@@ -659,7 +659,7 @@ var buffer : array[0..2047] of byte;
         s[i]:='_';
     if length(s)>253 then TruncStr(s,253);
     s:=s+#13#10;
-    FastMove(s[1],buffer[ofs],length(s));
+    Move(s[1],buffer[ofs],length(s));
     inc(ofs,length(s));
     if ofs>sizeof(buffer)-260 then
       writebuffer;
@@ -886,7 +886,7 @@ var f1,f2   : file;
         mAttrib:=attrib and $1012 + iif(pm,1,{ $8}0);  { $2000 wird gefiltert! }
         inc(mAttrib,attrKillSent);
         s:=fdate;
-        FastMove(s[1],datetime,length(s));
+        Move(s[1],datetime,length(s));
         end;
       blockwrite(f2,mhd,sizeof(mhd));
       wr0(fa2.username);                       { toUserName   }
@@ -1810,6 +1810,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.23  2000/07/02 14:24:56  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.22  2000/06/23 15:59:26  mk
   - 16 Bit Teile entfernt
 

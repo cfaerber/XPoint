@@ -462,7 +462,7 @@ var p  : byte;
       prev:=back;
       linenr:=alist^.lines;
       marked:=false;
-      FastMove(ltxt,cont,lt+1);
+      Move(ltxt,cont,lt+1);
       end;
   end;
 
@@ -546,7 +546,7 @@ begin
       until eof(f);
       close(f);
       if rp>1 then begin     { den Rest der letzten Zeile noch anh„ngen.. }
-        FastMove(p^[1],s[1],rp-1);
+        Move(p^[1],s[1],rp-1);
         s[0]:=chr(rp-1);
         app_l(s);
         end;
@@ -1379,6 +1379,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/07/02 14:24:48  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.21  2000/06/23 15:59:12  mk
   - 16 Bit Teile entfernt
 

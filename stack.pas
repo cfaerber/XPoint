@@ -62,7 +62,7 @@ begin
     tail:=p;
     end;
   getmem(p^.inhalt,size);
-  FastMove(x,p^.inhalt^,size);
+  Move(x,p^.inhalt^,size);
   p^.groesse:=size;
   p^.adr:=@x
 end;
@@ -77,7 +77,7 @@ begin
   if @x<>tail^.adr then
     error('var mismatch');
 {$ENDIF }
-  FastMove(tail^.inhalt^,x,tail^.groesse);
+  Move(tail^.inhalt^,x,tail^.groesse);
   freemem(tail^.inhalt,tail^.groesse);
   p:=tail;
   tail:=tail^.last;
@@ -88,6 +88,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/07/02 14:24:49  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.6  2000/06/29 13:00:49  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

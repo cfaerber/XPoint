@@ -1063,7 +1063,7 @@ var brk      : boolean;
           maddtext(36,3,getres2(1010,3),col.CoLDiaHigh);   { 'Fido-Direktanrufe ben”tigt.' }
           end;
         if anz>0 then
-          FastMove(ph^,phe^,anz*sizeof(phone1));
+          Move(ph^,phe^,anz*sizeof(phone1));
         for i:=0 to 6 do
           for j:=1 to 15 do begin
             maddstring(3+i*10,iif(n=1,4,1)+j,'',phe^[add+i*15+j],7,15,'0123456789-');
@@ -1096,7 +1096,7 @@ var brk      : boolean;
             anz:=i;
             if anz>0 then begin
               getmem(ph,anz*sizeof(phone1));
-              FastMove(phe^,ph^,anz*sizeof(phone1));
+              Move(phe^,ph^,anz*sizeof(phone1));
               end;
             end;
           end;
@@ -1410,7 +1410,7 @@ var brk      : boolean;
       dec(anzahl);
       dec(NL_anz);
       getmem(nlp,anzahl*sizeof(NL_rec));
-      FastMove(nodelist^,nlp^,anzahl*sizeof(NL_rec));
+      Move(nodelist^,nlp^,anzahl*sizeof(NL_rec));
       freemem(nodelist,(anzahl+1)*sizeof(NL_rec));
       nodelist:=nlp;
       modi:=true;
@@ -2024,6 +2024,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/02 14:24:52  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.11  2000/06/23 15:59:16  mk
   - 16 Bit Teile entfernt
 

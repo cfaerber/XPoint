@@ -562,7 +562,7 @@ begin
   kombaum^[0].flags:=kombaum^[0].flags or kflBetr;
   dbSetIndex(bezbase,mi);
   getmem(kb2,komanz*sizeof(komrec));
-  FastMove(kombaum^,kb2^,komanz*sizeof(komrec));
+  Move(kombaum^,kb2^,komanz*sizeof(komrec));
   freemem(kombaum,realmaxkom*sizeof(komrec));
   kombaum:=kb2;
   dispose(hdp);
@@ -885,6 +885,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/02 14:24:53  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.12  2000/06/23 15:59:21  mk
   - 16 Bit Teile entfernt
 

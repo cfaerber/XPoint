@@ -11,7 +11,7 @@
 {$R-,S-}
 
 uses
-{$IFDEF NCRT } 
+{$IFDEF NCRT }
   xpcurses,
 {$ELSE }
   crt,
@@ -306,7 +306,7 @@ var  fname,
      for i:=1 to lines do begin
        gstr:=z^[i]+#7;
        if docode then encode;
-       FastMove(gstr[1],obuf[obufp+1],length(gstr));
+       Move(gstr[1],obuf[obufp+1],length(gstr));
        inc(obufp,length(gstr));
      end;
      blockwrite(f,obuf,obufp);
@@ -414,6 +414,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2000/07/02 14:24:48  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.10  2000/06/22 19:53:26  mk
   - 16 Bit Teile ausgebaut
 

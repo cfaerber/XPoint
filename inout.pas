@@ -470,7 +470,7 @@ begin
         if zaehler[i]>0 then
         begin
           dec(zaehler[i]);
-          FastMove(Zaehlproc[i],l, 4);
+          Move(Zaehlproc[i],l, 4);
           if (zaehler[i]=0) and (l <> 0) then
             Zaehlproc[i];
          end;
@@ -488,7 +488,7 @@ var   x   : boolean;
   procedure stput(pos,len,nr:byte);
   begin
     moff;
-    FastMove(mem[base:memadr(statposx+pos,statposy)],stm[nr],len*2);
+    Move(mem[base:memadr(statposx+pos,statposy)],stm[nr],len*2);
     SaveCursor;
     InvTxt;
     wrt(statposx+pos,statposy,stt[nr]);
@@ -500,9 +500,9 @@ var   x   : boolean;
   procedure strest(pos,len,nr:byte);
   begin
     if do_rest then
-      FastMove(stm[nr],mem[base:memadr(statposx+pos,statposy)],2*len)
+      Move(stm[nr],mem[base:memadr(statposx+pos,statposy)],2*len)
     else
-      FastMove(mem[base:memadr(statposx+pos,statposy)],stm[nr],2*len);
+      Move(mem[base:memadr(statposx+pos,statposy)],stm[nr],2*len);
   end;
 
 begin
@@ -1651,6 +1651,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41  2000/07/02 14:24:48  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.40  2000/06/23 15:59:11  mk
   - 16 Bit Teile entfernt
 

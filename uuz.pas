@@ -537,7 +537,7 @@ procedure wrfs(var s:Hugestring);
 begin
   if outbufpos+length(s)>=outbufsize then
     FlushOutbuf;
-  FastMove(s[1],outbuf^[outbufpos],length(s));
+  Move(s[1],outbuf^[outbufpos],length(s));
   inc(outbufpos,length(s));
 end;
 
@@ -1559,7 +1559,7 @@ var p,i   : integer; { byte -> integer }
         ref:=copy(s0,2,p-2)
       else begin
         if addrefs<maxrefs then inc(addrefs)
-        else FastMove(addref[2],addref[1],(maxrefs-1)*sizeof(addref[1]));
+        else Move(addref[2],addref[1],(maxrefs-1)*sizeof(addref[1]));
         addref[addrefs]:=copy(s0,2,p-2);
         end;
       while (p<=length(s0)) and ((s0[p+1]=' ') or (s0[p+1]=#9)) do
@@ -2652,7 +2652,7 @@ begin
           j:=12+length(ref)+2;
           for i:=1 to addrefs do j:=j+length(addref[i])+3;
           if j>980 then begin
-            FastMove(addref[2],addref[1],(maxrefs-1)*sizeof(addref[1]));
+            Move(addref[2],addref[1],(maxrefs-1)*sizeof(addref[1]));
             dec(addrefs);
           end;
         until j<=980;
@@ -2832,7 +2832,7 @@ var hds,adr : longint;
     s := s + #10;
     if outbufpos+length(s)>=outbufsize then
       FlushOutbuf(f);
-    FastMove(s[1],outbuf^[outbufpos],length(s));
+    Move(s[1],outbuf^[outbufpos],length(s));
     inc(outbufpos,length(s));
   end;
 
@@ -3122,6 +3122,9 @@ end.
 
 {
   $Log$
+  Revision 1.38  2000/07/02 14:24:50  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.37  2000/06/29 13:00:50  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

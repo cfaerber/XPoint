@@ -650,11 +650,11 @@ var x,y        : byte;
             end;
           if fadr<$1000000 then begin
             inc(cuser[2],$80);
-            FastMove(fadr,cuser[cuserp],3);
+            Move(fadr,cuser[cuserp],3);
             inc(cuserp,3);
             end
           else begin
-            FastMove(fadr,cuser[cuserp],4);
+            Move(fadr,cuser[cuserp],4);
             inc(cuserp,4);
             end;
           { R+}
@@ -662,7 +662,7 @@ var x,y        : byte;
           if not ok then
             FlushOut
           else begin
-            FastMove(cuser,bbuf^[outp],cuserp);
+            Move(cuser,bbuf^[outp],cuserp);
             inc(outp,cuserp);
             end;
         until ok;
@@ -2249,6 +2249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/02 14:24:54  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.16  2000/06/29 13:01:00  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

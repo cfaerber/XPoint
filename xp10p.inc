@@ -178,7 +178,7 @@ begin
               anz:=0;
             if anz>0 then begin
               getmem(ph,anz*sizeof(phone1));
-              FastMove(pa^,ph^,anz*sizeof(phone1));
+              Move(pa^,ph^,anz*sizeof(phone1));
               end;
             end;
           end;
@@ -318,6 +318,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.4  2000/07/02 14:24:52  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.3  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

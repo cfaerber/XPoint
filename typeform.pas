@@ -193,7 +193,6 @@ Procedure SetSysDate(const d:DateTimeSt);          { Datum nach dt. String setze
 Procedure SetSysTime(const t:DateTimeSt);          { Zeit nach dt. String setzen  }
 Procedure TruncStr(var s:string; n:byte);    { String kÅrzen                }
 Procedure UpString(var s:string);            { UpperString                  }
-procedure FastMove(var Source, Dest; const Count : WORD);
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 procedure UkonvStr(var s:string;len:byte);     { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
@@ -1369,7 +1368,7 @@ function FileName(var f):string;
 var s : pathstr;
     i : byte;
 begin
-  FastMove(filerec(f).name,s[1],79);
+  Move(filerec(f).name,s[1],79);
   i:=1;
   while (i<79) and (s[i]<>#0) do inc(i);
   s[0]:=chr(i-1);
@@ -1923,29 +1922,6 @@ begin
     rforms:=sp(n-length(s))+s;
 end;
 
-procedure FastMove(var Source, Dest; const Count: WORD); {&uses esi,edi} assembler;
-asm
-        mov  ecx, count
-        mov  eax, ecx
-        sar  ecx, 2
-        js   @ende
-
-        mov  esi, source
-        mov  edi, dest
-
-        cld
-        rep movsd
-        mov ecx, eax
-        and ecx, $03
-        rep movsb
-@ende:
-{$ifdef FPC }
-end ['EAX', 'ECX', 'ESI', 'EDI'];
-{$else}
-end;
-{$endif}
-
-
 procedure UkonvStr(var s:string;len:byte);
 var s2 : string;
   procedure conv(c1,c2:char);
@@ -2039,6 +2015,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/07/02 14:24:49  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.39  2000/06/23 15:59:13  mk
   - 16 Bit Teile entfernt
 

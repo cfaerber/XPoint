@@ -668,7 +668,7 @@ begin
     else begin
       inc(x);
         if x<markanz then { Longint, da sonst bei 2731 Nachrichten RTE 215 }
-          { ACHTUNG: Hier kein FastMove wegen berlappenden Speicherbereichen! }
+          { ACHTUNG: Hier kein Move wegen berlappenden Speicherbereichen! }
           { SizeOf(MarkRec) ist 12, die MarkAnz kann bis 5000 sein. Um
             einen Integer-Ueberlauf nach Multiplikation zu verhindern muss
             mit Word gerechnet werden, so das mehr als 32kb verschoben werden
@@ -691,7 +691,6 @@ begin
   if found then begin
     dec(markanz);
     if (x<markanz) then
-     { ACHTUNG: Hier kein FastMove wegen berlappenden Speicherbereichen! }
       Move(marked^[x+1],marked^[x],word(sizeof(markrec))*word((markanz-x)));
     end;
 end;
@@ -796,7 +795,6 @@ begin
   if not found and (bmarkanz<maxbmark) then begin
     inc(x);
     if x<bmarkanz then
-     { ACHTUNG: Hier kein FastMove wegen berlappenden Speicherbereichen! }
       Move(bmarked^[x],bmarked^[x+1],4*(bmarkanz-x));
     inc(bmarkanz);
     bmarked^[x]:=rec;
@@ -812,7 +810,6 @@ begin
   if found then begin
     dec(bmarkanz);
     if (x<bmarkanz) then
-      { ACHTUNG: Hier kein FastMove wegen berlappenden Speicherbereichen! }
       Move(bmarked^[x+1],bmarked^[x],4*(bmarkanz-x));
     end;
 end;
@@ -1240,6 +1237,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/02 14:24:53  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.28  2000/07/02 14:11:24  mk
   JG: - Volltextsuche mit Wildcards implementiert
 

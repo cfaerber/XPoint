@@ -33,7 +33,7 @@ begin
         do inc(i);
 }
       if i<cacheanz then begin
-        FastMove(cache^[i].page,data,irsize);
+        Move(cache^[i].page,data,irsize);
         cache^[i].lasttick:=ticker;
         end
       else begin
@@ -58,7 +58,7 @@ begin
         cache^[sp].lasttick:=ticker;
         cache^[sp].dbp:=dbp;
         cache^[sp].ofs:=offs;
-        FastMove(data,cache^[sp].page,irsize);
+        Move(data,cache^[sp].page,irsize);
         end;
       end;
 end;
@@ -87,12 +87,12 @@ begin
         inc(i);
         end;
       if i<cacheanz then   { Seite schon im Cache vorhanden }
-        FastMove(data,cache^[i].page,irsize)
+        Move(data,cache^[i].page,irsize)
       else begin
         cache^[sp].lasttick:=ticker;
         cache^[sp].dbp:=dbp;
         cache^[sp].ofs:=offs;
-        FastMove(data,cache^[sp].page,irsize);
+        Move(data,cache^[sp].page,irsize);
         i:=sp;
         end;
       cache^[i].used:=true;
@@ -170,10 +170,10 @@ begin
     with dp(db_p)^ do begin
       getmem(rbuf,irsize);
       wp^:=anzahl;
-      FastMove(key[0].data,rbuf^[2],8);
+      Move(key[0].data,rbuf^[2],8);
       o:=10;
       for i:=1 to anzahl do begin
-        FastMove(key[i],rbuf^[o],9+ksize);
+        Move(key[i],rbuf^[o],9+ksize);
         inc(o,9+ksize);
         end;
       cache_write(db_p,irsize,filepos,rbuf^);
@@ -225,6 +225,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2000/07/02 14:24:44  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.12  2000/06/23 15:59:09  mk
   - 16 Bit Teile entfernt
 

@@ -772,9 +772,9 @@ begin
   getmem(p,(screenlines-1)*zpz*2);
   moff;
 {$IFNDEF ver32}
-  FastMove(mem[base:iif(TermStatus,0,2*zpz)],p^,(screenlines-1)*zpz*2);
+  Move(mem[base:iif(TermStatus,0,2*zpz)],p^,(screenlines-1)*zpz*2);
   termscr;
-  FastMove(p^,mem[base:iif(TermStatus,2*zpz,0)],(screenlines-1)*zpz*2);
+  Move(p^,mem[base:iif(TermStatus,2*zpz,0)],(screenlines-1)*zpz*2);
 {$ENDIF}
   mon;
   freemem(p,(screenlines-1)*zpz*2);
@@ -1617,6 +1617,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/02 14:24:55  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.10  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

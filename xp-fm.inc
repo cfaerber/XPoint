@@ -109,7 +109,7 @@ end;
 procedure SetZero(var buf; s:string; ml:byte);
 begin
   s:=s+#0;
-  FastMove(s[1],buf,min(ml,length(s)));
+  Move(s[1],buf,min(ml,length(s)));
 end;
 
 procedure InitHelloPacket;
@@ -529,7 +529,7 @@ var s : string[80];
     while (string(buf)[p]<>#0) and (p<max) do
       inc(p);
     s[0]:=chr(p);
-    FastMove(buf,s[1],p);
+    Move(buf,s[1],p);
   end;
 
 begin
@@ -620,7 +620,7 @@ label ende;
 
   procedure Add(s:string);
   begin
-    FastMove(s[1],edat^[edatlen],length(s));
+    Move(s[1],edat^[edatlen],length(s));
     inc(edatlen,length(s));
   end;
 
@@ -631,7 +631,7 @@ label ende;
     w:=0;
     repeat
       s2[0]:=chr(min(66,buflen-w));
-      FastMove(buf^[w],s2[1],length(s2));
+      Move(buf^[w],s2[1],length(s2));
       inc(w,length(s2));
       log('d',s2);
     until w>=buflen
@@ -673,7 +673,7 @@ label ende;
     if DebugMode and (s0<>'') then
       log('d',s0);
     s[0]:=chr(min(255,buflen));
-    FastMove(buf^,s[1],length(s));
+    Move(buf^,s[1],length(s));
     if DebugMode then DebugLog;
     bufpos:=0;
   end;
@@ -689,7 +689,7 @@ label ende;
       while (buf^[bufpos]<>'}') and (bufpos<buflen) do
         inc(bufpos);
       s[0]:=chr(min(255,bufpos-bp));
-      FastMove(buf^[bp],s[1],length(s));
+      Move(buf^[bp],s[1],length(s));
       inc(bufpos);
     end;
   end;
@@ -783,7 +783,7 @@ begin
       end;
       if left(s,length(EMSI_DAT))=EMSI_DAT then begin
         dl:=hexval(copy(s,length(EMSI_DAT)+1,4));    { Paketl„nge }
-        FastMove(buf^[bufpos+length(EMSI_DAT)+4+dl],hex4[1],4); hex4[0]:=#4;
+        Move(buf^[bufpos+length(EMSI_DAT)+4+dl],hex4[1],4); hex4[0]:=#4;
         ok:=(hexval(hex4)=CRC16Block(buf^[bufpos+2],dl+12));
         if not ok then begin
           CommObj^.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
@@ -1025,6 +1025,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/07/02 14:24:52  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.13  2000/06/22 22:24:34  ma
   - Kosmetik bei der Anzeige
 

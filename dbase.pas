@@ -141,7 +141,7 @@ begin
         blockread(datei,XFeld,SizeOf(XFeld));
         l:=1;
         while (l<=10) and (XFeld.name[l]<>#0) do inc(l);
-        FastMove(XFeld.name[1],feld[i].name[1],l-1);
+        Move(XFeld.name[1],feld[i].name[1],l-1);
         feld[i].name[0]:=chr(l-1);
         feld[i].typ:=XFeld.typ;
         feld[i].size:=XFeld.size;
@@ -238,7 +238,7 @@ begin
       FeldNummer(f,fname);
       if DbResult<0 then DbRead:=''
       else begin
-        FastMove(xa(buff^)[feld[FeldNr].off],h[1],feld[FeldNr].size);
+        Move(xa(buff^)[feld[FeldNr].off],h[1],feld[FeldNr].size);
         h[0]:=chr(feld[FeldNr].size);
         DbRead:=h;
         DbResult:=0;
@@ -339,7 +339,7 @@ begin
       o:=0;
       for i:=1 to felder do begin
         fillchar(XFeld,sizeof(XFeld),0);
-        FastMove(feld[i].name[1],XFeld.name,length(feld[i].name));
+        Move(feld[i].name[1],XFeld.name,length(feld[i].name));
         XFeld.typ:=feld[i].typ;
         XFeld.size:=feld[i].size;
         if feld[i].typ='N' then XFeld.nk:=feld[i].nk;
@@ -389,7 +389,7 @@ begin
       FeldNummer(f,fname);
       if DbResult=0 then begin
         fillchar(buff^,rsize,' ');
-        FastMove(s[1],buff^,length(copy(s,1,feld[FeldNr].size)));
+        Move(s[1],buff^,length(copy(s,1,feld[FeldNr].size)));
         seek(datei,hdsize+(FPos-1)*rsize+feld[FeldNr].off);
         blockwrite(datei,buff^,feld[FeldNr].size);
         modi:=true;
@@ -468,6 +468,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/07/02 14:24:45  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.5  2000/03/17 13:12:09  mk
   - Anpassung der Records an 32 Bit
 

@@ -68,7 +68,7 @@ begin
           with feldp^.feld[ifeldnr[i] and $fff] do
             case ftyp of
               1 : begin
-                    FastMove(rb^[fofs],s,rb^[fofs]+1);
+                    Move(rb^[fofs],s,rb^[fofs]+1);
                     if length(s)+1>fsize then s[0]:=chr(fsize-1);
                     if ifeldnr[i] and $8000<>0 then s:=UStr(s);
                     if feldanz=i then key:=key+s
@@ -79,7 +79,7 @@ begin
                     key[length(key)]:=char(rb^[fofs+fsize-j]);
                   end;
               3 : begin
-                    FastMove(rb^[fofs],r,6);
+                    Move(rb^[fofs],r,6);
                     str(r:20:3,s);
                     key:=key+s;
                   end;
@@ -493,6 +493,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.4  2000/07/02 14:24:45  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.3  2000/02/19 11:40:06  mk
   Code aufgeraeumt und z.T. portiert
 

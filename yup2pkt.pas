@@ -220,7 +220,7 @@ procedure WriteMheader(var mhd:mhd2);      { Nachrichtenheader schreiben }
 begin
   with mhd do begin
     mhd1.mPktVer:=2;
-    FastMove(datum[1],mhd1.datetime,20);
+    Move(datum[1],mhd1.datetime,20);
     blockwrite(pkt,mhd1,sizeof(mheader));
     wrs0(_to);
     wrs0(from);
@@ -362,6 +362,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.5  2000/07/02 14:24:55  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.4  2000/06/22 19:53:33  mk
   - 16 Bit Teile ausgebaut
 

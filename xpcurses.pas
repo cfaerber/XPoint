@@ -378,7 +378,7 @@ begin
   { Solange ich nicht weiss, ob XP irgendwo die Reihenfolge bei
     wrest nicht analog zu wpull vornimmt, ist diese Sicherung notwendig }
   getmem(win.PrevWin, sizeof(TWinDesc));
-  FastMove(ActWin, win.PrevWin^, sizeof(TWinDesc));
+  Move(ActWin, win.PrevWin^, sizeof(TWinDesc));
   { Fenster beschreiben }
   win.x:= x1-1; win.y:= y1-1;
   win.Cols:= x2-win.x; win.Rows:= y2-win.y;
@@ -395,7 +395,7 @@ begin
   { Panel verbinden }
   win.pHnd:= new_panel(win.wHnd);
   { Neues Window als aktuell setzen }
-  FastMove(win, ActWin, sizeof(TWinDesc));
+  Move(win, ActWin, sizeof(TWinDesc));
   show_panel(win.pHnd);
   if (f) then begin
     { Inhalt loeschen }
@@ -419,10 +419,10 @@ begin
   delwin(win.wHnd);
   { Vorheriger Descriptor vorhanden ? }
   if (win.PrevWin^.wHnd <> nil) then begin
-    FastMove(win.PrevWin^, ActWin, sizeof(TWinDesc));
+    Move(win.PrevWin^, ActWin, sizeof(TWinDesc));
     freemem(win.PrevWin, sizeof(TWinDesc));
   end else
-    FastMove(BaseWin, ActWin, sizeof(TWinDesc));
+    Move(BaseWin, ActWin, sizeof(TWinDesc));
   { Re-Init }
   FillChar(win, sizeof(TWinDesc), 0);
   if (ActWin.pHnd <> nil) then begin
@@ -942,7 +942,7 @@ Begin
 {$ENDIF }
     if (ActWin.wHnd <> nil) then
       delwin(ActWin.wHnd);
-    FastMove(BaseWin, ActWin, sizeof(TWinDesc));
+    Move(BaseWin, ActWin, sizeof(TWinDesc));
   end;
   NormVideo;
   LastMode := mode;
@@ -1265,7 +1265,7 @@ begin
   end;
 
   { Am Anfang ist die Basis auch Aktuell }
-  FastMove(BaseWin, ActWin, sizeof(TWinDesc));
+  Move(BaseWin, ActWin, sizeof(TWinDesc));
 
   BaseSub:= nil;
 
@@ -1288,6 +1288,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/02 14:24:53  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.19  2000/06/30 11:38:36  hd
   - XPWIN32-Plagiat
   - Aenderung der eingebundenen Units

@@ -252,7 +252,7 @@ label ende;
           rfehler(2120);   { 'Fehler im Nodelisten-Userindex' }
           b:=MaxNameLen-length(name);
           end;
-        FastMove(buf^[bufp],name[length(name)+1],b);
+        Move(buf^[bufp],name[length(name)+1],b);
         inc(byte(name[0]),b);
         inc(bufp,b);
         end;
@@ -275,7 +275,7 @@ label ende;
       else fnr:=0;
       b:=iif(adr3,3,4);            { Datei-Offset }
       fadr:=0;
-      FastMove(buf^[bufp],fadr,b);
+      Move(buf^[bufp],fadr,b);
       inc(bufp,b);
       last:=buf^[bufp]=$ff;
       end;
@@ -882,6 +882,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.9  2000/07/02 14:24:54  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.8  2000/06/29 13:01:00  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

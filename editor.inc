@@ -709,7 +709,7 @@ begin
     createacopy:=false
   else begin
     copyflags(ap1,ap2);
-    FastMove(ap1^.cont[from],ap2^.cont,len);
+    Move(ap1^.cont[from],ap2^.cont,len);
     createacopy:=true;
     end;
 end;
@@ -721,7 +721,7 @@ begin
   if len>0 then begin
     if delentry and (memavail-len-asize-16>minfree) then begin
       apnew:=AllocAbsatz(len);
-      FastMove(ap^.cont[from],apnew^.cont,len);
+      Move(ap^.cont[from],apnew^.cont,len);
       AddDelEntry(apnew);
     end;
     if ap^.size-len>=ap^.msize-15 then begin
@@ -735,8 +735,8 @@ begin
       if assigned(apnew) then begin
         copyflags(ap,apnew);
         absatzwechsel(ap,apnew,true);
-        FastMove(ap^.cont[0],apnew^.cont[0],from);
-        FastMove(ap^.cont[from+len],apnew^.cont[from],ap^.size-from-len);
+        Move(ap^.cont[0],apnew^.cont[0],from);
+        Move(ap^.cont[from+len],apnew^.cont[from],ap^.size-from-len);
         if blockabscut(ap,apnew,from,len) then begin
           NoDisplay;
           CheckBlockOrder;
@@ -777,7 +777,7 @@ var p,q : byte;
     s   : string;
 begin
   p:=min(ap^.size,80);
-  fastmove(ap^.cont,s[1],p);
+  Move(ap^.cont,s[1],p);
   s[0]:=char(p);
   p:=cpos('>',s);
   if p>5 then p:=0
@@ -839,7 +839,7 @@ begin
           fillchar(ap2^.cont,spaces,' ')
         { 10.02.2000 robo - Quote-Reflow }
         else if quotes>0 then
-          fastmove(quotec[1],ap2^.cont[0],quotes);
+          Move(quotec[1],ap2^.cont[0],quotes);
         { /robo }
         if assigned(ap^.next) then
           ap^.next^.prev:=ap2;
@@ -917,7 +917,7 @@ begin
             ap2^.next^.prev:=apnew;
             end;
           size1:=ap^.size;
-          FastMove(ap^.cont,apnew^.cont,size1);
+          Move(ap^.cont,apnew^.cont,size1);
           fillchar(apnew^.cont[size1],addspaces,32);
           Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
           absatzwechsel(ap,apnew,false);
@@ -1050,10 +1050,10 @@ var s : string[10];
 begin
   if wp>=6 then begin
     s[0]:=#6;
-    FastMove(ap^.cont[wp-6],s[1],6);
+    Move(ap^.cont[wp-6],s[1],6);
     if s='Yuppie' then begin
       s:='Oops!';
-      FastMove(s[1],ap^.cont[wp-6],5);
+      Move(s[1],ap^.cont[wp-6],5);
       if ap^.size>wp then
         Move(ap^.cont[wp],ap^.cont[wp-1],ap^.size-wp);
       dec(ap^.size);
@@ -1104,11 +1104,11 @@ begin
             copyflags(ap,apnew);
             absatzwechsel(ap,apnew,true);
             blockabsinsert(ap,apnew,wp,1);
-            FastMove(ap^.cont,apnew^.cont,wp-spaces);
+            Move(ap^.cont,apnew^.cont,wp-spaces);
             fillchar(apnew^.cont[wp-spaces],spaces,32);
             apnew^.cont[wp]:=t[1];
             if ap^.size>wp then
-              FastMove(ap^.cont[wp],apnew^.cont[wp+1],ap^.size-wp);
+              Move(ap^.cont[wp],apnew^.cont[wp+1],ap^.size-wp);
             FreeAbsatz(ap);
             MoveWorkpos(wp+1,nil);
             if pointswitch and (t[1]='e') then Juppheidi(apnew,wp+1);
@@ -1310,12 +1310,12 @@ begin
     then begin
       ap2:=AllocAbsatz(ss);
       copyflags(ap,ap2);
-      FastMove(ap^.cont,ap2^.cont,wp-spaces);
+      Move(ap^.cont,ap2^.cont,wp-spaces);
       fillchar(ap2^.cont[wp-spaces],spaces,32);
       ss:=blk^.size;
-      FastMove(blk^.cont,ap2^.cont[wp],ss);
+      Move(blk^.cont,ap2^.cont[wp],ss);
       if ap^.size>wp then
-        FastMove(ap^.cont[wp],ap2^.cont[wp+ss],ap^.size-wp);
+        Move(ap^.cont[wp],ap2^.cont[wp+ss],ap^.size-wp);
       endpos.absatz:=ap2;
       endpos.offset:=wp+ss;
       absatzwechsel(ap,ap2,true);
@@ -1339,7 +1339,7 @@ begin
     then begin
       ap2:=AllocAbsatz(blk^.size+wp);        { 1. Teil des ActAbs }
       copyflags(ap,ap2);                          { am Blockanfang einfg. }
-      FastMove(ap^.cont,ap2^.cont,wp-spaces);
+      Move(ap^.cont,ap2^.cont,wp-spaces);
       fillchar(ap2^.cont[wp-spaces],spaces,32);
       Move(blk^.cont,ap2^.cont[wp],blk^.size);
       absatzwechsel(blk,ap2,true);
@@ -1400,7 +1400,7 @@ begin
       ap:=AllocAbsatz(ss);
       if assigned(ap) then begin
         Copyflags(block[1].pos.absatz,ap);
-        FastMove(block[1].pos.absatz^.cont[block[1].pos.offset],
+        Move(block[1].pos.absatz^.cont[block[1].pos.offset],
              ap^.cont,ss);
         end;
       CopyBlock:=ap;
@@ -1417,7 +1417,7 @@ begin
         ss:=ap^.size-block[1].pos.offset;
         ap0:=AllocAbsatz(ss); ap1:=ap0;             { Startabsatz }
         copyflags(ap,ap0);
-        FastMove(ap^.cont[block[1].pos.offset],ap0^.cont,ss);
+        Move(ap^.cont[block[1].pos.offset],ap0^.cont,ss);
         ap:=ap^.next;
         while ap<>block[2].pos.absatz do begin      { Body }
           ap2:=AllocAbsatz(ap^.size);
@@ -1542,7 +1542,7 @@ begin
         recount:=(block[1].disp<2);
         apnew:=AllocAbsatz(ss);
         copyflags(ap1,apnew);
-        FastMove(ap1^.cont[ofs1],apnew^.cont,ss);
+        Move(ap1^.cont[ofs1],apnew^.cont,ss);
         aflag:=(ap1=ActAbs);
         ap:=AbsDelete(ap1,ofs1,ss,false,true);
         if aflag then begin
@@ -1564,7 +1564,7 @@ begin
       ss:=ap1^.size-ofs1;
       apnew:=AllocAbsatz(ss);       { Ende von 1. Absatz ausschneiden }
       copyflags(ap1,apnew);
-      FastMove(ap1^.cont[ofs1],apnew^.cont,ss);
+      Move(ap1^.cont[ofs1],apnew^.cont,ss);
       if ap1^.next<>ap2 then begin     { dazwischenliegende AbsÑtze }
         apnew^.next:=ap1^.next;   { anhÑngen                   }
         apnew^.next^.prev:=apnew;
@@ -1575,7 +1575,7 @@ begin
         apl:=apnew;
       apn:=AllocAbsatz(ofs2);       { Anfang vom letzten Absatz ausschn. }
       copyflags(ap2,apn);
-      FastMove(ap2^.cont,apn^.cont,ofs2);
+      Move(ap2^.cont,apn^.cont,ofs2);
       apl^.next:=apn;             { .. an Cut-Block anhÑngen }
       apn^.prev:=apl;
 
@@ -1592,8 +1592,8 @@ begin
         apn^.next:=ap2^.next;
         apn^.next^.prev:=apn;
         end;
-      FastMove(ap1^.cont,apn^.cont,ofs1);
-      FastMove(ap2^.cont[ofs2],apn^.cont[ofs1],ap2^.size-ofs2);
+      Move(ap1^.cont,apn^.cont,ofs1);
+      Move(ap2^.cont[ofs2],apn^.cont[ofs1],ap2^.size-ofs2);
       absatzwechsel(ap1,apn,false);
       absatzwechsel(ap2,apn,false);
       if wp.absatz=ap2 then begin
@@ -1794,7 +1794,7 @@ begin
       nofs:=Advance(ap,ofs,rrand);
       if ap=endap then nofs:=min(nofs,endofs);
       s[0]:=chr(nofs-ofs);
-      FastMove(ap^.cont[ofs],s[1],length(s));
+      Move(ap^.cont[ofs],s[1],length(s));
       writeln(lst,s);
       if nofs=ap^.size then begin
         ap:=ap^.next; ofs:=0; end
@@ -1898,7 +1898,7 @@ begin
           if spaces>0 then
             fillchar(ap2^.cont,spaces,' ')
           else if quotes>0 then
-            fastmove(quotec1[1],ap2^.cont[0],quotes);
+            Move(quotec1[1],ap2^.cont[0],quotes);
           if assigned(ap^.next) then
             ap^.next^.prev:=ap2;
           ap2^.next:=ap^.next;
@@ -1974,7 +1974,7 @@ begin
               ap2^.next^.prev:=apnew;
             end;
             size1:=ap^.size;
-            FastMove(ap^.cont,apnew^.cont,size1);
+            Move(ap^.cont,apnew^.cont,size1);
             fillchar(apnew^.cont[size1],addspaces,32);
             Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
             absatzwechsel(ap,apnew,false);
@@ -2073,7 +2073,7 @@ begin
             insap:=AllocAbsatz(length(repby));  { EinfÅgeabsatz erzeugen }
             if insap=nil then brk:=true
             else begin
-              FastMove(repby[1],insap^.cont,length(repby));
+              Move(repby[1],insap^.cont,length(repby));
               apd:=ActAbs; { .robo }
               AbsDelete(apd,workpos,length(txt),false,true); { .robo }
               Insert(insap,pos);
@@ -2290,6 +2290,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/07/02 14:24:46  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.19  2000/05/06 17:29:19  mk
   - DOS DPMI32 Portierung
 

@@ -745,7 +745,7 @@ begin
         pp:=cpos(#10,s);
         if pp>0 then begin
           endlf:=(pp=length(s));
-          FastMove(s[1],ibuf^[isize],pp-1);
+          Move(s[1],ibuf^[isize],pp-1);
           inc(isize,pp-1);
           delete(s,1,pp);
           srest:=true;
@@ -758,7 +758,7 @@ begin
             sbrk:=true;
             readln(t);
             end;
-          FastMove(s[1],ibuf^[isize],length(s));
+          Move(s[1],ibuf^[isize],length(s));
           inc(isize,length(s));
           end;
         end;
@@ -771,7 +771,7 @@ begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
                      ((umbruch=1) and ((isize<rrand-15) or sbrk)));
-        FastMove(ibuf^,p^.cont,isize);
+        Move(ibuf^,p^.cont,isize);
         AppP;
         end;
       end;
@@ -838,7 +838,7 @@ begin
       p:=AllocAbsatz(length(s));
       if assigned(p) then begin
         p^.umbruch:=true;
-        FastMove(s[1],p^.cont,length(s));
+        Move(s[1],p^.cont,length(s));
         AppP;
       end;
       s:='';
@@ -850,7 +850,7 @@ begin
         p:=AllocAbsatz(length(s));
         if assigned(p) then begin
           p^.umbruch:=true;
-          FastMove(s[1],p^.cont,length(s));
+          Move(s[1],p^.cont,length(s));
           AppP;
         end;
       end;
@@ -893,7 +893,7 @@ function EdInit(l,r,o,u:byte; rand:integer; savesoftbreaks:boolean;
 var ed : edp;
 begin
   new(ed);
-  FastMove(Defaults^,ed^,sizeof(Defaults^));
+  Move(Defaults^,ed^,sizeof(Defaults^));
   ed^.lastakted:=akted;
   akted:=ed;
   with ed^ do begin
@@ -1184,7 +1184,7 @@ var  dl         : displp;
               bende:=block[2].pos.offset-dofs;
             end;
           s[0]:=chr(minmax(nxo-dofs-xoffset,0,w));
-          if s<>'' then FastMove(ap^.cont[dofs+xoffset],s[1],length(s));
+          if s<>'' then Move(ap^.cont[dofs+xoffset],s[1],length(s));
           if length(s)<w then begin
             if (s<>'') and absende then begin               { Absatzende-Marke }
               s[length(s)+1]:=absatzende;
@@ -1882,6 +1882,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/07/02 14:24:46  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.27  2000/06/23 15:59:10  mk
   - 16 Bit Teile entfernt
 

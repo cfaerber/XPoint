@@ -286,7 +286,7 @@ begin
     if pstentry then begin
       inc(pstp);
       if pstp>maxpst then begin
-        FastMove(pst[2],pst[1],maxpst*sizeof(pst[1]));
+        Move(pst[2],pst[1],maxpst*sizeof(pst[1]));
         dec(pstp);
         end;
       pst[pstp]:=nr;
@@ -326,7 +326,7 @@ laden:
     if buf^[p]>=32 then begin
       p1:=p;
       while buf^[p]>=32 do inc(p);
-      FastMove(buf^[p1],s[sl+1],p-p1);
+      Move(buf^[p1],s[sl+1],p-p1);
       inc(sl,p-p1);
       end;
     if buf^[p]=7 then begin
@@ -761,6 +761,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/02 14:24:47  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.15  2000/06/23 15:59:11  mk
   - 16 Bit Teile entfernt
 

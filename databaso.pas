@@ -333,9 +333,9 @@ begin
         ICP(irec);
         for i:=1 to feldp^.felder do
           if feldp^.feld[i].ftyp=dbUntypedExt then begin
-            fastmove(recbuf^[feldp^.feld[i].fofs+4],l,4);
+            move(recbuf^[feldp^.feld[i].fofs+4],l,4);
             if l<>0 then begin
-              fastmove(ll,recbuf^[feldp^.feld[i].fofs],8);
+              move(ll,recbuf^[feldp^.feld[i].fofs],8);
               seek(f1,lastpos);
               blockwrite(f1,recbuf^,hd.recsize);
               inc(c2);
@@ -430,6 +430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/02 14:24:45  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.8  2000/06/22 19:53:24  mk
   - 16 Bit Teile ausgebaut
 

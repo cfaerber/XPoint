@@ -354,7 +354,7 @@ label ende;
     for i:=2 to lbuf[0]-1 do
       chk:=(chk+lbuf[i]) mod $100;
     meth:='     '; }
-    FastMove(lbuf[2],meth[1],5);
+    Move(lbuf[2],meth[1],5);
 
 {    TestLZH:=((chk=lbuf[1]) and (meth[1]='-') and (meth[5]='-')) or
              (meth='-lh1-'); }
@@ -627,7 +627,7 @@ label again;
     with ar do begin
       b:=0;
       while ba(fname)[b]<>#0 do inc(b);
-      FastMove(fname,s[1],b); s[0]:=chr(b);
+      Move(fname,s[1],b); s[0]:=chr(b);
       p:=pos('/',s);
       if p=0 then p:=pos('\',s);
       if p=0 then begin
@@ -765,7 +765,7 @@ begin
                    inc(adr,LZH.compsize+LZH.hdsize+2);
                    LZH.path[LZH.namelen]:=#0;
                    ZName(LZH.path);
-                   FastMove(LZH.method,method[1],5);
+                   Move(LZH.method,method[1],5);
                    method[0]:=#5;
                    insert(' ',method,1);
                    datum:=LZH.dosdate;
@@ -813,7 +813,7 @@ begin
                    ArjSkipExt(ar);
                    inc(adr,ARJ.compsize);
                    if ARJ.flags and 8<>0 then
-                     FastMove(ARJ.name[4],ARJ.name[0],251);
+                     Move(ARJ.name[4],ARJ.name[0],251);
                    ZName(ARJ.name);
                    datum:=ARJ.dosdate;
                    uhrzeit:=ARJ.dostime;
@@ -954,8 +954,8 @@ var f1,f2 : file;
       SetLocalZipHeaders:=false;
       exit;
       end;
-    FastMove(s[p+10],n,2);
-    FastMove(s[p+16],adr,4);
+    Move(s[p+10],n,2);
+    Move(s[p+16],adr,4);
     dec(adr,arcofs);
     seek(f2,filesize(f2)-b+p+15);
     blockwrite(f2,adr,4);
@@ -1017,6 +1017,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/07/02 14:24:43  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.11  2000/06/22 19:53:23  mk
   - 16 Bit Teile ausgebaut
 

@@ -476,7 +476,7 @@ var size   : longint;
           if (q<=length(s)) and (s[q]='>') then p:=q;
         until q>p;
         while (p<length(s)) and (s[p+1]='>') do inc(p);
-        q:=p;         
+        q:=p;
         while (q<length(s)) and (s[q+1]=' ') do inc(q);  { Textanfang suchen }
         QuoteOffset:=q-p;                  { Leerzeichen zwischen letztem ">" und Textanfang }
         end;
@@ -937,9 +937,9 @@ begin
          5: wrs(gr(35) + GetRes2(272, 5));     { 'Priorit„t  : Niedrigste'}
        end
        else if hdp^.Prio>0 then                                 { und fuer Zconnect ....  }
-         if hdp^.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }      
-                          else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }  
-    
+         if hdp^.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }
+                          else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }
+
   { /Priorit„t im Listenkopf anzeigen                                     }
 
   end;
@@ -972,7 +972,7 @@ begin
         XreadF(hds+iif(hdp^.typ='B',hdp^.komlen,0),f);
         end;
       if decode<>0 then begin
-        FastMove(f,decf,sizeof(f));
+        Move(f,decf,sizeof(f));
         case decode of
          -1 : do_decode(-1,filesize(f)-size);      { Rot13 }
           1 : if IS_QPC(hdp^.betreff) then
@@ -1043,6 +1043,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/02 14:24:53  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.17  2000/05/09 20:27:40  jg
   - Quoten... Bugfix Numero3
 

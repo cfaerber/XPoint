@@ -308,13 +308,13 @@ var i        : integer;
 begin
   make_stream(sts(key),ks);
   permutate(ks,ofs(PC1),56);
-  FastMove(ks[1],k1,28);
-  FastMove(ks[29],k2,28);
+  Move(ks[1],k1,28);
+  Move(ks[29],k2,28);
   for i:=1 to 16 do begin
     sleft(k1,i);
     sleft(k2,i);
-    FastMove(k1,k[i,1],28);
-    FastMove(k2,k[i,29],28);
+    Move(k1,k[i,1],28);
+    Move(k2,k[i,29],28);
     permutate(k[i],ofs(PC2),48);
     end;
 end;
@@ -328,7 +328,7 @@ begin
   Xs(s,k,48);
   F2(s,s2);
   permutate(s2,ofs(P),32);
-  FastMove(s2,s,32);
+  Move(s2,s,32);
 end;
 
 
@@ -338,16 +338,16 @@ var i        : integer;
 begin
   make_stream(s,x);
   permutate(x,ofs(IP),64);
-  FastMove(x[1],x1,32);
-  FastMove(x[33],x2,32);
+  Move(x[1],x1,32);
+  Move(x[33],x2,32);
   for i:=1 to 16 do begin
     x3:=x2;
     F(x2,k[i]);
     Xs(x2,x1,32);
     x1:=x3;
     end;
-  FastMove(x2,x[1],32);
-  FastMove(x1,x[33],32);
+  Move(x2,x[1],32);
+  Move(x1,x[33],32);
   permutate(x,ofs(PI),64);
   make_comp(x,s);
 end;
@@ -359,16 +359,16 @@ var i        : integer;
 begin
   make_stream(s,x);
   permutate(x,ofs(IP),64);
-  FastMove(x[1],x1,32);
-  FastMove(x[33],x2,32);
+  Move(x[1],x1,32);
+  Move(x[33],x2,32);
   for i:=16 downto 1 do begin
     x3:=x2;
     F(x2,k[i]);
     Xs(x2,x1,32);
     x1:=x3;
     end;
-  FastMove(x2,x[1],32);
-  FastMove(x1,x[33],32);
+  Move(x2,x[1],32);
+  Move(x1,x[33],32);
   permutate(x,ofs(PI),64);
   make_comp(x,s);
 end;
@@ -412,6 +412,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/07/02 14:24:53  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.10  2000/06/22 19:53:31  mk
   - 16 Bit Teile ausgebaut
 

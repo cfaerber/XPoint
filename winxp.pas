@@ -465,7 +465,7 @@ begin
     Top := o-1; Bottom := u-1;
   end;
 {$IFDEF FPC }
-  WriteConsoleOutput(OutHandle, Char_Info(Buffer), BSize, Coord, @DestRect);
+  WriteConsoleOutput(OutHandle, @Buffer, BSize, Coord, @DestRect);
 {$ELSE }
   WriteConsoleOutput(OutHandle, @Buffer, BSize, Coord, DestRect);
 {$ENDIF }
@@ -479,7 +479,7 @@ begin
     begin
       {$IFDEF LocalScreen }
         { LocalScreen zeilenweise aktualisieren }
-        Fastmove(TLocalScreen(Buffer)[Offset],LocalScreen^[((y-1)*zpz+l-1)*2], (r-l+1)*2);
+        Move(TLocalScreen(Buffer)[Offset],LocalScreen^[((y-1)*zpz+l-1)*2], (r-l+1)*2);
       {$ENDIF }
       x := l;
       while x <= r do
@@ -952,6 +952,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.40  2000/07/02 14:24:51  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.39  2000/06/24 14:10:26  mk
   - 32 Bit Teile entfernt
 

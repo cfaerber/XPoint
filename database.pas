@@ -267,7 +267,7 @@ begin
             end;
           end;
         end;
-      Fastmove(recbuf^,orecbuf^,hd.recsize);
+      move(recbuf^,orecbuf^,hd.recsize);
       end;
 
     flushed:=true; newrec:=false;
@@ -313,7 +313,7 @@ begin
           proctype(dbInterrProc);
       halt(1);
       end;
-    if flindex then Fastmove(recbuf^,orecbuf^,hd.recsize);
+    if flindex then move(recbuf^,orecbuf^,hd.recsize);
     if testdel and (recbuf^[0] and 1 <>0) then
       write(#7'Fehlerhafte Indexdatei:  '+fustr(fname)+dbIxExt+#7);
     end;
@@ -1118,9 +1118,9 @@ begin
     {$else}
       inc(hd.nextinr);
     {$endif}
-    FastMove(hd.nextinr,recbuf^[1],4);
+    Move(hd.nextinr,recbuf^[1],4);
     inc(hd.reccount);
-    if flindex then FastMove(recbuf^,orecbuf^,hd.recsize);
+    if flindex then Move(recbuf^,orecbuf^,hd.recsize);
     flushed:=false;
     newrec:=true;
     if hd.firstfree=0 then begin     { neuer Datensatz am Dateiende }
@@ -1172,7 +1172,7 @@ begin
 
     for i:=1 to hd.felder do           { externe Felder l”schen }
       if feldp^.feld[i].ftyp=dbUntypedExt then begin
-        Fastmove(recbuf^[feldp^.feld[i].fofs],ll,8);
+        move(recbuf^[feldp^.feld[i].fofs],ll,8);
         if ll.size>0 then
           FreeExtRec(dbp,ll.adr);
         end;
@@ -1255,9 +1255,9 @@ begin
         1       : begin
                     bb:=recbuf^[fofs]+1;
                     if bb>fsize then bb:=fsize;
-                    Fastmove(recbuf^[fofs],data,bb);
+                    move(recbuf^[fofs],data,bb);
                   end;
-        2,3,4,5 : Fastmove(recbuf^[fofs],data,fsize);
+        2,3,4,5 : move(recbuf^[fofs],data,fsize);
       end;
     end;
 end;
@@ -1301,10 +1301,10 @@ begin
         1       : begin
                     bb:=byte(data)+1;
                     if bb>fsize then bb:=fsize;
-                    Fastmove(data,recbuf^[fofs],bb);
+                    move(data,recbuf^[fofs],bb);
                     recbuf^[fofs]:=bb-1;
                   end;
-        2,3,4,5 : Fastmove(data,recbuf^[fofs],fsize);
+        2,3,4,5 : move(data,recbuf^[fofs],fsize);
       end;
     flushed:=false;
     end;
@@ -1326,7 +1326,7 @@ function dbXsize(dbp:DB; feld:dbFeldStr):longint;
 var l  : longint;
 begin
   with dp(dbp)^ do
-    Fastmove(recbuf^[feldp^.feld[GetFeldNr2(dbp,feld)].fofs+4],l,4);
+    move(recbuf^[feldp^.feld[GetFeldNr2(dbp,feld)].fofs+4],l,4);
   dbXsize:=l;
 end;
 
@@ -1338,7 +1338,7 @@ var rr : record
          end;
 begin
   with dp(dbp)^ do begin
-    Fastmove(recbuf^[feldp^.feld[GetFeldNr2(dbp,feld)].fofs],rr,8);
+    move(recbuf^[feldp^.feld[GetFeldNr2(dbp,feld)].fofs],rr,8);
     l:=rr.size;
     if l>0 then begin
       seek(fe,rr.adr+1);
@@ -1442,7 +1442,7 @@ label ende;
 begin
   with dp(dbp)^ do begin
     nr:=GetFeldNr2(dbp,feld);
-    Fastmove(recbuf^[feldp^.feld[nr].fofs],ll,8);
+    move(recbuf^[feldp^.feld[nr].fofs],ll,8);
     if ll.oldsize<>0 then begin
       if (size>0) and (dbdtyp(ll.oldsize)=dbdtyp(size)) then begin
         adr:=ll.adr;
@@ -1452,10 +1452,10 @@ begin
       end;
     if size>0 then begin
       AllocExtRec(dbp,size,adr);
-      Fastmove(adr,recbuf^[feldp^.feld[nr].fofs],4);
+      move(adr,recbuf^[feldp^.feld[nr].fofs],4);
       end;
   ende:
-    Fastmove(size,recbuf^[feldp^.feld[nr].fofs+4],4);
+    move(size,recbuf^[feldp^.feld[nr].fofs+4],4);
     flushed:=false;
     end;
 end;
@@ -1629,6 +1629,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/07/02 14:24:45  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.23  2000/06/22 19:53:24  mk
   - 16 Bit Teile ausgebaut
 

@@ -121,7 +121,7 @@ begin
     if left(s,1)='K' then begin
       s:=mid(s,3)+#13#10;
       if ofs+length(s)<127 then begin
-        FastMove(s[1],header[ofs],length(s));
+        Move(s[1],header[ofs],length(s));
         inc(ofs,length(s));
         end;
       end;
@@ -134,13 +134,13 @@ end;
 
 procedure wrbuf1(var x; size:word);
 begin
-  FastMove(x,buf1^[bufp1],size);
+  Move(x,buf1^[bufp1],size);
   inc(bufp1,size);
 end;
 
 procedure wrbuf2(var x; size:word);
 begin
-  FastMove(x,buf2^[bufp2],size);
+  Move(x,buf2^[bufp2],size);
   inc(bufp2,size);
 end;
 

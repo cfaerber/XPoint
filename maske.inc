@@ -545,17 +545,17 @@ var ax,p,myp  : integer;
           if variable<>nil then begin
             if (typ>=2) and (typ<=6) then l:=ival(cont^);
             case typ of
-              1,8,9 : FastMove(cont^,variable^,length(cont^)+1);
-              2,3   : FastMove(l,variable^,1);
-              4,5   : FastMove(l,variable^,2);
-              6     : FastMove(l,variable^,4);
+              1,8,9 : Move(cont^,variable^,length(cont^)+1);
+              2,3   : Move(l,variable^,1);
+              4,5   : Move(l,variable^,2);
+              6     : Move(l,variable^,4);
               7     : begin
                         r:=rval(cont^);
-                        FastMove(r,variable^,6);
+                        Move(r,variable^,6);
                       end;
               10    : begin
                         b:=(cont^=yesno[1]);
-                        FastMove(b,variable^,1);
+                        Move(b,variable^,1);
                       end;
             end;
           end;
@@ -1068,6 +1068,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.16  2000/07/02 14:24:49  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.15  2000/06/24 14:10:26  mk
   - 32 Bit Teile entfernt
 

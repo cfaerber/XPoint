@@ -260,7 +260,7 @@ begin
     end;
   if NL_anz>0 then begin
     getmem(Nodelist,NL_anz*sizeof(NL_rec));
-    FastMove(nlp^,Nodelist^,NL_anz*sizeof(NL_Rec));
+    Move(nlp^,Nodelist^,NL_anz*sizeof(NL_Rec));
     end;
   dispose(nlp);
   if saveflag then
@@ -477,7 +477,7 @@ begin
               inc(NL_anz);
               getmem(nlp,NL_anz*sizeof(NL_rec));
               if NL_anz>1 then begin
-                FastMove(Nodelist^,nlp^,(NL_anz-1)*sizeof(NL_rec));
+                Move(Nodelist^,nlp^,(NL_anz-1)*sizeof(NL_rec));
                 freemem(Nodelist,(NL_anz-1)*sizeof(NL_rec));
                 end;
               nlp^[NL_anz]:=nlrec;
@@ -741,6 +741,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/02 14:24:54  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.9  2000/06/29 13:01:01  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

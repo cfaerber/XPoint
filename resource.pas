@@ -211,7 +211,7 @@ begin
     with block[bnr] do begin
       s[0]:=chr(rsize(bnr,inr));
       if loaded then begin
-        FastMove(rptr^[index[bnr]^[inr,1]],s[1],length(s));
+        Move(rptr^[index[bnr]^[inr,1]],s[1],length(s));
         end
       else begin
         seek(f^,fileadr+index[bnr]^[inr,1]);
@@ -257,22 +257,22 @@ begin
           size:=rsize(bnr,inr);
           ofs:=index[bnr]^[inr,1];
           if loaded then begin
-            FastMove(rptr^[ofs],clsize,2);
+            Move(rptr^[ofs],clsize,2);
             clcsize:=size-2-clsize*4;
             getmem(clindex,clsize*4);
-            FastMove(rptr^[ofs+2],clindex^,clsize*4);
+            Move(rptr^[ofs+2],clindex^,clsize*4);
             clcont:=@rptr^[ofs+2+clsize*4];
             end
           else begin
             seek(f^,fileadr+ofs);
             getmem(p,size);
             blockread(f^,p^,size);                 { Cluster komplett laden }
-            FastMove(p^[0],clsize,2);                  { -> Anzahl Elemente     }
+            Move(p^[0],clsize,2);                  { -> Anzahl Elemente     }
             clcsize:=size-2-clsize*4;
             getmem(clindex,clsize*4);
-            FastMove(p^[2],clindex^,clsize*4);         { -> Clusterindex        }
+            Move(p^[2],clindex^,clsize*4);         { -> Clusterindex        }
             getmem(clcont,clcsize);
-            FastMove(p^[2+clsize*4],clcont^,clcsize);  { -> Clusterinhalt }
+            Move(p^[2+clsize*4],clcont^,clcsize);  { -> Clusterinhalt }
             freemem(p,size);
             end;
           end;
@@ -292,7 +292,7 @@ begin
         else
           size:=clcsize-clindex^[i,1];
         s[0]:=chr(size);
-        FastMove(clcont^[clindex^[i,1]],s[1],size);
+        Move(clcont^[clindex^[i,1]],s[1],size);
       ende:
         GetRes2:=s;
         clbnr:=bnr; clnr:=inr;
@@ -306,7 +306,7 @@ begin
   if getnr(nr,bnr,inr) then
     with block[bnr] do begin
       if loaded then begin
-        FastMove(rptr^[index[bnr]^[inr,1]],nr,2);
+        Move(rptr^[index[bnr]^[inr,1]],nr,2);
         end
       else begin
         seek(f^,fileadr+index[bnr]^[inr,1]);
@@ -346,6 +346,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/02 14:24:49  mk
+  - FastMove entfernt, da in FPC/VP RTL besser implementiert
+
   Revision 1.9  2000/06/23 15:59:13  mk
   - 16 Bit Teile entfernt
 
