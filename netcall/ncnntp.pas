@@ -46,9 +46,6 @@ type
     FServer             : string;               { Server-Software }
 
   public
-
-    Error               : integer;              { Letzter Fehlercode }
-
     User, Password      : string;               { Identifikation }
 
     constructor Create;
@@ -75,7 +72,6 @@ implementation
 
 const
   DefaultNNTPPort               = 119;
-  CrLf                          = #13#10;
 
 {$IFDEF VP }
 const
@@ -97,7 +93,6 @@ resourcestring
 constructor TNNTP.Create;
 begin
   inherited Create;
-  Error:= 0;
   User:='';
   Password:='';
   FServer:= '';
@@ -107,7 +102,6 @@ constructor TNNTP.CreateWithHost(s: string);
 begin
   inherited CreateWithHost(s);
   FPort:= DefaultNNTPPort;
-  Error:= 0;
   User:='';
   Password:='';
   FServer:= '';
@@ -119,15 +113,19 @@ var
 begin
   if Connected then begin
     if (User='') or (Password='') then
-      Error:= 480
+      FErrorCode := 480
     else begin
       SWritelnFmt('AUTHINFO USER %s PASS %s', [User, Password]);
-      SReadLn(s);
-      Error:= ParseResult(s);
+      try
+        SReadLn(s);
+      except
+        // Timeout und SocketError-Handling hinzufÅgen
+      end;
+      FErrorCode := ParseResult(s);
     end;
   end else
-    Error:= 500;
-  Result:= Error=480;
+    FErrorCode := 500;
+  Result := FErrorCode = 480;
 end;
 
 function TNNTP.Connect: boolean;
@@ -135,38 +133,42 @@ var
   s   : string;
   code: integer;
 begin
-  WriteIPC(mcInfo,res_connect1, [Host.Name]);
-  if not inherited Connect then begin
-    result:= false;
-    exit;
+  Result:= false;
+  try
+    WriteIPC(mcInfo,res_connect1, [Host.Name]);
+    if not inherited Connect then
+      exit;
+
+    { Ready ermitteln }
+    SReadln(s);
+
+    { Ergebnis auswerten }
+    if ParseResult(s)<>200 then
+    begin
+      WriteIPC(mcError,res_connect2, [ErrorMsg]);
+      DisConnect;
+      FErrorCode := code;
+      exit;
+    end else
+    begin
+    if s = '' then
+      WriteIPC(mcError,res_connect4, [0]);
+      FServer:= Copy(s,5,length(s)-5);
+    end;
+
+    { Anmelden }
+    if not Login then
+    begin
+      WriteIPC(mcError,res_connect3, [ErrorMsg]);
+      DisConnect;
+      Result := false;
+      exit;
+    end;
+  except
+    // Timeout und SocketError-Handling hinzufÅgen
+    // und einen reraise machen
   end;
-  { Ready ermitteln }
-  while not timeout do
-  begin
-    Sreadln(s);
-    code:= ParseResult(s);
-    if code<>-1 then
-      break;
-  end;
-  { Ergebnis auswerten }
-  if code<>200 then begin
-    WriteIPC(mcError,res_connect2, [ErrorMsg]);
-    DisConnect;
-    Result:= false;
-    Error:= code;
-    exit;
-  end else begin
-    WriteIPC(mcError,res_connect4, [0]);
-    FServer:= Copy(s,5,length(s)-5);
-  end;
-  { Anmelden }
-  if not Login then begin
-    WriteIPC(mcError,res_connect3, [ErrorMsg]);
-    DisConnect;
-    Result:= false;
-    exit;
-  end;
-  Result:= true;
+  Result := true;
 end;
 
 procedure TNNTP.DisConnect;
@@ -178,7 +180,7 @@ begin
   begin
     SWriteln('QUIT');
     SReadln(s);
-    Error:=ParseResult(s);
+    FErrorCode := ParseResult(s);
   end;
   inherited DisConnect;
 end;
@@ -192,73 +194,82 @@ var
 begin
   aList.Clear;
   aList.Duplicates:= dupIgnore;
-  if Connected then
-  begin
-    WriteIPC(mcInfo,res_list1,[0]);
-    SWriteln('MODE READER');
-    while s= '' do SReadln(s);
-    if ParseResult(s)<>200 then begin
-      WriteIPC(mcError,res_list2,[Host.Name]);
-      Result:= false;
-      exit;
-    end;
-    SWriteln('LIST ACTIVE');
-    s := '';
-    while s = '' do SReadln(s);
-    if not (ParseResult(s) in [200, 215]) then begin
-      WriteIPC(mcError,res_list3,[Host.Name]);
-      Result:= false;
-      exit;
-    end;
-
-    i:=0;
-    while true do
+  try
+    if Connected then
     begin
-      s := '';
-      if s = '' then SReadln(s);
-      code:= ParseResult(s);
-      if code=0 then break
-      else if code<>-1 then begin
+      WriteIPC(mcInfo,res_list1,[0]);
+      SWriteln('MODE READER');
+      SReadln(s);
+      if ParseResult(s)<>200 then begin
+        WriteIPC(mcError,res_list2,[Host.Name]);
+        Result:= false;
+        exit;
+      end;
+
+      SWriteln('LIST ACTIVE');
+      SReadln(s);
+      if not (ParseResult(s) in [200, 215]) then
+      begin
         WriteIPC(mcError,res_list3,[Host.Name]);
         Result:= false;
         exit;
       end;
-      inc(i);
-      if (i mod 25)=0 then WriteIPC(mcVerbose,res_list4, [i]);
-      s:= Trim(s);
-      if not withDescr then begin
-        p:= pos(' ',s);
-        if p=0 then p:= pos(#9,s);
-        if p<>0 then s:= Copy(s,1,p-1);
-      end;
-      aList.Add(s);
-{$ifdef FPC}
-      s:=''; { Workaround for bug #1067 }
-{$endif}
-    end; { while }
-    WriteIPC(mcInfo,res_list4, [aList.Count]);
-    aList.Sort;
-    result:= true;
-  end else
-    Result:= false;
+
+      i:=0;
+      while true do
+      begin
+        SReadln(s);
+        code:= ParseResult(s);
+        if code=0 then break
+        else if code<>-1 then begin
+          WriteIPC(mcError,res_list3,[Host.Name]);
+          Result:= false;
+          exit;
+        end;
+        inc(i);
+        if (i mod 25)=0 then WriteIPC(mcVerbose,res_list4, [i]);
+        s:= Trim(s);
+        if not withDescr then begin
+          p:= pos(' ',s);
+          if p=0 then p:= pos(#9,s);
+          if p<>0 then s:= Copy(s,1,p-1);
+        end;
+        aList.Add(s);
+  {$ifdef FPC}
+       if s = '' then
+        s:=''; { Workaround for bug #1067 }
+  {$endif}
+      end; { while }
+      WriteIPC(mcInfo,res_list4, [aList.Count]);
+      aList.Sort;
+      Result:= true;
+    end else
+      Result:= false;
+  except
+    // Timeout und SocketError-Handling hinzufÅgen
+    // und einen reraise machen
+  end;
 end;
 
 end.
 {
-        $Log$
-        Revision 1.6  2000/08/01 21:53:52  mk
-        - WriteFmt in NcSockets verschoben und in SWritelnFmt umbenannt
+  $Log$
+  Revision 1.7  2000/08/02 17:01:19  mk
+  - Exceptionhandling und Timeout hinzugefuegt
 
-        Revision 1.4  2000/08/01 18:06:18  mk
-        - WriteFMT in SWriteln geaendert
+  Revision 1.6  2000/08/01 21:53:52  mk
+  - WriteFmt in NcSockets verschoben und in SWritelnFmt umbenannt
 
-        Revision 1.3  2000/08/01 16:34:35  mk
-        - Sockets laufen unter Win32 !!!
+  Revision 1.4  2000/08/01 18:06:18  mk
+  - WriteFMT in SWriteln geaendert
 
-        Revision 1.2  2000/08/01 11:08:01  mk
-        - auf neues TNetCallSocket umgestellt
+  Revision 1.3  2000/08/01 16:34:35  mk
+  - Sockets laufen unter Win32 !!!
 
-        Revision 1.1  2000/07/25 18:02:18  hd
-        - NNTP-Unterstuetzung (Anfang)
+  Revision 1.2  2000/08/01 11:08:01  mk
+  - auf neues TNetCallSocket umgestellt
+
+  Revision 1.1  2000/07/25 18:02:18  hd
+  - NNTP-Unterstuetzung (Anfang)
 
 }

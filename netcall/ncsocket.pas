@@ -40,9 +40,10 @@ uses
 
 
 type
-  ESocketNetcall                = class(ENetcall);              { Allgemein (und Vorfahr) }
-  ESNInvalidPort                = class(ESocketNetcall);        { Ungueltiger Port }
-  ESocketError                  = Class(ESocketNetcall);        { WSAGetLastError }
+  ESocketNetcall                = class(ENetcall);         { Allgemein (und Vorfahr) }
+  ESNInvalidPort                = class(ESocketNetcall);   { Ungueltiger Port }
+  ESocketError                  = class(ESocketNetcall);   { WSAGetLastError }
+  ETimeOutError                 = class(ESocketNetcall);   { Timeout }
 
 const
   MaxSocketBuffer = 32767;
@@ -52,26 +53,26 @@ type
   TSocketNetcall = class(TNetcall)
 
   private
-
 {$IFDEF Win32}
     FAddr       : TSockAddr;            { Socket-Parameter-Block }
 {$ELSE}
-    FAddr        : TInetSockAddr;
+    FAddr       : TInetSockAddr;
 {$ENDIF}
     FHandle     : longint;              { Socket-Handle }
     FConnected  : boolean;              { Flag }
     FInBuf: TSocketBuffer;              { In-Buffer des Sockets }
     FInPos, FInCount: Integer;          { Position und Anzahl der Zeichen im Buffer }
-
-    FTimeOut: Boolean;                  { True, wenn ein Timeout aufgetreten ist }
+    FTimeOut: TDateTime;                { Zahl der Sekunden fr den Timeout }
   protected
-
-    FPort               : integer;              { Portnummer }
-    FErrorMsg   : string;               { Fehlertext }
+    FPort               : integer;      { Portnummer }
+    FErrorMsg           : string;       { Fehlertext }
+    FErrorCode          : Integer;      { SocketError-Code }
 
     procedure InitVars;
     procedure SActive(b: boolean);
     procedure SPort(i: integer);
+    function FGetTimeout: Integer;
+    procedure FSetTimeout(Timeout: Integer);
 
     { Ermittelt den Result-Code }
     function ParseResult(s: string): integer;
@@ -86,11 +87,10 @@ type
     procedure RaiseSocketError;
 
   public
-
     { --- Basisdaten }
 
-    { Hostadresse }
-    Host                : TIP;
+    Host                : TIP; { Hostadresse }
+
     { Port }
     property Port:integer read FPort write SPort;
 
@@ -99,7 +99,7 @@ type
     { Verbindung }
     property Active: boolean read FConnected write SActive;
     property Connected: boolean read FConnected;
-    property TimeOut: boolean read FTimeout write FTimeout;
+    property TimeOut: Integer read FGetTimeout write FSetTimeout;
 
     property ErrorMsg: string read FErrorMsg;
 
@@ -157,6 +157,8 @@ begin
   FPort:= 0;
   FConnected:= false;
   FInPos := 0; FInCount := 0;
+  FErrorMsg := ''; FErrorCode := 0;
+  FTimeOut := 0.000682870370370370; // 60 Sekunden Timeout
 
 {$IFDEF Win32}
   WSAStartup(2, wsadata);
@@ -169,6 +171,19 @@ begin
     DisConnect;
   Host.Clear;
   inherited destroy;
+end;
+
+function TSocketNetcall.FGetTimeOut: Integer;
+var
+  Hour, Min, Sec, MSec: Smallword;
+begin
+  DecodeTime(FTimeOut, Hour, Min, Sec, MSec);
+  Result := Sec;
+end;
+
+procedure TSocketNetcall.FSetTimeOut(TimeOut: Integer);
+begin
+  FTimeOut := EncodeTime(0, 0, Timeout, 0);
 end;
 
 procedure TSocketNetcall.SPort(i: integer);
@@ -300,10 +315,11 @@ end;
 procedure TSocketNetcall.RaiseSocketError;
 begin
 {$IFDEF Win32}
-  raise ESocketError.CreateFMT('WSASocketError %d', [WSAGetLastError]);
+  FErrorCode := WSAGetLastError;
 {$ELSE}
-  raise ESocketError.CreateFMT('SocketError %d', [SocketError]);
+  FErrorCode := SocketError;
 {$ENDIF}
+  raise ESocketError.CreateFMT('WSASocketError %d', [FErrorCode]);
 end;
 
 procedure TSocketNetcall.SWriteln(s: String);
@@ -321,10 +337,17 @@ end;
 procedure TSocketNetcall.SReadln(var s: String);
 var
   c: Char;
+  Time: TDateTime;
 begin
   s := '';
+  Time := Now + FTimeOut; // Zu diesem Zeitpunkt mssen wir abbrechen
   repeat
-    while FInPos >= FInCount do ReadBuffer;
+    while FInPos >= FInCount do
+    begin
+      ReadBuffer;
+      if Time < Now then
+        raise ETimeoutError.Create('Socket Timout Error');
+    end;
     c := FInBuf[FinPos]; Inc(FinPos);
     if c = #10 then
       break
@@ -337,6 +360,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/08/02 17:01:19  mk
+  - Exceptionhandling und Timeout hinzugefuegt
+
   Revision 1.10  2000/08/01 21:53:52  mk
   - WriteFmt in NcSockets verschoben und in SWritelnFmt umbenannt
 
