@@ -3228,21 +3228,25 @@ an, die ber andere Loginnamen ausgel”st werden.
 N„heres dazu erfahren Sie bei Ihrem Sysop.
 @
 8010
-Dies ist die Datenpaketgr”áe, die CrossPoint dem
-angerufenen System vorschl„gt - je gr”áer die Pake-
-te, desto h”her der Datendurchsatz.
+Nur bei <<UUCP-g>> und <<UUCP-G>>.
+
+Dies ist die Datenpaketgr”áe, die OpenXP dem anger-
+ufenen System vorschl„gt - je gr”áer die Pakete,
+desto h”her der Datendurchsatz.
 
 Einige veraltete UUCP-Implementationen kommen mit
 gr”áeren Paketen - manchmal schon ab 128 Bytes -
 nicht zurecht und brechen die Verbindung ab. In die-
-sem Fall mssen Sie CrossPoint auf eine geringere
+sem Fall mssen Sie OpenXP auf eine geringere
 Paketgr”áe einstellen.
 
-XP selbst paát sich immer der Gegenstelle an und
+OpenXP selbst paát sich immer der Gegenstelle an und
 untersttzt alle m”glichen Paketgr”áen von 64 bis
 4096 Bytes.
 @
 8011
+Nur bei <<UUCP-g>> und <<UUCP-G>>.
+
 Dies ist die sogenannte "UUCP-Fenstergr”áe" - sie
 gibt an, wieviele Datenpakete jeweils verschickt
 werden, bevor das sendende System auf eine Best„ti-
@@ -3253,41 +3257,46 @@ M”gliche Fenstergr”áen sind 2 bis 7. Normalerweise
 sollte eine maximale Gr”áe von 7 funktionieren.
 @
 8012
-šblicherweise werden w„hrend einer UUCP-g-Verbindung
-immer gleichgroáe Datenpakete verschickt. Dies ist
-recht ineffizient, insbesondere bei kleinen Daten-
-mengen.
+Nur bei <<UUCP-g>> und <<UUCP-G>>.
 
-Bessere UUCP-Systeme sind in der Lage, variable
-Paketgr”áen zu verarbeiten, was die Effizienz der
-Verbindung erh”ht und ein Arbeiten mit HST-Modems
-berhaupt erst m”glich macht. Im Zweifelsfall soll-
-ten Sie einfach testen, ob die šbertragung bei vari-
-abler Paketgr”áe funktioniert.
+šblicherweise werden immer gleich groáe Datenpakete
+verschickt. Dies ist recht ineffizient, insbesondere
+bei kleinen Datenmengen.
 
-CrossPoint selbst paát sich immer der Paketgr”áe der
+Bessere Systeme sind in der Lage, variable Paketgr”-
+áen zu verarbeiten, was die Effizienz der Verbindung
+erh”ht. Im Zweifelsfall sollten Sie einfach testen,
+ob die šbertragung bei variabler Paketgr”áe
+funktioniert.
+
+OpenXP selbst paát sich immer der Paketgr”áe der
 sendenden Seite an und verarbeitet beliebig gemischte
 Paketgr”áen.
 @
 8013
-<<[ ]>> -> CrossPoint verwendet beim Senden unter UUCP-g
-       die Paketgr”áe, die vom angerufenen System
-       angefordert wurde.
+Nur bei <<UUCP-g>> und <<UUCP-G>>.
+
+<<[ ]>> -> CrossPoint verwendet beim Senden die
+       Paketgr”áe, die vom angerufenen System an-
+       gefordert wurde.
 
 <<[x]>> -> Es wird zum Senden *und* zum Empfangen die
        oben eingestellte Paketgr”áe verwendet.
 
+Normalerweise fordert ein System automatisch die
+maximale Paketgr”áe an, die es verarbeiten kann.
+Manche Systeme sind jedoch in der Lage, gr”áere
+Pakete als angegeben zu empfangen.
+
 Falls die empfangenen Pakete deutlich gr”áer als die
 gesendeten Pakete sind (z.B. 1024 Bytes beim Empfang
-und 64 Bytes beim Senden), l„át sich der Durchsatz
+und 64 Bytes beim Senden), l„sst sich der Durchsatz
 evtl. erh”hen, indem Sie mit diesem Schalter die
-Sendepaketgr”áe fest einstellen. Ob dies funktio-
-niert, h„ngt von der Konfiguration des angerufenen
-Systems ab.
+Sendepaketgr”áe fest einstellen. 
 @
 8014
 <<[x]>> -> CrossPoint schl„gt dem angerufenen System eine
-       "size negotiation" vor. Dies bedeutet, daá vor
+       "size negotiation" vor. Dies bedeutet, dass vor
        der šbertragung jeder Datei dem jeweils ande-
        ren System die Dateigr”áe mitgeteilt wird, was
        z.B. zu einer bersichtlicheren Bildschirman-
@@ -3306,19 +3315,41 @@ CrossPoint akzeptieren soll.
 Wenn mehrere Protokolle angekreuzt sind, wird das
 erst(best)m”gliche verwendet; wenn Sie z.B. alle
 Protokolle eingeschaltet haben, und das angerufene
-System UUCP-g und UUCP-e untersttzt, wird UUCP-g
+System UUCP-t und UUCP-g untersttzt, wird UUCP-t
 verwendet. M”chten Sie stattdessen UUCP-e verwenden,
-mssen Sie UUCP-g abschalten.
+mssen Sie UUCP-t abschalten.
+
+Normalerweise sollte immer eine optimale Verbindung
+zustande kommen, wenn sie alle Protokolle aktiviert
+lassen.
 
 <<UUCP-g>>   Dies ist ein Standardprotokoll, das von
-         allen UUCP-Systemen beherrscht wird. Es
-         bietet eine fehlersichere šbertragung, al-
-         lerdings ist der Datendurchsatz bei kleinen
-         [Paketgr”áen] sehr schlecht.@8010
+         allen UUCP-Systemen beherrscht wird. 
+         
+         Es bietet eine fehlersichere šbertragung,
+         [Paketgr”áen] von 32 bis 4096 Bytes und@8010
+         [Fenstergr”áen] bis zu 7 Pakete. Manche@8011
+         Systeme k”nnen auch [variable Paketgr”áen]@8012
+         verarbeiten.
 
-<<UUCP-G>>   Dies ist eine minimal verbesserte Version
-         von UUCP-g, die auf einigen System das Ver-
-         wenden [variabler Paketgr”áen] erm”glicht.@8012
+         Manche Systeme beherrschen jedoch nur einen
+         kleinen Umfang des theoretisch M”glichen;
+         zum Teil nur eine [Paketgr”áe] von 64 Bytes@8010
+         und [Fenster] von 3 Paketen, was fr eher@8011
+         m„áigen Datendurchsatz sorgt.
+
+<<UUCP-G>>   Dieses Protokoll ist im Prinzip identisch
+         mit dem g-Protokoll. Manche Systeme bieten
+         aus Kompatibilit„tsgrnden gr”áere [Paket-]@8010
+         und [Fenstergr”áen] oder Features wie@8011
+         [variable Paketgr”áen] jedoch nur dann, wenn@8012
+         das G-Protokoll gew„hlt wurde.
+
+<<UUCP-t>>   Bei diesen Protokollen findet keinerlei
+<<UUCP-e>>   Fehlerprfung statt. Sie eigenen sich daher
+         nur fr Verbindungen, die bereits gesichert
+         sind (z.B. TCP/IP oder Telnet), bieten dort
+         aber optimalen Datendurchsatz.
 
 <<UUCP-z>>   Dies ist ein nicht standardisiertes Proto-
          koll, das von einigen deutschen UUCP-Syste-
@@ -3328,25 +3359,71 @@ mssen Sie UUCP-g abschalten.
          zu empfehlen, die bereits durch MNP oder
          V.42 abgesichert sind.
 
-<<UUCP-f>>   Dieses Protokoll ist nur fr die šbertragung
-         *ungepackter* Daten auf MNP- oder V42-ge-
-         sicherten Verbindungen geeignet. Sie sollten
-         es nur dann verwenden, wenn UUCP-g zu lang-
-         sam ist und kein UUCP-z zur Verfgung steht.
-         Bei šbertragung gepackter Daten ist UUCP-f
-         extrem langsam.
+<<UUCP-f>>   Dieses Protkoll benutzt nur druckbare ASCII-
+         Zeichen, andere Zeichen werden aufw„ndig in
+         solche umgesetzt. Das Protokoll ist daher
+         bei gepackten Dateien extrem langsam. Es
+         bietet auáerdem nur eine m„áige Fehlerkor-
+         rektur; wird ein Fehler entdeckt, wird die
+         gesamte Datei erneut versandt.
 
-<<UUCP-e>>   Dieses Protokoll bietet einen optimalen
-         Datendurchsatz, fhrt allerdings keinerlei
-         Fehlerberprfungen durch. Es darf nur dann
-         verwendet werden, wenn das Modem mit Fehler-
-         korrektur (MNP5, V.42) arbeitet, und wenn
-         Datenverluste an der seriellen Schnittstelle
-         (auch beim angerufenen System!) ausgeschlos-
-         sen sind. Verwenden Sie dieses Protokoll auf
-         keinen Fall unter Multitasking-Umgebungen
-         wie z.B. Windows!
+         Es eigent sich daher nur fr Verbindungen,
+         die nahezu fehlerfrei sind und nur fr die
+         šbertragung ungepackter Dateien.
 
+    [Von OpenXP nicht untersttzte Protokolle.]@8019
+@
+8019
+Folgende [UUCP-Protokolle] werden von OpenXP derzeit@8015
+nicht untersttzt:
+
+<<UUCP-i>>   Dieses Protokoll bietet als einziges bidi-
+         rektionalen Transfer. Ferner wird durch die
+         Verwendung mehrerer Kan„le die Antwortzeit,
+         minimiert. Dadurch kommt dieses Protokoll
+         sehr nahe an eine optimale Nutzung der Ver-
+         bindung heran.
+
+         Natrlich werden auch variable Paketgr”áen
+         untersttzt, ferner bietet das Protokoll
+         eine recht effiziente Fehlerkorrektur.  
+
+         Das Protokoll erfordert jedoch eine Verbin-
+         dung, die alle 8-Bit-Zeichen bertragen kann.
+
+<<UUCP-j>>   Dieses Protokoll ist eine Variante des
+         i-Protokolls, eignet sich jedoch auch fr
+         Verbindungen, die nicht alle Zeichen, wie
+         zum Beispiel XON/XOFF oder 8-Bit-Zeichen,
+         bertragen k”nnen.
+
+<<UUCP-a>>   Dieses Protokoll ist dem von ZModem-Proto-
+         koll, das von vielen Mailboxen benutzt wird
+         sehr „hnlich. Fehlersicherheit, Effizienz,
+         etc. entsprechen dem ZModem-Protokoll.
+
+<<UUCP-v>>   Ein weiteres mit dem g-Protokoll identisches
+         Protokoll, jedoch ist die Untersttzung
+         [variabler Paketgr”áen] garantiert. Alle Sys-@8012
+         teme, die UUCP-v untersttzen, beherrschen
+         dies auch mit UUCP-G; OpenXP untersttzt
+         daher dieses Protokoll nicht gesondert.  
+
+<<UUCP-x>>   Ein Protokoll fr Verbindungen ber das
+         X.25-Netzwerk (in Deutschland DATEX-P
+         genannt).
+
+<<UUCP-y>>   Dieses Protokoll bietet keine Fehlerkorrek-
+         tur, sondern nur eine Fehlererkennung; wird
+         ein Fehler entdeckt, wird einfach die Ver-
+         bindung beendet. Es eignet sich daher vor
+         allem fr Verbindungen, bei denen Fehler
+         sehr selten auftreten.
+
+<<UUCP-d>>   Protokoll fr DataKit-Verbindungen.
+
+<<UUCP-h>>   Ein Protokoll fr HST-Modems. Es bietet
+         keine Fehlerprfung.
 @
 8016
 Mit diesem Namen meldet sich CrossPoint bein angeru-
@@ -3355,12 +3432,13 @@ bart wurde, ist dieser Name identisch mit Ihrem
 Systemnamen (Pointnamen).
 @
 8017
-<<[x]>> -> Ihre PMs (Mails) werden per "Batched SMTP"
-       (kurz: bsmtp) verschickt. Dies bedeutet, daá
-       nicht jede Nachricht in einer einzelnen Datei,
-       sondern alle Nachrichten in einem Paket ber-
-       tragen werden, was die šbertragungsgeschwin-
-       digkeit *wesentlich* erh”ht.
+<<[x]>> -> E-Mail wird per "Batched SMTP" (rsmtp)
+       versandt. Das bedeutet, dass nicht jede
+       Nachricht in einer einzelnen Datei, sondern
+       alle Nachrichten in einem (ggf. gepackten)
+       Paket bertragen werden, was den Protokoll-
+       overhead verringert und so die šbertragungs-
+       geschwindigkeit *wesentlich* erh”ht.
 
 Nicht jedes UUCP-System untersttzt Batched SMTP. Im
 Zweifelsfall fragen Sie bitte den Systembetreiber.
@@ -3383,7 +3461,6 @@ Verwendung eines externen šbertragungsprotokolls
 unterschiedliche Download-Protokoll-Einstellungen
 notwendig sind! Fr Janus wird die Angabe <<$DOWNFILE>>
 ben”tigt, fr Janus Plus dagegen <<$DOWNPATH>>.
-
 @
 8020
 Mit diesem Programm werden alle zum Server geschick-

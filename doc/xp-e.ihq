@@ -2156,110 +2156,189 @@ features which can be called up using other names
 here. Ask your Sysop about this.
 @
 8010
-This is the packet size that CrossPoint suggests to
-the called system. The bigger the packet size, the
-faster the data transfer rate.
+<<UUCP-g>> and <<UUCP-G>> protocols only.
 
-Many incomplete UUCP implementations have diffi-
-culties with larger packets, sometimes even above
-128 bytes, and break off the connection. In such
-cases you have to set CrossPoint to small packet
-sizes here.
+This is the packet size that OpenXP suggests to the
+called system. The bigger the packet size, the faster
+the data transfer rate.
 
-CrossPoint can always adapt itself to the other
-side and supports all possible packet sizes from
-64 up to 4096 bytes.
+Many incomplete UUCP implementations have difficul-
+ties with larger packets, sometimes even above 128
+bytes, and break off the connection. In such cases
+you have to set OpenXP to a smaller packet sizes
+here.
+
+OpenXP can always adapt itself to the other side and
+supports all possible packet sizes from 64 up to 4096
+bytes.
 @
 8011
-This is the so-called "UUCP Window" size. This
-decides how many packets will be sent before the
+<<UUCP-g>> and <<UUCP-G>> protocols only.
+
+This is the so-called "window size". This setting
+determines how many packets will be sent before the
 sending system waits for an acknowledgement.
 
 Possible window sizes are 3 to 7. Normally the
 setting 7 works fine, and speeds things up.
 @
 8012
-A UUCP-g connection usually tries to send packets
-always of the same size. This is however inefficient
-especially with small quantities of data.
+<<UUCP-g>> and <<UUCP-G>> protocols only.
+
+A UUCP-g connection usually tries to send packets of
+always the same size. This is inefficient especially
+with small amounts of data, however.
 
 Better UUCP systems are able to work with variable
-packet sizes, which helps efficiency, but above all
-is the only way that works with HST Modems.
-If in doubt you just have to try whether the transfer
-works with variable packet sizes.
+packet sizes, which helps efficiency. When in doubt,
+just try whether the transfer will work with variable
+packet sizes.
 
-CrossPoint adapts itself to whatever packet size the
-other side sends, and can work with any size mixture.
+OpenXP always accepts all packet sizes and different
+packet sizes in a single connection.
 @
 8013
-<<[ ]>> ->  CrossPoint uses the packet size as
-        requested by the called system.
+<<[ ]>> ->  OpenXP uses the packet size requested 
+        by the called system.
 
-<<[x]>> ->  The packet size as set above will be
-        used for sending and receiving, regardless.
+<<[x]>> ->  OpenXP uses the packet size set above for
+        sending, even if the remote system requested
+        another packet size.
 
-In cases where the received packet is significantly
-bigger than that sent (eg. 1024 against 64 bytes),
-the transfer rate can sometimes be increased by
-raising and fixing the size of the send packet
-with this switch. It depends also on the system at
-the other end, whether this works.
+When the size of received packets is significantly
+bigger than that for packets sent (eg. 1024 against
+64 bytes), it is very likely that the transfer rate
+can be increased by forcing larger packet sizes than
+the remote system requested. It depends also on the
+remote system whether this will work.
 @
 8014
-<<[x]>> ->  CrossPoint offers the called system a
-        "size negotiation". This means that each
-        informs the other of the file size each time
-        before it is transferred. This gives for
-        example a more meaningful display on the
-        screen during the transfer.
+<<[x]>> ->  OpenXP tries to use "size negotiation", i.e.
+        it will have the remote system send the file
+        size before a file is received. This is
+        necessary for a sensible progress meter as
+        well as for rejecting files that are
+        considered too large.
+
 "Size Negotiation" is not supported by all UUCP
-systems, but it does not normally lead to problems,
-since the called system can simply ignore it.
+systems. However, this does not cause problems since
+the remote can simply ignore such requests.
 @
 8015
-For setting which of the UUCP transfer protocols
-offered by the called system will be accepted by
-CrossPoint.
+Here you can specify which UUCP low level protocols
+offered by the remote system will be accepted and
+used by OpenXP.
 
-If all or more than one is marked to use, CrossPoint
-has preferences. If all are marked, CrossPoint will
-use UUCP-g over UUCP-e if offered. If you wish to
-force UUCP-e, you must switch off UUCP-g.
+If more than one protocol is selected, OpenXP will
+use the first protocol in the list below that
+matches. For example, if all protocols are selected,
+OpenXP will prefer UUCP-g over UUCP-z if both are
+supported by the remote system. To avoid this, un- 
+select the protocols you do not want to use.
 
-<<UUCP-g>>  This is a standard protocol that all
-        UUCP systems support. It offers a fairly
-        error free transfer, but is very slow
-        for small size [data packets]@8010
+Normally, selecting all protocols will result in the
+optimal protocol being used.
+
+<<UUCP-g>>   This is a standard protcol supported by
+         virtuall alle UUCP systems.
+        
+         It features error correction, [packet sizes]@8010
+         of 32 to 4096 bytes and large [window sizes].@8011
+         Some systems are also able to handle
+         [variable packet sizes].@8012
+       
+         Some systems only support a small subset of
+         the protocol; sometimes only small packet
+         sizes of 64 bytes and windows of 3 packets,
+         which results in rather poor performance.
+
+<<UUCP-G>>   This protocol is identical to the g proto-
+         col. However, for compatibility reasons,
+         some systems will only accept large packet
+         and window sizes or advanced features such
+         as variable packet sizes when the G protcol
+         is selected.
 
 
-<<UUCP-G>>  This is a slightly improved version of
-        UUCP-g, which enables on some systems the
-        use of [variable size] data packets.@8012
+<<UUCP-t>>  
+<<UUCP-e>> 
+         These protocols do not feature and type of
+         error correction or flow control, so they
+         are only usable with connections that are
+         already secured (e.g. TCP/IP or Telnet).
+         These connections are used very efficiently.
 
-<<UUCP-z>>  This is a non standard protocol, but is
-        offered by many German UUCP systems. It
-        offers a high transfer rate together with
-        adequate error control and is very suitable
-        for modem links which already have an error
-        correction through MNP5 or V.42.
+<<UUCP-z>>   This is a non-standard protocol provided by
+         some European UUCP systems. It features a
+         high data throughput and sufficient error
+         correction. It is recommended for modem
+         connections already secured by MNP or V.42.
 
-<<UUCP-f>>  This is only suitable for transfer of
-        *unpacked* data across links with MNP5 or
-        V.42 error correction. Use it only when
-        UUCP-g is too slow, and UUCP-z is not
-        available.
 
-<<UUCP-e>>  This gives very good transfer rates, but
-        offers no error control. It is only suitable
-        for modems offering error correction like
-        MNP5 or V.42 when in addition data loss at
-        the serial port (also of the called system!)
-        is certain not to happen.
+<<UUCP-f>>   
+         
+         This protocol will only use printable ASCII
+         characters. Other characters will be trans-
+         formed to ASCII in an inefficient way, which
+         makes the protocol perform very badly with
+         compressed files. It further only provides a
+         poor error correction, which always retrans-
+         mits the whole file on errors.
 
-        Do not use under multitasking environments
-        like Windows!
+         It is only usable on connections which are
+         nearly error-free and only for transmission
+         of uncompressed data.
 
+       [Protocols not supported by OpenXP.]@8019
+@
+8019
+These [UUCP protocols] are not supported by OpenXP at@8015
+the moment.
+
+<<UUCP-i>>   This is the only protcol featuring bidirec-
+         tional transfer. It further minimizes the
+         cost of roundtrip delay through the use of
+         multiple channels. This was the protcol
+         reaches a performance near to the theore-
+         tical maximum of the connection.
+
+         Of course, this protcol uses variable packet
+         sizes and a efficient error correction.
+
+         It requires an 8-bit clean connection.
+
+<<UUCP-j>>   This is a variant of the i protocol, which
+         is adapted for connections are not fully
+         8-bit-clean.
+
+<<UUCP-a>>   This protocol is very similar to the ZModem
+         protcol used by many BBS. Error correction,
+         efficiency, etc. have the same properties as
+         in the ZModem protcol.
+
+<<UUCP-v>>   
+         
+         Another protocol identical to the g proto-
+         col. It guarantees the acceptance of
+         [variable packet] sizes. All systems@8012
+         supporting UUCP-v will also support these
+         features when using UUCP-G, so there is no
+         special support vor UUCP-v in OpenXP.
+
+<<UUCP-x>>   A protocol designed for connections over
+         X.25 networks.
+
+<<UUCP-y>>  This protocol does not provide any error
+         correction, only error detection. If an
+         error occours, it will just drop the
+         connection. It should only be used over
+         connections where errors are very rare.
+
+<<UUCP-d>>   Protocol designed for DataKit
+         connections.
+
+<<UUCP-h>>   Protocol used with HST modems without
+         any error correction
 @
 8016
 CrossPoint announces itself to the called system with
@@ -2267,14 +2346,14 @@ this name. If nothing else has been agreed, this is
 the same as your System Name or Point Name.
 @
 8017
-<<[x]>> ->  When "on" your Mails (PMs) will be sent
-        via "Batched SMTP" (AKA BSMTP). This means
-        instead of sending each message as a separate
-        file, they are bundled together as a package,
-        which raises the transfer rate considerably.
+<<[x]>> ->  E-Mail will be sent via "batched SMTP"
+        (rsmtp), i.e. there will be a single file
+        sent containing all E-Mail messages instead
+        of one file per messgae. This will result in
+        a much better transfer rate.
 
-Not all UUCP systems support this, so if in doubt
-ask your systems operator.
+Not all UUCP systems support "batched SMTP". If in
+doubt ask the administrator of the remote system.
 @
 8020
 With this programme, all messages going to the server
