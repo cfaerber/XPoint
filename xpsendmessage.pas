@@ -1222,7 +1222,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         _orgref:='';
         sData.References.Clear;
       end else
-      if RFCConcatOldSubject and (netztyp in netsRFC) then begin
+      if RFCAppendOldSubject and (netztyp in netsRFC) then begin
         ReCount(Oldbetr);
         betreff:=LeftStr(betreff+' ('+getres(619)+': '+oldbetr,betrlen-1)+')';
         end;
@@ -2321,9 +2321,11 @@ finalization
 
 {
   $Log$
+  Revision 1.35  2002/01/06 19:41:18  ma
+  - changed variable name
+
   Revision 1.34  2002/01/06 16:33:25  ma
-  - ported "concatenate old subject" feature from OpenXP/16 (JG+MY)
-    (config name has been changed, setting will not be kept from OpenXP/16)
+  - ported "append old subject" feature from OpenXP/16 (JG+MY)
 
   Revision 1.33  2002/01/05 16:01:10  mk
   - changed TSendUUData from record to class
@@ -2345,154 +2347,6 @@ finalization
 
   Revision 1.27  2001/10/26 11:37:36  ma
   - use YEAR-MONTH-DAY
-
-  Revision 1.26  2001/10/26 11:23:32  ma
-  - fixes and changes concerning CompileTime mailer header
-
-  Revision 1.25  2001/10/17 10:19:52  mk
-  - decode/docode byte instead of ShortInt
-
-  Revision 1.24  2001/10/14 11:40:42  ma
-  - changed user agent header (now "OpenXP/32 vVERSTR (PFORM) BETASTR")
-
-  Revision 1.23  2001/10/12 18:55:27  cl
-  - BUGFIX: new messages were also sent to copy recipients of preceding
-    message (#470141)
-
-  Revision 1.22  2001/10/07 17:12:30  cl
-  - added charset recoding for external editors
-    and corresponding config option
-
-  Revision 1.21  2001/10/01 10:26:19  ma
-  - (hopefully) fixed Fido binary mails
-
-  Revision 1.20  2001/09/25 21:07:45  cl
-  - added UI for non-RFC network charset selection
-
-  Revision 1.19  2001/09/24 22:04:51  mk
-  - fixed last commit
-
-  Revision 1.18  2001/09/21 16:16:49  mk
-  - fixed some memory leaks (thanks to BoundsChecker)
-
-  Revision 1.17  2001/09/19 18:02:36  cl
-  - various small fixes
-
-  Revision 1.16  2001/09/16 23:01:20  cl
-  - BUGFIX: Fido tearline now added
-
-  Revision 1.15  2001/09/16 18:01:40  ma
-  - removed bin_msg (seems to be some relic, caused error messages with fido)
-
-  Revision 1.14  2001/09/14 18:26:35  cl
-  - fixed iso flag
-  - no ZConnect-MIME for single-part messages
-
-  Revision 1.13  2001/09/10 15:58:04  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.12  2001/09/09 17:40:47  cl
-  - moved common code between alle en-/decoding streams to a base class
-  - all en-/decoding streams can now destruct the other stream
-  - much more elegant way to connect en-/decoding streams to each other
-
-  Revision 1.11  2001/09/08 23:30:58  cl
-  - fixed last fix
-
-  Revision 1.10  2001/09/08 21:07:16  cl
-  - MIME typ now always written to database in lower case and without paramters
-
-  Revision 1.9  2001/09/08 18:46:43  cl
-  - small bug/compiler warning fixes
-
-  Revision 1.8  2001/09/08 16:29:40  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.7  2001/09/08 14:42:09  cl
-  - added Multipart-MIME support
-  - added PGP/MIME support
-  - adaptions/fixes for MIME support
-  - adaptions/fixes for PGP/MIME support
-
-  Revision 1.6  2001/09/07 13:54:25  mk
-  - added SafeDeleteFile
-  - moved most file extensios to constant values in XP0
-  - added/changed some FileUpperCase
-
-  Revision 1.5  2001/09/07 09:17:56  mk
-  - added AddNewBrett procedure
-
-  Revision 1.4  2001/08/29 19:50:47  ma
-  - changes in net type handling (2)
-  - shortened CVS logs
-
-  Revision 1.3  2001/08/29 17:08:12  mk
-  - Fix: first character of PM recipient in temp file HEADER.HDR is not
-    truncated anymore (whatever HEADER.HDR might be needed for)
-
-  Revision 1.2  2001/08/23 11:15:04  mk
-  - RTA: fixed some bugs (only 32 bit releated) and converted all records
-    to classes and use TList/TStringList for storage management instead of
-    linked pointer lists
-
-  Revision 1.1  2001/08/12 19:57:21  cl
-  - rename xp6*.* => xpsendmessage*.*
-  - fixed crash in DoSend w/ hdp.oem.free
-
-  Revision 1.125  2001/08/12 11:50:41  mk
-  - replaced dbRead/dbWrite with dbReadN/dbWriteN
-
-  Revision 1.124  2001/08/11 23:06:34  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.123  2001/08/11 21:20:51  mk
-  - THeader.OEM is now TStringList (before: String)
-
-  Revision 1.122  2001/08/03 21:40:43  ml
-  - compilable with fpc (linux)
-
-  Revision 1.121  2001/07/31 16:18:40  mk
-  - removed some unused variables
-  - changed some LongInt to DWord
-  - removed other hints and warnings
-
-  Revision 1.120  2001/07/29 12:57:27  ma
-  - removed Developer and ntAllowed variables
-  - fixed setting of NNTP area db flags
-
-  Revision 1.119  2001/07/28 12:04:13  mk
-  - removed crt unit as much as possible
-
-  Revision 1.118  2001/07/27 18:10:13  mk
-  - ported Reply-To-All from 3.40, first part, untested
-  - replyto is now string instead of TStringList again
-
-  Revision 1.117  2001/07/23 16:05:20  mk
-  - added some const parameters
-  - changed most screen coordinates from byte to integer (saves some kb code)
-
-  Revision 1.116  2001/06/26 23:43:47  mk
-  JG:- fixed ancient 'forcebox' bug: it was possible to e.g. create a mail to
-       an RFC recipient and then select a Fido server in the send window.
-
-  Revision 1.115  2001/06/06 18:44:01  mk
-  JG:- Fix (DoSend): clear list of CC recipients after rfehler(606)
-         ("Internal newsgroup - writing not allowed!"). Ancient bug
-         that could lead to "ghost CC recipients", but that did not
-         occur anymore - obviously due to some RTA code somewhere.
-
-  Revision 1.114  2001/06/04 17:31:37  ma
-  - implemented role feature
-
-  Revision 1.113  2001/05/27 09:31:19  ma
-  - enabled PGP and some other things for NNTP/POP3/IMAP
-
-  Revision 1.112  2001/05/19 16:17:51  ma
-  - removed XP_ID (shareware notice)
-  - changed program id:
-    "OpenXP/32 vVERSION (PLATFORM)"
 }
 end.
 
