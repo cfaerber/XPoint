@@ -341,7 +341,7 @@ begin
     repeat
       dbSkip(ubase,-1);
       incn;
-    until dbBOF(ubase) or ((dispmode=1) and even(dbReadInt(ubase,'adrbuch')))
+    until dbBOF(ubase) or ((dispmode=1) and (dbreadint(ubase,'adrbuch')=AdrbTop-1))
           or UBmarked(dbRecno(ubase));
   if n>=gl then closebox;
   rec:=dbRecno(ubase);
@@ -790,6 +790,8 @@ begin
   poppush:=true;
 
   repeat                { +/- - Schleife }
+    nw:=NachWeiter;     { kann vom Lister verÑndert werden }
+    _down:=NachWeiter;
     ende:=true;
     GoP;
     aktdisprec:=dbRecno(mbase);
@@ -827,26 +829,28 @@ begin
       end
 
     else begin
+
       fn:=TempS(dbReadInt(mbase,'msgsize')+5000);
       dbReadN(mbase,mb_typ,typ);
       if (art<>2) and (dbReadInt(mbase,'netztyp') and $8000<>0) and
-         ReadJN(getres(433),false) then begin     { 'Kommentar anzeigen' }
+         ((lres <> -2) and (lres <> -4)) and ReadJN(getres(433),false) then  { 'Kommentar anzeigen' }
+      begin
         ExtractKom(fn);
-        if listfile(fn,'Kommentar',true,false,0)=0 then;
+        repeat until listfile(fn,'Kommentar',true,false,0) <> -4;  { <Ctrl-W> berÅcksichtigen! }
         _era(fn);
         goto ende0;
-        end;
+      end;
 
       dbReadN(mbase,mb_mimetyp,mimetyp);
       if (mimetyp='') and (mp<>0) and
          ((dbReadInt(mbase,'flags') and 4<>0) or (mp=2)) then
         mimetyp:='multipart/mixed';
-      if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }
+      if (mp=0) then mimetyp:='text/plain'; { Ctrl-Enter & Ctrl-H : Lister erzwingen }
 
       mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
       GetDefaultViewer(mimetyp, Viewer);
-      GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
-      if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
+      GetExtViewer(mpdata.fname,viewer);    { Dateiendung hat bei Viewerauswahl }
+      if viewer.prog='' then                { Vorrang vor dem Mimetyp }
         GetMimeViewer(mimetyp,viewer);
                                                        {Einteilige nicht text/plain Message }
       if ((mp=1) or (mp=2)) and (mimetyp <>'') and (mimetyp<>'text/plain')
@@ -905,6 +909,10 @@ begin
       else begin
         fillchar(mpdata,sizeof(mpdata),0);
         mpart_nr:=1;
+        GetExtViewer(getmsgfilename,viewer);     { Dateiendung hat }
+        if viewer.prog='' then                   { Vorrang vor dem Mimetyp }
+        GetMimeViewer(mimetyp,viewer);
+        Testviralextension;                      { Schutz vor Mail-Viren }
       end;
 
       poppush:=true;
@@ -914,7 +922,7 @@ begin
         typ:='B';
 
       if (typ='B') and (art<>2) and (dbReadInt(mbase,'unversandt') and 2=0)
-         and (viewer.prog='') then begin       { keine BinÑr-Versandmeldung }
+       and ((viewer.prog='') or (viewer.prog='*intern*')) then begin
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
         GetExtViewer(GetMsgFilename,viewer);
@@ -943,7 +951,16 @@ begin
 
     nw:=NachWeiter;   { kann vom Lister verÑndert werden }
     netztyp:=dbReadInt(mbase,'netztyp') and $ff;
-    if viewer.prog='*intern*' then viewer.prog:='';
+    if viewer.prog='*intern*' then
+    begin
+      viewer.prog:='';
+      if fn2='' then begin
+        Fn2:=temppath+viewer.fn;
+        CopyMsg;
+        end;
+      arc:=ArcType(fn2);
+      if ArcRestricted(arc) then arc:=0;
+    end;
     if viewer.prog<>'' then begin      { externer Viewer }
       if fn2='' then begin
         fn2:=TempS(_filesize(fn)+5000);
@@ -1466,7 +1483,8 @@ var dat    : longint;
   end;
 
   procedure mw2;
-  var s:string[81];
+  var   s       : string[81]; 
+        helprec : longint;
   begin
     if U_read then begin                   { Brett-Ungelesen-Flag ÅberprÅfen }
       dbSeek(mbase,miGelesen,_brett+#0);
@@ -1479,29 +1497,41 @@ var dat    : longint;
           end;
         end;
       end;
-      if (readmode=0) or (not brettall and wrongline) { BrettModus "A" und Brett passt nicht mehr }
-      then begin                    { dann Cursor nicht weiterschalten }
-        s:=' ';  { Dummy: s<>'' und s<>'$/T'... }
-        p2:=p;
-        repeat
-          inc(p);
-          GoP;
-          if not dbBOF(bbase) then dbReadN(bbase,bb_brettname,s);
-        until dbBOF(bbase) or (left(s,3)<>'$/T');   {keine Trennzeile anspringen }
-        if (readmode>0) then dec(p);
-        if dbBOF(bbase) then
-        begin
-          p:=p2;
-          GoP;
+
+   if (readmode=0) or (not brettall and wrongline)  { zum Lesemodus passende Bretter zeigen }
+   then begin                      { und Brett passt nicht mehr: kein weiterschalten}
+      s:=' ';
+      p2:=p; 
+      helprec:=disprec[1];
+
+      if p2>gl then begin
+        disprec[1]:=dbrecno(bbase);
+        p2:=1;
+        aufbau:=true;
         end;
-        if p>=gl then begin
-          disprec[1]:=dbrecno(bbase);
-          p:=1;
-          aufbau:=true;
-          end;
+     
+      GoPos(p2);
+      repeat 
+        inc(p2);
+        dbnext(bbase); 
+        if not (dbBOF(bbase) or dbEOF(bbase)) then dbReadN(bbase,bb_brettname,s);
+      until dbBOF(bbase) or dbEOF(bbase) or (left(s,3)<>'$/T'); {keine Trennzeile anspringen }               
+
+      if (dbBOF(bbase) or dbEOF(bbase))
+      then begin
+        disprec[1]:=helprec;
+        dbgo(bbase,helprec);
         end
-      else
-      if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
+      else if p2>gl then begin
+        disprec[1]:=dbrecno(bbase);
+        p:=1;
+        GoP;
+        aufbau:=true;
+        end
+      else p:=p2;
+      end
+    else
+    if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
       p2:=p;
       if not dispext and (readmode>0) and not alle and brettweiter then
       begin
@@ -1664,13 +1694,6 @@ begin
   aufbau:=true;
 end;
 
-procedure switch_weiterschalt;
-begin
-  NachWeiter:=not NachWeiter;
-  attrtxt(col.colmenu[0]);
-  mwrt(69,1,iifc(NachWeiter,'W','-'));
-end;
-
 procedure seek_brett(fwd:boolean);
 var i   : integer;
     rec : longint;
@@ -1705,6 +1728,52 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.32  2002/03/08 23:04:14  my
+  MY:- Fix: Umschaltung des Wortumbruchs im Lister mit <Ctrl-W>
+       funktioniert jetzt auch in der Anzeige des Nachrichtenkopfs ("o"),
+       in Nachrichten mit KOM-Header und bei der Anzeige von Dateien in
+       Archiven. Funktion bei der Anzeige des Archivinhalts deaktiviert
+       (weil dort vîllig ÅberflÅssig und nur hinderlich).
+
+  MY:- Bei Nachrichten mit KOM-Header erscheint keine ÅberflÅssige Abfrage
+       "Kommentar anzeigen?" mehr, wenn man im Lister aus der Anzeige des
+       Nachrichtenkopfs ("o") zum Nachrichtentext zurÅckkehrt, bzw. wenn
+       man die Nachricht aus dem Lister heraus mit "v" auf Wiedervorlage
+       setzt.
+
+  JG:- "öberspringen-Bug" gefixt: Im Lesemodus "Alle" sprang der
+       Cursorbalken in der Brett-öbersicht auf das erste Brett zurÅck,
+       wenn man das letzte auf dem Bildschirm sichtbare Brett mit <Esc>
+       verlassen hatte.
+
+  JG:- Fix: Das Springen zum nÑchsten/vorherigen markierten User mittels
+       "+" und "-" funktioniert jetzt auch Åber mehrere Adre·buchgruppen
+       hinweg.
+
+  JG:- Fix: Wenn unter Edit/Viewer ein MIME-Typ mit einer Archiv-Datei-
+       erweiterung (z.B. ZIP), aber ohne Viewerprogramm (Viewer
+       "(intern)") eingetragen war und ein Nachrichtenteil einer MIME-
+       Multipart-Nachricht mit dieser Dateierweiterung geîffnet wurde,
+       dann wurde nicht der Inhalt des Archivs, sondern der BinÑrinhalt
+       der Archivdatei angezeigt.
+
+  JG:- Fix: Beim ôffnen von Singlepart-BinÑrnachrichten wurde bei
+       bestimmten Konstellationen unter Edit/Viewer die Fehlermeldung
+       "Fehler beim Dateizugriff :-(" erzeugt (Viewer wurde nicht korrekt
+       initialisiert) und der MIME-Typ hatte fÑlschlicherweise Vorrang vor
+       der Dateierweiterung.
+
+  JG:- Fix Brettweiterschalter: Wenn im Lesemodus "Alles" nach mehr als
+       127 (zu Åberspringenden) Trennzeilen doch noch ein Brett kam,
+       bestand eine Chance von ca. 70%, da· dieses Brett nicht
+       angesprungen wurde (Åberlaufener Shortint-Counter, gefunden durch
+       Range Check...).
+
+  JG+MY:- Fix Nachrichtenweiterschalter: Nach Verlassen des MIME-
+          Auswahldialogs mit <Esc> konnte es passieren, da· nur noch genau
+          einmal (und dann nie wieder) zur nÑchsten Nachricht gesprungen
+          wurde.
+
   Revision 1.25.2.31  2001/12/20 18:17:51  mk
   - KOM-Header auch in Nicht-Binaer-Nachrichten auswerten
 
@@ -1754,9 +1823,10 @@ end;
   JG:- fixed last commit
 
   Revision 1.25.2.22  2001/05/30 20:47:51  my
-  JG:- Fix: When browsing through messages with <Ctrl-PgUp>/<Ctrl-PgDn> and +/-
-       the message that has been entered with the last <Ctrl-Pg*> was replaced in
-       the message window with the message the message reader had entered first.
+  JG:- Fix: When browsing through messages with <Ctrl-PgUp>/<Ctrl-PgDn>
+       and +/- the message that has been entered with the last <Ctrl-Pg*>
+       was replaced in the message window with the message the message
+       reader had entered first.
 
   Revision 1.25.2.21  2001/02/11 20:57:49  mk
   JG:- weiterer Ueberspringen-Bugfix
@@ -1771,7 +1841,8 @@ end;
   JG:- Brettweiterschalt-Fix, Teil 2
 
   Revision 1.25.2.17  2001/01/10 17:39:05  mk
-  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+  - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette,
+    UUZ und Bugfixes
 
   Revision 1.25.2.16  2000/12/10 02:57:16  mk
   - fix fuer Anzeige nach User aendern
@@ -1824,6 +1895,6 @@ end;
   - 32 Bit Teile entfernt, Fixes
 
   Revision 1.25  2000/06/12 19:52:15  mk
-  - Datei enth‰lt jetzt Loginfos
+  - Datei enthÑlt jetzt Loginfos
 
 }
