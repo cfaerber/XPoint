@@ -39,7 +39,7 @@ procedure memstat;
 procedure fragstat;
 procedure scsaver;
 procedure scsescape;
-procedure TimedScsaver(endtime:datetimest);
+procedure TimedScsaver(endtime:string);
 procedure DatabaseStat;
 procedure ScreenShot;
 procedure xp32welcome;
@@ -68,10 +68,10 @@ var   nt,n,mnt,
       y,m,d,w     : rtlword;
       lm,lj       : word;
       jj,mm,tt    : word;
-      di          : string[6];
+      di          : string;
       code        : integer;
 
-      cal         : string[15];
+      cal         : string;
       feier       : array[1..maxfeier] of fdate;
       feieranz    : integer;
 
@@ -339,7 +339,7 @@ begin
   cal_active:=false;
 end;
 
-function xpspace(dir:dirstr):longint;
+function xpspace(dir:string):longint;
 var sr  : searchrec;
     sum : longint;
 begin
@@ -460,7 +460,7 @@ end;
 
 { Screen Saver }
 
-procedure TimedScsaver(endtime:datetimest);
+procedure TimedScsaver(endtime:string);
 
 const maxstars = 40;
       scactive : boolean = false;
@@ -623,15 +623,15 @@ end;
 procedure DatabaseStat;
 var x,y : byte;
 
-  procedure wrd(yy:byte; datei:pathstr; d:DB);
+  procedure wrd(yy:byte; datei:string; d:DB);
   var n : boolean;
 
     function prozent:real;
     begin
       if dbPhysRecs(d)=0 then
-        prozent:=100
+        prozent:=100.0
       else
-        prozent:=dbRecCount(d) * 100 div dbPhysRecs(d);
+        prozent:=real(dbRecCount(d)) * 100.0 / real(dbPhysRecs(d));
     end;
 
   begin
@@ -673,7 +673,7 @@ const ss_active : boolean = false;
 var
     fn,ffn : string;
     app    : boolean;
-    x,y  : integer;
+    x,y    : integer;
     brk    : boolean;
     t      : text;
     useclip: boolean;
@@ -685,7 +685,7 @@ begin
   pushhp(13604);
   useclip:=true;
   if ReadFilename(getres(503),fn,true,useclip) then begin   { 'Bildschirm-Auszug' }
-    if not useclip and not multipos(':\',fn) then
+    if not useclip and not multipos(_MPMask,fn) then
       fn:=ExtractPath+fn;
     if not exist(fn) or useclip then app:=false
     else begin
@@ -761,11 +761,7 @@ end;
 
 function EnterPassword(txt:atext; var brk:boolean):longint;
 var x,y : byte;
-{$ifdef hasHugeString}
     s   : string;
-{$else}
-    s   : string[16];
-{$endif}
     t   : taste;
 
   procedure maus_bearbeiten;
@@ -827,7 +823,7 @@ var x,y  : byte;
 var brk  : boolean;
     p    : word;
     main : boolean;
-    typ  : string[15];
+    typ  : string;
     i    : integer;
 begin
   msgbox(ival(getres2(510,19)),ival(getres2(510,21))+6,'',x,y);
@@ -927,6 +923,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/07/12 10:13:27  hd
+  - AnsiString
+
   Revision 1.31  2000/07/05 12:47:27  hd
   - AnsiString
 
