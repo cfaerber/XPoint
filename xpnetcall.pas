@@ -1360,7 +1360,8 @@ begin                  { function Netcall }
         NC^.datum:=ZDate;
         NC^.box:=box;
         if SysopStart<>'' then shell(SysopStart,600,1);
-        AppendEPP;
+        errorlevel:=0;        //wenn hier io<>0 gesetzt wird, dann wird der call nicht
+        AppendEPP;            //ordnugsgem„ss fortgesetzt
         case netztyp of
           nt_Fido : begin
                       SetFilenames;
@@ -2318,6 +2319,10 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/01/04 22:30:01  mo
+  -bugfix für sysop net call beirorlevel <> 0
+  -nach Aufruf des Sysop Startprog.
+
   Revision 1.2  2001/01/04 21:22:54  ma
   - added/refined debug logs
 
