@@ -33,7 +33,7 @@ uses xpglobal,
   xpos2,
 {$ENDIF }
   sysutils,dos,typeform,fileio,inout,winxp,keys,maske,datadef,database,
-  archive,montage,dosx,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
+  archive,montage,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
 
 
 const
@@ -2070,6 +2070,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/10/20 14:54:02  hd
+  - dosx entfernt
+
   Revision 1.47  2000/10/17 10:05:50  mk
   - Left->LeftStr, Right->RightStr
 
