@@ -830,6 +830,8 @@ var f,f2     : file;
     close(f);
   end;
 
+var Dummy: Integer;
+
 begin      //-------- of DoSend ---------
   DoSend:=false;
   parken:=false;
@@ -1626,7 +1628,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     sData^.msgid:=hdp.msgid;
 
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
-      sData^.References.Add(_bezug);
+      if not sData^.References.Find(_bezug,Dummy)then
+        sData^.References.Add(_bezug);
 
     if (_beznet>=0) then  // bugfix fÅr VP
       if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
@@ -2099,6 +2102,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.108  2001/04/18 10:12:37  ma
+  - fixed: references got doubled
+
   Revision 1.107  2001/04/17 20:21:29  ma
   - removed "## XP ##" checking
 
