@@ -426,7 +426,10 @@ var x,y,fm   : byte;
         writeln(cmessagefile,'supersedes');
         writeln(cmessagefile,ersetzt);
         writeln(cmessagefile,absender);
-        writeln(cmessagefile,cust1);
+        if cust1<>'' then
+          writeln(cmessagefile,cust1)
+        else
+          writeln(cmessagefile,wab);
         inc(num_cmessages);
       end;
 
@@ -435,7 +438,10 @@ var x,y,fm   : byte;
         writeln(cmessagefile,dbRecno(mbase));
         writeln(cmessagefile,trim(mid(control,8)));
         writeln(cmessagefile,absender);
-        writeln(cmessagefile,cust1);
+        if cust1<>'' then
+          writeln(cmessagefile,cust1)
+        else
+          writeln(cmessagefile,wab);
         inc(num_cmessages);
       end;
 
@@ -1228,6 +1234,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.11  2001/01/29 19:43:22  sv
+  - cancel processing fixed (WAB-Header may authorize sender (ZConnect))
+
   Revision 1.21.2.10  2001/01/15 22:15:53  mk
   - fix fuer gelesen setzen der Ruecklaeufer
 
