@@ -79,7 +79,7 @@ uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview,
      xp_pgp, viewer;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
-      suchlen = 80;  {JG:06.02.00 wieder auf 80 gesetzt...}
+      suchlen = 73;
 
 type arcbuf = record
                 arcer_typ : shortint;
@@ -2419,6 +2419,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.81  2000/11/20 20:44:05  mk
+  - Suchlaenge auf 73 reduziert
+
   Revision 1.80  2000/11/18 21:42:18  mk
   - implemented new Viewer handling class TMessageViewer
 
