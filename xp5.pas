@@ -493,13 +493,13 @@ begin
   attrtxt(col.colmboxhigh);
   wrt(x+4,y+iif(win,12,11),'Overlay');
   attrtxt(col.colmbox);
-  gotoxy(x+23,y+12);
+  gotoxy(x+23,y+iif(win,12,11));
   if ((xmsovrbuf=true) and (emsovrbuf=false)) then write('XMS') else
   if ((xmsovrbuf=false) and (emsovrbuf=true)) then write('EMS') else
   if ((xmsovrbuf=false) and (emsovrbuf=false)) then write('Disk') else
   if ((xmsovrbuf=true) and (emsovrbuf=true)) then write('ERROR');
   wrt(x+62-length(getres2(rnr,9)),y+iif(win,iif(
-    (WinVersion=4)and(Lo(WinNTVersion)=0),13,12),9),getres2(rnr,9)+'...');
+    (WinVersion=4)and(Lo(WinNTVersion)=0),13,12),12),getres2(rnr,9)+'...');
   mon;
   freeres;
   wait(curon);
@@ -1071,6 +1071,9 @@ end.
 
 {
   $Log$
+  Revision 1.27.2.21  2003/04/15 14:07:00  mw
+  MW: - Korrektur der H”henberechnung der Ausgabe von X/S/S
+
   Revision 1.27.2.20  2003/04/13 21:05:31  my
   MY:- Display-Kosmetik und Code-Optimierung (else...).
 
