@@ -775,7 +775,7 @@ begin
   s0:= s;
   makelistdisplay(s0);
   Consolewrite(x,y,length(s0));
-  s:= s0;				{ Falls var irgendeine Bedeutung hat }
+  s:= s0;                               { Falls var irgendeine Bedeutung hat }
 end;
 
 procedure interr(txt:string);
@@ -1609,7 +1609,7 @@ var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
-    val(trim(copy(su,p+1,255)),b,res);
+    val(trim(Mid(su,p+1)),b,res);
     getb:=(res=0);
     end
   else getb:=false;
@@ -1634,7 +1634,7 @@ var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
-    val(trim(copy(su,p+1,255)),i,res);
+    val(trim(Mid(su,p+1)),i,res);
     geti:=(res=0);
     end
   else geti:=false;
@@ -1646,7 +1646,7 @@ var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
-    val(trim(copy(su,p+1,255)),i,res);
+    val(trim(Mid(su,p+1)),i,res);
     geti16:=(res=0);
     end
   else geti16:=false;
@@ -1658,7 +1658,7 @@ var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
-    val(trim(copy(su,p+1,255)),w,res);
+    val(trim(Mid(su,p+1)),w,res);
     getw:=(res=0);
     end
   else getw:=false;
@@ -1670,7 +1670,7 @@ var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
-    val(trim(copy(su,p+1,255)),l,res);
+    val(trim(Mid(su,p+1)),l,res);
     getl:=(res=0);
     end
   else getl:=false;
@@ -1682,7 +1682,7 @@ var   p   : byte;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then begin
-    val(trim(copy(su,p+1,255)),r,res);
+    val(trim(Mid(su,p+1)),r,res);
     getr:=(res=0);
     end
   else getr:=false;
@@ -1778,7 +1778,9 @@ end;
 
 function notempty(var s:string):boolean;
 begin
+{$IFDEF FPC }
 {$hint Seiteneffekt. Waere zu eleminieren }
+{$ENDIF }
   if trim(s)='' then errsound;
   notempty:=(trim(s)<>'');
 end;
@@ -1909,7 +1911,7 @@ end;
 
 procedure _era(fn:string);
 begin
-  if not DeleteFile(fn) then
+  if not sysutils.DeleteFile(fn) then
     trfehler1(4,'"'+FileUpperCase(fn)+'"',30);   { 'Kann "'+FileUpperCase(fn)+'" nicht l”schen!?' }
 end;
 
@@ -1938,12 +1940,10 @@ end;
 
 
 procedure exchange(var s:string; repl,by:string);
-var p : cardinal;	{ Cardinal ist am besten geeignet }
+var p : Integer;
 begin
   p:=pos(UpperCase(repl),UpperCase(s));
-  { if p>0 then s:=copy(s,1,p-1)+by+copy(s,p+length(repl),255); 
-    hd/2000-07-20, notwendig wegen unbegrenzter Laenge von Ansistring }
-  if p>0 then s:=copy(s,1,p-1)+by+right(s,length(s)-(p+length(repl)));
+  if p>0 then s:=copy(s,1,p-1)+by+Mid(s,p+length(repl));
 end;
 
 
@@ -2034,6 +2034,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.67  2000/07/20 16:49:56  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.66  2000/07/20 13:36:39  hd
   - ExErase entfernt (DeleteFile ist in SysUtils)
   - AnsiString und 32-Bit

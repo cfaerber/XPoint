@@ -319,7 +319,7 @@ begin
             repeat
               p:=cpos('@',absender);
               if p>0 then begin
-                absender:=copy(absender,p+1,255);
+                absender:=Mid(absender,p+1);
                 p:=cpos('@',absender);
                 end;
             until p=0;
@@ -1251,6 +1251,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/20 16:50:00  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.20  2000/07/12 13:15:02  hd
   - Ansistring
 

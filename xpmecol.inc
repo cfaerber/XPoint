@@ -178,7 +178,7 @@ begin
     p:=cpos('=',s);
     if (s<>'') and (s[1]<>'#') and (p>0) then begin
       s1:=copy(s,1,min(p-1,20));
-      s:=trim(copy(s,p+1,255))+' ';
+      s:=trim(Mid(s,p+1))+' ';
       n:=0;
       repeat
         p:=cpos(' ',s);
@@ -403,6 +403,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/07/20 16:50:00  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.7  2000/07/11 21:39:23  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

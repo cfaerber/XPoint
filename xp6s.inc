@@ -619,7 +619,7 @@ var d      : DB;
 begin
   p:=cpos('@',adresse);
   if p=0 then exit;
-  p2:=p+pos('.',copy(adresse,p+1,255));
+  p2:=p+pos('.',Mid(adresse,p+1));
   if p2=0 then exit;
   dbOpen(d,SystemFile,siName);
   dbSeek(d,siName,copy(adresse,p+1,p2-p-1));
@@ -1144,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.24  2000/07/20 16:49:59  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.23  2000/07/15 20:02:59  mk
   - AnsiString updates, noch nicht komplett
 

@@ -688,7 +688,7 @@ var ma     : map;
           write(mstr[hpos]);
           if i=p then attrtxt($70) else attrtxt(7);
           end;
-        write(forms(copy(mstr,hpos+1,255),ml+2-hpos));
+        write(forms(Mid(mstr,hpos+1),ml+2-hpos));
         end;
     mon;
   end;
@@ -1133,6 +1133,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/20 16:49:57  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.19  2000/07/11 21:39:21  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

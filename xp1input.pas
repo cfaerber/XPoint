@@ -130,13 +130,13 @@ begin
       if buttons[1]='ù' then begin
         i:=2; while (buttons[i]>='0') and (buttons[i]<='9') do inc(i);
         buttsp[n]:=ival(copy(buttons,2,i-2));
-        buttons:=copy(buttons,i,255);
+        buttons:=Mid(buttons,i);
         dec(p,i-1);
         end
       else
         buttsp[n]:=0;
       butt[n]:=left(buttons,p-1);
-      buttons:=copy(buttons,p+1,255);
+      buttons:= Mid(buttons,p+1);
       p:=pos('^',butt[n]);
       if p=0 then interr('Button: kein ShortKey!');
       delete(butt[n],p,1);
@@ -295,7 +295,7 @@ var width,height : byte;
         attrtxt(col.colselhigh);
         Wrt2(sel[i][selhigh[i]]);
         attrtxt(col.colselbox);
-        Wrt2(forms(copy(sel[i],selhigh[i]+1,255),ml-selhigh[i]+1));
+        Wrt2(forms(Mid(sel[i],selhigh[i]+1),ml-selhigh[i]+1));
         end;
       end;
     mon;
@@ -332,7 +332,7 @@ begin
     if p>0 then begin
       inc(n);
       sel[n]:=left(auswahl,p-1);
-      auswahl:=copy(auswahl,p+1,255);
+      auswahl:=Mid(auswahl,p+1);
       p:=pos('^',sel[n]);
       if p=0 then begin
         selhigh[n]:=0; hot[n]:=#0;
@@ -415,6 +415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/20 16:49:57  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.12  2000/07/14 11:35:41  mk
   - 16 Bit Ueberbleibsel und ungenutze Variablen beseitigt
 

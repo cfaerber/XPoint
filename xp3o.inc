@@ -813,7 +813,7 @@ begin
               else begin
                 while empfaenger[10]=#255 do  { wg. #255#255'Netzanruf' }
                   delete(empfaenger,10,1);
-                empfaenger:='$/¯'+copy(empfaenger,10,255);
+                empfaenger:='$/¯'+Mid(empfaenger,10);
                 end
             else
               if empfaenger[2]='¯' then
@@ -902,7 +902,7 @@ begin
                   SetBrettindexEnde
                 else
                   SetBrettindex;
-                writeln(brettlog,logstr(copy(empfaenger,2,255)));
+                writeln(brettlog,logstr(Mid(empfaenger,2)));
                 end;   { aufnehmen }
               end    { not dbFound }
             else
@@ -1178,6 +1178,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2000/07/20 16:49:58  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.26  2000/07/13 16:44:57  mk
   JG: - User-Editmenu: einstellbare Prioritaetsfarbe fuer Msgs des User
 

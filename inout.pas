@@ -932,10 +932,10 @@ begin
                      else
                        inss:=fndef[fnkn];
                      if einfueg then
-                       s:=left(left(s,p)+inss+copy(s,succ(p),255),ml)
+                       s:=left(left(s,p)+inss+mid(s,succ(p)),ml)
                      else
                        s:=left(left(s,p)+
-                               inss+copy(s,succ(p)+length(inss),255),ml);
+                               inss+mid(s,succ(p)+length(inss)),ml);
                      p:=min(p+length(inss),length(s));
                      if right(fndef[fnkn],1)=';' then
                        a:=keycr;
@@ -1657,6 +1657,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.47  2000/07/20 16:49:56  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.46  2000/07/09 09:09:54  mk
   - Newexit in Initialization/Finalization umgewandelt
 

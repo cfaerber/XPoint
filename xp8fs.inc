@@ -51,7 +51,7 @@ var
 
   procedure wrl;
   begin
-    writeln(t2,s[1],'   ',trim(copy(s,2,255)));
+    writeln(t2,s[1],'   ',trim(Mid(s,2)));
   end;
 
   procedure WriteFST(typ:byte);
@@ -530,7 +530,7 @@ begin
                 s:=first_marked;
                 while s<>#0 do begin
                   if fstyp=0 then
-                    s:=trim(copy(s,2,255));
+                    s:=trim(Mid(s,2));
                   s:=left(s,pos(' ',s)-1);
                   fscomm(iifs(request=1,'SEND ','TRANSFER ')+s);
                   s:=next_marked;
@@ -548,6 +548,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/07/20 16:49:59  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.9  2000/07/05 15:12:15  hd
   - AnsiString
 

@@ -455,7 +455,7 @@ begin
     dbWrite(mbase,'halteflags',flags);
     end;
   if left(hd.empfaenger,TO_len)=TO_ID then   { /TO: }
-    hd.empfaenger:=copy(hd.empfaenger,9,255);
+    hd.empfaenger:=Mid(hd.empfaenger,9);
   ReadEmpflist:=false; ReadHeadDisk:=0;
   ReadKopList:=false;
   NoPM2AMconv:=false;
@@ -1237,6 +1237,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/07/20 16:49:58  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.34  2000/07/09 08:35:15  mk
   - AnsiStrings Updates
 

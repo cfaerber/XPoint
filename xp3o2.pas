@@ -336,7 +336,7 @@ begin
     p:=cpos(' ',s);
     if p=0 then p:=cpos(#9,s);  { TAB }
     if p>0 then begin
-      komm:=left(trim(copy(s,p,255)),30);
+      komm:=left(trim(Mid(s,p)),30);
       s:=left(s,p-1);
       if komm='No' then komm:='';
       end;
@@ -445,6 +445,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/20 16:49:59  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.14  2000/07/09 08:35:15  mk
   - AnsiStrings Updates
 

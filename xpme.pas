@@ -325,7 +325,7 @@ begin
     if p>0 then begin
       inc(n);
       with ma^[n] do begin
-        s:=copy(s,p+1,255);
+        s:=Mid(s,p+1);
         if left(s,2)<>'-,' then begin
           mpnr:=hexval(left(s,3));
           delete(s,1,3);
@@ -753,6 +753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/07/20 16:50:00  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.23  2000/07/13 10:23:48  mk
   - Zeiger auf Strings entfernt
 

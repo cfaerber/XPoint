@@ -78,9 +78,9 @@ begin
     else dbReadN(ubase,ub_kommentar,komm);
     p2:=pos('P:',UpperCase(komm));
     if p2=0 then
-      s:=copy(s,1,p-1)+iifs(vorn,'$VORNAME','$TUSER')+copy(s,p+iif(vorn,8,7),255)
+      s:=copy(s,1,p-1)+iifs(vorn,'$VORNAME','$TUSER')+Mid(s,p+iif(vorn,8,7))
     else
-      s:=copy(s,1,p-1)+trim(mid(komm,p2+2))+copy(s,p+iif(vorn,8,7),255);
+      s:=copy(s,1,p-1)+trim(mid(komm,p2+2))+Mid(s,p+iif(vorn,8,7));
     end;
   name:=vert_name(name);
   rps(s,'$USER',name);
@@ -451,7 +451,7 @@ var size   : longint;
       stmp       : string;
       lastqc     : string[20];
       qspaces    : string[QuoteLen];
-      convstr	 : shortstring; 	{ Workaround fuer iso_conv }
+      convstr    : shortstring;         { Workaround fuer iso_conv }
       p,q        : byte;
       lastquote  : boolean;   { vorausgehende Zeile war gequotet }
       blanklines : longint;
@@ -517,7 +517,7 @@ var size   : longint;
       if not iso1 and ConvIso and (s<>'') then begin
         convstr:= s;
         ISO_conv(convstr[1],length(convstr));            { ISO-Konvertierung }
-	s:= convstr;
+        s:= convstr;
       end;
       if s=#3 then begin
         FlushStmp;                           { #3 -> Leerzeile einfÅgen }
@@ -597,10 +597,10 @@ var size   : longint;
               read(t,reads);      { Rest der Zeile nachladen }
               endspace:=(reads[length(reads)]=' ') or eoln(t);
               if not iso1 and ConvIso and (reads<>'') then begin
-		convstr:= reads;
+                convstr:= reads;
                 ISO_conv(convstr[1],length(convstr));    { ISO-Konvertierung }
-		reads:= convstr;
-	      end;
+                reads:= convstr;
+              end;
               stmp:=stmp+trimright(reads)+iifs(endspace,' ','');
             end;
             if length(stmp)+length(LastQC)>=QuoteBreak then begin
@@ -1069,6 +1069,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/07/20 16:49:58  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.29  2000/07/12 14:55:03  hd
   - Ansistring
 

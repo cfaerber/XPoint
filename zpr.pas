@@ -1061,7 +1061,7 @@ begin
     if ampm=0 then ampm:=2;
 
     for i:=1 to fldanz do begin                  { AM/PM ÅberprÅfen }
-      cont:=copy(fld[i],contpos[i],255);
+      cont:=Mid(fld[i],contpos[i]);
       if (fldtype[i]=hdf_CRYPT) and (ampm=2) then begin
         warnung('CRYPT-Zeile in AM');
         wrehd(i);
@@ -1298,6 +1298,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.22  2000/07/20 16:50:00  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.21  2000/07/09 09:09:56  mk
   - Newexit in Initialization/Finalization umgewandelt
 

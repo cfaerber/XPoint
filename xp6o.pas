@@ -623,7 +623,7 @@ label ende,again;
     tmp:=TempS(_filesize(fn)+2000);
     assign(tf,tmp);
     rewrite(tf,1);
-    hdp^.empfaenger:=copy(empf,2,255);
+    hdp^.empfaenger:=Typeform.Mid(empf,2);
     if hdp^.msgid<>'' then
       hdp^.msgid:=right(hdp^.msgid,1)+left(hdp^.msgid,length(hdp^.msgid)-1);
     assign(f,fn);           { ^^ Rekursion vermeiden }
@@ -1326,6 +1326,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/07/20 16:49:59  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.26  2000/07/11 21:39:22  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

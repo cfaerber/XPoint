@@ -216,10 +216,10 @@ procedure setmenup(mnu:string; nr:byte; anew:string);
 var n,p,p2 : byte;
 begin
   findnr(mnu,nr,n,p);
-  p2:=pos(',',copy(menu[n],p,255));
+  p2:=pos(',',Mid(menu[n],p));
   if p2=0 then p2:=length(menu[n])+1
   else inc(p2,p+1);
-  menu[n]:=left(menu[n],p-1)+anew+copy(menu[n],p2,255);
+  menu[n]:=left(menu[n],p-1)+anew+Mid(menu[n],p2);
 end;
 
 
@@ -601,6 +601,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/07/20 16:49:57  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.18  2000/07/12 14:43:44  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

@@ -423,7 +423,7 @@ begin
       last:=lastheap;
     while last<>nil do begin     { Liste freigeben }
       lnp:=last^.prev;
-      last^.cont:= '';					{ String freigeben }
+      last^.cont:= '';                                  { String freigeben }
       freemem(last,sizeof(listnode));
       last:=lnp;
     end;
@@ -447,8 +447,8 @@ var p  : byte;
     case memflag of
       0 : begin
             getmem(lnp,sizeof(listnode));
-	    fillchar(lnp^,sizeof(listnode),0);
-	  end;
+            fillchar(lnp^,sizeof(listnode),0);
+          end;
       3 : begin
             writeln('LIST: internal memory allocation error');
             halt(1);
@@ -644,7 +644,7 @@ var gl,p,y    : shortint;
           if xa=1 then
             s:=forms(cont,w)
           else
-            s:=forms(copy(cont,xa,255),w);
+            s:=forms(Mid(cont,xa),w);
           if @displproc=nil then
             fwrt(l,y+i-1,s)
           else
@@ -781,9 +781,9 @@ var gl,p,y    : shortint;
         found:=false;
         while not found and (sline<>nil) do begin
           if suchcase then
-            pp:=pos(suchstr,copy(sline^.cont,spos,255))
+            pp:=pos(suchstr,mid(sline^.cont,spos))
           else
-            pp:=pos(UpperCase(suchstr),UpperCase(copy(sline^.cont,spos,255)));
+            pp:=pos(UpperCase(suchstr),UpperCase(Mid(sline^.cont,spos)));
           if pp=0 then begin
             sline:=sline^.next;
             inc(sp);
@@ -1376,6 +1376,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/07/20 16:49:56  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.27  2000/07/19 10:17:20  hd
   - EmsPtr entfernt
   - Fix: Exception beim Anzeigen von Nachrichten

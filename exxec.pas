@@ -70,7 +70,7 @@ begin
   pp:=pos(' ',prog);
   if pp=0 then para:=''
   else begin
-    para:=' '+trim(copy(prog,pp+1,255));
+    para:=' '+trim(Mid(prog,pp+1));
     prog:=left(prog,pp-1);
   end;
   prog:=FileUpperCase(prog);
@@ -102,6 +102,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/07/20 16:49:56  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.23  2000/07/04 12:04:15  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

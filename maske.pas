@@ -985,7 +985,7 @@ begin
         str(ival(s1):maxlen,s1)
       else if typ=7 then
         str(rval(s1):maxlen:nk,s1);
-      s:=copy(s,p+1,255);
+      s:=Mid(s,p+1);
       app(selliste);
       end;
     forcesll:=force;
@@ -1269,6 +1269,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2000/07/20 16:49:56  mk
+  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
+
   Revision 1.16  2000/07/19 13:42:48  hd
   - new/dispose durch get-/freemem ersetzt
 
