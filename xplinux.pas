@@ -35,8 +35,8 @@ uses
   sysutils,
   xpglobal;
 
-const
 {$IFDEF VP }
+const
   STAT_IRUSR = S_IRUSR;
   STAT_IWUSR = S_IWUSR;
   STAT_IXUSR = S_IXUSR;
@@ -408,6 +408,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/05/15 14:01:51  hd
+  Fix Bedingte Compilierung
+
   Revision 1.16  2000/05/15 13:56:53  hd
   - Linux: Env-Var XPHOME uebersteuert nun die Vorgabe ~/.openxp
 
