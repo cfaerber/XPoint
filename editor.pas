@@ -1689,7 +1689,7 @@ var  dl         : displp;
 
         editfBlockBegin   : SetBlockMark(1);
         editfBlockEnd     : SetBlockMark(2);
-        editfMarkWord     : WortMarkieren;
+        editfMarkWord     : WortMarkieren(false);
         editfMarkLine     : ZeileMarkieren;
         editfMarkPara     : AbsatzMarkieren;
         editfMarkAll      : KomplettMarkieren;
@@ -1907,7 +1907,7 @@ var  dl         : displp;
       if (xx>=x) and (xx<x+w) and (yy>=y) and (yy<=y+h) then
         if yy>=y then
           if t=mausldouble then
-            WortMarkieren
+            WortMarkieren(false)
           else if t=mausright then begin
             InterpreteToken(LocalMenu);
             t:='';
@@ -2029,6 +2029,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.2  2000/07/21 20:30:57  jg
+  * Glossary:
+    - Bugfix: Endlosschleife bei Menueauswahl wenn in der Glossary.cfg
+      nach dem >Kuerzel< in derselben Zeile noch Zeichen kamen.
+    - Alle Zeichen ausser ASCII 0-32 und 255 Werden jetzt als Kuerzel akzeptiert
+
   Revision 1.25.2.1  2000/07/21 17:32:27  jg
   - Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G
 

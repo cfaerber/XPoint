@@ -1227,11 +1227,12 @@ begin
     SetBlock(n,ActAbs,workpos,2);
 end;
 
-procedure WortMarkieren;
+procedure WortMarkieren(alt_trenn:boolean);
 var wp,sp,sp0 : integer;
   function IsTrennz(p:integer):boolean;
   begin
-    IsTrennz:=(ActAbs^.cont[p] in trennzeich);
+    if alt_trenn then IsTrennz:=(ActAbs^.cont[p] in [#0..#32,#255])
+    else IsTrennz:=(ActAbs^.cont[p] in trennzeich);
   end;
 begin
   with e^ do begin
@@ -2043,13 +2044,14 @@ var ap : absatzp;
 
       if EOF(t) then 
       begin                           { Wort nicht gefunden - Kuerzelliste als Auswahlmenue }
+        pushhp(64);
         reset(t);
         listbox(45,7,'Glossary');
         app_l(' >- ESC -<');
         repeat
    	  readln(t,s);
           if (s[1]='>') and (cpos('<',s)>0) then
-          begin
+          begin             
             readln(t,s2);
             if s2[1]<>'>' then app_L(' '+forms(s,15)+'  '+forms(s2,26))
             end;
@@ -2062,9 +2064,12 @@ var ap : absatzp;
         closebox;
         if not brk then begin
           reset(t);
-          repeat readln(t,s); until s=s2;         
+          repeat 
+            readln(t,s); 
+          until (left(s,cpos('<',s))=s2) or eof(t);         
           end;
         setcolors;
+        pophp;
         end;
        
       if not brk then 
@@ -2084,7 +2089,7 @@ var ap : absatzp;
     end;
 
 begin
-  Wortmarkieren;
+  Wortmarkieren(true);
   if scanglossary(marked2string) then
   with e^ do begin
     if not (blockinverse or blockhidden)  { Markierung loeschen }
@@ -2389,6 +2394,12 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.2  2000/07/21 20:30:57  jg
+  * Glossary:
+    - Bugfix: Endlosschleife bei Menueauswahl wenn in der Glossary.cfg
+      nach dem >Kuerzel< in derselben Zeile noch Zeichen kamen.
+    - Alle Zeichen ausser ASCII 0-32 und 255 Werden jetzt als Kuerzel akzeptiert
+
   Revision 1.19.2.1  2000/07/21 17:32:26  jg
   - Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G
 
