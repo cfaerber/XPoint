@@ -325,7 +325,7 @@ begin
 
   { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
   if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
-    (t=keyaltb) or (t=keyaltu)) then errsound
+    (t=keyaltb) or (t=keyaltu)) then Hinweis(Getres(136))
   else
   begin
     if t = keyaltm then                                       { ALT+M = Suche MessageID }
@@ -975,6 +975,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.9  2000/11/26 20:20:33  mk
+  - Resource 136 hinzugefuegt
+
   Revision 1.19.2.8  2000/11/01 11:20:34  mk
   RB:- URL-Erkennung verbessert
 
