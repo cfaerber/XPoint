@@ -805,12 +805,12 @@ begin
           List.OnKeypressed := SSP_Keys;
           List.Startpos := 1;
           brk := List.Show;
-          List.Free;
           Closebox;
           pophp;
           if brk then goto nextmsg;
           // test if user has selected 'gesamte Nachricht'
           if Copy(List.GetSelection,2,10)=LeftStr(getres2(2440,10),10) then MimeViewer.UseInternal;
+          List.Free;
         end;
       mpMulti:
         begin
@@ -1564,6 +1564,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.63  2000/12/29 10:46:42  mk
+  - fixed bug in readmsg
+
   Revision 1.62  2000/12/25 14:02:42  mk
   - converted Lister to class TLister
 
