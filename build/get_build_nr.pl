@@ -47,7 +47,7 @@
 
   while (<InFile>) {
 
-    if (s/\%version\%/$MAINVER\.$SUBVER/ig) {  }
+    s/\%version\%/$MAINVER\.$SUBVER/ig;
     s/\%release\%/$BUILD/ig;
     s/\%compopts\%/$OPTS/ig; 
 
@@ -57,12 +57,18 @@
   close(InFile);
   close(OutFile);
 
-print "export OPENXP_MAINVER=$MAINVER\n";
-print "export OPENXP_SUBVER=$SUBVER\n";
-print "export OPENXP_BUILD=$BUILD\n";
-print "export OPENXP_RELEASE=$RELEASE\n";
-print "export OXP_VER=$MAINVER.$SUBVER-$BUILD\n";
-print "export OXP_OPTS='$OPTS'\n";
+if ($^O eq "MSWin32") {
+  print "SET OXP_VER=$MAINVER.$SUBVER-$BUILD\n";
+  print "SET OXP_OPTS=$OPTS\n";
+} else
+{
+  print "export OPENXP_MAINVER=$MAINVER\n";
+  print "export OPENXP_SUBVER=$SUBVER\n";
+  print "export OPENXP_BUILD=$BUILD\n";
+  print "export OPENXP_RELEASE=$RELEASE\n";
+  print "export OXP_VER=$MAINVER.$SUBVER-$BUILD\n";
+  print "export OXP_OPTS='$OPTS'\n"; 
+}
 
 $VERZ = $ENV{'TEMP'};
 if (!$VERZ) { $VERZ = '/tmp' } 
