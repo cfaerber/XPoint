@@ -2085,7 +2085,7 @@ begin
         new(sData);
         fillchar(sData^,sizeof(sData^),0);
         if aktdispmode in [10..19] then begin
-          get_bezug(pm,repto,reptoanz,dummy,sData,false);
+          get_bezug(pm,repto,reptoanz,dummy,Pointer(sData),false);
           if repto<>'' then empf:=repto;
           end;
         hf:='';
@@ -2132,6 +2132,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.71  2000/10/28 22:53:13  mk
+  - Workaround for VP Bug
+
   Revision 1.70  2000/10/22 21:58:59  mk
   - case of .pp and .epp is now UnixFS dependent
 
