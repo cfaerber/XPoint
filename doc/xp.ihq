@@ -335,6 +335,9 @@ angezeigt.
 
    /   Schnellsuche
 
+  ^G   markiert alle User, die zur gleichen Gruppe
+       geh”ren wie das gew„hlte User.
+
   ^Y   Die n„chste Trennzeile wird angesprungen.
 
   ^W   schaltet die automatische Weiterschaltung ein

@@ -1038,15 +1038,21 @@ begin
 end;
 
 procedure _mark_group;
-var grnr : longint;
+var grnr,g : longint;
+    feld   : string[7];  
 begin
   moment;
   GoP;
-  dbRead(dispdat,'gruppe',grnr);
+  if dispdat=ubase then feld:='Adrbuch'
+    else feld:='Gruppe';
+  dbRead(dispdat,feld,grnr);
+  if dispdat=ubase then grnr:=byte(grnr);
   dbGoTop(dispdat);
-  while (bmarkanz<maxbmark) and not dbEOF(dispdat) do begin
-    if dbReadInt(dispdat,'gruppe')=grnr then
-      UBAddMark(dbRecno(dispdat));
+  while (bmarkanz<maxbmark) and not dbEOF(dispdat) do
+  begin
+    dbRead(dispdat,feld,g);
+    if dispdat=ubase then g:=byte(g);
+    if g=grnr then UBAddMark(dbRecno(dispdat));
     dbSkip(dispdat,1);
     end;
   if bmarkanz=maxbmark then
@@ -1504,6 +1510,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.4  2000/07/26 19:09:45  jg
+  - Userfenster: Strg+G markiert gesamte Adressbuchgruppe
+
   Revision 1.25.2.3  2000/07/11 16:26:41  jg
   - Bugfix: Wiedervorlage-Umschalten im Lister
 
