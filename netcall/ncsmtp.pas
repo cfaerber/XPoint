@@ -72,8 +72,8 @@ type
 
     { -------- SMTP-Zugriffe }
 
-    procedure PostMail(Mail: TStringList; const From, ToStr: String);
-    procedure PostPlainRFCMails(Mail: TStringList);
+    procedure PostMail(Mail: TStringList; const EnvelopeFrom, EnvelopeTo: String);
+    procedure PostPlainRFCMails(Mail: TStringList; EnvelopeFrom: String);
     function GetFQDomain(Mail: TStringList): String;
   end;
 
@@ -194,12 +194,12 @@ begin
   inherited Disconnect;
 end;
 
-procedure TSMTP.PostMail(Mail: TStringList; const From, ToStr: String);
+procedure TSMTP.PostMail(Mail: TStringList; const EnvelopeFrom, EnvelopeTo: String);
 var
   s: String;
   i: Integer;
 begin
-  SWriteln(SMTPFROMSIGN + From);
+  SWriteln(SMTPFROMSIGN + EnvelopeFrom);
   SReadln(s);
   case ParseResult(s) of
     553: raise ESMTP.Create(res_connect6);  // sender field not properly set
@@ -208,7 +208,7 @@ begin
     raise ESMTP.CreateFmt(res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
   end;
 
-  SWriteln(SMTPTOSIGN + ToStr);
+  SWriteln(SMTPTOSIGN + EnvelopeTo);
   SReadln(s);
   if ParseResult(s) <> 250 then
     raise ESMTP.CreateFmt(res_connect5, [ErrorMsg]); // Mail konnte nicht verschickt werden
@@ -259,7 +259,7 @@ begin
   Dec(ToLine);
 end;
 
-procedure TSMTP.PostPlainRFCMails(Mail: TStringList);
+procedure TSMTP.PostPlainRFCMails(Mail: TStringList; EnvelopeFrom: String);
 const
   SMTPHeaderLines = 4;
 var
@@ -272,7 +272,7 @@ begin
   begin
     I := ParseHeader(Mail, I, I + SMTPHeaderLines, From, Recip);
     Output(mcInfo, res_postmsg, [iMail, ((I + 2) / Mail.Count * 100)]);
-    PostMail(Mail, From, Recip);
+    PostMail(Mail, iifs(EnvelopeFrom <> '', EnvelopeFrom, From), Recip);
     Inc(I); Inc(iMail);
   end;
   if Pos(SMTPQUITSIGN, Mail[Mail.Count - 1]) <> 0 then
@@ -293,6 +293,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2001/08/27 09:18:08  ma
+  - Envelope-From is server mail address now even if From has been changed
+    by roles or other feature
+  - this way mails with changed From will be accepted even by servers that
+    expect "their" email address in outgoing mail
+  - should be made configurable
+
   Revision 1.9  2001/08/11 23:06:44  mk
   - changed Pos() to cPos() when possible
 

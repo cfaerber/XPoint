@@ -118,7 +118,7 @@ begin
 
     SMTP.Connect(SMTP.GetFQDomain(List));
 
-    SMTP.PostPlainRFCMails(List);
+    SMTP.PostPlainRFCMails(List, bp^.UserName);
 
     SMTP.Disconnect;
   except
@@ -273,6 +273,13 @@ end.
 
 {
   $Log$
+  Revision 1.20  2001/08/27 09:18:08  ma
+  - Envelope-From is server mail address now even if From has been changed
+    by roles or other feature
+  - this way mails with changed From will be accepted even by servers that
+    expect "their" email address in outgoing mail
+  - should be made configurable
+
   Revision 1.19  2001/08/11 23:06:44  mk
   - changed Pos() to cPos() when possible
 
