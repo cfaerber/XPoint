@@ -219,7 +219,7 @@ begin
           p:=pos('=',s);
           if (p=0) or not (
             get_exclude or
-            gets(s,su,'Boxname',boxname,BoxRealLen) or
+            gets(s,su,'Boxname',boxname,BoxNameLen) or
             gets(s,su,'Pointname',pointname,25) or
             gets(s,su,'Username',username,30) or
             gets(s,su,'Domain',dummys,1) or
@@ -579,6 +579,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/11/10 05:25:47  mk
+  - - fixed Bug #116657: crash with servername >15 chars
+
   Revision 1.24  2000/11/02 21:27:04  fe
   bzip2 support added.
 
