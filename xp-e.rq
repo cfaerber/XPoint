@@ -54,7 +54,7 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3Me^ssage Reader,1cdEd^itor,1ce^Viewer,1c4M^essages,1ccA^ddresses,1c5^Netsù37,-,1c6Net^call,1c7P^hone feesù39,1cb^Terminal,-,1c9^Password,1caL^anguage
 29  Brettindex,1d1^Rebuild,1d2^Alphabetic
 30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search    ^@N,1e8^Lookup     @N
-31  Fido,1f1^Request,1f2^File listsù32,1f3File ^Areasù38,1f4^Crash,1f5^Nodelistsù30,1f6^Options
+31  Fido,1f1^Request,1f2^File listsù32,1f3File-^Echosù38,1f4^Crash,1f5^Nodelistsù30,1f6^Options
 32  Fidoliste,201^Read,202^Delete,203^Search
 33  Sonstiges,211Re-link ^References,212Read ^MsgIDs,213^Test Messagebase,214Read ^dates,215Newsgrp ^index..ù29
 34  Pointlist,221^Activate,222^Read diff
@@ -1220,8 +1220,8 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 7    Reply-To recipient :~
 8    Original recipient :~
 9    Recipient          :~
-10   --- all (without own and marked addresses) ---
-11   --- marked ---
+10   --- All (except own and marked addresses) ---
+11   --- Marked ---
 -
 
 # XP4W
@@ -1761,32 +1761,32 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 
 # XP8.INC
 
-850  Reading file echo list for %s ...
+850  Reading file-echo list for %s ...
 + 851
 # Window width
 0    50
 1    Message to %s
 # number of commands
 2    11
-3    LIST         List of all available file areas
-4    QUERY        List of all subscribed file areas
-5    UNLINKED     List of all unsubscribed file areas
-6    PAUSE        Stop file transfer
-7    RESUME       Restart file transfer
+3    LIST         List of all available file echos
+4    QUERY        List of all subscribed file echos
+5    UNLINKED     List of all unsubscribed file echos
+6    PAUSE        Temporarily stop sending files
+7    RESUME       Resume sending files
 8    HELP         Get help
 9    PWD          Change password
 10   INFO         Get status information
 11   STATUS       Get status information
 12   NOTIFY ON    Subscribe monthly file list
 13   NOTIFY OFF   Unsubscribe monthly file list
-20   New FileScan password:~
+20   New AllFix password:~
 + 852
-1    Subescibe file area %s
-2    Subscribe %s marked file areas
-3    Unsubscribe file area %s
-4    Unsubscribe %s marked file areas
-5    Unsubscribe file area %s?
-6    Unsubscribe all marked file areas?
+1    Subscribe to file echo %s
+2    Subscribe to %s marked file echos
+3    Unsubscribe file echo %s
+4    Unsubscribe %s marked file echos
+5    Unsubscribe file echo %s?
+6    Unsubscribe all marked file echos?
 7    ~^Yes ,  ^No  , ^List~
 -
 
@@ -2077,7 +2077,7 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 6    Commands as Subject
 7    Misc.
 8    Newsgroups~
-9    FileScan
+9    AllFix
 10   Name      ~
 11   Password  ~
 12   d'Bridge Areafix
@@ -2540,7 +2540,7 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 6    Sound
 7    File
 9    Message-Part ÄÄÄÄÄÄÄÄÄÄ Lines ÄÄÄÄÄÄÄÄÄÄÄÄ Filename
-10   Whole Message
+10   Whole message
 -
 2441 Extract Message-Part
 2442 Decoding binary file ...

@@ -8168,10 +8168,10 @@ feature. However, if messages to AreaFix are
 accepted, do NOT enable this feature.
 @
 705
-If the server offers a File Manager (Filescan), you
-can put its name and password here. Get the password
-from your sysop. It can be, but must not be, the same
-as your session password (point password), and/or
+If the server offers a File-Echo Manager (AllFix), 
+you can put its name and password here. Get the 
+password from your SysOp. It can be, but does not
+have to be, the same as your session password and/or
 your Area Manager password.
 @
 706
@@ -12023,20 +12023,19 @@ then use them for selecting files to request. These
 functions are for handling these lists.
 @
 13103
-<<Fido / File Areas
+<<Fido / File-Echos
 
-Many Fido boxes offer areas (newsgroups) where files
-instead of messages are exchanged. Subscribing to
-these areas is not done with the normal area manager
-but a special "file manager". But it works the same
-way.
+Many Fido systems offer echos where files instead of
+messages may be exchanged. Subscribing to these echos
+is not done with the normal area manager but with a
+special "file manager" which works in a similar way.
 
 Under this menu you will find all the functions
-necessary for administering these file areas.
-It is analog to the menu /Message/News manager
+necessary for administering these file echos. It is
+analogous to the menu /Message/News/Echo manager.
 
-The file manager must be configured first under
-/Edit/Servers/Edit/Fido, before it will function.
+The file manager must first be configured under
+/Edit/Servers/Edit/Fido before it will function.
 
 @
 13104
@@ -12285,7 +12284,7 @@ CrossPoint will warn you about the size when you send
 it.
 @
 13801
-<<Fido / File Areas / Subscribe
+<<Fido / File-Echos / Subscribe
 
 Works similarly to [/Message/News Manager/Subscribe]@11901
 but for File Areas (where files instead of messages
@@ -12293,7 +12292,7 @@ are exchanged). You order the file areas you wish to
 subscribe to.
 @
 13802
-<<Fido / File Areas / Unsubscribe
+<<Fido / File-Echos / Unsubscribe
 
 Works similarly to [/Message/News Manager/Unsubscribe]@11902
 but for File Areas (where files instead of messages
@@ -12307,7 +12306,7 @@ manager for the particular box is correctly
 configured. Check this yourself.
 @
 13803
-<<Fido / File Areas / Get List
+<<Fido / File-Echos / Get List
 
 Requests a current file area list. When received it
 is activated with [Import list].@13804
@@ -12316,7 +12315,7 @@ The file manager under /Edit/Servers/Edit/Fido must
 be configured correctly.
 @
 13804
-<<Fido / File Areas / Import list
+<<Fido / File-Echos / Import list
 The currently selected message will be read in as a
 file area list. It should therefore be one.
 
@@ -12324,21 +12323,33 @@ After being imported, the list can be used for
 subscribing to individual file areas.
 @
 13805
-<<Fido / File Areas / Others
+<<Fido / File-Echos / Import file
 
-Various other file manager commands.
-<<LIST>>, <<QUERY>>, and <<UNLINKED>> request various
-forms of file list
+Normally, a new file-echo list is activated with
+[Fido/File-Echos/Import list] whilst reading the@13804
+message which contains the list.
+
+If, for some reason, the list needs to be imported
+from a file, this option may be used to import and
+activate the list.
+@
+13806
+<<Fido / File-Echos / Others
+
+Various other file manager commands:
+
+<<LIST>>, <<QUERY>> and <<UNLINKED>> request various
+forms of file list.
+
 <<PAUSE>> and <<RESUME>> are used for temporarily
 stopping all subscribed file areas; useful for
 example if you go on holiday.
 
-<<PWD>> changes the Filemanager-Pass word. Wait for
+<<PWD>> changes the Filemanager password. Wait for
 the confirmation of the change before you change the
 pass word entry under /Edit/Servers/Edit/Fido and
-send off more requests.
-PWD does <<not>> work with the filemanager <<AllFix>>,
-which has a different command.
+send off more requests. PWD does <<not>> work with the
+filemanager <<AllFix>>, which has a different command.
 
 <<INFO>> and <<STATUS>> both do the same thing, some
 use one, some the other (see HELP).
