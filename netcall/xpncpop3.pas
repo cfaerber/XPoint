@@ -258,17 +258,18 @@ begin
         {$ENDIF }
         end;
     end;
+    List.Free;
+
+    Debug.DebugLog('xpncpop3', 'UIDLs speichern', DLDebug);
+    if POP.UIDLs.Count>0 then
+      POP.UIDLs.SaveToFile(UIDLFileName)
+    else
+      DeleteFile(UIDLFileName);
   finally
     POP.Disconnect; // seconds try if there was an exception handled
     POP.Free;
   end;
 
-  Debug.DebugLog('xpncpop3', 'UIDLs speichern', DLDebug);
-  if POP.UIDLs.Count>0 then
-    POP.UIDLs.SaveToFile(UIDLFileName)
-  else
-    DeleteFile(UIDLFileName);
-  List.Free;
   Debug.DebugLog('xpncpop3', 'ProcessincomingFiles', DLDebug);
   ProcessIncomingFiles(IncomingFiles);
 
@@ -285,6 +286,9 @@ end;
                       
 {
   $Log$
+  Revision 1.43  2003/08/29 19:34:53  mk
+  - fixed crash while writing UIDLs
+
   Revision 1.42  2003/08/04 22:48:18  mk
   - removed Edit/netze/verschiedens/mime in news
 
