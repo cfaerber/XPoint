@@ -31,8 +31,7 @@ uses
   vpsyslow,
 {$ENDIF }
 {$ifdef NCRT}
-  nCurses,
-  oCrt,
+  xpcurses,
 {$else}
   crt,
 {$endif}
@@ -64,12 +63,6 @@ procedure rahmen2d(li,re,ob,m,un:byte; txt:string); { Doppelrahmen ∫ zeichnen}
 procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
 procedure wshadow(li,re,ob,un:word);                { 8-Schatten }
 
-{$IFDEF NCRT }
-{ Erzeugt eine horizontale Linie, die links und rechts an den Rahmen passt,
-  so wie die Trenner in den Menues }
-procedure HLine1(li,re,y,attr: byte);
-{$ENDIF }
-
 procedure setrahmen(n:shortint);                 { Rahmenart fÅr wpull+ setzen }
 function  getrahmen:shortint;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
@@ -94,15 +87,14 @@ procedure Wrt2(const s:string);
 procedure FWrt(const x,y:word; const s:string);
 
 {$IFDEF Ver32 }
+{$IFNDEF NCRT }
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
 procedure SDisp(const x,y:word; const s:string);
-{$IFDEF Ver32 }
-procedure consolewrite(x,y:word; num:dword);
-{$ENDIF }
-{$ENDIF }
 
-{$IFDEF Ver32 }
+procedure consolewrite(x,y:word; num:dword);
+
+
 { Routinen fÅr 32 Bit Versionen, die den Zugriff auf den Bildschirm
   managen }
 
@@ -127,12 +119,12 @@ procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
 
+{$ENDIF NCRT }
 { FÅllt eine Bildschirmzeile mit konstantem Zeichen und Attribut
   Die Koordinaten beginnen bei 1/1.
   Die Routine ist bis jetzt unter Win32 mit API und fÅr den
   Rest mit FWrt implementiert }
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
-
 {$ENDIF }
 
 {$IFDEF Win32 }
@@ -141,10 +133,6 @@ var
     OutHandle     : THandle;
 {$ENDIF }
 
-{$ifdef NCRT}
-var
-  StdScr          : pWin;           { Standard-Bildschirm }
-{$endif}
 
 { ========================= Implementation-Teil =========================  }
 
@@ -168,7 +156,7 @@ const rchar : array[1..3,1..6] of char =
 type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
   memarr     = array[0..$1fff] of byte;
 
-{$IFDEF Ver32 }
+{$IFDEF LocalScreen }
   { Speicher den kompletten Bildschirm lokal zwischen, damit beim Auslesen
     des Fensterinhaltes nicht auf API-Funktionen zurÅckgegriffen werden mu·.
     Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
@@ -181,8 +169,12 @@ var
 var pullw   : array[1..maxpull] of record
                                      l,r,o,u,wi : byte;
                                      ashad      : byte;
+{$IFDEF NCRT }
+				     win	: TWinDesc;
+{$ELSE }
                                      savemem    : ^memarr;
                                      free       : boolean;
+{$ENDIF }
                                    end;
     rahmen  : shortint;
     oldexit : pointer;
@@ -417,8 +409,7 @@ begin
   write(s);
 {$ELSE }
   {$IFDEF NCRT }
-    GotoXY(x, y);
-    Wrt2(s);
+    StringOutXY(x, y, s);
   {$ELSE }
     FWrt(x, y, s);
     GotoXY(x+Length(s), y);
@@ -454,6 +445,12 @@ asm
 end;
 {$ELSE }
 procedure FWrt(const x,y:word; const s:string);
+{$IFDEF NCRT }
+begin
+  StringOutXY(x, y, s);
+  GotoXY(x, y);
+end;
+{$ELSE }
 var
   i, Count: Integer;
   {$IFDEF Win32 }
@@ -476,17 +473,9 @@ begin
      {$R-}
       SysWrtCharStrAtt(@s[1], Length(s), x-1, y-1, TextAttr);
     {$ELSE }
-      {$IFDEF NCRT }
-        {$IFDEF Linux }
-          nWriteScr(StdScr, x, y, TextAttr, StrDosToLinux(s));
-	{$ELSE }
-          nWriteScr(StdScr, x, y, TextAttr, s);
-	{$ENDIF }
-	GotoXY(x, y);
-      {$ELSE }
-        GotoXY(x, y);
-        Write(s); { Cursor zurÅcksetzen! }
-      {$ENDIF }
+      GotoXY(x, y);
+      Write(s); { Cursor zurÅcksetzen! }
+      GotoXY(x, y);
     {$ENDIF }
   {$ENDIF Win32 }
 
@@ -504,6 +493,7 @@ begin
        end;
   {$ENDIF LocalScreen }
   end;
+{$ENDIF }
 {$ENDIF BP }
 
 {$IFDEF Ver32}
@@ -640,17 +630,7 @@ procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
       TLocalScreen(Buffer)[i*2+1] := Char(SysReadAttributesAt(x+i, y));
     end;
   {$ELSE }
-    {$IFDEF NCRT }
-    var i: integer;
     begin
-      for i:= 0 to Count - 1 do
-      begin
-        TLocalScreen(Buffer)[i*2]:= LocalScreen^[((x-1)+(y-1)*zpz)*2];
-        TLocalScreen(Buffer)[i*2+1]:= LocalScreen^[((x-1)+(y-1)*zpz)*2+1];
-      end;
-    {$ELSE }
-    begin
-    {$ENDIF }
   {$ENDIF }
 {$ENDIF }
 end;
@@ -658,11 +638,7 @@ end;
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
 {$IFDEF NCRT }
 begin
-  {$IFDEF Linux }
-    Wrt(x, y, dup(Count, CharDosToLinux(Chr)));
-  {$ELSE }
-    Wrt(x, y, dup(Count, Chr));
-  {$ENDIF }
+    StringOutXY(x, y, dup(Count, Chr));
 end;
 {$ELSE }
 {$IFDEF Win32 }
@@ -689,6 +665,7 @@ end;
 {$ENDIF }
 {$ENDIF }
 
+{$IFNDEF NCRT }
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
 {$IFDEF Win32 }
 var
@@ -715,6 +692,7 @@ begin
     GetScreenLine(0, i, TLocalScreen(Buffer)[i*zpz*2], zpz);
 {$ENDIF }
 end;
+{$ENDIF } { NCRT }
 
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
 {$IFDEF Win32 }
@@ -772,13 +750,7 @@ begin
   GotoXY(WhereX+Length(s), WhereY);
 {$ELSE Win32 }
   {$ifdef NCRT }
-    { Wuerde ich hier FWrt nehmen (wie bei Win32), so fuehrt
-      das imho zu einem doppelten Speichern im Buffer, wenn
-      LocalScreen definiert ist. Die Sub-Routine unter
-      LocalScreen ist bei FWrt nochmals definiert. 
-      Deshalb ist unten 'xLocalScreen'. }
-    FWrt(WhereX, WhereY, s);
-    GotoXY(WhereX+Length(s), WhereY);
+    StringOut(s);
   {$else }
     Write(s);
   {$endif NCRT }
@@ -911,6 +883,24 @@ end;
 
 
 Procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
+{$IFDEF NCRT }
+const 
+  i: word = 1;
+begin
+  while (pullw[i].win.wHnd <> nil) do
+    Inc(i);
+  handle:= i;
+  with pullw[i] do begin
+    if (rahmen > 0) then
+      MakeWindow(win, x1, y1, x2, y2, text, true)
+    else
+      MakeWindow(win, x1, y1, x2, y2, text, false);
+    l:=x1; r:=x2; o:=y1; u:=y2;
+    ashad:=shad;
+    wi:=(r-l+1+shad)*2;
+  end;
+end;
+{$ELSE }
 var
   i : byte;
   j: Integer;
@@ -957,8 +947,15 @@ begin
     end;
   restcursor;
 end;
+{$ENDIF } { NCRT }
 
 Procedure wrest(handle:word);
+{$IFDEF NCRT }
+begin
+  RestoreWindow(pullw[handle].win);
+  pullw[handle].win.wHnd:= nil;
+end;
+{$ELSE }
 var
   i : byte;
   j, Offset: integer;
@@ -1004,7 +1001,7 @@ begin
     free:=true;
   end;
 end;
-
+{$ENDIF }
 
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
 var i,j : word;
@@ -1255,78 +1252,34 @@ begin
     end;
 end;
 
-{$IFDEF NCRT }
-{ Erzeugt eine horizontale Linie, die links und rechts an den Rahmen passt,
-  so wie die Trenner in den Menues }
-procedure HLine1(li,re,y,attr: byte);
-var
-  i: byte;
-begin
-  nWriteAC(StdScr,li,y,attr,nLT);
-  for i:= 1 to re-li-1 do
-    nWriteAC(StdScr,li+i,y,attr,nHL);
-  nWriteAC(StdScr,re,y,attr,nRT);
-end;
-{$ENDIF }
-
-
 procedure DoneVar;
 begin
   exitproc:=oldexit;
-{$IFDEF Ver32 }
-  FreeMem(LocalScreen);
+{$IFNDEF NCRT }
+  {$IFDEF Ver32 }
+    FreeMem(LocalScreen);
+  {$ENDIF }
 {$ENDIF }
-{$ifdef NCRT}
-  nEcho(true);
-{$endif}
 end;
 
-{$IFDEF NCRT }
-{ TestTTY - Prueft die Mindestaufloesung der Konsole. Unter
-  X wird versucht, die Konsole notfalls zu vergroessern.
-  Weiterhin wird anhand der Aufloesung geprueft, ob der
-  Puffer fuer LocalScreen ausreichend ist. }
-procedure TestTTY;
-var
-  x, y: Integer;
-begin
-  x:= nCols(StdScr); y:= nRows(StdScr);
-  if (x < 80) or (y < 25) then
-    begin
-      WriteLn('Can''t use your terminal. This program needs at least');
-      WriteLn('a screen size of 80 x 25 characters.');
-      WriteLn;
-      WriteLn('Your current settings are: ', nCols(StdScr), ' characters in ', nRows(StdScr), ' lines.');
-      Halt(2);
-    end;
-{$IFDEF LocalScreen }
-  { Pruefe, ob der Puffer fuer LocalScreen gross genug ist }
-  if (LSSize < x*y*(CharSize+AttrSize) ) then 
-    begin
-      WriteLn('Panic: LocalScreen is to small for your console.');
-      WriteLn('Please contact the development team to fix this');
-      WriteLn('problem.');
-      WriteLn('With your console the LocalScreen must have at');
-      WriteLn('least a size of ', x*y*(CharSize+AttrSize), ' bytes.');
-      halt(2);
-    end;
-{$ENDIF }
-end;
-{$ENDIF }
 
 var
   i: byte;
 begin
 {$ifdef NCRT}
-  StdScr:= oCrt.nScreen;
-  nEcho(false);
-  nCurses.meta(StdScr, 1);
-  TestTTY;
+  if not (MinimumScreen(80, 25)) then begin
+    writeln('This program needs a screen with 80x25!');
+    halt(1);
+  end;
 {$endif}
   oldexit:=exitproc;
   exitproc:=@DoneVar;
+{$IFDEF NCRT }
+  FillChar(pullw, sizeof(pullw), 0);
+{$ELSE }
   for i:=1 to maxpull do
     pullw[i].free:=true;
+{$ENDIF }
   rahmen:=1;
   fnproc[3,10]:=w_copyrght;
   wpp:=0;
@@ -1334,14 +1287,19 @@ begin
   warrcol:=7;
   selp:=seldummy;
 {$IFDEF Ver32 }
-  GetMem(LocalScreen, SizeOf(LocalScreen^));
-  {$IFDEF Win32 }
-    OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
+  {$IFNDEF NCRT }
+    GetMem(LocalScreen, SizeOf(LocalScreen^));
+    {$IFDEF Win32 }
+      OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
+    {$ENDIF }
   {$ENDIF }
 {$ENDIF }
 end.
 {
   $Log$
+  Revision 1.26  2000/05/01 18:58:55  hd
+  Einige Anpassungen an xpcurses
+
   Revision 1.25  2000/04/29 16:10:41  hd
   Linux-Anpassung
 
