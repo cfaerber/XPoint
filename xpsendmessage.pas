@@ -612,7 +612,7 @@ end;
             nobrett:=true;
             end
           else begin
-            if adr[1]='/' then dbSeek(bbase,biBrett,'A'+UpperCase(adr))
+            if FirstChar(adr)='/' then dbSeek(bbase,biBrett,'A'+UpperCase(adr))
             else dbSeek(bbase,biBrett,UpperCase(adr));
           if dbFound then
             if (CrosspostBox <> '') and (forcebox <> '') and forcedbox and ntAdrCompatible (nt_ForceBox, getBrettNT) then
@@ -2497,6 +2497,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.9  2002/08/04 14:58:32  mk
+  - fixed AV after N/W/R, Adr[1] was accessed directly
+
   Revision 1.48.2.8  2002/07/31 18:40:41  ma
   - using "email" db field instead of "user" db field for email address now
     email may be longer than 30 chars now
