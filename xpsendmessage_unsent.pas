@@ -885,30 +885,35 @@ again:
                      Empf := dbReadNStr(ubase,ub_username);
                      ebrett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
                      end
-                   else begin
+                   else
+                   begin
                      Am_ReplyTo:='';
                      dbGo(bbase,selpos);
 
-{ Brett-Vertreter }  Empf := dbReadNStr(bbase,bb_adresse);
-                     zg_flags:=dbReadInt(bbase,'flags');
-{ Schreibsperre   }  if zg_flags and 8<>0 then
-                     if (empf='') or ((empf<>'') and (zg_flags and 32<>0)) then begin
-                       rfehler(450);     { 'Schreibzugriff auf dieses Brett ist gesperrt' }
-                       goto ende;
-                     end;
-{ true=Userbrett  }  pm:=cpos('@',empf)>0;
-                     if ((empf<>'') and (zg_flags and 32=0)) and not pm then
+                     if typ = 7 then
                      begin
-{ Brettvertreter  }    pollbox := dbReadNStr(bbase,bb_pollbox);
-                       if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_ZConnect])) then
+  { Brett-Vertreter }  Empf := dbReadNStr(bbase,bb_adresse);
+                       zg_flags:=dbReadInt(bbase,'flags');
+  { Schreibsperre   }  if zg_flags and 8<>0 then
+                       if (empf='') or ((empf<>'') and (zg_flags and 32<>0)) then begin
+                         rfehler(450);     { 'Schreibzugriff auf dieses Brett ist gesperrt' }
+                         goto ende;
+                       end;
+  { true=Userbrett  }  pm:=cpos('@',empf)>0;
+                       if ((empf<>'') and (zg_flags and 32=0)) and not pm then
                        begin
-                         Am_ReplyTo:=empf;
-                         Empf := dbReadNStr(bbase,bb_brettname);
+  { Brettvertreter  }    pollbox := dbReadNStr(bbase,bb_pollbox);
+                         if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_ZConnect])) then
+                         begin
+                           Am_ReplyTo:=empf;
+                           Empf := dbReadNStr(bbase,bb_brettname);
+                         end else
+                           empf:='A'+empf;
                        end else
-                         empf:='A'+empf;
-                     end else
-                       Empf := dbReadNStr(bbase,bb_brettname);
-
+                         Empf := dbReadNStr(bbase,bb_brettname);
+                      end else
+                        Empf := dbReadNStr(bbase,bb_brettname);
+ 
                      if empf[1]<'A' then begin
                        rfehler(624);    { 'Weiterleiten in dieses Brett nicht moeglich' }
                        goto ende;
@@ -1327,6 +1332,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2002/01/06 16:13:19  mk
+  - second fix for last checkin
+
   Revision 1.14  2002/01/06 14:54:51  mk
   - fixed bug: Archivieren in ein Brett mit Uservertreter und Schreibsperre
 
