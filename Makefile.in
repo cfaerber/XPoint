@@ -43,7 +43,7 @@ mandir		= @mandir@
 # --- flags -----------------------------------------------------------
 
 PPC	= @PPC@
-PPC_FLAGS	= @PPCFLAGS@ -Funetcall -FuObjCOM -Fulinux -Fuxplib -dAUTOCONF
+PPC_FLAGS	= @PPCFLAGS@ -Funetcall -FuObjCOM -Fuxplib -Fulinux -dAUTOCONF
 PPC_LOCAL_FLAGS = -Funetcall -FuObjCOM -Fulinux -Fuxplib
 
 # --- files -----------------------------------------------------------
@@ -69,6 +69,7 @@ res: $(RESSOURCE_FILES) $(HELP_FILES)
 # --- cleaning --------------------------------------------------------
 mostlyclean:
 	rm -f $(OPENXP) openxp-*.res *.dcu *.ppu *.o
+	rm -f strip-stamp
 
 clean: mostlyclean
 	rm -f $(RC) $(IHS)
@@ -80,13 +81,21 @@ maintainer-clean: distclean
 	rm -f configure
 
 # --- install/uninstall -----------------------------------------------
-install:
-	install -D $(OPENXP) $(bindir)/$(OPENXP)
-	install -d $(datadir)/openxp/
-	install $(RESSOURCE_FILES) $(HELP_FILES) $(datadir)/openxp/
+install: bin res
+	install -D --mode=755 $(OPENXP) $(bindir)/$(OPENXP)
+	install -d -D $(datadir)/openxp/
+	install --mode=644 $(RESSOURCE_FILES) $(HELP_FILES) $(datadir)/openxp/
+
+strip: strip-stamp
+strip-stamp: bin
+	strip --strip-unneeded -R .note -R .comment $(OPENXP)
+	touch strip-stamp
 
 install-strip:
-uninstall:
+	$(MAKE) strip
+	$(MAKE) install
+
+# uninstall:
 
 # --- main programme --------------------------------------------------
 openxp$(EXEEXT): openxp.pas $(UNITS) config.h
@@ -113,17 +122,34 @@ openxp-%.hlp: doc/openxp-%.ihq $(IHS)
 
 # --- documentation ---------------------------------------------------	
 
-doc: html-doc pdf-doc text-doc
+DOC_SRC = doc/xpoint.sgm doc/xpoint.dsl doc/xpoint.cat
+DOC_HTML= doc/xpoint/book1.html
+DOC_PDF = doc/xpoint.pdf
 
-html-doc: doc/xpoint/book1.html
-pdf-doc: doc/xpoint.pdf
-text-doc:
+doc: $(DOC_HTML) $(DOC_PDF)
 
-doc/xpoint/book1.html : doc/xpoint.sgm doc/xpoint.dsl doc/xpoint.cat
-        ( cd doc; sgmltools --backend=html xpoint.sgm )
+$(DOC_HTML) : $(DOC_SRC)
+	( cd doc; sgmltools --backend=html -s xpoint.dsl xpoint.sgm )
 
-doc/xpoint.pdf : doc/xpoint.sgm doc/xpoint.dsl doc/xpoint.cat
-        ( cd doc; sgmltools --backend=pdf xpoint.sgm )
+$(DOC_PDF) : $(DOC_SRC)
+	( cd doc; sgmltools --backend=pdf -s xpoint.dsl xpoint.sgm )
+
+# --- Debian packages -------------------------------------------------	
+
+include debian/Makefile.version
+
+debian/Makefile.version : debian/Makefile.PL debian/control debian/changelog.in \
+ xpglobal.pas xpdefine.inc
+	(cd debian; make)
+
+debian: debian-is-a-directory
+
+debian-is-a-directory:
+	if [ `pwd|xargs basename` != openxp-$(DEB_UPSTREAM_VERSION) ]; then \
+	  ( ln -nfs `pwd|xargs basename` \
+	   ../openxp-$(DEB_UPSTREAM_VERSION) ) ; \
+	fi
+	cd ../openxp-$(DEB_UPSTREAM_VERSION) && dpkg-buildpackage -rfakeroot
 
 # --- files list ------------------------------------------------------
 
@@ -160,6 +186,10 @@ ${srcdir}/configure: configure.ac $(wildcard aclocal.m4)
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.12  2003/08/17 17:54:44  cl
+# - added ``make debian''
+# - fixed genration of documentation
+#
 # Revision 1.11  2003/05/15 11:07:43  cl
 # - fixed configure.in => configure.ac
 #
