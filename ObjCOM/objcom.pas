@@ -17,11 +17,10 @@ unit ObjCOM;
 
 uses Ringbuff
      {$IFDEF DOS32},Ports{$ENDIF}
-     {$IFDEF Win32},OCThread,Windows{$ENDIF}
+     {$IFDEF Win32},Windows,WinSock{$ENDIF}
      {$IFDEF Linux},Linux{$ENDIF}
      {$IFDEF OS2},OCThread,OS2Base{$ENDIF}
-     {$IFDEF Go32V2},Go32{$ENDIF}
-     {$IFDEF TCP},Sockets{$ENDIF};
+     {$IFDEF Go32V2},Go32{$ENDIF};
 
 type SliceProc = procedure;
 
@@ -79,18 +78,19 @@ var ErrorStr: String;
 function CommInit(S: String; var CommObj: tpCommObj): boolean;
  {Initializes comm object. S may be for example
   "Serial Port:1 Speed:57600"
-  "Serial IO:2f8 IRQ:4 Speed:57600"
+  "Serial /dev/ttyS1"
+  "Serial IO:2f8 IRQ:4 Speed:57600" *
   "Fossil Port:1 Speed:57600"
-  "Telnet Dest:192.168.0.1:20000"
-  "Telnet Port:20000"}
+  "Telnet 192.168.0.1:20000"
+  "Telnet Port:20000" *
+  *: not yet working.}
 
 function FossilDetect: Boolean;
 
-{$IFDEF Win32} {$I OCSWinh.inc} {$ENDIF}
+{$IFDEF Win32} {$I OCSWinh.inc} {$I OCTWinh.inc} {$ENDIF}
 {$IFDEF Linux} {$I OCSLinh.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
 {$IFDEF DOS32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
-{$IFDEF TCP} {$I OCTWinh.inc} {$ENDIF}
 
 procedure InitObjComUnit;
 
@@ -98,13 +98,12 @@ procedure InitObjComUnit;
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-uses Sysutils,Dos,Strings,Timer,Debug;
+uses Sysutils,Dos,Timer,Debug;
 
-{$IFDEF Win32} {$I OCSWin.inc} {$ENDIF}
+{$IFDEF Win32} {$I OCSWin.inc} {$I OCTWin.inc} {$ENDIF}
 {$IFDEF Linux} {$I OCSLin.inc} {$ENDIF}
 {$IFDEF Go32v2} {$I OCSDos.inc} {$I OCFDos.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2.inc} {$ENDIF}
-{$IFDEF TCP} {$I OCTWin.inc} {$ENDIF}
 
 {$IFNDEF Fossil}function FossilDetect: Boolean; begin FossilDetect:=False end;{$ENDIF}
 
@@ -365,21 +364,10 @@ end; { proc. Setflow }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function CommInit(S: String; var CommObj: tpCommObj): boolean;
- {Initializes comm object. S may be for example
-  "Serial Port:1 Speed:57600 Parameters:8N1"
-  "Serial IO:2f8 IRQ:4 Speed:57600" (Dos) *
-  "Serial /dev/ttyS1 Speed:57600 Flow:Hard" (Linux)
-  "Fossil Port:1 Speed:57600" (Dos)
-  "Telnet Dest:192.168.0.1:20000"
-  "Telnet Port:20000" *
-  *: not yet working.}
 
   function UpStr(st: String): String;
   var help: String; i: Integer;
   begin help:=st; for i:=1 to length(help)do help[i]:=UpCase(help[i]); UpStr:=help end;
-
-  function Int2Str(I: Longint): String;
-  var help: String; begin Str(I,help); Int2Str:=help end;
 
 type tConnType= (CUnknown,CSerial,CFossil,CTelnet);
 
@@ -395,12 +383,13 @@ begin
   if pos('SERIAL',UpStr(S))=1 then ConnType:=CSerial;
   if ConnType<>CUnknown then
     begin
-      IPort:=1; SPort:='/dev/modem'; ISpeed:=57600; IDataBits:=8; IStopBits:=1; CParity:='N'; IgnoreCD:=False; FlowHardware:=True;
+      IPort:=0; SPort:='/dev/modem'; ISpeed:=57600; IDataBits:=8; IStopBits:=1; CParity:='N'; IgnoreCD:=False; FlowHardware:=True;
       Delete(S,1,7); {delete 'Serial'/'Fossil'/'Telnet' from string}
-      {$IFDEF Linux} PTag:=Pos(' ',S);
-                     if PTag<>0 then begin SPort:=Copy(S,1,PTag-1); Delete(S,1,PTag)end
-                                else begin SPort:=S; S:='' end;
-      {$ENDIF}
+      if(ConnType=CTelnet){$IFDEF Linux}or(ConnType=CSerial){$ENDIF}then begin
+        PTag:=Pos(' ',S);
+        if PTag<>0 then begin SPort:=Copy(S,1,PTag-1); Delete(S,1,PTag)end
+          else begin SPort:=S; S:='' end;
+      end;
       S:=UpStr(S); Res:=0;
       while(S<>'')and(Res=0)do begin
         PTag:=Pos(' ',S); if PTag=0 then PTag:=Length(S)+1;
@@ -413,12 +402,12 @@ begin
         else if Copy(SOpt,1,8)='IGNORECD' then IgnoreCD:=True
         else if Copy(SOpt,1,4)='FLOW' then begin Delete(SOpt,1,5); FlowHardware := (SOpt<>'SOFT')end;
       end;
-      {$IFNDEF Linux} SPort:=Int2Str(IPort); {$ENDIF}
-      DebugLog('ObjCOM','P'+SPort+' S'+Int2Str(ISpeed)+' '+Int2Str(IDataBits)+CParity+Int2Str(IStopBits),1);
+      if IPort>0 then SPort:=IntToStr(IPort);
+      DebugLog('ObjCOM','P'+SPort+' S'+IntToStr(ISpeed)+' '+IntToStr(IDataBits)+CParity+IntToStr(IStopBits),1);
       if Res=0 then
         begin case ConnType of
                 {$IFDEF TCP} CTelnet: begin CommObj:=New(tpTelnetObj,Init);
-                                            Success:=tpTelnetObj(CommObj)^.Connect('')end;{$ENDIF}
+                                            Success:=tpTelnetObj(CommObj)^.Connect(SPort)end;{$ENDIF}
                 {$IFDEF Fossil} CFossil: begin CommObj:=New(tpFossilObj,Init);
                                                Success:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;{$ENDIF}
                 {$IFNDEF Linux} CSerial: begin CommObj:=New(tpSerialObj,Init); Success:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
@@ -426,14 +415,13 @@ begin
                                        Success:=tpSerialObj(CommObj)^.LOpen(SPort,ISpeed,IDatabits,CParity,IStopbits,FlowHardware)end; {$ENDIF}
               end;
               CommObj^.IgnoreCD:=IgnoreCD;
-              if not Success then ErrorStr:=CommObj^.ErrorStr;
+              if not Success then begin ErrorStr:=CommObj^.ErrorStr; Dispose(CommObj,Done)end;
         end;
     end;
   CommInit:=Success;
 end;
 
-var
-  SavedExitProc: pointer;
+var SavedExitProc: pointer;
   
 procedure ExitObjComUnit;
 begin
@@ -452,6 +440,10 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/01/03 22:28:38  ma
+  - replaced Int2Str by IntToStr
+  - TCP port working completely now (Win only)
+
   Revision 1.13  2000/12/27 13:23:33  hd
   - Fix: Modem: if echo requiered function tried to get -1 bytes
   - Fix: DSR not checked
