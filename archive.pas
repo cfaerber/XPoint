@@ -666,18 +666,6 @@ label again;
       end;
     end;
 
-    function OctVal(s:string):longint;     { Oktalstring -> Logint }
-    var l : longint;
-        n : integer;
-    begin
-      s:=trim(s);
-      l:=0;
-      for n:=1 to length(s) do
-        l:=(l shl 3) + ord(s[n]) - $30;
-      if l>=0 then OctVal:=l
-      else OctVal:=0;
-    end;
-
   begin
     secs:=OctVal(s);
     with dt do begin
@@ -996,6 +984,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/04 17:33:22  mk
+  - stapelweise ungenutze Routinen entfernt
+
   Revision 1.13  2000/07/04 10:21:36  mk
   - doppelte Routinen rausgenommen
 

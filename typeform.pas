@@ -9,29 +9,18 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-(***********************************************************)
-(*                                                         *)
-(*                      UNIT typeform                      *)
-(*                                                         *)
-(*             Strings und Typkonvertierungen              *)
-(*                                                         *)
-(***********************************************************)
 
 {$I XPDEFINE.INC }
 
 unit typeform;
 
-{  ==================  Interface-Teil  ===================  }
-
 interface
 
 uses
-  xpglobal,
-{$ifndef Linux}
- {$HINT Bitte pruefen, ob die wirklich notwendig ist!!! }
-  dos,
-{$endif}
-  sysutils;
+{$IFNDEF Linux }
+  dos, // wird fÅr den filerecord in filename() benîtigt
+{$ENDIF }
+  xpglobal, sysutils;
 
 {$IFNDEF DPMI}
   const  Seg0040 = $40;
@@ -99,7 +88,6 @@ function GetToken(var s:string; delimiter:string):string;
 function HBar(const len:byte):string;              { √ƒƒƒƒƒƒƒƒƒ...ƒƒƒƒƒƒƒƒƒ¥      }
 function Hex(const l:integer; const n:integer):string;      { Hex-Zahl mit n Stellen       }
 function HexVal(const s:string):longint;           { Hex-Val                      }
-function Hoch(const r:real; const n:integer):real;       { Hoch <-- r^n                 }
 function iif(b:boolean; l1,l2:longint):longint; { IIF Integer               }
 function iifb(b,b1,b2:boolean):boolean;         { IIF Boolean               }
 function iifc(b:boolean; c1,c2:char):char;      { IIF Char                  }
@@ -109,14 +97,9 @@ function IntQSum(const l:longint):longint;         { Quersumme                  
 function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
 function IVal(s:string):longint;             { Value Integer                }
 function Lastchar(const s:string):char;            { letztes Zeichen eines Str.   }
-function Lead(s:string):string;              { Anf.-u. Enden abschneiden  }
 function Left(const s: string; Count: integer): string;
 function Right(const s: string; Count: integer): string;
 function LoCase(const c:char):char;                { LowerCase                    }
-function Log(const b,r:real):real;           { allg. Logarithmus            }
-function Log2(const r:real):real;            { Logarithmus zur Basis 2      }
-function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
-function Log10(const r:real):real;           { Logarithmus zur Basis 10     }
 function Max(const a,b:longint):longint;          { Maximum Integer              }
 function MaxR(const a,b:real):real;                { Maximum Real                 }
 function MaxS(const a,b:string):string;            { Maximum String               }
@@ -127,12 +110,10 @@ function MinMaxR(const x,min,max:real):real;       { x -> [min,max]             
 function MinR(const a,b:real):real;                { Minimum Real                 }
 function MinS(const a,b:string):string;            { Minimum String               }
 function MultiPos(s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
-function Oct(l:longint):string;              { Longint -> Oktalstring       }
 function OctVal(s:string):longint;           { Oktalstring -> Logint        }
 function POfs(p:pointer):word;               { Offset-Anteil des Pointers   }
 function PosN(s1,s2:string; n:byte):byte;    { POS ab Stelle n              }
 function PosX(const s1,s2:string):byte;            { length(s)+1, falls pos=0     }
-function Potenz(const basis,exponent:real):real;   { allgemeine Potenz            }
 function ProgName:TFilename;                   { Name des Programms           }
 function ProgPath:TFilename;                   { Pfad des Programms           }
 function PSeg(p:pointer):word;               { Segment-Anteil des Pointers  }
@@ -148,14 +129,12 @@ function SgnR(const x:real):real;            { Signum Real                  }
 function SMatch(s1,s2:string):byte;          { Anzahl der Åbereinst. Bytes  }
 function SiMatch(s1,s2:string):byte;         { dto., ignore case            }
 function Sp(const n:integer):string;               { space$                       }
-function StrChar(const s:string; const n:byte):char;     { n-tes Zeichen aus s          }
 function Stricmp(s1,s2:string):boolean;      { UStr-Vergleich               }
 function StrS(const l:longint):string;             { "echtes" Str$, Integer       }
 function StrSn(const l:longint; const n:byte):string;    { "echtes" Str$, Integer       }
 function StrSr(const r:real; const nk:byte):string;      { Str$ auf nk, Real            }
 function StrSrn(const r:real; const vk,nk:byte):string;  { "echtes" Str$, Real          }
 function StrSrnp(const r:real; const vk,nk:byte):string; { "echtes" Str$, Real, mit DP  }
-function SwapLong(l:longint):longint;        { Byteorder umdrehen           }
 function Time:DateTimeSt;                    { dt. Zeitstring               }
 function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe gro·         }
@@ -168,22 +147,15 @@ function UStrHuge(const s:HugeString):HugeString;  { UpperString                
 function FileUpperCase(const s:string):string;
 function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
 
-Procedure bind(var l:longint; const min,max:longint);  { l:=minmax(l,min,max);    }
-Procedure bindr(var r:real; const min,max:real);   { r:=minmaxr(r,min,max);       }
 Procedure delfirst(var s:string);            { ersten Buchstaben lîschen    }
 Procedure delfirstHuge(var s:Hugestring);            { ersten Buchstaben lîschen    }
 Procedure dellast(var s:string);             { letzten Buchstaben lîschen   }
 procedure DellastHuge(var s:HugeString);
 Procedure incr(var r1:real; r2:real);        { r1:=r1+r2                    }
-Procedure iswap(var l1,l2:longint);           { l1 und l2 vertauschen        }
 Procedure LoString(var s:string);            { LowerString                  }
 Procedure release;                           { system.release abfangen      }
 Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
 Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf ParitÑt setzen  }
-{$ifndef Linux}
-Procedure SetSysDate(const d:DateTimeSt);          { Datum nach dt. String setzen }
-Procedure SetSysTime(const t:DateTimeSt);          { Zeit nach dt. String setzen  }
-{$endif}
 Procedure TruncStr(var s:string; n:byte);    { String kÅrzen                }
 Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
@@ -268,43 +240,6 @@ begin
   hoch:=x;
 end;
 
-function Log(const b,r:real):real;
-begin
-  log:=ln(r)/ln(b);
-end;
-
-
-function Log2(const r:real):real;
-begin
-  log2:=Log(2,r);
-end;
-
-
-function Log2int(const l:longint):byte;
-var i : byte;
-begin
-  log2int := 0;   { MK 12/99 }
-  for i:=0 to 31 do
-    if l and (1 shl i) <> 0 then
-      Log2int:=i;
-end;
-
-
-function Log10(const r:real):real;
-begin
-  log10:=Log(10,r);
-end;
-
-
-function potenz(const basis,exponent:real):real;
-begin
-  if basis=0 then
-    potenz:=0
-  else
-    potenz:=exp(exponent*ln(basis));
-end;
-
-
 function Round(const r:real; const nk:integer):real;
 begin
   round:=int(r*hoch(10,nk)+0.5)/hoch(10,nk);
@@ -352,20 +287,6 @@ begin
   if x<min then MinMax:=min
   else if x>max then MinMax:=max
   else MinMax:=x;
-end;
-
-
-procedure bind(var l:longint; const min,max:longint);
-begin
-  if l<min then l:=min
-  else if l>max then l:=max;
-end;
-
-
-procedure bindr(var r:real; const min,max:real);
-begin
-  if r<min then r:=min
-  else if r>max then r:=max;
 end;
 
 
@@ -426,19 +347,6 @@ begin
   formr:=st;
 end;
 
-
-function Lead(s:string):string;
-begin
-  if pos('.',s)>0 then
-    while s[length(s)]='0' do      { terminiert, da s[0]<>'0' fÅr s='' }
-      dellast(s);
-  if s[length(s)]='.' then dellast(s);
-  while (s<>'') and (s[1]='0') do
-    delfirst(s);
-  Lead:=s;
-end;
-
-
 function Time:DateTimeSt;
 begin
   Time:= FormatDateTime('hh:nn:ss', Now);
@@ -448,26 +356,6 @@ function Date:DateTimeSt;
 begin
   Date:= FormatDateTime('dd.mm.yyyy', Now);
 end;
-
-{$ifdef}
-Procedure SetSysTime(const t:DateTimeSt);
-VAR st,mi,se,res : Integer;
-begin
-  Val(Copy(t,1,2),st,res);
-  Val(Copy(t,4,2),mi,res);
-  Val(Copy(t,7,2),se,res);
-  settime(st,mi,se,0);
-end;
-
-Procedure SetSysDate(const d:DateTimeSt);
-VAR t,m,j,res : Integer;
-begin
-  Val(Copy(d,1,2),t,res);
-  Val(Copy(d,4,2),m,res);
-  Val(Copy(d,7,4),j,res);
-  setdate(j,m,t);
-end;
-{$endif}
 
 function Dup(const n:integer; const c:Char):string;
 VAR h : String;
@@ -820,52 +708,14 @@ end;
 {$endif} { FPC }
 
 
-{$IFDEF NOASM }
 function Mid(const s:string; const n:byte):string;
 begin
-  mid:=copy(s,n,255);
+  mid:=copy(s,n,length(s));
 end;
-{$ELSE }
-function Mid(const s:string; const n:byte): string; {&uses esi,edi} assembler;
-asm
-        cld
-        mov     edi, @result
-        mov     esi, s
-        xor     edx, edx
-        xor     ecx, ecx
-        lodsb
-        cmp     al, n
-        jnb @3
-        mov     al, cl              { n > als LÑnge von s }
-        stosb
-        jmp @2
-@3:     mov     dl, al
-        sub     al, n
-        inc     al
-        jnbe @4
-        dec     al                  { StringlÑnge 255, n = 0 }
-@4:     cmp     al, dl
-        jc      @1
-        mov     al, dl
-@1:     mov     cl, al
-        stosb
-        sub     edx, ecx
-        add     esi, edx
-        rep     movsb
-@2:
-{$ifdef FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$else}
-end;
-{$endif}
-
-{$ENDIF}
 
 function Range(const c1,c2:char):string;
-
 var s : string;
     c : char;
-
 begin
   s:='';
   for c:=c1 to c2 do
@@ -1093,13 +943,6 @@ end;
 {$ENDIF}
 
 
-Procedure iswap(var l1,l2:longint);
-var h : longint;
-begin
-  h:=l1; l1:=l2; l2:=h;
-end;
-
-
 function fitpath(path:TFilename; n:integer):TFilename;
 var dir  : TFilename;
     l    : integer;
@@ -1227,12 +1070,6 @@ begin
 end;
 
 
-function StrChar(const s:string; const n:byte):char;     { n-tes Zeichen aus s }
-begin
-  StrChar:=s[n];
-end;
-
-
 Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
 var p : byte;
 begin
@@ -1287,25 +1124,6 @@ begin
   UpString(s1);
   UpString(s2);
   Stricmp:=(s1=s2);
-end;
-
-
-function Oct(l:longint):string;        { Longint -> Oktalstring }
-var s   : string;
-    sgn : string[1];
-begin
-  s:='';
-  if l<0 then begin
-    sgn:='-';
-    l:=-l;
-    end
-  else sgn:='';
-  while l<>0 do begin
-    s := chr((l and 7) + $30) + s;
-    l := (l shr 3);
-    end;
-  if s='' then Oct:='0'
-  else Oct:=sgn+s;
 end;
 
 
@@ -1383,19 +1201,6 @@ begin
     inc(p);
   SiMatch:=p;
 end;
-
-
-function SwapLong(l:longint):longint;        { Byteorder umdrehen }
-type sr = record
-            w1,w2 : smallword;
-          end;
-var  m  : longint;
-begin
-  sr(m).w1:=swap(sr(l).w2);
-  sr(m).w2:=swap(sr(l).w1);
-  SwapLong:=m;
-end;
-
 
 
 { Mailadresse (mit @ in der Mitte) in einem String erkennen und ausschneiden }
@@ -1552,6 +1357,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/07/04 17:33:23  mk
+  - stapelweise ungenutze Routinen entfernt
+
   Revision 1.50  2000/07/04 17:11:17  hd
   - Funktion Long entfernt
 
