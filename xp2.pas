@@ -172,7 +172,7 @@ begin
   sclines:=getscreenlines;
   for i:=1 to n do begin
     writeln(getres2(202,i));
-    if (i+3) mod (sclines-1)=0 then
+    if (i+5) mod (sclines-1)=0 then
       if not outputredirected then begin
         write(getres(12));
         get(t,curon);
@@ -1086,6 +1086,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.13  2000/03/02 00:17:23  rb
+  Hilfe bei XP /? fÅr Rechenzeitfreigabe Åberarbeitet
+
   Revision 1.12  2000/03/01 23:49:02  rb
   Rechenzeitfreigabe komplett Åberarbeitet
 

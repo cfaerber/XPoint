@@ -298,35 +298,37 @@ K (c) '93-98 Peter Mandrella
 8    ~          /sd      verhindert das Leeren des Smartdrive-Schreibcaches
 9    ~          /ss      Screensaver aktivieren
 10   ~          /trace   schaltet Script-Protokoll ein (XPOINT.DOC, Kap. 8.1)
-11   ~          /w[0]    Windows-Rechenzeit-Freigabe (/w an /w0 aus)
-12   ~          /os2x    Rechenzeit-Freigabe unter OS/2 (x = a bis d)
-13   ~          /nolock  keine šberprfung auf mehrfachen Programmstart
-14
-15   ~          /k:X     Taste X bergeben (fr Tastenmakro)
-16   ~          /pw:xx   Startpaáwort xx bergeben
-17   ~          /z:nn    stellt nn Bildschirmzeilen ein
-18   ~          /l:X     Sprache w„hlen (z.B. /l:D fr deutsch)
-19
-20   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfhren
-21   ~          /n:*             Netcall bei allen Boxen
-22   ~          /nr:BOX          Relogin-Netcall bei BOX
-23   ~          /user:BOX:NAME   Username bei BOX setzen
-24   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
-25   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
-26
-27   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
-28   ~          /f:<Datei>       Schriftdatei laden
-29   ~          /gd:<Datei>      Gebhrendatei w„hlen (s. FIDO.DOC)
-30
-31   ~          /ip:PUF   liest die angegebene Pufferdatei ein
-32   ~          /ipe:PUF  liest Puffer mit Empfangsdatum = Erstelldatum ein
-33   ~          /g        tr„gt /ip- und /ips-Nachrichten als 'gelesen' ein.
-34   ~          /eb       Empfangsbest„tigungen (Zusatzschalter fr /ip..)
-35   ~          /r        Nachrichten-Reorganisation durchfhren
-36   ~          /pack     /Wartung/Packen durchfhren
-37   ~          /t:n      Timing-Liste Nr. n ausfhren
-38
-39   ~          /x        Programm beenden
+11   ~          /w0      keine Rechenzeit-Freigabe
+12   ~          /w, /w1  Win & OS/2-Rechenzeit-Freigabe (Timeslice)
+13   ~          /w2      Win & OS/2-Rechenzeit-Freigabe (konservativ)
+14   ~          /os2x    Art der Rechenzeit-Freigabe unter OS/2 (x = a bis d)
+15   ~          /nolock  keine šberprfung auf mehrfachen Programmstart
+16
+17   ~          /k:X     Taste X bergeben (fr Tastenmakro)
+18   ~          /pw:xx   Startpaáwort xx bergeben
+19   ~          /z:nn    stellt nn Bildschirmzeilen ein
+20   ~          /l:X     Sprache w„hlen (z.B. /l:D fr deutsch)
+21
+22   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfhren
+23   ~          /n:*             Netcall bei allen Boxen
+24   ~          /nr:BOX          Relogin-Netcall bei BOX
+25   ~          /user:BOX:NAME   Username bei BOX setzen
+26   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
+27   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
+28
+29   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
+30   ~          /f:<Datei>       Schriftdatei laden
+31   ~          /gd:<Datei>      Gebhrendatei w„hlen (s. FIDO.DOC)
+32
+33   ~          /ip:PUF   liest die angegebene Pufferdatei ein
+34   ~          /ipe:PUF  liest Puffer mit Empfangsdatum = Erstelldatum ein
+35   ~          /g        tr„gt /ip- und /ips-Nachrichten als 'gelesen' ein.
+36   ~          /eb       Empfangsbest„tigungen (Zusatzschalter fr /ip..)
+37   ~          /r        Nachrichten-Reorganisation durchfhren
+38   ~          /pack     /Wartung/Packen durchfhren
+39   ~          /t:n      Timing-Liste Nr. n ausfhren
+40
+41   ~          /x        Programm beenden
 -
 
 203  Fehler: Kann %s-Verzeichnis nicht anlegen!

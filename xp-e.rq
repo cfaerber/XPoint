@@ -294,35 +294,37 @@ K (c) '93-96 Peter Mandrella
 7    ~          /sd     prevents automatic Smartdrive cache flushing
 8    ~          /ss     start screen saver at once
 9    ~          /trace  enable script protocol (see XPOINT.DOC, 8.1)
-10   ~          /w[0]   free unused system resources (time) for Win (/w=on /w0=off) 
-11   ~          /os2x   free unused system resources (time) under OS/2
-12   ~                  (x ranges from a to d)
-13
-14   ~          /k:X    send key X (for key macro)
-15   ~          /pw:xx  enter start password xx
-16   ~          /z:nn   set nn screen lines
-17   ~          /l:X    set language (e.g. /l:E for Englisch)
-18
-19   ~          /n:Server[:hh:mm]   start netcall to Server
-20   ~          /n:*                netcall to all Servers
-21   ~          /nr:Server          relogin netcall to Server
-22   ~          /user:Server:NAME   set user name at Server to NAME
-23   ~          /ips:Server:PUFFER  import and send puffer file
-24   ~          /autostart:...      start program by time range
-25
-26   ~          /av:<File>          view archive file
-27   ~          /f:<File>[.FNT]     load font file
-28   ~          /gd:<File>          select phone fee file (see FIDO.DOC)
-29
-30   ~          /ip:PUF   import puffer file
-31   ~          /ipe:PUF  import puffer file with receive date = creation date
-32   ~          /g        sets /ip and /ips messages to status 'read'
-33   ~          /eb       return receipts (for /ip..)
-34   ~          /r        start messagebase reorganization
-35   ~          /pack     do /Reorg/Pack
-36   ~          /t:n      start timing list no. n
-37
-38   ~          /x        quit program
+10   ~          /w0     don't free unused system resources
+11   ~          /w, /w1 free unused system resources for Win & OS/2 (timeslice)
+12   ~          /w2     free unused system resources for Win & OS/2 (conservative)
+13   ~          /os2x   kind of freeing of free unused system resources (time)
+14   ~                  under OS/2 (x ranges from a to d)
+15
+16   ~          /k:X    send key X (for key macro)
+17   ~          /pw:xx  enter start password xx
+18   ~          /z:nn   set nn screen lines
+19   ~          /l:X    set language (e.g. /l:E for Englisch)
+20
+21   ~          /n:Server[:hh:mm]   start netcall to Server
+22   ~          /n:*                netcall to all Servers
+23   ~          /nr:Server          relogin netcall to Server
+24   ~          /user:Server:NAME   set user name at Server to NAME
+25   ~          /ips:Server:PUFFER  import and send puffer file
+26   ~          /autostart:...      start program by time range
+27
+28   ~          /av:<File>          view archive file
+29   ~          /f:<File>[.FNT]     load font file
+30   ~          /gd:<File>          select phone fee file (see FIDO.DOC)
+31
+32   ~          /ip:PUF   import puffer file
+33   ~          /ipe:PUF  import puffer file with receive date = creation date
+34   ~          /g        sets /ip and /ips messages to status 'read'
+35   ~          /eb       return receipts (for /ip..)
+36   ~          /r        start messagebase reorganization
+37   ~          /pack     do /Reorg/Pack
+38   ~          /t:n      start timing list no. n
+39
+40   ~          /x        quit program
 -
 
 203  Error: Can't create directory %s !
