@@ -1563,7 +1563,7 @@ var t,lastt: taste;
         Box := dbReadNStr(bbase, bb_pollbox);      { Pollbox des Brettes     }
         // Hilfe nachtragen
 
-        Filename := GetServerFileName(Box, '.MID');
+        Filename := GetServerFileName(Box, extMid);
         if Filename = '' then
           break; // Meldung: falsche Box!!
         if FileExists(OwnPath + Filename) then
@@ -2423,6 +2423,9 @@ end;
 
 {
   $Log$
+  Revision 1.122.2.6  2003/08/23 17:38:53  mk
+  - use extMid instead of '.MID'
+
   Revision 1.122.2.5  2003/04/25 20:52:23  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
