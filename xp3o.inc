@@ -931,9 +931,9 @@ begin
             if empfanz>1 then inc(mnt,longint(empfnr) shl 24);
             if ((empfaenger[1]='A') and ntDomainReply(netztyp) and
               IsOwnDomain(ref)) or
-              (filterattr and fattrHilite<>0) or 
+              (filterattr and fattrHilite<>0){ or  }
               { Nachricht mit Priority High und Highest hevorheben }
-              (hdp^.Priority in [1..2]) 
+{              (hdp^.Priority in [1..2])  }
             then begin
               attrtxt(col.colmboxhigh);
               showbetreff;
@@ -1142,6 +1142,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6.2.1  2000/04/09 11:39:26  mk
+  - Priority wird nicht mehr hervorgehoben
+
   Revision 1.6  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 
