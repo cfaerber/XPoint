@@ -689,13 +689,15 @@ var t,lastt: taste;
     begin
       if ReadJNesc(getreps(404,strs(markanz)),true,brk)   { '%s markierte Nachrichten zitieren' }
       and not brk then begin
+        if force_QuoteMsk = '' then
+          Force_QuoteMsk := QuoteSchab(pm);
         mquote:=false;
         multiquote:=true;
         SortMark;
         mqfirst:=marked^[0].recno;
         for i:=0 to markanz-1 do begin
           dbGo(mbase,marked^[i].recno);
-          extract_msg(3,QuoteSchab(pm),fn,true,1);
+          extract_msg(3,force_quotemsk,fn,true,1);
           end;
         if not markaktiv then UnsortMark;
         GoP;
@@ -813,14 +815,15 @@ var t,lastt: taste;
       pm:=not ReadJNesc(getres(431),false,brk);   { 'Der Absender wnscht eine PM-Antwort - trotzdem ”ffentlich antworten' }
       if brk then exit;
       end;
-    OrgQuote := Quote;
+
+    mquote:=(quote=1); mqfirst:=0;
     if quote=2 then
       if markanz=0 then
-        quote:=1
-      else
-        if not multiquote(brk) and brk then exit;
-      {  dbGo(mbase,marked^[0]); }
-    mquote:=(quote=1); mqfirst:=0;
+      begin
+        quote:=1;
+        mquote := true;
+      end;
+
     betr:='';
     rt0:='';
     realname:='';
@@ -961,6 +964,8 @@ var t,lastt: taste;
     if not usermsg then
       dbClose(d);
 
+    if (Quote= 2) and (not multiquote(brk) and brk) then exit;
+
     if (dispmode>=10) and (dispmode<=19) then begin
       dbRead(mbase,'typ',typ);
       dbRead(mbase,'betreff',betr);
@@ -1038,7 +1043,7 @@ var t,lastt: taste;
       { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
         Multipart-Daten vorhanden, wir faken uns also welche, damit
         die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
-      if (qmpdata = nil) and (Quote < 2) and (mimetyp <> 'text/plain') then
+      if (qmpdata = nil) and mquote and (mimetyp <> 'text/plain') then
       begin
         pushhp(94);
         fillchar(mpdata,sizeof(qmpdata),0);
@@ -2014,6 +2019,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.8  2000/10/26 16:21:04  mk
+  - Fixed Bug #116156: falsche Quoteschablone bei Mehrfachquotes
+
   Revision 1.6.2.7  2000/10/26 08:52:53  mk
   - MIME-Fixes (merged from 3.30
 
