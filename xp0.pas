@@ -601,6 +601,7 @@ type   textp  = ^text;
                   SizeNego  : boolean;     { UUCP: size negotiation    }
                   UUsmtp    : boolean;     { UUCP: SMTP                }
                   ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
+                  ReplaceDupes: boolean;   { Replace messages in db with same msgid as incoming message }
                   eFilter   : string;  { Eingangsfilter            }
                   aFilter   : string;  { Ausgangsfilter            }
                   SysopNetcall : boolean;  { Netzanruf-Bericht im S.M. }
@@ -1231,6 +1232,11 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.8  2002/07/31 19:30:35  ma
+  - new feature: kill/prevent dupes when sorting in messages
+    (in fact a replaceown variant)
+    taken from v3.9
+
   Revision 1.158.2.7  2002/07/22 15:49:59  mk
   - removed variable maxmarklist, because this is a dupe to maxmark
     this results in maximum 20000 marked messages instead of 5000 before

@@ -4514,10 +4514,17 @@ stattdessen /Wartung/Server-Wechsel verwenden.
 8051
 <<[x]>> -> Eingehende Nachrichten werden daraufhin ber-
        prft, ob sie sich bereits in der Datenbank
-       befinden und es sich um selbstgeschriebene
-       Nachrichten handelt. Trifft beides zu, wird
-       die lokale Kopie gel”scht und durch die ein-
-       gehende Nachricht ("Rckl„ufer") ersetzt.
+       befinden. Ist das der Fall, wird die lokale
+       Kopie gel”scht und durch die eingehende
+       Nachricht ersetzt.
+
+       Diese Einstellung ist insbesondere bei RFC-
+       Boxen sinnvoll, um duplizierte Kommentar-
+       baumzweige (durch Rckl„ufer eigener Nach-
+       richten) und Dupes bei Crosspostings zu
+       vermeiden. Die Aktivierung dieses Schalters
+       verlangsamt allerdings das Einlesen der
+       Nachrichten nach einem Netcall.
 
        Die Nachrichten werden unabh„ngig von ihrem
        Haltestatus und der Haltezeit des Brettes bzw.
@@ -4525,20 +4532,27 @@ stattdessen /Wartung/Server-Wechsel verwenden.
        richt auf "Halten" gesetzt worden sein, ber-
        nimmt die eingehende Nachricht diesen Status.
 
-       Diese Einstellung ist insbesondere bei RFC-
-       Boxen sinnvoll, um duplizierte Kommentar-
-       baumzweige zu vermeiden. Die Aktivierung
-       dieses Schalters verlangsamt allerdings das
-       Einlesen der Nachrichten nach einem Netcall.
+<<[ ]>> -> OpenXP legt ggf. Duplikate an.
+
+Die Einstellung wird bei allen Netztypen untersttzt,
+ist i.d.R. aber nicht bei allen Netztypen gleich
+sinnvoll.
+@
+8052
+<<[x]>> -> Wie vorherige Option, aber es werden ggf.
+       ausschlieálich eigene Nachrichten ersetzt.
 
 <<[ ]>> -> OpenXP legt beim Eintreffen selbst-
        geschriebener Nachrichten Duplikate an.
+
+Diese Option hat keinen Effekt, falls die Option
+"Dupes ersetzen" ausgew„hlt ist, da diese allgemeiner
+ist.
 
 Die Einstellung wird bei allen Netztypen untersttzt,
 ist i.d.R. aber nicht bei allen Netztypen gleich
 sinnvoll, da es in manchen Netzen (z.B. Fido) i.d.R.
 gar keine "Rckl„ufer" gibt.
-
 @
 190
 Dies ist der Name der Serverbox; genauer gesagt: der

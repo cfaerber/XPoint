@@ -1416,7 +1416,7 @@
     var f : file;
     begin
       assign(f,ownpath+old_dname+ext);
-      if existf(f) then 
+      if existf(f) then
       begin
         SafeDeleteFile(ownpath+dname+ext);
         rename(f,ownpath+dname+ext);
@@ -1605,7 +1605,7 @@
   begin
     add:=0;
     dialog(ival(getres2(924,0)),
-           14+iif(ntNetcall(nt),excludes+iif(nt=nt_Fido,1,3),0),getres2(924,1),x,y);
+           15+iif(ntNetcall(nt),excludes+iif(nt=nt_Fido,1,3),0),getres2(924,1),x,y);
     dbRead(d,'script',flags);            { 'Verschiedene Einstellungen' }
     av:= dbReadStr(d,'AVertreter');
     pv:= dbReadStr(d,'PVertreter');
@@ -1648,8 +1648,9 @@
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
       maddtext(3,12+add,getres2(924,11),col.coldiahigh);    { 'Sonstiges' }
-      maddbool(20,12+add,getres2(924,20),ReplaceOwn); mhnr(8051);  { 'lokale Kopien ersetzen' }
-      maddbool(20,13+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
+      maddbool(20,12+add,getres2(924,20),ReplaceDupes); mhnr(8051);  { 'Dupes verhindern' }
+      maddbool(20,13+add,getres2(924,21),ReplaceOwn); mhnr(8052);    { 'Ruecklaeufer-Dupes verhindern' }
+      maddbool(20,14+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
       freeres;
       readmask(brk);
       enddialog;
@@ -1676,7 +1677,7 @@
       av,pv : string;
   begin
     add:=0;
-    dialog(ival(getres2(924,0)),13+excludes,getres2(924,1),x,y);
+    dialog(ival(getres2(924,0)),14+excludes,getres2(924,1),x,y);
     dbRead(d,'script',flags);            { 'Verschiedene Einstellungen' }
     av:= dbReadStr(d,'AVertreter');
     pv:= dbReadStr(d,'PVertreter');
@@ -1708,8 +1709,9 @@
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
       maddtext(3,11+add,getres2(924,11),col.coldiahigh);    { 'Sonstiges' }
-      maddbool(20,11+add,getres2(924,20),ReplaceOwn); mhnr(8051);  { 'lokale Kopien ersetzen' }
-      maddbool(20,12+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
+      maddbool(20,11+add,getres2(924,20),ReplaceDupes); mhnr(8051);  { 'Dupes verhindern' }
+      maddbool(20,12+add,getres2(924,21),ReplaceOwn); mhnr(8052);    { 'Ruecklaeufer-Dupes verhindern' }
+      maddbool(20,13+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
       freeres;
       readmask(brk);
       enddialog;
@@ -2371,6 +2373,11 @@
 
 {
   $Log$
+  Revision 1.48.2.11  2002/07/31 19:30:36  ma
+  - new feature: kill/prevent dupes when sorting in messages
+    (in fact a replaceown variant)
+    taken from v3.9
+
   Revision 1.48.2.10  2002/07/31 18:48:07  ma
   - fix last commit, line got lost
 

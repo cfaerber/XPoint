@@ -2181,7 +2181,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 17   fr AMs~
 18   fr PMs~
 19   Aufruf
-20   lokale Kopien ersetzen
+20   Dupes verhindern
+21   Rckl„ufer-Dupes verhindern
 + 925
 1    netzspezifische Einstellungen
 2    Message-IDs
@@ -3995,6 +3996,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.6  2002/07/31 19:30:35  ma
+# - new feature: kill/prevent dupes when sorting in messages
+#   (in fact a replaceown variant)
+#   taken from v3.9
+#
 # Revision 1.57.2.5  2002/07/22 09:50:54  mk
 # - added missing resources 457.7-10
 #
