@@ -266,7 +266,8 @@ var x,y,i       : Integer;
     res         :boolean;
     s           :string;
 begin
-  if (ntUsed [nt_UUCP] + ntUsed [nt_ZConnect] > 0) and (RTAMode and 128 = 128) {and
+  if (ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] + ntUsed[nt_Client] +
+    ntUsed[nt_NNTP] + ntUsed[nt_POP3] + ntUsed[nt_IMAP]> 0) and (RTAMode and 128 = 128) {and
      (not XPFirstStart) } then
   begin
     msglines := ival (getres2 (2750, 0));
@@ -968,6 +969,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2001/11/01 14:43:42  mk
+  - do askRTA when client and pop3, nntp and imap-boxes are available
+
   Revision 1.21  2001/10/17 20:11:05  mk
   - fixed range check error in ntReplyToAll
 
