@@ -221,7 +221,7 @@ begin
       begin
         switch := LowerCase(mid(paramstr(i), 2));
         if left(switch, 2) = 'w:' then
-          XpWindow := minmax(StrToInt(mid(switch, 3)), 15, 60)
+          XpWindow := minmax(IVal(mid(switch, 3)), 15, 60)
         else
           { Envelope-Empf„nger aus Received auslesen? }
           if switch = 'graberec' then
@@ -259,7 +259,7 @@ begin
       begin
         switch := LowerCase(mid(paramstr(i), 2));
         if left(switch, 2) = 'w:' then
-          XpWindow := minmax(StrToInt(mid(switch, 3)), 15, 60)
+          XpWindow := minmax(IVal(mid(switch, 3)), 15, 60)
         else
           if switch = 's' then
           ParSize := true
@@ -640,13 +640,13 @@ var
     p := cpos(':', zone);
     if p = 0 then
     begin
-      off := minmax(StrToInt(mid(zone, 2)), -13, 13);
+      off := minmax(IVal(mid(zone, 2)), -13, 13);
       moff := 0;
     end
     else
     begin
-      off := minmax(StrToInt(copy(zone, 2, p - 2)), -13, 13);
-      moff := minmax(StrToInt(mid(zone, p + 1)), 0, 59);
+      off := minmax(IVal(copy(zone, 2, p - 2)), -13, 13);
+      moff := minmax(IVal(mid(zone, p + 1)), 0, 59);
     end;
     zone := left(zone, 2) + formi(abs(off), 2) + iifs(moff <> 0, ':' +
       formi(moff, 2), '');
@@ -706,13 +706,13 @@ begin
       s0 := copy(s0, p2 + 1, p - p2 - 1) + ' ' + copy(s0, max(1, p2 - 3), 3) +
         ' ' + trim(mid(s0, p + 1));
     end;
-  t := minmax(StrToInt(getstr), 1, 31);
+  t := minmax(IVal(getstr), 1, 31);
   p := pos(LowerCase(getstr), 'janfebmaraprmayjunjulaugsepoctnovdec');
   if p > 0 then
     m := (p + 2) div 3
   else
     m := 1;
-  j := minmax(StrToInt(getstr), 0, 2099);
+  j := minmax(IVal(getstr), 0, 2099);
   if j < 100 then
     if j < 70 then
       inc(j, 2000)                      { 2stellige Jahreszahl erg„nzen }
@@ -1838,7 +1838,7 @@ var
       begin
         { Zahl 1:1 konvertieren und auf 1..5 begrenzen }
         s0 := left(s0, p - 1);
-        hd.priority := minmax(StrToInt(s0), 1, 5);
+        hd.priority := minmax(IVal(s0), 1, 5);
       end;
     end;
   end;
@@ -1950,7 +1950,7 @@ begin
               telefon := s0
             else
               if zz = 'x-xp-ctl' then
-              XPointCtl := StrToInt(s0)
+              XPointCtl := IVal(s0)
             else
               { X-No-Archive Konvertierung }
               if zz = 'x-no-archive' then
@@ -2010,7 +2010,7 @@ begin
             GetPriority
           else
             if zz = 'lines' then
-            Lines := StrToInt(s0)
+            Lines := IVal(s0)
           else
             Uline.Add('U-' + s1);
         end;                          { case }
@@ -2441,7 +2441,7 @@ begin
           inc(n);
           write(#8#8#8#8#8, n: 5);
           inc(news);
-          size := minmax(StrToInt(trim(mid(s, 10))), 0, maxlongint);
+          size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
           fp := fpos; bp := bufpos;
           ClearHeader;
           ReadRFCheader(false, s);
@@ -2763,7 +2763,7 @@ var
   function month(m: string): string;
   begin
     month := copy('Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec ',
-      StrToInt(m) * 4 - 3, 4);
+      IVal(m) * 4 - 3, 4);
   end;
 
   function ZtoRFCdate(date, zdate: string): string;
@@ -2772,12 +2772,13 @@ var
   begin
     p := cpos(':', zdate);
     if p = 0 then p := length(zdate) + 1;
+
     ZtoRFCdate := copy(date, 5, 2) + ' ' + month(copy(date, 3, 2)) + left(zdate,
       2) +
       left(date, 2) + ' ' + copy(date, 7, 2) + ':' + copy(date, 9, 2) + ':' +
-      copy(zdate, 13, 2) + ' ' + zdate[16] + formi(StrToInt(copy(zdate, 17, p -
+      copy(zdate, 13, 2) + ' ' + zdate[16] + formi(IVal(copy(zdate, 17, p -
         17)), 2) +
-      formi(StrToInt(mid(zdate, p + 1)), 2);
+      formi(IVal(mid(zdate, p + 1)), 2);
   end;
 
   function formnews(s: string): string;
@@ -3438,6 +3439,9 @@ end.
 
 {
   $Log$
+  Revision 1.52  2000/07/27 10:11:05  mk
+  - IntToStr fixes
+
   Revision 1.51  2000/07/26 08:18:50  mk
   - fixes und AnsiString-Updates
 
