@@ -93,7 +93,7 @@ begin
     error('Resource file already open');
   new(f);
   assign(f^,fn);
-  fm:=filemode; filemode:=0;   { nur lesen }
+  fm:=filemode; filemode:=$40;   { nur lesen }
   reset(f^,1);
   filemode:=fm;
   if inoutres<>0 then
@@ -352,6 +352,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/12/04 10:03:43  mk
+  - open resource in DenyNone-Mode
+
   Revision 1.17  2000/11/19 18:22:52  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 
