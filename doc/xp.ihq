@@ -7,7 +7,7 @@ NH TAB 00 LEER NC
 Keine Hilfe verfgbar.
 @
 2
-<<     °°°°°°°°°°°°°°°°°°°°°   Online-Hilfe: Inhalt
+<<     =====================   Online-Hilfe: Inhalt
 
 
      [Hilfe zur Hilfe]@3
@@ -21,7 +21,7 @@ Keine Hilfe verfgbar.
      [Lizenzbestimmungen]@6
 @
 3
-<<°°°°°°°°°°°°°°°°°°°°°°°°  Bedienung der Online-Hilfe
+<<========================  Bedienung der Online-Hilfe
 
 Aktivieren der Online-Hilfe:
 
@@ -80,16 +80,14 @@ Support bei Problemen und Fragen. Dabei macht es
 keinen Unterschied, ob Sie bereits registrierter
 Anwender sind (s. [Lizenzbestimmungen]), oder Cross-@6
 Point noch testen. Wenn Sie Probleme haben, die sich
-nicht mit der Online-Hilfe oder der Dokumentation
-(XPOINT.TXT) l”sen lassen, haben Sie verschiedene
-M”glichkeiten:
+nicht mit der Online-Hilfe oder dem Handbuch l”sen
+lassen, haben Sie verschiedene M”glichkeiten:
 
-ş  Schildern Sie Ihr Problem in einem der Support-
+-  Schildern Sie Ihr Problem in einem der Support-
    Bretter:
 
-   Z-Netz     /Z-NETZ/ALT/SUPPORT/XPOINT/ALLGEMEINES
    FidoNet    CROSSPOINT.GER
-   MausNet    MT.XP
+   MausNet    Maus.Tausch.CrossPoint
    Usenet     de.comm.software.crosspoint
 
    Die Bretter werden von vielen erfahrenen XP-Usern
@@ -98,7 +96,7 @@ M”glichkeiten:
    Ihrer Box nicht gefhrt wird, fragen Sie Ihren
    Sysop. Er kann es fr Sie bestellen.
 
-ş  Es gibt im Internet auch einige Homepages zum
+-  Es gibt im Internet auch einige Homepages zum
    Thema CrossPoint:
 
          http://www.crosspoint.de
@@ -126,7 +124,7 @@ W„hrend der Testphase drfen Sie das Programm unein-
 geschr„nkt nutzen.
 
 N„heres zur Registrierung finden Sie in der beilie-
-genden Datei <<LIZENZ.DOC>> und unter dem Menpunkt
+genden Datei <<lizenz.doc>> und unter dem Menpunkt
 /XPoint/Registrierung.
 @
 9
@@ -139,7 +137,7 @@ unter
         http://www.crosspoint.de/
 
 Die neuste Version und weitere Infos zur Weiter-
-entwicklung von CrossPoint durch das OpenXp-Projekt
+entwicklung von CrossPoint durch das OpenXP-Projekt
 finden Sie auf:
 
         http://www.openxp.de
@@ -256,20 +254,20 @@ markierten Bretter.
 
 <<Brettanzeige im Bearbeitungsmodus
 
-        ì  HOT         3 /Z-NETZ/BILDUNG/UNI
+        0  HOT         3 /Z-NETZ/BILDUNG/UNI
  -     30  HOT         3 /Z-NETZ/DATENSCHUTZ/ALLGEM
     N  30  HOT         3 /Z-NETZ/DATENSCHUTZ/G10
   X*   14  HOT         3 /Z-NETZ/KOORDINATION/DISKU
- ³³³³  ³   ³           ³  ³
- ³³³³  ³   ³           ³  ÀÄÄ der Brettname
- ³³³³  ³   ³           ÀÄÄÄÄÄ die Brettgruppen-Nr.
- ³³³³  ³   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ der Name des Servers
- ³³³³  ÀÄÄÄÄÄÄÄÄ die Nachrichten-Haltezeit
- ³³³ÀÄÄÄÄÄÄÄ N = Nachrichten-Halteanzahl statt -zeit
- ³³ÀÄÄÄÄÄÄÄÄ * = Vertreteradresse vorhanden
- ³³          O = Fido-Origin eingetragen
- ³ÀÄÄÄÄÄÄÄÄÄ X = Schreibsperre eingeschaltet
- ÀÄÄÄÄÄÄÄÄÄÄ - = Brett ist leer
+ ||||  |   |           |  |
+ ||||  |   |           |  +-- der Brettname
+ ||||  |   |           +----- die Brettgruppen-Nr.
+ ||||  |   +----------------- der Name des Servers
+ ||||  +-------- die Nachrichten-Haltezeit
+ |||+------- N = Nachrichten-Halteanzahl statt -zeit
+ ||+-------- * = Vertreteradresse vorhanden
+ ||          O = Fido-Origin eingetragen
+ |+--------- X = Schreibsperre eingeschaltet
+ +---------- - = Brett ist leer
 
 Die Groá- bzw. Kleinschreibung der Brettnamen kann
 unter /Config/Anzeige/Bretter ge„ndert werden.
@@ -365,18 +363,18 @@ L und E beziehen sich auf alle markierten User.
 
 <<User-Anzeige
 
-û        ì HOT       GHOSTWRITER\@HOT-II.ZER
-û  *     ì HOT       GHOSTWRITER\@HOT.ZER
+1        0 HOT       GHOSTWRITER\@HOT-II.ZER
+1  *     0 HOT       GHOSTWRITER\@HOT.ZER
  ##P     30 HOT       KNALL\@PENG.ZER
-³³³³     ³ ³         ³
-³³³³     ³ ³         ÀÄÄ Name/Adresse des Users
-³³³³     ³ ÀÄÄÄÄÄÄÄÄ Server fr Mail an diesen User
-³³³³     ÀÄÄÄÄÄÄÄÄÄÄ Nachrichten-Haltezeit fr PMs
-³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ * = Vertreter-Adresse vorhanden
-³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ P = Paáwort eingetragen oder
-³³                       PGP als Codierer gew„hlt
-³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ ## = Nachrichtenfilter eingesch.
-ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ User steht im Adreábuch
+||||     | |         |
+||||     | |         +-- Name/Adresse des Users
+||||     | +-------- Server fr Mail an diesen User
+||||     +---------- Nachrichten-Haltezeit fr PMs
+|||+---------------- * = Vertreter-Adresse vorhanden
+||+----------------- P = Paáwort eingetragen oder
+||                       PGP als Codierer gew„hlt
+|+------------------ ## = Nachrichtenfilter eingesch.
++------------------- User steht im Adreábuch
 
 Die Groá- bzw. Kleinschreibung der Usernamen kann
 unter /Config/Anzeige/Bretter ge„ndert werden.
@@ -384,11 +382,10 @@ unter /Config/Anzeige/Bretter ge„ndert werden.
 <<Verteiler-Anzeige
 
  26       HOT      [lokale Points]
- ³        ³        ³
- ³        ³        ÀÄÄ Name des Verteilers
- ³        ÀÄÄÄÄÄÄÄÄÄÄÄ evtl. Serverbox des Verteilers
- ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Anzahl der Empf„nger
-
+ |        |        |
+ |        |        +-- Name des Verteilers
+ |        +----------- evtl. Serverbox des Verteilers
+ +-------------------- Anzahl der Empf„nger
 @
 22
 ^^21
@@ -400,6 +397,7 @@ best„tigt, mit <Esc> abgebrochen.
 
 "A" schaltet zwischen Komplett- und Adreábuchanzeige
 um.
+
 @
 24
 ^^23
@@ -542,27 +540,27 @@ Folgende Funktionen stehen zur Verfgung:
 
 <<Nachrichten-Anzeige
 
-ş       386 26.10.91 J.FRANKE\@COPS.ZER  Neu: 3065, H
+.       386 26.10.91 J.FRANKE\@COPS.ZER  Neu: 3065, H
   -     665 24.10.91 SYSOP\@TORF.ZER     Was wollt ih
  >   B  591 26.10.91 PETERLI\@MAFIA.ZER  Re: Scheiá a
    !w    5k 27.10.91 KNALL\@PENG.ZER     Na sowas
-³³³³³³   ³  ³        ³                  ³
-³³³³³³   ³  ³        ÀÄÄ Absender       ÀÄÄ Betreff
-³³³³³³   ³  ÀÄÄÄÄÄÄÄÄÄÄÄ Absendedatum
-³³³³³³   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Gr”áe in Bytes oder KBytes
-³³³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ B = Bin„rnachricht
-³³³³³                    M = mehrteilige Nachricht
-³³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ c = codierte Nachricht
-³³³³                     s = PGP-signierte Nachricht
-³³³³                     w = Nachricht auf Wiedervlg.
-³³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ ! = unversandte Nachricht
-³³³                       = unversandter Fido-Crash
-³³³                      * = versandter Fido-Crash(*)
-³³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ - = Nachricht auf "L”schen"
-³³                       + = Nachricht auf "Halten"
-³³                       ù = Haltezeit berschritten
-³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ > = ungelesene Nachricht
-ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ ş = Nachricht ist markiert
+||||||   |  |        |                  |
+||||||   |  |        +-- Absender       +-- Betreff
+||||||   |  +----------- Absendedatum
+||||||   +-------------- Gr”áe in Bytes oder KBytes
+|||||+------------------ B = Bin„rnachricht
+|||||                    M = mehrteilige Nachricht
+||||+------------------- c = codierte Nachricht
+||||                     s = PGP-signierte Nachricht
+||||                     w = Nachricht auf Wiedervlg.
+|||+-------------------- ! = unversandte Nachricht
+|||                       = unversandter Fido-Crash
+|||                      * = versandter Fido-Crash(*)
+||+--------------------- - = Nachricht auf "L”schen"
+||                       + = Nachricht auf "Halten"
+||                       — = Haltezeit berschritten
+|+---------------------- > = ungelesene Nachricht
++----------------------- . = Nachricht ist markiert
 
 Die Datumsanzeige kann auch unter /Config/Anzeige
 /Nachrichten abgeschaltet werden. MausNet/Fido: Ein
@@ -578,7 +576,7 @@ Eine Zahl statt des unversandt-Zeichens (!) gibt bei
 Nachrichten mit mehreren Empf„ngern die Empf„nger-
 anzahl an. \# steht fr mehr als 9 Empf„nger.
 
-(*) N„heres zu Fido-Crashs: Siehe FIDO.TXT.
+(*) N„heres zu Fido-Crashs: Siehe fido.txt.
 
 @
 31
@@ -668,6 +666,7 @@ Der Lister wird mit <Esc> verlassen.
 <<Ctrl L>> setzte die angezeigte Nachricht auf "L”schen".
 
 <<H>> setzt die angezeigte Nachricht auf "Halten".
+
 
 <Backspace> verl„át den Lister, ohne daá der Auswahl-
   balken auf die n„chste Nachricht springt, unabh„n-
@@ -761,16 +760,16 @@ vorhanden sein.
 <<Listen-Anzeige
 
 + C:BOOT.COM  B --.-- 01.04 /Z-NETZ/RECHNER/IBM/ BOOT
-+ F:EB          --.-- 15.04 /T-NETZ/LISTEN       Empf
++ F:EB          --.-- 15.04 /Z-NETZ/ALT/LISTEN   Empf
   F:POEBEL      --.-- --.-- KNALL\@PENG.ZER       Halt
 +               15.03 01.04 MAPS\@HOT.ZER         LIST
-³ ³           ³ ³     ³     ³            Betreff ÄÄÙ
-³ ³           ³ ³     ³     ÀÄ Empf„nger
-³ ³           ³ ³     ÀÄÄÄÄÄÄÄ n„chstes Absendedatum
-³ ³           ³ ÀÄÄÄÄÄÄÄÄÄÄÄÄÄ letztes Absendedatum
-³ ³           ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ B = Bin„rnachricht
-³ ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ (Laufwerk) / Datei
-ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ + = aktiver Eintrag
+| |           | |     |     |            Betreff --+
+| |           | |     |     +- Empf„nger
+| |           | |     +------- n„chstes Absendedatum
+| |           | +------------- letztes Absendedatum
+| |           +--------------- B = Bin„rnachricht
+| +--------------------------- (Laufwerk) / Datei
++----------------------------- + = aktiver Eintrag
 
 @
 50
@@ -826,10 +825,10 @@ Sie <Enter>.
 Mit der Option ¯Default® werden die Standard-Farben
 von CrossPoint gew„hlt; alle eigenen Farbeinstellun-
 gen gehen dabei verloren. Wahlweise k”nnten Sie auch
-die Datei XPOINT.COL l”schen.
+die Datei xpoint.col l”schen.
 
-Mit ¯Sichern® werden die ge„nderten Farben in XPOINT
-.COL gesichert. Nicht gesicherte nderungen bleiben
+Mit ¯Sichern® werden die ge„nderten Farben in xpoint
+.col gesichert. Nicht gesicherte nderungen bleiben
 nur bis zum Beenden des Programms aktiv.
 @
 53
@@ -848,9 +847,9 @@ Mit <Enter> wird die gew„hlte Farbe best„tigt, mit
 Farbe bleibt unver„ndert.
 @
 54
-Eine ausfhrliche Anleitung zum Editor finden Sie in
-XPOINT.TXT. Die Online-Hilfe besteht haupts„chlich
-aus einer Befehlsbersicht.
+Eine ausfhrliche Anleitung zum Editor finden Sie im
+Handbuch. Die Online-Hilfe besteht haupts„chlich aus
+einer Befehlsbersicht.
 
        [Statuszeile]@55
        [Funktionstastenbersicht]@56
@@ -878,7 +877,7 @@ links nach rechts werden angezeigt:
   - Ze: Zeile
   - Sp: Spalte
   - freier Speicherplatz
-  - ş = Text wurde ge„ndert
+  - . = Text wurde ge„ndert
   - Dateiname
 @
 56
@@ -1008,19 +1007,19 @@ lange der Hauptspeicher ausreicht, und k”nnen mit
 Das Men erreichen Sie ber die Taste <F10> oder
 durch halten der rechten Maustaste.
 
-            ÚÄ Block ÄÄÄÄÄÄÄÄÄÄ¿
-            ³ Kopieren       <<*>> ³
-            ³ Ausschneiden   <<->> ³
-            ³ Einfgen       <<+>> ³
-            ³ Laden        <<^KR>> ³
-            ³ Laden UUE    <<^KU>> ³
-            ³ Speichern    <<^KW>> ³
-            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
-            ³ Umbruch aus   <<F3>> ³
-            ³ Umbruch ein   <<F4>> ³
-            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
-            ³ [Optionen]     <<^OR>> ³@63
-            ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+            +- Block +---------+
+            | Kopieren       <<*>> |
+            | Ausschneiden   <<->> |
+            | Einfgen       <<+>> |
+            | Laden        <<^KR>> |
+            | Laden UUE    <<^KU>> |
+            | Speichern    <<^KW>> |
+            +------------------+
+            | Umbruch aus   <<F3>> |
+            | Umbruch ein   <<F4>> |
+            +------------------+
+            | [Optionen]     <<^OR>> |@63
+            +------------------+
 
 @
 63
@@ -1101,7 +1100,7 @@ werden u.a. folgende Informationen angezeigt:
            gelegt ist.
 
 Rechts in der Statuszeile steht die Art des Archivs,
-also ARC, ARJ, DWC, HYP, LZH, PAK, SQZ, ZIP oder ZOO.
+also arc, arj, dwc, hyp, lzh, pak, sqz, zip oder zoo.
 
 <<Enter>>  l„dt die gew„hlte Datei in den Lister
 
@@ -1200,8 +1199,8 @@ soll.
         sp„teren Zeitpunkt verschickt wird.
 
 <<EB>>      fordert eine Empfangsbest„tigung beim Empf„n-
-        ger an. Bitte beachten Sie die Hinweise in
-        XPOINT.TXT zum Thema "Empfangsbest„tigungen"!
+        ger an. Bitte beachten Sie die Hinweise im
+        Handbuch zum Thema "Empfangsbest„tigungen"!
 
 <<ohneSig>> verschickt die Nachricht ohne Signatur.
 
@@ -1246,7 +1245,7 @@ soll.
 
 <<<Esc> >>  die Nachricht wird verworfen. Sie ist aller-
         dings noch nicht endgltig gel”scht, sondern
-        liegt unter dem Namen LASTMSG im Tempor„rver-
+        liegt unter dem Namen lastmsg im Tempor„rver-
         zeichnis. Wenn Sie /Config/Opt/Nachrichten
         /../¯Unversandt eingeschaltet haben, wird die
         Nachricht automatisch geparkt (s.o.).
@@ -1378,7 +1377,7 @@ Wenn ein File Request trotz Verbindungsaufnahme mit
 der angerufenen Box nicht erfolgreich war, oder wenn
 nicht alle Dateien angekommen sind, merkt XP sich
 die fehlenden Dateien in einem "zurckgestellten
-Request". N„heres hierzu ist in FIDO.TXT beschrieben.
+Request". N„heres hierzu ist in fido.txt beschrieben.
 
 Mails und File Requests fr Ihren Bossnode - also
 eine Box, die Sie unter /Edit/Boxen eingetragen haben
@@ -1430,13 +1429,13 @@ W„hlen Sie die gewnschte Fileliste, und drcken Sie
 Fr alle vorhandenen Filelisten werden - von links
 nach rechts - folgende Informationen angezeigt:
 
-ş die Nodeadresse der Box
-ş Name und Standort der Box
-ş Dateidatum der Liste im Format Monat/Jahr
-ş Dateiname der Liste, ohne die Extension ".FL"
-ş Dateigr”áe der Liste in KByte
+- die Nodeadresse der Box
+- Name und Standort der Box
+- Dateidatum der Liste im Format Monat/Jahr
+- Dateiname der Liste, ohne die Extension ".FL"
+- Dateigr”áe der Liste in KByte
 
-Alle Filelisten befinden sich im Verzeichnis "FIDO"
+Alle Filelisten befinden sich im Verzeichnis "fido"
 unterhalb von XP.
 
 Falls als Name einer Box nur "???" angezeigt wird,
@@ -1749,12 +1748,12 @@ typische Aufrufzeile fr DSZ ist:
 <<DSZ.EXE port $PORT sz $UPFILE
 
 WICHTIG: Bei DSZ/GSZ sollten Sie auf jeden Fall die
-Dateierweiterung (.COM/.EXE) mit angeben; sonst
+Dateierweiterung (.com/.exe) mit angeben; sonst
 erkennt XP nicht, wenn ein Netcall fehlerhaft abge-
 brochen wurde! Das Gleiche gilt fr die $LOGFILE-
 Angabe im BiModem-Aufruf:
 
-<<BIMODEM /L $PORT /U $UPFILE /I $LOGFILE
+<<bimodem /L $PORT /U $UPFILE /I $LOGFILE
 
 Dabei ist unbedingt BiModem Version 1.24 oder h”her
 zu verwenden!
@@ -1762,7 +1761,7 @@ zu verwenden!
 Bei Verwendung von HS-Link sollte das Empfangsver-
 zeichnis mit angegeben werden:
 
-<<HSLINK -P$PORT -U$DOWNPATH $UPFILE
+<<hslink -P$PORT -U$DOWNPATH $UPFILE
 
 Bitte stellen Sie auch sicher, daá das Upload-Pro-
 gramm im CrossPoint-Verzeichnis oder ber einen DOS-
@@ -1773,7 +1772,7 @@ Pfad erreichbar ist!
 Das Download-Protokoll ist das externe Programm, mit
 dem die Nachrichten VOM angerufenen System bertra-
 gen werden. Am einfachsten ist es, wenn Sie das mit-
-gelieferte Zmodem verwenden (ZM.EXE). šbernehmen Sie
+gelieferte Zmodem verwenden (zm.exe). šbernehmen Sie
 dazu einfach die Voreinstellung "Zmodem".
 
 Wahlweise k”nnen Sie auch ein beliebiges anderes Pro-
@@ -1806,10 +1805,10 @@ verwendet werden:
 Eine typische Download-Zeile fr das Protokoll GSZ
 ist:
 
-<<GSZ.EXE port $PORT speed $SPEED rz $DOWNFILE
+<<gsz.exe port $PORT speed $SPEED rz $DOWNFILE
 
 WICHTIG: Bei DSZ/GSZ sollten Sie auf jeden Fall die
-Dateierweiterung (.COM/.EXE) mit angeben; sonst
+Dateierweiterung (.com/.exe) mit angeben; sonst
 erkennt XP nicht, wenn ein Netcall fehlerhaft abge-
 brochen wurde!
 
@@ -1873,7 +1872,7 @@ Nachrichtenpakete ungepackt zur Box zu bertragen.
 <<MagicNET
 
 Falls Sie bei einer AlphaBox pollen, mssen Sie hier
-einen ARC-Packer (PKARC o.„.) eintragen. Andere
+einen ARC-Packer (pkarc o.„.) eintragen. Andere
 Packformate werden nicht untersttzt!
 
 <<Batchdatei
@@ -1925,7 +1924,7 @@ copy $DOWNFILE $PUFFER
 <<MagicNET
 
 Falls Sie bei einer AlphaBox pollen, mssen Sie hier
-einen ARC-Entpacker eintragen, z.B. PKXARC. Andere
+einen ARC-Entpacker eintragen, z.B. pkxarc. Andere
 Packformate werden nicht untersttzt!
 
 @
@@ -1933,10 +1932,10 @@ Packformate werden nicht untersttzt!
 Dies ist die Dateierweiterung des Packers. Fr die
 blichen Packer gelten folgende Erweiterungen:
 
-   PKZip  -  ZIP
-   LHA    -  LZH
-   ARJ    -  ARJ
-   RAR    -  RAR
+   PKZip  -  zip
+   LHA    -  lzh
+   ARJ    -  arj
+   RAR    -  rar
 
 Bei ungepackter X- oder ZModembertragung spielt die
 Erweiterung keine Rolle - ich empfehle, das Feld ganz
@@ -1983,7 +1982,7 @@ Schreibweise! Bei Verwendung von 4D-Adressierung
 Sinn dieser AKAs ist es insbesondere, mit einem
 Anruf Nachrichten aus verschiedenen Fido-kompatiblen
 Netzen abzuholen. N„heres zu AKAs finden Sie in
-FIDO.TXT.
+fido.txt.
 @
 155
 Hier k”nnen Sie eine Liste von Fido-Serverboxen an-
@@ -1991,7 +1990,7 @@ geben, deren Nachrichten beim Anruf mitgeschickt
 werden sollen. Dies wird dann ben”tigt, wenn Sie
 mit einem Anruf Nachrichten fr verschiedene Fido-
 kompatible Netze absenden m”chten. N„heres hierzu
-finden Sie in FIDO.TXT.
+finden Sie in fido.txt.
 @
 156
 4D-Adressierung ist ein neuer Standard, der inzwi-
@@ -2099,7 +2098,7 @@ k”nnten:
 
 Die einzelnen Optionen mssen mit Leerzeichen ge-
 trennt werden. Eine vollst„ndige Liste finden Sie in
-ZM-GER.DOC im getrennt erh„ltlichen PD-Zmodem-Paket.
+zm-ger.doc im getrennt erh„ltlichen PD-Zmodem-Paket.
 
 WICHTIG: Die meisten der von PD-Zmodem untersttzten
 Optionen sollten oder drfen an dieser Stelle <<nicht>>
@@ -2142,7 +2141,7 @@ ters beheben.
 Normalerweise haben eingehende, gepackte Fido-Nach-
 richtenpakete als Dateierweiterung den englischen
 Namen von Wochentagen plus eine Ziffer, also z.B.
-.MO1 oder .TU2. Leider halten sich nicht alle Boxen
+.mo1 oder .tu2. Leider halten sich nicht alle Boxen
 an diesen Standard - einige verschicken seit neue-
 stem auch Pakete mit Buchstaben als letztem Zeichen.
 
@@ -2353,12 +2352,12 @@ absprechen.
 Hier noch eine kurze Gegenberstellung (+ = gut,
 o = mittelm„áig, - = schlecht):
 
-                ³ Geschwindigkeit ³ Packrate
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄ
-compress 12-Bit ³       +         ³     -
-compress 16-Bit ³       +         ³     o
-freeze          ³       -         ³     +
-gzip            ³       o         ³     +
+                | Geschwindigkeit | Packrate
+----------------+-----------------+---------
+compress 12-Bit |       +         |     -
+compress 16-Bit |       +         |     o
+freeze          |       -         |     +
+gzip            |       o         |     +
 
 @
 8021
@@ -2633,7 +2632,7 @@ sonstwie weiterverarbeiten. ACHTUNG! Sie mssen nach
 der Weiterverarbeitung selbst dafr sorgen, daá die
 Pakete gel”scht werden!
 
-N„heres finden Sie in FIDO.TXT im Kapitel "Sysop-
+N„heres finden Sie in fido.txt im Kapitel "Sysop-
 Mode".
 
 @
@@ -2658,7 +2657,7 @@ Festplatte bertragen gespeichert werden, sind Sie
 hier richtig. Bitte beachten Sie, daá XP UUCP-Datei-
 namen in einem bestimmten Format erwartet und
 erzeugt; in den meisten F„llen wird eine Umbenennung
-n”tig sein. N„heres hierzu finden Sie in UUCP.TXT.
+n”tig sein. N„heres hierzu finden Sie in uucp.txt.
 
 
 <<Eingangsverzeichnis>>
@@ -2678,7 +2677,7 @@ gepackt. ACHTUNG! Sie mssen nach einer Weiterverar-
 beitung der ausgehenden Nachrichten selbst dafr
 sorgen, daá die Pakete gel”scht werden!
 
-N„heres finden Sie in UUCP.TXT im Kapitel "Sysop-
+N„heres finden Sie in uucp.txt im Kapitel "Sysop-
 Mode".
 
 @
@@ -2788,9 +2787,9 @@ nicht mehr eingelesen werden.
 
 Hinweise:
 
-ş  Die Angabe einer Batchdatei ist m”glich.
+-  Die Angabe einer Batchdatei ist m”glich.
 
-ş  Das Programm wird auch aufgerufen, wenn keine
+-  Das Programm wird auch aufgerufen, wenn keine
    Nachrichten empfangen wurden. In diesem Fall wird
    der Name einer leeren Pufferdatei bergeben. Leere
    ZConnect-Puffer sind 0 Bytes groá, leere Z-Netz-
@@ -2798,9 +2797,9 @@ Hinweise:
    Mailboxprogramme erzeugen u.U. auch leere ZCON-
    NECT-Puffer von bis zu 16 Bytes.
 
-ş  Das Ganze funktioniert auch im Sysop-Mode.
+-  Das Ganze funktioniert auch im Sysop-Mode.
 
-ş  Zum Filtern von Fremdformat-Paketen im Original-
+-  Zum Filtern von Fremdformat-Paketen im Original-
    zustand (Maustausch, MagicNET etc.) sollten Sie
    das Filterprogramm per Batchdatei im Entpacker-
    Eingabefeld einbinden.
@@ -2818,7 +2817,7 @@ Nachrichtenpuffers bergeben werden. Bei Z-Netz-
 (alt)-Netcalls hat diese Datei Z-Netz-Format, bei
 allen anderen Netztypen ZCONNECT-Format. Die Datei
 beinhaltet auch die Nachrichten aus einer evtl. vor-
-handenen EPP-Datei (s. XPOINT.TXT, Stichwort "EPP").
+handenen EPP-Datei (s. Handbuch, Stichwort "EPP").
 
 Das Filterprogramm kann die Datei verarbeiten,
 „ndern, kopieren, oder beliebige andere Aktionen
@@ -2841,16 +2840,16 @@ bitte so grndlich wie m”glich!
 
 Hinweise:
 
-ş  Die Angabe einer Batchdatei ist m”glich.
+-  Die Angabe einer Batchdatei ist m”glich.
 
-ş  Das Filterprogramm wird auch aufgerufen, wenn
+-  Das Filterprogramm wird auch aufgerufen, wenn
    keine Nachrichten zu versenden sind. In diesem
    Fall wird der Name einer leeren Pufferdatei (0
    Bytes) bergeben. Ausnahme: im Sysop-Mode wird
    der Filter nur aufgerufen, wenn ausgehende Nach-
    richten vorhanden sind.
 
-ş  Das Ganze funktioniert auch im Sysop-Mode.
+-  Das Ganze funktioniert auch im Sysop-Mode.
 
 @
 8030
@@ -2860,8 +2859,8 @@ automatisch gestartet werden soll. Das Script wird
 sofort nach dem Eintrag auf syntaktische Korrektheit
 berprft.
 
-N„heres zu Scriptdateien finden Sie in Teil VIII von
-XPOINT.TXT.
+N„heres zu Scriptdateien finden Sie im Handbuch,
+Kapitel 8.
 @
 8031
 Hier k”nnen Sie den Namen einer Scriptdatei eintra-
@@ -2869,8 +2868,8 @@ gen, die bei Netcall-Anrufen automatisch gestartet
 werden soll. Das Script wird sofort nach dem Eintrag
 auf syntaktische Korrektheit berprft.
 
-N„heres zu Scriptdateien finden Sie in Teil VIII von
-XPOINT.TXT.
+N„heres zu Scriptdateien finden Sie im Handbuch,
+Kapitel 8.
 @
 8032
 Hier k”nnen Sie eine Serverbox eintragen, die XP
@@ -2989,7 +2988,7 @@ Geben Sie hier Ihren vollst„ndigen Namen ein (Vor-
 und Nachname).
 @
 195
-(N„heres zu Domains: siehe XPOINT.TXT, Kap. 1.3).
+(N„heres zu Domains: siehe Handbuch, Kap. 1.8).
 
 <<ZConnect:>>
 
@@ -3079,15 +3078,15 @@ ge andere Zwecke einsetzen.
 
 <<Anzeige im Gruppen-Fenster
 
-   1     Intern               IBM             ì
-   2 Q S Lokal                IBM             ì
-   3  K  Netz                 IBM   Ú    20.000
-   ³ ³³³ ³                    ³     ³
-   ³ ³³³ ÀÄÄ Gruppenname      ³     À max. Nachrich-
-   ³ ³³ÀÄ S = eigene Signatur ³       tengr”áe
-   ³ ³ÀÄÄ K = eigener Kopf    ÀÄ Sonderzeichen
-   ³ ÀÄÄÄ Q = eigene Quote-Schablone
-   ÀÄÄÄÄÄ Gruppennummer (wird automatisch vergeben)
+   1     Intern               IBM             
+   2 Q S Lokal                IBM             
+   3  K  Netz                 IBM   +-   20.000
+   | ||| |                    |     |
+   | ||| +-- Gruppenname      |     + max. Nachrich-
+   | ||+- S = eigene Signatur |       tengr”áe
+   | |+-- K = eigener Kopf    +- Sonderzeichen
+   | +--- Q = eigene Quote-Schablone
+   +----- Gruppennummer (wird automatisch vergeben)
 
 <<Standardgruppen
 
@@ -3175,12 +3174,12 @@ o Quote-Schablone (<<Quote>>, Default: QBRETT) und
 o Signatur (Default: SIGNATUR),
 
 die beim Schreiben in Bretter dieser Gruppe verwendet
-werden. Alle Schablonen-Dateinamen enden mit .XPS;
+werden. Alle Schablonen-Dateinamen enden mit .xps;
 diese Erweiterung ist jedoch NICHT mit anzugeben.
 
 Falls ein Feld leerbleibt, entf„llt die entsprechende
 Schablone. Ausnahme ist die Quote-Schablone, bei der
-dann die Standard-Schablone QBRETT.XPS verwendet
+dann die Standard-Schablone qbrett.xps verwendet
 wird.
 
 Die Standard-Schablonen k”nnen mit /Edit/Schablonen
@@ -3435,7 +3434,7 @@ CrossPoint besitzt einen eingebauten Nachrichten-
 Lister, sodaá eigentlich kein externer Lister ben”-
 tigt wird. Wenn Sie sich aber nicht von Ihrem alten
 Lister trennen k”nnen, dann tragen Sie hier den Da-
-teinamen incl. Erweiterung (.COM oder .EXE) ein.
+teinamen incl. Erweiterung (.com oder .exe) ein.
 
 Wahlweise kann das Makro <<$FILE>> fr die zu listende
 Datei eingesetzt werden. Ansonsten bergibt XP den
@@ -3492,8 +3491,8 @@ nung besitzen, nur Umlaute im IBM-Format enthalten.
 Leider halten sich viele Programmierer von nicht-
 IBM-Rechnern nicht an diesen Standard, wodurch oft
 unlesbare "Amiga-Sonderzeichen" (Sonderzeichen nach
-ISO-8859-1) auftauchen, z.B. "„" statt "„" oder "”"
-statt "”".
+ISO-8859-1) auftauchen, z.B. "„" statt "ä" oder "”"
+statt "ö".
 
 Wenn Sie hier <<[x]>> einstellen, konvertiert XP diese
 Zeichen im Lister und bei Quotes in ein lesbares
@@ -3748,7 +3747,7 @@ Antwort-an Adresse benutzt, wenn vorhanden.
 <<ZCONNECT / RFC:
 
 <<[X]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
-       Header "X-No-Archive: yes" versehen. Dadurch
+       Header "X-No-Archive: Yes" versehen. Dadurch
        werden die Usenet-Archive wie DejaNews ange-
        wiesen, die Nachricht nicht zu speichern.
 
@@ -3882,15 +3881,15 @@ ben.
 In diesem Verzeichnis legt CrossPoint folgende Da-
 teien ab:
 
-   XPOINT.LOG     Gebhren-Logfile
-   ERRORS.LOG     Fehlerlogfile
-   BRETTER.LOG    automatisch angelegte Bretter
-   USER.LOG       automatisch angelegte User
-   DUPES.LOG      Ergebnis von /Wartung/Dupekill
-   NODELIST.LOG   Fido-Nodelistenupdate-Protokoll
-   XPFIDO.LOG     Fido-Netzanrufe
-   XPUUCP.LOG     UUCP-Netzanrufe
-   NETCALL.LOG    Netzanrufmitschnitte
+   xpoint.log     Gebhren-Logfile
+   errors.log     Fehlerlogfile
+   bretter.log    automatisch angelegte Bretter
+   user.log       automatisch angelegte User
+   dupes.log      Ergebnis von /Wartung/Dupekill
+   nodelist.log   Fido-Nodelistenupdate-Protokoll
+   xpfido.log     Fido-Netzanrufe
+   xpuucp.log     UUCP-Netzanrufe
+   netcall.log    Netzanrufmitschnitte
 
 Auáerdem ist dies das Standardverzeichnis fr Log-
 files des eingebauten Terminalprogramms.
@@ -4358,7 +4357,7 @@ Version 3.02 arbeitete mit der Einstellung 14.
 @
 300
 Der Dateiname des Editor-Programms, incl. Erweiterung
-(.COM oder .EXE). Der Editor wird zum Schreiben von
+(.com oder .exe). Der Editor wird zum Schreiben von
 Nachrichten und zum Editieren von Schablonen verwen-
 det.
 
@@ -4454,7 +4453,7 @@ Bedeutung.
 Hier k”nnen Sie festlegen, ob CrossPoint beim Aufruf
 der DOS-Shell zus„tzlichen Environment-(Umgebungs-)
 Speicher zur Verfgung stellen soll; dazu wird der
-/E-Schalter von COMMAND.COM verwendet.
+/E-Schalter von command.com verwendet.
 
 Normalerweise mssen Sie hier gar nichts eintragen -
 bei Einstellung "0" wird immer so viel Umgebungs-
@@ -4742,30 +4741,30 @@ Hier gibt es zwei Eingabem”glichkeiten:
   a)  ein externes Programm
   b)  eine interne XP-Funktion
 
-<<Externe Programm>> sind beliebige .COM-, .EXE- oder
-.BAT-Dateien, die im XP-Verzeichnis liegen oder per
-DOS-Pfad erreichbar sind. EXE- und COM-Programme
+<<Externe Programm>> sind beliebige .com-, .exe- oder
+.bat-Dateien, die im XP-Verzeichnis liegen oder per
+DOS-Pfad erreichbar sind. exe- und com-Programme
 werden deutlich schneller ausgefhrt, wenn Sie die
-Erweiterung ".EXE" oder ".COM" mit angeben. Hinter
+Erweiterung ".exe" oder ".com" mit angeben. Hinter
 dem Programmnamen k”nnen beliebige Parameter ange-
 geben werden. Auáerdem ist die Verwendung des <<$FILE>>
 -Makros m”glich.
 
-Nehmen wir z.B. an, daá Sie den Archiv-Verwalter SHEZ
+Nehmen wir z.B. an, daá Sie den Archiv-Verwalter shez
 einbinden m”chten. Dann geben Sie als Programmname
-einfach  SHEZ $FILE  an. Nun k”nnen Sie eine belie-
+einfach  shez $FILE  an. Nun k”nnen Sie eine belie-
 bige Bin„rnachricht w„hlen und die entsprechende
 Funktionstaste bzw. den Menpunkt w„hlen - dann
 schreibt XP die gew„hlte Nachricht in eine Datei und
-bergibt den Namen der Datei an SHEZ.
+bergibt den Namen der Datei an shez.
 
 <<interne Funktionen>> beginnen immer mit einem "*"; sie
 sind *nicht* innerhalb von CrossTerm verfgbar:
 
 <<*>>             bewirkt gar nichts, es sei denn, der
               Autoexec-Schalter ist aktiviert; in
-              diesem Fall wird das AUTOEXEC-Verzeich-
-              bis bearbeitet (s. XPOINT.TXT, Kap.
+              diesem Fall wird das autoexec-Verzeich-
+              bis bearbeitet (s. Handbuch, Kap.
               7.6).
 
 <<*LIST DATEI>>   l„dt die angegebene Datei in den ein-
@@ -4843,7 +4842,7 @@ Es stehen die gleichen Formate wie bei /Nachricht
 @
 447
 <<[x]>> -> Nach Rckkehr aus dem aufgerufenen Programm
-       wird das Autoexec-Verzeichnis (s. XPOINT.TXT,
+       wird das Autoexec-Verzeichnis (s. Handbuch,
        Kap. 7.6) abgearbeitet. Wenn Sie als Programm-
        name nur "*" angeben, bewirkt die Funktios-
        taste nichts auáer dem Autoexec-Aufruf.
@@ -4906,11 +4905,11 @@ Paáwortvereinbarungen mit <<Fido>>-Boxen.
 Folgende Informationen werden angezeigt:
 
  FP  BOXNAME       Kommentar
- ³³  ³             ³
- ³³  ³             ÀÄÄ ein beliebiger Kommentar
- ³³  ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ der Name des Systems
- ³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ es ist ein Paáwort eingetragen
- ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ F = System ist ein Fileserver
+ ||  |             |
+ ||  |             +-- ein beliebiger Kommentar
+ ||  +---------------- der Name des Systems
+ |+------------------- es ist ein Paáwort eingetragen
+ +-------------------- F = System ist ein Fileserver
                        U = System ist UUCP-Fileserver
 
 Die Anzeige erfolgt immer in alphabetischer Reihen-
@@ -5127,15 +5126,15 @@ eine beliebige Bezeichnung
 
 Ein Programm- oder Batch-Aufruf zum Codieren einer
 Datei. Die zu codierende Datei wird unter dem Namen
-CRYPT.MSG im Tempor„rverzeichnis abgelegt; die co-
-dierte Datei muá den Namen CRYPT.ENC haben und eben-
+crypt.msg im Tempor„rverzeichnis abgelegt; die co-
+dierte Datei muá den Namen crypt.enc haben und eben-
 falls im Tempor„rverzeichnis liegen.
 
 Folgende Makros k”nnen optional an den Codierer ber-
 geben werden:
 
-<<$INFILE>>   =  <TempDir>\CRYPT.MSG
-<<$OUTFILE>>  =  <TempDir>\CRYPT.ENC
+<<$INFILE>>   =  <TempDir>\crypt.msg
+<<$OUTFILE>>  =  <TempDir>\crypt.enc
 <<$KEY>>      der Codierschlssel (Paáwort)
 <<$USER>>     Name des Empf„ngers der codierten Nachricht
 
@@ -5149,8 +5148,8 @@ Nachricht. Es gilt das Gleiche wie fr den Codierer,
 nur daá die Bedeutung von IN- und OUTFILE vertauscht
 ist:
 
-<<$INFILE>>   =  <TempDir>\CRYPT.ENC
-<<$OUTFILE>>  =  <TempDir>\CRYPT.MSG
+<<$INFILE>>   =  <TempDir>\crypt.enc
+<<$OUTFILE>>  =  <TempDir>\crypt.msg
 <<$KEY>>      Paáwort
 <<$USER>>     Name des Absenders der codierten Nachricht
 
@@ -5171,11 +5170,11 @@ chen.
 
 Was Sie dabei beachten sollten:
 
-ş XP berprft in jedem Fall den Typ der codierten
+- XP berprft in jedem Fall den Typ der codierten
   Nachrichten und setzt ihn automatisch auf 'bin„r',
   falls unerlaubte Zeichen vorhanden sind.
 
-ş Falls der Empf„nger THE ANSWER oder ein anderes
+- Falls der Empf„nger THE ANSWER oder ein anderes
   Pointprogramm benutzt, das bei pmCrypt den Typ
   'bin„r' verlangt, <<mssen>> Sie den Typ 'bin„r' ver-
   wenden.
@@ -5184,17 +5183,17 @@ Was Sie dabei beachten sollten:
 <<Beispiel 1:>>
 
 Nehmen wir an, Sie wollten ein (rein fiktives) Co-
-dierprogramm namens SUPERKEY verwenden, das folgende
+dierprogramm namens superkey verwenden, das folgende
 Aufrufsyntax hat:
 
-codieren:   SUPERKEY <Quelle> <Ziel> <Schlssel> code
-decodieren: SUPERKEY <Quelle> <Ziel> <Schlssel> dec
+codieren:   superkey <Quelle> <Ziel> <Schlssel> code
+decodieren: superkey <Quelle> <Ziel> <Schlssel> dec
 
 Dann máten Sie folgendes eintragen:
 
 Name:       Superkey
-Codierer:   SUPERKEY $INFILE $OUTFILE $KEY code
-Decodierer: SUPERKEY $INFILE $OUTFILE $KEY dec
+Codierer:   superkey $INFILE $OUTFILE $KEY code
+Decodierer: superkey $INFILE $OUTFILE $KEY dec
 
 
 <<Beispiel 2:>>
@@ -5202,7 +5201,7 @@ Decodierer: SUPERKEY $INFILE $OUTFILE $KEY dec
 PC-DES erwartet die Eingabe des Paáwortes ber die
 Tastatur. Daher ist ein kleiner Trick n”tig:
 
-Name:       PC-DES
+Name:       pc-des
 Codierer:   echo $KEY|PC-DES $INFILE
 Decodierer: echo $KEY|PC-DES $INFILE
 
@@ -5255,15 +5254,15 @@ Folgende Funktionen stehen zur Verfgung:
 Alle Eintr„ge werden nach Uhrzeit sortiert in folgen-
 dem Format angezeigt:
 
-+ 10:00-11:59  01.01.-31.12.  ş ş şşş  NETCALL HOT
-³ ³            ³              ³        ³
-³ ³            ³              ³        À Aktion
-³ ³            ³              À Wochentage (Mo-So)
-³ ³            ÀÄÄ Datumsbereich
-³ ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Uhrzeitbereich
-ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ + = aktivierter Eintrag
++ 10:00-11:59  01.01.-31.12.  . . ...  NETCALL HOT
+| |            |              |        |
+| |            |              |        +- Aktion
+| |            |              +- Wochentage (Mo-So)
+| |            +-- Datumsbereich
+| +--------------- Uhrzeitbereich
++----------------- + = aktivierter Eintrag
 
-N„heres hierzu finden Sie in XPOINT.TXT unter "auto-
+N„heres hierzu finden Sie im Handbuch unter "auto-
 matische Netcalls".
 
 @
@@ -5315,7 +5314,7 @@ Aktionen sind:
              innerhalb des angegebenen Zeitraums
 <<QUIT_ONCE n>>  dito, mit Errorlevel
 
-<<AUTOEXEC>>     Dateien im AUTOEXEC-Verzeichnis bear-
+<<AUTOEXEC>>     Dateien im autoexec-Verzeichnis bear-
              beiten
 
 <<CRASH z:n/n>>  Fido-Crashanruf bei einer Box
@@ -5441,15 +5440,15 @@ und Editor beliebig umdefinieren.
    L          B       ^Jnal^[
    v             LA   ^Iv
    <Ctrl S>        E  :-)
-   ³          ³³³³³³  ³
-   ³          ³³³³³³  ÀÄÄ das Tastenmakro
-   ³          ³³³³³ÀÄ E = Makro gilt im Editor
-   ³          ³³³³ÀÄÄ A = Makro gilt im Archiv-Viewer
-   ³          ³³³ÀÄÄÄ L = Makro gilt im Lister
-   ³          ³³ÀÄÄÄÄ N = Makro gilt im Nachr.fenster
-   ³          ³ÀÄÄÄÄÄ U = Makro gilt im Userfenster
-   ³          ÀÄÄÄÄÄÄ B = Makro gilt im Brettfenster
-   ÀÄÄÄÄÄÄÄ die umdefinierte Taste
+   |          ||||||  |
+   |          ||||||  +-- das Tastenmakro
+   |          |||||+- E = Makro gilt im Editor
+   |          ||||+-- A = Makro gilt im Archiv-Viewer
+   |          |||+--- L = Makro gilt im Lister
+   |          ||+---- N = Makro gilt im Nachr.fenster
+   |          |+----- U = Makro gilt im Userfenster
+   |          +------ B = Makro gilt im Brettfenster
+   +------- die umdefinierte Taste
 
 
 Folgende Funktionen stehen zur Verfgung:
@@ -5470,7 +5469,7 @@ Folgende Funktionen stehen zur Verfgung:
 <<OK>>        Makro-Editor beenden
 
 Genaueres zur Verwendung von Tastenmakros finden Sie
-in XPOINT.TXT.
+im Handbuch.
 
 @
 545
@@ -5626,7 +5625,7 @@ einschalten.
 Dies ist die Geschwindigkeit, die mit der Sie die
 linke Maustaste drcken mssen, um einen Doppelklick
 zu erzeugen. N„heres zu Maustasten und Doppelklicks
-finden Sie im Kapitel "Bedienung" in XPOINT.TXT.
+finden Sie im Kapitel "Bedienung" im Handbuch.
 @
 585
 <<[x]>> -> Wenn Sie innerhalb eines Dialog-Fensters im
@@ -5710,13 +5709,13 @@ Diese Einstellung gilt nicht fr Fido-Netcalls.
        berschrieben.
 
 Normalerweise sollte diese Option auf "N" stehen.
-N„heres dazu finden Sie im Anhang von XPOINT.TXT,
+N„heres dazu finden Sie im Anhang des Handbuchs,
 Kapitel "Erste Hilfe bei Datenverlust", unter dem
 Stichwort "Netcall verschwunden?".
 
-Hinweis: Bei MausTausch heiáen die Dateien OUTFILE,
-nicht CALLED, im MagicNET heiáen sie OUT, und bei
-QuickMail/GS-Mailbox heiáen sie PUFFER.
+Hinweis: Bei MausTausch heiáen die Dateien outfile,
+nicht called, im MagicNET heiáen sie out, und bei
+QuickMail/GS-Mailbox heiáen sie puffer.
 @
 564
 <<[x]>> -> Eingegehende Nachrichtenpakete werden nach
@@ -5736,7 +5735,7 @@ Ihre Festplatte unter akutem Platzmangel leidet.
 
 Diese Einstellung gilt nicht fr das FidoNet - dort
 ist immer ein Backup des letzten Netcalls bis zum
-n„chsten Netcall im SPOOL-Verzeichnis vorhanden -
+n„chsten Netcall im spool-Verzeichnis vorhanden -
 und fr den Sysop-Mode - dort werden Puffer nach dem
 Einlesen immer gel”scht.
 @
@@ -5761,7 +5760,7 @@ Adreábestandteilen kommen nicht an.
 <<[x]>> -> Zus„tzlich zu den Logfile-Eintr„gen am Ende
        der Netzanruf-Berichte wird im Logfile-Ver-
        zeichnis (s. /Config/Pfade) ein vollst„ndiges
-       Netcall-Logfile unter dem Namen NETCALL.LOG
+       Netcall-Logfile unter dem Namen netcall.log
        mitgefhrt. Diese Einstellung gilt nicht fr
        Fido-Netcalls.
 @
@@ -5860,7 +5859,7 @@ und "Wochentage" aber leer sind. Sie bewirkt, daá
 nach dem Absenden der Nachricht der Listeneintrag
 automatisch gel”scht wird.
 
-Hat die Nachrichtendatei die Erweiterung ".MSG", wird
+Hat die Nachrichtendatei die Erweiterung ".msg", wird
 sie ebenfalls automatisch gel”scht.
 @
 579
@@ -6292,8 +6291,8 @@ eingeben (eine sogenannte AKA).
 Diese Einstellung ist nur noch aus Kompatiblit„ts-
 grnden zu „lteren XP-Versionen vorhanden. Falls Sie
 ber eine Box Nachrichten unter verschiedenen AKAs
-absenden m”chten, verwenden Sie bitte die in FIDO.
-DOC, Kap. 2.5 beschriebene Methode.
+absenden m”chten, verwenden Sie bitte die in fido.
+txt, Kap. 2.5 beschriebene Methode.
 @
 700
 Der Name des Brettbestell-Verwalters der Box; in der
@@ -6362,11 +6361,10 @@ bestimmte User oder Bretter senden.
 
 <<Anzeige im Kurznamen-Fenster:
 
- pm          pm\@daisy.de
- zyxel       /T-NETZ/ZYXEL-KUMMERKASTEN    MEINEBOX
- dumpfbacke  rbabel\@babylon.pfm-mainz.de
- ³           ³                             ³
- ÀÄ Krzel   ÀÄÄ Adresse                   À Server
+ pm          peter\@mandrella.de
+ zyxel       /Z-NETZ/ALT/MODEM/ZYXEL       MEINEBOX
+ |           |                             |
+ +- Krzel   +-- Adresse                   +- Server
 
 
 <<Neu>>       legt einen neuen Kurznamen an
@@ -6432,15 +6430,15 @@ hier 49-621 ein.
        werden automatisch gel”scht.
 
 Dieser Schalter ist fr User gedacht, die alle Nach-
-richtenpakete als File Attaches (s. FIDO.TXT) erhal-
+richtenpakete als File Attaches (s. fido.txt) erhal-
 ten; es erspart das manuelle L”schen der leeren
 Nachrichten.
 @
 727
 Wenn Sie bei einer Fido-Box File Areas beziehen (s.
-FIDO.TXT), dann werden Ihnen die Dateien oft zusam-
+fido.txt), dann werden Ihnen die Dateien oft zusam-
 men mit sogenannten TIC-Files zugeschickt - Dateien
-mit der Erweiterung ".TIC", die Informationen ber
+mit der Erweiterung ".tic", die Informationen ber
 die verschickten File-Echo-Dateien enthalten.
 
 <<[x]>> -> XP wertet TIC-Files automatisch aus, legt in
@@ -6470,7 +6468,7 @@ die verschickten File-Echo-Dateien enthalten.
        oder nicht.
 
 Beachten Sie, daá XP beim Verwenden von "Magic Names"
-(s. FIDO.TXT) nicht erkennen kann, ob die gewnschten
+(s. fido.txt) nicht erkennen kann, ob die gewnschten
 Dateien tats„chlich angekommen sind. Daher werden
 File Requests ohne Dateierweiterung grunds„tzlich
 nicht zurckgestellt.
@@ -6518,12 +6516,12 @@ getrennt mit einem Slash (/) - an den Dateinamen an-
 h„ngen. Die Dateinamen drfen "*"- oder "?"-Zeichen
 enthalten.
 
-Wenn Sie z.B. die Dateien POLICY.ARJ, XP340.EXE und
-POINTS.* bestellen m”chten, und die POINTS.* -
+Wenn Sie z.B. die Dateien policy.arj, xp340.exe und
+points.* bestellen m”chten, und die points.* -
 Dateien mit dem Paáwort GEHEIM geschtzt sind, dann
 geben Sie Folgendes ein:
 
-   POLICY.ARJ XP340.EXE POINTS.*/GEHEIM
+   policy.arj xp340.exe points.*/GEHEIM
 
 Wenn fr die gew„hlte Box eine Fileliste vorhanden
 ist (und mit [/Fido/Filelisten/Einlesen] aktiviert@13201
@@ -6819,7 +6817,7 @@ mer erkannt und ausgewertet.
 
 @
 799
-<<[x]>> -> RFC-Bin„rnachrichten werden als mehrteilige
+<<[X]>> -> RFC-Bin„rnachrichten werden als mehrteilige
        Nachrichten - sogenannte "Attachments" - ver-
        schickt. Dieses Format wird von allen neuen
        Internet-Mailprogrammen verstanden.
@@ -6838,7 +6836,7 @@ sandten Nachrichten zu „ndern, mssen Sie diese mit
 den.
 @
 8100
-Wie in Kapitel "Kommentarverkettung" von XPOINT.TXT
+Wie in Kapitel "Kommentarverkettung" des Handbuchs
 beschrieben, ist die Nachrichten-Verkettung in Netzen
 mit MagicNET-Technik meist noch zu lckenhaft, um
 sinnvoll genutzt werden zu k”nnen. Falls Sie es den-
@@ -6846,7 +6844,7 @@ noch testen m”chten, k”nnen Sie diesen Schalter
 aktivieren.
 @
 8101
-Wie in Kapitel "Kommentarverknotung" von XPOINT.TXT
+Wie in Kapitel "Kommentarverknotung" des Handbuchs
 beschrieben, ist die Nachrichten-Verknotung in Netzen
 mit MagicNET-Technik meist noch zu lckenhaft, um
 sinnvoll genutzt werden zu k”nnen. Falls Sie es den-
@@ -6944,10 +6942,10 @@ Wochenende/Feiertage:
 
    Tarifgruppe 1:   Mo-Fr
    Tarifgruppe 2:   Sa,So,F1-F3
-   ³                ³     ³
-   ³                ³     ÀÄ Feiertage
-   ³                ÀÄÄÄÄÄÄÄ Wochentage
-   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Tarifgruppen
+   |                |     |
+   |                |     +- Feiertage
+   |                +------- Wochentage
+   +------------------------ Tarifgruppen
 
 Dies entspricht dem derzeitigen Tarifmodell in
 Deutschland. XP unterscheidet zwischen drei ver-
@@ -7089,7 +7087,7 @@ Parameter hinter dem Programmnamen ein.
 
 Falls Sie als Viewer eine Batchdatei eintragen, muá
 der Name der Datei voll ausgeschrieben werden, incl.
-".BAT".
+".bat".
 
 @
 830
@@ -7296,9 +7294,9 @@ gedeutet werden soll).
             Antwort (eines Replies).
 
 <<Maus-PM-Status:>>  Bearbeitungsstatus einer PM im
-            MausNet; siehe XPOINT.TXT.
+            MausNet; siehe Handbuch.
 
-<<PGP-Status:>> PGP-Informationen; siehe XPOINT.TXT, Ka-
+<<PGP-Status:>> PGP-Informationen; siehe Handbuch, Ka-
             pitel 5.12.
 
 <<Nachrichtenteil:>> fortlaufende Nummer der Teile einer
@@ -7362,14 +7360,14 @@ NODELIST.\###  322  NODEDIFF.### [..] Diff  Nodeliste
 POINTS24.\###  322  PR24DIFF.### [..] Diff  Points24-
 97POINT.PVT        97POINT.PVT             PVT-Point
 BORLANDN.\###  049                          Nodeliste
-³             ³    ³            ³    ³     ³
-³             ³    ³            ³    ³     À Format
-³             ³    ³            ³    À Einbindung als
-³             ³    ³            ³      Diff
-³             ³    ³            ÀÄ Archiv-Dateiname
-³             ³    ÀÄ Update-Dateiname
-³             ÀÄÄÄÄÄÄ Tag-Nummer = Dateierweiterung
-ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ Listen-Dateiname
+|             |    |            |    |     |
+|             |    |            |    |     +- Format
+|             |    |            |    +- Einbindung als
+|             |    |            |       Diff
+|             |    |            +- Archiv-Dateiname
+|             |    +- Update-Dateiname
+|             +------ Tag-Nummer = Dateierweiterung
++-------------------- Listen-Dateiname
 
 "\###" steht jeweils fr die aktuelle Tag-Nummer, die
 als Dateierweiterung eingesetzt wird. Node- und
@@ -7413,14 +7411,14 @@ abgelegt. Neu eingebundene Listen werden bei Bedarf
 in dieses Verzeichnis kopiert.
 
 N„heres zu Nodelisten und zur Nodelistenverwaltung
-finden Sie im entsprechenden Kapitel von FIDO.TXT.
+finden Sie im entsprechenden Kapitel von fido.txt.
 
 @
 931
 Geben Sie Name und - wahlweise - Verzeichnis der neu
 einzubindenden Node- oder Pointliste an, oder w„hlen
 Sie den Namen aus. Die Liste wird bei Bedarf automa-
-tisch entpackt und ins FIDO-Unterverzeichnis kopiert.
+tisch entpackt und ins fido-Unterverzeichnis kopiert.
 
 XP versucht, den Typ der Liste automatisch zu erken-
 nen. Gelingt dies nicht, so mssen Sie den Typ von
@@ -7474,7 +7472,7 @@ Normalfall ist, wird dieses Eingabefeld ignoriert.
 942
 Dies ist der Dateiname, unter dem Sie neue Listen-
 Updates erhalten. Fr fortlaufende Tages-Nummern ist
-"\###" einzusetzen, z.B. "NODELIST.###" fr die
+"\###" einzusetzen, z.B. "nodelist.###" fr die
 Standard-FidoNet-Nodeliste.
 
 Falls keine automatischen Updates fr diese Liste
@@ -7487,7 +7485,7 @@ Update-Archive stehen. Wie beim Listennamen selbst,
 so kann auch hier "\###" fr die Tages-Nummer ein-
 gesetzt werden. Wahlweise kann auch "\##" fr die
 letzten beiden Ziffern der Nummer verwendet werden,
-z.B. "NODEDIFF.A\##" fr die Standard-FidoNet-
+z.B. "nodediff.a\##" fr die Standard-FidoNet-
 Nodelistenupdates.
 
 Der passende, bei /Config/Extern/Entpacker eingetra-
@@ -7507,8 +7505,8 @@ Updates konstruieren.
 @
 945
 <<[x]>> -> Die Update-Dateien sind "Diff"-Dateien (s.
-       FIDO.TXT). XP ruft zum Einbinden das Programm
-       NDIFF.EXE auf.
+       fido.txt). XP ruft zum Einbinden das Programm
+       ndiff.exe auf.
 
 <<[ ]>> -> Die Update-Dateien werden unver„ndert einge-
        bunden (es sei denn, Sie haben ein Bearbei-
@@ -7641,7 +7639,7 @@ Drcken Sie ...
        tagskategorie: 1).
 
 <<[ ]>> -> Es werden nur Feiertage bercksichtigt, die
-       Sie in [FEIERTAG.DAT] eingetragen haben.@979
+       Sie in [feiertag.dat] eingetragen haben.@979
 @
 972
 <<[x]>> -> Falls Sie ISDN verwenden und den FOSSIL-Trei-
@@ -7657,7 +7655,7 @@ Drcken Sie ...
 Technischer Hinweis: cFos beinhaltet eine Program-
 mierschnittstelle, ber die Telefoneinheiten und
 andere Daten abgefragt werden k”nnen. N„heres dazu
-ist in der Datei APPEND.DOC im cFos-Paket beschrie-
+ist in der Datei append.doc im cFos-Paket beschrie-
 ben.
 
 @
@@ -7666,7 +7664,7 @@ Die W„hrungseinheit, die bei der Gebhrenabsch„tzung
 angegeben wird.
 @
 979
-In der Datei FEIERTAG.DAT k”nnen beliebig viele
+In der Datei feiertag.dat k”nnen beliebig viele
 Feiertage oder sonstige spezielle Tage eingetragen
 werden, an denen abweichende Telefontarife gelten.
 
@@ -7736,7 +7734,7 @@ delt werden soll.
 <<2>>   QWK bildet die Message-ID aus Nachrichtennummer
     und Brettnummer.
 
-N„heres hierzu ist in QWK.DOC unter dem Stichwort
+N„heres hierzu ist in qwk.doc unter dem Stichwort
 "Message-ID" beschrieben. Im Zweifelsfall sollten
 Sie es bei der Voreinstellung <<2>> belassen.
 
@@ -7756,7 +7754,7 @@ ausgewertet.
 Die QWK-<<Door>> ist derjenige Teil der Mailbox, der
 fr den Upload, Download und die Verarbeitung von
 QWK-Nachrichtenpaketen zust„ndig ist. N„heres zu
-QWK-Doors ist in QWK.DOC beschrieben.
+QWK-Doors ist in qwk.doc beschrieben.
 @
 990
 W„hlen Sie die gewnschte Schnittstelle. Es werden
@@ -7814,14 +7812,14 @@ verwenden.
 1010
 Hier wird festgelegt, welche PGP-Version verwendet
 werden soll. Die Versionen 2.6.x und 6.5.x kommen mit
-nur einer ausfhrbaren Datei PGP.EXE, die Version 5.x
-ist aufgeteilt in verschiedene Dateien PGPx.EXE,
+nur einer ausfhrbaren Datei pgp.exe, die Version 5.x
+ist aufgeteilt in verschiedene Dateien pgpx.exe,
 wobei das x fr E,K,O,S oder V steht. Diese Datei(en)
 muá/mssen installiert und per DOS-Pfad (PATH oder
 PGPPATH) erreichbar sein.
 
 N„heres zu PGP finden Sie im Kapitel "PGP-Verschls-
-selung" von XPOINT.TXT und natrlich in der PGP-
+selung" des Handbuchs und natrlich in der PGP-
 Dokumentation.
 @
 1011
@@ -7840,8 +7838,8 @@ bei automatischen, unbeaufsichtigten Netzanrufen zu
 vermeiden!
 
 ACHTUNG: Bei der Decodierung einer archivierten Datei
-(ZIP, LZH etc.) mit +batchmode benennt PGP diese
-Datei u.U. zwangsweise in .ZIP, .LZH etc um. Dadurch
+(zip, lzh etc.) mit +batchmode benennt PGP diese
+Datei u.U. zwangsweise in .zip, .lzh etc um. Dadurch
 findet XP die decodierte Datei nicht, und die Deco-
 dierung schl„gt fehl. Ist +batchmode dagegen abge-
 schaltet, kann man die Frage nach dem Umbenennen
@@ -7923,9 +7921,9 @@ ten Keys manuell einzulesen.
 
 <<[x]>> -> Alle ausgehende Nachrichten werden mit PGP
        signiert. Dazu muá PGP installiert sein (s.
-       XPOINT.TXT, Kapitel 5.12). Die Signierung
-       l„át sich im Absendefenster mit "G" fr ein-
-       zelne Nachrichten aufheben.
+       Handbuch, Kapitel 5.12). Die Signierung l„át
+       sich im Absendefenster mit "G" fr einzelne
+       Nachrichten aufheben.
 
 <<[ ]>> -> Nachrichten k”nnen durch Drcken von "G" im
        Absendefenster signiert werden.
@@ -7951,7 +7949,7 @@ erhalten, wenn sie z.B. pgp -kv (UserID) eingeben:
 
 Tragen sie in das Feld dann 0x fr Hex, gefolgt von
 der KeyID ein: 0xC39C5085. DOS kommt mit sehr langen
-Aufrufzeilen beim Starten der Command.com nicht
+Aufrufzeilen beim Starten der command.com nicht
 zurecht, daher ist die Verwendung dieses Krzels
 sinnvoll.
 
@@ -7967,7 +7965,7 @@ Die Kombination dieses Schalters mit dem Schalter
 in diesem Fall die Signatur ohne weiteres zusammen
 mit dem Key gef„lscht werden k”nnte.
 
-N„heres zu PGP ist in Kapitel 5.12 von XPOINT.TXT
+N„heres zu PGP ist in Kapitel 5.12 des Handbuchs
 beschrieben.
 @
 1021
@@ -8024,7 +8022,7 @@ W„hlen Sie <<Ja>>, um den Vorgang abzubrechen.
 1550
 W„hlen Sie ...
 
-<<LIZENZ.DOC>>      um die Lizenzbestimmungen anzeigen
+<<lizenz.doc>>      um die Lizenzbestimmungen anzeigen
                 zu lassen,
 
 <<Registrierung>>   um das Registrierungsformular auszu-
@@ -8039,7 +8037,7 @@ W„hlen Sie ...
 1551
 W„hlen Sie ...
 
-<<LIZENZ.DOC>>      um die Lizenzbestimmungen anzeigen
+<<lizenz.doc>>      um die Lizenzbestimmungen anzeigen
                 zu lassen, oder
 
 <<Registrierungsformular>>  um das Registrierungsformu-
@@ -8061,14 +8059,14 @@ W„hlen Sie ...
      um Ihren Registrierungscode einzugeben.
 @
 1553
-Wenn Sie <<Ja>> w„hlen, wird die Datei REGDAT.XP ge-
+Wenn Sie <<Ja>> w„hlen, wird die Datei regdat.xp ge-
 l”scht. Dies ist z.B. dann sinnvoll, wenn Sie Ihr
 fertig installiertes XP an einen Bekannten weiterge-
 ben m”chten.
 
 Sie mssen den Registrierungcode dann sp„ter wieder
 neu eingeben, oder Sie k”nnen eine Sicherung der
-Datei REGDAT.XP wieder ins XP-Verzeichnis kopieren.
+Datei regdat.xp wieder ins XP-Verzeichnis kopieren.
 @
 1554
 Geben Sie den Registrierungscode ein, den Sie von
@@ -8172,7 +8170,7 @@ Gltigkeitsdatum (Monat/Jahr) ein.
 
 Die aktuelle Programmversion ist auch in der Cross-
 Point-Supportbox erh„ltlich (Telefonnummern: Siehe
-XPOINT.TXT).
+Handbuch).
 @
 1577
 <<[x]>> -> Sie erhalten zus„tzlich eine CD-ROM mit dem
@@ -8205,7 +8203,7 @@ Beachten Sie, daá E-Mails in einzelnen F„llen ver-
 lorengehen k”nnen. Falls Sie drei Wochen nach Ihrem
 Registrierungsantrag noch keine Mail mit dem Regi-
 strierungscode erhalten haben, wenden Sie sich bitte
-an eine der in LIZENZ.DOC angegebenen Registrie-
+an eine der in lizenz.doc angegebenen Registrie-
 rungsadressen.
 @
 1579
@@ -8484,7 +8482,7 @@ mit externen Programmen definiert werden.
 
 šber diesen Menpunkt k”nnen Sie...
 
-ş  den Inhalt von LIZENZ.DOC anzeigen oder aus-
+ş  den Inhalt von lizenz.doc anzeigen oder aus-
    drucken lassen,
 
 ş  das Registrierungsformular ausfllen und aus-
@@ -8530,7 +8528,7 @@ auslagert (die EMS- und XMS-Auslagerung kann unter
 /Config/Optionen/Allgemeines abgeschaltet werden.
 Ich wáte allerdings nicht wozu).
 
-Mit EXIT kommen Sie von DOS wieder zurck zu XP.
+Mit exit kommen Sie von DOS wieder zurck zu XP.
 
 Beachten Sie, daá innerhalb der DOS-Shell <<keine re-
 <<sidenten Programme>> aufgerufen werden drfen!
@@ -8559,7 +8557,7 @@ Ein Kalender eben.
 <<Zusatz / Archiv-Viewer>>
 
 Hier k”nnen Sie den Inhalt einer beliebigen Archiv-
-Datei (ZIP, ARJ, LZH, ARC etc.) anzeigen lassen.
+Datei (zip, arj, lzh, arc etc.) anzeigen lassen.
 Falls Sie auch den Inhalt der archivierten Dateien
 anzeigen oder die Dateien entpacken lassen m”chten,
 mssen dazu die passenden Entpacker bei /Config
@@ -8760,13 +8758,13 @@ Eine versehentlich gel”schte Nachricht wird mit
 <<Nachricht / Unversandt / Statistik
 
 Hier erhalten Sie eine šbersicht ber die Anzahl der
-Nachrichten, die zum Versand (in *.PP) bereitliegen.
+Nachrichten, die zum Versand (in *.pp) bereitliegen.
 @
 10405
 <<Nachricht / Unversandt / Zeigen
 
 Dieser Menpunkt listet alle unversandten Nachrich-
-ten auf, die in den Pollpaketen (*.PP) zum Versand
+ten auf, die in den Pollpaketen (*.pp) zum Versand
 bereitliegen. XP markiert dazu die betreffenden
 Nachrichten und ruft [/Nachricht/Suchen/Markiert]@10506
 auf.
@@ -8929,8 +8927,8 @@ tion zum Sichern.
 
 @
 10615
-Es k”nnen beliebige .COM- und .EXE-Programme sowie
-.BAT-Dateien in CrossPoint eingebunden werden. Die
+Es k”nnen beliebige .com- und .exe-Programme sowie
+.bat-Dateien in CrossPoint eingebunden werden. Die
 Programme mssen sich dazu entweder im XP-Verzeich-
 nis befinden oder ber einen DOS-Pfad erreichbar
 sein.
@@ -9027,7 +9025,7 @@ lesen von Pufferdateien.
 Ausgenommen von der Dupe-Prfung sind Nachrichten,
 die auf "Halten" stehen.
 
-In DUPES.LOG werden alle als Dupes erkannten Nach-
+In dupes.log werden alle als Dupes erkannten Nach-
 richten aufgezeichnet.
 @
 10708
@@ -9171,7 +9169,7 @@ stellen und bearbeiten, die dann unter /Edit/Gruppen
 als Signatur oder Kopf fr bestimmte Bretter einge-
 tragen werden. Alle Schablonen-Dateien mssen sich
 im CrossPoint-Verzeichnis befinden und die Erweite-
-rung .XPS besitzen.
+rung .xps besitzen.
 
 Siehe auch:  [interner Editor]@54
              [Signatur-Wechsler]@2001
@@ -9185,7 +9183,7 @@ Sie alle Farben an Ihren pers”nlichen Geschmack an-
 passen.
 
 Fr das mitgelieferte Zmodem-šbertragungsprotkoll
-ZM.EXE verwenden Sie bitte den Menpunkt /Config
+zm.exe verwenden Sie bitte den Menpunkt /Config
 /Anzeige/PD-Zmodem.
 @
 10902
@@ -9236,10 +9234,10 @@ mit <Alt 1> aktiviert werden.
 10907
 <<Config / Anzeige / PD-Zmodem
 
-Dieser Menpunkt ruft das Programm ZCONFIG.EXE auf,
+Dieser Menpunkt ruft das Programm zconfig.exe auf,
 um die Farben und die Sprache des šbertragungspro-
 tokolls PD-Zmodem einzustellen. Die Einstellungen
-werden innerhalb des Zmodem-Programms (ZM.EXE)
+werden innerhalb des Zmodem-Programms (zm.exe)
 gespeichert.
 @
 10908
@@ -9268,7 +9266,7 @@ und User hervorgehoben angezeigt.
 Hier k”nnen Sie beliebige Fido-(PKT)-, MagicNET-,
 QuickMail-, QWK- oder MausTausch-(OUTFILE)-Pakete
 einlesen. CrossPoint startet automatisch einen der
-Nachrichtenkonvertierer MAGGI, ZFIDO und QWK. Es muá
+Nachrichtenkonvertierer maggi, zfido und qwk. Es muá
 eine Serverbox eingetragen sein und angegeben wer-
 den, deren Netztyp dem einzulesenden Nachrichtenfor-
 mat entspricht.
@@ -9278,7 +9276,7 @@ Brettliste fr die betreffende Box vorhanden sein.
 
 Das Einlesen von RFC/UUCP-Daten ist ber diesen
 Menpunkt z.Zt. nicht m”glich. Gehen Sie stattdessen
-so vor, wie es in UUCP.TXT unter "Nachrichten von
+so vor, wie es in uucp.txt unter "Nachrichten von
 Hand einlesen" beschrieben ist.
 
 @
@@ -9611,7 +9609,7 @@ mit [/Netcall/Timingliste] erstellt haben - CrossPoint@11509
 schaltet dann in den Automatik-Modus um und fhrt
 alle zeitgesteuerten Befehle aus, so lange, bis Sie
 mit <Esc> abbrechen. Alles Weitere hierzu finden Sie
-unter "Automatische Netcalls" in XPOINT.TXT.
+unter "Automatische Netcalls" im Handbuch.
 @
 11509
 <<Netcall / Timing-Liste
@@ -9621,7 +9619,7 @@ die fr die Netcall-Automatik ([/Netcall/Bereitschaft])@11508
 verwendet werden.
 
 Alles Weitere hierzu finden Sie unter "Automatische
-Netcalls" in XPOINT.TXT.
+Netcalls" im Handbuch.
 @
 11601
 <<Edit / Schablonen
@@ -9657,7 +9655,7 @@ Hier k”nnen Sie verschiedene Systeme (Server) mit
 verschiedenen Attributen/Funktionen erfassen. Z.Zt.
 dient dieser Menpunkt zum Erfassen von Z-Netz-File-
 servern, die mit SendZMsg arbeiten, zum Eintragen
-von UUCP-Fileservern (s. UUCP.TXT) und zum Eintragen
+von UUCP-Fileservern (s. uucp.txt) und zum Eintragen
 von Crash-Paáw”rtern fr Fido-Mailboxen.
 
 Bitte beachten Sie, daá nicht jeder auf einen Z-Netz-
@@ -9856,7 +9854,7 @@ Nachrichtenaufkommens auf die einzelnen Bretter.
 <<XPoint / Statistik / Gebhren
 
 Der Gebhrenz„hler wertet den Inhalt des Logfiles
-XPOINT.LOG statistisch aus und erstellt eine šber-
+xpoint.log statistisch aus und erstellt eine šber-
 sicht ber die angefallenen Telefonkosten.
 @
 11710
@@ -9978,11 +9976,11 @@ Dieser Menpunkt dient zum Einlesen einer Brettliste.
 Voraussetzung dafr ist, daá Sie eine von der Box er-
 stellte Nachricht gew„hlt haben, die eine Brettliste
 enth„lt. Die Liste wird in einer Datei mit dem Namen
-<Box>.BL gespeichert und kann sp„ter fr /Nachricht
+<Box>.bl gespeichert und kann sp„ter fr /Nachricht
 /Brettmanager/Bestellen verwendet werden.
 
 Falls schon eine Brettliste vorhanden ist, wird diese
-in <Box>.BAK umbenannt.
+in <Box>.bak umbenannt.
 @
 11907
 <<Nachricht / Brettmanager / Datei einlesen
@@ -10059,7 +10057,7 @@ o  mit /Nachricht/Fileserver/Liste/einlesen eine Da-
 
 Ist keine Dateiliste vorhanden, so mssen Sie von
 Hand eine Request-Nachricht schreiben; n„heres dazu
-und zum ben”tigten Dateilisten-Format ist in UUCP.TXT
+und zum ben”tigten Dateilisten-Format ist in uucp.txt
 beschrieben.
 @
 12002
@@ -10154,14 +10152,14 @@ An den Absender der gew„hlten Nachricht wird eine
 Empfangsbest„tigung versandt. Die Best„tigung enth„lt
 folgende Informationen ber die erhaltene Nachricht:
 
-ş Message-ID der Nachricht
-ş Erstellungsdatum/Uhrzeit der Nachricht
-ş Gr”áe der Nachricht
-ş Pfad, ber den die Nachricht zu Ihnen gelangt ist
+- Message-ID der Nachricht
+- Erstellungsdatum/Uhrzeit der Nachricht
+- Gr”áe der Nachricht
+- Pfad, ber den die Nachricht zu Ihnen gelangt ist
 
 Und bei Brettnachrichten auáerdem
 
-ş den Brettnamen
+- den Brettnamen
 @
 12107
 <<Nachricht / Weiterleiten / L”schen
@@ -10326,7 +10324,7 @@ nen und externen Editor.
 <<Config / Extern / Shell
 
 Hier k”nnen Sie verschiedene Parameter fr den Aufruf
-der DOS-Shell (COMMAND.COM) einstellen.
+der DOS-Shell (command.com) einstellen.
 @
 12404
 <<Config / Extern / Entpacker
@@ -10352,7 +10350,7 @@ gramm vorhanden ist.
 
 Die Packer DWC und Hyper sind relativ selten; die
 Einstellungen fr diese beiden Packer mssen bei Be-
-darf <<manuell>> in XPOINT.CFG erfolgen.
+darf <<manuell>> in xpoint.cfg erfolgen.
 
 @
 12405
@@ -10505,7 +10503,7 @@ lungen fr die Telefonkostenberechnung.
 
 Die Berechnung selbst erfolgt nach jedem Netzanruf.
 Die angefallenen Gebhren werden jeweils im Netzan-
-rufbericht und im Anruflogfile (XPOINT.LOG) gespei-
+rufbericht und im Anruflogfile (xpoint.log) gespei-
 chert und k”nnen ber /XPoint/Statistik/Gebhren
 ausgewertet werden.
 @
@@ -10534,7 +10532,7 @@ wort gesperrt wird.
 genauestens! Falls Sie ein Paáwort vergessen, mssen
 Sie CrossPoint neu installieren und Ihre Nachrichten-
 datenbank aus den Pufferdateien neu aufbauen lassen
-(siehe XPOINT.TXT, Anhang H).
+(siehe Handbuch, Anhang H).
 
 @
 12810
@@ -10580,9 +10578,9 @@ festlegen, ob und wie diese Listen automatisch ak-
 tualisiert werden sollen.
 
 Alle Node- und Pointlisten sind im Unterverzeichnis
-FIDO abgelegt.
+fido abgelegt.
 
-N„heres zu diesem Thema finden Sie in FIDO.TXT im
+N„heres zu diesem Thema finden Sie in fido.txt im
 Kapitel "Nodelist".
 @
 13002
@@ -10610,10 +10608,10 @@ nicht n”tig ist.
 Beachten Sie bitte, daá Nodediffs meist im ARC-Format
 verteilt werden. XP entpackt die Dateien zwar auto-
 matisch; allerdings muá dazu ein ARC-Entpacker (z.B.
-PKXARC) vorhanden sein.
+pkxarc) vorhanden sein.
 
 N„heres zu Nodelist und Nodediffs finden Sie in
-FIDO.TXT, Kapitel "Nodelist".
+fido.txt, Kapitel "Nodelist".
 
 @
 13003
@@ -10657,7 +10655,7 @@ kungen l”schen und (b) die Nodeliste unter /Fido
 /Nodelisten/Verwalten l”schen und neu einlesen.
 
 Diese Funktion gilt <<nur>> fr die Haupt-FidoNet-Node-
-list (NODELIST.xxx), nicht jedoch fr andere Node-
+list (nodelist.xxx), nicht jedoch fr andere Node-
 listen von Fido-kompatiblen Netzen.
 
 @
@@ -10772,8 +10770,8 @@ Hier befinden sich Fido-spezifische Einstellungen.
 Dieser Menpunkt dient zum Einlesen von Dateilisten
 im FidoNet-blichen Format. Die Listen werden dazu,
 falls nicht schon geschehen, in das Unterverzeichnis
-FIDO\ kopiert und anschlieáend in der Datei FILE-
-LIST.CFG eingetragen.
+fido\ kopiert und anschlieáend in der Datei file-
+list.cfg eingetragen.
 
 Gepackte Filelisten werden automatisch entpackt,
 vorausgesetzt, der passende Entpacker ist ber einen
@@ -10783,8 +10781,8 @@ DOS-Pfad erreichbar.
 <<Fido / Filelisten / L”schen
 
 Dieser Menpunkt dient zum L”schen von Filelisten.
-Die Liste wird dazu aus dem FIDO\-Unterverzeichnis
-gel”scht und aus der Datei FILELIST.CFG ausgetragen.
+Die Liste wird dazu aus dem fido\-Unterverzeichnis
+gel”scht und aus der Datei filelist.cfg ausgetragen.
 @
 13203
 <<Fido / Filelisten / Suchen
@@ -10827,12 +10825,12 @@ fehlerhaft erkannten Nachrichten werden auf "L”schen"
 gesetzt und markiert. Wenn Sie anschlieáend eine
 Nachrichten-Reorganisation durchfhren, bleiben nur
 korrekte Nachrichten brig; auch evtl. fehlerhafte
-Ablagedateien (MPUFFER.*) werden dabei korrigiert.
+Ablagedateien (mpuffer.*) werden dabei korrigiert.
 
 ACHTUNG! Wenn sehr viele Nachrichten besch„digt sind,
 z.B. durch einen Plattencrash o.„., ist es ratsamer,
 die Ablagedateien zu korrigieren und neu einzulesen;
-N„heres dazu finden Sie in XPOINT.TXT, Stichwort
+N„heres dazu finden Sie im Handbuch, Stichwort
 "erste Hilfe bei Datenverlust".
 @
 13304
@@ -10856,7 +10854,7 @@ herstellen.
 <<Wartung / Sonstiges / Brettindex
 
 Der Brettindex - nicht zu verwechseln mit der Bret-
-ter-Indexdatei BRETTER.IX1 - legt die Reihenfolge
+ter-Indexdatei bretter.ix1 - legt die Reihenfolge
 fest, in der die Bretter angezeigt werden. In diesem
 Men befinden sich Funktionen, um den Brettindex neu
 aufzubauen.
@@ -11135,13 +11133,13 @@ ge„nderten Einstellungen zu speichern.
 20009
 Die gew„hlte Datei ist schreibgeschtzt und kann
 daher nicht berschrieben werden. Verwenden Sie ggf.
-den DOS-Befehl ATTRIB, um den Schreibschutz zu ent-
+den DOS-Befehl attrib, um den Schreibschutz zu ent-
 fernen.
 @
 20020
 Sie haben eine Funktionstaste verwendet, die ber
-den Befehl *LIST (s. XPOINT.TXT) eine Datei anzei-
-gen sollte, aber die Datei ist nicht vorhanden.
+den Befehl *LIST (s. Handbuch) eine Datei anzeigen
+sollte, aber die Datei ist nicht vorhanden.
 šberprfen Sie ggf. die Einstellung bei /Config
 /Tasten/...
 @
@@ -11152,45 +11150,41 @@ die Einstellung bei /Config/Tasten/...!
 @
 20023
 Sie haben eine Funktionstaste verwendet, die ber
-den Befehl *EDIT (s. XPOINT.TXT) eine Datei edi-
+den Befehl *EDIT (s. Handbuch) eine Datei edi-
 tieren sollte, aber die Datei ist nicht vorhanden.
 šberprfen Sie ggf. die Einstellung bei /Config
 /Tasten/...
 @
 20101
 Fr Fido-Netcalls und zum Importieren von Fido-Nach-
-richten wird der Nachrichtenkonvertierer ZFIDO.EXE
-ben”tigt, der im getrennt erh„ltlichen XP-Fido-Paket
-enthalten ist.
+richten wird der Nachrichtenkonvertierer zfido.exe.
 @
 20102
 Fr MausTausch-, MagicNET- und QuickMail-Netcalls
 und zum Einlesen entsprechender Nachrichten wird der
-Nachrichtenkonvertierer MAGGI.EXE ben”tigt, der im
+Nachrichtenkonvertierer maggi.exe ben”tigt, der im
 XP-Paket enthalten ist. Bitte stellen Sie sicher,
 daá sich dieses Programm im XP-Verzeichnis befindet!
 @
 20103
 Zum Einbinden von Nodediff-Dateien wird das Programm
-NDIFF.EXE ben”tigt; es ist im XP-Fido-Paket enthal-
-ten.
+ndiff.exe ben”tigt.
 @
 20104
-Fr Fido-Netcalls wird das Mailer-Programm XP-FM.EXE
-ben”tigt; es ist im XP-Fido-Paket enthalten.
+Fr Fido-Netcalls wird das Mailer-Programm xp-fm.exe
+ben”tigt.
 @
 20105
-Fr UUCP-Netcalls wird das Konvertierprogramm UUZ.EXE
-ben”tigt. Es ist im XP-UUCP-Paket enthalten.
+Fr UUCP-Netcalls wird das Konvertierprogramm uuz.exe
+ben”tigt.
 @
 20110
 Fr UUCP-Netcalls wird das šbertragungsprogramm
-UUCICO.EXE ben”tigt, das im XP-UUCP-Paket enthalten
-ist.
+uucico.exe ben”tigt.
 @
 20111
 Fr die Verarbeitung von QWK-Nachrichten wird das
-Konvertierprogramm ZQWK.EXE ben”tigt, das im XP-
+Konvertierprogramm zqwk.exe ben”tigt, das im XP-
 QWK-Paket enthalten ist. Das QWK-Paket erhalten Sie
 dort, wo Sie CrossPoint herhaben, oder in der
 [CrossPoint-Supportbox].@9
@@ -11230,7 +11224,7 @@ gegeben wird.
 20210
 CrossPoint hat festgestellt, daá zu wenig Dateien
 ("File Handles") frei sind. Verlassen Sie XP und er-
-h”hen Sie die Einstellung in CONFIG.SYS!
+h”hen Sie die Einstellung in config.sys!
 
 Insbesondere, wenn Sie unter Windows oder OS/2
 arbeiten, werden sehr viele File Handles ben”tigt,
@@ -11251,8 +11245,8 @@ Pointlist, oder l”schen Sie den Pointlisteneintrag.
 20217
 Zum Codieren oder Decodieren von PGP-Nachrichten
 mssen Sie zuerst das Programm PGP installieren.
-Eine ausfhrliche Anleitung zu PGP finden Sie in
-XPOINT.TXT, Kapitel 5.12.
+Eine ausfhrliche Anleitung zu PGP finden Sie im
+Handbuch, Kapitel 5.12.
 @
 20218
 Aktivieren Sie die ZCONNECT-PGP-Untersttzung mit
@@ -11266,10 +11260,10 @@ nicht m”glich!
 Lassen Sie sich zuerst mit der Taste "#" den Kommen-
 tarbaum einer Nachricht anzeigen...
 
-Siehe auch XPOINT.TXT, Kapitel "Kommentarverkettung".
+Siehe auch Handbuch, Kapitel "Kommentarverkettung".
 @
 20305
-Die MPUFFER-Dateien bilden die Nachrichtendatenbank
+Die mpuffer-Dateien bilden die Nachrichtendatenbank
 von XP. Alle dort enthaltenen Nachrichten sind be-
 reits in XP vorhanden; ein Einlesen macht also wenig
 Sinn.
@@ -11277,7 +11271,7 @@ Sinn.
 Falls Sie die Pufferdateien neu einlesen lassen
 m”chten, weil die Nachrichtendatenbank defekt ist,
 so folgen Sie bitte exakt den Hinweisen im Kapitel
-"Erste Hilfe bei Datenverlust" in XPOINT.TXT.
+"Erste Hilfe bei Datenverlust" im Handbuch.
 @
 20306
 Die Decodierung der pmCrypt-codierten Nachricht hat
@@ -11364,7 +11358,7 @@ zu k”nnen.
 20408
 Das Netz, in dem Sie lesen und schreiben, unter-
 sttzt keine Kommentarverkettung - siehe Kapitel
-"Kommentarverkettung" in XPOINT.TXT.
+"Kommentarverkettung" im Handbuch.
 @
 20409
 Die gew„hlte Nachricht ist nicht kommentarverkettet.
@@ -11421,7 +11415,7 @@ auf die Suche nach der verlorenen Datei machen (z.B.
 auf einem Backup) und diese mit /XPoint/Import/Puf-
 fer wieder neu einlesen lassen.
 
-Der Name der Ablagedateien ist MPUFFER.x mit x=0-9
+Der Name der Ablagedateien ist mpuffer.x mit x=0-9
 fr Z-Netz alt und 10-19 fr alle brigen Netze.
 @
 20423
@@ -11440,41 +11434,41 @@ Ursachen haben, z.B.
   Cacheprogramms, insbesondere Smartdrive mit ein-
   geschaltetem Write-Behind-Cache
 
-ş eine Besch„digung einer der MPUFFER-Dateien auf
+ş eine Besch„digung einer der mpuffer-Dateien auf
   eine andere Weise.
 
-Im Anhang von XPOINT.TXT finden Sie im Kapitel "Erste
+Im Anhang des Handbuchs finden Sie im Kapitel "Erste
 Hilfe bei Datenverlust" Hinweise, wie sich besch„-
 digte XP-Datenbanken reparieren lassen.
 
 <<Wichtiger Hinweis:>> Solche Fehler k”nnen auch dann
 gemeldet werden, wenn die Ablagedateien an sich v”l-
-lig in Ordnung sind (Programme wie XPCHECK oder ZPR
+lig in Ordnung sind (Programme wie xpcheck oder zpr
 zeigen keinen Fehler an). Trotzdem ist die Nachrich-
 tendatenbank besch„digt - es besteht eine Inkonsi-
-stenz zwischen den MPUFFER- und den brigen Dateien.
+stenz zwischen den mpuffer- und den brigen Dateien.
 In diesem Fall ist es am sichersten, die Ablage umzu-
-benennen und neu einlesen zu lassen (s. XPOINT.TXT);
+benennen und neu einlesen zu lassen (s. Handbuch);
 es gehen dann keine Nachrichten verloren.
 
 @
 20426
 Es besteht eine Inkonsistenz zwischen den Paketen
-mit ausgehenden Nachrichten (*.PP- und *.CP-Dateien)
+mit ausgehenden Nachrichten (*.pp- und *.cp-Dateien)
 und der Nachrichtendatenbank. Die Fehlermeldung
 sollte verschwinden, sobald bei allen Servern ein
 Netcall durchgefhrt wurde.
 
 Verschwindet die Meldung <<nicht>>, so sollten Sie
 sicherstellen, daá keine unversandten Nachrichten
-vorhanden sind, und anschlieáend *.PP und *.CP
+vorhanden sind, und anschlieáend *.pp und *.cp
 l”schen.
 @
 20427
-Eine der Dateien mit ausgehenden Nachrichten (*.PP)
+Eine der Dateien mit ausgehenden Nachrichten (*.pp)
 wurde besch„digt. Versuchen Sie, die Datei mit dem
-Programm ZPR bzw. ZAP zu reparieren (beachten Sie
-die Hinweise in der Anleitung zu ZAP bzw. ZPR!)
+Programm zpr bzw. zap zu reparieren (beachten Sie
+die Hinweise in der Anleitung zu zap bzw. zpr!)
 Gelingt dies nicht, so bleibt Ihnen nichts anderes
 brig, als die Datei zu l”schen, die noch nicht
 verschickten Nachrichten ausfindig zu machen (z.B.
@@ -11524,13 +11518,13 @@ ten und die Datei dann noch einmal aufrufen.
 Das angegebene Zielverzeichnis existiert nicht.
 @
 20434
-ş  Bei der angegebenen Datei handelt es sich nicht
+-  Bei der angegebenen Datei handelt es sich nicht
    um ein gepacktes Archiv, oder
 
-ş  das Archivformat ist XP nicht bekannt (sehr un-
+-  das Archivformat ist XP nicht bekannt (sehr un-
    wahrscheinlich), oder
 
-ş  die Datei wurde besch„digt.
+-  die Datei wurde besch„digt.
 @
 20435
 Fr /Wartung/Dupekill wird mindestens <<doppelt>> so
@@ -11587,8 +11581,8 @@ griff-Funktion gegen Schreiben gesperrt.
 20480
 Crosspostings - also Nachrichten mit mehreren Emp-
 f„ngern - sind nur in bestimmten Netzen m”glich. N„-
-heres dazu finden Sie im Kapitel "Crosspostings" in
-XPOINT.TXT.
+heres dazu finden Sie im Kapitel "Crosspostings" im
+Handbuch.
 @
 20481
 Wenn Sie ein Crossposting - also eine Nachricht mit
@@ -11745,7 +11739,7 @@ kennzeichnen Sie sie mit den Tasten W + F.
 20706
 Fido-Crash-Anrufe sind nur m”glich, wenn eine Node-
 list eingebunden ist. N„heres dazu finden Sie in
-FIDO.TXT.
+fido.txt.
 @
 20707
 Bei dieser Box ist kein Relogin m”glich, weil bereits
@@ -11759,7 +11753,7 @@ Es gibt fr diesen Netztyp kein standardisiertes
 Loginverfahren. Daher mssen Sie XP zuerst ber eine
 Scriptdatei mitteilen, wie das Login ablaufen soll.
 N„heres dazu finden Sie im Abschnitt "Scriptprogram-
-mierung" in XPOINT.TXT.
+mierung" im Handbuch.
 @
 20710
 ^^20427
@@ -11785,24 +11779,24 @@ Edit/Boxen/Edit/Point!
 20714
 Das CTS-Signal des Modems signalisiert, daá das Modem
 nicht bereit ist. N„heres zu CTS finden Sie im Kapi-
-tel "Kleine Modemkunde" im Anhang von XPOINT.TXT.
+tel "Kleine Modemkunde" im Anhang des Handbuchs.
 @
 20715
 Das Entpacken hat nicht funktioniert. M”gliche Ursa-
 chen:
 
-ş  Der bei /Edit/Boxen/Edit/Point eingetragene Ent-
+-  Der bei /Edit/Boxen/Edit/Point eingetragene Ent-
    packer ist nicht vorhanden oder nicht ber einen
    DOS-Pfad erreichbar. Insbesondere bei ZCONNECT-
    und Fido-Netcalls gengt es <<NICHT>>, wenn der Ent-
    packer sich im CrossPoint-Verzeichnis befindet!!
 
-ş  Sie haben bei /Edit/Boxen/Edit/Point den falschen
+-  Sie haben bei /Edit/Boxen/Edit/Point den falschen
    Entpacker eingestellt. Evtl. hat die Box mit
    PKZIP-2 gepackt, aber Sie haben zum Entpacken die
    alte Version 1.0 oder 1.1 verwendet.
 
-ş  Das Nachrichtenpaket ist defekt.
+-  Das Nachrichtenpaket ist defekt.
 
 Achtung: XP hat das nicht entpackte Nachrichtenpaket
 im Unterverzeichnis "BAD" abgelegt, damit es beim
@@ -11821,19 +11815,19 @@ vorhanden.
 @
 20719
 Eines oder mehrere der empfangenen Fido-Nachrichten-
-Pakete (SPOOL\*.PKT) war(en) so stark besch„digt,
+Pakete (spool\*.pkt) war(en) so stark besch„digt,
 daá es/sie nicht konvertiert werden konnte(n).
 
 M”glicherweise war beim Entpacken der Pakete auch
 die Festplatte voll, sodaá das letzte Paket nicht
 mehr vollst„ndig entpackt wurde. In dem Fall hilft
 ein neues Entpacken und Einlesen der PKT-Dateien
-(am einfachsten durch Kopieren ins AUTOEXEC-Ver-
-zeichnis s. XPOINT.TXT), falls die gepackte Datei
-noch im SPOOL-Verzeichnis vorhanden ist.
+(am einfachsten durch Kopieren ins autoexec-Ver-
+zeichnis s. Handbuch), falls die gepackte Datei
+noch im spool-Verzeichnis vorhanden ist.
 
 ACHTUNG: Die fehlerhaften Nachrichtenpakte wurden
-ins Unterverzeichnis BAD verschoben, um sie gegen
+ins Unterverzeichnis bad verschoben, um sie gegen
 L”schen beim n„chsten Netcall zu schtzen!
 
 @
@@ -11844,12 +11838,12 @@ Bildschirm erkennbar ist, bitte zusammen mit Ihrer
 Fido-Point-Konfiguration an den Programmierer!
 @
 20721
-Siehe Kapitel "Kleine Modemkunde" im Anhang von
-XPOINT.TXT.
+Siehe Kapitel "Kleine Modemkunde" im Anhang des
+Handbuchs.
 @
 20722
 Sie verwenden vermutlich eine Version des Fido-Mai-
-lers (XP-FM), die nicht zu Ihrer CrossPoint-Version
+lers (xp-fm), die nicht zu Ihrer CrossPoint-Version
 kompatibel ist.
 @
 20723
@@ -11879,7 +11873,7 @@ stierendes Verzeichnis eingetragen.
 @
 20729
 Beim Konvertieren der ausgehenden Nachrichten mit
-ZFIDO.EXE ist etwas schiefgelaufen. Aktivieren Sie
+zfido.exe ist etwas schiefgelaufen. Aktivieren Sie
 den Schalter "auf Tastendruck warten" unter /Config
 /Extern/Shell und wiederholen Sie den Netcall, um
 die genaue Fehlermeldung lesen zu k”nnen.
@@ -11890,7 +11884,7 @@ die genaue Fehlermeldung lesen zu k”nnen.
 20731
 Die Scriptdatei, die Sie bei /Edit/Boxen/Edit/Point
 eingetragen haben, ist fehlerhaft. Ein Fehlerproto-
-koll finden Sie in der Datei SCERRORS.LOG.
+koll finden Sie in der Datei scerrors.log.
 @
 20732
 Sie haben bei /Config/Modem/... einen FOSSIL-Treiber
@@ -11899,7 +11893,7 @@ kein FOSSIL-Treiber geladen. XP verwendet daher die
 eigenen Schnittstellenroutinen. N„here Erl„uterungen
 zu FOSSIL-Treibern finden Sie in der Online-Hilfe zu
 /Config/Modem/... und im Kapitel "Kleine Modemkunde"
-im Anhang von XPOINT.TXT.
+im Anhang des Handbuchs.
 @
 20733
 Bei /Edit/Boxen/Edit/Point ist im Feld "Pakete mit-
@@ -11915,14 +11909,14 @@ dieser Box ein!
 20737
 Es ist ein unbekannter ZQWK-Fehler aufgetreten.
 Bitte wenden Sie sich an den Programmierer von ZQWK
-(siehe QWK.DOC).
+(siehe qwk.doc).
 @
 20738
 Es gibt kein vorgeschriebenes Relogin-Verfahren fr
 diesen Netztyp. Sie mssen XP ber eine Scriptdatei
 mitteilen, wie das Relogin durchzufhren ist. N„heres
 zur Scriptprogrammierung finden Sie im entsprechen-
-den Abschnitt von XPOINT.TXT.
+den Abschnitt des Handbuchs.
 @
 20741
 Sie haben ein Unterverzeichnis angelegt, das mit dem
@@ -11953,7 +11947,7 @@ Fr die gew„hlte Box ist noch keine Brettliste vor-
 handen. Bestellen Sie zun„chst mit /Nachricht/Brett-
 manager/Liste_anfordern eine Brettliste. Beachten
 Sie auch die Hinweise im Kapitel "Bestellen, Ver-
-walten und Abbestellen von Brettern" in XPOINT.TXT!
+walten und Abbestellen von Brettern" im Handbuch!
 @
 20808
 Sie haben den Brettmanager-Befehl SCRIPT verwendet,
@@ -11993,7 +11987,7 @@ manager-Funktionen.
 Bevor Sie per UUCP Dateien anfordern k”nnen, muá der
 (File-)Server bei /Edit/Boxen angelegt und konfigu-
 riert werden. N„here Hinweise zum Anlegen von UUCP-
-Systemen finden Sie in UUCP.TXT.
+Systemen finden Sie in uucp.txt.
 @
 20821
 Sie haben fr den Fileserver bei /Edit/Systeme ein
@@ -12091,8 +12085,8 @@ len. Gehen Sie dazu wie folgt vor:
 Sie haben eine Funktionstaste mit dem Befehl *SETUSER
 belegt, aber vergessen, den gewnschten Usernamen
 anzugeben. Korrigieren Sie die Einstellung unter
-/Config/Tasten! N„here Erl„uterungen finden Sie in
-XPOINT.TXT unter dem Stichwort "SETUSER".
+/Config/Tasten! N„here Erl„uterungen finden Sie im
+Handbuch unter dem Stichwort "SETUSER".
 @
 20925
 Die angegebene Scriptdatei ist fehlerhaft. Verlassen
@@ -12102,8 +12096,8 @@ anschlieáend die Fehler (Tip: Mit Alt-E k”nnen Sie
 jederzeit eine beliebige Datei editieren).
 
 Eine Beschreibung der CrossPoint-Scriptsprache
-finden Sie im Abschnitt "Scriptprogrammierung" in
-XPOINT.TXT.
+finden Sie im Abschnitt "Scriptprogrammierung" im
+Handbuch.
 @
 20927
 Verschicken Sie zun„chst alle unversandten Nachrich-
@@ -12121,8 +12115,8 @@ name korrigiert wird.
 @
 21001
 Die Timingliste enth„lt einen ungltigen Befehl.
-Eine Liste der erlaubten Befehle finden Sie in
-XPOINT.TXT und in der Online-Hilfe. Beachten Sie,
+Eine Liste der erlaubten Befehle finden Sie im
+Handbuch und in der Online-Hilfe. Beachten Sie,
 daá der Befehl PACKEN ab XP Version 2.9 in PACK
 umbenannt wurde.
 @
@@ -12166,8 +12160,8 @@ ses angegeben haben, ist ungltig.
 Das CTS-Signal des Modems ist abgeschaltet, d.h. das
 Modem ist entweder falsch konfiguriert, abgeschaltet
 oder nicht empfangsbereit. N„here Hinweise zum CTS-
-Signal finden Sie im Kapitel "kleine Modemkunde" in
-XPOINT.TXT.
+Signal finden Sie im Kapitel "kleine Modemkunde" im
+Handbuch.
 @
 22003
 Sie haben eine Funktiostaste verwendet, die das
@@ -12189,7 +12183,7 @@ unter /Fido/Nodelisten/Verwalten!
 Falls Sie nur Dateien bei Ihrem Fido-Server per Re-
 quest bestellen m”chten, so k”nnen Sie sich selbst
 eine provisorische Nodeliste anlegen. Eine Erl„ute-
-rung dazu finden Sie in FIDO.TXT unter dem Stichwort
+rung dazu finden Sie in fido.txt unter dem Stichwort
 "Request beim Boss-Node ohne Nodelist".
 @
 22104
@@ -12206,10 +12200,10 @@ Format.
 22110
 Node- und Pointdiff-Dateien k”nnen <<nur>> im Abstand
 von <<genau>> sieben Tagen eingebunden werden! Wenn die
-letzte Liste z.B. den Namen NODELIST.115 hat, dann
-<<muá>> die n„chste Diff-Datei NODEDIFF.122 sein. Falls
-Sie im Besitz von NODEDIFF.129 sind, ntzt es <<nichts>>,
-diese in NODEDIFF.122 umzubenennen, sondern Sie
+letzte Liste z.B. den Namen nodelist.115 hat, dann
+<<muá>> die n„chste Diff-Datei nodediff.122 sein. Falls
+Sie im Besitz von nodediff.129 sind, ntzt es <<nichts>>,
+diese in nodediff.122 umzubenennen, sondern Sie
 <<mssen>> sich die korrekte Diff-Datei besorgen!
 @
 22111
@@ -12250,7 +12244,7 @@ gleichem Namen.
 @
 22125
 /Fido/Nodelisten/Einschr„nken gilt nur fr die Haupt-
-FidoNet-Nodeliste (NODELIST.*). N„heres ist in der
+FidoNet-Nodeliste (nodelist.*). N„heres ist in der
 [Online-Hilfe zu diesem Menpunkt] beschrieben.@13003
 @
 22201
@@ -12262,25 +12256,25 @@ Sie haben bei /Edit/Autoversand den Namen einer
 leeren Datei eingetragen.
 @
 22204
-Sie haben im AUTOEXEC-Verzeichnis ein MausTausch-
-Outfile (also eine Datei mit Extension .OUT) abge-
+Sie haben im autoexec-Verzeichnis ein MausTausch-
+Outfile (also eine Datei mit Extension .out) abge-
 legt, aber der Name der Datei entspricht nicht dem
 Namen einer eingetragenen Serverbox.
 
 N„heres zum Einlesen von Nachrichtenpaketen per
-AUTOEXEC-Verzeichnis finden Sie im Kapitel "Das
-AUTOEXEC-Verzeichnis" in XPOINT.TXT.
+autoexec-Verzeichnis finden Sie im Kapitel "Das
+autoexec-Verzeichnis" im Handbuch.
 @
 22205
 Beim Konvertieren des Nachrichtenpaketes, das im
 AUTOEXEC-Verzeichnis zum Einlesen hinterlegt wurde,
 ist ein Fehler aufgetreten. M”glicherweise ist die
 Datei fehlerhaft. Versuchen Sie ggf., die Nachrich-
-ten "von Hand" mit dem Programm MAGGI.EXE zu kon-
+ten "von Hand" mit dem Programm maggi.exe zu kon-
 vertieren.
 @
 22207
-Bevor Sie Fido-Nachrichtenpakete per AUTOEXEC-Ver-
+Bevor Sie Fido-Nachrichtenpakete per autoexec-Ver-
 zeichnis einlesen k”nnen, muá bei /Edit/Boxen eine
 Fido-Stammbox gew„hlt werden.
 @
@@ -12289,7 +12283,7 @@ Beim Konvertieren eines Fido-Nachrichtenpaketes, das
 im AUTOEXEC-Verzeichnis zum Einlesen hinterlegt wur-
 de, ist ein Fehler aufgetreten. M”glicherweise ist
 die Datei fehlerhaft. Versuchen Sie ggf., die Nach-
-richten "von Hand" mit dem Programm ZFIDO.EXE zu
+richten "von Hand" mit dem Programm zfido.exe zu
 konvertieren.
 @
 22401
@@ -12335,11 +12329,11 @@ Es ist ein unbekannter ZQWK-Fehler aufgetreten. Ver-
 wenden Sie den Schalter "warten auf Tastendruck" bei
 /Config/Extern/Shell, um die genaue Fehlermeldung
 lesen zu k”nnen. Wenden Sie sich ggf. an den ZQWK-
-Programmierer (siehe QWK.DOC).
+Programmierer (siehe qwk.doc).
 @
 22604
 Fr die Gebhrenstatistik ben”tigt CrossPoint das
-Logfile XPOINT.LOG, das im bei /Config/Pfade einge-
+Logfile xpoint.log, das im bei /Config/Pfade einge-
 stellten Logfile-Verzeichnis angelegt wird und
 Informationen ber alle Netzanrufe enth„lt. Falls
 Sie noch keine Netzanrufe durchgefhrt habe, ist
@@ -12365,7 +12359,7 @@ dann mit /Nachricht/Weiterleiten/Erneut neu ab.
 @
 22804
 DOS:  Erh”hen Sie die Einstellung FILES= in
-      CONFIG.SYS.
+      config.sys.
 
 OS/2: Erh”hen Sie die Einstellung "DOS_FILES" in den
       DOS-Einstellungen.
@@ -12391,8 +12385,8 @@ der Umst„nde an den Programmierer!
 @
 22901
 Fr die Online-Registrierung verwendet XP den Fido-
-Mailer (XP-FM.EXE). Sie finden diese Datei im XP-
-Fido-Paket, das bei allen in XPOINT.TXT angegebenen
+Mailer (xp-fm.exe). Sie finden diese Datei im XP-
+Fido-Paket, das bei allen im Handbuch angegebenen
 Bezugsquellen erh„ltlich ist.
 @
 23001
@@ -12402,7 +12396,7 @@ reichbar ist, oder daá die Umgebungsvariable
 PGPPATH vorhanden ist.
 
 PGP erhalten Sie in der CrossPoint-Supportbox (siehe
-XPOINT.TXT) oder in jeder anderen gutsortierten
+Handbuch) oder in jeder anderen gutsortierten
 Mailbox. Verwenden Sie PGP Version 2.6 oder h”her!
 @
 23002
