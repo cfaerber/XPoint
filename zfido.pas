@@ -19,7 +19,8 @@
   {$M 16384,80000,110000}
 {$ENDIF }
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
+uses
+  sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -1810,6 +1811,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/07/04 09:59:04  mk
+  - Sysutils eingefuegt
+
   Revision 1.24  2000/07/03 16:20:04  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

@@ -31,7 +31,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,ObjCOM,resource,fileio,xpdiff,crc,
+  sysutils, dos,typeform,ObjCOM,resource,fileio,xpdiff,crc,
   xpglobal,montage,inout,winxp,ZModem,Timer,Debug;
 
 const aresult    : byte = 0;
@@ -765,6 +765,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2000/07/04 09:59:03  mk
+  - Sysutils eingefuegt
+
   Revision 1.18  2000/06/29 13:00:52  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

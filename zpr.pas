@@ -21,7 +21,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,             { Fuer die Sonderzeichen an der Console }
 {$ENDIF }
-  dos, typeform, dosx, xpglobal;
+  sysutils, dos, typeform, dosx, xpglobal;
 
 const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -1316,6 +1316,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/07/04 09:59:04  mk
+  - Sysutils eingefuegt
+
   Revision 1.17  2000/07/03 16:20:04  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

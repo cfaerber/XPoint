@@ -30,7 +30,7 @@
   {$APPTYPE CONSOLE }
 {$ENDIF }
 
-uses dos,
+uses dos, sysutils,
   typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
 const nt_ZConnect=2;
@@ -1753,6 +1753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/07/04 09:59:03  mk
+  - Sysutils eingefuegt
+
   Revision 1.16  2000/06/23 15:59:12  mk
   - 16 Bit Teile entfernt
 

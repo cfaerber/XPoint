@@ -22,7 +22,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
+  sysutils, typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
 
 const menus      = 99;
       maxhidden  = 500;
@@ -754,6 +754,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/07/04 09:59:04  mk
+  - Sysutils eingefuegt
+
   Revision 1.20  2000/05/14 17:22:51  hd
   - Linux: Manuelle Init. der XPCurses
 

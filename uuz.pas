@@ -30,7 +30,7 @@ uses  xpglobal,
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio, xpdatum,montage;
+  sysutils, dos,typeform,fileio, xpdatum,montage;
 
 const
       midlen      = 160;
@@ -3122,6 +3122,9 @@ end.
 
 {
   $Log$
+  Revision 1.39  2000/07/04 09:59:03  mk
+  - Sysutils eingefuegt
+
   Revision 1.38  2000/07/02 14:24:50  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 
