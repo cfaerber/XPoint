@@ -632,11 +632,11 @@ var lf : string;
   begin { loadresource }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
-  rc:= findfirst(LibDir + 'xp-*.res', faAnyFile, sr);         { Hier duerfte es keine Probleme geben }
-  assign(t,OwnPath + 'xp.res');
+  rc:= findfirst(LibDir + 'openxp-*.res', faAnyFile, sr);         { Hier duerfte es keine Probleme geben }
+  assign(t,OwnPath + 'openxp.res');
   reset(t);
   if ioresult<>0 then
-  begin                                     { Wenn XP.RES nicht existiert }
+  begin                                     { Wenn openxp.RES nicht existiert }
     if parlanguage='' then                                {/L Parameter beruecksichtigen}
     begin
       parlanguage:=sr.name[4];
@@ -646,14 +646,14 @@ var lf : string;
       until (ca='d') or (ca='e') or (ca=keycr);
       if (ca<>keycr) then parlanguage:=ca;                { Enter=Default }
       end;
-    lf:=LibDir + 'xp-'+parlanguage+'.res';
+    lf:=LibDir + 'openxp-'+parlanguage+'.res';
     WrLf;                                                {und XP.RES erstellen }
     end
   else begin
     readln(t,lf);
     close(t);
     if (ParLanguage<>'') then begin
-      lf2:=LibDir + 'xp-'+ParLanguage+'.res';
+      lf2:=LibDir + 'openxp-'+ParLanguage+'.res';
       if not FileExists(lf2) then writeln('language file '+ParLanguage+' not found')
       else if (UpperCase(lf)<>lf2) then begin
         lf:=lf2;
@@ -1074,6 +1074,9 @@ end.
 
 {
   $Log$
+  Revision 1.105  2001/03/30 13:09:35  mk
+  - renamed config/help/main-files
+
   Revision 1.104  2001/03/20 12:15:39  ma
   - implemented debug badge DEFAULT
 

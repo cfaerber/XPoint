@@ -6,7 +6,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # $Id$
 
 # Online-Hilfe, Tastenmakros
-1 XP.HLP
+1 OPENXP.HLP
 2 KEYDEF.CFG
 5 Lade Sprachmodul...
 
@@ -3652,6 +3652,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.1  2001/03/30 13:09:34  mk
+# - renamed config/help/main-files
+#
 # Revision 1.104  2001/03/24 22:57:21  cl
 # - more UUCICO ressources
 #

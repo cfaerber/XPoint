@@ -6,7 +6,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # $Id$
 
 # Online Help File, Key Macros
-1 xp-e.hlp
+1 OPENXP-E.HLP
 2 KEYS-E.CFG
 5 Changing language ...
 
@@ -3674,6 +3674,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.1  2001/03/30 13:09:34  mk
+# - renamed config/help/main-files
+#
 # Revision 1.129  2001/03/24 22:57:21  cl
 # - more UUCICO ressources
 #

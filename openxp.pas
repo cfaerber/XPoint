@@ -187,6 +187,9 @@ end.
 
 {
   $Log$
+  Revision 1.1  2001/03/30 13:09:34  mk
+  - renamed config/help/main-files
+
   Revision 1.53  2001/03/14 20:46:02  mk
   - removed registration routines
 
