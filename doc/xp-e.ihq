@@ -4165,81 +4165,82 @@ environment.
 @
 400
 The name of the newsgroup. Each newsgroup name must
-begin with "/" and may be up to 80 characters long.
+begin with a "/" and may be up to 80 characters long.
 
-Note that some Zerberus compatible systems only cope
-with up to 40 characters, therefore in Z-Netz news-
-group names longer than 40 chars are not used.
+Note that some Zerberus-compatible systems can only
+cope with up to 40 characters, therefore, in Z-Netz, 
+newsgroup names longer than 40 characters are not 
+used.
 @
 401
 You can put a comment about the newsgroup here, which
 will be displayed in the overview.
 @
 402
-All messages that you write into this newsgroup will
-be sent to this server.
+All messages that you write in this newsgroup will be
+sent to this Server.
 
-With <F2> you get a list of servers to select from.
+With <F2>, you get a list of Servers to select from.
 @
 403
-Messages will be held this many days.
+Messages will be held this many days (starting from
+the date <<received>>).
 
 When they get older than this, unless they are set to
-"hold" will be set to "delete" and will be at the
-next Re-Org. Counted from the date received.
+"hold", they will be set to "delete" and will be
+deleted at the next Re-Org.
 
-If you have set "Msgs" in the next field, this number
-becomes the maximum number of messages allowed in
-this newsgroup. Older messages are set to delete, to
-keep to this number if it is exceeded.
+If you have selected "Msgs" in preference to "Days",
+in the next field, this number becomes the maximum
+number of messages allowed in this newsgroup. Older
+messages are set to "delete", to keep to this number 
+if it is exceeded.
 
-A "0" here means the messages will kept forever.
-Only intentionally deleted messages will be removed
-by a Re-Org.
+A "0" here means the messages will be kept forever.
+Only manually "deleted" messages will be removed by a 
+Re-Org.
 
 @
 404
-Days or number of messages.
+Number of days to keep messages or number of messages
+to keep.
+
 You can specify here whether the number entered for
-the hold time means days or the number of messages
-held.
+the "hold time" means the number of days or the 
+number of messages to keep.
 
 Messages older than the number of days, or the oldest
-messages above the set quantity will be set for
-delete at the next Re-Org.
+messages above the set value, will be marked for
+deletion at the next Re-Org.
 
-Messages over a time limit are displayed with a "."
-marking to show this. It is not possible for
-technical reasons to indicate messages exceeding the
-number (if set) count in this way.
+Messages over the limit<hic!> will be displayed with 
+a "." against them in the left-hand column of the
+message-list. It is not possible, for technical 
+reasons, to indicate messages exceeding the number
+count (if set) in this way.
 @
 405
-<<[x]>>     Messages from users who have been set to
-        filter will be automatically erased from the
+<<[x]>>     Messages from Users, who have been set to
+        filter, will be automatically erased from the
         newsgroup.
 
-<<[ ]>>     Messages in this newsgroup are nor
-        filtered.
+<<[ ]>>     Messages in this newsgroup are not filtered.
 @
 406
-Each newsgroup belongs to a newsgroup-group.
+Each newsgroup must belong to a newsgroup-group.
 
-See under /Edit/[Groups]@200
+See /Edit/[Groups]@200
 
-The group must be selected from the list called with
-F2
+The group must be selected by pressing <F2>.
 @
 407
 Enter here the "Origin" line that CrossPoint should
-put under each message you write to this area. If you
+use for each message you write in this area. If you
 leave it empty, XP will use the default Origin for
-that area group (see /Edit/Groups). If there is no
-origin entered there, XP will use the default origin
-entered under /Edit/Servers/Edit/Names.
-
-Note that for technical reasons there cannot be an
-origin and simultaneously a stand-in entered for an
-area.
+that area group, as defined in "/Edit/Groups". If 
+there is no origin defined in "/Edit/Groups", XP will 
+use the default origin as defined in 
+"/Edit/Servers/Edit/Names".
 @
 409
 You have selected (marked) several newsgroups. All
@@ -8755,7 +8756,7 @@ If you get one, enter it under
 /Edit/Systems/Edit/FS-Password.
 @
 12101
-<<Message / Forward / Copy
+<<Message / Action / Copy
 
 A <<COPY>> of the current message is forwarded to
 either a User, a Newsgroup or sent "Direct". You can
@@ -8771,7 +8772,7 @@ NOTE: Neither a signature nor an origin are appended
       to the end of the copied message!
 @
 12102
-<<Message / Forward / Original
+<<Message / Action / Original
 
 (ZConnect, UseNet and Maus only)
 Forwards the original message to a user or newsgroup.
@@ -8781,18 +8782,35 @@ him/her (but you are noted as forwarder in the
 header). The [template "forward"] is used.@10807
 @
 12103
-<<Message / Forward / Comment
+<<Message / Action / Forward
 
-A copy of the current message is forwarded to a
-User or Newsgroup. You can select from a list.
+A copy of the current message is forwarded either to
+a User or to a Newsgroup. You can select from a list.
 
 The text is presented to you in the editor so that
 you may add your own comments before forwarding the
 message.
-NOTE: A template is NOT used!
+
+NOTE: The "Forward" template is used but the
+      "Signature ((Pub)/(Priv))" template is <<NOT>> 
+      used. In other words, your signature will <<NOT>> 
+      be added to the end of the forwarded message 
+      and so therefore, if you would like your 
+      signature added, you must add it manually 
+      before saving the message.
+
+      For the techies :-)
+      At this point in time, the <<original>> Tear and
+      Origin lines are kept intact. It is desirable
+      that the preceeding "---" in the <<original>> tear
+      line should be manually changed to "-!-" and
+      the "*" in the <<original>> origin line be manually
+      changed to "+". Why? Some mail processing
+      software may "complain" if you don't.
+
 @
 12104
-<<Message / Forward / Quote
+<<Message / Action / Quote
 
 A copy of the current message is forwarded to a
 User or Newsgroup. You can select from a list.
@@ -8803,7 +8821,7 @@ presented to you with quote signs (like the normal
 your own text before forwarding the message.
 @
 12106
-<<Message / Forward / Confirmation
+<<Message / Action / Confirmation
 
 The sender of the selected message is sent an
 automatic message confirming your receipt of it.
@@ -8819,7 +8837,7 @@ And for Newsgroup messages additionally
 þ Newsgroup name
 @
 12107
-<<Message / Forward / Cancel
+<<Message / Action / Cancel
 
 <<RFC/UUCP:>>  Sends out a cancel message for the
 selected newsgroup message, as long as it was written
@@ -8837,7 +8855,7 @@ net.
 
 @
 12108
-<<Message / Forward / Repost
+<<Message / Action / Repost
 
 The selected message will be resent (reposted) to the
 recipient. If you have defined a ["Repost" template],@10808
@@ -8847,7 +8865,7 @@ Also use this for sending messages you have "parked"
 in your newsgroup /¯Unsent
 @
 12109
-<<Message / Forward / Archive
+<<Message / Action / Archive
 <<or <Alt-A>
 
 Use this menu option or key combination to send the
@@ -8856,7 +8874,7 @@ You will be allowed to select which one.
 An archive-note is also added to the message text.
 @
 12110
-<<Message / Forward / User-PM
+<<Message / Action / User-PM
 
 Has 2 purposes.
 
