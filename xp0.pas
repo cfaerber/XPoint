@@ -50,7 +50,6 @@ const
        maxskeys    = 15;             { max. Tasten in Zeile 2  }
        mausdefx    = 620;            { Maus-Startposition      }
        mausdefy    = 28;
-       MaxNodelists = 100;
        MaxAKAs     = 10;
        maxviewers  = 7;
        defviewers  = 3;
@@ -555,20 +554,20 @@ type   textp  = ^text;
                    ispoint    : boolean;
                  end;
 
-       NL_Rec  = record
+       PNodeListItem = ^TNodeListItem;
+       TNodeListItem  = record
                    listfile   : string;    { Nodelisten-Datei      }
-                   number     : integer;       { akt. Nummer           }
+                   number     : integer;   { akt. Nummer           }
                    updatefile : string;    { Diff/Update-Datei     }
                    updatearc  : string;    { gepackte Update-Datei }
-                   processor  : string;       { externer Bearbeiter   }
+                   processor  : string;    { externer Bearbeiter   }
                    DoDiff     : boolean;
-                   DelUpdate  : boolean;       { Diff lîschen }
-                   format     : byte;     { 1=NL, 2=P24, 3=PVT, 4=4D, 5=FD }
+                   DelUpdate  : boolean;   { Diff lîschen }
+                   format     : byte;      { 1=NL, 2=P24, 3=PVT, 4=4D, 5=FD }
                    zone,net,node : word;
-                   sort       : longint;       { TemporÑrfeld }
+                   sort       : longint;   { TemporÑrfeld }
                  end;
-       NL_array= array[1..maxNodelists] of NL_Rec;
-       NL_ap   = ^NL_array;
+
 
        fkeyt  = array[1..10] of record
                                   menue    : string;
@@ -986,7 +985,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        orgcbreak    : boolean;
 
-       gl,actgl     : shortint;      { Anzeige-Zeilen im Hauptfenster }
+       gl,actgl     : integer;      { Anzeige-Zeilen im Hauptfenster }
        aufbau       : boolean;       { neuer Bildschirm-Aufbau nîtig  }
        xaufbau      : boolean;       { Bezugsbaum neu einlesen        }
        readmode     : integer;       { 0=Alles, 1=Ungelesen, 2=Neues }
@@ -1005,7 +1004,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bmarkanz  : integer;          { Anzahl markierte Bretter/User }
 
        ablsize     : array[0..ablagen-1] of longint;   { Dateigrî·en }
-       AktDispmode : shortint;
+       AktDispmode : integer;
        AktDisprec  : longint;
        editname    : string;         { Dateiname fÅr /Edit/Text }
        keymacros   : integer;        { Anzahl geladene Tastenmakros }
@@ -1038,8 +1037,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        DefaultZone : word;           { Fido - eigene Zone }
        DefaultNet  : word;           {      - eigenes Net }
        DefaultNode : word;           {      - eigener Node}
-       Nodelist    : NL_ap;          { Node-/Pointlisten }
-       NL_anz      : byte;           { Anzahl " }
+       Nodelist    : TList;          { Node-/Pointlisten }
        NodeOpen    : boolean;        { Nodelist(en) vorhanden & geîffnet }
        ShrinkNodes : string;    { Nodeliste einschrÑnken }
        kludges     : boolean;        { ^A-Zeilen im Lister anzeigen }
@@ -1056,8 +1054,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        kombaum     : komlistp;       { Kommentarbaum }
        komanz      : word;           { Anzahl EintrÑge }
-       maxebene    : shortint;
-       komwidth    : shortint;       { Anzeigeabstand zwischen Ebenen }
+       maxebene    : integer;
+       komwidth    : integer;       { Anzeigeabstand zwischen Ebenen }
        kombrett    : string;      { Brettcode der Ausgangsnachricht }
 
        languageopt : boolean;        { /Config/Optionen/Sprachen }
@@ -1086,6 +1084,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.84  2000/08/01 08:40:40  mk
+  - einige String-Parameter auf const geaendert
+
   Revision 1.83  2000/07/31 09:56:55  mk
   - ConfigScreenWidth und passende Logik hinzugefuegt
 

@@ -72,7 +72,7 @@ type  nodeinfo = record
 procedure MakeNodelistIndex;
 procedure OpenNodeindex(fn:string);
 procedure CloseNodeindex;
-procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:shortint);
+procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:integer);
 function  IsFidoNode(adr:string):boolean;
 function  FidoIsISDN(var fa:FidoAdr):boolean;
 procedure KeepNodeindexOpen;
@@ -741,19 +741,20 @@ begin
   new(uf[0]);
   assign(uf[0]^,'users1.$$$'); rewrite(uf[0]^,1);
 
-  for liste:=1 to NL_anz do begin
-    zone:=Nodelist^[liste].zone;
+  for liste:=0 to NodeList.Count - 1 do
+  begin
+    zone:=PNodeListItem(Nodelist[liste])^.zone;
     if zone=0 then zone:=DefaultZone;
     net:=0; node:=0;
     assign(nf,FidoDir+NLfilename(liste));
-    ltyp:=Nodelist^[liste].format;
+    ltyp:=PNodeListItem(Nodelist[liste])^.format;
     case ltyp of
       nlPoints24,
       nl4DPointlist,
-      nlFDpointlist : zone:=Nodelist^[liste].zone;
+      nlFDpointlist : zone:=PNodeListItem(Nodelist[liste])^.zone;
       nlNode        : begin
-                         zone:=Nodelist^[liste].zone;
-                         net :=Nodelist^[liste].net;
+                         zone:=PNodeListItem(Nodelist[liste])^.zone;
+                         net :=PNodeListItem(Nodelist[liste])^.net;
                       end;
     end;
 
@@ -842,7 +843,7 @@ begin
 
               nlNode:
                 if not newnet then
-                  AppPoint(Nodelist^[liste].node);
+                  AppPoint(PNodeListItem(Nodelist[liste])^.node);
 
               nlPoints24:
                 if not newnet then
@@ -876,7 +877,7 @@ begin
 
         if points>0 then begin
           if nodes=0 then begin       { ntNode }
-            np^[0].node:=Nodelist^[liste].node;
+            np^[0].node:=PNodeListItem(Nodelist[liste])^.node;
             inc(nodes);
             end;
           np^[nodes-1].adr:=filepos(idf);
@@ -1078,12 +1079,10 @@ end;
 
 
 function MainNodelist:integer;
-var i : integer;
 begin
-  i:=NL_anz;
-  while (i>0) and (nodelist^[i].listfile<>'NODELIST.###') do
-    dec(i);
-  MainNodelist:=i;
+  Result := NodeList.Count - 1;
+  while (Result>0) and (PNodeListItem(nodelist[Result])^.listfile<>'NODELIST.###') do
+    dec(Result);
 end;
 
 
@@ -1672,7 +1671,7 @@ var fn     : string;
     ar     : archrec;
     copied : boolean;
     fa     : FidoAdr;
-    arc    : shortint;
+    arc    : integer;
     useclip: boolean;
 
 label ende;
@@ -2001,7 +2000,7 @@ function FidoSeekfile:string;
           else test:=fInStr( sSub, sZeile, _pos );  { noch auf ganzes Wort testen }
         end;
         inc(n);                                     { n„chste Zeile }
-      end; { while ( n < apos)   do  { alle Zeilen durchtesten }
+      end; { while ( n < apos)   do } { alle Zeilen durchtesten }
       {Begriff im Bolck nicht gefunden, dann raus }
       if test =false then exit;
     end;    { for n2:=0 to anz_searchStr - 1 Do }
@@ -2245,6 +2244,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/08/01 08:40:41  mk
+  - einige String-Parameter auf const geaendert
+
   Revision 1.24  2000/07/27 10:13:05  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert

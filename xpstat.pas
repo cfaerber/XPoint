@@ -920,7 +920,7 @@ var   zone     : ^zonea;
     assign(nl,FidoDir+NLfilename(nls)); settextbuf(nl,buf^,bufs);
     reset(nl);
     ende:=false;
-    _z:=Nodelist^[nls].zone; _n:=0; _nodes:=0;
+    _z:=PNodeListItem(Nodelist[nls])^.zone; _n:=0; _nodes:=0;
     hostname:='';
     newfile:=true;
     brk:=false;
@@ -1111,8 +1111,9 @@ begin
   fillchar(lnet^,LargestNets*sizeof(lnetrec),0);
 
   brk:=false;
-  for nls:=1 to NL_anz do
-    if Nodelist^[nls].format=1 then begin   { Nodeliste }
+  for nls:=0 to NodeList.Count - 1 do
+    if PNodeListItem(Nodelist[nls])^.format=1 then
+    begin   { Nodeliste }
       attrtxt(col.colmboxhigh);
       mwrt(x+5+length(getres2(2612,25)),y+2,forms(NLfilename(nls),12));
       attrtxt(col.colmbox);
@@ -1253,6 +1254,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/08/01 08:40:42  mk
+  - einige String-Parameter auf const geaendert
+
   Revision 1.22  2000/07/22 21:49:27  mk
   - Record auf Shortstring umgestellt, jetzt kein Crash mehr ;-)
 

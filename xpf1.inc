@@ -81,11 +81,12 @@ var s  : string;
 
 begin
   ni.found:=false;
-  if (nfile<1) or (nfile>NL_anz) then exit;
+  if (nfile<1) or (nfile>NodeList.Count-1) then exit;
   new(nodelf);
   assign(nodelf^,FidoDir+NLfilename(nfile));
   resetfm(nodelf^,fmRead);
-  if ioresult=0 then begin
+  if ioresult=0 then
+  begin
     { reset(nodelf^,1);  !?!? }
     seek(nodelf^,adr);
     SetLength(s,255);
@@ -102,7 +103,7 @@ end;
 
 { Pointtyp: 0=nur Node, 1=Point/Node, 2=bei nicht gef. Point wiederholen }
 
-procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:shortint);
+procedure GetNodeinfo(adr:string; var ni:nodeinfo; pointtyp:integer);
 var fa     : fidoadr;
     i,netp : integer;
     bp     : ^netrecl;
@@ -405,7 +406,7 @@ begin
   diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
   if MainNodelist>0 then begin
     attrtxt(col.coldiarahmen);
-    mwrt(x+70,y,' '+formi(nodelist^[MainNodelist].number,3)+' ');
+    mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
     attrtxt(col.coldialog);
     end; { MH: Aufbau ge„ndert, damit m”glichst viel angezeigt werden kann }
   mwrt(x+3, y+2, GetRes2( 2100, 2));     { Box   }          { MH 03.02.2000 }
@@ -580,7 +581,7 @@ label again, NewStart;
       end;
   end;
 
-  procedure GetAddress(format:shortint; var skip:boolean);
+  procedure GetAddress(format:integer; var skip:boolean);
   var p  : byte;
       fa : FidoAdr;
   begin
@@ -735,8 +736,8 @@ again:
   mwrt(x+28,y+15,getres2(2131,23));  { 'passend:' }
   openlist(2,ScreenWidth-2,10,11,0,'/NS/SB/NLR/DM/');  { Koordinaten beliebig }
   found:=0; n:=0;
-  for i:=1 to NL_anz do
-    with Nodelist^[i],NB_Data^ do
+  for i:=0 to NodeList.Count - 1 do
+    with PNodeListItem(Nodelist[i])^,NB_Data^ do
       if ((fnl and (listfile='NODELIST.###') and (format=nlNodelist)) or
           (snl and (listfile<>'NODELIST.###') and (format=nlNodelist)) or
           (pl and (format<>nlNodelist))) and
@@ -881,6 +882,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.16  2000/08/01 08:40:41  mk
+  - einige String-Parameter auf const geaendert
+
   Revision 1.15  2000/07/27 13:41:50  mk
   - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
 

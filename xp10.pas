@@ -25,7 +25,7 @@ uses
   crt,
 {$ENDIF }
   dos,stack,typeform,fileio,inout,keys,montage,feiertag,winxp,
-     maske,datadef,database,maus2,lister,resource,xpglobal,
+  classes, maske,datadef,database,maus2,lister,resource,xpglobal,
      xp0,xp1,xp1o2,xp1help,xp1input,xp5;
 
 
@@ -407,7 +407,7 @@ end;
 
 function Time2Str(var tr:TimeRec):string;
 var w : string[7];
-    i : shortint;
+    i : Integer;
 begin
   with tr do begin
     for i:=1 to 7 do
@@ -520,11 +520,11 @@ var brk      : boolean;
     x,y      : byte;
     tnr      : integer;
     t        : taste;
-    nr,bp    : shortint;
+    nr,bp    : integer;
     gl,width : byte;
     buttons  : string;
-    okb,edb  : shortint;
-    p,n      : shortint;
+    okb,edb  : integer;
+    p,n      : integer;
     a,ii     : integer;
     modi     : boolean;
     reindex  : boolean;
@@ -570,7 +570,7 @@ var brk      : boolean;
   end;
 
   procedure display;
-  var i,j: shortint;
+  var i,j:  Integer;
       tr     : timerec;
       tt     : string;
       komm   : string;
@@ -618,7 +618,7 @@ var brk      : boolean;
                 Wrt2(' ' + iifc(i+a=movefrom,#16,' ') +
                       forms(mid(s,blankpos(s)),width-2));
               end;
-          5 : with nodelist^[a+i] do
+          5 : with PNodeListItem(Nodelist[a+i-1])^ do
                 Wrt2(' '+forms(listfile,14)+
                       iifs(pos('###',listfile)>0,formi(number,3),'   ')+'  '+
                       forms(updatefile,14)+forms(updatearc,14)+
@@ -1008,7 +1008,7 @@ var brk      : boolean;
 
   procedure EditPhoneEntry(neu:boolean; nr:integer; var brk:boolean);
   var x,y   : byte;
-      n     : shortint;
+      n     : integer;
       add   : integer;
       phe   : phoneap;
       i,j   : integer;
@@ -1365,21 +1365,22 @@ var brk      : boolean;
   { --- Nodelisten ------------------------------------------------ }
 
   procedure EditNodeEntry;
-  var nlr : NL_rec;
+  var nlr : TNodeListItem;
       brk : boolean;
   begin
-    nlr:=Nodelist^[a+p];
+    nlr:=PNodeListItem(Nodelist[a+p-1])^;
     EditNLentry(nlr,brk);
-    if not brk then begin
+    if not brk then
+    begin
       reindex:=reindex or
-               (nlr.format<>nodelist^[a+p].format) or
-               (nlr.zone<>nodelist^[a+p].zone) or
+               (nlr.format<>PNodeListItem(nodelist[a+p-1])^.format) or
+               (nlr.zone<>PNodeListItem(nodelist[a+p-1])^.zone) or
                ((nlr.format=3) and
-                ((nlr.net<>nodelist^[a+p].net) or
-                 (nlr.node<>nodelist^[a+p].node)));
-      Nodelist^[a+p]:=nlr;
+                ((nlr.net<> PNodeListItem(nodelist[a+p-1])^.net) or
+                 (nlr.node<> PNodeListItem(nodelist[a+p-1])^.node)));
+      PNodeListItem(Nodelist[a+p-1])^:=nlr;
       modi:=true;
-      end;
+    end;
   end;
 
   procedure TextEditNodelist(n:integer);
@@ -1397,19 +1398,15 @@ var brk      : boolean;
   var brk : boolean;
 
     procedure del_it;
-    var nlp : NL_ap;
     begin
-      with nodelist^[a+p] do
       if a+p<anzahl then
-        Move(nodelist^[a+p+1],nodelist^[a+p],(anzahl-a-p)*sizeof(NL_rec));
-      dec(anzahl);
-      dec(NL_anz);
-      getmem(nlp,anzahl*sizeof(NL_rec));
-      Move(nodelist^,nlp^,anzahl*sizeof(NL_rec));
-      freemem(nodelist,(anzahl+1)*sizeof(NL_rec));
-      nodelist:=nlp;
-      modi:=true;
-      reindex:=true;
+      begin
+        Dispose(PNodeListItem(NodeList[a+p-1]));
+        NodeList.Delete(a+p-1);
+        dec(anzahl);
+        modi:=true;
+        reindex:=true;
+      end;
     end;
 
   begin
@@ -1578,7 +1575,7 @@ begin
     5 : begin                       { Nodelisten }
           DisableAltN:=true;
           filewidth:=255;
-          anzahl:=NL_anz;
+          anzahl:=NodeList.Count;
           width:=70;
           buttons:=getres2(1019,1);   { ' ^Neu , ^Edit , ^TextEdit , ^L”schen , ^Info , ^OK ' }
           okb:=6; edb:=2;
@@ -1667,14 +1664,15 @@ begin
                 3 : DelHeaderLine;
               end;
         5 : case nr of
-              1 : if NewNodeentry then begin
-                    inc(anzahl);
+              1 : if NewNodeentry then
+                  begin
+                    Anzahl := NodeList.Count;
                     SortNodelists(nodelist);
                     modi:=true;
                     reindex:=true;
-                    end;
+                  end;
               2 : if a+p<=anzahl then EditNodeentry;
-              3 : if a+p<=anzahl then TextEditNodelist(a+p);
+              3 : if a+p<=anzahl then TextEditNodelist(a+p-1);
               4 : if a+p<=anzahl then DelNodeentry;
               5 : if a+p<=anzahl then NL_Info;
             end;
@@ -1725,7 +1723,7 @@ begin
       if t=keycend then p:=minmax(gl,1,eanzahl-a);
       end;
     if (typ=4) and (nr=okb) and modi then begin
-      { if ReadJNesc(getres(1019),true,brk) then begin   { 'Žnderungen sichern' }
+      { if ReadJNesc(getres(1019),true,brk) then begin  } { 'Žnderungen sichern' }
       ExtraktHeader:=xhd;
       HeaderLines:=anzahl;
       GlobalModified;
@@ -1754,20 +1752,22 @@ begin
     3 : FreePhoneZones;
     4 : freeres;
     5 : begin
-          if reindex then begin
+          if reindex then
+          begin
             KeepNodeindexClosed;
             if nodeopen then CloseNodeIndex;
-            if NL_anz=0 then begin
+            if NodeList.Count=0 then
+            begin
               DeleteFile(NodeIndexF);
               DeleteFile(UserIndexF);
               DeleteFile(NodelistCfg);
               nodeopen:=false;
-              end
+            end
             else begin
               MakeNodelistindex;
               OpenNodeindex(NodeIndexF);
-              end;
             end;
+          end;
           DisableAltN:=false;
         end;
     6 : begin
@@ -2013,6 +2013,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/08/01 08:40:40  mk
+  - einige String-Parameter auf const geaendert
+
   Revision 1.22  2000/07/21 21:17:44  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 
