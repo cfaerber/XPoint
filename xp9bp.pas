@@ -144,7 +144,6 @@ begin
     SizeNego:=true;
     UUsmtp:=false;
     ClientSmtp:= false;
-    PPPMode:= false;
     PPPClientPath:= '';
     PPPClient:= '';
     PPPAddServers:= '';
@@ -280,6 +279,7 @@ begin
             getw(su,  'GebuehrProEinheit',dummyw) or
             gets(s,su,'Waehrung',dummys,5) or
             gets(s,su,'Tarifzone',gebzone,20) or
+            getx(su,  'SysopMode', sysopmode) or
             gets(s,su,'SysopInFile',sysopinp,60) or
             gets(s,su,'SysopOutfile',sysopout,60) or
             gets(s,su,'SysopStartprg',sysopstart,60) or
@@ -317,7 +317,6 @@ begin
             getx(su,  'UU-SMTP',UUsmtp) or
             getx(su,  'UU-SMTP-Client', ClientSmtp) or
             gets(s,su,'UU-SMTP-OneFilePerMsg',dummys,1) or
-            getx(su,  'Client-Mode', PPPMode) or
             gets(s,su,'Client-Path', PPPClientPath, MaxLenPathname) or
             gets(s,su,'Client-Exec', PPPClient, MaxLenPathname) or
             gets(s,su,'Client-AddServers', PPPAddServers, 160) or
@@ -451,6 +450,7 @@ begin
     writeln(t,'Params=',params);
     writeln(t,'Baud=',baud);
     writeln(t,'Tarifzone=',gebzone);
+    writeln(t,'SysopMode=', jnf(sysopmode));
     writeln(t,'SysopInfile=',sysopinp);
     writeln(t,'SysopOutfile=',sysopout);
     writeln(t,'SysopStartprg=',sysopstart);
@@ -507,7 +507,6 @@ begin
     writeln(t,'7e1Login=',jnf(uucp7e1));
     if janusplus then writeln(t,'JanusPlus=J');
     writeln(t,'DelQWK=',jnf(DelQWK));
-    writeln(t,'Client-Mode=', jnf(PPPMode));
     writeln(t,'Client-Path=', PPPClientPath);
     writeln(t,'Client-Exec=', PPPClient);
     writeln(t,'Client-AddServers=', PPPAddServers);
@@ -518,12 +517,9 @@ begin
     writeln(t,'Client-AskIfConnect=', jnf(PPPAskIfConnect));
     writeln(t,'Client-AskIfDisconnect=', jnf(PPPAskIfDisconnect));
     writeln(t,'Client-KeepConnectStatus=', jnf(PPPKeepConnectStatus));
-    if PPPMode then
-    begin
-      writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
-      MkLongDir(OwnPath + XFerDir + Dateiname, Res);
-      if IOResult = 0 then ;
-      end;
+    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
+    MkLongDir(OwnPath + XFerDir + Dateiname, Res);
+    if IOResult = 0 then ;
     writeln(t,'Client-MailInServer=', PPPMailInServer);
     writeln(t,'Client-MailInPort=', PPPMailInPort);
     writeln(t,'Client-MailInProtocol=', PPPMailInProtocol);
@@ -662,6 +658,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.26  2001/12/20 15:08:27  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
+
   Revision 1.10.2.25  2001/12/11 17:50:55  my
   MY:- RFC/Client: Client- und Server-Konfiguration erheblich umgestaltet
        und erweitert. Neue Einstellungen:
