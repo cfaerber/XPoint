@@ -1371,12 +1371,10 @@ begin
               BretterAnlegen2;
           erase(t);
           end
-        else begin
+        else
           BretterAnlegen;
-          CloseList;
-          end;
-        end
-      else closelist; { Lister hier noch bei BRK schlieáen }
+      end;
+      if not ppp then closelist; { Lister hier noch bei BRK schlieáen }
       freeres;
       aufbau:=true;
       end;
@@ -1830,6 +1828,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.15  2001/04/23 18:19:41  mk
+  - Lister hat Speicher nicht freigegeben
+
   Revision 1.10.2.14  2001/04/19 14:28:41  mk
   - save some memory
 
