@@ -40,7 +40,7 @@ uses
 {$IFDEF DOS32 }
   xpdos32,
 {$ENDIF }
-  xpglobal, dos,
+  xpglobal,
   typeform;
 {$endif} { Unix }
 
@@ -84,6 +84,7 @@ procedure XPRewrite(var F: file; cm: TCreateMode);
 function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 function  existBin(const fn: string): boolean;       { Datei vorhanden (PATH)  }
+procedure FSplit(const path: string; var dir, name, ext: string);
 Function  ValidFileName(const name:string):boolean;  { gÅltiger Dateiname ?    }
 function  isEmptyDir(const path: string): boolean;
 function  IsPath(const Fname:string):boolean;         { Pfad vorhanden ?        }
@@ -103,7 +104,7 @@ procedure fm_rw;                                { Filemode Read/Write     }
 procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode îffn.}
 
 procedure adddir(var fn:string; dir:string);
-function GetBareFileName(p:string):string;
+function  GetBareFileName(const p:string):string;
 
 function  ioerror(i:integer; otxt:string):string; { Fehler-Texte            }
 
@@ -215,6 +216,15 @@ begin
     rc:= sysutils.findnext(sr);
   end;
   sysutils.findclose(sr);
+end;
+
+procedure FSplit(const path: string; var dir, name, ext: string);
+begin
+  dir:= ExtractFilePath(path);
+  ext:= ExtractFileExt(path);
+  name:= ExtractFileName(path);
+  if ext<>'' then
+    Delete(name,pos(ext,name),length(ext));
 end;
 
 function existf(var f):Boolean;
@@ -538,16 +548,12 @@ begin
   if ioresult<>0 then;
 end;
 }
-function GetBareFileName(p:string):string;
-var d : dirstr;
-    n : namestr;
-    e : extstr;
+function GetBareFileName(const p:string):string;
+var d,
+    n,
+    e : string;
 begin
-{$IFDEF UnixFS }
-  fsplit(ResolvePathName(p),d,n,e);
-{$ELSE }
   fsplit(p,d,n,e);
-{$ENDIF }
   GetBareFileName:=n;
 end;
 
@@ -596,6 +602,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2000/11/15 17:57:02  hd
+  - FSplit implementiert
+  - DOS-Unit entfernt
+
   Revision 1.69  2000/11/15 15:51:18  hd
   - Neu: isEmptyDir, da FileExists('/path/*.*') immer false liefert
 
