@@ -20,7 +20,7 @@
      Die Žnderungen im Detail k”nnen der Datei VERSION.TXT entnommen
      werden.
 
-     In diesem Archiv sind alle Dateien von CrossPoint/OpenXP v3.40 RC1
+     In diesem Archiv sind alle Dateien von CrossPoint/OpenXP v3.40 RC2
      einschlieálich des UUCP- und des Fido-Moduls enthalten; das QWK-
      Modul der v3.12 kann weiterhin verwendet werden.
 
