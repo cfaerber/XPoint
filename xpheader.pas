@@ -20,7 +20,7 @@
    Copyright (c) 2000 by the OpenXP Team.
 
 }
-{$i xpdefine.inc}
+{$I XPDEFINE.INC }
 
 { Contains class THeader }
 
@@ -52,7 +52,6 @@ type
     empfaenger: string; { --- allgemein --- Brett / User / TO:User }
     Kopien: TStringList;                { KOP: - Liste }
     empfanz: integer;                   { Anzahl EMP-Zeilen }
-    Followupz: integer;                   { Anzahl EMP-Zeilen }
     betreff: string;
     absender: string;
     datum: string;                      { Netcall-Format               }
@@ -180,7 +179,6 @@ begin
   empfaenger := '';
   Kopien.Clear;
   empfanz := 0;
-  Followupz := 0;
   betreff := '';
   absender := '';
   datum := '';
@@ -279,6 +277,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2000/12/30 17:36:54  mk
+  *** empty log message ***
+
   Revision 1.1  2000/12/03 12:38:26  mk
   - Header-Record is no an Object
 
