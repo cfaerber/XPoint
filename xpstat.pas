@@ -86,14 +86,15 @@ begin
   signal;
   hd:=''; InternBox:=DefaultBox;
   if StatBrett then
-    if DoSend(false,fn,xp0.StatBrett,bez+getres(2600)+fdat(zdate)+    { 'statistik vom ' }
+    if DoSend(false,fn,true,false,xp0.StatBrett,bez+getres(2600)+fdat(zdate)+    { 'statistik vom ' }
               ', '+LeftStr(time,5),
-              false,false,false,false,false,nil,hd,hd,sendIntern) then
+              false,false,false,false,false,nil,hd,sendIntern) then
       SetUngelesen
     else
-  else
+  else begin
     if ListFile(fn,bez+getres(2601),true,false,0)<>0 then;   { 'statistik' }
-  _era(fn);
+    _era(fn);
+  end;
 end;
 
 
@@ -1257,6 +1258,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/09/08 14:43:49  cl
+  - adaptions/fixes for MIME support
+  - adaptions/fixes for PGP/MIME support
+
   Revision 1.43  2001/09/07 13:54:25  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

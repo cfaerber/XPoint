@@ -392,8 +392,13 @@ begin
       inc(SendFlags,SendPGPsig);
     if msgMarked then msgMarkEmpf:=max(1,empfnr);
     if hdp.nokop then inc(SendFlags,SendNokop);
-    if DoSend(pm,tmp,empf,betr,modi,typ='B',true,false,false,
-              sData,headerf,headerf,sendflags+Sendreedit+
+
+    if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
+      inc(SendFlags,SendMPart);
+    sData^.OrgHdp :=hdp;
+
+    if DoSend(pm,tmp,true,false,empf,betr,modi,typ='B',true,false,false,
+              sData,headerf,sendflags+Sendreedit+
               iif(orghalt=1,sendHalt,0)+iif(msgmarked,sendMark,0)) then begin
       rec2:=dbRecno(mbase);
       dbGo(mbase,rec);
@@ -413,7 +418,7 @@ begin
       dbGo(mbase,rec2);
       end;
     freesenduudatamem(sdata);
-    _era(tmp);
+//    _era(tmp);
     end;
   xaufbau:=true;
 ende:
@@ -647,9 +652,9 @@ label ende,again;
       close(t);
       forcebox:=MausWLbox;
       leer:='';
-      if DoSend(true,fn,'MAUS@'+mauswlbox,'<Maus-Direct-Command>',false,false,
-                sendbox,false,false,nil,leer,leer,0) then;
-      _era(fn);
+      if DoSend(true,fn,true,false,'MAUS@'+mauswlbox,'<Maus-Direct-Command>',false,false,
+                sendbox,false,false,nil,leer,0) then;
+//      _era(fn);
       end;
     Hdp.Free;
   end;
@@ -979,8 +984,8 @@ again:
                  if nextwl>=0 then begin
                    ua:=uvs_active; uvs_active:=false;
                    end;
-                 if DoSend(pm,fn,empf,betr,typ in [2,3],binaermail,sendbox,
-                           (typ=3) and SelWeiter,typ=3,sData,leer,sigfile,
+                 if DoSend(pm,fn,true,false,empf,betr,typ in [2,3],binaermail,sendbox,
+                           (typ=3) and SelWeiter,typ=3,sData,sigfile,
                            iif(typ=5,SendIntern,0)+iif(typ=7,SendWAB,0)+
                            iif(typ<>3,SendReedit,0)) then;
                  if nextwl>=0 then uvs_active:=ua;
@@ -1051,12 +1056,16 @@ again:
                  onetztyp:=hdp.netztyp;
                  quotestr:=hdp.quotestring;
                  ersetzt:=hdp.ersetzt;
+                 boundary:=hdp.boundary;
                end;
                sendflags:=SendReedit;
                if dbReadInt(mbase,'netztyp') and $4000<>0 then
                  inc(SendFlags,SendPGPsig);
-               if DoSend(pm,fn,empf,betr,false,hdp.typ='B',sendbox,
-                         false,false,sData,leer,leer,sendflags) and unpark then SetDel;
+               if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
+                 inc(SendFlags,SendMPart);
+               sData^.OrgHdp :=hdp;
+               if DoSend(pm,fn,true,false,empf,betr,false,hdp.typ='B',sendbox,
+                         false,false,sData,leer,sendflags) and unpark then SetDel;
                freesenduudatamem(sdata);
              end;
          6 : begin
@@ -1126,7 +1135,7 @@ ende:
   SendEmpfList.Clear;
   hdp.Free;
   archivweiterleiten:=false;
-  SaveDeleteFile(fn);
+//  if FileExists(fn) then _era(fn);
 end;
 
 
@@ -1313,6 +1322,10 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/09/08 14:43:07  cl
+  - adaptions/fixes for MIME support
+  - adaptions/fixes for PGP/MIME support
+
   Revision 1.4  2001/09/07 13:54:25  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
