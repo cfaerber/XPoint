@@ -226,9 +226,13 @@ const  {$IFDEF DPMI}
 {$IFDEF UnixFS}
        MaggiBin		: pathstr	= 'maggi';
        ZFidoBin		: pathstr	= 'zfido';
+       ZQWKBin		: pathstr	= 'zqwk';
+       Yup2PktBin	: pathstr	= 'yup2pkt';
 {$ELSE}
        MaggiBin		= 'MAGGI.EXE';
        ZFidoBin		= 'ZFIDO.EXE';
+       ZQWKBin		= 'ZQWK.EXE';
+       Yup2PktBin	= 'YUP2PKT.EXE';
 {$ENDIF}
 
        miBrett     = 1;                { BRETTNAME/EMPFDATUM/INT_NR         }
@@ -1183,6 +1187,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.53  2000/06/16 14:51:41  hd
+  - ZQWKBin, Yup2PktBin eingefuegt
+
   Revision 1.52  2000/06/04 16:57:24  sv
   - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
     (RFC/ZConnect)
