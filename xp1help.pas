@@ -93,7 +93,7 @@ const kss : byte = 2;
       end;
   end;
 
-  procedure ende(s1,s2:string);
+  procedure ende(const s1,s2:string);
   begin
     Wrt2(sp(ScreenWidth-length(s1)-length(s2)-wherex-1));
     attrtxt(col.colkeyshigh);
@@ -134,7 +134,7 @@ const kss : byte = 2;
     ende('Q','uit');
   end;
 
-  procedure hitxt(s:string);
+  procedure hitxt(const s:string);
   begin
     attrtxt(col.colkeyshigh);
     Wrt2(s);
@@ -148,7 +148,7 @@ const kss : byte = 2;
     dec(shortkeys);
   end;
 
-  procedure kscr(txt:string);
+  procedure kscr(const txt:string);
   begin
     AddSK(wherex,length(txt)+4,-3,keycr);
     hitxt(#17'Ä');
@@ -360,7 +360,7 @@ var fks,fkn : integer;
     hilfe,
     makros  : string[10];
 
-  procedure wf(s:string);
+  procedure wf(const s:string);
   begin
     attrtxt(col.colkeyshigh);
     Wrt2(LeftStr(s,cPos('-',s)-1));
@@ -412,6 +412,9 @@ end;
 
 {
   $Log$
+  Revision 1.29  2001/12/18 14:09:54  mk
+  - added some const parameters
+
   Revision 1.28  2001/12/18 13:06:09  mk
   - little draw speedup for button bar
 
