@@ -300,7 +300,7 @@ begin
 {$IFDEF Ver32 }
   GetTime(h, m, s, hund);
   Ticker := system.round(hund / (100 / Tick) + s * tick + m * tick * 60 +
-    h * tick * 60 * 60 + h * tick * 60 * 60 * 24);
+    h * tick * 60 * 60);
 {$ELSE }
   ticker:=meml[Seg0040:$6c];
 {$ENDIF}
@@ -1775,6 +1775,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/03/15 14:00:52  mk
+  - 32 Bit Ticker Bugfix
+
   Revision 1.14  2000/03/14 15:15:35  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
