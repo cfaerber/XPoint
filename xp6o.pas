@@ -573,7 +573,9 @@ label ende,again;
       wrr;
       end;
     dbReadN(mbase,mb_flags,flags);
+    SaveKom := true;
     extract_msg(0,'',fn,true,1);
+    SaveKom := false;
     if not exist(fn) then exit;      { Nachricht nicht extrahiert !? }
     tmp:=TempS(_filesize(fn)+2000);
     assign(tf,tmp);
@@ -586,10 +588,20 @@ label ende,again;
     hdp^.groesse:=filesize(f);
     hdp^.betreff:=betr;
     hdp^.orgdate:=true;
+    mnt:=hdp^.netztyp;
+    if hdp^.komlen > 0 then
+    begin
+      mnt := mnt or $8000;
+      if archivtext and not binaermail then
+      begin
+        inc (hdp^.komlen, 2);
+        for b := 1 to asnum do
+          inc (hdp^.komlen, length (aas[b]) + 2);
+      end;
+    end;
     Writeheader(hdp^,tf,reflist);
     fmove(f,tf);
     dbAppend(mbase);
-    mnt:=hdp^.netztyp;
     if (hdp^.wab<>'') or (hdp^.oem<>'') then inc(mnt,$800);
     dbWriteN(mbase,mb_netztyp,mnt);
     dbWriteN(mbase,mb_brett,ebrett);
@@ -871,8 +883,12 @@ again:
             else begin
               newsize:=hdp^.groesse+2;  { Leerzeile }
               for i:=1 to asnum do
+              begin
                 inc(newsize,length(aas[i])+2);
+                if hdp^.komlen > 0 then inc (hdp^.komlen, length(aas[i])+2);
               end;
+              if hdp^.komlen > 0 then inc (hdp^.komlen, 2);
+            end;
             hdp^.groesse:=newsize;
             hdp^.attrib:=hdp^.attrib and (not attrQPC);
             hdp^.charset:='';
@@ -889,7 +905,9 @@ again:
               wrr;
               end;
             ExtCliptearline:=false;
+            SaveKom := true;
             extract_msg(0,'',fn,true,1);
+            SaveKom := false;
           end;
   end;
   leer:='';
@@ -1176,7 +1194,6 @@ ende:
   if exist(fn) then _era(fn);
 end;
 
-
 procedure ArchivAMtoPM;
 var fn,tmp : pathstr;
     f,tf   : file;
@@ -1193,6 +1210,36 @@ var fn,tmp : pathstr;
     hds    : longint;
     ebrett : string[5];
     box    : string[BoxNameLen];
+    binaermail :boolean;
+    aas    : array[1..3] of string[120];
+    asnum  : byte;
+
+  procedure write_archiv;
+    procedure wrs(s:string);
+    begin
+      inc(asnum);
+      aas[asnum]:=left(s,120);
+    end;
+  begin
+    asnum:=0;
+    if archivtext and not binaermail then begin
+      wrs(getreps2(641,1,fdat(zdate)));   { '## Nachricht am %s archiviert' }
+      wrs(getres2(641,2)+': '+hdp^.empfaenger);   { '## Ursprung' }
+      freeres;
+      end;
+  end;
+
+  procedure wrr;
+  var i : byte;
+  begin
+    if archivtext then begin
+      for i:=1 to asnum do
+        writeln(t,aas[i]);
+      writeln(t);
+      end;
+    close(t);
+  end;
+
 begin
   _UserAutoCreate:=UserAutoCreate;
   dbReadN(mbase,mb_ablage,abl);
@@ -1201,18 +1248,19 @@ begin
   else
     dbReadN(mbase,mb_empfdatum,edat);
   dbReadN(mbase,mb_typ,ntyp);
+  binaermail:=(ntyp='B');
   fn:=TempS(dbReadInt(mbase,'msgsize')+2048);
   new(hdp);
   ReadHeader(hdp^,hds,false);
-  if archivtext and (ntyp<>'B') then begin
+  if archivtext and not binaermail then begin
     assign(t,fn);
     rewrite(t);
-    writeln(t,getreps2(641,1,date));
-    writeln(t,getres2(641,2),': ',hdp^.empfaenger);
-    writeln(t);
-    close(t);
-    end;
+    write_archiv;
+    wrr;
+  end;
+  SaveKom:=true;
   extract_msg(0,'',fn,true,1);
+  SaveKom:=false;
   if not exist(fn) then exit;      { Nachricht nicht extrahiert !? }
 
   box:=defaultbox;
@@ -1237,10 +1285,20 @@ begin
   reset(f,1);
   hdp^.groesse:=filesize(f);
   hdp^.orgdate:=true;
+  mnt:=hdp^.netztyp;
+  if hdp^.komlen > 0 then
+  begin
+    mnt := mnt or $8000;
+    if archivtext and not binaermail then
+    begin
+      inc (hdp^.komlen, 2);
+      for b := 1 to asnum do
+        inc (hdp^.komlen, length (aas[b]) + 2);
+    end;
+  end;
   Writeheader(hdp^,tf,reflist);
   fmove(f,tf);
   dbAppend(mbase);
-  mnt:=hdp^.netztyp;
   if hdp^.ref<>'' then inc(mnt,$100);
   if (hdp^.wab<>'') or (hdp^.oem<>'') then inc(mnt,$800);
   dbWriteN(mbase,mb_netztyp,mnt);
@@ -1350,6 +1408,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.23  2002/03/17 13:15:41  sv
+  - Fix: Das Archivieren von Nachrichten mit Kommentar (KOM:) funktionierte
+    nicht
+
   Revision 1.20.2.22  2002/03/08 23:05:59  my
   JG:- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
        (Priorit„t, PGP-signiert usw.) jetzt erhalten.

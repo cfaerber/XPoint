@@ -858,6 +858,8 @@ const
        ignoreSupCancel : boolean = false; { Supersedes/Ersetzt und Cancels ignorieren }
        UserAutoCreate  : boolean = false; { Unbekannte User beim Beantworten und }
                                           { Archivieren ohne RÅckfrage anlegen   }
+       SaveKom         : boolean = false; { XP3EX.extract_msg Kommentar (KOM:) extrahieren }
+
 
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bb_gruppe,bb_index,bb_adresse,
@@ -1228,6 +1230,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.50  2002/03/17 13:15:40  sv
+  - Fix: Das Archivieren von Nachrichten mit Kommentar (KOM:) funktionierte
+    nicht
+
   Revision 1.54.2.49  2002/03/08 22:55:35  my
   MY:- Der interne Befehl *SETUSER ist jetzt zum Netztyp RFC/Client
        kompatibel und gleichzeitig komplett Åberarbeitet und erweitert:

@@ -176,6 +176,7 @@ var size   : longint;
     mpsize  : longint;
     mehdl, mehds : integer;
     QuoteEmptyLines: boolean;
+    ch :char;
 
   procedure wrs(s:string);
   begin
@@ -1100,7 +1101,7 @@ begin
         end
       else begin
         XReadIsoDecode:=true;
-        XreadF(hds+hdp^.komlen,f);
+        XreadF(hds+iif(SaveKom,0,hdp^.komlen),f);
         end;
       if decode<>0 then begin
         FastMove(f,decf,sizeof(f));
@@ -1143,9 +1144,13 @@ begin
         reset(t);
         if not multipart or (ListQuoteMsg<>'') then  { ZC-Header 'Åberlesen' }
           if ntZCablage(dbReadInt(mbase,'ablage')) then
+          begin
             repeat
               readln(t,s)
-            until (s='') or eof(t)
+            until (s='') or eof(t);
+            if hdp^.komlen > 0 then
+              for i := 1 to hdp^.komlen do read (t, ch); { Kommentar nicht quoten}
+          end
           else
             for i:=1 to 8 do readln(t);
         QuoteTtoF;
@@ -1176,6 +1181,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.26  2002/03/17 13:15:41  sv
+  - Fix: Das Archivieren von Nachrichten mit Kommentar (KOM:) funktionierte
+    nicht
+
   Revision 1.17.2.25  2002/03/13 23:05:40  my
   RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
             von Redundanzen befreit, korrigiert und erweitert:
