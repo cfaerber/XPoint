@@ -769,9 +769,17 @@ again:
     binaermail:=false;
     end;
   case typ of
-      1 : extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
+      1 : begin
+            ExtCliptearline:=false;
+            ExtChgtearline:=true;
+            extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
+          end;
       7 : extract_msg(0,'',fn,false,1);     { Original weiterleiten }
-      2 : extract_msg(0,WeiterMsk,fn,false,1);
+      2 : begin
+            ExtCliptearline:=false;
+            ExtChgtearline:=true;
+            extract_msg(0,WeiterMsk,fn,false,1);
+          end;
       4 : extract_msg(0,iifs((_brett[1]='$') or binaermail or not sendbox,'',
                              ErneutMsk),fn,false,1);
       3 : extract_msg(3,QuoteToMsk,fn,false,1);
@@ -1267,6 +1275,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/11/01 11:37:28  mk
+  RB:- Bug #109282: Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo verfremden
+
   Revision 1.39  2000/10/26 12:06:34  mk
   - AllocHeaderMem/FreeHeaderMem Umstellung
 

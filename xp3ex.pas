@@ -33,6 +33,7 @@ const xTractMsg   = 0;
       xTractDump  = 4;
 
       ExtCliptearline : boolean = true;
+      ExtChgtearline  : boolean = false;
 
 procedure rps(var s:string; s1,s2:string);
 procedure rpsuser(var s:string; name:string; var realname:string);
@@ -369,11 +370,40 @@ var size   : longint;
     SetLength(s, 200);
     blockread(f,s[1],200,rr);
     if rr<>200 then SetLength(s,rr);
-    p:=pos(#13#10+XP_origin,s);
+    p:=max(0,length(s)-20);
+    while (p>0) and (copy(s,p,5)<>#13#10'---') do
+      dec(p);
     if p>0 then begin
       seek(f,l+p-1);
       truncate(f);
       end;
+  end;
+
+  procedure Chg_Tearline;   { Fido - Tearline + Origin verfremden }
+  const splus : string [1] = '+';
+  var s  : string;
+      rr : word;
+      p  : byte;
+      l  : longint;
+  begin
+    l:=max(0,filesize(f)-200);
+    seek(f,l);
+    setlength(s, 200);
+    blockread(f,s[1],200,rr);
+    if rr <> 200 then setlength(s, rr);
+    p:=max(0,length(s)-20);
+    while (p>0) and (copy(s,p,5)<>#13#10'---') do
+      dec(p);
+    if p>0 then begin
+      seek(f,l+p+2);
+      blockwrite(f,splus[1],1);
+      while (p<length(s)-11) and (copy(s,p,13)<>#13#10' * Origin: ') do
+        inc(p);
+      if p<length(s)-13 then begin
+        seek(f,l+p+2);
+        blockwrite(f,splus[1],1);
+      end;
+    end;
   end;
 
   function mausstat(s:string):string;
@@ -687,8 +717,9 @@ begin
       close(f);
       FreeHeaderMem(hdp);
       ExtCliptearline:=true;
+      ExtChgtearline:=false;
       exit;
-      end;
+    end;
     if append then begin
       reset(f,1);
       if ioresult<>0 then rewrite(f,1)
@@ -1050,20 +1081,24 @@ begin
         erase(decf);
         end;
       end;
-    if (hdp^.netztyp=nt_Fido) and (art=xTractMsg) and ExtCliptearline then
-      Clip_Tearline;
+    if (hdp^.netztyp=nt_Fido) and (art=xTractMsg)
+      then if ExtCliptearline then Clip_Tearline
+                              else if ExtChgTearline then Chg_Tearline;
     close(f);
     FreeHeaderMem(hdp);
   end;
   freeres;
   ExtCliptearline:=true;
+  ExtChgtearline:=false;
   TempKopien.Free;
 end;
-
 
 end.
 {
   $Log$
+  Revision 1.49  2000/11/01 11:37:28  mk
+  RB:- Bug #109282: Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo verfremden
+
   Revision 1.48  2000/10/26 13:24:53  mk
   RB:- Tearline und Origin beim Quoten von Echomail verfremden
 
