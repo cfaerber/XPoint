@@ -541,14 +541,15 @@ end;
 
 function receive(no:byte; var b:byte):boolean;   { Byte holen, falls vorh. }
 begin
-  if not received(no) then    { FOSSIL: received() fÅllt Buffer }
+  result := false;
+(*  if not received(no) then    { FOSSIL: received() fÅllt Buffer }
     receive:=false
   else begin
     b:=buffer[no]^[bufo[no]];
     inc(bufo[no]);
     if bufo[no]=bufsize[no] then bufo[no]:=0;
     receive:=true;
-  end;
+  end; *)
 end;
 
 
@@ -883,6 +884,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2000/08/08 23:18:25  mk
+  - Crash temporaer beseitigt
+
   Revision 1.10  2000/06/29 13:00:50  mk
   - 16 Bit Teile entfernt
   - OS/2 Version l‰uft wieder
