@@ -232,8 +232,9 @@ M”gliche Optionen sind:
       <<F-TO>> den bis Version 3.12 verwendeten pro-
       priet„ren Header <<X-XP-FTO>>. Die Verwendung
       dieser Option macht nur dann u.U. Sinn, wenn
-      Sie das XP-Tool PKT2ZER einsetzen und dabei
-      Probleme feststellen.
+      Sie „ltere XP-Tools einsetzen, die auf die
+      alte Headerbezeichnung angewiesen sind (z.B.
+      PKT2ZER).
 
 <</av:<Datei> >>aktiviert den eingebauten Archiv-Viewer
       und beendet das Programm anschlieáend. Als
@@ -4842,8 +4843,9 @@ Point mit seinem Namen unterschreibt:
 
 Die Einstellung fr private Nachrichten gilt nur fr
 registrierte CrossPoint-Versionen. Die Einstellung
-fr ”ffentliche Nachrichten gilt nicht fr MausNet
-und FidoNet.
+fr ”ffentliche Nachrichten gilt nicht frs MausNet,
+im FidoNet hingegen wird immer eine leere "Tearline"
+(---) erzeugt.
 
 @
 249
@@ -6986,6 +6988,16 @@ Adreábestandteilen kommen nicht an.
 <<[ ]>> -> Das Programm verh„lt sich wie in frheren
        Versionen und l„át die Nachrichtenmarkierungen
        bei Netzanrufen unver„ndert.
+@
+568
+<<[x]>> -> Das Programm paát nach einem Netzanruf
+       automatisch die Datumsbezge an. Aktualisierte
+       Bretter wie /¯Netcall werden dann immer sofort
+       korrekt in der Brettliste angezeigt.
+
+<<[ ]>> -> Das Programm verh„lt sich wie in frheren
+       Versionen und l„át die Datumsbezge nach einem
+       Netzanruf unver„ndert.
 @
 570
 Geben Sie den Betreff der Nachricht an.
