@@ -296,6 +296,12 @@ procedure initdirs;
   end;
 
 begin {initdirs}
+  // this is not totally correct; case start command "openxp",
+  // "." is not in path, "openxp" exists in current dir
+  // but another openxp from path is called
+  OpenXPEXEPath:=ExpandFilename(ParamStr(0));
+  if not FileExists(OpenXPEXEPath) then
+    OpenXPEXEPath:=FindExecutable(ParamStr(0));
   GetLibDir;
   GetHomePath;                                { HomeDir := UserHome }
   GetOwnPath;                                 { OwnPath := OwnPath + BaseDir }
@@ -309,6 +315,7 @@ end; { initdirs }
 {$ELSE}
 procedure initdirs;
 begin
+  OpenXPEXEPath:=ExpandFilename(ParamStr(0));
   OwnPath:=progpath;
   if ownpath='' then getdir(0,ownpath);
   OwnPath := IncludeTrailingPathDelimiter(OwnPath);
@@ -1095,6 +1102,10 @@ finalization
 //!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.129  2001/10/26 11:20:38  ma
+  - new var "OpenXPEXEPath" (which replaces ParamStr(0) because of problems
+    with Unix)
+
   Revision 1.128  2001/10/21 10:25:35  mk
   - /NB always with /mailto
 

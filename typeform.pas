@@ -739,7 +739,7 @@ end;
 
 function progpath: TFilename;
 begin
-  ProgPath:= ExtractFilePath(ParamStr(0));
+  ProgPath:= ExtractFilePath(OpenXPEXEPath);
 end;
 
 
@@ -1417,6 +1417,10 @@ end;
 
 {
   $Log$
+  Revision 1.104  2001/10/26 11:20:38  ma
+  - new var "OpenXPEXEPath" (which replaces ParamStr(0) because of problems
+    with Unix)
+
   Revision 1.103  2001/10/17 10:54:58  ml
   - fix for umlaut
   - range Error fix

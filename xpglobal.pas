@@ -143,7 +143,8 @@ var
 { Initialisiert vom Hauptprogramm                               }
   HomeDir,                     { User-Verzeichnis mit Datenbank }
   LibDir,                      { Libraries und Ressourcen       }
-  DocDir: String;              { Dokumentationsverzeichnis      }
+  DocDir,                      { Dokumentationsverzeichnis      }
+  OpenXPEXEPath: String;       { 'd:\xp\openxp.exe'             }
 
 {$IFDEF Delphi }
 var
@@ -194,6 +195,10 @@ begin
 
 {
   $Log$
+  Revision 1.61  2001/10/26 11:20:39  ma
+  - new var "OpenXPEXEPath" (which replaces ParamStr(0) because of problems
+    with Unix)
+
   Revision 1.60  2001/10/21 20:42:11  mk
   - Snapshot 3.7.5
 
