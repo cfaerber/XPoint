@@ -2034,10 +2034,13 @@ var
   buf     : array[1..8192] of byte;
   mheader : string;
   Lines, Cols: Integer;
+  FreeXP  : boolean;
+
 begin
   Debug.DebugLog('xp2cfg','readconfig', dlTrace);
   SetDefault;
   aaa:=''; mheader:='';
+  FreeXP := false;
   assign(t,ownpath+CfgFile);
   if FileExists(OwnPath+CfgFile) then
   begin
@@ -2047,6 +2050,7 @@ begin
     begin
       Readln(t,s);
       s := Trim(s);
+
       if (s<>'') and (s[1]<>'#') then
       begin
         su := UpperCase(s);
@@ -2295,7 +2299,9 @@ begin
           else
             debug.debuglog('xp2cfg','Invalid config line: '+s,DLWarning);
         end;
-      end;
+      end else
+      if Pos('FreeXP', s)<=0 then
+        FreeXP := true;
     end;
     close(t);
 
@@ -2308,7 +2314,7 @@ begin
     if lastchar(viewer_Lister)<>'.' then viewer_lister:=Viewer_Lister+'.';
 
     for i:=1 to 2 do
-      TrimLastChar(mheadercustom[i], ':'); 
+      TrimLastChar(mheadercustom[i], ':');
 
     GetUsrFeldPos;
 
@@ -2349,7 +2355,7 @@ begin
     maus_setdblspeed(minmax(mausdblclck,1,50));
     SetMausEmu;
     MausWheelStep:=MinMax(MausWheelStep,1,120);
-    
+
     FidoTo:=brettalle;
     if auswahlcursor then
     begin
@@ -2367,7 +2373,7 @@ begin
 {$ELSE}
       EditCharset := 'IBM437';
 {$ENDIF}
-    
+
 //  if RightStr(date,4)<'1996' then ZC_ISO:=false;
     end
   else begin
@@ -2431,6 +2437,13 @@ begin
     s:= GetCfg('TermDevice',csLinux);
     if (s='') then PutCfg('TermDevice',TermDevice,csLinux,31018) else TermDevice:= s;
     CloseCfg;
+  end;
+
+  if FreeXP then
+  begin
+    SafeDeleteFile(NodeindexF);
+    SafeDeleteFile(UserindexF);
+    SaveConfig;
   end;
 
   readmenudat;
@@ -2797,6 +2810,10 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.169  2003/09/06 12:59:46  cl
+  - workaround for deliberately changed format of nodelist indexes in
+    "FreeXP 3.40 RC3" [2003-08-31].
+
   Revision 1.168  2003/09/01 16:17:13  mk
   - added printing support for linux
 
