@@ -707,10 +707,15 @@ begin
     end;
 end;
 
-
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF FPC }
 procedure addtoempflist(s:string);
 begin
 end;
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF FPC }
 
 
 function compmimetyp(typ:string):string;
@@ -1849,6 +1854,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.5  2000/02/15 21:06:52  mk
   RB: [40] in [realnlen] geändert
 

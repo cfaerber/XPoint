@@ -260,7 +260,6 @@ end;
 
 procedure RereadUngelesen(_brett:string);
 var _mBrett : string[5];
-    d1,d2   : longint;
     mi      : word;
     flags   : byte;
     bug,mug : boolean;
@@ -505,16 +504,15 @@ end;
 procedure extrakt(art:byte; aktdispmode,rdmode:shortint);
 var fname   : pathstr;
     x,y,p   : byte;
-    n,size  : longint;
+    n       : longint;
     _brett,_b : string[5];
     brett   : string[BrettLen];
-    i,nr    : integer;
+    i       : integer;
     schab   : pathstr;
     betreff : string[betrefflen];
     text    : string[40];
     ok      : boolean;
     append  : boolean;
-    t       : taste;
     brk     : boolean;
     hdp     : headerp;
     hds     : longint;
@@ -860,13 +858,9 @@ end;
 { eine neue Empf„nger-Zeile im Header                  }
 
 procedure NeuerEmpfaenger(name:string);
-var f1,f2 : file;
-    p     : pointer;
+var f1    : file;
     size  : longint;
-    c     : char;
-    i     : integer;
     fn    : pathstr;
-    siz,rr: word;
     hdp   : headerp;
     hds   : longint;
 begin
@@ -1133,10 +1127,8 @@ end;
 
 function ZC_puffer(var fn:pathstr):boolean;
 var t : text;
-    z : boolean;
     s : string;
     abs,emp,eda : boolean;
-    i: integer;
 begin
   assign(t,fn);
 
@@ -1169,7 +1161,6 @@ var ok       : boolean;
     MsgCount,
     fs,adr   : longint;
     hds      : longint;
-    rr       : word;
     hdp      : headerp;
     zconnect : boolean;
     j: longint;
@@ -1358,6 +1349,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.6  2000/02/20 11:06:33  mk
   Loginfos hinzugeueft, Todo-Liste geaendert
 

@@ -298,10 +298,16 @@ begin
   ntAreamgr:=(nt=nt_Fido);
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 function ntNoMaps(nt:byte):boolean;
 begin
   ntNoMaps:=false;
 end;
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
 begin
@@ -531,11 +537,16 @@ begin
 end;
 
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 function ntDataQuestBetreff(nt:byte):boolean; { Betreff bei DB-Abfrage   }
 begin
   ntDataQuestBetreff:=false;  { (nt=nt_Turbo); }
 end;
-
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 function ntBrettEmpf(nt:byte):boolean;        { Fido-To }
 begin
@@ -626,6 +637,9 @@ begin
   ntExtProt:=not (nt in [nt_Fido,nt_UUCP,nt_Turbo,nt_QWK]);
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 function ntISDN(nt:byte):boolean;             { ISDN/CAPI m”glich }
 begin
 {$IFDEF CAPI }
@@ -634,6 +648,9 @@ begin
   ntISDN:=false;
 {$ENDIF }
 end;
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 
 function ntOrigWeiter(nt:byte):boolean;       { Weiterleiten mit WAB  }
@@ -757,6 +774,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/21 22:48:02  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.5  2000/02/15 20:43:37  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

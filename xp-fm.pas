@@ -530,14 +530,14 @@ begin
 end;
 
 function GetBackIntensity:boolean;        { true = hell, false = blink }
-var
 {$IFDEF BP }
+var
   regs : registers;
   buf  : array[0..127] of byte;
 {$ENDIF }
 begin
   GetBackIntensity:=false;
-{$IFNDEF Ver32 }
+{$IFDEF BP }
   with regs do begin
     ah:=$1b; bx:=0;
     es:=seg(buf); di:=ofs(buf);
@@ -1079,6 +1079,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

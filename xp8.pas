@@ -196,7 +196,6 @@ var hf : string[12];
       root    : bnodep;
       sysfile : string[12];
       s       : string;
-      sysw    : boolean;
       syspos  : byte;
       first   : boolean;
       _brett  : string[5];
@@ -281,14 +280,14 @@ var hf : string[12];
       end;
     close(t);
     assign(t,sysfile);                   { neue .BBL-Datei schreiben }
-    rewrite(t); sysw:=true; syspos:=0; first:=false;
+    rewrite(t); syspos:=0; first:=false;
     syswrite(root);
     close(t);
     assign(t,datei);                     { neue (Ab)Bestellung schreiben }
     ReadBoxPar(nt_UUCP,box);
     dbOpen(d,BoxenFile,1);
     dbSeek(d,boiName,ustr(box));
-    rewrite(t); sysw:=false;
+    rewrite(t);
     writeln(t,'system: ',boxpar^.pointname,
                          iifs(boxpar^.BMdomain,dbReadStr(d,'domain'),''));
     writeln(t,'passwd: ',boxpar^.AreaPW);
@@ -436,7 +435,6 @@ type maggibrett  = record
 var t     : text;
     fn    : pathstr;
     box   : string[20];
-    ok    : boolean;
     i,nr  : integer;
     d     : DB;
     topen : boolean;
@@ -447,9 +445,7 @@ var t     : text;
     turbo : boolean;
     gs    : boolean;
     uucp  : boolean;
-    gup   : boolean;
     autosys: boolean;
-    feeder: boolean;
     postmaster : boolean;
     pronet: boolean;
     qwk   : boolean;
@@ -572,8 +568,8 @@ begin
     assign(t,fn);
     if brett<>'' then begin
       maf:=false; maus:=false; quick:=false; fido:=false; gs:=false;
-      uucp:=false; turbo:=false; pronet:=false; qwk:=false; gup:=false;
-      autosys:=false; feeder:=false; postmaster:=false;
+      uucp:=false; turbo:=false; pronet:=false; qwk:=false;
+      postmaster:=false;
       case mapstype(box) of
         2 : maf:=true;
         3 : maus:=true;
@@ -584,9 +580,7 @@ begin
         8 : pronet:=true;
         9 : turbo:=true;
        10 : qwk:=true;
-       11 : begin uucp:=true; gup:=true; end;
-       12 : begin uucp:=true; autosys:=true; end;
-       13 : begin uucp:=true; feeder:=true; end;
+       11..13 : uucp:=true;
        14 : begin uucp:=true; postmaster:=true; end;
       end;
       rewrite(t);
@@ -748,9 +742,6 @@ end;
 procedure MapsReadList;
 var absender : string[Adrlen];
     box      : string[BoxNameLen];
-    size     : longint;
-    x,y      : byte;
-    f        : file;
     betreff  : string[BetreffLen];
     d        : DB;
     bfile    : string[8];
@@ -905,9 +896,7 @@ var d      : DB;
     brk    : boolean;
     t      : text;
     s      : string;
-    anz,i  : longint;
-    x,y    : byte;
-    n      : longint;
+    anz    : longint;
     netztyp: byte;
     maf    : boolean;
     promaf : boolean;
@@ -1177,7 +1166,6 @@ var brk     : boolean;
     request : boolean;
     nt      : byte;
     maf     : boolean;
-    quick   : boolean;
     maus    : boolean;
     info    : MausInfAP;
     infos   : integer;
@@ -1233,7 +1221,6 @@ var brk     : boolean;
       user   : string[80];
       x,y,p  : byte;
       brk    : boolean;
-      d      : DB;
       aufnehm: boolean;
   begin
     aufnehm:=cpos('>',comm)>0;
@@ -1295,7 +1282,7 @@ begin
   dbRead(d,'domain',domain);
   dbClose(d);
   maf:=ntMAF(nt);
-  quick:=ntQuickMaps(nt);
+  ntQuickMaps(nt);
   maus:=ntNude(nt);
   fido:=ntAreamgr(nt);
   gs:=(nt=nt_GS);
@@ -1605,6 +1592,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

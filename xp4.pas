@@ -342,7 +342,7 @@ var t,lastt: taste;
   {          Seiteneffekte beachten!!                  }
 
   function forth:boolean;
-  var r      : longint;
+  var
       _brett : string[5];
   begin
     case dispmode of
@@ -389,7 +389,7 @@ var t,lastt: taste;
   end;
 
   function Back:boolean;
-  var r      : longint;
+  var
       _brett : string[5];
   begin
     case dispmode of
@@ -651,7 +651,6 @@ var t,lastt: taste;
       kein_re : boolean;
       netztyp : byte;
       usermsg : boolean;
-      dummy   : integer;
       gesperrt: boolean;
       sdata   : SendUUptr;
       flags   : byte;
@@ -989,7 +988,7 @@ var t,lastt: taste;
           end;
         end;   { if reply }
       if netztyp<>nt_maus then
-        if kein_re then dummy:=ReCount(betr)   { Re's abschneiden }
+        if kein_re then ReCount(betr)   { Re's abschneiden }
         else ReplyText(betr,re_n)
       else
         Cut_QPC_DES(betr);
@@ -1132,7 +1131,6 @@ var t,lastt: taste;
   procedure auto_read;
   var fn   : pathstr;
       arc  : shortint;
-      dummy: shortint;
   begin
     GoP;
     GetAutoFN(fn);
@@ -1142,7 +1140,7 @@ var t,lastt: taste;
       arc:=ArcType(fn);
       if ArcRestricted(arc) then arc:=0;
       if arc=0 then
-        dummy:=Listfile(fn,fitpath(fn,40),true,false,0)
+        Listfile(fn,fitpath(fn,40),true,false,0)
       else begin
         if ViewArchive(fn,arc)<>0 then;
         setall;

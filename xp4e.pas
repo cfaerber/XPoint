@@ -212,7 +212,9 @@ begin
   testgruppe:=dbFound;
 end;
 
-
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 procedure pb_wrntyp(var s:string);
 begin
   attrtxt(col.coldiahigh);
@@ -221,7 +223,9 @@ begin
     freeres;
     end;
 end;
-
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 procedure set_ubrett;
 begin
@@ -2180,6 +2184,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.7  2000/02/20 11:06:33  mk
   Loginfos hinzugeueft, Todo-Liste geaendert
 

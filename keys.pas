@@ -313,15 +313,19 @@ end;
 
 function ScrollMode:boolean;
 begin
-{$IFNDEF Ver32}
+{$IFDEF BP }
   ScrollMode:=odd(mem[Seg0040:$17] shr 4);
+{$ELSE }
+  ScrollMode := false;
 {$ENDIF }
 end;
 
 function kbstat:byte;
 begin
-{$IFNDEF Ver32}
+{$IFDEF BP }
   kbstat:=mem[Seg0040:$17];
+{$ELSE }
+  kbstat := 0; { !! }
 {$ENDIF }
 end;
 
@@ -357,6 +361,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

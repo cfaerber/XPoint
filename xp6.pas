@@ -113,12 +113,18 @@ uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
      xp_pgp,xp6o,xp6l;
 
 {$IFDEF Ver32 }
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 procedure ukonv(typ:byte; var data; var bytes:word);
 begin end;
 function  testbin(var bdata; rr:word):boolean;
 begin end;
 function  ContainsUmlaut(var s:string):boolean;
 begin end;
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 {$else }
 
@@ -2054,8 +2060,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.6  2000/02/18 21:54:46  jg
-  JG: Kurvnamen fueÅr UUCP + ZConnect Vertreteradressen
+  Kurvnamen fÅr UUCP + ZConnect Vertreteradressen
 
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000

@@ -52,10 +52,7 @@ uses  xp1,xp6;
 const edbetreff : ^string = nil;
       doautosave: boolean = false;
 
-var   EdFile,
-      loadpath,
-      dispfile  : pathstr;
-      edw_y     : byte;      { Zeilenadresse der Statuszeile }
+var
       edbmaxlen : byte;      { maximale Betreffl„nge }
       EdCfg     : EdConfig;
 

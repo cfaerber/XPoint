@@ -55,15 +55,13 @@ const rx = 42;
       cal_active : boolean = false;
       maxfeier   = 50;
 
-var   i,j,le,nt,n,mnt,
+var   nt,n,mnt,
       xjj,xmm,xtt : integer;
       z           : taste;
       y,m,d,w     : smallword;
       lm,lj       : word;
       jj,mm,tt    : word;
 
-      brk         : boolean;
-      hd          : string[9];
       cal         : string[15];
       feier       : array[1..maxfeier] of fdate;
       feieranz    : integer;
@@ -103,10 +101,9 @@ var   i,j,le,nt,n,mnt,
   end;
 
   procedure disp_kal(termin:boolean);
-  var i  : integer;
+  var i,j, le: integer;
       fd : fdate;
   begin
-{$IFNDEF Ver32 }
     j:=0; le:=ry+4;
     clwin(rx+3,rx+30,ry+5,ry+10);
     nt:=mnt;
@@ -146,7 +143,6 @@ var   i,j,le,nt,n,mnt,
       nt:=1;
       end;
     mon;
-    {$ENDIF}
   end;
 
   procedure maus_bearbeiten(var t:taste);
@@ -336,7 +332,7 @@ end;
 
 procedure memstat;
 const rnr = 500;
-var regs : registers;
+var
     x,y  : byte;
 {$IFDEF BP }
     ems  : longint;
@@ -368,9 +364,9 @@ begin
 {$ENDIF }
   gotoxy(x+32,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
                           xpspace(XferDir)) / $100000:6:1,' MB');
-  free:=dfree;
   gotoxy(x+32,y+6);
-{$IFNDEF Ver32 }
+{$IFDEF BP }
+  free:=dfree;
   if free>=0 then write((free / $100000):6:1,' MB')
   else write(getres2(rnr,11));    { 'Åber 2 GB' }
 {$ENDIF }
@@ -553,7 +549,7 @@ var c       : char;
   begin
     if softsaver then
       for i:=1 to vlines do begin
-{$IFNDEF ver32}
+{$IFDEF BP }
         Move(mem[base:0],mem[base:160],(vlines-1)*160);
 {$ENDIF}
         if i=1 then wrt(1,1,sp(80));
@@ -751,7 +747,7 @@ procedure ScreenShot;
 const ss_active : boolean = false;
 var fn,ffn : pathstr;
     app    : boolean;
-    i,x,y  : integer;
+    x,y  : integer;
     brk    : boolean;
     t      : text;
     useclip: boolean;
@@ -816,9 +812,6 @@ begin
 end;
 
 procedure WritePassword(main:boolean; p:word);
-var p0    : string[5];
-    found : boolean;
-    null  : longint;
 begin
   dbWriteUserflag(mbase,iif(main,1,2),p xor U8);
   if p<>0 then
@@ -834,12 +827,10 @@ function csum(s:string):word;
 var i   : integer;
     sum : longint;
 begin
-{$IFNDEF Ver32 }
   sum:=0;
   for i:=1 to length(s) do
-    inc(sum,i*succ(longint(s[i]))*(ord(s[i])shr 2));
+    inc(sum,i*succ(ord(s[i]))*(ord(s[i])shr 2));
   csum:=sum and $ffff;
-{$ENDIF }
 end;
 
 function EnterPassword(txt:atext; var brk:boolean):longint;
@@ -908,7 +899,6 @@ var brk  : boolean;
     main : boolean;
     typ  : string[15];
     i    : integer;
-    t    : taste;
 begin
   msgbox(ival(getres2(510,19)),ival(getres2(510,21))+6,'',x,y);
   moff;
@@ -1007,6 +997,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

@@ -26,7 +26,7 @@ const Nachricht = 3;     { /Nachricht }
       Fileliste = 27;    { Fido / Filelisten }
       Sonstiges = 33;    { Wartung / Sonstiges }
       PGP       = 40;    { Nachricht / PGP }
-var i          : integer;
+var
     unversandt : byte;
     nachrichten: boolean;
     uvse,uvsl  : boolean;
@@ -114,8 +114,8 @@ end;
 
 
 procedure menuopt(t:taste);
-const box : string = 'LU';
-      lastmenusel : integer = 0;
+const
+  lastmenusel : integer = 0;
 var m,m1     : integer;
     nix      : string[20];
     adr      : string[20];
@@ -572,6 +572,9 @@ begin
 end;
 { 
   $Log$
+  Revision 1.5  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.4  2000/02/18 17:28:08  mk
   AF: Kommandozeilenoption Dupekill hinzugefuegt
 

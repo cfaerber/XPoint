@@ -1314,40 +1314,6 @@ begin
   testconnect:=c;
 end;
 
-procedure RenameCALLED;   { CALLED.XYZ -> CALLEDnn.XYZ }
-var f   : file;
-    n   : byte;
-    dir : dirstr;
-    name: namestr;
-    ext : extstr;
-    fn  : pathstr;
-begin
-  fn:=called;
-  fsplit(fn,dir,name,ext);
-  fn:=dir+name;
-  n:=1;
-  while (n<=99) and exist(fn+formi(n,2)+ext) do inc(n);
-  if n<=99 then begin
-    mwriteln;
-    fn:=fn+formi(n,2)+ext;
-    moff;
-    attrtxt(15); writeln(reps(reps(getres2(713,1),called),fn));  { 'Fehler - %s umbenannt in %s' }
-    mon;
-    errsound; attrtxt(7);
-    assign(f,called);
-    rename(f,fn);
-    if ioresult<>0 then begin
-      moff;
-      writeln(getres2(713,2));   { 'Fehler beim Umbenennen :-(' }
-      mon;
-      logerror(getres2(713,3));  { 'Netcall abgebrochen; CALLED konnte nicht umbenannt werden!?' }
-      end
-    else logerror(getreps2(713,4,fn));   { 'Netcall abgebrochen; CALLED umbenannt in %s' }
-    mwriteln;
-    freeres;
-    end;
-end;
-
 procedure CallerToTemp; { gepackten Puffer wg. Namensgleichheit umbenennen }
 var f : file;
 begin
@@ -1467,6 +1433,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.4  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

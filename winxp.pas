@@ -165,8 +165,8 @@ asm
          mov   ah,6
          mul   ah
          xor   ebx, ebx
-         mov   bl, rchar - 6
-         add   ebx,eax                   { Offset der Zeichentabbelle [typ] }
+         mov   ebx, offset rchar - 6   { Offset der Zeichentabbelle [typ] }
+         add   ebx,eax
 
          mov   al,byte ptr o
          dec   al
@@ -889,6 +889,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

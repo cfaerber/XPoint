@@ -367,11 +367,13 @@ procedure dosshell;
 const ShellBatch = 'DPMISHELL.BAT';
 var t : text;
 
+  {$IFNDEF DPMI}
   function environment:string;
   begin
     if envspace=0 then environment:=''
     else environment:=' /E:'+strs(envspace);
   end;
+  {$ENDIF }
 
 begin
   if DisableDos then
@@ -396,6 +398,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

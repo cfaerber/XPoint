@@ -421,14 +421,10 @@ var x,y,fm   : byte;
       codierer : byte;
       f,f2     : file;
       tmp      : pathstr;
-      t        : text;
       uncfile  : pathstr;
       uvs      : byte;
       hdp2     : headerp;
       hds2     : longint;
-      p        : pointer;
-      rr       : word;
-      i        : integer;
       ok       : boolean;
       orgsize  : longint;
       orgempf  : AdrStr;
@@ -1123,7 +1119,7 @@ end;
 { Verzeichnis.                                                    }
 
 procedure MoveToBad(fn:pathstr);
-var dest : pathstr;
+var
     dir  : dirstr;
     name : namestr;
     ext  : extstr;
@@ -1146,6 +1142,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.5  2000/02/21 19:25:07  mk
   MH: Bugfix fuer Priority hervorheben
 

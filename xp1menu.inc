@@ -105,7 +105,6 @@ end;
 
 procedure showmain(nr:shortint);
 var i      : integer;
-    xp,xp2 : byte;
     s      : string[20];
     p      : byte;
 begin
@@ -174,7 +173,6 @@ end;
 { &p :  Position im Menstring }
 
 procedure findnr(var mnu:string; nr:byte; var n,p:byte);
-var i : byte;
 begin
   n:=0;
   LoString(mnu);
@@ -188,7 +186,6 @@ end;
 { nr :  Nummer des Menpunkts        }
 
 procedure setenable(mnu,nr:byte; flag:boolean);
-var p : byte;
 begin
   if flag then menable[mnu]:=menable[mnu] and not (word(1) shl nr)
   else menable[mnu]:=menable[mnu] or (word(1) shl nr);
@@ -571,6 +568,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.4  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

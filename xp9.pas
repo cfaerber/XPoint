@@ -170,7 +170,7 @@ begin
 end;
 
 function testqwkinfiles(var s:string):boolean;
-var res : integer;
+var
     qd  : pathstr;
 begin
   testqwkinfiles:=false;
@@ -556,7 +556,7 @@ function UniSel(typ:byte; edit:boolean; default:string):string;
 const maxgl   = 40;
       dsellen = 20;
 var d         : DB;
-    i,p0,p,gl : integer;
+    p0,p,gl : integer;
     t         : taste;
     drec      : array[1..maxgl] of longint;
     x,y       : byte;
@@ -901,8 +901,7 @@ var d         : DB;
 
   procedure ReadSystem(var name,komm,fs_name,fs_passwd,converter:string;
                        fs_typ:byte; var brk:boolean);
-  var x,y,i : byte;
-      ums   : string[5];
+  var x,y : byte;
   begin
     dialog(ival(getres2(903,0)),11,getres2(903,iif(edit,1,2)),x,y);    { 'Systeme bearbeiten','neues System anlegen' }
     maddstring(3,2,getres2(903,3),name,20,20,'>'); mhnr(461);   { 'Systemname ' }
@@ -998,8 +997,6 @@ var d         : DB;
   end;
 
   procedure DelSystem;
-  var grnr  : longint;
-      flags : byte;
   begin
     if dbRecCount(d)<2 then
       rfehler(914)    { 'Es muá mindestens ein System eingetragen sein!' }
@@ -1020,7 +1017,7 @@ var d         : DB;
 
   procedure ReadPseudo(edit:boolean; var kurz,lang,pollbox:string;
                        var brk:boolean);
-  var x,y,i : byte;
+  var x,y: byte;
   begin
     dialog(ival(getres2(905,0)),7,getres2(905,iif(edit,1,2)),x,y);   { 'Kurzname bearbeiten' / 'Kurzname anlegen' }
     maddstring(3,2,getres2(905,3),kurz,15,15,without(allchar,'@')); mhnr(711);   { 'Kurzname   ' }
@@ -1081,8 +1078,6 @@ var d         : DB;
   end;
 
   procedure DelPseudo;
-  var grnr  : longint;
-      flags : byte;
   begin
     dbGo(d,drec[p]);
     if ReadJN(getreps(906,dbReadStr(d,'kurzname')),true) then begin   { '"%s" l”schen' }
@@ -1099,7 +1094,7 @@ var d         : DB;
 
   procedure ReadMimetyp(edit:boolean; var typ,ext,prog:string;
                         var brk:boolean);
-  var x,y,i,add : byte;
+  var x,y,add : byte;
 
     procedure SetV(var viewer:pviewer);
     begin
@@ -1180,9 +1175,8 @@ var d         : DB;
   end;
 
   procedure DelMimetyp;
-  var grnr  : longint;
-      flags : byte;
-      s     : string[40];
+  var
+    s     : string[40];
   begin
     dbGo(d,drec[p]);
     s:=dbReadStr(d,'typ');
@@ -1727,6 +1721,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/02/21 22:48:02  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.7  2000/02/20 09:51:39  jg
   - auto_empfsel von XP4E.PAS nach XP3O.PAS verlegt
     und verbunden mit selbrett/seluser

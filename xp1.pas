@@ -1202,7 +1202,7 @@ begin
 end;
 
 function gets(var s,su:string; v:string; var ss:string; maxlen:byte):boolean;
-var res : integer;
+var
     p   : byte;
 begin
   p:=pos('=',su);
@@ -1337,18 +1337,17 @@ end;
 
 {$S-}
 procedure newexit;               { Exit-Prozedur }
-var res : integer;
 begin
-  res:=ioresult;
+  if ioresult= 0 then ;
   dbReleaseCache;
   if not closed then closedatabases;
-{$IFNDEF ver32}
+{$IFDEF BP }
   if lockopen then begin
     unlockfile(lockfile);
     close(lockfile);
     erase(lockfile);
-    if ioresult<>0 then;
-    end;
+    if ioresult<>0 then ;
+  end;
   if videotype>1 then setbackintensity(false);
   setcbreak(orgcbreak);
   exitproc:=oldexit;
@@ -1356,13 +1355,14 @@ begin
 end;
 {$S+}
 
-
 procedure showstack;
+{$IFDEF BP }
 const lastsptr : word = 0;
       lastavail: longint = 0;
 var b : byte;
+{$ENDIF }
 begin
-{$IFNDEF ver32}
+{$IFDEF BP }
   if (sptr<>lastsptr) or (memavail<>lastavail) then begin
     b:=dphback; dphback:=col.colkeys;
     {$IFDEF DPMI}
@@ -1374,7 +1374,7 @@ begin
     lastsptr:=sptr;
     lastavail:=memavail;
     end;
-{$ENDIF}
+{$ENDIF }
 end;
 
 
@@ -1512,11 +1512,9 @@ begin
   fillchar(dt,sizeof(dt),0);
   getdate(dt.year,dt.month,dt.day,dummy);
   gettime(dt.hour,dt.min,dt.sec,dummy);
-{$IFNDEF ver32}
   packtime(dt,pdt);
   if pdt shr 16 <> filetime(NewDateFile) shr 16 then
     setfiletime(NewDateFile,pdt);
-{$ENDIF}
 end;
 
 
@@ -1574,6 +1572,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/21 22:48:01  mk
+  MK: * Code weiter gesaeubert
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

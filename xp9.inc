@@ -345,7 +345,6 @@
 
   procedure EditPointdaten(nt:byte; var brk:boolean);
   var x,y,br : byte;
-      ntyp   : string[10];
       pname  : string[25];
       add    : shortint;
       fido   : boolean;
@@ -354,7 +353,6 @@
       pronet : boolean;
       zc     : boolean;
       pnr    : word;     { Fido - Pointnummer }
-      pnet   : word;
       lhapar : string[5];
       xx,yy  : byte;
       Ug,U_G : boolean;  { UUCP-g, UUCP-G }
