@@ -421,7 +421,8 @@ begin
                       else _domain:=rev+'@'+lstr(pointname)+domain;
         nt_Quick,
         nt_GS       : _domain:=rev+'@'+pointname;
-        nt_UUCP     : _domain:=rev+'@'+pointname+domain;
+        nt_UUCP     : if fqdn='' then _domain:=rev+'@'+pointname+domain
+                        else _domain:=rev+'@'+fqdn;
       else
         _domain:='@'+box;
       end;
@@ -1135,6 +1136,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.9  2000/03/01 09:24:30  mk
+  HS: - FQDN jetzt auch bei UUCP-Boxen
+
   Revision 1.8  2000/02/21 14:55:43  mk
   MH: Prioritaetenbehandlung eingebaut
 

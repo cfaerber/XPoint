@@ -28,7 +28,7 @@
     DomainNt:=nt;
     real:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP,nt_Turbo];
     dom:=(nt=nt_ZConnect) or (nt=nt_Magic) or (nt=nt_Pronet) or (nt=nt_Fido) or (nt=nt_UUCP);
-    fqdom:=(nt=nt_ZConnect);  {16.01.00 HS: Eingabe fÅr FQDN nur bei ZConnect}
+    fqdom:=(nt=nt_ZConnect) or (nt=nt_UUCP);  {Eingabe fÅr FQDN nur bei ZConnect und UUCP}
     bdom:=(nt=nt_UUCP);
     map:=(nt<>nt_Maus) and (nt<>nt_Fido) and (nt<>nt_Turbo) and (nt<>nt_UUCP)
          and (nt<>nt_QWK);
