@@ -1091,14 +1091,15 @@ begin
           then dpp:=dbRecno(mbase);   { Listerpositionsflag immer aktualisieren }
 
         if lres<6 then
-          if not ende then begin
+          if not ende then
+          begin
             {GrabP;} kk:=true; disprec[p]:=dbRecno(mbase);
             mpart_nr:=1;
             if u_read then aufbau:=true;
-            end
+          end
           else begin
-            if lres <> -4 then errsound; ende:=false; {-4 (Sub-) Listerende ohne Aktion }
-            end;
+            errsound; ende:=false;
+          end;
         end
       else
         case lres of
@@ -1704,6 +1705,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.30  2001/12/05 23:14:57  my
+  MY:- berflssige Abfrage auf Lister exit code -4 entfernt
+
   Revision 1.25.2.29  2001/12/05 19:27:36  my
   JG+MY:- Kommentare erg„nzt und korrigiert
 
