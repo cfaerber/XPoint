@@ -512,7 +512,7 @@ begin
   getmem(p,bufs);
   dbReadN(mbase,mb_adresse,adr);
   minus:=0;
-  if dbReadInt(mbase,'msgsize') and $8000<>0 then begin  { KOM vorhanden }
+  if dbReadInt(mbase,'netztyp') and $8000<>0 then begin  { KOM vorhanden }
     new(hdp);
     ReadHeader(hdp^,hds,false);
     if (hdp^.komlen>0) and (ofs=hds+hdp^.komlen) then
@@ -1261,6 +1261,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.1  2000/07/26 09:30:38  mk
+  - Fehler beim Anzeigen von Nachrichten mit KOM-Header beseitigt
+
   Revision 1.12  2000/02/20 20:46:17  jg
   Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
   Todo aktualisiert
