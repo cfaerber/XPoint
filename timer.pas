@@ -1,4 +1,4 @@
-{$i xpdefine.inc }
+{$I xpdefine.inc }
 
 unit Timer;
 
@@ -8,122 +8,144 @@ unit Timer;
 
 interface
 
-TYPE
-        tTimer= OBJECT
-                        CONSTRUCTOR Init;
-                        DESTRUCTOR Done;
-                        FUNCTION Timeout: Boolean;
-                        FUNCTION SecsToTimeout: Real; {Seconds to timeout}
-                        FUNCTION ElapsedSec: Real; {Seconds since initialization}
-                        PROCEDURE Start; {Reinitialize ('ElapsedSec:=0'}
-                        PROCEDURE SetTimeout(TimeoutSec: Real); {Method Timeout will be true TimeoutSec after calling this method}
-              PRIVATE
-                        InitTicks,TimeoutTicks: LongInt;
-              end;
+type
+  tTimer = object
+    constructor Init;
+    destructor Done;
+    function Timeout: Boolean;
+    function SecsToTimeout: Real;       {Seconds to timeout}
+    function ElapsedSec: Real;          {Seconds since initialization}
+    procedure Start;                    {Reinitialize ('ElapsedSec:=0'}
+    procedure SetTimeout(TimeoutSec: Real);  {Method Timeout will be true TimeoutSec after calling this method}
+  private
+    InitTicks, TimeoutTicks: LongInt;
+  end;
 
-FUNCTION Calibrate: LongInt;                 {Busy loop}
-PROCEDURE WaitTime(Milliseconds: Real);
+function Calibrate: LongInt;            {Busy loop}
+procedure WaitTime(Milliseconds: Real);
 
-PROCEDURE SleepTime(Milliseconds: Real);     {Idle loop}
+procedure SleepTime(Milliseconds: Real); {Idle loop}
 
-IMPLEMENTATION
+implementation
 
-USES
+uses
   SysUtils,
-{$IFDEF Win32}
+  {$IFDEF Win32}
   Windows,
-{$else}
-  {$ifndef NCRT}
+  {$ELSE}
+  {$IFNDEF NCRT}
   CRT,
-  {$else}
+  {$ELSE}
   XPCurses,
-  {$endif}
-{$endIF} {for Delay/Sleep}
-  debug;
+  {$ENDIF}
+  {$ENDIF}                              {for Delay/Sleep}
+  debug, xpglobal;
 
+const
+  qLoops = 100; TickCap = 8640000; CLKTICKS = 100;
 
-CONST qLoops= 100; TickCap= 8640000; CLKTICKS=100;
-
-var Speed: LongInt; Calibrated: Boolean;
-
-PROCEDURE SleepTime(Milliseconds: Real);
-begin {$IFDEF Win32}Sleep(Round(Milliseconds)){$else}Delay(Round(Milliseconds)){$endIF}end;
-
-FUNCTION GetTicks: LongInt;
 var
-  H,M,S,S100: Word;
+  Speed: LongInt; Calibrated: Boolean;
+
+procedure SleepTime(Milliseconds: Real);
 begin
-  DecodeTime(now,H,M,S,S100);
-  GetTicks:=S100+S*100+M*60*100+H*60*60*100
+  {$IFDEF Win32}Sleep(Round(Milliseconds)){$ELSE}Delay(Round(Milliseconds)){$ENDIF}
 end;
 
-CONSTRUCTOR tTimer.Init;
-begin Start; SetTimeout(0)end;
-
-DESTRUCTOR tTimer.Done;
-begin end;
-
-PROCEDURE tTimer.Start;
-begin InitTicks:=GetTicks end;
-
-PROCEDURE tTimer.SetTimeout(TimeoutSec: Real); {Berücksichtigt Nullrückstellung um Mitternacht}
+function GetTicks: LongInt;
+var
+  H, M, S, S100: smallWord;
 begin
-  if(TimeoutSec>0)and(TimeoutSec<0.07)then DebugLog('Timer','Timeout set critically low.',1);
-  TimeoutTicks:=(GetTicks+Round(TimeoutSec*CLKTICKS)+6)MOD TickCap
+  DecodeTime(now, H, M, S, S100);
+  GetTicks := S100 div 10 + S * 100 + M * 60 * 100 + H * 60 * 60 * 100
 end;
 
-FUNCTION tTimer.SecsToTimeout: Real; {funktioniert nur bis 12h Intervall zuverlässig}
-var T: LongInt;
+constructor tTimer.Init;
 begin
- T:=GetTicks;
- if TimeoutTicks>T then {Timeout vermutlich in der Zukunft}
-  IF(TimeoutTicks-T)>(TickCap DIV 2)then {doch in der Vergangenheit, aber Reset seitdem}
-   SecsToTimeout:=(Real(T)+TickCap-Real(TimeoutTicks))/CLKTICKS
-  else {tatsächlich in der Zukunft}
-   SecsToTimeout:=(TimeoutTicks-Real(T))/CLKTICKS
- else {Timeout vermutlich in der Vergangenheit}
-  IF(T-TimeoutTicks)>(TickCap DIV 2)then {doch in der Zukunft, aber Reset kommt}
-   SecsToTimeout:=(TimeoutTicks+TickCap-Real(T))/CLKTICKS
+  Start; SetTimeout(0)
+end;
+
+destructor tTimer.Done;
+begin
+end;
+
+procedure tTimer.Start;
+begin
+  InitTicks := GetTicks
+end;
+
+procedure tTimer.SetTimeout(TimeoutSec: Real);  {Berücksichtigt Nullrückstellung um Mitternacht}
+begin
+  if (TimeoutSec > 0) and (TimeoutSec < 0.07) then
+    DebugLog('Timer', 'Timeout set critically low.', 1);
+  TimeoutTicks := (GetTicks + Round(TimeoutSec * CLKTICKS) + 6) mod TickCap
+end;
+
+function tTimer.SecsToTimeout: Real; {funktioniert nur bis 12h Intervall zuverlässig}
+var
+  T: LongInt;
+begin
+  T := GetTicks;
+  if TimeoutTicks > T then              {Timeout vermutlich in der Zukunft}
+    if (TimeoutTicks - T) > (TickCap div 2) then  {doch in der Vergangenheit, aber Reset seitdem}
+      SecsToTimeout := (Real(T) + TickCap - Real(TimeoutTicks)) / CLKTICKS
+    else                                {tatsächlich in der Zukunft}
+      SecsToTimeout := (TimeoutTicks - Real(T)) / CLKTICKS
+  else                                  {Timeout vermutlich in der Vergangenheit}
+    if (T - TimeoutTicks) > (TickCap div 2) then  {doch in der Zukunft, aber Reset kommt}
+    SecsToTimeout := (TimeoutTicks + TickCap - Real(T)) / CLKTICKS
   else
-   SecsToTimeout:=(TimeoutTicks-Real(T))/CLKTICKS;
+    SecsToTimeout := (TimeoutTicks - Real(T)) / CLKTICKS;
 end;
 
-FUNCTION tTimer.Timeout: Boolean;
-begin Timeout:=GetTicks>=TimeoutTicks end;
-
-FUNCTION tTimer.ElapsedSec: Real;
-var T: LongInt;
+function tTimer.Timeout: Boolean;
 begin
- T:=GetTicks;
- if T<InitTicks THEN
-  ElapsedSec:=(TickCap-InitTicks+Real(T))/CLKTICKS
- else
-  ElapsedSec:=(Real(T)-InitTicks)/CLKTICKS
+  Timeout := GetTicks >= TimeoutTicks
 end;
 
-FUNCTION Calibrate: LongInt;
-var I,J,K: LongInt;
+function tTimer.ElapsedSec: Real;
+var
+  T: LongInt;
 begin
- Calibrated:=True; Speed:=0; K:=0;
- I:=GetTicks; REPEAT UNTIL I<>GetTicks;
- I:=GetTicks; REPEAT for J:=0 to qLoops DO K:=1-K; Inc(Speed) UNTIL I<>GetTicks;
- Calibrate:=Speed;
+  T := GetTicks;
+  if T < InitTicks then
+    ElapsedSec := (TickCap - InitTicks + Real(T)) / CLKTICKS
+  else
+    ElapsedSec := (Real(T) - InitTicks) / CLKTICKS
 end;
 
-PROCEDURE WaitTime(Milliseconds: Real);
-var I,J,K: LongInt;
+function Calibrate: LongInt;
+var
+  I, J, K: LongInt;
 begin
- K:=0; if NOT Calibrated then Calibrate;
- for I:=1 to Round(Milliseconds*CLKTICKS/1000*Speed)DO
-  for J:=0 to qLoops DO K:=1-K;
+  Calibrated := True; Speed := 0; K := 0;
+  I := GetTicks; repeat until I <> GetTicks;
+  I := GetTicks; repeat for J := 0 to qLoops do
+  K := 1 - K; Inc(Speed)until I <> GetTicks;
+  Calibrate := Speed;
+end;
+
+procedure WaitTime(Milliseconds: Real);
+var
+  I, J, K: LongInt;
+begin
+  K := 0;
+  if not Calibrated then Calibrate;
+  for I := 1 to Round(Milliseconds * CLKTICKS / 1000 * Speed) do
+    for J := 0 to qLoops do
+      K := 1 - K;
 end;
 
 initialization
-  Calibrated:=False;
+  Calibrated := False;
 end.
 
 {
   $Log$
+  Revision 1.14  2000/11/19 22:34:27  mk
+  - fixed some compile bugs
+  - applyed source code formatting
+
   Revision 1.13  2000/11/19 18:22:52  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 

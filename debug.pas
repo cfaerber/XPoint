@@ -25,150 +25,178 @@ unit Debug;
 
 {Debug logfile unit for development issues}
 
-INTERFACE
+interface
 
 uses xpglobal;
 
-const {Loglevels proposed are}
-  DLNone        = 0;
-  DLError       = 1;
-  DLWarning     = 2;
-  DLInform      = 3;
-  DLDebug       = 4;
+const                                   {Loglevels proposed are}
+  DLNone = 0;
+  DLError = 1;
+  DLWarning = 2;
+  DLInform = 3;
+  DLDebug = 4;
 
-  DLDefaultIfInDebugMode: Integer= DLInform;
+  DLDefaultIfInDebugMode: Integer = DLInform;
 
-{Messages will be logged only if environment variable DEBUG exists
- pointing to a file. If file starts with *, the logfile will be
- overwritten each time.}
+  {Messages will be logged only if environment variable DEBUG exists
+   pointing to a file. If file starts with *, the logfile will be
+   overwritten each time.}
 
-{If compiler directive DEBUG is set, logging will be set to on by
- default, using file "debuglog.txt" and level 3 if not overridden
- by explicit setting.}
+  {If compiler directive DEBUG is set, logging will be set to on by
+   default, using file "debuglog.txt" and level 3 if not overridden
+   by explicit setting.}
 
-PROCEDURE DebugLog(Badge,Message: String; Level: Integer);
+procedure DebugLog(Badge, Message: string; Level: Integer);
 {Write a debug message to logfile if level is less or equal badge level.
  Badge is an identifier for the program portion that creates the message.
  For example DebugLog('Coreroutine','Finished section 1',1) }
 
-PROCEDURE SetLoglevel(Badge: String; Level: Integer);
+procedure SetLoglevel(Badge: string; Level: Integer);
 {Sets badge level. Messages for badge are logged only if level is
  high enough. The example above will only be logged if preceded by
  SetLogLevel('Coreroutine',1[or greater]). Default level for badges
  can also be set by environment variables: BADGE=level}
 
-PROCEDURE TempCloseLog(Reactivate: Boolean);
+procedure TempCloseLog(Reactivate: Boolean);
 {Temporarily closes or reopens logfile.}
 
-PROCEDURE OpenLogfile(App: Boolean; Filename: String);
+procedure OpenLogfile(App: Boolean; Filename: string);
 {Appends if app true, logfile is automatically openened if
  environment variable DEBUG=filename is set}
 
-IMPLEMENTATION
+implementation
 
 uses
-{$ifdef Linux }
+  {$IFDEF Linux }
   Linux,
-{$else }
+  {$ELSE }
   Dos,
-{$endif }
+  {$ENDIF }
   SysUtils;
 
-CONST
- qLogbadges= 20;
- Logging: Boolean= False;
+const
+  qLogbadges = 20;
+  Logging: Boolean = False;
 
-VAR
- Logbadges: ARRAY[1..qLogbadges]OF RECORD Badge: String; Level: Integer END;
- Logfile: Text; Logfilename: String;
+var
+  Logbadges: array[1..qLogbadges] of record Badge: string; Level: Integer
+  end;
+  Logfile: Text; Logfilename: string;
 
-FUNCTION FindBadge(Badge: String): Integer;
-VAR
+function FindBadge(Badge: string): Integer;
+var
   I: Integer;
   Temp: LongInt;
-  S: String;
-BEGIN
-  I:=0; REPEAT Inc(I)UNTIL(Logbadges[I].Badge='')OR((Logbadges[I].Badge=Badge)OR(I=qLogbadges));
-  IF(Logbadges[I].Badge='')AND(I<=qLogbadges)THEN {Open new entry}
-    BEGIN Logbadges[I].Badge:=Badge; S:=GetEnv(Badge);
-          {$IFDEF Debug}if S='' then Str(DLDefaultIfInDebugMode,S);{$ENDIF}
-          Val(S,Logbadges[I].Level,Temp); FindBadge:=I END
-  ELSE
-    IF Logbadges[I].Badge=Badge THEN FindBadge:=I
-    ELSE FindBadge:=0;
-END;
+  S: string;
+begin
+  I := 0; repeat Inc(I)until (Logbadges[I].Badge = '') or ((Logbadges[I].Badge =
+    Badge) or (I = qLogbadges));
+  if (Logbadges[I].Badge = '') and (I <= qLogbadges) then {Open new entry}
+  begin
+    Logbadges[I].Badge := Badge; S := GetEnv(Badge);
+    {$IFDEF Debug}
+    if S = '' then Str(DLDefaultIfInDebugMode, S); {$ENDIF}
+    Val(S, Logbadges[I].Level, Temp); FindBadge := I
+  end
+  else
+    if Logbadges[I].Badge = Badge then
+    FindBadge := I
+  else
+    FindBadge := 0;
+end;
 
-PROCEDURE DebugLog(Badge,Message: String; Level: Integer);
-VAR
-  H,M,S,S100,C: RTLWord;
-BEGIN
-  IF NOT Logging THEN Exit;
-  C:=FindBadge(Badge);
-  IF(C<>0)AND(Logbadges[C].Level>=Level)THEN
-    BEGIN
-      GetTime(H,M,S,S100);
-      WriteLn(Logfile,H:2,':',M:2,':',S:2,'.',S100:2,' ',Badge,': ',Message);
-      Flush(Logfile);
-    END;
-END;
+procedure DebugLog(Badge, Message: string; Level: Integer);
+var
+  H, M, S, S100, C: RTLWord;
+begin
+  if not Logging then Exit;
+  C := FindBadge(Badge);
+  if (C <> 0) and (Logbadges[C].Level >= Level) then
+  begin
+    GetTime(H, M, S, S100);
+    WriteLn(Logfile, H: 2, ':', M: 2, ':', S: 2, '.', S100: 2, ' ', Badge, ': ',
+      Message);
+    Flush(Logfile);
+  end;
+end;
 
-PROCEDURE SetLoglevel(Badge: String; Level: Integer);
-VAR C: Integer;
-BEGIN
-  C:=FindBadge(Badge); IF C<>0 THEN Logbadges[C].Level:=Level;
-END;
+procedure SetLoglevel(Badge: string; Level: Integer);
+var
+  C: Integer;
+begin
+  C := FindBadge(Badge);
+  if C <> 0 then Logbadges[C].Level := Level;
+end;
 
-PROCEDURE OpenLogfile(App: Boolean; Filename: String); {Appends if App True}
-VAR
-  SR    : TSearchRec;
-  Rew   : Boolean;
-  err   : integer;
-BEGIN
-  IF Logging THEN Exit;
-  {$IFDEF Debug}if Filename='' then Filename:='debuglog.txt';{$ENDIF}
-  Logfilename:=Filename;
-  Logging:= True;
-  Rew:= False;
-  IF Filename<>'' THEN BEGIN
-    IF Filename[1]='*' THEN BEGIN
-      Delete(Filename,1,1);
-      Rew:=True;
-    END;
+procedure OpenLogfile(App: Boolean; Filename: string); {Appends if App True}
+var
+  SR: TSearchRec;
+  Rew: Boolean;
+  err: integer;
+begin
+  if Logging then Exit;
+  {$IFDEF Debug}
+  if Filename = '' then Filename := 'debuglog.txt'; {$ENDIF}
+  Logfilename := Filename;
+  Logging := True;
+  Rew := False;
+  if Filename <> '' then
+  begin
+    if Filename[1] = '*' then
+    begin
+      Delete(Filename, 1, 1);
+      Rew := True;
+    end;
     {$I-}
-    IF Rew AND(NOT App)THEN BEGIN
-      Assign(Logfile,Filename);
+    if Rew and (not App) then
+    begin
+      Assign(Logfile, Filename);
       ReWrite(Logfile);
-    END ELSE BEGIN
-      Assign(Logfile,Filename);
-      err:= FindFirst(Filename,faArchive,SR);
-      IF err = 0 THEN
+    end
+    else
+    begin
+      Assign(Logfile, Filename);
+      err := FindFirst(Filename, faArchive, SR);
+      if err = 0 then
         Append(Logfile)
-      ELSE
+      else
         ReWrite(Logfile);
       FindClose(SR);
-    END;
-    IF IOResult<>0 THEN Logging:=False;
+    end;
+    if IOResult <> 0 then Logging := False;
     {$I+}
-  END ELSE
-    Logging:=False;
-END;
+  end
+  else
+    Logging := False;
+end;
 
-PROCEDURE CloseLogfile;
-BEGIN IF Logging THEN Close(Logfile); Logging:=False END;
+procedure CloseLogfile;
+begin
+  if Logging then Close(Logfile); Logging := False
+end;
 
-PROCEDURE TempCloseLog(Reactivate: Boolean);
-BEGIN IF NOT Reactivate THEN CloseLogfile ELSE OpenLogfile(True,Logfilename)END;
+procedure TempCloseLog(Reactivate: Boolean);
+begin
+  if not Reactivate then
+    CloseLogfile
+  else
+    OpenLogfile(True, Logfilename)
+end;
 
-INITIALIZATION
-  OpenLogfile(False,GetEnv('DEBUG'));
+initialization
+  OpenLogfile(False, GetEnv('DEBUG'));
 
-FINALIZATION
+finalization
   CloseLogfile;
 
-END.
+end.
 
 {
   $Log$
+  Revision 1.7  2000/11/19 22:34:27  mk
+  - fixed some compile bugs
+  - applyed source code formatting
+
   Revision 1.6  2000/11/19 12:50:45  ma
   - now aware of general DEBUG mode (IFDEF DEBUG...)
   - debug files other than set by environment may be used
