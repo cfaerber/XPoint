@@ -97,6 +97,7 @@ var mhd    : longint;
     p2     : integer;
     bgr    : longint;
     rec    : longint;
+    s      : string;
 begin
   GoP;
   rec:=disprec[p];
@@ -113,7 +114,12 @@ begin
   if not kb_ctrl and userweiter and not dbDeleted(ubase,rec) then begin
     dbGo(ubase,rec);
     if Forth then begin
-      p2:=p+1;
+      p2:=p;
+      repeat
+        inc(p2);
+        s := dbreadNStr(ubase,ub_username);
+        if pos('$/T',s)>0 then if not forth then exit;
+      until pos('$/T',s)=0;
       if not dbEOF(dispdat) then
         if p2<=gl then p:=p2
         else begin
@@ -1366,12 +1372,18 @@ var dat    : longint;
       if not brettall and wrongline { BrettModus "A" und Brett passt nicht mehr }
       then begin                    { dann Cursor nicht weiterschalten }
         s:=' ';  { Dummy: s<>'' und s<>'$/T'... }
+        p2:=p;
         repeat
           inc(p);
           GoP;
           if not dbBOF(bbase) then s := dbReadNStr(bbase,bb_brettname);
         until dbBOF(bbase) or (leftStr(s,3)<>'$/T');   {keine Trennzeile anspringen }
-        dec(p);
+        if (readmode>0) then dec(p);
+        if dbBOF(bbase) then
+        begin
+          p:=p2;
+          GoP;
+        end;
         if p>=gl then begin
           disprec[1]:=dbrecno(bbase);
           p:=1;
@@ -1583,6 +1595,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.67  2001/01/22 14:53:04  mk
+  JG:- Brettweiterschalt-Fix, Teil 3
+
   Revision 1.66  2001/01/15 22:24:52  mk
   JG:- Brettweiterschalt-Fix, Teil 2
 
