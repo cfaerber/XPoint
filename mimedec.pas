@@ -405,6 +405,22 @@ begin
 
   cset:='';
   repeat
+    s:=ustr(ss);
+    p:=pos('?Q?',s);
+    if p=0 then p:=pos('?B?',s);
+    if p>3 then begin
+      p1:=p-1;
+      while (p1>0) and (s[p1]<>'=') do
+        if s[p1]=' ' then p1:=0 else dec(p1);
+      if (p1>0) and (s[p1+1]='?') then begin
+        p2:=p+3;
+        while (p2<length(s)) and (p2>0) and (s[p2]<>'?') do
+          if s[p2]=' ' then p2:=0 else inc(p2);
+        if not ((p2<length(s)) and (p2>0) and (s[p2+1]='=')) then p2:=0;
+      end;
+    end
+    else p1:=0;
+{
     p1:=pos('=?',ss);
     if p1>0 then begin
       p2:=p1+5;
@@ -417,6 +433,7 @@ begin
       and ((ss[p2]<>'=') or (ss[p2-1]<>'?')) do inc(p2);
       if (i<3) or (ss[p2]<>'=') then p2:=0 else dec(p2);
     end;
+}
     if (p1>0) and (p2>0) then begin
       s:=copy(ss,p1+2,p2-p1-2);
       delete(ss,p1,p2-p1+2);
@@ -456,6 +473,12 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.2  2002/03/14 17:01:21  my
+  RB:- Fix fÅr MimeIsoDecode:
+       "Test =? RFC 1522 =?ISO-8859-1?Q?=E4=F6=FC?= hehe ?=" wurde nicht
+       richtig decodiert. Korrekt decodiert mu· das so aussehen:
+       "Test =? RFC 1522 ÑîÅ hehe ?="
+
   Revision 1.1.2.1  2002/03/13 23:01:51  my
   RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
             von Redundanzen befreit, korrigiert und erweitert:
