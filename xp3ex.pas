@@ -122,6 +122,7 @@ end;
 
 procedure rpsdate(var s:string);
 begin
+  rps(s, '$DAY2', '$TAG2');
   rps(s, '$DAY', '$TAG');
   rps(s, '$TIME', '$UHRZEIT');
   rps(s,'$DATUM',left(date,6)+right(date,2));
@@ -643,13 +644,11 @@ var size   : longint;
         end;
   end;
 
-  { 01/2000 oh }
   function ohfill(s:string;l:byte) : string;
   begin
     while (length(s)<l) do s:=s+#32;
     ohfill:=s;
   end;
-  { /oh }
 
 begin
   extheadersize:=0; exthdlines:=0; hdlines:=0;
@@ -707,12 +706,13 @@ begin
           while cpos('/',wempf)>0 do wempf[cpos('/',wempf)]:='.';
           rps(s,'$NEWSGROUP',wempf);
           rpsuser(s,absender,realname);
-          rps(s,'$RNAME', iifs(realname='','',realname+' '));
           rps(s,'$RNAME2', realname);
-          rps(s,'$(RNAME)',iifs(realname='','','('+realname+') '));
+          rps(s,'$RNAME', iifs(realname='','',realname+' '));
           rps(s,'$(RNAME2)',iifs(realname='','','('+realname+')'));
+          rps(s,'$(RNAME)',iifs(realname='','','('+realname+') '));
           rps(s,'$FIDOEMPF',fido_to);
-          rps(s,'$BETREFF',betreff);
+          rps(s,'$BETREFF', betreff);
+          rps(s,'$SUBJECT', betreff);
           rps(s,'$ERSTELLT',fdat(datum));
           if pos('$MSGDATE',ustr(s))>0 then
             rpsdat(s,'$MSGDATE',fdat(datum));
@@ -1043,6 +1043,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.5  2000/07/11 08:12:22  mk
+  -- $DAY2, $SUBJECT hinzugefuegt
+
   Revision 1.17.2.4  2000/07/10 19:20:51  mk
   - $DAY, $TIME, $FIRSTNAME hinzugefuegt
 
