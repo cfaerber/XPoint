@@ -427,8 +427,12 @@ begin
     writeln(t,'Client-Mode=', Jnf(PPPMode));
     writeln(t,'Client-Path=', PPPClientPath);
     writeln(t,'Client-Exec=', PPPClient);
-    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname);
-    if PPPMode then MkDir(OwnPath + XFerDir + Dateiname);
+    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
+    if PPPMode then
+    begin
+      MkDir(OwnPath + XFerDir + Dateiname);
+      if IOResult = 0 then ;
+    end;
     writeln(t,'Client-AddServers=', PPPAddServers);
     writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
@@ -551,6 +555,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.10  2001/04/11 07:54:25  mk
+  - weitere Arbeiten am Client-Modus
+
   Revision 1.10.2.9  2001/04/10 11:36:39  mk
   - weitere Anpassungen Client-Modus
 

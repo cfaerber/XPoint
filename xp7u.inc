@@ -524,6 +524,7 @@ begin
     end else
     begin
       MkDir(PPPSpool);
+      if IOResult = 0 then ;
       if not IsPath(PPPSpool) then begin
         trfehler(728,44);   { 'ungltiges Spoolverzeichnis' }
         exit;
@@ -552,8 +553,11 @@ begin
       exchange(s, '$CLPATH', PPPClientpath);
       exchange(s, '$CLSPOOL', PPPSpool);
       attrtxt(col.colkeys);
-      Wrt(Screenwidth-Length(xp_client), Screenlines, xp_client);   { 'CrossPoint/Client' }
+      FWrt(64, Screenlines, xp_client);   { 'CrossPoint/Client' }
       shell(s,600,3);
+{      XPWinshell(OwnPath + s,'', 600,3, false); }
+      attrtxt(col.colkeys);
+      FWrt(64, Screenlines, xp_xp);   { 'CrossPoint/OpenXP' }
     end;
 
     if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
@@ -617,6 +621,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.13  2001/04/11 07:54:24  mk
+  - weitere Arbeiten am Client-Modus
+
   Revision 1.13.2.12  2001/04/10 11:36:38  mk
   - weitere Anpassungen Client-Modus
 

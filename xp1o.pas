@@ -937,11 +937,12 @@ function XPWinShell(prog:string; parfn:string; space:word;
         writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
         writeln(t,'echo.');
         writeln(t,'start '+iifs(fileattach,'','/wait ')+prog);
-        if not fileattach then writeln(t,'del '+parfn);
+        if not fileattach and (parfn <> '') then writeln(t,'del '+parfn);
         writeln(t,'del '+batfile);
         close(t);
         if winnt then
-          prog:='cmd /c start cmd /c '+batfile
+{          prog:='cmd /c start cmd /c '+batfile }
+          prog:='start command.com /c '+batfile
           else prog:='start command /c '+batfile
         end;
       PrepareExe:=1;
@@ -957,7 +958,7 @@ function XPWinShell(prog:string; parfn:string; space:word;
       writeln(t,'echo OS/2-Programm wird ausgefÅhrt ...');
       writeln(t,'echo.');
       writeln(t,prog);
-      writeln(t,'del '+parfn);
+      if parfn <> '' then writeln(t,'del '+parfn);
       writeln(t,'del '+ownpath+batfile);
       close(t);
       prog:=batfile;
@@ -980,6 +981,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.12  2001/04/11 07:54:24  mk
+  - weitere Arbeiten am Client-Modus
+
   Revision 1.40.2.11  2000/11/18 22:11:28  mk
   - einige Dirname, extname, pathname in string geaendert
 

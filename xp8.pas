@@ -423,8 +423,6 @@ begin
 end;
 
 function MakeRC(bestellen: boolean; box: string):boolean;
-type
-  Buffer = array[0..4095] of Byte;
 var t1,t2      : text;
     rcfile,blfile : string;
     Line,Line2    : string;
@@ -435,7 +433,7 @@ var t1,t2      : text;
 
   procedure domark;
   const
-    MaxStr = 50;
+    MaxStr = 20;
   var
     i, j: Integer;
     LineArray: array[1..MaxStr] of String;
@@ -1242,7 +1240,6 @@ label again;
   end;
 
 begin
-  dbDisableIndexCache;
   if mapsbox='' then begin
     box:=UniSel(1,false,DefaultBox);
     if box='' then exit;   { brk }
@@ -1250,6 +1247,7 @@ begin
   else
     box:=mapsbox;
   if not BoxHasMaps(box) then exit;
+  dbDisableIndexCache;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,ustr(box));
   if dbFound then begin
@@ -1828,6 +1826,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.12  2001/04/11 07:54:24  mk
+  - weitere Arbeiten am Client-Modus
+
   Revision 1.10.2.11  2001/04/09 16:47:18  mk
   - arbeiten am Client-Modus
 
