@@ -29,6 +29,7 @@ function  WinVersion:smallword;                 { Windows >= 3.0      }
 function  WinNTVersion:dword;
 function  InitWinVersion:SmallWord;
 procedure DestructWinVersion;
+function  DOSEmuVersion: String;
 
 function  SmartInstalled:boolean;
 function  SmartCache(drive:byte):byte;          { 0=nope, 1=read, 2=write }
@@ -131,6 +132,24 @@ asm
 
 @NoWin:       xor    ax, ax
 @Done:        mov    windows_version, ax
+end;
+
+{ Gibt die Versionnummer vom DOSEmu zurÅck, wenn XP nicht unter
+  dem Linux DOSEmu lÑuft, wird ein Leerstring zurÅckgegeben }
+function DOSEmuVersion: String;
+const
+  DOSEMU_MAGIC_STRING       = '$DOSEMU$';
+var
+  DOSEMU_MAGIC: array[1..8] of char absolute $F000:$FFE0;
+  DOSEMU_VersionPos: array[1..4] of byte absolute $F000:$FFE8;
+  Dosemu_Dummy: String[8];
+begin
+  DOSEmuVersion:= '';
+  Move(DOSEMU_MAGIC, DOSEMU_DUMMY[1], sizeof(DOSEMU_DUMMY) - 1);
+  Dosemu_Dummy[0] := chr(sizeof(Dosemu_Dummy) - 1);
+  if Dosemu_Dummy = DOSEMU_MAGIC_STRING then
+    DOSEmuVersion:= StrS(DOSEMU_VersionPos[4]) + '.' +
+      StrS(DOSEMU_VersionPos[3]) + '.' + StrS(DOSEMU_VersionPos[2]);
 end;
 
 procedure DestructWinVersion;
@@ -617,6 +636,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.10  2001/08/05 11:42:18  my
+  - moved 'DOSEmuVersion' from TYPEFORM.PAS to CLIP.PAS
+  - commented out 'erase_all' in FILEIO.PAS (unused)
+  - moved some rarely used routines to new unit XPOVL.PAS
+  = these measures save 4kB in EXE and memory :-)
+
   Revision 1.19.2.9  2001/07/02 18:40:31  cl
   - Better Windows NT/2k/XP detection (needs XP_NTVDM.DLL)
   - Clipboard support under NT/2k/XP (needs XP_NTVDM.DLL)

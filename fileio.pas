@@ -52,7 +52,7 @@ procedure setfiletime(const fn:pathstr; newtime:longint);  { Dateidatum setzen  
 function  copyfile(const srcfn, destfn:pathstr):boolean; { Datei kopieren }
 Procedure era(const s:string);                        { Datei l”schen           }
 procedure erase_mask(const s:string);                 { Datei(en) l”schen       }
-Procedure erase_all(path:pathstr);              { L”schen mit Subdirs     }
+(* Procedure erase_all(path:pathstr);              { L”schen mit Subdirs     } *)
 function  _rename(const n1,n2:pathstr):boolean;       { L”schen mit $I-         }
 Procedure MakeBak(const n,newext:string);             { sik anlegen             }
 procedure MakeFile(const fn:pathstr);                 { Leerdatei erzeugen      }
@@ -742,6 +742,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.13  2001/08/05 11:42:18  my
+  - moved 'DOSEmuVersion' from TYPEFORM.PAS to CLIP.PAS
+  - commented out 'erase_all' in FILEIO.PAS (unused)
+  - moved some rarely used routines to new unit XPOVL.PAS
+  = these measures save 4kB in EXE and memory :-)
+
   Revision 1.41.2.12  2001/08/01 17:57:49  my
   - changed const ffAnyFile from $20 to $21 (Normal, R/O and Archive)
 
