@@ -582,7 +582,7 @@ var
       p := cpos(',', keywords);
       if p = 0 then p := length(keywords) + 1;
       stw := trim(LeftStr(keywords, p - 1));
-      if stw <> '' then wrs('Stichwort: ' + stw);
+      if stw <> '' then wrs('STICHWORT: ' + stw);
       delete(keywords, 1, p);
     end;
   end;
@@ -613,20 +613,20 @@ begin
     for i := 0 to Followup.Count - 1 do
       wrs('Diskussion-in: ' + Followup[i]);
     if typ = 'B' then wrs('TYP: BIN');
-    if datei <> '' then wrs('File: ' + datei);
+    if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
     if ref <> '' then wrs('BEZ: ' + ref);
     for i := 0 to AddRef.Count -1 do
       wrs('BEZ: ' + addref[i]);
     if ersetzt <> '' then wrs('ERSETZT: ' + ersetzt);
     if error <> '' then wrs('ERR: ' + error);
-    if programm <> '' then wrs('Mailer: ' + programm);
+    if programm <> '' then wrs('MAILER: ' + programm);
     if xnoarchive then wrs('U-X-NO-ARCHIVE: yes');
     if priority <> 0 then wrs('U-X-PRIORITY: ' + strs(priority));
     if prio <> 0 then wrs('Prio: ' + strs(prio));
     if organisation <> '' then wrs('ORG: ' + organisation);
-    if postanschrift <> '' then wrs('Post: ' + postanschrift);
-    if telefon <> '' then wrs('Telefon: ' + telefon);
+    if postanschrift <> '' then wrs('POST: ' + postanschrift);
+    if telefon <> '' then wrs('TELEFON: ' + telefon);
     if homepage <> '' then wrs('U-X-Homepage: ' + homepage);
     if EmpfBestTo <> '' then
       wrs('EB: ' + iifs(empfbestto <> absender, empfbestto, ''));
@@ -2007,16 +2007,8 @@ begin
               if zz = 'x-gateway' then
               gateway := s0
             else
-              if zz = 'x-mailer' then
-              programm := s0
-            else
-              if zz = 'x-newsreader' then
-              programm := s0
-            else
-              if zz = 'x-news-reader' then
-              programm := s0
-            else
-              if zz = 'x-software' then
+              if (zz = 'x-mailer') or (zz = 'x-newsreader') or
+	         (zz = 'x-news-reader') or (zz = 'x-software') then
               programm := s0
             else
               if (zz = 'x-z-post') or (zz = 'x-zc-post')  then
@@ -2044,7 +2036,12 @@ begin
               if zz = 'x-homepage' then
               homepage := s0
             else
-
+              if leftstr(zz,5) = 'x-zc-' then
+              Uline.Add(rightstr(s1,length(s1)-5))
+            else
+              if leftstr(zz,6) = 'x-ftn-' then
+              Uline.Add('F-' + rightstr(s1,length(s1)-6))
+            else
               if (zz <> 'xref') and (LeftStr(zz, 4) <> 'x-xp') then
               Uline.Add(s1);
         else
@@ -2075,7 +2072,7 @@ begin
             if zz = 'in-reply-to' then
             GetInReplyto
           else
-            if zz = 'Followup-to' then
+            if zz = 'followup-to' then
             getFollowup
           else
             // User-Agent is new in grandson-of-1036
@@ -2093,6 +2090,13 @@ begin
           else
             if zz = 'lines' then
             Lines := IVal(s0)
+          else
+            { grandson-of-1036 standard for former X-No-Archive }
+            if zz = 'archive' then
+            begin
+              RFCRemoveComment(s0);
+              if LowerCase(s0) = 'no' then xnoarchive := true;
+            end
           else
             Uline.Add('U-' + s1);
         end;                          { case }
@@ -2113,6 +2117,8 @@ begin
     MimeIsoDecode(summary);
     MimeIsoDecode(keywords);
     MimeIsoDecode(organisation);
+    MimeIsoDecode(postanschrift);
+    MimeIsoDecode(fido_to);
 
     for i := 0 to ULine.Count-1 do
     begin
@@ -3120,6 +3126,14 @@ begin
         iifs(wab <> '', wab, iifs(pmReplyTo = '', absender, pmReplyTo))));
     if mail and (pgpflags and fPGP_encoded <> 0) then
       wrs(f, 'Encrypted: PGP');
+    if postanschrift <> '' then
+    begin
+      uuz.s := IbmToIso(postanschrift);
+      RFC1522form;
+      wrs(f, 'X-ZC-Post: ' + uuz.s);
+    end;
+    if telefon <> '' then
+      wrs(f, 'X-ZC-Telefon: ' + telefon);
     if homepage <> '' then
       wrs(f, 'X-Homepage: ' + homepage);
     if XPointCtl <> 0 then
@@ -3127,7 +3141,11 @@ begin
     if ersetzt <> '' then
       wrs(f, 'Supersedes: <' + ersetzt + '>');
     if fido_to <> '' then
-      wrs(f, 'X-Comment-To: ' + fido_to);
+    begin
+      uuz.s := IbmToIso(fido_to);
+      RFC1522form;
+      wrs(f, 'X-Comment-To: ' + uuz.s);
+    end;
 
     for i := 0 to uline.Count - 1 do
     begin
@@ -3523,6 +3541,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2000/11/04 22:04:53  fe
+  Added a few little things for Gatebau 97 and grandson-of-1036.
+
   Revision 1.70  2000/11/02 21:27:04  fe
   bzip2 support added.
 
