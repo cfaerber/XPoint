@@ -1533,7 +1533,7 @@ var
 
   { Entfert RFC-Kommentare, ignoriert dabei auch quoted-strings }
 
-  procedure RFCRemoveComment(var r0: string);
+  function RFCRemoveComment(r0: string): string;
   var
     s, p, c: integer;
     q: boolean;
@@ -1570,6 +1570,7 @@ var
       end;
       s := s + 1;
     end;
+    result:=r0
   end;
 
   procedure getadr(line: string;var adr, realname: string);
@@ -1651,8 +1652,7 @@ var
     ng: tstringlist;
   begin
     ng:=tstringlist.create;
-    rfcremovecomment(line);
-    line:=trim(line);
+    line:=trim(rfcremovecomment(line));
     if line<>'' then begin
       if rightstr(line,1)<>',' then line:=line+',';
       while cpos(',',line)>0 do begin
@@ -1802,60 +1802,66 @@ var
 
   function GetMsgid: string;
   begin
-    RFCRemoveComment(s0);
+    s0:=RFCRemoveComment(s0);
     if firstchar(s0) = '<' then delfirst(s0);
     if lastchar(s0) = '>' then dellast(s0);
     GetMsgid := s0;
   end;
 
-  procedure GetRef(s0: string);
-  var
-    p: integer;
-  begin
-    while (FirstChar(s0) = '<') do
-      with hd do
-      begin
-        p := cpos('>', s0);
-        if p < 3 then p := length(s0) + 1;
-        if ref = '' then
-          ref := copy(s0, 2, p - 2)
-        else
-          AddRef.Add(copy(s0, 2, p - 2));
-        while (p <= length(s0)) and ((s0[p + 1] = ' ') or (s0[p + 1] = #9)) do
-          inc(p);
-        delete(s0, 1, p);
-      end;
-  end;
+  procedure GetReferences(line: string;var hd: header);
 
-  procedure GetReferences;
+    procedure GetRef(line: string;var hd: header);
+    var
+      p: integer;
+    begin
+      while (FirstChar(line) = '<') do
+         with hd do
+        begin
+          p := cpos('>', line);
+          if p < 3 then p := length(line) + 1;
+          if ref = '' then
+            ref := copy(line, 2, p - 2)
+          else
+            AddRef.Add(copy(line, 2, p - 2));
+          while (p <= length(line)) and ((line[p + 1] = ' ') or (line[p + 1] = #9)) do
+            inc(p);
+          delete(line, 1, p);
+        end;
+    end;
+
   var
     p: integer;
   begin
-    if mail and (hd.ref <> '') then exit;
-    RFCRemoveComment(s0);
-    while (s0 <> '') do
+    line:=RFCRemoveComment(line);
+    while (line <> '') do
     begin
-      p := blankpos(s0);
-      if p = 0 then p := length(s0) + 1;
-      GetRef(LeftStr(s0, p));
-      delete(s0, 1, p);
+      p := blankpos(line);
+      if p = 0 then p := length(line) + 1;
+      GetRef(LeftStr(line, p),hd);
+      delete(line, 1, p);
     end;
   end;
 
-  procedure GetInReplyto;
+  { liest eine In-Reply-To-Zeile }
+  procedure GetInReplyto(line: string;var hd: header;
+    var uline: tstringlist);
   var
-    p: integer;
+    p,q: integer;
   begin
-    Hd.AddRef.Clear;
+    { enthaelt die In-Reply-To-Zeile eine Message-ID? }
+    { falls ja, spitze Klammern bei Bezugs-ID entfernen }
 
-    { spitze Klammern bei Bezugs-ID entfernen }
-
-    if cpos('<', s0) = 1 then delete(s0, 1, 1);
-
-    p := cpos('>', s0);
-    if p > 0 then s0 := LeftStr(s0, p - 1);
-
-    hd.ref := s0;
+    p:=cpos('<',line);
+    q:=cpos('>',line);
+    if (p>0) and (q>1) then begin
+      line:=copy(line,p+1,q-p-1);
+      { eine Message-ID enthaelt ein @ und kein Space }
+      if (cpos('@',line)>0) and (cpos(' ',line)=0) then begin
+        hd.addref.clear;
+        hd.ref := line
+      end
+    end else
+      uline.add('U-In-Reply-To: '+line)
   end;
 
   procedure GetReceived; { Mail - "Received: by" an Pfad anhaengen }
@@ -1881,7 +1887,7 @@ var
   begin
     hd.Uline.Add('U-' + s1);
     { "(qmail id xxx invoked from network)" enthaelt "from " }
-    RFCRemoveComment(s0);
+    s0:=RFCRemoveComment(s0);
     by := GetRec('by ');
     from := GetRec('from ');
     { Envelope-Empfaenger ermitteln }
@@ -1901,7 +1907,7 @@ var
 
   procedure GetDate;
   begin
-    RFCRemoveComment(s0);
+    s0:=RFCRemoveComment(s0);
     hd.zdatum := RFC2Zdate(s0);
     ZCtoZdatum(hd.zdatum, hd.datum);
   end;
@@ -1983,7 +1989,7 @@ var
   procedure GetMime(p: mimeproc);
   begin
     hd.Uline.Add('U-' + s1);
-    RFCRemoveComment(s0);
+    s0:=RFCRemoveComment(s0);
     p(s0);
   end;
 
@@ -1993,7 +1999,7 @@ var
   begin
     if hd.priority = 0 then
     begin                               { nur ersten X-Priority Header beachten }
-      RFCRemoveComment(s0);
+      s0:=RFCRemoveComment(s0);
       p := 1;
       { nur Zahl am Anfang beachten: }
       while (s0[p] in ['0'..'9']) and (p <= length(s0)) do
@@ -2025,8 +2031,7 @@ var
 
   procedure GetVar(var r0, s0: string);
   begin
-    RfcRemoveComment(s0);
-    r0 := s0;
+    r0 := RfcRemoveComment(s0);
   end;
 
 begin
@@ -2079,7 +2084,7 @@ begin
               Uline.Add('U-' + s1);
           'r':
             if zz = 'references' then
-              GetReferences
+              GetReferences(s0,hd)
             else
               if zz = 'received' then
               GetReceived
@@ -2131,8 +2136,7 @@ begin
               { X-No-Archive Konvertierung }
               if zz = 'x-no-archive' then
             begin
-              RFCRemoveComment(s0);
-              if LowerCase(s0) = 'yes' then xnoarchive := true;
+              if LowerCase(RFCRemoveComment(s0)) = 'yes' then xnoarchive := true;
             end
             else
               if zz = 'x-priority' then
@@ -2188,7 +2192,7 @@ begin
             keywords := s0
           else
             if zz = 'in-reply-to' then
-            GetInReplyto
+            GetInReplyto(s0,hd,uline)
           else
             if zz = 'followup-to' then
             getfollowup(s0,followup,pm_reply)
@@ -2215,8 +2219,8 @@ begin
             { grandson-of-1036 standard for former X-No-Archive }
             if zz = 'archive' then
             begin
-              RFCRemoveComment(s0);
-              if LowerCase(s0) = 'no' then xnoarchive := true;
+              if LowerCase(RFCRemoveComment(s0)) = 'no' then
+	        xnoarchive := true;
             end
           else
             Uline.Add('U-' + s1);
@@ -3683,6 +3687,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/11/19 00:48:56  fe
+  Made In-Reply-To parsing a bit more liberal.
+
   Revision 1.7  2000/11/18 21:20:24  mk
   - changed Shell() to SysExec()
 
