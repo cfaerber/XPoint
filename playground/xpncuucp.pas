@@ -1,7 +1,7 @@
 {  $Id$
 
    OpenXP UUCP netcall routines
-   Copyright (C) 2001 OpenXP team (www.openxp.de) and M.Kiesel
+   (C) 2001 OpenXP team (www.openxp.de), M.Kiesel and C.F"arber
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,452 +19,414 @@
 }
 
 { OpenXP UUCP netcall unit }
+
+{$I XPDEFINE.INC}
+
 unit xpncuucp;
 
 interface
 
+uses
+  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
+  sysutils,typeform,montage,fileio,keys,maus2,inout,lister,resource,
+  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes,
+  zcrfc;
+
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;
-                     crash,diskpoll: boolean;
-                     domain: string;
+                     ppfile: string;
+                     diskpoll: boolean;
                      Logfile: String;
-                     IncomingFiles: TStringList): shortint;
+                     IncomingFiles: TStringList):shortint;
 
 implementation
 
-var uunum : word;    { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
+uses
+  xp3,xp3o,xpmakeheader,xpmessagewindow,xpmodemscripts,
+  xpnt,xpnetcall,ncgeneric,objcom;
 
-function uu_nummer:word;     { nächste Paketnummer aus UUNUMMER.DAT lesen }
-var t : text;
-    s : string;
-begin
-  if _filesize(UUnumdat)<2 then
-    uu_nummer:=1
-  else begin
-    assign(t,UUnumdat);
-    reset(t);
-    readln(t,s);
-    close(t);
-    uu_nummer:=minmax(ival(s),0,$ffff);
-    end;
-end;
-
-function GetNextUUnummer:word;   { nächste Nummer aus C-File auslesen }
-var t : text;
-    s : string;
-    w : word;
-begin
-  w:=uu_nummer;
-  if FileExists(XFerDir+caller) and (_filesize(XFerDir+caller)>0) then begin
-    assign(t,XFerDir+caller);
-    reset(t);
-    while not eof(t) do begin
-      readln(t,s);
-      if LeftStr(s,4)='S D.' then begin
-        s:=trim(mid(s,cpos(' ',s)));
-        s:=LeftStr(s,cpos(' ',s)-1);
-        w:=hexval(RightStr(s,4));
-        end;
-      end;
-    close(t);
-    if w=$ffff then w:=0
-    else inc(w);
-    end;
-  GetNextUUnummer:=w;
-end;
-
-procedure WriteUUnummer(w:word);    { nächste Nr. in UUNUMER.DAT schreiben }
-var t : text;
-begin
-  assign(t,UUnumdat);
-  rewrite(t);
-  writeln(t,w);
-  close(t);
-end;
-
-
-//	procedure NoUUZ;
-//	begin
-//	  {window(1,1,screenwidth,screenlines);}
-//	  trfehler(105,30);    { 'Netcall-Konvetierer UUZ.EXE fehlt!' }
-//	  twin;
-//	end;
-
-//	procedure NoUUCICO;
-//	begin
-//	  {window(1,1,screenwidth,screenlines);}
-//	  trfehler(110,30);    { 'UUCICO.EXE fehlt!' }
-//	  twin;
-//	end;
-
-procedure PackFehler;
-begin
-  {window(1,1,screenwidth,screenlines);}
-  trfehler(713,30);    { 'Fehler beim Packen!' }
-  twin;
-end;
-
-
-{ Puffer in RFC-Files konvertieren }
-
-procedure ZtoRFC(cleardir:boolean; source,destdir:string);
-var sr    : tsearchrec;
-    rc    : integer;
-    f1,f2 : ^file;
-    s     : shortstring;
-    p     : byte;
-    cunb  : string;
-    news  : boolean;
-    freeze: boolean;
-    gzip  : boolean;
-    bzip  : boolean;
-    f     : boolean;
-    uu: TUUZ;
-
-  procedure NoCompSmtp(w:word);       { rcsmtp -> csmtp }
-  var f1,f2 : file;
-      s     : string[40];
-      p     : byte;
-      rr    : word;
-      adr   : longint;
-  begin
-    if w=$ffff then w:=0
-    else inc(w);
-    if FileExists(DestDir+'X-'+hex(w,4)+'.OUT') then begin
-      assign(f1,DestDir+'X-'+hex(w,4)+'.OUT');
-      reset(f1,1);
-      adr:=0;
-      assign(f2,DestDir+'smtp.tmp');
-      rewrite(f2,1);
-      repeat
-        seek(f1,adr);
-        blockread(f1,s[1],40,rr);
-        s[0]:=chr(rr);
-        p:=cpos(#10,s);
-        s[0]:=chr(p-1);
-        inc(adr,p);
-        if (s='C rcsmtp') or (s='C rfsmtp') or (s='C rgsmtp') or (c='rzsmtp')
-        then
-          s:='C rsmtp';
-        s:=s+#10;
-        blockwrite(f2,s[1],length(s));
-      until adr>=filesize(f1);
-      close(f1);
-      close(f2);
-      erase(f1);
-      rename(f2,DestDir+'X-'+hex(w,4)+'.OUT');
-      end;
-  end;
-
-begin
-  if cleardir then begin                { Spool räumen }
-    erase_mask(DestDir+'*.');
-    erase_mask(DestDir+'*.OUT');
-  end;
-  spacksize:=0;
-  spufsize:=0;
-  MakeMimetypCfg;
-  with boxpar^ do begin
-    uu := TUUZ.Create;
-    if SizeNego then uu.parsize := true;
-    if UUsmtp then
-      if UpArcer='' then uu.SMTP := true
-      else if pos('freeze',LowerCase(uparcer))>0 then uu.fSMTP := true
-      else if pos('gzip',LowerCase(uparcer))>0 then uu.zSMTP := true
-      else if pos('bzip2',LowerCase(uparcer))>0 then uu.bSMTP := true
-      else uu.cSMTP := true;
-    if NewsMIME then uu.NewsMime := true;
-    if MIMEqp then uu.MakeQP := true;
-    if RFC1522 then uu.RFC1522 := true;
-    uu.MailUser := BoxPar^.UserName;
-    uu.NewsUser := BoxPar^.UserName;
-    uu.FileUser := BoxPar^.UserName;
-    f:=OutFilter(source);
-    uu.Source := source;
-    uu.Dest := DestDir;
-    uu._from := boxpar^.pointname;
-    uu._to := boxpar^.boxname;
-    uu.uunumber := hexval(copy(caller,3,4));
-    uu.ztou;
-    uu.Free;
-
-    if f then _era(source);
-    end;
-  if errorlevel<>0 then exit;
-  if (BoxPar^.uparcer='') or (Netztyp in [nt_NNTP, nt_POP3, nt_IMAP]) then begin             { Mail/News nicht packen }
-    spufsize:=FileMaskSize(DestDir+'D*.OUT');
-    spacksize:=spufsize;
-    end
-  else begin                                   { Mail/News packen }
-    freeze:=pos('freeze',LowerCase(BoxPar^.uparcer))>0;
-    gzip:=pos('gzip',LowerCase(BoxPar^.uparcer))>0;
-    bzip:=pos('bzip2',LowerCase(BoxPar^.uparcer))>0;
-    new(f1); new(f2);
-    p:=pos('$PUFFER',UpperCase(boxpar^.uparcer));
-    s[0]:=#8;
-    if freeze then cunb:='#! funbatch'#10
-    else if gzip then cunb:='#! gunbatch'#10
-    else if bzip then cunb:='#! bunbatch'#10
-    else cunb:='#! cunbatch'#10;
-    rc:= findfirst(DestDir+'D*.OUT',faAnyFile,sr);
-    while rc=0 do begin
-      inc(spufsize,sr.size);
-      assign(f1^,DestDir+sr.name);
-      reset(f1^,1);
-      blockread(f1^,s[1],8);
-      close(f1^);
-      news:=(s='#! rnews');
-      if news or (LeftStr(s,5)='HELO ') then begin    { News/SMTPmail packen }
-        shell(LeftStr(boxpar^.UpArcer,p-1)+DestDir+sr.name+mid(boxpar^.UpArcer,p+7),
-              500,3);
-        if not existf(f1^) then begin    { Datei wurde gepackt }
-          if freeze then assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-2)+'XZ')
-          else assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-1)+'Z');
-          if (errorlevel<>0) or not existf(f1^) then begin
-            PackFehler;
-            dispose(f1); dispose(f2);
-            exit;
-            end;
-          if news then begin
-            reset(f1^,1);
-            assign(f2^,DestDir+sr.name);
-            rewrite(f2^,1);                          { cunbatch erzeugen }
-            blockwrite(f2^,cunb[1],length(cunb));
-            fmove(f1^,f2^);
-            close(f1^); close(f2^);
-            erase(f1^);
-            end
-          else
-            rename(f1^,DestDir+sr.name);
-          end
-        else
-          if not news then     { SMTP-File nicht gepackt - Packrate zu schlecht }
-            NoCompSmtp(hexval(copy(sr.name,3,4)));
-        end;
-      inc(spacksize,_filesize(DestDir+sr.name));
-      rc:= findnext(sr);
-    end;
-    FindClose(sr);
-    dispose(f1); dispose(f2);
-    end;
-  uunum:=GetNextUUnummer;
-end;
-
-
-{ RFC-Daten aus SPOOL\ konvertieren und einlesen }
-
-function ImportUUCPfromSpool(const XFerDir:string):boolean;
-var sr      : tsearchrec;
-    rc      : integer;
-    f1,f2   : ^file;
-    s       : string[80];
-    rr      : word;
-    uncompy : byte;
-    dummy   : longint;
-    uu : TUUZ;
-
-  procedure uncompress(fn:string; freeze,gzip,bzip:boolean);
-  var s : string;
-  begin
-    if freeze then s:=boxpar^.unfreezer
-    else if gzip then s:=boxpar^.ungzipper
-    else if bzip then s:=boxpar^.unbzipper
-    else s:=BoxPar^.downarcer;
-    exchange(s,'$DOWNFILE',XFerDir+fn+'.Z');
-    gotoxy(1,uncompy);
-    shell(s,600,5);
-    inc(uncompy);
-    if uncompy=screenlines-fnkeylines-5 then begin
-      clrscr;
-      uncompy:=2;
-      end;
-    if not FileExists(XFerDir+fn) then
-      if RenameFile(XFerDir+fn+'.Z',XFerDir+fn) then
-        MoveToBad(XFerDir+fn);
-  end;
-
-begin
-  ImportUUCPfromSpool:=false;
-  rc:= findfirst(XFerDir+'D*.',faAnyFile,sr);   { Datenfiles - ohne Extension }
-  if rc=0 then begin
-    twin;
-    clrscr;
-    uncompy:=2;
-    cursor(curoff);
-    new(f1); new(f2);
-    while rc=0 do begin
-      inc(NC^.recpack,sr.size);
-      assign(f1^,XFerDir+sr.name);
-      reset(f1^,1);
-      blockread(f1^,s[1],40,rr);
-      s[0]:=chr(rr);
-      if (LeftStr(s,11)='#! cunbatch') or (LeftStr(s,11)='#! funbatch') or   { Datei entpacken }
-         (LeftStr(s,11)='#! gunbatch') or (LeftStr(s,11)='#! zunbatch')
-      then begin
-        assign(f2^,XFerDir+sr.name+'.Z');
-        rewrite(f2^,1);
-        seek(f1^,cpos(#10,s));
-        fmove(f1^,f2^);
-        close(f1^); close(f2^);
-        uncompress(sr.name,pos('funbatch',s)>0,
-                   (pos('gunbatch',s)>0) or (pos('zunbatch',s)>0),
-                   pos('bunbatch',s)>0);
-        end
-      else begin
-        close(f1^);
-        if (LeftStr(s,2)=#$1f#$9d) or (LeftStr(s,2)=#$1f#$9f) or
-           (LeftStr(s,2)=#$1f#$8b) or (LeftStr(s,2)=#$42#$5a) then
-           begin     { compressed/frozen SMTP o.ä. }
-          rename(f1^,XFerDir+sr.name+'.Z');
-          uncompress(sr.name,s[2]=#$9f,s[2]=#$8b,s[2]=#$5a);
-          end;
-        end;
-      inc(NC^.recbuf,_filesize(XFerDir+sr.name));
-      rc:= findnext(sr);
-    end;
-    FindClose(sr);
-    dispose(f1); dispose(f2);
-    clrscr;
-    uu := TUUZ.Create;
-    uu.source := XFerDir+'X*.';
-    uu.dest := dpuffer;
-    uu.OwnSite := boxpar^.pointname+domain;
-    uu.utoz;
-    uu.free;
-
-    rc:= findfirst(XFerDir+'*.0??',faAnyFile,sr);
-    while rc=0 do begin       { abgebrochene UUCP-Files -> BAD }
-      MoveToBad(XFerDir+sr.name);
-      rc:= findnext(sr);
-    end;
-    FindClose(sr);
-    rc:= findfirst(XFerDir+'D*',faAnyFile,sr);   { übriggebliebene D-Files sicherstellen }
-    while rc=0 do begin
-      if sr.attr and faArchive<>0 then
-        MoveToBad(XFerDir+sr.name);
-      rc:= findnext(sr);
-    end;
-    FindClose(sr);
-    erase_mask(xp0.XFerDir+'D*.OUT');        { ausgehende Pakete löschen }
-    erase_mask(xp0.XFerDir+'X*.OUT');        { C-File muß stehenbleiben! }
-    if nDelPuffer and (errorlevel=0) and (testpuffer(dpuffer,false,dummy)>=0)
-    then
-      erase_mask(xp0.XFerDir+WildCard);         { entpackte Dateien löschen }
-    CallFilter(true,dpuffer);
-    if _filesize(dpuffer)>0 then
-      if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then begin
-        _era(dpuffer);
-        ImportUUCPfromSpool:=true;
-        end;
-    end
-  else
-    CallFilter(true,dpuffer);
-end;
-
-
-function UUCPnetcall: Boolean;
+function UUCPNetcall(boxname: string;
+                     boxpar: boxptr;
+                     ppfile: string;
+                     diskpoll: boolean;
+                     Logfile: String;
+                     IncomingFiles: TStringList):shortint;
 var
-    res  : integer;
-    f       : file;
-begin
-  recs:='';
-  netcall_connect:=true;
-  fidologfile:=TempFile('');
-  if not ExecutableExists(UUCICOBin) then begin
-    NoUUCICO;
-    res:=uu_parerr;
-    end
-  else begin
-    if not comn[comnr].fossil then ReleaseC;
-    {$IFNDEF Ver32 }
-    res:=uucico(XFerDir+caller,ConnTicks,ende,      { --- UUCICO ---------- }
-                   NC^.waittime,NC^.sendtime,NC^.rectime,fidologfile);
-    {$ENDIF }
-    if not comn[comnr].fossil then Activate;
-    end;
-  aufhaengen;
-  // !!DropDtr(comnr);
-  ReleaseC;
-  if (res<>uu_nologin) and (res<>uu_parerr) then
-    WriteUUnummer(uunum);
-  UUCPnetcall:=(res=uu_ok);
-  cursor(curoff);
-  if (res=uu_ok) or (res=uu_recerr) then
+(*
+    UUCICO:     TUUCPNetcall;
+*)
+
+  uunum : word;            { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
+
+
+  (* Nummer in UUNUMMER.DAT lesen/schreiben *)
+
+  procedure ReadUU;
+  var t : text;
+      s : string;
   begin
-    NC^.sendbuf:=spufsize;
-    NC^.sendpack:=spacksize;
-    NC^.abbruch:=(res<>uu_ok);
-    moment;
-    outmsgs:=0;
-    ClearUnversandt(ppfile,box);
-    if FileExists(ppfile) then
-      _era(ppfile);
-    if FileExists(eppfile) then
-      _era(eppfile);
-    if res=uu_ok then
-      wrtiming('NETCALL '+boxpar^.boxname);
-    if res=uu_recerr then begin    { doppeltes Senden verhindern }
-      assign(f,XFerDir+caller);
-      rewrite(f,1);                   { Inhalt des C-Files löschen }
-      close(f);
-      end;
-    closebox;
-    end
-  else
-    NC^.abbruch:=true;
-  if ImportUUCPfromSpool(XFerDir) and (res=uu_recerr) then
-    erase_mask(XFerDir+'*.');         { Doppeltes Einlesen verhindern }
-  SendNetzanruf(once,false);
-  SendFilereqReport;    { ... falls vorhanden }
-  AppLog(fidologfile,UUCPlog);
-  if FileExists(fidologfile) then _era(fidologfile);
-  twin;
-end;
-
-
-procedure UUCPSysopTransfer;
-var dummy : longint;
-begin
-  inmsgs:=0; outmsgs:=0; outemsgs:=0;
-  with boxpar^ do begin
-    if not IsPath(SysopInp) then begin              { Verzeichnisse testen }
-      trfehler(727,30);   { 'ungültiges Eingabeverzeichnis' }
-      exit;
-      end;
-    if not IsPath(SysopOut) then begin
-      trfehler(728,30);   { 'ungültiges Ausgabeverzeichnis' }
-      exit;
-      end;
-
-    NC^.sendbuf:=_filesize(ppfile);
-    if NC^.sendbuf>0 then begin               { -- Ausgabepaket -- }
-      outmsgs:=testpuffer(ppfile,false,dummy);
-      twin;
-      cursor(curoff);
-      ZtoRFC(false,ppfile,SysopOut);
-      {window(1,1,screenwidth,screenlines);}
-      WriteUUnummer(uunum);
-      Moment;
-      RemoveEPP;
-      outmsgs:=0;
-      ClearUnversandt(ppfile,box);
-      closebox;
-      _era(ppfile);
-      if FileExists(eppfile) then _era(eppfile);
-      end;
-
-    if FileExists(SysopInp+WildCard) then                   { -- Eingangspaket -- }
-      if ImportUUCPfromSpool(SysopInp) then
-        erase_mask(BoxPar^.sysopinp+WildCard);
-    Netcall_connect:=true;
+    if _filesize(UUnumdat)<2 then
+      uunum:=1
+    else begin
+      assign(t,UUnumdat); reset(t); readln(t,s);
+      close(t); uunum:=minmax(ival(s),0,$ffff);
     end;
-end;
+  end;
+  
+  procedure WriteUU; { Nr. in UUNUMER.DAT schreiben }
+  var t : text;
+  begin
+    assign(t,UUnumdat); rewrite(t); writeln(t,uunum); close(t);
+  end;
 
+  (* Puffer in RFC-Files konvertieren *)
+
+  function ProcessOutgoingFiles:boolean;
+  var source,destDir:	string;
+      uu: 		TUUZ;
+      delsource:	boolean;
+    
+    procedure CleanSpool;
+    begin { cleardir parameter to ZToRFC was false } 
+    // erase_mask(DestDir+'*.');
+    // erase_mask(DestDir+'*.OUT');
+    end;
+ 
+    function RunoutFilter:boolean;
+    begin
+      delsource := OutFilter(source);
+      result := (errorlevel=0);
+    end;
+ 
+    function InitUUZ:boolean;
+    begin
+      uu := TUUZ.Create;
+      if uu=nil then begin result:=false; exit; end;
+  
+      if boxpar^.SizeNego then uu.parsize := true;
+   
+      uu.SMTP     := BoxPar^.UUsmtp;
+
+      if uu.SMTP and (BoxPar^.UParcer<>'') then
+        if      pos('freeze',LowerCase(boxpar^.uparcer))>0 then uu.fSMTP := true
+        else if pos('gzip',  LowerCase(boxpar^.uparcer))>0 then uu.zSMTP := true
+        else if pos('bzip2', LowerCase(boxpar^.uparcer))>0 then uu.bSMTP := true
+        else                                                    uu.cSMTP := true;
+  
+      uu.NewsMime := NewsMIME;
+      uu.MakeQP   := MIMEqp;
+      uu.RFC1522  := RFC1522;
+   	  
+      uu.MailUser := BoxPar^.UserName;
+      uu.NewsUser := BoxPar^.UserName;
+      uu.FileUser := BoxPar^.UserName;
+   
+      uu.Source   := source;
+      uu.Dest     := DestDir;
+      uu._from    := boxpar^.pointname;
+      uu._to      := boxpar^.boxname;
+      uu.uunumber := uunum;
+
+      result:=true;
+    end;
+     
+    function RunUUZ:boolean;
+      { this whole stuff should really be part of UUZ }
+
+      function Pack: boolean;
+      var compression: (none,freeze,gzip,bzip,compress);
+          cunbatchcmd: string;
+          sr    : tsearchrec;
+          f1,f2 : ^file;
+          p,b : integer;
+	  s	 : shortstring;
+	  is_news: boolean;
+	  rr    : word;
+
+        procedure PackFehler;
+        begin
+          trfehler(713,30);    { 'Fehler beim Packen!' }
+        end;
+
+	procedure PackUndoRCSMTP(b:integer);
+	var f1,f2: file;
+	    adr  : longint;
+	    p	  : integer;
+	begin
+          adr:=0;
+          assign(f1,DestDir+'X-'+hex(b,4)+'.OUT'); reset(f1,1);
+          assign(f2,DestDir+'smtp.tmp'); rewrite(f2,1);
+          
+	  repeat
+            seek(f1,adr); blockread(f1,s[1],40,rr); s[0]:=chr(rr);
+            p:=cpos(#10,s); s[0]:=chr(p-1); inc(adr,p); {!! BUG: Lines MUST NOT be longer than 255 chars !!}
+            if (s='C rcsmtp') or (s='C rfsmtp') or (s='C rgsmtp') or (s='C rzsmtp') then s:='C rsmtp';
+            s:=s+#10;
+            blockwrite(f2,s[1],length(s));
+          until adr>=filesize(f1);
+  
+          close(f1); close(f2); erase(f1);
+          rename(f2,DestDir+'X-'+hex(b,4)+'.OUT');
+        end;
+
+      begin { Pack }
+        if BoxPar^.uparcer='' then begin result:=true; exit; end;
+      
+             if pos('freeze',LowerCase(BoxPar^.uparcer))>0 then compression := freeze
+        else if pos('gzip',  LowerCase(BoxPar^.uparcer))>0 then compression := gzip
+        else if pos('bzip2', LowerCase(BoxPar^.uparcer))>0 then compression := bzip
+        else compression := compress;
+
+        case compression of
+	  freeze: cunbatchcmd := '#! funbatch'#10;
+          gzip:   cunbatchcmd := '#! gunbatch'#10;
+          bzip:   cunbatchcmd := '#! bunbatch'#10;
+          else    cunbatchcmd := '#! cunbatch'#10;
+	end;
+
+        new(f1); new(f2);
+        p:=pos('$PUFFER',UpperCase(boxpar^.uparcer));
+
+        if 0=findfirst(DestDir+'D*.OUT',faAnyFile,sr) then 
+	repeat
+          assign(f1^,DestDir+sr.name);
+          reset(f1^,1);
+          s[0]:=#8; blockread(f1^,s[1],8);
+          close(f1^);
+          is_news:=(s='#! rnews');
+
+          if is_news or (LeftStr(s,5)='HELO ') then 
+          begin    { News/SMTPmail packen }
+            shell(LeftStr(boxpar^.UpArcer,p-1)+DestDir+sr.name+mid(boxpar^.UpArcer,p+7),500,3);
+	     
+	    if not existf(f1^) then 
+	    begin    { Datei wurde gepackt }
+              {$IFDEF UnixFS} { under unix, the extension is always preserved }
+              case compression of
+	        freeze:	assign(f1^,DestDir+sr.name+'.F');
+	        gzip:	assign(f1^,DestDir+sr.name+'.gz');
+		bzip:	assign(f1^,DestDir+sr.name+'.bz2');
+		else    assign(f1^.DestDir+sr.name+'.Z');
+              end; 
+	      {$ELSE} { under DOS/Win32/OS.2, we don't know whether we've got a 
+	       LFN compressor or what it does with the extension}
+
+	      { first, try .OUT => .XXX/.OXX/.OUX }
+              case compression of
+	        { for some strange reason, the pure DOS freeze that comes with Crosspoint 
+		  uses XZ as an extension }
+	        freeze: assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-2)+'XZ'); 
+	        gzip:	assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-2)+'GZ');
+		bzip:	assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-3)+'BZ2');
+		else    assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-1)+'Z');
+	      end;
+
+              { now, try .OUT => .X/.XX }
+              if (compression<>bzip) and (not existf(f1^)) then case compression of
+	        freeze: assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-4)+'F');
+	        gzip:	assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-4)+'GZ');
+		else    assign(f1^,DestDir+LeftStr(sr.name,length(sr.name)-4)+'Z');
+	      end; 
+
+	      { finally, try .OUT => .OUT.X/.OUT.XX }
+              if {$IFDEF DOS32} System.LFNSupport and {$ENDIF} (not existf(f1^)) then case compression of
+	      { Problem under DOS32: If we don't support LFN but the compressor does, we 
+	        won't find the compressed file (compressed file is D-XXXX~N.Z, but we 
+		only look for e.g. D-XXXX.OUZ and D-XXXX.Z (and don't know N anyway). }
+	        freeze:	assign(f1^,DestDir+sr.name+'.F');
+	        gzip:	assign(f1^,DestDir+sr.name+'.GZ');
+		bzip:	assign(f1^,DestDir+sr.name+'.BZ2');
+		else    assign(f1^,DestDir+sr.name+'.Z');
+	      end;
+	      {$ENDIF}
+  
+              if (errorlevel<>0) or not existf(f1^) then begin
+                PackFehler; dispose(f1); dispose(f2);
+		result:=false; exit;
+              end;
+
+              if is_news then begin 		{ '#! xxunbatch' erzeugen }
+                reset(f1^,1);
+                assign(f2^,DestDir+sr.name);
+                rewrite(f2^,1);
+                blockwrite(f2^,cunbatchcmd[1],length(cunbatchcmd));
+                fmove(f1^,f2^);
+                close(f1^); close(f2^);
+                erase(f1^);
+              end else				{ rxxsmtp -- erzeugt UUZ automatisch }
+                rename(f1^,DestDir+sr.name);
+            end else { Datei wurde nicht gepackt -- warum auch immer }
+              if not is_news then { UUZ generiert hier rxxsmtp -- rueckgaengig machen }
+	      begin { rcsmtp -> rsmtp }
+                b:=hexval(copy(sr.name,3,4)); if b=$ffff then b:=0 else inc(b);
+	        PackUndoRCSMTP(b);
+	      end;
+	  end; { is_news or 'HELO ' }
+	until 0<>findnext(sr);
+
+	dispose(f1);dispose(f2);
+	result:=true;
+      end;
+    
+    begin // RunUUZ
+      MakeMimetypCfg;
+      uu.ZtoU; {!! no error checking}
+      result:=Pack;
+    end;
+    
+    procedure KillUUZ;
+    begin
+      uunum := uu.uunumber;
+      uu.Free;
+      result:=true; {!! no error checking}
+    end; 
+    
+  begin { ProcessOutgoingFiles:boolean; }
+    result    := false;
+    delsource := false; 
+
+    source    := ppfile;
+    destdir   := iifs(diskpoll,boxpar^.sysopout,XFerDir);
+
+    if _filesize(source) <=0 then
+      result:=true	{ doing nothing will hopefully succeed ;-) }
+    else
+
+    if RunOutFilter then 
+    begin
+      CleanSpool;
+      if InitUUZ then begin
+        if RunUUZ then 
+          result:=true;
+        KillUUZ;
+      end;
+    end;
+
+    if delsource then _era(source);
+  end;
+ 
+  (* RFC-Files in Eingangspuffer konvertieren *)
+
+  function ProcessIncomingFiles:boolean;
+  var source,dest:	string;
+      uu: 		TUUZ;
+
+    function InitUUZ:boolean;
+    begin
+      uu := TUUZ.Create;
+      if uu=nil then begin result:=false; exit; end;
+
+      // uu.getrecenvemp := false;	{ not needed for UUCP }
+      // uu.shrinkheader := ShrinkUheaders; { UUZ-Schalter -r }
+
+      {!! uncompressing programmes are defined in box config but compiled into unit zcrfc}
+
+      uu.OwnSite  := BoxPar^.pointname+BoxPar^._domain;
+      uu.Source   := source;
+      uu.Dest     := dest;
+
+      uu.ClearSourceFiles := DiskPoll or nDelPuffer;
+
+      result:=true;
+    end;
+
+    function RunUUZ:boolean;
+    begin
+      MakeMimetypCfg;
+      uu.UtoZ;
+      result:=true; 
+    end;
+    
+    procedure KillUUZ;
+    begin
+      uu.Free;
+      result:=true;
+    end; 
+    
+    function RunInFilter:boolean;
+    begin
+      if (boxpar^.eFilter<>'') then
+        CallFilter(true,dest);
+      result:=true;
+    end;
+    
+  begin { ProcessIncomingFiles: boolean }
+    result    := false;
+    source    := iifs(diskpoll,BoxPar^.sysopinp,XFerDir)+'X*';
+    
+    dest      := 'UUbuffer.zer';
+
+    if InitUUZ then begin
+      if RunUUZ then 
+        if RunInFilter then
+          result:=true;
+      KillUUZ;
+    end;
+
+    if fileexists(dest) then
+      if _filesize(dest)>=1 then IncomingFiles.Add(dest)
+      else _era(dest);
+  end;
+ 
+{ 
+function UUCPNetcall(boxname: string;
+                     boxpar: boxptr;
+                     ppfile: string;
+                     diskpoll: boolean;
+                     Logfile: String;
+                     IncomingFiles: TStringList):shortint;
+}
+begin {function UUCPNetcall}
+  Debug.DebugLog('xpncuucp','uucp netcall starting',DLInform);
+  result:=el_noconn;
+  {
+            EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
+            EL_noconn : begin Netcall_connect:=false; end;
+            EL_recerr,
+            EL_senderr,
+            EL_nologin: begin Netcall_connect:=true; inc(connects); end;
+            EL_break  : begin  Netcall:=false; end;
+  }	    
+  
+  ReadUU;
+
+  if diskpoll then 
+  begin
+    SetCurrentDir(boxpar^.sysopinp);
+    Shell(boxpar^.sysopstart,500,1);
+    SetCurrentDir(OwnPath);
+    if (errorlevel=0) and ProcessIncomingFiles then
+      if ProcessOutgoingFiles then begin
+        SetCurrentDir(boxpar^.sysopout);
+        Shell(boxpar^.sysopend,500,1);
+	SetCurrentDir(OwnPath);
+	if errorlevel=0 then result:=el_ok else result:=el_recerr;
+      end
+      else {!ProcessOutgoingFiles}
+        result:=el_senderr
+    else {errorlevel<>0 or !ProcessIncomingFiles}
+      result:=el_recerr;
+  end {!diskpoll}
+  else begin
+    result:=el_noconn; 
+    Debug.DebugLog('xpncucp','not implemented',DLInform);
+  end; {!diskpoll}
+  
+  if result IN [el_recerr,el_ok] then begin
+    Debug.DebugLog('xpncucp','sending upbuffer was successful, clearing',DLInform);
+    if FileExists(ppfile) then begin ClearUnversandt(ppfile,boxname); _era(ppfile); end;
+    WriteUU;
+  end;
+
+end; { function UUCPNetcall}
 
 end.
 
 {
   $Log$
+  Revision 1.4  2001/02/22 17:14:34  cl
+  - UUCP sysop netcalls working
+
   Revision 1.3  2001/02/21 17:45:53  cl
   - first things for TUUCPNetcall
 
