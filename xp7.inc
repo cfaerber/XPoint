@@ -6,7 +6,6 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $Id$ }
 
 function BoxParOk:string;
 var uucp : boolean;
@@ -831,6 +830,7 @@ begin
   f := Outfilter(source);   { Filtern und merken ob Filtrat existiert }
   CopyFile(source,dest);    { ppfile/Filtrat ins Outfile kopieren }
   if f then _era(source);   { falls gefiltert wurde Filtratfile löschen }
+  errorlevel:=0; 
 end;
 
 procedure SysopTransfer;
@@ -1444,28 +1444,3 @@ begin
     comn[comnr].fossil:=false;
     end;
 end;
-{
-  $Log$
-  Revision 1.5.2.3  2000/04/18 19:59:13  mk
-  JG: - Fix fuer Ausgangsfilter bei ZConnect
-
-  Revision 1.5.2.2  2000/03/30 14:06:12  mk
-  - unnötigen Debugcode entfernt
-
-  Revision 1.5.2.1  2000/03/25 15:28:11  mk
-  - URL-Erkennung im Lister erkennt jetzt auch
-    einen String der mit WWW. beginnt als URL an.
-  - Fix fuer < 3.12er Bug: Ausgangsfilter wird jetzt auch bei Boxtyp
-    ZConnect und Sysoppoll aufgerufen
-  - PGP Bugs behoben (bis 1.10)
-  - keys.keypressed auf enhanced keyboard support umgestellt/erweitert
-  - <Ctrl Del>: Wort rechts loeschen
-  - Persistene Bloecke sind im Editor jetzt default
-
-  Revision 1.5  2000/02/21 22:48:01  mk
-  MK: * Code weiter gesaeubert
-
-  Revision 1.4  2000/02/19 11:40:08  mk
-  Code aufgeraeumt und z.T. portiert
-
-}
