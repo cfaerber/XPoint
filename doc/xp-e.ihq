@@ -1,4 +1,4 @@
-CrossPoint v3.30
+CrossPoint v3.40
 15 6
 53 19
 2 1
@@ -4928,22 +4928,13 @@ changed at any time whilst viewing a message list by
 pressing <Ctrl-A>
 @
 845
-Some nets differentiate between upper and lower case
-for user names. "\" characters (escape characters)
-are put in front of all upper case letters when
-converting to Z-Netz format.
+<<[x]>> ->  New messages are shown on top of the Message
+        Reading Window. The older a message is, the
+        more down below you will find it.
 
-For display, CrossPoint can convert these addresses
-back to their original form.
-For this you need to enter the full names of the
-gates  which use such conversions:
-eg. \@UUCP.ZER @MAUS.ZER
-
-For gates where "\" shows lower case and not upper
-case, you also need to put a "+" in front, as in
-"+\NAME". At present, however, very few gates seem to
-use this method.
-
+<<[ ]>> ->  The display is as in previous versions of
+        XP: Old messages on top, older ones at the
+        bottom.
 @
 280
 The screen saver blanks the screen if no key is 
@@ -5003,12 +4994,12 @@ defined here. For this to work, you must activate
         other purpose.
 
 @
-1032
+1035
 The order of the letters determines in what order
-(from left to right) the columns in the Message-list
-will be arranged. Every letter <<MUST>> be present,
-otherwise, the default column display (FGDAEB) will
-be used.
+(from left to right) the columns in the Message
+Reading Window will be arranged. Every letter may
+appear <<just once>>. If a letter does not appear,
+the respective column will not be shown.
 
        Valid letters (with their meanings) are:
 
@@ -5016,24 +5007,30 @@ be used.
        G  Size
        D  Date
        A  Sender
-       E  Recipient
+       E  Recipient (Fido Echomail only)
        B  Subject
+
+With <<<F2> >>you can select the default setting.
+
 @
-1033
+1036
 The order of the letters determines in what order
-(from left to right) the columns in the User-list
-<<(in "Special Mode")>> will be arranged. Every
-letter <<MUST>> be present, otherwise, the default
-column display (FHGBAK) will be used.
+(from left to right) the columns in the User-Overview
+will be arranged. Every letter may appear <<just once>>.
+If a letter does not appear, the respective column
+will not be shown.
 
        Valid letters (with their meanings) are:
 
        F  Flags
        H  Hold-time
-       G  Addressbook group
        B  Server
+       G  Addressbook group
        A  Address
        K  Comments/Pseudonym
+
+With <<<F2> >>you can select the default setting.
+
 @
 290
 This is the HEX address of the ComPort you are, at
