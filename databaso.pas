@@ -158,9 +158,7 @@ begin
   if xflag then
     MakeXbase(filename,ehd,f);
 
-  assign(f,filename+dbIxExt);
-  erase(f);
-  if ioresult = 0 then ;
+  SafeDeleteFile(filename+dbIxExt);
 end;
 
 
@@ -427,15 +425,16 @@ begin
     erase(f1); rename(f2,filename+dbExt);
     irec.command:=icCloseWindow;
     ICP(irec);
-    assign(f1,filename+dbIxExt);
-    erase(f1);
-    if ioresult<>0 then;
+    SafeDeleteFile(Filename+dbIxExt);
     dbPack:=true;
-    end;
+  end;
 end;
 
 {
   $Log$
+  Revision 1.19  2002/07/22 10:11:19  mk
+  - simplyfied deletion of Index files
+
   Revision 1.18  2002/05/26 12:16:22  ma
   - replaced dbLog by standard log routines
 
