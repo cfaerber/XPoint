@@ -2307,9 +2307,9 @@ JG:
   XP4E.PAS
 
 
-+----------------------+
-|  08./09./10.01.2003  |
-+----------------------+
++------------------+
+|  08.-12.01.2003  |
++------------------+
 
 MW:
 - Groáes Gebhren-Update:
@@ -2322,15 +2322,21 @@ MW:
                            mehr als Preis einer Tarifeinheit. Bei
                            inaktivem Schalter gelten Geldbetr„ge
                            weiterhin als Preis einer Tarifeinheit.
+     Neuinstallierte Versionen verwenden dieses neue Gebhrenmodell als
+     Voreinstellung. Bestehende Installationen verwenden weiterhin das
+     alte Modell.
   3. Neue Default-W„hrung fuer die Gebhrenberechnung ist nun EUR.
   4. Neue Tarife: Die Default-Tariftabelle enth„lt nun alle aktuellen
      nationalen Privatkunden-Tarife der DTAG fr Festnetz zu Festnetz
      sowie den Tarif "Normaltarif" von 3U.
+     Default-Tarif in der Boxen-Konfiguration ist jetzt "DTAG T-NET City".
   5. Wenn die Default-Tariftabelle geschrieben wird, wird dabei das
      verwendete Gebhrenmodell bercksichtigt.
   6. XPOINT.LOG enth„lt jetzt alle Kostenangaben mit 4 Nachkommastellen.
-  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP7O.PAS, XP10.PAS, XP10P.INC, XP-D.RQ,
-  XP-E.RQ, XP.IHQ, XP-E.IHQ
+  7. Die Gebhrenstatistik unter X/S/E zeigt in der Tabelle und im
+     Balkendiagramm jetzt auch die verwendete W„hrung an.
+  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP7O.PAS, XP9BP.PAS, XP10.PAS, XP10P.INC,
+  XPSTAT.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 
 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
