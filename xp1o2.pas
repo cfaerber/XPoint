@@ -19,15 +19,8 @@ interface
 
 
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-  SysUtils,
-{$ELSE }
-  crt,
-{$ENDIF }
-  typeform,keys,fileio,inout,maus2,datadef,database,
-  stack,resource, xp0;
+  xpglobal, crt, typeform,keys,fileio,inout,maus2,datadef,database,
+  stack,resource, xp0, lfn;
 
 procedure wkey(sec:word; count:boolean);
 function  DruckWiederholen:boolean;
@@ -220,6 +213,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.1  2000/08/28 23:35:54  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.11  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

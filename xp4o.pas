@@ -21,15 +21,7 @@ unit xp4o;
 interface
 
 uses
-{$IFDEF Ver32 }
-  sysutils,
-{$endif}
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-     dos,dosx,typeform,fileio,inout,keys,montage,maske,datadef,database,
+  crt, dos,dosx,typeform,fileio,inout,keys,montage,maske,datadef,database,
      lister,archive,maus2,winxp,printerx,resource,xpglobal,
      xp0,xp1,xp1o2,xp1help,xp1input;
 
@@ -1424,12 +1416,9 @@ var _brett   : string[5];
 begin
   if uvs_active then exit;
   crashs:=false;
-  dos.findfirst('*.pp',dos.Archive,sr);
+  findfirst('*.pp',dos.Archive,sr);
   if doserror<>0 then begin
-    {$IFDEF Ver32 }
-      FindClose(sr);
-    {$ENDIF}
-    dos.findfirst('*.cp',dos.Archive,sr);
+    findfirst('*.cp',dos.Archive,sr);
     crashs:=true;
     end;
   markanz:=0;
@@ -1504,10 +1493,7 @@ begin
     close(f);
     findnext(sr);
     if (doserror<>0) and not crashs then begin
-      {$IFDEF Ver32 }
-      FindClose(sr);
-      {$ENDIF}
-      dos.findfirst('*.cp',dos.Archive,sr);
+      findfirst('*.cp',dos.Archive,sr);
       crashs:=true;
     end;
   end;
@@ -2445,6 +2431,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.7  2000/08/28 23:35:54  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.47.2.6  2000/08/27 20:45:52  mk
   OH:- F3-Request, ist die automatische Magic-Erkennung abgeschaltet,
     werden sie trotzdem erkannt, und zwar dann, wenn keine

@@ -19,14 +19,9 @@ unit xp4o2;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
-      resource,help,xpglobal,xp0,xp1,xp1input,xpnt,crc;
+uses
+  crt, dos,typeform,fileio,inout,keys,datadef,database,databaso,maus2,
+      resource,help,xp0,xp1,xp1input,xpnt,crc, xpglobal, lfn;
 
 { Deklaration des Kommentarbaums in XP0 }
 
@@ -891,6 +886,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.1  2000/08/28 23:35:54  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.11  2000/06/19 20:20:21  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

@@ -19,15 +19,10 @@ unit xp7f;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,dosx,typeform,montage,fileio,keys,maus2,
+uses
+  crt, dos,dosx,typeform,montage,fileio,keys,maus2,
       inout,lister,resource,maske, xpglobal,
-      xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl;
+      xp0,xpdiff,xp1,xp1input,xp7l,xp7,xp7o,xpfido,xpf2,xpfidonl, lfn;
 
 
 function FidoImport(ImportDir:string; var box:string; addpkts:boolean):boolean;
@@ -225,7 +220,7 @@ begin
     p:=pos('$PUFFER',ustr(downarcer));         { Empfangspakete entpacken }
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',ustr(downarcer));       { immer > 0 ! }
-    Dos.findfirst(ImportDir+'*.*',ffAnyFile,sr);
+    findfirst(ImportDir+'*.*',ffAnyFile,sr);
     clrflag:=(doserror=0);
     if clrflag then begin
       window(1,1,80,25); attrtxt(7);
@@ -240,11 +235,8 @@ begin
         if errorlevel<>0 then
           MoveToBad(ImportDir+sr.name);
         end;
-      Dos.findnext(sr);
+      findnext(sr);
     end;
-    {$IFDEF Ver32}
-    FindClose(sr);
-    {$ENDIF}
     if clrflag then ttwin;
 
     if exist(XFerDir+'*.PKT') then begin
@@ -259,18 +251,15 @@ begin
         trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
       else begin
         if nDelPuffer then
-          Dos.findfirst(XFerDir+'*.*',ffAnyFile,sr)
+          findfirst(XFerDir+'*.*',ffAnyFile,sr)
         else begin
-          Dos.findfirst(XFerDir+'*.pkt',ffAnyFile,sr);    { .PKT - Dateien l”schen  }
+          findfirst(XFerDir+'*.pkt',ffAnyFile,sr);    { .PKT - Dateien l”schen  }
           if doserror=0 then findnext(sr);    { erstes PKT stehenlassen }
           end;
         while doserror=0 do begin
           _era(XFerDir+sr.name);
-          Dos.findnext(sr);
+          findnext(sr);
         end;
-        {$IFDEF Ver32}
-        FindClose(sr);
-        {$ENDIF}
       end;
       NC^.recbuf:=_filesize(fpuffer);
       CallFilter(true,fpuffer);
@@ -606,16 +595,13 @@ begin
     end;
 
   window(1,1,80,25);
-  Dos.findfirst(XFerDir+'*.*',AnyFile-Directory,sr);            { SPOOL leeren }
+  findfirst(XFerDir+'*.*',AnyFile-Directory,sr);            { SPOOL leeren }
   while doserror=0 do begin
     UpString(sr.name);
     if isPacket(sr.name) or (right(sr.name,4)='.PKT') then
       _era(XFerDir+sr.name);
-    Dos.findnext(sr);
+    findnext(sr);
   end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
 
   ttwin;
   FidoNetcall:=EL_noconn;
@@ -942,6 +928,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.1  2000/08/28 23:35:56  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.13  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

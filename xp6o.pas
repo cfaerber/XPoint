@@ -18,16 +18,9 @@ unit xp6o;
 interface
 
 uses
-  {$IFDEF virtualpascal}sysutils,{$endif}
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,typeform,fileio,inout,keys,datadef,database,maske,
+  xpglobal, crt, dos,typeform,fileio,inout,keys,datadef,database,maske,
   crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
-  xp2c,xp_des,xpe;
+  xp2c,xp_des,xpe, lfn;
 
 procedure Unversandt(edit,modi:boolean);
 procedure Weiterleit(typ:byte; sendbox:boolean);
@@ -243,7 +236,7 @@ begin
   crash:=(dbReadInt(mbase,'unversandt') and 16<>0);
   empfnr:=(dbReadInt(mbase,'netztyp') shr 24);
 
-  dos.findfirst(ownpath+iifs(crash,'*.cp','*.pp'),ffAnyFile,sr);
+  findfirst(ownpath+iifs(crash,'*.cp','*.pp'),ffAnyFile,sr);
   found:=false;
   rmessage(640);             { 'Puffer Åberarbeiten...' }
   while (doserror=0) and not found do begin
@@ -277,7 +270,7 @@ begin
       end;
   nextpp:
     if found then ShrinkPuffer
-    else dos.findnext(sr);
+    else findnext(sr);
     fs:=filesize(f);
     close(f);
     if found and (fs=0) then begin
@@ -1254,6 +1247,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.1  2000/08/28 23:35:55  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.20  2000/06/19 20:22:13  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 

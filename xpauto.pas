@@ -19,9 +19,9 @@ unit xpauto;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
+uses
       dos,dosx,montage,typeform,fileio,inout,datadef,database,resource,
-      xp0,xp1, xpglobal;
+      xp0,xp1, xpglobal, lfn;
 
 type  AutoRec = record                     { AutoVersand-Nachricht }
                   datei   : string;
@@ -318,8 +318,8 @@ var sr    : searchrec;
 
   function find(ext:string):boolean;
   begin
-    if first then dos.findfirst(AutoxDir+'*.'+ext,ffAnyFile,sr)
-    else dos.findnext(sr);
+    if first then findfirst(AutoxDir+'*.'+ext,ffAnyFile,sr)
+    else findnext(sr);
     first:=(doserror<>0);
     find:=not first;
   end;
@@ -384,22 +384,18 @@ var sr    : searchrec;
       if errorlevel<>0 then
         trfehler(2208,tfs)   { 'Fehler bei Fido-Paketkonvertierung' }
       else begin
-        { 27.01.2000 robo - Serverbox bei Fido aus Pfad nehmen }
+        { Serverbox bei Fido aus Pfad nehmen }
 {
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(multipos('*',BoxPar^.akas),pe_ForcePfadbox,0)) then begin
 }
         if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
                           iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
-        { /robo }
-          dos.findfirst(AutoxDir+'*.pkt',ffAnyFile,sr);
+          findfirst(AutoxDir+'*.pkt',ffAnyFile,sr);
           while doserror=0 do begin
             _era(AutoxDir+sr.name);
-            dos.findnext(sr);
+            findnext(sr);
           end;
-          {$IFDEF Ver32}
-          FindClose(sr);
-          {$ENDIF}
         end;
         _era('FPUFFER');
       end;
@@ -673,6 +669,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.1  2000/08/28 23:35:56  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.13  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

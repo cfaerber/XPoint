@@ -20,7 +20,7 @@ interface
 uses
   crt, dos,xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
   video,datadef,database,maus2,maske,clip,resource,
-  ems,xms, xp0,xp1,xp1input,xp1o,xp1o2;
+  ems,xms, xp0,xp1,xp1input,xp1o,xp1o2, lfn;
 
 procedure kalender;
 procedure memstat;
@@ -333,10 +333,10 @@ var sr  : searchrec;
 begin
   mon;
   sum:=0;
-  dos.findfirst(dir+WildCard,ffAnyFile,sr);
+  findfirst(dir+WildCard,ffAnyFile,sr);
   while doserror=0 do begin
     inc(sum,sr.size);
-    dos.findnext(sr);
+    findnext(sr);
   end;
   xpspace:=sum;
   moff;
@@ -989,6 +989,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.3  2000/08/28 23:35:55  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.27.2.2  2000/07/24 16:08:10  mk
   - konstanten Versionsstring ausgebaut
 

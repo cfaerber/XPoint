@@ -19,15 +19,8 @@ unit xpf2;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,typeform,fileio,archive,montage,
-      xp0,xp1,xp1o,xp3,xp3o;
+uses xpglobal, crt, dos,typeform,fileio,archive,montage,
+      xp0,xp1,xp1o,xp3,xp3o, lfn;
 
 
 procedure TestTICfiles(var logfile:string);   { TIC-Files verarbeiten }
@@ -170,15 +163,12 @@ begin
             if UniExtract(s,FilePath+'TICK\','*.*') and
                exist(FilePath+'TICK\'+name1) then begin
               _era(s);
-              Dos.FindFirst(FilePath+'TICK\*.TIC',ffAnyFile,sr);
+              FindFirst(FilePath+'TICK\*.TIC',ffAnyFile,sr);
               while doserror=0 do begin       { .TIC-Files verarbeiten }
                 if ProcessTICfile(FilePath+'TICK\'+sr.name) then;
                 _era(FilePath+'TICK\'+sr.name);
-                Dos.findnext(sr);
+                findnext(sr);
               end;
-              {$IFDEF Ver32}
-              FindClose(sr);
-              {$ENDIF}
             end;
           end;   { of TIC-File vorhanden }
         end;   { at>0 }
@@ -188,15 +178,12 @@ begin
 ende:
   close(t);
 
-  Dos.findfirst(FilePath+'*.TIC',ffAnyFile,sr);    { ungepackte TIC-Files }
+  findfirst(FilePath+'*.TIC',ffAnyFile,sr);    { ungepackte TIC-Files }
   while doserror=0 do begin
     if ProcessTICfile(FilePath+sr.name) then
       _era(FilePath+sr.name);
-    Dos.findnext(sr);
+    findnext(sr);
   end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
 
   close(f);
   if _filesize(tmp)>0 then

@@ -34,11 +34,7 @@
   {$M 20000,50000,655360}
 {$ENDIF }
 
-uses dos,
-{$IFDEF BP }
-  xms,
-{$ENDIF }
-  typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
+uses dos, xms, typeform,fileio,montage,xpdatum,xp_iti, xpglobal, lfn;
 
 const nt_ZConnect=2;
       OrgLen    = 80;
@@ -1831,6 +1827,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.2  2000/08/28 23:35:54  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.15.2.1  2000/07/02 10:42:59  mk
   - pformstr entfernt
 

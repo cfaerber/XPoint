@@ -22,8 +22,8 @@ interface
 uses crt, xpcfg,
      dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
      databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
-     resource,montage, xpglobal, lfn,
-     xp0,xp1,xp10,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy;
+     resource,montage, xpglobal, xp0,xp1,xp10,xp1o2,xp1input,
+     xp1help,xp5,xpdatum,xpeasy, lfn;
 
 
 procedure zusatz_menue;
@@ -1150,6 +1150,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.5  2000/08/28 23:35:54  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.45.2.4  2000/08/27 08:39:38  mk
   - LFN-Unterstuetzung aktiviert, Parameter /LFN schaltet explizit zu
 

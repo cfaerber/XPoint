@@ -19,13 +19,7 @@
   {$M 16384,80000,110000}
 {$ENDIF }
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,typeform,fileio,xpdiff,xpdatum,xpglobal;
+uses crt, dos,typeform,fileio,xpdiff,xpdatum,xpglobal, lfn;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -481,11 +475,8 @@ begin
     error('Eingabedatei fehlt: '+infile);
   if not validfilename(outfile) then
     error('UngÅltige Ausgabedatei: '+outfile);
-  dos.findfirst('BAD',Directory,sr);
+  findfirst('BAD',Directory,sr);
   baddir:=(doserror=0) and (sr.attr and Directory<>0);
-  {$IFDEF Ver32 }
-  FindClose(sr);
-  {$ENDIF}
 end;
 
 procedure splitfido(adr:string; var frec:fidoadr);
@@ -1778,16 +1769,13 @@ var sr  : searchrec;
     fst : boolean;
 begin
   FSplit(infile,d,n,e);
-  dos.findfirst(infile,ffAnyFile,sr);
+  findfirst(infile,ffAnyFile,sr);
   fst:=true;
   while doserror=0 do begin
     FidoZfile(d+sr.name,not fst);
     fst:=false;
-    dos.findnext(sr);
+    findnext(sr);
   end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
 end;
 
 
@@ -1814,6 +1802,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.3  2000/08/28 23:35:57  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.21.2.2  2000/07/08 18:22:39  mk
   - /OXP in PID hinzugefuegt
 

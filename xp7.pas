@@ -17,19 +17,13 @@ unit  xp7;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
-      xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,dosx,typeform,uart,datadef,database,fileio,inout,keys,winxp,
+uses
+      xpglobal, crt, dos,dosx,typeform,uart,datadef,database,fileio,inout,keys,winxp,
       video,maske,maus2,montage,lister,resource,stack,
 {$IFDEF CAPI }
   capi,
 {$ENDIF }
-      xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu;
+      xp0,xp1,xp1help,xp1input,xp2c,xpterm,xpdiff,xpuu, lfn;
 
 
 function  netcall(net:boolean; box:string; once,relogin,crash:boolean):boolean;
@@ -1554,6 +1548,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.3  2000/08/28 23:35:55  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.16.2.2  2000/06/29 16:46:59  mk
   - Fixes
 

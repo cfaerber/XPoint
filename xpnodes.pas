@@ -16,7 +16,7 @@ unit xpnodes;
 interface
 
 uses
-  typeform, dos;
+  typeform, dos, lfn;
 
 
 const PointNurNode = 0;      { Nur den Nodeteil der Adresse berÅcksichti-  }
@@ -249,15 +249,12 @@ Function exist(n:string):boolean;
 var sr : searchrec;
     ex : boolean;
 begin
-  Dos.findfirst(n,anyfile-volumeid-directory,sr);
+  findfirst(n,anyfile-volumeid-directory,sr);
   ex:=(doserror=0);
   while not ex and (doserror=0) do begin
-    Dos.findnext(sr);
+    findnext(sr);
     ex:=(doserror=0);
   end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
   exist:=ex;
 end;
 
@@ -506,6 +503,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.2  2000/08/28 23:35:56  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.7.2.1  2000/07/04 10:23:02  mk
   - unnoetige Routinen rausgenommen
 

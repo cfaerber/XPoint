@@ -21,7 +21,7 @@ unit  exxec;
 interface
 
 uses
-  xpglobal, dos, typeform, fileio;
+  xpglobal, dos, typeform, fileio, lfn;
 
 const ExecOk      = 0;
       ExecSwaperr = 1;
@@ -285,7 +285,7 @@ var regs  : registers;
   function exist(s:string):boolean;
   var sr : searchrec;
   begin
-    Dos.FindFirst(s,ffAnyfile,sr);
+    FindFirst(s,ffAnyfile,sr);
     exist:=doserror=0;
   end;
 
@@ -419,6 +419,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.2  2000/08/28 23:35:53  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.20.2.1  2000/08/02 16:04:04  mk
   - 80/127 Zeichen Limit wieder eingefuegt
 

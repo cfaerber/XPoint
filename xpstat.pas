@@ -19,14 +19,9 @@ unit xpstat;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,
-      lister,resource,xp0,xp2,xp1, xpglobal;
+uses
+  crt, dos,typeform,fileio,inout,keys,datadef,database,maske,montage,maus2,
+      lister,resource,xp0,xp2,xp1, xpglobal, lfn;
 
 
 procedure MultiStat(art:byte);
@@ -759,7 +754,7 @@ var sr       : searchrec;
     w        : pprec;
 begin
   ppanz:=0;
-  dos.findfirst('*.pp',ffAnyFile,sr);
+  findfirst('*.pp',ffAnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .PP-Files }
     if sr.size>0 then begin
 
@@ -768,12 +763,9 @@ begin
       pp_epp[ppanz].psize:=sr.size;
       pp_epp[ppanz].esize:=0;
       end;
-    dos.findnext(sr);
+    findnext(sr);
   end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
-  dos.findfirst('*.epp',ffAnyFile,sr);
+  findfirst('*.epp',ffAnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
     if sr.size>0 then begin
       truncstr(sr.name,cpos('.',sr.name)-1);
@@ -785,7 +777,7 @@ begin
         end;
       pp_epp[ppanz].esize:=sr.size;
       end;
-    dos.findnext(sr);
+    findnext(sr);
   end;
   {$IFDEF Ver32}
   FindClose(sr);
@@ -828,16 +820,13 @@ begin
     end;
   dbClose(d);
   if crashs then begin
-    dos.findfirst('*.cp',ffAnyFile,sr);
+    findfirst('*.cp',ffAnyFile,sr);
     sumbytes:=0; summsgs:=0;
     while doserror=0 do begin
       inc(summsgs,testpuffer(sr.name,false,attsize));
       inc(sumbytes,sr.size+attsize);
-      dos.findnext(sr);
+      findnext(sr);
     end;
-    {$IFDEF Ver32}
-    FindClose(sr);
-    {$ENDIF}
     mwrt(x+3,yy,forms(getres2(2611,3),16)+strsn(summsgs,7)+strsrnp(sumbytes,15,0));  { 'Crashmails' }
     inc(yy);
     end;
@@ -1270,6 +1259,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.1  2000/08/28 23:35:56  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.14  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

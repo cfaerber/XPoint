@@ -19,9 +19,9 @@ unit xpimpexp;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif}
+uses
       dos,typeform,fileio,inout,maske,datadef,database,maus2,resource,
-      xp0,xp1, xpglobal;
+      xp0,xp1, xpglobal, lfn;
 
 
 procedure ImportUserbase;     { X/Import/MB-Userbase }
@@ -605,14 +605,11 @@ var ypath : pathstr;
       sum : longint;
   begin
     sum:=0;
-    Dos.findfirst(ypath+'*.DBT',ffAnyFile,sr);
+    findfirst(ypath+'*.DBT',ffAnyFile,sr);
     while doserror=0 do begin
       inc(sum,sr.size);
-      Dos.findnext(sr);
+      findnext(sr);
     end;
-    {$IFDEF Ver32}
-    FindClose(sr);
-    {$ENDIF}
     YupMailsize:=sum;
   end;
 
@@ -706,6 +703,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.1  2000/08/28 23:35:56  mk
+  - LFN in uses hinzugefuegt
+
   Revision 1.15  2000/06/16 19:56:24  mk
   - jetzt geht es auch unter nicht Linux wieder zu compilieren, bitte die Aenderungen pruefen!
 
