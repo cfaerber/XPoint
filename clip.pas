@@ -246,7 +246,6 @@ begin
   end;
 end;
 {$ELSE }
-{$ELSE }
 begin
 end;
 {$ENDIF }
@@ -254,6 +253,9 @@ end;
 
 {
   $Log$
+  Revision 1.38.2.4  2004/05/09 11:34:10  mk
+  - fixed typo
+
   Revision 1.38.2.3  2004/05/09 00:19:49  mk
   - removed VP code
   - improved errorhandling for Win32 clipboard
