@@ -1782,10 +1782,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # Window width
 0    52
 1    Please enter the type of Net, the name of your
-2    Server and your user name:
-3    Type of Net~
-4    Server name~
-5    User name  ~
+2    Server and your user name or eMail address.
+3    The use of a RFC/Client Server requires a
+4    third-party Mail/News client.
+5    Type of Net~
+6    Server name~
+7    User name  ~
 + 912
 0    49
 1    Node number~
@@ -1799,6 +1801,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 9    Domain     ~
 10   Server dom.~
 11   FQDN       ~
+12   eMail addr.~
 + 913
 0    30
 1    Type of net~
@@ -1841,27 +1844,35 @@ K (c) '2000 OpenXP Team, www.openxp.de
 26   Unfreeze         ~
 27   GNU-unzipper     ~
 28   Zmodem options   ~
-# UUCP
+# RFC/UUCP
 30   max. UUCP-g packet size  ~
 31   max. UUCP-g window size     ~
-62   maximum file size        ~
-64   Batched SMTP Mode ~
-65   offùSMTP/UUCPùSMTP/Client
+61   maximum file size        ~
+62   Batched SMTP Mode ~
+63   offùSMTP/UUCPùSMTP/Client
 32   variable UUCP-g packet size
-60   force send packet size
-61   7/E/1 login
-33   G protocol
-34   g protocol
-35   Size negotiation
-36   Batched SMTP (UUCP style)
-58   Batched SMTP (Client style)
-57   Client mode (for external Mail/News Clients)
-59   Client call       ~
-63   Additional servers~
-67   Client directory  ~
-37   z protocol
-38   f protocol
-39   e protocol
+38   force send packet size
+39   Size negotiation
+33   g protocol
+34   G protocol
+35   z protocol
+36   f protocol
+37   e protocol
+60   7/E/1 login
+# RFC/Client
+80   Client settings
+81   Server
+82   Comment ~
+83   eMail address
+84   Real name   ~
+85   Reply to    ~
+86   FQDN        ~
+87   Client directory ~
+88   Client call      ~
+89   Additional servers
+90   Login  ~
+91   Password
+92   Phone  ~
 #
 40   UpPack extension ~
 41   DownPack ext.~
@@ -1945,8 +1956,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 16   Reply servers
 17   for News  ~
 18   for Mails ~
-19   replace local copies
-
+19   replace local copies of own messages
+20   'MAILER-DAEMON' as sender at RRQs
 + 925
 1    Net Options
 2    Message IDs
@@ -1974,11 +1985,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   Password  ~
 12   d'Bridge Areafix
 + 927
-1    ^Point,^Modem,^Charges,
-2    ^Names,%sM^isc.
-3    ,^Sysop Mode
+1    ^Point,
+2    ^Modem,
+3    C^harges,
+4    ^Names,
+5    M^isc.
+6    ,^SysopMode
 #
-4    ,^Transfer
+7    ,^Transfer
 + 928
 1    UUCP Configuration
 2    Reply-to address
@@ -3072,9 +3086,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 34 Duplicate MIME types or file extensions not allowed!
 35 Default entry cannot be edited.
 36 Entry must either contain nil or "$CLPATH+" as path specification!
-37 Directory must not be equal to the XP spool directory!
-38 Only RELATIVE path ONE level DIRECTLY below XP directory allowed!
+# The string in the following two lines must not exceed 56 characters:
+37 Path must be RELATIVE and point to a directory ONE level
+38 DIRECTLY below the XP directory!
 39 This path must not be empty!
+40 User name or eMail address required!
 
 +  11000
 1  unknown command

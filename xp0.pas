@@ -584,6 +584,7 @@ type   textp  = ^text;
                   BMtyp     : byte;        { UUCP: Brettmanager-Typ }
                   BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
                   maxfsize  : smallword;   { UUCP: max. Empfangsdateigr”áe / KB }
+                  EB_Daemon : boolean;     { UUCP: "MAILER-DAEMON" }
                 end;
        BoxPtr = ^BoxRec;
 
@@ -1187,6 +1188,33 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.32  2001/06/13 02:10:09  my
+  JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
+          - All vital client settings from Edit/Point, Edit/Names and
+            Edit/RFC/UUCP are summarized under one item Edit/Client now.
+            Superfluous RFC/UUCP settings have been removed (well, more
+            hidden in fact ;)).
+          - introduced simplified entry "eMail address" (rather than composing
+            it of removed entries user name, point name and domain).
+          - new FQDN festures: "@" is replaced with ".", and "_" with "-"
+            automatically. <F2> selection now shows the result of the
+            proposed FQDN rather than a fixed string. Special T-Online FQDN
+            support (".dialin.").
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+          - new unit XP9SEL as unit XP9 exceeded 64K size.
+  JG/MY:- Server type RFC/UUCP:
+          - introduced simplified entry "eMail address". If empty, the entries
+            user name, point name and domain are automatically filled with the
+            appropriate values taken from this eMail address.
+          - re-designed Edit/Point to the "old" stage (removed Client Mode specific
+            stuff). Kept new BSMTP options "SMTP/UUCP" and "SMTP/Client".
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+        - Removed superfluous code in connection with the changes above, updated
+          and cleaned up resource and help files (still a lot to do for the English
+          part).
+
   Revision 1.54.2.31  2001/04/28 15:47:32  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.

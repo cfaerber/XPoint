@@ -369,6 +369,7 @@ var f,f2     : ^file;
     boxfile  : string[12];
     username : string[30];  { eigener Username                    }
     pointname: string[25];
+    email    : string[80];
     sendedat : longint;     { Empfangsdatum                       }
     XP_ID    : string[40];
     XID      : string[40];  { CrossPoint-ID                       }
@@ -437,6 +438,7 @@ var f,f2     : ^file;
     showempfs: shortint;    { fÅr Betreffbox }
     fo       : ^string;
     flags    : longint;
+    force_absender : string;
 
 label xexit,xexit1,xexit2,fromstart,ReadAgain;
 
@@ -828,9 +830,9 @@ end;
     if pm and (adresse[1]=vert_char)
       then adresse:=copy(adresse,2,length(adresse)-3);
     attrtxt(col.coldiarahmen);
-    mwrt(x+70,y+12,' [F2] ');
+    mwrt(x+70,y+14,' [F2] ');
     if not pm and (Netztyp=nt_fido) then y:=y-2;   {Zeile fuer Fidoempf beachten}
-    openmask(x+13,x+13+51+2,y+2,y+2,false);
+    openmask(x+13,x+13+51+2,y+4,y+4,false);
     maskrahmen(0,0,0,0,0);
     maddstring(1,1,'',adresse,52,adrlen,'');
     mappcustomsel(scr_auto_empfsel,false);
@@ -840,7 +842,7 @@ end;
     readmask(brk);
     closemask;
     attrtxt(col.coldiahigh);
-    mwrt(x+13,y+2,' '+forms(adresse,53)+'   ');
+    mwrt(x+13,y+4,' '+forms(adresse,53)+'   ');
     if (adresse<>'') and (cc_testempf(adresse)) then begin
       if (adresse[1]='[') and (adresse[length(adresse)]=']')
         then adresse:=vert_char+adresse+'@V'                 { Verteiler: Namen anpassen }
@@ -856,6 +858,102 @@ end;
     sel_verteiler:=false;
     end;
 
+
+  procedure set_name(var absender:string);
+  begin
+    case ntDomainType(netztyp) of    { s. auch XP4O.CancelMassage! }
+      0 : absender:=username+'@'+iifs(aliaspt,pointname,box)+'.ZER';
+      1 : absender:=username+'@'+iifs(aliaspt,box,pointname);
+      2 : absender:=username+'@'+pointname;
+      3 : absender:=username+'@'+box;
+      4 : absender:=username+'@'+FidoAbsAdr;
+      5 : absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
+      6 : if email<>'' then absender:=email else
+            if email<>'' then absender:=email else
+              absender:=username+'@'+
+               iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
+      7 : absender:=username+'@'+box+';'+pointname;
+      end;
+    if realname <>'' then absender:=absender+'  ('+realname+')'; 
+  end;
+
+  function Samebox:boolean;
+  var i : integer;
+  ss    : string[BoxNameLen];
+  begin
+    ss:=ccm^[iif(verteiler,1,0)].server;
+    Samebox:=true;
+    for i:=1 to cc_anz do
+      if ccm^[i].server<>ss then Samebox:=false;
+  end;
+
+  Procedure changeabs;                         {Absender der Mail aendern}
+  var yy:byte;
+      s : string;
+  label again;
+
+    procedure Set_Box_Selection;
+    var s1: string[adrlen];
+        orgbox: string[boxnamelen];
+        orgnt : byte;
+    begin
+      orgbox:=box;
+      orgNT:=netztyp;
+      dbOpen(d,BoxenFile,1);
+      repeat
+        dbread(d,'boxname',box); 
+        loadboxdata;
+        if ntAdrCompatible(orgnt,netztyp)
+        then begin 
+          set_name(s1);
+          mappsel(false,s1);          
+          end;
+        dbnext(d);
+      until dbeof(d);
+      box:=orgbox;
+      dbSeek(d,boiName,ustr(orgbox));
+      loadBoxData; 
+      dbclose(d);
+    end;
+
+  begin
+    if not samebox then
+    begin
+      errsound;
+      exit;
+      end;
+    yy:=y;
+    if not pm and (Netztyp=nt_fido) then yy:=yy-2;   {Zeile fuer Fidoempf beachten}
+  again:    
+    s:=force_absender;
+    openmask(x+13,x+13+51+2,yy+2,yy+2,false);
+    maskrahmen(0,0,0,0,0);
+    maddstring(1,1,'',force_absender,52,adrlen,'');
+    set_box_selection;
+    readmask(brk);
+    closemask; 
+    if brk then force_absender:=s
+    else begin 
+      if force_absender='' then goto again;  
+      testmailstring_nt:=netztyp;
+      s:=(left(force_absender,cposx(' ',force_absender)-1));
+      if cpos('@',s)=0 then begin
+        dbOpen(d,PseudoFile,1);
+        dbSeek(d,piKurzname,ustr(s));
+        if dbFound
+         then dbRead(d,'Langname',s)
+         else s:='@\';
+        dbclose(d);
+        end;
+      if not testmailstring(s) then goto again;
+      force_absender:=s+'  '+mid(force_absender,cposx('(',force_absender));
+      if cpos('(',force_Absender)=0 then force_absender:=s+'  ('+realname+')';
+      end;
+    attrtxt(col.coldiahigh);
+    mwrt(x+13,yy+2,' '+forms(force_absender,53)+'   ');
+   end;
+
+
 { ausgelagert, weil Prozedurrumpf zu gro·: }
 
 procedure DisplaySendbox;
@@ -865,9 +963,10 @@ var
 begin
   echomail:=ntEditBrettempf(netztyp) and not pm;
   fadd:=iif(echomail,2,0);
-  diabox(78,13+fadd,typ,x,y);
+  diabox(78,15+fadd,typ,x,y);
   moff;
-  wrt(x+3,y+2,getres2(611,10)+ch);   { 'EmpfÑnger ' }
+  wrt(x+3,y+2,getres2(441,6)+ch);    { 'Absender ' }
+  wrt(x+3,y+4,getres2(611,10)+ch);   { 'EmpfÑnger ' }
 
   ToStr := getres2(611,11); { '^An' }
   ToPos := cpos('^', ToStr);
@@ -875,36 +974,37 @@ begin
   Delete(ToStr, ToPos, 1);
 
   if echomail then begin
-    wrt(x+3,y+4, ToStr);    { 'An' }
+    wrt(x+3,y+6, ToStr);    { 'An' }
     inc(y,2);
     end;
-  wrt(x+3,y+4,getres2(611,12));      { 'Betreff' }
-  wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
-  wrt(x+3,y+8,getres2(611,14));      { 'Grî·e'   }
-  wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
+  wrt(x+3,y+6,getres2(611,12));      { 'Betreff' }
+  wrt(x+3,y+8,getres2(611,13));      { 'Server'  }
+  wrt(x+3,y+10,getres2(611,14));      { 'Grî·e'   }
+  wrt(x+42,y+8,getres2(611,15));     { 'Code:'   }
   showcode;
   attrtxt(col.coldialog);
-  wrt(x+43,y+8,mid(getres2(611,16),2));    { 'opien:' }
+  wrt(x+43,y+10,mid(getres2(611,16),2));    { 'opien:' }
   showcc;
   attrtxt(col.coldiahigh);
   kopkey:=left(getres2(611,16),1);
-  wrt(x+42,y+8,kopkey);
+  wrt(x+42,y+10,kopkey);
   if empfaenger[1]=vert_char then
-    wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
+    wrt(x+14,y+4-fadd,vert_name(copy(empfaenger,edis,52)))
   else
-    wrt(x+14,y+2-fadd,left(uucpbrett(empfaenger,edis),52));
+    wrt(x+14,y+4-fadd,left(uucpbrett(empfaenger,edis),52));
 
   pgpkey:=getres2(611,50);
   if pgpkey='^' then pgpkey:=chr(ord(lastchar(getres2(611,50)))-64);
 
   if echomail then
   begin
-    wrt(x+2+ToPos,y+2,fidokey);            { 'A' }
-    wrt(x+14,y+2,fidoto);
+    wrt(x+2+ToPos,y+4,fidokey);            { 'A' }
+    wrt(x+14,y+4,fidoto);
   end;
   showbetreff;
   showbox;
   showsize;
+  showabsender;
   mon;
   senden:=-1;
   n:=1;                                { SendBox-Abfrage }
@@ -1135,6 +1235,7 @@ begin
 end;
 
 begin      {-------- of DoSend ---------}
+  force_absender:='';
   DoSendInit1;
   {$IFDEF BP }
   if memavail<20000 then
@@ -1303,6 +1404,7 @@ fromstart:
 
   if sendbox then
   repeat
+    set_name(force_absender);
     DisplaySendbox;                         { SendBox aufbauen }
     repeat
       if pm then intern:=false
@@ -1311,7 +1413,7 @@ fromstart:
       if spezial then begin
         spezial:=false;
         attrtxt(col.coldialog);
-        mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 67 -> 76 f. ZurÅck }
+        mwrt(x+1,y+13,sp(76)); { 05.02.2000 MH: 67 -> 76 f. ZurÅck }
       end;
     ReadAgain:
       n:=1;
@@ -1326,7 +1428,7 @@ fromstart:
         end;
         repeat
           t:='*';
-          n:=readbutton(x+3,y+11,1,sendbutt,
+          n:=readbutton(x+3,y+13,1,sendbutt,
                         abs(n),true,t);
         until (n>=0) or ((t<>mausmoved) and (t<>mauslmoved));
         case netztyp of
@@ -1354,7 +1456,7 @@ fromstart:
       end else begin
         repeat
           t:='*';
-          n:=readbutton(x+3,y+11,1,getres2(611,28)+
+          n:=readbutton(x+3,y+13,1,getres2(611,28)+
                iifs(binary or (sendflags and sendWAB<>0),'',getres2(611,29)),
                         abs(n),true,t);
            { ' ^Ja ,^Nein,^Intern,^Spezial,˘2^Betreff,B^ox,^Code' ',^Text' }
@@ -1362,7 +1464,7 @@ fromstart:
         if n=4 then begin
           spezial:=true;
           attrtxt(col.coldialog);
-          mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 68 -> 76 f. ZurÅck }
+          mwrt(x+1,y+13,sp(76)); { 05.02.2000 MH: 68 -> 76 f. ZurÅck }
           goto ReadAgain;
           end;
 
@@ -1409,7 +1511,7 @@ fromstart:
                 rfehler(610)   { 'Betreff kann nicht geÑndert werden' }
               else begin
                 { neuer Betreff }
-                readstring(x+13,y+4,'',betreff,min(betrlen,52),betrlen,'',brk);
+                readstring(x+13,y+6,'',betreff,min(betrlen,52),betrlen,'',brk);
                 betreff:=trim(betreff);
                 if umlauttest(betreff) then;
                 showbetreff;
@@ -1445,6 +1547,8 @@ fromstart:
                       showbox;
                       if netztyp<>nt_Fido then
                         flCrash:=false;
+                      set_name(force_absender);
+                      showabsender;
                       end;
                   dbClose(d);
                   end;
@@ -1523,6 +1627,9 @@ fromstart:
 
       else    if n<0 then begin
                 n:=abs(n);
+
+                if t=keyaltA then changeabs; { Absender aendern }
+
                 if ustr(t)=kopkey then begin
                   old_cca:=cc_anz;
                   sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }
@@ -1575,6 +1682,8 @@ fromstart:
       2 : intern:=true;
     end;
     end;
+
+  if not samebox then force_absender:='';
 
   if pm then fidoto:=''
   else
@@ -1716,8 +1825,9 @@ fromstart:
       4 : hdp^.absender:=username+'@'+FidoAbsAdr;
       5 : hdp^.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
       6 : begin
-            hdp^.absender:=username+'@'+
-	      iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
+            if email<>'' then hdp^.absender:=email else 
+              hdp^.absender:=username+'@'+
+               iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
             hdp^.real_box:=box;
           end;
       7 : begin
@@ -1725,7 +1835,18 @@ fromstart:
             hdp^.real_box:=box;
           end;
     end;
-    hdp^.realname:=realname;
+    if (force_absender='') or (hdp^.absender=force_absender)
+      then hdp^.realname:=realname
+    else begin 
+       hdp^.absender:=(left(force_absender,cposx(' ',force_absender)-1));
+       n:=cpos('(',force_absender);
+       if n>0 then begin
+         force_absender:=mid(force_absender,n+1);
+         n:=cposx(')',force_absender);
+         hdp^.realname:=left(force_absender,n-1);
+         end;
+       end;
+
     if (sendFlags and sendWAB<>0) and ntAdrCompatible(sData^.onetztyp,netztyp)
     then begin
       hdp^.wab:=hdp^.absender; hdp^.war:=hdp^.realname;
@@ -1798,7 +1919,7 @@ fromstart:
     hdp^.attrib:=iif(pm and flEB,attrReqEB,0);
     if IsEbest then with hdp^ do begin
       attrib := attrib and (not attrReqEB) + attrIsEB;
-      if netztyp=nt_UUCP then begin
+      if (netztyp=nt_UUCP) and boxpar^.EB_Daemon then begin
         if pmReplyTo='' then pmReplyTo:=absender;
         absender:='MAILER-DAEMON'+mid(absender,cpos('@',absender));
         if (realname<>'') and (length(realname)<=31) then begin
@@ -2249,6 +2370,33 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.30  2001/06/13 02:10:09  my
+  JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
+          - All vital client settings from Edit/Point, Edit/Names and
+            Edit/RFC/UUCP are summarized under one item Edit/Client now.
+            Superfluous RFC/UUCP settings have been removed (well, more
+            hidden in fact ;)).
+          - introduced simplified entry "eMail address" (rather than composing
+            it of removed entries user name, point name and domain).
+          - new FQDN festures: "@" is replaced with ".", and "_" with "-"
+            automatically. <F2> selection now shows the result of the
+            proposed FQDN rather than a fixed string. Special T-Online FQDN
+            support (".dialin.").
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+          - new unit XP9SEL as unit XP9 exceeded 64K size.
+  JG/MY:- Server type RFC/UUCP:
+          - introduced simplified entry "eMail address". If empty, the entries
+            user name, point name and domain are automatically filled with the
+            appropriate values taken from this eMail address.
+          - re-designed Edit/Point to the "old" stage (removed Client Mode specific
+            stuff). Kept new BSMTP options "SMTP/UUCP" and "SMTP/Client".
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+        - Removed superfluous code in connection with the changes above, updated
+          and cleaned up resource and help files (still a lot to do for the English
+          part).
+
   Revision 1.39.2.29  2001/06/05 20:33:50  my
   JG:- Fix (DoSend): clear list of CC recipients after rfehler(606)
        ("Internal newsgroup - writing not allowed!"). Ancient bug

@@ -6213,16 +6213,19 @@ supported.
 660
 Enter the Network type for this Server:
 
-<<RFC/UUCP>>    for UseNet, SubNet etc.
+<<RFC/Client>>  eMail (Internet) and News (Usenet) via
+            third party Mail/News clients
 
-<<Fido>>        for Fido and compatible Nets
-
-<<QWK>>         makes XP into a QWK Offline Reader
+<<RFC/UUCP>>    eMail (Internet) and News (Usenet)
+            via UUCP
 
 <<ZConnect>>    new Z-Netz format and compatibles
 
-<<Z-Netz>>      old Z-Netz and ComLink
+<<Fido>>        for FidoNet and compatible Nets
 
+<<QWK>>         for Servers with QWK interface
+
+<<Z-Netz>>      old Z-Netz and ComLink
 @
 670
 Enter the name of the group which is to be accepted
@@ -6239,6 +6242,8 @@ Servers <<and>> change your main Server later.
 The Net Name is the short form of the Server name, as
 it appears in your User name.
 
+For <<RFC/Client>> Servers, you can use any name.
+
 In Fido, enter the Node address of your BossNode, in
 the form Zone:Net/Node.
 @
@@ -6247,11 +6252,19 @@ Enter the type of Network your main Server belongs
 to. You can press <F2> to call up a pick-list to
 select from. Possible entries are:
 
-<<RFC/UUCP>>    UseNet
-<<Fido>>        Fido and compatible Networks
-<<QWK>>         QWK Network
-<<ZConnect>>    ZERBERUS-5.0 systems
-<<Z-Netz>>      Z-Netz or ComLink
+<<RFC/Client>>  eMail (Internet) and News (Usenet) via
+            third party Mail/News clients
+
+<<RFC/UUCP>>    eMail (Internet) and News (Usenet)
+            via UUCP
+
+<<ZConnect>>    new Z-Netz format and compatibles
+
+<<Fido>>        for Fido and compatible Nets
+
+<<QWK>>         for Servers with QWK interface
+
+<<Z-Netz>>      old Z-Netz and ComLink
 @
 682
 Your Username for this Server. This will usually be

@@ -93,7 +93,7 @@ begin
   with bp^ do begin
     passwort  := iifs(deutsch,'GEHEIM','SECRET');
     areapw    := iifs(deutsch,'GEHEIM','SECRET');
-    telefon   := '011-91';
+    telefon   := '';
     zerbid    := '0000';
     uploader  := 'Zmodem';
     downloader:= 'Zmodem';
@@ -145,16 +145,17 @@ begin
     UUsmtp:=false;
     ClientSmtp := false;
     PPPMode := false;
-    PPPClient := '';
-    PPPSpool := '';
     PPPClientPath := '';
+    PPPClient := '';
     PPPAddServers := '';
-    ReplaceOwn := false;
+    PPPSpool := '';
     UUprotos:='Ggz';
     efilter:='';
     afilter:='';
     SysopNetcall:=true;
     SysopPack:=false;
+    ReplaceOwn := false;
+    EB_Daemon:=false;
     PacketPW:=false;
     ExtPFiles:=false;
     uucp7e1:=false;
@@ -162,7 +163,7 @@ begin
     BMtyp:=bm_changesys;
     BMdomain:=false;
     maxfsize:=0;
-  end;
+    end;
   nt_bpar(nt,bp^);
 end;
 
@@ -284,16 +285,17 @@ begin
             getx(su,  'UU-SMTP-Client', ClientSmtp) or
             gets(s,su,'UU-SMTP-OneFilePerMsg',dummys,1) or
             getx(su,  'Client-Mode', PPPMode) or
-            gets(s,su,'Client-Exec', PPPClient, 60) or
-            gets(s,su,'Client-Spool', PPPSpool, 60) or
             gets(s,su,'Client-Path', PPPClientPath, 60) or
+            gets(s,su,'Client-Exec', PPPClient, 60) or
             gets(s,su,'Client-AddServers', PPPAddServers, 60) or
-            getx(su,  'ReplaceOwn', ReplaceOwn) or
+            gets(s,su,'Client-Spool', PPPSpool, 60) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
             gets(s,su,'Ausgangsfilter',aFilter,60) or
             getx(su,  'SysopNetcall',sysopnetcall) or
             getx(su,  'SysopPacken',sysoppack) or
+            getx(su,  'ReplaceOwn', ReplaceOwn) or
+            getx(su,  'Mailer-Daemon', EB_Daemon ) or
             gets(s,su,'NetcallScript',script,50) or
             gets(s,su,'OnlineScript',o_script,50) or
             getx(su,  'Brettmails',brettmails) or
@@ -309,7 +311,7 @@ begin
           begin
             window(1,1,80,25);
             trfehler1(901,left(s,35),30);   { 'UngÅltige Box-Config-Angabe: %s' }
-          end;
+            end;
           end;
         end;
     close(t);
@@ -402,6 +404,8 @@ begin
     writeln(t,'Ausgangsfilter=',aFilter);
     writeln(t,'SysopNetcall=',jnf(sysopnetcall));
     writeln(t,'SysopPacken=',jnf(sysoppack));
+    writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
+    writeln(t,'Mailer-Daemon=', jnf(EB_Daemon));
     writeln(t);
     writeln(t,'FidoFakenet=',fpointnet);
     writeln(t,'Fido4Dadr=',jnf(f4d));
@@ -432,14 +436,13 @@ begin
     writeln(t,'Client-Mode=', Jnf(PPPMode));
     writeln(t,'Client-Path=', PPPClientPath);
     writeln(t,'Client-Exec=', PPPClient);
-    writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
+    writeln(t,'Client-AddServers=', PPPAddServers);
     if PPPMode then
     begin
+      writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
       MkLongDir(OwnPath + XFerDir + Dateiname, Res);
       if IOResult = 0 then ;
-    end;
-    writeln(t,'Client-AddServers=', PPPAddServers);
-    writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
+      end;
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
     if maxfsize>0 then writeln(t,'MaxFileSize=',maxfsize);
     writeln(t,'BrettmanagerTyp=',BMtyp);
@@ -560,6 +563,33 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.14  2001/06/13 02:10:09  my
+  JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
+          - All vital client settings from Edit/Point, Edit/Names and
+            Edit/RFC/UUCP are summarized under one item Edit/Client now.
+            Superfluous RFC/UUCP settings have been removed (well, more
+            hidden in fact ;)).
+          - introduced simplified entry "eMail address" (rather than composing
+            it of removed entries user name, point name and domain).
+          - new FQDN festures: "@" is replaced with ".", and "_" with "-"
+            automatically. <F2> selection now shows the result of the
+            proposed FQDN rather than a fixed string. Special T-Online FQDN
+            support (".dialin.").
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+          - new unit XP9SEL as unit XP9 exceeded 64K size.
+  JG/MY:- Server type RFC/UUCP:
+          - introduced simplified entry "eMail address". If empty, the entries
+            user name, point name and domain are automatically filled with the
+            appropriate values taken from this eMail address.
+          - re-designed Edit/Point to the "old" stage (removed Client Mode specific
+            stuff). Kept new BSMTP options "SMTP/UUCP" and "SMTP/Client".
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+        - Removed superfluous code in connection with the changes above, updated
+          and cleaned up resource and help files (still a lot to do for the English
+          part).
+
   Revision 1.10.2.13  2001/05/30 07:32:07  mk
   - Fenster vor Fehlermeldung restaurieren
 

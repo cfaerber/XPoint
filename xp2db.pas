@@ -231,6 +231,17 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
+  { Feld 'Email' in Boxendatei einfÅgen }
+  procedure NewFieldemail;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='Email'; ftyp:=dbTypeString;
+      fsize:=80;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
   { Feld 'FQDN' in Boxendatei einfÅgen }  {16.01.00 HS: fÅr Message-IDs}
   procedure NewFieldFQDN;
   var fld : dbFeldTyp;
@@ -679,7 +690,7 @@ begin
     end;
 
   if not exist(BoxenFile+dbExt) then begin       { BOXEN: Pollbox-Liste }
-    initflp(16);  {16.01.00 HS: Erweitert um 1 fÅr neues Feld}
+    initflp(17);  {16.01.00 HS: Erweitert um 1 fÅr neues Feld}
     AppS('Boxname',20);
     AppS('Username',30);
     AppS('Kommentar',30);
@@ -691,6 +702,7 @@ begin
     AppS('Pointname',25);
     AppS('Domain',60);
     AppS('FQDN',60);  {16.01.00 HS: fÅr Message-IDs}
+    AppS('EMail',80);
     AppS('Fidoname',40);
     AppS('ReplyTo',80);
     AppS('AVertreter',20);
@@ -710,6 +722,8 @@ begin
       NewFieldDomain;
     if not dbHasField(BoxenFile,'FQDN') then  {16.01.00 HS: fÅr Message-IDs}
       NewFieldFQDN;
+    if not dbHasField(BoxenFile,'Email') then  {fÅr schnelle EMail-Adresse}
+      NewFieldEmail;
     if not dbHasField(BoxenFile,'Fidoname') then
       NewFieldFidoname;
     if not dbHasField(BoxenFile,'ReplyTo') then
@@ -878,6 +892,33 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.4  2001/06/13 02:10:09  my
+  JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
+          - All vital client settings from Edit/Point, Edit/Names and
+            Edit/RFC/UUCP are summarized under one item Edit/Client now.
+            Superfluous RFC/UUCP settings have been removed (well, more
+            hidden in fact ;)).
+          - introduced simplified entry "eMail address" (rather than composing
+            it of removed entries user name, point name and domain).
+          - new FQDN festures: "@" is replaced with ".", and "_" with "-"
+            automatically. <F2> selection now shows the result of the
+            proposed FQDN rather than a fixed string. Special T-Online FQDN
+            support (".dialin.").
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+          - new unit XP9SEL as unit XP9 exceeded 64K size.
+  JG/MY:- Server type RFC/UUCP:
+          - introduced simplified entry "eMail address". If empty, the entries
+            user name, point name and domain are automatically filled with the
+            appropriate values taken from this eMail address.
+          - re-designed Edit/Point to the "old" stage (removed Client Mode specific
+            stuff). Kept new BSMTP options "SMTP/UUCP" and "SMTP/Client".
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+        - Removed superfluous code in connection with the changes above, updated
+          and cleaned up resource and help files (still a lot to do for the English
+          part).
+
   Revision 1.12.2.3  2000/12/31 11:35:54  mk
   - fileio.disksize statt lfn.disksize benutzen
 

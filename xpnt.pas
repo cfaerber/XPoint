@@ -33,6 +33,7 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_Fido      = 30;
        nt_QWK       = 31;
        nt_UUCP      = 40;
+       nt_UUCP_C    = 41;        { fuer RFC/Client-Modus Auswahl, kein echter Netztyp } 
 
        ltNetcall    = 0;         { Login/Transfer-Typen }
        ltZConnect   = 2;         { XRef: XP7            }
@@ -426,6 +427,7 @@ begin
     nt_Fido     : ntName:='Fido';
     nt_QWK      : ntName:='QWK';
     nt_UUCP     : ntName:='RFC/UUCP';
+    nt_UUCP_C   : ntName:='RFC/Client';
   else
     ntName:='???';
   end;
@@ -753,6 +755,33 @@ begin
 end.
 {
   $Log$
+  Revision 1.9.2.3  2001/06/13 02:10:10  my
+  JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
+          - All vital client settings from Edit/Point, Edit/Names and
+            Edit/RFC/UUCP are summarized under one item Edit/Client now.
+            Superfluous RFC/UUCP settings have been removed (well, more
+            hidden in fact ;)).
+          - introduced simplified entry "eMail address" (rather than composing
+            it of removed entries user name, point name and domain).
+          - new FQDN festures: "@" is replaced with ".", and "_" with "-"
+            automatically. <F2> selection now shows the result of the
+            proposed FQDN rather than a fixed string. Special T-Online FQDN
+            support (".dialin.").
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+          - new unit XP9SEL as unit XP9 exceeded 64K size.
+  JG/MY:- Server type RFC/UUCP:
+          - introduced simplified entry "eMail address". If empty, the entries
+            user name, point name and domain are automatically filled with the
+            appropriate values taken from this eMail address.
+          - re-designed Edit/Point to the "old" stage (removed Client Mode specific
+            stuff). Kept new BSMTP options "SMTP/UUCP" and "SMTP/Client".
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+        - Removed superfluous code in connection with the changes above, updated
+          and cleaned up resource and help files (still a lot to do for the English
+          part).
+
   Revision 1.9.2.2  2001/04/28 15:47:37  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.

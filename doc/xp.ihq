@@ -3500,14 +3500,14 @@ Zweifelsfall fragen Sie bitte den Systembetreiber.
              Der Batched-SMTP-Modus "[SMTP/Client]"@8018
 
     <<Hinweis>>: Generell sollten Sie externe Clients
-             jedoch ber den [Client-Modus] einbinden,@8026
-             der hierfr eine wesentlich einfachere,
-             flexiblere und leistungsf„higere
-             M”glichkeit bietet. Der Sysop-Modus ist
-             hierfr eigentlich nicht vorgesehen und
-             nur mit diversen Tricks (oder 'Hacks')
-             dazu zu bewegen, externe Clients korrekt
-             einzubinden und auszufhren.
+             jedoch ber den Netztyp [RFC/Client] ein-@30100
+             binden, der hierfr eine wesentlich ein-
+             fachere, flexiblere und leistungsf„hige-
+             re M”glichkeit bietet. Der Sysop-Modus
+             ist hierfr eigentlich nicht vorgesehen
+             und daher nur mit diversen Tricks (oder
+             'Hacks') dazu zu bewegen, mit externen
+             Clients korrekt zu kooperieren.
 
 
 Die Unterschiede zwischen den einzelnen SMTP-Modi
@@ -3697,605 +3697,6 @@ Diese Einstellung funktioniert nur bei Servern, die
 "size negotiation" untersttzen. Dies erkennen Sie
 daran, daá beim Empfangen von Dateien deren Gr”áe
 angezeigt wird.
-@
-8026
-Mit diesem Schalter wird der "<<Client-Modus>>" aktiviert
-bzw. deaktiviert. Der Client-Modus ist eine flexible
-und universelle Schnittstelle zur Durchfhrung von
-Netcalls mit beliebigen externen Mail- und News-
-Clients, die ihrerseits beliebige Verbindungs- und
-šbertragungsprotokolle verwenden k”nnen.
-
-<<[ ]>> -> Client-Modus ist deaktiviert. XP fhrt
-       einen Direktanruf bei einem UUCP-Server unter
-       Bercksichtigung der Einstellungen im oberen
-       Teil dieses Konfigurationsdialogs durch.
-
-<<[x]>> -> Client-Modus ist aktiviert. Statt einen
-       Direktanruf bei einem UUCP-Server durchzu-
-       fhren, startet XP das unter "<<Client-Aufruf>>"
-       eingetragene externe Programm. Die UUCP-spezi-
-       fischen Einstellungen im oberen Teil dieses
-       Dialogs werden von XP ignoriert - auáer dem
-       "Pointnamen", der fr die Bildung der eigenen
-       Internet-Adresse von Bedeutung ist.
-
-Bitte achten Sie darauf, daá der <<Sysop-Mode deakti->>
-<<viert>> sein muá, wenn Sie den Client-Modus verwenden
-wollen (bei Eingangs- und Ausgangsverzeichnis darf
-im Sysop-Mode nichts eingetragen sein)!
-
-Bei aktiviertem Client-Modus bergibt CrossPoint die
-Kontrolle eines Netcalls nach dem Konvertieren des
-Ausgangspuffers bis zum Einlesen des Eingangspuffers
-vollst„ndig an das externe Programm. Das bedeutet,
-daá der externe Client fr Verbindungsaufbau, Nach-
-richtenaustausch und Verbindungsabbau ausschlieálich
-selbst zust„ndig ist.
-
-Voraussetzung fr eine funktionierende Kooperation
-zwischen CrossPoint und dem externen Mail-Client ist,
-daá der Client Nachrichten im <<SMTP-Mailformat>> verar-
-beiten und erzeugen kann. N„heres zu Nachrichten-
-formaten siehe UUCP.TXT.
-
-M”glicherweise wertet der von Ihnen eingesetzte
-Client (und/oder ein speziell fr CrossPoint/OpenXP
-und diesen Client entwickelter "<<Client-Kit>>") auto-
-matisch eine Reihe von Box-Parametern wie Paáwort,
-Telefon, Login oder Modem-Einstellungen aus. N„heres
-entnehmen Sie bitte der Dokumentation des Clients
-bzw. des Client-Kits.
-
-Weitere Detail-Informationen zum Client-Modus (wie
-zum genauen Ablauf eines Netcalls, der Arbeitsweise
-des Nachrichtenkonvertierers UUZ usw.) finden Sie in
-XPCLIENT.TXT sowie hier:
-
-[Client-Modus: Netcall-Ablauf und weitere Details]@8043
-
-@
-8027
-Geben Sie hier den <<relativen>> Pfad vom XP-Verzeichnis
-zu dem Verzeichnis an, in dem der Client installiert
-ist, oder w„hlen Sie mit <<<F2> >>einen der vorbereiteten
-Eintr„ge aus. Der Client <<muá>> in einem beliebigen Ver-
-zeichnis unmittelbar unterhalb des XP-Verzeichnisses
-installiert sein.
-
-Beispiel: Wenn Ihr Client im Verzeichnis CLIENT
-installiert ist, das sich unmittelbar unterhalb des
-XP-Verzeichnisses befindet, geben Sie hier an:
-
-<<CLIENT\>>  oder
-<<.\CLIENT\>>
-
-Absolute Pfadangaben, mehrere Verzeichnisebenen,
-Laufwerksbuchstaben oder Pfade oberhalb des XP-
-Verzeichnisses werden in diesem Eingabefeld nicht
-akzeptiert. Sie k”nnen auch nicht das XP-Verzeichnis
-selbst angeben oder das Feld gar ganz leer lassen.
-Der Backslash am Ende des Pfades ist obligatorisch,
-wird aber automatisch erg„nzt, wenn er fehlt.
-
-Diese Pfadangabe ist u.a. fr den internen Brett-
-manager wichtig, weil XP in dem hier angegebenen
-Verzeichnis die Listen der vorhandenen (<Box>.BL)
-und der bestellten Newsgroups (<Box>.RC) erwartet.
-
-Wenn das Verzeichnis noch nicht existiert, k”nnen Sie
-es von XP automatisch anlegen lassen. Es kann auáer-
-dem ber das Makro <<$CLPATH>> beim [Client-Aufruf] dem@8028
-auszufhrenden Programm als Parameter und/oder als
-Pfad zum auszufhrenden Programm bergeben werden.
-
-@
-8028
-Tragen Sie hier das Programm ein, das CrossPoint bei
-einem Netcall im Client-Modus ausfhren soll. Fr
-einige g„ngige Clients bzw. Client-Kits k”nnen Sie
-mit <<<F2> >>einen der vorbereiteten Eintr„ge ausw„hlen.
-
-Das hier eingetragene Programm bernimmt nach der
-ZC->RFC-Konvertierung der ausgehenden Nachrichten
-durch XP (UUZ) die vollst„ndige Kontrolle ber den
-Netcall und ist somit fr Anwahl, Nachrichtentrans-
-port und Abwahl alleine zust„ndig. Nachdem sich das
-Programm beendet hat, bernimmt XP die RFC->ZC-Kon-
-vertierung und liest die Nachrichten ein.
-
-Bei Clients, die aus mehreren ausfhrbaren Dateien
-(z.B. fr Anwahl/Abwahl, Mail- und News-Transport)
-bestehen, wird hier die Angabe einer Batch- oder
-Scriptdatei sinnvoll sein, die die einzelnen Auf-
-gaben hintereinander ausfhrt.
-
-Fr Clients, die ber eine einzige ausfhrbare EXE-
-Datei gestartet werden, kann diese auch direkt ange-
-geben werden.
-
-Fr Batches oder Scripts, die im XP-Verzeichnis
-liegen, geben Sie keinen Programmpfad an. Sollten
-diese jedoch im [Client-Verzeichnis] liegen (oder Sie@8027
-einen aus einer einzigen EXE-Datei bestehenden Client
-einsetzen), k”nnen (mssen!) Sie hier den Pfad zur
-Programmdatei angeben, indem Sie dieser das Makro
-<<$CLPATH>> mit dem Zeichen "<<+>>" voranstellen:
-
-<<$CLPATH+CLIENT.EXE /Option1 /Option2
-
-Eine andere Pfadangabe als keine oder "$CLPATH+" wird
-nicht akzeptiert.
-
-Dem Client-Aufruf k”nnen beliebige Parameter ber-
-geben werden. Hierfr stehen Ihnen folgende Makros
-zur Verfgung, die z.B. in Batchdateien oder Scripts
-weiterverarbeitet werden k”nnen:
-
-<<$CLPATH>> - der unter "Client-Verzeichnis" definierte
-          relative Pfad zu dem Verzeichnis, in dem
-          der externe Client installiert ist.
-
-<<$CONFIG>> - Der Name der Serverbox in XP, wie er von XP
-          als <Box>.BFG im XP-Verzeichnis abgelegt
-          wurde, also ggf. auf 8 Zeichen gekrzt
-          und/oder bei mehreren Boxen mit identisch
-          beginnenden Namen mit einer Numerierung in
-          den beiden letzten Stellen versehen (z.B.
-          T-ONLI01.BFG). Die Dateierweiterung ".BFG"
-          wird *nicht* mit bergeben.
-
-CrossPoint kann nicht berprfen, ob Ihre Eingaben an
-dieser Stelle korrekt und sinnvoll sind - dafr ms-
-sen Sie selbst sorgen. Wenn Sie hier ein Programm
-eintragen, das Ihren Drucker sprengt, dann werden Sie
-nach dem n„chsten Netcall eben ohne Drucker dastehen.
-<<;-)>>
-
-Weitere Hinweise u.a. zum Ablauf eines Netcalls im
-Detail finden Sie in XPCLIENT.TXT sowie hier:
-
-[Client-Modus: Netcall-Ablauf und weitere Details]@8043
-
-
-<<Hinweise fr Windows-GUI-Clients
-
-Sollten Sie XP unter Windows 9x/ME/2000/NT betreiben
-und einen Windows-Client mit einer graphischen Ober-
-fl„che einsetzen, werden Sie m”glicherweise auf ein
-Problem stoáen, wenn Sie diesen direkt ber seine
-EXE-Datei von XP ausfhren lassen:
-
-XP wird den Client zwar starten, allerdings in einem
-anderen "Task" (vereinfacht ausgedrckt: in einem
-zweiten Fenster). Da die beiden Prozesse "XP" und
-"Client" v”llig unabh„ngig voneinander agieren, wird
-XP nicht darauf warten, bis der Client seine Arbeit
-verrichtet hat und den Netcall wieder sehr schnell
-beenden, w„hrend der Client vielleicht noch nicht
-einmal die Verbindung hergestellt hat. Im Ergebnis
-werden also weder Ihre Nachrichten versandt noch
-die vom Client geholten Nachrichten in CrossPoint
-eingelesen werden.
-
-Um diesen unerwnschten Effekt zu vermeiden, mssen
-Sie dem Client-Aufruf bei solchen Clients den Befehl
-"<<start /w>>" (bzw. "<<start /wait>>") voranstellen. Dieser
-Befehl bewirkt, daá das aufgerufene Programm (der
-Client) das aufrufende Programm (XP) solange anh„lt,
-bis das aufgerufene Programm mit seiner Arbeit fertig
-ist und sich beendet hat.
-
-Soweit die Regel. Es ist aber schon von F„llen
-berichtet worden (z.B. unter Windows 2000), bei denen
-die Angabe von "<<start /w>>" nicht nur nicht n”tig,
-sondern aus bisher unerfindlichen Grnden auch gar
-nicht m”glich war. Teilweise kann der <<start>>-Befehl
-also offensichtlich auch weggelassen werden, im
-Zweifel hilft nur Ausprobieren.
-
-Die Angabe von "<<start /w>>" ist *nicht* erforderlich
-fr Windows-Clients, die keine graphische Oberfl„che
-haben, sondern in der sog. "Console" laufen und des-
-halb so aussehen wie ein DOS-Programm. Solche Clients
-laufen automatisch im XP-Fenster und blockieren XP
-solange, bis sie ihre Arbeit beendet haben.
-
-@
-8029
-(Diese Funktion ist noch nicht implementiert, aber
-man kann schon mal lesen, wie es werden soll.)  :-)
-
-Wenn Sie bei einem Netcall dieser Serverbox Nachrich-
-ten weiterer in XP eingerichteter Boxen mitsenden
-und/oder empfangen wollen, tragen Sie hier die Namen
-der jeweiligen Boxen mit einem Leerzeichen getrennt
-ein.
-
-Achten Sie bei der Eingabe darauf, genau den Namen
-zu verwenden, der der Box-Konfigurationsdatei
-<Box>.BFG der jeweiligen Box entspricht (im Zweifel
-drcken Sie <<<F9> >>und fhren im XP-Verzeichnis den
-DOS-Befehl "dir *.bfg" aus, um die vorhandenen BFG-
-Dateien sehen zu k”nnen).
-
-CrossPoint wird dann zu Beginn eines Netcalls im
-Client-Modus die ausgehenden Nachrichten der hier
-eingetragenen Box(en) *zus„tzlich* zu denen der
-"Pollbox" konvertieren und in dem/den Spool-Verzeich-
-nis(sen) der jeweiligen Box(en) ablegen.
-
-Entsprechend werden am Ende eines Netcalls etwaig
-eingegangene Nachrichten aus dem/den Spool-Verzeich-
-nis(sen) der hier eingetragenen Box(en) jeweils in
-einen ZConnect-Puffer konvertiert und in XP einge-
-lesen.
-
-Was zwischen diesen beiden Schritten passiert (und
-ob berhaupt etwas passiert) ist alleine Sache des
-externen Clients. Wenn Sie z.B. feststellen sollten,
-daá Ihr Client die ausgehenden Nachrichten der zu-
-s„tzlich eingetragenen Boxen nicht versendet, ist
-dies eine Fehlkonfiguration, Fehlfunktion oder auch
-eine Inkompatibilit„t des verwendeten Clients mit
-dem Client-Konzept von CrossPoint/OpenXP. In diesem
-Fall wenden Sie sich an den Autor des jeweiligen
-Clients oder auch an den OpenXP-Support - vielleicht
-gibt es eine einfache L”sung (oder auch die Antwort,
-daá es leider keine L”sung gibt).
-
-Bitte wundern Sie sich nicht, wenn der Nachrichten-
-konvertierer UUZ im "Multiboxbetrieb" sowohl zu
-Beginn als auch am Ende eines Netcalls mehrmals
-hintereinander aufgerufen wird - das ist v”llig
-normal und muá so sein. :-)
-
-@
-8043
-<<Client-Modus: Netcall-Ablauf und weitere Details
-
-Hier finden Sie einige weiterfhrende Informationen
-zum Betrieb einer RFC/UUCP-Box im Client-Modus, die
-fr die Einbindung des Clients, die Durchfhrung des
-Netcalls, das Erstellen von Batches oder Scripts und
-das Lokalisieren von Problemen hilfreich sein k”nnen.
-Normalerweise mssen Sie als XP-Anwender das alles
-gar nicht wissen, weil CrossPoint und der Client bzw.
-der fr diesen Client speziell entwickelte "Client-
-Kit" automatisch miteinander so kooperieren, daá
-weitere Eingriffe seitens des Anwenders nicht notwen-
-dig sein sollten.
-
-
-<<Verbindungs- und šbertragungsprotokolle
-
-Da CrossPoint den Verbindungsaufbau und die Nachrich-
-tenbertragung vollst„ndig den Clients berl„át,
-k”nnen so beliebige Verbindungs- und šbertragungs-
-protokolle verwendet werden.
-
-Weit verbreitete Verbindungsprotokolle sind z.B. SLIP
-und PPP, fr die šbertragung von Mails und News haben
-sich die Protokolle POP3/SMTP bzw. IMAP (fr Mail)
-sowie NNTP (fr News) durchgesetzt.
-
-
-<<Datei- und Verzeichnisnamen
-
-Zum besseren Verst„ndnis der folgenden Texte nach-
-stehend zun„chst eine Aufstellung der im Client-Modus
-spezifischen Datei- und Verzeichnisnamen und ihre
-Funktion. An diese Konventionen mssen sich die ein-
-gesetzten Clients halten, anderenfalls mssen die
-Dateinamen und/oder ihr Speicherort vorher durch
-Batches oder Scripts ggf. so angepaát werden, daá der
-Client und XP korrekt miteinander kooperieren.
-
-<<<XP>\SPOOL\<Box> >> Das Spool-Verzeichnis der Box, fr
-   die ein Netcall durchgefhrt wird. <<<XP> >>steht fr
-   das XP-Verzeichnis, <<<Box> >>fr den Namen der Box,
-   genauer: fr den Namensanteil der Box-Konfigura-
-   tionsdatei <<<Box>.BFG>> (also ggf. auf 8 Stellen ge-
-   krzt und mit einer lfd. Numerierung in den beiden
-   letzten Stellen versehen). So ist gew„hrleistet,
-   daá jede Box ihr eigenes Spool-Verzeichnis hat.
-   Das Verzeichnis wird beim Anlegen oder Umbenennen
-   einer Box automatisch erstellt/umbenannt.
-
-   Im Spool-Verzeichnis legt XP bei einem Netcall
-   alle ausgehenden RFC-Nachrichten ab und liest ein-
-   gegangene Nachrichten (nur) aus diesem Verzeichnis
-   ein.
-
-   Name und Pfad des Spool-Verzeichnisses sind in der
-   o.a. Form "fest verdrahtet" und k”nnen nicht kon-
-   figuriert werden. Clients oder Client-Kits, die
-   den Pfad des Spool-Verzeichnisses ben”tigen,
-   k”nnen ihn aus dem Wert "Client-Spool=" in der
-   <Box>.BFG auslesen.
-
-<<Mnnnn.OUT>>  Ausgehende Mails (PMs) legt XP (genauer:
-   der Nachrichtenkonvertierer UUZ) unter diesem
-   Namen im Spool-Verzeichnis ab.
-
-<<Nnnnn.OUT>>  Ausgehende News (Artikel, Postings, AMs)
-   werden von XP (bzw. UUZ) unter diesem Namen im
-   Spool-Verzeichnis abgelegt.
-
-Fr Mails wie fr News gilt: "nnnn" steht fr eine
-fortlaufende vierstellige Zahl. Es wird je Nachricht
-eine Datei erzeugt (s. auch weiter unten, "<<Nachrich-
-<<tenkonvertierung ZC<->RFC mit UUZ>>").
-
-<<Mnnnn.MSG>>  Unter diesem Namen erwartet CrossPoint
-   die eingegangenen Mails (PMs) im Spool-Verzeichnis
-   der Serverbox.
-
-<<Nnnnn.MSG>>  Unter diesem Namen erwartet CrossPoint
-   die eingegangenen News (AMs) im Spool-Verzeichnis
-   der Serverbox.
-
-Eingegangene Mails und News werden von UUZ in einen
-ZConnect-Puffer konvertiert und anschlieáend in XP
-eingelesen. "nnnn" steht auch hier fr eine fortlau-
-fende vierstellige Zahl.
-
-<<M*.IN, N*.IN>>  Eingegangene Mails und News, die
-   erfolgreich konvertiert *und* in XP eingelesen
-   werden konnten, erhalten danach die Dateierweite-
-   rung .IN statt .MSG. Diese bleiben bis zum n„ch-
-   sten Netcall im Spool-Verzeichnis der Serverbox
-   liegen und werden beim n„chsten Netcall gel”scht.
-
-<<CLPUFFER>>  Der Name des ZConnect-Eingangspuffers,
-   den UUZ bei einem Netcall im Client-Modus aus den
-   eingegangenen RFC-Nachrichten erstellt.
-
-<<<Box>.BL>>  Die Gesamtliste aller vorhandenen Bretter
-   (Newsgroups) einer Serverbox - liegt immer im
-   Client-Verzeichnis.
-
-<<<Box>.RC>>  Die Liste aller bestellten Bretter
-   (Newsgroups) einer Serverbox - liegt immer im
-   Client-Verzeichnis.
-
-
-<<Ablauf eines Netcalls
-
-Ein Netcall im Client-Modus l„uft in folgenden
-Einzelschritten ab:
-
-1. <<L”schen>> aller *.IN (= beim letzten Netcall erfolg-
-   reich eingelesene Nachrichten) im Spool-Verzeich-
-   nis <XP>\SPOOL\<Box> - noch in diesem Verzeichnis
-   befindliche *.MSG sind beim letzten Netcall nicht
-   erfolgreich eingelesen worden und werden daher
-   *nicht* gel”scht, sondern am Ende des aktuellen
-   Netcalls mit eingelesen.
-
-2. <<Ausgangsfilter>> - Filtern des Ausgangspuffers (nur,
-   wenn ausgehende Nachrichten vorhanden und Aus-
-   gangsfilter eingetragen).
-
-3. <<ZC->RFC-Konvertierung>> der ausgehenden Nachrichten
-   durch UUZ und Ablegen der konvertierten Nach-
-   richten (Mails: Mnnnn.OUT, News: Nnnnn.OUT) im
-   Spool-Verzeichnis <XP>\SPOOL\<Box> (nur, wenn
-   ausgehende Nachrichten vorhanden).
-
-   Im "[Multiboxbetrieb]" werden auch die Nachrichten@8029
-   der Boxen, die bei einem Netcall dieser Box mit-
-   gesendet werden sollen, konvertiert und in dem der
-   jeweiligen Box zugeh”rigen Spool-Verzeichnis abge-
-   legt.
-
-4. <<Aufruf des externen Clients>> (ab hier gibt XP die
-   Kontrolle an das externe Programm ab). Der Client
-   muá die im Spool-Verzeichnis liegenden Nachrichten
-   (*.OUT) versenden, erfolgreich versendete Nach-
-   richten l”schen, und eingehende Nachrichten als
-   Mnnnn.MSG (Mails) bzw. Nnnnn.MSG (News) im Spool-
-   Verzeichnis <XP>\SPOOL\<Box> ablegen.
-
-5. <<Unversandt-Handling>> - CrossPoint prft das Spool-
-   Verzeichnis <XP>\SPOOL\<Box> auf unversandte Nach-
-   richten (*.OUT), erstellt anhand der Message-IDs
-   ein neues Pollpaket (<Box>.PP), l”scht die *.OUT-
-   Dateien und entfernt in der Nachrichtendatenbank
-   bei den brigen (= versandten) Nachrichten den
-   Unversandt-Status.
-
-6. <<RFC->ZC-Konvertierung>> der eingegangenen Nachrich-
-   ten und Erstellen des Eingangspuffers (CLPUFFER).
-
-7. <<Eingangsfilter>> - Filtern des Eingangspuffers (nur,
-   wenn eingegangene Nachrichten vorhanden und Ein-
-   gangsfilter eingetragen).
-
-8. <<Einlesen>> des Eingangspuffers.
-
-9. <<Umbenennen>> der erfolgreich eingelesenen Nachrich-
-   ten im Spool-Verzeichnis <XP>\SPOOL\<Box> von
-   *.MSG nach *.IN.
-
-
-<<Nachrichtenkonvertierung ZC<->RFC mit UUZ
-
-Der Nachrichtenkonvertierer UUZ legt ausgehende Nach-
-richten (*.OUT) im Client-Modus im Spool-Verzeichnis
-<XP>\SPOOL\<Box> der jeweiligen Serverbox ab; aus
-demselben Verzeichnis konvertiert UUZ eingegangene
-Nachrichten (*.MSG) in die ZConnect-Pufferdatei
-CLPUFFER, die anschlieáend von XP eingelesen wird.
-
-Wenn w„hrend eines Netcalls mal etwas schiefgegangen
-sein sollte, k”nnen Sie die eingegangenen Nachrichten
-mit folgendem Befehl auch manuell konvertieren (Sie
-mssen sich dabei im XP-Verzeichnis befinden):
-
-<<UUZ.EXE -uz SPOOL\<Box>\*.MSG CLPUFFER
-
-Die Pufferdatei CLPUFFER k”nnen Sie dann ber XPoint/
-Import/Puffer_einlesen... na, einlesen eben. :-)
-
-Sie k”nnen aber auch einfach bis zum n„chsten Netcall
-warten, im Spool-Verzeichnis der Serverbox liegende
-Nachrichten (*.MSG) werden dann am Ende des Netcalls
-automatisch mit eingelesen.
-
-UUZ wird - unabh„ngig von den UUCP-spezifischen Ein-
-stellungen unter /Edit/Boxen/Edit/Point/Batched_SMTP-
-Modus - im Client-Modus bei der Konvertierung ZC->RFC
-(also bei ausgehenden Nachrichten) *immer* mit fol-
-genden Schaltern aufgerufen:
-
-<<-SMTP>>:   Dieser Schalter sorgt dafr, daá die
-         ausgehenden PMs (Mnnnn.OUT) im SMTP-Mail-
-         format erstellt werden. Dieses Format muá
-         von dem eingesetzten externen Client ver-
-         standen werden. Beim SMTP-Format befinden
-         sich bestimmte fr den Mailtransfer wichtige
-         Steuerbefehle am Beginn jeder Nachricht
-         (z.B. "MAIL FROM:" und "RCPT TO:", also die
-         'Envelope-Adressen').
-
-         Diese Informationen mssen deshalb am Beginn
-         jeder Nachricht stehen, weil externe Clients
-         blicherweise nicht die fr den UUCP-Betrieb
-         erzeugten Steuerdateien ('C- und X-Dateien')
-         und die darin enthaltenen Informationen
-         auswerten k”nnen. N„heres zur 'Envelope-
-         Adressierung' finden Sie in UUCP.TXT. Ob, in
-         welchem Umfang und auf welche Art und Weise
-         der von Ihnen verwendete Client Envelope-
-         Adressierung untersttzt, erfahren Sie (hof-
-         fentlich) in der Dokumentation des Clients.
-
-<<-client>>: Dieser Schalter hat entscheidende Bedeutung
-         fr das Zusammenspiel zwischen CrossPoint
-         und externem Client:
-
-         - Im Unterschied zum UUCP-Protokoll, bei dem
-           im Batched-SMTP-Betrieb alle Nachrichten
-           in eine Datei geschrieben werden, wird
-           hier fr jede Nachricht eine eigene Datei
-           erzeugt - mit einer (sinnvollen) Ausnahme:
-           Kopien ('Carbon Copies', CC) und Blind-
-           kopien ('Blind Carbon Copies', BCC) werden
-           immer gemeinsam in eine Datei geschrieben
-           (mit dem angenehmen Nebeneffekt, daá die
-           Empf„nger so genau erkennen k”nnen, wer
-           'echter' und wer Kopien-Empf„nger ist).
-
-           Das Erzeugen von einer Datei je Nachricht
-           spielt u.a. fr das Unversandt-Handling
-           eine wichtige Rolle, da XP sonst nicht
-           erkennen k”nnte, welche Nachrichten nicht
-           versandt wurden. Auáerdem verhindert diese
-           Methode das Senden von 'Dupes' im Falle
-           von Verbindungs-/šbertragungsproblemen.
-
-         - Die ausgehenden Nachrichtendateien werden
-           nach dem Schema "Mnnnn.OUT" (Mails, PMs)
-           bzw. "Nnnnn.OUT" (News, AMs) benannt,
-           wobei "nnnn" fr eine fortlaufende vier-
-           stellige Zahl steht.
-
-         - Es werden keine UUCP-Steuerdateien ('C-
-           und X-Dateien', siehe UUCP.TXT) erzeugt.
-
-
-<<Der interne Brettmanager
-
-CrossPoint bietet auch fr den Client-Modus der
-RFC/UUCP-Box einen integrierten Brettmanager, der
-sich in seiner Funktionsweise an der g„ngigen Praxis
-einiger popul„rer Clients orientiert - leider gibt
-es hierfr keinen definierten Standard. Es kann also
-durchaus passieren, daá die von dem Brettmanager aus-
-gefhrten Funktionen von dem von Ihnen eingesetzten
-Client nicht oder nicht richtig verstanden werden.
-
-
-ş Brett-/Newsgroup-Liste beziehen und aktualisieren
-
-  Alle bekannten Clients bieten eine Option, mit der
-  eine Brettliste bezogen bzw. aktualisiert werden
-  kann - diese Option sollten Sie aktivieren.
-
-  CrossPoint geht davon aus, daá die Gesamtliste der
-  vorhandenen Newsgroups im Client-Verzeichnis liegt
-  und den Namen <<<Box>.BL>> tr„gt. Der Client muá also
-  neue Newsgroups dieser Datei hinzufgen.
-
-  Leider gibt es im Usenet noch immer kein Verfahren,
-  mit dem sich nicht mehr existierende Newsgroups
-  erkennen und automatisch aus der Liste austragen
-  lieáen. Wenn Sie also von Zeit zu Zeit eine top-
-  aktuelle Liste beziehen m”chten, l”schen Sie die
-  alte <<<Box>.BL>> - der Client bezieht dann i.d.R.
-  eine komplett neue Liste vom Newsserver.
-
-  Zum L”schen der Liste k”nnen Sie auch den Men-
-  Befehl Nachricht/Brettmanager/Liste_anfordern
-  verwenden. Wenn Sie nach dem n„chsten Netcall keine
-  aktuelle Newsgroup-Liste vorfinden sollten, ist
-  entweder die entsprechende Option ihres Clients
-  nicht aktiviert (oder Ihr Client hat keine solche
-  Option), oder der Client legt die Liste unter einem
-  anderen Dateinamen als <<<Box>.BL>> ab. In diesem
-  Fall bleibt Ihnen nur brig, die Brettliste vor
-  und nach jedem Netcall mittels Batch- oder Script-
-  datei in den Namen umzubenennen, den Ihr Client
-  erwartet.
-
-
-ş Bretter/Newsgroups (ab-)bestellen
-
-  Die aktuell bestellten Newsgroups werden in einer
-  Liste gefhrt, die ebenfalls im Client-Verzeichnis
-  liegt und den Namen <<<Box>.RC>> tr„gt. Der Client muá
-  also bei jedem News-Transport die neuen Nachrichten
-  der darin verzeichneten Newsgroups anfordern. Wenn
-  der Client einen anderen Dateinamen erwarten soll-
-  te, mssen Sie die Liste bei jedem Netcall ggf.
-  (per Batch- oder Scriptdatei) umbenennen.
-
-  Das Bestellen und Abbestellen von Newsgroups funk-
-  tioniert im wesentlichen genauso, wie Sie es auch
-  von den brigen Netztypen oder von UUCP her kennen:
-  Sie markieren die (ab-)zubestellenden Bretter und
-  drcken <<<Enter> >> - die anschlieáende Rckfrage
-  beantworten Sie mit "Ja".
-
-  Bei neu bestellten Newsgroups werden Sie vom Brett-
-  manager noch aufgefordert, die Anzahl der letzten
-  n Artikel anzugeben, die fr die neu bestellte(n)
-  Newsgroup(s) angefordert werden sollen. Der Stan-
-  dardwert ist 10 Artikel je Newsgroup, Sie k”nnen
-  hier jeden beliebigen Wert bis 9999 angeben. Dieser
-  Wert wird als negative Zahl ("-10") hinter den
-  Namen der Newsgroup geschrieben. Wenn Sie "0" an-
-  geben, l”sen Sie bei den meisten Clients einen
-  "Rescan" aus, d.h. der Client fordert s„mtliche auf
-  dem Newsserver verfgbaren Artikel der Newsgroup
-  an. M”glicherweise bietet Ihr Client eine Option,
-  die Gesamtanzahl dieser Artikel zu begrenzen.
-
-  Im Unterschied zu anderen Netztypen oder zum UUCP-
-  Protokoll wird also keine Nachricht an irgendeinen
-  Pseudo-User erstellt, der den von Ihnen ge„uáerten
-  Bestellwunsch ausfhrt, sondern die (ab-)bestell-
-  te(n) Newsgroup(s) wird/werden aus der Liste der
-  bestellten Newsgroups aus- bzw. eingetragen.
-
-  Das Format der Liste der bestellten Newsgroups ist
-  einfach: auf den Namen der Newsgroup folgt durch
-  ein Leerzeichen getrennt der 'article counter', der
-  die Nummer des letzten geholten Artikels fr diese
-  Newsgroup enth„lt. Sie k”nnen die Datei <<<Box>.RC>>
-  also notfalls auch per Hand editieren.
-
 @
 160
 So viele Sekunden wartet XP nach dem Senden des W„hl-
@@ -4842,6 +4243,22 @@ sinnvoll, da es in manchen Netzen (z.B. Fido) i.d.R.
 gar keine "Rckl„ufer" gibt.
 
 @
+8052
+<<[ ]>> -> Automatisch oder manuell erstellte Empfangs-
+       best„tigungen erhalten als Absender Ihre
+       eMail-Adresse und Ihren Realname:
+
+       user.name\@do.main (Real Name's Mailer)
+
+<<[x]>> -> Empfangsbest„tigungen werden stattdessen mit
+       mit folgendem Absender erzeugt:
+
+       MAILER-DAEMON\@do.main (Real Name's Mailer)
+
+       Diese Einstellung sollten Sie nur verwenden,
+       wenn Sie der Inhaber der von Ihnen verwendeten
+       Domain sind.
+@
 190
 Dies ist der Name der Serverbox; genauer gesagt: der
 Kurzname, der zur Adressierung dieser Box innerhalb
@@ -4912,7 +4329,6 @@ gerne gesehen (Stichwort Netiquette). Wenn Sie ihn
 nicht angeben, mssen Sie damit rechnen, daá Sie von
 einigen Usern ignoriert oder sogar komplett gefiltert
 werden.
-
 @
 8038
 Geben Sie hier Ihren vollst„ndigen Namen ein (Vor-
@@ -4931,8 +4347,7 @@ rechts vom Boxnamen.
 
 Geben Sie den Domainnamen aus Ihrer eigenen Adresse
 an. Ist Ihre Adresse z.B. "abc\@def.sub.org", dann
-ist der Domainname ".sub.org", bei "abc\@t-online.de"
-oder "abc\@gmx.de" w„re es ".de".
+ist der Domainname ".sub.org".
 
 <<Fido>>
 
@@ -4963,21 +4378,839 @@ Domain ein (normalerweise ".magic" bzw. ".pro").
 in der Message-ID verwendet.)
 
 @
-30001
-Geben Sie hier den 'Fully Qualified Domain Name' ein,
-der zur Erstellung der Message-IDs (MID) benutzt
-werden soll. Ihre Nachrichten erhalten dann die
-Message-ID <<MID\@FQDN>>. Wenn Sie dieses Feld frei-
-lassen, erhalten Ihre Nachrichten die Message-ID
-<<MID\@Pointname.Domain>> (RFC/UUCP), bzw.
-<<MID\@Pointname.Boxname.Domain>> (ZConnect).
-
-Diese Domain sollte ausschlieálich von Ihnen verwen-
-det werden, um so die Eindeutigkeit der Message-IDs
-gew„hrleisten zu k”nnen.
-@
 8034
 Geben Sie hier die Domain des UUCP-Servers an.
+@
+30001
+Geben Sie hier die eMail-Adresse ein, die Ihre eMails
+(PMs) und Artikel/Postings (AMs) als Absenderadresse
+erhalten sollen.
+
+Sie k”nnen dieses Feld auch freilassen - in diesem
+Fall setzt CrossPoint Ihre Absenderadresse wie folgt
+zusammen:
+
+<<Username>>\@<<Pointname>>.<<Domain>>
+(Schalter "Absender Username\@Boxname.Serverdomain"
+unter Edit/Boxen/Edit/RFC/UUCP ist deaktiviert)
+
+<<Username>>\@<<Boxname>>.<<Serverdomain>>
+(Schalter "Absender Username\@Boxname.Serverdomain"
+unter Edit/Boxen/Edit/RFC/UUCP ist aktiviert)
+
+Wenn Sie hier eine eMail-Adresse angeben, brauchen
+Sie bei "Username", "Domain" und "Pointname" (siehe
+Edit/Point) keine Eintr„ge vorzunehmen: CrossPoint
+bertr„gt die einzelnen Bestandteile der Adresse dann
+automatisch in die leeren Felder - jedoch nur in die
+Felder, die leer sind. Bestehende Eintr„ge werden
+nicht berschrieben.
+
+Wenn Ihre Adresse z.B. <<user>>\@<<system>>.<<do>>.<<main>> lautet,
+dann wird "<<user>>" in den Usernamen, "<<system>>" in den
+Pointnamen und ".<<do>>.<<main>>" in die Domain bertragen.
+
+@
+30002
+Geben Sie hier den 'Fully Qualified Domain Name' ein,
+der zur Erzeugung des Teils rechts vom "<<\@>>" der
+Message-ID (MID) benutzt werden soll. Ihre Nachrich-
+ten erhalten dann die Message-ID <<Zufallszahl>>\@<<FQDN>>.
+
+Wenn Sie dieses Feld freilassen, erhalten Ihre Nach-
+richten die Message-ID <<Zufallszahl>>\@<<Pointname>>.<<Domain>>
+(RFC/UUCP) bzw. <<Zufallszahl>>\@<<Pointname>>.<<Boxname>>.<<Domain>>
+(ZConnect).
+
+Unterstriche "<<_>>" sind in FQDNs nicht zul„ssig und
+werden von XP automatisch durch Bindestriche ersetzt.
+Das Zeichen "<<\@>>" wird in einen Punkt umgewandelt.
+
+Wenn Sie hier etwas eintragen, sollten Sie einen aus-
+schlieálich von Ihnen verwendeten Namen eingeben, um
+so die Eindeutigkeit des FQDN sicherzustellen. Die
+Eindeutigkeit des FQDN ist nur fr ”ffentliche Nach-
+richten (Artikel/Postings = AMs) innerhalb von XP
+relevant. Uneindeutige FQDNs wie "anyname.de" sind
+absolut RFC-konform (weil "fully qualified"), die
+RFC-Forderung nach Eindeutigkeit bezieht sich auf die
+Message-ID insgesamt.
+
+@
+30100
+Der Netztyp <<RFC/Client>> ist eine flexible und univer-
+selle Schnittstelle zur Durchfhrung von Netcalls mit
+beliebigen externen Mail- und News-Clients, die
+ihrerseits beliebige Verbindungs- und šbertragungs-
+protokolle verwenden k”nnen.
+
+Hierbei bergibt CrossPoint die Kontrolle eines Net-
+calls nach dem Konvertieren des Ausgangspuffers bis
+zum Einlesen des Eingangspuffers vollst„ndig an den
+externen Client. Das bedeutet, daá der externe Client
+fr Verbindungsaufbau, Nachrichtenaustausch und Ver-
+bindungsabbau ausschlieálich selbst zust„ndig ist.
+
+Voraussetzung fr eine funktionierende Kooperation
+zwischen CrossPoint und dem externen Mail-Client ist,
+daá der Client Nachrichten im <<SMTP-Mailformat>> verar-
+beiten und erzeugen kann. N„heres zu Nachrichten-
+formaten siehe UUCP.TXT.
+
+M”glicherweise wertet der von Ihnen eingesetzte
+Client (und/oder ein speziell fr CrossPoint/OpenXP
+und diesen Client entwickelter "<<Client-Kit>>") auto-
+matisch die Serverbox-Konfigurationsparameter Login,
+Paáwort, Telefon und/oder die Modem-Einstellungen
+aus. N„heres entnehmen Sie bitte der Dokumentation
+des Clients bzw. des Client-Kits.
+
+Weitere Detail-Informationen (wie zum genauen Ablauf
+eines Netcalls, der Arbeitsweise des Nachrichtenkon-
+vertierers UUZ, des internen Brettmanagers usw.)
+finden Sie in XPCLIENT.TXT sowie hier:
+
+[RFC/Client: Netcall-Ablauf und weitere Details]@30200
+
+@
+30101
+Dies ist der - v”llig beliebige - Name des Servers.
+
+Im Gegensatz zu den brigen von XP untersttzten
+Netztypen hat der Servername beim Netztyp RFC/Client
+keinerlei Funktion in Bezug auf Nachrichtenerstellung
+oder -transport.
+
+Bitte beachten Sie bei einem eventuellen ndern des
+Namens, daá die Server-Angaben in der Brett- und
+Userliste NICHT automatisch mitge„ndert werden. Sie
+mssen also nach der nderung ber /Wartung/Server-
+Wechsel die Servereintr„ge umstellen lassen.
+@
+30102
+Hier k”nnen Sie einen beliebigen Kommentar eingeben,
+z.B. den ausfhrlichen Namen des Providers oder die
+untersttzten/eingerichteten šbertragungsprotokolle.
+Es werden nur die ersten 23 eingegebenen Zeichen in
+der šbersicht der Serverboxen angezeigt.
+@
+30103
+Geben Sie hier die von Ihrem Mail-/News-Provider
+zugewiesene eMail-Adresse ein, die Ihre eMails (PMs)
+und Artikel/Postings (AMs) als Absenderadresse
+erhalten sollen.
+
+Eine eMail-Adresse hat blicherweise die Form
+<<User>>\@<<Domain>>.<<TLD>> (<<TLD>>=<<T>>op <<L>>evel <<D>>omain, also ".de",
+".com", ".net", ".org" usw.), gltige Adressen w„ren
+daher z.B. "nn\@openxp.de" oder "no.name@t-online.de".
+@
+30104
+^^194
+@
+30105
+Hier k”nnen Sie eine Vertreteradresse ("Reply-To")
+fr Ihre Nachrichten angeben. Alle PM-Antworten auf
+Nachrichten, die Sie ber diesen Server versenden,
+werden dann an die Vertreteradresse umgeleitet,
+sofern die Software des antwortenden Users Vertreter
+untersttzt.
+
+Vertreteradressen mssen vollst„ndige Adressen im
+Format <<User>>\@<<Domain>>.<<TLD>> sein (<<TLD>>=<<T>>op <<L>>evel <<D>>omain,
+also ".de", ".com", ".net", ".org" usw.). Wahlweise
+k”nnen Sie in Klammern einen Realname anh„ngen, z.B.
+
+      <<user>>\@<<domain>>.<<tld (Vorname Nachname)>>
+@
+30106
+Geben Sie hier den 'Fully Qualified Domain Name' ein,
+der zur Erzeugung des Teils rechts vom "<<\@>>" der
+Message-ID (MID) benutzt werden soll. Ihre Nachrich-
+ten erhalten dann die Message-ID <<Zufallszahl>>\@<<FQDN>>.
+
+Wenn Sie Inhaber einer eigenen Domain sind, tragen
+Sie diese hier ein.
+
+Bei Teilnehmern, die keine eigene Domain besitzen,
+ist es g„ngige und sinnvolle Praxis, hier die eigene
+eMail-Adresse einzutragen und dabei das "<<\@>>"-Zeichen
+durch einen Punkt ("<<.>>") zu ersetzen. Mit der Taste
+<<<F2> >>erzeugt XP einen solchen FQDN fr Sie automa-
+tisch. Fr T-Online-User wird dabei ein spezifischer
+FQDN generiert, der von T-Online ausdrcklich als
+gltiger und zul„ssiger FQDN zur Verfgung gestellt
+wird ("<<<eMail-Alias>.dialin.t-online.de>>").
+
+Unterstriche "<<_>>" sind in FQDNs nicht zul„ssig und
+werden von XP automatisch durch Bindestriche ersetzt.
+
+Andere News-Provider stellen m”glicherweise ebenfalls
+einen spezifischen FQDN zu Verfgung. Wenn das der
+Fall ist, tragen Sie hier statt der eMail-Adresse
+unbedingt diesen FQDN ein - einzelne Provider ber-
+schreiben sonst m”glicherweise die Message-ID Ihrer
+Nachrichten mit einem aus ihrer Sicht zul„ssigen Wert
+(N„heres erfahren Sie von Ihrem Provider). Dies wird
+unweigerlich zu Problemen mit der XP-internen Bezugs-
+verkettung fhren.
+
+Wenn Sie dieses Feld freilassen, erhalten Ihre Nach-
+richten die Message-ID <<Zufallszahl>>\@<<Domain>>.<<TLD>>, also
+z.B. "82AWL5iACHB\@openxp.de" (<<TLD>>=<<T>>op <<L>>evel <<D>>omain,
+".de" ".com", ".net", ".org" usw.). Dies wird aller-
+dings zu Problemen im Zusammenhang mit der farblichen
+Hervorhebung von Antworten auf eigene Nachrichten in
+XP fhren, da der Teil rechts vom "<<\@>>" der Message-ID
+dann nicht mehr eindeutig ist und XP alle Antworten
+hervorheben wrde, die sich auf Nachrichten beziehen,
+deren rechter Teil der Message-ID ebenfalls aus dem
+FQDN "openxp.de" bestehen.
+
+Sie sollten daher dieses Feld *nicht* freilassen und
+einen ausschlieálich von Ihnen verwendeten, vom News-
+Server als zul„ssig anerkannten Namen eintragen, um
+so die Eindeutigkeit des FQDN sicherzustellen. Die
+Eindeutigkeit des FQDN ist nur fr ”ffentliche Nach-
+richten (Artikel/Postings = AMs) innerhalb von XP
+relevant. Uneindeutige FQDNs wie "t-online.de" sind
+absolut RFC-konform (weil "fully qualified"), die
+RFC-Forderung nach Eindeutigkeit bezieht sich auf die
+Message-ID insgesamt.
+
+
+<<Hinweis:>> Welche Kunststcke auch immer Sie mit der
+M”glichkeit, einen FQDN in CrossPoint konfigurieren
+zu k”nnen, vollfhren: Es wird Ihnen alles nichts
+ntzen, wenn Sie an einen News-Server geraten, der
+ohne jede Rcksicht Ihre Message-IDs berschreibt.
+In diesem Fall werden Sie folgende Probleme haben:
+
+ş Antworten auf Ihre Artikel werden nicht farblich
+  hervorgehoben werden.
+
+ş Das [Ersetzen der lokalen Kopien eigener Nachrichten]@8051
+  (Edit/Boxen/Edit/Diverses) durch ihre "Rckl„ufer"
+  wird nicht funktionieren.
+
+ş Es wird keine Bezugsverkettung zu den von Ihnen
+  erstellten lokalen Kopien Ihrer Original-Artikel
+  existieren - wohl aber zu den bei Ihnen eintreffen-
+  den "Rckl„ufern" Ihrer eigenen Nachrichten.
+
+Hierfr gibt es keine L”sung, auáer: a) Einen anderen
+News-Server verwenden, oder b) komplizierte Eingangs-
+filter konstruieren (nicht jedermanns Sache und im
+Vergleich zu a) den Aufwand nicht wert).
+
+@
+30107
+Geben Sie hier den <<relativen>> Pfad vom XP-Verzeichnis
+zu dem Verzeichnis an, in dem der Client installiert
+ist, oder w„hlen Sie mit <<<F2> >>einen der vorbereiteten
+Eintr„ge aus. Der Client <<muá>> in einem beliebigen Ver-
+zeichnis unmittelbar unterhalb des XP-Verzeichnisses
+installiert sein.
+
+Beispiel: Wenn Ihr Client im Verzeichnis CLIENT
+installiert ist, das sich unmittelbar unterhalb des
+XP-Verzeichnisses befindet, geben Sie hier an:
+
+<<CLIENT\>>  oder
+<<.\CLIENT\>>
+
+Absolute Pfadangaben, mehrere Verzeichnisebenen,
+Laufwerksbuchstaben oder Pfade oberhalb des XP-
+Verzeichnisses werden in diesem Eingabefeld nicht
+akzeptiert. Sie k”nnen auch nicht das XP-Verzeichnis
+selbst angeben oder das Feld gar ganz leer lassen.
+Der Backslash am Ende des Pfades ist obligatorisch,
+wird aber automatisch erg„nzt, wenn er fehlt.
+
+Diese Pfadangabe ist u.a. fr den internen Brett-
+manager wichtig, weil XP in dem hier angegebenen
+Verzeichnis immer die Liste der bestellten Newsgroups
+(<Box>.RC) erwartet. Auáerdem wird hier die Liste der
+vorhandenen Newsgroups (<Box>.BL oder <Box>.GR)
+gesucht - wenn Sie nicht mit Nachricht/Brettmanager/
+Datei_einlesen eine Liste eingelesen haben, die im
+XP-Verzeichnis abgelegt wurde.
+
+Wenn das Verzeichnis noch nicht existiert, k”nnen Sie
+es von XP automatisch anlegen lassen. Es kann auáer-
+dem ber das Makro <<$CLPATH>> beim [Client-Aufruf] dem@30108
+auszufhrenden Programm als Parameter und/oder als
+Pfad zum auszufhrenden Programm bergeben werden.
+
+@
+30108
+Tragen Sie hier das Programm ein, das CrossPoint bei
+einem RFC/Client-Netcall ausfhren soll. Fr einige
+g„ngige Clients bzw. Client-Kits k”nnen Sie mit <<<F2> >>
+einen der vorbereiteten Eintr„ge ausw„hlen.
+
+Die Konfiguration des Clients selbst (Server- und
+Port-Eintr„ge fr die šbertragungsprotokolle wie
+POP3, SMTP und NNTP sowie weitere client-spezifische
+Optionen) nehmen Sie auáerhalb von XP in der Konfi-
+gurationsdatei des jeweiligen Clients vor. N„heres
+dazu erfahren Sie (hoffentlich) in der Dokumentation
+Ihres Clients oder Client-Kits.
+
+Das hier eingetragene Programm bernimmt nach der
+ZC->RFC-Konvertierung der ausgehenden Nachrichten
+durch XP (UUZ) die vollst„ndige Kontrolle ber den
+Netcall und ist somit fr Anwahl, Nachrichtentrans-
+port und Abwahl alleine zust„ndig. Nachdem sich das
+Programm beendet hat, bernimmt XP die RFC->ZC-Kon-
+vertierung und liest die Nachrichten ein.
+
+Bei Clients, die aus mehreren ausfhrbaren Dateien
+(z.B. fr Anwahl/Abwahl, Mail- und News-Transport)
+bestehen, wird hier die Angabe einer Batch- oder
+Scriptdatei sinnvoll sein, die die einzelnen Aufgaben
+hintereinander ausfhrt.
+
+Bei Clients, die ber eine einzige ausfhrbare EXE-
+Datei gestartet werden, kann diese hier auch direkt
+angegeben werden.
+
+Fr Batches oder Scripts, die im XP-Verzeichnis
+liegen, geben Sie keinen Programmpfad an. Sollten
+diese jedoch im [Client-Verzeichnis] liegen (oder Sie@30107
+einen aus einer einzigen EXE-Datei bestehenden Client
+einsetzen), k”nnen (mssen!) Sie hier den Pfad zur
+Programmdatei angeben, indem Sie dieser das Makro
+<<$CLPATH>> mit dem Zeichen "<<+>>" voranstellen:
+
+<<$CLPATH+CLIENT.EXE /Option1 /Option2
+
+Eine andere Pfadangabe als keine oder "<<$CLPATH+>>" wird
+nicht akzeptiert.
+
+Dem Client-Aufruf k”nnen beliebige Parameter ber-
+geben werden. Hierfr stehen Ihnen folgende Makros
+zur Verfgung, die z.B. in Batchdateien oder Scripts
+weiterverarbeitet werden k”nnen:
+
+<<$CLPATH>> - der unter "Client-Verzeichnis" definierte
+          relative Pfad zu dem Verzeichnis, in dem
+          der externe Client installiert ist.
+
+<<$CONFIG>> - Der Name der Serverbox in XP, wie er von XP
+          als <Box>.BFG im XP-Verzeichnis abgelegt
+          wurde, also ggf. auf 8 Zeichen gekrzt
+          und/oder bei mehreren Boxen mit identisch
+          beginnenden Namen mit einer Numerierung in
+          den beiden letzten Stellen versehen (z.B.
+          T-ONLI01.BFG). Die Dateierweiterung ".BFG"
+          wird *nicht* mit bergeben.
+
+CrossPoint kann nicht berprfen, ob Ihre Eingaben an
+dieser Stelle korrekt und sinnvoll sind - dafr ms-
+sen Sie selbst sorgen. Wenn Sie hier ein Programm
+eintragen, das Ihren Drucker sprengt, dann werden Sie
+nach dem n„chsten Netcall eben ohne Drucker dastehen.
+<<;-)>>
+
+Weitere Hinweise u.a. zum Ablauf eines Netcalls im
+Detail finden Sie in XPCLIENT.TXT sowie hier:
+
+[RFC/Client: Netcall-Ablauf und weitere Details]@30200
+
+
+<<Hinweise fr Windows-GUI-Clients
+
+Sollten Sie XP unter Windows 9x/ME/2000/NT betreiben
+und einen Windows-Client mit einer graphischen Ober-
+fl„che einsetzen, werden Sie m”glicherweise auf ein
+Problem stoáen, wenn Sie diesen direkt ber seine
+EXE-Datei von XP ausfhren lassen:
+
+XP wird den Client zwar starten, allerdings in einem
+anderen "Task" (vereinfacht ausgedrckt: in einem
+zweiten Fenster). Da die beiden Prozesse "XP" und
+"Client" v”llig unabh„ngig voneinander agieren, wird
+XP nicht darauf warten, bis der Client seine Arbeit
+verrichtet hat, sondern den Netcall als beendet be-
+trachten, obwohl der Client vielleicht noch nicht
+einmal die Verbindung hergestellt hat. Im Ergebnis
+werden also weder Ihre Nachrichten versandt noch
+die vom Client geholten Nachrichten in CrossPoint
+eingelesen werden.
+
+Um diesen unerwnschten Effekt zu vermeiden, mssen
+Sie dem Client-Aufruf bei solchen Clients den Befehl
+"<<start /w>>" (bzw. "<<start /wait>>") voranstellen. Dieser
+Befehl bewirkt, daá das aufgerufene Programm (der
+Client) das aufrufende Programm (XP) solange anh„lt,
+bis das aufgerufene Programm mit seiner Arbeit fertig
+ist und sich beendet hat.
+
+Soweit die Regel. Es ist aber schon von F„llen
+berichtet worden (z.B. unter Windows 2000), bei denen
+die Angabe von "<<start /w>>" nicht nur nicht n”tig,
+sondern aus bisher unerfindlichen Grnden auch gar
+nicht m”glich war. Teilweise kann der <<start>>-Befehl
+also offensichtlich auch weggelassen werden, im
+Zweifel hilft nur Ausprobieren.
+
+Die Angabe von "<<start /w>>" ist *nicht* erforderlich
+fr Windows-Clients, die keine graphische Oberfl„che
+haben, sondern in der sog. "Console" laufen und des-
+halb so aussehen wie ein DOS-Programm. Solche Clients
+laufen automatisch im XP-Fenster und blockieren XP
+solange, bis sie ihre Arbeit beendet haben.
+
+@
+30109
+(Diese Funktion ist noch nicht implementiert, aber
+man kann schon mal lesen, wie es werden soll.)  :-)
+
+Wenn Sie bei einem Netcall dieser Serverbox Nachrich-
+ten weiterer in XP eingerichteter Server mitsenden
+und/oder empfangen wollen, tragen Sie hier die Namen
+der jeweiligen Server mit einem Leerzeichen getrennt
+ein.
+
+Achten Sie bei der Eingabe darauf, genau den Namen
+zu verwenden, der der Serverbox-Konfigurationsdatei
+<Box>.BFG des jeweiligen Servers entspricht (im Zwei-
+fel drcken Sie <<<F9> >>und fhren im XP-Verzeichnis
+den DOS-Befehl "dir *.bfg" aus, um die vorhandenen
+BFG-Dateien sehen zu k”nnen).
+
+CrossPoint wird dann zu Beginn eines RFC/Client-
+Netcalls die ausgehenden Nachrichten der hier ein-
+getragenen Serverbox(en) *zus„tzlich* zu denen des
+"Pollservers" konvertieren und im Spool-Verzeichnis
+der Serverbox ablegen, fr die der eigentliche
+Netcall durchgefhrt wird.
+
+Eingegangene Nachrichten hingegen werden am Ende des
+Netcalls in dem/den spezifischen Spool-Verzeich-
+nis(sen) der hier eingetragenen Serverbox(en) erwar-
+tet und von dort in jeweils einen ZConnect-Puffer
+konvertiert und in XP eingelesen.
+
+Was zwischen diesen beiden Schritten passiert (und
+ob berhaupt etwas passiert), ist alleine Sache des
+externen Clients bzw. Client-Kits. Wenn Sie z.B.
+feststellen sollten, daá Ihr Client die ausgehenden
+Nachrichten der zus„tzlich eingetragenen Server-
+box(en) nicht versendet, ist dies eine Fehlfunktion,
+Fehlkonfiguration oder auch eine Inkompatibilit„t
+des verwendeten Clients mit dem Client-Konzept von
+CrossPoint/OpenXP. In diesem Fall wenden Sie sich
+bitte an den Autor des jeweiligen Clients oder auch
+an den OpenXP-Support - vielleicht gibt es eine
+bekannte L”sung (oder auch die Antwort, daá es leider
+keine L”sung gibt).
+
+Bitte wundern Sie sich nicht, wenn der Nachrichten-
+konvertierer UUZ im "Multiserverbetrieb" sowohl zu
+Beginn als auch am Ende eines Netcalls mehrmals
+hintereinander aufgerufen wird - das ist v”llig
+normal und muá so sein. :-)
+
+@
+30110
+Hier k”nnen Sie eine Zeichenfolge (z.B. einen User-
+namen) angeben, mit der sich der externe Client beim
+angerufenen Provider anmelden soll.
+
+Wenn Ihr Client die Verbindung zu Ihrem Provider ber
+eine DFš-Netzwerkverbindung von Windows 9x/ME/2000/NT
+herstellt, kann dieses Feld i.d.R. leer bleiben.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<LoginName=>>"
+gespeichert.
+@
+30111
+Tragen Sie hier das Paáwort ein, daá Sie fr den
+Zugang zu Ihrem Provider ben”tigen.
+
+Wenn Ihr Client die Verbindung zu Ihrem Provider ber
+eine DFš-Netzwerkverbindung von Windows 9x/ME/2000/NT
+herstellt, kann dieses Feld i.d.R. leer bleiben.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner "<<Passwort=>>"
+gespeichert.
+@
+30112
+Geben Sie hier die Telefonnummer und/oder den Namen
+der DFš-Netzwerkverbindung ein, die Sie zum Aufbau
+der Verbindung mit Ihrem Provider ben”tigen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet und welche Syntax ggf. ein-
+zuhalten ist, entnehmen Sie bitte der Dokumentation
+Ihres Clients oder Client-Kits. Der Wert, den Sie
+hier eintragen, wird in der Konfigurationsdatei
+<Box>.BFG unter dem Bezeichner "<<Telefon=>>" gespei-
+chert.
+@
+30200
+<<RFC/Client: Netcall-Ablauf und weitere Details
+
+Hier finden Sie einige weiterfhrende Informationen
+zum Betrieb einer in XP eingerichteten RFC/Client-
+Serverbox, die fr die Einbindung des Clients, die
+Durchfhrung des Netcalls, das Erstellen von Batches
+oder Scripts und das Lokalisieren von Problemen hilf-
+reich sein k”nnen. Normalerweise mssen Sie als XP-
+Anwender das alles gar nicht wissen, weil CrossPoint
+und der Client bzw. der fr diesen Client speziell
+entwickelte "Client-Kit" automatisch miteinander so
+kooperieren, daá weitere Eingriffe seitens des Anwen-
+ders nicht notwendig sein sollten.
+
+
+<<Verbindungs- und šbertragungsprotokolle
+
+Da CrossPoint den Verbindungsaufbau und die Nachrich-
+tenbertragung vollst„ndig den Clients berl„át,
+k”nnen so beliebige Verbindungs- und šbertragungs-
+protokolle verwendet werden.
+
+Weit verbreitete Verbindungsprotokolle sind z.B. SLIP
+und PPP, fr die šbertragung von Mails und News haben
+sich die Protokolle POP3/SMTP bzw. IMAP (fr Mail)
+sowie NNTP (fr News) durchgesetzt.
+
+
+<<Datei- und Verzeichnisnamen
+
+Zum besseren Verst„ndnis der nachfolgenden Texte
+zun„chst eine Aufstellung der fr eine RFC/Client-
+Serverbox spezifischen Datei- und Verzeichnisnamen
+und deren Funktion. An diese Konventionen mssen sich
+die eingesetzten Clients halten, anderenfalls mssen
+die Dateinamen und/oder ihr Speicherort vorher durch
+Batches oder Scripts ggf. so angepaát werden, daá der
+Client und XP korrekt miteinander kooperieren.
+
+<<<XP>\SPOOL\<Box> >> Das Spool-Verzeichnis der Server-
+   box, fr die ein Netcall durchgefhrt wird. <<<XP> >>
+   steht dabei fr das XP-Verzeichnis, <<<Box> >>fr den
+   Namen der Serverbox, genauer: fr den Namensanteil
+   der Serverbox-Konfigurationsdatei <<<Box>.BFG>> (also
+   ggf. auf 8 Stellen gekrzt, bei in den ersten acht
+   Stellen identischen Namen mit einer lfd. Numerie-
+   rung in den beiden letzten Stellen des Dateinamens
+   versehen und ohne Dateierweiterung). Damit ist ge-
+   w„hrleistet, daá jede Serverbox ihr eigenes Spool-
+   Verzeichnis hat. Das Verzeichnis wird beim Anlegen
+   oder Umbenennen einer Serverbox automatisch
+   erstellt bzw. umbenannt.
+
+   Im Spool-Verzeichnis legt XP bei einem Netcall
+   alle ausgehenden RFC-Nachrichten ab und liest ein-
+   gegangene Nachrichten (nur) aus diesem Verzeichnis
+   ein. Ausnahme: "[Multiserverbetrieb]"@30109
+
+   Name und Pfad des Spool-Verzeichnisses sind in der
+   o.a. Form "fest verdrahtet" und k”nnen nicht kon-
+   figuriert werden. Clients oder Client-Kits, die
+   den Pfad des Spool-Verzeichnisses ben”tigen,
+   k”nnen ihn aus dem Wert "Client-Spool=" in der
+   Konfigurationsdatei <Box>.BFG auslesen.
+
+<<Mnnnn.OUT>>  Ausgehende Mails (PMs) legt XP (genauer:
+   der Nachrichtenkonvertierer UUZ) unter diesem
+   Namen im Spool-Verzeichnis ab.
+
+<<Nnnnn.OUT>>  Ausgehende News (Artikel, Postings, AMs)
+   werden von XP (bzw. UUZ) unter diesem Namen im
+   Spool-Verzeichnis abgelegt.
+
+Fr Mails wie fr News gilt: "nnnn" steht fr eine
+fortlaufende vierstellige Zahl. Es wird je Nachricht
+eine Datei erzeugt (s. auch weiter unten, "<<Nachrich-
+<<tenkonvertierung ZC<->RFC mit UUZ>>").
+
+<<Mnnnn.MSG>>  Unter diesem Namen erwartet CrossPoint
+   die eingegangenen Mails (PMs) im Spool-Verzeichnis
+   der Serverbox.
+
+<<Nnnnn.MSG>>  Unter diesem Namen erwartet CrossPoint
+   die eingegangenen News (AMs) im Spool-Verzeichnis
+   der Serverbox.
+
+Eingegangene Mails und News werden von UUZ in einen
+ZConnect-Puffer konvertiert und anschlieáend in XP
+eingelesen. "nnnn" steht auch hier fr eine fortlau-
+fende vierstellige Zahl.
+
+<<M*.IN, N*.IN>>  Eingegangene Mails und News, die
+   erfolgreich konvertiert *und* in XP eingelesen
+   werden konnten, erhalten danach die Dateierweite-
+   rung .IN statt .MSG. Diese bleiben bis zum n„ch-
+   sten Netcall im Spool-Verzeichnis der Serverbox
+   liegen und werden beim n„chsten Netcall gel”scht.
+
+<<CLPUFFER>>  Der Name des ZConnect-Eingangspuffers,
+   den UUZ bei einem Netcall im Client-Modus aus den
+   eingegangenen RFC-Nachrichten erstellt.
+
+<<<Box>.BL>> oder <<<Box>.GR>>  Die Gesamtliste aller vorhan-
+   denen Bretter (Newsgroups) einer Serverbox - liegt
+   i.d.R. im Client-Verzeichnis (speziell bei Einsatz
+   eines der diversen UKA*-Clients), kann aber auch
+   (ausschlieálich als <<<Box>.BL>>!) im XP-Verzeichnis
+   liegen (siehe auch "Der interne Brettmanager"
+   weiter unten).
+
+<<<Box>.RC>>  Die Liste aller bestellten Bretter
+   (Newsgroups) einer Serverbox - liegt immer im
+   Client-Verzeichnis.
+
+
+<<Ablauf eines Netcalls
+
+Der Netcall einer RFC/Client-Serverbox l„uft in
+folgenden Einzelschritten ab:
+
+1. <<L”schen>> aller *.IN (= beim letzten Netcall erfolg-
+   reich eingelesene Nachrichten) im Spool-Verzeich-
+   nis <XP>\SPOOL\<Box> - noch in diesem Verzeichnis
+   befindliche *.MSG sind beim letzten Netcall nicht
+   erfolgreich eingelesen worden und werden daher
+   *nicht* gel”scht, sondern am Ende des aktuellen
+   Netcalls mit eingelesen.
+
+2. <<Ausgangsfilter>> - Filtern des Ausgangspuffers (nur,
+   wenn ausgehende Nachrichten vorhanden und Aus-
+   gangsfilter eingetragen).
+
+3. <<ZC->RFC-Konvertierung>> der ausgehenden Nachrichten
+   durch UUZ und Ablegen der konvertierten Nach-
+   richten (Mails: Mnnnn.OUT, News: Nnnnn.OUT) im
+   Spool-Verzeichnis <XP>\SPOOL\<Box> (nur, wenn
+   ausgehende Nachrichten vorhanden).
+
+   Im "[Multiserverbetrieb]" werden auch die Nachrich-@30109
+   ten der Server, die bei einem Netcall einer Ser-
+   verbox mitgesendet werden sollen, konvertiert und
+   in dem Spool-Verzeichnis der Serverbox abgelegt,
+   fr die der Netcall durchgefhrt wird.
+
+4. <<Aufruf des externen Clients>> (ab hier gibt XP die
+   Kontrolle an das externe Programm ab). Der Client
+   muá die im Spool-Verzeichnis liegenden Nachrichten
+   (*.OUT) versenden, erfolgreich versendete Nach-
+   richten l”schen, und eingehende Nachrichten als
+   Mnnnn.MSG (Mails) bzw. Nnnnn.MSG (News) im Spool-
+   Verzeichnis <XP>\SPOOL\<Box> ablegen.
+
+5. <<Unversandt-Handling>> - CrossPoint prft das Spool-
+   Verzeichnis <XP>\SPOOL\<Box> auf unversandte Nach-
+   richten (*.OUT), erstellt anhand der Message-IDs
+   ein neues Pollpaket (<Box>.PP), l”scht die *.OUT-
+   Dateien und entfernt in der Nachrichtendatenbank
+   bei den brigen (= versandten) Nachrichten den
+   Unversandt-Status.
+
+6. <<RFC->ZC-Konvertierung>> der eingegangenen Nachrich-
+   ten und Erstellen des Eingangspuffers (CLPUFFER).
+
+7. <<Eingangsfilter>> - Filtern des Eingangspuffers (nur,
+   wenn eingegangene Nachrichten vorhanden und Ein-
+   gangsfilter eingetragen).
+
+8. <<Einlesen>> des Eingangspuffers.
+
+9. <<Umbenennen>> der erfolgreich eingelesenen Nachrich-
+   ten im Spool-Verzeichnis <XP>\SPOOL\<Box> von
+   *.MSG nach *.IN.
+
+
+<<Nachrichtenkonvertierung ZC<->RFC mit UUZ
+
+Der Nachrichtenkonvertierer UUZ legt ausgehende Nach-
+richten (*.OUT) im Spool-Verzeichnis <XP>\SPOOL\<Box>
+der jeweiligen Serverbox ab; aus demselben Verzeich-
+nis konvertiert UUZ eingegangene Nachrichten (*.MSG)
+in die ZConnect-Pufferdatei CLPUFFER, die anschlie-
+áend von XP eingelesen wird.
+
+Wenn w„hrend eines Netcalls mal etwas schiefgegangen
+sein sollte, k”nnen Sie die eingegangenen Nachrichten
+mit folgendem Befehl auch manuell konvertieren (Sie
+mssen sich dabei im XP-Verzeichnis befinden):
+
+<<UUZ.EXE -uz SPOOL\<Box>\*.MSG CLPUFFER
+
+Die Pufferdatei CLPUFFER k”nnen Sie dann ber XPoint/
+Import/Puffer_einlesen... na, einlesen eben. :-)
+
+Sie k”nnen aber auch einfach bis zum n„chsten Netcall
+warten, im Spool-Verzeichnis der Serverbox liegende
+Nachrichten (*.MSG) werden dann am Ende des Netcalls
+automatisch mit eingelesen.
+
+UUZ wird beim Netztyp RFC/Client *immer* mit folgen-
+den Schaltern aufgerufen:
+
+<<-SMTP>>:   Dieser Schalter sorgt dafr, daá die
+         ausgehenden PMs (Mnnnn.OUT) im SMTP-Mail-
+         format erstellt werden. Dieses Format muá
+         von dem eingesetzten externen Client ver-
+         standen werden. Beim SMTP-Format befinden
+         sich bestimmte fr den Mailtransfer wichtige
+         Steuerbefehle am Beginn jeder Nachricht
+         (z.B. "MAIL FROM:" und "RCPT TO:", also die
+         'Envelope-Adressen').
+
+         Diese Informationen mssen deshalb am Beginn
+         jeder Nachricht stehen, weil externe Clients
+         blicherweise nicht die fr den UUCP-Betrieb
+         erzeugten Steuerdateien ('C- und X-Dateien')
+         und die darin enthaltenen Informationen
+         auswerten k”nnen. N„heres zur 'Envelope-
+         Adressierung' finden Sie in UUCP.TXT. Ob, in
+         welchem Umfang und auf welche Art und Weise
+         der von Ihnen verwendete Client Envelope-
+         Adressierung untersttzt, erfahren Sie (hof-
+         fentlich) in der Dokumentation des Clients.
+
+<<-client>>: Dieser Schalter hat entscheidende Bedeutung
+         fr das Zusammenspiel zwischen CrossPoint
+         und externem Client:
+
+         - Im Unterschied zum UUCP-Protokoll, bei dem
+           im Batched-SMTP-Betrieb alle Nachrichten
+           in eine Datei geschrieben werden, wird
+           hier fr jede Nachricht eine eigene Datei
+           erzeugt - mit einer (sinnvollen) Ausnahme:
+           Kopien ('Carbon Copies', CC) und Blind-
+           kopien ('Blind Carbon Copies', BCC) werden
+           immer gemeinsam in eine Datei geschrieben
+           (mit dem angenehmen Nebeneffekt, daá die
+           Empf„nger so genau erkennen k”nnen, wer
+           'echter' und wer Kopien-Empf„nger ist).
+
+           Das Erzeugen von einer Datei je Nachricht
+           spielt u.a. fr das Unversandt-Handling
+           eine wichtige Rolle, da XP sonst nicht
+           erkennen k”nnte, welche Nachrichten nicht
+           versandt wurden. Auáerdem verhindert diese
+           Methode das Senden von 'Dupes' im Falle
+           von Verbindungs-/šbertragungsproblemen.
+
+         - Die ausgehenden Nachrichtendateien werden
+           nach dem Schema "Mnnnn.OUT" (Mails, PMs)
+           bzw. "Nnnnn.OUT" (News, AMs) benannt,
+           wobei "nnnn" fr eine fortlaufende vier-
+           stellige Zahl steht.
+
+         - Es werden keine UUCP-Steuerdateien ('C-
+           und X-Dateien', siehe UUCP.TXT) erzeugt.
+
+
+<<Der interne Brettmanager
+
+CrossPoint bietet auch fr den Netztyp RFC/Client
+einen integrierten Brettmanager, der sich in seiner
+Funktionsweise an der g„ngigen Praxis einiger popu-
+l„rer Clients (n„mlich der sog. UKA*-Clients) anlehnt
+- leider gibt es hierfr keinen definierten Standard.
+Es kann also durchaus passieren, daá die von dem
+Brettmanager untersttzten Funktionen von dem von
+Ihnen eingesetzten Client nicht (oder nicht richtig)
+verstanden werden.
+
+
+ş Brett-/Newsgroup-Liste beziehen und aktualisieren
+
+  Alle bekannten Clients bieten eine Option, mit der
+  eine Brettliste bezogen bzw. aktualisiert werden
+  kann - diese Option sollten Sie aktivieren.
+
+  CrossPoint geht davon aus, daá die Gesamtliste der
+  vorhandenen Newsgroups im Client-Verzeichnis liegt
+  und den Namen <<<Box>.BL>> tr„gt. Der Client muá also
+  neue Newsgroups dieser Datei hinzufgen.
+
+  Leider gibt es im Usenet noch immer kein Verfahren,
+  mit dem sich nicht mehr existierende Newsgroups
+  erkennen und automatisch aus der Liste austragen
+  lieáen. Wenn Sie also von Zeit zu Zeit eine top-
+  aktuelle Liste beziehen m”chten, l”schen Sie die
+  alte <<<Box>.BL>> - der Client bezieht dann i.d.R.
+  eine komplett neue Liste vom Newsserver.
+
+  Zum L”schen der Liste k”nnen Sie auch den Men-
+  Befehl Nachricht/Brettmanager/Liste_anfordern
+  verwenden. Wenn Sie nach dem n„chsten Netcall keine
+  aktuelle Newsgroup-Liste vorfinden sollten, ist
+  entweder die entsprechende Option ihres Clients
+  nicht aktiviert (oder Ihr Client hat keine solche
+  Option), oder der Client legt die Liste unter einem
+  anderen Dateinamen als <<<Box>.BL>> ab. In diesem
+  Fall bleibt Ihnen nur brig, die Brettliste vor
+  und nach jedem Netcall mittels Batch- oder Script-
+  datei in den Namen umzubenennen, den Ihr Client
+  erwartet.
+
+
+ş Bretter/Newsgroups (ab-)bestellen
+
+  Die aktuell bestellten Newsgroups werden in einer
+  Liste gefhrt, die ebenfalls im Client-Verzeichnis
+  liegt und den Namen <<<Box>.RC>> tr„gt. Der Client muá
+  also bei jedem News-Transport die neuen Nachrichten
+  der darin verzeichneten Newsgroups anfordern. Wenn
+  der Client einen anderen Dateinamen erwarten soll-
+  te, mssen Sie die Liste bei jedem Netcall ggf.
+  (per Batch- oder Scriptdatei) umbenennen.
+
+  Das Bestellen und Abbestellen von Newsgroups funk-
+  tioniert im wesentlichen genauso, wie Sie es auch
+  von den brigen Netztypen oder von UUCP her kennen:
+  Sie markieren die (ab-)zubestellenden Bretter und
+  drcken <<<Enter> >>- die anschlieáende Rckfrage
+  beantworten Sie mit "Ja".
+
+  Bei neu bestellten Newsgroups werden Sie vom Brett-
+  manager noch aufgefordert, die Anzahl der letzten
+  n Artikel anzugeben, die fr die neu bestellte(n)
+  Newsgroup(s) angefordert werden sollen. Der Stan-
+  dardwert ist 10 Artikel je Newsgroup, Sie k”nnen
+  hier jeden beliebigen Wert bis 9999 angeben. Dieser
+  Wert wird als negative Zahl ("-10") hinter den
+  Namen der Newsgroup geschrieben. Wenn Sie "0" an-
+  geben, l”sen Sie bei den meisten Clients einen
+  "Rescan" aus, d.h. der Client fordert s„mtliche auf
+  dem Newsserver verfgbaren Artikel der Newsgroup
+  an. M”glicherweise bietet Ihr Client eine Option,
+  die Gesamtanzahl dieser Artikel zu begrenzen.
+
+  Im Unterschied zu anderen Netztypen oder zum UUCP-
+  Protokoll wird also keine Nachricht an irgendeinen
+  Pseudo-User erstellt, der den von Ihnen ge„uáerten
+  Bestellwunsch ausfhrt, sondern die (ab-)bestell-
+  te(n) Newsgroup(s) wird/werden aus der Liste der
+  bestellten Newsgroups aus- bzw. eingetragen.
+
+  Das Format der Liste der bestellten Newsgroups ist
+  einfach: auf den Namen der Newsgroup folgt durch
+  ein Leerzeichen getrennt der 'article counter', der
+  die Nummer des letzten geholten Artikels fr diese
+  Newsgroup enth„lt. Sie k”nnen die Datei <<<Box>.RC>>
+  also notfalls auch per Hand editieren.
+
 @
 196
 Weil eine Nummer langweilig und schlecht zu merken
@@ -8403,27 +8636,31 @@ Sie diesen Schalter aktivieren.
 
 @
 660
-Hier wird eingestellt, wie und in welchem Format die
-Daten von und zur Box bertragen werden:
+W„hlen Sie den Netztyp aus. Damit wird bestimmt, wie
+und in welchem Format die Daten von und zur Serverbox
+bertragen werden:
 
-<<ZConnect>>    (= "JANUS")  fr das Z-Netz
+<<RFC/Client>>  eMail (Internet) und News (Usenet) ber
+            externe Mail-/News-Clients <<=> >>[Information]@30100
 
-<<Z-Netz alt>>  fr Z-Netz-Systeme, die das neue ZCon-
-            nect-Format noch nicht untersttzen
+<<RFC/UUCP>>    eMail (Internet) und News (Usenet)
+            ber UUCP
 
-<<RFC/UUCP>>    fr Usenet, SubNet etc.
+<<ZConnect>>    fr Z-Netz-Boxen
 
-<<MausTausch>>  fr das Maus-Netz
+<<Fido>>        FidoNet und kompatible Netze
 
-<<Fido>>        fr Fido und kompatible Netze
+<<QWK>>         fr Boxen mit QWK-Schnittstelle
 
-<<QWK>>         hiermit wird XP zum QWK-Offline-Reader
+<<MausTausch>>  Maus-Netz
 
-<<MagicNET>>    fr MagicNET und LightNET
+<<Z-Netz alt>>  fr veraltete Z-Netz-Boxen
 
-<<QuickMail>>   fr QuickNet, PhantomNet und Kompatible
+<<MagicNET>>    MagicNET oder LightNET
 
-<<GS-Mailbox>>  fr verschiedene GS-Box-Netze
+<<QuickMail>>   QuickNet, PhantomNet und Kompatible
+
+<<GS-Mailbox>>  diverse GS-Box-Netze
 
 @
 670
@@ -8442,6 +8679,9 @@ andere Stammbox festgelegt werden.
 Der Netzname ist der Kurzname der Box, der in Ihrer
 Useradresse verwendet wird.
 
+Beim Netztyp <<RFC/Client>> k”nnen Sie einen beliebigen
+Namen verwenden.
+
 Bei FidoNet-Boxen setzen Sie hier bitte die Node-
 adresse der Box ein, in der Form Zone:Netz/Node.
 @
@@ -8449,15 +8689,28 @@ adresse der Box ein, in der Form Zone:Netz/Node.
 Geben Sie den Typ der Stammbox an, oder w„hlen Sie
 einen Typ mit <<<F2> >>aus. M”gliche Eingaben sind:
 
+<<RFC/Client>>  eMail (Internet) und News (Usenet) ber
+            externe Mail-/News-Clients <<=> >>[Information]@30100
+
+<<RFC/UUCP>>    eMail (Internet) und News (Usenet)
+            ber UUCP
+
 <<ZConnect>>    fr Z-Netz-Boxen
-<<Z-Netz alt>>  fr veraltete Z-Netz-Boxen
-<<RFC/UUCP>>    Usenet
-<<MausTausch>>  Maus-Netz
-<<Fido>>        FidoNet und Kompatible
+
+<<Fido>>        FidoNet und kompatible Netze
+
 <<QWK>>         fr Boxen mit QWK-Schnittstelle
+
+<<MausTausch>>  Maus-Netz
+
+<<Z-Netz alt>>  fr veraltete Z-Netz-Boxen
+
 <<MagicNET>>    MagicNET oder LightNET
+
 <<QuickMail>>   QuickNet, PhantomNet und Kompatible
+
 <<GS-Mailbox>>  diverse GS-Box-Netze
+
 @
 682
 Ihr Username in der angegebenen Box.
@@ -10611,7 +10864,7 @@ Aussagen zum Thema PGP (Stand April 2001):
    man lediglich sicherstellen, ausschlieálich RSA-
    Schlssel zu generieren und an andere weiterzu-
    geben. Damit ist gew„hrleistet, daá man alle mit
-   dem eigenen "public key" veschlsselten Nachrich-
+   dem eigenen "public key" verschlsselten Nachrich-
    ten mit PGP 2.6.x einwandfrei decodieren kann.
 
 

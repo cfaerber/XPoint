@@ -1822,11 +1822,13 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 910  Username:~
 + 911
 0    50
-1    Bitte geben Sie den Namen Ihrer Stammbox, den
-2    Netztyp der Box und Ihren Usernamen ein:
-3    Netztyp  ~
-4    Boxname  ~
-5    Username ~
+1    Bitte geben Sie Netztyp und Name Ihrer Stamm-
+2    box sowie Username bzw. eMail-Adresse ein.
+3    Bei Einsatz des Netztyps RFC/Client ben”tigen
+4    Sie einen externen Mail-/News-Client.
+5    Netztyp  ~
+6    Boxname  ~
+7    Username ~
 + 912
 0    47
 1    Nodenummer
@@ -1840,6 +1842,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 9    Domain   ~
 10   Serverdom.
 11   FQDN     ~
+12   eMail-Adr.
 + 913
 0    26
 1    Netztyp~
@@ -1882,27 +1885,35 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 26   Freeze-Entpacker ~
 27   GNU-ZIP-Entpacker~
 28   ZModem-Optionen  ~
-# UUCP
+# RFC/UUCP
 30   max. UUCP-g-Paketgr”áe   ~
 31   max. UUCP-g-Fenstergr”áe    ~
-62   maximale Dateigr”áe      ~
-64   Batched SMTP-Modus~
-65   ausùSMTP/UUCPùSMTP/Client
+61   maximale Dateigr”áe      ~
+62   Batched SMTP-Modus~
+63   ausùSMTP/UUCPùSMTP/Client
 32   variable UUCP-g-Paketgr”áe
-60   Ausgangspaketgr”áe vorgeben
-61   Login mit 7/E/1
-33   G-Protokoll
-34   g-Protokoll
-35   Dateigr”áe bertragen
-36   Batched SMTP (UUCP-Style)
-58   Batched SMTP (Client-Style)
-57   Client-Modus (fr externe Mail-/News-Clients)
-59   Client-Aufruf     ~
-63   Zus„tzliche Boxen ~
-67   Client-Verzeichnis~
-37   z-Protokoll
-38   f-Protokoll
-39   e-Protokoll
+38   Ausgangspaketgr”áe vorgeben
+39   Dateigr”áe bertragen
+33   g-Protokoll
+34   G-Protokoll
+35   z-Protokoll
+36   f-Protokoll
+37   e-Protokoll
+60   Login mit 7/E/1
+# RFC/Client
+80   Client-Einstellungen
+81   Server
+82   Kommentar
+83   eMail-Adresse
+84   Realname    ~
+85   Vertreter   ~
+86   FQDN        ~
+87   Client-Verzeichnis
+88   Client-Aufruf    ~
+89   Zus„tzliche Server
+90   Login  ~
+91   Paáwort~
+92   Telefon~
 #
 40   Packer-Extension ~
 # ProNet:
@@ -1925,7 +1936,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Turbo + Maus(55)
 55   Brettnachrichten anfordern
 56   Seriennr.~
-66   ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
 + 921
 0    59
 1    Warten auf Verbindung
@@ -1987,7 +1997,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 16   Vertretersystem
 17   fr AMs~
 18   fr PMs~
-19   lokale Kopien ersetzen
+19   ersetze lokale Kopien eigener Nachr.
+20   Abs. 'MAILER-DAEMON' bei Empf.-Best.
 + 925
 1    netzspezifische Einstellungen
 2    Message-IDs
@@ -2015,11 +2026,14 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 11   Paáwort   ~
 12   d'Bridge-Areafix
 +    927
-1    ^Point,^Modem,^Gebhren,
-2    ^Namen,%s^Diverses
-3    ,^SysopMode
+1    ^Point,
+2    ^Modem,
+3    ^Gebhren,
+4    ^Namen,
+5    ^Diverses
+6    ,^SysopMode
 # QWK
-4    ,^Transfer
+7    ,^Transfer
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -3121,9 +3135,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 34 Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
 35 Standardeintrag kann nicht editiert werden.
 36 Eintrag darf entweder keine oder nur "$CLPATH+" als Pfadangabe enthalten!
-37 Verzeichnis darf nicht gleich dem XP-Spool-Verzeichnis sein!
-38 Nur RELATIVER Pfad EINE Ebene DIREKT unterhalb XP-Verzeichnis zul„ssig!
+# Der String in den folgenden zwei Zeilen darf max. 56 Zeichen lang sein:
+37 Pfadangabe muá RELATIV sein und auf ein Verzeichnis EINE
+38 Ebene DIREKT unterhalb des XP-Verzeichnisses verweisen!
+#
 39 Pfad darf nicht leer sein!
+40 Es muá ein Username oder eine eMail-Adresse angegeben werden!
 
 +  11000
 1  unbekannter Befehl

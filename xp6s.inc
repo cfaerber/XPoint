@@ -80,9 +80,14 @@ end;
 procedure showbetreff;
 begin
   attrtxt(col.coldiahigh);
-  mwrt(x+13,y+4,' '+forms(betreff,52)+' ');
+  mwrt(x+13,y+6,' '+forms(betreff,52)+' ');
 end;
 
+procedure showabsender;
+begin 
+  attrtxt(col.coldiahigh);
+  wrt(x+14,y+2-fadd,forms(force_absender,62)); 
+end;
 
 procedure showbox;
 var ss : string[BoxNameLen];
@@ -100,7 +105,7 @@ var ss : string[BoxNameLen];
 
 begin
   attrtxt(col.coldiahigh);
-  gotoxy(x+14,y+6);
+  gotoxy(x+14,y+8);
   moff;
   if cc_anz=0 then Wrt2(forms(box,17))
   else if forcebox='' then
@@ -115,9 +120,9 @@ var ms : longint;
 begin
   attrtxt(col.coldialog);
   moff;
-  wrt(x+14,y+8,sp(18));
+  wrt(x+14,y+10,sp(18));
   attrtxt(col.coldiahigh);
-  wrt(x+14,y+8,strs(fs+addsize));
+  wrt(x+14,y+10,strs(fs+addsize));
   attrtxt(col.coldialog);
   Wrt2(getres(13));    { ' Bytes' }
   ms:=maxsize;
@@ -251,8 +256,8 @@ procedure showcode;
 begin
   attrtxt(col.coldialog);
   moff; (* 05.02.2000 MH: x+45 -> x+51 *)
-  wrt(x+51,y+6,sp(22));
-  gotoxy(x+51,y+6);
+  wrt(x+51,y+8,sp(22));
+  gotoxy(x+51,y+8);
   if docode=0 then
     case cancode of
       -1 : Wrt2(getreps2(601,1,'Rot13'));       { '%s m”glich' }
@@ -281,12 +286,12 @@ end;
 procedure showcc;
 begin
   attrtxt(col.coldialog);
-  mwrt(x+51,y+8,sp(20)); (* 05.02.2000 MH: y+47 -> x+51 *)
+  mwrt(x+51,y+10,sp(20)); (* 05.02.2000 MH: y+47 -> x+51 *)
   if cc_anz=0 then
-    mwrt(x+51,y+8,getres(602))   { 'keine' }
+    mwrt(x+51,y+10,getres(602))   { 'keine' }
   else begin
     attrtxt(col.coldiahigh);
-    mwrt(x+51,y+8,strs(cc_anz));
+    mwrt(x+51,y+10,strs(cc_anz));
     end;
 end;
 
@@ -294,12 +299,12 @@ procedure ShowLine(spezial:boolean);
 begin
   attrtxt(col.coldialog);
   if spezial then begin
-    mwrt(x+3,y+10,getres2(603,1));   { 'Spezial..  ' }
-    mwrt(x+39,y+10,'               ');
+    mwrt(x+3,y+12,getres2(603,1));   { 'Spezial..  ' }
+    mwrt(x+39,y+12,'               ');
     end (* 05.02.2000 MH: x+38 -> x+42 *)
   else begin
-    mwrt(x+3,y+10,getres2(603,2));   { 'Absenden..' }
-    mwrt(x+39,y+10,getres2(603,3));  { 'Žndern..' }
+    mwrt(x+3,y+12,getres2(603,2));   { 'Absenden..' }
+    mwrt(x+39,y+12,getres2(603,3));  { 'Žndern..' }
     end;
 end;
 
@@ -831,6 +836,7 @@ begin
   else
     username:=forceabs;
   dbRead(d,'pointname',pointname);
+  dbRead(d,'email',email);
   dbRead(d,'dateiname',boxfile);
   dbRead(d,'nameomaps',mapsname);
   dbRead(d,'netztyp',netztyp);
@@ -1145,6 +1151,33 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.7  2001/06/13 02:10:09  my
+  JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
+          - All vital client settings from Edit/Point, Edit/Names and
+            Edit/RFC/UUCP are summarized under one item Edit/Client now.
+            Superfluous RFC/UUCP settings have been removed (well, more
+            hidden in fact ;)).
+          - introduced simplified entry "eMail address" (rather than composing
+            it of removed entries user name, point name and domain).
+          - new FQDN festures: "@" is replaced with ".", and "_" with "-"
+            automatically. <F2> selection now shows the result of the
+            proposed FQDN rather than a fixed string. Special T-Online FQDN
+            support (".dialin.").
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+          - new unit XP9SEL as unit XP9 exceeded 64K size.
+  JG/MY:- Server type RFC/UUCP:
+          - introduced simplified entry "eMail address". If empty, the entries
+            user name, point name and domain are automatically filled with the
+            appropriate values taken from this eMail address.
+          - re-designed Edit/Point to the "old" stage (removed Client Mode specific
+            stuff). Kept new BSMTP options "SMTP/UUCP" and "SMTP/Client".
+          - added "MAILER-DAEMON" switch to Edit/Servers/Edit/Misc. (by default,
+            eMail address is used as sender for RRQs now).
+        - Removed superfluous code in connection with the changes above, updated
+          and cleaned up resource and help files (still a lot to do for the English
+          part).
+
   Revision 1.18.2.6  2001/04/28 15:47:36  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.
