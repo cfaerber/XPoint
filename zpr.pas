@@ -382,12 +382,9 @@ begin
   close(f);
   bakname:=ChangeFileExt(n, newext);
   assign(f,bakname);
-  setfattr(f,archive);  { evtl. altes BAK lîschen }
+  FileSetAttr(bakname, faArchive);  { evtl. altes BAK lîschen }
   erase(f);
-  assign(f,n);
-  setfattr(f,archive);
-  rename(f,bakname);
-  if ioresult<>0 then;
+  RenameFile(n, bakname);
 end;
 
 
@@ -405,7 +402,7 @@ begin
     if not validfilename(ferr) then
       error('ungÅltige Fehlerausgabedatei: "'+ferr+'"');
     end;
-  if FExpand(fi)=FExpand(fo) then fo:='';
+  if ExpandFilename(fi)=ExpandFileName(fo) then fo:='';
   if ParRep and (pos('MPUFFER.',fi)>0) and ((fo='') or (pos('MPUFFER.',fo)>0))
   then
     error('CrossPoint-MPUFFER-Dateien dÅrfen nicht direkt modifiziert werden!');
@@ -1300,6 +1297,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/07/31 13:10:36  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.33  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

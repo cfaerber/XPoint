@@ -144,7 +144,7 @@ var t     : text;
     fa    : fidoadr;
     NlItem: TNodeListItem;
 begin
-  assign(t,NodelistCfg);
+  assignFile(t, NodelistCfg);
   if existf(t) then begin
     reset(t);
     while not eof(t) do
@@ -188,7 +188,7 @@ procedure TNodeList.SaveConfigToFile;           // NODELST.CFG speichern
 var t : text;
     i : integer;
 begin
-  assign(t,NodelistCfg);
+  assignFile(t,NodelistCfg);
   rewrite(t);
   for i:=0 to Count - 1 do
   with TNodeListItem(Items[i]) do
@@ -312,6 +312,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/07/31 13:10:31  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.12  2001/01/08 07:37:10  mo
   -Add inherited,  delete wrong create -TnodeList(Tlist)
 

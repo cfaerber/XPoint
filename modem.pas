@@ -24,7 +24,9 @@ unit Modem;
 
 interface
 
-uses Sysutils,ObjCOM,Typeform,Timer,Debug,{$IFDEF NCRT}xpcurses{$ELSE}crt{$ENDIF};
+uses
+ {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
+ Sysutils,ObjCOM,Typeform,Timer,Debug;
 
 const TimeoutModemInit   : Integer= 60; {fuer Dialup, in Sekunden}
       TimeoutModemAnswer : Integer= 3; {fuer SendCommand}
@@ -298,6 +300,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/07/31 13:10:31  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.11  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

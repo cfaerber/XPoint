@@ -552,7 +552,9 @@ begin
 
 makercend:
   List.Free;
+  {$IFNDEF Delphi }
   InOutRes:=0;
+  {$ENDIF }
   closebox;
 end;
 
@@ -598,7 +600,7 @@ var t1,t2    : text;
         push ebx                 { Offset zum Flag in UKA-Brettliste sichern }
         mov byte ptr [esi],bl
         add esi,ecx
-        lea di,[esi+2]
+        lea edi,[esi+2]
         std
         rep movsb                { s:='* '+s }
         dec edi
@@ -1843,9 +1845,10 @@ begin
     else comm:='LIST VERBOSE BRETTER *';
     brk:=false;
     end
-  else begin
+  else
+  begin
     List := listbox(iif(maus,45,57),lines,getres2(810,0)+mapsname+   { 'Nachricht an ' }
-            +iifs((mapsname='MAPS') and (random<0.07),'-o-MAT','')+' @ '+box);
+      iifs((mapsname='MAPS') and (random<0.07),'-o-MAT','') + ' @ ' + box);
     if fido then begin
       app('List',getres2(810,40));      { 'Liste der verfgbaren Bretter' }
       app('Query',getres2(810,41));     { 'Liste der bestellten Bretter' }
@@ -2092,6 +2095,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2001/07/31 13:10:33  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.48  2001/07/28 12:04:14  mk
   - removed crt unit as much as possible
 

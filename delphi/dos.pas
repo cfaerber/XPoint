@@ -14,8 +14,6 @@ const
   Archive    = $20;
   AnyFile    = $3F;
 
-const
-  DosError: Integer = 0;
 
 type
   FileRec = TFileRec;

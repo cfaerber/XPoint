@@ -438,7 +438,7 @@ begin
                   iifs(SizeNego,' w/ size negotiation',       ''             )),[0]);
 
   for n := 1 to 5 do begin
-    s:=GetUUStr; dec(n);
+    s:=GetUUStr; {$IFNDEF Delphi}dec(n); {$ENDIF }// Achtung: Loop-Variable wird verändert
     if s[1]='P' then break;
   end;
 
@@ -1108,6 +1108,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/07/31 13:10:38  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.9  2001/07/30 19:07:44  cl
   - support of UUCP E command for outgoing messages
 

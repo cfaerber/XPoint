@@ -298,7 +298,7 @@ asm
 @isolp1:  mov    al,[edi]
           or     al,al
           jns    @ii1
-          xlat
+          xlatb
 @ii1:     stosb
           loop   @isolp1
 @noconv1:
@@ -316,7 +316,7 @@ asm
           mov    ebx,offset IBM2ISOtab
           cld
 @isolp2:  mov    al,[edi]
-          xlat
+          xlatb
           stosb
           loop   @isolp2
 @noconv2:
@@ -1135,6 +1135,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.59  2001/07/31 13:10:33  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.58  2001/07/28 12:04:11  mk
   - removed crt unit as much as possible
 

@@ -28,7 +28,7 @@ unit xpmakeheader;
 interface
 
 uses
-  classes, xpheader;
+  xpglobal, classes, xpheader;
 
 const
   ReadEmpflist : boolean  = false;
@@ -570,6 +570,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/07/31 13:10:35  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.8  2001/07/27 18:10:15  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

@@ -29,7 +29,7 @@ unit replytoall;
 
 interface
 
-uses xpglobal,dos,typeform,fileio,inout,winxp,keys,maske,datadef,database,
+uses xpglobal,typeform,fileio,inout,winxp,keys,maske,datadef,database,
   resource,xp0,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xp6,maus2,lister, sysutils,
   classes, xpHeader, xpconfigedit, xpmakeheader;
 
@@ -1059,6 +1059,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/07/31 13:10:32  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.4  2001/07/28 19:35:58  mk
   - askRTA asks not every time ;)
 

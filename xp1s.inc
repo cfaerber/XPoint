@@ -434,7 +434,7 @@ end;
 
 procedure editfile(name:string; nachricht,reedit:boolean; keeplines:byte;
                    ed_ukonv:boolean);
-var p   : byte;
+var
     bak : string;
     ms  : boolean;
 begin
@@ -457,12 +457,8 @@ begin
       end;
     bak:='BAK';
     end;
-  if bak<>'' then begin
-    p:=pos('.',name);
-    if p=0 then name:=name+'.'+bak
-    else name:=LeftStr(name,p)+bak;
-    if FileExists(name) then _era(name);      { .BAK l”schen }
-    end;
+  if bak<>'' then
+    if FileExists(ChangeFileExt(name, '.'+bak)) then _era(name);      { .BAK l”schen }
 end;
 
 
@@ -505,6 +501,9 @@ end;
 
 {
   $Log$
+  Revision 1.57  2001/07/31 13:10:32  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.56  2001/07/28 12:04:10  mk
   - removed crt unit as much as possible
 

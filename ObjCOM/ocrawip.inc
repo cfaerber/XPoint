@@ -165,7 +165,7 @@ function tRawIPObj.Connect(Dest: String): Boolean;
 var SHost: String;
     IPort: Integer;
     IPos:  Integer;
-    D:     word;
+    D:     Integer;
 begin
   { TODO: IPv6 support }
 
@@ -173,6 +173,7 @@ begin
   if IPos=0 then IPos:=length(Dest)+1;
 
   SHost := Copy(Dest,1,IPos-1);
+
   Val(Copy(Dest,IPos+1,Length(Dest)-IPos),IPort,D);
 
   if IPort=0 then IPort:=23;            { Telnet default port; Port 0 is illegal with TCP/IP }
@@ -318,7 +319,7 @@ begin
   case {$IFDEF Win32}WinSock.{$ENDIF}select(256,@SSet,nil,nil,@NilTm) of
     0:            begin Result:=0; end;
     SOCKET_ERROR: begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end;
-  else            if {$IFDEF WIN32}WinSock.ioctlsocket(SHandle,FIONREAD,@Result)<>0
+  else            if {$IFDEF WIN32}WinSock.ioctlsocket(SHandle,FIONREAD,{$IFDEF FPC}@{$ENDIF}{$IFDEF VP}@{$ENDIF}Result)<>0
                      {$ELSE}not ioctl(SHandle,FIONREAD,@Result){$ENDIF} then
                     begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end
                   else if Result=0 then SOpened:=false; (* select said readable *)
@@ -441,8 +442,8 @@ var     InFree_size,OutFree_size: Integer;
 begin
   InFree :=maxLongInt; InUsed :=0;  InFree_size:=sizeof(infree);
   OutFree:=maxLongInt; OutUsed:=0; OutFree_size:=sizeof(outfree);
-  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_RCVBUF,{$IFDEF VP}@{$ENDIF}InFree, InFree_size )<>0 then SetErrorStr('GetBufferStatus');
-  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFDEF VP}@{$ENDIF}OutFree,OutFree_size)<>0 then SetErrorStr('GetBufferStatus');
+  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_RCVBUF,{$IFNDEF FPC}@{$ENDIF}InFree, InFree_size )<>0 then SetErrorStr('GetBufferStatus');
+  if {$IFDEF WIN32}WinSock.GetSockOpt{$ELSE}GetSocketOptions{$ENDIF}(SHandle,SOL_SOCKET,SO_SNDBUF,{$IFNDEF FPC}@{$ENDIF}OutFree,OutFree_size)<>0 then SetErrorStr('GetBufferStatus');
   InFree :=InFree+Sizeof(SBuffer)-(SBufEnd-SBufBeg)
 end; { proc. TTelnetObj.GetBufferStatus }
 
@@ -491,6 +492,9 @@ end; { func. ReadyToSend }
 
 {
   $Log$
+  Revision 1.8  2001/07/31 13:10:37  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.7  2001/07/11 20:43:40  mv
    * Small FreeBSD patches
 

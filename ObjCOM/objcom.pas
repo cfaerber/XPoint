@@ -99,7 +99,7 @@ function FossilDetect: Boolean;
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-uses Sysutils,Dos,Timer,Debug;
+uses Sysutils,Timer,Debug;
 
 {$IFDEF Win32} {$I OCSWin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
 {$IFDEF Linux} {$I OCSLin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
@@ -390,14 +390,14 @@ begin
       if(ConnType=CTelnet)or(ConnType=CRawIP){$IFDEF Linux}or(ConnType=CSerial){$ENDIF}then begin
         PTag:=Pos(' ',S);
         if PTag<>0 then
-	begin
-	   SPort:=Copy(S,1,PTag-1);
-	   Delete(S,1,PTag)
-	end
-	else begin
-	   SPort:=S;
-	   S:=''
-	end;
+        begin
+           SPort:=Copy(S,1,PTag-1);
+           Delete(S,1,PTag)
+        end
+        else begin
+           SPort:=S;
+           S:=''
+        end;
       end;
       S:=UpStr(S); Res:=0;
       while(S<>'')and(Res=0)do begin
@@ -441,6 +441,9 @@ end.
 
 {
   $Log$
+  Revision 1.22  2001/07/31 13:10:37  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.21  2001/03/21 19:04:00  ma
   - fixed SendString
 

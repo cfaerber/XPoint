@@ -310,8 +310,10 @@ var
   Count: Integer;
 begin
 {$IFDEF Win32}
+  {$IFNDEF Delphi } {!!}
   if IOCTLSocket(FHandle, FIONREAD, @Size) < 0 then
     RaiseSocketError;
+  {$ENDIF }
   if Size > 0 then
   begin
 {$ENDIF }
@@ -401,6 +403,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2001/07/31 13:10:38  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.22  2001/05/23 23:54:01  ma
   - fix: ParseError did not return ErrorMsg
 

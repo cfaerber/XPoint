@@ -53,7 +53,7 @@ const
   { Neue AnyFile-Konstante, da $3F oft nicht laeuft }
   ffAnyFile = $20;
 
-{$IFDEF VirtualPascal}
+{$IFNDEF FPC }
 const
   fsFromBeginning = 0;
   fsFromCurrent   = 1;
@@ -664,6 +664,9 @@ end.
 
 {
   $Log$
+  Revision 1.98  2001/07/31 13:10:31  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.97  2001/07/28 12:33:33  mk
   - GetEnv is now in OS dependend and not in dos unit
 

@@ -171,11 +171,7 @@ implementation
 
 uses
   {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF}
-  xpglobal,sysutils,typeform,debug,xpprogressoutputwindow;
-
-{$IFDEF VP}
-const fsFromEnd= 2; fsFromCurrent= 1; fsFromBeginning= 0;
-{$ENDIF}
+  xpglobal,sysutils,typeform,debug,xpprogressoutputwindow, fileio;
 
 function GetNextPhonenumber(var Phonenumbers: string): string;
 var p : byte;
@@ -519,6 +515,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/07/31 13:10:38  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.2  2001/04/16 18:13:28  ma
   - ProgOutWin now pauses a bit on closing
     (some seconds if an error occured, one second if not)

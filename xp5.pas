@@ -420,7 +420,9 @@ begin
     gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
     gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
   {$ELSE }
+    {$IFNDEF Delphi }
     gotoxy(x+17,y+5); write((heapsize -MaxAvail) div 1024:7,' KB');
+    {$ENDIF }
     gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
     gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
    {$ENDIF}
@@ -945,6 +947,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2001/07/31 13:10:33  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.51  2001/07/28 12:04:13  mk
   - removed crt unit as much as possible
 

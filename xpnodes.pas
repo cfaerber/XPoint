@@ -197,21 +197,6 @@ begin
 end;
 
 
-Function exist(n:string):boolean;
-var sr : searchrec;
-    ex : boolean;
-begin
-  Dos.findfirst(n,anyfile-volumeid-directory,sr);
-  ex:=(doserror=0);
-  while not ex and (doserror=0) do begin
-    Dos.findnext(sr);
-    ex:=(doserror=0);
-  end;
-  FindClose(sr);
-  exist:=ex;
-end;
-
-
 function OpenNodelistIndex(XP_Verzeichnis:string):boolean;
 var t  : text;
     s  : string;
@@ -239,15 +224,15 @@ begin
           readln(t,s);
           p:=cpos('=',s);
           if p>0 then begin
-            ss:=lstr(LeftStr(s,p-1));
+            ss:=lowercase(LeftStr(s,p-1));
             s:=mid(s,p+1);
             if ss='listfile'       then listfile:=s else
             if ss='number'         then number:=minmax(ival(s),0,999) else
             if ss='updatefile'     then updatefile:=s else
-            if ss='delupdate'      then delupdate:=(ustr(s)='J') else
+            if ss='delupdate'      then delupdate:=(uppercase(s)='J') else
             if ss='updatearchive'  then updatearc:=s else
             if ss='process-by'     then processor:=s;
-            if ss='dodiff'         then dodiff:=(ustr(s)='J') else
+            if ss='dodiff'         then dodiff:=(uppercase(s)='J') else
             if ss='format'         then format:=minmax(ival(s),0,6) else
             if ss='zone'           then zone:=minmax(ival(s),0,32767) else
             if ss='address'        then begin
@@ -453,6 +438,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2001/07/31 13:10:35  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.14  2000/12/27 22:36:31  mo
   -new class TfidoNodeList
 

@@ -50,6 +50,9 @@ uses xpglobal,
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
+{$IFDEF Delphi }
+  Dos,
+{$ENDIF }
   sysutils,classes,typeform,fileio,xpdatum,montage;
 
 type
@@ -1580,23 +1583,23 @@ begin
       shr   ax,1
       rcr   ch,1
       xchg  al,ah
-      xlat
+      xlatb
       stosb                      { Bit 7..2/1 }
       mov   al,ch
       shr   ax,cl
       xchg  al,ah
-      xlat
+      xlatb
       stosb                      { Bit 1..0/1 + Bit 7..4/2 }
       lodsb                      { Byte 3 }
       shr   ah,cl
       shr   ah,cl
       shl   ax,cl
       xchg  al,ah
-      xlat
+      xlatb
       stosb                      { Bit 3..0/2 + Bit 7..6/3 }
       mov   al,ah
       shr   al,cl
-      xlat
+      xlatb
       stosb                      { Bit 5..0/3 }
       dec   edx
       jnz   @@1
@@ -3831,6 +3834,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2001/07/31 13:10:35  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.63  2001/07/30 19:07:44  cl
   - support of UUCP E command for outgoing messages
 

@@ -24,7 +24,7 @@
 {$ifdef Win32 }{$R ICONS.RES }{$endif}
 
 { OpenXP main source file }
-program xp;
+program openxp;
 
 uses
   {$IFDEF unix} linux,xplinux, {$ENDIF }
@@ -189,6 +189,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/07/31 13:10:32  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.4  2001/07/28 12:04:09  mk
   - removed crt unit as much as possible
 

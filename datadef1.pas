@@ -29,7 +29,7 @@ interface
 uses typeform,datadef, xpglobal;
 
 const
-{$IFNDEF VP }
+{$IFDEF FPC }
         db_magic: ShortString  = 'DB1'^Z;
         eb_magic: ShortString  = 'EB1'^Z;
         ix_magic: ShortString  = 'IX1'^Z;
@@ -238,6 +238,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2001/07/31 13:10:30  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.15  2001/06/05 21:22:15  ma
   - added debug logs
 

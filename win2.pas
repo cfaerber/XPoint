@@ -734,6 +734,7 @@ const dsfiles : longint = 0;
       dsb     : longint = 0;
 
 var   i,j     : integer;
+      IORes   : Integer;
       econt   : set of byte;
       glc     : char;
       sn      : string;
@@ -943,8 +944,10 @@ begin
             path:=AddDirSepa(pname(a+p));
             Delete(path,1,1); { fuehrenden Separator loeschen }
             mkdir(drive+_MPMask+path+vn);
-            if inoutres<>0 then begin
-              if ioresult=3 then
+            IORes := IOResult;
+            if IORes <>0 then
+            begin
+              if IORes =3 then
                 pmsg('ungÅltiger Name - Taste')
               else
                 pmsg('Anlegen nicht mîglich - Taste');
@@ -1101,6 +1104,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/07/31 13:10:32  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.38  2001/07/28 12:04:09  mk
   - removed crt unit as much as possible
 

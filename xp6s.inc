@@ -632,6 +632,7 @@ begin
       inc(nq);
     end;
   close(t);
+{$IFNDEF Delphi }
   if real(nq)/ real(n)>=0.5 then
   begin
     lines:=ival(getres2(606,1));
@@ -649,6 +650,7 @@ begin
     closebox;
     freeres;
     end;
+{$ENDIF }
 end;
 
 
@@ -1107,6 +1109,9 @@ end;
 
 {
   $Log$
+  Revision 1.58  2001/07/31 13:10:33  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.57  2001/07/27 18:10:14  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

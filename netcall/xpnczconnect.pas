@@ -28,7 +28,7 @@ interface
 uses
   {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
   sysutils,ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,
-  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes;
+  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes, osdepend;
 
 
 function ZConnectNetcall(box: string;
@@ -214,7 +214,7 @@ begin { ZConnectNetcall }
       GenericMailer.Disconnect;
       if Proceed then result:=el_ok;
 
-      Delay(2000);
+      SysDelay(2000);
       GenericMailer.Destroy;
       end;
     true: begin  // diskpoll, call appropriate programs
@@ -250,6 +250,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/07/31 13:10:38  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.4  2001/07/23 16:05:26  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

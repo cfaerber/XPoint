@@ -377,7 +377,7 @@ begin
             gets(s,su,'SMTP-ID', smtp_id, 255) or
             gets(s,su,'SMTP-Password', smtp_pwd, 255) or
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
-            getr(su,  'Letzte Verbindung',LastCall) or
+            getr(su,  'Letzte Verbindung',double(LastCall)) or
 
             // Client Mode
             getx(su,  'Client-Mode', ClientMode) or
@@ -695,6 +695,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/07/31 13:10:34  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.43  2001/07/21 16:02:11  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 

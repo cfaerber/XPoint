@@ -1816,7 +1816,7 @@
                      pushhp(131);
                      nts:=
 //                       +getres2(927,8)        { ^Gebuehren, }
-                         +getres2(927,9)        { ^Namen, }
+                         getres2(927,9)        { ^Namen, }
                          +getres2(927,29)       { ^QWK, }
                          +getres2(927,10)       { ^Diverse }
                          +getres2(927,4);       { ,^Transfer }
@@ -2021,6 +2021,9 @@
 
 {
   $Log$
+  Revision 1.12  2001/07/31 13:10:34  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.11  2001/07/29 13:58:23  ma
   - removed nt_UUCP_U, some fixes
 

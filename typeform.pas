@@ -518,7 +518,7 @@ asm
     mov   bl, c
     cmp   bl, 'a'                         { erst ab 'a'... }
     jb @noupcase
-    mov al,byte ptr [offset lookup+ebx-61h]          { Lookup-Table begint bei 'a'... }
+    mov al, byte ptr [lookup+ebx-61h]          { Lookup-Table begint bei 'a'... }
     jmp @Upcase_end
 @noupcase:
     mov al,bl
@@ -1449,6 +1449,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.91  2001/07/31 13:10:32  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.90  2001/07/28 12:33:33  mk
   - GetEnv is now in OS dependend and not in dos unit
 

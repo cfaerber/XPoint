@@ -653,7 +653,6 @@ begin
         if text='' then addblank:=false;
         txt:=text+iifs(addblank,' ','');
         typ := 0;
-        variable := nil;
         len := 0;
         yy0:=y; ownattr := 0;
         maxyy0:=max(maxyy0,yy0);
@@ -1290,6 +1289,9 @@ end.
 
 {
   $Log$
+  Revision 1.28  2001/07/31 13:10:31  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.27  2001/07/28 12:04:09  mk
   - removed crt unit as much as possible
 

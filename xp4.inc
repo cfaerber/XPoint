@@ -246,9 +246,7 @@ begin
             5 : MenuConfigAnzeigeZeilen;
             6 : MiscAnzeigeCfg;  { Screen-Saver u.a. }
             7 : begin
-                  shell('zconfig.exe',200,1);
-                  { !! Eine Fehlerabfrage wird nicht gemacht, also Fehler l”schen }
-                  // doserror := 0;
+                  shell('zconfig.exe',200,1); // !! Fehler abfangen
                   menurestart:=true;
                 end;
             8 : AccessibilityOptions;
@@ -605,6 +603,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2001/07/31 13:10:33  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.31  2001/07/23 16:05:19  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -169,8 +169,10 @@ asm
              cld
 
 @perloop:    lodsb
+{$IFNDEF Delphi }  // prüfen!
              seges
-             xlat
+{$ENDIF }
+             xlatb
              mov     [edi],al
              inc     edi
              loop    @perloop
@@ -314,7 +316,7 @@ var i        : integer;
     ks,k1,k2 : stream;
 begin
   make_stream(sts(key),ks);
-  permutate(ks,ofs(PC1),56);
+  permutate(ks, LongInt(Addr(PC1)),56);
   Move(ks[1],k1,28);
   Move(ks[29],k2,28);
   for i:=1 to 16 do begin
@@ -322,7 +324,7 @@ begin
     sleft(k2,i);
     Move(k1,k[i,1],28);
     Move(k2,k[i,29],28);
-    permutate(k[i],ofs(PC2),48);
+    permutate(k[i],LongInt(Addr(PC2)),48);
     end;
 end;
 
@@ -331,10 +333,10 @@ procedure F(var s:stream; var k:stream);
 var
   s2 : stream;
 begin
-  permutate(s,ofs(E),48);
+  permutate(s,LongInt(Addr(E)),48);
   Xs(s,k,48);
   F2(s,s2);
-  permutate(s2,ofs(P),32);
+  permutate(s2,LongInt(Addr(P)),32);
   Move(s2,s,32);
 end;
 
@@ -344,7 +346,7 @@ var i        : integer;
     x1,x2,x3 : stream;
 begin
   make_stream(s,x);
-  permutate(x,ofs(IP),64);
+  permutate(x,LongInt(Addr(IP)),64);
   Move(x[1],x1,32);
   Move(x[33],x2,32);
   for i:=1 to 16 do begin
@@ -355,7 +357,7 @@ begin
     end;
   Move(x2,x[1],32);
   Move(x1,x[33],32);
-  permutate(x,ofs(PI),64);
+  permutate(x,LongInt(Addr(PI)),64);
   make_comp(x,s);
 end;
 
@@ -365,7 +367,7 @@ var i        : integer;
     x1,x2,x3 : stream;
 begin
   make_stream(s,x);
-  permutate(x,ofs(IP),64);
+  permutate(x,LongInt(Addr(IP)),64);
   Move(x[1],x1,32);
   Move(x[33],x2,32);
   for i:=16 downto 1 do begin
@@ -376,7 +378,7 @@ begin
     end;
   Move(x2,x[1],32);
   Move(x1,x[33],32);
-  permutate(x,ofs(PI),64);
+  permutate(x,LongInt(Addr(PI)),64);
   make_comp(x,s);
 end;
 
@@ -419,6 +421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2001/07/31 13:10:34  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.14  2001/07/28 12:04:14  mk
   - removed crt unit as much as possible
 

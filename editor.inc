@@ -171,7 +171,7 @@ begin
             pos.absatz:=new1
           else begin
             pos.absatz:=new2;
-	    pos.offset:=pos.offset-split+ins;
+            pos.offset:=pos.offset-split+ins;
           end;
 end;
 
@@ -1009,7 +1009,7 @@ begin
     s[0]:=#6;
     Move(ap^.cont[wp-6],s[1],6);
     { Sollen wir das bei Gelegenheit nicht mal
-      von Yuppie auf XP2 aendern?! } 
+      von Yuppie auf XP2 aendern?! }
     if s='Yuppie' then begin
       s:='Oops!';
       Move(s[1],ap^.cont[wp-6],5);
@@ -2165,6 +2165,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2001/07/31 13:10:30  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.43  2001/02/25 11:34:12  ma
   - removed non-GPL code
 

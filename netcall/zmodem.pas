@@ -14,7 +14,11 @@ unit ZModem;
 
 interface
 
-uses xpglobal, montage, typeform, ObjCOM, ProgressOutput, Timer, Classes;
+uses
+ {$IFDEF Delphi}
+ dos,
+ {$ENDIF }
+ xpglobal, montage, typeform, ObjCOM, ProgressOutput, Timer, Classes;
 
 const
   ZBUFSIZE = 8192;
@@ -2727,6 +2731,9 @@ end.
 
 {
   $Log$
+  Revision 1.18  2001/07/31 13:10:38  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.17  2001/07/28 12:04:20  mk
   - removed crt unit as much as possible
 

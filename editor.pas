@@ -206,8 +206,10 @@ asm
          ja    @noupper
          push  ebx
          mov   ebx,offset @uppertab-128
+{$IFNDEF Delphi } //!
          segcs
-         xlat
+{$ENDIF }
+         xlatb
          pop   ebx
   @noupper:
          cmp   al,[edi+ebx+1]
@@ -1678,6 +1680,9 @@ end.
 
 {
   $Log$
+  Revision 1.55  2001/07/31 13:10:31  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.54  2001/07/28 12:04:08  mk
   - removed crt unit as much as possible
 

@@ -123,6 +123,7 @@ type
     smallword =  system.word;
     dword =      Cardinal; { = signed }
     rtlword =    system.word; { 16 Bit bei FPC }
+    variant =    pointer; // Naja...
   {$endif}
 
 const
@@ -147,6 +148,11 @@ var
   LibDir,                      { Libraries und Ressourcen       }
   DocDir: String;              { Dokumentationsverzeichnis      }
 
+{$IFDEF Delphi }
+var
+  Inoutres: Integer;
+{$ENDIF }
+
 const
   XPDirName = 'openxp';        { Default LibDirname of openxp   }
   BaseDir   = '.' + XPDirName;
@@ -154,6 +160,9 @@ const
 const
   MaxLenFilename = 255;
   MaxLenPathname = 255;
+  {$IFDEF Delphi }
+  MemAvail = MaxInt;
+  {$ENDIF }
 
 type
   PCharArray = ^TCharArray;
@@ -189,6 +198,9 @@ end.
 
 {
   $Log$
+  Revision 1.54  2001/07/31 13:10:35  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.53  2001/05/19 16:17:51  ma
   - removed XP_ID (shareware notice)
   - changed program id:

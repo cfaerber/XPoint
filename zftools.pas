@@ -274,7 +274,7 @@ asm
           ja     @trans
           loop   @xloop
           jmp    @xende
-@trans:   xlat
+@trans:   xlatb
           mov    [esi-1],al
           loop   @xloop
 @xende:
@@ -297,7 +297,7 @@ asm
           ja     @trans
           loop   @xloop
           jmp    @xende
-@trans:   xlat
+@trans:   xlatb
           mov    [esi-1],al
           loop   @xloop
 @xende:
@@ -1802,6 +1802,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.18  2001/07/31 13:10:35  mk
+        - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
         Revision 1.17  2001/07/28 12:04:17  mk
         - removed crt unit as much as possible
 

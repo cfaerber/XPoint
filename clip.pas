@@ -57,9 +57,10 @@ procedure ClipToFile(fn:TFilename);
 implementation  { ---------------------------------------------------- }
 
 uses
-  xp0, fileio,
+  xp0,
 {$ifdef unix}
   linux,
+  fileio;
   xplinux;
 {$else}
 {$IFDEF Win32 }
@@ -68,7 +69,7 @@ uses
 {$IFDEF VP }
   vpsyslow,
 {$ENDIF }
-  strings;
+  fileio;
 {$endif}
 
 
@@ -334,6 +335,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2001/07/31 13:10:30  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.29  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

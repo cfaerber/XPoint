@@ -27,7 +27,7 @@ procedure EasyMainDialog;
 implementation
 
 function NeuBenutzergruss:boolean;
-  var x,y,i : byte;
+  var x,y,i : integer;
       msglines    : byte;
       z     : taste;
       s:String;
@@ -54,8 +54,8 @@ function NeuBenutzergruss:boolean;
   end;
 
   procedure EasyMainDialog;
-  var x,y,i : byte;
-      msglines    : byte;
+  var x,y,i : Integer;
+      msglines: Integer;
       brk : boolean;
   begin
     {Adressconfig fuer Easy}
@@ -82,6 +82,9 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.14  2001/07/31 13:10:35  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.13  2001/07/28 12:04:15  mk
   - removed crt unit as much as possible
 

@@ -340,7 +340,7 @@ asm
 @isolp:  mov    al, [edi]
          cmp    al, 0c0h
          jb     @noconv
-         xlat
+         xlatb
 @noconv: stosb
          loop   @isolp
 {$IFDEF FPC }
@@ -2044,6 +2044,9 @@ end.
 
 {
   $Log$
+  Revision 1.112  2001/07/31 13:10:32  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
   Revision 1.111  2001/07/28 14:34:15  ma
   - added some debug logs
 
