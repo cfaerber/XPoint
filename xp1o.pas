@@ -59,7 +59,8 @@ function  IsKomCode(nr:longint):boolean;
 function  IsOrgCode(nr:longint):boolean;
 
 {$IFNDEF Delphi5}
-function XPWinShell(prog:string; parfn:pathstr; space:word; cls:shortint):boolean;
+function XPWinShell(prog:string; parfn:pathstr; space:word; 
+                    cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 {$ENDIF}
 
@@ -875,7 +876,8 @@ end;
 { Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
 {$IFNDEF Delphi5}
-function XPWinShell(prog:string; parfn:pathstr; space:word; cls:shortint):boolean;
+function XPWinShell(prog:string; parfn:pathstr; space:word; 
+                    cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 var w1,w2: word;
 
@@ -924,8 +926,8 @@ var w1,w2: word;
         writeln(t);
         writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
         writeln(t,'echo.');
-        writeln(t,'start /wait '+prog);
-        writeln(t,'del '+parfn);
+        writeln(t,'start '+iifs(fileattach,'','/wait ')+prog);
+        if not fileattach then writeln(t,'del '+parfn);
         writeln(t,'del '+batfile);
         close(t);
         if winnt then
@@ -969,6 +971,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/03/04 18:34:18  jg
+  - Externe Viewer: zum Ansehen von Fileattaches wird keine Temp-Kopie
+    mehr erstellt, und nicht mehr gewartet, da kein Loeschen noetig ist
+
   Revision 1.22  2000/03/04 15:48:48  jg
   - Externe Windowsviewer, DELVTEMP-Modus:
     "start" wird nicht mehr zu "start start"

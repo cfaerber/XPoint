@@ -35,7 +35,7 @@ procedure GetMimeViewer(typ:string; var viewer:viewinfo);
 procedure GetDefaultViewer(typ:string; var viewer:viewinfo);
 procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo);
 
-procedure ViewFile(fn:string; var viewer:viewinfo);
+procedure ViewFile(fn:string; var viewer:viewinfo; Fileattach:boolean);
 
 
 implementation  { ---------------------------------------------------- }
@@ -201,7 +201,7 @@ begin
 end;
 
 
-procedure ViewFile(fn:string; var viewer:viewinfo);
+procedure ViewFile(fn:string; var viewer:viewinfo; fileattach:boolean);
 var p         : byte;
     prog      : string[ViewprogLen];
     orgfn,fn1,
@@ -213,16 +213,24 @@ begin
   if (not ValidFileName(orgfn) or exist(orgfn)) and (viewer.ext<>'') and
      (cpos('.',fn)>0) then
     orgfn:=left(fn,rightpos('.',fn))+viewer.ext;
+
+  if not fileattach then 
+  begin
   if stricmp(fn,orgfn) or not ValidFileName(orgfn)
     then orgfn:=TempS(_filesize(fn)+5000);                              
-  if copyfile(fn,orgfn) then fn1:=orgfn;
-
+    if copyfile(fn,orgfn) then fn1:=orgfn;
+    end;
+ 
   prog:=viewer.prog;
   orgfn:=iifs(fn1<>'',fn1,fn);
 
-  parfn:=left(orgfn,length(orgfn)-3);    { Tempdatei mit richtiger Extension versorgen }
-  parfn:=left(parfn,length(parfn)-5)+'TMP-'+right(parfn,5)+viewer.ext; 
-  _rename(orgfn,parfn);
+  if not fileattach then
+  begin
+    parfn:=left(orgfn,length(orgfn)-3);    { Tempdatei mit richtiger Extension versorgen }
+    parfn:=left(parfn,length(parfn)-5)+'TMP-'+right(parfn,5)+viewer.ext; 
+    _rename(orgfn,parfn);
+    end
+  else parfn:=orgfn; 
 
   p:=pos('$FILE',ustr(prog));
   if p=0 then prog:=prog+' '+parfn
@@ -230,14 +238,18 @@ begin
   urep(prog,'$TYPE',viewer.typ);
   urep(prog,'$EXT',viewer.ext);
 {$IFNDEF Delphi5}
-  if not XPWinShell(prog,parfn,600,1) then
+  if not XPWinShell(prog,parfn,600,1,fileattach) then
 {$ENDIF }
-  if fn1<>'' then era(fn1);
+  if not fileattach and (fn1<>'') then era(parfn);
 end;
 
 end.
 {
   $Log$
+  Revision 1.9  2000/03/04 18:34:18  jg
+  - Externe Viewer: zum Ansehen von Fileattaches wird keine Temp-Kopie
+    mehr erstellt, und nicht mehr gewartet, da kein Loeschen noetig ist
+
   Revision 1.8  2000/03/04 11:55:28  mk
   Loginfo hinzugefuegt
 

@@ -1763,7 +1763,7 @@ begin
           GetExtViewer(datei,viewer);
           if viewer.prog='' then TestGifLbmEtc(datei,false,viewer);
           if (viewer.prog<>'') and (viewer.prog<>'*intern*') then
-            ViewFile(TempPath+datei,viewer)
+            ViewFile(TempPath+datei,viewer,false)
           else
             dummy:=ListFile(TempPath+datei,datei,true,false,0);
           end
@@ -2417,6 +2417,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/03/04 18:34:18  jg
+  - Externe Viewer: zum Ansehen von Fileattaches wird keine Temp-Kopie
+    mehr erstellt, und nicht mehr gewartet, da kein Loeschen noetig ist
+
   Revision 1.20  2000/03/02 20:09:31  jg
   - NOT Operator (~) fuer Suchstrings und Such-History eingebaut
 
