@@ -705,7 +705,7 @@ var t,lastt: taste;
   procedure brief_senden(reply,pm,xposting:boolean; quote:byte);
   var empf,rt : string;
       rtanz   : integer;
-      realnm2 : string;
+      realname: string;
       rt0     : string;   { Vertreter-Adresse }
       _empf   : string;
       betr    : string;
@@ -812,18 +812,31 @@ var t,lastt: taste;
     begin
       hdp := THeader.Create;
       Readheader(hdp,hds,false);
+      SendEmpfList.Clear;
       with hdp do
         for i:=1 to followup.count-1 do begin
           dbSeek(bbase,biBrett,'A'+UpperCase(followup[i]));
-          Empfaenger.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
+          SendEmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
         end;
-      SendEmpfList.Assign(hdp.Empfaenger);
       Hdp.Free;
+    end;
+
+    procedure EmpfCorrect;
+    var i:integer;
+        p:string[1];
+    begin
+      p:=iifs(pm,'','A');
+    
+      for i:=0 to SendEmpfList.Count-1 do
+        if p+SendEmpfList[i]=Empf then
+          begin
+            SendEmpfList.Delete(i);
+            exit;
+          end;
     end;
 
     { empf-Brett ist nicht vorhanden -> in SendEmpfList nachsehen, ob }
     { eines der Bretter vorhanden ist; ggf mit empf vertauschen       }
-
     function MF_brettda:boolean;
     var
       i, j: Integer;
@@ -889,7 +902,7 @@ var t,lastt: taste;
 
     betr:='';
     rt0:='';
-    realnm2:='';
+    realname:='';
     gesperrt:=false;
     usermsg:=(dispmode>=1) and (dispmode<=4);
     if usermsg then
@@ -906,7 +919,7 @@ var t,lastt: taste;
       begin
         if reply and ntReplyToAll(mbNetztyp) then
         begin
-          DoReplyToAll (brk, adresseAusgewaehlt, empf, realnm2, dispdat);
+          DoReplyToAll (brk, adresseAusgewaehlt, empf, realname, dispdat);
           if brk or (empf = '') then exit;
         end else
         begin
@@ -921,10 +934,10 @@ var t,lastt: taste;
           and not (RTAMode and 2 = 2)
           then begin
             empf:= dbReadStr(dispdat,'absender');
-            if ntRealName(mbNetztyp) then realnm2:= dbReadStr(dispdat,'name');
+            if ntRealName(mbNetztyp) then realname:= dbReadStr(dispdat,'name');
             end
           else begin
-            empf:=GetWABreplyEmpfaenger(realnm2);
+            empf:=GetWABreplyEmpfaenger(realname);
             if empf='' then exit;
             end
           end
@@ -1036,7 +1049,7 @@ var t,lastt: taste;
     end;
     if pm then begin
       if quote=0 then
-        BriefSchablone(pm,HeaderPriv,fn,empf,realnm2);
+        BriefSchablone(pm,HeaderPriv,fn,empf,realname);
       if not usermsg and gfound then
         getren
       else begin
@@ -1056,7 +1069,7 @@ var t,lastt: taste;
           force_quotemsk:=force_quotemsk+ extXps;
         getren;
         end;
-        BriefSchablone(pm,headf,fn,empf,realnm2);
+        BriefSchablone(pm,headf,fn,empf,realname);
       end;
     if netztyp in (netsRFC + [nt_ZCONNECT]) then begin
       re_n:=false; kein_re:=false;
@@ -1092,6 +1105,7 @@ var t,lastt: taste;
               ReadHeader(hdp,hds,false);
               SendEmpfList.Assign(hdp.Empfaenger);
               Hdp.Free;
+              Empfcorrect;
               SetNobrettServers;
             end;
           end;
@@ -1100,8 +1114,10 @@ var t,lastt: taste;
         begin
           if not adresseAusgewaehlt  or (cpos('@',empf)=0) then empf:=rt;  { Reply-To }
           if not pm then begin
-            if rtanz>1 then
+            if rtanz>1 then begin
               AddMultipleFollowups;
+              Empfcorrect;
+            end;
             dbSeek(bbase,biBrett,UpperCase(empf));     { neues Brett in DISKUSSION-IN }
             if not dbFound and not MF_Brettda then begin
               forcebox:=EmpfBox;   { -> gleiche Pollbox }
@@ -1133,6 +1149,7 @@ var t,lastt: taste;
       if dbFound then
         sData.ReplyGroup:=mid(dbReadStrN(bbase,bb_brettname),2);
       end;
+    sData.empfrealname:=realname;
 
     if reply then
     begin
@@ -1173,6 +1190,7 @@ var t,lastt: taste;
 {*}   savePos := p;
 {*} end;
 
+
     if (dispmode<>1) and (dispmode<>2) and pm and (FirstChar(empf)<>vert_char) then
     begin
       origdb:=defaultbox;
@@ -1195,9 +1213,7 @@ var t,lastt: taste;
       if brk then goto ende;
     end;
 
-    sData.EmpfList.AddNewXP(pm,Empf,RealNm2);
-
-    if DoSend(pm,fn,true,false,'',betr,true,false,true,true,true,sData,sigf,
+    if DoSend(pm,fn,true,false,empf,betr,true,false,true,true,true,sData,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then
     begin
@@ -2327,8 +2343,8 @@ end;
 
 {
   $Log$
-  Revision 1.123  2002/04/14 22:26:56  cl
-  - changes for new address handling
+  Revision 1.122.2.1  2002/04/20 16:08:34  cl
+  - fixed recipient duplication bug
 
   Revision 1.122  2002/03/25 22:03:09  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
