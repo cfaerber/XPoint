@@ -20,6 +20,8 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
+{$i xpdefine.inc }
+
 unit xpsendmessage_addr_edit;
 
 { -------------------------- } interface { --------------------------- }
@@ -1028,6 +1030,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2002/04/17 19:35:03  mk
+// - added xpdefine.inc
+//
 // Revision 1.1  2002/04/14 22:33:10  cl
 // - New address handling, supports To, CC, and BCC
 // - Nearly complete rewrite of DoSend's message creation
