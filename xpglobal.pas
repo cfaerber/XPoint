@@ -33,7 +33,12 @@ uses sysutils;
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = '3.9.7';       { Versionnr. - steht nur an dieser Stelle }
+  mainver     = '3.9';          { Versionnr. - steht nur an dieser Stelle }
+  subver      = '7';
+
+{$I version.inc }
+
+  verstr      = mainver + '.' + subver + '-' + buildver; 
   betastr     = ' alpha';       { ' ', ' alpha' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -60,6 +65,7 @@ const
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
   x_copyright = '(c) 2000-2003';
+
 
 type
   { Regeln fuer Datentypen unter 32 Bit
@@ -183,6 +189,9 @@ begin
 
 {
   $Log$
+  Revision 1.82  2003/10/09 19:49:58  mk
+  - new automatic build number system
+
   Revision 1.81  2003/08/27 17:41:47  mk
   - updated copyright year to 2003
   - updated data type comments
