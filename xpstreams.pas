@@ -30,6 +30,23 @@ uses
 
 type
 
+{ ------------------- Use PASCAL 'file' as stream -------------------- }
+
+  PFile = ^file;
+
+  TPascalFileStream = class(TStream)
+  private
+    FPFile: PFile;
+  protected
+    procedure SetSize(NewSize: Longint); override;
+  public
+    constructor Create(var AFile: file);
+
+    function Read(var Buffer; Count: Longint): Longint; override; // only raises exception
+    function Write(const Buffer; Count: Longint): Longint; override; // only raises exception
+    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+  end;
+
 { ------------------- Deletes file at destruction -------------------- }
 
   TTemporaryFileStream = class(TFileStream)
@@ -115,7 +132,99 @@ uses
   ,strutils
   {$ENDIF}
   {$ENDIF}
+  ,typeform
   ;
+
+{ ------------------- Use PASCAL 'file' as stream -------------------- }
+
+{$I-}
+procedure TPascalFileStream.SetSize(NewSize: Longint);
+var curPos: Longint;
+    OldSize: Longint;
+    AddSize: Integer;
+
+    Buffer: array [1..4096] of byte;
+    Counter: Integer;
+
+begin
+  IOResult;
+
+  OldSize := System.FileSize(FPFile^);                  IOExcept(EStreamError);
+  if OldSize=NewSize then exit;
+
+  curPos := System.FilePos(FPFile^);                    IOExcept(EStreamError);
+
+  if NewSize>OldSize then
+  begin
+    System.Seek(FPFile^,System.FileSize(FPFile^));      IOExcept(EStreamError);
+
+    AddSize:=NewSize-OldSize;
+    if AddSize>High(Buffer)-Low(Buffer) then
+      AddSize:=High(Buffer)-Low(Buffer);
+
+    for Counter := Low(Buffer) to Low(Buffer)+AddSize do
+      Buffer[Counter]:=0;
+
+    while OldSize<NewSize do
+    begin
+      AddSize:=NewSize-OldSize;
+      if AddSize>High(Buffer)-Low(Buffer) then
+        AddSize:=High(Buffer)-Low(Buffer);
+      System.BlockWrite(FPFile^,Buffer,AddSize,AddSize); IOExcept(EStreamError);
+      OldSize:=OldSize+AddSize;
+    end;
+  end else
+  begin
+    System.Seek(FPFile^,NewSize);                       IOExcept(EStreamError);
+    System.Truncate(FPFile^);                           IOExcept(EStreamError);
+
+    if curPos>NewSize then
+      curPos:=NewSize;
+  end;
+
+  System.Seek(FPFile^,curPos);                          IOExcept(EStreamError);
+end;
+
+constructor TPascalFileStream.Create(var AFile: file);
+begin
+  FPFile := @AFile;
+end;
+
+function TPascalFileStream.Read(var Buffer; Count: Longint): Longint;
+var R: Integer;
+begin
+  IOResult;
+  System.BlockRead(FPFile^,Buffer,Count,R);             IOExcept(EReadError);
+  Result := R;
+end;
+
+function TPascalFileStream.Write(const Buffer; Count: Longint): Longint;
+var R: Integer;
+begin
+  IOResult;
+  System.BlockWrite(FPFile^,Buffer,Count,R);            IOExcept(EWriteError);
+  Result := R;
+end;
+
+function TPascalFileStream.Seek(Offset: Longint; Origin: System.Word): Longint;
+begin
+  IOResult;
+
+  case Origin of
+    soFromBeginning:    Result:=Offset;
+    soFromCurrent:      begin Result:=System.FilePos(FPFile^)+Offset;
+                                                        IOExcept(EWriteError); end;
+    soFromEnd:          begin Result:=System.FileSize(FPFile^)+Offset;
+                                                        IOExcept(EWriteError); end;
+  end;
+
+  if (Offset=0) and (Origin=soFromCurrent) then
+    exit;
+
+  System.Seek(FPFile^,Result);                          IOExcept(EWriteError);
+end;
+
+{ ------------------- Deletes file at destruction -------------------- }
 
 constructor TTemporaryFileStream.Create;
 begin
@@ -348,6 +457,11 @@ procedure CopyStream(InStream,OutStream:TStream);
 var b: array [1..8192] of char;
     n: longint;
 begin
+  while InStream is TNullCodecStream do
+    InStream:=TNullCodecStream(InStream).OtherStream;
+  while OutStream is TNullCodecStream do
+    OutStream:=TNullCodecStream(OutStream).OtherStream;
+
   repeat
     n := InStream.Read(b,sizeof(b));
     if n<= 0 then break;
@@ -360,6 +474,12 @@ var b: array [1..8192] of char;
     n: longint;
     i: integer;
 begin
+  while InStream is TNullCodecStream do
+    InStream:=TNullCodecStream(InStream).OtherStream;
+  for i:=Low(OutStreams) to High(OutStreams) do
+    while OutStreams[i] is TNullCodecStream do
+      OutStreams[i]:=TNullCodecStream(OutStreams[i]).OtherStream;
+
   repeat
     n := InStream.Read(b,sizeof(b));
     if n<= 0 then break;
