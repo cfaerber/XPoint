@@ -408,6 +408,10 @@ begin
   freeres;
   if netcallunmark then
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
+  { Nach dem Netcall Datumsbezge setzen, damit
+    /¯Netzanruf korrekt in der Brettliste auftaucht }
+  if AutoDatumsBezuege then
+    bd_setzen(true);
 end;
 
 
@@ -436,7 +440,7 @@ var d         : DB;
         fnet:= fPointNet
       else
         fnet:= -1;
-    
+
       rc:= DoZFido(1,                           { Richtung ZC->FTS }
               MagicBrett,                       { Basisebene }
               source,                           { Quelldatei }
@@ -809,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/11/20 19:54:11  mk
+  - Automatische Datumsbezuege wieder wie immer (schaltbar)
+
   Revision 1.39  2000/11/16 20:53:50  hd
   - DOS Unit entfernt
 

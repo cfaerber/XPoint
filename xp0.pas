@@ -77,6 +77,7 @@ const
        ViewprogLen = 70;             { Kommandozeile fuer ext. Viewer }
        ResMinmem   = 340000;
        realnlen = 120;               { Laenge der Realnames }
+       AutoDatumsBezuege : boolean = false;
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
@@ -1172,6 +1173,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.103  2000/11/20 19:54:09  mk
+  - Automatische Datumsbezuege wieder wie immer (schaltbar)
+
   Revision 1.102  2000/11/18 21:42:17  mk
   - implemented new Viewer handling class TMessageViewer
 

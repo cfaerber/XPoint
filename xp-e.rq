@@ -574,6 +574,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13   ~^Yes ,  ^No ~
 14   Complete netcall logfile (NETCALL.LOG)
 15   Un-mark messages after netcall
+16   DatumsbezÅge nach Netcall anpassen
 + 255
 # window width
 0    46
@@ -3410,6 +3411,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.109  2000/11/20 19:54:08  mk
+# - Automatische Datumsbezuege wieder wie immer (schaltbar)
+#
 # Revision 1.108  2000/11/14 10:24:08  mk
 # - display message box in Edit/Viewer when modify */*
 #

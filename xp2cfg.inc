@@ -905,6 +905,7 @@ begin
   writeln(t,'PGP-Logfile=',jnf(PGP_log));
   writeln(t,'PGP-SignAll=',jnf(PGP_signall));
   writeln(t,'PGP-Version=',PGPVersion);
+  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege));
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
@@ -1335,7 +1336,7 @@ begin
           getb(su,  'quotebreak',quotebreak) or
           gets(s,su,'quote',quotechar,QuoteLen) or
           getx(su,  'otherquotechars',otherquotechars) or
-          getx(su,  'autodatumsbezuege', dummyb) or
+          getx(su,  'autodatumsbezuege', autodatumsbezuege) or
           getb(su,  'screenlines',ConfigScreenlines) or
           getb(su,  'screencols', ConfigScreenWidth) or
           gets(s,su,'tempdir',temppath,79) or           { Wg. case sensetive }
@@ -1692,6 +1693,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.95  2000/11/20 19:54:10  mk
+  - Automatische Datumsbezuege wieder wie immer (schaltbar)
+
   Revision 1.94  2000/11/18 21:38:41  mk
   - removed SetCBreak
 

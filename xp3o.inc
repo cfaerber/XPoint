@@ -1085,11 +1085,11 @@ begin
     close(userlog);
     puffereinlesen:=true;
 
-    Wrt(x+2,y+7,getres(320)); { 'DatumsbezÅge werden Åberarbeitet...     %' }
+(*    Wrt(x+2,y+7,getres(320)); { 'DatumsbezÅge werden Åberarbeitet...     %' }
     GotoXY(WhereX-5, WhereY);
     BrettDatumSetzen(true);
     GotoXY(WhereX-2, WhereY);
-    moff; Wrt2(getres(321)); mon;  { ' fertig.' }
+    moff; Wrt2(getres(321)); mon;  { ' fertig.' } *)
 
     mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
   end   { if Puffer_ok }
@@ -1164,6 +1164,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2000/11/20 19:54:11  mk
+  - Automatische Datumsbezuege wieder wie immer (schaltbar)
+
   Revision 1.35  2000/11/14 15:51:29  mk
   - replaced Exist() with FileExists()
 
