@@ -428,7 +428,7 @@ begin
     error('Eingabedatei fehlt: '+infile);
   if not validfilename(outfile) then
     error('UngÅltige Ausgabedatei: '+outfile);
-  rc:= findfirst('bad',faDirectory,sr);
+  rc:= findfirst(FileUpperCase('bad'),faDirectory,sr);
   baddir:=(rc=0) and (sr.attr and faDirectory<>0);
   FindClose(sr);
 end;
@@ -1380,9 +1380,11 @@ begin
   assign(f1,fn);
   reset(f1,1); fs:=filesize(f1);
   assign(f2,outfile);
-  if append then begin
-    reset(f2,1); seek(f2,filesize(f2)); end
-  else
+  { do a propper append even if the file does not exist }
+  if append and FileExists(outfile) then begin
+    reset(f2,1);
+    seek(f2,filesize(f2));
+  end else
     rewrite(f2,1);
   write(fn,' Ø ',outfile,'      ');
   ok:=true;
@@ -1679,9 +1681,12 @@ var sr  : TSearchRec;
     dir : string;
     fst : boolean;
 begin
+  { Kill outfile only on wildcards. Otherwise the
+    function was called by XP and then allways without
+    wildcards because of the processing of the directory }
+  fst:= (pos('*',infile)+pos('?',infile)>0);
   dir:= AddDirSepa(ExtractFilePath(infile));
   rc:= findfirst(infile,faAnyFile,sr);
-  fst:=true;
   while rc=0 do begin
     FidoZfile(dir+sr.name,not fst);
     fst:=false;
@@ -1790,6 +1795,11 @@ end;
 end.
 {
         $Log$
+        Revision 1.8  2000/12/08 11:14:55  hd
+        - A little change: outfile will only be deleted before starting
+          if infile does not contain any wildcard. In that case, the
+          output will be written to the end of the file.
+
         Revision 1.7  2000/12/06 22:29:44  mo
         -indexfehler bei nodelistenlˆschung besetigt
 
