@@ -1,12 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Tastendefinitionen und Tastatur-Routinen }
@@ -98,11 +98,8 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keyesc  : taste = #27;       { sonstige Tasten }
        keybs   : taste = #8;
        keytab  : taste = #9;
-{$IFDEF FPC } { !! StrgTab statt ShiftTab, evtl. ein Bug in FPC }
-       keystab : taste = #0#148;
-{$ELSE }
        keystab : taste = #0#15;
-{$ENDIF }
+       keyctab : taste = #0#148;
        keycr   : taste = #13;
 
        keyctn  = #14;               { Control-Sequenzen }
@@ -452,6 +449,15 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.3  2001/09/16 20:33:38  my
+  JG+MY:- Text-Markiersuche im Lister mit "S": mehrere Suchbegriffe,
+          Suchoptionen (z.B. umlautunabhängige Suche), Suchbegriff-History
+          und Suchbegriffs-Bibliothek verfügbar. "Alte" Suchfunktionen
+          jetzt über <Ctrl-S> (früher "S") bzw. wie bisher über <Shift-S>
+          erreichbar.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.21.2.2  2001/09/06 10:38:26  mk
   - added keys shift-ins, shift-del and ctrl-ins in Editor
 
