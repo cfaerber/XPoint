@@ -1,17 +1,27 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
 
-{ CrossPoint - StartUp }
+    OpenXP startup unit
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC}
 
+{ OpenXP startup unit }
 unit xp2;
 
 interface
@@ -454,8 +464,6 @@ var i  : integer;
     if isl('pw:') then ParPasswd:=mid(paramstr(i),5) else
     if isl('z:')  then SetZeilen(ival(mid(s,4))) else
 
-{TAINTED}
-    { Achtung! Folgende Reihenfolge muss bleiben! robo }
     if _is('w0')   then ParWintime:=0 else
     if _is('os2a') then begin ParWintime:=1; ParOS2:=1; end else
     if _is('os2b') then begin ParWintime:=1; ParOS2:=2; end else
@@ -464,8 +472,6 @@ var i  : integer;
     if _is('w')    then ParWintime:=1 else
     if _is('w1')   then ParWintime:=1 else
     if _is('w2')   then ParWintime:=2 else
-    { Reihenfolge bis hier }
-{/TAINTED}    
 
     if _is('ss')   then ParSsaver:=true else
   { if isl('gd:') then SetGebdat(mid(s,5)) else }
@@ -1046,7 +1052,7 @@ var
     x,y  : byte;
     brk  : boolean;
     dat  : datetimest;
-    t,m,j: word;
+    j    : word;
     m3s  : procedure;
 begin
   // diff in days
@@ -1071,12 +1077,12 @@ begin
     multi3:=m3s; hotkeys:=true;
     if not brk and mmodified then
     begin
-      t:=ival(LeftStr(dat,2));
-      m:=ival(copy(dat,4,2));
+//      t:=ival(LeftStr(dat,2));
+//      m:=ival(copy(dat,4,2));
       j:=ival(RightStr(dat,2));
       if j<80 then inc(j,2000) else inc(j,1900);
-      // !! not portable
-      // setdate(j,m,t);
+// !! not portable
+//      setdate(j,m,t);
     end;
     enddialog;
     end;
@@ -1163,8 +1169,14 @@ Begin
 end;
 
 end.
+
 {
   $Log$
+  Revision 1.102  2001/02/25 15:40:21  ma
+  - added GPL headers
+  - shortened CVS logs
+  - cosmetics
+
   Revision 1.101  2001/02/19 15:27:18  cl
   - marked/modified non-GPL code by RB and MH
 
@@ -1197,313 +1209,4 @@ end.
 
   Revision 1.91  2000/12/03 14:20:33  mk
   - mdkir -> CreateDir
-
-  Revision 1.90  2000/11/22 20:56:44  fe
-  Added FreeBSD paths.
-
-  Revision 1.89  2000/11/19 13:32:55  ma
-  - oops. Debugged debug procedure ;-)
-
-  Revision 1.88  2000/11/19 13:03:06  ma
-  - added "dl:badge=level,badge=level"... switch, sets debug level of
-    module badge to level. Output will be in "debuglog.txt", default levels
-    are set via DEFAULT=level (DLInform if conditional define DEBUG is set).
-
-  Revision 1.87  2000/11/18 21:42:17  mk
-  - implemented new Viewer handling class TMessageViewer
-
-  Revision 1.86  2000/11/18 18:38:21  hd
-  - Grundstruktur des Loggings eingebaut
-
-  Revision 1.85  2000/11/18 16:55:36  hd
-  - Unit DOS entfernt
-
-  Revision 1.84  2000/11/16 13:46:27  hd
-  - Unit Linux wird nicht benˆtigt
-
-  Revision 1.83  2000/11/16 12:08:42  hd
-  - Fix: Zu sp‰te Arbeit
-
-  Revision 1.82  2000/11/15 23:00:40  mk
-  - updated for sysutils and removed dos a little bit
-
-  Revision 1.81  2000/11/14 15:51:28  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.80  2000/11/14 11:14:32  mk
-  - removed unit dos from fileio and others as far as possible
-
-  Revision 1.79  2000/11/11 19:26:48  ml
-  - changed libdirs for rpm
-
-  Revision 1.78  2000/11/01 22:59:24  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.77  2000/10/19 20:52:22  mk
-  - removed Unit dosx.pas
-
-  Revision 1.76  2000/10/19 15:25:06  mk
-  - sstringp in AnsiString umgewandelt
-
-  Revision 1.75  2000/10/19 14:10:40  hd
-  - UnixDevelop eingefuegt
-
-  Revision 1.74  2000/10/17 20:36:50  mk
-  - Diskfree/Disksize von Longint auf Int64 umgestellt
-
-  Revision 1.73  2000/10/17 10:05:47  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.72  2000/10/15 08:50:06  mk
-  - misc fixes
-
-  Revision 1.71  2000/10/09 22:14:45  ml
-  - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
-
-  Revision 1.70  2000/10/01 15:50:23  mk
-  - AnsiString-Fixes
-
-  Revision 1.69  2000/09/29 11:27:43  fe
-  Ungenutzte, lokale Variablen entfernt.
-
-  Revision 1.68  2000/08/25 23:02:07  mk
-  JG:
-  - "< >" in Macros funktioniert jetzt wie dokumentiert als Leertastenersatz
-    XP10.PAS
-  - Parameter -K verarbeitet jetzt ganze Zeichenketten. Benoetigt
-    Anfuehrungszeichenauswertung damit Tasten wie <Enter> funktionieren !
-    XP10.PAS,XP2.PAS
-  - Neuer Parameter -mailto: dem direkt ein Mailto-Link uebergeben wird
-    Subjects mit Leerzeichen benoetigen Anfuehrungszeichenauswertung !
-    XP2.PAS
-
-  Revision 1.67  2000/08/20 11:22:38  mk
-  - Landessprache wird jetzt richtig erkannt (BP inkompatiblitaet)
-
-  Revision 1.66  2000/08/01 18:13:49  mk
-  - XPOS2 hinzugefuegt
-
-  Revision 1.65  2000/07/27 10:13:00  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.64  2000/07/22 14:05:26  hd
-  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
-    (sollte es jetzt gewesen sein)
-
-  Revision 1.63  2000/07/21 20:56:23  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.62  2000/07/21 17:39:52  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
-
-  Revision 1.61  2000/07/21 13:14:09  hd
-  - Fix: Strings in der Maske
-  - Fix: Einige Datenbankzugriffe wegen AnsiString
-
-  Revision 1.60  2000/07/20 18:11:55  mk
-  - unbekannte Konfigurationszeilen werden in einer TStringList gespeichert
-
-  Revision 1.59  2000/07/12 15:27:01  hd
-  - Ansistring
-
-  Revision 1.58  2000/07/12 14:43:45  mk
-  - einige ^AnsiString in einen normalen String umgewandelt
-  - AnsiString-Fixes fuer die Datenbank
-
-  Revision 1.57  2000/07/12 12:57:39  hd
-  - Ansistring
-
-  Revision 1.56  2000/07/11 21:39:21  mk
-  - 16 Bit Teile entfernt
-  - AnsiStrings Updates
-  - ein paar ASM-Routinen entfernt
-
-  Revision 1.55  2000/07/07 14:38:36  hd
-  - AnsiString
-  - Kleine Fixes nebenbei
-  - dbReadStr angepasst
-
-  Revision 1.54  2000/07/07 11:00:32  hd
-  - AnsiString
-  - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
-
-  Revision 1.53  2000/07/06 09:23:08  mk
-  - _days_ in String umgewandelt
-
-  Revision 1.52  2000/07/06 08:58:44  hd
-  - AnsiString
-
-  Revision 1.51  2000/07/04 12:04:20  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.50  2000/07/03 15:54:15  hd
-  - Linux: Check_Date entfernt
-
-  Revision 1.49  2000/07/03 15:16:22  mk
-  - Trim entfernt und Sysutils eingefuegt
-
-  Revision 1.48  2000/06/29 13:00:54  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version l‰uft wieder
-  - Jochens 'B' Fixes ¸bernommen
-  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.47  2000/06/23 15:59:17  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.46  2000/06/22 19:53:30  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.45  2000/06/19 20:19:32  ma
-  - von CRC16/XPCRC32 auf Unit CRC umgestellt
-
-  Revision 1.44  2000/06/02 16:28:36  ml
-  Linux: Die Ressourcen werden nun im Programmverzeichnis gesucht, nicht im ~/openxp-Verzeichnis
-
-  Revision 1.43  2000/06/01 16:03:05  mk
-  - Verschiedene Aufraeumarbeiten
-
-  Revision 1.42  2000/05/29 20:21:41  oh
-  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
-
-  Revision 1.41  2000/05/20 02:07:39  mk
-  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
-
-  Revision 1.40  2000/05/19 13:48:00  ml
-  Hilfedatei wird jetzt gefunden (xp.hlp)
-
-  Revision 1.39  2000/05/14 09:54:58  hd
-  - 3. Cfg-Datei
-
-  Revision 1.38  2000/05/14 07:22:51  jg
-  - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
-  - Feldtausch-Config: Defaultauswahl mit F2
-
-  Revision 1.37  2000/05/13 14:29:13  hd
-  Workaround wg. noch nicht vorhandener Unit
-
-  Revision 1.36  2000/05/13 14:24:56  hd
-  - Suchmaske angepasst (test_pfade)
-
-  Revision 1.35  2000/05/10 12:55:52  sv
-  - Veraenderte Boxeneinstellungen wurden ohne XP-Neustart nicht
-    uebernommen
-
-  Revision 1.34  2000/05/04 10:32:57  mk
-  - unbenutzer TurboBox Code entfernt
-
-  Revision 1.33  2000/05/03 17:15:39  hd
-  - Kleinschreibung der Dateinamen (duerfte keine Probleme geben :-/) (loadresource)
-  - ustr durch lstr bei ParLanguage ersetzt (readpar)
-
-  Revision 1.32  2000/05/02 19:14:00  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.31  2000/04/30 17:24:54  mk
-  - Erkennung eigener Mails jetzt mit FQDN-Unterstuetzung
-
-  Revision 1.30  2000/04/29 11:54:09  mw
-
-  - MIME in News voreingestellt
-  - Triggerlevel 2 voreingestellt
-  - EASY-Mode Aufruf verÑndert
-
-  Revision 1.29  2000/04/22 13:54:08  mw
-
-  - TermInit Default angepasst
-  - TermInit hat jetzt auswÑhlbare Vorgaben
-  - Rechtschreibfehler in xp2.pas gefunden
-
-  Revision 1.28  2000/04/18 11:23:49  mk
-  - AnyFile in ffAnyFile ($3F->$20) ersetzt
-
-  Revision 1.27  2000/04/16 19:50:38  mk
-  - Fixes fuer FindFirst
-
-  Revision 1.26  2000/04/15 21:44:46  mk
-  - Datenbankfelder von Integer auf Integer16 gaendert
-
-  Revision 1.25  2000/04/13 12:48:35  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-  Revision 1.24  2000/04/08 13:33:14  mk
-  MW: Defaultwerte angepasst und aktualisiert
-
-  Revision 1.23  2000/04/04 21:01:23  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.22  2000/04/04 10:33:56  mk
-  - Compilierbar mit Virtual Pascal 2.0
-
-  Revision 1.21  2000/03/16 19:25:10  mk
-  - fileio.lock/unlock nach Win32 portiert
-  - Bug in unlockfile behoben
-
-  Revision 1.20  2000/03/14 15:15:38  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.19  2000/03/10 13:29:33  mk
-  Fix: Registrierung wird sauber erkannt
-
-  Revision 1.18  2000/03/09 23:39:33  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.17  2000/03/07 23:41:07  mk
-  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
-
-  Revision 1.16  2000/03/04 15:54:43  mk
-  Funktion zur DOSEmu-Erkennung gefixt
-
-  Revision 1.15  2000/03/03 21:12:49  jg
-  - Config-Optionen-Sprache ausgeklammert
-  - Sprachabfrage bei allererstem Start eingebaut
-
-  Revision 1.14  2000/03/02 18:32:24  mk
-  - Code ein wenig aufgeraeumt
-
-  Revision 1.13  2000/03/02 00:17:23  rb
-  Hilfe bei XP /? fÅr Rechenzeitfreigabe Åberarbeitet
-
-  Revision 1.12  2000/03/01 23:49:02  rb
-  Rechenzeitfreigabe komplett Åberarbeitet
-
-  Revision 1.11  2000/02/29 17:55:42  mk
-  - /nb wird jetzt in Release-Versionen ignoriert
-
-  Revision 1.10  2000/02/28 08:57:05  mk
-  - Version auf 3.20 RC1 geandert
-
-  Revision 1.9  2000/02/27 22:30:10  mk
-  - Kleinere Aenderung zum Sprachenwechseln-Bug (2)
-
-  Revision 1.8  2000/02/19 14:59:36  jg
-  Parameter /w0 hat keine wirkung mehr, wenn /osx definiert ist.
-
-  Revision 1.6  2000/02/19 11:40:08  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.5  2000/02/18 17:28:08  mk
-  AF: Kommandozeilenoption Dupekill hinzugefuegt
-
 }

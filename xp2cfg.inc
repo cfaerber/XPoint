@@ -1,12 +1,23 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
+
+    OpenXP startup unit include file - configuration
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 const cfs : array[0..3] of string = ('Z','Shift','Ctrl','Alt');
 
@@ -985,7 +996,7 @@ begin
       writeln(t,'COM',i,'-TriggerLevel=',tlevel);
       writeln(t,'COM',i,'-Waehlsperre=',jnf(postsperre));
       if i<4 then writeln(t);
-      end; {TAINTED}{ unklar, da nicht im CVS-Log }{ 04.02.2000 MH: ISDN-Daten sichern: aktiviert! }{/TAINTED}
+      end;
   writeln(t,'ISDN1-Int=$',hex(ISDN_Int,2));
   writeln(t,'ISDN1-EAZ=',ISDN_EAZ);
   writeln(t,'ISDN1-Controller=',ISDN_controller);
@@ -1683,8 +1694,14 @@ begin
   masksetmausarrows(true);
   SetSwapfilename;
 end;
+
 {
   $Log$
+  Revision 1.108  2001/02/25 15:40:21  ma
+  - added GPL headers
+  - shortened CVS logs
+  - cosmetics
+
   Revision 1.107  2001/02/19 15:27:18  cl
   - marked/modified non-GPL code by RB and MH
 
@@ -1715,353 +1732,4 @@ end;
 
   Revision 1.98  2000/12/25 14:02:41  mk
   - converted Lister to class TLister
-
-  Revision 1.97  2000/12/15 19:03:38  mk
-  - do not uppercase Custom Headers
-
-  Revision 1.96  2000/12/03 22:23:08  mk
-  - Improved Printing Support
-
-  Revision 1.95  2000/11/20 19:54:10  mk
-  - Automatische Datumsbezuege wieder wie immer (schaltbar)
-
-  Revision 1.94  2000/11/18 21:38:41  mk
-  - removed SetCBreak
-
-  Revision 1.93  2000/11/18 16:55:36  hd
-  - Unit DOS entfernt
-
-  Revision 1.92  2000/11/15 23:00:40  mk
-  - updated for sysutils and removed dos a little bit
-
-  Revision 1.91  2000/11/14 15:51:28  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.90  2000/11/12 11:34:05  mk
-  - removed some limits in Reply Tree
-  - implementet moving the tree with cursor keys (RB)
-  - optimized display of the tree
-
-  Revision 1.89  2000/11/01 23:03:46  mv
-   - if(n)def Linux -> if(n)def Unix fixes
-
-  Revision 1.88  2000/11/01 11:01:15  mk
-  - Autodatumsbezuege jetzt immer in Netcall
-
-  Revision 1.87  2000/10/17 10:05:48  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.86  2000/09/18 07:58:57  mw
-  Voreinstellungen aktualisiert:
-  - NewuserIBM ist jetzt eingeschaltet.
-
-  Revision 1.85  2000/08/26 08:47:43  mk
-  JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
-
-  Revision 1.84  2000/08/15 11:12:23  mk
-  MO: Bugfixes und Anpassungen fuer > 80 Spalten
-
-  Revision 1.83  2000/08/01 16:32:26  mk
-  - Define Windows in Win32 geaendert
-
-  Revision 1.82  2000/07/31 09:56:55  mk
-  - ConfigScreenWidth und passende Logik hinzugefuegt
-
-  Revision 1.81  2000/07/27 10:13:00  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.80  2000/07/23 10:01:00  mk
-  - memavail wo moeglich rausgenommen
-
-  Revision 1.79  2000/07/22 13:29:30  mk
-  JG: - Bugfix: Viewer-Beschraenkungen, an Config-Strings wurden u.U. zuviele Punkte angehaengt
-
-  Revision 1.78  2000/07/20 18:11:55  mk
-  - unbekannte Konfigurationszeilen werden in einer TStringList gespeichert
-
-  Revision 1.77  2000/07/20 16:49:57  mk
-  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
-
-  Revision 1.76  2000/07/12 16:49:42  ma
-  - Comminit-String-Konfigurationseintrag hinzugefuegt
-
-  Revision 1.75  2000/07/12 15:27:01  hd
-  - Ansistring
-
-  Revision 1.74  2000/07/12 14:43:45  mk
-  - einige ^AnsiString in einen normalen String umgewandelt
-  - AnsiString-Fixes fuer die Datenbank
-
-  Revision 1.73  2000/07/11 21:39:21  mk
-  - 16 Bit Teile entfernt
-  - AnsiStrings Updates
-  - ein paar ASM-Routinen entfernt
-
-  Revision 1.72  2000/07/09 09:09:55  mk
-  - Newexit in Initialization/Finalization umgewandelt
-
-  Revision 1.71  2000/07/07 11:00:32  hd
-  - AnsiString
-  - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
-
-  Revision 1.70  2000/07/06 08:58:45  hd
-  - AnsiString
-
-  Revision 1.69  2000/07/05 18:57:54  mk
-  - AnsiString Updates
-
-  Revision 1.68  2000/07/04 12:04:21  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.67  2000/07/01 11:18:28  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.66  2000/06/29 13:00:54  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version l‰uft wieder
-  - Jochens 'B' Fixes ¸bernommen
-  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.65  2000/06/24 14:10:27  mk
-  - 32 Bit Teile entfernt
-
-  Revision 1.64  2000/06/23 15:59:17  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.63  2000/06/22 19:53:30  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.62  2000/06/20 18:19:36  hd
-  - TermDevice Auswerten (Section: Linux)
-
-  Revision 1.61  2000/06/10 20:16:06  sv
-  - C/O/N/"News nicht archivieren lassen" per default ausgeschaltet
-
-  Revision 1.60  2000/06/04 16:57:25  sv
-  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
-    (RFC/ZConnect)
-  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
-  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
-    macht in C/O/N eingefuehrt
-  - Anzeige beim Puffereinlesen leicht ueberarbeitet
-
-  Revision 1.59  2000/06/03 19:30:25  jg
-  - Ungelesen Anzeige fuer Bretter wird in XPOINT.CFG gespeichert
-
-  Revision 1.58  2000/05/29 15:13:29  oh
-  -Vertipper korrigiert
-
-  Revision 1.57  2000/05/24 09:16:48  mk
-  - Druckerunterstuetzung in FPC wegen RTL-Crash beseitigt
-
-  Revision 1.56  2000/05/18 03:44:36  jg
-  - Bugfix: vergessen Delviewtmp in XPOINT.CFG abzuspeichern.
-
-  Revision 1.55  2000/05/15 20:56:40  oh
-  -Feldtausch: optimiert und vereinfacht, (F)lags stehen jetzt immer vorne.
-
-  Revision 1.54  2000/05/15 05:24:05  mw
-
-  - Default angepasst: - UUCP-Paketsize jetzt 1024
-                       - RFC1522 eingeschaltet (MIME im Header)
-
-  Revision 1.53  2000/05/14 09:54:58  hd
-  - 3. Cfg-Datei
-
-  Revision 1.52  2000/05/14 07:22:51  jg
-  - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
-  - Feldtausch-Config: Defaultauswahl mit F2
-
-  Revision 1.51  2000/05/09 20:07:01  jg
-   Externe Viewer / Schutzmassnahmen:
-   - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen
-   - entsprechende Einstellungen unter Config/Optionen/Viewer
-
-  Revision 1.50  2000/05/08 18:34:45  hd
-  - /var/tmp unter Linux als Default
-
-  Revision 1.49  2000/05/06 15:57:04  hd
-  - Diverse Anpassungen fuer Linux
-  - DBLog schreibt jetzt auch in syslog
-  - Window-Funktion implementiert
-  - ScreenLines/ScreenWidth werden beim Start gesetzt
-  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
-  - Keine CAPI bei Linux
-
-  Revision 1.48  2000/05/04 18:43:15  jg
-  - Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten
-    entsprechender Menuepunkt unter Config/Anzeige/Farben/Lister
-
-  Revision 1.47  2000/05/04 10:32:57  mk
-  - unbenutzer TurboBox Code entfernt
-
-  Revision 1.46  2000/05/03 20:36:08  hd
-  - Default-Editor unter Linux: pico
-  - ustr durch fustr ersetzt
-  - gets-Aufrufe geaendert
-
-  Revision 1.45  2000/05/03 17:16:14  hd
-  - ScreenWidth angepasst
-
-  Revision 1.44  2000/05/03 12:46:23  hd
-  - timezone wurde beim Lesen moniert (Linux)
-
-  Revision 1.43  2000/05/02 20:51:49  hd
-  - Dynamische ZEitzone angepasst
-
-  Revision 1.42  2000/05/02 20:31:40  hd
-  Kein Default-Wert mehr fuer Timezone unter Linux
-
-  Revision 1.41  2000/05/02 19:56:38  hd
-  - Dateinamen fuer UnixFS angepasst (diesmal vollstaendig :-/)
-  - Programmnamen der Entpacker angepasst
-  - DES-Aufruf angepasst
-  - Die Viewer fehlen noch
-
-  Revision 1.40  2000/05/02 12:36:48  sv
-  - Ueberbleibsel der alten Viewerkonfiguration beseitigt
-    Viewer werden nicht mehr in die Config-Datei geschrieben
-
-  Revision 1.39  2000/05/02 04:18:15  jg
-  - XPoint.cfg Schalter DelViewTmp
-    macht dasselbe wie die Umgebungsvariable DELVTMP
-
-  Revision 1.38  2000/04/29 11:54:09  mw
-
-  - MIME in News voreingestellt
-  - Triggerlevel 2 voreingestellt
-  - EASY-Mode Aufruf verÑndert
-
-  Revision 1.37  2000/04/28 14:52:52  jg
-  - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
-    Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
-
-  Revision 1.36  2000/04/26 06:48:49  mk
-  - RTE 217 bei MInit behoben
-
-  Revision 1.35  2000/04/24 11:28:54  mk
-  - 32 Bit: Drucken funktioniert jetzt
-
-  Revision 1.34  2000/04/22 13:54:09  mw
-
-  - TermInit Default angepasst
-  - TermInit hat jetzt auswÑhlbare Vorgaben
-  - Rechtschreibfehler in xp2.pas gefunden
-
-  Revision 1.33  2000/04/21 12:34:47  jg
-  - MIME-Flag wird jetzt beim Archivieren mit uebernommen
-  - Archivier-Vermerk ist jetzt abschaltbar
-
-  Revision 1.32  2000/04/15 21:44:46  mk
-  - Datenbankfelder von Integer auf Integer16 gaendert
-
-  Revision 1.31  2000/04/15 12:30:58  mk
-  - Compilierfaehigkeit mit VP wieder hergestellt
-
-  Revision 1.30  2000/04/15 09:57:59  jg
-  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
-  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
-
-  Revision 1.29  2000/04/13 20:18:03  jg
-  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
-  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
-  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
-
-  Revision 1.28  2000/04/13 12:48:35  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-  Revision 1.27  2000/04/10 00:43:03  oh
-  - F3-Request: Magicerkennung ein/ausschaltbar (C/O/e/V/Fido)
-
-  Revision 1.26  2000/04/08 13:33:14  mk
-  MW: Defaultwerte angepasst und aktualisiert
-
-  Revision 1.25  2000/04/04 10:33:57  mk
-  - Compilierbar mit Virtual Pascal 2.0
-
-  Revision 1.24  2000/04/02 11:33:54  oh
-  - Feldtausch-Routine abgesichert, OLH dazu ueberarbeitet
-
-  Revision 1.23  2000/04/01 07:41:38  jg
-  - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
-    neue Einstellung wird dann auch beim Quoten verwendet
-  - Hilfe aktualisiert, und Englische Hilfe fuer
-    Config/Optionen/Allgemeines auf Stand gebracht.
-
-  - Externe-Viewer (Windows): "START" als Allroundviewer
-    funktioniert jetzt auch mit der Loeschbatch-Variante
-  - Text fuer MIME-Auswahl in englische Resource eingebaut
-
-  Revision 1.22  2000/04/01 02:21:47  oh
-  - Userliste: Felder jetzt sortierbar: Config/Anzeige/Hilfen, dasselbe fuer die MsgListe vorbereitet
-
-  Revision 1.21  2000/03/25 16:29:29  mk
-  - 32 Bit: Zeilenzahl fest auf 25 gestellt
-
-  Revision 1.20  2000/03/25 11:46:10  jg
-  - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
-  - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr
-
-  Revision 1.19  2000/03/24 02:20:17  oh
-  - Schalter Config/Anzeige/Hilfen: Feldtausch in Listen eingefuegt
-
-  Revision 1.18  2000/03/15 13:57:30  mk
-  - Benutzerdefinierbare Headerzeilen:
-    Nach Config/Anzeige/Diverses sowie beim Einlesen der
-    XPoint.cfg werden die Headerzeilen auf einen abschliessenden
-    Doppelpunkt ueberprueft und dieser bei Vorhandensein entfernt.
-
-  Revision 1.17  2000/03/08 22:36:33  mk
-  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
-
-  Revision 1.16  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.15  2000/03/04 15:54:43  mk
-  Funktion zur DOSEmu-Erkennung gefixt
-
-  Revision 1.14  2000/03/04 14:53:49  mk
-  Zeichenausgabe geaendert und Winxp portiert
-
-  Revision 1.13  2000/03/03 08:37:19  mk
-  OH: Autodatumsbezuege werden nicht mehr doppelt geschrieben
-
-  Revision 1.12  2000/03/02 18:32:24  mk
-  - Code ein wenig aufgeraeumt
-
-  Revision 1.11  2000/03/01 23:49:02  rb
-  Rechenzeitfreigabe komplett Åberarbeitet
-
-  Revision 1.10  2000/03/01 22:30:21  rb
-  Dosemu-Erkennung eingebaut
-
-  Revision 1.9  2000/02/20 22:09:30  mk
-  MO: * Fidolastseek von 28 auf 40 erweitert
-
-  Revision 1.8  2000/02/20 20:46:17  jg
-  Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
-  Todo aktualisiert
-
-  Revision 1.7  2000/02/20 17:22:10  ml
-  Kommentare in MsgAddMark hinzugefuegt
-
-  Revision 1.6  2000/02/19 11:40:08  mk
-  Code aufgeraeumt und z.T. portiert
-
 }
