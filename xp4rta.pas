@@ -225,10 +225,10 @@ begin
       dbRead (d, 'domain', domain);
       dbRead (d, 'boxname', box);
       dbRead (d, 'email', email);
-      if email <> '' then adresse := email
-      else case ntDomainType (dbReadInt (d, 'netztyp')) of
+      case ntDomainType (dbReadInt (d, 'netztyp')) of
         5: adresse := username + '@' + iifs (aliaspt, pointname, box) + domain;
-        6: adresse := username + '@' +
+        6: if email <> '' then adresse := email
+           else adresse := username + '@' +
             iifs (aliaspt, box + ntServerDomain (box), pointname + domain);
         else adresse := '';
       end;
@@ -1072,6 +1072,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.3  2001/07/01 21:54:02  my
+  - fixed last commit (eMail address was also taken after a net type change
+    RFC/* => ZConnect)
+
   Revision 1.1.2.2  2001/07/01 20:00:36  my
   - Fix: eMail addresses are recognized as own addresses now, especially
          if eMail address is different from server@point.domain
