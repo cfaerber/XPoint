@@ -39,8 +39,15 @@ begin
   mdelay(MS);
 end;
 
+procedure SysBeep(Freq, Dur: Integer);
+begin
+end;
+
 {
         $Log$
+        Revision 1.4  2001/12/09 15:57:36  ml
+        - os-dependend beep not yet implemented in linux
+
         Revision 1.3  2001/10/27 16:14:14  ma
         - fixed SysDelay
           (fixed modem netcall malfunctions)
