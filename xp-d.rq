@@ -3307,7 +3307,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 # --- Aenderungen der alten Menu-Struktur
 + 30001
-1 Schnitstellen
+1 Schnittstellen
 2 Seriell ^1 (COM1),Seriell ^2 (COM2),Seriell ^3 (COM3),Seriell ^4 (COM4)
 3 Seriell ^1 (COM1),Seriell ^2 (COM2),Seriell ^3 (COM3),Seriell ^4 (COM4),^ISDN (CAPI)
 4 Ger„te
@@ -3515,6 +3515,14 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.83  2000/12/03 20:44:36  my
+# XP-E.IHQ:
+# - implemented some stuff from 3.30 (e.g. Glossary), fixed some
+#   typos and illegal character combinations
+#
+# XP-D.RQ:
+# - changed "Schnitstellen" to "Schnittstellen"
+#
 # Revision 1.82  2000/11/20 19:54:08  mk
 # - Automatische Datumsbezuege wieder wie immer (schaltbar)
 #

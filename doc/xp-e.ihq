@@ -1,4 +1,4 @@
-CrossPoint v3.0
+CrossPoint v3.70
 15 6
 53 19
 2 1
@@ -22,6 +22,7 @@ Sorry, no help available!
 
 <<<Tab> >> ... go to next [cross-reference]@7000
 <<Alt-F1>> ... go back one page
+
 @
 3
 <<  °°°°°°°°°°°° = Using Online Help = °°°°°°°°°°°°
@@ -30,7 +31,8 @@ Starting Online Help:
 
 <<F1>>      Shows context sensitive help
 
-[cross-references] <<Tab>> and <<shift-Tab>> to select, then@7000
+<<Tab>> to go to next [cross-reference] and <<shift-Tab>>@7000
+            to go to previous [cross-reference].
 <Enter>.
 
 <<Alt F1>>  Shows the previous help page.
@@ -284,7 +286,7 @@ Keys in <<both>> "Read/Write" <<and>> "Special" mode:
   <<O>>          Move a message area to a different
              position in the area list.
 
-<<Crtl-S>>       Inserts a dividing line at the cursor
+<<Ctrl-S>>       Inserts a dividing line at the cursor
              position.
 
   <<+>>          Increases the hold time by one day.
@@ -389,7 +391,7 @@ recorded in the address book.
 
 L and E apply to all marked Users.
 
-<<see also   [User display] (<Enter> here)@4017
+<<see also>>  [ User display ]  <<(<Enter> here)@4017
 
 @
 22
@@ -408,7 +410,7 @@ forwarded. Confirm <Enter> or abort with <Esc>.
 30
 <<Message Reading window
 
-<<see also>> [  message display  ] (Press <Enter>)@4015
+<<see also>>  [ message display ]  <<(Press <Enter>)@4015
 
 Note: only those messages are actually displayed
 which match the conditions set by "View", in the
@@ -499,7 +501,7 @@ Bar and the Menu under "Other")
         of the current selected message, if present.
         Can add the person to the user list if not.
 
-<<Crtl-S>>  Edits the password in your user list of the
+<<Ctrl-S>>  Edits the password in your user list of the
         sender of the current message.
 
    <<I>>    Shows the information in the message header.
@@ -516,7 +518,7 @@ Bar and the Menu under "Other")
 <<Ctrl-A>>  In FIDO, toggles showing who a public message
         is responding to (On/Off).
 
-<<Crtl-D>>  Toggles showing the date (On/Off).
+<<Ctrl-D>>  Toggles showing the date (On/Off).
 
 <<Ctrl-N>>  Toggles between RealNames and User-Names
         (ZCONNECT, RFC & MagicNET only)
@@ -543,7 +545,7 @@ Bar and the Menu under "Other")
 
 <<<F6> >>   Select a macro
 
-<<see also [  message display  ] (Press <Enter>)@4015
+<<see also>>  [ message display ]  <<(Press <Enter>)@4015
 
 @
 31
@@ -609,7 +611,7 @@ Replying to messages:
 
    <<I>>    Shows the information in the message header.
 
-<<Ctrl-O>>  Shows the hidden kludges.
+   <<O>>    Shows the hidden kludges.
 
    <<G>>    Jumps to the preceding message. (Like <<->>)
 
@@ -811,36 +813,39 @@ The selected colour is accepted with <Enter>, <Esc>
 breaks off without changing.
 @
 54
-Using the editor, a brief overview:
+Considering the complexity of the editor, the online
+help has had to be broken up into the following
+sections:
 
-       [Status Line]@55
-       [Function Keys]@56
-       [Block-Functions]@57
-       [Search/Replace]@58
-       [Marking Text]@59
-       [Deleting]@60
-       [Other]@61
+         [Status Line]@55
+         [Function Keys]@56
+         [Block Functions]@57
+         [Search/Replace]@58
+         [Marking]@59
+         [Deleting]@60
+         [Glossary Function]@64
+         [Other]@61
 
-The important Editor Functions:
+Commonly used editor functions:
 
-    <F2>        Save message
+    <F2>        Save message (stay in editor)
     <Esc>       Exit editor
     <Shift F2>  Save message and exit editor
     <F10>       Menu
 @
 55
 
-The status line shows, well, the current status:
+The status line shows, well, the current status!
 From left to right:
 
-  - Row: Current line number
-  - Col: Current column number
+  - Row(x): Current line number
+  - Col(x): Current column number
   - free memory
   - þ = Text has been changed
-  - File Name
+  - Filename
 @
 56
-<F1>        : Online Help
+<F1>        : Online help
 <F2>        : Save Text
 <F3>        : disable line wrap (current para)
 <F4>        : enable line wrap  (current para)
@@ -884,7 +889,7 @@ Keys from the number keypad:
 
 *  Copies marked block to clipboard
 -  Moves marked block to clipboard
-+  insert Clipboard at cursor position
++  Insert clipboard contents at cursor position
 
 <Ctrl Ins>   Copies marked block to clipboard
 <Shift Ins>  insert Clipboard at cursor position
@@ -950,6 +955,72 @@ They can be <<recalled with Ctrl-U>>
         marked, the text from the paragraph where
         the cursor is to the next empty line is
         reformatted.
+@
+64
+<<Glossary>>
+<<-------->>
+
+By means of a pick-list, this function allows text to
+be imported directly into the editor. For this to
+work, a file named <<GLOSSARY.CFG>> must be present in
+the CrossPoint HOME directory.
+
+By pressing Ctl-Enter whilst in the message editor, a
+pick-list will appear, allowing the user to import
+any of the pre-written text "modules" found in
+GLOSSARY.CFG into the message editor. The text
+"module" will be inserted at the cursor position so
+be very careful because if the cursor is positioned
+on a word, that word will be <<replaced>> by the imported
+text "module".
+
+
+<<Rules for configuring GLOSSARY.CFG:>>
+<<---------------------------------->>
+
+Each text "module" must be given a description. This
+is achieved by enclosing either a single descriptive
+word or a descriptive sentence between the ">" and
+"<" characters. All text that follows the "<"
+character will be considered as the actual text
+"module". The end of module marker is the next ">"
+character to be encounterd.
+
+
+<<Example 1:>>
+<<--------->>
+
+>Sig<
+Regards,
+Fred
+>
+
+Upon pressing Ctl-Enter in the message editor and
+then by hitting <return> over ">Sig<" in the
+pick-list, "Regards,
+            Fred"
+will be imported at the cursor position.
+
+
+<<Example 2:>>
+<<--------->>
+
+>Sig<
+Regards,
+Fred
+>Cut<
+=== Cut ===
+>
+
+Upon pressing Ctl-Enter in the message editor and
+then by hitting <return> over ">Cut<" in the
+pick-list, "=== Cut ===" will be imported at the
+cursor position.
+
+
+This is quite a powerful function and the possibile
+uses are endless. Even a text file could be imported
+this way!
 @
 8063
 <<Line length>>
@@ -2208,9 +2279,9 @@ ask your systems operator.
 8020
 With this programme, all messages going to the server
 are [packed], or compressed. You select the settings@4006
-for <<compress>>, <<freeze>>, <<gzip>> or <<bzip2>> by pressing
-F2. If you prefer to transfer [unpacked], you can@4006
-leave this field empty.
+for <<compress>>, <<freeze>>, <<gzip>> or <<bzip2>> by pressing F2.
+If you prefer to transfer [unpacked], you can leave@4006
+this field empty.
 
 Compress is supported by nearly all UUCP-servers,
 gzip (Gnu ZIP) is supported by most UUCP-servers,
@@ -11788,7 +11859,7 @@ Options are:
    /gd:  selects another phone charge file (Default:
          GEBUEHR.DAT).
 
-   /j    no dumb remark when exiting CrossPoint....
+   /j    no dumb remark when exiting CrossPoint...
 
    /k:X  Passes the (single) keystroke X to the
          programme, whereby X is any character.
@@ -12156,5 +12227,5 @@ Press <Enter> to read about [Fido addresses].@4010
 @
 24001
 Choose a device. At the moment you can setup up to
-for devices (/Config/Modem).
+four devices (/Config/Modem).
 @@
