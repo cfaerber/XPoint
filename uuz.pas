@@ -286,22 +286,26 @@ asm
 end;
 
 procedure Charset2IBM;
+begin
+  with hd.mime do
   begin
-    with hd.mime do
-    if charset='iso-8859-1' then ISO2IBM
+    if (ctype=tMultipart) or (subtype='html') then exit;
+  { if charset='iso-8859-1' then ISO2IBM }
+    if left(charset,9)='iso-8859-' then ISO2IBM
     else if charset='utf-8' then UTF82IBM(s)
     else if charset='utf-7' then UTF72IBM(s)
-    else if hd.mime.ctype <> tMultipart then ISO2IBM;
+    else if charset='' then ISO2IBM;
   end;
+end;
 
 procedure logo;
 begin
   assign(output, '');
   rewrite(output);
   writeln;
-  writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
-  writeln('OpenXP-Version ',verstr,betastr,' ',x_copyright,
-            ' by ',author_name,' <',author_mail,'>');
+  writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME  (c) 1993-1999 Peter Mandrella');
+  writeln('OpenXP/16-Version ',verstr,betastr,'  ',x_copyright,
+          ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
 
@@ -1168,7 +1172,7 @@ begin
     hd.typ:=iifc(mpart,'M',iifc(binary,'B','T'));
     charset:=LStr(charset);    
     if (ctype=tText) and (charset<>'') and (charset<>'us-ascii') and
-       (charset<>'iso-8859-1') and (charset<>'utf-8') and (charset<>'utf-7') then
+       (left(charset,9)<>'iso-8859-') and (charset<>'utf-8') and (charset<>'utf-7') then
       hd.error:='Unsupported character set: '+charset;
     end;
 end;
@@ -1249,19 +1253,40 @@ begin
 end;
 
 procedure RFC1522form;     { evtl. s mit quoted-printable codieren }
-var p       : byte;
+var p,p1,p2 : integer;
     encoded : boolean;
 begin
   if RFC1522 then begin
-    p:=1;
+    p1:=0;
+    p2:=0;
+    for p:=1 to length(s) do
+      if s[p]>#127 then
+        if p1=0 then begin
+          p1:=p;
+          p2:=p;
+        end
+        else p2:=p;
+    if p1=0 then begin
+      p1:=1;
+      p2:=length(s);
+    end
+    else begin
+      p:=posn(' ',reverse(s),length(s)-p1+1);
+      if p=0 then p1:=1 else p1:=length(s)-p+2;
+      p:=posn(' ',s,p2);
+      if p=0 then p2:=length(s) else p2:=p-1;
+    end;
+    p:=p1;
     { wenn =? und ?= von Hand in den Header geschrieben wurden, mÅssen
       sie codiert werden: }
-    encoded:=(pos('=?',s)>0) and (pos('?=',s)>0);
-    while p<=length(s) do begin           { qp-Codierung }
+    encoded:=(pos('=?',copy(s,p1,p2-p1+1))>0) and
+             (pos('?=',copy(s,p1,p2-p1+1))>0);
+    while p<=p2 do begin           { qp-Codierung }
       if s[p]>=#127 then begin
         insert(hex(ord(s[p]),2),s,p+1);
         s[p]:='=';
         inc(p,2);
+        inc(p2,2);
         encoded:=true;
         end
       else
@@ -1269,8 +1294,8 @@ begin
       inc(p);
       end;
     if encoded then begin
-      p:=1;
-      while p<=length(s) do begin           { qp-Codierung }
+      p:=p1;
+      while p<=p2 do begin           { qp-Codierung }
         if s[p]=' ' then
           s[p]:='_'
         else
@@ -1279,10 +1304,12 @@ begin
             insert(hex(ord(s[p]),2),s,p+1);
             s[p]:='=';
             inc(p,2);
+            inc(p2,2);
             end;
         inc(p);
         end;
-      s:='=?ISO-8859-1?Q?'+left(s,238)+'?=';
+      insert('?=',s,p2+1);
+      insert('=?ISO-8859-1?Q?',s,p1);
       end
     else
       for p:=1 to length(s) do
@@ -1842,12 +1869,12 @@ var p,i   : integer; { byte -> integer }
   end;
 
   procedure GetRef(s0:string);
-  var p : byte;
+  var p : integer;
   begin
     while (s0<>'') and (s0[1]='<') do with hd do
     begin
       p:=cpos('>',s0);
-      if p<3 then p:=min(length(s0)+1, 254);
+      if p<3 then p:=length(s0)+1;
       if ref='' then
         ref:=copy(s0,2,p-2)
       else begin
@@ -2089,7 +2116,7 @@ begin
     ReadString(true);
     if (s<>'') and ((s[1]=' ') or (s[1]=#9)) then
       if (length(s0)+length(s)<254) and (manz=0) then
-        s0:=s0+' '+trim(s)                      { fortgesetzte Zeile }
+        s0:=trim(s0)+' '+trim(s)                { fortgesetzte Zeile }
       else if manz<maxmore then begin
         if (manz=0) or (length(smore[manz])+length(s)>253) then begin
           inc(manz);
@@ -3020,7 +3047,10 @@ begin
     { X-Priority Konvertierung }
     if priority<>0 then wrs(f,'X-Priority: '+strs(priority));
 
-    if not NoMIME and (mail or (NewsMIME and (x_charset<>''))) then
+  { if not NoMIME and (mail or (NewsMIME and (x_charset<>''))) then }
+  { if not NoMIME and (mail or NewsMIME) then }
+    if not NoMIME and (mail or (NewsMIME and (x_charset<>''))
+      or (hd.boundary<>'')) then
     with mime do begin
       wrs(f,'MIME-Version: '+mversion);
       s:=maintype(ctype)+'/'+subtype;
@@ -3473,6 +3503,42 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.62  2002/03/08 23:18:16  my
+  MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
+       OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
+       aktualisiert.
+
+  RB:- Fix fÅr UUZ-Absturz bei "kaputten"  Reference-Headern (ohne
+       schlie·ende spitze Klammern) korrigiert: String wird nicht mehr
+       abgeschnitten, sondern es bleibt die volle LÑnge erhalten.
+
+  JG+MY:- Fix: MIME-Singlepart-Nachrichten vom Content-Type 'text/html'
+          werden jetzt nicht mehr in den IBM-Zeichensatz konvertiert und
+          daher bei Darstellung mit externen HTML-Viewern korrekt
+          angezeigt. Andere Content-Types werden dann konvertiert, wenn
+          einer der ISO-8859-ZeichensÑtze oder ein anderer von XP
+          unterstÅtzter Zeichensatz vorliegt, oder wenn der Nachrichten-
+          teil keine Zeichensatzdeklaration enthÑlt (letzteres ist
+          notwendig wegen diverser kaputter Outlook-Versionen, die keinen
+          Charset-Header erzeugen).
+
+  RB:- Fix: Bei "gefalteten" Headern wird beim "Entfalten" der
+       Zeilenumbruch und die anschlie·enden Leerzeichen jetzt nur noch
+       durch *ein* Leerzeichen ersetzt.
+
+  RB:- Fix fÅr RFC-1522-Codierung ("MIME in Headerzeilen verwenden"):
+       'RFC1522form' codiert jetzt nicht mehr blind den gesamten String,
+       sondern nur noch den Teil vom ersten bis zum letzten Wort, in dem
+       ein Sonderzeichen vorkommt, das codiert werden mu· (AnnÑherung an
+       Praxis von Mozilla und anderen).
+
+  JG+MY:- Fix: Der Content-Type-Header wird jetzt auch bei ausgehenden
+          MIME-Multipart-Postings nicht mehr entfernt, sofern ein
+          Boundary-Header existiert (vorher war das nur dann der Fall,
+          wenn die Nachricht Umlaute enthielt). Dadurch jetzt korrekter
+          Versand von MIME-Multipart-Nachrichten auch in Newsgroups
+          gewÑhrleistet.
+
   Revision 1.35.2.61  2002/01/11 23:05:54  mk
   - Fix: Endlosschleife bei kaputten Nachrichten
 
