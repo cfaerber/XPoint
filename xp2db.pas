@@ -1,10 +1,15 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2002 OpenXP-Team, http://www.openxp.de                 }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ See list of contributors in authors.txt                         }
+{                                                                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{ OpenXP ist eine eingetragene Marke von Markus Kaemmerer.        }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
 { --------------------------------------------------------------- }
 { $Id$ }
 
@@ -893,6 +898,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.8  2003/05/01 14:22:43  mk
+  - updated copyright headers
+
   Revision 1.12.2.7  2001/12/20 15:05:26  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen

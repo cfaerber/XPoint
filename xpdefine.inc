@@ -1,7 +1,14 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000-2002 OpenXP-Team, http://www.openxp.de                 }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ See list of contributors in authors.txt                         }
+{                                                                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{ OpenXP ist eine eingetragene Marke von Markus Kaemmerer.        }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
 {                                                                 }
 { Compilerdirektiven fÅr CrossPoint (OpenXP)                      }
 { --------------------------------------------------------------- }
@@ -80,6 +87,9 @@
 
 {
   $Log$
+  Revision 1.30.2.13  2003/05/01 14:22:58  mk
+  - updated copyright headers
+
   Revision 1.30.2.12  2003/04/12 08:23:57  mw
   MW: - Wegfall des Schalters /xmsovr und neuer Schalter /noovrbuf
 

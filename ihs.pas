@@ -1,12 +1,16 @@
-{ ------------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                   }
-{ (c) 1989-1999 Peter Mandrella                                       }
-{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                     }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.         }
-{                                                                     }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der     }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.       }
-{ ------------------------------------------------------------------- }
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2002 OpenXP-Team, http://www.openxp.de                 }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ See list of contributors in authors.txt                         }
+{                                                                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{ OpenXP ist eine eingetragene Marke von Markus Kaemmerer.        }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ --------------------------------------------------------------- }
 { Intelligent Help System          }
 { Rel. 1.01 (c) 11/89 PM           }
 {      1.02 (c) 03/90              }
@@ -400,6 +404,9 @@ end.
 }
 {
    $Log$
+   Revision 1.9.2.10  2003/05/01 14:22:32  mk
+   - updated copyright headers
+
    Revision 1.9.2.9  2003/01/26 16:22:25  my
    MY: - Eingabe des Dateinamens wird getrimmt.
        - Nicht gefundener Dateiname wird angezeigt (wegen '.HLP' => '.IHQ')

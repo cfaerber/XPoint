@@ -1,11 +1,15 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ (c) 2000-2002 OpenXP-Team, http://www.openxp.de                 }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ See list of contributors in authors.txt                         }
+{                                                                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{ OpenXP ist eine eingetragene Marke von Markus Kaemmerer.        }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
 { --------------------------------------------------------------- }
 { $Id$ }
 
@@ -730,6 +734,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36.2.5  2003/05/01 14:22:37  mk
+  - updated copyright headers
+
   Revision 1.36.2.4  2001/12/18 13:06:55  mk
   - Beschleunigung der Bildschirmausgabe unter Windows-Dos-Boxen
 

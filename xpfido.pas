@@ -1,13 +1,16 @@
-{ ----------------------------------------------------------------}
+{ --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2000-2002 OpenXP-Team, http://www.openxp.de                 }
 { (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ See list of contributors in authors.txt                         }
+{                                                                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{ OpenXP ist eine eingetragene Marke von Markus Kaemmerer.        }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
-{ ----------------------------------------------------------------}
+{ --------------------------------------------------------------- }
 { $Id$ }
 
 { Nodelist }
@@ -2222,6 +2225,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.10  2003/05/01 14:22:58  mk
+  - updated copyright headers
+
   Revision 1.15.2.9  2003/03/17 23:02:20  my
   MY:- Fido: Grundlegendes Redesign der Nodelist-Abfrage mit <Alt-N> bzw.
              F/N/A und des Durchsuchens mit F/N/D ("Nodelist-Browser")

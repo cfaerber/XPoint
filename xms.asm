@@ -4,6 +4,7 @@
 ; (c) 2003      OpenXP/16
 ;
 ; CrossPoint ist eine eingetragene Marke von Peter Mandrella.
+; OpenXP ist eine eingetragene Marke von Markus Kaemmerer.
 ;
 ; Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der
 ; Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.

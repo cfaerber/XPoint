@@ -1,11 +1,16 @@
-{ ------------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                   }
-{ (c) 2002      OpenXP/16 & Michael Heydekamp, http://www.openxp16.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.         }
-{                                                                     }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der     }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.       }
-{ ------------------------------------------------------------------- }
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2002 OpenXP-Team, http://www.openxp.de                 }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ See list of contributors in authors.txt                         }
+{                                                                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{ OpenXP ist eine eingetragene Marke von Markus Kaemmerer.        }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ --------------------------------------------------------------- }
 { $Id$ }
 
 
@@ -578,6 +583,9 @@ end;
 
 {
   $Log$
+  Revision 1.1.2.4  2003/05/01 14:22:51  mk
+  - updated copyright headers
+
   Revision 1.1.2.3  2002/04/25 22:16:08  my
   MY:- Fix: Beim Weiterleiten von MIME-Multipart-Nachrichten wurden Text-
        AnhÑnge nach ISO-8859-1 konvertiert, aber mit dem ursprÅnglichen
