@@ -34,7 +34,7 @@ uses xpglobal,
 
 const
   bufsize = 65536;
-  readempflist = true;
+  readEmpfList = true;
   xpboundary: string = '-';
 
   attrFile = $0010;                     { File Attach }
@@ -123,7 +123,8 @@ var
   buffer: array[0..bufsize] of char;    { Kopierpuffer }
   bufpos, bufanz: integer;              { Leseposition / Anzahl Zeichen }
   hd: header;
-  empflist: empfnodep;
+  // Liste der Empf„nger
+  empflist: TStringList;
   uline: ^ulinea;
   uunumber: word;                       { fortlaufende Hex-Paketnummer }
   _from, _to: string;                   { UUCP-Systemnamen }
@@ -357,6 +358,7 @@ begin
     addpath := '';
 
   AddHd := TStringList.Create;          { zus„tzliche Headerzeilen einlesen }
+  EmpfList := TStringList.Create;
   rh('NEWS.RFC', false);
   rh('MAIL.RFC', true);
 end;
@@ -364,6 +366,7 @@ end;
 procedure donevar;
 begin
   AddHd.Free;
+  EmpfList.Free;
   freemem(outbuf, bufsize);
   dispose(uline);
 end;
@@ -409,28 +412,14 @@ end;
 
 { --- ZConnect-Header verarbeiten ----------------------------------- }
 
-procedure AddToEmpflist(empf: string);
-var
-  p: empfnodep;
+procedure AddToEmpfList(empf: string);
 begin
-  p := @empflist;
-  while p^.next <> nil do
-    p := p^.next;
-  new(p^.next);
-  p^.next^.next := nil;
-  p^.next^.empf := empf;
+  EmpfList.Add(empf);
 end;
 
-procedure DisposeEmpflist(var list: empfnodep);
-var
-  p: empfnodep;
+procedure DisposeEmpfList(var EmpfList: TStringList);
 begin
-  while list <> nil do
-  begin
-    p := list^.next;
-    dispose(list);
-    list := p;
-  end;
+  EmpfList.Clear;
 end;
 
 function compmimetyp(typ: string): string;
@@ -2749,19 +2738,12 @@ var
   procedure WriteNewsgroups;            { Newsgroups nicht folden! }
   var
     s: string;
-    p: empfnodep;
+    i: Integer;
   begin
     s := 'Newsgroups: ' + formnews(hd.empfaenger);
-    wrs_nolf(f, s);
-    while empflist <> nil do
-    begin
-      s := ',' + formnews(empflist^.empf);
-      wrs_nolf(f, s);
-      p := empflist^.next;
-      dispose(empflist);
-      empflist := p;
-    end;
-    wrs(f, '');
+    for i := 0 to EmpfList.Count - 1 do
+      s := ',' + formnews(EmpfList[i]);
+    Wrs(f, s);
   end;
 
   function maintype(ctype: byte): string;
@@ -2800,12 +2782,9 @@ begin
         end;
         wrs(f, 'MAIL FROM:<' + s + '>');
         wrs(f, 'RCPT TO:<' + hd.empfaenger + '>');
-        ep := empflist;
-        while ep <> nil do
-        begin
-          wrs(f, 'RCPT TO:<' + ep^.empf + '>');
-          ep := ep^.next;
-        end;
+
+        for i := 0 to EmpfList.Count - 1 do
+          wrs(f, 'RCPT TO:<' + EmpfList[i] + '>');
         wrs(f, 'DATA');
       end
       else
@@ -2836,23 +2815,22 @@ begin
       RFC1522form;
       wrs(f, 'Sender: ' + wab + iifs(uuz.s <> '', ' (' + uuz.s + ')', ''));
     end;
+
     if mail then
     begin
       if (wab <> '') and (cpos('@', oem) > 0) { s. (*1) } then
         wrs(f, 'To: ' + oem)
       else
         wrs(f, 'To: ' + empfaenger);
-      while empflist <> nil do
-      begin
+
+      for i := 0 to EmpfList.Count - 1 do
         if not nokop then
-          wrs(f, 'cc: ' + empflist^.empf);
-        ep := empflist^.next;
-        dispose(empflist);
-        empflist := ep;
-      end;
+          wrs(f, 'cc: ' + EmpfList[i]);
     end
     else
       WriteNewsgroups;
+    EmpfList.Clear;
+
     wrs(f, 'Message-ID: <' + msgid + '>');
     if ref <> '' then
       if mail and (attrib and attrPmReply = 0) then
@@ -3232,7 +3210,7 @@ begin
   fs := filesize(f1);
   repeat
     seek(f1, adr);
-    empflist := nil;
+    EmpfList.Clear;
     makeheader(true, f1, 1, 0, hds, hd, ok, false);
     if not ok then
     begin
@@ -3287,10 +3265,8 @@ begin
         seek(f, 0);
         fmove(f, f2);
       end;
-    disposeempflist(empflist);
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
-  empflist := nil;
   close(f2);
   if n = 0 then
     erase(f2)
@@ -3302,6 +3278,7 @@ begin
   close(f); erase(f);
 
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
+  EmpfList.Clear;
   if SMTP then CreateNewfile;
   repeat
     copycount := 1;
@@ -3351,7 +3328,6 @@ begin
             MakeXfile('mail');
           end;
         end;
-      disposeempflist(empflist);
       if SMTP then copycount := hd.empfanz;
       inc(copycount);
     until copycount > hd.empfanz;
@@ -3399,8 +3375,8 @@ end.
 
 {
   $Log$
-  Revision 1.44  2000/07/20 20:10:58  mk
-  - AddHd in eine Stringlist umgewandelt
+  Revision 1.45  2000/07/20 20:30:54  mk
+  - EmpfList auf StringList umgestellt
 
   Revision 1.43  2000/07/12 07:57:05  mk
   RB:- XPBoundary Default in SetMimeData
