@@ -295,8 +295,8 @@ angezeigt.
 
    O   wechselt die Anordnung der Userbretter.
        M”gliche Einstellungen sind:
-       - sortiert nach Usernamen   
-       - sortiert nach Serverbox dann Usernamen        
+       - sortiert nach Usernamen
+       - sortiert nach Serverbox dann Usernamen
 
 <Tab>  schaltet auf Brettbersicht um.
 
@@ -378,7 +378,7 @@ angezeigt.
   ^P   User in andere Adressbuchgruppe verschieben
 
 
-Die Funktionen L, E, ^T und ^P beziehen sich 
+Die Funktionen L, E, ^T und ^P beziehen sich
 auf alle markierten User.
 
 
@@ -419,7 +419,7 @@ best„tigt, mit <Esc> abgebrochen.
 
 "A" schaltet zwischen Komplett- und Adreábuchanzeige
 um, "O" schaltet die Sortierung nach Boxen um.
-Mit CTRL+Y wird zur n„chsten Trennzeile gesprungen. 
+Mit CTRL+Y wird zur n„chsten Trennzeile gesprungen.
 
 @
 24
@@ -693,11 +693,11 @@ Der Lister wird mit <Esc> verlassen.
 
 <<Ctrl L>> setzte die angezeigte Nachricht auf "L”schen".
 
-<<H>> schaltet "Halten" fr die angezeigte 
+<<H>> schaltet "Halten" fr die angezeigte
   Nachricht Ein/Aus.
 
 <<V>> schaltet "Wiedervorlage" fr die angezeigte
-  Nachricht Ein/Aus. 
+  Nachricht Ein/Aus.
 
 
 <Backspace> verl„át den Lister, ohne daá der Auswahl-
@@ -713,7 +713,7 @@ Der Lister wird mit <Esc> verlassen.
     (s. [/Config/ExternLister]).@237
 
 <<Q>>   schaltet um, ob "|" und ":" als Quote-Zeichen
-    interpretiert werden oder nicht.     
+    interpretiert werden oder nicht.
 
 <<Ctrl R>> schaltet die Rot13-Codierung ein/aus.
 
@@ -995,7 +995,7 @@ Zum L”schen von Text stehen neben der blichen <Back-
 space>- und <Del>-Taste noch folgende Funktionen zur
 Verfgung:
 
-    <Ctrl T>,         
+    <Ctrl T>,
     <Ctrl Del>       : Wort nach rechts l”schen
     <Ctrl Backspace> : Wort nach links l”schen
     <Ctrl Y>         : Zeile l”schen
@@ -1089,26 +1089,26 @@ durch halten der rechten Maustaste.
 @
 8064
   Mit diesem Zeichen wird intern im Editor
-  das Absatzende markiert. 
-   
+  das Absatzende markiert.
+
 @
 8065
-<<[x]>> -> Beim Drcken von <Return> wird die 
-       nachfolgende Zeile automatisch um die 
+<<[x]>> -> Beim Drcken von <Return> wird die
+       nachfolgende Zeile automatisch um die
        gleiche Anzahl von Leerzeichen eingerckt,
-       wie die vorhergehende. (Auto-Indent)  
+       wie die vorhergehende. (Auto-Indent)
 @
 8066
 <<[x]>> -> Markierte Bl”cke werden durch Tasten-
-       druck nicht entmarkiert oder berschrieben. 
+       druck nicht entmarkiert oder berschrieben.
        Sinnvoll, wenn man die Wordstartasten fr
        Blockoperationen verwenden m”chte.
 @
 8067
 <<[x]>> -> Beim Umbrechen oder Zusammenfgen von
-       gequoteten Zeilen werden die Quotezeichen 
-       mit bercksichtigt. Siehe auch 
-       ['Block reformatieren'] (<Ctrl B>).@61     
+       gequoteten Zeilen werden die Quotezeichen
+       mit bercksichtigt. Siehe auch
+       ['Block reformatieren'] (<Ctrl B>).@61
 @
 65
 Mit den Cursortasten kann zwischen verschiedenen
@@ -1125,7 +1125,7 @@ gebl„ttert werden.
 Durch die Zifferntasten kann Monat und Jahr
 direkt eingestellt werden. Eingabe muá dann
 inkl. fhrender Nullen erfolgen.
-z.B. 012000 fr Januar 2000. 
+z.B. 012000 fr Januar 2000.
 
 Insgesamt umfaát der Kalender die Jahre 1-3000.
 @
@@ -1225,9 +1225,9 @@ soll.
 <<Emp.>>    Der Empf„nger der Nachricht wird ge„ndert.
         Wird der aktuelle Eintrag gel”scht, kann mit
         <F2> zwischen Brett und Usern gew„hlt werden.
-        ACHTUNG ! Bitte berdenken Sie vor dem 
+        ACHTUNG ! Bitte berdenken Sie vor dem
         Benutzen dieser Funktion, ob Sie damit nicht
-        andere Netzteilnehmer ver„rgern k”nnten. 
+        andere Netzteilnehmer ver„rgern k”nnten.
 
 <<Betreff>> „ndert den Betreff.
 
@@ -1374,7 +1374,7 @@ kopiert den markierten Text ins Clipboard
 <<Win-Clipboard (URL)>>
 versucht aus der ersten markierten Zeile eine
 Internet-URL (FTP:// oder HTTP:// oder WWW.)
-auszuschneiden, und kopiert diese ins 
+auszuschneiden, und kopiert diese ins
 Windows Clipboard.
 
 <<Win-Clipboard (MAIL)>>
@@ -3358,7 +3358,7 @@ Mit /Wartung/UserReorg werden die nicht ben”tigten
 Adressen wieder aus der Datenbank entfernt.
 @
 8068
-Neu aufgenommene User werden dieser 
+Neu aufgenommene User werden dieser
 [Adressbuchgruppe] zugeordnet.@8069
 
 @
@@ -3372,7 +3372,7 @@ Nummern erscheinen am Ende der Userliste.
 
 Wenn man bestimmte User (oder Pseudouser wie Areafix)
 im Userfenster zusammengruppieren will, muss man sie
-nur in dieselbe Adressbuchgruppe stecken. 
+nur in dieselbe Adressbuchgruppe stecken.
 
 Minimalwert ist 1 Maximalwert ist 99
 
@@ -3437,7 +3437,7 @@ ten anschlieáend auf "L”schen" gesetzt werden sollen.
        (Archiviert am... / Ursprung...).
 
 <<[ ]>> -> Der Text der Nachricht bleibt unveraendert.
-        
+
 @
 219
 <<[x]>> -> Automatisch neu angelegte Bretter werden immer
@@ -3502,13 +3502,13 @@ dardm„áig aktiviert.
 Dieser Schalter bestimmt,
 wie das Userfenster sortiert werden soll:
 
-<<[x]>> -> Es wird zuerst nach den Namen der Serverbox, 
+<<[x]>> -> Es wird zuerst nach den Namen der Serverbox,
        dann nach Usernamen sortiert.
 
 <<[ ]>> -> Es wird nur nach Usernamen sortiert.
 
 
-Diese Einstellung kann im Userfenster und 
+Diese Einstellung kann im Userfenster und
 User-Weiterleitmenue jederzeit mit der Taste "O"
 umgestellt werden.
 
@@ -3521,7 +3521,7 @@ hier eingestellt werden, daá diese zwei Zeichen auch
 wie Quote-Zeichen behandelt werden sollen.
 
 Diese Einstellung gilt sowohl fr den Lister als auch
-den Editor. Sie l„át sich im Lister jederzeit 
+den Editor. Sie l„át sich im Lister jederzeit
 mit der Taste "Q" umschalten.
 
 @
@@ -3657,10 +3657,10 @@ Diese Einstellung gilt auch fr den Editor.
        Die Uhr wird am rechten Rand der obersten
        Textzeile eingeblendet.
 
-       Dieser Schalter gilt nicht, wenn mit dem 
-       Kommandozeilen-Parameter /W2 die h”chste 
-       Stufe der Rechenzeitfreigabe aktiviert wurde.    
-       
+       Dieser Schalter gilt nicht, wenn mit dem
+       Kommandozeilen-Parameter /W2 die h”chste
+       Stufe der Rechenzeitfreigabe aktiviert wurde.
+
 @
 240
 Hier k”nnen Sie angeben, bis zu welcher Gr”áe von
@@ -4197,9 +4197,9 @@ der Felder in der Nachrichtenliste fest. Jeder
 Buchstabe muá <<genau einmal>> vorkommen, ansonsten
 wird auf die Standardeinstellung (FGDAEB) zurck-
 gesetzt.
-       
+
        Die Buchstaben stehen fr
-       
+
        F  Flags
        G  Gr”áe
        D  Datum
@@ -4212,9 +4212,9 @@ Die Sortierung der Buchstaben legt die Sortierung
 der Felder in der Userliste fest. Jeder Buchstabe
 muá <<genau einmal>> vorkommen, ansonsten wird auf
 die Standardeinstellung (FHGBAK) zurckgesetzt.
-       
+
        Die Buchstaben stehen fr
-       
+
        F  Flags
        H  Halten
        G  Adreábuch-Gruppe
@@ -5517,12 +5517,12 @@ soll:
 @
 533
 <<[ ]>> --> Sehr schnelle Suche ber Bezugsdatenbank.
-        Es muss die komplette Message-ID angegeben 
-        werden. Teilstring-Suche oder Verknpfungen 
+        Es muss die komplette Message-ID angegeben
+        werden. Teilstring-Suche oder Verknpfungen
         sind nicht m”glich.
 
 <<[x]>> --> Langsamere Suche ber Nachrichtenheader.
-        Es k”nnen wie z.B bei der Betreffsuche 
+        Es k”nnen wie z.B bei der Betreffsuche
         Teilstrings gesucht, Suchoptionen benutzt,
         und zu durchsuchende Bretter gew„hlt werden.
 @
@@ -6916,12 +6916,12 @@ mer erkannt und ausgewertet.
 
 @
 799
-<<[ ]>> -> RFC-Bin„rnachrichten werden als mehrteilige
+<<[X]>> -> RFC-Bin„rnachrichten werden als mehrteilige
        Nachrichten - sogenannte "Attachments" - ver-
        schickt. Dieses Format wird von allen neuen
        Internet-Mailprogrammen verstanden.
 
-<<[x]>> -> XP verschickt Bin„rnachrichten - wie in den
+<<[ ]>> -> XP verschickt Bin„rnachrichten - wie in den
        Programmversion 3.0 bis 3.11 - als einteilige
        MIME-Nachrichten. Dieses Format ist einfach,
        korrekt und platzsparend, wird aber leider
