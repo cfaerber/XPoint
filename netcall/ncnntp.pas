@@ -457,7 +457,7 @@ begin
       Error := ParseResult(s);
       if Error > 400 then
       begin
-        Output(mcError,res_msg3, [IntToStr(Article)]);
+        Output(mcError,res_msg3, [IntToStr(Article+i)]);
         Result := Error;
         Continue;
       end;
@@ -468,7 +468,7 @@ begin
         inc(iLine);
         if Timer.Timeout then
         begin
-          Output(mcVerbose,iifs(HeaderOnly, res_msg2, res_msg1), [Article, iLine]);
+          Output(mcVerbose,iifs(HeaderOnly, res_msg2, res_msg1), [Article+i, iLine]);
           Timer.SetTimeout(1);
         end;
         Message.Add(s);
@@ -597,6 +597,9 @@ end;
 
 {
   $Log$
+  Revision 1.37.2.6  2003/09/03 00:39:16  mk
+  - fixed ArticleCount was not correct
+
   Revision 1.37.2.5  2003/09/01 22:12:52  mk
   - reduced latenz time for NNTP, this speeds up NNTP to factor 10
 
