@@ -37,7 +37,12 @@ uses
 {$endif}
   dos,keys,inout,maus2,typeform, xpglobal;
 
-const maxpull = 30;
+const 
+{$IFDEF NCRT }
+      maxpull = 50; { sichern/holen verwenden auch diese Funktionen }
+{$ELSE }
+      maxpull = 30;
+{$ENDIF }
       maxpush = 20;
 
       crline  : byte = 25;      { zeile fÅr Alt-F10-Copyright }
@@ -1182,6 +1187,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36  2000/05/10 11:01:14  hd
+  - maxpull erhoeht
+
   Revision 1.35  2000/05/07 18:17:36  hd
   - Wrt, Wrt2, FWrt und qrahmen sind jetzt Bestandteil von XPCURSES.PAS
   - Kleiner Fix im Window-Handling
