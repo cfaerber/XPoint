@@ -411,7 +411,7 @@ function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe gross         }
 function TopAllStr(s:string):string;         { alle ersten Buchstaben gross  }
 procedure TrimFirstChar(var s: String; c: Char);   { Spezielles Zeichen am Anfang des String entfernen }
-procedure TrimLastChar(var s: String; c: Char);   { Spezielles Zeichen am Anfang des String entfernen }
+procedure TrimLastChar(var s: String; c: Char);   { Spezielles Zeichen am Ende des String entfernen }
 {$ifndef FPC}
 function UpCase(const c:char):char;                { int. UpCase                  }
 {$endif}
@@ -1703,6 +1703,9 @@ end;
 
 {
   $Log$
+  Revision 1.107.2.8  2003/08/25 22:37:12  mk
+  - corrected commend for trimlastchar
+
   Revision 1.107.2.7  2003/05/01 10:20:56  mk
   - fixed range check error in SMatch
 
