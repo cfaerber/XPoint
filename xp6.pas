@@ -907,19 +907,16 @@ begin
   close(f);
 end;
 
-
-begin      {-------- of DoSend ---------}
+procedure DoSendInit1;
+begin
   DoSend:=false;
   parken:=false;
   _verteiler:=false;
   flOhnesig:=false; flLoesch:=false;
-  {$IFDEF BP }
-  if memavail<20000 then
-  begin
-    rfehler(605);   { 'zu wenig freier Speicher zum Absenden der Nachricht' }
-    goto xexit2;
-  end;
-  {$ENDIF }
+end;
+
+procedure DoSendInit2;
+begin
   new(f); new(f2);
   new(fn); new(fn2); new(fn3);
   assign(f^,datei);
@@ -946,13 +943,10 @@ begin      {-------- of DoSend ---------}
     end;
     OrigBox:='';
   end;
+end;
 
-  if not pm and betreffbox and (left(empfaenger,1)<>'A') then
-  begin
-    rfehler(606);   { 'Schreiben in dieses Brett nicht mîglich!' }
-    goto xexit1;
-  end;
-
+procedure DoSendInit3;
+begin
   new(passwd);
   new(hdp);
 
@@ -970,10 +964,10 @@ begin      {-------- of DoSend ---------}
   flPGPreq:=(sendflags and SendPGPreq<>0);
   flNokop:=(sendflags and SendNokop<>0) or DefaultNokop;
   new(fo); fo^:='';
+end;
 
-{ Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }
-fromstart:
-
+procedure DoSendInit4;
+begin
   passwd^:='';         { Betreffbox true = Betreff nochmal eintippen           }
   empfneu:=false;      { Edit       true = Editor Starten                      }
   docode:=0;           { Sendbox    true = Sendefenster zeigen                 }
@@ -1112,6 +1106,33 @@ fromstart:
     edis:=2;
     if not binary then cancode:=-1;  { Rot13 mîglich }
   end;   { of not pm }
+end;
+
+begin      {-------- of DoSend ---------}
+  DoSendInit1;
+  {$IFDEF BP }
+  if memavail<20000 then
+  begin
+    rfehler(605);   { 'zu wenig freier Speicher zum Absenden der Nachricht' }
+    goto xexit2;
+  end;
+  {$ENDIF }
+
+  DoSendInit2;
+
+  if not pm and betreffbox and (left(empfaenger,1)<>'A') then
+  begin
+    rfehler(606);   { 'Schreiben in dieses Brett nicht mîglich!' }
+    goto xexit1;
+  end;
+
+  DoSendInit3;
+
+{ Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }
+fromstart:
+
+  DoSendInit4;
+
 
   dbOpen(d,BoxenFile,1);           { Pollbox + MAPS-Name ÅberprÅfen }
   if box<>'' then begin            { nicht intern.. }
@@ -2196,6 +2217,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.13  2000/10/10 22:49:45  mk
+  - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
+
   Revision 1.39.2.12  2000/10/10 13:04:55  mk
   RB:- Supersedes in Autoversand
 

@@ -32,6 +32,7 @@ uses lfn, xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      xp1o2,
      xp1help,  { Online-Hilfe u.a.  }
      xp1input, { Eingabefunktionen  }
+     xp2b,
      xpnt,     { Netztypen          }
      xp_des,   { DES-Codierung      }
      xp_pgp,   { PGP-Codierung      }
@@ -79,7 +80,7 @@ uses lfn, xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O win2}    {$O help}    {$O maske}    {$O lister}   {$O archive}
 {$O clip}    {$O editor}  {$O databaso} {$O feiertag}
 {$O xp_uue}  {$O xp1o}    {$O xp1o2}    {$O xp_pgp}   {$O xp1input}
-{$O xp1help}
+{$O xp1help} {$O xp2b}
 {$O xp2}     {$O xp2c}    {$O xp2f}     {$O xp2db}
 {$O xp3o}    {$O xp3o2}   {$O xp3ex}
 {$O xp4}     {$O xp4e}    {$O xp4o}     {$O xp4o2}    {$O xp4o3}
@@ -191,6 +192,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.5  2000/10/10 22:49:44  mk
+  - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
+
   Revision 1.29.2.4  2000/08/27 08:39:38  mk
   - LFN-Unterstuetzung aktiviert, Parameter /LFN schaltet explizit zu
 

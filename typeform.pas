@@ -2182,14 +2182,14 @@ end;
 
 function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
 var
-  Size: Integer;
+  Size: Word;
 begin
   if MinMem > (MaxAvail + MaxAvail div 10) then
   begin
     Writeln('Nicht genÅgend Speicher');
     Halt(1);
   end;
-  Size := Min(MaxAvail - MaxAvail div 10, MaxMem);
+  Size := Word(Min(MaxAvail - MaxAvail div 10, MaxMem));
   GetMem(p, Size);
   GetMaxMem := Size;
 end;
@@ -2197,6 +2197,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37.2.7  2000/10/10 22:49:44  mk
+  - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
+
   Revision 1.37.2.6  2000/08/22 09:27:00  mk
   - Allgemeine Performance erhoeht
 

@@ -1616,7 +1616,7 @@ begin
 end;
 
 {$IFDEF Debug }
-procedure dbLog(s:string);
+procedure dbLog(const s:string);
 begin
   if dl then
     writeln(dblogfile,s);
@@ -1716,6 +1716,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22.2.5  2000/10/10 22:49:43  mk
+  - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
+
   Revision 1.22.2.4  2000/08/26 09:10:38  mk
   - Pointercheck hinzugefuegt
 

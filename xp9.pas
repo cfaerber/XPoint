@@ -18,9 +18,9 @@ unit xp9;
 
 interface
 
-uses 
+uses
   crt,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
-     maus2,mouse,resource,xpglobal,
+  maus2,mouse,resource,xpglobal,
      xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
 
 
@@ -68,7 +68,7 @@ function  JanusSwitch(var s:string):boolean;
 implementation  {---------------------------------------------------}
 
 uses
-  xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterm;
+  xp2b, xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterm;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -1753,6 +1753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.2  2000/10/10 22:49:45  mk
+  - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
+
   Revision 1.19.2.1  2000/07/15 18:42:19  mk
   ML: - Nilpointerzugriff gefixt
 

@@ -54,12 +54,9 @@ procedure test_defaultgruppen;
 procedure test_systeme;
 procedure testdiskspace;
 procedure testfilehandles;
-procedure DelTmpfiles(fn:string);
 procedure TestAutostart;
 procedure check_date;
 procedure ReadDomainlist;
-procedure testlock;
-procedure ReadDefaultViewers;
 
 procedure ShowDateZaehler;
 Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
@@ -67,7 +64,8 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 
 implementation  {-----------------------------------------------------}
 
- uses xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg;
+uses
+  xp2b, xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg;
 
 var   zaehlx,zaehly : byte;
 
@@ -925,16 +923,6 @@ begin
 end;
 
 
-procedure DelTmpfiles(fn:string);
-var sr : searchrec;
-begin
-  findfirst(fn,ffAnyFile,sr);
-  while doserror=0 do begin
-    _era(sr.name);
-    findnext(sr);
-  end;
-end;
-
 
 procedure TestAutostart;
 var p   : byte;
@@ -954,18 +942,6 @@ begin
 end;
 
 
-procedure ShowDateZaehler;
-const lastdz : integer = -1;
-begin
-  if zaehler[1]<>lastdz then begin
-    savecursor;
-    lastdz:=zaehler[1];
-    attrtxt(col.coldiarahmen);
-    wrt(zaehlx,zaehly,' '+strsn(lastdz,2)+' ');
-    restcursor;
-    if lastdz=0 then keyboard(KeyEsc);
-    end;
-end;
 
 procedure check_date;      { Test, ob Systemdatum verstellt wurde }
 const maxdays = 14;
@@ -1080,51 +1056,6 @@ begin
 end;
 
 
-procedure testlock;
-var i : integer;
-begin
-  if ParNolock then exit;
-  assign(lockfile, 'LOCKFILE');
-  filemode:=FMRW + FMDenyWrite;
-  rewrite(lockfile);
-  if (ioresult<>0) or not fileio.lockfile(lockfile) then
-  begin
-    writeln;
-    for i:=1 to res2anz(244) do
-      writeln(getres2(244,i));
-    mdelay(1000);
-    close(lockfile);
-    if ioresult<>0 then;
-    runerror:=false;
-    halt(1);
-  end;
-  lockopen:=true;
-  { MK 09.01.00: Bugfix fÅr Mime-Lîschen-Problem von Heiko.Schoenfeld@gmx.de }
-  FileMode := FMRW;
-end;
-
-
-procedure ReadDefaultViewers;
-
-  procedure SeekViewer(mimetyp:string; var viewer:pviewer);
-  var prog : string[ViewprogLen];
-  begin
-    dbSeek(mimebase,mtiTyp,ustr(mimetyp));
-    if not dbEOF(mimebase) and not dbBOF(mimebase) and
-       stricmp(dbReadStr(mimebase,'typ'),mimetyp) then begin
-      dbReadN(mimebase,mimeb_programm,prog);
-      getmem(viewer,length(prog)+1);   { auch bei prog=''! }
-      viewer^:=prog;
-      end
-    else
-      viewer:=nil;
-  end;
-
-begin
-  SeekViewer('*/*',DefaultViewer);
-  SeekViewer('text/*',DefTextViewer);
-  SeekViewer('text/plain',PTextViewer);
-end;
 
 Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 Var i : byte;                { Anhand der Feldtauscheinstellungen bestimmen }
@@ -1147,9 +1078,25 @@ Begin
    if UsrfeldPos2=33 Then UsrFeldpos2:=32;
 end;
 
+procedure ShowDateZaehler;
+const lastdz : integer = -1;
+begin
+  if zaehler[1]<>lastdz then begin
+    savecursor;
+    lastdz:=zaehler[1];
+    attrtxt(col.coldiarahmen);
+    wrt(zaehlx,zaehly,' '+strsn(lastdz,2)+' ');
+    restcursor;
+    if lastdz=0 then keyboard(KeyEsc);
+    end;
+end;
+
 end.
 {
   $Log$
+  Revision 1.45.2.8  2000/10/10 22:49:45  mk
+  - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
+
   Revision 1.45.2.7  2000/10/08 11:11:18  mk
   - Verschiedene Dateinamen gross geschrieben
 

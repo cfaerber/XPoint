@@ -69,17 +69,14 @@ procedure EdAddToken(ed:ECB; t:EdToken);
 function  EddefQuitfunc(ed:ECB):taste;
 function  EddefOverwrite(ed:ECB; fn:pathstr):taste;
 procedure EddefMsgproc(txt:string; error:boolean);
-{ 04.02.2000 robo }
-{ procedure EddefFileproc(ed:ECB; var fn:pathstr; save:boolean); }
 procedure EddefFileproc(ed:ECB; var fn:pathstr; save,uuenc:boolean);
-{ /robo }
 function  EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
 procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 
 implementation  { ------------------------------------------------ }
 
-uses  typeform,fileio,inout,maus2,winxp,printerx,xp1,xp2,lister;
+uses  xp2b, typeform,fileio,inout,maus2,winxp,printerx,xp1,xp2,lister;
 
 const maxgl     = 60;
       minfree   = 12000;             { min. freier Heap }
@@ -100,10 +97,6 @@ type  charr    = array[0..65500] of char;
                    size,msize : smallword;       { msize = allokierte Gr”áe }
                    umbruch    : boolean;
                    fill       : array[1..3] of byte;
-{$ifdef ver32}
-  { Achtung! hier gibts ein Problem! obiges sind genau 16 Byte!
-      asize beachten! }
-{$endif}
                    cont       : charr;
                  end;
       position = record
@@ -2041,6 +2034,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.5  2000/10/10 22:49:44  mk
+  - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
+
   Revision 1.25.2.4  2000/07/25 18:39:56  jg
   - Glossary: GLOSSARY.CFG-"E"ditor darf nicht rekursiv aufgerufen werden
 

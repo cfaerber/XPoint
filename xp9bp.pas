@@ -43,6 +43,8 @@ procedure WriteQFG(dateiname:pathstr; qrec:QfgRec);
 
 implementation  { ------------------------------------------------- }
 
+uses
+  xp2b;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 var i : integer;
@@ -526,6 +528,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.1  2000/10/10 22:49:46  mk
+  - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
+
   Revision 1.10  2000/05/22 18:07:40  hd
   - Kleinschreibungen (UnixFS)
 
