@@ -27,28 +27,6 @@ implementation
 
 var uunum : word;    { fortlaufende 16-Bit-Nummer der UUCP-Dateien }
 
-procedure MakeMimetypCfg;
-var t   : text;
-    typ : string;
-    ext : string;
-begin
-  assign(t, MimeCfgFile);
-  rewrite(t);
-  writeln(t,'# ',getres(728));   { 'tempor„re MAGGI- und UUZ-Konfigurationsdatei' }
-  writeln(t);
-  dbSetIndex(mimebase,0);
-  dbGoTop(mimebase);
-  while not dbEOF(mimebase) do begin
-    typ:= dbReadNStr(mimebase,mimeb_typ);
-    ext:= dbReadNStr(mimebase,mimeb_extension);
-    if (typ<>'') and (ext<>'') then
-      writeln(t,ext,'=',extmimetyp(typ));
-    dbNext(mimebase);
-    end;
-  dbSetIndex(mimebase,mtiTyp);
-  close(t);
-end;
-
 function uu_nummer:word;     { nächste Paketnummer aus UUNUMMER.DAT lesen }
 var t : text;
     s : string;
@@ -476,135 +454,16 @@ begin
     end;
 end;
 
-function BoxParOk:string;
-var uucp : boolean;
-begin
-  uucp:=(logintyp=ltUUCP);
-  with BoxPar^ do begin
-    SysopMode:=(SysopInp+SysopOut<>'');
-    if SysopMode then
-      if sysopinp='' then
-        BoxParOK:=getres2(706,1)    { 'kein Eingangspuffer-Name' }
-      else if sysopout='' then
-        BoxParOK:=getres2(706,2)    { 'kein Ausgangspuffer-Name' }
-      else
-        BoxParOk:=''
-    else
-      if LoginTyp in [ltNNTP, ltPOP3] then
-        // Hier evtl. n”tige Tests der Parameter einstellen
-      else
-      if (pointname='') or (not (_fido or uucp) and (passwort='')) or
-        ((not SysopMode and (telefon='') or (telefon='08-15'))) then
-        BoxParOk:=getres2(706,3)    { 'unvollst„ndige Pointdaten' }
-      else if (((not (_fido or uucp) or (UpArcer<>'')) and
-                ((not uucp and (pos('$UPFILE',UpperCase(UpArcer))=0)) or
-                 (pos('$PUFFER',FileUpperCase(UpArcer))=0))) or
-              (pos('$DOWNFILE',FileUpperCase(DownArcer))=0)) then
-        BoxParOk:=getres2(706,4)    { 'unvollst„ndige Packer-Angaben' }
-//      else if ntDownarcPath(netztyp) and not FindDownarcer then
-//        BoxparOk:=getres2(706,6)    { 'Entpacker fehlt' }
-      else if (logintyp<>ltFido) and not uucp and (trim(uploader)='') then
-        BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
-      else
-        BoxParOk:='';
-    end;
-  freeres;
-end;
-
-Procedure ZFilter(source,dest: string);
-var
-  f:boolean;
-begin
-  f := Outfilter(source);   { Filtern und merken ob Filtrat existiert }
-  CopyFile(source,dest);    { ppfile/Filtrat ins Outfile kopieren }
-  if f then _era(source);   { falls gefiltert wurde Filtratfile löschen }
-  errorlevel:=0;
-end;
-
-procedure CallerToTemp; { gepackten Puffer wg. Namensgleichheit umbenennen }
-var f : file;
-begin
-  if (logintyp in [ltMagic,ltQuick,ltGS]) and (netztyp<>nt_Pronet) then begin
-    assign(f,caller);
-    if existf(f) then begin
-      if FileExists('$caller.tmp') then _era('$caller.tmp');
-      rename(f,'$caller.tmp');
-      end;
-    end;
-end;
-
-procedure TempToCaller;
-var f : file;
-begin
-  if (logintyp=ltQuick) or (logintyp=ltGS) or
-     ((logintyp=ltMagic) and (netztyp<>nt_Pronet) and not FileExists(caller)) then
-  begin
-    assign(f,'$caller.tmp');
-    rename(f,caller);
-    if ioresult<>0 then;
-    end;
-end;
-
-procedure waitpack(entpack:boolean);
-var p : byte;
-begin
-   p := 0; { !! mK 12/99 }
-   time(boxpar^.packwait);                { auf Packer warten }
-   rz:='';
-   repeat
-     tb; tkey;
-     if rz<>restzeit then begin
-       moff;
-       write(#13,getres(iif(entpack,714,715)),restzeit);   { 'Box (ent)packt Daten... ' }
-       mon;
-       rz:=restzeit;
-       end;
-     case logintyp of
-       ltNetcall,
-       ltZConnect   : p:=pos(NAK,recs);
-       ltMagic      : p:=length(recs);
-       ltQuick,ltGS : if entpack then p:=length(recs)
-                      else p:=pos('**'^X,recs);
-     end;
-   until (p>0) or timeout(true);
-   if not timeout(true) then delete(recs,1,p);
-   mwriteln;
-end;
-
-procedure makepuf(fn:string; twobytes:boolean);
-var f : file;
-begin
-  assign(f,fn);
-  rewrite(f,1);
-  if twobytes then blockwrite(f,crlf,2);
-  close(f);
-end;
-
-procedure testBL;
-var f : file;
-begin
-  if not FileExists(bfile+'.bl') then begin
-    assign(f,bfile+'.bl');
-    rewrite(f,1);
-    close(f);
-    end;
-end;
-
-function CrashPassword(var CrashBox:string):string;
-var d : DB;
-begin
-  CrashPassword:='';
-  dbOpen(d,'systeme',1);
-  dbSeek(d,siName,UpperCase(CrashBox));
-  if dbFound and (dbReadStr(d,'fs-passwd')<>'') then
-    CrashPassword:=dbReadStr(d,'fs-passwd');
-  dbClose(d);
-end;
 
 end.
 
 {
   $Log$
+  Revision 1.2  2001/02/01 21:20:27  ma
+  - compiling!
+  - only Fido: UUCP/POP3/... routines are temporarily commented out
+  - untested
+
   Revision 1.1  2001/01/10 16:32:19  ma
   - todo: general cleanup
 

@@ -46,9 +46,6 @@ type
                  reserved3      : array[0..11] of byte;
                end;
 
-var
-  FilePath: String;
-
 type
   TFidomailer = class(TModemNetcall)
   protected
@@ -81,17 +78,20 @@ type
     SysName: String;
     SerNr: String;
     MailPath: String;
-    ExtFNames: String;
+    FilePath: String;
+    ExtFNames: Boolean;
     SendEmpty: Boolean;
     TXT: String;
     UseEMSI: Boolean;
     SetTime: Boolean;
     SendTrx: Boolean;
-    MinCPS: Boolean;
+    MinCPS: Longint;
     AddTXT: String;
 
     function PerformNetcall: Integer;
   end;
+
+function isCompressedFidoPacket(const Filename: string; const FidoExtNamesPermitted: Boolean): Boolean;
 
 implementation
 
@@ -152,8 +152,6 @@ end;
 procedure ZModemStartProc;
 var
   I,P: Integer;
-const
-  PKTExtensions: ARRAY[1..8]OF String[3]= ('MO','TU','WE','TH','FR','SA','SU','PKT');
 begin
   {Ab jetzt Statusmeldungen anzeigen}
   ZModemTimer.Start;
@@ -165,13 +163,9 @@ begin
     FidomailerObj.WriteIPC(mcInfo,getreps2(30004,11,TransferName),[0]);
     { Mailpakete, erkennbar an ihrer Extension, wandern in anderes
       Verzeichnis als sonstige Dateien. }
-    I:=0;
-    repeat
-      Inc(I);
-      P:=Pos('.'+PKTExtensions[I],UpperCase(TransferName))
-    until (P<>0)or(I>=8);
-    if(P=0)or((I<8)and not(TransferName[P+3] IN ['0'..'9','A'..'Z'])) then
-      TransferPath:= FilePath; {File ist kein Mailpaket}
+    if(not isCompressedFidoPacket(TransferName,FidomailerObj.ExtFNames))and
+      (Pos('.PKT',UpperCase(TransferName))=0)then
+      TransferPath:=FidomailerObj.FilePath;
   end;
 end;
 
@@ -194,7 +188,7 @@ end;
 
 { ----- some generic routines ------------------------------------------------------}
 
-function isCompressedPacket(const Filename: string; const FidoExtNamesPermitted: Boolean): Boolean;
+function isCompressedFidoPacket(const Filename: string; const FidoExtNamesPermitted: Boolean): Boolean;
 var p : byte;
 begin
   p:=cpos('.',Filename);
@@ -330,6 +324,11 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/02/01 21:20:27  ma
+  - compiling!
+  - only Fido: UUCP/POP3/... routines are temporarily commented out
+  - untested
+
   Revision 1.5  2001/01/30 15:18:37  ma
   - moved protocols to separate source files
 
