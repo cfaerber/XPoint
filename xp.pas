@@ -102,7 +102,7 @@ uses xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xpstat}  {$O xpterm}  {$O xpcc}     {$O xpmaus}   {$O xp_iti}
 {$O xpfido}  {$O xpf2}    {$O xpfidonl}
 {$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}
-{$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}
+{$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}   {$O crc16 }
 {$IFDEF CAPI }
 {$O capi }
 {$ENDIF }
@@ -212,6 +212,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.20  2000/04/29 16:10:40  mk
+  - CRC16 als Overlay definiert
+
   Revision 1.19  2000/04/29 11:54:09  mw
 
   - MIME in News voreingestellt

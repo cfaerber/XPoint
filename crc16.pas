@@ -1,9 +1,11 @@
 UNIT CRC16;
 
 {$I XPDEFINE.INC }
-{$R-}
+{$IFDEF BP }
+  {$O+,F+}
+{$ENDIF }
 
-INTERFACE
+interface
 
 uses xpglobal;
 { Note: Your crc variable must be initialized to 0, before       }
@@ -112,6 +114,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/29 16:10:40  mk
+  - CRC16 als Overlay definiert
+
   Revision 1.6  2000/04/13 12:48:30  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
