@@ -196,7 +196,7 @@ begin  { __ Suchmarke }
               := Forms(s,
                 iif(pos('A',UsrFeldTausch)<pos('K',UsrFeldTausch),
                     max(44-iif(kuerzen,9,0),length(s)),
-                    74-max(39,length(komm))-iif(kuerzen,8,0)
+                    74+9-max(39,length(komm))-iif(kuerzen,8,0)
                    )
               );
                 
@@ -204,7 +204,7 @@ begin  { __ Suchmarke }
             taus[pos('K',UsrFeldTausch)]
               := Forms(komm,
                 iif(pos('K',UsrFeldTausch)<pos('A',UsrFeldTausch),
-                    max(39-iif(kuerzen,9,0),length(komm)),
+                    max(30,length(komm)),
                     74-max(35,length(s))-iif(kuerzen,8+9,0)
                    )
               );
