@@ -428,11 +428,6 @@ procedure THeader.WriteZConnect(stream:TStream);
       if attrib and attrIsEB<>0  then writeln_s(stream,'STAT: EB');
       if pm_reply                then writeln_s(stream,'STAT: PM-REPLY');
 
-      if attrib and AttrQPC<>0   then writeln_s(stream,'CRYPT: QPC') else
-      if attrib and AttrPmcrypt<>0 then writeln_s(stream,'CRYPT: PMCRYPT2') else
-      if pgpflags and fPGP_encoded<>0  then writeln_s(stream,'CRYPT: PGP') else
-      if crypt.method<>'' then writeln_s(stream,'CRYPT: '+crypt.method);
-
       charset:=MimeCharsetToZC(charset);
       if (charset<>'') and (charset<>'US-ASCII') and (charset<>'IBM437') then writeln_s(stream,'CHARSET: '+charset);
       
@@ -458,11 +453,17 @@ procedure THeader.WriteZConnect(stream:TStream);
         if pgpflags and fPGP_sigok<>0    then writeln_s(stream,'X-XP-PGP: SigOk');
         if pgpflags and fPGP_sigerr<>0   then writeln_s(stream,'X-XP-PGP: SigError');
       end;
-        { ToDo: fPGP_comprom }
-        if crypt.typ='B' then writeln_s(stream,'Crypt-Content-TYP: BIN') else
-        if crypt.typ='M' then writeln_s(stream,'Crypt-Content-TYP: MIME');
-        if crypt.charset<>'' then writeln_s(stream,'Crypt-Content-Charset: '+crypt.charset);
-        if crypt.komlen>0    then writeln_s(stream,'Crypt-Content-KOM: '+strs(crypt.komlen));
+
+      if attrib and AttrQPC<>0   then writeln_s(stream,'CRYPT: QPC') else
+      if attrib and AttrPmcrypt<>0 then writeln_s(stream,'CRYPT: PMCRYPT2') else
+      if pgpflags and fPGP_encoded<>0  then writeln_s(stream,'CRYPT: PGP') else
+      if crypt.method<>'' then writeln_s(stream,'CRYPT: '+crypt.method);
+
+      if crypt.typ='B' then writeln_s(stream,'Crypt-Content-TYP: BIN') else
+      if crypt.typ='M' then writeln_s(stream,'Crypt-Content-TYP: MIME');
+      crypt.charset:=MimeCharsettoZC(crypt.charset);
+      if (crypt.charset<>'') and (crypt.charset<>'US-ASCII') and (crypt.charset<>'IBM437') then 
+        writeln_s(stream,'Crypt-Content-KOM: '+strs(crypt.komlen));
 
       if ntConv(netztyp) then begin
         writeln_s(stream,'X_C:');
@@ -580,6 +581,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2001/09/25 21:12:06  cl
+  - CRYPT-CONTENT-CHARSET is correctly converted to ZConnect charset names
+
   Revision 1.18  2001/09/15 00:08:31  cl
   - fixed initialization of THeader.Charset in THeader.Clear
 
