@@ -99,7 +99,7 @@ begin
   cursor(curoff);
   new(pntl);
   lnum:=0;
-  p:=pos(';',sla);
+  p:=cpos(';',sla);
   if p=0 then begin
     sla:=sla+';';
     p:=length(sla);
@@ -109,7 +109,7 @@ begin
     inc(slan);
     slas[slan]:=left(sla,p-1);
     delete(sla,1,p);
-    p:=pos(';',sla);
+    p:=cpos(';',sla);
     end;
 
   for i:=1 to slan do
@@ -120,7 +120,7 @@ begin
         inc(lnum);
         n:=lnum;
         s:=' '+sr.name;
-        p:=pos('.',s);
+        p:=cpos('.',s);
         if p=0 then
           s:=forms(s,9)+'.'
         else
@@ -427,14 +427,14 @@ begin
     end
   else begin
     pathn:=0;
-    p:=pos(';',pathx);
+    p:=cpos(';',pathx);
     pathonly(path);
     dpath:=pathx;        { dpath wird hier als Temp genutzt! }
     while p>0 do begin
       inc(pathn);
       paths[pathn]:=path+left(dpath,p-1);
       delete(dpath,1,p);
-      p:=pos(';',dpath);
+      p:=cpos(';',dpath);
       end;
     end;
 
@@ -723,8 +723,8 @@ var x    : byte;
 begin
   path:='';
   while p>1 do begin
-    x:=pos('Ã',pa^[p]^);
-    if x=0 then x:=pos('À',pa^[p]^);
+    x:=cpos('Ã',pa^[p]^);
+    if x=0 then x:=cpos('À',pa^[p]^);
     path:=copy(pa^[p]^,x+3,80)+'\'+path;
     while pa^[p]^[x] in ['³','Ã','À'] do dec(p);
     end;
@@ -1117,6 +1117,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.11  2001/08/11 22:17:54  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.16.2.10  2001/08/05 11:45:33  my
   - added new unit XPOVL.PAS ('uses')
 

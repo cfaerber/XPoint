@@ -225,10 +225,10 @@ begin
         writeln(t);
         close(t);
         end;
-      pm:=(pos('@',empf)<>0);
+      pm:=(cpos('@',empf)<>0);
       if pm and (betreff='') then betreff:='<nope>';
       empf:=vert_long(empf);
-      pm:=(pos('@',empf)<>0);
+      pm:=(cpos('@',empf)<>0);
       if not pm then insert('A',empf,1);
       leer:='';
       if ustr(box)='*CRASH*' then begin
@@ -677,6 +677,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.9  2001/08/11 22:18:04  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.13.2.8  2001/08/02 22:31:35  mk
   - removed function FUStr, only usefull in 3.70
 

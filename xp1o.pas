@@ -35,9 +35,9 @@ function  ReadFilename(txt:atext; var s:string; subs:boolean;
 function  overwrite(const fname:string; replace:boolean; var brk:boolean):boolean;
 procedure listExt(var t:taste);
 procedure ExtListKeys;
-function  filecopy(fn1,fn2:string):boolean;
+function  filecopy(const fn1,fn2:string):boolean;
 function  FileDa(fn:string):boolean;   { Programm im Pfad suchen }
-procedure ExpandTabs(fn1,fn2:string);
+procedure ExpandTabs(const fn1,fn2:string);
 
 function  GetDecomp(atyp:shortint; var decomp:string):boolean;
 function  UniExtract(_from,_to,dateien:string):boolean;
@@ -52,7 +52,7 @@ function  GetBezug(var ref:string):longint;
 function  KK:boolean;
 function  HasRef:boolean;
 function  ZCfiletime(var fn:string):string;   { ZC-Dateidatum }
-procedure SetZCftime(fn:string; var ddatum:string);
+procedure SetZCftime(const fn:string; var ddatum:string);
 
 function  testtelefon(var s:string):boolean;
 function  IsKomCode(nr:longint):boolean;
@@ -276,7 +276,7 @@ begin
     ok:=ReadFileName(getres(120),fname,true,useclip);  { 'Text in Datei schreiben' }
     pophp;
     if ok then begin
-      if (pos('\',fname)=0) and (pos(':',fname)=0) then
+      if (cpos('\',fname)=0) and (cpos(':',fname)=0) then
         fname:=extractpath+fname;
       while cpos('/',fname)>0 do
         fname[cpos('/',fname)]:='\';
@@ -470,7 +470,7 @@ end;
 
 
 
-function filecopy(fn1,fn2:string):boolean;
+function filecopy(const fn1,fn2:string):boolean;
 var f1,f2 : file;
     time  : longint;
     res   : integer;
@@ -742,8 +742,7 @@ begin
     end;
 end;
 
-{ fn jetzt kein var-Parameter mehr }
-procedure SetZCftime(fn:string; var ddatum:string);
+procedure SetZCftime(const fn:string; var ddatum:string);
 var dt : datetime;
     l  : longint;
     f  : file;
@@ -811,12 +810,12 @@ begin
       tnr:=left(tele,p-1);
       tele:=ltrim(mid(tele,p));
       endc:=['0'..'9'];
-      if pos('V',tnr)>0 then include(endc,'Q');
+      if cpos('V',tnr)>0 then include(endc,'Q');
       while firstchar(tnr) in ['V','F','B','P'] do
         delfirst(tnr);
       if (firstchar(tnr)<>'+') or not (lastchar(tnr) in endc) then
         ok:=false;
-      if pos('+',mid(tnr,2))>0 then
+      if cpos('+',mid(tnr,2))>0 then
         ok:=false;
     until tele='';
     if not ok and errmsg then
@@ -852,7 +851,7 @@ begin
 end;
 
 
-procedure ExpandTabs(fn1,fn2:string);
+procedure ExpandTabs(const fn1,fn2:string);
 var t1,t2 : text;
     s     : string;
     buf   : array[1..1024] of byte;
@@ -868,7 +867,7 @@ begin
       readln(t1,s);
       while (s[length(s)]=' ') do dec(byte(s[0]));  { Spaces wegschneiden }
       repeat
-        p:=pos(#9,s);              { TABs expandieren }
+        p:=cpos(#9,s);              { TABs expandieren }
         if p>0 then begin
           delete(s,p,1);
           insert(sp(8-(p-1)mod 8),s,p);
@@ -981,6 +980,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.18  2001/08/11 22:17:56  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.40.2.17  2001/08/10 20:01:11  mk
   - Overwrite liefert false, wenn Datei schreibgeschützt
 

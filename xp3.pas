@@ -1217,8 +1217,8 @@ function IsNodeAddress(adr:string):boolean;
 var p : byte;
 begin
   p:=cpos(':',adr);
-  if p=0 then p:=pos('/',adr);
-  if p=0 then p:=pos('.',adr);
+  if p=0 then p:=cpos('/',adr);
+  if p=0 then p:=cpos('.',adr);
   IsNodeAddress := ((p>0) and (ival(left(adr,p-1))>0)) or
                    (ival(adr)>0) or (adr=',') or
                    ((p=1) and (ival(mid(adr,p+1))>0));
@@ -1278,6 +1278,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.12  2001/08/11 22:17:57  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.25.2.11  2001/08/05 11:45:34  my
   - added new unit XPOVL.PAS ('uses')
 

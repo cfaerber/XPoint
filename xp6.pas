@@ -275,7 +275,7 @@ var p : byte;
     d : DB;
 begin
   p:=cpos('@',s);
-  if (s<>'') and ((p=0) or (pos('.',mid(s,p))=0)) then
+  if (s<>'') and ((p=0) or (cpos('.',mid(s,p))=0)) then
   begin
       dbOpen(d,PseudoFile,1);           { Wenns keine gueltige Adresse ist...}
       dbSeek(d,piKurzname,ustr(s));
@@ -284,7 +284,7 @@ begin
         dbRead(d,'Langname',s);
         dbclose(d);                     { ists ein Kurzname ? }
         testreplyto:=true;
-        if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
+        if cpos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
           begin
             rfehler(908);               { 'ungÅltige Adresse' }
             testreplyto:=false;
@@ -2377,6 +2377,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.35  2001/08/11 22:18:00  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.39.2.34  2001/08/05 11:45:35  my
   - added new unit XPOVL.PAS ('uses')
 

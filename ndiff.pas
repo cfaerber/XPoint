@@ -296,7 +296,7 @@ begin
       if p>1 then begin
         ss:=lstr(left(s,p-1));
         keep:=(ss='host') or (ss='region') or (ss='zone');
-        p2:=pos(',',mid(s,p+1));
+        p2:=cpos(',',mid(s,p+1));
         if keep and (ss<>'host') and (p2>0) then begin
           nr:=minmax(0,ival(copy(s,p+1,p2-1)),65535);
           if ss='zone' then begin
@@ -338,6 +338,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6.2.3  2001/08/11 22:17:52  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.6.2.2  2000/07/04 10:23:02  mk
   - unnoetige Routinen rausgenommen
 

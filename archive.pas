@@ -608,10 +608,10 @@ label again;
       b:=0;
       while ba(fname)[b]<>#0 do inc(b);
       FastMove(fname,s[1],b); s[0]:=chr(b);
-      p:=pos('/',s);
-      if p=0 then p:=pos('\',s);
+      p:=cpos('/',s);
+      if p=0 then p:=cpos('\',s);
       if p=0 then begin
-        p:=pos(':',s);
+        p:=cpos(':',s);
         if p=0 then begin
           path:=''; name:=s;
           end
@@ -996,6 +996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.4  2001/08/11 22:17:50  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.10.2.3  2001/08/11 20:16:26  mk
   - added const parameters if possible, saves about 2.5kb exe
 

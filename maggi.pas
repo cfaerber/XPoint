@@ -531,7 +531,7 @@ begin
         end;
       if ok then begin
         rdln; absender:=trim(s);
-        rdln; while pos('@',left(s,15))>0 do s[cpos('@',s)]:='#';  { @ -> # }
+        rdln; while cpos('@',left(s,15))>0 do s[cpos('@',s)]:='#';  { @ -> # }
               absender:=trim(left(s,15))+'@'+absender;
               realname:=trim(mid(s,16));
               if pronet and ((length(realname)<3) or
@@ -794,7 +794,7 @@ begin
           end
         else begin
           i:=cpos('@',empfaenger);
-          while pos('#',left(empfaenger,i))>0 do
+          while cpos('#',left(empfaenger,i))>0 do
             empfaenger[cpos('#',empfaenger)]:='@';    { # -> @ }
           node:=mid(empfaenger,i+1);
           if cpos('.',node)>0 then
@@ -898,7 +898,7 @@ begin
       pm:=(p1>0);
       if pm then
         if zq then begin
-          p2:=pos('.',mid(empfaenger,p1+1));
+          p2:=cpos('.',mid(empfaenger,p1+1));
           if p2>0 then empfaenger:=left(empfaenger,p1+p2-1);
           end
         else
@@ -1834,6 +1834,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.10  2001/08/11 22:17:51  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.15.2.9  2001/08/05 11:45:32  my
   - added new unit XPOVL.PAS ('uses')
 

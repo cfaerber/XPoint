@@ -160,7 +160,7 @@ var f      : file;
           end;
         end
       else begin
-        dbSeek(ubase,uiName,ustr(empfaenger+iifs(pos('@',empfaenger)=0,'@'+box+'.ZER','')));
+        dbSeek(ubase,uiName,ustr(empfaenger+iifs(cpos('@',empfaenger)=0,'@'+box+'.ZER','')));
         if not dbFound then
           trfehler(702,esec)   { 'Interner Fehler: UV-Userbrett nicht mehr vorhanden!' }
         else begin
@@ -848,6 +848,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.21  2001/08/11 22:18:02  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.13.2.20  2001/08/05 11:45:36  my
   - added new unit XPOVL.PAS ('uses')
 

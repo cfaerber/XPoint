@@ -127,7 +127,7 @@ begin
   buttons[length(buttons)]:=',';
   n:=0;
   repeat
-    p:=pos(',',buttons);
+    p:=cpos(',',buttons);
     if p>0 then begin
       inc(n);
       if buttons[1]='ù' then begin
@@ -140,7 +140,7 @@ begin
         buttsp[n]:=0;
       butt[n]:=left(buttons,p-1);
       buttons:=copy(buttons,p+1,255);
-      p:=pos('^',butt[n]);
+      p:=cpos('^',butt[n]);
       if p=0 then interr('Button: kein ShortKey!');
       delete(butt[n],p,1);
       butthigh[n]:=p;
@@ -333,14 +333,14 @@ begin
   n:=0; ml:=0;
   poutside:=false;
   repeat
-    p:=pos(',',auswahl);
+    p:=cpos(',',auswahl);
     if p>0 then begin
       inc(n);
       slen[n]:=p;
       getmem(sel[n],p);
       sel[n]^:=left(auswahl,p-1);
       auswahl:=copy(auswahl,p+1,255);
-      p:=pos('^',sel[n]^);
+      p:=cpos('^',sel[n]^);
       if p=0 then begin
         selhigh[n]:=0; hot[n]:=#0;
         p:=1;
@@ -424,6 +424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.1  2001/08/11 22:17:56  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.7  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 

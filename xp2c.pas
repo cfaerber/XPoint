@@ -273,7 +273,7 @@ var p   : byte;
 begin
   p:=cpos(':',s);
   if p=0 then p:=length(s)+1;
-  if pos(':',mid(s,p+1))>0 then
+  if cpos(':',mid(s,p+1))>0 then
     testtimezone:=false       { mehrere ':' }
   else if (p<4) or (p>5) then
     testtimezone:=false       { : an falscher Stelle }
@@ -836,7 +836,7 @@ begin
     { Alle Buchstaben fr den MsgFeldTausch vorhanden? }
     j:=0;
     { (F)lags mssen immer vorne stehen }
-    i:=pos('F',MsgFeldTausch); if (i>1) then begin
+    i:=cpos('F',MsgFeldTausch); if (i>1) then begin
       delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
     end;
     for i := 1 to length(MsgFeldDef) do
@@ -845,7 +845,7 @@ begin
     { Alle Buchstaben fr den UsrFeldTausch vorhanden? }
     j:=0;
     { (F)lags mssen immer vorne stehen }
-    i:=pos('F',UsrFeldTausch); if (i>1) then begin
+    i:=cpos('F',UsrFeldTausch); if (i>1) then begin
       delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
     end;
     for i := 1 to length(UsrFeldDef) do
@@ -1500,6 +1500,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.26  2001/08/11 22:17:56  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.39.2.25  2001/08/11 20:16:29  mk
   - added const parameters if possible, saves about 2.5kb exe
 

@@ -443,7 +443,7 @@ end;
 
 function __timeok(var s:string):boolean;
 begin
-  if pos(' ',s)>0 then
+  if cpos(' ',s)>0 then
     case fieldpos of
       1 : s:='00:00';
       2 : s:='23:59';
@@ -1326,7 +1326,7 @@ var brk      : boolean;
     listbox(30,min(anz,screenlines-5),getres2(1018,3));
     for i:=1 to res2anz(222)-1 do
       if not (i in used) then
-        app_l(' '+mid(getres2(222,i),pos(' ',getres2(222,i))));
+        app_l(' '+mid(getres2(222,i),cpos(' ',getres2(222,i))));
     app_l('  ------------- '+getres2(1018,4));
     list(brk);
     closebox;
@@ -2033,6 +2033,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.6  2001/08/11 22:17:55  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.10.2.5  2001/08/05 11:45:33  my
   - added new unit XPOVL.PAS ('uses')
 

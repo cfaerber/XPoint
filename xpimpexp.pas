@@ -170,7 +170,7 @@ begin
             end;
           end;
         if (typ=0) and getuser and
-           ((useraufnahme<>1) or ((pos('%',name)=0) and (pos(':',name)=0)))
+           ((useraufnahme<>1) or ((cpos('%',name)=0) and (cpos(':',name)=0)))
         then begin
           if cpos('@',name)=0 then name:=left(name+'@'+DefaultBox+'.ZER',79);
           moff;
@@ -704,6 +704,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.6  2001/08/11 22:18:05  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.15.2.5  2001/08/02 22:31:35  mk
   - removed function FUStr, only usefull in 3.70
 

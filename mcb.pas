@@ -34,6 +34,9 @@ function shortp(s:string):string;
 
 implementation
 
+uses
+  Typeform;
+
 var dosmaj:byte;
 
 function firstmcb:mcbp; assembler;
@@ -110,12 +113,12 @@ function getmcbenvprog(envseg:word):string;
 function shortp(s:string):string;
   var p:integer;
   begin
-    p:=pos('\',s);
+    p:=cpos('\',s);
     while p>0 do begin
       delete(s,1,p);
-      p:=pos('\',s);
+      p:=cpos('\',s);
     end;
-    p:=pos('.',s);
+    p:=cpos('.',s);
     if p>0 then s:=copy(s,1,p-1);
     shortp:=s;
   end;
@@ -130,6 +133,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.2  2001/08/11 22:17:52  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.1.2.1  2000/11/21 22:40:37  mk
   - MCB-Code von XP2 (Robert Boeck) hinzugefuegt um auf schon geladenes XP zu testen
 

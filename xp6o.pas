@@ -127,9 +127,9 @@ label ende,nextpp;
       uvsXgroesse:=0;
       end
     else begin
-      s:=trim(copy(s,pos(':',s)+1,20));
-      if pos(' ',s)>0 then
-        s:=left(s,pos(' ',s)-1);
+      s:=trim(copy(s,cpos(':',s)+1,20));
+      if cpos(' ',s)>0 then
+        s:=left(s,cpos(' ',s)-1);
       uvsXgroesse:=ival(s);
       end;
     close(t);
@@ -157,7 +157,7 @@ label ende,nextpp;
       p:=cpos('@',abs);
       if p>0 then begin
         bbox:=mid(abs,p+1);      { Box aus Absendername }
-        p:=pos('.',bbox);
+        p:=cpos('.',bbox);
         if p>0 then bbox:=left(bbox,p-1);
         if isbox(bbox) then forcebox:=bbox;
         end;
@@ -300,7 +300,7 @@ begin
       if p>0 then
       begin
         bbox:=mid(abs,p+1);      { Box aus Absendername }
-        p:=pos('.',bbox);
+        p:=cpos('.',bbox);
         if p>0 then bbox:=left(bbox,p-1);
         if isbox(bbox) then box:=bbox;
       end;
@@ -340,7 +340,7 @@ begin
     headerf:='';
     if not pm then hdp^.empfaenger:=_brett[1]+hdp^.empfaenger
     else
-      if pos('@',hdp^.empfaenger)=0 then
+      if cpos('@',hdp^.empfaenger)=0 then
         hdp^.empfaenger:=hdp^.empfaenger+'@'+box+'.ZER';
     dbReadN(mbase,mb_typ,typ);
     set_forcebox;
@@ -932,7 +932,7 @@ again:
                        goto ende;
                      end;
                      if ((empf<>'') and (zg_flags and 32=0)) then begin
-{ true=Userbrett  }    pm:=pos('@',empf)>0;
+{ true=Userbrett  }    pm:=cpos('@',empf)>0;
 { Brettvertreter  }    if not pm then begin
                          dbReadN(bbase,bb_pollbox,pollbox);
                          if (ntBoxNetztyp(pollbox) in [nt_UUCP,nt_ZConnect]) then begin
@@ -1344,6 +1344,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.17  2001/08/11 22:18:00  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.20.2.16  2001/08/02 12:52:40  my
   JG:- When archiving a PM/AM with <Alt-P> and user doesn't exist already,
        XP brings up a 'create user' dialogue and defaults to the server of

@@ -293,7 +293,7 @@ begin
     FastMove(freeptr^,p^,fs);
   end;
 
-  pp:=pos(' ',prog);
+  pp:=cpos(' ',prog);
   if pp=0 then
     para:=''
   else begin
@@ -302,7 +302,7 @@ begin
   end;
   prog:=ustr(prog);
 
-  if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
+  if (cpos('|',para)>0) or (cpos('>',para)>0) or (cpos('<',para)>0) then
     dpath:=''
   else begin
     if exist(prog) then
@@ -412,6 +412,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.6  2001/08/11 22:17:50  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.20.2.5  2001/08/11 20:16:27  mk
   - added const parameters if possible, saves about 2.5kb exe
 

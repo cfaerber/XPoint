@@ -198,7 +198,7 @@ var ax,p,myp  : integer;
         end;
       if (typ>=2) and (typ<=7) then begin
         s:=trim(cont^);
-        if pos(' ',s)>0 then s:=copy(s,1,pos(' ',s)-1);
+        if cpos(' ',s)>0 then s:=copy(s,1,cpos(' ',s)-1);
         if typ<7 then begin
           val(s,l,res);
           if not entered then begin
@@ -1070,6 +1070,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13.2.2  2001/08/11 22:17:51  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.13.2.1  2001/01/04 09:54:18  mk
   - Breite der Ausgabezeilen auf 70 begrenzen
 

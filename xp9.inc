@@ -1276,7 +1276,7 @@
         dbWrite(d,'AVertreter',av);
         dbWrite(d,'PVertreter',pv);
         for i:=1 to excludes do
-          if pos(' ',exclude[i,1]+exclude[i,2])>0 then begin
+          if cpos(' ',exclude[i,1]+exclude[i,2])>0 then begin
             exclude[i,1]:='  :  '; exclude[i,2]:='  :  ';
             end;
         if ntOnePW(nt) then passwort:=o_passwort;
@@ -1861,6 +1861,9 @@
 
 {
   $Log$
+  Revision 1.10.2.42  2001/08/11 22:18:02  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.10.2.41  2001/08/03 00:38:50  my
   - added missing 'ustr' in EditExtern
 

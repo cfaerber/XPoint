@@ -128,7 +128,7 @@ begin
           end;
         dbClose(d);
         end;
-      if ntZonly and (p>0) and (pos('.',mid(s,p+1))=0) then
+      if ntZonly and (p>0) and (cpos('.',mid(s,p+1))=0) then
         s:=s+'.ZER';
       if p=0 then
       begin
@@ -400,6 +400,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.5  2001/08/11 22:18:04  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.15.2.4  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 

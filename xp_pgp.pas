@@ -318,7 +318,7 @@ var tmp  : string;
 begin
   if UserID='' then                       { User-ID ermitteln }
     UserID:=hd.empfaenger;
-  if (pos('/',UserID)>0) then UserID:=''; { Empfaenger ist Brett }
+  if (cpos('/',UserID)>0) then UserID:=''; { Empfaenger ist Brett }
 
   fm_ro; reset(source,1); fm_rw;
   tmp:=TempS(filesize(source)*2);         { Temp-Dateinamen erzeugen }
@@ -799,6 +799,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.3  2001/08/11 22:18:04  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.19.2.2  2000/10/15 09:28:09  mk
   - LFN fixes
 

@@ -1003,7 +1003,7 @@ var s1 : string[80];
 begin
   with feld^ do begin
     while s<>'' do begin
-      p:=pos('ù',mid(s,2));
+      p:=cpos('ù',mid(s,2));
       if p=0 then p:=length(s)+1
       else inc(p);
       s1:=copy(s,1,p-1);
@@ -1298,6 +1298,9 @@ end.
 
 {
   $Log$
+  Revision 1.8.2.3  2001/08/11 22:17:52  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.8.2.2  2001/08/11 20:16:28  mk
   - added const parameters if possible, saves about 2.5kb exe
 

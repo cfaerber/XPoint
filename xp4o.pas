@@ -1447,7 +1447,7 @@ begin
       zconnect:=true;
       end
     else begin
-      box:=file_box(nil,left(sr.name,pos('.',sr.name)-1));
+      box:=file_box(nil,left(sr.name,cpos('.',sr.name)-1));
       zconnect:=ntZConnect(ntBoxNetztyp(box));
       end;
     dbSetIndex(mbase,miBrett);
@@ -1472,7 +1472,7 @@ begin
           end
         else begin
           dbSeek(ubase,uiName,ustr(empfaenger+
-                 iifs(pos('@',empfaenger)>0,'','@'+box+'.ZER')));
+                 iifs(cpos('@',empfaenger)>0,'','@'+box+'.ZER')));
           if not dbFound then fehlt
           else _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
           end;
@@ -2289,7 +2289,7 @@ begin
 {     if (s='') then lMagics:=false; }
 
       { Usernamen vor Quotes killen }
-      k:=pos('>',s);
+      k:=cpos('>',s);
       if (k>0) then if (k<6) then delete(s,1,k);
 
       k:=0;
@@ -2332,11 +2332,11 @@ begin
         for ic:=1 to byte(t[0]) do if t[ic]='.' then inc(k);
         if (k>1) then continue;
         if (pos('**',t)>0) then continue;
-        if not lMagics then if (pos('.',t)<3) and (byte(t[0])<5) then continue;
+        if not lMagics then if (cpos('.',t)<3) and (byte(t[0])<5) then continue;
 
         { Passwort suchen, erkennen und speichern }
         p1:='';
-        ic:=pos('/',t); if (ic>0) then begin
+        ic:=cpos('/',t); if (ic>0) then begin
           p1:=copy(t,ic,20); delete(t,ic,99)
         end;
 
@@ -2353,7 +2353,7 @@ begin
         if (s1='FAQ') or (s1='OS') then continue;
         if (s1='DOS') then continue;
         if (length(s1)=3) then if (copy(s1,1,2)='RC') and (s1[3] in ['0'..'9']) then continue;
-        ic:=pos('@',t); if (ic>1) and (ic<>byte(t[0])) then continue;
+        ic:=cpos('@',t); if (ic>1) and (ic<>byte(t[0])) then continue;
 
         { Auf Beschreibungs-Datei testen }
         FSplit(u,dir,name,ext);
@@ -2398,7 +2398,7 @@ begin
           continue
         end;
         u := UStr(t);
-        ic := pos('.',u); if not (ic in [2..9]) then continue;
+        ic := cpos('.',u); if not (ic in [2..9]) then continue;
         if (length(u)<4) then continue;
         if (length(u)-ic>3) then continue;
         if (p1<>'') then u:=u+p1; p1:='';
@@ -2448,6 +2448,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.26  2001/08/11 22:17:58  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.47.2.25  2001/08/05 11:45:35  my
   - added new unit XPOVL.PAS ('uses')
 

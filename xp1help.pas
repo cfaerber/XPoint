@@ -58,7 +58,7 @@ const kss : byte = 2;
   procedure ks(s:string);
   var p : byte;
   begin
-    p:=pos('^',s);
+    p:=cpos('^',s);
     delete(s,p,1);
     inc(shortkeys);
     if shortkeys>maxskeys then
@@ -365,9 +365,9 @@ var fks,fkn : integer;
   procedure wf(s:string);
   begin
     attrtxt(col.colkeyshigh);
-    Wrt2(left(s,pos('-',s)-1));
+    Wrt2(left(s,cpos('-',s)-1));
     attrtxt(col.colkeys);
-    Wrt2(copy(s,pos('-',s),60) + sp(spc));
+    Wrt2(copy(s,cpos('-',s),60) + sp(spc));
   end;
 
 begin
@@ -415,6 +415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.2  2001/08/11 22:17:56  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.7.2.1  2000/12/08 01:08:40  mk
   MH:- Usersuche bei Auswahl ueber F2 moeglich
 

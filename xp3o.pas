@@ -125,8 +125,8 @@ begin                         { user: 1 = Userauswahl  0 = Brettauswahl }
           exit;
         end;
         if ((s<>'') and (zg_flags and 32=0)) then begin      { FollowUp-To? }
-          {_pm:=pos('@',s)>0;}
-          if pos('@',s)=0 then begin
+          {_pm:=cpos('@',s)>0;}
+          if cpos('@',s)=0 then begin
             dbReadN(bbase,bb_pollbox,pollbox);
             if (ntBoxNetztyp(pollbox) in [nt_fido,nt_UUCP,nt_ZConnect]) then begin
               { _AmReplyTo:=s; }
@@ -393,8 +393,8 @@ begin
     newempf:=newbrett;
     if left(dbReadStr(bbase,'brettname'),1)='1' then begin
       delfirst(newempf);
-      if pos('/',newempf)>0 then   { Boxname im PM-Brett }
-        newempf[pos('/',newempf)]:='@'
+      if cpos('/',newempf)>0 then   { Boxname im PM-Brett }
+        newempf[cpos('/',newempf)]:='@'
       else
         newempf:=newempf+'@';
       end;
@@ -616,8 +616,8 @@ begin
         if left(betreff,length(EmpfBKennung))=EmpfBkennung then
           delete(betreff,1,length(EmpfBKennung));
         if recount(betreff)>0 then;  { entfernt Re^n }
-        if pos(' ',betreff)=0 then fname:=betreff
-        else fname:=copy(betreff,1,pos(' ',betreff)-1);
+        if cpos(' ',betreff)=0 then fname:=betreff
+        else fname:=copy(betreff,1,cpos(' ',betreff)-1);
         end
       else
         fname:=hdp^.datei;
@@ -646,7 +646,7 @@ begin
     useclip:=true;
     ok:=ReadFileName(text,fname,true,useclip);
     pophp;
-    if (pos('\',fname)=0) and (pos(':',fname)=0) then
+    if (cpos('\',fname)=0) and (cpos(':',fname)=0) then
       fname:=extractpath+fname;
     if ok then
       if not ValidFileName(fname) then
@@ -1066,7 +1066,7 @@ begin
   empf:=hdp^.empfbestto;
   if empf='' then empf:=hdp^.pmreplyto;
   if empf='' then empf:=hdp^.wab;
-  if (empf='') or (cpos('@',empf)=0) or (pos('.',mid(empf,cpos('@',empf)))=0)
+  if (empf='') or (cpos('@',empf)=0) or (cpos('.',mid(empf,cpos('@',empf)))=0)
   then
     empf:=hdp^.absender;
   dispose(hdp);
@@ -1507,6 +1507,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.10  2001/08/11 22:17:57  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.21.2.9  2001/08/05 11:45:34  my
   - added new unit XPOVL.PAS ('uses')
 

@@ -322,7 +322,7 @@ begin
   s:=menu[nr]^;
   n:=0;
   repeat
-    p:=pos(',',s);
+    p:=cpos(',',s);
     if p>0 then begin
       inc(n);
       with ma^[n] do begin
@@ -340,8 +340,8 @@ begin
           end
         else
           keep:=false;
-        p2:=pos('^',s);
-        p3:=pos(',',s);
+        p2:=cpos('^',s);
+        p3:=cpos(',',s);
         if (p3=0) or ((p2>0) and (p2<p3)) then begin
           if p2>0 then delete(s,p2,1);
           if p3>0 then dec(p3);
@@ -354,8 +354,8 @@ begin
         else mstr:=left(s,p2-1);
         if hpos>0 then hkey:=UpCase(mstr[hpos])
         else hkey:=#255;
-        if pos('ù',mstr)>0 then begin
-          p2:=pos('ù',mstr);
+        if cpos('ù',mstr)>0 then begin
+          p2:=cpos('ù',mstr);
           chain:=ival(copy(mstr,p2+1,40));
           mstr:=copy(mstr,1,p2-1);
           if (nr>0) and (pos('..',mstr)=0) then mstr:=mstr+'..';
@@ -754,6 +754,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.3  2001/08/11 22:18:06  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.20.2.2  2000/12/05 13:09:42  mk
   - einige Datei/Verzeichnisnamen gross geschrieben
 

@@ -192,7 +192,7 @@ begin
     usertest:=true;
     p:=cpos('@',s);
     if p>0 then
-      if (pos('.',mid(s,p+1))=0) then
+      if (cpos('.',mid(s,p+1))=0) then
         s:=s+ntAutoDomain(pbox,false);
     if p>0 then
       s:=trim(left(s,p-1))+'@'+trim(mid(s,p+1))
@@ -1420,7 +1420,7 @@ begin
           end;
         dbClose(d);
         end
-      else if pos('.',mid(s,cpos('@',s)))=0 then
+      else if cpos('.',mid(s,cpos('@',s)))=0 then
         s:=left(s+ntAutoDomain(pbox,false),eAdrLen);
       end;
   if ok and not verteiler then begin
@@ -1502,7 +1502,7 @@ begin
   if not dbfound then begin
     dbOpen(d,PseudoFile,1);
     dbSeek(d,piKurzname,ustr(s));
-    if dbFound {and (pos('@',dbReadStr(d,'langname'))>0)} then begin
+    if dbFound {and (cpos('@',dbReadStr(d,'langname'))>0)} then begin
       dbRead(d,'pollbox',pbox);
       if (pbox='') or not IsBox(pbox) then
         pbox:=DefaultBox;
@@ -1595,7 +1595,7 @@ begin
   fn:=TempS(2000);
   dbGo(mbase,0);    { -> Kennung fr dosend(), daá kein Brett-Reply }
   real:='';
-  pm:=(pos('@',empf)>0);
+  pm:=(cpos('@',empf)>0);
   if pm then
   begin                                            {User}
     BriefSchablone(true,HeaderPriv,fn,empf,real);
@@ -2417,6 +2417,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.16  2001/08/11 22:17:58  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.25.2.15  2001/08/05 11:45:35  my
   - added new unit XPOVL.PAS ('uses')
 

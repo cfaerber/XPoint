@@ -150,7 +150,7 @@ begin
         if art<2 then begin
           p:=cpos('@',anew);
           if p>0 then begin
-            p2:=pos('.',mid(anew,p));   { mit Domain? }
+            p2:=cpos('.',mid(anew,p));   { mit Domain? }
             if p2=0 then
               s:=s+mid(anew,p)
             else
@@ -822,6 +822,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8.2.2  2001/08/11 22:18:05  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.8.2.1  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 

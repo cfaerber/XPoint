@@ -178,17 +178,13 @@ var hdp : headerp;
 begin
   new(hdp);
   ReadHeader(hdp^,hds,false);
-  { 03.02.2000 robo }
   if (hdp^.PmReplyTo<>'') and not askreplyto then
-  { /robo }
     abs:=hdp^.PmReplyTo
   else begin
-    wabok:=(pos('.',mid(hdp^.wab,cpos('@',hdp^.wab)))<>0);
-    { 03.02.2000 robo }
+    wabok:=(cpos('.',mid(hdp^.wab,cpos('@',hdp^.wab)))<>0);
     if (hds=1) or ((hdp^.wab='') and (hdp^.oem='') and (hdp^.PmReplyTo='')) or
                   ((hdp^.wab='') and (hdp^.oem=hdp^.vertreter) and (hdp^.PmReplyTo='')) or
                   (not wabok and (hdp^.oem='') and (hdp^.PmReplyTo=''))
-    { /robo }
     then begin
       dbReadN(mbase,mb_absender,abs);
       realname:=hdp^.realname;
@@ -312,6 +308,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.3  2001/08/11 22:17:59  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.6.2.2  2000/10/15 09:28:07  mk
   - LFN fixes
 

@@ -36,6 +36,9 @@ total 193
 
 {$I XPDEFINE.INC }
 
+uses
+  Typeform;
+
 const bufsize = 2048;
 
 var  f1       : file;
@@ -135,7 +138,7 @@ begin
       inc(dirs);
       write(#13,'Verzeichnisse: ',dirs);
       end
-    else if pos(' ',s)=11 then begin
+    else if cpos(' ',s)=11 then begin
       p:=length(s);
       while s[p]<>' ' do dec(p);
       if (p>20) and (copy(s,p-2,2)='->') then begin   { symbolic link }
@@ -152,6 +155,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.1.2.1  2001/08/11 22:17:53  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.1  2000/05/11 14:25:02  mk
   - Utility hinzugefuegt
 

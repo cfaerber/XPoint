@@ -1228,7 +1228,7 @@ begin
   KeepNodeindexOpen;
   while not eof(t) do begin
     readln(t,s); s:=trim(s);
-    p:=pos('=',s);
+    p:=cpos('=',s);
     if (s<>'') and (s[1]<>'#') and (s[1]<>';') and (p>0) then begin
       fn:=mid(s,p+1);
       findfirst(FidoDir+fn,ffAnyFile,sr);
@@ -2260,6 +2260,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.6  2001/08/11 22:18:05  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.15.2.5  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 

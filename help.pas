@@ -175,9 +175,9 @@ var ixadr : longint;
 
 begin
 {$IFDEF UnixFS }
-  if pos('.',getfilename(name))=0 then name:=name+'.hlp';
+  if cpos('.',getfilename(name))=0 then name:=name+'.hlp';
 {$ELSE }
-  if pos('.',getfilename(name))=0 then name:=name+'.HLP';
+  if cpos('.',getfilename(name))=0 then name:=name+'.HLP';
 {$ENDIF }
   assign(f,name);
   fm:=filemode; filemode:=0;
@@ -403,9 +403,9 @@ laden:
       if p1>0 then p:=p+p1+1 else p:=0;
       end;
     if blocksatz and (length(s)>wd div 3) then begin
-      if pos('@',s)>0 then lc:=s[pos('@',s)-1]
+      if cpos('@',s)>0 then lc:=s[pos('@',s)-1]
       else lc:=s[length(s)];
-      if pos('#',s)>0 then lc:='#';
+      if cpos('#',s)>0 then lc:='#';
       if pos(lc,'#.?!:')=0 then begin
         while length(s)<wd do begin
           ps:=random(length(s)-2)+1;
@@ -415,7 +415,7 @@ laden:
           end;
         end;
       end;
-    ps:=pos('#',s);
+    ps:=cpos('#',s);
     if ps>0 then begin
       if s[ps-1]='\' then dec(ps);   { ord(\) = 92 > length(s) }
       delete(s,ps,1);
@@ -745,9 +745,9 @@ begin     { of IHS }
         if t=keystab then goleft;
         end;
       uc:=UpCase(t[1]);
-      if pos(uc,mid(qvj,qvp+1))>0 then qvp:=pos(uc,mid(qvj,qvp+1))+qvp
+      if cpos(uc,mid(qvj,qvp+1))>0 then qvp:=pos(uc,mid(qvj,qvp+1))+qvp
       else
-        if pos(uc,qvj)>0 then qvp:=pos(uc,qvj);
+        if cpos(uc,qvj)>0 then qvp:=cpos(uc,qvj);
       end;
     if qvws>0 then begin
       if t=keyhome then qvp:=1;
@@ -798,6 +798,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.8  2001/08/11 22:17:50  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.13.2.7  2001/08/11 20:16:27  mk
   - added const parameters if possible, saves about 2.5kb exe
 

@@ -1240,7 +1240,7 @@ begin
       not (fido or turbo or uucp)
       and not ReadJN(getres(805),true) then   { 'Sind Sie sicher, da· das eine Brettliste ist' }
       goto ende;
-    if pos('@',absender)=0 then
+    if cpos('@',absender)=0 then
       trfehler(805,60)    { 'UngÅltige Absenderangabe' }
     else begin
       message(getreps(806,ustr(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
@@ -1444,7 +1444,7 @@ label again;
     else begin
       s:=trim(s);
       if length(s)<2 then exit;
-      p:=pos(' ',s);
+      p:=cpos(' ',s);
       if p=0 then p:=pos(#9,s);
       if p>0 then
         if uucp then
@@ -1452,8 +1452,8 @@ label again;
         else begin
           if p<5 then
             s:=copy(s,p+1,80);
-          if pos(' ',s)>0 then
-            s:=copy(s,1,pos(' ',s)-1);
+          if cpos(' ',s)>0 then
+            s:=copy(s,1,cpos(' ',s)-1);
           end;
       if s='' then exit;
       if not (quick or gs or uucp) and (s[1]<>'/') then
@@ -2020,7 +2020,7 @@ begin
     then begin
       pushhp(69);
       if ReadJNesc(getres2(810,20),true,brk) then begin   { 'ausfÅhrliche Liste' }
-        insert(' VERBOSE',comm,pos(' ',comm));
+        insert(' VERBOSE',comm,cpos(' ',comm));
         comm:=comm+' *';
         end;
       pophp;
@@ -2167,6 +2167,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.29  2001/08/11 22:18:02  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.10.2.28  2001/07/23 17:09:50  my
   - cancelled last 'fix' (that introduced a bug)
 

@@ -328,7 +328,7 @@ begin
     if right(s,1)<>DirSepa then s:=s+DirSepa;
     if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
     if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
-    ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
+    ok := (cPos(':', fn) = 0) and (cPos('\', fn) = 0) and (cPos('.', fn) < 2)
       and (Length(fn) > 0) and (fn[length(fn)] <> '.');
     if not ok then
     begin
@@ -467,7 +467,7 @@ begin
     testreplyto:=true
   else begin                            { Wenn's keine gueltige Adresse ist...}
     p:=cpos('@',s);
-    if (p=0) or (pos('.',mid(s,p))=0) then
+    if (p=0) or (cpos('.',mid(s,p))=0) then
     begin
       dbOpen(d,PseudoFile,1);
       dbSeek(d,piKurzname,ustr(s));
@@ -476,7 +476,7 @@ begin
         dbRead(d,'Langname',s);         { ist's ein Kurzname ? }
         dbclose(d);
         testreplyto:=true;
-        if pos(' ',s)<>0 then           { Langname jetzt gueltig ? }
+        if cpos(' ',s)<>0 then           { Langname jetzt gueltig ? }
           begin
             rfehler(908);               { 'ungÅltige Adresse' }
             testreplyto:=false;
@@ -904,6 +904,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.18  2001/08/11 22:18:04  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.1.2.17  2001/08/11 20:16:30  mk
   - added const parameters if possible, saves about 2.5kb exe
 

@@ -859,8 +859,8 @@ var f1,f2   : file;
         end
       else begin
         RepKlammer(empfaenger);
-        p:=pos('#',empfaenger);
-        if (p>0) and (pos('.',mid(empfaenger,p+1))>0) then begin
+        p:=cpos('#',empfaenger);
+        if (p>0) and (cpos('.',mid(empfaenger,p+1))>0) then begin
           uuadr:=trim(left(empfaenger,p-1))+'@'+trim(mid(empfaenger,p+1));
           p:=rightpos('@',uuadr);
           empfaenger:='UUCP'+mid(uuadr,p);
@@ -1449,7 +1449,7 @@ label abbr;
   procedure InternetAdresse(s:string);
   var p : byte;
   begin
-    p:=pos('<',left(s,253));
+    p:=cpos('<',left(s,253));
     if p>0 then begin
       s:=mid(s,p+1);      { User Name <...> -> Realname und <> wegschneiden }
       dellast(s);
@@ -1811,6 +1811,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.9  2001/08/11 22:18:06  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.21.2.8  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 

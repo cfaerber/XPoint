@@ -614,7 +614,7 @@ begin
     writeln('Zu wenig freier Speicher fr externen Programmaufruf!')
   else
   begin
-    pp:=pos(' ',prog);
+    pp:=cpos(' ',prog);
     if pp=0 then para:=''
     else begin
       para:=' '+trim(copy(prog,pp+1,127));
@@ -656,7 +656,7 @@ begin
           end;
         free:=memfree;
 
-        if (pos('|',para)>0) or (pos('>',para)>0) or (pos('<',para)>0) then
+        if (cpos('|',para)>0) or (cpos('>',para)>0) or (cpos('<',para)>0) then
           dpath:=''
         else begin
           if exist(prog) then dpath:=prog
@@ -963,7 +963,7 @@ begin
     if j<70 then inc(j,2000)   { 2stellige Jahreszahl erg„nzen }
     else inc(j,1900);
   ti:=getstr;
-  if pos(':',ti)=0 then
+  if cpos(':',ti)=0 then
     if length(ti)=4 then ti:=left(ti,2)+':'+right(ti,2)+':00'  { RFC 822 }
     else ti:='00:00:00';
   zone:=getstr;
@@ -1627,12 +1627,12 @@ var p,i   : integer; { byte -> integer }
     realname:='';
     s0:=trim(s0);
     if (firstchar(s0)='"') and (cpos('<',s0)>5) then begin  { neu in 3.11 }
-      p:=pos('"',mid(s0,2));
+      p:=cpos('"',mid(s0,2));
 
       { Realname-Konvertierung: Hans \"Hanswurst\" Wurst }
       while s0[p]='\' do begin
         delete(s0,p,1);
-        p:=pos('"',mid(s0,p+1))+p-1;
+        p:=cpos('"',mid(s0,p+1))+p-1;
       end;
 
       if p>0 then begin
@@ -1641,11 +1641,12 @@ var p,i   : integer; { byte -> integer }
         end;
       end;                                                  { ... bis hier }
     p:=cpos('(',s0);
-    p2:=cpos('<',s0);      { 06.01.1999 robo - Klammer im Realname beachten }
-    if (p>0) and ((p2=0) or (p2>cpos('>',s0))) then begin { 06.01.1999 robo }
+    p2:=cpos('<',s0);      { robo - Klammer im Realname beachten }
+    if (p>0) and ((p2=0) or (p2>cpos('>',s0))) then
+    begin
       realname:=copy(s0,p+1,min(length(s0)-p-1,realnlen));
       s0:=trim(left(s0,min(p-1,realnlen)));
-      p:=pos('),',realname);   { mehrerer ","-getrennte Adressen }
+      p:=cpos('),',realname);   { mehrerer ","-getrennte Adressen }
       if p>0 then truncstr(realname,p-1);
       end;
     p:=cpos('<',s0);
@@ -1869,16 +1870,16 @@ var p,i   : integer; { byte -> integer }
   end;
 
   procedure GetInReplyto;
-  var _i:word; { robo }
+  var _i:word;
   begin
     hd.addrefs:=0;
 
-{ 08.10.1999 robo - Fix: spitze Klammern bei Bezugs-ID entfernen }
+{ spitze Klammern bei Bezugs-ID entfernen }
 
-    if pos('<',s0)=1 then delete (s0,1,1);
-{    if (pos('>',s0)=length(s0)) and (length(s0)>0) then dec(s0[0]); }
+    if cpos('<',s0)=1 then delete (s0,1,1);
+{    if (cpos('>',s0)=length(s0)) and (length(s0)>0) then dec(s0[0]); }
 
-    _i:=pos('>',s0);
+    _i:=cpos('>',s0);
     if _i>0 then s0:=copy (s0,1,_i-1);
 
     hd.ref:=s0;
@@ -2236,7 +2237,7 @@ begin
             while hd.wab[p2]<>'!' do dec(p2);   { rechtes "!" suchen }
             p:=p2-1;
             while (p>0) and (hd.wab[p]<>'!') do dec(p);   { n„chstes "!" suchen }
-            p3:=pos('@',mid(hd.wab,p2+1));
+            p3:=cpos('@',mid(hd.wab,p2+1));
             if p3>0 then
               if stricmp(copy(hd.wab,p2+1,p3-1)+'@'+copy(hd.wab,p+1,p2-p-1),
                          hd.absender) then
@@ -3444,6 +3445,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.49  2001/08/11 22:17:53  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.35.2.48  2001/08/11 13:12:17  mk
   - no stack checking in uuz
 

@@ -223,7 +223,7 @@ begin
     if j<70 then inc(j,2000)   { 2stellige Jahreszahl erg„nzen }
     else inc(j,1900);
   ti:=getstr;
-  if pos(':',ti)=0 then
+  if cpos(':',ti)=0 then
     if length(ti)=4 then ti:=left(ti,2)+':'+right(ti,2)+':00'  { RFC 822 }
     else ti:='00:00:00';
   zone:=getstr;
@@ -718,6 +718,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.16  2001/08/11 22:18:06  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.12.2.15  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 

@@ -225,7 +225,7 @@ begin
         readln(t,s);
         if (s<>'') and (left(s,1)<>'#') then begin
           su:=ustr(s);
-          p:=pos('=',s);
+          p:=cpos('=',s);
           if (p=0) or not (
             get_exclude or
             gets(s,su,'Boxname',boxname,BoxNameLen) or
@@ -620,6 +620,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.22  2001/08/11 22:18:03  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.10.2.21  2001/08/05 11:45:36  my
   - added new unit XPOVL.PAS ('uses')
 

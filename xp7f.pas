@@ -492,7 +492,7 @@ label fn_ende,fn_ende0;
           else
             delete(s,1,pos('skipped',s)+7);
           s:=trim(s);
-          p:=pos(';',s);
+          p:=cpos(';',s);
           if p=0 then p:=blankposx(s);
           new(fp);
           fp^.next:=rflist;
@@ -863,7 +863,7 @@ begin
             rewrite(t);
             s:=first_marked;
             repeat
-              if Pos(':',s) > 0 then        { Nur Fido Nodes, keine Meneuzeilen... }
+              if cPos(':',s) > 0 then        { Nur Fido Nodes, keine Meneuzeilen... }
                 writeln(t,trim(copy(s,5,18)));
               s:=next_marked;
             until s=#0;
@@ -933,6 +933,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.5  2001/08/11 22:18:01  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.13.2.4  2001/08/05 11:45:36  my
   - added new unit XPOVL.PAS ('uses')
 

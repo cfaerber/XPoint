@@ -523,7 +523,7 @@ end;
 (*
 Function Lead(s:string):string;
 begin
-  if pos('.',s)>0 then
+  if cpos('.',s)>0 then
     while s[length(s)]='0' do      { terminiert, da s[0]<>'0' fÅr s='' }
       dellast(s);
   if s[length(s)]='.' then dellast(s);
@@ -2169,6 +2169,9 @@ end.
 
 {
   $Log$
+  Revision 1.37.2.22  2001/08/11 22:17:52  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.37.2.21  2001/08/11 17:19:19  my
   - commented out unused routines
   JG:- some functions rewritten to ASM (Trim, Range, Hex, Sgn, Min, Max,

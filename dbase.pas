@@ -125,7 +125,7 @@ var i : word;
 
 begin
   fillchar(f^,sizeof(f^),0);
-  if pos('.',name)=0 then name:=name+'.dbf';
+  if cpos('.',name)=0 then name:=name+'.dbf';
   assign(f^.datei,name);
   reset(f^.datei,1);
   DbResult:=IOResult;
@@ -316,7 +316,7 @@ var i : word;
     ta,mo,ja,wt : word;
 
 begin
-  if pos('.',name)=0 then name:=name+'.dbf';
+  if cpos('.',name)=0 then name:=name+'.dbf';
   assign(f^.datei,name);
   rewrite(f^.datei,1);
   DbResult:=IOResult;
@@ -468,6 +468,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.1  2001/08/11 22:17:50  mk
+  - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
+
   Revision 1.5  2000/03/17 13:12:09  mk
   - Anpassung der Records an 32 Bit
 
