@@ -297,7 +297,7 @@ end;
 {$ENDIF }
 function ntNoMaps(nt:byte):boolean;
 begin
-  ntNoMaps:= nt in [nt_POP3, nt_NNTP, nt_IMAP, nt_Client];
+  ntNoMaps:= nt in [nt_POP3];
 end;
 {$IFDEF FPC }
   {$HINTS ON }
@@ -305,7 +305,7 @@ end;
 
 function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
 begin
-  ntMapsOthers:=not (nt in [nt_Quick,nt_Pronet,nt_QWK,nt_NNTP,nt_POP3]);
+  ntMapsOthers:=not (nt in [nt_Quick,nt_Pronet,nt_QWK,nt_NNTP,nt_POP3, nt_NNTP, nt_IMAP, nt_Client]);
 end;
 
 function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
@@ -748,6 +748,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.43.2.6  2003/08/28 21:46:42  mk
+  - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
+
   Revision 1.43.2.5  2003/08/25 20:46:18  mk
   - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
 

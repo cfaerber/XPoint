@@ -1874,7 +1874,7 @@ begin
   end;
   promaf:=ntProMaf(nt);
   case defcom of
-    0 : if (not ppp) and (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster)) then begin
+    0 : if (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster)) then begin
           rfehler(818);     { 'Bei dieser Box nicht m”glich.' }
           exit;
           end;
@@ -2191,6 +2191,9 @@ end;
 
 {
   $Log$
+  Revision 1.70.2.12  2003/08/28 21:46:41  mk
+  - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
+
   Revision 1.70.2.11  2003/08/25 20:44:39  mk
   - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
 
