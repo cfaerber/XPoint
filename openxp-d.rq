@@ -1826,8 +1826,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Maus-Paáwort
 1    Paáwort ~
 # Fido
-2    Pointnummer
-3    Pointnetz ~
+2    Pointnr.~
+3    Pointnetz
 # Turbobox-PW
 4    Paáwort
 # Pronet
@@ -3738,6 +3738,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.21  2001/07/29 12:53:05  ma
+# - fixed Fido ressources
+#
 # Revision 1.20  2001/07/28 14:43:35  mk
 # - added ReplyToAll resources for askRTA
 #
