@@ -18,7 +18,7 @@ unit objcom;
 uses ringbuff,classes,osdepend
      {$IFDEF DOS32},Ports,DOS{$ENDIF}
      {$IFDEF Win32},Windows,WinSock{$ENDIF}
-     {$IFDEF Linux}
+     {$IFDEF Unix}
        {$IFDEF fpc},Linux,sockets{$ENDIF}
        {$IFDEF Kylix},libc,KernelIoctl{$ENDIF}
      {$ENDIF}
@@ -101,7 +101,7 @@ function CommInit(S: String): TCommStream;
 function FossilDetect: Boolean;
 
 {$IFDEF Win32} {$I OCSWinh.inc} {$I OCRawIPh.inc} {$I OCTelneth.inc} {$ENDIF}
-{$IFDEF Linux} {$I ocslinh.inc} {$I ocrawiph.inc} {$I octelneth.inc} {$ENDIF}
+{$IFDEF Unix} {$I ocslinh.inc} {$I ocrawiph.inc} {$I octelneth.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
 {$IFDEF DOS32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
 
@@ -112,7 +112,7 @@ function FossilDetect: Boolean;
 uses Sysutils,timer,debug;
 
 {$IFDEF Win32} {$I OCSWin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
-{$IFDEF Linux} {$I ocslin.inc} {$I ocrawip.inc} {$I octelnet.inc} {$ENDIF}
+{$IFDEF Unix} {$I ocslin.inc} {$I ocrawip.inc} {$I octelnet.inc} {$ENDIF}
 {$IFDEF Go32v2} {$I OCSDos.inc} {$I OCFDos.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2.inc} {$ENDIF}
 
@@ -488,6 +488,9 @@ end.
 
 {
   $Log$
+  Revision 1.29.2.1  2003/01/01 16:18:38  mk
+  - changes to made FreeBSD version compilable
+
   Revision 1.29  2001/12/30 19:56:49  cl
   - Kylix 2 compile fixes
 

@@ -243,7 +243,7 @@ const
     if rr='' then
       rr:=NewKey
     else
-      Forwardkeys:=Forwardkeys+NewKey;
+      PushKey(NewKey);
   end;
 
 begin
@@ -557,6 +557,9 @@ end;
 
 {
   $Log$
+  Revision 1.46.2.2  2003/01/01 16:18:37  mk
+  - changes to made FreeBSD version compilable
+
   Revision 1.46.2.1  2002/07/21 20:14:33  ma
   - changed copyright from 2001 to 2002
 

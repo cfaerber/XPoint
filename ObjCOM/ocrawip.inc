@@ -81,7 +81,7 @@ end; { func. OpenKeep }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-{$IFDEF Linux}
+{$IFDEF Unix}
 {$IFDEF fpc}
   type THostEnt = record
     h_Name     : pchar;   { Official name }
@@ -180,7 +180,7 @@ begin
     begin
       SOpened:=True;
       IDummy:=Sizeof(LocalAddr);
-{$IFNDEF Linux}
+{$IFNDEF Unix}
       getsockname(SHandle,LocalAddr, IDummy);
 {$ELSE}
       getsocketname(SHandle,LocalAddr, IDummy);
@@ -613,6 +613,9 @@ end;
 
 {
   $Log$
+  Revision 1.15.2.1  2003/01/01 16:18:38  mk
+  - changes to made FreeBSD version compilable
+
   Revision 1.15  2001/10/23 07:12:07  cl
   - changed last fix to better solution
 

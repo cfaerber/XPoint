@@ -1006,7 +1006,7 @@ begin
   SysSetScreenSize(ScreenLines, ScreenWidth);
   screenlines := SysGetScreenLines;
   screenwidth := SysGetScreenCols;
-  {$IFDEF Linux}xpcurses.{$ENDIF}window(1,1,screenwidth,screenlines);
+  {$IFDEF NCRT}xpcurses.{$ENDIF}window(1,1,screenwidth,screenlines);
   cursor(curoff);
 
   getmem(ma,sizeof(menuarray));
@@ -2108,6 +2108,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.12  2003/01/01 16:18:37  mk
+  - changes to made FreeBSD version compilable
+
   Revision 1.147.2.11  2002/09/09 09:02:42  mk
   - added const parameters
 

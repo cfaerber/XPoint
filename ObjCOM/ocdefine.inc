@@ -99,8 +99,15 @@
   {$DEFINE TCP }
 {$ENDIF }
 
+{$IFDEF BSD }
+  {$DEFINE TCP }
+{$ENDIF }
+
 {
   $Log$
+  Revision 1.7.2.2  2003/01/01 16:18:38  mk
+  - changes to made FreeBSD version compilable
+
   Revision 1.7.2.1  2002/11/23 23:49:36  mk
   - added Delphi 7 support
 

@@ -82,7 +82,7 @@ procedure OpenLogfile(App: Boolean; Filename: string);
 implementation
 
 uses
-  {$IFDEF Linux}
+  {$IFDEF Unix}
   {$IFDEF Kylix}
   libc,
   {$ELSE} {fpc}
@@ -307,6 +307,9 @@ finalization
 
 {
   $Log$
+  Revision 1.29.2.3  2003/01/01 16:18:37  mk
+  - changes to made FreeBSD version compilable
+
   Revision 1.29.2.2  2002/07/21 20:14:31  ma
   - changed copyright from 2001 to 2002
 

@@ -49,11 +49,14 @@ implementation
 {$ifdef BSD}   {$i osdbsd.inc}   {$endif}
 {$ifdef Dos32} {$i osddos32.inc} {$endif}
 {$ifdef OS2}   {$i osdos2.inc}   {$endif}
-{$ifdef Unix}  {$i osdlinux.inc} {$endif}
+{$ifdef Linux} {$i osdlinux.inc} {$endif}
 {$ifdef Win32} {$i osdwin32.inc} {$endif}
 
 {
         $Log$
+        Revision 1.6.2.1  2003/01/01 16:18:37  mk
+        - changes to made FreeBSD version compilable
+
         Revision 1.6  2001/12/09 14:36:40  mk
         - implemented SysBeep and error sounds
 
