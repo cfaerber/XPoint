@@ -302,52 +302,52 @@ begin
     RCList := TStringList.Create;
     if FileExists(RCFilename) then RCList.LoadFromFile(RCFilename);
     iNewsFile:= 0;
-    NNTP.Connect;
-
-    for RCIndex := 0 to RCList.Count - 1 do
-    begin
-      Group := RCList[RCIndex];
-      // skip Lines special lines in .rc
-      if (Group <> '') and (Group[1] in ['$', '#', '!']) then Continue;
-
-      p := cPos(' ', Group);
-      if p > 0  then
+    
+    if NNTP.Connect then
+      for RCIndex := 0 to RCList.Count - 1 do
       begin
-        ArticleIndex := StrToIntDef(Mid(Group, p + 1), 0);
-        Group := LeftStr(Group, p-1);
-      end else
-       ArticleIndex := -bp^.nntp_initialnewscount;
+        Group := RCList[RCIndex];
+        // skip Lines special lines in .rc
+        if (Group <> '') and (Group[1] in ['$', '#', '!']) then Continue;
 
-      POWindow.WriteFmt(mcInfo,res_setnewsgroup,[Group,RCIndex+1,RCList.Count]);
-      NNTP.SelectGroup(Group);
-
-      FillStr := '';
-      For i := 0 to 40 - length(Group) do
-        FillStr := FillStr + ' ';
-
-      if ArticleIndex<0 then // "-n": fetch n articles
-        Inc(ArticleIndex,NNTP.LastMessage)
-      else
-        if bp^.NNTP_MaxNews > 0 then
+        p := cPos(' ', Group);
+        if p > 0  then
         begin
-          if (NNTP.LastMessage - ArticleIndex) > (bp^.NNTP_MaxNews) then
-            ArticleIndex := NNTP.LastMessage - (bp^.NNTP_MaxNews);
+          ArticleIndex := StrToIntDef(Mid(Group, p + 1), 0);
+          Group := LeftStr(Group, p-1);
+        end else
+         ArticleIndex := -bp^.nntp_initialnewscount;
+
+        POWindow.WriteFmt(mcInfo,res_setnewsgroup,[Group,RCIndex+1,RCList.Count]);
+        NNTP.SelectGroup(Group);
+
+        FillStr := '';
+        For i := 0 to 40 - length(Group) do
+          FillStr := FillStr + ' ';
+
+        if ArticleIndex<0 then // "-n": fetch n articles
+          Inc(ArticleIndex,NNTP.LastMessage)
+        else
+          if bp^.NNTP_MaxNews > 0 then
+          begin
+            if (NNTP.LastMessage - ArticleIndex) > (bp^.NNTP_MaxNews) then
+              ArticleIndex := NNTP.LastMessage - (bp^.NNTP_MaxNews);
+          end;
+
+        if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
+        oArticle:=ArticleIndex;
+
+        while ArticleIndex < NNTP.LastMessage do
+        begin
+          Inc(ArticleIndex);
+          POWindow.WriteFmt(mcVerbose,res_getposting,[ArticleIndex-oArticle,NNTP.LastMessage-oArticle]);
+
+          NNTP.GetMessage(ArticleIndex, List);
+          if List.Count > 10000 then
+            SaveNews;
         end;
-
-      if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
-      oArticle:=ArticleIndex;
-
-      while ArticleIndex < NNTP.LastMessage do
-      begin
-        Inc(ArticleIndex);
-        POWindow.WriteFmt(mcVerbose,res_getposting,[ArticleIndex-oArticle,NNTP.LastMessage-oArticle]);
-
-        NNTP.GetMessage(ArticleIndex, List);
-        if List.Count > 10000 then
-          SaveNews;
+        if List.Count > 0 then SaveNews;
       end;
-      if List.Count > 0 then SaveNews;
-    end;
   except
     on E: EUserBreakError do begin
       POWindow.WriteFmt(mcError, res_userbreak, [0]);
@@ -370,6 +370,9 @@ end;
 
 {
         $Log$
+        Revision 1.37  2002/02/21 09:29:19  mk
+        - more nntp fixes
+
         Revision 1.36  2002/02/21 08:59:28  mk
         - misc fixes
         - added timestame to newgroups
