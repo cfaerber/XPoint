@@ -114,6 +114,7 @@ var x,y,fm   : byte;
     mbflags  : longint;
     cust_header : custheadstr;
     flags : longint;
+    ReplGelesen: byte;
 
   function puffer_ok:boolean;
   var ok : boolean;
@@ -655,7 +656,7 @@ var x,y,fm   : byte;
   end;
 
 begin
-  inmsgs:=0;
+  inmsgs:=0; ReplGelesen := 255;
   puffereinlesen:=false;
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
   msgbox(78,screenlines-6,getres(333),x,y);    { 'Puffer einlesen' }
@@ -964,6 +965,7 @@ begin
                 dbReadN(mbase,mb_flags,flags); { Flags holen }
                 if flags and 256 <> 0 then
                 begin
+                  dbReadN(mbase,mb_gelesen, ReplGelesen);
                   (* b := 1; { Nachricht auf gelesen setzen }
                   dbWriteN(mbase,mb_gelesen,b);
                   b := 2; { Nachricht auf gel”scht setzen }
@@ -1031,11 +1033,12 @@ begin
               dbWriteN(mbase,mb_name,fido_to)
             else
               dbWriteN(mbase,mb_name,realname);
-            if IsGelesen then begin
-              flags:=1;
+            if IsGelesen or (ReplGelesen = 1) then
+            begin
+              flags:=1; ReplGelesen := 255;
               dbWriteN(mbase,mb_gelesen,flags);
               if sendbuf then dbWriteN(mbase,mb_unversandt,flags);
-              end;
+            end;
             flags:=0;
             if filterattr and fattrLoeschen<>0 then flags:=2;
             if filterattr and fattrHalten<>0 then flags:=1;
@@ -1224,6 +1227,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.8  2001/01/13 14:07:49  mk
+  - bei Replaceown gelesen Flag der ersetzten Nachricht uebernehmen
+
   Revision 1.21.2.7  2001/01/10 17:39:04  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 
