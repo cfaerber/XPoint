@@ -2775,10 +2775,13 @@ begin
           (typ = 'rgsmtp') or (typ = 'grsmtp') or
           (typ = 'rbsmtp') or (typ = 'brsmtp') then
           ConvertSmtpFile(spath + dfile, typ <> 'rsmtp', mails);
-      end;
-      if ClearSourceFiles then begin
-        DeleteFile(spath+sr.name);
-        DeleteFile(spath+dfile);
+        if ClearSourceFiles then begin
+          DeleteFile(spath+sr.name);
+          DeleteFile(spath+dfile);
+        end else begin
+          RenameFile(spath+sr.name,spath+sr.name+'.BAK');
+          RenameFile(spath+dfile,  spath+dfile  +'.BAK');
+	end;
       end;
     end
     else
@@ -2791,7 +2794,8 @@ begin
       else
         dec(n);
       end;
-      if ClearSourceFiles then DeleteFile(spath+sr.name);
+      if ClearSourceFiles then DeleteFile(spath+sr.name) else
+        RenameFile(spath+sr.name,spath+sr.name+'.BAK');
     end;
     sres := findnext(sr);
   end;
@@ -3670,6 +3674,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/03/13 00:18:07  cl
+  - if ClearSourceFiles is false, files are renamed to *.BAK
+    (so on error, files are not deleted upon next netcall, only files named *.BAK)
+
   Revision 1.35  2001/03/12 23:51:57  cl
   - fixed crash when To header was empty/missing in mails
 
