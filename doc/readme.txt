@@ -1,5 +1,5 @@
-     OpenXP Projekt - CrossPoint Version 3.20·
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     OpenXP Projekt - CrossPoint Version 3.20
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
      Im Dezember '99 hat Peter Mandrella neben dem Y2K-Bugfix fÅr die
      3.12 den Quellcode von XP 3.20 freigegeben. Eine offizielle
