@@ -1154,9 +1154,10 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.13  2002/03/08 23:07:26  my
+  MY:- corrected CVS log
+
   Revision 1.18.2.12  2002/03/08 23:06:43  my
-  XP6S.INC
-  --------
   JG:- Fix: Bei der Prfung, ob eine neu erstellte Nachricht Umlaute
        enth„lt, wird jetzt auch die Signatur einbezogen und daher auch
        dann der korrekte Zeichensatz deklariert, wenn zwar der
