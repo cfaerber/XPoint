@@ -827,7 +827,7 @@
       { stÑndigen Pfad oder ohne fÅhrenden Backslash werden als        }
       { relativ zum Client-Verzeichnis betrachtet.                     }
 
-      if left(cfgfile,5)='<XP>' + DirSepa then
+      if ustr(left(cfgfile,5))='<XP>' + DirSepa then
         cfgfile:= ownpath + Mid(cfgfile,6);
       if LFNEnabled then cfgfile := GetLongName(cfgfile);
       pushhp(30129);
@@ -1861,6 +1861,9 @@
 
 {
   $Log$
+  Revision 1.10.2.41  2001/08/03 00:38:50  my
+  - added missing 'ustr' in EditExtern
+
   Revision 1.10.2.40  2001/08/02 14:33:53  my
   - EditExtern: filename of a non-existing file is written to
     <server>.BFG only if the user confirmed file creation *and*
