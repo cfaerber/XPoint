@@ -358,7 +358,6 @@ begin
   inc(longint(rp));
   rp^:=false;
 
-  GetMem(BadConfigLines, SizeOf(BadConfigLines^));
   BadConfigLinesCount := 0;
 
   fnproc[0,1]:=hilfe;
@@ -892,8 +891,10 @@ begin
   writeln(t,'ListHighlight=',jnf(listhighlight));
   writeln(t,'ListFixedHead=',jnf(listfixedhead));
   writeln(t,'MaggiVerkettung=',jnf(MaggiVerkettung));
+
   for i := 1 to BadConfigLinesCount do
-    Writeln(t, BadConfigLines^[i]);
+    Writeln(t, BadConfigLines[i]^);
+
   writeheaderlines;
   for i:=1 to 2 do
     writeln(t,'HeaderCustom',i,'=',mheadercustom[i]);
@@ -1536,7 +1537,8 @@ begin
           then
           begin
             Inc(BadConfigLinesCount);
-            BadConfigLines^[BadConfigLinesCount] := s;
+            GetMem(BadConfigLines[BadConfigLinesCount], Length(s)+1);
+            BadConfigLines[BadConfigLinesCount]^ := s;
           end else
            tfehler(getres(219)+left(s,30),30);   { 'ungÅltige Konfigurationszeile:  ' }
         end;
@@ -1687,6 +1689,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.2  2000/07/20 18:20:14  mk
+  - Speichern unbekannter Config-Lines jetzt Heapsparender implementiert
+
   Revision 1.62.2.1  2000/07/08 15:07:46  mk
   - BadConfigLines implementiert
 

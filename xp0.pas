@@ -56,7 +56,7 @@ const  {$IFDEF DPMI}
        mausdefy    = 28;
        MaxNodelists = 100;
        MaxAKAs     = 10;
-       MaxBadConfigLines = 50;       { Maximale Zahl der unbekannten Config-Zeilen }
+       MaxBadConfigLines = 50;      { Maximale Zahl der unbekannten Config-Zeilen }
        maxviewers  = 7;
        defviewers  = 3;
        maxpmlimits = 6;              { Z/Maus/Fido/UUCP/Magic/QMGS     }
@@ -687,8 +687,7 @@ type   textp  = ^text;
        { Speichert die Zeilen in der Konfiguration, die nicht
          bekannt sind, wichtig fÅr KompatibilitÑt mit anderen
          Programmen }
-       PBadConfigLines = ^TBadConfigLines;
-       TBadConfigLines = array[1..MaxBadConfigLines] of String;
+       TBadConfigLines = array[1..MaxBadConfigLines] of ^String;
 
 
 const
@@ -850,7 +849,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        IntGruppe,LocGruppe,NetzGruppe : longint;   { INT_NRs der Std.-Gruppen }
 
-       BadConfigLines: PBadConfigLines;
+       BadConfigLines: TBadConfigLines;
        BadConfigLinesCount: Integer;
        menu         : array[0..menus] of ^string;
        SwapFileName : string[12];
@@ -1178,6 +1177,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.4  2000/07/20 18:20:14  mk
+  - Speichern unbekannter Config-Lines jetzt Heapsparender implementiert
+
   Revision 1.54.2.3  2000/07/08 15:07:45  mk
   - BadConfigLines implementiert
 
