@@ -999,7 +999,7 @@ var x,y : byte;
     brk : boolean;
     asc : string[120];
     sml : string[1];
-    s   : string;
+    tmpReplyTo, tmpFollowUp: string;
 begin
   case netztyp of
     nt_ZConnect : y:=iif(pm,5,9);
@@ -1015,24 +1015,19 @@ begin
       else sml:='';
       { suboptimal }
       if followup.count>0 then
-        s:=followup[0];
-      maddstring(3,y,getres2(616,1),s,40,eAdrLen,sml+asc); mhnr(850);
-      if s<>'' then begin
-        followup.clear;
-	followup.add(s)
-      end;
+        tmpFollowUp := followup[0]
+      else
+        tmpFollowUp := '';
+      maddstring(3,y,getres2(616,1),tmpFollowUp,40,eAdrLen,sml+asc); mhnr(850);
       mappcustomsel(selbrett,false);        { 'Brettantworten in' }
       mset3proc(firstslash);
       inc(y,2);
       end;
-    { suboptimal }
     if replyto.count>0 then
-      s:=replyto[0];
-    maddstring(3,y,getres2(616,5),s,40,eAdrLen,asc); mhnr(851);
-    if s<>'' then begin
-      replyto.clear;
-      replyto.add(s)
-    end;
+      tmpReplyTo :=replyto[0]
+    else
+      tmpReplyTo := '';
+    maddstring(3,y,getres2(616,5),tmpReplyTo,40,eAdrLen,asc); mhnr(851);
     mappcustomsel(seluser,false);           { 'PM-Antworten an  ' }
     msetvfunc(testReplyTo);
     inc(y,2);
@@ -1050,6 +1045,12 @@ begin
       end;
     end;
   readmask(brk);
+  if not brk then
+  with sData^ do
+  begin
+    if ReplyTo.Count > 0 then ReplyTo[0] := tmpReplyTo;
+    if FollowUp.Count > 0 then FollowUp[0] := tmpFollowUp;
+  end;
   enddialog;
 end;
 
@@ -1155,6 +1156,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.39  2000/11/25 10:31:48  mk
+  - some fixes for new SendUUData
+
   Revision 1.38  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 

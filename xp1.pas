@@ -97,24 +97,6 @@ Type TStartData = record
                     ObjectBuffLen: LongInt; { reserved, must be 00000000 }
   End;
 
-type  SendUUdata = record
-                     followup   : tstringlist;
-                     replyto    : Tstringlist;
-                     keywords   : string;
-                     summary    : string;
-                     distribute : string;
-                     ReplyGroup : string;     { Maus-QuoteTo }
-                     oab,oem,wab: string;
-                     oar,war    : string;
-                     onetztyp   : byte;
-                     orghdp     : headerp;
-                     quotestr   : string;
-                     UV_edit    : boolean;        { <Esc> -> "J" }
-                     empfrealname : string;
-                     msgid,
-                     ersetzt    : string;
-                   end;
-      SendUUptr   = ^SendUUdata;
 
 var printlines : longint;
     WaitKey    : taste;               { Taste, mit der wkey beendet wurde }
@@ -2138,6 +2120,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.94  2000/11/25 10:31:47  mk
+  - some fixes for new SendUUData
+
   Revision 1.93  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 

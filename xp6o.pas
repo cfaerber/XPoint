@@ -343,11 +343,10 @@ begin
     sendfiledate:=hdp0^.ddatum;
     sendflags:=0;
     sdata:=allocsenduudatamem;
-    with sData^ do begin
-      if hdp^.followup.count>0 then
-        followup.assign(hdp^.followup);
-      if hdp^.replyto.count>0 then
-        replyto.assign(hdp^.replyto);
+    with sData^ do
+    begin
+      followup.assign(hdp^.followup);
+      replyto.assign(hdp^.replyto);
       Keywords:=hdp^.Keywords;
       Summary:=hdp^.Summary;
       Distribute:=hdp^.Distribution;
@@ -954,7 +953,7 @@ again:
                    sendfilename:=hdp^.datei;
                    sendfiledate:=hdp^.ddatum;
                    end;
-		 { suboptimal }
+                 { suboptimal }
                  if ((typ in [1..3,7]) and (not pm)) then
                    sData^.followup.add (am_replyto);
                  if typ in [1,4,7] then sdata^.quotestr:=hdp^.quotestring;
@@ -973,7 +972,7 @@ again:
                            iif(typ=5,SendIntern,0)+iif(typ=7,SendWAB,0)+
                            iif(typ<>3,SendReedit,0)) then;
                  if nextwl>=0 then uvs_active:=ua;
-		 freesenduudatamem(sdata);
+                 freesenduudatamem(sdata);
                  end;
               end;
          4 : begin
@@ -1028,10 +1027,8 @@ again:
                xp6.ControlMsg:=(hdp^.attrib and attrControl<>0);
                sdata:=allocsenduudatamem;
                with sData^ do begin
-                 if hdp^.followup.count>0 then
-		   followup.assign(hdp^.followup);
-                 if hdp^.replyto.count>0 then
-		   replyto.assign(hdp^.replyto);
+                 followup.assign(hdp^.followup);
+                 replyto.assign(hdp^.replyto);
                  Keywords:=hdp^.Keywords;
                  Summary:=hdp^.Summary;
                  Distribute:=hdp^.Distribution;
@@ -1287,6 +1284,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/11/25 10:31:47  mk
+  - some fixes for new SendUUData
+
   Revision 1.46  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 

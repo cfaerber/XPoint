@@ -1713,8 +1713,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       with sData^.orghdp^ do begin
         { hdp^.zdatum:=zdatum; hdp^.orgdate:=true;  !! Unversandt/* !! }
         hdp^.organisation:=organisation;
-	for i:=0 to replyto.count-1 do
-          hdp^.replyto.add(replyto[i]);
+        hdp^.ReplyTo.AddStrings(ReplyTo);
         hdp^.datei:=datei; hdp^.ddatum:=ddatum;
         end;
     if _sendmaps then
@@ -2061,7 +2060,7 @@ begin
         {fsplit(fn,dir,name,ext);}
         if betr='' then betr:=ExtractFileName(fn)
         else betr:=LeftStr(ExtractFilename(fn)+' ('+betr,39)+')';
-	sdata:=allocsenduudatamem;
+        sdata:=allocsenduudatamem;
         if aktdispmode in [10..19] then begin
           get_bezug(pm,repto,reptoanz,dummy,Pointer(sData),false);
           if repto<>'' then empf:=repto;
@@ -2110,6 +2109,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.80  2000/11/25 10:31:47  mk
+  - some fixes for new SendUUData
+
   Revision 1.79  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 

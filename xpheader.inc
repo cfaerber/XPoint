@@ -114,26 +114,29 @@ type
   headerp = ^header;
 
   SendUUdata = record
-    AmReplyTo  : string;
-    PmReplyTo  : string;
-    keywords   : string;
-    summary    : string;
-    distribute : string;
-    ReplyGroup : string;     { Maus-QuoteTo }
-    oab,oem,wab: string;
-    oar,war    : string;
-    onetztyp   : byte;
-    orghdp     : headerp;
-    quotestr   : string;
-    UV_edit    : boolean;        { <Esc> -> "J" }
-    empfrealname : string;
-    msgid,
-    ersetzt    : string;
-  end;
-  SendUUptr   = ^SendUUdata;
+                     followup   : tstringlist;
+                     replyto    : Tstringlist;
+                     keywords   : string;
+                     summary    : string;
+                     distribute : string;
+                     ReplyGroup : string;     { Maus-QuoteTo }
+                     oab,oem,wab: string;
+                     oar,war    : string;
+                     onetztyp   : byte;
+                     orghdp     : headerp;
+                     quotestr   : string;
+                     UV_edit    : boolean;        { <Esc> -> "J" }
+                     empfrealname : string;
+                     msgid,
+                     ersetzt    : string;
+                   end;
+      SendUUptr   = ^SendUUdata;
 
 {
   $Log$
+  Revision 1.9  2000/11/25 10:31:48  mk
+  - some fixes for new SendUUData
+
   Revision 1.8  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 
