@@ -31,12 +31,11 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  mainver     = '3.8';          { Versionnr. - steht nur an dieser Stelle }
-  subver      = '12';
+  mainver     = '3.8.12';       { Versionnr. - steht nur an dieser Stelle }
 
 {$I version.inc }
 
-  verstr      = mainver + '.' + subver + '-' + buildver; 
+  verstr      = mainver + '-' + buildver; 
   betastr     = ' beta';        { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -197,6 +196,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.34  2003/10/13 19:49:14  mk
+  - complete string mainver
+
   Revision 1.63.2.33  2003/10/09 21:13:55  mk
   - added build version handling
 
