@@ -677,7 +677,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        OrgVideomode:word    = 3;
        uvs_active : boolean = false;   { /N/Z/Unversandt        }
        marksorted : boolean = false;   { marked^[] sortiert     }
-       fidolastseek:string[28] = '';   { Fido/Fileliste/Suchen  }
+       fidolastseek:string[40] = '';   { Fido/Fileliste/Suchen  }
        abgelaufen1: boolean = false;   { Betaversion ist abgelaufen }
        abgelaufen2: boolean = false;   {  " }
        cfgmodified: boolean = false;   { Einstellungen ge„ndert }
@@ -1074,6 +1074,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.7  2000/02/20 22:09:30  mk
+  MO: * Fidolastseek von 28 auf 40 erweitert
+
   Revision 1.6  2000/02/19 14:46:39  jg
   Automatische Rechenzeitfreigabe unter Win (/W Default an)
   Parameter /W0 um Rechenzeitfreigabe auszuschalten

@@ -1563,7 +1563,7 @@ begin
           geti(su,  'Nstat-MinFlags',NS_minflags) or
           geti(su,  'Nstat-AnzahlNetze',LargestNets) or
           getx(su,  'CountDown',countdown) or
-          gets(s,su,'FileSuche',fidolastseek,28) or
+          gets(s,su,'FileSuche',fidolastseek,40) or
           getx(su,  'tl-netcallalle',XSA_NetAlle)
         )
         then
@@ -1587,6 +1587,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/02/20 22:09:30  mk
+  MO: * Fidolastseek von 28 auf 40 erweitert
+
   Revision 1.8  2000/02/20 20:46:17  jg
   Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
   Todo aktualisiert
