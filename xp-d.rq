@@ -1988,9 +1988,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 24   P^ronet,
 25   ^FTS,
 26   NNT^P,
-27   ^POP3/SMTP,
+27   ^POP3,
 28   ^UUCP,
 29   ^QWK,
+30   ^SMTP,
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -2046,12 +2047,29 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 950
 # NNTP
 0    45
-1    Host     ~
-2    Port     ~
-3    User-ID  ~
-4    Kennwort ~
+1    Server    ~
+2    Port      ~
+3    Loginname ~
+4    Passwort  ~
 -
 
++ 951
+# POP3
+0    45
+1    Server    ~
+2    Loginname ~
+3    Passwort  ~
+4    Abgeholte Mails auf Server lîschen
+-
++ 952
+# SMTP
+0    45
+1    Server    ~
+2    Loginname ~
+3    Passwort  ~
+4    Vor SMTP einen POP3 Login ausfÅhren
+
+-
 
 # --- XP10 ------------------------------------------------------------
 

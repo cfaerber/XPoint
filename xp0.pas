@@ -524,11 +524,19 @@ type   textp  = ^text;
                   BMtyp     : byte;        { UUCP: Brettmanager-Typ }
                   BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
                   maxfsize  : smallword;   { UUCP: max. Empfangsdateigr”áe / KB }
-                  nntp_ip   : string;           { NNTP: IP oder Domain }
-                  nntp_port : integer;          { NNTP: Port, default: 119 }
-                  nntp_id   : string;           { NNTP: User-ID, falls noetig }
-                  nntp_pwd  : string;           { NNTP: Password, wenn noetig }
-                  LastCall  : TDateTime;        { Letzter Call }
+                  nntp_ip   : string;      { NNTP: IP oder Domain }
+                  nntp_port : integer;     { NNTP: Port, default: 119 }
+                  nntp_id   : string;      { NNTP: User-ID, falls n”tig }
+                  nntp_pwd  : string;      { NNTP: Passwort, falls n”tig }
+                  pop3_ip   : string;      { POP3: IP oder Domain }
+                  pop3_id   : string;      { POP3: User-ID, falls n”tig }
+                  pop3_pwd  : string;      { POP3: Passwort, falls n”tig }
+                  pop3_clear: boolean;     { POP3: Nachrichten l”schen }
+                  smtp_ip   : string;      { SMTP: IP oder Domain }
+                  smtp_id   : string;      { SMTP: User-ID, falls n”tig }
+                  smtp_pwd  : string;      { SMTP: Password, falls n”tig }
+                  SmtpAfterPOP: Boolean;   { SMTP: Vorher POP3 Login n”tig }
+                  LastCall  : TDateTime;   { Letzter Call }
                 end;
        BoxPtr = ^BoxRec;
 
@@ -601,9 +609,9 @@ type   textp  = ^text;
        komlistp = ^komliste;
 
        ExtHeaderType = record
-       		         v      :array[0..maxheaderlines] of byte;
-       		         anz	:integer;
-       		       end;    
+                         v      :array[0..maxheaderlines] of byte;
+                         anz    :integer;
+                       end;
 
        viewert  = array[1..maxviewers] of record
                                             ext : string;
@@ -1086,6 +1094,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.86  2000/08/15 12:52:57  mk
+  - Boxenkonfiguration fuer NNTP/POP3/SMTP verfeinert
+
   Revision 1.85  2000/08/15 11:12:22  mk
   MO: Bugfixes und Anpassungen fuer > 80 Spalten
 
