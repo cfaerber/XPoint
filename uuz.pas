@@ -1030,12 +1030,12 @@ begin
 end;
 
 
-procedure GetMimeVersion(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure GetMimeVersion(var s:string); far;
 begin
   hd.mime.mversion:=s;
 end;
 
-procedure GetCTencoding(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure GetCTencoding(var s:string); far;
 begin
   LoString(s);
   with hd.mime do
@@ -1048,7 +1048,7 @@ begin
 end;
 
 
-procedure GetContentType(var s:string); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure GetContentType(var s:string); far;
 var p     : byte;
     s1    : string[30];
     value : string;
@@ -1421,7 +1421,7 @@ procedure ReadString(umbruch:boolean);
 const l : Integer = 0;
       c : char = #0;
 
-  procedure reload; {$IFNDEF Ver32 } far; {$ENDIF }
+  procedure reload;  far;
   begin
     if eof(f1) then { ok:=false }
     else ReadBuf;
@@ -1433,34 +1433,12 @@ const l : Integer = 0;
     if bufpos=bufanz then reload;
   end;
 
-{$IFNDEF Ver32 }
 const
       savedi : word = 0;
       savebx : word = 0;
-{$ENDIF }
 begin
   lasteol:=(eol>0);
   eol:=0;
-{$IFDEF Ver32 }
-  l:=0;
-  SetLength(s,MaxSLen);
-  while (bufpos<bufanz) and (buffer[bufpos]<>#10) and
-        (not umbruch or (l<MaxSLen)) and (l<MaxSlen) do begin
-    c:=buffer[bufpos];
-    if c<>#13 then begin
-      inc(l);
-      s[l]:=c;
-      end
-    else
-      inc(eol);
-    IncPos;
-    end;
-  Setlength(s, l);
-  if buffer[bufpos]=#10 then begin
-    inc(eol);
-    IncPos;
-    end;
-{$ELSE  }
    asm
      mov   si,bufpos
      mov   di,0                    { l:=0 }
@@ -1535,7 +1513,6 @@ begin
      mov   byte ptr s,al           { s[0]:=char(l) }
      mov   bufpos,si
    end;
-{$ENDIF }
   MaxSlen:=255;
 end;
 
@@ -3497,6 +3474,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.42  2001/06/09 18:41:53  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.35.2.41  2001/06/08 17:54:04  my
   JG:- Fixed last commit: if no split position is in the read
        buffer, routine aborts and splits line at current position
