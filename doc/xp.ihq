@@ -629,7 +629,7 @@ Der Lister wird mit <Esc> verlassen.
 <<Nachrichten-Lister
 
 
-<<G>> Springt zur Bezugsnachricht, alternative zu <<->> 
+<<G>> Springt zur Bezugsnachricht, alternative zu <<->>
 
 <<I>> Zeigt den Inhalt des Nachrichtenkopfes an
 
@@ -640,7 +640,7 @@ Der Lister wird mit <Esc> verlassen.
       die erste markierte Textzeile wird dabei
       als Suchbegriff Åbernommen.
       Findet sich eine "<news:" Kennung in dieser
-      Zeile, erscheint nur die MessageID 
+      Zeile, erscheint nur die MessageID
       als Suchbegriff.
 
       War die Suche erfolgreich werden die gefundenen
@@ -1192,8 +1192,8 @@ soll.
 <</>>       Der EmpfÑnger der Nachricht wird geÑndert.
         Wird der aktuelle Eintrag gelîscht, kann mit
         <F2> zwischen Brett und Usern gewÑhlt werden.
-        ACHTUNG ! Diese Funktion sollte nur von 
-        erfahrenen Usern Benutzt werden.          
+        ACHTUNG ! Diese Funktion sollte nur von
+        erfahrenen Usern Benutzt werden.
 
 Wenn der Server in Klammern angezeigt wird, bedeutet
 dies, da· mehrere Nachrichen-Kopien Åber unterschied-
@@ -1247,19 +1247,19 @@ Wenn Sie den Dateinamen ohne Pfad angeben, legt XP
 die Datei im Extrakt-Verzeichnis ([/Config/Pfade/Ext.])@261
 ab.
 
-Mit F2 kommen sie zur Auswahl fÅr das 
+Mit F2 kommen sie zur Auswahl fÅr das
 Windows-Clipboard.
 
-<<Windows-Clipboard>> 
+<<Windows-Clipboard>>
 kopiert den markierten Text ins Clipboard
 
-<<Win-Clipboard (URL)>> 
-versucht aus der ersten markierten Zeile eine 
-Internet-URL (FTP:// oder HTTP://) auszuschneiden, 
+<<Win-Clipboard (URL)>>
+versucht aus der ersten markierten Zeile eine
+Internet-URL (FTP:// oder HTTP://) auszuschneiden,
 und kopiert diese ins Windows Clipboard.
 
-<<Win-Clipboard (MAIL)>> 
-Analog zur vorherigen Funktion, nur wird hier 
+<<Win-Clipboard (MAIL)>>
+Analog zur vorherigen Funktion, nur wird hier
 versucht eine Mailadresse zu generieren.
 
 @
@@ -3667,7 +3667,7 @@ Manche Autoren tragen Antwort-an in den Header ihrer
 Mails ein (RFC: Reply-To), weil sie eine Antwort an
 eine andere Mailadresse als die Absenderadresse wÅn-
 schen. Allerdings wird diese Headerzeile auch gerne
-von Mailinglisten benutzt, um eine Antwort an die 
+von Mailinglisten benutzt, um eine Antwort an die
 Liste zu vereinfachen. Leider erschwert das das Ant-
 worten direkt an den Autor erheblich.
 
@@ -5223,7 +5223,7 @@ Aktionen sind:
 @
 530
 Geben Sie hier den Suchbegriff ein.
-Mit [F2] bekommen Sie eine Auswahl 
+Mit [F2] bekommen Sie eine Auswahl
 der drei zuletzt benutzten Suchbegriffe.
 
 
@@ -5234,7 +5234,7 @@ BerÅcksichtigung der Suchoptionen "i" und "Ñ".)
 
 
 bei AND/OR verknÅpften Suchen (mit den Such-
-optionen "a" bzw "o") kînnen Sie mehrere Worte 
+optionen "a" bzw "o") kînnen Sie mehrere Worte
 in GÑnsefÅsschen (") einschliessen:
 
 "Fischers Fritz" fischt "frische Fische"
@@ -5251,8 +5251,8 @@ dieses NICHT im durchsuchten Text vorkommen darf:
 
 ~"Fischers Fritz" ~fischt frische Fische
 
-sucht dann z.B nach allen EintrÑgen, in denen 
-"frische" UND/ODER "Fische" aber weder 
+sucht dann z.B nach allen EintrÑgen, in denen
+"frische" UND/ODER "Fische" aber weder
 "Fischers Fritz" noch "fischt" vorkommt.
 
 
@@ -5261,29 +5261,29 @@ sucht dann z.B nach allen EintrÑgen, in denen
 Algemeine Funkionen in Texteingabefeldern:
 
 Mit <<Ctrl V>> oder <<Shift + Ins>> wird das Windows-
-Clipboard eingefuegt. Ein Fehlerton bedeutet, 
-dass der Clipboard-Inhalt zu gross ist, 
+Clipboard eingefuegt. Ein Fehlerton bedeutet,
+dass der Clipboard-Inhalt zu gross ist,
 oder nicht existiert.
 
-<<Ctrl C>> oder <<Ctrl + Ins>> kopiert den Inhalt 
+<<Ctrl C>> oder <<Ctrl + Ins>> kopiert den Inhalt
 des Textfelds in das Windows Clipboard.
 
-Mit <<Ctrl G>> wird die Eingabe in Grossbuchstaben 
+Mit <<Ctrl G>> wird die Eingabe in Grossbuchstaben
 umgewandelt. <<Crtl K>> wandelt in Kleinbuchstaben um.
 
 <<Ctrl X>> erzeugt eine gemischte Schreibweise:
 der erste Buchstaben jedes Wortes wird gross
-geschrieben, der Rest klein.       
+geschrieben, der Rest klein.
 
 @
 531
 Geben Sie hier die gewÅnschten Suchoptionen
-als Buchstabenfolge ein: 
+als Buchstabenfolge ein:
 
 <<i>>  Gro·/Kleinschreibung ignorieren (statt "i"
    kann auch "u" verwendet werden).
 
-<<Ñ>>  Umlaut-insensitive Suche (ae=Ñ, oe=î, usw.) 
+<<Ñ>>  Umlaut-insensitive Suche (ae=Ñ, oe=î, usw.)
    statt "Ñ" kann auch "î" oder "Å" verwendet werden.
 
 <<a>>  AND-VerknÅpfung: ALLE im Suchbegriff angegebenen
@@ -5291,7 +5291,7 @@ als Buchstabenfolge ein:
    bei der Suche gefunden werden.
 
 <<o>>  OR-VerknÅpfung: Es genÅgt wenn ein einziges
-   der angegebenen Worte/Phrasen gefunden wird.   
+   der angegebenen Worte/Phrasen gefunden wird.
 
 
 Wenn Sie keine Suchoption wÅnschen, dann lîschen Sie
@@ -5787,7 +5787,7 @@ rige Datei gelîscht (s. Feld "lîschen").
 @
 594
 <<[x]>> -> das Makro gilt im Archiv-Viewer
-       im MIME-Popup, und Ñhnlichen Fenstern 
+       im MIME-Popup, und Ñhnlichen Fenstern
 @
 595
 <<[x]>> -> das Marko gilt im internen Editor
@@ -5836,7 +5836,7 @@ davon ein (z.B. nur den Boxnamen), oder lassen Sie
 das Eingabefeld frei.
 
 Mit einer Tilde (~) am Beginn des Suchbegriffs
-wird bestimmt, dass der Suchbegriff NICHT 
+wird bestimmt, dass der Suchbegriff NICHT
 gefunden werden darf.
 
 @
@@ -5845,7 +5845,7 @@ Geben Sie den gesuchten Betreff oder einen Teil
 davon ein, oder lassen Sie das Eingabefeld frei.
 
 Mit einer Tilde (~) am Beginn des Suchbegriffs
-wird bestimmt, dass der Suchbegriff NICHT 
+wird bestimmt, dass der Suchbegriff NICHT
 gefunden werden darf
 
 @
@@ -5855,12 +5855,12 @@ gesuchten Texte befinden soll, oder lassen Sie das
 Eingabefeld frei.
 
 bei AND/OR verknÅpften Text-Suchen (mit den Such-
-optionen "a" bzw "o") kînnen sie mehrere Worte 
+optionen "a" bzw "o") kînnen sie mehrere Worte
 in GÑnsefÅsschen (") einschliessen:
 
 "Fischers Fritz" fischt "frische Fische"
 
-Mit einer Tilde (~) vor einem Wort kann bestimmt 
+Mit einer Tilde (~) vor einem Wort kann bestimmt
 werden, dass dieses sich NICHT im gesuchten Text
 befinden darf.
 
@@ -5877,7 +5877,7 @@ Fido-Brettnachrichten, die an Sie gerichtet sind.
 
 
 Mit einer Tilde (~) am Beginn des Suchbegriffs
-wird bestimmt, dass der Suchbegriff NICHT 
+wird bestimmt, dass der Suchbegriff NICHT
 gefunden werden darf
 
 @
@@ -5930,12 +5930,12 @@ gesuchten Nachrichten in KByte an. 99999 steht fÅr
 639
 Bei Eingabe von <<i>> hat die Schreibweise der Suchbe-
 griffe (Absender, Betreff, Text) keine Bedeutung.
-Ohne <<i>> wird zwischen Gro·- und Kleinschreibung 
+Ohne <<i>> wird zwischen Gro·- und Kleinschreibung
 unterschieden.
 
-Bei Eingabe von <<Ñ>> wird Umlaut-Sensitiv gesucht,
+Bei Eingabe von <<Ñ>> wird Umlaut-insensitiv gesucht,
 d.h. "ae" und "Ñ", "oe" und "î", usw. werden bei der
-suche als gleichwertig angesehen. 
+suche als gleichwertig angesehen.
 
 
 Folgende Optionen gelten hier nur fÅr die Textsuche:
@@ -5945,7 +5945,7 @@ Folgende Optionen gelten hier nur fÅr die Textsuche:
    bei der Suche gefunden werden.
 
 <<o>>  OR-VerknÅpfung: Es genÅgt wenn ein einziges
-   der angegebenen Worte/Phrasen gefunden wird.   
+   der angegebenen Worte/Phrasen gefunden wird.
 
 
 @
@@ -6922,7 +6922,7 @@ zum Anzeigen diverser Dateiformate verwenden soll.
          gewÑhlten Eintrag.
 
 <<Edit>>     Ruft das Bearbeitungs-MenÅ auf. Hier kînnen
-         sie einen bestehenden Eintrag Ñndern.  
+         sie einen bestehenden Eintrag Ñndern.
 
 @
 821
@@ -6931,8 +6931,8 @@ Eintrag gelten soll. Der Mime-Typ ist die MIME-Header
 Beschreibung dieser Dateiart. (Usenet)
 
 Wird eine entsprechende Mime-Nachricht empfangen
-kann diese mit dem Viewer-Programm angesehen werden. 
- 
+kann diese mit dem Viewer-Programm angesehen werden.
+
 @
 822
 Geben sie hier die Dateinamenerweiterung ein.
@@ -6941,10 +6941,10 @@ Wird eine Binaernachricht oder ein Fido-Fileattach
 mit einer entsprechenden Datei empfangen,
 kann diese mit dem Viewer-Programm angesehen werden.
 
-Beachten Sie, da· bei Åber das Z-Netz verschickten 
-BinÑrnachrichten der Betreff der Nachricht nicht 
+Beachten Sie, da· bei Åber das Z-Netz verschickten
+BinÑrnachrichten der Betreff der Nachricht nicht
 unbedingt den korrekten Dateinamen enthalten mu·,
-und die Erkennung von Dateiformaten anhand des 
+und die Erkennung von Dateiformaten anhand des
 Dateinamens daher im Z-Netz nicht in allen FÑllen
 funktioniert.
 
@@ -6957,7 +6957,7 @@ U. die temporÑre Datei nicht als HTML-Datei erkennt.
 @
 823
 Geben Sie hier an, welches Programm CrossPoint zum
-Anzeigen der Dateiart verwenden soll. 
+Anzeigen der Dateiart verwenden soll.
 
 Das Programm mu· sich im aktuellen Verzeichnis
 befinden, oder Åber einen Pfad erreichbar sein.
@@ -9591,7 +9591,7 @@ Schablonen erlaubt:
   $BRETT     -  der Brettname der Bezugsnachricht
   $AREA      -  der Echo- bzw. Gruppenname bei Fido-
                     oder MausNet-Nachrichten
-  $NEWSGROUP -  der Brettname in Usenet-Åblicher 
+  $NEWSGROUP -  der Brettname in Usenet-Åblicher
                     Punktschreibweise
   $BETREFF   -  der Betreff der Bezugsnachricht
   $ERSTELLT  -  das Datum der Bezugsnachricht
@@ -10637,10 +10637,10 @@ Hier kînnen Sie alle vorhandenen Filelisten nach
 bestimmten Begriffen oder Dateinamen durchsu-
 chen und anschlie·end die Dateien  requesten.
 
-Wollen Sie nach meheren Begriffen suchen so trennen 
+Wollen Sie nach meheren Begriffen suchen so trennen
 sie die Begriffe mit: /&. Beispiel:
             Haus/&Tuer
-findet Dateien die "Haus" UND "Tuer" in der 
+findet Dateien die "Haus" UND "Tuer" in der
 Filebeschreibung enthalten.
 @
 13301
