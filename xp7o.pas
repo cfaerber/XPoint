@@ -26,7 +26,7 @@ uses
   crt,
 {$ENDIF }
   winxp, dos,typeform,inout,fileio,datadef,database,resource,maus2,
-      uart, archive,xp0,xp1,xp7,xp_iti;
+      uart, archive,xp0,xp1,xp7,xp_iti,debug;
 
 procedure ttwin;
 procedure twin;
@@ -263,8 +263,8 @@ var t,log         : text;
 
 begin
   fn:=TempS(1000);
-  assign(t,fn);
-  rewrite(t);
+  DebugLog('XP7','xp7o: SendNetzanruf '+fn,4);
+  assign(t,fn); rewrite(t);
   with NC^ do begin
     writeln(t);
     txt:=getres2(700,iif(sysopmode,3,4));   { 'Netztransfer' / 'Netzanruf' }
@@ -331,7 +331,8 @@ begin
           cfos:=', cFos';
           end
         else begin
-          kosten:=CalcGebuehren(conndate,conntime,sum);
+          kosten:={* laeuft noch nicht wieder CalcGebuehren(conndate,conntime,sum)}0;
+          DebugLog('XP7','xp7o: CalcGebuehren omitted',4);
           cfos:='';
           end;
         if kosten>0 then
@@ -779,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/09/03 20:45:41  ma
+  - CalcGebuehren ausgeklammert, laeuft nicht
+
   Revision 1.25  2000/07/30 08:49:53  mk
   MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
 
