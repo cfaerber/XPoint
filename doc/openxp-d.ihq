@@ -1381,7 +1381,7 @@ Folgende Funktionen stehen zur Verfgung:
 
    <<O>>     zeigt den Original-Nachrichtenkopf an.
 
-<<<Ctrl-R> >>decodiert eine Rot13-codierte Nachricht.
+<<<Ctrl-R> >>decodiert eine [ROT13]-codierte Nachricht.@483
 
 <<<Ctrl-H> >>zeigt eine Nachricht als Hex-Dump (<<<Ctrl-H> >>
          ist brigens mit der Taste <<<Backspace> >>
@@ -1577,7 +1577,7 @@ ten Suchl„ufe gilt:
 <<Q>> schaltet um, ob ":" und "|" als Quote-Zeichen
   interpretiert werden oder nicht.
 
-<<<Ctrl-R> >>schaltet die Rot13-Codierung ein/aus.
+<<<Ctrl-R> >>schaltet die [ROR13]-Codierung ein/aus.@483
 
 Mit <<P>> / <<<Ctrl-P> >>/ <<B>> / <<<Ctrl-B> >>und <<<Ctrl-Q> >>k”nnen
 Sie wie in der Nachrichten-šbersicht direkt auf Nach-
@@ -1826,7 +1826,7 @@ Textblock.
 <<<Ctrl-K><W> >>  Block in Datei schreiben
 <<<Ctrl-K><R> >>  Block aus Datei lesen
 <<<Ctrl-K><U> >>  Block aus Datei lesen und UU-codieren
-<<<Ctrl-K><O> >>  Block Rot13-codieren
+<<<Ctrl-K><O> >>  Block [ROT13]-codieren@483
 <<<Ctrl-K><S> >>  Schreibweise (groá/klein) wechseln
 <<<Ctrl-Q><B> >>  Cursor an Blockanfang bewegen
 <<<Ctrl-Q><K> >>  Cursor an Blockende bewegen
@@ -2323,6 +2323,153 @@ Wenn der Server in Klammern angezeigt wird, bedeutet
 dies, daá mehrere Nachrichten-Kopien ber unter-
 schiedliche Server verschickt werden.
 
+@
+17932
+ N -Q (keine Beschreibung           text/plain
+ AF B bild.jpeg                     image/jpeg 
+ ³³³³ ³                             ³
+ ³³³³ ³                             ÀÄÄ Dateityp        
+ ³³³³ ³
+ ³³³³ ÀÄÄÄÄÄÄÄÄÄ Dateiname oder Beschreibung
+ ³³³ÀÄÄÄÄÄÄÄÄÄÄÄ Kodierung: 7/8 = 7/8 Bit
+ ³³³                        Q   = Quoted Printable
+ ³³³                        B   = Base64
+ ³³ÀÄÄÄÄÄÄÄÄÄÄÄÄ - = Tempor„r
+ ³ÀÄÄÄÄÄÄÄÄÄÄÄÄÄ F = Dateianhang
+ ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄ N = Erster Textteil (Nachricht)
+                 A = Anhang
+                < >= Inline-Teil
+                
+<<Neu>>        -> Fgt einen neuen Teil hinzu.
+<<L”schen>>    -> L”scht den markierten Teil.
+<<Bearbeiten>> -> Erm”glicht das Bearbeiten des Textes
+              oder der Einstellungen.
+<<Auf>>        -> Bewegt den markierten Teil nach oben.
+<<Ab>>         -> Bewegt den markierten Teil nach unten.
+<<Schlieáen>>  -> Zurck zum Sendefenster.
+@
+17933
+Geben Sie hier den Dateityp der Nachricht an.
+
+<<Vorsicht>>: nderungen an diesem Feld k”nnen dazu 
+fhren, dass die Datei beim Empf„nger nicht oder 
+nicht richtig angezeigt wird.
+@
+17934
+Geben Sie hier die Kodierung an, die verwendet
+werden soll.
+
+OpenXP sollte die am besten geeignete Kodierung
+automatisch ermitteln; Sie sollten diese Einstellung
+nur im Ausnahmefall ver„ndern.
+
+<<Vorsicht:>> Bei Wahl der falschen Kodierung,
+insbesondere bei Quoted-Printable statt Base64, kann
+die Gr”áe der kodierten Daten um ein Vielfaches
+anwachsen.
+
+<<7 Bit>>   -> Die Nachricht wird 1:1 kodiert. Nur 
+           geeignet fr Textnachrichten ohne 8-Bit-
+           Zeichen.
+           
+<<8 Bit>>   -> Die Nachricht wird 1:1 kodiert. Nur 
+           geeignet fr Textnachrichten.
+           
+<<Quoted Printable>>
+        -> Geeignet fr Textnachrichten, auch wenn 
+           sie 8-Bit-Zeichen oder kurze bin„re 
+           Abschnitte enthalten.  
+           
+<<Base64>>  -> Geeignet fr alle Dateiarten, 
+           insbesondere Dateien mit l„ngeren 
+           bin„ren Abschnitten.
+
+OpenXP l„sst Sie nur die Kodierungen verwenden, die
+fr den erkannten Dateityp geeignet sind.
+@
+17935
+Geben Sie den Zeichensatz an, dan OpenXP <<fr den>>
+<<Versand>> der Daten verwenden soll.
+
+OpenXP sollte automatisch den am besten geeigneten
+Zeichensatz ausw„hlen; Sie sollten diese Einstellung
+nur im Ausnahmefall ver„ndern.
+
+Im Netz bliche Zeichens„tze sind:
+
+<<US-ASCII>>   -> Enth„lt nur 7-Bit-Zeichen, also keine
+              Umlaute.
+              
+<<ISO-8859-1>> -> Enth„lt den Latin1-Zeichensatz. In
+              Deutschland gebr„uchlichste Kodierung.
+              
+<<UTF-8>>      -> Eine 8-Bit-Umsetzung des Unicode-
+              Zeichensatzes. Eignet sich somit zur 
+              šbertragung aller Zeichen.
+
+<<Vorsicht:>> Vermeiden Sie, andere als die hier
+angegebenen Zeichens„tze zu verwenden. Diese sind in
+der Regel beim Empf„nger nicht lesbar!
+@
+17936
+Geben Sie den hier den Typ der Datei an, wie sie
+<<auf Ihrem lokalen System>> gespeichert ist.
+
+OpenXP sollte die Art der Daten automatisch
+erkennen; Sie sollten diese Einstellung nur im
+Ausnahmefall ver„ndern.
+
+<<Vorsicht:>> Ein falsch angegebener Dateityp fhrt in
+der Regel dazu, dass die Datei beim Empf„nger nicht
+mehr lesbar ist.
+
+<<CRLF (DOS)>>  -> Die Zeilen sind durch CRLF getrennt. 
+               Dies ist der Standard bei Dateien,
+               die unter DOS, Windows oder OS/2
+               erstellt wurden.
+               
+<<LF (Unix)>>   -> Die Zeilen sind durch LF getrennt. 
+               Dies ist der Standard bei Dateien,
+               die unter Unix-Derivaten erzeugt
+               wurden. Die Zeilenenden werden
+               entsprechend dem MIME-Standard nach
+               CRLF konvertiert.  
+               
+<<CR (Mac)>>    -> Die Zeilen sind durch CR getrennt. 
+               Dies ist der Standard bei Dateien,
+               die unter MacOS erstellt wurden. Die
+               Zeilenenden werden entsprechend dem
+               MIME-Standard nach CRLF konvertiert.  
+               
+<<Keine/Bin„r>> -> Die Datei enth„lt keine Zeilenenden;
+               es handelt sich um eine Bin„rdatei.
+               Die Datei wird 1:1 bertragen.  
+
+Bei Dateien, die im internen Editor erstellt wurden,
+ist der Dateityp nicht „nderbar.
+@
+17937
+Geben Sie den hier den Zeichensatz der Datei an, wie
+sie <<auf Ihrem lokalen System>> gespeichert ist.
+
+OpenXP sollte den verwendeten Zeichensatz
+automatisch erkennen.
+
+<<Vorsicht:>> Eine falsche Angabe des Zeichensatzes
+fhrt dazu, dass die Dateien beim Empf„nger nicht
+mehr lesbar sind.
+
+<<CP850>>        -> Der DOS-Zeichensatz. Verwenden Sie
+                diesen Zeichensatz, wenn die Datei
+                unter DOS oder OS/2 erstellt wurde.
+
+<<Windows-1252>> -> Der unter Windows verwendete 
+                Zeichen satz. W„hlen Sie diesen
+                Zeichensatz, wenn die Textdatei
+                unter Windows erstellt wurde.
+
+Bei Dateien, die im internen Editor erstellt wurden,
+ist der Zeichensatz nicht „nderbar.
 @
 69
 <<Ja>>  ->  CrossPoint fgt dem MAPS-Befehl das Attribut
@@ -8260,18 +8407,22 @@ Stellen Sie hier das Codierverfahren ein, das Sie mit
 dem gew„hlten User vereinbart haben:
 
 <<QPC:>>  Ein einfaches, sehr schnelles Verfahren, das
-      von Marc Zimmermann entwickelt wurde. QPC
-      wurde frher von vielen Z-Netz-Pointprogrammen
-      untersttzt.
+      frher von vielen Z-Netz-Pointprogrammen
+      untersttzt wurde.  Das Verfahren galt bis Mitte
+      des 19. Jahrhunderts als sicher; heute bietet es
+      kaum mehr Sicherheit als [ROT13].@483
 
-<<DES:>>  Ein sehr sicheres Verfahren, das nur zum Aus-
+<<DES:>>  Ein relativ sicheres Verfahren, das nur zum Aus-
       tausch von Nachrichten zwischen CrossPoint-
       Benutzern gedacht ist.
 
-<<PGP:>>  Ein sehr weit verbreitetes und sicheres
+<<PGP:>>  Ein weit verbreitetes und ziemlich sicheres
       Codierprogramm. Um PGP-Codierung verwenden zu
       k”nnen, mssen Sie PGP installiert und unter
       /Config/Extern/PGP eingerichtet haben.
+
+<<PGP/MIME:>> Wie <<PGP>>, verwendet jedoch die MIME-
+      Codierung nach RFC 2015, falls m”glich.
 
 <<pmCrypt>>  (pmc-1 bis pmc-3): Ein von Christian Mock
       entwickeltes Verfahren zum Einbinden beliebiger
@@ -8285,6 +8436,14 @@ dem gew„hlten User vereinbart haben:
        "codieren".
 
 <<[ ]>> -> Vorgabe im Sendefenster ist "nicht codieren".
+@
+483
+ROT13 ist ein simples Codierverfahren, das einfach jeden
+Buchstaben um 13 Stellen im Alphabet verschiebt.
+
+Das Verfahren dient dazu, ein versehentliches Lesen
+von Nachrichten zu verhindern, z.B. bei Aufl”sungen von
+R„tseln.
 @
 490
 Hier k”nnen Sie bis zu drei externe Codierprogramme
@@ -14270,11 +14429,11 @@ Info-Fenster (Taste <<I>>) angezeigt.
 12203
 <<Nachricht / ndern / Rot13
 
-Leider k”nnen Rot13-codierte Nachrichten nicht auto-
+Leider k”nnen [ROT13]-codierte Nachrichten nicht auto-@483
 matisch als solche erkannt und decodiert werden.
-Damit Sie Rot13er aber trotzdem in lesbarer Form
+Damit Sie [ROT13]er aber trotzdem in lesbarer Form@483
 weiterleiten, zitieren oder sonstwie verarbeiten
-k”nnen, gibt es hier die M”glichkeit, die Rot13-
+k”nnen, gibt es hier die M”glichkeit, die [ROT13]-@483
 Codierung einer beliebigen Nachricht zu „ndern.
 
 Einzige Ausnahme sind unversandte Nachrichten, bei
