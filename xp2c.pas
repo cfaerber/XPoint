@@ -163,6 +163,7 @@ begin
     else UserAufnahme:=2;                                       { 'Keine'  }
     Usersortbox:=_usersortbox;
     ListUseXms:=SwapToXms;
+    otherqcback:=OtherQuoteChars;
     GlobalModified;
     end;
   enddialog;
@@ -552,7 +553,7 @@ begin
   dialog(ival(getres2(255,0)),16,getres2(255,1),x,y);    { 'Lister' }
   maddbool(3,2,getres2(255,4),listvollbild);   { 'interner Lister - Vollbild' }
     mhnr(232);
-  maddbool(3,3,getres2(255,14),listuhr);        { 'interner Lister - Uhr bei Vollbild' }
+  maddbool(3,3,getres2(255,14),listuhr);       { 'interner Lister - Uhr bei Vollbild' }
     mhnr(8062);
   maddbool(3,4,getres2(255,5),listwrap);       { 'Wortumbruch in Spalte 80' }
     mhnr(233);
@@ -560,7 +561,7 @@ begin
   maddbool(3,6,getres2(255,7),ListFixedHead);  { 'feststehender Nachrichtenkopf' }
   maddbool(3,8,getres2(255,8),ConvISO);        { 'ISO-Umlaute konvertieren' }
   maddbool(3,9,getres2(255,9),ListHighlight);  { 'farbliche *Hervorhebungen*' }
-  maddbool(3,10,getres2(255,12),QuoteColors);   { 'verschiedenfarbige Quoteebenen' }
+  maddbool(3,10,getres2(255,12),QuoteColors);  { 'verschiedenfarbige Quoteebenen' }
     mhnr(8060);
   maddbool(3,12,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
     mhnr(238);
@@ -570,7 +571,10 @@ begin
   freeres;
   readmask(brk);
   if not brk and mmodified then
+  begin
+    ListWrapBack:=listwrap;
     GlobalModified;
+  end;
   enddialog;
   menurestart:=brk;
 end;
@@ -1514,6 +1518,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.29  2001/12/05 19:29:57  my
+  MY:- Umschaltung Quotezeichen und Wortumbruch im Lister wird jetzt auch
+       dann auf den korrekten Wert zurÅckgesetzt, wenn der User vorher die
+       Config (C/O/A bzw. C/O/L) geÑndert, aber noch nicht gesichert hatte
+
   Revision 1.39.2.28  2001/10/26 17:40:03  my
   MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
