@@ -173,7 +173,7 @@ end;
 { Ergebnis kann mit dbFound abgefragt werden. Ist found=false, aber  }
 { auch EOF=False, dann ist den nÑchst*grîssere* Satz gÅltig.         }
 
-procedure dbSeek(dbp:DB; indnr:word; key:string);
+procedure dbSeek(dbp:DB; indnr:word; const key:string);
 var x : longint;
 begin
   dbFlush(dbp);
@@ -239,6 +239,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/08/22 09:27:50  mk
+  - Allgemeine Performance erhoeht
+
   Revision 1.6  2000/07/04 12:04:14  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

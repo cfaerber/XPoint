@@ -34,13 +34,13 @@ procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 
 procedure dbOpenLog(fn:pathstr);
 {$IFDEF Debug }
-procedure dbLog(s:string);
+procedure dbLog(const s:string);
 {$ENDIF }
 procedure dbCloseLog;
 
 {------------------------------------------------------- Datenbanken ---}
 
-function  dbHasField(filename:string; feldname:dbFeldStr):boolean;
+function  dbHasField(const filename:string; const feldname:dbFeldStr):boolean;
 procedure dbOpen(var dbp:DB; name:dbFileName; flags:word);
 procedure dbClose(var dbp:DB);
 procedure dbFlushClose(var dbp:DB);
@@ -67,7 +67,7 @@ procedure dbGoEnd(dbp:DB);
 
 procedure dbSetIndex(dbp:DB; indnr:word);
 function  dbGetIndex(dbp:DB):word;
-procedure dbSeek(dbp:DB; indnr:word; key:string);
+procedure dbSeek(dbp:DB; indnr:word; const key:string);
 function  dbFound:boolean;
 function  dbIntStr(i:integer16):string;
 function  dbLongStr(l:longint):string;
@@ -79,21 +79,21 @@ procedure dbDelete(dbp:DB);
 function  dbDeleted(dbp:DB; adr:longint):boolean;
 function  dbGetFeldNr(dbp:DB; feldname:dbFeldStr):integer;  { -1=unbekannt }
 
-procedure dbRead  (dbp:DB; feld:dbFeldStr; var data);
+procedure dbRead  (dbp:DB; const feld:dbFeldStr; var data);
 procedure dbReadN (dbp:DB; feldnr:integer; var data);
-procedure dbWrite (dbp:DB; feld:dbFeldStr; var data);
+procedure dbWrite (dbp:DB; const feld:dbFeldStr; var data);
 procedure dbWriteN(dbp:DB; feldnr:integer; var data);
-function  dbReadStr(dbp:DB; feld:dbFeldStr):string;
-function  dbReadInt(dbp:DB; feld:dbFeldStr):longint;
+function  dbReadStr(dbp:DB; const feld:dbFeldStr):string;
+function  dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
 
-function  dbXsize  (dbp:DB; feld:dbFeldStr):longint;
-procedure dbReadX  (dbp:DB; feld:dbFeldStr; var size:smallword; var data);
-procedure dbReadXX (dbp:DB; feld:dbFeldStr; var size:longint; datei:string;
+function  dbXsize  (dbp:DB; const feld:dbFeldStr):longint;
+procedure dbReadX  (dbp:DB; const feld:dbFeldStr; var size:smallword; var data);
+procedure dbReadXX (dbp:DB; const feld:dbFeldStr; var size:longint; const datei:string;
                     append:boolean);
-procedure dbReadXF (dbp:DB; feld:dbFeldStr; ofs:longint; var size:longint;
+procedure dbReadXF (dbp:DB; const feld:dbFeldStr; ofs:longint; var size:longint;
                     var datei:file);
-procedure dbWriteX (dbp:DB; feld:dbFeldStr; size:word; var data);
-procedure dbWriteXX(dbp:DB; feld:dbFeldStr; datei:string);
+procedure dbWriteX (dbp:DB; const feld:dbFeldStr; size:word; var data);
+procedure dbWriteXX(dbp:DB; const feld:dbFeldStr; const datei:string);
 
 procedure dbFlush(dbp:DB);
 procedure dbStopHU(dbp:DB);
@@ -105,11 +105,11 @@ procedure dbWriteUserflag(dbp:DB; nr:byte; value:word);
 { NEue Funktionen wg. AnsiString }
 
 function  dbReadNStr(dbp:DB; feldnr: integer): string;
-function  dbReadXStr(dbp: DB; feld: dbFeldStr; var size: smallword): string;
+function  dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: smallword): string;
 
-procedure dbWriteNStr(dbp:DB; feldnr:integer; s: string);
-procedure dbWriteStr(dbp:DB; feld:dbFeldStr; s: string);
-procedure dbWriteXStr (dbp:DB; feld:dbFeldStr; size:word; s: string);
+procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
+procedure dbWriteStr(dbp:DB; const feld:dbFeldStr; const s: string);
+procedure dbWriteXStr (dbp:DB; const feld:dbFeldStr; size:word; const s: string);
 
 {--------------------------------------------- interne Routinen --------}
 
@@ -753,7 +753,7 @@ begin
 end;
 
 
-function dbHasField(filename:string; feldname:dbFeldStr):boolean;
+function dbHasField(const filename:string; const feldname:dbFeldStr):boolean;
 var d : db;
 begin
   dbOpen(d,filename,0);
@@ -1142,18 +1142,21 @@ end;
 function dbGetFeldNr(dbp:DB; feldname:dbFeldStr):integer;   { -1=unbekannt }
 var i : integer;
 begin
-  with dp(dbp)^ do begin
+  with dp(dbp)^ do
+  begin
     i:=0;
     feldname:= UpperCase(feldname); { UpString(feldname);}
     while (i<=feldp^.felder) and (feldname<>feldp^.feld[i].fname) do
       inc(i);
-    if i>feldp^.felder then dbGetFeldNr:=-1
-    else dbGetFeldNr:=i;
-    end;
+    if i>feldp^.felder then
+      dbGetFeldNr:=-1
+    else
+      dbGetFeldNr:=i;
+  end;
 end;
 
 
-function GetFeldNr2(dbp:DB; var feldname:dbFeldStr):integer;   { -1=unbekannt }
+function GetFeldNr2(dbp:DB; const feldname:dbFeldStr):integer;   { -1=unbekannt }
 var nr : integer;
 begin
   nr:=dbgetfeldnr(dbp,feldname);
@@ -1184,7 +1187,7 @@ end;
 
 { Feld mit Name 'feld' nach 'data' auslesen }
 
-procedure dbRead(dbp:DB; feld:dbFeldStr; var data);
+procedure dbRead(dbp:DB; const feld:dbFeldStr; var data);
 var nr : integer;
 begin
   nr:=GetFeldNr2(dbp,feld);
@@ -1198,7 +1201,7 @@ begin
   dbReadNStr:= s;
 end;
 
-function dbReadStr(dbp:DB; feld:dbFeldStr):string;
+function dbReadStr(dbp:DB; const feld:dbFeldStr):string;
 var s: shortstring;
 begin
   dbRead(dbp,feld,s);
@@ -1206,7 +1209,7 @@ begin
 end;
 
 
-function dbReadInt(dbp:DB; feld:dbFeldStr):longint;
+function dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
 var l : longint;
 begin
   l:=0;
@@ -1237,7 +1240,7 @@ begin
     end;
 end;
 
-procedure dbWriteNStr(dbp:DB; feldnr:integer; s: string);
+procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
 var
   s0: shortstring;
 begin
@@ -1248,14 +1251,14 @@ end;
 
 { 'data' in Feld mit Name 'feld' schreiben }
 
-procedure dbWrite(dbp:DB; feld:dbFeldStr; var data);
+procedure dbWrite(dbp:DB; const feld:dbFeldStr; var data);
 var nr : integer;
 begin
   nr:=GetFeldNr2(dbp,feld);
   dbWriteN(dbp,nr,data);
 end;
 
-procedure dbWriteStr(dbp:DB; feld:dbFeldStr; s: string);
+procedure dbWriteStr(dbp:DB; const feld:dbFeldStr; const s: string);
 var
   nr: integer;
 begin
@@ -1265,7 +1268,7 @@ end;
 
 { Gr”sse eines externen Feldes abfragen }
 
-function dbXsize(dbp:DB; feld:dbFeldStr):longint;
+function dbXsize(dbp:DB; const feld:dbFeldStr):longint;
 var l  : longint;
 begin
   with dp(dbp)^ do
@@ -1274,7 +1277,7 @@ begin
 end;
 
 
-procedure feseek(dbp:DB; var feld:dbfeldstr; var l:longint);
+procedure feseek(dbp:DB; const feld:dbFeldStr; var l:longint);
 var rr : record
            adr  : longint;
            size : longint;
@@ -1295,7 +1298,7 @@ end;
 { Size = 0 -> Alles Lesen, >0 max. 'size' bytes lesen }
 { size MUSS angegeben sein!!                          }
 
-procedure dbReadX(dbp:DB; feld:dbFeldStr; var size:smallword; var data);
+procedure dbReadX(dbp:DB; const feld:dbFeldStr; var size:smallword; var data);
 var l : longint;
 begin
   with dp(dbp)^ do begin
@@ -1308,7 +1311,7 @@ begin
     end;
 end;
 
-function dbReadXStr(dbp: DB; feld: dbFeldStr; var size: smallword): string;
+function dbReadXStr(dbp: DB; const feld: dbFeldStr; var size: smallword): string;
 var
   s: shortstring;
 begin
@@ -1319,7 +1322,7 @@ end;
 
 { Aus externer Datei in Datei einlesen }
 
-procedure dbReadXX(dbp:DB; feld:dbFeldStr; var size:longint; datei:string;
+procedure dbReadXX(dbp:DB; const feld:dbFeldStr; var size:longint; const datei:string;
                    append:boolean);
 var l    : longint;
     f    : file;
@@ -1356,7 +1359,7 @@ end;
 
 { In ge”ffnete Datei lesen, ab Offset 'ofs' }
 
-procedure dbReadXF (dbp:DB; feld:dbFeldStr; ofs:longint; var size:longint;
+procedure dbReadXF (dbp:DB; const feld:dbFeldStr; ofs:longint; var size:longint;
                     var datei:file);
 var l    : longint;
     s: word;
@@ -1383,7 +1386,7 @@ begin
 end;
 
 
-procedure fealloc(dbp:DB; var feld:dbfeldstr; size:longint; var adr:longint);
+procedure fealloc(dbp:DB; const feld:dbFeldStr; size:longint; var adr:longint);
 var nr      : byte;
     ll      : record
                 adr     : longint;
@@ -1414,7 +1417,7 @@ end;
 
 { Aus Speicher in externe Datei schreiben }
 
-procedure dbWriteX(dbp:DB; feld:dbFeldStr; size:word; var data);
+procedure dbWriteX(dbp:DB; const feld:dbFeldStr; size:word; var data);
 var adr,ss: longint;
 begin
   with dp(dbp)^ do begin
@@ -1428,7 +1431,7 @@ begin
     end;
 end;
 
-procedure dbWriteXStr (dbp:DB; feld:dbFeldStr; size:word; s: string);
+procedure dbWriteXStr (dbp:DB; const feld:dbFeldStr; size:word; const s: string);
 var
   s0: shortstring;
 begin
@@ -1439,7 +1442,7 @@ end;
 
 { Aus Datei in externe Datei schreiben }
 
-procedure dbWriteXX(dbp:DB; feld:dbFeldStr; datei:string);
+procedure dbWriteXX(dbp:DB; const feld:dbFeldStr; const datei:string);
 var adr,size : longint;
     s     : word;
     rr: word;
@@ -1491,7 +1494,7 @@ begin
 end;
 
 {$IFDEF Debug }
-procedure dbLog(s:string);
+procedure dbLog(const s:string);
 begin
   if dl then
     writeln(dblogfile,s);
@@ -1579,6 +1582,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.34  2000/08/22 09:27:50  mk
+  - Allgemeine Performance erhoeht
+
   Revision 1.33  2000/07/11 13:25:37  hd
   - neu: dbWriteXStr
 
