@@ -156,7 +156,7 @@ resourcestring
   res_posterror         = 'Fehler %d beim Absenden des Artikels';
   res_postmsg           = 'Verschicke Artikel %d (gesamt %.0f%%)';
 
-  res_auth              = 'Authentifikation benötigt';
+  res_auth              = 'Authentifikation benoetigt';
 
 
 procedure TNNTP.InitVars;
@@ -609,6 +609,9 @@ end;
 
 {
   $Log$
+  Revision 1.37.2.8  2003/12/06 14:35:57  mk
+  - corrected spelling error
+
   Revision 1.37.2.7  2003/10/05 12:36:53  mk
   - removed RawFormat and NNTPSpoolFormat from ZCRFC
   - internal NNTP uses rnews format now
