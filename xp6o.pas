@@ -756,7 +756,15 @@ again:
   fn:=TempS(dbReadInt(mbase,'msgsize')+2000);
   assign(t,fn); assign(f,fn);
   rec:=dbRecno(mbase);
+  if typ in [5,6] then
+  begin
+    ReadHeadEmpf := 0;
+    ReadEmpflist:=true;
+    ReadKoplist := true;
+  end;
   ReadHeader(hdp^,hds,true);
+  if typ in [5,6] then
+    empflist := hdp^.kopien;
   if hds=1 then goto ende;
   betr:=hdp^.betreff;
   binaermail:=(ntyp='B');
@@ -1097,6 +1105,9 @@ again:
 
   if typ<>6 then FlushClose;
 ende:
+  ReadEmpflist := false;
+  ReadKoplist := false;
+  DisposeEmpfList(hdp^.kopien);
   freeres;
   disposeempflist(sendempflist);
   dispose(hdp);
@@ -1272,6 +1283,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.6  2000/11/09 18:16:15  mk
+  - fixed Bug #116187: header of forwarded mails is stripped down
+
   Revision 1.20.2.5  2000/11/01 11:37:13  mk
   RB:- Bug #109282: Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo verfremden
 
