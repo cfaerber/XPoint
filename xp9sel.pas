@@ -195,51 +195,6 @@ begin
   end;
 end;
 
-function PPPClientTest(var s:string):boolean;
-var ok   : boolean;
-    fn   : pathstr;
-    dir  : dirstr;
-    name : namestr;
-    ext  : extstr;
-    s1: String;
-begin
-  PPPClientTest:=true;
-  fn:=trim(s);
-  if Pos('start /wait ', lstr(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
-  if Pos('start /wai ', lstr(fn)) = 1 then fn := Copy(fn, 12, MaxInt);
-  if Pos('start /wa ', lstr(fn)) = 1 then fn := Copy(fn, 11, MaxInt);
-  if Pos('start /w ', lstr(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
-  if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
-  if (fn<>'') then
-  begin
-    fsplit(fn,dir,name,ext);
-    ok := dir = '';
-    s1 := GetField(fieldpos-1);
-    if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
-    { if ustr(s1) =  ustr(Dir) then Ok := true; }
-    if Dir = '$CLPATH+' then ok := true;
-    if not ok then
-    begin
-      rfehler1(936, UStr(fn)); { 'Eintrag darf entweder keine oder nur "$CLPATH+" als Pfadangabe enthalten!' }
-      PPPClientTest:=false;
-    end else
-    begin
-      exchange(fn, '$CLPATH+', s1);
-      if ext<>'' then
-        ok:=fsearch(fn,ownpath)<>''
-      else
-        ok:=(fsearch(fn+'.exe',ownpath)<>'') or
-          (fsearch(fn+'.com',ownpath)<>'') or
-          (fsearch(fn+'.bat',ownpath)<>'');
-      if not ok then rfehler1(907,ustr(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
-    end;
-  end else
-    begin
-    PPPClientTest:=false;
-    errsound;
-  end;
-end;
-
 function PPPClientPathTest(var s:string):boolean;
 var ok   : boolean;
     fn   : pathstr;
@@ -286,6 +241,50 @@ begin
   end;
 end;
 
+function PPPClientTest(var s:string):boolean;
+var ok   : boolean;
+    fn   : pathstr;
+    dir  : dirstr;
+    name : namestr;
+    ext  : extstr;
+    s1   : String;
+begin
+  PPPClientTest:=true;
+  fn:=trim(s);
+  if Pos('start /wait ', lstr(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
+  if Pos('start /wai ', lstr(fn)) = 1 then fn := Copy(fn, 12, MaxInt);
+  if Pos('start /wa ', lstr(fn)) = 1 then fn := Copy(fn, 11, MaxInt);
+  if Pos('start /w ', lstr(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
+  if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
+  if (fn<>'') then
+  begin
+    fsplit(fn,dir,name,ext);
+    ok := dir = '';
+    s1 := GetField(fieldpos-1);
+    if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
+    { if ustr(s1) =  ustr(Dir) then Ok := true; }
+    if Dir = '$CLPATH+' then ok := true;
+    if not ok then
+    begin
+      rfehler1(936, UStr(fn)); { 'Eintrag darf entweder keine oder nur "$CLPATH+" als Pfadangabe enthalten!' }
+      PPPClientTest:=false;
+    end else
+    begin
+      exchange(fn, '$CLPATH+', s1);
+      if ext<>'' then
+        ok:=fsearch(fn,ownpath)<>''
+      else
+        ok:=(fsearch(fn+'.exe',ownpath)<>'') or
+          (fsearch(fn+'.com',ownpath)<>'') or
+          (fsearch(fn+'.bat',ownpath)<>'');
+      if not ok then rfehler1(907,ustr(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
+    end;
+  end else
+    begin
+    PPPClientTest:=false;
+    errsound;
+  end;
+end;
 
 function testmbretter(var s:string):boolean;
 begin
@@ -714,6 +713,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.7  2001/06/30 01:01:46  my
+  - just changed order of functions "PPPClientTest" and "PPPClientPathTest"
+
   Revision 1.1.2.6  2001/06/19 17:09:57  my
   - tried to add correct CVS $Id string, works hopefully
 
