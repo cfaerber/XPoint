@@ -544,13 +544,14 @@ begin
   until b=27;
 end; *)
 
+(*
 function Cval(s:string):longint;
 begin
   LoString(s);
   if LeftStr(s,2)='0x' then Cval:=hexval(mid(s,3))
   else Cval:=ival(s);
 end;
-
+*)
 
 procedure blockwrite(var f:file; var data; size:word);
 begin
@@ -1949,6 +1950,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2001/02/25 17:38:33  cl
+  - moved CVal to typeform.pas, now also supports octal numbers
+
   Revision 1.6  2000/11/18 14:07:48  fe
   Replaced exist() with fileexists().
 

@@ -80,6 +80,7 @@ function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 function CPos(c:char; const s:string):integer;    { schnelles POS fuer CHARs      }
 function CPosX(c:char; const s:string):integer;   { pos=0 -> pos:=length(s)+1    }
 function CreditCardOk(s:string):boolean;     { Kreditkartennummer ueberpruefen }
+function CVal(s:string):longint;	     { C Value Integer - nnnn/0nnn/0xnnn }
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
 function FileName(var f):string;                { Dateiname Assign             }
@@ -696,6 +697,15 @@ begin
   RVal:=r;
 end;
 
+function CVal(s:string):longint;
+begin
+  if LeftStr(s,2)='0x' then     (* 0xnn = hex *)
+    CVal:=hexval(mid(s,3))
+  else if LeftStr(s,2)='0' then (* 0nnn = oct *)
+    CVal:=OctVal(mid(s,2)) 
+  else                          (* nnnn = dec *)
+    CVal:=IVal(s);
+end;
 
 function progname: TFilename;
 var s : TFilename;
@@ -1350,6 +1360,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.81  2001/02/25 17:38:33  cl
+  - moved CVal to typeform.pas, now also supports octal numbers
+
   Revision 1.80  2001/02/25 15:15:19  ma
   - shortened logs
   - added GPL headers
