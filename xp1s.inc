@@ -56,7 +56,7 @@ var sm2t     : boolean;
     savecursor;
     cursor(curoff);
     w1:=windmin; w2:=windmax;
-    window(1,1,80,25);
+    window(1,1,screenwidth,25);
     if length(prog)<=74 then
       message(prog)
     else begin
@@ -101,7 +101,7 @@ begin
                 m2t:=false;
               end;
       3   : begin
-              clwin(1,80,4,screenlines-2);
+              clwin(1,screenwidth,4,screenlines-2);
               gotoxy(1,5);
             end;
     end;
@@ -300,7 +300,7 @@ var brk    : boolean;
     for i:=1 to exthdlines do begin
       readln(t,s);
       if s[1]<>'-' then mwrt(1,lfirst,' '+forms(s,79))
-      else mwrt(1,lfirst,dup(80,'Ä'));
+      else mwrt(1,lfirst,dup(screenwidth,'Ä'));
       inc(lfirst);
       inc(lofs,length(s)+2);
       end;
@@ -343,14 +343,14 @@ begin
     if ListMsg and ListFixedHead then
       ShowMsgHead;
 
-    openlist(1,iif(_maus and listscroller,79,80),lfirst,
+    openlist(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
              iifs(_maus and ListScroller,'VSC:080/','')+
              iifs(listmsg,'ROT/',''));
 
     if listwrap {or listkommentar} then
-      lister.listwrap(iif(_maus and listscroller,78,80));
+      lister.listwrap(iif(_maus and listscroller,screenwidth-1,screenwidth));
     if listmsg and ConvIso then list_convert(ISO_conv);
     if not ListAutoscroll then listNoAutoscroll;
     msg:=(_filesize(name)>1024*100);
@@ -371,7 +371,7 @@ begin
     pushhp(39);
     if _maus and listscroller and listvollbild then begin
       attrtxt(col.colliststatus);
-      mwrt(1,lfirst,sp(80));
+      mwrt(1,lfirst,sp(screenwidth));
       end;
 
     list_infos(listmsg);
@@ -495,6 +495,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.16  2002/03/27 19:51:26  my
+  MY:- Interne Žnderung: An einigen Stellen den festen Wert "80" durch die
+       Variable "screenwidth" ersetzt.
+
   Revision 1.24.2.15  2002/03/08 22:58:25  my
   MY:- Fix: Umschaltung des Wortumbruchs im Lister mit <Ctrl-W>
        funktioniert jetzt auch in der Anzeige des Nachrichtenkopfs ("o"),
