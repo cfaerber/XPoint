@@ -1954,7 +1954,7 @@ end;
 
 procedure set_checkdate;
 begin
-  FileClose(FileCreate(NewDateFile));
+  FileSetDate(NewDateFile, DateTimeToFileDate(Now));
 end;
 
 
@@ -2093,6 +2093,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.5  2002/05/07 07:56:46  mk
+  - fixed set_checkdate again
+
   Revision 1.147.2.4  2002/05/03 17:04:48  mk
   - write _fehler and tfehler-messages to Debuglog
 
