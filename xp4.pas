@@ -139,12 +139,13 @@ begin
 end;
 
 procedure SetBrettGelesen(brett:string);       { Ungelesenflag des Bretts loeschen }
-var b     : byte;                              { wenn keine ungelesenen Nachrichten }
+var b    : byte;                               { wenn keine ungelesenen Nachrichten }
+    nope : boolean;
 begin                                          { mehr vorhanden sind. }
   dbSeek(mbase,miGelesen,brett+#0);
-  if not dbEOF(mbase) and
-    ((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0))
-  then begin
+  if dbEOF(mbase) then nope:=true
+    else nope:=((dbReadStr(mbase,'brett')<>brett) or (dbReadInt(mbase,'gelesen')<>0));
+  if nope then begin
     dbSeek(bbase,biIntnr,mid(brett,2));
     if dbFound then begin
       dbReadN(bbase,bb_flags,b);
@@ -2062,6 +2063,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.6  2000/08/12 17:12:34  jg
+  - Ungelesen-Workarround Setbrettgelesen funktioniert jetzt auch
+    Wenn Msgbase keine Nachricht mehr fuer dieses mehr Brett enthaelt.
+
   Revision 1.26.2.5  2000/08/05 14:36:57  jg
   - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
 
