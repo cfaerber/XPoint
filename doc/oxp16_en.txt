@@ -1,12 +1,4 @@
-
-
-
-
-
-
-
-
-
+$Id$
 
                       ----===========================----
                          OpenXP/16 Installation  Guide
@@ -1588,4 +1580,9 @@ A6.9 I decided that - come hellorhighwater - somehow I was going to use
      much needed injection of new life, for recognising and supporting the
      English speaking users and for simplifying its installation.
      =====================================================================
+
+$Log$
+Revision 1.1.2.2  2003/04/22 18:58:20  mf
+- Superfluous white space removed from top of document.
+
 
