@@ -685,7 +685,8 @@ label ende,again;
              (left(empf,21)='## Originalempf„nger:');   { Kompatibilit„t zu XP 1.0-2.1 }
   end;
 
- :¼Çcedure GetOEmpflist;
+
+  procedure GetOEmpflist;
   var s : string;
   begin
     repeat
@@ -1275,6 +1276,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.8  2000/11/21 22:42:30  mk
+  - neu eingecheckt wegen cvs Bug
+
   Revision 1.20.2.7  2000/11/11 10:33:59  mk
   - removed fix for #116167 because of RTE 204
 
