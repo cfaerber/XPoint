@@ -7,24 +7,24 @@ NH TAB 00 LEER NC
 Sorry, no help available!
 @
 2
-<<     같같같같같같같같같같�   Online Help: Contents
+<<   같같같같같 = Online Help Contents = 같같같같같
 
 
-     [Help on Help]@3
+                    [Help on Help]@3
 
-     [Hotkeys]@4
+                      [Hotkeys]@4
 
-     [CrossPoint start parameters]@4020
+            [CrossPoint start parameters]@4020
 
-     [Support]@5
+                      [Support]@5
 
-     [Licence Conditions]@6
+                 [Licence Conditions]@6
 
-Back <<<Alt F1> >>...
-<Tab> to [cross-references]@7000
+<<<Tab> >> ... go to next [cross-reference]@7000
+<<Alt-F1>> ... go back one page
 @
 3
-<<같같같같같같같같같같같같  Using Online Help
+<<  같같같같같같 = Using Online Help = 같같같같같같
 
 Starting Online Help:
 
@@ -125,9 +125,9 @@ You may test it without cost for up to 30 days from
 first installation but if you wish to use it after
 that, you must register the programme.
 
-You will find details of how to do this and what to
-do in the file <<LICENCE.DOC>> included in the
-English Language package.
+You will find details of how to register in the file
+<<REG_ENG.TXT>> included in the English Language
+package.
 @
 10
 (Stichwortverzeichnis - fehlt noch)
@@ -7263,7 +7263,7 @@ exit by pressing <Esc> and CrossPoint will remain
 unregistered.
 
 You will find details of how to register in the file
-LICENCE.DOC, which is included in the CrossPoint
+REG_ENG.TXT, which is included in the CrossPoint
 package.
 @
 10102
@@ -9367,7 +9367,7 @@ setting a start password and locking you out!
 
 <<IMPORTANT!>>  Do not forget your Password!
 If you forget a password, you will have to call me
-under the number listed in LICENCE.DOC
+under the number listed in REG_ENG.TXT
 @
 12810
 <<Config / Options / Language
