@@ -353,10 +353,15 @@ end;
     dbAppendField(AutoFile,fld);
   end;
 {$ELSE}
+
 procedure UpdateAutoDb(AppendedFields: TdbFieldSet);
 begin
-  //if not dbHasField(AutoFile,'LastMsgID') then NewFieldLastMsgID;
+    if dbGetIndexVersion(AutoFile+dbIxExt)<3 then
+      _era(AutoFile+dbIxExt);
+    if not FileExists(AutoFile+dbExtExt) then
+      dbKillXbase(AutoFile);
 end;
+
 {$ENDIF}
 
 // ------------------- Bezuege ------------------
@@ -1281,7 +1286,7 @@ begin
 
 {$IFDEF old}
   if not FileExists(UserFile+dbExt) then begin
-    initflp(9);
+    initflp(9);                  
     AppS('Username',80);
     AppX('Adresse',dbUntypedExt,0,0);
     AppS('Kommentar',30);
@@ -1565,6 +1570,10 @@ end;
 
 {
   $Log$
+  Revision 1.56  2003/09/07 16:13:34  cl
+  - BUGFIX: AUTOMSG.EX1 was not created automatically when AUTOMSG.DB1 was
+    present.
+
   Revision 1.55  2003/09/06 23:03:07  cl
   - send window - time-shifted sending of message
     cLOSES task #76792: Sendefenster: Datum
