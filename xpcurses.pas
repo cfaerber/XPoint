@@ -350,7 +350,7 @@ procedure MakeWindow(var win: TWinDesc; x1, y1, x2, y2: integer; s: string; f: b
 procedure RestoreWindow(var win: TWinDesc);
 
 { SigHandler für Xterm-Resizing, HUP etc. }
-procedure SigHandler(Sig : Integer); cdecl;
+procedure SigHandler(Sig : LongInt); cdecl;
 
 procedure Scroll(w: TWinDesc; mode: boolean);
 
@@ -868,8 +868,11 @@ again:
      Result:= DosSeq[1];              // first char is result
      PrefChar := #0;
 
-     if Length(DosSeq)>=2 then
-       Forwardkeys:=Mid(DosSeq,2)+Forwardkeys;
+// 
+{$WARNING ACHTUNG fuer Hans-Peter: Code noch portieren!!!!!! }
+//     if Length(DosSeq)>=2 then
+//       Forwardkeys:=Mid(DosSeq,2)+Forwardkeys;
+
   end else
     Result:= TranslateSpecialChar(chr(ord(l)));
 
@@ -1333,7 +1336,7 @@ end;
 { Unit-Interna --------------------------------------------------------- }
 
 { Sig Handler is called, when a SIG is called by Linux }
-procedure SigHandler(Sig : Integer);
+procedure SigHandler(Sig : LongInt);
 begin
   case Sig of
     SIGWINCH		     : { when XTerm is Resized }
@@ -1521,10 +1524,10 @@ begin
   libc.signal(SIGQUIT, @SigHandler);
   libc.signal(SIGKILL, @SigHandler);
 {$ELSE}
-  Linux.SigNal(SIGWINCH, @SigHandler);
-  Linux.SigNal(SIGHUP, @SigHandler);
-  Linux.SigNal(SIGQUIT, @SigHandler);
-  Linux.SigNal(SIGKILL, @SigHandler);
+//  Linux.SigNal(SIGWINCH, @SigHandler);
+//  Linux.SigNal(SIGHUP, @SigHandler);
+//  Linux.SigNal(SIGQUIT, @SigHandler);
+//  Linux.SigNal(SIGKILL, @SigHandler);
 {$ENDIF}
 
   { set the unit exit procedure }
@@ -1543,6 +1546,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2003/01/07 09:50:23  mk
+  - made xpcurses temporary compilable
+  - bug with forwardkeys has to be fixed (commented out)
+  - signal-handler commented out due to compile problem with fp
+
   Revision 1.66  2002/12/22 13:33:06  mk
   - writable const on for this unit only
 
