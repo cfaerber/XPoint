@@ -34,6 +34,8 @@ procedure dbReleaseFL(var flp:dbFLP);
 function  dbIOerror:integer;
 procedure dbSetindexcache(pages:word);     { 1..MaxCache }
 procedure dbReleasecache;
+procedure dbEnableIndexCache;
+procedure dbDisableIndexCache;
 procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 
 procedure dbOpenLog(const fn: string);
@@ -1606,6 +1608,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/01/04 14:58:06  mk
+  - disable Indexcache during creation of Indizies
+
   Revision 1.43  2000/11/19 18:22:52  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 

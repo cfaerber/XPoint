@@ -26,6 +26,17 @@ begin
   cacheanz:=0;
 end;
 
+procedure dbEnableIndexCache;
+begin
+  dbSetIndexCache(OldCacheAnz);
+end;
+
+procedure dbDisableIndexCache;
+begin
+  OldCacheAnz := CacheAnz;
+  dbReleaseCache;
+end;
+
 procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
 var
   s, i,sp : integer;
@@ -264,6 +275,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2001/01/04 14:58:05  mk
+  - disable Indexcache during creation of Indizies
+
   Revision 1.16  2000/10/04 15:40:43  mk
   - Expand-Node wieder 32 Bit ASM
 

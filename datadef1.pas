@@ -171,6 +171,7 @@ var     ICP       : dbIndexCProc;     { Index-Kontrollprozedur     }
         cache     : icachep;
         bb        : byte;             { lokal dbReadN/dbWriteN     }
         dblogfile : text;             { DB-Logfile                 }
+        oldcacheanz : integer;
 
 
 function  iohandler:boolean;
@@ -225,6 +226,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2001/01/04 14:58:29  mk
+  - disable Indexcache during creation of Indizies
+
   Revision 1.12  2000/11/15 18:01:31  hd
   - Unit DOS entfernt
 

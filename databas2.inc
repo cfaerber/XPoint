@@ -26,6 +26,7 @@ var icr : dbIndexCRec;
       key    : string;
       mfm    : byte;
   begin
+    dbDisableIndexCache;
     with dp(dbp)^ do begin
       mfm:=filemode; filemode:=$42;
       rewrite(fi,1);
@@ -107,7 +108,8 @@ var icr : dbIndexCRec;
       icr.command:=icCloseWindow;
       ICP(icr);
       flindex:=true;
-      end;
+    end;
+    dbEnableIndexCache;
   end;
 
 begin
@@ -239,6 +241,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2001/01/04 14:58:05  mk
+  - disable Indexcache during creation of Indizies
+
   Revision 1.9  2000/11/15 18:01:31  hd
   - Unit DOS entfernt
 
