@@ -1439,7 +1439,7 @@ begin
   maddtext(3,9,getres2(273,3),0);          { Sichere Dateiendungen (externen Viewer benutzen):}
   maddstring(3,10,'',viewer_save,50,255,'>');
   mset1func(testfilename); 
-  mappsel(false,'.BMP.GIF.JPG.PCX.IFF.PDF.ZIP'); 
+  mappsel(false,'.BMP.GIF.JPG.PCX.IFF.PDF'); 
   maddtext(3,12,getres2(273,4),0);          {Internen Lister benutzen bei diesen Dateiendungen:}
   maddstring(3,13,'',viewer_lister,50,255,'>');
   mset1func(testfilename); 
@@ -1460,6 +1460,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/05/10 13:52:57  jg
+  - Viewer-Sicherheitslisten F2-Auswahl hatte ein ".ZIP" zuviel
+
   Revision 1.32  2000/05/09 20:07:01  jg
    Externe Viewer / Schutzmassnahmen:
    - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen
