@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { --- User bearbeiten ---------------------------------- }
@@ -60,7 +61,7 @@ begin
       end
     else begin
       while wrongline do                     { Ausgehend von oberster Bildschirmzeile }
-      begin                                  { ersten Passenden Ubase Eintrag suchen }
+      begin                                  { ersten passenden Ubase-Eintrag suchen  }
         dbnext(ubase);
         if dbeof(ubase) then dbgotop(ubase);
         end;
@@ -102,7 +103,7 @@ begin
   GoP;
   rec:=disprec[p];
   dispspec:='U'+left(dbReadStrN(ubase,ub_username),40);  { nur fr Anzeige }
-  _dispspec:=mbrettd('U',ubase);                       { abschneiden     }
+  _dispspec:=mbrettd('U',ubase);                         { abschneiden     }
   mhd:=abhdatum;
   dbReadN(ubase,ub_haltezeit,halten);
   gethdat(halten);
@@ -131,6 +132,38 @@ begin
         t:=keyend; lastt:=''; end;
       end;
     end;
+end;
+
+procedure jump_adressbuch;
+var b,x,y:byte;
+    brk:boolean; 
+begin
+  b:=Adrbtop;
+  dialog(length(getres2(480,1))+8,1,'',x,y);
+  maddint(2,1,getres2(480,1),b,2,2,Adrbtop,99);
+  readmask(brk);
+  enddialog;
+  if brk then exit;
+  if not usersortbox then dbSeek(ubase,uiAdrbuch,chr(b))
+    else dbseek(ubase,uiBoxAdrBuch,chr(b));
+  if dbBOF(dispdat) or dbEOF(dispdat) then errsound
+  else begin
+    disprec[1]:=dbRecNo(dispdat);
+    aufbau:=true;
+    end; 
+end;
+  
+procedure next_adrbuch;
+var b:byte;
+begin
+  GoP;
+  dbReadN(ubase,ub_adrbuch,b);
+  inc(b);
+  if not usersortbox then dbSeek(ubase,uiAdrbuch,chr(b))
+    else dbseek(ubase,uiBoxAdrBuch,chr(b));
+  if dbBOF(dispdat) or dbEOF(dispdat) then gostart;
+  disprec[1]:=dbRecNo(dispdat);
+  aufbau:=true;
 end;
 
 procedure change_adressbuch;
@@ -325,7 +358,7 @@ end;
 
 procedure wiedervorlage; forward;
 
-{ --- Nachrichten berabeiten --------------------------- }
+{ --- Nachrichten bearbeiten --------------------------- }
 
 procedure to_window;           { Nachrichten-Fenster -> TO-Brett }
 var s      : string[adrlen];
@@ -910,7 +943,11 @@ begin
           first:=false;
           sichern(pt); pushed:=true;
           end;
-        if dispmode=10 then ldisp:=copy(dispspec,2,40)
+        if dispmode=10 then begin
+          ldisp:=dispspec;
+          brettform(ldisp,dispflags,aktdispmode<1);
+          ldisp:=copy(ldisp,2,40); 
+          end
         else ldisp:='';
         if (dispmode<>11) and KomArrows and ntKomkette(netztyp) then begin
           GetKomflags(l,r,o,u);
@@ -976,7 +1013,7 @@ begin
       ende:=false;
       end
 
-    else if lres = -2 then  {Wiedervorageflag mit "V" aus Lister heraus aendern }
+    else if lres = -2 then  {Wiedervorlageflag mit "V" aus Lister heraus aendern }
     begin
       rec:=disprec[1];
       wiedervorlage;
@@ -988,6 +1025,14 @@ begin
       end
 
     else begin
+
+    if lres = -3 then  {Bezugsbaum "#" aus Lister heraus anzeigen }
+    begin
+      showscreen(true);
+      Bezugsbaum;
+      lres:=5;
+      end;
+
      {  if (dispmode=10) and (rdmode=1) and not ntKomKette(netztyp) then
         lres:=0; } { !! ungelesen-Mode }
       if (dispmode<>11) and ntKomkette(netztyp) and (lres<>0) then begin
@@ -1150,27 +1195,36 @@ begin
 end;
 
 procedure show_info;
-var s : string[80];
-    b : byte;
+var s     : string[80];
+    s1    : string[81];
+    b     : byte;  
+    flags : boolean;  
+
+const len : byte = 80;
+
 begin
+  s1:=dispspec;
+  brettform(s1,dispflags,false);
   attrtxt(col.colmsgsinfo);
+{ if msganz<=0 then len:=80 else len:=68; }  { nur fr Anzeige der Msg-Anzahl relevant }
   if dispmode=11 then
-    mwrt(1,4,forms(getreps(421,strs(markanz)),80))   { 'markierte Nachrichten' }
+    mwrt(1,4,forms(getreps(421,strs(markanz)),len))   { 'markierte Nachrichten' }
   else if dispmode=12 then
-    mwrt(1,4,forms(getreps(422,bezbetr),80))   { ' Bezugsnachrichten zu "%s"' }
+    mwrt(1,4,forms(' '+mid(s1,2)+'  -  "'+bezbetr+'"',len))
+    (*mwrt(1,4,forms(getreps(422,bezbetr),len))*)   { ' Bezugsnachrichten zu "%s"' }
   else begin
     case rdmode of
       0 : s:='';
       1 : s:='  -  '+getres(423);   { 'ungelesene Nachrichten' }
-      2 : s:=iifs(length(dispspec)<38,'  -  ',' - ')+getres(424);
+      2 : s:=iifs(length(s1)<38,'  -  ',' - ')+getres(424);
                                { 'Nachrichten seit dem letzten Netcall' }
     else
       s:='  -  '+getreps(425,fdat(longdat(readdate)));  { 'Nachrichten seit dem %s' }
     end;
-    if UserSlash or (left(dispspec,1)>='A') or (copy(dispspec,2,1)<>'/') then
-      b:=2
+    if newsgroupdispall or UserSlash or (left(s1,1)>='A') or (copy(dispspec,2,1)<>'/') 
+    then b:=2
     else b:=3;
-    mwrt(1,4,' '+forms(copy(dispspec,b,80)+s,79));
+    mwrt(1,4,' '+forms(copy(s1,b,len)+s,len-1));
   end;
 end;
 
@@ -1204,7 +1258,7 @@ begin
   if (t='/') or (t='.') then begin
     suchen:=true;
     if dispmode<1 then suchst:='/'
-    else suchst:='';
+      else suchst:='';
     end;
 end;
 
@@ -1224,7 +1278,8 @@ var s       : string[90];
 begin
   newsuch:=suchst;
   if ch=keybs then
-    if newsuch='' then begin
+    if ((newsuch='/') and (dispmode<1))
+    or (newsuch='') then begin
       errsound; exit; end
     else dellast(newsuch)
   else
@@ -1236,30 +1291,38 @@ begin
 
   if (dispmode<1) then begin
     dbSeek(bbase,biBrett,'A'+ustr(newsuch));
-    if not dbEOF(bbase) then begin
+    if dbEOF(bbase) then exit;
+    dbReadN(bbase,bb_brettname,s);
+    delfirst(s);
+    if ustr(left(s,length(newsuch)))<>ustr(newsuch) then
+    begin
+      dbSeek(bbase,biBrett,'1'+ustr(newsuch));
+      if dbEOF(bbase) then exit;
       dbReadN(bbase,bb_brettname,s);
       delfirst(s);
-      if ustr(left(s,length(newsuch)))<>ustr(newsuch) then
-        errsound
-      else if ch<>'/' then
-        suchok
-      else begin
-        pp:=cpos('/',mid(s,length(newsuch)+1));
-        if pp=0 then begin
-          dbSeek(bbase,biBrett,'A'+ustr(s)+'/');
-          if not dbEOF(bbase) and (left(dbReadStrN(bbase,bb_brettname),length(s)+2)='A'+s+'/')
-          then begin
-            newsuch:=s+'/';
-            suchok;
-            end
-          else
-            errsound;
-          end
-        else begin
-          newsuch:=left(s,pp+length(newsuch));
+      end;
+    if ustr(left(s,length(newsuch)))<>ustr(newsuch) then 
+      errsound
+    else if ch<>'/' then
+      suchok
+    else begin
+      pp:=pos('/',mid(s,length(newsuch)+1));
+      if pp=0 then begin
+        dbSeek(bbase,biBrett,'A'+ustr(s)+'/');
+      {  if dbEOF(bbase) then dbSeek(bbase,biBrett,'1'+ustr(s)+'/');}
+        if not dbEOF(bbase) and 
+          (mid(left(dbReadStr(bbase,'brettname'),length(s)+2),1)=s+'/')
+        then begin
+          newsuch:=s+'/';
           suchok;
-          end;
+          end
+        else
+          errsound;
         end
+      else begin
+        newsuch:=left(s,pp+length(newsuch));
+        suchok;
+        end;
       end
     end
   else begin
@@ -1273,7 +1336,7 @@ begin
         dbsetindex(ubase,uiname);              { Nach Namen sortieren }
         repeat
           dbReadN(ubase,ub_adrbuch,adrb);      { solange Adressbuchflag nicht gesetzt ist }
-          if adrb=0 then dbnext(ubase);        { den naechsten Eintrag holen }
+          if adrb<AdrbTop then dbnext(ubase);  { den naechsten Eintrag holen }
           if dbEOF(ubase) then
           begin
             dbsetindex(ubase, indx);
@@ -1281,7 +1344,7 @@ begin
             Exit;
           end;
           dbReadN(ubase,ub_username,s);
-        until (adrb<>0) or (left(ustr(s),length(newsuch))<>ustr(newsuch));
+        until (adrb>=adrbtop) or (left(ustr(s),length(newsuch))<>ustr(newsuch));  
         dbsetindex(ubase,indx);                { wieder nach Adressbuch sortieren}
         end
       else dbReadN(ubase,ub_username,s);
@@ -1608,6 +1671,24 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.27  2001/09/16 20:27:41  my
+  JG+MY:- Kommentarbaum kann mit '#' direkt aus Lister heraus aufgebaut
+          werden. Nach Beendigung des Kommentarbaums kehrt XP zur
+          aktuellen Nachricht zurück.
+
+  JG+MY:- Verbesserte Brettanzeige (zusätzlicher Schalter unter
+          Config/Anzeige/Bretter): Es können jetzt alle Bretter in
+          Punktschreibweise dargestellt werden, der einleitende "/" wird
+          entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
+
+  JG+MY:- Brett-Schnellsuche ("/" oder ".") findet jetzt auch PM-Bretter.
+
+  JG+MY:- Mit '#' kann in der User-Übersicht eine Adreßbuchgruppe
+          angegeben werden, die angesprungen werden soll. Mit <Ctrl-#>
+          wird die nächste Adreßbuchgruppe angesprungen.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.25.2.26  2001/08/29 21:45:29  my
   JG:- Fix: Showing message header with 'O' in message reader after
        <Ctrl-PgUp/PgDn> could overwrite the screen position the selection
