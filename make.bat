@@ -12,6 +12,8 @@ if errorlevel 1 goto Fehler
 if errorlevel 1 goto Fehler
 %comp% uuz
 if errorlevel 1 goto Fehler
+%comp% ndiff
+if errorlevel 1 goto Fehler
 %comp% rc
 if errorlevel 1 goto Fehler
 %comp% ihs
