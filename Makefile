@@ -2465,7 +2465,7 @@ dist:
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar file_id.diz Makefile icons.res *.inc *.pas *.rq *.bat
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar beispiel$(SEP)*.scr beispiel$(SEP)*.xps beispiel$(SEP)*.cfg
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar charsets$(SEP)*.inc
-	$(RAR) $(RARFLAGS) $(DISTFILE).rar doc$(SEP)Makefile doc$(SEP)*.txt doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.sgm doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat doc$(SEP)dbform doc$(SEP)readme.lnx
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar doc$(SEP)Makefile doc$(SEP)*.txt doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.sgm doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar linux$(SEP)*.inc
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar ObjCOM$(SEP)Makefile ObjCOM$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.txt
 endif
@@ -2495,6 +2495,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.23  2000/10/17 15:01:18  fe
+# dbform und readme.lnx heissen jetzt dbform.txt und linux.txt.
+#
 # Revision 1.22  2000/10/15 11:12:15  fe
 # beispiel/glossary.cfg eingetragen.
 #
