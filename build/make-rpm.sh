@@ -1,4 +1,5 @@
 #! /bin/sh
+# has to be called as root because of rpm
 # has to be called in main source dir for desired version
 cd build
 eval $(./get_build_nr.pl)
@@ -6,9 +7,10 @@ mainversion=$OPENXP_MAINVER
 subversion=$OPENXP_SUBVER
 buildnr=$OPENXP_BUILD
 version="$mainversion"."$subversion"-"$buildnr"
-scriptdir=/home/boettger/openxp/script/
+#scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
 sourcedir=$versiondir'openxp/'
+scriptdir="$sourcedir"'build/
 cd "$sourcedir"
 #
 # example: version = 3.8.12-1
@@ -47,5 +49,5 @@ sleep 5
 # echo press [enter] to continue
 # read
 popd
-rpm -ba "$sourcedir"/build/openxp-"$version".spec
+rpm -ba "$scriptdir"openxp-"$version".spec
 #rpmbuild -ba openxp.spec

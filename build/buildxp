@@ -2,7 +2,7 @@
 echo "Starting $0 $*"
 # must be started in main source dir for desired version
 cd build
-eval $(get_build_nr.pl)
+eval $(./get_build_nr.pl)
 mainversion=$OPENXP_MAINVER
 subversion=$OPENXP_SUBVER
 buildnr=$OPENXP_BUILD
@@ -15,9 +15,10 @@ buildnr=$OPENXP_BUILD
 # subversion has to be 12 in this example
 # buildnr has to be 1 in this example
 version="$mainversion"."$subversion"-"$buildnr"
-scriptdir=/home/boettger/openxp/script/
+#scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
 sourcedir=$versiondir'openxp/'
+scriptdir="$sourcedir"'build/'
 #subversion="$1".0
 cd "$sourcedir"
 #
@@ -98,15 +99,3 @@ test -f openxp-dos.exe && zip -9-r "$versiondir"openxp-"$version"-dos-`date -I`.
 test -f openxp-win.exe &&  zip -9 -r "$versiondir"openxp-"$version"-win32-`date -I`.zip openxp-win.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
 #
 echo "Finished $0"
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,8 @@
 #/bin/bash
 echo "Starting $0 $*"
 #
+# has to be called as root because of rpm call in make-rpm.sh
+#
 mainversion=$1
 subversion=0
 buildnr=1
@@ -9,9 +11,10 @@ buildnr=1
 # subversion has to be 12 in this example
 # buildnr has to be 1 in this example
 version="$mainversion"."$subversion"-"$buildnr"
-scriptdir=/home/boettger/openxp/script/
+#scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
 sourcedir=$versiondir'openxp/'
+scriptdir=$sourcedir'build/
 #subversion="$1".0
 #cd "$sourcedir"
 #
@@ -19,16 +22,17 @@ sourcedir=$versiondir'openxp/'
 cd "$sourcedir"
 pwd
 cvs up -C version.inc
-cd build
+cd "$scriptdir"
 ./inc_build_nr.pl
 eval $(./get_build_nr.pl)
 mainversion=$OPENXP_MAINVER
 subversion=$OPENXP_SUBVER
 buildnr=$OPENXP_BUILD
 version="$mainversion"."$subversion"-"$buildnr"
-scriptdir=/home/boettger/openxp/script/
+#scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
 sourcedir=$versiondir'openxp/'
+scriptdir=$sourcedir'build/
 echo '- new version: '"$version"' CB'
 commit='- new version: '"$version"' CB'
 commit2='cvs -t ci -m "'"$commit"'" '"$sourcedir"'version.inc'
