@@ -29,7 +29,7 @@ var  fname,
      t        : text;
      f        : file;
      pages    : word;
-     pageadr  : array[1..maxpages] of record
+     pageadr  : array[1..maxpages] of packed record
                                         nr  : smallword;
                                         adr : longint;
                                       end;
@@ -129,7 +129,7 @@ var  fname,
        qvws          : byte;
        s,qvref,st    : string;
        z             : ^za;
-       qvw           : array[1..300] of record
+       qvw           : array[1..300] of packed record
                                           y,x,l : byte;
                                           nn    : smallword;
                                         end;
@@ -410,6 +410,9 @@ end.
 
 {
   $Log$
+  Revision 1.15  2000/10/10 05:18:17  mk
+  - Virtual Pascal Bugfixes (packed record)
+
   Revision 1.14  2000/07/14 11:58:53  ma
   - Kosmetik: Kein clrscr etc.
 

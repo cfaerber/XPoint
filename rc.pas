@@ -22,7 +22,7 @@ const open   : boolean = false;
 
       flPreload = 1;
 
-type  rblock = record
+type  rblock = packed record
                  anzahl   : smallword;    { Anzahl Strings in diesem Block  }
                  fileadr  : longint;      { Startadresse in RES-Datei       }
                  contsize : smallword;    { Gr”áe des Inhalts (Texte)       }
@@ -30,7 +30,7 @@ type  rblock = record
                  flags    : smallword;    { 1 = preload                     }
                  dummy    : longint;
                end;
-      restype= record
+      restype= packed record
                  nummer : smallword; { Bit 15 = aufgeteilte Resource   }
                  collect: smallword; { die folgenden n Strings geh”ren }
                end;                  { zu dieser Resource              }
@@ -329,6 +329,9 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.16  2000/10/10 05:18:17  mk
+        - Virtual Pascal Bugfixes (packed record)
+
         Revision 1.15  2000/09/04 12:09:24  hd
         - Fix: Inkonsistente Dateischreibung
 
