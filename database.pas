@@ -100,7 +100,9 @@ procedure dbReadN (dbp:DB; feldnr:integer; var data);
 procedure dbWrite (dbp:DB; const feld:dbFeldStr; var data);
 procedure dbWriteN(dbp:DB; feldnr:integer; var data);
 function  dbReadStr(dbp:DB; const feld:dbFeldStr):string;
+function  dbReadStrN(dbp:DB; feldnr:integer):string;
 function  dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
+function  dbReadIntN(dbp:DB; feldnr:integer):longint;
 
 function  dbXsize  (dbp:DB; const feld:dbFeldStr):longint;
 procedure dbReadX  (dbp:DB; const feld:dbFeldStr; var size:integer; var data);
@@ -1229,6 +1231,13 @@ begin
   dbReadStr:=s;
 end;
 
+function dbReadStrN(dbp:DB; feldnr: Integer):string;
+var s: shortstring;
+begin
+  dbReadN(dbp,feldnr,s);
+  dbReadStrN:=s;
+end;
+
 
 function dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
 var l : longint;
@@ -1238,6 +1247,12 @@ begin
   dbReadInt:=l;
 end;
 
+function dbReadIntN(dbp:DB; Feldnr: Integer):longint;
+var l : longint;
+begin
+  l:=0;
+  dbReadN(dbp,feldnr,result);   { 1/2/4 Bytes }
+end;
 
 { 'data' in Feld mit Nr. 'feldnr' schreiben }
 
@@ -1265,7 +1280,7 @@ procedure dbWriteNStr(dbp:DB; feldnr:integer; const s: string);
 var
   s0: shortstring;
 begin
-  if length(s)>255 then s0:= copy(s,1,255)
+  if length(s)>255 then SetLength(s0, 255)
   else s0:= s;
   dbWriteN(dbp,feldnr,s0);
 end;
@@ -1619,6 +1634,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2001/08/12 11:29:13  mk
+  - added dbReadStrN and dbReadIntN
+
   Revision 1.46  2001/06/10 18:57:53  ma
   - fixed: Empty strings were not read correctly
 
