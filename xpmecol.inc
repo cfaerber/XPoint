@@ -337,7 +337,7 @@ var p,n,p1,i : byte;
 begin
   spenter:=(firstchar(buttons)='*');
   if spenter then delfirst(buttons);
-  inc(byte(buttons[0]));
+  SetLength(buttons,Length(buttons)); { inc(byte(buttons[0])); }
   buttons[length(buttons)]:=',';
   n:=0;
   repeat
@@ -403,6 +403,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.9  2000/09/09 15:41:28  hd
+  - Fix: GetScreen* -> SysGetScreen*
+
   Revision 1.8  2000/07/20 16:50:00  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

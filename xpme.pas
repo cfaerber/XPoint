@@ -22,7 +22,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils, typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
+  sysutils, typeform,fileio,keys,maus2,inout,resource,xpglobal;
 
 const menus      = 99;
       maxhidden  = 500;
@@ -113,7 +113,7 @@ begin
   error('Es wird CrossPoint Version 3.11 oder h”her ben”tigt!');
   for i:=0 to menus do begin
     s:=getres2(10,i);   { "[fehlt:...]" kann hier ignoriert werden. }
-    menu[i]^:=s;
+    menu[i]:=s;
     end;
   specials:=getres2(10,200);
   CloseResource;
@@ -155,10 +155,10 @@ begin
   setbackintensity;
   attrtxt(col.colmenu[0]);
   {$IFDEF NCRT } { <- Evntl. neuer Token: VarScrSize ? }
-  wrt2(sp(GetScreenLines));
+  wrt2(sp(SysGetScreenLines));
   attrtxt(col.colback);
-  for i:=1 to GetScreenLines do
-    wrt(1,i,dup(GetScreenCols, #177));
+  for i:=1 to SysGetScreenLines do
+    wrt(1,i,dup(SysGetScreenCols, #177));
   {$ELSE }
   wrt2(sp(80));
   attrtxt(col.colback);
@@ -168,10 +168,10 @@ begin
   attrtxt(col.colutility);
   forcecolor:=true;
   {$IFDEF NCRT }
-  x1:= GetScreenCols-42;
-  x2:= GetScreenCols-2;
-  y1:= GetScreenLines-7;
-  y2:= GetScreenLines-2;
+  x1:= SysGetScreenCols-42;
+  x2:= SysGetScreenCols-2;
+  y1:= SysGetScreenLines-7;
+  y2:= SysGetScreenLines-2;
   rahmen1(x1,x2-1,y1,y2-1,'');
   wrt(x1+2,y1,' CrossPoint-Meneditor ');
   clwin(x1+1,x2-2,y1+1,y2-2);
@@ -318,7 +318,7 @@ procedure splitmenu(nr:byte; ma:map; var n:integer);
 var s       : string;
     p,p2,p3 : byte;
 begin
-  s:=menu[nr]^;
+  s:=menu[nr];
   n:=0;
   repeat
     p:=pos(',',s);
@@ -750,6 +750,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/09/09 15:41:28  hd
+  - Fix: GetScreen* -> SysGetScreen*
+
   Revision 1.25  2000/09/08 16:12:06  hd
   - Init-Reihenfolge
 
