@@ -199,7 +199,7 @@ var   fb     : string;
       sr     : tsearchrec;
       s: String;
       rc     : integer;
-      p,i,ma,
+      CposY,i,ma,
       add,x  : integer;
       disp   : boolean;
       t      : taste;
@@ -281,11 +281,11 @@ var   fb     : string;
       xx,yy : byte;
   begin
     if invers then normtxt else invtxt;
-    dispfile(p);
+    dispfile(CposY);
     xx:=wherex; yy:=wherey;   { fÅr Cursor-Anzeige }
     iit;
     if fsb_info then begin
-      s:=f[add+p];
+      s:=f[add+CposY];
       gotoxy(3,y+height-1);
       moff;
 {$IFNDEF UnixFS }
@@ -322,11 +322,11 @@ var   fb     : string;
   procedure binseek(ab:char);
   var i : integer;
   begin
-    i:=p+add+1;
+    i:=CposY+add+1;
     while (i<=f.Count) and (UpCase(f[i][1])<>ab) do inc(i);
     if i>f.Count then begin
       i:=1;
-      while (i<=p+add) and (UpCase(f[i][1])<>ab) do inc(i);
+      while (i<=CposY+add) and (UpCase(f[i][1])<>ab) do inc(i);
       end;
     if (f[i] <> '') and (UpCase(f[i][1])=ab) then begin
       if not vert then begin
@@ -337,7 +337,7 @@ var   fb     : string;
         while i-add<1 do add:=max(0,add-9);
         while i-add>36 do inc(add,9);
         end;
-      p:=i-add;
+      CposY:=i-add;
       end;
   end;
 
@@ -350,9 +350,9 @@ var   fb     : string;
     if inside then begin
       if (t=mausleft) or (t=mauslmoved) then
         if vert then
-          p:=((xx-11)div 15)*9+1 + (yy-y)
+          CposY:=((xx-11)div 15)*9+1 + (yy-y)
         else
-          p:=(xx-11)div 15+1 + ((yy-y-1)*4);
+          CposY:=(xx-11)div 15+1 + ((yy-y-1)*4);
       if t=mausldouble then
         t:=keycr;
       end
@@ -361,7 +361,7 @@ var   fb     : string;
         t:=keycr
       else if t=mausunright then
         t:=keyesc;
-     p:=min(p,f.count);
+     CposY:=min(CposY,f.count);
    end;
 
 begin
@@ -375,14 +375,14 @@ begin
     end
   else begin
     pathn:=0;
-    p:=pos(';',pathx);
+    CposY:=pos(';',pathx);
     path := ExtractFilePath(path);
     dpath:=pathx;        { dpath wird hier als Temp genutzt! }
-    while p>0 do begin
+    while CposY>0 do begin
       inc(pathn);
-      paths[pathn]:=path+LeftStr(dpath,p-1);
-      delete(dpath,1,p);
-      p:=pos(';',dpath);
+      paths[pathn]:=path+LeftStr(dpath,CposY-1);
+      delete(dpath,1,CposY);
+      CposY:=pos(';',dpath);
       end;
     end;
 
@@ -480,11 +480,11 @@ begin
             f[i]:=f[i]+DirSepa;
         end;
 
-      p:=0; add:=0;
-      while (p<f.count) and (FileUpperCase(f[p])<>vorgabe) do inc(p);
-      if p=f.count then p:=0
-      else add:=max(p-36,add);
-      p:=p-add;
+      CposY:=0; add:=0;
+      while (CposY<f.count) and (FileUpperCase(f[CposY])<>vorgabe) do inc(CposY);
+      if CposY=f.count then CposY:=0
+      else add:=max(CposY-36,add);
+      CposY:=CposY-add;
 
       disp:=true;
       repeat
@@ -500,7 +500,7 @@ begin
         else
           get(t,curoff);
         iit;
-        dispfile(p);
+        dispfile(CposY);
         ma:=add;
         if (t>=mausfirstkey) and (t<=mauslastkey) then
           maus_bearbeiten(t);
@@ -508,157 +508,159 @@ begin
         begin
           if t=keyup then
           begin
-            if p>=4 then
-              dec(p,4)
+            if CposY>=4 then
+              dec(CposY,4)
             else
               if add>0 then dec(add,4);
           end;
           if t=keydown then
           begin
-            if p+add<f.count-4 then
-              if p<31 then
-                inc(p,4)
+            if CposY+add<f.count-4 then
+              if CposY<31 then
+                inc(CposY,4)
               else
                 inc(add,4);
             end;
           if t=keyleft then begin
-            if p>0 then
-              dec(p,1)
+            if CposY>0 then
+              dec(CposY,1)
             else
               if add>0 then
               begin
-                dec(add,4); p:=3;
+                dec(add,4); CposY:=3;
               end;
             end;
           if t=keyrght then begin
-            if p+add<f.count-1 then
-              if p<35 then inc(p,1)
+            if CposY+add<f.count-1 then
+              if CposY<35 then inc(CposY,1)
               else
               begin
-                inc(add,4); p:=32;
+                inc(add,4); CposY:=32;
               end;
             end;
           if t=keyhome then
           begin
-            p:=0; add:=0;
+            CposY:=0; add:=0;
           end;
           if t=keyend then
           begin
             if f.count-add<=36 then
-              p:=f.count-add-1
+              CposY:=f.count-add-1
             else begin
-              p:=f.count-1; add:=0;
-              while p>=36 do
+              CposY:=f.count-1; add:=0;
+              while CposY>=36 do
               begin
-                dec(p,4); inc(add,4);
+                dec(CposY,4); inc(add,4);
               end;
             end;
           end;
           if t=keypgup then begin
             if add>=36 then dec(add,36)
             else begin
-              add:=0; p:=p mod 4;
+              add:=0; CposY:=CposY mod 4;
               end;
             end;
           if t=keypgdn then
           begin
-            if f.count-add>=36 then
+            if f.count-1-add>=36 then
             begin
               inc(add,36);
-              if p+add>f.count-1 then
+              if CposY+add>f.count-1 then
                 if f.count-add>=4 then
-                  repeat dec(p,4) until p+add<f.count
+                  repeat dec(CposY,4) until CposY+add < f.count
                 else
-                  repeat dec(p) until p+add<f.count;
+                begin
+                  repeat dec(CposY) until CposY+add < f.count;
+                  end
               end
             else
-              while p+add<f.count-4 do inc(p,4);
+              while CposY+add<f.count-4 do inc(CposY,4);
             end;
           end
         else begin    { vertikal }
           if t=keyup then begin
-            if p>1 then dec(p)
+            if CposY>1 then dec(CposY)
             else if add>0 then dec(add);
             end;
           if t=keydown then begin
-            if p+add<f.count then
-              if p<36 then inc(p)
+            if CposY+add<f.count then
+              if CposY<36 then inc(CposY)
               else inc(add);
             end;
           if t=keyleft then begin
-            if p>9 then dec(p,9)
+            if CposY>9 then dec(CposY,9)
             else
               if add>0 then
                 add:=max(0,add-9);
             end;
           if t=keyrght then begin
-            if p+add<f.count then
-              if p<28 then p:=iif(p+9<=f.count-add,p+9,p)
+            if CposY+add<f.count then
+              if CposY<28 then CposY:=iif(CposY+9<=f.count-add,CposY+9,CposY)
               else
-                if add+9+p<=f.count then
+                if add+9+CposY<=f.count then
                   inc(add,9);
             end;
           if t=keyhome then begin
-            p:=1; add:=0;
+            CposY:=1; add:=0;
             end;
           if t=keyend then begin
             if f.count<=36 then begin
-              add:=0; p:=f.count;
+              add:=0; CposY:=f.count;
               end
             else begin
-              add:=f.count-36; p:=36;
+              add:=f.count-36; CposY:=36;
               end;
             end;
           if t=keypgup then begin
-            dec(p,35);
-            if p<1 then begin
-              add:=max(0,add-(1-p));
-              p:=1;
+            dec(CposY,35);
+            if CposY<1 then begin
+              add:=max(0,add-(1-CposY));
+              CposY:=1;
               end;
             end;
           if t=keypgdn then begin
-            if f.count-add<=36 then p:=f.count-add
+            if f.count-add<=36 then CposY:=f.count-add
             else begin
-              inc(p,35);
-              if p>36 then begin
-                add:=min(f.count-36,add+(p-36));
-                p:=36;
+              inc(CposY,35);
+              if CposY>36 then begin
+                add:=min(f.count-36,add+(CposY-36));
+                CposY:=36;
                 end;
               end;
             end;
           end;
         if (t[1]>' ') then binseek(UpCase(t[1]));
         if add<>ma then disp:=true;
-        if (t=keycr) and (f[p+add][1]='[') then
-          t:=chr(ord(f[p+add][2])-64);
+        if (t=keycr) and (f[CposY+add][1]='[') then
+          t:=chr(ord(f[CposY+add][2])-64);
         chgdrive:=xdir and (t>=^A) and (t<=^Z) and (t<>keycr) and
                   (cpos(chr(ord(t[1])+64),drives)>0);
         if chgdrive then begin    { Balken auf [LW:] positionieren }
           i:=1;
           while (i<=f.count) and (f[i]<>'['+chr(ord(t[1])+64)+':]') do inc(i);
-          if (i<=f.count) and (i<>p+add) then begin
+          if (i<=f.count) and (i<>CposY+add) then begin
             while i-add<1 do dec(add,iif(vert,9,4));
             while i-add>36 do inc(add,iif(vert,9,4));
-            p:=i-add;
+            CposY:=i-add;
             display;
             disp_p;
             end;
           end;
       until (t=keyesc) or (t=keycr) or chgdrive;
       end;
-    if ((f.count>0) and (t=keycr) and (RightStr(f[p+add],1)=DirSepa)) or chgdrive then
+    if ((f.count>0) and (t=keycr) and (RightStr(f[CposY+add],1)=DirSepa)) or chgdrive then
     begin
       for i:=1 to pathn do begin
         fsplit(paths[i],dir,name,ext);
         if t=keycr then                   { Pfadwechsel }
-          if f[p+add]='..'+DirSepa then begin
+          if f[CposY+add]='..'+DirSepa then begin
             delete(dir,length(dir),1);
             while (dir<>'') and (dir[length(dir)]<>DirSepa) do
               delete(dir,length(dir),1);
             if dir<>'' then path:=dir+name+ext;
             end
           else
-            path:=dir+f[p+add]+name+ext
+            path:=dir+f[CposY+add]+name+ext
         else
         begin                        { Laufwerkswechsel }
           GetDir(Ord(t[1]), Path);
@@ -675,7 +677,7 @@ begin
     normtxt;
     wpop;
     end;
-  if t=keycr then fb:=fname(p+add)
+  if t=keycr then fb:=fname(CposY+add)
   else fb:='';
   F.Free;
   fsbox:=fb;
@@ -1091,6 +1093,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/12/28 08:14:17  mo
+  -fsbox, array bounds error bei page down behoben
+
   Revision 1.33  2000/12/27 21:02:49  mk
   MO:- use FistChar in FSBox
 
