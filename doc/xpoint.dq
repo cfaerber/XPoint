@@ -214,26 +214,7 @@ auch heute noch zahlreiche engagierte Anh„nger.
 
 CrossPoint wurde bis 1996 auf kleiner Flamme weiterentwickelt. Danach habe
 ich die Entwicklung aus pers”nlichen und beruflichen Grnden und wegen der
-stark nachlassenden Nachfrage eingestellt. Die 1996 begonnene Arbeit an einem
-TCP/IP-Modul und an der Version 3.2 wurde leider nicht mehr fertiggestellt.
-
-Die vorliegende Version 3.12 ist voraussichtlich das letzte von mir freigegebene
-Programmupdate. Es enth„lt keine neuen Funktionen, sondern behebt nur ein
-Jahr-2000- und ein Jahr-2028-Problem und faát alle in den vergangenen drei
-Jahren erschienenen Patches zusammen. In der Dokumentation wurden nur Bezugsquellen,
-Supportadressen und Versionsgeschichte aktualisiert; die technischen Informationen
-zu den einzelnen Mailboxnetzen sind also u.U. nicht mehr ganz aktuell.
-
-In den n„chsten Wochen werde ich die Quelltexte von XP 3.2 Beta ver”ffentlichen,
-sodaá zumindest die M”glichkeit besteht, das Programm an die aktuellen und zuknftigen
-technischen Ver„nderungen in der Netzwelt anzupassen.
-
-Ich danke den CrossPoint-Anwendern dafr, daá sie viele Jahre lang ein einfaches
-Pointprogramm sehr glcklich gemacht haben, und fr die viele Kohle. ;-)
-Ich danke allen Mailboxbetreibern, Betatestern, Usern und Toolprogrammierern,
-die zum Erfolg von CrossPoint beigetragen haben, und ganz besonders Max Raabe
-und Jochen Herz fr ihre langj„hrige, zuverl„ssige Untersttzung.
-
+stark nachlassenden Nachfrage eingestellt.
 
 Peter Mandrella, Dezember 1999
 
@@ -243,27 +224,31 @@ Mit viel Energie und Einsatz haben wir es geschafft, den komplizierten Quellcode
 von CrossPoint zu verstehen und vor allem zu bearbeiten. Unser Ziel war eine
 stabile Version, die grunds„tzlich nur Fehlerbereinigungen und Anpassungen an
 die aktuelle Netzwelt enthalten sollte (natrlich ist auch das eine oder andere
-neue Feature enthalten ;). Portierungen auf andere Systeme sind geplant, 
-doch diese haben eindeutig eine niedrigere Priorit„t, da wir eben lieber mit etwas 
-Stabilem arbeiten als mit einem funktionsberfrachteten Monstrum. Damit treffen 
-wir wohl die Meinung der meisten Anwender. In der Hoffnung, daá wir gute Arbeit 
+neue Feature mit reingerutscht ;). Portierungen auf andere Systeme sind geplant,
+doch diese haben eindeutig eine niedrigere Priorit„t, da wir eben lieber mit etwas
+Stabilem arbeiten als mit einem funktionsberfrachteten Monstrum. Damit treffen
+wir wohl die Meinung der meisten Anwender. In der Hoffnung, daá wir gute Arbeit
 geleistet haben (und es war Arbeit), ”ffnen wir jetzt den Vorhang.
 
-Das OpenXP-Team
-
-Gut, und diese Doku habe ich, Christian Faulhammer, ganz alleine gemacht,
-und bin Teamleiter des Doku-Teams.
-
-Christian Faulhammer im M„rz 2000
+Das OpenXP-Team im M„rz 2000
 <<|
 
 
 
-Vorwort zur Version 3.11
+Vorwort zur Version 3.2
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-Eigentlich k”nnen Programmierer keine Handbcher schreiben. Ich habe es
-trotzdem getan und hoffe, daá Sie mit dem Ergebnis zufrieden sind.
+"Eigentlich k”nnen Programmierer keine Handbcher schreiben. Ich habe es
+trotzdem getan und hoffe, daá Sie mit dem Ergebnis zufrieden sind."
+>>|
+Diesen Satz schrieb Peter Mandrella, konnte aber seine eigenen Worte mit
+einem hervorragenden Text widerlegen. Obwohl umfangreich, l„át sich das
+CrossPoint-Handbuch sehr leicht lesen und auch verstehen; ein Musterbeispiel
+fr jeden Programmierer eben. Mit der Weiterentwicklung durch das OpenXP-Team
+geht die Dokumentation zum ersten Mal in die H„nde eines Nicht-Programmierers,
+was vielleicht sogar besser ist. In der Hoffnung die exellente Arbeit 
+weiterfhren zu k”nnen.
+<<|
 
 Das gr”áte Problem beim Schreiben von DFš-Handbchen ist, daá die DFš sich
 schneller weiterentwickelt, als die Handbuchschreiber mit den Korrekturen
@@ -317,7 +302,7 @@ entmutigen! Es ist alles viel einfacher, als Sie denken.
 m”glichst genau durch, angefangen bei Kapitel 1.2 (Teil IV bis VI k”nnen Sie
 zun„chst einmal weglassen). Beachten Sie auch Anhang F, in dem Grundbegriffe
 zum Thema "Modem" erl„utert werden. Falls Sie berhaupt nicht mehr weiterkommen,
-fragen Sie einfach mal beim Betreiber oder einen Benutzer der Mailbox nach, mit
+fragen Sie einfach mal beim Betreiber oder einem Benutzer der Mailbox nach, mit
 der Sie CrossPoint einsetzen m”chten - in vielen Mailboxen gibt es jemanden,
 der neuen Teilnehmern bei der Einrichtung der Software behilflich ist.
 
@@ -331,6 +316,9 @@ finden Sie in LIZENZ.DOC.
 Viel Erfolg!
 
 Peter Mandrella, Januar '92 - M„rz '96
+>>|
+Das OpenXP-Team im M„rz 2000
+<<|
 
 
 
@@ -371,10 +359,10 @@ Die Namen der Supportbretter sind:
 im FidoNet:    CROSSPOINT.GER (fr CrossPoint selbst)
                CROSSTOOLS.GER (fr Zusatzprogramme)
 >>|
-               CROSSPOINT.EXPERT.GER (fuer Fortgeschrittene)
+               CROSSPOINT.EXPERT.GER (fr Fortgeschrittene)
 im MausNet:    maus.tausch.crosspoint
+im Usenet:     de.comm.software.client.crosspoint
 <<|
-im Usenet:     de.comm.software.crosspoint
 
 Falls das betreffende Brett nicht bei Ihrem Server verfgbar ist, fragen Sie
 bitte Ihren Sysop - er kann das Brett fr Sie bestellen.
@@ -395,7 +383,7 @@ Das OpenXP-Team besteht aus:
 
 Markus K„mmerer (Projekt-Koordination und Programmierung), Flups Baumann (Programmierung),
 Robert B”ck (Programmierung), Mathias Helm (Programmierung), Kai Henningsen, Oliver Hertel (Programmierung), 
-Martin Huckenbeck (Programmierung und Dokumentation), Torsten Jaehnigen (Programmierung), Michael Koppel,
+Martin Huckenbeck (Programmierung), Torsten Jaehnigen (Programmierung), Michael Koppel,
 Matthias Leonhardt (Programmierung), Heiko Schoenfeld (Programmierung), Martin Wodrich (Programmierung), 
 Martin Foster (englische Uebersetzung), Jochen Gehring (Beratung), Sebastian Mannke (Wunschliste), 
 Maik Mueller (Mailingliste), Helmut Hullen (Bugliste), Christian Faulhammer (Dokumentation)
@@ -425,7 +413,7 @@ und an die Zeitschrift c't dafr, daá es sie gibt.
 Das Team dankt:
 Natrlich Peter Mandrella fr die Freigabe des Quellcodes und fr das beste
 Pointprogramm der Welt. ;)
-Auáerdem Stefan Vinke, Ulf Hinze, Mark Peter Wege.
+Auáerdem Stefan Vinke, Ulf Hinze, Mark Peter Wege, Peter Arndt.
 
 Wir danken den Entwicklern vieler anderer Programme (vor allem Betriebssysteme), 
 die uns gezeigt haben, welche Fehler wir nicht imitieren sollten.
@@ -885,7 +873,7 @@ Der Postmaster ist der Systemverwalter fr private Nachrichten, der Newsmaster
 ist fr ”ffentliche Nachrichten zust„ndig. Gelegentlich wird auch "Postmaster"
 als Sammelbegriff fr Beides verwendet.
 
-Die Bezeichnungen in den brigen Netzen stimmen im Wesentlichen mit dem Z-Netz
+Die Bezeichnungen in den brigen Netzen stimmen im wesentlichen mit dem Z-Netz
 berein.
 
 
@@ -900,7 +888,7 @@ II   CrossPoint - Konzept und Grundlagen
 2.1  Das Datenbank-Konzept
 ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
 
-Das Kernstck von CrossPoint bildet eine speziell fr dieses Programm entwickeltes
+Das Kernstck von CrossPoint bildet ein speziell fr dieses Programm entwickeltes
 Datenbank-Modul. Es verwaltet mehrere, nach bestimmten Kriterien sortierte
 ("indizierte") und miteinander verbundene Dateien, in denen alle Daten abgelegt
 werden, die w„hrend des Pointbetriebs in gr”áeren Mengen anfallen k”nnen. Die
@@ -1049,7 +1037,7 @@ Ein typischer XPoint-Arbeitsbildschirm sieht so aus:
 
 In der ersten Zeile befinden sich alle Menpunkte des Hauptmens und am rechten
 Rand die aktuelle Uhrzeit. In der zweiten Zeile befinden sich diverse
-Programmfunktionen, die unmittelbar durch Drcken einer Buchstaben-Tasten
+Programmfunktionen, die unmittelbar durch Drcken einer Buchstaben-Taste
 ausgefhrt werden k”nnen. Am rechten Rand steht die Taste, mit der das aktuelle
 Anzeigefenster verlassen werden kann.
 
@@ -1062,7 +1050,7 @@ Funktionstasten.
 ş Die drei Hauptfenster von XPoint
 
 .. sind das Brettfenster, das Userfenster und das Nachrichtenfenster. Der
-Zusammenhang wird am Besten in einer kleinen Grafik deutlich:
+Zusammenhang wird am besten in einer kleinen Grafik deutlich:
 
 
        ÚÄÄÄÄÄÄÄ¿     ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿     ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
@@ -1272,7 +1260,7 @@ zun„chst folgende Informationen:
 Diese Informationen erhalten Sie von Ihrem SYSOP.
 
 Rufen Sie nun mit /Edit/Boxen die Boxenliste auf. Die Liste enth„lt zun„chst
-nur einen Eintrag: Den Box- und Usernamen und den Netztyp, den Sie beim ersten
+nur einen Eintrag: den Box- und Usernamen und den Netztyp, den Sie beim ersten
 Programmstart eingegeben haben. Sollten Sie sich dabei vertippt haben, dann
 ist jetzt der richtige Zeitpunkt, um den Fehler zu korrigieren. Verwenden Sie
 dazu Edit/Name bzw. Ne(t)ztyp.
@@ -1421,7 +1409,7 @@ daá sie beim n„chsten Anrufversuch berschrieben werden. Sie k”nnen die
 Nachrichten von Hand entpacken und ber /XPoint/Import/... einlesen.
 
 Eine Hilfe bei der Diagnose von Netzanrufproblemen, die mit dem Packer oder
-dem šbertragungsprotokoll zusammenh„nden, sind die Schalter "Paramterzeile
+dem šbertragungsprotokoll zusammenh„ngen, sind die Schalter "Paramterzeile
 anzeigen" und "auf Tastendruck warten" unter /Config/Extern/Shell. Der erste
 Schalter bewirkt, daá Sie genau sehen k”nnen, wie Packer und Protokol aufgerufen
 werden. Der zweite Schalter hilft dabei, Fehlermeldungen dieser Programme
@@ -1653,7 +1641,7 @@ Die Userverwaltung erfolgt „hnlich wie die oben beschriebene Brettverwaltung;
 allerdings k”nnen die User keiner Brettgruppe zugeordnet werden.
 
 Das Userfenster kennt zwei Anzeigearten: Die Komplettanzeige und die Adreábuchanzeige.
-Zwischen Beiden wird mit "A" umgeschaltet. Im Adreábuch-Modus werden nur
+Zwischen beiden wird mit "A" umgeschaltet. Im Adreábuch-Modus werden nur
 diejenigen User angezeigt, an die Sie einmal eine Mail geschickt haben, oder die
 Sie von Hand mit "R" ins Adreábuch aufgenommen haben. Alle im Adreábuch enthaltenen
 User sind durch ein vorangestelltes "û" gekennzeichnet.
@@ -2002,7 +1990,7 @@ privaten und ”ffentlichen und zwischen zitierten und nicht zitierten Nachrichten
 Es gibt prinzipiell zwei Arten von Schablonen: Kopfschablonen und Signaturen.
 Kopfschablonen werden am Anfang von Nachrichten eingefgt, Signaturen am Ende.
 Alle Schablonen k”nnen Makros enthalten, die durch bestimmte Texte ersetzt
-werden. So wird z.B. das Makro $USER immer durch den Name des angeschriebenen
+werden. So wird z.B. das Makro $USER immer durch den Namen des angeschriebenen
 Users ersetzt, und mit dem Makro $PSEUDO kann fr jeden User ein eigenes
 Pseudonym eingesetzt werden; dazu ist im Kommentarfeld des User-Editierfensters
 "P:" gefolgt vom gewnschten Pseudonym einzutragen.
@@ -2146,7 +2134,7 @@ Signaturdatei mit "-*-" beginnt, und w„hlt dann nach dem Zufallsprinzip eine
 Signatur aus.
 
 Falls Ihnen die Funktionen des eingebauten Signaturwechslers nicht ausreichen,
-k”nnen Sie auch einen der zahlreichen externen Signaturtools verwenden, die
+k”nnen Sie auch eines der zahlreichen externen Signaturtools verwenden, die
 >>|
 Sie z.B. im XP-Tool-Netz finden.
 <<|
@@ -2300,7 +2288,7 @@ daá die Verkettung m”glichst vollst„ndig ist, daá also keine Lcken im
 Im MausNet ist eine durchg„ngige, optimale Bezugsverkettung vorhanden. Im
 Usenet und bei ZCONNECT sind fast alle Nachrichten verkettet, im FidoNet
 ca. 80-90% der Nachrichten, Tendenz steigend. Im Seven und im MagicNET drfte
-inzwischen auch eine passeble Verkettung vorhanden sein. Bei QWK gibt es nur
+inzwischen auch eine passable Verkettung vorhanden sein. Bei QWK gibt es nur
 eine lckenhafte Verkettung, und in QuickMail- und GS-Mailbox-Netzen und bei
 Z-Netz (alt) gar keine.
 
@@ -2866,7 +2854,7 @@ Dieses Kapitel setzt die Kenntnis des CrossPoint-Nachrichtenkopie/Verteiler-Mech
 voraus. Falls Sie damit noch nicht vertraut sind, lesen Sie zun„chst bitte
 Kapitel 5.11.
 
-In herk”mmlichen Netze hat jede Nachricht genau einen Empf„nger. Geh”rt eine
+In herk”mmlichen Netzen hat jede Nachricht genau einen Empf„nger. Geh”rt eine
 ”ffentliche Nachricht zu mehreren Themenbereichen, oder hat eine PM mehrere
 Empf„nger, so bleibt Ihnen nichts anders brig, als die Nachricht mehrfach
 zu versenden. Dies ist zwar mit CrossPoint recht einfach, aber durch die
@@ -3103,7 +3091,7 @@ automatisch decodiert.
 Handelt es sich bei der archivierten Nachricht nicht um eine PM, so wird
 sie als Kopie im User-Brett abgelegt. Dadurch k”nnen Sie im gleichen Brett
 neben Ihren Antworten auf ”ffentliche Nachrichten eines Users auch die
-Originalnachrichten ablegen
+Originalnachrichten ablegen.
 
 Ein kleiner technischer Hinweis am Rande: Beim Archivieren wird die MessageID
 (Nachrichtenkennung) um ein Zeichen nach rechts rotiert. Dadurch wird
@@ -3188,7 +3176,7 @@ sp„ter wird dann - vorausgesetzt, es ist Montag oder Donnerstag - die Datenbank
 reorganisiert. Anschlieáend wird eine externe Batchdatei zum Defragmentieren
 der Festplatte gestartet. Danach macht CrossPoint eine Pause bis 22:00, um das
 Ganze wieder von vorne zu beginnen, es sei denn, Sie brechen den Vorgang mit
-<Esc> ab. Tun sie das nicht, dann f„hrt CrossPoint bis zum 9. Dezember mit der
+<Esc> ab. Tun Sie das nicht, dann f„hrt CrossPoint bis zum 9. Dezember mit der
 Netcallerei fort und beendet sich am folgenden Tag um 3:00 von alleine.
 
 Sie sehen, die Netcall-Automatik ist nicht ganz einfach, aber dafr sehr
@@ -3785,7 +3773,7 @@ verschicken lassen, wie Nachrichten zu einem bestimmten Datum automatisch
 versandt, und wie vorgefertigte Texte bequem wiederholt verschickt werden k”nnen.
 Typische Anwendungen sind das regelm„áige, automatische Bestellen von
 MAPS-Brettlisten und Fileserver-Dateilisten, oder das Versenden von FAQs
-(Frequently Asked (oder Answered?) Questions - Antworten auf h„ufig gestellte
+(frequently asked (oder answered?) questions - Antworten auf h„ufig gestellte
 Fragen) in bestimmten Brettern.
 
 Die Verwaltung der automatisch zu versendenden Nachrichten (kurz: AutoVersand-Nachrichten)
@@ -3915,11 +3903,8 @@ bin„r:      N
 Wochentage: Sa
 
 >>|
-Fr Fido-Boxen gilt:
-Betreff:    FILES
-Empf„nger:  File Request@2:2452/125
-bin„r:      N
-Wochentage: Sa
+Fr automatisierte Fido-Requests werfen Sie bitte einen Blick in Kapitel 3.3
+von FIDO.TXT.
 <<|
 
 
@@ -8076,10 +8061,9 @@ o  Benennen Sie die betreffende Ablagedatei (MPUFFER.x) um.
 
 o  Fhren Sie eine Reorganisation durch. XP l”scht dabei alle Nach-
    richten, die sich in der fehlerhaften Ablage befanden.
-::? XpCheck
-o  šberprfen Sie die umbenannte Datei mit dem Programm XPCHECK auf
-   Fehler. Falls die Datei fehlerhaft ist, reparieren Sie sie mit
-   dem Programm ZAP (MPUFFER.0 bis 9) bzw. ZPR (MPUFFER.10 bis 19).
+
+o  šberprfen und reparieren Sie die Dateien mit dem Programm ZAP 
+   (MPUFFER.0 bis 9) bzw. ZPR (MPUFFER.10 bis 19), s. ZPR.TXT.
 
 o  Lesen Sie die Datei mit /XPoint/Import/Puffer und der Option
    "Empfangsdatum = Erstellungsdatum" wieder ein.
@@ -8093,14 +8077,13 @@ Gehen Sie dazu wie folgt vor:
 
 o  Legen Sie wenn m”glich ein komplettes Backup des XP-Verzeichnis-
    ses an - zur Sicherheit.
-::?
-o  šberprfen Sie die Dateien MPUFFER.* mit dem Programm XPCHECK auf
+
+o  šberprfen Sie die Dateien MPUFFER.* mit dem Programm ZPR auf
    Fehler.
 
 o  Reparieren Sie evtl. fehlerhafte Puffer - soweit m”glich - mit
    dem Programm ZAP (MPUFFER.0 bis 9) bzw. ZPR (MPUFFER.10 bis 19)
-::?
-   Von XPCHECK als fehlerhaft befundene Puffer k”nnen sonst nicht
+   Von ZPR als fehlerhaft befundene Puffer k”nnen sonst nicht
    mehr eingelesen werden!
 
 o  L”schen Sie die Nachrichten-Datenbank:  DEL MSGS.*
@@ -8861,6 +8844,9 @@ o  diverse Kleinigkeiten korrigiert
        /w0 keine Freigabe
        /w bzw. /W1 Verhalten wie bei automatischer Erkennung
        /w2 Freigabe wie in Versionen vor 3.2
+*  text/html wird mit ISO-Zeichensatz exportiert
+!  ein eventueller Filter wurde beim Sysoppoll an einer ZConnect-
+   Box nicht ausgefhrt
 <<|
 
 Die Versionsgeschichte zum Fido- und UUCP-Modul befindet sich in FIDO.TXT

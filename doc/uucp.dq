@@ -487,7 +487,7 @@ jedem UUCP-System untersttzt. Die Qualit„t der einzelnen Implementationen
 ist sehr unterschiedlich. Schlechte uucicos bertragen die Daten in sehr
 kleinen Bl”cken von z.B. 64 Bytes; dies ist in etwa mit dem XModem-Protokoll
 vergleichbar. Gute Implementationen verarbeiten auch groáe Bl”cke von z.B. 1024
-Bytes und erreichen damit Geschwindigkeiten, die ungef„hr denen von ZModem
+Bytes und erreichen damit Geschwindigkeiten, die ungef„hr denen von Zmodem
 entsprechen.
 
 --8         CrossPoint untersttzt alle m”glichen UUCP-g-Blockgr”áen von 32
@@ -538,9 +538,8 @@ ausweichen mssen.
 
 >>|
 UUCP sind in der heutigen Zeit eher rar ges„t und sicher findet man solch
-::Erg„nzen
-einen Zugang nur bei den Mitgliedern des IN e.V., Infos gibt es unter http://www.in.de
-::
+einen Zugang nur bei den Mitgliedern des IN e.V., Infos gibt es unter 
+http://www.individual.net
 <<|
 
 
@@ -1991,6 +1990,6 @@ UUZ 3.11e  (Bugfix vom 22.12.96)
 *  Kurznamen jetzt auch hier benutzbar:
      Sendefenster Zusatz/PM-Antworten_An
      Edit/Boxen/RFC/UUCP/Vertreter
-+  FQDN auch bei RFC-Boxen m”glich
++  FQDN auch bei UUCP-Boxen m”glich
 <<|
 
