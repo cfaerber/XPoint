@@ -297,23 +297,25 @@ l„uft also ber einen Gateway (Schnittstelle zwischen zwei Netzen).
 
 Weitere Beispiele fr Topleveldomains sind:
         
-    .fr     Frankreich                  \
-    .dk     D„nemark                     |  L„nderkennungen
-    .fi     Finnland                    /
+    .fr     Frankreich                    \
+    .dk     D„nemark                       | L„nderkennungen
+    .fi     Finnland                      /
         
-    .com    kommerzielles Teilnetz      \
-    .edu    Bildungseinrichtungen        | vor allem in Nord-
-    .gov    Regierungs-Teilnetz          | Amerika verbreite
-    .mil    milit„risches Teilnetz       | TopLevel-Domains
-    .nato   Teilnetz der NATO            |
-    .org    Organisation                /
+    .com    kommerzielle Angebote         \  Dabei ist zu beachten, dass
+    .net    netzbezogene Angebote          | die ursprnglichen Bedeutungen
+    .org    (Non Profit) Organisationen    | heute weitestgehend verloren
+    .int    transnationale Organisationen /  gegangen sind.
+
+    .edu    US-Bildungseinrichtungen      \  vor allem in Nord-
+    .gov    US-Regierungseinrichtungen     | Amerika verbreite
+    .mil    US-Millit„r                   /  TopLevel-Domains
 
 
 Es gibt noch zwei abgewandelte Formen der Domainadressierung, bei denen die
 Adresse um den Realname (also Ihren Namen) erweitert wird:
 
-        ghostwriter@hot.zer.de (Ulrich Stamm)
         "Ulrich Stamm" <ghostwriter@hot.zer.de>
+        ghostwriter@hot.zer.de (Ulrich Stamm)
 
 Innerhalb von CrossPoint werden Sie diese Form der Adressierung aber nie
 verwenden, da XP immer Adresse und Realname trennt (einzige Ausnahme: Die
@@ -342,7 +344,8 @@ behebt, und der von CrossPoint weitgehend untersttzt wird.
 anderen Netzen auch - in verschiedenen Brettern verteilt, genannt
 Newsgroups, Gruppen oder Foren. Die Anzahl der Newsgroups ist schwer abzusch„tzen, da sie
 t„glich schwankt, und nirgendwo wirklich alle Newsgroups verfgbar sind; sie
-drfte z.Zt. in der Gr”áenordnung von ca. 30.000 Stck liegen.
+drfte z.Zt. weit mehr als 50.000 betragen.  Rund 10.000 bis 20.000
+Gruppen sind auf gut sortierten Servern vorhanden.
 <<|
 
 Die Gruppennamen sind hierarchisch angeordnet, und die einzelnen Ebenen werden
@@ -496,6 +499,10 @@ schwieriger gestalten als die Suche nach einer Z-Netz- oder Fido-Mailbox -
 Ballungsgebiet wohnen, werden Sie meist in die Regional- oder Fernzone
 ausweichen mssen.
 
+Eine andere M”glichkeit am Usenet teilzunehmen, ist der Bezug von
+Nachrichten ber NNTP (Network News Transfer Protokoll).  Fr diese
+brauchen Sie zur Zeit noch externe Programme.
+
 
 ş Postmeister und Wurzeln
 
@@ -503,7 +510,7 @@ ausweichen mssen.
 Von anderen Netzen kennen Sie m”glicherweise den Username SYSOP als Synonym
 fr den Systembetreiber. In RFC-basierten Netzen ist dieser Name „uáerst
 unblich; stattdessen erreichen Sie Ihren Ansprechpartner unter einer
-der Namen "info" (d.h. info@system.do.main), "hostmaster",
+der Namen "info" (d.h. info@system.do.main), "root" (Systemverwalter),
 "postmaster" (fr Mail) oder "news" (fr News).
 <<|
 
@@ -999,6 +1006,15 @@ Sie also bei /Edit/Boxen/Edit/Namen Ihren Usernamen, z.B. in "tandem", senden
 Sie die Anforderung an die Mailingliste und tragen Sie anschlieáend wieder
 Ihren richtigen Namen ein.
 
+Beachten Sie jedoch, dass viele Listen nur Mails von eingetragenen
+Usern weiterleiten.  In solchen Faellen mssen Sie sicherstellen,
+dass Sie als Absender den Usernamen verwenden, den Sie bei der Anmeldung
+verwandt haben.  In obigem Beispiel also "tandem". Wie dies geht k”nnen
+Sie in Abschnitt 5.7 der xpoint.txt nachlesen.
+
+Ist Ihnen dieses Vorgehen zu umst„ndlich, ist die Verwendung eines 
+externen Filters ratsam.
+
 
 
 
@@ -1340,6 +1356,9 @@ UUCP-FAQ von Ian Taylor:      exakte Beschreibung des UUCP-Protokolls;
                               wird gelegentlich in comp.mail.uucp ver”f-
                               fentlicht
 <<|
+
+Ein fast vollst„ndiges RFC-Archiv finden Sie, falls sie ber einen
+Onlinezugang zum Internet verfgen, unter http://www.faqs.org/rfcs/.
 
 
 
@@ -1723,6 +1742,9 @@ Message       schickten Nachricht
 --14CfV           Call for Vote - Aufruf zur Abstimmung, insbesondere zur
 Einrichtung einer neuen ^Newsgroup im ^Usenet
 
+Client          Ein System oder Programm das bestimmte Dienste eines ^Servers
+in Anspruch nimmt. CrossPoint ist ein Mail- und Newsclient.
+
 --14Crossposting  ”ffentliche Nachricht in mehreren ^Newsgroups, die physikalisch
 nur einmal bertragen wird
 
@@ -1745,6 +1767,9 @@ Followup      ”ffentliche Antwort auf eine ”ffentliche Nachricht
 
 --14FTP           File Transfer Protocol = Dateibertragungsprotokoll, das
 zum Dateitransfer im ^Internet eingesetzt wird
+
+GABELN       Sammelbezeichnung fr Gruppen, Areas, Bretter, 
+Echos, Listen, Newsgroups.
 
 Gateway       šbergang zwischen zwei Netzen
 
@@ -1799,14 +1824,14 @@ werden
 
 >>|
 --14PGP           Pretty Good Privacy - Programm zur Nachrichten-Verschlsselung
-mit dem "RSA-Verfahren"
+mit asymetrischen Nachrichtenschlsseln.
 <<|
 
 Posting       (Versenden einer) ”ffentliche(n) Nachricht
 
 >>|
 Postmaster    Ansprechpartner einer Usenet-Site bzw. einer Domain fr
-Adressierungsprobleme
+Adressierungsprobleme.
 <<|
 
 >>|
@@ -1831,10 +1856,16 @@ Routing       Nachrichtentransport ber bestimmte Wege
 
 Sendmail      kompliziertes Unix-Programm zum ^Routing von ^Mail
 
+Server        ein System das anderen Systemen bestimmte Dienste
+bereitstellt (z.B. Mail, News, HTTP, FTP).
+
 Site          System/Knoten/"Point" im ^Usenet
 
 --14SMTP          Simple Mail Transfer Protocol - Programm/Verfahren zur
 šbertragung von ^Mail im ^Internet
+
+Spam    Sammelbezeichnung fr Artikel die Werbung enthalten oder in
+unverh„ltnism„áig viele Gruppen geposted wurden.
 
 --14Spooling      Bereitstellen versandfertiger Nachrichten/Dateien in einem
 bestimmten Festplattenverzeichnis
@@ -1844,6 +1875,10 @@ Subject       Betreff einer Nachricht
 Summary       Zusammenfassung einer Nachricht
 
 Traffic       Nachrichtenaufkommen
+
+UBE      Unsolicited Bulk Email - Unverlangt zugeschickte Massensendung
+
+UCE      Unsolicited Commercial Email - Unverlangt zugeschickte Werbesendung
 
 Usenet        Menge aller Systeme, die ^News austauschen
 
