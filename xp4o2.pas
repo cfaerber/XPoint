@@ -549,7 +549,6 @@ var hdp    : theader;
             begin
               spnr:=ebene div 32;
               spb:=ebene and (32-1);
-              writeln(' ', spnr, '  ', spb);
               // Cardinal() prevents range check error
               xlines[spnr]:=xlines[spnr] or (Cardinal(1) shl spb);
              end;
@@ -929,6 +928,9 @@ end;
 
 {
   $Log$
+  Revision 1.49  2002/01/09 02:27:37  mk
+  - removed debug info from last checkin
+
   Revision 1.48  2002/01/07 19:44:17  mk
   - fixed range check error
 
