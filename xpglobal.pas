@@ -31,7 +31,7 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.7.7';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.7.9';  { Versionnr. - steht nur an dieser Stelle }
 {$ifdef Linux}
   betastr     = ' alpha';
 {$else}
@@ -58,7 +58,7 @@ const
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
-  x_copyright = '(c) 2000-2001';
+  x_copyright = '(c) 2000-2002';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -195,6 +195,9 @@ begin
 
 {
   $Log$
+  Revision 1.64  2002/04/20 12:43:57  mk
+  - Mainbranch with Beta 3.7.9
+
   Revision 1.63  2001/12/31 15:18:10  mk
   - changed to 3.7.7
 
