@@ -2281,6 +2281,26 @@ used for MausTausch. The standard ones are:
 @
 151
 Your Point number, as given to you by your Boss.
+
+Note: This setting may be used by FidoNet Nodes who
+wish to use their Node number instead of a Point
+number AND who are using OpenXP/16 in SysOp Mode.
+There are two methods of achieving this:
+
+<<Method 1>>: Enter "<<0>>" as the Point number.
+
+<<Method 2>>: Enter the <<Node>> part of your Node number.
+As an example, for 2:250/333, the Node part is "333".
+For this method to work, the "Use node address" box
+MUST be checked.
+
+So what's the difference?
+
+With "Method 1", your AKA will be written in the
+following manner: "Zone:Net/Node.0"
+
+With "Method 2", your AKA will be written in the
+following manner: "Zone:Net/Node"
 @
 152
 If the Server does not support 4D Addressing, you
