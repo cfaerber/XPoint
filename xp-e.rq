@@ -1197,9 +1197,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 20   Choose "Continue" if you agree to these license conditions.
 21
 26   You have been using XP unregistered for more than %s months!
-30   ~^Enter Key , ^Continue , ^Quit~
-32   ~^BESTELL.DOC , ^Enter Key~
-40   BESTELL.DOC
+30   ~^REG_ENG.TXT , ^Enter Key , ^Continue , ^Quit~
+32   ~^REG_ENG.TXT , ^Enter Key~
+40   REG_ENG.TXT
 41   %s not found!
 # same key for printing as in 22.5:
 42   D=Print    <Esc>=End~
@@ -1210,16 +1210,16 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    Registration key:~
 3    Changed your mind?
 4    Oops... I guess that wasn't a XP registration key.
-5    The registration key has been saved. Cross-
-6    Point will quit now and must be restarted
-7    to have registation taking effect.
+5    Your registration key has been saved.
+6    CrossPoint will quit now and must be
+7    restarted to have the key take effect.
 8    Key was deleted.
 -
 
 + 530
 # Zeilenanzahl
 0    13
-1    This is a Beta-Version of Crosspoint, created by the OpenXP-       
+1    This is a Beta-Version of Crosspoint, created by the OpenXP-
 2    Development-Team. Please notice, that there are surely still bugs
 3    in this betaVersion, which could damage your database
 4    or cause trouble if you use this XP-Version in public.
