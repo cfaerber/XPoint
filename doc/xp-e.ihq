@@ -650,7 +650,7 @@ also use <Space> instead of PgDn.
         to the Main-Lister, showing the message
         where you started the search.
 
-<<Alt-V>>   like <<Alt+M>> but searching for text.
+<<Alt-V>>   like <<Alt-M>> but searching for text.
 
 <<Alt-U>>   User-search. If a Textline is marked
         it will be used as search-string, else
@@ -3575,9 +3575,9 @@ itself as the point programme used:
 <<never>>   well, never :-(
 
 Note: the "PM" and "never" settings may only be
-changed in the [registered] version of CrossPoint.@6
+changed in the registered version of CrossPoint.
 In Fido, XP never advertises itself. In MausNet,
-you can switch it off for PMs.
+you can switch it off for PMs only.
 @
 248
 <<[x]>> ->  Messages aborted (with <Esc>) at the
@@ -10914,7 +10914,7 @@ CrossPoint. Changes here are only effective after
 storing the configuration and at the next start.
 @
 12803
-<<Config / Options / Lister
+<<Config / Options / Message Reader
 
 Settings concerning the internal message reader.
 @
