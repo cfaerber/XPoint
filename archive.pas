@@ -57,7 +57,7 @@ type   arcpath = string[79];
                    orgsize  : longint;       { Gr”áe der Original-Datei }
                    compsize : longint;       { komprimierte Gr”áe       }
                    path     : arcpath;       { Pfad ohne Dateiname }
-                   name     : string[12];
+                   name     : string;
                    attrib   : word;          { DOS-Attribute }
                  end;
 
@@ -613,16 +613,16 @@ label again;
       if p=0 then begin
         p:=pos(':',s);
         if p=0 then begin
-          path:=''; name:=copy(s,1,12);
+          path:=''; name:=s;
           end
         else begin
-          path:=copy(s,1,p); name:=copy(s,p+1,12);
+          path:=copy(s,1,p); name:= mid(s, p+1);
           end;
         end
       else begin
         b:=length(s);
         while (s[b]<>'/') and (s[b]<>'\') do dec(b);
-        name:=copy(s,b+1,12);
+        name:=mid(s, b+1);
         path:=copy(s,1,b);
         for b:=1 to length(path) do
           if path[b]='/' then path[b]:='\';
@@ -632,7 +632,6 @@ label again;
 
   function TarVAL(s:string):longint;
   var l   : longint;
- {      res : integer;           MK 12/99 }
   begin
     while (s<>'') and (s[length(s)]<'0') do dec(byte(s[0]));
     while (s<>'') and (s[1]=' ') do delete(s,1,1);
@@ -906,7 +905,7 @@ var f1,f2 : file;
     arcofs : word;
     pkch   : array[0..1] of char;
 
-  function SetLocalZipHeaders: Boolean; { MK 01/2000 Proz->Funk }
+  function SetLocalZipHeaders: Boolean;
   var s   : string;
       b,p : byte;
       n,i : word;
@@ -963,11 +962,7 @@ begin
     if pkch<>'PK' then inc(arcofs);   { altes PKZIP-SFX-Format }
     seek(f1,arcofs);
     end;
-{$IFDEF BP }
   ps:=min(maxavail-1000,maxbuf);
-{$ELSE }
-  ps := maxbuf;
-{$ENDIF}
   getmem(p,ps);
   assign(f2,copy(name,1,length(name)-3)+ArcName[abs(typ)]);
   rewrite(f2,1);
@@ -1001,6 +996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.2  2000/10/26 13:05:29  mk
+  - Fixed Bug #112798: Lange Dateinamen in Archiven
+
   Revision 1.10.2.1  2000/07/04 10:23:02  mk
   - unnoetige Routinen rausgenommen
 

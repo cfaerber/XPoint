@@ -1760,7 +1760,7 @@ begin
     exdir:=''
   else begin
     p:=pos('$DATEI',ustr(decomp));
-    datei:=trim(copy(fn,2,Length(fn)));
+    datei:=trim(mid(fn, 80));
     if (exdir='') and ((temppath='') or (ustr(temppath)=ownpath))
       and exist(datei) then begin
         rfehler(428);   { 'extrahieren nicht m”glich - bitte Temp-Verzeichnis angeben!' }
@@ -1782,7 +1782,7 @@ begin
     else GoDir(temppath);
     decomp:=copy(decomp,1,p-1)+datei+copy(decomp,p+6,127);
     p:=pos('$ARCHIV',ustr(decomp));
-    decomp:=copy(decomp,1,p-1)+abuf[arcbufp]^.arcname+copy(decomp,p+7,127);
+    decomp:=copy(decomp,1,p-1)+'"'+abuf[arcbufp]^.arcname+'" "'+copy(decomp,p+8,127) + '"';
     shell(decomp,400,3);
     if exdir='' then begin
       { !?! GoDir(temppath);     { wurde durch Shell zurckgesetzt }
@@ -1893,10 +1893,11 @@ var ar   : ArchRec;
 
   function prozent:string;
   begin
-    if ar.OrgSize>0 then
-      prozent:=strsrn(ar.CompSize/ar.OrgSize*100,3,1)
-    else
-      prozent:='     ';
+    with ar do
+      if (OrgSize>0) and (OrgSize >= CompSize) then
+        prozent:=strsrn(CompSize/OrgSize*100,3,1)
+      else
+        prozent:='     ';
   end;
 
   procedure renameDWC;
@@ -1929,12 +1930,12 @@ begin
     abuf[arcbufp]^.arcname:=fn;
     mwrt(77,4,arcname[arctyp]);
     while not ende do begin
-      if (name<>'') or (path='') then
+      if (name <>'') or (path='') then
         app_l(iifc(path<>'','*',' ')+forms(name,12)+strsn(orgsize,11)+
               strsn(compsize,11)+'   '+ prozent+'  '+forms(method,10)+
-              dt(datum,uhrzeit))
+              dt(datum,uhrzeit)+'       ' + name)
       else
-        app_l('*'+path);
+        app_l(forms('*'+path+name,80)+path+name);
       ArcNext(ar);
       end;
     end;
@@ -2429,6 +2430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.10  2000/10/26 13:05:29  mk
+  - Fixed Bug #112798: Lange Dateinamen in Archiven
+
   Revision 1.47.2.9  2000/10/17 00:16:44  mk
   - LFN Unit hinzugefuegt (Bug #112966)
 
