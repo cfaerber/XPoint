@@ -1,4 +1,4 @@
-CrossPoint v3.70
+OpenXP/32 v3.70
 15 6
 53 19
 2 1
@@ -10,8 +10,8 @@ Keine Hilfe verfgbar.
 <<     °°°°°°°°°°°°°°°°°°°°°   Online-Hilfe: Inhalt
 
 
-     [Hilfe zur Hilfe]             <<Cross>> \\//@3
-                                       //\\ <<Point>>
+     [Hilfe zur Hilfe]              <<Open>> \\//@3
+                                       //\\ <<XP>>
      [Hotkeys]@4
 
      [Tastaturkonventionen]@10
@@ -769,9 +769,9 @@ Normalerweise wrden alle Mails, die Sie ber eine
 Mailingliste erhalten, in Ihr internes PM-Brett ein-
 sortiert werden. Des weiteren wrde sich CrossPoint,
 wenn Sie auf eine solche Mail antworten, auch wie
-bei einer PM verhalten (es wrde z.B. fragen, ob Sie
-die PM archivieren wollen, und es wrde die entspre-
-chende PM-Schablone verwenden).
+bei einer PM verhalten - es wrde also z.B. fragen,
+ob Sie die PM archivieren wollen, und es wrde die
+entsprechende PM-Schablone verwenden.
 
 Dieses Verhalten ist i.d.R. nicht erwnscht, weil
 Sie auf die Dauer bei Mailinglisten, die einen hohen
@@ -791,8 +791,9 @@ liste abzusetzen. Im Falle der OpenXP-Mailingliste
 ist dies z.B. <<openxp-dev\@lists.sourceforge.net>>.
 
 Diese Useradresse legen Sie nun wie einen ganz nor-
-malen User an (<<S>>, <<H>> in der User-šbersicht). Wichtig:
-die Haltezeit dieses Users setzen Sie auf 1 Tag!
+malen User an (<<S>>, <<H>> in der User-šbersicht). Die
+Haltezeit des Users k”nnen Sie auf einen beliebigen
+Wert einstellen (s. Hinweis unten).
 
 Wenn Sie nun eine Mail an diesen User schreiben (<<B>> in
 der User-šbersicht), erhalten alle brigen Teilnehmer
@@ -889,10 +890,27 @@ antworten. Ihre eigenen Nachrichten befinden sich
 zun„chst im PM-Brett des Pseudo-Users, kommen aber
 als "Rckl„ufer" beim n„chsten Netcall wieder zu
 Ihnen zurck und werden ebenfalls in das Mailing-
-listen-Brett einsortiert. Die Nachrichten im PM-Brett
-des Pseudo-Users werden bei der n„chsten Reorganisa-
-tion entsorgt (wenn Sie, wie oben beschrieben, die
-Haltezeit des Users auf "1" eingestellt haben).
+listen-Brett einsortiert.
+
+
+<<Hinweis:
+
+Da Ihre selbstgeschriebenen Nachrichten nun doppelt
+in der Nachrichtendatenbank vorhanden sind, wrden
+Kommentarbaumzweige, die von Ihnen verfaáte Nach-
+richten enthalten, ebenfalls dupliziert werden.
+
+Sie sollten daher bei den Boxen, mit denen Sie an
+Mailinglisten teilnehmen, unter Edit/Boxen/Edit/
+Diverses den Schalter "[lokale Kopien ersetzen]"@8051
+aktivieren. Die Nachrichten werden selbst dann
+ersetzt, wenn der Schalter "[Eigene PMs halten]"@244
+unter Config/Optionen/Nachrichten aktiviert sein
+sollte. In diesem Fall bernimmt die ersetzende
+Nachricht den Haltestatus der ersetzten Nachricht.
+
+Auch die Haltezeit des (Pseudo-)Users spielt fr das
+Ersetzen lokaler Kopien keine Rolle.
 
 @
 19
@@ -4032,6 +4050,35 @@ Beachten Sie, daá dieser Eintrag <<nicht>> fr bereits
 im Adreábuch vorhandene User gilt! Zur Umstellung
 dieser User auf einen anderen Server k”nnen Sie
 stattdessen /Wartung/Server-Wechsel verwenden.
+
+@
+8051
+<<[x]>> -> Eingehende Nachrichten werden daraufhin ber-
+       prft, ob sie sich bereits in der Datenbank
+       befinden und es sich um selbstgeschriebene
+       Nachrichten handelt. Trifft beides zu, wird
+       die lokale Kopie gel”scht und durch die ein-
+       gehende Nachricht ("Rckl„ufer") ersetzt.
+
+       Die Nachrichten werden unabh„ngig von ihrem
+       Haltestatus und der Haltezeit des Brettes bzw.
+       des Users ersetzt. Sollte die ersetzte Nach-
+       richt auf "Halten" gesetzt worden sein, ber-
+       nimmt die eingehende Nachricht diesen Status.
+
+       Diese Einstellung ist insbesondere bei RFC-
+       Boxen sinnvoll, um duplizierte Kommentar-
+       baumzweige zu vermeiden. Die Aktivierung
+       dieses Schalters verlangsamt allerdings das
+       Einlesen der Nachrichten nach einem Netcall.
+
+<<[ ]>> -> CrossPoint legt beim Eintreffen selbst-
+       geschriebener Nachrichten Duplikate an.
+
+Die Einstellung wird bei allen Netztypen untersttzt,
+ist i.d.R. aber nicht bei allen Netztypen gleich
+sinnvoll, da es in manchen Netzen (z.B. Fido) i.d.R.
+gar keine "Rckl„ufer" gibt.
 
 @
 190
@@ -9935,7 +9982,8 @@ diese nicht mehr finden kann und die Decodierung
 somit fehlschl„gt.
 
 Um diesen Bug von PGP zu umgehen, mssen Sie die PGP-
-Version <<2.6.3in>> vom <<07.10.2000>> verwenden.
+Version <<2.6.3in>> vom <<07.10.2000>> oder vom <<23.03.2001>>
+verwenden.
 
 Siehe auch: [PGP - Versions- und Detailinformationen]@1010
 
