@@ -1497,7 +1497,13 @@ begin
   writeln(t,'Quote=','"',quotechar,'"');
   writeln(t,'OtherQuoteChars=',jnf(otherquotechars));
   otherqcback:=otherquotechars;
-  writeln(t,'ScreenLines=',ConfigScreenLines);
+  if ((ConfigScreenLines in [25,50]) and (ConfigScreenWidth in [80])) or
+     (ConfigScreenLines = ConfigScreenLines16) then
+    writeln(t,'ScreenLines=',ConfigScreenLines)
+  else begin
+    writeln(t,'ScreenLines=',ConfigScreenLines16);
+    writeln(t,'ScreenLines32=',ConfigScreenLines)
+  end;
   writeln(t,'ScreenCols=', ConfigScreenWidth);
   writeln(t,'ScreenSaver=',scrsaver);
   writeln(t,'SoftSaver=',jnf(softsaver));
@@ -2204,7 +2210,8 @@ begin
                     getx(su,  'ShowMsgDatum',showmsgdatum) or
                     geti16(su,  'stdhaltezeit',stdhaltezeit) or
                     geti16(su,  'stduserhaltezeit',stduhaltezeit) or
-                    getb(su,  'screenlines',ConfigScreenlines) or
+                    getb(su,  'screenlines32',ConfigScreenlines) or
+                    getb(su,  'screenlines',ConfigScreenlines16) or
                     getb(su,  'screencols', ConfigScreenWidth) or
                     xp1.gets(s,su,'sendfiledir',sendpath) or
                     xp1.getw(su,  'ScreenSaver',scrsaver) or
@@ -2304,11 +2311,16 @@ begin
 
     extrakttyp:=defextrakttyp;
 
-    if ParZeilen>0 then
-      ScreenLines:=ParZeilen;
     SysGetMaxScreenSize(Lines, Cols);
+
+    if ConfigScreenLines = 0 then
+      ConfigScreenLines := ConfigScreenLines16;
+
     ScreenLines := MinMax(ConfigScreenLines, 25, Lines);
     ScreenWidth := MinMax(ConfigScreenWidth, 80, Cols);
+
+    if ParZeilen>0 then
+      ScreenLines:=ParZeilen;
 
     { if getenv(reverse('BPX'))<>LowerCase(hex(936,3)) then quit:=true; }
     TrimFirstChar(QuoteChar, '"');
@@ -2507,7 +2519,7 @@ begin
   Debug.DebugLog('XP2','Default system: '+tmpS+', file: '+dname,DLDebug);
   if not FileExists(OwnPath+dname+extBfg) then begin
     DefaultBoxPar(nt_Netcall,boxpar);
-    WriteBox(dname,boxpar);
+    WriteBox(nt_Netcall,dname,boxpar);
   end;
   if deffidobox<>'' then begin
     dbSeek(d,boiName,deffidobox);
@@ -2782,6 +2794,11 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.166  2003/08/26 22:41:24  cl
+  - better compatibility with OpenXP-16/FreeXP with config files:
+    - don't overwrite line number settings with incompatible values
+    - don't store unnecessary parameters for IP netcalls
+
   Revision 1.165  2003/08/26 05:37:41  mk
   - added AutomaticTimeZone const and removed $IFDEFs
 

@@ -444,7 +444,7 @@
             Boxpar^.nntp_port := 119;
           end;
         dname:=CreateServerFilename(d,nt,name);      { eindeutigen Dateinamen bestimmen }
-        WriteBox(dname,boxpar);
+        WriteBox(nt,dname,boxpar);
         dbAppend(d);
         dbWrite(d,'netztyp',nt);
         dbWriteStr(d,'boxname',name);
@@ -896,7 +896,7 @@
         if not (UpperCase(extcfg_file) = UpperCase(ClientExternCfg)) then
         begin
           ClientExternCfg := extcfg_file;
-          WriteBox(bfg,boxpar);
+          WriteBox(nt_Client,bfg,boxpar);
         end;
       end;
     end;
@@ -1407,7 +1407,7 @@
           end;
         boxpar^._domain:=dom;
         boxpar^._fqdn:=fqdom;
-        WriteBox(dname,boxpar);
+        WriteBox(nt,dname,boxpar);
         dbWriteStr(d,'boxname',name);
         dbWriteStr(d,'username',user);
         dbWriteStr(d,'dateiname',dname);
@@ -1491,7 +1491,7 @@
         boxpar^.boxname:=boxname;
         boxpar^.username:=LeftStr(email,pos('@',email)-1);
         boxpar^._fqdn:=fqdom;
-        WriteBox(dname,boxpar);
+        WriteBox(nt,dname,boxpar);
         dbWriteStr(d,'boxname',boxname);
         dbWriteStr(d,'username',boxpar^.username);
         dbWriteStr(d,'email',email);
@@ -2034,7 +2034,7 @@
           boxpar^.username:=user;
           boxpar^._domain:=domain;
           boxpar^.boxname:=name;
-          WriteBox(dname,boxpar);
+          WriteBox(nt_Client,dname,boxpar);
           dbwriteStr(d,'dateiname',dname);
           dbWriteStr(d,'pointname',pointname);
           dbWriteStr(d,'email',email);
@@ -2339,7 +2339,7 @@
                       end;
       end; { case nt }
       if not brk then
-        WriteBox(fn,boxpar);
+        WriteBox(nt,fn,boxpar);
       ReadDomainList;
     end;
     pophp;
@@ -2407,7 +2407,7 @@
       if not brk and (nt<>nt1) and
          ReadJN(getreps2(929,5,box),true) then
       begin { 'Moechten Sie den Netztyp fuer %s wirklich aendern' }
-        WriteBox(fn,BoxPar);
+        WriteBox(nt,fn,BoxPar);
         dbWrite(d,'netztyp',nt);
         dec(ntused[nt1]);
         inc(ntused[nt]);
@@ -2424,6 +2424,11 @@
 
 {
   $Log$
+  Revision 1.69  2003/08/26 22:41:25  cl
+  - better compatibility with OpenXP-16/FreeXP with config files:
+    - don't overwrite line number settings with incompatible values
+    - don't store unnecessary parameters for IP netcalls
+
   Revision 1.68  2003/05/01 09:52:29  mk
   - added IMAP support
 

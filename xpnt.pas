@@ -516,7 +516,7 @@ begin
     nt_Pronet   : ntName:='ProNET';
     nt_Quick    : ntName:='QuickMail';
     nt_GS       : ntName:='GS-Mailbox';
-    nt_Maus     : ntName:='MausTausch';
+    nt_Maus     : ntName:='MausNet';
     nt_Fido     : ntName:='Fido';
     nt_QWK      : ntName:='QWK';
     nt_UUCP     : ntName:='RFC/UUCP';
@@ -842,6 +842,11 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.57  2003/08/26 22:41:25  cl
+  - better compatibility with OpenXP-16/FreeXP with config files:
+    - don't overwrite line number settings with incompatible values
+    - don't store unnecessary parameters for IP netcalls
+
   Revision 1.56  2003/08/25 20:47:04  mk
   - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
 

@@ -786,8 +786,9 @@ var    menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        deutsch    : boolean = true;
        screenlines: Integer = 25;      { Bildschirmzeilen       }
        screenwidth: Integer = 80;      { Bildschirmspalten      }
-       ConfigScreenLines:byte = 25;    { Config-Bildzeilen (wg. /z: }
-       ConfigScreenWidth:byte = 80;      { Config-Bildschirmspalten }
+       ConfigScreenLines:byte = 0;     { Config-Bildzeilen (wg. /z: }
+       ConfigScreenWidth:byte = 80;    { Config-Bildschirmspalten }
+       ConfigScreenLines16:byte = 25; { Config-Bildzeilen fuer XP/16 }
        OrgVideomode:xpWord    = 3;
        uvs_active : boolean = false;   { /N/Z/Unversandt        }
        fidolastseek:string  = '';      { Fido/Fileliste/Suchen  }
@@ -1224,6 +1225,11 @@ implementation
 
 {
   $Log$
+  Revision 1.182  2003/08/26 22:41:24  cl
+  - better compatibility with OpenXP-16/FreeXP with config files:
+    - don't overwrite line number settings with incompatible values
+    - don't store unnecessary parameters for IP netcalls
+
   Revision 1.181  2003/08/11 22:10:35  mk
   - changed OpenXP/32 to OpenXP
 

@@ -43,7 +43,7 @@ const conn_mode_modem = 1;
 procedure nt_bpar(nt:eNetz; var bpar:BoxRec);
 procedure DefaultBoxPar(nt:eNetz; bp:BoxPtr);
 procedure ReadBox(nt:eNetz; const dateiname:string; bp:BoxPtr);
-procedure WriteBox(const dateiname:string; bp:BoxPtr);
+procedure WriteBox(nt:eNetz; const dateiname:string; bp:BoxPtr);
 procedure ReadBoxPar(nt:eNetz; const box:string);
 function  BoxBrettebene(const box:string):string;
 
@@ -481,14 +481,14 @@ begin
         end;
       SaveConfig;
       bp^.owaehlbef:='';
-      WriteBox(dateiname,bp);
+      WriteBox(nt,dateiname,bp);
       if bp=BoxPar then BoxPar^.owaehlbef:='';
       end;
     end;
 end;
 
 
-procedure WriteBox(const dateiname:string; bp:BoxPtr);
+procedure WriteBox(nt:eNetz;const dateiname:string;bp:BoxPtr);
 var t : text;
     i : byte;
 
@@ -599,42 +599,56 @@ begin
     writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
     writeln(t,'ReplaceDupes=', Jnf(ReplaceDupes));
 
-    writeln(t,'Netcall-Mode=',conn_mode);
-    if conn_ip<>''   then writeln(t,'IP-Host=',conn_ip);
-    if conn_port>=-1 then writeln(t,'IP-Port=',conn_port);
+    if (nt in [nt_UUCP,nt_Fido,nt_Maus,nt_ZConnect]) then
+    begin
+      if conn_mode>1   then writeln(t,'Netcall-Mode=',conn_mode);
+      if conn_ip<>''   then writeln(t,'IP-Host=',conn_ip);
+      if conn_port>0   then writeln(t,'IP-Port=',conn_port);
+    end;
 
-    if nntp_ip<>''   then writeln(t,'NNTP-Host=',nntp_ip);
-    if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
-    if nntp_id<>''   then writeln(t,'NNTP-ID=',nntp_id);
-    if nntp_pwd<>''  then writeln(t,'NNTP-Password=',nntp_pwd);
-    writeln(t,'NNTP-InitialNewsCount=',nntp_initialnewscount);
-    writeln(t,'NNTP-MaxNews=',nntp_maxnews);
-    //////////////////////////////////
-    writeln(t,'POP3-IP=',pop3_ip);
-    if pop3_id <>''  then writeln(t,'POP3-ID=',pop3_id);
-    if pop3_pwd<>''  then writeln(t,'POP3-Password=',pop3_pwd);
-    writeln(t,'POP3Clear=',jnf(pop3_clear));
-    writeln(t,'POP3APOP=',jnf(pop3_APOP));
-    writeln(t,'POP3OnlyNew=',jnf(pop3_OnlyNew));
-    writeln(t,'POP3ForceOneArea=',jnf(pop3_ForceOneArea));
-    writeln(t,'POP3-Port=', pop3_port);
+    if nt in [nt_NNTP] then
+    begin
+      writeln(t,'NNTP-Host=',nntp_ip);
+      writeln(t,'NNTP-Port=',nntp_port);
+      writeln(t,'NNTP-ID=',nntp_id);
+      writeln(t,'NNTP-Password=',nntp_pwd);
+      writeln(t,'NNTP-InitialNewsCount=',nntp_initialnewscount);
+      writeln(t,'NNTP-MaxNews=',nntp_maxnews);
+    end;
 
-    writeln(t,'SMTP-IP=',smtp_ip);
-    if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
-    if smtp_pwd<>''  then writeln(t,'SMTP-Password=',smtp_pwd);
-    writeln(t,'SMTP-Port=', smtp_port);
-    writeln(t,'SMTP-SecureLoginMandatory=',jnf(SMTP_secureloginmandatory));
-    writeln(t,'SmtpAfterPOP=',jnf(SMTPAfterPOP));
+    if nt in [nt_POP3] then
+    begin
+      writeln(t,'POP3-IP=',pop3_ip);
+      writeln(t,'POP3-ID=',pop3_id);
+      writeln(t,'POP3-Password=',pop3_pwd);
+      writeln(t,'POP3Clear=',jnf(pop3_clear));
+      writeln(t,'POP3APOP=',jnf(pop3_APOP));
+      writeln(t,'POP3OnlyNew=',jnf(pop3_OnlyNew));
+      writeln(t,'POP3ForceOneArea=',jnf(pop3_ForceOneArea));
+      writeln(t,'POP3-Port=', pop3_port);
+    end;
 
-    writeln(t,'IMAP-IP=',IMAP_ip);
-    if IMAP_id <>''  then writeln(t,'IMAP-ID=',IMAP_id);
-    if IMAP_pwd<>''  then writeln(t,'IMAP-Password=',IMAP_pwd);
-    writeln(t,'IMAPClear=',jnf(IMAP_clear));
-    writeln(t,'IMAPOnlyNew=',jnf(IMAP_OnlyNew));
-    writeln(t,'IMAPForceOneArea=',jnf(IMAP_ForceOneArea));
-    writeln(t,'IMAP-Port=', IMAP_port);
+    if nt in [nt_POP3,nt_IMAP] then
+    begin
+      writeln(t,'SMTP-IP=',smtp_ip);
+      writeln(t,'SMTP-ID=',smtp_id);
+      writeln(t,'SMTP-Password=',smtp_pwd);
+      writeln(t,'SMTP-Port=', smtp_port);
+      writeln(t,'SMTP-SecureLoginMandatory=',jnf(SMTP_secureloginmandatory));
+      writeln(t,'SmtpAfterPOP=',jnf(SMTPAfterPOP));
+    end;
 
-    ///////////////////////////////////////////
+    if nt in [nt_IMAP] then
+    begin
+      writeln(t,'IMAP-IP=',IMAP_ip);
+      writeln(t,'IMAP-ID=',IMAP_id);
+      writeln(t,'IMAP-Password=',IMAP_pwd);
+      writeln(t,'IMAPClear=',jnf(IMAP_clear));
+      writeln(t,'IMAPOnlyNew=',jnf(IMAP_OnlyNew));
+      writeln(t,'IMAPForceOneArea=',jnf(IMAP_ForceOneArea));
+      writeln(t,'IMAP-Port=', IMAP_port);
+    end;
+
     if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall);
 
     writeln(t,'Client-Path=', ClientPath);
@@ -676,7 +690,8 @@ begin
     writeln(t,'Client-NewsMax=', ClientNewsMax);
     writeln(t,'Client-ExternalConfig=', ClientExternCfg);
 
-    writeln(t,'UUZ-RecodeCharset=',jnf(UUZCharsetRecode));
+    if not UUZCharsetRecode then
+      writeln(t,'UUZ-RecodeCharset=',jnf(UUZCharsetRecode));
   end;
   close(t);
 end;
@@ -779,6 +794,11 @@ end;
 
 {
   $Log$
+  Revision 1.69  2003/08/26 22:41:25  cl
+  - better compatibility with OpenXP-16/FreeXP with config files:
+    - don't overwrite line number settings with incompatible values
+    - don't store unnecessary parameters for IP netcalls
+
   Revision 1.68  2003/05/01 09:52:28  mk
   - added IMAP support
 

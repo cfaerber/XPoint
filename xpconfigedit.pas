@@ -1994,7 +1994,7 @@ restart:
   boxpar^._Domain:=dom;
   if (nt=nt_UUCP) and FileExists('uucp.scr') then
     boxpar^.script:=FileUpperCase('uucp.scr');
-  WriteBox(dname,boxpar);
+  WriteBox(nt,dname,boxpar);
   DefaultBox:=name;
   if nt=nt_Fido then begin
     DefFidobox:=name;
@@ -3141,6 +3141,11 @@ end;
 
 {
   $Log$
+  Revision 1.63  2003/08/26 22:41:25  cl
+  - better compatibility with OpenXP-16/FreeXP with config files:
+    - don't overwrite line number settings with incompatible values
+    - don't store unnecessary parameters for IP netcalls
+
   Revision 1.62  2003/08/25 17:44:52  mk
   - fixed directory create in Edit/Client
 
