@@ -1776,8 +1776,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       if flCrash and MayCrash then inc(b,16);    { !! Crash-Flag }
       dbWrite(mbase,'unversandt',b);
 
-      flags := flags or 256; // this mail is from yourself, needed for replaceown
       dbreadN(mbase,mb_flags,flags);                 { Farb - Flags setzen... }
+      flags := flags or 256; // this mail is from yourself, needed for replaceown
 
       flags:=flags and not 56;
       if netztyp=nt_Zconnect then                    { Zconnect-Prioritaet: }
@@ -2101,6 +2101,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.111  2001/04/27 10:15:09  ma
+  - moved line "flags or 256" to correct position
+    (but ReplaceOwn does still not work)
+
   Revision 1.110  2001/04/25 17:55:00  mk
   - own mail is flagged now (needed for replaceown)
 
