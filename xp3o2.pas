@@ -40,6 +40,9 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
 
   procedure wrs(s:string);
   begin
+{$ifdef hasHugeString}
+    s:= s+#13+#10;
+{$else}
     if length(s)<253 then begin           { s:=left(s,253)+#13#10; }
       s[length(s)+1]:=#13;
       s[length(s)+2]:=#10;
@@ -49,6 +52,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       s[254]:=#13; s[255]:=#10;
       s[0]:=#255;
       end;
+{$endif}
     blockwrite(f,s[1],length(s));
   end;
 
@@ -441,6 +445,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/05 10:59:52  hd
+  - Weitere AnsiString-Anpassungen
+
   Revision 1.12  2000/07/04 12:04:23  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -166,7 +166,11 @@ var t      : text;
     s,su   : string;
     p      : byte;
     dummyb : byte;
+{$ifdef hasHugeString}
+    dummys : string;
+{$else}
     dummys : string[10];
+{$endif}
     dummyl : boolean;
     dummyw : smallword;
     dummyr : real;
@@ -524,6 +528,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/05 10:59:52  hd
+  - Weitere AnsiString-Anpassungen
+
   Revision 1.12  2000/07/04 12:04:28  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

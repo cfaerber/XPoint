@@ -298,7 +298,11 @@ end;
 procedure do_help(n:word);
 var
       x,y  : byte;
+{$ifdef hasHugeString}
+      hlp  : string;
+{$else}
       hlp  : string[10];
+{$endif}
       mh   : boolean;
 begin
   if not inithlp then
@@ -411,6 +415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/05 10:59:52  hd
+  - Weitere AnsiString-Anpassungen
+
   Revision 1.8  2000/06/29 13:00:53  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

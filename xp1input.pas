@@ -120,7 +120,7 @@ var p,n,p1,i : byte;
 begin
   spenter:=(firstchar(buttons)='*');
   if spenter then delfirst(buttons);
-  inc(byte(buttons[0]));
+  SetLength(buttons, Length(buttons)+1); { inc(byte(buttons[0])); }
   buttons[length(buttons)]:=',';
   n:=0;
   repeat
@@ -325,7 +325,7 @@ var width,height : byte;
   end;
 
 begin
-  inc(byte(auswahl[0]));
+  SetLength(auswahl, Length(auswahl)+1); {inc(byte(auswahl[0]));}
   auswahl[length(auswahl)]:=',';
   n:=0; ml:=0;
   poutside:=false;
@@ -421,6 +421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/07/05 10:59:52  hd
+  - Weitere AnsiString-Anpassungen
+
   Revision 1.9  2000/07/04 12:04:19  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

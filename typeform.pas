@@ -59,13 +59,21 @@ const
     97,223, 71,182, 83,115,181,110,111, 79, 79,100,111,248, 69, 32,
     61,177, 62, 60,124,124,247, 61,176,183,183, 32,179,178,183, 32);
 
-
+{$ifdef hasHugeString}
+type DateTimeSt = string;
+     s20        = string;
+     s40        = string;
+     s60        = string;
+     s80        = string;
+     atext      = s80;
+{$else}
 type DateTimeSt = string[11];
      s20        = string[20];
      s40        = string[40];
      s60        = string[60];
      s80        = string[80];
      atext      = s80;
+{$endif}
 
 function Bin(l:longint; n:byte):string;      { Bin-Zahl mit n Stellen       }
 function Blankpos(var s:string):byte;        { Position von ' ' oder #9     }
@@ -1357,6 +1365,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/07/05 10:59:52  hd
+  - Weitere AnsiString-Anpassungen
+
   Revision 1.52  2000/07/04 21:23:07  mk
   - erste AnsiString-Anpassungen
 

@@ -434,9 +434,9 @@ begin
         end
       else
         if length(recs)<255 then begin
-          inc(byte(recs[0]));
+          SetLength(recs, Length(recs)+1); {inc(byte(recs[0]));}
           recs[length(recs)]:=chr(b);
-          inc(byte(lrecs[0]));
+          SetLength(lrecs, Length(lrecs)+1); {inc(byte(lrecs[0]));}
           lrecs[length(lrecs)]:=LoCase(chr(b));
           end;
       end;
@@ -1617,6 +1617,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/05 10:59:53  hd
+  - Weitere AnsiString-Anpassungen
+
   Revision 1.13  2000/07/04 12:04:31  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

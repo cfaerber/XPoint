@@ -760,7 +760,11 @@ end;
 
 function EnterPassword(txt:atext; var brk:boolean):longint;
 var x,y : byte;
+{$ifdef hasHugeString}
+    s   : string;
+{$else}
     s   : string[16];
+{$endif}
     t   : taste;
 
   procedure maus_bearbeiten;
@@ -922,6 +926,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/07/05 10:59:52  hd
+  - Weitere AnsiString-Anpassungen
+
   Revision 1.29  2000/07/04 12:04:25  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

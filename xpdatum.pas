@@ -27,12 +27,16 @@ uses
   xpglobal;
 
 {$IFNDEF Linux }
+{$ifdef hasHugeString}
+const timezone      : string = 'W+1';
+{$else}
 const timezone      : string[7] = 'W+1';
+{$endif}
 {$ELSE }
 { Unix-Systeme haben detailierte Informationen ueber die Zeitzonen.
   Diese wird hier verwendet. Es sollte auch klappen, dass ein Zeitzonen-
   wechsel ohne manuelle Konfiguration beruecksichtigt wird. }
-function TimeZone: string[7];
+function TimeZone: string;
 {$ENDIF }
 
 procedure ZtoZCdatum(var datum,zdatum:string);
@@ -158,6 +162,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/05 10:59:53  hd
+  - Weitere AnsiString-Anpassungen
+
   Revision 1.8  2000/06/29 13:00:59  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

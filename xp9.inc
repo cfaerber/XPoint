@@ -20,9 +20,15 @@
       bdom : boolean;
       map  : boolean;
       blen : byte;
+{$ifdef hasHugeString}
+      btxt : string;
+      fido : boolean;
+      s    : string;
+{$else}
       btxt : string[15];
       fido : boolean;
       s    : string[20];
+{$endif}
       yy   : byte;
   begin
     DomainNt:=nt;
@@ -113,7 +119,11 @@
 
   procedure ReadNetztyp(box:string; var nt:byte; var brk:boolean);
   var x,y  : byte;
+{$ifdef hasHugeString}
+      ntyp : string;
+{$else}
       ntyp : string[10];
+{$endif}
       i    : integer;
   begin
     ntyp:=Netz_Typ(nt);
@@ -144,6 +154,20 @@
   end;
 
   procedure NewBox;
+{$ifdef hasHugeString}
+  var name : string;
+      dname: string;
+      user : string;
+      komm : string;
+      maps : string;
+      real : string;
+      dom  : string;
+      fqdom: string;  {16.01.00 HS}
+      bdom : string;
+      fido : string;
+      brk  : boolean;
+      fn   : string;
+{$else}
   var name : string[BoxNameLen];
       dname: string[8];
       user : string[30];
@@ -156,6 +180,7 @@
       fido : string[40];
       brk  : boolean;
       fn   : string[12];
+{$endif}
       nt,i : byte;
       b    : byte;
   begin
@@ -343,14 +368,19 @@
 
   procedure EditPointdaten(nt:byte; var brk:boolean);
   var x,y,br : byte;
+{$ifdef hasHugeString}
+      pname  : string;
+      lhapar : string;
+{$else}
       pname  : string[25];
+      lhapar : string[5];
+{$endif}
       add    : shortint;
       fido   : boolean;
       uucp   : boolean;
       pronet : boolean;
       zc     : boolean;
       pnr    : word;     { Fido - Pointnummer }
-      lhapar : string[5];
       xx,yy  : byte;
       Ug,U_G : boolean;  { UUCP-g, UUCP-G }
       Ue,Uz  : boolean;  { UUCP-e }
@@ -588,7 +618,11 @@
 
   procedure EditModemdaten(nt:byte; var brk:boolean);
   var x,y,add  : byte;
+{$ifdef hasHugeString}
+      schnitte : string;
+{$else}
       schnitte : string[4];
+{$endif}
       fido     : boolean;
   begin
     fido:=(nt=nt_Fido);
@@ -660,6 +694,16 @@
   end;
 
   procedure EditName(var brk:boolean);
+{$ifdef hasHugeString}
+  var name,user,komm  : string;
+      dname,old_dname : string;
+      realname        : string;
+      dom,bdom,fqdom  : string;  {16.01.00 HS}
+      maps            : string;
+      nt              : byte;
+      newbox,newibox  : boolean;
+      fidoname        : string;
+{$else}
   var name,user,komm  : string[40];
       dname,old_dname : string[8];
       realname        : string[40];
@@ -668,6 +712,7 @@
       nt              : byte;
       newbox,newibox  : boolean;
       fidoname        : string[40];
+{$endif}
 
     procedure renbox(ext:string);
     var f : file;
@@ -825,7 +870,11 @@
       nall  : boolean;
       x2    : byte;
       add   : shortint;
+{$ifdef hasHugeString}
+      av,pv : string;
+{$else}
       av,pv : string[20];
+{$endif}
   begin
     add:=0;
     dialog(ival(getres2(924,0)),
@@ -895,8 +944,13 @@
       width  : byte;
       alias  : boolean;
       mids   : boolean;
+{$ifdef hasHugeString}
+      replyto: string;
+      maps   : string;
+{$else}
       replyto: string[AdrLen];
       maps   : string[20];
+{$endif}
       nt     : byte;
       _nname : boolean;   { Netzname }
       _alias : boolean;
@@ -1011,7 +1065,11 @@
 
   procedure EditFido(var brk:boolean);
   var x,y : byte;
+{$ifdef hasHugeString}
+      maps: string;
+{$else}
       maps: string[20];
+{$endif}
       nli : boolean;
   begin
     dbGo(d,drec[p]);
@@ -1048,9 +1106,15 @@
 
   procedure EditUUCP(var brk:boolean);
   var x,y,bl   : byte;
+{$ifdef hasHugeString}
+      bmname,
+      _bmtyp   : string;
+      replyto  : string;
+{$else}
       bmname,
       _bmtyp   : string[20];
       replyto  : string[AdrLen];
+{$endif}
       alias    : boolean;
       a        : byte;
   begin
@@ -1105,17 +1169,31 @@
   var   x,y    : byte;
         eqfg   : boolean;
         qfg    : QfgRec;
+{$ifdef hasHugeString}
+        nmta   : array[1..maxnmt] of record
+                                       nr   : byte;
+                                       name : string;
+                                     end;
+        nmtn,i : integer;
+        nmtyp  : string;
+{$else}
         nmta   : array[1..maxnmt] of record
                                        nr   : byte;
                                        name : string[30];
                                      end;
         nmtn,i : integer;
         nmtyp  : string[30];
+{$endif}
 
     procedure ReadNmta;
     var t   : text;
+{$ifdef hasHugeString}
+        tmp : string;
+        s   : string;
+{$else}
         tmp : pathstr;
         s   : string[50];
+{$endif}
     begin
       tmp:=TempS(4096);
       shell('zqwk.exe -nmt >'+tmp,350,3);

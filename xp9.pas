@@ -180,13 +180,17 @@ end;
 
 function testqwkinfiles(var s:string):boolean;
 var
+{$ifdef hasHugeString}
+    qd  : string;
+{$else}
     qd  : pathstr;
+{$endif}
 begin
   testqwkinfiles:=false;
   if s<>'' then begin
     qd:=GetFileDir(s);
     testqwkinfiles:=testfidodir(qd);
-    s:=qd+getFileName(s);
+    s:=qd+ExtractFilename(s);
     end;
 end;
 
@@ -759,9 +763,15 @@ var d         : DB;
     end;
 
   var x,y,i : byte;
+{$ifdef hasHugeString}
+      ums   : string;
+      ss    : string;
+      retyp : string;  { Re^n / Re / Default / nein }
+{$else}
       ums   : string[5];
       ss    : string;
       retyp : string[10];  { Re^n / Re / Default / nein }
+{$endif}
   begin
     dialog(ival(getres2(901,0)),10,getres2(901,iif(edit,1,2)),x,y);    { 'Brettgruppe bearbeiten','neue Brettgruppe anlegen' }
     if not odd(flags) then begin
@@ -1761,6 +1771,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/07/05 10:59:52  hd
+  - Weitere AnsiString-Anpassungen
+
   Revision 1.23  2000/07/04 16:42:45  hd
   - Funktion even entfernt
 
