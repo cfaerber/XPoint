@@ -26,7 +26,7 @@ unit NCModem;
 interface
 
 uses
-  xpglobal,netcall,sysutils,timer;
+  netcall,timer,objcom;
 
 type
   { This is the base class for all netcall types using dialup techniques.
@@ -37,20 +37,55 @@ type
 
   protected
     FCommObj: tpCommObj;
-    FTimerObj: tTimerObj;
-    FConnected,FActive,FDialupRequired: Boolean;
-    FErrorMsg: String;
+    FTimerObj: tTimer;
+    FConnected,FActive,FDialupRequired,WaitForAnswer,GotUserBreak: Boolean;
+    FErrorMsg,ReceivedUpToNow,ModemAnswer: String;
+
+    {Process incoming bytes from modem: store in ReceivedUpToNow or move
+     all bytes received yet to ModemAnswer and set WaitForAnswer to False
+     if WaitForAnswer was True.}
+    procedure ProcessIncoming;
+
+    {Process keypresses:
+     - set timer to timeout and set GotUserbreak to True on ESC
+     - set timer to timeout on space
+     - adjust timer on +/-}
+    procedure ProcessKeypresses(AcceptSpace:boolean);
+
+    {Send command to modem. Wait max TimeoutModemAnswer seconds for answer.
+     Return answer if received in time; if not received store in
+     ReceivedUpToNow, set WaitForAnswer to True and return empty string.}
+    function SendCommand(s:string; TimeoutModemAnswer: real): String;
+
+    {Send multiple commands separated by '\\'. Return last modem answer. See
+     SendCommand for details.}
+    function SendMultCommand(s:string; TimeoutModemAnswer: real): String;
 
   public
+    {Phone numbers to dial (space separated)}
+    Phonenumbers: String;
+    {Modem init string}
+    ModemInit: String;
+    {Modem dial prefix string}
+    ModemDial: String;
+    {Max dial attempts}
+    MaxDials: Integer;
+    {Connection establish timeout}
+    TimeoutConnectionEstablish: Integer;
+    {Modem init timeout}
+    TimeoutModemInit: Integer;
+    {Time to wait between dial attempts}
+    RedialWait: Integer;
+
     { True if comm channel initialized }
-    property Active: Boolean read FActive write SActive;
+    property Active: Boolean read FActive;
     { True if connected to peer }
     property Connected: Boolean read FConnected;
     { True if dialing is required in order to connect. Not necessary
       for IP connections or online calls. }
     property DialupRequired: Boolean read FDialupRequired write FDialupRequired;
     { Sets/reads timeout (activates on idleing of peer) }
-    property Timeout: Real read FGetTimeout write FSetTimeout;
+//    property Timeout: Real read FGetTimeout write FSetTimeout;
 
     property ErrorMsg: string read FErrorMsg;
 
@@ -75,6 +110,10 @@ function CountPhonenumbers(Phonenumbers: string): integer;
 
 implementation
 
+uses
+  {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF}
+  xpglobal,sysutils,typeform,debug,ipcclass;
+
 function GetNextPhonenumber(var Phonenumbers: string): string;
 var p : byte;
 begin
@@ -84,7 +123,6 @@ begin
   else begin
     result:=LeftStr(Phonenumbers,p-1);
     Phonenumbers:=trim(mid(Phonenumbers,p))+' '+LeftStr(Phonenumbers,p-1);
-    end;
   end;
 end;
 
@@ -103,7 +141,10 @@ end;
 constructor TModemNetcall.Create;
 begin
   inherited Create;
-  FConnected:=False; FActive:=False; FDoDialup:=False;
+  FConnected:=False; FActive:=False; FDialupRequired:=False; FErrorMsg:='';
+  WaitForAnswer:=False; GotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
+  Phonenumbers:=''; ModemInit:='ATZ'; ModemDial:='ATD'; MaxDials:=3;
+  TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWait:=40;
 end;
 
 constructor TModemNetcall.CreateWithCommObj(p: tpCommObj);
@@ -117,39 +158,17 @@ begin
   inherited destroy;
 end;
 
-(*
-procedure ProcessIncoming(idle:boolean);
-{Zeichen vom Modem abholen, in ReceivedUpToNow aufbewahren, ggf. Zeile ausgeben, in
- ModemAnswer ablegen und WaitForAnswer auf False setzen}
+function TModemNetcall.Activate(s: String): Boolean;
+begin
+  result:=CommInit(s,FCommObj);
+  if not result then WriteIPC(mcError,'Error activating comm channel: %s',[ObjCOM.ErrorStr]);
+end;
 
-procedure ProcessKeypresses(AcceptSpace:boolean);
-{Auf Tastendruecke reagieren:
- - bei ESC Timer auf Timeout und GotUserbreak auf True setzen
- - ggf. bei Space Timer auf Timeout setzen
- - +/- zum Aendern des Timeouts}
-
-function SendCommand(s:string): String;
-{Sendet Befehl an Modem; wartet maximal TimeoutModemAnswer Sekunden auf Antwort;
- Antwort wird als Ergebnis zurueckgegeben, falls innerhalb dieser Zeit erfolgt;
- ansonsten mit ProcessIncoming warten, bis WaitForAnswer False wird, Antwort steht
- dann in ModemAnswer.}
-
-function SendMultCommand(s:string): String;
-{Sendet durch \\ voneinander getrennte Befehle an Modem, zurueckgegeben wird letzte
- Antwort des Modems, weiteres siehe SendCommand.}
-
-function Hangup: Boolean;
-{Legt Modem auf; gibt True zurueck, falls Modem danach tatsaechlich wieder auf
- AT-Befehle reagiert.}
-*)
-
-implementation
-
-procedure TModemNetcall.ProcessIncoming(idle:boolean);
+procedure TModemNetcall.ProcessIncoming;
 var c : char;
 begin
-  if CommObj^.CharAvail then begin
-    c:=CommObj^.GetChar;
+  if FCommObj^.CharAvail then begin
+    c:=FCommObj^.GetChar;
     if (c=#13) or (c=#10) then begin
       if WaitForAnswer and(ReceivedUpToNow<>'') then begin
         ModemAnswer:=ReceivedUpToNow; ReceivedUpToNow:='';
@@ -157,7 +176,7 @@ begin
         WaitForAnswer:=false;
       end;
     end else if c<>#0 then ReceivedUpToNow:=ReceivedUpToNow+c;
-  end else if idle then SleepTime(10);
+  end else SleepTime(2);
 end;
 
 procedure TModemNetcall.ProcessKeypresses(AcceptSpace:boolean);
@@ -167,33 +186,36 @@ begin
     c:=readkey;
     case c of
       #27 : begin
-              TimerObj.SetTimeout(0); WaitForAnswer:=False; ReceivedUpToNow:='';
-              DebugLog('ncmodem','User break',DLInform); GotUserBreak:=true;
+              FTimerObj.SetTimeout(0); WaitForAnswer:=False; ReceivedUpToNow:='';
+              DebugLog('ncmodem','User break',DLWarning); GotUserBreak:=true;
             end;
-      '+' : TimerObj.SetTimeout(TimerObj.SecsToTimeout+1);
-      '-' : if TimerObj.SecsToTimeout>1 then TimerObj.SetTimeout(TimerObj.SecsToTimeout-1);
-      ' ' : if AcceptSpace then TimerObj.SetTimeout(0);
+      '+' : FTimerObj.SetTimeout(FTimerObj.SecsToTimeout+1);
+      '-' : if FTimerObj.SecsToTimeout>1 then FTimerObj.SetTimeout(FTimerObj.SecsToTimeout-1);
+      ' ' : if AcceptSpace then FTimerObj.SetTimeout(0);
+      #0: readkey;
     end;
   end;
 end;
 
-function TModemNetcall.SendCommand(s:string): String;
+function TModemNetcall.SendCommand(s: string; TimeoutModemAnswer: real): String;
 var p : byte; EchoTimer: tTimer;
 begin
   DebugLog('ncmodem','SendCommand: "'+s+'"',DLDebug);
-  CommObj^.PurgeInBuffer; s:=trim(s);
+  FCommObj^.PurgeInBuffer; s:=trim(s);
   if s<>'' then begin {Nicht-leerer Modembefehl; Tilde im Befehl bedeutet ca. 1 Sec Pause}
     repeat
       p:=cpos('~',s);
       if p>0 then begin
-        if not CommObj^.SendString(LeftStr(s,p-1),True)then DebugLog('ncmodem','Sending failed, received "'+LeftStr(s,p-1)+'"',DLWarning);
+        if not FCommObj^.SendString(LeftStr(s,p-1),True)then
+          DebugLog('ncmodem','Sending failed, received "'+FCommObj^.ErrorStr+'"',DLWarning);
         delete(s,1,p); SleepTime(1000);
       end;
     until p=0;
-    if not CommObj^.SendString(s+#13,True)then DebugLog('ncmodem','Sending failed, received "'+CommObj^.ErrorStr+'"',DLWarning);
+    if not FCommObj^.SendString(s+#13,True)then
+      DebugLog('ncmodem','Sending failed, received "'+FCommObj^.ErrorStr+'"',DLWarning);
     EchoTimer.Init; EchoTimer.SetTimeout(TimeoutModemAnswer); ReceivedUpToNow:=''; WaitForAnswer:=True;
     repeat
-      ProcessIncoming(true); ProcessKeypresses(false);
+      ProcessIncoming; ProcessKeypresses(false);
     until EchoTimer.Timeout or (not WaitForAnswer); {Warte auf Antwort}
     if EchoTimer.Timeout then ModemAnswer:='';
     SleepTime(200); EchoTimer.Done;
@@ -201,21 +223,21 @@ begin
   end;
 end;
 
-function TModemNetcall.SendMultCommand(s:string): String;
+function TModemNetcall.SendMultCommand(s: string; TimeoutModemAnswer: real): String;
 var p : byte; cmd: String;
 begin
   DebugLog('ncmodem','SendMultCommand: "'+s+'"',DLDebug);
-  while (length(trim(s))>1) and not TimerObj.Timeout do begin
+  while (length(trim(s))>1) do begin
     p:=pos('\\',s);
     if p=0 then p:=length(s)+1;
     cmd:=trim(LeftStr(s,p-1));
-    SendMultCommand:=SendCommand(cmd);
+    SendMultCommand:=SendCommand(cmd,TimeoutModemAnswer);
     s:=trim(mid(s,p+2));
     ProcessKeypresses(false);
   end;
 end;
 
-function TModemNetcall.Connect: Boolean;
+function TModemNetcall.Connect: boolean;
 
   function Bauddetect(ConnectString: String): Longint;
   var p: byte; b: longint;
@@ -233,86 +255,81 @@ type tStateDialup= (SDInitialize,SDSendDial,SDWaitForConnect,SDWaitForNextCall,S
 
 var
   StateDialup: tStateDialup;
-  iDial: Integer; Connected: Boolean;
+  iDial: Integer;
   CurrentPhonenumber: String;
 
 begin
+  if not FDialupRequired then begin result:=true; exit end;
   GotUserBreak := false;
   DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+ModemInit+'", Dial "'+ModemDial+'", MaxDials '+
                    Strs(MaxDials)+', ConnectionTimeout '+Strs(TimeoutConnectionEstablish)+', RedialWait '+Strs(RedialWait),DLInform);
-  StateDialup:=SDInitialize; iDial:=0; DialUp:=False;
+  StateDialup:=SDInitialize; iDial:=0; result:=False;
 
-  while StateDialup<=SDWaitForNextCall do begin {alles nach SDWaitForNextCall wird nur fuer DisplayProc benutzt}
+  while StateDialup<=SDWaitForNextCall do begin
     case StateDialup of
       SDInitialize: begin
-                      DebugLog('ncmodem','Dialup initialize',DLDebug);
-                      DUDState:=StateDialup; DisplayProc; {Ausgabe: 'Modem initialisieren' }
-                      TimerObj.SetTimeout(TimeoutModemInit);
+                      WriteIPC(mcInfo,'Init modem',[0]);
+                      FTimerObj.SetTimeout(TimeoutModemInit);
                       if ModemInit='' then begin
-                        CommObj^.SendString(#13,False); SleepTime(150);
-                        CommObj^.SendString(#13,False); SleepTime(300);
-                        SendCommand('AT'); ProcessKeypresses(false);
+                        FCommObj^.SendString(#13,False); SleepTime(150);
+                        FCommObj^.SendString(#13,False); SleepTime(300);
+                        SendCommand('AT',1); ProcessKeypresses(false);
                       end;
-                      if not TimerObj.Timeout then begin
-                        SendMultCommand(ModemInit); StateDialup:=SDSendDial;
+                      if not FTimerObj.Timeout then begin
+                        SendMultCommand(ModemInit,1); StateDialup:=SDSendDial;
                       end;
                     end;
       SDSendDial: begin
-                    DebugLog('ncmodem','Dialup send dial command',DLDebug);
-                    inc(iDial); CurrentPhonenumber:=NumberRotate(Phonenumbers);
-                    DUDState:=StateDialup; DUDNumber:=CurrentPhonenumber; DUDTry:=iDial;
-                    DisplayProc;
-                    {Ausgabe: 'Waehle [DUDNumber] (Versuch [DUDTry]) ...' }
+                    inc(iDial); CurrentPhonenumber:=GetNextPhonenumber(Phonenumbers);
+                    WriteIPC(mcInfo,'Dial %s try %i',[CurrentPhoneNumber,iDial]);
                     while cpos('-',CurrentPhonenumber)>0 do delete(CurrentPhonenumber,cpos('-',CurrentPhonenumber),1);
-                    SendMultCommand(ModemDial+CurrentPhonenumber); {Gegenstelle anwaehlen}
+                    SendMultCommand(ModemDial+CurrentPhonenumber,1); {Gegenstelle anwaehlen}
                     StateDialup:=SDWaitForConnect;
                   end;
       SDWaitForConnect: begin
-                          DebugLog('ncmodem','Dialup wait for connect',DLDebug);
-                          TimerObj.SetTimeout(TimeoutConnectionEstablish);
+                          FTimerObj.SetTimeout(TimeoutConnectionEstablish);
                           repeat
-                            ProcessIncoming(true); ProcessKeypresses(false);
-                            DUDState:=StateDialup; DUDTimer:=TimerObj.SecsToTimeout; DisplayProc;
-                            {Ausgabe: Restzeit bis Timeout}
-                            if (ModemAnswer='RINGING')or(ModemAnswer='RRING') then begin
-                              DUDState:=SDModemAnswer; DisplayProc; {Ausgabe ring string}
-                              ModemAnswer:=''; WaitForAnswer:=true;
-                            end;
-                          until TimerObj.Timeout or(not WaitForAnswer);
-                          Connected:=False;
-                          if not TimerObj.Timeout then begin
+                            ProcessIncoming; ProcessKeypresses(false);
+                            WriteIPC(mcVerbose,'*%i',[System.Round(FTimerObj.SecsToTimeout)]);
+                          until FTimerObj.Timeout or(not WaitForAnswer);
+                          result:=False;
+                          if not FTimerObj.Timeout then begin
                             {Kein Timeout, kein Userbreak: Vermutlich Connect oder Busy.}
                             if LeftStr(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
-                            DUDState:=SDModemAnswer; DisplayProc; {Ausgabe Modemantwort}
+                            WriteIPC(mcInfo,'Modem answer %s',[ModemAnswer]);
                             SleepTime(200);
                             if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(LeftStr(UpperCase(ModemAnswer),7)='CARRIER'))or
-                                (CommObj^.Carrier and(not CommObj^.IgnoreCD))then begin {Connect!}
-                              StateDialup:=SDConnect; DialUp:=True; Connected:=True;
-                              DUDState:=StateDialup; DUDBaud:=BaudDetect(ModemAnswer); DisplayProc; {Ausgabe: Connect}
-                              if not CommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
-                              if not CommObj^.Carrier then SleepTime(1000);
+                                (FCommObj^.Carrier and(not FCommObj^.IgnoreCD))then begin {Connect!}
+                              StateDialup:=SDConnect; result:=True;
+                              WriteIPC(mcInfo,'Connect %i',[Bauddetect(ModemAnswer)]);
+                              if not FCommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
+                              if not FCommObj^.Carrier then SleepTime(1000);
                             end
                           end;
-                          if not Connected then begin {Timeout, Userbreak, Busy oder aehnliches}
-                            DUDState:=SDNoConnect; DisplayProc; {Ausgabe: Keine Verbindung}
-                            CommObj^.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
+                          if not result then begin {Timeout, Userbreak, Busy oder aehnliches}
+                            WriteIPC(mcInfo,'No connect',[0]);
+                            FCommObj^.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
                             StateDialup:=SDWaitForNextCall;
                           end;
               end;
       SDWaitForNextCall: begin
-                           DebugLog('ncmodem','Dialup wait for next call',DLDebug);
-                           TimerObj.SetTimeout(RedialWait);
-                           DUDState:=StateDialup; {Ausgabe: 'warte auf naechsten Anruf ...'}
+                           FTimerObj.SetTimeout(RedialWait);
+                           WriteIPC(mcInfo,'Wait for next dial attempt',[0]);
                            if iDial<MaxDials then begin
                              repeat
-                               DUDTimer:=TimerObj.SecsToTimeout; DisplayProc; ProcessIncoming(true); ProcessKeypresses(true);
-                             until TimerObj.Timeout;
+                               WriteIPC(mcVerbose,'*%i',[System.Round(FTimerObj.SecsToTimeout)]);
+                               ProcessIncoming; ProcessKeypresses(true);
+                               if Pos('RING',ModemAnswer)<>0 then begin
+                                 WriteIPC(mcInfo,'Ring detected',[0]);
+                                 WaitForAnswer:=True; FTimerObj.SetTimeout(RedialWait);
+                               end;
+                             until FTimerObj.Timeout;
                              StateDialup:=SDInitialize;
                            end else StateDialup:=SDNoConnect;
                          end;
     end;
-    ProcessKeypresses(false);
-    if GotUserBreak then begin DUDState:=SDUserBreak; DisplayProc; {Ausgabe: Userbreak} exit end;
+    ProcessKeypresses(true);
+    if GotUserBreak then begin WriteIPC(mcInfo,'Got user break',[0]); exit end;
   end;
 end;
 
@@ -321,25 +338,27 @@ procedure TModemNetcall.Disconnect;
 var i : integer;
 begin
   DebugLog('ncmodem','Hangup',DLInform);
-  CommObj^.PurgeInBuffer; CommObj^.SetDTR(False);
-  SleepTime(500); for i:=1 to 6 do if(not CommObj^.IgnoreCD)and CommObj^.Carrier then SleepTime(500);
-  CommObj^.SetDTR(True); SleepTime(500);
-  if CommObj^.ReadyToSend(3)then begin
-    CommObj^.SendString('+++',False);
-    for i:=1 to 4 do if((not CommObj^.IgnoreCD)and CommObj^.Carrier)then SleepTime(500);
+  FCommObj^.PurgeInBuffer; FCommObj^.SetDTR(False);
+  SleepTime(500); for i:=1 to 6 do if(not FCommObj^.IgnoreCD)and FCommObj^.Carrier then SleepTime(500);
+  FCommObj^.SetDTR(True); SleepTime(500);
+  if FCommObj^.ReadyToSend(3)then begin
+    FCommObj^.SendString('+++',False);
+    for i:=1 to 4 do if((not FCommObj^.IgnoreCD)and FCommObj^.Carrier)then SleepTime(500);
     SleepTime(100);
   end;
-  if CommObj^.ReadyToSend(6)then begin
-    CommObj^.SendString('AT H0'#13,True);
+  if FCommObj^.ReadyToSend(6)then begin
+    FCommObj^.SendString('AT H0'#13,True);
     SleepTime(1000);
   end;
-  if CommObj^.ReadyToSend(3)then CommObj^.SendString('AT'+#13,True);
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.4  2001/01/28 00:13:58  ma
+  - compiles!- untested though.
+
   Revision 1.3  2001/01/23 11:46:11  ma
   - a little cleanup done
 
