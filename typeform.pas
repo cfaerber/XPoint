@@ -1156,7 +1156,7 @@ Function LStr(const s:string):string;
 
 {$endif}
 
-function UStrHuge(const s: AnsiString):AnsiString;
+function UStrHuge(const s: HugeString): HugeString;
 var
   i : integer;
 begin
@@ -2223,6 +2223,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/05/01 08:49:28  mk
+  - Tippfehler :-(
+
   Revision 1.31  2000/05/01 08:44:47  mk
   - Function UStrHuge fuer AnsiStrings eingefuegt
 
