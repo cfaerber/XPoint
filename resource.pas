@@ -32,7 +32,6 @@ uses
 
 procedure OpenResource(fn:string; preloadmem:longint);
 procedure CloseResource;
-function  ResEmspages:word;
 function  ResIsOpen:boolean;
 
 function  GetRes(nr:word):string;
@@ -71,12 +70,13 @@ type
                end;
       tindex = packed array[0..maxindex-1,0..1] of smallword;
 
-const f      : ^file = nil;
+const
       clnr   : word  = $ffff;    { geladener Cluster }
 
 var   block  : packed array[1..maxblocks] of rblock;
       blocks : word;
       index  : packed array[1..maxblocks] of ^tindex;
+      FH: Integer;
 
       clsize : word;         { Cluster-Gr”áe }
       clindex: ^tindex;      { Cluster-Index  }
@@ -94,34 +94,26 @@ end;
 { preloadmem: soviel Bytes Heap soll mindestens freibleiben }
 
 procedure OpenResource(fn:string; preloadmem:longint);
-var i  : integer;
-    fm : byte;
+var
+  i  : integer;
 begin
-  if f<>nil then
-    error('Resource file already open');
-  new(f);
-  assign(f^,fn);
-  fm:=filemode; filemode:=$40;   { nur lesen }
-  reset(f^,1);
-  filemode:=fm;
-  if inoutres<>0 then
+  FH := FileOpen(fn, fmOpenRead);
+  if FH < 0 then
     error(ioerror(ioresult,'can''t open '+UpperCase(fn)));
-  seek(f^,128);
-  blockread(f^,blocks,2);
-  seek(f^,128+16);
-  blockread(f^,block,sizeof(block));
+  FileSeek(FH, 128, 0);
+  FileRead(FH, Blocks, 2);
+  FileSeek(FH, 128+16, 0);
+  FileRead(FH,block,sizeof(block));
   for i:=1 to blocks do begin          { Indextabellen laden }
     getmem(index[i],block[i].anzahl*4);
-    seek(f^,block[i].fileadr);
-    blockread(f^,index[i]^,block[i].anzahl*4);
+    FileSeek(FH, block[i].fileadr, 0);
+    FileRead(FH,index[i]^,block[i].anzahl*4);
     if block[i].flags and flPreload<>0 then
     begin
-        if memavail-block[i].contsize>preloadmem then begin
-          getmem(block[i].rptr,block[i].contsize);
-          block[i].loaded:=true;
-          end;
+      getmem(block[i].rptr,block[i].contsize);
+      block[i].loaded:=true;
       if block[i].loaded then
-        blockread(f^,block[i].rptr^,block[i].contsize)   { preload }
+        FileRead(FH,block[i].rptr^,block[i].contsize)   { preload }
       else
         inc(block[i].fileadr,block[i].anzahl*4);
       end;
@@ -132,33 +124,19 @@ end;
 procedure CloseResource;
 var i : integer;
 begin
-  if f=nil then
-    error('no resource file open');
-  close(f^);
-  dispose(f);
+  FileClose(FH);
   for i:=1 to blocks do with block[i] do begin
       if loaded then
         freemem(rptr,contsize);
     freemem(index[i],anzahl*4);
     end;
   freeres;
-  f:=nil;
 end;
 
 function ResIsOpen:boolean;
 begin
-  ResIsOpen:=(f<>nil);
-end;
-
-
-function ResEmspages:word;
-var w,i : word;
-begin
-  w:=0;
-  if f<>nil then
-    for i:=1 to blocks do
-      inc(w,block[i].emspages);
-  ResEmspages:=w;
+  ResIsOpen := false;
+//   ResIsOpen:=(f<>nil);
 end;
 
 
@@ -212,8 +190,8 @@ begin
         Move(rptr^[index[bnr]^[inr,1]],s[1],length(s));
         end
       else begin
-        seek(f^,fileadr+index[bnr]^[inr,1]);
-        blockread(f^,s[1],length(s));
+        FileSeek(FH, fileadr+index[bnr]^[inr,1], 0);
+        FileRead(FH,s[1],length(s));
         end;
       GetRes:=s;
       end;
@@ -264,9 +242,9 @@ begin
             clcont:=@rptr^[ofs+2+clsize*4];
             end
           else begin
-            seek(f^,fileadr+ofs);
+            FileSeek(FH,fileadr+ofs, 0);
             getmem(p,size);
-            blockread(f^,p^,size);                 { Cluster komplett laden }
+            FileRead(FH,p^,size);                 { Cluster komplett laden }
             Move(p^[0],clsize,2);                  { -> Anzahl Elemente     }
             clcsize:=size-2-clsize*4;
             getmem(clindex,clsize*4);
@@ -309,8 +287,8 @@ begin
         Move(rptr^[index[bnr]^[inr,1]],nr,2);
         end
       else begin
-        seek(f^,fileadr+index[bnr]^[inr,1]);
-        blockread(f^,nr,2);
+        FileSeek(FH,fileadr+index[bnr]^[inr,1], 0);
+        FileRead(FH,nr,2);
         end;
       Res2Anz:=nr;
       end
@@ -349,13 +327,11 @@ var
 procedure ExitResourceUnit;
 begin
   ExitProc:= SavedExitProc;
-  if f<>nil then
-    closeresource;
+  Closeresource;
 end;
 
 procedure InitResourceUnit;
 begin
-  f:= nil;
   SavedExitProc:= ExitProc;
   ExitProc:= @ExitResourceUnit;
 end;
@@ -363,6 +339,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2001/07/28 13:07:27  mk
+  - converted to new SysUtils File routines
+
   Revision 1.20  2001/05/13 13:10:41  ma
   - added missing resource debug warnings
 
