@@ -254,11 +254,41 @@ xpoint.htm: xpoint.sgm xpoint.dsl catalog
 	$(SED) 's/&#13;//g' xpoint.tmp > xpoint.htm
 	-$(TIDY) $(TIDYFLAGS) xpoint.htm
 
+ifeq (,$(dbdir))
+
+catalog: xpoint.cat
+	$(error Variable "dbdir" muss gesetzt werden)
+
+else
+ifeq (,$(entdir))
+
+catalog: xpoint.cat
+	$(error Variable "entdir" muss gesetzt werden)
+
+else
+ifeq (,$(jadedir))
+
+catalog: xpoint.cat
+	$(error Variable "jadedir" muss gesetzt werden)
+
+else
+ifeq (,$(moddir))
+
+catalog: xpoint.cat
+	$(error Variable "moddir" muss gesetzt werden)
+
+else
+
 catalog: xpoint.cat
 	$(SED) 's/@DBDIR@/$(dbdirq)/' xpoint.cat > xpoint.tmp
 	$(SED) 's/@ENTDIR@/$(entdirq)/' xpoint.tmp > xpoint.tm1
 	$(SED) 's/@JADEDIR@/$(jadedirq)/' xpoint.tm1 > xpoint.tm2
 	$(SED) 's/@MODDIR@/$(moddirq)/' xpoint.tm2 > catalog
+
+endif
+endif
+endif
+endif
 
 xpoint.rtf: xpoint.sgm xpoint.dsl catalog
 	$(JADE) -c catalog -d xpoint.dsl#print -t rtf xpoint.sgm > xpoint.rtf
@@ -370,6 +400,9 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.15  2000/10/29 16:18:58  fe
+# Korrekturen
+#
 # Revision 1.14  2000/10/23 17:16:27  fe
 # FreeBSD-Anpassungen
 #
