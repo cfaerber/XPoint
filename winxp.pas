@@ -164,8 +164,8 @@ var
 {$ENDIF }
 
 var pullw   : array[1..maxpull] of record
-                                     l,r,o,u,wi : byte;
-                                     ashad      : byte;
+                                     l,r,o,u,wi : integer;
+                                     ashad      : integer;
 {$IFDEF NCRT }
                                      win        : TWinDesc;
 {$ELSE }
@@ -925,6 +925,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2001/02/22 11:48:13  ma
+  - fixed crashes occurring with ScreenWidth>128
+
   Revision 1.52  2000/11/19 18:22:52  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 

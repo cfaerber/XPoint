@@ -69,7 +69,7 @@ const kss : byte = 2;
       Wrt2(copy(s,p+1,30) + ' ')
   end;
 
-  procedure AddSK(pos,len,spot:shortint; _key:taste);
+  procedure AddSK(pos,len,spot: integer; _key:taste);
   begin
     inc(shortkeys);
     if shortkeys>maxskeys then
@@ -403,6 +403,9 @@ end.
 
 {
   $Log$
+  Revision 1.21  2001/02/22 11:48:13  ma
+  - fixed crashes occurring with ScreenWidth>128
+
   Revision 1.20  2001/01/20 15:25:00  ml
   - helpfix
 
