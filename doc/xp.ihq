@@ -854,9 +854,9 @@ Normalerweise wrden alle Mails, die Sie ber eine
 Mailingliste erhalten, in Ihr internes PM-Brett ein-
 sortiert werden. Des weiteren wrde sich CrossPoint,
 wenn Sie auf eine solche Mail antworten, auch wie
-bei einer PM verhalten (es wrde z.B. fragen, ob Sie
-die PM archivieren wollen, und es wrde die entspre-
-chende PM-Schablone verwenden).
+bei einer PM verhalten - es wrde also z.B. fragen,
+ob Sie die PM archivieren wollen, und es wrde die
+entsprechende PM-Schablone verwenden.
 
 Dieses Verhalten ist i.d.R. nicht erwnscht, weil
 Sie auf die Dauer bei Mailinglisten, die einen hohen
@@ -876,8 +876,9 @@ liste abzusetzen. Im Falle der OpenXP-Mailingliste
 ist dies z.B. <<openxp-dev\@lists.sourceforge.net>>.
 
 Diese Useradresse legen Sie nun wie einen ganz nor-
-malen User an (<<S>>, <<H>> in der User-šbersicht). Wichtig:
-die Haltezeit dieses Users setzen Sie auf 1 Tag!
+malen User an (<<S>>, <<H>> in der User-šbersicht). Die
+Haltezeit des Users k”nnen Sie auf einen beliebigen
+Wert einstellen (s. Hinweis unten).
 
 Wenn Sie nun eine Mail an diesen User schreiben (<<B>> in
 der User-šbersicht), erhalten alle brigen Teilnehmer
@@ -974,10 +975,27 @@ antworten. Ihre eigenen Nachrichten befinden sich
 zun„chst im PM-Brett des Pseudo-Users, kommen aber
 als "Rckl„ufer" beim n„chsten Netcall wieder zu
 Ihnen zurck und werden ebenfalls in das Mailing-
-listen-Brett einsortiert. Die Nachrichten im PM-Brett
-des Pseudo-Users werden bei der n„chsten Reorganisa-
-tion entsorgt (wenn Sie, wie oben beschrieben, die
-Haltezeit des Users auf "1" eingestellt haben).
+listen-Brett einsortiert.
+
+
+<<Hinweis:
+
+Da Ihre selbstgeschriebenen Nachrichten nun doppelt
+in der Nachrichtendatenbank vorhanden sind, wrden
+Kommentarbaumzweige, die von Ihnen verfaáte Nach-
+richten enthalten, ebenfalls dupliziert werden.
+
+Sie sollten daher bei den Boxen, mit denen Sie an
+Mailinglisten teilnehmen, unter Edit/Boxen/Edit/
+Diverses den Schalter "[lokale Kopien ersetzen]"@8051
+aktivieren. Die Nachrichten werden selbst dann
+ersetzt, wenn der Schalter "[Eigene PMs halten]"@244
+unter Config/Optionen/Nachrichten aktiviert sein
+sollte. In diesem Fall bernimmt die ersetzende
+Nachricht den Haltestatus der ersetzten Nachricht.
+
+Auch die Haltezeit des (Pseudo-)Users spielt fr das
+Ersetzen lokaler Kopien keine Rolle.
 
 @
 19
@@ -4151,6 +4169,34 @@ dieser User auf einen anderen Server k”nnen Sie
 stattdessen /Wartung/Server-Wechsel verwenden.
 
 @
+8051
+<<[x]>> -> Eingehende Nachrichten werden daraufhin ber-
+       prft, ob sie sich bereits in der Datenbank
+       befinden und es sich um selbstgeschriebene
+       Nachrichten handelt. Trifft beides zu, wird
+       die lokale Kopie gel”scht und durch die ein-
+       gehende Nachricht ("Rckl„ufer") ersetzt.
+
+       Die Nachrichten werden unabh„ngig von ihrem
+       Haltestatus und der Haltezeit des Brettes bzw.
+       des Users ersetzt. Sollte die ersetzte Nach-
+       richt auf "Halten" gesetzt worden sein, ber-
+       nimmt die eingehende Nachricht diesen Status.
+
+       Diese Einstellung ist insbesondere bei RFC-
+       Boxen sinnvoll, um duplizierte Kommentar-
+       baumzweige zu vermeiden. Die Aktivierung
+       dieses Schalters verlangsamt allerdings das
+       Einlesen der Nachrichten nach einem Netcall.
+
+<<[ ]>> -> CrossPoint legt beim Eintreffen selbst-
+       geschriebener Nachrichten Duplikate an.
+
+Die Einstellung wird bei allen Netztypen untersttzt,
+ist i.d.R. aber nicht bei allen Netztypen gleich
+sinnvoll, da es in manchen Netzen (z.B. Fido) i.d.R.
+gar keine "Rckl„ufer" gibt.
+@
 190
 Dies ist der Name der Serverbox; genauer gesagt: der
 Kurzname, der zur Adressierung dieser Box innerhalb
@@ -5414,6 +5460,16 @@ so lange warten zu mssen.
        Stromsparschaltung aktivieren.
 @
 283
+<<[x]>> -> nderungen der VGA-Farbpalette (z.B. von
+       externen Programmen) werden beim XP-Start und
+       nach Rckkehr aus einer DOS-Shell gesichert
+       und somit nach XP bernommen.
+
+<<[ ]>> -> XP restauriert bei jedem Start und jeder
+       Rckkehr aus einer DOS-Shell die Standard-
+       VGA-Palette.
+@
+284
 <<[x]>> -> Beim Aktivieren des Screensavers schaltet XP
        Ihren Monitor in den Stromsparmodus. Voraus-
        setzung dafr ist, daá Ihre Grafikkarte und
@@ -5424,20 +5480,20 @@ Wenn XP in einem Windows- oder OS/2-Fenster l„uft,
 steht normalerweise kein VESA-DPMS zur Verfgung.
 
 @
-284
+285
 <<[x]>> -> beim Beenden des Screensavers, d.h. beim Wie-
        dereinblenden des alten Bildschirms, wird das
        unter /Config/Optionen/Paáwort eingestellte
        Startpaáwort abgefragt (falls vorhanden).
 @
-285
+286
 <<[x]>> -> In der dritten Bildzeile wird der Username
        bei der gew„hlten Stammbox angezeigt.
 
 Dieses Feature ist ntzlich, wenn Sie mit *SETUSER
 oder Parameter "/user" arbeiten.
 @
-286
+287
 Haben sie unter /Config/Anzeige/Kopf die Zeile
 <<Userdefiniert 1>> aktiviert, so mssen sie hier
 noch die Zeichenkette eingeben, nach der im Kopf
@@ -5448,7 +5504,7 @@ Beispiel: U-SUPERSEDES
 Es wird nach U-SUPERSEDES: im Kopf der Nachricht
 gesucht und der Text dahinter angezeigt.
 @
-287
+288
 Haben sie unter /Config/Anzeige/Kopf die Zeile
 <<Userdefiniert 2>> aktiviert, so mssen sie hier
 noch die Zeichenkette eingeben, nach der im Kopf
@@ -12066,6 +12122,12 @@ Boxen beim bern„chsten Anruf.
 Gelegentlich kann es auch vorkommen, daá Brettmana-
 ger-Befehle mit einigen Minuten Verz”gerung abgear-
 beitet werden.
+
+Im Client-Modus einer RFC/UUCP-Box muá die Liste der
+Newsgroups nicht ber CrossPoint, sondern direkt ber
+den in XP eingebundenen externen Client angefordert
+werden.
+
 @
 11904
 <<Nachricht / Brettmanager / Sonstiges
@@ -12134,6 +12196,8 @@ nur eine kleie Auswahl von Befehlen.
   <<help>>    fordert einen Hilfetext zur manuellen Be-
           dienung von Changesys an.
 
+  Im Client-Modus wird diese Funktion nicht untersttzt.
+
 @
 11906
 <<Nachricht / Brettmanager / Liste einlesen
@@ -12178,6 +12242,27 @@ mit /Nachricht/Brettmanager/Sonstige anfordern.
 
 Die "maschinenlesbare Gruppenliste" wird von Cross-
 Point fr das Bestellen von Brettern verwendet.
+@
+11910
+<<RFC/UUCP (nur Client-Modus)
+
+Geben Sie hier an, wieviele Artikel der mit *diesem*
+Bestellvorgang bestellte(n) Newsgroup(s) angefordert
+werden sollen (Standard: es werden die letzten 10
+Artikel angefordert).
+
+Diese Einstellung hat nur Einfluá auf den n„chsten
+Netcall fr diesen Server. Danach sind die Artikel-
+z„hler in der Liste der bestellten Newsgroups (Datei
+<<<Box>.RC>> im Client-Verzeichnis) auf dem aktuellen
+Stand und es werden bei den folgenden Netcalls immer
+die jeweils aktuellen, noch nicht vorhandenen Artikel
+fr jede Gruppe geholt.
+
+Wenn Sie fr mehrere zu bestellende Gruppen eine
+unterschiedliche Anzahl von Artikeln anfordern
+m”chten, teilen Sie die Bestellung in mehrere
+einzelne Bestellvorg„nge auf.
 
 @
 12001
