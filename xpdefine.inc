@@ -66,7 +66,7 @@
   {$ENDIF }
 {$ENDIF }
 
-{$IFDEF VER130 }      { Delphi 5 }
+{$IFDEF VER130 }          { Delphi 5 }
   {$DEFINE Ver32 }
   {$DEFINE Win32 }
   {$DEFINE Delphi }
@@ -74,14 +74,14 @@
   {$UNDEF NeedReg }
 {$ENDIF }
 
-{$IFDEF __CON__ } { Nur fÅr TMT Pascal >= 3.30 }
+{$IFDEF __CON__ }         { Nur fÅr TMT Pascal >= 3.30 }
   {$DEFINE VER32 }
   {$DEFINE TMT }
   {$DEFINE DOS32 }
   {$A+,B-,D-,F-,I-,L-,O-,P-,Q-,R-,S-,T-,V-,X+}
 {$ENDIF }
 
-{$IFDEF VirtualPascal }  { Virtual Pascal ab 2.0 }
+{$IFDEF VirtualPascal }   { Virtual Pascal ab 2.0 }
   {$DEFINE VP }
   {$DEFINE Ver32 }
   {$B-,D-,H-,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
@@ -104,7 +104,7 @@
 {$ENDIF }
 
 {$IFDEF DebugInfo }
-  {$IFDEF BP } { Nur fÅr Borland Pascal 7 }
+  {$IFDEF BP }            { Nur fÅr Borland Pascal 7 }
     {$D+,L+,Y+}
   {$ENDIF }
   {$IFDEF VirtualPascal }
@@ -113,7 +113,7 @@
 {$ENDIF }
 
 {$IFDEF Debug }
-  {$IFDEF BP } { Nur fÅr Borland Pascal 7 }
+  {$IFDEF BP }            { Nur fÅr Borland Pascal 7 }
     {$R+,S+,Q+}
   {$ENDIF }
   {$IFDEF VirtualPascal }
@@ -122,21 +122,49 @@
 {$ENDIF }
 
 {$IFDEF Ver32 }
-  {$IFDEF CAPI } { Umgeht hÑssliche Warnings in TMT Pascal }
-    {$UNDEF CAPI } { Bis jetzt keine CAPI-UnterstÅtzung in 32 Bit Versionen }
-  {$ENDIF CAPI }
+  {$UNDEF CAPI } { Bis jetzt keine CAPI-UnterstÅtzung in 32 Bit Versionen }
 {$ENDIF }
 
 {$IFDEF DPMI32 }
   {$DEFINE DOS32 }
+  {$DEFINE NeedReg }     { 32 Bit DOS-Versionen mÅssen registriert werden }
 {$ENDIF }
 
 {$IFDEF Linux }
-  {$DEFINE UseLocalScreen } { Unter Linux mÅssen wir den LocalScreen verwenden }
+  {$DEFINE LocalScreen } { Unter Linux mÅssen wir den LocalScreen verwenden }
+  {$DEFINE UnixFS }      { Unix-FS wird verwendet }
 {$ENDIF }
+
+{$IFDEF FreeBSD }
+  {$DEFINE LocalScreen } { Unter FreeBSD mÅssen wir den LocalScreen verwenden }
+  {$DEFINE UnixFS }      { Unix-FS wird verwendet }
+{$ENDIF }
+
+{ --- ErklÑrungen der selbst gesetzen Defines --- }
+
+{ LocalSceeen
+
+  Jede Routine, die in den Bildschirmspeicher schreibt, aktualisiert einen
+  internen Puffer um die énderung fÅr das Restaurieren von Fensterhinter-
+  grÅnden wieder anzeigen verfÅgbar zu haben. Das ist bei allen Betriebs-
+  systemen nîtig, wo der Bildschirm nicht wieder ausgelesen werden kann,
+  z.B. bei Linux
+
+  UnixFS
+
+  OpenXP lÑuft auf einem Unix-Dateisystem, es werden damit Dateinamen nach
+  Gro·- und Kleinschreibung unterschieden und der "/" statt "\" benutzt.
+  Dateinamen, die von OpenXP erzeugt oder benutzt werden, mÅssen immer
+  komplett klein geschrieben sein.
+
+}
+
 
 {
   $Log$
+  Revision 1.21  2000/04/26 20:58:56  mk
+  - Erweiterungen fuer Linux
+
   Revision 1.20  2000/04/23 15:46:53  mk
   - Typo fuer Linux LocalScreen beseitigt
 
