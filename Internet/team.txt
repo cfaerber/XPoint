@@ -23,6 +23,11 @@ Misc (OpenXP/16)
 Linux-Portierung (OpenXP/32)
 Porting to Linux (OpenXP/32)
 
+<a href="http://www.stuebner.de">Matthias St&uuml;bner</a>
+<a href="mailto:ms@openxp.de">ms</a>
+Dokumentation, Onlinehilfe (OpenXP/32)
+Documentation, Online help (OpenXP/32)
+
 Michael Heydekamp
 <a href="mailto:my@openxp.de">my</a>
 Div. Programmierung, Client-Unterstützung, Design, Hilfe
