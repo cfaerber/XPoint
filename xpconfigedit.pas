@@ -107,7 +107,7 @@ procedure set_AddServers_Allowances(var s:string);
 procedure set_ExtCfg_Allowances;
 procedure reset_Allowances(var s:string);
 function  addServersTest(var s:string):boolean;
-function  BfgToBox(var s:string):string;
+function  BfgToBox(s:string):string;
 function  BoxToBfg(var s:string):string;
 
 implementation  {---------------------------------------------------}
@@ -2228,7 +2228,7 @@ begin
 end;
 
 
-function BfgToBox(var s:string):string;
+function BfgToBox(s:string):string;
 var   d      : DB;
       p      : Integer;
       s1     : string;              { BFG-Datei }
@@ -2514,6 +2514,9 @@ end;
 
 {
   $Log$
+  Revision 1.45.2.7  2003/09/03 00:43:37  mk
+  - added multiserver client netcall
+
   Revision 1.45.2.6  2003/08/25 17:44:21  mk
   - fixed directory create in Edit/Client
 

@@ -279,31 +279,34 @@ begin
   if not existf(f) then exit;
   CCList := TStringList.Create;
   Header := THeader.Create;
-  zconnect:=ntZConnect(ntBoxNetztyp(BoxName));
-  reset(f,1);
-  adr:=0;
-  fs:=filesize(f);
-  mi:=dbGetIndex(mbase);
-  dbSetIndex(mbase,miBrett);
-  if Assigned(IDList) then IDList.Sort;
-  while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
-    inc(outmsgs);
-    seek(f,adr);
-    makeheader(zconnect,f,0,hds, Header,ok,false,true); { MUSS ok sein! }
-    if not ok then begin
-      tfehler(puffer+' corrupted!',esec);
-      close(f);
-      Header.Free;
-      exit;
+  try
+    zconnect:=ntZConnect(ntBoxNetztyp(BoxName));
+    reset(f,1);
+    adr:=0;
+    fs:=filesize(f);
+    mi:=dbGetIndex(mbase);
+    dbSetIndex(mbase,miBrett);
+    if Assigned(IDList) then IDList.Sort;
+    while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
+      inc(outmsgs);
+      seek(f,adr);
+      makeheader(zconnect,f,0,hds, Header,ok,false,true); { MUSS ok sein! }
+      if not ok then begin
+        tfehler(puffer+' corrupted!',esec);
+        close(f);
+        Header.Free;
+        exit;
+      end;
+      for i:=0 to Header.Empfaenger.Count -1 do
+        ClearUnsent(Header.Empfaenger[i]);
+      inc(adr, Header.groesse+hds);
     end;
-    for i:=0 to Header.Empfaenger.Count -1 do
-      ClearUnsent(Header.Empfaenger[i]);
-    inc(adr, Header.groesse+hds);
-  end;
-  close(f);
-  CCList.Free;
-  dbSetIndex(mbase,mi);
-  Header.Free;
+    close(f);
+    CCList.Free;
+    dbSetIndex(mbase,mi);
+  finally
+    Header.Free;
+  end; 
   inc(outemsgs,TestPuffer(LeftStr(puffer,cpos('.',puffer))+extEBoxFile,false,ldummy));
 end;
 
@@ -759,9 +762,9 @@ function BoxParOk: string;
     end;
 
     function ChkAddServers:boolean;
-    var s : string;
+    var
+      s : string;
     begin
-      ChkAddServers:=true;
       own_Nt:=netztyp;
       showErrors:=false;    { keine Einzel-Fehlermeldungen  }
       with boxpar^ do
@@ -831,7 +834,7 @@ begin
   freeres;
 end;
 
-procedure makepuf(fn:string; twobytes:boolean);
+procedure makepuf(const fn:string; twobytes:boolean);
 var f : file;
 begin
   assign(f,fn);
@@ -947,7 +950,7 @@ begin                  { function Netcall }
     dbClose(d);
     trfehler1(709,BoxName,60);   { 'unbekannte Box:  %s' }
     exit;
-    end;
+  end;
   bfile := dbReadStr(d,'dateiname');
   email := ComputeUserAddress(d);
   ppfile:=bfile+extBoxFile;
@@ -957,7 +960,7 @@ begin                  { function Netcall }
   Debug.DebugLog('xpnetcall','got net type: '+ntName(netztyp),DLInform);
 
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
-  BoxPar^._domain   := dbReadStr(d,'domain');
+  BoxPar^._domain   := dbReadStr(d,'domain');  // Warum nicht aus bfg??
   komment := dbReadStr(d,'kommentar');
   dbClose(d);
   Debug.DebugLog('xpnetcall','got server file name: '+bfile,DLInform);
@@ -991,6 +994,7 @@ begin                  { function Netcall }
   end;
 
   Debug.DebugLog('xpnetcall','testing buffers',DLInform);
+
   if FileExists(ppfile) and (testpuffer(ppfile,false,ldummy)<0) then begin
     trfehler1(748,ppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
     exit;
@@ -999,6 +1003,7 @@ begin                  { function Netcall }
     trfehler1(748,eppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
     exit;
     end;
+
   if not relogin and ((not PerformDial) or (boxpar^.sysopinp+boxpar^.sysopout=''))
   then begin
     i:=exclude_time;
@@ -1051,7 +1056,8 @@ begin                  { function Netcall }
 
   if PerformDial then begin
     NetcallLogfile:=TempFile('');
-    if (not fileexists(ppfile))and(not FidoCrash) then makepuf(ppfile,false);
+    if (not fileexists(ppfile))and(not FidoCrash) then
+      makepuf(ppfile,false);
     inmsgs:=0; outmsgs:=0; outemsgs:=0;
     cursor(curoff);
     inc(wahlcnt);
@@ -1100,7 +1106,7 @@ begin                  { function Netcall }
 
       nt_Client: begin
         Debug.DebugLog('xpnetcall','netcall: client',DLInform);
-        case ClientNetcall(BoxName,BFile,Boxpar,ppfile,NetcallLogfile,IncomingFiles, DeleteSpoolFiles) of
+        case ClientNetcall(BoxName, BFile, Boxpar, DeleteSpoolFiles) of
           EL_ok     : begin Netcall_connect:=true; result:=true; end;
           EL_noconn : begin Netcall_connect:=false; end;
           EL_recerr,
@@ -1142,7 +1148,7 @@ begin                  { function Netcall }
 //**      RemoveEPP;
     if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
     SafeDeleteFile(NetcallLogfile);
-    end; {if PerformDial}
+  end; {if PerformDial}
 
   Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+StringListToString(IncomingFiles),DLDebug);
   
@@ -1187,7 +1193,7 @@ begin                  { function Netcall }
   if Netcall_connect and not FidoCrash then begin
     WrTiming('NETCALL '+BoxName);
     AponetNews;
-    end;
+  end;
   Debug.DebugLog('xpnetcall','finished netcall',DLInform);
 end;
 
@@ -1393,6 +1399,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.14  2003/09/03 00:43:40  mk
+  - added multiserver client netcall
+
   Revision 1.52.2.13  2003/08/25 19:21:21  mk
   - added ChkAddServers
 

@@ -150,8 +150,10 @@ const
        extBbl      = '.bbl';
        extHelp     = '.hlp';
        extXps      = '.xps';
-       extOut      = '.out';
        extBak      = '.bak';
+       extIn       = '.in';
+       extOut      = '.out';
+       extMsg      = '.msg';
 {$ELSE}
        PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
        XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
@@ -192,8 +194,10 @@ const
        extBbl      = '.BBL';
        extHelp     = '.HLP';
        extXps      = '.XPS';
-       extOut      = '.OUT';
        extBak      = '.BAK';
+       extIn       = '.IN';
+       extOut      = '.OUT';
+       extMsg      = '.MSG';
 {$ENDIF }
 
 {$IFDEF UnixFS }
@@ -1234,6 +1238,9 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.17  2003/09/03 00:43:37  mk
+  - added multiserver client netcall
+
   Revision 1.158.2.16  2003/08/30 11:00:44  mk
   - made printerlist dynamic
 
