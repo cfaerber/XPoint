@@ -40,10 +40,13 @@ type
 
 const
   // returnErrors of GetMessage
+  nntpMsg_GroupnotFound     = 411;
   nntpMsg_noGroupSelected   = 412;
   nntpMsg_noArticleSelected = 420;
   nntpMsg_wrongArticleNr    = 423;
   nntpMsg_nosuchArticle     = 430;
+  nntpMsg_AuthRequired      = 480;
+  nntpMsg_PassRequired      = 381;
 
 
 type
@@ -54,7 +57,7 @@ type
     FServer             : string;               { Server-Software }
     FUser, FPassword    : string;               { Identifikation }
 
-    GroupName: String;
+    FGroupName: String;
     EstimateNr,
     FirstNr,
     LastNr: Integer;
@@ -89,9 +92,12 @@ type
 
     { Message vom server holen }
     function GetMessage(msgNr: Integer; Message: TStringList): Integer; virtual;
-
+    
     property FirstMessage: Integer read FirstNr;
     property LastMessage: Integer read LastNr;
+    property GroupName: String read FGroupName;
+
+    property ErrorCode: Integer read FErrorCode;
   end;
 
 implementation
@@ -125,6 +131,8 @@ resourcestring
   res_msg2            = 'Artikel %d geholt';
   res_msg3            = 'Fehler beim Holen von Artikel %d';
 
+  res_auth            = 'Authentifikation benötigt';
+
 
 constructor TNNTP.Create;
 begin
@@ -155,10 +163,17 @@ begin
       SWritelnFmt('AUTHINFO USER %s PASS %s', [FUser, FPassword]);
       SReadLn(s);
       FErrorCode := ParseResult(s);
+      if FErrorCode = nntpMsg_PassRequired then     { some servers use another syntax... }
+      begin
+        SWritelnFmt('AUTHINFO PASS %s', [FPassword]);
+        SReadLn(s);
+        FErrorCode := ParseResult(s);
+      end;
     end;
   end else
     FErrorCode := 500;
-  Result := FErrorCode = 480;
+  Result := (FErrorCode = 480) or       { OK without Auth }
+            (FErrorCode = 281);         { OK with    Auth }
 end;
 
 function TNNTP.Connect: boolean;
@@ -363,7 +378,7 @@ var
     EstimateNr := GetNextIntFromStr(WorkS);
     FirstNr := GetNextIntFromStr(WorkS);
     LastNr := GetNextIntFromStr(WorkS);
-    GroupName := WorkS;
+    FGroupName := WorkS;
   end;
 
 begin
@@ -373,12 +388,17 @@ begin
     WriteIPC(mcInfo,res_group1, [AGroupName]);
     SWriteln('GROUP '+ AGroupName);
     SReadln(s);
-    if ParseResult(s) = 411 then
-    begin
-      WriteIPC(mcInfo,res_group3, [AGroupName]);
-      raise ENNTP.create(Format(res_group3, [AGroupName]));
+    case ParseResult(s) of
+      nntpMsg_GroupnotFound : begin
+        WriteIPC(mcInfo,res_group3, [AGroupName]);
+        raise ENNTP.create(Format(res_group3, [AGroupName]));
+      end;
+      nntpMsg_AuthRequired : begin
+        WriteIPC(mcInfo, res_auth, [0]);
+        raise ENNTP.create(res_auth);
+      end;
     end;
-    GroupName := AGroupName;
+    FGroupName := AGroupName;
     GetGroupInfo(s);
     WriteIPC(mcInfo,res_group2, [AGroupName]);
   end;
@@ -421,6 +441,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/12/27 00:51:00  ml
+  - userauth (user + passwd) works now with inn
+  - getting newsmail works
+
   Revision 1.13  2000/09/11 17:13:54  hd
   - Kleine Arbeiten an NNTP
 
