@@ -1989,7 +1989,7 @@ fromstart:
         inc(l,longint(succ(msgCPpos)) shl 24);        { Empfaengernummer }
         end;
       dbWriteN(mbase,mb_netztyp,l);
-      shortmid:=FormMsgid(hdp.msgid);
+      shortmid:= Hdp.BinaryMsgID;
       dbWriteNStr(mbase,mb_msgid,shortmid);
       dbWriteNStr(mbase,mb_brett,_brett);
       dbWriteNStr(mbase,mb_betreff,hdp.betreff);
@@ -2330,6 +2330,9 @@ finalization
 
 {
   $Log$
+  Revision 1.43  2002/02/13 18:19:53  mk
+  - improvements for THeader and ClrUVS
+
   Revision 1.42  2002/02/07 20:21:12  cl
   - fixed sending of binary files
 

@@ -163,40 +163,46 @@ end;
 procedure ClearUnversandt(const puffer,boxname:string);
 var f      : file;
     adr,fs : longint;
-    hdp    : THeader;
+    Header : THeader;
     hds    : longint;
     ok     : boolean;
-    _brett : string[5];
-    _mbrett: string[5];
+    _brett : string;
+    _mbrett: string;
     mi     : word;
     zconnect: boolean;
     i      : integer;
     ldummy : longint;
-    CCFile: Text;
+    CCList: TStringList;
     InMsgID: String;
 
-  procedure ClrUVS;
+  // handle unsent for one recipient
+  procedure ClearUnsent(const aRecipient: String);
   var pbox : string;
       uvl  : boolean;
       uvs  : byte;
-      IDFile: text;
+      IDList: TStringList;
       HaveIDFile: boolean;
       MsgIDFound : boolean;
-      Outmsgid   : string[MidLen];
-      CCs: Byte;
+      Outmsgid   : string;
+      CCs, i: Integer;
   begin
     HaveIDFile := FileExists('UNSENT.ID') and TempPPPMode;
     if HaveIDFile then
-      Assign(IDFile, 'UNSENT.ID');
+    begin
+      IDList := TStringList.Create;
+      IDList.LoadFromFile('UNSENT.ID');
+      IDList.Sort;
+    end;
 
-    with hdp do begin
+    with Header do
+    begin
       pbox:='!?!';
-      if (cpos('@',FirstEmpfaenger)=0) and
-         ((netztyp<>nt_Netcall) or (FirstChar(FirstEmpfaenger)='/'))
+      if (cpos('@', aRecipient)=0) and
+         ((netztyp<>nt_Netcall) or (FirstChar(aRecipient)='/'))
       then begin
-        dbSeek(bbase,biBrett,'A'+UpperCase(FirstEmpfaenger));
+        dbSeek(bbase,biBrett,'A'+UpperCase(aRecipient));
         if not dbFound then begin
-          if hdp.Empfaenger.Count = 1 then
+          if Header.Empfaenger.Count = 1 then
             trfehler(701,esec);   { 'Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!' }
           end
         else begin
@@ -205,7 +211,7 @@ var f      : file;
           end;
         end
       else begin
-        dbSeek(ubase,uiName,UpperCase(Firstempfaenger+iifs(cPos('@',FirstEmpfaenger)=0,'@'+BoxName+'.ZER','')));
+        dbSeek(ubase,uiName,UpperCase(aRecipient+iifs(cPos('@', aRecipient)=0,'@'+BoxName+'.ZER','')));
         if not dbFound then
           trfehler(702,esec)   { 'Interner Fehler: UV-Userbrett nicht mehr vorhanden!' }
         else begin
@@ -228,35 +234,22 @@ var f      : file;
           begin
             dbReadN(mbase,mb_unversandt,uvs);
             InMsgID := dbReadStr(mbase,'msgid');
-            if (uvs and 1=1) and EQ_betreff(hdp.betreff) and
-               (FormMsgid(hdp.msgid)=InMsgId) then
+            if (uvs and 1=1) and EQ_betreff(Header.Betreff) and
+               (Header.BinaryMsgId = InMsgId) then
             begin
               MsgIDFound := false;
               CCs := 0;
               { Check, ob MsgID in unversandten Nachrichten enthalten ist }
-              if HaveIDFile then
+              if HaveIDFile and (IDList.IndexOf(FormMsgId(OutMsgID)) <> - 1) then
               begin
-                Reset(IDFile); { von vorn starten }
-                repeat
-                  Readln(IDFile, OutMsgid);
-                  if FormMsgid(OutMsgid) = InMsgID then
-                  begin
-                    MsgIDFound:=true;
-                    if (hdp.Empfaenger.Count>1) then
-                    begin
-                      Append(CCFile);
-                      Writeln(CCFile, OutMsgid);
-                      Close(CCFile);
-                      Reset(CCFile);
-                      repeat
-                        readln(CCFile, OutMsgid);
-                        if FormMsgid(OutMsgid)=InMsgId then
-                          inc(CCs);
-                      until eof(CCFile) or (CCs > 1);
-                      Close(CCFile);
-                    end;
-                  end;
-                until eof(IDFile) or MsgIDFound;
+                MsgIDFound := true;
+                if Header.Empfaenger.Count > 1 then
+                begin
+                  CCList.Add(OutMsgId);
+                  CCList.Sort;
+                  if CCList.IndexOf(FormMsgId(OutMsgID)) <> -1 then
+                    Inc(CCs);
+                end;
               end;
               if not MsgIDFound then
               begin
@@ -265,8 +258,8 @@ var f      : file;
               end else
               if CCs <= 1 then
               begin
-                if not ((hdp.typ='B') and (maxbinsave>0) and
-                  (hdp.groesse > maxbinsave*1024)) then
+                if not ((Header.typ='B') and (maxbinsave>0) and
+                  (Header.groesse > maxbinsave*1024)) then
                 begin
                   if FileExists('UNSENT.PP') then
                     extract_msg(2,'','UNSENT.PP',true,1)
@@ -276,7 +269,7 @@ var f      : file;
                 end else
                 begin
                   { String noch in die Resource Åbernehmen }
-                  tFehler('Die Datei ' + hdp.datei + ' an ' + hdp.FirstEmpfaenger + ' bitte erneut versenden!',30);
+                  tFehler('Die Datei ' + Header.datei + ' an ' + aRecipient + ' bitte erneut versenden!',30);
                   uvs:=uvs and $fe;
                   dbWriteN(mbase,mb_unversandt,uvs);
                 end;
@@ -291,16 +284,15 @@ var f      : file;
       end;
     end;
     if HaveIDFile then
-      Close(IDFile);
+      IDList.Free;
   end;
 
 begin
   Debug.Debuglog('xpnetcall','Clearunversandt, puffer '+puffer+', box '+boxname,DLInform);
   assign(f,puffer);
   if not existf(f) then exit;
-  Assign(CCFile, 'UNSENT.ID2');
-  ReWrite(CCFile); Close(CCFile); { Anlegen fÅr Append }
-  hdp := THeader.Create;
+  CCList := TStringList.Create;
+  Header := THeader.Create;
   zconnect:=ntZConnect(ntBoxNetztyp(BoxName));
   reset(f,1);
   adr:=0;
@@ -310,26 +302,21 @@ begin
   while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
     inc(outmsgs);
     seek(f,adr);
-    makeheader(zconnect,f,0,hds,hdp,ok,false,true); { MUSS ok sein! }
+    makeheader(zconnect,f,0,hds, Header,ok,false,true); { MUSS ok sein! }
     if not ok then begin
       tfehler(puffer+' corrupted!',esec);
-      close(f); exit;
-      end;
-    if hdp.Empfaenger.COunt =1 then
-      ClrUVS
-    else
-    for i:=1 to hdp.Empfaenger.Count -1 do
-    begin
-      seek(f,adr);
-      makeheader(zconnect,f,i,hds,hdp,ok,false,true);
-      ClrUVS;
+      close(f);
+      Header.Free;
+      exit;
     end;
-    inc(adr,hdp.groesse+hds);
+    for i:=0 to Header.Empfaenger.Count -1 do
+      ClearUnsent(Header.Empfaenger[i]);
+    inc(adr, Header.groesse+hds);
   end;
   close(f);
-  Erase(CCFile);
+  CCList.Free;
   dbSetIndex(mbase,mi);
-  Hdp.Free;
+  Header.Free;
   inc(outemsgs,TestPuffer(LeftStr(puffer,cpos('.',puffer))+extEBoxFile,false,ldummy));
 end;
 
@@ -1399,6 +1386,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2002/02/13 18:19:54  mk
+  - improvements for THeader and ClrUVS
+
   Revision 1.47  2002/02/06 21:32:56  mk
   - fixed resource 10700,10 (now 10700,48)
 

@@ -126,7 +126,7 @@ function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
 
 function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All erlaubt }
 
-function formmsgid(msgid:string):string;
+function FormMsgId(MsgID: String): String;
 function grosschar(b:boolean):string;
 
 function ntValidAddress(nt:byte;const addr:string):boolean;
@@ -247,19 +247,22 @@ begin
 end;
 
 
-function formmsgid(msgid:string):string;
-var p : integer;
+function FormMsgId(MsgID: String): String;
+var
+  p: Integer;
 begin
   if msgid='' then
-    formmsgid:=''
-  else begin
-    p:=cposx('@',msgid)+1;
-    while p<=length(msgid) do begin
-      msgid[p]:=system.upcase(msgid[p]);
+    Result :=''
+  else
+  begin
+    p := cPosX('@',msgid)+1;
+    while p<=length(msgid) do
+    begin
+      msgid[p] := System.UpCase(msgid[p]);
       inc(p)
-      end;
-    formmsgid:=dbLongStr(CRC32Str(msgid))+LeftStr(msgid,15);
     end;
+    Result := dbLongStr(CRC32Str(msgid))+LeftStr(msgid,15);
+  end;
 end;
 
 
@@ -739,6 +742,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.42  2002/02/13 18:19:53  mk
+  - improvements for THeader and ClrUVS
+
   Revision 1.41  2001/12/24 23:07:04  mk
   - updates for nt_Client
 

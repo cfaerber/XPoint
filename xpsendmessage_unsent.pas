@@ -263,7 +263,7 @@ begin
         goto nextpp;   { zum naechsten Puffer weiterspringen }
         end;
       found:=EQ_betreff(hdp.betreff) and (dat=hdp.datum) and EQ_empf
-             and (FormMsgid(hdp.msgid)=dbReadStrN(mbase,mb_msgid));
+             and (hdp.BinaryMsgID=dbReadStrN(mbase,mb_msgid));
       dbReadN(mbase,mb_netztyp,nt);
    (* Groessenueberpruefung nicht mehr notwendig, wegen MsgID-Ueberpruefung
       if (uvs and 4=0) and (nt and $4000=0) then   { 4=pmc, $4000 = PGP }
@@ -595,7 +595,7 @@ label ende,again;
     dbWriteN(mbase,mb_flags,flags);
     dat:=IxDat(hdp.datum); dbWriteN(mbase,mb_origdatum,dat);
     dbWriteN(mbase,mb_empfdatum,edat);
-    mid:=FormMsgid(hdp.msgid);
+    mid:= hdp.BinaryMsgID;
     dbWriteNStr(mbase,mb_msgid,mid);
     l:=filesize(f);       dbWriteN(mbase,mb_groesse,l);
     hdp.typ:=iifc(binaermail,'B','T');   { Typ korrigieren }
@@ -1236,7 +1236,7 @@ begin
   dbWriteNStr(mbase,mb_absender,hdp.absender);
   dat:=IxDat(hdp.datum); dbWriteN(mbase,mb_origdatum,dat);
   dbWriteN(mbase,mb_empfdatum,edat);
-  mid:=FormMsgid(hdp.msgid);
+  mid:= hdp.BinaryMsgID;
   dbWriteNStr(mbase,mb_msgid,mid);
   l:=filesize(f);       dbWriteN(mbase,mb_groesse,l);
   hdp.typ:=ntyp;
@@ -1336,6 +1336,9 @@ end;
 
 {
   $Log$
+  Revision 1.18  2002/02/13 18:19:53  mk
+  - improvements for THeader and ClrUVS
+
   Revision 1.17  2002/01/13 15:15:55  mk
   - new "empfaenger"-handling
 

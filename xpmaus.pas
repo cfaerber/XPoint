@@ -199,7 +199,7 @@ begin
 
             case art of
               0 : begin
-                    msgid:=FormMsgid(hdp.msgid);
+                    msgid:= hdp.BinaryMsgID;
                     dbWriteNStr(mbase,mb_msgid,msgid);   { neue MsgID in die Datenbank }
                     l:=MsgidIndex(anew);
                     dbWriteN(bezbase,bezb_msgid,l);   { neue MsgID in die BezBase }
@@ -819,6 +819,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2002/02/13 18:19:53  mk
+  - improvements for THeader and ClrUVS
+
   Revision 1.36  2002/01/13 15:15:54  mk
   - new "empfaenger"-handling
 

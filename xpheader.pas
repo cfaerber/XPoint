@@ -51,8 +51,12 @@ type
     archive: boolean;                   { archivierte PM               }
     attrib: word;                       { Attribut-Bits                }
     filterattr: word;                   { Filter-Attributbits          }
-    Empfaenger: TStringList;              { EMP: - Liste }
+
+    Empfaenger: TStringList;            { List of EMP: and To: }
     Kopien: TStringList;                { KOP: - Liste }
+    CC: TStringList;                    { List of CC: }
+    BCC: TStringList;                   { List of BCC: }
+
     betreff: string;
     absender: string;
     datum: string;                      { Netcall-Format               }
@@ -134,6 +138,8 @@ type
     procedure Clear;
 
     function GetLastReference: String;
+    // get managled Message ID
+    function BinaryMsgId: string;
 
     procedure WriteToStream(stream:TStream);
     procedure WriteZ38(stream:TStream);
@@ -186,6 +192,8 @@ begin
   inherited Create;
   Empfaenger := TStringList.Create;
   Kopien := TStringList.Create;
+  CC := TStringList.Create;
+  BCC := TStringList.Create;
   ULine := TStringList.Create;
   XLIne := TStringList.Create;
   fLine := TStringList.Create;
@@ -209,6 +217,8 @@ begin
   filterattr := 0;
   Empfaenger.Clear;
   Kopien.Clear;
+  CC.Clear;
+  BCC.Clear;
   betreff := '';
   absender := '';
   datum := '';
@@ -299,6 +309,8 @@ end;
 destructor THeader.Destroy;
 begin
   Empfaenger.Free;
+  CC.Free;
+  BCC.Free;
   Kopien.Free;
   ULine.Free;
   XLine.Free;
@@ -590,6 +602,11 @@ begin
     Empfaenger[0] := Value;
 end;
 
+function THeader.BinaryMsgId: string;
+begin
+  Result := FormMsgId(MsgId);
+end;
+
 { TSendUUData }
 
 constructor TSendUUData.Create;
@@ -638,6 +655,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/02/13 18:19:53  mk
+  - improvements for THeader and ClrUVS
+
   Revision 1.22  2002/02/06 21:26:20  mk
   MA:- do not clear empfaenger list after writeing the header
 

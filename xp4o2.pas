@@ -218,8 +218,8 @@ begin
       get_username
     else
       user:='';
-    ref:=FormMsgid(ref);
-    end;
+    ref:= FormMsgid(ref);
+  end;
   Hdp.Free;
 
   if user=dbReadStrN(mbase,mb_absender) then user:='';
@@ -928,6 +928,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/02/13 18:19:53  mk
+  - improvements for THeader and ClrUVS
+
   Revision 1.51  2002/01/13 15:15:53  mk
   - new "empfaenger"-handling
 
