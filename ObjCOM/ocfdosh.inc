@@ -16,6 +16,7 @@ type TFossilObj = Object(tCommObj)
         function  OpenKeep(Comport: Byte): Boolean; virtual;
         function  GetChar: Char; virtual;
         function  CharAvail: Boolean; virtual;
+        function  CharCount: Integer; virtual;
         function  Carrier: Boolean; virtual;
         function  SendChar(C: Char): Boolean; virtual;
         function  ReadyToSend(BlockLen: Longint): Boolean; virtual;
@@ -43,6 +44,9 @@ Type tpFossilObj = ^TFossilObj;
 
 {
   $Log$
+  Revision 1.2  2000/06/25 00:31:09  ma
+  - added CharCount method
+
   Revision 1.1  2000/06/22 17:30:01  mk
   - initial release
   - please keep comments in English

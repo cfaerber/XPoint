@@ -262,6 +262,14 @@ end;  { func. TFossilObj.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
+function TFossilObj.CharCount: Integer;
+var infree,outfree,inused,outused: Longint;
+begin
+  GetBufferStatus(infree,outfree,inused,outused);
+  CharCount:=inused;
+end;  { func. TFossilObj.CharCount }
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 function  TFossilObj.ReadyToSend(BlockLen: Longint): Boolean;
 begin
   Regs.AH := $03;
@@ -490,6 +498,9 @@ end; { proc. SetFlow }
 
 {
   $Log$
+  Revision 1.2  2000/06/25 00:31:09  ma
+  - added CharCount method
+
   Revision 1.1  2000/06/22 17:30:01  mk
   - initial release
   - please keep comments in English
