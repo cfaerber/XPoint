@@ -1750,11 +1750,11 @@ begin      { --- select --- }
                    if t=keyaltp then begin GoP; pm_archiv(false); end;  { @P }
                    if c=k2_cF then datei_senden(true,false);        { ^F }
                    if c=k2_cI then datei_senden(true,true);         { ^I }
+                   if c=k2_U then to_window;                        { 'U' }
                    if (dispmode=10) or (dispmode=12) then begin
                      if (c=' ') and ((dispmode<12) or not markaktiv) then
                        _mark_;
                      if c=k2_cE then _unmark_;                      { ^E }
-                     if c=k2_U then to_window else                  { 'U' }
                      if t=keyaltu then usersuche(false);
                      if dispmode=10 then begin
                        if (c=k2_G) or (c='-') then bezuege;         { 'G' }
@@ -1762,6 +1762,7 @@ begin      { --- select --- }
                        if c=k2_cA then begin                        { ^A }
                          dispfto:=not dispfto; aufbau:=true; end;
                        end
+
                      else begin
                        if c=k2_KA then begin                        { 'A' }
                          KomShowAdr:=not KomShowAdr;
@@ -2052,6 +2053,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/08/02 10:06:58  mk
+  JG:- "U" (ins Userfenster Umschalten) funktioniert jetzt auch
+    wenn die Markiert-Liste angezeigt wird.
+
   Revision 1.40  2000/08/01 10:34:11  mk
   JG: - Ungelesen-Workarround "Setbrettgelesen"
         jetzt auch beim Verlassen der Nachrichtenliste.
