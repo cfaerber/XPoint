@@ -56,6 +56,7 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
      komment   : string[35];
      fidologfile: string[12];
      ClientLogFile: string[79];
+     ExtLogFile: string[79];
     _turbo     : boolean;
     _uucp      : boolean;
     netlog     : textp;
@@ -68,6 +69,9 @@ implementation
 end.
 { 
   $Log$
+  Revision 1.3.2.2  2001/06/27 15:36:15  my
+  - move external client netcall log to 'ClientPath+XPCLIENT.LOG'
+
   Revision 1.3.2.1  2001/06/19 01:27:44  my
   - RFC/Client: Logfile XPCLIENT.LOG is now automatically appended to the
     netcall report if found in the client directory

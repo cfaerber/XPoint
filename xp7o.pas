@@ -437,7 +437,7 @@ begin
       writeln(t);
       assign(log,iifs(_maus,mauslogfile,iifs(TempPPPMode,ClientLogFile,fidologfile)));
       fm_ro; reset(log); fm_rw;
-      if _fido or _uucp then
+      if _fido or (_uucp and not TempPPPMode) then
         repeat
           readln(log,s);
         until (left(s,2)='--') or eof(log);
@@ -846,6 +846,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.17  2001/06/27 15:36:15  my
+  - move external client netcall log to 'ClientPath+XPCLIENT.LOG'
+
   Revision 1.13.2.16  2001/06/22 18:15:02  my
   - removed unnecessary flush() commands
 

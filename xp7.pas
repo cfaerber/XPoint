@@ -571,6 +571,12 @@ begin                  { of Netcall }
         if SysopNetcall or TempPPPMode then   { in BoxPar }
         begin
           ClientLogFile:=PPPClientPath+ClientLog;
+          ExtLogFile:=LogPath+'XP-PPP.LOG';
+          if TempPPPMode and exist(ExtLogFile) then
+          begin
+            copyfile(ExtLogFile,ClientLogFile);
+            _era(ExtLogFile);
+            end;
           sendnetzanruf(false,false);
           end;
         dispose(NC);
@@ -1552,6 +1558,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.14  2001/06/27 15:36:14  my
+  - move external client netcall log to 'ClientPath+XPCLIENT.LOG'
+
   Revision 1.16.2.13  2001/06/23 19:15:21  mk
   - kleine Aenderung fuer neue WinVersion Routine
 
