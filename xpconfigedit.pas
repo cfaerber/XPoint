@@ -285,34 +285,31 @@ begin
     end;
 end;
 
-procedure set_uparcext(var s:string);
-var ls  : string[60];
-    ext : string[3];
+function SetArcExtension(s: String; nr: Integer): String;
+var
+  Ext: String;
 begin
-  if UpArcNr<1 then exit;
-  ls:=LowerCase(s);
+  s:=LowerCase(s);
   ext:='*';
-  if (LeftStr(ls,5)='pkarc') or (LeftStr(ls,5)='pkpak') then ext:='arc'
-  else if LeftStr(ls,3)='lha' then ext:='lzh'
-  else if LeftStr(ls,5)='pkzip' then ext:='zip'
-  else if LeftStr(ls,3)='arj' then ext:='arj'
-  else if (LeftStr(ls,4)='copy') and (getfield(UpArcNr)<>'txt') then ext:='';
-  if ext<>'*' then setfield(UpArcNr,ext);
+  if (LeftStr(s,5)='pkarc') or (LeftStr(s,5)='pkpak') then ext:='arc'
+  else if LeftStr(s,3)='lha' then ext:='lzh'
+  else if LeftStr(s,5)='pkzip' then ext:='zip'
+  else if LeftStr(s,3)='arj' then ext:='arj'
+  else if LeftStr(s,3)='rar' then ext:='rar'
+  else if (LeftStr(s,4)='copy') and (getfield(nr)<>'txt') then ext:='';
+  if ext<>'*' then SetField(nr, ext);
+end;
+
+procedure set_uparcext(var s:string);
+begin
+  if UpArcNr > 0 then
+    SetArcExtension(s, UpArcNr);
 end;
 
 procedure set_downarcext(var s:string);
-var ls  : string[60];
-    ext : string[3];
 begin
-  if DownArcNr<1 then exit;
-  ls:=LowerCase(s);
-  ext:='*';
-  if (LeftStr(ls,6)='pkxarc') or (LeftStr(ls,7)='pkunpak') then ext:='arc'
-  else if LeftStr(ls,3)='lha' then ext:='lzh'
-  else if LeftStr(ls,7)='pkunzip' then ext:='zip'
-  else if LeftStr(ls,3)='arj' then ext:='arj'
-  else if (LeftStr(ls,4)='copy') and (getfield(DownArcNr)<>'txt') then ext:='';
-  if ext<>'*' then setfield(DownArcNr,ext);
+  if DownArcNr > 0 then
+    SetArcExtension(s, DownArcNr);
 end;
 
 function testmbretter(var s:string):boolean;
@@ -578,27 +575,22 @@ var d  : DB;
     nt : eNetz;
 begin
   if s='' then  
-    testvertreterbox:=true
+    Result :=true
   else 
   begin
-    dbOpen(d,BoxenFile,1);
-    SeekLeftBox(d,s);
-    if dbFound then 
+    if SeekLeftBox(d,s, nt) then
     begin
-      s:= dbReadStr(d,'boxname');
-      nt:=dbNetztyp(d);
       if fieldpos=amvfield then    { AM-Vertreterbox }
-        Result :=(DomainNt=nt)
+        Result := (DomainNt=nt)
       else                         { PM-Vertreterbox }
-        Result :=ntAdrCompatible(DomainNt,nt);
+        Result := ntAdrCompatible(DomainNt,nt);
       if not Result then 
         rfehler(2713);
     end else
     begin
       rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
-      testvertreterbox:=false;
+      Result := false;
     end;
-    dbClose(d);
   end;
 end;
 
@@ -613,7 +605,8 @@ begin
 end;
 
 function testlogfile(var s:string):boolean;
-var fn : string;
+var
+  fn : string;
 begin
   if s='' then
     testlogfile:=true
@@ -829,8 +822,6 @@ var d         : DB;
   end;
 
   {$I xpconfigedit-servers.inc} //> 2000 lines
-
-  {.$I xpconfigedit-groups.inc}
 
   procedure ReadGruppe(edit:boolean; var name:string; var hzeit:integer16;
                        var limit:longint; var umlaut:byte; var hd,qt,sig,qt2,pmhd,pmqt,pmsig, qstring:string;
@@ -1246,8 +1237,6 @@ var d         : DB;
     end;
   end;
 
-  {.$I xpconfigedit-pseudos.inc}
-
   procedure ReadPseudo(edit:boolean; var kurz,lang,pollbox:string;
                        var brk:boolean);
   var
@@ -1266,8 +1255,7 @@ var d         : DB;
     enddialog;
   end;
 
-  { Pseudo editieren und anlegen. Funktion 'NeuesPseudo' gibt es nicht
-    mehr (hd/2000-07-21) }
+  { Pseudo editieren und anlegen. Funktion 'NeuesPseudo' gibt es nicht mehr  }
   procedure EditPseudo(isNew: boolean);
   var kurz    : string;
       lang    : string;
@@ -1316,8 +1304,6 @@ var d         : DB;
       aufbau:=true;
     end;
   end;
-
-  {.$I xpconfigedit-mimetypes.inc}
 
   procedure ReadMimetyp(edit:boolean; var typ,ext,prog:string;
                         var brk:boolean);
@@ -2066,12 +2052,13 @@ begin
   if (fn<>'') then
   begin
     s := AddDirSepa(s);
-    if Copy(fn, 1, 2) = '.' + DirSepa then fn := Copy(fn, 3, Length(fn));
-    if LastChar(fn) = DirSepa then DeleteLastChar(fn);
+    if LeftStr(fn, 2) = '.' + DirSepa then
+      fn := Mid(fn, 3);
+    TrimLastChar(fn, DirSepa);
     ok := (cPos(':', fn) = 0) and (cPos(DirSepa, fn) = 0) and (cPos('.', fn) < 2)
       and (Length(fn) > 0) and (LastChar(fn) <> '.');
     if not ok then
-    begin
+    begin              
       msgbox(62,6,_fehler_,x,y);
       mwrt(x+3,y+2,getres2(10900,37));   { 'Pfadangabe muss RELATIV sein und auf ein Verzeichnis EINE' }
       mwrt(x+3,y+3,getres2(10900,38));   { 'Ebene DIREKT unterhalb des XP-Verzeichnisses verweisen!' }
@@ -2106,20 +2093,17 @@ var ok   : boolean;
 begin
   PPPClientTest:=true;
   fn:=trim(s);
-  if Pos('start /wait ', LowerCase(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
-  if Pos('start /wai ', LowerCase(fn)) = 1 then fn := Copy(fn, 12, MaxInt);
-  if Pos('start /wa ', LowerCase(fn)) = 1 then fn := Copy(fn, 11, MaxInt);
-  if Pos('start /w ', LowerCase(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
+  if Pos('start /wait ', LowerCase(fn)) = 1 then fn := Mid(fn, 13);
+  if Pos('start /wai ', LowerCase(fn)) = 1 then fn := Mid(fn, 12);
+  if Pos('start /wa ', LowerCase(fn)) = 1 then fn := Mid(fn, 11);
+  if Pos('start /w ', LowerCase(fn)) = 1 then fn := Mid(fn, 10);
   if cpos(' ',fn)>0 then fn:= LeftStr(fn,cpos(' ',fn)-1);
   if (fn<>'') then
   begin
     fsplit(fn,dir,name,ext);
-    ok := dir = '';
     s1 := GetField(fieldpos-1);
     if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
-    { if ustr(s1) =  ustr(Dir) then Ok := true; }
-    if Dir = '$CLPATH+' then ok := true;
-    if not ok then
+    if (Dir = '') or (UpperCase(Dir) = '$CLPATH+') then
     begin
       rfehler1(936, UpperCase(fn)); { 'Eintrag darf entweder keine oder nur "$CLPATH+" als Pfadangabe enthalten!' }
       PPPClientTest:=false;
@@ -2195,7 +2179,6 @@ type box_array = array[0..maxboxen] of string;
 function BoxSelect(const entries:byte; boxlist:box_array; colsel2:boolean):string;
 const width = 51+BoxNameLen;
 var   d          : DB;
-      brk        : boolean;
       nt         : eNetz;
       x,y,height,
       i, sel_anz : integer;     { Anzahl der auszuwaehlenden Boxen }
@@ -2230,28 +2213,21 @@ begin
       else user:=dbReadStr(d,'Username');
       boxline:=' '+forms(box,BoxNameLen)+'  '+forms(user,20)+
                '  '+forms(komm,25);
-      if sel_anz=1 then begin     { bei erster gefundener Box Dialog aufbauen }
-        if own_name <> '' then begin
-          if colsel2 then begin   { 'Serverboxen (Netztyp %s)' }
-            selbox(width+2,height+4,getreps2(936,3,Netz_Typ(nt)),x,y,false);
-            list := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
-            Listboxcol(list);
-            list.setarrows(x,y+1,y+height+2,col.colsel2rahmen,col.colsel2rahmen,'³');
-          end else begin                        { 'Serverboxen (Netztyp %s)' }
-            selbox(width+2,height+4,getreps2(936,3,Netz_Typ(nt)),x,y,true);
-            list := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
-            Listboxcol(list);
-            list.setarrows(x,y+1,y+height+2,col.colselrahmen,col.colselrahmen,'³');
-          end;
-        end else begin                          { '/Netcall/Spezial bei:' }
-          selbox(width+2,height+4,getres2(1024,3)+' '+getres2(1024,5),
-          x,y,false);
-          list := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
-          Listboxcol(list);
-            list.setarrows(x,y+1,y+height+2,col.colsel2rahmen,col.colsel2rahmen,'³');
-        end;
+      if sel_anz=1 then
+      begin     { bei erster gefundener Box Dialog aufbauen }
+        if own_name <> '' then        { 'Serverboxen (Netztyp %s)' }
+          selbox(width+2,height+4,getreps2(936,3,Netz_Typ(nt)),x,y,true)
+        else                          { '/Netcall/Spezial bei:' }
+          selbox(width+2,height+4,getres2(1024,3)+' '+getres2(1024,5),x,y,false);
+
+        List := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
+        ListBoxCol(list);
+        if ColSel2 or (own_name = '') then
+          List.SetArrows(x,y+1,y+height+2,col.colsel2rahmen,col.colsel2rahmen,'³')
+        else
+          List.SetArrows(x,y+1,y+height+2,col.colselrahmen,col.colselrahmen,'³');
       end;
-      List.addline(boxline);
+      List.Addline(boxline);
     end;
 nextBox:
     dbNext(d);
@@ -2259,12 +2235,11 @@ nextBox:
   dbClose(d);
   if sel_anz > 0 then       { Wenn Box(en) gefunden, Auswahl }
   begin
-    brk := list.Show;
-    CloseBox;
-    if brk then
+    if List.Show then
       Result := ''
     else
       Result :=trim(copy(list.getselection,2,BoxNameLen));
+    CloseBox;
     List.Free;
   end else
     rfehler(953); { 'Keine (weiteren) hinzuzufuegenden Serverboxen vorhanden!' }
@@ -2741,7 +2716,7 @@ begin
       if showErrors then
       begin
         fehler:=getreps2(10900,67,uppercase(s1));
-       { 'Ungueltiger Name fuer Serverbox-Konfigurationsdatei: "%s.BFG"' }
+        { 'Ungueltiger Name fuer Serverbox-Konfigurationsdatei: "%s.BFG"' }
         ConvertAddServersFehler(fehler);
       end else
         break;
@@ -2756,7 +2731,7 @@ begin
         if showErrors then
         begin
           fehler:=getreps2(10900,68,uppercase(s1));
-                   { 'Serverbox zu Dateiname "%s.BFG" nicht gefunden!' }
+          { 'Serverbox zu Dateiname "%s.BFG" nicht gefunden!' }
           ConvertAddServersFehler(fehler);
         end else
           break;
@@ -2819,7 +2794,7 @@ end;
 
 procedure set_ExtCfg_Allowances;
 begin
- delete_on_cDel:=true;
+  delete_on_cDel:=true;
   leave_on_cDel:=true;
   may_insert_clip:=true;
   cDel_pressed:=false;
@@ -2936,6 +2911,9 @@ end;
 
 {
   $Log$
+  Revision 1.69  2003/10/01 18:37:11  mk
+  - simplyfied seeknextbox
+
   Revision 1.68  2003/09/21 20:17:40  mk
   - rewrite of Listdisplay:
     removed Assemlber function MakeListDisplay, now

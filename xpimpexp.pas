@@ -201,22 +201,20 @@ end;
 
 
 function imptestpollbox(var s:string):boolean;
-var d : DB;
+var
+  d : DB;
+  nt: eNetz;
 begin
-  dbOpen(d,BoxenFile,1);
-  SeekLeftBox(d,s);
-  if dbFound then
-    if (impnt<>nt_QWK) or (dbNetztyp(d) in [nt_Fido,nt_QWK]) then
-      imptestpollbox:=true
-    else begin
+  if SeekLeftBox(d, s, nt) then
+  begin
+    Result := (impnt<>nt_QWK) or (nt in [nt_Fido,nt_QWK]);
+    if not Result then
       rfehler(2413);    { 'Falscher Netztyp - Netztyp muá QWK oder Fido sein!' }
-      imptestpollbox:=false;
-      end
-  else begin
-    rfehler(2412);   { 'unbekannte Serverbox - w„hlen mit <F2>' }
-    imptestpollbox:=false;
-    end;
-  dbClose(d);
+  end else
+  begin
+    rfehler(2412);      { 'unbekannte Serverbox - w„hlen mit <F2>' }
+    Result := false;
+  end;
 end;
 
 
@@ -666,6 +664,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2003/10/01 18:37:12  mk
+  - simplyfied seeknextbox
+
   Revision 1.52  2003/08/28 14:13:04  mk
   - TUniSelType for UniSel instead of numeric constants
 

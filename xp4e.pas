@@ -283,23 +283,19 @@ function testpollbox(var s:string):boolean;
 var d : DB;
 begin
   pbox:=s;
-  if (aktdispmode=0) and (s='') then testpollbox:=true
-  else begin
-    dbOpen(d,BoxenFile,1);
-    SeekLeftBox(d,s);
-    if dbFound then begin
-      dbRead(d,'netztyp',pb_netztyp);
-      s:= dbReadStr(d,'boxname');
-      pbox:=s;
-      end;
-    dbClose(d);
-    if not dbFound then rfehler(2702);   { 'unbekannte Serverbox - waehlen mit <F2>' }
-    testpollbox:=dbFound;
-    if dbFound then begin
+  if (aktdispmode=0) and (s='') then
+    Result :=true
+  else
+  begin
+    Result := SeekLeftBox(d, pbox, pb_netztyp);
+    if not Result then
+      rfehler(2702)    { 'unbekannte Serverbox - waehlen mit <F2>' }
+    else
+    begin
       pb_wrntyp(s);
       set_ubrett;
-      end;
     end;
+  end;
 end;
 
 
@@ -466,17 +462,18 @@ begin
 end;
 
 function vtestpollbox(var s:string):boolean;
-var d : DB;
+var
+  d : DB;
+  dummy: eNetz;
 begin
-  if s='' then vtestpollbox:=true
-  else begin
-    dbOpen(d,BoxenFile,1);
-    SeekLeftBox(d,s);
-    if dbFound then s := dbReadStr(d,'boxname');
-    dbClose(d);
-    if not dbFound then rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
-    vtestpollbox:=dbFound;
-    end;
+  if s='' then
+    vtestpollbox:=true
+  else
+  begin
+    Result := SeekLeftBox(d, s, dummy);
+    if not Result then
+      rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
+  end;
 end;
 
 
@@ -1564,15 +1561,8 @@ var d  : DB;
 begin
 {  orgnt:=ntBoxNetztyp(pbox); }
   pbox:=s;
-  dbOpen(d,BoxenFile,1);
-  SeekLeftBox(d,s);
-  if dbFound then begin
-    dbRead(d,'netztyp',pb_netztyp);
-    s:= dbReadStr(d,'boxname');
-    pbox:=s;
-    end;
-  dbClose(d);
-  if not dbfound then begin
+  if not SeekLeftBox(d,pbox, pb_netztyp) then
+  begin
     dbOpen(d,PseudoFile,1);
     dbSeek(d,piKurzname,UpperCase(s));
     if dbFound {and (cPos('@',dbReadStr(d,'langname'))>0)} then begin
@@ -1586,7 +1576,7 @@ begin
       _keyboard(keycr);
       end;
     dbClose(d);
-    end;
+  end;
   dtestpollbox:=dbfound;
   if dbfound then begin
     pb_wrntyp(s);
@@ -1881,22 +1871,17 @@ end;
 
 
 function atestpollbox(var s:string):boolean;
-var d : DB;
+var
+  d: DB;
 begin
-  if (s='') or (UpperCase(s)='*CRASH*') then atestpollbox:=true
-  else begin
-    dbOpen(d,BoxenFile,1);
-    SeekLeftBox(d,s);
-    if dbFound then begin
-      dbRead(d,'netztyp',pb_netztyp);
-      s:= dbReadStr(d,'boxname');
-      pbox:=s;
-      end
-    else
+  if (s='') or (UpperCase(s)='*CRASH*') then
+    Result :=true
+  else
+  begin
+    Result := SeekLeftBox(d, pbox, pb_netztyp);
+    if not Result then
       rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
-    dbClose(d);
-    atestpollbox:=dbFound;
-    end;
+  end;
 end;
 
 procedure AutoEdit(kopie:boolean; var ar:AutoRec; var brk:boolean);
@@ -2456,6 +2441,9 @@ end;
 
 {
   $Log$
+  Revision 1.110  2003/10/01 18:37:11  mk
+  - simplyfied seeknextbox
+
   Revision 1.109  2003/09/15 20:14:45  mk
   - fixed not initialized variable while editing seperator lines in edituser
 

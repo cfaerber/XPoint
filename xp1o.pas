@@ -31,6 +31,7 @@ uses
   keys, //taste
   lister, xpheader,
   datadef,  //DB
+  xpnt,
   xpglobal;
 
 var   ListKommentar : boolean = false;   { beenden mit links/rechts }
@@ -55,7 +56,7 @@ procedure ExpandTabs(const fn1,fn2:string);
 function  GetDecomp(atyp:shortint; var decomp:string):boolean;
 function  UniExtract(_from,_to,dateien:string):boolean;
 function  g_code(s:string):string;
-procedure SeekLeftBox(var d:DB; var box:string);
+function SeekLeftBox(var d:DB; var box:string; var nt: eNetz): Boolean;
 // get Boxfilename from Boxname, add Extension
 // Result is already FileUpperCase
 function GetServerFilename(const boxname: String; Extension: String): String;
@@ -96,7 +97,7 @@ uses
   {$IFDEF OS2} xpos2, {$ENDIF}
   {$IFDEF DOS32} xpdos32, {$ENDIF}
   stringtools,fileio,inout,maus2,printerx,database,maske,archive,resource,clip,
-  xp0,xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
+  xp0,xp1,xp1o2,xp1input,xpkeys,xp10,xp4,xp4o,xp_uue;
 
 
 // get one line from lister, check for marked lines
@@ -773,16 +774,25 @@ begin
 end;
 
 
-procedure SeekLeftBox(var d:DB; var box:string);
+function SeekLeftBox(var d:DB; var box:string; var nt: eNetz): Boolean;
 begin
+  dbOpen(d,BoxenFile,1);
   if ((length(box)<=2) and (FirstChar(box)=FirstChar(DefFidoBox))) then
-    box:=DefFidoBox;
+    box := DefFidoBox;
   dbSeek(d,boiName,UpperCase(box));
-  if not dbFound and (box<>'') and not dbEOF(d) and
-     (UpperCase(LeftStr(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)) then begin
+  Result := dbFound;
+  if not Result and (box<>'') and not dbEOF(d) and
+     (UpperCase(LeftStr(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)) then
+  begin
     Box := dbReadStr(d,'boxname');
     dbSeek(d,boiName,UpperCase(box));
-    end;
+  end;
+  if Result then
+  begin
+    box := dbReadStr(d,'boxname');
+    dbRead(d,'netztyp', nt);
+  end;
+  dbClose(d);
 end;
 
 
@@ -1058,6 +1068,9 @@ end;
 
 {
   $Log$
+  Revision 1.124  2003/10/01 18:37:11  mk
+  - simplyfied seeknextbox
+
   Revision 1.123  2003/09/21 20:12:22  mk
   - use new Function FindURL in ReadFilename
 
