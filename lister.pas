@@ -1028,24 +1028,28 @@ var gl,p,y    : shortint;
             if not selbar then begin
               selbar:=true; stat.markable:=true;
               end;
-            pl:=actl;
-            p:=1;
-            for i:=1 to yy-y do
-              if EmsPtr(pl)^.next<>nil then begin
-                pl:=EmsPtr(pl)^.next; inc(p);
+            if actl <> nil then
+            begin
+              pl:=actl;
+              p:=1;
+              for i:=1 to yy-y do
+                if EmsPtr(pl)^.next<>nil then
+                begin
+                  pl:=EmsPtr(pl)^.next; inc(p);
                 end;
-            if stat.markable and testmark(EmsPtr(pl)^.cont,false) then begin
-              oldmark:=EmsPtr(pl)^.marked;
-              if t=mauslmoved then
-                EmsPtr(pl)^.marked:=plm
-              else begin
-                EmsPtr(pl)^.marked:=not EmsPtr(pl)^.marked;
-                plm:=EmsPtr(pl)^.marked;
+              if stat.markable and testmark(EmsPtr(pl)^.cont,false) then begin
+                oldmark:=EmsPtr(pl)^.marked;
+                if t=mauslmoved then
+                  EmsPtr(pl)^.marked:=plm
+                else begin
+                  EmsPtr(pl)^.marked:=not EmsPtr(pl)^.marked;
+                  plm:=EmsPtr(pl)^.marked;
+                  end;
+                if oldmark and not EmsPtr(pl)^.marked then dec(markanz) else
+                if not oldmark and EmsPtr(pl)^.marked then inc(markanz);
                 end;
-              if oldmark and not EmsPtr(pl)^.marked then dec(markanz) else
-              if not oldmark and EmsPtr(pl)^.marked then inc(markanz);
-              end;
-            end
+                end;
+              end
           else if ((t=mausleft) or (t=mausldouble)) and
                   (xx=stat.scrollx) and (yy>=y) and (yy<=y+gl) then
             if yy<vstart then
@@ -1494,6 +1498,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.4  2000/12/27 21:46:30  mk
+  - crash bei 0 zeilen langen Nachrichten, feststehenden Headern und Mausklick behoben
+
   Revision 1.19.2.3  2000/11/11 19:53:11  mk
   - moved some strings into resources
 
