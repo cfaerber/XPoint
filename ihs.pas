@@ -234,7 +234,7 @@ var  fname,
      readln(t,st);
      val(st,pnr,res); if res<>0 then exiterr('Illegal Page number: '+st);
      inspage(pnr,filepos(f));
-     gotoxy(17,wherey); write(pages:4,' : ',pnr:4);
+     write(#13,pages:4,' : ',pnr:4);
      blockwfw(pnr);
      if no_lastnext then begin
        last:=0; next:=0;
@@ -348,10 +348,7 @@ var dir:dirstr;
     ext:extstr;
 
 begin
-  clrscr;
-  writeln('Intelligent Help System Rel '+version);
-  writeln('(c) '+date+' Peter Mandrella');
-  writeln;
+  writeln('Intelligent Help System '+version+' (c) '+date+' Peter Mandrella (C) OpenXP Team');
   write('Source File: ');
   fname:=paramstr(1);
   if fname='' then readln(fname)
@@ -383,8 +380,7 @@ begin
   create_header;
   qvwun:=0;
   pages:=0;
-  writeln;
-  write('Processing page');
+  writeln('Processing page');
   repeat until not create_page;
   write_page_index;
   close(t);
@@ -414,6 +410,9 @@ end.
 
 {
   $Log$
+  Revision 1.14  2000/07/14 11:58:53  ma
+  - Kosmetik: Kein clrscr etc.
+
   Revision 1.13  2000/07/13 11:01:37  ma
   - wieder kompilierbar; Sysutils hinzugefuegt
 
