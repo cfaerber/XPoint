@@ -979,9 +979,6 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         if (t>=mausfirstkey) and (t<=mauslastkey) then
           maus_bearbeiten;
 
-        if (t=^J) and not quitfn(false,modified) then t:='';
-        if (t=keyesc) and not quitfn(true,modified) then t:='';
-
         if ((t=keyins) and not (kb_shift or kb_ctrl)) then insert_mode:=not insert_mode;
 
         if (t=keyup) or (t=keystab) or ((t=keyleft)and(typ in [120])) then
@@ -1329,6 +1326,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 end;   { readHmask }
 {
   $Log$
+  Revision 1.55  2003/09/07 14:44:26  cl
+  - BUGFIX: Quitfn called twice
+
   Revision 1.54  2003/09/07 14:41:28  cl
   - allow setting return code in quitfn
 
