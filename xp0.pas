@@ -70,7 +70,7 @@ const  {$IFDEF DPMI}
        eBrettLen   = 79;             { wendet werden                   }
        AdrLen      = 80;
        eAdrLen     = 79;
-       BetreffLen  = 70;
+       BetreffLen  = 250;
        DateLen     = 11;
        midlen      = 160;
        AKAlen      = 127;
@@ -1177,6 +1177,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.5  2000/08/03 09:52:43  mk
+  - Subjektlaenge auf 250 Zeichen angepasst
+
   Revision 1.54.2.4  2000/07/20 18:20:14  mk
   - Speichern unbekannter Config-Lines jetzt Heapsparender implementiert
 
