@@ -76,10 +76,14 @@ procedure shell(prog:string; space:word; cls:shortint);
     commandsave:=command;
     if not callviacli then begin
       command:=FindExecutable(command);
-      if(command='')or(Pos('.BAT',command)<>0)then begin
+      if (command='') // file not found, assume it is built-in in cli
+         or(UpperCase(ExtractFileExt(command))='.BAT') // batch files have to be run via cli
+         or(ExtractFileExt(command)='') // FindExecutable WILL find "copy" as built-in in cli
+        then begin
         callviacli:=true; command:=commandsave;
       end;
     end;
+    if trim(command)='' then begin result:=-100; exit end;
     if callviacli then begin
       parameters:=' /c '+command+' '+parameters;
       command:=getenv('comspec');
@@ -478,6 +482,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2001/05/08 17:41:32  ma
+  - fixed: cli built-in commands could not be executed
+
   Revision 1.52  2001/04/03 13:33:15  ma
   - screen size set to 80x25 with Win32 now
   - todo: don't set screen size with WinNT/2000
