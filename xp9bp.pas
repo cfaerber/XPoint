@@ -148,6 +148,7 @@ begin
     PPPClientPath := '';
     PPPClient := '';
     PPPAddServers := '';
+    PPPDialUp := '';
     PPPSpool := '';
     UUprotos:='Ggz';
     efilter:='';
@@ -288,6 +289,7 @@ begin
             gets(s,su,'Client-Path', PPPClientPath, 60) or
             gets(s,su,'Client-Exec', PPPClient, 60) or
             gets(s,su,'Client-AddServers', PPPAddServers, 60) or
+            gets(s,su,'Client-DialUp',PPPDialup,60) or
             gets(s,su,'Client-Spool', PPPSpool, 60) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
@@ -437,6 +439,7 @@ begin
     writeln(t,'Client-Path=', PPPClientPath);
     writeln(t,'Client-Exec=', PPPClient);
     writeln(t,'Client-AddServers=', PPPAddServers);
+    writeln(t,'Client-DialUp=', PPPDialUp);
     if PPPMode then
     begin
       writeln(t,'Client-Spool=', OwnPath + XFerDir + Dateiname + '\');
@@ -563,6 +566,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.15  2001/06/16 02:11:42  my
+  - New server configuration parameter "Client-DialUp="
+
   Revision 1.10.2.14  2001/06/13 02:10:09  my
   JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
           - All vital client settings from Edit/Point, Edit/Names and

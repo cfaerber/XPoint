@@ -559,18 +559,19 @@ type   textp  = ^text;
                   LoginName : string[60];  { UUCP/QM: login-Username   }
                   UUCPname  : string[8];   { uucico-Systemname         }
                   MaxWinSize: byte;        { UUCP: max. Windowgrî·e    }
-                  MaxPacketSize:smallword;      { UUCP: max. Blockgrî·e     }
+                  MaxPacketSize:smallword; { UUCP: max. Blockgrî·e     }
                   VarPacketSize:boolean;   { UUCP: variable Blockgrî·e }
                   ForcePacketSize:boolean; { UUCP: SendWinsize=RecvWinsize }
                   UUprotos  : string[10];  { UUCP: mîgl. Protokolle    }
                   SizeNego  : boolean;     { UUCP: size negotiation    }
-                  UUsmtp    : boolean;     { UUCP: SMTP                }
-                  ClientSmtp   : boolean;  { UUCP: SMTP Client Mode    }
-                  PPPMode   : Boolean;     { PPP Mode Switch           }
+                  UUsmtp    : boolean;     { UUCP: SMTP/UUCP           }
+                  ClientSmtp: boolean;     { UUCP: SMTP/Client         }
+                  PPPMode   : Boolean;     { RFC/Client switch         }
                   PPPClient : string[60];  { PPP Client                }
+                  PPPClientPath: string[60];  { PPP Client Path        }
+                  PPPAddServers: string[200]; { Pakete mitsenden       }
+                  PPPDialUp : string[60];  { PPP Dial-Up               }
                   PPPSpool  : string[60];  { PPP Spool                 }
-                  PPPClientPath: string[60]; { PPP Client Path         }
-                  PPPAddServers: string[200]; { Pakete mitsenden }
                   ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
                   eFilter   : string[60];  { Eingangsfilter            }
                   aFilter   : string[60];  { Ausgangsfilter            }
@@ -1188,6 +1189,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.33  2001/06/16 02:11:41  my
+  - New server configuration parameter "Client-DialUp="
+
   Revision 1.54.2.32  2001/06/13 02:10:09  my
   JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
           - All vital client settings from Edit/Point, Edit/Names and
