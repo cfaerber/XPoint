@@ -371,7 +371,7 @@ var   hdp      : headerp;
           else ctype:=getres2(2440,2);                { 'Nachspann' }
       until isbound or eof(t);
       { Letzte Zeile im letzen Part wird sonst unterschlagen }
-      { if eof(t) then inc(n); }
+      if not isbound then inc(n); }
       vorspann:=false;
 
       if not eof(t) and (ctype=getres2(2440,2)) then begin  { 'Nachspann' }
@@ -725,6 +725,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.2  2000/07/27 14:56:52  jg
+   - Mime-Extrakt - Makepartlist: INC(N) am EOF sorgt dafuer, dass die
+     letzte Nachspann-Zeile angezeigt wird. Es darf nicht ausgefuehrt
+     werden, wenn der Block mit EOF mit einem Boundary endet !
+
   Revision 1.12.2.1  2000/06/29 20:53:34  mk
   JG: - Mime-Auswahl erscheint nur noch, wenn wirklich noetig und sinnvoll
 
