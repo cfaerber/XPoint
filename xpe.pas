@@ -304,7 +304,7 @@ begin
   if edbetreff=nil then exit;
   dialog(min(edbmaxlen+7+length(getres(2507)),70),3,'',x,y);
   maddstring(3,2,getres(2507),edbetreff^,min(edbmaxlen,48),edbmaxlen,'');
-  mset1func(xp6.umlauttest); mhnr(88);
+  msetvfunc(xp6.umlauttest); mhnr(88);
   readmask(brk);
   enddialog;
   if not brk then begin
@@ -391,6 +391,4 @@ begin
   attrtxt(ma);
 end;
 
-
 end.
-
