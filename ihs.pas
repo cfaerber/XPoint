@@ -144,7 +144,7 @@ var  fname    : pathstr;
          w : word;
          r : integer;
      begin
-       p:=pos(' ',qvref);
+       p:=cpos(' ',qvref);
        if p=0 then
          s:=qvref
        else begin
@@ -239,10 +239,10 @@ var  fname    : pathstr;
        end
      else begin
        readln(t,st);
-       if pos(' ',st)=0 then exiterr('Illegal/missing LAST/NEXT statement');
-       val(left(st,pos(' ',st)-1),last,res);
+       if cpos(' ',st)=0 then exiterr('Illegal/missing LAST/NEXT statement');
+       val(left(st,cpos(' ',st)-1),last,res);
        if res<>0 then exiterr('Illegal LAST statement');
-       val(mid(st,pos(' ',st)+1),next,res);
+       val(mid(st,cpos(' ',st)+1),next,res);
        if res<>0 then exiterr('Illegal NEXT statement');
        end;
      blockwfw(last); blockwfw(next);
@@ -259,14 +259,14 @@ var  fname    : pathstr;
      repeat
        readln(t,s);
        if (s<>'@') and (s<>'@@') then begin
-         p:=pos('@',s);
+         p:=cpos('@',s);
          if p>0 then
            if (p>1) and (s[p-1]='\') then
              delete(s,p-1,1)
            else begin
              qvref:=copy(s,p+1,80);
              s:=copy(s,1,p-1);
-             p1:=pos('[',s);
+             p1:=cpos('[',s);
              while p1>0 do begin
                p2:=p1+1;
                while (p2<length(s)) and (s[p2]<>']') do inc(p2);
@@ -400,7 +400,13 @@ end.
 }
 {
    $Log$
-   Revision 1.9.2.4  2003/01/25 21:31:54  my
+   Revision 1.9.2.5  2003/01/25 22:48:27  my
+   MY: - 'pos()' => 'cpos()'
+
+   Revision 1.2.2.4  2003/01/25 22:47:35  my
+   MY: - 'pos()' => 'cpos()'
+
+   Revision 1.2.2.3  2003/01/25 21:41:11  my
    MY: - GeÑnderte Parameterbehandlung: Dateiname kann jetzt jede beliebige
          oder wie bisher keine Extension enthalten (bisher fÅhrte der
          korrekte Dateiname 'XP.IHQ' zu einer Fehlermeldung). Bei öbergabe
@@ -408,7 +414,13 @@ end.
        - Kosmetik bei Versions- und Copyright-Strings.
        - Copyright-Header hinzugefÅgt.
 
-   Revision 1.9.2.3  2003/01/25 17:46:40  mw
+   Revision 1.2.2.2  2003/01/25 17:45:41  mw
    MW: - IHS compiliert jetzt wieder fehlerfrei die Hilfen.
+
+   Revision 1.2.2.1  2003/01/15 16:02:02  mw
+   MW: - Fehlende CVS-Infos ergÑnzt (ID und Log wird jetzt
+         bei allen Quelldateien in die Dateien geschrieben.
+         Assembler-Quellen nur ID.
+
 
 }
