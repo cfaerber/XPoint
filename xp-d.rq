@@ -52,7 +52,7 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 27  Liste,1b1^Anfordern,1b2^Nachricht einlesen,1b3^Datei einlesen
 28  Optionen,1c1^Allgemeines,1c2^Bedienung,1c3^Lister,1cdEd^itor,1ce^Viewer,1c4^Nachrichten,1ccA^dressen,1c5N^etzeù37,-,1c6Net^call,1c7^Gebhrenù39,1cb^Terminal,-,1c9^Paáwort,1ca^Sprache
 29  Brettindex,1d1^Neuaufbau,1d2^Alphabetisch
-30  Nodelist,1e1^Verwalten,1e2^Update einbinden,1e3^Einschr„nken,1e4^Indizieren,-,1e6^Statistik,1e7^Durchsuchen,1e8^Abfragen      @N
+30  Nodelist,1e1^Verwalten,1e2^Update einbinden,1e3^Einschr„nken,1e4^Indizieren,-,1e6^Statistik,1e7^Durchsuchen  ^@N,1e8^Abfragen      @N
 31  Fido,1f1^Request,1f2^Filelistenù32,1f3File ^Areasù38,1f4^Crash,1f5^Nodelistenù30,1f6^Optionen
 32  Fidoliste,201^Einlesen,202^L”schen,203^Suchen
 33  Sonstiges,211Neuaufbau ^Verkettung,212^MsgIDs einlesen,213^Nachrichten prfen,214^Datumsbezge,215^Brettindexù29
@@ -2371,16 +2371,8 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 # --- XPFIDO ----------------------------------------------------------
 
 + 2100
-1    Node-Infos abfragen (Esc=Ende)
-2    Box
-3    AKA    [                    ]
-4    Sysop
-5    TelNr
-6    Flags
-7    Suchen
-8    Datei
-9    Status
-10   E-Mail
+1    Node-/Point-Infos abfragen
+2    Suchen
 -
 + 2101
 1    Nodeindex anlegen
@@ -2510,14 +2502,21 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 21   Netz:
 22   Eintr„ge:
 23   passend:
-30   Sysop
-31   ~Nodeliste
-32   Flags
-33   Point
-34   Pointliste
-35   Status
+26   ~Box/Point, Standort ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ AKA ÄÄÄÄÄÄÄÄÄÄÄÄÄ Telefon~
+27   ~Nodelisten: < >bfragen Ä < >urchsuchen ÄÄÄÄ <   >~
+28   ~Nodelisten: < >bfragen Ä < >urchsuchen ÄÄÄÄ <     > ÄÄÄÄ <   >~
+29   AD
+30   ~Nodeliste
+31   Pointliste
+32   Status
+33   Boxname
+34   Name
+35   Standort
+36   Sysop
+37   Point
+38   Flags
 -
-2132 ~^Nachricht , ^Request , ^Info , ^Zurck~
+2132 ~^Nachricht , ^Request , ^Zurck~
 
 
 # --- XPAUTO, XPCC ----------------------------------------------------
@@ -3406,7 +3405,10 @@ K (c) 2002-2003 OpenXP/16, http://www.openxp16.de
 23 Kann Verzeichnis %s nicht anlegen!
 24 Diese Datei ist bereis eingebunden.
 25 Es ist keine Haupt-Fido-Nodeliste (NODELIST.###) eingebunden.
-26 Es wurden keine passenden Eintr„ge gefunden.
+26 --- Keine passenden Eintr„ge gefunden ---
+27 Nachricht aus Nodelist-Browser erzeugt -> Nodelist-Browser deaktiviert.
+28 F'Request aus Nodelist-Browser erzeugt -> Nodelist-Browser deaktiviert.
+29 Mail- und F'Request-Funktion ist hier deaktiviert.
 
 +  12200
 1  AutoVersand - Datei "%s" fehlt!
