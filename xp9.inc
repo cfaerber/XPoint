@@ -1060,8 +1060,8 @@
     dbRead(d,'PVertreter',pv);
     nall:=(flags and 2=0);
     with boxpar^ do begin
-      if not ((nt=nt_uucp) and boxpar^.pppMode) then
-      begin
+      if (nt=nt_uucp) and pppMode then add:=-4
+      else begin
         maddtext(3,2,getres2(924,2),col.coldiahigh);    { 'Online-Anruf' }
         maddstring(20,2,getres2(924,3),o_passwort,25,25,''); mhnr(187);  { 'Paáwort ' }
         maddstring(20,3,getres2(924,4),o_logfile,25,60,''); { 'Logfile ' }
@@ -1087,8 +1087,6 @@
             end;
           end;
         end;
-      if (nt=nt_uucp) and boxpar^.pppMode then
-        add:=-4;
       maddtext(3,6+add,getres2(924,8),col.coldiahigh);  { 'Filter' }
       maddstring(20,6+add,getres2(924,9),eFilter,25,60,''); mhnr(199);  { 'Eingang' }
       maddstring(20,7+add,getres2(924,10),aFilter,25,60,''); mhnr(8050); { 'Ausgang' }
@@ -1694,6 +1692,9 @@
 
 {
   $Log$
+  Revision 1.10.2.30  2001/06/22 18:14:00  my
+  - optimized code a little bit
+
   Revision 1.10.2.29  2001/06/19 17:01:47  my
   - minor fixes with nil effect :-)
 
