@@ -336,9 +336,11 @@ var x,y: Integer;
     ebs  : boolean;
     farb : byte;
     OldAdr: Byte;
+    Seperator: Boolean;
 begin
   OldAdr := adr;
-  if LeftStr(user,4)<>#0+'$/T' then
+  Seperator := LeftStr(user,4)=#0+'$/T';
+  if not Seperator then
   begin
     dialog(57,13,txt,x,y);
     maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxNameLen,''); mhnr(423);
@@ -385,8 +387,7 @@ begin
     maddint(35,12,getres2(2701,11),adr,2,2,0,99);       { 'Adressbuchgruppe' }
     Select_Gruppen;
     mhnr(8069);
-    end
-
+  end
   else begin { Trennzeile }
     dialog(57,7,txt,x,y);
     maddtext(3,2,getres2(2701,3),0);                   { 'User' }
@@ -400,12 +401,15 @@ begin
   begin
     if (OldAdr<>0) and (adr=0) then // Adr was changed from <> 0 to 0
      if not readJN(GetRes(2738),false) then
-       adr:= OldAdr; 
-    if farb=3 then Farb:=0;
-    if farb>3 then dec(farb);
-    flags:=(flags and not $E0) or (farb shl 5);
-    flags:=flags and $e6 + iif(filt,0,1) + iif(uml,0,8) + iif(ebs,16,0);
+       adr:= OldAdr;
+    if not Seperator then // modify flags only if not seperator
+    begin
+      if farb=3 then Farb:=0;
+      if farb>3 then dec(farb);
+      flags:=(flags and not $E0) or (farb shl 5);
+      flags:=flags and $e6 + iif(filt,0,1) + iif(uml,0,8) + iif(ebs,16,0);
     end;
+  end;
   enddialog;
   freeres;
 end;
@@ -2493,6 +2497,9 @@ end;
 
 {
   $Log$
+  Revision 1.88.2.8  2003/09/15 20:15:13  mk
+  - fixed not initialized variable while editing seperator lines in edituser
+
   Revision 1.88.2.7  2003/08/23 20:01:34  mk
   - write()->wrt() for autosend file info
 
