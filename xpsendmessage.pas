@@ -901,7 +901,7 @@ begin      //-------- of DoSend ---------
   if not intern then
     CheckEmpfaengerList(sData.EmpfList, false, false, sData);
 
-  if not sData.EmpfList.Count>0 then 
+  if sData.EmpfList.Count<=0 then 
     exit;
 
   if (not intern) and (datei='') then
@@ -1452,6 +1452,9 @@ finalization
 
 {
   $Log$
+  Revision 1.57  2002/06/23 15:30:41  cl
+  - Fixed List Index Error
+
   Revision 1.56  2002/06/23 15:03:06  cl
   - Adapted Nachricht/Direkt to new address handling.
 
