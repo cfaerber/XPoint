@@ -41,7 +41,14 @@ type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
 
 procedure SelectMultiPart(select:boolean; index:integer; forceselect:boolean;
                           var mpdata:multi_part; var brk:boolean);
+{$IFDEF Ver32 }
+  {$H+}
+{$ENDIF }
 procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
+{$IFDEF Ver32 }
+  {$H-}
+{$ENDIF }
+
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
 
@@ -99,7 +106,7 @@ begin
     if exist(fn) then begin
       if mpdata.typ='text'then o:=false else o:=true;   {Falls vorhanden... Text: "anhaengen"}
       o:=overwrite(fn,o,brk);                           {Rest: "ueberschreiben"}
-      end 
+      end
     else o:=true;
     if not exist(fn) or not brk then
       ExtractMultiPart(mpdata,fn,not o);
@@ -372,7 +379,7 @@ var   hdp      : headerp;
           else ctype:=getres2(2440,2);                { 'Nachspann' }
       until isbound or eof(t);
       { MK 04.02.2000: Letzte Zeile im letzen Part wird sonst unterschlagen }
-      { if eof(t) then inc(n); } 
+      { if eof(t) then inc(n); }
       vorspann:=false;
 
       if not eof(t) and (ctype=getres2(2440,2)) then begin  { 'Nachspann' }
@@ -548,6 +555,9 @@ end;
 
 { Teil einer Multipart-Nachricht decodieren und extrahieren }
 
+{$IFDEF Ver32 }
+  {$H+}
+{$ENDIF }
 procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
 const bufsize = 2048;
 
@@ -560,18 +570,22 @@ var   input,t : text;
       softbreak: boolean;
 
   procedure QP_decode;       { s quoted-printable-decodieren }
-  var p : byte;
+  var
+    p : integer;
   begin
+    if s = '' then exit;
     p:=1;
-    while p<length(s)-1 do begin
-      while (p<length(s)) and (s[p]<>'=') do
+    while p<length(s)-1 do
+    begin
+      while (p<length(s)-1) and (s[p]<>'=') do
         inc(p);
-      if p<length(s)-1 then begin
+      if p<length(s)-1 then
+      begin
         s[p]:=chr(hexval(copy(s,p+1,2)));
         delete(s,p+1,2);
-        end;
-      inc(p);
       end;
+      inc(p);
+    end;
   end;
 
   procedure DecodeBase64;    { aus UUZ.PAS }
@@ -614,7 +628,7 @@ var   input,t : text;
         s[p2+2]:=chr((b3 and 3) shl 6 + b4);
         inc(p2,3);
         end;
-      s[0]:=chr(p2-1-pad);
+        SetLength(s, p2-1-pad);
       end;
   end;
 
@@ -644,11 +658,11 @@ begin
         end
         else
           softbreak:=false;
-        if softbreak then begin
-          dellast(s);
+        if softbreak then
+        begin
+          SetLength(s, Length(s)-1);
           write(t,s);
-          end
-        else
+        end else
           writeln(t,s);
         end;
       close(t);
@@ -701,6 +715,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/22 23:29:55  mk
+  - Endlosschleife beim QP-decodieren von Zeilen mit 255 Zeichen Laenge behoben
+  - $H+ teils in xpmime implementiert um Zeilen laenger 255 Zeichen dekodieren zu koennen
+
   Revision 1.10  2000/03/24 17:37:05  jg
   - Mime-Extrakt: Bugfixes:
     Makepartlist: kein INC(N) mehr beim Block mit EOF
