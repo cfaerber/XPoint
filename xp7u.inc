@@ -158,7 +158,7 @@ var sr    : searchrec;
   end;
 
 begin
-  if cleardir then begin		{ Spool r„umen }
+  if cleardir then begin                { Spool r„umen }
     DelAll('*.');
     DelAll('*.OUT');
   end;
@@ -187,7 +187,7 @@ begin
     if f then _era(source);
     end;
   if errorlevel<>0 then exit;
-  if BoxPar^.uparcer='' then begin             { Mail/News nicht packen }
+  if (BoxPar^.uparcer='') or (Netztyp in [nt_NNTP, nt_POP3, nt_IMAP]) then begin             { Mail/News nicht packen }
     spufsize:=filesum(DestDir+'D*.OUT');
     spacksize:=spufsize;
     end
@@ -461,6 +461,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/08/15 16:51:02  mk
+  - Updates fuer neue Boxentypen NNTP, POP3/SMTP und IMAP
+
   Revision 1.18  2000/07/30 08:49:54  mk
   MO: - Referenzen auf konstante Bildschirmbreite/hoehe entfernt
 

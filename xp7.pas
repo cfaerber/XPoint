@@ -269,6 +269,18 @@ label abbruch,ende0;
                        dpuffer:='YYY$$$';
                        fidologfile:='';
                      end;
+        ltNNTP      : begin
+                       caller:='NNTPDMY1';
+                       called:='NNTPDMY2';
+                       upuffer:='NNTPPUF';
+                       dpuffer:='NNTPPUF';
+                     end;
+        ltPOP3      : begin
+                       caller:='POP3DMY1';
+                       called:='POP3DMY2';
+                       upuffer:='POP3PUF';
+                       dpuffer:='POP3PUF';
+                     end;
         ltUUCP     : begin
                        caller:='C-'+hex(uu_nummer,4)+'.OUT';
                        called:='uudummy';
@@ -620,9 +632,11 @@ begin                  { of Netcall }
     mwriteln;
 
     showkeys(0);
-    if net then begin
+    if net then
+    begin
       assign(f,ppfile);
-      if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltFido,ltUUCP] then begin
+      if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltFido,ltUUCP, ltNNTP, ltPOP3] then
+      begin
         if not existf(f) then
           makepuf(ppfile,false);      { leeren Puffer erzeugen }
         case logintyp of
@@ -635,9 +649,10 @@ begin                  { of Netcall }
                       exchange(uparcer,'$UPFILE',caller);
                     end;
           ltUUCP  : ZtoRFC(true,ppfile,XFerDir);
+          ltNNTP, ltPOP3: ZtoRFC(true,ppfile, XFerDir);
         end;
         RemoveEPP;
-        if logintyp<>ltUUCP then
+        if not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]) then
           spufsize:=_filesize(upuffer);
         if errorlevel=MaggiFehler then begin
           {window(1,1,screenwidth,screenlines);}
@@ -647,7 +662,8 @@ begin                  { of Netcall }
         if (logintyp in [ltQuick,ltGS]) and (spufsize=0) then begin   { nîtig ? }
           makepuf(upuffer,false);
           end;
-        if logintyp<>ltUUCP then begin
+        if not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]) then
+        begin
           if uparcer<>'' then      { '' -> ungepackte Fido-PKTs }
             shell(uparcer,500,1);
           spacksize:=_filesize(caller);
@@ -684,7 +700,8 @@ begin                  { of Netcall }
           spacksize:=_filesize(caller);
         end;
 
-      if (uparcer<>'') and (logintyp<>ltUUCP) and not exist(caller) then begin
+      if (uparcer<>'') and (not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]))
+        and not exist(caller) then begin
         {window(1,1,screenwidth,screenlines);}
         trfehler(713,30);   { 'Fehler beim Packen!' }
         goto ende0;
@@ -692,597 +709,608 @@ begin                  { of Netcall }
       CallerToTemp;    { Maggi : OUT.ARC umbenennen }
       end;   { if net and not Turbo-Box }
 
-    ComNr:=bport; in7e1:=false; out7e1:=false; IgnCD:=IgCD; IgnCTS:=IgCTS;
-
     netcall:=false;
-    display:=ParDebug;
-    ende:=false;
-    wahlcnt:=0; connects:=0;
-    showkeys(17);
 
-       { ---------------------- FIDO - Mailer ---------------------- }
+    if not (LoginTyp in [ltNNTP, ltPOP3, ltIMAP]) then
+    begin
+      ComNr:=bport; in7e1:=false; out7e1:=false; IgnCD:=IgCD; IgnCTS:=IgCTS;
 
-    if net and _fido then begin
-      fillchar(nc^,sizeof(nc^),0);
-      inmsgs:=0; outmsgs:=0; outemsgs:=0;
-      cursor(curoff);
-      inc(wahlcnt);
-      case FidoNetcall(box,ppfile,eppfile,caller,upuffer,
-                       uparcer<>'',crash,alias,addpkts,domain) of
-        EL_ok     : begin
-                      Netcall_connect:=true;
-                      Netcall:=true;
-                      goto ende0;
-                    end;
-        EL_noconn : begin
-                      Netcall_connect:=false;
-                      goto ende0;
-                    end;
-        EL_recerr,
-        EL_senderr,
-        EL_nologin: begin
-                      Netcall_connect:=true;
-                      inc(connects);
-                      goto ende0;
-                    end;
-        EL_break  : begin
-                      Netcall:=false;
-                      goto ende0;
-                    end;
-      else          begin              { Parameter-Fehler }
-                      Netcall:=true;
-                      goto ende0;
-                    end;
-      end;
-    end;
 
-       { ---------------------- Andere Mailer ---------------------- }
-
-    fossiltest;
-    if not ISDN then begin
-      SetComParams(bport,fossil,Cport,Cirq);
-      if OStype<>OS_2 then SaveComState(bport,cps);
-      SetTriggerLevel(tlevel);
-      if SetUart(bport,baud,PNone,8,1,not IgnCTS) then;   { fest auf 8n1 ... }
-      end;
-    Activate; mdelay(300); flushin;
-    if not IgnCTS then begin           { Modem an?  ISDN -> IgnCTS=true }
-      i:=3;
-      while not GetCTS(comnr) and (i>0) do begin
-        time(2);
-        while not GetCTS(comnr) and not timeout(false) do tb;
-        if timeout(false) then begin
-          {window(1,1,screenwidth,screenlines);}
-          trfehler(714,esec);   { 'Modem nicht bereit - oder etwa ausgeschaltet?' }
-          twin;
-          writeln;
-          if waitkey=keyesc then i:=1;
-          end;
-        dec(i);
-        end;
-      if i=0 then begin
-        ende:=true;
-        if _fido then ReleaseC;
-        goto abbruch;
-        end;
-      end;
-
-    recs:=''; lrec:='';
-    showconn:=false;
-    time(60);
-    esctime0;
-
-    if not ISDN then begin        { Modem-Init }
-      if HayesComm and not relogin and not timeout(false) then begin
-        moff;
-        if not display then write(getres2(703,1));   { 'Modem initialisieren...' }
-        mon;
-        sendstr(#13); {mdelay(150);}    { alte Modem-Befehle verschlucken ... }
-        sendstr(#13); mdelay(300);
-        flushin;
-        sendcomm('AT');
-        end;
-      if not relogin then begin
-        if not timeout(false) then sendmstr(minit);
-        if not timeout(false) then begin
-          sendmstr(modeminit);
-          if HayesComm and not relogin then begin
-            mwriteln; mwriteln; end;
-          end;
-        end;
-      if timeout(false) then begin   { Init abgebrochen }
-        ende:=true;
-        goto abbruch;
-        end;
-      end;
-
-    nulltime:=typeform.time;
-    repeat
-      in7e1:=false; out7e1:=false;
-      showkeys(15);
-      if net and exist(called) and (caller<>called) then _era(called);
-      if net then TempToCaller;
       display:=ParDebug;
-      inmsgs:=0; outmsgs:=0; outemsgs:=0;
-      fillchar(NC^,sizeof(NC^),0);
-      NC^.datum:=ZDate;
-      NC^.box:=box;
-      NC^.starttime:=nulltime;
-      if display then begin
-        mwriteln; mwriteln; end;
-      inc(wahlcnt);
-      moff;
-      if not once then write(wahlcnt:2,'. ');
-      write(getres2(703,iif(net,2,3)),box);  { 'Netza' / 'Anruf bei ' }
-      if numcount>1 then write(' #',numpos);
-      write(getres2(703,4),zeit);    { ' um ' }
-      mon;
+      ende:=false;
+      wahlcnt:=0; connects:=0;
+      showkeys(17);
 
-      begin                              { Hayes-Anwahl }
-        mdelay(150);
-        flushin;   { Return verschlucken }
+         { ---------------------- FIDO - Mailer ---------------------- }
+
+      if net and _fido then begin
+        fillchar(nc^,sizeof(nc^),0);
+        inmsgs:=0; outmsgs:=0; outemsgs:=0;
+        cursor(curoff);
+        inc(wahlcnt);
+        case FidoNetcall(box,ppfile,eppfile,caller,upuffer,
+                         uparcer<>'',crash,alias,addpkts,domain) of
+          EL_ok     : begin
+                        Netcall_connect:=true;
+                        Netcall:=true;
+                        goto ende0;
+                      end;
+          EL_noconn : begin
+                        Netcall_connect:=false;
+                        goto ende0;
+                      end;
+          EL_recerr,
+          EL_senderr,
+          EL_nologin: begin
+                        Netcall_connect:=true;
+                        inc(connects);
+                        goto ende0;
+                      end;
+          EL_break  : begin
+                        Netcall:=false;
+                        goto ende0;
+                      end;
+        else          begin              { Parameter-Fehler }
+                        Netcall:=true;
+                        goto ende0;
+                      end;
+        end;
+      end;
+
+         { ---------------------- Andere Mailer ---------------------- }
+
+      fossiltest;
+      if not ISDN then begin
+        SetComParams(bport,fossil,Cport,Cirq);
+        if OStype<>OS_2 then SaveComState(bport,cps);
+        SetTriggerLevel(tlevel);
+        if SetUart(bport,baud,PNone,8,1,not IgnCTS) then;   { fest auf 8n1 ... }
+        end;
+      Activate; mdelay(300); flushin;
+      if not IgnCTS then begin           { Modem an?  ISDN -> IgnCTS=true }
+        i:=3;
+        while not GetCTS(comnr) and (i>0) do begin
+          time(2);
+          while not GetCTS(comnr) and not timeout(false) do tb;
+          if timeout(false) then begin
+            {window(1,1,screenwidth,screenlines);}
+            trfehler(714,esec);   { 'Modem nicht bereit - oder etwa ausgeschaltet?' }
+            twin;
+            writeln;
+            if waitkey=keyesc then i:=1;
+            end;
+          dec(i);
+          end;
+        if i=0 then begin
+          ende:=true;
+          if _fido then ReleaseC;
+          goto abbruch;
+          end;
+        end;
+
+      recs:=''; lrec:='';
+      showconn:=false;
+      time(60);
+      esctime0;
+
+      if not ISDN then begin        { Modem-Init }
+        if HayesComm and not relogin and not timeout(false) then begin
+          moff;
+          if not display then write(getres2(703,1));   { 'Modem initialisieren...' }
+          mon;
+          sendstr(#13); {mdelay(150);}    { alte Modem-Befehle verschlucken ... }
+          sendstr(#13); mdelay(300);
+          flushin;
+          sendcomm('AT');
+          end;
+        if not relogin then begin
+          if not timeout(false) then sendmstr(minit);
+          if not timeout(false) then begin
+            sendmstr(modeminit);
+            if HayesComm and not relogin then begin
+              mwriteln; mwriteln; end;
+            end;
+          end;
+        if timeout(false) then begin   { Init abgebrochen }
+          ende:=true;
+          goto abbruch;
+          end;
+        end;
+
+      nulltime:=typeform.time;
+      repeat
+        in7e1:=false; out7e1:=false;
+        showkeys(15);
+        if net and exist(called) and (caller<>called) then _era(called);
+        if net then TempToCaller;
+        display:=ParDebug;
+        inmsgs:=0; outmsgs:=0; outemsgs:=0;
+        fillchar(NC^,sizeof(NC^),0);
+        NC^.datum:=ZDate;
+        NC^.box:=box;
+        NC^.starttime:=nulltime;
         if display then begin
           mwriteln; mwriteln; end;
-        if hayescomm and not relogin then begin                  { Anwahl }
-          s:=comn[bport].MDial;
-          while pos('\\',s)>0 do begin
-            sendcomm(left(s,pos('\\',s)-1));
-            delete(s,1,pos('\\',s)+1);
+        inc(wahlcnt);
+        moff;
+        if not once then write(wahlcnt:2,'. ');
+        write(getres2(703,iif(net,2,3)),box);  { 'Netza' / 'Anruf bei ' }
+        if numcount>1 then write(' #',numpos);
+        write(getres2(703,4),zeit);    { ' um ' }
+        mon;
+
+        begin                              { Hayes-Anwahl }
+          mdelay(150);
+          flushin;   { Return verschlucken }
+          if display then begin
+            mwriteln; mwriteln; end;
+          if hayescomm and not relogin then begin                  { Anwahl }
+            s:=comn[bport].MDial;
+            while pos('\\',s)>0 do begin
+              sendcomm(left(s,pos('\\',s)-1));
+              delete(s,1,pos('\\',s)+1);
+              end;
+            NC^.telefon:=GetTelefon;
+            sendstr(s+NC^.telefon+#13);
             end;
-          NC^.telefon:=GetTelefon;
-          sendstr(s+NC^.telefon+#13);
-          end;
-        numpos:=numpos mod numcount + 1;
-        if ParDebug then begin
-          zaehler[3]:=1;
-          repeat tb until zaehler[3]=0;
-          end
-        else
-          mdelay(500);
-        flushin; recs:=''; lrec:='';
-        time(connwait);
-        noconnstr:=getres2(703,5);    { 'keine Verbindung' }
-        showconn:=not display;
-        Netcall_connect:=false;
-        if ParDebug then begin
-          mdelay(200);
-          for i:=1 to 20 do tb;
-          mwriteln;
-          end;
-        rz:=''; write('        ');
-        if not logopen then begin
-          new(netlog);
-          assign(netlog^,nlfile);
-          rewrite(netlog^);
-          logopen:=true;
-          end;
-        repeat                         { Warten auf CONNECT }
-          if rz<>restzeit then begin
-            rz:=restzeit;
-            moff;
-            write(back7,'(',rz,')');
-            mon;
-            end;
-          tb;
-          esctime0;
-          if recs='' then XpIdle;
-        until (IgnCD and (recs<>'')) or (not IgnCD and carrier(bport))
-              or timeout(false) or busy;
-        write(back7,sp(7),back7,#8);
-        if timeout(true) or
-           (IgnCD and hayescomm and not relogin and not TestConnect) then begin
-          showconn:=false;
-          moff;
-          if timeout(true) then writeln('  -  ',noconnstr);
-          mon;
-          dropdtr(comnr);
-          mdelay(100);
-          setdtr(comnr);
-          sendstr(#13); mdelay(200);
-          sendstr(#13); mdelay(200);
-          flushin;
-          goto abbruch;
-          end;
-        if busy then goto abbruch;
-        end;                              { Ende Hayes-Anwahl }
-
-      NC^.ConnTime:=typeform.time;
-      NC^.ConnDate:=typeform.date;
-      ConnTicks:=ticker;
-      NC^.ConnSecs:=conn_time;    { in BoxPar^ }
-
-      in7e1:=(logintyp=ltUUCP) or uucp7e1;
-      out7e1:=uucp7e1;
-      startscreen:=BreakLogin and not relogin;    { ^X-Kennzeichen }
-      if not net then begin
-        display:=true;
-        termscr;
-        end;
-      if net or (o_passwort<>'') then begin
-        inc(connects);
-        Netcall_connect:=true;
-        if not relogin then
-          while not timeout(true) and showconn do tb;
-        error:=false;
-        time(loginwait);
-        scrfile:=iifs(net,script,o_script);
-        if (scrfile<>'') and exist(scrfile) then begin   { Script-Login }
-          if net then wrscript(3,2,col.colkeys,'*Script*')
-          else if TermStatus then wrscript(55,1,col.colmenu[0],'*Script*');
-          case RunScript(false,scrfile,not net,relogin,netlog) of
-            0 : display:=ParDebug or (logintyp=ltMaus);
-            1 : error:=true;
-            2 : begin error:=true; ende:=true; end;
-            3 : begin error:=true; rfehler(731); end;
-          end;
-          if net then wrscript(3,2,col.colkeys,'        ')
-          else wrscript(55,1,$70,'        ');
-          end
-        else
-          case logintyp of                          { Standard-Login }
-            ltMagic    : MagicLogin;
-            ltMaus     : MausLogin;
-            else         login;
-          end;
-        NC^.logtime:=loginwait-zaehler[2]-brkadd;
-        if timeout(true) or error then begin
-          if not net then showscreen(false);
-          aufhaengen;
-          mwriteln;
-          NC^.abbruch:=true;
-          if net then SendNetzanruf(once,false)
-          else ende:=true;
-          goto abbruch;
-          end;
-        end;
-
-      if ende then goto abbruch;
-
-      if net and (logintyp=ltUUCP) then begin    { --- UUCICO }
-        LogExternal(getres(719));
-        Netcall := UUCPnetcall;
-        goto abbruch;
-        end;
-
-      if net then begin
-        showkeys(17);
-
-        if (logintyp<>ltMagic) and (logintyp<>ltMaus) then begin
-          waitpack(false);
-          if (logintyp<>ltQuick) and (logintyp<>ltGS) then
-            repeat                             { "Seriennr." Åbertragen }
-              if timeout(true) then begin
-                aufhaengen;
-                mwriteln;
-                cursor(curoff);
-                NC^.abbruch:=true;
-                SendNetzanruf(once,false);
-                cursor(curon);
-                goto abbruch;
-                end;
-              zsum:=0;
-              { R-}
-              for i:=1 to 4 do inc(zsum,ord(zerbid[i]));
-              { R+}
-              sendstr(zerbid+chr(zsum));
-              repeat
-                tb; tkey;
-              until (pos(ACK,recs)>0) or (pos(NAK,recs)>0) or timeout(true);
-            until (pos(ACK,recs)>0) or timeout(true);
-          NC^.waittime:=packwait-zaehler[2]-brkadd;
-          if timeout(true) then begin
-            TimeoutStop1;
-            goto abbruch;
-            end;
-          end;    { of Z-Netz-Packen & Seriennr. }
-
-        if exist(bilogfile) then _era(bilogfile);   { DEL BiModem-Logfile }
-
-        ticks:=ticker;
-        if logintyp=ltMagic then begin
-          flushin; recs:=''; lrec:='';
-          end;
-        if (netztyp=nt_ZCONNECT) and janusplus and (trim(downloader)='') then
-          EmptySpool('*.*');
-        ReleaseC;
-        LogExternal(uploader);
-        shell(uploader,500,1);                               { Upload }
-        LogErrorlevel;
-        NC^.sendtime:=tickdiff;
-        jperror:=JanusP and (errorlevel<>0);
-        if errorlevel=0 then begin
-          NC^.sendbuf:=spufsize;
-          NC^.sendpack:=spacksize;
-          end;
-        if logintyp=ltMagic then begin
-          Activate;
-          time(packwait);
-          waitpack(false);
-          NC^.waittime:=packwait-zaehler[2]-brkadd;
-          if timeout(true) then begin
-            TimeoutStop1;
-            goto abbruch;
-            end;
-          ReleaseC;
-          end;
-        if logintyp=ltGS then begin
-          mdelay(500);
-          flushin;
-          recs:=''; lrec:='';
-          { waitpack(true); }
-          mdelay(3000);
-          inc(NC^.waittime,packwait-zaehler[2]);
-          end;
-        CallerToTemp;
-        if (trim(downloader)<>'') and (errorlevel=0) then begin
-          if JanusP then
-            EmptySpool('*.*');
-          if logintyp=ltMaus then begin
-            Activate;
-            moff;
-            clrscr;
-            mon;
-            time(packwait);
-            WaitForMaus;
-            NC^.waittime:=packwait-zaehler[2]-brkadd;
-            ReleaseC;
+          numpos:=numpos mod numcount + 1;
+          if ParDebug then begin
+            zaehler[3]:=1;
+            repeat tb until zaehler[3]=0;
             end
           else
-            time(99);
-          if not timeout(true) then begin
-            ticks:=ticker;
-            if pronet then begin
+            mdelay(500);
+          flushin; recs:=''; lrec:='';
+          time(connwait);
+          noconnstr:=getres2(703,5);    { 'keine Verbindung' }
+          showconn:=not display;
+          Netcall_connect:=false;
+          if ParDebug then begin
+            mdelay(200);
+            for i:=1 to 20 do tb;
+            mwriteln;
+            end;
+          rz:=''; write('        ');
+          if not logopen then begin
+            new(netlog);
+            assign(netlog^,nlfile);
+            rewrite(netlog^);
+            logopen:=true;
+            end;
+          repeat                         { Warten auf CONNECT }
+            if rz<>restzeit then begin
+              rz:=restzeit;
+              moff;
+              write(back7,'(',rz,')');
+              mon;
+              end;
+            tb;
+            esctime0;
+            if recs='' then XpIdle;
+          until (IgnCD and (recs<>'')) or (not IgnCD and carrier(bport))
+                or timeout(false) or busy;
+          write(back7,sp(7),back7,#8);
+          if timeout(true) or
+             (IgnCD and hayescomm and not relogin and not TestConnect) then begin
+            showconn:=false;
+            moff;
+            if timeout(true) then writeln('  -  ',noconnstr);
+            mon;
+            dropdtr(comnr);
+            mdelay(100);
+            setdtr(comnr);
+            sendstr(#13); mdelay(200);
+            sendstr(#13); mdelay(200);
+            flushin;
+            goto abbruch;
+            end;
+          if busy then goto abbruch;
+          end;                              { Ende Hayes-Anwahl }
+
+        NC^.ConnTime:=typeform.time;
+        NC^.ConnDate:=typeform.date;
+        ConnTicks:=ticker;
+        NC^.ConnSecs:=conn_time;    { in BoxPar^ }
+
+        in7e1:=(logintyp=ltUUCP) or uucp7e1;
+        out7e1:=uucp7e1;
+        startscreen:=BreakLogin and not relogin;    { ^X-Kennzeichen }
+        if not net then begin
+          display:=true;
+          termscr;
+          end;
+        if net or (o_passwort<>'') then begin
+          inc(connects);
+          Netcall_connect:=true;
+          if not relogin then
+            while not timeout(true) and showconn do tb;
+          error:=false;
+          time(loginwait);
+          scrfile:=iifs(net,script,o_script);
+          if (scrfile<>'') and exist(scrfile) then begin   { Script-Login }
+            if net then wrscript(3,2,col.colkeys,'*Script*')
+            else if TermStatus then wrscript(55,1,col.colmenu[0],'*Script*');
+            case RunScript(false,scrfile,not net,relogin,netlog) of
+              0 : display:=ParDebug or (logintyp=ltMaus);
+              1 : error:=true;
+              2 : begin error:=true; ende:=true; end;
+              3 : begin error:=true; rfehler(731); end;
+            end;
+            if net then wrscript(3,2,col.colkeys,'        ')
+            else wrscript(55,1,$70,'        ');
+            end
+          else
+            case logintyp of                          { Standard-Login }
+              ltMagic    : MagicLogin;
+              ltMaus     : MausLogin;
+              else         login;
+            end;
+          NC^.logtime:=loginwait-zaehler[2]-brkadd;
+          if timeout(true) or error then begin
+            if not net then showscreen(false);
+            aufhaengen;
+            mwriteln;
+            NC^.abbruch:=true;
+            if net then SendNetzanruf(once,false)
+            else ende:=true;
+            goto abbruch;
+            end;
+          end;
+
+        if ende then goto abbruch;
+
+        if net and (logintyp=ltUUCP) then begin    { --- UUCICO }
+          LogExternal(getres(719));
+          Netcall := UUCPnetcall;
+          goto abbruch;
+          end;
+
+        if net then begin
+          showkeys(17);
+
+          if (logintyp<>ltMagic) and (logintyp<>ltMaus) then begin
+            waitpack(false);
+            if (logintyp<>ltQuick) and (logintyp<>ltGS) then
+              repeat                             { "Seriennr." Åbertragen }
+                if timeout(true) then begin
+                  aufhaengen;
+                  mwriteln;
+                  cursor(curoff);
+                  NC^.abbruch:=true;
+                  SendNetzanruf(once,false);
+                  cursor(curon);
+                  goto abbruch;
+                  end;
+                zsum:=0;
+                { R-}
+                for i:=1 to 4 do inc(zsum,ord(zerbid[i]));
+                { R+}
+                sendstr(zerbid+chr(zsum));
+                repeat
+                  tb; tkey;
+                until (pos(ACK,recs)>0) or (pos(NAK,recs)>0) or timeout(true);
+              until (pos(ACK,recs)>0) or timeout(true);
+            NC^.waittime:=packwait-zaehler[2]-brkadd;
+            if timeout(true) then begin
+              TimeoutStop1;
+              goto abbruch;
+              end;
+            end;    { of Z-Netz-Packen & Seriennr. }
+
+          if exist(bilogfile) then _era(bilogfile);   { DEL BiModem-Logfile }
+
+          ticks:=ticker;
+          if logintyp=ltMagic then begin
+            flushin; recs:=''; lrec:='';
+            end;
+          if (netztyp=nt_ZCONNECT) and janusplus and (trim(downloader)='') then
+            EmptySpool('*.*');
+          ReleaseC;
+          LogExternal(uploader);
+          shell(uploader,500,1);                               { Upload }
+          LogErrorlevel;
+          NC^.sendtime:=tickdiff;
+          jperror:=JanusP and (errorlevel<>0);
+          if errorlevel=0 then begin
+            NC^.sendbuf:=spufsize;
+            NC^.sendpack:=spacksize;
+            end;
+          if logintyp=ltMagic then begin
+            Activate;
+            time(packwait);
+            waitpack(false);
+            NC^.waittime:=packwait-zaehler[2]-brkadd;
+            if timeout(true) then begin
+              TimeoutStop1;
+              goto abbruch;
+              end;
+            ReleaseC;
+            end;
+          if logintyp=ltGS then begin
+            mdelay(500);
+            flushin;
+            recs:=''; lrec:='';
+            { waitpack(true); }
+            mdelay(3000);
+            inc(NC^.waittime,packwait-zaehler[2]);
+            end;
+          CallerToTemp;
+          if (trim(downloader)<>'') and (errorlevel=0) then begin
+            if JanusP then
               EmptySpool('*.*');
-              chdir(XFerDir_);
-              if not multipos(':/',downloader) then
-                downloader:=OwnPath+downloader;
-              LogExternal(downloader);
-              shell(downloader,500,1);
-              LogErrorlevel;
-              if exist(boxname+'.REQ') or exist(boxname+'.UPD') then begin
-                mdelay(1000);
-                chdir(XFerDir_);      { File-Download }
+            if logintyp=ltMaus then begin
+              Activate;
+              moff;
+              clrscr;
+              mon;
+              time(packwait);
+              WaitForMaus;
+              NC^.waittime:=packwait-zaehler[2]-brkadd;
+              ReleaseC;
+              end
+            else
+              time(99);
+            if not timeout(true) then begin
+              ticks:=ticker;
+              if pronet then begin
+                EmptySpool('*.*');
+                chdir(XFerDir_);
+                if not multipos(':/',downloader) then
+                  downloader:=OwnPath+downloader;
                 LogExternal(downloader);
                 shell(downloader,500,1);
                 LogErrorlevel;
-                end;
-              end
-            else begin
-              LogExternal(downloader);
-              shell(downloader,500,1);                     { Download }
-              LogErrorlevel;
-              end;
-            NC^.rectime:=tickdiff;
-            end;
-          end;
-        Activate;
-
-        if logintyp=ltMaus then
-          if relogin then begin
-            termscr;
-            terminal(false);
-            ttwin;
-            end
-          else
-            MausAuflegen
-        else
-          aufhaengen;
-
-        prodir:=iifs(ProNet,XFerDir,'');
-        if exist(prodir+called) or (JanusP and not jperror) then
-          if ((errorlevel=0) and not (bimodem and BimodemFehler)) or JanusP
-          then begin
-            jperror:=(JanusP and (errorlevel<>0));
-            cursor(curoff);
-            moff;
-            clrscr;
-            mon;
-            if (pronet or (caller<>called)) and exist(caller) then
-              _era(caller);
-            if exist(dpuffer) then _era(dpuffer);
-            if not jperror then begin
-              ende:=true;                     { <-- Ende:=true }
-              netcall:=true;
-              end;
-            if not crash then  { !! }
-              wrtiming('NETCALL '+box);
-            if pronet then chdir(XFerDir_);
-            if JanusP then begin
-              if jperror then MoveLastFileIfBad;
-              MoveRequestFiles(size);
-              end
-            else
-              size:=_filesize(called);
-            NC^.recpack:=size;
-            assign(f,iifs(JanusP,XferDir,'')+called);
-            if (size<=16) and (called<>dpuffer) then begin
-              if not exist(prodir+dpuffer) then
-                if existf(f) then
-                  rename(f,prodir+dpuffer)
-                else
-                  MakeFile(prodir+dpuffer);
-              end
-            else begin
-              ReleaseC;
-              if ltMultiPuffer(logintyp) then begin    { JANUS/GS-PKT-Puffer }
-                if not JanusP then begin
-                  EmptySpool('*.*');
-                  ChDir(XFerDir_);
-                  RepStr(downarcer,called,OwnPath+called);
-                  end
-                else begin
-                  ChDir(JanusDir_);
-                  erase_mask('*.*');
-                  RepStr(downarcer,called,OwnPath+XferDir+'*.*')
+                if exist(boxname+'.REQ') or exist(boxname+'.UPD') then begin
+                  mdelay(1000);
+                  chdir(XFerDir_);      { File-Download }
+                  LogExternal(downloader);
+                  shell(downloader,500,1);
+                  LogErrorlevel;
                   end;
-                {window(1,1,screenwidth,screenlines);}
-                end;
-              if (DownArcer<>'') and
-                 (not JanusP or (left(LowerCase(DownArcer),5)<>'copy ')) then
-                shell(downarcer,500,1);      { Download-Packer }
-              SetCurrentDir(OwnPath);
-              if ltMultiPuffer(logintyp) then
-                twin;
-              Activate;
-              case logintyp of
-                ltZConnect : if JanusP then   { JANUS-Puffer zusammenkopieren }
-                               MovePuffers(JanusDir+'*.*',dpuffer)
-                             else
-                               MovePuffers(XferDir+'*.*',dpuffer);
-                ltGS       : MovePuffers(XferDir+'*.PKT',dpuffer);
-              end;                            { GS-PKTs zusammenkopieren }
-              end;
-            {window(1,1,screenwidth,screenlines);}
-            if pronet then begin
-              SetCurrentDir(ownpath);
-              if exist(XFerDir+'BRETTER.LST') then begin
-                message('Brettliste fÅr '+UpperCase(box)+' wird eingelesen ...');
-                Readpromaflist(XFerDir+'BRETTER.LST',bfile);
-                end;
-              end;
-            if (logintyp=ltGS) and not exist(dpuffer) then
-              makefile(dpuffer);
-            if not exist(prodir+dpuffer) then begin
-              trfehler(715,esec);  { 'Puffer fehlt! (Fehler beim Entpacken?)' }
-              MoveToBad(called);   { fehlerhaftes Paket -> BAD\ }
-              TempToCaller;
-              end
-            else begin
-              ReleaseC;
-              NC^.recbuf:=_filesize(prodir+dpuffer);
-              Del_PP_and_UV;   { .PP/.EPP und unversandte Nachrichten lîschen }
-              if exist(prodir+called) then
-                _era(prodir+called);            { Platz schaffen.. }
-              case logintyp of
-                ltMagic : begin
-                            MaggiToZ(prodir+dpuffer,PufferFile,pronet,3);
-                            olddpuffer:=dpuffer;
-                            dpuffer:=PufferFile;
-                          end;
-                ltQuick,
-                ltGS    : begin
-                            QuickToZ(dpuffer,'qpuffer',logintyp=ltGS,3);
-                            olddpuffer:=dpuffer;
-                            dpuffer:='qpuffer';
-                          end;
-                ltMaus  : begin
-                            ft:=filetime(box+'.itg');
-                            MausToZ(dpuffer,PufferFile,3);
-                            MausGetInfs(box,mauslogfile);
-                            MausLogFiles(0,false,box);
-                            MausLogFiles(1,false,box);
-                            MausLogFiles(2,false,box);
-                            if ft<>filetime(box+'.itg') then
-                              MausImportITG(box);
-                            olddpuffer:=dpuffer;
-                            dpuffer:=PufferFile;
-                          end;
+                end
               else begin
-                olddpuffer:='';
-                errorlevel:=0;
+                LogExternal(downloader);
+                shell(downloader,500,1);                     { Download }
+                LogErrorlevel;
                 end;
+              NC^.rectime:=tickdiff;
               end;
-              if errorlevel<>0 then begin
-                trfehler(712,30);
-                if _filesize(olddpuffer)>0 then
-                  MoveToBad(olddpuffer);
-                end;
-              CallFilter(true,dpuffer);
-              Activate;
-              if exist(dpuffer) then
-                if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad)
-                then begin
-                { if _maus and not MausLeseBest then  - abgeschafft; s. XP7.INC
-                    MausPMs_bestaetigen(box); }
-                  if nDelPuffer then begin
-                    if (olddpuffer<>'') and exist(olddpuffer) and (_filesize(dpuffer)>0) then
-                      _era(olddpuffer);
-                    if exist(dpuffer) then
-                      _era(dpuffer);
-                    end;
-                  end;
-              TempToCaller;
-              if exist(caller) then _era(caller);
-              if jperror then twin;
-              end;
-            end
-          else begin
-            MoveToBad(called);
-            moff;
-            writeln(getres2(713,5));   { 'Netcall abgebrochen; fehlerhaftes Paket wurde im Verzeichnis BAD abgelegt.' }
-            mon;
             end;
-        SendNetzanruf(once,false);
-        end     { if net }
+          Activate;
 
-      else begin
-        terminal(false);
-        ende:=true;
-        end;
-
-  abbruch:
-      if not ende and ((wahlcnt=redialmax) or (connects=connectmax)) then begin
-        ende:=true;
-        if not once and (connects<connectmax) then SendNetzanruf(false,false);
-        end;
-
-      if not ende then begin
-        if (logintyp=ltUUCP) and (ISDN or not ComActive(comnr)) then
-          Activate;              { wurde durch UUCPnetcall() abgeschaltet }
-        if net then callertotemp;
-        showkeys(iif(net,16,18));
-        attrtxt(7);
-        mwriteln;
-        time(iif((numpos=1) or postsperre,redialwait,4));
-        rz:='';
-        repeat
-          multi2;
-          if rz<>restzeit then begin
-            moff;
-            write(#13,getres2(703,iif(net,6,7)),  { 'Warten auf nÑchsten (Netz)anruf... ' }
-                  restzeit);
-            mon;
-            rz:=restzeit;
-            end;
-          if keypressed then begin
-            c:=readkey;
-            if c=' ' then time(0)
-            else ende:=(c=#27);
-            end
-          else                   { ISDN: Ring=false }
-            if (redialwait-zaehler[2]>1) and ring and rring(comnr) then
-              RingSignal   { ^^^ RING-Peak bei bestimmtem Modem amfangen }
+          if logintyp=ltMaus then
+            if relogin then begin
+              termscr;
+              terminal(false);
+              ttwin;
+              end
             else
-              XpIdle;
-        until timeout(false) or ende;
-        moff;
-        write(#13,sp(60));
-        mon;
-        if not ende then gotoxy(1,wherey-1);
-        end;
-    until ende;
-    if not _fido then begin
-      if exist(caller) and ((logintyp<>ltMagic) or ndelpuffer) then
-        _era(caller);
-      if not ISDN and (net or not carrier(bport)) and ComActive(comnr)
-      then begin
-        DropDtr(comnr);
-        { DropRts(comnr); - Vorsicht, ZyXEL-Problem }
-        end;
-      if ISDN or ComActive(comnr) then
-        ReleaseC;
-      end;
-    if logopen then close(netlog^);
-    if netlog<>nil then begin
-      if NetcallLogfile then AppendNetlog;
-      _era(nlfile);
-      dispose(netlog);
-      end;
+              MausAuflegen
+          else
+            aufhaengen;
 
-ende0:
-    if net and (OStype<>OS_2) then
-      RestComState(bport,cps);
-    comn[boxpar^.bport].fossil:=orgfossil;
+          prodir:=iifs(ProNet,XFerDir,'');
+          if exist(prodir+called) or (JanusP and not jperror) then
+            if ((errorlevel=0) and not (bimodem and BimodemFehler)) or JanusP
+            then begin
+              jperror:=(JanusP and (errorlevel<>0));
+              cursor(curoff);
+              moff;
+              clrscr;
+              mon;
+              if (pronet or (caller<>called)) and exist(caller) then
+                _era(caller);
+              if exist(dpuffer) then _era(dpuffer);
+              if not jperror then begin
+                ende:=true;                     { <-- Ende:=true }
+                netcall:=true;
+                end;
+              if not crash then  { !! }
+                wrtiming('NETCALL '+box);
+              if pronet then chdir(XFerDir_);
+              if JanusP then begin
+                if jperror then MoveLastFileIfBad;
+                MoveRequestFiles(size);
+                end
+              else
+                size:=_filesize(called);
+              NC^.recpack:=size;
+              assign(f,iifs(JanusP,XferDir,'')+called);
+              if (size<=16) and (called<>dpuffer) then begin
+                if not exist(prodir+dpuffer) then
+                  if existf(f) then
+                    rename(f,prodir+dpuffer)
+                  else
+                    MakeFile(prodir+dpuffer);
+                end
+              else begin
+                ReleaseC;
+                if ltMultiPuffer(logintyp) then begin    { JANUS/GS-PKT-Puffer }
+                  if not JanusP then begin
+                    EmptySpool('*.*');
+                    ChDir(XFerDir_);
+                    RepStr(downarcer,called,OwnPath+called);
+                    end
+                  else begin
+                    ChDir(JanusDir_);
+                    erase_mask('*.*');
+                    RepStr(downarcer,called,OwnPath+XferDir+'*.*')
+                    end;
+                  {window(1,1,screenwidth,screenlines);}
+                  end;
+                if (DownArcer<>'') and
+                   (not JanusP or (left(LowerCase(DownArcer),5)<>'copy ')) then
+                  shell(downarcer,500,1);      { Download-Packer }
+                SetCurrentDir(OwnPath);
+                if ltMultiPuffer(logintyp) then
+                  twin;
+                Activate;
+                case logintyp of
+                  ltZConnect : if JanusP then   { JANUS-Puffer zusammenkopieren }
+                                 MovePuffers(JanusDir+'*.*',dpuffer)
+                               else
+                                 MovePuffers(XferDir+'*.*',dpuffer);
+                  ltGS       : MovePuffers(XferDir+'*.PKT',dpuffer);
+                end;                            { GS-PKTs zusammenkopieren }
+                end;
+              {window(1,1,screenwidth,screenlines);}
+              if pronet then begin
+                SetCurrentDir(ownpath);
+                if exist(XFerDir+'BRETTER.LST') then begin
+                  message('Brettliste fÅr '+UpperCase(box)+' wird eingelesen ...');
+                  Readpromaflist(XFerDir+'BRETTER.LST',bfile);
+                  end;
+                end;
+              if (logintyp=ltGS) and not exist(dpuffer) then
+                makefile(dpuffer);
+              if not exist(prodir+dpuffer) then begin
+                trfehler(715,esec);  { 'Puffer fehlt! (Fehler beim Entpacken?)' }
+                MoveToBad(called);   { fehlerhaftes Paket -> BAD\ }
+                TempToCaller;
+                end
+              else begin
+                ReleaseC;
+                NC^.recbuf:=_filesize(prodir+dpuffer);
+                Del_PP_and_UV;   { .PP/.EPP und unversandte Nachrichten lîschen }
+                if exist(prodir+called) then
+                  _era(prodir+called);            { Platz schaffen.. }
+                case logintyp of
+                  ltMagic : begin
+                              MaggiToZ(prodir+dpuffer,PufferFile,pronet,3);
+                              olddpuffer:=dpuffer;
+                              dpuffer:=PufferFile;
+                            end;
+                  ltQuick,
+                  ltGS    : begin
+                              QuickToZ(dpuffer,'qpuffer',logintyp=ltGS,3);
+                              olddpuffer:=dpuffer;
+                              dpuffer:='qpuffer';
+                            end;
+                  ltMaus  : begin
+                              ft:=filetime(box+'.itg');
+                              MausToZ(dpuffer,PufferFile,3);
+                              MausGetInfs(box,mauslogfile);
+                              MausLogFiles(0,false,box);
+                              MausLogFiles(1,false,box);
+                              MausLogFiles(2,false,box);
+                              if ft<>filetime(box+'.itg') then
+                                MausImportITG(box);
+                              olddpuffer:=dpuffer;
+                              dpuffer:=PufferFile;
+                            end;
+                else begin
+                  olddpuffer:='';
+                  errorlevel:=0;
+                  end;
+                end;
+                if errorlevel<>0 then begin
+                  trfehler(712,30);
+                  if _filesize(olddpuffer)>0 then
+                    MoveToBad(olddpuffer);
+                  end;
+                CallFilter(true,dpuffer);
+                Activate;
+                if exist(dpuffer) then
+                  if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad)
+                  then begin
+                  { if _maus and not MausLeseBest then  - abgeschafft; s. XP7.INC
+                      MausPMs_bestaetigen(box); }
+                    if nDelPuffer then begin
+                      if (olddpuffer<>'') and exist(olddpuffer) and (_filesize(dpuffer)>0) then
+                        _era(olddpuffer);
+                      if exist(dpuffer) then
+                        _era(dpuffer);
+                      end;
+                    end;
+                TempToCaller;
+                if exist(caller) then _era(caller);
+                if jperror then twin;
+                end;
+              end
+            else begin
+              MoveToBad(called);
+              moff;
+              writeln(getres2(713,5));   { 'Netcall abgebrochen; fehlerhaftes Paket wurde im Verzeichnis BAD abgelegt.' }
+              mon;
+              end;
+          SendNetzanruf(once,false);
+          end     { if net }
+
+        else begin
+          terminal(false);
+          ende:=true;
+          end;
+
+    abbruch:
+        if not ende and ((wahlcnt=redialmax) or (connects=connectmax)) then begin
+          ende:=true;
+          if not once and (connects<connectmax) then SendNetzanruf(false,false);
+          end;
+
+        if not ende then begin
+          if (logintyp=ltUUCP) and (ISDN or not ComActive(comnr)) then
+            Activate;              { wurde durch UUCPnetcall() abgeschaltet }
+          if net then callertotemp;
+          showkeys(iif(net,16,18));
+          attrtxt(7);
+          mwriteln;
+          time(iif((numpos=1) or postsperre,redialwait,4));
+          rz:='';
+          repeat
+            multi2;
+            if rz<>restzeit then begin
+              moff;
+              write(#13,getres2(703,iif(net,6,7)),  { 'Warten auf nÑchsten (Netz)anruf... ' }
+                    restzeit);
+              mon;
+              rz:=restzeit;
+              end;
+            if keypressed then begin
+              c:=readkey;
+              if c=' ' then time(0)
+              else ende:=(c=#27);
+              end
+            else                   { ISDN: Ring=false }
+              if (redialwait-zaehler[2]>1) and ring and rring(comnr) then
+                RingSignal   { ^^^ RING-Peak bei bestimmtem Modem amfangen }
+              else
+                XpIdle;
+          until timeout(false) or ende;
+          moff;
+          write(#13,sp(60));
+          mon;
+          if not ende then gotoxy(1,wherey-1);
+          end;
+      until ende;
+      if not _fido then begin
+        if exist(caller) and ((logintyp<>ltMagic) or ndelpuffer) then
+          _era(caller);
+        if not ISDN and (net or not carrier(bport)) and ComActive(comnr)
+        then begin
+          DropDtr(comnr);
+          { DropRts(comnr); - Vorsicht, ZyXEL-Problem }
+          end;
+        if ISDN or ComActive(comnr) then
+          ReleaseC;
+        end;
+      if logopen then close(netlog^);
+      if netlog<>nil then begin
+        if NetcallLogfile then AppendNetlog;
+        _era(nlfile);
+        dispose(netlog);
+        end;
+
+  ende0:
+      if net and (OStype<>OS_2) then
+        RestComState(bport,cps);
+      comn[boxpar^.bport].fossil:=orgfossil;
+    end else // not LoginTyp ltNNTP, ltPOP, ltIMAP
+    begin
+      // Hier Netcallroutinen fÅr die Socket-Boxen
+
+
+    end;
+
 
     if net then begin
       if ltVarBuffers(logintyp) then begin
@@ -1508,6 +1536,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/08/15 16:51:02  mk
+  - Updates fuer neue Boxentypen NNTP, POP3/SMTP und IMAP
+
   Revision 1.29  2000/08/14 13:45:17  ma
   - CAPI-IFDEFs entfernt, da CAPI bei Bedarf in ObjCOM verlagert
     werden sollte; bisher nicht alle CAPI-Teile entfernt.

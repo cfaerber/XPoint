@@ -42,6 +42,9 @@ begin
       else
         BoxParOk:=''
     else
+      if LoginTyp in [ltNNTP, ltPOP3] then
+        // Hier evtl. n”tige Tests der Parameter einstellen
+      else
       if (pointname='') or (not (_fido or uucp) and (passwort='')) or
          (telefon='') or (telefon='08-15') then
         BoxParOk:=getres2(706,3)    { 'unvollst„ndige Pointdaten' }
@@ -1429,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2000/08/15 16:51:02  mk
+  - Updates fuer neue Boxentypen NNTP, POP3/SMTP und IMAP
+
   Revision 1.31  2000/07/22 14:05:28  hd
   - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
     (sollte es jetzt gewesen sein)

@@ -219,6 +219,10 @@
             boxpar^.exclude[1,2]:='06:00';
             end;
           end;
+          if nt=nt_nntp then
+          begin
+            Boxpar^.nntp_port := 119;
+          end;
         dname:=getdname(nt,name);      { eindeutigen Dateinamen bestimmen }
         unique(dname);
         WriteBox(dname,boxpar);

@@ -30,8 +30,9 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        nt_Fido      = 30;
        nt_QWK       = 31;
        nt_UUCP      = 40;
-       nt_NNTP      = 50;	 { NNTP-Stream }
-       nt_POP3	    = 51;	 { POP3/SMTP-Stream }
+       nt_NNTP      = 50;        { NNTP-Stream }
+       nt_POP3      = 51;        { POP3/SMTP-Stream }
+       nt_IMAP      = 52;        { IMAP4 }
 
        ltNetcall    = 0;         { Login/Transfer-Typen }
        ltZConnect   = 2;         { XRef: XP7            }
@@ -42,8 +43,9 @@ const  nt_Netcall   = 0;         { Puffer-Formate       }
        ltFido       = 7;
        ltUUCP       = 10;
        ltQWK        = 11;
-       ltNNTP	    = 50;
+       ltNNTP       = 50;
        ltPOP3       = 51;
+       ltIMAP       = 52;
 
 
 var ntused : array[0..99] of integer;
@@ -426,8 +428,8 @@ begin
     nt_Fido     : ntName:='Fido';
     nt_QWK      : ntName:='QWK';
     nt_UUCP     : ntName:='RFC/UUCP';
-    nt_NNTP	: ntName:='NNTP';
-    nt_POP3	: ntName:='POP3/SMTP';
+    nt_NNTP     : ntName:='NNTP';
+    nt_POP3     : ntName:='POP3/SMTP';
   else
     ntName:='? '+IntToStr(nt);
   end;
@@ -444,7 +446,7 @@ begin
     nt_NNTP,
     nt_POP3     : ntRelogin:=0;
     nt_GS,
-    nt_UUCP	: ntRelogin:=1;
+    nt_UUCP     : ntRelogin:=1;
     else          ntRelogin:=2;
   end;
 end;
@@ -759,6 +761,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/08/15 16:51:03  mk
+  - Updates fuer neue Boxentypen NNTP, POP3/SMTP und IMAP
+
   Revision 1.15  2000/07/25 18:02:19  hd
   - NNTP-Unterstuetzung (Anfang)
 
