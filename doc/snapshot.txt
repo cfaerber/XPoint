@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 05.12.2001 (letzter Update)
+DÅsseldorf, den 07.12.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -499,6 +499,21 @@ Bugfixes
 - Umschaltung Quotezeichen und Wortumbruch im Lister wird jetzt auch
   dann auf den korrekten Wert zurÅckgesetzt, wenn der User vorher die
   Config (C/O/A bzw. C/O/L) geÑndert, aber noch nicht gesichert hatte.
+  XP2C.PAS
+
+- Farben fÅr Statuszeile und Suchergebnis in Select-Box initialisiert
+  (relevant fÅr Suchbegriffs-Bibliothek).
+  XP1.PAS
+
+- Suchbegriffs-Bibliothek: Wenn Suchbegriffe markiert sind und <Esc>
+  gedrÅckt wird, wird a) wieder zum Suche-Dialog zurÅckgekehrt und b)
+  die markierten Begriffe werden nicht mehr in die Suchbegriff-History
+  Åbernommen.
+  XP4O.PAS
+
+- Suchbegriffs-Bibliothek: Der erste markierte Suchbegriff wird nicht
+  mehr doppelt in die Suchbegriff-History Åbernommen.
+  XP4O.PAS
 
 
 
