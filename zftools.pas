@@ -870,8 +870,8 @@ var f1,f2   : file;
         wrs(^A'FLAGS '+xflags);
       if XPointCtl<>0 then
         wrs(^A'XPCTL: '+strs(XPointCtl));
-      if x_charset<>'' then
-        wrs(^A'CHRS: '+MimeCharsetToFido(x_charset));
+      if charset<>'' then
+        wrs(^A'CHRS: '+MimeCharsetToFido(charset));
       if uuadr<>'' then begin
         wrs('To: '+uuadr);
         wrs('');
@@ -1804,6 +1804,11 @@ end;
 
 {
         $Log$
+        Revision 1.29.2.5  2003/09/17 00:59:43  cl
+        - BUGFIX: charset declaration for Fido
+          CLOSES #727387 [Fido, 3.9.4] UTF-8-Deklaration (also present in 3.8.x)
+          CLOSES #727381 [Fido, 3.9.4] Falsche Umlautdeklaration (also present in 3.8.x)
+
         Revision 1.29.2.4  2002/09/26 12:53:06  ma
         - fixed outgoing charset declaration (CHRS)
 
