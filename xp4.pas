@@ -194,6 +194,7 @@ label selende;
     GoPos(p);
   end;
 
+  procedure setall; forward;
   procedure pm_archiv(einzel:boolean);
   var
     _brett : string[5];
@@ -206,11 +207,13 @@ label selende;
       if _brett[1]='1' then
       begin
         dbGo(mbase,disprec[1]);
-        if left(dbReadStr(mbase,'brett'),1)<>'1' then
+        if (Dispmode <> 12) and (left(dbReadStr(mbase,'brett'),1)<>'1') then
           disprec[1]:=0;
-      end else
+      end
+        else
         GoP;
-      end;
+    end;
+    aufbau := true; xaufbau := true;
   end;
 
   procedure setmainkeys(dispmode:shortint);
@@ -2130,6 +2133,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.23  2000/12/11 09:38:09  mk
+  - fixed Bug #117177: Alt-P in reply tree
+
   Revision 1.26.2.22  2000/12/08 01:08:40  mk
   MH:- Usersuche bei Auswahl ueber F2 moeglich
 
