@@ -405,6 +405,7 @@ begin
     dopush:=pushit;
     mtxt:=nil;
     editing:=false;
+    yp:=1;
     end;
   lastfld:=nil;
 end;
@@ -1193,12 +1194,16 @@ end;
 procedure setfieldpos(nr: Integer);
 var i: integer;
 begin 
-  amaskp^.newfld := true;    { Kennzeichen: zur Zeit kein aktives Feld; }
-                             {              Feld yp ist zu aktivieren   }
-  for i := nr to amaskp^.felder do 
-    if amaskp^.fld[i].enabled then begin amaskp^.yp := i; exit; end;
-  for i := nr-1 downto 1 do 
-    if amaskp^.fld[i].enabled then begin amaskp^.yp := i; exit; end;
+  if amaskp^.editing then
+  begin
+    amaskp^.newfld := true;    { Kennzeichen: zur Zeit kein aktives Feld; }
+                               {              Feld yp ist zu aktivieren   }
+    for i := nr to amaskp^.felder do 
+      if amaskp^.fld[i].enabled then begin amaskp^.yp := i; exit; end;
+    for i := nr-1 downto 1 do 
+      if amaskp^.fld[i].enabled then begin amaskp^.yp := i; exit; end;
+  end;
+  
   amaskp^.yp := nr;  
 end;
 
@@ -1351,6 +1356,9 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.39  2002/06/23 13:48:40  cl
+  - Allow modification of fieldpos on creation of masks
+
   Revision 1.38  2002/04/14 22:10:12  cl
   - added:
       procedure masksetscrollfunc(scrollfn:scrollfunc);

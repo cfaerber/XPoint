@@ -787,7 +787,8 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
     a:=0; ax:=0; p:=1;
     modified:=false;
     doreplace:=true;
-    yp:=1;
+//  yp:=1;
+    setfieldpos(yp);
     while not fld[yp]^.enabled do inc(yp);
     if dopush then
       if rahmentyp=0 then
@@ -1177,6 +1178,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
+  Revision 1.45  2002/06/23 13:48:40  cl
+  - Allow modification of fieldpos on creation of masks
+
   Revision 1.44  2002/04/14 22:09:17  cl
   - added:
       procedure masksetscrollfunc(scrollfn:scrollfunc);
