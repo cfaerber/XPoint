@@ -65,7 +65,7 @@
 
 {$IFDEF OS2 }
   {$IFNDEF VP }
-    {$DEFINE TCP }
+    {a$DEFINE TCP }
   {$ENDIF }
 {$ENDIF }
 
@@ -74,11 +74,14 @@
 {$ENDIF }
 
 {$IFDEF Linux }
-  {$DEFINE TCP }
+  {a$DEFINE TCP }
 {$ENDIF }
 
 {
   $Log$
+  Revision 1.4  2001/01/03 22:29:24  ma
+  - TCP port working only with Win32
+
   Revision 1.3  2000/12/14 16:29:19  hd
   - Workaround: no range check under FPC
     - please, never, FPC is buggy.
