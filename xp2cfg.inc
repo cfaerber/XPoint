@@ -289,20 +289,14 @@ begin
   fchar:='ú';
   fsb_shadow:=true;
   fsb_info:=true;
-  new(bmarked);
   maxmark:=5000;
   getmem(marked,maxmark * sizeof(markrec));
   markanz:=0; bmarkanz:=0;
-  GetMem(boxpar, SizeOf(BoxPar^));
   new(fkeys[0]);
   new(fkeys[1]);
   new(fkeys[2]);
   new(fkeys[3]);
   aktdispmode:=0;
-  ReplyTree := TList.Create;
-
-
-  BadConfigLinesList := TStringList.Create;
 
   fnproc[0,1]:=hilfe;
   fnproc[3,1]:=hilfealt;
@@ -1703,6 +1697,10 @@ begin
 
 {
   $Log$
+  Revision 1.128  2001/09/27 23:04:03  mk
+  - moved variable initialization to initialization-part to avoid crashes
+    in finalization parts with rc and ihs
+
   Revision 1.127  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 

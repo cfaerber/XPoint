@@ -1085,14 +1085,22 @@ Begin
 end;
 
 initialization
+  ReplyTree := TList.Create;
+  BadConfigLinesList := TStringList.Create;
+  New(bmarked);
+  GetMem(boxpar, SizeOf(BoxPar^));
 finalization
   ReplyTree.Free;
   BadConfigLinesList.Free;
   Dispose(bmarked);
-  FreeMem(marked);
-  FreeMem(Boxpar);
+  FreeMem(Boxpar); 
+//!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.125  2001/09/27 23:04:03  mk
+  - moved variable initialization to initialization-part to avoid crashes
+    in finalization parts with rc and ihs
+
   Revision 1.124  2001/09/27 21:22:26  ml
   - Kylix compatibility stage IV
 

@@ -1259,7 +1259,6 @@ end;
 procedure InitMaskeUnit;
 begin
   masks:=0; amask:=0;
-  getmem(mask[0],sizeof(masktyp));
   system.fillchar(mask[0]^,sizeof(masktyp),0);
   amaskp:=mask[0];
   with mask[0]^.Stat do
@@ -1288,10 +1287,15 @@ begin
 end;
 
 initialization
+  Getmem(Mask[0],sizeof(masktyp));
 finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.34  2001/09/27 23:04:03  mk
+  - moved variable initialization to initialization-part to avoid crashes
+    in finalization parts with rc and ihs
+
   Revision 1.33  2001/09/21 16:16:47  mk
   - fixed some memory leaks (thanks to BoundsChecker)
 

@@ -196,7 +196,8 @@ uses
   RegExpr in 'regexpr.pas',
   main in 'main.pas',
   ncursix in 'ncursix.pas',
-  xpsendmessage_attach_analyze in 'xpsendmessage_attach_analyze.pas';
+  xpsendmessage_attach_analyze in 'xpsendmessage_attach_analyze.pas',
+  mime in 'mime.pas';
 
 {$R *.RES}
 begin
