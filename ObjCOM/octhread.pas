@@ -294,7 +294,7 @@ function TThreadsObj.CreateThread(StackSize    : Longint;
                                   CallProc,
                                   Parameters   : Pointer;
                                   CreationFlags: Longint): Boolean;
-{$IFDEF VirtualPascal}var ReturnCode: Longint;{$ENDIF}
+var ReturnCode: Longint;
 begin
  {$IFNDEF VirtualPascal}
   {$IFDEF WIN32}
@@ -312,7 +312,11 @@ begin
     ReturnCode :=
       DosCreateThread(ThreadHandle,                           { ThreadHandle }
                       CallProc,                           { Actual procedure }
+   {$IFDEF VIRTUALPASCAL}
                       Longint(Parameters),                      { Parameters }
+   {$ELSE VIRTUALPASCAL}
+                      Parameters,                               { Parameters }
+   {$ENDIF VIRTUALPASCAL}
                       CreationFlags,                        { Creation flags }
                       StackSize);                                { Stacksize }
 
@@ -386,6 +390,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/01/18 10:22:15  mk
+  - more FPC and OS2 compatibility
+
   Revision 1.8  2001/01/04 10:59:50  mk
   - some changes for FPC and OS/2 compatibility
 

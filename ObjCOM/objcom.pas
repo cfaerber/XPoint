@@ -19,8 +19,9 @@ uses Ringbuff
      {$IFDEF DOS32},Ports{$ENDIF}
      {$IFDEF Win32},Windows,WinSock{$ENDIF}
      {$IFDEF Linux},Linux{$ENDIF}
-     {$IFDEF OS2},OCThread,OS2Base{$ENDIF}
-     {$IFDEF Go32V2},Go32{$ENDIF};
+     {$IFDEF OS2},OCThread
+       {$IFDEF VIRTUALPASCAL},OS2Base{$ELSE},OS2Def,DosCalls{$ENDIF}
+     {$ENDIF}     {$IFDEF Go32V2},Go32{$ENDIF};
 
 type SliceProc = procedure;
 
@@ -420,13 +421,16 @@ begin
 end;
 
 initialization Initserial;
-  
+
 finalization Stopserial;
 
 end.
 
 {
   $Log$
+  Revision 1.16  2001/01/18 10:22:15  mk
+  - more FPC and OS2 compatibility
+
   Revision 1.15  2001/01/04 16:09:18  ma
   - using initialization again (removed procedure InitXXXUnit)
 
