@@ -33,7 +33,7 @@ uses  xpglobal,
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,dosx,typeform,fileio, xpdatum,montage,stack;
+  dos,typeform,fileio, xpdatum,montage;
 
 const
       midlen      = 120;
@@ -1661,10 +1661,11 @@ begin
       mov   edx,18                { 18 byte-Tripel konvertieren }
       mov   cl,2
       mov   ebx,offset b64chr
-      mov   edi,offset s[1]
- @@1: lodsb                      { Byte 1 }
+      mov   edi,offset s
+      inc   edi                   { s[1] }
+@@1:  lodsb                       { Byte 1 }
       mov   ah,al
-      lodsb                      { Byte 2 }
+      lodsb                       { Byte 2 }
       shr   ax,1
       rcr   ch,1
       shr   ax,1
@@ -3530,6 +3531,9 @@ end.
 
 {
   $Log$
+  Revision 1.23  2000/05/03 07:31:02  mk
+  - unter FPC jetzt auch compilierbar
+
   Revision 1.22  2000/05/03 00:21:19  mk
   - unbenutzte Units aus uses entfernt
 
