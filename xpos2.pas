@@ -21,7 +21,6 @@
 
 unit xpos2;
 
-
 {$I XPDEFINE.INC }
 
 {$IFNDEF OS2 }
@@ -49,11 +48,12 @@ function SysGetDriveType(drive:char):byte;
 function SysOutputRedirected: boolean;
 // Execute an externel program
 function SysExec(const Path, CmdLine: String): Integer;
+procedure SysSetCurType(Y1,Y2: Integer; Show: Boolean);
 
 implementation
 
 uses
-  vpsyslow, os2base, dos;
+  viocalls, doscalls, dos;
 
 function Invalid16Parm(const p: Pointer; const Length: Longint): Boolean;
 begin
@@ -65,7 +65,7 @@ begin
   // Test if memory crosses segment boundary
   if Invalid16Parm(_Memory, _Length) then
     // It does: Choose address in next segment
-    Fix_64k := Ptr((Ofs(_memory) and $ffff0000) + $00010000)
+    Fix_64k := Pointer((Ofs(_memory) and $ffff0000) + $00010000)
   else
     // It doesn't: return original pointer
     Fix_64k := _Memory;
@@ -79,7 +79,7 @@ var
 begin
   VioMode := Fix_64k(@LVioMode, SizeOf(VioMode^));
   VioMode^.cb := SizeOf(VioMode^);
-  if VioGetMode(VioMode^, TVVioHandle) = 0 then
+  if VioGetMode(VioMode^, 0) = 0 then
     SysGetScreenLines := VioMode.Row
   else
     SysGetScreenLines := 25;
@@ -92,7 +92,7 @@ var
 begin
   VioMode := Fix_64k(@LVioMode, SizeOf(VioMode^));
   VioMode^.cb := SizeOf(VioMode^);
-  if VioGetMode(VioMode^, TVVioHandle) = 0 then
+  if VioGetMode(VioMode^, 0) = 0 then
     SysGetScreenCols := VioMode.Col
   else
     SysGetScreenCols := 80;
@@ -112,7 +112,7 @@ var
 begin
   VioMode := Fix_64k(@LVioMode, SizeOf(VioMode^));
   VioMode^.cb := SizeOf(VioMode^);
-  if VioGetMode(VioMode^, TVVioHandle) = 0 then
+  if VioGetMode(VioMode^, 0) = 0 then
   with VioMode^ do
   begin
     // Indicate that we only filled important Entrys
@@ -122,7 +122,7 @@ begin
     Col := Cols;
     Row := Lines;
     Color := 4; // 16 Farben
-    VioSetMode(VioMode^, TVVioHandle);
+    VioSetMode(VioMode^, 0);
   end;
 end;
 
@@ -163,9 +163,35 @@ begin
   Result := DosExitCode;
 end;
 
+procedure SysSetCurType(Y1,Y2: Integer; Show: Boolean);
+var
+  CurData  : ^VioCursorInfo;
+  LCurData : Array[1..2] of VioCursorInfo;
+begin
+  CurData := Fix_64k(@LCurData, SizeOf(CurData^));
+  with CurData^ do
+    begin
+      yStart := Y1;
+      cEnd   := Y2;
+      cx := 1;
+      if Show then
+        attr := 0
+      else
+        begin
+          attr := $FFFF;
+          yStart := 0;
+          cEnd := 1;
+        end;
+    end;
+  VioSetCurType(CurData^, 0);
+end;
+
 end.
 {
   $Log$
+  Revision 1.8  2001/01/01 20:16:06  mk
+  - changes for os2 and freepascal
+
   Revision 1.7  2000/11/18 21:10:00  mk
   - added SysExec
 

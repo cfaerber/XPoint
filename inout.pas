@@ -31,7 +31,8 @@ uses
   windows,
 {$ENDIF  }
 {$IFDEF OS2 }
-  os2base,
+  xpos2,
+  doscalls,
 {$ENDIF }
 {$ifdef vp }
   vpsyslow,
@@ -366,12 +367,21 @@ begin
   SetConsoleCursorInfo(Outhandle, Info);
 {$ELSE }
   {$IFDEF FPC }
+    {$IFDEF OS2 }
+      case t of
+        curnorm : SysSetCurType(-85, -100, true);
+        cureinf : SysSetCurType(0, -100, true);
+        curoff  : SysSetCurType(-100, -100, false);
+      end;
+
+    {$ELSE }
       case t of
         curnorm : Cursoron;
         cureinf : CursorBig;
         curnone,
         curoff  : CursorOff;
       end;
+    {$ENDIF }
   {$ENDIF }
   {$IFDEF VP }
     case t of
@@ -1660,6 +1670,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2001/01/01 20:16:06  mk
+  - changes for os2 and freepascal
+
   Revision 1.67  2000/12/26 16:39:34  mk
   - removed Window()
 
