@@ -538,7 +538,7 @@ begin
   ReadBox(0,box,boxpar);
   rcfile:=BoxPar^.PPPClientPath + ustr(boxfilename(box))+'.RC';
   blfile:=Get_BL_Name(box);
-  if not exist(rcfile) or not exist(blfile) then 
+  if not exist(blfile) then
   begin
     rfehler(807);
     exit;
@@ -1261,6 +1261,11 @@ begin
     end;
   useclip:=true;
   if not ReadFilename(getres(821),fn,true,useclip) then exit;  { 'Brettliste einlesen }
+  if not exist(fn) then
+  begin
+    hinweis(getres2(10800,23)); { Datei nicht gefunden }
+    exit;
+    end;
   maggi:=(mapstype(box)=2);    { MagicNet }
   promaf:=(mapstype(box)=8);
 (*
@@ -2137,6 +2142,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.21  2001/07/04 01:32:08  my
+  JG:- fixed two Bugs (N/M/E and non-existent RC file when subscribing)
+
   Revision 1.10.2.20  2001/06/19 17:01:47  my
   - minor fixes with nil effect :-)
 
