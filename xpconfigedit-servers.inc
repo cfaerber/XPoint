@@ -269,6 +269,7 @@
     maddtext(0,15,'Ã'+dup(66,'Ä')+'´', 0); { Linie }
 
     freeres;
+    own_nt := nt_Client;
     readmask(brk);
     enddialog;
     ClientAddServers:=BoxToBfg(serverNames);
@@ -294,7 +295,8 @@
       dbRead(d,'netztyp',nt);
     ReadNetztyp(getres(914),nt,brk); 
     if brk then exit;   { 'neue Box' }
-    
+    own_nt := nt;
+
     if nt<>nt_Client then
     begin
       pp:='';
@@ -2378,6 +2380,9 @@
 
 {
   $Log$
+  Revision 1.48.2.15  2003/09/15 10:59:11  mk
+  - set own_nt to allow additional servers work correctly
+
   Revision 1.48.2.14  2003/08/28 06:19:47  mk
   - add no default domain for boxes they don't need one
 
