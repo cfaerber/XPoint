@@ -503,7 +503,9 @@ var
     procedure ParseAddresses(const inhalt: string; list: TAddressList);
     var i:          Integer;    // current position
         j:          Integer;    // position of last address start
+        AfterAt:    boolean;    // after @ sign
         Quote:      Boolean;    // within dquotes
+        Literal:    Boolean;    // within domain literal
         Angle:      Boolean;    // within angle brackets
         CommentCnt: Integer;    // comment count
         CGroup:     Integer;    // current group index
@@ -615,8 +617,10 @@ var
         
     begin
       CommentCnt := 0;
+      AfterAt := true;
       Quote := false;
       Angle := false;
+      Literal := false;
       CGroup := -1;
       SkipNext := false;
       J := 1; i := 1;
@@ -626,15 +630,18 @@ var
         if SkipNext then
           SkipNext:=false else
         case inhalt[i] of
+          '@':  AfterAt := true;
           '\':  SkipNext := true;
           '"':  Quote := not Quote;
           '<':  if(not Quote)and(CommentCnt<=0)then Angle:=true;
           '>':  if(not Quote)and(CommentCnt<=0)then Angle:=false;
           '(':  If not Quote then Inc(CommentCnt);
           ')':  If(not Quote)then If CommentCnt>0 then Dec(CommentCnt);
-          ':':  If(not Quote)and(not Angle)and(CommentCnt<=0)then AddGroup;
-          ',':  If(not Quote)and(not Angle)and(CommentCnt<=0)then AddAddr;
-          ';':  If(not Quote)and(not Angle)and(CommentCnt<=0)then begin AddAddr; CGroup:=-1; end;
+          '[':  If(not Quote)and(AfterAt)then Literal := true;
+          ']':  If(not Quote)and(AfterAt)then Literal := false;
+          ':':  If(not Quote)and(not Angle)and(CommentCnt<=0)and(not AfterAt)and(not Literal) then AddGroup;
+          ',':  If(not Quote)and(not Angle)and(CommentCnt<=0)and(not Literal)then begin AddAddr; AfterAt := true; end;
+          ';':  If(not Quote)and(not Angle)and(CommentCnt<=0)and(not Literal)then begin AddAddr; CGroup:=-1; end;
         end;
         Inc(i);
       end;
@@ -1544,6 +1551,9 @@ end;
 
 //
 // $Log$
+// Revision 1.5  2003/01/11 19:54:07  cl
+// - fixes for FTN addresses
+//
 // Revision 1.4  2003/01/07 00:56:47  cl
 // - send window rewrite -- part II:
 //   . added support for Reply-To/(Mail-)Followup-To

@@ -662,7 +662,7 @@ procedure TFTNEmailAddress._internal_MkZC;
 begin
   if FZC<>'' then exit;
   FZC := FUsername+'@'+StrS(Zone)+':'+
-    StrS(Net)+'/'+StrS(Node)+iifs(Point>0,':'+StrS(Point),'');
+    StrS(Net)+'/'+StrS(Node)+iifs(Point>0,'.'+StrS(Point),'');
 end;
 
 function TFTNEmailAddress.GetUsername: string;
@@ -783,6 +783,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.9  2003/01/11 19:54:07  cl
+// - fixes for FTN addresses
+//
 // Revision 1.8  2003/01/07 00:20:05  cl
 // - added new address list item types: atMailCopies/atMailFollowupto
 // - added AddrSpec property to non-TDomainEmailAddress classes
