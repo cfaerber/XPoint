@@ -104,10 +104,10 @@ implementation  { ------------------------------------------------------- }
 
 {$ifdef Linux}
   {$i linux/fileio.inc}
-{$endif}
-
+{$else}
 uses
   xp0;
+{$endif}
 
 {$i fileio.inc}
 
@@ -596,6 +596,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/07/01 13:18:28  hd
+  - Uses-Anweisung in ifdef
+
   Revision 1.45  2000/06/30 19:11:31  mk
   - wieder compilierbar
 
