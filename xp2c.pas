@@ -1142,10 +1142,13 @@ begin
     { COM-Drucker wurden nicht selektiert }
     for i := 1 to high(lpts) do
       if lpt = lpts[i] then DruckLPT := i;
-{    DruckLPT:=ival(lpt[4]); }
+{$IFNDEF FPC }
+  { FPC crasht, wenn der LPT-Port nicht verfuebar ist,
+    bis jetzt kein bekannter WorkArround }
     close(lst);
     assignlst(lst,DruckLPT-1);
     rewrite(lst);
+{$ENDIF }
     GlobalModified;
   end;
   enddialog;
@@ -1477,6 +1480,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/05/24 09:16:47  mk
+  - Druckerunterstuetzung in FPC wegen RTL-Crash beseitigt
+
   Revision 1.36  2000/05/15 20:56:40  oh
   -Feldtausch: optimiert und vereinfacht, (F)lags stehen jetzt immer vorne.
 

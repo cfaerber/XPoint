@@ -1707,8 +1707,12 @@ begin
     close(lst);                           { Drucker-Schnitte }
 {$ENDIF }
     DruckLPT:=min(5,max(DruckLpt,1));
+{$IFNDEF FPC }
+  { FPC crasht, wenn der LPT-Port nicht verfuebar ist,
+    bis jetzt kein bekannter WorkArround }
     AssignLst(lst,DruckLPT-1);
     rewrite(lst);
+{$ENDIF }
     if aaa<>'' then begin
       UpString(aaa);
       AAmsg:=left(aaa,1)='J';
@@ -1804,6 +1808,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.57  2000/05/24 09:16:48  mk
+  - Druckerunterstuetzung in FPC wegen RTL-Crash beseitigt
+
   Revision 1.56  2000/05/18 03:44:36  jg
   - Bugfix: vergessen Delviewtmp in XPOINT.CFG abzuspeichern.
 
