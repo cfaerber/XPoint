@@ -74,45 +74,90 @@ const
 
    { support for the alt'd characters }
    { these get initialized by StartCurses }
-   KEY_ALTA = 465; { alt/a }
-   KEY_ALTB = 466;
-   KEY_ALTC = 467;
-   KEY_ALTD = 468;
-   KEY_ALTE = 469;
-   KEY_ALTF = 470;
-   KEY_ALTG = 471;
-   KEY_ALTH = 472;
-   KEY_ALTI = 473;
-   KEY_ALTJ = 474;
-   KEY_ALTK = 475;
-   KEY_ALTL = 476;
-   KEY_ALTM = 477;
-   KEY_ALTN = 478;
-   KEY_ALTO = 479;
-   KEY_ALTP = 480;
-   KEY_ALTQ = 481;
-   KEY_ALTR = 482;
-   KEY_ALTS = 483;
-   KEY_ALTT = 484;
-   KEY_ALTU = 485;
-   KEY_ALTV = 486;
-   KEY_ALTW = 487;
-   KEY_ALTX = 488;
-   KEY_ALTY = 489;
-   KEY_ALTZ = 490; { alt/z }
-   KEY_ALT1 = 491; { alt/1 }
-   KEY_ALT2 = 492; { alt/2 }
-   KEY_ALT3 = 493; { alt/3 }
-   KEY_ALT4 = 494; { alt/4 }
-   KEY_ALT5 = 495; { alt/5 }
-   KEY_ALT6 = 496; { alt/6 }
-   KEY_ALT7 = 497; { alt/7 }
-   KEY_ALT8 = 498; { alt/8 }
-   KEY_ALT9 = 499; { alt/9 }
-   KEY_ALT0 = 500; { alt/0 }
-   KEY_ALTEQUAL = 501; { alt/- }
-   KEY_ALTMINUS = 502; { alt/= }
-   KEY_ALTTAB   = 503; { alt/tab }
+
+   { ESCSequenztable }
+   lastESCSeq = 72;
+   ncad = #27#27#27;  { already defined by ncurses }
+
+   keyESCSeqs: array [0..lastESCSeq] of record
+		  Sequenz : String;
+		  ncCode  : Integer;
+		  DosCode : String[2];
+	       end = (	  
+      (Sequenz: #27#91#54#94; ncCode: 512; DosCode : #0#118), { Ctrl-PgDn }
+      (Sequenz: #27#91#53#94; ncCode: 513; DosCode : #0#132), { Ctrl-PgUp }
+      (Sequenz: ncad; ncCode: Key_BREAK;     DosCode : #3),
+      (Sequenz: ncad; ncCode: Key_BACKSPACE; DosCode : #8),
+      (Sequenz: ncad; ncCode: Key_IC;        DosCode : #0#82), { insert }
+      (Sequenz: ncad; ncCode: Key_DC;        DosCode : #0#83), { delete }
+      (Sequenz: ncad; ncCode: Key_HOME;      DosCode : #0#71), { home }
+      (Sequenz: ncad; ncCode: Key_END;       DosCode : #0#79), { end }
+      (Sequenz: ncad; ncCode: Key_UP;        DosCode : #0#72), { up arrow }
+      (Sequenz: ncad; ncCode: Key_DOWN;      DosCode : #0#80), { down arrow }
+      (Sequenz: ncad; ncCode: Key_LEFT;      DosCode : #0#75), { left arrow }
+      (Sequenz: ncad; ncCode: Key_RIGHT;     DosCode : #0#77), { right arrow }
+      (Sequenz: ncad; ncCode: Key_NPAGE;     DosCode : #0#81), { page down }
+      (Sequenz: ncad; ncCode: Key_PPAGE;     DosCode : #0#73), { page up }
+      (Sequenz: ncad; ncCode: 265;      DosCode : #0#59), { F1 }
+      (Sequenz: ncad; ncCode: 266;      DosCode : #0#60),
+      (Sequenz: ncad; ncCode: 267;      DosCode : #0#61),
+      (Sequenz: ncad; ncCode: 268;      DosCode : #0#62),
+      (Sequenz: ncad; ncCode: 269;      DosCode : #0#63),
+      (Sequenz: ncad; ncCode: 270;      DosCode : #0#64),
+      (Sequenz: ncad; ncCode: 271;      DosCode : #0#65),
+      (Sequenz: ncad; ncCode: 272;      DosCode : #0#66),
+      (Sequenz: ncad; ncCode: 273;      DosCode : #0#67),
+      (Sequenz: ncad; ncCode: 274;      DosCode : #0#68), { F10 }
+      (Sequenz: ncad; ncCode: 275;      DosCode : #0#84),
+      (Sequenz: ncad; ncCode: 276;      DosCode : #0#85),
+      (Sequenz: ncad; ncCode: 277;      DosCode : #0#86),
+      (Sequenz: ncad; ncCode: 278;      DosCode : #0#87),
+      (Sequenz: ncad; ncCode: 279;      DosCode : #0#88),
+      (Sequenz: ncad; ncCode: 280;      DosCode : #0#89),
+      (Sequenz: ncad; ncCode: 281;      DosCode : #0#90),
+      (Sequenz: ncad; ncCode: 282;      DosCode : #0#91),
+      (Sequenz: ncad; ncCode: 283;      DosCode : #0#92),
+      (Sequenz: ncad; ncCode: 284;      DosCode : #0#93), { F20 }
+      (Sequenz: #27'a'; ncCode: 512; DosCode : #0#30), { alt/a }
+      (Sequenz: #27'b'; ncCode: 513; DosCode : #0#48),
+      (Sequenz: #27'c'; ncCode: 514; DosCode : #0#46),
+      (Sequenz: #27'd'; ncCode: 515; DosCode : #0#32),
+      (Sequenz: #27'e'; ncCode: 516; DosCode : #0#18),
+      (Sequenz: #27'f'; ncCode: 517; DosCode : #0#33),
+      (Sequenz: #27'g'; ncCode: 518; DosCode : #0#34),
+      (Sequenz: #27'h'; ncCode: 519; DosCode : #0#35),
+      (Sequenz: #27'i'; ncCode: 520; DosCode : #0#23),
+      (Sequenz: #27'j'; ncCode: 521; DosCode : #0#36),
+      (Sequenz: #27'k'; ncCode: 522; DosCode : #0#37),
+      (Sequenz: #27'l'; ncCode: 523; DosCode : #0#38),
+      (Sequenz: #27'm'; ncCode: 524; DosCode : #0#50),
+      (Sequenz: #27'n'; ncCode: 525; DosCode : #0#49),
+      (Sequenz: #27'o'; ncCode: 526; DosCode : #0#24),
+      (Sequenz: #27'p'; ncCode: 527; DosCode : #0#25),
+      (Sequenz: #27'q'; ncCode: 528; DosCode : #0#16),
+      (Sequenz: #27'r'; ncCode: 529; DosCode : #0#19),
+      (Sequenz: #27's'; ncCode: 530; DosCode : #0#31),
+      (Sequenz: #27't'; ncCode: 531; DosCode : #0#20),
+      (Sequenz: #27'u'; ncCode: 532; DosCode : #0#22),
+      (Sequenz: #27'v'; ncCode: 533; DosCode : #0#47),
+      (Sequenz: #27'w'; ncCode: 534; DosCode : #0#17),
+      (Sequenz: #27'x'; ncCode: 535; DosCode : #0#45),
+      (Sequenz: #27'y'; ncCode: 536; DosCode : #0#21),
+      (Sequenz: #27'z'; ncCode: 537; DosCode : #0#44),  { alt/z }
+      (Sequenz: #27#1 ; ncCode: 538; DosCode : #0#120), { alt/1 }
+      (Sequenz: #27#2 ; ncCode: 539; DosCode : #0#121), { alt/2 }
+      (Sequenz: #27#3 ; ncCode: 540; DosCode : #0#122), { alt/3 }
+      (Sequenz: #27#4 ; ncCode: 541; DosCode : #0#123), { alt/4 }
+      (Sequenz: #27#5 ; ncCode: 542; DosCode : #0#124), { alt/5 }
+      (Sequenz: #27#6 ; ncCode: 543; DosCode : #0#125), { alt/6 }
+      (Sequenz: #27#7 ; ncCode: 544; DosCode : #0#126), { alt/7 }
+      (Sequenz: #27#8 ; ncCode: 545; DosCode : #0#127), { alt/8 }
+      (Sequenz: #27#9 ; ncCode: 546; DosCode : #0#128), { alt/9 }
+      (Sequenz: #27'0'; ncCode: 547; DosCode : #0#128), { alt/0 }
+      (Sequenz: #27'-'; ncCode: 548; DosCode : #0#130), { alt/- }
+      (Sequenz: #27'='; ncCode: 549; DosCode : #0#131), { alt/= }
+      (Sequenz: #27#9; ncCode: 550; DosCode : #0#15) { alt/tab }
+   );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
 
@@ -279,8 +324,10 @@ uses
 {$ifdef Debug}
   SysUtils,             { FormatDateTime etc. }
 {$endif}
+  keys,
   typeform;             { ISOTab }
 
+   
 const
    { standard file descriptors }
    STDIN  = 0;
@@ -721,108 +768,72 @@ end;
        ( nWindow does this )
  ---------------------------------------------------------------------}
 function Readkey: char;
+
+  function TranslateESCSeq(Code : Integer): String;
+  var
+     I : Integer;
+  begin
+     Result := '';
+     for I := 0 to lastESCSeq do
+	if Code = keyESCSeqs[I].ncCode then
+	begin
+	   Result := keyESCSeqs[I].DosCode;
+{$IFDEF Debug}
+           if __isopen then
+             Write(__F,FormatDateTime('hh:nn:ss',Now),
+		     Format(' Translating KeySequence: [%d] to ', [Code]));
+	     for I := 1 to Length(Result) do
+      	       write(__F, '[', Ord(Result[I]), ']');
+  	       writeln(__F);
+{$ENDIF}	   
+	   exit;
+	end;
+  end;
+
+
 var
-  b: boolean;
-  c: char;
-  l: longint;
-  xtnded : boolean;
+  b	 : boolean;
+  l	 : longint;
+  I	 : Integer;
+  DosSeq : String;
 begin
   if not __isInit then InitXPCurses;
   b:= IsEcho;
   noecho;
   l:= wgetch(BaseWin.wHnd);
   { if it's an extended key, then map to the IBM values }
-  if l > 255 then begin
-    xtnded := true;
+{$IFDEF Debug}
+           if __isopen then
+             Writeln(__F,FormatDateTime('hh:nn:ss',Now),
+		     Format(' Key pressed: [%d] = ''%c''', [l, chr(l)]));
+{$ENDIF}	   
+   
+  if (l > 255) then
+  begin
+{   if l = 27 then
+    begin
+       z := #27;
+       while keypressed do
+       begin
+	  c := readkey;
+	  I := Succ(Length(z));
+	  SetLength(z, I);
+	  z[I] := c;
+       end;
+       z := TranslateESCSeq(z);
+       c := z[2];
+    end;
     c:= #27;
-    case l of
-      KEY_BREAK : begin xtnded:= false; c:= #3; end;
-      KEY_BACKSPACE : begin xtnded:= false; c:= #8; end;
-      KEY_IC    : c:= #82; { insert }
-      KEY_DC    : c:= #83; { delete }
-      KEY_HOME  : c:= #71; { home }
-      KEY_END   : c:= #79; { end }
-      KEY_UP    : c:= #72; { up arrow }
-      KEY_DOWN  : c:= #80; { down arrow }
-      KEY_LEFT  : c:= #75; { left arrow }
-      KEY_RIGHT : c:= #77; { right arrow }
-      KEY_NPAGE : c:= #81; { page down }
-      KEY_PPAGE : c:= #73; { page up }
-      KEY_ALTA  : c:= #30; { alt/a }
-      KEY_ALTB  : c:= #48;
-      KEY_ALTC  : c:= #46;
-      KEY_ALTD  : c:= #32;
-      KEY_ALTE  : c:= #18;
-      KEY_ALTF  : c:= #33;
-      KEY_ALTG  : c:= #34;
-      KEY_ALTH  : c:= #35;
-      KEY_ALTI  : c:= #23;
-      KEY_ALTJ  : c:= #36;
-      KEY_ALTK  : c:= #37;
-      KEY_ALTL  : c:= #38;
-      KEY_ALTM  : c:= #50;
-      KEY_ALTN  : c:= #49;
-      KEY_ALTO  : c:= #24;
-      KEY_ALTP  : c:= #25;
-      KEY_ALTQ  : c:= #16;
-      KEY_ALTR  : c:= #19;
-      KEY_ALTS  : c:= #31;
-      KEY_ALTT  : c:= #20;
-      KEY_ALTU  : c:= #22;
-      KEY_ALTV  : c:= #47;
-      KEY_ALTW  : c:= #17;
-      KEY_ALTX  : c:= #45;
-      KEY_ALTY  : c:= #21;
-      KEY_ALTZ  : c:= #44;  { alt/z }
-      KEY_ALT1  : c:= #120; { alt/1 }
-      KEY_ALT2  : c:= #121; { alt/2 }
-      KEY_ALT3  : c:= #122; { alt/3 }
-      KEY_ALT4  : c:= #123; { alt/4 }
-      KEY_ALT5  : c:= #124; { alt/5 }
-      KEY_ALT6  : c:= #125; { alt/6 }
-      KEY_ALT7  : c:= #126; { alt/7 }
-      KEY_ALT8  : c:= #127; { alt/8 }
-      KEY_ALT9  : c:= #128; { alt/9 }
-      KEY_ALT0  : c:= #129; { alt/0 }
-      KEY_ALTEQUAL : c:= #130; { alt/- }
-      KEY_ALTMINUS : c:= #131; { alt/= }
-      KEY_ALTTAB : c:= #15; { alt/tab }
-    else
-      begin
-        if l = Key_f(1) then c := #59
-        else if l = Key_f(2) then c := #60
-        else if l = Key_f(3) then c := #61
-        else if l = Key_f(4) then c := #62
-        else if l = Key_f(5) then c := #63
-        else if l = Key_f(6) then c := #64
-        else if l = Key_f(7) then c := #65
-        else if l = Key_f(8) then c := #66
-        else if l = Key_f(9) then c := #67
-        else if l = Key_f(10) then c := #68
-        else if l = Key_f(11) then c := #84
-        else if l = Key_f(12) then c := #85
-        else if l = Key_f(13) then c := #86
-        else if l = Key_f(14) then c := #87
-        else if l = Key_f(15) then c := #88
-        else if l = Key_f(16) then c := #89
-        else if l = Key_f(17) then c := #90
-        else if l = Key_f(18) then c := #91
-        else if l = Key_f(19) then c := #92
-        else if l = Key_f(20) then c := #93;
-      end;
-    end; { case }
-    if xtnded then begin
-      ReadKey:= #0;
-      ungetch(ord(c));
-      if (b) then
-        echo;
-      Exit;
-    end else
-      Readkey:= c;
+}    
+
+     DosSeq := TranslateESCSeq(l);
+
+     ReadKey:= DosSeq[1];              // first char is result
+     for I := 2 to Length(DosSeq) do   // other chars pushed to process later
+       ungetch(ord(DosSeq[I]));
   end else
     Readkey:= chr(ord(l));
-  if (b) then
-    echo;
+  if (b) then echo;
 end;
 
 {=========================================================================
@@ -1225,9 +1236,9 @@ procedure mDelay(msec: word);
 begin
   if not __isInit then InitXPCurses;
   napms(msec);
-{$ifdef Debug}
+{$ifdef .Debug}
   if __isopen then
-    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Daylay=',msec,' ms');
+    WriteLn(__F,FormatDateTime('hh:nn:ss',Now), ' Delay=',msec,' ms');
 {$endif}
 end;
 
@@ -1327,10 +1338,25 @@ begin
 end;
 
 function StartCurses(var win: TWinDesc): Boolean;
+const
+  MaxESCSeq = 10; // maxlength of ESCSeq;
 var
   i : integer;
-  s : string[3];
+  s : String[MaxESCSeq];
   w : PWindow;
+
+  procedure NCursesRegisterKeys;
+  var
+     RegStr : String;
+     I	    : Integer;
+  begin
+    for I := 0 to lastESCSeq do
+       if (keyESCSeqs[I].Sequenz <> ncad) then
+       begin
+	 RegStr := keyESCSeqs[I].Sequenz+#0;
+	 define_key(@RegStr[1], keyESCSeqs[I].nccode);
+       end;
+  end;
 begin
   { save the current terminal settings }
   tcGetAttr(STDIN,tios);
@@ -1363,13 +1389,16 @@ begin
     LastWindMax:= WindMax;
     win.x:= 0; win.y:= 0;
     win.isRel:= false;
-    { define the the alt'd keysets for ncurses }
-    { alt/a .. atl/z }
+
+    NCursesRegisterKeys; 
+(*
+     { define the the alt'd keysets for ncurses }
+    { alt/a .. alt/z }
     for i:= ord('a') to ord('z') do begin
       s:= #27+chr(i)+#0;
       define_key(@s[1],400+i-32);
     end;
-     { alt/1 .. alt/9 }
+    { alt/1 .. alt/9 }
     for i:= 1 to 9 do begin
       s:= #27+chr(i)+#0;
       define_key(@s[1],490+i);
@@ -1378,6 +1407,7 @@ begin
     s:= #27+'-'+#0; define_key(@s[1],501); { alt/- }
     s:= #27+'='+#0; define_key(@s[1],502); { alt/= }
     s:= #27+#9+#0;  define_key(@s[1],503); { alt/tab }
+*)
 {$ifdef Debug}
     AssignFile(__F,'.curses.log');
     Rewrite(__F);
@@ -1448,6 +1478,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/04/10 10:03:23  ml
+  - keyboard-translation completely rewritten (what a mess)
+  - Ctrl-Up/Down now do the job
+
   Revision 1.36  2001/04/09 14:18:25  ml
   -disabled blinking till it is working well
 

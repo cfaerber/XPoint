@@ -679,8 +679,8 @@ begin
         c:=readkey;
         SetLength(z,2);
         z[2]:=c;
-        end;
       end;
+    end;
     cursor(curoff);
     lastkey:=z;
     if hotkeys then
@@ -1670,6 +1670,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2001/04/10 10:03:23  ml
+  - keyboard-translation completely rewritten (what a mess)
+  - Ctrl-Up/Down now do the job
+
   Revision 1.69  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
