@@ -913,10 +913,6 @@ again:
                  if typ in [1,7] then begin
                    sData^.summary:=hdp^.summary;
                    sData^.keywords:=hdp^.keywords;
-                   if hdp^.oab<>'' then begin
-                     sData^.oab:=hdp^.oab; sData^.oar:=hdp^.oar; end
-                   else begin
-                     sData^.oab:=hdp^.absender; sData^.oar:=hdp^.realname; end;
                    if hdp^.oem<>'' then sData^.oem:=hdp^.oem
                    else sData^.oem:=hdp^.empfaenger;
                    sData^.onetztyp:=hdp^.netztyp;
@@ -924,7 +920,11 @@ again:
                    sendfiledate:=hdp^.ddatum;
                    end;
                  if typ in [1,4,7] then sdata^.quotestr:=hdp^.quotestring;
-                 if typ=7 then sData^.orghdp:=hdp;
+                 if typ=7 then begin
+                   sData^.oab:=hdp^.absender;
+		   sData^.oar:=hdp^.realname;
+		   sData^.orghdp:=hdp;
+		   end;
                  if typ in [1,2,7] then
                    xp6.FileAttach:=(hdp^.attrib and attrFile<>0);
                  if nextwl>=0 then begin
@@ -1248,6 +1248,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/09/12 12:40:46  fe
+  Korrektur: Bei Nachricht->Weiterleiten->Kopie wird keine OAB-Zeile
+  mehr erzeugt.  Dies brach die ZConnect-Vorschrift, dass bei
+  Weiterleitungen ausser bei Verwendung der KOM-Zeile keine
+  Veraenderungen am Nachrichtentext vorgenommen werden duerfen.
+  (Das Problem betraf nur ZC-Nutzer, da uuz die OAB-Zeile bis jetzt
+  nicht wandelt.)
+
   Revision 1.34  2000/08/23 13:55:14  mk
   - Datenbankfunktionen mit Const-Parametern wo moeglich
   - dbReadX und Co auf 32 Bit angepasst
