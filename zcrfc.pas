@@ -238,6 +238,13 @@ begin
   result := RFC2047_Decode(rfcUnQuotePhrase(input),csCP437);
 end;
 
+function EncodePhrase(const Source:string; 
+        var MaxFirstLen, MaxLen: integer; const EOL: String):string;
+begin
+  result := RFCQuoteEncodePhraseFolded(Source, csCP437,
+        MaxFirstLen, MaxLen, EOL);
+end;
+
 function RFCAddressToZConnect(const input: string):string;
 var a,n:string;
 begin
@@ -2480,7 +2487,7 @@ begin
   try
     s1 := ExtractFileExt(sr.name);
     // BAK-Dateien überspringen
-    if s1 = FileUpperCase(ExtBak) then Continue;
+    if LowerCase(s1) = LowerCase(ExtBak) then Continue;
     if not (UpperCase(RightStr(sr.name,4))='.OUT') then
     if ExtractFileExt(sr.name) = '.mail' then
     begin
@@ -2746,6 +2753,44 @@ var
       end;
     end;
 
+  function WriteAddressList(const header: string; var content:string):string;
+  var al: TAddressList;
+      m1,ml: integer;
+  begin
+    Content := Trim(Content);
+    if Content='' then exit;
+  
+    al := TAddressList.Create;
+    try
+      ml := 76; m1 := ml - (Length(header) + 2);
+      RFCReadAddressList(content,al,nil);
+      if al.Count<=0 then exit;      
+      content := RFCWriteAddressListFolded(al,EncodePhrase,m1,ml,#13#10,AddressListTypeAll);
+      if Length(content)<=0 then exit;
+    finally
+      al.Free;
+    end;
+    Wrs(f,header+': '+content);
+  end;  
+
+  procedure WriteRecipients;
+  var
+    UTo,UCC,UBCC,UNewsgroups: string;
+    i: integer;
+  begin
+    UTo         := hd.UTo;
+    UCC         := hd.CC;
+    UBCC        := hd.BCC;
+    UNewsgroups := hd.Newsgroups;
+
+    if UNewsgroups<>'' then Wrs(f,'Newsgroups: '+UNewsgroups);
+    WriteAddressList('To',UTo);
+    WriteAddressList('CC',UCC);
+
+  // see http://cr.yp.to/immhf/recip.html ------------------------------  
+    if Mail and (UTo='') and (UCC='') then Wrs(f,'CC: recipient list not shown: ;');
+  end;
+
 begin
   if not mpart then
   with hd do
@@ -2797,6 +2842,9 @@ begin
       wrs(f, 'Sender: ' + wab + iifs(zcrfc.s <> '', ' (' + zcrfc.s + ')', ''));
     end;
 
+    WriteRecipients;    
+
+(*
     if mail then
     begin
       if (wab <> '') and (oem.count > 0) and (cpos('@', oem[0]) > 0) { s. (*1) } then
@@ -2811,6 +2859,7 @@ begin
     else
       Wrs(f, 'Newsgroups: ' + Newsgroupsline(hd.Empfaenger));
 //  Empfaenger.Clear;
+*)
 
     wrs(f, 'Message-ID: <' + msgid + '>');
 
@@ -3558,6 +3607,9 @@ end;
 
 {
   $Log$
+  Revision 1.104  2002/05/20 15:18:44  cl
+  - added outgoing U-To/U-CC handling
+
   Revision 1.103  2002/05/20 07:47:57  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 
