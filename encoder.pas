@@ -27,8 +27,7 @@ interface
 type str90=string[90];
      tbytestream=array[0..63] of byte;
 
-procedure encode_base64(var bytestream:tbytestream;len:word;
-                        var encoded:str90);
+function EncodeBase64(var source; len:word): string;
 procedure encode_UU(var bytestream:tbytestream;len:word;
                     var encoded:str90);
 
@@ -39,14 +38,16 @@ type tbase64alphabet=array[0..63] of char;
 const cbase64alphabet:tbase64alphabet=
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
-procedure encode_base64(var bytestream:tbytestream;len:word;
-                        var encoded:str90);
+function EncodeBase64(var source; len:word): string;
   var i,j,l:word;
       b:array[0..3] of byte;
+      bytestream: tbytestream;
   begin
-    encoded:='';
+    result:='';
     if len=0 then exit;
-    for i:=len to sizeof(tbytestream)-1 do bytestream[i]:=0;
+    fillchar(bytestream,sizeof(bytestream),0);
+    move(source,bytestream,len);
+
     l:=0;
     for i:=0 to (len-1) div 3 do begin
       inc(l,3);
@@ -58,9 +59,9 @@ procedure encode_base64(var bytestream:tbytestream;len:word;
             or ((bytestream[i*3+2] and $c0) shr 6);
       b[3]:=bytestream[i*3+2] and $3f;
       for j:=0 to (l-1) mod 3+1 do
-       encoded:=encoded+cbase64alphabet[b[j]];
+       result:=result+cbase64alphabet[b[j]];
       for j:=1 to 2-(l-1) mod 3 do
-       encoded:=encoded+'=';
+       result:=result+'=';
     end;
   end;
 
@@ -90,6 +91,9 @@ procedure encode_UU(var bytestream:tbytestream;len:word;
 end.
 {
   $Log$
+  Revision 1.6  2001/05/27 14:23:34  ma
+  - cleaned up a bit
+
   Revision 1.5  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
