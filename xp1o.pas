@@ -719,6 +719,12 @@ begin
   if cpos(' ',fn)>0 then
     fn:=LeftStr(fn,cpos(' ',fn)-1);
   fsplit(fn,dir,name,ext);
+{$ifdef Unix}
+  if name='cp' then
+    FileDa:= true
+  else
+    FileDa:= Find(fn);
+{$else}
   if UpperCase(name+ext)='COPY' then
     fileda:=true
   else
@@ -726,6 +732,7 @@ begin
       FileDa:=Find(fn)
     else
       FileDa:=Find(fn+'.exe') or Find(fn+'.com') or Find(fn+'.bat');
+{$endif}
 end;
 
 
@@ -985,6 +992,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2000/11/09 17:35:19  hd
+  - Fix: FileDa unter Unix
+
   Revision 1.65  2000/11/01 11:20:14  mk
   RB:- improved URL detection
 
