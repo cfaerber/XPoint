@@ -276,6 +276,8 @@ var
        RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex) + iifs(HeaderOnly, ' HdrOnly', '');
    end;
 
+const
+  MaxMessagecount = 15; // Maximum number of Messages in Pipeline
 var
   NNTP          : TNNTP;                { Socket }
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
@@ -359,17 +361,14 @@ begin
 
         oArticle:=ArticleIndex;
 
+        Inc(ArticleIndex);
         while ArticleIndex < NNTP.LastMessage do
         begin
-          Inc(ArticleIndex);
           POWindow.WriteFmt(mcVerbose,res_getposting,[ArticleIndex-oArticle,NNTP.LastMessage-oArticle]);
 
-          NNTP.GetMessage(IntToStr(ArticleIndex), List, HeaderOnly);
-          if HeaderOnly then
-          begin
-            List.Insert(List.Count-1, 'X-XP-MODE: HdrOnly'); // empty line to break up headers
-            List.Insert(List.Count-1, ''); // empty line to break up headers
-          end;
+          NNTP.GetMessage(ArticleIndex, Min(MaxMessageCount, NNTP.LastMessage - ArticleIndex + 1), List, HeaderOnly);
+          Inc(ArticleIndex, MaxMessageCount);
+
           if List.Count > 10000 then
             SaveNews(true);
         end;
@@ -391,7 +390,7 @@ begin
                 MsgId := '<' + MsgId;
               if LastChar(MsgId) <> '>' then
                 MsgId := MsgId + '>';
-              NNTP.GetMessage(MsgId, List, false);
+              NNTP.GetMessageById(MsgId, List);
             end;
             // add handling if message id was not found
             MidList.Delete(0);
@@ -425,6 +424,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.9  2003/09/01 22:12:52  mk
+        - reduced latenz time for NNTP, this speeds up NNTP to factor 10
+
         Revision 1.39.2.8  2003/08/29 19:33:04  mk
         - added special handling for leafnode pseudo groups:
           first pseudo message will now be fetched

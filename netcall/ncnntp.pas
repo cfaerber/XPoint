@@ -98,7 +98,8 @@ type
     procedure SelectGroup(const AGroupName: String); virtual;
 
     { Message vom server holen }
-    function GetMessage(MsgID: String; Message: TStringList; HeaderOnly: Boolean): Integer; virtual;
+    function GetMessage(Article, ArticleCount: Integer; Message: TStringList; HeaderOnly: Boolean): Integer; virtual;
+    function GetMessageByID(const MsgID: String; Message: TStringList): Integer;
 
     { Message vom server holen }
     function PostMessage(Message: TStringList): Integer; virtual;
@@ -147,9 +148,10 @@ resourcestring
   res_groupnotfound     = 'Gruppe %s nicht gefunden';
   res_error             = 'Fehler: %s';
 
-  res_msg1              = 'hole Artikel %s, Zeile %d';
-  res_msg2              = 'hole Header %s, Zeile %d';
+  res_msg1              = 'hole Artikel %d, Zeile %d';
+  res_msg2              = 'hole Header %d, Zeile %d';
   res_msg3              = 'Artikel %s nicht mehr auf Server vorhanden';
+  res_msg4              = 'hole Message-ID %s, Zeile %d';
 
   res_posterror         = 'Fehler %d beim Absenden des Artikels';
   res_postmsg           = 'Verschicke Artikel %d (gesamt %.0f%%)';
@@ -430,7 +432,61 @@ begin
 end;
 
 
-function TNNTP.GetMessage(MsgID: String; Message: TStringList; HeaderOnly: Boolean): Integer;
+function TNNTP.GetMessage(Article, ArticleCount: Integer; Message: TStringList; HeaderOnly: Boolean): Integer;
+var
+  i, Error,iLine: Integer;
+  s: String;
+  Timer: TTimer;
+begin
+  Result := nntp_NotConnected;
+  if Connected then
+  begin
+    for i := 0 to ArticleCount - 1 do
+    begin
+      // select one newsgroup
+      if HeaderOnly then
+        SWriteln('HEAD ' + IntToStr(Article+i))
+      else
+        SWriteln('ARTICLE ' + IntToStr(Article+i));
+    end;
+
+    Timer.Init; Timer.SetTimeout(5);
+    for i := 0 to ArticleCount - 1 do
+    begin
+      SReadln(s);
+      Error := ParseResult(s);
+      if Error > 400 then
+      begin
+        Output(mcError,res_msg3, [IntToStr(Article)]);
+        Result := Error;
+        Continue;
+      end;
+
+      iLine:=0;
+      repeat
+        SReadln(s);
+        inc(iLine);
+        if Timer.Timeout then
+        begin
+          Output(mcVerbose,iifs(HeaderOnly, res_msg2, res_msg1), [Article, iLine]);
+          Timer.SetTimeout(1);
+        end;
+        Message.Add(s);
+      until s = '.';
+      
+      if HeaderOnly then
+      begin
+        Message.Insert(Message.Count-1, 'X-XP-MODE: HdrOnly'); // empty line to break up headers
+        Message.Insert(Message.Count-1, ''); // empty line to break up headers
+      end;
+    end;
+    Timer.Done;
+
+    Result := 0;
+  end;
+end;
+
+function TNNTP.GetMessageByID(const MsgID: String; Message: TStringList): Integer;
 var
   Error,iLine: Integer;
   s: String;
@@ -439,11 +495,7 @@ begin
   Result := nntp_NotConnected;
   if Connected then
   begin
-    // select one newsgroup
-    if HeaderOnly then
-      SWriteln('HEAD ' + MsgID)
-    else
-      SWriteln('ARTICLE ' + MsgID);
+    SWriteln('ARTICLE ' + MsgID);
     SReadln(s);
     Error := ParseResult(s);
     if Error > 400 then
@@ -459,13 +511,12 @@ begin
       inc(iLine);
       if Timer.Timeout then
       begin
-        Output(mcVerbose,iifs(HeaderOnly, res_msg2, res_msg1), [MsgID,iLine]);
+        Output(mcVerbose, res_msg4, [MsgID, iLine]);
         Timer.SetTimeout(1);
         end;
       Message.Add(s);
     until s = '.';
     Timer.Done;
-
     Result := 0;
   end;
 end;
@@ -546,6 +597,9 @@ end;
 
 {
   $Log$
+  Revision 1.37.2.5  2003/09/01 22:12:52  mk
+  - reduced latenz time for NNTP, this speeds up NNTP to factor 10
+
   Revision 1.37.2.4  2003/08/15 19:56:04  mk
   - fixed Bug #766604: skip over NNTP groups that are not exsists anymore
 
