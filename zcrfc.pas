@@ -2175,6 +2175,11 @@ begin
       // of next mail and unquote '>From ' to 'From '.
       LastLineWasBlank:=False;
 
+      // fix bad line count
+      // most times, the line count in rfc mails is wrong
+      if hd.lines <> 0 then
+        hd.lines := MaxInt;
+
       while (bufpos < bufanz) and (hd.Lines<>0) do
       begin
         ReadString;
@@ -3710,6 +3715,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.22  2002/12/08 12:38:13  mk
+  - removed line-header detection for mails again
+
   Revision 1.97.2.21  2002/10/13 11:47:17  mk
   - fixed converting news files with base64 encoding and empty lines
     see <8YjoOQphsaB@MSchiff.gmx.de>
