@@ -50,18 +50,14 @@ uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister,
       xp4rta,xpovl;
 
-const suchch    = #254;
-      komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
-      closeflag : boolean = false; { TClose -> Dateien schlie·en     }
-      nobrettweiter : boolean = false; { Brettweiterschalter temporaer komplett ausschalten}
+const suchch      = #254;
+      DispStrSize = 81;
+      komaktiv         : boolean = false;  { Kommentarbaumanzeige (12) aktiv }
+      closeflag        : boolean = false;  { TClose -> Dateien schlie·en     }
+      nobrettweiter    : boolean = false;  { Brettweiterschalter temporaer komplett ausschalten}
 
-      IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
-      ubpos         : longint = 0;      { aktuelle UserBase-Position }
-{$ifdef Ver32}
-      DispStrSize       = 255;
-{$else}
-      DispStrSize       = 81;
-{$endif}
+      IndirectQuote    : boolean = false;  { Fido/QWK: indirekter Quote }
+      ubpos            : longint = 0;      { aktuelle UserBase-Position }
 
 type  dispstr   = string[DispStrSize];
       specstr   = string[DispStrSize];
@@ -173,6 +169,7 @@ label selende;
             end;
       12 : bezpos:=komofs+pos-1;
     end;
+    if dbbof(dispdat) or dbEOF(dispdat) then dBGotop(dispdat);
   end;
 
   procedure GoP;
@@ -182,8 +179,7 @@ label selende;
 
   procedure setall; forward;
   procedure pm_archiv(einzel:boolean);
-  var
-    _brett : string[5];
+  var _brett : string[5];
   begin
     dbReadN(mbase,mb_brett,_brett);
     if (_brett[1]<>'1') and (_brett[1]<>'A') then
@@ -195,6 +191,7 @@ label selende;
         dbGo(mbase,disprec[1]);
         if (Dispmode <> 12) and (left(dbReadStrN(mbase,mb_brett),1)<>'1') then
           disprec[1]:=0;
+        RereadBrettdatum(_brett);
       end
         else
         GoP;
@@ -338,13 +335,13 @@ var t,lastt: taste;
               wrongline:=dbEOF(bbase) or dbBOF(bbase) or not brettok(true);
       1,3 : begin                { User/Adre·buch }
               dbReadN(ubase,ub_adrbuch,adrb);
-              wrongline:=(adrb<AdrbTop);    {Adressbuchgruppe 0 evtl. erlauben }
+              wrongline:=(adrb<AdrbTop);    { Adressbuchgruppe 0 evtl. erlauben }
             end;
       2,4 : begin                              { alle User      }
              dbReadN(ubase,ub_username,s);
              wrongline:=(pos('$/T',s)>0);
              end;
-      10  : begin                { Brett-Msgs     }
+      10  : begin                                        { Brett-Msgs     }
               dbRead(dispdat,'brett',_brett);
               case rdmode of
                 0 : wrongline:=(_brett<>_dispspec);
@@ -1158,7 +1155,10 @@ var t,lastt: taste;
         else GoP;
         if not dbEof (mbase) and not dbBOF (mbase) and (left(dbReadStrN(mbase,mb_brett),1)='1') and
            ReadJN(getres(407),true) then     { 'Nachricht archivieren' }
-          pm_archiv(true);
+          begin
+            pm_archiv(true);
+            GoP;
+          end;
         end;
       briefsent:=true;
       end
@@ -1187,7 +1187,7 @@ var t,lastt: taste;
       hds    : longint;
       mbrett : string[5];
   begin
-        { Nur ausfÅhren, wenn wirklich einer der benoetigten Tasten }
+        { Nur ausfuehren, wenn wirklich eine der benoetigten Tasten }
     if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
     GoP;
     dbreadN(mbase,mb_brett,mbrett);
@@ -1427,6 +1427,7 @@ var t,lastt: taste;
   procedure set_lesemode;
   var rm : shortint;
   begin
+    GoP;
     rm:=get_lesemode(showtime);
     if rm>=0 then begin
       readmode:=rm;
@@ -1731,32 +1732,32 @@ begin      { --- select --- }
                    _unmark_;
                    selcall(UserDispmode,gl);
                    end;
-                 if c=k0_S then begin        { 'S' }
+                 if c=k0_S then begin                                 { 'S' }
                    dispext:=not dispext;
                    testbrettalle;
                    setall; aufbau:=true;
                    end;
                  if dispext then begin    { Bretter bearbeiten }
-                   if (c=k0_H) or (t=keyins) then neues_brett;     { 'H' }
+                   if (c=k0_H) or (t=keyins) then neues_brett;        { 'H' }
                    if t=k0_cH then begin MapsBrettliste(2); setall; end; { ^H }
                    if not empty then begin
-                     if (c=k0_L) or (t=keydel) then        { 'L' }
+                     if (c=k0_L) or (t=keydel) then                   { 'L' }
                        if bmarkanz=0 then loeschbrett
                      else multiloesch(false);
                      if c=k0_E then if bmarkanz<2 then brett_aendern  { 'E' }
                      else multiedit(false);
                      if markflag[p]<>2 then begin
-                       if c=k0_Ac then brett_aendern2;     { 'U' }
+                       if c=k0_Ac then brett_aendern2;                { 'U' }
                        if c='+'  then add_haltezeit(1);
                        if c='-'  then add_haltezeit(-1);
-                       if c=k0_V then _verknuepfen(true);  { 'V' }
+                       if c=k0_V then _verknuepfen(true);             { 'V' }
                        end;
                      if c=k0_cT then begin GoP; Bretttrennung; end;   { ^T }
                      if c=k0_P  then begin GoP; MoveBretter; setall; end;
                      end;
                    end
                  else begin
-                   if c=k0_A then              { 'A' }
+                   if c=k0_A then                                     { 'A' }
                      ChangeBrettall;
                {    if c='U' then 
                    begin
@@ -1764,12 +1765,12 @@ begin      { --- select --- }
                      Globalmodified;
                      aufbau:=true;
                      end; } 
-                   if (c=k0_Le) or (t=keyaltl) then set_lesemode;       { 'L'esemode }
+                   if (c=k0_Le) or (t=keyaltl) then set_lesemode;     { 'L'esemode }
                    if not empty and (markflag[p]<>2) then begin
                      if t[1]=k0_B  then brief_senden(false,false,false,0); { 'b' }
                      if t[1]=k0_SB then brief_senden(false,false,true,0);  { 'B' }
-                     if c=k0_I  then datei_senden(false,true);      { 'I' }
-                     if c=k0_TE then datei_senden(false,false);     { 'E' }
+                     if c=k0_I  then datei_senden(false,true);        { 'I' }
+                     if c=k0_TE then datei_senden(false,false);       { 'E' }
                      end;
                    if not empty then begin
                      if c='+' then seek_brett(true);
@@ -1781,14 +1782,14 @@ begin      { --- select --- }
                      if t=keycr then _msg_window;
                      if c=' ' then _mark_;
                      if t=^J then msg_window(true);
-                     if c=k0_cG then _mark_group;      { ^G }
+                     if c=k0_cG then _mark_group;                     { ^G }
                      end
                    else
                      if c=' ' then pushkey(keydown);  { Trennzeile Åberspr. }
                    if t=keyf8 then gopm;
-                   if c=k0_cE then _unmark_;           { ^E }
-                   if c=k0_cW then brettweiter:=not brettweiter;  { ^W }
-                   if ParDebug and (c=k0_cF) then begin  { ^F }
+                   if c=k0_cE then _unmark_;                          { ^E }
+                   if c=k0_cW then brettweiter:=not brettweiter;      { ^W }
+                   if ParDebug and (c=k0_cF) then begin               { ^F }
                      GoP; brettinfo; end;
                    testsuche(t);
                    end;
@@ -1796,50 +1797,50 @@ begin      { --- select --- }
         1,2  : begin                        { Userliste }
                  if dispmode=1 then begin
                    if c='#'then Jump_Adressbuch;
-                   if c=^\ then Next_Adrbuch;                    { Ctrl-# }
+                   if c=^\ then Next_Adrbuch;                         { Ctrl-# }
                    end;
                  if t=keyf6 then Makroliste(2);
                  if c=^Y then Trennzeilensuche;
-                 if c=k0_cG then _mark_group;                    { ^G }
-                 if c=k1_O then begin                            { 'O' }
+                 if c=k0_cG then _mark_group;                         { ^G }
+                 if c=k1_O then begin                                 { 'O' }
                    usersortbox:=not usersortbox;
                    setall; aufbau:=true;
                    end;
                  if (dispmode=1) and (t=keyalta) then
                    AdrbTop:=AdrbTop xor 1;
 
-                 if c=k1_S then begin                            { 'S' }
+                 if c=k1_S then begin                                 { 'S' }
                    dispext:=not dispext;
                    setall; aufbau:=true;
                    end;
-                 if c=k1_A then UserSwitch;                      { 'A' }
+                 if c=k1_A then UserSwitch;                           { 'A' }
                  if dispext then begin
-                   if (c=k1_H) or (t=keyins) then neuer_user;    { 'H' }
-                   if c=k1_V then neuer_verteiler;               { 'V' }
-                   if c=k0_cT then begin GoP; usertrennung; end; { '^T' }
-                   if c=^P  then begin                           { '^P' }
+                   if (c=k1_H) or (t=keyins) then neuer_user;         { 'H' }
+                   if c=k1_V then neuer_verteiler;                    { 'V' }
+                   if c=k0_cT then begin GoP; usertrennung; end;      { ^T }
+                   if c=^P  then begin                                { ^P }
                      GoP; MoveUser; setall; end;
                    if not empty then begin
-                     if (c=k1_L) or (t=keydel) then              { 'L' }
+                     if (c=k1_L) or (t=keydel) then                   { 'L' }
                        if isverteiler then verteiler_loeschen
                      else if bmarkanz=0 then loeschuser
                           else multiloesch(true);
-                     if c=k1_E then if bmarkanz<2 then           { 'E' }
+                     if c=k1_E then if bmarkanz<2 then                { 'E' }
                                       if isverteiler then verteiler_aendern
                                       else user_aendern(false)
                                     else multiedit(true);
                      if markflag[p]<>2 then begin
                        if (c='+') and keinverteiler then add_haltezeit(1);
                        if (c='-') and keinverteiler then add_haltezeit(-1);
-                       if c=k1_cV then _verknuepfen(false);        { ^V }
+                       if c=k1_cV then _verknuepfen(false);           { ^V }
                        end;
                      end;
                    end
                  else if not empty and (markflag[p]<>2) then begin
                    if t[1]=k1_B  then brief_senden(false,true,false,0); { 'b' }
                    if t[1]=k2_SB then brief_senden(false,true,true,0);  { 'B' }
-                   if c=k1_I  then datei_senden(true,true);       { 'I' }
-                   if c=k1_TE then datei_senden(true,false);      { 'E' }
+                   if c=k1_I  then datei_senden(true,true);           { 'I' }
+                   if c=k1_TE then datei_senden(true,false);          { 'E' }
                    if bmarkanz>0 then
                      if c='+' then usersprung(true) else
                      if c='-' then usersprung(false);
@@ -1854,39 +1855,39 @@ begin      { --- select --- }
                      if (c=k1_P) and keinverteiler then edit_password(false);
                      end;
                    if c=' ' then begin
-                     if markflag[p]<>2 then _mark_                         { 'P' }
+                     if markflag[p]<>2 then _mark_                    { 'P' }
                      else pushkey(keydown);
                      end;
-                   if c=k1_cE then _unmark_;                    { ^E }
+                   if c=k1_cE then _unmark_;                          { ^E }
                    if (t=keyaltu) and keinverteiler then usersuche(true);
-                   if c=k1_cW then userweiter:=not userweiter;  { ^W }
-                   if c=k1_U then User_suche;                   { 'U' }
+                   if c=k1_cW then userweiter:=not userweiter;        { ^W }
+                   if c=k1_U then User_suche;                         { 'U' }
                    testsuche(t);
                    end;
                end;
          3,4 : begin                                   { Weiterleiten an User }
                  if dispmode=3 then begin
                    if c='#'then Jump_Adressbuch;
-                   if c=^\ then Next_Adrbuch;          { Strg+# }
+                   if c=^\ then Next_Adrbuch;                         { Ctrl-# }
                    end;
-                 if c=k1_A then UserSwitch;            { 'A' }
+                 if c=k1_A then UserSwitch;                           { 'A' }
                  if c=^Y then Trennzeilensuche;
                  if c=k1_O then begin
-                   usersortbox:=not usersortbox;       { 'O' }
+                   usersortbox:=not usersortbox;                      { 'O' }
                    setall; aufbau:=true;
                    end;
-                 if (dispmode=3) and (t=keyalta) then  { Alt-A }
+                 if (dispmode=3) and (t=keyalta) then                 { Alt-A }
                    AdrbTop:=AdrbTop xor 1;
 
                  if not empty then
                  begin
-                   if c=k1_U then User_suche;          { 'U' }
+                   if c=k1_U then User_suche;                         { 'U' }
                    testsuche(t);
                  end;
                end;
       10..12 : begin
                  if t=keyf6 then Makroliste(3);
-                 if c=k2_S then spezialmenue;          { 'S'pezial-MenÅ }
+                 if c=k2_S then spezialmenue;              { 'S'pezial-MenÅ }
                  if empty then begin
                    if t[1]=k2_b then
                    begin
@@ -2237,6 +2238,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.51  2001/09/20 15:47:07  my
+  JG+MY:- Ein paar Optimierungen (GoP, dBGotop etc.)
+  JG+MY:- Bei <Alt-P> in PM-Brettern wurde Brettdatum nicht korrigiert
+
   Revision 1.26.2.50  2001/09/16 20:24:32  my
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
