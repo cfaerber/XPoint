@@ -2567,7 +2567,7 @@ begin
       mempf:=SetMailUser(hd.empfaenger);
       ReadRFCheader(true,s);
       binaer:=(hd.typ='B');
-      if (mempf<>'') and (mempf<>hd.xempf[1]) then begin
+      if (mempf<>'') and (hd.EmpfAnz >=1) and (mempf<>hd.xempf[1]) then begin
         hd.xoem:=hd.xempf;
         hd.oemanz:=hd.empfanz;
         hd.xempf[1]:=mempf;
@@ -3579,6 +3579,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.3  2000/07/26 14:00:58  mk
+  - Bug bei Zugriff auf XEmpf[1] behoben
+
   Revision 1.35.2.2  2000/07/12 07:58:53  mk
   RB:- XPBoundary Default in SetMimeData
 
