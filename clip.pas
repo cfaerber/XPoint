@@ -54,9 +54,9 @@ asm
               mov    ax,1600h
               int    Multiplex
               cmp    al,0
-              jz     @NoWin
+              jz     @NoOldWin
               cmp    al,20
-              ja     @NoWin
+              ja     @NoOldWin
               cmp    al,1
               jz     @Win386
               cmp    al,0ffh
@@ -64,6 +64,12 @@ asm
               xchg   al,ah
               jmp    @WinOk
 @Win386:      mov    ax,200h
+              jmp    @WinOk
+@NoOldWin:    mov    ax, $3306   { Get True Version Number }
+              int    $21
+              cmp    bx, $3205   { Win NT/2000 DOS Box }
+              jne    @NoWin
+              mov    ax, $0400   { Win NT >= Version 4 }
               jmp    @WinOk
 @NoWin:       xor    ax,ax
 @WinOk:
@@ -484,6 +490,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.7  2001/06/22 20:34:59  mk
+  - added Win NT/2000 detection (result is version 4.0)
+
   Revision 1.19.2.6  2000/12/07 13:52:14  mk
   RB:- Fix for ClipToFile
 
