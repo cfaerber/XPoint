@@ -420,7 +420,8 @@ begin
     result:=true
   else begin
     handle:=FileCreate(name);
-    if handle<>-1 then begin
+    if handle>0 then
+    begin
       FileClose(handle);
       result:=SysUtils.DeleteFile(name);
     end;
@@ -539,7 +540,7 @@ function MakeFile(const fn: string): Boolean;
 var handle: longint;
 begin
   handle:=FileCreate(fn);
-  result:=handle<>-1;
+  result:=handle>0;
   if result then FileClose(handle);
 end;
 
@@ -558,7 +559,8 @@ var
   fh: longint;
 begin
   fh:= FileOpen(fn, fmOpenWrite);
-  if fh >= 0 then begin
+  if fh > 0 then
+  begin
     result:= (FileSetDate(fh, newtime) = 0);
     FileClose(fh);
   end else
@@ -641,6 +643,9 @@ end.
 
 {
   $Log$
+  Revision 1.89  2001/01/21 16:56:25  mk
+  - fix for VP compatiblity in FileCreate/FileOpen results
+
   Revision 1.88  2001/01/14 10:58:04  ma
   - fixed FindFile/FindExecutable/ExecutableExists
   - paths have to be correct if specified in these functions now
