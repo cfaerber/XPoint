@@ -965,17 +965,18 @@ begin
       XPFont;
       screenlines:=GetScreenlines;
     end;
-  if (ParFontfile='') and not ParLCD then begin
+  if (ParFontfile='') and not ParLCD then
+  begin
+    GetPal;
     if newmode and (videotype>0) and ((screenlines>25) or (getvideomode<>3))
     then
     begin
-      GetPal;
       setvideomode(3);
       IoVideoInit;
-      SetPal;
     end;
     if (screenlines<>25) or (screenlines<>getscreenlines) then
       setscreenlines(screenlines);
+    SetPal;
   end;
   iosclines:=screenlines;
   crline:=screenlines;
@@ -2037,6 +2038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.14  2000/12/30 12:59:50  mk
+  - Farbpalette sichern, die x.te
+
   Revision 1.48.2.13  2000/12/30 10:43:28  mk
   - Farbpalette sichern, die hundertste
 
