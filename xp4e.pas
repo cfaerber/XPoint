@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Overlay-Unit mit Editierroutinen u.a. }
@@ -18,13 +19,8 @@ unit xp4e;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-      dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
-      win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3, lfn;
+  crt,dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
+  win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3, lfn;
 
 
 var   testmailstring_nt : byte; { Netztyp fuer Testmailstring }
@@ -42,7 +38,7 @@ function  modibrett2:boolean;           { Zugriff }
 procedure _multiedit(user:boolean);
 procedure _multiloesch(user:boolean);
 
-procedure EditTime(x,y:byte; txt:atext; var d:datetimest; var brk:boolean);
+(* procedure EditTime(x,y:byte; txt:atext; var d:datetimest; var brk:boolean); *)
 
 procedure ReadDirect(txt:atext; var empf,betr,box:string; pmonly:boolean;
                      var brk:boolean);
@@ -96,8 +92,7 @@ function testnoverteiler(var s:string):boolean; {Verteileradressen verboten}
 
 implementation  { --------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xp6,xp9bp,xp9,xpcc,xpauto,xpfido,
-      xpovl;
+uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xp5,xp6,xp9bp,xp9,xpcc,xpauto,xpfido,xpovl;
 
 var   adp         : ^atext;
       wcy         : byte;          { fÅr writecode() }
@@ -319,6 +314,25 @@ begin
 end;
 
 
+Procedure Select_Gruppen;
+var i      : byte;
+    oldrec : longint;    
+begin
+  oldrec:=dbrecno(ubase);
+  i:=0;
+  repeat
+    inc(i); 
+    dbseek(ubase,uiAdrbuch,chr(i));
+    if not dbEOF(ubase) then 
+    begin
+      dbreadN(ubase,ub_adrbuch,i);
+      mappsel(false,strs(i));
+      end; 
+    until (i=99) or dbEOF(ubase);
+    dbgo(ubase,oldrec);
+end; 
+
+
 procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
                    var halten:integer16; var adr:byte; var flags:byte; edit:boolean;
                    var brk:boolean);
@@ -375,6 +389,7 @@ begin
     maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
     mhnr(8075);
     maddint(35,12,getres2(2701,11),adr,2,2,0,99);       { 'Adressbuchgruppe' }
+    Select_Gruppen;
     mhnr(8069);
     end
 
@@ -1143,7 +1158,7 @@ const nn : shortint = 1;
 var n,w    : shortint;
     x,y    : byte;
     brk    : boolean;
-    s      : string[30];
+    s      : string[AdrLen];  { MY: war frÅher string[30], bitte nicht aendern! }
     halten,adr : integer16;
     htyp   : string[6];
     hzahl  : boolean;
@@ -1159,21 +1174,33 @@ var n,w    : shortint;
     na,tg  : string[10];
     uucp   : byte;
     sperre : boolean;    { Brett - Schreibsperre }
+
+    oldbmarkanz : integer;
+
 begin
   if user then dispdat:=ubase
   else dispdat:=bbase;
   pushhp(iif(user,429,409));
   n:=MiniSel(34,10+(screenlines-25)div 2,'',getres2(2715,iif(user,1,2)),nn);
-  if n<>0 then nn:=abs(n);       { ^Kommentar,^Serverbox,^Haltezeit,^Gruppe^Umlaute/^Filter }
+  { ^Kommentar,^Serverbox,^Haltezeit,Umlaute,^Filter,^Gruppe^,^PrioritÑt,^Empfangsbest.,^Vertreteradr.,^Lîschen }
+  if n<>0 then nn:=abs(n);
   pophp;
   case n of
-    1   : w:=49;    { Kommentar }
+    1,9 : w:=49;    { Kommentar }
     2,3 : w:=37;    { Pollbox, Haltezeit }
     4   : if user then w:=40
           else w:=46;   { Gruppe }
     5   : w:=37;
-    6   : if user then w:=46
-          else w:=37;
+    6,7,8 : if user then w:=46
+            else w:=37;
+
+    10 : begin
+           _multiloesch(user);
+           freeres;
+           aufbau:=true;
+           exit;
+           end; 
+
 else begin
     freeres;
     exit;
@@ -1203,11 +1230,13 @@ else begin
           if hzahl then
             htyp:=iifs(odd(dbReadInt(bbase,'flags')),na,tg);
           maddint(3,2,getres2(2715,9),halten,4,4,0,9999); mhnr(iif(user,430,411));
-          if hzahl then begin                 { 'Haltezeit: ' }
+          if hzahl then begin                 { 'Haltezeit ' }
             maddstring(23,2,'',htyp,6,6,''); mhnr(411);
             mappsel(true,na+'˘'+tg);
             mset1func(testhaltetyp);
-            end;
+            end
+          else
+            maddtext(21,2,getres2(2715,8),col.coldialog);   { 'Tage' }
         end;
     4 : if user then begin
           umlaut:=true;
@@ -1236,11 +1265,36 @@ else begin
         else begin
           adr:=NeuUserGruppe;
           maddint(3,2,getres2(2701,11),adr,2,2,1,99); mhnr(8069);
+          Select_Gruppen;
           end;
+    7 : begin
+          flags:=0;
+          maddint(3,2,getres2(272,8),flags,2,2,0,5);       { ' Prioritaet ' }
+          mhnr(8075);
+          end;
+    8 : begin 
+          filter:=false;
+          maddbool(3,2,getres2(2701,10),filter);   { 'EmpfangsbestÑtigungen' }
+          mhnr(426);
+          end;
+    9 : begin
+          oldbmarkanz:=bmarkanz; 
+          maddstring(3,2,getres2(2701,4),s,30,eAdrLen,'');   { 'Adresse  ' }
+          mhnr(421);
+          mappcustomsel(seluser,false);
+          {msetvfunc(usertest);}
+          end;
+
   end;
   readmask(brk);
   enddialog;
   if not brk then begin
+    if n=9 then bmarkanz:=oldbmarkanz;
+
+    if n=7 then begin
+      if flags=3 then Flags:=0;
+      if flags>3 then dec(flags);
+      end;
     if n=2 then uucp:=iif(ntBoxNetztyp(s)=nt_UUCP,16,0);
     for i:=0 to bmarkanz-1 do begin
       dbGo(dispdat,bmarked^[i]);
@@ -1298,6 +1352,22 @@ else begin
             else begin
               dbwrite(dispdat,'adrbuch',adr);
               end;
+        7 : if not vert then 
+            begin
+              dbReadN(ubase,ub_userflags,b);
+              b:=(b and not $E0) or (flags shl 5);
+              dbWriteN(ubase,ub_userflags,b);
+            end;
+
+        8 : if not vert then
+            begin
+              dbreadN(ubase,ub_userflags,flags);
+              if filter then flags:=flags or 16
+                 else flags:=flags and (not 16);
+              dbWriteN(ubase,ub_userflags,flags);
+            end;
+
+        9 : if not vert then dbWriteX(ubase,'adresse',iif(s='',0,length(s)+1),s);
 
       end;
       end;
@@ -1349,7 +1419,7 @@ begin
     end;
 end;
 
-
+(*
 procedure EditTime(x,y:byte; txt:atext; var d:datetimest; var brk:boolean);
 var width,height : byte;
 begin
@@ -1368,7 +1438,7 @@ begin
   wpop;
   blindoff;
 end;
-
+*)
 
 function empftest(var s:string):boolean;
 var ok    : boolean;
@@ -1651,6 +1721,7 @@ function get_lesemode(var showtime:boolean):shortint;
 var n   : shortint;
     d   : datetimest;
     brk : boolean;
+ getdate: boolean;
     sich: string[20];
     x,y : byte;
 begin
@@ -1659,7 +1730,7 @@ begin
   sich:=iifs(readmode>=2,getres2(2720,2),'');    { ',^Sichern' }
   x:=iif(mauskey,40,20);
   y:=iif(mauskey,4,10+(screenlines-25)div 2);
-  n:=MiniSel(x,y,'',getres2(2720,1)+sich,   { '^Alles,^Ungelesen,^Neues,^Heute,^Datum,^Zeit' }
+  n:=MiniSel(x,y,'',getres2(2720,1)+sich,   { '^Alles,^Ungelesen,^Neues,^Heute,^Reorg.,^Datum/Zeit' }
              -(readmode+1));
   if (n>0) and ((readmode>=4) or (n<>readmode+1)) then begin
     showtime:=false;
@@ -1667,17 +1738,20 @@ begin
     case n of
       3 : readdate:=NewDate;
       4 : readdate:=ixdat(left(Zdate,6)+'0000');
-      5 : begin
-            d:=fdat(longdat(readdate));
-            EditDate(15,11+(screenlines-25)div 2,getres2(2720,3),d,brk);   { 'Lesen ab Datum:' }
-            if not brk then readdate:=ixdat(copy(d,7,2)+copy(d,4,2)+copy(d,1,2)+'0000');
+      5:  begin
+            d:=reorgdate;
+            if d<>'' then readdate:=ixdat(d);
+            if right(d,4)<>'0000' then showtime:=true;
           end;
       6 : begin
-            d:=ftime(longdat(readdate));
-            EditTime(15,11+(screenlines-25)div 2,getres2(2720,4),d,brk);   { 'Lesen ab Uhrzeit:' }
+            d:=longdat(readdate);
+            if (Aktdispmode>=10) and not empty
+              then getdate:=true else getdate:=false;
+            EditDate(15,11+(screenlines-25)div 2,getres2(2720,3),d,getdate,brk);   { 'Lesen ab Datum:' }
             if not brk then begin
-              readdate:=ixdat(left(longdat(readdate),6)+copy(d,1,2)+copy(d,4,2));
-              showtime:=true;
+              if getdate then d:=longdat(dbreadint(mbase,'empfdatum'));
+              readdate:=ixdat(d);
+              if right(d,4)<>'0000' then showtime:=true;
               end;
           end;
       7 : begin
@@ -2437,6 +2511,22 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.23  2001/09/16 20:26:14  my
+  JG+MY:- User editieren: bei "Adreﬂbuchgruppe" <F2>-Auswahl aus den
+          aktuell bereits verwendeten Adreﬂbuchgruppen mˆglich.
+
+  JG+MY:- Neue Men¸punkte beim Editieren markierter User:
+          Priorit‰t / Empfangsbest‰tigung / Vertreteradresse / Lˆschen
+
+  JG+MY:- Lesemodi "Datum" und "Zeit" zusammengefaﬂt zu Lesemodus
+          "Datum/Zeit" (kombinierte Datums-/Zeiteingabe). Steht der
+          Markierbalken auf einer Nachricht, kann direkt das Eingangsdatum
+          aus der Nachricht ¸bernommen werden.
+
+  JG+MY:- Neuer Lesemodus "Reorg." (Lesen ab letzter Reorganisation)
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.25.2.22  2001/09/11 07:49:17  mk
   - Resource 2741 fuer Usertest
 
