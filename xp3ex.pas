@@ -276,18 +276,16 @@ var size   : longint;
       i   : integer;
       rr  : word;
       buf : array[0..15] of byte;
-      adr : word;
-      p,b : byte;
-      s68 : atext;
+      adr : DWord;
+      p,b : Integer;
   begin
     moment;
     adr:=0;
-    s68:=sp(68);
     repeat
       blockread(decf,buf,16,rr);
       dec(rr);
-      s:=hex(adr,4)+s68;
-      p:=7;
+      s:=hex(adr,8)+sp(68);
+      p:=11;
       for i:=0 to min(15,rr) do begin
         b:=buf[i];
         s[p]:=hc[b shr 4];
@@ -295,13 +293,13 @@ var size   : longint;
         inc(p,3);
         if i=7 then inc(p);
         if b<32 then
-          s[i+57]:='ú'
+          s[i+61]:='ú'
         else
-          s[i+57]:=chr(b);
+          s[i+61]:=chr(b);
         end;
       wrslong(s);
       inc(adr,16);
-    until eof(decf) or (adr>$ffe0) or (ioresult<>0);
+    until eof(decf) or (ioresult<>0);
     closebox;
   end;
 
@@ -869,11 +867,34 @@ begin
                   ((UpperCase(Hdp.ReplyTo) <> UpperCase(hdp.absender))) then   { 'Antwort an : ' }
                    wrs(gr(27)+hdp.ReplyTo);
 
-    hdf_BET    : wrs(gr(5)+LeftStr(hdp.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
+    hdf_BET    : begin
+                   tmp:=TempS(2000+dbReadInt(mbase,'msgsize')
+                     *iif(art=xTractQuote,1,4));
+                   assign(t,tmp);
+                   Xread(tmp,false);    { Erstmal Betreff aus Nachricht holen... }
+                   reset(t);
+                   repeat
+                     readln(t,s);
+                   until (s='') or (leftStr(s,4)='BET:') or eof(t);
+                   close(t);
+                   _era(tmp);
+                   if LeftStr(s,4)='BET:' then s:=mid(s,6)
+                     else s:=hdp.betreff;
+                   ln:=length(getres2(361,5));
+                   p:=0;
+                   repeat                               { langen Betreff umbrechen }
+                     lr:=rightpos(' ',leftStr(s,78-ln));
+                     if (lr=0) or (length(s)<=78-ln) then lr:=78-ln;
+                     wrs(iifs(p=0,gr(5),sp(ln))+leftStr(s,lr));
+                     inc(p);
+                     s:=mid(s,lr+1);
+                   until s='';
+                 end;
     hdf_ZUSF   : if hdp.summary<>'' then        { 'Zus.fassung: ' }
                  begin
                    s:=hdp.summary;
                    p:=0;
+                   ln:=length(getres2(361,23));
                    repeat                               { lange Zusammenfassung umbrechen }
                      lr:=rightpos(' ', LeftStr(s,78-ln));
                      if (lr=0) or (length(s)<=78-ln) then lr:=78-ln;
@@ -903,14 +924,20 @@ begin
                      end;
                    end;
 
-    hdf_MID    : if hdp.msgid<>'' then
-                   wrs(gr(8)+hdp.msgid);        { 'Message-ID : ' }
+    hdf_MID    : begin
+                   ln:=length(getres2(361,8));                  { 'Message-ID : ' }
+                   wrs(gr(8)+leftStr(hdp.msgid,78-ln));
+                   if length(hdp.msgid)>78-ln then
+                     wrs(sp(ln)+copy(hdp.msgid,79-ln,78-ln));
+                 end;
+
     hdf_BEZ    : with hdp do if References.Count > 0 then            { 'Bezugs-ID  : ' }
                    wrs(gr(19)+References[References.Count-1]+iifs(hdp.References.Count=1,'',', ...'));
 
-    hdf_EDA    : wrs(gr(9)+copy(zdow(hdp.datum),1,2)+' '+fdat(hdp.datum)+', '+  { 'Datum      : ' }
-                     ftime(hdp.datum)+iifs(hdp.datum<>longdat(edat),'  ('+
-                     gr(10)+fdat(longdat(edat))+', '+ftime(longdat(edat))+')','')); { 'erhalten: ' }
+    hdf_EDA    : wrs(gr(9)+iifs(hdp.Datum='','N/A',copy(zdow(hdp.datum),1,2)+' ' { 'Datum' }
+                  +fdat(hdp.datum)+', '+ftime(hdp.datum))
+                  +iifs(hdp.datum<>longdat(edat),'  ('+gr(10)
+                  +fdat(longdat(edat))+', '+ftime(longdat(edat))+')','')); { 'erhalten: ' }
 
     hdf_LEN    : begin
                    sizepos:=filesize(f);
@@ -1075,6 +1102,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.73  2001/08/08 20:13:08  mk
+  Some fixes and improvements from JG:
+  - Fix: Summary header is wrapped correctly now
+  - Subject header is now read from MPUFFER (if possible) and may be more then
+    80 chars long
+  - Subject and MsgID headers are also wrapped now if longer than 78 chars
+  - Messages with an invalid date (usually spam) do now show "N/A" rather
+    than an empty date/time mask ("..,:") in the message reader header
+  - Hex-Dump (Ctrl-H) now also shows messages >64k
+
   Revision 1.72  2001/08/07 13:51:16  mk
   JG:- 'Summary' header is wrapped now
 
