@@ -331,7 +331,7 @@ begin
             geti(su,  'IP-Port',conn_port) or
          (* !! Shouldn't that be cleaned up? *)
          (* !! XXXX-ID/XXXX-Password is already present as loginname/password *)
-	 (* !! XXX-Host/XXXX-Port can always be written as IP-Host/IP-Port    *)
+         (* !! XXX-Host/XXXX-Port can always be written as IP-Host/IP-Port    *)
             gets(s,su,'NNTP-Host',nntp_ip,255) or
             geti(su,  'NNTP-Port',nntp_port) or
             gets(s,su,'NNTP-ID',nntp_id,255) or
@@ -489,7 +489,7 @@ begin
     if not pop3_clear then writeln(t,'POP3Clear=N');
 
     if smtp_ip <>''  then writeln(t,'SMTP-IP=',smtp_ip);
-    if smtp_id <>''  then writeln(t,'SMTP-ID=',pop3_id);
+    if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
     if smtp_pwd<>''  then writeln(t,'SMTP-Password=',smtp_pwd);
     if SmtpAfterPOP  then writeln(t,'SmtpAfterPOP=J');
     ///////////////////////////////////////////
@@ -607,6 +607,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2001/04/05 14:12:03  ml
+  - fixed typo
+
   Revision 1.32  2001/04/03 13:25:40  ma
   - cleaned up fido aka handling
 
