@@ -4238,6 +4238,26 @@ of the UserList.
 Valid Usergroup numbers are in the range 1 - 99
 
 @
+8075
+Users may be assigned a priority level but for this
+to work, priority levels must be assigned a colour
+in /Config/Display/Colours/Messages.
+
+Valid levels are:
+
+<<0>> - Normal User
+<<1>> - Highest priority
+<<2>> - High priority
+<<4>> - Low priority
+<<5>> - Lowest priority
+
+The object of all this is to display messages in
+different colours in the message list, e.g. messages
+from Users to whom you message with often can be
+displayed in one colour whilst messages from "twits"
+can be displayed in another colour etc.
+
+@
 214
 <<[+]>>     Set this if you occasionally like to
         test the Quit function but not actually quit
