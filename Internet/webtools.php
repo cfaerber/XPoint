@@ -1,9 +1,8 @@
 <?
-/* $Id */
+/* $Id$ */
 
-
+// inserts ftp file size
 function GetFileSize($fn) {
-
 	$fh = ftp_connect('ftp.openxp.de');
 	if ($fh) {
 		if (ftp_login($fh,"anonymous","webmaster@openxp.de")) {
@@ -15,7 +14,7 @@ function GetFileSize($fn) {
 	return $result;
 };
 
-// ShowHeader show everything to that point, where the infos should be insertet
+// inserts header (including nagvigation menu)
 function ShowHeader($title) {
 	global $language, $Menu, $Links;
 	
@@ -109,6 +108,7 @@ function ShowHeader($title) {
 }; // ShowHeader
 
 
+// concludes the HTML page
 function ShowFooter() {
 	global $language;
 	echo("</td></tr></table><hr color='Blue' noshade size=1>");
@@ -124,4 +124,76 @@ function ShowFooter() {
 	echo("</td></tr></table></body>\n</html>\n");
 };
 
+
+// generates a contact table from a file
+function ShowContactTable($tablefile) {
+	global $language;
+	// generate table header
+	echo("<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"1\">");
+	echo("<tr><th nowrap width=\"20%\" bgcolor=\"#EEEE00\">Name/Homepage");
+	echo("<th width=\"5%\" bgcolor=\"#EEEE00\"><div align=\"center\">K&uuml;rzel</div>");
+	echo("<th nowrap width=\"75%\" bgcolor=\"#EEEE00\">Aufgabenfeld"); 
+
+	$ptfile = fopen($tablefile,"r");
+	if ($ptfile==false) return 0;
+	// interpret input file entries
+	while (!feof($ptfile)) {
+	  echo("<tr bgcolor=\"#e0e0e0\">");
+	  // Name/homepage
+	  echo("<td nowrap>".fgets($ptfile,120));
+	  // Short/mail
+	  echo("<td nowrap><div align=\"center\">".fgets($ptfile,150));
+	  // Job
+	  $job=fgets($ptfile,150);
+	  if ($language=="en") { $job=fgets($ptfile,150); } else { fgets($ptfile,150); }
+	  echo("<td nowrap>".$job);
+	  // skip empty line
+	  fgets($ptfile,10);
+	}
+	fclose($ptfile);
+
+	// generate table end
+	echo("</table>");
+}
+
+// generates a news page from a file
+function ShowNews($newsfile,$genindex) {
+	// generate index if necessary
+	if ($genindex==1) {
+	  $iarticle = 0;
+	  $pnfile = fopen($newsfile,"r");
+	  if ($pnfile==false) return 0;
+	  while (!feof($pnfile)) {
+	    $iarticle++;
+	    $headline=fgets($pnfile,200);
+	    echo("<a href=\"#art".$iarticle."\"><h3>".$headline."</h3></a><p>");
+	    do {
+	      $headline=fgets($pnfile,1000);
+	    } while((trim($headline)!="")and(!feof($pnfile)));
+	  }
+	  fclose($pnfile);
+	}
+	
+	// show articles
+	$iarticle = 0;
+	$pnfile = fopen($newsfile,"r");
+	if ($pnfile==false) return 0;
+	while (!feof($pnfile)) {
+	  $iarticle++;
+	  $headline=fgets($pnfile,200);
+	  echo("<a name=\"art".$iarticle."\"><h3>".$headline."</h3></a>");
+	  do {
+	    $headline=fgets($pnfile,1000);
+	    if($headline!="") echo($headline);
+	  } while((trim($headline)!="")and(!feof($pnfile)));
+	}
+	fclose($pnfile);
+}
+
+
 ?>
+
+
+
+
+
