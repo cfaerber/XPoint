@@ -1942,9 +1942,13 @@ begin      { --- select --- }
   until ende or quit;
   maus_popinside;
 
-  if not quit and ((dispmode>=1) and (dispmode<=4)) then begin
+  if not quit and ((dispmode>=1) and (dispmode<=4)) then 
+  begin
     _unmark_;
-    if dispmode=2 then UserSwitch;
+
+    if (dispmode=2) or ((dispmode=4) and (lastdm=1))
+      or ((dispmode=3) and (lastdm=2)) then UserSwitch;
+
     if disprec[1]=0 then ubpos:=''
     else begin
       dbGo(ubase,disprec[1]);
@@ -2045,6 +2049,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.21  2001/08/23 12:04:49  mk
+  JG:- Fixed bug in select routine: Switching to the user window with <F2>
+       from a Message/Direct dialogue and activating the "all user" view
+       with the "a" key lead to a garbled display of the user window if
+       the user switched to it again with <Tab> after sending the message.
+
   Revision 1.6.2.20  2001/07/10 19:00:45  my
   - returned to the (correct) previous stage (mistake was in xpcc.pas)
 
