@@ -589,14 +589,14 @@ var   res  : integer;
       end;
   end;
 
-  procedure TestDir2(d:dirstr);
+(*  procedure TestDir2(d:dirstr);
   begin
     if not IsPath(d) then begin
       mkdir(left(d,length(d)-1));
       if ioresult<>0 then
         interr(reps(getres(203),left(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
       end;
-  end;
+  end; *)
 
   procedure SetPath(var pathp:pathptr; var oldpath:pathstr);
   begin
@@ -607,10 +607,10 @@ var   res  : integer;
 
 begin
   EditLogpath:=nil;
-  TestDir2(logpath);
+(*  TestDir2(logpath);
   TestDir2(temppath);
   TestDir2(extractpath);
-  TestDir2(sendpath);
+  TestDir2(sendpath); *)
   if logpath='' then logpath:=ownpath
   else
     if not IsPath(logpath) then begin
@@ -1095,6 +1095,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.11  2000/12/06 11:19:00  mk
+  - TestPfad2 entfernt
+
   Revision 1.45.2.10  2000/12/05 13:09:42  mk
   - einige Datei/Verzeichnisnamen gross geschrieben
 
