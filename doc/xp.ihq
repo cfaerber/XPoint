@@ -2531,14 +2531,14 @@ Dies ist das <<Sende-Fenster>> von CrossPoint. Hier geben
 Sie an, ob und wie eine Nachricht verschickt werden
 soll.
 
-<<Ja>>       die Nachricht wird wie angegeben abge-
+<<Ja>>       Die Nachricht wird wie angegeben abge-
          schickt.
 
-<<Nein>>     die Nachricht wird nicht verschickt, bleibt
+<<Nein>>     Die Nachricht wird nicht verschickt, bleibt
          allerdings als Datei mit Namen LASTMSG im
          Tempor„rverzeichnis liegen.
 
-<<Intern>>   die Nachricht wird nur innerhalb von Cross-
+<<Intern>>   Die Nachricht wird nur innerhalb von Cross-
          Point gespeichert und nicht ins Netz ver-
          sandt.
 
@@ -2584,10 +2584,20 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
          Bretter im gleichen Netz ist allgemein
          unerwnscht!
 
+<<Anhang>>   (RFC, ZConnect) h„ngt eine(n) Datei/Text im
+         MIME-Multipart-Format an die Nachricht an.
+         Sie k”nnen beliebig viele Dateien anh„ngen.
+         Fr die Deklaration des "Content-Type" (im
+         Dialog als "Anhang-Typ" bezeichnet) der
+         einzelnen MIME-Nachrichtenteile wird, sofern
+         vorhanden, die unter <</Edit/Viewer>> definierte
+         Zuordnung der jeweiligen Dateierweiterung
+         zum entsprechenden MIME-Typ verwendet.
+
 
 <<Spezial-Funktionen:
 
-<<Parken>>   die Nachricht wird im Brett /¯Unversandt ge-
+<<Parken>>   Die Nachricht wird im Brett /¯Unversandt ge-
          parkt. Von dort kann sie mit /Nachricht/Wei-
          terleiten/Erneut oder <<<Alt-R> >>endgltig ver-
          sandt werden.
@@ -2626,7 +2636,7 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
          Priorit„tsstatus besitzen, k”nnen Sie unter
          /Config/Anzeige/Farben einstellen.
 
-<<Zusatz>>   (ZConnect/Usenet) erm”glicht die Eingabe
+<<Zusatz>>   (RFC, ZConnect) erm”glicht die Eingabe
          diverser zus„tzlicher Informationen.
 
 <<PGP>>      (ZConnect u.a.) erm”glicht das Signieren
@@ -2644,13 +2654,13 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
 
 <<Weitere Funktionen:
 
-<<<Ctrl-K> >>(ZConnect, RFC/UUCP) schaltet die Nachrich-
-         tenmarkierung "Blindkopie" (Blind Carbon
-         Copy/BCC) ein/aus. Bei BCCs k”nnen die ein-
-         zelnen Empf„nger nicht erkennen, wer Kopien
-         der Nachricht erhalten hat.
+<<<Ctrl-K> >>(RFC, ZConnect) schaltet die Nachrichten-
+         markierung "Blindkopie" (Blind Carbon Copy,
+         "BCC") ein/aus. Bei BCCs k”nnen die einzel-
+         nen Empf„nger nicht erkennen, wer Kopien der
+         Nachricht erhalten hat.
 
-<<<Esc> >>   die Nachricht wird verworfen. Sie ist aller-
+<<<Esc> >>   Die Nachricht wird verworfen. Sie ist aller-
          dings noch nicht endgltig gel”scht, sondern
          liegt unter dem Namen LASTMSG im Tempor„rver-
          zeichnis. Wenn Sie /Config/Opt/Nachrichten
@@ -2661,6 +2671,83 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
 Wenn der Server in Klammern angezeigt wird, bedeutet
 dies, daá mehrere Nachrichten-Kopien ber unter-
 schiedliche Server verschickt werden.
+
+@
+8077
+Hier k”nnen Sie Dateianh„nge im MIME-Multipart-Format
+erstellen. Das ist das bliche Verfahren im Internet,
+um Dateien per Mail oder News zu versenden.
+
+Bitte beachten Sie, das CrossPoint zwar das Versenden
+von Dateien an Newsgroups erlaubt, dies aber in der
+Regel nicht erwnscht ist.
+
+Der MIME-Standard bietet Ihnen darber hinaus die
+M”glichkeit, Ihrer Nachricht mehrere voneinander
+unabh„ngige Textteile hinzuzufgen. Diese Texte
+k”nnen ebenfalls in diesem Men erstellt bzw.
+bearbeitet werden.
+
+
+   <<<N> >>     Neuen Dateianhang hinzufgen
+
+   <<<T> >>     Textanhang erstellen/bearbeiten.
+            Wenn der Cursorbalken auf einem bereits
+            existierenden Textanhang steht, wird
+            dieser zum Bearbeiten in den Editor
+            geladen; anderenfalls kann dort ein
+            neuer Textanhang erstellt werden. Gleich-
+            zeitiges Drcken von <<<Shift> >>erzwingt das
+            Erstellen eines weiteren Textanhangs in
+            jedem Fall. <<<Ctrl-T> >>l„dt den gew„hlten
+            Anhang in den Editor, egal ob es sich
+            dabei um einen Textanhang oder z.B. um
+            eine Bin„rdatei handelt.
+
+   <<<L> >>     Ausgew„hlten Datei-/Textanhang entfernen.
+            Die ursprnglich angeh„ngte Originaldatei
+            wird dabei (natrlich) nicht gel”scht.
+
+   <<<P> >>     Position des markierten Nachrichtenteils
+            mit der eines ausgew„hlten Teils vertau-
+            schen. Der erste Tastendruck auf <<<P> >>mar-
+            kiert den gew„hlten Nachrichtenteil, mit
+            den Cursortasten wird ein anderer Nach-
+            richtenteil ausgew„hlt, und ein erneutes
+            Drcken von <<<P> >>best„tigt die Aktion und
+            die beiden Teile tauschen ihre Position.
+
+   <<<Esc> >>   Men verlassen und nderungen best„tigen
+
+
+Alternativtasten: 
+
+   <<<Ins> >>   Dateianhang hinzufgen
+   <<<Del> >>   Anhang entfernen
+   <<<Space> >> Markieren/Verschieben
+   <<<Enter> >> Men verlassen
+
+@
+8078
+Der Textanhang, den Sie bearbeiten wollen, liegt in
+einem Zeichensatz vor, den CrossPoint bei ausgehenden
+Nachrichten nicht untersttzt.
+
+Sie k”nnen den Nachrichtenteil dennoch bearbeiten,
+mssen sich aber dessen bewuát sein, daá Umlaute und
+andere Sonderzeichen (ASCII-Codes > 127) im Editor
+"falsch" angezeigt werden.
+
+Wenn Sie Umlaute und/oder Sonderzeichen im Editor
+verwenden wollen, mssen Sie diese ebenso "falsch"
+eingeben, damit sie beim Empf„nger korrekt darge-
+tellt werden. Dies ist meist nur ber Tastenkombi-
+nationen <Alt-nnn> m”glich, und Sie mssen wissen,
+welches "falsche" Zeichen dem darzustellenden
+Zeichen bei diesem bestimmten Zeichensatz entspricht.
+
+Vermeiden Sie daher am besten die Eingabe von
+Sonderzeichen.
 
 @
 69
@@ -18203,6 +18290,14 @@ Nachricht dann l”schen.
 Nachrichten, die mit /Nachrichten/Weiterleiten/
 /Original versandt wurden, drfen nachtr„glich
 nicht ge„ndert werden.
+@
+20639
+Das Format von MIME-Multipart-Nachrichten wrde
+spezielle Anforderungen an diese Funktion stellen,
+die momentan nicht erfllt werden.
+
+Evtl. steht diese Funktion in einer sp„teren Version
+zur Verfgung.
 @
 20701
 CrossPoint konnte das Brett mit der unversandten

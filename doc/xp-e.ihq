@@ -1225,93 +1225,188 @@ sent.
 <<Yes>>      The Message is sent "as is".
 
 <<No>>       The Message is discarded and NOT sent.
-        It can, however, still be found in the file
-        called LASTMSG in the temp. directory, as
-        long as no other message has been written.
+         It can, however, still be found in the file
+         called LASTMSG in the temp. directory, as
+         long as no other message has been written.
 
 <<Internal>> The message is not sent out but sent to
-         the Newsgroup it was written to (also
-         PM Newsgroups) for storage.
+         the Newsgroup it was written to (also PM
+         Newsgroups) for storage.
 
-<<Special>> Shows some extra functions. You can
-        select functions by their hot-key letters.
+<<Special>>  Shows some extra functions. You can
+         select functions by their hot-key letters.
 
-<<Subject>> Changes the subject of the message.
+<<To:>>      Changes the recipient of the message.
+or <</>>     Delete the current entry to choose with <F2>
+         between users and newsgroups. You can also
+         enter one of the pre-defined [short-names]@11605
+         as defined under /Edit/Short names instead
+         of the complete address.
 
-<<Box>>     Allows a different Server to be selected.
+         ATTENTION! Only experienced users should
+         use this function.
 
-<<Code>>    Changes the encoding of the message. PMs
-        can only be changed when the recipient has
-        entered a password.
+<<Subject>>  Changes the subject of the message.
 
-<<Text>>    Return to the Editor to make changes to
-        the message text.
-        (Not with binary messages).
+<<Server>>   Allows a different Server to be selected.
 
-<<Copies>>  Up to 125 Users and Newsgroups can be set
-        to receive copies (but max. 15 Newsgroups per
-        Server). Note however, it is frowned upon to
-        send the same message to several Newsgroups
-        in the same net!
+<<Code>>     Changes the encoding of the message. PMs
+         can only be changed when the recipient has
+         entered a password.
 
-<<Special-Functions:
+<<Text>>     Return to the Editor to make changes to the
+         message text (not with binary messages).
 
-<<Park>>    The message is "parked" in the /¯Unsent
-        area. The area will be created if it doesn't
-        exist. From there, you can re-edit and/or
-        send it by pressing (Alt-R).
+<<Copies>>   Up to 125 Users and Newsgroups can be set
+         to receive copies (but max. 15 Newsgroups
+         per Server). Note however, it is frowned
+         upon to send the same message to several
+         Newsgroups in the same net!
 
-<<Date>>    Puts the message in the Autosend List
-        (Edit/AutoSend) and it will be sent at a
-        predetermined time.
+<<Attach>>   (RFC, ZConnect) Appends a file/text to the
+         message in MIME multipart format. The number
+         of attachments is unlimited. The "Content-
+         Type" declaration of the several message
+         parts is taken from the definitions made
+         under <</Edit/Viewer>> for the respective file
+         extension (if specified) relating to a
+         particular MIME type.
 
-<<RRQ>>     Requests an (automatic) confirmation of
-        receipt from the recipient to be sent back.
-        Note advice about "Request Confirmation"
-        in XPOINT.TXT.
+
+<<Special Functions:
+
+<<Park>>     The message is "parked" in the /¯Unsent
+         area. The area will be created if it doesn't
+         exist. From there, you can re-edit and/or
+         send it by pressing <Alt-R>.
+
+<<Date>>     Puts the message in the Autosend List
+         (Edit/AutoSend) and it will be sent at the
+         specified time.
+
+<<RRQ>>      Requests an (automatic) confirmation of
+         receipt from the recipient to be sent back.
+         Note advice about "Request Confirmation" in
+         XPOINT.TXT.
 
 <<withoutSig>> Leaves off the automatic signature.
 
-<<Delete>>  Sets the message straight to delete, so
-        it will be deleted in the next Re-Org after
-        it is sent.
+<<Delete>>   Sets the message straight to delete, so it
+         will be deleted in the next Re-Org after it
+         is sent.
 
-<<Crash>>   (Fido). The message is readied for a
-        direct call [/Fido/Crash].@13104
+<<Crash>>    (Fido) The message is readied for a direct
+         call [/Fido/Crash].@13104
 
-<<Prio>>    (ZConnect) sets how the message will be
-        sent, [Direct Mail] or [Express Mail].@4004
-        Beware! Both will likely cost money!
+<<Prio>>     (ZConnect) Sets how the message will be
+         sent, [Direct Mail] or [Express Mail].@4004
+         Beware! Both will likely cost money!
 
-<<More>>    (ZConnect/UseNet) shows dialog boxes for
-        [stand-in] address and [Keywords].@851 852
-        Select it and see!
+         (RFC) Sets the priority status of the
+         message.  You can select between several
+         priority levels, and the recipient will
+         (likely) be able to see the assigned prio-
+         rity in his message reader. If and how XP
+         displays different priority levels can be
+         defined under /Config/Display/Colours.
+        
+<<More>>     (RFC, ZConnect) Shows dialog boxes for
+         [stand-in] address and [Keywords].@851 852
+         Select it and see!
 
-<<MausNet>> (Maus) appends "(MausNet)" to the message
-        and it will not be sent over gates.
+<<MausNet>>  (Maus) Appends "(MausNet)" to the message
+         and it will not be sent over gates.
 
-<<local>>   (Maus) appends "(lokal)" to the message
-        and it will be sent no further than your
-        local Server.
+<<local>>    (Maus) Appends "(lokal)" to the message
+         and it will be sent no further than your
+         local Server.
 
-<<<Esc> >>  The message is discarded. If the option
-        <</Config/Options/Messages/../¯Unsent>> is
-        enabled, the message is <<parked>> (see above).
-        Even if not, the message can be retrieved,
-        it exists in the <<TEMP directory>> under the
-        name <<LASTMSG>> (only as long as no other
-        message has been written!).
-
-<</>>       Changes the recipient of the message.
-        Delete the current entry to choose (with <F2>)
-        between users and newsgroups.
-        ATTENTION! only experienced users should
-        use this function.
+<<<Esc> >>   The message is discarded. If the option
+         <</Config/Options/Messages/../¯Unsent>> is
+         enabled, the message is <<parked>> (see above).
+         Even if not, the message can be retrieved,
+         it exists in the <<TEMP directory>> under the
+         name <<LASTMSG>> (only as long as no other
+         message has been written!).
 
 
 If the <<server>> is shown in <<brackets>>, it means that
 several copies of the message will be sent over
 <<different servers>>.
+
+@
+8077
+Here you can create file attaches in MIME multipart
+format. This is the usual procedure in the Internet
+to send files along with mail or news postings.
+
+Please note that CrossPoint allows you to send file
+attachments also to newsgroups, but that this is
+usually neither desired nor permitted.
+
+Additionally, the MIME standard allows you to attach
+one or more text parts. These text parts can be
+created or edited here as well.
+
+
+   <<<N> >>     Append new file attach
+
+   <<<T> >>     Create/edit text part. If the selection
+            bar is already standing on a text part,
+            this key will load it in the editor for,
+            well, editing; otherwise a new text part
+            can be created there. Pressing <<<Shift> >>
+            simultaneously forces the creation of a
+            new text part in any case. <<<Ctrl-T> >>loads
+            the selected attachment in the editor,
+            be it a text part or e.g. a binary file.
+
+   <<<D> >>     Deletes the selected file/text attach-
+            ment. The original file that has been
+            attached before will (of course) not be
+            deleted.
+
+   <<<P> >>     Swaps the position of a marked message
+            part with the position of a part to be
+            selected afterwards. The first key press
+            of <<<P> >>marks the currently selected
+            message part, by moving the selection bar
+            with the cursor keys another message part
+            is selected, pressing <<<P> >>once more
+            confirms the action and both parts swap
+            their position.
+
+   <<<Esc> >>   Leave menu and confirm changes
+
+
+Alternative keys: 
+
+   <<<Ins> >>   Append file attach
+   <<<Del> >>   Delete attach
+   <<<Space> >> Mark/Move
+   <<<Enter> >> Leave menu
+
+@
+8078
+The text part that you wish to edit has a character
+set not supported by CrossPoint for outgoing
+messages.
+
+Nonetheless you can edit it but please be aware that
+all Hi-ASCII characters (ASCII codes > 127) will be
+displayed "wrong" in the editor.
+
+If you want to use Hi-ASCII characters in this text
+part yourself, you will have to enter them in the
+same "wrong" way - otherwise the recipient will not
+see them correctly. This is usually only possible by
+using <Alt-nnn> key combinations, and you need to
+know which "wrong" character corresponds to the
+character to be displayed in this particular
+character set.
+
+Thus it is recommended not to use Hi-ASCII characters
+when editing this text part.
 
 @
 69
@@ -12451,6 +12546,14 @@ original sender in ZConnect, RFC/UUCP and in MausNet.
 20630
 The Archive newsgroups entered under
 /Config/Miscellaneous/Options do not exist.
+@
+20639
+The format of MIME multipart messages sets several
+requirements to this function which are currently
+not met by CrossPoint.
+
+Eventually this function will be supported also for
+MIME multipart messages in a later version.
 @
 20701
 CrossPoint is no longer able to locate the newsgroup
