@@ -1317,7 +1317,10 @@ ende0:
     else
 {$ENDIF }
     if net and (OStype<>OS_2) then
+    begin
       RestComState(bport,cps);
+      SetUart(bport,baud,Pnone,8,1,not IgnCTS);
+    end;
     comn[boxpar^.bport].fossil:=orgfossil;
 
     if net then begin
@@ -1544,6 +1547,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.8  2001/03/01 09:34:18  mk
+  JG:- fix fuer COM-Reset
+
   Revision 1.16.2.7  2001/01/18 23:59:58  mk
   - verschiedene Aenderungen fuer PPP-Modus
 

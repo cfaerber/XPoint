@@ -658,7 +658,10 @@ begin
 
       releasecom(comnr);
       if OStype<>OS_2 then
+      begin
         RestComState(comnr,cps);
+        SetUart(bport,baud,Pnone,8,1,not IgnCTS);
+      end;
       rfehler(2002);     { 'Modem nicht bereit.' }
       initcom:=false;
       end
@@ -1611,6 +1614,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.3  2001/03/01 09:34:18  mk
+  JG:- fix fuer COM-Reset
+
   Revision 1.10.2.2  2000/10/17 00:16:45  mk
   - LFN Unit hinzugefuegt (Bug #112966)
 
