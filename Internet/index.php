@@ -17,11 +17,6 @@ if (eregi('.de$', $SERVER_NAME)) {
 	$language="en";
 };
 
-//$news="news-de.txt";
-//$genindex=1;
-$file="contact-de.html";
-$language="de";
-
 require("menu.php");
 require("webtools.php");
 ShowHeader("OpenXP Online");
