@@ -49,7 +49,7 @@ const
   pformstr    = ' DOS/32';    { 32 Bit DOS mit FPC oder VP }
   {$ENDIF}
 
-  author_name = 'OpenXP Team';
+  author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
   x_copyright = '(c) 2000';
 
@@ -179,6 +179,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.49  2000/12/06 09:43:42  mk
+  - OpenXP-Team mit Bindestrich in der Mitte
+
   Revision 1.48  2000/11/18 18:38:21  hd
   - Grundstruktur des Loggings eingebaut
 
