@@ -1818,8 +1818,9 @@ fromstart:
       1: with TSendAttach_Part(parts[0]) do begin
 //         if ntMIME(netztyp) and not ntConv(netztyp) then
 //           hdp.typ := 'M' else // ZConnect with MIME
-           if(TSendAttach_Part(parts[0]).FileEOL=MimeEOLNone) or
-             (TSendAttach_Part(parts[0]).Analyzed.IsBinary) then
+           if((TSendAttach_Part(parts[0]).FileEOL = MimeEOLNone) or
+              (TSendAttach_Part(parts[0]).Analyzed.IsBinary)) and 
+              not TSendAttach_Part(parts[0]).ContentType.NeedCharset then
              hdp.typ := 'B'  // UUZ will encode
            else
              hdp.typ := 'T'; // UUZ will encode
@@ -2508,6 +2509,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.12  2002/08/25 19:34:00  cl
+  - BUGFIX: <8VUmTJAKnKB@zocki.toppoint.de> Auto-MIME bei XP32
+
   Revision 1.48.2.11  2002/08/20 01:10:06  cl
   - BUGFIX: [ 595224 ] Nachricht/Weiterleiten/Erneut (1 of 2 bugs)
     BUGFIX: <8UvISBXKnKB@zocki.toppoint.de> Probleme mit "unversandt"
