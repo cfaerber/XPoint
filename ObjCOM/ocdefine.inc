@@ -97,6 +97,7 @@
 
 {$IFDEF Linux }
   {$DEFINE TCP }
+  {$DEFINE Unix }
 {$ENDIF }
 
 {$IFDEF BSD }
@@ -105,6 +106,9 @@
 
 {
   $Log$
+  Revision 1.7.2.3  2003/01/07 11:13:51  mk
+  - kylix update
+
   Revision 1.7.2.2  2003/01/01 16:18:38  mk
   - changes to made FreeBSD version compilable
 

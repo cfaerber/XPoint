@@ -27,7 +27,7 @@
 program openxp;
 
 uses
-  Main;
+  main;
 
 begin
   StartOpenXP;
