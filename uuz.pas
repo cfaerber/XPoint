@@ -71,7 +71,7 @@ const
       SwapFileName= 'uuz.swp';
       UUserver    = 'UUCP-Fileserver';
       tspecials   = '()<>@,;:\"/[]?=';       { RFC822-Special Chars    }
-      tspecials2  = tspecials+' ';           { RFC1341-Speical Chars   }
+      tspecials2  = tspecials+' ';           { RFC1341-Special Chars   }
 
       XpWindow    : byte = 0;
 
@@ -170,7 +170,7 @@ type  OrgStr  = string[orglen];
                   telefon    : string[TeleLen];
                   homepage   : string[HomepageLen];
                   PmReplyTo  : string[AdrLen];   { Antwort-An }
-                  AmReplyTo  : string[AdrLen];   { Diskussiom-In, nicht benutzt! }
+                  AmReplyTo  : string[AdrLen];   { Diskussion-In, nicht benutzt! }
                   amrepanz   : integer;
                   followups  : integer;          { Anzahl Followup's }
                   followup   : array[1..maxfollow] of string[AdrLen];
@@ -256,7 +256,7 @@ procedure Charset2IBM;
 begin
   with hd.mime do
   begin
-    if (ctype=tMultipart) or (subtype='html') then exit;
+    if mpart or (subtype='html') then exit;
     CharsetToIBM(charset,s);
   end;
 end;
@@ -1121,7 +1121,6 @@ end;
 procedure MimeAuswerten;
 var ismime : boolean;
     binary : boolean;
-    mpart  : boolean;
 begin
   with hd.mime do begin
     (* ignore presence of MIME-Version due to roboustness principle *)
@@ -1130,9 +1129,7 @@ begin
     b64:=ismime and (encoding=encBase64);
     binary:=ismime and (not (ctype in [tText,tMultipart,tMessage]) or
                         ((encoding=encBinary) and (ctype<>tText)));
-    (* set typ='M' for pass-through message types *)
-    mpart :=ismime and (ctype in [tMultipart,tMessage]);
-    hd.typ:=iifc(mpart,'M',iifc(binary,'B','T'));
+    hd.typ:=iifc((binary or b64) and (ctype<>tText),'B','T');
     charset:=LStr(charset);    
     if (ctype=tText) and (charset<>'') and (charset<>'us-ascii') and
        (left(charset,9)<>'iso-8859-') and (charset<>'windows-1252') and
@@ -1544,7 +1541,7 @@ var p,i   : integer; { byte -> integer }
       end;
   end;
 
-{ Entfert RFC-Kommentare, ignoriert dabei auch quoted-strings }
+{ Entfernt RFC-Kommentare, ignoriert dabei auch quoted-strings }
   procedure RFCRemoveComment(var r0:string);
   var s,p,c   : integer;
           q   : boolean;
@@ -2174,7 +2171,8 @@ begin
     s[1]:=c;
     ReadRFCheader(true,s);
     (* no decoding for MIME multipart messages *)
-    binaer:=(hd.typ = 'B') or (hd.typ = 'M');
+    binaer := (hd.typ='B');
+    mpart := (hd.typ='M') or (hd.mime.ctype=tMultipart);
 
     if (mailuser='') and (hd.envemp<>'') then begin
       if cpos('<',hd.envemp)=1 then delete (hd.envemp,1,1);
@@ -2304,7 +2302,8 @@ begin
       if UseEnvTo then
         if (hd.envemp <> '') then mempf:=hd.envemp
         else if (hd.delivTo <> '') then mempf:=hd.delivTo;
-      binaer:=(hd.typ = 'B') or (hd.typ = 'M');
+      binaer := (hd.typ = 'B');
+      mpart := (hd.typ='M') or (hd.mime.ctype=tMultipart);
       if (mempf<>'') and (mempf<>hd.xempf[1]) then
       begin
         hd.xoem:=hd.xempf;
@@ -2446,7 +2445,8 @@ begin
           hd.netztyp:=nt_RFC;
           ReadString(true);
           ReadRFCheader(false,s);
-          binaer:=(hd.typ = 'B') or (hd.typ = 'M');
+          binaer := (hd.typ = 'B');
+          mpart := (hd.typ='M') or (hd.mime.ctype=tMultipart);
           seek(f1,fp); ReadBuf; bufpos:=bp;
           repeat                           { Header Åberlesen }
             ReadString(true);
@@ -2680,7 +2680,7 @@ var dat    : string[30];
   procedure WrLongline(txt:string; var ss:string);
   var p,r,ml : byte;
   begin
-    if convibm then IBM2ISO(ss);
+    IBM2ISO(ss);  { Header immer konvertieren! }
     ml:=iif(rfc1522,60,78);
     r:=ml+1-length(txt);
     while length(ss)>r do begin
@@ -2778,7 +2778,7 @@ begin
   with hd do
   begin
     convibm := (lstr(hd.charset) <> 'iso1');
-    mpart   := hd.typ='M';
+    mpart := (hd.typ='M') or (hd.mime.ctype=tMultipart);
     dat:=ZtoRFCdate(datum,zdatum);
     if mail then begin
       if wab='' then s:=absender          { Envelope erzeugen }
@@ -2813,12 +2813,12 @@ begin
       wrs(f,'Path: '+addpath+pfad);
     wrs(f,'Date: '+dat);
     uuz.s:=realname;
-    if convibm then IBM2ISO(uuz.s);
+    IBM2ISO(uuz.s);  { Header immer konvertieren! }
     RFC1522form;
     wrs(f,'From: '+absender+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     if wab<>'' then begin
       uuz.s:=war;
-      if convibm then IBM2ISO(uuz.s);
+      IBM2ISO(uuz.s);  { Header immer konvertieren! }
       RFC1522form;
       wrs(f,'Sender: '+wab+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     end;
@@ -2880,12 +2880,12 @@ begin
     if mail and (lstr(betreff)='<none>') then
       betreff:='';
     uuz.s:=betreff;
-    if convibm then IBM2ISO(uuz.s);
+    IBM2ISO(uuz.s);  { Header immer konvertieren! }
     RFC1522form;
     wrs(f,'Subject: '+uuz.s);
     if keywords<>'' then begin
       uuz.s:=keywords;
-      if convibm then IBM2ISO(uuz.s);
+      IBM2ISO(uuz.s);  { Header immer konvertieren! }
       RFC1522form;
       wrs(f,'Keywords: '+uuz.s);
     end;
@@ -2910,8 +2910,7 @@ begin
 
   { if not NoMIME and (mail or (NewsMIME and (x_charset<>''))) then }
   { if not NoMIME and (mail or NewsMIME) then }
-    if not NoMIME and (mail or (NewsMIME and (x_charset<>''))
-      or (hd.boundary<>'')) then
+    if not NoMIME and (mail or (NewsMIME and (x_charset<>'')) or mpart) then
     with mime do begin
       wrs(f,'MIME-Version: '+mversion);
       s:=maintype(ctype)+'/'+subtype;
@@ -2944,7 +2943,7 @@ begin
       wrs(f,'Distribution: '+distribution);
     if organisation<>'' then begin
       uuz.s:=organisation;
-      if convibm then IBM2ISO(uuz.s);
+      IBM2ISO(uuz.s);  { Header immer konvertieren! }
       RFC1522form;
       wrs(f,'Organization: '+uuz.s);
     end;
@@ -2970,7 +2969,7 @@ begin
       wrs(f,'X-Comment-To: '+fido_to);
     for i:=1 to ulines do begin
       uuz.s:=uline^[i];
-      if convibm then IBM2ISO(uuz.s);
+      IBM2ISO(uuz.s);  { Header immer konvertieren! }
       RFC1522form;
       wrs(f,uuz.s);
     end;
@@ -3202,12 +3201,12 @@ begin
       error('fehlerhafter Eingabepuffer!');
     end;
     binmail := (hd.typ <> 'T') and (hd.typ <> 'M');
-    mpart  :=hd.typ='M';
+    mpart := (hd.typ='M') or (hd.mime.ctype=tMultipart);
     if cpos('@',hd.empfaenger)=0 then      { AM }
       if binmail and not NewsMIME then
-        writeln(#13'BinÑrnachricht <',hd.msgid,'> wird nicht konvertiert')
+        writeln(#13'Binary message <',hd.msgid,'> will not be converted')
       else if mpart and not NewsMIME then
-        writeln(#13'MIME-Nachricht <',hd.msgid,'> wird nicht konvertiert')
+        writeln(#13'MIME multipart message <',hd.msgid,'> will not be converted')
       else begin   { AM }
         inc(n); write(#13'News: ',n);
         if client then CreateNewFile;
@@ -3238,7 +3237,7 @@ begin
             ReadString(true);
             if fpos+bufpos>gs then ShortS;
             if convibm and (not mpart) then IBM2ISO(uuz.s);
-            if NewsMIME and (not mpart) then MakeQuotedPrintable;
+            if NewsMIME then MakeQuotedPrintable;
             wrbuf(f);
           end;
         flushoutbuf(f);
@@ -3274,7 +3273,7 @@ begin
       seek(f1,adr);
       makeheader(true,f1,copycount,0,hds,hd,ok,false);
       binmail := (hd.typ <> 'T') and (hd.typ <> 'M');
-      mpart  :=hd.typ='M';
+      mpart := (hd.typ='M') or (hd.mime.ctype=tMultipart);
       if cpos('@',hd.empfaenger)>0 then
         if ustr(left(hd.empfaenger,length(server)))=server then begin
           if not client then WrFileserver;
@@ -3302,7 +3301,7 @@ begin
               if fpos+bufpos>gs then ShortS;
               if SMTP and (s<>'') and (s[1]='.') then s:='.'+s;
               if convibm and (not mpart) then IBM2ISO(uuz.s);
-              if not mpart then MakeQuotedPrintable;
+              MakeQuotedPrintable;
               wrbuf(f2);
             end;
           flushoutbuf(f2);
@@ -3364,6 +3363,19 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.65  2002/03/29 16:22:01  my
+  MY:- Ausgehende MIME-Multipart-Nachrichten werden jetzt auch dann keiner
+       Zeichensatzkonvertierung unterzogen, wenn der Header "CHARSET: ISO1"
+       nicht vorhanden ist. Der Header "CHARSET: ISO1" verhindert aber
+       (wie bisher) ebenfalls eine Zeichensatzkonvertierung.
+
+  MY:- Eingehende MIME-Multipart-Nachrichten erhalten keinen Header
+       "TYP: MIME" mehr (KompatibilitÑt mit anderen XP-Versionen).
+
+  MY:- Ein- wie ausgehende Nachrichten werden dann als MIME-Multipart-
+       Nachrichten betrachtet, wenn sie einen entsprechenden Content-Type-
+       Header *oder* den Header "TYP: MIME" (oder beides) tragen.
+
   Revision 1.35.2.64  2002/03/29 15:29:50  my
   MY:- Support des Headers "U-Delivered-To" fÅr eingehende SMTP-Mails
        implementiert: Bei Angabe des Schalters "-UseEnvTo" (beim Netztyp
