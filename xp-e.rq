@@ -466,12 +466,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13   Delete archived messages
 14   Append new newsgroups at end
 15   Server name in PM-newsgroups
-16   Minimal disk space on drive %s~
+16   Minimum disk space on drive %s~
 17   MBytes
 18   Use XMS
-19   Use comments from newsgroup list
+19   Use descriptions from newsgroup list
 20   Enables special characters for new users
-21   Use of : and | is equal to quote char.
+21   Enable alternate quote characters
 + 251
 # Extract as
 0    Text w/o head
