@@ -24,14 +24,14 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # Achtung: Das erste Wort in den folgen Zeilen (Main, XPoint, Nachricht etc.)
 #          darf *nicht* bersetzt werden. Es wird von OpenXP nur intern verwendet
 #          und nicht angezeigt.
-0   Main,001Open^XPù1,002M^aintenanceù7,003^Messageù3,004^Netcallù15,005^Fidoù31,006E^ditù16,007^Configù6,008^Toolsù2,009^?ù41
+0   Main,001Open^XPù1,002^Re-Orgù7,003^Messageù3,004^Netcallù15,005^Fidoù31,006E^ditù16,007^Configù6,008^Toolsù2,009^?ù41
 1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statisticsù17,015^Terminal,016S^hell     F9,-,018^Quit
 2   Zusatz,021^Calendar,022^Archive Viewer
 3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038News/Echo ^Managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark,058Message^ID
 6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modem,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
-7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,077,^Complete,-,078^Change Server,079Mi^scù33
+7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,077^Complete,-,078^Change Server,079Mi^scù33
 8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
 9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Lines,096M^isc,098^Accessibility
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
@@ -1266,16 +1266,16 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # number of lines
 0    9
 1    This program is free software; you can redistribute it and/or
-2    modify it under the terms of the GNU General Public License as
+2    modify it under the terms of the GNU General Public Licence as
 3    published by the Free Software Foundation; either version 2 of
-4    the License, or (at your option) any later version.
+4    the licence, or (at your option) any later version.
 5    This program is distributed in the hope that it will be useful,
 6    but without any warranty; without even the implied warranty of
 7    merchantibility or fitness for a particular purpose.
 8
-9    See the GNU General Public License for more details.
+9    See the GNU General Public Licence for more details.
 #
-20   Choose "Continue" if you agree to these terms of license.
+20   Choose "Continue" if you agree to these terms of licence.
 21
 26   You have been using OpenXP unregistered for more than %s months!
 30   ^Continue
@@ -1386,6 +1386,38 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    Sending message
 4    Saving message in~
 5    Sending message to~
+
+10   Send message ...
+
+20   ~^Yes~
+21   ^No
+22   ^Intern
+
+25   ^Text
+26   ^Attach
+
+30   Group:
+31   To:
+32   CC:
+33   BCC:
+
+35   Reply-To:
+36   Disc. In:
+
+40   From:
+41   Sender:
+
+50   Subject:   ~
+
+81   Select ...
+
+86   Orig. To:  ~
+87   Forwarder:  ~
+
+92   Marked addresses
+90   Area(s) or Group(s)
+91   ^User or Direct
+
 -
 + 611
 1    Private message
@@ -4014,6 +4046,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.59  2003/02/05 17:27:28  mf
+# 610.10, 20, 21, 22, 25, 26, 30, 31, 32, 33, 35, 36, 40, 41, 50, 81, 86, 87, 90, 91, 92 added. 10.0 changed, 10,7 corrected. Corrected spelling mistakes in 520.2, .4, .9
+#
 # Revision 1.58  2003/01/29 15:40:34  mf
 # - Added: 728, 29900.1, 29900.2
 #
