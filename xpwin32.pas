@@ -58,7 +58,7 @@ uses
   {$IFDEF VP}
   vputils,
   {$ENDIF }
-  SysUtils, dos, windows, winxp;
+  SysUtils, windows, winxp;
 
 function SysGetScreenLines: Integer;
 var
@@ -168,12 +168,40 @@ end;
 
 // Execute an external program
 function SysExec(const Path, CmdLine: String): Integer;
-var TempError: Integer;
+var
+  SI: TStartupInfo;
+  PI: TProcessInformation;
+  Proc : THandle;
+  l    : Longint;
+  AppPath,
+  AppParam : array[0..255] of char;
+  DosError : Integer;
 begin
-  DosError:=0;
-  Exec(Path, CmdLine);
-  TempError:=DosError; DosError:=0;
-  if TempError=0 then Result:=DosExitCode else Result:=-TempError;
+  FillChar(SI, SizeOf(SI), 0);
+  SI.cb:=SizeOf(SI);
+  SI.wShowWindow:=1;
+  Move(Path[1],AppPath,length(Path));
+  AppPath[Length(Path)]:=#0;
+  AppParam[0]:='-';
+  AppParam[1]:=' ';
+  Move(CmdLine[1],AppParam[2],length(Cmdline));
+  AppParam[Length(CmdLine)+2]:=#0;
+  if not CreateProcess(PChar(@AppPath), PChar(@AppParam),
+           Nil, Nil, false,$20, Nil, Nil, SI, PI) then
+   begin
+//!!     DosError:=Last2DosError(GetLastError);
+     exit;
+   end
+  else
+   DosError:=0;
+  Proc:=PI.hProcess;
+  CloseHandle(PI.hThread);
+  if WaitForSingleObject(Proc, Infinite) <> $ffffffff then
+    GetExitCodeProcess(Proc,l)
+  else
+    l:=-1;
+  CloseHandle(Proc);
+//!  LastDosExitCode:=l;
 end;
 
 Function GetEnv(envvar: string): string;
@@ -203,8 +231,8 @@ end;
 end.
 {
   $Log$
-  Revision 1.15  2001/07/28 12:33:33  mk
-  - GetEnv is now in OS dependend and not in dos unit
+  Revision 1.16  2001/07/28 12:38:33  mk
+  - removed unit dos, uses SysExec from Freepascal RTL
 
   Revision 1.14  2001/01/05 18:36:05  ma
   - fixed SysExec
