@@ -12172,7 +12172,7 @@ Wochentage:   Sa
 
                 <entry>Netztyp; 2=ZConnect (Default), 3=MagicNet,
                   10=Quick-Mail, 11=GS-Mailbox, 20=Maus, 30=Fido,
-                  40=UUCP/RFC </entry>
+                  31=QWK, 40=UUCP, 50=NNTP, 51=POP3, 52=IMAP</entry>
 
               </row>
 
@@ -25017,6 +25017,9 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 <!--
 
 $Log$
+Revision 1.13  2000/11/24 19:05:11  fe
+Corrections from Hans-Juergen Bardenhagen.
+
 Revision 1.12  2000/11/23 22:35:54  fe
 Team list corrected.
 
