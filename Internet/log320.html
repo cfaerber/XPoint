@@ -63,13 +63,16 @@
     the user switched to it again with &lt;Tab&gt; after sending the message 
   <li>JG: Fixed crash with F/A/A and empty Message Area database 
   <li>JG: If the search term was found in the second or any subsequent line of 
-    a paragraph, the search was stuck at this place
+    a paragraph, the search was stuck at this place 
   <li>MK: fixed crash with addresses longer then 80 chars, when xp try to add 
-    a domain name
+    a domain name 
   <li>JG+MY:- Fix: When auto-creating a user with an address longer than 80 chars 
     the user flags (Prio, Filter, Return Receipt) of the last DB entry were used 
     (dbSeek couldn't find the address with more than 80 chars). Address string 
-    is truncated to eAdrLen now<br>
+    is truncated to eAdrLen now
+  <li>JG: Fix: Showing message header with 'O' in message reader after &lt;Ctrl-PgUp/PgDn&gt; 
+    could overwrite the screen position the selection bar had been moved to with 
+    the message the lister was started with <br>
     <br>
 </ul>
 <p><b>01.01.2001 MK 3.20d </b>Minior fixes, die zweite 
