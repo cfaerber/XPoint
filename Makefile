@@ -249,7 +249,7 @@ endif
 
 ifeq ($(OS),linux)
 
-prefix ?= /opt/openxp
+prefix ?= /usr/lib/openxp
 bindir ?= $(prefix)/bin
 binlinkdir ?= /usr/bin
 datadir ?= $(prefix)/lib
@@ -1900,13 +1900,28 @@ xp7o$(UNITEXT): xp7o.pas archive$(UNITEXT) database$(UNITEXT) \
 
 endif
 
+ifeq ($(OS),dos32)
+
+xp8$(UNITEXT): xp8.pas crc$(UNITEXT) database$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
+	win2$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
+	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
+	xp2c$(UNITEXT) xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o2$(UNITEXT) \
+	xp4$(UNITEXT) xp6$(UNITEXT) xp6o$(UNITEXT) xp8.inc xp8fs.inc \
+	xp9$(UNITEXT) xp9bp$(UNITEXT) xp_iti$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT) xpnt$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
-xp8$(UNITEXT): xp8.pas database$(UNITEXT) datadef$(UNITEXT) \
-	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
-	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
-	xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
+xp8$(UNITEXT): xp8.pas crc$(UNITEXT) database$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
+	win2$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
 	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
 	xp2c$(UNITEXT) xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o2$(UNITEXT) \
 	xp4$(UNITEXT) xp6$(UNITEXT) xp6o$(UNITEXT) xp8.inc xp8fs.inc \
@@ -1916,28 +1931,13 @@ xp8$(UNITEXT): xp8.pas database$(UNITEXT) datadef$(UNITEXT) \
 	$(PC) $(PFLAGS) $<
 
 endif
-ifeq ($(OS),dos32)
-
-xp8$(UNITEXT): xp8.pas database$(UNITEXT) datadef$(UNITEXT) \
-	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
-	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
-	xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
-	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
-	xp2c$(UNITEXT) xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o2$(UNITEXT) \
-	xp4$(UNITEXT) xp6$(UNITEXT) xp6o$(UNITEXT) xp8.inc xp8fs.inc \
-	xp9$(UNITEXT) xp9bp$(UNITEXT) xp_iti$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) xpnt$(UNITEXT)
-	$(PC) $(PFLAGS) $<
-
-endif
 ifneq (,$(findstring $(OS),os2 win32))
 
-xp8$(UNITEXT): xp8.pas database$(UNITEXT) datadef$(UNITEXT) \
-	fileio$(UNITEXT) inout$(UNITEXT) keys$(UNITEXT) \
-	lister$(UNITEXT) maske$(UNITEXT) maus2$(UNITEXT) \
-	resource$(UNITEXT) typeform$(UNITEXT) win2$(UNITEXT) \
-	xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
+xp8$(UNITEXT): xp8.pas crc$(UNITEXT) database$(UNITEXT) \
+	datadef$(UNITEXT) fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) lister$(UNITEXT) maske$(UNITEXT) \
+	maus2$(UNITEXT) resource$(UNITEXT) typeform$(UNITEXT) \
+	win2$(UNITEXT) xp0$(UNITEXT) xp1$(UNITEXT) xp1help$(UNITEXT) \
 	xp1input$(UNITEXT) xp1o$(UNITEXT) xp1o2$(UNITEXT) \
 	xp2c$(UNITEXT) xp3$(UNITEXT) xp3ex$(UNITEXT) xp3o2$(UNITEXT) \
 	xp4$(UNITEXT) xp6$(UNITEXT) xp6o$(UNITEXT) xp8.inc xp8fs.inc \
@@ -2583,8 +2583,8 @@ install-strip: all install_bindir \
 	$(patsubst %,install_%,$(RESFILES)) \
 	$(patsubst %,install_%,$(RSTFILES)) \
 	install_exampledir $(patsubst %,install_%,$(EXAMPLES)) \
-	$(patsubst %,install_%,$(CONTRIB)) $(INSTALL_DATA) icons.res \
-	$(datadir)
+	$(patsubst %,install_%,$(CONTRIB))
+	$(INSTALL_DATA) icons.res $(datadir)
 	$(MAKE) -C doc install
 endif
 
@@ -2802,6 +2802,10 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.51  2000/11/23 13:05:13  fe
+# Fixed dependencies.
+# Synchronized Linux installation paths with xp2.pas.
+#
 # Revision 1.50  2000/11/22 20:55:56  fe
 # Fixed install, install-strip and some other stuff.
 #
