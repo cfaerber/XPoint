@@ -1,0 +1,341 @@
+Datenbank-Formate von CrossPoint
+--------------------------------
+
+MSGS:  Nachrichtendatei
+
+ 1. Brett       String(5)   i    $/1/A/U + Int-Nr. aus BRETTER oder USER
+                                 $ = Intern
+                                 1 = PM 
+                                 A = oeffentlich
+                                 U = User  
+ 2. Betreff     String(40)
+ 3. Absender    String(80)  i
+ 4. OrigDatum   Longint
+ 5. EmpfDatum   Longint     i
+ 6. Groesse     LongInt          Nachrichtengroesse ohne Header
+ 7. Typ         Char             'T' / 'B'
+ 8. HalteFlags  Byte             0=normal, 1=halten, 2=loeschen
+ 9. gelesen     Byte        i    1=gelesen
+10. unversandt  Byte             Flags: 1=unversandt, 2=Binaermeldung, 4=pmCrypt
+                                        8=Wiedervorlage, 16=Crash, 32=zurueckgest.
+                                        64=interne Nachricht - keine Statusabfrage
+                                        128=gecancelt
+11. Ablage      Byte             MPUFFER-Ablage:
+				 0..9   = Z-Netz-Format (alt)
+				 10..19 = ZConnect-Format
+12. Adresse     Longint          Offset in der Ablage (MPUFFER)
+13. MsgSize     Longint          Gesamtgroesse incl. Header
+14. WVdatum     Longint          ab 0.9g: Original-Empfangsdatum bei Wiedervlg.
+15. MsgID       String(19)       ab 1.01
+16. Netztyp     Longint          ab 2.0:  LSB=Netztyp, $100=rueckwaerts-verkettet
+                                          $200=File Attached, $400=pm_reply
+                                          $800=WAB vorhanden, $1000=highlight
+                                          $2000=ISO-Zeichensatz
+                                          $4000=PGP-signiert
+                                          $8000=KOM-Header vorhanden
+                                          HSB-1=EMP-Anzahl gesamt
+                                          HSB=EMP-Nummer (Cross-Postings)
+17. Name        String(25)       ab 2.1:  Fido: Brettempf, sonst: Realname
+18. Flags       Longint          ab 3.1:  1=PGP-Signatur ok
+                                          2=PGP-Signatur fehlerhaft
+                                          4=Multipart-MIME Nachricht (ab 3.2)
+                                 ab 3.21: 8+16+32=Priority:
+                                           000=normal / 001=hoechste / 010=hoch               
+                                           011=niedrig / 100=niedrigste
+				 ab OpenXP/32 3.9.5: 64=HeaderOnly, 128=HDO-Request
+                                 ab 3.30: 256 = Eigene Nachricht (fuer Replaceown)
+				 ab OpenXP/32 3.9.5: 512+1024=SPAM-Status:
+					   00=nichts / 01=potentiell SPAM /
+					   10=manuell als HAM markiert /
+					   11=manuell als SPAM markiert
+19. Mimetyp     String(30)       ab 3.2:  Multipart-Mime Typ der Nachricht
+
+Indizes:
+
+ 1. Brett/EmpfDatum/Int_Nr              miBrett
+ 2. Brett/gelesen/EmpfDatum/Int_Nr      miGelesen
+
+DUPEKILL: gleiches Format, aber anderer Index:
+
+ 1. Halteflags/Brett/OrigDatum/MsgID/EmpfDatum
+
+Userflags[8] = Random(65536)
+Userflags[1] = (Userflags[8] shr 3) xor (Userflags[8] shl 2) xor HPasswdSum
+Userflags[2] = (Userflags[8] shr 3) xor (Userflags[8] shl 2) xor SPasswdSum
+Userflags[3] = Zeitpunkt der letzten Copyright-Anzeige
+Userflags[4] = 0 (bis XP 3.11), 1 (XP 3.12), 2 (XP 3.12c), 3 (XP 3.12d),
+               4 (ab XP 3.2)
+
+-----------------------------------------------------------------------
+
+BRETTER:   Brettdatei
+
+ 1. Brettname   String(81)  i    Brettyp: $=intern, 1=PM, A=Netz, U=User
+ 2. Kommentar   String(30)
+ 3. Pollbox     String(20)       '' == internes Brett
+ 4. HalteZeit   Integer
+ 5. Flags       Byte             1=Haltezahl, 2=ungelesene Msgs, 4=kein Filter
+                                 8=Schreibsperre, 16=RFC-Brett
+                                 32: Adresse = Fido-Origin
+ 6. LDatum      Longint          Datum der letzten Nachricht
+ 7. Gruppe      Longint     i    Verkettung in Gruppendatei
+ 8. Index       Longint     i    ab 1.13: Anzeige-Reihenfolge
+ 9. Adresse     String(81)       ab 2.11: Followup-To / Vertreteradresse
+
+Indizes:
+
+ 1. +Brettname           biBrett
+ 2. Gruppe               biGruppe
+ 3. Int_nr               biIntnr
+ 4. Index                biIndex  (Default in XP4)
+
+Userflags[1] = Zeitpunkt der Erstinstallation
+
+-----------------------------------------------------------------------
+
+USER:   User(U)/Verteiler
+
+ 1. Username    String(80)  i       (Verteiler: #4[Name]@V  ; Trennzeile: #0$/T+Trennzeichen )
+ 2. Adresse     Extern           U
+ 3. Kommentar   String(30)
+ 4. Pollbox     String(20)  i
+ 5. Haltezeit   Integer             (Verteiler: Anzahl Empfaenger)
+ 6. AdrBuch     Byte        i       Adressbuchgruppe, 0:User steht nicht im Adressbuch
+ 7. Passwort    Extern           U
+ 8. UserFlags   Byte                ~1=DummUser, 2=Default:codieren, 4=Verteiler
+                                    8=keine Umlaute, 16=EBs, 32+64+128=Prioritaet
+ 9. Codierer    Byte             U  0=Nix, 1=QPC, 2=DES, 3-5=pmc1-3, 9=PGP
+
+Indizes:
+
+ 1. +Username                  uiName
+ 2. AdrBuch/+Username          uiAdrbuch
+ 3. Pollbox/+Username          uiBoxName    (ab Openxp 3.21)
+ 4. Pollbox/Adrbuch/+Username  uiBoxAdrbuch (ab Openxp 3.21) 
+
+-----------------------------------------------------------------------
+
+BOXEN:  Boxendatei
+
+ 1. Boxname     String(20)  i    Eingabe: 8
+ 2. Username    String(30)
+ 3. Kommentar   String(30)
+ 4. Dateiname   String(8)        plus .BFG
+ 5. Script      Byte             1=Script vorhanden (Dateiname.SCR)
+                                 2=~/Netcall/Alle, ~8=MsgIDs
+                                 Z: 16=eigener Absendername im PP ohne @BOX
+                                 4=User@Point(Z), AliasP.(Maggi), /node(Fido)
+ 6. NameOMaps   String(20)       MAPS-Name (ab 0.9g)
+ 7. Netztyp     Byte             ab 1.12: 0=Netcall, 2=ZConnect, 3=Magic
+                                 4=ProNet, 10=QuickMail, 11=G+S, 20=Maus,
+                                 30=Fido, 31=QWK, 40=UUCP, 41=RFC/Client,
+                                 90=Turbo-Box (deaktiviert)
+ 8. Realname    String(40)       ab 1.2
+ 9. Pointname   String(25)       ab 1.2
+10. Domain      String(60)       ab 1.2
+11. Fidoname    String(40)       ab 1.93: eigener Systemname
+12. ReplyTo     String(80)       ab 1.97: Vertreteradresse
+13. AVertreter  String(20)       ab 2.15: Vertreterbox fuer AMs
+14. PVertreter  String(20)       ab 2.15: Vertreterbox fuer PMs
+15. Boxdomain   String(60)       ab 2.15: Domain des Servers
+16. FQDN        String(60)       ab 3.20: FQDN (MsgID)
+17. Email       String(80)       ab 3.40: eMail-Adresse 
+
+Indizes:
+
+ 1. +Boxname             boiName
+ 2. +Dateiname           boiDatei
+
+-----------------------------------------------------------------------
+
+GRUPPEN:  Brettgruppendatei
+
+ 1. Name        String(30)  i
+ 2. Haltezeit   Integer
+ 3. MsgLimit    Longint
+ 4. Flags       Byte             1=Standard-Gruppe (nicht loeschbar)
+                                 0=Default, 2=Re^n, 4=Re:, 6=nix
+ 5. Umlaute     Byte             0=IBM, 1=ASCII, 2=ISO, 3-5=eigene
+ 6. Kopf        String(8)        Kopfschablone; Extension .XPS
+ 7. Signatur    String(8)        Signatur-Schablone; Extension .XPS
+ 8. QuoteMsk    String(8)        ab 0.9e: Quote-Schablone; Extension .XPS
+ 9. Origin      String(50)       ab 1.92: Fido-Origin
+10. Adresse     String(50)       ab 1.92: Fido-Brettadresse
+
+11. AMRealname  String(40)       ab OpenXP/32 2001-06-04: Support f. Roles
+12. AMMail      String(80)         (nur RFC-Netztypen)
+13. AMReplyTo   String(80)
+14. AMFQDN      String(60)
+15. PMRealname  String(40)
+16. PMMail      String(80)
+17. PMReplyTo   String(80)
+18. PMFQDN      String(60)
+
+19. QuoteChar   String(5)        ab OpenXP/32 3.9.4: Quote-Zeichen
+
+20. QuoteToMsk  String(8)        ab OpenXP/32 3.9.4: Quote-Schablone
+				 fuer Nachrichten an neue GABEL;
+				 Extension .XPS
+21. PMKopf      String(8)        ab OpenXP/32 3.9.4: Kopf-Schablone
+				 fuer private Nachrichten; Extension .XPS
+22. PMSignatur  String(8)	 ab OpenXP/32 3.9.4: Signatur-Schablone
+				 fuer private Nachrichten; Extension .XPS
+23. PMQuoteMsk  String(8)        ab OpenXP/32 3.9.4: Quote-Schablone
+				 fuer private Nachrichten; Extension .XPS
+
+Indizes:
+
+ 1. +Name                giName
+ 2. Int_Nr               giIntnr
+
+-----------------------------------------------------------------------
+
+SYSTEME:  Fileserver u.a.
+
+ 1. Name        String(20)  i
+ 2. Kommentar   String(30)
+ 3. Flags       Word             1=Fileserver
+ 4. FS-Name     String(20)       Username des Fileservers
+ 5. FS-Passwd   String(20)       Fileserver-SERVICE-Passwort, oder Indexdatei
+ 6. FS-Typ      Byte             0=SendZMsg, 1=iMLS, 2=NCBmail, 3=UUCP
+ 7. ZBV1        String(60)       ab 2.15: UUCP: Listen-Konvertierer
+ 8. ZBV2        String(60)       ab 2.15
+
+Indizes:
+
+ 1. +Name                siName
+
+-----------------------------------------------------------------------
+
+AUTOMSG:  automatischer Nachrichten-Versand (ab 1.11)
+
+ 1. Dateiname   String(80)       Default-Pfad: Sendeverzeichnis
+ 2. Betreff     String(40)  i
+ 3. Typ         Char             'T' / 'B'
+ 4. Empfaenger  String(80)  i    Brett, User@Kiste oder [Verteiler]
+ 5. Pollbox     String(20)       (optional)
+ 6. Wochentage  Byte             Bit 0=Mo, 1=Di, .., 6=So
+ 7. Tage        Longint          Bit 0=1, Bit 1=2, ... Bit 30=31
+ 8. Monate      Word             Bit 0=Jan, 1=Feb, ... 11=Dez
+ 9. Datum1      Longint          einzelnes Datum
+10. Datum2      Longint          dito
+11. Flags       Word             1=aktiv, 2=AutoLoeschen, 4=nur geaenderte Dat.
+                                 ab 3.30: 8=ersetzen (Supersedes)
+                                 ab 3.9.8: 32+64+128=Prioritaet
+				           256=Empfangsbest.
+					   512=reserviert (Lesebest.)
+					   1024=nicht archivieren
+12. LastDate    Longint          letztes Sendedatum
+13. LastFdate   Longint          Dateidatum beim letzten Absenden
+14. LastMsgID   String(120)      ab 3.30: MessageID beim letzten Absenden
+15. MIMEType    Extern           ab 3.9.8: MIME Content-Type
+16. CharSet     String(40)       ab 3.9.8: Datei-Zeichensatz
+
+Indizes:
+
+ 1. +Betreff/Empfaenger   aiBetreff
+
+-----------------------------------------------------------------------
+
+PSEUDOS:  Empfaenger-Pseudonyme
+
+ 1. Kurzname    String(15)  i
+ 2. Langname    String(80)
+ 3. Pollbox     String(20)
+ 4. Flags       Word
+
+Indizes:
+
+ 1. +Kurzname            piKurzname
+
+-----------------------------------------------------------------------
+
+BEZUEGE:  Bezugsverkettung
+
+ 1. MsgPos      Longint          RecNo() in MSGS
+ 2. MsgID       Longint     i    CRC32
+ 3. Ref         Longint     i  	 Bezug (0, falls keiner)
+ 4. Datum       Longint          Erstellungsdatum, ausser Bit 0-3:
+                                 1=erste Kopie eines CrossPostings
+                                 2=weitere Kopie eines CrossPostings
+
+Indizes:
+
+ 1. MsgID       beiMsgID
+ 2. Ref         beiRef
+
+-----------------------------------------------------------------------
+
+MIME:  Mime-Typen (ab 3.20)
+
+ 1. +TYP        String(40)  i
+ 2. +EXTENSION  String(5)   i
+ 3. PROGRAMM    String(70)
+
+Indizes:
+
+ 1. mtiTyp      +TYP
+ 2. mtiExt      +EXTENSION
+
+-----------------------------------------------------------------------
+
+SPAMFLT: Wortliste fuer statistischen Spamfilter (ab OpenXP/32 3.9.5)
+
+ 1. WORD        String(7)   i    Wort (Grossbuchstaben, max. 7 Zeichen)
+ 2. GOODCNT	Longint		 Anzahl in "guten" Nachrichten (Ham)
+ 3. BADCNT	Longint		 Anzahl in "schlechten" Nachrichten (Spam)
+ 4. DATUM	Longint          Datum (spezielles Format)
+
+Indizes:
+
+ 1. spamiWord   WORD
+
+-----------------------------------------------------------------------
+
+Format der Datei mit Extern-Feldern (*.EB1)
+-------------------------------------------
+0000..00FF: Header
+00FF..    : Nutzdaten
+
+Die Nutzdaten sind in Blöcken organisiert. Diese starten und enden(!)
+mit einem Byte, das den Typ angibt:
+
+Die unteren 7 Bit ($7F)  bestimmen die Länge des Blocks. Die Zahlen 0 bis 51
+stehen hierbei für die Längen von 32 bis 1610612736 Bytes (siehe
+database.pas).
+
+Das höchstwertige Bit ($80) gibt an, ob der Block unbelegt ist (0: unbelegt,
+1: frei).
+
+Bei einem belegten Block befindet sich nach dem Typbyte am Anfang eine
+Längenangabe (4 Bytes Longint, Little Endian) gefolgt von den Nutzdaten.
+Es stehen somit 6 Bytes (2 Typbytes plus 4 Bytes Länge) weniger Nutzdaten
+zur Verfügung als der Block lang ist.
+
+Bei einem unbelegten Block befindet sich nach dem Typbyte am Anfang zwei
+Adressangaben (je 4 Bytes Longint, Little Endian), die die Position des
+vorangehenden/nächsten freien Blocks (bzw. $0000000 für den ersten/letzten
+Block) angeben (als Dateiposition) und so eine verkettete Liste bilden.
+
+Anmerkungen:
+
+XP speichert strings als shortstring, das heißt, dass die Nutzdaten am
+Anfang ein Längenbyte und dann maximal 255 Zeichen enthalten.
+Dieses Format kann NICHT einfach erweitert werden (indem man z.B. das
+Längenbyte des shortstrings auf maximal 255 setzt und beim Einlesen
+ignoriert); alte XP-Versionen würden dann mehr Daten einlesen als Speicher
+für den Shortstring reserviert ist (256) und sich somit den Stack
+überschreiben.
+
+Beispiel:
+
+00006b0: 0015 0000 0014 636c 6175 7340 6661 6572  ......claus@faer
+00006c0: 6265 722e 6d75 632e 6465 0000 0000 0000  ber.muc.de......
+------------------------------------------------
+         TTLL LLLL LLDD DDDD DDDD DDDD DDDD DDDD
+         DDDD DDDD DDDD DDDD DDDD ---- ---- --TT
+
+TT: Typbyte (hier 32 Bytes, belegt)
+LL: Länge der Nutzdaten (15 Bytes)
+DD: Nutzdaten (hier ein Shortstring, beginnend mit dem Längenbyte)
+--: Nicht genutzt

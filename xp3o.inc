@@ -1,0 +1,1660 @@
+{ $Id$
+
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
+   Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
+
+procedure readpuffer;
+var x,y   : Integer;
+    s     : string;
+    brk   : boolean;
+    ed,pb : boolean;
+    ebest : boolean;
+    read  : boolean;
+    useclip: boolean;
+begin
+  s:=WildCard;
+  useclip:=true;
+  if ReadFilename(getres2(330,1),s,true,useclip) then   { 'Puffer einlesen' }
+    if not FileExists(s) then
+      rfehler(304)   { 'Datei nicht vorhanden!' }
+    else if pos(UpperCase(AblagenFile),UpperCase(s))>0 then
+      rfehler(305)   { 'Interne Ablage - bitte erst umbenennen!' }
+    else begin
+      dialog(46,6,fitpath(s,38),x,y);
+      ed:=false; pb:=true;
+      ebest:=false; read:=false;
+      maddbool(3,2,getres2(330,2),ed); mhnr(101);   { 'Empfangsdatum = Erstellungsdatum' }
+      maddbool(3,3,getres2(330,3),pb);     { 'Server aus Pfad uebernehmen' }
+      maddbool(3,4,getres2(330,4),ebest);  { 'Empfangsbestaetigungen versenden' }
+      maddbool(3,5,getres2(330,5),read);   { 'Nachrichten als "gelesen" markieren' }
+      readmask(brk);
+      closemask;
+      closebox;
+      if not brk then
+        if puffereinlesen(s,iifs(pb,'',DefaultBox),ed,false,ebest,
+                          iif(read,pe_gelesen,0)) then
+          signal;
+      if useclip then _era(s);
+      end;
+  freeres;
+end;
+
+{ Pollbox='' -> Pollbox wird aus Pfad uebernommen, falls vor-  }
+{               handen, sonst aus DefaultBox                  }
+{ Replace-ED :  Empfangsdatum durch Erstellungsdatum ersetzen }
+
+function  PufferEinlesen(const puffer, pollbox:string; replace_ed,
+                         sendbuf,ebest:boolean; pflags:xpWord):boolean;
+const
+  bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
+  maxll    = 64;
+
+type llref = record
+   MsgPos, MsgId, MsgRef, Datum: Integer; 
+  end;
+
+var x,y      : Integer;
+    f,pfile  : file;
+    fm: Byte;
+    llbuf    : array[1..maxll] of llref;
+    llanz    : integer;
+    padr,size: longint;
+    ablage   : byte;
+    abadd    : byte;
+    p        : charrp;
+    adr,fs,l : longint;
+    hdp      : THeader;
+    i        : integer;
+    hdsize   : longint;
+    rr       : Integer;
+    dat      : string;
+    name     : string;
+    pb       : string;
+    _brett   : string;
+    mapsname : string;
+    seekbr   : string;
+    msgid2   : string;    { gekuerzte MsgID (FormMsgid) fuer mbase }
+    msgid3   : string;    { generierte MsgID fuer Nachrichten ohne }
+    amvertreter,
+    pmvertreter : string;
+    sysbetreff  : string;  { Betreff von Changesys/getsys }
+    orgempf  : string;
+    tobrett  : boolean;
+    typ1     : char;
+    ok       : boolean;
+    adrbuch  : byte;
+    flags    : longint;
+    atp      : byte;
+    grnr     : longint;
+    ld       : longint;
+    uflags   : byte;
+    aufnehmen: boolean;
+    diff     : integer;
+    haltezeit: integer16;
+    MsgCount : longint;
+    brettlog,
+    userlog  : text;
+    _datum   : longint;
+    check    : boolean;
+    p0       : byte;
+    zconnect : boolean;
+    pm       : boolean;
+    mnt      : RNetzMsg;  //longint;       { Netztyp-Feld fuer mbase }
+    today    : longint;
+    empfnr   : integer;
+    junk     : boolean;
+    msgsent  : boolean;
+    forcepfadbox: boolean;
+    IsGelesen   : boolean;
+    cmessagefile:text;         { Datei fuer Controlmessages (Cancels/Supersedes) }
+    num_cmessages : integer;   { Anzahl Controlmessages (Cancels/Supersedes) }
+    mbflags  : longint;
+    mstr     : string;          { Message-Text }
+    sp       : scrptr;
+    ReplaceOwnHoldFlag: byte;
+    MsgIdsRead: TStringList;
+    dummy    : integer;
+    cust_header : custheadstr;
+    BrettKommentar : string;
+
+  function puffer_ok:boolean;
+  var ok : boolean; lastsubj,lastmid: string;
+  begin
+    moff;
+    mstr:=getres(331);
+    FWrt(x+2,y+2,mstr);    { 'Puffer ueberpruefen...' }
+    mon;
+    MsgCount:=0; adr:=0; lastsubj:=''; lastmid:='';
+    repeat
+      inc(MsgCount);
+      if MsgCount mod 10=0 then
+      begin
+        moff;
+        FWrt(x+3+length(mstr),y+2, StrS(MsgCount));
+        mon;
+      end;
+      seek(f,adr);
+      makeheader(zconnect,f,0,hdsize,hdp,ok,true, true);
+      if ok then begin
+        inc(adr,hdsize+hdp.groesse);
+        lastsubj:=hdp.betreff; lastmid:=hdp.msgid;
+        end;
+    until not ok or (adr>=fs-3);     { Der Puffer kann maximal 3 zusaetzliche }
+    if (MsgCount>0) then begin
+      moff;
+      FWrt(x+3+length(mstr),y+2,strs(MsgCount));
+      mon;
+    end;
+    result:=ok and (adr<=fs+8);
+    if not result then Debug.DebugLog('xp3o','Last correct message: '+lastsubj+', '+lastmid+', filepos now '+inttostr(adr),DLError);
+    diff:=min(maxint,max(0,fs-adr));
+  end;
+
+{
+  procedure writemsg;
+  var size : longint;
+      rr   : xpWord;
+  begin
+    dbWriteN(mbase,mb_ablage,ablage);
+    dbWriteN(mbase,mb_adresse,padr);
+    size:=hdp.groesse+hdsize;
+    dbWriteN(mbase,mb_msgsize,size);
+    blockwrite(pfile,p^,min(readfirst,hdsize+hdp.groesse));
+    dec(size,readfirst);
+    if size>0 then begin
+      repeat
+        blockread(f,p^,min(bufsize,size),rr);
+        blockwrite(pfile,p^,rr);
+        dec(size,rr);
+      until size=0;
+    end;
+    inc(padr,hdp.groesse+hdsize);
+  end;
+}
+
+  function pollbox_str(zconnect,user:boolean):string;
+  begin
+    if not user and (amvertreter<>'') then
+      pollbox_str:=amvertreter
+    else if user and (pmvertreter<>'') then
+      pollbox_str:=pmvertreter
+    else if not forcepfadbox and (pollbox<>'') then
+      pollbox_str:=pollbox
+    else if trim(hdp.pfad)='' then
+      pollbox_str:=DefaultBox
+    else
+      pollbox_str:=pfadbox(zconnect,hdp.pfad);
+  end;
+
+  function adrok(const s:string):boolean;
+  begin
+    adrok:=(useraufnahme=0) or
+           ((useraufnahme=1) and (pm or ((cPos('%',s)=0) and (cPos(':',s)=0)))) or
+           ((useraufnahme=3) and pm);
+  end;
+
+  function isl(const s:string):boolean;
+  begin
+    isl:=LeftStr(hdp.betreff,length(s))=s;
+  end;
+
+  function LeftAbsender(const s:string):boolean;
+  begin
+    LeftAbsender:=(LeftStr(LowerCase(hdp.absender),length(s)+1+length(pollbox))=LowerCase(s+'@'+pollbox));
+  end;
+
+  procedure bearbeiteMsg(var id,abs,sender:string; cancel:boolean);
+  var crc  : longint;
+      hdp2 : THeader;
+      hds  : longint;
+      rec  : longint;
+      mrec : longint;
+
+    procedure DelMsg;
+    var b : byte;
+    begin
+      b:=1;  dbWriteN(mbase,mb_gelesen,b);
+      b:=2;  dbWriteN(mbase,mb_halteflags,b);   { geloescht }
+      dbReadN(mbase,mb_unversandt,b);
+      b:=b or 128;                              { gecancelt }
+      dbWriteN(mbase,mb_unversandt,b);
+    end;
+
+    { Fuer die Bearbeitung von Cancel-Nachrichten wurde u.a. der folgende
+      Abschnitt aus RFC 1036 zu Grunde gelegt:
+
+      "Only the author of the message or the local news administrator is
+       allowed to send this message.  The verified sender of a message is
+       the "Sender" line, or if no "Sender" line is present, the "From"
+       line.  The verified sender of the cancel message must be the same as
+       either the "Sender" or "From" field of the original message.  A
+       verified sender in the cancel message is allowed to match an
+       unverified "From" in the original message." }
+
+    function okay:boolean;
+    begin
+      if sender<>'' then
+        result:=((hdp2.absender=sender) or (hdp2.cust1=sender)) and (hdp2.msgid=id)
+      else
+        result:=(hdp2.absender=abs) or (hdp2.cust1=abs) and (hdp2.msgid=id);
+    end;
+
+  begin
+    mrec:=0;
+    TrimFirstChar(id, '<');
+    TrimLastChar(id, '>');
+    if cpos('@',id)=0 then exit;
+    crc:=MsgidIndex(id);
+    hdp2 := THeader.Create;
+    if cancel then mrec:=dbRecno(mbase); { Position der Cancel-Mail merken }
+    dbSeek(bezbase,beiMsgId,dbLongStr(crc));
+    if dbFound then
+      while (not dbEOF(bezbase)) and (dbReadIntN(bezbase,bezb_msgid)=crc) do begin
+        repeat;
+          hdp2.msgid:='';
+          rec:=dbReadIntN(bezbase,bezb_msgpos);
+          if not dbDeleted(mbase,rec) then begin   { sicher ist sicher.. }
+            dbGo(mbase,rec);
+            Readheader(hdp2,hds,false);
+          end;
+          dbNext(bezbase);
+        until (hdp2.msgid=id) or dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_msgid)<>crc);
+        if okay then DelMsg; { zu loeschende/zu ersetzende Nachricht loeschen }
+      end;
+    Hdp2.Free;
+    if cancel then begin
+      dbGo(mbase,mrec);
+      DelMsg;   { Cancel-Nachricht auf 'gelesen' / 'loeschen' }
+    end;
+  end;
+
+  procedure bearbeite_cancels_supersedes;
+  var
+      id : string;
+      abs: string;
+      str: string;
+      sender :custheadstr;
+      rec: longint;
+      n  : longint;
+      l  : integer;
+  begin
+    Debug.DebugLog('xp3o','start bearbeite_cancels_supersedes',DLTrace);
+    reset(cmessagefile);
+    n:=0;
+    FWrt(x+2,y+6,getres(341)); { 'Bearbeite Steuernachrichten...' }
+    l:=Length(getres(341));
+    while not eof(cmessagefile) do begin
+      Inc(n);
+      FWrt(x+2+l,y+6,strs((n * 100) div num_cmessages)+'%');
+      readln(cmessagefile,str);
+      if str='cancel' then begin
+        readln(cmessagefile,rec);
+        dbGo(mbase,rec);
+        readln(cmessagefile,id);
+        readln(cmessagefile,abs);
+        readln(cmessagefile,sender);
+        bearbeiteMsg(id,abs,sender,true)
+      end else begin
+        readln(cmessagefile,id);
+        readln(cmessagefile,abs);
+        readln(cmessagefile,sender);
+        bearbeiteMsg(id,abs,sender,false);
+      end;
+    end;
+    close(cmessagefile);
+    FWrt(x+2+l,y+6,getres2(324,7)); { 'fertig.' }
+  end;
+
+  function IsCancelMsg:boolean;
+  begin
+    with hdp do
+      IsCancelMsg:=(attrib and attrControl<>0) and
+                   (LowerCase(LeftStr(control,7))='cancel ');
+  end;
+
+  function isSupersedesMsg:boolean;
+  begin
+    isSupersedesMsg:=(hdp.ersetzt<>'');
+  end;
+
+  function IsSupportCfg:boolean;
+
+    function NameOk:boolean;
+    begin
+      NameOk:=stricmp(hdp.realname,inout.pm) or
+              (pos(LowerCase(inout.pm),LowerCase(hdp.absender))>0);
+    end;
+
+    function XPctlOk:boolean;
+    var sum : longint;
+        i   : integer;
+    begin
+      with hdp do begin
+        sum:=0;
+        for i:=1 to length(datum) do
+          inc(sum,ord(datum[i])*7);
+        for i:=1 to length(msgid) do
+          inc(sum,ord(msgid[i])*3);
+        XpCtlOk:=(sum=XpointCtl div 1000);
+        end;
+    end;
+
+  begin
+    with hdp do
+      IsSupportCfg:=
+        (ntXPctl(netztyp) and NameOk and XPctlOk) or
+        ((netztyp=nt_Maus) and (absender=inout.pm+'@LU') and
+         (LeftStr(betreff,11)=SupportCfg));
+  end;
+
+  procedure TestControlMessage;
+  var box    : string;
+      fstype : byte;
+  begin
+    automessaging:=true;
+    with hdp do begin
+      if aufnehmen and
+        ( ((LeftStr(UpperCase(betreff),7)='BRETTER') or
+           (pos('your list',LowerCase(betreff))>0))
+         and
+         stricmp(LeftStr(absender,length(mapsname)),mapsname) and
+         (FirstChar(FirstEmpfaenger)='1') )
+      or
+         ((LeftStr(absender,7)='SYSTEM@') and
+          ((LeftStr(UpperCase(betreff),11)='NETZBRETTER') or  { QuickMail }
+           (UpperCase(betreff)='BESTELLBARE BRETTER')  or  { G & S     }
+           (pos('BRETTLISTE',UpperCase(betreff))>0)))      { ZQWK }
+          then begin
+        MapsReadList;
+        end;
+
+      if (LeftStr(UpperCase(betreff),6)='FILES.') and IsMailAddr(absender) and
+         (typ='T') then
+      begin
+        box:=copy(absender,cpos('@',absender)+1,20);
+        if cpos('.',box)>0 then begin
+          box:=LeftStr(box,cpos('.',box)-1);
+          if IsServer(box,fstype) and (fstype<>3) then begin
+            FS_Readlist(true);
+            end;
+          end;
+        end;
+
+      if (FirstChar(FirstEmpfaenger)='1') { PM } and empfbest and ebest and
+         (((attrib and attrReqEB<>0) and (attrib and attrIsEB=0)) or
+          ((empfbkennung<>'') and (isl(empfbkennung) or
+            isl(QPC_ID+empfbkennung) or isl(DES_ID+empfbkennung)))) then
+      begin
+        empfang_bestaetigen(pollbox);
+        end;
+
+      if (sysbetreff<>'') and (FirstChar(FirstEmpfaenger)='1') and (LowerCase(betreff)=sysbetreff) and
+         (LeftAbsender('changesys') or LeftAbsender('news') or
+          LeftAbsender('postmaster') or LeftAbsender('root')) then
+      begin
+        GetSysfile;
+        end;
+(*
+      if UsePGP and (FirstChar(FirstEmpfaenger)='1') { PM } and
+         (pgpflags and fPGP_request<>0) and ebest then begin
+        if pollbox<>'' then
+          xpsendmessage.forcebox:=pollbox
+        else
+          xpsendmessage.forcebox:=pfadbox(true,pfad);
+        sData.References.Add(msgid);
+//      xpsendmessage._beznet:=netztyp;
+        PGP_SendKey(iifs(pgp_uid='',absender,pgp_uid));
+//      xpsendmessage.forcebox:='';
+        end;
+*)
+
+      if isSupersedesMsg and (not ignoreSupCancel) then begin
+        writeln(cmessagefile,'supersedes');
+        writeln(cmessagefile,ersetzt);
+        writeln(cmessagefile,absender);
+        if cust1<>'' then
+          writeln(cmessagefile,cust1)
+        else
+          writeln(cmessagefile,wab);
+        inc(num_cmessages);
+      end;
+
+      if IsCancelMsg and (not ignoreSupCancel) then begin
+        writeln(cmessagefile,'cancel');
+        writeln(cmessagefile,dbRecno(mbase));
+        writeln(cmessagefile,trim(mid(control,8)));
+        writeln(cmessagefile,absender);
+        if cust1<>'' then
+          writeln(cmessagefile,cust1)
+        else
+          writeln(cmessagefile,wab);
+        inc(num_cmessages);
+      end;
+
+      if IsSupportCFG then
+        XRead(SupportCfg,false);
+      end;
+    automessaging:=false;
+  end;
+
+  function logstr(const s:string):string;
+  begin
+    logstr:=LeftStr(date,6)+RightStr(date,2)+' '+LeftStr(time,5)+' '+s;
+  end;
+
+  procedure pmCryptDecode;
+  var passwd,s : string;
+      size     : integer;
+      codierer : byte;
+      f,f2     : file;
+      tmp      : string;
+      uncfile  : string;
+      uvs      : byte;
+      hdp2     : THeader;
+      hds2     : longint;
+      ok       : boolean;
+      orgsize  : longint;
+      orgempf  : AdrStr;
+      sp       : scrptr;
+      hdp2typ  : char;
+  begin
+    size:=0;
+    dbSeek(ubase,uiName,UpperCase(hdp.absender));
+    uflags := 0;
+    if not dbFound then exit;
+    passwd:= dbReadXStr(ubase,'passwort',size);
+    dbReadN(ubase,ub_codierer,codierer);
+    if (passwd='') or (codierer<3) or (codierer>2+maxpmc) or
+      (TempFree<2*dbReadInt(mbase,'msgsize')) then exit;
+    hdp2 := THeader.Create;
+    ReadHeader(hdp2,hds2,true);
+    assign(f,temppath+cryptedfile);
+    rewrite(f,1);
+    XreadF(dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse'),f);
+    close(f);
+    uncfile:=temppath+uncryptedfile;
+    s:=pmcrypt[codierer-2].decode;
+    rps(s,'$KEY',passwd);
+    rps(s,'$INFILE',temppath+cryptedfile);
+    rps(s,'$OUTFILE',uncfile);
+    rps(s,'$USER',hdp.absender);
+    SafeDeleteFile(uncfile);
+    savecursor;
+    sichern(sp);
+    shell(s,600,3);                     { Nachricht decodieren }
+    if existf(f) then erase(f);       { codierte Msg loeschen, falls noch da }
+    if not FileExists(uncfile) then
+      trfehler(306,5)         { 'Fehler beim Decodieren' }
+    else begin
+      assign(f,uncfile);
+      reset(f,1);
+      makeheader(false,f,0,hds2,hdp2,ok,false, true);
+      close(f);
+      if not ok then
+        trfehler(306,5)       { 'Fehler beim Decodieren' }
+      else begin
+        reset(f,1);   { uncfile }
+        hdp.betreff:=hdp2.betreff;
+        hdp.typ:=hdp2.typ;
+        orgsize:=hdp.groesse;     hdp.groesse:=filesize(f)-hds2;  { = hdp2^.groesse }
+        orgempf:=hdp.FirstEmpfaenger;  hdp.empfaenger:=hdp2.empfaenger;
+        tmp:=TempS(hdp.groesse+2048);
+        assign(f2,tmp);
+        rewrite(f2,1);
+        ClearPGPflags(hdp);
+        WriteHeader(hdp,f2);             { neuer Header }
+        seek(f,hds2);
+        fmove(f,f2);                     { + decodierter Text }
+        close(f); close(f2);
+        erase(f);   { uncfile }
+        Xwrite(tmp);
+        wrkilled;
+        _era(tmp);
+        dbWriteNStr(mbase,mb_betreff,hdp2.betreff);
+
+        hdp2typ := hdp2.typChar;
+        dbWriteN(mbase,mb_typ,hdp2typ);
+        
+        dbWriteN(mbase,mb_groesse,hdp.groesse);
+        dbReadN(mbase,mb_unversandt,uvs);
+        uvs:=uvs or 4;                        { "c"-Flag }
+        dbWriteN(mbase,mb_unversandt,uvs);
+        hdp.groesse:=orgsize;
+        hdp.FirstEmpfaenger:=orgempf;
+        end;
+      end;
+    holen(sp);
+    restcursor;
+    Hdp2.Free;
+  end;
+
+  procedure DecPGP;
+  var s : string;
+      sp: scrptr;
+  begin
+    s:=hdp.Firstempfaenger;
+    hdp.Firstempfaenger:=orgempf;
+    savecursor;
+    sichern(sp);
+    LogPGP(getreps2(3002,2,hdp.absender));  { 'decodiere Nachricht von %s' }
+    PGP_DecodeMessage(hdp,false);
+    holen(sp);
+    restcursor;
+    hdp.Firstempfaenger:=s;
+  end;
+
+  procedure Bezugsverkettung;
+  var ll     : llref;
+      fs,no  : integer;
+      ok     : integer;
+  begin
+    Debug.DebugLog('xp3o','start Bezugsverkettung 1',DLInform);
+    moff;
+    mstr:= getres(332);
+    FWrt(x+2,y+5,mstr); { 'Bezugsverkettung...' }
+    FWrt(x+3+length(mstr),y+5,'0%');
+    mon;
+    dbStopHU(bezbase);
+  try
+    seek(pfile,0);
+    fs := filesize(pfile) div sizeof(ll);
+    no := 0;
+
+    while not eof(pfile) do begin
+      inc(no);
+      blockread(pfile,ll,sizeof(ll),ok);
+      if ok <> sizeof(llref) then exit;
+
+      xp1o.AddNewBezug(ll.MsgPos, ll.MsgId, ll.MsgRef, ll.Datum);
+
+      if ((no mod 5)=0) then begin
+        moff;
+        FWrt(x+3+length(mstr),y+5,StrS(no*100 div fs)+'%');
+        mon;
+      end;
+    end;
+  finally
+    dbRestartHU(bezbase);
+    dbFlush(bezbase);
+    Debug.DebugLog('xp3o','end Bezugsverkettung',DLTrace);
+  end;
+    Wrt(x+3+length(mstr),y+5,getres2(324,7)); { 'fertig.' }
+  end;
+
+(*
+  procedure wrll(l:longint);
+  begin
+    inc(llanz);
+    llbuf[llanz]:=l;
+    if llanz=maxll then begin
+      blockwrite(pfile,llbuf,sizeof(llbuf));
+      llanz:=0;
+      end;
+  end;
+*)
+
+  procedure FlushLL;
+  begin
+    if llanz>Low(llbuf) then begin
+      blockwrite(pfile,llbuf,llanz*sizeof(llref));
+      llanz:=Low(llbuf);
+      end;
+  end;
+
+  procedure AddNewBezug(MsgNr: Longint; const MsgId, RefId: string; datum: longint);
+  begin
+    if MsgId='' then exit;
+    inc(llanz);
+    llbuf[llanz].MsgPos := MsgNr;
+    llbuf[llanz].MsgId := MsgidIndex(msgid);
+    if RefId='' then
+      llbuf[llanz].MsgRef := 0
+    else
+      llbuf[llanz].MsgRef := MsgidIndex(refid);
+    llbuf[llanz].Datum := Datum;
+
+    if llanz=High(llbuf) then 
+      FlushLL;
+  end;
+
+  function IsOwnDomain(dom:string):boolean;
+  var
+    Index: Integer;
+  begin
+    if not IsMailAddr(dom) then
+      IsOwnDomain:=false
+    else
+    begin
+      delete(dom,1,cpos('@',dom));
+      IsOwnDomain := DomainList.Find(LowerCase(dom), Index);
+    end;
+  end;
+
+  { returns true if *own* message is going to be replaced.
+    Used for ReplaceOwn and ReplaceDupes. }
+  function KillSameMsgId: boolean;
+  var
+    MsgPos: Integer;
+  begin
+    result:= false;
+    dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(Hdp.msgid)));
+    if dbFound and not dbDeleted(bezbase, dbRecNo(bezbase)) then
+    begin
+      // message with same msgid found in db
+      msgpos := dbReadIntN(bezbase,bezb_msgpos);
+      if not dbDeleted(mbase, msgpos) then
+      begin
+        flags := 0;
+        dbGo(mbase, msgpos);
+        if not dbBOF(mBase) and not dbEOF(mbase) then
+        begin
+          dbReadN(mbase,mb_flags,flags); { get message flags }
+          if (flags and 256 <> 0) or
+            (boxpar^.ReplaceDupes) then
+          begin
+            debug.debuglog('xp3o','dupe (already in msgbase)',dltrace);
+            dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
+            wrkilled; { Ablage auf jeden Fall reorganisieren }
+            DelBezug;
+            dbDelete(mbase);
+            result:= (flags and 256 <> 0);
+          end;
+        end else
+          debug.debuglog('xp3o','Error in KillSameMsgId: dbGo to bad message',dltrace);
+      end;
+    end;
+  end;
+
+  procedure checkbox(var box :string);
+  begin
+    dbSeek(boxbase,boiName,UpperCase(box));
+    if dbFound then
+      Box := dbReadStr(boxbase,'boxname');  { -> korrekte Schreibweise des Systemnamens }
+  end;
+
+  function dummyid(inr: integer): string;
+  var t,m,j   : smallword;
+      h,mm,s,ss: smallword;
+      dat     : integer;
+      count   : integer;
+      rand    : integer;
+      csum    : integer;
+  begin
+    decodedate(now,j,m,t);
+    decodetime(now,h,mm,s,ss);
+    dat:=(t-1)+(m-1)*32+(j mod 165)*32*12;
+    
+    count:=Integer(inr and $ffff);
+    rand:=random($1000);
+    csum:=crc16strXP(hdp.Absender);
+
+    Result := FormMsgID(b30(crc32Str(hdp.FirstEmpfaenger))+
+      b30(longint(dat) shl 14+count shr 2)+
+      b30(longint(count and 3) shl 28+longint(rand) shl 16 +csum));
+  end;
+
+var
+  OwnMessageReplaced: Boolean;
+  s: String;
+  nt: eNetz;
+  f_str: TPASCALFileStream;     // current message buffer as a TStream (nil until first use)
+  data:  TPartialStream;        // temporary: current message
+  spam:  TSpamicityCalculator;  // spamicity calculator (nil until first use)
+  spam_ok: boolean;             // whether spamicity has been calculated for current message
+  is_spam: boolean;             // whether current message is spam
+  is_ham:  boolean;
+  d: DB;
+begin
+  Debug.DebugLog('xp3o','sorting in messages',DLInform);
+  inmsgs:=0; ReplaceOwnHoldFlag:=255; result:=false;
+  MsgIdsRead:=TStringlist.Create; MsgIdsRead.Sorted:=true;
+  forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
+  zconnect:=ZC_puffer(puffer);
+
+  if (zconnect) then
+    msgbox(47,10,getres(333),x,y)        { 'Puffer einlesen' }
+  else
+    msgbox(47,11,getres(333),x,y);
+
+  attrtxt(col.colmbox);
+  fm := FileMode;
+  assign(f,puffer);
+  FileMode := fmOpenRead + fmShareDenyWrite;
+  reset(f,1);
+  FileMode := fm;
+  fs:=filesize(f);
+  if fs<16 then begin
+    close(f);
+    moff;
+    Debug.DebugLog('xp3o','empty buffer',DLInform);
+    rmessage(334);      { 'leerer Puffer' }
+    mon;
+    wkey(1,false);
+    closebox;
+    closebox;
+    freeres;
+    result:=true;
+    exit;
+    end;
+  check:=(fs*1.3<diskfree(0));
+
+  getmem(p,bufsize);
+  hdp := THeader.Create;
+  if check and puffer_ok then begin
+    abadd:=iif(zconnect,10,0);
+    l:=ablsize[1+abadd]; ablage:=1+abadd;   { 0/10 = PM-Ablage }
+    for i:=2+abadd to 9+abadd do
+      if ablsize[i]<l then begin
+        ablage:=i; l:=ablsize[i];
+        end;
+
+    assign(brettlog,logpath+brettLogfile);
+    if existf(brettlog) then append(brettlog)
+    else rewrite(brettlog);
+    assign(userlog,logpath+userLogfile);
+    if existf(userlog) then append(userlog)
+    else rewrite(userlog);
+
+    if pollbox='' then begin
+      mapsname:='MAPS'; amvertreter:=''; pmvertreter:='';
+      sysbetreff:='';
+      end
+    else begin
+      dbSeek(boxbase,boiName,UpperCase(pollbox));
+      if not dbFound then begin
+        mapsname:=''; amvertreter:=''; pmvertreter:='';
+        sysbetreff:='';
+        end
+      else begin
+        mapsname:= dbReadStr(boxbase,'nameomaps');
+        AMvertreter:= dbReadStr(boxbase,'AVertreter');
+        PMvertreter:= dbReadStr(boxbase,'PVertreter');
+        dbSeek(boxbase,boiName,UpperCase(amvertreter));
+        if not dbFound then amvertreter:='';
+        dbSeek(boxbase,boiName,UpperCase(pmvertreter));
+        if not dbFound then pmvertreter:='';
+        dbSeek(boxbase,boiname,UpperCase(pollbox));
+        nt := dbNetztyp(boxbase);
+        if nt in netsRFC then
+        begin
+          ReadBoxPar(nt, pollbox);
+          sysbetreff:=LowerCase(boxpar^.chsysbetr);
+          end;
+        end;
+      end;
+
+    moff;
+    Debug.DebugLog('xp3o','appending buffer to mbuffer',DLInform);
+    Wrt(x+2,y+3,getres(335));           { 'Puffer kopieren...' }
+    mon;
+    assign(pfile,aFile(ablage));        { Puffer in die kleinste }
+    if existf(pfile) then begin         { Ablage kopieren ..     }
+      reset(pfile,1);
+      padr:=filesize(pfile);
+      seek(pfile,padr);
+      end
+    else begin
+      rewrite(pfile,1);
+      padr:=0;
+      end;
+    seek(f,0);
+    size:=filesize(f)-diff;
+    repeat
+      blockread(f,p^,bufsize,rr);
+      blockwrite(pfile,p^,rr);
+      dec(size,rr);
+    until eof(f);
+    close(pfile);
+    moff;
+    Wrt2(' '+getres2(324,7));           { fertig }
+    mstr:= getres2(330,6);              { Importiere Nachrichten }
+    FWrt(x+2,y+4,mstr+' 0%');
+    mon;
+
+    Debug.DebugLog('xp3o','adding messages to db index',DLInform);
+    assign(pfile,TempS(msgcount*8+2048));
+    rewrite(pfile,1);
+    llanz:=0;
+    seek(f,0);
+
+    assign(cmessagefile,TempS(msgcount*40+2048));
+    rewrite(cmessagefile);
+    num_cmessages:=0;
+
+    adr:=0;
+
+    dat:=Zdate;
+    today:=ixDat(dat);
+    dbStopHU(mbase);
+
+    cust_header:=mheadercustom[1];
+    mheadercustom[1]:='U-Sender';  { 'U-Sender'-Header erkennen }
+
+    f_str := nil;
+    spam := nil;
+
+    repeat
+      empfnr:=1;
+      junk:=false;
+      msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert
+                                      oder soll weggeworfen werden
+                              false -> Nachricht muss in />>Junk gespeichert werden }
+
+      spam_ok := false;
+      is_spam := false;
+      is_ham  := false;
+
+      msgid3  := '';
+      
+      repeat       { Cross-Postings bearbeiten }
+        seek(f,adr);
+        Debug.DebugLog('xp3o.inc','recipient "'+orgempf+'", subject "'+hdp.betreff+'", msgid "'+hdp.msgid+'"',DLDebug);
+
+        hdp.clear;
+        makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
+        orgempf:=hdp.FirstEmpfaenger;
+        BrettKommentar := '';
+                              
+        { Schalter maildelxpost beachten }
+        if (hdp.Empfaenger.Count > maxcrosspost)
+        and ((not IsMailAddr(hdp.FirstEmpfaenger)) or maildelxpost) then begin
+          empfnr:=hdp.Empfaenger.Count +1;                { Crossposting-Filter }
+          continue;
+          end;
+          
+        if IsMailAddr(hdp.FirstEmpfaenger) and (not spam_ok) then 
+//      if not spam_ok then
+        begin
+          if not assigned(spam) then
+            spam := TSpamicityCalculator.Create;
+          if not assigned(f_str) then
+            f_str := TPASCALFileStream.Create(f);
+
+          data := TPartialStream.Create(adr,adr+hdsize+hdp.groesse);
+          data.OtherStream := f_str;          // use message buffer
+          data.DestroyOtherStream := false;   // but don't kill it
+          data.Seek(0,soFromBeginning);
+          spam.CalculateMessageSpamicity(data);
+          data.Free;
+          
+          is_spam := spam.IsSpam;
+          is_ham  := spam.IsHam;
+          spam_ok := true;
+
+          if is_spam then
+          begin
+            hdp.Empfaenger.Clear;
+            hdp.Empfaenger.Add('/¯Spam'); // Unterscheidung von der Pseudo-Newsgroup junk
+            BrettKommentar := 'SPAM, SPAM, wonderful SPAM!' // nicht uebersetzen (Zitat aus Monty Phyton).
+          end;
+        end;
+
+        if junk then
+        begin
+          hdp.Empfaenger.Clear;
+          hdp.Empfaenger.Add('/¯Nix'); // Unterscheidung von der Pseudo-Newsgroup junk
+        end;
+        if grosswandeln and not zconnect then
+        begin
+          hdp.Absender := UpperCase(hdp.absender);
+          hdp.FirstEmpfaenger := UpperCase(hdp.Firstempfaenger);
+        end;
+        pm:=false;
+
+        with hdp do
+        begin
+          if replace_ed then dat:=datum;
+          _datum:=ixdat(dat);
+          if replace_ed and smdl(today,_datum) then begin
+            dat:=zdate;
+            _datum:=today;
+            end;
+          tobrett:=archive or (copy(FirstEmpfaenger,1,TO_len)=TO_ID);
+          atp:=cPos('@',FirstEmpfaenger);
+          if sendbuf then begin   { pollbox <> '' !  }
+            if (FirstChar(FirstEmpfaenger)<>'/') and (not IsMailAddr(Firstempfaenger)) then
+              Firstempfaenger:=Firstempfaenger+'@'+pollbox+'.ZER';
+            if IsMailAddr(FirstEmpfaenger) then
+              if tobrett then
+                Firstempfaenger:='U'+mid(Firstempfaenger,iif(archive,1,length(TO_ID)+1))
+              else begin
+                Firstempfaenger:='U'+Firstempfaenger;
+                //tobrett:=true;
+                end
+            else
+              FirstEmpfaenger:='A'+Firstempfaenger;
+            end
+          else     { not sendbuf }
+            if tobrett then
+              if (copy(Firstempfaenger,1,9)<>'/'#0#0#8#8'TO:/') or (atp>0) then
+                Firstempfaenger:='U'+copy(Firstempfaenger,iif(archive,1,9),79)
+              else
+              begin
+                s := FirstEmpfaenger;
+                while (length(s) >= 10) and (s[10]=#255) do  { wg. #255#255'Netzanruf' }
+                  delete(s,10,1);
+                FirstEmpfaenger:='$/¯'+Mid(s,10);
+              end
+            else
+              if (Length(FirstEmpfaenger) >= 2) and (FirstEmpfaenger[2]='¯') then
+                Firstempfaenger:='$'+FirstEmpfaenger
+              else
+                if (atp=0) and (FirstChar(FirstEmpfaenger) = '/') then
+                  FirstEmpfaenger:='A'+FirstEmpfaenger
+                else begin
+                  if atp=0 then FirstEmpfaenger:='1/'+FirstEmpfaenger
+                  else
+                    if UserBoxname then
+                      Firstempfaenger:='1/'+LeftStr(Firstempfaenger,atp-1)+'/'+mid(Firstempfaenger,atp+1)
+                    else
+                      Firstempfaenger:='1/'+LeftStr(Firstempfaenger,atp-1);
+                  pm:=true;
+                  end;
+
+          if (ForceRecipient<>'') and (not is_spam) then Firstempfaenger:= ForceRecipient;
+
+          multi2; initscs;
+
+          Debug.DebugLog('xp3o.inc', 'point multi2', DLDebug);
+
+          truncstr(absender,eAdrLen);  { dbSeek laeuft sonst ins Leere }
+          dbSeek(ubase,uiName,UpperCase(absender));
+          // do not add users with names longer 80 char, our database is not large enough
+          if not dbFound then
+          begin          { neuen User anlegen }
+            if adrok(absender) then
+            begin
+              { mwrt(29,wherey,forms(absender,22)); }
+              AddNewUser(Absender, pollbox_str(zconnect,true));
+              writeln(userlog,logstr(absender));
+            end;        { Netzunabhaengige Useraufnahme }
+            aufnehmen:=true;
+          end
+          else
+            if FirstChar(FirstEmpfaenger)<>'A' then
+              aufnehmen:=true
+                         {((pos('@mips.pfalz.de',absender)=0) and
+                          (pos('news@pythia.lunetix.de',absender)=0) and
+                          (pos('news@dfki.uni-sb.de',absender)=0)) }
+            else begin
+              dbReadN(ubase,ub_userflags,uflags);
+              aufnehmen:=odd(uflags); // Filter AMs (Twit filter)
+              if not aufnehmen then
+                // AM is filtered, don''t put it in /Junk
+                msgsent:=true;
+              end;
+
+          if FirstChar(Firstempfaenger)<>'U' then begin
+            // AM
+            dbSeek(bbase,biBrett,UpperCase(Firstempfaenger));
+            if not dbFound then
+            begin
+              // AM for a group not yet existing
+              if (Empfaenger.Count>1) or (attrib and AttrControl<>0) then begin
+                debug.debuglog('xp3o','crossposting or cancel msg',dltrace);
+                aufnehmen:=false;
+                end
+              else if aufnehmen then begin
+                // create new group
+                if FirstChar(Firstempfaenger)<>'A' then grnr:=IntGruppe
+                else begin
+                  seekbr:=Firstempfaenger;
+                  p0:=posn('/',seekbr,3);
+                  if p0>0 then begin
+                    seekbr:=LeftStr(seekbr,p0-1);
+                    if dbEOF(bbase) or
+                       (LeftStr(dbReadStrN(bbase,bb_brettname),length(seekbr))<>seekbr) then
+                      dbSeek(bbase,biBrett,UpperCase(seekbr));
+                    end;
+                  if dbEOF(bbase) then dbGoEnd(bbase);
+                  if dbEOF(bbase) then grnr:=NetzGruppe
+                  else dbReadN(bbase,bb_gruppe,grnr);
+                  if grnr=IntGruppe then grnr:=NetzGruppe;
+                  end;
+                if FirstChar(Firstempfaenger)='1' then
+                  haltezeit:=0
+                else 
+                begin
+                  dbOpen(d,GruppenFile,1);
+                  dbSeek(d,giIntnr,dbLongStr(grnr));
+                  if not dbFound then haltezeit:=stdhaltezeit
+                  else dbRead(d,'haltezeit',haltezeit);
+                  dbClose(d);
+                end;
+                AddNewBrett(FirstEmpfaenger, BrettKommentar, pollbox_str(zconnect,false),
+                  Haltezeit, Grnr, iif(netztyp in netsRFC,16,0));
+                if newbrettende then
+                  SetBrettindexEnde
+                else
+                  SetBrettindex;
+                writeln(brettlog,logstr(Mid(FirstEmpfaenger,2)));
+                end;   { aufnehmen }
+              end    { not dbFound }
+            else
+              // AM for an existing group
+              if dbReadInt(bbase,'flags') and 4<>0 then
+                // twit filter disabled for this group
+                aufnehmen:=true;
+            if aufnehmen then
+              _brett:=mbrettd(FirstChar(FirstEmpfaenger),bbase);
+            end;
+
+          { hier kein adrok: TO-User werden immer aufgenommen! }
+          if FirstChar(FirstEmpfaenger)='U' then begin
+            dbSeek(ubase,uiName,UpperCase(copy(FirstEmpfaenger,2,80))); {Adressbuch-Eintrag}
+            if not dbFound then begin
+              dbAppend(ubase);
+              name:=copy(FirstEmpfaenger,2,79);
+              pb:=pollbox_str(zconnect,true);
+              checkbox(pb);
+              if not IsMailAddr(Name) then name:=LeftStr(name+'@'+pb+'.ZER',79);
+              dbWriteNStr(ubase,ub_username,name);
+              dbWriteNStr(ubase,ub_pollbox,pb);
+              dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
+              flags:=1+iif(newuseribm,0,8);  { aufnehmen / Umlaute }
+              dbWriteN(ubase,ub_userflags,flags);
+              adrbuch:=NeuUserGruppe;
+              dbWriteN(ubase,ub_adrbuch,adrbuch);
+              end
+            else begin
+              dbReadN(ubase,ub_adrbuch,adrbuch);
+              if adrbuch=0 then begin
+                adrbuch:=NeuUserGruppe;
+                dbWriteN(ubase,ub_adrbuch,adrbuch);
+                end;
+              end;
+            _brett:=mbrettd('U',ubase);
+            end;
+
+          if(Aufnehmen and(BoxPar^.ReplaceOwn or BoxPar^.ReplaceDupes))and(hdp.MsgId<>'')then begin
+            OwnMessageReplaced:= KillSameMsgId;
+            if BoxPar^.ReplaceDupes and MsgIdsRead.Find(msgid,dummy)then begin
+              // this msg already showed up in this buffer
+              aufnehmen:=false;  // prevent sorting in message
+              msgsent:=true;     // prevent putting this message to /Nix
+              debug.debuglog('xp3o','dupe (multiple times in buffer)',dltrace);
+              end;
+            end
+          else
+            OwnMessageReplaced:= False;
+
+          IsGelesen:=ParGelesen or sendbuf or
+                     ((netztyp=nt_Maus) and (FirstChar(pm_bstat)='G')) or
+                     (filterattr and fattrGelesen<>0) or
+                     (pflags and pe_gelesen<>0) or (ReplaceOwnHoldFlag < 255);
+
+          Debug.DebugLog('xp3o.inc', 'vor aufnehmen=' + iifs(Aufnehmen, 'true', 'false'), DLDebug);
+
+          if aufnehmen then
+          begin
+            if FirstChar(FirstEmpfaenger)<>'U' then begin
+              dbReadN(bbase,bb_flags,flags);
+              if not IsGelesen and (flags and 2 = 0) then
+              begin
+                inc(flags,2);                 { ungelesene Nachricht(en) }
+                dbWriteN(bbase,bb_flags,flags);
+                end;
+              if smdl(dbReadInt(bbase,'ldatum'),_datum) then
+                dbWriteN(bbase,bb_ldatum,_datum);      { Datum der neuesten Msg }
+              end;
+            dbAppend(mbase);
+            mnt.i := 0; //clear record
+            mnt.netztyp:=netztyp; // and $FF;
+            if References.Count > 0 then //inc(mnt,$100); // rueckwaertsverkettet
+              include(mnt.flags, mf_Verkettet);
+            if attrib and attrFile<>0 then //inc(mnt,$200);
+              include(mnt.flags, mf_Attachment);
+            if pm_reply then //inc(mnt,$400);
+              include(mnt.flags, mf_pm_reply);
+            if (wab<>'') or (oem.Count > 0) then //inc(mnt,$800);
+              include(mnt.flags, mf_wab);
+            if Empfaenger.Count >1 then //inc(mnt,longint(empfnr) shl 24);
+              mnt.CPpos := empfnr;
+            if ((FirstChar(FirstEmpfaenger)='A') and ntDomainReply(netztyp) and
+              IsOwnDomain(GetLastReference)) or
+              (filterattr and fattrHilite<>0)
+            then
+              //inc(mnt,$1000);        { Antwort auf eigene Nachricht }
+              include(mnt.flags, mf_Reply);
+            if UpperCase(charset)='ISO1' then //inc(mnt,$2000);
+              include(mnt.flags, mf_ISO1);
+            if komlen>0 then //inc(mnt,$8000);
+              include(mnt.flags, mf_Kom);
+            dbWriteN(mbase,mb_netztyp,mnt.i);
+            
+            dbWriteNStr(mbase,mb_betreff,betreff);
+            dbWriteNStr(mbase,mb_absender,absender);
+            ld:=ixdat(datum);
+            dbWriteN(mbase,mb_origdatum,ld);
+            ld:=ixdat(dat);
+            dbWriteN(mbase,mb_empfdatum,ld);
+            dbWriteN(mbase,mb_groesse,groesse);
+            typ1:=UpCase(typ[1]);
+            if (typ1<=' ') or (typ1>#126) then typ1:='?';
+            if (typ1='M') then typ1:='T';
+            dbWriteN(mbase,mb_typ,typ1);
+            dbWriteNStr(mbase,mb_mimetyp,LowerCase(hdp.mime.contenttype.verb));
+            dbWriteNStr(mbase,mb_brett,_brett);
+            dbWriteN(mbase,mb_ablage,ablage);
+            dbWriteN(mbase,mb_adresse,padr);
+            size:=groesse+hdsize;
+            dbWriteN(mbase,mb_msgsize,size);
+
+            if msgid<>'' then
+              msgid2:=FormMsgid(msgid)
+            else begin
+              if msgid3 = '' then
+                msgid3 := dummyid(dbRecno(mbase));
+              msgid2 := msgid3;
+            end;
+            dbWriteNStr(mbase,mb_msgid,msgid2);
+            if ntEditBrettempf(netztyp) then   { Fido, QWK }
+              dbWriteNStr(mbase,mb_name,fido_to)
+            else
+              dbWriteNStr(mbase,mb_name,realname);
+            if IsGelesen then begin
+              flags:=1;
+              dbWriteN(mbase,mb_gelesen,flags);
+              if sendbuf then dbWriteN(mbase,mb_unversandt,flags);
+              end;
+            flags:=0;
+            if filterattr and fattrLoeschen<>0 then flags:=2;
+            if filterattr and fattrHalten<>0 then flags:=1;
+            if ReplaceOwnHoldFlag < 255 then
+            begin
+              Flags := ReplaceOwnHoldflag;
+              ReplaceOwnHoldFlag := 255;
+            end;
+            dbWriteN(mbase,mb_halteflags,flags);
+
+                                                   {Fuer User spezifizierte Farbe einstellen}
+            if uflags and $E0 <> 0 then
+             mbflags:=longint((uflags and $E0) shr 2)
+                                                   { Prioritaeten in anderer Farbe.... }
+            else if hdp.Priority=5 then mbflags:=32          { Niedrigste }
+            else if hdp.Priority=4 then mbflags:=16+8   { Niedrig    }
+            else if hdp.Priority=2 then mbflags:=16     { Hoch       }
+            else if hdp.Priority=1 then mbflags:=8      { hoechste   }
+
+            else if zconnect and (hdp.Prio>0) then      { und fuer Zconnect ....  }
+              if hdp.Prio<=10 then mbflags:=16          { hoch     }
+              else mbflags:=8                            { hoechste }
+            else mbflags:=0;
+
+            // set  HeaderOnly flags
+            if (UpperCase(hdp.XPMode) = 'HDRONLY') and (hdp.Groesse=0) then
+              mbflags:=mbflags or 64;
+
+            mbflags:=mbflags or iif(boundary<>'',4,0);
+            { this message replaces an old own message; mark it as an own }
+            { message again. Necessary for cancels. }
+            if OwnMessageReplaced then mbflags:= mbflags or 256;
+
+            { this message could not be identified as SPAM or HAM, set
+              ``potentially SPAM'' flag }
+            if (not is_spam)and(not is_ham)and spam_ok  then 
+              mbflags:= mbflags or 64;
+            
+            dbWriteN(mbase,mb_flags,mbflags);
+
+      	    if ntKomKette(hdp.netztyp) then
+	          begin
+              l:=LongInt(LongWord(ixdat(datum)) and LongWord($fffffff0));
+              if Empfaenger.Count >1 then inc(l,iif(msgsent,2,1));
+      	      AddNewBezug(dbRecno(mbase),hdp.MsgId,hdp.GetLastReference,l);
+	          end;
+
+            if UsePGP and (pgpflags and fPGP_haskey<>0) and
+               ((PGP_AutoAM and (firstchar(FirstEmpfaenger)='A')) or
+                (PGP_AutoPM and (firstchar(FirstEmpfaenger)='1')))
+            then begin
+              savecursor;
+              sichern(sp);
+              PGP_ImportKey(true);
+              holen(sp);
+              restcursor;
+              end;
+            if (firstchar(FirstEmpfaenger)='1') and UsePGP and
+               (pgpflags and fPGP_encoded<>0) then
+              DecPGP else
+            if (firstchar(FirstEmpfaenger)='1') and
+               (LeftStr(betreff,length(PMC_ID))=PMC_ID) then
+              pmCryptDecode;
+
+            msgsent:=true;
+          end;
+          (* else begin   { nicht aufnehmen }
+            wrll(0);
+            wrll(0);
+            end; *)
+
+          inc(empfnr); // iterate through recipients
+        end;           { with hdp }
+        
+        if msgsent then
+          TestControlMessage;
+
+        if (hdp.Empfaenger.Count>1) and
+           (empfnr>hdp.Empfaenger.Count) and
+           not msgsent and
+           not IsCancelMsg then
+        begin
+          { Nachricht nach /Junk }
+          junk:=true;
+          empfnr:=1;            { kein passendes Brett fuer Crossposting }
+(*
+          FlushLL;
+          seek(pfile,filesize(pfile)-8); 
+*)
+        { seek(pfile,filesize(pfile)-8*hdp.empfanz); }
+        { seek(pfile,filesize(pfile)-4*max(0,2*hdp.empfanz-llanz));
+          llanz:=max(0,llanz-2*hdp.empfanz); }
+        end;
+    (*  else
+          if junk then begin
+            FlushLL;
+            seek(pfile,sizeof(pfile));   { 0/0-Eintraege fuer nicht einsor- }
+            end;                         { tierte Xpostings ueberspringen  } *)
+
+      until (empfnr>hdp.Empfaenger.Count)or(forcerecipient<>'');
+
+      Debug.DebugLog('xp3o','ok, next message',DLDebug);
+      if BoxPar^.ReplaceDupes then
+        MsgIdsRead.Add(hdp.msgid);
+      inc(adr,hdp.groesse+hdsize);
+      inc(padr,hdp.groesse+hdsize);
+      inc(inmsgs);
+      if ((inmsgs mod 3) = 0) then begin        { User beruhigen }
+        moff;
+        FWrt(x+3+length(mstr),y+4,strs((inmsgs * 100) div MsgCount)+'%');
+        mon;
+      end;
+      
+    until adr>=fs-3;     { 3 Byte Toleranz }
+    MsgIdsRead.Destroy;
+    f_str.Free;
+    spam.Free;
+
+    Debug.DebugLog('xp3o','index built',DLInform);
+    moff;
+    FWrt(x+3+length(mstr),y+4,getres2(324,7));
+    mon;
+    dbrestartHU(mbase);
+    dbFlush(mbase);
+    close(f);
+    inc(ablsize[ablage],fs);
+    Debug.DebugLog('xp3o','db flushed',DLInform);
+
+    FlushLL;
+    if zconnect then
+      Bezugsverkettung;
+    close(pfile);
+    erase(pfile);
+
+    close(cmessagefile);
+    if not ignoreSupCancel then
+      bearbeite_cancels_supersedes;
+    erase(cmessagefile);
+    Debug.DebugLog('xp3o','ctrl msgs done',DLInform);
+
+    if not replace_ed then write_lastcall(dat);
+    FlushClose;
+    close(brettlog);
+    close(userlog);
+    result:=true;
+
+(*    Wrt(x+2,y+7,getres(320)); { 'Datumsbezuege werden ueberarbeitet...     %' }
+    GotoXY(WhereX-5, WhereY);
+    Debug.DebugLog('xp3o','set area date',DLInform);
+    BrettDatumSetzen(true);
+    GotoXY(WhereX-2, WhereY);
+    moff; Wrt2(getres(321)); mon;  { ' fertig.' } *)
+    Debug.DebugLog('xp3o','finished',DLInform);
+
+    mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
+  end   { if Puffer_ok }
+
+  else begin
+    close(f);
+    moff;
+    msgbox(78,9,getres2(336,1),x,y);    { 'ACHTUNG !!!' }
+    attrtxt(col.colmboxhigh);
+
+    if check then begin
+      FWrt(x+2,y+2,getres2(336,2)+FileUpperCase(puffer));   { 'Fehlerhafte Pufferdatei:  ' }
+      Debug.DebugLog('xp3o','buffer corrupted: "'+puffer+'"',DLError);
+      end
+    else begin
+      FWrt(x+2,y+2,getres2(336,3));    { 'Zu wenig Platz auf der Festplatte.' }
+      Debug.DebugLog('xp3o','insufficent disk space',DLError);
+      end;
+    FWrt(x+2,y+3,getres2(336,4));      { 'Puffer wurde NICHT eingelesen!' }
+    if pflags and pe_Bad<>0 then begin
+      MoveToBad(puffer);
+      FWrt(x+2,y+5,getres2(336,5));    { 'Datei wurde im Unterverzeichnis BAD abgelegt.' }
+      logerror(getres2(336,6));   { 'Fehlerhafter Netcallpuffer wurde im Unterverzeichnis BAD abgelegt.' }
+      end
+    else
+      logerror(getres2(336,8)+puffer);   { 'Netcallpuffer wurde nicht eingelesen: ' }
+    attrtxt(col.colmbox);
+    mon;
+    errsound;
+    moff;
+    Wrt(x+2,y+7,getres(12));   { 'Taste druecken ...' }
+    mon;
+    errsound;
+    cursor(curon);
+    wkey(180,true);    { max. 3 Minuten }
+    cursor(curoff);
+    closebox;
+    end;
+
+  Hdp.Free;
+  freeres;
+  freemem(p,bufsize);
+  closebox;
+  aufbau:=true; xaufbau:=true;
+  Debug.DebugLog('xp3o','finished message import',DLInform);
+end;
+
+{ Datei fn ins Unterverzeichnis BAD\ verschieben; ggf. umbenennen }
+{ Die Datei befindet sich normalerweise im XP- oder im SPOOL-     }
+{ Verzeichnis.                                                    }
+
+procedure MoveToBad(const fn:string);
+var
+  name : string;
+  ext  : string;
+begin
+  ext:= ExtractFileExt(fn);
+  name:= ExtractFilename(fn);
+  if (ext<>'') then
+    Delete(name, length(name)-length(ext),length(ext));
+  if FileUpperCase(ext)='.OUT' then exit;   { UUCP: ausgehende Nachrichten }
+  if ext='' then
+    ext:='.001'
+  else
+    while FileExists(BadDir+name+ext) and (ext<>'.999') do
+      ext:='.'+formi(ival(mid(ext,2))+1,3);
+  SafeDeleteFile(BadDir+name+ext);
+  if not FileExists(BadDir+name+ext) then
+    RenameFile(fn, BadDir+name+ext);
+end;
+
+{
+  $Log: xp3o.inc,v $
+  Revision 1.113  2003/11/30 23:16:12  mk
+  - better fix than last comitt
+
+  Revision 1.112  2003/11/30 23:12:02  mk
+  - prevent database error in KillSameMsgId
+
+  Revision 1.111  2003/10/21 21:25:04  cl
+  - Changed THeader.MIME to use TMimeContentType and TMimeDisposition objects
+  - Changed MausTausch headers for Maus-internal IDs: MID/BEZ => maus_*, org_* => MID/BEZ,
+
+  Revision 1.110  2003/10/18 17:14:44  mk
+  - persistent open database boxenfile (DB: boxbase)
+
+  Revision 1.109  2003/10/06 16:01:33  mk
+  - some little code optimizations (mostly added const parameters and
+    use of new file system RTL functions)
+
+  Revision 1.108  2003/10/06 11:06:17  mk
+  - added some const paramters
+
+  Revision 1.107  2003/08/24 21:43:37  mk
+    - simplified and corrected FileMode Handling (now uses OS dependend
+      constants instead of hard coded values, this may prevent problems
+      with linux and other OS)
+
+  Revision 1.106  2003/05/11 11:12:17  mk
+  - use IsMailAddr when possible
+
+  Revision 1.105  2003/04/25 21:11:16  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
+  Revision 1.104  2003/01/28 10:42:25  cl
+  - Added statistical SPAM filter
+
+  Revision 1.103  2003/01/26 09:20:08  cl
+  - fixed problem with inc(empfnr)
+
+  Revision 1.102  2003/01/24 19:29:05  cl
+  - merged commit from stable branch:
+
+  Revision 1.83.2.12  2003/01/24 16:37:32  cl
+  - fixed last commit
+
+  Revision 1.83.2.11  2003/01/24 14:24:11  cl
+  - fixed problems during ``bezugsverkettung''
+    (should also fix ``Cannot delete ...\SPOOL\1.z'').
+
+  Revision 1.101  2002/12/21 05:37:56  dodi
+  - removed questionable references to Word type
+
+  Revision 1.100  2002/12/14 07:31:32  dodi
+  - using new types
+
+  Revision 1.99  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
+  Revision 1.98  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
+  Revision 1.97  2002/08/12 12:13:27  ma
+  - fix: filtered crosspostings caused creation of "/Nix" area
+
+  Revision 1.96  2002/08/10 15:49:26  cl
+  - fix for FPC 1.0.4
+
+  Revision 1.95  2002/08/10 10:32:26  ma
+  - dupekill when sorting in messages detects dupes in same buffer now
+    (really kills crossposting dupes :-)
+
+  Revision 1.94  2002/08/05 22:54:06  mk
+  - read boxPar with other boxtypes as ntUUCP, too
+    allows ReplaceOwn and ReplaceDupe for all RFC boxtypes
+
+  Revision 1.93  2002/07/25 20:43:54  ma
+  - updated copyright notices
+
+  Revision 1.92  2002/07/22 17:05:28  mk
+  - fixed Bug #496988: OXP-Linux: Dateirechte bei Pufferimport
+
+  Revision 1.91  2002/07/21 11:51:01  ma
+  - new feature: kill/prevent dupes when sorting in messages
+    (in fact a replaceown variant)
+
+  Revision 1.90  2002/06/12 09:14:51  mk
+  - removed some length limits including AdressLength (for RFC nets only)
+
+  Revision 1.89  2002/06/03 09:05:07  mk
+  - added more debug logs for Bezugsverkettung
+
+  Revision 1.88  2002/05/27 16:07:42  ma
+  - fixed: Crosspostings from filtered users were put in /Junk
+  - added comments
+
+  Revision 1.87  2002/05/23 22:52:10  mk
+  - added more debug logs
+
+  Revision 1.86  2002/05/23 22:49:01  mk
+  - added debug logs for 'Bezugsverkettung'
+  - fixed record size bug in Bezugsverkettung
+
+  Revision 1.85  2002/05/21 15:24:05  ma
+  - more debug logs
+  - fixed hints and warnings
+
+  Revision 1.84  2002/05/01 17:25:18  mk
+  SV: - Bei automatisch neu angelegten Usern/Brettern wird die Schreibweise
+    der Serverbox ueberprueft
+
+  Revision 1.83  2002/03/23 15:12:51  mk
+  - removed compiler warnings
+
+  Revision 1.82  2002/02/18 16:59:40  cl
+  - TYP: MIME no longer used for RFC and not written into database
+
+  Revision 1.81  2002/02/01 10:31:54  mk
+  - fixed some bugs with new empfaenger handling
+  - made DomainList to StringList
+
+  Revision 1.80  2002/02/01 10:18:00  mk
+  - fixed bug with new empfaenger handling
+
+  Revision 1.79  2002/01/13 15:15:50  mk
+  - new "empfaenger"-handling
+
+  Revision 1.78  2002/01/13 15:07:28  mk
+  - Big 3.40 Update Part I
+
+  Revision 1.77  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
+  Revision 1.76  2001/10/22 21:55:46  cl
+  - killed more range check errors
+
+  Revision 1.75  2001/10/20 17:26:40  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
+  Revision 1.74  2001/10/13 20:15:06  ma
+  - fixed: CC mails were muliplied with forceonearea feature
+
+  Revision 1.73  2001/09/15 00:09:28  cl
+  - BUGFIX: Header cleared for every new message
+  - BUGFIX: Cancels with certain sites in path not executed
+
+  Revision 1.72  2001/09/14 20:03:06  cl
+  - fixed flags for PufferEinlesen
+
+  Revision 1.71  2001/09/08 23:30:58  cl
+  - fixed last fix
+
+  Revision 1.70  2001/09/08 21:07:16  cl
+  - MIME typ now always written to database in lower case and without paramters
+
+  Revision 1.69  2001/09/08 16:29:33  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
+  Revision 1.68  2001/09/08 14:27:29  cl
+  - cleaned up MIME-related fields in THeader
+
+  Revision 1.67  2001/09/07 13:54:19  mk
+  - added SafeDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
+  Revision 1.66  2001/09/07 09:17:55  mk
+  - added AddNewBrett procedure
+
+  Revision 1.65  2001/09/07 08:28:02  mk
+  - added new procedure: AddNewBezug, collects three pieces of code
+
+  Revision 1.64  2001/09/06 19:31:19  mk
+  - removed some hints und warnings
+
+  Revision 1.63  2001/08/27 08:24:50  mk
+  JG+MY:- Fix: When auto-creating a user with an address longer than 80
+          chars the user flags (Prio, Filter, Return Receipt) of the last
+          DB entry were used (dbSeek couldn't find the address with more
+          than 80 chars). Address string is truncated to eAdrLen now.
+
+  Revision 1.62  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
+  Revision 1.61  2001/08/12 11:50:37  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
+  Revision 1.60  2001/08/11 23:06:31  mk
+  - changed Pos() to cPos() when possible
+
+  Revision 1.59  2001/08/11 21:20:51  mk
+  - THeader.OEM is now TStringList (before: String)
+
+  Revision 1.58  2001/07/29 12:57:27  ma
+  - removed Developer and ntAllowed variables
+  - fixed setting of NNTP area db flags
+
+  Revision 1.57  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
+  Revision 1.56  2001/07/11 20:30:47  mk
+  SV:- cancel processing fixed (WAB-Header may authorize sender (ZConnect))
+
+  Revision 1.55  2001/06/19 06:47:16  mk
+  JG:- fixed possible Crash in replace own when searching for messages without
+       a valid message id.
+
+  Revision 1.54  2001/06/09 10:58:53  ma
+  - added ForceOneArea feature (for POP3 server type)
+
+  Revision 1.53  2001/06/04 22:01:41  ma
+  - messages replaced by ReplaceOwn feature are flagged as own again.
+    This flag is used for deciding whether cancelling is valid
+    even if "from" field has been changed by Role feature.
+
+  Revision 1.52  2001/06/04 16:32:23  mk
+  - fixed possible crash (empfaenger[2])
+
+  Revision 1.51  2001/06/01 21:43:52  ma
+  - ReplaceOwn working now
+
+  Revision 1.50  2001/04/07 11:38:22  ma
+  - better debug log in puffer_ok
+
+  Revision 1.49  2001/02/28 14:25:45  mk
+  - removed some tainted comments
+
+  Revision 1.48  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
+  Revision 1.47  2001/01/22 16:15:15  mk
+  - added ReplaceOwn-Feature (merge from 3.40 branch)
+
+  Revision 1.46  2001/01/14 10:13:33  mk
+  - MakeHeader() integreated in new unit
+
+  Revision 1.45  2001/01/10 19:36:52  ma
+  - added verbose message import debug logs
+  - added GPL header
+  - shortened CVS logs
+
+  Revision 1.44  2001/01/10 11:17:34  mk
+  JG:- fix for user names longer 80 chars (MK)
+
+  Revision 1.43  2001/01/05 09:33:09  mk
+  - removed THeader.Ref
+
+  Revision 1.42  2001/01/04 21:21:10  ma
+  - added/refined debug logs
+
+  Revision 1.41  2001/01/02 10:05:24  mk
+  - implemented Header.References
+
+  Revision 1.40  2000/12/05 14:58:09  mk
+  - AddNewUser
+
+  Revision 1.39  2000/12/03 12:38:21  mk
+  - Header-Record is no an Object
+}

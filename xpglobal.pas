@@ -1,0 +1,359 @@
+{  $Id$
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this software; see the file gpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   Created on Mai, 3st 2000 by Markus Kaemmerer <mk@happyarts.de>
+
+   This software is part of the OpenXP project (www.openxp.de).
+
+   Global definitions, types and constants
+}
+
+unit xpglobal;
+
+interface
+
+{$I xpdefine.inc }
+
+uses sysutils;
+
+// format the following strings in a way that
+// verstr+pformstr+betastr is readable
+
+const
+  mainver     = '3.9.8';       { Versionnr. - steht nur an dieser Stelle }
+
+  betastr     = ' alpha';       { ' ', ' alpha' oder ' beta' }
+
+  {$IFDEF Win32 }
+  target_os   = 'Win32';        { 32 Bit Windows mit FPC oder VP }
+  {$ENDIF }
+  {$IFDEF OS2 }
+  target_os   = 'OS/2';         { 32 Bit OS/2 mit FPC oder VP }
+  {$ENDIF}
+  {$IFDEF Linux}
+  {$ifndef BSD}
+  target_os   = 'Linux';        { 32 Bit Linux mit FPC oder VP }
+  {$endif}
+  {$ENDIF}
+  {$IFDEF FreeBSD}
+   target_os  = 'FreeBSD';      { 32 Bit native FreeBSD v4+ mit FPC }
+  {$endif}
+  {$IFDEF NetBSD}
+   target_os  = 'NetBSD';       { 32 Bit native NetBSD mit FPC }
+  {$endif}
+  {$IFDEF Dos32 }
+  target_os   = 'DOS32';        { 32 Bit DOS mit FPC oder VP }
+  {$ENDIF}
+
+  {$IFDEF FPC}
+  compiler    = 'FPC';          { Free Pascal }
+  {$ELSE}
+  {$IFDEF Kylix}
+  compiler    = 'Kylix';        { Borland Kylix }
+  {$ELSE}
+  {$IFDEF Delphi}
+  compiler    = 'Delphi';       { Borland Delphi (Windows) }
+  {$ELSE}
+  {$IFDEF GPC}
+  compiler    = 'GPC';          { GNU Pascal }
+  {$ELSE}
+  compiler    = '???';
+  {$ENDIF}
+  {$ENDIF}
+  {$ENDIF}
+  {$ENDIF}
+
+  pformstr = ' (' + target_os + '; ' + compiler + ')';
+
+  author_name = 'OpenXP-Team';
+  author_mail = 'dev@openxp.de';
+  x_copyright = '(c) 2000-2005';
+
+const
+
+  {$I version.inc }
+
+var
+  verstr: string;
+
+type
+  { Regeln fuer Datentypen unter 32 Bit
+
+  Die Groesse einiger Datentypen unterscheidet sich je nach verwendetem
+  Compiler und der Systemumgebung. Folgende Regeln sollten beachtet werden:
+
+  Der im Regelfall zu verwendede Datentyp ist Integer. Dieser Datentyp
+  ist unter 32 Bit wiederum 32 Bit gross und immer signed (vorzeichenbehaftet).
+  Bei sp‰teren 64 Bit Versionen kann dieser Datentyp 64 Bit groﬂ sein.
+  Dieser Datentyp ist immer der _schnellste_ fuer das System verfuegbare Datentyp,
+  sollte also in Schleifen usw. wenn moeglich genommen und den spezielleren
+  Datentypen vorgezogen werden.
+
+  Folgende Datentypen sind immer gleich gross und z.B. fuer Records geeignet:
+  Byte       1 Byte  unsigned  0..255
+  Unsigned16 2 Byte  unsigned  0..65535
+  DWord      4 Byte  unsigned  0..4294967295
+
+  Integer8   1 Byte  signed   -128..127
+  Integer16  2 Byte  signed   -32768..32767
+  Integer32  4 Byte  signed   -2147493647..2147493647
+
+  }
+
+  {$IFDEF FPC }
+    { FreePascal, 32 Bit }
+    integer8 =   shortint;
+    integer16 =  system.smallint;
+    integer32 =  longint;
+    unsigned16 = system.word;
+    { Unter FPC ist ein Integer im BP Kompatibilit‰tsmodus standardmaessig 16 Bit gross }
+    integer =    longint;
+  {$endif}
+  {$IFDEF Delphi }
+    { Delphi, 32 Bit }
+    integer8 =   shortint;
+    integer16 =  system.smallint;
+    integer32 =  longint;
+    unsigned16 = system.word;
+    DWord =      Longword;  { = unsigned 32 bit }
+    variant =    pointer; // Naja...
+  {$endif}
+    smallword =  unsigned16;  //todo: drop and use unsigned16 wherever required
+
+//todo: replace all usages of these temporary types by something more appropriate
+type
+  xpWord =     integer;     //used in all units which used xpglobal
+
+const
+{$IFDEF UnixFS }
+  DirSepa  = '/';
+  WildCard = '*';
+  _MPMask  = '/';       { Fuer die MultiPos-Suche, verringert deutlich die IFDEF's }
+  newline  = #10;
+  PathSepa = ':';
+{$ELSE }
+  DirSepa  = '\';
+  WildCard = '*.*';
+  _MPMask  = ':\';      { Reihenfolge NICHT AENDERN!!!!! }
+  newline  = #13#10;
+  PathSepa = ';';
+{$ENDIF }
+
+var
+{ Verzeichnisvariablen - auﬂer in linux alle auf Curdir gesetzt }
+{ Initialisiert vom Hauptprogramm                               }
+  HomeDir,                     { User-Verzeichnis mit Datenbank }
+  LibDir,                      { Libraries und Ressourcen       }
+  DocDir,                      { Dokumentationsverzeichnis      }
+  OpenXPEXEPath: String;       { 'd:\xp\openxp.exe'             }
+
+{$IFDEF Delphi }
+var
+  Inoutres: Integer;
+{$ENDIF }
+
+const
+  XPDirName = 'openxp';        { Default LibDirname of openxp   }
+  BaseDir   = '.' + XPDirName;
+
+const
+  MaxLenFilename = 255;
+  MaxLenPathname = 255;
+  {$IFDEF Delphi }
+  MemAvail = MaxInt;
+  {$ENDIF }
+
+type
+  PCharArray = ^TCharArray;
+  TCharArray = array[0..MaxInt div 2] of Char;
+  PByteArray = ^TByteArray;
+  TByteArray = array[0..MaxInt div 2] of Byte;
+
+type
+  EXPoint = class(Exception)
+  private
+    FExitCode: Integer;
+  public
+    constructor Create(ExitCode: Integer; const Message: String);
+    property ExitCode: Integer read FExitCode write FExitCode;
+  end;
+
+implementation
+
+constructor EXPoint.Create(ExitCode: Integer; const Message: String);
+begin
+  inherited Create(Message);
+  self.ExitCode := ExitCode;
+end;
+
+begin
+{$IFDEF Beta }
+{$IFDEF FPC }
+{$ifndef Unix}
+  Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
+        ' with Compiler ', {$I %FPCVERSION%}, ' for ', {$I %FPCTARGET%});
+{$endif}
+{$ENDIF }
+{$ENDIF }
+  verstr := Copy(version_Build, Pos(' ', version_build)+1, 50);
+  verstr := mainver + '.' + Copy(verstr, 1, Pos(' ', verstr)-1);
+
+{
+  $Log: xpglobal.pas,v $
+  Revision 1.91  2003/11/13 17:08:09  mk
+  - added missing '
+
+  Revision 1.90  2003/10/21 21:43:17  cl
+  - changed version info to new scheme
+
+  Revision 1.89  2003/10/20 19:23:01  cl
+  - Delphi compile fixes
+
+  Revision 1.88  2003/10/20 00:27:06  cl
+  - New build system
+
+  Revision 1.87  2003/10/19 00:28:57  cl
+  - undo changes made by testing build/next_release.pl
+
+  Revision 1.86  2003/10/19 00:21:16  cl
+  New version number: 3.9.11
+
+  Revision 1.85  2003/10/19 00:08:17  cl
+  New version number: 3.9.10
+
+  Revision 1.84  2003/10/18 15:00:53  mk
+  - Version 3.9.8 Alpha
+
+  Revision 1.83  2003/10/13 19:49:04  mk
+  - complete string mainver
+
+  Revision 1.82  2003/10/09 19:49:58  mk
+  - new automatic build number system
+
+  Revision 1.81  2003/08/27 17:41:47  mk
+  - updated copyright year to 2003
+  - updated data type comments
+
+  Revision 1.80  2003/08/15 21:36:18  mk
+  - fixed #733047: Bad User-Agent header syntax
+
+  Revision 1.79  2003/05/02 19:43:05  mk
+  - version 3.9.7
+
+  Revision 1.78  2003/05/01 09:52:29  mk
+  - added IMAP support
+
+  Revision 1.77  2003/04/25 21:11:18  mk
+  - added Headeronly and MessageID request
+    toggle with "m" in message view
+
+  Revision 1.76  2003/01/24 20:05:06  mk
+  - Version 3.9.4
+
+  Revision 1.75  2003/01/15 23:10:18  mk
+  - added NetBSD pformstr
+
+  Revision 1.74  2002/12/28 20:11:06  dodi
+  - start keyboard input redesign
+
+  Revision 1.73  2002/12/21 05:38:01  dodi
+  - removed questionable references to Word type
+
+  Revision 1.72  2002/12/05 19:36:21  dodi
+  - removed ambiguous word type
+
+  Revision 1.71  2002/11/14 20:10:38  cl
+  - changed some fatal errors to exceptions to allow easier debugging
+
+  Revision 1.70  2002/07/25 20:50:13  ma
+  - updated copyright notices
+
+  Revision 1.69  2002/07/25 20:43:56  ma
+  - updated copyright notices
+
+  Revision 1.68  2002/06/05 18:01:02  mk
+  - version 3.9.3
+
+  Revision 1.67  2002/05/20 19:50:41  mk
+  - version 3.9.2
+
+  Revision 1.66  2002/05/08 11:01:16  mk
+  - 3.9.x is Alpha, not Beta
+  - version 3.9.1
+
+  Revision 1.65  2002/04/30 08:56:16  mk
+  - Version 3.9.0
+
+  Revision 1.64  2002/04/20 12:43:57  mk
+  - Mainbranch with Beta 3.7.9
+
+  Revision 1.63  2001/12/31 15:18:10  mk
+  - changed to 3.7.7
+
+  Revision 1.62  2001/12/31 15:07:11  mk
+  - changes for version 3.7.6
+
+  Revision 1.61  2001/10/26 11:20:39  ma
+  - new var "OpenXPEXEPath" (which replaces ParamStr(0) because of problems
+    with Unix)
+
+  Revision 1.60  2001/10/21 20:42:11  mk
+  - Snapshot 3.7.5
+
+  Revision 1.59  2001/10/21 11:45:46  mk
+  - Beta 3.7.4
+
+  Revision 1.58  2001/10/20 17:26:42  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
+  Revision 1.57  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
+  Revision 1.56  2001/09/08 16:29:39  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
+  Revision 1.55  2001/08/02 22:47:57  mk
+  - added Cardinal for VP
+
+  Revision 1.54  2001/07/31 13:10:35  mk
+  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
+
+  Revision 1.53  2001/05/19 16:17:51  ma
+  - removed XP_ID (shareware notice)
+  - changed program id:
+    "OpenXP/32 vVERSION (PLATFORM)"
+
+  Revision 1.52  2001/01/06 16:16:26  ma
+  - added PathSepa
+  - shortened CVS logs
+
+  Revision 1.51  2000/12/27 13:34:23  hd
+  - Set Linux version to alpha state
+  - Increased copyright (a little bit to early)
+
+  Revision 1.50  2000/12/11 10:59:36  mk
+  - fixed comment of betastr
+
+  Revision 1.49  2000/12/06 09:43:42  mk
+  - OpenXP-Team mit Bindestrich in der Mitte
+
+  Revision 1.48  2000/11/18 18:38:21  hd
+  - Grundstruktur des Loggings eingebaut
+}
+end.

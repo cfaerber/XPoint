@@ -1,0 +1,57 @@
+#!/bin/bash
+echo "Starting $0"
+# has to be run as root because of rpm call in make-rpm.sh
+oxpdir=/home/boettger/openxp/
+export oxpdir
+#scriptdir="$oxpdir"script/
+diffdir="$oxpdir"diff/
+dailydifffile=$diffdir'openxpdiff_3.9_'`date +%d.%m.%y`
+dailydifffile38=$diffdir'openxpdiff_3.8_'`date +%d.%m.%y`
+#mailtoaddr=openxp-cvs@lists.sourceforge.net
+
+echo Generating diffs in $diffdir
+echo $dailydifffile
+echo $dailydifffile38
+sleep 1
+
+# 3.9.x
+echo Generating $dailydifffile for 3.9.x
+cd "$oxpdir"3.9/openxp
+pwd
+#sleep 1
+#cvs up -A
+mv openxp.dpr openxp.dpr-old
+mv openxp.conf openxp.conf-old
+cvs up -A -d -P
+cp openxp.dpr openxp.dpr-cvs
+cp openxp.conf openxp.conf-cvs
+cvs diff -u -D "-1 day" | grep -v -w "\?" > $dailydifffile
+#test -s $dailydifffile && mailx -s dailydiff $mailtoaddr < $dailydifffile
+cp openxp.conf-cb openxp.conf
+cp openxp.dpr-cb openxp.dpr
+
+# 3.8.x
+echo Generating $dailydifffile for 3.8.x
+cd "$oxpdir"3.8/openxp
+pwd
+#sleep 1
+#cvs up -r branch_3_7_8
+
+# due to a CVS bug with diff'ing branches, this does NOT work
+#cvs up -r branch_3_7_8 -d
+#cvs diff -u -r branch_3_7_8 -D "-1 day" | grep -v -w "\?" > $dailydifffile38
+# so we have to use a work-around ... or better call it an ugly hack
+rm -fr openxp_3.8_last 2>/dev/null
+rm -fr openxp_3.8 2>/dev/null
+cvs co -r branch_3_7_8 -d openxp_3.8 openxp
+cvs co -D "-1 day" -r branch_3_7_8 -d openxp_3.8_last openxp
+diff openxp_3.8_last openxp_3.8 -ud > $dailydifffile38
+rm -rf openxp_3.8_last openxp_3.8
+
+echo Starting snapshot builds if needed
+#test -s $dailydifffile && "$oxpdir"3.9/openxp/build/snapshot 3.9
+test `ls -la $dailydifffile |cut -b 31-42` -gt 406 && "$oxpdir"3.9/openxp/build/snapshot 3.9
+test `ls -la $dailydifffile38 |cut -b 31-42` -gt 1165 && "$oxpdir"3.8/openxp/build/snapshot 3.8
+
+chown -R boettger.users /home/boettger/openxp/*
+echo "Finished $0"

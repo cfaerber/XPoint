@@ -1,0 +1,240 @@
+# $Id$
+#  
+#  Makefile.in -- OpenXP autoconf build system
+#  
+#  This software is part of the OpenXP project (www.openxp.de).
+#  Copyright (c) 2000 by the OpenXP Team.
+#  Created on 2002-01-13 by Claus F"arber <claus@faerber.muc.de>
+#  
+#  This is free software; you can redistribute it and/or modify it
+#  under the terms of the Lesser GNU General Public License (LGPL) as
+#  published by the Free Software Foundation; either version 2,
+#  or (at your option) any later version.
+#  
+#  The software is distributed in the hope that it will be useful, but
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See LGPL
+#  for more details.
+#  
+#  You should have received a copy of the LGPL along with this
+#  software; see the file lgpl.txt. If not, write to the
+#  Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# --- variables -------------------------------------------------------
+SHELL	= /bin/sh
+
+# --- configuration ---------------------------------------------------
+srcdir		= @srcdir@
+prefix		= @prefix@
+exec_prefix     = @exec_prefix@
+bindir		= @bindir@
+sbindir		= @sbindir@
+libexecdir	= @libexecdir@
+datadir		= @datadir@
+sysconfdir	= @sysconfdir@
+sharedstatedir	= @sharedstatedir@
+localstatedir	= @localstatedir@
+libdir		= @libdir@
+includedir	= @includedir@
+oldincludedir	= @oldincludedir@
+infodir		= @infodir@
+mandir		= @mandir@
+
+# --- flags -----------------------------------------------------------
+
+UNIT_DIRS = xplib ObjCOM netcall linux
+INCLUDE_DIRS = build
+
+PPC	= @PPC@
+PPC_FLAGS	= @PPCFLAGS@ \
+		  $(patsubst %,-Fu"./%",$(UNIT_DIRS)) \
+		  $(patsubst %,-Fi"./%",$(INCLUDE_DIRS)) \
+		  -dAUTOCONF
+PPC_LOCAL_FLAGS = $(PPC_FLAGS)
+
+# --- files -----------------------------------------------------------
+EXEEXT 	= @EXEEXT@
+
+OPENXP	= openxp@EXEEXT@
+RC	= ./rc@EXEEXT@
+IHS	= ./ihs@EXEEXT@
+
+UNITS	=
+INCLUDES=
+
+RESSOURCE_FILES=$(patsubst openxp-%.rq,openxp-%.res,$(wildcard openxp-*.rq))
+HELP_FILES=$(patsubst doc/openxp-%.ihq,openxp-%.hlp,$(wildcard doc/openxp-*.ihq))
+
+# --- abstract targets ------------------------------------------------
+all: bin res
+
+bin: $(OPENXP)
+
+res: $(RESSOURCE_FILES) $(HELP_FILES)
+
+# --- cleaning --------------------------------------------------------
+mostlyclean:
+	rm -f $(OPENXP) openxp-*.res *.dcu *.ppu *.o *.rst fpc*.txt
+	-for d in $(UNIT_DIRS) ; do rm -f $$d/*.dcu $$d/*.ppu $$d/*.o ; done
+	rm -f strip-stamp
+
+clean: mostlyclean
+	rm -f $(RC) $(IHS)
+
+distclean: clean
+	rm -f Makefile config.cache config.status config.h config.inc config.log
+
+maintainer-clean: distclean
+	rm -f configure
+
+# --- install/uninstall -----------------------------------------------
+install: bin res
+	install -D --mode=755 $(OPENXP) $(bindir)/$(OPENXP)
+	install -d -D $(datadir)/openxp/
+	install --mode=644 $(RESSOURCE_FILES) $(HELP_FILES) $(datadir)/openxp/
+
+strip: strip-stamp
+strip-stamp: bin
+	strip --strip-unneeded -R .note -R .comment $(OPENXP)
+	touch strip-stamp
+
+install-strip:
+	$(MAKE) strip
+	$(MAKE) install
+
+# uninstall:
+
+# --- main programme --------------------------------------------------
+
+OPENXP_DEP=openxp.pas $(UNITS) config.inc
+
+openxp$(EXEEXT): $(OPENXP_DEP)
+	$(PPC) $(PPC_FLAGS) $<
+
+config.inc: config.h
+	( sed -ne "s/^#\(.*\)/{\$$\1}/p" config.h &&	\
+	  echo "const conf_prefix = '$(prefix)';" &&	\
+	  echo "const conf_datadir = '$(datadir)';" ) 	> config.inc
+
+# --- ressources ------------------------------------------------------
+openxp-%.res: openxp-%.rq $(RC)
+	$(RC) $<
+
+rc$(EXEEXT): rc.pas $(UNITS) $(INCLUDES)
+	$(PPC) $(PPC_LOCAL_FLAGS) $<
+
+# --- in-programme help -----------------------------------------------
+
+ihs$(EXEEXT): ihs.pas $(UNITS) $(INCLUDES)
+	$(PPC) $(PPC_LOCAL_FLAGS) $<
+
+openxp-%.hlp: doc/openxp-%.ihq $(IHS)
+	$(IHS) $<
+	cp doc/openxp-$*.hlp $@
+
+# --- documentation ---------------------------------------------------	
+
+DOC_SRC = doc/xpoint.sgm doc/xpoint.dsl doc/xpoint.cat
+DOC_HTML= doc/xpoint/book1.html
+DOC_PDF = doc/xpoint.pdf
+
+doc: $(DOC_HTML) $(DOC_PDF)
+
+$(DOC_HTML) : $(DOC_SRC)
+	( cd doc; sgmltools --backend=html -s xpoint.dsl xpoint.sgm )
+
+$(DOC_PDF) : $(DOC_SRC)
+	( cd doc; sgmltools --backend=pdf -s xpoint.dsl xpoint.sgm )
+
+# --- Debian packages -------------------------------------------------	
+
+# --- files list ------------------------------------------------------
+
+MANIFEST.snap:
+	(for a in $(OPENXP) $(RESSOURCE_FILES) $(HELP_FILES) ; do echo $$a ; done) > MANIFEST.snap
+
+# --- autoconf configuration PASCAL adaptions -------------------------
+# config.inc: config.h Makefile
+#	( 					\
+# 	sed -ne "s/^#\(.*\)/{\$$\1}/p" $< &&	\
+#	sed -ne "s/^CONF_\([A-Z_-]*\)[ 	]*=[ 	]*\(.*[^ 	]\)/const CONF_\1 = '\2';/p" Makefile \
+#	) >$@
+
+#		sed							\
+#		  -e "s/^[^#].*/\/\/&/" 				\
+#		  -e "s/^#\(.*\)/{\$$\1}/"				\
+#		  -e "s/^\(\/\/[	 ]*\)\/[\/\*]/\1  /" 		\
+#		  -e "s/\*\/[ 	]*$$//"					\
+#		  -e "s/[ 	]*$$//"					\
+#		$< >$@
+
+# --- configuration ---------------------------------------------------
+
+${srcdir}/Makefile: Makefile.in configure
+	cd ${srcdir} && ./configure
+
+# --- maintainer only -------------------------------------------------
+
+autoconf: ${srcdir}/configure
+
+${srcdir}/configure: configure.ac $(wildcard aclocal.m4)
+	cd ${srcdir} && autoconf
+
+# ---------------------------------------------------------------------
+#
+# $Log: Makefile.in,v $
+# Revision 1.19  2003/11/04 17:52:52  cl
+# - added include dirs
+#
+# Revision 1.18  2003/10/25 17:28:50  cl
+# - fixes for Debian packaging
+#
+# Revision 1.17  2003/10/20 00:27:06  cl
+# - New build system
+#
+# Revision 1.16  2003/10/18 23:26:14  cl
+# - removed old build system for Debian
+#
+# Revision 1.15  2003/09/04 12:52:53  cl
+# - fixed make debian
+#
+# Revision 1.14  2003/09/02 17:39:55  cl
+# - fixed recreation of debian/changelog on ``make debian''
+#
+# Revision 1.13  2003/09/02 17:30:33  cl
+# - some minor changes
+#
+# Revision 1.12  2003/08/17 17:54:44  cl
+# - added ``make debian''
+# - fixed genration of documentation
+#
+# Revision 1.11  2003/05/15 11:07:43  cl
+# - fixed configure.in => configure.ac
+#
+# Revision 1.10  2003/02/21 19:32:13  cl
+# - Moved configure.in to configure.ac
+#
+# Revision 1.8  2003/01/13 23:34:25  cl
+# - autoconf update
+#
+# Revision 1.7  2003/01/13 16:17:32  cl
+# - Makfile update
+#
+# Revision 1.6  2003/01/13 16:13:29  cl
+# - autoconf updates for cross-compilation
+#
+# Revision 1.5  2003/01/13 15:42:41  cl
+# - autoconf update for cross-compilation
+#
+# Revision 1.4  2002/08/10 18:46:57  cl
+# - autoconf: install location now configurable
+#
+# Revision 1.3  2002/08/10 17:34:54  cl
+# - update for autoconf
+#
+# Revision 1.2  2002/01/13 22:50:15  cl
+# - update
+#
+# Revision 1.1  2002/01/13 21:52:16  cl
+# - added a start for autoconf configuration
+#

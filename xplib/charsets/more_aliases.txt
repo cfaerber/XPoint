@@ -1,0 +1,115 @@
+# $Id: more_aliases.txt,v 1.2 2004/02/08 22:11:26 cl Exp $
+# Additional aliases not found in IANA database. This file is public domain.
+#
+# Written 2003 by Claus Färber
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation
+# files (the "Software"), to deal in the Software without
+# restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, and/or sell copies of
+# the Software, and to permit persons to whom the Software is
+# furnished to do so, provided that the above copyright notice(s)
+# and this permission notice appear in all copies of the Software
+# and that both the above copyright notice(s) and this permission
+# notice appear in supporting documentation.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT OF THIRD PARTY RIGHTS.  IN NO EVENT SHALL THE
+# COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE LIABLE
+# FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES,
+# OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+# PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+# TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+# PERFORMANCE OF THIS SOFTWARE.
+#
+# Except as contained in this notice, the name of a copyright
+# holder shall not be used in advertising or otherwise to promote
+# the sale, use or other dealings in this Software without prior
+# written authorization of the copyright holder.
+#
+# Format:
+# <IANA/canon charset> WSP <alias>
+CP00858		CP858
+CP00858		IBM858
+MACINTOSH	X-MAC-ROMAN
+X-UNKNOWN	UNKNOWN
+X-UNKNOWN	UNKNOWN-8BIT
+X-UNKNOWN	UNKNOWN-8-BIT
+X-UNKNOWN	X-UNKNOWN-8BIT
+X-UNKNOWN	X-UNKNOWN-8-BIT
+# Common
+Latin-0		Latin0
+Latin-1		Latin1
+Latin-2		Latin2
+Latin-3		Latin3
+Latin-4		Latin4
+Latin-5		Latin5
+Latin-6		Latin6
+Latin-7		Latin7
+Latin-8		Latin8
+Latin-9		Latin9
+Latin-10	Latin10
+# Microsoft Windows
+Latin-1		L1
+Latin-2		L2
+Latin-3		L3
+Latin-4		L4
+Latin-5		L5
+Latin-6		L6
+Latin-7		L7
+Latin-8		L8
+Latin-9		L9
+Shift_JIS	Shift-JIS
+Shift_JIS	x-SJIS
+UTF-16BE	unicodeFFFE
+Big5		X-Big5
+Big5		X-X-Big5
+# ZConnect 
+ISO-8859-1	ISO1
+ISO-8859-2	ISO2
+ISO-8859-3	ISO3
+ISO-8859-4	ISO4
+ISO-8859-5	ISO5
+ISO-8859-6	ISO6
+ISO-8859-7	ISO7
+ISO-8859-8	ISO8
+ISO-8859-9	ISO9
+ISO-8859-10	ISO10
+ISO-8859-13	ISO13
+ISO-8859-14	ISO14
+ISO-8859-16	ISO16
+UTF-16		UNICODE
+# FTN
+ISO646-NL	DUTCH
+ISO646-FI   	FINNISH
+ISO646-FR	FRENCH
+ISO646-CA	CANADIAN
+ISO646-DE	GERMAN
+ISO646-IT	ITALIAN
+ISO646-NO	NORWEG
+ISO646-PT	PORTU
+ISO646-ES	SPANISH
+ISO646-SE	SWEDISH
+ISO646-CH	SWISS
+ISO646-GB	UK
+ISO-8859-1	LATIN-1
+IBM437		IBMPC
+macintosh	MAC
+ISO-8859-2	Latin-2
+ISO-8859-3	Latin-3
+ISO-8859-4	Latin-4
+ISO-8859-9	Latin-5
+ISO-8859-10	Latin-6
+ISO-8859-13	Latin-7
+ISO-8859-14	Latin-8
+ISO-8859-15	Latin-9
+ISO-8859-6	Arabic
+ISO-8859-5	Cyrillic
+ISO-8859-7	Greek
+ISO-8859-8	Hebrew
+JIS_X0201	Katakana
+GB2312		Hanzi
+JIS_X0208	Kanji
