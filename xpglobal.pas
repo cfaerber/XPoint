@@ -31,7 +31,7 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.7.9';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.9.0';  { Versionnr. - steht nur an dieser Stelle }
 {$ifdef Linux}
   betastr     = ' alpha';
 {$else}
@@ -195,6 +195,9 @@ begin
 
 {
   $Log$
+  Revision 1.65  2002/04/30 08:56:16  mk
+  - Version 3.9.0
+
   Revision 1.64  2002/04/20 12:43:57  mk
   - Mainbranch with Beta 3.7.9
 
