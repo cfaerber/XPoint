@@ -85,6 +85,7 @@ procedure XPRewrite(var F: file; cm: TCreateMode);
 
 { DOS-Routinen }
 procedure FSplit(const path: string; var dir, name, ext: string);
+function  FSearch(const fn: string; dirlist: string): string;
 
 function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
@@ -231,6 +232,25 @@ begin
     Delete(name,pos(ext,name),length(ext));
 end;
 
+function FSearch(const fn: string; dirlist: string): string;
+var p: integer;
+begin
+  result:= '';
+  p:= pos(PathSepaChar,dirlist);
+  while p<>0 do begin
+    if FileExists(AddDirSepa(Copy(dirlist,1,p-1))+fn) then begin
+      result:= AddDirSepa(Copy(dirlist,1,p-1))+fn;
+      dirlist:='';
+      break;
+    end;
+    delete(dirlist,1,p);
+    p:= pos(PathSepaChar,dirlist);
+  end;
+  if dirlist<>'' then
+    if FileExists(AddDirSepa(dirlist)+fn) then
+      result:= AddDirSepa(dirlist)+fn;
+end;
+
 function existf(var f):Boolean;
 var
   fr: ^tfilerec;
@@ -350,6 +370,7 @@ begin
     while i>0 do begin
       if FileExists(AddDirSepa(Copy(path,1,i-1))+fname) then begin
         result:= true;
+        path:= '';
         break;
       end;
       Delete(path,1,i);
@@ -617,6 +638,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.77  2000/11/16 20:00:50  hd
+  - DOS Unit entfernt
+
   Revision 1.76  2000/11/16 12:50:27  fe
   Made compileable with VP.
 
