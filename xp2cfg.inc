@@ -37,7 +37,7 @@ begin
     coltline:=4;
     colbretter:=7; colbretterinv:=$30; colbretterhi:=2; colbrettertr:=3;
     colmsgs:=7; colmsgshigh:=2; colmsgsinv:=$30; colmsgsinfo:=2;
-    colmsgsuser:=lightred; colmsgsinvuser:=$30+red;
+    colmsgsuser:= lightred; colmsgsinvuser:=$30+red;
     Colmsgsprio1:=7; colmsgsprio2:=7; colmsgsprio4:=7; colmsgsprio5:=7;
     colmbox:=$70; colmboxrahmen:=$70; colmboxhigh:=$7f;
     coldialog:=$70; coldiarahmen:=$70; coldiahigh:=$7e;
@@ -684,8 +684,8 @@ begin
   PGPVersion:=PGP2;           { Default-Version ist PGP 2.6.x }
   RTAMode := 128 + 13;        { RTA und/oder WAB vorhanden    }
   RTAStandard := true;
-  RTAOwnAddresses := nil;
-  RTANoOwnAddresses := nil;
+  RTAOwnAddresses := '';
+  RTANoOwnAddresses := '';
 end;
 
 
@@ -1707,6 +1707,9 @@ end;
 
 {
   $Log$
+  Revision 1.116  2001/07/27 22:51:29  mk
+  - fixed some Freepascal compile problems
+
   Revision 1.115  2001/07/27 18:10:11  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again

@@ -29,7 +29,7 @@ unit replytoall;
 
 interface
 
-uses xpglobal,crt,dos,typeform,fileio,inout,winxp,keys,maske,datadef,database,
+uses xpglobal,dos,typeform,fileio,inout,winxp,keys,maske,datadef,database,
   resource,xp0,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xp6,maus2,lister, sysutils,
   classes, xpHeader, xpconfigedit, xpmakeheader;
 
@@ -201,7 +201,7 @@ begin
   eigeneAdressenBaum := nil;
   notEigeneAdressenbaum := nil;
 
-  if assigned (RTANoOwnAddresses) then          { Adressen aus dem Config-     }
+  if RTANoOwnAddresses <> '' then          { Adressen aus dem Config-     }
   begin                                         { Setting RTANotEigeneAdressen }
     s := RTANoOwnAddresses;                     { verwerten                    }
     repeat
@@ -248,7 +248,7 @@ begin
   end;
   dbClose (d);
 
-  if assigned (RTAOwnAddresses) then    { Adressen aus dem Config-Setting }
+  if RTAOwnAddresses <> '' then    { Adressen aus dem Config-Setting }
   begin                                 { RTAEigeneAdressen verwerten     }
     s := RTAOwnAddresses;
     repeat
@@ -1018,7 +1018,7 @@ begin
   brk := false;
   dbRead(dispdat,'absender',empf);
   if ntRealName(mbNetztyp) then dbRead (dispdat, 'name', realname);
-  new (hdp);
+  hdp := THeader.Create;
   readkoplist := true;      { KOP-Header auslesen }
   readempflist := true;     { EMP-Header auslesen }
   readHeadEmpf := 127;
@@ -1045,7 +1045,7 @@ begin
   then
     empf := GetEmpfaenger (hdp.ReplyTo);
 
-  dispose (hdp);
+  hdp.Free;
 
   if not RTA then
     disposeRTAEmpfList (RTAEmpfList)
@@ -1059,6 +1059,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/07/27 22:51:29  mk
+  - fixed some Freepascal compile problems
+
   Revision 1.1  2001/07/27 18:10:10  mk
   - ported Reply-To-All from 3.40, first part, untested
   - replyto is now string instead of TStringList again
