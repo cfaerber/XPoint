@@ -804,20 +804,35 @@ end;
 
 Procedure ClientBL_Sort(box:string);
 var s1: string;
+var p1: string;
 begin
   s1:=get_BL_Name(Box);
-  if not exist(s1) then 
+  p1:='RPSORT.COM';
+  if not exist(s1) then
   begin
-    rfehler(807);
+    rfehler(807);     { Keine Brettliste fÅr diese Box vorhanden! }
     exit;
     end;  
-  shell('sort <'+s1+' >sort.tmp',640,0);
-  if exist('sort.tmp') then 
+  if not exist(ownpath+p1) then
   begin
-    copyfile('sort.tmp',s1);
-    _era('sort.tmp');
+    rfehler1(907,p1); { Achtung! Das Programm "%s" ist nicht vorhanden! }
+    exit;
     end;
-end;
+  moment;
+  shell(ownpath+p1+' /q /a /b /d /n /z '+s1+' '+TempPath+'RPSORT.~BL',640,0);
+  if (errorlevel=0) and (exist(TempPath+'RPSORT.~BL')) then
+  begin
+    copyfile(TempPath+'RPSORT.~BL',s1);
+    _era(TempPath+'RPSORT.~BL');
+    closebox;
+    end
+  else begin
+    if exist(TempPath+'RPSORT.~BL') then _era(TempPath+'RPSORT.~BL');
+    closebox;
+    rfehler(836);     { Sortierung der Newsgroup-Liste ist fehlgeschlagen! }
+    exit;
+    end;
+  end;
 
 Procedure ClientBL_Del(box:string);
 var s1: string;
@@ -2153,6 +2168,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.23  2001/07/08 21:33:11  my
+  - ClientBL_Sort now uses 'rpsort.com' instead of 'sort'
+  - Improved error handling in ClientBL_Sort
+
   Revision 1.10.2.22  2001/07/06 15:35:38  my
   JG:- Fix for RFC/Client: <Enter> needs not be pressed twice anymore
        when N/M/E is mapped to N/M/D
