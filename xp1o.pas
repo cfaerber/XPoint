@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Overlay-Teil zu xp1 }
@@ -25,6 +26,7 @@ uses
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg  : string = '';
       ListXHighlight: boolean = true;    { fÅr F-Umschaltung }
+      ListShowSeek  : boolean = false;
 
 var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
      listkey  : taste;
@@ -81,51 +83,61 @@ end;
 
 function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
-const
-  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
-    '-','_','#','=','&','%','@','$'];
 var x,y : byte;
     brk : boolean;
     fn  : string[20];
-    s2  : string;
+    s2  : pathstr;
+const
+    lastpath : pathstr = '';
+    urlchars : set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
+               '-','_','#','=','&','%','@','$'];
 begin
   fn:=getres(106);
   dialog(45+length(fn),3,txt,x,y);
-  if not clipboard then useclip:=false;
+  if s='' then s:=iifs(useclip,'Clipboard',lastpath);
+  if (s='*.*') and not useclip then s:=left(lastpath,rightpos('\',lastpath))+s; 
   maddstring(3,2,fn,s,37,MaxLenPathname,'');   { Dateiname: }
   if useclip then begin
     mappsel(false,'Clipboard');
     mappsel(false,'Clipboard (URL)');
     mappsel(false,'Clipboard (MAIL)');
     end;
+  if lastpath<>'' then mappsel(false,lastpath); 
   readmask(brk);
   enddialog;
+  if not clipboard then useclip:=false;
   if not brk then begin
     s2:= s; { Original-Schreibweise merken }
     UpString(s);
-    if useclip and (s='CLIPBOARD') then begin
-      s:=TempS(65535);
-      ClipToFile(s);
+    if (s='CLIPBOARD') then begin
+      if useclip then begin
+        s:=TempS(65535);
+        ClipToFile(s);
       end
+      else begin
+        _era(ownpath + ClipFileName);
+        s:=ownpath + ClipFileName;
+      end; 
+    end
     else
-    if useclip and (s='CLIPBOARD (MAIL)') then begin         { Markierten Text als Mailadresse}
+    if (s='CLIPBOARD (MAIL)') then begin       { Markierten Text als Mailadresse }
       s:=mailstring(getline,false);
-      string2clip(s);                                        { ins Clipboard }
+      string2clip(s);                          { ins Clipboard }
       ReadFilename:=false;
       exit;
       end
     else
-    if useclip and (s='CLIPBOARD (URL)') then begin          { Markierten Text als URL}
+    if (s='CLIPBOARD (URL)') then begin        { Markierten Text als URL }
       s:=getline;
-      y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
-      if y=0 then y:=pos('HTTPS://',ustr(s));                {HTTPS URL ?}
-      if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
-      if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }
+      y:=pos('HTTP://',ustr(s));               { WWW URL?}
+      if y=0 then y:=pos('HTTPS://',ustr(s));  { HTTPS URL?}
+      if y=0 then y:=pos('FTP://',ustr(s));    { oder FTP?}
+      if y=0 then y:=pos('WWW.',ustr(s));      { oder WWW URL ohne HTTP:? }
       if y<>0 then
       begin
         s:=mid(s,y);
         y:=1;
-        while (y<=length(s)) and (s[y] in urlchars) do inc(y); {Ende der URL suchen...}
+        while (y<=length(s)) and (s[y] in urlchars) do inc(y); { Ende der URL suchen... }
         s:=left(s,y-1);
       end;
       string2clip(s);
@@ -142,6 +154,7 @@ begin
       s:=s+WildCard
     else if IsPath(s) then
       s:=s+DirSepa+WildCard;
+    if (cpos('?',s)>0) or (cpos('*',s)>0) then lastpath:=fexpand(s);
     file_box(s,subs);
     if (s<>'') and (IsDevice(s) or not ValidFilename(s)) then begin
       rfehler(3);   { UngÅltiger Pfad- oder Dateiname! }
@@ -153,6 +166,8 @@ begin
     ReadFilename:=false;
     UseClip:=false;
     end;
+  if not brk and (s<>'')
+    then lastpath:=left(s,rightpos('\',s))+mid(lastpath,rightpos('\',lastpath)+1);
 end;
 
 
@@ -312,58 +327,83 @@ begin
   if UpCase(c)=k4_F then                                 { 'F' }
     ListXHighlight:=not ListXHighlight;
 
+  if t=keytab then t:=keyctab
+  else if (t=keyctab) or (t=keystab) then t:=keytab;
+
+  if t=^S then
+  begin
+    t:='s';
+    c:='s';
+    end
+  else if t='s' then
+  begin
+    t:='';
+    if Suche(getres(438),'#','')
+    then begin
+      ListShowSeek:=true;
+      t:=keyctab;
+      end else
+    end;
+
+  if upcase(c)='E' then ListShowSeek:=not Listshowseek;
 
   if Listmakros=8 then    {Diese Funktionen NUR im Lister ausfuehren, nicht im Archivviewer... }
   begin
 
-    if upcase(c) = k2_I then msg_info;                         { 'I' fuer Lister }
+    if upcase(c) = k2_I then msg_info;                        { 'I' fuer Lister }
 
-    if upcase(c) = 'U' then uudecode;                          { 'U' = UUDecode }
+    if upcase(c) = 'U' then uudecode;                         { 'U' = UUDecode }
 
-    if upcase(c) = k2_V then ex(-2);                           { 'V' fuer Lister }
+    if upcase(c) = k2_V then ex(-2);                          { 'V' fuer Lister }
        { Wiedervorlage-Flag umschalten realisiert mit
          Exitcode -2. Weiter bei xp4w.inc/read_msg }
 
-    if upcase(c) = k2_O then                                   { 'O' fuer Lister }
+    if upcase(c) = k2_O then                                  { 'O' fuer Lister }
     begin
       ShowHeader;
       ex(-4);
       end;
 
-    if upcase(c) = 'Q' then                                   {'Q' Quotechars |: aktivieren}
+    if upcase(c) = 'Q' then                                   { 'Q' Quotechars |: aktivieren }
       otherquotechars:=not otherquotechars;
+
+    if c='#' then ex(-3);                                     { '#' = Kommentarbaum }
+
     end;
 
   { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
   if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
     (t=keyaltb) or (t=keyaltu)) then Hinweis(Getres(136))
-  else
-  begin
-    if t = keyaltm then                                       { ALT+M = Suche MessageID }
+  else begin
+
+    if t = keyaltm then                                       { Alt-M = Suche MessageID }
     begin
       s:=mailstring(getline,false);
+      while lastchar(s)='/' do dec(s[0]); 
+      s:=mid(s,rightpos('/',s)+1);
       if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
       end;
 
-    if t = keyaltv then                                        { ALT+V = Suche text }
+    if t = keyaltv then                                       { Alt-V = Suche Text }
     begin
       s:=getline;
       if Suche(getres(414),'',s) then Showfromlister;
       end;
 
-    if t = keyaltb then                                        { Alt+B = Betreff }
+    if t = keyaltb then                                       { Alt-B = Betreff }
     begin
       s:=getline;
       if s='' then s:=dbReadStrN(mbase,mb_betreff);
       if Suche(getres(415),'Betreff',s) then Showfromlister;
       end;
 
-    if t = keyaltu then                                        { Alt+U = User }
+    if t = keyaltu then                                       { Alt-U = User }
     begin
       s:=mailstring(getline,false);
       if s='' then s:=dbReadStrN(mbase,mb_absender);
       if Suche(getres(416),'Absender',s) then Showfromlister;
     end;
+
   end;
 
   if listmakros=16 then   { Archiv-Viewer }
@@ -980,6 +1020,30 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.21  2001/09/16 20:18:50  my
+  JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
+          Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
+          Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
+          <Tab> springt der Cursorbalken die n‰chste Zeile mit einem
+          markierten Suchbegriff an.
+
+  JG+MY:- Kommentarbaum kann mit '#' direkt aus Lister heraus aufgebaut
+          werden. Nach Beendigung des Kommentarbaums kehrt XP zur
+          aktuellen Nachricht zur¸ck.
+
+  JG+MY:- <Alt-M> (Message-ID-Suche) schneidet in der markierten Zeile
+          '/' ab.
+
+  JG+MY:- Dateinamenabfrage: Letzter benutzter Pfad (ohne Dateinamen) wird
+          gespeichert und erscheint im <F2>-Auswahldialog. Letzte benutzte
+          Datei oder "Clipboard" ist Default. Eingaben mit Wildcards
+          werden gespeichert auch wenn keine Datei ausgew‰hlt wurde, bei
+          Pfad‰nderungen in der Datei-Auswahlbox und anschlieﬂender
+          Dateiauswahl werden Pfad und Wildcard f¸r die n‰chste <F2>-
+          Auswahl gespeichert.
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.40.2.20  2001/08/29 21:45:29  my
   JG:- Fix: Showing message header with 'O' in message reader after
        <Ctrl-PgUp/PgDn> could overwrite the screen position the selection
