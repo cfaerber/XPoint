@@ -141,7 +141,8 @@ var s   : atext;
 begin
   s:=getres(320);   { 'DatumsbezÅge werden Åberarbeitet...     %' }
   msgbox(length(s)+10,5,'',x,y);
-  mwrt(x+3,y+2,s+#8#8#8#8#8);
+  mwrt(x+3,y+2,s);
+  GotoXY(WhereX-5, WhereY);
   attrtxt(col.colmboxhigh);
   BrettDatumSetzen(true);
   attrtxt(col.colmbox);
@@ -1347,6 +1348,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/13 13:54:45  mk
+  - 32 Bit: Fehlerhafte Prozentanzeigen behoben
+  - 32 Bit VP: Shift-Tab funktioniert jetzt
+
   Revision 1.10  2000/04/04 21:01:23  mk
   - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
 

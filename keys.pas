@@ -82,7 +82,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keyesc  : taste = #27;       { sonstige Tasten }
        keybs   : taste = #8;
        keytab  : taste = #9;
-{$IFDEF Ver32 } { !! StrgTab statt ShiftTab, evtl. ein Bug in FPC }
+{$IFDEF FPC } { !! StrgTab statt ShiftTab, evtl. ein Bug in FPC }
        keystab : taste = #0#148;
 {$ELSE }
        keystab : taste = #0#15;
@@ -465,6 +465,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/04/13 13:54:45  mk
+  - 32 Bit: Fehlerhafte Prozentanzeigen behoben
+  - 32 Bit VP: Shift-Tab funktioniert jetzt
+
   Revision 1.15  2000/04/06 09:04:17  mk
   MW: - Datumseingabe in Kalender
 

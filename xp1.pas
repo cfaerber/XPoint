@@ -1666,7 +1666,8 @@ var x,y : byte;
 begin
   msgbox(length(txt)+16,5,_fehler_,x,y);
   mwrt(x+3,y+2,left(txt,screenwidth-16)+'  '#4'  '+formi(sec div 60,2)+':'+
-               formi(sec mod 60,2)+#8#8#8#8#8);
+               formi(sec mod 60,2));
+  GotoXY(WhereX-5, WhereY);
   errsound;
   logerror(txt);
   wkey(sec,true);
@@ -2323,6 +2324,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/04/13 13:54:45  mk
+  - 32 Bit: Fehlerhafte Prozentanzeigen behoben
+  - 32 Bit VP: Shift-Tab funktioniert jetzt
+
   Revision 1.28  2000/04/13 12:48:34  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
