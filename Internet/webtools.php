@@ -147,7 +147,7 @@ function ShowFeatureList($tablefile) {
 	echo("<th nowrap=\"nowrap\" bgcolor=\"#EEEE00\">Feature</th>");
 	echo("\n<th nowrap=\"nowrap\" bgcolor=\"#EEEE00\">3.20</th>");
 	echo("\n<th nowrap=\"nowrap\" bgcolor=\"#EEEE00\">3.40</th>");
-	echo("\n<th nowrap=\"nowrap\" bgcolor=\"#EEEE00\">3.70</th></tr>");
+	echo("\n<th nowrap=\"nowrap\" bgcolor=\"#EEEE00\">OXP/32</th></tr>");
 
 	$ptfile = fopen($tablefile,"r");
 	if ($ptfile==false) return 0;

@@ -1,11 +1,11 @@
-Verbesserte MIME-Unterstützung
-Improved MIME support
+Verbesserte MIME-Unterstützung<br /><small>OXP/32: auch beim Erstellen von Mails</small>
+Improved MIME support<br /><small>OXP/32: support for creatine MIME mails, too</small>
 x
 x
 x
 
-PGP5/6.5-Unterstützung
-Support for PGP5/6.5
+PGP5/6.5-Unterstützung<br /><small>OXP/32: auch MIME, auch GnuPG</small>
+Support for PGP5/6.5<br /><small>OXP/32: MIME, GnuPG</small>
 x
 x
 x
@@ -20,7 +20,7 @@ Quote reflow
 Quote reflow
 x
 x
-o
+x
 
 Erweiterte Reply-Funktion<br /><small>Reply-To-All, an markierte User antworten etc.</small>
 Enhanced reply<br /><small>Reply-to-all, reply to marked users only, ...</small>
@@ -114,6 +114,12 @@ x
 
 BinkP-Protokoll (Fido over IP)
 BinkP protocol (Fido over IP)
+-
+-
+x
+
+Roles<br /><small>Eigene E-Mail-Adresse über Brettgruppen anpassbar</small>
+Roles<br /><small>Change own email address automatically depending on area group</small>
 -
 -
 x
