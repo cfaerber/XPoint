@@ -1369,7 +1369,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    Betreff  ~
 8    An       ~
 # Sendefenster
-10   Empf„nger~
+10   E^mpf„nger~
 11   ^An
 12   Betreff
 13   Server
@@ -1387,7 +1387,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # sonst.
 24   ^Parken,^Datum, ^EB ,o^hneSig,l^”schen,^Zurck
 25   JNIùBOCT
-28   ~^Ja ,^Nein,^Intern,^Spezial,ù3E^mp.,^Betreff,B^ox,^Code
+28   ~^Ja ,^Nein,^Intern,^Spezial,ù1^Betreff,B^ox,^Code,^Anh„nge
 29   ,^Text
 30   PDEH™RMLUG
 # Kopf fr Editor
@@ -1423,6 +1423,63 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 620  Teste auf Crosspostings...
 621  Origin-Datei fehlt: %s
 622  In diesem Netz nicht m”glich
+
++ 624
+0  ~^Neu ,^L”schen,B^earbeiten, ^Auf , A^b ,ù4S^chlieáen
+1 ^Datei anh„ngen,^Text erstellen
+
+3 Nachrichtenteil sichern
+4  Dieser Nachrichtenteil wurde neu erstellt bzw. ver„ndert.
+5  ~ In Datei ^Sichern , ^Verwerfen , A^bbruch~
+
+7 ^Text,
+8 M^etainformationen,Dateit^yp
+
+10 (keine Beschreibung)
+
+21    Weitere Einstellungen
+#  +------------------------------------------------------------+
+13   Dateiname  ~
+14   Beschreibung
+
+12   Darstellung~
+
+15   Ge„ndert   ~
+16   Erstellt   ~
+17   Zugriff    ~
+#  +------------------------------------------------------------+
+
+24 Anhang
+25 Inline
+
+30 7/8 Bit
+31 Quoted-Printable
+32 Base64
+
+35 ISO-8859-1ùUTF-8ùWindows-1252ùCP850
+36 ISO-8859-1ùUTF-8ùWindows-1252
+
+37 text/plainùapplication/octet-stream
+
+40    Nachrichtentyp „ndern
+#  +------------------------------------------------------------+
+41   Vorsicht: nderungen an diesen Einstellungen k”nnen zu un-
+42   erwnschten Nebeneffekten fhren.
+
+45   Dateityp  ~
+
+46   Zeichensatz Original
+47   ~           Versand~
+
+48   Kodierung ~
+
+50 Datei anh„ngen
+
+
+100 Kann Datei nicht zum Editieren kopieren.
+101 Kann keine Datei erstellen.
+102 Datei existiert nicht.
+-
 
 # XP6.INC
 640  Puffer berarbeiten...
@@ -3741,6 +3798,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.24  2001/08/09 19:07:01  cl
+# - allocate ressource block for attachment handling
+#
 # Revision 1.23  2001/07/31 18:05:38  mk
 # - implemented is_emailaddress in NameRead
 # - RFC/Client: implemented "External Settings" under
