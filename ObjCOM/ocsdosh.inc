@@ -15,10 +15,8 @@ type TSerialObj = Object(TCommObj)
 {        function  OpenKeep(Comport: Byte): Boolean; virtual;}
         function  GetChar: Char; virtual;
         function  CharAvail: Boolean; virtual;
-        function  CharCount: Integer; virtual;
         function  Carrier: Boolean; virtual;
         function  SendChar(C: Char): Boolean; virtual;
-        function  ReadyToSend(BlockLen: Longint): Boolean; virtual;
 {        function  GetBPSrate: Longint; virtual;}
 {        function  GetDriverInfo: String; virtual;}
 {        function  GetHandle: longint; virtual;}
@@ -50,6 +48,9 @@ const
 
 {
   $Log$
+  Revision 1.2  2000/09/11 23:00:58  ma
+  - FIFO and HighIRQ support added
+
   Revision 1.1  2000/06/22 17:30:01  mk
   - initial release
   - please keep comments in English
