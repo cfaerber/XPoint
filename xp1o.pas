@@ -636,7 +636,7 @@ begin
     { s. auch XP3O.Bezugsverkettung }
     satz:=dbRecno(mbase);
     dbReadN(mbase,mb_origdatum,datum);
-    datum:=datum and $fffffff0;  { Bit 0-3 l”schen }
+    datum:=Longint(LongWord(datum) and $fffffff0);  { Bit 0-3 l”schen }
     if dateadd>0 then
       inc(datum,dateadd)
     else begin
@@ -1038,6 +1038,9 @@ end;
 
 {
   $Log$
+  Revision 1.102  2001/10/23 07:39:56  cl
+  - ...and another range check error leaves the code
+
   Revision 1.101  2001/10/22 21:13:56  cl
   - another range check error bites the dust
 
