@@ -1597,7 +1597,7 @@ begin
     if UpperCase(userauf)='ALLE' then UserAufnahme:=0
     else if UpperCase(userauf)='Z-NETZ' then UserAufnahme:=1
     else if UpperCase(userauf)='PMS' then UserAufnahme:=3
-    else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
+    else UserAufnahme:=2;   
     scsavetime:=scrsaver;                { Screen-Saver     }
     DruckLPT:=min(5,max(DruckLpt,1));
     if aaa<>'' then
@@ -1705,6 +1705,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.5  2003/04/02 15:45:35  mk
+  - allow "keine" as "User-Aufnahme" setting again
+
   Revision 1.144.2.4  2002/07/22 15:49:59  mk
   - removed variable maxmarklist, because this is a dupe to maxmark
     this results in maximum 20000 marked messages instead of 5000 before
