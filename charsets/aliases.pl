@@ -21,24 +21,29 @@ $name=undef;
 print "(* \$ID: \$ *)\n";
 print "(* generated from IANA charset list -- do not edit *)\n\n";
 
-print "function ResolveCharsetAlias(Name: String): String;\nbegin\n";
-print "  Name:=LowerCase(Name);\n";
+open ZC,"<aliases.zc"; while(<ZC>) { 
+  /(.*[^ ]) *(.*[^ ])/; $zc{$2}=$1; } close ZC; 
+
+print "function MimeCharsetCanonicalName(Name: String): String;\nbegin\n";
+print "  Name:=UpperCase(Name);\n";
 
 while(<>) {
   chomp;
   if(/^Name: *([^ ]*)/) {
     print "\n";
     printf "  if name=%-63s else\n",
-      sprintf "%-25s then result :=%s","'$_'","'$name'" 
+      sprintf "%-25s then result :=%s","'".uc($_)."'","'$name'" 
       foreach @alias;
+
+    $db($name)=\@alias;
     
     $name=$1;
-    @alias=();
+    @alias=($name);
   } elsif(/^Alias: *([^ ]+) \(.*preferred MIME.*\)/) {
-    push @alias,lc($name);
     $name=$1;
+    push @alias,$name;
   } elsif(/^Alias: *([^ ]+)/) {
-    push @alias,lc($1) unless lc($1) eq "none";
+    push @alias,$1 unless lc($1) eq "none";
   } elsif(/^REFERENCES[ \t]*$/) {
     print "\n  result:=name;\nend;\n";
   }
@@ -55,6 +60,10 @@ while(<>) {
 }
 
 # $Log$
+# Revision 1.2  2001/09/08 14:55:27  cl
+# - More uniform naming of MIME functions/types/consts
+# - MimeCharsetCanonicalName now does also canonicalize case
+#
 # Revision 1.1  2001/04/09 13:18:15  cl
 # - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
 # - zcrfc.pas: regognition of all known charsets for news and smtp batches
