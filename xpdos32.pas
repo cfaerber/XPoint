@@ -49,12 +49,12 @@ function SysGetDriveType(drive:char):byte;
 function SysGetConsoleCodepage: TUnicodeCharsets;
 function SysOutputRedirected: boolean;
 // Execute an externel program
-function SysExec(const Prog: String): Integer;
+function SysExec(const Path, CmdLine: String): Integer;
 
 implementation
 
 uses
-  Go32, xpglobal;
+  Dos, Go32, xpglobal;
 
 const
   Font8x14: array[0..3583] of Byte = (
@@ -698,15 +698,25 @@ begin
 end;
 
 // Execute an externel program
-function SysExec(const Prog: String): Integer;
+function SysExec(const Path, CmdLine: String): Integer;
 begin
-  Exec(Prog, '');
+  Exec(Path, CmdLine);
   Result := DosExitCode;
 end;
 
+var
+  CheckBreak: Boolean;
+initialization
+  GetCBreak(CheckBreak);
+  SetCBreak(false);
+finalization
+  SetCBreak(CheckBreak);
 end.
 {
   $Log$
+  Revision 1.11  2000/11/18 21:33:07  mk
+  - disabled Ctrl-Break
+
   Revision 1.10  2000/11/18 21:10:00  mk
   - added SysExec
 
