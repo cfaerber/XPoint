@@ -1964,7 +1964,7 @@ begin      { --- select --- }
                        end;
                      end;
                    _brief_senden(t[1]);
-                   if c=k2_cW  then NachWeiter:=not NachWeiter;     { ^W }
+                   if c=k2_cW  then switch_weiterschalt;            { ^W }
                    if t=k2_cD then SwitchDatum;                     { ^S }
                    if t=keyalta then begin
                      GoP;
@@ -2243,6 +2243,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.61  2002/04/07 22:33:26  my
+  MY:- Anzeige des manuell mit <Ctrl-W> gesetzten Nachrichten-Weiter-
+       schalters in oberer MenÅleiste wieder eingebaut.
+
   Revision 1.26.2.60  2002/03/31 15:49:01  my
   JG:- Schnellsuche Brett- und User-öbersicht: Leertaste beendet die Suche
        nicht mehr (<Esc> oder <Enter> funktionieren nach wie vor). So
