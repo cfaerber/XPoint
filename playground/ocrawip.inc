@@ -231,20 +231,23 @@ end; { proc. tRawIPObj.SendBlock }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tRawIPObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
+var rr: Longint;
 begin
   DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),2);
+  rr:=0;
 
-  Reads := WinSock.recv(SHandle,Block,Blocklen,0);
-
-  case Reads of
-    0:            SOpened:=false;
-    SOCKET_ERROR: begin
-                    SetErrorStr('SendBlock');
-                    DebugLog('ObjCOM','ReadBlock error',1);
-                    SOpened:=false;
-                    Reads := 0;
-                  end;
-  end;
+  repeat
+    rr := WinSock.recv(SHandle,Block,Blocklen-Reads,0);
+    case rr of
+      0:            SOpened:=false;
+      SOCKET_ERROR: begin
+                      SetErrorStr('SendBlock');
+                      DebugLog('ObjCOM','ReadBlock error',1);
+                      SOpened:=false;
+                    end;
+      else reads:=reads+rr;
+    end;
+  until (reads>=blocklen) or (not SOpened);
 
 end; { proc. tRawIPObj.ReadBlock }
 
@@ -355,6 +358,9 @@ end; { proc. ResumeCom }
 
 {
   $Log$
+  Revision 1.4  2001/03/26 21:30:30  cl
+  - workaround: Winsock.recv does not always read all available bytes.
+
   Revision 1.3  2001/03/20 00:26:59  cl
   - fixed warning with new/dispose
 
