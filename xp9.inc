@@ -797,8 +797,8 @@
             renbox2('.RC');
             renbox2('.CFG');
             renbox2(BfgExt);
-            { RmDir(OwnPath + XFerDir + Dname); }
-            RenameDir(BoxPar^.PPPClientpath+old_dname, BoxPar^.PPPClientpath+dname);
+            RmDir(OwnPath + XFerDir + Dname);
+            { RenameDir(BoxPar^.PPPClientpath+old_dname, BoxPar^.PPPClientpath+dname); }
             end;
           end;
         end;
@@ -1402,6 +1402,9 @@
 
 {
   $Log$
+  Revision 1.10.2.23  2001/04/23 18:43:08  mk
+  - Spoolverzeichnis bei Boxen umbenennen loeschen
+
   Revision 1.10.2.22  2001/04/23 06:38:47  mk
   - E/B/E/P Maske vergroessert
 
