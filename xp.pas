@@ -80,7 +80,7 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      lfn;      { Long filenames     }
 
 {$O win2}    {$O help}    {$O maske}    {$O lister}   {$O archive}
-{$O clip}    {$O editor}  {$O databaso} {$O feiertag}
+{$O clip}    {$O editor}  {$O databaso} {$O feiertag} {$O encoder }
 {$O xp_uue}  {$O xp1o}    {$O xp1o2}    {$O xp_pgp}   {$O xp1input}
 {$O xp1help} {$O xp2b}
 {$O xp2}     {$O xp2c}    {$O xp2f}     {$O xp2db}
@@ -203,6 +203,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.20  2001/08/12 08:46:35  mk
+  - moved to overlay
+
   Revision 1.29.2.19  2001/08/12 08:32:27  mk
   - XPCFG in das Overlay verlegt, wird nur beim Start gebraucht
 

@@ -6,9 +6,10 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-unit encoder;
-
 {$I XPDEFINE.INC }
+{$F+,O+}
+
+unit encoder;
 
 interface
 
@@ -78,6 +79,9 @@ procedure encode_UU(var bytestream:tbytestream;len:word;
 end.
 {
   $Log$
+  Revision 1.4.2.1  2001/08/12 08:46:35  mk
+  - moved to overlay
+
   Revision 1.4  2000/04/04 21:01:20  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 
