@@ -93,6 +93,7 @@ const
 
 {$IFDEF UnixFS }
        BaseDir     = '.openxp/';     { Basisverzeichnis }
+       ClipFileName= '.openxp.clipboard'; { Simuliertes Clipboard (in TempPath) }
        ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
 {$ELSE}
        ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=';
@@ -1156,6 +1157,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.62  2000/07/04 18:34:53  hd
+  - Clipboard fuer Linux simuliert
+
   Revision 1.61  2000/07/01 11:18:28  mk
   - 16 Bit Teile entfernt
 

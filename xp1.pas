@@ -257,7 +257,12 @@ function  cm_key:char;
 implementation  {-------------------------------------------------------}
 
 uses
-  xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
+  xp1o,xp1o2,xp1help,xp1input,
+{$ifndef Linux}
+  xp2,
+  strings,
+{$endif}
+  xpe,exxec,xpnt;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -1828,8 +1833,9 @@ begin
   TempOpen;
 end;
 
-
-{$S-}
+{$ifndef Linux}
+  {$S-}
+{$endif}
 procedure newexit;               { Exit-Prozedur }
 begin
   exitproc:=oldexit;
@@ -1839,7 +1845,9 @@ begin
   setbackintensity;
 end;
 {$IFDEF Debug }
+{$ifndef Linux}
   {$S+}
+{$endif}
 {$ENDIF }
 
 { alle restlichen Bytes ab fpos(f1) nach f2 kopieren }
@@ -1924,11 +1932,7 @@ procedure _chdir(p:pathstr);
 begin
   p:=trim(p);
   if p<>'' then begin
-{$IFDEF UnixFS }
-    if (length(p)>1) and (right(p,1)='/') then
-{$ELSE }
-    if (length(p)>1) and (right(p,1)='\') then
-{$ENDIF }
+    if (length(p)>1) and (right(p,1)=DirSepa) then
       dellast(p);
     chdir(p);
     if ioresult<>0 then
@@ -2019,6 +2023,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/07/04 18:34:53  hd
+  - Clipboard fuer Linux simuliert
+
   Revision 1.54  2000/07/04 12:04:19  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

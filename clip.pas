@@ -16,18 +16,39 @@ unit clip;
 interface
 
 uses
-  xpglobal, dos;
+  xpglobal,
+  sysutils;
 
-function ClipAvailable:boolean;              { Clipboard verfÅgbar }
+const
+{$ifdef Win32}
+  ClipAvailable		= true;
+{$else}
+  {$ifdef Linux}
+  ClipAvailAble		= true;		{ Simuliertes Clipboard a la MC }
+  {$else}
+   {$IFDEF VP }
+  ClipAvailable 	= false; { !! Funktioniert noch nicht sauber }
+   {$ELSE }
+  ClipAvailable 	= false;
+   {$ENDIF }
+  {$endif}
+{$endif}
+
 function Clip2String:string;                 { Clipboardinhalt als String }
 procedure String2Clip(var str: String);      { String ins Clipboard}
 
-procedure FileToClip(fn:pathstr);
-procedure ClipToFile(fn:pathstr);
+procedure FileToClip(fn:TFilename);
+procedure ClipToFile(fn:TFilename);
 
 implementation  { ---------------------------------------------------- }
 
 uses
+{$ifdef Linux}
+  xp0,
+  fileio,
+  linux,
+  xplinux;
+{$else}
 {$IFDEF Win32 }
   windows,
 {$ENDIF }
@@ -35,21 +56,35 @@ uses
   vpsyslow,
 {$ENDIF }
   strings;
+{$endif}
 
-function ClipAvailable:boolean;
+
+{$ifdef Linux}
+function ClipFilename: TFilename;
 begin
- {$IFDEF Win32 }
-   ClipAvailable := true;
- {$ELSE }
-   {$IFDEF VP }
-     ClipAvailable := false; { !! Funktioniert noch nicht sauber }
-   {$ELSE }
-     ClipAvailable := false;
-   {$ENDIF }
- {$ENDIF }
-end;     { wird Clipboard unterstÅtzt? }
+  ClipFilename:= TempPath+'.openxp.clipboard.'+IntToStr(GetUid);
+end;
+{$endif}
 
-function Clip2String: String;
+function Clip2String: string;
+{$ifdef Linux}
+var
+  f: text;
+  s: string;
+begin
+  assign(f,ClipFilename);
+  reset(f);
+  if ioresult=0 then begin
+    readln(f,s);
+    if ioresult=0 then
+      Clip2String:= s
+    else
+      Clip2String:= '';
+    close(f);
+  end else
+    Clip2String:= '';
+end;
+{$else}
 {$IFDEF Win32 }
 var
   P: Pointer;
@@ -100,8 +135,22 @@ begin
 end;
 {$ENDIF }
 {$ENDIF }
+{$endif}
 
 procedure String2Clip(var Str: String);             { String ins Clipboard }
+{$ifdef Linux}
+var
+  f: text;
+begin
+  assign(f,ClipFilename);
+  rewrite(f);
+  if ioresult=0 then begin
+    writeln(f,str);
+    close(f);
+    SetAccess(ClipFilename, taUserRW);
+  end;
+end;
+{$else}
 {$IFDEF Win32 }
 var
   MemHandle: HGlobal;
@@ -133,8 +182,17 @@ begin
 end;
 {$ENDIF }
 {$ENDIF }
+{$endif}
 
-procedure FileToClip(fn:pathstr);
+procedure FileToClip(fn:TFilename);
+{$ifdef Linux}
+begin
+  if FileExists(fn) then begin
+    if CopyFile(fn, ClipFilename) then
+      SetAccess(ClipFilename, taUserRW);
+  end;
+end;
+{$else}
 {$IFDEF Win32 }
 var
   f  : file;
@@ -184,8 +242,17 @@ begin
 end;
 {$ENDIF }
 {$ENDIF }
+{$endif}
 
-procedure ClipToFile(fn:pathstr);
+procedure ClipToFile(fn:TFilename);
+{$ifdef Linux}
+begin
+  if FileExists(ClipFilename) then begin
+    if not CopyFile(ClipFilename, fn) then
+      era(fn);
+  end;
+end;
+{$else}
 {$IFDEF Win32 }
 var
   P: Pointer;
@@ -239,10 +306,14 @@ begin
 end;
 {$ENDIF }
 {$ENDIF }
+{$endif}
 
 end.
 {
   $Log$
+  Revision 1.23  2000/07/04 18:34:53  hd
+  - Clipboard fuer Linux simuliert
+
   Revision 1.22  2000/06/24 14:10:26  mk
   - 32 Bit Teile entfernt
 
