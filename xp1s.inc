@@ -288,6 +288,7 @@ var brk    : boolean;
     lfirst : byte;     { Startzeile Lister }
     lofs   : word;     { Ladeposition Datei }
     dphb   : byte;     { Uhr Hintergrundfarbe Backup }
+    wrapb  : boolean;  { Backup no_ListWrapToggle }
 
   procedure ShowMsgHead;
   var t : text;
@@ -310,9 +311,11 @@ var brk    : boolean;
 
 begin
   listexit:=0;
+  wrapb:=no_ListWrapToggle;
+  no_ListWrapToggle:=false;
   listseekcol:=col.collistfound;
-  if Suchergebnis then listshowseek:=true 
-    else listshowseek:=false; 
+  if Suchergebnis then listshowseek:=true
+    else listshowseek:=false;
   if varlister<>'' then begin
     lf:=repfile(VarLister,name);
     pp:=pos('$TYPE',ustr(lf));
@@ -326,15 +329,14 @@ begin
   else begin
     if savescr then sichern(p);
     lfirst:=iif(listvollbild,1,4); lofs:=0;
-    if listvollbild then begin                     { Bei Vollbild-Lister : }
-      if {not listmsg or} not listuhr then m2t:=false { Uhr nur im Message Lister... }
+    if listvollbild then begin                        { Bei Vollbild-Lister: }
+      if {not listmsg or} not listuhr then m2t:=false { Uhr nur im Message-Lister... }
       else begin
         dphb:=dphback;
-        if ListFixedhead and (exthdlines>0) then   { Wenn fester Header }
+        if listmsg and ListFixedhead and (exthdlines>0) then   {   Wenn fester Header }
           dphback:=listheadercol                   { dann Uhr aktiv mit Headerfarbe }
         else begin
           dphback:=col.colliststatus;              { bei freiem Header }
-          timey:=2;                                { Uhr in Zeile 2 und Statuszeilenfarbe }
           end;
         end;
       end;
@@ -379,11 +381,7 @@ begin
     pophp;
     ListMakros:=oldm;
     if listvollbild and listuhr {and ListMsg}
-    then begin
-      dphback:=dphb;                              { Uhrfarbe resetten  }
-      if not (ListFixedhead and (exthdlines>0))
-        then timey:=1;                            { und evtl. Position }
-      end;
+    then dphback:=dphb;                  { Uhrfarbe resetten  }
     m2t:=true;
     if savescr then holen(p);
     closelist;
@@ -398,6 +396,7 @@ begin
     ListWrapToggle:=false;
   end;
   listfile:=listexit;
+  no_ListWrapToggle:=wrapb;
   ListShowSeek:=false;
 end;
 
@@ -496,6 +495,19 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.15  2002/03/08 22:58:25  my
+  MY:- Fix: Umschaltung des Wortumbruchs im Lister mit <Ctrl-W>
+       funktioniert jetzt auch in der Anzeige des Nachrichtenkopfs ("o"),
+       in Nachrichten mit KOM-Header und bei der Anzeige von Dateien in
+       Archiven. Funktion bei der Anzeige des Archivinhalts deaktiviert
+       (weil dort vîllig ÅberflÅssig und nur hinderlich).
+
+  JG:- Uhr im Archiv-Viewer wird jetzt in der Statuszeile statt in der
+       ersten Textzeile angezeigt und bei der Anzeige von Dateien, die
+       sich *in* einem Archiv befinden, wird jetzt auch die richtige Uhr
+       des Archiv-Viewers (statt der falschen des Nachrichten-Listers)
+       benutzt.
+
   Revision 1.24.2.14  2001/12/05 19:27:36  my
   JG+MY:- Kommentare ergÑnzt und korrigiert
 
