@@ -238,7 +238,9 @@ begin
   dbSetIndex(mbase,miBrett);
   while not dbEOF(bbase) do begin
     if show then begin
-      moff; write(n div recs:3,#8#8#8); mon;
+      moff;
+      fwrt(WhereX + 2, WhereY, Format('%3d %%', [n div recs]));
+      mon;
       end;
     dbReadN(bbase,bb_ldatum,d1);
     brett := dbReadNStr(bbase,bb_brettname);
@@ -1506,6 +1508,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2001/04/13 20:23:30  ml
+  - correct output of status in reorg
+
   Revision 1.52  2001/03/14 20:46:04  mk
   - removed registration routines
 
