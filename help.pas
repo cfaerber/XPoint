@@ -36,7 +36,7 @@ uses
 {$ENDIF }
   xp0, typeform,keys,fileio,inout,winxp,mouse,maus2,printerx,debug;
 
-const maxpages = 1200;
+const maxpages = 2000;
       maxqvw   = 400;
       maxlines = 400;   { max. Zeilen pro Hilfsseite }
 
@@ -190,6 +190,10 @@ begin
     wdt:=blockrb;
     hgh:=blockrb; dec(hgh,3);
     pages:=blockrw;
+    {$IFDEF Debug }
+      if Pages > MaxPages then
+        raise Exception.Create('MaxPages in help.pas is to small');
+    {$ENDIF }
     ixp:=blockrw;
     illp:=blockrw;
     ixadr:=blockrl;
@@ -780,6 +784,9 @@ finalization
 
 {
   $Log$
+  Revision 1.45.2.4  2003/09/13 17:40:33  mk
+  - fixed #804967: Crash beim Aufruf der Hilfe
+
   Revision 1.45.2.3  2003/08/24 21:35:33  mk
   - simplified and corrected FileMode Handling (now uses OS dependend
     constants instead of hard coded values, this may prevent problems
