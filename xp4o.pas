@@ -2493,7 +2493,7 @@ var d     : DB;
   begin
     _brett := dbReadStr(d,'brett');
     write(log,fdat(longdat(dbReadInt(d,'origdatum'))),' ');
-    if _brett[1]='U' then
+    if FirstChar(_brett)='U' then
       write(log,forms(dbReadStr(d,'absender'),32))
     else begin
       dbSeek(bbase,biIntnr,copy(_brett,2,4));
@@ -2980,6 +2980,9 @@ end;
 
 {
   $Log$
+  Revision 1.138.2.4  2002/07/29 19:53:16  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.138.2.3  2002/07/22 09:58:15  mk
   - added missing CloseBox in SucheWiedervorlage
 

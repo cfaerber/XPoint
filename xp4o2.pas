@@ -445,7 +445,7 @@ var hdp    : theader;
           if recount(newbetr)=0 then;
           if LeftStr(newbetr,35)<>LeftStr(betr,35) then
             inc(flags,kflBetr);
-          if (_brett[1]='U') or (_brett[1]='1') then
+          if (FirstChar(_brett)='U') or (FirstChar(_brett)='1') then
             inc(flags,kflPM)
           else if _brett<>brett then
             inc(flags,kflBrett);
@@ -928,6 +928,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.3  2002/07/29 19:53:16  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.52.2.2  2002/07/21 20:14:37  ma
   - changed copyright from 2001 to 2002
 

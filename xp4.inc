@@ -56,7 +56,7 @@ begin
   setenable(Weiter,10,true);
   if (dispmode=10) and not empty then begin
     _brett:= dbReadNStr(mbase,mb_brett);
-    if _brett[1]='U' then setenable(Weiter,10,false);    { PM-Archiv }
+    if FirstChar(_brett)='U' then setenable(Weiter,10,false);    { PM-Archiv }
     dbReadN(mbase,mb_unversandt,unversandt);
     dbReadN(mbase,mb_typ,mtyp);
     if unversandt and 1=0 then begin
@@ -807,6 +807,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.39.2.2  2002/07/29 19:53:15  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.39.2.1  2002/07/21 20:14:36  ma
   - changed copyright from 2001 to 2002
 

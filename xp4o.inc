@@ -85,7 +85,7 @@ begin
       if not user then 
       begin
         brett := dbReadNStr(bbase,bb_brettname);
-        brettc:=brett[1];
+        brettc:= FirstChar(brett);
       end else
         brett := dbReadNStr(ubase,ub_username);
       _brett:=mbrettd(brettc,d);
@@ -711,6 +711,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.47.2.3  2002/07/29 19:53:16  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.47.2.2  2002/07/21 20:14:37  ma
   - changed copyright from 2001 to 2002
 

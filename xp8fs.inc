@@ -171,7 +171,7 @@ begin
               readln(t1,s);
               end
             else
-              if (s<>'') and (s[1]<>' ') and (s[2]=' ') then begin
+              if (Length(s) >= 2) and (s[1]<>' ') and (s[2]=' ') then begin
                 repeat
                   if eof(t1) then s2:=''
                   else readln(t1,s2);
@@ -556,6 +556,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30.2.5  2002/07/29 19:53:17  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.30.2.4  2002/07/21 20:14:38  ma
   - changed copyright from 2001 to 2002
 

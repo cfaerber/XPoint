@@ -623,7 +623,7 @@ var fn     : string;
     dbReadN(mbase,mb_unversandt,flags);
     if (b=0) or ((nt=nt_Maus) and (flags and 32<>0)) then begin
       brett:= dbReadNStr(mbase,mb_brett);       { ^^ Maus-zurueckgestellt }
-      if (nt=nt_Maus) and MausLeseBest and ((brett[1]='1') or (brett[1]='U'))
+      if (nt=nt_Maus) and MausLeseBest and ((FirstChar(brett)='1') or (FirstChar(brett)='U'))
       then
         if briefsent then begin
           flags:=flags and (not 32);
@@ -1774,6 +1774,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.99.2.4  2002/07/29 19:53:17  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.99.2.3  2002/07/21 20:14:37  ma
   - changed copyright from 2001 to 2002
 

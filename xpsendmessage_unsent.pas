@@ -539,7 +539,7 @@ label ende,again;
     if archivtext and not binaermail then begin
       wrs(getreps2(641,1,fdat(zdate)));   { '## Nachricht am %s archiviert' }
       _brett := dbReadNStr(mbase,mb_brett);
-      if (_brett[1]<>'U') or (typ=5) then
+      if (FirstChar(_brett)<>'U') or (typ=5) then
         wrs(getres2(641,2)+iifs(pmarchiv,': /',' : ')+hdp.FirstEmpfaenger);   { '## Ursprung' }
       if not pmarchiv and (typ<>5) then
         wrs(getres2(641,3)+hdp.absender);   { '## Ersteller: ' }
@@ -586,7 +586,7 @@ label ende,again;
       dbReadN(mbase,mb_empfdatum,edat);
     if archivtext and not binaermail then begin
       rewrite(t);
-      write_archiv((_brett[1]='1') or (_brett[1]='U'));
+      write_archiv((FirstChar(_brett)='1') or (FirstChar(_brett)='U'));
       wrr;
       end;
     dbReadN(mbase,mb_flags,flags);
@@ -825,7 +825,7 @@ again:
             ExtChgtearline:=true;
             extract_msg(0,WeiterMsk,fn,false,1);
           end;
-      4 : extract_msg(0,iifs((_brett[1]='$') or binaermail or not sendbox,'',
+      4 : extract_msg(0,iifs((FirstChar(_brett)='$') or binaermail or not sendbox,'',
                              ErneutMsk),fn,false,1);
       3 : extract_msg(3,QuoteToMsk,fn,false,1);
       5 : binaermail:=IsBinary;          { 5: In Archivbrett archivieren }
@@ -982,7 +982,7 @@ again:
                  sdata:= TSendUUData.Create;
                  if typ=3 then begin
                    binaermail:=false;
-                   if (hdp.netztyp=nt_Maus) and (_brett[1]='A') then
+                   if (hdp.netztyp=nt_Maus) and (FirstChar(_brett)='A') then
                      sData.ReplyGroup:=hdp.FirstEmpfaenger;
                    fidoto:=LeftStr(hdp.absender,35);
                    p:=cpos('@',fidoto);
@@ -1043,13 +1043,13 @@ again:
                unpark:=IsOempf(empf);
                if not unpark then begin
                  _Brett := dbReadNStr(mbase,mb_brett);
-                 if _brett[1]<'A' then begin
+                 if FirstChar(_brett)<'A' then begin
                    rfehler(625);    { 'Schreiben in dieses Brett ist nicht moeglich.' }
                    goto ende;
                    end
                  else begin
-                   pm:=(_brett[1]='U');
-                   empf:=iifs(_brett[1]='U','',_brett[1])+hdp.FirstEmpfaenger;
+                   pm:=(FirstChar(_brett)='U');
+                   empf:=iifs(FirstChar(_brett)='U','',FirstChar(_brett)+hdp.FirstEmpfaenger);
                    end;
                  end
                else begin
@@ -1362,6 +1362,9 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.6  2002/07/29 19:53:19  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.21.2.5  2002/07/21 20:14:41  ma
   - changed copyright from 2001 to 2002
 

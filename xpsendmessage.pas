@@ -1228,7 +1228,7 @@ fromstart:
             box:=DefaultBox         { /Nachricht/Direkt }
           else begin
             _brett := dbReadStrN(mbase,mb_brett);
-            if _brett[1]='1' then begin    { PM-Reply an nicht eingetr. User }
+            if FirstChar(_brett)='1' then begin    { PM-Reply an nicht eingetr. User }
               if origbox='' then get_origbox;
               if (OrigBox='') or not IsBox(OrigBox) then
               begin
@@ -1240,7 +1240,7 @@ fromstart:
                 box:=OrigBox;
               end
             else
-              if _brett[1]='U' then
+              if FirstChar(_brett)='U' then
                 box:=DefaultBox
               else begin
                 dbSeek(bbase,biIntnr,copy(_brett,2,4));
@@ -2496,6 +2496,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.7  2002/07/29 19:53:18  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.48.2.6  2002/07/27 09:09:18  mk
   - fixed range check error (BetrLen byte->integer)
 

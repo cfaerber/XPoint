@@ -1134,7 +1134,7 @@ var box :string;
 begin
   box := '';
   brett := dbReadNStr(mbase, mb_brett);
-  if brett[1] = '1' then         { Brett }
+  if FirstChar(brett) = '1' then         { Brett }
   begin
     dbSeek (bbase, biIntNr, copy (brett, 2, 4));
     if dbBOF (bbase) or dbEOF (bbase) then box := ''
@@ -1146,6 +1146,9 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.9  2002/07/29 19:53:19  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.17.2.8  2002/07/21 20:14:41  ma
   - changed copyright from 2001 to 2002
 

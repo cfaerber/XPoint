@@ -484,13 +484,13 @@ var RTAEmpfList : TRTAEmpfaengerList;
     begin
       box := '';
       brett := dbReadStr (mbase, 'brett');
-      if brett[1] in ['1', 'A'] then         { Brett }
+      if FirstChar(brett) in ['1', 'A'] then         { Brett }
       begin
         dbSeek (bbase, biIntNr, copy (brett, 2, 4));
         if dbBOF (bbase) or dbEOF (bbase) then box := ''
         else Box := dbReadStr (bbase, 'pollbox');
       end else
-      if brett[1] = 'U' then                 { User }
+      if FirstChar(brett) = 'U' then                 { User }
       begin
         hdp2 := THeader.Create;
         try
@@ -983,6 +983,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29.2.2  2002/07/29 19:53:15  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.29.2.1  2002/07/21 20:14:33  ma
   - changed copyright from 2001 to 2002
 

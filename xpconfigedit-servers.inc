@@ -1045,7 +1045,7 @@
             readln(t,s);
             s:=trim(s);
             if (s='') or (s[1]='#') or (s[1]=';') then continue; { Kommentar }
-            if s[1] = '[' then break;                         { neue Section }
+            if FirstChar(s) = '[' then break;                         { neue Section }
             ServersList[i]:=s;
             inc(i);
           end;
@@ -2371,6 +2371,9 @@
 
 {
   $Log$
+  Revision 1.48.2.8  2002/07/29 19:53:18  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.48.2.7  2002/07/21 20:21:08  ma
   - cosmetics (box name can now be written in any case)
 

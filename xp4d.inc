@@ -155,7 +155,7 @@ begin  { __ Suchmarke }
               markflag[y]:=iif(UBmarked(dbRecno(bbase)),1,0);
               markc:=iifc(markflag[y]<>0,suchch,' ');
               brettform(s,flags,false);
-              if (not NewsgroupDispall) and (not UserSlash) and (s[1]<'A') then delete(s,2,1);
+              if (not NewsgroupDispall) and (not UserSlash) and (FirstChar(s)<'A') then delete(s,2,1);
               if not dispext then begin                         { erweiterte Anzeige s ? }
                 case readmode of     { s. auch XP4.BRETTOK() }
                   0 : c:=markc+iifs(showungelesen and (flags and 2<>0),#$af' ','  ');
@@ -319,7 +319,7 @@ begin  { __ Suchmarke }
             if cpos('D',MsgFeldTausch)=0 then inc(h2,6);
             if cpos('G',MsgFeldTausch)=0 then inc(h2,6);
             if cpos('F',MsgFeldTausch)=0 then inc(h2,7);
-            if not (fidoqwk and (dispmode=10) and dispfto and (_brett[1]='A'){})
+            if not (fidoqwk and (dispmode=10) and dispfto and (FirstChar(_brett)='A'){})
             then begin
               if cpos('E',MsgFeldTausch)=0 then dec(h2,19)
               else dec(h3);
@@ -411,7 +411,7 @@ begin  { __ Suchmarke }
             end;
             _brett:= dbReadNStr(mbase,mb_brett);
             pp:=iif(netztyp=nt_Maus,35,iif(fidoqwk,35,0));
-            if (pp<>0) and (_brett[1]<>'$') and (blen>pp) then
+            if (pp<>0) and (FirstChar(_brett)<>'$') and (blen>pp) then
             begin
               inc(ulen,blen-pp);
               blen:=pp;
@@ -478,7 +478,7 @@ begin  { __ Suchmarke }
               end;
               userflag[y]:=helpbyte;
 
-              if (fidoqwk and (_brett[1]='A') and
+              if (fidoqwk and (FirstChar(_brett)='A') and
                   (HighlightName=UpperCase(dbReadStr(mbase,'name'))))
                 OR
                  ((cpos('@',dispspec)>0) and
@@ -624,6 +624,9 @@ end;
 
 {
   $Log$
+  Revision 1.56.2.2  2002/07/29 19:53:16  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.56.2.1  2002/07/21 20:14:36  ma
   - changed copyright from 2001 to 2002
 
