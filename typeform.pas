@@ -169,7 +169,9 @@ function Time:DateTimeSt;                    { dt. Zeitstring               }
 function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe gro·         }
 function TopAllStr(s:string):string;         { alle ersten Buchstaben gro·  }
+{$ifndef hasTrim}
 function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
+{$endif}
 function UpCase(const c:char):char;                { int. UpCase                  }
 function UStr(const s:String):String;              { UpperString                  }
 function UStrHuge(const s:HugeString):HugeString;  { UpperString                  }
@@ -188,6 +190,9 @@ Procedure iswap(var l1,l2:longint);           { l1 und l2 vertauschen        }
 Procedure LoString(var s:string);            { LowerString                  }
 Procedure release;                           { system.release abfangen      }
 Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
+{$ifndef hasSetLength}
+procedure SetLength(var s: string; l: integer); { Stringlaenge manipulieren}
+{$endif}
 Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf ParitÑt setzen  }
 Procedure SetSysDate(const d:DateTimeSt);          { Datum nach dt. String setzen }
 Procedure SetSysTime(const t:DateTimeSt);          { Zeit nach dt. String setzen  }
@@ -205,9 +210,20 @@ function ConvertFileName(s:string): String;
 
 implementation
 
+{ SysUtils wird bei OpenXP als Standard RTL Unit vorausgesetzt! }
+uses
+  SysUtils;
+
 type psplit = record              { FÅr Pointer-Type-Cast }
                 o,s : smallword;
               end;
+
+{$ifndef hasSetLength}
+procedure SetLength(var s: string; l: integer;
+begin
+  s[0]:= chr(l);
+end;
+{$endif}
 
 function CountChar(const c: char; const s: string): integer;
 const
@@ -482,7 +498,7 @@ VAR h : String;
 begin
   if n<=0 then Dup:=''
   else begin
-    h[0]:=chr(n);
+    SetLength(h, n);
     fillchar(h[1],n,c);
     dup:=h;
     end;
@@ -500,7 +516,7 @@ var b : integer;  { kann bei length(s)=255 = 256 werden!! }
 begin
   for b:=length(s)+1 to n do
     s[b]:=' ';
-  s[0]:=char(n);
+  SetLength(s, n);
   FormS:=s;
 end;
 
@@ -789,20 +805,26 @@ end;
 
 
 function UStr(const s: AnsiString): AnsiString;
-var i : integer;
+var i,l : integer;
+    r : string;			{ Result bzw. UStr klappt nicht bei allen Compilern }
 begin
-  Ustr[0]:=s[0];
-  for i:=1 to length(s) do
-    UStr[i]:=UpCase(s[i]);
+  l:= length(s);		{ Nicht zweimal zaehlen }
+  SetLength(r, l);
+  for i:=1 to l do
+    r[i]:=UpCase(s[i]);
+  UStr:= r;
 end;
 
 
 function LStr(const s:string):string;
-var i : integer;
+var i,l : integer;
+    r : string;
 begin
-  LStr[0]:=s[0];
-  for i:=1 to length(s) do
-    LStr[i]:=LoCase(s[i]);
+  l:= lenght(s);
+  SetLength(r, l);
+  for i:=1 to l do
+    r[i]:=LoCase(s[i]);
+  LStr:= r;
 end;
 
 {$else}
@@ -1145,7 +1167,7 @@ end;
 {$IFDEF NOASM }
 function Left(s:string; n:byte):string;
 begin
-  if n<length(s) then s[0]:=chr(n);
+  if n<length(s) then SetLength(s,n);
   left:=s;
 end;
 {$ELSE }
@@ -1248,15 +1270,21 @@ end;
 
 {$ENDIF}
 
+{$ifndef hasTrim}
 function trim(s:string):string;
+var
+  l: integer;
 begin
-  while (s[length(s)]=' ') or (s[length(s)]=#9) do     { terminiert, da s[0]<>' ' fÅr s='' }
-    dec(byte(s[0]));
+  l:= length(s);
+  while (s[l]=' ') or (s[l]=#9) and (l>0) do begin     { terminiert, da s[0]<>' ' fÅr s='' }
+    dec(l);
+    SetLength(s,l);
+  end;
   while (s<>'') and ((s[1]=' ') or (s[1]=#9)) do
     delete(s,1,1);
   trim:=s;
 end;
-
+{$endif}
 
 function Range(const c1,c2:char):string;
 
@@ -1371,7 +1399,7 @@ begin
   Move(filerec(f).name,s[1],79);
   i:=1;
   while (i<79) and (s[i]<>#0) do inc(i);
-  s[0]:=chr(i-1);
+  SetLength(s, (i-1));
   FileName:=s;
 end;
 
@@ -1423,7 +1451,7 @@ end;
 
 procedure dellast(var s:string);
 begin
-  if s<>'' then dec(byte(s[0]));
+  if s<>'' then SetLength(s, Length(s)-1);
 end;
 
 procedure DellastHuge(var s:HugeString);
@@ -1465,10 +1493,17 @@ end;
 
 
 function reverse(s:string):string;
-var i : byte;
+var i,l: integer;
+    r: string;
 begin
+  l:= Length(s);
+  SetLength(r, l);
+  for i:= 1 to l do r[i]:= s[l+1-i];
+  reverse:= r;
+{
   reverse[0]:=s[0];
   for i:=1 to length(s) do reverse[i]:=s[length(s)+1-i];
+}
 end;
 
 
@@ -1610,9 +1645,13 @@ begin
 end;
 
 function Rtrim(s:string):string;
+var l: integer;
 begin
-  while (s[length(s)]=' ') or (s[length(s)]=#9) do
-    dec(byte(s[0]));
+  l:= Length(s);
+  while (s[l]=' ') or (s[l]=#9) do begin
+    dec(l);
+    SetLEngth(s,l);
+  end;
   Rtrim:=s;
 end;
 
@@ -1674,7 +1713,7 @@ end;
 Procedure TruncStr(var s:string; n:byte);    { String kÅrzen                }
 begin
   if length(s)>n then
-    s[0]:=chr(n);
+    SetLength(s,n);
 end;
 
 
@@ -2015,6 +2054,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/07/03 09:59:39  hd
+  - Neue Definitionen:
+    - hasSetLength -> RTL-Funktion SetLength vorhanden
+    - hasTrim      -> RTL-Funktion Trim vorhanden
+  - string[0] durch SetLength ersetzt
+
   Revision 1.40  2000/07/02 14:24:49  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

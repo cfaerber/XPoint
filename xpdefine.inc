@@ -74,6 +74,8 @@
   {$ASMMODE Intel }
   {$GOTO ON }
   {$UNDEF NeedReg }
+  {$DEFINE hasSetLength}	{ SetLength vorhanden }
+  {$DEFINE hasTrim}		{ Trim vorhanden }
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -132,6 +134,12 @@
 
 {
   $Log$
+  Revision 1.35  2000/07/03 09:59:40  hd
+  - Neue Definitionen:
+    - hasSetLength -> RTL-Funktion SetLength vorhanden
+    - hasTrim      -> RTL-Funktion Trim vorhanden
+  - string[0] durch SetLength ersetzt
+
   Revision 1.34  2000/06/29 13:00:59  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder
