@@ -830,7 +830,7 @@ function Readkey: char;
   begin
      Result := InChar;
      I := Ord(InChar);
-     if (I > 128) and (PrefChar <> #0) then
+     if (I > 128) {and (PrefChar <> #0) }then
      begin
        Result := Chr(ISO2IBMTab[I]);
        Debug.DebugLog('xpcurses',Format('Key translated: [%d] => [%d] prefchar=[%d]',
@@ -1542,6 +1542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.8  2003/04/12 16:57:56  mk
+  - fixed last commit
+
   Revision 1.64.2.7  2003/04/12 13:00:22  mk
   - fixed garbage character in editor after del and high-ascii
   - added more debugging output
