@@ -9,18 +9,20 @@
 <!ENTITY xpname "<application>OpenXP</application>">
 <!ENTITY xpversion "4.0">
 
-<!ENTITY maggibinfilename "<filename>maggi.exe</filename>">
-<!ENTITY ndiffbinfilename "<filename>ndiff.exe</filename>">
-<!ENTITY pmconvbinfilename "<filename>pmconv.exe</filename>">
-<!ENTITY uucp-fl1binfilename "<filename>uucp-fl1.exe</filename>">
-<!ENTITY uucicobinfilename "<filename>uucico.exe</filename>">
-<!ENTITY uuzbinfilename "<filename>uuz.exe</filename>">
-<!ENTITY xpbinfilename "<filename>xp.exe</filename>">
-<!ENTITY xp-fmbinfilename "<filename>xp-fm.exe</filename>">
-<!ENTITY xpmebinfilename "<filename>xpme.exe</filename>">
-<!ENTITY yup2pktbinfilename "<filename>yup2pkt.exe</filename>">
-<!ENTITY zfidobinfilename "<filename>zfido.exe</filename>">
-<!ENTITY zprbinfilename "<filename>zpr.exe</filename>">
+<!ENTITY maggibinfilename "maggi.exe">
+<!ENTITY ndiffbinfilename "ndiff.exe">
+<!ENTITY pmconvbinfilename "pmconv.exe">
+<!ENTITY uucp-fl1binfilename "uucp-fl1.exe">
+<!ENTITY uucicobinfilename "uucico.exe">
+<!ENTITY uuzbinfilename "uuz.exe">
+<!ENTITY xpbinfilename "xp.exe">
+<!ENTITY xp-fmbinfilename "xp-fm.exe">
+<!ENTITY xpmebinfilename "xpme.exe">
+<!ENTITY yup2pktbinfilename "yup2pkt.exe">
+<!ENTITY zfidobinfilename "zfido.exe">
+<!ENTITY zprbinfilename "zpr.exe">
+
+<!ENTITY iconsfilename "icons.res">
 
 ]>
 
@@ -239,35 +241,15 @@
 
       <bridgehead>Die &xpname;-Homepage</bridgehead>
 
-      <para>Die aktuelle &xpname;-Version und eine Auswahl von Tools
-        und Links rund um &xpname; finden Sie im Internet unter</para>
-
-      <informalexample>
-
-        <para><ulink
-          url="http://www.crosspoint.de">http://www.crosspoint.de</ulink></para>
-
-      </informalexample>
-
-      <para>Die offizielle &xpname;-Supportmailbox im FidoNet ist die
-        Klystron BBS:</para>
-
-      <para><address>2:2454/97</address> (Modem)</para>
-
-      <para><address>2:2454/970</address> (ISDN)</para>
-
-      <para>Dort finden Sie eine umfangreiche Sammlung mit
-        &xpname;-Zusatztools. Mit dem Filerequest-Magic
-        <userinput>XP</userinput> erhalten Sie die aktuelle
-        &xpname;-Version.</para>
-
-      <para>Diese Version wurde durch das
-        <application>OpenXP</application>-Team weiterentwickelt und
-        verbessert. Aktuelle Informationen befinden sich im Internet
+      <para>Die aktuelle &xpname;-Version finden Sie im Internet
         unter</para>
 
       <para><ulink
         url="http://www.openxp.de">http://www.openxp.de</ulink></para>
+
+      <para>oder per Fido-File-Request bei</para>
+
+      <para><address>2:248/2004</address></para>
 
       <bridgehead id="support">Support</bridgehead>
 
@@ -527,7 +509,7 @@
 
             <row>
 
-              <entry>&xpbinfilename;,
+              <entry><filename>&xpbinfilename;</filename>,
                 <filename>xp.ovr</filename></entry>
 
               <entry>das Programm selbst</entry>
@@ -615,7 +597,7 @@
 
             <row>
 
-              <entry>&zprbinfilename;</entry>
+              <entry><filename>&zprbinfilename;</filename></entry>
 
               <entry>Programm zum &Uuml;berpr&uuml;fen und Reparieren
                 von Nachrichten-Pufferdateien</entry>
@@ -624,7 +606,7 @@
 
             <row>
 
-              <entry>&pmconvbinfilename;</entry>
+              <entry><filename>&pmconvbinfilename;</filename></entry>
 
               <entry>PM-Konvertierer; s. <link
                 linkend="an0c0200">Anhang C.2</link></entry>
@@ -633,7 +615,7 @@
 
             <row>
 
-              <entry>&maggibinfilename;</entry>
+              <entry><filename>&maggibinfilename;</filename></entry>
 
               <entry>Netcall-Konvertierer f&uuml;r MagicNET,
                 MausTausch u.a.</entry>
@@ -642,7 +624,7 @@
 
             <row>
 
-              <entry>&uuzbinfilename;</entry>
+              <entry><filename>&uuzbinfilename;</filename></entry>
 
               <entry>Netcall-Konvertierer f&uuml;r RFC/UUCP</entry>
 
@@ -650,7 +632,7 @@
 
             <row>
 
-              <entry>&zfidobinfilename;</entry>
+              <entry><filename>&zfidobinfilename;</filename></entry>
 
               <entry>Netcall-Konvertierer f&uuml;r Fido</entry>
 
@@ -658,7 +640,7 @@
 
             <row>
 
-              <entry><filename>icons.res</filename></entry>
+              <entry><filename>&iconsfilename;</filename></entry>
 
               <entry>Icons f&uuml;r
                 <application>MS-Windows</application></entry>
@@ -667,7 +649,7 @@
 
             <row>
 
-              <entry>&uucicobinfilename;</entry>
+              <entry><filename>&uucicobinfilename;</filename></entry>
 
               <entry>&Uuml;bertragungsprogramm f&uuml;r
                 RFC/UUCP</entry>
@@ -676,7 +658,7 @@
 
             <row>
 
-              <entry>&xp-fmbinfilename;</entry>
+              <entry><filename>&xp-fmbinfilename;</filename></entry>
 
               <entry>Fido-Mailer</entry>
 
@@ -684,7 +666,7 @@
 
             <row>
 
-              <entry>&uucp-fl1binfilename;</entry>
+              <entry><filename>&uucp-fl1binfilename;</filename></entry>
 
               <entry>Dateilistenkonvertierer f&uuml;r UUCP</entry>
 
@@ -692,7 +674,7 @@
 
             <row>
 
-              <entry>&ndiffbinfilename;</entry>
+              <entry><filename>&ndiffbinfilename;</filename></entry>
 
               <entry>NodeDiff-Bearbeiter (f&uuml;r Fido)</entry>
 
@@ -700,7 +682,7 @@
 
             <row>
 
-              <entry>&yup2pktbinfilename;</entry>
+              <entry><filename>&yup2pktbinfilename;</filename></entry>
 
               <entry><application>Yuppie</application>-&gt;<filename>PKT</filename>-Konvertierer
                 (f&uuml;r Fido)</entry>
@@ -3562,7 +3544,8 @@
           <guimenuitem>Registrierung</guimenuitem>, wenn Sie bereits
           registriert sind.</para>
 
-        <para>Den Men&uuml;editor &xpmebinfilename; finden Sie im
+        <para>Den Men&uuml;editor
+          <filename>&xpmebinfilename;</filename> finden Sie im
           &xpname;-Verzeichnis.</para>
 
       </sect2>
@@ -15529,7 +15512,7 @@ Wochentage:   Sa
         <keycap>Ctrl</keycap>-Steuercodes und als solche
         einzugeben:</para>
 
-      <table>
+      <table id="weiteresondertasten">
         <title>weitere Sondertasten</title>
 
         <tgroup cols="2">
@@ -20449,6 +20432,21 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
             <row>
 
+              <entry><parameter>/k:<replaceable>Text</replaceable></parameter></entry>
+
+              <entry>&uuml;bergibt direkt die in
+                <replaceable>Text</replaceable> angegebenen Zeichen
+                und Sondertasten an das Programm. (Anzugeben
+                gem&auml;&szlig; &xpname;-Makro-Notation, <link
+                linkend="weiteresondertasten">siehe: Tabelle "weitere
+                Sondertasten"</link>)
+
+                </entry>
+
+            </row>
+
+            <row>
+
               <entry><parameter>/l:<replaceable>X</replaceable></parameter></entry>
 
               <entry>w&auml;hlt die Sprache
@@ -20483,9 +20481,62 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
             <row>
 
+              <entry><parameter>/mailto:<replaceable>Adresse</replaceable>\<replaceable>Server</replaceable></parameter></entry>
+
+              <entry>schickt eine direkte Nachricht bei Programmstart
+                an die in <replaceable>Adresse</replaceable>>
+                angegebene E-Mail-Adresse und verwendet die in
+                <replaceable>Server</replaceable> angegebene Box.
+                (Optional - wenn kein Server angegeben wurde - wird
+                der Server verwendet, der beim jeweiligen User
+                eingetragen ist. Existiert der User nicht, wird die
+                Stammbox verwendet. <emphasis>Achtung:</emphasis> Das
+                kann z.B. auch eine Fido-Box sein, deshalb
+                sicherheitshalber immer einen
+                <acronym>RFC</acronym>-Server angeben!). Dieser
+                Parameter wird automatisch verwendet, wenn &xpname;
+                als Standard-Mailer in
+                <application>Windows</application> registriert ist und
+                ein Mausklick auf einen
+                <computeroutput>mailto:</computeroutput>-Link erfolgt.
+                (Funktioniert leider nicht mit
+                <application>Netscape</application>!) Siehe auch:
+                <link linkend="an0e0300">Anhang E.3</link></entry>
+
+            </row>
+
+            <row>
+
               <entry><parameter>/maus</parameter></entry>
 
               <entry>aktiviert eine Cursor-Maus-Emulation</entry>
+
+            </row>
+
+            <row>
+
+              <entry><parameter>/nb</parameter></entry>
+
+              <entry>schaltet bei Beta-Versionen den Warnhinweis
+                ab</entry>
+
+            </row>
+
+            <row>
+
+              <entry><parameter>/os2<replaceable>x</replaceable></parameter></entry>
+
+              <entry>verwendet eine von vier
+                (<replaceable>x</replaceable> =
+                <userinput>a</userinput> bis <userinput>d</userinput>)
+                undokumentierten
+                <application>OS/2</application>-Funktionen zur
+                Rechenzeit-Freigabe. Die Verwendung der Schalter
+                <parameter>/os2a</parameter> bis
+                <parameter>/os2d</parameter> kann zur
+                Systeminstabilit&auml;t f&uuml;hren. Bei
+                merkw&uuml;rdigen Problemen w&auml;hrend des
+                &xpname;-Betriebs nicht weiterverwenden!</entry>
 
             </row>
 
@@ -20963,7 +21014,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&xpbinfilename;,
+            <entry><filename>&xpbinfilename;</filename>,
               <filename>xp.ovr</filename></entry>
 
             <entry>das Programm selbst</entry>
@@ -20988,7 +21039,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry><filename>xpicons.dll</filename></entry>
+            <entry><filename>&iconsfilename;</filename></entry>
 
             <entry>Icons f&uuml;r
               <application>MS-Windows</application></entry>
@@ -21038,7 +21089,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&pmconvbinfilename;</entry>
+            <entry><filename>&pmconvbinfilename;</filename></entry>
 
             <entry>Programm zum Konvertieren von PMs</entry>
 
@@ -21046,7 +21097,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&zprbinfilename;</entry>
+            <entry><filename>&zprbinfilename;</filename></entry>
 
             <entry>ZConnect-Pufferreparierer</entry>
 
@@ -21071,7 +21122,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&maggibinfilename;</entry>
+            <entry><filename>&maggibinfilename;</filename></entry>
 
             <entry>Puffer-Konvertierer f&uuml;r MagicNET, MausTausch
               u.a.</entry>
@@ -21497,7 +21548,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&zfidobinfilename;</entry>
+            <entry><filename>&zfidobinfilename;</filename></entry>
 
             <entry>ZConnect &lt;-&gt; Fido-<filename>pkt</filename> -
               Konvertierer</entry>
@@ -21506,7 +21557,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&yup2pktbinfilename;</entry>
+            <entry><filename>&yup2pktbinfilename;</filename></entry>
 
             <entry>Yuppie -&gt; <filename>pkt</filename> -
               Konvertierer</entry>
@@ -21515,7 +21566,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&xp-fmbinfilename;</entry>
+            <entry><filename>&xp-fmbinfilename;</filename></entry>
 
             <entry>Fido-Mailer</entry>
 
@@ -21541,7 +21592,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&ndiffbinfilename;</entry>
+            <entry><filename>&ndiffbinfilename;</filename></entry>
 
             <entry>Nodediff-Bearbeiter</entry>
 
@@ -21647,7 +21698,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&uucicobinfilename;</entry>
+            <entry><filename>&uucicobinfilename;</filename></entry>
 
             <entry>UUCP-Netcallmodul</entry>
 
@@ -21673,7 +21724,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&uuzbinfilename;</entry>
+            <entry><filename>&uuzbinfilename;</filename></entry>
 
             <entry>ZConnect &lt;-&gt; RFC/UUCP - Konvertierer</entry>
 
@@ -21721,7 +21772,7 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
           <row>
 
-            <entry>&uucp-fl1binfilename;</entry>
+            <entry><filename>&uucp-fl1binfilename;</filename></entry>
 
             <entry>Dateilistenkonvertierer f&uuml;r UUCP</entry>
 
@@ -23366,8 +23417,8 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 
       <bridgehead>Icons</bridgehead>
 
-      <para>In der Datei <filename>xpicons.dll</filename> sind mehrere
-        Icons f&uuml;r &xpname; enthalten. Verwenden Sie den
+      <para>In der Datei <filename>&iconsfilename;</filename> sind
+        mehrere Icons f&uuml;r &xpname; enthalten. Verwenden Sie den
         Men&uuml;punkt <guimenuitem>Eigenschaften</guimenuitem> aus
         dem <guimenu>Datei</guimenu>-Men&uuml; des Program-Managers,
         um f&uuml;r &xpname; ein neues Icon zu w&auml;hlen. F&uuml;r
@@ -23464,9 +23515,9 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
         <application>Windows NT</application> nicht zuverl&auml;ssig
         bei h&ouml;heren Baudraten. In diesem Fall sollten Sie
         entweder <command>gsz</command> verwenden, oder den
-        FOSSIL-Treiber <command>ntfoss</command>. Falls
-        <command>ntfoss</command> nicht richtig funktioniert, sollten
-        Sie dessen Leerlaufzeiterkennung abschalten (Parameter
+        <acronym>FOSSIL</acronym>-Treiber <command>ntfoss</command>.
+        Falls <command>ntfoss</command> nicht richtig funktioniert,
+        sollten Sie dessen Leerlaufzeiterkennung abschalten (Parameter
         <parameter>/a 0</parameter>). Beispielaufruf f&uuml;r COM2 bei
         38400 <glossterm linkend="bps">bps</glossterm></para>
 
@@ -23487,6 +23538,245 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
     </sect1>
 
     <sect1 label="E.3" id="an0e0300">
+      <title>&xpname; als Standard-Mailer in
+        <application>Windows</application></title>
+
+      <para>In <application>Windows</application>
+        (<application>95</application>/<application>98</application>,
+        <application>Millennium</application>,
+        <application>2000</application> und
+        <application>NT</application>) k&ouml;nnen Sie &xpname; als
+        Standard-Mailer registrieren, so da&szlig; automatisch
+        &xpname; gestartet wird, wenn Sie auf einen sog.
+        <computeroutput>mailto:</computeroutput>-Link klicken. Dabei
+        werden die Mail-Adresse des Empf&auml;ngers und der Server an
+        &xpname; &uuml;bergeben und Sie k&ouml;nnen nach Eingabe des
+        Betreffs direkt mit dem Editieren Ihrer Nachricht
+        beginnen.</para>
+
+      <para>Im <filename>beispiel</filename>-Unterverzeichnis des
+        &xpname;-Verzeichnises finden Sie
+        <filename>xpmailto.reg</filename>. Bitte passen Sie dort
+        zun&auml;chst mit einem beliebigen Texteditor die Pfadangaben
+        zu Ihrer &xpname;-Installation (z.B.
+        <filename>C:\Programme\OpenXP</filename>), den Namen des zu
+        verwendenden Servers (z.B. <userinput>examserv</userinput>)
+        und den Pfad bzw. Namen des &xpname;-Startbefehls (z.B.
+        <filename>C:\Programme\OpenXP\&xpbinfilename;</filename>) an
+        und f&uuml;hren Sie diese Datei aus (z.B. durch einen
+        Doppelklick auf die Datei im <application>Windows
+        Explorer</application>). Danach sind die in
+        <filename>xpmailto.reg</filename> enthaltenen Angaben in Ihrer
+        <application>Windows</application>-Registry
+        (Registrierdatenbank) eingetragen.</para>
+
+      <para>Bitte beachten Sie, da&szlig; Backslashes in Pfadangaben
+        in <filename>xpmailto.reg</filename> doppelt anzugeben
+        sind!</para>
+
+      <para>Sollte <filename>xpmailto.reg</filename> nicht im
+        <filename>beispiel</filename>-Unterverzeichnis des
+        &xpname;-Verzeichnis enthalten sein (oder sollten Sie aus
+        irgendeinem Grund die Eintr&auml;ge manuell vornehmen wollen),
+        k&ouml;nnen Sie nachfolgend sehen, welche Eintr&auml;ge wo
+        vorzunehmen sind.
+
+        <warning>
+
+          <para>Nehmen Sie keine &Auml;nderungen an der
+            Registry vor, wenn Sie damit nicht vertraut sind! Machen
+            Sie in jedem Fall vorher ein Backup der entsprechenden
+            Datei (<filename>system.dat</filename> in Ihrem
+            <application>Windows</application>-Verzeichnis)!</para>
+
+        </warning></para>
+
+      <para>Die folgenden Angaben gehen davon aus, da&szlig; &xpname;
+        in <filename>C:\Programme\OpenXP</filename> installiert ist
+        umd der zu verwendende Server (d.h. der Name der zu
+        verwendenden Box) <computeroutput>examserv</computeroutput>
+        ist.</para>
+
+      <table id="regitryeintraege">
+        <title>Registry-Eintr&auml;ge</title>
+
+        <tgroup cols="3">
+
+          <thead>
+
+            <row>
+
+              <entry>Schl&uuml;ssel</entry>
+
+              <entry>Wert</entry>
+
+              <entry>Daten</entry>
+
+            </row>
+
+          </thead>
+
+          <tbody>
+
+            <row>
+
+              <entry>HKEY_LOCAL_MACHINE\Software\Clients\Mail</entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>OpenXP</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry morerows="1"><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>OpenXP</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>DLLPath</computeroutput></entry>
+
+              <entry><userinput>C:\Programme\OpenXP\&iconsfilename;</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>[leer]</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry morerows="2"><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>URL:MailTo Protocol</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>EditFlags</computeroutput> (Bin&auml;rwert!)</entry>
+
+              <entry><userinput>02 00 00 00</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>URL Protocol</computeroutput></entry>
+
+              <entry><userinput>[leer]</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto\DefaultIcon</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>C:\Programme\OpenXP\&iconsfilename;,-1</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto\shell</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>[leer]</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto\shell\open</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>[leer]</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto\shell\open\command</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>"C:\Programme\OpenXP\&xpbinfilename;"
+                "/nb /%1\examserv"</userinput>
+
+              </entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\shell</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>[leer]</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\shell\open</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>[leer]</userinput></entry>
+
+            </row>
+
+            <row>
+
+              <entry><computeroutput>HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\shell\open\command</computeroutput></entry>
+
+              <entry><computeroutput>(Standard)</computeroutput></entry>
+
+              <entry><userinput>C:\Programme\OpenXP\&xpbinfilename;</userinput></entry>
+
+            </row>
+
+          </tbody>
+
+        </tgroup>
+
+      </table>
+
+      <note>
+
+        <para>Es ist sinnvoll, f&uuml;r &xpname; eine
+          <filename>pif</filename>-Datei anzulegen, dort
+          <filename>&xpbinfilename;</filename> einzutragen, und in
+          <filename>xpmailto.reg</filename> dann statt
+          <filename>C:\Programme\OpenXP\&xpbinfilename;</filename> den
+          Namen und Pfad der <filename>pif</filename>-Datei anzugeben
+          (z.B.
+          <filename>C:\WINDOWS\Startmen&uuml;\OpenXP.pif</filename>).</para>
+
+      </note>
+
+    </sect1>
+
+    <sect1 label="E.4" id="an0e0400">
       <title><application>OS/2</application></title>
 
       <bridgehead>Rechenzeit-Freigabe</bridgehead>
@@ -25017,6 +25307,9 @@ ende:  write &quot;^M       ^M&quot;                   # ^Pshere l&ouml;schen
 <!--
 
 $Log$
+Revision 1.14  2000/11/25 23:37:01  fe
+Ein bischen Zeug von xp.ihq importiert.
+
 Revision 1.13  2000/11/24 19:05:11  fe
 Corrections from Hans-Juergen Bardenhagen.
 
