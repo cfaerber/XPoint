@@ -1159,11 +1159,11 @@ begin
   with sp do
   begin
     moff;
-{$IFDEF BP }
-    FastMove(p^,mem[base:0],scsize);
-{$ELSE }
-  WriteScreenRect(1, screenwidth, 1, screenlines, p^);
-{$ENDIF }
+    {$IFDEF BP }
+      FastMove(p^,mem[base:0],scsize);
+    {$ELSE }
+      WriteScreenRect(1, screenwidth, 1, screenlines, p^);
+    {$ENDIF }
     mon;
     disp_DT;
     freemem(p,scsize);               { Bild wiederherstellen }
@@ -1334,7 +1334,7 @@ begin
 {$ENDIF }
   with col do begin
     attrtxt(colmenu[0]);
-    write(sp(screenwidth));
+    Wrt2(sp(screenwidth));
     showusername;
     dispfunctionkeys(false);
     attrtxt(coltline);
@@ -2372,6 +2372,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/05/06 17:29:21  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.37  2000/05/06 15:57:04  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog

@@ -56,7 +56,7 @@ begin
   brk:=false;
   repeat
     wrt(x,y,s);
-    write(dup(maxlen-length(s),iifc(dot,'.',' ')),dup(maxlen-length(s),#8));
+    Wrt2(dup(maxlen-length(s), iifc(dot,'.',' ')) + dup(maxlen-length(s),#8));
     get(t,curon);
     if (t=keybs) and (s<>'') then dellast(s)
     else if (t>=' ') and (length(s)<maxlen) then s:=s+t;

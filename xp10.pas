@@ -603,7 +603,7 @@ var brk      : boolean;
       if i=p then attrtxt(col.colsel2bar)
       else attrtxt(col.colsel2box);
       if i+a>eanzahl then
-        write(sp(width))
+        Wrt2(sp(width))
       else begin
         case typ of
           1 : begin                           { Timingliste }
@@ -631,15 +631,15 @@ var brk      : boolean;
                 if anz>0 then
                   if anz=1 then s:=s+'1 '+getres2(1003,1)   { 'Eintrag' }
                   else s:=s+strs(anz)+' '+getres2(1003,2);  { 'Eintr„ge' }
-                write(forms(s,53));
+                Wrt2(forms(s,53));
               end;
           4 : begin
                 s:=getres2(222,xhd[i+a]);
-                write(' ',iifc(i+a=movefrom,#16,' '),
+                Wrt2(' ' + iifc(i+a=movefrom,#16,' ') +
                       forms(mid(s,blankpos(s)),width-2));
               end;
           5 : with nodelist^[a+i] do
-                write(' '+forms(listfile,14)+
+                Wrt2(' '+forms(listfile,14)+
                       iifs(pos('###',listfile)>0,formi(number,3),'   ')+'  '+
                       forms(updatefile,14)+forms(updatearc,14)+
                       iifs(dodiff,'Diff  ','      ')+
@@ -1096,7 +1096,7 @@ var brk      : boolean;
         if nr>2 then begin
           i:=0;
           for j:=1 to maxphone do         { leere Eintr„ge entfernen }
-            if (phe^[j]<>'') then begin   
+            if (phe^[j]<>'') then begin
               inc(i);
               if i<>j then phe^[i]:=phe^[j];
               end;
@@ -2042,6 +2042,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/06 17:29:21  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.8  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 

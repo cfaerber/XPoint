@@ -208,7 +208,7 @@ label ende;
     if spez then x:=23 else x:=19;
     msgbox(70,x,'Suchstring-Check',x,y);
     attrtxt(col.colmbox);
-    wrt(x+1,y+1,'Benutzte Teilstrings: '); write(suchanz);
+    wrt(x+1,y+1,'Benutzte Teilstrings: '); Wrt2(suchanz);
     wrt(x+27,y+1,iifs(suchand,'AND','OR'));
     write('    Igcase='+iifs(igcase,'1','0')+'   Umlaut='+iifs(umlaut,'1','0'));
     write(iifs(spez,'    SPEZIAL',''));
@@ -1152,7 +1152,7 @@ end;
 procedure ModiTyp;
 var c   : char;
     uvs : byte;
-    flags:longint;    
+    flags:longint;
 begin
   dbReadN(mbase,mb_unversandt,uvs);
   if uvs and 1<>0 then
@@ -1160,9 +1160,9 @@ begin
   else begin
     dbReadN(mbase,mb_typ,c);
     dbReadN(mbase,mb_flags,flags);
-    if c='T' then 
+    if c='T' then
       if flags and 4=0 then c:='B'  { Text -> Bin  }
-      else flags:=flags and not 4   { Mime -> Text }      
+      else flags:=flags and not 4   { Mime -> Text }
     else begin
       flags:=flags or 4;            { Bin -> Mime }
       c:='T';
@@ -2407,6 +2407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/05/06 17:29:22  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.36  2000/05/02 19:14:01  hd
   xpcurses statt crt in den Units
 

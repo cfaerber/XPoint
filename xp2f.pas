@@ -159,11 +159,11 @@ begin
       else attrtxt(col.colsel2box);
       with fkeys[typ]^[i] do begin
         wrt(x+1,y+1+i,' '+forms(txt+strs(i),length(txt)+3));
-        if menue+prog='' then write(sp(67))
+        if menue+prog='' then Wrt2(sp(67))
         else begin
-          write(' ',forms(menue,14),' ',forms(prog,26));
+          Wrt2(' ' + forms(menue,14) + ' ' + forms(prog,26));
           if copy(prog,1,1)='*' then
-            write(sp(18),chk(autoexec),'      ')
+            Wrt2(sp(18) + chk(autoexec) + '      ')
           else
             write(' ',forms(getres2(240,ntyp+7),10),' ',chk(bname),' ',
                   chk(warten),' ',chk(listout),' ',chk(autoexec),'  ',
@@ -259,7 +259,7 @@ begin
     wrl('Lister'); wrh(collisttext); wrh(collistmarked); wrh(collistselbar);
                    wrh(collistfound); wrh(colliststatus); wrh(collistquote[1]);
                    wrh(collistscroll); wrh(collistheader); wrh(collisthigh);
-                   wrh(collistqhigh[1]); wrhl(collistheaderhigh); 
+                   wrh(collistqhigh[1]); wrhl(collistheaderhigh);
     wrl('Editor'); wrh(coledittext); wrh(coleditmarked); wrh(coleditstatus);
                    wrh(coleditmessage); wrh(coledithead); wrh(coleditquote[1]);
                    wrh(coleditendmark); wrh(coleditmenu); wrh(coleditmenuhi);
@@ -272,7 +272,7 @@ begin
     wrl('Maps'); wrhl(colmapsbest);
     wrl('Mailer'); wrh(colmailer); wrh(colmailerhigh); wrhl(colmailerhi2);
     wrl('Border'); wrhl(colborder);
-    wrl('Priority'); wrh(colmsgsprio1); wrh(colmsgsprio2); 
+    wrl('Priority'); wrh(colmsgsprio1); wrh(colmsgsprio2);
                      wrh(colmsgsprio4) ;wrhl(colmsgsprio5);
     end;
   close(t);
@@ -1036,9 +1036,9 @@ begin
                5 : cset(colmsgsuser);
                6 : cset(colmsgsinvuser);
                7 : cset(colmsgsprio1);
-               8 : cset(colmsgsprio2); 
-               9 : cset(colmsgsprio4);                
-              10 : cset(colmsgsprio5); 
+               8 : cset(colmsgsprio2);
+               9 : cset(colmsgsprio4);
+              10 : cset(colmsgsprio5);
              end;
            until m=0;
        9 : repeat    { Message-Box }
@@ -1186,6 +1186,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/05/06 17:29:21  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.10  2000/05/04 18:43:16  jg
   - Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten
     entsprechender Menuepunkt unter Config/Anzeige/Farben/Lister

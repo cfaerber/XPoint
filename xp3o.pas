@@ -34,7 +34,7 @@ const pe_ForcePfadbox = 1;     { Flags fÅr PufferEinlesen }
 
       auto_empfsel_default : byte = 1;         {Flags fuer Autoempfsel in XPCC.PAS}
       autoe_showscr        : boolean = false;
-      sel_verteiler        : boolean = false;  {True = Verteilerauswahl erlauben }     
+      sel_verteiler        : boolean = false;  {True = Verteilerauswahl erlauben }
 
 type charr  = array[0..65530] of char;
      charrp = ^charr;
@@ -145,15 +145,15 @@ end;
 
 procedure scr_auto_empfsel(var cr:CustomRec);       { Brett/User fuer Vollbildroutinen }
 var x,y   : byte;                                   { Sichert Screen und zeigt Hauptmenue an }
-    mt,kd : boolean;    
+    mt,kd : boolean;
 const s : string[1]='';
 begin
   mt:=m2t; m2t:=false;            { Uhr aus }
   kd:=keydisp; keydisp:=true;     { Funktionskeys ein }
   wpushs(1,80,1,screenlines,'-'); { Ganzen Screen sichern, ohne Rahmen }
   showscreen(false);              { Hauptmenue zeigen }
-  Auto_Empfsel(cr);               
-  m2t:=mt;                   
+  Auto_Empfsel(cr);
+  m2t:=mt;
   keydisp:=kd;
   wpop;                           { alten Screen wiederherstellen }
 end;
@@ -172,7 +172,7 @@ begin
   BrettDatumSetzen(true);
   attrtxt(col.colmbox);
   moff;
-  write(getres(321));   { ' fertig.' }
+  Wrt2(getres(321));   { ' fertig.' }
   mon;
   if sig then signal;
   wkey(1,false);
@@ -512,7 +512,7 @@ begin
               end;
         until (_user<>_olduser) or dbEOF(mbase);
         dbGo(ubase,rec2);
-        dbReadN(ubase,ub_adrbuch,adrb);  
+        dbReadN(ubase,ub_adrbuch,adrb);
         if adrb=0 then adrb:=NeuUserGruppe;
         dbWriteN(ubase,ub_adrbuch,adrb);
         closebox;
@@ -768,7 +768,8 @@ begin
   mwrt(x+3,y+2,getres(329));   { 'bearbeite Nachricht:' }
   attrtxt(col.colmboxhigh);
   i:=0; ii:=0;
-  if aktdispmode=10 then begin
+  if (aktdispmode=10) then
+  begin
     dbRead(mbase,'brett',_brett);
     case rdmode of
       0 : dbSeek(mbase,miBrett,_brett);
@@ -1374,6 +1375,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/05/06 17:29:22  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.15  2000/05/02 19:14:00  hd
   xpcurses statt crt in den Units
 

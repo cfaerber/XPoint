@@ -125,9 +125,9 @@
   {$UNDEF CAPI } { Bis jetzt keine CAPI-UnterstÅtzung in 32 Bit Versionen }
 {$ENDIF }
 
-{$IFDEF DPMI32 }
-  {$DEFINE DOS32 }
+{$IFDEF DOS32 }
   {$DEFINE NeedReg }     { 32 Bit DOS-Versionen mÅssen registriert werden }
+  {$DEFINE LocalScreen } { DOS 32 Bit braucht einen Localscreen }
 {$ENDIF }
 
 {$IFDEF Linux }
@@ -139,10 +139,6 @@
 {$IFDEF FreeBSD }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
   {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-{$ENDIF }
-
-{$IFDEF NCRT }
-  {$UNDEF LocalScreen }  { Unter NCRT nicht notwendig }
 {$ENDIF }
 
 { --- ErklÑrungen der selbst gesetzen Defines --- }
@@ -176,6 +172,9 @@
 
 {
   $Log$
+  Revision 1.25  2000/05/06 17:29:24  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.24  2000/05/06 15:57:04  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog

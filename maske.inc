@@ -93,13 +93,13 @@ var ax,p,myp  : integer;
                 if stat.arrowspace and enabled then begin
                   if length(cont^)>len then begin
                     attrtxt(stat.col.ColArrows);
-                    write(#16);
+                    Wrt2(#16);
                     end
                   else
                     Wrt2(' ');
                   if stat.mausarrows and hassel then begin
                     attrtxt(stat.col.colback);
-                    write(#25);
+                    Wrt2(#25);
                     end;
                   end;
                 end;
@@ -276,7 +276,7 @@ var ax,p,myp  : integer;
             end;
           if stat.mausarrows and hassel then begin
             attrtxt(stat.col.colback);
-            write(#25);
+            Wrt2(#25);
             end;
           end;
         mon;
@@ -1070,6 +1070,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13  2000/05/06 17:29:20  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.12  2000/04/13 12:48:32  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

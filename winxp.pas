@@ -636,7 +636,16 @@ procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
       TLocalScreen(Buffer)[i*2+1] := Char(SysReadAttributesAt(x+i, y));
     end;
   {$ELSE }
+  var
+    i: Integer;
+  begin
+    {$IFDEF Localscreen }
+    for i := 0 to Count - 1 do
     begin
+      TLocalScreen(Buffer)[i*2] := LocalScreen^[((x+i-1)+(y-1)*zpz)*2];
+      TLocalScreen(Buffer)[i*2+1] := LocalScreen^[((x+i-1)+(y-1)*zpz)*2+1];
+    end;
+    {$ENDIF }
   {$ENDIF }
 {$ENDIF }
 end;
@@ -717,9 +726,9 @@ begin
   WriteConsoleOutput(OutHandle, @Buffer, BSize, Coord, DestRect);
 {$ENDIF }
 {$ELSE }
-{$IFDEF VP }
   var
     x, y, j, Offset: Integer;
+    attr: Integer;
   begin
     for y := 0 to ScreenLines - 1 do
     begin
@@ -729,46 +738,26 @@ begin
         {$IFDEF VP }
           SysWrtCharStrAtt(@TLocalScreen(Buffer)[Offset], 1, x, y, Byte(TLocalScreen(Buffer)[Offset+1]));
         {$ELSE VP }
-          TextAttr := SmallWord(TLocalScreen(Buffer)[Offset+1]);
-          FWrt(l+x, y, Char(TLocalScreen(Buffer)[Offset]));
+          Attr := Byte(TLocalScreen(Buffer)[Offset+1]);
+          TextAttr := Attr;
+          FWrt(l+x-1, y, Char(TLocalScreen(Buffer)[Offset]));
         {$ENDIF VP }
         Inc(Offset, 2);
       end;
     end;
-{$ELSE }
-begin
-{$ENDIF }
 {$ENDIF }
 end;
 
 {$ENDIF Ver32 }
 
 procedure Wrt2(const s:string);
-{$IFDEF Localscreen }
-var
-  i, Count: Integer;
-{$ENDIF LocalScreen }
 begin
-{$IFDEF Win32 }
+{$IFDEF NCRT  }
+  StringOut(s);
+{$ELSE }
   FWrt(WhereX, WhereY, s);
   GotoXY(WhereX+Length(s), WhereY);
-{$ELSE Win32 }
-  {$ifdef NCRT }
-    StringOut(s);
-  {$else }
-    Write(s);
-  {$endif NCRT }
-
-  {$IFDEF LocalScreen }  { LocalScreen Åbernimmt die énderungen }
-    Count := ((Wherex-1)+(Wherey-1)*zpz)*2;
-    if s <> '' then
-      for i := 0 to Length(s)-1 do
-        begin
-          LocalScreen^[Count+i*2] := s[i+1];
-          LocalScreen^[Count+i*2+1] := Char(TextAttr);
-        end;
-  {$ENDIF LocalScreen }
-{$ENDIF Win32 }
+{$ENDIF }
 end;
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
@@ -940,7 +929,6 @@ begin
     {$ELSE }
         GetScreenLine(l-1, j, savemem^[(1+j-o)*wi], wi div 2);
     {$ENDIF }
-        { Fastmove(LocalScreen^[j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi); }
   {$ENDIF BP }
 {$ENDIF Win32 }
     mon;
@@ -1294,6 +1282,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.30  2000/05/06 17:29:21  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.29  2000/05/06 15:57:03  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog

@@ -36,11 +36,11 @@ uses
 {$ifdef vp }
   vpsyslow,
 {$endif}
-  dos, 
+  dos,
 {$ifdef NCRT }
   xpcurses,
 {$else }
-  crt, 
+  crt,
 {$endif }
   keys, typeform, mouse, xp0, xpglobal;
 
@@ -392,7 +392,7 @@ begin
         case t of
           curnorm : Cursoron;
           cureinf : CursorBig;
-	  curnone,
+          curnone,
           curoff  : CursorOff;
         end;
     {$ENDIF }
@@ -865,7 +865,7 @@ begin
   end;
 {$ELSE }
 {$IFDEF NCRT }
-  StringOutXYBaseWin(x,y,s); 
+  StringOutXYBaseWin(x,y,s);
 {$ELSE }
   FWrt(x, y, s);
 {$ENDIF }
@@ -886,7 +886,7 @@ begin
     c:=UpCase(t[1]);
   until c IN ['J','N',#13,#27];
   if (c<>#27) and (c<>#13) then begin
-    moff; write(c); mon; end;
+    moff; Wrt2(c); mon; end;
 end;
 
 
@@ -1154,9 +1154,9 @@ begin
   moff;
   wrt(x,y,txt);
   la:=lastattr;
-  if invers then InvTxt; write(s);
+  if invers then InvTxt; Wrt2(s);
   if invers then AttrTxt(la);
-  write(dup(ml-length(s),fchar));
+  Wrt2(dup(ml-length(s), fchar));
   mon;
   gotoxy(x+length(txt),y);
   Get(a,curon);
@@ -1402,7 +1402,7 @@ begin
   p:=minpos; endeed:=0;
   REPEAT
     moff;
-    GotoXY(cx,cy); Write(copy(dt,succ(minpos),rl)); GotoXY(cx+p-minpos,cy);
+    GotoXY(cx,cy); Wrt2(copy(dt,succ(minpos),rl)); GotoXY(cx+p-minpos,cy);
     mon;
     Get(a,curon);
     IF a=keyesc THEN
@@ -1863,6 +1863,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.34  2000/05/06 17:29:20  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.33  2000/05/06 15:57:03  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog

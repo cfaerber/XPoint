@@ -102,11 +102,11 @@ begin
   attrtxt(col.coldiahigh);
   gotoxy(x+14,y+6);
   moff;
-  if cc_anz=0 then write(forms(box,17))
+  if cc_anz=0 then Wrt2(forms(box,17))
   else if forcebox='' then
-          if SameServer then write(forms(ss,17))
-          else write(forms('('+box+')',17))
-       else write(forms(forcebox,17));
+          if SameServer then Wrt2(forms(ss,17))
+          else Wrt2(forms('('+box+')',17))
+       else Wrt2(forms(forcebox,17));
   mon;
 end;
 
@@ -119,12 +119,12 @@ begin
   attrtxt(col.coldiahigh);
   wrt(x+14,y+8,strs(fs+addsize));
   attrtxt(col.coldialog);
-  write(getres(13));    { ' Bytes' }
+  Wrt2(getres(13));    { ' Bytes' }
   ms:=maxsize;
   if binary and ntBinEncode(netztyp) then  { aut. uu-Codierung }
     ms:=system.round((ms-400)/1.415);
   oversize:=iif((maxsize>0) and (fs+addsize>ms),fs+addsize-ms,0);
-  if oversize>0 then write('!');
+  if oversize>0 then Wrt2('!');
   mon;
 end;
 
@@ -255,23 +255,23 @@ begin
   gotoxy(x+51,y+6);
   if docode=0 then
     case cancode of
-      -1 : write(getreps2(601,1,'Rot13'));       { '%s m”glich' }
-       0 : write(getres2(601,iif(pm,2,3)));      { 'kein Paáwort' / 'nicht m”glich' }
-       1 : if binary then write(getres2(601,4))  { 'evtl. QPC m”glich' }
-           else write(getreps2(601,1,'QPC'));    { 'QPC m”glich' }
-       2 : write(getreps2(601,1,'DES'));         { 'DES m”glich' }
-       3..2+maxpmc : write(getreps2(601,1,pmcode(cancode)));
-       9 : write(getreps2(601,1,'PGP'));         { 'PGP m”glich' }
+      -1 : Wrt2(getreps2(601,1,'Rot13'));       { '%s m”glich' }
+       0 : Wrt2(getres2(601,iif(pm,2,3)));      { 'kein Paáwort' / 'nicht m”glich' }
+       1 : if binary then Wrt2(getres2(601,4))  { 'evtl. QPC m”glich' }
+           else Wrt2(getreps2(601,1,'QPC'));    { 'QPC m”glich' }
+       2 : Wrt2(getreps2(601,1,'DES'));         { 'DES m”glich' }
+       3..2+maxpmc : Wrt2(getreps2(601,1,pmcode(cancode)));
+       9 : Wrt2(getreps2(601,1,'PGP'));         { 'PGP m”glich' }
     end
   else begin
     attrtxt(col.coldiahigh);
     case docode of
-      -1 : write('Rot13');
-       0 : write(getres2(601,3));
-       1 : write('QPC');
-       2 : write('DES');
-       3..2+maxpmc: write(pmcode(docode));
-       9 : write('PGP');
+      -1 : Wrt2('Rot13');
+       0 : Wrt2(getres2(601,3));
+       1 : Wrt2('QPC');
+       2 : Wrt2('DES');
+       3..2+maxpmc: Wrt2(pmcode(docode));
+       9 : Wrt2('PGP');
     end;
   end;
   mon;
@@ -1124,6 +1124,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.16  2000/05/06 17:29:23  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.15  2000/05/04 10:32:59  mk
   - unbenutzer TurboBox Code entfernt
 

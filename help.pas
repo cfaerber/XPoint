@@ -451,9 +451,9 @@ begin
   if not NoHeader then begin
     wrt(x,y,'Hilfe: ');
     if headhigh and color then textcolor(15);
-    write(left(z^[1]^,wdt-7));
+    Wrt2(left(z^[1]^,wdt-7));
     attrtxt(NormColor);
-    if length(z^[1]^)<wdt-7 then write(sp(wdt-7-length(z^[1]^)));
+    if length(z^[1]^)<wdt-7 then Wrt2(sp(wdt-7-length(z^[1]^)));
     wrt(x,y+1,dup(wdt,'Ä'));
     end;
   for i:=1 to hgh do begin
@@ -470,17 +470,17 @@ begin
     else begin
       gotoxy(x,yy);
       while p>0 do begin
-        write(left(s,p-1));
+        Wrt2(left(s,p-1));
         p2:=pos('>>',s); if p2=0 then p2:=length(s)+1;
         attrtxt(HighColor);
-        write(copy(s,p+2,p2-p-2));
+        Wrt2(copy(s,p+2,p2-p-2));
         attrtxt(NormColor);
         s:=copy(s,p2+2,80);
         p:=pos('<<',s);
-        end;
-      write(forms(s,x+wdt-wherex));
       end;
+      Wrt2(forms(s,x+wdt-wherex));
     end;
+  end;
   mon;
   attrtxt(QvwColor);
   for i:=1 to qvws do
@@ -780,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/06 17:29:20  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.11  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 

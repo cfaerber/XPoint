@@ -21,7 +21,7 @@ unit xp6;
 
 interface
 
-uses 
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
@@ -548,7 +548,7 @@ var f,f2     : ^file;
     m1msgsize: longint;     { Gesamtgrî·e der ersten Kopie   }
     showempfs: shortint;    { fÅr Betreffbox }
     fo       : ^string;
-    flags    : longint;  
+    flags    : longint;
 
 label xexit,xexit1,xexit2,fromstart,ReadAgain;
 
@@ -579,11 +579,11 @@ begin
     wpush(1,80,1,2,'-');         { 'Nachricht an  ' / 'Nachricht in  ' }
     p:=cpos('@',empfaenger);
     wrt(1,1,' ');
-    if verteiler then write(forms(getres2(611,40)+vert_name(empfaenger),79))
+    if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79))
     else
-      if pm then write(forms(getres2(611,40)+left(empfaenger,p-1)+' @ '+
+      if pm then Wrt2(forms(getres2(611,40)+left(empfaenger,p-1)+' @ '+
                        mid(empfaenger,p+1),70)+sp(9))
-      else write(forms(getres2(611,41)+copy(empfaenger,edis,55)+
+      else Wrt2(forms(getres2(611,41)+copy(empfaenger,edis,55)+
                  iifs(ntBrettEmpf(netztyp) and (fidoto<>''),
                       getres2(611,43)+fidoto,''),70)+sp(9));
     wrt(1,2,' '+forms(getres2(611,42)+betreff,79));   { 'Betreff:      ' }
@@ -1204,9 +1204,9 @@ fromstart:
     attrtxt(col.coldiahigh);
     moff;
     if empfaenger[1]=vert_char then
-      write(copy(vert_name(empfaenger),edis,bboxwid))
+      Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
     else
-      write(left(uucpbrett(empfaenger,edis),bboxwid));
+      Wrt2(left(uucpbrett(empfaenger,edis),bboxwid));
     for ii:=1 to min(showempfs,14) do
       if ccm^[ii].ccpm then
         wrt(x+3+length(getres2(611,6)),y+2+ii,left(cc^[ii],bboxwid))
@@ -1334,7 +1334,7 @@ fromstart:
           goto ReadAgain;
           end;
 
-        if (n=5) or (t='/') then    { Empfaenger aendern? } 
+        if (n=5) or (t='/') then    { Empfaenger aendern? }
         begin
           Changeempf;
           betreffbox:=false; edit:=false; sendbox:=true;
@@ -1351,7 +1351,7 @@ fromstart:
             1..5 : n:=p+10;
             6    : if netztyp=nt_Fido then n:=16 else
                    if netztyp=nt_ZConnect then n:=19 else
-                   if netztyp=nt_uucp then n:=22;  
+                   if netztyp=nt_uucp then n:=22;
             7    : if netztyp=nt_Maus then n:=17;
             8    : if netztyp=nt_Maus then n:=18;
             9    : if netztyp in [nt_ZConnect,nt_UUCP] then n:=20;
@@ -1870,7 +1870,7 @@ fromstart:
       dbWrite(mbase,'gelesen',b);
       if sendFlags and sendHalt<>0 then b:=1
       else if flLoesch then b:=2
-      else if not (HaltOwn and (sendbox or _verteiler)) 
+      else if not (HaltOwn and (sendbox or _verteiler))
         or pm then b:=0;                { Eigene Nachrichten Halten gilt nicht fuer Mails }
       dbWriteN(mbase,mb_halteflags,b);
       if intern then b:=0
@@ -1881,19 +1881,19 @@ fromstart:
 
       dbreadN(mbase,mb_flags,flags);                 { Farb - Flags setzen... }
 
-      flags:=flags and not 56;                
+      flags:=flags and not 56;
       if netztyp=nt_Zconnect then                    { Zconnect-Prioritaet: }
         if msgprio=10 then flags:=flags or 16        { Direkt = Hoch }
-        else if msgprio=20 then flags:=flags or 8;   { Eilmail = Hoechste }   
+        else if msgprio=20 then flags:=flags or 8;   { Eilmail = Hoechste }
 
       case rfcprio of                                { RFC - Prioritaet }
-        1 : flags:=flags or 8;                       { hoechste } 
+        1 : flags:=flags or 8;                       { hoechste }
         2 : flags:=flags or 16;                      { hoch }
         4 : flags:=flags or 24;                      { niedrig }
         5 : flags:=flags or 32;                      { niedrigste }
-        end; 
+        end;
 
-      dbwriteN(mbase,mb_flags,flags); 
+      dbwriteN(mbase,mb_flags,flags);
 
       if msgCPpos=0 then begin
         if OldMsgsize<>0 then begin
@@ -2210,6 +2210,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/05/06 17:29:23  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.26  2000/05/05 18:08:50  jg
   - Sendefenster: Verteiler im "Kopien an" Dialog erlaubt
   - Empfaenger aendern Loescht alte "Kopien an" Eintraege

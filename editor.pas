@@ -1188,21 +1188,24 @@ var  dl         : displp;
       attrtxt(col.colstatus);
       gotoxy(x,y);
       moff;
-      write(' ',language^.zeile,' ',forms(strs(startline+scy),7),
-                language^.spalte,' ',forms(strs(xoffset+scx),7));
-      if xoffset=0 then write(sp(8))
-      else write(forms('+'+strs(xoffset),8));
-      write(memavail);
-      if message='' then begin
+      Wrt2(' ' + language^.zeile + ' ' + forms(strs(startline+scy),7) +
+                language^.spalte + ' ' + forms(strs(xoffset+scx),7));
+      if xoffset=0 then
+        Wrt2(sp(8))
+      else
+        Wrt2(forms('+'+strs(xoffset),8));
+      Write(memavail);
+      if message='' then
+      begin
         showfile[1]:=iifc(modified,'þ',' ');
-        write(sp(w-wherex-length(showfile)),showfile,' ');
-        end
-      else begin
-        write(sp(w-wherex-length(message)),message,' ');
+        Wrt2(sp(w-wherex-length(showfile)) + showfile +' ');
+      end else
+      begin
+        Wrt2(sp(w-wherex-length(message)) + message + ' ');
         message:='';
-        end;
-      mon;
       end;
+    mon;
+    end;
   end;
 
   function GetPrefixChar(p:char; igcase:boolean):char;
@@ -2022,6 +2025,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/05/06 17:29:19  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.24  2000/05/02 19:13:58  hd
   xpcurses statt crt in den Units
 

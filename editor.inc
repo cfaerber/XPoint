@@ -232,7 +232,7 @@ begin
     if (dl^[gl].absatz=nil) or
        ((dl^[gl].absatz^.next=nil) and (dl^[gl].zeile=alines(dl^[gl].absatz)))
     then Seitenende  { Wenn Ende des Textes bereits auf dem Bildschirm ist... }
-    else begin 
+    else begin
       i:=gl;
       while dl^[i].absatz=nil do dec(i);
       inc(startline,i-1);
@@ -1382,7 +1382,7 @@ begin
       SetBlock(1,ActAbs,workpos,2);
       SetBlock(2,pos.absatz,pos.offset,2);
       KorrBlockScrolled(false);
-    end;  
+    end;
   end;
 end;
 
@@ -1453,7 +1453,7 @@ begin
       SetBlockMark(1);
       SetBlock(2,endp.absatz,endp.offset,2);
       KorrBlockScrolled(false);
-    end;  
+    end;
   end;
 end;
 
@@ -2112,13 +2112,17 @@ label sok;
         if i=p then attrtxt(col.colmenuinv)
         else attrtxt(col.colmenu);
         wrt(mx+1,my+i,' '+left(menue[i],highp[i]-2));
-        if i<>p then attrtxt(col.colmenuhi)
-        else attrtxt(col.colmenuhiinv);
-        write(menue[i,highp[i]]);
-        if i<>p then attrtxt(col.colmenu)
-        else attrtxt(col.colmenuinv);
-        write(forms(mid(menue[i],highp[i]+1),ml-highp[i]+1));
-        end;
+        if i<>p then
+          attrtxt(col.colmenuhi)
+        else
+          attrtxt(col.colmenuhiinv);
+        Wrt2(menue[i,highp[i]]);
+        if i<>p then
+          attrtxt(col.colmenu)
+        else
+          attrtxt(col.colmenuinv);
+        Wrt2(forms(mid(menue[i],highp[i]+1),ml-highp[i]+1));
+      end;
     mon;
     with e^ do
       if EdSelcursor then begin
@@ -2286,6 +2290,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2000/05/06 17:29:19  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.18  2000/04/27 09:06:55  jg
   - Editor: Pgdn in der letzten Textseite springt ohne scrollen zum Textende
             beim Quote-Reflow wird der Cursor an den Zeilenanfang gesetzt,

@@ -237,18 +237,18 @@ label selende;
     gotoxy(lesemodepos,2);
     moff;
     case readmode of
-      0 : write(getres(400));    { 'Alles      ' }
-      1 : write(getres(401));    { 'ungelesen  ' }
-      2 : write(getres(402));    { 'Neues      ' }
+      0 : Wrt2(getres(400));    { 'Alles      ' }
+      1 : Wrt2(getres(401));    { 'ungelesen  ' }
+      2 : Wrt2(getres(402));    { 'Neues      ' }
     else begin
-      write(getres(403),fdat(longdat(readdate)));   { 'ab ' }
+      Wrt2(getres(403) + fdat(longdat(readdate)));   { 'ab ' }
       if showtime then begin
-        write(', ',ftime(longdat(readdate)));
+        Wrt2(', ' + ftime(longdat(readdate)));
         sps:='  ';
         end;
       end;
     end;
-    write(sps);
+    Wrt2(sps);
     mon;
   end;
 
@@ -307,12 +307,12 @@ var t,lastt: taste;
           10,11,12 : if (aktdispmode<>11) and (markflag[y]<>0) then
                        attrtxt(col.colmsgshigh)
                      else
-                       if userflag[y]=0 then attrtxt(col.colmsgs)                      
+                       if userflag[y]=0 then attrtxt(col.colmsgs)
                        else if userflag[y]=1 then attrtxt(col.colmsgsuser)
                        else if userflag[y]=2 then attrtxt(col.colmsgsprio1)
                        else if userflag[y]=3 then attrtxt(col.colmsgsprio2)
                        else if userflag[y]=4 then attrtxt(col.colmsgsprio4)
-                       else if userflag[y]=5 then attrtxt(col.colmsgsprio5) 
+                       else if userflag[y]=5 then attrtxt(col.colmsgsprio5)
                        else attrtxt(col.colmsgs); { nur zur Sicherheit... }
 
           20    : attrtxt(col.colmsgs);
@@ -352,8 +352,8 @@ var t,lastt: taste;
             end;
       2,4 : begin                              { alle User      }
              dbReadN(ubase,ub_username,s);
-             wrongline:=(pos('$/T',s)>0); 
-             end; 
+             wrongline:=(pos('$/T',s)>0);
+             end;
       10  : begin                { Brett-Msgs     }
               dbRead(dispdat,'brett',_brett);
               case rdmode of
@@ -517,7 +517,7 @@ var t,lastt: taste;
               else showkeys(8);
               if not usersortbox
                 then dbsetindex(dispdat,iif(dispmode in [1,3],uiAdrBuch,uiName))
-                else dbsetindex(dispdat,iif(dispmode in [1,3],uiBoxAdrBuch,uiBoxName)); 
+                else dbsetindex(dispdat,iif(dispmode in [1,3],uiBoxAdrBuch,uiBoxName));
             end;
       10  : begin   { Nachrichten }
               dispdat:=mbase;
@@ -1294,13 +1294,13 @@ var t,lastt: taste;
   end;
 
   procedure reset_lesemode;
-  begin    
-    set_lesemode;    
+  begin
+    set_lesemode;
     rdmode:=readmode;
     setall;
-    gostart; 
+    gostart;
     show_info;
-    aufbau:=true;         
+    aufbau:=true;
   end;
 
   procedure wrm(nr:word);
@@ -1637,9 +1637,9 @@ begin      { --- select --- }
                  if t=keyf6 then Makroliste(2);
                  if c=^Y then Trennzeilensuche;
                  if c=k1_O then begin              {'O'}
-                   usersortbox:=not usersortbox; 
+                   usersortbox:=not usersortbox;
                    setall; aufbau:=true;
-                   end; 
+                   end;
 
                  if c=k1_S then begin              { 'S' }
                    dispext:=not dispext;
@@ -1649,9 +1649,9 @@ begin      { --- select --- }
                  if dispext then begin
                    if (c=k1_H) or (t=keyins) then neuer_user;    { 'H' }
                    if c=k1_V then neuer_verteiler;               { 'V' }
-                   if c=k0_cT then begin GoP; usertrennung; end; { '^T' }  
+                   if c=k0_cT then begin GoP; usertrennung; end; { '^T' }
                    if c=^P  then begin                            { '^P' }
-                     GoP; MoveUser; setall; end; 
+                     GoP; MoveUser; setall; end;
                    if not empty then begin
                      if (c=k1_L) or (t=keydel) then              { 'L' }
                        if isverteiler then verteiler_loeschen
@@ -1677,8 +1677,8 @@ begin      { --- select --- }
                      if c='+' then usersprung(true) else
                      if c='-' then usersprung(false);
                    end;
-                 if not empty then begin                   
-                   if markflag[p]<>2 then 
+                 if not empty then begin
+                   if markflag[p]<>2 then
                    begin
                      if ((t=keycr) or (t=^J)) then
                        if isverteiler then edverteiler
@@ -1686,7 +1686,7 @@ begin      { --- select --- }
                      if (c=k1_R) and keinverteiler then change_adressbuch;
                      if (c=k1_P) and keinverteiler then edit_password(false);
                      end;
-                   if c=' ' then begin                    
+                   if c=' ' then begin
                      if markflag[p]<>2 then _mark_                         { 'P' }
                      else pushkey(keydown);
                      end;
@@ -1703,7 +1703,7 @@ begin      { --- select --- }
                  if c=k1_O then begin
                    usersortbox:=not usersortbox;  {'O'}
                    setall; aufbau:=true;
-                   end; 
+                   end;
 
                  if not empty then
                    testsuche(t);
@@ -1946,7 +1946,7 @@ begin      { --- select --- }
     if dispmode=2 then UserSwitch;
 
     ubpos:=disprec[1];
-    if ubpos<>0 then ub_p:=p; 
+    if ubpos<>0 then ub_p:=p;
 
     end;
 
@@ -2038,6 +2038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/05/06 17:29:22  mk
+  - DOS DPMI32 Portierung
+
   Revision 1.18  2000/05/02 19:14:00  hd
   xpcurses statt crt in den Units
 
