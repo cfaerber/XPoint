@@ -102,10 +102,7 @@ label ende;
 var pwcnt:byte;
     pwrc:boolean;
 
-var
- s: String;
 begin
-  s := 'XP2';
   readpar;
   loadresource;
   initvar;
@@ -200,6 +197,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.12  2001/04/16 11:24:28  mk
+  - XP2 String entfernt
+
   Revision 1.29.2.11  2001/01/30 10:01:21  mk
   - weitere arbeiten am Client-Modus
 
