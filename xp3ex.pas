@@ -708,8 +708,10 @@ begin
           while cpos('/',wempf)>0 do wempf[cpos('/',wempf)]:='.';
           rps(s,'$NEWSGROUP',wempf);
           rpsuser(s,absender,realname);
-          rps(s,'$RNAME', realname);
-          rps(s,'$(RNAME)',iifs(realname='','','('+realname+')'));
+          rps(s,'$RNAME', iifs(realname='','',realname+' '));
+          rps(s,'$RNAME2', realname);
+          rps(s,'$(RNAME)',iifs(realname='','','('+realname+') '));
+          rps(s,'$(RNAME2)',iifs(realname='','','('+realname+')'));
           rps(s,'$FIDOEMPF',fido_to);
           rps(s,'$BETREFF',betreff);
           rps(s,'$ERSTELLT',fdat(datum));
@@ -1042,6 +1044,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.3  2000/07/09 13:35:16  mk
+  - $RNAME2 und $(RNAME2) eingebaut
+
   Revision 1.17.2.2  2000/07/07 18:37:58  mk
   - Trim fuer Textmakros eingefuegt und Space bei $RNAME entfernt
 

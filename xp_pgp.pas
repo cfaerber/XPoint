@@ -11,9 +11,7 @@
 { PGP-Codierung }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit  xp_pgp;
 
@@ -126,7 +124,7 @@ begin
       path:=fsearch(PGPEXE,getenv('PATH'));
   end;
   if path='' then
-    trfehler(3001,30)    { 'PGP fehlt oder ist nicht per Pfad erreichbar.' }
+    trfehler(217,30)    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
   else begin
     shellkey:=PGP_WaitKey;
     if PGPVersion=PGP2 then
@@ -801,6 +799,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.1  2000/07/09 13:35:16  mk
+  - $RNAME2 und $(RNAME2) eingebaut
+
   Revision 1.19  2000/05/08 22:15:55  oh
   -PGP 2.6.x: einmal war ein Space vor dem t drin, zweimal nicht. Angeglichen. Fix fuer den vorherigen Fix.
 
