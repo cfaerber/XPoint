@@ -453,7 +453,7 @@ end;
 procedure FWrt(const x,y:word; const s:string);
 {$IFDEF NCRT }
 var
-  x0, y0: integer;
+  x0, y0: smallint;
 begin
   WhereXY(x0,y0);
   StringOutXY(x, y, s);
@@ -1285,6 +1285,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.32  2000/05/07 10:40:40  hd
+  - Fix: FWrt: FPC behandelt Integer nicht als Integer :-/
+
   Revision 1.31  2000/05/07 09:24:02  hd
   FWrt-Korrektur
 
