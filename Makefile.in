@@ -23,26 +23,48 @@
 # --- variables -------------------------------------------------------
 SHELL	= /bin/sh
 
-srcdir	= @srcdir@
+# --- configuration ---------------------------------------------------
+srcdir		= @srcdir@
+prefix		= @prefix@
+exec_prefix     = @exec_prefix@
+bindir		= @bindir@
+sbindir		= @sbindir@
+libexecdir	= @libexecdir@
+datadir		= @datadir@
+sysconfdir	= @sysconfdir@
+sharedstatedir	= @sharedstatedir@
+localstatedir	= @localstatedir@
+libdir		= @libdir@
+includedir	= @includedir@
+oldincludedir	= @oldincludedir@
+infodir		= @infodir@
+mandir		= @mandir@
+
+# --- flags -----------------------------------------------------------
 
 PPC	= @PPC@
-PPC_FLAGS	=
-PPC_LOCAL_FLAGS =
+PPC_FLAGS	= @PPCFLAGS@ -Funetcall -FuObjCOM -Fulinux -dAUTOCONF
+PPC_LOCAL_FLAGS = -Funetcall -FuObjCOM -Fulinux
 
+# --- files -----------------------------------------------------------
 EXEEXT 	= @EXEEXT@
 
 OPENXP	= openxp@EXEEXT@
-RC	= rc@EXEEXT@
-IHS	= ihs@EXEEXT@
+RC	= ./rc@EXEEXT@
+IHS	= ./ihs@EXEEXT@
 
 UNITS	=
-INCLUDES= config.inc
+INCLUDES=
 
-# --- files -----------------------------------------------------------
 RESSOURCE_FILES=$(patsubst openxp-%.rq,openxp-%.res,$(wildcard openxp-*.rq))
+HELP_FILES=$(patsubst doc/openxp-%.ihq,openxp-%.hlp,$(wildcard doc/openxp-*.ihq))
 
 # --- abstract targets ------------------------------------------------
-all: $(OPENXP) $(RESSOURCE_FILES)
+all: bin res
+
+bin: $(OPENXP) 
+
+res: $(RESSOURCE_FILES) $(HELP_FILES)
 
 # --- cleaning --------------------------------------------------------
 mostlyclean:
@@ -59,15 +81,22 @@ maintainer-clean: distclean
 
 # --- install/uninstall -----------------------------------------------
 install:
+	install -D $(OPENXP) $(bindir)/$(OPENXP)
+	install -d $(datadir)/openxp/
+	install $(RESSOURCE_FILES) $(HELP_FILES) $(datadir)/openxp/
+
 install-strip:
 uninstall:
 
 # --- main programme --------------------------------------------------
-openxp$(EXEEXT): openxp.pas $(UNITS) $(INCLUDES)
+openxp$(EXEEXT): openxp.pas $(UNITS) config.h
+	( sed -ne "s/^#\(.*\)/{\$$\1}/p" config.h &&	\
+	  echo "const conf_prefix = '$(prefix)';" &&	\
+	  echo "const conf_datadir = '$(datadir)';" ) 	> config.inc
 	$(PPC) $(PPC_FLAGS) $<
 
 # --- ressources ------------------------------------------------------
-openxp-%.res: openxp-%.rq rc$(EXEEXT)
+openxp-%.res: openxp-%.rq $(RC)
 	$(RC) $<
 
 rc$(EXEEXT): rc.pas $(UNITS) $(INCLUDES)
@@ -78,24 +107,60 @@ rc$(EXEEXT): rc.pas $(UNITS) $(INCLUDES)
 ihs$(EXEEXT): ihs.pas $(UNITS) $(INCLUDES)
 	$(PPC) $(PPC_LOCAL_FLAGS) $<
 
+openxp-%.hlp: doc/openxp-%.ihq $(IHS)
+	$(IHS) $<
+	cp doc/openxp-$*.hlp $@
+
+# --- files list ------------------------------------------------------
+
+MANIFEST.snap:
+	(for a in $(OPENXP) $(RESSOURCE_FILES) $(HELP_FILES) ; do echo $$a ; done) > FILELIST
+
 # --- autoconf configuration PASCAL adaptions -------------------------
-config.inc: config.h
-	sed							\
-	  -e "s/^[^#].*/\/\/&/" 				\
-	  -e "s/^#\(.*\)/{\$$\1}/"				\
-	  -e "s/^\(\/\/[	 ]*\)\/[\/\*]/\1  /" 		\
-	  -e "s/\*\/[ 	]*$$//"					\
-	  -e "s/[ 	]*$$//"					\
-	$< >$@
+# config.inc: config.h Makefile
+#	( 					\
+# 	sed -ne "s/^#\(.*\)/{\$$\1}/p" $< &&	\
+#	sed -ne "s/^CONF_\([A-Z_-]*\)[ 	]*=[ 	]*\(.*[^ 	]\)/const CONF_\1 = '\2';/p" Makefile \
+#	) >$@
+
+#		sed							\
+#		  -e "s/^[^#].*/\/\/&/" 				\
+#		  -e "s/^#\(.*\)/{\$$\1}/"				\
+#		  -e "s/^\(\/\/[	 ]*\)\/[\/\*]/\1  /" 		\
+#		  -e "s/\*\/[ 	]*$$//"					\
+#		  -e "s/[ 	]*$$//"					\
+#		$< >$@
+
+# --- configuration ---------------------------------------------------
+
+${srcdir}/Makefile: Makefile.in configure
+	cd ${srcdir} && ./configure
 
 # --- maintainer only -------------------------------------------------
-# --- (taken from autoconf documentation) -----------------------------
+
+autoconf: ${srcdir}/configure
+
 ${srcdir}/configure: configure.in $(wildcard aclocal.m4)
 	cd ${srcdir} && autoconf
 
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.2.2.1  2003/01/13 16:15:47  cl
+# - autoconf update for cross-compilation
+#
+# Revision 1.6  2003/01/13 16:13:29  cl
+# - autoconf updates for cross-compilation
+#
+# Revision 1.5  2003/01/13 15:42:41  cl
+# - autoconf update for cross-compilation
+#
+# Revision 1.4  2002/08/10 18:46:57  cl
+# - autoconf: install location now configurable
+#
+# Revision 1.3  2002/08/10 17:34:54  cl
+# - update for autoconf
+#
 # Revision 1.2  2002/01/13 22:50:15  cl
 # - update
 #
