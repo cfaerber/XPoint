@@ -56,20 +56,20 @@ procedure tSerialObj.ProcIncoming;
 var BytesRead: DWord;
 begin
   if not DataRequested then begin
-    DebugLog('ObjCOM','Requesting incoming.',3);
+    DebugLog('ObjCOM','Requesting incoming.',DLDebug);
     while ReadFile(SaveHandle,InBuffer.TmpBuf^,InBufSize,BytesRead,@ReadOL)and(BytesRead>0)do
-      begin InBuffer.Put(InBuffer.TmpBuf^,BytesRead); DebugLog('ObjCOM','ReadFile True',2)end;
+      begin InBuffer.Put(InBuffer.TmpBuf^,BytesRead); DebugLog('ObjCOM','ReadFile True',DLDebug)end;
     if GetLastError=ERROR_IO_PENDING then DataRequested:=True;
     OLDataProcessed:=0;
   end;
   if DataRequested then begin
-    DebugLog('ObjCOM','Incoming pending...',3);
+    DebugLog('ObjCOM','Incoming pending...',DLDebug);
     if GetOverlappedResult(SaveHandle,ReadOL,BytesRead,False)then
-      begin DebugLog('ObjCOM','Overlapped IO finished.',3); DataRequested:=False end;
+      begin DebugLog('ObjCOM','Overlapped IO finished.',DLDebug); DataRequested:=False end;
   end;
   if(BytesRead-OLDataProcessed)>0 then begin
     InBuffer.Put(InBuffer.TmpBuf^[OLDataProcessed],BytesRead-OLDataProcessed);
-    DebugLog('ObjCOM','Read '+IntToStr(BytesRead-OLDataProcessed),3);
+    DebugLog('ObjCOM','Read '+IntToStr(BytesRead-OLDataProcessed),DLDebug);
     OLDataProcessed:=BytesRead;
   end;
 end;  
@@ -170,7 +170,7 @@ function tSerialObj.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
                          Parity: Char; StopBits: Byte): Boolean;
 begin
   Result:=OpenKeep(Comport);
-  DebugLog('ObjCOM','Opening: '+IntToStr(Baudrate)+Parity+IntToStr(DataBits)+IntToStr(StopBits)+IntToStr(Ord(Result)),1);
+  DebugLog('ObjCOM','Opening: '+IntToStr(Baudrate)+Parity+IntToStr(DataBits)+IntToStr(StopBits)+IntToStr(Ord(Result)),DLInform);
   if Result then Result:=SetLine(Baudrate, Parity, DataBits, StopBits);
 end; { func. tSerialObj.OpenCom }
 
@@ -246,12 +246,12 @@ procedure tSerialObj.SendBlock(var Block; BlockLen: Longint; var Written: Longin
 var BytesWritten: DWord;
     Success: Boolean;
 begin
-  DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),2);
+  DebugLog('ObjCOM','SendBlock '+IntToStr(BlockLen),DLDebug);
   Success:=WriteFile(SaveHandle,Block,BlockLen,BytesWritten,@WriteOL);
   if not Success then
     case GetLastError of
       ERROR_IO_PENDING: repeat until GetOverlappedResult(SaveHandle,WriteOL,BytesWritten,False);
-    else DebugLog('ObjCOM','SendBlock error',1);
+    else DebugLog('ObjCOM','SendBlock error',DLError);
     end;
   Written:=BytesWritten;
 end;  
@@ -260,7 +260,7 @@ end;
 
 procedure tSerialObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint);
 begin
-  if BlockLen>1 then DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),2);
+  if BlockLen>1 then DebugLog('ObjCOM','ReadBlock '+IntToStr(BlockLen),DLDebug);
   while InBuffer.BufUsed<BlockLen do ProcIncoming;
   Reads := InBuffer.Get(Block, BlockLen, true);
 end; { proc. tSerialObj.ReadBlock }
@@ -269,7 +269,7 @@ end; { proc. tSerialObj.ReadBlock }
 
 function tSerialObj.CharAvail: Boolean;
 begin
-  DebugLog('ObjCOM','CharAvail',2);
+  DebugLog('ObjCOM','CharAvail',DLDebug);
   ProcIncoming; Result := (InBuffer.BufUsed > 0);
 end; { func. tSerialObj.CharAvail }
 
@@ -278,7 +278,7 @@ end; { func. tSerialObj.CharAvail }
 function tSerialObj.CharCount: Integer;
 begin
   ProcIncoming; Result:=InBuffer.BufUsed;
-  DebugLog('ObjCOM','CharCount '+IntToStr(InBuffer.BufUsed),2);
+  DebugLog('ObjCOM','CharCount '+IntToStr(InBuffer.BufUsed),DLDebug);
 end; { func. tSerialObj.CharAvail }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -412,6 +412,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.6  2001/01/04 21:22:54  ma
+  - added/refined debug logs
+
   Revision 1.5  2001/01/03 22:30:17  ma
   - enlarged win buffer size to 2048 bytes
   - removed some unused variables

@@ -623,6 +623,7 @@ var x,y      : byte;
   end;
 
 begin
+  Debug.DebugLog('xp3o','sorting in messages',DLInform);
   inmsgs:=0;
   puffereinlesen:=false;
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
@@ -638,6 +639,7 @@ begin
   if fs<16 then begin
     close(f);
     moff;
+    Debug.DebugLog('xp3o','empty buffer',DLInform);
     rmessage(334);      { 'leerer Puffer' }
     mon;
     wkey(1,false);
@@ -695,6 +697,7 @@ begin
       end;
 
     moff;
+    Debug.DebugLog('xp3o','appending buffer to mbuffer',DLInform);
     Wrt(x+2,y+3,getres(335));           { 'Puffer kopieren...' }
     mon;
     assign(pfile,aFile(ablage));        { Puffer in die kleinste }
@@ -721,6 +724,7 @@ begin
     FWrt(x+2,y+4,mstr+' 0%');
     mon;
 
+    Debug.DebugLog('xp3o','adding messages to db index',DLInform);
     assign(pfile,TempS(msgcount*8+2048));
     rewrite(pfile,1);
     llanz:=0;
@@ -1054,6 +1058,8 @@ begin
         mon;
       end;
     until adr>=fs-3;     { 3 Byte Toleranz }
+
+    Debug.DebugLog('xp3o','index built',DLInform);
     moff;
     FWrt(x+3+length(mstr),y+4,getres2(324,7));
     mon;
@@ -1084,6 +1090,7 @@ begin
     BrettDatumSetzen(true);
     GotoXY(WhereX-2, WhereY);
     moff; Wrt2(getres(321)); mon;  { ' fertig.' } *)
+    Debug.DebugLog('xp3o','finished',DLInform);
 
     mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
   end   { if Puffer_ok }
@@ -1094,10 +1101,14 @@ begin
     msgbox(78,9,getres2(336,1),x,y);    { 'ACHTUNG !!!' }
     attrtxt(col.colmboxhigh);
 
-    if check then
-      FWrt(x+2,y+2,getres2(336,2)+FileUpperCase(puffer))   { 'Fehlerhafte Pufferdatei:  ' }
-    else
+    if check then begin
+      FWrt(x+2,y+2,getres2(336,2)+FileUpperCase(puffer));   { 'Fehlerhafte Pufferdatei:  ' }
+      Debug.DebugLog('xp3o','buffer corrupted: "'+puffer+'"',DLError);
+      end
+    else begin
       FWrt(x+2,y+2,getres2(336,3));    { 'Zu wenig Platz auf der Festplatte.' }
+      Debug.DebugLog('xp3o','insufficent disk space',DLError);
+      end;
     FWrt(x+2,y+3,getres2(336,4));      { 'Puffer wurde NICHT eingelesen!' }
     if pflags and pe_Bad<>0 then begin
       MoveToBad(puffer);
@@ -1124,6 +1135,7 @@ begin
   freemem(p,bufsize);
   closebox;
   aufbau:=true; xaufbau:=true;
+  Debug.DebugLog('xp3o','finished message import',DLInform);
 end;
 
 
@@ -1158,6 +1170,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.42  2001/01/04 21:21:10  ma
+  - added/refined debug logs
+
   Revision 1.41  2001/01/02 10:05:24  mk
   - implemented Header.References
 

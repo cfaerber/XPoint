@@ -27,7 +27,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,fileio,xpdiff,xpdatum,xpglobal, winxp;
+  typeform,fileio,xpdiff,xpdatum,xpglobal,winxp,debug;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -1727,6 +1727,12 @@ var
   s: string;
   p: integer;
 begin
+  case dir of
+    1: Debug.DebugLog('zftools','converting ZC to fido',DLInform);
+    2: Debug.DebugLog('zftools','converting fido to ZC',DLInform);
+  else Debug.DebugLog('zftools','dozfido: wrong conversion direction specified',DLError);
+  end;
+
   direction:= dir;
   bretter:= ebene;
   if fnet <> -1 then begin
@@ -1779,6 +1785,7 @@ begin
     2: FidoZ(x,y);
   end; { case }
   result:= _result;
+  Debug.DebugLog('zftools','conversion finished',DLInform);
 end;
 
 
@@ -1795,6 +1802,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.13  2001/01/04 21:22:54  ma
+        - added/refined debug logs
+
         Revision 1.12  2000/12/28 13:29:57  hd
         - Fix: packets now sorted in after netcall
         - Adjusted: Open window once during sorting in

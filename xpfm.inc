@@ -137,7 +137,7 @@ begin
   SetLength(s,Len);
   Move(Buf,s[1],Len);
   GetString:=s;
-  Debug.DebugLog('XPFM','GetString: "'+s+'"',4);
+  Debug.DebugLog('XPFM','GetString: "'+s+'"',DLDebug);
 end;
 
 procedure SetZero(var buf; s:string; ml:byte);
@@ -320,7 +320,7 @@ begin
   NAKtimer:=false;
   repeat
     if State<>LastState then begin
-      DebugLog('XPFM','fmSS state: '+Char(state+48),5);
+      DebugLog('XPFM','fmSS state: '+Char(state+48),DLDebug);
       LastState:=State;
     end;
     case state of
@@ -648,7 +648,7 @@ var OtherData: String;
             EMSIString:=EMSIString+c;
       end;
     until (c=#13) or (c=#10) or Timers[ti_EMS1].Timeout or not CommObj^.Carrier;
-    DebugLog('XPFM','Read EMSI string: "'+EMSIString+'","'+OtherData+'"',4);
+    DebugLog('XPFM','Read EMSI string: "'+EMSIString+'","'+OtherData+'"',DLDebug);
     ReadEMSIString:=EMSIString;
   end;
 
@@ -661,10 +661,10 @@ var OtherData: String;
     if J>I then begin S:=Copy(EMSIString,I+1,J-I-1); Delete(EMSIString,1,J)end
     else if I=0 then begin S:=''; EMSIString:='' end
     else begin
-      DebugLog('XPFM','Strange EMSI string: "'+EMSIString+'"',4);
+      DebugLog('XPFM','Strange EMSI string: "'+EMSIString+'"',DLDebug);
       Delete(EMSIString,1,J); S:='';
     end;
-    DebugLog('XPFM','Processing EMSI data: "'+S+'"',4);
+    DebugLog('XPFM','Processing EMSI data: "'+S+'"',DLDebug);
     ExtractEMSIData:=S;
   end;
 
@@ -707,7 +707,7 @@ begin
   if akas<>'' then EMSIData2:=EMSIData2+' '+akas;
   EMSIData:=EMSIData2+'}'+EMSIData;
 
-  Debug.DebugLog('XPFM','EMSIData: "'+EMSIData+'"',4);
+  Debug.DebugLog('XPFM','EMSIData: "'+EMSIData+'"',DLDebug);
   count:=5; ercount:=0; ok:=false; more:=false;
   scount:=200;  { zur Sicherheit: nach max. 200 Zeilen wird abgebrochen }
   repeat
@@ -747,11 +747,11 @@ begin
       while LeftStr(EMSIString,length(EMSI_ACK))=EMSI_ACK do delete(EMSIString,1,length(EMSI_ACK));
       while(LeftStr(EMSIString,2)<>'**')and(EMSIString<>'')do delete(EMSIString,1,1);
       if LeftStr(EMSIString,length(EMSI_DAT))=EMSI_DAT then begin
-        Debug.DebugLog('XPFM','Received EMSI_DAT',4);
+        Debug.DebugLog('XPFM','Received EMSI_DAT',DLDebug);
         dl:=hexval(copy(EMSIString,length(EMSI_DAT)+1,4));    { Paketlaenge }
         hex4:=Copy(EMSIString,Length(EMSI_DAT)+1+4+dl,4);     { CRC }
         Delete(EMSIString,Length(EMSI_DAT)+1+4+dl,4); { CRC entfernen }
-        Debug.DebugLog('XPFM','Read CRC: "'+hex4+'"',4);
+        Debug.DebugLog('XPFM','Read CRC: "'+hex4+'"',DLDebug);
         ok:=(hexval(hex4)=CRC16Block(EMSIString[3],Length(EMSIString)-2)); {fuehrende Sternchen von CRC aussparen}
         if not ok then begin
           CommObj^.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
@@ -849,7 +849,7 @@ begin
         if Pos(#9,FilesToSend)>0 then begin
           FileToSend:=Copy(FilesToSend,1,Pos(#9,FilesToSend)-1);
           Delete(FilesToSend,1,Pos(#9,FilesToSend));
-          DebugLog('XPFM','Sending file "'+FileToSend+'", remaining: "'+FilesToSend+'"',3);
+          DebugLog('XPFM','Sending file "'+FileToSend+'", remaining: "'+FilesToSend+'"',DLInform);
         end else begin
           FileToSend:=FilesToSend; FilesToSend:='';
         end;
@@ -859,7 +859,7 @@ begin
 
   if ErrorWord<>0 then begin
     DisplayStatus(getres2(30004,14),True);            { 'Uebertragung abgebrochen' }
-    DebugLog('XPFM','ZModemSend error: "'+ZModem.TransferMessage+'"',1);
+    DebugLog('XPFM','ZModemSend error: "'+ZModem.TransferMessage+'"',DLError);
     if not CommObj^.Carrier then begin
       DisplayStatus(nocarrier,True);            { 'CARRIER futsch :-( ' }
       log(ErrChar,'carrier lost');
@@ -876,7 +876,7 @@ begin
     LogSending:=False;  {Am Ende der Uebertragung wird von ZModemEndProc 'Rcvd' geloggt}
     ZModemReceive(CommObj,MailPath,ErrorFlag);
     if (ErrorFlag) then begin
-      DebugLog('XPFM','ZModemReceive error: "'+ZModem.TransferMessage+'"',1);
+      DebugLog('XPFM','ZModemReceive error: "'+ZModem.TransferMessage+'"',DLError);
       DisplayStatus(getres2(30004,14),True);            { 'Uebertragung abgebrochen' }
       aresult:=EL_recerr;
     end;
@@ -914,6 +914,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.8  2001/01/04 21:21:10  ma
+        - added/refined debug logs
+
         Revision 1.7  2000/12/26 21:01:46  mk
         - set StartProc and EndProc again before receive
 

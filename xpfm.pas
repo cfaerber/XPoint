@@ -126,7 +126,7 @@ var
 
 procedure logwithtime(typ:char; time,txt:string);
 begin
-  Debuglog('XPFM','Log: '+Typ+' '+Txt,1);
+  Debuglog('XPFM','Log: '+Typ+' '+Txt,DLInform);
   writeln(logf,typ,' ',time,'  ',txt);
 end;
 
@@ -266,7 +266,7 @@ end;
 
 procedure DisplayStatus(const s:string; const UseNewLine: Boolean);
 begin
-  Debuglog('XPFM','Display: '+S,2);
+  Debuglog('XPFM','Display: '+S,DLInform);
   if s<>'' then
   begin
     if UseNewLine and(lastdispline<>'')then
@@ -318,6 +318,7 @@ function DoXPFM: integer;
 const
   MessageBoxTitle: String = 'Fidomailer';
 begin
+  Debuglog('XPFM','performing fido netcall',DLInform);
   TestConfig;
   InitVar;
   OpenLog;
@@ -365,7 +366,7 @@ begin
     set_time(secsfrom70+timediff);
   CloseBox;
   freeres;
-  Debuglog('XPFM','Result code: '+strs(aresult),3);
+  Debuglog('XPFM','Result code: '+strs(aresult),DLInform);
   close(logf);
   result:= aresult;
 end;
@@ -374,6 +375,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.7  2001/01/04 21:21:10  ma
+        - added/refined debug logs
+
         Revision 1.6  2000/12/25 22:50:45  mk
         - MarkPos in FirstMarked should be 0
 

@@ -1294,7 +1294,7 @@ begin
     __isopen:=false;
   end;
   writeln;
-  writeln('This message is only in the debug version visible!');
+  writeln('This message is visible only in the debug version!');
   write('Please press enter...');
   readln;
   writeln;
@@ -1435,6 +1435,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/01/04 21:21:10  ma
+  - added/refined debug logs
+
   Revision 1.33  2000/11/16 19:23:53  hd
   - SysLog abgeschaltet (kann mit UseSysLog aktiviert werden
 

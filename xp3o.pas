@@ -72,7 +72,7 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp, xp4o2;
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug;
 
 
 { Customselectroutinen fuer Brett/User }
@@ -1497,6 +1497,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2001/01/04 21:21:10  ma
+  - added/refined debug logs
+
   Revision 1.47  2001/01/02 10:05:24  mk
   - implemented Header.References
 

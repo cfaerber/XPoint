@@ -548,6 +548,7 @@ var d         : DB;
   end;
 
 begin { ZtoFido }
+  Debug.DebugLog('xpnetcall','converting ZC to fido',DLInform);
   sout:=Boxpar^.sysopout;
   Convert;
   orgdest:=dest;
@@ -570,9 +571,12 @@ begin { ZtoFido }
         box:=LeftStr(akas,p-1);
         akas:=trim(mid(akas,p));
         dbSeek(d,boiName,UpperCase(box));
-        if not dbfound then
-          rfehler1(733,box)         { 'Ungültiger AKA-Eintrag - %s ist keine Serverbox!' }
+        if not dbfound then begin
+          Debug.DebugLog('xpnetcall','box is no server box: "'+box+'"',DLError);
+          rfehler1(733,box);         { 'Ungültiger AKA-Eintrag - %s ist keine Serverbox!' }
+          end
         else begin
+          Debug.DebugLog('xpnetcall','reading box parameters',DLInform);
           ReadBoxPar(nt_Fido,box);
           writeln(t,'Bretter=',box,' ',boxpar^.magicbrett);
           if addpkts^.akanz<maxaddpkts then begin   { !! }
@@ -610,7 +614,9 @@ begin { ZtoFido }
     for i:=1 to addpkts^.anzahl do
       dest:=dest+' '+addpkts^.addpkt[i];
     exchange(boxpar^.uparcer,'$PUFFER',dest);
-    end;
+    end
+  else Debug.DebugLog('xpnetcall','no akas',DLWarning);
+  Debug.DebugLog('xpnetcall','converting to fido finished',DLInform);
   close(t);
 end;
 
@@ -1194,10 +1200,9 @@ label abbruch,ende0;
     if FileExists(eppfile) then _era(eppfile);
   end;
 
-begin                  { of Netcall }
-  netcall:=true;
-  Netcall_connect:=false;
-  logopen:=false; netlog:=nil;
+begin                  { function Netcall }
+  Debug.DebugLog('xpnetcall','function Netcall',DLInform);
+  netcall:=true; Netcall_connect:=false; logopen:=false; netlog:=nil;
 
   if crash then
     if not isbox(DefFidoBox) then begin
@@ -1224,6 +1229,7 @@ begin                  { of Netcall }
     if box='' then exit;
     end;
 
+  Debug.DebugLog('xpnetcall','get box file name',DLInform);
   dbOpen(d,BoxenFile,1);               { zugehoerigen Dateiname holen }
   dbSeek(d,boiName,UpperCase(box));
   if not dbFound then begin
@@ -1241,6 +1247,8 @@ begin                  { of Netcall }
   msgids:=(dbReadInt(d,'script') and 8=0);
   alias:=(dbReadInt(d,'script') and 4<>0);
   dbClose(d);
+
+  Debug.DebugLog('xpnetcall','get box parameters',DLInform);
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
   isdn:=(boxpar^.bport>4);
   if relogin then
@@ -1262,6 +1270,8 @@ begin                  { of Netcall }
     rfehler(708);   { 'Online-Anruf bei dieser Box nicht moeglich' }
     exit;
     end;
+
+  Debug.DebugLog('xpnetcall','get login type',DLInform);
   logintyp:=ntTransferType(netztyp);
   _maus:=(logintyp=ltMaus);
   _fido:=(logintyp=ltFido);
@@ -1277,6 +1287,7 @@ begin                  { of Netcall }
   with BoxPar^ do
     if alias then OwnFidoAdr:=LeftStr(boxname,cpos('/',boxname))+pointname
     else OwnFidoAdr:=boxname+'.'+pointname;
+  Debug.DebugLog('xpnetcall','got fido addr: "'+OwnFidoAdr+'"',DLInform);
   if crash then begin
     ppfile:=FidoFilename(CrashBox)+'.cp';
     eppfile:=FidoFilename(CrashBox)+'.ecp';
@@ -1302,6 +1313,7 @@ begin                  { of Netcall }
     end;
   orgfossil:=comn[boxpar^.bport].fossil;
 
+  Debug.DebugLog('xpnetcall','testing buffers',DLInform);
   if FileExists(ppfile) and (testpuffer(ppfile,false,ldummy)<0) then begin
     trfehler1(710,ppfile,esec);  { 'Sendepuffer (%s) ist fehlerhaft!' }
     exit;
@@ -1323,11 +1335,9 @@ begin                  { of Netcall }
   upuffer:=''; caller:='';
   NumCount:=TeleCount; NumPos:=1;
   FlushClose;
+
+  Debug.DebugLog('xpnetcall','testing utilities',DLInform);
   with boxpar^,ComN[boxpar^.bport] do begin
-(*    if relogin and not ISDN and not IgCD and not carrier(bport) then begin
-      rfehler(711);    { 'Keine Verbindung!' }
-      exit;
-      end; *)
     if once then
       RedialMax:=NumCount;
     if net then begin
@@ -1382,6 +1392,7 @@ begin                  { of Netcall }
 
       SetFilenames;
 
+      Debug.DebugLog('xpnetcall','deleting old buffers',DLInform);
       if FileExists(upuffer) then _era(upuffer);  { evtl. alte PUFFER loeschen }
       if FileExists(dpuffer) then _era(dpuffer);
       if FileExists(caller) then _era(caller);
@@ -1402,7 +1413,7 @@ begin                  { of Netcall }
      end;
 
     { Ab hier kein exit mehr! }
-
+    Debug.DebugLog('xpnetcall','saving screen',DLInform);
     Sichern(ScreenPtr);
 
     AppendEPP;
@@ -1418,6 +1429,7 @@ begin                  { of Netcall }
       if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltFido,ltUUCP, ltNNTP, ltPOP3] then
       begin
         if not existf(f) then makepuf(ppfile,false);      { leeren Puffer erzeugen }
+        Debug.DebugLog('xpnetcall','converting output buffers',DLInform);
         case logintyp of
           ltMagic : ZtoMaggi(ppfile,upuffer,pronet,1);
           ltQuick : ZtoQuick(ppfile,upuffer,false,1);
@@ -1430,6 +1442,7 @@ begin                  { of Netcall }
           ltUUCP  : ZtoRFC(true,ppfile,XFerDir);
           ltNNTP, ltPOP3: ZtoRFC(true,ppfile, XFerDir);
         end;
+        Debug.DebugLog('xpnetcall','buffers converted',DLInform);
         RemoveEPP;
         if not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]) then
           spufsize:=_filesize(upuffer);
@@ -1441,6 +1454,7 @@ begin                  { of Netcall }
         if (logintyp in [ltQuick,ltGS]) and (spufsize=0) then begin { noetig ? }
           makepuf(upuffer,false);
           end;
+        Debug.DebugLog('xpnetcall','compressing buffers',DLInform);
         if not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]) then
         begin
           if uparcer<>'' then      { '' -> ungepackte Fido-PKTs }
@@ -1448,7 +1462,8 @@ begin                  { of Netcall }
           spacksize:=_filesize(caller);
           end;
         end
-      else begin                            { Netcall/ZConnect/Fido }
+      else begin { Netcall/ZConnect/Fido }
+        Debug.DebugLog('xpnetcall','converting buffers ii',DLInform);
         if existf(f) then begin             { gepacktes PP erzeugen }
           size:=_filesize(ppfile);
           if size<=2 then erase(f)
@@ -1476,6 +1491,7 @@ begin                  { of Netcall }
           spacksize:=_filesize(caller);
         end;
 
+      Debug.DebugLog('xpnetcall','checking archive',DLInform);
       if (uparcer<>'') and (not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]))
         and not FileExists(caller) then begin
         trfehler(713,30);   { 'Fehler beim Packen!' }
@@ -1492,16 +1508,15 @@ begin                  { of Netcall }
       { --------------------------------------------------------------- }
 
       ComNr:=bport; IgnCD:=IgCD; IgnCTS:=IgCTS;
-
-
       display:=ParDebug;
       ende:=false;
       wahlcnt:=0; connects:=0;
       showkeys(17);
 
-         { ---------------------- FIDO - Mailer ---------------------- }
+      { ---------------------- FIDO - Mailer ---------------------- }
 
       if net and _fido then begin
+        Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
         fillchar(nc^,sizeof(nc^),0);
         inmsgs:=0; outmsgs:=0; outemsgs:=0;
         cursor(curoff);
@@ -1535,37 +1550,11 @@ begin                  { of Netcall }
         end;
       end;
 
-         { ---------------------- Andere Mailer ---------------------- }
+      { ---------------------- Andere Mailer ---------------------- }
 
-      fossiltest;
-(*      if not ISDN then begin
-        !! SetComParams(bport,fossil,Cport,Cirq);
-        if OStype<>OS_2 then SaveComState(bport,cps);
-        SetTriggerLevel(tlevel);
-        if SetUart(bport,baud,PNone,8,1,not IgnCTS) then;   { fest auf 8n1 ... }
-        end;
-      Activate; mdelay(300); flushin;
-      if not IgnCTS then begin           { Modem an?  ISDN -> IgnCTS=true }
-        i:=3;
-        while not GetCTS(comnr) and (i>0) do begin
-          time(2);
-          while not GetCTS(comnr) and not timeout(false) do tb;
-          if timeout(false) then begin
-            {window(1,1,screenwidth,screenlines);}
-            trfehler(714,esec);   { 'Modem nicht bereit - oder etwa ausgeschaltet?' }
-            twin;
-            writeln;
-            if waitkey=keyesc then i:=1;
-            end;
-          dec(i);
-          end;
-        if i=0 then begin
-          ende:=true;
-          if _fido then ReleaseC;
-          goto abbruch;
-          end;
-        end; *)
+      // add here: check modem powered and connected
 
+      Debug.DebugLog('xpnetcall','netcall: non-fido',DLInform);
       recs:=''; lrec:='';
       showconn:=false;
       time(60);
@@ -2085,7 +2074,9 @@ begin                  { of Netcall }
       case LoginTyp of
         ltPOP3:
         begin
+          Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
           GetPOP3Mails(Box, BoxPar, 'spool'+DirSepa);
+          Debug.DebugLog('xpnetcall','converting received buffers',DLInform);
           uu := TUUZ.Create;
           uu.source := 'spool'+DirSepa+'*.mail';
           uu.dest := dpuffer;
@@ -2096,6 +2087,7 @@ begin                  { of Netcall }
           PufferEinlesen(dpuffer,box,false,false,true,pe_Bad);
         end;
       else
+        Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(LoginTyp),DLError);
         trfehler(799,30); { 'Funktion nicht implementiert' }
       end; { case }
 
@@ -2123,6 +2115,7 @@ begin                  { of Netcall }
     aufbau:=true;
     end;
   if Netcall_connect and not crash then AponetNews;
+  Debug.DebugLog('xpnetcall','finished netcall',DLInform);
 end;
 
 
@@ -2325,6 +2318,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/01/04 21:22:54  ma
+  - added/refined debug logs
+
   Revision 1.1  2001/01/04 16:05:10  ma
   - renamed, was xp7.pas
   - todo: split and simplify

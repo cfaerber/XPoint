@@ -141,7 +141,7 @@ var t    : text;
   end;
 
 begin
-  DebugLog('xpncfido','WriteFidoNetcallLog '+logfile+' '+_box,4);
+  DebugLog('xpncfido','WriteFidoNetcallLog file "'+logfile+'", box "'+_box+'"',4);
   if not FileExists(logfile) then exit;
   wahlcnt:=0;
   with NC^ do begin
@@ -225,16 +225,20 @@ var p       : byte;
     dir     : TDirectory;
     x,y     : byte;
 begin
+  Debug.DebugLog('xpncfido','importing fido messages: "'+ImportDir+'"',DLInform);
   FidoImport:=false;
   with BoxPar^ do begin
     msgbox(40,5,GetRepS2(30003,1,boxname),x,y);      { 'Pakete suchen (%s)' }
     p:=pos('$PUFFER',UpperCase(downarcer));         { Empfangspakete entpacken }
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
-    { using wildcard does not require case sensetive }
+
+    { using wildcard does not require case sensitive }
     dir:= TDirectory.Create(ImportDir+WildCard,faAnyFile-faDirectory,false);
     for i:= 0 to dir.Count-1 do begin
+      Debug.DebugLog('xpncfido','processing file: "'+dir.name[i]+'"',DLDebug);
       if isPacket(dir.name[i]) then begin
+        Debug.DebugLog('xpncfido','is packet',DLDebug);
         MWrt(x+2,y+2,GetRepS2(30003,2,dir.Name[i]));
         ImportDir:=ExpandFilename(ImportDir);
         SetCurrentDir(OwnPath+XFerDir);
@@ -248,11 +252,13 @@ begin
     end;
     dir.Free;
     closebox;
+
     { Read only files }
     dir:= TDirectory.Create(OwnPath+XFerDir+'*.PKT',(faAnyFile-faDirectory),true);
     if not(dir.isEmpty) then begin
       msgbox(70,10,GetRes2(30003,10),x,y);
       for i:=0 to dir.Count-1 do begin
+        Debug.DebugLog('xpncfido','processing PKT: "'+dir.LongName[i]+'"',DLDebug);
         rc:=DoZFido(2,                  { FTS -> ZC }
                     MagicBrett,         { root group }
                     dir.LongName[i],    { in file }
@@ -268,28 +274,36 @@ begin
                     FidoDelEmpty,       { delete empty messages? }
                     x,y);               { Box-Coordinates }
 
-        if rc<>0 then
-          trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
-        else if nDelPuffer then         //pkts nach call L”schen? xpoint.cfg -> pufferloeschen=
+        if rc<>0 then begin
+          Debug.DebugLog('xpncfido','packet corrupted: "'+dir.LongName[i]+'"',DLError);
+          trfehler(719,30);   { 'fehlerhaftes Fido-Paket' }
+          end
+        else if nDelPuffer then begin         //pkts nach call L”schen? xpoint.cfg -> pufferloeschen=
+          Debug.DebugLog('xpncfido','deleting PKT: "'+dir.LongName[i]+'"',DLDebug);
           _era(dir.LongName[i]);
+          end;
       end; { for }
       closebox;
       NC^.recbuf:=_filesize(fpuffer);
+      Debug.DebugLog('xpncfido','CallFilter',DLInform);
       CallFilter(true,fpuffer);
       if _filesize(fpuffer)>0 then
         if PufferEinlesen(fpuffer,box,false,false,true,
                           iif(length(trim(boxpar^.akas))>0,
                           pe_ForcePfadbox or pe_Bad,pe_Bad))
         then begin
+          Debug.DebugLog('xpncfido','buffer imported OK, deleting "'+fpuffer+'"',DLInform);
           _era(fpuffer);
           FidoImport:=true;
         end;
     end else begin
+      Debug.DebugLog('xpncfido','Xferdir was empty',DLInform);
       if FileExists(fpuffer) then _era(fpuffer);
       CallFilter(true,fpuffer);
     end;
   end; { with }
   freeres;
+  Debug.DebugLog('xpncfido','fidoimport finished',DLInform);
 end;
 
 { bei Crashs steht in BOX der eigene BossNode, und in BoxPar^.BOXNAME  }
@@ -588,6 +602,7 @@ label fn_ende,fn_ende0;
   end;
 
 begin { FidoNetcall }
+  Debug.DebugLog('xpncfido','fido netcall starting',DLInform);
   Fidonetcall:=EL_ok;
   for i:=1 to addpkts^.akanz do begin    { Zusatz-Req-Files erzeugen }
     splitfido(addpkts^.akabox[i],fa,DefaultZone);
@@ -629,6 +644,7 @@ begin { FidoNetcall }
   AppLog(fidologfile,FidoLog);
   if (aresult<0) or (aresult>EL_max) then begin
     // DropAllCarrier;
+    Debug.DebugLog('xpncfido','error in fido mailer',DLError);
     trfehler1(720,strs(aresult),10);   { 'interner Fehler (%s) im Fido-Mailer' }
     aresult:=EL_break;
     end;
@@ -696,11 +712,18 @@ begin { FidoNetcall }
     if request<>'' then DeleteFile(request);
     with addpkts^ do
       for i:=1 to akanz do
-        if (reqfile[i]<>'') and FileExists(reqfile[i]) then
+        if (reqfile[i]<>'') and FileExists(reqfile[i]) then begin
+          Debug.DebugLog('xpncfido','deleting request file: "'+reqfile[i]+'"',DLDebug);
           DeleteFile(reqfile[i]);
-    if FileExists(ppfile) and (_filesize(ppfile)=0) then
+          end;
+    if FileExists(ppfile) and (_filesize(ppfile)=0) then begin
+      Debug.DebugLog('xpncfido','deleting packet: "'+ppfile+'"',DLInform);
       DeleteFile(ppfile);
-    if FileExists(fidologfile) then DeleteFile(fidologfile);
+      end;
+    if FileExists(fidologfile) then begin
+      Debug.DebugLog('xpncfido','deleting netcall temporary log file: "'+fidologfile+'"',DLInform);
+      DeleteFile(fidologfile);
+      end;
 end;
 
 
@@ -943,6 +966,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/01/04 21:21:10  ma
+  - added/refined debug logs
+
   Revision 1.1  2001/01/04 16:02:12  ma
   - renamed, was xp7f.pas
   - todo: simplify and merge with xpfm.inc
