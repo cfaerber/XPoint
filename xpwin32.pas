@@ -30,7 +30,7 @@ unit xpwin32;
 interface
 
 uses
-  UTFTools;
+  UTFTools,Mime;
 
 { Gibt die Anzahl der Bildschirmzeilen/Spalten zurÅck }
 function SysGetScreenLines: Integer;
@@ -44,7 +44,7 @@ procedure SysSetScreenSize(const Lines, Cols: Integer);
 procedure SysSetBackIntensity;
 procedure RegisterMailClient;
 // Returns the used Codepage in form of the Unicode charset
-function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetConsoleCodepage: TMimeCharsets;
 function SysGetDriveType(drive:char):byte;
 function SysOutputRedirected: boolean;
 // Execute an external program; return errorlevel of called program if
@@ -130,7 +130,7 @@ begin
   RegCloseKey(Key); }
 end;
 
-function SysGetConsoleCodepage: TUnicodeCharsets;
+function SysGetConsoleCodepage: TMimeCharsets;
 begin
   case GetConsoleOutputCP of
     437: Result := csCP437;
@@ -238,6 +238,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2001/09/08 14:44:03  cl
+  - More uniform naming of MIME functions/types/consts
+
   Revision 1.19  2001/08/11 23:06:39  mk
   - changed Pos() to cPos() when possible
 
