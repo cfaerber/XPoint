@@ -67,6 +67,7 @@ var p,p2 : byte;
 begin
 { if _unescape(name) then; }
   vorn:=false;
+  rps(s, '$FIRSTNAME', '$VORNAME');
   p:=pos('$PSEUDO',ustr(s));
   if p=0 then begin
     vorn:=true;
@@ -121,6 +122,8 @@ end;
 
 procedure rpsdate(var s:string);
 begin
+  rps(s, '$DAY', '$TAG');
+  rps(s, '$TIME', '$UHRZEIT');
   rps(s,'$DATUM',left(date,6)+right(date,2));
   if pos('$DATE',s)>0 then
     rpsdat(s,'$DATE',date);
@@ -301,18 +304,16 @@ var size   : longint;
   begin
     qchar:=QuoteChar;
 
-    { 31.01.2000 robo }
     p:=cpos('&',qchar);
     p2:=cpos('#',hdp^.absender);
     if p>0 then qchar[p]:='$';
 
 {    if netztyp=nt_UUCP then begin }
-    if (netztyp=nt_UUCP) or ((p>0) and (p2>0)) then begin
-    { /robo}
-
+    if (netztyp=nt_UUCP) or ((p>0) and (p2>0)) then
+    begin
       p:=cpos('@',qchar); if p>0 then delete(qchar,p,1);
       p:=cpos('$',qchar); if p>0 then delete(qchar,p,1);
-      end;
+    end;
     p:=cpos('@',qchar);
     empty:=false;
     if p=0 then begin
@@ -447,9 +448,7 @@ var size   : longint;
       blanklines : longint;
       i          : longint;
       endspace   : boolean;
-      { 03.02.2000 robo }
       qc         : char;
-      { /robo }
       QuoteOffset: byte;
 
     procedure FlushStmp;
@@ -1044,6 +1043,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.4  2000/07/10 19:20:51  mk
+  - $DAY, $TIME, $FIRSTNAME hinzugefuegt
+
   Revision 1.17.2.3  2000/07/09 13:35:16  mk
   - $RNAME2 und $(RNAME2) eingebaut
 
