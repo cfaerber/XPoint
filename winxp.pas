@@ -18,7 +18,7 @@ unit winxp;
 
 {  ==========================  Interface-Teil  ==========================  }
 
-INTERFACE
+interface
 
 uses
 {$IFDEF Win32 }
@@ -78,12 +78,15 @@ procedure w_copyrght;
 
 { Schreiben eines Strings mit Update der Cursor-Posititon }
 { Diese Routine aktualisiert wenn nîtig den LocalScreen }
+{ Die Koordinaten beginnen bei 1,1 }
 procedure Wrt(const x,y:word; const s:string);
 { Schreiben eines Strings, wie Write, CursorPosition
   wird aktualisiert }
+{ Die Koordinaten beginnen bei 1,1 }
 procedure Wrt2(const s:string);
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der LocalScreen wird wenn nîtig aktualisiert }
+{ Die Koordinaten beginnen bei 1,1 }
 procedure FWrt(const x,y:word; const s:string);
 
 {$IFDEF Ver32 }
@@ -101,12 +104,6 @@ procedure consolewrite(x,y:word; num:dword);
 { Liest ein Zeichen direkt von der Konsole aus
   x und y beginnen mit 1 }
 procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
-
-{ Liest direkt von der Console eine Zeile (nicht Åber Zeilenende) aus
-  und speichert das Ergebnis in Buffer. Buffer enthÑlt ein array
-  aus Zeichen + Attribut mit je einem Byte. Count gibt die Zeichenzahl an
-  Achtung: X und Y beginnen hier bei Koodinate 0 ! }
-procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
 
 { Diese Routinen kopieren rechteckige Bildschirmbereiche aus
   der Console heraus und wieder hinein. Der Buffer mu· dabei
@@ -174,6 +171,7 @@ var pullw   : array[1..maxpull] of record
 {$ELSE }
                                      savemem    : ^memarr;
                                      free       : boolean;
+                                     MemSize    : LongInt;
 {$ENDIF }
                                    end;
     rahmen  : shortint;
@@ -466,6 +464,7 @@ var
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: DWord;
   {$ENDIF }
+  xold, yold: Integer;
 begin
   {$IFDEF Win32 }
     { Kompletten String an einem StÅck auf die Console ausgeben }
@@ -482,9 +481,11 @@ begin
      {$R-}
       SysWrtCharStrAtt(@s[1], Length(s), x-1, y-1, TextAttr);
     {$ELSE }
+      xold := WhereX; yold := WhereY;
       GotoXY(x, y);
-      Write(s); { Cursor zurÅcksetzen! }
-      GotoXY(x, y);
+      Write(s);
+      { Cursor an Originalposition zurÅcksetzen }
+      GotoXY(xold, yold);
     {$ENDIF }
   {$ENDIF Win32 }
 
@@ -502,7 +503,7 @@ begin
        end;
   {$ENDIF LocalScreen }
   end;
-{$ENDIF }
+{$ENDIF NCRT }
 {$ENDIF BP }
 
 {$IFDEF Ver32}
@@ -595,61 +596,8 @@ begin
     {$ENDIF }
     {$IFDEF LocalScreen }
       c := Char(LocalScreen^[((x-1)+(y-1)*zpz)*2]);
-      {$ifdef FPC }
-        { Workaround, da anders der FPC 0.99.14 die Daten nicht nimmt }
-        Attr:= 0;
-        FastMove(LocalScreen^[((x-1)+(y-1)*zpz)*2+1], Attr, 1);
-      {$else }
-        Attr := Char(LocalScreen^[((x-1)+(y-1)*zpz)*2+1]);
-      {$endif }
+      Attr := SmallWord(Byte(LocalScreen^[((x-1)+(y-1)*zpz)*2+1]));
     {$ENDIF }
-{$ENDIF }
-end;
-
-procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
-  {$IFDEF Win32 }
-  var
-    ReadPos: TCoord;                       { Upper-left cell to Read from }
-    OutRes: LongInt;
-    CharBuffer: array[0..1023] of Char;
-    AttrBuffer: array[0..1023] of SmallWord;
-    i: Integer;
-  begin
-    ReadPos.X := x; ReadPos.Y := y;
-  {$IFDEF FPC }
-    ReadConsoleOutputCharacter(OutHandle, @Char(Addr(CharBuffer)^), Count, ReadPos, @OutRes);
-    ReadConsoleOutputAttribute(OutHandle, @SmallWord(Addr(AttrBuffer)^), Count, ReadPos, @OutRes);
-  {$ELSE }
-    ReadConsoleOutputCharacter(OutHandle, CharBuffer, Count, ReadPos, OutRes);
-    ReadConsoleOutputAttribute(OutHandle, @SmallWord(Addr(AttrBuffer)^), Count, ReadPos, OutRes);
-  {$ENDIF }
-    for i := 0 to Count - 1 do
-    begin
-      TLocalScreen(Buffer)[i*2] := CharBuffer[i];
-      TLocalScreen(Buffer)[I*2+1] := Char(Lo(AttrBuffer[i]));
-    end;
-  {$ELSE }
-  {$IFDEF VP }
-  var
-    i: Integer;
-  begin
-    for i := 0 to Count - 1 do
-    begin
-      TLocalScreen(Buffer)[i*2] := SysReadCharAt(x+i, y);
-      TLocalScreen(Buffer)[i*2+1] := Char(SysReadAttributesAt(x+i, y));
-    end;
-  {$ELSE }
-  var
-    i: Integer;
-  begin
-    {$IFDEF Localscreen }
-    for i := 0 to Count - 1 do
-    begin
-      TLocalScreen(Buffer)[i*2] := LocalScreen^[((x+i-1)+(y-1)*zpz)*2];
-      TLocalScreen(Buffer)[i*2+1] := LocalScreen^[((x+i-1)+(y-1)*zpz)*2+1];
-    end;
-    {$ENDIF }
-  {$ENDIF }
 {$ENDIF }
 end;
 
@@ -674,11 +622,8 @@ end;
 {$ENDIF }
   end;
 {$ELSE }
-  var
-    i: Integer;
   begin
-    GotoXY(x, y);
-    Write(Dup(Count, Chr));
+    FWrt(x, y, Dup(Count, Chr));
   end;
 {$ENDIF }
 {$ENDIF }
@@ -703,10 +648,23 @@ begin
 {$ENDIF }
 {$ELSE }
 var
-  i: Integer;
+  x, y, Offset: Integer;
 begin
-  for i := 0 to ScreenLines-1 do
-    GetScreenLine(0, i, TLocalScreen(Buffer)[i*zpz*2], zpz);
+  Offset := 0;
+  for y := o-1 to u-1 do
+    for x := l-1 to r-1 do
+    begin
+      {$IFDEF VP }
+        TLocalScreen(Buffer)[Offset] := SysReadCharAt(x, y);
+        TLocalScreen(Buffer)[Offset+1] := Char(SysReadAttributesAt(x, y));
+      {$ELSE }
+        {$IFDEF LocalScreen }
+          TLocalScreen(Buffer)[Offset] := LocalScreen^[(x+y*zpz)*2];
+          TLocalScreen(Buffer)[Offset+1] := LocalScreen^[(x+y*zpz)*2+1];
+        {$ENDIF }
+      {$ENDIF }
+      Inc(Offset, 2);
+    end;
 {$ENDIF }
 end;
 
@@ -730,22 +688,37 @@ begin
 {$ENDIF }
 {$ELSE }
   var
-    x, y, j, Offset: Integer;
-    attr: Integer;
+    x, y, i, j, Offset: Integer;
+    s: String;
   begin
-    for y := 0 to ScreenLines - 1 do
+    Offset := 0;
+    for y := o to u do
     begin
-      Offset := y*zpz*2;
-      for x := 0 to zpz-1 do
+      {$IFDEF LocalScreen }
+        { LocalScreen zeilenweise aktualisieren }
+        Fastmove(TLocalScreen(Buffer)[Offset],LocalScreen^[((y-1)*zpz+l-1)*2], (r-l+1)*2);
+      {$ENDIF }
+      x := l;
+      while x <= r do
       begin
+        j := x;
+        { Solange suchen, bis im String unterschiedliche Attribute auftauchen }
+        while (TLocalScreen(Buffer)[Offset+1] = TLocalScreen(Buffer)[Offset+3+(j-x)*2])
+          and (j<r) do inc(j);
+
+        s := '';
+        for i := x to j do
+        begin
+          s := s + Char(TLocalScreen(Buffer)[Offset]);
+          Inc(Offset, 2);
+        end;
         {$IFDEF VP }
-          SysWrtCharStrAtt(@TLocalScreen(Buffer)[Offset], 1, x, y, Byte(TLocalScreen(Buffer)[Offset+1]));
+           SysWrtCharStrAtt(@s[1], Length(s), x-1, y-1, Byte(TLocalScreen(Buffer)[Offset-1]));
         {$ELSE VP }
-          Attr := Byte(TLocalScreen(Buffer)[Offset+1]);
-          TextAttr := Attr;
-          FWrt(l+x-1, y, Char(TLocalScreen(Buffer)[Offset]));
+           TextAttr := SmallWord(Byte(TLocalScreen(Buffer)[Offset-1]));
+           FWrt(x, y, s);
         {$ENDIF VP }
-        Inc(Offset, 2);
+        x := j; inc(x);
       end;
     end;
 {$ENDIF }
@@ -918,22 +891,21 @@ begin
     ashad:=shad;
     wi:=(r-l+1+shad)*2;
     moff;
-{$IFDEF Win32 }
-    getmem(savemem,wi*(u-o+ashad+1)*2);
-    ReadScreenRect(l, r+ashad, o, u+ashad, SaveMem^);
-{$ELSE Win32 }
-    getmem(savemem,wi*(u-o+ashad+1));
+{$IFDEF BP }
+    MemSize := wi*(u-o+ashad+1);
+{$ELSE }
+    MemSize := wi*(u-o+ashad+1)*2;
+{$ENDIF }
+
+    getmem(savemem, MemSize);
+
+{$IFDEF BP }
     for j:=o-1 to u-1+ashad do
-  {$IFDEF BP }
-        Fastmove(mem[base:j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
-  {$ELSE BP }
-    {$IFDEF FPC }
-        Fastmove(LocalScreen^[j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
-    {$ELSE }
-        GetScreenLine(l-1, j, savemem^[(1+j-o)*wi], wi div 2);
-    {$ENDIF }
-  {$ENDIF BP }
-{$ENDIF Win32 }
+      Fastmove(mem[base:j*zpz*2+(l-1)*2],savemem^[(1+j-o)*wi],wi);
+{$ELSE }
+    ReadScreenRect(l, r+ashad, o, u+ashad, SaveMem^);
+{$ENDIF }
+
     mon;
     if rahmen=1 then rahmen1(l,r,o,u,text);
     if rahmen=2 then rahmen2(l,r,o,u,text);
@@ -956,43 +928,17 @@ var
   j, Offset: integer;
 begin
   normwin;
-  with pullw[handle] do begin
+  with pullw[handle] do
+  begin
     moff;
-
-{$IFDEF Win32 }
-    WriteScreenRect(l, r+ashad, o, u+ashad, SaveMem^);
-{$ELSE }
-    for i:=o-1 to u-1+ashad do
 {$IFDEF BP }
+    for i:=o-1 to u-1+ashad do
       Fastmove(savemem^[(i-o+1)*wi],mem[base:i*zpz*2+(l-1)*2],wi);
-{$ELSE BP }
-      begin
-        {$IFDEF LocalScreen }
-          { in den lokalen Screen kopieren }
-          Fastmove(savemem^[(i-o+1)*wi],LocalScreen^[i*zpz*2+(l-1)*2],wi);
-        {$ENDIF }
-        { Offset nur einmal berechnen, beschleunigt das ganze etwas }
-        Offset := (i-o+1)*wi;
-        for j := 0 to wi div 2 - 1 do
-        begin
-          {$IFDEF VP }
-            SysWrtCharStrAtt(@Savemem^[Offset], 1, l+j-1, i, Savemem^[Offset+1]);
-          {$ELSE VP }
-            TextAttr := savemem^[Offset+1];
-            FWrt(l+j, i+1, Char(Savemem^[Offset]));
-          {$ENDIF VP }
-          Inc(Offset, 2);
-        end;
-      end;
-{$ENDIF BP }
-{$ENDIF Win32 }
-    mon;
-{$IFDEF Win32 }
-    freemem(savemem,wi*(u-o+ashad+1)*2);
 {$ELSE }
-    freemem(savemem,wi*(u-o+ashad+1));
+    WriteScreenRect(l, r+ashad, o, u+ashad, SaveMem^);
 {$ENDIF }
-
+    mon;
+    freemem(savemem, MemSize);
     free:=true;
   end;
 end;
@@ -1285,6 +1231,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.33  2000/05/07 13:58:07  mk
+  - Localscreen laeuft jetzt komplett
+
   Revision 1.32  2000/05/07 10:40:40  hd
   - Fix: FWrt: FPC behandelt Integer nicht als Integer :-/
 
