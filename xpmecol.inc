@@ -387,7 +387,7 @@ begin
   buttons[length(buttons)]:=',';
   n:=0;
   repeat
-    p:=pos(',',buttons);
+    p:=cpos(',',buttons);
     if p>0 then begin
       inc(n);
       if buttons[1]='ù' then begin
@@ -400,7 +400,7 @@ begin
         buttsp[n]:=0;
       butt[n]:=left(buttons,p-1);
       buttons:=copy(buttons,p+1,255);
-      p:=pos('^',butt[n]);
+      p:=cpos('^',butt[n]);
       delete(butt[n],p,1);
       butthigh[n]:=p;
       hot[n]:=butt[n,p];
@@ -449,6 +449,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.4.2.1  2001/08/11 22:43:57  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.4  2000/04/29 16:10:41  hd
   Linux-Anpassung
 

@@ -403,7 +403,7 @@ laden:
       if p1>0 then p:=p+p1+1 else p:=0;
       end;
     if blocksatz and (length(s)>wd div 3) then begin
-      if cpos('@',s)>0 then lc:=s[pos('@',s)-1]
+      if cpos('@',s)>0 then lc:=s[cpos('@',s)-1]
       else lc:=s[length(s)];
       if cpos('#',s)>0 then lc:='#';
       if pos(lc,'#.?!:')=0 then begin
@@ -798,6 +798,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.9  2001/08/11 22:43:51  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.13.2.8  2001/08/11 22:17:50  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

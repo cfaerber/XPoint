@@ -1244,7 +1244,7 @@ begin
       else if ch<>'/' then
         suchok
       else begin
-        pp:=pos('/',mid(s,length(newsuch)+1));
+        pp:=cpos('/',mid(s,length(newsuch)+1));
         if pp=0 then begin
           dbSeek(bbase,biBrett,'A'+ustr(s)+'/');
           if not dbEOF(bbase) and (left(dbReadStr(bbase,'brettname'),length(s)+2)='A'+s+'/')
@@ -1608,6 +1608,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.24  2001/08/11 22:43:55  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.25.2.23  2001/06/02 22:06:29  mk
   JG:- fixed last commit
 

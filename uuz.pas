@@ -1646,7 +1646,7 @@ var p,i   : integer; { byte -> integer }
     begin
       realname:=copy(s0,p+1,min(length(s0)-p-1,realnlen));
       s0:=trim(left(s0,min(p-1,realnlen)));
-      p:=cpos('),',realname);   { mehrerer ","-getrennte Adressen }
+      p:=pos('),',realname);   { mehrerer ","-getrennte Adressen }
       if p>0 then truncstr(realname,p-1);
       end;
     p:=cpos('<',s0);
@@ -3445,6 +3445,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.50  2001/08/11 22:43:51  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.35.2.49  2001/08/11 22:17:53  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

@@ -1204,22 +1204,22 @@ var t       : text;
         tfehler(getres(218)+left(s,45),60)   { 'ungÅltige FKey-Config-Zeile:  ' }
       else begin
         ss:=copy(s,p+3,200);     { 'P' Åberlesen }
-        p0:=pos('~',ss);
+        p0:=cpos('~',ss);
         if p0>0 then with fkeys[nr]^[j] do begin
           menue:=left(ss,p0-1);         { MenÅ-Anzeige }
           ss:=copy(ss,p0+1,200);
-          p0:=pos('~',ss);
-          while (p0>0) and (pos('\',mid(ss,p0))>0) and
-                (pos('~',mid(ss,p0+1))>0) do
-            inc(p0,pos('~',mid(ss,p0+1)));   { wegen kurzen Win95-Dateinamen }
+          p0:=cpos('~',ss);
+          while (p0>0) and (cpos('\',mid(ss,p0))>0) and
+                (cpos('~',mid(ss,p0+1))>0) do
+            inc(p0,cpos('~',mid(ss,p0+1)));   { wegen kurzen Win95-Dateinamen }
           if p0>0 then begin
             prog:=left(ss,p0-1);        { Programmname }
             ss:=copy(ss,p0+1,40);
-            p0:=pos('~',ss);
+            p0:=cpos('~',ss);
             if p0>0 then begin
               speicher:=ival(left(ss,p0-1));
               ss:=copy(ss,p0+1,30);
-              p0:=pos('~',ss);
+              p0:=cpos('~',ss);
               if p0>0 then begin
                 ntyp:=min(3,ival(left(ss,p0-1)));
                 ss:=ustr(copy(ss,p0+1,30));
@@ -1248,19 +1248,19 @@ var t       : text;
       with pmcrypt[ival(su[8])] do begin
         encode:=''; decode:='';
         s2:=copy(s,10,200);
-        p:=pos('~',s2);
+        p:=cpos('~',s2);
         if p=0 then
           name:=s2
         else begin
           name:=left(s2,p-1);
           s2:=mid(s2,p+1);
-          p:=pos('~',s2);
+          p:=cpos('~',s2);
           if p=0 then
             encode:=s2
           else begin
             encode:=left(s2,p-1);
             s2:=mid(s2,p+1);
-            p:=pos('~',s2);
+            p:=cpos('~',s2);
             if p=0 then
               decode:=s2
             else begin
@@ -1364,7 +1364,7 @@ begin
       s:=trim(s);
       su:=ustr(s);
       if (s<>'') and (s[1]<>'#') then begin
-        p:=pos('=',s);
+        p:=cpos('=',s);
         if (p=0) or not (
           getcommpar or
           getfkeys or
@@ -1614,7 +1614,7 @@ begin
 
     MsgFeldTausch:=UStr(MsgFeldTausch);
     { (F)lags mÅssen immer vorne stehen }
-    i:=pos('F',MsgFeldTausch); if (i>1) then begin
+    i:=cpos('F',MsgFeldTausch); if (i>1) then begin
       delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
     end;
     { Alle Buchstaben fÅr den MsgFeldTausch vorhanden? }
@@ -1624,7 +1624,7 @@ begin
 
     UsrFeldTausch:=UStr(UsrFeldTausch);
     { (F)lags mÅssen immer vorne stehen }
-    i:=pos('F',UsrFeldTausch); if (i>1) then begin
+    i:=cpos('F',UsrFeldTausch); if (i>1) then begin
       delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
     end;
     { Alle Buchstaben fÅr den UsrFeldTausch vorhanden? }
@@ -1695,7 +1695,7 @@ begin
       s:=trim(s);
       su:=ustr(s);
       if (s<>'') and (s[1]<>'#') then begin
-        p:=pos('=',s);
+        p:=cpos('=',s);
         if (p=0) or not (
           gets(s,su,'defaultbox',defaultbox,20) or
           gets(s,su,'defaultfidobox',deffidobox,20) or
@@ -1751,6 +1751,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.25  2001/08/11 22:43:53  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.62.2.24  2001/08/02 22:31:33  mk
   - removed function FUStr, only usefull in 3.70
 

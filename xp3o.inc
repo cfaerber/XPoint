@@ -161,7 +161,7 @@ var x,y,fm   : byte;
   function adrok(var s:string):boolean;
   begin
     adrok:=(useraufnahme=0) or
-           ((useraufnahme=1) and (pm or ((pos('%',s)=0) and (pos(':',s)=0)))) or
+           ((useraufnahme=1) and (pm or ((cpos('%',s)=0) and (cpos(':',s)=0)))) or
            ((useraufnahme=3) and pm);
   end;
 
@@ -798,7 +798,7 @@ begin
             _datum:=today;
             end;
           tobrett:=archive or (copy(empfaenger,1,TO_len)=TO_ID);
-          atp:=pos('@',empfaenger);
+          atp:=cpos('@',empfaenger);
           if sendbuf then begin   { pollbox <> '' !  }
             if (left(empfaenger,1)<>'/') and (cpos('@',empfaenger)=0) then
               empfaenger:=empfaenger+'@'+pollbox+'.ZER';
@@ -934,7 +934,7 @@ begin
               dbAppend(ubase);
               name:=copy(empfaenger,2,79);
               pb:=pollbox_str(zconnect,true);
-              if pos('@',name)=0 then name:=left(name+'@'+pb+'.ZER',79);
+              if cpos('@',name)=0 then name:=left(name+'@'+pb+'.ZER',79);
               dbWriteN(ubase,ub_username,name);
               dbWriteN(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
@@ -1236,6 +1236,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.13  2001/08/11 22:43:54  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.21.2.12  2001/06/19 06:46:58  mk
   JG:- fixed possible Crash in replace own when searching for messages without
        a valid message id.

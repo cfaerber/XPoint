@@ -59,7 +59,7 @@ var icr : dbIndexCRec;
             if_flag:=false;
           icr.indexstr:=UStr(icr.indexstr)+'/';
           repeat
-            p:=pos('/',icr.indexstr);
+            p:=cpos('/',icr.indexstr);
             fn:=copy(icr.indexstr,1,p-1);
             icr.indexstr:=copy(icr.indexstr,p+1,255);
             upflag:=0;
@@ -236,6 +236,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5.2.4  2001/08/11 22:43:50  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.5.2.3  2001/07/28 19:24:12  mk
   - added some const parameters
 

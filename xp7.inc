@@ -44,7 +44,7 @@ var uucp : boolean;
       begin
         if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
         if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
-        ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
+        ok := (cPos(':', fn) = 0) and (cPos('\', fn) = 0) and (cPos('.', fn) < 2)
           and (Length(fn) > 0) and (fn[length(fn)] <> '.');
         if (not ok) or (not IsPath(s)) or (right(s,1)<>DirSepa) then
           ChkPPPClientPath := false;
@@ -1519,6 +1519,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.13  2001/08/11 22:43:56  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.24.2.12  2001/07/21 15:15:26  mk
   - removed some unused variables
 

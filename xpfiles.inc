@@ -27,7 +27,7 @@ begin
   if fn='~' then fn:='';
   if right(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
     fn:=left(fn,length(fn)-5)+'TAZ';
-  p:=pos(':',fn);
+  p:=cpos(':',fn);
   if (p>0) and (p<length(fn)) then        { device: entfernen }
     delete(fn,1,p);
   p:=length(fn);
@@ -74,7 +74,7 @@ begin
   if fn='~' then fn:='';
   if right(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
     fn:=left(fn,length(fn)-5)+'TAZ';
-  p:=pos(':',fn);
+  p:=cpos(':',fn);
   if (p>0) and (p<length(fn)) then        { device: entfernen }
     delete(fn,1,p);
   p:=length(fn);

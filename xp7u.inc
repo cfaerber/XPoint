@@ -482,7 +482,7 @@ var
 
         if Found then
         begin
-          p := pos('<', s);
+          p := cpos('<', s);
           Writeln(IDFile, Copy(s, p+1, Length(s)-p-1));
           Error := true;
         end;
@@ -621,6 +621,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.20  2001/08/11 22:43:56  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.13.2.19  2001/08/11 08:54:03  mk
   - use local file variable in DelAll instead of global file^
 

@@ -197,9 +197,9 @@ begin  { __ Suchmarke }
             if vert then begin
               { Verteiler }
               s := vert_name(s);
-              taus[pos('F',UsrFeldTausch)] := 'V   '; { Laenge 4 }
+              taus[cpos('F',UsrFeldTausch)] := 'V   '; { Laenge 4 }
             end else
-              taus[pos('F',UsrFeldTausch)] := abc+pw+dadr; { Laenge 4 }
+              taus[cpos('F',UsrFeldTausch)] := abc+pw+dadr; { Laenge 4 }
 
             markflag[y]:=iif(UBmarked(dbRecno(ubase)),1,0);
             brettform(s,0,true);
@@ -212,33 +212,33 @@ begin  { __ Suchmarke }
               brettform(s,0,true);
 
               { (H)altezeit }
-              taus[pos('H',UsrFeldTausch)] := '  '+hz(hzeit);
+              taus[cpos('H',UsrFeldTausch)] := '  '+hz(hzeit);
 
               { (B)OX }
-              taus[pos('B',UsrFeldTausch)] := forms(pbox,9);
+              taus[cpos('B',UsrFeldTausch)] := forms(pbox,9);
 
               { Adressbuch-(G)ruppe }
-              taus[pos('G',UsrFeldTausch)] := strsn(ab,2);
+              taus[cpos('G',UsrFeldTausch)] := strsn(ab,2);
             end;
 
             { Falls (S)pezial EIN, dann mu· der folgende Resttext um
               20 Zeichen gekÅrzt werden: }
 
             { Verteilername bzw. (A)dresse }
-            taus[pos('A',UsrFeldTausch)]
+            taus[cpos('A',UsrFeldTausch)]
               := Forms(s,
                    { Adresse vor Kommentar: beide kÅrzen, sonst nur Adresse }
-                   iif(pos('K',UsrFeldTausch)>pos('A',UsrFeldTausch),
+                   iif(cpos('K',UsrFeldTausch)>cpos('A',UsrFeldTausch),
                      44-iif(kuerzen,12,0),
                      44-iif(kuerzen,20,0)
                    )
                  );
 
             { (K)ommentar }
-            taus[pos('K',UsrFeldTausch)]
+            taus[cpos('K',UsrFeldTausch)]
               := Forms(komm,
                    { Kommentar nur kÅrzen, wenn er hinter der Adresse steht }
-                   iif(pos('K',UsrFeldTausch)<pos('A',UsrFeldTausch),
+                   iif(cpos('K',UsrFeldTausch)<cpos('A',UsrFeldTausch),
                      30,
                      30-iif(kuerzen,8,0)
                    )
@@ -247,7 +247,7 @@ begin  { __ Suchmarke }
             { Felder zusammenkopieren }
             tausc:=0; dispbuf[y]^:='';
             while (tausc<UsrFelderMax) do begin
-              inc(tausc); 
+              inc(tausc);
               if (taus[tausc]='') then continue; { Leere Felder Åbergehen }
               if (dispbuf[y]^<>'') then dispbuf[y]^:=dispbuf[y]^+' ';
               dispbuf[y]^:=dispbuf[y]^+taus[tausc];
@@ -380,22 +380,22 @@ begin  { __ Suchmarke }
               dbReadN(mbase,mb_name,s0);
 
               { (F)lags }
-              taus[pos('F',MsgFeldTausch)] := dflags;
-              
+              taus[cpos('F',MsgFeldTausch)] := dflags;
+
               { (G)roesse }
-              taus[pos('G',MsgFeldTausch)] := siz;
+              taus[cpos('G',MsgFeldTausch)] := siz;
 
               { (D)atum }
-              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
-              
+              taus[cpos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
+
               { (A)bsender }
-              taus[pos('A',MsgFeldTausch)] := forms(s,19);
-              
+              taus[cpos('A',MsgFeldTausch)] := forms(s,19);
+
               { (E)mpfaenger }
-              taus[pos('E',MsgFeldTausch)] := forms(s0,19);
-              
+              taus[cpos('E',MsgFeldTausch)] := forms(s0,19);
+
               { (B)etreff }
-              taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21,27));
+              taus[cpos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21,27));
 
               userflag[y]:=IIf((HighlightName=ustr(s0)) or (mnt and $1000<>0),1,0);
 
@@ -409,27 +409,27 @@ begin  { __ Suchmarke }
               end else begin
 
               { (F)lags }
-              taus[pos('F',MsgFeldTausch)] := dflags;
-              
+              taus[cpos('F',MsgFeldTausch)] := dflags;
+
               { (G)roesse }
-              taus[pos('G',MsgFeldTausch)] := siz;
+              taus[cpos('G',MsgFeldTausch)] := siz;
 
               { (D)atum }
-              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
-              
+              taus[cpos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
+
               { (A)bsender }
-              taus[pos('A',MsgFeldTausch)] := forms(s,ulen);
-              
+              taus[cpos('A',MsgFeldTausch)] := forms(s,ulen);
+
               { (B)etreff }
-              taus[pos('B',MsgFeldTausch)] := forms(s1,blen-1);
-                                              
+              taus[cpos('B',MsgFeldTausch)] := forms(s1,blen-1);
+
               end;
 
-              userflag[y]:=0;                              { Man muss Prioritaeten setzen... }              
-              if flags and 56=32 then userflag[y]:=5        { niedrigste }                                   
+              userflag[y]:=0;                              { Man muss Prioritaeten setzen... }
+              if flags and 56=32 then userflag[y]:=5        { niedrigste }
               else if flags and 56=24 then userflag[y]:=4   { niedrige   }
               else if flags and 56=16 then userflag[y]:=3   { hohe       }
-              else if flags and 56=8  then userflag[y]:=2;  { hoechste   }          
+              else if flags and 56=8  then userflag[y]:=2;  { hoechste   }
 
               if fidoqwk and (_brett[1]='A') and
                  (HighlightName=ustr(dbReadStr(mbase,'name')))

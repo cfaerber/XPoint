@@ -529,7 +529,7 @@ var s   : string;
   var  p,p2: byte;
   begin
     p:=cpos('@',s);
-    p2:=pos('.',mid(s,p+1));
+    p2:=cpos('.',mid(s,p+1));
     if p2>0 then s:=left(s,p+p2)+'ZER';
   end;
 
@@ -610,7 +610,7 @@ var d      : DB;
 begin
   p:=cpos('@',adresse);
   if p=0 then exit;
-  p2:=p+pos('.',copy(adresse,p+1,255));
+  p2:=p+cpos('.',copy(adresse,p+1,255));
   if p2=0 then exit;
   dbOpen(d,SystemFile,siName);
   dbSeek(d,siName,copy(adresse,p+1,p2-p-1));
@@ -927,7 +927,7 @@ begin
   p:=cpos('@',empfaenger);
   if p=0 then
     ee:=getres2(609,1)     { '"@" fehlt!' }
-  else if (pos(' ',left(empfaenger,p))>0) and not ntNameSpace(netztyp) then
+  else if (cpos(' ',left(empfaenger,p))>0) and not ntNameSpace(netztyp) then
     ee:=iifs(ReadJN(getres2(609,2),true),'','*')   { 'Warnung: Leerzeichen in Adresse! Trotzdem absenden' }
   else if steuerzeichen(empfaenger) then
     ee:=getres2(609,7)     { 'unerlaubte Steuerzeichen in Useradresse' }
@@ -941,7 +941,7 @@ begin
               SplitFido(empfaenger,fa,DefaultZone);
               if fa.net=0 then ee:=getres2(609,4);   { 'Fido-Netznummer fehlt!' }
             end;
-        5 : if pos('.',mid(empfaenger,p+1))=0 then ee:=getres2(609,5);  { 'Domain fehlt!' }
+        5 : if cpos('.',mid(empfaenger,p+1))=0 then ee:=getres2(609,5);  { 'Domain fehlt!' }
     end;
   if (ee<>'') and (ee<>'*') then
     afehler(getreps2(609,6,ee),not sendbox);   { 'fehlerhafter Empf„nger: %s' }
@@ -1151,6 +1151,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.8  2001/08/11 22:43:55  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.18.2.7  2001/06/13 02:10:09  my
   JG/MY:- New Server type "RFC/Client" (formerly "Client Mode"):
           - All vital client settings from Edit/Point, Edit/Names and

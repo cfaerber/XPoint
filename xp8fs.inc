@@ -83,7 +83,7 @@ begin
       exit;
     dbRead(mbase,'absender',absender);
     p:=cpos('@',absender);
-    p2:=p+pos('.',copy(absender,p+1,20));
+    p2:=p+cpos('.',copy(absender,p+1,20));
     if (p=0) then begin { or (p2 = 0) rausgenomme!!  MK 12/99 }
       trfehler(809,60);   { 'fehlerhafter Absender!?' }
       exit;
@@ -529,7 +529,7 @@ begin
                 while s<>#0 do begin
                   if fstyp=0 then
                     s:=trim(copy(s,2,255));
-                  s:=left(s,pos(' ',s)-1);
+                  s:=left(s,cpos(' ',s)-1);
                   fscomm(iifs(request=1,'SEND ','TRANSFER ')+s);
                   s:=next_marked;
                   end;
@@ -546,6 +546,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6.2.4  2001/08/11 22:43:57  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.6.2.3  2000/12/12 11:30:30  mk
   - FindClose hinzugefuegt
 

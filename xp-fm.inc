@@ -123,7 +123,7 @@ begin
     reset(t);
     s:=''; p:=1;
     while not eof(t) and (hexval(left(s,p-1))<>pc) do begin
-      readln(t,s); p:=max(1,pos(',',s));
+      readln(t,s); p:=max(1,cpos(',',s));
     end;
     if hexval(left(s,p-1))=pc then begin
       delete(s,1,p);
@@ -1069,6 +1069,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11.2.1  2001/08/11 22:43:52  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.11  2000/06/20 22:22:21  ma
   - letzte Version des alten Mailers
 

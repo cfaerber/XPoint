@@ -2083,7 +2083,7 @@ var ap : absatzp;
           reset(t);
           repeat 
             readln(t,s); 
-          until (pos(s2,s)=1) or eof(t);         
+          until (pos(s2,s)=1) or eof(t);
           end;
         setcolors;
         pophp;
@@ -2418,6 +2418,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.16  2001/08/11 22:43:50  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.19.2.15  2000/12/12 14:03:55  mk
   - weitere lfn-fixes
 

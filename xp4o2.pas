@@ -180,7 +180,7 @@ var _brett,
     close(t);
     erase(t);
     if (ref<>'') or (length(user)<4) then user:='';
-    if (user<>'') and (pos('.',user)=0) and ntAutoZer(hdp^.netztyp) then
+    if (user<>'') and (cpos('.',user)=0) and ntAutoZer(hdp^.netztyp) then
       user:=user+'.ZER';
   end;
 
@@ -925,6 +925,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.10  2001/08/11 22:43:54  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.11.2.9  2001/01/03 18:08:07  mk
   - fix fuer BezBaum mit extrem groáen Datenbanken
 

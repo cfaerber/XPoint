@@ -1250,7 +1250,7 @@ begin
   list(brk);
   pophp;
   if not brk then
-    AutoCrash:='*'+copy(get_selection,2,pos(' ',mid(get_selection,2))-1);
+    AutoCrash:='*'+copy(get_selection,2,cpos(' ',mid(get_selection,2))-1);
   closelist;
   closebox;
 end;
@@ -1259,6 +1259,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.4  2001/08/11 22:43:57  mk
+  - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
+
   Revision 1.14.2.3  2001/08/05 11:45:37  my
   - added new unit XPOVL.PAS ('uses')
 
