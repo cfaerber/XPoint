@@ -470,7 +470,7 @@ begin
               repeat
                 p:=blankpos(s);
                 writeln(t,left(s,p-1));
-                s:=ltrim(mid(s,p));
+                s:=trimleft(mid(s,p));
               until s='';
               end
             else begin
@@ -534,6 +534,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/07/03 16:20:03  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.6  2000/04/18 11:23:51  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 

@@ -814,7 +814,7 @@ begin
       inc(n);
       p:=blankpos(tele);
       tnr:=left(tele,p-1);
-      tele:=ltrim(mid(tele,p));
+      tele:=trimleft(mid(tele,p));
       endc:=['0'..'9'];
       if pos('V',tnr)>0 then include(endc,'Q');
       while firstchar(tnr) in ['V','F','B','P'] do
@@ -988,6 +988,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/07/03 16:20:03  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.43  2000/07/03 15:23:26  hd
   - Neue Definition: hasXCurrentDir (RTL-Fkt: GetCurrentDir, SetCurrentDir)
   - GoDir durch SetCurrentDir ersetzt

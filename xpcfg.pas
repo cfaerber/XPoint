@@ -253,7 +253,7 @@ var
   p: integer;
 begin
   k:= '';                                       { Init }
-  v:= LTrim(s);                                 { Init, aber keine fuehrende Space }
+  v:= TrimLeft(s);                              { Init, aber keine fuehrende Space }
   if (Length(v)=0) or (v[1]='#') then           { Kommentar? }
     exit;                                       { -> und wech }
   p:=cpos('=',v);                               { Trenner merken }
@@ -481,6 +481,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.4  2000/07/03 16:20:03  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.3  2000/07/03 13:31:44  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

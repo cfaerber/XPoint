@@ -118,7 +118,6 @@ function Log2(const r:real):real;            { Logarithmus zur Basis 2      }
 function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
 function Log10(const r:real):real;           { Logarithmus zur Basis 10     }
 function LStr(const s:string):string;              { LowerString                  }
-function Ltrim(const s:string):string;             { linke Leerzeichen entfernen  }
 function Max(const a,b:longint):longint;          { Maximum Integer              }
 function MaxR(const a,b:real):real;                { Maximum Real                 }
 function MaxS(const a,b:string):string;            { Maximum String               }
@@ -149,7 +148,6 @@ function Right(const s:string; n:byte):string;     { RightString                
 {$ENDIF }
 function RightPos(c:char; s:string):byte;    { Pos von rechts               }
 function Round(const r:real; const nk:integer):real;     { Real --> Real auf nk runden  }
-function Rtrim(s:string):string;             { rechte Leerzeichen entfernen }
 function RVal(const s:string):real;                { Value Real                   }
 function Sgn(const x:longint):longint;       { Signum Integer               }
 function SgnR(const x:real):real;            { Signum Real                  }
@@ -1608,26 +1606,6 @@ begin
 end;
 
 
-function Ltrim(const s:string):string;
-var i : byte;
-begin
-  i:=1;
-  while (i<=length(s)) and ((s[i]=' ') or (s[i]=#9)) do inc(i);
-  ltrim:=copy(s,i,255);
-end;
-
-function Rtrim(s:string):string;
-var l: integer;
-begin
-  l:= Length(s);
-  while (s[l]=' ') or (s[l]=#9) do begin
-    dec(l);
-    SetLEngth(s,l);
-  end;
-  Rtrim:=s;
-end;
-
-
 function Without(s1,s2:string):string;       { Strings "subtrahieren"  }
 var p,i : byte;
 begin
@@ -1818,7 +1796,7 @@ begin
     p:=blankposx(s);
     GetToken:=left(s,p-1);
     delete(s,1,p);
-    s:=ltrim(s);
+    s:=TrimLeft(s);
     end
   else begin
     p:=posx(delimiter,s);
@@ -2026,6 +2004,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/07/03 16:20:03  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.43  2000/07/03 15:16:22  mk
   - Trim entfernt und Sysutils eingefuegt
 

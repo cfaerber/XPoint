@@ -230,7 +230,7 @@ var i,res : integer;
       if left(line,p-1)='PM-REPLY' then hd.pm_reply:=true else
       if left(line,p-1)='NOKOP' then hd.nokop:=true else
       if left(line,p-1)='CTL' then hd.attrib:=hd.attrib or attrControl;
-      line:=ltrim(mid(line,p+1));
+      line:=trimleft(mid(line,p+1));
     until line='';
   end;
 
@@ -604,6 +604,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/07/03 16:20:04  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.15  2000/06/04 18:10:28  sv
   - Maggi wieder kompilierbar
 

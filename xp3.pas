@@ -894,8 +894,8 @@ var pmcrypted : boolean;
     b2        : string[40];
 begin
   dbReadN(mbase,mb_betreff,betreff);
-  betreff:=rtrim(betreff);
-  b2:=rtrim(left(betr,40));
+  betreff:=trimright(betreff);
+  b2:=trimright(left(betr,40));
   pmcrypted:=(left(betr,length(PMC_ID))=PMC_ID);
   EQ_betreff:=(pmcrypted and (hexval(right(betr,6))=dbReadInt(mbase,'groesse'))) or
               (b2=betreff) or (b2=left(QPC_ID+betreff,40)) or
@@ -1237,6 +1237,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/07/03 16:20:03  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.30  2000/07/03 13:31:40  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

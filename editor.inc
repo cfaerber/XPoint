@@ -1877,7 +1877,7 @@ begin
           else quotec1:='';
         quotes:=length(quotec1);
         if quotes>rrand div 2 then begin
-          quotec1:=rtrim(quotec1);
+          quotec1:=trimright(quotec1);
           quotes:=length(quotec1);
           if quotes>rrand div 2 then quotes:=0;
         end;
@@ -2290,6 +2290,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2000/07/03 16:20:02  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.20  2000/07/02 14:24:46  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

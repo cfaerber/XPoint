@@ -773,7 +773,7 @@ end;
 procedure Maddbool(x,y:byte; text:string; var b:boolean);
 begin
   if amaskp^.stat.checkbutts then begin
-    text:=rtrim(text);
+    text:=trimright(text);
     if right(text,1)='?' then dellast(text);
     end;
   setall(text,x,y,not amaskp^.stat.checkbutts);
@@ -1294,6 +1294,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2000/07/03 16:20:02  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.10  2000/07/03 13:31:38  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

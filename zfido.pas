@@ -989,7 +989,7 @@ var f1,f2   : file;
         p:=cpos(' ',betreff);
         if p>0 then begin
           _file:=trim(left(betreff,p));
-          betreff:=ltrim(mid(betreff,p));
+          betreff:=trimleft(mid(betreff,p));
           p2:=cpos('/',_file);
           if p2=0 then writeln(reqfile,ustr(_file))
           else writeln(reqfile,ustr(left(_file,p2-1))+' !'+mid(_file,p2+1));
@@ -1810,6 +1810,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/07/03 16:20:04  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.23  2000/07/02 14:24:56  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

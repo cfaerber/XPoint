@@ -1122,7 +1122,7 @@ begin
     repeat
       p:=cpos(' ',s);
       ss:=left(s,p-1);
-      s:=ltrim(mid(s,p));
+      s:=trimleft(mid(s,p));
       p:=cpos(':',ss);
       if p=0 then
         val(ss,l,res)
@@ -1396,7 +1396,7 @@ begin
       p:=cpos(' ',files);
       if p>0 then begin
         _file:=trim(left(files,p));
-        files:=ltrim(mid(files,p));
+        files:=trimleft(mid(files,p));
         p2:=cpos('/',_file);
         if p2=0 then writeln(t,_file)
         else writeln(t,left(_file,p2-1)+' !'+mid(_file,p2+1));
@@ -2249,6 +2249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/03 16:20:03  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.18  2000/07/03 13:31:44  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

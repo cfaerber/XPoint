@@ -929,7 +929,7 @@ var i,j  : integer;
     repeat
       p:=blankpos(cont);
       nr:=left(cont,p-1);
-      cont:=ltrim(mid(cont,p+1));
+      cont:=trimleft(mid(cont,p+1));
       while (nr<>'') and (nr[1] in ['V','F','B','P']) do delfirst(nr);
       if nr[1]<>'+' then
         tok:=false
@@ -1316,6 +1316,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/07/03 16:20:04  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.16  2000/06/29 13:01:03  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder

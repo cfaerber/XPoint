@@ -496,7 +496,7 @@ var size   : longint;
 *)
 
   begin
-    qspaces:=sp(length(qchar)-length(ltrim(qchar)));
+    qspaces:=sp(length(qchar)-length(trimleft(qchar)));
     stmp:='';
     lastquote:=false;
     blanklines:=0;
@@ -577,17 +577,21 @@ var size   : longint;
             if p<=QuoteBreak div 2 then p:=QuoteBreak;
             stmp:=mid(s,p+iif(s[p]<=' ',1,0))+iifs(endspace,' ','');
             TruncStr(s,p-1);
-            while s[length(s)]=' ' do dec(byte(s[0]));   { rtrim(s) }
+	    { Change hd 2000-07-03 RTrim entfernt }
+	    { TrimRight entfernt mehr als nur Space, also bitte pruefen!!! }
+	    s:= TrimRight(s);
+            { while s[length(s)]=' ' do dec(byte(s[0]));}   { rtrim(s) }
+	    { /Change }
             if not eoln(t) and (length(stmp)+length(LastQC)<QuoteBreak) then begin
               read(t,reads);      { Rest der Zeile nachladen }
               endspace:=(reads[length(reads)]=' ') or eoln(t);
               if not iso1 and ConvIso and (reads<>'') then
                 ISO_conv(reads[1],length(reads));    { ISO-Konvertierung }
-              stmp:=stmp+rtrim(reads)+iifs(endspace,' ','');
+              stmp:=stmp+trimright(reads)+iifs(endspace,' ','');
             end;
             if length(stmp)+length(LastQC)>=QuoteBreak then begin
               wrslong(s);
-              s:=LastQC+rtrim(stmp);
+              s:=LastQC+trimright(stmp);
               stmp:='';
             end;
           end;
@@ -1043,6 +1047,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/03 16:20:03  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.19  2000/07/03 13:31:40  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)

@@ -193,7 +193,7 @@ var ax,p,myp  : integer;
     with feld^ do begin
       if typ=1 then
         case autotrim of
-          1 : cont^:=rtrim(cont^);
+          1 : cont^:=trimright(cont^);
           2 : cont^:=trim(cont^);
         end;
       if (typ>=2) and (typ<=7) then begin
@@ -1068,6 +1068,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.17  2000/07/03 16:20:02  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.16  2000/07/02 14:24:49  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 

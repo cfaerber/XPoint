@@ -169,7 +169,7 @@ begin
                     inc(anz);
                     pa^[anz]:=left(s,p-1);
                     end;
-                  s:=ltrim(mid(s,p+1));
+                  s:=trimleft(mid(s,p+1));
                   end;
                 if eof(t) then s:=''
                 else readln(t,s);
@@ -318,6 +318,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.5  2000/07/03 16:20:03  hd
+  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
+
   Revision 1.4  2000/07/02 14:24:52  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 
