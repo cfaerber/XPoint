@@ -64,7 +64,7 @@ uses
   WinAPI,
   {$ENDIF}
 {$ENDIF }
-   fileio;
+   fileio,typeform;
 
 var
   vtype   : byte;
@@ -389,22 +389,73 @@ procedure SetScreenLines(lines:byte);
         end;
     end;
 
+                      { 14*8 Font nach DEST Laden (Aktuelle Grakas haben ihn nicht im Rom) } 
+
+    procedure Getfont8x14(var dest); assembler;
+    const on_seq  :  array [1..4] of word = ($0100,$0402,$0704,$0300);
+          on_grc  :  array [1..3] of word = ($0204,$0005,$0406);
+          off_seq :  array [1..4] of word = ($0100,$0302,$0304,$0300);
+          off_grc :  array [1..3] of word = ($0004,$1005,$0e06);
+
+    asm
+          mov ax,$1111            { 8 * 14 font installieren }
+          mov bl,0
+          int 10h
+
+          mov cx,4                { Zugriff auf Bitplane 2 nach A000:0 }
+          mov si,offset on_seq
+          mov dx,$03c4
+          rep outsw
+          mov cx,4
+          mov si,offset on_grc
+          mov dx,$03ce
+          rep outsw
+
+          push ds                 { Font aus Graka-Ram kopieren }
+          mov si,$a000    
+          mov ds,si
+          mov si,0
+          les di,dest
+          mov dl,0 
+     @3:  mov cx,14               { und von 8*32 zu 8*14 konvertieren }
+          rep movsb
+          add si,18
+          dec dl
+          jne @3   
+          pop ds  
+
+          mov cx,4                { Normalen Zugriff auf Textscreen wiederherstellen }
+          mov si,offset off_seq
+          mov dx,$03c4
+          rep outsw
+          mov cx,4
+          mov si,offset off_grc
+          mov dx,$03ce
+          rep outsw
+
+       end;
+
   begin
     getmem(p2,16*256);
-    with regs do
-    begin
-      ax:=$1130;
-      if height>14 then bh:=6        { 16er Font lesen }
-      else if height>10 then bh:=2   { 14er Font lesen }
-      else bh:=3;                    { 8er Font lesen  }
-      xintr($10,regs);
-      {$IFDEF DPMI }
-      sel:=allocselector(0);
-      if SetSelectorBase(sel,longint(es)*$10)=0 then;
-      if SetSelectorLimit(sel,$ffff)=0 then;
-      es:=sel;
-      {$ENDIF }
-      p1:=ptr(es,bp);             { Zeiger auf Font im ROM }
+    with regs do begin
+      if (height <=10) or (Height >14) then { Adresse es 8*16 und 8*8 Font beim Bios erfragen }
+      Begin
+        ax:=$1130;
+        if height>14 then bh:=6        { 16er Font lesen }
+        else bh:=3;                    { 8er Font lesen  }
+        xintr($10,regs);
+        {$IFDEF DPMI }
+        sel:=allocselector(0);
+        if SetSelectorBase(sel,longint(es)*$10)=0 then;
+        if SetSelectorLimit(sel,$ffff)=0 then;
+        es:=sel;
+        {$ENDIF }
+        p1:=ptr(es,bp);             { Zeiger auf Font im ROM }
+        end
+      else begin 
+        getmem(p1,8192);            { 14er Font von Graka generieren lassen }
+        getfont8x14(p1^);           { und nach P1 kopieren... }
+        end;
       case height of
         15 : make15;
         13 : make13;
@@ -413,14 +464,14 @@ procedure SetScreenLines(lines:byte);
         10 : make10;
          9 : make9;
          7 : make7;
-       else
-         Move(p1^, p2^, height*4096);
+       else fastmove(p1^,p2^,height*4096);           
       end;
       LoadFont(height,p2^);
-      {$IFDEF DPMIa}
+      {$IFDEF DPMI }
       if FreeSelector(sel)=0 then;
       {$ENDIF}
       end;
+    if (height >10) and (height <=14) then freemem(p1,8192);
     freemem(p2,16*256);
   end;
 
@@ -475,6 +526,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.3  2000/08/25 18:01:01  jg
+  - Verbesserte Unterstuetzung der 28,30,33,36 Zeilenmodi
+
   Revision 1.20.2.2  2000/07/05 16:20:51  mk
   JG: - Verbesserungen fuer den 28 Zeilen-Modus, bitte testen!
 
