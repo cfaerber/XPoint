@@ -8,6 +8,7 @@ type tRawIPObj = Object(TCommObj)
         destructor Done; virtual;
 
         function  Connect(Dest: String): Boolean; virtual;
+        function  ConnectIP(DestHost: String; DestPort:Integer): Boolean; virtual;
         function  OpenKeep(Comport: Byte): Boolean; virtual;
         function  GetChar: Char; virtual;
         function  CharAvail: Boolean; virtual;
@@ -32,9 +33,10 @@ type tRawIPObj = Object(TCommObj)
         procedure PauseCom(CloseCom: Boolean); virtual;
         procedure ResumeCom(OpenCom: Boolean); virtual;
         private
-         SHandle: LongInt; SOpened: Boolean; InBuffer: tRingbuffer;
-         {$IFNDEF Linux} WSAData: tWSAData; {$ENDIF}
-         procedure ProcIncoming; virtual;
+        procedure SetErrorStr(prefix: string);
+        private
+        SHandle: LongInt; SOpened: Boolean;
+         {$IFDEF Win32} WSAData: tWSAData; {$ENDIF}
      end; { object tRawIPObj }
 
 Type tpRawIPObj = ^tRawIPObj;
@@ -56,6 +58,11 @@ Type tpRawIPObj = ^tRawIPObj;
 
 {
   $Log$
+  Revision 1.2  2001/01/31 20:18:19  cl
+  - improved Win32 rawip implementation:
+    - no own ringbuffer
+    - detection of remote connection close
+
   Revision 1.1  2001/01/28 18:04:59  ma
   - raw ip functionality moved from oct*.inc to ocrawip*.inc
   - compiling under Win32 as well as Unix

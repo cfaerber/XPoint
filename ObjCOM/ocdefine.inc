@@ -61,9 +61,7 @@
 {$ENDIF }
 
 {$IFDEF Win32 }
-  {$IFNDEF VP }
-    {$DEFINE TCP }
-  {$ENDIF }
+  {$DEFINE TCP }
 {$ENDIF }
 
 {$IFDEF OS2 }
@@ -82,6 +80,11 @@
 
 {
   $Log$
+  Revision 1.6  2001/01/31 20:18:19  cl
+  - improved Win32 rawip implementation:
+    - no own ringbuffer
+    - detection of remote connection close
+
   Revision 1.5  2001/01/20 17:36:26  ml
   - linuxextension of telnet-obj
 
