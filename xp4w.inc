@@ -506,6 +506,7 @@ var fn     : string;
     MultiPartType: TMultiPartType;
     MimeViewer: TMessageViewer;
   List: TLister;
+  s: String;
                                            { Mailviren-Schutz }
 
   function fnform(fname:string; len:integer):string;
@@ -805,12 +806,13 @@ begin
           List.OnKeypressed := SSP_Keys;
           List.Startpos := 1;
           brk := List.Show;
+          s := List.GetSelection;
+          List.Free;
           Closebox;
           pophp;
           if brk then goto nextmsg;
           // test if user has selected 'gesamte Nachricht'
-          if Copy(List.GetSelection,2,10)=LeftStr(getres2(2440,10),10) then MimeViewer.UseInternal;
-          List.Free;
+          if Copy(s,2,10)=LeftStr(getres2(2440,10),10) then MimeViewer.UseInternal;
         end;
       mpMulti:
         begin
@@ -1564,6 +1566,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.64  2000/12/29 10:49:27  mk
+  MO:- fix for last commit
+
   Revision 1.63  2000/12/29 10:46:42  mk
   - fixed bug in readmsg
 
