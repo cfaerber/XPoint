@@ -106,6 +106,7 @@ resourcestring
 
   res_loginplaintext    = 'UnverschlÅsselter Login';
   res_apoplogin         = 'Sicherer Login (APOP)';
+  res_noapop            = 'Server bietet keinen APOP-Support';
 
   res_disconnect        = 'Trenne Verbindung...';
 
@@ -148,7 +149,7 @@ begin
     end;
 
     case FUseAPOP of
-      false: begin // no APOP login possible
+      false: begin // standard plaintext login
          Output(mcInfo,res_loginplaintext,[0]);
          SWritelnFmt('USER %s', [FUser]);
          SReadLn(s);
@@ -173,6 +174,11 @@ begin
          end;
 
       true: begin // use APOP
+         if FTimestamp='' then begin // APOP is not supported
+           Output(mcError,res_noapop,[0]);
+           Disconnect;
+           exit;
+           end;
          Output(mcInfo,res_apoplogin,[0]);
          SWritelnFmt('APOP %s %s', [FUser,LowerCase(MD5_Digest(FTimestamp+FPassword))]);
          SReadLn(s);
@@ -344,6 +350,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2001/04/16 18:07:40  ma
+  - added error msg if APOP chosen but server does not support it
+
   Revision 1.11  2001/04/16 16:43:26  ml
   - pop3 now only gets new mail
   - added switch in pop3-boxconfig for getting only new mail
