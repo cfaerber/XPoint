@@ -21,7 +21,7 @@ interface
 uses
   crt,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
   maus2,mouse,resource,xpglobal,
-     xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
+     xp0,xp1,xp1o,xp1o2,xp1input,xp2c, lfn;
 
 
 function  UniSel(typ:byte; edit:boolean; default:string):string;
@@ -1753,6 +1753,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.3  2000/10/15 09:28:08  mk
+  - LFN fixes
+
   Revision 1.19.2.2  2000/10/10 22:49:45  mk
   - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
 

@@ -26,7 +26,7 @@ uses
   crt,
 {$ENDIF }
       dos,typeform,fileio,inout,keys,maske,datadef,database,winxp,
-      win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3;
+      win2,dosx,maus2,resource, xpglobal, xp0,xp1,xp1input,xp3, lfn;
 
 
 var   testmailstring_nt : byte; { Netztyp fuer Testmailstring }
@@ -2415,6 +2415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.9  2000/10/15 09:28:06  mk
+  - LFN fixes
+
   Revision 1.25.2.8  2000/10/10 13:04:54  mk
   RB:- Supersedes in Autoversand
 

@@ -16,7 +16,7 @@
 {$M 16384,65536,65536}
 
 uses
-  dos, typeform, dosx, xpglobal;
+  dos, typeform, dosx, xpglobal, lfn;
 
 const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -1287,6 +1287,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14.2.4  2000/10/15 09:28:09  mk
+  - LFN fixes
+
   Revision 1.14.2.3  2000/10/04 15:41:30  mk
   - Range-Check-Error in FldBezCheck beseitigt
 

@@ -24,7 +24,7 @@ interface
 uses
   crt, dos, typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe,
-  xpglobal;
+  xpglobal, lfn;
 
 const sendIntern = 1;     { force Intern              }
       sendShow   = 2;     { ausfÅhrliche Sendeanzeige }
@@ -2123,7 +2123,7 @@ var empf,repto : string[AdrLen];
     reptoanz   : integer;
     betr,dummy : string[BetreffLen];
     fn         : pathstr;
-    hf         : string[12];
+    hf         : string;
     dir        : dirstr;
     name       : namestr;
     ext        : extstr;
@@ -2217,6 +2217,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.14  2000/10/15 09:28:08  mk
+  - LFN fixes
+
   Revision 1.39.2.13  2000/10/10 22:49:45  mk
   - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
 

@@ -1748,7 +1748,7 @@ end;
 procedure ShowArch(var fn:string);   { 'var' wegen Stackplatz }
 var decomp : string[127];
     p      : byte;
-    datei  : string[12];
+    datei  : string;
     newarc : longint;
     atyp   : shortint;
     spath  : pathstr;
@@ -1762,7 +1762,7 @@ begin
     exdir:=''
   else begin
     p:=pos('$DATEI',ustr(decomp));
-    datei:=trim(copy(fn,2,12));
+    datei:=trim(copy(fn,2,Length(fn)));
     if (exdir='') and ((temppath='') or (ustr(temppath)=ownpath))
       and exist(datei) then begin
         rfehler(428);   { 'extrahieren nicht m”glich - bitte Temp-Verzeichnis angeben!' }
@@ -2431,6 +2431,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.8  2000/10/15 09:28:07  mk
+  - LFN fixes
+
   Revision 1.47.2.7  2000/08/28 23:35:54  mk
   - LFN in uses hinzugefuegt
 

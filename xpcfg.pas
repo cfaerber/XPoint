@@ -15,7 +15,7 @@ unit XPCfg;
 interface
 
 uses
-  xpglobal;
+  xpglobal, lfn;
 
 { Sektionen. Im Implementationsteil wird MySection definiert. Dieses muss
   fuer die einzelnen Betriebssysteme angepasst werden }
@@ -480,6 +480,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.2.2.1  2000/10/15 09:28:09  mk
+  - LFN fixes
+
   Revision 1.2  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

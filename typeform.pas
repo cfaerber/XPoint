@@ -27,7 +27,7 @@ unit typeform;
 interface
 
 uses
-  xpglobal, dos;
+  xpglobal, dos, lfn;
 
 {$IFNDEF DPMI}
   const  Seg0040 = $40;
@@ -2224,6 +2224,9 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
 end.
 {
   $Log$
+  Revision 1.37.2.9  2000/10/15 09:28:05  mk
+  - LFN fixes
+
   Revision 1.37.2.8  2000/10/15 08:51:58  mk
   - misc fixes
 

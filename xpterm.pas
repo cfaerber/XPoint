@@ -11,9 +11,7 @@
 { CrossPoint - Terminal und Scripts }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpterm;
 
@@ -21,12 +19,7 @@ interface
 
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,video,
+  crt, dos,typeform,fileio,inout,keys,uart,datadef,database,maus2,video,
 {$IFDEF CAPI }
   capi,
 {$ENDIF }
@@ -1617,6 +1610,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.1  2000/10/15 09:28:09  mk
+  - LFN fixes
+
   Revision 1.10  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 

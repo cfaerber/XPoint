@@ -20,7 +20,7 @@ interface
 uses
   xpglobal,
   crt, dos,dosx,typeform,keys,fileio,inout,maus2,lister,
-  printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
+  printerx,datadef,database,maske,archive,resource,clip,xp0,crc, lfn;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg  : pathstr = '';
@@ -979,6 +979,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.9  2000/10/15 09:28:06  mk
+  - LFN fixes
+
   Revision 1.40.2.8  2000/10/15 08:52:00  mk
   - misc fixes
 

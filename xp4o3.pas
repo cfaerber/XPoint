@@ -18,7 +18,7 @@ unit xp4o3;
 interface
 
 uses dos,typeform,fileio,datadef,database,inout,keys,resource,
-     xp0,xp1,xp1input, xpglobal;
+     xp0,xp1,xp1input, xpglobal, lfn;
 
 function  __getfilename(nr,nn:byte):string;
 function  go_pm:boolean;
@@ -312,6 +312,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.2  2000/10/15 09:28:07  mk
+  - LFN fixes
+
   Revision 1.6.2.1  2000/07/25 16:45:07  jg
   - Crosspostings mit Shift+B: Beschraenkungen bei Verteilern, verschiedenen
     Serverboxen, und anderen Netzen als Zconnect und RFC aufgehoben.

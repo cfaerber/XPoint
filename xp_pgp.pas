@@ -17,7 +17,7 @@ unit  xp_pgp;
 
 interface
 
-uses  xpglobal, dos,typeform,fileio,resource,database,maske,xp0,xp1;
+uses  xpglobal, dos,typeform,fileio,resource,database,maske,xp0,xp1, lfn;
 
 procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
 procedure RunPGP(par:string);                { PGP 2.6.x bzw. 6.5.x aufrufen  }
@@ -799,6 +799,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.2  2000/10/15 09:28:09  mk
+  - LFN fixes
+
   Revision 1.19.2.1  2000/07/09 13:35:16  mk
   - $RNAME2 und $(RNAME2) eingebaut
 

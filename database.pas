@@ -19,7 +19,7 @@ interface
 
 uses xpglobal,
   ems,
-  dos, typeform,datadef, inout;
+  dos, typeform,datadef, inout, lfn;
 
 {------------------------------------------------------- Allgemeines ---}
 
@@ -1716,6 +1716,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22.2.6  2000/10/15 09:28:05  mk
+  - LFN fixes
+
   Revision 1.22.2.5  2000/10/10 22:49:43  mk
   - Unit xp2 gesplittet, um Codegroessengrenzen zu umgehen
 

@@ -175,18 +175,10 @@ end;
 function fsbox(y:byte; path,pathx:pathstr; vorgabe:s20; xdir,invers,vert:boolean):pathstr;
 
 const
-{$IFDEF Ver32 }
-  maxf   = 8192;
-{$ELSE }
-  maxf   = 1024;
-{$ENDIF }
-      maxs   = 5;
+  maxf   = 750;
+  maxs   = 5;
 type
-{$IFDEF Ver32 }
-  fnst   = HugeString;
-{$ELSE }
-  fnst   = string[13];
-{$ENDIF }
+  fnst   = string[80];
       ft     = array[1..maxf+36] of fnst;
       txst   = string[70];
 var   fb     : pathstr;
@@ -1113,6 +1105,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.4  2000/10/15 09:28:06  mk
+  - LFN fixes
+
   Revision 1.16.2.3  2000/08/28 23:15:01  mk
   - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext usw. LFN-faehig zu machen; das muss bei den anderen Units noch nachgeholt werden
 
