@@ -148,7 +148,7 @@ function ddow(dd:fdate):byte;
 var nt  : word;
 begin
   with dd do
-    if t+m+j > 0 then { MK 01/00 falls Record leer, wird 1 (Mo) zurueckgegeben }
+    if (t>0)and(m>0)and(j>0) then { MK 01/00 falls Record leer, wird 1 (Mo) zurckgegeben }
     begin
       if m<3 then begin
         m:=m+12; dec(j);
@@ -200,6 +200,9 @@ end;
 
 {
   $Log$
+  Revision 1.16  2002/12/13 11:51:58  cl
+  - fixed Range Check Error
+
   Revision 1.15  2002/12/12 11:58:41  dodi
   - set $WRITEABLECONT OFF
 
