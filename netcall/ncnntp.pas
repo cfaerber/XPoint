@@ -175,7 +175,7 @@ begin
     if (FUser='') or (FPassword='') then
       FErrorCode := 480
     else begin
-      SWritelnFmt('AUTHINFO USER %s PASS %s', [FUser, FPassword]);
+      SWritelnFmt('AUTHINFO USER %s', [FUser]);
       SReadLn(s);
       FErrorCode := ParseResult(s);
       if FErrorCode = nntp_PassRequired then     { some servers use another syntax... }
@@ -544,6 +544,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2001/04/06 22:34:58  mk
+  - changed nntp authorisation
+
   Revision 1.18  2001/04/06 21:06:38  ml
   - nntpsend now working
 
