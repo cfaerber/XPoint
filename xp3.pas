@@ -103,7 +103,8 @@ implementation  {-----------------------------------------------------}
                 'A'  ==  Netzbretter
                 'U'  ==  Userbretter (nur in der MBase) }
 
-uses  xp3o,xp3ex,xpnt, xpmakeheader;
+uses
+  xp3o, xp3ex, xpnt, xpmakeheader, debug;
 
 
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
@@ -1023,8 +1024,12 @@ begin
   if not open then
     dbOpen(d,BoxenFile,1);
   dbSeek(d,boiDatei,dname);
-  if dbFound then file_box:=dbReadStr(d,'boxname')
-  else file_box:=dname;
+  if dbFound then
+    file_box:=dbReadStr(d,'boxname')
+  else begin
+    Debug.DebugLog('xp3','file_box: assigned server name not found: ' + dname + '!', DLWarning);
+    file_box:=dname;
+    end;
   if not open then
     dbClose(d);
 end;
@@ -1035,8 +1040,12 @@ var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  if dbFound then box_file:=dbReadStr(d,'dateiname')
-  else box_file:=box;
+  if dbFound then
+    box_file:=dbReadStr(d,'dateiname')
+  else begin
+    Debug.DebugLog('xp3','box_file: assigned file name not found: ' + box + '!', DLWarning);
+    box_file:=box;
+    end;
   dbClose(d);
 end;
 
@@ -1133,6 +1142,9 @@ finalization
   EmpfList.Free;
 {
   $Log$
+  Revision 1.69  2001/10/14 20:42:37  ma
+  - added debug info (for tracing 8charN/U/Z Linux bug :-)
+
   Revision 1.68  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
