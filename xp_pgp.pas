@@ -1,18 +1,27 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
 
-{ PGP-Codierung }
+    OpenXP PGP handling unit
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC }
 
+{ OpenXP PGP handling unit }
 unit  xp_pgp;
 
 interface
@@ -155,7 +164,6 @@ begin
     shellkey:=false;
   end;
 end;
-{ /oh }
 
 { User-ID fuer Command-Line-Aufruf in Anfuehrungszeichen setzen }
 
@@ -779,6 +787,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/03/13 19:24:57  ma
+  - added GPL headers, PLEASE CHECK!
+  - removed unnecessary comments
+
   Revision 1.34  2001/01/02 10:05:26  mk
   - implemented Header.References
 

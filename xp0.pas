@@ -1,18 +1,27 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
 
-{ CrossPoint - Deklarationen }
+    OpenXP declarations unit
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC}
 
+{ OpenXP declarations unit }
 unit xp0;
 
 interface
@@ -955,7 +964,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        SaveType     : byte;          { 0=Sofort, 1=Alt-S, 2=Rueckfrage }
        XSA_NetAlle  : boolean;       { Netcall/Alle-Schalter bei /Netcall/L }
        maxcrosspost : byte;          { Filter fuer Massen-Crosspostings }
-       maildelxpost : boolean;       { 20.01.2000 robo - auch bei Mail? } { unbedenklich }
+       maildelxpost : boolean;
        KeepRequests : boolean;       { Requests zurueckstellen }
        waehrung     : string;
        gebnoconn    : longint;       { Gebuehren fuer nicht zustandegek. Verb. }
@@ -988,7 +997,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        _Usersortbox : boolean;       {Hilfszeiger fuer Config }
        multipartbin : boolean;       { RFC-Binaernachrichten als Multipart }
        mausmpbin    : boolean;       { dto. fuer MausTausch }
-       askreplyto   : boolean;       { 03.02.2000 robo - fragen bei ANTWORT-AN } { unbedenklich }
+       askreplyto   : boolean;       { fragen bei ANTWORT-AN }
 
        UsePGP       : boolean;       { PGP verwenden }
        PGPbatchmode : boolean;       { PGP-Schalter +batchmode verwenden }
@@ -1122,6 +1131,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.121  2001/03/13 19:24:56  ma
+  - added GPL headers, PLEASE CHECK!
+  - removed unnecessary comments
+
   Revision 1.120  2001/03/05 11:47:34  cl
   - changed uucp_mode/ip/port to conn_mode/ip/port
 

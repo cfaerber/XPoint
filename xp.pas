@@ -188,6 +188,10 @@ end.
 
 {
   $Log$
+  Revision 1.52  2001/03/13 19:24:56  ma
+  - added GPL headers, PLEASE CHECK!
+  - removed unnecessary comments
+
   Revision 1.51  2001/01/06 17:23:16  ma
   - added GPL header
   - moved some compiler directives to xpdefine

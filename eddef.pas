@@ -120,7 +120,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfGlossary    = 126;        { Kuerzelmacros mit STRG+ENTER   }
 
        MaxFindLen       = 30;
-       EditMenuMps      = { 12 } 11;  { 03.02.2000 robo - ge„ndert auf 11 } { trivial - cl }
+       EditMenuMps      = 11;
 
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
 
@@ -179,6 +179,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.12  2001/03/13 19:24:55  ma
+  - added GPL headers, PLEASE CHECK!
+  - removed unnecessary comments
+
   Revision 1.11  2001/02/25 15:25:22  ma
   - added GPL headers
   - cosmetics

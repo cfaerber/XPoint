@@ -515,12 +515,8 @@ begin
   gebCfos:=false;
   autofeier:=true;
   
-  { 20.01.2000 robo } { unbedenklich }
   maildelxpost:=false;
-  { /robo}
-  { 03.02.2000 robo } { unbedenklich }
   askreplyto:=false;
-  { /robo}
 
   for i:=0 to 3 do begin
     fillchar(fkeys[i]^,sizeof(fkeys[0]^),0);
@@ -1697,6 +1693,10 @@ end;
 
 {
   $Log$
+  Revision 1.109  2001/03/13 19:24:56  ma
+  - added GPL headers, PLEASE CHECK!
+  - removed unnecessary comments
+
   Revision 1.108  2001/02/25 15:40:21  ma
   - added GPL headers
   - shortened CVS logs

@@ -1,13 +1,22 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
+
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 { CrossPoint - Editor }
 
@@ -41,10 +50,7 @@ function  EditKeyFunc(var t:taste):boolean;
 function  EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
 function  EditOverwrite(ed:ECB; fn:string):taste;   { öberschr.: J/N/Esc }
 procedure EditMessage(txt:string; error:boolean);
-{ 04.02.2000 robo } { unbedenklich }
-{ procedure EditAskFile(ed:ECB; var fn:string; save:boolean); }
 procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
-{ /robo }
 function  EditFindfunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EditReplfunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
 procedure EditCfgFunc(var cfg:EdConfig; var brk:boolean);
@@ -113,18 +119,13 @@ begin
   else hinweis(txt);
 end;
 
-{ 04.02.2000 robo } { unbedenklich }
-{ procedure EditAskFile(ed:ECB; var fn:string; save:boolean); }
 procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
-{ /robo }
 var useclip : boolean;
 begin
   if save then fn:='' else fn:=SendPath+WildCard;
   useclip:=false;          { 'Block speichern' / 'Block laden' }
   if readfilename(getres(iif(save,2504,2505))
-  { 04.02.2000 robo } { unbedenklich }
                   +iifs(uuenc,' '+getres(2509),'')
-  { /robo }
                   ,fn,true,useclip) then begin
 {$IFDEF UNIXFS}
     if not multipos('/',fn)
@@ -183,12 +184,8 @@ begin
     maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Asatzendezeichen' }
     mappsel(false,'˙˘'#20'˘˛˘Æ˘'#17'˘ ');
     maddbool(3,6,getres2(2508,4),AutoIndent);             { 'autom. einrÅcken' }
-    { 01/2000 oh }
     maddbool(3,7,getres2(2508,5),PersistentBlocks);       { 'persistente Blîcke' }
-    { /oh }
-    { 10.02.2000 robo }{ unbedenklich }
     maddbool(3,8,getres2(2508,6),QuoteReflow);            { 'Quote-Reflow' }
-    { /robo }
     readmask(brk);
     enddialog;
     if not brk then begin
@@ -477,6 +474,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2001/03/13 19:24:58  ma
+  - added GPL headers, PLEASE CHECK!
+  - removed unnecessary comments
+
   Revision 1.26  2001/02/19 15:27:19  cl
   - marked/modified non-GPL code by RB and MH
 
