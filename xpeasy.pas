@@ -37,9 +37,9 @@ function NeuBenutzergruss:boolean;
     msglines:=ival(getres2(14000,0));
     msgbox(73,msglines+7,'',x,y);
     moff;
-    wrt(x+3,y+1,'Cross \\//    '+
-                 RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
-    wrt(x+3,y+2,'      //\\ Point');
+//    wrt(x+3,y+1,'Cross \\//    '+
+//                 RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
+//    wrt(x+3,y+2,'      //\\ Point');
     s:=x_copyright + ' ' + author_name;
     wrt(x+67-length(s),y+2,s);
     for i:=1 to msglines do
@@ -84,6 +84,9 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.11  2000/11/04 23:01:14  fe
+  Made 'hauruck' compilable with FreeBSD.
+
   Revision 1.10  2000/10/17 10:05:57  mk
   - Left->LeftStr, Right->RightStr
 
