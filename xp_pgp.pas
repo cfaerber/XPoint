@@ -644,7 +644,7 @@ begin
     else if PGPVersion=GPG then
       RunGPG('-s -a --detach-sign --force-v3-sigs -o '+fo+' '+OwnUserID+' '+fi)
     else begin
-      RunPGP('-s -a -b '+OwnUserID+fi);
+      RunPGP('-s -a -b '+OwnUserID+ ' ' + fi);
       fo:=fi+'.asc';
     end;
 
@@ -1168,6 +1168,9 @@ end;
 
 {
   $Log$
+  Revision 1.67  2002/04/14 13:19:06  mk
+  - fixed signing with Pgp 6.5.8
+
   Revision 1.66  2002/04/14 00:12:17  mk
   - fixed signing of messages with pgp 2.x
 
