@@ -867,7 +867,7 @@ K (c) '93-96 Peter Mandrella
 338  Testing message packet...     ~
 339  Building newsgroup index...     %
 340  Rebuilding newsgroup index ...     %
-341  processing control messages ...~
+341  Processing control messages ...~
 342  Form feed after each message
 343  <no subject>
 344  Delete "held" messages as well?
@@ -1337,13 +1337,13 @@ K (c) '93-96 Peter Mandrella
 8    Fido-to ~
 # Send window
 10   To       ~
-11   Fido-to
+11   ^Recipient
 12   Subject
 13   Server
 14   Size
 15   Code:
 16   Copies:
-20   P^ark,^Date,R^ecConf,^withoutSig,de^lete,C^rash,P^GP,^Back
+20   P^ark,^Date,R^ecConf,^withoutSig,de^lete,Cras^h,P^GP,^Back
 21   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^MausNet,^Lokal,^Back
 22   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
 23   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
@@ -1351,7 +1351,7 @@ K (c) '93-96 Peter Mandrella
 25   YNIùSVOT
 28   ^Yes,^No,^Internal,S^pecial,ù4To^:,^Subj.,Ser^ver,C^ode
 29   ,^Text
-30   ADEWLRùLMG
+30   ADEWLHùLMG
 # Editor Header
 40   Message to ~
 41   Message in ~
@@ -2816,27 +2816,27 @@ K (c) '93-96 Peter Mandrella
 1  Date must be same or newer than today.
 2  empty message - not sent
 3  File was not crypted!
-4  Plese send message to server system as normal netmail.
+4  Plese send message to Server as a normal netmail.
 5  not enough memory to send the message
 6  Internal newsgroup - writing not allowed!
-7  Unknown server system: %s
+7  Unknown Server: %s
 8  file path too long
-9  Binary mails are not possible in this net
+9  Binary messages are not allowed in this Net
 10 Subject of file attaches cannnot be changed
 11 not possible - internal message
 12 Not possible with binary mails.
 13 Not possible with carbon copies.
 14 Receipts only allowed for PMs
-15 Only possible with PMs
+15 Only possible with Private messages!
 16 File not found
 17 Not enough disk space on temporary drive
 18 Invalid send message!
-19 This is no unsent message!
+19 This is not an unsent message!
 20 Not possible - please resend file
 21 Bad message packet:  %s
 22 Message does not exist in message packet !?
 24 Forwarding to this newsgroup is not allowed.
-25 Wrinting to this newsgroup is not allowed.
+25 Writing to this newsgroup is not allowed.
 26 Invalid original recipient line!
 27 Not possible in this type of net.
 28 In MausNet only possible with PMs.
@@ -2849,7 +2849,7 @@ K (c) '93-96 Peter Mandrella
 35 Message must have a subject.
 36 Binary mails are not possible here.
 37 Cannot change server - different newsgroup names!
-38 You are not allowed to change this Message!
+38 You are not allowed to change this message!
 
 +  10700
 1  Internal error: Newsgroup with unsent message not found!
