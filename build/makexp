@@ -25,7 +25,8 @@ cd "$sourcedir"
 case "$mainversion" in
     3.8)
        echo "Version $mainversion "
-       fpcgen='-Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -Fu'"$sourcedir"'xplib -Fu'"$sourcedir"'build -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       #fpcgen='-Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -Fu'"$sourcedir"'xplib -Fu'"$sourcedir"'build -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       fpcgen='-Ci -Co -Cr -Ct -Fu./ObjCOM -Fu./netcall -Fu./xplib -Fu./build -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        fpcopts="$OXP_OPTS"' '"$fpcgen"
        # for snapshots
        #fpcopts='-gl -Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
@@ -38,7 +39,8 @@ case "$mainversion" in
     3.9)
        echo "Version $mainversion "
        #fpcopts='-Ci -Co -Cr -Ct -gl -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -Fu'"$sourcedir"'xplib -FU'"$versiondir"'output -Fl'"$versiondir"'output'
-       fpcgen='-Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -Fu'"$sourcedir"'xplib -Fu'"$sourcedir"'build -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       #fpcgen='-Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -Fu'"$sourcedir"'xplib -Fu'"$sourcedir"'build -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       fpcgen='-Ci -Co -Cr -Ct -FuObjCOM -Funetcall -Fuxplib -Fubuild -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        fpcopts="$OXP_OPTS"' '"$fpcgen"
        fpcoptscross='-Ci -Co -Cr -Ct -gl -Fu./ObjCOM -Fu./netcall -Fu./xplib -FU../output -Fl../output'
        echo "fpc options $fpcopts"
