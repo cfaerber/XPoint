@@ -177,9 +177,8 @@ type psplit = record              { FÅr Pointer-Type-Cast }
 {$IFDEF Ver32 }
 
 { 10.01.2000 robo - in 32-Bit-ASM umgeschrieben }
-function CPos(c: char; const s: string): byte; assembler;
+function CPos(c: char; const s: string): byte; {&uses edi} assembler;
 asm
-         push   edi
          cld
          mov    edi,s
          xor    ecx, ecx
@@ -195,8 +194,12 @@ asm
          sub    eax,ecx
          jmp    @end
 @notf:   xor    eax,eax
-@end:    pop    edi
+@end:
+{$ifdef FPC }
+end ['EAX', 'ECX', 'EDX', 'EDI'];
+{$else}
 end;
+{$endif}
 
 {$ELSE}
 
@@ -226,9 +229,8 @@ end;
 {$IFDEF Ver32 }
 
 { 10.01.2000 robo - in 32-Bit-ASM umgeschrieben }
-procedure SetParity(var b:byte; even:boolean); assembler;
+procedure SetParity(var b:byte; even:boolean); {&uses edi} assembler;
 asm
-          push   edi
           mov    edi,b
           mov    al,[edi]
           cmp    even,0
@@ -241,8 +243,11 @@ asm
           jpo    @spok
           or     al,80h
 @spok:    mov    [edi],al
-          pop edi
+{$ifdef FPC }
+end ['EAX', 'EDI'];
+{$else}
 end;
+{$endif}
 
 {$ELSE}
 
@@ -630,7 +635,7 @@ end;
 { 01.02.2000 robo - 32 Bit }
 { 08.02.2000 MK Tabellen als Konstanten, wegen FPC }
 
-function Upcase(const c:char): char; assembler;
+function Upcase(const c:char): char; {&uses ebx} assembler;
 const
   LookUp: array[0..158] of Char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~' +
 {$IFDEF Windows}
@@ -641,7 +646,6 @@ const
    '¿¡¬√ƒ≈∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ';
 {$ENDIF}
 asm
-    push ebx
     xor ebx,ebx
     mov   bl, c
     cmp   bl, 'a'                         { erst ab 'a'... }
@@ -651,15 +655,17 @@ asm
 @noupcase:
     mov al,bl
 @Upcase_end:
-    pop ebx
+{$ifdef FPC }
+end ['EAX', 'EBX'];
+{$else}
 end;
+{$endif}
 
-function Locase(const c:char):char; assembler;
+function Locase(const c:char):char; {&uses ebx} assembler;
 const
   Look: array[0..7] of char = 'êèí•Äéôö';
   Get: array[0..7] of char = 'ÇÜë§áÑîÅ';
 asm
-    push ebx
     mov al,c                { Weniger Benutzt - weniger schnell aber kuerzer }
     cmp al,"A"
     jb @Locase_end
@@ -691,8 +697,11 @@ asm
 {$ENDIF}
 
 @Locase_end:
-     pop ebx
+{$ifdef FPC }
+end ['EAX', 'EBX'];
+{$else}
 end;
+{$endif}
 
 { /robo }
 
@@ -811,10 +820,8 @@ end;
 
 {$ifdef ver32}
 
-procedure LoString (var s: string); assembler;
+procedure LoString (var s: string); {&uses ebx,edi} assembler;
   asm
-    push ebx
-    push edi
     mov ebx,s
     xor ecx,ecx
     mov cl,[ebx]
@@ -878,14 +885,14 @@ procedure LoString (var s: string); assembler;
     or edi,edi
     jnz @lostr_next
   @lostr_ende:
-    pop edi
-    pop ebx
+{$ifdef FPC }
+  end ['EBX', 'ECX', 'EDI'];
+{$else}
   end;
+{$endif}
 
-procedure UpString (var s: string); assembler;
+procedure UpString (var s: string); {&uses ebx,edi} assembler;
   asm
-    push ebx
-    push edi
     mov ebx,s
     xor ecx,ecx
     mov cl,[ebx]
@@ -949,9 +956,11 @@ procedure UpString (var s: string); assembler;
     or edi,edi
     jnz @upstr_next
   @upstr_ende:
-    pop edi
-    pop ebx
+{$ifdef FPC }
+  end ['EBX', 'ECX', 'EDI'];
+{$else}
   end;
+{$endif}
 
 {$else}
 
@@ -1123,10 +1132,8 @@ end;
 
 {$ifdef ver32}
 { 01.02.2000 robo - 32 Bit}
-function Left(const s: String; n: byte): string; assembler;
+function Left(const s: String; n: byte): string; {&uses esi,edi} assembler;
 asm
-        push    esi
-        push    edi
         cld
         mov     edi, @result
         mov     esi, s
@@ -1138,9 +1145,11 @@ asm
 @1:     mov     ecx, eax
         stosb
         rep     movsb
-        pop     edi
-        pop     esi
+{$ifdef FPC }
+end ['EAX', 'ECX', 'ESI', 'EDI'];
+{$else}
 end;
+{$endif}
 { /robo }
 {$else}
 function Left(const s: String; n: byte): string; assembler;
@@ -1174,10 +1183,8 @@ end;
 {$ELSE }
 {$ifdef ver32}
 { 01.02.2000 robo - 32 Bit}
-function Right(const s: string; n: byte):string; assembler;
+function Right(const s: string; n: byte):string; {&uses esi,edi} assembler;
 asm
-        push    esi
-        push    edi
         cld
         mov     esi, s
         mov     edi, @result
@@ -1197,9 +1204,11 @@ asm
         inc     edi
         add     esi, eax
         rep     movsb
-        pop     edi
-        pop     esi
+{$ifdef FPC }
+end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$else}
 end;
+{$endif}
 { /robo }
 {$else}
 function Right(const s: string; n: byte):string; assembler;
@@ -1238,10 +1247,8 @@ end;
 {$ELSE }
 {$ifdef ver32}
 { 01.02.2000 robo - 32 Bit}
-function Mid(const s:string; const n:byte): string; assembler;
+function Mid(const s:string; const n:byte): string; {&uses esi,edi} assembler;
 asm
-        push    esi
-        push    edi
         cld
         mov     edi, @result
         mov     esi, s
@@ -1266,10 +1273,14 @@ asm
         sub     edx, ecx
         add     esi, edx
         rep     movsb
-@2:     pop     edi
-        pop     esi
+@2:
+{$ifdef FPC }
+end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
+{$else}
 end;
+{$endif}
 { /robo }
+
 {$else}
 function Mid(const s:string; const n:byte): string; assembler;
 asm
@@ -1963,11 +1974,8 @@ end;
 { 01.02.2000 robo - 32 Bit }
 { 06.02.2000 MK - Optimiert }
 
-procedure FastMove(var Source, Dest; const Count: WORD); assembler;
+procedure FastMove(var Source, Dest; const Count: WORD); {&uses esi,edi} assembler;
 asm
-        push esi
-        push edi
-
         mov  ecx, count
         mov  eax, ecx
         sar  ecx, 2
@@ -1981,10 +1989,12 @@ asm
         mov ecx, eax
         and ecx, $03
         rep movsb
-
-@ende:  pop edi
-        pop esi
+@ende:
+{$ifdef FPC }
+end ['EAX', 'ECX', 'ESI', 'EDI'];
+{$else}
 end;
+{$endif}
 
 { /robo }
 
@@ -2077,17 +2087,17 @@ end;
 
 
 { ROT13 Kodierung }
-procedure Rot13(var data; size: word); assembler;
+procedure Rot13(var data; size: word); {&uses edi} assembler;
 asm
 {$IFDEF BP }
          les   di,data
          mov   cx,size
+         jcxz  @ende
 {$ELSE }
-         push  edi
          mov   edi, data
          mov   ecx, size
+         jecxz @ende
 {$ENDIF }
-         jcxz  @ende
          cld
   @rotlp:
 {$IFDEF BP }
@@ -2117,10 +2127,11 @@ asm
          stosb
          loop  @rotlp
   @ende:
-{$ifndef BP }
-         pop   edi
-{$endif}
+{$ifdef FPC }
+end ['EAX', 'ECX', 'EDI'];
+{$else}
 end;
+{$endif}
 
 {$IFDEF BP }
 function DOSEmuVersion: String;
@@ -2143,6 +2154,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/03/24 20:25:49  rb
+  ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
+
   Revision 1.24  2000/03/24 08:35:30  mk
   - Compilerfaehigkeit unter FPC wieder hergestellt
 

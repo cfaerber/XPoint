@@ -300,7 +300,7 @@ var    ca,ce,ii,jj : byte;
 function ticker:longint;
 {$IFDEF Ver32 }
 var
-  h, m, s, hund : word;
+  h, m, s, hund : rtlword;
 {$ENDIF }
 begin
 {$IFDEF Ver32 }
@@ -433,8 +433,8 @@ end;
 
 
 procedure disp_DT;
-var h,m,s,s100 : word;
-    y,mo,d,dow : word;
+var h,m,s,s100 : rtlword;
+    y,mo,d,dow : rtlword;
 begin
   if UseMulti2 then begin
     if m2t then begin
@@ -467,7 +467,7 @@ end;
 
 
 Procedure multi2;
-var h,m,s,s100 : word;
+var h,m,s,s100 : rtlword;
     i          : integer;
     l          : longint;
 begin
@@ -1795,6 +1795,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/03/24 20:25:50  rb
+  ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
+
   Revision 1.20  2000/03/24 00:03:39  rb
   erste Anpassungen fÅr die portierung mit VP
 

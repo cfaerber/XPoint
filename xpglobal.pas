@@ -79,7 +79,7 @@ type
       integer =    longint;
       word =       longint; { = signed }
       dword =      longint; { = signed }
-      rtlword =    longint;     { 32 Bit bei FPC }
+      rtlword =    longint;     { 32 Bit bei VP }
     {$ENDIF }
     {$IFDEF FPC }
       { FreePascal, 32 Bit }
@@ -117,6 +117,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/03/24 20:25:50  rb
+  ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
+
   Revision 1.18  2000/03/24 15:41:02  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 

@@ -144,7 +144,7 @@ end;
 
 
 Function existrf(var f):Boolean;
-var a : word;
+var a : rtlword;
     e : boolean;
 begin
   getfattr(f,a);
@@ -271,7 +271,7 @@ end;
 
 Function ReadOnlyHidden(name:PathStr):boolean;
 var f    : file;
-    attr : word;
+    attr : rtlword;
 begin
   assign(f,name);
   if not existf(f) then ReadOnlyHidden:=false
@@ -763,6 +763,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/03/24 20:25:50  rb
+  ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
+
   Revision 1.13  2000/03/24 04:16:21  oh
   - Function GetBareFileName() (Dateiname ohne EXT) fuer PGP 6.5.x
 

@@ -27,7 +27,8 @@ VAR
    CRC_reg_lo     : smallWORD;
    CRC_reg_hi     : smallWORD;
 
-procedure CCITT_CRC32_calc_Block(var block; size: word); assembler;  {  CRC-32  }
+procedure CCITT_CRC32_calc_Block(var block; size: word);
+                                {&uses ebx,esi,edi} assembler;  {  CRC-32  }
 {$IFDEF BP }
 asm
      xor bx, bx        { CRC mit 0 initialisieren }
@@ -51,9 +52,6 @@ asm
 end;
 {$ELSE }
 asm
-     push ebx
-     push esi
-     push edi
      xor ebx, ebx      { CRC mit 0 initialisieren }
      mov edx, ebx
      mov edi, block
@@ -72,10 +70,11 @@ asm
      jnz @u3
      mov CRC_reg_lo, bx
      mov CRC_reg_hi, dx
-     pop edi
-     pop esi
-     pop ebx
+{$ifdef FPC }
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$else}
 end;
+{$endif}
 {$ENDIF }
 
 function CRC32(st : string) : longint;
@@ -132,6 +131,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/24 20:25:50  rb
+  ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
+
   Revision 1.5  2000/03/24 00:03:39  rb
   erste Anpassungen fÅr die portierung mit VP
 
