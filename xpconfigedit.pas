@@ -678,7 +678,6 @@ var d         : DB;
 
   procedure displine(i:integer);
   var s1,s2,s3: string;
-      scrp       : byte;
       limit,grnr : longint;
       w          : smallword;
       hd,sig,qt  : char;
@@ -700,7 +699,6 @@ var d         : DB;
       1 : begin     { Boxen }
             s2 := dbReadStr(d,'Username');
             s3 := dbReadStr(d,'Kommentar');
-            dbRead(d,'Script',scrp);
             dbRead(d,'Netztyp',nt);
             if s1=DefaultBox then
               if s1=DefFidoBox then dc:='F '
@@ -1620,6 +1618,9 @@ end;
 
 {
   $Log$
+  Revision 1.30  2001/12/13 17:06:46  mk
+  - removed unused variable
+
   Revision 1.29  2001/11/24 20:29:25  mk
   - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
 
