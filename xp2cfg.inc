@@ -714,7 +714,9 @@ begin
   NewsMIME:=true;
   MIMEqp:=false;
   RFC1522:=true;
+  multipartbin:=true;
   NoArchive:=false; {!MH:} { auf 'false' gesetzt, SV }
+  RFC_AddOldBetreff:=false;
   FidoDelEmpty:=false;
   KeepVia:=false;
   pmlimits[1,1]:=10000; pmlimits[1,2]:=0;     { Z-Netz     }
@@ -745,8 +747,6 @@ begin
   newuseribm:=true;
   _usersortbox:=false;
   NeuUserGruppe:=1;
-  multipartbin:=true;
-  RFC_AddOldBetreff:=false;
   mausmpbin:=false;
 
   AutoUpload:=true;
@@ -1017,6 +1017,7 @@ begin
 {  writeln(t,'AutoDatumsBezuege=',jnf(AutoDatumsBezuege)); }
 { unnîtig seit Fix von jg in XP3O2.PAS und XP4.PAS (2001/05/23 und 2001/06/10) }
   writeln(t,'IgnoreSupCancel=',jnf(IgnoreSupCancel));
+  writeln(t,'UserAutoCreate=',jnf(UserAutoCreate));
   writeln(t,'MessageBeep=',jnf(msgbeep));
   writeln(t,'NetcallUnmark=',jnf(netcallunmark));
   writeln(t,'DefaultNokop=',jnf(defaultnokop));
@@ -1057,12 +1058,12 @@ begin
   writeln(t,'NewsMIME=',jnf(NewsMIME));
   writeln(t,'MIMEqp=',jnf(MIMEqp));
   writeln(t,'RFC1522=',jnf(RFC1522));
+  writeln(t,'BinMultipart=',jnf(multipartbin));
   writeln(t,'NoArchive=',jnf(NoArchive)); {!MH:}
+  writeln(t,'RFC_AddOldBetreff=',jnf(RFC_AddOldBetreff));
+{ writeln(t,'UUCP-PGP=',jnf(PGP_UUCP)); }
   writeln(t,'NewsgroupAnzeige=',jnf(newsgroupdisp));
   writeln(t,'NewsgroupAnzeigeAlle=',jnf(newsgroupdispall));
-{ writeln(t,'UUCP-PGP=',jnf(PGP_UUCP)); }
-  writeln(t,'BinMultipart=',jnf(multipartbin));
-  writeln(t,'RFC_AddOldBetreff=',jnf(RFC_AddOldBetreff));
   wrhd(7);                                             { Fido }
   writeln(t,'Vorwahl=',vorwahl);
   writeln(t,'IntVorwahl=',intvorwahl);
@@ -1601,7 +1602,9 @@ begin
           getx(su,  'NewsMIME',NewsMIME) or
           getx(su,  'MIMEqp',MIMEqp) or
           getx(su,  'RFC1522',RFC1522) or
+          getx(su,  'binmultipart',multipartbin) or
           getx(su,  'NoArchive',NoArchive) or {!MH:}
+          getx(su,  'RFC_AddOldBetreff',RFC_AddOldBetreff) or
           getx(su,  'FidoDelEmpty',FidoDelEmpty) or
           getx(su,  'KeepVia',keepvia) or
           getx(su,  'ZCrossPostings',dummyb) or
@@ -1672,11 +1675,10 @@ begin
           getx(su,  'adrpmonly',adrpmonly) or
           getx(su,  'newuseribm',newuseribm) or
           getx(su,  'usersortbox',_usersortbox) or
-          getx(su,  'binmultipart',multipartbin) or
           getx(su,  'binmime',mausmpbin) or
-          getx(su,  'RFC_AddOldBetreff',RFC_AddOldBetreff) or
           getx(su,  'delviewtmp',delviewtmp) or
           getx(su,  'ignoresupcancel',ignoreSupCancel) or
+          getx(su,  'UserAutoCreate',UserAutoCreate) or
           getb(su,  'RTA-Mode', RTAMode) or
           getx(su,  'askreplyto',askreplyto) or
           getx(su,  'RTA-Standard', RTAStandard) or
@@ -1832,6 +1834,13 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.34  2001/12/20 23:38:38  my
+  MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+       Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
+       unbekannter User beim Beantworten oder Archivieren angelegt werden
+       soll sowie der anschlie·ende Bearbeitungsdialog abgeschaltet und
+       der User automatisch mit den Standardeinstellungen angelegt werden.
+
   Revision 1.62.2.33  2001/12/20 15:22:12  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen

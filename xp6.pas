@@ -813,6 +813,7 @@ end;
   Procedure changeempf;                         {Empfaenger der Mail aendern}
   var kb_s: boolean;
   begin
+    _UserAutoCreate:=false;
     kb_s:=kb_shift;
     pm:=cpos('@',empfaenger)>0;
     if pm then adresse:=empfaenger
@@ -2407,6 +2408,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.46  2001/12/20 23:38:39  my
+  MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+       Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
+       unbekannter User beim Beantworten oder Archivieren angelegt werden
+       soll sowie der anschlie·ende Bearbeitungsdialog abgeschaltet und
+       der User automatisch mit den Standardeinstellungen angelegt werden.
+
   Revision 1.39.2.45  2001/12/20 15:05:26  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen

@@ -23,7 +23,8 @@ uses  typeform,fileio,inout,maske,datadef,database,stack,resource,
       xp0,xp1,xp1input, xpglobal;
 
 const maxcc = 126;
-      ccte_nobrett : boolean = false;
+      ccte_nobrett    : boolean = false;
+      _UserAutoCreate : boolean = false;  { User ohne RÅckfrage anlegen }
 
 type  ccl   = array[1..maxcc] of AdrStr;
       ccp   = ^ccl;
@@ -168,9 +169,10 @@ begin
           exit;
           end
       else
-        if ReadJN(getres2(2202,iif(p=0,2,1))+': '+left(s,33)+ { 'unbekannter User' / 'unbekanntes Brett' }
-                  iifs(length(s)>33,'..','')+' - '+getres2(2202,3),true)
-        then begin                                           { 'neu anlegen' }
+        if ((p<>0) and _UserAutoCreate) or
+        ReadJN(getres2(2202,iif(p=0,2,1))+': '+left(s,33)+ { 'unbekannter User' / 'unbekanntes Brett' }
+               iifs(length(s)>33,'..','')+' - '+getres2(2202,3),true)
+        then begin                                         { 'neu anlegen' }
           cc_testempf:=true;
           if p=0 then begin
             MakeBrett(mid(s,2),n,DefaultBox,ntBoxNetztyp(DefaultBox),false);
@@ -183,15 +185,16 @@ begin
             end
           else begin
             MakeUser(s,DefaultBox);
-            if not modiuser(false) then
-            begin
-              dbseek(ubase,uiname,ustr(s));
-              if dbfound then dbDelete(ubase);
-              cc_testempf:=false;
+            if not _UserAutoCreate then
+              if not modiuser(false) then
+              begin
+                dbseek(ubase,uiname,ustr(s));
+                if dbfound then dbDelete(ubase);
+                cc_testempf:=false;
               end;
-            end;
+          end;
           aufbau:=true;
-          end
+        end
         else
           cc_testempf:=false;
       end;
@@ -232,6 +235,7 @@ var x,y   : byte;
     s     : string;
 begin
   h:=minmax(cc_anz+2,6,screenlines-13);
+  _UserAutoCreate:=false;
   diabox(62,h+4,getres(2201),x,y);    { 'Kopien an:' }
   inc(x); inc(y);
   openmask(x,x+59,y+1,y+h,false);
@@ -401,6 +405,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.8  2001/12/20 23:38:40  my
+  MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+       Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
+       unbekannter User beim Beantworten oder Archivieren angelegt werden
+       soll sowie der anschlie·ende Bearbeitungsdialog abgeschaltet und
+       der User automatisch mit den Standardeinstellungen angelegt werden.
+
   Revision 1.15.2.7  2001/10/16 18:39:17  my
   MY:- Nur etwas Code-Kosmetik, ÅberflÅssige Blanks entfernt etc.
 

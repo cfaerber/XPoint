@@ -855,7 +855,9 @@ const
 
        showungelesen : boolean = true;    { kombinierter Ungelesen-Modus }
 
-       ignoreSupCancel : boolean = False; { Supersedes/Ersetzt und Cancels ignorieren }
+       ignoreSupCancel : boolean = false; { Supersedes/Ersetzt und Cancels ignorieren }
+       UserAutoCreate  : boolean = false; { Unbekannte User beim Beantworten und }
+                                          { Archivieren ohne Rckfrage anlegen   }
 
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bb_gruppe,bb_index,bb_adresse,
@@ -1226,6 +1228,13 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.48  2001/12/20 23:38:38  my
+  MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+       Config/Optionen/Nachrichten. Damit kann die Rckfrage, ob ein
+       unbekannter User beim Beantworten oder Archivieren angelegt werden
+       soll sowie der anschlieáende Bearbeitungsdialog abgeschaltet und
+       der User automatisch mit den Standardeinstellungen angelegt werden.
+
   Revision 1.54.2.47  2001/12/20 15:03:13  my
   MY:- Registrierroutine fr RFC/Client gem„á Vereinbarung mit Peter
        Mandrella (Mail vom 21.11.2001) angepaát => kein UUCP-Key mehr

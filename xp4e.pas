@@ -1461,6 +1461,7 @@ begin
   oldpb:=pbox;
   verteiler:=false;
   newbrett:=false;
+  _UserAutoCreate:=true;
   brett:=(left(s,1)='/') and (cpos('@',s)=0);
   if trim(s)='' then
   begin
@@ -2511,6 +2512,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.26  2001/12/20 23:38:38  my
+  MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+       Config/Optionen/Nachrichten. Damit kann die Rckfrage, ob ein
+       unbekannter User beim Beantworten oder Archivieren angelegt werden
+       soll sowie der anschlieáende Bearbeitungsdialog abgeschaltet und
+       der User automatisch mit den Standardeinstellungen angelegt werden.
+
   Revision 1.25.2.25  2001/12/20 15:22:13  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
@@ -2523,16 +2531,16 @@ end.
        nicht bei N//T z.B.)
 
   Revision 1.25.2.23  2001/09/16 20:26:14  my
-  JG+MY:- User editieren: bei "Adreßbuchgruppe" <F2>-Auswahl aus den
-          aktuell bereits verwendeten Adreßbuchgruppen möglich.
+  JG+MY:- User editieren: bei "Adreábuchgruppe" <F2>-Auswahl aus den
+          aktuell bereits verwendeten Adreábuchgruppen m”glich.
 
-  JG+MY:- Neue Menüpunkte beim Editieren markierter User:
-          Priorität / Empfangsbestätigung / Vertreteradresse / Löschen
+  JG+MY:- Neue Menpunkte beim Editieren markierter User:
+          Priorit„t / Empfangsbest„tigung / Vertreteradresse / L”schen
 
-  JG+MY:- Lesemodi "Datum" und "Zeit" zusammengefaßt zu Lesemodus
+  JG+MY:- Lesemodi "Datum" und "Zeit" zusammengefaát zu Lesemodus
           "Datum/Zeit" (kombinierte Datums-/Zeiteingabe). Steht der
           Markierbalken auf einer Nachricht, kann direkt das Eingangsdatum
-          aus der Nachricht übernommen werden.
+          aus der Nachricht bernommen werden.
 
   JG+MY:- Neuer Lesemodus "Reorg." (Lesen ab letzter Reorganisation)
 

@@ -843,6 +843,7 @@ var t,lastt: taste;
   begin
     saveDispRec := nil; { Auf keinen Fall entfernen! }
     adresseAusgewaehlt := false;
+    _UserAutoCreate:=UserAutoCreate;
     fn:=TempS(2000);
     GoP;
     if reply then netztyp:=mbNetztyp
@@ -854,7 +855,7 @@ var t,lastt: taste;
       exit;
       end;
     if reply and (dbReadInt(mbase,'unversandt') and 128<>0) then begin
-      rfehler(443);  { 'Nachricht wurde duch Absender "gecancelt" - antworten nicht mîglich.' }
+      rfehler(443);  { 'Nachricht wurde durch Absender "gecancelt" - antworten nicht mîglich.' }
       exit;
       end;
     if reply and not pm and (dbReadInt(mbase,'netztyp')and $400<>0) then begin
@@ -1133,11 +1134,11 @@ var t,lastt: taste;
         dbseek(ubase,uiname,ustr(hdp^.empfaenger));
         if dbfound then dbReadN(ubase,ub_pollbox,defaultbox);
         dispose(hdp);
-        end
+      end
       else begin
         dbseek(bbase,biIntnr,mid(_empf,2));
         if dbfound then dbReadN(bbase,bb_pollbox,defaultbox);
-        end;
+      end;
       ReplaceVertreterbox(defaultbox,true);
       brk:=not CC_testempf(empf);
       defaultbox:=origdb;
@@ -2238,6 +2239,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.55  2001/12/20 23:38:38  my
+  MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+       Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
+       unbekannter User beim Beantworten oder Archivieren angelegt werden
+       soll sowie der anschlie·ende Bearbeitungsdialog abgeschaltet und
+       der User automatisch mit den Standardeinstellungen angelegt werden.
+
   Revision 1.26.2.54  2001/12/20 15:22:13  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen

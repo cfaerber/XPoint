@@ -1102,6 +1102,7 @@ again:
                dispose(sData);
              end;
          6 : begin
+               _UserAutoCreate:=UserAutoCreate;
                dbSeek(ubase,uiName,ustr(name));
                if not dbFound then begin   { User noch nicht vorhanden }
                   pollbox:=defaultbox;
@@ -1189,6 +1190,7 @@ var fn,tmp : pathstr;
     ebrett : string[5];
     box    : string[BoxNameLen];
 begin
+  _UserAutoCreate:=UserAutoCreate;
   dbReadN(mbase,mb_ablage,abl);
   if dbReadInt(mbase,'unversandt') and 8 <> 0 then   { Wiedervorlage }
     dbReadN(mbase,mb_wvdatum,edat)
@@ -1344,6 +1346,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.20  2001/12/20 23:38:39  my
+  MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+       Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
+       unbekannter User beim Beantworten oder Archivieren angelegt werden
+       soll sowie der anschlie·ende Bearbeitungsdialog abgeschaltet und
+       der User automatisch mit den Standardeinstellungen angelegt werden.
+
   Revision 1.20.2.19  2001/12/20 15:22:14  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen

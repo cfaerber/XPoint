@@ -428,6 +428,7 @@ var user : string[AdrLen];
     ok   : boolean;
     nt   : byte;
 begin
+  _UserAutoCreate:=false;
   case aktdispmode of
     1..4   : if dbEOF(ubase) or dbBOF(ubase) then
                user:=''
@@ -799,6 +800,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.6  2001/12/20 23:38:39  my
+  MY:- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+       Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
+       unbekannter User beim Beantworten oder Archivieren angelegt werden
+       soll sowie der anschlie·ende Bearbeitungsdialog abgeschaltet und
+       der User automatisch mit den Standardeinstellungen angelegt werden.
+
   Revision 1.19.2.5  2001/08/12 11:20:39  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
