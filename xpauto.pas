@@ -598,10 +598,10 @@ begin
         end;
       end;
     ParGelesen:=mgel;
+    {$IFDEF Ver32 }
+    FindClose(sr);
+    {$ENDIF}
   end;
-  {$IFDEF virtualpascal}
-  FindClose(sr);
-  {$ENDIF}
 end;
 
 
@@ -655,6 +655,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/04/30 20:24:01  mk
+  - FindClose an falscher Stelle
+
   Revision 1.8  2000/04/18 11:23:51  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 
