@@ -956,7 +956,10 @@ end;
 
 function Lastchar(const s:string):char;           { letztes Zeichen eines Str.   }
 begin
-  lastchar:=s[length(s)];
+  if Length(s) > 0 then
+   lastchar:=s[length(s)]
+  else
+    LastChar := ' ';
 end;
 
 
@@ -1299,6 +1302,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/07/21 13:22:59  mk
+  - Bugfix fuer AnsiStrings
+
   Revision 1.57  2000/07/09 08:35:13  mk
   - AnsiStrings Updates
 
