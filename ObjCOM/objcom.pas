@@ -350,7 +350,7 @@ begin
     i:=0; while(CharCount<Written)and(i<CommandTimeout)do
       begin SleepTime(100); inc(i,100); Str(CharCount,Echo); DebugLog('ObjCOM','Waiting '+Echo,3)end;
     if CharCount<Written then Written:=CharCount;
-    ReadBlock(Echo[1], Written, ReadBytes); SetLength(Echo,ReadBytes); ErrorStr:=Echo;
+    SetLength(Echo,Written); ReadBlock(Echo[1], Written, ReadBytes); SetLength(Echo,ReadBytes); ErrorStr:=Echo;
     SendString:=(ReadBytes=Length(Temp))and(Echo=Temp);
   end;
 end; { proc. SendString }
@@ -441,6 +441,9 @@ end.
 
 {
   $Log$
+  Revision 1.21  2001/03/21 19:04:00  ma
+  - fixed SendString
+
   Revision 1.20  2001/03/16 17:10:47  cl
   - changed SendString to ansistrings
 
