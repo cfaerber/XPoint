@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ ----------------------------------------------------------------}
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { CrossPoint - HauptmenÅ }
@@ -24,7 +25,7 @@ const Nachricht = 3;     { /Nachricht }
       Edit      = 16;    { /Edit }
       Maps      = 19;    { Nachricht / Brettmanager }
       Weiter    = 21;    { Nachricht / Weiterleiten }
-      Fileliste = 27;    { Fido / Filelisten }
+      Fileliste = 27;    { Fileserver-Listen }
       Sonstiges = 33;    { Wartung / Sonstiges }
       PGP       = 40;    { Nachricht / PGP }
       Hilfe     = 41;    { /? }
@@ -263,15 +264,39 @@ begin
           end;
 
      15 : case m1 of                          { Netcall }
-            1 : EinzelNetcall('');                           { Einzeln }
-            2 : AutoTiming(0,true,false,false,1);            { Alle    }
+            1 : begin
+                  NodelistBrowserButtonsDisabled:=true;
+                  EinzelNetcall('');                         { Einzeln }
+                  NodelistBrowserButtonsDisabled:=false;
+                end;
+            2 : begin
+                  NodelistBrowserButtonsDisabled:=true;
+                  AutoTiming(0,true,false,false,1);          { Alle    }
+                  NodelistBrowserButtonsDisabled:=false;
+                end;
             3 : AnrufStat;                                   { Letzte Anrufe }
             4 : netcall_at('','');                           { Uhrzeit }
-            5 : netcall(true,'',false,true,false);           { Relogin }
-            6 : netcall(false,'',false,false,false);         { Online  }
-            8 : AutoTiming(0,true,false,true,1);             { Spezial }
+            5 : begin
+                  NodelistBrowserButtonsDisabled:=true;
+                  netcall(true,'',false,true,false);         { Relogin }
+                  NodelistBrowserButtonsDisabled:=false;
+                end;
+            6 : begin
+                  NodelistBrowserButtonsDisabled:=true;
+                  netcall(false,'',false,false,false);       { Online  }
+                  NodelistBrowserButtonsDisabled:=false;
+                end;
+            8 : begin
+                  NodelistBrowserButtonsDisabled:=true;
+                  AutoTiming(0,true,false,true,1);           { Spezial }
+                  NodelistBrowserButtonsDisabled:=false;
+                end;
             9 : EditNetcallDat;                              { Spezial-Liste }
-           11 : AutoTiming(0,false,false,false,1);           { Bereitschaft }
+           11 : begin
+                  NodelistBrowserButtonsDisabled:=true;
+                  AutoTiming(0,false,false,false,1);         { Bereitschaft }
+                  NodelistBrowserButtonsDisabled:=false;
+                end;
            12 : UniEdit(1);                                  { Timing-Liste }
           end;
 
@@ -329,26 +354,74 @@ begin
           end;
 
      21 : case m1 of           { Weiterleiten }
-            1     : Weiterleit(1,true);      { Kopie     }
-            2     : Weiterleit(7,true);      { Original  }
-            3     : Weiterleit(2,true);      { EditTo    }
-            4     : Weiterleit(3,true);      { QuoteTo   }
+            1     : begin
+                      NodelistBrowserButtonsDisabled:=true;
+                      Weiterleit(1,true);                    { Kopie     }
+                      NodelistBrowserButtonsDisabled:=false;
+                    end;
+            2     : begin
+                      NodelistBrowserButtonsDisabled:=true;
+                      Weiterleit(7,true);                    { Original  }
+                      NodelistBrowserButtonsDisabled:=false;
+                    end;
+            3     : begin
+                      NodelistBrowserButtonsDisabled:=true;
+                      Weiterleit(2,true);                    { EditTo    }
+                      NodelistBrowserButtonsDisabled:=false;
+                    end;
+            4     : begin
+                      NodelistBrowserButtonsDisabled:=true;
+                      Weiterleit(3,true);                    { QuoteTo   }
+                      NodelistBrowserButtonsDisabled:=false;
+                    end;
             6     : empfang_bestaetigen(nix);
             7     : CancelMessage;
-            8     : ErsetzeMessage;
-            9     : Weiterleit(4,true);      { Erneut    }
-           10     : Weiterleit(5,true);      { Archiv    }
-           11     : pm_archiv(false);
+            8     : begin
+                      NodelistBrowserButtonsDisabled:=true;
+                      ErsetzeMessage;
+                      NodelistBrowserButtonsDisabled:=false;
+                    end;
+            9     : begin
+                      NodelistBrowserButtonsDisabled:=true;
+                      Weiterleit(4,true);                    { Erneut    }
+                      NodelistBrowserButtonsDisabled:=false;
+                    end;
+           10     : begin
+                      NodelistBrowserButtonsDisabled:=true;
+                      Weiterleit(5,true);                    { Archiv    }
+                      NodelistBrowserButtonsDisabled:=false;
+                    end;
+           11     : begin
+                      NodelistBrowserButtonsDisabled:=true;
+                      pm_archiv(false);
+                      NodelistBrowserButtonsDisabled:=false;
+                    end;
          end;
 
      22 : if not (dispmode in [10..19]) then
             rfehler(442)    { 'Nur in der NachrichtenÅbersicht mîglich.' }
           else
             case m1 of           { éndern }
-              1 : ModiBetreff;
-              2 : ModiEmpfdatum;
-              3 : ModiRot13;
-              4 : ModiText;
+              1 : begin
+                    NodelistBrowserButtonsDisabled:=true;
+                    ModiBetreff;
+                    NodelistBrowserButtonsDisabled:=false;
+                  end;
+              2 : begin
+                    NodelistBrowserButtonsDisabled:=true;
+                    ModiEmpfdatum;
+                    NodelistBrowserButtonsDisabled:=false;
+                  end;
+              3 : begin
+                    NodelistBrowserButtonsDisabled:=true;
+                    ModiRot13;
+                    NodelistBrowserButtonsDisabled:=false;
+                  end;
+              4 : begin
+                    NodelistBrowserButtonsDisabled:=true;
+                    ModiText;
+                    NodelistBrowserButtonsDisabled:=false;
+                  end;
               5 : ModiTyp;
               6 : ModiGelesen;
               7 : ModiHighlite;
@@ -406,18 +479,24 @@ begin
             3 : SetShrinkNodelist;
             4 : NodelistIndex;
             6 : NodeStatistik;
-            7 : NodelistBrowser;
-            8 : NodelistSeek;
+            7 : NodelistBrowser(false);
+            8 : NodelistBrowser(true);
           end;
 
      31 : case m1 of          { Fido }
-            1 : AutoCrash:=FidoRequest('','');
+            1 : begin
+                  NodelistBrowserButtonsDisabled:=true;
+                  AutoCrash:=FidoRequest('','');
+                  NodelistBrowserButtonsDisabled:=false;
+                end;
             4 : begin
+                  NodelistBrowserButtonsDisabled:=true;
                   if netcall(true,'',false,false,true) then;   { Crash   }
                   if (autocrash=' alle ') or (autocrash=CrashTemp) then begin
                     AutoTiming(iif(autocrash=CrashTemp,1,0),false,true,false,1);
                     autocrash:='';
                     end;
+                  NodelistBrowserButtonsDisabled:=false;
                 end;
             6 : FidoOptions;
           end;
@@ -426,8 +505,10 @@ begin
             1 : ReadFidolist;
             2 : DelFidolist;
             3 : begin
+                  NodelistBrowserButtonsDisabled:=true;
                   adr:=FidoSeekfile;
                   if (adr<>'') and netcall(true,adr,false,false,true) then;
+                  NodelistBrowserButtonsDisabled:=false;
                 end;
           end;
 
@@ -782,6 +863,14 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.13  2003/03/17 22:57:27  my
+  MY:- MenÅfunktionen F/N/A und F/N/D an neuen Nodelist-Browser angepa·t.
+
+  MY:- Buttons "Nachricht" und "Request" im Nodelist-Browser bei
+       etlichen Funktionen deaktiviert.
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.14.2.12  2002/06/03 16:43:30  my
   MY:- Fix: Die MenÅfunktion XPoint/Export/Brettinhalt rief stattdessen
        Nachricht/Alle/Entfernen auf. :-(
