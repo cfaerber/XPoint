@@ -50,11 +50,13 @@ procedure shell(const prog:string; space:word; cls:shortint);
   {$ifdef Unix}
   begin
     Debug.TempCloseLog(False);
+    DoneXPCurses;
 {$IFDEF Kylix}
     Result:=libc.system(PChar(command));
 {$ELSE}
     Result:=linux.shell(command);
 {$ENDIF}
+    InitXPCurses;
     Debug.TempCloseLog(True);
     Debug.DebugLog('xp1s','called program "'+command+'": result '+
                    strs(Result),iif(Result=0,DLInform,DLError));
@@ -493,6 +495,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.68  2001/10/20 19:11:10  ml
+  - call done and init-curses when calling external progs (redraw needed yet)
+
   Revision 1.67  2001/10/17 20:55:21  cl
   - Fixed range check error
 
