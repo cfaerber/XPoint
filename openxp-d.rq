@@ -1403,7 +1403,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # sonst.
 24   ^Parken,^Datum, ^EB ,o^hneSig,l^”schen,^Zurck
 25   JNIùBOCT
-28   ~^Ja ,^Nein,^Intern,^Spezial,ù1^Betreff,B^ox,^Code,^Anh„nge
+28   ~^Ja ,^Nein,^Intern,^Spezial,·3E^mp.,^Betreff,B^ox,^Code
 29   ,^Text
 30   PDEH™RMLUG
 # Kopf fr Editor
@@ -3819,6 +3819,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.31  2001/09/06 15:17:35  mk
+# - fixed resource 611,28 (part of comming new multipart MIME change)
+#
 # Revision 1.30  2001/09/05 23:27:23  mk
 # - added empty resources for Menu, avoids false error in debuglog.txt
 # - fixed 611,10: E^mpfaenger to Empfaenger
