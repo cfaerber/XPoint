@@ -76,10 +76,11 @@ var s: TStream;
         t := GetLine;
         t2:= Trim(t);
 
-        if not ( ((Length(t2)-Length(c.Boundary)) in [2,4]) and // this is only
-           (t2[1]='-') and (t2[2]='-') and                // optimization
-           ( (t2 = '--' + c.Boundary) or             // and this is the
-             (t2 = '--' + c.Boundary + '--') ) ) then  // real test
+        i := Length(t2)-Length(c.Boundary);
+        if not ( ((i = 2) or (i = 4)) and             // this is only
+           (t2[1]='-') and (t2[2]='-') and            // optimization
+           ( (t2 = '--' + c.Boundary) or              // and this is the
+             (t2 = '--' + c.Boundary + '--') ) ) then // real test
         begin
           if assigned(d) and (SavedT <> '') then
             d.Write(SavedT[1],Length(SavedT));
@@ -303,6 +304,9 @@ end;
 
 //
 // $Log$
+// Revision 1.6  2003/09/29 19:09:00  mk
+// - another fix for #809655: 3.8.12. Multipart lässt sich nicht edieren
+//
 // Revision 1.5  2003/09/29 17:35:22  mk
 // - fixed typo in last committ
 //
