@@ -29,6 +29,7 @@ function  xp9_testbox(var s:string):boolean;
 function  xp9_setclientFQDN(var s:string):boolean;
 function  xp9_FQDNTest(var s:string):boolean;
 function  zidtest(var s:string):boolean;
+function  toggleSysop(var s:string):boolean;
 function  validfile(var s:string):boolean;
 function  testfidodir(var s:string):boolean;
 function  testqwkinfiles(var s:string):boolean;
@@ -95,10 +96,8 @@ var   d          : DB;
       user       : string[20];         { Username der aktuellen Box      }
       komm       : string[25];         { Kommentar der aktuellen Box     }
       boxline    : string[width];      { angezeigte Zeile in Boxauswahl  }
-      TempBoxRec : BoxRec;
 label nextBox;
 begin
-  if own_Name <> '' then TempBoxRec:=BoxPar^;    { Box-Parameter sichern }
   BoxSelect:=''; brk:=false;
   height:=screenlines-17;
   if screenlines>30 then dec(height,2);
@@ -113,17 +112,12 @@ begin
         if ustr(box)=ustr(boxlist[i]) then  { Box schon ausgewÑhlt?      }
           goto nextBox;                     { ...dann nÑchsten Datensatz }
     dbRead(d,'Netztyp',nt);
-    if nt=40 then
-    begin
-      ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
-      if Boxpar^.pppMode then nt:=41;                  { RFC/Client? }
-    end;
     if ((nt=own_Nt) and (ustr(box)<>own_Name))   { passende Box gefunden }
       or (own_name='') then
     begin
       inc(sel_anz);
       komm:=dbReadStr(d,'Kommentar');
-      if nt=41 then user:=dbReadStr(d,'Email')
+      if nt=nt_Client then user:=dbReadStr(d,'Email')
       else user:=dbReadStr(d,'Username');
       boxline:=' '+forms(box,BoxNameLen)+'  '+forms(user,20)+
                '  '+forms(komm,25);
@@ -172,7 +166,6 @@ begin
   end else
     rfehler(953); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
   if own_Name <> '' then
-     BoxPar^:=TempBoxRec;                  { Box-Parameter zurÅcksichern }
 end;
 
 
@@ -191,7 +184,6 @@ var   d          : DB;
       poutside   : boolean;
       movefrom   : integer;
       entries    : integer;
-      TempBoxRec : BoxRec;
 var   boxlist    : box_array;
 label Start;
 
@@ -218,7 +210,6 @@ label Start;
     moff;
     for i:=1 to gl do
     begin
-      gotoxy(x+1,y+i);
       if i=p then
         if own_Name <> '' then
           attrtxt(col.colsel2bar)
@@ -230,10 +221,10 @@ label Start;
         else
           attrtxt(col.colselbox);
       if i+a>entries then
-        Wrt2(sp(width))
+        FWrt(x+1, y+i, sp(width))
       else begin
         box:=boxlist[a+i];
-        Wrt2(' ' + iifc(a+i=movefrom,#16,' ') +
+        FWrt(x+1, y+i, ' ' + iifc(a+i=movefrom,#16,' ') +
              forms(box,width-2));
       end;
     end;
@@ -241,8 +232,8 @@ label Start;
       attrtxt(col.colsel2box)
     else
       attrtxt(col.colselbox);
-    wrt(x,y+1,iifc(a=0,'≥',#30));
-    wrt(x,y+gl,iifc(a+gl<entries,#31,'≥'));
+    fwrt(x+width+1,y+1,iifc(a=0,'≥',#30));
+    fwrt(x+width+1,y+gl,iifc(a+gl<entries,#31,'≥'));
     mon;
   end;
 
@@ -432,26 +423,18 @@ begin  { --- of EditAddServersList --- }
   s1:=trim(cr.s);
   if (s1='') and (own_Name<>'') then      { Sind Boxen im Eingabefeld? }
   begin                        { Wenn nicht, auf passende Boxen prÅfen }
-    TempBoxRec:=BoxPar^;                       { Box-Parameter sichern }
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do
     begin
       dbRead(d,'Netztyp',nt);
-      if (nt=40) and (own_Nt=41) then
-      begin
-        ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
-        if Boxpar^.pppMode then nt:=41;                  { RFC/Client? }
-      end;
       if (nt=own_Nt) and (ustr(dbReadStr(d,'boxname')) <> own_Name) then
       begin                           { erste passende Box gefunden... }
         dbClose(d);
-        BoxPar^:=TempBoxRec;     { Box-Parameter zurÅcksichern, und... }
         goto start;        { ...dann Schleife verlassen und los geht's }
       end;
       dbNext(d);
     end;
     dbClose(d);                          { keine passende Box gefunden }
-    BoxPar^:=TempBoxRec;                 { Box-Parameter zurÅcksichern }
     rfehler(953); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
     exit;
   end;
@@ -580,7 +563,6 @@ var   p,nt,i,j,
       boxlen,
       bfglen     : word;
       s1         : string;
-      TempBoxRec : BoxRec;
       d          : DB;
       boxlist    : array[1..maxboxen] of string[BoxNameLen];
       dupelist   : array[1..maxboxen] of byte;       { Array fÅr Dupes }
@@ -608,13 +590,6 @@ const maxboxlen  : byte = 255;
   { wir die oben angesprochenen Bedingungen nicht als Parameter        }
   { Åbergeben (geht bei 'msetvfunc' halt nicht) und fragen sie daher   }
   { Åber Variablen ab.                                                 }
-
-  procedure closeRestore;
-  begin                                      { Box-Datenbank schlie·en }
-    dbClose(d);
-    if own_Name <> '' then
-      BoxPar^:=TempBoxRec;               { Box-Parameter zurÅcksichern }
-  end;
 
 begin
   addServersTest:=true;
@@ -662,7 +637,6 @@ begin
     end;
   end;
   { ----------------- Ende Dupeschleife ------------------ }
-  if own_Name <> '' then TempBoxRec:=BoxPar^;  { Box-Parameter sichern }
   dbOpen(d,BoxenFile,1);
   for i:=1 to box_anz do
   begin
@@ -677,7 +651,7 @@ begin
                  getreps2(10900,61,strs(dupelist[i])))
                               { 'Serverbox "%s" ist %s mal vorhanden!' }
         else begin
-          closeRestore;
+          dbClose(d);
           exit;
         end;
       end;
@@ -689,7 +663,7 @@ begin
       if showErrors then
         rfehler1(962,boxlist[i])   { 'Serverbox "%s" existiert nicht!' }
       else begin
-        closeRestore;
+        dbClose(d);
         exit;
       end;
     end
@@ -702,17 +676,12 @@ begin
           rfehler1(963,boxlist[i])
               { Serverbox "%s" ist identisch mit editierter Serverbox!'}
         else begin
-          closeRestore;
+          dbClose(d);
           exit;
         end;
       end
       else begin
         dbRead(d,'Netztyp',nt);
-        if (nt=40) and (own_Nt=41) then
-        begin
-          ReadBox(nt,dbReadStr(d,'dateiname'),boxpar);
-          if Boxpar^.pppMode then nt:=41;                { RFC/Client? }
-        end;
         if nt <> own_Nt then
         begin
           addServersTest:=false;
@@ -721,7 +690,7 @@ begin
                    getreps2(10900,64,Netz_Typ(own_Nt)))
                    { 'Serverbox "%s" ist nicht vom Netztyp %s!' }
           else begin
-            closeRestore;
+            dbClose(d);
             exit;
           end;
         end;
@@ -743,7 +712,7 @@ begin
         rfehler1(965,strs(maxbfglen))
     { 'Maximale GesamtlÑnge (%s) der Dateinamen (.BFG) Åberschritten!' }
       else begin
-        closeRestore;
+        dbClose(d);
         exit;
       end;
     end;
@@ -756,7 +725,7 @@ begin
       rfehler1(966,strs(maxboxlen))
       { 'Maximale GesamtlÑnge (%s) der Serverbox-Namen Åberschritten!' }
     else begin
-      closeRestore;
+      dbClose(d);
       exit;
     end;
   end;
@@ -766,11 +735,11 @@ begin
     if showErrors then
       rfehler1(954,strs(maxbox)) { 'Maximal %s Serverbox-EintrÑge mîglich!' }
     else begin
-      closeRestore;
+      dbClose(d);
       exit;
     end;
   end;
-  closeRestore;
+  dbClose(d);
 end;
 
 
@@ -1140,6 +1109,17 @@ begin
     end;
 end;
 
+
+function toggleSysop(var s:string):boolean;   { Sysop-Mode on/off }
+var b   : boolean;
+    i,j : byte;
+begin
+  b:=s=_jn_[1];
+  j:=6;
+  if own_Nt in [nt_Netcall,nt_Fido,nt_QWK] then j:=7;
+  for i:=2 to j do setfieldenable(i,b);
+  toggleSysop:=true;
+end;
 
 function validfile(var s:string):boolean;     { Sysop-Mode }
 begin
@@ -1547,7 +1527,9 @@ begin
       dbRead(d,'boxname',s);
       dbRead(d,'netztyp',nt);
       if fieldpos=amvfield then    { AM-Vertreterbox }
-        ok:=(DomainNt=nt)
+        if (DomainNt=nt_Client) or (DomainNt=nt_UUCP) then
+          ok:=(nt=nt_Client) or (nt=nt_UUCP)
+        else ok:=(DomainNt=nt)
       else                         { PM-Vertreterbox }
         ok:=ntAdrCompatible(DomainNt,nt);
       if not ok then rfehler(2713);
@@ -1657,20 +1639,21 @@ end;
 
 
 procedure gf_getntyp(var s:string);
-var uucp : boolean;
+var uucp,client : boolean;
 begin
-  setfieldtext(fieldpos+1,getres2(912,iif(lstr(s)=lstr(ntName(41)),13,2)));
+  setfieldtext(fieldpos+1,getres2(912,iif(lstr(s)=lstr(ntName(nt_Client)),13,2)));
   gf_fido:=(lstr(s)=lstr(ntName(nt_Fido)));
-  uucp:=(lstr(s)=lstr(ntName(nt_UUCP_U))) OR (lstr(s)=lstr(ntName(nt_UUCP_C)));
-  if (lstr(s)=lstr(ntName(nt_Maus))) or gf_fido or uucp then
+  uucp:=(lstr(s)=lstr(ntName(nt_UUCP)));
+  client:=(lstr(s)=lstr(ntName(nt_Client)));
+  if (lstr(s)=lstr(ntName(nt_Maus))) or gf_fido or uucp or client then
     set_chml(userfield,'')
   else
     set_chml(userfield,'>');
-  if uucp then
+  if uucp or client then
     set_chml(fieldpos+1,'')
   else
     set_chml(fieldpos+1,'>');
-  setfieldtext(userfield,getres2(912,iif(lstr(s)=lstr(ntName(41)),12,3)));
+  setfieldtext(userfield,getres2(912,iif(client,12,3)));
 end;
 
 function xp9_testbox(var s:string):boolean;
@@ -1695,7 +1678,8 @@ begin
       else if nt=lstr(ntName(nt_Netcall)) then         { Domain abschneiden }
         if right(s,4)='.ZER' then s:=left(s,length(s)-4)
         else
-      else if (nt=lstr(ntName(nt_ZCONNECT))) or (nt=lstr(ntName(nt_UUCP))) then
+      else if (nt=lstr(ntName(nt_ZCONNECT))) or (nt=lstr(ntName(nt_UUCP)))
+           or (nt=lstr(ntName(nt_Client))) then
         if cpos('.',s)>0 then truncstr(s,cpos('.',s)-1);
       xp9_testbox:=true;
       end;
@@ -1757,7 +1741,6 @@ begin
     notempty2:=false;
     end;
 end;
-
 
 { s = '<BOX> <USERNAME> [/ Realname]'}
 
@@ -1834,6 +1817,16 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.25  2001/12/20 15:09:12  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
+
+  MK:- Einige Displayroutinen beschleunigt ('FWrt()' statt 'Wrt()').
+
   Revision 1.1.2.24  2001/12/11 17:51:37  my
   MY:- RFC/Client: Client- und Server-Konfiguration erheblich umgestaltet
        und erweitert. Neue Einstellungen:
