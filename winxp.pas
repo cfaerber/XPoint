@@ -104,7 +104,7 @@ procedure wpop;
 { Schreiben eines Strings mit Update der Cursor-Posititon }
 { Diese Routine aktualisiert wenn nîtig den LocalScreen }
 { Die Koordinaten beginnen bei 1,1 }
-procedure Wrt(const x,y:word; const s:string);
+procedure Wrt(const x,y: Integer; const s:string);
 { Schreiben eines Strings, wie Write, CursorPosition
   wird aktualisiert }
 { Die Koordinaten beginnen bei 1,1 }
@@ -112,7 +112,7 @@ procedure Wrt2(const s:string);
 { Schreiben eines Strings ohne Update der Cursor-Position
   Der LocalScreen wird wenn nîtig aktualisiert }
 { Die Koordinaten beginnen bei 1,1 }
-procedure FWrt(const x,y:word; const s:string);
+procedure FWrt(const x,y: Integer; const s:string);
 procedure Clreol;
 procedure GotoXY(x, y: Integer);
 procedure TextColor(Color: Byte);
@@ -274,33 +274,70 @@ begin
     FillScreenLine(l, i, ' ', r-l+1);
 end;
 
-{$IFNDEF NCRT }
-procedure Wrt(const x,y:word; const s:string);
-begin
-  FWrt(x, y, s);
-  GotoXY(x+Length(s), y);
-end; { Wrt }
-{$ENDIF }
-
 {$IFDEF DOS32}
 type TCoord= record x,y: integer end;
 {$ENDIF}
 
 {$IFNDEF NCRT }
-procedure FWrt(const x,y:word; const s:string);
+{$R-,Q-}
+procedure Wrt(const x,y: Integer; const s:string);
+{$IFDEF Win32 }
+var
+  WritePos: TCoord;                       { Upper-left cell to write from }
+  OutRes: DWord;
+  Len: Integer;
+{$ENDIF }
+begin
+  {$IFDEF Win32 }
+    WritePos.X := x-1; WritePos.Y := y-1;  Len := Length(s);
+    WriteConsoleOutputCharacter(OutHandle, @s[1], Len, WritePos, OutRes);
+    FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
+    WritePos.X := x + Len;
+    SetConsoleCursorPosition(OutHandle, WritePos); 
+  {$ELSE }
+    FWrt(x, y, s);
+    GotoXY(x+Length(s), y);
+  {$ENDIF }
+end; { Wrt }
+
+procedure Wrt2(const s:string);
+{$IFDEF Win32 }
+var
+  WritePos: TCoord;                       { Upper-left cell to write from }
+  OutRes: DWord;
+  Len: Integer;
+{$ENDIF }
+begin
+  {$IFDEF Win32 }
+    WritePos.X := WhereX-1; WritePos.Y := WhereY-1; Len := Length(s);
+    WriteConsoleOutputCharacter(OutHandle, @s[1], Len, WritePos, OutRes);
+    FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
+    WhereX := WhereX + Len;
+    WritePos.X := WhereX;
+    SetConsoleCursorPosition(OutHandle, WritePos);  
+  {$ELSE }
+    FWrt(WhereX, WhereY, s);
+    GotoXY(WhereX+Length(s), WhereY);
+  {$ENDIF }
+end;
+{$ENDIF }
+
+
+{$IFNDEF NCRT }
+procedure FWrt(const x,y: Integer; const s:string);
 var
   {$IFDEF Win32 }
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: DWord;
+    Len: Integer;
   {$ENDIF }
   i, Count: Integer;
 begin
-  {$R-}
   {$IFDEF Win32 }
     { Kompletten String an einem StÅck auf die Console ausgeben }
-    WritePos.X := x-1; WritePos.Y := y-1;
-    WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
-    FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, OutRes);
+    WritePos.X := x-1; WritePos.Y := y-1;  Len := Length(s);
+    WriteConsoleOutputCharacter(OutHandle, @s[1], Len, WritePos, OutRes);
+    FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
   {$ELSE }
     {$IFDEF DOS32 }
       Count := ((X-1)+(y-1)*screenwidth)*2;
@@ -311,10 +348,6 @@ begin
       Write(s);
     {$ENDIF }
   {$ENDIF Win32 }
-
-  {$IFDEF Debug }
-    {$R+}
-  {$ENDIF }
 
   {$IFDEF Localscreen }
   { LocalScreen Åbernimmt die énderungen }
@@ -344,9 +377,9 @@ begin
 {$ELSE }
   procedure consolewrite(x,y:word; num: Integer);  { Num = Chars in xp0.charpuf (String) }
   var
-    i, j: Integer;
+    i, j: Integer;                        
   begin
-    i := 1;
+    i := 1;                             
     while i < num do
     begin
       j := i;
@@ -377,7 +410,6 @@ begin
   WhereX := X;
   WhereY := Y;
 {$IFDEF Win32}
-  FillChar(Curinfo, SizeOf(Curinfo), 0);
   CurInfo.X := X - 1;
   CurInfo.Y := Y - 1;
 
@@ -576,12 +608,8 @@ begin
 {$ENDIF }
 end;
 
-{$IFNDEF NCRT }
-procedure Wrt2(const s:string);
-begin
-  FWrt(WhereX, WhereY, s);
-  GotoXY(WhereX+Length(s), WhereY);
-end;
+{$IFDEF Debug }
+  {$R+,Q+}
 {$ENDIF }
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
@@ -1030,6 +1058,9 @@ end;
 
 {
   $Log$
+  Revision 1.68  2001/12/05 17:42:56  mk
+  - optimized Win32 screen draw speed, part I
+
   Revision 1.67  2001/10/21 13:33:14  mk
   - compile fix for windows
 
