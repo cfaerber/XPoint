@@ -81,7 +81,7 @@ XP6*.*          Nachrichten verschicken (... in DB und Puffer schreiben)
  - xp6.pas       Hauptroutine Nachrichten verschicken
    ... 
 XP7*.*          Netcall-Funktionen
-XP8.*           Brettmanager-Funktionen
+XP8*.*          Brettmanager-Funktionen
 XP8FS.INC       Fileserver-Funktionen
 XP9.*           (fast) alle Funktionen im Edit-MenÅ
 XPAUTO.PAS      AutoVersandt, Autoexec-Verzeichnis
@@ -132,6 +132,14 @@ XP-E.IHQ        Quelltext der englischen Online-Hilfe
 IHS.PAS         Quelltext zu IHS.EXE (Helpfile-Compiler)
 DOCFORM.PAS     Quelltext zu DOCFORM.EXE
 RC.PAS          Quelltext zu RC.EXE (Resourcen-Compiler)
+
+Neue Sources, die unter der GPL stehen
+--------------------------------------
+
+IPADDR.PAS	Klasse TIP zur Verwaltung einer IP-Adresse
+IPCCLASS.PAS	Klasse TIPC (Inter Process Communication)
+NETCALL.PAS	Abstrakte Klasse TNetcall
+NCSOCKET.PAS	Abstrakte Klasse TSocketNetcall
 
 Linux: wird zum compilieren der anderen Versionen nicht benˆtigt
 ----------------------------------------------------------------
