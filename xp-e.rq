@@ -1208,7 +1208,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    Thank you for using CrossPoint. Please note that CrossPoint is
 2    NOT free software, it is shareware and you must register after a
 3    30-day evaluation period. For further information, including
-4    prices and a registration form, read the file *REG_ENG.TXT*.
+4    prices and a registration form, contact the author.
 5
 6    If you have any questions, problems or suggestions concerning XP,
 7    please feel free to post in either the FidoNet echo XPOINT or the
@@ -1218,9 +1218,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 20   Choose "Continue" if you agree to these terms of license.
 21
 26   You have been using XP unregistered for more than %s months!
-30   ~^REG_ENG.TXT , ^Enter Key , ^Continue , ^Quit~
-32   ~^REG_ENG.TXT , ^Enter Key~
-40   REG_ENG.TXT
+30   ~^BESTELL.DOC , ^Enter Key , ^Continue , ^Quit~
+32   ~^BESTELL.DOC , ^Enter Key~
+40   BESTELL.DOC
 41   %s not found!
 # same key for printing as in 22.5:
 42   D=Print    <Esc>=End~
