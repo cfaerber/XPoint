@@ -427,8 +427,8 @@
                       mhnr(8016);
                     loginfld:=fieldpos;
 	            maddstring(3,3,getres2(920,11),passwort,15,20,'');	   { 'Password' }
-                    maddstring(33,2,getres2(920,10),pname,20,25,'<');
-                      mhnr(140);                                           { 'Pointname' }
+                    maddstring(33,2,getres2(920,18),pname,20,25,'');
+                      mhnr(140);                                           { 'UUCP-Name' }
                     mset3proc(uucp_getloginname);
 
 		    _uucp_mode:=iifs((uucp_mode=uucp_mode_modem),
@@ -443,6 +443,7 @@
 		    maddstring(23,5,getres2(920,74),uucp_ip,18,60,'');	   { 'Hostname' }
 		      uucp_ipfld:=fieldpos;
 		    maddint   (53,5,getres2(920,75),uucp_port,5,5,1,65535);{ 'Port' }
+		    mappsel(false,'540');
 		      uucp_portfld:=fieldpos;
 		    uucp_setmode(_uucp_mode);
                   end;
@@ -1727,6 +1728,9 @@
 
 {
   $Log$
+  Revision 1.36  2000/12/29 22:29:05  mk
+  CL:- fixes for UUCP config dialogue
+
   Revision 1.35  2000/12/28 14:45:02  mk
   CL:- first things for UUCP over IP
 

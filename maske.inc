@@ -35,6 +35,23 @@ var ax,p,myp  : integer;
     lasttexty : byte;
     gl        : byte;
 
+  procedure ClearFields;
+  var i : integer;
+      s : string;
+  begin
+    with amaskp^ do begin
+      moff;
+      for i:=1 to felder do
+        with fld[i]^ do
+          if disnodisp and not enabled then begin
+            attrtxt(stat.col.ColFeldName);
+            wrt(xx,yy,dup(length(txt)+len+3,' '));
+          end;
+      mon;
+      end;
+    normtxt;
+  end;
+
   procedure ShowFldNames;
   var i : integer;
       s : string[80];
@@ -778,6 +795,7 @@ begin   { readmask }
         redisptext:=true;
         end;
       if redispfields then begin
+        ClearFields;
         showfldnames;
         FldDisplay;
         if @userdisp<>nil then userdisp;
@@ -1076,6 +1094,9 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.29  2000/12/29 22:29:04  mk
+  CL:- fixes for UUCP config dialogue
+
   Revision 1.28  2000/10/17 10:05:41  mk
   - Left->LeftStr, Right->RightStr
 

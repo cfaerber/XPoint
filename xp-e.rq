@@ -1800,6 +1800,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # UUCP
 16   Login   ~
 17   Password
+18   UUCP name
 #
 70   Mode    ~
 71   Modem
@@ -3610,6 +3611,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.118  2000/12/29 22:29:04  mk
+# CL:- fixes for UUCP config dialogue
+#
 # Revision 1.117  2000/12/28 14:45:00  mk
 # CL:- first things for UUCP over IP
 #

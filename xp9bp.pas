@@ -461,7 +461,7 @@ begin
 
     writeln(t,'UU-Mode=',uucp_mode);
     if uucp_ip<>''   then writeln(t,'UU-Host=',uucp_ip);
-    if uucp_port<>-1 then writeln(t,'UU-Port=',nntp_port);
+    if uucp_port<>-1 then writeln(t,'UU-Port=',uucp_port);
 
     if nntp_ip<>''   then writeln(t,'NNTP-Host=',nntp_ip);
     if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
@@ -592,6 +592,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/12/29 22:29:05  mk
+  CL:- fixes for UUCP config dialogue
+
   Revision 1.27  2000/12/28 14:45:03  mk
   CL:- first things for UUCP over IP
 
