@@ -11,9 +11,7 @@
 { Overlay-Teil zu xp1 }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xp1o;
 
@@ -120,6 +118,7 @@ begin
     if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
       s:=getline;
       y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
+      if y=0 then y:=pos('HTTPS://',ustr(s));                {HTTPS URL ?}
       if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
       if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }
       if y<>0 then begin
@@ -972,6 +971,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.5  2000/07/16 22:46:03  mk
+  - https bei URL-Erkennung hinzugefuegt
+
   Revision 1.19.2.4  2000/04/23 14:48:45  jg
   Aenderungen fuer externe Viewer:
 
