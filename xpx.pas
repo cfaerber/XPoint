@@ -18,7 +18,7 @@ unit xpx;
 interface
 
 uses
-  ems, xms,{$IFDEF XMSOVR} overxms, {$ENDIF} crt, dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal, mcb;
+  ems, xms, overxms, crt, dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal, mcb;
 
 implementation
 
@@ -336,6 +336,10 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.24  2003/04/12 19:43:48  mw
+  MW: - Letzten Commit korregiert (Es gibt jetzt kein Compileschalter
+        xmsovr mehr. In Xpx.pas war bei den Units noch einer drin.
+
   Revision 1.18.2.23  2003/04/12 08:23:57  mw
   MW: - Wegfall des Schalters /xmsovr und neuer Schalter /noovrbuf
 
