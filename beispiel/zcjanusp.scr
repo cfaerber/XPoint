@@ -24,4 +24,14 @@
          WRITE "Login......"
          WAITFOR "nning arc"
          WRITELN "Login successful"
+         WRITE "Waiting for remote..."
+         TIMER 15
+loop:    ON TIMEOUT GOTO timeout
+         READ
+         ON "^U" GOTO done
+         GOTO loop
+done:    WRITELN "Remote ready"
+         END
+
+timeout: WRITELN "Timeout"
          END
