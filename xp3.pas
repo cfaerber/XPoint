@@ -212,6 +212,8 @@ asm
          cld
          lds   si,adr
          mov   cx,size
+         cmp   cx, 0
+         jz    @found
 	 mov   dh,umlaut
          cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
          jne   @icase
@@ -1260,6 +1262,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.3  2001/07/11 20:23:38  mk
+  - fixed Txtseek bei leerem String
+
   Revision 1.12.2.2  2000/11/30 14:15:03  mk
   - fixed NewUserIBM when adding new uesers
 
