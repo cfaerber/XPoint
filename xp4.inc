@@ -319,9 +319,10 @@ begin
             4     : Weiterleit(3,true);      { QuoteTo   }
             6     : empfang_bestaetigen(nix);
             7     : CancelMessage;
-            8     : Weiterleit(4,true);      { Erneut    }
-            9     : Weiterleit(5,true);      { Archiv    }
-           10     : pm_archiv(false);
+            8     : ErsetzeMessage;
+            9     : Weiterleit(4,true);      { Erneut    }
+           10     : Weiterleit(5,true);      { Archiv    }
+           11     : pm_archiv(false);
          end;
 
      22 : if not (dispmode in [10..19]) then
@@ -579,6 +580,12 @@ begin
 end;
 { 
   $Log$
+  Revision 1.14  2000/06/10 20:15:11  sv
+  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
+    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
+  - ZConnectler koennen jetzt auch canceln :-)
+  - Fix beim Canceln von Crosspostings
+
   Revision 1.13  2000/05/09 20:07:02  jg
    Externe Viewer / Schutzmassnahmen:
    - Dateiendungsabhaengige Sicherheitsabfragen bei Multiformet-Mime Typen

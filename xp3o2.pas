@@ -132,6 +132,10 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if ntMaxRef(netztyp)>1 then
         WriteReflist(reflist,1);
       if ref<>'' then wrs('BEZ: '+ref);
+      if (attrib and attrControl<>0) and (hd.netztyp=nt_ZConnect) then begin
+        wrs('STAT: CTL');
+        wrs('CONTROL: cancel <'+ref+'>');
+      end;
       wrs('ROT: '+pfad);
       p1:=cpos(' ',PmReplyTo);
       if p1>0 then   { evtl. ÅberflÅssige Leerzeichen entfernen }
@@ -164,6 +168,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if keywords<>''  then WriteStichworte(keywords);
       if summary<>''   then wrs('Zusammenfassung: '+summary);
       if distribution<>'' then wrs('U-Distribution: '+distribution);
+      if ersetzt<>''   then wrs('ERSETZT: '+ersetzt);
 
       if pgpflags<>0 then begin
         if pgpflags and fPGP_avail<>0    then wrs('PGP-Key-Avail:');
@@ -438,6 +443,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/06/10 20:15:11  sv
+  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
+    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
+  - ZConnectler koennen jetzt auch canceln :-)
+  - Fix beim Canceln von Crosspostings
+
   Revision 1.8  2000/05/10 07:47:15  mk
   RB: X-* -> U-X-*
 

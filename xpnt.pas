@@ -87,6 +87,7 @@ function ntRealUmlaut(nt:byte):boolean;       { Umlaute im Realname }
 function ntHeaderUmlaut(nt:byte):boolean;     { Umlaute in Keywords etc. }
 function ntCancel(nt:byte):boolean;           { Cancel-Messages m”glich }
 function ntCancelPM(nt:byte):boolean;         { Cancel auch bei PM m”glich }
+function ntErsetzen(nt:byte):boolean;         { Supersedes/Ersetzt m”glich }
 function ntBetreffLen(nt:byte):byte;          { max. Betreffl„nge }
 function ntPmReply(nt:byte):boolean;          { attrPmReply erzeugen }
 function ntFollowup(nt:byte):boolean;         { Followup-To m”glich }
@@ -552,7 +553,7 @@ end;
 
 function ntCancel(nt:byte):boolean;           { Cancel-Messages m”glich }
 begin
-  ntCancel:=(nt=nt_UUCP) or (nt=nt_Maus);
+  ntCancel:=nt in [nt_UUCP,nt_Maus,nt_ZConnect];
 end;
 
 function ntCancelPM(nt:byte):boolean;         { Cancel auch bei PM m”glich }
@@ -560,6 +561,10 @@ begin
   ntCancelPM:=(nt=nt_Maus);
 end;
 
+function ntErsetzen(nt:byte):boolean;         { Supersedes/Ersetzt m”glich }
+begin
+  ntErsetzen:=nt in [nt_UUCP,nt_ZConnect];
+end;
 
 function ntBetreffLen(nt:byte):byte;          { max. Betreffl„nge }
 begin
@@ -740,6 +745,12 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/06/10 20:15:12  sv
+  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
+    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
+  - ZConnectler koennen jetzt auch canceln :-)
+  - Fix beim Canceln von Crosspostings
+
   Revision 1.7  2000/05/04 10:33:01  mk
   - unbenutzer TurboBox Code entfernt
 

@@ -42,7 +42,7 @@ K (c) '93-98 Peter Mandrella
 18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Bestellen,132^Abbestellen,133^Liste anfordern,134^Sonstiges,-,136Liste ^einlesen,137^Datei einlesen,138^Maus-Infos
 20  Fileserver,141^Bestellen,142^Senden,143^Liste˘27,144^Hilfe,145^Transfer,146S^ervice
-21  Weiter,151^Kopie,152^Original,153^EditTo,154^QuoteTo,-,156^BestÑtigung,157^Lîschen,158e^Rneut     @R,159^Archiv     @A,15aUser-^PM    @P
+21  Weiter,151^Kopie,152^Original,153^EditTo,154^QuoteTo,-,156^BestÑtigung,157^Lîschen,158Er^Setzen,159e^Rneut     @R,15a^Archiv     @A,15bUser-^PM    @P
 22  éndern,161^Betreff,162^EmpfDatum,163^Rot13,164^Text,165T^yp,166^gelesen,167^Hervorhebung
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Makros
 24  Extern,181^Lister,182^Editor,183^Shell,184Ent^packer,185pm^Crypt,186P^GP
@@ -2820,6 +2820,9 @@ K (c) '93-98 Peter Mandrella
 14 In diesem Netz nicht mîglich!
 15 Nur in der NachrichtenÅbersicht mîglich!
 16 UngÅltiger Pfad- oder Dateiname!
+17 Nur bei îffentlichen Nachrichten mîglich!
+18 In diesem Netz nicht mîglich!
+19 Diese Nachricht stammt nicht von Ihnen!
 
 +  10400
 1  keine Nachricht gewÑhlt
@@ -2869,6 +2872,7 @@ K (c) '93-98 Peter Mandrella
 44 User nicht erfa·t.
 45 Nachrichtendatenbank defekt - verwenden Sie /Wartung/Packen!
 46 Verlassen Sie das Brett und drÅcken Sie *dann* "B" ...
+47 Unversandte Nachrichten kînnen nicht ersetzt werden.
 
 50 Der Schreibzugriff auf dieses Brett ist gesperrt.
 # XP4O3

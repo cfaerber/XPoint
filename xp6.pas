@@ -91,6 +91,7 @@ type  SendUUdata = record
                      quotestr   : string[20];
                      UV_edit    : boolean;        { <Esc> -> "J" }
                      empfrealname : string[40];
+                     ersetzt    : string[MidLen];
                    end;
       SendUUptr   = ^SendUUdata;
 
@@ -1707,7 +1708,7 @@ fromstart:
     else
       hdp^.empfaenger:=iifs(pm,TO_ID+empfaenger,mid(empfaenger,2));
     hdp^.betreff:=betreff;
-    case ntDomainType(netztyp) of    { s. auch XP4O.CancelMassage! }
+    case ntDomainType(netztyp) of    { s. auch XP3O.CancelMessage! }
       0 : hdp^.absender:=username+'@'+iifs(aliaspt,pointname,box)+'.ZER';
       1 : begin
             hdp^.absender:=username+'@'+iifs(aliaspt,box,pointname);
@@ -1780,6 +1781,7 @@ fromstart:
                      +pformstr+iifs(registriert.r2,' '+KomOrgReg+'R/'+
                             registriert.tc+strs(registriert.nr),'');
     hdp^.organisation:=orga^;
+    if sdata^.ersetzt<>''then hdp^.ersetzt:=sdata^.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
     then begin
       hdp^.postanschrift:=postadresse^;
@@ -2243,6 +2245,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/06/10 20:15:11  sv
+  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
+    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
+  - ZConnectler koennen jetzt auch canceln :-)
+  - Fix beim Canceln von Crosspostings
+
   Revision 1.36  2000/06/05 16:41:04  mk
   - Zugriff auf uninitialisiertes sdata verhindert
 

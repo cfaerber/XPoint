@@ -3202,6 +3202,8 @@ begin
       wrs(f,'X-Homepage: '+homepage);
     if XPointCtl<>0 then
       wrs(f,'X-XP-Ctl: '+strs(XPointCtl));
+    if ersetzt<>'' then
+      wrs(f,'Supersedes: <'+ersetzt+'>');
     for i:=1 to ulines do begin
       uuz.s:=uline^[i];
       IBM2ISO;
@@ -3572,6 +3574,12 @@ end.
 
 {
   $Log$
+  Revision 1.34  2000/06/10 20:15:09  sv
+  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
+    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
+  - ZConnectler koennen jetzt auch canceln :-)
+  - Fix beim Canceln von Crosspostings
+
   Revision 1.33  2000/06/05 16:16:22  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 

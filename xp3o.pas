@@ -57,6 +57,7 @@ function  PufferEinlesen(puffer:pathstr; pollbox:string; replace_ed,
 procedure AppPuffer(Box,fn:string);
 procedure empfang_bestaetigen(var box:string);
 procedure CancelMessage;
+procedure ErsetzeMessage;
 function  testpuffer(fn:pathstr; show:boolean; var fattaches:longint):longint;
 function  ZC_puffer(var fn:pathstr):boolean;
 procedure MoveToBad(fn:pathstr);
@@ -1096,6 +1097,7 @@ begin
       nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
                        dbReadStr(d,'domain');
       nt_Maus   : adr:=dbReadStr(d,'username')+'@'+box;
+      nt_ZConnect: adr:=dbReadStr(d,'username')+'@'+box+dbReadStr(d,'domain');
     end
   else begin
     rfehler1(109,box);
@@ -1105,11 +1107,16 @@ begin
   if adr='' then exit;
 
   new(hdp);
+
+  ReadEmpflist:=true;
+  ReadHeadEmpf:=1;
   ReadHeader(hdp^,hds,true);
   if ((ustr(adr)<>ustr(dbReadStr(mbase,'absender'))) and
       not stricmp(adr,hdp^.wab)) or (hds<=1) then begin
     if hds>1 then
       rfehler(312);     { 'Diese Nachricht stammt nicht von Ihnen!' }
+    disposeempflist(empflist);
+    empflist:=nil;
     dispose(hdp);
     exit;
     end;
@@ -1123,15 +1130,8 @@ begin
                     ControlMsg:=true;
                     dat:=CancelMsk;
                     empf:=hdp^.empfaenger;
-                    if hdp^.empfanz>1 then begin
-                      for i:=2 to hdp^.empfanz do begin
-                        readheadempf:=i;
-                        ReadHeader(hdp^,hds,true);
-                        AddToEmpflist(hdp^.empfaenger);
-                        end;
-                      sendempflist:=empflist;
-                      empflist:=nil;
-                      end;
+                    sendempflist:=empflist;
+                    empflist:=nil;
                     if DoSend(false,dat,'A'+empf,'cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,leer,
                               sendShow) then;
@@ -1148,8 +1148,110 @@ begin
                               sendShow) then;
                     _era(fn);
                   end;
+      nt_ZConnect:begin
+                    ControlMsg:=true;
+                    _bezug:=hdp^.msgid;
+                    _beznet:=hdp^.netztyp;
+                    dat:=CancelMsk;
+                    empf:=hdp^.empfaenger;
+                    sendempflist:=empflist;
+                    empflist:=nil;
+                    if DoSend(false,dat,'A'+empf,'cancel <'+_bezug+
+                              '>',false,false,false,false,true,nil,leer,leer,
+                              sendShow) then;
+                  end;
     end;
   dispose(hdp);
+end;
+
+procedure ErsetzeMessage;
+var _brett : string[5];
+    _betreff : string[betrefflen];
+    hdp    : headerp;
+    hds    : longint;
+    box    : string[BoxNameLen];
+    d      : DB;
+    adr    : string[adrlen];
+    leer   : string[12];
+    empf   : string[AdrLen];
+    i      : integer;
+    fn     : pathstr;
+    sData  : SendUUptr;
+    vor    : empfnodep;
+begin
+  if odd(dbReadInt(mbase,'unversandt')) then begin
+    rfehler(447);     { 'Unversandte Nachrichten k”nnen nicht ersetzt werden.' }
+    exit;
+    end;
+  dbReadN(mbase,mb_brett,_brett);
+  if (_brett[1]<>'A') then begin
+    rfehler(317);     { 'Nur bei ”ffentlichen Nachrichten m”glich!' }
+    exit;
+    end;
+  if not ntErsetzen(mbNetztyp) then begin
+    rfehler(318);     { 'In diesem Netz nicht m”glich!' }
+    exit;
+    end;
+  if _brett[1]<>'U' then begin
+    dbSeek(bbase,biIntnr,copy(_brett,2,4));
+    if not dbFound then exit;
+    dbReadN(bbase,bb_pollbox,box);
+    end
+  else begin
+    new(hdp);
+    ReadHeader(hdp^,hds,true);
+    dbSeek(ubase,uiName,ustr(hdp^.empfaenger));
+    dispose(hdp);
+    if not dbFound then exit;
+    dbReadN(ubase,ub_pollbox,box);
+    end;
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,ustr(box));
+  if dbFound then
+    case mbNetztyp of
+      nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
+                       dbReadStr(d,'domain');
+      nt_Maus   : adr:=dbReadStr(d,'username')+'@'+box;
+      nt_ZConnect: adr:=dbReadStr(d,'username')+'@'+box+dbReadStr(d,'domain');
+    end
+  else begin
+    rfehler1(109,box);
+    adr:='';
+    end;
+  dbClose(d);
+  if adr='' then exit;
+
+  new(hdp);
+  ReadEmpflist:=true;
+  ReadHeadEmpf:=1;
+  ReadHeader(hdp^,hds,true);
+  if ((ustr(adr)<>ustr(dbReadStr(mbase,'absender'))) and
+      not stricmp(adr,hdp^.wab)) or (hds<=1) then begin
+    if hds>1 then
+      rfehler(319);     { 'Diese Nachricht stammt nicht von Ihnen!' }
+    disposeempflist(empflist);
+    empflist:=nil;
+    dispose(hdp);
+    exit;
+    end;
+
+  fn:=TempS(8196);
+  extract_msg(0,'',fn,false,0);
+  leer:='';
+  _bezug:=hdp^.ref;
+  _beznet:=hdp^.netztyp;
+  _betreff:=hdp^.betreff;
+  new(sData);
+  fillchar(sData^,sizeof(sData^),0);
+  sData^.ersetzt:=hdp^.msgid;
+  empf:=hdp^.empfaenger;
+  sendempflist:=empflist;
+  empflist:=nil;
+  if DoSend(false,fn,'A'+empf,_betreff,
+            true,false,true,false,true,sData,leer,leer,
+            0) then;
+  dispose(hdp);
+  dispose(sData);
 end;
 
 { Puffer im ZConnect-Format? }
@@ -1376,6 +1478,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/06/10 20:15:11  sv
+  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
+    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
+  - ZConnectler koennen jetzt auch canceln :-)
+  - Fix beim Canceln von Crosspostings
+
   Revision 1.19  2000/06/03 09:19:50  mk
   - Hart kodierten String in Resource 344 uebernommen
 

@@ -371,6 +371,7 @@ begin
       onetztyp:=hdp^.netztyp;
       quotestr:=hdp^.quotestring;
       UV_edit:=true;
+      ersetzt:=hdp^.ersetzt;
       end;
     dbReadN(mbase,mb_msgsize,oldmsgsize);
     dbReadN(mbase,mb_adresse,oldmsgpos);
@@ -1008,6 +1009,7 @@ again:
                  wab:=hdp^.wab;
                  onetztyp:=hdp^.netztyp;
                  quotestr:=hdp^.quotestring;
+                 ersetzt:=hdp^.ersetzt;
                  end;
                sendflags:=SendReedit;
                if dbReadInt(mbase,'netztyp') and $4000<>0 then
@@ -1252,6 +1254,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/06/10 20:15:11  sv
+  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
+    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
+  - ZConnectler koennen jetzt auch canceln :-)
+  - Fix beim Canceln von Crosspostings
+
   Revision 1.18  2000/06/05 16:16:23  mk
   - 32 Bit MaxAvail-Probleme beseitigt
 
