@@ -487,7 +487,8 @@ begin
               end;
         until (_user<>_olduser) or dbEOF(mbase);
         dbGo(ubase,rec2);
-        adrb:=1;
+        dbReadN(ubase,ub_adrbuch,adrb);  
+        if adrb=0 then adrb:=NeuUserGruppe;
         dbWriteN(ubase,ub_adrbuch,adrb);
         closebox;
         end;
@@ -1348,6 +1349,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/04/16 13:49:44  jg
+  - Bugfix: Adressbuchgruppe beim Userverknuepfen
+
   Revision 1.11  2000/04/13 13:54:45  mk
   - 32 Bit: Fehlerhafte Prozentanzeigen behoben
   - 32 Bit VP: Shift-Tab funktioniert jetzt
