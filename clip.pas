@@ -56,6 +56,8 @@ const
   Multiplex = $2f;
   cf_Oemtext   = 7;
   maxfile   = 65520;
+  clipemu : String ='';
+
 {$ENDIF }
 
 type
@@ -396,7 +398,7 @@ asm           les bx,@result
               int multiplex
               cmp ax,1700h
               mov di,0                            { Clipb. nicht schliessen, wenn nicht da.}
-              je @nope
+              je @noclip
 
               mov ax,1701h                        { Clipboard ”ffnen }
               int multiplex
@@ -455,6 +457,15 @@ asm           les bx,@result
               je @jup
               mov ax,1708h                        { wieder schliessen }
               int multiplex
+              jmp @jup 
+
+@noclip:      les di,@result
+              mov si,offset clipemu
+              mov ch,0
+              mov cl,[si]
+              inc cx
+              rep movsb
+
 @jup:
 end;
 
@@ -465,7 +476,7 @@ asm
               mov ax,1700h                        { Clipboard verfuegbar ? }
               int multiplex
               cmp ax,1700h
-              je @end
+              je @noclip
 
               mov ax,1701h                        { Clipboard ”ffnen }
               int multiplex
@@ -495,6 +506,18 @@ asm
               je @end
               mov ax,1708h                        { wieder schliessen }
               int multiplex
+              jmp @end
+
+@noclip:      push ds
+              pop es
+              mov di,offset clipemu
+              lds si,str
+              mov ch,0
+              mov cl,[si]
+              inc cx
+              rep movsb
+              push es
+              pop ds
 @end:
 end;
 
@@ -656,6 +679,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.1  2000/09/25 05:59:48  mk
+  JG:- Interne Zwischenablage implementiert
+
   Revision 1.19  2000/06/01 16:03:04  mk
   - Verschiedene Aufraeumarbeiten
 
