@@ -32,7 +32,7 @@ uses  xpglobal,
   XPLinux,
 {$ENDIF }
 {$IFDEF NCRT }
-  xpcurses,		{ Fuer die Sonderzeichen an der Console }
+  xpcurses,             { Fuer die Sonderzeichen an der Console }
 {$ELSE }
   crt,
 {$ENDIF }
@@ -281,28 +281,15 @@ const
       mheadercustom : array[1..2] of string[custheadlen] = ('','');
 
 {$IFDEF Ver32 }
-procedure IBM2ISO; assembler; {&uses ebx, esi}
-asm
-     cld
-     mov   ebx, offset IBM2ISOtab
-     mov   esi, offset s
-     lodsb                           { Stringl„nge }
-     xor   ecx, ecx
-     mov   cl,al
-     jecxz  @@2
-@@1: lodsb
-     xlat
-     mov   [esi-1],al
-     loop  @@1
-@@2:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI'];
-{$ELSE }
+procedure IBM2ISO;
+var
+  i: Integer;
+begin
+  if Length(s) > 0 then
+    for i := 1 to Length(s) do
+      s[i] := Char(IBM2ISOTab[byte(s[i])]);
 end;
-{$ENDIF }
-
 {$ELSE }
-
 procedure IBM2ISO; assembler;
 asm
      cld
@@ -321,30 +308,17 @@ end;
 {$ENDIF }
 
 
-{$IFDEF Ver32 } { MK 26.01.2000 Anpassungen an 32 Bit }
-procedure ISO2IBM; assembler; {&uses ebx, esi}
-asm
-     cld
-     mov   ebx, offset ISO2IBMtab - 128
-     mov   esi, offset s
-     lodsb                           { Stringl„nge }
-     xor   ecx, ecx
-     mov   cl, al
-     jecxz  @@2
-@@1: lodsb
-     cmp   al,127
-     ja    @@3
-     loop  @@1
-     jmp   @@2
-@@3: xlat
-     mov   [esi-1],al
-     loop  @@1
-@@2:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI'];
-{$ELSE }
+{$IFDEF Ver32 }
+
+procedure ISO2IBM;
+var
+  i: Integer;
+begin
+  if Length(s) > 0 then
+    for i := 1 to Length(s) do
+      if s[i] > #127 then
+        s[i] := Char(ISO2IBMTab[byte(s[i])]);
 end;
-{$ENDIF }
 
 {$ELSE }
 
@@ -435,7 +409,7 @@ begin
 {$ELSE}
         if source=''  then source:=ustr(paramstr(i)) else
         if dest=''    then dest:=ustr(paramstr(i)) else
-{$ENDIF}	   
+{$ENDIF}
         if OwnSite='' then OwnSite:=paramstr(i);
     end
   else begin
@@ -1239,9 +1213,10 @@ procedure UnQuotePrintable;     { MIME-quoted-printable/base64 -> 8bit }
 var p,b     : byte;
     softbrk : boolean;
 
-  procedure AddCrlf; assembler; {&uses ebx }    { CR/LF an s anh„ngen }
-  asm
+  procedure AddCrlf; { CR/LF an s anh„ngen }
 {$IFDEF BP }
+  assembler;
+  asm
     mov bl,byte ptr s[0]
     mov bh,0
     cmp bx,255
@@ -1253,20 +1228,12 @@ var p,b     : byte;
     inc bx
     mov byte ptr s[bx],10
 @@1:mov byte ptr s[0],bl
-{$ELSE }
-    xor ebx, ebx
-    mov bl,byte ptr s[0]
-    cmp ebx,255
-    jz  @@1
-    inc ebx
-    mov byte ptr s[ebx],13
-    cmp ebx,255
-    jz  @@1
-    inc ebx
-    mov byte ptr s[ebx],10
-@@1:mov byte ptr s[0],bl
-{$ENDIF }
   end;
+{$ELSE }
+  begin
+    s := s + #13#10;
+  end;
+{$ENDIF }
 
   procedure DecodeBase64;
   const b64tab : array[0..127] of byte =
@@ -2837,7 +2804,7 @@ end;
 
 procedure wrs(var f:file; s:string);
 begin
-  if length(s)>254 then s[0]:=#254;
+  if length(s)>254 then SetLength(s, 254);
   s:=s+#10;
   blockwrite(f,s[1],length(s));
 end;
@@ -3516,6 +3483,9 @@ end.
 
 {
   $Log$
+  Revision 1.29  2000/05/13 15:39:51  mk
+  - Crashes wegen Hugestring beseitigt
+
   Revision 1.28  2000/05/11 17:01:04  ml
   Für linux: uppercase für Parameter rausgenommen (Groß/Kleinschreibung
   nicht mehr ignoriert) + string-Access-Violation beseitigt.
