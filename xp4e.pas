@@ -950,7 +950,8 @@ var
     komm         : string;
     pollbox      : string;
     size         : integer;
-    halten,adr   : integer16;
+    halten       : integer16;
+    adr          : byte;
     flags        : byte;
     brk          : boolean;
     rec          : longint;
@@ -2427,10 +2428,11 @@ begin
   closebox;
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.70  2001/09/05 22:59:02  mk
+  - additional fix: adr in modiuser now also byte
+
   Revision 1.69  2001/09/05 22:55:13  mk
   - changed adr parameter in EditUser back to var
 
@@ -2669,3 +2671,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+
