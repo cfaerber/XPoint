@@ -297,7 +297,7 @@ end;
 {$ENDIF }
 function ntNoMaps(nt:byte):boolean;
 begin
-  ntNoMaps:= nt in [nt_POP3];
+  ntNoMaps:= nt in [nt_POP3, nt_NNTP, nt_IMAP, nt_Client];
 end;
 {$IFDEF FPC }
   {$HINTS ON }
@@ -748,6 +748,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.43.2.5  2003/08/25 20:46:18  mk
+  - fixed #794671: Menü bei N/M/S/RFC Client ist für Zconnect
+
   Revision 1.43.2.4  2002/07/21 20:14:41  ma
   - changed copyright from 2001 to 2002
 
