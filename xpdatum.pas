@@ -45,9 +45,12 @@ const timezone      : string = 'W+1';
   wechsel ohne manuelle Konfiguration beruecksichtigt wird. }
 function TimeZone: string;
 {$ENDIF }
+procedure DecodeTimeZone(var IsNegative:boolean;var tzHours,tzMinutes:integer;var IsDST:boolean);
 
 procedure ZtoZCdatum(var datum,zdatum:string);
 procedure ZCtoZdatum(var zdatum, datum:string);
+
+function DateTimeToRFCDateTime(DateTime: TDateTime): String;
 
 // internal Dateformat:
 // 7.......0  7..43..0  76...210  7..43..0
@@ -57,7 +60,6 @@ function LongDateToDateTime(date: LongInt): TDateTime;
 function DateTimeToLongDate(Date: TDateTime): LongInt;
 
 implementation  { ---------------------------------------------------- }
-
 
 uses xp1;
 
@@ -183,6 +185,36 @@ begin
 end;
 {$ENDIF }
 
+procedure DecodeTimeZone(var IsNegative:boolean;var tzHours,tzMinutes:integer;var IsDST:boolean);
+{$IFDEF unix}
+var tzBase:Longint;
+begin
+  if (tzseconds < 0) then begin
+    isNegative:= true;
+    tzBase:= tzseconds div -60;
+  end else begin
+    isNegative:= false;
+    tzBase:= tzseconds div 60;
+  end;
+  { Minuten sind der Rest von Stunden }
+  tzMinutes:= tzBase mod 60;
+  { Stunde hat 60 Minuten }
+  tzHours:= tzBase div 60;
+
+  IsDST := (tzdaylight);
+{$ELSE}
+var tz: string;
+    p:  Integer;
+begin
+  tz := TimeZone;
+  isDST := LeftStr(tz,1)='S';
+  isNegative := Copy(tz,2,1)='-';
+  p := CposX(':',tz);
+  tzHours:=IVal(Copy(tz,3,p-3));
+  tzMinutes:=IVal(Copy(tz,p,length(tz)-p));
+{$ENDIF}
+end;
+
 function LongDateToDateTime(date: LongInt): TDateTime;
 begin
   Result := EncodeDate((date shr 24) mod 100, (date shr 20) and 15, (date shr 15) and 31) +
@@ -200,9 +232,37 @@ begin
     FormI(Hour, 2) + FormI(Min, 2));
 end;
 
+function DateTimeToRFCDateTime(DateTime: TDateTime): String;
+var yyyy,mm,dd,hh,min,sec,msec: system.word;
+    tzh,tzm: integer;
+    neg,dst: boolean;
+const weekdays: string[21] = 'SunMonTueWedThuFriSat';
+      months:   string[36] = 'JanFebMarAprMayJunJulAugSepOctNovDec';
+begin
+  DecodeDate(DateTime,yyyy,mm,dd);
+  DecodeTime(DateTime,hh,min,sec,msec);
+  DecodeTimeZone(neg,tzh,tzm,dst);
+
+  result :=
+    Copy(weekdays,(DayOfWeek(DateTime)-1)*3+1,3)+', ' +
+    StrS(dd) + ' ' +
+    Copy(months,(mm-1)*3+1,3) + ' ' +
+    FormI(yyyy,4) + ' ' +
+    FormI(hh,2) + ':' +
+    FormI(min,2) + ':' +
+    FormI(sec,2) + ' ' +
+    iifs(neg,'-','+') +
+    FormI(tzh,2)+
+    FormI(tzm,2);
+end;
+
 end.
 {
   $Log$
+  Revision 1.18  2001/09/08 14:36:26  cl
+  - added DecodeTimeZone (please check if it works with Linux)
+  - added DateTimeToRFCDateTime
+
   Revision 1.17  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 
