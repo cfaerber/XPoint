@@ -59,7 +59,7 @@ $Menu = array(
 		"sub"	=> true),
 	13 => array("de"	=> "Entwicklerinfos",
 		"en" 	=> "Developer info",
-		"url"	=> $indexname . "?file=code-en.html",
+		"url"	=> $indexname . "?file=code-" . $language . ".html",
 		"sub"	=> false),
 	14 => array("de"	=> "Hinweise",
 		"en" 	=> "Hints",

@@ -6,7 +6,7 @@ Im Moment gehen nur der Fido-(Sysop)-Netcall und UUCP.
 <br><small>2001-01-16</small>
 
 SMTP/IMAP/NNTP geht nicht!
-Z.Zt. geht nur POP3 und das Holen der Newsgrouplisten über NNTP.
+Im Moment geht nur POP3 und das Holen der Newsgrouplisten über NNTP.
 Die anderen Protokolle sind noch nicht fertig.
 <br><small>2001-01-16</small>
 
