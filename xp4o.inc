@@ -89,7 +89,7 @@ begin
       if leer and ((user and (left(brett,4)<>#0+'$/T')) or
         (not user and (left(brett,3)<>'$/T'))) then
       begin
-        dbReadN(d,nfeld,loesch);
+        loesch := dbReadNStr(d,nfeld);
         if not user then loesch:=copy(loesch,2,80);
         if adrbuch then
           if (dbReadInt(ubase,'userflags') and 4=0) and
@@ -713,6 +713,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2000/08/02 23:26:16  mk
+  - dbReadN mit String-Problem beseitigt
+
   Revision 1.21  2000/07/21 20:56:25  mk
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
