@@ -1235,7 +1235,7 @@
       maddstring(3,2,getres2(950,2),nntp_ip,25,255,             { 'Server    ~' }
                  range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
         mhnr(40060);
-      maddint(3,4,getres2(950,3),nntp_port,4,5,0,65535);        { 'Port      ~' }
+      maddint(3,4,getres2(950,3),nntp_port,5,5,0,65535);        { 'Port      ~' }
       maddstring(3,6,getres2(950,4),nntp_id,25,255,'');         { 'Loginname ~' }
       maddstring(3,8,getres2(950,5),nntp_pwd,25,255,'');        { 'Passwort  ~' }
         mhnr(40062);
@@ -2380,6 +2380,9 @@
 
 {
   $Log$
+  Revision 1.48.2.16  2004/05/26 21:52:22  mk
+  - fixed display of port values
+
   Revision 1.48.2.15  2003/09/15 10:59:11  mk
   - set own_nt to allow additional servers work correctly
 
