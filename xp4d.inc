@@ -7,7 +7,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
 { ------------------------------------------------------------------ }
-{ $Id }
+{ $Id$ }
 
 
 { XP4.PAS - Anzeigeroutinen }
@@ -583,5 +583,41 @@ begin
 end;
 
 {
-  $Log
+  $Log$
+  Revision 1.27.2.6  2001/09/18 16:13:39  my
+  MY:- CVS-Loginfos jetzt hoffentlich korrekt hinzugefuegt
+
+  Revision 1.27.2.5  2001/09/16 20:25:38  my
+  MY:- Verbesserung fuer blinde XP-User: Wenn unter Config/Anzeige/Hilfen
+       die Optionen "Auswahlcursor" und "Fensterhintergrund ausblenden"
+       aktiviert sind, ist das Zeichen fuer "Haltezeit ueberschritten" ein
+       normaler Punkt "." statt eines mittelstehenden Punkts """ (249d)
+       und ist daher jetzt von der Sprachausgabe auswertbar.
+
+  JG+MY:- Neuer Menuepunkt "kombinierter Ungelesen-Modus" unter
+          Config/Anzeige/Bretter, bisherige Taste "U" fuer diese Funktion
+          ist jetzt Brett-Markiersuche. Geaenderte Anzeigelogik (siehe
+          Hilfe).
+
+  JG+MY:- Verbesserte Brettanzeige (zusaetzlicher Schalter unter
+          Config/Anzeige/Bretter): Es koennen jetzt alle Bretter in
+          Punktschreibweise dargestellt werden, der einleitende "/" wird
+          entfernt, bei PM-Brettern wird der erste "/" durch "@" ersetzt.
+
+  JG+MY:- Feldtausch geaendert/verbessert: Default bei Usern jetzt FHBGAK,
+          jedes Feld kann weggelassen werden, bei Weglassen grosser Felder
+          werden die uebrigen Felder verbreitert. Option fuer Nachrichten-
+          Feldtausch jetzt zusaetzlich ueber /Config/Anzeige/Nachrichten
+          erreichbar. /Config/Anzeige/Hilfen uebersichtlicher gestaltet.
+
+  JG+MY:- Beim Umschalten auf Realname mit <Ctrl-N> wird der Absender um 5
+          Zeichen verkuerzt und der Betreff um 5 Zeichen verlaengert
+
+  JG+MY:- Verbesserungen an Displayroutinen (u.a. Feldtausch, rund 1k
+          weniger Speicherverbrauch)
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
+  MY:- CVS-Loginfos hinzugefuegt
+
 }
