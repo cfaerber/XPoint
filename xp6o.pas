@@ -406,8 +406,8 @@ begin
       end;
     dispose(sData);
     _era(tmp);
-    end;
-  xaufbau:=true;
+    xaufbau:=true;
+  end;
 ende:
   FlushClose;
   dispose(hdp);
@@ -1276,6 +1276,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.9  2000/11/22 09:47:24  mk
+  MH:- Kommentarbaum wurde unnoetigerweise neu aufgebaut
+
   Revision 1.20.2.8  2000/11/21 22:42:30  mk
   - neu eingecheckt wegen cvs Bug
 

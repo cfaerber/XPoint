@@ -1428,6 +1428,7 @@ begin      { --- select --- }
 
   if dispmode=12 then begin
     bezpos:=0; komofs:=0; baumdispofs := 0;
+    xaufbau := false;
     while (bezpos<komanz) and (kombaum^[bezpos].msgpos<>dbRecno(mbase)) do begin
       inc(bezpos); inc(komofs);
       end;
@@ -2126,6 +2127,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.20  2000/11/22 09:47:23  mk
+  MH:- Kommentarbaum wurde unnoetigerweise neu aufgebaut
+
   Revision 1.26.2.19  2000/11/15 12:21:45  mk
   - fixed bug with Alt-P in reply trees
 
