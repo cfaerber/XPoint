@@ -1057,7 +1057,7 @@ begin
       xaufbau:=true;
       end;
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -1086,7 +1086,7 @@ begin
     exit;
     end;
   if testuvs(getres(455)) then exit;   { 'Edit' }
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,true);           { Heder einlesen }
   if hds>1 then begin
     PGP_BeginSavekey;
@@ -1119,7 +1119,7 @@ begin
     PGP_EndSavekey;
     aufbau:=true;                 { wg. ge„nderter Gr”áe }
     end;
-  dispose(hdp);
+   FreeHeaderMem(hdp);
 end;
 
 
@@ -1419,7 +1419,7 @@ begin
   end;
   markanz:=0;
   moment;
-  new(hdp);
+  hdp := AllocHeaderMem;
   while doserror=0 do begin
     if crashs then begin
       box:=strs(hexval(LeftStr(sr.name,4)))+'/'+strs(hexval(copy(sr.name,5,4)));
@@ -1496,7 +1496,7 @@ begin
     end;
   end;
   FindClose(sr);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   closebox;
   if markanz=0 then
     hinweis(getres(458))   { 'Keine unversandten Nachrichten vorhanden!' }
@@ -1618,7 +1618,7 @@ var hdp   : headerp;
   end;
 
 begin
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,true);
   anz:=0;
   with hdp^ do begin
@@ -1706,7 +1706,7 @@ begin
     end;
   closebox;
   freeres;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -1717,7 +1717,7 @@ var fn  : string;
     hds : longint;
     lm  : Byte;                  { Makrozwischenspeicher... }
 begin
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,true);
   if hds>1 then begin
     fn:=TempS(dbReadInt(mbase,'msgsize')+1000);
@@ -1733,7 +1733,7 @@ begin
     listmakros:=lm;                                   { wieder alte Makros benutzen   }
     _era(fn);
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -2424,6 +2424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.73  2000/10/26 12:06:33  mk
+  - AllocHeaderMem/FreeHeaderMem Umstellung
+
   Revision 1.72  2000/10/22 21:58:59  mk
   - case of .pp and .epp is now UnixFS dependent
 

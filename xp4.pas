@@ -775,7 +775,7 @@ var t,lastt: taste;
         hds : longint;
         i   : integer;
     begin
-      getmem(hdp,sizeof(header));
+      hdp := AllocHeaderMem;
       for i:=2 to rtanz do with hdp^ do begin
         ReadHeadDisk:=i;
         ReadHeader(hdp^,hds,false);
@@ -784,7 +784,6 @@ var t,lastt: taste;
           EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+amreplyto);
           end;
         end;
-      Freemem(hdp);
       SendEmpfList.Assign(EmpfList); EmpfList.Clear;
     end;
 
@@ -1116,7 +1115,7 @@ var t,lastt: taste;
 
     if (LeftStr(dispspec,1)='1') then
     begin                           { Bei PM-Brett und Msg ohne Replyto }
-      new(hdp);                     { automatisch "P" statt "B" benutzen }
+      hdp := AllocHeaderMem;        { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp^,hds,false);
       if (hdp^.amreplyto='') or ((hdp^.empfanz=1) and
         (hdp^.empfaenger=hdp^.amreplyto)) then
@@ -1125,8 +1124,8 @@ var t,lastt: taste;
         if c=k2_cb then c:=k2_cp;
         if c=k2_SB then c:=k2_SP;
         end;
-      dispose(hdp);
-      end;
+      FreeHeaderMem(hdp);
+    end;
     if c=k2_b  then brief_senden(true,false,false,0) else
     if c=k2_cb then brief_senden(true,false,false,1) else
     if c=k2_SB then brief_senden(true,false,false,2) else
@@ -2108,6 +2107,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/10/26 12:06:33  mk
+  - AllocHeaderMem/FreeHeaderMem Umstellung
+
   Revision 1.53  2000/10/26 10:34:51  mk
   - <Ctrl-H> bringt jetzt auch MIME-Auswahldialog, wenn noetig
 

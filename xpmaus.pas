@@ -418,7 +418,7 @@ begin
       spop(m2t);
       end;
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -813,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/10/26 12:06:34  mk
+  - AllocHeaderMem/FreeHeaderMem Umstellung
+
   Revision 1.16  2000/10/17 10:05:59  mk
   - Left->LeftStr, Right->RightStr
 

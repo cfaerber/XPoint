@@ -808,7 +808,7 @@ begin
       fidoto:=hdp^.fido_to;
     origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),pfad);
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 procedure get_origbox;
@@ -818,7 +818,7 @@ begin
   hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),hdp^.pfad);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 procedure LoadBoxData;
@@ -1144,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.33  2000/10/26 12:06:34  mk
+  - AllocHeaderMem/FreeHeaderMem Umstellung
+
   Revision 1.32  2000/10/17 10:05:53  mk
   - Left->LeftStr, Right->RightStr
 

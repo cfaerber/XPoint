@@ -732,7 +732,7 @@ var fn     : string;
     seek(f,hdp^.komlen);
     if hdp^.komlen>0 then truncate(f);
     close(f);
-    dispose(hdp);
+    FreeHeaderMem(hdp);
   end;
 
   function GetMsgFilename:string;
@@ -1597,6 +1597,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.48  2000/10/26 12:06:33  mk
+  - AllocHeaderMem/FreeHeaderMem Umstellung
+
   Revision 1.47  2000/10/24 13:42:51  mk
   - MIME-fixes (merged from 3.30 branch)
 

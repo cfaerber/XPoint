@@ -684,7 +684,7 @@ begin
     if hds=1 then begin
       rewrite(f,1);
       close(f);
-      dispose(hdp);
+      FreeHeaderMem(hdp);
       ExtCliptearline:=true;
       exit;
       end;
@@ -1063,6 +1063,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/10/26 12:06:32  mk
+  - AllocHeaderMem/FreeHeaderMem Umstellung
+
   Revision 1.46  2000/10/17 10:05:49  mk
   - Left->LeftStr, Right->RightStr
 

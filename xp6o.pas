@@ -218,8 +218,8 @@ begin
     exit;
     end;
   rec:=dbRecno(mbase);
-  new(hdp0);
   hdp := AllocHeaderMem;
+  hdp0 := AllocHeaderMem;
   ReadHeader(hdp0^,hds,true);
 
   if (hdp0^.wab<>'') and edit and modi then begin
@@ -408,7 +408,7 @@ begin
 ende:
   FlushClose;
   FreeHeaderMem(hdp);
-  dispose(hdp0);
+  FreeHeaderMem(hdp0);
   aufbau:=true;
 end;
 
@@ -639,7 +639,7 @@ label ende,again;
                 sendbox,false,false,nil,leer,leer,0) then;
       _era(fn);
       end;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
   end;
 
   procedure get_re_n(grnr:longint);
@@ -750,7 +750,7 @@ again:
   _brett := dbReadNStr(mbase,mb_brett);
   if (typ=4) and (dbReadInt(mbase,'unversandt') and 2<>0) then begin
     rfehler(620);    { 'Nicht m”glich - bitte Nachricht erneut versenden.' }
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     exit;   { Erneut: Bin„r-Versandmeldung }
     end;
   fn:=TempS(dbReadInt(mbase,'msgsize')+2000);
@@ -1093,7 +1093,7 @@ again:
 ende:
   freeres;
   SendEmpfList.Clear;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   archivweiterleiten:=false;
   if exist(fn) then _era(fn);
 end;
@@ -1185,7 +1185,7 @@ begin
   Xwrite(tmp);
   AddBezug(hdp^,0);
   erase(tf);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -1267,6 +1267,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/10/26 12:06:34  mk
+  - AllocHeaderMem/FreeHeaderMem Umstellung
+
   Revision 1.38  2000/10/17 10:05:53  mk
   - Left->LeftStr, Right->RightStr
 
