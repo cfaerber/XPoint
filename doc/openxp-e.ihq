@@ -1,4 +1,4 @@
-OpenXP/32 v3.70
+OpenXP/32 v3.9.x
 15 6
 53 19
 2 1
@@ -4895,6 +4895,16 @@ This setting also sets the User display.
 Note: This setting applies to display only; when
 entering newsgroup names you must always use the
 Z-Netz form (as in /Alt/Tasteless/Jokes).
+@
+274
+ToDo: Separator comment (\@274)
+@
+275
+ToDo: (Usenet groups with ".")
+      ... applies to all Message Areas (\@275)
+@
+276
+ToDo: Combined Unread mode (\@276)
 @
 840
 <<[x]>>     The message date will be displayed in the
