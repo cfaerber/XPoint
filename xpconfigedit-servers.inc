@@ -20,7 +20,7 @@
 
   procedure NameRead(nt:byte; var name,user,komm,maps,realname,domain,fqdn,
                      bdomain,fidoname:string; txt:atext; var brk:boolean);
-  var x,y  : byte;
+  var x,y  : Integer;
       real : boolean;
       dom  : boolean;
       fqdom: boolean;
@@ -41,7 +41,7 @@
     map:=not (nt in [nt_Maus,nt_Fido,nt_UUCP,nt_QWK]);
     fido:=(nt=nt_Fido);
     dialog(ival(getres2(912,0)),7+iif(map,2,0)+iif(real,2,0)+iif(dom,2,0)+
-           iif(fqdom,2,0)+iif(bdom,2,0)+iif(fido,2,0),txt,x,y);  {16.01.00 HS}
+           iif(fqdom,2,0)+iif(bdom,2,0)+iif(fido,2,0),txt,x,y);
     blen:=ntBoxnameLen(nt);
     btxt:=getres2(912,iif(fido,1,2));    { 'Nodenummer','Boxname   ' }
     { Kleinschreibung fuer Boxname zulassen}
@@ -122,8 +122,7 @@
   // 'Namen' fuer die Internet-Boxentypen
   procedure InetNameRead(nt:byte; var name,user,komm,realname,fqdn:string;
     var brk:boolean);
-  var x,y  : byte;
-      blen : byte;
+  var x,y, bLen  : Integer;
   begin
     DomainNt:=nt;
     dialog(ival(getres2(912,0)),11,name,x,y);
@@ -151,7 +150,7 @@
 
 
   procedure ReadNetztyp(box:string; var nt:byte; var brk:boolean);
-  var x,y  : byte;
+  var x,y  : Integer;
       ntyp : string;
       i    : integer;
   begin
@@ -187,8 +186,7 @@
   procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,fqdn,PPPClientPath,
                      PPPClient,PPPAddServers,PPPDialUp,PPPPhone,PPPLogin,PPPPass:String; Titel:String);
   var
-    x,y: Byte;
-    b: Integer;
+    x,y, b: Integer ;
   label restart;
   begin
   restart:
@@ -509,7 +507,7 @@
   end;
 
   procedure EditPointdaten(nt:byte; var brk:boolean);
-  var x,y,FieldW : byte;
+  var x,y,FieldW : Integer;
       pname  : string;
       lhapar : string;
       YOffset    : shortint;
@@ -821,7 +819,7 @@
   end;
 
   procedure EditTransport(nt:byte; var brk:boolean);
-  var x,y : byte;
+  var x,y : Integer;
   begin
     dialog(58,20,kompname,x,y);
     with boxpar^ do begin
@@ -876,7 +874,7 @@
     end;
 
   procedure EditModemdaten(nt:byte; var brk:boolean);
-  var x,y,add  : byte;
+  var x,y,add  : Integer;
       schnitte : string;
       fido     : boolean;
   begin
@@ -931,7 +929,7 @@
   // procedure Editgebuehren(var brk:boolean);  Removed in Rev. 1.37
 
   procedure EditNNTP(var brk:boolean);
-  var x,y   : byte;
+  var x,y   : Integer;
   begin
     dialog(ival(getres2(950,0)),11,GetRes2(950,1),x,y);         { 'NNTP-Einstellungen' }
     with boxpar^ do begin
@@ -950,7 +948,7 @@
   end;
 
   procedure EditPOP3(var brk:boolean);
-  var x,y   : byte;
+  var x,y: Integer;
   begin
     dialog(ival(getres2(951,0)),13,GetRes2(951,1),x,y);         { 'POP3-Einstellungen' }
     with boxpar^ do
@@ -971,7 +969,7 @@
   end;
 
   procedure EditSMTP(var brk:boolean);
-  var x,y   : byte;
+  var x, y: Integer;
   begin
     dialog(ival(getres2(952,0)),9,GetRes2(952,1),x,y);          { 'SMTP-Einstellungen' }
     with boxpar^ do
@@ -1202,7 +1200,7 @@
   end;
 
   procedure EditSysopdaten(nt:byte; var brk:boolean);
-  var x,y   : byte;
+  var x,y   : Integer;
       flags : byte;
       nobox : boolean;
       fl,el : byte;      { 923.fl = eines der Eingabefelder (fuer Laengenermittlung) }
@@ -1271,7 +1269,7 @@
   end;
 
   procedure EditDiverses(nt:byte; var brk:boolean);
-  var x,y,i : byte;
+  var x,y,i : Integer;
       flags : byte;
       nall  : boolean;
       x2    : byte;
@@ -1343,7 +1341,7 @@
   end;
 
   procedure EditNNTPMisc(nt:byte; var brk:boolean);
-  var x,y,i : byte;
+  var x,y,i : Integer;
       flags : byte;
       nall  : boolean;
       x2    : byte;
@@ -1403,8 +1401,8 @@
   end;
 
   procedure EditNet(var brk:boolean);
-  var x,y,a  : byte;
-      width  : byte;
+  var x,y,a  : Integer;
+      width  : Integer;
       alias  : boolean;
       mids   : boolean;
       replyto: string;
@@ -1522,7 +1520,7 @@
   end;
 
   procedure EditFido(var brk:boolean);
-  var x,y : byte;
+  var x,y : Integer;
       maps: string;
       nli : boolean;
   begin
@@ -1559,7 +1557,7 @@
   end;
 
   procedure EditUUCP(var brk:boolean);
-  var x,y,bl   : byte;
+  var x,y,bl   : Integer;
       bmname,
       _bmtyp   : string;
       replyto  : string;
@@ -1614,7 +1612,7 @@
 
   procedure EditQWK(dateiname:string; var brk:boolean);
   const maxnmt = 10;
-  var   x,y    : byte;
+  var   x,y    : Integer;
         eqfg   : boolean;
         qfg    : QfgRec;
         nmta   : array[1..maxnmt] of record
@@ -1915,13 +1913,13 @@
   var brk : boolean;
       nt  : byte;
       nt1 : byte;
-      x,y : byte;
+      x,y : Integer;
       maps: string[20];
       box : string[BoxNameLen];
 
     procedure SetBrettNetztyp;
     var i,n  : integer;
-        x,y  : byte;
+        x,y  : Integer;
         flags: byte;
         uucp : byte;
         mi   : byte;
@@ -1989,6 +1987,10 @@
 
 {
   $Log$
+  Revision 1.8  2001/07/23 16:05:23  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.7  2001/07/22 21:05:18  mk
   - fixed double RFC/UUCP in Edit/Boxen/Neu
   - renamed ntnr to NetTypes and removed eNetztypen

@@ -114,7 +114,7 @@ end;
 
 
 procedure EditNLentry(var NLItem: TNodeListItem; var brk:boolean);
-var x,y,i    : byte;
+var x,y,i    : Integer;
     filechar : string;
     lform    : string;
     adresse  : string;
@@ -526,6 +526,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/07/23 16:05:23  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.34  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

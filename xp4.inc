@@ -120,7 +120,7 @@ end;
 
 procedure MenuConfigAnzeigeZeilen;
 var
-  x, y: byte;
+  x, y: Integer;
   aLines, aCols: Integer;
   MaxLines, MaxCols: Integer;
   brk: boolean;
@@ -605,6 +605,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2001/07/23 16:05:19  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.30  2001/03/14 20:46:04  mk
   - removed registration routines
 

@@ -370,7 +370,7 @@ procedure memstat;
 
 const rnr = 500;
 var
-    x,y  : byte;
+    x,y  : Integer;
 {$IFDEF Unix}
  {$ifndef BSD}
     info : TSysInfo;
@@ -447,7 +447,7 @@ end;
 { USER.EB1 - Fragmentstatistik, nur deutsche Version }
 
 procedure fragstat;
-var x,y         : byte;
+var x,y         : Integer;
     i           : integer;
     fsize,anz,
     gsize,n,sum : longint;
@@ -639,7 +639,7 @@ end;
 
 
 procedure DatabaseStat;
-var x,y : byte;
+var x,y : Integer;
 
   procedure wrd(yy:byte; datei:string; d:DB);
   var n : boolean;
@@ -787,7 +787,7 @@ begin
 end;
 
 function EnterPassword(txt:atext; var brk:boolean):longint;
-var x,y : byte;
+var x,y : Integer;
     s   : string;
     t   : taste;
 
@@ -846,7 +846,7 @@ begin
 end;
 
 procedure EditPassword;
-var x,y  : byte;
+var x,y  : Integer;
 var brk  : boolean;
     p    : word;
     main : boolean;
@@ -931,7 +931,7 @@ end;
 
 
 procedure xp32welcome;
-var x,y,anz,i : byte;
+var x,y,anz,i : Integer;
 begin
   anz:=res2anz(511);
   msgbox(62,anz+6,'',x,y);
@@ -950,6 +950,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2001/07/23 16:05:20  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.49  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -49,8 +49,8 @@ function  ReadFilename(txt:atext; var s:string; subs:boolean;
 function  overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
 procedure listExt(Self: TLister; var t:taste);
 procedure ExtListKeys;
-function  filecopy(fn1,fn2:string):boolean;
-procedure ExpandTabs(fn1,fn2:string);
+function  filecopy(const fn1,fn2:string):boolean;
+procedure ExpandTabs(const fn1,fn2:string);
 
 function  GetDecomp(atyp:shortint; var decomp:string):boolean;
 function  UniExtract(_from,_to,dateien:string):boolean;
@@ -101,7 +101,7 @@ function ReadFilename(txt:atext; var s:string; subs:boolean;
 const
   urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
     '-','_','#','=','&','%','@','$',','];
-var x,y : byte;
+var x,y : Integer;
   brk : boolean;
   fn  : string;
   s2  : string;
@@ -176,7 +176,7 @@ end;
 
 
 function overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
-var x,y : byte;
+var x,y : Integer;
     nr  : shortint;
     t   : taste;
 begin
@@ -482,7 +482,7 @@ end;
 
 
 
-function filecopy(fn1,fn2:string):boolean;
+function filecopy(const fn1,fn2:string):boolean;
 var f1,f2 : file;
     time  : longint;
     res   : integer;
@@ -561,7 +561,7 @@ end;
 function UniExtract(_from,_to,dateien:string):boolean;
 var decomp : string;
     atyp   : shortint;
-    p      : byte;
+    p      : Integer;
 begin
   UniExtract:=false;
   atyp:=ArcType(_from);
@@ -698,7 +698,7 @@ end;
 
 
 function g_code(s:string):string;
-var i : byte;
+var i : integer;
 begin
   for i:=1 to length(s) do
     s[i]:=chr(byte(s[i]) xor (i mod 7));
@@ -832,7 +832,7 @@ begin
 end;
 
 
-procedure ExpandTabs(fn1,fn2:string);
+procedure ExpandTabs(const fn1,fn2:string);
 var t1,t2 : text;
     s     : string;
     buf   : array[1..1024] of byte;
@@ -1018,6 +1018,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.82  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.81  2001/07/21 16:02:10  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 

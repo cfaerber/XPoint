@@ -22,7 +22,7 @@
 
 
 procedure BU_reorg(user,adrbuch:boolean);
-var x,y,xx  : byte;
+var x,y,xx  : Integer;
     brk,ask : boolean;
     typ     : string;
     d       : DB;
@@ -146,7 +146,7 @@ end;
 
 
 procedure MsgReorgScan(_del,repair:boolean; var brk:boolean);
-var x,y,wdt: byte;
+var x,y,wdt: Integer;
     n,ndel,
     nbesch : longint;
     bt,dbt,
@@ -353,7 +353,7 @@ end;
 procedure MsgReorg;
 const tmp     = 'REORG.$$$';
       maxbufs = 20;
-var x,y,yy  : byte;
+var x,y,yy  : Integer;
     lastproz: byte;
     abl     : byte;
     ablage  : byte;
@@ -708,6 +708,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2001/07/23 16:05:19  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.34  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

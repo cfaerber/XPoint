@@ -37,7 +37,7 @@ type
 
   protected
     FVisible,LastMsgUnimportant,ErrorOccurred: Boolean;
-    FPosX,FPosY,FWidth,FHeight: Byte;
+    FPosX,FPosY,FWidth,FHeight: Integer;
     FHeadline,LastTime: String;
     FLines: TStringList;
     procedure Display(RefreshContent: Boolean); virtual;
@@ -240,7 +240,7 @@ begin
   if not RefreshContent then exit;
 
   SPos:=min(FHeight-FLines.Count,FPosY2-FPosY);
-				
+
   for iLine:= FPosY2-FPosY to FHeight-1 do
     if iLine-spos >= FLines.Count then
       FWrt(FPosX+2,FPosY+iLine+1,Sp(FWidth) )
@@ -276,6 +276,10 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/07/23 16:05:24  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.3  2001/04/16 18:13:28  ma
   - ProgOutWin now pauses a bit on closing
     (some seconds if an error occured, one second if not)

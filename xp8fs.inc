@@ -55,7 +55,7 @@ var
     absender : string;
     box      : string;   { das ist auf jeden Fall eine Zerberus-Box.. }
     convert  : string;
-    x,y,p,p2 : byte;
+    x,y,p,p2 : Integer;
     f        : file;
     fn       : string;
     t1,t2    : text;
@@ -356,7 +356,7 @@ var d     : DB;
 
   procedure readservice;
   var s   : string;
-      x,y : byte;
+      x,y : Integer;
   begin
     diabox(49,5,getres(815),x,y);   { 'Service-Befehl' }
     s:='';
@@ -383,7 +383,7 @@ var d     : DB;
   end;
 
   procedure UUsendfile;
-  var x,y    : byte;
+  var x,y    : Integer;
       brk    : boolean;
       source,
       dest   : string;
@@ -408,7 +408,7 @@ var d     : DB;
   end;
 
   procedure ReadFiles;
-  var x,y : byte;
+  var x,y : Integer;
   begin
     dialog(ival(getres2(818,10)),3,getres2(818,11),x,y);   { 'UUCP-Filerequest' / 'Dateien ' }
     s:='';
@@ -558,6 +558,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2001/07/23 16:05:22  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.20  2001/07/08 09:42:17  ma
   - fixed: File name case (.bl was not processed correctly with Unix)
 

@@ -28,7 +28,7 @@
       retypes:=getres2(901,15+nr);
     end;
 
-  var x,y,i : byte;
+  var x,y,i : Integer;
       ums   : string;
       ss    : string;
       retyp : string;  { Re^n / Re / Default / nein }
@@ -150,7 +150,7 @@
   end;
 
   procedure EditGruppeFido;
-  var x,y  : byte;
+  var x,y  : Integer;
       brk  : boolean;
       orig : string;
       addr : string;
@@ -172,7 +172,7 @@
   end;
 
   procedure EditGruppeRFC;
-  var x,y  : byte;
+  var x,y  : Integer;
       brk  : boolean;
       AMRealname,AMMail,AMReplyTo,AMFQDN : string;
       PMRealname,PMMail,PMReplyTo,PMFQDN : string;
@@ -268,6 +268,10 @@
 
 {
   $Log$
+  Revision 1.2  2001/07/23 16:05:22  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.1  2001/06/04 17:40:41  ma
   - renamed, was xp9
   - implemented role feature

@@ -21,7 +21,7 @@
   procedure ReadMimetyp(edit:boolean; var typ,ext,prog:string;
                         var brk:boolean);
   var
-    x,y,add : byte;
+    x,y,add: Integer;
   begin
     typ:=extmimetyp(typ);
     add:=iif(typ='*/*',0,2);
@@ -135,6 +135,10 @@
 
 {
   $Log$
+  Revision 1.2  2001/07/23 16:05:23  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.1  2001/06/04 17:41:12  ma
   - renamed, was xp9
 

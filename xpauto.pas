@@ -383,7 +383,7 @@ var sr    : tsearchrec;
   end;
 
   procedure FidoImport;
-  var x,y: byte;
+  var x,y: Integer;
   begin
     if not IsBox(DefFidoBox) then
       trfehler(2207,tfs)     { 'Keine gÅltige Fido-Stammbox gewÑhlt' }
@@ -675,6 +675,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/07/23 16:05:22  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.37  2001/04/03 13:25:40  ma
   - cleaned up fido aka handling
 

@@ -219,7 +219,7 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
   end;
 
 const fpuffer = 'FPUFFER';
-var x,y     : byte;
+var x,y: Integer;
     res,iFile: integer;
     AtLeastOneConvertedOK: Boolean;
     aFile,ShellProg: String;
@@ -765,7 +765,7 @@ end;
 
 
 function GetCrashbox:string;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     anz : word;
     t   : text;
@@ -884,6 +884,10 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/07/23 16:05:26  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.13  2001/06/05 21:24:26  ma
   - fixed: file attachments were not sent
 

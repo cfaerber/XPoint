@@ -228,7 +228,7 @@ var  f     : file;
      name  : string;
      vname : string;
      s     : string;
-     p,x,y : byte;
+     p,x,y : Integer;
      buf   : ^ubufa;
      bufp  : word;
      l,r,m : longint;
@@ -406,7 +406,7 @@ end;
 
 procedure NodelistSeek;
 const active : boolean = false;
-var x,y,b: byte;
+var x,y,b: Integer;
     brk  : boolean;
     ni   : ^NodeInfo;
     adr  : string;
@@ -417,7 +417,6 @@ begin
   if active or not TestNodelist or DisableAltN then exit;
   new(ni);
   active:=true;
-{ MH: AltN-Screen zur besseren Lesbarkeit verbreitert }{ unbedenklich }
   diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
   if NodeList.GetMainNodelist>0 then begin
     NlItem:=nodelist.Items[NodeList.GetMainNodelist];
@@ -551,7 +550,7 @@ const NB_data : NodeBRP = nil;
 
 type
   tAndFlags = array[1..andflags] of String;
-var   x,y,h   : byte;
+var   x,y,h   : Integer;
       brk     : boolean;
       flag    : array[1..orflags] of tAndFlags;
       k       : string;
@@ -902,6 +901,10 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.33  2001/07/23 16:05:23  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.32  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

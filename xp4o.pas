@@ -151,7 +151,7 @@ const srec       : ^suchrec = nil;
       history1   : string='';
       history2   : string='';
 
-var x,y   : byte;
+var x,y   : Integer;
     brk   : boolean;
     n,nf  : longint;
     p     : pointer;
@@ -209,7 +209,8 @@ label ende;
 
 {$IFDEF Debug}                      { Zum Debuggen der Suchstringerkennung}
   Procedure Show_Seekstrings;
-  var n,x,y:byte;
+  var
+    n,x,y: Integer;
    begin
     if spez then x:=23 else x:=19;
     msgbox(70,x,'Suchstring-Check',x,y);
@@ -953,7 +954,7 @@ end;
 
 
 procedure SucheWiedervorlage;
-var x,y,xx : byte;
+var x,y,xx : Integer;
     brk    : boolean;
     _brett : string;
     mbrett : string;
@@ -1034,7 +1035,7 @@ procedure ModiBetreff;
 var brk  : boolean;
     hdp  : THeader;
     hds  : longint;
-    x,y  : byte;
+    x,y  : Integer;
     fn   : string;
     f    : file;
 begin
@@ -1233,7 +1234,7 @@ procedure ImportBrettliste;
 var fn  : string;
     s   : string;
     t   : text;
-    x,y : byte;
+    x,y : Integer;
     n   : longint;
     useclip: boolean;
 begin
@@ -1271,7 +1272,7 @@ var fn  : string;
     brk : boolean;
     s   : string;
     t   : text;
-    x,y : byte;
+    x,y : Integer;
     n   : longint;
     useclip: boolean;
     b   : byte;
@@ -1324,7 +1325,7 @@ procedure ExportUB(user:boolean);
 var fname : string;
     t     : text;
     d     : DB;
-    x,y,xx: byte;
+    x,y,xx: Integer;
     cnt,n : longint;
     exkom : boolean;
     brk   : boolean;
@@ -1518,7 +1519,7 @@ procedure msg_info;     { Zerberus-Header anzeigen }
 var hdp   : Theader;
     hds   : longint;
     i     : integer;
-    x,y  : byte;
+    x,y  : Integer;
     dat   : datetimest;
     anz   : byte;
     xxs   : array[1..20] of string;
@@ -1548,7 +1549,7 @@ var hdp   : Theader;
   procedure empfliste;   { Fenster mit Empfaengerliste }
   var ml  : byte;
       i,j : integer;
-      x,y : byte;
+      x,y : Integer;
   begin
     ml:=length(getres2(459,30))+8;
     with hdp do begin
@@ -1574,7 +1575,7 @@ var hdp   : Theader;
   procedure refliste;   { Fenster mit Referenzliste }
   var ml  : byte;
       i,j : integer;
-      x,y : byte;
+      x,y : Integer;
   begin
     ml:=length(getres2(459,31))+8;
     with hdp do
@@ -1827,7 +1828,7 @@ end;
 procedure ArcSpecial(Self: TLister; var t:taste);
 var s   : string;
     dp  : string;
-    x,y : byte;
+    x,y : Integer;
     brk : boolean;
     fk  : string;
     sex : string;
@@ -1979,7 +1980,7 @@ procedure DupeKill(autodupekill:boolean);
 var d     : DB;
     f1,f2 : file;
     n,ll  : longint;
-    x,y   : byte;
+    x,y   : Integer;
     last,
     next  : string;
     flags : byte;
@@ -2116,7 +2117,7 @@ end;
 
 function UserMarkSuche(allmode:boolean):boolean;
 const suchst  : string = '';
-var   x,y     : byte;
+var   x,y     : Integer;
       brk     : boolean;
       nn,n,nf : longint;
       uname,
@@ -2170,7 +2171,7 @@ end;
 
 procedure BrettInfo;
 var i   : longint;
-    x,y : byte;
+    x,y : Integer;
     brk : boolean;
 begin
   dbReadN(bbase,bb_index,i);
@@ -2410,6 +2411,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.96  2001/07/23 16:05:20  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.95  2001/07/10 07:59:38  mk
   JG:- added search Option "u"
 

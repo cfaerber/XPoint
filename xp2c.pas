@@ -114,7 +114,7 @@ end;
 { Verschiedene Optionen }
 
 procedure options;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     ua  : string;
     i   : integer;
@@ -163,7 +163,7 @@ begin
 end;
 
 procedure UI_options;
-var x,y  : byte;
+var x,y  : Integer;
     brk  : boolean;
     xa   : array[0..3] of string;
     lm   : array[0..3] of string;
@@ -277,7 +277,7 @@ begin
 end;
 
 procedure msgoptions;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     i   : byte;
     xnr : byte;
@@ -359,7 +359,7 @@ begin { testurl }
 end;
 
 procedure adroptions;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
 begin
   dialog(ival(getres2(252,100)),8,getres2(252,101),x,y);  { 'Adre·einstellungen (ZCONNECT / RFC)' }
@@ -381,7 +381,7 @@ end;
 
 
 function smalladr(var s:string):boolean;
-var x,y : byte;
+var x,y : Integer;
     t   : taste;
     ok  : boolean;
 begin
@@ -401,7 +401,7 @@ begin
 end;
 
 function testhayes(var s:string):boolean;
-var x,y : byte;
+var x,y : Integer;
     t   : taste;
     ok  : boolean;
 begin
@@ -423,7 +423,7 @@ begin
 end;
 
 procedure netcalloptions;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
 begin
   dialog(59,11,getres2(254,1),x,y);     { 'Netcall-Optionen' }
@@ -449,7 +449,7 @@ end;
 
 procedure listoptions;
 var brk : boolean;
-    x,y : byte;
+    x,y : Integer;
 begin
 {$IFDEF unix}
   dialog(ival(getres2(255,0)),15,getres2(255,1),x,y);    { 'Lister' }
@@ -499,7 +499,7 @@ end;
 
 procedure Xlistoptions;
 var brk : boolean;
-    x,y : byte;
+    x,y : Integer;
 begin
   dialog(ival(getres2(255,20)),3,getres2(255,21),x,y);    { 'externer Lister' }
   maddstring(3,2,getres2(255,22),VarLister,21,40,''); mhnr(230);   { 'Lister ' }
@@ -516,7 +516,7 @@ end;
 
 procedure editoptions;
 var brk   : boolean;
-    x,y,i : byte;
+    x,y,i : Integer;
     eds   : string;
     edtype: array[1..3] of string;
 begin
@@ -565,7 +565,7 @@ end;
 
 procedure shelloptions;
 var brk : boolean;
-    x,y : byte;
+    x,y : Integer;
 begin
 {$IFDEF unix}
   dialog(ival(getres2(257,0)),4,getres2(257,1),x,y);    { 'Shell' }
@@ -592,7 +592,7 @@ end;
 { Brettanzeige }
 
 procedure brett_config;
-var x,y   : byte;
+var x,y   : Integer;
     brk   : boolean;
     i     : integer;
     brett : string;
@@ -637,7 +637,7 @@ end;
 { Nachrichtenanzeige }
 
 procedure NachrichtenanzeigeCfg;
-var x,y   : byte;
+var x,y   : Integer;
     brk   : boolean;
     i     : integer;
     sabs  : string;
@@ -679,7 +679,7 @@ begin
 end;
 
 procedure MiscAnzeigeCfg;
-var i,x,y    : byte;
+var i,x,y    : Integer;
     brk,du : boolean;
 begin
 {$IFDEF unix}
@@ -720,7 +720,7 @@ end;
 { UnterstÅtzung fÅr seh-/hîrbehinderte Anwender }
 
 procedure AccessibilityOptions;
-var x,y,i,j : byte;
+var x,y,i,j : Integer;
     brk : boolean;
 begin
   dialog(41,11,getres2(260,11),x,y);
@@ -797,7 +797,7 @@ const
   txt_nr  = 2;                  { 'Seriell ^1 (COM1), ...' }
 {$endif} { Unix }
 var brk  : boolean;
-    x,y  : byte;
+    x,y  : Integer;
 {$ifndef Unix }
     pstr : string;
 {$endif}
@@ -897,7 +897,7 @@ end;
 
 procedure path_config;
 var brk : boolean;
-    x,y : byte;
+    x,y : Integer;
 begin
   delete_tempfiles;
   dialog(ival(getres2(262,0)),11,'',x,y);
@@ -949,7 +949,7 @@ begin
 end;
 
 procedure ArcOptions;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
 begin
   dialog(53,17,getres(263),x,y); fy:=y;   { 'Archiv-Entpacker fÅr...' }
@@ -993,7 +993,7 @@ const
 {  lpts : array[1..5] of string[4] = ('LPT1','LPT2','LPT3','COM1','COM2');  }
   { MK 01/00 Das drucken auf COM-Ports wird im Moment nicht unterstÅtzt }
   lpts : array[1..3] of string = ('LPT1','LPT2','LPT3');
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     lpt : string;
     i   : integer;
@@ -1026,7 +1026,7 @@ end;
 
 
 procedure pmcOptions;
-var x,y  : byte;
+var x,y  : Integer;
     brk  : boolean;
     i    : integer;
     pchr : string;
@@ -1059,7 +1059,7 @@ begin
 end;
 
 procedure FidoOptions;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     via : boolean;
 begin
@@ -1089,7 +1089,7 @@ begin
 end;
 
 procedure netoptions;
-var x,y   : byte;
+var x,y   : Integer;
     brk   : boolean;
     add   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
@@ -1139,9 +1139,9 @@ begin
 end;
 
 procedure SizeOptions;
-var x,y   : byte;
+var x,y   : Integer;
     brk   : boolean;
-    anz,i : byte;
+    anz,i : Integer;
   function sname(nr:byte):string;
   begin
     case nr of
@@ -1175,7 +1175,7 @@ begin
 end;
 
 procedure GebuehrOptions;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     r   : real;
 begin
@@ -1200,7 +1200,7 @@ end;
 
 procedure TerminalOptions;
 {$ifdef unix}
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     ok  : boolean;
 begin
@@ -1221,7 +1221,7 @@ begin
   menurestart:=brk;
 end;
 {$else} { unix}
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     com : string;
     d   : DB;
@@ -1300,7 +1300,7 @@ begin
 end;
 
 procedure PGP_Options;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     sall: boolean;
 begin
@@ -1352,7 +1352,7 @@ begin
 end;
 
 procedure ViewerOptions;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
 begin
   if RightStr(viewer_save,1)='.' then viewer_save:=LeftStr(viewer_save,length(viewer_save)-1);
@@ -1388,6 +1388,10 @@ end.
 
 {
   $Log$
+  Revision 1.91  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.90  2001/06/11 22:23:27  ma
   - added GnuPG support
 

@@ -137,7 +137,7 @@ var flp : dbFLP;
   var fld : dbFeldTyp;
       hdp : Theader;
       hds : longint;
-      x,y : byte;
+      x,y : Integer;
       n,nn: longint;
       idnr: integer;
 
@@ -449,7 +449,7 @@ var flp : dbFLP;
   var fld   : dbFeldTyp;
       hdp   : Theader;
       hds,n : longint;
-      x,y   : byte;
+      x,y   : Integer;
       nt    : byte;
       name  : string[25];
   begin
@@ -509,7 +509,7 @@ var flp : dbFLP;
   var fld   : dbFeldTyp;
       hdp   : THeader;
       n,hds : longint;
-      x,y   : byte;
+      x,y   : Integer;
       flags : longint;
   begin
     xp32welcome;
@@ -547,7 +547,7 @@ var flp : dbFLP;
   end;
 
   procedure UserEbError;
-  var x,y  : byte;
+  var x,y  : Integer;
       nr,i : shortint;
       anz  : shortint;
       t    : taste;
@@ -582,7 +582,7 @@ var flp : dbFLP;
 
   { Wiedervorlage-Datum 31.12.1999 durch 31.12.2027 ersetzen }
   procedure FixWiedervorlage;
-  var x,y  : byte;
+  var x,y  : Integer;
       n,nn : longint;
       flags: byte;
       edat : longint;
@@ -958,6 +958,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.30  2001/07/22 21:43:47  mk
   - added new database field eMail
 

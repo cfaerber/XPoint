@@ -231,7 +231,7 @@ begin
 end;
 
 procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
-var x,y   : byte;
+var x,y   : Integer;
     i     : shortint;
     h     : byte;
     small : string[1];
@@ -407,6 +407,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/07/23 16:05:22  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.25  2001/07/10 19:02:50  my
   - fixed previous commit
 

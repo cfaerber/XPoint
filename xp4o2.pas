@@ -257,7 +257,7 @@ end;
 
 procedure BezugNeuaufbau;
 var nn,n : longint;
-    x,y  : byte;
+    x,y  : Integer;
     hd   : theader;
     hds  : longint;
     lp   : byte;
@@ -358,7 +358,7 @@ end;
 
 procedure BezugReadmids;
 var nn,n : longint;
-    x,y  : byte;
+    x,y  : Integer;
     idnr : integer;
     hd   : theader;
     hds  : longint;
@@ -935,6 +935,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/07/23 16:05:20  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.37  2001/06/05 16:45:54  ma
   - fixed: language switching did not work
 

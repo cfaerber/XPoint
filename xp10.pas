@@ -401,7 +401,7 @@ begin
 end;
 
 function ReadTimingNr(var brk:boolean):integer;
-var x,y,nr : byte;
+var x,y,nr : Integer;
 begin
   dialog(length(getres(1001))+9,1,'',x,y);
   nr:=Timing_Nr;
@@ -541,7 +541,7 @@ end;
 procedure UniEdit(typ:byte);
 var
     brk, eList : boolean;
-    x,y        : byte;
+    x,y        : Integer;
     tnr        : integer;
     t          : taste;
     nr,bp      : integer;
@@ -691,7 +691,7 @@ var
   var tr  : TimeRec;
       wot : string;
       i   : byte;
-      x,y : byte;
+      x,y : Integer;
       all : boolean;
       wtage:array[1..7] of string;
       aVon, aBis: String;
@@ -800,7 +800,7 @@ var
                          and (ta^[ord(t[2])]<>''));
   end;
 
-  procedure readmkey(edit:boolean; x,y:byte; ta:tap; var tt:string);
+  procedure readmkey(edit:boolean; x,y: Integer; ta:tap; var tt:string);
   var t1,t2 : taste;
 
     function gett:string;
@@ -845,7 +845,7 @@ var
 
   procedure ReadMacro(var s:string; var brk:boolean);
   var i,nr,a : integer;
-      x,y    : byte;
+      x,y    : Integer;
       mt     : string;
       t1     : taste;
       ta     : tap;
@@ -966,7 +966,7 @@ var
   end;
 
   procedure EditMacro(strIdx : integer);
-  var x,y  : byte;
+  var x,y  : Integer;
       s    : string;
       komm : string;
       brk  : boolean;
@@ -989,7 +989,7 @@ var
   end;
 
   procedure MacroKey(strIdx : integer);
-  var x,y    : byte;
+  var x,y    : Integer;
       tt,ttt : string;
       ta     : tap;
   begin
@@ -1013,7 +1013,7 @@ var
   end;
 
   procedure MacroScope(strIdx : integer);
-  var x,y,i  : byte;
+  var x,y,i  : Integer;
       brk    : boolean;
       enable : array[1..mtypes-1] of boolean;
       s: String;
@@ -1042,7 +1042,7 @@ var
   { --- GebÅhrenzonen --------------------------------------------- }
 
   procedure EditPhoneEntry(neu:boolean; nr:integer; var brk:boolean);
-  var x,y   : byte;
+  var x,y   : Integer;
       n     : integer;
       add   : integer;
       phe   : phoneap;
@@ -1183,7 +1183,7 @@ var
   procedure EditTarif(nr,page:integer; var brk:boolean);
   const etlen = 14;
   type  tet1  = array[1..5,1..maxzones] of string;
-  var   x,y   : byte;
+  var   x,y   : Integer;
         tt    : tet1;
         add   : integer;
         i,j : integer;
@@ -1253,7 +1253,7 @@ var
 
 
   procedure EditTarifTage(nr:integer; var brk:boolean);
-  var x,y : byte;
+  var x,y : Integer;
       i,j : integer;
   begin
     for i:=1 to maxwotage do DayUsed[i]:=false;
@@ -1470,7 +1470,7 @@ var
 
   procedure NL_info;
   const bs = 4096;
-  var x,y : byte;
+  var x,y : Integer;
       fn  : string[12];
       t   : text;
       buf : pointer;
@@ -2061,6 +2061,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.55  2001/07/23 16:05:17  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.54  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

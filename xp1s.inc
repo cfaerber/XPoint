@@ -99,7 +99,7 @@ procedure shell(prog:string; space:word; cls:shortint);
 
   procedure ShowPar;
   var w1,w2    : word;
-      x,y,p,p2 : byte;
+      x,y,p,p2 : Integer;
   begin
     savecursor;
     cursor(curoff);
@@ -508,6 +508,10 @@ end;
 
 {
   $Log$
+  Revision 1.55  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.54  2001/05/20 12:21:06  ma
   - added ShellTrackNewFiles
 

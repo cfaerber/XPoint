@@ -285,7 +285,7 @@ end;
 procedure MausInfoReorg;
 var brett  : string[5];
     mi     : shortint;
-    x,y    : byte;
+    x,y    : Integer;
     rec    : longint;
     maus   : string[BoxNameLen];
     betreff: string[BetreffLen];
@@ -370,7 +370,7 @@ var t   : text;
     hdp : Theader;
     hds : longint;
     nr  : shortint;
-    x,y : byte;
+    x,y : Integer;
     gel : byte;
     ta  : taste;
     b   : byte;
@@ -590,7 +590,7 @@ var  box    : string[BoxNameLen];
 
   procedure edit(var brk:boolean);
   var i,ml  : integer;
-      h,x,y : byte;
+      h,x,y : Integer;
       spflag: boolean;
       ipos  : byte;
 
@@ -821,6 +821,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/07/23 16:05:24  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.25  2001/06/04 17:36:50  ma
   - renamed old xp9 source files
 

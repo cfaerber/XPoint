@@ -77,7 +77,7 @@ type ubrec = record
 
 var fn   : string;
     brk  : boolean;
-    x,y  : byte;
+    x,y  : Integer;
     f    : file of ubrec;
     r    : ubrec;
     grnr : longint;
@@ -90,18 +90,6 @@ var fn   : string;
   begin
     halten:=r.haltezeit;
     dbWrite(d,'haltezeit',halten);
-  end;
-
-  procedure w0;
-  begin
-    savecursor;
-    window(1,1,screenwidth,screenlines);
-  end;
-
-  procedure w1;
-  begin
-    // window(x+2,y+1,x+76,y+screenlines-8);
-    restcursor;
   end;
 
 begin
@@ -165,9 +153,9 @@ begin
           if not dbFound then begin
             dbAppend(bbase);
             dbWriteN(bbase,bb_brettname,name);
-            w0;
+            savecursor;
             setbrettindex;
-            w1;
+            restcursor;
             end;
           if not dbFound or replbretter then begin
             dbWriteN(bbase,bb_pollbox,pollbox);
@@ -237,7 +225,7 @@ var t   : text;
     s   : string;
     fn  : string;
     nt  : shortint;
-    x,y : byte;
+    x,y : Integer;
     brk : boolean;
     d   : DB;
     box : string;
@@ -411,7 +399,7 @@ var   daten    : FILE;
       x,tempx  : msg_index;
       tempdatum: TDateTime;
       was      : byte;
-      mx,my    : byte;
+      mx,my    : Integer;
       n        : longint;
       buf      : ^buft;
       bufpos,
@@ -542,7 +530,7 @@ end;
 procedure ImportMautauBase;   { X/Import/MauTau }
 var mtpath : string;
     brk    : boolean;
-    x,y    : byte;
+    x,y    : Integer;
     box    : string;
 begin
   if not mfehler(ExecutableExists(MaggiBin),MaggiBin+' fehlt!') then begin
@@ -586,11 +574,11 @@ end;
 procedure ImportYuppiebase;          { --- Yuppie-Import ----------------- }
 var ypath : string;
     brk   : boolean;
-    x,y   : byte;
+    x,y   : Integer;
 
   procedure ImportYupbase;
   const TempPKT = '1.PKT';
-  var x, y: byte;
+  var x, y: Integer;
   begin
     shell(Yup2PktBin+' '+ypath+' '+TempPKT+' '+DefFidoBox,300,3);
     if not mfehler(errorlevel=0,'Fehler bei Nachrichtenkonvertierung') then begin
@@ -638,7 +626,7 @@ end;
 
 
 procedure ImportQWKpacket;
-var x,y     : byte;
+var x,y     : Integer;
     fn      : string;
     useclip : boolean;
     bretth  : string;
@@ -676,6 +664,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/07/23 16:05:24  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.38  2001/06/04 17:36:50  ma
   - renamed old xp9 source files
 

@@ -461,7 +461,7 @@ var t1,t2         : text;
     Line2         : string;
     Articles      : String;
     fileofs       : Longint;
-    x,y           : byte;
+    x,y           : Integer;
     c             : char;
     brk           : boolean;
 label makercend;
@@ -569,7 +569,7 @@ var t1,t2    : text;
     i        : longint;
     n,m      : byte;
 
-  { //!! ToDo: In Pascal umschreiben
+  //!! ToDo: In Pascal umschreiben
   { Brettlisten-Zeilen im UKA* Format vor der        }
   { Uebergabe an den Lister ins XP-Format bringen    }
   { und Offsetanpassung fuer Bestellt-Flag ermitteln }
@@ -855,8 +855,8 @@ var t     : text;
     else brettcode:='';
   end;
 
-  procedure GetDel(txt:string);
-  var width,x,y : byte;
+  procedure GetDel(const txt:string);
+  var width,x,y : Integer;
       t         : taste;
   begin
     width:=max(33,length(txt)+5);
@@ -1345,7 +1345,7 @@ label again;
   end;
 
   procedure BretterAnlegen;
-  var x,y : byte;
+  var x,y : Integer;
       n   : longint;
       s   : string;
       i   : integer;
@@ -1385,7 +1385,7 @@ label again;
   end;
 
   procedure BretterAnlegen2;
-  var x,y : byte;
+  var x,y : Integer;
       n   : longint;
       s   : string;
       i   : integer;
@@ -1661,7 +1661,7 @@ var brk     : boolean;
     lines   : byte;
     i       : integer;
     List: TLister;
-    x, y: Byte;
+    x, y: Integer;
 
   procedure app(s1,s2:string);
   begin
@@ -1669,7 +1669,7 @@ var brk     : boolean;
   end;
 
   procedure rdsystem;
-  var x,y : byte;
+  var x,y : Integer;
       sys : string;
       brk : boolean;
   begin
@@ -1702,7 +1702,7 @@ var brk     : boolean;
   var
       gruppe : string;
       user   : string;
-      x,y,p  : byte;
+      x,y,p  : Integer;
       brk    : boolean;
       aufnehm: boolean;
   begin
@@ -2094,6 +2094,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2001/07/23 16:05:22  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.46  2001/07/21 16:02:11  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 

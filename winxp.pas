@@ -64,24 +64,24 @@ var   wpstack  : array[1..maxpush] of word;
 
 procedure clwin(l,r,o,u:word);
 
-procedure rahmen1(li,re,ob,un:byte; txt:string);    { Rahmen ≥ zeichen       }
-procedure rahmen2(li,re,ob,un:byte; txt:string);    { Rahmen ∫ zeichnen      }
-procedure rahmen3(li,re,ob,un:byte; txt:string);    { Special-Rahmen         }
-procedure rahmen1d(li,re,ob,m,un:byte; txt:string); { Doppelrahmen ≥ zeichen }
-procedure rahmen2d(li,re,ob,m,un:byte; txt:string); { Doppelrahmen ∫ zeichnen}
-procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
-procedure wshadow(li,re,ob,un:word);                { 8-Schatten }
+procedure rahmen1(li,re,ob,un: Integer; const txt:string);    { Rahmen ≥ zeichen       }
+procedure rahmen2(li,re,ob,un: Integer; const txt:string);    { Rahmen ∫ zeichnen      }
+procedure rahmen3(li,re,ob,un: Integer; const txt:string);    { Special-Rahmen         }
+procedure rahmen1d(li,re,ob,m,un: Integer; const txt:string); { Doppelrahmen ≥ zeichen }
+procedure rahmen2d(li,re,ob,m,un: Integer; const txt:string); { Doppelrahmen ∫ zeichnen}
+procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:word; const txt:string);
+procedure wshadow(li,re,ob,un: Integer);                { 8-Schatten }
 
 procedure setrahmen(n:shortint);                 { Rahmenart fÅr wpull+ setzen }
 function  getrahmen:shortint;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
-procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
+procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle:word);
 procedure wrest(handle:word);
 procedure wslct(anz:integer; ta:pntslcta; handle,pos:word; abs1:boolean;
                 var n:word; var brk:boolean);
 procedure seldummy(var sel:slcttyp);
-procedure wpush(x1,x2,y1,y2:byte; text:string);
-procedure wpushs(x1,x2,y1,y2:byte; text:string);
+procedure wpush(x1,x2,y1,y2: integer; text:string);
+procedure wpushs(x1,x2,y1,y2: integer; text:string);
 procedure wpop;
 
 {$IFNDEF NCRT }
@@ -187,7 +187,7 @@ var pullw   : array[1..maxpull] of record
 
 
 {$IFNDEF NCRT }
-procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
+procedure qrahmen(l,r,o,u: Integer; typ,attr:byte; clr:boolean);
 var
   i: integer;
   SaveAttr: Byte;
@@ -492,7 +492,7 @@ end;
 {$ENDIF }
 
 { attr1 = Rahmen/Background; attr2 = Kopf }
-procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
+procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:word; const txt:string);
 var la           : byte;
     ls,rs,os,us,
     i,nx,ny,del  : byte;
@@ -536,7 +536,7 @@ begin
     end;
 end;
 
-procedure rahmen1(li,re,ob,un:byte; txt:string);
+procedure rahmen1(li,re,ob,un: Integer; const txt:string);
 begin
   normtxt;
   moff;
@@ -550,7 +550,7 @@ begin
 end;
 
 
-procedure rahmen2(li,re,ob,un:byte; txt:string);
+procedure rahmen2(li,re,ob,un: Integer; const txt:string);
 begin
   normtxt;
   moff;
@@ -563,7 +563,7 @@ begin
 end;
 
 
-procedure rahmen3(li,re,ob,un:byte; txt:string);
+procedure rahmen3(li,re,ob,un: Integer; const txt:string);
 begin
   normtxt;
   moff;
@@ -576,14 +576,14 @@ begin
 end;
 
 
-Procedure rahmen1d(li,re,ob,m,un:byte; txt:string);
+Procedure rahmen1d(li,re,ob,m,un: Integer; const txt:string);
 begin
   rahmen1(li,re,ob,un,txt);
   mwrt(li,m,hbar(re-li+1));
 end;
 
 
-Procedure rahmen2d(li,re,ob,m,un:byte; txt:string);
+Procedure rahmen2d(li,re,ob,m,un: Integer; const txt:string);
 begin
   rahmen2(li,re,ob,un,txt);
   mwrt(li,m,'Ã'+dup(re-li-1,'Õ')+'π');
@@ -600,7 +600,7 @@ begin
 end;
 
 
-Procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
+Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle:word);
 {$IFDEF NCRT }
 const
   i: word = 1;
@@ -846,8 +846,8 @@ end;
   {$HINTS ON }
 {$ENDIF }
 
-procedure wpush(x1,x2,y1,y2:byte; text:string);
-var r   : byte;
+procedure wpush(x1,x2,y1,y2: Integer; text:string);
+var r   : Integer;
     tx1 : char;
 begin
   if wpp=maxpush then writeln('WPUSH error')
@@ -868,7 +868,7 @@ begin
 end;
 
 
-procedure wpushs(x1,x2,y1,y2:byte; text:string);
+procedure wpushs(x1,x2,y1,y2: Integer; text:string);
 begin
   shad:=1;
   wpush(x1,x2,y1,y2,text);
@@ -934,6 +934,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2001/07/23 16:05:17  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.55  2001/04/22 21:34:38  mk
   - FPC compatibility fix
 

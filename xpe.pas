@@ -139,7 +139,7 @@ begin
 end;
 
 function EditFindfunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
 begin
   dialog(ival(getres2(2506,0)),5,getres2(2506,1),x,y);    { 40 / 'Suchen' }
@@ -153,7 +153,7 @@ begin
 end;
 
 function EditReplfunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
 begin
   dialog(ival(getres2(2506,10)),7,getres2(2506,11),x,y);    { 40 / 'Suchen/ersetzen' }
@@ -173,7 +173,7 @@ end;
 {$ENDIF }
 
 procedure EditCfgFunc(var cfg:EdConfig; var brk:boolean);
-var x,y : byte;
+var x,y : Integer;
     ec  : string;
 begin
   with cfg do begin
@@ -312,7 +312,7 @@ begin
 end;
 
 procedure EditBetreff;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
 begin
   if edbetreff='' then exit;
@@ -334,7 +334,7 @@ end;
 
 procedure SigEdit(datei:string);
 var ok   : boolean;
-    x,y  : byte;
+    x,y  : Integer;
     n,nn : shortint;
     a    : taste;
     i    : integer;
@@ -474,6 +474,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/07/23 16:05:23  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.27  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

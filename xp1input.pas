@@ -38,12 +38,12 @@ uses
 
 function readbutton(x,y,abs:byte; buttons:string; default:shortint;
                     homeend:boolean; var retkey:taste):shortint;
-function ReadJN(txt:string; default:boolean):boolean;
-function ReadJNesc(txt:string; default:boolean; var brk:boolean):boolean;
+function ReadJN(const txt:string; default:boolean):boolean;
+function ReadJNesc(const txt:string; default:boolean; var brk:boolean):boolean;
 function ReadIt(width:byte; txt,buttons:string; default:shortint;
                 var brk:boolean):shortint;
-function MiniSel(x,y:byte; txt,auswahl:string; startpos:shortint):shortint;
-procedure EditDate(x,y:byte; txt:atext; var d:datetimest; var brk:boolean);
+function MiniSel(x,y: Integer; txt,auswahl:string; startpos:shortint):shortint;
+procedure EditDate(x,y: Integer; const txt:atext; var d:datetimest; var brk:boolean);
 
 
 implementation
@@ -64,9 +64,9 @@ uses xp1;
 
 function readbutton(x,y,abs:byte; buttons:string; default:shortint;
                     homeend:boolean; var retkey:taste):shortint;
-const maxbutt = 9; (* 05.02.2000 MH: 9 Buttons im Sendefenster zulassen *){ unbedenklich }
-var p,n,p1,i : byte;
-    butt     : array[1..maxbutt] of string[30];
+const maxbutt = 9;
+var p,n,p1,i : Integer;
+    butt     : array[1..maxbutt] of string;
     butthigh : array[1..maxbutt] of byte;
     buttsp   : array[1..maxbutt] of byte;
     bpx      : array[1..maxbutt] of byte;
@@ -209,10 +209,9 @@ end;
 
 { Button-Abfrage; liefert FALSE bei Esc }
 
-function ReadJN(txt:string; default:boolean):boolean;
-var x,y   : byte;
+function ReadJN(const txt:string; default:boolean):boolean;
+var x,y, width: Integer;
     t     : taste;
-    width : byte;
 begin
   readjn:=default;
   width:=max(22,length(txt)+5);
@@ -229,10 +228,9 @@ end;
 
 { Button-Abfrage; liefert brk bei Esc }
 
-function ReadJNesc(txt:string; default:boolean; var brk:boolean):boolean;
-var x,y   : byte;
+function ReadJNesc(const txt:string; default:boolean; var brk:boolean):boolean;
+var x,y, Width: Integer;
     t     : taste;
-    width : byte;
 begin
   readjnesc := default;
   width:=max(22,length(txt)+5);
@@ -254,7 +252,7 @@ end;
 
 function ReadIt(width:byte; txt,buttons:string; default:shortint;
                 var brk:boolean):shortint;
-var x,y   : byte;
+var x,y   : Integer;
     t     : taste;
     r     : shortint;
 begin
@@ -274,9 +272,9 @@ end;
 { auswahl  = ^Punkt1,^Punkt2,...     }
 { startpos = Default; < 0 -> Checker }
 
-function MiniSel(x,y:byte; txt,auswahl:string; startpos:shortint):shortint;
+function MiniSel(x,y: Integer; txt,auswahl:string; startpos:shortint):shortint;
 const maxsel = 20;
-var width,height : byte;
+var width,height : Integer;
     n,p,p1,ml : shortint;
     sel       : array[1..maxsel] of string;
     selhigh   : array[1..maxsel] of byte;
@@ -398,9 +396,9 @@ begin
 end;
 
 
-procedure EditDate(x,y:byte; txt:atext; var d:datetimest; var brk:boolean);
+procedure EditDate(x,y: Integer;const txt:atext; var d:datetimest; var brk:boolean);
 var
-  width,height,i : byte;
+  width,height,i : Integer;
 begin
   width:=length(txt)+17; height:=3;
   if x=0 then getpos(width,height,x,y);
@@ -425,6 +423,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2001/07/23 16:05:17  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.18  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

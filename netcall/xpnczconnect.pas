@@ -62,7 +62,7 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
       for i:=3 to p-1 do result:=result and(s[i] IN ['0'..'9']);
   end;
 
-var x,y     : byte;
+var x,y: Integer;
     res,iFile: integer;
     aFile,ShellProg: String;
     NewFiles: TStringList;
@@ -250,6 +250,10 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/07/23 16:05:26  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.3  2001/04/23 11:38:40  ma
   - implemented sending of serial number
 

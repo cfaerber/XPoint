@@ -45,14 +45,14 @@ implementation  { -------------------------------------------------- }
 procedure EditFkeys(typ:byte);
 { const n_typ : array[0..3] of string[9] =
               ('ohne Kopf','mit Kopf','Puffer','Quote'); }
-var anzahl  : byte;
-    x,y,p,i : byte;
+var anzahl  : Integer;
+    x,y,p,i : Integer;
     txt     : string;
     t       : taste;
     modi    : boolean;
 
   procedure edit(p:byte);
-  var x,y,i : byte;
+  var x,y,i : Integer;
       s     : string;
       brk   : boolean;
   begin
@@ -1155,6 +1155,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.25  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

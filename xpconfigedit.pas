@@ -598,8 +598,7 @@ end;
 {$ENDIF }
 
 function JanusSwitch(var s:string):boolean;
-var x,y   : byte;
-    anz,i : integer;
+var x,y, anz,i : integer;
     t     : taste;
 begin
   JanusSwitch:=true;
@@ -630,7 +629,7 @@ var d         : DB;
     p0,p,gl : integer;
     t         : taste;
     drec      : array[1..maxgl] of longint;
-    x,y       : byte;
+    x,y       : Integer;
     width     : byte;
     buttons   : string;
     bp,rb     : shortint;
@@ -1109,7 +1108,7 @@ end;
 { s = '<BOX> <USERNAME> [/ Realname]'}
 
 procedure SetUsername(s:string);
-var x,y  : byte;
+var x,y  : Integer;
     brk  : boolean;
     user : string;
     real : string;
@@ -1232,7 +1231,7 @@ begin
 end;
 
 procedure get_first_box(d:DB);
-var x,y  : byte;
+var x,y  : Integer;
     brk  : boolean;
     name : string;
     dname: string;
@@ -1404,7 +1403,7 @@ function PPPClientPathTest(var s:string):boolean;
 var ok   : boolean;
     fn   : String;
     path : string;
-    x,y  : byte;
+    x,y  : Integer;
 begin
   PPPClientPathTest:=true;
   fn:=trim(s);
@@ -1491,6 +1490,10 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/07/23 16:05:23  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.5  2001/07/22 21:06:22  mk
   - fixed crash in get_first_box: email is ansistring, not shortstring
 

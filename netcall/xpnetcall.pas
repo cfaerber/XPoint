@@ -1178,7 +1178,7 @@ end;
 
 procedure netcall_at(zeit:datetimest; BoxName:string);
 var brk  : boolean;
-    x,y  : byte;
+    x,y  : Integer;
     ende : boolean;
     t    : taste;
     xx   : byte;
@@ -1373,6 +1373,10 @@ end.
 
 {
   $Log$
+  Revision 1.25  2001/07/23 16:05:26  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.24  2001/07/21 16:02:13  mk
   - implemented RFC/Client from OpenXP 3.40 RC3, Part 1
 

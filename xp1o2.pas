@@ -92,7 +92,7 @@ end;
 
 
 function DruckWiederholen:boolean;
-var x,y   : byte;
+var x,y   : Integer;
     t     : taste;
 begin
   diabox(32,5,'',x,y);
@@ -108,8 +108,8 @@ end;
 
 
 procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
-const x: byte = 0;
-      y: byte = 0;
+const x: Integer = 0;
+      y: Integer = 0;
       lastper : byte = 101;
 begin
   with ICR do
@@ -222,6 +222,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.17  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -83,7 +83,7 @@ var printlines : longint;
     WaitKey    : taste;               { Taste, mit der wkey beendet wurde }
     llh        : boolean;             { "L"/"H" im Lister -> xp1o.listExt }
                                       { == Nachrichten-Lister             }
-    rbx,rby    : byte;                { Cursorposition fÅr ReadButton     }
+    rbx,rby    : Integer;             { Cursorposition fÅr ReadButton     }
     hidden     : ^ahidden;            { Liste der unsichtbaren MenÅpkte.  }
     anzhidden  : integer;             { Anzahl der unsichtbaren MenÅpkte. }
 
@@ -129,19 +129,19 @@ procedure SetMausEmu;
 
 procedure blindon(total:boolean);
 procedure blindoff;
-procedure getpos(width,height:byte; var x,y:byte);
-procedure openbox(width,height:byte; var txt:string; var x,y:byte; c1,c2:byte);
-procedure msgbox(width,height:byte; txt:string; var x,y:byte);
-procedure diabox(width,height:byte; txt:string; var x,y:byte);
-procedure selbox(width,height:byte; txt:string; var x,y:byte; hell:boolean);
-function listbox(width,height:byte; txt:string): TLister;
+procedure getpos(width,height: Integer; var x,y: Integer);
+procedure openbox(width,height:Integer; const txt:string; var x,y: Integer; c1,c2: Integer);
+procedure msgbox(width,height: Integer; const txt:string; var x,y: Integer);
+procedure diabox(width,height: Integer; const txt:string; var x,y: Integer);
+procedure selbox(width,height: Integer; const txt:string; var x,y: Integer; hell:boolean);
+function listbox(width,height: Integer; const txt:string): TLister;
 procedure ListboxCol(List: TLister);
-procedure utilbox(l,r,o,u:byte; txt:string);
-procedure dialog(width,height:byte; txt:string; var x,y:byte);
+procedure utilbox(l,r,o,u: Integer; const txt:string);
+procedure dialog(width,height: Integer; const txt:string; var x,y: Integer);
 procedure enddialog;
 procedure closebox;
 procedure moment;
-procedure message(txt:string);
+procedure message(const txt:string);
 procedure rmessage(nr:word);
 procedure WaitIt(txt:atext; p:proc; sec:word);
 procedure WriteClipFile(fn:string);
@@ -152,7 +152,7 @@ procedure XP_testbrk(var brk:boolean);
 procedure errsound;
 function  _errsound:boolean;
 procedure signal;              { s. Config/Anzeige/Hilfen }
-procedure fehler(txt:string);
+procedure fehler(const txt:string);
 procedure rfehler(nr:word);
 procedure rfehler1(nr:word; txt:string);
 procedure hinweis(txt:string);
@@ -164,7 +164,7 @@ procedure trfehler(nr:word; sec:integer);
 procedure trfehler1(nr:word; txt:string; sec:integer);
 procedure afehler(txt:string; auto:boolean);
 procedure arfehler(nr:word; auto:boolean);
-procedure interr(txt:string);
+procedure interr(const txt:string);
 function  ioerror(i:integer; otxt:atext):atext;
 
 procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
@@ -236,12 +236,12 @@ procedure ExitPrinter;
 
 function  TempFree:Int64;                 { Platz auf Temp-Laufwerk }
 function  TempS(bytes:longint):string;
-procedure _era(fn:string);
+procedure _era(const fn:string);
 procedure _chdir(p:string);
 function  testmem(size:longint; wait:boolean):boolean;
 
-procedure cm_w(s:string);                     { Command-Mode-Ausgabe }
-procedure cm_wl(s:string);                    { Writeln              }
+procedure cm_w(const s:string);                     { Command-Mode-Ausgabe }
+procedure cm_wl(const s:string);                    { Writeln              }
 procedure cm_wln;
 procedure cm_rl(var s:string; maxlen:byte; dot:boolean; var brk:boolean);
 function  cm_key:char;
@@ -766,7 +766,7 @@ begin
   s:= s0;                               { Falls var irgendeine Bedeutung hat }
 end;
 
-procedure interr(txt:string);
+procedure interr(const txt:string);
 begin
   moff;
   cm_wl(txt);
@@ -1096,14 +1096,14 @@ end;
 
 { --- Dialog- und sonstige Boxen ------------------------------- }
 
-procedure getpos(width,height:byte; var x,y:byte);
+procedure getpos(width,height: Integer; var x,y: Integer);
 begin
   x:=(screenwidth-width)div 2 +1;
   y:=(ScreenLines-height+1) div 2 +1;
 end;
 
 
-procedure openbox(width,height:byte; var txt:string; var x,y:byte; c1,c2:byte);
+procedure openbox(width,height: Integer; const txt:string; var x,y: Integer; c1,c2: Integer);
 begin
   blindon(true);
   getpos(width,height,x,y);
@@ -1122,19 +1122,19 @@ begin
 end;
 
 
-procedure msgbox(width,height:byte; txt:string; var x,y:byte);
+procedure msgbox(width,height: Integer; const txt:string; var x,y: Integer);
 begin
   openbox(min(width,screenwidth),height,txt,x,y,col.colmboxrahmen,col.colmbox);
 end;
 
 
-procedure diabox(width,height:byte; txt:string; var x,y:byte);
+procedure diabox(width,height: Integer; const txt:string; var x,y: Integer);
 begin
   openbox(width,height,txt,x,y,col.coldiarahmen,col.coldialog);
 end;
 
 
-procedure selbox(width,height:byte; txt:string; var x,y:byte; hell:boolean);
+procedure selbox(width,height: Integer; const txt:string; var x,y: Integer; hell:boolean);
 begin
   openbox(width,height,txt,x,y,
           iif(hell,col.colselrahmen,col.colsel2rahmen),
@@ -1155,8 +1155,8 @@ begin
   end;
 end;
 
-function listbox(width,height:byte; txt:string): TLister;
-var x,y : byte;
+function listbox(width,height: Integer; const txt:string): TLister;
+var x,y : Integer;
 begin
   selbox(width+2,height+2,txt,x,y,true);
   Result := TLister.CreateWithOptions(x+1,x+width,y+1,y+height,0,'/NS/SB/NLR/DM/');
@@ -1165,7 +1165,7 @@ begin
 end;
 
 
-procedure utilbox(l,r,o,u:byte; txt:string);
+procedure utilbox(l,r,o,u: INteger; const txt:string);
 begin
   blindon(true);
   attrtxt(col.colutility);
@@ -1193,8 +1193,8 @@ begin
 end;
 
 
-procedure message(txt:string);
-var x,y : byte;
+procedure message(const txt:string);
+var x,y : Integer;
 begin
   msgbox(length(txt)+6,3,'',x,y);
   mwrt(x+3,y+1,LeftStr(txt,screenwidth-6));
@@ -1211,7 +1211,7 @@ begin
 end;
 
 
-procedure dialog(width,height:byte; txt:string; var x,y:byte);
+procedure dialog(width,height: Integer; const txt:string; var x,y: Integer);
 begin
   diabox(width+2,height+2,txt,x,y);
   inc(x); inc(y);
@@ -1280,17 +1280,18 @@ begin
   end;
 end;
 
-procedure _fehler(var txt:string; hinweis:boolean);
-var x,y   : byte;
+procedure _fehler(const txt:string; hinweis:boolean);
+var x,y   : Integer;
     w1,w2 : word;
     lcol  : byte;
+    s: String;
 begin
-  truncstr(txt,screenwidth-4);
+  s := LeftStr(s, screenwidth-6);
   savecursor; lcol:=textattr;
   w1:=windmin; w2:=windmax;
   window(1,1,ScreenWidth,ScreenLines);
-  msgbox(length(txt)+6,5,iifs(hinweis,_hinweis_,_fehler_),x,y);
-  mwrt(x+3,y+2,LeftStr(txt,screenwidth-6));
+  msgbox(length(s)+6,5,iifs(hinweis,_hinweis_,_fehler_),x,y);
+  mwrt(x+3,y+2, s);
   errsound;
   wait(curoff);
   closebox;
@@ -1299,7 +1300,7 @@ begin
   attrtxt(lcol);
 end;
 
-procedure fehler(txt:string);
+procedure fehler(const txt:string);
 begin
   _fehler(txt,false);
 end;
@@ -1355,7 +1356,7 @@ begin
 end;
 
 procedure tfehler(txt:string; sec:integer);
-var x,y : byte;
+var x,y : Integer;
 begin
   msgbox(length(txt)+16,5,_fehler_,x,y);
   mwrt(x+3,y+2,LeftStr(txt,screenwidth-16)+'  '#4'  '+formi(sec div 60,2)+':'+
@@ -1788,7 +1789,7 @@ end;
 { alle restlichen Bytes ab fpos(f1) nach f2 kopieren }
 
 function fmove(var f1,f2:file): boolean;
-var x,y   : byte;
+var x,y   : Integer;
     p     : pointer;
     ps : word;
     box   : boolean;
@@ -1852,7 +1853,7 @@ begin
 end;
 
 
-procedure _era(fn:string);
+procedure _era(const fn:string);
 begin
   if not sysutils.DeleteFile(fn) then
     trfehler1(4,'"'+FileUpperCase(fn)+'"',30);   { 'Kann "'+FileUpperCase(fn)+'" nicht lîschen!?' }
@@ -1947,7 +1948,7 @@ end;
 
 const cm = false;
 
-procedure cm_w(s:string);
+procedure cm_w(const s:string);
 begin
   if cm then write(s)
   else write(s);
@@ -1973,7 +1974,7 @@ begin
     writeln;
 end;
 
-procedure cm_wl(s:string);
+procedure cm_wl(const s:string);
 begin
   cm_w(s);
   cm_wln;
@@ -1985,7 +1986,7 @@ begin
 end;
 
 procedure cm_rl(var s:string; maxlen:byte; dot:boolean; var brk:boolean);
-var x,y : byte;
+var x,y : Integer;
     t   : taste;
 begin
   x:=wherex; y:=wherey;
@@ -2058,6 +2059,10 @@ end.
 
 {
   $Log$
+  Revision 1.107  2001/07/23 16:05:17  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.106  2001/05/20 12:21:06  ma
   - added ShellTrackNewFiles
 

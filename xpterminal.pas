@@ -704,7 +704,7 @@ end;
 procedure telnet;
 var Host: String;
     Port: Integer;
-    x,y:  Byte;
+    x,y:  Integer;
     brk:  Boolean;
 begin
   Debug.DebugLog('XPFM','Telnet called',1);
@@ -738,6 +738,10 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/07/23 16:05:24  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.4  2001/05/16 01:59:15  mk
   - fixed os/2 compatibility with FPC very quick and dirty
 

@@ -300,7 +300,7 @@ var
     brk  : boolean;
     fn   : string;
     t    : text;
-    x,y  : byte;
+    x,y  : Integer;
 begin
   GetFilescanbox(box);
   if box='' then exit;
@@ -342,6 +342,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.13  2001/07/23 16:05:21  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.12  2001/07/08 09:42:17  ma
   - fixed: File name case (.bl was not processed correctly with Unix)
 

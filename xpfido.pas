@@ -205,7 +205,7 @@ var   NX_adrnetx   : longint;
 procedure MakeNodelistIndex;
 const tbuf     = 8192;
       nbuffers = 32;
-var x,y        : byte;
+var x,y        : Integer;
     nf         : text;
     idf,tf     : file;
     p          : byte;
@@ -1087,7 +1087,7 @@ begin
 end;
 
 procedure SetShrinkNodelist;
-var x,y   : byte;
+var x,y   : Integer;
     brk   : boolean;
     s,s2  : string;
     ss    : string;
@@ -1262,10 +1262,9 @@ end;
 
 
 procedure GetFAddress(request:boolean; txt:string; var fa:FidoAdr;
-                      var ni:NodeInfo; var brk:boolean; var x,y:byte);
+                      var ni:NodeInfo; var brk:boolean; var x,y: Integer);
 var node    : string;
-{    modem   : string[53]; }
-    xx,yy,i : byte;
+    xx,yy,i : Integer;
     t       : taste;
 begin
   dialog(38,3,txt,x,y);
@@ -1505,7 +1504,7 @@ end;
 
 function FidoRequest(node,files:string):string;
 var brk   : boolean;
-    x,y   : byte;
+    x,y   : Integer;
     fa    : FidoAdr;
     ni    : NodeInfo;
     atonce: boolean;
@@ -1659,7 +1658,7 @@ end;
 procedure ReadFidolist;
 var fn     : string;
     brk    : boolean;
-    x,y    : byte;
+    x,y    : Integer;
     node   : string;
     fi,fi2 : string;
     ni     : nodeinfo;
@@ -1679,14 +1678,14 @@ label ende;
 
   function filetest(docopy:boolean; size:Int64; path:string; fi:string):boolean;
   var
-    p	    : Integer;
+    p       : Integer;
     driveNr : Integer;
   begin
 {$IFDEF Linux}
      driveNr := SysUtils.AddDisk(Path);
-{$ELSE}     
+{$ELSE}
      driveNr := ord(FirstChar(Path))-64;
-{$ENDIF}     
+{$ENDIF}
     if (diskfree(driveNr)<=size) and fehlfunc(getres(2114)) then  { 'zu wenig Platz' }
       filetest:=false
     else if docopy and FileExists(path+fi) and not overwrite(path+fi) then
@@ -1881,8 +1880,7 @@ end;
 
 
 
-{ MO 23.01.0000 File Suche in Fido Requstlisten mit bis zu fnf
-  Suchbegriffen  }
+{ File Suche in Fido Requstlisten mit bis zu fnf Suchbegriffen  }
 function FidoSeekfile:string;
   const
     seekfile         = 'fileseek.dat';
@@ -1898,7 +1896,7 @@ function FidoSeekfile:string;
     sFlistName       : string;
     sa               : array[0..maxbuf] of string;
     searchStr        : array[0..SearchStr_maxIdx] of string;
-    x,y              : byte;
+    x,y              : Integer;
     brk              : boolean;
     pFileListCfg     : ^text;
     pOutput          : ^text;
@@ -2254,6 +2252,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2001/07/23 16:05:23  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.51  2001/06/05 16:44:49  ma
   - Fido crash netcalls should be working again
   - cleaned up a bit

@@ -43,7 +43,7 @@ var brk     : boolean;
     tl      : array[1..maxentries] of TRP;
     anz,i   : integer;
     ldate   : string;
-    x,y,gl  : byte;
+    x,y,gl  : Integer;
     anzeige : boolean;
     ende    : boolean;
     endtime : string;
@@ -185,8 +185,8 @@ var brk     : boolean;
       t   : text;
       ti  : string;
       all : string;
-      x,y : byte;
-      p   : byte;
+      x,y : Integer;
+      p   : Integer;
       box : string;
   begin
     all:='';
@@ -598,7 +598,7 @@ end;
 procedure Makroliste(nr:byte);
 var
   List: TLister;
-  x,y  : byte;
+  x,y  : Integer;
     brk  : boolean;
     anz  : integer;
     t    : text;
@@ -656,6 +656,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2001/07/23 16:05:17  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.15  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

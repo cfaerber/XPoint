@@ -471,7 +471,7 @@ var
     aas     : array[1..3] of string;
     leerz   : string;
     pm,brk : boolean;
-    x,y,p  : byte;
+    x,y,p  : Integer;
     ta     : taste;
     n      : integer;
     hdp    : Theader;
@@ -614,7 +614,7 @@ label ende,again;
   end;
 
   procedure MausWeiterleiten;   { Maus-BK }
-  var x,y  : byte;
+  var x,y  : Integer;
       brk  : boolean;
       empf : string;
       fn   : string;
@@ -1241,7 +1241,7 @@ end;
 
 procedure PmArchiv(einzel:boolean);
 var i   : integer;
-    x,y : byte;
+    x,y : Integer;
     xx  : byte;
     brk : boolean;
     fpm : boolean;
@@ -1295,6 +1295,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2001/07/23 16:05:21  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.61  2001/07/15 08:15:43  mk
   - Reversed wrong 'fix' (2000/09/18) of fe. This fix was meant to meet
     ZC specs but did everything else than that. N/W/K is "active"

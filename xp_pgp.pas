@@ -452,7 +452,7 @@ end;
 
 procedure PGP_RequestKey;
 var user : string;
-    x,y  : byte;
+    x,y  : Integer;
     brk  : boolean;
     tmp  : string;
     t    : text;
@@ -476,7 +476,7 @@ begin
   mappcustomsel(seluser,false);
   ccte_nobrett:=true;
   msetvfunc(cc_testempf);
-  ok := false; { mk 12/99 }
+  ok := false;
   repeat
     readmask(brk);
     if not brk then begin
@@ -838,6 +838,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/07/23 16:05:22  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.36  2001/06/11 22:23:27  ma
   - added GnuPG support
 

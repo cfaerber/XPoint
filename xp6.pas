@@ -337,7 +337,7 @@ function DoSend(pm:boolean; var datei:string; empfaenger,betreff:string;
 
 var f,f2     : file;
     edis     : byte;
-    x,y      : byte;
+    x,y      : Integer;
     brk      : boolean;
     typ      : string;  { Kopf fuer Betreff/Sende-Box          }
     wbox     : string;
@@ -769,7 +769,7 @@ var f,f2     : file;
   var
     ToStr: String;
     ToPos: Integer;
-  begin  { 05.02.2000 MH: 70 -> 78 f. Zurueck }{ unbedenklich }
+  begin
     diabox(78,13+fadd,typ,x,y);
     moff;
     wrt(x+3,y+2,getres2(611,10)+ch);   { 'Empfaenger ' }
@@ -2109,6 +2109,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.117  2001/07/23 16:05:20  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.116  2001/06/26 23:43:47  mk
   JG:- fixed ancient 'forcebox' bug: it was possible to e.g. create a mail to
        an RFC recipient and then select a Fido server in the send window.

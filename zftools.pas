@@ -678,7 +678,7 @@ var f1,f2   : file;
     reqfile : text;
     reqopen : boolean;
     reqnode : string;
-    x,y     : byte;
+    x,y     : Integer;
 
   procedure wrw(w:word);
   begin
@@ -1804,6 +1804,10 @@ end;
 end.
 {
         $Log$
+        Revision 1.16  2001/07/23 16:05:24  mk
+        - added some const parameters
+        - changed most screen coordinates from byte to integer (saves some kb code)
+
         Revision 1.15  2001/03/23 13:42:34  ma
         - missing msgid reported in debug log
 

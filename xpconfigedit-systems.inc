@@ -20,7 +20,8 @@
 
   procedure ReadSystem(var name,komm,fs_name,fs_passwd,converter:string;
                        fs_typ:byte; var brk:boolean);
-  var x,y : byte;
+  var
+    x,y: Integer;
   begin
     dialog(ival(getres2(903,0)),11,getres2(903,iif(edit,1,2)),x,y);    { 'Systeme bearbeiten','neues System anlegen' }
     maddstring(3,2,getres2(903,3),name,BoxNameLen,BoxNameLen,'>'); mhnr(461);   { 'Systemname ' }
@@ -135,6 +136,10 @@
 
 {
   $Log$
+  Revision 1.2  2001/07/23 16:05:23  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.1  2001/06/04 17:41:12  ma
   - renamed, was xp9
 

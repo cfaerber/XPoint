@@ -51,7 +51,7 @@ function  modibrett2:boolean;           { Zugriff }
 procedure _multiedit(user:boolean);
 procedure _multiloesch(user:boolean);
 
-procedure EditTime(x,y:byte; txt:atext; var d:datetimest; var brk:boolean);
+procedure EditTime(x,y: Integer; txt:atext; var d:datetimest; var brk:boolean);
 
 procedure ReadDirect(txt:atext; var empf,betr,box:string; pmonly:boolean;
                      var brk:boolean);
@@ -313,7 +313,7 @@ end;
 procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
                    var halten,adr:integer16; var flags:byte; edit:boolean;
                    var brk:boolean);
-var x,y  : byte;
+var x,y: Integer;
     filt : boolean;
     uml  : boolean;
     ebs  : boolean;
@@ -463,7 +463,7 @@ end;
 
 procedure editverteiler(txt:atext; var name,komm,pollbox:string; Var adr:integer16;
                         var brk:boolean);
-var x,y : byte;
+var x,y: Integer;
 begin
   dialog(57,7,txt,x,y);
   name:=vert_name(name);
@@ -614,7 +614,7 @@ var pw    : string;
     name  : string;
     adr   : string;
     size  : integer;
-    x,y   : byte;
+    x,y   : Integer;
     brk   : boolean;
     adrb  : byte;
     i     : integer;
@@ -691,7 +691,7 @@ end;
 
 
 function brettaffe(var s:string):boolean;
-var x,y : byte;
+var x,y: Integer;
 begin
   if cpos('@',s)=0 then
     brettaffe:=true
@@ -739,7 +739,7 @@ end;
 procedure editbrett(var brett,komm,box,origin:string; var gruppe:longint;
                     var halten:integer16; var flags:byte; edit:boolean;
                     var brk:boolean);
-var x,y    : byte;
+var x,y    : Integer;
     askloc : boolean;
     d      : DB;
     grname : string;
@@ -889,7 +889,7 @@ end;
 
 
 function modibrett2:boolean;
-var x,y,wdt  : byte;
+var x,y,wdt  : Integer;
     brk      : boolean;
     rec      : longint;
     adresse  : string;
@@ -1058,7 +1058,7 @@ var
     brk    : boolean;
     gruppe : longint;
     modin  : boolean;
-    x,y    : byte;
+    x,y    : Integer;
     n      : longint;
     mi     : shortint;
     rec    : longint;
@@ -1140,7 +1140,7 @@ end;
 procedure _multiedit(user:boolean);
 const nn : shortint = 1;
 var n,w    : shortint;
-    x,y    : byte;
+    x,y    : Integer;
     brk    : boolean;
     s      : string;
     htyp   : string;
@@ -1349,7 +1349,7 @@ begin
 end;
 
 
-procedure EditTime(x,y:byte; txt:atext; var d:datetimest; var brk:boolean);
+procedure EditTime(x,y: Integer; txt:atext; var d:datetimest; var brk:boolean);
 var width,height : byte;
 begin
   width:=length(txt)+14; height:=3;
@@ -1544,7 +1544,7 @@ end;
 
 procedure ReadDirect(txt:atext; var empf,betr,box:string; pmonly:boolean;
                      var brk:boolean);
-var x,y : byte;
+var x,y: Integer;
     pb  : boolean;
     pba : integer;
     d   : DB;
@@ -1647,7 +1647,7 @@ var n   : shortint;
     d   : string;
     brk : boolean;
     sich: string;
-    x,y : byte;
+    x,y: Integer;
 begin
   get_lesemode:=-1;
   pushhp(50);
@@ -1869,7 +1869,7 @@ begin
 end;
 
 procedure AutoEdit(kopie:boolean; var ar:AutoRec; var brk:boolean);
-var x,y    : byte;
+var x,y: Integer;
     wot    : string;
     tg     : string;
     mon    : string;
@@ -2046,7 +2046,7 @@ begin
 end;
 
 procedure auto_fileinfo;
-var x,y : byte;
+var x,y: Integer;
     ar  : AutoRec;
     fn  : string;
     sr  : tsearchrec;
@@ -2148,7 +2148,7 @@ begin
 end;
 
 procedure Bretttrennung;
-var x,y   : byte;
+var x,y: Integer;
     brk   : boolean;
     oldtc : string;
     s     : string;
@@ -2192,7 +2192,7 @@ end;
 
 
 procedure Usertrennung;
-var x,y   : byte;
+var x,y: Integer;
     brk   : boolean;
     oldtc : string;
     s     : string;
@@ -2324,7 +2324,7 @@ var
     localuser       : boolean;
     autov,pseudos   : boolean;
     nn              : longint;
-    x,y,i,uucp,flags: byte;
+    x,y,i,uucp,flags: Integer;
     brk             : boolean;
     d               : DB;
     mi,p            : shortint;
@@ -2432,6 +2432,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2001/07/23 16:05:19  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.59  2001/06/04 17:36:50  ma
   - renamed old xp9 source files
 

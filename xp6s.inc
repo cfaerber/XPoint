@@ -459,7 +459,7 @@ procedure encode_file(des:boolean; var f1,f2:file);
 var p    : pointer;
     rr   : word;
     show : boolean;
-    x,y  : byte;
+    x,y: Integer;
     ofs  : longint;
     total: longint;
     _pwd : ^string; { Notwendig, da QPC in Assembler :-((( }
@@ -613,8 +613,8 @@ var t     : text;
     buf   : array[0..2047] of byte;
     n,nq  : integer;
     s     : string;
-    x,y,i : byte;
-    lines : byte;
+    x,y,i : Integer;
+    lines : Integer;
     a     : taste;
     p     : byte;
 begin
@@ -707,7 +707,7 @@ end;
 
 function DateSend:boolean;
 var brk      : boolean;
-    x,y      : byte;
+    x,y      : Integer;
     mind     : fdate;
     dd,mm,yy : smallword;
 begin
@@ -958,7 +958,7 @@ begin
 end;
 
 procedure EditSdata;
-var x,y : byte;
+var x,y : Integer;
     brk : boolean;
     asc : string[120];
     sml : string[1];
@@ -1049,7 +1049,7 @@ end;
 
 procedure SendPGPOptions;
 var brk : boolean;
-    x,y : byte;
+    x,y: Integer;
 begin
   if not UsePGP then
     rfehler(633)    { 'Aktivieren Sie zuerst PGP unter /Config/Extern/PGP!' }
@@ -1089,7 +1089,7 @@ end;
 { RFC: X-Priority: 1, 2, 3, 4, 5 }
 procedure GetPrio;
 var
-  x, y: Byte;
+  x, y: Integer;
   i: Integer;
   brk: boolean;
   Prio: string;
@@ -1115,6 +1115,10 @@ end;
 
 {
   $Log$
+  Revision 1.56  2001/07/23 16:05:21  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.55  2001/06/04 17:40:05  ma
   - implemented role feature
   - fixed: MsgId was not correct if no FQDN specified with NNTP/SMTP servers

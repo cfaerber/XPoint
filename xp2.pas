@@ -179,14 +179,14 @@ begin
     writeln(getres2(202,i));
     if (i+5) mod (sclines-3)=0 then
       if not Sysoutputredirected then begin
-	writeln;
+        writeln;
         write(getres(12));
         get(t,curon);
 {$IFNDEF Linux}
         write(#13,sp(30),#13);
 {$ELSE}
-	 XPCurses.Clrscr;
-{$ENDIF}   
+         XPCurses.Clrscr;
+{$ENDIF}
         end;
     end;
   CloseResource;
@@ -650,8 +650,8 @@ var lf : string;
     begin
        if length(sr.name) < LanguagePos then
        begin
-	 SetLength(sr.name, LanguagePos);
-	 sr.name[LanguagePos] := 'd'
+         SetLength(sr.name, LanguagePos);
+         sr.name[LanguagePos] := 'd'
        end;
       parlanguage:=sr.name[LanguagePos];
       write ('<D>eutsch / <E>nglish ?  '+parlanguage);
@@ -893,7 +893,7 @@ end;
 procedure testdiskspace;
 var
   free : Int64;
-  x,y  : byte;
+  x,y  : Integer;
 begin
   if ParNomem then exit;
 {$IFDEF Debug }
@@ -971,7 +971,7 @@ const maxdays = 14;
 var
     ddiff: longint;
     wdt  : byte;
-    x,y  : byte;
+    x,y  : Integer;
     brk  : boolean;
     dat  : datetimest;
     j    : word;
@@ -1092,6 +1092,10 @@ end.
 
 {
   $Log$
+  Revision 1.112  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.111  2001/06/05 16:45:54  ma
   - fixed: language switching did not work
 

@@ -204,7 +204,7 @@ end;
 
 procedure bd_setzen(sig:boolean);
 var s   : atext;
-    x,y : byte;
+    x,y : Integer;
 begin
   s:=getres(320);   { 'Datumsbezuege werden ueberarbeitet...     %' }
   msgbox(length(s)+10,5,'',x,y);
@@ -380,7 +380,7 @@ end;
 *)
 
 procedure Bverknuepfen;
-var x,y     : byte;
+var x,y     : Integer;
     brk     : boolean;
     newbrett,
     oldbrett,
@@ -492,7 +492,7 @@ end;
 *)
 
 procedure Uverknuepfen;   { Userbretter verknuepfen }
-var x,y      : byte;
+var x,y      : Integer;
     brk      : boolean;
     newuser,
     olduser  : string;
@@ -575,7 +575,7 @@ end;
 
 procedure extrakt(art:byte; aktdispmode,rdmode:shortint);
 var fname   : string;
-    x,y,p   : byte;
+    x,y,p   : Integer;
     n       : longint;
     _brett,_b : string;
     brett   : string;
@@ -758,7 +758,7 @@ end;
 procedure msgall(art:byte; aktdispmode,rdmode:shortint);
 var i,ii     : longint;
     _brett,_b: string;
-    x,y,attr : byte;
+    x,y,attr : Integer;
     gelesen  : byte;
     isflags  : byte;
     lhalt    : byte;
@@ -1423,7 +1423,7 @@ end;
 procedure AlphaBrettindex;
 var nr,i,nn : longint;
     d       : DB;
-    x,y,xx  : byte;
+    x,y,xx  : Integer;
 begin
   msgbox(length(getres(339))+6,3,'',x,y);
   mwrt(x+3,y+1,getres(339));   { 'Brettindex wird angelegt...     %' }
@@ -1525,6 +1525,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2001/07/23 16:05:19  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.58  2001/06/09 10:58:53  ma
   - added ForceOneArea feature (for POP3 server type)
 

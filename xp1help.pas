@@ -296,7 +296,7 @@ end;
 
 procedure do_help(n:word);
 var
-      x,y  : byte;
+      x,y  : Integer;
       hlp  : string;
       mh   : boolean;
 begin
@@ -413,6 +413,10 @@ end.
 
 {
   $Log$
+  Revision 1.23  2001/07/23 16:05:17  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.22  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

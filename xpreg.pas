@@ -44,7 +44,7 @@ procedure BetaMessage;
 implementation
 
 procedure OpenXPInfo;
-var x,y,i : byte;
+var x,y,i : Integer;
     s     : string;
     p     : byte;
 
@@ -90,7 +90,7 @@ begin
 end;
 
 procedure BetaMessage;
-var x,y,i : byte;
+var x,y,i : Integer;
     msglines    : byte;
     z     : taste;
     s:String;
@@ -120,6 +120,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/07/23 16:05:24  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.27  2001/07/23 14:45:02  mk
   - OpenXPInfo: Default Button corrected and Dialog resized
 

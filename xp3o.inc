@@ -19,7 +19,7 @@
 }
 
 procedure readpuffer;
-var x,y   : byte;
+var x,y   : Integer;
     s     : string;
     brk   : boolean;
     ed,pb : boolean;
@@ -66,7 +66,7 @@ const
   bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
   maxll    = 64;
 
-var x,y      : byte;
+var x,y      : Integer;
     f,pfile  : file;
     llbuf    : array[1..maxll] of longint;
     llanz    : integer;
@@ -1238,6 +1238,10 @@ end;
 
 {
   $Log$
+  Revision 1.57  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.56  2001/07/11 20:30:47  mk
   SV:- cancel processing fixed (WAB-Header may authorize sender (ZConnect))
 

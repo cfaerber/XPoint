@@ -20,7 +20,8 @@
 
   procedure ReadPseudo(edit:boolean; var kurz,lang,pollbox:string;
                        var brk:boolean);
-  var x,y: byte;
+  var
+    x,y: Integer;
   begin
     dialog(ival(getres2(905,0)),7,getres2(905,iif(edit,1,2)),x,y);   { 'Kurzname bearbeiten' / 'Kurzname anlegen' }
     maddstring(3,2,getres2(905,3),kurz,15,15,without(allchar,'@')); mhnr(711);   { 'Kurzname   ' }
@@ -88,6 +89,10 @@
 
 {
   $Log$
+  Revision 1.2  2001/07/23 16:05:23  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.1  2001/06/04 17:41:12  ma
   - renamed, was xp9
 

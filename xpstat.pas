@@ -116,7 +116,7 @@ type statrec = record
      statarr = array[1..maxrec] of statrec;
 
 var brk       : boolean;
-    x,y,p     : byte;
+    x,y,p     : Integer;
     marked    : boolean;
     von,bis   : datetimest;
     vonl,bisl : longint;
@@ -257,7 +257,7 @@ begin
   dialog(38,10,txt,x,y);
   marked:=(bmarkanz>0) and (AktDispmode<=0);
   von:='01.01.80'; bis:=fdat(zdate);
-  sysmax := maxrec; { MK 01/00 }
+  sysmax := maxrec;
   statbrett:=true;
   madddate(3,2,getres2(2603,3),von,false,false); mhnr(450);    { 'Vom' }
   madddate(19,2,getres2(2603,4),bis,false,false);    { 'bis zum' }
@@ -423,7 +423,7 @@ end;
 
 
 procedure ReadStatbrett(txt:string; var brk:boolean);
-var x,y : byte;
+var x,y : Integer;
 begin
   dialog(33,3,getreps(2605,txt),x,y);   { '%s-Statistik' }
   statbrett:=true;
@@ -441,7 +441,7 @@ type statrec = record
                  size : longint;
                end;
      statt   = array[1..maxgr] of statrec;
-var x,y       : byte;
+var x,y       : Integer;
     brk       : boolean;
     ende      : boolean;
     stat      : ^statt;
@@ -571,7 +571,7 @@ end;
 procedure GebuehrenZaehler(alle:boolean);
 var box     : string;
     showbox : string;
-    x,y,wdt : byte;
+    x,y,wdt : Integer;
     brk     : boolean;
     monate  : boolean;
     jahr    : word;
@@ -746,7 +746,7 @@ type pprec  = record
                 esize : longint;
               end;
 var sr       : tsearchrec;
-    x,y,yy   : byte;
+    x,y,yy   : Integer;
     msgs     : longint;   { Anzahl Nachrichten in PP-File  }
     emsgs    : longint;   { Anzahl Nachrichten in EPP-File }
     d        : DB;
@@ -841,7 +841,7 @@ end;
 
 procedure NodeStatistik;
 
-var x,y   : byte;
+var x,y   : Integer;
     brk   : boolean;
     fn    : string;
     t     : text;
@@ -1145,7 +1145,7 @@ end;
 
 
 procedure AnrufStat;
-var x,y    : byte;
+var x,y    : Integer;
     brk    : boolean;
     d      : DB;
     t      : text;
@@ -1259,6 +1259,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/07/23 16:05:24  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
   Revision 1.37  2001/06/04 17:36:50  ma
   - renamed old xp9 source files
 
