@@ -132,6 +132,9 @@ RECODE ?= recode
 JADE ?= openjade
 TIDY ?= tidy
 W3M ?= w3m
+TEX ?= tex
+PDFTEX ?= pdftex
+DVIPS ?= dvips
 INSTALLDIR ?= mkdir
 INSTALL_DATA ?= xcopy
 DOCFORM ?= ..\docform.exe
@@ -154,6 +157,9 @@ RECODE ?= recode
 JADE ?= openjade
 TIDY ?= tidy
 W3M ?= w3m
+TEX ?= tex
+PDFTEX ?= pdftex
+DVIPS ?= dvips
 INSTALLDIR ?= install -m 755 -d
 INSTALL_DATA ?= install -b -V existing -p -m 644
 DOCFORM ?= ../docform
@@ -166,8 +172,8 @@ OLDDOC = fido uucp
 TXT = authors.txt dbform devtodo.txt files.txt gpl.txt make.txt \
 	planung.txt readme.txt slizenz.txt tools.txt versions.txt
 CONTRIBDOC = bestell.txt lizenz.doc xpoint.log
-HBFILES = xpoint.htm catalog xpoint.tmp xpoint.tm1 xpoint.tm2 \
-	tidyerr.tmp
+HBFILES = xpoint.htm xpoint.rtf xpoint.tex xpoint.dvi xpoint.ps \
+	xpoint.pdf catalog xpoint.tmp xpoint.tm1 xpoint.tm2 tidyerr.tmp
 
 ifeq ($(OS),linux)
 TXT += readme.lnx
@@ -190,12 +196,15 @@ else
 all: $(HELPFILES) $(OLDDOCFILES)
 endif
 
+fulldoc: xpoint.txt xpoint.htm xpoint.rtf xpoint.tex xpoint.dvi \
+	xpoint.ps xpoint.pdf $(HELPFILES) $(OLDDOCFILES)
+
 $(HELPFILES): %.hlp: %.ihq
 	$(IHS) $*
 
 xpoint.txt: xpoint.htm
 	$(W3M) $(W3MFLAGS) xpoint.htm > xpoint.tmp
-	$(RECODE) -f latin1..ibmpc < xpoint.tmp > xpoint.txt
+	-$(RECODE) -f latin1..ibmpc < xpoint.tmp > xpoint.txt
 
 xpoint.htm: xpoint.sgm xpoint.dsl catalog
 	$(JADE) -c catalog -d xpoint.dsl#html -t sgml xpoint.sgm > xpoint.tmp
@@ -207,6 +216,23 @@ catalog: xpoint.cat
 	$(SED) 's/@ENTDIR@/$(ENTDIRQ)/' xpoint.tmp > xpoint.tm1
 	$(SED) 's/@JADEDIR@/$(JADEDIRQ)/' xpoint.tm1 > xpoint.tm2
 	$(SED) 's/@MODDIR@/$(MODDIRQ)/' xpoint.tm2 > catalog
+
+xpoint.rtf: xpoint.sgm xpoint.dsl catalog
+	$(JADE) -c catalog -d xpoint.dsl#print -t rtf xpoint.sgm > xpoint.rtf
+
+xpoint.tex: xpoint.sgm xpoint.dsl catalog
+	$(JADE) -c catalog -d xpoint.dsl#print -t tex xpoint.sgm > xpoint.tex
+
+xpoint.dvi: xpoint.tex
+	$(TEX) "&jadetex" xpoint.tex
+	$(TEX) "&jadetex" xpoint.tex
+
+xpoint.ps: xpoint.dvi
+	$(DVIPS) -o xpoint.ps xpoint.dvi
+
+xpoint.pdf: xpoint.tex
+	$(PDFTEX) "&pdfjadetex" xpoint.tex
+	$(PDFTEX) "&pdfjadetex" xpoint.tex
 
 $(OLDDOCFILES): %.txt: %.dq
 	$(DOCFORM) $< $@ $(DOCFORMFLAGS)
@@ -231,7 +257,7 @@ install_docdir:
 
 ifeq ($(OS),linux)
 $(patsubst %,install_%,$(TXT)): install_%: %
-	$(RECODE) -f ibmpc..latin1 $* > tmp
+	-$(RECODE) -f ibmpc..latin1 $* > tmp
 	$(INSTALL_DATA) tmp $(docdir)$(SEP)$*
 else
 $(patsubst %,install_%,$(TXT)): install_%: %
@@ -275,6 +301,9 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.8  2000/10/10 17:46:37  fe
+# Handbuch-Formate TeX, RTF, DVI, PS und PDF ergaenzt.
+#
 # Revision 1.7  2000/10/09 22:10:02  fe
 # Ergaenzungen fuer Handbuch, v.a. ISO 8879 Entities.
 #
