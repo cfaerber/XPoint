@@ -49,30 +49,51 @@ type
   cap = ^ca;
 
 
-function WinVersion:smallword;assembler;      { Windows-Version abfragen }
-asm
-              mov    ax,1600h
+{ Rckgabe: 2 = Win 3.1, 3 = Win95/98/ME, 4 = WinNT, 5 = Win2000/XP }
+function WinVersion:smallword;             { Windows-Version abfragen }
+var
+  Vers: SmallWord;
+  Regs: registers;
+  s: String[1];
+begin
+  asm
+              mov    ax,160Ah
               int    Multiplex
-              cmp    al,0
-              jz     @NoOldWin
-              cmp    al,20
-              ja     @NoOldWin
-              cmp    al,1
-              jz     @Win386
-              cmp    al,0ffh
-              jz     @Win386
-              xchg   al,ah
-              jmp    @WinOk
-@Win386:      mov    ax,200h
-              jmp    @WinOk
-@NoOldWin:    mov    ax, $3306   { Get True Version Number }
+              or     ax, ax
+              jne    @NoWin95    { Call not supported }
+              cmp    bx, 0395h   { Žlter als Win95x }
+              jae    @Win3
+              mov    Vers, 2     { Win 3.1 }
+              jmp    @Done
+@Win3:        cmp    bh, 3       { Win 95 oder 98 }
+              jz     @Win95
+              cmp    bh, 4       { Win 95 oder 98 }
+              jnz    @NoWin95
+@Win95:       mov    Vers, 3     { Win 95/98/ME }
+              jmp    @Done
+@NoWin95:     mov    ax, $3306   { Get True Version Number }
               int    $21
               cmp    bx, $3205   { Win NT/2000 DOS Box }
               jne    @NoWin
-              mov    ax, $0400   { Win NT >= Version 4 }
-              jmp    @WinOk
-@NoWin:       xor    ax,ax
-@WinOk:
+              mov    Vers, 5     { Win NT >= Version 4 }
+              jmp    @Done
+@NoWin:       mov    Vers, 0
+@Done:
+  end;
+  if Vers = 5 then
+  begin
+    s := '.';
+    with Regs do
+    begin
+      AX := $713B;  { Long Filename: Change Directory }
+      DS := Seg(S);
+      DX := Ofs(S[1]);
+      Flags := FCarry;
+      MsDos(Regs);
+      if ax = $7100 then Vers := 4; { Fehler, dann Win NT 4 }
+    end;
+  end;
+  WinVersion := Vers;
 end;
 
 
@@ -490,6 +511,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.8  2001/06/23 19:14:12  mk
+  - Win 3.1, 95/98/ME, NT und 2000 Erkennung hinzugefuegt
+
   Revision 1.19.2.7  2001/06/22 20:34:59  mk
   - added Win NT/2000 detection (result is version 4.0)
 
