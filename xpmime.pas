@@ -697,7 +697,7 @@ begin
         else
           softbreak:=false;
 
-        if Code in [mcodeQP, mcode8Bit] then
+        if Code in [mCodeNone, mcodeQP, mcode8Bit] then
           CharsetToIBM(charset, s);
 
         if softbreak then
@@ -758,6 +758,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.8  2000/10/26 13:17:36  mk
+  - ISO859-1 Umwandlung immer durchfuerhen
+
   Revision 1.12.2.7  2000/10/24 10:17:25  mk
   - Sourceformatierungen verbessert
 
