@@ -350,8 +350,8 @@ begin
   betreff:=getres2(700,4)+getres2(700,8)+ { 'Netzanruf' + ' bei ' }
            boxpar^.boxname;
   hd:='';
-  if DoSend(false,logfile,netbrett,betreff,
-            false,false,false,false,false,nil,hd,hd,sendIntern+sendShow) then
+  if DoSend(false,logfile,false,false,netbrett,betreff,
+            false,false,false,false,false,nil,hd,sendIntern+sendShow) then
     SetUngelesen;
 end;
 (* var t,log         : text;
@@ -507,7 +507,7 @@ begin
     else betreff:=ftime(datum)+' - '+getres2(700,4)+getres2(700,8)+ { 'Netzanruf' + ' bei ' }
                   boxpar^.boxname;
     if DoSend(false,fn,netbrett,betreff+iifs(abbruch,getres2(700,38),''),  { ' (Fehler)' }
-              false,false,false,false,false,nil,hd,hd,sendIntern+sendShow) then
+              false,false,false,false,false,nil,hd,sendIntern+sendShow) then
       SetUngelesen;
     if inwin then
     begin
@@ -1354,6 +1354,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2001/09/08 15:02:36  cl
+  - adaptions/fixes for MIME support
+
   Revision 1.33  2001/09/07 13:54:28  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
