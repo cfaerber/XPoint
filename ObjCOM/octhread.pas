@@ -1,3 +1,5 @@
+{$I OCDEFINE.INC }
+
 unit OCThread;
 (*
 **
@@ -390,6 +392,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2000/10/16 12:19:06  mk
+  - added ocdefine.inc
+
   Revision 1.4  2000/10/15 14:56:59  ma
   - OS/2 port compiles again (VP)
 

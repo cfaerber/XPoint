@@ -1,5 +1,6 @@
+{$I OCDEFINE.INC }
+
 unit Ringbuff;
-{$I-,R-,S-,Q-}
 (*
 **
 ** Large char-buffer handling routines
@@ -142,6 +143,9 @@ end. { bufunit }
 
 {
   $Log$
+  Revision 1.3  2000/10/16 12:19:06  mk
+  - added ocdefine.inc
+
   Revision 1.2  2000/10/02 03:16:41  mk
   - made ObjCOM Virtual Pascal compatible
 

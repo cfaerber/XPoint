@@ -1,5 +1,6 @@
 program Example;
 
+{$I OCDEFINE.INC }
 uses ObjCOM,CRT;
 
 var ComObj    : tpCommObj;
@@ -15,7 +16,7 @@ begin
   WriteLn('F1 to temporary close comport; F2 to quit; F10 to display status');
   ComOpen:=True; Pass:=False;
   repeat
-    if KeyPressed then 
+    if KeyPressed then
      begin
       c:=ReadKey;
       case c of

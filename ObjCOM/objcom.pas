@@ -18,11 +18,13 @@ unit ObjCOM;
  INTERFACE
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-{$IFDEF FPC}{$HINTS OFF}{$ENDIF}
+{$I OCDEFINE.INC }
 
-uses Ringbuff
-{$IFDEF VirtualPascal},Use32{$ENDIF}
-{$IFDEF Go32v2},Ports{$ENDIF};
+uses
+{$IFDEF DOS32}
+  Ports
+{$ENDIF}
+  Ringbuff;
 
 type SliceProc = procedure;
 
@@ -75,10 +77,11 @@ type tCommObj = Object
 
 Type tpCommObj = ^tCommObj;
 
-{$IFDEF Win32} {$I OCSWinh.inc} {$IFNDEF VirtualPascal} {$DEFINE TCP} {$ENDIF} {$ENDIF}
-{$IFDEF Linux} { $I OCSLinh.inc } {$DEFINE TCP} {$ENDIF}
-{$IFDEF OS2} {$I OCSOS2h.inc} {$IFNDEF VirtualPascal} {$DEFINE TCP} {$ENDIF} {$ENDIF}
-{$IFDEF Go32v2} {$I OCSDosh.inc} {$I OCFDosh.inc} {$DEFINE Fossil} {$ENDIF}
+{$IFDEF Win32} {$I OCSWinh.inc} {$ENDIF}
+{$IFDEF Linux} { $I OCSLinh.inc }{$ENDIF}
+{$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
+{$IFDEF DOS32 } {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
+{ !?!?!?!? }
 {$IFDEF TCP} {$I OCTWinh.inc} {$ENDIF}
 
 function CommInit(S: String; var CommObj: tpCommObj): boolean;
@@ -440,6 +443,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2000/10/16 12:19:06  mk
+  - added ocdefine.inc
+
   Revision 1.6  2000/10/15 14:53:38  ma
   - Ken J. Wright: Linux port now working
   - M.Kiesel: OS/2 port now compiles again (VP)
