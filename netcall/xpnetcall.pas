@@ -701,7 +701,6 @@ var
 
     connects   : integer;         { Zaehler 0..connectmax }
     netztyp    : byte;
-    logintyp   : shortint;        { ltZConnect / ltMaus }
 
     ldummy     : longint;
     NumCount   : byte;            { Anzahl Telefonnummern der Box }
@@ -805,7 +804,7 @@ function BoxParOk: string;
 var
   uucp : boolean;
 begin
-  uucp:=(logintyp=ltUUCP);
+  uucp:=(netztyp=nt_UUCP);
   with BoxPar^ do
   begin
     TempPPPMode := ClientMode;
@@ -835,7 +834,7 @@ begin
           BoxParOk:=''
       end;
     end else
-      if LoginTyp IN [ltNNTP, ltPOP3] then
+      if netztyp IN [nt_NNTP, nt_POP3] then
         // Hier evtl. n"tige Tests der Parameter einstellen
       else
       if (pointname='') or (not (_fido or uucp) and (passwort='')) then
@@ -847,9 +846,9 @@ begin
         BoxParOk:=getres2(706,4)    { 'unvollst„ndige Packer-Angaben' }
 //      else if ntDownarcPath(netztyp) and not FindDownarcer then
 //        BoxparOk:=getres2(706,6)    { 'Entpacker fehlt' }
-//      else if (logintyp<>ltFido) and not uucp and (trim(uploader)='') then
+//      else if (netztyp<>ltFido) and not uucp and (trim(uploader)='') then
 //        BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
-      else if ((logintyp IN [ltZConnect,ltUUCP])and NoScript(script)) then
+      else if ((netztyp IN [nt_ZConnect,nt_UUCP])and NoScript(script)) then
         BoxParOk:=getres2(10700,8)
       else
         BoxParOk:='';
@@ -978,6 +977,9 @@ begin                  { function Netcall }
   ppfile:=bfile+BoxFileExt;
   eppfile:=bfile+EBoxFileExt;
   dbRead(d,'netztyp',netztyp);
+
+  Debug.DebugLog('xpnetcall','got net type: '+ntName(netztyp),DLInform);
+
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
   BoxPar^._domain   := dbReadStr(d,'domain');
   komment := dbReadStr(d,'kommentar');
@@ -996,7 +998,6 @@ begin                  { function Netcall }
     end;
   {$endif}
 
-  Debug.DebugLog('xpnetcall','get server parameters',DLInform);
   if FidoCrash then BoxPar^.BoxName:=CrashBoxName;
 
   if not PerformDial and not ntOnline(netztyp) and NoScript(boxpar^.o_script) then begin
@@ -1004,11 +1005,9 @@ begin                  { function Netcall }
     exit;
     end;
 
-  logintyp:=ntTransferType(netztyp);
-  Debug.DebugLog('xpnetcall','got login type: '+inttostr(logintyp),DLInform);
-  _maus:=(logintyp=ltMaus);
-  _fido:=(logintyp=ltFido);
-  _uucp:=(logintyp=ltUUCP);
+  _maus:=(netztyp=nt_Maus);
+  _fido:=(netztyp=nt_Fido);
+  _uucp:=(netztyp=nt_UUCP);
   if _maus then begin
     if FileExists(mauslogfile) then _era(mauslogfile);
     if FileExists(mauspmlog) then _era(mauspmlog);
@@ -1046,12 +1045,12 @@ begin                  { function Netcall }
         tfehler(BoxName+': '+BoxParOk+getres(702),esec);   { ' - bitte korrigieren!' }
         exit;
         end;
-      if (logintyp=ltMaus) and not ExecutableExists(MaggiBin)
+      if (netztyp=nt_Maus) and not ExecutableExists(MaggiBin)
       then begin
         trfehler(102,esec);                 { 'MAGGI.EXE fehlt!' }
         exit;
         end;
-      if (logintyp=ltQWK) and not ExecutableExists(ZQWKBin) then begin
+      if (netztyp=nt_QWK) and not ExecutableExists(ZQWKBin) then begin
         trfehler(111,esec);      { 'ZQWK.EXE fehlt! }
         exit;
         end;
@@ -1079,8 +1078,8 @@ begin                  { function Netcall }
     inmsgs:=0; outmsgs:=0; outemsgs:=0;
     cursor(curoff);
     inc(wahlcnt);
-    case LoginTyp of
-      ltFido: begin
+    case netztyp of
+      nt_Fido: begin
         Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
         case FidoNetcall(BoxName,Boxpar,FidoCrash,sysopmode,NetcallLogfile,IncomingFiles) of
           EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
@@ -1092,9 +1091,9 @@ begin                  { function Netcall }
         else begin Netcall:=true; end;
           end; {case}
         SendNetzanruf(NetcallLogFile);
-        end; {case ltFido}
+        end; {case nt_Fido}
 
-      ltZConnect: begin
+      nt_ZConnect: begin
         Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
         case ZConnectNetcall(BoxName,Boxpar,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
           EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
@@ -1106,9 +1105,9 @@ begin                  { function Netcall }
         else begin Netcall:=true end;
           end; {case}
         SendNetzanruf(NetcallLogFile);
-        end; {case ltZConnect}
+        end; {case nt_ZConnect}
 
-      ltUUCP: begin
+      nt_UUCP: begin
         Debug.DebugLog('xpnetcall','netcall: uucp',DLInform);
         case UUCPNetcall(BoxName,Boxpar,BFile,ppfile,sysopmode,NetcallLogfile,IncomingFiles) of
           EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
@@ -1120,9 +1119,9 @@ begin                  { function Netcall }
         else begin Netcall:=true end;
           end; {case}
         SendNetzanruf(NetcallLogFile);
-        end; {case ltUUCP}
+        end; {case nt_UUCP}
 
-      ltPOP3: begin
+      nt_POP3: begin
         Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
         if Boxpar^.SMTPAfterPop then
         begin
@@ -1134,18 +1133,18 @@ begin                  { function Netcall }
           netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
           netcall_connect:= GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles) or netcall_connect;
         end;
-      end; {case ltPOP3}
+      end; {case nt_POP3}
 
-      ltNNTP: begin
+      nt_NNTP: begin
         Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
         netcall_connect:= SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
         netcall_connect:= GetNNTPMails(BoxName,Boxpar,IncomingFiles) or netcall_connect;
       end;
 
       else
-        Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(LoginTyp),DLError);
+        Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(netztyp),DLError);
         trfehler(799,30); { 'Funktion nicht implementiert' }
-      end; {case LoginTyp}
+      end; {case netztyp}
 
 //**      RemoveEPP;
     if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
@@ -1372,6 +1371,9 @@ end.
 
 {
   $Log$
+  Revision 1.30  2001/08/27 09:18:43  ma
+  - changes in net type handling
+
   Revision 1.29  2001/08/12 20:04:53  cl
   - rename xp6*.* => xpsendmessage*.*
 
