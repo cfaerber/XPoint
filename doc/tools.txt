@@ -5,17 +5,27 @@
 	Fuer CrossPoint existiert eine Reihe von Tools. Diese Uebersicht
 	soll dazu dienen, die bekannten Tools tabellarisch zu erfassen.
 
-	Name		Version	OS	Puffer	Beschreibung
+	Name		Version	OS	Puffer	Beschreibung	Benutzer
 	----------------------------------------------------------------
-	CrossSecretary	n.b.	D		
-	FidoROut	n.b.	D		
-	NoSpam		n.b.	D		Anti-Spam-Tool
-	PktXCode	n.b.	D		
-	URLGrep		n.b.	D		
-	XenPoll		n.b.	D		
-	XPCbC		n.b.	D		
-	XPFilter	n.b.	D		Filterprogramm
-	XPHatch		n.b.	D		
+	CrossSecretary	n.b.	D				       2
+	FidoROut	n.b.	D				       1
+	FLS4XP		n.b.	D		n.b.		       1
+	Msg2XP		n.b.    D		*.msg -> XP	       1
+	MsgCopy		n.b.	D		n.b.		       1
+	NoSpam		n.b.	D		Anti-Spam-Tool         1
+	PktXCode	n.b.	D		                       2
+	Req4XP		n.b.	D		n.b.		       1
+	UKAPPP		n.b.	D		PPP		       1
+	URLGrep		n.b.	D		                       1
+	XenPoll		n.b.	D		                       1
+	XPCbC		n.b.	D		                       1
+	XPFEXP		n.b.	D		n.b.		       1
+	XPFilter	n.b.	D		Filterprogramm         1
+	XPHatch		n.b.	D		                       ?
+	XPMust		n.b.	D		n.b.		       1
+	XPure		n.b.	D		n.b.		       1
+	ZCP-IS		n.b.	D		n.b.		       1
+	ZHM		n.b.	D		n.b.		       1
 	----------------------------------------------------------------
 
 	Legende:
