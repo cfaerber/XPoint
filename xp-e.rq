@@ -1524,7 +1524,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    incomplete packer settings
 5    no uploader setting
 6    unpacker not found
-7    unvollst„ndige Client-Modus Angaben
+7    incomplete client mode data
 -
 707 <broken in>
 708 Break
@@ -1839,9 +1839,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 35   Size negotiation
 36   Batched SMTP (UUCP-Style)
 58   Batched SMTP (PPP-Style)
-57   PPP-Mode (external Clients)
-59   PPP-Client-Aufruf
-63   Spool-Verzeichnis
+57   Client Mode (for external Mail/News Clients)
+59   Client call       ~
+63   Spool directory   ~
+67   Client directory  ~
 37   z protocol
 38   f protocol
 39   e protocol
@@ -1930,7 +1931,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 16   Reply servers
 17   for News  ~
 18   for Mails ~
-19   lokale Kopien ersetzen
+19   replace local copies
+
 + 925
 1    Net Options
 2    Message IDs
@@ -1941,7 +1943,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7    Sender User@Point.ZER
 8    Reply to ~
 9    newsgroup manager~
-10   ... passsword    ~
+10   ... password     ~
 12   Sender User@Point.domain
 + 926
 0    42
@@ -3026,9 +3028,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 33 "rz" and "sz" must be installed!
 34 Duplicate MIME types or file extensions not allowed!
 35 Default entry cannot be edited.
-36 Dieser Eintrag darf keinen Pfad enthalten!
-37 Verzeichnis darf nicht gleich dem Spoolverzeichnis sein!
-38 Dieser Pfad darf nur eine relative Verzeichnisebene enthalten!
+36 This entry must not contain any path name!
+37 Directory must not be equal to the XP spool directory!
+38 This path must contain ONE relative directory level!
 
 +  11000
 1  unknown command

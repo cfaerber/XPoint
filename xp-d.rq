@@ -1564,7 +1564,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 4    unvollst„ndige Packer-Angaben
 5    fehlende UpLoader-Angabe
 6    Entpacker fehlt
-7    unvollst„ndige Client-Modus Angaben
+7    unvollst„ndige Client-Angaben
 -
 707  <abgebrochen>
 708  Abbruch
@@ -1880,9 +1880,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 35   Dateigr”áe bertragen
 36   Batched SMTP (UUCP-Style)
 58   Batched SMTP (PPP-Style)
-57   PPP-Modus (externe Clients)
-59   PPP-Client-Aufruf ~
+57   Client-Modus (fr externe Mail-/News-Clients)
+59   Client-Aufruf     ~
 63   Spool-Verzeichnis ~
+67   Client-Verzeichnis~
 37   z-Protokoll
 38   f-Protokoll
 39   e-Protokoll
@@ -1911,7 +1912,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 64   Batched SMTP-Modus~
 65   ausùSMTP/UUCPùSMTP/PPP
 66   ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
-67   Client-Verzeichnis~
 + 921
 0    59
 1    Warten auf Verbindung
@@ -3080,8 +3080,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 34 Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
 35 Standardeintrag kann nicht editiert werden.
 36 Dieser Eintrag darf keinen Pfad enthalten!
-37 Verzeichnis darf nicht gleich dem Spoolverzeichnis sein!
-38 Dieser Pfad darf nur eine relative Verzeichnisebene enthalten!
+37 Verzeichnis darf nicht gleich dem XP-Spool-Verzeichnis sein!
+38 Dieser Pfad muá EINE relative Verzeichnisebene enthalten!
 
 +  11000
 1  unbekannter Befehl
