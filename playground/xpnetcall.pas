@@ -61,8 +61,8 @@ procedure AssignUniqueDownloadName(var f:file;var s:string;path:string); { makes
 
 procedure AponetNews; {?!}
 
-{ Converts stringlist to comma separated string }
-function Stringlist(SL: TStringList): String;
+{ Converts stringlist to space separated string }
+function StringListToString(SL: TStringList): String;
 
 { Executes a shell command and puts any files created while executing this
   command in SL }
@@ -95,18 +95,17 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 implementation  {---------------------------------------------------}
 
 uses direct,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
-     xpfido,xpncfido,xpnczconnect,xpncpop3,xpncuucp,xpmakeheader,ncmodem;
+     xpfido,xpncfido,xpnczconnect,xpncpop3,xpmakeheader,ncmodem,xpncuucp;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
-function Stringlist(SL: TStringList): String;
+function StringListToString(SL: TStringList): String;
 var i: Integer;
 begin
   result:='';
-  for i:=1 to SL.Count do begin
-    result:=result+SL[i-1];
-    if i<SL.Count then result:=result+', ';
-    end;
+  for i:=0 to SL.Count-1 do
+    result:=result+SL[i]+' ';
+  DelLast(result);
 end;
 
 function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
@@ -123,7 +122,7 @@ begin
     fileexisted:=false;
     for j:=0 to dir1.Count-1 do
       if dir2.Name[i]=dir1.Name[j] then fileexisted:=true;
-    if not fileexisted then begin 
+    if not fileexisted then begin
       SL.Add(ExpandFilename(dir2.Name[i]));
       if newfiles<>'' then newfiles:=newfiles+', ';
       newfiles:=newfiles+ExpandFilename(dir2.Name[i]);
@@ -568,20 +567,20 @@ begin
   
   (* 
      replace invalid chars
-  
+
      Unix: all, except '/' and #0
      DOS:  A-Z 0-9 $ % ' - _ @   ~ ` ! ( ) { } ^ # &
      LFN:  a-z <sp> + , ; = [ ]
   *)
 
-  for j := 1 to length(s) do 
-  {$IFDEF UnixFS} 
+  for j := 1 to length(s) do
+  {$IFDEF UnixFS}
     if s[j] in [#0..#31,'/'] then
   {$ELSE}
     if (s[j] in [#0..#31,'/','\','<','>','|',':','"','*','?'])
     {$IFDEF DOS32}
       or ((not System.LFNSupport) and (s[j] in [' ','+',',',';','=','[',']']))
-    {$ENDIF} 
+    {$ENDIF}
       then
   {$ENDIF}
         s[j]:='_';
@@ -591,7 +590,7 @@ begin
   (* truncate to 8.3 on TRUE DOS *)
 
   {$IFDEF DOS32}
-  if not System.LFNSupport then 
+  if not System.LFNSupport then
   begin
     if (ext='.Z') or (ext='.gz') or (ext='.bz') or (ext='.F') then begin
       FSplit(name,pold,name,ext2);
@@ -600,7 +599,7 @@ begin
         ext:=LeftStr(ext2,5-length(ext))+Mid(ext,2);
       end;
     end;
-  
+
     name:=UpperCase(copy(name,1,8)); for j:= 1 to length(name) do if name[j] in ['.'] then name[j]:='_';
     ext :=UpperCase(copy(ext, 1,4));                      (* ^^^ grmpf, another pass ^^^ *)
   end;
@@ -847,6 +846,11 @@ begin                  { function Netcall }
     exit;
     end;
 
+  if crash then begin
+    tfehler('Fido crash netcalls are currently not supported.',60);
+    exit;
+    end;
+
   Debug.DebugLog('xpnetcall','get BoxName parameters',DLInform);
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
 
@@ -968,7 +972,7 @@ begin                  { function Netcall }
             EL_break  : begin  Netcall:=false; end;
           else begin Netcall:=true end;
             end; {case}
-	  SendNetzanruf(NetcallLogFile);
+          SendNetzanruf(NetcallLogFile);
           end; {case ltUUCP}
 
         ltPOP3: begin
@@ -988,7 +992,7 @@ begin                  { function Netcall }
       end; {if PerformDial}
     end; {with boxpar}
 
-  Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+Stringlist(IncomingFiles),DLDebug);
+  Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+StringListToString(IncomingFiles),DLDebug);
   for i:=1 to IncomingFiles.Count do
     if PufferEinlesen(IncomingFiles[i-1],boxname,false,false,true,pe_Bad)then
       if FileExists(IncomingFiles[i-1])then _era(IncomingFiles[i-1]);
@@ -1202,6 +1206,10 @@ end.
 
 {
   $Log$
+  Revision 1.20  2001/03/20 12:12:00  ma
+  - added fido crash error
+  - renamed fct Stringlist
+
   Revision 1.19  2001/03/19 12:23:36  cl
   - fix for AssignUniqueDownload and VPAscal
 
