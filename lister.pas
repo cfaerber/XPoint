@@ -21,10 +21,7 @@ unit lister;
 interface
 
 uses  xpglobal, crt,typeform,
-{$IFDEF BP }
-  xms, ems,
-{$ENDIF }
-  fileio,inout,maus2,keys,winxp;
+  xms, ems, fileio,inout,maus2,keys,winxp, resource;
 
 const ListHelpStr : string[8] = 'Hilfe';
       ListUseXms  : boolean   = false;
@@ -897,13 +894,13 @@ var gl,p,y    : shortint;
       if not rep then begin
         mi:=invattr; invattr:=$70;
         rdedtrunc:=false;
-        ld(l,y+gl-1,'Suchen: ',suchstr,sw,1,true,brk);
+        ld(l,y+gl-1, GetRes2(11,23),suchstr,sw,1,true,brk);
         rdedtrunc:=true;
         invattr:=mi;
         end
       else begin
         brk:=false;
-        mwrt(l,y+gl-1,'Suchen...');
+        mwrt(l,y+gl-1,GetRes2(11,24));
         end;
       if brk or (suchstr='') then begin
         slen:=0; spos:=1;
@@ -947,7 +944,7 @@ var gl,p,y    : shortint;
           end;
         if not found then begin
           attrtxt(col.colstatus);
-          mwrt(l,y+gl-1,center('*nicht gefunden* ',w-1));
+          mwrt(l,y+gl-1,center(GetRes2(11,25),w-1));
           dispa:=-1;
           slen:=0;
           end
@@ -968,6 +965,7 @@ var gl,p,y    : shortint;
           end;
         end;
       end;
+    FreeRes;
   end;
 
   procedure listrot13;
@@ -1527,6 +1525,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.6.2.2  2000/11/11 19:52:46  mk
+  - moved some strings into resources
+
   Revision 1.6.2.1  2000/07/18 14:57:34  mk
   - Keine Leerzeichen mehr in Leerzeilen
 
