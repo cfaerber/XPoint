@@ -1022,9 +1022,11 @@ begin { FidoSysopTransfer }
       end;
 
       dir:= TDirectory.Create(BoxPar^.sysopinp+'*.pkt', faAnyFile, true);
-      if dir.Count>0 then begin
-        for i:=0 to dir.Count-1 do
-          if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then
+      if dir.Count>0 then
+      begin                                     //Pollpakete im SysopIn Verzeichnisvorhanden
+        erase_mask(xp0.XFerDir+'*.pkt');        //L”sche alle alten pakete
+        for i:=0 to dir.Count-1 do                              //Was ist mit den Arcmails?
+          if filecopy(dir.LongName[i],XFerDir+dir.Name[i]) then //kopiere vonSysOpIn -> Spool und l”sche die *.pkt
             _era(dir.LongName[i]);
         if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
           for i:=0 to dir.Count-1 do
@@ -1338,6 +1340,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.51  2000/12/28 17:47:41  mo
+  -entferne alte *.pkt aus dem spool vor dem neueinlesen  -anti dupes
+
   Revision 1.50  2000/12/08 11:17:01  hd
   - Add: Sysop-Call (Incoming) on Fido Packets works propper
     (the screen output doesn't). The ZFido is integrated to

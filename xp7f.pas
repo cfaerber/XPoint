@@ -265,7 +265,7 @@ begin
 
         if rc<>0 then
           trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
-        else if nDelPuffer then
+        else if nDelPuffer then         //pkts nach call L”schen? xpoint.cfg -> pufferloeschen=
           _era(dir.LongName[i]);
       end; { for }
       closebox;
@@ -940,6 +940,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/12/28 17:47:41  mo
+  -entferne alte *.pkt aus dem spool vor dem neueinlesen  -anti dupes
+
   Revision 1.50  2000/12/28 13:29:57  hd
   - Fix: packets now sorted in after netcall
   - Adjusted: Open window once during sorting in
