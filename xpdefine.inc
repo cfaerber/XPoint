@@ -28,7 +28,7 @@
 {$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{.$DEFINE Snapshot}
+{$DEFINE Snapshot}
 
 { Wenn dieser Schalter nicht gesetzt ist, ben”tigt XP eine 386er mit
   CoProzessor, ansonsten ist es auch auf XT aufw„rts lauff„hig }
@@ -79,6 +79,9 @@
 
 {
   $Log$
+  Revision 1.30.2.2  2000/06/26 17:57:21  mk
+  - Versionsnummer auf 3.30.2 gesetzt
+
   Revision 1.30.2.1  2000/06/22 17:13:46  mk
   - 32 Bit Teile entfernt
 

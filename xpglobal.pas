@@ -13,7 +13,7 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.30.1';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.30.2';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
   {$IFDEF DPMI}
@@ -89,6 +89,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29.2.2  2000/06/26 17:57:21  mk
+  - Versionsnummer auf 3.30.2 gesetzt
+
   Revision 1.29.2.1  2000/06/22 17:13:46  mk
   - 32 Bit Teile entfernt
 
