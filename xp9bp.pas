@@ -160,6 +160,7 @@ begin
     UUsmtp:=false;
     UUprotos:='tGgz';
     ReplaceOwn := true;
+    ReplaceDupes := true;
     efilter:='';
     afilter:='';
     SysopNetcall:=true;
@@ -360,6 +361,7 @@ begin
             getx(su,  'UU-SizeNegotiation',sizenego) or
             getx(su,  'UU-SMTP',UUsmtp) or
             getx(su,  'ReplaceOwn', ReplaceOwn) or
+            getx(su,  'ReplaceDupes|DupeKiller', ReplaceDupes) or
             gets(s,su,'UU-Protocols',uuprotos) or
             gets(s,su,'Eingangsfilter',eFilter) or
             gets(s,su,'Ausgangsfilter',aFilter) or
@@ -572,6 +574,7 @@ begin
     if uusmtp then writeln(t,'UU-SMTP=',jnf(uusmtp));
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
     writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
+    writeln(t,'ReplaceDupes=', Jnf(ReplaceDupes));
 
     writeln(t,'Netcall-Mode=',conn_mode);
     if conn_ip<>''   then writeln(t,'IP-Host=',conn_ip);
@@ -742,6 +745,10 @@ end;
 
 {
   $Log$
+  Revision 1.63  2002/07/21 11:51:01  ma
+  - new feature: kill/prevent dupes when sorting in messages
+    (in fact a replaceown variant)
+
   Revision 1.62  2002/05/07 15:27:39  ma
   - implemented SMTP AUTH PLAIN and LOGIN
 

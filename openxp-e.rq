@@ -2106,7 +2106,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 17   for News  ~
 18   for Mails ~
 19   Call
-20   lokale Kopien ersetzen
+20   prevent creation of dupes
+21   no duping of own messages
 + 925
 1    Net Options
 2    Message IDs
@@ -4005,6 +4006,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.54  2002/07/21 11:51:01  ma
+# - new feature: kill/prevent dupes when sorting in messages
+#   (in fact a replaceown variant)
+#
 # Revision 1.53  2002/07/20 13:01:57  ma
 # - cosmetics
 #

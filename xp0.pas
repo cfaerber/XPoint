@@ -592,6 +592,7 @@ type   textp  = ^text;
                   SizeNego  : boolean;     { UUCP: size negotiation    }
                   UUsmtp    : boolean;     { UUCP: SMTP                }
                   ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
+                  ReplaceDupes: boolean;   { Replace messages in db with same msgid as incoming message }
                   eFilter   : string;  { Eingangsfilter            }
                   aFilter   : string;  { Ausgangsfilter            }
                   SysopNetcall : boolean;  { Netzanruf-Bericht im S.M. }
@@ -1222,6 +1223,10 @@ implementation
 
 {
   $Log$
+  Revision 1.165  2002/07/21 11:51:01  ma
+  - new feature: kill/prevent dupes when sorting in messages
+    (in fact a replaceown variant)
+
   Revision 1.164  2002/06/15 08:54:32  mk
   - removed unused constant UUCICOBin
 

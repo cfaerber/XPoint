@@ -2977,6 +2977,38 @@ user already in the address book. To change these use
 Re-Org/Misc../Change Server.
 
 @
+8051
+<<[x]>> -> Upon importing messages, OpenXP will test
+       whether a message with the same msgid as the
+       incoming message already exists in the message
+       base. It will replace any already existing
+       message with the incoming one then.
+
+       This option is useful for RFC nets preventing
+       dupes due to crosspostings or returning own
+       messages.
+
+       Local messages are replaced regardless of
+       their status or other flags. Hold flags will
+       be preserved during replacement.
+
+<<[ ]>> -> OpenXP can produce dupes.
+
+This option is supported by every net type but not
+useful with all of them.
+@
+8052
+<<[x]>> -> Just like the previous option but only self-
+       written messages will be replaced.
+
+<<[ ]>> -> OpenXP can produce dupes.
+
+This option has no effect if the previous option is
+chosen.
+
+This option is supported by every net type but not
+useful with all of them.
+@
 190
 
 This is the pure name of the server, without further

@@ -643,18 +643,19 @@ var x,y      : Integer;
       end;
   end;
 
-  { returns true if own message is going to be replaced }
-  function HandleReplaceOwn: boolean;
+  { returns true if *own* message is going to be replaced.
+    Used for ReplaceOwn and ReplaceDupes. }
+  function KillSameMsgId: boolean;
   var
     MsgPos: Integer;
   begin
-    { Nach RÅcklÑufern suchen }
     result:= false;
-    if BoxPar^.ReplaceOwn and Aufnehmen then
+    if Aufnehmen then
     begin
       dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(Hdp.msgid)));
       if dbFound and not dbDeleted(bezbase, dbRecNo(bezbase)) then
-      begin { RÅcklÑufer gefunden }
+      begin
+        // message with same msgid found in db
         msgpos := dbReadIntN(bezbase,bezb_msgpos);
         if not dbDeleted(mbase, msgpos) then
         begin
@@ -662,13 +663,14 @@ var x,y      : Integer;
           flags := 0;
           if not dbBOF(mBase) and not dbEOF(mbase) then
             dbReadN(mbase,mb_flags,flags); { get message flags }
-          if flags and 256 <> 0 then
+          if (flags and 256 <> 0)or
+             (boxpar^.ReplaceDupes) then
           begin
             dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
             wrkilled; { Ablage auf jeden Fall reorganisieren }
             DelBezug;
             dbDelete(mbase);
-            result:= true;
+            result:= (flags and 256 <> 0);
           end;
         end;
       end;
@@ -994,7 +996,10 @@ begin
             _brett:=mbrettd('U',ubase);
             end;
 
-          OwnMessageReplaced:= HandleReplaceOwn;
+          if(BoxPar^.ReplaceOwn or BoxPar^.ReplaceDupes)then
+            OwnMessageReplaced:= KillSameMsgId
+          else
+            OwnMessageReplaced:= False;
 
           IsGelesen:=ParGelesen or sendbuf or
                      ((netztyp=nt_Maus) and (FirstChar(pm_bstat)='G')) or
@@ -1267,6 +1272,10 @@ end;
 
 {
   $Log$
+  Revision 1.91  2002/07/21 11:51:01  ma
+  - new feature: kill/prevent dupes when sorting in messages
+    (in fact a replaceown variant)
+
   Revision 1.90  2002/06/12 09:14:51  mk
   - removed some length limits including AdressLength (for RFC nets only)
 
