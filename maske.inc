@@ -878,7 +878,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
     if rahmentyp>0 then wshadow(rl+1,rr+1,ro+1,ru+1);
     forcecolor:=false;
     if rahmentyp>0 then clwin(rl+1,rr-1,ro+1,ru-1);
-    
+
 
     maussel:=false;
     poutside:=false;
@@ -1274,6 +1274,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 
       end; // with afld
 
+      if (t=KeyESC) and (return >= 0) then return := -1;
+      if (t=^J) and (return < 0) then return := 0; 
+
       end // if not done
       else
         if return < 0 then 
@@ -1326,6 +1329,10 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 end;   { readHmask }
 {
   $Log$
+  Revision 1.56  2003/09/17 00:40:18  cl
+  - BUGFIX: pressing ESC was same as CR
+    CLOSES #803342 - /Wartung/Serverwechsel abbrechen
+
   Revision 1.55  2003/09/07 14:44:26  cl
   - BUGFIX: Quitfn called twice
 
