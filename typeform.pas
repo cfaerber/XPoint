@@ -2269,7 +2269,14 @@ begin
         pad := 1;
       if Length(s) mod 4 <> 0 then Pad := 3;
     end else
-      pad := 0;
+    begin
+      if Length(Trim(s)) mod 4 <> 0 then
+      begin
+        { kein gueltiger Base64 String }
+        DecodeBase64 := s; Exit;
+      end else
+        pad := 0;
+    end;
 
     p1 := 1;
     while p1 <= length(s) do
@@ -2287,6 +2294,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37.2.18  2001/07/02 23:41:09  mk
+  - defect base64 lines are'nt decoded anymore (readded this fix)
+
   Revision 1.37.2.17  2001/07/01 23:04:16  mk
   - Fehler Base64-Dekodierung beseitigt
   - Routine DecodeBase64 von xpmime und uuz in typeform verlegt
