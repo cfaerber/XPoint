@@ -1814,8 +1814,9 @@ begin
   if ioresult= 0 then ;
   dbReleaseCache;
   if not closed then closedatabases;
-  if lockopen then begin
-    fileio.unlockfile(xp0.lockfile);
+  if lockopen then
+  begin
+    FileUnLock(xp0.lockfile, 0, SizeOf(xp0.lockfile));
     close(xp0.lockfile);
     erase(xp0.lockfile);
     if ioresult<>0 then ;
@@ -2030,6 +2031,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.5  2000/11/10 11:30:41  mk
+  - fixed Bug #116292: Mehrfachstart von XP abfangen
+
   Revision 1.48.2.4  2000/10/23 22:17:02  mk
   - Portierung entfernt
 

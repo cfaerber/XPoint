@@ -63,10 +63,8 @@ function  exetype(const fn:pathstr):TExeType;
 procedure fm_ro;                                { Filemode ReadOnly       }
 procedure fm_rw;                                { Filemode Read/Write     }
 procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode îffn.}
-function  lock(var datei:file; from,size:longint):boolean;
-procedure unlock(var datei:file; from,size:longint);
-function  lockfile(var datei:file):boolean;
-procedure unlockfile(var datei:file);
+function  FileLock(var datei:file; from,size:longint):boolean;
+procedure FileUnLock(var datei:file; from,size:longint);
 
 procedure addext(var fn:pathstr; ext:extstr);
 procedure adddir(var fn:pathstr; dir:dirstr);
@@ -564,25 +562,30 @@ begin
   filemode:=fmRW;
 end;
 
-function lock(var datei:file; from,size:longint):boolean;
-var regs : registers;
+function FileLock(var datei:file; from,size:longint):boolean;
+var
+  regs : registers;
 begin
-  if Shareda then with regs do begin
-    ax:=$5c00;
-    bx:=filerec(datei).handle;
-    cx:=from shr 16; dx:=from and $ffff;
-    si:=size shr 16; di:=size and $ffff;
-    msdos(regs);
-    lock:=flags and fcarry = 0;
-  end
-  else
-    lock:=true;
+  if Shareda then
+    with regs do
+    begin
+      ax:=$5c00;
+      bx:=filerec(datei).handle;
+      cx:=from shr 16; dx:=from and $ffff;
+      si:=size shr 16; di:=size and $ffff;
+      msdos(regs);
+      FileLock:=flags and fcarry = 0;
+    end else
+      FileLock:=true;
 end;
 
-procedure unlock(var datei:file; from,size:longint);
-var regs : registers;
+procedure FileUnLock(var datei:file; from,size:longint);
+var
+  regs : registers;
 begin
-  if shareda then with regs do begin
+  if shareda then
+  with regs do
+  begin
     ax:=$5c01;
     bx:=filerec(datei).handle;
     cx:=from shr 16; dx:=from and $ffff;
@@ -591,38 +594,17 @@ begin
   end;
 end;
 
-function lockfile(var datei:file):boolean;
-begin
-  lockfile:=lock(datei,0,maxlongint);
-end;
-
-procedure unlockfile(var datei:file);
-begin
-  unlock(datei,0,maxlongint);
-end;
-
-
 procedure TestShare;
-var regs : registers;
+var
+  regs : registers;
 begin
-  fillchar(regs,sizeof(regs),0);
-  with regs do begin
-    ax:=$5c00;
-    di:=1;
-    msdos(regs);
-    if flags and fcarry=0 then begin
-      ax:=$5c01;
-      msdos(regs);
-    end;
-    ShareDa:=(ax<>1);
-  end;
-  { Weiterer Installcheck fÅr Share, um Probleme mit einem Plain
-    DR-DOS zu umgehen }
+  { Installcheck fÅr Share }
   with regs do
   begin
-    ax:=$1000;
+    fillchar(regs, sizeof(regs), 0);
+    ah:=$10;
     intr($2f, regs);
-    if al <> $ff then ShareDa := false;
+    ShareDa := al = $ff;
   end;
 end;
 
@@ -730,11 +712,13 @@ begin
 end;
 
 begin
-  {  TestShare; }
-  shareda := false; { wegen Problemen mit Novell Client 32 }
+  TestShare;
 end.
 {
   $Log$
+  Revision 1.41.2.5  2000/11/10 11:30:41  mk
+  - fixed Bug #116292: Mehrfachstart von XP abfangen
+
   Revision 1.41.2.4  2000/10/19 12:55:20  mk
   - const-Parameter sparen 600 Byte in der EXE-Datei ;-)
 
@@ -742,6 +726,7 @@ end.
   - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext usw. LFN-faehig zu machen; das muss bei den anderen Units noch nachgeholt werden
 
   Revision 1.41.2.2  2000/08/22 17:45:37  mk
+
   - Test auf Share entfernt
 
   Revision 1.41.2.1  2000/07/01 11:17:26  mk

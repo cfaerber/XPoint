@@ -31,26 +31,40 @@ uses
   xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg;
 
 procedure testlock;
-var i : integer;
+const
+  LockString: String = 'Isn''t this a beautiful lockfile?';
+var
+  i : integer;
+  LockDenied: Boolean;
 begin
   if ParNolock then exit;
+  LockDenied := false;
   assign(lockfile, 'LOCKFILE');
   filemode:=FMRW + FMDenyWrite;
   rewrite(lockfile);
-  if (ioresult<>0) or not fileio.lockfile(lockfile) then
+  if IOResult <> 0 then
+    LockDenied := true
+  else
+  begin
+    BlockWrite(lockfile, LockString[1], Length(LockString));
+    if IOResult <> 0 then
+      LockDenied := true
+    else
+      if (not FileLock(LockFile, 0, FileSize(Lockfile))) or
+        (IOResult <> 0) then LockDenied := true;
+  end;
+  if LockDenied then
   begin
     writeln;
     for i:=1 to res2anz(244) do
       writeln(getres2(244,i));
     mdelay(1000);
     close(lockfile);
-    if ioresult<>0 then;
     runerror:=false;
     halt(1);
   end;
   lockopen:=true;
-  { MK 09.01.00: Bugfix fÅr Mime-Lîschen-Problem von Heiko.Schoenfeld@gmx.de }
-  FileMode := FMRW;
+  FileMode := FMRW; { Filemode restaurieren! }
 end;
 
 procedure DelTmpfiles(fn:string);
