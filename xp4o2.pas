@@ -877,18 +877,15 @@ begin
   sn:=0;
   while Result = 0 do
   begin
-    // ReadOnly and DenyNone
-    {$IFDEF VP }
-    TextModeRead := $40;
-    {$ENDIF }
-    FileMode :=$40;
-    assign(t,sr.name);
+    FileMode := fmOpenRead + fmShareDenyNone;
+    assign(t,LibDir + sr.name);
     reset(t);
     s0:='';
     if not eof(t) then readln(t);
     if not eof(t) then readln(t);
     if not eof(t) then readln(t,s0);
     close(t);
+    FileMode := fmOpenReadWrite;
     fm_rw;
     if s0<>'' then begin
       inc(sn);
@@ -930,6 +927,10 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.5  2003/08/24 21:01:38  mk
+  - fixed #557886: Sprachumschaltung geht nicht (Linux)
+  - fixed Filemode after language selection
+
   Revision 1.52.2.4  2002/09/09 08:27:45  mk
   - disable indexcache in reply tree
 
