@@ -452,7 +452,7 @@ var
     _brett  : string;
     ebrett  : string;
     obrett  : string;
-    empf    : string;
+    empf,am_replyto: string;
     pollbox : string;
     name    : string;
     betr    : string;
@@ -487,6 +487,7 @@ var
     ua      : boolean;
     add_oe_cc : integer;
     sendflags : word;
+    zg_flags: integer;
 
 label ende,again;
 
@@ -849,8 +850,26 @@ again:
                      ebrett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
                      end
                    else begin
+                     Am_ReplyTo:='';
                      dbGo(bbase,selpos);
-                     Empf := dbReadNStr(bbase,bb_brettname);
+{ Brett-Vertreter }  Empf := dbReadNStr(bbase,bb_adresse);
+                     zg_flags:=dbReadInt(bbase,'flags');
+{ Schreibsperre   }  if zg_flags and 8<>0 then
+                     if (empf='') or ((empf<>'') and (zg_flags and 32<>0)) then begin
+                       rfehler(450);     { 'Schreibzugriff auf dieses Brett ist gesperrt' }
+                       goto ende;
+                     end;
+                     if ((empf<>'') and (zg_flags and 32=0)) then begin
+{ true=Userbrett  }    pm:=pos('@',empf)>0;
+{ Brettvertreter  }    if not pm then begin
+                         pollbox := dbReadNStr(bbase,bb_pollbox);
+                         if (ntBoxNetztyp(pollbox) in [nt_POP3,nt_NNTP,nt_IMAP,nt_UUCP,nt_ZConnect]) then begin
+                           Am_ReplyTo:=empf;
+                           Empf := dbReadNStr(bbase,bb_brettname);
+                         end else empf:='A'+empf;
+                       end;
+                     end else
+                        Empf := dbReadNStr(bbase,bb_brettname);
                      if empf[1]<'A' then begin
                        rfehler(624);    { 'Weiterleiten in dieses Brett nicht m”glich' }
                        goto ende;
@@ -919,12 +938,13 @@ again:
                    sendfilename:=hdp^.datei;
                    sendfiledate:=hdp^.ddatum;
                    end;
+                 if ((typ in [1..3,7]) and (not pm)) then sData^.amreplyto:=am_replyto;
                  if typ in [1,4,7] then sdata^.quotestr:=hdp^.quotestring;
                  if typ=7 then begin
                    sData^.oab:=hdp^.absender;
-		   sData^.oar:=hdp^.realname;
-		   sData^.orghdp:=hdp;
-		   end;
+                   sData^.oar:=hdp^.realname;
+                   sData^.orghdp:=hdp;
+                   end;
                  if typ in [1,2,7] then
                    xp6.FileAttach:=(hdp^.attrib and attrFile<>0);
                  if nextwl>=0 then begin
@@ -1248,6 +1268,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/10/06 20:35:29  mk
+  MH:- bei Weiterleiten werden Vertreteradressen und Schreibesperern beachtet
+
   Revision 1.35  2000/09/12 12:40:46  fe
   Korrektur: Bei Nachricht->Weiterleiten->Kopie wird keine OAB-Zeile
   mehr erzeugt.  Dies brach die ZConnect-Vorschrift, dass bei
