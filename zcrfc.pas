@@ -656,9 +656,8 @@ begin
 {   if (PmReplyTo <> '') and (PmReplyTo <> absender) then
       wrs('ANTWORT-AN: ' + PmReplyTo); }
 
-    if replyto.count>0 then
-      for i:=0 to replyto.count-1 do
-        wrs('ANTWORT-AN: '+replyto[i]);
+    for i:=0 to replyto.count-1 do
+      wrs('ANTWORT-AN: '+replyto[i]);
     if pm_reply then begin
       wrs('STAT: PM-REPLY');  { nur temporaer zwecks Kompatibilitaet }
       if mailcopies.count>0 then
@@ -680,9 +679,9 @@ begin
       else
         if absender<>'' then
           wrs('DISKUSSION-IN: '+absender)
-    end else begin
-      if followup.count>0 then
-        for i:=0 to followup.count-1 do
+    end else
+    begin
+      for i:=0 to followup.count-1 do
           wrs('DISKUSSION-IN: '+followup[i]);
       if (mailcopies.count=1) and ((lowercase(mailcopies[0])='nobody')
         or (lowercase(mailcopies[0])='never')) then
@@ -2685,6 +2684,7 @@ var
   sr: tsearchrec;
   spath: String;
   s: string;
+  SRes: Integer;
   typ: string;                          { 'mail' / 'news'   }
   dfile: string;                        { Name des D.-files }
   p: integer;
@@ -2760,6 +2760,7 @@ var
   begin
     assign(f, spath + sr.name);
     reset(f, 1);
+    setlength(s, 12);
     blockread(f, s[1], 12, rr);
     close(f);
     setlength(s,rr);
@@ -2788,9 +2789,9 @@ begin
   Mails := 0; News := 0;
   spath := ExtractFilePath(source);
   n := 0; RawNews := false;
-  ;
-  while findfirst(source, faAnyFile, sr)=0 do
-  repeat
+  sres := findfirst(source, faAnyFile, sr);
+  while sres = 0 do
+  begin
     if ExtractFileExt(sr.name) = '.mail' then
       ConvertMailfile(spath + sr.name, '', mails)
     else
@@ -2833,7 +2834,8 @@ begin
         dec(n);
       end;
     end;
-  until findnext(sr)<>0;
+    sres := findnext(sr);
+  end;
   findclose(sr);
   if n > 0 then writeln;
   writeln('Mails:', mails: 6);
@@ -3649,6 +3651,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/12/07 10:35:01  mk
+  - fixed three bugs
+
   Revision 1.13  2000/12/04 14:20:56  mk
   RB:- UTF-7 Support added
 
