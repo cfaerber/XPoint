@@ -2031,7 +2031,9 @@
                         4: EditNNTPMisc(nt,brk);
                       end;
       end; { case nt }
-
+      if not brk then
+        WriteBox(fn,boxpar);
+      ReadDomainList;
     end;
     pophp;
   end;
@@ -2121,6 +2123,9 @@
 
 {
   $Log$
+  Revision 1.30  2001/09/24 10:38:30  ma
+  - fixed: Server data was not saved
+
   Revision 1.29  2001/09/14 11:46:05  cl
   - Delphi compile fixes
 
