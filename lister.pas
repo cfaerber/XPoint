@@ -399,8 +399,8 @@ var
       moff;
       attrtxt(col.colstatus);
       gotoxy(l, o);
-(*      Write(' SelLine: ', SelLine: 3, ' xa: ', xa: 3, ' FirstLine: ',
-        FirstLine: 3, ' lines.count: ', lines.count: 5, ' SelCount: ', SelCount: 3, DispLines: 3);*)
+//      Write(' SelLine: ', SelLine: 3, ' xa: ', xa: 3, ' FirstLine: ',
+//      FirstLine: 3, ' lines.count: ', lines.count: 5, ' SelCount: ', SelCount: 3, DispLines: 3);
 
       Write(FirstLine+1:5,lines.count-1:6);
       if xa=1 then
@@ -472,7 +472,7 @@ var
         <= xa + w - slen) then
       begin
         attrtxt(col.colfound);
-        wrt(l + spos - xa, y + i, copy(s, spos - xa + 1, slen));
+        wrt(l + spos - xa -1, y + i, copy(s, spos - xa , slen));
       end;
       inc(i);
     end;
@@ -604,8 +604,8 @@ var
        end
        else
        begin
-          if FirstLine + DispLines - 1 < SuchLine then Inc(FirstLine);
-//         if SuchLine > FirstLine + DispLines then FirstLine := SuchLine;
+         if FirstLine + DispLines - 1 < SuchLine then Inc(FirstLine);
+         if SuchLine > FirstLine + DispLines then FirstLine := SuchLine;
          while spos<xa do dec(xa,10);
          while spos+slen>xa+w-1 do inc(xa,10);
        end;
@@ -1065,6 +1065,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.48  2001/01/03 08:01:49  mo
+  -Richtige Positionierung des cursors und der Zeilenposition bei Suche –S-
+
   Revision 1.47  2000/12/26 16:40:27  mk
   - readded search function
 
