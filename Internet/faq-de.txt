@@ -2,27 +2,27 @@ Allgemeine OpenXP-FAQ
 
 Ich habe vermutlich einen Fehler/Bug entdeckt.&nbsp;&nbsp;<small>2001-10-20</small>
 Bei SourceForge existiert eine Bugliste (siehe "Kontakt"). Evtl. ist der Fehler dort schon verzeichnet.
-<br />Falls das nicht der Fall ist, eine genaue Beschreibung des Fehlers an die <a href="mailto:dev&#64;openxp.de">Mailingliste</a> schreiben (<i>unbedingt</i> erwähnen: genaue OpenXP-Version, Plattform, Netztyp, wie wird das Fehlverhalten hervorgerufen, ist es reproduzierbar?). Ggf. hilft auch ein genaues Debuglog (ab OpenXP/32: debuglog.txt, siehe FAQ zu OpenXP/32) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
+<br />Falls das nicht der Fall ist, eine genaue Beschreibung des Fehlers an die <a href="mailto:dev&#64;openxp.de">Mailingliste</a> schreiben (<i>unbedingt</i> erwähnen: genaue OpenXP-Version, Plattform, Netztyp, wie wird das Fehlverhalten hervorgerufen, ist es reproduzierbar?). Ggf. hilft auch ein genaues Debuglog (ab OpenXP: debuglog.txt, siehe FAQ zu OpenXP) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
 
 Ich habe einen Vorschlag für ein neues Feature.&nbsp;&nbsp;<small>2001-01-18</small>
 Wenn es eine Kleinigkeit ist, am besten direkt an den jeweiligen Programmierer wenden; ansonsten in der Mailingliste nachfragen bzw. in die Bugliste eintragen (ist gleichzeitig Featurerequestliste; alles siehe "Kontakt"). Wegen des im Moment noch immer ziemlich undurchsichtigen Codes von XP kann es aber einige Zeit dauern. Viele Wünsche lassen sich immerhin bereits mit Tools oder z.B. den Tastaturmakros erfüllen.
 
-Was gibt es beim Umstieg auf OpenXP/32 zu beachten?&nbsp;&nbsp;<small>2001-11-25</small>
+Was gibt es beim Umstieg auf OpenXP zu beachten?&nbsp;&nbsp;<small>2001-11-25</small>
 Eigentlich gar nichts (natürlich schadet ein Backup der Datenbank und der
-Konfigurationsdateien .cfg/.bfg nichts ;-). OpenXP/32 läßt sich jeweils
+Konfigurationsdateien .cfg/.bfg nichts ;-). OpenXP läßt sich jeweils
 einfach über eine bestehende Installation kopieren und nehmen beim ersten Start
 automatisch die nötigen Anpassungen vor. Das neue Datenbankformat ist allerdings
 nicht abwärtskompatibel. Ein Zurücksatteln auf XP 3.12 oder früher ist also ohne
 Backup nicht möglich - es gibt aber keine Probleme mit der XP2-Datenbank.
-<br />Zum "Reinschnüffeln" kann OpenXP/32 auch in ein separates Verzeichnis kopiert
+<br />Zum "Reinschnüffeln" kann OpenXP auch in ein separates Verzeichnis kopiert
 werden. Nach dem Kopieren einiger Dateien der bestehenden Installation (*.DB1,
 *.EB1, MPUFFER.*) sollte die Datenbank wieder zur Verfügung stehen.
-<br />Beim Umstieg ergeben sich einige Änderungen, siehe OpenXP/32-FAQ. Eine
+<br />Beim Umstieg ergeben sich einige Änderungen, siehe OpenXP-FAQ. Eine
 Anleitung für eine Neuinstallation bzw. den Umstieg
 von 16-Bit-XPs findet sich unter "Setup-Infos".
 
 Kann ich Mails aus anderen Programmen übernehmen?&nbsp;&nbsp;<small>2001-04-14</small>
-OpenXP/32 kann Mails aus dem mbox-Format in das von XP (alle Versionen) benutzte ZConnect-Format konvertieren. Dazu den Mailbuffer nach *.mail umbenennen, dann den Buffer mittels "openxp uuz -uz in.mail out.z domain.net" konvertieren. out.z läßt sich dann über XPoint/Import/Puffer einlesen nach XP importieren.
+OpenXP kann Mails aus dem mbox-Format in das von XP (alle Versionen) benutzte ZConnect-Format konvertieren. Dazu den Mailbuffer nach *.mail umbenennen, dann den Buffer mittels "openxp uuz -uz in.mail out.z domain.net" konvertieren. out.z läßt sich dann über XPoint/Import/Puffer einlesen nach XP importieren.
 <br />Das mbox-Format wird von den meisten Unix-Programmen benutzt, es gibt Konverter von diversen anderen Formaten auf mbox.
 
 Wie kriege ich (Open)XP mit ISDN/USB-Modems/WinModems zum Laufen?&nbsp;&nbsp;<small>2001-03-25</small>
@@ -37,7 +37,7 @@ Es gibt mehrere Möglichkeiten für Programme, auf serielle Geräte zuzugreifen:
 <li>CAPI
 <br /><small>CAPI ist ein Interface für ISDN-Karten. Es gibt die Versionen 1.1 und 2.0 (die Version 2.0 ist <i>nicht</i> abwärtskompatibel zur Version 1.1, die meisten CAPIs sind aber Dual-CAPIs und stellen beide Interfaces zur Verfügung). Achtung: Manche ISDN-Windows-Treiber stellen das CAPI nur Windows-Programmen zur Verfügung.</small></li>
 </ol>
-(Open)XP (DOS) kann auf Hardware (1) und Fossil (2) zugreifen, OpenXP/32 (Win32) auf Win32-COM-Ports (3).
+(Open)XP (DOS) kann auf Hardware (1) und Fossil (2) zugreifen, OpenXP (Win32) auf Win32-COM-Ports (3).
 <br />USB- und WinModems stellen normalerweise nur einen Win32-COM-Port (3) zur Verfügung.
 <br />ISDN-Karten stellen mindestens CAPI (4) zur Verfügung, meistens noch einen Win32-COM-Port (3).
 <p>Es gibt diverse Umsetzsoftware (Download siehe "Links"):
@@ -47,7 +47,7 @@ Es gibt mehrere Möglichkeiten für Programme, auf serielle Geräte zuzugreifen:
 <br />cFos/Win: 4 -&gt; 3</p>
 <p><i>Was sagt uns das?</i>
 <br />Für ein DOS-XP braucht man entweder WinFossil/NTFoss <i>oder</i> TurboCom. Benutzt man ISDN, und die Treiber stellen keinen Win32-COM-Port zur Verfügung, braucht man cFos/Win und WinFossil/NTFoss <i>oder</i> cFos/DOS.
-<br />Für OpenXP/32 (Win32) braucht man normalerweise keine Zusatzsoftware. Benutzt man ISDN, und die Treiber stellen keinen Win32-COM-Port zur Verfügung, wird cFos/Win benötigt. Siehe auch OpenXP/32-FAQ.
+<br />Für OpenXP (Win32) braucht man normalerweise keine Zusatzsoftware. Benutzt man ISDN, und die Treiber stellen keinen Win32-COM-Port zur Verfügung, wird cFos/Win benötigt. Siehe auch OpenXP-FAQ.
 </p>
 <p>Unter Linux entfällt diese Problematik komplett, da OpenXP (Linux) direkt auf die /dev/tty-Geräte zugreifen kann.</p>
 
@@ -57,7 +57,7 @@ Eine Betaversion ist eine einigermaßen benutzbare Version eines Programms, das s
 <br />Betatester sind herzlich eingeladen, die Betaversionen zu testen und Hinweise auf Fehler in der Mailingliste kundzutun :-).
 
 Kann ich Mail und News mit OpenXP lesen und schreiben?&nbsp;&nbsp;<small>2001-09-17</small>
-In OpenXP/32 sind Mail und News integriert.
+In OpenXP sind Mail und News integriert.
 <p>Bei den 16-Bit-(Open)XP-Versionen wird dafür ein Client benötigt:
 <ul>
 <li>XPNews: Markus Kämmerers Client (Windows, Shareware).</li>
@@ -88,7 +88,7 @@ Wofür stehen bei XP eigentlich die ganzen Abkürzungen?&nbsp;&nbsp;<small>2002-01
 
 Warum gibt es mehrere Entwickler-Teams?&nbsp;&nbsp;<small>2002-09-28</small>
 Es gab Anfang 2000 starke Differenzen im OpenXP-Team. Sie haben dazu geführt, da&szlig; das XP2-Projekt (siehe "Links") gegründet wurde, welches etwas andere Ziele als das OpenXP-Projekt verfolgt.
-<br />Seit Anfang 2002 wird OpenXP/16 getrennt von OpenXP/32 weiterentwickelt.
+<br />Seit Anfang 2002 wird FreeXP (früher OpenXP/16) getrennt von OpenXP weiterentwickelt.
 
 Kann ich OpenXP mit ADSL nutzen?&nbsp;&nbsp;<small>2001-01-16</small>
 Ja. ;-)

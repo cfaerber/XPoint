@@ -1,6 +1,6 @@
-FAQ zu OpenXP/32
+FAQ zu OpenXP
 
-Wie installiere ich OpenXP/32 bzw. wie mache ich ein Update?&nbsp;&nbsp;<small>2001-11-25</small>
+Wie installiere ich OpenXP bzw. wie mache ich ein Update?&nbsp;&nbsp;<small>2001-11-25</small>
 Siehe "Setup-Infos" links :-).
 
 Warum ist die Windows-Version bei mir so langsam?&nbsp;&nbsp;<small>2001-03-20</small>
@@ -17,7 +17,7 @@ per Rechtsklick auf den Startmenüeintrag, Eigenschaften, "Symbolleiste anzeigen"
 <br />Also: <i>Fenstermodus nehmen, Zeilen-/Spaltenanzahl hochsetzen, das Fenster passend verschieben</i> - voilà, man hat ein
 übersichtliches, schnelles OpenXP :-).
 
-OpenXP/32 DOS? Windows? Linux?- Wo liegen die Unterschiede?&nbsp;&nbsp;<small>2001-10-20</small>
+OpenXP DOS? Windows? Linux?- Wo liegen die Unterschiede?&nbsp;&nbsp;<small>2001-10-20</small>
 Alle drei Versionen sehen optisch ziemlich gleich aus. Die Windows-Version bietet <i>keine</i> graphische Oberfläche, also nicht wundern. Im folgenden die Einschränkungen der einzelnen Versionen:
 <ul>
 <li>DOS: Die integrierten Mail/Newsclients (NNTP/POP3/SMTP) funktionieren hier nicht, ebenso wie BinkP (Fido over IP). Die Bildschirmgröße läßt sich nicht völlig frei ändern, es werden nur die unter DOS üblichen Textmodi unterstützt. Für den Modemzugriff stehen die gewohnten Möglichkeiten zur Verfügung (also direkter Zugriff auf die Hardware und Fossil).</li>
@@ -25,7 +25,7 @@ Alle drei Versionen sehen optisch ziemlich gleich aus. Die Windows-Version biete
 <li>Linux: Modemzugriff wie unter Linux üblich über /dev/ttyX. ISDN-Karten werden über /dev/ttyIx wie normale Modems angesprochen, in ISDN4Linux ist ein AT-Emulator integriert. In der Boxenkonfiguration bedeutet "COM1" bei "Schnittstelle", daß die Konfiguration von "Gerät 1" unter Config/Modem... benutzt wird.</li>
 </ul>
 
-Wie lasse ich OpenXP/32 unter Windows/Linux auf mein Modem/meine ISDN-Karte zugreifen?&nbsp;&nbsp;<small>2002-09-28</small>
+Wie lasse ich OpenXP unter Windows/Linux auf mein Modem/meine ISDN-Karte zugreifen?&nbsp;&nbsp;<small>2002-09-28</small>
 Mit der Umstellung im Netcall-Bereich wurden die alten Modemeinstellungen abgeschafft. Stattdessen gibt man
 jetzt einen "CommInit"-String an (Config/Modem...). Die Beispiele, die man per F2 bekommt, sollten klarmachen,
 wie man damit umgeht. Die alten Einstellungen gelten nur für externe Programme wie PPP-Clients, falls sie ihre Einstellungen
@@ -37,12 +37,12 @@ herzustellen hat (DFÜ-Netzwerk bzw. pppd). Anleitungen hierzu gibt es vom jeweil
 zuhauf im <a href="http://www.google.de">Netz</a>.
 <br />Windows-Tip: Die Internetverbindung kann automatisch bei Bedarf hergestellt werden, siehe hierzu
 Start/Einstellungen/Systemsteuerung/Internetoptionen/Verbindungen.</p>
-<p>Damit OpenXP/32 (Windows) auf die ISDN-Karte/das USB-Modem/... zugreifen kann, muß das jeweilige Gerät einen virtuellen
+<p>Damit OpenXP (Windows) auf die ISDN-Karte/das USB-Modem/... zugreifen kann, muß das jeweilige Gerät einen virtuellen
 COM-Port bereitstellen. Fritz!-ISDN-Karten muß man dafür bei der Installation speziell konfigurieren, siehe 
 <a href="fritzconfig.jpg">Screenshot</a>.</p>
 
 Wie geht man mit dem Logging-Feature um?&nbsp;&nbsp;<small>2001-10-20</small>
-OpenXP/32 bietet die Möglichkeit, sehr ausführliche Debug-Logs zu erzeugen, die im Fehlerfall u.U. sehr einfach
+OpenXP bietet die Möglichkeit, sehr ausführliche Debug-Logs zu erzeugen, die im Fehlerfall u.U. sehr einfach
 weiterhelfen können. Standardmäßig wird im OpenXP-Verzeichnis eine Datei "debuglog.txt" angelegt, in die die
 Logs geschrieben werden; diese Datei wird bei jedem Start von OpenXP überschrieben, damit sie nicht zu groß wird.
 <i>Falls also ein Fehler aufgetreten ist, bitte die Datei vor dem nächsten Start von OpenXP sichern!</i>

@@ -4,8 +4,8 @@ x
 x
 x
 
-PGP5/6.5-Unterstützung<br /><small>OXP/32: auch MIME, auch GnuPG</small>
-Support for PGP5/6.5<br /><small>OXP/32: MIME, GnuPG</small>
+PGP5/6.5-Unterstützung<br /><small>OpenXP: auch MIME, auch GnuPG</small>
+Support for PGP5/6.5<br /><small>OpenXP: MIME, GnuPG</small>
 x
 x
 x

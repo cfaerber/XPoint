@@ -27,8 +27,8 @@ $Menu = array(
 		"url"	=> $indexname . "?news=faqgpl-de.txt&genindex=1",
 		"sub"	=> true),
 
-	5 => array("de"	=> "OpenXP/32",
-		"en" 	=> "OpenXP/32",
+	5 => array("de"	=> "OpenXP",
+		"en" 	=> "OpenXP",
 		"sub"	=> false),
 	6 => array("de"	=> "FAQ",
 		"en" 	=> "FAQ",
