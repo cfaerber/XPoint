@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { DOS-Shell }
@@ -165,7 +166,6 @@ begin
   TempOpen;
 end;
 
-{$IFDEF BP }
 Function DosStartSession(Var Data:TStartData):Word; Assembler;
  Asm
         mov     ah, $64
@@ -219,7 +219,6 @@ Begin
   FreeMem(PrgParam,256);
   FreeMem(PrgName,256);
 End;
-{$ENDIF }
 
 function listheadercol:byte; { Headerzeilenfarbe entsprechend Hervorhebungsflag waehlen }
 var nt : longint;
@@ -233,6 +232,7 @@ var p,p0,ml : byte;
     qn,pdiff: integer;
 begin
   listhicol:=col.collisthigh;
+  listseekcol:=col.collistfound;
   if line<=exthdlines then
     listcolor:=listheadercol
   else if s='' then
@@ -308,20 +308,11 @@ var brk    : boolean;
     lfirst:=min(lfirst,screenlines-5);
   end;
 
-{$IFDEF NCRT }
-  function MakeVSC: string;
-  var s: string;
-  begin
-    Str(screenwidth,s);
-    if (screenwidth<100) then
-      MakeVSC:= 'VSC:0'+s+'/'
-    else
-      MakeVSC:= 'VSC:'+s+'/';
-  end;
-{$ENDIF }
-
 begin
   listexit:=0;
+  listseekcol:=col.collistfound;
+  if Suchergebnis then listshowseek:=true 
+    else listshowseek:=false; 
   if varlister<>'' then begin
     lf:=repfile(VarLister,name);
     pp:=pos('$TYPE',ustr(lf));
@@ -335,33 +326,27 @@ begin
   else begin
     if savescr then sichern(p);
     lfirst:=iif(listvollbild,1,4); lofs:=0;
-    if listvollbild then begin                      { Bei Vollbild-lister : }
-      if not listmsg or not listuhr then m2t:=false { Uhr nur im Message Lister... }
+    if listvollbild then begin                     { Bei Vollbild-Lister : }
+      if {not listmsg or} not listuhr then m2t:=false { Uhr nur im Message Lister... }
       else begin
         dphb:=dphback;
-        if ListFixedhead then                      {   Wenn fester Header }
-          dphback:=listheadercol                   {   dann Uhr aktiv mit Headerfarbe }
+        if ListFixedhead and (exthdlines>0) then   { Wenn fester Header }
+          dphback:=listheadercol                   { dann Uhr aktiv mit Headerfarbe }
         else begin
-          dphback:=col.colliststatus;              {   bei freiem Header }
-          timey:=2;                                {   Uhr in Zeile 2 und Statuszeilenfarbe}
+          dphback:=col.colliststatus;              { bei freiem Header }
+          timey:=2;                                { Uhr in Zeile 2 und Statuszeilenfarbe }
           end;
         end;
       end;
     if ListMsg and ListFixedHead then
       ShowMsgHead;
-{$IFDEF NCRT }
-    openlist(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
-             iif(listvollbild,screenlines,screenlines-fnkeylines-1),
-             iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
-             iifs(_maus and ListScroller,MakeVSC,'')+
-             iifs(listmsg,'ROT/',''));
-{$ELSE }
+
     openlist(1,iif(_maus and listscroller,79,80),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
              iifs(_maus and ListScroller,'VSC:080/','')+
              iifs(listmsg,'ROT/',''));
-{$ENDIF }
+
     if listwrap {or listkommentar} then
       lister.listwrap(iif(_maus and listscroller,78,80));
     if listmsg and ConvIso then list_convert(ISO_conv);
@@ -387,25 +372,19 @@ begin
       mwrt(1,lfirst,sp(80));
       end;
 
-    if listmsg then
-    begin
-      dbReadN(mbase,mb_halteflags,listhalten);
-      dbReadN(mbase,mb_unversandt,listunvers);
-      dbReadN(mbase,mb_flags,listflags);
-      end
-    else begin
-      Listunvers:=0; Listhalten:=0; Listflags:=0;
-      end;
+    list_infos(listmsg);
 
     list(brk);
     Listunvers:=0; Listhalten:=0; Listflags:=0;
     pophp;
     ListMakros:=oldm;
-    if listvollbild and listuhr and ListMsg then begin
-     dphback:=dphb;                        {Uhrfarbe reseten}
-     if not Listfixedhead then timey:=1;   {Und evtl. Position}
-     end;
-   m2t:=true;
+    if listvollbild and listuhr{ and ListMsg}
+    then begin
+      dphback:=dphb;                              { Uhrfarbe reseten   }
+      if not (ListFixedhead and (exthdlines>0))
+        then timey:=1;                            { und evtl. Position }
+      end;
+    m2t:=true;
     if savescr then holen(p);
     closelist;
     end;
@@ -414,6 +393,7 @@ begin
   if listexit<>4                         { Wenn nicht Editor gestartet wird... }
     then otherquotechars:=otherqcback;   { Status der Quotechars '|' und ':' reseten }
   listfile:=listexit;
+  ListShowSeek:=false;
 end;
 
 
@@ -456,7 +436,7 @@ begin
     end
   else begin
     if nachricht then pushhp(54);
-    TED(name,reedit,keeplines,ed_ukonv);
+    TED(name,reedit,keeplines,ed_ukonv,nachricht);
     if nachricht then pophp;
     if nachricht and (left(VarEditor,1)='*') then begin
       delfirst(VarEditor);
@@ -511,6 +491,29 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.10  2001/09/16 20:19:33  my
+  JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
+          Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
+          Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
+          <Tab> springt der Cursorbalken die nächste Zeile mit einem
+          markierten Suchbegriff an.
+
+  JG+MY:- Text-Markiersuche im Lister mit "S": mehrere Suchbegriffe,
+          Suchoptionen (z.B. umlautunabhängige Suche), Suchbegriff-History
+          und Suchbegriffs-Bibliothek verfügbar. "Alte" Suchfunktionen
+          jetzt über <Ctrl-S> (früher "S") bzw. wie bisher über <Shift-S>
+          erreichbar.
+
+  JG+MY:- Beim Editieren von Nachrichten gibt es im "Änderungen
+          speichern?"-Dialog die Option "Parken", die direkt ein "P" ans
+          Sendefenster weiterleitet.
+
+  JG+MY:- Uhr im Archiv-Viewer aktiviert
+
+  JG+MY:- Übergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay)
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.24.2.9  2001/08/12 11:20:29  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
