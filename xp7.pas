@@ -61,7 +61,7 @@ implementation  {---------------------------------------------------}
 
 uses direct,
      xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
-     xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f;
+     xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f, xppop3;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
@@ -154,6 +154,8 @@ var
     isdn       : boolean;
     orgfossil  : boolean;
     jperror    : boolean;
+    uu : TUUZ;
+
 
 label abbruch,ende0;
 
@@ -270,8 +272,8 @@ label abbruch,ende0;
         ltPOP3      : begin
                        caller:='POP3DMY1';
                        called:='POP3DMY2';
-                       upuffer:='POP3PUF';
-                       dpuffer:='POP3PUF';
+                       upuffer:='POP3PUF1';
+                       dpuffer:='POP3PUF2';
                      end;
         ltUUCP     : begin
                        caller:='C-'+hex(uu_nummer,4)+'.OUT';
@@ -677,7 +679,6 @@ begin                  { of Netcall }
 
       if (uparcer<>'') and (not (logintyp in [ltUUCP, ltNNTP, ltPOP3, ltIMAP]))
         and not FileExists(caller) then begin
-        {window(1,1,screenwidth,screenlines);}
         trfehler(713,30);   { 'Fehler beim Packen!' }
         goto ende0;
         end;
@@ -1114,7 +1115,6 @@ begin                  { of Netcall }
                     erase_mask('*.*');
                     RepStr(downarcer,called,OwnPath+XferDir+'*.*')
                     end;
-                  {window(1,1,screenwidth,screenlines);}
                   end;
                 if (DownArcer<>'') and
                    (not JanusP or (LeftStr(LowerCase(DownArcer),5)<>'copy ')) then
@@ -1131,7 +1131,6 @@ begin                  { of Netcall }
                   ltGS       : MovePuffers(XferDir+'*.PKT',dpuffer);
                 end;                            { GS-PKTs zusammenkopieren }
                 end;
-              {window(1,1,screenwidth,screenlines);}
               if pronet then begin
                 SetCurrentDir(ownpath);
                 if FileExists(XFerDir+'BRETTER.LST') then begin
@@ -1287,9 +1286,17 @@ begin                  { of Netcall }
       { --------------------------------------------------------------- }
 
       case LoginTyp of
-        ltPOP3: begin
-                  trfehler(799,30);
-                end;
+        ltPOP3:
+        begin
+          GetPOP3Mails(Box, BoxPar, 'spool\');
+          uu := TUUZ.Create;
+          uu.source := 'spool\*.mail';
+          uu.dest := dpuffer;
+          uu.OwnSite := boxpar^.pointname+domain;
+          uu.utoz;
+          uu.free;
+          PufferEinlesen(dpuffer,box,false,false,true,pe_Bad);
+        end;
       else
         trfehler(799,30); { 'Funktion nicht implementiert' }
       end; { case }
@@ -1520,6 +1527,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/12/26 13:03:36  mk
+  - implemented POP3 Support
+
   Revision 1.51  2000/12/25 20:07:21  mk
   - removed test for zfido.exe
 
