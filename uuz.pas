@@ -808,7 +808,7 @@ begin
   if zone = '' then
     zone := 'W+0'
   else
-    if (zone[1] = '+') or (zone[1] = '-') then
+    if (FirstChar(zone) = '+') or (FirstChar(Zone) = '-') then
   begin
     zone := 'W' + LeftStr(zone, 3) + ':' + copy(zone, 4, 2);
     if lastchar(zone) = ':' then zone := zone + '00';
@@ -992,7 +992,7 @@ begin
           SkipWhitespace;
           if s <> '' then
           begin
-            if s[1] = '"' then
+            if FirstChar(s) = '"' then
               repeat inc(p)until (p = length(s)) or (s[p] = '"')
             else
               repeat inc(p)until (p = length(s)) or (s[p] <= ' ');
@@ -1000,7 +1000,7 @@ begin
             if lastchar(value) = ';' then
               dellast(value);
             inc(p);
-            if value[1] = '"' then UnQuote(value);
+            if FirstChar(Value) = '"' then UnQuote(value);
             case ctype of
               tText:
                 if s1 = 'charset' then charset := LowerCase(value);
@@ -1557,12 +1557,12 @@ var
     end
     else
       adr := s0;
-    if (adr[1] = '@') and (cpos(':', adr) > 0) then
+    if (FirstChar(adr) = '@') and (cpos(':', adr) > 0) then
     begin
       delete(adr, 1, cpos(':', adr));   { Route-Adresse nach RFC-822 aufloesen }
       if cpos('@', adr) = 0 then adr := adr + '@nowhere';
     end;
-    if (realname <> '') and (realname[1] = '"') then UnQuote(realname);
+    if FirstChar(realname) = '"' then UnQuote(realname);
   end;
 
   procedure GetEmpf;
@@ -1711,7 +1711,7 @@ var
   var
     p: integer;
   begin
-    while (s0 <> '') and (s0[1] = '<') do
+    while (FirstChar(s0) = '<') do
       with hd do
       begin
         p := cpos('>', s0);
@@ -1848,7 +1848,7 @@ var
           p := cpos('?', s);
           if p = 2 then
           begin
-            code := UpCase(s[1]);
+            code := UpCase(FirstChar(s));
             delete(s, 1, 2);
             qp := qprint;
             case code of
@@ -1934,7 +1934,7 @@ begin
   repeat
     ReadString;
     // fortgesetzte Zeile zusammenfassen
-    if (s<>'') and ((s[1]=' ') or (s[1]=#9)) then
+    if (FirstChar(s) =' ') or (FirstChar(s)=#9) then
       s0:=s0+' '+trim(s)
     else
     with hd do
@@ -2180,7 +2180,7 @@ begin
         p := cpos(' ', s);
         if p = 0 then p := cpos(#9, s);
         if p = 0 then p := length(s) + 1;
-        c := s[1];
+        c := FirstChar(s);
         for i := 1 to p - 1 do
           s[i] := LoCase(s[i]);
         if s[p - 1] <> ':' then
@@ -2401,7 +2401,7 @@ begin
         smtpende := (s = '.');
         if not smtpende then
         begin
-          if (s <> '') and (s[1] = '.') then { SMTP-'.' entfernen }
+          if FirstChar(s) = '.' then { SMTP-'.' entfernen }
             delfirst(s);
           UnquotePrintable;             { haengt CR/LF an, falls kein Base64 }
           inc(hd.groesse, length(s));
@@ -2416,7 +2416,7 @@ begin
         smtpende := (s = '.');
         if not smtpende then
         begin
-          if (s <> '') and (s[1] = '.') then { SMTP-'.' entfernen }
+          if FirstChar(s) = '.' then { SMTP-'.' entfernen }
             delfirst(s);
           UnQuotePrintable;             { haengt CR/LF an, falls kein Base64 }
           if not binaer then s := ISOtoIBM(s);
@@ -2615,7 +2615,7 @@ var
     i: integer;
     b: byte;
   begin
-    s := s[1] + '-' + RightStr(s, 5);
+    s := FirstChar(s) + '-' + RightStr(s, 5);
     b := 0;
     for i := 0 to 3 do                  { Schreibweise in einem Byte codieren }
       if (s[i + 4] >= 'A') and (s[i + 4] <= 'Z') then
@@ -2633,7 +2633,7 @@ var
     begin
       GetStr;
       if s <> '' then
-        case UpCase(s[1]) of
+        case UpCase(FirstChar(s)) of
           'C':
             if typ = '' then
             begin                       { Befehl: 'rmail' / 'rnews' / 'rsmtp' }
@@ -2693,7 +2693,7 @@ begin
   rewrite(f2, 1);
   outbufpos := 0;
   Mails := 0; News := 0;
-  spath := GetFileDir(source);
+  spath := ExtractFilePath(source);
   n := 0; RawNews := false;
   findfirst(source, ffAnyFile, sr);
   while doserror = 0 do
@@ -2898,7 +2898,7 @@ var
   var
     p: integer;
   begin
-    if s[1] = '/' then delfirst(s);
+    if FirstChar(s) = '/' then delfirst(s);
     repeat
       p := cpos('/', s);
       if p > 0 then s[p] := '.';
@@ -3276,7 +3276,7 @@ var
       wrs(f2, 'U ' + MailUser + ' ' + _from)
     else
       wrs(f2, 'U ' + NewsUser + ' ' + _from);
-    name := fn[1] + '.' + LeftStr(_from, 7) + iifc(mail or smtp, 'C', 'd') +
+    name := FirstChar(fn) + '.' + LeftStr(_from, 7) + iifc(mail or smtp, 'C', 'd') +
       RightStr(fn, 4);
     wrs(f2, 'F ' + name);
     wrs(f2, 'I ' + name);
@@ -3295,7 +3295,7 @@ var
       wrs(f2, 'C r' + sender + iifs(mail, ' ' + hd.empfaenger, ''));
     fs := filesize(f2);
     close(f2);
-    name2 := fn[1] + '.' + LeftStr(_to, 7) + 'D' + RightStr(fn, 4);
+    name2 := FirstChar(fn) + '.' + LeftStr(_to, 7) + 'D' + RightStr(fn, 4);
     write(fc, 'S ', name2, ' ', name, ' ', iifs(mail or smtp, MailUser,
       NewsUser),
       ' - ', name2, ' 0666');
@@ -3357,7 +3357,7 @@ var
     begin
       ReadString;
       s := trim(s);
-      if (s <> '') and (s[1] <> '#') then
+      if FirstChar(s) <> '#' then
       begin
         if request then
         begin
@@ -3527,7 +3527,7 @@ begin
             begin
               ReadString;
               if fpos + bufpos > gs then ShortS;
-              if SMTP and (s <> '') and (s[1] = '.') then s := '.' + s;
+              if SMTP and (FirstChar(s) = '.') then s := '.' + s;
               uuz.s := IBMToISO(uuz.s);
               MakeQuotedPrintable;
               wrbuf(f2);
@@ -3566,6 +3566,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.76  2000/11/14 11:02:16  mk
+  - AnsiString-Fixes
+
   Revision 1.75  2000/11/09 18:15:11  mk
   - fixed Bug #116187: header of forwarded mails is stripped down
 
