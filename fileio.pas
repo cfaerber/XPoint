@@ -107,6 +107,11 @@ function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
 
 implementation  { ------------------------------------------------------- }
 
+{$ifdef linux}
+uses
+  linux;
+{$endif}
+
 var ShareDa : boolean;
 
 
@@ -564,16 +569,18 @@ end;
 
 function lock(var datei:file; from,size:longint):boolean;
 {$IFDEF ver32 }
- {$ifdef vp }
 begin
+  {$ifdef vp }
   lock:=SysLockFile(datei,from,size)=0;
- {$else}
+  {$else}
   {$ifdef win32}
-begin
   Lock := Windows.LockFile(FileRec(Datei).Handle,
     Lo(From), Hi(From), Lo(Size), Hi(Size));
   {$endif}
+   {$ifdef linux}                     { ML 25.03.2000    Filelocking für Linux }
+   lock := flock (datei, LOCK_SH);
  {$endif}
+{$ENDIF}
 {$ELSE }
 var regs : registers;
 begin
@@ -592,15 +599,17 @@ end;
 
 procedure unlock(var datei:file; from,size:longint);
 {$IFDEF ver32 }
- {$ifdef vp }
 begin
+ {$ifdef vp }
   if SysUnLockFile(datei,from,size)=0 then ;
  {$else}
   {$ifdef win32}
-begin
   Windows.UnLockFile(FileRec(Datei).Handle,
     Lo(From), Hi(From), Lo(Size), Hi(Size));
   {$endif}
+   {$ifdef linux}                 { ML 25.03.2000    Filelocking für Linux }
+   flock(Datei, LOCK_UN);
+   {$endif}
  {$endif}
 {$ELSE }
 var regs : registers;
@@ -693,9 +702,9 @@ var dir : dirstr;
 begin
   fsplit(s,dir,name,ext);
   p:=cpos('*',name);
-  if p>0 then name:=left(name,p-1)+dup(9-p,'?');
+   if p>0 then name:=left(name,p-1)+typeform.dup(9-p,'?');
   p:=cpos('*',ext);
-  if p>0 then ext:=left(ext,p-1)+dup(5-p,'?');
+   if p>0 then ext:=left(ext,p-1)+typeform.dup(5-p,'?');
   s:=dir+name+ext;
 end;
 
@@ -775,6 +784,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/03/25 18:46:59  ml
+  uuz lauffähig unter linux
+
   Revision 1.15  2000/03/24 23:11:17  rb
   VP Portierung
 

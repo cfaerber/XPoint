@@ -398,8 +398,10 @@ end;
 
 procedure logo;
 begin
+   {$ifndef linux}         { ML 25.03.2000  workaround für Linux - Outputumleitung mgl. }
   assign(output, '');
   rewrite(output);
+{$endif}   
   writeln;
   writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
   writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
@@ -3512,6 +3514,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.15  2000/03/25 18:46:59  ml
+  uuz lauffähig unter linux
+
   Revision 1.14  2000/03/24 15:41:01  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 
