@@ -2,7 +2,7 @@ K CrossPoint v3.40 resource file
 K English
 K (c) 1993-99 Peter Mandrella
 K (c) 2000-01 OpenXP-Team, http://www.openxp.de
-K (c) 2002    OpenXP/16, http://www.openxp16.de
+K (c) 2002-03 OpenXP/16, http://www.openxp16.de
 
 # Online Help File, Key Macros
 1 XP-E.HLP
@@ -2258,16 +2258,17 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 8    Holiday
 # width of weekday window
 9    42
-# position of holiday coloumn
+# position of holiday column
 10   24
 11   Delete phone fee group %s
 + 1023
-0    39
+0    51
 1    Phone fee settings
-2    Fees for unsucessfull dial~
-3    Currency ~
+2    Fees for unsuccessful dial~
+3    Currency
 4    cFos phone fee calculation
 5    German holidays
+6    new phone fee model
 # Netcall/Special
 + 1024
 1    Special Netcall to:
