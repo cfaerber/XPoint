@@ -137,6 +137,7 @@ var
   // true wenn mail, false wenn keine Mail
   addhd: TStringList;
   RawNews: Boolean;
+  eol: Integer;
 
   envemp: string;                       { Envelope-Empf„nger }
 
@@ -1266,7 +1267,7 @@ var
   end;
 
 begin
-  l := 0;
+  l := 0; eol := 1;
   s := '';
   SetLength(s, MaxSLen);
   while (bufpos < bufanz) and (buffer[bufpos] <> #10) do
@@ -1281,7 +1282,8 @@ begin
         s[l] := c
       else
         s := s + c;
-    end;
+    end else
+      Inc(eol);
     IncPos;
   end;
   Setlength(s, l);
@@ -2437,7 +2439,7 @@ begin
           if RawNews then
             Size := Bufanz
           else
-            size := minmax(ival(mid(s, 10)), 0, maxlongint);
+            size := minmax(ival(trim(mid(s, 10))), 0, maxlongint);
           fp := fpos; bp := bufpos;
           ClearHeader;
           ReadRFCheader(false, s);
@@ -2445,14 +2447,14 @@ begin
           seek(f1, fp); ReadBuf; bufpos := bp;
           repeat                        { Header berlesen }
             ReadString;
-            dec(size, length(s) + 1);
+            dec(size, length(s) + eol);
           until (s = '') and (true or (bufpos >= bufanz));
           fp := fpos; bp := bufpos;
           ss := size;
           while (ss > 0) and (bufpos < bufanz) do
           begin                         { Gr”áe des Textes berechnen }
             ReadString;
-            dec(ss, length(s) + 1);
+            dec(ss, length(s) + eol);
             UnQuotePrintable;
             inc(hd.groesse, length(s));
           end;
@@ -2461,13 +2463,13 @@ begin
           while (size > 0) and (bufpos < bufanz) do
           begin                         { ZC-Text anh„ngen }
             ReadString;
-            dec(size, length(s) + 1);
+            dec(size, length(s) + eol);
             UnQuotePrintable;
             if not binaer then ISO2IBM(s);
             wrfs(s);
           end;
-          if bufpos < bufanz then
-            ReadString;
+          { if bufpos < bufanz then
+            ReadString; }
         end;
       until (bufpos >= bufanz {-8}) or (s = '');
       writeln(' - ok');
@@ -3396,6 +3398,9 @@ end.
 
 {
   $Log$
+  Revision 1.48  2000/07/22 17:25:46  mk
+  - misc Bugfixes
+
   Revision 1.47  2000/07/22 14:41:26  mk
   - UUZ geht jetzt endlich wieder komplett :-)
 
