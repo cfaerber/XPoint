@@ -208,7 +208,7 @@ begin
     result:= true;
     List.LoadFromFile(RFCFileDummy);
     NNTP.Connect;
-    NNTP.PostPlainRFCMessages(List);
+    result := NNTP.PostPlainRFCMessages(List)=0;
   except
     on E: EUserBreakError do begin
       POWindow.WriteFmt(mcError, res_userbreak, [0]);
@@ -367,6 +367,9 @@ end;
 
 {
         $Log$
+        Revision 1.41  2002/05/26 15:06:34  ma
+        - fixed: outgoing postings were marked "sent" even if not accepted by server
+
         Revision 1.40  2002/05/03 20:43:53  mk
         - code cleanup and added comment
 
