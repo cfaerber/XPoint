@@ -747,7 +747,7 @@ begin
     end;
 
   if not FileExists(BoxenFile+dbExt) then begin       { BOXEN: Pollbox-Liste }
-    initflp(16);
+    initflp(17);
     AppS('Boxname',20);
     AppS('Username',30);
     AppS('Kommentar',30);
@@ -797,7 +797,7 @@ begin
     end;
 
   if not FileExists(GruppenFile+dbExt) then begin     { GRUPPEN: Brettgruppen }
-    initflp(10);
+    initflp(18);
     AppS('name',30);
     AppX('haltezeit',dbTypeInt,2,4);
     AppX('MsgLimit',dbTypeInt,4,10);
@@ -956,6 +956,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2001/07/29 12:56:05  ma
+  - fixed initfld parameters
+
   Revision 1.32  2001/07/28 12:04:11  mk
   - removed crt unit as much as possible
 
