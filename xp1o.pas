@@ -86,10 +86,13 @@ end;
 
 function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
+const
+  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
+    '-','_','#','=','&','%','@','$'];
 var x,y : byte;
-    brk : boolean;
-    fn  : string;
-    s2  : string;
+  brk : boolean;
+  fn  : string;
+  s2  : string;
 begin
   fn:=getres(106);
   dialog(45+length(fn),3,txt,x,y);
@@ -123,19 +126,17 @@ begin
       if y=0 then y:=pos('HTTPS://',UpperCase(s));                {HTTPS URL ?}
       if y=0 then y:=pos('FTP://',UpperCase(s));                  {oder FTP ?}
       if y=0 then y:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
-      if y<>0 then begin
-        s:=mid(s,y); x:=0; y:=0;
-        repeat
-          inc (y);                                           {Ende der URL suchen...}
-          if (s[y] <= ' ') or (s[y] > '~') or (y=length(s)+1) then x:=y-1;
-          case s[y] of '<', '>', '(', ')', '{', '}', '[', ']', '"' : x:=y-1; end;
-        until x<>0;
-        s:=LeftStr(s,x);
-        end;
+      if y<>0 then
+      begin
+        s:=mid(s,y);
+        y:=1;
+        while (y<=length(s)) and (s[y] in urlchars) do inc(y); {Ende der URL suchen...}
+        s:=leftStr(s,y-1);
+      end;
       string2clip(s);
       ReadFilename:=false;
       exit;
-      end
+    end
     else begin
       s:= s2; { Schreibweise zurueckholen }
       useclip:=false;
@@ -984,6 +985,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2000/11/01 11:20:14  mk
+  RB:- improved URL detection
+
   Revision 1.64  2000/10/22 23:16:47  mk
   - AnsiString fixes
 
