@@ -268,6 +268,7 @@ begin
     if Pos(SMTPQUITSIGN, Mail[I]) <> 0 then break;
   end;
   Result := ToLine;
+  Dec(ToLine);
 end;
 
 procedure TSMTP.PostPlainRFCMails(Mail: TStringList);
@@ -303,6 +304,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2001/04/13 01:14:30  ma
+  - fixed: double sending of '.'
+
   Revision 1.4  2001/04/06 15:21:15  ml
   - smtpsenden komplett überarbeitet
 
