@@ -69,7 +69,7 @@ type  liste   = pointer;
 
 procedure openlist(_l,_r,_o,_u:byte; statpos:shortint; options:string);
 procedure SetListsize(_l,_r,_o,_u:byte);
-procedure app_l(ltxt:string);           { Zeile anh„ngen }
+procedure app_l(ltxt:shortstring);           { Zeile anh„ngen }
 procedure list_convert(cp:listConvert);
 procedure list_readfile(fn:string; ofs:word);
 procedure ListSetStartpos(sp:longint);
@@ -117,7 +117,6 @@ type  lnodep  = ^listnode;
                   marked    : boolean;
                   cont      : string;
                 end;
-const lnodelen= sizeof(listnode)-255;       { = 14 }
 
 type  liststat= record
                   statline  : boolean;
@@ -384,7 +383,7 @@ begin
     col:=lstack[0].l^.col;
     stat:=lstack[0].l^.stat;
     SetListsize(_l,_r,_o,_u);
-    UpString(options);
+    options:= UpperCase(options);
     selbar:=pos('/SB/',options)>0;
     stat.markable:=pos('/M/',options)>0;
     stat.endoncr:=pos('/CR/',options)>0;
@@ -414,11 +413,6 @@ begin
   memflag:=0;
 end;
 
-function EmsPtr(p:lnodep):lnodep;
-begin
-  EmsPtr := p;
-end;
-
 procedure closelist;
 var lnp : lnodep;
 begin
@@ -429,7 +423,8 @@ begin
       last:=lastheap;
     while last<>nil do begin     { Liste freigeben }
       lnp:=last^.prev;
-      freemem(last,lnodelen+length(last^.cont));
+      last^.cont:= '';					{ String freigeben }
+      freemem(last,sizeof(listnode));
       last:=lnp;
     end;
   end;
@@ -442,27 +437,29 @@ end;
 
 { Zeile anh„ngen }
 
-procedure app_l(ltxt:string);
+{ ACHTUNG: Muss shortstring sein, da direkt aus 'make_list' aufgerufen }
+procedure app_l(ltxt:shortstring);
 const TAB = #9;
 var p  : byte;
 
   procedure appnode(var lnp:lnodep; back:lnodep);
-  var lt : byte;
   begin
-    lt:=length(ltxt);
     case memflag of
-      0 : getmem(lnp,lnodelen+lt);
+      0 : begin
+            getmem(lnp,sizeof(listnode));
+	    fillchar(lnp^,sizeof(listnode),0);
+	  end;
       3 : begin
             writeln('LIST: internal memory allocation error');
             halt(1);
           end;
     end;
-    with EmsPtr(lnp)^ do begin
+    with lnp^ do begin
       next:=nil;
       prev:=back;
       linenr:=alist^.lines;
       marked:=false;
-      Move(ltxt,cont,lt+1);
+      cont:= ltxt;
       end;
   end;
 
@@ -473,7 +470,7 @@ var p  : byte;
       inc(lines);
       appnode(lp,last);
       if first=nil then first:=lp
-      else EmsPtr(last)^.next:=lp;
+      else last^.next:=lp;
       last:=lp;
       end;
   end;
@@ -623,15 +620,11 @@ var gl,p,y    : shortint;
   procedure display;
   var i  : integer;
       pp : lnodep;
-{$ifdef hasHugeString}
       s  : string;
-{$else}
-      s  : string[100];
-{$endif}
       b  : byte;
   begin
     with alist^ do begin
-      pp:=EmsPtr(actl);
+      pp:=actl;
       i:=1;
       moff;
       while (i<=gl+dispa) and (pp<>nil) do begin
@@ -662,14 +655,14 @@ var gl,p,y    : shortint;
           attrtxt(col.colfound);
           wrt(l+spos-xa,y+i-1,copy(s,spos-xa+1,slen));
           end;
-        pp:=EmsPtr(pp^.next);
+        pp:=pp^.next;
         inc(i);
         end;
       mon;
       attrtxt(col.coltext);
       if i<=gl+dispa then clwin(l,l+w-1,y+i-1,y+gl+dispa-1);
       while (dispa<0) do begin
-        if pp<>nil then pp:=EmsPtr(pp^.next);
+        if pp<>nil then pp:=pp^.next;
         inc(dispa);
         end;
       more:=pp<>nil;
@@ -704,10 +697,10 @@ var gl,p,y    : shortint;
   procedure clearmark;
   var pp : lnodep;
   begin
-    pp:=EmsPtr(alist^.first);
+    pp:=alist^.first;
     while pp<>nil do begin
       pp^.marked:=false;
-      pp:=EmsPtr(pp^.next);
+      pp:=pp^.next;
       end;
     alist^.markanz:=0;
   end;
@@ -716,10 +709,10 @@ var gl,p,y    : shortint;
   var pp    : lnodep;
       n,anz : longint;
   begin
-    pp:=EmsPtr(alist^.first);
+    pp:=alist^.first;
     for n:=1 to f7p-1 do begin
       pp^.marked:=false;
-      pp:=EmsPtr(pp^.next);
+      pp:=pp^.next;
       end;
     anz:=0;
     for n:=f7p to f8p do begin
@@ -727,12 +720,12 @@ var gl,p,y    : shortint;
         pp^.marked:=true;
         inc(anz);
         end;
-      pp:=EmsPtr(pp^.next);
+      pp:=pp^.next;
       end;
     alist^.markanz:=anz;
     while pp<>nil do begin
       pp^.marked:=false;
-      pp:=EmsPtr(pp^.next);
+      pp:=pp^.next;
       end;
   end;
 
@@ -773,7 +766,7 @@ var gl,p,y    : shortint;
           if (suchline>=a+1) and (suchline<=a+gl) then begin
             inc(spos,slen);
             for i:=1 to suchline-a-1 do begin
-              inc(sp); sline:=EmsPtr(sline)^.next;
+              inc(sp); sline:=sline^.next;
               end;
             end
           else
@@ -788,11 +781,11 @@ var gl,p,y    : shortint;
         found:=false;
         while not found and (sline<>nil) do begin
           if suchcase then
-            pp:=pos(suchstr,copy(EmsPtr(sline)^.cont,spos,255))
+            pp:=pos(suchstr,copy(sline^.cont,spos,255))
           else
-            pp:=pos(UpperCase(suchstr),UpperCase(copy(EmsPtr(sline)^.cont,spos,255)));
+            pp:=pos(UpperCase(suchstr),UpperCase(copy(sline^.cont,spos,255)));
           if pp=0 then begin
-            sline:=EmsPtr(sline)^.next;
+            sline:=sline^.next;
             inc(sp);
             spos:=1;
             end
@@ -811,11 +804,11 @@ var gl,p,y    : shortint;
         else begin
           pl:=sline;
           while sp>gl do begin
-            actl:=EmsPtr(actl)^.next;
+            actl:=actl^.next;
             inc(a); dec(sp);
             end;
           while sp<1 do begin
-            actl:=EmsPtr(actl)^.prev;
+            actl:=actl^.prev;
             dec(a); inc(sp);
             end;
           p:=sp;
@@ -830,10 +823,10 @@ var gl,p,y    : shortint;
   procedure listrot13;
   var p : lnodep;
   begin
-    p:=EmsPtr(alist^.first);
+    p:=alist^.first;
     while p<>nil do begin
       Rot13(p^.cont[1],length(p^.cont));
-      p:=EmsPtr(p^.next);
+      p:=p^.next;
       end;
   end;
 
@@ -846,8 +839,8 @@ var gl,p,y    : shortint;
 
     procedure back;
     begin
-      if EmsPtr(actl)^.prev<>nil then begin
-        actl:=EmsPtr(actl)^.prev; pl:=EmsPtr(pl)^.prev;
+      if actl^.prev<>nil then begin
+        actl:=actl^.prev; pl:=pl^.prev;
         dec(a);
         end
       else
@@ -856,9 +849,9 @@ var gl,p,y    : shortint;
 
     procedure forth;
     begin
-      if EmsPtr(pl)^.next<>nil then begin
+      if pl^.next<>nil then begin
         inc(a);
-        actl:=EmsPtr(actl)^.next; pl:=EmsPtr(pl)^.next;
+        actl:=actl^.next; pl:=pl^.next;
         end
       else
         nope:=true;
@@ -885,14 +878,14 @@ var gl,p,y    : shortint;
         maus_showVscroller(false,false,0,y,y+gl-1,alist^.lines+1,a+1,gl,
                            _start,_stop,dummy);
         nope:=false;
-        up:=(yy<_start+scrolladd) or ((yy-scrolladd=y) and (EmsPtr(actl)^.prev<>nil));
+        up:=(yy<_start+scrolladd) or ((yy-scrolladd=y) and (actl^.prev<>nil));
         down:=(yy>_start+scrolladd);
         if up then back
         else if down then forth;
       until not (up or down) or nope;
       if _down and (a=ma) then    { Korrektur am Textende }
         while a+gl<alist^.lines do begin
-          actl:=EmsPtr(actl)^.next; pl:=EmsPtr(pl)^.next;
+          actl:=actl^.next; pl:=pl^.next;
           inc(a);
           end;
     end;
@@ -925,19 +918,19 @@ var gl,p,y    : shortint;
             pl:=actl;
             p:=1;
             for i:=1 to yy-y do
-              if EmsPtr(pl)^.next<>nil then begin
-                pl:=EmsPtr(pl)^.next; inc(p);
+              if pl^.next<>nil then begin
+                pl:=pl^.next; inc(p);
                 end;
-            if stat.markable and testmark(EmsPtr(pl)^.cont,false) then begin
-              oldmark:=EmsPtr(pl)^.marked;
+            if stat.markable and testmark(pl^.cont,false) then begin
+              oldmark:=pl^.marked;
               if t=mauslmoved then
-                EmsPtr(pl)^.marked:=plm
+                pl^.marked:=plm
               else begin
-                EmsPtr(pl)^.marked:=not EmsPtr(pl)^.marked;
-                plm:=EmsPtr(pl)^.marked;
+                pl^.marked:=not pl^.marked;
+                plm:=pl^.marked;
                 end;
-              if oldmark and not EmsPtr(pl)^.marked then dec(markanz) else
-              if not oldmark and EmsPtr(pl)^.marked then inc(markanz);
+              if oldmark and not pl^.marked then dec(markanz) else
+              if not oldmark and pl^.marked then inc(markanz);
               end;
             end
           else if ((t=mausleft) or (t=mausldouble)) and
@@ -995,9 +988,9 @@ begin
     dispa:=0;
     suchline:=1; slen:=0;
     actl:=first;
-    for i:=1 to a do actl:=EmsPtr(actl)^.next;
+    for i:=1 to a do actl:=actl^.next;
     pl:=actl;
-    for i:=1 to p-1 do pl:=EmsPtr(pl)^.next;
+    for i:=1 to p-1 do pl:=pl^.next;
     f7p:=1; f8p:=0;
     sel_line:=nil;
     mzo:=mauszuo; mzu:=mauszuu;
@@ -1013,8 +1006,8 @@ begin
         sel_line:=pl;
         dproc(get_selection);
         end;
-      mauszuo:=(pl<>nil) and (EmsPtr(pl)^.prev<>nil);
-      mauszuu:=(pl<>nil) and (EmsPtr(pl)^.next<>nil);
+      mauszuo:=(pl<>nil) and (pl^.prev<>nil);
+      mauszuu:=(pl<>nil) and (pl^.next<>nil);
       mauszul:=false; mauszur:=false;
       if (p+a=1) or (_mausy>y) then AutoUp:=false;
       if (a+gl>=lines) or (_mausy<y+gl-1) then AutoDown:=false;
@@ -1033,10 +1026,10 @@ begin
       tproc(t);
 
       if actl<>nil then begin   { Liste nicht leer }
-        if stat.markable and (t=' ') and testmark(EmsPtr(pl)^.cont,false)
+        if stat.markable and (t=' ') and testmark(pl^.cont,false)
         then begin
-          EmsPtr(pl)^.marked:=not EmsPtr(pl)^.marked;
-          if EmsPtr(pl)^.marked then inc(markanz)
+          pl^.marked:=not pl^.marked;
+          if pl^.marked then inc(markanz)
           else dec(markanz);
           t:=keydown;
           end;
@@ -1054,11 +1047,11 @@ begin
         if t=keyup then
           if selbar and (p>1) then begin
             dec(p);
-            pl:=EmsPtr(pl)^.prev;
+            pl:=pl^.prev;
             end
           else
-            if EmsPtr(actl)^.prev<>nil then begin
-              actl:=EmsPtr(actl)^.prev; pl:=EmsPtr(pl)^.prev;
+            if actl^.prev<>nil then begin
+              actl:=actl^.prev; pl:=pl^.prev;
               dec(a);
               end
             else if stat.wrap then
@@ -1066,17 +1059,17 @@ begin
         if t=keydown then
           if selbar then begin
             if p<gl then
-              if EmsPtr(pl)^.next<>nil then begin
+              if pl^.next<>nil then begin
                 inc(p);
-                pl:=EmsPtr(pl)^.next;
+                pl:=pl^.next;
                 end
               else begin
                 if stat.wrap then t:=keyhome;
                 end
             else
-              if EmsPtr(pl)^.next<>nil then begin
+              if pl^.next<>nil then begin
                 inc(a);
-                actl:=EmsPtr(actl)^.next; pl:=EmsPtr(pl)^.next;
+                actl:=actl^.next; pl:=pl^.next;
                 end
               else
                 if stat.wrap then t:=keyhome;
@@ -1084,8 +1077,8 @@ begin
           else  { not selbar }
             if more then begin
               inc(a);
-              actl:=EmsPtr(actl)^.next;
-              pl:=EmsPtr(pl)^.next;
+              actl:=actl^.next;
+              pl:=pl^.next;
               end;
         if (t=keyhome) or (t=keycpgu) then begin
           a:=0; p:=1;
@@ -1096,7 +1089,7 @@ begin
           if lines>gl then begin
             actl:=last;
             for i:=1 to gl-1 do
-              actl:=EmsPtr(actl)^.prev;
+              actl:=actl^.prev;
             pl:=last;
             {if selbar then} p:=gl;
             a:=lines-gl;
@@ -1113,9 +1106,9 @@ begin
             else
           else begin
             i:=1;
-            while (i<=gl) and (EmsPtr(actl)^.prev<>nil) do begin
-              actl:=EmsPtr(actl)^.prev;
-              pl:=EmsPtr(pl)^.prev;
+            while (i<=gl) and (actl^.prev<>nil) do begin
+              actl:=actl^.prev;
+              pl:=pl^.prev;
               dec(a); inc(i);
               end;
             end;
@@ -1123,9 +1116,9 @@ begin
           if more then begin
             i:=1;
             while (i<=gl) and (stat.allpgdn or (a+gl<lines)) do begin
-              actl:=EmsPtr(actl)^.next;
-              if EmsPtr(pl)^.next<>nil then
-                pl:=EmsPtr(pl)^.next
+              actl:=actl^.next;
+              if pl^.next<>nil then
+                pl:=pl^.next
               else
                 if p>1 then dec(p);
               inc(a); inc(i);
@@ -1133,9 +1126,9 @@ begin
             end
           else
             if selbar then
-              while EmsPtr(pl)^.next<>nil do begin
+              while pl^.next<>nil do begin
                 inc(p);
-                pl:=EmsPtr(pl)^.next;
+                pl:=pl^.next;
                 end;
         if t=keychom then begin
           p:=1; pl:=actl;
@@ -1144,7 +1137,7 @@ begin
           p:=1; pl:=actl;
           while (a+p<lines) and (p<gl) do begin
             inc(p);
-            pl:=EmsPtr(pl)^.next;
+            pl:=pl^.next;
             end;
           end;
 
@@ -1186,7 +1179,7 @@ begin
 
         if (t=keycr) and not stat.endoncr and (@crproc<>@list_dummycrp)
         then begin
-          crproc(EmsPtr(pl)^.cont);
+          crproc(pl^.cont);
           t:='';
           end;
 
@@ -1271,13 +1264,13 @@ begin
   if markpos=nil then
     next_marked:=#0
   else
-    markpos:=EmsPtr(markpos)^.next;
-  while (markpos<>nil) and not EmsPtr(markpos)^.marked do
-    markpos:=EmsPtr(markpos)^.next;
+    markpos:=markpos^.next;
+  while (markpos<>nil) and not markpos^.marked do
+    markpos:=markpos^.next;
   if markpos=nil then
     next_marked:=#0
   else
-    next_marked:=EmsPtr(markpos)^.cont;
+    next_marked:=markpos^.cont;
   linepos:=markpos;
 end;
 
@@ -1287,7 +1280,7 @@ begin
   if sel_line=nil then
     get_selection:=''
   else
-    get_selection:=EmsPtr(sel_line)^.cont;
+    get_selection:=sel_line^.cont;
 end;
 
 
@@ -1298,12 +1291,12 @@ begin
     first_marked:=get_selection
   else begin
     markpos:=alist^.first;
-    while (markpos<>nil) and not EmsPtr(markpos)^.marked do
-      markpos:=EmsPtr(markpos)^.next;
+    while (markpos<>nil) and not markpos^.marked do
+      markpos:=markpos^.next;
     if markpos=nil then
       first_marked:=#0
     else
-      first_marked:=EmsPtr(markpos)^.cont;
+      first_marked:=markpos^.cont;
     end;
   linepos:=markpos;
 end;
@@ -1332,8 +1325,8 @@ begin
     end
   else begin
     linepos:=alist^.first;
-    first_line:=EmsPtr(linepos)^.cont;
-    linepos:=EmsPtr(linepos)^.next;
+    first_line:=linepos^.cont;
+    linepos:=linepos^.next;
     end;
 end;
 
@@ -1343,8 +1336,8 @@ begin
   if linepos=nil then
     next_line:=#0
   else begin
-    next_line:=EmsPtr(linepos)^.cont;
-    linepos:=EmsPtr(linepos)^.next;
+    next_line:=linepos^.cont;
+    linepos:=linepos^.next;
     end;
 end;
 
@@ -1354,8 +1347,8 @@ begin
   if linepos=nil then
     prev_line:=#0
   else begin
-    prev_line:=EmsPtr(linepos)^.cont;
-    linepos:=EmsPtr(linepos)^.prev;
+    prev_line:=linepos^.cont;
+    linepos:=linepos^.prev;
     end;
 end;
 
@@ -1365,7 +1358,7 @@ begin
   if linepos=nil then
     current_linenr:=0
   else
-    current_linenr:=EmsPtr(linepos)^.linenr;
+    current_linenr:=linepos^.linenr;
 end;
 
 
@@ -1383,6 +1376,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/07/19 10:17:20  hd
+  - EmsPtr entfernt
+  - Fix: Exception beim Anzeigen von Nachrichten
+
   Revision 1.26  2000/07/18 14:57:45  mk
   - Keine Leerzeichen mehr in Leerzeilen
 
