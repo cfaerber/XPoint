@@ -58,10 +58,10 @@ Christian Faulhammer
 Dokumentation, Übersetzung
 Documentation, translation
 
-Claus Färber
+<a href="http://www.faerber.muc.de/"><b>Claus Färber</b></a>
 <a href="mailto:cl@openxp.de">cl</a>
-UUZ
-UUZ
+UUZ, UUCP, RFC-Konformität
+UUZ, UUCP, RFC conformance
 
 <a href="http://basedrum.de">Mathias Helm</a>
 <a href="mailto:ke@openxp.de">ke</a>
