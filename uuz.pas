@@ -310,7 +310,8 @@ begin
   writeln('UUZ -uz [Switches] <Source file(s)> <Destination file> [ownsite.domain]');
   writeln('UUZ -zu [Switches] <Source file> <Dest.Dir.> <fromSite> <toSite> [Number]');
   writeln;
-  writeln('uz switches:  -graberec  =  grab envelope recipient from Received-header');
+  writeln('uz switches:  -graberec  =  grab envelope recipient from "Received" header');
+  writeln('              -UseEnvTo  =  Use (X-)Envelope-To instead of "RCPT TO"');
   writeln;
   writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
   writeln('              -SMTP   =  Batched SMTP (-c/f/zSMTP = compressed)');
@@ -319,7 +320,8 @@ begin
   writeln('              -qp     =  MIME: quoted-printable (default: 8bit)');
   writeln('              -1522   =  MIME: create RFC-1522 headers');
   writeln('              -uUser  =  User to return error messages to');
-  writeln('              -UseEnvTo = Use (X-)Envelope-To instead RCPT TO');
+  writeln('              -client =  create one SMTP file per outgoing message');
+  writeln;
   writeln('zu/uz:        -LFN    =  Support Long Filenames');
   halt(1);
 end;
@@ -3471,6 +3473,10 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.60  2002/01/06 17:29:20  my
+  MY:- Hilfeausgabe korrigiert und Åberarbeitet
+  MY:- Ein paar CVS-Logs lesbarer gemacht
+
   Revision 1.35.2.59  2002/01/04 12:03:35  mk
   - implemented UseEnvTo
 
@@ -3591,7 +3597,8 @@ end.
   - weitere arbeiten am Client-Modus
 
   Revision 1.35.2.33  2001/01/10 17:39:01  mk
-  - client-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
+  - client-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette,
+    UUZ und Bugfixes
 
   Revision 1.35.2.32  2001/01/07 15:41:00  mk
   - removed last patches (LFN)
@@ -3603,7 +3610,8 @@ end.
   - fehler in WAB-Handling behoben
 
   Revision 1.35.2.29  2001/01/01 22:03:03  mk
-  - Dateien mit lange Dateinamen werden jetzt auch ohne Parameter lfn erstellt
+  - Dateien mit langen Dateinamen werden jetzt auch ohne
+    Parameter lfn erstellt
 
   Revision 1.35.2.28  2001/01/01 21:01:15  mk
   - auf dest.bak pruefen
@@ -3660,9 +3668,9 @@ end.
   - Typ wird nicht mehr auf Binaer gesetzt, wenn Msg B64 codiert ist
 
   Revision 1.35.2.10  2000/09/21 16:18:31  mk
-  RB:- (X-)-Envelope-To-Unterst¸tzung
+  RB:- (X-)-Envelope-To-UnterstÅtzung
      - QP Decode fuer verschiedene Header
-     - Zeilen l‰nger als 255 Zeichen werden nicht mehr abgeschnitten
+     - Zeilen lÑnger als 255 Zeichen werden nicht mehr abgeschnitten
 
   Revision 1.35.2.9  2000/09/12 12:41:59  fe
   1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
@@ -3683,7 +3691,9 @@ end.
   - Cancelerstellung ueberarbeitet
 
   Revision 1.35.2.6  2000/08/28 23:15:00  mk
-  - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext usw. LFN-faehig zu machen; das muss bei den anderen Units noch nachgeholt werden
+  - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext
+    usw. LFN-faehig zu machen; das muss bei den anderen Units noch
+    nachgeholt werden
 
   Revision 1.35.2.5  2000/08/28 22:52:06  mk
   - LFN-Unterstuetzung freigeschaltet
@@ -3721,7 +3731,8 @@ end.
   - Anzeige beim Puffereinlesen leicht ueberarbeitet
 
   Revision 1.31  2000/06/03 17:53:03  mk
-  CL: - Verbesserte Kompatibilit‰t mit RFC 822: Kommentare (selten, kommen aber vor) werden nun entfernt
+  CL: - Verbesserte KompatibilitÑt mit RFC 822: Kommentare (selten,
+        kommen aber vor) werden nun entfernt
   - Erkennung von User-Agent
   - Content-Disposition (RFC 2183) wird erzeugt.
 
@@ -3732,7 +3743,7 @@ end.
   - Crashes wegen Hugestring beseitigt
 
   Revision 1.28  2000/05/11 17:01:04  ml
-  F¸r linux: uppercase f¸r Parameter rausgenommen (Groﬂ/Kleinschreibung
+  FÅr linux: uppercase fÅr Parameter rausgenommen (Gro·-/Kleinschreibung
   nicht mehr ignoriert) + string-Access-Violation beseitigt.
 
   Revision 1.27  2000/05/10 07:47:15  mk
@@ -3742,7 +3753,7 @@ end.
   - einige Limits beseitigt
 
   Revision 1.25  2000/05/05 15:27:58  ml
-  zpr und uuz wieder unter linux lauff‰hig (ncrt)
+  zpr und uuz wieder unter linux lauffÑhig (ncrt)
 
   Revision 1.24  2000/05/04 10:26:03  mk
   - UUZ teils auf HugeString umgestellt
@@ -3777,7 +3788,7 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
   Revision 1.16  2000/04/04 21:01:22  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fÅr VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.15  2000/03/25 18:46:59  ml
   uuz lauff‰hig unter linux
@@ -3793,8 +3804,8 @@ end.
 
   Revision 1.11  2000/03/16 10:14:24  mk
   - Ver32: Tickerabfrage optimiert
-  - Ver32: Buffergroessen f¸r Ein-/Ausgabe vergroessert
-  - Ver32: Keypressed-Routine laeuft nach der letzen ƒnderung wieder
+  - Ver32: Buffergroessen fÅr Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen énderung wieder
 
   Revision 1.10  2000/03/14 18:47:13  rb
   'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlÑngert
