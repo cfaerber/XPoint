@@ -13,8 +13,8 @@ buildnr=1
 version="$mainversion"."$subversion"-"$buildnr"
 #scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
-sourcedir=$versiondir'openxp/'
-scriptdir=$sourcedir'build/
+sourcedir="$versiondir"'openxp/'
+scriptdir="$sourcedir"'build/
 #subversion="$1".0
 #cd "$sourcedir"
 #
@@ -31,11 +31,12 @@ buildnr=$OPENXP_BUILD
 version="$mainversion"."$subversion"-"$buildnr"
 #scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
-sourcedir=$versiondir'openxp/'
-scriptdir=$sourcedir'build/
+sourcedir="$versiondir"'openxp/'
+scriptdir="$sourcedir"'build/
+cd "$sourcedir"
 echo '- new version: '"$version"' CB'
 commit='- new version: '"$version"' CB'
-commit2='cvs -t ci -m "'"$commit"'" '"$sourcedir"'version.inc'
+commit2='cvs -t ci -m "'"$commit"'" version.inc'
 echo $commit2
 #read a
 #cvs ci -m '- new version: '"$version"' CB' version.inc

@@ -1,5 +1,6 @@
 #!/bin/bash
 echo "Starting $0"
+# has to be run as root because of rpm call in make-rpm.sh
 oxpdir=/home/boettger/openxp/
 export oxpdir
 #scriptdir="$oxpdir"script/
