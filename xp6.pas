@@ -1532,6 +1532,7 @@ fromstart:
       nt_QWK      : fidoto:=fidoto;
       nt_Magic,
       nt_Pronet,
+      nt_UUCP,
       nt_ZConnect : if (fidoto=brettalle) or (blankpos(fidoto)=0) then
                       fidoto:='';
     else
@@ -2193,6 +2194,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.8  2000/09/12 12:41:59  fe
+  1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
+     proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO
+     untergebracht.  (X-XP-FTO wird aber weiterhin verarbeitet.)
+
+  2. Kleine Anpassung an Gatebau '97: Fido-To wird auch aus und in
+     RFC-Nachrichten konvertiert.  (X-Comment-To)
+
+  3. Auch bei RFC wird bei oeffentlichen Antworten auf Nachrichten mit
+     Fido-To eine Fido-To-Zeile erzeugt.  (Kleine Verbesserung fuer Leute,
+     die mit RFC-Technik in Fido-Foren schreiben.)
+
   Revision 1.39.2.7  2000/08/26 07:56:18  jg
   - Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
 

@@ -886,7 +886,7 @@ begin
     wrs('X-XP-NTP: '+strs(netztyp));
     attrib:=attrib and not (attrReqEB+attrIsEB);
     if attrib<>0    then wrs('X-XP-ATT: '+hex(attrib,4));
-    if fido_to<>''  then wrs('X-XP-FTO: '+fido_to);
+    if fido_to<>''  then wrs('F-TO: '+fido_to);
     if XPointCtl<>0 then wrs('X-XP-CTL: '+strs(XPointCtl));
     wrs('');
     end;
@@ -2247,7 +2247,8 @@ begin
              if zz='supersedes'   then ersetzt:=GetMsgid else
              if zz='summary'      then GetVar(summary,s0)
              else AppUline('U-'+s1);
-        'x': if zz='x-gateway'    then gateway:=s0 else
+        'x': if zz='x-comment-to' then fido_to:=s0 else
+             if zz='x-gateway'    then gateway:=s0 else
              if zz='x-mailer'     then programm:=s0 else
              if zz='x-newsreader' then programm:=s0 else
              if zz='x-news-reader'then programm:=s0 else
@@ -3168,6 +3169,8 @@ begin
       wrs(f,'X-XP-Ctl: '+strs(XPointCtl));
     if ersetzt<>'' then
       wrs(f,'Supersedes: <'+ersetzt+'>');
+    if fido_to<>'' then
+      wrs(f,'X-Comment-To: '+fido_to);
     for i:=1 to ulines do begin
       uuz.s:=uline^[i];
       IBM2ISO;
@@ -3538,6 +3541,18 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.9  2000/09/12 12:41:59  fe
+  1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
+     proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO
+     untergebracht.  (X-XP-FTO wird aber weiterhin verarbeitet.)
+
+  2. Kleine Anpassung an Gatebau '97: Fido-To wird auch aus und in
+     RFC-Nachrichten konvertiert.  (X-Comment-To)
+
+  3. Auch bei RFC wird bei oeffentlichen Antworten auf Nachrichten mit
+     Fido-To eine Fido-To-Zeile erzeugt.  (Kleine Verbesserung fuer Leute,
+     die mit RFC-Technik in Fido-Foren schreiben.)
+
   Revision 1.35.2.8  2000/09/08 11:15:04  sv
   - Fix (begin...end-Block vergessen)
 

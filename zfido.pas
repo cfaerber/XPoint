@@ -612,6 +612,7 @@ begin
           if id='BEZ'  then ref:=left(line,midlen) else
           if id='MAILER' then programm:=line else
           if id='PRIO' then prio:=minmax(ival(line),0,20) else
+          if id='F-TO' then fido_to:=left(line,36) else
           if id='CRYPT' then pgpencode:=true else
           if id='SIGNED' then pgpsigned:=(pos('PGP',ustr(line))>0) else
           if id[1]='X' then
@@ -692,7 +693,7 @@ begin
     wrs('X_C:');
     wrs('X-XP-NTP: '+strs(netztyp));
     if attrib<>0    then wrs('X-XP-ATT: '+hex(attrib,4));
-    if fido_to<>''  then wrs('X-XP-FTO: '+fido_to);
+    if fido_to<>''  then wrs('F-TO: '+fido_to);
     if fido_flags<>'' then wrs('X-Fido-Flags: '+fido_flags);
     if x_charset<>''  then wrs('X-Charset: '+x_charset);
     if org_msgid<>''  then wrs('X-XP-ORGMID: '+org_msgid);
@@ -708,7 +709,7 @@ end;
 
 { Im Packet-Header mssen die Adressen verwendet werden, die als      }
 { Parameter bergeben wurden (_from/_to). In den Nachrichten-Headern  }
-{ mssen die Adressen aus den Feldern ABS, EMP und X-XP-FTO verwendet }
+{ mssen die Adressen aus den Feldern ABS, EMP und F-TO verwendet     }
 { werden.                                                             }
 
 procedure ZFidoProc;          { ZCONNECT -> FTS-0001 }
@@ -1802,6 +1803,18 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.4  2000/09/12 12:42:00  fe
+  1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
+     proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO
+     untergebracht.  (X-XP-FTO wird aber weiterhin verarbeitet.)
+
+  2. Kleine Anpassung an Gatebau '97: Fido-To wird auch aus und in
+     RFC-Nachrichten konvertiert.  (X-Comment-To)
+
+  3. Auch bei RFC wird bei oeffentlichen Antworten auf Nachrichten mit
+     Fido-To eine Fido-To-Zeile erzeugt.  (Kleine Verbesserung fuer Leute,
+     die mit RFC-Technik in Fido-Foren schreiben.)
+
   Revision 1.21.2.3  2000/08/28 23:35:57  mk
   - LFN in uses hinzugefuegt
 

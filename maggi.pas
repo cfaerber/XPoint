@@ -629,7 +629,7 @@ begin
             wrml(mline[i]^);
           wrs('X-XP-NTP: '+iifs(pronet,'4','3'));
           if fido_to<>'' then
-            wrs('X-XP-FTO: '+fido_to);
+            wrs('F-TO: '+fido_to);
           wrs('');
           end
         else begin                   { M->N }
@@ -1827,6 +1827,18 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.3  2000/09/12 12:41:59  fe
+  1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
+     proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO
+     untergebracht.  (X-XP-FTO wird aber weiterhin verarbeitet.)
+
+  2. Kleine Anpassung an Gatebau '97: Fido-To wird auch aus und in
+     RFC-Nachrichten konvertiert.  (X-Comment-To)
+
+  3. Auch bei RFC wird bei oeffentlichen Antworten auf Nachrichten mit
+     Fido-To eine Fido-To-Zeile erzeugt.  (Kleine Verbesserung fuer Leute,
+     die mit RFC-Technik in Fido-Foren schreiben.)
+
   Revision 1.15.2.2  2000/08/28 23:35:54  mk
   - LFN in uses hinzugefuegt
 

@@ -194,13 +194,11 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         if hd_point<>''  then wrs('X-XP-PNT: '+hd_point);
         if pm_bstat<>''  then wrs('X-XP-BST: '+pm_bstat);
         if attrib<>0     then wrs('X-XP-ATT: '+hex(attrib,4));
-        if fido_to<>''   then wrs('X-XP-FTO: '+fido_to);
         if ReplyPath<>'' then wrs('X-XP-MRP: '+replypath);
         if ReplyGroup<>''then wrs('X-XP-RGR: '+replygroup);
         if org_xref<>''  then wrs('X-XP-ORGREF: '+org_xref);
         end
-      else
-        if fido_to<>''   then wrs('F-TO: '+fido_to);
+      if fido_to<>''   then wrs('F-TO: '+fido_to);
       if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
       if mimetyp<>''   then wrs('U-Content-Type: '+extmimetyp(mimetyp)+
                                 iifs(boundary<>'','; boundary="'+boundary+'"','')+
@@ -385,7 +383,7 @@ begin
       end;
     p:=cpos('@',absender);
     if p=0 then p:=length(absender)+1;
-    if netztyp=nt_ZConnect then
+    if netztyp in [nt_ZConnect,nt_UUCP] then
       if hdp^.fido_to<>'' then xp0.fidoto:=realname
       else xp0.fidoto:=''
     else begin
@@ -443,6 +441,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.2  2000/09/12 12:41:59  fe
+  1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
+     proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO
+     untergebracht.  (X-XP-FTO wird aber weiterhin verarbeitet.)
+
+  2. Kleine Anpassung an Gatebau '97: Fido-To wird auch aus und in
+     RFC-Nachrichten konvertiert.  (X-Comment-To)
+
+  3. Auch bei RFC wird bei oeffentlichen Antworten auf Nachrichten mit
+     Fido-To eine Fido-To-Zeile erzeugt.  (Kleine Verbesserung fuer Leute,
+     die mit RFC-Technik in Fido-Foren schreiben.)
+
   Revision 1.9.2.1  2000/09/07 12:56:53  sv
   - Cancelerstellung ueberarbeitet
 
