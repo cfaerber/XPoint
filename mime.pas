@@ -1110,25 +1110,25 @@ outer:
          ( (q=0) or  { we are at the beginning (i.e. there was not already an encoded-word) }
            (r>=q) )  { the last non-white-space character was not before the stop of the last encoded-word }
       then
-        sd := sd + RecodeCharset(copy(ss,q,p-q),csCP1252,csCP437);
+        sd := sd + RecodeCharset(copy(ss,q,p-q),csCP1252,csTo);
 
       (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
       (*                 ^p              ^e           ^e+2          ^t  *)
 
-//    if phrase then 
+//    if phrase then
 //    begin
 //      if ss[e] in ['B','b'] then { base64 }
-//        sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437)
+//        sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csTo)
 //      else                       { quoted-printable }
-//         sd := sd + RecodeCharset(DecodeQuotedPrintable_Internal(Copy(ss,e+2,t-(e+2)),true),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437);
+//         sd := sd + RecodeCharset(DecodeQuotedPrintable_Internal(Copy(ss,e+2,t-(e+2)),true),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csTo);
 //    end else
       begin
         if ss[e] in ['B','b'] then { base64 }
-          sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437)
+          sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csTo)
         else                       { quoted-printable }
-           sd := sd + RecodeCharset(DecodeQuotedPrintable_Internal(Copy(ss,e+2,t-(e+2)),true),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csCP437);
+           sd := sd + RecodeCharset(DecodeQuotedPrintable_Internal(Copy(ss,e+2,t-(e+2)),true),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csTo);
       end;
-        
+
       p:=t+2;
       q:=p;
       Continue;
@@ -1292,6 +1292,9 @@ end;
 
 //
 // $Log$
+// Revision 1.20  2002/05/14 07:44:57  mk
+// *** empty log message ***
+//
 // Revision 1.19  2002/04/14 22:11:11  cl
 // - added EncodeQuotedPrintable
 // - fixes for RFC2047_Decode
