@@ -113,7 +113,8 @@ XP-*.RQ         Resourcendateien fr CrossPoint
 NDIFF.PAS       Nodelist-Differ (NDIFF.EXE)
 PMCONV.PAS      PM-Puffer-Konvertierer (PMCONV.EXE)
 MAGGI.PAS       Multiformat-Konvertierer (MAGGI.EXE)
-UUZ.PAS         UUCP/RFC-Konvertierer (UUZ.EXE)
+uuz.pas         UUCP/RFC-Konvertierer
+uuzext.pas      externer UUCP/RFC-Konvertierer
 XPFILES.INC     Dateinamenskonvertierung fr UUZ
 XP-FM.*         Fido-Mailer (XP-FM.EXE)
 XPFM-*.RQ       Resourcen-Quelltexte fr den Fido-Mailer
@@ -125,13 +126,18 @@ ZPR.*           ZCONNECT-Pufferreparierer (ZPR.EXE)
 UUCP-FL1.PAS    Beispiel fr UUCP-Filelisten-Konvertierer
 XPNODES.PAS     Unit fr Zugriff auf den XP-Nodelistenindex
 
-XP.IHQ          Quelltext der deutschen Online-Hilfe
-XP-E.IHQ        Quelltext der englischen Online-Hilfe
-*.DQ            Quelltexte der Dokumentation
-
 IHS.PAS         Quelltext zu IHS.EXE (Helpfile-Compiler)
 DOCFORM.PAS     Quelltext zu DOCFORM.EXE
 RC.PAS          Quelltext zu RC.EXE (Resourcen-Compiler)
+
+uucico.pas      ???
+uucp-g.inc      ???
+xpuu-d.rq       ???
+xpuu-e.rq       ???
+
+file_id.diz	???
+icons.res	Icons fuer OpenXP im Windows-Format
+Makefile        Makefile fuer GNU make
 
 Neue Sources, die unter der GPL stehen
 --------------------------------------
@@ -141,8 +147,8 @@ IPCCLASS.PAS	Klasse TIPC (Inter Process Communication)
 NETCALL.PAS	Abstrakte Klasse TNetcall
 NCSOCKET.PAS	Abstrakte Klasse TSocketNetcall
 
-Linux: wird zum compilieren der anderen Versionen nicht benötigt
-----------------------------------------------------------------
+Linux: wird zum compilieren der anderen Versionen nicht benoetigt
+-----------------------------------------------------------------
 
 XPCURSES.PAS    XP-spezifisches Interface zur Ansteuerung der Curses-Lib.
                 (wird nur unter Unix-Derivaten benoetigt)
@@ -151,23 +157,69 @@ XPLINUX.PAS	XP-spezifisches Interface unter Linux
 Verzeichnis .\DOC
 -----------------
 
-XPOINT.XML      XML-Docbook des Handbuches
-XPOINT.DSL      Sylesheet für Handbuch
+XPOINT.XML      Handbuch im DocBook-Format
+XPOINT.DSL      Stylesheet fuer Handbuch
 DBFORM          Beschreibung der Datenbankfelder
+
+README.LNX	Hinweise zur Nutzung unter Linux
+
+xp.ihq          Quelltext der deutschen Online-Hilfe
+xp-e.ihq        Quelltext der englischen Online-Hilfe
+fido.dq         Fido-Dokumentation im Quelltext
+uucp.dq         UUCP-Dokumentation im Quelltext
+
+authors.txt     ???
+devtodo.txt     ???
+files.txt       ???
+gpl.txt         ???
+make.txt        ???
+planung.txt     ???
+readme.txt      ???
+slizenz.txt     ???
+tools.txt       ???
+versions.txt    ???
+
+Makefile        Makefile fuer GNU make
+
+Verzeichnis ObjCOM
+------------------
+
+Makefile        Makefile fuer GNU make
+developer.txt   ???
+example.pas     ???
+license.txt     ???
+objcom.pas      ???
+ocdeffpc.inc    ???
+ocfdos.inc      ???
+ocfdosh.inc     ???
+ocsdos.inc      ???
+ocsdosh.inc     ???
+ocslin.inc      ???
+ocslinh.inc     ???
+ocsos2.inc      ???
+ocsos2h.inc     ???
+ocswin.inc      ???
+ocswinh.inc     ???
+octhread.pas    ???
+octwin.inc      ???
+octwinh.inc     ???
+ringbuff.pas    ???
+serial.pp       ???
+todo.txt        ???
 
 Verzeichnis .\LINUX
 -------------------
 dosx?.inc	Systemabhaengige Includes
+fileio.inc      ???
+fileioh.inc     ???
 
-Die folgenden Tools liegen nur im Source vor und können mit allen
-unterstützen Compilern aktualisiert werden:
+Die folgenden Tools liegen nur im Source vor und koennen mit allen
+unterstuetzen Compilern aktualisiert werden:
 
 RC.EXE          Compiler fr *.RQ -> *.RC
 DOCFORM.EXE     Formatierer fr *.DQ -> *.DOC
 IHS.EXE         Compiler fr *.IHQ -> *.HLP
 
-
-README.LNX	Hinweise zur Nutzung unter Linux
 
 Dateiformate
 ------------
@@ -203,4 +255,5 @@ Resourcen:
     Die Funktionen zum Auslesen der compilierten Resourcendateien
   befinden sich in RESOURCE.PAS.
 
-
+DocBook (Handbuch):
+  siehe: <http://www.oasis-open.org/docbook/>
