@@ -336,7 +336,7 @@ var sr    : searchrec;
   begin
     p:=cpos('.',sr.name);
     dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiDatei,left(sr.name,p-1));
+    dbSeek(d,boiDatei,UStr(left(sr.name,p-1)));
     if dbFound then
       NamePollbox:=dbReadStr(d,'boxname')
     else
@@ -677,6 +677,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.7  2001/01/22 22:41:38  mk
+  - Boxname mit Grosschreibung in der Datenbank suchen
+
   Revision 1.13.2.6  2000/12/12 14:03:57  mk
   - weitere lfn-fixes
 
