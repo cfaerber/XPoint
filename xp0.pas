@@ -774,7 +774,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 
        AutoDatumsBezuege : boolean = false;
        MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
-       UsrFeldDef = 'FHRBAK'; { Standardreihenfolge: Feldtausch Userliste }
+       UsrFeldDef = 'FHGBAK'; { Standardreihenfolge: Feldtausch Userliste }
 
        { /oh }
 
@@ -1108,6 +1108,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.27  2000/04/15 13:36:08  oh
+  - Flag falsch benamst: war R statt G wie Gruppe
+
   Revision 1.26  2000/04/15 12:37:57  oh
   - User/Nachrichten/Kommentarbaum-Listenanzeige verbessert, Feld Adressbuch in Userliste eingefuegt
 

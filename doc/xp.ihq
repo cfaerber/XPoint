@@ -4159,13 +4159,13 @@ gesetzt.
 Die Sortierung der Buchstaben legt die Sortierung
 der Felder in der Userliste fest. Jeder Buchstabe
 muá <<genau einmal>> vorkommen, ansonsten wird auf
-die Standardeinstellung (FHRBAK) zurckgesetzt.
+die Standardeinstellung (FHGBAK) zurckgesetzt.
        
        Die Buchstaben stehen fr
        
        F  Flags
        H  Halten
-       R  Adreábuch
+       G  Adreábuch-Gruppe
        B  Box
        A  Adresse/Verteiler
        K  Kommentar

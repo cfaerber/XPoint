@@ -193,8 +193,8 @@ begin  { __ Suchmarke }
               { (B)OX }
               taus[pos('B',UsrFeldTausch)] := forms(pbox,9);
               
-              { Ad(r)essbuch-Nummer }
-              taus[pos('R',UsrFeldTausch)] := strsn(ab,2);
+              { Adressbuch-(G)ruppe }
+              taus[pos('G',UsrFeldTausch)] := strsn(ab,2);
             end;
             
             { Falls (S)pezial EIN, dann muá der folgende Resttext um
