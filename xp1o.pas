@@ -909,7 +909,11 @@ var w1,w2: word;
     winnt:=win and (lstr(getenv('OS'))='windows_nt');
 
     if win then begin        
-      if getenv('DELVTMP')<>'' then prog:='start '+parfn 
+
+      if getenv('DELVTMP')<>'' then 
+      begin
+        if ustr(left(prog,5))<>'START' then prog:='start '+prog;
+        end
       else begin
         batfile:=TempExtFile(temppath,'wrun','.bat');
         assign(t,batfile);
@@ -926,7 +930,7 @@ var w1,w2: word;
         close(t);
         if winnt then
           prog:='cmd /c start cmd /c '+batfile
-          else prog:='start command /c'+batfile
+          else prog:='start command /c '+batfile
         end; 
       PrepareExe:=1;
     end
@@ -965,6 +969,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/03/04 15:48:48  jg
+  - Externe Windowsviewer, DELVTEMP-Modus:
+    "start" wird nicht mehr zu "start start"
+    Programmname wird wieder uebernommen.
+
   Revision 1.21  2000/03/04 12:39:36  jg
   - weitere Aenderungen fuer externe Windowsviewer
     Umgebungsvariable DELVTMP
