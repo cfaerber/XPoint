@@ -1095,17 +1095,27 @@ begin
         pa.FileNameO := ExtractFileName(pa.FileName);
 
       pa.FileName := FileName;
-      NewTime2 := FileDateToDateTime(NewTime);
-      pa.FileModify := NewTime2;
-      pa.FileAccess := NewTime2;
-      if IsNaN(pa.FileCreate) then pa.FileCreate := NewTime2;
+
+      if not(IsNan(pa.FileCreate) or
+             IsNan(pa.FileAccess) or
+             IsNan(pa.FileModify)) then
+      begin
+        NewTime2 := FileDateToDateTime(NewTime);
+        pa.FileModify := NewTime2;
+        pa.FileAccess := NewTime2;
+        if IsNaN(pa.FileCreate) then pa.FileCreate := NewTime2;
+      end;
       pa.IsTemp := true;
       pa.IsFile := false;
       pa.IsExtract := false;
-      pa.FileCharset := MyEditCharset;
     end
     else                (* not modified - just delete copy      *)
       _era(FileName);
+  end;
+
+  if NewTime<>OldTime then
+  begin               (* modified - use this file from now on *)
+    pa.FileCharset := MyEditCharset
   end;
 
   if (NewTime<>OldTime) or (pa.Analyzed.Size<=0) then
