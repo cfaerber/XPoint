@@ -181,76 +181,76 @@ begin
 end;
 
 procedure MIMEWriteContent(s1:TStream;pa:TSendAttach_Part;DoEncode:Boolean;Sigfile:String);
-var s2,s3,s4,s5,s0: TStream;
+var ins,outs:TStream;
 begin
-  s2:=nil; s3:=nil; s4:=nil; {s5:=nil;} s0:=nil;
+  // The stream passed must not be destroyed!
+  outs := TNullCodecStream.Create;
+ try
+  TNullCodecStream(outs).OtherStream := s1;
+  TNullCodecStream(outs).DestroyOtherStream := false;
+ 
+  if FileExists(pa.FileName) then
+    ins := TFileStream.Create(pa.FileName,fmOpenRead)
+  else
+    ins := TMemoryStream.Create; // WTF?
 
-  with pa do
+  // we have to change the encoding if (a) the file is encoded
+  // differently than we want it to be, or (b) the file is encoeded but
+  // we don't want to have it encoded (binary/text messages)
+  if (pa.FileEncoding<>pa.ContentEncoding) or
+     ((not DoEncode) and (pa.FileEncoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable])) then
   begin
+    // decode the existing file if necessary
+    if pa.FileEncoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable] then
+      ConnectStream(ins,MimeCreateDecoder(pa.FileEncoding));
 
-    if FileExists(FileName) then
-      s5 := TFileStream.Create(FileName,fmOpenRead)
-    else
-      s5 := TStringStream.Create(''); // ???
-
-    if (FileEncoding<>ContentEncoding) or
-       ((not DoEncode) and (FileEncoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable])) then
-    begin
-      if FileEncoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable] then
-      begin
-        s0 := s5;
-        s5 := MimeCreateDecoder(FileEncoding,s0);
-      end;
-
-      if ContentEncoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable] then
+    // encode it for output
+    if pa.ContentEncoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable] then
       if DoEncode then
-      begin
-        s2 := s1;
-        s1 := MimeCreateEncoder(ContentEncoding,s2,FileEOL in [MimeEOLCR,MimeEOLLF,MimeEOLCRLF]);
-      end;
-    end;
+        ConnectStream(outs,MimeCreateEncoder(pa.ContentEncoding,pa.FileEOL in [MimeEOLCR,MimeEOLLF,MimeEOLCRLF]));
+  end;
 
-    if ContentType.NeedCharset and (ContentCharset <> FileCharset) then
-    if DoEncode or not MIMESaveCharsetAsCP437(FileCharset) then
-    begin
-      s3 := s1;
-      s1 := TCharsetEncodingStream.Create( s3,
-        iifs((FileCharset<>'') and IsKnownCharset(FileCharset),FileCharset,'IBM437'),
-        iifs((ContentCharset<>'') and IsKnownCharset(FileCharset),ContentCharset,'ISO-8859-1') );
-    end;
+  // TODO: it would be better if we could just connect charset and EOL
+  // *de*coding streams to the input stream (but these are not finished
+  // yet).
 
-    if FileEOL in [MimeEOLCR,MimeEOLLF] then
-    begin
-      s4 := s1;
-      s1 := MimeCreateEolConverter(FileEOL,s4)
-    end;
+  // recode the charset
+  if pa.ContentType.NeedCharset and (pa.ContentCharset <> pa.FileCharset) then
+    if DoEncode or not MIMESaveCharsetAsCP437(pa.FileCharset) then
+      ConnectStream(outs,TCharsetEncoderStream.Create(
+        iifs(IsKnownCharset(pa.FileCharset),pa.FileCharset,'IBM437'),
+        iifs(IsKnownCharset(pa.ContentCharset),pa.ContentCharset,'ISO-8859-1') ));
 
-    CopyStream(s5,s1);
+  if pa.FileEOL in [MimeEOLCR,MimeEOLLF] then
+    ConnectStream(ins,MimeCreateEolConverter(pa.FileEOL));
 
-    s5.Free; s5:=nil;
-    s0.Free; {s0:=nil;}
+  CopyStream(ins,outs);
 
-    if assigned(s4) then begin s1.Free; s1:=s4; {s4:=nil;} end;
-    if assigned(s3) then begin s1.Free; s1:=s3; s3:=nil; end;
+  ins.Free;
 
-    if (SigFile<>'') and FileExists(SigFile) then
-    begin
-      if DoEncode or not MIMESaveCharsetAsCP437(FileCharset) then
-      begin
-        s3 := s1;
-        s1 := TCharsetEncodingStream.Create(s3,'IBM437',ContentCharset);
-      end;
+  if (SigFile<>'') and FileExists(SigFile) then
+  begin
+    if outs is TMimeEolCodecStream then
+      UnconnectStream(outs);
+
+    if outs is TCharsetCodecStream then
+      UnconnectStream(outs);
+
+    if DoEncode or not MIMESaveCharsetAsCP437(pa.FileCharset) then
+      ConnectStream(outs,TCharsetEncoderStream.Create('IBM437',pa.ContentCharset));
+
+    ins := TFileStream.Create(sigfile,fmOpenRead);
     try
-      s5 := TFileStream.Create(sigfile,fmOpenRead);
-      CopyStream(s5,s1);
+      CopyStream(ins,outs);
     except
     end;
-      s5.Free; {s5:=nil;}
-      if assigned(s3) then begin s1.Free; s1:=s3; {s3:=nil;} end;
-    end;
+      ins.Free;
+  end;
 
-    if assigned(s2) then begin s1.Free; {s1:=s2; s2:=nil;} end;
-  end; // with
+ finally
+  assert(pointer(outs)<>pointer(s1));
+  outs.Free; // will not destroy s1!
+ end;
 end;
 
 procedure MIMEWriteContentWithHeaders(s:TStream;pa:TSendAttach_Part;Sigfile:String);
@@ -275,6 +275,11 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2001/09/09 17:40:47  cl
+// - moved common code between alle en-/decoding streams to a base class
+// - all en-/decoding streams can now destruct the other stream
+// - much more elegant way to connect en-/decoding streams to each other
+//
 // Revision 1.2  2001/09/08 18:46:43  cl
 // - small bug/compiler warning fixes
 //

@@ -24,44 +24,31 @@ unit mime_qp;
 
 { ---------------------------} interface { --------------------------- }
 
-uses classes;
+uses classes, xpstreams, mime;
 
 type
 
-  TQuotedPrintableEncodingStream = class(TStream)
+  TQuotedPrintableEncoderStream = class(TMimeTransferEncoderStream)
   protected
-    OutputStream : TStream;
     IsText       : Boolean;
     Line         : String[84];
     CRPending    : Boolean;
-    TotalBytesProcessed, BytesWritten: LongInt;
   private
     procedure   PrepareCRLF;
   public
-    constructor Create(AOutputStream: TStream;FIsText: Boolean);
-    destructor Destroy; override;
-
-    function Read(var Buffer; Count: Longint): Longint; override;
+    constructor Create(FIsText: Boolean);
     function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+    procedure SetSize(NewSize:Longint);
   end;
 
-
-  TQuotedPrintableDecodingStream = class(TStream)
+  TQuotedPrintableDecoderStream = class(TMimeTransferDecoderStream)
   protected
-    InputStream: TStream;
     Line       : string;
     InputEOF   : boolean;
-    BytesRead  : Longint;
   private
     procedure ProcessLine;
   public
-    constructor Create(AInputStream: TStream);
-    procedure Reset;
-
     function Read(var Buffer; Count: Longint): Longint; override;
-    function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
   end;
 
 { ------------------------} implementation { ------------------------- }
@@ -76,16 +63,15 @@ uses SysUtils
   {$ENDIF}
   ;
 
-constructor TQuotedPrintableEncodingStream.Create(AOutputStream: TStream; FIsText:Boolean);
+constructor TQuotedPrintableEncoderStream.Create(FIsText:Boolean);
 begin
   inherited Create;
-  OutputStream := AOutputStream;
   IsText := FIsText;
   Line := '';
   CRPending := false;
 end;
 
-procedure TQuotedPrintableEncodingStream.PrepareCRLF;
+procedure TQuotedPrintableEncoderStream.PrepareCRLF;
 var s: char;
 begin
   if (Length(Line)>0) and (Line[Length(Line)] in [#9,#32]) then
@@ -103,23 +89,18 @@ begin
     end;
 end;
 
-destructor TQuotedPrintableEncodingStream.Destroy;
+procedure TQuotedPrintableEncoderStream.SetSize(NewSize: Longint);
 begin
+  inherited;
+
   if Length(Line)>0 then
   begin
     PrepareCRLF;
-    OutputStream.Write(Line[1],Length(Line));
-    Inc(BytesWritten,Length(Line));
+    OtherStream.WriteBuffer(Line[1],Length(Line));
   end;
-  inherited Destroy;
 end;
 
-function TQuotedPrintableEncodingStream.Read(var Buffer; Count: Longint): Longint;
-begin
-  raise EStreamError.Create('Invalid stream operation');
-end;
-
-function TQuotedPrintableEncodingStream.Write(const Buffer; Count: Longint): Longint;
+function TQuotedPrintableEncoderStream.Write(const Buffer; Count: Longint): Longint;
 var i: integer;
     c: char;
 
@@ -147,8 +128,7 @@ var i: integer;
       Line:=Line+#13#10;
       if s='.' then s:='=2E';
     end;
-    OutputStream.Write(Line[1],Length(Line));
-    Inc(BytesWritten,Length(Line));
+    OtherStream.Write(Line[1],Length(Line));
     Line:=s;
   end;
 
@@ -170,8 +150,7 @@ var i: integer;
   begin
     PrepareCRLF;
     Line:=Line+#13#10;
-    OutputStream.Write(Line[1],Length(Line));
-    Inc(BytesWritten,Length(Line));
+    OtherStream.WriteBuffer(Line[1],Length(Line));
     Line:='';
   end;
 
@@ -206,40 +185,18 @@ begin
         PutEncodedChar(c);
     end;
   end;
-  inc(TotalBytesProcessed,Count);
+  inc(FPosition,Count);
   result:=Count;
 end;
 
-function TQuotedPrintableEncodingStream.Seek(Offset: Longint; Origin: System.Word): Longint;
-begin
-  Result := BytesWritten+Length(Line);
-  if CRPending then Inc(Result,1);
-
-  if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
-     or ((Origin = soFromBeginning) and (Offset = Result))) then
-    raise EStreamError.Create('Invalid stream operation');
-end;
-
-constructor TQuotedPrintableDecodingStream.Create(AInputStream: TStream);
-begin
-  inherited Create;
-  InputStream := AInputStream;
-  InputEOF    := false;
-  Reset;
-end;
-
-procedure TQuotedPrintableDecodingStream.Reset;
-begin
-end;
-
-procedure TQuotedPrintableDecodingStream.ProcessLine;
+procedure TQuotedPrintableDecoderStream.ProcessLine;
 var c:char;
     i:Longint;
     has_crlf:boolean;
 begin
   { read until [CR]LF or EOF }
   repeat
-    if InputStream.Read(c,sizeof(c)) < sizeof(c) then begin
+    if OtherStream.Read(c,sizeof(c)) < sizeof(c) then begin
       InputEOF:=true;
       break;
     end;
@@ -273,7 +230,7 @@ begin
     Line:=Line+#13#10;
 end;
 
-function TQuotedPrintableDecodingStream.Read(var Buffer; Count: Longint): Longint;
+function TQuotedPrintableDecoderStream.Read(var Buffer; Count: Longint): Longint;
 begin
   Result := 0;
 
@@ -291,26 +248,16 @@ begin
       Delete(Line,1,Count-Result);
       Result:=Count;
     end;
-  Inc(BytesRead,Result);
+  Inc(FPosition,Result);
 end;
-
-function TQuotedPrintableDecodingStream.Write(const Buffer; Count: Longint): Longint;
-begin
-  raise EStreamError.Create('Invalid stream operation');
-end;
-
-function TQuotedPrintableDecodingStream.Seek(Offset: Longint; Origin: System.Word): Longint;
-begin
-  if ((Origin = soFromCurrent)   and (Offset = 0)) or
-     ((Origin = soFromBeginning) and (Offset = BytesRead)) then
-    Result := BytesRead
-  else
-    raise EStreamError.Create('Invalid stream operation');
-end;
-
 
 //
 // $Log$
+// Revision 1.4  2001/09/09 17:40:47  cl
+// - moved common code between alle en-/decoding streams to a base class
+// - all en-/decoding streams can now destruct the other stream
+// - much more elegant way to connect en-/decoding streams to each other
+//
 // Revision 1.3  2001/09/09 10:23:20  ml
 // - Kylix compatibility stage III
 // - compilable in linux

@@ -42,6 +42,46 @@ type
     destructor Destroy; override;
   end;
 
+{ ---------------- Streams that can own other streams ---------------- }
+
+type TConnectableStream = class (TStream)
+  private
+    FOtherStream: TStream;
+    FDestroyOtherStream: boolean;
+    procedure Connect(AnOtherStream:TStream);
+
+  public
+    constructor Create; overload;
+    destructor Destroy; override;
+
+    property OtherStream: TStream read FOtherStream write Connect;
+    property DestroyOtherStream: boolean read FDestroyOtherStream write FDestroyOtherStream;
+  end;
+
+procedure ConnectStream(var AStream:TStream;AFilter:TConnectableStream);
+procedure UnConnectStream(var AStream:TStream);
+
+{ --------------------------- CODEC streams -------------------------- }
+
+type TCoDecStream = class(TConnectableStream)
+  protected
+    FPosition: Longint;
+    procedure SetSize(NewSize: Longint); override;
+  public
+    function Read(var Buffer; Count: Longint): Longint; override; // only raises exception
+    function Write(const Buffer; Count: Longint): Longint; override; // only raises exception
+    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+  end;
+
+{ --------------------------- Null CODECS ---------------------------- }
+
+  TNullCoDecStream = class(TCODECStream)
+  public
+    function Write(const Buffer; Count: Longint): Longint; override;
+    function Read(var Buffer; Count: Longint): Longint; override;
+    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+  end;
+
 { ---------------------- Cut part of an stream ----------------------- }
 
   TPartialStream = class(TStream)
@@ -59,7 +99,7 @@ type
 
 procedure write_s(stream:TStream;const s:string);
 procedure writeln_s(stream:TStream;const s: string);
-function readln_s(stream:TStream):string;
+function  readln_s(stream:TStream):string;
 
 procedure CopyStream(InStream,OutStream:TStream);
 procedure CopyStreamMult(InStream:TStream;OutStreams:array of TStream);
@@ -98,8 +138,8 @@ end;
 
 destructor TTemporaryFileStream.Destroy;
 begin
+  inherited;
   DeleteFile(FFileName);
-  inherited Destroy
 end;
 
 constructor TPartialStream.Create(AnOtherStream: TStream;AStart,AnEnd: Longint);
@@ -149,6 +189,128 @@ begin
 
   result := FStream.Seek(Offset,soFromBeginning) - FStart;
 end;
+
+{ ---------------- Streams that can own other streams ---------------- }
+
+constructor TConnectableStream.Create;
+begin
+  FOtherStream:=nil;
+  FDestroyOtherStream:=false;
+end;
+
+procedure TConnectableStream.Connect(AnOtherStream:TStream);
+begin
+  if FDestroyOtherStream and assigned(FOtherStream) then
+  begin
+    SetSize(0);
+    FOtherStream.Free;
+  end;
+
+  Assert(Assigned(AnotherStream));
+
+  FOtherStream:=AnOtherStream;
+  FDestroyOtherStream:=false;
+end;
+
+destructor TConnectableStream.Destroy;
+begin
+  if assigned(FOtherStream) then
+    SetSize(0);
+
+  if assigned(FOtherStream) and FDestroyOtherStream then
+    FOtherStream.Free;
+
+  inherited;
+end;
+
+procedure ConnectStream(var AStream:TStream;AFilter:TConnectableStream);
+begin
+  if not assigned(AFilter) then
+    exit;
+
+  if AFilter is TNullCoDecStream then
+  begin
+  // If the filter stream is a null codec, just destroy it and keep
+  // using the original stream
+    AFilter.Free;
+    exit;
+  end else
+  if AStream is TNullCoDecStream then
+  begin
+  // If the original stream is a null codec, just copy it's properties,
+  // destroy it, and use the filter stream
+    AFilter.OtherStream := TNullCoDecStream(AStream).OtherStream;
+    AFilter.DestroyOtherStream := TNullCoDecStream(AStream).DestroyOtherStream;
+
+    TNullCoDecStream(AStream).DestroyOtherStream := false;
+    TNullCoDecStream(AStream).Free;
+
+    AStream := AFilter;
+  end else
+  begin
+  // If original and filter streams are not null codecs, connect them.
+    AFilter.OtherStream := AStream;
+    AFilter.DestroyOtherStream := true;
+    AStream := AFilter;
+  end;
+end;
+
+procedure UnConnectStream(var AStream:TStream);
+var Temp:TConnectableStream;
+begin
+  Temp := (AStream as TConnectableStream);
+
+  if Temp.DestroyOtherStream then
+    AStream := Temp.OtherStream
+  else
+  begin
+    AStream := TNullCodecStream.Create;
+    TNullCodecStream(AStream).OtherStream := Temp.OtherStream;
+    TNullCodecStream(AStream).DestroyOtherStream := false;
+  end;
+
+  Temp.DestroyOtherStream := false;
+  Temp.Free;
+end;
+
+{ --------------------------- CODEC streams -------------------------- }
+
+procedure TCODECStream.SetSize(NewSize: Longint);
+begin
+  if NewSize<>0 then
+    raise EStreamError.Create('Stream does not allow to set size');
+  FPosition:=0;
+end;
+
+{$HINTS OFF}{$WARNINGS OFF}
+function TCODECStream.Read(var Buffer; Count: Longint): Longint;
+begin
+  raise EReadError.Create('Stream does not support reading.');
+end;
+
+function TCODECStream.Write(const Buffer; Count: Longint): Longint;
+begin
+  raise EWriteError.Create('Stream does not support writing.');
+end;
+{$WARNINGS ON}{$HINTS ON}
+
+function TCODECStream.Seek(Offset: Longint; Origin: System.Word): Longint;
+begin
+  Result := FPosition;
+  if not (
+    ((Origin = soFromCurrent  ) and (Offset = 0     )) or
+    ((Origin = soFromBeginning) and (Offset = Result)) ) then
+    raise EStreamError.Create('Stream does not support seeking.');
+end;
+
+function TNullCoDecStream.Write(const Buffer; Count: Longint): Longint;
+begin Result := FOtherStream.Write(Buffer,Count); end;
+
+function TNullCODECStream.Read(var Buffer; Count: Longint): Longint;
+begin Result := FOtherStream.Read(Buffer,Count); end;
+
+function TNullCODECStream.Seek(Offset: Longint; Origin: System.Word): Longint;
+begin Result := FOtherStream.Seek(Offset,Origin); end;
 
 { ---------------------- Stream helper functions --------------------- }
 
@@ -206,4 +368,4 @@ begin
   until false;
 end;
 
-end.
+{ --------------------------------------------------------------- } end.

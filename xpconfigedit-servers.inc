@@ -1954,8 +1954,8 @@
           1 : EditPointdaten(nt,brk);
           2 : EditModemdaten(nt,brk);
 //          3 : EditGebuehren(nt,brk);
-          4 : EditName(brk);
-          5 : case nt of
+          3 : EditName(brk);
+          4 : case nt of
                 nt_Fido : EditFido(brk);
                 nt_QWK  : EditQWK(fn,brk);
                 nt_UUCP : EditUUCP(brk);
@@ -1963,8 +1963,8 @@
                 nt_NNTP : EditNNTP(brk);
                 else      EditNet(brk);
               end;
-          6 : if nt = nt_POP3 then EditSMTP(brk) else EditDiverses(nt,brk);
-          7 : if nt = nt_POP3 then EditDiverses(nt, brk) else EditSysopdaten(nt,brk);
+          5 : if nt = nt_POP3 then EditSMTP(brk) else EditDiverses(nt,brk);
+          6 : if nt = nt_POP3 then EditDiverses(nt, brk) else EditSysopdaten(nt,brk);
           end;
         end;
       if not brk then
@@ -2059,6 +2059,11 @@
 
 {
   $Log$
+  Revision 1.27  2001/09/09 17:40:47  cl
+  - moved common code between alle en-/decoding streams to a base class
+  - all en-/decoding streams can now destruct the other stream
+  - much more elegant way to connect en-/decoding streams to each other
+
   Revision 1.26  2001/09/08 16:29:38  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

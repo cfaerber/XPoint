@@ -92,7 +92,7 @@ begin
 end;
 
 procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;SigFile:String;docode:Byte;pgpsig:boolean);
-var f,f1: TStream;
+var data: TStream;
     GuessedType: String;
 begin
   { first of all, look at the file type }
@@ -103,42 +103,35 @@ begin
   if not FileExists(pa.FileName) then
     exit;
 
-  f:=nil;
-  f1:=nil;
+  pa.Analyzed.Size := 0;
 
+  // --- 1. Header ---------------------------------------------------
+
+  // --- 2. Actual file ----------------------------------------------
+
+  data := TFileStream.Create(pa.FileName,fmOpenRead);
   try
-    pa.Analyzed.Size := 0;
-
-    // --- 1. Header ---------------------------------------------------
-
-    // --- 2. Actual file ----------------------------------------------
-
-    f := TFileStream.Create(pa.FileName,fmOpenRead);
-    pa.FileSize := f.Size;
+    pa.FileSize := data.Size;
 
     if pa.FileEncoding in [MimeEncodingQuotedPrintable,MimeEncodingBase64] then
-      f1 := MimeCreateDecoder(pa.FileEncoding,f)
-    else begin
-      f1 := f;
-      f := nil;
-    end;
+      ConnectStream(data,MimeCreateDecoder(pa.FileEncoding));
 
-    CopyStream(f1,pa.Analyzed);   // looks harmless, doesn't it?
-
-    // --- 3. Signature ------------------------------------------------
-
-    if (SigFile<>'') and FileExists(SigFile) then
-    begin
-      f1.Free;
-      f1 := TFileStream.Create(SigFile,fmOpenRead);
-      CopyStream(f1,pa.Analyzed); // drop signature right behind
-    end;
-
+    CopyStream(data,pa.Analyzed);   // looks harmless, doesn't it?
   finally
-    f.Free;
-    f1.Free;
+    data.Free;
   end;
 
+  // --- 3. Signature ------------------------------------------------
+
+  if (SigFile<>'') and FileExists(SigFile) then
+  begin
+    data := TFileStream.Create(SigFile,fmOpenRead);
+    try
+      CopyStream(data,pa.Analyzed); // drop signature right behind
+    finally
+      data.Free;
+    end;
+  end;
 
   if pa.IsFile then
   { change all parameters to the values determined through our         }

@@ -333,7 +333,7 @@ var b    : byte;
     OwnUserID  : string;
 
     fi,fo: string;
-    fis,fie: TStream;
+    fis: TStream;
 
 begin
   if RemoteUserID='' then                       { User-ID ermitteln }
@@ -352,7 +352,6 @@ begin
   fo:=TempS(data.Size+iif(encode,data.Size div 2,0)+iif(sign,2000,0)+2000);
 
   fis:=TFileStream.Create(fi,fmCreate or fmDenyWrite);
-  fie:=nil;
 
   if (hd.typ='T') and MimeContentTypeNeedCharset(hd.MIME.ctype) and
     (hd.x_charset<>'US-ASCII') and (hd.x_charset<>'') then
@@ -383,22 +382,20 @@ begin
         t:=t+' +charset=noconv'                 // uh, oh...
     end;
 
-    if MimeCharsetCanonicalName(hd.x_charset)<>
-       MimeCharsetCanonicalName(ZCCharsetToMIME(hd.charset)) then
+    if LowerCase(MimeCharsetCanonicalName(hd.x_charset))<>
+       LowerCase(MimeCharsetCanonicalName(ZCCharsetToMIME(hd.charset))) then
     begin
-      fie:=fis;
-      fis:=TCharsetEncodingStream.Create(fie,ZCCharsetToMime(hd.charset),hd.x_charset);
+      ConnectStream(fis,TCharsetEncoderStream.Create(ZCCharsetToMime(hd.charset),hd.x_charset));
       hd.charset:=MimeCharsetToZC(hd.x_charset);
     end;
   end;
 
-  CopyStream(data,fis);
-
   if fido_origin<>'' then
-    fis.Size:=fis.Size-length(fido_origin)-2;
-  fis.Free;
+    fis.CopyFrom(data,data.Size-length(fido_origin)-2)
+  else
+    CopyStream(data,fis);
 
-  fie.Free;
+  fis.Free;
 
   if PGP_UserID<>'' then
     OwnUserID:=' -u '+IDform(PGP_UserID)
@@ -1083,6 +1080,11 @@ end;
 
 {
   $Log$
+  Revision 1.49  2001/09/09 17:40:47  cl
+  - moved common code between alle en-/decoding streams to a base class
+  - all en-/decoding streams can now destruct the other stream
+  - much more elegant way to connect en-/decoding streams to each other
+
   Revision 1.48  2001/09/09 10:23:20  ml
   - Kylix compatibility stage III
   - compilable in linux

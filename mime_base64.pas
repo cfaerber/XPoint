@@ -28,39 +28,28 @@ unit mime_base64;
 
 { ---------------------------} interface { --------------------------- }
 
-uses classes;
+uses classes, xpstreams, mime;
 
 { --------------------- Encoding/Decoding Streams -------------------- }
 
 type
-  TBase64EncodingStream = class(TStream)
+  TBase64EncoderStream = class(TMimeTransferEncoderStream)
   protected
-    OutputStream: TStream;
-    TotalBytesProcessed, BytesWritten,LineLength: Cardinal;
+    LineLength: Cardinal;
     Buf: array[0..2] of Byte;
     BufSize: Integer;    // # of bytes used in Buf
   public
-    constructor Create(AOutputStream: TStream);
-    destructor Destroy; override;
-
-    function Read(var Buffer; Count: Longint): Longint; override;
     function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+    procedure SetSize(NewSize:Longint); override;
   end;
 
-  TBase64DecodingStream = class(TStream)
+  TBase64DecoderStream = class(TMimeTransferDecoderStream)
   protected
-    InputStream: TStream;
     Buf: Byte;          // unread bits
     BufBits: ShortInt;  // number of unread bits
-    BytesRead: Longint;
   public
-    constructor Create(AInputStream: TStream);
-    procedure Reset;
-
     function Read(var Buffer; Count: Longint): Longint; override;
-    function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
+    procedure SetSize(NewSize:Longint); override;
   end;
 
 { --------------------- Encoding/Decoding Tables --------------------- }
@@ -93,48 +82,35 @@ const
 uses
   SysUtils;
 
-constructor TBase64EncodingStream.Create(AOutputStream: TStream);
-begin
-  inherited Create;
-  OutputStream := AOutputStream;
-end;
-
-destructor TBase64EncodingStream.Destroy;
+procedure TBase64EncoderStream.SetSize(NewSize:Longint);
 var
   WriteBuf: array[0..3] of Char;
 begin
-  // Fill output to multiple of 4
-  case (TotalBytesProcessed mod 3) of
+  case (FPosition mod 3) of
     1: begin
         WriteBuf[0] := Base64EncodingTable[Buf[0] shr 2];
         WriteBuf[1] := Base64EncodingTable[(Buf[0] and 3) shl 4];
         WriteBuf[2] := '=';
         WriteBuf[3] := '=';
-        OutputStream.Write(WriteBuf, 4);
+        OtherStream.WriteBuffer(WriteBuf, 4);
       end;
     2: begin
         WriteBuf[0] := Base64EncodingTable[Buf[0] shr 2];
         WriteBuf[1] := Base64EncodingTable[(Buf[0] and 3) shl 4 or (Buf[1] shr 4)];
         WriteBuf[2] := Base64EncodingTable[(Buf[1] and 15) shl 2];
         WriteBuf[3] := '=';
-        OutputStream.Write(WriteBuf, 4);
+        OtherStream.WriteBuffer(WriteBuf, 4);
       end;
   end;
-  inherited Destroy;
 end;
 
-function TBase64EncodingStream.Read(var Buffer; Count: Longint): Longint;
-begin
-  raise EStreamError.Create('Invalid stream operation');
-end;
-
-function TBase64EncodingStream.Write(const Buffer; Count: Longint): Longint;
+function TBase64EncoderStream.Write(const Buffer; Count: Longint): Longint;
 var
   ReadNow: LongInt;
   p: Pointer;
   WriteBuf: array[0..3] of Char;
 begin
-  Inc(TotalBytesProcessed, Count);
+  Inc(FPosition, Count);
   Result := Count;
 
   p := @Buffer;
@@ -153,16 +129,14 @@ begin
     WriteBuf[1] := Base64EncodingTable[(Buf[0] and 3) shl 4 or (Buf[1] shr 4)];
     WriteBuf[2] := Base64EncodingTable[(Buf[1] and 15) shl 2 or (Buf[2] shr 6)];
     WriteBuf[3] := Base64EncodingTable[Buf[2] and 63];
-    OutputStream.Write(WriteBuf, 4);
-    Inc(BytesWritten, 4);
+    OtherStream.WriteBuffer(WriteBuf, 4);
     Inc(LineLength,4);
 
     if LineLength>=76 then
     begin
       WriteBuf[0]:=#13;
       WriteBuf[1]:=#10;
-      OutputStream.Write(WriteBuf,2);
-      Inc(BytesWritten,2);
+      OtherStream.Write(WriteBuf,2);
       LineLength:=0;
     end;
 
@@ -172,32 +146,13 @@ begin
   Inc(BufSize, count);
 end;
 
-function TBase64EncodingStream.Seek(Offset: Longint; Origin: System.Word): Longint;
+procedure TBase64DecoderStream.SetSize(NewSize:Longint);
 begin
-  Result := BytesWritten;
-  if BufSize > 0 then
-    Inc(Result, 4);
-
-  // This stream only supports the Seek modes needed for determining its size
-  if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
-     or ((Origin = soFromBeginning) and (Offset = Result))) then
-    raise EStreamError.Create('Invalid stream operation');
-end;
-
-constructor TBase64DecodingStream.Create(AInputStream: TStream);
-begin
-  inherited Create;
-  InputStream := AInputStream;
-  Reset;
-end;
-
-procedure TBase64DecodingStream.Reset;
-begin
+  inherited;
   BufBits:=0;
-  BytesRead:=0;
 end;
 
-function TBase64DecodingStream.Read(var Buffer; Count: Longint): Longint;
+function TBase64DecoderStream.Read(var Buffer; Count: Longint): Longint;
 var b:Byte;
     d:ShortInt;
 
@@ -214,7 +169,7 @@ var b:Byte;
       BEnd:=((Count-R)*8-BufBits+5)div 6+BBeg;
       if BEnd>High(BBuf)+1 then BEnd:=High(BBuf)+1;
       if BEnd<=BBeg then BEnd:=BBeg+1; // read at least 1 character
-      BEnd:=InputStream.Read(bbuf,BEnd-BBeg)+BBeg;
+      BEnd:=OtherStream.Read(bbuf,BEnd-BBeg)+BBeg;
     end;
 
     if BBeg< BEnd then
@@ -252,31 +207,18 @@ begin
     end;
   end;
 
-  Inc(BytesRead,R);
-  Result:=R;
-
+  Inc(FPosition,R);
   Assert(BBeg< BEnd);
-end;
-
-function TBase64DecodingStream.Write(const Buffer; Count: Longint): Longint;
-begin
-  raise EStreamError.Create('Invalid stream operation');
-end;
-
-function TBase64DecodingStream.Seek(Offset: Longint; Origin: System.Word): Longint;
-begin
-  if (Origin = soFromCurrent) and (Offset = 0) then
-    Result := BytesRead
-  else if (Origin = soFromEnd) and (Offset = 0) then
-    Result := BytesRead
-  else if (Origin = soFromBeginning) and (Offset = BytesRead) then
-    Result := BytesRead
-  else
-    raise EStreamError.Create('Invalid stream operation');
+  Result := R;
 end;
 
 //
 // $Log$
+// Revision 1.3  2001/09/09 17:40:47  cl
+// - moved common code between alle en-/decoding streams to a base class
+// - all en-/decoding streams can now destruct the other stream
+// - much more elegant way to connect en-/decoding streams to each other
+//
 // Revision 1.2  2001/09/08 18:46:43  cl
 // - small bug/compiler warning fixes
 //

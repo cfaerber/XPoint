@@ -31,7 +31,6 @@ type
   P8BitTable = ^T8BitTable;
   T8BitTable = array[Char] of UCChar;
 
-
 // -------------------------------------------------------------------
 //   UTF-8 support
 // -------------------------------------------------------------------
@@ -457,6 +456,11 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/09/09 17:40:47  cl
+  - moved common code between alle en-/decoding streams to a base class
+  - all en-/decoding streams can now destruct the other stream
+  - much more elegant way to connect en-/decoding streams to each other
+
   Revision 1.6  2001/09/08 20:19:51  cl
   - fixes for US-ASCII
 

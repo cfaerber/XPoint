@@ -847,14 +847,11 @@ begin
         if boundary <>'' then mtype.boundary := boundary;
 
         if typ='M' then begin
-          if x_charset=''  then mtype.charset := x_charset;
-
           wrs('MIME-Type: '+mtype.AsString);
           if(Mime.encoding<>MimeEncodingUnknown) then
             wrs('MIME-Encoding: '+MimeEncodingNames[Mime.Encoding]);
         end;
 
-        mtype.charset:=''; // confuses old CrossPoint/OpenXP/XP^2 versions
         wrs('U-Content-Type: '+mtype.AsString);
         mtype.Free;
       end;
@@ -1139,6 +1136,9 @@ begin
     else
       hd.typ:='B';
 
+    if hd.x_charset='' then
+      hd.x_charset:='windows-1252'
+    else
     if MimeContentTypeNeedCharset(ctype) and
       (not IsKnownCharset(hd.x_charset)) then
       hd.error := 'Unsupported character set: ' + hd.x_charset;
@@ -2142,6 +2142,12 @@ begin
       // If not, assume mbox format: Recognize 'crlfFrom ' as beginning
       // of next mail and unquote '>From ' to 'From '.
       LastLineWasBlank:=False;
+
+      if not(binaer or multi) then
+        hd.charset:='IBM437'
+      else
+        hd.charset:=MimeCharsetToZC(hd.x_charset);
+
       while (bufpos < bufanz) and (hd.Lines<>0) do
       begin
         ReadString;
@@ -2155,12 +2161,9 @@ begin
               if LeftStr(s,6)='>From ' then
                 DeleteFirstChar(s);
         LastLineWasBlank:=(s=''); DecodeLine;
+
         if not(binaer or multi) then
-        begin
           s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
-          hd.charset:='IBM437';
-        end else
-          hd.charset:=MimeCharsetToZC(hd.x_charset);
 
         Mail.Add(s);
         inc(hd.groesse, length(s));
@@ -2284,6 +2287,12 @@ begin
       seek(f1, fp); ReadBuf; bufpos := bp;
       WriteHeader;
       smtpende := false;
+
+      if not(not binaer or multi) then
+        hd.charset:='IBM437'
+      else
+        hd.charset:=MimeCharsetToZC(hd.x_charset);
+
       while (bufpos < bufanz) and not smtpende do
       begin
         ReadString;
@@ -2294,11 +2303,7 @@ begin
             DeleteFirstChar(s);
           DecodeLine;           { haengt CR/LF an, falls kein Base64 }
           if not(not binaer or multi) then
-          begin
             s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
-            hd.charset:='IBM437';
-          end else
-            hd.charset:=MimeCharsetToZC(hd.x_charset);
 
           wrfs(s);
         end;
@@ -2309,7 +2314,7 @@ begin
   pfrec:= @f1;
 {$IFNDEF UnixFS}
   FileSetAttr(pfrec^.name, 0); { Archivbit abschalten }
-{$ENDIF}  
+{$ENDIF}
   if CommandLine then writeln(' - ok');
 end;
 
@@ -2388,6 +2393,11 @@ begin
       if hd.Lines = 0 then
         hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
 
+      if not (binaer or multi) then
+        hd.charset:='IBM437'
+      else
+        hd.charset:=MimeCharsetToZC(hd.x_charset);
+
       //** clean up: ignore size if line count is given
       while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
       begin                         { Groesse des Textes berechnen }
@@ -2403,11 +2413,7 @@ begin
         dec(Size, length(s) + eol);
         DecodeLine;
         if not (binaer or multi) then
-        begin
           s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
-          hd.charset:='IBM437';
-        end else
-          hd.charset:=MimeCharsetToZC(hd.x_charset);
 
         if not(NNTPSpoolFormat and(hd.lines=0))then begin // skip last '.' if NNTP spool format
           Mail.Add(s);
@@ -3281,49 +3287,31 @@ type rcommand = (rmail,rsmtp,rnews);
       f2 := TFileStream.Create(dest + fn + '.OUT',fmCreate);
   end;
 
-  procedure CopyEncodeMail(os:TStream;Count:Longint);
-  var o3,o4:TStream;
+  procedure CopyEncodeMail(outs_safe:TStream;Count:Longint);
+  var outs,ins:TStream;
   begin
-//    o1:=nil;
-//    o2:=nil;
-    o3:=nil;
-    o4:=nil;
+    // The stream passed must not be destroyed!
+    outs := TNullCodecStream.Create;
+    TNullCodecStream(outs).OtherStream := outs_safe;
+    TNullCodecStream(outs).DestroyOtherStream := false;
    try
-//    if dotEscape then
-//    begin
-//      o1 := TDotEscapeStream(os);
-//      os := o1;
-//    end;
-
-//    o2 := TCRLFtoLFStream.Create(os);
-//    os := o2;
-
     if (hd.typ<>'M') and (hd.mime.encoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable]) then
-    begin
-      o3 := MimeCreateEncoder(hd.mime.encoding,os,hd.typ<>'B');
-      os := o3;
-    end;
+      ConnectStream(outs,MimeCreateEncoder(hd.mime.encoding,hd.typ<>'B'));
 
     if (hd.typ<>'M') and MimeContentTypeNeedCharset(hd.mime.ctype) and
     ( LowerCase(MimeCharsetCanonicalName(ZCCharsetToMime(hd.charset))) <>
       LowerCase(MimeCharsetCanonicalName(hd.x_charset)) ) then
-    begin
-      o4 := TCharsetEncodingStream.Create(os,ZCCharsetToMime(hd.charset),hd.x_charset);
-      os := o4;
-    end;
+      ConnectStream(outs,TCharsetEncoderStream.Create(ZCCharsetToMime(hd.charset),hd.x_charset));
 
     while Count>0 do
     begin
       blockread(f1,buffer,min(sizeof(buffer),count),bufanz);
-      os.WriteBuffer(buffer,bufanz);
+      outs.WriteBuffer(buffer,bufanz);
       dec(Count,BufAnz);
     end;
 
    finally
-    o4.Free;
-    o3.Free;
-//    o2.Free;
-//    o1.Free;
+    outs.Free;
    end;
   end;
 
@@ -3651,6 +3639,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.74  2001/09/09 17:40:47  cl
+  - moved common code between alle en-/decoding streams to a base class
+  - all en-/decoding streams can now destruct the other stream
+  - much more elegant way to connect en-/decoding streams to each other
+
   Revision 1.73  2001/09/08 18:46:43  cl
   - small bug/compiler warning fixes
 

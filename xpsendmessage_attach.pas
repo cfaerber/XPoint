@@ -453,7 +453,7 @@ var FileName: String;
     NewTime2: TDateTime;
 
     Charset : String;
-    s1,s2,d1,d2: TStream;
+    ins,outs: TStream;
 
     RecodedCharset: Boolean;
     RecodedEncoding:Boolean;
@@ -465,32 +465,26 @@ begin
 
   if RecodedCharset or RecodedEncoding then
   begin
-    s1 := nil; s2 := nil; d1 := nil; d2:=nil;
-  try
-    s2 := TFileStream.Create(pa.FileName,fmOpenRead or fmShareDenyWrite);
+    ins := TFileStream.Create(pa.FileName,fmOpenRead or fmShareDenyWrite);
 
-    if RecodedEncoding then
-      s1 := MimeCreateDecoder(pa.FileEncoding,s2)
-    else begin
-      s1 := s2; s2 := nil;
-    end;
+    try // [1]
+      FileName := TempS(_FileSize(pa.FileName));
+      outs := TFileStream.Create(FileName,fmCreate or fmShareDenyWrite);
 
-    FileName := TempS(_FileSize(pa.FileName));
-    d2 := TFileStream.Create(FileName,fmCreate or fmShareDenyWrite);
+      try // [2]
+        if RecodedEncoding then
+          ConnectStream(ins,MimeCreateDecoder(pa.FileEncoding));
 
-    if RecodedCharset then
-      d1 := TCharsetEncodingStream.Create(d2,Charset,'IBM437')
-    else begin
-      d1 := d2; d2 := nil;
-    end;
+        if RecodedCharset then
+          ConnectStream(outs,TCharsetEncoderStream.Create(Charset,csCP437));
 
-    CopyStream(s1,d1);
-  finally
-    s1.Free;
-    s2.Free;
-    d1.Free;
-    d2.Free;
-  end; // try
+        CopyStream(ins,outs);
+      finally
+        outs.Free;
+      end;  // [2]
+    finally
+      ins.Free;
+    end; // [1]
   end else
   if not pa.IsTemp then begin
     FileName := TempS(_FileSize(pa.FileName));
@@ -511,7 +505,7 @@ begin
         _era(pa.FileName)
       else if pa.FileNameO='' then
         pa.FileNameO := ExtractFileName(pa.FileName);
-        
+
       pa.FileName := FileName;
       NewTime2 := FileDateToDateTime(NewTime);
       pa.FileModify := NewTime2;

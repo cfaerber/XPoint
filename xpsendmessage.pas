@@ -1628,16 +1628,6 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     if ntMIME(netztyp) then
       hdp.MIME.mversion := '1.0';
 
-    if (hdp.typ='M') or not ((not docode in [0,8]) or (flPGPSig and
-       (((not PGP_MIME) and (cancode<>8)) or (cancode=9)) )) then
-      for i:=0 to parts.Count-1 do
-        with TSendAttach_Part(parts[i]) do
-          case ContentEncoding of
-            MimeEncoding8Bit: ContentEncoding:=MimeEncodingQuotedPrintable;
-            MimeEncodingBinary: ContentEncoding:=MimeEncodingBase64;
-            MimeEncoding7Bit: ContentEncoding:=Analyzed.PreferredEncoding;
-          end;
-
     if (not partsex) and assigned(sdata^.orghdp) then
     begin
       // just pass-through
@@ -1652,16 +1642,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       hdp.x_charset     := sdata^.orghdp.x_charset;
     end
     else case parts.count of
-      0: begin
-           if ntMIME(netztyp) then
-           begin
-             hdp.typ := 'M'; // pass-through
-             hdp.mime.ctype := 'text/plain';
-             hdp.mime.encoding := MimeEncoding7Bit;
-           end else
-             hdp.typ := 'T';
-           s1 := TMemoryStream.Create;
-         end;
+      0: assert(false);
       1: with TSendAttach_Part(parts[0]) do begin
            if ntMIME(netztyp) and not ntConv(netztyp) then
              hdp.typ := 'M' else // ZConnect with MIME
@@ -1730,6 +1711,14 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         hdp.typ:='M';
         hdp.MIME.ctype := 'multipart/mixed; boundary='+Boundary;
         hdp.MIME.encoding := MimeEncoding7Bit;
+
+        // if we use PGP/MIME, then only 7bit transparent encodings
+        // are allowed.
+        if flPGPSig or (docode in [8,9]) then
+          for i:=0 to parts.Count-1 do
+            with TSendAttach_Part(parts[i]) do
+              if not Analyzed.EncodingSafeForSigned[ContentEncoding] then
+                ContentEncoding := MimeEncodingQuotedPrintable;
 
         s1 := TMemoryStream.Create;
 
@@ -2089,7 +2078,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         end;
         end else
       begin
-        if (typ<>'M') and (flPGPSig or (docode in [8,9])) then
+        if (hdp.typ<>'M') and (flPGPSig or (docode in [8,9])) then
         begin
           // encode the single part NOW for MIME
           assert(parts.count=1);
@@ -2309,6 +2298,11 @@ finalization
 
 {
   $Log$
+  Revision 1.12  2001/09/09 17:40:47  cl
+  - moved common code between alle en-/decoding streams to a base class
+  - all en-/decoding streams can now destruct the other stream
+  - much more elegant way to connect en-/decoding streams to each other
+
   Revision 1.11  2001/09/08 23:30:58  cl
   - fixed last fix
 

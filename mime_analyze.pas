@@ -33,7 +33,9 @@ type TMimeAnalyzer = class(TStream)
     HasBinary,HasUTF8,HasNonUTF8,HasNonISO,HasNonMS,HasCP850NonISO,HasCP437NonISO: Boolean;
     _8BitChars,ISOChars: Integer;
     MaxLineLenCRLF,MaxLineLenLF,MaxLineLenCR: Integer;
-    HasFromOrDotAfterCR, HasFromOrDotAfterLF: Boolean;
+    HasDangerousFrom, HasDangerousDot, HasDangerousWS: Boolean;
+    HasDangerousFromPos: Integer;
+
     QPGoodCount: Integer;
 
     FPosition: Integer;
@@ -55,6 +57,7 @@ type TMimeAnalyzer = class(TStream)
     function GPreferredCharset:  String;
 
     function GEncodingAllowed(Enc:TMimeEncoding):Boolean;
+    function GEncodingSafeForSigned(Enc:TMimeEncoding):Boolean;
     function GEolAllowed(Enc:TMimeEol):Boolean;
 
     function GMagic16:           Word;
@@ -74,6 +77,7 @@ type TMimeAnalyzer = class(TStream)
     property PreferredCharset:  String          read GPreferredCharset;
 
     property EncodingAllowed[Enc:TMimeEncoding]:Boolean read GEncodingAllowed;
+    property EncodingSafeForSigned[Enc:TMimeEncoding]:Boolean read GEncodingAllowed;
     property EOLAllowed[Enc:TMimeEol]:Boolean   read GEOLAllowed;
 
     property Is8Bit:            Boolean         read GIs8Bit;
@@ -143,8 +147,11 @@ begin
   MaxLineLenLF  := 0;
   MaxLineLenCR  := 0;
 
-  HasFromOrDotAfterCR := false;
-  HasFromOrDotAfterLF := false;
+  HasDangerousDot := false;
+  HasDangerousFrom := false;
+  HasDangerousWS := false;
+
+  HasDangerousFromPos := 0;
 
   QPGoodCount   := 0;
 
@@ -273,6 +280,8 @@ const cp850_not_in_Latin1: set of char = [
 function TMimeAnalyzer.Write(const Buffer; Count: Longint): Longint;
 var i: Longint;
     c: char;
+const
+    From : string = '>From';
 begin
   for i:=0 to Count-1 do
   begin
@@ -311,10 +320,27 @@ begin
       end {c=#10};
       CRPending := false;
 
-      if c='.' then begin
-        if CurLineLenCR=0 then HasFromOrDotAfterCR:=true;
-        if CurLineLenLF=0 then HasFromOrDotAfterLF:=true;
+      if 0 in [CurLineLenCR,CurLineLenLF,CurLineLenCRLF] then
+      begin
+        if c='.' then
+          HasDangerousDot:=true else
+        if c=From[1] then
+          HasDangerousFromPos := 1
+        else if c=From[2] then
+          HasDangerousFromPos := 2;
+      end else
+      if HasDangerousFromPos > 0 then
+        if c=From[HasDangerousFromPos+1] then
+          Inc(HasDangerousFromPos)
+        else HasDangerousFromPos:=0;
+
+      if HasDangerousFromPos=Length(From) then begin
+        HasDangerousFrom := true;
+        HasDangerousFromPos := 0;
       end;
+
+      if c in [#0..#9,#11..#12,#14..#31] then
+        HasDangerousWS:=true;
 
       if (not HasBinary) and (c in [#0..#8,#11,#14..#20,#22..#31]) then {CTLs except HT,LF,FF,CR}
         HasBinary := true;
@@ -442,9 +468,7 @@ end;
 function TMimeAnalyzer.GPreferredEncoding: TMimeEncoding;
 begin
   if not (IsBinary or IsAmbigousEOL) then
-    if not (
-      ((FCrCount>0) and HasFromOrDotAfterCr) or
-      ((FLfCount>0) and HasFromOrDotAfterLf) ) then
+    if not (HasDangerousDot or HasDangerousFrom) then
     begin
       if _8BitChars>0 then
         result:=MimeEncoding8bit
@@ -474,9 +498,24 @@ function TMimeAnalyzer.GEncodingAllowed(Enc:TMimeEncoding):Boolean;
 begin
   case Enc of
     MimeEncodingBase64,MimeEncodingQuotedPrintable: result:=true;
-    MimeEncoding7Bit: result:=(not IsBinary) and (not (_8BitChars>0));
-    MimeEncoding8Bit: result:=(not IsBinary) and (not (_8BitChars=0));
+    MimeEncoding7Bit: result:=(not IsAmbigousEOL) and (not IsBinary) and (not (_8BitChars>0));
+    MimeEncoding8Bit: result:=(not IsAmbigousEOL) and (not IsBinary) and (not (_8BitChars=0));
     else result:=false;
+  end;
+end;
+
+function TMimeAnalyzer.GEncodingSafeForSigned(Enc:TMimeEncoding):Boolean;
+begin
+  case Enc of
+    MimeEncodingBase64,MimeEncodingQuotedPrintable: result:=true;
+    MimeEncoding7Bit: result :=
+      (not IsAmbigousEOL) and
+      (not IsBinary) and
+      (not (_8BitChars>0)) and
+      (not HasDangerousFrom) and
+      (not HasDangerousDot) and
+      (not HasDangerousWS);
+    MimeEncoding8Bit,MimeEncodingBinary: result:=false;
   end;
 end;
 
@@ -513,6 +552,11 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2001/09/09 17:40:47  cl
+// - moved common code between alle en-/decoding streams to a base class
+// - all en-/decoding streams can now destruct the other stream
+// - much more elegant way to connect en-/decoding streams to each other
+//
 // Revision 1.3  2001/09/08 21:58:09  cl
 // - BUGFIX: Paragraph character (IBM437 #21) now does not trigger binary flag
 // - BUGFIX: Paragraph character recoded correctly
