@@ -89,6 +89,7 @@ procedure listNoAutoscroll;
 
 function  get_selection:string;
 function  first_marked:string;
+procedure list_unmark;
 function  next_marked:string;
 function  list_markanz:longint;
 function  list_lineanz: longint;
@@ -1426,6 +1427,12 @@ begin
   linepos:=markpos;
 end;
 
+procedure list_unmark;
+begin
+  if markpos=nil then exit;
+  EmsPtr(markpos)^.marked:=false;
+  if alist^.markanz>1 then dec(alist^.markanz);
+end;
 
 function list_markanz:longint;
 {var anz : longint;
@@ -1505,6 +1512,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.8  2001/06/13 01:37:41  my
+  JG:- message area manager update: UKA_PPP support (.GR) implemented, some
+       logic changed, more to come (work in progress)
+
   Revision 1.19.2.7  2001/04/20 17:28:48  mk
   - misc updates
 
