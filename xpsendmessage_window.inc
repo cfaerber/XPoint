@@ -304,6 +304,20 @@ var
     end;
   end;
 
+  var SelectAddress_KeyPressed: integer;
+
+  procedure SelectAddress_OnKeyPressed(LSelf: TLister; var t: taste);
+  begin
+    if (t='b')or(t=keyaltb) then begin
+      SelectAddress_KeyPressed := 2;
+      t := keycr;
+    end else
+    if (t='u')or(t=keyaltu) then begin
+      SelectAddress_KeyPressed := 1;
+      t := keycr;
+    end;
+  end;
+
   procedure CheckAddressSetAddressList(nl: TAddressList; AutoAdd: boolean); forward;
 
   procedure SelectAddress(var cr:customrec);
@@ -371,9 +385,11 @@ var
 
     Lister := TLister.CreateWithOptions(0,0,0,0,0,'/NS/SB/NLR/DM/M/');
     try
+      SelectAddress_KeyPressed := 0;
       Lister.OnDisplayLine := SelectAddress_OnDisplay;
       Lister.OnTestMark := SelectAddress_OnTestMark;
       Lister.OnTestSelect := SelectAddress_OnTestSelbar;
+      Lister.OnKeyPressed := SelectAddress_OnKeyPressed;      
       
       DontAdd := TStringList.Create;
       try
@@ -460,7 +476,9 @@ var
 
       NewList := TAddressList.Create;
       try
-        case Lister.Lines.Count - Lister.SelLine of
+        if SelectAddress_KeyPressed = 0 then 
+          SelectAddress_KeyPressed := Lister.Lines.Count - Lister.SelLine;
+        case SelectAddress_KeyPressed of
         1: (* select user *)
           begin
             wpush(1,ScreenWidth,1,ScreenLines,'-');
@@ -1571,6 +1589,9 @@ end;
 
 //
 // $Log$
+// Revision 1.7  2003/01/27 18:45:46  cl
+// - send window rewrite IIb: implemented hotkeys
+//
 // Revision 1.6  2003/01/13 22:14:28  cl
 // - send window rewrite IIa - cleanups
 //
