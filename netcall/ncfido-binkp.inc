@@ -266,6 +266,7 @@ begin
         end;
       WaitOk: begin
         if BpF.IsReady then begin
+          Log(lcInfo,BpF.CommandPar);
           case BpF.FrameType of
             M_OK: begin
                     if CRAM_MD5_Challenge<>'' then
@@ -275,8 +276,8 @@ begin
                     result:=0; State:=Done;
                     end;
             M_BSY: begin Output(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
-            M_ERR: begin Output(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
-            M_NUL: Log(lcInfo,BpF.CommandPar);
+            M_ERR: begin Output(mcError,'Error: %s',[BpF.CommandPar]); result:=2; State:=Done; end;
+            M_NUL: ;
             end;
           if State<>Done then BpF.ReadFromStream(False);
           end;
@@ -594,6 +595,9 @@ end;
 
 {
   $Log$
+  Revision 1.18  2003/09/12 17:42:06  ma
+  - errors get logged now (wrong password...)
+
   Revision 1.17  2003/05/10 20:59:08  ma
   - fixed: Files were sent with wrong timestamp
 
