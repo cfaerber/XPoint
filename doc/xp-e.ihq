@@ -712,7 +712,7 @@ Replying to messages:
 
    <<I>>    Shows the information in the message header.
 
-   <<O>>    Shows the hidden kludges.
+<<Ctrl-O>>  Shows the hidden kludges.
 
    <<G>>    Jumps to the preceding message. (Like <<->>)
 
@@ -757,6 +757,8 @@ Replying to messages:
 
    <<C>>    Toggles coloured <<bold>> Text on/off.
         (see [/Config/External/Lister])@237
+
+   <<##>>    Jumps to the thread-tree.
 
 <<When>> [reference links] <<available@4014
 <<(Maus, Fido):
