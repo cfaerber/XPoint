@@ -2855,6 +2855,22 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2737 Warning: Message encryption is not allowed in FidoNet!
 2738 Delete User from address book
 2739 Vertreter nicht in der Datenbank - neu anlegen
++2750
+# number of lines
+0 11
+1 For  ZConnect  and  RFC Servers,  CrossPoint  provides  an
+2 enhanced reply function ("*Reply-To-All*").  With this reply
+3 function, a reply to a message with several recipients can
+4 simultaneously be sent to the sender and to all recipients
+5 of the replied  message automatically  (details see online
+6 help under *C*onfig/*O*ptions/M*e*ssages/User_selection_list).
+7
+8 This function  is not existent  respectively not activated
+9 in your current configuration.
+10
+11 Do you want to activate "*Reply-To-All*"?
+20 ~^Yes , ^No~
+-
 
 
 # --- XP_DES, XP_PGP --------------------------------------------------
@@ -3755,6 +3771,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.24  2001/07/28 14:43:35  mk
+# - added ReplyToAll resources for askRTA
+#
 # Revision 1.23  2001/07/27 16:21:37  ma
 # - changed splash screen once again: Made smaller (corrupted menu lines
 #   in 80x25 text mode)

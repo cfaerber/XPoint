@@ -1894,6 +1894,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 103  mailto.t-online.deúsmtprelay.t-online.deúmail.gmx.netúmail.nexgo.deúpostman.nexgo.deúmail.epost.deúsmtp.web.deúsmtp.compuserve.deúsmtp.mail.yahoo.deúsmtp.addcom.deúsmtp.tiscalinet.deúsmtp.worldonline.deúmailhost.planetinternet.deúsmtp.kundenserver.de
 
 
+
 úmail.komtel.net
 104  News-Server (NNTP)
 105  news.t-online.deúnews.cis.dfn.deúnews.nexgo.deúxnews.nexgo.deúnews.compuserve.deúnews.tiscali.deúnews.worldonline.deúnews.planetinternet.deúnews.komtel.net
@@ -2909,6 +2910,23 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2738 User aus Adreábuch entfernen
 2739 Vertreter nicht in der Datenbank - neu anlegen
 
++2750
+# Zeilenzahl
+0 11
+1 CrossPoint stellt fr ZConnect-  und  RFC-Serverboxen eine
+2 erweiterte Antwortfunktion ("*Reply-To-All*") zur Verfgung,
+3 mit der  Sie die  Antwort auf eine  Nachricht mit mehreren
+4 Empf„ngern automatisch an den Absender  und alle Empf„nger
+5 einer Mail gleichzeitig senden k”nnen  (N„heres dazu siehe
+6 Online-Hilfe zu *C*onfig/*O*pt./*N*achr./Empf„nger-Auswahl).
+7
+8 Diese Funktion ist in Ihrer bisherigen Konfiguration nicht
+9 vorhanden bzw. nicht aktiviert.
+10
+11 Wollen Sie "*Reply-To-All*" aktivieren?
+20 ~^Ja , ^Nein~
+-
+
 # --- XPREG -----------------------------------------------------------
 
 # 2900
@@ -3720,6 +3738,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.20  2001/07/28 14:43:35  mk
+# - added ReplyToAll resources for askRTA
+#
 # Revision 1.19  2001/07/27 16:21:37  ma
 # - changed splash screen once again: Made smaller (corrupted menu lines
 #   in 80x25 text mode)
