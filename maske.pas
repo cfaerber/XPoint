@@ -1009,6 +1009,7 @@ var s1 : string;
   end;
 
 begin
+  truncstr(s,254);   { bei Strings >= 255 crasht es sonst }
   with feld^ do begin
     while s<>'' do begin
       p:=cpos('ù',mid(s,2));
@@ -1019,7 +1020,7 @@ begin
         str(ival(s1):maxlen,s1)
       else if typ=7 then
         str(rval(s1):maxlen:nk,s1);
-      s:=copy(s,p+1,255);
+      s:=copy(s,p+1,254);
       app(selliste);
       end;
     forcesll:=force;
@@ -1306,6 +1307,9 @@ end.
 
 {
   $Log$
+  Revision 1.8.2.7  2001/11/20 23:07:25  my
+  MY+JG:- mappsel-Crash bei Strings > 254 Zeichen behoben
+
   Revision 1.8.2.6  2001/10/21 13:40:07  mk
   - added const parameters (save 500 bytes ;)
 
