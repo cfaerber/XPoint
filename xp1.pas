@@ -1950,18 +1950,8 @@ begin
 end;
 
 procedure set_checkdate;
-var f:file;
-    b:byte;
 begin
-  b := ReadMode;
-
-  ReadMode := fmOpenReadWrite;
-
-  assign(f,NewDateFile);
-  reset(f,1);
-  close(f);
-
-  ReadMode := b;
+  FileClose(FileCreate(NewDateFile));
 end;
 
 
@@ -2100,6 +2090,9 @@ end;
 
 {
   $Log$
+  Revision 1.152  2002/05/02 18:35:24  mk
+  - better set_checkdate
+
   Revision 1.151  2002/05/01 16:34:15  mk
   - fixed last commit
 
