@@ -32,6 +32,15 @@ uses xpglobal,
   {$ELSE }
   crt,
   {$ENDIF }
+{$IFDEF Win32 }
+  xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
   sysutils,classes,typeform,fileio,xpdatum,montage;
 
 type
@@ -539,16 +548,6 @@ end;
 
 { --- Shell --------------------------------------------------------- }
 
-procedure shell(prog: string);          { Externer Aufruf }
-begin
-{$ifdef Unix}
-  Linux.Shell(prog);
-{$else}
-  //Exec(prog, '');
-  {$error Need a Exec-Procedure!
-{$endif}
-end;
-
 procedure fmove(var f1, f2: file);
 var
   rr: word;
@@ -656,15 +655,15 @@ begin
           (lowercase(mailcopies[0])='never')) then begin
           wrs('U-Mail-Copies-To: '+mailcopies[0]);
           if replyto.count>0 then
-	    for i:=0 to replyto.count-1 do
+            for i:=0 to replyto.count-1 do
               wrs('DISKUSSION-IN: '+replyto[i])
           else
             wrs('DISKUSSION-IN: '+absender)
         end else
-	  for i:=0 to mailcopies.count-1 do
+          for i:=0 to mailcopies.count-1 do
             wrs('DISKUSSION-IN: '+mailcopies[i])
       else if replyto.count>0 then
-	for i:=0 to replyto.count-1 do
+        for i:=0 to replyto.count-1 do
           wrs('DISKUSSION-IN: '+replyto[i])
       else
         wrs('DISKUSSION-IN: '+absender)
@@ -677,7 +676,7 @@ begin
       else begin
         for i:=0 to mailcopies.count-1 do
           wrs('DISKUSSION-IN: '+mailcopies[i]);
-	if (mailcopies.count>0) and (followup.count=0) then
+        if (mailcopies.count>0) and (followup.count=0) then
           for i:=0 to xempf.count-1 do
             wrs('DISKUSSION-IN: '+xempf[i])
       end
@@ -1658,7 +1657,7 @@ var
       if rightstr(line,1)<>',' then line:=line+',';
       while cpos(',',line)>0 do begin
         p:=cpos(',',line);
-	ng.add(forumn_rfc2zc(leftstr(line,p-1)));
+        ng.add(forumn_rfc2zc(leftstr(line,p-1)));
         line:=trim(mid(line,p+1))
       end
     end;
@@ -2085,11 +2084,11 @@ begin
               if zz = 'received' then
               GetReceived
             else
-	      { suboptimal }
+              { suboptimal }
               if zz = 'reply-to' then begin
                 GetAdr(s0,s,drealn);
-		replyto.add(s)
-	      end
+                replyto.add(s)
+              end
             else
               if zz = 'return-receipt-to' then
               GetAdr(s0,EmpfBestTo,drealn)
@@ -2175,14 +2174,14 @@ begin
             if zz = 'mime-version' then
             getmime(GetMimeVersion)
           else
-	    { suboptimal }
+            { suboptimal }
             if zz = 'mail-copies-to' then begin
               if (s0='nobody') or (s0='never') then
-	        mailcopies.add(s0)
-	      else begin
-	        GetAdr(s0,s,drealn);
-		mailcopies.add(s)
-	      end
+                mailcopies.add(s0)
+              else begin
+                GetAdr(s0,s,drealn);
+                mailcopies.add(s)
+              end
             end
           else
             if zz = 'keywords' then
@@ -2248,7 +2247,7 @@ begin
       MimeIsoDecode(s);
       ULine[i] := s;
     end;
-    
+
     if pm_reply then
       if replyto.count>0 then
         tstringlistadd(mailcopies,replyto)
@@ -2445,22 +2444,22 @@ begin
         #$9D:
           begin
             write(' - uncompressing SMTP mail...');
-            shell(uncompress + fn);
+            SysExec(uncompress + fn, '');
           end;
         #$9F:
           begin
             write(' - unfreezing SMTP mail...');
-            shell(unfreeze + fn);
+            SysExec(unfreeze + fn, '');
           end;
         #$8B:
           begin
             write(' - unzipping SMTP mail ...');
-            shell(ungzip + fn);
+            SysExec(ungzip + fn, '');
           end;
         #$5A:
           begin
             write(' - unbzip2`ing SMTP mail ...');
-            shell(unbzip + fn);
+            SysExec(unbzip + fn, '');
           end;
       end;
     end;
@@ -2625,24 +2624,24 @@ begin
     if freeze then
     begin
       write(' - unfreezing news...');
-      shell(unfreeze + newfn);
+      SysExec(unfreeze + newfn, '');
     end
     else
       if gzip then
     begin
       write(' - unzipping news...');
-      shell(ungzip + newfn);
+      SysExec(ungzip + newfn, '');
     end
     else
       if bzip then
     begin
       write(' - unbzip2`ing news...');
-      shell(unbzip + newfn);
+      SysExec(unbzip + newfn, '');
     end
     else
     begin
       write(' - uncompressing news...');
-      shell(uncompress + newfn);
+      SysExec(uncompress + newfn, '');
     end;
     reset(f2, 1); seek(f2, filesize(f2));
     if FileExists(newfn) then
@@ -3684,6 +3683,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/11/18 21:20:24  mk
+  - changed Shell() to SysExec()
+
   Revision 1.6  2000/11/18 15:46:05  hd
   - Unit DOS entfernt
 
