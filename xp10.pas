@@ -185,7 +185,7 @@ _x             ***       abc<F3>x<Alt P><<>
 
 procedure settap(var ta:tap);
 
-  procedure _set(von:byte; s:string);
+  procedure _set(von:byte; const s:string);
   var p,p2: byte;
   begin
     p:=1;
@@ -258,7 +258,7 @@ begin
 end;
 
 
-function getflags(s:string):byte;
+function getflags(const s:string):byte;
 var fl,i : byte;
     f    : integer;
 begin
@@ -279,17 +279,17 @@ begin
   while (length(m)<253) and (s<>'') do
     case s[1] of
       '^' : begin
-              delete(s,1,1);
+              DeleteFirstChar(s);
               if s<>'' then begin
                 if s[1]='0' then m:=m+'^'
                 else m:=m+chr(ord(UpCase(s[1]))-64);
-                delete(s,1,1);
-                end;
+                DeleteFirstChar(s);
+              end;
             end;
       '<' : begin
-              delete(s,1,1);
-              if s<>'' then
-                if (s[1]='<') or (s[1]='>') or (s[1]='^') or (s[1]=' ') then begin
+              DeleteFirstChar(s);
+              if FirstChar(s) in ['<', '>', '^', ' '] then
+              begin
                   m:=m+s[1];
                   delete(s,1,2);
                   end
@@ -307,7 +307,7 @@ begin
             end;
     else begin
       m:=m+s[1];
-      delete(s,1,1);
+      DeleteFirstChar(s);
       end;
     end;
   getmacro:=m;
@@ -410,29 +410,24 @@ begin
 end;
 
 
-procedure savefile(typ:eLoadFileType; fn:string);
+procedure SaveMakroFile(const fn:string);
 var t : text;
     i : integer;
 begin
   assign(t,fn);
   rewrite(t);
-  case typ of
-    lfTiming :
-      for i:=0 to e.Count-1 do
-        writeln(t,e[i]);
-    lfMakros :
-      for i:=0 to e.Count-1 do begin
-        writeln(t,trim(LeftStr(e.Strings[i],225)));
-        if mid(e.Strings[i],226)<>'' then
-          writeln(t,'!',mid(e.Strings[i],226));
-      end;
-    //else?
+  for i:=0 to e.Count-1 do
+  begin
+    writeln(t,trim(LeftStr(e.Strings[i],225)));
+    if mid(e.Strings[i],226)<>'' then
+      writeln(t,'!',mid(e.Strings[i],226));
   end;
   close(t);
 end;
 
 procedure releaseliste;
 begin
+  e.Clear;
   anzahl:=0;
 end;
 
@@ -545,7 +540,7 @@ var pa    : phoneap;
     p     : byte;
     loadt : boolean;    { TARIFE.DAT laden }
 
-  procedure AddP(s:string; _anz:integer);
+  procedure AddP(const s:string; _anz:integer);
   begin
     inc(anzahl);
     with phones^[anzahl] do begin
@@ -565,7 +560,7 @@ var pa    : phoneap;
       end;
   end;
 
-  procedure xs(s:string);
+  procedure xs(const s:string);
   begin
     with phones^[anzahl] do begin
       inc(ppos);
@@ -578,7 +573,7 @@ var pa    : phoneap;
     xs('7-'+strs(nr));
   end;
 
-  procedure bereich(tnr,bereichnr:integer; _von,_bis:string;
+  procedure bereich(tnr,bereichnr:integer; const _von,_bis:string;
                     g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,g11:real);
   var i : integer;
   begin
@@ -1013,7 +1008,7 @@ var
     mon;
   end;
 
-  procedure _insert(s:string; from,len:byte);
+  procedure _insert(const s:string; from,len:byte);
   var i : integer;
   begin
     i:=0;                       //kleinster index
@@ -1021,11 +1016,6 @@ var
       inc(i);
     e.Insert(i, s);
     inc(anzahl);
-  end;
-
-  procedure sort_e;
-  begin
-    E.Sort;
   end;
 
   //
@@ -1365,7 +1355,7 @@ var
     closebox;
     if tt<>ttt then begin
       e.Strings[strIdx]:=forms(tt,15)+mid(e.Strings[strIdx],16);
-      sort_e;
+      e.Sort;
       modi:=true;
       end;
   end;
@@ -1694,7 +1684,7 @@ var
       used : set of byte;
       i    : integer;
       brk  : boolean;
-      s    : string[40];
+      s    : string;
   begin
     if xhd.anz=maxheaderlines then begin
       rfehler1(1007,strs(maxheaderlines));    { 'Maximal %s Zeilen moeglich!' }
@@ -1878,7 +1868,7 @@ var
 
   procedure getboxsel;
   var d   : DB;
-      box : string[40];
+      box : string;
   begin
     boxsel1:='';
     boxsel2:='';
@@ -1947,7 +1937,7 @@ begin   {procedure UniEdit(typ:byte); }
     2 : begin                       { Tastenmakros }
           filewidth:=KeymacWidth;
           loadfile(lfMakros,keydeffile);
-          sort_e;
+          e.Sort;
           width:=66+mtypes;
           buttons:=getres(1012);   { ' ^Neu , ^Loeschen , ^Edit , ^Taste , ^*** , ^Sichern , ^OK ' }
           okb:=7; edb:=3;
@@ -2029,7 +2019,7 @@ begin   {procedure UniEdit(typ:byte); }
               3 : if CurRow+a<=anzahl then EditTiming(a+CurRow-1);
               4 : if CurRow+a<=anzahl then ChangeActive(a+CurRow-1);
               5 : begin
-                    savefile(lfTiming,TimingFile+strs(tnr));
+                    e.SaveToFile(TimingFile+strs(tnr));
                     modi:=false;
                     keyboard(keyrght);
                   end;
@@ -2041,7 +2031,7 @@ begin   {procedure UniEdit(typ:byte); }
               4 : if CurRow+a<=anzahl then MacroKey(a+CurRow-1);  //
               5 : if CurRow+a<=anzahl then MacroScope(a+CurRow-1);
               6 : begin
-                    savefile(lfMakros,KeydefFile);
+                    SaveMakrofile(KeydefFile);
                     modi:=false;
                     keyboard(keyrght);
                   end;
@@ -2569,30 +2559,28 @@ var brk     : boolean;
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefuehrt wurde.                                    }
 
-  function intime(dat,von,bis:string; var tr:TimeRec):boolean;
+  function intime(dat: string; const von,bis:string; var tr:TimeRec):boolean;
   var t   : text;
       s   : string;
       p   : byte;
-      it  : boolean;
-      buf : array[0..1023] of byte;
   begin
     dat:=LeftStr(dat,6)+RightStr(dat,2);
-    it:=false;
+    Result := false;
     assign(t,TimingDat);
-    if existf(t) then begin
-      settextbuf(t,buf);
+    if existf(t) then
+    begin
       reset(t);
-      while not eof(t) and not it do begin
+      while not eof(t) and not Result do
+      begin
         readln(t,s);
         UpString(s);
         p:=cpos('=',s);
         if (p>0) and (LeftStr(s,p-1)=UpperCase(tr.action)) and (copy(s,p+1,8)=dat) and
            (copy(s,p+10,5)>=von) and (copy(s,p+10,5)<=bis) then
-            it:=true;
+            Result:=true;
         end;
       close(t);
-      end;
-    intime:=it;
+    end;
   end;
 
   procedure parse_liste;
@@ -2605,7 +2593,7 @@ var brk     : boolean;
       usebox  : string;
       lastbox : string;
 
-    function tf(s:string):string;
+    function tf(const s:string):string;
     begin
       tf:=copy(s,4,2)+LeftStr(s,2);
     end;
@@ -2876,7 +2864,7 @@ var brk     : boolean;
   procedure MakeCrashListe;
   var fn   : string;
       t,t2 : text;
-      s    : string[30];
+      s    : string;
   begin
     fn:=TempS(1000);
     assign(t,fn);
@@ -3261,6 +3249,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.81  2003/08/28 05:49:21  mk
+  - misc code optimizations
+
   Revision 1.80  2002/12/28 20:11:04  dodi
   - start keyboard input redesign
 
