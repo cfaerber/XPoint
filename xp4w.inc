@@ -143,6 +143,38 @@ begin
     end;
 end;
 
+procedure jump_adressbuch;
+var b,x,y: Integer;
+    brk:boolean; 
+begin
+  b:=Adrbtop;
+  dialog(length(getres2(480,1))+8,1,'',x,y);
+  maddint(2,1,getres2(480,1),b,2,2,Adrbtop,99);
+  readmask(brk);
+  enddialog;
+  if brk then exit;
+  if not usersortbox then dbSeek(ubase,uiAdrbuch,chr(b))
+    else dbseek(ubase,uiBoxAdrBuch,chr(b));
+  if dbBOF(dispdat) or dbEOF(dispdat) then errsound
+  else begin
+    disprec[1]:=dbRecNo(dispdat);
+    aufbau:=true;
+    end;
+end;
+
+procedure next_adrbuch;
+var b:byte;
+begin
+  GoP;
+  dbReadN(ubase,ub_adrbuch,b);
+  inc(b);
+  if not usersortbox then dbSeek(ubase,uiAdrbuch,chr(b))
+    else dbseek(ubase,uiBoxAdrBuch,chr(b));
+  if dbBOF(dispdat) or dbEOF(dispdat) then gostart;
+  disprec[1]:=dbRecNo(dispdat);
+  aufbau:=true;
+end;
+
 procedure change_adressbuch;
 var ab        : byte;
     _brett,
@@ -1646,6 +1678,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.89  2002/01/09 02:29:30  mk
+  MY:- '#' from lister, Part I
+
   Revision 1.88  2002/01/09 02:17:00  mk
   MY: - Ctrl-W toggles word wrap in message lister
 

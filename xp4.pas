@@ -170,6 +170,7 @@ end;
 procedure select(dispmode:shortint);
 
 const autokey : taste = '';
+      AdrbTop : byte = 1; {Anzeige der Adressbuchgruppe 0 Ein/Aus}
 
 var gl      : shortint;
     rdmode  : byte;        { Readmode fuer das aktuelle Brett }
@@ -712,8 +713,8 @@ var t,lastt: taste;
 
 
   procedure _brief_senden(c:char); forward;
-
-
+  procedure Bezugsbaum; forward;
+  
   {$I xp4w.inc}   { Bretter/User/Nachrichten bearbeiten }
 
 
@@ -1854,6 +1855,11 @@ begin      { --- select --- }
                    end;
                end;
         1,2  : begin                        { Userliste }
+                 if dispmode=1 then
+                 begin
+                   if c='#'then Jump_Adressbuch;
+                   if c=^\ then Next_Adrbuch;      { Ctrl-# }
+                 end;
                  if t=keyf6 then Makroliste(2);
                  if c=^Y then Trennzeilensuche;
                  if c=k0_cG then _mark_group;      { ^G }
@@ -1919,6 +1925,11 @@ begin      { --- select --- }
                    end;
                end;
          3,4 : begin                              { Weiterleiten an User }
+                 if dispmode=3 then
+                 begin
+                   if c='#'then Jump_Adressbuch;
+                   if c=^\ then Next_Adrbuch;          { Strg+# }
+                 end;
                  if c=k1_A then UserSwitch;       {'A'}
                  if c=^Y then Trennzeilensuche;
                  if c=k1_O then begin
@@ -2314,6 +2325,9 @@ end;
 
 {
   $Log$
+  Revision 1.118  2002/01/09 02:29:30  mk
+  MY:- '#' from lister, Part I
+
   Revision 1.117  2002/01/06 15:44:00  ma
   - ported "new messages first" feature from OpenXP/16 (JG+MY)
 
