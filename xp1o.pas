@@ -114,6 +114,7 @@ begin
       s:=first_marked;
       y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
       if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
+      if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }   
       if y<>0 then begin
         s:=mid(s,y); x:=0;                                      
         repeat
@@ -965,6 +966,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/03/13 15:32:37  jg
+  URL-Erkennung im Lister erkennt jetzt auch
+  einen String der mit WWW. beginnt als URL an.
+
   Revision 1.26  2000/03/09 23:39:33  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

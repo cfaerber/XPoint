@@ -1255,8 +1255,9 @@ kopiert den markierten Text ins Clipboard
 
 <<Win-Clipboard (URL)>>
 versucht aus der ersten markierten Zeile eine
-Internet-URL (FTP:// oder HTTP://) auszuschneiden,
-und kopiert diese ins Windows Clipboard.
+Internet-URL (FTP:// oder HTTP:// oder WWW.)
+auszuschneiden, und kopiert diese ins 
+Windows Clipboard.
 
 <<Win-Clipboard (MAIL)>>
 Analog zur vorherigen Funktion, nur wird hier
