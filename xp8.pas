@@ -78,49 +78,54 @@ var mapsname : string;
     mapsnt   : eNetz;
     mapsart  : byte;
 
+type
+  eMapsType = (
+    mtMAPS, mtAREAFIX, mtMAF, mtMaus, mtQ,  //0..4
+    mtFido, mtGS, mtChangesys, mtPronet,  //5..8
+    mtTurbobox, mtZQWK, mtGUP, mtAutoSys, //9..12
+    mtFeeder, mtPostmaster, mtNNTP, mtClient  //13..16
+  );
 
-function mapstype(box:string):byte;  { 0=MAPS, 1=AREAFIX, 2=MAF, 3=Maus, 4=Q. }
-var d  : DB;                         { 5=Fido, 6=G&S, 7=changesys, 8=Pronet,  }
-    nt : eNetz;                      { 9=Turbobox, 10=ZQWK, 11=GUP, 12=AutoSys}
-begin                                { 13=Feeder, 14=postmaster, 15=online, 16=client  }
+function mapstype(box:string):eMapsType;
+var d  : DB;
+    nt : eNetz;
+begin
+  Result := mtMaps;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  if not dbFound then
-    mapstype:=0
-  else begin
+  if dbFound then begin
     mapsname:= dbReadStr(d,'nameomaps');     { muss vor MAF-Test stehen !! }
     nt := dbNetztyp(d);
     if ntMAF(nt) then
-      mapstype:=2
+      mapstype:=mtMAF
     else if ntNude(nt) then
-      mapstype:=3
+      mapstype:=mtMaus
     else if ntQuickMaps(nt) then
-      mapstype:=4
+      mapstype:=mtQ
     else if ntAreamgr(nt) then
-      mapstype:=5
+      mapstype:=mtFido
     else if nt in [nt_NNTP,nt_POP3,nt_IMAP,nt_Client] then
-      mapstype := 16
+      mapstype := mtClient
     else if (nt=nt_UUCP) then begin
       ReadBoxpar(nt,box);
       case Boxpar^.BMtyp of
-        bm_changesys : mapstype:=7;
-        bm_GUP       : mapstype:=11;
-        bm_Feeder    : mapstype:=13;
-        bm_AutoSys   : mapstype:=12;
-        else           mapstype:=14;  { postmaster }
+        bm_changesys : mapstype:=mtChangeSys;
+        bm_GUP       : mapstype:=mtGUP;
+        bm_Feeder    : mapstype:=mtFeeder;
+        bm_AutoSys   : mapstype:=mtAutoSys;
+        else           mapstype:=mtPostmaster;
       end;
-      end
-    else if (nt=nt_Pronet) then
-      mapstype:=8
+    end else if (nt=nt_Pronet) then
+      mapstype:=mtPronet
     else if nt=nt_QWK then
-      mapstype:=10
+      mapstype:=mtZQWK
     else if nt=nt_NNTP then
-      mapstype:=15
-    else
-      if mapsname='AREAFIX' then mapstype:=1
-      else if mapsname='SYSTEM' then mapstype:=6  { G&S }
-      else mapstype:=0;
-    end;
+      mapstype:=mtNNTP
+    else if mapsname='AREAFIX' then
+      mapstype:=mtAreaFix
+    else if mapsname='SYSTEM' then
+      mapstype:=mtGS  { G&S }
+  end;
   dbClose(d);
 end;
 
@@ -137,7 +142,7 @@ end;
 procedure SendMaps(bef:string; var box,datei:string);
 var
     hf : string;
-    mt : byte;
+    mt : eMapsType;
     nt : eNetz;
  sdata : TSendUUData;
 
@@ -385,55 +390,62 @@ var
 
 begin
   sdata := TSendUUData.Create;
- try
-
-  mt:=mapstype(box);
-  nt:=ntBoxNetztyp(box);
-  case mt of
-    1 : AreaBef;
-    2 : MafNude(true,false);
-    3 : MafNude(false,false);
-    5 : begin
+  try
+    mt:=mapstype(box);
+    nt:=ntBoxNetztyp(box);
+    case mt of
+      mtAreafix :
+        AreaBef;
+      mtMAF :
+        MafNude(true,false);
+      mtMaus :
+        MafNude(false,false);
+      mtFido :
+        begin
           ReadBoxpar(nt,box);
           if (bef='ADD') or (bef='DEL') or (bef='') then
             bef:=boxpar^.AreaPW
           else
             bef:=boxpar^.AreaPW+' '+bef;
         end;
-    6 : if bef='ADD' then bef:='BRETT +'
+      mtGS :
+        if bef='ADD' then bef:='BRETT +'
         else if bef='DEL' then bef:='BRETT -';
-    7 : if (bef='ADD') or (bef='DEL') or (bef='setsys') then
+      mtChangesys :
+        if (bef='ADD') or (bef='DEL') or (bef='setsys') then
           ChangeSys;
-    8 : MafNude(false,true);   { ProNet }
-    9 : begin
+      mtPronet :
+        MafNude(false,true);   { ProNet }
+      mtTurbobox :
+        begin
           mapsname:='SYSTEM';
           sData.flControlMsg:=true;
         end;
-   10 : begin
+      mtZQWK :
+        begin
           mapsname:='ZQWK';
           bef:='CONFIG';
         end;
-   11 : Guppie(1);
-   12 : Guppie(2);
-   13 : Guppie(3);
-   14 : ;   { Postmaster }
-   15 : ; { NNTP }
+      mtGUP : Guppie(1);
+      mtAutoSys : Guppie(2);
+      mtFeeder : Guppie(3);
+      mtPostmaster : ;   { Postmaster }
+      mtNNTP : ; { NNTP }
+    end;
+    hf:='';
+  //  _sendmaps:=true;
+  (*
+    if DoSend(true,datei,false,false,mapsname+'@'+box+ntServerDomain(box),bef,
+              false,false,false,false,false,nil,hf,0) then;
+  *)
+    sData.EmpfList.AddNew.ZCAddress := mapsname+'@'+box+ntServerdomain(box);
+    sData.ForceBox:=box;
+    sData.Subject := bef;
+    sData.AddText(datei,false);
+    sData.CreateMessages;
+  finally
+    sData.Free;
   end;
-  hf:='';
-//  _sendmaps:=true;
-(*  
-  if DoSend(true,datei,false,false,mapsname+'@'+box+ntServerDomain(box),bef,
-            false,false,false,false,false,nil,hf,0) then;
-*)
-  sData.EmpfList.AddNew.ZCAddress := mapsname+'@'+box+ntServerdomain(box);
-  sData.ForceBox:=box;
-  sData.Subject := bef;
-  sData.AddText(datei,false);
-  sData.CreateMessages;
- finally
-  sData.Free;
- end;
-            
 //_sendmaps:=false;
 end;
 
@@ -959,20 +971,20 @@ begin
     assign(t,fn);
     if brett<>'' then begin
       maf:=false; maus:=false; quick:=false; fido:=false; gs:=false;
-      uucp:=false; pronet:=false; qwk:=false; rfc := false;
+      uucp:=false; qwk:=false; rfc := false; //pronet:=false;
       postmaster:=false;
       case mapstype(box) of
-        2 : maf:=true;
-        3 : maus:=true;
-        4 : quick:=true;
-        5 : fido:=true;
-        6 : gs:=true;
-        7 : uucp:=true;
-        8 : pronet:=true;
-       10 : qwk:=true;
-       11..13 : uucp:=true;
-       14: begin uucp:=true; postmaster:=true; end;
-       16: rfc:= true;
+        mtMAF : maf:=true;
+        mtMaus : maus:=true;
+        mtQ : quick:=true;
+        mtFido : fido:=true;
+        mtGS : gs:=true;
+        mtChangesys : uucp:=true;
+        //8 : pronet:=true;
+        mtZQWK : qwk:=true;
+        mtGUP..mtFeeder : uucp:=true;
+        mtPostmaster: begin uucp:=true; postmaster:=true; end;
+        mtClient: rfc:= true;
       end;
       rewrite(t);
       if quick or (uucp and postmaster) then
@@ -1140,11 +1152,12 @@ var
     betreff  : string;
     bfile    : string;
     d        : DB;
-    fido     : boolean;
-    turbo    : boolean;
-    uucp     : boolean;
+    //fido     : boolean;
+    //turbo    : boolean;
+    //uucp     : boolean;
     fn       : string;
     bpsik    : BoxPtr;
+    mt: eMapsType;
 label ende;
 begin
   absender:= dbReadNStr(mbase,mb_absender);
@@ -1171,27 +1184,28 @@ begin
       end;
 
   dbClose(d);
-  fido:=(mapstype(box)=5);
-  turbo:=(mapstype(box)=9);
-  uucp:=(mapstype(box) in [7,11]);
+  mt := mapstype(box);
+  //fido:=(mapstype(box)=5);
+  //turbo:=(mapstype(box)=9);
+  //uucp:= mt in [mtChangesys,mtGUP];
   bpsik:=boxpar;
   getmem(boxpar,sizeof(BoxRec));
   fillchar(boxpar^,sizeof(BoxRec),0);
   ReadBox(nt_Netcall,bfile,boxpar);
-  if mapstype(box) in [2,8] then begin
+  if mt in [mtMAF,mtPronet] then begin
     message('Brettliste fuer '+UpperCase(box)+' wird eingelesen ...');
     fn:=TempS(dbReadInt(mbase,'msgsize'));
     extract_msg(0,'',fn,false,0);
-    case mapstype(box) of
-      2 : if ReadMaflist(fn,bfile) then;
-      8 : ReadPromafList(fn,bfile);
+    case mt of
+      mtMAF : if ReadMaflist(fn,bfile) then;
+      mtPronet : ReadPromafList(fn,bfile);
     end;
     _era(fn);
     end
   else begin
     if (pos('BRETT',UpperCase(betreff))=0) and (betreff<>'Gruppenliste') and
        (pos('list',LowerCase(betreff))=0) and
-      not (fido or turbo or uucp)
+      not (mt in [mtFido, mtTurbobox,mtChangesys,mtGUP]) //or uucp)
       and not ReadJN(getres(805),true) then   { 'Sind Sie sicher, dass das eine Brettliste ist' }
       goto ende;
     if cPos('@',absender)=0 then
@@ -1222,31 +1236,31 @@ var
     fn      : string;
     useclip : boolean;
     d       : DB;
-    maggi   : boolean;
-    promaf  : boolean;
+    //maggi   : boolean;
+    //promaf  : boolean;
 begin
   box:=UniSel(1,false,DefaultBox);
   if box='' then exit;   { brk }
   fn:=Wildcard;
   useclip:=true;
   if not ReadFilename(getres(821),fn,true,useclip) then exit;  { 'Brettliste einlesen }
-  maggi:=(mapstype(box)=2);    { MagicNet }
-  promaf:=(mapstype(box)=8);
+  //maggi:=(mapstype(box)=mtMAF);    { MagicNet }
+  //promaf:=(mapstype(box)=mtPronet);
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   bfile:= dbReadStr(d,'dateiname');
   dbClose(d);
   ReadBox(nt_Netcall,bfile,boxpar);
   message(getreps(806,UpperCase(box)));   { 'Brettliste fuer %s wird eingelesen ...' }
-  if maggi then
-    if not ReadMafList(fn,bfile) then exit
-    else
-  else if promaf then
+  case mapstype(box) of
+  mtMAF:  //if maggi then
+    if not ReadMafList(fn,bfile) then exit;
+  mtPronet: //  else if promaf then
     ReadPromafList(fn,bfile)
-  else begin
+  else 
     ExpandTabs(fn,FileUpperCase(bfile+extBl));
     closebox;
-    end;
+  end;
   if useclip or ReadJN(getreps(817,fn),false) then    { '%s loeschen' }
     _era(fn);
 end;
@@ -1340,7 +1354,6 @@ var d      : DB;
     changesys  : boolean;
     postmaster : boolean;
     qwk    : boolean;
-    verbose: boolean;
     List: TLister;
 
 label again;
@@ -1578,149 +1591,145 @@ begin
   if not BoxHasMaps(box) then exit;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  if dbFound then
-  begin
+  if dbFound then begin
     fn:= dbReadStr(d,'dateiname');
-    netztyp:=dbNetztyp(d);
-    mapsname:= dbReadStr(d,'nameomaps');
-    maf:=ntMAF(netztyp);
-    promaf:=ntProMAF(netztyp);
-    quick:=ntQuickMaps(netztyp);
-    maus:=ntNude(netztyp);
-    fido:=ntAreamgr(netztyp);
-    gs:=(netztyp=nt_GS);
-    uucp:=(netztyp=nt_UUCP);
-    nntp := netztyp in [nt_NNTP, nt_Client];
-    if uucp then begin
-      ReadBoxpar(netztyp,box);
-      changesys:=(boxpar^.BMtyp=bm_changesys);
-      postmaster:=(boxpar^.BMtyp=bm_postmaster);
-    end;
-    qwk:=(netztyp=nt_QWK);
-    end
-  else begin
-    fn:='';
-    maf:=false; quick:=false; maus:=false; fido:=false; gs:=false;
-    uucp:=false; promaf:=false; qwk:=false; postmaster:=false; 
-    netztyp:=nt_Netcall;
-    end;
-  dbClose(d);
-  if fn='' then
-    rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte loeschen!' }
-  else begin
-    if (art=1) and FileExists(fn +  extBbl) and changesys then
-      lfile:=fn+ extBbl else
-    if (art=1) and NNTP and FileExists(fn+ extRc) then
-      lfile:=fn+extRc
-    else lfile:=fn+extBl;
-    lfile := FileUpperCase(lfile);
-    if not FileExists(lfile) then
-      rfehler(807)    { 'Keine Brettliste fuer diese Box vorhanden!' }
+    if fn='' then
+      rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte loeschen!' }
     else begin
-      if fido or maus or qwk then
+      netztyp:=dbNetztyp(d);
+      mapsname:= dbReadStr(d,'nameomaps');
+      maf:=ntMAF(netztyp);
+      promaf:=ntProMAF(netztyp);
+      quick:=ntQuickMaps(netztyp);
+      maus:=ntNude(netztyp);
+      fido:=ntAreamgr(netztyp);
+      gs:=(netztyp=nt_GS);
+      uucp:=(netztyp=nt_UUCP);
+      nntp := netztyp in [nt_NNTP, nt_Client];
+      if uucp then begin
         ReadBoxpar(netztyp,box);
-      List := TLister.CreateWithOptions(1,iif(_maus and ListScroller,ScreenWidth-1,ScreenWidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
-                 'APGD/'+iifs(_maus and listScroller,'VSC/',''));
-      // preallocate ram for stringlist do speed up loading
-      List.Lines.Capacity := _FileSize(lfile) div 25;
-      List.Lines.LoadFromFile(lfile);
-      case art of
-        0 : showkeys(9);
-        1 : showkeys(-9);
-        2 : showkeys(12);
-        3 : showkeys(9);
-        4 : showkeys(12);
+        changesys:=(boxpar^.BMtyp=bm_changesys);
+        postmaster:=(boxpar^.BMtyp=bm_postmaster);
+      end else begin
+        changesys := False;
+        postmaster := False;
       end;
-    again:
-      List.OnTestMark := BrettMark;
-      mapsnt:=netztyp; mapsart:=art;
-      if NNTP then mapsnt:=nt_Client;
-      if maus then LColType:=2 else
-      if fido then lcoltype:=4 else
-      if maf or quick then LColType:=0 else
-      if promaf then lcoltype:=3
-      else LColType:=1;
-      if NNTP and (art=0) then lcoltype:=5 else
-        LColType:=1;
-      List.OnColor := MapsListcolor;
-      brk := List.Show;
-      if not brk then begin
-        anz:=List.SelCount;
-        if anz=0 then anz:=1;
-        if (mapsnt=nt_ZConnect) and (anz=1) then begin
-          if (art=0) and (firstchar(List.FirstMarked)='-') then begin
+      qwk:=(netztyp=nt_QWK);
+      if (art=1) and FileExists(fn +  extBbl) and changesys then
+        lfile:=fn+ extBbl else
+      if (art=1) and NNTP and FileExists(fn+ extRc) then
+        lfile:=fn+extRc
+      else lfile:=fn+extBl;
+      lfile := FileUpperCase(lfile);
+      if not FileExists(lfile) then
+        rfehler(807)    { 'Keine Brettliste fuer diese Box vorhanden!' }
+      else begin
+        if fido or maus or qwk then
+          ReadBoxpar(netztyp,box);
+        List := TLister.CreateWithOptions(1,iif(_maus and ListScroller,ScreenWidth-1,ScreenWidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
+                   'APGD/'+iifs(_maus and listScroller,'VSC/',''));
+        // preallocate ram for stringlist do speed up loading
+        List.Lines.Capacity := _FileSize(lfile) div 25;
+        List.Lines.LoadFromFile(lfile);
+        case art of
+          0 : showkeys(9);
+          1 : showkeys(-9);
+          2 : showkeys(12);
+          3 : showkeys(9);
+          4 : showkeys(12);
+        end;
+      again:
+        List.OnTestMark := BrettMark;
+        mapsnt:=netztyp; mapsart:=art;
+        if NNTP then mapsnt:=nt_Client;
+        if maus then LColType:=2 else
+        if fido then lcoltype:=4 else
+        if maf or quick then LColType:=0 else
+        if promaf then lcoltype:=3
+        else LColType:=1;
+        if NNTP and (art=0) then lcoltype:=5 else
+          LColType:=1;
+        List.OnColor := MapsListcolor;
+        brk := List.Show;
+        if not brk then begin
+          anz:=List.SelCount;
+          if anz=0 then anz:=1;
+          if (mapsnt=nt_ZConnect) and (anz=1) then begin
+            if (art=0) and (firstchar(List.FirstMarked)='-') then begin
+              rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
+              goto again;
+            end;
+            if (art=1) and (firstchar(List.FirstMarked)='!') then begin
+              rfehler(827);   { 'Dieses Brett kann nicht abbestellt werden.' }
+              goto again;
+            end;
+          end;
+          if NNTP and (anz=1) and (art=0) and (Firstchar(List.FirstMarked)='!') then begin
             rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
             goto again;
-            end;
-          if (art=1) and (firstchar(List.FirstMarked)='!') then begin
-            rfehler(827);   { 'Dieses Brett kann nicht abbestellt werden.' }
+          end;
+          bretter:=getres2(807,iif(anz=1,1,2));
+          case art of
+              0 : ask:=reps(reps(getreps2(807,3,strs(anz)),bretter),box);
+              1 : ask:=reps(reps(getreps2(807,4,strs(anz)),bretter),box);
+              2 : ask:=reps(getreps2(807,5,strs(anz)),bretter);
+            3,4 : ask:=getres2(807,6);   { 'Inhalt der gewaehlten Bretter anfordern' }
+          end;
+          if not ReadJN(ask,true) then
             goto again;
-            end;
-          end;
-        if NNTP and (anz=1) and (art=0) and
-          (Firstchar(List.FirstMarked)='!') then
-        begin
-          rfehler(826);   { 'Dieses Brett kann nicht bestellt werden.' }
-          goto again;
-        end;
-        bretter:=getres2(807,iif(anz=1,1,2));
-        case art of
-            0 : ask:=reps(reps(getreps2(807,3,strs(anz)),bretter),box);
-            1 : ask:=reps(reps(getreps2(807,4,strs(anz)),bretter),box);
-            2 : ask:=reps(getreps2(807,5,strs(anz)),bretter);
-          3,4 : ask:=getres2(807,6);   { 'Inhalt der gewaehlten Bretter anfordern' }
-        end;
-        if not ReadJN(ask,true) then
-          goto again;
-        if art in [0,1,3,4] then
-        begin
-          if NNTP then
-            HandleNNTP
-          else
-          begin
-            fn:=TempS(10000);
-            assign(t,fn);
-            rewrite(t);
-            if quick or (uucp and postmaster) then
-              wr_btext(t,art<>0,uucp);
-            s:=List.FirstMarked;
-            if fido and (art=4) and not Boxpar^.areabetreff then
-              write(t,'%Rescan',#13#10);
-            while s<>#0 do begin
-              writeform;
-              s:=List.NextMarked;
+          if art in [0,1,3,4] then begin
+            if NNTP then
+              HandleNNTP
+            else begin
+              fn:=TempS(10000);
+              assign(t,fn);
+              rewrite(t);
+              if quick or (uucp and postmaster) then
+                wr_btext(t,art<>0,uucp);
+              s:=List.FirstMarked;
+              if fido and (art=4) and not Boxpar^.areabetreff then
+                write(t,'%Rescan',#13#10);
+              while s<>#0 do begin
+                writeform;
+                s:=List.NextMarked;
               end;
-            if fido then write(t,'---',#13#10);
-            close(t);
-            if (not NNTP) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
-              BretterAnlegen;
-            List.Free;
-            if art=3 then
-              verbose:=ReadJN(getres2(810,20),false);  { 'ausfuehrliche Liste' }
-            if not NNTP then
-              case art of
-                0 : sendmaps('ADD',box,fn);
-                1 : sendmaps('DEL',box,fn);
-                3 : sendmaps('INHALT'+iifs(verbose,' VERBOSE',''),box,fn);
-                4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
-              end;
-            if NNTP and (art in [0,1]) then
-              if MakeRC(art=0,box, List) then
-                BretterAnlegen2;
+              if fido then write(t,'---',#13#10);
+              close(t);
+              if (not NNTP) and (art=0) and (uucp or (netztyp=nt_ZCONNECT)) then
+                BretterAnlegen;
+              List.Free;
+              //if art=3 then verbose:=ReadJN(getres2(810,20),false);  { 'ausfuehrliche Liste' }
+              if not NNTP then
+                case art of
+                  0 : sendmaps('ADD',box,fn);
+                  1 : sendmaps('DEL',box,fn);
+                  3 :
+                    begin
+                      s := 'INHALT';
+                      if ReadJN(getres2(810,20),false) then  { 'ausfuehrliche Liste' }
+                        s := s + ' VERBOSE';
+                      sendmaps(s,box,fn);
+                    end;
+                  4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
+                end;
+              if NNTP and (art in [0,1]) then
+                if MakeRC(art=0,box, List) then
+                  BretterAnlegen2;
 
-            erase(t);
-          end;
+              erase(t);
+            end;
+          end else begin
+            BretterAnlegen;
+            List.Free;
+          end
         end else
-        begin
-          BretterAnlegen;
           List.Free;
-        end
-      end
-      else List.Free;
-      freeres;
-      aufbau:=true;
+        freeres;
+        aufbau:=true;
+      end;
     end;
   end;
+  dbClose(d);
 end;
 
 
@@ -1864,6 +1873,7 @@ begin
   uucp:=(nt=nt_UUCP);
   nntp:=(nt=nt_NNTP);
   ppp := (nt=nt_Client);
+  postmaster := False;
   if (nntp) or (uucp) then ReadBoxPar(nt,box);
   if uucp then begin
     gup:=(boxpar^.BMtyp=bm_gup);
@@ -3098,6 +3108,9 @@ end;
 
 {
   $Log$
+  Revision 1.83  2002/12/14 22:41:26  dodi
+  - new maps type
+
   Revision 1.82  2002/12/14 07:31:35  dodi
   - using new types
 
