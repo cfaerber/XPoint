@@ -6,7 +6,6 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -29,7 +28,7 @@ UNIT inout;
 
 INTERFACE
 
-uses   xpglobal, dos, crt,keys,typeform,fileio,mouse, xp0;
+uses   xpglobal, dos,crt,keys,typeform,fileio,mouse;
 
 const  lastkey   : taste = '';
 
@@ -168,7 +167,7 @@ Procedure initscs;                              { Screen-Saver init       }
 
 procedure IoVideoInit;                       { nach Modewechsel aufrufen! }
 Procedure window(l,o,r,u:byte);              { Statt CRT.WINDOW         }
-Procedure CurLen(a,e:byte);               { Cursorbereich festlegen  }
+Procedure CurLen(a,e:Integer);               { Cursorbereich festlegen  }
 Procedure Cursor(t:curtype);                 { Cursorschalter setzen    }
 Procedure GetCur(var a,e,x,y:byte);          { Cursorbereich abfragen   }
 Procedure SaveCursor;                        { Cursor retten            }
@@ -185,12 +184,15 @@ Procedure JN(VAR c:Char; default:Char);      { J/N-Abfrage (Esc = Def.) }
 Procedure JNEsc(VAR c:Char; default:Char; var brk:boolean);
                                              { J/N-Abfrage mit Esc      }
 Procedure clrscr;                            { statt CRT.clrscr         }
+Procedure Wrt(x,y:byte; s:string);           { String ausgeben          }
 Procedure DispHard(x,y:byte; s:string);      { String ohne berÅcksicht. }
                                              { des akt. Windows ausgeb. }
 Function  CopyChr(x,y:byte):char;            { Bildschirm-Inhalt ermitt.}
 procedure ShowStatus(do_rest:boolean);       { Caps/Num/Scroll-Status   }
+procedure SetLED(led:byte; ein:boolean);      { Tastatur-LED's schalten  }
 Function  memadr(x,y:byte):word;             { Bild-Speicheradresse     }
 procedure DosOutput;                         { auf CON: umschalten      }
+procedure CrtOutput;                         { auf DirectVideo umsch.   }
 function  ticker:longint;                    { mem[Seg0040:$6c]         }
 
 {     Haupt-String-Edit-Prozedur
@@ -256,6 +258,8 @@ procedure editms(n:integer; var feld; eoben:boolean; var brk:boolean);
 
 Procedure mausiniti;                 { Maus nach Bildschirmmitte             }
 procedure dummyFN;
+procedure clearscroll;               { ScrollLock auschalten                 }
+procedure boot(cold:boolean);
 procedure mdelay(msec:word);
 
 
@@ -263,7 +267,7 @@ procedure mdelay(msec:word);
 
 IMPLEMENTATION
 
-uses   maus2, winxp;
+uses   xp0,maus2;
 
 const  maxsave     = 50;  { max. fÅr savecursor }
 
@@ -285,6 +289,8 @@ var    ca,ce,ii,jj : byte;
        mx,my       : integer;      { Maus-Koordinaten }
        st1         : byte;
        fnpactive   : array[0..3,1..10] of boolean;
+       nstack      : array[1..40,1..2] of byte;
+       nstackp     : integer;
        istack      : array[1..maxalt] of byte;
        istackp     : integer;
        autolast    : longint;   { Get: Tick des letzten AutoUp/Down }
@@ -293,7 +299,11 @@ var    ca,ce,ii,jj : byte;
 function ticker:longint;
 begin
 {$IFDEF BP }
+  {$IFDEF DPMI}
     ticker:=meml[Seg0040:$6c];
+  {$ELSE}
+    ticker:=meml[$40:$6c];
+  {$ENDIF}
 {$ENDIF}
 end;
 
@@ -317,53 +327,40 @@ begin
 end;
 
 
-Procedure CurLen(a,e:byte); assembler;
-asm
-{$IFDEF BP }
-  mov ah, 1
-  mov ch, a
-  mov cl, e
-  int $10
-{$ENDIF }
+Procedure CurLen(a,e:Integer);
+var regs : registers;
+begin
+  with regs do begin
+    ah:=1;
+    ch:=a;
+    cl:=e;
+    intr($10,regs);
+  end;
 end;
+
 
 Procedure Cursor(t:curtype);
 begin
-{$IFDEF BP }
   case t of
     curnorm : curlen(ca,ce);
     curoff  : curlen(ca+$20,ce);
     cureinf : curlen(max(ca-4,1),ce);
   end;
-{$ELSE }
-  {$IFDEF FPC }
-    case t of
-      curnorm : CursorOn;
-      curoff  : CursorOff;
-      cureinf : CursorBig;
-    end;
-  {$ENDIF }
-{$ENDIF }
   lastcur:=t;
 end;
 
 
 Procedure GetCur(var a,e,x,y:byte);
+
+var regs : registers;
+
 begin
-{$IFDEF BP }
-  asm
-        mov ah, 3
-        mov bh, 0
-        int $10
-        and ch, $7f
-        les di, a
-        mov es:[di], ch
-        and cl, $7f
-        les di, e
-        mov es:[di], cl
-  end;
-{$ENDIF }
-  x :=wherex; y:=wherey;
+  with regs do begin
+    ah:=3; bh:=0;
+    intr($10,regs);
+    a:=ch and $7f; e:=cl and $7f;
+    end;
+  x:=wherex; y:=wherey;
 end;
 
 
@@ -388,11 +385,17 @@ begin
   if cursp<1 then cursp:=maxsave;
 end;
 
+
+{$S-}
 Procedure cursoron;
 begin
   exitproc:=oldexit;
   cursor(curon);
 end;
+{$IFDEF Debug }
+  {$S+}
+{$ENDIF }
+
 
 procedure initscs;
 begin
@@ -477,7 +480,7 @@ var   x   : boolean;
   procedure stput(pos,len,nr:byte);
   begin
     moff;
-{$IFDEF BP }
+{$IFNDEF ver32}
     FastMove(mem[base:memadr(statposx+pos,statposy)],stm[nr],len*2);
 {$ENDIF}
     SaveCursor;
@@ -489,6 +492,7 @@ var   x   : boolean;
   end;
 
   procedure strest(pos,len,nr:byte);
+  var i : byte;
   begin
 {$IFNDEF ver32}
     if do_rest then
@@ -537,6 +541,9 @@ VAR c       : Char;
       r1 : taste;
   begin
     la:=lastattr; normtxt;
+    inc(nstackp);
+    nstack[nstackp,1]:=state;
+    nstack[nstackp,2]:=nr;
     p:=fnproc[state,nr];
     if (@p<>@dummyFN) and
        (not fnpactive[state,nr]) then begin
@@ -551,6 +558,7 @@ VAR c       : Char;
       z:=retonfn;
       if z='' then z:='!!';
       end;
+    dec(nstackp);
     attrtxt(la);
   end;
 
@@ -675,20 +683,35 @@ begin
   until z<>'!!';
 end;
 
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
 
 function BiosWord(off:word):word;
 begin
-{$IFDEF BP }
+{$IFNDEF WIN32}
   BiosWord:=memw[Seg0040:off];
 {$ENDIF}
 end;
 
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
+function BiosByte(off:word):byte;
+begin
+{$IFNDEF WIN32}
+  BiosByte:=mem[Seg0040:off];
+{$ENDIF}
+end;
+
+procedure SetBiosWord(off,value:word);
+begin
+{$IFNDEF WIN32}
+  memw[Seg0040:off]:=value;
+{$ENDIF}
+end;
+
+procedure SetBiosByte(off:word; value:byte);
+begin
+{$IFNDEF WIN32}
+  mem[Seg0040:off]:=value;
+{$ENDIF}
+end;
+
 
 Procedure testbrk(var brk:boolean);
 const k1     = $1a;
@@ -702,9 +725,7 @@ begin
   if BiosWord(k1)<>BiosWord(k2) then begin
     k:=BiosWord(k1);
     while (k<>BiosWord(k2)) and not brk do begin
-{$IFDEF BP }
-      t:=chr(mem[Seg0040:k]);
-{$ENDIF }
+      t:=chr(BiosByte(k));
     { if t=#0 then t:=t+chr(mem[$40:k+1]);  Sondertasten hier nicht nîtig }
       brk:=(t=keyesc);
       inc(k,2); if k>BiosWord(bend) then k:=BiosWord(bstart);
@@ -768,16 +789,16 @@ var offx : word;
     i    : byte;
     back : word;
 begin
+{$IFNDEF WIN32 }
   offx:=memadr(x,y);
   back:=dphback shl 8;
   moff;
   for i:=1 to length(s) do begin
-{$IFDEF BP }
     memw[base:offx]:=byte(s[i])+back;
-{$ENDIF}
     inc(offx,2);
-  end;
+    end;
   mon;
+{$ENDIF}
 end;
 
 
@@ -1434,9 +1455,6 @@ begin
   until (p<1) or (p>n) or brk;
 end;
 
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
 
 procedure dummyproc(var s:string; var ok:boolean);
 begin
@@ -1447,16 +1465,6 @@ procedure dummyed(x,y:byte; var s:string; var p:shortint; var en:endeedtyp);
 begin
   en:=enabbr;
 end;
-
-{$IFDEF BP}
-procedure dummy; interrupt;
-begin
-end;
-{$ENDIF}
-
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
 
 
 procedure editms(n:integer; var feld; eoben:boolean; var brk:boolean);
@@ -1521,6 +1529,12 @@ begin
   chkn:=26690;
 end;
 
+{$IFDEF BP}
+procedure dummy; interrupt;
+begin
+end;
+{$ENDIF}
+
 procedure chalt;
 var x,y : byte;
     regs: registers;
@@ -1567,7 +1581,7 @@ end;
 
 Function CopyChr(x,y:byte):char;
 begin
-{$IFDEF BP }
+{$IFNDEF WIN32}
   CopyChr:=chr(mem[base:(2*x-2) + 2*zpz*(y-1)]);
 {$ENDIF}
 end;
@@ -1642,12 +1656,45 @@ begin
   get(t,curon);
 end;
 
+
+procedure clearscroll;
+const kbstat = $17;
+var regs   : registers;
+begin
+  SetBiosByte(kbstat,BiosByte(kbstat) and $ef);    { ScrollLock ausblenden }
+  regs.ah:=1;               { Read Keystroke Status }
+  intr($16,regs);
+end;
+
+
 procedure DosOutput;                         { auf CON: umschalten      }
 begin
   close(output);
   assign(output,'');
   rewrite(output);
 end;
+
+
+procedure CrtOutput;                         { auf DirectVideo umsch.   }
+begin
+  close(output);
+  AssignCRT(output);
+  rewrite(output);
+end;
+
+
+procedure boot(cold:boolean);
+const BootFlag = $72;
+var   p        : procedure;
+begin
+  if cold then SetBiosWord(BootFlag,0)
+  else SetBiosWord(BootFlag,$1234);
+{$IFNDEF WIN32}
+  @p:=ptr($f000,$fff0);
+  p;
+{$ENDIF}
+end;
+
 
 { msec = 0 -> laufende Timeslice freigeben }
 
@@ -1694,6 +1741,18 @@ begin
     end;
 end;
 
+
+procedure SetLED(led:byte; ein:boolean);
+const keystat = $17;
+begin
+  if ein then
+    SetBiosByte(keystat,BiosByte(keystat) or led)
+  else
+    SetBiosByte(keystat,BiosByte(keystat) and not led);
+  if keypressed then;
+end;
+
+
 procedure IoVideoInit;
 begin
 {$IFNDEF WIN32}
@@ -1702,6 +1761,7 @@ begin
   getzpz;
 {$ENDIF}
 end;
+
 
 begin
   if lo(lastmode)=7 then base:=SegB000 else base:=SegB800;
@@ -1727,7 +1787,7 @@ begin
     for ii:=1 to 10 do
       fnproc[jj,ii]:=dummyFN;
   fillchar(fnpactive,sizeof(fnpactive),false);
-  istackp:=0;
+  nstackp:=0; istackp:=0;
   cursp:=0;
   multi3:=dummyFN;
   memerror:=dummyFN;
@@ -1736,12 +1796,3 @@ begin
   fillchar(zaehlproc,sizeof(zaehlproc),0);
   mwl:=1; mwo:=1; mwr:=80; mwu:=25;
 end.
-{
-  $Log$
-  Revision 1.11  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.9  2000/03/04 22:41:37  mk
-  LocalScreen fuer xpme komplett implementiert
-
-}

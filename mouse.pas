@@ -490,8 +490,9 @@ begin
     ClearMausInt;
   if mausda then mausaus;
 end;
-{$S+}
-
+{$IFDEF Debug }
+  {$S+}
+{$ENDIF }
 
 procedure mausunit_init;
 const minit : boolean = false;
@@ -513,6 +514,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.5.2.3  2000/05/13 12:09:00  mk
+  - Unnoetiger Stackcheck in Non-Debugversion abgestellt
+
   Revision 1.5.2.2  2000/04/16 08:38:23  mk
   - Stackframe im Mausinterrupt wird wieder erzeugt
 
