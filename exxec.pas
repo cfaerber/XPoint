@@ -17,7 +17,7 @@ unit exxec;
 interface
 
 uses
-  xpglobal, dos, typeform, fileio;
+  xpglobal, dos, typeform, fileio, debug;
 
 const
   ExecDeutsch : boolean = true;
@@ -70,11 +70,12 @@ begin
     para:=' /c '+prog+para;
     dpath:=getenv('comspec');
   end;
+  Debug.TempCloseLog(False);
   SwapVectors;
   Exec(dpath, para);
   SwapVectors;
-  Result := DOSExitCode;
-  { Wir nicht sauber belegt, also von Hand machen }
+  Debug.TempCloseLog(True);
+  Result := DOSExitCode; { Wird nicht sauber belegt, also von Hand machen }
   DosError :=0;
 {$ENDIF }
 end;
@@ -82,6 +83,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/08/16 00:38:10  ma
+  - Handling der Logdatei fuer die Unit Debug hinzugefuegt
+
   Revision 1.25  2000/08/14 20:41:22  mk
   - Exec-Routinen besser auf 32 Bit Bedingungen angepasst
 
