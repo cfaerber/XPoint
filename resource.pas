@@ -274,7 +274,7 @@ begin
     else
       with block[bnr] do begin
         if emspages>0 then EmsEinblenden(bnr);
-        if (inr<>clnr) and (bnr<>clbnr) then
+        if (inr<>clnr) or (bnr<>clbnr) then
         begin
           FreeRes;
           size:=rsize(bnr,inr);
@@ -372,6 +372,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.2  2000/08/24 23:21:19  mk
+  - Typo beseitigt
+
   Revision 1.7.2.1  2000/08/24 09:15:29  mk
   MO:- Bug in Resourcencaching behoben
 
