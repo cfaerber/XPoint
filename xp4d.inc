@@ -1,11 +1,14 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
+{ $Id }
+
 
 { XP4.PAS - Anzeigeroutinen }
 
@@ -20,25 +23,28 @@ begin
     2 : for i:=iif(user,1,2) to length(s) do
           s[i]:=LoCase(s[i]);
   end;
-  if not user and (flags and 16<>0) and newsgroupdisp and (s[1]='A') and
-     (cpos('/',s)>0)
+  if not user and (cpos('/',s)>0) and newsgroupdisp
+     and (((s[1]='A') and (flags and 16<>0)) or newsgroupdispall)  
   then begin
-    if s[2]='/' then delete(s,2,1);
-    for i:=3 to length(s) do
-      if s[i]='/' then s[i]:='.';
+    if newsgroupdispall and (s[2]='/') then delete(s,2,1);
+    if s[1]='1' then begin
+      i:=cpos('/',s);
+      if i>2 then s[i]:='@';
+    end else
+      for i:=3 to length(s) do
+        if s[i]='/' then s[i]:='.'; 
     end;
 end;
 
 procedure write_disp_line(y,p:shortint; show:boolean);
-const hf : array[0..4] of char = ' +-A˘';
-      uv : array[0..13] of char = ' !*'#19'z23456789#';
+const uv : array[0..13] of char = ' !*'#19'z23456789#';
       ge : array[0..1] of char = '> ';
       wv : array[0..5] of char = ' cwwss';
 
 var
-    taus    : array[1..MsgFelderMax+UsrFelderMax] of string[81];
-    tausc   : 0..MsgFelderMax+UsrFelderMax;
-    kuerzen : boolean;
+    hf      : array[0..4] of char;
+    taus    : array[1..FelderMax] of string[75];
+    tausc   : 0..FelderMax;
     s,s0    : string[81];
     dat,edat: longint;
     sdat    : string[15];
@@ -70,6 +76,7 @@ var
     dflags  : string[20];
     fidoqwk : boolean;
     uv_anz  : integer;
+    helpbyte,h1,h2,h3: byte;  
 
     hflags,gelesen,unvers : byte;
     ulen,blen             : byte;
@@ -90,6 +97,18 @@ var
   function hz(i:integer):string;
   begin
     hz:=iifs(i=0,'   Ï',strsn(i,4));
+  end;
+
+  procedure msgtausch(c:char;s:string);
+  begin
+    if cpos(c,MsgFeldTausch)=0 then exit;
+    taus[cpos(c,MsgFeldTausch)] := s;
+  end;
+
+  procedure usrtausch(c:char;s:string);
+  begin
+    if cpos(c,UsrFeldTausch)=0 then exit;
+    taus[cpos(c,UsrFeldTausch)] := s;
   end;
 
 begin  { __ Suchmarke }
@@ -119,11 +138,11 @@ begin  { __ Suchmarke }
               markflag[y]:=iif(UBmarked(dbRecno(bbase)),1,0);
               markc:=iifc(markflag[y]<>0,suchch,' ');
               brettform(s,flags,false);
-              if not UserSlash and (s[1]<'A') then delete(s,2,1);
+              if (not NewsgroupDispall) and (not UserSlash) and (s[1]<'A') then delete(s,2,1);
               if not dispext then begin
                 case readmode of     { s. auch XP4.BRETTOK() }
                   0 : c:=markc+iifs(showungelesen and (flags and 2<>0),#$af' ','  ');
-                  1 : c:=markc+iifs(flags and 2<>0,#16' ','  ');
+                  1 : c:=markc+iifs(flags and 2<>0,#$af' ','  ');
                 else
                   if showungelesen and (flags and 2<>0) 
                     then c:=markc+iifs(not smdl(dat,readdate),#$af' ',#$1a' ')
@@ -153,18 +172,18 @@ begin  { __ Suchmarke }
     3,4 : begin { USERLISTE }
 
            { LÑngen:
-             FLAGS   4
-             ADRBUCH 2
-             PBOX    9
-             HZEIT   4
+             FLAGS     4
+             ADRBUCH   2
+             PBOX      9
+             HZEIT     4
+             ADRESSE   44,32,24
+             KOMMENTAR 30,22
             }
 
             for tausc := 1 to UsrFelderMax do taus[tausc]:='';
             dbReadN(ubase,ub_username,s);
             dbReadN(ubase,ub_kommentar,komm);
                                                      { Trennzeilenerkennung }
-
-           { if left(s,3)='$/T' then s:=#0+s; }       { Altes Trennzeichenformat unterstuetzen }
 
             if left(s,4)=#0+'$/T' then begin
 
@@ -193,72 +212,71 @@ begin  { __ Suchmarke }
             vert:=(uflags and 4<>0);
             dbReadN(ubase,ub_haltezeit,hzeit);
 
-            { (F)lags }
-            if vert then begin
-              { Verteiler }
+
+            if vert then    { Verteiler }
+            begin                     
               s := vert_name(s);
-              taus[cpos('F',UsrFeldTausch)] := 'V   '; { Laenge 4 }
-            end else
-              taus[cpos('F',UsrFeldTausch)] := abc+pw+dadr; { Laenge 4 }
+              abc:='V ';
+              end;
+            usrtausch('F',abc+pw+dadr);      { (F)lags }
 
             markflag[y]:=iif(UBmarked(dbRecno(ubase)),1,0);
             brettform(s,0,true);
 
-            kuerzen := false;
-            if dispext then begin
-            { Anzeige/Spezial }
-              kuerzen := true; { wir brauchen mehr Platz, also Felder kuerzen }
+            if dispext then begin     { Anzeige/Spezial }
               dbReadN(ubase,ub_pollbox,pbox);
               brettform(s,0,true);
-
-              { (H)altezeit }
-              taus[cpos('H',UsrFeldTausch)] := '  '+hz(hzeit);
-
-              { (B)OX }
-              taus[cpos('B',UsrFeldTausch)] := forms(pbox,9);
-
-              { Adressbuch-(G)ruppe }
-              taus[cpos('G',UsrFeldTausch)] := strsn(ab,2);
+              usrtausch('H','  '+hz(hzeit)); { (H)altezeit }
+              usrtausch('B',forms(pbox,9));  { (B)OX }
+              usrtausch('G',strsn(ab,2));    { Adressbuch-(G)ruppe }
             end;
 
-            { Falls (S)pezial EIN, dann mu· der folgende Resttext um
-              20 Zeichen gekÅrzt werden: }
 
-            { Verteilername bzw. (A)dresse }
-            taus[cpos('A',UsrFeldTausch)]
-              := Forms(s,
-                   { Adresse vor Kommentar: beide kÅrzen, sonst nur Adresse }
-                   iif(cpos('K',UsrFeldTausch)>cpos('A',UsrFeldTausch),
-                     44-iif(kuerzen,12,0),
-                     44-iif(kuerzen,20,0)
-                   )
-                 );
+            Helpbyte:=cpos('A',Usrfeldtausch);
+            h3:=cpos('K',Usrfeldtausch);
+            if (komm='') or (h3=0) then h1:=75 else h1:=44;
+            h2:=30;
+            if dispext and (h3<>0) then  { Falls (S)pezial EIN, dann Resttext kÅrzen }
+              if h3 > helpbyte then   
+                dec(h1,12)            { Adresse nach Kommentar: nur Adresse kÅrzen }
+              else begin
+                h1:=44-20;
+                h2:=30-8;             { Kommentar nur kÅrzen, wenn er hinter der Adresse steht }
+                end;            
+            usrtausch('A',forms(s,h1));              { Verteilername bzw. (A)dresse }
+            usrtausch('K',forms(komm,h2));           { (K)ommentar }
 
-            { (K)ommentar }
-            taus[cpos('K',UsrFeldTausch)]
-              := Forms(komm,
-                   { Kommentar nur kÅrzen, wenn er hinter der Adresse steht }
-                   iif(cpos('K',UsrFeldTausch)<cpos('A',UsrFeldTausch),
-                     30,
-                     30-iif(kuerzen,8,0)
-                   )
-                 );
 
-            { Felder zusammenkopieren }
-            tausc:=0; dispbuf[y]^:='';
+            tausc:=0; dispbuf[y]^:='';                     { Felder zusammenkopieren }
             while (tausc<UsrFelderMax) do begin
-              inc(tausc);
-              if (taus[tausc]='') then continue; { Leere Felder Åbergehen }
-              if (dispbuf[y]^<>'') then dispbuf[y]^:=dispbuf[y]^+' ';
-              dispbuf[y]^:=dispbuf[y]^+taus[tausc];
-            end;
-            { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen }
-            dispbuf[y]^:=forms(dispbuf[y]^,80);
+              inc(tausc); 
+              if (taus[tausc]='') then continue;           { Leere Felder Åbergehen }
+              abc:=' ';
+              if (dispbuf[y]^='') then abc:='';
+              dispbuf[y]^:=dispbuf[y]^+abc+taus[tausc];
+              end;
+            dispbuf[y]^:=forms(dispbuf[y]^,80);            { Sicherheitshalber nochmal kÅrzen }
 
+              asm                  { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
+                  mov al,uflags    { 000=normal   -> 0     100=niedrigste -> 5       } 
+                  shr al,5         { 001=hoechste -> 2     101=    ?      -> 6       }
+                  and al,7         { 010=hoch     -> 3     110=    ?      -> 7       } 
+                  je @1            { 011=niedrig  -> 4     111=    ?      -> 8       }     
+                  inc al 
+              @1: mov helpbyte,al
+              end;
+              userflag[y]:=helpbyte;
           end;
         end;
+
+
   10..12: begin { NACHRICHTENLISTE }
+            if auswahlcursor and blind then hf := ' +-A.'
+            else hf := ' +-A˘';
+
             for tausc := 1 to MsgFelderMax do taus[tausc]:='';
+
+            dbReadN(mbase,mb_brett,_brett);
             dbReadN(mbase,mb_absender,s0);
             dbReadN(mbase,mb_netztyp,mnt);
             fileatt:=(mnt and $200<>0);
@@ -266,10 +284,27 @@ begin  { __ Suchmarke }
             uv_anz:=(mnt shr 16) and $ff;
             pp:=cpos('@',s0);
             fidoqwk:=(netztyp=nt_Fido) or (netztyp=nt_QWK);
+
+            {-------}
+            h2:=0; h3:=0;
+            if cpos('A',MsgFeldTausch)=0 then inc(h2,19) else inc(h3);
+            if cpos('E',MsgFeldTausch)=0 then inc(h2,19) else inc(h3);
+            if cpos('B',MsgFeldTausch)=0 then inc(h2,21) else inc(h3);
+            if cpos('D',MsgFeldTausch)=0 then inc(h2,6);
+            if cpos('G',MsgFeldTausch)=0 then inc(h2,6);
+            if cpos('F',MsgFeldTausch)=0 then inc(h2,7);
+            if not (fidoqwk and (dispmode=10) and dispfto and (_brett[1]='A'){})
+            then begin
+              if cpos('E',MsgFeldTausch)=0 then dec(h2,19)
+              else dec(h3);
+              end;
+            if h3>0 then h3:=h2 div h3;
+            {-------}
+ 
             if ((netztyp=nt_Maus) or fidoqwk) and (pp>0) then
               s:=left(s0,pp-1)+' @ '+mid(s0,pp+1)
             else
-              if showrealos and (dbReadStrN(mbase,mb_name)<>'') and
+              if showrealos and (dbReadStr(mbase,'name')<>'') and
                  ((dispmode<>11) or not markunversandt) then
                 dbReadN(mbase,mb_name,s)
               else begin
@@ -289,25 +324,33 @@ begin  { __ Suchmarke }
                   end;
                 end;
               end;
+
             dbReadN(mbase,mb_betreff,s1);
-            if dispmode<>12 then begin
-              if (netztyp=nt_Maus) and (mnt and $100<>0) then
+
+            if dispmode<>12 then 
+            begin
+(*           if (netztyp=nt_Maus) and (mnt and $100<>0) then
                 s1:=left('-'+s1,40) else
-              if ntKomkette(netztyp) and (mnt and $100<>0) and
+             if ntKomkette(netztyp) and (mnt and $100<>0) and
                  (lstr(left(s1,3))<>'re:') and (left(s1,3)<>'Re^') then
                 s1:=left('-'+s1,40);
-            end;
+*)
+             if ((netztyp=nt_Maus) and (mnt and $100<>0)) or
+                (ntKomkette(netztyp) and (mnt and $100<>0) and
+                 (lstr(left(s1,3))<>'re:') and (left(s1,3)<>'Re^'))
+               then s1:='-'+s1
+             end;
+
             dbReadN(mbase,mb_OrigDatum,dat);
             if dispmode=10 then
               dbReadN(mbase,mb_EmpfDatum,edat)
             else
               edat:=ixdat('6912310000');
-            { Datum anzeigen }
-            if showmsgdatum then begin
+            
+            if showmsgdatum then              { Datum anzeigen }
+            begin
               s2:=fdat(longdat(dat));
               getdate(j,m,t,d);
-
-              { MK 01/00, Y2K-Bug beseitigt }
               tempd := ival(copy(s2,7,2));
               if tempd < 70 then inc(tempd, 2000) else inc(tempd, 1900);
               if abs(tempd*12+ival(copy(s2,4,2))-1-(j*12+m-1)) > 11 then
@@ -315,11 +358,12 @@ begin  { __ Suchmarke }
               else
                 sdat:=left(s2,5);
               ulen:=25; blen:=36;
-            { kein Datum anzeigen }
-            end else begin
-              sdat:=''; ulen:=27; blen:=40;
-            end;
-            if (dispmode=11) and MarkUnversandt then begin
+              end
+            else begin
+              sdat:=''; ulen:=27; blen:=40;  { kein Datum }
+              end;
+            if (dispmode=11) and MarkUnversandt then 
+            begin
               inc(ulen,5); dec(blen,5);
               readheader(hd,hds,true);
               if hd.wab<>'' then s:=hd.wab;
@@ -332,13 +376,14 @@ begin  { __ Suchmarke }
                 s:=forms(mid(hd.empfaenger,length(TO_ID)+1),ulen-length(s)-1)+' '+s
               else
                 s:=forms(hd.empfaenger,ulen-length(s)-1)+' '+s;
-            end;
+              end;
             dbReadN(mbase,mb_brett,_brett);
             pp:=iif(netztyp=nt_Maus,35,iif(fidoqwk,35,0));
-            if (pp<>0) and (_brett[1]<>'$') and (blen>pp) then begin
+            if (pp<>0) and (_brett[1]<>'$') and (blen>pp) then 
+            begin
               inc(ulen,blen-pp);
               blen:=pp;
-            end;
+              end;
             dbReadN(mbase,mb_Groesse,size);
             dbReadN(mbase,mb_unversandt,unvers);
             dbReadN(mbase,mb_Typ,typ);
@@ -346,16 +391,9 @@ begin  { __ Suchmarke }
             if typ='T' then typ:=iifc(fileatt,'F',iifc(flags and 4<>0,'M',' '));
             wvl:=(unvers and 12) div 4;
             
-            if (wvl=0) and (mnt and $4000<>0) then begin 
-              wvl:=5;
-              { Diese Info gibt's bei unversandten Nachrichten gar nicht,
-                daher auskommentiert: }
-              
-              { if (flags and 1<>0) then wvl:=5; }  { 'S' - 'good' signierte Nachricht }
-              { if (flags and 2<>0) then wvl:=4; }  { 's' - 'bad' signierte Nachricht }
-            
-            end;
-            
+            if (wvl=0) and (mnt and $4000<>0) then 
+              wvl:=5; 
+
             dbReadN(mbase,mb_Halteflags,hflags);
             dbReadN(mbase,mb_gelesen,gelesen);
             if unvers and 32<>0 then
@@ -374,91 +412,68 @@ begin  { __ Suchmarke }
             dflags:=iifc(markflag[y]<>0,suchch,' ')+ge[gelesen]+hf[hflags]+
                     uv[unvers]+wv[wvl]+typ;
 
-            if fidoqwk and (dispmode=10) and
-               dispfto and (_brett[1]='A') then begin
+            if fidoqwk and (dispmode=10) and dispfto and (_brett[1]='A') then 
+            begin
               if cpos('@',s)>0 then s[0]:=chr(cpos('@',s)-1);
               dbReadN(mbase,mb_name,s0);
-
-              { (F)lags }
-              taus[cpos('F',MsgFeldTausch)] := dflags;
-
-              { (G)roesse }
-              taus[cpos('G',MsgFeldTausch)] := siz;
-
-              { (D)atum }
-              taus[cpos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
-
-              { (A)bsender }
-              taus[cpos('A',MsgFeldTausch)] := forms(s,19);
-
-              { (E)mpfaenger }
-              taus[cpos('E',MsgFeldTausch)] := forms(s0,19);
-
-              { (B)etreff }
-              taus[cpos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21,27));
-
+              ulen:=19; {Absender-laenge}
+              msgtausch('E',forms(s0,19+h3));                      { (E)mpfaenger }
+              msgtausch('B',forms(s1,iif(showmsgdatum,21,27)+h3+iif(Showrealos,5,0))); { (B)etreff }
               userflag[y]:=IIf((HighlightName=ustr(s0)) or (mnt and $1000<>0),1,0);
+              end 
+            else begin                            { Nicht-Fido bzw. Dispmode 11,12 }
 
-            end else begin
-
-              { Kommentarbaum }
-              if dispmode=12 then begin
-                s:=BaumBlatt(baumdispofs,ulen+blen+1,bezpos,s,s1);
+               if dispmode=12 then                 { Kommentarbaum }              
+              begin
+                s:=' '+BaumBlatt(baumdispofs, ulen+blen,bezpos,s,s1);
                 if (sdat<>'') then sdat:=' '+sdat;
                 dispbuf[y]^:=forms(dflags+siz+sdat+' '+s,80);
-              end else begin
+                end 
+              else msgtausch('B',forms(s1,blen-1+h3+iif(Showrealos,5,0)));         { (B)etreff }
 
-              { (F)lags }
-              taus[cpos('F',MsgFeldTausch)] := dflags;
-
-              { (G)roesse }
-              taus[cpos('G',MsgFeldTausch)] := siz;
-
-              { (D)atum }
-              taus[cpos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
-
-              { (A)bsender }
-              taus[cpos('A',MsgFeldTausch)] := forms(s,ulen);
-
-              { (B)etreff }
-              taus[cpos('B',MsgFeldTausch)] := forms(s1,blen-1);
-
+              asm                  { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
+                  mov al,flags     { 000=normal   -> 0     100=niedrigste -> 5       } 
+                  shr al,3         { 001=hoechste -> 2     101=    ?      -> 6       }
+                  and al,7         { 010=hoch     -> 3     110=    ?      -> 7       } 
+                  je @1            { 011=niedrig  -> 4     111=    ?      -> 8       }     
+                  inc al 
+              @1: mov helpbyte,al
               end;
+              userflag[y]:=helpbyte;
 
-              userflag[y]:=0;                              { Man muss Prioritaeten setzen... }
-              if flags and 56=32 then userflag[y]:=5        { niedrigste }
-              else if flags and 56=24 then userflag[y]:=4   { niedrige   }
-              else if flags and 56=16 then userflag[y]:=3   { hohe       }
-              else if flags and 56=8  then userflag[y]:=2;  { hoechste   }
 
-              if fidoqwk and (_brett[1]='A') and
-                 (HighlightName=ustr(dbReadStrN(mbase,mb_name)))
-                 then userflag[y]:=1              
-              else
-                if (cpos('@',dispspec)>0) and
-                   (ustr(left(s0,40))=ustr(copy(dispspec,2,min(40,length(s0)))))
-                   then Userflag[y]:=1
-                else
-                  if mnt and $1000<>0 then userflag[y]:=1;                         
-            end;
+              if (fidoqwk and (_brett[1]='A') and
+                  (HighlightName=ustr(dbReadStr(mbase,'name'))))
+                OR 
+                 ((cpos('@',dispspec)>0) and
+                   (ustr(left(s0,40))=ustr(copy(dispspec,2,min(40,length(s0))))))
+                OR 
+                 (mnt and $1000<>0)
+                  then userflag[y]:=1              
 
-            { Kommentarbaum-Ausgabe schon fertig, fuer andere dispmodes
-              muss sie noch zusammenkopiert werden: }
-            if (dispmode<>12) then begin
-              { Felder zusammenkopieren }
-              tausc:=0; dispbuf[y]^:='';
+            end;     {-*- Ab hier wieder alle Netze/Dispmodes -*-}
+
+            msgtausch('F',dflags);                     { (F)lags }
+            msgtausch('G',siz);                        { (G)roesse }
+            msgtausch('D',iifs(showmsgdatum,sdat,'')); { (D)atum }
+            msgtausch('A',forms(s,ulen+h3-iif(showrealos,5,0)));           { (A)bsender }
+
+
+            if (dispmode<>12) then begin            { Kommentarbaum-Ausgabe ist fertig }
+              tausc:=0; dispbuf[y]^:='';            { Ansonsten Felder zusammenkopieren }
               while (tausc<MsgFelderMax) do begin
                 inc(tausc);
                 if (taus[tausc]='') then continue; { Leere Felder Åbergehen }
                 if (dispbuf[y]^<>'') then dispbuf[y]^:=dispbuf[y]^+' ';
                 dispbuf[y]^:=dispbuf[y]^+taus[tausc];
-              end;
-              { Sicherheitshalber nochmal auf 80 Zeichen kÅrzen }
-              dispbuf[y]^:=forms(dispbuf[y]^,80);
+              end;              
+              dispbuf[y]^:=forms(dispbuf[y]^,80);  { Sicherheitshalber nochmal kÅrzen }
             end;
           end;
+
      20 : dispbuf[y]^:=AutoShow;
   end;
+
   if show then begin
     lcol(y,p);
     moff;
@@ -567,4 +582,6 @@ begin
     end;
 end;
 
-
+{
+  $Log
+}
