@@ -817,7 +817,7 @@ begin
     for i:=1 to addrefs do wrs('BEZ: '  +addref[i]);
     if ersetzt<>''    then wrs('ERSETZT: '+ersetzt);
     if error<>''      then wrs('ERR: '   +error);
-    if programm<>''   then wrs('Mailer: '+programm);
+    if programm<>''   then wrs('MAILER: '+programm);
     if xnoarchive     then wrs('U-X-NO-ARCHIVE: yes');
     if priority<>0    then wrs('U-X-PRIORITY: '+strs(priority));
     if prio<>0        then wrs('Prio: '  +strs(prio));
@@ -3472,6 +3472,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.36  2001/04/09 16:12:16  mk
+  - MAILER: gross geschrieben
+
   Revision 1.35.2.35  2001/03/15 07:48:52  mw
 
 
