@@ -227,8 +227,8 @@ begin
   CountChar:= j;
 end;
 
-function CPos(c: char; const s: string): integer;
-{$IFDEF NOASM }
+function CPos(c: char; const s: string): integer; 
+// {$IFDEF NOASM }
 var
   i: Integer;
 begin
@@ -240,7 +240,7 @@ begin
     end;
   CPos := 0;
 end;
-{$ELSE }
+(* {$ELSE } // does not work with FPC
 asm
   TEST  EDX, EDX       {Str = NIL?}
   JZ    @@NotFound     {Yes - Jump}
@@ -263,8 +263,12 @@ asm
   DEC   ECX            {Adjust Counter}
   MOV   EAX, EDX       {EAX = Length(Str)}
   SUB   EAX, ECX       {Set Result}
-end; {CharPos}
-{$ENDIF }
+{$ifdef FPC }
+end ['ECX', 'EDX', 'EDI'];
+{$else}
+end;
+{$endif}
+{$ENDIF } *)
 
 procedure SetParity(var b:byte; even:boolean); {&uses edi} assembler;
 asm
@@ -1481,6 +1485,9 @@ end;
 
 {
   $Log$
+  Revision 1.113  2002/05/13 07:59:05  mk
+  - asm version of cpos has problems with FPC, removed temporary
+
   Revision 1.112  2002/05/05 22:26:33  mk
   - added ASM version of cPos
 
