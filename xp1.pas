@@ -937,13 +937,10 @@ end;
 procedure XPFont;
 begin
   if not ParLCD then
-  begin
     if ParFontfile[1]='*' then
       InternalFont
     else
       LoadFontfile(ParFontfile);
-    ScreenLines := GetScreenLines;
-  end;
 end;
 
 procedure SetXPborder;
@@ -2034,6 +2031,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.7  2000/11/28 09:59:54  mk
+  - letzen Fix wieder entfernt, da unnoetig
+
   Revision 1.48.2.6  2000/11/27 21:42:59  mk
   RB:- Screenlines nach Userfont setzen
 
