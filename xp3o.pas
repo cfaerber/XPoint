@@ -831,7 +831,7 @@ begin
       else begin
         dbReadN(mbase,mb_halteflags,isflags);
         if (art=2) and (isflags=1) and (lhalt=0) then
-          lhalt:=iif(ReadJNesc('Auch gehaltene Nachrichten l”schen',false,brk),1,2);
+          lhalt:=iif(ReadJNesc(GetRes(344),false,brk),1,2);
         wvl:=(dbReadInt(mbase,'unversandt') and 8)<>0;
         if (art=1) or ((art=2) and not wvl and ((isflags<>1) or (lhalt<>2))) or
            (art=4) then
@@ -1376,6 +1376,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/06/03 09:19:50  mk
+  - Hart kodierten String in Resource 344 uebernommen
+
   Revision 1.18  2000/06/01 16:03:05  mk
   - Verschiedene Aufraeumarbeiten
 
