@@ -1204,7 +1204,7 @@ begin
     exit;
     end;
 
-  listbox(54,min(anz,screenlines-6),getres2(2614,1));
+  List := listbox(54,min(anz,screenlines-6),getres2(2614,1));
   assign(t,TimingDat);                             { 'Letzte Anrufe' }
   settextbuf(t,buf);
   while not dbEOF(d) do begin
@@ -1249,6 +1249,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/12/25 20:35:17  mk
+  - fixed a bug introduced with new lister
+
   Revision 1.30  2000/12/25 14:02:45  mk
   - converted Lister to class TLister
 

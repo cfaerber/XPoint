@@ -1,7 +1,7 @@
-
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -1367,7 +1367,7 @@ begin
     brk:=false;
     end
   else begin
-    listbox(iif(maus,45,57),lines,getres2(810,0)+mapsname+   { 'Nachricht an ' }
+    List := listbox(iif(maus,45,57),lines,getres2(810,0)+mapsname+   { 'Nachricht an ' }
             +iifs((mapsname='MAPS') and (random<0.07),'-o-MAT','')+' @ '+box);
     if fido then begin
       app('List',getres2(810,40));      { 'Liste der verfgbaren Bretter' }
@@ -1615,6 +1615,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/12/25 20:35:16  mk
+  - fixed a bug introduced with new lister
+
   Revision 1.31  2000/12/25 14:02:44  mk
   - converted Lister to class TLister
 
