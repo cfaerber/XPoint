@@ -365,7 +365,7 @@ var
     x,y  : byte;
 {$IFDEF Unix}
  {$ifndef BSD}
-    info : TSysInfo; 
+    info : TSysInfo;
  {$endif}
 {$endif}
 begin
@@ -941,6 +941,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/11/14 11:14:33  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.40  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

@@ -45,7 +45,7 @@ begin
   runerror:=false;
 {$IFDEF Unix}
    readln;         { better debuggin with readable Messages... }
-{$ENDIF}   
+{$ENDIF}
   halt(1);
 end;
 
@@ -134,7 +134,7 @@ begin
       runerror:=false;
 {$IFDEF Unix}
       readln;         { better debuggin with readable Messages... }
-{$ENDIF}   
+{$ENDIF}
       halt(1);
       end;
     end;
@@ -149,7 +149,7 @@ initialization
     if _deutsch then stop('ZurÅck zu '+xp_xp+' mit EXIT.')
     else stop('Type EXIT to return to '+xp_xp+'.');
 {$endif}
-  ShellPath:=dospath(0);
+  ShellPath:=GetCurrentDir;
   if (Shellpath+DirSepa<>progpath) then
     SetCurrentDir(progpath);
 
@@ -173,6 +173,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.34  2000/11/14 11:14:35  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.33  2000/11/09 10:57:57  hd
   - Rewrite -> XPRewrite
 

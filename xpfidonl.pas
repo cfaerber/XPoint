@@ -245,15 +245,20 @@ var
       dt      : datetime;
       dummy   : rtlword;
       ActTime : longint;
+      fh: Integer;
   begin
     getdate(dt.year,dt.month,dt.day,dummy);
     gettime(dt.hour,dt.min,dt.sec,dummy);
     PackTime(dt,ActTime);
     if filetime(NodelistCfg)>filetime(UserIndexf) then begin
       if filetime(NodelistCfg)>ActTime then
-        setfiletime(NodelistCfg,ActTime);
-      indexflag:=true;
+      begin
+        fh := FileOpen(NodeListCfg, fmOpenReadWrite {$IFDEF WIn32 } OR fmShareExclusive {$ENDIF });
+        FileSetDate(fh, DateTimeToFileDate(now));
+        FileClose(fh);
       end;
+      indexflag:=true;
+    end;
   end;
 
 begin
@@ -474,7 +479,7 @@ begin
           else
             brk:=false;
           if not brk then
-            if (getfiledir(fn)=OwnPath+FidoDir) or
+            if (ExtractFilePath(fn)=OwnPath+FidoDir) or
                filecopy(fn,FidoDir+Extractfilename(fn)) then
             begin
               New(PNLItem);
@@ -651,7 +656,7 @@ begin
   DoDiffs:=1;
   reindex:=false;
   logopen:=false;
-  diffdir:=getfiledir(files);
+  diffdir:=ExtractFilePath(files);
   diffnames:=extractfilename(files);
 
   for i:=0 to NodeList.Count - 1 do
@@ -738,6 +743,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/11/14 11:14:34  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.20  2000/10/17 12:53:19  mk
   - einige Funktionen auf Sysutils umgestellt
 

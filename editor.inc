@@ -1694,7 +1694,7 @@ begin
         if SaveBlock(block[1].pos,block[2].pos,EdTempFile,rrand,false,true,false) then
         begin
           FileToClip(EdTempFile);
-          { if exist(EdTempFile) then era(EdTempFile); }
+          { if exist(EdTempFile) then DeleteFile(EdTempFile); }
           if cut then begin
             ap:=CutBlock; Freeblock(ap); end;
           end;
@@ -2412,6 +2412,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2000/11/14 11:14:31  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.34  2000/11/05 15:08:31  mk
   RB:- Aenderungen bezueglich - und /
 

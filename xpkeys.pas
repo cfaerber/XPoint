@@ -185,12 +185,12 @@ begin
         fn2:=TempFile(TempPath);
         shell(s+'>'+fn2,speicher,0);
         if listfile(fn2,'',true,false,0)<>0 then;
-        if exist(fn2) then era(fn2);
+        if exist(fn2) then DeleteFile(fn2);
         end
       else
         shell(s,speicher,iif(vollbild,1,3));
       if (p0>0) and not bname and (exist(fn)) then
-        era(fn);
+        DeleteFile(fn);
       end;
     if auto then
       if (s='') and not exist(AutoxDir+'\*.*') then
@@ -239,6 +239,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/11/14 11:14:35  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.12  2000/10/17 10:05:59  mk
   - Left->LeftStr, Right->RightStr
 

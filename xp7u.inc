@@ -281,7 +281,7 @@ var sr      : searchrec;
       uncompy:=2;
       end;
     if not exist(XFerDir+fn) then
-      if _rename(XFerDir+fn+'.Z',XFerDir+fn) then
+      if RenameFile(XFerDir+fn+'.Z',XFerDir+fn) then
         MoveToBad(XFerDir+fn);
   end;
 
@@ -310,13 +310,13 @@ begin
         close(f1^); close(f2^);
         uncompress(sr.name,pos('funbatch',s)>0,
                    (pos('gunbatch',s)>0) or (pos('zunbatch',s)>0),
-		   pos('bunbatch',s)>0);
+                   pos('bunbatch',s)>0);
         end
       else begin
         close(f1^);
         if (LeftStr(s,2)=#$1f#$9d) or (LeftStr(s,2)=#$1f#$9f) or
-           (LeftStr(s,2)=#$1f#$8b) or (LeftStr(s,2)=#$42#$5a) then 
-	   begin     { compressed/frozen SMTP o.„. }
+           (LeftStr(s,2)=#$1f#$8b) or (LeftStr(s,2)=#$42#$5a) then
+           begin     { compressed/frozen SMTP o.„. }
           rename(f1^,XFerDir+sr.name+'.Z');
           uncompress(sr.name,s[2]=#$9f,s[2]=#$8b,s[2]=#$5a);
           end;
@@ -476,6 +476,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/11/14 11:14:34  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.22  2000/11/02 21:27:04  fe
   bzip2 support added.
 

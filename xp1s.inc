@@ -126,7 +126,7 @@ begin
     fehler(ioerror(-ErrorLevel,getres(115)));   { Fehler bei Programm-Aufruf }
 
   if trackpath then getdir(0,shellpath);
-  if dospath(0)<>OwnPath then SetCurrentDir(OwnPath);
+  SetCurrentDir(OwnPath);
   TempOpen;
 end;
 
@@ -409,6 +409,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.42  2000/11/14 11:14:32  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.41  2000/10/17 10:05:47  mk
   - Left->LeftStr, Right->RightStr
 

@@ -688,8 +688,9 @@ begin
             end
           else
             path:=dir+f^[p+add]+name+ext
-        else begin                        { Laufwerkswechsel }
-          path:=dospath(ord(t[1]));
+        else
+        begin                        { Laufwerkswechsel }
+          GetDir(Ord(t[1]), Path);
           if RightStr(path,1)<>DirSepa then path:=path+DirSepa;
           path:=path+name+ext;
           end;
@@ -1108,6 +1109,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/11/14 11:14:31  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.25  2000/10/19 20:52:21  mk
   - removed Unit dosx.pas
 

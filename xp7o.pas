@@ -671,12 +671,12 @@ begin
         writeln(sr.name,'   - ',getres(724));
           { 'nicht gengend Plattenplatz - Datei wird in BAD abgelegt' }
         mon;
-        MoveToBad(GetFileDir(fmask)+sr.name);
+        MoveToBad(ExtractFilePath(fmask)+sr.name);
         end
       else begin
         writeln(sr.name,'   - ',strsrnp(sr.size,9,0),getres(13));  { ' Bytes' }
         mon;
-        assign(f2,GetFileDir(fmask)+sr.name);
+        assign(f2,ExtractFilePath(fmask)+sr.name);
         if sr.size>70 then begin     { kleinere ZCONNECT-Puffer sind }
           setfattr(f2,0);            { auf jeden Fall fehlerhaft     }
           reset(f2,1);
@@ -772,6 +772,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/11/14 11:14:34  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.35  2000/11/11 10:03:07  mk
   - Logfile Readonly oeffnen
 

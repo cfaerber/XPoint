@@ -522,22 +522,31 @@ label fn_ende,fn_ende0;
       p      : byte;
 
     function match(wfn,fn:string):boolean;
-    var p : byte;
-        i : integer;
+    var
+      p, i : integer;
+      dir : dirstr;
+      name: namestr;
+      ext : extstr;
     begin
       p:=cpos('.',fn);
       if p=0 then
         match:=false
-      else begin
+      else
+      begin
         match:=true;
-        WildForm(wfn);
+        fsplit(wfn,dir,name,ext);
+        p:=cpos('*',name);
+        if p>0 then name:=LeftStr(name,p-1)+typeform.dup(9-p,'?');
+        p:=cpos('*',ext);
+        if p>0 then ext:=LeftStr(ext,p-1)+typeform.dup(5-p,'?');
+        wfn:=dir+name+ext;
         fn:=forms(LeftStr(fn,p-1),8)+forms(mid(fn,p),4);
         p:=cpos('.',wfn);
         if p>0 then wfn:=forms(LeftStr(wfn,p-1),8)+forms(mid(wfn,p),4);
         for i:=1 to length(fn) do
           if (wfn[i]<>'?') and (UpCase(fn[i])<>UpCase(wfn[i])) then
             match:=false;
-        end;
+      end;
     end;
 
   begin
@@ -940,6 +949,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/11/14 11:14:34  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.32  2000/11/09 19:44:30  hd
   - Anpassungen an Linux
 

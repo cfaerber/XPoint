@@ -329,7 +329,7 @@ begin
                       (ZQWK.EXE ist im getrennt erh„ltlichen QWK-Paket enthalten)' }
                    else begin
                      shell(ZQWKBin+' -qz -c'+BoxFilename(box)+' -b'+box+
-                           ' -i'+fn+' -o'+GetFileDir(fn)+' -h'+BoxPar^.MagicBrett+
+                           ' -i'+fn+' -o'+ExtractFilePath(fn)+' -h'+BoxPar^.MagicBrett+
                            iifs(nt=nt_Fido,' -t30',''),600,1);
                      if errorlevel=100 then begin
                        errorlevel:=0;
@@ -697,6 +697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/11/14 11:14:35  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.26  2000/11/06 00:41:26  mk
   - fixed Bug #116657: crash with servername >15 chars
 

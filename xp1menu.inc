@@ -237,22 +237,17 @@ procedure miscschab;
 var s       : string;
     useclip : boolean;
 begin
-{$IFDEF UnixFS }
-  s:= '*.xps';
-{$ELSE }
-  s:='*.XPS';
-{$ENDIF }
+  s:= FileUpperCase('*.xps');
   useclip:=false;
-  if readfilename(getres(103),s,false,useclip) then begin  { Schablone bearbeiten }
-{$IFDEF UnixFS }
-    addext(s,'xps');
-    if UpperCase(RightStr(s,4))<>'.xps' then begin
-{$ELSE }
-    addext(s,'XPS');
-    if UpperCase(RightStr(s,4))<>'.XPS' then begin
-{$ENDIF }
-      rfehler(2);    { Dateierweiterung muá .XPS sein! }
-      exit;
+  if readfilename(getres(103),s,false,useclip) then
+  begin  { Schablone bearbeiten }
+    if ExtractFileExt(s) = '' then
+      s := ChangeFileExt(s, FileUpperCase('.xps'));
+
+      if FileUpperCase(ExtractFileExt(s)) <>  FileUpperCase('.xps') then
+      begin
+        rfehler(2);    { Dateierweiterung muá .XPS sein! }
+        exit;
       end;
     EditFile(s,false,false,0,false);
     end;
@@ -601,6 +596,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2000/11/14 11:14:32  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.24  2000/10/17 10:05:46  mk
   - Left->LeftStr, Right->RightStr
 

@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  dos,typeform,fileio,inout,datadef,database,montage,resource,
+  typeform,fileio,inout,datadef,database,montage,resource,
   xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal, classes;
 
 const XreadF_error : boolean  = false;
@@ -1220,6 +1220,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.47  2000/11/14 11:14:32  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.46  2000/11/09 18:15:11  mk
   - fixed Bug #116187: header of forwarded mails is stripped down
 

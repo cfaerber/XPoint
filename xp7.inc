@@ -1146,7 +1146,7 @@ var sr     : searchrec;
   begin
     findfirst(files,ffAnyFile,sr);
     while doserror=0 do begin
-      _era(GetFiledir(files)+sr.name);
+      _era(ExtractFilePath(files)+sr.name);
       findnext(sr);
     end;
     FindClose(sr);
@@ -1219,7 +1219,7 @@ begin
         end;
       ReadQfg(bfile,qfg);
       ex:=RepExtension;
-      if not exist(GetFileDir(SysopOut)+qfg.repfile+'.'+ex) then
+      if not exist(ExtractFilePath(SysopOut)+qfg.repfile+'.'+ex) then
         replace:=1
       else begin
         replace:=ReadIt(ival(getres2(726,0)),
@@ -1432,6 +1432,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.38  2000/11/14 11:14:33  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.37  2000/11/09 18:51:42  hd
   - Anpassungen an Linux
 

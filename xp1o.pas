@@ -150,7 +150,7 @@ begin
     else if IsPath(s) then
       s:=s+DirSepa+WildCard;
     file_box(s,subs);
-    if (s<>'') and (IsDevice(s) or not ValidFilename(s)) then begin
+    if (s<>'') and (not ValidFilename(s)) then begin
       rfehler(3);   { UngÅltiger Pfad- oder Dateiname! }
       s:='';
       end;
@@ -903,6 +903,65 @@ function XPWinShell(prog:string; parfn:string; space:word;
                     cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 
+type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
+                  ET_OS2_16, ET_OS2_32, ET_ELF);
+
+  function exetype(fn:string):TExeType;
+  var f       : file;
+      magic   : array[0..1] of char;
+      magic2  : array[0..2] of char;
+      hdadr   : longint;
+      version : byte;
+  begin
+  {$IFDEF UnixFS }
+    fn:= ResolvePathName(fn);
+  {$ENDIF }
+    assign(f,fn);
+    resetfm(f,FMDenyWrite);
+    blockread(f,magic,2);
+    seek(f,60);
+    blockread(f,hdadr,4);
+    if (ioresult<>0) then
+      exetype:=ET_Unknown
+    else if (magic<>'MZ') then
+      begin
+        seek(f, 1);                    { ELF }
+        blockread(f,magic2,3);         { IOResult braucht nicht abgefragt }
+        if (magic2='ELF') then         { zu werden, da bereits ein hoehrer }
+          exetype:=ET_ELF              { Offset verwandt wurde }
+        { Fuer andere Suchen }
+        else
+          exetype:=ET_Unknown;
+      end
+    else if odd(hdadr) then
+      exetype:=ET_DOS
+    else
+    begin { Fix fÅr LZEXE gepackte Dateien }
+      if (hdadr > 0) and (hdadr < FileSize(f)-54) then
+      begin
+        seek(f,hdadr);
+        blockread(f,magic,2);
+        if ioresult<>0 then
+          exetype:=ET_DOS
+        else if magic='PE' then
+          exetype:=ET_Win32
+        else if magic='LX' then
+          exetype:=ET_OS2_32
+        else if magic<>'NE' then
+          exetype:=ET_DOS
+        else begin
+          seek(f,hdadr+54);
+          blockread(f,version,1);
+          if version=2 then exetype:=ET_Win16
+          else exetype:=ET_OS2_16;
+        end;
+      end else
+        exetype := ET_DOS;
+    end;
+    close(f);
+    if ioresult<>0 then;
+  end;
+
   function PrepareExe:integer;    { Stack sparen }
   {
   RÅckgabewert: -1 Fehler
@@ -992,6 +1051,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2000/11/14 11:14:32  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.66  2000/11/09 17:35:19  hd
   - Fix: FileDa unter Unix
 

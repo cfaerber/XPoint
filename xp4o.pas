@@ -2070,9 +2070,9 @@ begin
     last:=next;
     end;
   dbClose(d);
-  era(MsgFile+dbExt);
+  DeleteFile(MsgFile+dbExt);
   assign(f1,DupeFile+dbExt); rename(f1,MsgFile+dbExt);
-  era(DupeFile+dbIxExt);
+  DeleteFile(DupeFile+dbIxExt);
   writeln(log);
   close(log);
   dbTempOpen(mbase);
@@ -2425,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.75  2000/11/14 11:14:33  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.74  2000/10/26 12:59:57  mk
   - Fixed Bug #112798: Lange Dateinamen in Archiven
 

@@ -1935,7 +1935,7 @@ end;
 
 begin
   logo;
-  if exist(uucicores) then era(uucicores);
+  if exist(uucicores) then DeleteFile(uucicores);
   InitVar;
   ReadConfig;
   SetLanguage;
@@ -1949,6 +1949,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.5  2000/11/14 11:14:31  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.4  2000/11/02 21:27:04  fe
   bzip2 support added.
 

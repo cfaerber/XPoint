@@ -45,8 +45,7 @@ procedure ClipToFile(fn:TFilename);
 implementation  { ---------------------------------------------------- }
 
 uses
-  xp0,
-  fileio,
+  xp0, fileio,
 {$ifdef unix}
   linux,
   xplinux;
@@ -261,7 +260,7 @@ procedure ClipToFile(fn:TFilename);
 begin
   if FileExists(ClipFilename) then begin
     if not CopyFile(ClipFilename, fn) then
-      era(fn);
+      DeleteFile(fn);
   end;
 end;
 {$else}
@@ -323,6 +322,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/14 11:14:31  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.27  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

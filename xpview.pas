@@ -238,7 +238,7 @@ begin
 
   // Korrekte File-extension verwenden
   ParFN := ChangeFileExt(ParFN, iifs(viewer.ext='',ExtractFileExt(Orgfn),'.'+viewer.ext));
-  _rename(orgfn,parfn);
+  RenameFile(orgfn,parfn);
 
   p:=pos('$FILE',UpperCase(prog));
   if p=0 then prog:=prog+' '+parfn
@@ -246,12 +246,15 @@ begin
   urep(prog,'$TYPE',viewer.typ);
   urep(prog,'$EXT',viewer.ext);
   if not XPWinShell(prog,parfn,600,1,fileattach) then
-  if not fileattach and (fn1<>'') then era(parfn);
+  if not fileattach and (fn1<>'') then DeleteFile(parfn);
 end;
 
 end.
 {
   $Log$
+  Revision 1.26  2000/11/14 11:14:35  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.25  2000/10/19 20:52:24  mk
   - removed Unit dosx.pas
 

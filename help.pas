@@ -37,7 +37,7 @@ uses
 
 const maxpages = 1200;
       maxqvw   = 200;
-      maxlines = 250;   { max. Zeilen pro Hilfsseite }
+      maxlines = 350;   { max. Zeilen pro Hilfsseite }
 
       HBlocksatz     = true;
       HKeinBlocksatz = false;
@@ -102,8 +102,8 @@ var f         : file;
     last,next : word;
     qvws      : byte;
     qvw       : ^qvt;
-    lines     : byte;
-    _lines    : byte;   { iif(noheader,lines,lines-1) }
+    lines     : integer;
+    _lines    : integer;   { iif(noheader,lines,lines-1) }
     z         : ^zt;
     wdt,hgh   : byte;
 
@@ -253,7 +253,7 @@ procedure loadpage(nr:word; pstentry:boolean);
 type buft    = array[1..32768] of byte;
 var  size    : word;
      buf     : ^buft;
-     i,sl,ps : byte;
+     i,sl,ps : integer;
      p,p1    : word;
      s       : string;
      l,r,m   : word;
@@ -756,6 +756,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/11/14 11:14:31  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.28  2000/11/11 19:26:48  ml
   - changed libdirs for rpm
 

@@ -648,7 +648,7 @@ var lf : string;
 *)
 
   FindClose(sr);
-  if not exist(lf) then
+  if not Exist(lf) then
     interr(lf+' not found');
   ParLanguage:=copy(lf,4,cpos('.',lf)-4);
   assign(t,lf);
@@ -1200,6 +1200,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.80  2000/11/14 11:14:32  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.79  2000/11/11 19:26:48  ml
   - changed libdirs for rpm
 

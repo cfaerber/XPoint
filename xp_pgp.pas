@@ -324,7 +324,7 @@ begin
       RunPGP5('PGPE.EXE','-a '+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp)
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
-      _source:=GetFileDir(filename(source))+GetBareFileName(filename(source));
+      _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-e -a '+t+' '+_source+' '+IDform(UserID));
@@ -340,7 +340,7 @@ begin
       RunPGP5('PGPS.EXE','-a '+t+' '+filename(source)+uid+' -o '+tmp )
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
-      _source:=GetFileDir(filename(source))+GetBareFileName(filename(source));
+      _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-s -a '+t+' '+_source+' '+IDform(UserID)+uid);
@@ -357,7 +357,7 @@ begin
       RunPGP5('PGPE.EXE','-sa '+t+' '+filename(source)+' -r '+IDform(UserID)+uid+' -o '+tmp)
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
-      _source:=GetFileDir(filename(source))+GetBareFileName(filename(source));
+      _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-e -s -a '+t+' '+_source+' '+IDform(UserID)+uid);
@@ -525,11 +525,11 @@ begin
     RunPGP5('PGPV.EXE',tmp+' -o '+tmp2)
   else begin
     { Sourcefile xxxx.TMP nach xxxx kopieren }
-    _source:=GetFileDir(tmp)+GetBareFileName(tmp)+'.asc';
+    _source:=ExtractFilePath(tmp)+GetBareFileName(tmp)+'.asc';
     copyfile(tmp,_source);
     { Ausgabedateiname = tmp ohne ext }
     RunPGP(_source+' '+tmp2);
-    tmp2:=GetFileDir(tmp2)+GetBareFileName(_source);
+    tmp2:=ExtractFilePath(tmp2)+GetBareFileName(_source);
   end;
 
   if sigtest then begin
@@ -780,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/11/14 11:14:34  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.28  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 

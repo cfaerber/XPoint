@@ -108,7 +108,7 @@ label ende;
         s:=trim(mid(s,p));
         if feld='area' then empfaenger:=MagicBrett+'FILES/'+s else
         if feld='origin' then absender:='FileScan@'+s else
-        if feld='file' then betreff:=FExpand(GetFileDir(fn)+s) else
+        if feld='file' then betreff:=FExpand(ExtractFilePath(fn)+s) else
         if feld='desc' then summary:=s else
         if (feld='path') and (blankpos(s)>0) then
           pfad:=LeftStr(s,blankpos(s)-1)+'!'+pfad;

@@ -1630,7 +1630,7 @@ begin
   then;
   freemem(sdata,sizeof(SendUUdata)); {dispose(sdata);}
   pgdown:=false;
-  if exist(fn) then era(fn);
+  if exist(fn) then DeleteFile(fn);
 end;
 
 
@@ -1695,7 +1695,7 @@ begin
   { Laufwerksbuchstaben hinzufuegen }
   if cpos(':',dir)=0 then begin
     if LeftStr(dir,1)<>DirSepa then dir:=DirSepa+dir;
-    dir:=LeftStr(dospath(0),2)+dir;
+    dir:=LeftStr(GetCurrentDir,2)+dir;
   end;
 {$endif}
   ps:=fsbox(screenlines div 2 - 5,dir+WildCard,'',ExtractFileName(cr.s),true,false,false);
@@ -2425,6 +2425,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/11/14 11:14:32  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.47  2000/11/06 00:41:25  mk
   - fixed Bug #116657: crash with servername >15 chars
 

@@ -1791,7 +1791,7 @@ begin
     fi:=ar.name;
     copied:=true;
     end
-  else if GetFiledir(fn)=FidoPath then begin   { ungepackt, in FIDO\ }
+  else if ExtractFilePath(fn)=FidoPath then begin   { ungepackt, in FIDO\ }
     if RightStr(fn,3)<>'.FL' then
       if not FileTest(false,0,FidoPath,fi) then goto ende;
     copied:=false;
@@ -1814,7 +1814,7 @@ begin
     else fi2:=LeftStr(fi,p)+'FL';
     if exist(FidoPath+fi2) then
       _era(FidoPath+fi2);
-    if not _rename(FidoPath+fi,FidoPath+fi2) and
+    if not RenameFile(FidoPath+fi,FidoPath+fi2) and
        fehlfunc(getres2(2117,8)) then   { 'Fehler beim Umbenennen' }
       goto ende;
     end
@@ -2248,6 +2248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/11/14 11:14:34  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.32  2000/10/19 20:52:24  mk
   - removed Unit dosx.pas
 

@@ -22,7 +22,13 @@ unit fileio;
 interface
 
 {$ifdef unix}
-  {$i linux/fileioh1.inc}
+uses
+  sysutils,
+  linux,
+  xplinux,
+  xpglobal,
+  dos,
+  typeform;
 {$else }
 uses
   sysutils,
@@ -35,21 +41,21 @@ uses
 {$IFDEF DOS32 }
   xpdos32,
 {$ENDIF }
-  xpglobal,
-  dos, typeform;
-const FMRead       = $00;     { Konstanten fÅr Filemode }
-      FMWrite      = $01;
-      FMRW         = $02;
-      FMDenyNone   = $40;
-      FMDenyRead   = $30;
-      FMDenyWrite  = $20;
-      FMDenyBoth   = $10;
-      FMCompatible = $00;
+  xpglobal, dos,
+  typeform;
 
 {$endif} { Linux }
 
-type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
-                  ET_OS2_16, ET_OS2_32, ET_ELF);
+const
+  FMRead       = $00;     { Konstanten fÅr Filemode }
+  FMWrite      = $01;
+  FMRW         = $02;
+  FMDenyNone   = $40;
+  FMDenyRead   = $30;
+  FMDenyWrite  = $20;
+  FMDenyBoth   = $10;
+  FMCompatible = $00;
+
 
 const
   { Neue AnyFile-Konstante, da $3F oft nicht lÑuft }
@@ -80,51 +86,195 @@ procedure XPRewrite(var F: file; cm: TCreateMode);
 function  AddDirSepa(p: string): string;      { Verz.-Trenner anhaengen }
 Function  exist(n:string):boolean;              { Datei vorhanden ?       }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
-Function  existrf(var f):boolean;               { D.v. (auch hidden etc.) }
 function  existBin(fn: string): boolean;       { Datei vorhanden (PATH)  }
 Function  ValidFileName(name:string):boolean;  { gÅltiger Dateiname ?    }
-Function  IsPath(fname:string):boolean;         { Pfad vorhanden ?        }
+function  IsPath(Fname:string):boolean;         { Pfad vorhanden ?        }
 function  TempFile(path:string):string;       { TMP-Namen erzeugen      }
 function  TempExtFile(path,ld,ext:string):string; { Ext-Namen erzeugen }
-function  _filesize(fn:string):longint;        { Dateigrî·e in Bytes     }
+function  _filesize(const fn:string):longint;        { Dateigrî·e in Bytes     }
 function  filetime(fn:string):longint;         { Datei-Timestamp         }
 procedure setfiletime(fn:string; newtime:longint);  { Dateidatum setzen  }
 function  copyfile(srcfn, destfn:string):boolean; { Datei kopieren }
-Procedure era(s:string);                        { Datei lîschen           }
 procedure erase_mask(s:string);                 { Datei(en) lîschen       }
-function  _rename(n1,n2:string):boolean;       { Lîschen mit $I-         }
 Procedure MakeBak(n,newext:string);             { sik anlegen             }
 procedure MakeFile(fn:string);                 { Leerdatei erzeugen      }
 procedure mklongdir(path:string; var res:integer);  { mehrere Verz. anl. }
-
-function  exetype(fn:string):TExeType;
 
 procedure fm_ro;                                { Filemode ReadOnly       }
 procedure fm_rw;                                { Filemode Read/Write     }
 procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode îffn.}
 
-procedure addext(var fn:string; ext:string);
 procedure adddir(var fn:string; dir:string);
-function  GetFileDir(p:string):string;
 function GetBareFileName(p:string):string;
-procedure WildForm(var s: string);              { * zu ??? erweitern }
-function  dospath(d:byte):string;
 
 function  ioerror(i:integer; otxt:string):string; { Fehler-Texte            }
-procedure WriteBatch(s:string);                 { Batchfile erstellen     }
-function alldrives:string;
-function  IsDevice(fn:string):boolean;
+
+{$IFNDEF Unix }
+function  alldrives:string;
+{$ENDIF }
 
 implementation  { ------------------------------------------------------- }
 
 {$ifdef unix}
-  {$i linux/fileio.inc}
+
+const
+  PathSepaChar          = ':'; { Trennzeichen in der Environment-Var PATH }
+  STAT_IRWUSR           = STAT_IRUSR or STAT_IWUSR;
+  STAT_IRWGRP           = STAT_IRGRP or STAT_IWGRP;
+  STAT_IRWOTH           = STAT_IROTH or STAT_IWOTH;
+
+function SetAccessMode(const fn: string; const cm: TCreateMode): boolean;
+var
+  fm: longint;
+begin
+  case cm of
+    cmUser   : fm:= STAT_IRWUSR;
+    cmUserE  : fm:= STAT_IRWXU;
+    cmGrpR   : fm:= STAT_IRWUSR or STAT_IRGRP;
+    cmGrpRE  : fm:= STAT_IRWXU or STAT_IRGRP or STAT_IXGRP;
+    cmGrpRW  : fm:= STAT_IRWUSR or STAT_IRWGRP;
+    cmGrpRWE : fm:= STAT_IRWXU or STAT_IRWXG;
+    cmAllR   : fm:= STAT_IRWUSR or STAT_IRGRP or STAT_IROTH;
+    cmAllRE  : fm:= STAT_IRWXU or STAT_IRGRP or STAT_IXGRP or STAT_IROTH or STAT_IXOTH;
+    cmAllRW  : fm:= STAT_IRWUSR or STAT_IRWGRP or STAT_IRWOTH;
+    cmAllRWE : fm:= STAT_IRWXU or STAT_IRWXG or STAT_IRWXO;
+  end; { case }
+  { Mode setzen }
+  result:= chmod(fn, fm);
+end;
+
+procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
+var
+  fn : string;
+begin
+  System.Rewrite(F,l);
+  if ioresult=0 then begin
+    fn:= FileName(F);
+    System.Close(F);
+    { Mode setzen }
+    SetAccessMode(fn, cm);
+  end; { if }
+  { Nochmaliges ˆffnen, denn bei IOResult=0 ist die Datei zu,
+    ansonsten wSre IOResult gelˆscht. }
+  System.Rewrite(F,l);
+end;
+
+procedure XPRewrite(var F: file; cm: TCreateMode);
+var
+  fn : string;
+begin
+  System.Rewrite(F);
+  if ioresult=0 then begin
+    fn:= FileName(F);
+    System.Close(F);
+    { Mode setzen }
+    SetAccessMode(fn, cm);
+  end; { if }
+  System.Rewrite(F);
+end;
+
+procedure XPRewrite(var F: text; cm: TCreateMode);
+var
+  fn : string;
+begin
+  System.Rewrite(F);
+  if ioresult=0 then begin
+    fn:= FileName(F);
+    System.Close(F);
+    { Mode setzen }
+    SetAccessMode(fn, cm);
+  end; { if }
+  System.Rewrite(F);
+end;
+
+{ Haengt einen fehlenden Verzeichnisseparator an.
+  Loest dabei C: auf (nur Nicht-Unix }
+function  AddDirSepa(p: string): string;
+begin
+  if p='' then
+    AddDirSepa:= ''
+  else begin
+    if LastChar(p)<>DirSepa then
+      AddDirSepa:= p+DirSepa
+    else
+      AddDirSepa:= p;
+  end;
+end;
+
+
 {$else}
 uses
   xp0;
-{$endif}
 
-{$i fileio.inc}
+function Exist(n:string): boolean;
+var
+  sr : TSearchrec;
+begin
+  Exist := Sysutils.FindFirst(n,faAnyFile-faDirectory,sr) = 0;
+  Sysutils.FindClose(sr);
+end;
+
+Function existf(var f):Boolean;
+var
+  fm : byte;
+begin
+  fm:=filemode;
+  filemode:=FMDenyNone;
+  reset(file(f));
+  existf:=(ioresult=0);
+  close(file(f));
+  filemode:=fm;
+  if ioresult = 0 then ;
+end;
+
+function ioerror(i:integer; otxt:string):string;
+begin
+  case i of
+      2 : ioerror:='Datei nicht gefunden';
+      3 : ioerror:='ungÅltiges Verzeichnis';
+      4 : ioerror:='zu viele Dateien geîffnet (bitte FILES erhîhen!)';
+      5 : ioerror:='Zugriff verweigert';
+      7 : ioerror:='Speicherverwaltung zerstîrt';
+      8 : ioerror:='ungenÅgend Speicher';
+     10 : ioerror:='ungÅltiges Environment';
+     11 : ioerror:='ungÅltiges Aufruf-Format';
+     15 : ioerror:='ungÅltige Laufwerksbezeichnung';
+     16 : ioerror:='Verzeichnis kann nicht gelîscht werden';
+     18 : ioerror:='Fehler bei Dateisuche';
+    101 : ioerror:='Diskette/Platte voll';
+    150 : ioerror:='Diskette ist schreibgeschÅtzt';
+    152 : ioerror:='keine Diskette eingelegt';
+154,156 : ioerror:='Lesefehler (Diskette/Platte defekt)';
+157,158 : ioerror:='Diskette ist nicht korrekt formatiert';
+    159 : ioerror:='Drucker ist nicht betriebsbereit';
+    162 : ioerror:='Hardware-Fehler';
+    209 : ioerror:='Fehler in .OVR-Datei';
+  else
+    ioerror:=otxt;
+  end;
+end;
+
+procedure fm_ro;      { Filemode ReadOnly }
+begin
+  filemode:=fmRead;
+end;
+
+procedure fm_rw;      { Filemode Read/Write }
+begin
+  filemode:=fmRW;
+end;
+
+
+procedure resetfm(var f:file; fm:byte);
+var fm0 : byte;
+begin
+  fm0:=filemode;
+  filemode:=fm;
+  reset(f,1);
+  filemode:=fm0;
+end;
+
+{$endif}
 
 {$ifndef unix}
 
@@ -147,7 +297,6 @@ procedure XPRewrite(var F: file; cm: TCreateMode);
 begin
   System.Rewrite(F);
 end;
-
 
 { Haengt einen fehlenden Verzeichnisseparator an.
   Loest dabei C: auf (nur Nicht-Unix }
@@ -174,7 +323,7 @@ end;
 { Sucht die Datei 'fn' in folgender Reihenfolge:
   - Aktuelle Verzeichnis
   - Startverzeichnis der aktuellen Programmdatei
-  - Environment-Var PATH
+  - Environment-Var PATH sysutils
 }
 function  existBin(fn: string): boolean;
 var
@@ -222,7 +371,11 @@ begin
   if (name='') or multipos('*?&',name) then
     ValidFileName:=false
   else begin
+{$IFDEF UnixFS }
+    assign(f, ResolvePathName(name));           { ~/ aufloesen }
+{$ELSE }
     assign(f,name);
+{$ENDIF }
     if existf(f) then ValidFileName:=true
     else begin
       rewrite(f);
@@ -233,39 +386,14 @@ begin
   end;
 end;
 
-
-Function IsPath(fname:string):boolean;         { Pfad vorhanden ? }
-var sr : searchrec;
+function IsPath(fname:string):boolean;         { Pfad vorhanden ? }
+var
+  curdir: string;
 begin
-  fname:=trim(fname);
-  if multipos('?*',fname) or (trim(fname)='') then
-    IsPath:=false
-  else begin
-    if (fname='\') or (fname[length(fname)]=':') or (RightStr(fname,2)=':\')
-    then begin
-      Dos.findfirst(fname+'*.*',ffAnyFile,sr);
-      if doserror=0 then
-        IsPath:=true
-      else
-        IsPath:=validfilename(fname+'1$2$3.xx');
-    end
-    else begin
-      if fname[length(fname)]='\' then
-        dellast(fname);
-      findfirst(fname,Directory,sr);
-      IsPath:=(doserror=0) or (doserror=18);
-    end;
-  findclose(sr);
-  end;
+  curdir := GetCurrentDir;
+  IsPath := SetCurrentDir(fname);
+  SetCurrentDir(curdir);
 end;
-
-function dospath(d:byte):string;
-var s : string;
-begin
-  getdir(d,s);
-  dospath:=s;
-end;
-
 
 function copyfile(srcfn, destfn:string):boolean;  { Datei kopieren }
 { keine öberprÅfung, ob srcfn existiert oder destfn bereits existiert }
@@ -275,8 +403,13 @@ var bufs,rr:word;
 begin
   bufs:=65536;
   getmem(buf,bufs);
+{$IFDEF UnixFS }
+  assign(f1,ResolvePathName(srcfn));
+  assign(f2,ResolvePathName(destfn));
+{$ELSE }
   assign(f1,srcfn);
   assign(f2,destfn);
+{$ENDIF }
   reset(f1,1);
   rewrite(f2,1);
   while not eof(f1) and (inoutres=0) do begin
@@ -290,62 +423,34 @@ begin
   freemem(buf,bufs);
 end;
 
-Procedure era(s:string);
-var f : file;
-begin
-  assign(f,s);
-  erase(f);
-end;
-
-
 procedure erase_mask(s:string);                 { Datei(en) lîschen }
-var sr : searchrec;
+var
+  sr : TSearchrec;
 begin
-  Dos.findfirst(s,ffAnyfile,sr);
-  while doserror=0 do begin
-    era(getfiledir(s)+sr.name);
-    dos.findnext(sr);
-  end;
-  FindClose(sr);
+  if Sysutils.findfirst(s, faAnyfile, sr) = 0 then
+  repeat
+    SysUtils.DeleteFile(ExtractFileDir(s) + '\' +sr.name);
+  until Sysutils.findnext(sr) <> 0;
+  SysUtils.FindClose(sr);
 end;
 
 
 Procedure MakeBak(n,newext:string);
 var bakname : string;
     f       : file;
-    dir     : dirstr;
-    name    : namestr;
-    ext     : extstr;
 begin
-  assign(f,n);
-  if not existrf(f) then exit;
-  fsplit(n,dir,name,ext);
-  bakname:=dir+name+'.'+newext;
-  assign(f,bakname);
-  if existrf(f) then begin
-    setfattr(f,archive);
+  if not FileExists(n) then exit;
+  BakName := ChangeFileExt(n, '.' + NewExt);
+  if FileExists(BakName) then
+  begin
+    Assign(f, Bakname);
+    FileSetAttr(BakName,faArchive);
     erase(f);
   end;
-  assign(f,n);
-  setfattr(f,archive);
-  rename(f,bakname);
+  Assign(f,n);
+  FileSetAttr(n, faArchive);
+  RenameFile(n, bakname);
   if ioresult<>0 then;
-end;
-
-procedure WriteBatch(s:string);
-var
-  f:text;
-  io:integer;
-begin
-  assign(f, TempBatchFN);
-  rewrite(f);
-  io:=ioresult;
-  if (io=0) then begin
-    writeln(f,'@echo off');
-    writeln(f,s);
-    close(f);
-  end;
-  io:=ioresult;
 end;
 
 { res:  0 = Pfad bereits vorhanden }
@@ -408,37 +513,36 @@ begin
 end;
 
 
-function _filesize(fn:string):longint;
-var sr : searchrec;
+function _filesize(const fn:string):longint;
+var sr : TSearchrec;
 begin
-  dos.findfirst(fn,ffAnyFile,sr);
-  if doserror<>0 then
-    _filesize:=0
+  if SysUtils.Findfirst(fn,faAnyFile,sr) = 0 then
+    Result := sr.Size
   else
-    _filesize:=sr.size;
-  findclose(sr);
+    Result := 0;
+  SysUtils.Findclose(sr);
 end;
 
 procedure MakeFile(fn:string);
-var t : text;
+var
+  t : text;
 begin
   assign(t,fn);
   rewrite(t);
   if ioresult=5 then
-    setfattr(t,0)
+    FileSetAttr(fn,0)
   else
     close(t);
 end;
 
 function filetime(fn:string):longint;
-var sr : searchrec;
+var sr : Tsearchrec;
 begin
-  dos.findfirst(fn,ffAnyFile,sr);
-  if doserror=0 then
+  if SysUtils.findfirst(fn,faAnyFile,sr) = 0 then
     filetime:=sr.time
   else
     filetime:=0;
-  findclose(sr);
+  SysUtils.findclose(sr);
 end;
 
 procedure setfiletime(fn:string; newtime:longint);  { Dateidatum setzen }
@@ -451,132 +555,36 @@ begin
   if ioresult<>0 then;
 end;
 
-function GetFileDir(p:string):string;
-var d : dirstr;
-    n : namestr;
-    e : extstr;
-begin
-  fsplit(p,d,n,e);
-  GetFileDir:=d;
-end;
-
 function GetBareFileName(p:string):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
 begin
+{$IFDEF UnixFS }
+  fsplit(ResolvePathName(p),d,n,e);
+{$ELSE }
   fsplit(p,d,n,e);
+{$ENDIF }
   GetBareFileName:=n;
 end;
 
-function _rename(n1,n2:string):boolean;
-var f : file;
-begin
-  assign(f,n1);
-  rename(f,n2);
-  _rename:=(ioresult=0);
-end;
-
-{ Extension anhÑngen, falls noch nicht vorhanden }
-
-procedure addext(var fn:string; ext:string);
-var dir  : dirstr;
-    name : namestr;
-    _ext : extstr;
-begin
-  fsplit(fn,dir,name,_ext);
-  if _ext='' then fn:=dir+name+'.'+ext;
-end;
 
 { Verzeichnis einfÅgen, falls noch nicht vorhanden }
 
-procedure adddir(var fn: string; dir:string);
-var _dir : dirstr;
-    name : namestr;
-    ext  : extstr;
+procedure adddir(var fn: string; dir: string);
+var s: string;
 begin
-  fsplit(fn,_dir,name,ext);
-  if _dir='' then begin
-    if dir[length(dir)]<>DirSepa then dir:=dir+DirSepa;
-    insert(dir,fn,1);
-  end;
-end;
-
-procedure WildForm(var s: string);
-var dir : dirstr;
-    name: namestr;
-    ext : extstr;
-    p   : byte;
-begin
-  fsplit(s,dir,name,ext);
-  p:=cpos('*',name);
-   if p>0 then name:=LeftStr(name,p-1)+typeform.dup(9-p,'?');
-  p:=cpos('*',ext);
-   if p>0 then ext:=LeftStr(ext,p-1)+typeform.dup(5-p,'?');
-  s:=dir+name+ext;
-end;
-
-function exetype(fn:string):TExeType;
-var f       : file;
-    magic   : array[0..1] of char;
-    magic2  : array[0..2] of char;
-    hdadr   : longint;
-    version : byte;
-begin
-  assign(f,fn);
-  resetfm(f,FMDenyWrite);
-  blockread(f,magic,2);
-  seek(f,60);
-  blockread(f,hdadr,4);
-  if (ioresult<>0) then
-    exetype:=ET_Unknown
-  else if (magic<>'MZ') then
-    begin
-      seek(f, 1);                    { ELF }
-      blockread(f,magic2,3);         { IOResult braucht nicht abgefragt }
-      if (magic2='ELF') then         { zu werden, da bereits ein hoehrer }
-        exetype:=ET_ELF              { Offset verwandt wurde }
-      { Fuer andere Suchen }
-      else
-        exetype:=ET_Unknown;
-    end
-  else if odd(hdadr) then
-    exetype:=ET_DOS
-  else
-  begin { Fix fÅr LZEXE gepackte Dateien }
-    if (hdadr > 0) and (hdadr < FileSize(f)-54) then
-    begin
-      seek(f,hdadr);
-      blockread(f,magic,2);
-      if ioresult<>0 then
-        exetype:=ET_DOS
-      else if magic='PE' then
-        exetype:=ET_Win32
-      else if magic='LX' then
-        exetype:=ET_OS2_32
-      else if magic<>'NE' then
-        exetype:=ET_DOS
-      else begin
-        seek(f,hdadr+54);
-        blockread(f,version,1);
-        if version=2 then exetype:=ET_Win16
-        else exetype:=ET_OS2_16;
-      end;
-    end else
-      exetype := ET_DOS;
-  end;
-  close(f);
-  if ioresult<>0 then;
-end;
-
-function IsDevice(fn:string):boolean;
-begin
-  { COMs sind Devices, der Rest nicht }
-  IsDevice := Pos('COM', fn) = 1;
+{$IFDEF UnixFS }
+  fn:=ResolvePathName(fn);
+{$ENDIF }
+  s:= ExtractFilePath(fn);
+  if s='' then
+    fn:= AddDirSepa(dir)+fn;
 end;
 
 {$endif} { Linux }
 
+{$ifndef Unix }
 function alldrives:string;
 var
   s : string;
@@ -601,10 +609,14 @@ begin
 
   alldrives:=s;
 end;
+{$endif }
 
 end.
 {
   $Log$
+  Revision 1.63  2000/11/14 11:14:31  mk
+  - removed unit dos from fileio and others as far as possible
+
   Revision 1.62  2000/11/09 18:12:22  mk
   - ispath corrections
 
