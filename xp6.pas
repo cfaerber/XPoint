@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -29,7 +29,7 @@ uses
   xpglobal, Classes;
 
 const sendIntern = 1;     { force Intern              }
-      sendShow   = 2;     { ausfÅhrliche Sendeanzeige }
+      sendShow   = 2;     { ausfuehrliche Sendeanzeige }
       sendDelay  = 4;     { 0,5 s Warten              }
       sendQuote  = 8;     { akt. Nachricht quoten     }
       SendWAB    = 16;    { ABS->WAB, OAB->ABS        }
@@ -45,10 +45,10 @@ const sendIntern = 1;     { force Intern              }
       pgdown    : boolean = false;
       _sendmaps : boolean = false;
       forcebox  : string = '';
-      forceabs  : string = '';       { 'SYSOP' fÅr ProNet-System }
+      forceabs  : string = '';       { 'SYSOP' fuer ProNet-System }
       _bezug    : string = '';
       _orgref   : string = '';
-      _replypath: string = '';        { Box, Åber die die Bezugsnachr. kam }
+      _replypath: string = '';        { Box, ueber die die Bezugsnachr. kam }
       sendfilename   : string = '';
       sendfiledate   : string = '';
       force_quotemsk : string = '';
@@ -63,7 +63,7 @@ const sendIntern = 1;     { force Intern              }
       msgprio   : byte    = 0;           { ZConnect-Prio }
       rfcprio   : byte    = 0;           { RFC-Priority  }   { 6.2.2000 MH: }
       ControlMsg: boolean = false;
-      newbrettgr: longint = 0;           { Gruppe fÅr neues Brett }
+      newbrettgr: longint = 0;           { Gruppe fuer neues Brett }
       flCrash   : boolean = false;
       flQTo     : boolean = false;       { Maus: Wildwestverkettung }
       flNokop   : boolean = false;
@@ -96,7 +96,7 @@ type  SendUUdata = record
 
 var
       InternBox : string;  { Boxname bei /Netzanruf }
-      msgMarkEmpf: byte;   { fÅr sendMark }
+      msgMarkEmpf: byte;   { fuer sendMark }
 
 
 function DoSend(pm:boolean; var datei:string; empfaenger,betreff:string;
@@ -118,6 +118,9 @@ implementation  { --------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
      xp_pgp,xp6l;
+
+var
+  i: integer;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
 asm
@@ -192,14 +195,14 @@ asm
          cld
 @tbloop: lodsb
          cmp   al,9
-         jb    @is_bin                  { BinÑrzeichen 0..8 }
+         jb    @is_bin                  { Binaerzeichen 0..8 }
          cmp   al,127
-         jae   @is_bin                  { "binÑr"zeichen 127..255 }
+         jae   @is_bin                  { "binae"zeichen 127..255 }
          cmp   al,32
          jae   @no_bin                  { ASCII-Zeichen 32..126 }
          cmp   al,13
          jbe   @no_bin                  { erlaubte Zeichen 9,10,12,13 }
-@is_bin: mov   eax,1                    { TRUE: BinÑrzeichen gefunden }
+@is_bin: mov   eax,1                    { TRUE: Binaerzeichen gefunden }
          jmp   @tbend
 @no_bin: loop  @tbloop
          mov   eax,ecx                  { FALSE: nix gefunden }
@@ -261,7 +264,7 @@ end;
 function test_senddate(var s:string):boolean;
 begin
   if smdl(ixdispdat(s),min_send) then begin
-    rfehler(601);    { 'RÅckdatieren nicht mîglich.' }
+    rfehler(601);    { 'Rueckdatieren nicht moeglich.' }
     s:=fdat(longdat(min_send));
     test_senddate:=false;
     end
@@ -291,12 +294,12 @@ begin
         testreplyto:=true;
         if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
           begin
-            rfehler(908);               { 'ungÅltige Adresse' }
+            rfehler(908);               { 'ungueltige Adresse' }
             testreplyto:=false;
             end;
         end
       else begin
-        rfehler(908);                   { 'ungÅltige Adresse' }
+        rfehler(908);                   { 'ungueltige Adresse' }
         dbclose(d);
         testreplyto:=false;
         end;
@@ -332,11 +335,11 @@ end;
 { --- Datei verschicken ---------------------------------------------------- }
 { Datei:  Pfadname der Datei. Wenn nicht vorhanden, wird eine leere angelegt }
 { empfaenger: der Empfaenger (User oder x/Brett)                             }
-{ Edit :   Nachricht zunÑchst Editieren und dann erst senden                 }
-{ Binary:  BinÑrdatei                                                        }
+{ Edit :   Nachricht zunaechst Editieren und dann erst senden                }
+{ Binary:  Binaerdatei                                                       }
 { sendwin: vor dem Senden Sende-Fenster abfragen                             }
-{ datei, header und signat sind nur aus Stack-Platz-GrÅnden VARs!            }
-{ header wird verÑndert!!                                                    }
+{ datei, header und signat sind nur aus Stack-Platz-Gruenden VARs!           }
+{ header wird veraendert!!                                                   }
 
 function DoSend(pm:boolean; var datei:string; empfaenger,betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData:SendUUptr;
@@ -346,12 +349,12 @@ var f,f2     : file;
     edis     : byte;
     x,y      : byte;
     brk      : boolean;
-    typ      : string;   { Kopf fÅr Betreff/Sende-Box          }
+    typ      : string;  { Kopf fuer Betreff/Sende-Box          }
     wbox     : string;
-    ch       : string;    { '*'-Zeichen fÅr abweichende Adresse }
-    box      : string; { EmpfÑnger-Pollbox             }
+    ch       : string;  { '*'-Zeichen fuer abweichende Adresse }
+    box      : string;  { Empfaenger-Pollbox                   }
     adresse  : string;
-    newbox   : string;  { Zwischensp. fÅr geÑnderte Pollbox   }
+    newbox   : string;  { Zwischensp. fuer geaenderte Pollbox  }
     boxfile  : string;
     username : string;  { eigener Username                    }
     pointname: string;
@@ -385,23 +388,23 @@ var f,f2     : file;
     size     : integer;
     empfneu  : boolean;
     cancode  : shortint;    { -1=Rot13, 0=kein PW, 1=QPC, 2=DES, 9=PGP }
-    docode   : shortint;    { gewÑhlte Codierung                  }
+    docode   : shortint;    { gewaehlte Codierung                 }
     pmc_code : boolean;
     senden   : shortint;    { 0=Nein, 1=Ja, 2=Intern              }
-    halten   : integer16;   { Haltezeit fÅr neuen User            }
+    halten   : integer16;   { Haltezeit fuer neuen User           }
     sendedat : longint;     { Empfangsdatum                       }
-    passwd   : string;     { Pa·wort des empfangenden Users      }
-    passpos  : smallword;   { PW-Position fÅr QPC                 }
+    passwd   : string;      { Passwort des empfangenden Users     }
+    passpos  : smallword;   { PW-Position fuer QPC                }
     newbin   : boolean;     { Typ nach Codierung                  }
     intern,                 { interne Nachricht                   }
     lokalPM  : boolean;     { lokale PM                           }
-    maxsize  : longint;     { ab hier mu· gesplittet werden       }
+    maxsize  : longint;     { ab hier muss gesplittet werden      }
     grnr     : longint;     { Brettgruppen-Nr.                    }
     addsize  : longint;     { Header + Signatur                   }
 {    hdsize   : word; }
-    oversize : longint;     { Nachrichtenlimit Åberschritten      }
-    parken   : boolean;     { Nachricht nach /ØUnversandt         }
-    bin_msg  : boolean;     { BinÑr-Versandmeldung                }
+    oversize : longint;     { Nachrichtenlimit ueberschritten     }
+    parken   : boolean;     { Nachricht nach />>Unversandt        }
+    bin_msg  : boolean;     { Binaer-Versandmeldung               }
     SendDefault : shortint;
     verteiler: boolean;
     _verteiler: boolean;    { bleibt true bei allen Einzelnachrichten }
@@ -416,7 +419,7 @@ var f,f2     : file;
     old_cca  : integer;     { vor (K)opien            }
     FidoBin  : boolean;     { File Attach }
     cc_count : integer;
-    betrlen  : byte;        { max. BetrefflÑnge }
+    betrlen  : byte;        { max. Betrefflaenge }
     bboxwid  : byte;
 
     spezial  : boolean;
@@ -435,8 +438,8 @@ var f,f2     : file;
     msgCPpos : shortint;    { gerade bearbeiteter EMP }
     ii       : integer;
     m1adr    : longint;     { Pufferadresse der ersten Kopie }
-    m1msgsize: longint;     { Gesamtgrî·e der ersten Kopie   }
-    showempfs: shortint;    { fÅr Betreffbox }
+    m1msgsize: longint;     { Gesamtgroesse der ersten Kopie }
+    showempfs: shortint;    { fuer Betreffbox }
     fo       : string;
     flags    : longint;
 
@@ -576,7 +579,7 @@ var i,first : integer;
     function IndexStr(i:integer):string;
     begin
       with ccm^[i] do
-        { !! Char(Byte(x)) ist eine gro·e Schweinerei, evtl. mal Ñndern }
+        { !! Char(Byte(x)) ist eine grosse Schweinerei, evtl. mal aendern }
         IndexStr:=char(byte(encode))+forms(server,BoxNameLen)+char(byte(ccpm));
     end;
   begin
@@ -634,7 +637,7 @@ var i,first : integer;
           ccm^[i].cpanz:=min(j-i,iif(ccm^[i].ccpm,maxcc,MaxXposts));
           if not ccm^[i].ccpm and (j-i>MaxXposts) then begin
             if not errflag then
-              rfehler1(632,strs(MaxXposts));   { 'Es sind maximal %s BrettempfÑnger pro Server mîglich.' }
+              rfehler1(632,strs(MaxXposts));   { 'Es sind maximal %s Brettempfaenger pro Server moeglich.' }
             errflag:=true;
             if j<=cc_anz then begin
               Move(cc^[j],cc^[i+MaxXposts],(cc_anz-j)*sizeof(cc^[1]));
@@ -677,7 +680,7 @@ procedure ReadEmpflist;
 var
   i: Integer;
 begin
-  // !! Assign mîglich, wenn beides StringListe
+  // !! Assign moeglich, wenn beides StringListe
   for i := 0 to SendEmpfList.Count - 1 do
     if cc_anz<maxcc then
     begin
@@ -774,16 +777,16 @@ end;
     sel_verteiler:=false;
     end;
 
-{ ausgelagert, weil Prozedurrumpf zu gro·: }
+{ ausgelagert, weil Prozedurrumpf zu gross: }
 
 procedure DisplaySendbox;
 var
   ToStr: String;
   ToPos: Integer;
-begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
+begin  { 05.02.2000 MH: 70 -> 78 f. Zurueck }
   diabox(78,13+fadd,typ,x,y);
   moff;
-  wrt(x+3,y+2,getres2(611,10)+ch);   { 'EmpfÑnger ' }
+  wrt(x+3,y+2,getres2(611,10)+ch);   { 'Empfaenger ' }
 
   ToStr := getres2(611,11); { '^An' }
   ToPos := cpos('^', ToStr);
@@ -796,7 +799,7 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
     end;
   wrt(x+3,y+4,getres2(611,12));      { 'Betreff' }
   wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
-  wrt(x+3,y+8,getres2(611,14));      { 'Grî·e'   }
+  wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
   wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
   showcode; { 05.02.2000 MH: 38 > 42 }
   attrtxt(col.coldialog);
@@ -872,7 +875,7 @@ begin      {-------- of DoSend ---------}
 
   if not pm and betreffbox and (LeftStr(empfaenger,1)<>'A') then
   begin
-    rfehler(606);   { 'Schreiben in dieses Brett nicht mîglich!' }
+    rfehler(606);   { 'Schreiben in dieses Brett nicht moeglich!' }
     goto xexit1;
   end;
 
@@ -930,7 +933,7 @@ fromstart:
           dbSeek(ubase,uiName,UpperCase(empfaenger));
           end;
         if dbFound then begin
-          Box := dbReadStr(ubase,'pollbox');   { leider doppelt nîtig :-/ }
+          Box := dbReadStr(ubase,'pollbox');   { leider doppelt noetig :-/ }
           _brett:=mbrettd('U',ubase);
           dbRead(ubase,'codierer',cancode);
           if (cancode<>9) and (dbXsize(ubase,'passwort')=0) then
@@ -950,9 +953,9 @@ fromstart:
           end;
         end;
       end
-    else begin                                                 { EmpfÑnger unbekannt }
+    else begin                                                 { Empfaenger unbekannt }
     { 14.02.2000 MH: IBM=0, ASCII=1, ISO=2 }
-    if newuseribm then umlaute:=0 { MH: NewUserIBM berÅcksichtigen }
+    if newuseribm then umlaute:=0 { MH: NewUserIBM beruecksichtigen }
      else umlaute:=1;
       empfneu:=true;
       verteiler:=false;
@@ -982,7 +985,7 @@ fromstart:
                 dbSeek(bbase,biIntnr,copy(_brett,2,4));
                 if dbBOF(bbase) or dbEOF(bbase) then box:=''
                 else Box := dbReadStr(bbase,'pollbox');
-                if box='' then box:=DefaultBox;  { dÅrfte nicht vorkommen }
+                if box='' then box:=DefaultBox;  { duerfte nicht vorkommen }
                 end;
             ReplaceVertreterbox(box,true);
             end;
@@ -1014,9 +1017,9 @@ fromstart:
       if dbReadInt(bbase,'flags') and 32<>0 then
         FidoName := dbReadNStr(bbase,bb_adresse);    { Brett-Origin }
     end;
-    dbOpen(d,gruppenfile,1);          { max. BrettMsg-Grî·e ermitteln   }
+    dbOpen(d,gruppenfile,1);          { max. BrettMsg-Groesse ermitteln   }
     dbSeek(d,giIntnr,dbLongStr(grnr));
-    if not dbFound then maxsize:=0    { dÅrfte nicht vorkommen }
+    if not dbFound then maxsize:=0    { duerfte nicht vorkommen }
     else dbRead(d,'MsgLimit',maxsize);
     if box='' then grnr:=IntGruppe;
     intern:=(grnr=IntGruppe) or (box='');
@@ -1032,15 +1035,15 @@ fromstart:
       altadr:='';
     dbClose(d);
     edis:=2;
-    if not binary then cancode:=-1;  { Rot13 mîglich }
+    if not binary then cancode:=-1;  { Rot13 moeglich }
   end;   { of not pm }
 
-  dbOpen(d,BoxenFile,1);           { Pollbox + MAPS-Name ÅberprÅfen }
+  dbOpen(d,BoxenFile,1);           { Pollbox + MAPS-Name ueberpruefen }
   if box<>'' then begin            { nicht intern.. }
     dbSeek(d,boiName,UpperCase(box));
     if not dbFound then begin
       dbClose(d);
-      rfehler1(607,box);  { 'Unbekannte Serverbox: %s  -  Bitte ÅberprÅfen!' }
+      rfehler1(607,box);  { 'Unbekannte Serverbox: %s  -  Bitte ueberpruefen!' }
       goto xexit;                  { --> unbekannte Pollbox }
     end;
     Box := dbReadStr(d,'boxname');       { Schreibweise korrigieren }
@@ -1073,7 +1076,7 @@ fromstart:
       MakeFile(datei);
     end;
   end else if binary and not ntBinary(netztyp) then begin
-    rfehler(609);   { 'In diesem Netz sind leider keine BinÑrnachrichten mîglich :-(' }
+    rfehler(609);   { 'In diesem Netz sind leider keine Binaernachrichten moeglich :-(' }
     goto xexit;
   end;
   if not ((registriert.non_uucp and (netztyp<>nt_UUCP)) or
@@ -1102,17 +1105,17 @@ fromstart:
   end;
   if not fileattach then
     ukstring(betreff);
-  typ:=getres2(611,iif(pm,1,iif(grnr=IntGruppe,2,3)));  { 'private Nachricht' / 'interne Nachricht' / 'îffentliche Nachricht' }
+  typ:=getres2(611,iif(pm,1,iif(grnr=IntGruppe,2,3)));  { 'private Nachricht' / 'interne Nachricht' / 'oeffentliche Nachricht' }
 
   betreff:=LeftStr(betreff,betrlen);
   if betreffbox then begin         { Betreff editieren }
     if sendFlags and sendQuote<>0 then typ:=typ+getres2(611,4) else   { ' (Quote)' }
-    if binary then typ:=typ+getres2(611,5);   { ' (BinÑr)' }
+    if binary then typ:=typ+getres2(611,5);   { ' (Binaer)' }
     fidoam:=ntEditBrettempf(netztyp) and not pm;
     bboxwid:=min(betrlen,54);
     showempfs:=min(cc_anz,15);
     diabox(bboxwid+19,iif(fidoam,9,7)+showempfs,typ,x,y);
-    mwrt(x+3,y+2,getres2(611,6)+ch);   { 'EmpfÑnger  ' }
+    mwrt(x+3,y+2,getres2(611,6)+ch);   { 'Empfaenger  ' }
     attrtxt(col.coldiahigh);
     moff;
     if empfaenger[1]=vert_char then
@@ -1141,14 +1144,15 @@ fromstart:
     betreff:=trim(betreff);
     if brk then goto xexit;            { --> Abbruch bei Betreffmaske }
     if betreff='' then begin
-      if not pm then rfehler(635);  { 'Nachricht mu· einen Betreff haben' }
+      if not pm then rfehler(635);  { 'Nachricht muss einen Betreff haben' }
       if (pm and not ReadJNesc(getres(618),false,brk)) or   { 'Nachricht ohne Betreff absenden' }
          not pm then goto xexit;
     end;
     if (_bezug<>'') and ntKomkette(netztyp) and
                     (UpperCase(LeftStr(betreff,20))<>UpperCase(oldbetr)) then begin
       pushhp(1501);
-      if not ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff geÑndert - Verkettung beibehalten' }
+      if not
+ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff geaendert - Verkettung beibehalten' }
              ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
       begin
         _bezug:='';
@@ -1170,7 +1174,7 @@ fromstart:
     WriteHeaderHdr;
     EditNachricht(pgdown);
   end;
-  if not getsize then goto xexit;        { --> Nachrichten-Grî·e 0 }
+  if not getsize then goto xexit;        { --> Nachrichten-Groesse 0 }
   calc_hdsize;
 
   echomail:=ntEditBrettempf(netztyp) and not pm;
@@ -1191,18 +1195,18 @@ fromstart:
       if spezial then begin
         spezial:=false;
         attrtxt(col.coldialog);
-        mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 67 -> 76 f. ZurÅck }
+        mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 67 -> 76 f. Zurueck }
       end;
     ReadAgain:
       n:=1;
       ShowLine(spezial);
       if spezial then begin
-        case netztyp of     { '^Parken,^Datum, ^EB ,o^hneSig,l^îschen,' }
+        case netztyp of    { '^Parken,^Datum, ^EB ,o^hneSig,l^oeschen,' }
           nt_Fido     : sendbutt:=getres2(611,20);  { 'C^rash,P^GP'     }
           nt_Maus     : sendbutt:=getres2(611,21);  { '^MausNet,^Lokal' }
           nt_ZConnect : sendbutt:=getres2(611,22);  { 'P^rio,P^GP'      }
           nt_UUCP     : sendbutt:=getres2(611,23);  { 'Z^usatz,P^GP'    }
-          else          sendbutt:=getres2(611,24);  { '^ZurÅck'         }
+          else          sendbutt:=getres2(611,24);  { '^Zurueck'        }
         end;
         repeat
           t:='*';
@@ -1211,19 +1215,19 @@ fromstart:
         until (n>=0) or ((t<>mausmoved) and (t<>mauslmoved));
         case netztyp of
           nt_Fido : if n=7 then n:=11        { PGP         }
-                    else if n=8 then n:=0;   { MH: ZurÅck  }
-          nt_Maus : if n=8 then n:=0         { ZurÅck      }
+                    else if n=8 then n:=0;   { MH: Zurueck }
+          nt_Maus : if n=8 then n:=0         { Zurueck     }
                     else if n>5 then inc(n);
           nt_ZConnect :  if n=6 then n:=9    { Prio        }
                     else if n=7 then n:=10   { Zusatz      }
                     else if n=8 then n:=11   { PGP         }
-                    else if n=9 then n:=0;   { MH: ZurÅck  }
+                    else if n=9 then n:=0;   { MH: Zurueck }
           nt_UUCP : if n=6 then n:=12        { MH: RFC-Prio}
                       else if n=7 then n:=10 { Zusatz      }
                       else if n=8 then n:=11 { MH: PGP-Sig }
-                      else if n=9 then n:=0; { ZurÅck      }
-          else      if n=6 then n:=0;        { ZurÅck      }
-        end; { 05.02.2000 MH: ZurÅck-Button in allen Netztypen }
+                      else if n=9 then n:=0; { Zurueck     }
+          else      if n=6 then n:=0;        { Zurueck     }
+        end; { 05.02.2000 MH: Zurueck-Button in allen Netztypen }
         if n=0 then n:=-1;
         if n>0 then
           inc(n,10)
@@ -1242,7 +1246,7 @@ fromstart:
         if n=4 then begin
           spezial:=true;
           attrtxt(col.coldialog);
-          mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 68 -> 76 f. ZurÅck }
+          mwrt(x+1,y+11,sp(76)); { 05.02.2000 MH: 68 -> 76 f. Zurueck }
           goto ReadAgain;
           end;
 
@@ -1283,11 +1287,11 @@ fromstart:
                 if (OverSize=0) or (msgprio>0) or
                    (_errsound and ReadJN(getreps2(612,1,strs(OverSize)),false))
                 then senden:=1;
-                  { 'Nachrichtenlimit um %s Bytes Åberschritten! Trotzdem absenden' }
+                  { 'Nachrichtenlimit um %s Bytes ueberschritten! Trotzdem absenden' }
         2   : senden:=0;   { Nein   }
         3   : senden:=2;   { Intern }
         5   : if FileAttach then
-                rfehler(610)   { 'Betreff kann nicht geÑndert werden' }
+                rfehler(610)   { 'Betreff kann nicht geaendert werden' }
               else begin
                 { neuer Betreff }
                 readstring(x+13,y+4,'',betreff,min(betrlen,52),betrlen,'',brk);
@@ -1297,21 +1301,21 @@ fromstart:
                 n:=1;
               end;
         6   : if intern then
-                rfehler(611)   { 'nicht mîglich - interne Nachricht' }
+                rfehler(611)   { 'nicht moeglich - interne Nachricht' }
               else if IncompatibleNTs then
-                rfehler(629)   { 'nicht mîglich - unterschiedliche Netztypen' }
+                rfehler(629)   { 'nicht moeglich - unterschiedliche Netztypen' }
               else begin                        { neue Pollbox }
                 newbox:=UniSel(1,false,box);
                 if newbox<>'' then
                   if not pm and (cc_anz=0) and ntBrettebene(netztyp) and
                      ntBrettebene(ntBoxNetztyp(newbox)) and
                      not stricmp(BoxBrettebene(box),BoxBrettebene(newbox)) then
-                    rfehler(637)   { 'ServerÑnderung nicht mîglich - abweichende Brettebene!' }
+                    rfehler(637)   { 'Serveraenderung nicht moeglich - abweichende Brettebene!' }
                   else begin
                     dbOpen(d,BoxenFile,1);
                     dbSeek(d,boiName,UpperCase(newbox));
                     if binary and not ntBinary(dbReadInt(d,'netztyp')) then
-                      rfehler(609)  { 'In diesem Netz sind leider keine BinÑrnachrichten mîglich :-(' }
+                      rfehler(609)  { 'In diesem Netz sind leider keine Binaernachrichten moeglich :-(' }
                     else begin
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
@@ -1330,23 +1334,23 @@ fromstart:
                   end;
                 n:=1;
               end;
-        7   : if cancode<>0 then begin          { Codierung Ñndern }
+        7   : if cancode<>0 then begin          { Codierung aendern }
                 if docode=0 then docode:=cancode
                 else docode:=0;
                 showcode;
                 n:=1;
               end;
         8   : if not binary and (sendflags and sendWAB=0) then begin
-                editnachricht(false);              { zurÅck zum Editor }
+                editnachricht(false);              { zurueck zum Editor }
                 if not getsize then begin
-                  closebox; goto xexit; end;    { -> Nachrichtengrî·e 0 }
+                  closebox; goto xexit; end;    { -> Nachrichtengroesse 0 }
                 showbetreff;
                 showsize;
                 n:=1;
               end;
-       11   : if binary then rfehler(612)   { 'Bei BinÑrnachrichten nicht mîglich.' }
+       11   : if binary then rfehler(612)   { 'Bei Binaernachrichten nicht moeglich.' }
               else
-                {if cc_anz>0 then rfehler(613) }  { 'Bei mehreren Kopien nicht mîglich.' }
+                {if cc_anz>0 then rfehler(613) }  { 'Bei mehreren Kopien nicht moeglich.' }
                 {else} senden:=3;   { Parken }
        12   : if cc_anz>0 then    { Datum }
                 rfehler(613)
@@ -1355,7 +1359,7 @@ fromstart:
                 n:=1;
                 end;
        13   : if not pm then
-                rfehler(614)   { 'EmpfangsbestÑtigung nur bei PMs mîglich' }
+                rfehler(614)   { 'Empfangsbestaetigung nur bei PMs moeglich' }
               else begin
                 flEB:=not flEB;
                 if not ntEmpfbest(netztyp) then
@@ -1373,7 +1377,7 @@ fromstart:
                   flCrash:=not flCrash
                 else
               else
-                rfehler(615);   { 'nur bei PMs mîglich' }
+                rfehler(615);   { 'nur bei PMs moeglich' }
        17   : begin
                 flMnet:=not flMnet;
                 flMloc:=false;
@@ -1427,8 +1431,8 @@ fromstart:
     case senden of
       0 : goto xexit;              { Abbruch }
       2 : intern:=true;            { nicht in Puffer + kein unversandt }
-      3 : begin                    { Nachricht nach /ØUnversandt }
-            ParkMsg;               { ## OriginalempfÑnger einfÅgen }
+      3 : begin                    { Nachricht nach />>Unversandt }
+            ParkMsg;               { ## Originalempfaenger einfuegen }
             pm:=false;
             Internbox:={default}box;
             empfaenger:=UnvBrett;
@@ -1490,7 +1494,7 @@ fromstart:
         dbWrite(ubase,'adrbuch',NeuUserGruppe);
         { if netztyp=nt_Fido then inc(b,8);}  { ASCII-Umlaute }
         { UserFlags: 8=ASCII }
-      if not newuseribm then inc(b,8); { NewUserIBM berÅcksichtigen }
+      if not newuseribm then inc(b,8); { NewUserIBM beruecksichtigen }
         dbWrite(ubase,'userflags',b);      { aufnehmen }
         dbFlushClose(ubase);
         _brett:=mbrettd('U',ubase);
@@ -1564,10 +1568,10 @@ fromstart:
       assign(f2,TempPath+'binmsg');
       rewrite(f2,1);
       wrs('');
-      wrs(getres2(612,2));   { 'BinÑrdatei verschickt' }
+      wrs(getres2(612,2));   { 'Binaerdatei verschickt' }
       wrs('');
       wrs(getreps2(612,3,UpperCase(datei)));   { 'Dateiname: %s' }
-      wrs(getreps2(612,4,strs(fs)));      { 'Grî·e    : %s Bytes' }
+      wrs(getreps2(612,4,strs(fs)));      { 'Groesse    : %s Bytes' }
       close(f2);
       assign(f,TempPath+'binmsg');
       end;
@@ -1619,9 +1623,9 @@ fromstart:
 
     if netztyp=nt_Magic then
       hdp^.hd_point:=pointname;
-    hdp^.PmReplyTo:=sData^.PmReplyTo;
+    hdp^.replyto.add(sData^.PmReplyTo);
     if not pm then
-      hdp^.AmReplyTo:=sData^.AmReplyTo;
+      hdp^.followup.add(sData^.AmReplyTo);
     hdp^.Keywords:=sData^.keywords;
     hdp^.Summary:=sData^.summary;
     if  ntAdrCompatible(sData^.onetztyp,netztyp)
@@ -1647,7 +1651,7 @@ fromstart:
     else
       hdp^.pfad:='';
     end;
-    dbAppend(mbase);            { neue mbase.INT_NR fÅr MessageID }
+    dbAppend(mbase);            { neue mbase.INT_NR fuer MessageID }
     hdp^.msgid:=MessageID;
     sData^.msgid:=hdp^.msgid;
 
@@ -1687,7 +1691,7 @@ fromstart:
     if IsEbest then with hdp^ do begin
       attrib := attrib and (not attrReqEB) + attrIsEB;
       if netztyp=nt_UUCP then begin
-        if pmReplyTo='' then pmReplyTo:=absender;
+        if followup.count=0 then replyto.add(absender);
         absender:='MAILER-DAEMON'+mid(absender,cpos('@',absender));
         if (realname<>'') and (length(realname)<=31) then begin
           realname:=realname+'''';
@@ -1729,11 +1733,13 @@ fromstart:
       with sData^.orghdp^ do begin
         { hdp^.zdatum:=zdatum; hdp^.orgdate:=true;  !! Unversandt/* !! }
         hdp^.organisation:=organisation;
-        hdp^.pmreplyto:=pmreplyto;
+	{ suboptimal }
+        hdp^.replyto.add(replyto[0]);
         hdp^.datei:=datei; hdp^.ddatum:=ddatum;
         end;
     if _sendmaps then
-      hdp^.pmreplyto:='';
+      for i:=0 to hdp^.replyto.count-1 do
+        hdp^.replyto.delete(i);
     SetXpointCtl;
     if cc_anz=0 then     { Anzahl der Crossposting-EMPS ermitteln }
       msgCPanz:=0
@@ -1770,7 +1776,7 @@ fromstart:
       if flPGPsig then inc(l,$4000);
       if msgCPanz>0 then begin
         inc(l,longint(msgCPanz) shl 16);
-        inc(l,longint(succ(msgCPpos)) shl 24);        { EmpfÑngernummer }
+        inc(l,longint(succ(msgCPpos)) shl 24);        { Empfaengernummer }
         end;
       dbWriteN(mbase,mb_netztyp,l);
       shortmid:=FormMsgid(hdp^.msgid);
@@ -1796,7 +1802,7 @@ fromstart:
       dbWriteN(mbase,mb_halteflags,b);
       if intern then b:=0
       else b:=1;
-      if bin_msg then inc(b,2);                  { 2 = BinÑr-Meldung }
+      if bin_msg then inc(b,2);                  { 2 = Binaer-Meldung }
       if flCrash and MayCrash then inc(b,16);    { !! Crash-Flag }
       dbWrite(mbase,'unversandt',b);
 
@@ -1963,12 +1969,12 @@ fromstart:
       closebox;
       if not noCrash and flCrash and MayCrash and FidoAdrOK(false) and
          ReadJN(getres(615),true) then    { 'Crash sofort absenden' }
-        AutoCrash:=CrashAdr;  { EmpfÑnger, evtl. ohne Point }
+        AutoCrash:=CrashAdr;  { Empfaenger, evtl. ohne Point }
       end
     else
       closebox;    { "Nachricht abschicken/speichern" }
 
-    if msgCPanz>1 then begin    { cc-EpfÑnger bis auf einen Åberspringen }
+    if msgCPanz>1 then begin    { cc-Epfaenger bis auf einen ueberspringen }
       Move(cc^[msgCPanz],cc^[1],(maxcc-msgCPanz+1)*sizeof(cc^[1]));
       Move(ccm^[msgCPanz-1],ccm^[0],(maxcc-msgCPanz+2)*sizeof(ccm^[1]));
       dec(cc_anz,msgCPanz-1); inc(cc_count,msgCPanz-1);
@@ -1977,7 +1983,7 @@ fromstart:
     if not binary then _era(fn);
   end;   { not verteiler }
 
-  if cc_anz>0 then begin           { weitere CC-EmpfÑnger bearbeiten }
+  if cc_anz>0 then begin           { weitere CC-Empfaenger bearbeiten }
     empfaenger:=cc^[1];
     Move(cc^[2],cc^[1],(maxcc-1)*sizeof(cc^[1]));
     Move(ccm^[1],ccm^[0],maxcc*sizeof(ccm^[1]));
@@ -1996,7 +2002,7 @@ fromstart:
     end;
 
   aufbau:=true; xaufbau:=true;
-  { es mu· jetzt der korrekte Satz in mbase aktuell sein! }
+  { es muss jetzt der korrekte Satz in mbase aktuell sein! }
 xexit:
   freeres;
   dispose(ccm);
@@ -2050,8 +2056,8 @@ var
 begin
   betr:='';
   case aktdispmode of
-   -1..0 : empf := dbReadNStr(bbase,bb_brettname); { B^inÑr / Text^File an Brett }
-    1..4 : empf := dbReadNStr(ubase,ub_username);  { B^inÑr / Text^File an User }
+   -1..0 : empf := dbReadNStr(bbase,bb_brettname); { B^inaer / Text^File an Brett }
+    1..4 : empf := dbReadNStr(ubase,ub_username);  { B^inaer / Text^File an User }
   10..19 : begin
              empf := dbReadNStr(mbase,mb_absender);  { ^I/^F an Absender der Msg }
              betr := dbReadNStr(mbase,mb_betreff);
@@ -2060,7 +2066,7 @@ begin
   end;
   fn:=sendpath+Wildcard;
   useclip:=true;
-  if readfilename(getres(iif(binary,613,614)),fn,true,useclip)   { 'BinÑrdatei' / 'Textdatei' versenden }
+  if readfilename(getres(iif(binary,613,614)),fn,true,useclip)   { 'Binaerdatei' / 'Textdatei' versenden }
   then
     if binary and (LeftStr(empf,length(xp_support))=xp_support) and
        ((LeftStr(extractfilename(fn),4)='PDZM') or
@@ -2126,6 +2132,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.75  2000/11/18 00:04:44  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.74  2000/11/16 22:35:30  hd
   - DOS Unit entfernt
 
@@ -2168,7 +2177,7 @@ end.
   - dbReadX und Co auf 32 Bit angepasst
 
   Revision 1.61  2000/08/23 07:49:20  mo
-  - Betreffzeile im editor f¸r screenwidth > 80 angepasst
+  - Betreffzeile im editor fuer screenwidth > 80 angepasst
 
   Revision 1.60  2000/08/22 14:02:40  mk
   - SendenDefault in Shortint geaendert
@@ -2332,7 +2341,7 @@ end.
   - Umlaute in Betreffs, werden jetzt (falls verboten) automatisch konvertiert
 
   Revision 1.14  2000/04/04 21:01:24  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.13  2000/04/01 07:41:38  jg
   - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
@@ -2370,7 +2379,7 @@ end.
   MK: * Code weiter gesaeubert
 
   Revision 1.6  2000/02/18 21:54:46  jg
-  Kurvnamen fÅr UUCP + ZConnect Vertreteradressen
+  Kurvnamen fuer UUCP + ZConnect Vertreteradressen
 
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000

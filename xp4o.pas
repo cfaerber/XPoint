@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -29,7 +29,7 @@ uses
   xp0,xp1,xp1o2,xp1help,xp1input;
 
 
-var  such_brett  : string;    { fÅr Suche im gewÑhlten Brett }
+var  such_brett  : string;    { fuer Suche im gewaehlten Brett }
      FMsgReqnode : string;    { F3 - Request - Nodenr. }
 
 procedure msg_info;          { interpretierten Header anzeigen }
@@ -90,7 +90,7 @@ const arcbufp : byte = 0;
       suchopt : string = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch}
 
 var  reobuf : array[0..ablagen-1] of boolean;
-     bufsiz : array[0..ablagen-1] of longint;  { Grî·e nach Reorg }
+     bufsiz : array[0..ablagen-1] of longint;  { Groesse nach Reorg }
      abuf   : array[1..max_arc+1] of arcbuf;
      exdir  : string;
      arctyp_save : shortint;
@@ -628,7 +628,7 @@ begin
         maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }
         mid_bretter:=fieldpos;
         for i:=0 to 4 do
-          mappsel(true,bera[i]);    { Alle / Netz / User / markiert / gewÑhlt }
+          mappsel(true,bera[i]);    { Alle / Netz / User / markiert / gewaehlt }
         mset1func(testbrettscope);
       end;
       if autosuche<>'' then _keyboard(keypgdn);
@@ -823,7 +823,7 @@ begin
                             ((bereich=2) and (_brett[1]='U')) then
             TestMsg;
           if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
-            dbNext(mbase);            { Satz gelîscht wurde               }
+            dbNext(mbase);            { Satz geloescht wurde               }
           testbrk(brk);
           end;
         dbSetIndex(mbase,mi);
@@ -859,7 +859,7 @@ begin
              1..4 : TestBrett(mbrettd('U',ubase));
                10 : TestBrett(such_brett);
           else      begin
-                      hinweis(getres2(441,17));   { 'kein Brett gewÑhlt' }
+                      hinweis(getres2(441,17));   { 'kein Brett gewaehlt' }
                       me:=false;
                     end;
           end;
@@ -884,7 +884,7 @@ begin
     begin
       if me then begin
         hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
-        aufbau:=true;               { wg. gelîschter Markierung! }
+        aufbau:=true;               { wg. geloeschter Markierung! }
         end;
       goto ende;                    { Fenster wiedeherstellen...}
       end
@@ -1030,7 +1030,7 @@ var brk  : boolean;
     fn   : string;
     f    : file;
 begin
-  if testuvs(getres(453)) then exit;   { 'éndern' }
+  if testuvs(getres(453)) then exit;   { 'Aendern' }
   hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,true);
   if hds>1 then begin
@@ -1045,7 +1045,7 @@ begin
       { ClearPGPflags(hdp); }
       hdp^.orgdate:=true;
       WriteHeader(hdp^,f,reflist);
-      XreadF(hds,f);   { den Nachrichtentext anhÑngen ... }
+      XreadF(hds,f);   { den Nachrichtentext anhaengen ... }
       close(f);
       Xwrite(fn);
       erase(f);
@@ -1082,7 +1082,7 @@ var fn   : string;
 begin
   dbReadN(mbase,mb_typ,typ);
   if typ='B' then begin
-    rfehler(423);   { 'Bei BinÑrdateien nicht mîglich' }
+    rfehler(423);   { 'Bei Binaerdateien nicht moeglich' }
     exit;
     end;
   if testuvs(getres(455)) then exit;   { 'Edit' }
@@ -1107,7 +1107,7 @@ begin
     hdp^.orgdate:=true;
     WriteHeader(hdp^,f2,reflist);   { ..Header in neues Tempfile.. }
     reset(f,1);
-    fmove(f,f2);                  { ..den Text dranhÑngen.. }
+    fmove(f,f2);                  { ..den Text dranhaengen.. }
     close(f); erase(f);
     close(f2);
     dbReadN(mbase,mb_netztyp,l);
@@ -1117,7 +1117,7 @@ begin
     erase(f2);
     wrkilled;
     PGP_EndSavekey;
-    aufbau:=true;                 { wg. geÑnderter Grî·e }
+    aufbau:=true;                 { wg. geaenderter Groesse }
     end;
    FreeHeaderMem(hdp);
 end;
@@ -1135,17 +1135,17 @@ var ablg   : byte;
 begin
   dbReadN(mbase,mb_typ,typ);
   if typ='B' then begin
-    rfehler(423);   { 'Bei BinÑrdateien nicht mîglich' }
+    rfehler(423);   { 'Bei Binaerdateien nicht moeglich' }
     exit;
     end;
-  if testuvs(getres(453)) then exit;   { 'éndern' }
+  if testuvs(getres(453)) then exit;   { 'Aendern' }
   dbReadN(mbase,mb_ablage,ablg);
   dbReadN(mbase,mb_adresse,adr);
   dbReadN(mbase,mb_groesse,size);
   assign(f,aFile(ablg));
   reset(f,1);
   if (size=0) or (adr+size>filesize(f)) then begin
-    rfehler1(424,strs(ablg));   { 'Nachricht ist beschÑdigt  (Ablage %s)' }
+    rfehler1(424,strs(ablg));   { 'Nachricht ist beschaedigt  (Ablage %s)' }
     close(f);
     end
   else
@@ -1174,7 +1174,7 @@ var c   : char;
 begin
   dbReadN(mbase,mb_unversandt,uvs);
   if uvs and 1<>0 then
-    rfehler(425)   { 'Bei unversandten Nachrichten leider nicht mîglich.' }
+    rfehler(425)   { 'Bei unversandten Nachrichten leider nicht moeglich.' }
   else begin
     dbReadN(mbase,mb_typ,c);
     dbReadN(mbase,mb_flags,flags);
@@ -1276,7 +1276,7 @@ begin
     else begin
       dialog(38,3,'',x,y);
       adrb:=true;
-      maddbool(3,2,getres2(456,12),adrb);   { 'User in Adre·buch eintragen' }
+      maddbool(3,2,getres2(456,12),adrb);   { 'User in Adressbuch eintragen' }
       readmask(brk);
       enddialog;
       if brk then exit;
@@ -1340,7 +1340,7 @@ begin
   if ReadFilename(getres2(457,iif(user,1,2)),fname,true,useclip)
   then
     if not ValidFileName(fname) then
-      fehler(getres2(457,3))   { 'ungÅltiger Dateiname' }
+      fehler(getres2(457,3))   { 'ungueltiger Dateiname' }
     else begin
       exkom:=ReadJNesc(getres2(457,4),false,brk);  { 'auch Kommentare exportieren' }
       if brk then begin
@@ -1419,7 +1419,7 @@ begin
   while rc=0 do begin
     if crashs then begin
       box:=strs(hexval(LeftStr(sr.name,4)))+'/'+strs(hexval(copy(sr.name,5,4)));
-      { ^^^ nur fÅr Anzeige bei fehlerhaftem CP }
+      { ^^^ nur fuer Anzeige bei fehlerhaftem CP }
       zconnect:=true;
       end
     else begin
@@ -1516,7 +1516,7 @@ var hdp   : headerp;
     xxs   : array[1..20] of string;
     netz  : string;
     p     : byte;
-    elist : boolean;    { mehrere EmpfÑnger }
+    elist : boolean;    { mehrere Empfaenger }
     rlist : boolean;    { mehrere References }
     t     : taste;
     s     : atext;
@@ -1537,7 +1537,7 @@ var hdp   : headerp;
               ', '+copy(ddatum,9,2)+':'+copy(ddatum,11,2)+':'+copy(ddatum,13,2);
   end;
 
-  procedure empfliste;   { Fenster mit EmpfÑngerliste }
+  procedure empfliste;   { Fenster mit Empfaengerliste }
   var ml  : byte;
       i,j : integer;
       x,y : byte;
@@ -1551,7 +1551,7 @@ var hdp   : headerp;
         end;
       ml:=min(ml,72);
       i:=min(empfanz,screenlines-8);
-      msgbox(ml,i+4,getres2(459,30),x,y);   { 'EmpfÑngerliste' }
+      msgbox(ml,i+4,getres2(459,30),x,y);   { 'Empfaengerliste' }
       for j:=1 to i do begin
         ReadHeadEmpf:=j;
         ReadHeader(hdp^,hds,false);
@@ -1591,7 +1591,7 @@ var hdp   : headerp;
       ml:=max(ml,length(ref)+6);
       ml:=min(ml,72);
       i:=min(refanz,screenlines-8);
-      msgbox(ml,i+4,getres2(459,31),x,y);   { 'EmpfÑngerliste' }
+      msgbox(ml,i+4,getres2(459,31),x,y);   { 'Empfaengerliste' }
       j:=y+2;
       showrefs(reflist);
       wrt(x+3,y+i+1,LeftStr(ref,72));
@@ -1608,7 +1608,7 @@ var hdp   : headerp;
     else begin
       UpString(typ);
       if typ='T' then typstr:=typ+getres2(459,1) else   { '  (Text)' }
-      if typ='B' then typstr:=typ+getres2(459,2) else   { '  (binÑr)' }
+      if typ='B' then typstr:=typ+getres2(459,2) else   { '  (binaer)' }
       typstr:=typ;
       end;
   end;
@@ -1624,7 +1624,8 @@ begin
     apps(6,LeftStr(absender,53));
     if realname<>'' then apps(7,realname);
     if organisation<>'' then apps(8,LeftStr(organisation,53));
-    if PmReplyTo<>'' then apps(9,LeftStr(PmReplyTo,53));
+    { suboptimal }
+    if replyto.count>0 then apps(9,LeftStr(replyto[0],53));
     apps(10,iifs(ntZDatum(netztyp),zdatum,datum)+
          iifs(datum<>'','  ('+fdat(datum)+', '+ftime(datum)+
          iifs(ntSec(netztyp),':'+copy(zdatum,13,2),'')+')',''));
@@ -1669,7 +1670,7 @@ begin
       attrtxt(col.colmbox);
       wrt(x+3+p,y+i+1,mid(xxs[i],p+1));
       end;
-    attrtxt(col.colmboxhigh); wrt(x+3,y+anz+3,getres2(459,26));  { 'Grî·e des Kopfes: ' }
+    attrtxt(col.colmboxhigh); wrt(x+3,y+anz+3,getres2(459,26));  { 'Groesse des Kopfes: ' }
     attrtxt(col.colmbox);     write(hds,getres(13));
     dat:=longdat(dbReadInt(mbase,'empfdatum'));
     if smdl(IxDat('2712300000'),IxDat(dat)) then
@@ -1688,7 +1689,7 @@ begin
       s:=s+'R='+getres2(459,31);
       end;
     if s<>'' then s:=s+')';
-    wrt(x+3,y+anz+5,getres2(459,29)+s+' ...');    { Taste drÅcken / E=EmpfÑngerliste / R=Referenzliste }
+    wrt(x+3,y+anz+5,getres2(459,29)+s+' ...');    { Taste druecken / E=Empfaengerliste / R=Referenzliste }
     mon;
     x:=wherex; y:=wherey;
     repeat
@@ -1757,7 +1758,7 @@ begin
     datei:=trim(mid(fn, 80));
     if (exdir='') and ((temppath='') or (UpperCase(temppath)=ownpath))
       and FileExists(datei) then begin
-        rfehler(428);   { 'extrahieren nicht mîglich - bitte Temp-Verzeichnis angeben!' }
+        rfehler(428);   { 'extrahieren nicht moeglich - bitte Temp-Verzeichnis angeben!' }
         exit;
         end
     else if ((exdir<>'') and FileExists(exdir+datei)) or
@@ -1767,7 +1768,7 @@ begin
         exit;
         end
       else
-        if not ReadJN(getreps(461,fitpath(exdir+datei,40)),false)  { '%s existiert schon. öberschreiben' }
+        if not ReadJN(getreps(461,fitpath(exdir+datei,40)),false)  { '%s existiert schon. ueberschreiben' }
         then exit
         else
           _era(iifs(exdir<>'',exdir,temppath)+datei);
@@ -1779,7 +1780,7 @@ begin
     decomp:=copy(decomp,1,p-1)+'"'+abuf[arcbufp].arcname+'" "' + copy(decomp,p+8,127)+'"';
     shell(decomp,400,3);
     if exdir='' then begin
-      { !?! GoDir(temppath); }    { wurde durch Shell zurÅckgesetzt }
+      { !?! GoDir(temppath); }    { wurde durch Shell zurueckgesetzt }
       if not FileExists(temppath+datei) then
         rfehler(430)       { 'Datei wurde nicht korrekt entpackt.' }
       else begin
@@ -1798,7 +1799,7 @@ begin
           //  rfehler(431)   { 'zu wenig Speicher!' }
           // else
           if arcbufp=max_arc then
-            rfehler(432)   { 'Maximal 3 verschachtelte Archive mîglich!' }
+            rfehler(432)   { 'Maximal 3 verschachtelte Archive moeglich!' }
           else begin
             decomp:=TempPath+datei;  { Stack sparen ... }
             if ViewArchive(decomp,newarc)<>0 then;
@@ -1850,7 +1851,7 @@ begin
     if (dp<>'') and (RightStr(dp,1)<>':') and (RightStr(dp,1)<>'\') then
       dp:=dp+'\';
     if not validfilename(dp+'test.$$1') then
-      rfehler(433)   { 'ungÅltiges Verzeichnis' }
+      rfehler(433)   { 'ungueltiges Verzeichnis' }
     else begin
       sex:=exdir;
       exdir:=dp;
@@ -1912,7 +1913,7 @@ begin
   listtp(ArcSpecial);
   showkeys(11);
   attrtxt(col.colarcstat);
-  mwrt(1,4,forms(getres(464),80));   { ' Name            OrgGrî·e  CompGrî·e    %    Methode    Datum    Uhrzeit' }
+  mwrt(1,4,forms(getres(464),80));   { ' Name            OrgGroesse CompGroesse    %    Methode    Datum    Uhrzeit' }
   inc(arcbufp);
   with ar do begin
     arctyp_save:=arctyp;
@@ -2030,7 +2031,7 @@ begin
   msgbox(32,8,getres2(466,2),x,y);   { 'DupeKill' }
   wrt(x+3,y+2,getres2(466,3));       { 'Nachrichten gesamt:' }
   wrt(x+3,y+3,getres2(466,4));       { '        bearbeitet:' }
-  wrt(x+3,y+4,getres2(466,5));       { '          gelîscht:' }
+  wrt(x+3,y+4,getres2(466,5));       { '         geloescht:' }
   attrtxt(col.colmboxhigh);
   wrt(x+22,y+2,strsn(dbRecCount(d),7));
   assign(log,logpath+DupeLogfile);
@@ -2087,7 +2088,7 @@ var t  : text;
     s  : string;
 begin
   if dbReadInt(mbase,'typ')=ord('B') then
-    rfehler(436)   { 'Drucken nicht mîglich - BinÑrnachricht' }
+    rfehler(436)   { 'Drucken nicht moeglich - Binaernachricht' }
   else begin
     fn:=TempS(dbReadInt(mbase,'groesse')+1000);
     extract_msg(1,'',fn,false,1);
@@ -2270,7 +2271,7 @@ begin
             delete(s,1,1);
           continue
         end;
-        { Vor dem Dateinamen mu· ein Trennzeichen stehen }
+        { Vor dem Dateinamen muss ein Trennzeichen stehen }
         if (v<>#0) then if not (v in [#32,'"','<','>','Ø','Æ','(','[','{',',',';',':','_','*']) then begin
           while (Length(s)>0)
           and not (s[1] in [#32,'"','<','>','Ø','Æ','(','[','{','_','*']) do begin
@@ -2288,7 +2289,7 @@ begin
         t:=copy(s,1,k);
         u:=UpperCase(t);
         delete(s,1,Length(t));
-        { Auf den Dateinamen mu· ein Trennzeichen folgen }
+        { Auf den Dateinamen muss ein Trennzeichen folgen }
         if (Length(s)>0) then if not (s[1] in [#32,'"','<','>','Ø','Æ',')',']','}',',',';',':','_','*']) then continue;
 
         if (mark and (t[Length(t)] in ['_','*'])) then Dellast(t);
@@ -2393,9 +2394,9 @@ begin
   _killit:=false;
   dbReadN(mbase,mb_unversandt,uv);
   if uv and 1<>0 then
-    rfehler(439)   { 'Unversandte Nachricht mit "Nachricht/Unversandt/Lîschen" lîschen!' }
+    rfehler(439)   { 'Unversandte Nachricht mit "Nachricht/Unversandt/Loeschen" loeschen!' }
   else
-    if not ask or ReadJN(getres(470)+   { 'Nachricht lîschen' }
+    if not ask or ReadJN(getres(470)+   { 'Nachricht loeschen' }
       iifs(KK and HasRef,getres(471),''),true) then
     begin                            { ' (unterbricht Bezugsverkettung)' }
       if msgmarked then
@@ -2415,6 +2416,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.79  2000/11/18 00:04:44  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.78  2000/11/16 21:31:06  hd
   - DOS Unit entfernt
 
@@ -2609,7 +2613,7 @@ end.
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 
   Revision 1.23  2000/03/08 22:36:33  mk
-  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
+  - Bugfixes fuer die 32 Bit-Version und neue ASM-Routinen
 
   Revision 1.22  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
@@ -2647,10 +2651,10 @@ end.
   -!Todo.txt aktualisiiert
 
   Revision 1.13  2000/02/22 15:51:20  jg
-  Bugfix fÅr "O" im Lister/Archivviewer
-  Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
-  O, I,  ALT+M, ALT+U, ALT+V, ALT+B nur noch im Lister gÅltig.
-  Archivviewer-Macros gÅltig im MIME-Popup
+  Bugfix fuer "O" im Lister/Archivviewer
+  Fix fuer Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
+  O, I,  ALT+M, ALT+U, ALT+V, ALT+B nur noch im Lister gueltig.
+  Archivviewer-Macros gueltig im MIME-Popup
 
   Revision 1.12  2000/02/19 18:00:24  jg
   Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
@@ -2677,8 +2681,8 @@ end.
   JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
       * wenn man eine markierte Nachricht liest, wird beim Verlassen
         der Headeranzeige nicht gleich auch der Lister verlasssen
-      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempf‰nger"
-        kˆnnen jetzt Umlautunabh‰ngig geschalten werden
+      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempfaenger"
+        koennen jetzt Umlautunabhaengig geschalten werden
 
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000

@@ -481,7 +481,7 @@ var ma    : map;
       DelHidden(ma^[p].mpnr);
       display;
       modi:=true;
-      {$IFDEF unix}
+      {$IFDEF usesyslog}
       XPInfoLog('Entry '''+ma^[p].mstr+''' enabled');
       {$ENDIF }
       end;
@@ -495,7 +495,7 @@ var ma    : map;
       AddHidden(ma^[p].mpnr);
       display;
       modi:=true;
-      {$IFDEF unix}
+      {$IFDEF usesyslog}
       XPInfoLog('Entry '''+ma^[p].mstr+''' disabled');
       {$ENDIF }
       end;
@@ -752,13 +752,16 @@ begin
   wrlogo;
   if saved then begin
     writeln('Žnderungen wurden gesichert.'#10);
-    {$IFDEF unix}
+    {$IFDEF usesyslog}
     XPNoticeLog('Changes saved');
     {$ENDIF }
   end;
 end.
 {
   $Log$
+  Revision 1.31  2000/11/18 00:04:43  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.30  2000/11/14 22:35:05  fe
   Replaced "exist()" by "fileexists()".
 

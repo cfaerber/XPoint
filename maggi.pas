@@ -1224,8 +1224,9 @@ begin
               else
                 writeln(t,'-',ref);
               end;
-            if AmReplyTo<>'' then
-              writeln(t,':Followup-To: ',mid(AmReplyTo,length(bretth)+1));
+	    { suboptimal }
+            if followup.count>0 then
+              writeln(t,':Followup-To: ',mid(followup[0],length(bretth)+1));
             end;
           size:=groesse;              { Nachrichtentext kopieren }
           bufpos:=0; rr:=0;
@@ -1479,9 +1480,9 @@ begin
                           ref:=LeftStr(ref,cpos(' ',ref)-1);
                         end
                       else if LeftStr(LowerCase(s),13)='followup-to: ' then
-                        AmReplyTo:=bretth+trim(mid(s,14))
+                        followup.add(bretth+trim(mid(s,14)))
                       else if LeftStr(LowerCase(s),10)='reply-to: ' then
-                        PmReplyTo:=trim(mid(s,11))
+                        replyto.add(trim(mid(s,11)))
                       else if LowerCase(s)='content-type: uu1' then
                         typ:='B'
                       else if LowerCase(LeftStr(s,11))='file-date: ' then
@@ -1580,8 +1581,10 @@ begin
           wrs('MID: '+msgid);
           if organisation<>'' then wrs('ORG: '+organisation);
           if ref<>'' then wrs('BEZ: '+ref);
-          if AmReplyTo<>'' then wrs('Diskussion-in: '+AmReplyTo);
-          if PmReplyTo<>'' then wrs('Antwort-an: '+PmReplyTo);
+          for i:=0 to replyto.count-1 do
+            wrs('ANTWORT-AN: '+replyto[i]);
+          for i:=0 to followup.count-1 do
+            wrs('DISKUSSION-IN: '+followup[i]);
           if programm<>''  then wrs('Mailer: '+programm);
           if gate<>''      then wrs('Gate: '+gate);
           if distribution<>'' then wrs('U-Distribution: '+distribution);
@@ -1643,6 +1646,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2000/11/18 00:04:44  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.28  2000/11/14 22:35:05  fe
   Replaced "exist()" by "fileexists()".
 

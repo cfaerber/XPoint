@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -178,13 +178,14 @@ var hdp : headerp;
 begin
   hdp:= AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
-  if (hdp^.PmReplyTo<>'') and not askreplyto then
-    abs:=hdp^.PmReplyTo
+  { suboptimal }
+  if (hdp^.replyto.count>0) and not askreplyto then
+    abs:=hdp^.replyto[0]
   else begin
     wabok:=(pos('.',mid(hdp^.wab,cpos('@',hdp^.wab)))<>0);
-    if (hds=1) or ((hdp^.wab='') and (hdp^.oem='') and (hdp^.PmReplyTo='')) or
-                  ((hdp^.wab='') and (hdp^.oem=hdp^.vertreter) and (hdp^.PmReplyTo='')) or
-                  (not wabok and (hdp^.oem='') and (hdp^.PmReplyTo=''))
+    if (hds=1) or ((hdp^.wab='') and (hdp^.oem='') and (hdp^.replyto.count=0)) or
+                  ((hdp^.wab='') and (hdp^.oem=hdp^.vertreter) and (hdp^.replyto.count=0)) or
+                  (not wabok and (hdp^.oem='') and (hdp^.replyto.count=0))
     then begin
       abs:= dbReadNStr(mbase,mb_absender);
       realname:=hdp^.realname;
@@ -192,15 +193,16 @@ begin
     else begin
       anz:=0;
       { 03.02.2000 robo }
-      if hdp^.PmReplyTo<>'' then
-        appadr(hdp^.PmReplyTo,7);                    { 'Reply-To-Empf„nger :' }
+      { suboptimal }
+      if hdp^.replyto.count>0 then
+        appadr(hdp^.replyto[0],7);                   {'Reply-To-Empfaenger :' }
       { /robo }
       if hdp^.wab<>'' then appadr(hdp^.absender,1)   { 'Original-Absender  :' }
       else appadr(hdp^.absender,5);                  { 'Absender           :' }
       if wabok then
         appadr(hdp^.wab,2);                          { 'Weiterleit-Absender:' }
       if hdp^.oem<>'' then
-        appadr(hdp^.oem,3);                          { 'Original-Empf„nger :' }
+        appadr(hdp^.oem,3);                          { 'Original-Empfaenger :' }
     (*
       dbSeek(ubase,uiName,UpperCase(hdp^.absender));
       if dbFound and (dbXsize(ubase,'adresse')>0) then begin
@@ -212,7 +214,7 @@ begin
       s:=getres2(476,resn[1])+' '+LeftStr(adra[1],50);
       for i:=2 to anz do
         s:=s+','+getres2(476,resn[i])+' '+LeftStr(adra[i],50);
-      nr:=minisel(0,0,getres2(476,4),s,1);           { 'Empf„nger w„hlen ...' }
+      nr:=minisel(0,0,getres2(476,4),s,1);           { 'Empfaenger waehlen ...' }
       freeres;
       if (nr>=1) and (nr<=anz) then
         abs:=adra[nr]
@@ -308,6 +310,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/11/18 00:04:44  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.18  2000/11/16 22:35:30  hd
   - DOS Unit entfernt
 
@@ -350,9 +355,9 @@ end.
 
   Revision 1.7  2000/06/29 13:00:57  mk
   - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
+  - OS/2 Version laeuft wieder
+  - Jochens 'B' Fixes uebernommen
+  - Umfangreiche Umbauten fuer Config/Anzeigen/Zeilen
   - Modeminitialisierung wieder an alten Platz gelegt
   - verschiedene weitere fixes
 

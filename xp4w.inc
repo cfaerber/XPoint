@@ -53,7 +53,7 @@ begin
         end;
       end;
     n:= dbReadNStr(ubase,ub_username);
-    if (dispmode=1) or (dispmode=3) then begin    { Adre·buch }
+    if (dispmode=1) or (dispmode=3) then begin    { Adressbuch }
       dbSeek(ubase,uiAdrbuch,#1+UpperCase(n));
       if dbEOF(ubase) then disprec[1]:=0
       else disprec[1]:=dbRecno(ubase);
@@ -100,7 +100,7 @@ var mhd    : longint;
 begin
   GoP;
   rec:=disprec[p];
-  dispspec:='U'+LeftStr(dbReadStr(ubase,'username'),40);  { nur fÅr Anzeige }
+  dispspec:='U'+LeftStr(dbReadStr(ubase,'username'),40);  { nur fuer Anzeige }
   _dispspec:=mbrettd('U',ubase);                       { abschneiden     }
   mhd:=abhdatum;
   dbReadN(ubase,ub_haltezeit,halten);
@@ -257,7 +257,7 @@ begin
   GoP;
   name:= dbReadNStr(ubase,ub_username);
   name:=vert_name(name);
-  if ReadJN(getreps(418,name),true) then begin   { 'Verteiler %s lîschen' }
+  if ReadJN(getreps(418,name),true) then begin   { 'Verteiler %s loeschen' }
     del_verteiler(name);
     udelete;
     end;
@@ -272,14 +272,14 @@ end;
 function keinverteiler:boolean;
 begin
   if isverteiler then begin
-    rfehler(417);   { 'Bei Verteilern nicht mîglich!' }
+    rfehler(417);   { 'Bei Verteilern nicht moeglich!' }
     keinverteiler:=false;
     end
   else
     keinverteiler:=true;
 end;
 
-procedure UserSprung(vor: boolean);   { zum nÑchsten/letzten markierten User }
+procedure UserSprung(vor: boolean);   { zum naechsten/letzten markierten User }
 var rec,n : longint;
 
   procedure incn;
@@ -336,7 +336,7 @@ var s      : string;
     pollbox  : string;
   begin
     dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
-    if dbFound then       { mÅ·te IMMER true sein }
+    if dbFound then       { moesste IMMER true sein }
       pollbox := dbReadNStr(bbase,bb_pollbox)
     else
       pollbox:=DefaultBox;
@@ -345,7 +345,7 @@ var s      : string;
   end;
 
 begin
-  d1:=disprec[1];             { Mu· gesichert werden, da Zielfenster }
+  d1:=disprec[1];             { Muss gesichert werden, da Zielfenster }
   GoP;
   if LeftStr(dbReadStr(mbase,'brett'),1)='U' then
     fehler('In diesem Brett nicht mîglich.')
@@ -353,9 +353,10 @@ begin
     hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,false);
     s:='';
-    if hdp^.PmReplyTo<>'' then begin
-      dbSeek(ubase,uiName,UpperCase(hdp^.PmReplyTo));
-      if dbFound then s:=hdp^.PmReplyTo;
+    { suboptimal }
+    if hdp^.replyto.count>0 then begin
+      dbSeek(ubase,uiName,UpperCase(hdp^.replyto[0]));
+      if dbFound then s:=hdp^.replyto[0];
     end;
     if s='' then
       s:= dbReadNStr(mbase,mb_absender);   { auch auf mbase arbeitet.     }
@@ -461,10 +462,10 @@ end;
 { art: 0=normal, 1=Rot13, 2=HexDump }
 { mp:  0=kein Multipart, 1=Auto, 2=Multipart }
 
-{ Viewer-PrioritÑt:    1. Viewer fÅr passenden MIME-Typ }
-{                      2. interner Archiv-Viewer        }
-{                      3. externer Viewer fÅr */*       }
-{                      4. Lister                        }
+{ Viewer-Prioritaet:   1. Viewer fuer passenden MIME-Typ }
+{                      2. interner Archiv-Viewer         }
+{                      3. externer Viewer fuer */*       }
+{                      4. Lister                         }
 
 { Ausschnitt aus der Mail 7nWPORiQUWB@jochen.gehring.dialin.t-online.de von
   Jochen Gehring <Jochen.Gehring@t-online.de>:
@@ -474,14 +475,14 @@ Zum verhalten bei Singlepart:
 
 die 600Zeilen Routine Readmsg in XP4W.INC sieht garnicht so riesig aus,
 ist aber ein wahnsinniges Gebastel das mit XP immer weiter gewachsen ist.
-Ohne den Code schritt fÅr Schritt durchzutracen kann man oft nur raten,
+Ohne den Code schritt fuer Schritt durchzutracen kann man oft nur raten,
 wann die Routine wohin springt. Da huscht ein File schon mal durch den einen
 Test durch, um von einem der drei folgenden, fast gleichartigen Tests
-abgefangen zu werden. Sinnvoll wÑre das ganze komplett neu zu schreiben,
+abgefangen zu werden. Sinnvoll waere das ganze komplett neu zu schreiben,
 aber wer garantiert dann ob dann alles noch so funktioniert wie bisher ?
 (ich denke etzt an die verschiedenen File-Attach Varianten in Mailboxnetzen)
 
-Zum VerstÑndnis: XP geht in etwa so vor:
+Zum Verstaendnis: XP geht in etwa so vor:
 
 
 ist es ein File-Attach ?
@@ -495,16 +496,16 @@ ist es Multipart ?                                  |  |
                                                |    |  |
 Mimeauswahlfenster darstellen                  |    |  |
                                                |    |  |
-gewÑhlten Mime-part in Datei extrahieren     <-     |  |
+gewaehlten Mime-part in Datei extrahieren    <-     |  |
                                                     |  |
 Dateinhalt in neue Datei dekodieren          <------   |
                                                        |
-Ist es ein Fall fÅr den Internen Viewer ?    <---------
+Ist es ein Fall fuer den Internen Viewer ?   <---------
   J -> Archivviewer/Lister mit Datei Starten
 
 Existiert ein Viewertyp ?
-  J -> Zum Viewertyp passenden Viewer WÑhlen
-  N -> Zur Dateiendung passenden Viewer wÑhlen
+  J -> Zum Viewertyp passenden Viewer Waehlen
+  N -> Zur Dateiendung passenden Viewer waehlen
 
 Passt Dateiendung zum Viewer ?
   N -> Dateiendung entsprechend setzen
@@ -513,8 +514,8 @@ Viewer starten
 
 
 Und das ist jetzt grob vereinfacht, ohne die Sonderstellung
-von Dateiendung gegenÅber Mime-typ, oder den Virenschutz,
-die die folgenden Tests dann kreativ durch umÑndern des Viewertyps,
+von Dateiendung gegenueber Mime-typ, oder den Virenschutz,
+die die folgenden Tests dann kreativ durch umaendern des Viewertyps,
 Mimetyps oder Dateiendung umgehen...
 
 }
@@ -618,7 +619,7 @@ var fn     : string;
     dbReadN(mbase,mb_unversandt,flags);
     rflag:=false;
     if (b=0) or ((nt=nt_Maus) and (flags and 32<>0)) then begin
-      brett:= dbReadNStr(mbase,mb_brett);       { ^^ Maus-zurÅckgestellt }
+      brett:= dbReadNStr(mbase,mb_brett);       { ^^ Maus-zurueckgestellt }
       if (nt=nt_Maus) and MausLeseBest and ((brett[1]='1') or (brett[1]='U'))
       then
         if briefsent then begin
@@ -675,7 +676,7 @@ var fn     : string;
 { JG:24.04.00 Ausgeklammerte Stellen sorgen dafuer das durch blaettern im Lister
              die einzelnen Teile einer Mulpart-Messi direkt angesehen werden. }
 
-  procedure GoMsgBack;    { '-' -> zurÅck }
+  procedure GoMsgBack;    { '-' -> zurueck }
   begin
     SetGelesen;
 (*    if multipart and not mpdata.alternative and (mpart_nr>1) then begin
@@ -700,7 +701,7 @@ var fn     : string;
     mpselect:=true;
   end;
 
-  procedure GoMsgForth;       { '+' -> vorwÑrts }
+  procedure GoMsgForth;       { '+' -> vorwaerts }
   begin
     SetGelesen;
 (*    if multipart and not mpdata.alternative and
@@ -803,7 +804,7 @@ begin
       end;
 
     { Im folgenden Block werden die Variablen fn2, arc, typ, mpdata,    }
-    { mpart_nr und viewer entsprechend der gewÑhlten Nachricht gesetzt: }
+    { mpart_nr und viewer entsprechend der gewaehlten Nachricht gesetzt: }
 
     if FileAttach then begin
       fn2:=fn;
@@ -905,12 +906,12 @@ begin
         typ:='B';
 
       if (typ='B') and (art<>2) and (dbReadInt(mbase,'unversandt') and 2=0)
-         and (viewer.prog='') then begin       { keine BinÑr-Versandmeldung }
+         and (viewer.prog='') then begin       { keine Binaer-Versandmeldung }
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
         GetExtViewer(GetMsgFilename,viewer);
         if viewer.prog='' then
-          TestGifLbmEtc(fn2,true,viewer);   { fÅr Z3.8, MaggiPoll etc. }
+          TestGifLbmEtc(fn2,true,viewer);   { fuer Z3.8, MaggiPoll etc. }
         if viewer.prog='' then begin
           arc:=ArcType(fn2);
           if ArcRestricted(arc) then arc:=0;
@@ -925,13 +926,13 @@ begin
         if mimetyp='' then
           GetMimeViewer('text/plain',viewer);
         if (viewer.prog='') and (mimetyp<>'') then
-          GetDefaultViewer(mimetyp,viewer);   { Viewer fÅr */* }
+          GetDefaultViewer(mimetyp,viewer);   { Viewer fuer */* }
         end;
 
       end;      { of not FileAttach }
     { Nachricht anzeigen }
 
-    nw:=NachWeiter;   { kann vom Lister verÑndert werden }
+    nw:=NachWeiter;   { kann vom Lister veraendert werden }
     netztyp:=dbReadInt(mbase,'netztyp') and $ff;
     if viewer.prog='*intern*' then viewer.prog:='';
     if viewer.prog<>'' then begin      { externer Viewer }
@@ -983,7 +984,7 @@ begin
     { aufrÑumen ... }
 
     if not FileAttach then begin
-      if fn2<>'' then _era(fn2);    { Temp-Dateien lîschen }
+      if fn2<>'' then _era(fn2);    { Temp-Dateien loeschen }
       if FileExists(fn) then _era(fn);
       end;
     lastmpsel:=mpselect;
@@ -1219,12 +1220,12 @@ var s : string;
 begin
   attrtxt(col.colBretterHi);
   if ArchivWeiterleiten then
-    s:=getres(426)      { ' Archivbrett wÑhlen:' }
+    s:=getres(426)      { ' Archivbrett waehlen:' }
   else
     if dispmode=-1 then
-      s:=getres(427)    { ' Zielbrett wÑhlen' }
+      s:=getres(427)    { ' Zielbrett waehlen' }
     else
-      s:=getres(428);   { ' EmpfÑnger wÑhlen' }
+      s:=getres(428);   { ' Empfaenger waehlen' }
   mwrt(1,4,forms(s,80+ScreenWidth-80));
 end;
 
@@ -1376,7 +1377,7 @@ end;
 
 { --- Bretter bearbeiten ------------------------------- }
 
-procedure msg_window(alle:boolean);   { BrettÅbersicht->Nachrichtenfenster }
+procedure msg_window(alle:boolean);   { Brettuebersicht->Nachrichtenfenster }
 var dat    : longint;
     p2     : integer;
     mdr    : dispra;
@@ -1406,7 +1407,7 @@ var dat    : longint;
 
   procedure mw2;
   begin
-    if U_read then begin                   { Brett-Ungelesen-Flag ÅberprÅfen }
+    if U_read then begin                   { Brett-Ungelesen-Flag ueberpruefen }
       dbSeek(mbase,miGelesen,_brett+#0);
       if not dbEOF(mbase) then begin
         flags:=iif(dbReadInt(mbase,'gelesen')=1,0,2) +
@@ -1621,6 +1622,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.55  2000/11/18 00:04:44  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.54  2000/11/17 00:15:47  mk
   - Virtual Pascal compatibility updates
 
@@ -1720,6 +1724,6 @@ end;
   - 32 Bit Teile entfernt
 
   Revision 1.25  2000/06/12 19:52:15  mk
-  - Datei enth‰lt jetzt Loginfos
+  - Datei enthaelt jetzt Loginfos
 
 }

@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -110,9 +110,10 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       end;
       EmpfList.Clear;
 
-      if gb and (cpos('@',AmReplyTo)=0) then
-        UpString(AmReplyTo);
-      if AmReplyTo<>'' then wrs('Diskussion-in: '+AmReplyTo);
+{      if gb and (cpos('@',AmReplyTo)=0) then
+        UpString(AmReplyTo);}
+      for i:=0 to followup.count-1 do
+        wrs('DISKUSSION-IN: '+followup[i]);
       if oem<>'' then wrs('OEM: '+oem);
       wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
       if oab<>'' then wrs('OAB: '+oab+iifs(oar='','',' ('+oar+')'));
@@ -129,11 +130,13 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         wrs('CONTROL: cancel <'+ref+'>');
       end;
       wrs('ROT: '+pfad);
-      p1:=cpos(' ',PmReplyTo);
-      if p1>0 then   { evtl. ÅberflÅssige Leerzeichen entfernen }
-        PmReplyTo:=LeftStr(PmReplyTo,p1-1)+' '+trim(mid(PmReplyTo,p1+1));
-      if (PmReplyTo<>'') and (LeftStr(PmReplyTo,length(absender))<>absender)
-                       then wrs('Antwort-an: '+PmReplyTo);
+{      p1:=cpos(' ',PmReplyTo);
+      if p1>0 then }  { evtl. ueberfluessige Leerzeichen entfernen }
+{        PmReplyTo:=LeftStr(PmReplyTo,p1-1)+' '+trim(mid(PmReplyTo,p1+1));}
+      for i:=0 to replyto.count-1 do
+        wrs('ANTWORT-AN: '+replyto[i]);
+{      if (PmReplyTo<>'') and (LeftStr(PmReplyTo,length(absender))<>absender)
+                       then wrs('Antwort-an: '+PmReplyTo);}
       if typ='B'       then wrs('TYP: BIN');
       if datei<>''     then wrs('FILE: ' +LowerCase(datei));
       if ddatum<>''    then wrs('DDA: '  +ddatum+'W+0');
@@ -143,8 +146,11 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if organisation<>'' then wrs('ORG: '+organisation);
       if attrib and attrReqEB<>0 then
         if wab<>''       then wrs('EB: '+wab) else
-        if pmreplyto<>'' then wrs('EB: '+pmreplyto) else
-        wrs('EB:');
+        if replyto.count>0 then
+	  for i:=0 to replyto.count-1 do
+            wrs('EB: '+replyto[i])
+	else
+          wrs('EB:');
       if attrib and attrIsEB<>0  then wrs('STAT: EB');
       if pm_reply                then wrs('STAT: PM-REPLY');
       if attrib and AttrQPC<>0   then wrs('CRYPT: QPC');
@@ -393,13 +399,16 @@ begin
       end;
     reptoanz:=0;
     if pm then begin
-      repto:=pmreplyto; reptoanz:=0;
+      { suboptimal }
+      if replyto.count>0 then repto:=replyto[0];
+      reptoanz:=0;
       end
-    else if (amreplyto='') or
-         ((empfanz=1) and (empfaenger=amreplyto)) then repto:=''
+      { suboptimal }
+    else if (followup.count>0) or
+         ((empfanz=1) and (empfaenger=followup[0])) then repto:=''
          else begin
-           repto:='A'+amreplyto;
-           reptoanz:=amrepanz;
+           repto:='A'+followup[0];
+           reptoanz:=followup.count;
            end;
     if not pm then begin
       AddToReflist(hdp^.ref);
@@ -438,6 +447,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/11/18 00:04:44  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.24  2000/11/09 18:15:12  mk
   - fixed Bug #116187: header of forwarded mails is stripped down
 
@@ -487,9 +499,9 @@ end.
 
   Revision 1.10  2000/06/29 13:00:55  mk
   - 16 Bit Teile entfernt
-  - OS/2 Version l‰uft wieder
-  - Jochens 'B' Fixes ¸bernommen
-  - Umfangreiche Umbauten f¸r Config/Anzeigen/Zeilen
+  - OS/2 Version laeuft wieder
+  - Jochens 'B' Fixes uebernommen
+  - Umfangreiche Umbauten fuer Config/Anzeigen/Zeilen
   - Modeminitialisierung wieder an alten Platz gelegt
   - verschiedene weitere fixes
 

@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -41,11 +41,11 @@ const
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
-      wltrenn : boolean;   { Trennzeilen als Ziel mîglich        }
+      wltrenn : boolean;   { Trennzeilen als Ziel moeglich       }
       mauskey : boolean;
 
       ArchivWeiterleiten : boolean;  { wird bei select(-1|3|4) verwendet }
-      MarkUnversandt     : boolean;  { fÅr select(11)                    }
+      MarkUnversandt     : boolean;  { fuer select(11)                   }
 
 
 procedure select(dispmode:shortint);
@@ -63,7 +63,7 @@ uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,xp8,
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
-      closeflag : boolean = false; { TClose -> Dateien schlie·en     }
+      closeflag : boolean = false; { TClose -> Dateien schliessen     }
       nobrettweiter : boolean = false; { Brettweiterschalter temporaer komplett ausschalten}
 
       IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
@@ -74,7 +74,7 @@ type  dispra    = array[1..maxgl] of longint;
 
 var   disprec   : dispra;
       dispext   : boolean;      { erweiterte Fensteranzige   }
-      dispspec  : string;      { Filter/Bereich fÅr Anzeige }
+      dispspec  : string;      { Filter/Bereich fuer Anzeige }
       _dispspec : string;
       dispdat   : DB;
       dispfto   : boolean;      { Fido: von/an/Betreff-Anzeige }
@@ -106,7 +106,7 @@ var fn : string;
 begin
   fn:='';
   if isempty or (aktdispmode<10) or (aktdispmode>19) then
-    rfehler(401)      { 'keine Nachricht gewÑhlt' }
+    rfehler(401)      { 'keine Nachricht gewaehlt' }
   else begin
     dbGo(dispdat,disprec[_p]);
     fn:=__getfilename(nr,nn);
@@ -150,14 +150,14 @@ begin                                          { mehr vorhanden sind. }
     end;
 end;
 
-{ ----- HauptmenÅ ---------------------------------------------------- }
+{ ----- Hauptmenue ---------------------------------------------------- }
 
 procedure select(dispmode:shortint);
 
 const autokey : taste = '';
 
 var gl      : shortint;
-    rdmode  : byte;        { Readmode fÅr das aktuelle Brett }
+    rdmode  : byte;        { Readmode fuer das aktuelle Brett }
     p       : shortint;
     empty   : boolean;
     markpos : integer;
@@ -202,7 +202,7 @@ label selende;
   begin
     _brett:= dbReadNStr(mbase,mb_brett);
     if (length(_brett)=0) or ((_brett[1]<>'1') and (_brett[1]<>'A')) then
-      rfehler(403)     { 'PM-Archiv in diesem Brett nicht mîglich' }
+      rfehler(403)     { 'PM-Archiv in diesem Brett nicht moeglich' }
     else begin
       PmArchiv(einzel);
       if _brett[1]='1' then begin
@@ -227,7 +227,7 @@ label selende;
   end;
 
 
-  {$I xp4.inc}        { HauptmenÅ }
+  {$I xp4.inc}        { Hauptmenue }
 
 
   { ----- Hauptfenster --------------------------------------------------}
@@ -262,9 +262,9 @@ label selende;
 
 { Dispmodes:  -1=Bretter - Weiterleiten/Kopie/QuoteTo etc.
                0=Bretter     (normal oder ext.)
-               1=Adre·buch   (normal oder ext.)
+               1=Adressbuch  (normal oder ext.)
                2=alle User   (normal oder ext.)
-               3=User    - Weiterleiten/Kopie/QuoteTo etc / Adre·buch
+               3=User    - Weiterleiten/Kopie/QuoteTo etc / Adressbuch
                4=User, dito, Alle
               10=Nachrichten in DispBrett (auch To-Brett!)
               11=markierte Nachrichten
@@ -272,7 +272,7 @@ label selende;
               20=Autoversand-Liste       }
 
 
-const maxsuch = 30;   { maxl. Suchstring-LÑnge }
+const maxsuch = 30;   { maxl. Suchstring-Laenge }
 
 var t,lastt: taste;
     nosuccess : boolean;   { letzter Tastendruck konnte nicht ausgef. werden }
@@ -281,8 +281,8 @@ var t,lastt: taste;
     i      : integer;
     oldrec : longint;
     ende   : boolean;
-    ya     : shortint;    { gl-save, y-Offset fÅr die Anzeige }
-    user_msgs : boolean;  { Typ 10, User-Msg-Fenster          }
+    ya     : shortint;    { gl-save, y-Offset fuer die Anzeige }
+    user_msgs : boolean;  { Typ 10, User-Msg-Fenster           }
     suchst : string;
     suchen : boolean;
     savedd : DB;          { dispdat }
@@ -349,7 +349,7 @@ var t,lastt: taste;
               wrongline:=false    { alle Bretter   }
             else
               wrongline:=dbEOF(bbase) or dbBOF(bbase) or not brettok(true);
-      1,3 : begin                { User/Adre·buch }
+      1,3 : begin                { User/Adressbuch }
               dbReadN(ubase,ub_adrbuch,adrb);
               wrongline:=(adrb=0);
             end;
@@ -786,9 +786,10 @@ var t,lastt: taste;
       for i:=2 to rtanz do with hdp^ do begin
         ReadHeadDisk:=i;
         ReadHeader(hdp^,hds,false);
-        if amreplyto<>'' then begin
-          dbSeek(bbase,biBrett,'A'+UpperCase(amreplyto));
-          EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+amreplyto);
+	{ suboptimal }
+        if followup.count>0 then begin
+          dbSeek(bbase,biBrett,'A'+UpperCase(followup[0]));
+          EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[0]);
           end;
         end;
       SendEmpfList.Assign(EmpfList); EmpfList.Clear;
@@ -807,15 +808,15 @@ var t,lastt: taste;
       while (i < SendEmpfList.Count - 1) and (SendEmpfList[i][1]='+') do
         Inc(i);
       if i < SendEmpfList.Count then
-      begin                       { existierendes EmpfÑngerbrett gefunden }
+      begin                       { existierendes Empfaengerbrett gefunden }
         s := empf;
         empf:='A'+SendEmpfList[i];
         SendEmpfList[i] := '+Dummy:' + Mid(s,2);
-        dbSeek(bbase,biBrett,UpperCase(empf));   { mu· funktionieren! }
+        dbSeek(bbase,biBrett,UpperCase(empf));   { muss funktionieren! }
         pb:= dbReadNStr(bbase,bb_pollbox);
 
-        { Sever fÅr alle nicht existierenden }
-        { Bretter auf dieses Brett setzen    }
+        { Server fuer alle nicht existierenden }
+        { Bretter auf dieses Brett setzen      }
         for j := 0 to SendEmpfList.Count - 1 do
         begin
           s2 := SendEmpfList[j];
@@ -839,11 +840,11 @@ var t,lastt: taste;
       exit;
       end;
     if reply and (dbReadInt(mbase,'unversandt') and 128<>0) then begin
-      rfehler(443);  { 'Nachricht wurde duch Absender "gecancelt" - antworten nicht mîglich.' }
+      rfehler(443);  { 'Nachricht wurde duch Absender "gecancelt" - antworten nicht moeglich.' }
       exit;
       end;
     if reply and not pm and (dbReadInt(mbase,'netztyp')and $400<>0) then begin
-      pm:=not ReadJNesc(getres(431),false,brk);   { 'Der Absender wÅnscht eine PM-Antwort - trotzdem îffentlich antworten' }
+      pm:=not ReadJNesc(getres(431),false,brk);   { 'Der Absender wuenscht eine PM-Antwort - trotzdem oeffentlich antworten' }
       if brk then exit;
       end;
 
@@ -1001,7 +1002,7 @@ var t,lastt: taste;
       dbRead(mbase,'typ',typ);
       betr:= dbReadStr(mbase,'betreff');
       if (typ='B') and (quote=1) and not IS_QPC(betr) and not IS_DES(betr) and
-         not ReadJN(getres(406),true)   { 'Das ist eine BinÑrnachricht! Mîchten Sie die wirklich quoten' }
+         not ReadJN(getres(406),true)   { 'Das ist eine Binaernachricht! Moechten Sie die wirklich quoten' }
       then goto ende;
       if reply then begin
         get_bezug(pm,rt,rtanz,betr,sData,IndirectQuote);
@@ -1018,7 +1019,7 @@ var t,lastt: taste;
           if rt='' then begin
             ReadHeadEmpf:=dbReadInt(mbase,'netztyp') shr 24;
             if ReadHeadEmpf<>0 then begin
-              ReadEmpfList:=true;          { Crossposting-EmpfÑnger einlesen }
+              ReadEmpfList:=true;          { Crossposting-Empfaenger einlesen }
               hdp := AllocHeaderMem;
               ReadHeader(hdp^,hds,false);
               FreeHeaderMem(hdp);
@@ -1084,7 +1085,7 @@ var t,lastt: taste;
         // if quoting binary mails is desired
         if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
           and (mpdata.typ <> '') and (quote=1) and
-          not ReadJN(getres(406),true)   { 'Das ist eine BinÑrnachricht! Mîchten Sie die wirklich quoten' }
+          not ReadJN(getres(406),true)   { 'Das ist eine Binaernachricht! Moechten Sie die wirklich quoten' }
           then goto ende;
 
         qmpdata := @mpdata;
@@ -1120,15 +1121,16 @@ var t,lastt: taste;
   var hdp : headerp;
       hds : longint;
   begin
-    // Nur ausfÅhren, wenn wirklich einer der benîtigten Tasten }
+    // Nur ausfuehren, wenn wirklich einer der benoetigten Tasten }
     if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
 
     if (LeftStr(dispspec,1)='1') then
     begin                           { Bei PM-Brett und Msg ohne Replyto }
       hdp := AllocHeaderMem;        { automatisch "P" statt "B" benutzen }
       ReadHeader(hdp^,hds,false);
-      if (hdp^.amreplyto='') or ((hdp^.empfanz=1) and
-        (hdp^.empfaenger=hdp^.amreplyto)) then
+      { suboptimal }
+      if (hdp^.replyto.count>0) or ((hdp^.empfanz=1) and
+        (hdp^.empfaenger=hdp^.replyto[0])) then
       begin
         if c=k2_b  then c:=k2_p;
         if c=k2_cb then c:=k2_cp;
@@ -1169,7 +1171,7 @@ var t,lastt: taste;
       xp0.kombrett:= dbReadNStr(mbase,mb_brett);
       BezBaum(bezbetr);
       if ReplyTree.Count < 2 then
-        rfehler(409)   { 'keine BezÅge vorhanden' }
+        rfehler(409)   { 'keine Bezuege vorhanden' }
       else
       begin
         GoP;
@@ -1210,7 +1212,7 @@ var t,lastt: taste;
     GoP;
     AutoRead(ar);
     if length(ar.empf)<2 then
-      rfehler(410)    { 'ungÅltiger EmpfÑnger' }
+      rfehler(410)    { 'ungueltiger Empfaenger' }
     else
       if postfile(ar,true) then
         aufbau:=true;
@@ -1258,11 +1260,11 @@ var t,lastt: taste;
     GoP;
     fn:= GetAutoFN;
     if not ValidFilename(fn) then
-      rfehler(412)   { 'ungÅltiger Dateiname' }
+      rfehler(412)   { 'ungueltiger Dateiname' }
     else begin
       dbRead(auto,'typ',typ);
       if typ='B' then
-        rfehler(413)   { 'nicht mîglich - BinÑrdatei' }
+        rfehler(413)   { 'nicht moeglich - Binaerdatei' }
       else
         EditFile(fn,true,true,0,false);
       end;
@@ -1540,7 +1542,7 @@ begin      { --- select --- }
                  wrm(436)     { 'keine Bretter mit ungelesenen Nachrichten' }
                else
                  wrm(435);    { 'keine Bretter mit neuen Nachrichten' }
-        1,3  : wrm(410);    { 'kein User im Adre·buch eingetragen' }
+        1,3  : wrm(410);    { 'kein User im Adressbuch eingetragen' }
         2,4  : wrm(411);    { 'keine User eingetragen' }
        10..19: wrm(412);    { 'keine Nachrichten vorhanden' }
         20   : wrm(413);    { 'keine Eintragungen vorhanden' }
@@ -1548,7 +1550,7 @@ begin      { --- select --- }
       end;
 
     if AutoCrash='' then begin           { Tastaturabfrage }
-      zaehler[1]:=3;   { nach 3 Sekunden automatisch Dateien schlie·en }
+      zaehler[1]:=3;   { nach 3 Sekunden automatisch Dateien schliessen }
       closeflag:=true;
       mauszul:=false; mauszur:=false;
       AktDisprec:=iif(p=0,0,disprec[p]);
@@ -1598,7 +1600,7 @@ begin      { --- select --- }
     lastt:=t; nosuccess:=false;
 
     AktDispmode:=dispmode;
-    such_brett:=_dispspec;   { nur gÅltig bei dispmode=10 ! }
+    such_brett:=_dispspec;   { nur gueltig bei dispmode=10 ! }
 
     mauszul:=true; mauszur:=true;
     zaehler[1]:=0;
@@ -1622,7 +1624,7 @@ begin      { --- select --- }
       menuopt(t);
       if dispmode=11 then SortMark;
       maus_popinside;
-      maus_setinside(3,78,4+ya,screenlines-2);  { bei geÑnderten Bildzeilen.. }
+      maus_setinside(3,78,4+ya,screenlines-2);  { bei geaenderten Bildzeilen.. }
       if dispmode=20 then dbOpen(auto,AutoFile,1);
       setall;
       end
@@ -1694,7 +1696,7 @@ begin      { --- select --- }
                      if c=k0_cG then _mark_group;      { ^G }
                      end
                    else
-                     if c=' ' then pushkey(keydown);  { Trennzeile Åberspr. }
+                     if c=' ' then pushkey(keydown);  { Trennzeile ueberspr. }
                    if t=keyf8 then gopm;
                    if c=k0_cE then _unmark_;           { ^E }
                    if c=k0_cW then brettweiter:=not brettweiter;  { ^W }
@@ -1781,7 +1783,7 @@ begin      { --- select --- }
                end;
       10..12 : begin
                  if t=keyf6 then Makroliste(3);
-                 if c=k2_S then spezialmenue;         { 'S'pezial-MenÅ }
+                 if c=k2_S then spezialmenue;         { 'S'pezial-Menue }
                  if empty then begin
                    if t[1]=k2_b then
                    begin
@@ -1790,7 +1792,7 @@ begin      { --- select --- }
                      c:=#0;
                      nobrettweiter:=true;
                      end;
-                 { rfehler(446); } { 'Verlassen Sie das Brett und drÅcken Sie *dann* "B" ...' }
+                 { rfehler(446); } { 'Verlassen Sie das Brett und druecken Sie *dann* "B" ...' }
                    end
                  else begin
                    if t=keycr then
@@ -2124,6 +2126,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2000/11/18 00:04:44  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.62  2000/11/16 21:31:05  hd
   - DOS Unit entfernt
 
@@ -2215,7 +2220,7 @@ end.
   - Umstellung auf TStringList
 
   Revision 1.35  2000/07/12 11:49:30  ml
-  - workaround f¸r Ansistring
+  - workaround fuer Ansistring
 
   Revision 1.34  2000/07/10 14:41:59  hd
   - Ansistring
@@ -2251,7 +2256,7 @@ end.
   - 32 Bit MaxAvail-Probleme beseitigt
 
   Revision 1.24  2000/06/04 09:25:42  jg
-  - Ungelesen-Brettmarkierung unterstÅtzt jetzt "Sichern" unter C/O/B
+  - Ungelesen-Brettmarkierung unterstuetzt jetzt "Sichern" unter C/O/B
 
   Revision 1.23  2000/06/03 19:30:25  jg
   - Ungelesen Anzeige fuer Bretter wird in XPOINT.CFG gespeichert
@@ -2260,7 +2265,7 @@ end.
   - Nachrichtenfenster "U" zeigt ungelesene Nachrichten
 
   Revision 1.21  2000/05/30 17:19:31  jg
-  - Fixes fÅrs umschalten mit "A" zwischen Adressbuch und allen Usern
+  - Fixes fuers umschalten mit "A" zwischen Adressbuch und allen Usern
 
   Revision 1.20  2000/05/14 07:22:52  jg
   - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen

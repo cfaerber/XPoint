@@ -113,13 +113,13 @@ label ende,nextpp;
     Xread(fn,false);
     assign(t,fn);
     reset(t);
-    gr:=LeftStr(getres2(612,4),5);        { 'Grî·e' }
+    gr:=LeftStr(getres2(612,4),5);        { 'Groesse' }
     freeres;
     repeat
       readln(t,s);
     until (LeftStr(s,5)=gr) or eof(t);
     if LeftStr(s,5)<>gr then begin
-      rfehler(618);                  { 'ungÅltige Versand-Nachricht!' }
+      rfehler(618);                  { 'ungueltige Versand-Nachricht!' }
       uvsXgroesse:=0;
       end
     else begin
@@ -195,9 +195,9 @@ label ende,nextpp;
   var b : byte;
   begin
     b:=2;
-    dbWriteN(mbase,mb_halteflags,b);     { erst mal auf 'lîschen' .. }
+    dbWriteN(mbase,mb_halteflags,b);     { erst mal auf 'loeschen' .. }
     dbReadN(mbase,mb_unversandt,b);
-    b:=b and $ee;   { UV- und Crashflag lîschen }
+    b:=b and $ee;   { UV- und Crashflag loeschen }
     dbWriteN(mbase,mb_unversandt,b);     { .. und die UV-Flags auf 0 }
   end;
 
@@ -215,7 +215,7 @@ begin
     exit;
     end;
   if edit and (uvs and 2<>0) then begin
-    rfehler(620);   { 'nicht mîglich - bitte Datei neu versenden' }
+    rfehler(620);   { 'nicht moeglich - bitte Datei neu versenden' }
     exit;
     end;
   rec:=dbRecno(mbase);
@@ -224,7 +224,7 @@ begin
   ReadHeader(hdp0^,hds,true);
 
   if (hdp0^.wab<>'') and edit and modi then begin
-    rfehler(638); { 'Als 'Original' weitergeleitete Nachrichen dÅrfen nicht geÑndert werden!' }
+    rfehler(638); { 'Als 'Original' weitergeleitete Nachrichen duerfen nicht geaendert werden!' }
     goto ende;
   end;
 
@@ -238,7 +238,7 @@ begin
 
   rc:= findfirst(ownpath+iifs(crash,'*.cp','*.pp'),faAnyFile,sr);
   found:=false;
-  rmessage(640);             { 'Puffer Åberarbeiten...' }
+  rmessage(640);             { 'Puffer ueberarbeiten...' }
   while (rc=0) and not found do begin
     if crash then zconnect:=true
     else begin
@@ -254,14 +254,14 @@ begin
       makeheader(zconnect,f,empfnr,0,hds,hdp^,ok,false);
       if not ok then begin
         rfehler1(621,sr.name);    { 'fehlerhaftes Pollpaket:  %s' }
-        goto nextpp;   { zum nÑchsten Puffer weiterspringen }
+        goto nextpp;   { zum naechsten Puffer weiterspringen }
         end;
       found:=EQ_betreff(hdp^.betreff) and (dat=hdp^.datum) and EQ_empf
              and (FormMsgid(hdp^.msgid)=dbReadStr(mbase,'msgid'));
       dbReadN(mbase,mb_netztyp,nt);
-   (* Grî·enÅberprÅfung nicht mehr notwendig, wegen MsgID-öberprÅfung
+   (* Groessenueberpruefung nicht mehr notwendig, wegen MsgID-Ueberpruefung
       if (uvs and 4=0) and (nt and $4000=0) then   { 4=pmc, $4000 = PGP }
-        if uvs and 2=0 then                        { 2 = BinÑrmeldung }
+        if uvs and 2=0 then                        { 2 = Binaermeldung }
           found:=found and (groesse=hdp^.groesse)
         else
           found:=found and (uvsXgroesse=hdp^.groesse); *)
@@ -287,9 +287,9 @@ begin
     end;
 
   dbReadN(mbase,mb_halteflags,orghalt);
-  SetDelNoUV;                  { Nachricht auf 'lîschen' und !UV }
+  SetDelNoUV;                  { Nachricht auf 'loeschen' und !UV }
   if empfnr>0 then begin
-    dbReadN(mbase,mb_ablage,ablage);    { alle Crosspostings auf lî. + !UV }
+    dbReadN(mbase,mb_ablage,ablage);    { alle Crosspostings auf loe. + !UV }
     dbReadN(mbase,mb_adresse,madr);
     crc:=LeftStr(dbReadStr(mbase,'msgid'),4);
     dbSeek(bezbase,beiMsgID,crc);
@@ -345,8 +345,11 @@ begin
     new(sData);
     fillchar(sdata^,sizeof(sdata^),0);
     with sData^ do begin
-      AmReplyto:=hdp^.AmReplyTo;
-      PmReplyTo:=hdp^.PmReplyTo;
+      { suboptimal }
+      if hdp^.followup.count>0 then AmReplyto:=hdp^.followup[0];
+      if hdp^.replyto.count>0 then PmReplyto:=hdp^.replyto[0];
+{      AmReplyto:=hdp^.AmReplyTo;
+      PmReplyTo:=hdp^.PmReplyTo; }
       Keywords:=hdp^.Keywords;
       Summary:=hdp^.Summary;
       Distribute:=hdp^.Distribution;
@@ -389,7 +392,7 @@ begin
       dbGo(mbase,rec);
       RemoveMsg;
       wrkilled;
-      if empfnr>0 then            { alle alten Crossposting-Kopien lîschen }
+      if empfnr>0 then            { alle alten Crossposting-Kopien loeschen }
         repeat
           dbSeek(bezbase,beiMsgID,crc);
           found:=dbFound;
@@ -482,7 +485,7 @@ var
 
     binaermail : boolean;
     SelWeiter  : boolean;
-    nextwl  : integer;      { nÑchste markierte Nachricht }
+    nextwl  : integer;      { naechste markierte Nachricht }
     msort   : boolean;
     ua      : boolean;
     add_oe_cc : integer;
@@ -682,7 +685,7 @@ label ende,again;
   function IsOempf(empf:string):boolean;
   begin
     IsOempf:=(LeftStr(empf,length(oempf))=oempf) or
-             (LeftStr(empf,21)='## OriginalempfÑnger:');   { KompatibilitÑt zu XP 1.0-2.1 }
+             (LeftStr(empf,21)='## OriginalempfÑnger:');   { Kompatibilitaet zu XP 1.0-2.1 }
   end;
 
  :º«cedure GetOEmpflist;
@@ -702,18 +705,18 @@ label ende,again;
 
 begin
   if not (aktdispmode in [10..19]) then begin
-    rfehler(631);    { 'Nur in der NachrichtenÅbersicht mîglich.' }
+    rfehler(631);    { 'Nur in der Nachrichtenuebersicht moeglich.' }
     exit;
     end;
   if typ=7 then
     if not ntOrigWeiter(mbNetztyp) then begin
-      rfehler(627);       { 'In diesem Netz nicht mîglich.' }
+      rfehler(627);       { 'In diesem Netz nicht moeglich.' }
       exit;
       end else
     if mbNetztyp=nt_Maus then begin
       if (LeftStr(dbReadStr(mbase,'brett'),1)<>'1') and
          (LeftStr(dbReadStr(mbase,'brett'),1)<>'U') then
-        rfehler(628)     { 'Im MausNet nur bei PMs mîglich.' }
+        rfehler(628)     { 'Im MausNet nur bei PMs moeglich.' }
       else
         MausWeiterleiten;
       exit;
@@ -723,7 +726,7 @@ begin
      if dbEOF(bbase) or
         (UpperCase(LeftStr(dbReadStr(bbase,'brettname'),length(ArchivBretter)+1))<>
          'A'+UpperCase(ArchivBretter)) then begin
-       rfehler(630);    { 'ungÅltige Archivbrett-Einstellung' }
+       rfehler(630);    { 'ungueltige Archivbrett-Einstellung' }
        exit;
        end;
      end;
@@ -750,9 +753,9 @@ again:
   dbReadN(mbase,mb_typ,ntyp);
   _brett := dbReadNStr(mbase,mb_brett);
   if (typ=4) and (dbReadInt(mbase,'unversandt') and 2<>0) then begin
-    rfehler(620);    { 'Nicht mîglich - bitte Nachricht erneut versenden.' }
+    rfehler(620);    { 'Nicht moeglich - bitte Nachricht erneut versenden.' }
     FreeHeaderMem(hdp);
-    exit;   { Erneut: BinÑr-Versandmeldung }
+    exit;   { Erneut: Binaer-Versandmeldung }
     end;
   fn:=TempS(dbReadInt(mbase,'msgsize')+2000);
   assign(t,fn); assign(f,fn);
@@ -838,7 +841,7 @@ again:
     1..3,
     5,7    : begin
                if nextwl<1 then begin
-                 SelWeiter:=true;    { Weiterleitziel aus Liste wÑhlen }
+                 SelWeiter:=true;    { Weiterleitziel aus Liste waehlen }
                  if typ=5 then pm:=false
                  else begin
                    diabox(length(getres2(644,2))+11,5,'',x,y);
@@ -887,7 +890,7 @@ again:
                      end else
                         Empf := dbReadNStr(bbase,bb_brettname);
                      if empf[1]<'A' then begin
-                       rfehler(624);    { 'Weiterleiten in dieses Brett nicht mîglich' }
+                       rfehler(624);    { 'Weiterleiten in dieses Brett nicht moeglich' }
                        goto ende;
                        end;
                      ebrett:=empf[1]+dbLongStr(dbReadInt(bbase,'int_nr'));
@@ -919,7 +922,7 @@ again:
                if (typ in [1,5]) and pm and (hdp^.typ='B') and
                  not ntBinary(UserNetztyp(empf))
                then begin
-                 rfehler(636);  { 'BinÑrnachrichten sind in diesem Netz nicht mîglich.' }
+                 rfehler(636);  { 'Binaernachrichten sind in diesem Netz nicht moeglich.' }
                  goto ende;
                  end;
 
@@ -992,7 +995,7 @@ again:
                if not unpark then begin
                  _Brett := dbReadNStr(mbase,mb_brett);
                  if _brett[1]<'A' then begin
-                   rfehler(625);    { 'Schreiben in dieses Brett ist nicht mîglich.' }
+                   rfehler(625);    { 'Schreiben in dieses Brett ist nicht moeglich.' }
                    goto ende;
                    end
                  else begin
@@ -1004,7 +1007,7 @@ again:
                  shortmsg(length(empf)+add_oe_cc+2+iif(leerz='',2,0));
                  empf:=vert_long(trim(mid(empf,length(oempf)+1)));
                  if length(empf)<3 then begin
-                   rfehler(626);    { 'UngÅltige OriginalempfÑnger-Zeile!' }
+                   rfehler(626);    { 'Ungueltige Originalempfaenger-Zeile!' }
                    goto ende;
                    end;
                  pm:=cpos('@',empf)>0;
@@ -1027,8 +1030,11 @@ again:
                new(sData);
                fillchar(sdata^,sizeof(sdata^),0);
                with sData^ do begin
-                 AmReplyto:=hdp^.AmReplyTo;
-                 PmReplyTo:=hdp^.PmReplyTo;
+                 { suboptimal }
+                 if hdp^.followup.count>0 then AmReplyto:=hdp^.followup[0];
+                 if hdp^.replyto.count>0 then PmReplyto:=hdp^.replyto[0];
+               {  AmReplyto:=hdp^.AmReplyTo;
+                 PmReplyTo:=hdp^.PmReplyTo; }
                  Keywords:=hdp^.Keywords;
                  Summary:=hdp^.Summary;
                  Distribute:=hdp^.Distribution;
@@ -1063,7 +1069,7 @@ again:
                  dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
                  b:=1;
                  dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
-                 dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);    { Adre·buch }
+                 dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);    { Adressbuch }
                  end
                else begin
                  dbReadN(ubase,ub_adrbuch,b);
@@ -1101,7 +1107,7 @@ again:
     if nextwl<markanz then begin
       if FileExists(fn) then _era(fn);
       dbGo(mbase,marked^[nextwl].recno);
-      goto again;    { nÑchste Nachricht wl/arch. }
+      goto again;    { naechste Nachricht wl/arch. }
       end;
     end;
   if not msort then UnsortMark;
@@ -1284,6 +1290,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/11/18 00:04:43  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.43  2000/11/16 22:35:30  hd
   - DOS Unit entfernt
 
@@ -1357,7 +1366,7 @@ end.
   - Sysutils hier und da nachgetragen
 
   Revision 1.23  2000/07/03 15:11:01  mk
-  - unnˆtige Defines entfernt
+  - unnoetige Defines entfernt
   - sysutils war zweimal in xp6o.pas enthalten
 
   Revision 1.22  2000/07/03 13:31:41  hd

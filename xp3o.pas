@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -26,7 +26,7 @@ uses
   sysutils,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
       resource,printerx,xp0,xp1,xp1o2,xp1input,crc,xpdatum,xpglobal;
 
-const pe_ForcePfadbox = 1;     { Flags fÅr PufferEinlesen }
+const pe_ForcePfadbox = 1;     { Flags fuer PufferEinlesen }
       pe_Bad          = 2;     { Puffer bei Fehler nach BAD verschieben }
       pe_gelesen      = 4;     { Nachrichten auf "gelesen" setzen }
 
@@ -40,7 +40,7 @@ type charr  = array[0..65530] of char;
 var  inmsgs : longint;   { beim Puffereinlesen erhaltene Msgs }
 
 
-procedure bd_setzen(sig:boolean);  { Wartung/DatumsbezÅge }
+procedure bd_setzen(sig:boolean);  { Wartung/Datumsbezuege }
 procedure readpuffer;              { Xpoint/Import/Puffer }
 
 procedure BrettdatumSetzen(show:boolean);
@@ -146,7 +146,7 @@ begin
     user:=multipos('@',s) or (LeftStr(s,1)='[');
     if not user and (LeftStr(s,1)<>'/') then begin
       user:=(ReadIt(length(getres2(2721,2))+8,getres2(2721,1),getres2(2721,2),auto_empfsel_default,brk)=2);
-      freeres;                        { 'EmpfÑnger:' / ' ^Brett , ^User ' }
+      freeres;                        { 'Empfaenger:' / ' ^Brett , ^User ' }
       end
     else
       brk:=false;
@@ -190,7 +190,7 @@ procedure bd_setzen(sig:boolean);
 var s   : atext;
     x,y : byte;
 begin
-  s:=getres(320);   { 'DatumsbezÅge werden Åberarbeitet...     %' }
+  s:=getres(320);   { 'Datumsbezuege werden ueberarbeitet...     %' }
   msgbox(length(s)+10,5,'',x,y);
   mwrt(x+3,y+2,s);
   GotoXY(WhereX-5, WhereY);
@@ -201,7 +201,7 @@ begin
   Wrt2(getres(321));   { ' fertig.' }
   mon;
   if sig then signal;
-  // wkey(1,false);  // damit werden Makros unterbrochen, da der Tastaturpuffer gelîscht wird
+  // wkey(1,false);  // damit werden Makros unterbrochen, da der Tastaturpuffer geloescht wird
   delay(500);
   closebox;
 end;
@@ -234,7 +234,7 @@ begin
     brett := dbReadNStr(bbase,bb_brettname);
     _brett:=mbrettd(brett[1],bbase);
 
-    dbSeek(mbase,miBrett,_brett+#255);  { erste Msg im nÑchsten Brett suchen: }
+    dbSeek(mbase,miBrett,_brett+#255);  { erste Msg im naechsten Brett suchen: }
     if dbEOF(mbase) then
       dbGoEnd(mbase)               { auf letzte Msg im letzten Brett gehen.. }
     else
@@ -284,7 +284,7 @@ begin
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,miBrett);
   dbSeek(bbase,biIntnr,copy(_brett,2,4));
-  if dbFound then begin      { mÅ·te eigentlich immer True sein, aber... }
+  if dbFound then begin      { muesste eigentlich immer True sein, aber... }
     dbRead(bbase,'LDatum',d1);
     dbSeek(mbase,miBrett,_brett+#255);
     if dbEOF(mbase) then
@@ -321,7 +321,7 @@ begin
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,miGelesen);
   dbSeek(bbase,biIntnr,copy(_brett,2,4));
-  if dbFound then begin      { mÅ·te eigentlich immer True sein, aber... }
+  if dbFound then begin      { muesste eigentlich immer True sein, aber... }
     dbReadN(bbase,bb_flags,flags);
     bug:=(flags and 2<>0);
     dbSeek(mbase,miGelesen,_brett+#255);
@@ -473,7 +473,7 @@ begin
 end;
 *)
 
-procedure Uverknuepfen;   { Userbretter verknÅpfen }
+procedure Uverknuepfen;   { Userbretter verknuepfen }
 var x,y      : byte;
     brk      : boolean;
     newuser,
@@ -485,7 +485,7 @@ var x,y      : byte;
     adrb     : byte;
 begin
   if (dbReadInt(ubase,'userflags') and 4<>0) then begin
-    rfehler(301);   { 'bei Verteilern nicht mîglich' }
+    rfehler(301);   { 'bei Verteilern nicht moeglich' }
     exit;
     end;
   rec:=dbRecno(ubase);
@@ -506,7 +506,7 @@ begin
     if not dbFound then
       fehler(getres2(323,4))   { 'User nicht vorhanden' }
     else if (dbReadInt(ubase,'userflags') and 4<>0) then
-      rfehler(301)             { 'bei Verteilern nicht mîglich' }
+      rfehler(301)             { 'bei Verteilern nicht moeglich' }
     else begin
       _newuser:=mbrettd('U',ubase);
       rec2:=dbRecno(ubase);
@@ -619,7 +619,7 @@ begin
         end
       else
         fname:=hdp^.datei;
-      i:=1;                            { ungÅltige Zeichen entfernen }
+      i:=1;                            { ungueltige Zeichen entfernen }
       UpString(fname);
       while i<=length(fname) do
         if pos(fname[i],'_^$~!#%-{}()@''`.'+range('A','Z')+'0123456789éôö')>0 then
@@ -648,7 +648,7 @@ begin
       fname:=extractpath+fname;
     if ok then
       if not ValidFileName(fname) then
-        fehler(getres2(324,5))   { 'ungÅltiger Datei- oder Pfadname' }
+        fehler(getres2(324,5))   { 'ungueltiger Datei- oder Pfadname' }
       else begin
 
         if useclip then begin
@@ -733,7 +733,7 @@ end;
 
 
 { Alle angezeigten Msgs im aktuellen Msg-Fenster bearbeiten }
-{ art: 1=halten, 2=lîschen, 3=markieren, 4=normal, 5=lesen  }
+{ art: 1=halten, 2=loeschen, 3=markieren, 4=normal, 5=lesen }
 {      6=entfernen, 7=Liste erzeugen, 8=drucken             }
 { Aufruf bei dispmode in [10..19]                           }
 
@@ -767,7 +767,7 @@ begin
   { falls im aktuellen Brett keine Nachricht selektiert ist, rausgehen }
   if dbBOF(mbase) then Exit;
   if not (aktdispmode in [10..19]) then begin
-    rfehler(315);      { 'Nur in der NachrichtenÅbersicht mîglich.' }
+    rfehler(315);      { 'Nur in der Nachrichtenuebersicht moeglich.' }
     exit;
     end;
   if (art=6) and not ReadJN(getres(iif(aktdispmode=10,325,326)),false) then exit;
@@ -913,8 +913,8 @@ begin
 end;
 
 
-{ diese Prozedur verpa·t der Nachricht in recno(mbase) }
-{ eine neue EmpfÑnger-Zeile im Header                  }
+{ diese Prozedur verpasst der Nachricht in recno(mbase) }
+{ eine neue Empfaenger-Zeile im Header                  }
 
 procedure NeuerEmpfaenger(name:string);
 var f1    : file;
@@ -924,7 +924,7 @@ var f1    : file;
     hds   : longint;
 begin
   dbReadN(mbase,mb_msgsize,size);
-  if size>0 then begin      { mÅ·te eigentlich immer TRUE sein }
+  if size>0 then begin      { muesste eigentlich immer TRUE sein }
     PGP_BeginSavekey;
     hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,true);
@@ -974,7 +974,7 @@ begin
 end;
 
 
-{ EmpfangsbestÑtigung zu aktueller Nachricht erzeugen }
+{ Empfangsbestaetigung zu aktueller Nachricht erzeugen }
 
 procedure empfang_bestaetigen(var box:string);
 var tmp  : string;
@@ -995,7 +995,7 @@ begin
   if not auto then begin
     _br := dbReadNStr(mbase,mb_brett);
     if (_br[1]<>'1') and (_br[1]<>'A') and (_br[1]<>'U') then begin
-      rfehler(307);   { 'EmpfangsbestÑtigung in diesem Brett nicht mîglich' }
+      rfehler(307);   { 'Empfangsbestaetigung in diesem Brett nicht moeglich' }
       exit;
       end;
     end;
@@ -1035,7 +1035,7 @@ begin
   if auto and FileExists(EB_msk) then begin    { nur bei autom. EB }
     writeln(t);
     writeln(t,'--');
-    assign(t2,EB_msk);     { EB-Signatur anhÑngen }
+    assign(t2,EB_msk);     { EB-Signatur anhaengen }
     reset(t2);
     while not eof(t2) do begin
       readln(t2,s);
@@ -1060,7 +1060,8 @@ begin
     _replypath:=hdp^.pfad;
   if FirstChar(_br)='A' then _pmReply:=true;
   empf:=hdp^.empfbestto;
-  if empf='' then empf:=hdp^.pmreplyto;
+  { suboptimal }
+  if (empf='') and (hdp^.replyto.count>0) then empf:=hdp^.replyto[0];
   if empf='' then empf:=hdp^.wab;
   if (empf='') or (cpos('@',empf)=0) or (pos('.',mid(empf,cpos('@',empf)))=0)
   then
@@ -1091,16 +1092,16 @@ var
     t      : text;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
-    rfehler(439);     { 'Unversandte Nachricht mit "Nachricht/Unversandt/Lîschen" lîschen!' }
+    rfehler(439);     { 'Unversandte Nachricht mit "Nachricht/Unversandt/Loeschen" loeschen!' }
     exit;
     end;
   _Brett := dbReadNStr(mbase,mb_brett);
   if (_brett[1]<>'A') and not ntCancelPM(mbNetztyp) then begin
-    rfehler(311);     { 'Nur bei îffentlichen Nachrichten mîglich!' }
+    rfehler(311);     { 'Nur bei oeffentlichen Nachrichten moeglich!' }
     exit;
     end;
   if not ntCancel(mbNetztyp) then begin
-    rfehler(314);     { 'In diesem Netz nicht mîglich!' }
+    rfehler(314);     { 'In diesem Netz nicht moeglich!' }
     exit;
     end;
   if _brett[1]<>'U' then begin
@@ -1200,16 +1201,16 @@ var
     sData  : SendUUptr;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
-    rfehler(447);     { 'Unversandte Nachrichten kînnen nicht ersetzt werden.' }
+    rfehler(447);     { 'Unversandte Nachrichten koennen nicht ersetzt werden.' }
     exit;
     end;
   _Brett := dbReadNStr(mbase,mb_brett);
   if (_brett[1]<>'A') then begin
-    rfehler(317);     { 'Nur bei îffentlichen Nachrichten mîglich!' }
+    rfehler(317);     { 'Nur bei oeffentlichen Nachrichten moeglich!' }
     exit;
     end;
   if not ntErsetzen(mbNetztyp) then begin
-    rfehler(318);     { 'In diesem Netz nicht mîglich!' }
+    rfehler(318);     { 'In diesem Netz nicht moeglich!' }
     exit;
     end;
   if _brett[1]<>'U' then begin
@@ -1321,7 +1322,7 @@ begin
   else begin
     if show then
     begin
-      message(getres(338));   { 'Puffer ÅberprÅfen...      ' }
+      message(getres(338));   { 'Puffer ueberpruefen...      ' }
       gotoxy(wherex-6,wherey);
     end;
     zconnect:=ZC_puffer(fn);
@@ -1425,7 +1426,7 @@ var rec  : longint;
     l,n,
     i,nn : longint;
 begin
-  message(getres(340)); write(#8#8);   { 'Brettindex Åberarbeiten ...     %' }
+  message(getres(340)); write(#8#8);   { 'Brettindex ueberarbeiten ...     %' }
   rec:=dbRecno(bbase);
   bi:=dbGetIndex(bbase);
   dbSetIndex(bbase,biIndex);
@@ -1497,6 +1498,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/11/18 00:04:44  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.42  2000/11/16 20:53:50  hd
   - DOS Unit entfernt
 
@@ -1611,7 +1615,7 @@ end.
   - 32 Bit VP: Shift-Tab funktioniert jetzt
 
   Revision 1.10  2000/04/04 21:01:23  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.9  2000/03/14 15:15:39  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)

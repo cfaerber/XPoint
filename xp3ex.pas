@@ -214,15 +214,15 @@ var size   : longint;
         else
           dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));   { Nachricht in PM-Brett }
         if not dbFound or (dbXsize(ubase,'passwort')=0) then begin
-          rfehler(308);   { 'Nachricht ist codiert, aber Pa·wort fehlt!' }
+          rfehler(308);   { 'Nachricht ist codiert, aber Passwort fehlt!' }
           exit;
           end;
         dbRead(ubase,'codierer',coder);
         if coder<>dtyp then begin
           if dtyp=1 then
-            rfehler(309)  { 'Nachricht ist QPC-codiert, aber es ist ein DES-Pa·wort eingetragen!' }
+            rfehler(309)  { 'Nachricht ist QPC-codiert, aber es ist ein DES-Passwort eingetragen!' }
           else
-            rfehler(310);  { 'Nachricht ist DES-codiert, aber es ist ein QPC-Pa·wort eingetragen!' }
+            rfehler(310);  { 'Nachricht ist DES-codiert, aber es ist ein QPC-Passwort eingetragen!' }
           exit;
           end;
         siz0:=0;
@@ -447,7 +447,7 @@ var size   : longint;
       if attrib and attrCrash<>0 then mstatus:=mstatus+', Crash';
       if attrib and attrFile<>0  then mstatus:=mstatus+', File-Attach';
       if attrib and attrReqEB<>0 then mstatus:=mstatus+getres2(363,1);  { ' EB-Anforderung' }
-      if attrib and attrIsEB<>0  then mstatus:=mstatus+getres2(363,2);  { ' EmpfangsbestÑtigung' }
+      if attrib and attrIsEB<>0  then mstatus:=mstatus+getres2(363,2);  { ' Empfangsbestaetigung' }
       if attrib and attrControl<>0   then mstatus:=mstatus+getres2(363,3); { ' Steuernachricht' }
       freeres;
       delete(mstatus,1,2);
@@ -461,14 +461,14 @@ var size   : longint;
     dbReadN(mbase,mb_flags,flags);
     with hdp^ do begin
       if pgpflags and fPGP_avail<>0  then mstatus:=mstatus+getres2(363,4); { 'PGP-Key vorhanden' }
-      if pgpflags and fPGP_haskey<>0 then mstatus:=mstatus+getres2(363,5); { 'Nachricht enthÑlt PGP-Key' }
+      if pgpflags and fPGP_haskey<>0 then mstatus:=mstatus+getres2(363,5); { 'Nachricht enthaelt PGP-Key' }
       if pgpflags and fPGP_request<>0 then mstatus:=mstatus+getres2(363,6); { 'PGP-Keyanforderung' }
       if pgpflags and (fPGP_signed+fPGP_clearsig)<>0 then
         mstatus:=mstatus+getres2(363,9);  { 'PGP-Signatur vorhanden' }
       if (pgpflags and fPGP_sigok<>0) or (flags and 1<>0) then
         mstatus:=mstatus+getres2(363,7);  { 'PGP-Signatur o.k.' }
       if (pgpflags and fPGP_sigerr<>0) or (flags and 2<>0) then
-        mstatus:=mstatus+getres2(363,8);  { 'ungÅltige PGP-Signatur!' }
+        mstatus:=mstatus+getres2(363,8);  { 'ungueltige PGP-Signatur!' }
       freeres;
       delete(mstatus,1,2);
       end;
@@ -549,7 +549,7 @@ var size   : longint;
         s:= convstr;
       end;
       if s=#3 then begin
-        FlushStmp;                           { #3 -> Leerzeile einfÅgen }
+        FlushStmp;                           { #3 -> Leerzeile einfuegen }
         wrslong('');
       end else
       if s='' then begin
@@ -562,7 +562,7 @@ var size   : longint;
       else begin
         p:=GetQCpos;
         if blanklines>0 then
-          if (p=0) { or not IniQuote } then  { nÑchste Zeile war nicht gequotet }
+          if (p=0) { or not IniQuote } then  { naechste Zeile war nicht gequotet }
             for i:=1 to blanklines do    { -> Leerzeilen mitquoten          }
               if QuoteEmptyLines then wrslong(qchar)else wrslong('')
           else
@@ -602,7 +602,7 @@ var size   : longint;
         p:=p+QuoteOffset;                    { Leerzeichen nach Quotezeichen dazuzaehlen }
         if stmp<>'' then begin               { Rest von letzter Zeile }
           if LeftStr(s,length(lastqc))=lastqc then
-            insert(stmp,s,p+1)               { einfÅgen }
+            insert(stmp,s,p+1)               { einfuegen }
           else
             FlushStmp;
           stmp:='';
@@ -611,7 +611,7 @@ var size   : longint;
         if (length(s)>=QuoteBreak) and
            ((lastchar(s)<#176) or (lastchar(s)>#223))  { Balkengrafik }
         then
-          while length(s)>=QuoteBreak do begin   { öberlÑnge abschneiden }
+          while length(s)>=QuoteBreak do begin   { Ueberlaenge abschneiden }
             p:=QuoteBreak;
             while (p>0) and (s[p]<>' ') and (s[p]<>#9) do dec(p);
             if p<=QuoteBreak div 2 then p:=QuoteBreak;
@@ -651,7 +651,7 @@ var size   : longint;
   begin
     s:='˘'+s;
     if not testtelefon(s) then
-      telestring:=s+getres2(361,50)    { ' [ungÅltiges Format]' }
+      telestring:=s+getres2(361,50)    { ' [ungueltiges Format]' }
     else begin
       ts:='';
       repeat
@@ -838,23 +838,24 @@ begin
                   Wrs(s);
                 end;
 
-    hdf_DISK  :  if hdp^.AmReplyTo<>'' then
-                   if hdp^.amrepanz=1 then
-                     wrs(gr(3)+hdp^.amreplyto)           { 'Antwort in : ' }
+                 { suboptimal }
+    hdf_DISK  :  if hdp^.followup.count>0 then
+                   if hdp^.followup.count=1 then
+                     wrs(gr(3)+hdp^.followup[0])           { 'Antwort in : ' }
                    else begin
-                     s:=gr(3)+hdp^.amreplyto;
-                     for i:=2 to hdp^.amrepanz do begin
+                     s:=gr(3)+hdp^.followup[0];
+                     for i:=2 to hdp^.followup.count do begin
                        ReadHeadDisk:=i;
                        TempKopien.Assign(Hdp^.Kopien);
                        ReadHeader(hdp^,hds,false);
                        Hdp^.Kopien.Assign(TempKopien);
-                       if length(s)+length(hdp^.amreplyto)>iif(listscroller,76,77)
+                       if length(s)+length(hdp^.followup[0])>iif(listscroller,76,77)
                        then begin
                          wrs(s); s:=gr(3{15});
                          end
                        else
                          s:=s+', ';
-                       s:=s+hdp^.amreplyto;
+                       s:=s+hdp^.followup[0];
                        end;
                      wrs(s);
                      end;
@@ -884,9 +885,10 @@ begin
                    wrs(gr(18)+hdp^.oab+iifs(hdp^.oar<>'','  ('+hdp^.oar+')',''));
     hdf_WAB    : if hdp^.wab<>'' then            { 'Weiterleit.: ' }
                    wrs(gr(17)+hdp^.wab+iifs(hdp^.war<>'','  ('+hdp^.war+')',''));
-    hdf_ANTW   : if (hdp^.pmReplyTo<>'') and
-                    ((UpperCase(hdp^.pmReplyTo)<>UpperCase(hdp^.absender))) then   { 'Antwort an : ' }
-                   wrs(gr(27)+hdp^.pmReplyTo);
+                 { suboptimal}
+    hdf_ANTW   : if (hdp^.replyto.count>0) and
+                    ((UpperCase(hdp^.replyto[0])<>UpperCase(hdp^.absender))) then   { 'Antwort an : ' }
+                   wrs(gr(27)+hdp^.replyto[0]);
 
     hdf_BET    : wrs(gr(5)+LeftStr(hdp^.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
     hdf_ZUSF   : if hdp^.summary<>'' then        { 'Zus.fassung: ' }
@@ -976,23 +978,23 @@ begin
                   end;
     { /oh }
 
-  { PrioritÑt im Listenkopf anzeigen:                                     }
-  { RÅckgabewert hinter dem PriorityFlag extrahieren und zuordnen         }
+  { Prioritaet im Listenkopf anzeigen:                                    }
+  { Rueckgabewert hinter dem PriorityFlag extrahieren und zuordnen        }
 
   hdf_Priority: if hdp^.Priority <> 0 then
        case hdp^.Priority of
-         { Wert aus Header Åbernehmen                                     }
-         1: wrs(gr(35) + GetRes2(272, 1));     { 'PrioritÑt  : Hîchste'   }
-         2: wrs(gr(35) + GetRes2(272, 2));     { 'PrioritÑt  : Hoch'      }
-         3: wrs(gr(35) + GetRes2(272, 3));     { 'PrioritÑt  : Normal'    }
-         4: wrs(gr(35) + GetRes2(272, 4));     { 'PrioritÑt  : Niedrig'   }
-         5: wrs(gr(35) + GetRes2(272, 5));     { 'PrioritÑt  : Niedrigste'}
+         { Wert aus Header uebernehmen                                     }
+         1: wrs(gr(35) + GetRes2(272, 1));     { 'Prioritaet  : Hoechste'  }
+         2: wrs(gr(35) + GetRes2(272, 2));     { 'Prioritaet  : Hoch'      }
+         3: wrs(gr(35) + GetRes2(272, 3));     { 'Prioritaet  : Normal'    }
+         4: wrs(gr(35) + GetRes2(272, 4));     { 'Prioritaet  : Niedrig'   }
+         5: wrs(gr(35) + GetRes2(272, 5));     { 'Prioritaet  : Niedrigste'}
        end
        else if hdp^.Prio>0 then                                 { und fuer Zconnect ....  }
          if hdp^.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }
                           else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }
 
-  { /PrioritÑt im Listenkopf anzeigen                                     }
+  { /Prioritaet im Listenkopf anzeigen                                     }
 
   end;
 
@@ -1062,7 +1064,7 @@ begin
         SetQC(hdp^.netztyp);
         assign(t,tmp);
         reset(t);
-        if not multipart or (ListQuoteMsg<>'') then  { ZC-Header 'Åberlesen' }
+        if not multipart or (ListQuoteMsg<>'') then  { ZC-Header 'ueberlesen' }
           if ntZCablage(dbReadInt(mbase,'ablage')) then
             repeat
               readln(t,s)
@@ -1096,6 +1098,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/11/18 00:04:44  fe
+  Made compileable again.  (Often a suboptimal way...)
+
   Revision 1.51  2000/11/16 20:53:50  hd
   - DOS Unit entfernt
 
@@ -1223,13 +1228,13 @@ end.
   - Zconnect-Prioritaet erscheint jetzt im Lister-Header
 
   Revision 1.12  2000/04/04 21:01:23  mk
-  - Bugfixes f¸r VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.11  2000/03/09 23:39:33  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 
   Revision 1.10  2000/02/28 23:43:01  rb
-  Grmpf, ich hatte vergessen, das nicht mehr benîtigte 'IniQuote' auszukommentieren
+  Grmpf, ich hatte vergessen, das nicht mehr benoetigte 'IniQuote' auszukommentieren
 
   Revision 1.9  2000/02/28 23:38:12  rb
   Quoten von Leerzeilen verbessert
