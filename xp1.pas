@@ -3252,7 +3252,7 @@ end;
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
 begin
-  CompileTime := FormatDateTime('yyyy-mm-dd-hhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
+  CompileTime := FormatDateTime('yyyymmddhhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
   {$IFDEF Delphi }
     + 'd'
   {$ENDIF }
@@ -3288,6 +3288,9 @@ end;
 
 {
   $Log$
+  Revision 1.182  2003/08/15 21:36:18  mk
+  - fixed #733047: Bad User-Agent header syntax
+
   Revision 1.181  2003/05/11 11:12:16  mk
   - use IsMailAddr when possible
 

@@ -33,7 +33,7 @@ uses sysutils;
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.9.7';       { Versionnr. - steht nur an dieser Stelle }
+  verstr      = '3.9.7';       { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' alpha';       { ' ', ' alpha' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -221,6 +221,9 @@ begin
 
 {
   $Log$
+  Revision 1.80  2003/08/15 21:36:18  mk
+  - fixed #733047: Bad User-Agent header syntax
+
   Revision 1.79  2003/05/02 19:43:05  mk
   - version 3.9.7
 
