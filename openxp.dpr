@@ -21,7 +21,7 @@ program openxp;
 {%File 'xpsendmessage_subs.inc'}
 
 uses
-	addresses in 'addresses.pas',
+  addresses in 'addresses.pas',
   addresslist in 'addresslist.pas',
   archive in 'archive.pas',
   charmaps in 'charmaps.pas',
@@ -153,6 +153,8 @@ uses
   objcom in 'ObjCOM\objcom.pas',
   Ringbuff in 'ObjCOM\ringbuff.pas',
   xprope in 'xplib\xprope.pas',
+  xpunicode in 'xplib\xpunicode.pas',
+  xpunicode_lbr in 'xplib\xpunicode_lbr.pas',
 {$ELSE}
   ZModem in 'netcall/zmodem.pas',
   ncgeneric in 'netcall/ncgeneric.pas',
@@ -183,7 +185,7 @@ uses
   ncursix in 'ncursix.pas',
   xprope in 'xplib/xprope.pas'
 {$ENDIF}
-	xpserver in 'xpserver.pas',
+  xpserver in 'xpserver.pas',
   xpsendmessage_rta in 'xpsendmessage_rta.pas',
   xpsendmessage_internal in 'xpsendmessage_internal.pas',
   xpsendmessage in 'xpsendmessage.pas',
