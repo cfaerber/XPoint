@@ -399,6 +399,7 @@ var x,y,b: byte;
     adr  : string;
     fa   : fidoadr;
     first: boolean;
+    NlItem :TNodeListItem;
 begin
   if active or not TestNodelist or DisableAltN then exit;
   new(ni);
@@ -406,8 +407,10 @@ begin
 { MH: AltN-Screen zur besseren Lesbarkeit verbreitert }
   diabox(77,11,getres2(2100,1),x,y);    { Node-Infos abfragen }
   if MainNodelist>0 then begin
+    NlItem:=nodelist[MainNodelist];
     attrtxt(col.coldiarahmen);
-    mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
+    //mwrt(x+70,y,' '+formi(PNodeListItem(nodelist[MainNodelist]^).number,3)+' ');
+    mwrt(x+70,y,' '+formi(NlItem.number,3)+' ');
     attrtxt(col.coldialog);
     end; { MH: Aufbau ge„ndert, damit m”glichst viel angezeigt werden kann }
   mwrt(x+3, y+2, GetRes2( 2100, 2));     { Box   }          { MH 03.02.2000 }
@@ -885,6 +888,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.23  2000/12/10 10:54:56  mo
+  -TNodelistItem in eine Klasse umgewandelt
+
   Revision 1.22  2000/11/14 15:51:36  mk
   - replaced Exist() with FileExists()
 

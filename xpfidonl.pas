@@ -198,7 +198,9 @@ begin
     reset(t);
     while not eof(t) do
     begin
-      New(Item); NLP.Add(Item);
+      New(Item);
+      Item^:=TNodelistItem.Create;
+      NLP.Add(Item);
       with Item^ do begin
         repeat
           readln(t,s);
@@ -417,6 +419,7 @@ begin
     if not FileExists(fn) then
       rfehler(22)        { 'Datei ist nicht vorhanden! }
     else begin
+      NLItem:=TNodeListItem.Create;
       arc:=ArcType(fn);
       if arc>0 then begin          { gepackt -> Dateiname aus Archiv auslesen }
         ar.name:='';
@@ -741,6 +744,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/12/10 10:54:56  mo
+  -TNodelistItem in eine Klasse umgewandelt
+
   Revision 1.25  2000/11/18 21:41:26  mk
   - compile fix
 

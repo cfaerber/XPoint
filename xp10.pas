@@ -1395,6 +1395,7 @@ var
   var nlr : TNodeListItem;
       brk : boolean;
   begin
+    nlr:=TNodeListItem.Create;
     nlr:=PNodeListItem(Nodelist[strIdx])^;
     EditNLentry(nlr,brk);
     if not brk then
@@ -2050,6 +2051,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.46  2000/12/10 10:54:56  mo
+  -TNodelistItem in eine Klasse umgewandelt
+
   Revision 1.45  2000/12/06 22:29:44  mo
   -indexfehler bei nodelistenlöschung besetigt
 

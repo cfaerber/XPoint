@@ -646,7 +646,7 @@ type   textp  = ^text;
                  end;
 
        PNodeListItem = ^TNodeListItem;
-       TNodeListItem  = record
+       TNodeListItem  = class
                    listfile   : string;    { Nodelisten-Datei      }
                    number     : integer;   { akt. Nummer           }
                    updatefile : string;    { Diff/Update-Datei     }
@@ -1179,6 +1179,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.106  2000/12/10 10:54:56  mo
+  -TNodelistItem in eine Klasse umgewandelt
+
   Revision 1.105  2000/12/03 12:38:20  mk
   - Header-Record is no an Object
 
