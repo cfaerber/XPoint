@@ -259,7 +259,13 @@ procedure InitXP1Unit;
 implementation  {-------------------------------------------------------}
 
 uses
-  xp1o,xp1o2,xp1help,xp1input,xpe,xpnt,direct;
+  xp1o,xp1o2,xp1help,xp1input,xpe,xpnt,
+{$IFDEF Kylix}
+  ncursix,
+{$ELSE}
+  ncurses,
+{$ENDIF}
+  direct;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -996,7 +1002,7 @@ begin
   SysSetScreenSize(ScreenLines, ScreenWidth);
   screenlines := SysGetScreenLines;
   screenwidth := SysGetScreenCols;
-  window(1,1,screenwidth,screenlines);
+  {$IFDEF Linux}xpcurses.{$ENDIF}window(1,1,screenwidth,screenlines);
   cursor(curoff);
 
   getmem(ma,sizeof(menuarray));
@@ -2067,6 +2073,9 @@ end;
 
 {
   $Log$
+  Revision 1.129  2001/10/20 21:35:48  ml
+  - saving/restoring terminal for calling external programs works now
+
   Revision 1.128  2001/10/17 20:56:23  mk
   - fixed AVs in exit parts of unit
 

@@ -50,13 +50,16 @@ procedure shell(const prog:string; space:word; cls:shortint);
   {$ifdef Unix}
   begin
     Debug.TempCloseLog(False);
-    DoneXPCurses;
+    Debug.DebugLog('xp1s','saving terminal state', DLInform);
+    def_prog_mode();           { save current tty modes }
+    endwin();                  { restore original tty modes }
 {$IFDEF Kylix}
     Result:=libc.system(PChar(command));
 {$ELSE}
     Result:=linux.shell(command);
 {$ENDIF}
-    InitXPCurses;
+    Debug.DebugLog('xp1s','reload terminal state', DLInform);
+    refresh();                 { restore save modes, repaint screen }
     Debug.TempCloseLog(True);
     Debug.DebugLog('xp1s','called program "'+command+'": result '+
                    strs(Result),iif(Result=0,DLInform,DLError));
@@ -316,6 +319,7 @@ var
 
 begin
   listexit:=0;
+  dphb := 0;
   if varlister<>'' then begin
     lf:=repfile(VarLister,name);
     pp:=pos('$TYPE',UpperCase(lf));
@@ -495,6 +499,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.69  2001/10/20 21:35:48  ml
+  - saving/restoring terminal for calling external programs works now
+
   Revision 1.68  2001/10/20 19:11:10  ml
   - call done and init-curses when calling external progs (redraw needed yet)
 

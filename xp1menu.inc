@@ -433,6 +433,7 @@ var ma    : map;
   end;
 
 begin
+  get2 := -1;
   if nr=0 then begin
     menulevel:=0;
     if menurestart then enterkey:=mainmenu^[menustack[0]].hkey;
@@ -610,6 +611,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2001/10/20 21:35:48  ml
+  - saving/restoring terminal for calling external programs works now
+
   Revision 1.35  2001/10/17 20:56:23  mk
   - fixed AVs in exit parts of unit
 
