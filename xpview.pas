@@ -204,6 +204,9 @@ var p         : byte;
     prog      : string;  {Maximallaenge= Programmname+' '+Pfadstring(79)}
     orgfn,fn1,
     parfn     : string;
+    Dir: DirStr;
+    Name: NameStr;
+    Ext: ExtStr;
 begin
   fn1:='';
   orgfn:=iifs(viewer.fn<>'',ExtractFilepath(fn)+ExtractFileName(viewer.fn),'');
@@ -229,12 +232,11 @@ begin
     end
   else parfn:=orgfn;
                               {Korrekte File-extension verwenden}
-  if cpos('.',parfn)>0 then
-    parfn:=left(parfn,rightpos('.',parfn))
-  else
-    parfn:=parfn+'.';
 
-  parfn:=parfn+iifs(viewer.ext='',mid(orgfn,rightpos('.',orgfn)+1),viewer.ext);
+  FSplit(Parfn, Dir, Name, Ext);
+  ParFn := Dir + Name;
+
+  parfn:=parfn+iifs(viewer.ext='',ExtractFileExt(Orgfn),'.' + viewer.ext);
   _rename(orgfn,parfn);
 
 
@@ -250,6 +252,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/10/16 08:30:37  mk
+  - Bugfix fuer ViewFile, wenn File ohne Extension
+
   Revision 1.21  2000/10/11 14:51:57  mk
   JG:- Bug bei Erstellung des Dateinamens behoben
 
