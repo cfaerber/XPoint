@@ -68,7 +68,7 @@ var done: boolean;
 var
   TypStr: array [TAddressListType] of String;
   List: TAddressList;
-  i,x,y,w1: integer; max_h,new_h,h: 1..20;
+  x,y,w1: integer; max_h,new_h,h: 1..20;
   brk: boolean;
 
   FieldUp:  integer;
@@ -227,7 +227,7 @@ var
   end;
 
   function CheckGroup(var inhalt:string):boolean;
-  var G,ii,j: integer;
+  var G,ii: integer;
   begin
     ii := IndexPos;
     inhalt := Trim(inhalt);
@@ -297,7 +297,6 @@ var
 
       procedure AddAddr;
       var s,t: string;
-          r,n: string;
           p: integer;
           d: DB;
           bb : string;
@@ -390,7 +389,7 @@ var
 
  {function CheckAddress(var inhalt:string):boolean;}
   var ii: integer;
-     i,j: integer;
+      j: integer;
       nl: TAddressList;
       lg: integer;
       lp: integer;
@@ -594,6 +593,8 @@ function EditEmpfaengerList(
       end;
   end;  
 
+var
+  i: Integer;
 begin
   TypStr[atNewsgroup] := GetRes2(2203,1);
   TypStr[atTo       ] := GetRes2(2203,2);
@@ -1075,6 +1076,10 @@ end;
 
 //
 // $Log$
+// Revision 1.7  2002/07/25 21:23:18  mk
+// - removed unused variables
+// - i is now a local variable
+//
 // Revision 1.6  2002/07/25 20:57:39  mk
 // - possible fix for #585559: OXP/Linux 3.9: neue User verkrüppelt
 //   AddAdr used for loop varialbe i from CheckAdresses, this varialbe
