@@ -107,8 +107,10 @@ asm
          xor   edx, edx
          mov   edi,bytes
          mov   ecx,[edi]
-         jcxz  @ende
-         mov   edi, data
+         cmp   ecx, 0
+         jne   @weiter
+         jmp   @ende
+@weiter: mov   edi, data
          lea   esi,[edi+1500]
          cld
          mov   bl,typ
@@ -148,11 +150,12 @@ asm
          cmp   edx,1500
          jz    @ende                    { Konvertierpuffer voll :-( }
          inc   esi
-         loop  @uklp
+         loop  @uklp1
          jmp   @ende
+@uklp1:  jmp   @uklp
 @noconv: stosb
          inc   esi
-         loop  @uklp
+         loop  @uklp1
          jmp   @ende
 
 @isolp:  mov   al,[esi]
@@ -2095,6 +2098,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.96  2001/01/28 08:54:26  mk
+  - fixed jump out of range
+
   Revision 1.95  2001/01/14 10:13:35  mk
   - MakeHeader() integreated in new unit
 
