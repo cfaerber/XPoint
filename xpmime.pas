@@ -720,6 +720,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.29  2002/03/29 15:01:54  my
+  MY:- Text des letzten Commits pr„zisiert.
+
   Revision 1.12.2.28  2002/03/27 19:45:18  my
   JG+MY:- Fix: Bei Dateianh„ngen in MIME-Multipart-Nachrichten, die nach
           der Deklaration des Dateinamens in einem "gefalteten" Header
@@ -727,7 +730,8 @@ end.
           XP diese Angaben fr einen Bestandteil des Dateinamens und
           konnte daher die Datei im Archiv-Viewer nicht korrekt
           extrahieren (bzw. gab die Fehlermeldung "Fehler beim
-          Dateizugriff :-(") aus.
+          Dateizugriff :-(" aus), wenn fr den MIME-Typ 'text/plain'
+          der Viewer "(intern)" definiert war.
 
   Revision 1.12.2.27  2002/03/17 22:00:35  my
   JG:- Fix: Wenn beim Lesen von MIME-Multipart-Nachrichten die Auswahl
