@@ -131,9 +131,9 @@ begin                         { user: 1 = Userauswahl  0 = Brettauswahl }
               s := dbReadNStr(bbase,bb_brettname);
             end;
           end else s:='A'+s;
-        end else dbReadN(bbase,bb_brettname,s);
+        end else s := dbReadNStr(bbase,bb_brettname);
         {if s<>'' then  s:='A'+s
-        else dbReadN(bbase,bb_brettname,s);}
+        else s := dbReadN(bbase,bb_brettname);}
         delete(s,1,1);
       end;
     end;
@@ -1496,6 +1496,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/11/02 09:47:23  mk
+  - AnsiString Fix
+
   Revision 1.38  2000/10/22 21:58:58  mk
   - case of .pp and .epp is now UnixFS dependent
 
