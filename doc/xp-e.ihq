@@ -6263,23 +6263,39 @@ This option is only functional for EGA and VGA
 display adapters.
 @
 311
-Tell CrossPoint to make extra memory for the
-environment available (tech. note: uses the /E switch
+Tell CrossPoint to make extra memory available for
+the DOS environment (tech. note: uses the /E switch
 when calling COMMAND.COM).
 
-You do not need to use this if you do not know that
-you need extra environment space.
+You do not need to use this if you know that you do
+not need extra environment space.
 
-See your DOS handbook for more information about the
+See your DOS manual for more information about the
 environment.
+@
+312
+<<[x]>> -> When calling external programs, a window
+       will be opened and the command line displayed.
+
+       This feature is only really useful for
+       diagnostic purposes.
+@
+313
+<<[x]>> -> After an external program has been called,
+       CrossPoint will wait for a keypress before the
+       program is executed.
+
+       This feature is only really useful for
+       diagnostic purposes and after using it, it
+       might be a good idea to disable it.
 @
 400
 The name of the newsgroup. Each newsgroup name must
 begin with a "/" and may be up to 80 characters long.
 
 Note that some Zerberus-compatible systems can only
-cope with up to 40 characters, therefore, in Z-Netz, 
-newsgroup names longer than 40 characters are not 
+cope with up to 40 characters, therefore, in Z-Netz,
+newsgroup names longer than 40 characters are not
 used.
 @
 401
@@ -10044,7 +10060,7 @@ settings for each one.
 Printer settings.
 
 At present they apply only to printing messages with
-"R", printing with "D" when in the message readetr, 
+"R", printing with "D" when in the message readetr,
 or when printing the Help pages with <Ctrl-D>.
 
 The settings are NOT valid when printing from the
@@ -10124,9 +10140,9 @@ fields when editing an entry (press "E" to edit..)
 10701
 <<Re-Org / Messages
 
-Deletes all messages which have been marked for 
-deletion either by you or because they have reached 
-the set time limit. The time is calculated from the 
+Deletes all messages which have been marked for
+deletion either by you or because they have reached
+the set time limit. The time is calculated from the
 <<"date received">>.
 
 Note that extra disk space is required during the
@@ -11491,10 +11507,10 @@ message.
 
 NOTE: The "Forward" template is used but the
       "Signature ((Pub)/(Priv))" template is <<NOT>>
-      used. In other words, your signature will <<NOT>> 
-      be added to the end of the forwarded message 
-      and so therefore, if you would like your 
-      signature added, you must add it manually 
+      used. In other words, your signature will <<NOT>>
+      be added to the end of the forwarded message
+      and so therefore, if you would like your
+      signature added, you must add it manually
       before saving the message.
 
       For the techies :-)
@@ -11694,34 +11710,28 @@ Under this entry are the various possible parameters
 for calling a DOS shell.
 @
 12404
-<<Config / External / Packer
-see also [Packers]@4006
-This is actually the settings for the CrossPoint
-Archive viewer, which it uses if you want to extract.
-an archive rather than just view it.
-It needs to have access to all the necessary
-(un)packer programs.
-It is pre set-up for most purposes, but if you need
-to change it:
+<<Config / External / Unpacker
+(See also [Packers] )@4006
 
-The settings must contain 2 macros.
+These are actually the settings for the CrossPoint
+archive viewer, which are used to extract files from
+an archive rather than to just view it. Obviously,
+CrossPoint needs to be able to access all the
+necessary unpacker programs. It is pre-configured for
+most purposes but if you need to change it, the
+settings must contain the following 2 macros:
 
-<<$ARCHIV>>  The name of the packed file being
-             unpacked
+<<$ARCHIV>>  The name of the compressed archive to
+         unpack.
 
-<<$DATEI>>   The name of the file in that packed file
-             which is to be extracted from it.
+<<$DATEI>>   The name of the file to extract from the
+         compressed archive.
 
 In addition, all switches and options necessary for
-the particular Packer must be entered.
-CrossPoint <<must>> be able to find the Packer in the
-DOS Path. A Tick next to the entry in the table
-confirms that CrossPoint can "see" that packer
-program.
-
-The packers DWC and Hyper are seldom met with.
-Settings for these have to be entered <<by Hand>>
-direct in XPOINT.CFG.
+the particular unpacker must be entered. CrossPoint
+<<must>> be able to find the unpacker in the DOS path.
+A tick next to the entry in the table confirms that
+CrossPoint can "see" that unpacker program.
 
 @
 12405
@@ -11845,7 +11855,7 @@ Netcall-Options decide the way XP makes netcalls.
 
 CrossPoint can be protected with <<2 Passwords>>.
 
-<<Start Password>> is required to start the 
+<<Start Password>> is required to start the
                program.
 
 <<Main Password>>  is required to change
