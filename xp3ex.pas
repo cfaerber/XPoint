@@ -26,7 +26,7 @@ uses
   crt,
 {$ENDIF }
   dos,typeform,fileio,inout,database,resource,stack,
-  xp0,xp1;
+  xp0,xp1,mimedec;
 
 const xTractMsg   = 0;
       xTractHead  = 1;
@@ -1176,6 +1176,22 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.25  2002/03/13 23:05:40  my
+  RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
+            von Redundanzen befreit, korrigiert und erweitert:
+            - Alle Decodier- und Konvertierroutinen in neue Unit
+              MIMEDEC.PAS verlagert.
+            - Nach RFC 1522 codierte Dateinamen in Attachments werden
+              jetzt decodiert (XPMIME.PAS).
+            - 'MimeIsoDecode' kann jetzt auch andere ZeichensÑtze als
+               ISO-8859-1 konvertieren. Daher erfolgt bei nach RFC 1522
+               codierten Headerzeilen im Anschlu· an die qp- oder base64-
+               Decodierung keine starre ISO-8859-1-Konvertierung mehr,
+               sondern es wird der deklarierte Zeichensatz korrekt
+               berÅcksichtigt.
+            - UnterstÅtzung fÅr ZeichensÑtze ISO-8859-15 und Windows-1252
+              implementiert.
+
   Revision 1.17.2.24  2002/03/08 23:01:08  my
   MY- Fix: Quotezeichenbehandlung bei RFC/Client korrigiert (jetzt wieder
       mit der von RFC/UUCP identisch).

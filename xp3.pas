@@ -20,7 +20,7 @@ interface
 
 uses
   xpglobal, crt, dos,typeform,fileio,inout,datadef,database,montage,
-  resource,xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum;
+  resource,xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,mimedec;
 
 const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
@@ -66,8 +66,6 @@ procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);  { Fehler->
 { procedure Rot13(var data; size:word); }                             {jetzt in Typeform.pas }
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:smallword);
-procedure Iso1ToIBM(var data; size:word);
-procedure IBMToIso1(var data; size:word);
 function  TxtSeek(adr:pointer; size:word; var key:string; igcase,umlaut:boolean):boolean;
 
 function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
@@ -340,39 +338,6 @@ asm
          pop ds
 end;
 
-
-
-procedure Iso1ToIBM(var data; size:word); assembler;
-asm
-          mov    cx,size
-          jcxz   @noconv1
-          les    di,data
-          mov    bx,offset ISO2IBMtab - 128
-          cld
-@isolp1:  mov    al,es:[di]
-          or     al,al
-          jns    @ii1
-          xlat
-@ii1:     stosb
-          loop   @isolp1
-@noconv1:
-end;
-
-
-
-procedure IBMToIso1(var data; size:word); assembler;
-asm
-          mov    cx,size
-          jcxz   @noconv2
-          les    di,data
-          mov    bx,offset IBM2ISOtab
-          cld
-@isolp2:  mov    al,es:[di]
-          xlat
-          stosb
-          loop   @isolp2
-@noconv2:
-end;
 
 
 { Datum des letzten Puffer-Einlesens ermitteln }
@@ -1279,6 +1244,22 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.17  2002/03/13 23:09:42  my
+  RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
+            von Redundanzen befreit, korrigiert und erweitert:
+            - Alle Decodier- und Konvertierroutinen in neue Unit
+              MIMEDEC.PAS verlagert.
+            - Nach RFC 1522 codierte Dateinamen in Attachments werden
+              jetzt decodiert (XPMIME.PAS).
+            - 'MimeIsoDecode' kann jetzt auch andere ZeichensÑtze als
+               ISO-8859-1 konvertieren. Daher erfolgt bei nach RFC 1522
+               codierten Headerzeilen im Anschlu· an die qp- oder base64-
+               Decodierung keine starre ISO-8859-1-Konvertierung mehr,
+               sondern es wird der deklarierte Zeichensatz korrekt
+               berÅcksichtigt.
+            - UnterstÅtzung fÅr ZeichensÑtze ISO-8859-15 und Windows-1252
+              implementiert.
+
   Revision 1.25.2.16  2002/03/08 22:59:56  my
   MY+HG+JG:- WICHTIGER Bugfix (3 Beteiligte, 1 Monat Suche, 2 Codezeilen
              geÑndert): OpenXP/16 kann jetzt wieder eine Nachrichten-

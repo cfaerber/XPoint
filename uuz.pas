@@ -19,7 +19,8 @@
 
 program uuz;
 
-uses  xpglobal,ems,crt,dos,typeform,xpovl,fileio,xpdatum,montage,clip,lfn;
+uses  xpglobal,ems,crt,dos,typeform,xpovl,fileio,xpdatum,montage,clip,
+      mimedec,lfn;
 
 const
       midlen      = 160;
@@ -29,7 +30,7 @@ const
       hderrlen    = 60;
       maxemp      = 50;
       maxulines   = 60;               { max. zusÑtzliche U-Zeilen }
-      maxmore     = 15;               { max. String's pro RFC-Headerzeile }
+      maxmore     = 15;               { max. Strings pro RFC-Headerzeile }
       maxrefs     = 20;               { max. gespeicherte References }
       maxfollow   = 10;               { max. Followup-To-Zeilen }
       bufsize     = 16384;
@@ -249,52 +250,12 @@ const
       { Wird zum Einlesen der Customizable Headerlines benîtigt }
       mheadercustom : array[1..2] of string[custheadlen] = ('','');
 
-procedure IBM2ISO; assembler;
-asm
-     cld
-     mov   bx, offset IBM2ISOtab
-     mov   si, offset s
-     lodsb                           { StringlÑnge }
-     mov   cl,al
-     mov   ch,0
-     jcxz  @@2
-@@1: lodsb
-     xlat
-     mov   [si-1],al
-     loop  @@1
-@@2:
-end;
-
-procedure ISO2IBM; assembler;
-asm
-     cld
-     mov   bx,offset ISO2IBMtab - 128
-     mov   si,offset s
-     lodsb                           { StringlÑnge }
-     mov   cl,al
-     mov   ch,0
-     jcxz  @@2
-@@1: lodsb
-     cmp   al,127
-     ja    @@3
-     loop  @@1
-     jmp   @@2
-@@3: xlat
-     mov   [si-1],al
-     loop  @@1
-@@2:
-end;
-
 procedure Charset2IBM;
 begin
   with hd.mime do
   begin
     if (ctype=tMultipart) or (subtype='html') then exit;
-  { if charset='iso-8859-1' then ISO2IBM }
-    if left(charset,9)='iso-8859-' then ISO2IBM
-    else if charset='utf-8' then UTF82IBM(s)
-    else if charset='utf-7' then UTF72IBM(s)
-    else if charset='' then ISO2IBM;
+    CharsetToIBM(charset,s);
   end;
 end;
 
@@ -1172,55 +1133,10 @@ begin
     hd.typ:=iifc(mpart,'M',iifc(binary,'B','T'));
     charset:=LStr(charset);    
     if (ctype=tText) and (charset<>'') and (charset<>'us-ascii') and
-       (left(charset,9)<>'iso-8859-') and (charset<>'utf-8') and (charset<>'utf-7') then
+       (left(charset,9)<>'iso-8859-') and (charset<>'windows-1252') and
+       (charset<>'utf-8') and (charset<>'utf-7') then
       hd.error:='Unsupported character set: '+charset;
     end;
-end;
-
-
-procedure UnQuotePrintable(add_cr_lf:boolean);  { MIME-quoted-printable/base64 -> 8bit }
-var p,b     : byte;
-    softbrk : boolean;
-
-  procedure AddCrlf; assembler; { CR/LF an s anhÑngen }
-  asm
-    mov bl,byte ptr s[0]
-    mov bh,0
-    cmp bx,255
-    jz  @@1
-    inc bx
-    mov byte ptr s[bx],13
-    cmp bx,255
-    jz  @@1
-    inc bx
-    mov byte ptr s[bx],10
-@@1:mov byte ptr s[0],bl
-  end;
-
-begin
-  if qprint then begin
-    while (s<>'') and (s[length(s)]=' ') do    { rtrim }
-      SetLength(s, Length(s)-1);
-    softbrk:=(lastchar(s)='=');    { quoted-printable: soft line break }
-    if softbrk then dellastHuge(s);
-    p:=cpos('=',s);
-    if p>0 then
-      while p<length(s)-1 do begin
-        inc(p);
-        b:=hexval(copy(s,p,2));
-        if b>0 then begin
-          s[p-1]:=chr(b);
-          delete(s,p,2);
-          end;
-        while (p<length(s)) and (s[p]<>'=') do inc(p);
-        end;
-    if (not softbrk) and (add_cr_lf) then
-      AddCrlf;
-    end
-  else if b64 then
-    s := DecodeBase64(s)
-  else
-    if add_cr_lf then AddCrlf;
 end;
 
 
@@ -1973,74 +1889,6 @@ var p,i   : integer; { byte -> integer }
     ZCtoZdatum(hd.zdatum,hd.datum);
   end;
 
-  { vollstÑndig RFC-1522-Decodierung }
-
-  procedure MimeIsoDecode(var ss:string; maxlen:byte);
-  var p1,p2,p,i : byte;
-      code      : char;
-      qp        : boolean;
-  begin
-    for i:=1 to length(ss) do
-      if ss[i]=#9 then ss[i]:=' ';
-
-{ 09.02.2000 robo - Fix fÅr QP-Dekodierung }
-    repeat
-      p1:=pos('=?',ss);
-      if p1>0 then begin
-        p2:=p1+5;
-        i:=0;
-        while (i<3) and (p2<length(ss)) do begin
-          if ss[p2]='?' then inc(i);
-          inc(p2);
-        end;
-        while (p2<length(ss))
-        and ((ss[p2]<>'=') or (ss[p2-1]<>'?')) do inc(p2);
-        if (i<3) or (ss[p2]<>'=') then p2:=0 else dec(p2);
-      end;
-      if (p1>0) and (p2>0) then begin
-        s:=copy(ss,p1+2,p2-p1-2);
-        delete(ss,p1,p2-p1+2);
-{        cset:='iso-8859'; }
-        p:=cpos('?',s);
-        if p>0 then begin
-{          cset:=lstr(left(s,min(8,p-1))); }
-          delete(s,1,p);
-          p:=cpos('?',s);
-          if p=2 then begin
-            code:=UpCase(s[1]);
-            delete(s,1,2);
-            qp:=qprint;
-            case code of
-              'Q' : begin
-                      for i:=1 to length(s) do
-                        if s[i]='_' then s[i]:=' ';
-                      qprint:=true; s:=s+'=';
-                      UnquotePrintable(false);
-                    end;
-              'B' : begin
-                      qprint:=false; b64:=true;
-                      UnquotePrintable(false);
-                    end;
-            end;
-            end;
-          qprint:=qp;
-          end;
-        { if cset='iso-8859' then
-            ISO2IBM; }
-        insert(s,ss,p1);
-        end;
-    until (p1=0) or (p2=0);
-
-{ Fix im Zuge der RealnameverlÑngerung }
-    if length(ss)>maxlen then ss[0]:=char(maxlen);
-
-    s:=ss;
-    ISO2IBM;
-    ss:=s;
-    for i:=1 to length(ss) do
-      if ss[i]<' ' then ss[i]:=' ';
-  end;
-
   procedure GetMime(p:mimeproc);
   begin
     AppUline('U-'+s1);
@@ -2332,7 +2180,7 @@ begin
     hd.groesse:=0;
     while bufpos<bufanz do begin
       ReadString(true);
-      UnQuotePrintable(eol>0);
+      UnQuotePrintable(s,qprint,b64,eol>0);
       if not binaer then Charset2IBM;
       inc(hd.groesse,length(s));
       end;
@@ -2343,7 +2191,7 @@ begin
     writeln;
   while bufpos<bufanz do begin
     ReadString(true);
-    UnQuotePrintable(eol>0);
+    UnQuotePrintable(s,qprint,b64,eol>0);
     if not binaer then Charset2IBM;
     wrfs(s);
     end;
@@ -2458,7 +2306,7 @@ begin
         if not smtpende then begin
           if (s<>'') and (s[1]='.') and LastEol then     { SMTP-'.' entfernen }
             delfirstHuge(s);
-          UnquotePrintable(eol>0);    { hÑngt CR/LF an, falls kein Base64 }
+          UnQuotePrintable(s,qprint,b64,eol>0);    { hÑngt CR/LF an, falls kein Base64 }
           if not binaer then Charset2IBM;
           inc(hd.groesse,length(s));
           end;
@@ -2472,7 +2320,7 @@ begin
         if not smtpende then begin
           if (s<>'') and (s[1]='.') and LastEol then    { SMTP-'.' entfernen }
             delfirstHuge(s);
-          UnQuotePrintable(eol>0);    { hÑngt CR/LF an, falls kein Base64 }
+          UnQuotePrintable(s,qprint,b64,eol>0);    { hÑngt CR/LF an, falls kein Base64 }
           if not binaer then Charset2IBM;
           wrfs(s);
           end;
@@ -2595,7 +2443,7 @@ begin
             MaxSlen:=ss;
             ReadString(true);
             dec(ss,length(s)+eol);
-            UnQuotePrintable(eol>0);
+            UnQuotePrintable(s,qprint,b64,eol>0);
             if not binaer then Charset2IBM;
             inc(hd.groesse,length(s));
             end;
@@ -2607,7 +2455,7 @@ begin
           { if length(s)+eol>size then
               s[0]:=chr(size-eol); }
             dec(size,length(s)+eol);
-            UnQuotePrintable(eol>0);
+            UnQuotePrintable(s,qprint,b64,eol>0);
             if not binaer then Charset2IBM;
             wrfs(s);
             end;
@@ -2817,9 +2665,7 @@ var dat    : string[30];
   procedure WrLongline(txt:string; var ss:string);
   var p,r,ml : byte;
   begin
-    uuz.s:=ss;
-    if convibm then IBM2ISO;
-    ss:=uuz.s;
+    if convibm then IBM2ISO(ss);
     ml:=iif(rfc1522,60,78);
     r:=ml+1-length(txt);
     while length(ss)>r do begin
@@ -2952,12 +2798,12 @@ begin
       wrs(f,'Path: '+addpath+pfad);
     wrs(f,'Date: '+dat);
     uuz.s:=realname;
-    if convibm then IBM2ISO;
+    if convibm then IBM2ISO(uuz.s);
     RFC1522form;
     wrs(f,'From: '+absender+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     if wab<>'' then begin
       uuz.s:=war;
-      if convibm then IBM2ISO;
+      if convibm then IBM2ISO(uuz.s);
       RFC1522form;
       wrs(f,'Sender: '+wab+iifs(uuz.s<>'',' ('+uuz.s+')',''));
     end;
@@ -3019,12 +2865,12 @@ begin
     if mail and (lstr(betreff)='<none>') then
       betreff:='';
     uuz.s:=betreff;
-    if convibm then IBM2ISO;
+    if convibm then IBM2ISO(uuz.s);
     RFC1522form;
     wrs(f,'Subject: '+uuz.s);
     if keywords<>'' then begin
       uuz.s:=keywords;
-      if convibm then IBM2ISO;
+      if convibm then IBM2ISO(uuz.s);
       RFC1522form;
       wrs(f,'Keywords: '+uuz.s);
     end;
@@ -3083,7 +2929,7 @@ begin
       wrs(f,'Distribution: '+distribution);
     if organisation<>'' then begin
       uuz.s:=organisation;
-      if convibm then IBM2ISO;
+      if convibm then IBM2ISO(uuz.s);
       RFC1522form;
       wrs(f,'Organization: '+uuz.s);
     end;
@@ -3109,7 +2955,7 @@ begin
       wrs(f,'X-Comment-To: '+fido_to);
     for i:=1 to ulines do begin
       uuz.s:=uline^[i];
-      if convibm then IBM2ISO;
+      if convibm then IBM2ISO(uuz.s);
       RFC1522form;
       wrs(f,uuz.s);
     end;
@@ -3376,7 +3222,7 @@ begin
           while fpos+bufpos<gs do begin
             ReadString(true);
             if fpos+bufpos>gs then ShortS;
-            if convibm and (not mpart) then IBM2ISO;
+            if convibm and (not mpart) then IBM2ISO(uuz.s);
             if NewsMIME and (not mpart) then MakeQuotedPrintable;
             wrbuf(f);
           end;
@@ -3440,7 +3286,7 @@ begin
               ReadString(true);
               if fpos+bufpos>gs then ShortS;
               if SMTP and (s<>'') and (s[1]='.') then s:='.'+s;
-              if convibm and (not mpart) then IBM2ISO;
+              if convibm and (not mpart) then IBM2ISO(uuz.s);
               if not mpart then MakeQuotedPrintable;
               wrbuf(f2);
             end;
@@ -3503,6 +3349,22 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.63  2002/03/13 23:05:41  my
+  RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
+            von Redundanzen befreit, korrigiert und erweitert:
+            - Alle Decodier- und Konvertierroutinen in neue Unit
+              MIMEDEC.PAS verlagert.
+            - Nach RFC 1522 codierte Dateinamen in Attachments werden
+              jetzt decodiert (XPMIME.PAS).
+            - 'MimeIsoDecode' kann jetzt auch andere ZeichensÑtze als
+               ISO-8859-1 konvertieren. Daher erfolgt bei nach RFC 1522
+               codierten Headerzeilen im Anschlu· an die qp- oder base64-
+               Decodierung keine starre ISO-8859-1-Konvertierung mehr,
+               sondern es wird der deklarierte Zeichensatz korrekt
+               berÅcksichtigt.
+            - UnterstÅtzung fÅr ZeichensÑtze ISO-8859-15 und Windows-1252
+              implementiert.
+
   Revision 1.35.2.62  2002/03/08 23:18:16  my
   MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte

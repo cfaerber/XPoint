@@ -17,7 +17,7 @@
 {$I XPDEFINE.INC }
 {$M 16384,80000,110000}
 
-uses crt,dos,typeform,fileio,xpdiff,xpdatum,xpglobal,xpovl,lfn;
+uses crt,dos,typeform,fileio,xpdiff,xpdatum,xpglobal,xpovl,mimedec,lfn;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -267,87 +267,6 @@ end ['EAX', 'ECX', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
-
-procedure ISO2IBM(var data; size:word); assembler; {&uses ebx, esi}
-asm
-{$IFDEF BP }
-          mov    bx,offset ISO2IBMtab - 128
-          les    si,data
-          mov    cx,size
-          jcxz   @xende
-@xloop:   mov    al,es:[si]
-          inc    si
-          cmp    al,127
-          ja     @trans
-          loop   @xloop
-          jmp    @xende
-@trans:   xlat
-          mov    es:[si-1],al
-          loop   @xloop
-@xende:
-{$ELSE }
-          mov    ebx,offset ISO2IBMtab - 128
-          mov    esi,data
-          mov    ecx,size
-          jecxz  @xende
-@xloop:   mov    al,[esi]
-          inc    esi
-          cmp    al,127
-          ja     @trans
-          loop   @xloop
-          jmp    @xende
-@trans:   xlat
-          mov    [esi-1],al
-          loop   @xloop
-@xende:
-{$ENDIF}
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI'];
-{$ELSE }
-end;
-{$ENDIF }
-
-procedure Mac2IBM(var data; size:word); assembler; {&uses ebx, esi}
-asm
-{$IFDEF BP }
-          mov    bx,offset Mac2IBMtab - 128
-          les    si,data
-          mov    cx,size
-          jcxz   @xende
-          jmp    @xloop
-@xloop:   mov    al,es:[si]
-          inc    si
-          cmp    al,127
-          ja     @trans
-          loop   @xloop
-          jmp    @xende
-@trans:   xlat
-          mov    es:[si-1],al
-          loop   @xloop
-@xende:
-{$ELSE }
-          mov    ebx,offset Mac2IBMtab - 128
-          mov    esi,data
-          mov    ecx,size
-          jecxz  @xende
-          jmp    @xloop
-@xloop:   mov    al,[esi]
-          inc    esi
-          cmp    al,127
-          ja     @trans
-          loop   @xloop
-          jmp    @xende
-@trans:   xlat
-          mov    [esi-1],al
-          loop   @xloop
-@xende:
-{$ENDIF}
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI'];
-{$ELSE }
-end;
-{$ENDIF }
-
 
 { --- Allgemeines --------------------------------------------------- }
 
@@ -1338,7 +1257,7 @@ label abbr;
         blockread(f1,p^,min(size,bs),rr);
         exch_8d(p^,rr);
         case cxlate of
-          1 : ISO2IBM(p^,rr);
+          1 : Iso1ToIBM(p^,rr);
           2 : Mac2IBM(p^,rr);
         end;
         blockwrite(f2,p^,rr);
@@ -1359,7 +1278,7 @@ label abbr;
     blockread(f1,msgbuf^[bpos],size);
     exch_8d(msgbuf^[bpos],size);
     case cxlate of
-      1 : ISO2IBM(msgbuf^[bpos],size);
+      1 : Iso1ToIBM(msgbuf^[bpos],size);
       2 : Mac2IBM(msgbuf^[bpos],size);
     end;
     ExpandCR(msgbuf^,bpos,size,addlf);
@@ -1442,7 +1361,7 @@ label abbr;
   procedure TranslateStr(var s:string);
   begin
     case cxlate of
-      1 : ISO2IBM(s[1],length(s));
+      1 : Iso1ToIBM(s[1],length(s));
       2 : MAC2IBM(s[1],length(s));
     end;
   end;
@@ -1818,6 +1737,22 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.13  2002/03/13 23:05:42  my
+  RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
+            von Redundanzen befreit, korrigiert und erweitert:
+            - Alle Decodier- und Konvertierroutinen in neue Unit
+              MIMEDEC.PAS verlagert.
+            - Nach RFC 1522 codierte Dateinamen in Attachments werden
+              jetzt decodiert (XPMIME.PAS).
+            - 'MimeIsoDecode' kann jetzt auch andere ZeichensÑtze als
+               ISO-8859-1 konvertieren. Daher erfolgt bei nach RFC 1522
+               codierten Headerzeilen im Anschlu· an die qp- oder base64-
+               Decodierung keine starre ISO-8859-1-Konvertierung mehr,
+               sondern es wird der deklarierte Zeichensatz korrekt
+               berÅcksichtigt.
+            - UnterstÅtzung fÅr ZeichensÑtze ISO-8859-15 und Windows-1252
+              implementiert.
+
   Revision 1.21.2.12  2002/03/09 21:50:13  my
   MY:- Versionsstrings korrigiert/geÑndert:
        - Snapshot-Versionsstrings werden jetzt nach dem Muster
@@ -1890,7 +1825,7 @@ end.
   - Assembler-Fixes (32 Bit)
 
   Revision 1.16  2000/05/20 02:07:40  mk
-  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
+  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statt aus SysTools verwendet
 
   Revision 1.15  2000/05/03 00:21:24  mk
   - unbenutzte Units aus uses entfernt

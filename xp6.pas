@@ -25,7 +25,7 @@ interface
 uses
   crt, dos, typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe,
-  xpglobal, lfn;
+  xpglobal,mimedec, lfn;
 
 const sendIntern = 1;     { force Intern              }
       sendShow   = 2;     { ausfhrliche Sendeanzeige }
@@ -2415,6 +2415,22 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.51  2002/03/13 23:05:40  my
+  RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrmpelt,
+            von Redundanzen befreit, korrigiert und erweitert:
+            - Alle Decodier- und Konvertierroutinen in neue Unit
+              MIMEDEC.PAS verlagert.
+            - Nach RFC 1522 codierte Dateinamen in Attachments werden
+              jetzt decodiert (XPMIME.PAS).
+            - 'MimeIsoDecode' kann jetzt auch andere Zeichens„tze als
+               ISO-8859-1 konvertieren. Daher erfolgt bei nach RFC 1522
+               codierten Headerzeilen im Anschluá an die qp- oder base64-
+               Decodierung keine starre ISO-8859-1-Konvertierung mehr,
+               sondern es wird der deklarierte Zeichensatz korrekt
+               bercksichtigt.
+            - Untersttzung fr Zeichens„tze ISO-8859-15 und Windows-1252
+              implementiert.
+
   Revision 1.39.2.50  2002/03/09 21:50:12  my
   MY:- Versionsstrings korrigiert/ge„ndert:
        - Snapshot-Versionsstrings werden jetzt nach dem Muster

@@ -19,7 +19,7 @@ unit xpmime;
 interface
 
 uses  dos,typeform,montage,fileio,keys,lister,database,resource,
-      xp0,xp1, xpglobal, xpkeys;
+      xp0,xp1,xpglobal,xpkeys,mimedec;
 
 
 type
@@ -35,7 +35,7 @@ type
                      ddatum     : string[14];   { Dateidatum fÅr extrakt }
                      part,parts : integer;
                      alternative: boolean;
-                     Charset: string[20];
+                     Charset    : string[20];
                    end;
       pmpdata    = ^multi_part;
 
@@ -271,7 +271,7 @@ var   hdp      : headerp;
         folded    : boolean;
         firstline : string[80];
         _encoding   : string[20];
-        filename    : string[40];
+        filename    : string[80];
         filedate    : string[14];
         subboundary : string[72];
         hdline      : string[30];
@@ -405,7 +405,7 @@ var   hdp      : headerp;
           if vorspann then ctype:=#0'vorspann' {getres2(2440,1)} { 'Vorspann' }
           else ctype:=#0'nachspann' {getres2(2440,2)} ;          { 'Nachspann' }
       until isbound or eof(t);
-      { Letzte Zeile im letzen Part wird sonst unterschlagen }
+      { Letzte Zeile im letzten Part wird sonst unterschlagen }
       if not isbound then inc(n);
       vorspann:=false;
 
@@ -425,6 +425,7 @@ var   hdp      : headerp;
           subtyp:=LStr(subtype);
           code:=codecode(_encoding);
           fname:=filename;
+          mimeisodecode(filename,80);
           ddatum:=filedate;
           startline:=_start;
           lines:=n-startline;
@@ -627,14 +628,6 @@ var   input,t : text;
     end;
   end;
 
-  procedure CharsetToIBM(const charset:string; var s:string);
-  begin
-     if left(charset,9)='iso-8859-' then Iso1ToIBM(s[1],length(s))
-     else if charset='utf-8' then UTF82IBM(s)
-     else if charset='utf-7' then UTF72IBM(s)
-     else if charset='' then Iso1ToIBM(s[1],length(s));  { Outlook-Fix! }
-  end;
-
 begin
   tmp:=TempS(dbReadInt(mbase,'msgsize'));
   extract_msg(0,'',tmp,false,0);
@@ -691,7 +684,7 @@ begin
       for i:=1 to lines do
       begin
         readln(input,s);
-        s := DecodeBase64(s);
+        DecodeBase64(s);
         if (fname='') and (typ='text') and (subtyp<>'html') then
           CharsetToIBM(charset,s);
         if s <> '' then blockwrite(f,s[1],length(s));
@@ -726,6 +719,22 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.25  2002/03/13 23:05:41  my
+  RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
+            von Redundanzen befreit, korrigiert und erweitert:
+            - Alle Decodier- und Konvertierroutinen in neue Unit
+              MIMEDEC.PAS verlagert.
+            - Nach RFC 1522 codierte Dateinamen in Attachments werden
+              jetzt decodiert (XPMIME.PAS).
+            - 'MimeIsoDecode' kann jetzt auch andere ZeichensÑtze als
+               ISO-8859-1 konvertieren. Daher erfolgt bei nach RFC 1522
+               codierten Headerzeilen im Anschlu· an die qp- oder base64-
+               Decodierung keine starre ISO-8859-1-Konvertierung mehr,
+               sondern es wird der deklarierte Zeichensatz korrekt
+               berÅcksichtigt.
+            - UnterstÅtzung fÅr ZeichensÑtze ISO-8859-15 und Windows-1252
+              implementiert.
+
   Revision 1.12.2.24  2002/03/08 23:14:50  my
   JG:- Fix: Textteile einer MIME-Multipart-Nachricht, die gleichzeitig
        base64- und UTF-codiert sind, werden jetzt in den IBM-Zeichensatz
@@ -853,7 +862,7 @@ end.
   text/html wird jetzt mit ISO-Zeichensatz exportiert
 
   Revision 1.8  2000/03/08 22:36:33  mk
-  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
+  - Bugfixes fÅr die 32 Bit-Version und neue ASM-Routinen
 
   Revision 1.7  2000/03/01 23:41:48  mk
   - ExtractMultiPart decodiert jetzt eine Zeile weniger

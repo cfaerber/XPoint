@@ -36,37 +36,6 @@ uses
          SegB800 = $b800;
 {$ENDIF}
 
-const
-  ISO2IBMTab : array[128..255] of byte =
-  (128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
-   144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
-    32,173,155,156,120,157,124, 21, 34, 67,166,174,170, 45, 82,223,
-   248,241,253,252, 39,230,227,249, 44, 49,167,175,172,171, 47,168,
-   133,160,131, 65,142,143,146,128,138,144,136,137,141,161,140,139,
-    68,165,149,162,147,111,153,120,237,151,163,150,154,121, 80,225,
-   133,160,131, 97,132,134,145,135,138,130,136,137,141,161,140,139,
-   100,164,149,162,147,111,148,246,237,151,163,150,129,121,112,152);
-
-  IBM2ISOTab : array[0..255] of byte =
-  ( 32, 32, 32, 32, 32, 32, 32, 32, 32,  9, 10, 32, 12, 13, 32, 42,
-    62, 60, 32, 33, 32,167, 95, 32, 32, 32, 32, 32, 32, 32, 32, 32,
-    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-    48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-    64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-    80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-    96, 97, 98, 99,100,101,102,103,104,105,106,107,108,109,110,111,
-   112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,
-
-   199,252,233,226,228,224,229,231,234,235,232,239,238,236,196,197,
-   201,230,198,244,246,242,251,249,255,214,220,162,163,165, 80, 32,
-   225,237,243,250,241,209,170,186,191, 43,172,189,188,161,171,187,
-    32, 32, 32,124, 43, 43, 43, 43, 43, 43,124, 43, 43, 43, 43, 43,
-    43, 43, 43, 43, 45, 43, 43, 43, 43, 43, 43, 43, 43, 45, 43, 43,
-    43, 43, 43, 43, 43, 43, 43, 43, 43, 43, 43, 32, 32, 32, 32, 32,
-    97,223, 71,182, 83,115,181,110,111, 79, 79,100,111,248, 69, 32,
-    61,177, 62, 60,124,124,247, 61,176,183,183, 32,179,178,183, 32);
-
-
 type DateTimeSt = string[11];
      s20        = string[20];
      s40        = string[40];
@@ -147,14 +116,10 @@ Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf ParitÑt setzen  }
 Procedure TruncStr(var s:string; n:byte);    { String kÅrzen                }
 Procedure UpString(var s:string);            { UpperString                  }
 Procedure FastMove(var Source, Dest; const Count : WORD);
-Function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 { Holt so viel Speicher wie mîglich, mindestens aber MinMem und
   gibt im Fehlerfalle eine Fehlermeldung aus. RÅckgabewert ist
   der tatsÑchlich allocierte Speicher }
 Function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
-Procedure UTF82IBM(var s: String);
-Procedure UTF72IBM(var s: String);
-Function DecodeBase64(const s: String):String;
 Function Log2int(const l:longint):byte;      { Integer-Logarithmus          }
 
 
@@ -2002,8 +1967,8 @@ end;
 procedure FastMove(var Source, Dest; const Count: WORD); assembler;
 asm
         mov  cx, count
-        or   cx, cx        { Nichts zu kopieren? }
-        jz   @ende
+(*      or   cx, cx        { Nichts zu kopieren? }
+        jz   @ende *)      { MY: Auskommentiert - laut JG ÅberflÅssig }
 
         mov  bx, ds
         les  di, dest
@@ -2048,16 +2013,6 @@ end;
 {$ENDIF }
 
 
-function IsoToIbm(const s:string): String;
-var
-  i : integer;
-begin
-  IsoToIBM := s;
-  for i:=1 to length(s) do
-    if (s[i]>=#128) then
-      IsoToIBM[i] := chr(iso2ibmtab[byte(s[i])])
-end;
-
 function GetMaxMem(var p: Pointer; MinMem, MaxMem: Word): Word;
 var
   Size: Word;
@@ -2073,176 +2028,25 @@ begin
 end;
 
 
-procedure UTF82IBM(var s:string);
-const  s_rest    : string[6] = '';
-var    i,n       : integer;
-       utf_value : longint;
-begin
-  if s_rest<>'' then begin            { Evtl. Rest von vorherigem String dazunehmen } 
-    s:=s_rest+s;
-    s_rest:=''; 
-    end;
- for i:=1 to length(s) do 
-  if s[i] >= #$80 then begin 
-    asm  mov di,i                     { 1. Byte: gesetzte Hi-Bits = Anzahl Bytes }
-         les bx,s
-         mov al,byte ptr es:[bx+di] 
-         xor cx,cx
-     @1: inc cx
-         shl al,1
-         jc @1
-     @2: mov ax,cx
-         dec ax
-         mov n,ax 
-       end;  
-    if length(s) < i+n then begin     
-      s_rest:=mid(s,i);               { Wenn String zu kurz war (Base64) }
-      truncstr(s,i-1);                { Rest merken und abschneiden }
-      break;
-      end 
-    else begin
-      asm
-          push ds
-          lds si,s                    { Weiter Dekodieren wenn alles im String ist }
-          add si,i
-          mov cx,n
-          inc cx
-          db 66h
-          xor bx,bx
-          lodsb                       { 1. Byte: gesetzte Hi Bits loeschen }
-          shl al,cl                  
-          shr al,cl
-          mov bl,al
-          sub cl,2  
-      @1: db 66h                      { Jedes weitere Byte enthaelt 6 Bit (Low Endian) }
-          shl bx,6
-          lodsb
-          and al,$3f
-          or bl,al
-          loop @1
-          db 66h
-          mov word ptr utf_value,bx
-          pop ds  
-        end;             
-      delete(s,i,n-1);
-      if (utf_value<$80) or (utf_value>$ff) then s[i]:='∞'
-        else s[i]:=char(iso2ibmtab[utf_value]);
-      end;
-    end;
-end;
-
-
-{ RFC 1521, see www.rfc.net }
-function DecodeBase64(const s: String):String;
-const
-  b64tab: array[0..127] of shortint =
-  (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
-    -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
-    -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1);
-var
-  b1, b2, b3, b4: byte;
-  p1, pad: byte;
-  res: String;
-
-  function nextbyte: byte;
-  var p: integer;
-  begin
-    nextbyte:=0;
-    if p1>length(s)then exit;
-    repeat
-      if s[p1] > #127 then
-        p := -1
-      else
-        p := b64tab[byte(s[p1])];
-      inc(p1);
-    until (p >= 0) or (p1 > length(s));
-    if p>=0 then nextbyte:=p;
-  end;
-
-begin
-  Res := '';
-  if length(s) >= 3 then
-  begin
-    if LastChar(s) = '=' then
-    begin
-      if (Length(s) >= 2) and (s[length(s) - 1] = '=') then
-        pad := 2
-      else
-        pad := 1;
-      if Length(s) mod 4 <> 0 then Pad := 3;
-    end else
-    begin
-      if Length(Trim(s)) mod 4 <> 0 then
-      begin
-        { kein gueltiger Base64 String }
-        DecodeBase64 := s; Exit;
-      end else
-        pad := 0;
-    end;
-
-    p1 := 1;
-    while p1 <= length(s) do
-    begin
-      b1 := nextbyte; b2 := nextbyte; b3 := nextbyte; b4 := nextbyte;
-      Res := Res + chr(b1 shl 2 + b2 shr 4);
-      Res := Res + chr((b2 and 15) shl 4 + b3 shr 2);
-      Res := res + chr((b3 and 3) shl 6 + b4);
-    end;
-    Res[0] := Char(Byte(Res[0])-pad);
-  end;
-  Decodebase64 := Res;
-end;
-
-
-procedure UTF72IBM(var s:string); { by robo; nach RFC 2152 }
-  const b64alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-  var i,j:integer;
-      s1:string;
-      S2:string[11];
-      ucs:smallword;
-  begin
-    i:=1;
-    j:=posn('+',s,i);
-    while j<>0 do begin
-      i:=j;
-      inc(j);
-      while (j<=length(s)) and (pos(s[j],b64alphabet)<>0) do inc(j);
-      if (j<=length(s)) and (s[j]='-') then inc(j);
-      s1:=copy(s,i,j-i);
-      delete(s,i,j-i);
-      if s1='+-' then s1:='+'
-      else begin
-        if firstchar(s1)='+' then delfirst(s1);
-        if lastchar(s1)='-' then dellast(s1);
-        while (length(s1) mod 4<>0) do s1:=s1+'=';
-        s2:=DecodeBase64(s1);
-        if odd(length(s2)) then dellast(s2);
-        j:=1;
-        while length(s2)>j do begin
-          ucs:=word(s2[j]) shl 8+word(s2[j+1]);
-          if (ucs<$00000080)
-            then s2[j]:=char(ucs)
-            else if (ucs>$000000ff) { nur Latin-1 }
-              then s2[j]:='?'
-              else s2[j]:=char(iso2ibmtab[byte(ucs)]);
-          inc(j);
-          delete(s2,j,1);
-        end;
-      end;
-      insert(s2,s,i);
-      j:=posn('+',s,i+length(s2));
-    end;
-  end;
-
-
   end.
 {
   $Log$
+  Revision 1.37.2.27  2002/03/13 23:05:41  my
+  RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
+            von Redundanzen befreit, korrigiert und erweitert:
+            - Alle Decodier- und Konvertierroutinen in neue Unit
+              MIMEDEC.PAS verlagert.
+            - Nach RFC 1522 codierte Dateinamen in Attachments werden
+              jetzt decodiert (XPMIME.PAS).
+            - 'MimeIsoDecode' kann jetzt auch andere ZeichensÑtze als
+               ISO-8859-1 konvertieren. Daher erfolgt bei nach RFC 1522
+               codierten Headerzeilen im Anschlu· an die qp- oder base64-
+               Decodierung keine starre ISO-8859-1-Konvertierung mehr,
+               sondern es wird der deklarierte Zeichensatz korrekt
+               berÅcksichtigt.
+            - UnterstÅtzung fÅr ZeichensÑtze ISO-8859-15 und Windows-1252
+              implementiert.
+
   Revision 1.37.2.26  2002/03/08 23:17:29  my
   JG:- öberflÅssige PrÅfung ("Nichts zu kopieren?") in 'FastMove'
        entfernt.

@@ -34,7 +34,8 @@
   {$M 20000,50000,655360}
 {$ENDIF }
 
-uses dos,xms,typeform,xpovl,fileio,montage,xpdatum,xp_iti,xpglobal,lfn;
+uses dos,xms,typeform,xpovl,fileio,montage,xpdatum,xp_iti,xpglobal,
+     mimedec,lfn;
 
 const nt_ZConnect=2;
       OrgLen    = 80;
@@ -1428,7 +1429,7 @@ var t1,log     : text;
 {$ENDIF }
   begin
     if hd.mimever<>'' then
-      s := ISOToIBM(s);
+      ISO2IBM(s,cs_iso8859_1);
 {$IFDEF BP }
     if (xms=0) and (lines<maxilines) and
        (((lines mod 16)<>0) or (memavail>10000)) then
@@ -1834,6 +1835,22 @@ begin
 end.
 {
   $Log$
+  Revision 1.15.2.12  2002/03/13 23:05:41  my
+  RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
+            von Redundanzen befreit, korrigiert und erweitert:
+            - Alle Decodier- und Konvertierroutinen in neue Unit
+              MIMEDEC.PAS verlagert.
+            - Nach RFC 1522 codierte Dateinamen in Attachments werden
+              jetzt decodiert (XPMIME.PAS).
+            - 'MimeIsoDecode' kann jetzt auch andere ZeichensÑtze als
+               ISO-8859-1 konvertieren. Daher erfolgt bei nach RFC 1522
+               codierten Headerzeilen im Anschlu· an die qp- oder base64-
+               Decodierung keine starre ISO-8859-1-Konvertierung mehr,
+               sondern es wird der deklarierte Zeichensatz korrekt
+               berÅcksichtigt.
+            - UnterstÅtzung fÅr ZeichensÑtze ISO-8859-15 und Windows-1252
+              implementiert.
+
   Revision 1.15.2.11  2002/03/08 23:40:10  my
   MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
