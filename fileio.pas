@@ -102,7 +102,7 @@ function IncludeTrailingPathDelimiter(const S: string): string;
 
 { Checks whether file exists - note f has to be a file type, NOT a string.
   Use SysUtils.FileExists to check using a filename. }
-function  existf(var f):boolean;
+function existf(var f):boolean;
 
 { Searches for file in current directory, program's directory and path.
   Path has to be correct if specified. Characters after a space
@@ -125,6 +125,7 @@ function  ExecutableExists(fn: string): boolean;
   or exists already) }
 Function  ValidFileName(const name:string):boolean;
 
+{ Necessary for FileExists('/path/*.*') is false in any case. }
 function  isEmptyDir(const path: string): boolean;
 
 { Checks whether this path exists }
@@ -712,6 +713,9 @@ end;
 
 {
   $Log$
+  Revision 1.116.2.1  2002/05/13 21:26:18  ma
+  - added comment
+
   Revision 1.116  2002/04/09 08:51:51  mk
   - fixed last commit (TempFile result was not set)
 
