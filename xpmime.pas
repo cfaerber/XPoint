@@ -719,12 +719,16 @@ begin
       m_extrakt(mpdata)
     else
       rfehler(2440);    { 'keine mehrteilige MIME-Nachricht' }
+  FreeRes;
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.12.2.4  2000/08/03 14:48:26  mk
+  - ein (nicht dringend noetiges) Freeres hinzugefuegt
+
   Revision 1.12.2.3  2000/07/27 16:16:09  mk
   - Bugfix für den Bugfix für einen Bugfix, der ausgeklammert wurde,
     um einen anderen Bug zu fixen, der entstand, weil man einen Bug der
