@@ -1060,7 +1060,7 @@ begin
             if OwnMessageReplaced then mbflags:= mbflags or 256;
             dbWriteN(mbase,mb_flags,mbflags);
             wrll(dbRecno(mbase));     { fr Bezugsverkettung merken }
-            l:=LongInt(LongWord(ixdat(datum)) and $fffffff0);
+            l:=LongInt(LongWord(ixdat(datum)) and LongWord($fffffff0));
             if Empfaenger.Count >1 then
               inc(l,iif(msgsent,2,1));
             wrll(l);
@@ -1236,6 +1236,9 @@ end;
 
 {
   $Log$
+  Revision 1.83  2002/03/23 15:12:51  mk
+  - removed compiler warnings
+
   Revision 1.82  2002/02/18 16:59:40  cl
   - TYP: MIME no longer used for RFC and not written into database
 

@@ -1377,7 +1377,7 @@ End;
 
 Function Swap32(X: DWord): DWord; {$IFNDEF Delphi} inline; {$ENDIF }
 Begin
-  result:=(x and $ff) shl 24 + (x and $ff00) shl 8 + (x and $ff0000) shr 8 + (x and $ff000000) shr 24;
+  result:=(x and $ff) shl 24 + (x and $ff00) shl 8 + (x and $ff0000) shr 8 + (x and LongWord($ff000000)) shr 24;
 End;
 
 {$IFDEF LittleEndian}
@@ -1417,6 +1417,9 @@ end;
 
 {
   $Log$
+  Revision 1.106  2002/03/23 15:12:51  mk
+  - removed compiler warnings
+
   Revision 1.105  2002/01/28 20:32:24  mk
   - completed 3.40 merge, source is compilable for dos and win
     linux is still untested

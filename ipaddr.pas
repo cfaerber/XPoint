@@ -65,7 +65,7 @@ type
     FAutoResolve: boolean;      { Automatisches aufloesen? }
 
     function  GAsString: string;
-    function  GAtom(i: integer): integer;
+    function  GAtom(i: integer): Byte;
     function  GName: string;
 
     procedure SAutoResolve(b: boolean);
@@ -78,7 +78,7 @@ type
 
 
     { Atom gibt einen Teil der IP zurueck (i = 1..4) }
-    property Atom[i: integer]: integer read GAtom;
+    property Atom[i: integer]: Byte read GAtom;
 
     { Name gibt den Namen zurueck }
     property Name: string read FName write SName;
@@ -154,13 +154,13 @@ begin
   FResolved:= false;
 end;
 
-function TIP.GAtom(i: integer): integer;
+function TIP.GAtom(i: integer): Byte;
 begin
   case i of
     1: Result:= (FIP and $000000ff);
     2: Result:= (FIP and $0000ff00) shr 8;
     3: Result:= (FIP and $00ff0000) shr 16;
-    4: Result:= (FIP and $ff000000) shr 24;
+    4: Result:= (FIP and LongWord($ff000000)) shr 24;
   else
     raise EIPRangeError.Create(Format(res_IPRangeError, [i]));
   end;
@@ -241,9 +241,11 @@ begin
   Result:= FName;
 end;
 
-end.
 {
   $Log$
+  Revision 1.15  2002/03/23 15:12:51  mk
+  - removed compiler warnings
+
   Revision 1.14  2001/10/19 00:35:55  mk
   - fixed range check error: RAW-IP Adress is LongWord, not Integer
 
@@ -288,3 +290,6 @@ end.
   - Neue Klasse: TIP
 
 }
+end.
+
+
