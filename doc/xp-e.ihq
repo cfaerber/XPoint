@@ -5044,7 +5044,6 @@ future reference.
         question is asked on every PM if it should be
         archived.
 
-
 <<[ ]>>     PMs are not archived, no questions asked.
 @
 253
@@ -5063,13 +5062,38 @@ by the Host software and so this feature is not
 guaranteed to work. If it is important that the CC
 recipients are invisible, it would be better to send
 several separate messages. This does not apply to
-RFC/UUCP and RFC/PPP.
+the net types RFC/UUCP and RFC/Client.
 
 <<All other Nets:>>
 
 Information about carbon copy recipients is not
 transmitted, except if you write it in the message
 text.
+
+@
+254
+<<[ ]>> ->  Upon replying to a privat or public message
+        with P, <Ctrl-P> or <Shift-P> or upon archi-
+        ving it with <Alt-P>, CrossPoint will ask if
+        the user shall be created in case he doesn't
+        exist in your user database already. If the
+        answer is positive you can check (and change)
+        the user settings in the following dialogue.
+        If the answer is negative the user will not
+        be created and the action (replying, archi-
+        ving) is cancelled.
+
+<<[ ]>> ->  CrossPoint creates unknown users upon reply-
+        ing to or archiving a message automatically
+        and without asking, using the default user
+        settings. The server assigned to the user
+        upon creation will be the server of the
+        message area the message you are replying
+        to is stored in.
+
+<<Note:>> If you enable this option, you should also
+enable "[Full name/address in private mail areas]"@220
+under /Config/Options/Miscellaneous.
 
 @
 256
@@ -8033,6 +8057,37 @@ See also [/Message/Forward/Delete].@12107
      ZConnect are excluded from the conversion.
      This saves several hundred Bytes per mail!
      The saving on public messages is however small.
+@
+7990
+<<RFC / ZConnect:
+
+<<[ ]>> ->  Messages are allowed to be archived by some
+        Usenet archives, e.g. Google.
+
+<<[x]>> ->  CrossPoint creates a special header line
+        "X-No-Archive: Yes" which tells the operator
+        of the archive not to store this message.
+
+<<Note:>> This setting does not necessarily work because
+not all archives support this header. Some for
+instance require the command "X-No-Archive: Yes"
+to be in the first line of the message body.
+
+This option does also apply to ZConnect!
+
+@
+7991
+<<[ ]>> ->  If you change the subject line upon quoting
+        a message and keep the reference to this
+        message, then the old subject will be appen-
+        ded to the new one in the style "<<was: old>>
+        <<subject>>".
+        
+<<Note:>> Many mail and news readers remove such an
+appended subject automatically upon replying - but
+not all. Please observe the customs of the newsgroups
+you are posting messages to.
+
 @
 8100
 [Reference links] are still pretty scarce in nets based@4014

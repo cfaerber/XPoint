@@ -7878,7 +7878,7 @@ stellt, da· sie von allen Boxprogrammen unterstÅtzt
 wird. Wenn es sehr wichtig ist, da· die einzelnen
 EmpfÑnger nicht zu erkennen sind, schicken Sie die
 Nachricht besser mehrmals einzeln ab. Dies gilt
-nicht fÅr RFC/UUCP.
+nicht fÅr RFC/UUCP bzw. RFC/Client.
 
 <<Alle Åbrigen Netze:
 
@@ -7889,16 +7889,31 @@ richtentext.
 
 @
 254
-<<ZConnect / RFC:
+<<[ ]>> -> Wenn Sie eine private oder îffentliche Nach-
+       richt mit <<P>>, <<<Ctrl-P> >>oder <<<Shift-P> >>per PM
+       beantworten oder wenn Sie diese mit <<<Alt-P> >>
+       archivieren, fragt CrossPoint vorher nach, ob
+       Sie den User anlegen mîchten, falls er noch
+       nicht in Ihrer User-Datenbank existiert. Ist
+       die Antwort positiv, kînnen Sie im anschlies-
+       senden Dialog die User-Einstellungen (z.B. die
+       Serverbox oder die Adre·buchgruppe) ÅberprÅfen
+       und ggf. Ñndern. Beantworten Sie die RÅckfrage
+       negativ, wird der User nicht angelegt und die
+       Beantwortung bzw. Archivierung der Nachricht
+       wird abgebrochen.
 
-<<[x]>> -> Ihre îffentlichen Nachrichten werden mit dem
-       Header "X-No-Archive: Yes" versehen. Dadurch
-       werden Usenet-Archive wie DejaNews angewiesen,
-       die Nachricht nicht zu speichern.
+<<[x]>> -> CrossPoint legt unbekannte User beim Beantwor-
+       ten und Archivieren ohne RÅckfrage automatisch
+       mit den Standardeinstellungen an und weist dem
+       neu angelegten User dabei die Serverbox des
+       Brettes zu, in dem sich die zu beantwortende
+       bzw. zu archivierende Nachricht befindet.
 
-Auch wenn dieser Schalter aktiviert wird, ist das
-keine Garantie dafÅr, da· Ihre Nachrichten nicht
-doch gespeichert werden. "Das Usenet vergi·t nicht!"
+<<Hinweis:>> Wenn Sie diesen Schalter aktivieren, sollten
+Sie den Schalter "[Systemname in PM-Brettern]" unter@220
+/Config/Optionen/Allgemeines ebenfalls aktivieren (es
+sei denn, Sie haben nicht mehr als eine Serverbox).
 
 @
 255
@@ -11677,6 +11692,26 @@ sandten Nachrichten zu Ñndern, mÅssen Sie diese mit
 den.
 @
 7990
+<<RFC / ZConnect:
+
+<<[x]>> -> Ihre îffentlichen Nachrichten werden mit dem
+       Header "X-No-Archive: Yes" versehen. Dadurch
+       werden Usenet-Archive wie Google angewiesen,
+       die Nachricht nicht zu speichern.
+
+<<Hinweis:>> Selbst wenn dieser Schalter aktiviert ist,
+ist das keine Garantie dafÅr, da· Ihre Nachrichten
+nicht doch archiviert werden, weil nicht alle Usenet-
+Archive diesen Header unterstÅtzen. Bei manchen ist
+es z.B. notwendig, die Anweisung "X-No-Archive: Yes"
+statt im Header in der ersten Zeile des Nachrichten-
+textes unterzubringen. Im Zweifel erkundigen Sie sich
+bitte beim Betreiber des Archivs.
+
+Diese Einstellung gilt auch fÅr ZConnect!
+
+@
+7991
 <<[x]>> -> Wenn Sie beim Zitieren ('Quoten') einer
        Nachricht die Betreffzeile verÑndern und
        die Bezugsverkettung beibehalten, dann
@@ -11691,7 +11726,7 @@ leider nicht alle. Achten Sie bitte auf die Gepflo-
 genheiten der Newsgroups, in denen Sie schreiben.
 @
 8100
-Wie in Kapitel "Kommentarverkettung" des Handbuchs
+Wie im Kapitel "Kommentarverkettung" des Handbuchs
 beschrieben, ist die Nachrichten-Verkettung in Netzen
 mit MagicNET-Technik meist noch zu lÅckenhaft, um
 sinnvoll genutzt werden zu kînnen. Falls Sie es den-
@@ -11699,7 +11734,7 @@ noch testen mîchten, kînnen Sie diesen Schalter
 aktivieren.
 @
 8101
-Wie in Kapitel "Kommentarverknotung" des Handbuchs
+Wie im Kapitel "Kommentarverknotung" des Handbuchs
 beschrieben, ist die Nachrichten-Verknotung in Netzen
 mit MagicNET-Technik meist noch zu lÅckenhaft, um
 sinnvoll genutzt werden zu kînnen. Falls Sie es den-
