@@ -1,3 +1,8 @@
+openxp (3.9.7-2) experimental; urgency=low
+
+  * Incremented Debian revision because of change in snapshot numbering
+    scheme.
+
 openxp (3.9.7-1) experimental; urgency=low
 
   * Initial Debian Release.
