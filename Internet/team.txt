@@ -13,6 +13,11 @@ UUZ, UUCP, RFC conformance
 Fidomailer, Netcall-Routinen, ObjCOM (OpenXP/32)
 Fidomailer, netcall functions, ObjCOM (OpenXP/32)
 
+<a href="http://www.martinwodrich.de">Martin Wodrich</a>
+<a href="mailto:mw@openxp.de">mw</a>
+Verschiedenes (OpenXP/16)
+Misc (OpenXP/16)
+
 <a href="http://www.uni-jena.de/~i7lema">Matthias Leonhardt</a>
 <a href="mailto:ml@openxp.de">ml</a>
 Linux-Portierung (OpenXP/32)

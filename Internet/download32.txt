@@ -1,16 +1,42 @@
+*OpenXP/32 v3.7.4 Beta<br /><small>bzw. Linux Alpha</small>
+OpenXP/32 v3.7.4 Beta<br /><small>OpenXP/32 (Linux) is alpha</small>
+/openxp/oxp32win.rar
+Win32-Version [RAR]
+Win32 version [RAR]
+
+/openxp/oxp32win.zip
+Win32-Version [ZIP]
+Win32 version [ZIP]
+
+/openxp/openxp-3.7.4.i386.rpm
+Linux-Version [rpm]
+Linux version [rpm]
+
+/openxp/openxp.bin.tar.gz
+Linux-Version [tar.gz]
+Linux version [tar.gz]
+
+/openxp/oxp32dos.rar
+DOS-Version [RAR]
+DOS version [RAR]
+
+/openxp/oxp32src.rar
+Quelltexte
+Source code
+
 *OpenXP/32 Snapshot<br /><small>"das Neueste vom Neuesten", keine Garantie, zeitweise u.U. nicht funktionsfähig!</small>
 OpenXP/32 snapshot<br /><small>"bleeding edge code", no guarantees, may not work from time to time!</small>
 /openxp/snapshot/oxp32win.rar
 Win32-Version
 Win32 version
 
-/openxp/snapshot/openxp-3.70.3-26.i386.rpm
-Linux-Version (rpm)
-Linux version (rpm)
+/openxp/snapshot/openxp-3.70.3-30.i386.rpm
+Linux-Version [rpm]
+Linux version [rpm]
 
 /openxp/snapshot/openxp.bin.tar.gz
-Linux-Version (tar.gz)
-Linux version (tar.gz)
+Linux-Version [tar.gz]
+Linux version [tar.gz]
 
 /openxp/snapshot/oxp32dos.rar
 DOS-Version

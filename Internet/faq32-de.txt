@@ -14,7 +14,7 @@ per Rechtsklick auf den Startmenüeintrag, Eigenschaften, "Symbolleiste anzeigen"
 <br />Also: <i>Fenstermodus nehmen, Zeilen-/Spaltenanzahl hochsetzen, das Fenster passend verschieben</i> - voilà, man hat ein
 übersichtliches, schnelles OpenXP :-).
 
-OpenXP/32 DOS? Windows? Linux?- Wo liegen die Unterschiede?&nbsp;&nbsp;<small>2001-04-22</small>
+OpenXP/32 DOS? Windows? Linux?- Wo liegen die Unterschiede?&nbsp;&nbsp;<small>2001-10-20</small>
 Alle drei Versionen sehen optisch ziemlich gleich aus. Die Windows-Version bietet <i>keine</i> graphische Oberfläche, also nicht wundern. Im folgenden die Einschränkungen der einzelnen Versionen:
 <ul>
 <li>DOS: Die integrierten Mail/Newsclients (NNTP/POP3/SMTP) funktionieren hier nicht, ebenso wie BinkP (Fido over IP). Die Bildschirmgröße läßt sich nicht völlig frei ändern, es werden nur die unter DOS üblichen Textmodi unterstützt. Für den Modemzugriff stehen die gewohnten Möglichkeiten zur Verfügung (also direkter Zugriff auf die Hardware und Fossil).</li>
@@ -27,6 +27,25 @@ Mit der Umstellung im Netcall-Bereich wurden die alten Modemeinstellungen abgesc
 jetzt einen "CommInit"-String an (Config/Modem...). Die Beispiele, die man per F2 bekommt, sollten klarmachen,
 wie man damit umgeht. Die alten Einstellungen gelten nur für externe Programme wie PPP-Clients, falls sie ihre Einstellungen
 aus den XP-Konfigurationsdateien auslesen. Änderungen am Config/Modem-Dialog sind in der Planung.
+<p>Die Einstellungen bezüglich des Modems sind nur für Fido, UUCP (Modembetrieb) und ZConnect relevant,
+Fido/UUCP over IP, NNTP und SMTP/POP3 benutzen den TCP/IP-Stack von Windows bzw. Linux. Für den Fall,
+daß man keine Standleitung hat ;-), muß man also dem Betriebssystem klarmachen, wie es eine Internetverbindung
+herzustellen hat (DFÜ-Netzwerk bzw. pppd). Anleitungen hierzu gibt es vom jeweiligen Internetprovider bzw. auch
+zuhauf im <a href="http://www.google.de">Netz</a>.
+<br />Tip: Die Internetverbindung kann automatisch bei Bedarf hergestellt werden, siehe hierzu
+Start/Einstellungen/Systemsteuerung/Internetoptionen/Verbindungen.</p>
+
+Wie geht man mit dem Logging-Feature um?&nbsp;&nbsp;<small>2001-10-20</small>
+OpenXP/32 bietet die Möglichkeit, sehr ausführliche Debug-Logs zu erzeugen, die im Fehlerfall u.U. sehr einfach
+weiterhelfen können. Standardmäßig wird im OpenXP-Verzeichnis eine Datei "debuglog.txt" angelegt, in die die
+Logs geschrieben werden; diese Datei wird bei jedem Start von OpenXP überschrieben, damit sie nicht zu groß wird.
+<i>Falls also ein Fehler aufgetreten ist, bitte die Datei vor dem nächsten Start von OpenXP sichern!</i>
+<br />Beim Start von OpenXP kann an der Kommandozeile angegeben werden, wie ausführlich die Logs werden sollen.
+Maximale Logs werden mit "/dl:DEFAULT=10" erzeugt, sie sind dann aber recht unübersichtlich. Ausführliche
+Logs für die internen Mail-/Newsroutinen gibt es mit "/dl:NCSOCKET=10", ausführliche Logs für die Tastaturroutinen
+mit "/dl:XPCRT=10".
+<br />Die Position des Logs läßt sich durch Setzen einer Umgebungsvariable ändern ("SET DEBUG=<i>dateiname</i>");
+ist <i>dateiname</i> dabei ein "*" vorangestellt, wird die Datei bei jedem Start von OpenXP überschrieben.
 
 Was ist bei den Netcalls zu beachten?&nbsp;&nbsp;<small>2001-09-16</small>
 <big>NNTP/SMTP/POP3:</big>

@@ -1,19 +1,22 @@
 Allgemeine OpenXP-FAQ
 
-Ich habe vermutlich einen Fehler/Bug entdeckt.&nbsp;&nbsp;<small>2001-01-18</small>
+Ich habe vermutlich einen Fehler/Bug entdeckt.&nbsp;&nbsp;<small>2001-10-20</small>
 Bei SourceForge existiert eine Bugliste (siehe "Kontakt"). Evtl. ist der Fehler dort schon verzeichnet.
-<br />Welche Version von OpenXP wird benutzt?- Insbesondere falls es sich um einen Release Candidate oder eine Release handelt, unter Angabe der genauen Umstände (OpenXP-Version, Netztyp, wie wird das Fehlverhalten hervorgerufen?) an die openxp-dev-Mailingliste schreiben (siehe "Kontakt"). Ggf. hilft auch ein genaues Debuglog (ab OpenXP/32: debuglog.txt) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
+<br />Falls das nicht der Fall ist, eine genaue Beschreibung des Fehlers an die <a href="mailto:dev@openxp.de">Mailingliste</a> schreiben (<i>unbedingt</i> erwähnen: genaue OpenXP-Version, Plattform, Netztyp, wie wird das Fehlverhalten hervorgerufen, ist es reproduzierbar?). Ggf. hilft auch ein genaues Debuglog (ab OpenXP/32: debuglog.txt, siehe FAQ zu OpenXP/32) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
 
 Ich habe einen Vorschlag für ein neues Feature.&nbsp;&nbsp;<small>2001-01-18</small>
 Wenn es eine Kleinigkeit ist, am besten direkt an den jeweiligen Programmierer wenden; ansonsten in der Mailingliste nachfragen bzw. in die Bugliste eintragen (ist gleichzeitig Featurerequestliste; alles siehe "Kontakt"). Wegen des im Moment noch immer ziemlich undurchsichtigen Codes von OpenXP kann es aber einige Zeit dauern. Viele Wünsche lassen sich immerhin bereits mit Tools oder z.B. den Tastaturmakros erfüllen.
 
-Was muß ich bei der Umstellung von XP auf OpenXP beachten?&nbsp;&nbsp;<small>2001-01-16</small>
+Was gibt es beim Umstieg auf OpenXP zu beachten?&nbsp;&nbsp;<small>2001-10-20</small>
 Eigentlich gar nichts (natürlich schadet ein Backup der Datenbank und der
-Konfigurationsdateien nichts ;-). Die Datenbank-Indexdateien werden
-automatisch neu aufgebaut, das kann etwas dauern. Die neu aufgebaute
-Datenbank ist allerdings nicht abwärtskompatibel; ein Zurücksatteln
-auf XP 3.12 oder früher ist also ohne Backup nicht möglich (es gibt
-aber keine Probleme mit der XP2-Datenbank).
+Konfigurationsdateien nichts ;-). OpenXP/16 und OpenXP/32 lassen sich jeweils
+einfach über eine bestehende Installation kopieren und nehmen beim ersten Start
+automatisch die nötigen Anpassungen vor. Das neue Datenbankformat ist allerdings
+nicht abwärtskompatibel. Ein Zurücksatteln auf XP 3.12 oder früher ist also ohne
+Backup nicht möglich - es gibt aber keine Probleme mit der XP2-Datenbank.
+<br />Zum "Reinschnüffeln" kann OpenXP auch in ein separates Verzeichnis kopiert
+werden. Nach dem Kopieren einiger Dateien der bestehenden Installation (*.DB1,
+*.EB1, MPUFFER.*) sollte die Datenbank wieder zur Verfügung stehen.
 <br />Beim Umstieg auf OpenXP/32 ergeben sich einige Änderungen, dort
 in der FAQ nachsehen.
 
