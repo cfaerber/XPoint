@@ -24,12 +24,9 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
-{ Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
-  und es kann eine ausfÅhrliche Map-Datei erstellt werden. éndert den
-  Code der EXE-Datei nicht
-  Unter Virtual Pascal werden Informationen Åber die Zeilennummern
+{ Unter Virtual Pascal werden Informationen Åber die Zeilennummern
   gespeichert, vergrî·ert die EXE-Datei etwas. }
 
 {$DEFINE DebugInfo }
@@ -133,6 +130,9 @@
 
 {
   $Log$
+  Revision 1.52  2000/09/19 03:21:41  mk
+  - Debuginfos ausgeschaltet
+
   Revision 1.51  2000/08/15 11:55:41  mk
   - Unit wird nur unter 16 Bit gebraucht
 
