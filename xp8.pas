@@ -1536,8 +1536,8 @@ begin
     else begin
       if fido or maus or qwk then
         ReadBoxpar(netztyp,box);
-      List := TLister.CreateWithOptions(1,iif(_maus,ScreenWidth-1,ScreenWidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
-                 'APGD/'+iifs(_maus,'VSC:080/',''));
+      List := TLister.CreateWithOptions(1,iif(_maus and ListScroller,ScreenWidth-1,ScreenWidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
+                 'APGD/'+iifs(_maus and listScroller,'VSC/',''));
       // preallocate ram for stringlist do speed up loading
       List.Lines.Capacity := _FileSize(lfile) div 25;
       List.Lines.LoadFromFile(lfile);
@@ -2102,6 +2102,11 @@ end;
 
 {
   $Log$
+  Revision 1.62  2001/10/10 20:38:52  mk
+  - removed (unnecessary) ScreenWidth from Lister option VSC
+  - use correct scrollbar position with more than 80 screen columns
+  - show scrollbar only if listscroller is enabled
+
   Revision 1.61  2001/09/20 18:29:52  cl
   - changed var to const for TLister.OnMarkTest
 

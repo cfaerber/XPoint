@@ -91,7 +91,7 @@ type
     AllPgDn: boolean;                   { immer komplettes PgDn }
     directmaus: boolean;                { Enter bei Maus-Auswahl }
     vscroll: boolean;                   { vertikaler Scrollbar   }
-    scrollx: byte;
+    scrollx: Integer;
     rot13enable: boolean;               { ^R m”glich }
     autoscroll: boolean;
   end;
@@ -285,10 +285,10 @@ begin
   stat.noctrla := pos('/NA', options) > 0;
   stat.allpgdn := pos('/APGD/', options) > 0;
   stat.directmaus := pos('/DM/', options) > 0;
-  stat.vscroll := pos('/VSC:', options) > 0;
+  stat.vscroll := pos('/VSC/', options) > 0;
   stat.rot13enable := pos('/ROT/', options) > 0;
   if stat.vscroll then
-    stat.scrollx := ival(copy(options, pos('/VSC:', options) + 5, 3));
+    stat.scrollx := ScreenWidth;
   stat.autoscroll := true;
   startpos := 0;
 end;
@@ -1084,6 +1084,11 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.60  2001/10/10 20:38:52  mk
+  - removed (unnecessary) ScreenWidth from Lister option VSC
+  - use correct scrollbar position with more than 80 screen columns
+  - show scrollbar only if listscroller is enabled
+
   Revision 1.59  2001/09/26 23:34:18  mk
   - fixed FPC compile error with newest snapshot:
     Error: Self can only be an explicit parameter in message handlers or class methods

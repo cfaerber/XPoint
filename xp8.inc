@@ -90,9 +90,9 @@ begin
   fl:=GetServerFilename(box, extFbl);
   if not FileExists(fl) then begin
     rfehler1(853,box); exit;
-    end;
-  List := TLister.CreateWithOptions(1,iif(_maus,screenwidth-1,screenwidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
-             'APGD/'+iifs(_maus,'VSC:080/',''));
+    end; 
+  List := TLister.CreateWithOptions(1,iif(_maus and ListScroller,Screenwidth-1,screenwidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
+             'APGD/'+iifs(_maus and ListScroller,'VSC/',''));
   List.ReadFromFile(fl,0);
   case art of
     1 : showkeys(12);
@@ -347,6 +347,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2001/10/10 20:38:52  mk
+  - removed (unnecessary) ScreenWidth from Lister option VSC
+  - use correct scrollbar position with more than 80 screen columns
+  - show scrollbar only if listscroller is enabled
+
   Revision 1.20  2001/09/20 18:29:52  cl
   - changed var to const for TLister.OnMarkTest
 

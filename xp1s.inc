@@ -312,16 +312,6 @@ var
     lfirst:=min(lfirst,screenlines-5);
   end;
 
-  function MakeVSC: string;
-  var s: string;
-  begin
-    Str(screenwidth,s);
-    if (screenwidth<100) then
-      MakeVSC:= 'VSC:0'+s+'/'
-    else
-      MakeVSC:= 'VSC:'+s+'/';
-  end;
-
 begin
   listexit:=0;
   if varlister<>'' then begin
@@ -354,7 +344,7 @@ begin
     List := TLister.CreateWithOptions(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
-             iifs(_maus and ListScroller,MakeVSC,'')+
+             iifs(_maus and ListScroller,'VSC/','')+
              iifs(listmsg,'ROT/',''));
     if listwrap {or listkommentar} then
       list.Stat.WrapPos := iif(_maus and listscroller,78,80)+ScreenWidth-80;
@@ -503,6 +493,11 @@ begin
     end;
 {
   $Log$
+  Revision 1.66  2001/10/10 20:38:52  mk
+  - removed (unnecessary) ScreenWidth from Lister option VSC
+  - use correct scrollbar position with more than 80 screen columns
+  - show scrollbar only if listscroller is enabled
+
   Revision 1.65  2001/10/07 17:12:30  cl
   - added charset recoding for external editors
     and corresponding config option
