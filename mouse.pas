@@ -9,15 +9,7 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-(***********************************************************)
-(*                                                         *)
-(*                       UNIT mouse                        *)
-(*                                                         *)
-(*                      Maus-Routinen                      *)
-(*  4/7/88, 21/7/91                                        *)
-(***********************************************************)
-
-UNIT mouse;
+unit mouse;
 
 {$I XPDEFINE.INC }
 
@@ -30,7 +22,8 @@ UNIT mouse;
 
 interface
 
-uses xpglobal;
+uses
+  xpglobal;
 
 const  mausLinks  = 0;     { linke Taste    }
        mausRechts = 1;     { rechte Taste   }
@@ -52,11 +45,6 @@ type   mausstat   = record
                       tasten : word;
                       x,y    : word;
                     end;
-       mauststat  = record
-                      pressed : boolean;   { momentan gedrckt }
-                      count   : word;      { Anzahl der Clicks }
-                      x,y     : word;      { Koordinaten des letzten Clicks }
-                    end;
        mausintp   = procedure(intsource,tasten,x,y,mx,my:word);
 
 
@@ -71,29 +59,25 @@ procedure mausaus;                       { 2: Mauscursor ausschalten   }
 procedure getmaus(var stat:mausstat);    { 3: Mauszustand ermitteln    }
 procedure setmaus(x,y: integer16);       { 4: neue Mausposition setzen }
 
-procedure savemaus;                      { Zustand merken, Maus aus }
-procedure restmaus;                      { Zustand wiederherstellen }
-
-procedure maustaste(press:boolean; nr:word; var stat:mauststat); { 5/6 }
-
 function mausx:word;      { 3: Maus-X-Koordinate holen }
 function mausy:word;      { 3: Maus-Y-Koordinate holen }
 function maust:word;      { 3: Maustastenzustand holen }
 
 procedure setmauswindow(xmin,xmax,ymin,ymax:integer16);     { 7/8 }
-procedure mausSetGraphCursor(hotx,hoty:smallword; var bitmap);   { 9   }
-procedure mausSetTextSoftCursor(c:char);                    { 10  }
-procedure mausSetTextHardCursor(startline,endline:smallword);    { 10  }
 
+{$IFDEF BP }
 procedure SetMausInt(intmask:word; intproc:mausintp; ssize:word);     { 12 }
 procedure ClearMausInt;
-procedure mausSetMickeys(mx,my:smallword);                       { 15 }
-procedure mausSetDblSpeed(mickeys:smallword);                    { 19 }
-
+{$ENDIF }
 
 { ================= Implementation-Teil ==================  }
 
-IMPLEMENTATION
+implementation
+
+{$IFDEF VP }
+uses
+  vpsyslow;
+{$ENDIF }
 
 const mausint = $33;
       intset  : boolean = false;
@@ -179,6 +163,7 @@ asm
   mov mausda,false
 end;
 
+{$IFDEF BP }
 procedure mausan; assembler;
 asm
   cmp maus,false
@@ -199,63 +184,54 @@ asm
 @1:
 end;
 
-procedure savemaus;
+{$ELSE }
+
+procedure mausan;
 begin
-  savem:=mausda;
-  if mausda then mausaus;
+  {$IFDEF VP }
+    SysTVShowMouse;
+  {$ENDIF }
+  mausda := true;
 end;
 
-procedure restmaus;
+procedure mausaus;
 begin
-  if savem then mausan;
+  {$IFDEF VP }
+    SysTVHideMouse;
+  {$ENDIF }
+  mausda := false;
 end;
 
-
-{ Zustand einewr Maustaste ermitteln     }
-{ press: Taste gedrckt oder losgelassen }
-{ nr   : Nummer der Taste                }
-
-procedure maustaste; assembler;
-asm
-{$IFNDEF Ver32 }
-  cmp maus,false
-  je @1
-  mov ax,5
-  cmp press,false
-  jne @2
-  inc ax
-@2:
-  mov bx,nr
-  int mausint
-  les di,stat
-  cmp ax,0
-  je @3
-  mov al,true
-@3:
-  mov es:[di],al
-  mov es:[di+1],bx
-  mov es:[di+3],cx
-  mov es:[di+5],dx
-@1:
 {$ENDIF }
-end;
 
 procedure getmaus(var stat:mausstat);
+{$IFDEF VP }
+var
+  event: TSysMouseEvent;
+{$ENDIF }
 begin
-{$IFDEF BP }
   if maus then
+{$IFDEF BP }
   asm
-    cmp maus,false
-    je @1
     mov ax,3
     int mausint
     les di,stat
     mov es:[di],bx
     mov es:[di+2],cx
     mov es:[di+4],dx
-  @1:
-  end else
+{$ELSE }
+  begin
+    {$IFDEF VP }
+      SysTVGetMouseEvent(Event);
+      with Stat do
+      begin
+        x := event.smepos.x * 8;
+        y := event.smepos.y * 8;
+        tasten := event.smebuttons;
+      end;
+    {$ENDIF }
 {$ENDIF }
+  end else
   with stat do
   begin
     x := 0;
@@ -264,6 +240,7 @@ begin
   end;
 end;
 
+{$IFDEF BP }
 function mausx:word; assembler;
 asm
   xor ax,ax
@@ -288,8 +265,6 @@ end;
 
 function maust:word; assembler;
 asm
-  xor ax,ax
-{$IFDEF BP }
   cmp maus,false
   je @1
   mov ax,3
@@ -306,11 +281,57 @@ asm
   or ax,bx
   or ax,cx
 @1:
-{$ENDIF }
 end;
+
+{$ELSE }
+
+function mausx:word;
+{$IFDEF VP }
+var
+  event: TSysMouseEvent;
+{$ENDIF }
+begin
+  {$IFDEF VP }
+     SysTVGetMouseEvent(Event);
+     mausx := event.smepos.x * 8;
+  {$ELSE }
+    Mausx := 0;
+  {$ENDIF }
+end;
+
+function mausy:word;
+{$IFDEF VP }
+var
+  event: TSysMouseEvent;
+{$ENDIF }
+begin
+  {$IFDEF VP }
+     SysTVGetMouseEvent(Event);
+     mausy := event.smepos.y * 8;
+  {$ELSE }
+    Mausy := 0;
+  {$ENDIF }
+end;
+
+function maust:word;
+{$IFDEF VP }
+var
+  event: TSysMouseEvent;
+{$ENDIF }
+begin
+  {$IFDEF VP }
+     SysTVGetMouseEvent(Event);
+     maust := event.smebuttons;
+  {$ELSE }
+    Maust := 0;
+  {$ENDIF }
+end;
+
+{$ENDIF }
 
 procedure setmaus(x,y: integer16); assembler;
 asm
+{$IFDEF BP }
   cmp maus,false
   je @1
   mov ax,4
@@ -318,11 +339,13 @@ asm
   mov dx,y
   int mausint
 @1:
+{$ENDIF }
 end;
 
 
 procedure setmauswindow(xmin,xmax,ymin,ymax:integer16); assembler;
 asm
+{$IFDEF BP }
   cmp maus,false
   je @1
   mov ax,7
@@ -334,73 +357,16 @@ asm
   mov dx,ymax
   int mausint
 @1:
+{$ENDIF }
 end;
 
-
-{ Grafik-Cursor definieren              }
-{ hotx,hoty: Koordinate des Hot-Spots   }
-{ bitmap   : Cursor-Bitmap (16x16 Pix.) }
-
-procedure mausSetGraphCursor(hotx,hoty:smallword; var bitmap); assembler;
-asm
 {$IFDEF BP }
-  cmp maus,false
-  je @1
-  mov ax,9
-  mov bx,hotx
-  mov cx,hoty
-  les dx,bitmap
-  int mausint
-@1:
-{$ENDIF }
-end;
-
-
-{ Cursorform einstellen #0 -> normaler Pfeil bzw. Block }
-procedure mausSetTextSoftCursor(c:char); assembler;
-const lastcur : char = #0;
-asm
-  cmp maus,false
-  je @1
-  mov al,lastcur
-  cmp al,c
-  je @1
-  mov ax,10
-  mov bx,0
-  mov cx,0ff00h
-  mov dh,07fh
-  mov dl,c
-  int mausint
-  mov al,c
-  mov lastcur,al
-@1:
-end;
-
-
-{ Hardwarecursor setzen: der normale Textcursor wird zum Mauscursor }
-procedure mausSetTextHardCursor(startline,endline:smallword); assembler;
-asm
-  cmp maus,false
-  je @1
-  mov ax,10
-  mov bx,1
-  mov cx,startline
-  mov dx,endline
-  int mausint
-@1:
-end;
-
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-
 { Interrupt-Routine setzen                        }
 { intmask: Interrupt-Maske; siehe intX-Konstanten }
 { intproc: aufzurufender Interrupt-Handler        }
 { ssize  : Stack-Gr”áe                            }
 procedure SetMausInt(intmask:word; intproc:mausintp; ssize:word);
 begin
-{$IFNDEF Ver32}
   if maus then begin
     int_call:=intproc;
     asm
@@ -424,17 +390,11 @@ begin
       sti
     end;
   end;
-{$ENDIF}
 end;
-
 
 procedure dummyproc(intsource,tasten,x,y,mx,my:word); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
 end;
-
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
 
 procedure ClearMausInt;
 begin
@@ -442,29 +402,11 @@ begin
     SetMausInt(0,dummyproc,0);
   intset:=false;
 end;
+{$ENDIF }
 
-
-{ Mausgeschwindigkeit festlegen }
-procedure mausSetMickeys(mx,my:smallword); assembler;
-asm
-  mov ax,15
-  mov cx,mx
-  mov dx,my
-  int mausint
-end;
-
-{ Anzahl Mickeys/sec festlegen, aber der sich der Mauspfeil }
-{ mit doppelter Geschwindigkeit bewegt.                     }
-procedure mausSetDblSpeed(mickeys:smallword); assembler;
-asm
-  mov ax,19
-  mov dx,mickeys
-  int mausint
-end;
-
+{$IFDEF BP }
 procedure testmaus; assembler;
 asm
-{$IFDEF BP }
   mov ah,035h
   mov al,mausint
   int 021h         { DOS Get Interrupt Vector -> ES:BX }
@@ -487,32 +429,56 @@ asm
 @2:
   mov maus,al
 @3:
-{$ENDIF }
 end;
+{$ENDIF }
 
 {$S-}
 procedure newexit; {$IFNDEF Ver32 } far; {$ENDIF }
 begin
   exitproc:=oldexit;
   if intset then
+  begin
+{$IFDEF BP }
     ClearMausInt;
+{$ELSE }
+  {$IFDEF VP }
+    SysTVDoneMouse(true);
+  {$ENDIF }
+{$ENDIF }
+  end;
   if mausda then mausaus;
 end;
-{$S+}
-
+{$IFDEF Debug }
+  {$S+}
+{$ENDIF }
 
 procedure mausunit_init;
-const minit : boolean = false;
+const
+  minit : boolean = false;
+var
+  x, y: Integer;
 begin
-  if not minit then begin
+  if not minit then
+  begin
+{$IFDEF BP }
     testmaus;
     if maus then mausinit;
+{$ELSE }
+    {$IFDEF VP }
+      if SysTVDetectMouse <> 0 then
+      begin
+        SysTVInitMouse(x, y);
+        Maus := true;
+      end else
+        Maus := false;
+    {$ENDIF }
+{$ENDIF }
     mausda:=false;
     oldexit:=exitproc;
     exitproc:=@newexit;
     mausswapped:=false;
     minit:=true;
-    end;
+  end;
 end;
 
 
@@ -521,6 +487,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/04/24 14:35:09  mk
+  - Mausroutinen aufgeraeumt und teils portiert
+
   Revision 1.9  2000/04/15 18:19:49  mk
   - Getmaus sicherer gemacht (2)
 

@@ -45,7 +45,6 @@ const mausleft    = #0#240;       { links gedrÅckt  }
 procedure maus_tasten_an;
 procedure maus_tasten_aus;
 procedure maus_gettext(var x,y:integer);
-procedure maus_getgraph(var x,y:integer);
 procedure maus_setdblspeed(b:byte);    { Doppelklick-Ticks                 }
 
 procedure maus_pushinside(l,r,o,u:byte);
@@ -166,8 +165,10 @@ end;
 
 procedure maus_tasten_an;
 begin
+{$IFDEF BP }
   if not tan then
     setmausint(intMove+intLeft0+intLeft1+intRight0+intRight1,mint,2048);
+{$ENDIF }
   tan:=true;
   lx:=255; ly:=255;
 end;
@@ -175,8 +176,10 @@ end;
 
 procedure maus_tasten_aus;
 begin
+{$IFDEF BP }
   if tan then
     clearmausint;
+{$ENDIF }
   tan:=false;
 end;
 
@@ -189,29 +192,16 @@ end;
 
 procedure maus_gettext(var x,y:integer);
 begin
-  if koo_da then begin
+  if koo_da then
+  begin
     x:=kx div 8+1;
     y:=ky div 8+1;
-    end
-  else begin
+  end else
+  begin
     x:=mausx div 8+1;
     y:=mausy div 8+1;
-    end;
+  end;
 end;
-
-
-procedure maus_getgraph(var x,y:integer);
-begin
-  if koo_da then begin
-    x:=kx;
-    y:=ky;
-    end
-  else begin
-    x:=mausx;
-    y:=mausy;
-    end;
-end;
-
 
 procedure mon;
 begin
@@ -339,6 +329,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/04/24 14:35:09  mk
+  - Mausroutinen aufgeraeumt und teils portiert
+
   Revision 1.9  2000/04/13 12:48:32  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
