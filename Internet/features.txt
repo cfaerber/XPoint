@@ -1,5 +1,5 @@
-Verbesserte MIME-Unterstützung<br /><small>OXP/32: auch beim Erstellen von Mails</small>
-Improved MIME support<br /><small>OXP/32: support for creatine MIME mails, too</small>
+Verbesserte MIME-Unterstützung
+Improved MIME support
 x
 x
 x
@@ -26,7 +26,7 @@ Erweiterte Reply-Funktion<br /><small>Reply-To-All, an markierte User antworten 
 Enhanced reply<br /><small>Reply-to-all, reply to marked users only, ...</small>
 -
 x
-o
+x
 
 Verbesserter Support v. ext. Viewern
 Improved external viewer support
@@ -79,8 +79,8 @@ x
 RFC/Client-Boxtyp<br /><small>Universelle Schnittstelle für UKA_PPP, UKAW/UKAD, XPNews etc.</small>
 RFC/Client server type<br /><small>Universal interface for UKA_PPP, UKAW/UKAD, XPNews etc.</small>
 -
-o
-o
+x
+x
 
 32 Bit<br /><small>Praktisch alle Limits entschärft</small>
 32 bit<br /><small>Nearly all limits removed</small>
@@ -95,7 +95,7 @@ Screen size configurable freely<br /><small>Win32/Linux only</small>
 x
 
 Integrierter NNTP/SMTP/POP3-Support<br /><small>unter Win32/Linux, unterstützt APOP und SMTP Auth</small>
-Integrated NNTP/SMTP/POP3 support<small>Win32/Linux, with APOP and SMTP Auth support</small>
+Integrated NNTP/SMTP/POP3 support<br /><small>Win32/Linux, with APOP and SMTP Auth support</small>
 -
 -
 x

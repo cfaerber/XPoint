@@ -69,9 +69,6 @@ In OpenXP/32 sind Mail und News integriert.
 </ul>
 Bezugsquellen siehe "Links".</p>
 
-Ich habe einen Mail/News-Client installiert, seitdem bekomme ich wieder eine Registrierungsaufforderung.&nbsp;&nbsp;<small>2001-04-08</small>
-Vermutlich ist nur ein Registrierungsschlüssel für ZConnect/Fido vorhanden. Entweder einen Key <a href="http://www.crosspoint.de">nachbestellen</a> oder das freie OpenXP/32 benutzen.
-
 Wofür stehen bei XP eigentlich die ganzen Abkürzungen?&nbsp;&nbsp;<small>2002-01-20</small>
 <table>
 <tr><td width="100">MAGGI</td><td width="200">Magic</td><td width="300">Ganz am Anfang Konverter Magic-ZConnect, später auch andere Formate</td></tr>
