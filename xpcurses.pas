@@ -18,6 +18,8 @@
 }
 
 {$I xpdefine.inc}
+{ Only in this unit: Writeable Const On }
+{$J+}
 
 unit xpcurses;
 
@@ -1546,6 +1548,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2003/01/09 17:32:56  mk
+  - fixes kylix compile bug (added j+ to this unit)
+
   Revision 1.67  2003/01/07 09:50:23  mk
   - made xpcurses temporary compilable
   - bug with forwardkeys has to be fixed (commented out)
