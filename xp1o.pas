@@ -692,7 +692,7 @@ begin
       end;
     if ok then begin
       nr:=dbReadIntN(bezbase,bezb_datum) and 3;
-      dat:=dbReadIntN(bezbase,bezb_datum) and $fffffff0;
+      dat:=LongInt(LongWord(dbReadIntN(bezbase,bezb_datum)) and $fffffff0);
       dbDelete(bezbase);
       if nr=1 then begin        { erste Kopie eines CrossPostings }
         dbSeek(bezbase,beiMsgid,crc);
@@ -1038,6 +1038,9 @@ end;
 
 {
   $Log$
+  Revision 1.101  2001/10/22 21:13:56  cl
+  - another range check error bites the dust
+
   Revision 1.100  2001/10/01 19:30:09  ma
   - compiles again (DOS32)
 
