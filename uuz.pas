@@ -3261,7 +3261,9 @@ var hds,adr : longint;
 
   procedure CreateNewfile;
   begin
-    fn:='D-'+hex(NextUunumber,4);
+    repeat
+      fn:=ldstr+hex(NextUunumber,4);
+    until not exist(dest+fn+'.OUT') or ovrwrt;
     assign(f2,dest+fn+'.OUT');
     rewrite(f2,1);
   end;
@@ -3457,6 +3459,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.23  2000/12/22 20:32:16  mk
+  - fix fuer -ppp
+
   Revision 1.35.2.22  2000/12/19 22:09:54  mk
   RB:- Option -ppp implementiert
 
