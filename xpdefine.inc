@@ -68,6 +68,7 @@
   {$GOTO ON }
   {$PACKRECORDS Default } { Default: 2 }
   {$C-,H+,I-,M-,P-,Q-,R-,S-,T-,V-,X+}
+  {$DEFINE Int64 }
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -135,6 +136,9 @@
 
 {
   $Log$
+  Revision 1.55  2000/10/15 08:50:07  mk
+  - misc fixes
+
   Revision 1.54  2000/10/05 23:10:54  mk
   - Resource 2738 angelegt
 

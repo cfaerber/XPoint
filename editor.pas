@@ -230,11 +230,13 @@ end;
 {$ENDIF }
 
 
-function FindUmbruch(var data; zlen:integer16):integer; assembler; {&uses ebx, esi}
+function FindUmbruch(var data; zlen:integer):integer; assembler; {&uses ebx, esi}
   { rckw„rts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
             mov   esi,data
-            movzx ebx,zlen
+            mov   ebx,zlen
+            test  ebx, ebx
+            jz    @ufound
   @floop:
             mov   al,[esi+ebx]
             cmp   al,' '               { ' ' -> unbedingter Umbruch }
@@ -897,16 +899,17 @@ begin
   with ap^ do
     if not umbruch or (size-offset<=rand) then
       Advance:=size
-    else begin
+    else
+    begin
       zlen:=min(rand,size-offset-1);
       zlen:=FindUmbruch(cont[offset],zlen);    { in EDITOR.ASM }
-    { while (zlen>0) and not (cont[offset+zlen] in [' ','-','/']) do
-        dec(zlen); }
+//     while (zlen>0) and not (cont[offset+zlen] in [' ','-','/']) do
+//        dec(zlen);
       if zlen=0 then
         Advance:=offset+rand
       else
         Advance:=offset+zlen+1;
-      end;
+   end;
 end;
 
 
@@ -1835,6 +1838,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/10/15 08:50:05  mk
+  - misc fixes
+
   Revision 1.39  2000/08/08 13:18:13  mk
   - s[Length(s)] durch Lastchar ersetzt
 

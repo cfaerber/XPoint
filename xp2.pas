@@ -210,13 +210,13 @@ procedure initdirs;
   procedure GetHomePath;
   begin
     HomeDir := GetEnv(ResolvePathName(envXPHome));          { XPHOME=~/.openxp }
-    if (length(HomeDir) > 0) then exit; 
+    if (length(HomeDir) > 0) then exit;
     HomeDir := GetEnv('HOME');                              { HOME= }
-    if (length(HomeDir) > 0) then exit; 
+    if (length(HomeDir) > 0) then exit;
     HomeDir := '~';
     if (length(HomeDir) > 0) then exit;
   end; { GetHomePath }
-  
+
   procedure AddSepa(var APath: String);
   begin
     if (right(APath,1)<>DirSepa) then                 { Path + / }
@@ -244,7 +244,7 @@ procedure initdirs;
     begin    { Ich will alle Rechte :-/ }
       if _deutsch then
         stop('Das Programm muss Lese-, Schreib- und Suchberechtigung auf "' +
-	     OwnPath+'" haben.')
+             OwnPath+'" haben.')
       else
         stop('I need read, write and search rights on "'+OwnPath+'".');
     end;
@@ -260,7 +260,7 @@ procedure initdirs;
       begin
         if _deutsch then
           stop('Das Programm ist nicht korrekt installiert - LibDir: "' +
-	       LibDir + '" nicht vorhanden.')
+               LibDir + '" nicht vorhanden.')
         else
           stop('The programm is not installed correctly - LibDir: "' +
                LibDir + '" not available.');
@@ -276,7 +276,7 @@ begin {initdirs}
 
   if not (IsPath(OwnPath)) then               { Existent? }
     createOpenXPHomedir;
-   
+
   SetCurrentDir(OwnPath);
 end; { initdirs }
 {$ELSE}
@@ -880,14 +880,19 @@ end;
 
 
 procedure testdiskspace;
-var free : longint;
+var
+{$IFDEF Int64 }
+  free : Int64;
+{$ELSE }
+  free: Longint;
+{$ENDIF }
     x,y  : byte;
 begin
   if ParNomem then exit;
 {$IFDEF Debug }
   dbLog('-- Plattenplatz testen');
 {$ENDIF }
-  free:=diskfree(0);                       { <0 bei Platten >2GB! }
+  free:=diskfree(0);
   if (free>=0) and (free<200000) then begin
     exitscreen(0);
     writeln(getreps(205,left(OwnPath,2)));   { 'Fehler: zu wenig freier Speicher auf Laufwerk %s !' }
@@ -1205,6 +1210,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2000/10/15 08:50:06  mk
+  - misc fixes
+
   Revision 1.71  2000/10/09 22:14:45  ml
   - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
 

@@ -275,6 +275,7 @@ begin
     if charset='windows-1252' then Result := RecodeString(s, CP1252Transtable) else
     if charset='windows-1255' then Result := RecodeString(s, CP1255Transtable) else
     if charset='utf-8' then Result := UTF8ToIBM(s) else
+    if hd.mime.ctype <> tMultipart then Result := ISOToIBM(s) else
     Result := s;
   end;
 end;
@@ -3493,6 +3494,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2000/10/15 08:50:06  mk
+  - misc fixes
+
   Revision 1.66  2000/10/10 12:26:16  mk
   - support for international fonts incl. UTF-8
 

@@ -21,7 +21,7 @@ uses  xpglobal,sysutils,dos,typeform,montage,fileio,keys,lister,database,resourc
       xp0,xp1,xpkeys, utftools;
 
 
-type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
+type  mpcode = (mcodeNone, mcodeQP, mcodeBase64, mcode8Bit);
 
       multi_part = record                   { Teil einer Multipart-Nachricht }
                      startline  : longint;  { 0 = kein Multipart }
@@ -96,6 +96,7 @@ function codecode(encoding:string):mpcode;
 begin
   if encoding='base64' then codecode:=mcodeBase64
   else if encoding='quoted-printable' then codecode:=mcodeQP
+  else if encoding='8bit' then codecode:=mcode8Bit
   else codecode:=mcodeNone;
 end;
 
@@ -689,16 +690,20 @@ begin
         if code=mcodeQP then begin
           softbreak:=(lastchar(s)='=');
           QP_decode;
+        end
+        else
+          softbreak:=false;
 
+        if code in [mcodeQP, mcode8Bit] then
+        begin
           // convert s to Unicode (UTF-8)
           if Charset <> csUnicode then
             s := Convert8BitToUTF(s, Charset);
 
           // convert s (now UTF-8) back in the used Codepage
           s := ConvertUTFTo8Bit(s, SysGetConsoleCodepage);
-        end
-        else
-          softbreak:=false;
+        end;
+
         if softbreak then
         begin
           SetLength(s, Length(s)-1);
@@ -757,6 +762,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/10/15 08:50:07  mk
+  - misc fixes
+
   Revision 1.27  2000/10/10 12:25:34  mk
   - extract_msg now uses Unicode
 

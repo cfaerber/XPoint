@@ -86,9 +86,13 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
 
 
 procedure auto_empfsel_do (var cr:Customrec;user:boolean) ;
-var p    : scrptr;
-    mt   : boolean;                             { user: 1 = Userauswahl  0 = Brettauswahl }
-begin
+var p        : scrptr;
+    mt       : boolean;
+    pollbox  : string[BoxNameLen];
+    zg_flags : integer;
+    size     : Integer;
+    adresse  : string[AdrLen];
+begin                         { user: 1 = Userauswahl  0 = Brettauswahl }
   with cr do begin
     sichern(p);
     if autoe_showscr then showscreen(false);
@@ -100,12 +104,36 @@ begin
     if not brk then
       if user then begin
         dbGo(ubase,selpos);
-        s := dbReadNStr(ubase,ub_username);
+        size:=0;
+        if dbXsize(ubase,'adresse')=0 then adresse:=''
+        else adresse := dbReadXStr(ubase,'adresse',size);
+        s:=adresse;
+        if s='' then
+          s := dbReadNStr(ubase,ub_username);
         s:=vert_name(s);
-        end
+      end
       else begin
         dbGo(bbase,selpos);
-        s := dbReadNStr(bbase,bb_brettname);
+        s := dbReadNStr(bbase,bb_adresse); { Brett-Vertreter }
+        zg_flags:=dbReadInt(bbase,'flags');
+        if zg_flags and 8<>0 then { Schreibsperre }
+        if (s='') or ((s<>'') and (zg_flags and 32<>0)) then begin
+          s:='';
+          rfehler(450); { 'Schreibzugriff auf dieses Brett ist gesperrt' }
+          exit;
+        end;
+        if ((s<>'') and (zg_flags and 32=0)) then begin      { FollowUp-To? }
+          {_pm:=pos('@',s)>0;}
+          if pos('@',s)=0 then begin
+            pollbox := dbReadNStr(bbase,bb_pollbox);
+            if (ntBoxNetztyp(pollbox) in [nt_fido,nt_UUCP,nt_ZConnect]) then begin
+              { _AmReplyTo:=s; }
+              s := dbReadNStr(bbase,bb_brettname);
+            end;
+          end else s:='A'+s;
+        end else dbReadN(bbase,bb_brettname,s);
+        {if s<>'' then  s:='A'+s
+        else dbReadN(bbase,bb_brettname,s);}
         delete(s,1,1);
       end;
     end;
@@ -1468,6 +1496,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/10/15 08:50:06  mk
+  - misc fixes
+
   Revision 1.35  2000/10/10 13:58:58  mk
   RB:- Ersetzt-Nachrichten in Autoversand
 

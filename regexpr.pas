@@ -24,9 +24,6 @@
      - locals dependend upper/lowercase routines
      - extend the interface
 }
-{$IFDEF FPC }
-  {$MODE OBJFPC }
-{$ENDIF }
 unit regexpr;
 
   interface
@@ -81,6 +78,8 @@ unit regexpr;
 
   implementation
 
+     uses
+        strings;
 
 {$ifdef DEBUG}
      procedure writecharset(c : tcharset);
@@ -314,8 +313,8 @@ unit regexpr;
                           new(hp);
                           doregister(hp);
                           hp^.typ:=ret_backtrace;
-                          // hp^.elsepath:=parseregexpr(elsepath);
-                          hp^.next:=@parseregexpr;
+                          hp^.elsepath:=parseregexpr(nil,elsepath);
+                          hp^.next:=parseregexpr;
                           parseregexpr:=hp;
                           exit;
                        end;
@@ -428,6 +427,7 @@ unit regexpr;
           endp : pregexprentry;
 
        begin
+          error:=false;
           GenerateRegExprEngine.Data:=nil;
           GenerateRegExprEngine.DestroyList:=nil;
           if regexpr=nil then
@@ -443,7 +443,7 @@ unit regexpr;
           GenerateRegExprEngine.Data:=parseregexpr(nil,endp);
           GenerateRegExprEngine.DestroyList:=first;
           if error or (currentpos^<>#0) then
-            DestroyRegExprEngine(Result);
+            DestroyRegExprEngine(GenerateRegExprEngine);
        end;
 
     procedure DestroyRegExprEngine(var regexpr : TRegExprEngine);
@@ -476,7 +476,7 @@ unit regexpr;
               begin
 {$ifdef DEBUG}
                  writeln(byte(regexpr^.typ));
-{$endif DEBUG}
+{$endif}
                  case regexpr^.typ of
                     ret_endline:
                       begin
@@ -594,7 +594,7 @@ begin
 end.
 {
   $Log$
-  Revision 1.1  2000/07/30 15:03:56  mk
-  - Intitial Import
+  Revision 1.2  2000/10/15 08:50:05  mk
+  - misc fixes
 
 }
