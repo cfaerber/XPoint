@@ -179,7 +179,7 @@ begin { ZtoFido }
             if FileExists(sout+dest) then begin
 //**              AddPackets.AddPackets.Add(dest);
 //**              AddPackets.ABFiles.Add(bfile);
-              
+
 //**              addpkts^.abox[addpkts^.anzahl]:=BoxName;
               end;
             end;   { exist .PP }
@@ -580,6 +580,7 @@ begin { FidoNetcall }
     end;
   Fidomailer.IPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
   Fidomailer.FilesToSend:=OutgoingFiles; Fidomailer.FilesReceived:=IncomingFiles;
+  OutgoingFiles.Clear;
   InitFidomailer;
   FidoNetcall:=EL_noconn;
   aresult:=Fidomailer.PerformNetcall;
@@ -907,6 +908,10 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/02/05 22:33:56  ma
+  - added ZConnect netcall (experimental status ;-)
+  - modemscripts working again
+
   Revision 1.7  2001/02/04 18:33:04  ma
   - moved ZtoFido to xpncfido
   - fido netcall tracking files with StringLists now

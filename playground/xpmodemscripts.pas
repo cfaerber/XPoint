@@ -28,63 +28,20 @@ interface
 uses
   {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
   sysutils,typeform,fileio,inout,keys,datadef,database,maus2,
-  resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,Modem,Debug;
+  resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,IPCClass;
 
-function RunScript(test:boolean; scriptfile:string;
-                   online,relogin:boolean; slog:textp):shortint;
+function RunScript(BoxPar: BoxPtr; CommObj: tpCommObj; IPC: TIPC;
+                   DryRun:boolean; scriptfile,tracefile:string;
+                   online,relogin:boolean; RcvdCharLog:textp):shortint;
 
 
 implementation
 
-uses  xp1o,xpkeys,xp9bp,xp10,winxp;
+uses  timer,debug;
 
-const ansimode : boolean = true;
-      ansimax  = 40;       { max. L„nge von ANSI-Codes }
-      log2     : textp   = nil;
-
-      ShellReleased : boolean = false;
-
-      coltab : array[0..7] of byte = (0,red,green,brown,blue,magenta,cyan,7);
-
-      ANSI_curup     = #27'[A';
-      ANSI_curdown   = #27'[B';
-      ANSI_curleft   = #27'[D';
-      ANSI_curright  = #27'[C';
-      ANSI_home      = #27'[H';
-      ANSI_end       = #27'[K';
-
-var termlines    : byte;
-    IgnCD        : boolean;
-    comnr        : byte;
-    recs,lrecs   : string;
-    display      : boolean;
-    log          : boolean;
-    logfile      : text;
-    la           : byte;
-    open_log     : boolean;
-    in7e1        : boolean;
-
-    ansichar     : boolean;       { ANSI-Sequenz aktiv }
-    ansiseq      : string;
-    ansilen      : byte;          { length(ansiseq) - fr schnellen Zugriff }
-    ansifg,ansibg: byte;          { Farbattribute }
-    ansihigh     : byte;          { add fr helle Farben }
-    ansirev      : boolean;       { reverse Darstellung }
-
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-
-{ Parameter nr, nn werden zwar nicht gebraucht, aber durch
-  Prozedurvariable sind sie n”tig }
-function TermGetfilename(nr,nn:byte):string;
-begin
-  rfehler(2003);    { '$FILE-Makro ist hier nicht m”glich.' }
-  TermGetfilename:='';
-end;
-
-function RunScript(test:boolean; scriptfile:string;
-                   online,relogin:boolean; slog:textp):shortint;
+function RunScript(BoxPar: BoxPtr; CommObj: tpCommObj; IPC: TIPC;
+                   DryRun:boolean; scriptfile,tracefile:string;
+                   online,relogin:boolean; RcvdCharLog:textp):shortint;
 
 const MaxLines  = 500;
       Maxlabels = 100;
@@ -130,7 +87,7 @@ var   script   : ScrArr;
       lines    : integer;
       logins   : integer;       { verbleibende Login-Anzahl }
       RunScriptRes: ShortInt;
-
+      ReceivedChars: String;
 
 function LoadScript:boolean;
 type labela = array[1..maxlabels] of record
@@ -412,7 +369,6 @@ var t      : text;
       command:=cmd;
       numpar:=SeekLabel;
       if numpar=0 then begin              { Label (noch) nicht vorhanden }
-{*        getmem(strparp,length(s0)+1);}
         strpar:=s0;
         end;
       end;
@@ -473,7 +429,7 @@ begin
     if not comment(s) then begin
       GetWord;
       if ok then begin
-        if s0[length(s0)]=':' then begin
+        if LastChar(s0)=':' then begin
           AddLabel;
           GetWord;
           end;
@@ -492,6 +448,7 @@ end;
 function ExecuteScript:shortint;
 const maxstack = 50;
 var ip   : integer;
+    LoginTimer,UniTimer: TTimer;
     ende : boolean;
     par  : string;
     trace: text;
@@ -502,15 +459,14 @@ var ip   : integer;
 
   procedure RunError(nr:word);
   begin
-    writeln;
-    writeln(getres2(2011,3)+' '+getres2(2011,nr)+#7);
+    xp1.fehler(getres2(2011,3)+' '+getres2(2011,nr)+#7);
     logerror(getres2(2011,3)+' '+getres2(2011,nr));
     ende:=true;
    end;
 
   function timeout:boolean;
   begin
-    timeout:=not (IgnCD or CommObj^.Carrier) or (zaehler[2]=0);
+    timeout:=not (CommObj^.IgnoreCD or CommObj^.Carrier) or (LoginTimer.Timeout);
   end;
 
   function GetPar:string;
@@ -544,7 +500,7 @@ var ip   : integer;
     end;
   end;
 
-  procedure TestKey;
+  procedure ProcessKeypresses;
   var c : char;
   begin
     if keypressed then begin
@@ -554,11 +510,18 @@ var ip   : integer;
         ExecuteScriptRes:=pEndError;
         end
       else if c>#0 then
-        CommObj^.SendString(c,False);
+        CommObj^.SendString(c,False)
+      else readkey;
       end;
   end;
+  
+  procedure ProcessIncoming;
+  begin
+    while CommObj^.CharAvail do
+      ReceivedChars:=ReceivedChars+CommObj^.GetChar;
+  end;
 
-  procedure interprete;
+  procedure InterpreteEntry;
   var doit : boolean;
   begin
     with script[ip] do begin
@@ -566,15 +529,16 @@ var ip   : integer;
         0 : doit:=true;
         1 : begin
               par:=onstr;
-              doit:=(RightStr(lrecs,length(par))=par);
+              doit:=Pos(par,LowerCase(ReceivedChars))<>0;
               if doit then begin
-                if log2<>nil then write(log2^,recs);
-                recs:=''; lrecs:='';
+                IPC.WriteFmt(mcInfo,'Reacting on %s',[par]);
+                if RcvdCharLog<>nil then write(RcvdCharLog^,ReceivedChars);
+                ReceivedChars:='';
                 end;
             end;
         2 : begin
               multi2;
-              doit:=(zaehler[3]=0);
+              doit:=UniTimer.Timeout;
             end;
         3 : doit:=online;
         4 : doit:=not online;
@@ -585,11 +549,11 @@ var ip   : integer;
           cmdWaitfor  : begin
                           par:=LowerCase(getpar);
                           repeat
-                            tb;
-                            testkey;
-                          until timeout or (RightStr(lrecs,length(par))=par) or ende;
-                          if log2<>nil then write(log2^,recs);
-                          recs:=''; lrecs:='';
+                            ProcessIncoming;
+                            ProcessKeypresses;
+                          until timeout or (RightStr(LowerCase(ReceivedChars),length(par))=par) or ende;
+                          if RcvdCharLog<>nil then write(RcvdCharLog^,ReceivedChars);
+                          ReceivedChars:='';
                         end;
           cmdSend     : CommObj^.SendString(GetPar,False);
           cmdGoto     : ip:=numpar-1;
@@ -597,14 +561,11 @@ var ip   : integer;
                           ende:=true;
                           ExecuteScriptRes:=numpar;
                         end;
-          cmdDelay    : mdelay(numpar,strpar='SHOW');
-          cmdWrite    : begin moff;
-                          write(GetPar); mon;
-                        end;
-          cmdWriteln  : begin moff; writeln(Getpar); mon; end;
-          cmdDisplay  : Display:=(numpar=pDispOn);
-          cmdTimer    : zaehler[3]:=numpar;
-          cmdRead     : tb;
+          cmdDelay    : mdelay(numpar);
+          cmdWrite,cmdWriteLn    : begin moff; IPC.WriteFmt(mcInfo,'%s',[GetPar]); mon; end;
+          cmdDisplay  : {**Display:=(numpar=pDispOn)};
+          cmdTimer    : UniTimer.SetTimeout(numpar);
+          cmdRead     : ProcessIncoming;
           cmdFlush    : CommObj^.PurgeInbuffer;
           cmdCls      : clrscr;
           cmdCall     : if sp=maxstack then begin
@@ -624,8 +585,8 @@ var ip   : integer;
                         end;
           cmdBreak    : {*SendBreak(comnr)};
           cmdANSI     : begin
-                          ansimode:=(numpar=pAnsiOn);
-                          if not ansimode then ansichar:=false;
+                          {*ansimode:=(numpar=pAnsiOn);
+                          if not ansimode then ansichar:=false;}
                         end;
         end;
       inc(ip);
@@ -634,41 +595,43 @@ var ip   : integer;
 
 begin    { of ExecuteScript }
   ip:=1;
-  recs:=''; lrecs:='';
-  zaehler[2]:=boxpar^.LoginWait;
-  zaehler[3]:=0;
+  ReceivedChars:='';
+  LoginTimer.Init; LoginTimer.SetTimeout(boxpar^.LoginWait);
+  UniTimer.Init;
   logins:=boxpar^.retrylogin+1;
   ende:=false;
-  display:=true;
-  ansimode:=true;
+//**  display:=true;
+//**  ansimode:=true;
   sp:=0;
-  if ParTrace then begin                       { Trace-Log ”ffnen }
-    assign(trace,LogPath+'TRACE.LOG');
+  if Tracefile<>'' then begin                       { Trace-Log ”ffnen }
+    assign(trace,Tracefile);
     if existf(trace) then append(trace)
     else rewrite(trace);
     writeln(trace,getres2(2011,1),' ',scriptfile,' / ',date,' / ',time);
     writeln(trace);
     tn:=0;
     end;
+
   repeat
-    if ParTrace then begin                     { Trace-Zeile schreiben }
+    if Tracefile<>'' then begin                     { Trace-Zeile schreiben }
       write(trace,script[ip].txtline,' ');
       inc(tn);
       if tn>17 then begin
         tn:=0; writeln(trace);
         end;
       end;
-    interprete;
-    Testkey;
+    InterpreteEntry;
+    ProcessKeypresses;
 
     if ip>lines then begin
       ende:=true;
       ExecuteScriptRes:=pEndOk;
       end;
   until ende or timeout;
+
   if sp>0 then
     runerror(4);           { 'CALL ohne RETURN' }
-  if ParTrace then begin
+  if Tracefile<>'' then begin
     if tn>0 then writeln(trace);
     writeln(trace);
     writeln(trace,getres2(2011,2),' ',time);
@@ -677,6 +640,7 @@ begin    { of ExecuteScript }
     close(trace);
     end;
   freeres;
+  LoginTimer.Done; UniTimer.Done;
   if timeout then
     ExecuteScriptRes:=pEndError;
   ExecuteScript := ExecuteScriptRes;
@@ -692,28 +656,25 @@ end;
 
 
 begin     { of RunScript }
-  log2:=slog;
   if not LoadScript then
     RunScriptRes:=pEndSyntax
   else
-    if not test and (lines>0) then
+    if not DryRun and (lines>0) then
       RunScriptRes:=ExecuteScript
     else
       RunScriptRes:=pEndOK;
   RunScript := RunScriptRes;
   ReleaseScript;
-  log2:=nil;
 end;
 
 end.
 
 {
   $Log$
-  Revision 1.1  2001/01/10 16:31:50  ma
-  - todo: change to a class that can communicate with a class from
-    xpterminal unit
+  Revision 1.2  2001/02/05 22:33:56  ma
+  - added ZConnect netcall (experimental status ;-)
+  - modemscripts working again
 
-  ------ moved to playground
   Revision 1.1  2001/01/04 16:06:04  ma
   - renamed, was xpterm.pas (partly)
 

@@ -113,7 +113,7 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 implementation  {---------------------------------------------------}
 
 uses direct,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
-     xpfido,xpfidonl,xpmaus,xpncfido,xpncpop3,xpmakeheader,ncmodem;
+     xpfido,xpfidonl,xpmaus,xpncfido,xpnczconnect,xpncpop3,xpmakeheader,ncmodem;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
@@ -143,6 +143,7 @@ begin
     if not fileexisted then SL.Add(dir2.Name[i]);
     end;
   dir1.destroy; dir2.destroy;
+  Debug.DebugLog('xpnetcall','new files created by external program: '+Stringlist(SL),DLDebug);
   SetCurrentDir(OwnPath);
 end;
 
@@ -770,7 +771,6 @@ var
     netztyp    : byte;
     logintyp   : shortint;        { ltZConnect / ltMaus }
 
-    pronet     : boolean;
     janusp     : boolean;
     msgids     : boolean;         { fuer MagicNET }
     alias      : boolean;         { Fido: Node- statt Pointadresse     }
@@ -870,8 +870,8 @@ begin
         BoxParOk:=getres2(706,4)    { 'unvollst„ndige Packer-Angaben' }
 //      else if ntDownarcPath(netztyp) and not FindDownarcer then
 //        BoxparOk:=getres2(706,6)    { 'Entpacker fehlt' }
-      else if (logintyp<>ltFido) and not uucp and (trim(uploader)='') then
-        BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
+//      else if (logintyp<>ltFido) and not uucp and (trim(uploader)='') then
+//        BoxParOk:=getres2(706,5)    { 'fehlende UpLoader-Angabe' }
       else
         BoxParOk:='';
     end;
@@ -1119,22 +1119,6 @@ end;
                        dpuffer:='UPUFFER';
                      end;
       end;
-      if logintyp<>ltUUCP then begin
-        {if _fido and sysopmode then
-          exchange(uparcer,'$PUFFER',OwnPath+upuffer)
-        else} if pronet then
-          exchange(uparcer,'$PUFFER',upuffer+' '+bfile+'.REQ')
-        else
-          exchange(uparcer,'$PUFFER',upuffer);
-        exchange(uparcer,'$UPFILE',caller);
-        if not _fido then begin
-          exchange(downarcer,'$DOWNFILE',called);
-          if not ltMultiPuffer(logintyp) then
-            exchange(downarcer,'$PUFFER',dpuffer)
-          else
-            exchange(downarcer,'$PUFFER','*.*');
-          end;
-        end;
 //      if UpperCase(LeftStr(uploader+' ',7))='ZMODEM ' then
 //        uploader:=ZM(uploader,true);
 //      if UpperCase(LeftStr(downloader+' ',7))='ZMODEM ' then
@@ -1145,7 +1129,7 @@ end;
       exchange(uploader,'$SPEED',strs(baud));
       exchange(uploader,'$UPFILE',caller);
       exchange(uploader,'$LOGFILE',OwnPath+bilogfile);
-      if janusplus or (netztyp=nt_Pronet) then
+      if janusplus then
         exchange(uploader,'$DOWNPATH','SPOOL')
       else
         exchange(uploader,'$DOWNPATH',LeftStr(OwnPath,length(OwnPath)-1));
@@ -1154,7 +1138,7 @@ end;
       exchange(downloader,'$IRQ',strs(comn[bport].Cirq));
       exchange(downloader,'$SPEED',strs(baud));
       exchange(downloader,'$DOWNFILE',called);
-      if janusplus or (netztyp=nt_Pronet) then
+      if janusplus then
         exchange(downloader,'$DOWNPATH','SPOOL')
       else
         exchange(downloader,'$DOWNPATH',LeftStr(OwnPath,length(OwnPath)-1));
@@ -1293,7 +1277,6 @@ begin                  { function Netcall }
   _maus:=(logintyp=ltMaus);
   _fido:=(logintyp=ltFido);
   _uucp:=(logintyp=ltUUCP);
-  pronet:=(logintyp=ltMagic) and (netztyp=nt_Pronet);
   janusp:=(logintyp=ltZConnect) and BoxPar^.JanusPlus;
   if _maus then begin
     if FileExists(mauslogfile) then _era(mauslogfile);
@@ -1415,7 +1398,6 @@ begin                  { function Netcall }
       case LoginTyp of
         ltFido: begin
           Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
-          fillchar(nc^,sizeof(nc^),0);
           inmsgs:=0; outmsgs:=0; outemsgs:=0;
           cursor(curoff);
           inc(wahlcnt);
@@ -1431,6 +1413,22 @@ begin                  { function Netcall }
           else begin Netcall:=true; goto ende0; end;
             end; {case}
           end; {case ltFido}
+
+        ltZConnect: begin
+          Debug.DebugLog('xpnetcall','netcall: zconnect',DLInform);
+          inmsgs:=0; outmsgs:=0; outemsgs:=0;
+          cursor(curoff);
+          inc(wahlcnt);
+          case ZConnectNetcall(BoxName,ppfile,Boxpar,OutgoingFiles,IncomingFiles,caller) of
+            EL_ok     : begin Netcall_connect:=true; Netcall:=true; goto ende0; end;
+            EL_noconn : begin Netcall_connect:=false; goto ende0; end;
+            EL_recerr,
+            EL_senderr,
+            EL_nologin: begin Netcall_connect:=true; inc(connects); goto ende0; end;
+            EL_break  : begin  Netcall:=false; goto ende0; end;
+          else begin Netcall:=true; goto ende0; end;
+            end; {case}
+          end; {case ltZConnect}
 
         ltPOP3: begin
           Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
@@ -1459,7 +1457,6 @@ begin                  { function Netcall }
                     { in allen anderen Faellen ist das EPP bereits   }
                     { entfernt.                                     }
       if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
-//**      DelPronetfiles;
       end; {if PerformDial}
     end; {*if PerformDial?!}
 
@@ -1470,7 +1467,6 @@ ende0:
     if PufferEinlesen(IncomingFiles[i-1],boxname,false,false,true,pe_Bad)then
       _era(IncomingFiles[i-1]);
   freeres;
-  dispose(NC);
 //** addpkts.destroy;
   netcalling:=false;
   cursor(curoff);
@@ -1680,6 +1676,10 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/02/05 22:33:56  ma
+  - added ZConnect netcall (experimental status ;-)
+  - modemscripts working again
+
   Revision 1.3  2001/02/04 18:33:04  ma
   - moved ZtoFido to xpncfido
   - fido netcall tracking files with StringLists now
