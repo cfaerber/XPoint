@@ -703,7 +703,6 @@ var t,lastt: taste;
       gfound  : boolean;
       mqfirst : longint;
       mpdata  : multi_part;
-      OrgQuote: Integer;
 
   label ende;
 
@@ -837,14 +836,15 @@ var t,lastt: taste;
       pm:=not ReadJNesc(getres(431),false,brk);   { 'Der Absender wÅnscht eine PM-Antwort - trotzdem îffentlich antworten' }
       if brk then exit;
       end;
-    OrgQuote := Quote;
+    mquote:=(quote=1); mqfirst:=0;
     if quote=2 then
       if markanz=0 then
-        quote:=1
-      else
+      begin
+        quote:=1;
+        mquote := true;
+      end else
         if not multiquote(brk) and brk then exit;
       {  dbGo(mbase,marked^[0]); }
-    mquote:=(quote=1); mqfirst:=0;
     betr:='';
     rt0:='';
     realname:='';
@@ -1057,20 +1057,20 @@ var t,lastt: taste;
 
     if reply then
     begin
-      mimetyp := dbReadNStr(mbase,mb_mimetyp);
+      dbReadN(mbase,mb_mimetyp, mimetyp);
 
       { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
         Multipart-Daten vorhanden, wir faken uns also welche, damit
         die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
-      if (qmpdata = nil) and (OrgQuote = 1) and (mimetyp <> 'text/plain') then
+      if (qmpdata = nil) and mquote and (mimetyp <> 'text/plain') then
       begin
         pushhp(94);
         fillchar(mpdata,sizeof(qmpdata),0);
         mpdata.fname := fn;
         SelectMultiPart(true,1,false,mpdata,brk);
 
-        // is MIME-Typ not text/plain and quote then ask
-        // if quoting binary mails is desired
+        { is MIME-Typ not text/plain and quote then ask }
+        { if quoting binary mails is desired }
         if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
           and (mpdata.typ <> '') and (quote=1) and
           not ReadJN(getres(406),true)   { 'Das ist eine BinÑrnachricht! Mîchten Sie die wirklich quoten' }
@@ -2106,6 +2106,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.12  2000/10/26 09:08:10  mk
+  - MIME-Fixes
+
   Revision 1.26.2.11  2000/10/26 08:55:11  mk
   - MIME-Fixes
 
