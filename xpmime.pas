@@ -6,7 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $Id }
+{ $Id$ }
 
 { CrossPoint - Multipart-Nachrichten decodieren / lesen / extrahieren }
 
@@ -372,7 +372,7 @@ var   hdp      : headerp;
           else ctype:=getres2(2440,2);                { 'Nachspann' }
       until isbound or eof(t);
       { MK 04.02.2000: Letzte Zeile im letzen Part wird sonst unterschlagen }
-      if eof(t) then inc(n);
+      { if eof(t) then inc(n); } 
       vorspann:=false;
 
       if not eof(t) and (ctype=getres2(2440,2)) then begin  { 'Nachspann' }
@@ -634,13 +634,14 @@ begin
       assign(t,fn);
       if append then system.append(t)
       else rewrite(t);
-      for i:=1 to lines-1 do begin
+      for i:=1 to lines do begin
         readln(input,s);
         if code=mcodeQP then begin
           softbreak:=(lastchar(s)='=');
           QP_decode;
-          Iso1ToIBM(s[1],length(s));
-          end
+          if (typ<>'text') or (subtyp<>'html') then
+            Iso1ToIBM(s[1],length(s));
+        end
         else
           softbreak:=false;
         if softbreak then begin
@@ -665,7 +666,7 @@ begin
       if lines>500 then { MK 01.02.2000 Auf 500 Zeilen angepasst }
         rmessage(2442);    { 'decodiere Bin„rdatei ...' }
 
-      for i:=1 to lines-1 do
+      for i:=1 to lines do
       begin
         readln(input,s);
         DecodeBase64;
@@ -701,6 +702,21 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.1  2000/03/25 10:43:09  mk
+  - Flagzeile kuerzen
+  - 'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert
+  - Suche: Pfeil fuer Historyauswahl kommt nur noch
+    wenn auch was gewaehlt werden kann.
+  - text/html wird jetzt mit ISO-Zeichensatz exportiert
+  - Mailstring: RFC-Konforme(re) Erkennung
+  - Bug beim Erzeugen des Received-Headers behoben
+  - Bugfix: Suchen-Spezial ohne Volltext aber mit Option "o" oder "a"
+    Vorbereitung der Such Teilstrings fuehrte zu nem RTE 201.
+  - Sternhimmel-Screensaver mit Zeitscheibenfreigabe arbeitet jetzt korrekt
+  - Mime-Extrakt: Bugfixes:
+    Makepartlist: kein INC(N) mehr beim Block mit EOF
+    Extraktmultipart: es wird wieder bis Lines extrahiert, nicht mehr Lines-1
+
   Revision 1.7  2000/03/01 23:41:48  mk
   - ExtractMultiPart decodiert jetzt eine Zeile weniger
 

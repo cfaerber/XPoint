@@ -168,7 +168,7 @@ type  OrgStr  = string[orglen];
                   realname   : string[realnlen];
                   { 11.10.1999 robo - Realname verl„ngert wg. MIME }
 
-                  programm   : string[40];    { Mailer-Name }
+                  programm   : string[60];    { Mailer-Name }
                   datei      : string[40];    { Dateiname }
                   ddatum     : string[22];    { Dateidatum, jjjjmmtthhmmss }
                   prio       : byte;          { 10=direkt, 20=Eilmail }
@@ -2839,7 +2839,8 @@ procedure WriteRFCheader(var f:file; mail:boolean);
 const smtpfirst : boolean = true;
 var dat    : string[30];
     p      : byte;
-    s      : string;
+    s,      
+    rfor   : string;
     first  : boolean;
     i      : integer;
     j      : integer; { 24.09.1999 robo }
@@ -2851,7 +2852,7 @@ var dat    : string[30];
     if first then begin
       wrs(f,'References: '+s);
       first:=false;
-      end
+    end
     else
       wrs(f,#9+s);
     s:='';
@@ -2871,19 +2872,19 @@ var dat    : string[30];
       if p<2 then begin
         p:=r+1;
         while (p<=length(ss)) and (ss[p]<>' ') do inc(p);
-        end;
+      end;
       if ss[p]=' ' then dec(p);
       uuz.s:=left(ss,p);
       RFC1522form;
       wrs(f,txt+uuz.s);
       ss:=trim(mid(ss,p+1));
       txt:=#9; r:=ml;
-      end;
+    end;
     if ss<>'' then begin
       uuz.s:=ss;
       RFC1522form;
       wrs(f,txt+uuz.s);
-      end;
+    end;
   end;
 
   function month(m:string):string;
@@ -2916,8 +2917,8 @@ var dat    : string[30];
 { lowercase wandeln wegen Macrosuff-Schrottnewsservern }
 
     if hd.netztyp=nt_RFC 
-     then formnews:=s 
-     else
+      then formnews:=s 
+      else
 
 { /robo }
 
@@ -2936,7 +2937,7 @@ var dat    : string[30];
       p:=empflist^.next;
       dispose(empflist);
       empflist:=p;
-      end;
+    end;
     wrs(f,'');
   end;
 
@@ -2967,25 +2968,27 @@ begin
         if smtpfirst then begin
           wrs(f,'HELO '+mid(s,p+1));
           smtpfirst:=false;
-          end;
+        end;
         wrs(f,'MAIL FROM:<'+s+'>');
         wrs(f,'RCPT TO:<'+hd.empfaenger+'>');
         ep:=empflist;
         while ep<>nil do begin
           wrs(f,'RCPT TO:<'+ep^.empf+'>');
           ep:=ep^.next;
-          end;
+        end;
         wrs(f,'DATA');
-        end
+      end
       else
         wrs(f,'From '+left(s,p-1)+' '+dat+' remote from '+mid(s,p+1));
+      if (wab<>'') and (cpos('@',oem)>0) and not smtp   { (*1) - s.u. }
+        then rfor:=empfaenger
+        else rfor:='';
       wrs(f,'Received: by '+mid(s,cpos('@',s)+1)+
-            iifs(programm<>'',' ('+programm+');',';'));
+            iifs(programm<>'',' ('+programm+')','')+
+            iifs(rfor<>'',#10#9'  for '+rfor+';',';'));
       wrs(f,#9'  '+left(date,2)+' '+month(copy(date,4,2))+right(date,4)+' '+
             time+' '+right(dat,5));   { akt. Datum/Uhrzeit }
-      if (wab<>'') and (cpos('@',oem)>0) then      { (*1) - s.u. }
-        wrs(f,#9+'  for '+empfaenger);
-      end
+    end
     else
       wrs(f,'Path: '+addpath+pfad);
     wrs(f,'Date: '+dat);
@@ -2998,19 +3001,19 @@ begin
       IBM2ISO;
       RFC1522form;
       wrs(f,'Sender: '+wab+iifs(uuz.s<>'',' ('+uuz.s+')',''));
-      end;
+    end;
     if mail then begin
-      if (wab<>'') and (cpos('@',oem)>0) then  { s. (*1) }
-        wrs(f,'To: '+oem)
-      else wrs(f,'To: '+empfaenger);
+      if (wab<>'') and (cpos('@',oem)>0)   { s. (*1) }
+        then wrs(f,'To: '+oem)
+        else wrs(f,'To: '+empfaenger);
       while empflist<>nil do begin
         if not nokop then
           wrs(f,'cc: '+empflist^.empf);
         ep:=empflist^.next;
         dispose(empflist);
 	empflist:=ep;
-	end;
-      end
+      end;
+    end
     else
       WriteNewsgroups;
     wrs(f,'Message-ID: <'+msgid+'>');
@@ -3047,9 +3050,9 @@ begin
             wrref;
           if s='' then s:='<'+addref[i]+'>'
           else s:=s+' <'+addref[i]+'>';
-          end;
-        if s<>'' then wrref;
         end;
+        if s<>'' then wrref;
+      end;
     if attrib and attrControl<>0 then
       wrs(f,'Control: '+betreff);
     if mail and (lstr(betreff)='<none>') then
@@ -3063,7 +3066,7 @@ begin
       IBM2ISO;
       RFC1522form;
       wrs(f,'Keywords: '+uuz.s);
-      end;
+    end;
     if summary<>'' then
       WrLongline('Summary: ',summary);
 
@@ -3110,7 +3113,7 @@ begin
       end;
       if s<>'7bit' then
         wrs(f,'Content-Transfer-Encoding: '+s);
-      end;
+    end;
 
     if not mail and (distribution<>'') then
       wrs(f,'Distribution: '+distribution);
@@ -3119,7 +3122,7 @@ begin
       IBM2ISO;
       RFC1522form;
       wrs(f,'Organization: '+uuz.s);
-      end;
+    end;
     if PmReplyTo<>'' then
       wrs(f,'Reply-To: '+pmreplyto);
     if pm_reply then
@@ -3141,7 +3144,7 @@ begin
       IBM2ISO;
       RFC1522form;
       wrs(f,uuz.s);
-      end;
+    end;
     if not mail then
       wrs(f,'Lines: '+strs(lines+iif(attrib and AttrMPbin<>0,16,0)));
     for i:=1 to addhds do
@@ -3168,8 +3171,8 @@ begin
       if ddatum<>'' then wrs(f,#9'      x-date="'+ZtoRFCdate(copy(ddatum,3,10),ddatum+'W+0')+'"');
       wrs(f,'Content-Transfer-Encoding: base64');
       wrs(f,'');
-      end;
     end;
+  end;
 end;
 
 
@@ -3496,6 +3499,22 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.1  2000/03/25 10:43:08  mk
+  - Flagzeile kuerzen
+  - 'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert
+  - Suche: Pfeil fuer Historyauswahl kommt nur noch
+    wenn auch was gewaehlt werden kann.
+  - text/html wird jetzt mit ISO-Zeichensatz exportiert
+  - Mailstring: RFC-Konforme(re) Erkennung
+  - Bug beim Erzeugen des Received-Headers behoben
+  - Bugfix: Suchen-Spezial ohne Volltext aber mit Option "o" oder "a"
+    Vorbereitung der Such Teilstrings fuehrte zu nem RTE 201.
+  - Sternhimmel-Screensaver mit Zeitscheibenfreigabe arbeitet jetzt korrekt
+  - Mime-Extrakt: Bugfixes:
+    Makepartlist: kein INC(N) mehr beim Block mit EOF
+    Extraktmultipart: es wird wieder bis Lines extrahiert, nicht mehr Lines-1
+
+
   Revision 1.8  2000/02/25 20:01:46  rb
   unben”tigte Funktion und Variable ausgeklammert
 

@@ -2254,8 +2254,20 @@ end;
 end.
 {
   $Log$
-  Revision 1.9  2000/03/04 23:34:53  mk
-  MH: Flagzeile kuerzen, falls zu lang
+  Revision 1.8.2.1  2000/03/25 10:43:09  mk
+  - Flagzeile kuerzen
+  - 'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert
+  - Suche: Pfeil fuer Historyauswahl kommt nur noch
+    wenn auch was gewaehlt werden kann.
+  - text/html wird jetzt mit ISO-Zeichensatz exportiert
+  - Mailstring: RFC-Konforme(re) Erkennung
+  - Bug beim Erzeugen des Received-Headers behoben
+  - Bugfix: Suchen-Spezial ohne Volltext aber mit Option "o" oder "a"
+    Vorbereitung der Such Teilstrings fuehrte zu nem RTE 201.
+  - Sternhimmel-Screensaver mit Zeitscheibenfreigabe arbeitet jetzt korrekt
+  - Mime-Extrakt: Bugfixes:
+    Makepartlist: kein INC(N) mehr beim Block mit EOF
+    Extraktmultipart: es wird wieder bis Lines extrahiert, nicht mehr Lines-1
 
   Revision 1.8  2000/03/03 18:14:46  mk
   MO: - fileseek fidofilelist, Quelltext renoviert und Suche nach ganzen Woertern eingeführt

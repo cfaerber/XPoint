@@ -172,9 +172,7 @@ procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr)
 procedure ukonv(var s:string;len:byte);        { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 {$IFDEF BP }
-{ Gibt die Versionnummer vom DOSEmu zurÅck, wenn XP nicht unter
-  dem Linux DOSEmu lÑuft, wird ein Leerstring zurÅckgegeben }
-function DOSEmuVersion: String;
+function lnxversion:word;                      { Dosemu-Version (analog zu dosversion), sonst 0 }
 {$ENDIF }
 { ================= Implementation-Teil ==================  }
 
@@ -1944,24 +1942,26 @@ end;
 { Ist Reverse = true, dann wird aus s die Mailadresse ausgeschnitten }
 function mailstring(s: String; Reverse: Boolean): string;
 const
-  MailChar: set of Char = ['0'..'9', 'A'..'Z', 'a'..'z', '-', '_', '.', '$', '@','=','!'];
-  WrongChar: set of Char = ['.', '_', '-'];
+  WrongChar: set of Char = ['.', '_', '*'];
+  ForbiddenChar: set of Char=['(', ')', '<', '>', ',', ';', ':', '\', '[', ']',' '];
 var
   i, j: Byte;
 begin
   i := CPos('@',s);                              {Ists ne Mailadresse ?}
   if i <> 0 then
   begin
-    while (s[i] in MailChar) and ( i > 0) do dec(i); { Anfang suchen... }
-    repeat                           { '.-_' sind am Anfang ungueltig }
+    while (s[i] > ' ') and (s[i] < chr(128)) and 
+     not (s[i] in forbiddenChar) and ( i > 0) do dec(i);   { Anfang suchen... }
+    repeat                                                 
       inc(i);
-    until not (s[i] in WrongChar);
+    until not (s[i] in WrongChar);            { '.-_' sind am Anfang ungueltig }
 
     j := i;
-    while (s[j] in MailChar) and (j <= length(s)) do Inc(j); {Ende suchen...}
-    repeat                                   {.-_ sind am Ende ungueltig}
+    while (s[j] > ' ') and (s[j] < chr(128)) and
+     not (s[j] in forbiddenChar) and (j <= length(s)) do Inc(j);  {Ende suchen...}
+    repeat                                                        
       dec(j);
-    until not (s[j] in WrongChar);
+    until not (s[j] in WrongChar);                    {.-_ sind am Ende ungueltig}
 
     if Reverse then
     begin
@@ -2160,79 +2160,46 @@ asm
 end;
 
 {$IFDEF BP }
-function DOSEmuVersion: String;
-const
-  DOSEMU_MAGIC_STRING       = '$DOSEMU$';
-var
-  DOSEMU_MAGIC: array[1..8] of char absolute $F000:$FFE0;
-  DOSEMU_VersionPos: array[1..4] of byte absolute $F000:$FFE8;
-  Dosemu_Dummy: String[8];
+{ Erkennt die Version des DOSEmu, wenn XP darin gestartet wird }
+function lnxversion:word;
+var biosdate:string[8];
+    vseg:word;
 begin
-  DOSEmuVersion:= '';
-  Move(DOSEMU_MAGIC, DOSEMU_DUMMY[1], sizeof(DOSEMU_DUMMY) - 1);
-  Dosemu_Dummy[0] := chr(sizeof(Dosemu_Dummy) - 1);
-  if Dosemu_Dummy = DOSEMU_MAGIC_STRING then
-    DOSEmuVersion:= StrS(DOSEMU_VersionPos[4]) + '.' +
-      StrS(DOSEMU_VersionPos[3]) + '.' + StrS(DOSEMU_VersionPos[2]);
+  lnxversion:=0;
+  fastmove(ptr($f000,$fff5)^,biosdate[1],8);
+  biosdate[0]:=char(8);
+  vseg:=memw[0:$e6*4+2];
+  if (vseg=$f000) and (biosdate='02/25/93') then begin
+    asm
+      xor ax,ax
+      mov vseg,ax
+      int 0e6h
+      cmp ax,0aa55h
+      jne @nodosemu
+      mov vseg,bx
+    @nodosemu:
+    end;
+    lnxversion:=vseg;
+  end;
 end;
 {$ENDIF }
 
 end.
 {
   $Log$
-  Revision 1.18  2000/03/05 12:14:51  mk
-  ML: DOSEmuVersion nutzt jetzt den offiziellen Weg
-
-  Revision 1.17  2000/03/04 15:54:43  mk
-  Funktion zur DOSEmu-Erkennung gefixt
-
-  Revision 1.16  2000/03/02 18:32:23  mk
-  - Code ein wenig aufgeraeumt
-
-  Revision 1.15  2000/03/01 22:30:20  rb
-  Dosemu-Erkennung eingebaut
-
-  Revision 1.14  2000/03/01 08:04:23  jg
-  - UND/ODER Suche mit Suchoptionen "o" + "u"
-    Debug-Checkfenster mit Suchoption "c"
-  - Umlautkonvertierungen beruecksichtigen
-    jetzt Maximalstringlaenge
-
-  Revision 1.13  2000/02/29 12:59:16  jg
-  - Bugfix: Umlautkonvertierung beachtet jetzt Originalstringlaenge
-    (Wurde akut bei Spezialsuche-Betreff)
-
-  Revision 1.12  2000/02/28 18:12:50  jg
-  -Bugfix: mehrere gleiche Umlaute in einem String konvertieren
-
-  Revision 1.11  2000/02/21 18:51:47  mk
-  MH: Nachrichten mit Prioritaet ab High hervorheben
-
-  Revision 1.10  2000/02/21 15:07:55  mk
-  MH: * Anzeige der eMail beim Nodelistbrowsen
-
-  Revision 1.9  2000/02/19 18:00:24  jg
-  Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
-  Umlautunabhaengige Suche kennt jetzt "Ç"
-  Mailadressen mit "!" und "=" werden ebenfalls erkannt
-
-  Revision 1.8  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.7  2000/02/18 18:39:03  jg
-  Speichermannagementbugs in Clip.pas entschaerft
-  Prozedur Cliptest in Clip.Pas ausgeklammert
-  ROT13 aus Editor,Lister und XP3 entfernt und nach Typeform verlegt
-  Lister.asm in Lister.pas integriert
-
-  Revision 1.6  2000/02/16 23:04:06  mk
-  JG: * Windows-Umlaute aus UKonv korrigiert
-
-  Revision 1.5  2000/02/15 21:19:24  mk
-  JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
-      * wenn man eine markierte Nachricht liest, wird beim Verlassen
-        der Headeranzeige nicht gleich auch der Lister verlasssen
-      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempf‰nger"
-        kˆnnen jetzt Umlautunabh‰ngig geschalten werden
+  Revision 1.16.2.1  2000/03/25 10:43:07  mk
+  - Flagzeile kuerzen
+  - 'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert
+  - Suche: Pfeil fuer Historyauswahl kommt nur noch
+    wenn auch was gewaehlt werden kann.
+  - text/html wird jetzt mit ISO-Zeichensatz exportiert
+  - Mailstring: RFC-Konforme(re) Erkennung
+  - Bug beim Erzeugen des Received-Headers behoben
+  - Bugfix: Suchen-Spezial ohne Volltext aber mit Option "o" oder "a"
+    Vorbereitung der Such Teilstrings fuehrte zu nem RTE 201.
+  - Sternhimmel-Screensaver mit Zeitscheibenfreigabe arbeitet jetzt korrekt
+  - Mime-Extrakt: Bugfixes:
+    Makepartlist: kein INC(N) mehr beim Block mit EOF
+    Extraktmultipart: es wird wieder bis Lines extrahiert, nicht mehr Lines-1
 
 }

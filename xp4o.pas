@@ -178,7 +178,7 @@ var x,y   : byte;
     seek              : string[suchlen];    
     found             : boolean;   
  
-label ende;
+label ende,happyend;
 
 
 { Check_Seekmode:
@@ -197,7 +197,7 @@ label ende;
   quotes  : boolean;
                                        
 {$IFDEF DebugSuche}                   { Zum Debuggen der Suchstringerkennung} 
-  Procedure Show_Seekstrings;
+  Procedure Show_Seekstrings;        
   var n,x,y:byte;
    begin
     if spez then x:=23 else x:=19;
@@ -236,8 +236,9 @@ label ende;
         seeknot[n]:=false;
         end;  
 {$Endif}
-    suchand:=cpos('o',lstr(suchopt))=0;                                  { OR }
-    if not suchand or (cpos('a',lstr(suchopt))>0) then                   { oder AND ?}
+    suchand:=cpos('o',lstr(suchopt))=0;                           { OR }
+    if not suchand or (cpos('a',lstr(suchopt))>0)                 { oder AND ?}
+     and not (trim(sst)='') then                          {und nicht Leertext (Suche-Spezial)}
     begin       
       n:=0;
       seek:=trim(sst);                              { Leerzeichen vorne und hinten, }
@@ -270,7 +271,7 @@ label ende;
         if seeklen[n-1]=0 then dec(n);                 { Falls String mit > "< Endete... }
         suchanz:=n;  
         end;
-     
+
       if suchanz=1 then suchand:=true;
       m:=0;
       for n:=0 to suchanz do            { Teilstrings Umsortieren: NOT zuerst }   
@@ -609,15 +610,16 @@ begin
       seek:=suchstring;
       maddstring(3,2,getres2(441,2),suchstring,32,SuchLen,range(' ',#255));
       mnotrim;
-{$ifdef History}
-      mappsel(false,history0);
-      mappsel(false,history1);
-      mappsel(false,history2);
+      if history0 <> '' then  { Bei Leerer Suchhistory kein Auswahlpfeil... }
+      begin
+        mappsel(false,history0);
+        mappsel(false,history1);
+        mappsel(false,history2);
+      end;
       mset3proc(seek_cutspace);
-{$endif}
       mhnr(530);                                       { 'Suchbegriff ' }
       if suchfeld<>'MsgID'
-      then Begin 
+      then Begin
         maddstring(3,4,getres2(441,3),suchopt,8,8,'');   { 'Optionen    ' }
         maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }
        
@@ -1763,7 +1765,7 @@ begin
           GetExtViewer(datei,viewer);
           if viewer.prog='' then TestGifLbmEtc(datei,false,viewer);
           if (viewer.prog<>'') and (viewer.prog<>'*intern*') then
-            ViewFile(TempPath+datei,viewer,false)
+            ViewFile(TempPath+datei,viewer)
           else
             dummy:=ListFile(TempPath+datei,datei,true,false,0);
           end
@@ -2417,12 +2419,20 @@ end;
 end.
 {
   $Log$
-  Revision 1.22  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.21  2000/03/04 18:34:18  jg
-  - Externe Viewer: zum Ansehen von Fileattaches wird keine Temp-Kopie
-    mehr erstellt, und nicht mehr gewartet, da kein Loeschen noetig ist
+  Revision 1.20.2.1  2000/03/25 10:43:08  mk
+  - Flagzeile kuerzen
+  - 'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verlaengert
+  - Suche: Pfeil fuer Historyauswahl kommt nur noch
+    wenn auch was gewaehlt werden kann.
+  - text/html wird jetzt mit ISO-Zeichensatz exportiert
+  - Mailstring: RFC-Konforme(re) Erkennung
+  - Bug beim Erzeugen des Received-Headers behoben
+  - Bugfix: Suchen-Spezial ohne Volltext aber mit Option "o" oder "a"
+    Vorbereitung der Such Teilstrings fuehrte zu nem RTE 201.
+  - Sternhimmel-Screensaver mit Zeitscheibenfreigabe arbeitet jetzt korrekt
+  - Mime-Extrakt: Bugfixes:
+    Makepartlist: kein INC(N) mehr beim Block mit EOF
+    Extraktmultipart: es wird wieder bis Lines extrahiert, nicht mehr Lines-1
 
   Revision 1.20  2000/03/02 20:09:31  jg
   - NOT Operator (~) fuer Suchstrings und Such-History eingebaut
