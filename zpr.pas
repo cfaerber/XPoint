@@ -307,7 +307,7 @@ var i,j : integer;
   end;
 
 begin
-  if paramcount=0 then helppage;
+  if paramcount=1 then helppage;
   err:=false;
   for i:=2 to paramcount do
   begin
@@ -1270,17 +1270,13 @@ begin
   closefiles;
   statistik;
   halt(sgn(errmsgs));
-(* !!
-  if (RightStr(fo,3)='$$$') then
-  begin     { evtl. Tempfile l”schen }
-    assign(f2,fo);
-    erase(f2);
-    if ioresult<>0 then;
-  end; *)
 end;
 
 {
   $Log$
+  Revision 1.47  2001/12/22 16:39:56  mk
+  - show help with "openxp zpr"
+
   Revision 1.46  2001/12/09 13:01:00  mk
   - fixed range check error
 
