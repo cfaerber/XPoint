@@ -611,7 +611,7 @@ var x,y      : Integer;
   procedure FlushLL;
   begin
     if llanz>Low(llbuf) then begin
-      blockwrite(pfile,llbuf,llanz*4);
+      blockwrite(pfile,llbuf,llanz*sizeof(llref));
       llanz:=Low(llbuf);
       end;
   end;
@@ -1283,6 +1283,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.12  2003/01/24 16:37:32  cl
+  - fixed last commit
+
   Revision 1.83.2.11  2003/01/24 14:24:11  cl
   - fixed problems during ``bezugsverkettung''
     (should also fix ``Cannot delete ...\SPOOL\1.z'').
