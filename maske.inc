@@ -258,6 +258,7 @@ var ax,p,myp  : integer;
           end;
         {cont:=cont+' ';}
         end;
+      v:=v and test2(cont);        
       if (selliste<>nil) and forcesll then begin
         p:=selliste;
         while (p<>nil) and (UpperCase(cont)<>UpperCase(p^.el)) do
@@ -277,7 +278,7 @@ var ax,p,myp  : integer;
         8 : v:=v and testdate;
         9 : v:=v and testtime(len,cont);
       end;
-      valid:=v and test2(cont);
+      valid:=v;
       end;
   end;
 
@@ -1118,6 +1119,11 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
+  Revision 1.38  2001/09/25 21:05:04  cl
+  - allow function added with msetvfunc to change the content or a field
+    _before_ is is checked for being a member of a list added with
+    maddsel(true,...)
+
   Revision 1.37  2001/09/08 16:29:29  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
