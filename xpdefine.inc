@@ -44,7 +44,9 @@
   Konfiguration mittels EASY-Mode verfgbar }
 {.$DEFINE EASY }
 
-{ --- ab hier sind keine Žnderungen n”tig --- }
+{ --- ab hier sind keine Aenderungen noetig -------------------------- }
+{ --- no user-serviceable parts below -------------------------------- }
+{ --- 1. compiler and platform detection ----------------------------- }
 
 {$IFDEF VER130 }          { Delphi 5.0 }
   {$DEFINE Delphi }
@@ -64,25 +66,12 @@
   {$ENDIF }
 {$ENDIF }
 
-{$IFNDEF VirtualPascal }
-  {$IFNDEF FPC }
-     {$IFNDEF Delphi }
-       {$IFNDEF Kylix }
-        !! Only Freepascal, Delphi, Kylix and Virtual Pascal is supported
-        {$ENDIF }
-     {$ENDIF }
-  {$ENDIF }
-{$ENDIF }
-
-{$IFDEF VirtualPascal }   { Virtual Pascal ab 2.0 }
-  {$DEFINE VP }
-  {$DEFINE Ver32 }
-  {$B-,D-,H+,I-,J+,M-,P+,Q-,R-,S-,T-,V-,W-,X+,Z-}
-  {&AlignCode+,AlignData+,AlignRec+,Asm-,Cdecl-,Delphi+,Frame+,G3+,LocInfo-}
-  {&Open32-,Optimise-,OrgName-,SmartLink+,Speed+,Use32+,ZD-}
-  {$IFDEF CPU86}
-    {$DEFINE i386} (* FreePascal compatible *)
-  {$ENDIF}
+{$IFNDEF FPC }
+   {$IFNDEF Delphi }
+     {$IFNDEF Kylix }
+      !! Only Freepascal, Delphi and Kylix are supported
+      {$ENDIF }
+   {$ENDIF }
 {$ENDIF }
 
 {$IFDEF FPC }             { Freepascal >= 1.0 }
@@ -97,7 +86,7 @@
   {$INLINE ON }
   {$PACKRECORDS Default } { Default: 2 }
   {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
-  {$C-,H+,I-,M-,P-,T-,V-,X+}  
+  {$C-,H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
 {$ENDIF }
@@ -122,22 +111,13 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J-,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
 {$ENDIF }
 
-{$IFDEF i386}
-  {$DEFINE LittleEndian} 
-{$ELSE}
-  !! Only i386 platform supported
-{$ENDIF}
-
 {$IFDEF DebugInfo }
-  {$IFDEF VirtualPascal }
-    {$D+,LocInfo+}
-  {$ENDIF }
   {$IFDEF Delphi }
     {$D+}                 { Debug-Informationen }
     {$L+}                 { Locale Symbole }
@@ -151,9 +131,6 @@
 {$ENDIF }
 
 {$IFDEF Debug }
-  {$IFDEF VirtualPascal }
-    {$Q+,R+,S+,W+,Optimize-}
-  {$ENDIF }
   {$IFDEF FPC }
     {$IFNDEF Linux }
       {$S+}               { Stack Checking }
@@ -187,38 +164,57 @@
 
 {$IFDEF Win32 }
   {$DEFINE Sockets }     { Sockets vorhanden }
-  {$IFDEF GUI }
-    {$DEFINE Win32GUI }
-    {$DEFINE LocalScreen }
-  {$ELSE }
-    {$DEFINE Win32Console }
-  {$ENDIF }
+  {$DEFINE Win32Console }
 {$ENDIF }
 
 {$IFDEF OS2 }
   {$M 131072,524288}
 {$ENDIF }
 
-{$IFDEF Linux }
-  {$DEFINE UnixFS }      { Unix-FS wird verwendet }
-  {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-  {$DEFINE Sockets }     { Sockets vorhanden }
-  {$DEFINE Unix }        { Linux is a Unix Platform }
-  {$M 500000,1024000}
-  {$IFDEF Debug} {$S+} {$ELSE} {$S-} {$ENDIF }
+{$IFDEF Linux}
+  {$DEFINE Unix}
+{$ENDIF}
+
+{$IFDEF FreeBSD }
+  {$DEFINE Unix }
+  {$DEFINE BSD }
+  {$UNDEF Linux }
 {$ENDIF }
 
-{$IFDEF BSD}
-  {$IFDEF FreeBSD }        { FPC >= 1.0.2, FreeBSD >=4.0 }
-    {$DEFINE UnixFS }      { Unix-FS wird verwendet }
-    {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-    {$DEFINE Sockets}      { Sockets for FreeBSD are near the same as for
-                            Linux. Maybe some non POSIX values for
-                            flag-parameters aren't allowed}
-    {$DEFINE Unix }        { FreeBSD is a Unix Platform }
-  {$ELSE}
-    // !! Non FreeBSD BSD targets (NetBSD, OpenBSD, BSDI) aren't supported yet
-  {$ENDIF}
+{$IFDEF NetBSD }
+  {$DEFINE Unix }
+  {$DEFINE BSD }
+  {$UNDEF Linux }
+{$ENDIF }
+
+{$DEFINE i386}
+{$IFDEF i386}
+  {$DEFINE LittleEndian} 
+{$ELSE}
+  !! Only i386 platform supported
+{$ENDIF}
+
+{$IFDEF OS2 }
+  {$M 131072,524288}
+{$ENDIF }
+
+{$IFDEF Linux }
+  {$DEFINE Sockets }     { Sockets vorhanden }
+  {$M 500000,1024000}
+  {$IFNDEF FPC}{$IFDEF Debug} {$S+} {$ELSE} {$S-} {$ENDIF }{$ENDIF}
+{$ENDIF }
+
+{ --- 2. File System and other system features ----------------------- }
+
+{ UnixFS: POSIXoid file system: uses '/' as a path separator and is    }
+{         case-sensitive                                               }
+{$IFDEF Unix}
+  {$DEFINE UnixFS}
+{$ENDIF}
+
+{ Sockets: Socket API available                                        }
+{$IFNDEF DOS32}
+  {$DEFINE Sockets}
 {$ENDIF}
 
 { --- Erkl„rungen der selbst gesetzen Defines --- }
@@ -257,6 +253,10 @@
 
 {
   $Log$
+  Revision 1.78.2.10  2003/01/18 22:20:08  mk
+  - merged most of the changes from Head-Branch to support FreeBSD/NetBSD
+  - removed Virtual Pascal support
+
   Revision 1.78.2.9  2002/12/14 21:07:21  mk
   - $C- for FPC in non debug mode
 
