@@ -2275,9 +2275,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.2  2000/04/06 22:12:44  mk
+  RB: - Bugfixes fuer Editor und Maustastenabfrage
+
   Revision 1.10.2.1  2000/04/06 07:50:12  mk
   - Bloecke formatieren im Editor uebernommen
-
   Revision 1.10  2000/03/02 20:51:22  rb
   Wrapper-Funktionen vap und vap2 aus Editor entfernt
 
