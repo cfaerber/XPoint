@@ -1543,11 +1543,11 @@ begin
   msgbox(72,msglines+8,'',x,y);
   moff;
   attrtxt(col.colmboxhigh);
-  wrt(x+9,y+1,'\\//');
-  wrt(x+9,y+2,'//\\');
+  wrt(x+9,y+2,'\\//');
+  wrt(x+9,y+3,'//\\');
   attrtxt(col.colmbox);
-  wrt(x+3,y+1,'Cross');
-  wrt(x+14,y+2,'Point');
+  wrt(x+3,y+2,'Cross');
+  wrt(x+14,y+3,'Point');
   s := '(c) 1992-1999 ' + pm;
   wrt(x+69-length(s),y+1,s);
   s := '(c) 2000-2001' + forms(' ',5) + iifs(deutsch,'OpenXP-Team','OpenXP Team');
@@ -1580,36 +1580,26 @@ procedure About;
 var x,y : byte;
     z   : taste;
     ver : string;
-    addxVer,addxInf,addxDia,addy : shortint;
+    addxVer,addxInf,addy : shortint;
+    DiaWidth : byte;
 begin
   addy := 0;
-  addxVer := 0;
-  addxInf := 0;
-  addxDia := 0;
   ver := xp_xp+' '+verstr+betastr;
   {$IFDEF Snapshot}
     addy := addy+1;
   {$ENDIF}
   if registriert.r2 then addy := addy+1;
-  if length(ver) > 30 then  { Versionsstring lÑnger als OpenXP/16-URL }
-  begin
-    if odd(length(ver)) then
-      addxDia := length(ver)-29
-    else
-      addxDia := length(ver)-30;
-    addxInf := addxDia div 2;
-  end else                  { Versionsstring gleich lang oder kÅrzer als OpenXP/16-URL }
-  begin
-    if odd(length(ver)) then
-      addxVer := (29-length(ver)) div 2
-    else
-      addxVer := (30-length(ver)) div 2;
-  end;
-  diabox(36+addxDia,18+addy,'',x,y);
+  { Breite des Dialogs aus LÑnge der Versionsbezeichnung,     }
+  { URL, eMail-Adresse und "Mandrella-String" (=30) berechnen }
+  DiaWidth:=max(max(max(length(author_url),length(author_mail))+7,length(ver)),30);
+  addxVer:=iif(length(ver)=DiaWidth,0,(DiaWidth-length(ver)) div 2);
+  addxInf:=iif(addxVer>0,0,(DiaWidth-max(max(length(author_url),length(author_mail))+7,30)) div 2);
+  if odd(DiaWidth) then dec(DiaWidth);  { "gerade" Breite erzwingen }
+  diabox(DiaWidth+6,18+addy,'',x,y);
   moff;
   attrtxt(col.colmboxhigh);
-  wrt(x+16+addxInf,y+2,'\\//');
-  wrt(x+16+addxInf,y+3,'//\\');
+  wrt(x+((DiaWidth+6) div 2)-2,y+2,'\\//');
+  wrt(x+((DiaWidth+6) div 2)-2,y+3,'//\\');
   wrt(x+3+addxVer,y+5,ver);
   {$IFDEF Snapshot}
     wrt(x+3+addxVer,y+6,'Snapshot: '+compiletime);
@@ -1617,8 +1607,8 @@ begin
   if registriert.r2 then
     wrt(x+3+addxVer,y+5+addy,getres2(520,19)+LizenzNummer);
   attrtxt(col.colmbox);
-  wrt(x+10+addxInf,y+2,'Cross');
-  wrt(x+21+addxInf,y+3,'Point');
+  wrt(x+((DiaWidth+6) div 2)-8,y+2,'Cross');
+  wrt(x+((DiaWidth+6) div 2)+3,y+3,'Point');
   wrt(x+3+addxInf,y+7+addy,forms('(c) 1992-1999',15)+pm);
   wrt(x+3+addxInf,y+8+addy,forms('(c) 2000-2001',15)+iifs(deutsch,'OpenXP-Team','OpenXP Team'));
   wrt(x+3+addxInf,y+9+addy,forms(x_copyright,15)+author_name);
@@ -1626,7 +1616,7 @@ begin
   wrt(x+3+addxInf,y+12+addy,'eMail: '+author_mail);
   wrt(x+3+addxInf,y+13+addy,'WWW  : '+author_url);
   mon;
-  ReadButton(x+13+addxInf,y+15+addy,1,'*   ^OK   ',1,true,z);
+  ReadButton(x+((DiaWidth+6) div 2)-5,y+15+addy,1,'*   ^OK   ',1,true,z);
   closebox;
   freeres;
 end;
@@ -1642,6 +1632,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.10  2002/04/14 14:28:13  my
+  MY:- About-Dialog fÅr alle "Lebenslagen" fit gemacht (Breite des Dialogs
+       und Position der Strings immer richtig berechnen), Position "XP"
+       im Beta-Dialog korrigiert.
+
   Revision 1.10.2.9  2002/03/08 23:40:11  my
   MY:- Registrierungs-, Beta-, "öber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
