@@ -1465,10 +1465,10 @@ begin
   if right(viewer_lister,1)='.' then viewer_lister:=left(viewer_lister,length(viewer_lister)-1);
 
   dialog(ival(getres2(273,0)),18,getres2(273,1),x,y);  { 'Viewer-Einstellungen' }
-  maddtext(2,2,getres2(273,6),col.coldiahigh);     { Allgemeines}
+  maddtext(3,2,getres2(273,6),col.coldiahigh);     { Allgemeines}
   maddbool(3,4,getres2(273,7),delviewtmp);   { Keine Warte-Batchdatei bei Windows-Viewern }
   mhnr(8071);
-  maddtext(2,7,getres2(273,2),col.coldiahigh);    { 'Sicherheit bei Multiformat Mime-Viewern:'}
+  maddtext(3,7,getres2(273,2),col.coldiahigh);    { 'Sicherheit bei Multiformat Mime-Viewern:'}
   maddtext(3,9,getres2(273,3),0);          { Sichere Dateiendungen (externen Viewer benutzen):}
   maddstring(3,10,'',viewer_save,50,255,'>');
   mset1func(testfilename);
@@ -1493,6 +1493,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/09/10 01:11:29  my
+  MY: Tausendundeins Korrekturen, Änderungen und Ergänzungen, speziell in XP.IHQ
+      (u.a. für C/O/V, neue Topics für Kommandozeilen-Parameter, Standard-Mailer
+      unter Windows und Mailinglisten)
+  MY: in xp2c.pas nur kleine Layoutkorrektur (übernommen von JG in 3.30)
+
   Revision 1.54  2000/08/26 08:47:42  mk
   JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
 

@@ -1,4 +1,4 @@
-CrossPoint v3.2
+CrossPoint v3.7
 15 6
 53 19
 2 1
@@ -14,9 +14,13 @@ Keine Hilfe verfgbar.
 
      [Hotkeys]@4
 
-     [Supportadressen]@5
+     [Kommandozeilen-Parameter]@7
 
-     [Supportmailbox]@9
+     [Errorlevel]@8
+
+     [Support]@5
+
+     [Bezugsquellen]@9
 
      [Lizenzbestimmungen]@6
 @
@@ -25,31 +29,31 @@ Keine Hilfe verfgbar.
 
 Aktivieren der Online-Hilfe:
 
-<<F1>>      zeigt zu jedem Programmteil passende Hilfs-
+<<F1>>      zeigt zu jedem Programmteil passende Hilfe-
         informationen an
 
-<<Alt-F1>>  zeigt die zuletzt abgerufene Hilfsseite an.
+<<Alt-F1>>  zeigt die zuletzt abgerufene Hilfeseite an.
         Mehrfaches Drcken von <Alt-F1> bl„ttert zu
-        den vorausgehenden Hilfsseiten zurck.
+        den vorausgehenden Hilfeseiten zurck.
 
-Innerhalb einer Hilfsseite:
+Innerhalb einer Hilfeseite:
 
 <<F1>>      Hilfe-Inhaltsverzeichnis
 
-<<Ctrl-D>>  druckt die angezeigte Hilfsseite aus. Es
+<<Ctrl-D>>  druckt die angezeigte Hilfeseite aus. Es
         gelten die Drucker-Einstellungen unter
         [/Config/Drucker].@10606
 
-Groáe Hilfsseiten, die mehrere Bildschirmseiten um-
+Groáe Hilfeseiten, die mehrere Bildschirmseiten um-
 fassen, erkennen Sie an einer ge„nderten Rahmenform -
 Sie k”nnen mit den blichen Tasten (Pfeiltasten,
 PgUp/PgDn etc.) innerhalb dieser Seiten bl„ttern.
 
-Viele Hilfsseiten enthalten farblich hervorgehobene
+Viele Hilfeseiten enthalten farblich hervorgehobene
 [Querverweise] auf andere Seiten. Sie k”nnen mit den@7000
 Tasten <Tab> und <Shift-Tab> oder mit den Anfangs-
 buchstaben den gewnschten Querverweis w„hlen und
-gelangen mit <Enter> zur passenden Hilfsseite. Mit
+gelangen mit <Enter> zur passenden Hilfeseite. Mit
 <Alt-F1> geht's wieder zurck zur vorhergehenden
 Seite.
 
@@ -84,13 +88,20 @@ nicht mit der Online-Hilfe oder der Dokumentation
 (Handbuch) l”sen lassen, haben Sie verschiedene
 M”glichkeiten:
 
+
 ş  Schildern Sie Ihr Problem in einem der Support-
    Bretter:
 
-   Z-Netz     /Z-NETZ/ALT/SUPPORT/XPOINT/ALLGEMEINES
-   FidoNet    CROSSPOINT.GER
-   MausNet    MT.XP
+   Z-Netz (*) /DE/COMM/SOFTWARE/CROSSPOINT  (Usenet)
+              /Z-NETZ/ALT/SUPPORT/XPOINT/ALLGEMEINES
+   FidoNet    CROSSPOINT.GER,  CROSSPOINT.EXPERT.GER
+   MausNet    Maus.Tausch.CrossPoint
    Usenet     de.comm.software.crosspoint
+
+  (*) Z-Netz: Es ist zu empfehlen, prim„r die Usenet-
+              Gruppe zu benutzen, da Sie im Z-Netz-
+              Brett kaum noch aktive CrossPoint-User
+              antreffen werden.
 
    Die Bretter werden von vielen erfahrenen XP-Usern
    gelesen; dadurch l„át sich fr fast jedes Problem
@@ -98,21 +109,42 @@ M”glichkeiten:
    Ihrer Box nicht gefhrt wird, fragen Sie Ihren
    Sysop. Er kann es fr Sie bestellen.
 
-ş  Es gibt im Internet auch einige Homepages zum
-   Thema CrossPoint:
 
-         http://www.crosspoint.de/
-         (Offizelle XP-Homepage von Peter Mandrella)
+ş  <<Bugreports>> sollten bevorzugt wie folgt gemeldet
+   werden (mit absteigender Priorit„t):
 
-         http://www.openxp.de/
-         (Offizielle Homepage des OpenXP-Projekts)
+   Internet   eMail an: <<dev\@openxp.de>>
+              Damit erreichen Sie die Entwickler des
+              OpenXP-Teams in der [Mailingliste], an@11
+              der Sie auch selbst teilnehmen k”nnen
+              (s. <<http://www.openxp.de/>>).
 
-         Bugreports fr Fehlermeldungen sollten in
-         der Usenet-Newsgroup gemeldet werden.
+   Usenet     Artikel in: <<de.comm.software.crosspoint>>
+
+   Fido       Echomail in: <<CROSSPOINT.DEVELOP.GER>>
+              Auch hier haben Sie - ber ein Gate -
+              Verbindung zur offenen [Mailingliste]@11
+              des OpenXP-Teams: alle Fido-Echomails,
+              deren Betreff mit "[OpenXP]" beginnen,
+              werden in die Liste "gegated", umge-
+              kehrt werden alle eMails von der Liste
+              in das Echo gegated.
 
 <<Bei Problemen und Anfragen sollten Sie IMMER die
 <<Nummer Ihrer CrossPoint-Version angeben, bei einem
 <<Programmausstieg IMMER die genaue Fehlermeldung!
+
+
+ş  Es gibt im Internet auch einige Homepages zum
+   Thema CrossPoint:
+
+<<         http://www.openxp.de/
+         (offizielle Homepage des OpenXP-Projekts;
+         dort finden Sie auch Links zu weiteren Sei-
+         ten ber CrossPoint im World Wide Web).
+
+<<         http://www.crosspoint.de/
+         (offizelle XP-Homepage von Peter Mandrella)
 
 @
 6
@@ -129,15 +161,256 @@ N„heres zur Registrierung finden Sie in der beilie-
 genden Datei <<LIZENZ.DOC>> und unter dem Menpunkt
 /XPoint/Registrierung.
 @
+7
+<<CrossPoint - Kommandozeilen-Parameter
+
+Die Aufrufsyntax von CrossPoint ist:
+
+XP [/Option1 /Option2 ...]
+
+
+M”gliche Optionen sind:
+
+<</?>>    Ausgabe einer Hilfeseite
+
+<</av:>>  aktiviert den eingebauten Archiv-Viewer und
+      beendet das Programm anschlieáend. Als Para-
+      meter muá der Name einer Datei oder eine Wild-
+      card (z.B. *.*) angegeben werden.
+
+<</f:<Datei> >> l„dt eine EGA/VGA-Schriftdatei (Bild-
+      schirm-Font) in den blichen Formaten (8x8 bis
+      8x16 Punkte). Falls keine Dateierweiterung an-
+      gegeben wird, nimmt XP ".FNT" an.
+
+<</gd:>>  w„hlt eine andere Gebhrendatei (Default:
+      GEBUEHR.DAT). N„heres s. FIDO.TXT.
+
+<</j>>    fr ein Programmende ohne irgendeinen dummen
+      Spruch...
+
+<</k:X>>  bergibt den Tastendruck X an das Programm, wo-
+      bei X ein(e) beliebige(s/r) Zeichen/Zahl/Buch-
+      stabe sein kann. Auf diese Weise kann ein
+      Tastenmakro bei Programmstart aktiviert werden.
+
+<<"/k:<Text>">>  bergibt direkt die in <Text> angegebe-
+      nen Zeichen und Sondertasten (anzugeben gem„á
+      XP-Makro-Notation, s. [Makro-Hilfe]) an das Pro-@548
+      gramm.
+
+<</l:X>>  w„hlt die Sprache X aus, z.B. /l:E fr Eng-
+      lisch. Voraussetzung ist, daá das entsprechen-
+      de Sprachmodul installiert wurde.
+
+<</LCD>>  behebt Anzeigeprobleme auf bestimmten Laptops
+      (Zeilen am unteren Bildrand fehlen etc.). Evtl.
+      wird die Anzeige durch den Schalter /m (s.u.)
+      zus„tzlich verbessert.
+
+<</m>>    Erzwingen von monochromer Bildschirmausgabe,
+      z.B. fr LC-Displays.
+
+<</mailto:<Adresse>\<Server> >> schickt eine direkte
+      Nachricht bei Programmstart an die in <Adresse>
+      angegebene eMail-Adresse und verwendet die in
+      <Server> angegebene Box (optional - wenn kein
+      Server angegeben wurde, wird der Server verwen-
+      det, der beim jeweiligen User eingetragen ist.
+      Existiert der User nicht, wird die Stammbox
+      verwendet. ACHTUNG: das kann z.B. auch eine
+      Fido-Box sein, deshalb sicherheitshalber immer
+      einen RFC-Server angeben!).
+      Dieser Parameter wird automatisch verwendet,
+      wenn CrossPoint als Standard-Mailer in Windows
+      registriert ist und ein Mausklick auf einen
+      "mailto:"-Link erfolgt (funktioniert leider
+      nicht mit Netscape!). Siehe auch:
+      [CrossPoint als Standard-Mailer in Windows]@10
+
+<</maus>> aktiviert eine Cursor-Maus-Emulation.
+
+<</nb>>   schaltet bei Beta-Versionen den Warnhinweis ab.
+
+<</os2x>>  verwendet eine von vier (x = a bis d) undoku-
+      mentierten OS/2-Funktionen zur Rechenzeit-
+      Freigabe. Die Verwendung der Schalter /os2a
+      bis /os2d kann zur Systeminstabilit„t fhren,
+      bei merkwrdigen Problemen w„hrend des XP-
+      Betriebs nicht weiterverwenden!
+
+<</pw:xxx>>  bergibt das Startpaáwort "xxx"
+      (s. XPOINT.TXT, Kap. 3.4).
+
+<</q>>    schaltet alle Tonsignale ab. Damit CrossPoint
+      Sie beim automatischen Netcall nicht weckt.
+
+<</rp>>   CrossPoint berprft nach Beendigung einer DOS-
+      Shell, ob residente Programme geladen wurden.
+      Sollte diese šberprfung - aus welchem Grund
+      auch immer - rger machen, k”nnen Sie sie mit
+      /rp abschalten.
+
+<</sd>>   Falls ein MS-Smartdrive-Schreibcache vorhanden
+      ist, leert XP den Cache in regelm„áigen Abst„n-
+      den und bei Programmende, um die Gefahr von
+      Datenverlusten zu verringern. Sollten diese
+      Smartdrive-Zugriffe Probleme verursachen, so
+      k”nnen Sie sie mit /sd abschalten.
+
+<</trace>>  aktiviert die Netcall-Scriptprotokollierung
+      (s. XPOINT.TXT, Kap. 8.1.).
+ 
+<</w>>    gibt nicht ben”tigte Rechenzeit unter Multi-
+<</w1>>   tasking-Umgebungen frei. Unter Windows, OS/2
+      und Linux DOS-Emu ist die Angabe dieses Para-
+      meters nicht n”tig, da die Rechenzeitfreigabe
+      dort automatisch erfolgt.
+
+<</w0>>   schaltet die Rechenzeitfreigabe (siehe Parame-
+      ter "/w") fr Windows, OS/2 und Linux DOS-Emu
+      explizit ab.
+
+<</w2>>   erzwingt Rechenzeitfreigabe wie in Versionen
+      vor XP v3.20 (Uhr, ScreenSaver und die /maus-
+      Emulation werden abgeschaltet.
+
+<</z:nn>>  stellt nn Bildzeilen ein. "nn" muá einer der
+      bei [/Config/Anzeige/Zeilen] angezeigten Zeilen-@10905
+      werte sein.
+
+
+Wenn Sie mehrere der folgenden Optionen gleichzeitig
+angeben, dann werden diese immer in der unten angege-
+benen Reihenfolge ausgefhrt. Die gleichzeitige Anga-
+be von /ip und /ipe ist nicht m”glich; es wird dann
+nur die jeweils letzte Option ausgefhrt:
+
+<</autostart:...>>  startet CrossPoint nur zu bestimmten
+                Uhrzeiten (s. XPOINT.TXT, Kap. 5.3.).
+
+<</user:BOX:NAME>>  „ndert den Usernamen bei der angege-
+                benen Box. Siehe auch XPOINT.TXT,
+                Kap. 5.7, "Multiuser-Points".
+                Achtung: Bei Fido-Boxen muá im Box-
+                namen ein "_" statt des ":" verwen-
+                det werden!
+
+<</ip:PUFFER>>      liest den angegebenen Puffer ein
+                ([/XPoint/Import/Puffer]). Der Datei-@11001
+                name darf Laufwerks- und Pfadbezeich-
+                nungen enthalten.
+
+<</ipe:PUFFER>>     liest den angegebenen Puffer ein und
+                setzt dabei das Empfangsdatum gleich
+                dem Erstellungsdatum.
+
+<</ips:BOX:PUF>>    liest den angegebenen Puffer ein,
+                verschickt ihn an die angegebene Box
+                und l”scht ihn anschlieáend (s.
+                XPOINT.TXT, Kap. 5.6). Achtung: Bei
+                Fido-Boxen muá im Boxnamen ein "_"
+                statt des ":" verwendet werden!
+
+<</g>>              ist ein Zusatzschalter fr /ip und
+                /ipe, der die importierten Nachrich-
+                ten als 'gelesen' eintr„gt. Bei /ips
+                ist die Angabe von /g nicht n”tig.
+
+<</n:BOX[:hh:mm]>>  fhrt einen Netcall bei der angegebe-
+                nen Box durch. Bei Angabe einer Uhr-
+                zeit im Format hh:mm wartet Cross-
+                Point bis zu dieser Uhrzeit. Achtung:
+                Bei Fido-Netcalls muá im Boxnamen ein
+                "_" statt des ":" verwendet werden!
+
+<</n:*>>            entspricht /Netcall/Alle.
+
+<</nr:BOX>>         fhrt einen Relogin-Netcall durch.
+                Die Verbindung muá bestehen, und die
+                Box muá auf die Eingabe des Userna-
+                mens warten (nur Z-Netz/QM).
+
+<</t:n>>     fhrt die Timing-Liste Nr. n aus
+         (s. XPOINT.TXT, Kap. 5.3).
+
+<</r>>       fhrt [/Wartung/Reorganisation] durch.@10701
+
+<</pack>>    das gleiche, jedoch mit [/Wartung/Packen].@10702
+
+<</xpack>>   nur Dateien packen, deren Ausnutzung unter
+         100% liegt. Wahlweise kann ein einzelner Da-
+         teiname angegeben werden, z.B. /xpack:USER,
+         um die Userdatei zu packen.
+
+<</ss>>      Screensaver aktivieren.
+
+<</x>>       Programm beenden - kann gleichzeitig mit
+         allen anderen Parametern angegeben werden.
+
+
+Die folgenden Optionen sind nur zu Diagnosezwecken
+gedacht:
+
+<</d>>       startet CrossPoint im Debug-Mode. Dies be-
+         wirkt u.a. eine genauere Anzeige w„hrend
+         des Netcalls und kann hilfreich sein, um
+         Netcall-Probleme zu lokalisieren. Auáerdem
+         stehen noch einige zus„tzliche Test-Funktio-
+         nen (Speicherplatzanzeige u.a.) zur Verf-
+         gung, die aber nur fr interne Testzwecke
+         gedacht sind und daher nicht weiter dokumen-
+         tiert werden.
+
+<</df:1>>    Zeigt bei jedem externen Programmaufruf den
+         genauen Aufrufbefehl an. Entspricht dem
+         Schalter [Parameterzeile anzeigen] bei@312
+         /Config/Extern/Shell.
+
+<</df:2>>    Wartet nach jedem externen Programmaufruf
+         auf einen Tastendruck. Entspricht dem Schal-
+         ter [auf Tastendruck warten] bei /Config/@313
+         Extern/Shell.
+
+Statt die Optionen als Parameter bei Programmstart
+anzugeben, k”nnen Sie sie auch in einer Datei mit
+Erweiterung .OPT im AUTOEXEC-Unterverzeichnis able-
+gen; jede Zeile der Datei muá genau eine Option ent-
+halten. Mehrere .OPT-Dateien sind m”glich.
+
+@
+8
+<<CrossPoint - Errorlevel
+
+CrossPoint gibt bei Beendigung folgende ERRORLEVEL-
+Werte zurck:
+
+<<0>>:      Programm wurde normal beendet.
+<<1>>:      Programm wurde mit einem (internen) Fehler
+        beendet.
+
+<<2-9>>:    Diese Werte sind reserviert. Bitte erzeugen
+        Sie bei der QUIT-Option nur Errorlevel >= 10:
+
+<<10-255>>: Diese Errorlevel-Werte k”nnen mit der QUIT-
+        Option in Timing-Listen erzeugt werden und
+        dadurch von XP aus externe Programme steuern.
+        Siehe auch XPOINT.TXT, Kap. 5.3 (automatische
+        Netcalls). Im Prinzip sind auch Werte von 0-9
+        m”glich, aber wie gesagt: Besser nicht ver-
+        wenden, da reserviert fr zuknftige Erweite-
+        rungen.
+
+@
 9
-<<Bezugsquellen
+<<CrossPoint - Bezugsquellen
 
 Die neueste Version des OpenXP-Teams und weitere
 Infos zur Weiterentwicklung von CrossPoint durch
 das OpenXP-Projekt finden Sie auf:
 
-        http://www.openxp.de/
-        oder File-Request bei 2:248/2004
+<<        http://www.openxp.de/
+        oder Fido File Request bei <<2:248/2004>>
 
 
 Eine sehr gut sortierte Mailbox fr alles rund um
@@ -145,27 +418,299 @@ CrossPoint und die aktuellen Versionen des OpenXP-
 Teams ist die Kruemel Boks! des Cross-Secretary-
 Programmierers Christian von Busse im FidoNet:
 
-        2:/240/2100
+<<        2:240/2100
 
 
 Die "klassische" Programmversion (bis v3.12d),
 Zusatztools und Informationen zu CrossPoint
 finden Sie im Internet unter:
 
-        http://www.crosspoint.de/
+<<        http://www.crosspoint.de/
+
+@
+10
+<<CrossPoint als Standard-Mailer in Windows
+
+In Windows (95/98, Millennium, 2000 und NT) k”nnen
+Sie CrossPoint als Standard-Mailer registrieren, so
+daá automatisch CrossPoint gestartet wird, wenn Sie
+auf einen sog. "mailto:"-Link klicken. Dabei werden
+die Mail-Adresse des Empf„ngers und der Server an
+CrossPoint bergeben und Sie k”nnen nach Eingabe des
+Betreffs direkt mit dem Editieren Ihrer Nachricht
+beginnen.
+
+Dem CrossPoint-Paket liegt eine Datei XPMAILTO.REG
+bei. Bitte passen Sie dort zun„chst mit einem belie-
+bigen Texteditor die Pfadangaben zu Ihrer CrossPoint-
+Installation (z.B. "C:\XP"), den Namen des zu verwen-
+denden Servers (z.B. "t-online") und den Pfad bzw.
+Namen des XP-Startbefehls (z.B. "C:\BAT\XP.BAT") an
+und fhren Sie diese Datei aus (z.B. durch einen Dop-
+pelklick auf die Datei im Windows Explorer). Danach
+sind die in XPMAILTO.REG enthaltenen Angaben in Ihrer
+Windows-Registry (Registrierdatenbank) eingetragen.
+
+Bitte beachten Sie, daá Backslashes in Pfadangaben
+in XPMAILTO.REG doppelt anzugeben sind!
+
+Sollte XPMAILTO.REG fehlen (oder Sie aus irgendeinem
+Grund die Eintr„ge manuell vornehmen wollen), k”nnen
+Sie nachfolgend sehen, welche Eintr„ge wo vorzunehmen
+sind.  WARNUNG: Nehmen Sie keine nderungen an der
+Registry vor, wenn Sie damit nicht vertraut sind!
+Machen Sie in jedem Fall vorher ein Backup der ent-
+sprechenden Datei (SYSTEM.DAT in Ihrem Windows-
+Verzeichnis)!
+
+Die folgenden Angaben gehen davon aus, daá CrossPoint
+in C:\XP installiert ist, der zu verwendende Server
+(d.h. der Name der zu verwendenden Box) "t-online"
+ist, und daá Sie CrossPoint mit einer Batchdatei
+XP.BAT starten, die im Verzeichnis C:\BAT liegt.
 
 
-Die offizielle Support-Mailbox fr die "klassischen"
-CrossPoint-Versionen bis v3.12d im FidoNet ist Max
-Raabes Klystron BBS:
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail
+----------
 
-        2:2454/97
+Wert:      <<(Standard)>>
+Daten:     <<CrossPoint>>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint
+
+Wert:      <<(Standard)>>
+Daten:     <<CrossPoint>>
+
+Wert:      <<DLLPath>>
+Daten:     <<C:\XP\XPICONS.DLL>>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint\Protocols
+
+Wert:      <<(Standard)>>
+Daten:     <<[leer]>>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint\Protocols\mailto
+
+Wert:      <<(Standard)>>
+Daten:     <<URL:MailTo Protocol>>
+
+Wert:      <<EditFlags>>  (Bin„rwert!)
+Daten:     <<02 00 00 00>>
+
+Wert:      <<URL Protocol>>
+Daten:     <<[leer]>>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint\Protocols\mailto\DefaultIcon
+
+Wert:      <<(Standard)>>
+Daten:     <<C:\XP\XPICONS.DLL,-1>>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint\Protocols\mailto\shell
+
+Wert:      <<(Standard)>>
+Daten:     <<[leer]>>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint\Protocols\mailto\shell\open
+
+Wert:      <<(Standard)>>
+Daten:     <<[leer]>>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint\Protocols\mailto\shell\open\
+           <<command
+
+Wert:      <<(Standard)>>
+Daten:     <<"C:\BAT\XP.BAT" "/nb /%1\t-online">>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint\shell
+
+Wert:      <<(Standard)>>
+Daten:     <<[leer]>>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint\shell\open
+
+Wert:      <<(Standard)>>
+Daten:     <<[leer]>>
+
+
+Schlssel: <<HKEY_LOCAL_MACHINE\Software\Clients\Mail\
+---------- <<CrossPoint\shell\open\command
+
+Wert:      <<(Standard)>>
+Daten:     <<C:\BAT\XP.BAT>>
+
+
+<<Hinweis:>> Es ist sinnvoll, fr CrossPoint eine PIF-
+         Datei anzulegen, dort die Batchdatei (z.B.
+         XP.BAT) bzw. XP.EXE einzutragen, und in
+         XPMAILTO.REG dann statt "C:\BAT\XP.BAT" den
+         Namen und Pfad der PIF-Datei anzugeben (z.B.
+         "C:\WINDOWS\Startmen\CrossPoint.pif".
+
+@
+11
+<<CrossPoint und Mailinglisten
+
+Mailinglisten sind, kurz gesagt, Bretter auf PM-Basis
+(im Usenet-Jargon: Newsgroups auf eMail-Basis). Das
+Prinzip ist, daá die Teilnehmer der Mailingliste eine
+PM (eMail) an einen Pseudo-User schreiben. Jede bei
+diesem Pseudo-User eingehende PM wird dann vom Mai-
+linglist-Server an alle Teilnehmer der Liste weiter-
+geleitet.
+
+Normalerweise wrden alle Mails, die Sie ber eine
+Mailingliste erhalten, in Ihr internes PM-Brett ein-
+sortiert werden. Des weiteren wrde sich CrossPoint,
+wenn Sie auf eine solche Mail antworten, auch wie
+bei einer PM verhalten (es wrde z.B. fragen, ob sie
+die PM archivieren wollen, und es wrde die entspre-
+chende PM-Schablone verwenden).
+
+Dieses Verhalten ist i.d.R. nicht erwnscht, weil
+Sie auf die Dauer bei Mailinglisten, die einen hohen
+"Traffic" haben, die šbersicht verlieren wrden.
+Idealerweise sollte sich eine Mailingliste in XP wie
+ein Brett (Newsgroup) verhalten. Eine grunds„tzliche
+Anleitung, wie Sie dies erreichen, folgt hier:
+
+
+<<Anmeldung bei der Liste und User einrichten
+
+Zun„chst melden Sie sich bei der Liste an (wie das
+funktioniert, erfahren Sie vom Betreiber der Liste).
+Dabei erfahren Sie auch, an welchen Pseudo-User Sie
+schreiben mssen, um eine Nachricht an die Mailing-
+liste abzusetzen. Im Falle der OpenXP-Mailingliste
+ist dies z.B. <<openxp-dev\@lists.sourceforge.net>>.
+
+Diese Useradresse legen Sie nun wie einen ganz nor-
+malen User an (<<S>>, <<H>> in der User-šbersicht). Wichtig:
+die Haltezeit dieses Users setzen Sie auf 1 Tag!
+
+Wenn Sie nun eine Mail an diesen User schreiben (<<B>> in
+der User-šbersicht), erhalten alle brigen Teilnehmer
+der Liste diese Mail ebenfalls.
+
+
+<<Behandlung eingehender Nachrichten (Filtern)
+
+Bei einem der n„chsten Netcalls nach der Anmeldung
+bei der Mailingliste werden Sie (mehr oder weniger)
+Nachrichten ber diese Liste erhalten. Diese werden
+zun„chst in Ihr internes PM-Brett einsortiert.
+
+Alle Mails, die Sie ber eine Mailingliste erhalten,
+haben im Nachrichtenkopf irgendeine gemeinsame Eigen-
+schaft (im Falle der OpenXP-Mailingliste ist dies
+u.a. der Text "<<openxp-dev\@lists.sourceforge.net>>" im
+Antwort-An-Header der Nachricht. Leider gibt es hier-
+fr keinen einheitlichen Standard und so kann das
+Merkmal entweder eine Antwort-An-Headerzeile (Reply-
+To), eine spezielle Headerzeile wie "X-Mailinglist"
+oder sonst irgendwas sein - Sie mssen es nur heraus-
+finden.
+
+Sobald Sie das geschafft haben, mssen Sie einen
+[Eingangsfilter] einrichten, den Sie anschlieáend@199
+unter /Edit/Boxen/Edit/Namen eintragen (bzw. wenn
+Sie bereits einen Eingangsfilter haben, mssen Sie
+den vorhandenen entsprechend erg„nzen). Sinn dieses
+Eingangsfilters ist es, alle Mails der Mailingliste
+in ein spezielles Brett in CrossPoint zu verschieben.
+
+CrossPoint stellt keinen eigenen Eingangsfilter zur
+Verfgung, hierzu mssen Sie sich eines externen
+Filterprogramms bedienen. Nicht ganz trivial in der
+Bedienung, aber sehr flexibel und bew„hrt ist z.B.
+das speziell fr XP entwickelte XPFILTER von Robin
+Sommer.
+
+Ein sog. "Muster" fr XPFILTER, das alle ber die
+OpenXP-Mailingliste eingehenden Nachrichten in ein
+Netzbrett "Mailingliste OpenXP" verschiebt, k”nnte
+dann z.B. so aussehen:
+
+   NAME=Mails nach "Mailingliste OpenXP" verschieben
+   Antwort-an=openxp-dev\@lists\.sourceforge\.net
+   BRETT=/Mailingliste OpenXP
+   VERSCHIEBEN
+   STOP
+   END
+
+Wichtig ist hierbei der Schr„gstrich zu Beginn des
+Brettnamens. Dadurch ist sichergestellt, daá ein
+Netzbrett (und nicht etwa ein internes, nicht be-
+schreibbares PM-Brett) angelegt wird, und daá die
+automatische User-Aufnahme verhindert wird (falls
+Sie in /Config/Optionen/Allgemeines bei User-Auf-
+nahme "PMs" eingestellt haben sollten).
+
+Durch dieses Filtermuster werden nun alle zuknftig
+fr diese Mailingliste eingehenden Nachrichten in
+ein Netzbrett mit dem Namen "Mailingliste OpenXP"
+einsortiert.
+
+
+<<Vertreter-Adresse zuweisen
+
+Als letzten Schritt mssen Sie dem Brett noch eine
+Vertreter-Adresse zuweisen, damit Sie wie bei allen
+anderen ”ffentlichen Brettern auch mit <<B>> eine
+"”ffentliche" Nachricht (die technisch betrachtet
+aber eine PM ist), an die Liste schreiben k”nnen,
+wenn Sie mit dem Auswahlbalken auf dem entsprechen-
+den Brett stehen.
+
+Hierzu wechseln Sie in der Brett-šbersicht mit <<S>> in
+den Spezial-Modus, w„hlen das entsprechende Brett
+aus und drcken <<U>> (fr "Z<<u>>griff"). Im Feld "Vertre-
+ter-Adresse" geben Sie nun die Adresse des Pseudo-
+Users der Mailingliste ein (fr die OpenXP-Mailing-
+liste z.B. also <<openxp-dev\@lists.sourceforge.net>>).
+
+Abschlieáend aktivieren Sie noch das Feld "Schreib-
+sperre" und schlieáen die Eingabe mit <Enter> ab.
+
+
+<<Fertig! :-)
+
+Nun k”nnen Sie das Brett Ihrer neu eingerichteten
+Mailingliste wie jedes andere ”ffentliche Brett be-
+handeln, also mit <<B>> eine neue Nachricht schrei-
+ben und mit <<<Ctrl-B> >>auf Nachrichten anderer User
+antworten. Ihre eigenen Nachrichten befinden sich
+zun„chst im PM-Brett des Pseudo-Users, kommen aber
+als "Rckl„ufer" beim n„chsten Netcall wieder zu
+Ihnen zurck und werden ebenfalls in das Mailing-
+listen-Brett einsortiert. Die Nachrichten im PM-Brett
+des Pseudo-Users werden bei der n„chsten Reorganisa-
+tion entsorgt (wenn Sie, wie oben beschrieben, die
+Haltezeit des Users auf "1" eingestellt haben).
+
 @
 19
 Bitte w„hlen Sie das gewnschte Brett. Mit <Enter>
 wird die Auswahl best„tigt, mit <Esc> abgebrochen.
 
-Ctrl-Y springt zur n„chsten Trennzeile.
+<Ctrl-Y> springt zur n„chsten Trennzeile.
 
 @
 20
@@ -239,8 +784,8 @@ richten und Bretteinstellungen.
          passende Nachrichten.
        ¯ Brett enth„lt sowohl zum aktiven Lesemodus
          passende als auch ungelesene Nachrichten.
-       > Brett enh„lt ungelesene, aber keine auf den
-         aktiven Lesemodus passenden Nachrichten.
+       > Brett enth„lt ungelesene, aber keine auf
+         den aktiven Lesemodus passenden Nachrichten.
          (Anmerkung: das Zeichen ">" symbolisiert
          einen nach rechts gerichteten dnnen Pfeil
          (auch als Ctrl-Z bekannt), der sich hier
@@ -668,27 +1213,27 @@ bl„ttert werden. Statt <PgDn> kann auch <Space>
 verwendet werden.
 
 <<s>> sucht einen anzugebenden Begriff. Groá-/Klein-
-  schreibung werden dabei ignoriert. <Tab> wiederholt
+  schreibung werden dabei ignoriert. <<<Tab> >>wiederholt
   die letzte Suche.
 
-<<S>> wie <<s>>, jedoch unter Beachtung von Groá- und
-  Kleinschreibung.
+<<S>> wie <<s>>, jedoch unter Beachtung von Groá- und Klein-
+  schreibung.
 
 <<M>> schaltet den Markier-Balken ein bzw. aus; Sie k”n-
-  nen dann mit <Space> Zeilen oder mit <F7>/<F8>
+  nen dann mit <<<Space> >>Zeilen oder mit <<<F7> >>/ <<<F8> >>
   Textbl”cke zum Drucken markieren.
 
-<<D>> oder <Ctrl-D> druckt die markierten Zeilen aus.
+<<D>> oder <<<Ctrl-D> >>druckt die markierten Zeilen aus.
   Wenn nichts markiert ist, wird der gesamte Text
   gedruckt.
 
 <<W>> schreibt die markierten Zeilen bzw. den gesamten
   Text in eine Datei.
 
-Mit <Ctrl-A> werden alle Zeilen markiert; mit
-<Ctrl-E> werden alle Markierungen gel”scht.
+Mit <<<Ctrl-A> >>werden alle Zeilen markiert;
+mit <<<Ctrl-E> >>werden alle Markierungen gel”scht.
 
-Der Lister wird mit <Esc> verlassen.
+Der Lister wird mit <<<Esc> >>verlassen.
 
 
 <<Nachrichten-Lister
@@ -703,12 +1248,14 @@ Der Lister wird mit <Esc> verlassen.
   (siehe auch [Nachricht / Extrakt / UUdecode]).@11202
 
 
-<<Alt-M>> startet die Suche nach einer MessageID,
-      dabei wird die komplette erste markierte Text-
-      zeile als Suchbegriff bernommen.
-      Findet sich eine "<news:"-Kennung in dieser
-      Zeile, wird automatisch nur die MessageID als
-      Suchbegriff verwendet.
+<<Alt-M>> startet die Suche nach einer Message-ID.
+      Wenn eine Textzeile markiert ist und dort eine
+      Message-ID erkannt wird, wird automatisch die
+      Message-ID als Suchbegriff bernommen. Erkennt
+      CrossPoint keine Message-ID, wird die komplette
+      Zeile als Suchbegriff verwendet. Ist keine
+      Textzeile markiert, wird der letzte verwendete
+      Suchbegriff angeboten.
 
 <<Alt-T>> startet die Volltextsuche analog zu <<Alt-M>>.
 
@@ -726,7 +1273,7 @@ ten Suchl„ufe gilt:
 
       War die Suche erfolgreich, werden die gefunde-
       nen Nachrichten angezeigt und k”nnen dann
-      gelesen werden. Mit <ESC> in der Nachrichten-
+      gelesen werden. Mit <<<ESC> >>in der Nachrichten-
       anzeige kehren Sie zurck in den Nachrichten-
       Lister zu der Nachricht, von dem aus die Suche
       gestartet wurde.
@@ -743,8 +1290,8 @@ ten Suchl„ufe gilt:
 <<V>> schaltet "Wiedervorlage" fr die angezeigte
   Nachricht ein/aus.
 
-<<F3>> Fido-Request von Dateien, die Sie mit "M" +
-   <Space> markiert haben. Voraussetzung ist, daá
+<<F3>> Fido-Request von Dateien, die Sie mit <<M>> und
+   <<<Space> >>markiert haben. Voraussetzung ist, daá
    Sie die angezeigte Nachricht aus dem FidoNet
    erhalten haben.
 
@@ -756,7 +1303,7 @@ ten Suchl„ufe gilt:
 
 <<Ctrl-R>> schaltet die Rot13-Codierung ein/aus.
 
-Mit <<p>>, <<Ctrl-P>>, <<b>>, <<Ctrl-B>> und <<Ctrl-Q>> k”nnen Sie wie
+Mit <<P>>, <<Ctrl-P>>, <<B>>, <<Ctrl-B>> und <<Ctrl-Q>> k”nnen Sie wie
 in der Nachrichten-šbersicht direkt auf Nachrichten
 antworten.
 
@@ -1133,7 +1680,7 @@ durch Halten der rechten Maustaste.
 
 @
 64
-<<Glossary>>
+<<Editor - Glossary>>
 
 Mit dieser Funktion k”nnen Sie oft ben”tigte Text-
 bausteine aus einem Men w„hlen oder direkt als
@@ -1367,7 +1914,7 @@ soll.
         tr„ge durch diese Funktion gel”scht. Ist
         das nicht erwnscht, muá die <<Shift-Taste>>
         gehalten werden, wenn der Schalter bet„tigt
-        wird (also Shift-M oder Shift-Mausklick).
+        wird (also <Shift-M> oder Shift-Mausklick).
 
 <<Betreff>> „ndert den Betreff.
 
@@ -1893,14 +2440,14 @@ reich war.
 143
 <<Z-Netz alt>>
 
-Dies ist die Seriennumer des Mailboxprogramms. Wird
+Dies ist die Seriennummer des Mailboxprogramms. Wird
 eine Mailbox von einer anderen mit der gleichen Se-
 riennummer angerufen, bricht sie den Netzanruf sofort
 ab; es handelt sich also um eine Art Kopierschutz,
 und die Nummer muá sich immer von derjenigen des an-
-gerufenen Systems unterscheiden. Da Boxprogramm-Seri-
-ennummern immer gr”áer als 0 sind, sollte die Angabe
-von "0000" eigentlich immer funktionieren.
+gerufenen Systems unterscheiden. Da Boxprogramm-
+Seriennummern immer gr”áer als 0 sind, sollte die
+Angabe von "0000" eigentlich immer funktionieren.
 
 <<MagicNET>>
 
@@ -2039,7 +2586,7 @@ Das UpPacker-Feld MUSS folgende Makros enthalten:
 
 <<$PUFFER>>  die Datei, die gepackt wird
 
-Der Packer erh„lt also $PUFFER als Eingabe und muá
+Der Packer erh„lt also <<$PUFFER>> als Eingabe und muá
 daraus $UPFILE erzeugen. Mit <F2> k”nnen Sie die
 Aufruf-Zeilen fr die Packer PKArc, LHArc, PKZip
 und ARJ aus einer Liste ausw„hlen.
@@ -2085,7 +2632,7 @@ Statt des Packers k”nnen Sie auch eine Batchdatei
 einsetzen, die dann den Packer aufruft und noch ver-
 schiedene andere Aufgaben erledigt. In diesem Fall
 mssen Sie jedoch UNBEDINGT darauf achten, daá nach
-Beendigung der Batchdatei die $PUFFER-Datei in un-
+Beendigung der Batchdatei die <<$PUFFER>>-Datei in un-
 ver„nderter Form vorliegt!
 
 @
@@ -2105,8 +2652,8 @@ gende Makros enthalten:
 
 
 Der DownPacker (oder genauer: Entpacker) muá also aus
-der Datei $DOWNFILE (die nur $PUFFER enth„lt) die
-Datei $PUFFER extrahieren. Im FidoNet liegt der Puf-
+der Datei $DOWNFILE (die nur <<$PUFFER>> enth„lt) die
+Datei <<$PUFFER>> extrahieren. Im FidoNet liegt der Puf-
 ferdateiname nicht fest; daher ist die Angabe von
 $PUFFER dort wirkungslos.
 
@@ -2677,10 +3224,10 @@ se Modemeinstellung entsprechend erh”hen.
 Es gibt zwei M”glichkeiten fr einen erfolglosen
 Netcall-Versuch:
 
-o  Es kam keine Verbindung zustande (besetzt, Box
+ş  Es kam keine Verbindung zustande (besetzt, Box
    hebt nicht ab etc.).
 
-o  Es kam eine Verbindung zustande, aber das Login
+ş  Es kam eine Verbindung zustande, aber das Login
    war nicht erfolgreich (falsches Paáwort, fehler-
    hafte Boxsoftware).
 
@@ -2978,7 +3525,7 @@ im Sysop-Mode.
 199
 Hier k”nnen Sie ein externes Programm angeben, das XP
 nach jedem Netcall unmittelbar vor dem Einlesen der
-Nachrichten aufrufen soll. šber das Makro $PUFFER
+Nachrichten aufrufen soll. šber das Makro <<$PUFFER>>
 kann der Name der einzulesenden Datei bergeben
 werden; bei Z-Netz-(alt)-Netcalls hat diese Datei
 Z-Netz-Format, bei allen anderen Netzen (und bei
@@ -2989,17 +3536,18 @@ kopieren, oder beliebige andere Aktionen durchfhren.
 Es kann die Datei auch l”schen, so daá die Daten
 nicht mehr eingelesen werden.
 
-Hinweise:
+<<Hinweise:
 
 ş  Die Angabe einer Batchdatei ist m”glich.
 
 ş  Das Programm wird auch aufgerufen, wenn keine
-   Nachrichten empfangen wurden. In diesem Fall wird
-   der Name einer leeren Pufferdatei bergeben. Leere
-   ZCONNECT-Puffer sind 0 Bytes groá, leere Z-Netz-
-   Puffer bis zu 8 Bytes (4 Leerzeilen). Defekte
-   Mailboxprogramme erzeugen u.U. auch leere ZCON-
-   NECT-Puffer von bis zu 16 Bytes.
+   Nachrichten empfangen wurden (Ausnahme: RFC/UUCP).
+   In diesem Fall wird der Name einer leeren Puffer-
+   datei bergeben. Leere ZCONNECT-Puffer sind
+   0 Bytes groá, leere Z-Netz-Puffer bis zu 8 Bytes
+   (4 Leerzeilen). Defekte Mailboxprogramme erzeugen
+   u.U. auch leere ZCONNECT-Puffer von bis zu
+   16 Bytes.
 
 ş  Das Ganze funktioniert auch im Sysop-Mode.
 
@@ -3016,7 +3564,7 @@ vor jedem Netcall aufruft. Bei ZCONNECT und Z-Netz
 brigen Netztypen vor der Nachrichtenkonvertierung
 gestartet.
 
-šber das Makro $PUFFER kann der Name des ausgehenden
+šber das Makro <<$PUFFER>> kann der Name des ausgehenden
 Nachrichtenpuffers bergeben werden. Bei Z-Netz-
 (alt)-Netcalls hat diese Datei Z-Netz-Format, bei
 allen anderen Netztypen ZCONNECT-Format. Die Datei
@@ -3042,7 +3590,7 @@ sicher sind, daá sie fehlerfrei arbeiten! Falls Sie
 eigene Filterprogramme schreiben, testen Sie diese
 bitte so grndlich wie m”glich!
 
-Hinweise:
+<<Hinweise:
 
 ş  Die Angabe einer Batchdatei ist m”glich.
 
@@ -3185,7 +3733,13 @@ Im Zweifelsfall fragen Sie bitte Ihren Sysop.
 
 @
 194
-Ihr Name im realen Leben (kann freibleiben).
+Ihr Name im realen Leben. Kann freibleiben, Nachrich-
+ten ohne Realname werden aber im Usenet oftmals nicht
+gerne gesehen (Stichwort Netiquette). Wenn Sie ihn
+nicht angeben, mssen Sie damit rechnen, daá Sie von
+einigen Usern ignoriert oder sogar komplett gefiltert
+werden.
+
 @
 8038
 Geben Sie hier Ihren vollst„ndigen Namen ein (Vor-
@@ -3204,7 +3758,8 @@ rechts vom Boxnamen.
 
 Geben Sie den Domainnamen aus Ihrer eigenen Adresse
 an. Ist Ihre Adresse z.B. "abc\@def.sub.org", dann
-ist der Domainname ".sub.org".
+ist der Domainname ".sub.org", bei "abc\@t-online.de"
+oder "abc\@gmx.de" w„re es ".de".
 
 <<Fido:>>
 
@@ -3272,6 +3827,11 @@ Port POP, normal: 110
 @
 8034
 Geben Sie hier die Domain des UUCP-Servers an.
+
+CrossPoint-User, die einen externen PPP-Client wie
+UKA_PPP oder UKAW in einer RFC/UUCP-Box betreiben,
+geben hier den vollst„ndigen Namensteil hinter dem
+"\@" an, also z.B. "t-online.de" oder "gmx.de".
 @
 196
 Weil eine Nummer langweilig und schlecht zu merken
@@ -3435,7 +3995,7 @@ bigen Editor bearbeiten.
             erzeugt.
 
 <<nein>>    ->  Es wird kein "Re:" erzeugt; vorhandene
-            "Re:"'s werden beim Antworten entfernt.
+            "Re:"s werden beim Antworten entfernt.
 
 <<Vorgabe>> ->  Es gilt die Einstellung unter /Config
             /Optionen/Nachrichten
@@ -3636,7 +4196,7 @@ Einstellung ohne Wirkung, weil eingehende PMs keinen
 Boxnamen im Empf„nger enthalten.
 @
 221
-<<[x]>> -> Beim Anlegen neuer Bretter mit Ctrl-H, mit
+<<[x]>> -> Beim Anlegen neuer Bretter mit <Ctrl-H>, mit
        [/XPoint/Import/Brettliste] oder mit@11004
        [/Nachricht/Brettmanager/Bestellen] (nur ZCON-@11901
        NECT und RFC/UUCP) werden die Kommentare aus
@@ -4026,21 +4586,21 @@ richtentext.
 253
 <<ZCONNECT / RFC:
 
-Manche Autoren tragen Antwort-an in den Header ihrer
-Mails ein (RFC: Reply-To), weil sie eine Antwort an
-eine andere Mailadresse als die Absenderadresse wn-
-schen. Allerdings wird diese Headerzeile auch gerne
-von Mailinglisten benutzt, um eine Antwort an die
-Liste zu vereinfachen. Leider erschwert das das Ant-
-worten direkt an den Autor erheblich.
+Manche Absender setzen einen Antwort-an-Header in
+ihren Mails (RFC: Reply-To), weil sie eine Antwort
+an eine andere Mail-Adresse als die Absenderadresse
+wnschen. Auch von [Mailinglisten] wird diese Header-@11
+zeile gerne benutzt, um eine Antwort an die Liste zu
+vereinfachen. Leider erschwert das aber eine Antwort
+direkt an den Autor erheblich.
 
-Der Schalter bewirkt, daá eine Auswahlliste angeze-
-zeigt wird, wo die gewschte Adresse fr die Antwort
-ausgew„hlt werden kann, wenn eine Antwort-an-Header-
-zeile vorhanden ist.
+Dieser Schalter bewirkt, daá eine Abfrage erscheint,
+an welche Adresse (Absenderadresse oder Antwort-An-
+Adresse) geantwortet werden soll, wenn eine Antwort-
+an-Headerzeile vorhanden ist.
 
 Ist der Schalter deaktiviert, wird grunds„tzlich die
-Antwort-an-Adresse benutzt, wenn vorhanden.
+Antwort-an-Adresse verwendet, wenn vorhanden.
 @
 254
 <<ZCONNECT / RFC:
@@ -4419,7 +4979,7 @@ wird auf die Standardeinstellung (FGDAEB) zurck-
 gesetzt. Die Flags (F) werden immer automatisch
 nach vorne sortiert.
 
-       Die Buchstaben stehen fr
+       Die Buchstaben stehen fr:
 
        F  Flags           (immer erstes Zeichen!)
        G  Gr”áe
@@ -4436,7 +4996,7 @@ die Standardeinstellung (FHGBAK) zurckgesetzt.
 Die Flags (F) werden immer automatisch nach vorne
 sortiert.
 
-       Die Buchstaben stehen fr
+       Die Buchstaben stehen fr:
 
        F  Flags           (immer erstes Zeichen!)
        H  Halten
@@ -4535,11 +5095,11 @@ schickt. šbliche Befehle sind:
    ATDT0,   fr Tonwahl an Nebenstellenanlagen
    ATDT0W   dito; auf W„hlton warten
 
-Pulswahl funktioniert bei direkten Amtsanschlssen
-immer, Tonwahl nur dann, wenn Ihr Anschluá durch die
-Telekom auf MFV (Mehrfrequenzw„hlverfahren = Ton-
-wahl) umgestellt wurde. Bei Nebenstellenanlagen
-funktioniert dagegen meist nur Tonwahl.
+Tonwahl (im Telekom-Deutsch "MFV") sollte mittler-
+weile bei direkten Amtsanschlssen immer funktionie-
+ren. Wenn Sie dennoch mit Pulswahl w„hlen m”chten
+(oder falls Tonwahl bei Ihnen doch nicht funktionie-
+ren sollte), verwenden Sie den Befehl "ATDP".
 @
 295
 Hier werden die Angaben der seriellen Schnittstelle
@@ -4977,7 +5537,7 @@ in diesem Fall setzt XP bei nicht gefundenem Pseu-
 donym $VORNAME statt $TUSER ein.
 
 Wenn Sie einen Kommentar UND ein Pseudonym verwenden
-m”chten, Schreiben Sie den Kommentar einfach vor das
+m”chten, schreiben Sie den Kommentar einfach vor das
 "P:".
 @
 423
@@ -5376,10 +5936,11 @@ Wahlweise ist auch die direkte Angabe des ASCII-Wer-
 tes mit vorangestelltem "##" m”glich, also z.B. #27
 fr Esc. Ein einzelnes "##" wird durch "^#" erzeugt.
 
-<<HP LaserJet und Kompatible:
+<<HP LaserJet und kompatible PCL-Drucker:
 
 Tragen Sie <<\#27(10U>> ein, damit deutsche Sonderzeichen
-korrekt ausgedruckt werden.
+korrekt ausgedruckt werden (dieser Befehl „ndert den
+Zeichensatz des Druckers auf PC-8).
 
 @
 473
@@ -5654,7 +6215,7 @@ Aktionen sind:
 
 <<CRASH z:n/n>>  Fido-Crashanruf bei einer Box
 <<CRASHS>>       alle noch offenen Crashanrufe starten
-<<REQUESTS>>     alle gespeicherten File-Requests starten
+<<REQUESTS>>     alle gespeicherten File Requests starten
 <<NODEDIFFS>>    bindet alle Nodelisten-Updates ein, die
              in dem bei /Config/Pfade eingetragenen
              Filerequest-Verzeichnis liegen.
@@ -5751,7 +6312,7 @@ soll:
 @
 533
 <<[ ]>> --> Sehr schnelle Suche ber Bezugsdatenbank.
-        Es muá die komplette MessageID angegeben
+        Es muá die komplette Message-ID angegeben
         werden. Teilstring-Suche oder Verknpfungen
         sind nicht m”glich.
 
@@ -5838,10 +6399,10 @@ Hier kann das gew„hlte Tastenmakro bearbeitet werden.
 Die Tastendefinition kann folgende Elemente enthal-
 ten:
 
-o  normale Buchstaben, Zahlen und Sonderzeichen
-o  Ctrl-Kombinationen, z.B. ^A fr Ctrl-A
-o  Alt-Kombinationen, z.B. <Alt-1> oder <Alt-A>
-o  Sondertasten, eingeschlossen in spitze Klammern.
+ş  normale Buchstaben, Zahlen und Sonderzeichen
+ş  Ctrl-Kombinationen, z.B. ^A fr <Ctrl A>
+ş  Alt-Kombinationen, z.B. <Alt 1> oder <Alt A>
+ş  Sondertasten, eingeschlossen in spitze Klammern
 
 M”gliche Sondertasten sind:
 
@@ -7379,7 +7940,7 @@ verbilligter Telefontarif!)
 @
 820
 Hier k”nnen sie angeben, welche Programme CrossPoint
-zum Anzeigen diverser Dateiformate verwenden soll.
+zum Anzeigen diverser Dateitypen verwenden soll.
 
 <<Neu>>      dient zum Erstellen eines neuen Eintrags.
 
@@ -7393,7 +7954,7 @@ zum Anzeigen diverser Dateiformate verwenden soll.
          <Esc>).
 @
 821
-Usenet: Geben sie hier den MIME-Typ ein, fr den
+<<Usenet:>> Geben Sie hier den MIME-Typ ein, fr den
 dieser Eintrag gelten soll. Der MIME-Typ ist die
 MIME-Beschreibung dieses Dateityps im Body (Text-
 teil) der Nachricht (z.B. <<image/gif>>).
@@ -7401,6 +7962,23 @@ teil) der Nachricht (z.B. <<image/gif>>).
 Wird eine entsprechende MIME-Nachricht empfangen,
 kann diese mit dem hier eingetragenen Viewer-
 Programm betrachtet werden.
+
+G„ngige MIME-Typen sind z.B.:
+
+application/octet-stream
+application/x-zip-compressed
+application/zip
+application/msword
+application/pdf
+application/postscript
+
+audio/mpeg
+image/gif
+image/jpeg
+text/html
+text/plain
+text/x-vcard
+video/mpeg
 
 @
 822
@@ -7414,9 +7992,11 @@ getragenen Viewer-Programm betrachtet werden.
 Beachten Sie, daá bei ber das Z-Netz verschickten
 Bin„rnachrichten der Betreff der Nachricht nicht
 unbedingt den korrekten Dateinamen enthalten muá,
-und die Erkennung von Dateiformaten anhand des
-Dateinamens daher im Z-Netz nicht in allen F„llen
-funktioniert.
+und die Erkennung von Dateitypen anhand des Datei-
+namens daher im Z-Netz nicht in allen F„llen funk-
+tioniert.
+
+Siehe dazu auch: [Viewer-Sicherheitseinstellungen]@8072
 
 
 <<Hinweise:
@@ -7433,9 +8013,73 @@ Datei an den passenden Viewer zu bergeben (das ist
 der Viewer, der in Windows fr den entsprechenden
 Dateityp registriert ist).
 
-Beispiel: <muá noch erg„nzt werden>
 
-Siehe dazu auch: [Viewer-Sicherheitseinstellungen]@8072
+<<Beispiele:
+
+
+Sie haben folgende Eintr„ge vorgenommen:
+
+
+Eintrag 1
+---------
+
+   MIME-Typ           <<text/html>>
+   Dateierweiterung   <<htm>>
+   Viewer-Programm    <<c:\opera\opera.exe>>
+
+Dieser Eintrag erfllt zwei Funktionen:
+
+ş Dateien in MIME-Nachrichten des Typs <<text/html>>
+  werden aus der Nachricht tempor„r extrahiert und
+  erhalten die Dateierweiterung <<htm>>. Dann wird
+  der Browser Opera gestartet, mit dem Dateinamen
+  als erstem Parameter.
+
+ş Dateianh„nge von Nicht-MIME-Nachrichten (Bin„rda-
+  teien, File Attaches) mit der Erweiterung <<htm>>
+  werden mit dem Browser Opera ge”ffnet.
+
+
+Eintrag 2
+---------
+
+   MIME-Typ           <<application/octet-stream>>
+   Dateierweiterung   <<[leer]>>
+   Viewer-Programm    <<start>>
+
+Die Datei wird mit dem in der MIME-Nachricht enthal-
+tenen Original-Dateinamen aus der Nachricht tempor„r
+extrahiert und dem Befehl <<start>> als erstem Para-
+meter bergeben - handelt es sich z.B. um eine Datei
+mit der Erweiterung <<zip>> und ist in Windows das
+Programm WinZip fr ZIP-Dateien registriert, wrde
+jetzt WinZip gestartet und die ZIP-Datei ge”ffnet
+werden.
+
+Wrde es sich jedoch um eine Datei mit der Dateier-
+weiterung <<htm>> handeln, wrde nicht der <<start>>-Befehl,
+sondern der Browser Opera ausgefhrt werden, weil
+<<htm>>-Dateien mit dem vorherigen Eintrag explizit dem
+Programm c:\opera\opera.exe zugewiesen wurden.
+
+Dieser Eintrag hat keine Wirkung auf Dateianh„nge
+von Nicht-MIME-Nachrichten (Bin„rdateien, File
+Attaches).
+
+
+Eintrag 3
+---------
+
+   MIME-Typ           <<[leer]>>
+   Dateierweiterung   <<txt>>
+   Viewer-Programm    <<qe.exe>>
+
+Dateianh„nge von Nicht-MIME-Nachrichten (Bin„rda-
+teien, File Attaches) mit der Erweiterung <<txt>>
+werden mit dem Programm qe.exe (QEdit) ge”ffnet.
+
+Dieser Eintrag hat keine Wirkung auf Dateien, die in
+MIME-Nachrichten enthalten sind.
 
 @
 823
@@ -7451,9 +8095,9 @@ eine Bin„r- oder MIME-Nachricht anw„hlen, die den
 passenden Dateityp enth„lt.
 
 Wenn Sie als Parameter das Makro <<$FILE>> verwenden,
-wird es durch den Namen der Datei ersetzt. An-
-sonsten setzt XP den Namen der Datei als ersten
-Parameter hinter dem Programmnamen ein.
+wird es durch den Namen der Datei ersetzt. Ansonsten
+bergibt XP den Namen der Datei dem Programm als
+ersten Parameter.
 
 Falls Sie als Viewer eine Batchdatei eintragen, muá
 der Name der Datei vollst„ndig  ausgeschrieben wer-
@@ -7480,11 +8124,11 @@ m”gliche Vorgehensweisen:
 Wenn bei den Einstellungen fr externe Viewer
 (E<<D>>it/<<V>>iewer) ein MIME-Typ ohne Dateierweiterung
 angegeben wurde, k”nnen Nachrichten im MIME-Multi-
-format (z.B. <<Application/octet-stream>>) mit einem
+format (z.B. <<application/octet-stream>>) mit einem
 Allround-Viewer betrachtet werden. Unter Windows
 bietet sich hierfr der Befehl <<start>> an, der die
-Datei automatisch an den passenden (fr den fr den
-jeweiligen Dateityp registrierten) Viewer bergibt.
+Datei automatisch an den passenden (fr den jeweili-
+gen Dateityp registrierten) Viewer bergibt.
 
 Allerdings besteht bei dieser Funktion die Gefahr,
 daá Mail-Viren oder andere gef„hrliche Dateien
@@ -7502,7 +8146,7 @@ um die Datei zu betrachten.
 
 Die Dateierweiterungen mssen inkl. Punkt eingegeben
 werden (also ".HTM" statt nur "HTM"). Folgende
-Dateiformate sind zu gef„hrlich und werden deshalb
+Dateitypen sind zu gef„hrlich und werden deshalb
 in dieser Liste ignoriert:
 .EXE .COM .BAT .BTM .CMD .PIF .LNK .INF .REG
 
@@ -7618,7 +8262,8 @@ dies gleichbedeutend mit der Eingabe von "world".
 Hier k”nnen Sie eine Vertreteradresse angeben, an
 die Nachrichten in dieses Brett umgeleitet werden
 sollen; dies kann entweder der Name eines anderen
-Brettes oder eine Useradresse sein.
+Brettes oder eine Useradresse sein. Letzteres ist
+z.B. ntzlich bei [Mailinglisten].@11
 
 Falls die Schreibsperre eingeschaltet ist, werden
 alle von Ihnen in dieses Brett geschriebenen Nach-
@@ -7913,7 +8558,7 @@ Bei PVT-Pointlisten muá hier die Adresse des Nodes
 und bei Points24-Listen die Zonennummer stehen.
 
 Bei Nodelisten und bei 4D-Pointlisten kann ebenfalls
-eine Zonnennumer angegeben werden. Falls die Liste
+eine Zonennummer angegeben werden. Falls die Liste
 selbst bereits eine Zonenangabe enth„lt, was der
 Normalfall ist, wird dieses Eingabefeld ignoriert.
 @
@@ -8247,7 +8892,7 @@ nicht m”glich.
 
 Falls Sie keine Datei ausw„hlen, sondern mit <Esc>
 abbrechen, schickt CrossTerm eine ZModem-Abbruchse-
-quenz (mehrmals Ctrl-X).
+quenz (mehrmals <Ctrl-X>).
 @
 995
 Hiermit wird die erste Bildschirmzeile ein- oder
@@ -8286,12 +8931,12 @@ Dieser Schalter ist unbedingt notwendig, um H„nger
 bei automatischen, unbeaufsichtigten Netzanrufen zu
 vermeiden!
 
-ACHTUNG: Bei der Decodierung einer archivierten Datei
-(ZIP, LZH etc.) mit +batchmode benennt PGP diese
-Datei u.U. zwangsweise in .ZIP, .LZH etc um. Dadurch
-findet XP die decodierte Datei nicht, und die Deco-
-dierung schl„gt fehl. Ist +batchmode dagegen abge-
-schaltet, kann man die Frage nach dem Umbenennen
+ACHTUNG: Bei der Decodierung einer archivierten Da-
+tei (ZIP, LZH etc.) mit +batchmode benennt PGP diese
+Datei u.U. zwangsweise in .ZIP, .LZH etc. um. Da-
+durch findet XP die decodierte Datei nicht, und die
+Decodierung schl„gt fehl. Ist +batchmode dagegen ab-
+geschaltet, kann man die Frage nach dem Umbenennen
 manuell mit "Nein" beantworten, so daá die Decodie-
 rung funktioniert.
 
@@ -8520,12 +9165,7 @@ Geben Sie den Registrierungscode ein, den Sie von
 der CrossPoint-Registrierungsstelle erhalten haben.
 @
 1560
-Falls Sie in ™sterreich wohnen, richten Sie Ihre
-Registrierung bitte an Roland Lipovits.
-
-Falls Sie nicht in ™sterreich wohnen oder eine
-CrossPoint-CD-ROM bestellen m”chten, richten Sie
-Ihre Registrierung an Jochen Herz.
+Richten Sie Ihre Registrierung bitte an Jochen Herz.
 @
 1561
 Geben Sie hier Ihre Anschrift ein.
@@ -8545,7 +9185,7 @@ wir Sie erreichen k”nnen, oder w„hlen Sie eine
 Adresse mit <F2> aus.
 
 Diese Angabe wird insbesondere dann ben”tigt, wenn
-Sie den Registrierungscode per E-Mail erhalten m”ch-
+Sie den Registrierungscode per eMail erhalten m”ch-
 ten (s.u.).
 @
 1566
@@ -8596,7 +9236,7 @@ erfolgen soll.
 
 Falls Sie eine Bezahlung per Kreditkarte wnschen,
 verschicken Sie das Registrierungsformular bitte
-nicht per E-Mail!
+nicht per eMail!
 @
 1573
 Geben Sie die 16stellige Kartennummer und das
@@ -8612,41 +9252,30 @@ Gltigkeitsdatum (Monat/Jahr) ein.
 @
 1576
 <<[x]>> -> Sie erhalten zus„tzlich eine Diskette mit der
-       aktuellen Programmversion und eine Diskette
-       mit CrossPoint-Tools.
+       aktuellen Programmversion (v3.12d) und eine
+       Diskette mit CrossPoint-Tools.
 
-Die aktuelle Programmversion ist auch in der Cross-
-Point-Supportbox erh„ltlich (Telefonnummern:
-s. Handbuch).
+Die aktuelle Programmversion (v3.12d) ist auch auf
+<<http://www.crosspoint.de/>> erh„ltlich.
+
+Die vom OpenXP-Projekt weiterentwickelten Versionen
+(v3.20 und h”her) sind auf <<http://www.openxp.de/>>
+erh„ltlich.
+
 @
 1577
-<<[x]>> -> Sie erhalten zus„tzlich eine CD-ROM mit dem
-       kompletten Dateibestand der CrossPoint-Sup-
-       portbox.
-
-In der CrossPoint-Supportbox sind z.Zt. die folgen-
-den Dateien verfgbar:
-
-- die aktuelle CrossPoint-Version
-- eine Auswahl von CrossPoint-Zusatztools
-- alle wichtigen DFš-Tools (Packer, Protokolle,
-  FOSSIL-Treiber, Uuencoder etc.)
-
-sowie eine umfangreiche Sammlung von Dokumentationen
-fr Programmierer (Polldocs, APIs, Dateiformate etc.)
-
-Der Dateibestand kann sich jederzeit „ndern. Die CD-
-ROM wird mehrmals pro Jahr neu aufgelegt, sodaá sie
-immer aktuelle Programmversionen enth„lt.
+<<[x]>> -> Anmerkung:
+       Das CD-ROM-Angebot existiert zur Zeit nicht -
+       bitte den Schalter nicht aktivieren.
 
 @
 1578
 <<[x]>> -> Sie erhalten Ihren Registrierungscode per
-       E-Mail. Geben Sie im oberen Teil des Formu-
+       eMail. Geben Sie im oberen Teil des Formu-
        lars bitte eine allgemein erreichbare Mail-
        Adresse an!
 
-Beachten Sie, daá E-Mails in einzelnen F„llen ver-
+Beachten Sie, daá eMails in einzelnen F„llen ver-
 lorengehen k”nnen. Falls Sie drei Wochen nach Ihrem
 Registrierungsantrag noch keine Mail mit dem Regi-
 strierungscode erhalten haben, wenden Sie sich bitte
@@ -8660,55 +9289,26 @@ formular geschehen soll.
 <<Formular ausdrucken
 
 Das Formular wird auf dem unter /Config/Drucker ein-
-gestellten Drucker ausgegeben, sodaá Sie es per Post
-verschicken k”nnen.
+gestellten Drucker ausgegeben, so daá Sie es per
+Post verschicken k”nnen.
 
 <<Formular in Datei speichern
 
-Das Formular wird in einer Datei abgelegt, sodaá Sie
-es z.B. mit einer Textverarbeitung einlesen und aus-
-drucken oder auf andere Weise verschicken k”nnen.
+Das Formular wird in einer Datei abgelegt, so daá
+Sie es z.B. mit einer Textverarbeitung einlesen und
+ausdrucken oder auf andere Weise verschicken k”nnen.
 
 <<Formular per Mail verschicken
 
-Das Formular wird per E-Mail an die CrossPoint-Regi-
+Das Formular wird per eMail an die CrossPoint-Regi-
 strierungsstelle verschickt. W„hlen Sie dazu im
 nachfolgenden Feld mit <F2> eine Mailadresse aus,
-die zum Netztyp von einer Ihrer Serverboxen kompa-
-tibel ist.
+die zum Netztyp einer Ihrer Serverboxen kompatibel
+ist.
 
 šberprfen Sie im nachfolgenden Absendefenster bitte,
 ob der korrekte Server gew„hlt ist, und „ndern Sie
 ihn ggf. mit "O".
-
-<<Online-Registrierung
-
-Hier wird das Registrierungsformular per Direkt-
-Anruf bei der CrossPoint-Supportbox abgeliefert.
-W„hlen Sie dazu im nachfolgenden Feld die Telefon-
-nummer, unter der die XP-Supportbox angerufen werden
-soll. Beachten Sie, daá sich die Telefonnummern in
-Zukunft „ndern k”nnen! Erfragen Sie ggf. in einem
-CrossPoint-Supportbrett die aktuellen Nummern.
-
-Beachten Sie auch, daá fr die Online-Registrierung
-das <<XP-Fido-Modul>> ben”tigt wird. Es gengt, wenn
-die Dateien aus dem Fido-Modul ins XP-Verzeichnis
-kopiert wurden; spezielle Fido-Einstellungen sind
-nicht notwendig.
-
-CrossPoint verwendet fr die Online-Registrierung
-die Modemdaten Ihrer Stammbox. Wenn Ihre Stammbox
-mit ISDN arbeitet, mssen Sie daher eine ISDN-Nummer
-w„hlen.
-
-Falls die Online-Registrierung nicht funktionieren
-sollte, verwenden Sie bitte den herk”mmlichen Regi-
-strierungsweg per Post oder E-Mail.
-
-Bemerkung der OpenXP-Entwickler:
-Die Online-Registrierung ist seit Anfang 2000
-nicht mehr m”glich.
 
 @
 1580
@@ -8724,29 +9324,6 @@ auch direkt eingeben.
 šberprfen Sie im nachfolgenden Absendefenster, ob
 der korrekte Server gew„hlt ist, und „ndern Sie ihn
 ggf. mit "O".
-@
-1582
-W„hlen Sie mit <F2> die Nummer der XP-Supportbox
-aus, bei der das Formular abgeliefert werden soll.
-Beachten Sie bitte, daá die Telefonnummern sich in
-Zukunft „ndern k”nnen! Erfragen Sie ggf. in einem
-CrossPoint-Supportbrett die aktuellen Nummern.
-
-Beachten Sie auch, daá fr die Online-Registrierung
-das <<XP-Fido-Modul>> ben”tigt wird. Es gengt, wenn
-die Dateien aus dem Fido-Modul ins XP-Verzeichnis
-kopiert wurden; spezielle Fido-Einstellungen sind
-nicht notwendig.
-
-CrossPoint verwendet fr die Online-Registrierung
-die Modemdaten Ihrer Stammbox. Wenn Ihre Stammbox
-mit ISDN arbeitet, mssen Sie daher eine ISDN-Nummer
-w„hlen.
-
-Falls die Online-Registrierung nicht funktionieren
-sollte, verwenden Sie bitte den herk”mmlichen Regi-
-strierungsweg per Post oder E-Mail.
-
 @
 1583
 Hier k”nnen sie einen beliebigen Kommentar eingeben,
@@ -8802,51 +9379,51 @@ Zufallsprinzip aus.
 
 @
 7000
-Dies ist eine [Querverweis]-Seite. Mit [Alt-F1] gelan-@7001 7002
+Dies ist eine [Querverweis]-Seite. Mit [<Alt-F1>] gelan-@7001 7002
 gen Sie zurck zur vorhergehenden [Seite].@7003
 @
 7001
-Sie haben <Enter> statt [Alt-F1] gedrckt. Dadurch@7002
-sind Sie in einer weiteren [Querverweis]-Seite gelan-@7001
-det. Sie sollten nun [Alt-F1] drcken, bevor Sie die@7002
+Sie haben <Enter> statt [<Alt-F1>] gedrckt. Dadurch@7002
+sind Sie in einer weiteren [Querverweis]-Seite gelan-@7010
+det. Sie sollten nun [<Alt-F1>] drcken, bevor Sie die@7002
 šbersicht ber die [Querverweise] verlieren.@7010
 @
 7002
 <<Alt-F1
 
 Die Tastenkombination <Alt-F1> erhalten Sie, indem
-Sie die [Alt]-Taste drcken, sie festhalten, und@7006
-gleichzeitig die Taste [F1] bet„tigen. Anschlieáend@7005
+Sie die [<Alt>]-Taste drcken, sie festhalten, und@7006
+gleichzeitig die Taste [<F1>] bet„tigen. Anschlieáend@7005
 sollten Sie beide Tasten in beliebiger Reihenfolge
 wieder loslassen. N„heres finden Sie in Ihrem Tasta-
 turhandbuch.
 @
 7003
-Das CrossPoint-[Hilfssystem] besteht aus ca. 850@3
-Seiten. Je nach Kontext aktiviert die Taste [F1] die@7005
-passende Hilfsseite.
+Das CrossPoint-[Hilfesystem] besteht aus mehr als@3
+1.000 Seiten. Je nach Kontext aktiviert die Taste
+[<F1>] die passende Hilfeseite.@7005
 @
 7005
-Die F1-Taste befindet sich auf Ihrer [Tastatur], genau-@7009
-er: Im linken oberen Bereich Ihrer [Tastatur]. Sie@7009
-drften sie eigentlich nicht verfehlen k”nnen.
+Die <F1>-Taste befindet sich auf Ihrer [Tastatur],@7009
+genauer: Im linken oberen Bereich Ihrer [Tastatur].@7009
+Sie drften sie eigentlich nicht verfehlen k”nnen.
 @
 7006
-Die Alt-Taste befindet sich irgendwo im unteren Teil
-Ihrer Tastatur, im Gegensatz zur [F1-Taste].@7005
+Die <Alt>-Taste befindet sich irgendwo im unteren Teil
+Ihrer Tastatur, im Gegensatz zur [<F1>-Taste].@7005
 @
 7009
 Die Tastatur finden Sie, indem Sie das Kabel verfol-
-gen, das mit einem 5poligen DIN-Stecker an der Rck-
-seite Ihres [Rechners] angebracht ist.@7013
-
+gen, das mit einem PS/2- oder USB-Stecker (bei „lte-
+ren Modellen auch mit einem 5poligen DIN-Stecker) an
+der Rckseite Ihres [Rechners] angebracht ist.@7013
 @
 7010
 Just another [Querverweis].@7001
 @
 7011
 Nun haben Sie vermutlich den Zusammenhang verloren.
-Macht nix, mit [F1] gelangen Sie wieder zur Inhalts-@7005
+Macht nix, mit [<F1>] gelangen Sie wieder zur Inhalts-@7005
 bersicht.
 @
 7012
@@ -8890,7 +9467,7 @@ matischen Netzanrufen.
 
 Dieses Men beinhaltet alle Fido-spezifischen Fea-
 tures und Einstellungen, d.h. insbesondere alle
-Funktionen, die irgendwie mit der Nodelisten zu tun
+Funktionen, die irgendwie mit der Nodeliste zu tun
 haben.
 @
 10006
@@ -8928,8 +9505,9 @@ mit externen Programmen definiert werden.
 ş  den Inhalt von LIZENZ.DOC anzeigen oder aus-
    drucken lassen,
 
-ş  das Registrierungsformular ausfllen und aus-
-   drucken oder absenden und
+ş  das Registrierungsformular ausfllen, aus-
+   drucken und absenden oder per Mail verschicken,
+   und
 
 ş  Ihren Registrierungscode eingeben.
 @
@@ -9271,10 +9849,10 @@ Dieser Menpunkt entspricht der Tastenkombination
 alle Nachrichten-Markierungen auf.
 @
 10508
-<<Nachricht / Suchen / MessageID
+<<Nachricht / Suchen / Message-ID
 
-Oft wird auf andere Usenet Artikel ber ihre
-MessageID hingewiesen, mit diesem Menpunkt
+Oft wird auf andere Usenet-Artikel ber ihre
+Message-ID hingewiesen, mit diesem Menpunkt
 kann danach gesucht werden.
 @
 10601
@@ -9326,7 +9904,7 @@ schen Einstellungen doppelt n”tig w„ren.
 
 Hier befinden sich diverse Drucker-Einstellungen.
 Diese betreffen z.Zt. nur den Ausdruck von Nachrich-
-ten oder von Hilfsseiten mit <Ctrl-D>.
+ten oder von Hilfeseiten mit <Ctrl-D>.
 
 Die Einstellungen gelten NICHT fr das Drucken mit
 <Ctrl-K><P> im Editor.
@@ -9862,18 +10440,18 @@ entfernen oder das Programm verlassen.
 CrossPoint kann Nachrichten in vier verschiedenen
 Formaten extrahieren:
 
-  o  als Text ohne Kopf - dies ist der reine Nach-
+  ş  als Text ohne Kopf - dies ist der reine Nach-
      richtentext.
 
-  o  als Text mit Kopf - dies ist der Nachrichten-
+  ş  als Text mit Kopf - dies ist der Nachrichten-
      text, so wie er im Lister angezeigt wird.
 
-  o  als Puffer - dies ist das Format, in dem die
+  ş  als Puffer - dies ist das Format, in dem die
      Nachricht ber das Netz angekommen ist. Ein
      solcher Puffer kann mit /XPoint/Import/Puffer
      eingelesen werden.
 
-  o  als Quote - dazu wird die Quote-Schablone fr
+  ş  als Quote - dazu wird die Quote-Schablone fr
      ”ffentliche Nachrichten verwendet.
 
 Bin„rdateien k”nnen nur als "Text ohne Kopf" oder
@@ -10418,7 +10996,7 @@ nur eine kleie Auswahl von Befehlen.
   <<setsys>>  sendet Ihren letzten Sysfile-Eintrag noch
           einmal neu ab.
 
-  <<help>>    fordert einen Hilfstext zur manuellen Be-
+  <<help>>    fordert einen Hilfetext zur manuellen Be-
           dienung von Changesys an.
 
 @
@@ -10501,12 +11079,12 @@ Hinweis: Es wird der SEND-Befehl von SendZMsg ver-
 Systemen bestellen. Voraussetzung ist, daá das be-
 treffende System
 
-o  bei /Edit/Systeme als UUCP-Fileserver eingetragen
-   ist
-o  bei /Edit/Boxen als Server erfaát ist
-o  die M”glichkeit von File Requests untersttzt
-o  mit /Nachricht/Fileserver/Liste/einlesen eine Da-
-   teiliste eingelesen wurde.
+ş  bei /Edit/Systeme als UUCP-Fileserver eingetragen
+   ist,
+ş  bei /Edit/Boxen als Server erfaát ist,
+ş  die M”glichkeit von File Requests untersttzt,
+ş  und daá mit /Nachricht/Fileserver/Liste/einlesen
+   eine Dateiliste eingelesen wurde.
 
 Ist keine Dateiliste vorhanden, so mssen Sie von
 Hand eine Request-Nachricht schreiben; n„heres dazu
@@ -10520,10 +11098,10 @@ Hier k”nnen Sie eine Datei an ein UUCP-System senden
 (bei einem UUCP-System "uploaden"). Voraussetzung
 ist,
 
-o  daá das System bei /Edit/Systeme als UUCP-File-
+ş  daá das System bei /Edit/Systeme als UUCP-File-
    server eintragen ist, und
 
-o  daá das System bei /Edit/Boxen mit allen n”tigen
+ş  daá das System bei /Edit/Boxen mit allen n”tigen
    Daten als Server erfaát ist.
 @
 12003
@@ -10535,7 +11113,7 @@ um Filelisten zu bestellen und einzulesen.
 12004
 <<Nachricht / Fileserver / Hilfe  (nur Z-Netz)
 
-Hier wird ein Hilfstext vom Fileserver angefordert.
+Hier wird ein Hilfetext vom Fileserver angefordert.
 Dazu wird der SendZMsg-Befehl HILFE verwendet.
 @
 12005
@@ -10675,7 +11253,7 @@ Dieser Menpunkt hat zwei Funktionen: Er dient einer-
 seits dazu, erhaltene PMs in das PM-Archivbrett des
 Absenders zu verschieben. Andererseits k”nnen Sie
 damit aber auch ”ffentliche Nachrichten eines Users
-als Kopie in seinem PM-Archiv-Brett ablegen, sodaá
+als Kopie in seinem PM-Archiv-Brett ablegen, so daá
 Sie Nachrichten, auf die Sie geantwortet haben, zu-
 sammen mit Ihrer Antwort archivieren k”nnen.
 @
@@ -11089,15 +11667,15 @@ Diff-Format haben - vorausgesetzt, Sie haben XP
 unter Fido/Nodelisten/Verwalten mitgeteilt, wie es
 mit diesen Updates umgehen soll.
 
-Falls Sie den Schalter "Updates automatisch ein-
-binden" unter /Fido/Optionen aktiviert haben, werden
+Falls Sie den Schalter "Updates automatisch einbin-
+en" unter /Fido/Optionen aktiviert haben, werden
 alle eingehenden Update-Dateien automatisch nach dem
-Netzanruf eingebunden, sodaá ein manuelles Einbinden
-nicht n”tig ist.
+Netzanruf eingebunden, so daá ein manuelles Einbin-
+den nicht n”tig ist.
 
 Beachten Sie bitte, daá Nodediffs meist im ARC-Format
 verteilt werden. XP entpackt die Dateien zwar auto-
-matisch; allerdings muá dazu ein ARC-Entpacker (z.B.
+matisch, allerdings muá dazu ein ARC-Entpacker (z.B.
 PKXARC) vorhanden sein.
 
 N„heres zu Nodelist und Nodediffs finden Sie in
@@ -11191,7 +11769,7 @@ Point sind, oder aber eine beliebige andere Box, die
 Dateien zum Filerequest bereitstellt. Voraussetzung
 ist, daá
 
-ş eine Nodelist vorhanden und aktiviert ist
+ş eine Nodelist vorhanden und aktiviert ist, und
 
 ş bei /Edit/Boxen eine Fido-Stammbox gew„hlt ist.
 
@@ -11235,7 +11813,7 @@ zum Bestellen (requesten) von Dateien oder zum Ver-
 senden von Dateien an beliebige Fido-Boxen. Voraus-
 setzung ist, daá
 
-ş  eine Nodelist vorhanden und aktiviert ist
+ş  eine Nodelist vorhanden und aktiviert ist, und
 
 ş  bei /Edit/Boxen eine Fido-Stammbox gew„hlt ist.
 
@@ -11443,9 +12021,9 @@ besteht darin, eine Liste zu bestellen und die
 erhaltene Nachricht mit [/F/A/Liste_einlesen] als@13804
 File-Area-Liste zu aktivieren.
 
-Falls Sie aber bereits eine Liste als Datei besitzen,
+Falls Sie aber bereits eine Liste als Datei besitzen
 oder neue Listen nicht als Nachricht sondern als Da-
-tei erhalten k”nnen Sie diese Datei hier statt einer
+tei erhalten, k”nnen Sie diese Datei hier statt einer
 Nachricht einlesen.
 @
 13806
@@ -11470,7 +12048,7 @@ Die Befehle <<INFO>> und <<STATUS>> haben die gleiche Funk-
 tion; einige Filemanager verwenden den einen, einige
 den anderen Befehl. Welche Befehle der Filemanager
 Ihres Servers untersttzt, k”nnen Sie am einfachsten
-herausfinden, indem Sie mit <<HELP>> Hilfsinformationen
+herausfinden, indem Sie mit <<HELP>> Hilfeinformationen
 anfordern.
 
 Die Befehle <<NOTIFY ON>> und <<NOTIFY OFF>> werden nur von
@@ -11486,7 +12064,7 @@ wird ber den Menpunkt /Edit/Boxen/Edit/Gebhren
 eine dieser Zonen zugeordnet.
 
 Fr Fido-Crashanrufe kann zus„tzlich eine Vorwahl-
-Tabelle angelegt werden, sodaá XP anhand der Tele-
+Tabelle angelegt werden, so daá XP anhand der Tele-
 fonnummern die Tarifzonen ermitteln kann.
 @
 13902
@@ -11602,11 +12180,11 @@ Fehlermeldung in den meisten F„llen ignorieren.
 20006
 Es ist zuwenig freier Hauptspeicher vorhanden, um
 die gew„hlte Programmfunktion auszufhren. ndern Sie
-Ihre DOS-Konfiguration, sodaá mehr Speicher verfgbar
-ist! Um die Funktionen von CrossPoint voll ausnutzen
-zu k”nnen, sollten vor dem Programmstart wenigstens
-450, besser jedoch 500 KByte an freiem Speicher vor-
-handen sein.
+Ihre DOS-Konfiguration, so daá mehr Speicher verfg-
+bar ist! Um die Funktionen von CrossPoint voll aus-
+nutzen zu k”nnen, sollten vor dem Programmstart
+wenigstens 450, besser jedoch 500 KByte an freiem
+Speicher vorhanden sein.
 @
 20007
 Es ist zuwenig freier Hauptspeicher vorhanden, um
@@ -11681,8 +12259,7 @@ ist.
 Fr die Verarbeitung von QWK-Nachrichten wird das
 Konvertierprogramm ZQWK.EXE ben”tigt, das im XP-
 QWK-Paket enthalten ist. Das QWK-Paket erhalten Sie
-dort, wo Sie CrossPoint herhaben, oder in der
-[CrossPoint-Supportbox].@9
+dort, wo Sie CrossPoint herhaben -> [Bezugsquellen].@9
 @
 20201
 Korrigieren Sie die Tempor„rverzeichnis-Einstellung
@@ -11842,8 +12419,8 @@ Das Kommentieren von unversandten Nachrichten wird
 von XP im MausNet noch nicht untersttzt.
 @
 20405
-Verwenden Sie die Taste P statt B bzw. Ctrl-P statt
-Ctrl-B.
+Verwenden Sie die Taste P statt B bzw. <Ctrl-P>
+statt <Ctrl-B>.
 @
 20406
 Es ist bereits ein Kommentarbaum aktiv. Um den Baum
@@ -11854,7 +12431,7 @@ Sie den aktiven Baum zuerst verlassen.
 Es ist nicht gengend freier Hauptspeicher vorhan-
 den, um einen Kommentarbaum anzeigen zu lassen. Ver-
 lassen Sie XP und „ndern Sie Ihre DOS-Einstellungen,
-sodaá mehr DOS-Arbeitsspeicher zur Verfgung steht!
+so daá mehr DOS-Arbeitsspeicher zur Verfgung steht!
 Es sollten vor dem Start von XP mindestens 450 KByte
 vorhanden sein, um alle Programmfunktionen nutzen
 zu k”nnen.
@@ -12177,8 +12754,8 @@ Wenn Sie eine Nachricht mit der Taste "P" im Absende-
 fenster parken, wird sie im Brett /¯Unversandt abge-
 legt, und der tats„chliche Empf„nger wird als Origi-
 nalempf„nger in die erste Nachrichtenzeile gesetzt.
-Mit Nachricht/Weiterleiten/Erneut bzw. Alt-R kann
-eine sollte Nachricht reaktiviert werden; XP liest
+Mit Nachricht/Weiterleiten/Erneut bzw. <Alt-R> kann
+eine solche Nachricht reaktiviert werden; XP liest
 dann den Empf„nger aus der "Originalempf„nger"-Zeile
 aus.
 
@@ -12334,7 +12911,7 @@ Pakete (SPOOL\*.PKT) war(en) so stark besch„digt,
 daá es/sie nicht konvertiert werden konnte(n).
 
 M”glicherweise war beim Entpacken der Pakete auch
-die Festplatte voll, sodaá das letzte Paket nicht
+die Festplatte voll, so daá das letzte Paket nicht
 mehr vollst„ndig entpackt wurde. In dem Fall hilft
 ein neues Entpacken und Einlesen der PKT-Dateien
 (am einfachsten durch Kopieren ins AUTOEXEC-Ver-
@@ -12580,9 +13157,10 @@ Die Gruppen "Intern", "Lokal" und "Netz" sind fest
 vorgegeben und k”nnen nicht gel”scht werden.
 @
 20912
-Bevor Sie die Gruppe l”schen k”nnen, mssen Sie fr
-alle Bretter mit dieser Gruppe eine neue Gruppe w„h-
-len. Gehen Sie dazu wie folgt vor:
+Bevor Sie die Gruppe l”schen k”nnen, mssen Sie alle
+Bretter, die dieser Gruppe zugeordnet sind, einer
+anderen Gruppe zuordnen. Gehen Sie dazu wie folgt
+vor:
 
 ş Schalten Sie in der Brettliste mit "S" in den
   Bearbeitungsmodus.
@@ -12590,8 +13168,8 @@ len. Gehen Sie dazu wie folgt vor:
 ş W„hlen Sie ein Brett, das der alten Gruppe zuge-
   ordnet ist.
 
-ş Drcken Sie Ctrl-G, um alle Bretter mit der glei-
-  chen Gruppe zu markieren.
+ş Drcken Sie <Ctrl-G>, um alle Bretter mit der
+  gleichen Gruppe zu markieren.
 
 ş Drcken Sie "E", w„hlen Sie "Gruppe" und w„hlen
   Sie dann mit <F2> die neue Gruppe aus.
@@ -12607,7 +13185,7 @@ Handbuch unter dem Stichwort "SETUSER".
 Die angegebene Scriptdatei ist fehlerhaft. Verlassen
 Sie die Hilfe und drcken Sie eine beliebige Taste,
 um ein Fehlerprotokoll zu erhalten. Korrigieren Sie
-anschlieáend die Fehler (Tip: Mit Alt-E k”nnen Sie
+anschlieáend die Fehler (Tip: Mit <Alt-E> k”nnen Sie
 jederzeit eine beliebige Datei editieren).
 
 Eine Beschreibung der CrossPoint-Scriptsprache
@@ -12837,7 +13415,8 @@ solcher Server vorhanden ist, mssen Sie ihn zuerst
 anlegen.
 @
 22414
-Das QWK-Paket erhalten Sie u.a. in der [XP-Supportbox].@9
+Das QWK-Paket erhalten Sie dort, wo Sie CrossPoint
+herhaben -> [Bezugsquellen].@9
 @
 22415
 Es ist ein unbekannter ZQWK-Fehler aufgetreten. Ver-
