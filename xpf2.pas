@@ -70,30 +70,39 @@ end; *)
 
 procedure TestTICfiles(var logfile:string);
 var t    : text;
+{$ifdef hasHugeString}
+    s    : string;
+    name1: string;
+{$else}
     s    : string[80];
+    name1: string[14];
+{$endif}
     at   : shortint;
     ar   : ArchRec;
     sr   : searchrec;
     f    : file;
-    tmp  : pathstr;
+    tmp  : string;
     count: longint;
-    name1: string[14];
 
 label ende;
 
-  function IsTIC(name:pathstr):boolean;
+  function IsTIC(name:string):boolean;
   begin
     UpString(name);
-    IsTIC:={((left(name,2)='TK') and} (right(name,4)='.TIC');
+    IsTIC:={((left(name,2)='TK') and} (UpperCase(right(name,4))='.TIC');
   end;
 
   { True -> passende Datei ist vorhanden }
 
-  function ProcessTICfile(fn:pathstr):boolean;
+  function ProcessTICfile(fn:string):boolean;
   var t2  : text;
       hdp : headerp;
       s   : string;
+{$ifdef hasHugeString}
+      feld: string;
+{$else}
       feld: string[20];
+{$endif}
       p   : byte;
   begin
     ProcessTICfile:=false;
@@ -148,7 +157,7 @@ begin
       s:=trim(mid(s,18));
       s:=left(s,cpos(';',s)-1);  { Pfad\Dateiname isolieren }
       UpString(s);
-      if (hexval(left(getfilename(s),8))<>0) or (left(getfilename(s),4)='TO__')
+      if (hexval(left(extractfilename(s),8))<>0) or (left(extractfilename(s),4)='TO__')
       then begin   { m”gliches TIC-Paket? }
         at:=ArcType(s);
         if at<>0 then begin

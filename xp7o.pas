@@ -31,9 +31,9 @@ uses
 
 procedure ttwin;
 procedure twin;
-procedure CallFilter(input:boolean; fn:pathstr);
+procedure CallFilter(input:boolean; fn:string);
 function  OutFilter(var ppfile:string):boolean;
-procedure AppLog(var logfile:string; dest:pathstr);   { Log an Fido/UUCP-Gesamtlog anh„ngen }
+procedure AppLog(var logfile:string; dest:string);   { Log an Fido/UUCP-Gesamtlog anh„ngen }
 
 procedure ClearUnversandt(puffer,box:string);
 procedure LogNetcall(secs:word; crash:boolean);
@@ -76,7 +76,7 @@ begin
 end;
 
 
-procedure CallFilter(input:boolean; fn:pathstr);
+procedure CallFilter(input:boolean; fn:string);
 var nope : boolean;
     fp   : string;
 begin
@@ -106,7 +106,7 @@ begin
 end;
 
 
-procedure AppLog(var logfile:string; dest:pathstr);   { Log an Fido/UUCP-Gesamtlog anh„ngen }
+procedure AppLog(var logfile:string; dest:string);   { Log an Fido/UUCP-Gesamtlog anh„ngen }
 var f1,f2 : text;
     s     : string;
 begin
@@ -246,15 +246,24 @@ procedure SendNetzanruf(once,crash:boolean);
 var t,log         : text;
     fn            : string;
     sum           : word;
+{$ifdef hasHugeString}
     hd            : string;
-    inwin         : boolean;
-    rate          : word;
     sz            : string;
     txt           : string;
-    s             : string;
-    betreff       : string[BetreffLen];
+    betreff       : string;
     bytes         : string;
     cps,cfos      : string;
+{$else}
+    hd            : string[12];
+    sz            : string[15];
+    txt           : string[30];
+    betreff       : string[BetreffLen];
+    bytes         : string[15];
+    cps,cfos      : string[10];
+{$endif}
+    inwin         : boolean;
+    rate          : word;
+    s             : string;
 
   function sec(zeit:longint):string;
   begin
@@ -419,14 +428,21 @@ end;
 procedure ZtoFido(source,dest:string; ownfidoadr:string; screen:byte;
                   addpkts:addpktpnt; alias:boolean);
 var d         : DB;
+{$ifdef hasHugeString}
     akas      : string;
-    p,i       : byte;
+    box       : string;
+    orgdest   : string;
+    bfile     : string;
+{$else}
+    akas      : string[AKAlen];
     box  : string[BoxNameLen];
     orgdest   : string[12];
     bfile     : string[12];
+{$endif}
+    p,i       : byte;
     t         : text;
     bpsave    : BoxPtr;
-    sout      : pathstr;
+    sout      : string;
 
   procedure Convert;
   var _2d,pc,pw,nli : string[20];
@@ -559,7 +575,7 @@ end;
 
 procedure SendFilereqReport;
 var t1,t2  : text;
-    fn     : pathstr;
+    fn     : string;
     n      : longint;
     nofiles: longint;
     s      : string;
@@ -608,7 +624,7 @@ begin
         delete(s,1,p+3);
         dest:=trim(s);
         size:=_filesize(dest);
-        dest:=GetFilename(dest);
+        dest:=ExtractFilename(dest);
         end
       else begin
         source:=trim(mid(s,p+16));
@@ -747,7 +763,7 @@ end;
 
 procedure AponetNews;
 var ApoBrett : string[80];
-    tmp      : pathstr;
+    tmp      : string;
     miso     : boolean;
     pt       : scrptr;
 begin
@@ -780,6 +796,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/05 17:35:37  hd
+  - AnsiString
+
   Revision 1.18  2000/07/05 17:10:54  mk
   - AnsiString Updates
 

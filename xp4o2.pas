@@ -53,7 +53,7 @@ uses xp1o,xp3,xp3o,xp3ex;
 const  emax = 30;   { maximale Tiefe }
 
 
-procedure packit(xpack:boolean; fname:pathstr);
+procedure packit(xpack:boolean; fname:string);
 var d  : DB;
     mp : boolean;
 begin
@@ -108,20 +108,30 @@ end;
 
 
 procedure bezuege_suchen(var brk:boolean);
-var _brett,
-    _mbrett : string[5];
+var
+{$ifdef hasHugeString}
+    _brett,
+    _mbrett : string;
     bezug   : string;
     betreff : string;
-    recnt   : integer;
     user    : string;   { Bezugs-User }
     ref     : string;   { Bezugs-MesssageID }
+{$else}
+    _brett,
+    _mbrett : string[5];
+    bezug   : string[BetreffLen];
+    betreff : string[BetreffLen];
+    user    : string[AdrLen];   { Bezugs-User }
+    ref     : string[midlen];   { Bezugs-MesssageID }
+{$endif}
+    recnt   : integer;
     ml      : byte;
     hdp     : ^header;
     hds     : longint;
     bezg    : longint;
 
   procedure get_username;
-  var fn     : pathstr;
+  var fn     : string;
       t      : text;
       s,s0   : string;
       n,p,p1 : byte;
@@ -441,7 +451,7 @@ var hdp    : headerp;
     end;
 
     procedure GetSeekID;
-    var mid : string[20];
+    var mid : string;
         i   : shortint;
     begin
       if nullid=0 then
@@ -731,10 +741,10 @@ end;
 { s=User, s1=Betreff }
 
 function BaumBlatt(len:byte; bezpos:word; var s,s1:string):string;
-var ss : string[80];
+var ss : string;
     i  : longint;   { muá longint sein, damit (1 shl i) longint ist }
     p  : byte;
-    bs : string[40];
+    bs : string;
 begin
   with kombaum^[bezpos] do begin
     if not KomShowAdr then begin
@@ -886,6 +896,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/05 17:35:36  hd
+  - AnsiString
+
   Revision 1.15  2000/07/05 17:10:54  mk
   - AnsiString Updates
 

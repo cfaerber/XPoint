@@ -85,7 +85,7 @@ end;
 
 { Puffer in RFC-Files konvertieren }
 
-procedure ZtoRFC(cleardir:boolean; source,destdir:pathstr);
+procedure ZtoRFC(cleardir:boolean; source,destdir:string);
 var sr    : searchrec;
     f1,f2 : ^file;
     s     : string[8];
@@ -248,7 +248,7 @@ end;
 
 { RFC-Daten aus SPOOL\ konvertieren und einlesen }
 
-function ImportUUCPfromSpool(XFerDir:pathstr):boolean;
+function ImportUUCPfromSpool(XFerDir:string):boolean;
 var sr      : searchrec;
     f1,f2   : ^file;
     s       : string[80];
@@ -257,7 +257,7 @@ var sr      : searchrec;
     dummy   : longint;
 
   procedure uncompress(fn:string; freeze,gzip:boolean);
-  var s : string[120];
+  var s : string;
   begin
     if freeze then s:=boxpar^.unfreezer
     else if gzip then s:=boxpar^.ungzipper
@@ -462,6 +462,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/07/05 17:35:37  hd
+  - AnsiString
+
   Revision 1.15  2000/07/04 12:04:27  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

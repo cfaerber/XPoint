@@ -197,7 +197,7 @@ begin
 end;
 
 
-function isPacket(var name:string):boolean;
+function isPacket(name:string):boolean;
 var p : byte;
 begin
   p:=cpos('.',name);
@@ -215,7 +215,11 @@ const fpuffer = 'FPUFFER';
 var p       : byte;
     sr      : searchrec;
     clrflag : boolean;
+{$ifdef hasHugeString}
+    via     : string;
+{$else}
     via     : string[5];
+{$endif}
 begin
   FidoImport:=false;
   with BoxPar^ do begin
@@ -302,7 +306,11 @@ function FidoNetcall(box:string; var ppfile,eppfile,sendfile,upuffer:string;
 
 type rfnodep     = ^reqfilenode;
      reqfilenode = record
+{$ifdef hasHugeString}
+                     fn   : string;
+{$else}
                      fn   : string[12];
+{$endif}
                      next : rfnodep;
                    end;
 
@@ -310,8 +318,13 @@ var t        : text;
     sr       : searchrec;
     aresult   : integer;
     i      : byte;
+{$ifdef hasHugeString}
+    request  : string;
+    ownaddr  : string;
+{$else}
     request  : string[12];
     ownaddr  : string[30];
+{$endif}
     fa       : fidoadr;
     ni       : NodeInfo;
     fileatts : integer;   { File-Attaches }
@@ -322,7 +335,7 @@ label fn_ende,fn_ende0;
   procedure WriteFidoCfg;
   var i : integer;
 
-    procedure WriteAttach(var t:text; puffer:pathstr);
+    procedure WriteAttach(var t:text; puffer:string);
     var hd  : headerp;
         hds : longint;
         adr : longint;
@@ -470,7 +483,7 @@ label fn_ende,fn_ende0;
       end;
   end;
 
-  procedure BuildIncomingFilelist(logfile:pathstr);
+  procedure BuildIncomingFilelist(logfile:string);
   var t  : text;
       buf: array[0..511] of byte;
       s  : string;
@@ -497,7 +510,7 @@ label fn_ende,fn_ende0;
           if p=0 then p:=blankposx(s);
           new(fp);
           fp^.next:=rflist;
-          fp^.fn:=UpperCase(getfilename(left(s,p-1)));
+          fp^.fn:=UpperCase(extractfilename(left(s,p-1)));
           rflist:=fp;
           end;
         end;
@@ -508,8 +521,13 @@ label fn_ende,fn_ende0;
   procedure ProcessRequestResult(fa:string);   { Requests zurÅckstellen }
   var files,
       nfiles : string;
+{$ifdef hasHugeString}
+      fname  : string;
+      pw     : string;
+{$else}
       fname  : string[50];
       pw     : string[30];
+{$endif}
       fp     : rfnodep;
       p      : byte;
 
@@ -600,9 +618,9 @@ begin
     end;
 
   window(1,1,80,25);
-  Dos.findfirst(XFerDir+'*.*',AnyFile-Directory,sr);            { SPOOL leeren }
+  Dos.findfirst(XFerDir+WildCard,AnyFile-Directory,sr);            { SPOOL leeren }
   while doserror=0 do begin
-    UpString(sr.name);
+    sr.name:= UpperCase(sr.name);
     if isPacket(sr.name) or (right(sr.name,4)='.PKT') then
       _era(XFerDir+sr.name);
     Dos.findnext(sr);
@@ -793,9 +811,14 @@ var x,y : byte;
     brk : boolean;
     anz : word;
     t   : text;
+{$ifdef hasHugeString}
+    s   : string;
+    adr : string;
+{$else}
     s   : string[80];
-    ni  : nodeinfo;
     adr : string[25];
+{$endif}
+    ni  : nodeinfo;
     c,f : boolean;
     old : boolean;    { zurÅckgestellter Request }
     fa  : FidoAdr;
@@ -934,6 +957,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/05 17:35:37  hd
+  - AnsiString
+
   Revision 1.17  2000/07/04 12:04:27  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

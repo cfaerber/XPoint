@@ -123,8 +123,10 @@ end;
 
 procedure testbyte;
 var b : byte;
+{$ifdef hasHugeString}
+    l : integer;
+{$endif}
 begin
-
 {$IFDEF CAPI }
    if (ISDN and CAPI_getchar(char(b))) or (not ISDN and receive(comnr,b)) then
 {$ELSE }
@@ -154,12 +156,27 @@ begin
       recs:=''; lrec:='';
       end
     else
+{$ifdef hasHugeString}
+      begin
+        l:= length(recs);	{ Die ewige Zaehlerei frisst Zeit }
+	if l<255 then begin
+	  Inc(l);    
+          SetLength(recs,l);
+	  recs[l]:= chr(b);
+	  l:= length(lrec);
+	  Inc(l);
+	  SetLength(lrec,l);
+	  lrec[l]:= LoCase(chr(b));
+	end;
+      end;
+{$else}
       if length(recs)<255 then begin
         inc(byte(recs[0]));
         recs[length(recs)]:=chr(b);
         inc(byte(lrec[0]));
         lrec[length(lrec)]:=LoCase(chr(b));
         end;
+{$endif}
     zaehler[4]:=IdleTimeout;
     end;
 end;
@@ -754,7 +771,7 @@ begin
 end;
 
 
-procedure ZtoMaggi(source,dest:pathstr; pronet:boolean; screen:byte);
+procedure ZtoMaggi(source,dest:string; pronet:boolean; screen:byte);
 var c : string[10];
     f : boolean;
 begin
@@ -767,7 +784,7 @@ begin
   if f then _era(source);
 end;
 
-procedure MaggiToZ(source,dest:pathstr; pronet:boolean; screen:byte);
+procedure MaggiToZ(source,dest:string; pronet:boolean; screen:byte);
 var c : string[10];
 begin
   if pronet then c:='-pz'
@@ -777,7 +794,7 @@ begin
           screen);
 end;
 
-procedure ZtoQuick(source,dest:pathstr; gs:boolean; screen:byte);
+procedure ZtoQuick(source,dest:string; gs:boolean; screen:byte);
 var f : boolean;
 begin
   f:=OutFilter(source);
@@ -785,12 +802,12 @@ begin
   if f then _era(source);
 end;
 
-procedure QuickToZ(source,dest:pathstr; gs:boolean; screen:byte);
+procedure QuickToZ(source,dest:string; gs:boolean; screen:byte);
 begin
   shell('MAGGI.EXE -qz '+iifs(gs,'-g ','')+source+' '+dest,300,screen);
 end;
 
-procedure ZtoMaus(source,dest:pathstr; screen:byte);
+procedure ZtoMaus(source,dest:string; screen:byte);
 var opt : string[10];
     f   : boolean;
 begin
@@ -805,14 +822,14 @@ begin
   if f then _era(source);
 end;
 
-procedure MausToZ(source,dest:pathstr; screen:byte);
+procedure MausToZ(source,dest:string; screen:byte);
 begin
   with BoxPar^ do
     shell('MAGGI.EXE -sz -b'+box+' -h'+MagicBrett+' -it '+source+' '+dest,
           600,screen);
 end;
 
-Procedure ZFilter(source,dest: Pathstr);
+Procedure ZFilter(source,dest: string);
 var
   f:boolean;
 begin
@@ -824,7 +841,7 @@ end;
 
 procedure SysopTransfer;
 var f1,f2 : file;
-    fn    : pathstr;
+    fn    : string;
     dummy : longint;
     ft    : longint;
 
@@ -1006,7 +1023,7 @@ var dummy : longint;
     FindClose(sr);
   end;
 
-  procedure CopyFileAttaches(ppfile:pathstr);
+  procedure CopyFileAttaches(ppfile:string);
   var hd  : headerp;
       hds : longint;
       adr : longint;
@@ -1025,7 +1042,7 @@ var dummy : longint;
           if not exist(hd^.betreff) then
             trfehler1(725,hd^.betreff,15)   { '%s fehlt!' }
           else
-            if not filecopy(hd^.betreff,boxpar^.SysopOut+GetFileName(hd^.betreff)) then
+            if not filecopy(hd^.betreff,boxpar^.SysopOut+extractFileName(hd^.betreff)) then
               trfehler1(726,hd^.betreff,15);  { 'Fehler beim Kopieren von %s' }
         inc(adr,hds+hd^.groesse);
         end;
@@ -1108,13 +1125,13 @@ end;
 
 procedure QWKSysopTransfer;
 var sr     : searchrec;
-{    sysdir : pathstr; }
+{    sysdir : string; }
     dummy  : longint;
 {    qwkext : string[3]; }
     qfg    : QfgRec;
     brk    : boolean;
     replace: shortint;
-    source : pathstr;
+    source : string;
     f      : boolean;
     ex     : string[3];   { REP-Extension }
 
@@ -1354,7 +1371,7 @@ begin
    mwriteln;
 end;
 
-procedure makepuf(fn:pathstr; twobytes:boolean);
+procedure makepuf(fn:string; twobytes:boolean);
 var f : file;
 begin
   assign(f,fn);
@@ -1423,6 +1440,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2000/07/05 17:35:36  hd
+  - AnsiString
+
   Revision 1.27  2000/07/04 12:04:26  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

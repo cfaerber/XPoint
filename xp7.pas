@@ -47,6 +47,17 @@ const CrashGettime : boolean = false;  { wird nicht automatisch zurÅckgesetzt }
       { (anzahl StÅck), in akabox alle eingetragenen Mitsende-Boxen    }
       { (akanz StÅck).                                                 }
 
+{$ifdef hasHugeString}
+type  addpktrec    = record
+                       anzahl : shortint;
+                       akanz  : shortint;
+                       addpkt : array[1..maxaddpkts] of string;
+                       abfile : array[1..maxaddpkts] of string;
+                       abox,
+                       akabox : array[1..maxaddpkts] of string;
+                       reqfile: array[1..maxaddpkts] of string;
+                     end;
+{$else}
 type  addpktrec    = record
                        anzahl : shortint;
                        akanz  : shortint;
@@ -56,6 +67,7 @@ type  addpktrec    = record
                        akabox : array[1..maxaddpkts] of string[BoxNameLen];
                        reqfile: array[1..maxaddpkts] of string[12];
                      end;
+{$endif}
       addpktpnt    = ^addpktrec;
 
 
@@ -112,10 +124,40 @@ const crlf : array[0..1] of char = #13#10;
       NAK  = #21;
       back7= #8#8#8#8#8#8#8;
 
-var bfile      : string[14];
+var
+{$ifdef hasHugeString}
+    bfile      : string;
+    ppfile     : string;
+    eppfile    : string;
+    user       : string;
+    noconnstr  : string;
+    rz         : string;
+    prodir     : string;
+    OwnFidoAdr : string;    { eigene z:n/n.p, fÅr PKT-Header und ArcMail }
+    CrashPhone : string;
+    scrfile    : string;
+    domain     : string;
+    caller,called,
+    upuffer,dpuffer,
+    olddpuffer : string;
+    nulltime   : string;      { Uhrzeit der ersten Anwahl }
+{$else}
+    bfile      : string[14];
     ppfile     : string[14];
     eppfile    : string[14];
     user       : string[30];
+    noconnstr  : string[30];
+    rz         : string[5];
+    prodir     : string[8];
+    OwnFidoAdr : string[20];    { eigene z:n/n.p, fÅr PKT-Header und ArcMail }
+    CrashPhone : string[30];
+    scrfile    : string[50];
+    domain     : string[60];
+    caller,called,
+    upuffer,dpuffer,
+    olddpuffer : string[14];
+    nulltime   : DateTimeSt;      { Uhrzeit der ersten Anwahl }
+{$endif}
     ende   : boolean;
     d          : DB;
     f          : file;
@@ -127,44 +169,33 @@ var bfile      : string[14];
     zsum       : byte;
     i          : integer;
     size       : longint;
-    noconnstr  : string[30];
     c          : char;
     startscreen: boolean;
     display    : boolean;
     showconn   : boolean;
-    rz         : string[5];
     spufsize,
     spacksize  : longint;
     brkadd     : longint;         { s. tkey() }
     s          : string;
 
     ticks      : longint;
-    nulltime   : DateTimeSt;      { Uhrzeit der ersten Anwahl }
     connects   : integer;         { ZÑhler 0..connectmax }
     netztyp    : byte;
     logintyp   : shortint;        { ltNetcall / ltZConnect / ltMagic / }
                                   { ltQuick / ltMaus                   }
     pronet     : boolean;
-    prodir     : string[8];
     janusp     : boolean;
     msgids     : boolean;         { fÅr MagicNET }
     alias      : boolean;         { Fido: Node- statt Pointadresse     }
     CrashBox   : FidoAdr;
-    OwnFidoAdr : string[20];    { eigene z:n/n.p, fÅr PKT-Header und ArcMail }
     ldummy     : longint;
-    CrashPhone : string[30];
     NumCount   : byte;            { Anzahl Telefonnummern der Box }
     NumPos     : byte;            { gerade gewÑhlte Nummer        }
     error      : boolean;
-    scrfile    : string[50];
-    domain     : string[60];
     ft         : longint;
 
-    caller,called,
-    upuffer,dpuffer,
-    olddpuffer : string[14];
     addpkts    : addpktpnt;
-    source     : pathstr;
+    source     : string;
     ff         : boolean;
 
     isdn       : boolean;
@@ -380,7 +411,7 @@ label abbruch,ende0;
       writeln(netlog^,'ÆErrorlevel: '+strs(errorlevel)+'Ø');
   end;
 
-  function NoScript(script:pathstr):boolean;
+  function NoScript(script:string):boolean;
   begin
     NoScript:=((script='') or not exist(script));
   end;
@@ -611,9 +642,9 @@ begin                  { of Netcall }
 
    if net and (IsPath(upuffer) or IsPath(dpuffer)) then begin
      if IsPath(upuffer) then
-       rfehler1(741,getfilename(upuffer))    { 'Lîschen Sie das Unterverzeichnis "%s"!' }
+       rfehler1(741,extractfilename(upuffer))    { 'Lîschen Sie das Unterverzeichnis "%s"!' }
      else
-       rfehler1(741,getfilename(dpuffer));
+       rfehler1(741,extractfilename(dpuffer));
      dispose(NC);
      dispose(addpkts);
      exit;
@@ -1558,6 +1589,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/05 17:35:36  hd
+  - AnsiString
+
   Revision 1.20  2000/07/04 12:04:27  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

@@ -25,6 +25,26 @@ const esec        = 30;    { Sekunden warten bei Fehler }
 
       forcepoll   : boolean = false;   { Ausschluázeiten ignorieren }
 
+{$ifdef hasHugeString}
+type NCstat = record
+                datum              : string;
+                box                : string;
+                starttime,conntime : string;
+                conndate           : string;
+                connsecs           : integer;
+                connstr            : string;
+                addconnects        : word;      { bei mehreren Fido- }
+                logtime,waittime   : integer;   {    Anwahlversuchen }
+                hanguptime         : integer;
+                sendtime,rectime   : longint;
+                sendbuf,sendpack   : longint;
+                recbuf,recpack     : longint;
+                endtime            : string;
+                kosten             : real;
+                abbruch            : boolean;
+                telefon            : string;
+              end;
+{$else}
 type NCstat = record
                 datum              : string[DateLen];
                 box                : string[BoxNameLen];
@@ -43,6 +63,7 @@ type NCstat = record
                 abbruch            : boolean;
                 telefon            : string[40];
               end;
+{$endif}
      NCSptr = ^NCstat;
 
 var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
@@ -53,8 +74,13 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
      wahlcnt   : integer;  { Anwahlversuche }
      bimodem   : boolean;
      SysopMode : boolean;
+{$ifdef hasHugeString}
+     komment   : string;
+     fidologfile: string;
+{$else}
      komment   : string[35];
      fidologfile: string[12];
+{$endif}
     _turbo     : boolean;
     _uucp      : boolean;
     netlog     : textp;
@@ -67,6 +93,9 @@ implementation
 end.
 { 
   $Log$
+  Revision 1.4  2000/07/05 17:35:37  hd
+  - AnsiString
+
   Revision 1.3  2000/04/13 12:48:38  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
