@@ -32,7 +32,15 @@ PROCEDURE SleepTime(Milliseconds: Real);     {Idle loop}
 IMPLEMENTATION
 
 USES Dos,
-{$IFDEF Win32}Windows,{$else}CRT,{$endIF} {for Delay/Sleep}
+{$IFDEF Win32}
+  Windows,
+{$else}
+  {$ifndef NCRT}
+  CRT,
+  {$else}
+  XPCurses,
+  {$endif}
+{$endIF} {for Delay/Sleep}
   debug;
 
 
@@ -122,6 +130,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2000/10/20 14:54:28  hd
+  - xpcurses hinzugefuegt
+
   Revision 1.9  2000/10/15 17:17:08  mk
   - fix for Virtual Pascal compatibility
 
