@@ -3793,10 +3793,10 @@ use this method.
 
 @
 280
-The screen saver switches the screen dark if no key
-is pressed for the number of seconds entered here.
-Entries of 1-4 seconds are not permitted, to prevent
-inconvenience. "0" deactivates the screen saver.
+The screen saver blanks the screen if no key is 
+pressed for the number of seconds entered here.
+The minimum value is "5", whilst "0" deactivates the 
+screen saver.
 
 You can test the screen saver any time with <Alt-1>
 without having to wait the number of seconds you set.
@@ -3808,25 +3808,47 @@ without having to wait the number of seconds you set.
 <<[ ]>>     The display is switched off at once.
 @
 282
-<<[x]>>     The password (if there is one) set under
-        /Config/Options/Password will be activated to
-        prevent the screen saver being switched out
-        without the password. You can set a
-        password needed switch off the screen saver
+<<[x]>>     The password, if one has been set under
+        /Config/Options/Password, will be activated
+        to prevent the screen saver being switched
+        off without the password.
 @
 283
-<<[x]>>     Your username that you use in the box you
-      have selected (under edit servers) to be your
-      main server will be displayed permanently on
-      the screen in the third screen line, top right.
-
-This feature is useful if you work with *SETUSER or
-the Parameter "/user".
+<<[x]>>     When the screen saver is activated, your
+        monitor will be switched into power-saving
+        mode. For this to work, your monitor and
+        graphics card must be VESA-DPMS compatible.
 @
 284
-<<[x]>>     Selection bars in menus and lists with be
+<<[x]>>     The start password, if defined in
+        /Config/Options/Password, will be asked for
+        at programme start.
+@
+285
+<<[x]>>     The Username that you use for the current
+        Server will be displayed permanently on the
+        screen in the third screen line, top right.
+
+This feature is useful if you work with *SETUSER or
+use the parameter "/user".
+
+@
+286
+A custom message header kludge may be defined here. 
+For this to work, you must activate "User defined 1" 
+in /Config/Display/Header.
+@
+287
+An additional custom message header kludge may be 
+defined here. For this to work, you must activate 
+"User defined 2" in /Config/Display/Header.
+@
+1030
+<<[x]>>     Selection bars in menus and lists will be
         marked additionally with a blinking cursor.
-        It is only an extra indicator.
+        This is only an extra indicator and serves no
+        other purpose.
+
 @
 1032
 The order of the letters determines in what order
