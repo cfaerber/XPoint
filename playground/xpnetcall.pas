@@ -49,6 +49,7 @@ function  OutFilter(var ppfile:string):boolean;
 procedure AppLog(var logfile:string; dest:string);   { Log an Fido/UUCP-Gesamtlog anhängen }
 
 procedure ClearUnversandt(puffer,BoxName:string);
+procedure MakeMimetypCfg;
 //**procedure LogNetcall(secs:word; crash:boolean);
 //**procedure SendNetzanruf(once,crash:boolean);
 //**procedure SendFilereqReport;
@@ -510,6 +511,28 @@ begin
     end;
 end;
 
+procedure MakeMimetypCfg;
+var t   : text;
+    typ : string;
+    ext : string;
+begin
+  assign(t, MimeCfgFile);
+  rewrite(t);
+  writeln(t,'# ',getres(728));   { 'tempor„re MAGGI- und UUZ-Konfigurationsdatei' }
+  writeln(t);
+  dbSetIndex(mimebase,0);
+  dbGoTop(mimebase);
+  while not dbEOF(mimebase) do begin
+    typ:= dbReadNStr(mimebase,mimeb_typ);
+    ext:= dbReadNStr(mimebase,mimeb_extension);
+    if (typ<>'') and (ext<>'') then
+      writeln(t,ext,'=',extmimetyp(typ));
+    dbNext(mimebase);
+    end;
+  dbSetIndex(mimebase,mtiTyp);
+  close(t);
+end;
+
 function netcall(PerformDial:boolean; BoxName:string; DialOnlyOnce,relogin,crash:boolean):boolean;
 
 const crlf : array[0..1] of char = #13#10;
@@ -586,30 +609,6 @@ label ende0;
       close(f); close(f2);
       end;
   end;
-
-{------------------}
-
-procedure MakeMimetypCfg;
-var t   : text;
-    typ : string;
-    ext : string;
-begin
-  assign(t, MimeCfgFile);
-  rewrite(t);
-  writeln(t,'# ',getres(728));   { 'tempor„re MAGGI- und UUZ-Konfigurationsdatei' }
-  writeln(t);
-  dbSetIndex(mimebase,0);
-  dbGoTop(mimebase);
-  while not dbEOF(mimebase) do begin
-    typ:= dbReadNStr(mimebase,mimeb_typ);
-    ext:= dbReadNStr(mimebase,mimeb_extension);
-    if (typ<>'') and (ext<>'') then
-      writeln(t,ext,'=',extmimetyp(typ));
-    dbNext(mimebase);
-    end;
-  dbSetIndex(mimebase,mtiTyp);
-  close(t);
-end;
 
 Procedure ZFilter(source,dest: string);
 var
@@ -747,14 +746,9 @@ end;
 
 var NetcallLogfile: String;
 
-tempboxpar: boxptr;
-
 begin                  { function Netcall }
   Debug.DebugLog('xpnetcall','function Netcall',DLInform);
   netcall:=true; Netcall_connect:=false; logopen:=false; netlog:=nil;
-
-  new(tempboxpar);
-  dispose(tempboxpar);
 
   if not crash then begin
     if BoxName='' then
@@ -779,6 +773,11 @@ begin                  { function Netcall }
   domain := dbReadStr(d,'domain');
   msgids:=(dbReadInt(d,'script') and 8=0);
   dbClose(d);
+
+  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3])then begin
+    tfehler('Netcalls to this server type are currently not supported.',60);
+    exit;
+    end;
 
   Debug.DebugLog('xpnetcall','get BoxName parameters',DLInform);
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
@@ -819,8 +818,6 @@ begin                  { function Netcall }
       end;
     end;
 
-  new(tempboxpar);
-  dispose(tempboxpar);
   NumCount:=CountPhonenumbers(boxpar^.telefon); NumPos:=1;
   FlushClose;
 
@@ -848,8 +845,6 @@ begin                  { function Netcall }
     Sichern(ScreenPtr);
 
 //**    AppendEPP;
-  new(tempboxpar);
-  dispose(tempboxpar);
 
     netcalling:=true;
     showkeys(0);
@@ -859,8 +854,6 @@ begin                  { function Netcall }
 
     {------------------------- call appropriate mailer ------------------------}
     Debug.DebugLog('xpnetcall','calling appropriate mailer',DLInform);
-  new(tempboxpar);
-  dispose(tempboxpar);
 
     if PerformDial then begin
       if not fileexists(ppfile)then makepuf(ppfile,false);
@@ -868,8 +861,6 @@ begin                  { function Netcall }
       inmsgs:=0; outmsgs:=0; outemsgs:=0;
       cursor(curoff);
       inc(wahlcnt);
-  new(tempboxpar);
-  dispose(tempboxpar);
       case LoginTyp of
         ltFido: begin
           Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
@@ -899,16 +890,7 @@ begin                  { function Netcall }
 
         ltPOP3: begin
           Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
-          GetPOP3Mails(BoxName, BoxPar, 'spool'+DirSepa);
-          Debug.DebugLog('xpnetcall','converting received buffers',DLInform);
-          uu := TUUZ.Create;
-          uu.source := 'spool'+DirSepa+'*.mail';
-          uu.dest := 'POP3IBUF';
-          uu.OwnSite := boxpar^.pointname+domain;
-          uu.ClearSourceFiles := true;
-          uu.utoz;
-          uu.free;
-          IncomingFiles.Add('POP3IBUF');
+          GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
           end; {case ltPOP3}
 
         else
@@ -1136,6 +1118,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/02/11 19:18:14  ma
+  - added POP3/SMTP code (untested)
+
   Revision 1.8  2001/02/11 16:30:36  ma
   - added sysop call
   - some changes with class constructors
