@@ -52,6 +52,7 @@ type
     colscroll,                          { Scroller                }
     colhigh,                            { *hervorgehoben*         }
     colqhigh: byte;                     { Quote / *hervorgehoben* }
+    colsignatur: byte;                  { Signatur                }
   end;
 
   TLister = class;
@@ -92,6 +93,7 @@ type
     scrollx: Integer;
     rot13enable: boolean;               { ^R moeglich }
     autoscroll: boolean;
+    Signatur: boolean;                  { Highlight beginning from signatur }
   end;
 
   listarr = record                      { Pfeile }
@@ -135,6 +137,7 @@ type
 
   private
     FIsUTF8: boolean;
+    SignaturPosition: Integer;         // line number where signatur starts
   protected
     procedure SetUTF8;
     procedure SetCP437;
@@ -227,6 +230,7 @@ begin
   FIsUTF8 := false;
   
   FLines := TStringList.Create;
+  SignaturPosition := MaxInt;
 end;
 
 constructor TLister.CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
@@ -248,6 +252,7 @@ begin
   stat.directmaus := pos('/DM/', options) > 0;
   stat.vscroll := pos('/VSC/', options) > 0;
   stat.rot13enable := pos('/ROT/', options) > 0;
+  stat.signatur := pos('/SIG/', options) > 0;
   if stat.vscroll then
     stat.scrollx := ScreenWidth;
   stat.autoscroll := true;
@@ -321,7 +326,7 @@ end;
 procedure TLister.ReadFromFile(const Filename: string; ofs: Integer; line_break: boolean);
 var input: TFileStream;
     breaker: TUnicodeLineBreaker;
-
+    i: Integer;
 begin
   FHeaderText := fitpath(FileUpperCase(FileName), 40);
 
@@ -342,6 +347,14 @@ begin
     end;
   finally
     Input.Free;
+  end;
+
+  // search for begin of signature
+  if stat.Signatur then
+  begin
+    SignaturPosition := Lines.IndexOf('-- ');
+    if SignaturPosition = -1 then
+      SignaturPosition := MaxInt; // no signature found
   end;
 end;
 
@@ -438,6 +451,8 @@ var
           else
             if b = $FF then
             b := (col.coltext and $F0) + (col.coltext shr 4);
+          if stat.Signatur and (FirstLine + i >= SignaturPosition) then
+            b := col.colsignatur;
           attrtxt(b);
         end
         else
@@ -776,7 +791,7 @@ begin // Show
   scrolling := false;
   mausdown := false;
   oldselb := true; {!}
-  
+
   repeat
 
     if SelBar then
@@ -1085,6 +1100,7 @@ initialization
       colmarkbar := $30 + green;
       colfound := $71;
       colstatus := 3;
+      colsignatur := 7;
     end
     else
     begin
@@ -1094,10 +1110,14 @@ initialization
       colmarkbar := $70;
       colfound := 1;
       colstatus := $F;
+      colsignatur := $F;
     end;
 finalization
 {
   $Log$
+  Revision 1.89  2003/09/11 22:30:04  mk
+  - added special color for signatures
+
   Revision 1.88  2003/08/26 01:30:22  mk
   - improved display of actual line in lister (showstat)
 

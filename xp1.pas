@@ -1970,7 +1970,7 @@ begin
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
              iifs(_maus and ListScroller,'VSC/','')+
-             iifs(listmsg,'ROT/',''));
+             iifs(listmsg,'ROT/SIG/',''));
     if listwrap {or listkommentar} then
       list.Stat.WrapPos := iif(_maus and listscroller,78,80)+ScreenWidth-80;
 //!!    if listmsg and ConvIso then List.OnConvert := ISO_conv;
@@ -3297,6 +3297,9 @@ end;
 
 {
   $Log$
+  Revision 1.187  2003/09/11 22:30:06  mk
+  - added special color for signatures
+
   Revision 1.186  2003/09/05 18:38:25  mk
   - fixed compile problem on linux (removed const Parameter in PrintLine)
 

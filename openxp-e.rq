@@ -297,7 +297,7 @@ N English
 13   ^Text,^Hotkey,^Arrows
 14   ^Text,^Highlighted,^Inverse
 15   ^Text,^Highlighted,^Reference,^Selected Reference
-16   ^Message Header,^Header Highlight,^Text,^Selection bar,Marked ^Line,Marked ^Word,St^atus line,Sc^roller,Hi^ghlighted word,^Quote,H^ighlited quote
+16   ^Message Header,^Header Highlight,^Text,^Selection bar,Marked ^Line,Marked ^Word,St^atus line,Sc^roller,Hi^ghlighted word,^Quote,H^ighlited quote,,S^ignatur
 17   ^Head,^Status line,^Text,^Quote,^Marked,^End marker,M^enu,Me^nu keys,Menu ^Bar,^selected key
 18   ^Text,^Data,^Status line
 19   Level ^1,Level ^2,Level ^3,Level ^4,Level ^5,Level ^6,Level ^7,Level ^8,Level ^9
@@ -4068,6 +4068,9 @@ N English
 -
 
 # $Log$
+# Revision 1.67  2003/09/11 22:30:04  mk
+# - added special color for signatures
+#
 # Revision 1.66  2003/08/30 22:19:26  cl
 # - send window: select encryption and signature method
 # - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit

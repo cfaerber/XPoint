@@ -475,6 +475,7 @@ type   textp  = ^text;
                   ColListHeaderhigh : byte; { Nachrichtenkopf hervorgehobene Msg}
                   ColListHigh   : byte;   { *hervorgehoben*         }
                   ColListQHigh  : ColQArr; { Quote / *hervorgehoben* }
+                  ColListSignatur: Byte;  { Lister, Signatur        }
                   ColEditText   : byte;   { Editor, normaler Text   }
                   ColEditStatus : byte;   { Editor, Statuszeile     }
                   ColEditMarked : byte;   { Editor, markierter Blck.}
@@ -1234,6 +1235,9 @@ implementation
 
 {
   $Log$
+  Revision 1.187  2003/09/11 22:30:05  mk
+  - added special color for signatures
+
   Revision 1.186  2003/09/06 23:03:07  cl
   - send window - time-shifted sending of message
     cLOSES task #76792: Sendefenster: Datum

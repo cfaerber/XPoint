@@ -135,6 +135,7 @@ type  ColArr = array[0..3] of byte;
                   ColListHeader : byte;   { Nachrichtenkopf         }
                   ColListHigh   : byte;   { *hervorgehoben*         }
                   ColListQHigh  : byte;   { Quote / *hervorgehoben* }
+                  ColListSignatur: byte;  { Lister, Signatur        }
                   ColEditText   : byte;   { Editor, normaler Text   }
                   ColEditStatus : byte;   { Editor, Statuszeile     }
                   ColEditMarked : byte;   { Editor, markierter Blck.}
@@ -192,6 +193,7 @@ begin
     collisttext:=7; collistselbar:=$30; collistmarked:=green;
     collistfound:=$71; colliststatus:=lightred; collistquote:=3;
     collistscroll:=7; collistheader:=7; collisthigh:=$f; collistqhigh:=11;
+    collistsignatur := 7;
     coledittext:=7; coleditmarked:=$17; coleditstatus:=$17; coleditmessage:=$1e;
     coledithead:=$70; coleditquote:=3; coleditendmark:=7;
     coleditmenu:=$70; coleditmenuhi:=$74; coleditmenuinv:=$17;
@@ -299,7 +301,7 @@ begin
         getb(collisttext); getb(collistmarked); getb(collistselbar);
         getb(collistfound); getb(colliststatus); getb(collistquote);
         getb(collistscroll); getb(collistheader); getb(collisthigh);
-        getb(collistqhigh);
+        getb(collistqhigh); getb(collistsignatur);
         end
       else if s1='editor' then begin
         getb(coledittext); getb(coleditmarked); getb(coleditstatus);
@@ -1153,6 +1155,9 @@ end;
 
 {
   $Log$
+  Revision 1.45  2003/09/11 22:30:07  mk
+  - added special color for signatures
+
   Revision 1.44  2003/08/24 21:43:40  mk
     - simplified and corrected FileMode Handling (now uses OS dependend
       constants instead of hard coded values, this may prevent problems

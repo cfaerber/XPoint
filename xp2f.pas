@@ -242,7 +242,8 @@ begin
     wrl('Lister'); wrh(collisttext); wrh(collistmarked); wrh(collistselbar);
                    wrh(collistfound); wrh(colliststatus); wrh(collistquote[1]);
                    wrh(collistscroll); wrh(collistheader); wrh(collisthigh);
-                   wrh(collistqhigh[1]); wrhl(collistheaderhigh);
+                   wrh(collistqhigh[1]); wrh(collistheaderhigh);
+                   wrhl(collistsignatur);
     wrl('Editor'); wrh(coledittext); wrh(coleditmarked); wrh(coleditstatus);
                    wrh(coleditmessage); wrh(coledithead); wrh(coleditquote[1]);
                    wrh(coleditendmark); wrh(coleditmenu); wrh(coleditmenuhi);
@@ -605,6 +606,9 @@ begin
     wrt(42,24,'Wort');
     at(collisthigh);
     wrt(31,25,'hervorgehobenes');
+    at(collistsignatur);
+    wrt(31,27,'--');
+    wrt(31,28,'Signatur');
     at(collistscroll);
     for i:=2 to 5 do wrt(ScreenWidth,i,'°');
     for i:=6 to 10 do wrt(ScreenWidth,i,'Û');
@@ -1119,6 +1123,7 @@ begin
                      l:=readmenu(19);
                      if l>0 then cset(collistqhigh[l]);
                    until l=0;
+              12 : cset(collistsignatur);
              end;
            until m=0;
       17 : repeat    { Editor }
@@ -1169,6 +1174,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2003/09/11 22:30:07  mk
+  - added special color for signatures
+
   Revision 1.36  2003/08/23 20:17:10  mk
   - allow longer program name in Zusatzmenü
   - fixed little display problem in Zusatzmenü
