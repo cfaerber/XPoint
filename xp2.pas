@@ -105,7 +105,7 @@ end;
 procedure setmenus;
 var i : integer;
 begin
-  for i:=0 to 40 do
+  for i:=0 to menues do
     if (i<>11) then setmenu(i,getres2(10,i));
   zusatz_menue;
   case videotype of
@@ -120,7 +120,7 @@ end;
 procedure freemenus;
 var i : integer;
 begin
-  for i:=0 to 40 do
+  for i:=0 to menues do
     freemem(menu[i],length(menu[i]^)+1);
 end;
 
@@ -1077,6 +1077,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.9  2000/02/27 22:30:10  mk
+  - Kleinere Aenderung zum Sprachenwechseln-Bug (2)
+
   Revision 1.8  2000/02/19 14:59:36  jg
   Parameter /w0 hat keine wirkung mehr, wenn /osx definiert ist.
 
