@@ -23,8 +23,6 @@ interface
 uses
   xpglobal,crt,typeform,keys,inout,maus2,winxp,montage,clip;
 
-var exit_mask : boolean;  { = true, sobald Maske verlassen wird }
-
 const digits       : string[12] = '-0123456789 ';
       MaskSeekMenu : Byte = 0;
       allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
@@ -38,6 +36,10 @@ const digits       : string[12] = '-0123456789 ';
       mtInteger  = 4;
       mtWord     = 5;
       mtLongint  = 6;
+
+      exit_mask    : boolean = false; { = true, sobald Maske verlassen wird   }
+      cDel_pressed : boolean = false; { = true, wenn <Ctrl-Del> erkannt wird  }
+                                               { und delete_on_cDel true ist  }
 
 type  colrec   =  record              { 0 = keine spezielle Farbe }
                     ColBack,          { Hintergrund & Rahmen  }
@@ -134,8 +136,8 @@ procedure Maddcustomsel(x,y:byte; const text:string; var s:string; displ:byte;
                         cp:customsel);
 
 
-{----------------- Feld-Einstellungen ----------------}
-{ beziehen ich auf das jeweils zuletzt angelegte Feld }
+{------------------ Feld-Einstellungen ----------------}
+{ beziehen sich auf das jeweils zuletzt angelegte Feld }
 
 procedure MSetProcs(p0,p3:testProc);
 procedure MSet0Proc(p0:testproc);        { bei Feldeintritt     }
@@ -179,7 +181,7 @@ procedure mappendsel(nr:word; force:boolean; const s:string);
 
 implementation  {---------------------------------------------------------}
 
-uses xpovl;
+uses xp9,xpovl;
 
 const maxmask   = 10;                { max. gleichzeitig offene Masken }
       maxfields = 140;               { max. Felder pro Maske           }
@@ -1307,6 +1309,15 @@ end.
 
 {
   $Log$
+  Revision 1.8.2.8  2001/12/11 17:52:37  my
+  MY:- Neue Variable 'delete_on_cDel' in xp9.pas: Mit <Ctrl-Del> kann der
+       Inhalt auch von Feldern gelîscht werden, die gegen Eingaben
+       gesperrt sind (hierzu mu· 'delete_on_cDel' in der Maskenroutine auf
+       'true' gesetzt und beim Verlassen des Feldes wieder zurÅckgesetzt
+       werden). Bei DrÅcken von <Ctrl-Del> wird die Variable
+       'cDel_pressed' gesetzt, so da· in AbhÑngigkeit davon weitere
+       Aktionen ausgefÅhrt werden kînnen.
+
   Revision 1.8.2.7  2001/11/20 23:07:25  my
   MY+JG:- mappsel-Crash bei Strings > 254 Zeichen behoben
 
