@@ -906,15 +906,18 @@ begin
                  GoP; dp:=dbRecno(mbase);
                  ende:=false;
                end;
-        end;
+          end;
+        if (not ende) and (lres<=7)
+          then dpp:=dbRecno(mbase);   { Listerpositionsflag immer aktualisieren }
+
         if lres<6 then
           if not ende then begin
-            {GrabP} kk:=true; disprec[p]:=dbRecno(mbase);
+            {GrabP;} kk:=true; disprec[p]:=dbRecno(mbase);
             mpart_nr:=1;
             if u_read then aufbau:=true;
             end
           else begin
-            errsound; ende:=false;
+            if lres <> -4 then errsound; ende:=false; {-4 (Sub-) Listerende ohne Aktion }
             end;
         end
       else
@@ -1480,6 +1483,13 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.16  2001/08/29 21:43:14  my
+  JG:- Fix: update lister position flag always
+  JG:- Fix: Showing message header with 'O' in message reader after
+       <Ctrl-PgUp/PgDn> could overwrite the screen position the selection
+       bar had been moved to with the message the lister was started with
+       (new exit code -4)
+
   Revision 1.3.2.15  2001/08/05 10:58:36  mk
   - Jochens Weiterschalt-Fix von 3.40
 
