@@ -1576,7 +1576,7 @@ begin
     empf:=vert_char+empf+'@V';     { Verteilernamen anpassen }
 end;
 
-procedure msgdirect;
+procedure msgdirect; // Nachricht/Direkt
 var brk  : boolean;
     empf : string;
     betr : string;
@@ -2415,6 +2415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/08/14 14:43:26  mk
+  - Kommentar hinzugefuegt
+
   Revision 1.38  2000/08/08 13:18:15  mk
   - s[Length(s)] durch Lastchar ersetzt
 
