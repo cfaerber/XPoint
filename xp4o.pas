@@ -2149,15 +2149,19 @@ end;
 { Fehler -> exdir:=''                                         }
 
 procedure ShowArch(var fn:string);   { 'var' wegen Stackplatz }
-var decomp : string[127];
-    p      : byte;
-    datei  : string;
-    newarc : longint;
-    atyp   : shortint;
-    spath  : pathstr;
-    ats    : shortint;
-    viewer : viewinfo;
+var decomp    : string;
+    p         : byte;
+    datei     : string;
+    newarc    : longint;
+    atyp      : shortint;
+    spath     : pathstr;
+    ats       : shortint;
+    viewer    : viewinfo;
+    wasLFN,
+    extractOK : boolean;
+label ende;
 begin
+  wasLFN:=LFNEnabled; extractOK:=false;
   ats:=arctyp_save;
   atyp:=abuf[arcbufp]^.arcer_typ;
   if atyp>arctypes then exit;  { ??? }
@@ -2165,10 +2169,10 @@ begin
     exdir:=''
   else begin
     p:=pos('$DATEI',ustr(decomp));
-    datei:=trim(mid(fn, 80));
+    datei:=trim(mid(fn,80));
     if (exdir='') and ((temppath='') or (ustr(temppath)=ownpath))
       and exist(datei) then begin
-        rfehler(428);   { 'extrahieren nicht mîglich - bitte Temp-Verzeichnis angeben!' }
+        rfehler(428);   { 'Entpacken nicht mîglich - bitte Temp-Verzeichnis angeben!' }
         exit;
         end
     else if ((exdir<>'') and exist(exdir+datei)) or
@@ -2177,23 +2181,36 @@ begin
         rfehler(429);  { 'Datei schon vorhanden - bitte Extrakt-Verzeichnis angeben!' }
         exit;
         end
-      else
-        if not ReadJN(getreps(461,fitpath(exdir+datei,40)),false)  { '%s existiert schon. öberschreiben' }
+      else                            { '%s existiert schon. öberschreiben' }
+        if not ReadJN(getreps(461,'"'+fitpath(iifs(exdir<>'',exdir,temppath)+datei,38)+'"'),false)
         then exit
         else
           _era(iifs(exdir<>'',exdir,temppath)+datei);
+    decomp:=copy(decomp,1,p-1)+'"'+datei+'"'+mid(decomp,p+6);
+    p:=pos('$ARCHIV',ustr(decomp));
+    decomp:=copy(decomp,1,p-1)+abuf[arcbufp]^.arcname+mid(decomp,p+7);
+    if length(decomp) > 127 then
+    begin
+      rfehler(452);  { 'Entpacken nicht mîglich - Entpacker-Aufruf lÑnger als 127 Zeichen.' }
+      goto ende;
+    end;
     spath:=ShellPath;
     if exdir<>'' then GoDir(exdir)
     else GoDir(temppath);
-    decomp:=copy(decomp,1,p-1)+'"'+datei+'"'+copy(decomp,p+6,127);
-    p:=pos('$ARCHIV',ustr(decomp));
-    decomp:=copy(decomp,1,p-1)+abuf[arcbufp]^.arcname+copy(decomp,p+7,127);
     shell(decomp,400,3);
-    if exdir='' then begin
+    if exdir='' then
+    begin
       datei:=mid(datei,rightpos('\',datei)+1);
-      { !?! GoDir(temppath);     { wurde durch Shell zurÅckgesetzt }
-      if not exist(temppath+datei) then
-        rfehler(430)       { 'Datei wurde nicht korrekt entpackt.' }
+      { !?! GoDir(temppath);   { wurde durch Shell zurÅckgesetzt }
+      if exist(temppath+datei) then
+        extractOK:=true
+      else                     { Entpacker evtl. nicht LFN-fÑhig?   }
+        if wasLFN then
+        begin
+          DisableLFN;          { dann ohne LFN-Support versuchen... }
+          if exist(temppath+datei) then extractOK:=true;
+        end;
+      if not extractOK then rfehler(430)  { 'Datei wurde nicht korrekt entpackt.' }
       else begin
         newarc:=ArcType(TempPath+datei);
         if ArcRestricted(newarc) then newarc:=0;
@@ -2203,7 +2220,8 @@ begin
           if (viewer.prog<>'') and (viewer.prog<>'*intern*') then
             ViewFile(TempPath+datei,viewer,false)
           else
-            repeat until ListFile(TempPath+datei,datei,true,false,0) <> -4;
+            repeat until ListFile(TempPath+datei,fitpath(datei,
+                         iif(listuhr,33,40)),true,false,0) <> -4;
           end
         else
           if memavail<20000 then
@@ -2219,8 +2237,10 @@ begin
         end;
       { GoDir(OwnPath); }
       end;
+    if (not LFNEnabled) and wasLFN then EnableLFN;
     ShellPath:=spath;
     end;
+  ende:
   arctyp_save:=ats;
   attrtxt(col.colarcstat);
   wrt(77,4,arcname[ats]);
@@ -2232,7 +2252,7 @@ function a_getfilename(nr,nn:byte):pathstr;
 var fn   : pathstr;
     sex  : pathstr;
 begin
-  fn:=trim(copy(get_selection,2,12));
+  fn:=trim(mid(get_selection,80));
   sex:=exdir; exdir:=TempPath;
   ShowArch(fn);
   exdir:=sex;
@@ -2321,7 +2341,7 @@ var ar   : ArchRec;
 begin
   if abs(typ)=ArcDWC then
     renameDWC;
-  OpenList(1,80,5,screenlines-fnkeylines-1,1,'/NS/SB/M/');
+  OpenList(1,screenwidth,5,screenlines-fnkeylines-1,1,'/NS/SB/M/{NLR/}');
   OpenArchive(fn,typ,ar);
   listcrp(ShowArch);
   listtp(ArcSpecial);
@@ -2344,7 +2364,7 @@ begin
       
       end else
 
-        app_l(forms('*'+path+name,80)+path+name);
+        app_l('*'+path);
       ArcNext(ar);
       end;
     end;
@@ -2907,6 +2927,27 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.41  2002/03/27 19:47:06  my
+  MY:- Fix Archiv-Viewer: Lange Dateinamen wurden nicht korrekt an den
+       Entpacker Åbergeben und der Entpacker konnte daher die Datei im
+       Archiv nicht finden (Code von JG am 09.03.2002 nicht vollstÑndig
+       eingebaut).
+
+  MY:- Fix Archiv-Viewer: Wenn XP unter einem LFN-fÑhigen Betriebssystem
+       lief und die zu entpackende Datei einen langen Dateinamen hatte,
+       jedoch ein nicht LFN-fÑhiger Entpacker wie PKUNZIP v2.04g verwendet
+       wurde, dann wurde die Datei zwar (mit einem kurzen Dateinamen)
+       entpackt, aber von XP nicht angezeigt ("Datei wurde nicht korrekt
+       entpackt"). XP hatte ausschlie·lich nach dem langen Dateinamen
+       gesucht und konnte daher die mit dem kurzen Dateinamen entpackte
+       Datei nicht finden.
+
+  MY:- Fix Archiv-Viewer: Entpacker-Aufrufe, die aufgrund der LÑnge des
+       Dateinamens der zu entpackenden Datei lÑnger als 127 Zeichen
+       wurden, werden jetzt abgefangen (statt erst den Entpacker
+       aufzurufen und anschlie·end je eine Fehlermeldung vom Entpacker und
+       von XP zu kassieren).
+
   Revision 1.47.2.40  2002/03/13 23:11:12  my
   SV[+MY]:- Bei Nachrichten mit KOM-Header wird ein éndern des Textes via
             N/é/T jetzt verhindert.
