@@ -50,6 +50,9 @@ const
   {$IFDEF FreeBSD}
    pformstr    = ' (FreeBSD)';  { 32 Bit native FreeBSD v4+ mit FPC }
   {$endif}
+  {$IFDEF NetBSD}
+   pformstr    = ' (NetBSD)';   { 32 Bit native NetBSD mit FPC }
+  {$endif}
   {$IFDEF Dos32 }
   pformstr    = ' (DOS32)';     { 32 Bit DOS mit FPC oder VP }
   {$ENDIF}
@@ -218,6 +221,9 @@ begin
 
 {
   $Log$
+  Revision 1.75  2003/01/15 23:10:18  mk
+  - added NetBSD pformstr
+
   Revision 1.74  2002/12/28 20:11:06  dodi
   - start keyboard input redesign
 
