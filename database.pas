@@ -109,6 +109,7 @@ function  dbReadXStr(dbp: DB; feld: dbFeldStr; var size: smallword): string;
 
 procedure dbWriteNStr(dbp:DB; feldnr:integer; s: string);
 procedure dbWriteStr(dbp:DB; feld:dbFeldStr; s: string);
+procedure dbWriteXStr (dbp:DB; feld:dbFeldStr; size:word; s: string);
 
 {--------------------------------------------- interne Routinen --------}
 
@@ -1427,6 +1428,15 @@ begin
     end;
 end;
 
+procedure dbWriteXStr (dbp:DB; feld:dbFeldStr; size:word; s: string);
+var
+  s0: shortstring;
+begin
+  if length(s)>255 then s0:= copy(s,1,255)
+  else s0:= s;
+  dbWriteX(dbp,feld,size,s0);
+end;
+
 { Aus Datei in externe Datei schreiben }
 
 procedure dbWriteXX(dbp:DB; feld:dbFeldStr; datei:string);
@@ -1569,6 +1579,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.33  2000/07/11 13:25:37  hd
+  - neu: dbWriteXStr
+
   Revision 1.32  2000/07/11 12:08:53  hd
   - neu: dbWriteStr, dbWriteNStr fuer Schreiben von Strings
 
