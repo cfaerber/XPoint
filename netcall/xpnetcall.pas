@@ -1128,7 +1128,12 @@ begin                  { function Netcall }
   
   if (IncomingFiles.Count>0)and MergeFiles(IncomingFiles)then begin
     CallFilter(true,IncomingFiles[0]);
-    ImportOK := PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad);
+    if PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad)then
+    begin
+      ImportOK := true;
+      SafeDeleteFile(IncomingFiles[0]);
+    end else
+      ImportOK := false;
   end else
     ImportOK := true;
 
@@ -1368,6 +1373,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.11  2003/01/23 19:47:41  ma
+  - last "fix" broke things.
+
   Revision 1.52.2.10  2003/01/22 21:14:02  ma
   - should fix "Could not delete file..." warnings
 
