@@ -468,6 +468,12 @@ var
             TxSize:=FileSeek(TxFileHandle,0,fsFromEnd);
             FileSeek(TxFileHandle,0,fsFromBeginning);
             // unixtime (seconds since 1970-01-01 00:00)
+
+            // temporary
+            DebugLog('ncfido','BpTransmit: FileGetDate (Int): ' + IntToStr(FileGetDate(TxFileHandle)),DLDebug);
+            DebugLog('ncfido','BpTransmit: FileGetDate (Str): ' + DateTimeToStr(FileDateToDateTime(FileGetDate(TxFileHandle))),DLDebug);
+            DebugLog('ncfido','BpTransmit: FileGetDate (xxx): ' + IntToStr((System.Round(FileDateToDateTime(FileGetDate(TxFileHandle))-25569)*24*60*60)),DLDebug);
+
             TxTime:=System.Round((FileDateToDateTime(FileGetDate(TxFileHandle))-25569)*24*60*60);
             OutBpF.SendCommandFrame(M_FILE,TxFilename+' '+IntToStr(TxSize)+' '+IntToStr(TxTime)+' 0');
             TxState:=TxTryR; result:=Continue;
@@ -598,6 +604,9 @@ end;
 
 {
   $Log$
+  Revision 1.11.2.5  2003/11/22 17:27:22  mk
+  - added temp debug log to datetime functions
+
   Revision 1.11.2.4  2003/09/12 17:36:51  ma
   - better error messages (wrong password...)
   - log exceptions
