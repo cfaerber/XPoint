@@ -534,6 +534,7 @@ begin
 end;
 *)
 
+{$IFDEF NOASM}
 Function Dup(const n:integer; const c:Char):string;
 VAR h : String;
 begin
@@ -545,6 +546,24 @@ begin
     end;
 end;
 
+{$ELSE}
+
+Function Dup(const n:integer; const c:Char):string; assembler;
+asm
+    les di,@result
+    mov cx,word ptr n
+    cmp ch,0
+    mov al,cl
+    je @1
+    mov al,0
+    stosb
+    jmp @end
+@1: stosb
+    mov al,byte ptr c
+    rep stosb
+@end:
+end;      
+{$ENDIF}
 
 Function Sp(const n:integer):string;
 begin
@@ -2045,6 +2064,9 @@ end;
   end.
 {
   $Log$
+  Revision 1.37.2.29  2002/05/30 21:40:36  my
+  JG: 'function dup' in ASM-Fassung eingebaut
+
   Revision 1.37.2.28  2002/03/27 19:46:02  my
   MY:- Fix Archiv-Viewer: Wenn die zu entpackende Datei bereits vorhanden
        und der Dateiname l„nger war als die in der Fehlermeldung "xyz
