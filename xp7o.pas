@@ -361,7 +361,7 @@ begin
         writeln(t,getres2(700,40));  { UUCP-Logfile }
       writeln(t);
       assign(log,iifs(_maus,mauslogfile,fidologfile));
-      reset(log);
+      fm_ro; reset(log); fm_rw;
       if _fido or _uucp then
         repeat
           readln(log,s);
