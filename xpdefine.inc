@@ -40,7 +40,7 @@
 
 { Wenn dieser Schalter definiert ist, wird der Overlay-Buffer im
   XMS angelegt, wenn kein EMS zur Verfuegung steht }
-{.$DEFINE XMSOVR }
+{$DEFINE XMSOVR }
 
 { --- ab hier sind keine Žnderungen n”tig --- }
 
@@ -79,6 +79,13 @@
 
 {
   $Log$
+  Revision 1.30.2.9  2003/01/14 21:47:08  mw
+  MW: - XMS-Overlaycache nun per Kommandozeile einschaltbar
+        (Wenn Compilerschalter gesetzt und kein EMS vorhanden)
+      - Kommandozeilenauswertung in der xpx.pas jetzt
+        positionsunabh„ngig realisiert.
+      - Compilerschalter XMSOVR jetzt per Default eingeschaltet
+
   Revision 1.30.2.8  2003/01/10 22:02:32  my
   MY:- Log-Kosmetik
 

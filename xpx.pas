@@ -37,7 +37,7 @@ implementation
 const starting : boolean = true;
 
 var oldexit : pointer;
-
+    i: integer;
 
 procedure stop(const txt:string);
 begin
@@ -294,13 +294,27 @@ begin
   {$IFNDEF DPMI}     { mit DPMI auch nicht }
     TestOVR;
     OvrInit('xp.ovr'); 
+
+    {Lightweight-Readpar}
+    noovrbuf:=false;
+    {$IFDEF XMSOVR }
+    xmsovrbuf:=false; 
+    {$ENDIF }
+    for i:=1 to paramcount do begin     
+      if ((paramstr(i)='/?') and (not noovrbuf)) then noovrbuf:=true;
+      if ((ustr(left(paramstr(i),4))='/AV:') and (not noovrbuf)) then noovrbuf:=true;
+      {$IFDEF XMSOVR } 
+      if (ustr(paramstr(i))='/XMSOVR') then xmsovrbuf:=true;
+      {$ENDIF }                                                 
+    end;
+
     {$IFDEF XMSOVR } 
-    if EmsTest and (ustr(left(paramstr(1),4))<>'/AV:') and (paramstr(1)<>'/?') then
+    if ((EmsTest) and (not noovrbuf)) then
       OvrInitEMS
-    else if XmsTest and (ustr(left(paramstr(1),4))<>'/AV:') and (paramstr(1)<>'/?') then
+    else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf)) then
       OvrInitXMS;
     {$ELSE }
-    if EmsTest and (ustr(left(paramstr(1),4))<>'/AV:') and (paramstr(1)<>'/?') then
+    if ((EmsTest) and (not noovrbuf)) then
       OvrInitEMS;
     {$ENDIF }
     OvrSetBuf(OvrGetBuf+50000);   { > CodeSize(MASKE.TPU) }
@@ -328,6 +342,13 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.16  2003/01/14 21:47:08  mw
+  MW: - XMS-Overlaycache nun per Kommandozeile einschaltbar
+        (Wenn Compilerschalter gesetzt und kein EMS vorhanden)
+      - Kommandozeilenauswertung in der xpx.pas jetzt
+        positionsunabh„ngig realisiert.
+      - Compilerschalter XMSOVR jetzt per Default eingeschaltet
+
   Revision 1.18.2.15  2003/01/10 22:02:32  my
   MY:- Log-Kosmetik
 

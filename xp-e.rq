@@ -351,6 +351,8 @@ K (c) 2002-03 OpenXP/16, http://www.openxp16.de
 55   ~         /df:2    wait for key press after external program calls
 56
 57   ~         /x       quit program
+58
+59   ~         /xmsovr  Use XMS for Overlay-Buffering if no EMS available.
 -
 
 203  Error: Can't create directory %s !

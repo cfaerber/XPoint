@@ -1217,6 +1217,11 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
       xmst : word;
 
+      {Lightweight-Readpar}
+
+      noovrbuf : boolean;
+      xmsovrbuf : boolean;
+
 { Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
 
@@ -1236,6 +1241,13 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.60  2003/01/14 21:47:09  mw
+  MW: - XMS-Overlaycache nun per Kommandozeile einschaltbar
+        (Wenn Compilerschalter gesetzt und kein EMS vorhanden)
+      - Kommandozeilenauswertung in der xpx.pas jetzt
+        positionsunabh„ngig realisiert.
+      - Compilerschalter XMSOVR jetzt per Default eingeschaltet
+
   Revision 1.54.2.59  2003/01/11 14:23:38  my
   MY:- 'GEBUEHR.DAT' und 'TARIFE.DAT' in Groáschreibung (wg. LFN-Leichen)
 
