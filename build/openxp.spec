@@ -7,31 +7,30 @@ Summary: openxp - The Open-Source OpenXP Project (from Crosspoint by Peter Mandr
 Name: openxp
 %define version %version%
 %define release %release%
-#%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
-#%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
-#%define ppcopts -gl -XX -FU. -FuObjCOM -Funetcall -Fl.
-#%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl. -Ci -Co -Cr
-# -CX for Releases only
-#%define ppcopts -CX -XX -OG3p3r -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
-# for snapshots
-%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
+%define compopts %compopts%
+
+%define ppcopts -XX -FU. -FuObjCOM -Funetcall -Fuxplib -Fl.
+
 #%define helpdir /home/boettger/openxp/openxp/contrib
-##%define filelist /home/boettger/openxp/openxptools/filelist.lst
 %define filelist /tmp/filelist.lst
 %define Prefix /usr/local/lib/openxp
+
 Version: %{version}
 Release: %{release}
 Group: Applications/Mail
 Copyright: (C) 2000 by OpenXP-Team under GPL
 Source: /usr/src/packages/SOURCES/openxp-%{version}-%{release}.tar.gz
 BuildRoot: /tmp/openxp-root
+
 # Following are optional fields
 URL: http://www.openxp.de
 Distribution: none
+
 #Patch: openxp.patch
 Prefix: %{Prefix}
 BuildArchitectures: i386
 Requires: ncurses
+
 #Obsoletes:
 %description
 OpenXP - the mail- and newsreader for fido, uucp, rfc, zconnect and other networks
@@ -45,20 +44,16 @@ OpenXP - the mail- and newsreader for fido, uucp, rfc, zconnect and other networ
 %build
 #CFLAGS="$RPM_OPT_FLAGS" ./configure --Prefix=/usr
 #make openxp
-#patch netcall/zmodem.pas < /home/leo/openxptools/zmodem.diff
-#patch < /home/leo/openxptools/xp4.pas.diff
-#ppc386 %{ppcopts} openxp
-ppc386 -B %{ppcopts} openxp
+
+ppc386 -B %{compopts} %{ppcopts} openxp
 ppc386 %{ppcopts} rc
 ppc386 %{ppcopts} ihs
+
 ./rc openxp-d.rq
 ./rc openxp-e.rq
 ./ihs doc/openxp-d
 ./ihs doc/openxp-e
-#/home/leo/openxp/rc openxp-d.rq
-#/home/leo/openxp/rc openxp-e.rq
-#/home/leo/openxp/ihs doc/openxp-d
-#/home/leo/openxp/ihs doc/openxp-e
+
 
 %install
 # echo install >> /tmp/rpm.log
