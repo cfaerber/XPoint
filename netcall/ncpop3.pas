@@ -232,7 +232,11 @@ begin
     SReadln(s);
     if not ParseError(s) then
     begin
-      // abholen
+      while s <> '.' do
+      begin
+        SReadln(s);
+        List.Add(s);
+      end;
     end else
       exit;
     Result := true;
@@ -275,6 +279,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.2  2000/08/06 10:18:04  mk
+  - Abolen der Mails testweise implementiert
+
   Revision 1.1  2000/08/03 06:57:11  mk
   - POP3 bis auf das holen der Nachricht fertig
 
