@@ -63,22 +63,31 @@ mkdir $RPM_BUILD_ROOT%{Prefix}/bin
 mkdir $RPM_BUILD_ROOT%{Prefix}/lib
 mkdir $RPM_BUILD_ROOT%{Prefix}/doc
 
+mkdir -p %{Prefix}
+mkdir -p %{Prefix}/bin
+mkdir -p %{Prefix}/lib
+mkdir -p %{Prefix}/doc
+
 # copy bins
 cp openxp $RPM_BUILD_ROOT%{Prefix}/bin
+cp openxp %{Prefix}/bin
 #cp rc $RPM_BUILD_ROOT%{Prefix}/bin
 #cp ihs $RPM_BUILD_ROOT%{Prefix}/bin
 
 # copy resources
 cp openxp-d.res openxp-e.res $RPM_BUILD_ROOT%{Prefix}/lib
+cp openxp-d.res openxp-e.res %{Prefix}/lib
 
 # copy Helpfiles
 #pushd .
 #cd %{helpdir}
 rm -rf doc/CVS
 cp doc/* $RPM_BUILD_ROOT%{Prefix}/doc
+cp doc/* %{Prefix}/doc
 #popd
 #cp doc/*.hlp $RPM_BUILD_ROOT%{Prefix}/doc
 cp file_id.diz $RPM_BUILD_ROOT%{Prefix}/doc
+cp file_id.diz %{Prefix}/doc
 
 pushd .
 cd $RPM_BUILD_ROOT
