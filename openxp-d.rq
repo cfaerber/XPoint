@@ -34,6 +34,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 8   Schablonen,081!^Kopf,082!^PrivKopf,083!^BrettQuote,084!P^RivQuote,085!PrivP^MQuote,086!^QuoteTo,087!^Weiterleit,088!^Erneut,-,08a!^Signatur,08b!Pr^ivSignatur,08c!Emp^fBest.,08d!^L”schnachr.,08e!S^onstige
 9   Anzeige,091^Farben,092^Bretter,093^Nachrichten,094^Kopf,095^Zeilen,096^Diverses,098^Hilfen
 10  Import,0a1^Puffer einlesen,0a2^Fremdformat,0a3^Userliste,0a4^Brettliste,-,0a6^Yuppie-Nachrichten
+11
 # Dummy fr XPME:
 12  Extrakt,0c1^Nachricht,0c2^UUdecode,0c7M^IME-Decode,0c3^Brett,0c4^Kommentarbaum,0c5^Markiert,0c6!^Als..     T.o.Kopfù13
 13  Als,0d1Text ^ohne Kopf,0d2Text ^mit Kopf,0d3^Puffer,0d4^Quote
@@ -41,6 +42,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 15  Netcall,0f1^Einzeln,0f2^Alle,0f3^Letzte Anrufe,0f4^Uhrzeit,0f5^Relogin,0f6^Online,-,0f8^Bereitschaft,0f9^Timing-Liste
 16  Edit,101^Schablonenù8,102^Boxen,103^Gruppen,104S^ysteme,105^Kurznamen,106^AutoVersand,108^Viewer,107^Textdatei   @E
 17  Status,111^Speicher,112^Nachrichten,113^Datenbank,11a^Fragmente,-,115^Gruppen,116S^Ysteme,117^Bretter,-,119G^ebhrenù26
+18
 #18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Bestellen,132^Abbestellen,133^Liste anfordern,134^Sonstiges,-,136Liste ^einlesen,137^Datei einlesen,138^Maus-Infos
 20  Fileserver,141^Bestellen,142^Senden,143^Listeù27,144^Hilfe,145^Transfer,146S^ervice
@@ -48,6 +50,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 22  ndern,161^Betreff,162^EmpfDatum,163^Rot13,164^Text,165T^yp,166^gelesen,167^Hervorhebung
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Makros
 24  Extern,181^Lister,182^Editor,183^Shell,184Ent^packer,185pm^Crypt,186P^GP
+25
 26  Gebhren,1a1^Alle,1a2^Einzeln
 27  Liste,1b1^Anfordern,1b2^Nachricht einlesen,1b3^Datei einlesen
 28  Optionen,1c1^Allgemeines,1c2^Bedienung,1c3^Lister,1cdEd^itor,1ce^Viewer,1c4^Nachrichten,1ccA^dressen,1c5N^etzeù37,-,1c6Net^call,1c7^Gebhrenù39,1cb^Terminal,-,1c9^Paáwort,1ca^Sprache
@@ -56,6 +59,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 31  Fido,1f1^Request,1f2^Filelistenù32,1f3File ^Areasù38,1f4^Crash,1f5^Nodelistenù30,1f6^Optionen
 32  Fidoliste,201^Einlesen,202^L”schen,203^Suchen
 33  Sonstiges,211Neuaufbau ^Verkettung,212^MsgIDs einlesen,213^Nachrichten prfen,214^Datumsbezge,215^Brettindexù29
+34
+35
 36  Export,241^Userliste,242^Brettliste,243Bre^ttinhalt,244B^ildschirm   @I
 37  Netze,251^Verschiedenes,252^PM-Limits
 38  Filescan,261^Bestellen,262^Abbestellen,263^Liste anfordern,264Liste ^einlesen,265^Datei einlesen,266^Sonstiges
@@ -1380,7 +1385,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    Betreff  ~
 8    An       ~
 # Sendefenster
-10   E^mpf„nger~
+10   Empf„nger~
 11   ^An
 12   Betreff
 13   Server
@@ -3814,6 +3819,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.30  2001/09/05 23:27:23  mk
+# - added empty resources for Menu, avoids false error in debuglog.txt
+# - fixed 611,10: E^mpfaenger to Empfaenger
+#
 # Revision 1.29  2001/08/23 11:15:00  mk
 # - RTA: fixed some bugs (only 32 bit releated) and converted all records
 #   to classes and use TList/TStringList for storage management instead of
