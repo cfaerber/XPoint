@@ -385,8 +385,11 @@ begin
     if t = keyaltm then                                       { ALT+M = Suche MessageID }
     begin
       s:=mailstring(getline,false);
+      while lastchar(s)='/' do
+        DeleteLastChar(s);
+      s:=mid(s,rightpos('/',s)+1);
       if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
-      end;
+    end;
 
     if t = keyaltv then                                        { ALT+V = Suche text }
     begin
@@ -1069,6 +1072,9 @@ end;
 
 {
   $Log$
+  Revision 1.110.2.4  2003/04/25 19:19:57  mk
+  - optimizes MID-Extraction (alt-m)
+
   Revision 1.110.2.3  2003/01/24 14:24:11  cl
   - fixed problems during ``bezugsverkettung''
     (should also fix ``Cannot delete ...\SPOOL\1.z'').
