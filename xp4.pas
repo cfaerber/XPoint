@@ -705,7 +705,7 @@ var t,lastt: taste;
   procedure brief_senden(reply,pm,xposting:boolean; quote:byte);
   var empf,rt : string;
       rtanz   : integer;
-      realname: string;
+      realnm2 : string;
       rt0     : string;   { Vertreter-Adresse }
       _empf   : string;
       betr    : string;
@@ -889,7 +889,7 @@ var t,lastt: taste;
 
     betr:='';
     rt0:='';
-    realname:='';
+    realnm2:='';
     gesperrt:=false;
     usermsg:=(dispmode>=1) and (dispmode<=4);
     if usermsg then
@@ -906,7 +906,7 @@ var t,lastt: taste;
       begin
         if reply and ntReplyToAll(mbNetztyp) then
         begin
-          DoReplyToAll (brk, adresseAusgewaehlt, empf, realname, dispdat);
+          DoReplyToAll (brk, adresseAusgewaehlt, empf, realnm2, dispdat);
           if brk or (empf = '') then exit;
         end else
         begin
@@ -921,10 +921,10 @@ var t,lastt: taste;
           and not (RTAMode and 2 = 2)
           then begin
             empf:= dbReadStr(dispdat,'absender');
-            if ntRealName(mbNetztyp) then realname:= dbReadStr(dispdat,'name');
+            if ntRealName(mbNetztyp) then realnm2:= dbReadStr(dispdat,'name');
             end
           else begin
-            empf:=GetWABreplyEmpfaenger(realname);
+            empf:=GetWABreplyEmpfaenger(realnm2);
             if empf='' then exit;
             end
           end
@@ -1036,7 +1036,7 @@ var t,lastt: taste;
     end;
     if pm then begin
       if quote=0 then
-        BriefSchablone(pm,HeaderPriv,fn,empf,realname);
+        BriefSchablone(pm,HeaderPriv,fn,empf,realnm2);
       if not usermsg and gfound then
         getren
       else begin
@@ -1056,7 +1056,7 @@ var t,lastt: taste;
           force_quotemsk:=force_quotemsk+ extXps;
         getren;
         end;
-        BriefSchablone(pm,headf,fn,empf,realname);
+        BriefSchablone(pm,headf,fn,empf,realnm2);
       end;
     if netztyp in (netsRFC + [nt_ZCONNECT]) then begin
       re_n:=false; kein_re:=false;
@@ -1133,7 +1133,6 @@ var t,lastt: taste;
       if dbFound then
         sData.ReplyGroup:=mid(dbReadStrN(bbase,bb_brettname),2);
       end;
-    sData.empfrealname:=realname;
 
     if reply then
     begin
@@ -1174,7 +1173,6 @@ var t,lastt: taste;
 {*}   savePos := p;
 {*} end;
 
-
     if (dispmode<>1) and (dispmode<>2) and pm and (FirstChar(empf)<>vert_char) then
     begin
       origdb:=defaultbox;
@@ -1197,7 +1195,9 @@ var t,lastt: taste;
       if brk then goto ende;
     end;
 
-    if DoSend(pm,fn,true,false,empf,betr,true,false,true,true,true,sData,sigf,
+    sData.EmpfList.AddNewXP(pm,Empf,RealNm2);
+
+    if DoSend(pm,fn,true,false,'',betr,true,false,true,true,true,sData,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then
     begin
@@ -2327,6 +2327,9 @@ end;
 
 {
   $Log$
+  Revision 1.123  2002/04/14 22:26:56  cl
+  - changes for new address handling
+
   Revision 1.122  2002/03/25 22:03:09  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
        und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse

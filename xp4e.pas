@@ -77,6 +77,10 @@ function  writecode(var s:string):boolean;
 function  testgruppe(var s:string):boolean;
 function  empftest(var s:string):boolean;
 
+procedure edituser(txt:atext; var user,adresse,komm,pollbox:string;
+                   var halten: Integer16; var adr:byte; var flags:byte; edit:boolean;
+                   var brk:boolean);
+
 procedure AutoFilename(var cr:CustomRec);
 function  auto_testempf(var s:string):boolean;
 procedure testwot(var s:string);
@@ -1701,8 +1705,16 @@ begin
   if autocpgd then pgdown:=true;
   forcebox:=box;
   sdata:= TSendUUData.Create;
-  sdata.empfrealname:=real;
-  DoSend(pm,fn,true,false,empf,betr,true,false,true,false,true,sdata,sigf,0);
+// sdata.empfrealname:=real;
+//  with sData.EmpfList.AddNew do begin
+//    Address := empf;
+//    RealName := real;
+//  ed;
+  with sData do begin
+    sData.Empf1Address := empf;
+    sData.Empf1RealName := real;
+    DoSend(pm,fn,true,false,'',betr,true,false,true,false,true,sdata,sigf,0);
+  end;
   sData.Free;
   pgdown:=false;
   if FileExists(fn) then DeleteFile(fn);
@@ -2494,6 +2506,9 @@ end;
 
 {
   $Log$
+  Revision 1.89  2002/04/14 22:26:56  cl
+  - changes for new address handling
+
   Revision 1.88  2002/01/28 20:32:25  mk
   - completed 3.40 merge, source is compilable for dos and win
     linux is still untested

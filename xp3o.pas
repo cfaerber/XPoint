@@ -1235,7 +1235,6 @@ var
     box    : string;
     adr    : string;
     leer   : string;
-    empf   : string;
     hdp    : Theader;
     hds    : longint;
     flags  : longint;
@@ -1293,8 +1292,8 @@ begin
   _betreff:=hdp.betreff;
   sdata:= TSendUUData.Create;
   sData.ersetzt:=hdp.msgid;
-  empf:=hdp.FirstEmpfaenger;
-  SendEmpfList.Assign(hdp.Empfaenger);
+
+  sData.EmpfList.AddStrings(hdp.Empfaenger);
   hdp.Empfaenger.Clear;
 
   sFlags:=0;
@@ -1302,7 +1301,7 @@ begin
   if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
     sFlags:=sFlags or SendMPart;
 
-  DoSend(false,fn,false,false,'A'+empf,_betreff,
+  DoSend(false,fn,false,false,'',_betreff,
     true,false,true,false,true,sData,leer, sFlags);
   Hdp.Free;
   sData.Free;
@@ -1533,6 +1532,9 @@ end;
 
 {
   $Log$
+  Revision 1.86  2002/04/14 22:26:56  cl
+  - changes for new address handling
+
   Revision 1.85  2002/03/25 22:03:09  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
        und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
