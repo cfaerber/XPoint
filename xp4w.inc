@@ -6,7 +6,6 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
-{ $Id$ }
 
 { --- User bearbeiten ---------------------------------- }
 
@@ -692,6 +691,7 @@ begin
       if (mimetyp='') and (mp<>0) and
          ((dbReadInt(mbase,'flags') and 4<>0) or (mp=2)) then
         mimetyp:='multipart/mixed';
+      if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }  
       GetMimeViewer(mimetyp,viewer);
 
       multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
@@ -764,7 +764,7 @@ begin
         CopyMsg;
         end;
       if (viewer.fn='') then viewer.fn:=GetMsgFilename;
-      ViewFile(fn2,viewer,fileattach);
+      ViewFile(fn2,viewer);
       lres:=0;
       end
     else
@@ -1414,6 +1414,3 @@ begin
   wait(curoff);
   closebox;
 end;
-{
-  $Id$
-}
