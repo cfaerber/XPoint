@@ -989,7 +989,7 @@ var f1,f2  : file;
     fromu  : string[70];    { verl„ngert wegen Internet-Adressen }
     tou    : string[36];
     subj   : string[72];
-    tt     : record case integer of
+    tt     : packed record case integer of
                0 : (ctrla : char;
                     kenn  : longint);
                1 : (area  : longint;
@@ -1058,7 +1058,7 @@ label abbr;
     if p=0 then p:=cpos(#10,s);
     if p=0 then p:=cpos(#0,s);
     lfs:=0;
-    if p>0 then
+    if p>1 then                 //war p>0, das h„ngt bei p=1
     begin
       SetLength(s, p-1);
       if (p<rr) and (s[p+1]=#13) then inc(p);   { xxx }
@@ -1339,6 +1339,7 @@ label abbr;
   end;
 
 begin
+  adr:=0;
   assign(f1,fn);
   reset(f1,1); fs:=filesize(f1);
   assign(f2,outfile);
@@ -1677,6 +1678,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.35  2000/10/03 16:38:55  mo
+  - kleine Kammerjagd
+
   Revision 1.34  2000/09/25 17:58:31  mk
   - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
 
