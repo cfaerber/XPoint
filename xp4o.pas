@@ -1543,7 +1543,7 @@ begin
       fehler(getres2(456,2))   { 'Datei nicht vorhanden!' }
     else begin
       msgbox(30,5,'',x,y);
-      wrt(x+3,y+2,getres2(456,3));   { 'Bretter anlegen ...' }
+      wrt(x+3,y+2,getres2(456,3));   { 'Bretter anlegen...' }
       n:=0;
       assign(t,fn);
       reset(t);
@@ -1588,7 +1588,7 @@ begin
       enddialog;
       if brk then exit;
       msgbox(34,5,'',x,y);
-      wrt(x+3,y+2,getres2(456,13));   { 'Userbretter anlegen ...' }
+      wrt(x+3,y+2,getres2(456,13));   { 'Userbretter anlegen...' }
       n:=0;
       assign(t,fn);
       reset(t);
@@ -1663,9 +1663,11 @@ label ende;
   procedure getbrettinfos;
   var x1,y1 : byte;
   begin
-    sortadress:=false; sortbox:=Usersortbox;  exkom:=falsE;
-    dialog(50,5,getres2(457,2),x1,y1);        { 'Brettliste erzeugen' }
-    maddbool(2,2,getres2(457,7),SortAdress);  { 'nach Gruppen sortieren'}
+    sortadress:=false; sortbox:=Usersortbox;  exkom:=false;
+                                              { 'Brettliste erzeugen' }
+    dialog(max(max(length(getres2(457,7)),length(getres2(457,10))),
+                   length(getres2(457,4)))+9,6,getres2(457,2),x1,y1);
+    maddbool(2,2,getres2(457,7),SortAdress);  { 'nach Gruppen ordnen'}
     MSet1Func(bool_brettgruppe);
     maddbool(2,3,getres2(457,10),SortBox);    { 'Sortierung aus BrettÅbersicht beibehalten'}
     MSet1Func(bool_brettindex);    
@@ -1677,11 +1679,13 @@ label ende;
   procedure getuserinfos;
   var x1,y1 : byte;
   begin
-    sortadress:=true; sortbox:=Usersortbox; Onlyadress:=true; exkom:=falsE;
-    dialog(43,6,getres2(457,1),x1,y1);        { 'Userliste erzeugen' }
-    maddbool(2,2,getres2(457,7),SortAdress);  { 'nach Adressbuchgruppen sortieren'}
+    sortadress:=true; sortbox:=Usersortbox; Onlyadress:=true; exkom:=false;
+    dialog(max(max(max(length(getres2(457,7)),length(getres2(457,8))),
+                       length(getres2(457,9))),length(getres2(457,4)))+9,
+           7,getres2(457,1),x1,y1);           { 'Userliste erzeugen' }
+    maddbool(2,2,getres2(457,7),SortAdress);  { 'nach Gruppen ordnen'}
     maddbool(2,3,getres2(457,8),SortBox);     { 'nach Serverbox sortieren'}
-    maddbool(2,4,getres2(457,9),OnlyAdress);  { 'Nur User im Adressbuch exportieren' }
+    maddbool(2,4,getres2(457,9),OnlyAdress);  { 'nur User im Adre·buch exportieren' }
     maddbool(2,6,getres2(457,4),exkom);       { 'auch Kommentare exportieren' }
     readmask(brk);
     enddialog;
@@ -1734,7 +1738,7 @@ begin
         d:=bbase;
         end; 
       msgbox(34,5,'',x,y);
-      wrt(x+3,y+2,getres2(457,iif(user,5,6)));  { 'erzeuge User/Brettliste...     %' }
+      wrt(x+3,y+2,getres2(457,iif(user,5,6)));  { 'erzeuge User-/Brettliste...     %' }
       xx:=wherex-5;
       if not multipos(':\',fname) then fname:=ExtractPath+fname;
       assign(t,fname);
@@ -2926,6 +2930,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.44  2002/04/13 17:29:40  my
+  MY:- Ressourcen fÅr erweiterte User- und Brett-Exportfunktionen (die
+       offenbar schon seit lÑngerem implementiert waren) ergÑnzt und
+       Breite der Dialogboxen an Ressourcen angepa·t.
+
   Revision 1.47.2.43  2002/04/12 14:34:16  my
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
           umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile
@@ -3026,7 +3035,7 @@ end.
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
           Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
-          <Tab> springt der Cursorbalken die n‰chste Zeile mit einem
+          <Tab> springt der Cursorbalken die nÑchste Zeile mit einem
           markierten Suchbegriff an.
 
   JG+MY:- Neue Nachrichten-Suchfunktionen:

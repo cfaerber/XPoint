@@ -1124,18 +1124,22 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 + 456
 1    Read newsgroup list
 2    File not found
-3    Creating newsgroups ...
+3    Creating newsgroups...
 11   Read user list
-12   register user in address book
-13   Create user newsgroups
+12   Register user in address book
+13   Create user newsgroups...
 -
 + 457
 1    Create user list
 2    Create newsgroup list
-3    invalid file name
+3    Invalid file name
 4    Export comments, too
-5    creating user list...     %
-6    creating newsgroup list...     %
+5    Creating user list...     %
+6    Creating newsgroup list...     %
+7    Sort by groups
+8    Sort by Server
+9    Export users registered in address book only 
+10   Keep sorting order from Message Areas Overview
 -
 458  There are NO unsent messages!
 + 459
