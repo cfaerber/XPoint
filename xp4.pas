@@ -2748,6 +2748,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.38  2001/06/13 01:15:57  my
+  - added more meaningful description for "ungelesen-fix" of 01/05/23
+
   Revision 1.26.2.37  2001/06/10 14:33:53  mk
   JG:- Fixed SetBrettgelesen (Index Gruppe nicht gefunden)
 
@@ -2772,6 +2775,9 @@ end.
 
   Revision 1.26.2.32  2001/05/23 10:29:47  mk
   JG:- ungelesen-fix
+  (Amended description by my: Unread flag of /Netcall ("/Netzanruf")
+  message area should now always be set correctly => "Update date
+  entries after netcall" under C/O/C should not be necessary anymore.)
 
   Revision 1.26.2.31  2001/05/18 09:11:52  mk
   - maxgl auf 55 gestellt

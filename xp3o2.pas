@@ -466,8 +466,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.8  2001/06/13 01:15:57  my
+  - added more meaningful description for "ungelesen-fix" of 01/05/23
+
   Revision 1.9.2.7  2001/05/23 10:29:47  mk
   JG:- ungelesen-fix
+  (Amended description by my: Unread flag of /Netcall ("/Netzanruf")
+  message area should now always be set correctly => "Update date
+  entries after netcall" under C/O/C should not be necessary anymore.)
 
   Revision 1.9.2.6  2001/04/28 15:47:33  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
