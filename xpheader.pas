@@ -165,6 +165,7 @@ begin
   ReplyTo := TStringList.Create;
   Followup := TStringList.Create;
   MailCopies := TStringList.Create;
+  MailCopies.Duplicates := dupIgnore;
   References := TStringList.Create;
   XEmpf := TStringList.Create;
   XOEM := TStringList.Create;
@@ -249,9 +250,9 @@ begin
   fline.clear;;
   References.Clear;
   mimereltyp:= '';
-  xempf.clear;;
-  mailcopies.clear;;
-  xoem.clear;;
+  xempf.clear;
+  mailcopies.clear;
+  xoem.clear;
   gateway:= '';
   sender:= '';
   lines := 0;
@@ -294,6 +295,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/04/10 17:38:01  mk
+  - Stringlist Code cleanup
+
   Revision 1.6  2001/01/05 09:33:10  mk
   - removed THeader.Ref
 

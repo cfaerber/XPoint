@@ -252,25 +252,6 @@ end;
 
 function unbatch(s: string): boolean; forward;
 
-{ addiert einen tstringlists an einen zweiten }
-procedure tstringlistadd(var a: tstringlist;b: tstringlist);
-var
-  i,j: integer;
-  ina: boolean;
-begin
-  for i:=0 to b.count-1 do
-  begin
-    ina:=false;
-    for j:=0 to a.count-1 do
-      if a[j]=b[i] then
-      begin
-        ina:=true;
-        break
-      end;
-    if not ina then a.add(b[i])
-  end
-end;
-
 constructor TUUZ.create;
 var
   t: Text;
@@ -1767,26 +1748,19 @@ var
   end;
 
   { liesst eine Newsgroups-Zeile in einen tstring }
-  procedure getnewsgroupsline(line: string;var list: tstringlist);
+  procedure getnewsgroupsline(line: string; List: TStringlist);
   var
     i,p: integer;
-    ng: tstringlist;
   begin
-    ng:=tstringlist.create;
-    try
-      line:=trim(rfcremovecomment(line));
-      if line<>'' then begin
-        if rightstr(line,1)<>',' then line:=line+',';
-        while cpos(',',line)>0 do begin
-          p:=cpos(',',line);
-          ng.add(forumn_rfc2zc(leftstr(line,p-1)));
-          line:=trim(mid(line,p+1))
-        end
-      end;
-      List.Clear;
-      List.AddStrings(ng);
-    finally
-      ng.free
+    List.Clear;
+    line:=trim(rfcremovecomment(line));
+    if line<>'' then begin
+      if rightstr(line,1)<>',' then line:=line+',';
+      while cpos(',',line)>0 do begin
+        p:=cpos(',',line);
+        List.add(forumn_rfc2zc(leftstr(line,p-1)));
+        line:=trim(mid(line,p+1))
+      end
     end;
   end;
 
@@ -1844,33 +1818,24 @@ var
   end;
 
   { liesst eine Followup-To-Zeile }
-  procedure getfollowup(line: string; var followup: tstringlist;
-    var poster: boolean);
+  procedure getfollowup(line: string; FollowUp: TStringList; var poster: boolean);
   var
     i,j: integer;
-    f: tstringlist;
     lposter: boolean;
   begin
-    f:=tstringlist.create;
-    try
-      lposter:=false;
-      if cpos('@',line)=0 then
-      begin
-        getnewsgroupsline(line,f);
-        for i:=0 to f.count-1 do
-          if lowercase(f[i])='/poster' then
-          begin
-            lposter:=true;
-            f.Clear; // why?
-            break
-          end;
-        poster:=lposter;
-        FollowUp.Clear;
-        FollowUp.AddStrings(f);
-      end
-    finally
-      f.free
-    end;
+    lposter:=false;
+    if cpos('@',line)=0 then
+    begin
+      getnewsgroupsline(line,FollowUp);
+      for i:=0 to FollowUp.count-1 do
+        if lowercase(Followup[i])='/poster' then
+        begin
+          lposter:=true;
+          FollowUp.Clear; // why?
+          break
+        end;
+      poster:=lposter;
+    end
   end;
 
 //  procedure GetNewsgroups;
@@ -2374,9 +2339,9 @@ begin
 
     if pm_reply then
       if replyto.count>0 then
-        tstringlistadd(mailcopies,replyto)
+        MailCopies.AddStrings(ReplyTo)
       else
-        mailcopies.add(absender);
+        Mailcopies.Add(Absender);
 
     if (XEmpf.Count = 1) and (Followup.Count = 1) and (xempf[0] = Followup[0]) then
       Followup.Clear;
@@ -3307,17 +3272,20 @@ begin
       if not mail and (AmReplyTo <> '') then
       wrs(f, 'Followup-To: ' + formnews(AmReplyTo)); }
 
-    if pm_reply then begin
+    if pm_reply then
+    begin
       t:=tstringlist.create;
-      tstringlistadd(t,mailcopies);
+      t.Assign(MailCopies);
+      T.duplicates := dupIgnore;
       if replyto.count>0 then
-        tstringlistadd(t,replyto)
+        T.AddStrings(replyto)
       else
-        t.add(absender);
+        t.Add(Absender);
       wrs(f, 'Reply-To: '+newsgroupsline(t));
       wrs(f, 'Followup-To: poster');
       t.free
-    end else begin
+    end else
+    begin
       if replyto.count>0 then
         wrs(f, 'Reply-To: '+newsgroupsline(replyto));
       if followup.count>0 then
@@ -3821,6 +3789,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2001/04/10 17:38:01  mk
+  - Stringlist Code cleanup
+
   Revision 1.49  2001/04/10 15:55:48  ml
   - inline produced accessviolations under vp
 
