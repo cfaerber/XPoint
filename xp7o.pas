@@ -400,15 +400,14 @@ begin
   freeres;
   if netcallunmark then
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
-  { 01/2000 oh: Nach dem Netcall DatumsbezÅge setzen, damit
+  { Nach dem Netcall DatumsbezÅge setzen, damit
     /ØNetzanruf korrekt in der Brettliste auftaucht }
-  if AutoDatumsBezuege then begin 
+  if AutoDatumsBezuege and not NC^.Abbruch then
+  begin
     window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
     bd_setzen(true);
-    end; 
-  { /oh }
+  end;
 end;
-
 
 procedure ZtoFido(source,dest:pathstr; ownfidoadr:string; screen:byte;
                   addpkts:addpktpnt; alias:boolean);
@@ -780,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.2  2000/10/11 08:48:51  mk
+  - DatumsbezÅge nach Netcall ueberarbeiten, #116428
+
   Revision 1.13.2.1  2000/07/06 21:20:23  mk
   - Alten Puffereinlesenscreen wiederhergestellt
 
