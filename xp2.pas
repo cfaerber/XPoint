@@ -276,9 +276,24 @@ procedure initdirs;
 
   procedure GetLibDir;
   begin
-    {$IFDEF UnixDevelop}
-      LibDir:= './';
-    {$ELSE}
+    LibDir := ExtractFilePath(OpenXPEXEPath);
+    if FileExists(LibDir+'/openxp-d.res') and
+       FileExists(LibDir+'/openxp-e.res') then
+    begin
+      if FileExists(LibDir+'/openxp-d.hlp') and
+         FileExists(LibDir+'/openxp-e.hlp') then
+      begin
+        DocDir := LibDir;
+	exit;
+      end else
+      if FileExists(LibDir+'/doc/openxp-d.hlp') and
+         FileExists(LibDir+'/doc/openxp-e.hlp') then
+      begin
+        DocDir := LibDir+'doc/';
+	exit;
+      end;
+    end;
+
       {$IFDEF AUTOCONF}
         LibDir := AddDirSepa(CONF_DATADIR) + XPDirName; { Lib/Res-Verzeichnis }
         DocDir := AddDirSepa(CONF_DATADIR) + XPDirName; { Lib/Res-Verzeichnis }
@@ -296,7 +311,6 @@ procedure initdirs;
         end;
       {$ENDIF}
       {$ENDIF}
-    {$ENDIF}
 
     if not isPath(LibDir) then
     begin
@@ -2774,6 +2788,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.155  2003/01/18 00:46:28  cl
+  - autoconf update
+
   Revision 1.154  2002/12/21 05:37:55  dodi
   - removed questionable references to Word type
 
