@@ -4099,20 +4099,20 @@ und Nachname).
 195
 (N„heres zu Domains: s. Handbuch, Kapitel 1.3).
 
-<<ZCONNECT:>>
+<<ZCONNECT>>
 
 Geben Sie einen gltigen Domainnamen der Box ein.
 Der Domainname ist der Teil Ihrer Z-Netz-Adresse
 rechts vom Boxnamen.
 
-<<Usenet:>>
+<<RFC/UUCP>>
 
 Geben Sie den Domainnamen aus Ihrer eigenen Adresse
 an. Ist Ihre Adresse z.B. "abc\@def.sub.org", dann
 ist der Domainname ".sub.org", bei "abc\@t-online.de"
 oder "abc\@gmx.de" w„re es ".de".
 
-<<Fido:>>
+<<Fido>>
 
 Sie k”nnen dieses Feld (a) freilassen, (b) den Namen
 des Netzes angeben, zu dem die Box geh”rt, z.B.
@@ -4130,21 +4130,25 @@ auch an evtl. eingetragene AKA-Adressen anh„ngen,
 z.B. "2:345/678\@fidonet".
 
 (<<Technischer Hinweis:>> Die Fido-Domain wird nur in
-der Message-ID verwendet).
+der Message-ID verwendet.)
 
-<<MagicNET:>>
+<<MagicNET>>
 
 Geben Sie die im jeweiligen Netz bliche Phantasie-
 Domain ein (normalerweise ".magic" bzw. ".pro").
 
 (<<Technischer Hinweis:>> Die MagicNET-Domain wird nur
-in der Message-ID verwendet).
+in der Message-ID verwendet.)
 
 @
 30001
 Geben Sie hier den 'Fully Qualified Domain Name' ein,
-der zur Erstellung der Message-IDs benutzt werden
-soll.
+der zur Erstellung der Message-IDs (MID) benutzt
+werden soll. Ihre Nachrichten erhalten dann die
+Message-ID <<MID\@FQDN>>. Wenn Sie dieses Feld frei-
+lassen, erhalten Ihre Nachrichten die Message-ID
+<<MID\@Pointname.Domain>> (RFC/UUCP), bzw.
+<<MID\@Pointname.Boxname.Domain>> (ZCONNECT).
 
 Diese Domain sollte ausschlieálich von Ihnen verwen-
 det werden, um so die Eindeutigkeit der Message-IDs
@@ -4152,11 +4156,6 @@ gew„hrleisten zu k”nnen.
 @
 8034
 Geben Sie hier die Domain des UUCP-Servers an.
-
-CrossPoint-User, die einen externen PPP-Client wie
-UKA_PPP oder UKAW in einer RFC/UUCP-Box betreiben,
-geben hier den vollst„ndigen Namensteil hinter dem
-"\@" an, also z.B. "t-online.de" oder "gmx.de".
 @
 196
 Weil eine Nummer langweilig und schlecht zu merken
@@ -7414,10 +7413,10 @@ bitte Ihren Sysop.
 <<Z-Netz / ZCONNECT
 
 <<[x]>> -> Ihre Nachrichten erhalten die Absenderadresse
-       Username\@Pointname.
+       Username\@Pointname.Domain.
 
 <<[ ]>> -> Ihre Nachrichten haben den Absender
-       Username\@Boxname.
+       Username\@Boxname.Domain.
 
 Normalerweise haben Pointadressen - gem„á Z-Netz-
 bzw. ZCONNECT-Standard - immer die letztere Form.
@@ -7428,10 +7427,10 @@ Pointnamen in der Useradresse ben”tigt.
 <<RFC/UUCP
 
 <<[ ]>> -> Ihre Nachrichten erhalten die bliche Absen-
-       deradresse Username\@Pointname.domain
+       deradresse Username\@Pointname.Domain.
 
 <<[x]>> -> Ihre Nachrichten haben den Absender
-       Username\@Servername.Serverdomain. Diese Form
+       Username\@Boxname.Serverdomain. Diese Form
        der Adressierung wird in sehr seltenen F„llen
        verwendet; die Verwendung dieses Schalters
        erspart Ihnen die Angabe einer Vertreter-
@@ -7478,7 +7477,7 @@ Sie diesen Schalter aktivieren.
    Das Brettmanager-Paáwort, das Sie mit dem System-
    betreiber ausgemacht haben.
 
-<<vollst„ndige Domain>>
+<<vollst„ndige Domain:>>
 
    Je nach Konfiguration des Servers erwartet der
    Brettmanager entweder nur Ihren Sitenamen oder
@@ -8434,8 +8433,8 @@ wie folgt aussehen:
 ³ */mpeg             mpg   MPLAYER2.EXE $FILE       ³
 ³ appl./octet-stream       start $FILE              ³
 ³ image/*                  start $FILE              ³
-³ image/gif          gif   C:\PSP\PSP.EXE $FILE     ³
-³ image/jpeg         jpg   C:\PSP\PSP.EXE $FILE     ³
+³ image/gif          gif   C:\QPEG\QPEG.EXE $FILE   ³
+³ image/jpeg         jpg   C:\QPEG\QPEG.EXE $FILE   ³
 ³ text/html          htm   C:\OPERA\OPERA.EXE $FILE ³
 ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
 ³   <<N>>eu      <<L>>”schen      <<E>>dit     <<O>>K             ³
@@ -8549,13 +8548,13 @@ M”glichkeiten:
   Die Dateierweiterung bleibt unver„ndert. Beispiel:
 
   ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-  ³                  gif   C:\PSP\PSP.EXE $FILE    ³
+  ³                  gif   C:\QPEG\QPEG.EXE $FILE  ³
   ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
   ³   <<N>>eu      <<L>>”schen      <<E>>dit     <<O>>K          ³
   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
   Dateiname:     <<beispiel.gif
-  Viewer-Aufruf: <<C:\PSP\PSP.EXE beispiel.gif
+  Viewer-Aufruf: <<C:\QPEG\QPEG.EXE beispiel.gif
 
   Eine Viruswarnung erfolgt nicht.
 
@@ -8565,19 +8564,19 @@ M”glichkeiten:
   Die Dateierweiterung bleibt unver„ndert. Beispiele:
 
   ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-  ³ image/gif              C:\PSP\PSP.EXE $FILE    ³
+  ³ image/gif              C:\QPEG\QPEG.EXE $FILE  ³
   ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
   ³   <<N>>eu      <<L>>”schen      <<E>>dit     <<O>>K          ³
   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
   Dateiname:     <<beispiel.gif
-  Viewer-Aufruf: <<C:\PSP\PSP.EXE beispiel.gif
+  Viewer-Aufruf: <<C:\QPEG\QPEG.EXE beispiel.gif
 
   Dateiname:     <<beispiel.xyz
-  Viewer-Aufruf: <<C:\PSP\PSP.EXE beispiel.xyz
+  Viewer-Aufruf: <<C:\QPEG\QPEG.EXE beispiel.xyz
 
   Dateiname:     <<beispiel
-  Viewer-Aufruf: <<C:\PSP\PSP.EXE beispiel
+  Viewer-Aufruf: <<C:\QPEG\QPEG.EXE beispiel
 
   Fr die letzten beiden F„lle w„re ein Viewer erfor-
   derlich, der Dateitypen selbst„ndig (nicht an der
@@ -8596,19 +8595,19 @@ M”glichkeiten:
   fernt. Beispiele:
 
   ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-  ³ image/gif        gif   C:\PSP\PSP.EXE $FILE    ³
+  ³ image/gif        gif   C:\QPEG\QPEG.EXE $FILE  ³
   ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
   ³   <<N>>eu      <<L>>”schen      <<E>>dit     <<O>>K          ³
   ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
   Dateiname:     <<beispiel.gif
-  Viewer-Aufruf: <<C:\PSP\PSP.EXE beispiel.gif
+  Viewer-Aufruf: <<C:\QPEG\QPEG.EXE beispiel.gif
 
   Dateiname:     <<beispiel.xyz
-  Viewer-Aufruf: <<C:\PSP\PSP.EXE beispiel.gif
+  Viewer-Aufruf: <<C:\QPEG\QPEG.EXE beispiel.gif
 
   Dateiname:     <<beispiel
-  Viewer-Aufruf: <<C:\PSP\PSP.EXE beispiel.gif
+  Viewer-Aufruf: <<C:\QPEG\QPEG.EXE beispiel.gif
 
   Eine Viruswarnung erfolgt nicht.
 
@@ -8633,6 +8632,15 @@ ersten Parameter.
 Falls Sie als Viewer eine Batchdatei eintragen, muá
 der Name der Datei vollst„ndig  ausgeschrieben wer-
 den, inkl. der Erweiterung ".BAT".
+
+Wenn das eingetragene Viewer-Programm eine Windows-
+Anwendung ist, startet CrossPoint das Programm
+automatisch mit einer speziellen "Warte-Batch" ber
+den Befehl <<start>> - es sei denn, Sie haben dies expli-
+zit bei "[Keine Warte-Batch bei Windows-Viewern]" unter@8071
+/Config/Optionen/Viewer deaktiviert. In diesem Fall
+stellt XP bei Windows-Viewern dem eigentlichen Pro-
+grammaufruf lediglich den Befehl <<start>> voran.
 
 Wenn Sie einen Viewer-Eintrag nur mit MIME-Typ aber
 ohne Dateierweiterung (oder nur mit Dateierweiterung
@@ -13997,7 +14005,7 @@ ist!
 @
 20908
 Die Vertreteradresse muá die Form einer normalen
-Useradresse haben, also "user@system.domain".
+Useradresse haben, also "user\@system.domain".
 @
 20911
 Die Gruppen "Intern", "Lokal" und "Netz" sind fest
@@ -14335,10 +14343,11 @@ stellen Sie sicher, daá es per DOS-Pfad (PATH) er-
 reichbar ist, oder daá die Umgebungsvariable
 PGPPATH vorhanden und korrekt gesetzt ist.
 
-PGP erhalten Sie in der CrossPoint-Supportbox
-(s. Handbuch) oder in jeder anderen gutsortierten
-Mailbox, im Internet z.B. auf der "International
-PGP Home Page": http://www.ifi.uio.no/pgp/.
+Die fr CrossPoint geeigneten und empfehlenswerten
+PGP-Versionen erhalten Sie bei <<ftp.openxp.de>> oder
+per Fido File Request bei 2:248/2004. N„heres siehe
+unter: [PGP - Versions- und Detailinformationen]@1010
+
 Verwenden Sie PGP Version 2.6.3!
 @
 23002
