@@ -410,10 +410,15 @@ begin
         2,3: Write(GetRes2(20000,WinVersion));
         4:   if Lo(WinNTVersion) = 0 then
    	       Write(GetRes2(20201,WinNTVersion shr 16))
-	     else begin
+	     else
+             begin
 	       if lo(WinNTVersion) in [5,6] then
-	         Write(GetRes2(20200,Lo(WinNTVersion)))	{ 'Windows 2000'/'XP' }
-	       else
+               begin
+                 if Hi(WinNTVersion) = 0 then
+	           Write(GetRes2(20200,5))	{ 'Windows 2000' }
+                 else
+	           Write(GetRes2(20200,6))	{ 'Windows XP' }
+	       end else
 	         Write(GetRes2(20200,1));	{ 'Windows NT' }
 	       Write(' [',lo(WinNTversion),'.',
                  hi(WinNTversion),'.',Winntversion shr 16,']') 
@@ -1056,6 +1061,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.13  2002/01/04 01:15:45  mk
+  - Windows XP wurde unter CrossPoint/Statistik als WIndows 2000 angezeigt
+
   Revision 1.27.2.12  2001/09/16 20:31:21  my
   JG+MY:- Neuer Lesemodus "Reorg." (Lesen ab letzter Reorganisation)
 
