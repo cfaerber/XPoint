@@ -3148,6 +3148,10 @@ begin
       wrs(f, 'X-XP-Ctl: ' + strs(XPointCtl));
     if ersetzt <> '' then
       wrs(f, 'Supersedes: <' + ersetzt + '>');
+    if expiredate <> '' then begin
+        zctozdatum(expiredate,uuz.s);
+	wrs(f, 'Expires: ' + ztorfcdate(uuz.s,expiredate));
+      end;
     if fido_to <> '' then
     begin
       uuz.s := IbmToIso(fido_to);
@@ -3563,6 +3567,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.74  2000/11/06 21:10:46  fe
+  LDA/Expires support completet.  (Only relaying, not application.)
+
   Revision 1.73  2000/11/05 20:14:13  fe
   Added LDA/Expires.
 
