@@ -65,9 +65,6 @@ function GetTimeZone: String;
 
 implementation
 
-uses
-  Debug;
-
 {$ifdef BSD}   {$i osdbsd.inc}   {$endif}
 {$ifdef Dos32} {$i osddos32.inc} {$endif}
 {$ifdef OS2}   {$i osdos2.inc}   {$endif}
@@ -76,6 +73,9 @@ uses
 
 {
         $Log$
+        Revision 1.6.2.5  2003/09/17 00:17:49  mk
+        - moved uses debug to correct place
+
         Revision 1.6.2.4  2003/09/16 23:47:28  mk
         - added Debug log to GetTimeZone
 
