@@ -1900,6 +1900,7 @@ fromstart:
         5 : flags:=flags or 32;                      { niedrigste }
         end;
 
+      flags := flags or 256; { diese Mail ist von uns erstellt worden!! }
       dbwriteN(mbase,mb_flags,flags);
 
       if msgCPpos=0 then begin
@@ -2217,6 +2218,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.25  2001/01/04 09:25:05  mk
+  - eigene Mails in der Datenbank markieren
+
   Revision 1.39.2.24  2000/12/31 11:54:12  mk
   JG:- eigene PMs halten fix
 
