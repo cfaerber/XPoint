@@ -21,15 +21,12 @@ UNIT montage;
 
 {$I XPDEFINE.INC }
 
+interface
 
-{  ==================  Interface-Teil  ===================  }
+uses
+  typeform, xpglobal;
 
-INTERFACE
-
-uses   typeform, xpglobal;
-
-const  maxmonlen = 9;
-
+const
        monat : Array[1..12] of record
                                  tag : String[9];
                                  zahl: Byte;
@@ -47,9 +44,6 @@ type fdate = packed record
                j   : smallword;
              end;
 
-var  adow  : byte;
-
-
 function  schaltj(jahr:integer):boolean;
 function  ddow(dd:fdate):byte;
 function  dow(d:string):byte;           { Wochentag 1..7 }
@@ -62,10 +56,7 @@ function  prevd(d:datetimest):datetimest;
 function  nextd(d:datetimest):datetimest;
 function  sommer(d:datetimest):boolean;   { Sommerzeit? }
 
-
-{ ================= Implementation-Teil ==================  }
-
-IMPLEMENTATION
+implementation
 
 function schaltj(jahr:integer):boolean;
 begin
@@ -195,12 +186,12 @@ begin
   sommer:=((m>3) and (m<9)) or ((m=3) and (t>=21)) or ((m=9) and (t<=23));
 end;
 
-
-begin
-  adow:=dow(date);
 end.
 {
   $Log$
+  Revision 1.5  2000/04/30 15:54:21  mk
+  - unbenutze globale Variable adow entfernt
+
   Revision 1.4  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
 
