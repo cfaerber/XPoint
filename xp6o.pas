@@ -361,7 +361,6 @@ begin
       onetztyp:=hdp^.netztyp;
       quotestr:=hdp^.quotestring;
       UV_edit:=true;
-      ersetzt:=hdp^.ersetzt;
       end;
     dbReadN(mbase,mb_msgsize,oldmsgsize);
     dbReadN(mbase,mb_adresse,oldmsgpos);
@@ -1268,6 +1267,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/10/16 09:32:38  mk
+  SV:- Ersetzt-Header wird nun beim Weiterleiten geloescht
+
   Revision 1.36  2000/10/06 20:35:29  mk
   MH:- bei Weiterleiten werden Vertreteradressen und Schreibesperern beachtet
 
