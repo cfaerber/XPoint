@@ -31,14 +31,17 @@ begin
     2 : for i:=iif(user,1,2) to length(s) do
           s[i]:=LoCase(s[i]);
   end;
-  if not user and (cpos('/',s)>0)  and newsgroupdisp
+  if (not user)
+     and (cpos('/',s)>0)
+     and newsgroupdisp
      and (((s[1]='A') and (flags and 16<>0)) or newsgroupdispall)
   then begin
-    if newsgroupdispall and (s[2]='/') then delete(s,2,1);
+    if newsgroupdisp and (s[2]='/') then delete(s,2,1);
     if (s[1]='1') or (cpos(':',s)>0) then begin
       i:=cpos('/',s);
       if (i>2) and (cpos('@',s)=0) then s[i]:='@';
     end else
+      // convert slashes to points EXCEPT slashes in OpenXP/16 or OpenXP/32
       for i:=3 to length(s) do if (s[i]='/') and not
         (((i>6) and (UpperCase(copy(s,i-6,6))='OPENXP')) and
          ((i<length(s)-1) and ((copy(s,i+1,2)='16') or
@@ -624,6 +627,10 @@ end;
 
 {
   $Log$
+  Revision 1.57  2002/05/24 12:47:06  ma
+  - fixed: first slashes in RFC area names were displayed even with
+    NewsgroupDisp enabled
+
   Revision 1.56  2002/03/25 22:03:09  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der Menleiste korrigiert
        und berarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
