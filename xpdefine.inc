@@ -197,7 +197,9 @@
   {$DEFINE Sockets }     { Sockets vorhanden }
   {$DEFINE Unix }        { Linux is a Unix Platform }
   {$M 500000,1024000}
+  {$IFNDEF FPC}
   {$IFDEF Debug} {$S+} {$ELSE} {$S-} {$ENDIF }
+  {$ENDIF}
 {$ENDIF }
 
 {$IFDEF BSD}
@@ -249,6 +251,9 @@
 
 {
   $Log$
+  Revision 1.80  2002/08/10 15:48:31  cl
+  - avoid "Stack check is global under Linux" message with FPC
+
   Revision 1.79  2002/06/15 14:28:40  mk
   - O- with delphi, avoid crashes with various functions
 
