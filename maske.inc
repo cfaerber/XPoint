@@ -927,8 +927,10 @@ begin   { readmask }
 
           if (t=^C) or (t=keycins) then string2clip(cont^);   { Ctrl-C / Ctrl-Ins = kopieren }
 
-          if (t=^V) or ((t=keyins) and kb_shift)              { Ctrl-V / Shift-Ins }
-             or ((maskseekmenu>=yp) and (t=keySF2)) then begin
+          if ((t=^V) or ((t=keyins) and kb_shift)             { Ctrl-V / Shift-Ins }
+             or ((maskseekmenu>=yp) and (t=keySF2)))
+             and may_insert_clip then
+          begin
             if replace then
             begin                                             { Ersetzen }
               if (t=keySF2) then begin
@@ -938,7 +940,7 @@ begin   { readmask }
               else s^:=clip2string(maxlen,1);
               i:=length(s^);
               p:=1; ax:=0; replace:=false;
-              end
+            end
             else begin                                        { Einfuegen }
               if t=keySF2 then begin
                 help_page:=ShiftF2Help;
@@ -948,15 +950,25 @@ begin   { readmask }
               else s^:=clip2string(maxlen-length(cont^),1);
               i:=length(s^);
               s^:=left(cont^,p+ax-1)+s^+mid(cont^,p+ax);
-              end;
+            end;
             p:=p+i;                                           { Cursorposition aktualisieren }
             if p>=len then
             begin
               ax:=ax+p-len;
               p:=len;
-              end;
-            if xtest1(s^) then if s^<>'' then cont^:=s^;
             end;
+            if xtest1(s^) then if s^<>'' then cont^:=s^;
+          end;
+
+          if (delete_on_cDel) and (t=keycdel)                 { MY: <Ctrl-Del> in Mens erlauben }
+          then begin                                          {     (auch wenn Feld gesperrt)    }
+            cont^:=mask;
+            if xtest1(cont^) then;    { leer ist immer zul„ssig! }
+            p:=1; ax:=0;
+            replace:=false;
+            cDel_pressed:=true;
+            if leave_on_cDel then t:=keyesc;
+          end;
 
         if (t=keypgup) then
           if yp>1 then begin
@@ -1090,6 +1102,24 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.13.2.6  2001/12/11 17:53:14  my
+  MY:- Neue Variable 'delete_on_cDel' in xp9.pas: Mit <Ctrl-Del> kann der
+       Inhalt auch von Feldern gel”scht werden, die gegen Eingaben
+       gesperrt sind (hierzu muá 'delete_on_cDel' in der Maskenroutine auf
+       'true' gesetzt und beim Verlassen des Feldes wieder zurckgesetzt
+       werden). Bei Drcken von <Ctrl-Del> wird die Variable
+       'cDel_pressed' gesetzt, so daá in Abh„ngigkeit davon weitere
+       Aktionen ausgefhrt werden k”nnen.
+
+  MY:- Neue Variable 'leave_on_cDel' in xp9.pas: Wenn in Maskenroutine auf
+       'true' gesetzt, wird der Dialog nach L”schen des Feldinhalts mit
+       <Ctrl-Del> verlassen.
+
+  MY:- Neue Variable 'may_insert_clip' in xp9.pas (Default: true): Der
+       Clipboard-Inhalt kann nur noch dann mit <Ctrl-C> in Felder
+       eingefgt werden, wenn may_insert_clip=true ist. Damit k”nnen
+       Felder gegen das Einfgen des Clipboard-Inhalts geschtzt werden.
+
   Revision 1.13.2.5  2001/10/21 13:40:07  mk
   - added const parameters (save 500 bytes ;)
 
