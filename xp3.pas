@@ -1261,6 +1261,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/02/20 20:46:17  jg
+  Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
+  Todo aktualisiert
+
   Revision 1.11  2000/02/20 17:22:10  ml
   Kommentare in MsgAddMark hinzugefuegt
 

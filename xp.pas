@@ -189,6 +189,10 @@ ende:
 end.
 {
   $Log$
+  Revision 1.8  2000/02/20 20:46:17  jg
+  Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
+  Todo aktualisiert
+
   Revision 1.7  2000/02/20 17:22:09  ml
   Kommentare in MsgAddMark hinzugefuegt
 
@@ -201,6 +205,10 @@ end.
 }
 {
   $Log$
+  Revision 1.8  2000/02/20 20:46:17  jg
+  Sourcefiles wieder lesbar gemacht (CRCRLF gegen CRLF getauscht)
+  Todo aktualisiert
+
   Revision 1.7  2000/02/20 17:22:09  ml
   Kommentare in MsgAddMark hinzugefuegt
 
