@@ -18,10 +18,11 @@ unit ObjCOM;
 uses Ringbuff
      {$IFDEF DOS32},Ports{$ENDIF}
      {$IFDEF Win32},Windows,WinSock{$ENDIF}
-     {$IFDEF Linux},Linux{$ENDIF}
+     {$IFDEF Linux},Linux,Sockets{$ENDIF}
      {$IFDEF OS2},OCThread
        {$IFDEF VIRTUALPASCAL},OS2Base{$ELSE},OS2Def,DosCalls{$ENDIF}
-     {$ENDIF}     {$IFDEF Go32V2},Go32{$ENDIF};
+     {$ENDIF}
+     {$IFDEF Go32V2},Go32{$ENDIF};
 
 type SliceProc = procedure;
 
@@ -82,14 +83,15 @@ function CommInit(S: String; var CommObj: tpCommObj): boolean;
   "Serial /dev/ttyS1"
   "Serial IO:2f8 IRQ:4 Speed:57600" *
   "Fossil Port:1 Speed:57600"
-  "Telnet 192.168.0.1:20000"
+  "Telnet 192.168.0.1:23"
+  "RawIP 192.168.0.1:20000"
   "Telnet Port:20000" *
   *: not yet working.}
 
 function FossilDetect: Boolean;
 
-{$IFDEF Win32} {$I OCSWinh.inc} {$I OCTWinh.inc} {$ENDIF}
-{$IFDEF Linux} {$I OCSLinh.inc} {$I OCTLinuxh.inc} {$ENDIF}
+{$IFDEF Win32} {$I OCSWinh.inc} {$I OCRawIPh.inc} {$I OCTelneth.inc} {$ENDIF}
+{$IFDEF Linux} {$I OCSLinh.inc} {$I OCRawIPh.inc} {$I OCTelneth.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
 {$IFDEF DOS32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
 
@@ -97,14 +99,10 @@ function FossilDetect: Boolean;
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-uses Sysutils,Dos,Timer,
-{$IFDEF Linux}
-  Sockets,
-{$ENDIF}
-  Debug;
+uses Sysutils,Dos,Timer,Debug;
 
-{$IFDEF Win32} {$I OCSWin.inc} {$I OCTWin.inc} {$ENDIF}
-{$IFDEF Linux} {$I OCSLin.inc} {$I OCTLinux.inc} {$ENDIF}
+{$IFDEF Win32} {$I OCSWin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
+{$IFDEF Linux} {$I OCSLin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
 {$IFDEF Go32v2} {$I OCSDos.inc} {$I OCFDos.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2.inc} {$ENDIF}
 
@@ -372,7 +370,7 @@ function CommInit(S: String; var CommObj: tpCommObj): boolean;
   var help: String; i: Integer;
   begin help:=st; for i:=1 to length(help)do help[i]:=UpCase(help[i]); UpStr:=help end;
 
-type tConnType= (CUnknown,CSerial,CFossil,CTelnet);
+type tConnType= (CUnknown,CSerial,CFossil,CRawIP,CTelnet);
 
 var
  IPort,ISpeed,IDataBits,IStopBits: LongInt; IgnoreCD,FlowHardware: Boolean;
@@ -382,13 +380,14 @@ var
 begin
   ConnType:=CUnknown; Success:=False;
   {$IFDEF Fossil} if pos('FOSSIL',UpStr(S))=1 then ConnType:=CFossil; {$ENDIF}
-  {$IFDEF TCP} if pos('TELNET',UpStr(S))=1 then ConnType:=CTelnet; {$ENDIF}
+  {$IFDEF TCP} if pos('TELNET',UpStr(S))=1 then ConnType:=CTelnet;
+               if pos('RAWIP',UpStr(S))=1 then ConnType:=CRawIP; {$ENDIF}
   if pos('SERIAL',UpStr(S))=1 then ConnType:=CSerial;
   if ConnType<>CUnknown then
     begin
       IPort:=0; SPort:='/dev/modem'; ISpeed:=57600; IDataBits:=8; IStopBits:=1; CParity:='N'; IgnoreCD:=False; FlowHardware:=True;
-      Delete(S,1,7); {delete 'Serial'/'Fossil'/'Telnet' from string}
-      if(ConnType=CTelnet){$IFDEF Linux}or(ConnType=CSerial){$ENDIF}then begin
+      if ConnType<>CRawIP then Delete(S,1,7)else Delete(S,1,6); {delete 'Serial'/'Fossil'/'Telnet'/'RawIP' from string}
+      if(ConnType=CTelnet)or(ConnType=CRawIP){$IFDEF Linux}or(ConnType=CSerial){$ENDIF}then begin
         PTag:=Pos(' ',S);
         if PTag<>0 then
 	begin
@@ -417,7 +416,9 @@ begin
       if Res=0 then
         begin case ConnType of
                 {$IFDEF TCP} CTelnet: begin CommObj:=New(tpTelnetObj,Init);
-                                            Success:=tpTelnetObj(CommObj)^.Connect(SPort)end;{$ENDIF}
+                                            Success:=tpTelnetObj(CommObj)^.Connect(SPort)end;
+                             CRawIP:  begin CommObj:=New(tpRawIPObj,Init);
+                                            Success:=tpRawIPObj(CommObj)^.Connect(SPort)end;{$ENDIF}
                 {$IFDEF Fossil} CFossil: begin CommObj:=New(tpFossilObj,Init);
                                                Success:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;{$ENDIF}
                 {$IFNDEF Linux} CSerial: begin CommObj:=New(tpSerialObj,Init); Success:=CommObj^.Open(IPort,ISpeed,IDataBits,CParity,IStopbits)end;
@@ -427,7 +428,8 @@ begin
               CommObj^.IgnoreCD:=IgnoreCD;
               if not Success then begin ErrorStr:=CommObj^.ErrorStr; Dispose(CommObj,Done)end;
         end;
-    end;
+    end
+  else ErrorStr:='Unknown connection type specified';
   CommInit:=Success;
 end;
 
@@ -439,6 +441,10 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/01/28 18:06:38  ma
+  - added a bit real telnet functionality
+  - renamed former connection type "telnet" to "rawip"
+
   Revision 1.18  2001/01/20 20:00:44  ml
   - telnet compilable - not yet ful functionally
 
