@@ -1,18 +1,27 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
 
-{ CrossPoint - Multipart-Nachrichten decodieren / lesen / extrahieren }
+    OpenXP multipart messages handling unit
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC}
 
+{ OpenXP multipart messages handling unit }
 unit xpmime;
 
 interface
@@ -631,50 +640,6 @@ var   input,t : text;
     end;
   end;
 
-  procedure DecodeBase64;    { aus UUZ.PAS }
-  const b64tab : array[0..127] of byte =
-                 ( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,63, 0, 0, 0,64,
-                  53,54,55,56,57,58,59,60,61,62, 0, 0, 0, 0, 0, 0,
-                   0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
-                  16,17,18,19,20,21,22,23,24,25,26, 0, 0, 0, 0, 0,
-                   0,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,
-                  42,43,44,45,46,47,48,49,50,51,52, 0, 0, 0, 0, 0);
-  var b1,b2,b3,b4 : byte;
-      p1,p2,pad   : byte;
-
-    function nextbyte:byte;
-    var p : byte;
-    begin
-      repeat
-        if s[p1]>#127 then p:=0
-        else p:=b64tab[byte(s[p1])];
-        inc(p1);
-      until (p>0) or (p1>length(s));
-      if p>0 then dec(p);
-      nextbyte:=p;
-    end;
-
-  begin
-    if (length(s)<4) or ((Length(Trim(s)) mod 4) <> 0) then Exit
-    else begin
-      if LastChar(s)='=' then
-        if s[length(s)-1]='=' then pad:=2
-        else pad:=1
-      else pad:=0;
-      p1:=1; p2:=1;
-      while p1<=length(s) do begin
-        b1:=nextbyte; b2:=nextbyte; b3:=nextbyte; b4:=nextbyte;
-        s[p2]:=chr(b1 shl 2 + b2 shr 4);
-        s[p2+1]:=chr((b2 and 15) shl 4 + b3 shr 2);
-        s[p2+2]:=chr((b3 and 3) shl 6 + b4);
-        inc(p2,3);
-        end;
-        SetLength(s, p2-1-pad);
-      end;
-  end;
-
 begin
   tmp:=TempS(dbReadInt(mbase,'msgsize'));
   extract_msg(0,'',tmp,false,0);
@@ -738,7 +703,7 @@ begin
       for i:=1 to lines do
       begin
         readln(input,s);
-        DecodeBase64;
+        DecodeBase64(s);
         if s <> '' then blockwrite(f,s[1],length(s));
       end;
 
@@ -770,8 +735,14 @@ end;
 
 
 end.
+
 {
   $Log$
+  Revision 1.44  2001/02/25 15:15:19  ma
+  - shortened logs
+  - added GPL headers
+  - deleted DecBase64 as it was implemented twice
+
   Revision 1.43  2000/12/25 23:58:07  mk
   - fehlerhafte Base64-Zeilen werden nicht mehr dekodiert
 
@@ -789,115 +760,4 @@ end.
 
   Revision 1.38  2000/12/03 12:38:26  mk
   - Header-Record is no an Object
-
-  Revision 1.37  2000/11/18 23:31:41  mk
-  - MIME-Erkennung wegen schrottiger Microsoft Outlook Software angepasst
-
-  Revision 1.36  2000/11/18 15:46:05  hd
-  - Unit DOS entfernt
-
-  Revision 1.35  2000/11/14 15:51:37  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.34  2000/11/01 22:59:24  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.33  2000/10/26 13:17:20  mk
-  - ISO859-1 Umwandlung immer durchfuerhen
-
-  Revision 1.32  2000/10/22 23:16:48  mk
-  - AnsiString fixes
-
-  Revision 1.31  2000/10/19 13:12:40  mk
-  - if Charset is unkown assume ISO8859-1 is used
-
-  Revision 1.30  2000/10/19 12:56:38  mk
-  - Ansistring Fix
-
-  Revision 1.29  2000/10/17 10:06:00  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.28  2000/10/15 08:50:07  mk
-  - misc fixes
-
-  Revision 1.27  2000/10/10 12:25:34  mk
-  - extract_msg now uses Unicode
-
-  Revision 1.26  2000/10/10 05:34:56  mk
-  - Ansistring-Bugfix
-
-  Revision 1.25  2000/08/08 13:18:16  mk
-  - s[Length(s)] durch Lastchar ersetzt
-
-  Revision 1.24  2000/08/05 17:28:24  mk
-  JG: - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
-
-  Revision 1.23  2000/08/03 14:48:10  mk
-  - ein (nicht dringend noetiges) Freeres hinzugefuegt
-
-  Revision 1.22  2000/07/27 16:17:44  mk
-  - Endlich korrekte Behandlung der letzen Zeile im letzen Part von MIME-Mails
-
-  Revision 1.21  2000/07/21 21:17:49  mk
-  - hasHugeStrings entfernt, weil nicht mehr noetig
-
-  Revision 1.20  2000/07/21 17:39:58  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
-
-  Revision 1.19  2000/07/09 08:35:19  mk
-  - AnsiStrings Updates
-
-  Revision 1.18  2000/07/06 18:26:26  hd
-  - Stringzeiger entfernt
-
-  Revision 1.17  2000/07/05 13:55:03  hd
-  - AnsiString
-
-  Revision 1.16  2000/07/04 12:04:31  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.15  2000/07/03 13:31:45  hd
-  - SysUtils eingefuegt
-  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
-
-  Revision 1.14  2000/06/29 20:53:09  mk
-  JG: - Mime-Auswahl erscheint nur noch, wenn wirklich noetig und sinnvoll
-
-  Revision 1.13  2000/06/22 19:53:32  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.12  2000/05/05 14:20:08  mk
-  - erweiterte Filenamenerkennung bei MIME-Mails
-
-  Revision 1.11  2000/04/22 23:29:55  mk
-  - Endlosschleife beim QP-decodieren von Zeilen mit 255 Zeichen Laenge behoben
-  - $H+ teils in xpmime implementiert um Zeilen laenger 255 Zeichen dekodieren zu koennen
-
-  Revision 1.10  2000/03/24 17:37:05  jg
-  - Mime-Extrakt: Bugfixes:
-    Makepartlist: kein INC(N) mehr beim Block mit EOF
-    Extraktmultipart: es wird wieder bis Lines extrahiert, nicht mehr Lines-1
-
-  Revision 1.9  2000/03/09 22:29:56  rb
-  text/html wird jetzt mit ISO-Zeichensatz exportiert
-
-  Revision 1.8  2000/03/08 22:36:33  mk
-  - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
-
-  Revision 1.7  2000/03/01 23:41:48  mk
-  - ExtractMultiPart decodiert jetzt eine Zeile weniger
-
-  Revision 1.6  2000/02/22 15:51:20  jg
-  Bugfix fÅr "O" im Lister/Archivviewer
-  Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
-  O, I,  ALT+M, ALT+U, ALT+V, ALT+B nur noch im Lister gÅltig.
-  Archivviewer-Macros gÅltig im MIME-Popup
-
-  Revision 1.5  2000/02/16 23:02:43  mk
-  JB: * Nachricht/Extrakt/Mime Decode die Zieldatei schon vorhanden und waehlt
-        entsprechend die Option Ueberschreiben/Anhaengen
-
 }

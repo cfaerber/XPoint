@@ -1,14 +1,23 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{   $Id$
 
+    OpenXP typeform unit
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC }
 
@@ -1282,36 +1291,37 @@ begin
   else d2:='19'+d1+'00W+0';
 end;
 
-{TAINTED}
+{ RFC 1521, see www.rfc.net }
 procedure DecodeBase64(var s: String);
 const
-  b64tab: array[0..127] of byte =
-  (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 63, 0, 0, 0, 64,
-    53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 0, 0, 0, 0, 0, 0,
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 0, 0, 0, 0, 0,
-    0, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41,
-    42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 0, 0, 0, 0, 0);
+  b64tab: array[0..127] of shortint =
+  (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
+    -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+    -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1);
 var
   b1, b2, b3, b4: byte;
   p1, p2, pad: integer;
 
   function nextbyte: byte;
-  var
-    p: integer;
+  var p: integer;
   begin
+    result:=0;
+    if p1>length(s)then exit;
     repeat
       if s[p1] > #127 then
-        p := 0
+        p := -1
       else
         p := b64tab[byte(s[p1])];
       inc(p1);
-    until (p > 0) or (p1 > length(s));
-    if p > 0 then dec(p);
-    nextbyte := p;
+    until (p >= 0) or (p1 > length(s));
+    if p>=0 then result:=p;
   end;
+
 begin
   if length(s) < 4 then
     s := ''
@@ -1336,11 +1346,15 @@ begin
     SetLength(s, p2 - 1 - pad);
   end;
 end;
-{/TAINTED}
 
 end.
 {
   $Log$
+  Revision 1.80  2001/02/25 15:15:19  ma
+  - shortened logs
+  - added GPL headers
+  - deleted DecBase64 as it was implemented twice
+
   Revision 1.79  2001/02/19 15:27:18  cl
   - marked/modified non-GPL code by RB and MH
 
@@ -1370,233 +1384,4 @@ end.
 
   Revision 1.70  2000/10/17 10:05:43  mk
   - Left->LeftStr, Right->RightStr
-
-  Revision 1.69  2000/08/27 10:37:08  mk
-  - UUZ ist jetzt intern
-
-  Revision 1.68  2000/08/19 09:41:36  mk
-  - Code aufgeraeumt
-
-  Revision 1.67  2000/08/14 21:05:53  mk
-  - Bugfix fuer Mailstring
-
-  Revision 1.66  2000/08/08 23:14:26  mk
-  - Bugfix fuer Hex() unter VP
-
-  Revision 1.65  2000/08/08 13:18:14  mk
-  - s[Length(s)] durch Lastchar ersetzt
-
-  Revision 1.64  2000/08/08 12:05:40  mk
-  - fix fuer BlankPosX und FirstChar liefert jetzt #0 bei Length(s)=0
-
-  Revision 1.63  2000/08/04 14:52:53  mk
-  - Einige Verbesserung durch Nutzung von Result
-
-  Revision 1.62  2000/08/01 23:55:29  mk
-  - Endlosschleife in Without beseitigt
-
-  Revision 1.61  2000/08/01 16:32:26  mk
-  - Define Windows in Win32 geaendert
-
-  Revision 1.60  2000/08/01 08:40:40  mk
-  - einige String-Parameter auf const geaendert
-
-  Revision 1.59  2000/07/22 21:48:25  mk
-  - Ansistring-Fix fuer Filename
-
-  Revision 1.58  2000/07/21 13:22:59  mk
-  - Bugfix fuer AnsiStrings
-
-  Revision 1.57  2000/07/09 08:35:13  mk
-  - AnsiStrings Updates
-
-  Revision 1.56  2000/07/07 09:51:30  mk
-  - verschiedene AnsiString Fixes
-
-  Revision 1.55  2000/07/06 12:05:27  hd
-  - Fix: Unterschiedliche Definition (Rot13)
-
-  Revision 1.54  2000/07/06 08:52:12  mk
-  - AnsiString-Fixes, byte->integer
-
-  Revision 1.53  2000/07/05 10:59:52  hd
-  - Weitere AnsiString-Anpassungen
-
-  Revision 1.52  2000/07/04 21:23:07  mk
-  - erste AnsiString-Anpassungen
-
-  Revision 1.51  2000/07/04 17:33:23  mk
-  - stapelweise ungenutze Routinen entfernt
-
-  Revision 1.50  2000/07/04 17:11:17  hd
-  - Funktion Long entfernt
-
-  Revision 1.49  2000/07/04 16:42:45  hd
-  - Funktion even entfernt
-
-  Revision 1.48  2000/07/04 16:30:37  hd
-  - DirName, PAthNAme, ExtName auf TFilename umgestellt
-  - ProgPath, ProgName, FitPath, Hex umgeschrieben
-  - ShortPath entfernt
-  - Linux-Version:
-    - DOS-Unit entfernt (SetDate/SetTime funktionieren sowieso nicht)
-
-  Revision 1.47  2000/07/04 11:40:12  hd
-  - UStr, LStr entfernt
-  - FUStr in FileUpperCase umbenannt
-  - Die anderen Dateien folgen in 30 Minuten, bitte solange keine Updates
-    committen!!!!!!
-
-  Revision 1.46  2000/07/03 18:15:46  mk
-  - Left/Right deutlich vereinfacht
-
-  Revision 1.45  2000/07/03 17:28:54  hd
-  - Date/Time geaendert
-  - Left/Right angepasst (nur FPC, da die Funktionen bei VPC fehlen)
-
-  Revision 1.44  2000/07/03 16:20:03  hd
-  - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
-
-  Revision 1.43  2000/07/03 15:16:22  mk
-  - Trim entfernt und Sysutils eingefuegt
-
-  Revision 1.42  2000/07/03 15:11:01  mk
-  - unnoetige Defines entfernt
-  - sysutils war zweimal in xp6o.pas enthalten
-
-  Revision 1.41  2000/07/03 09:59:39  hd
-  - Neue Definitionen:
-    - hasSetLength -> RTL-Funktion SetLength vorhanden
-    - hasTrim      -> RTL-Funktion Trim vorhanden
-  - string[0] durch SetLength ersetzt
-
-  Revision 1.40  2000/07/02 14:24:49  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.39  2000/06/23 15:59:13  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.38  2000/06/22 19:53:27  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.37  2000/06/16 14:51:09  hd
-  - Neue Funktion: CountChar: Zaehlt das Vorkommen eines Zeichens
-
-  Revision 1.36  2000/06/01 08:02:23  mk
-  RB: - Assembler-Verbesserungen
-
-  Revision 1.35  2000/05/09 13:11:00  hd
-  - DirSepa eingebaut
-
-  Revision 1.34  2000/05/07 11:29:47  ml
-  Bug in typeform unter Linux keine '\' als Verzeichnistrennung...
-
-  Revision 1.33  2000/05/04 10:32:55  mk
-  - unbenutzer TurboBox Code entfernt
-
-  Revision 1.32  2000/05/01 08:49:28  mk
-  - Tippfehler :-(
-
-  Revision 1.31  2000/05/01 08:44:47  mk
-  - function UStrHuge fuer AnsiStrings eingefuegt
-
-  Revision 1.30  2000/04/29 20:54:07  mk
-  - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
-
-  Revision 1.29  2000/04/29 07:59:03  mk
-  - Funktion FUStr fuer Filenamen Up/Locase eingebaut
-
-  Revision 1.28  2000/04/22 23:35:27  mk
-  - SetLength nur fuer BP implementiert
-
-  Revision 1.27  2000/04/22 23:29:55  mk
-  - Endlosschleife beim QP-decodieren von Zeilen mit 255 Zeichen Laenge behoben
-  - $H+ teils in xpmime implementiert um Zeilen laenger 255 Zeichen dekodieren zu koennen
-
-  Revision 1.26  2000/04/04 21:01:21  mk
-  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.25  2000/03/24 20:25:49  rb
-  ASM-Routinen gesaeubert, Register fuer VP + FPC angegeben, Portierung FPC <-> VP
-
-  Revision 1.24  2000/03/24 08:35:30  mk
-  - Compilerfaehigkeit unter FPC wieder hergestellt
-
-  Revision 1.23  2000/03/24 00:03:39  rb
-  erste Anpassungen fuer die portierung mit VP
-
-  Revision 1.22  2000/03/21 18:45:04  jg
-  - Mailstring: RFC-Konforme(re) Erkennung
-
-  Revision 1.21  2000/03/14 15:15:36  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.20  2000/03/13 18:55:18  jg
-  - xp4o+typeform: Ukonv in UkonvStr umbenannt
-  - xp4o: Compilerschalter "History" entfernt,
-          "Debugsuche" durch "Debug" ersetzt
-
-  Revision 1.19  2000/03/08 22:36:33  mk
-  - Bugfixes fuer die 32 Bit-Version und neue ASM-Routinen
-
-  Revision 1.18  2000/03/05 12:14:51  mk
-  ML: DOSEmuVersion nutzt jetzt den offiziellen Weg
-
-  Revision 1.17  2000/03/04 15:54:43  mk
-  Funktion zur DOSEmu-Erkennung gefixt
-
-  Revision 1.16  2000/03/02 18:32:23  mk
-  - Code ein wenig aufgeraeumt
-
-  Revision 1.15  2000/03/01 22:30:20  rb
-  Dosemu-Erkennung eingebaut
-
-  Revision 1.14  2000/03/01 08:04:23  jg
-  - UND/ODER Suche mit Suchoptionen "o" + "u"
-    Debug-Checkfenster mit Suchoption "c"
-  - Umlautkonvertierungen beruecksichtigen
-    jetzt Maximalstringlaenge
-
-  Revision 1.13  2000/02/29 12:59:16  jg
-  - Bugfix: Umlautkonvertierung beachtet jetzt Originalstringlaenge
-    (Wurde akut bei Spezialsuche-Betreff)
-
-  Revision 1.12  2000/02/28 18:12:50  jg
-  -Bugfix: mehrere gleiche Umlaute in einem String konvertieren
-
-  Revision 1.11  2000/02/21 18:51:47  mk
-  MH: Nachrichten mit Prioritaet ab High hervorheben
-
-  Revision 1.10  2000/02/21 15:07:55  mk
-  MH: * Anzeige der eMail beim Nodelistbrowsen
-
-  Revision 1.9  2000/02/19 18:00:24  jg
-  Bugfix zu Rev 1.9+: Suchoptionen werden nicht mehr reseted
-  Umlautunabhaengige Suche kennt jetzt "‚"
-  Mailadressen mit "!" und "=" werden ebenfalls erkannt
-
-  Revision 1.8  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.7  2000/02/18 18:39:03  jg
-  Speichermannagementbugs in Clip.pas entschaerft
-  Prozedur Cliptest in Clip.Pas ausgeklammert
-  ROT13 aus Editor,Lister und XP3 entfernt und nach Typeform verlegt
-  Lister.asm in Lister.pas integriert
-
-  Revision 1.6  2000/02/16 23:04:06  mk
-  JG: * Windows-Umlaute aus UKonv korrigiert
-
-  Revision 1.5  2000/02/15 21:19:24  mk
-  JG: * Umlautkonvertierung von XP4O.Betreffsuche in Typeform verlagert
-      * wenn man eine markierte Nachricht liest, wird beim Verlassen
-        der Headeranzeige nicht gleich auch der Lister verlasssen
-      * Die Suchfunktionen "Absender/User", "Betreff" und "Fidoempfaenger"
-        koennen jetzt Umlautunabhaengig geschalten werden
-
 }
