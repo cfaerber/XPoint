@@ -519,7 +519,7 @@ begin
         State:=Switch; //** set timer
         end;
       Switch: begin
-        if (RxState=RxDone)and(TxState=TxDone)then begin
+        if (RxState=RxDone)and(TxState=TxDone)and(PendingFiles.Count=0)then begin
           if MultipleBatchCapability and SeenCommandPacket then
             State:=WaitConn
           else begin
@@ -577,6 +577,9 @@ end;
 
 {
   $Log$
+  Revision 1.9  2001/09/17 11:06:34  ma
+  - fix: mailer reported "connection lost" if no incoming mail
+
   Revision 1.8  2001/09/16 10:48:00  ma
   - added multiple batch mode
   - improved debug logs
