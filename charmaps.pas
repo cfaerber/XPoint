@@ -28,7 +28,7 @@ uses
   Unicode,  //T8BitTable
   mime;     //TMimeCharsets
 
-{$IFDEF Linux }
+{$IFDEF Unix }
 {$I charsets/cp437.inc }
 {$I charsets/cp850.inc }
 {$I charsets/cp857.inc }
@@ -121,6 +121,9 @@ end.
 
 //
 // $Log$
+// Revision 1.11  2003/01/16 11:14:20  mk
+// - some *BSD-releated changes
+//
 // Revision 1.10  2002/12/06 14:27:26  dodi
 // - updated uses, comments and todos
 //

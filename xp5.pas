@@ -422,7 +422,7 @@ begin
 {$ENDIF}
   attrtxt(col.colmboxhigh);
   moff;
-{$IFDEF Linux}
+{$IFDEF Unix }
   wrt(x+21,y+2,'RAM         '+RightStr('     ~/openxp',8));
 {$ELSE }
    wrt(x+21,y+2,'RAM         '+RightStr('     '+getres2(rnr,8)+' '+LeftStr(ownpath,2),8));
@@ -430,7 +430,7 @@ begin
   wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
   wrt(x+4,y+5,xp_xp);             { CrossPoint }
   wrt(x+4,y+6,getres2(rnr,4));    { frei }
-{$IFDEF Linux}
+{$IFDEF Unix }
   wrt(x+4,y+7,getres2(rnr,12));
   wrt(x+4,y+8,getres2(rnr,13));
   wrt(x+4,y+9,getres2(rnr,14));
@@ -442,7 +442,7 @@ begin
 {$IFDEF Dos32 }
   wrt(x+4,y+8,'DOS' + getres2(rnr,7));
 {$ENDIF }
-{$IFDEF Linux }
+{$IFDEF Unix }
   wrt(x+4,y+12,GetShortVersion);
 {$ENDIF }
   attrtxt(col.colmbox);
@@ -451,7 +451,7 @@ begin
   wrt(x+31,y+4,format('%8d MB',[SysDiskSizeLong(0) div 1024 div 1024]));
   wrt(x+31,y+6,format('%8d MB',[SysDiskFreeLong(0) div 1024 div 1024]));
 {$ELSE }
-  {$IFDEF Linux}
+  {$IFDEF Unix}
     wrt(x+19,y+4,format('%5d MB',[info.totalram div 1024 div 1024]));
     wrt(x+19,y+6,format('%5d MB',[info.freeram div 1024 div 1024]));
     wrt(x+19,y+7,format('%5d MB',[info.totalswap div 1024 div 1024]));
@@ -470,7 +470,7 @@ begin
 {$ENDIF }
    wrt(x+31,y+5,format('%8d MB',[(xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
                                  xpspace(XferDir)) div 1024 div 1024]));
-{$IFDEF Linux}
+{$IFDEF Unix}
   wrt(x+30,y+13,RightStr('     '+getres2(rnr,10),7)+'...');
 {$ELSE}
   wrt(x+30,y+9,RightStr('     '+getres2(rnr,10),7)+'...');
@@ -979,6 +979,9 @@ end;
 
 {
   $Log$
+  Revision 1.72  2003/01/16 11:14:20  mk
+  - some *BSD-releated changes
+
   Revision 1.71  2002/12/28 20:11:05  dodi
   - start keyboard input redesign
 

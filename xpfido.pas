@@ -129,7 +129,7 @@ uses  xpnt,xp2,xp3,xp4e,
 {$IFDEF Kylix}
   xplinux,
 {$ELSE}
-{$IFDEF Linux}
+{$IFDEF Unix}
   linux, // for stat & fsstat
 {$ENDIF}
 {$ENDIF}
@@ -3183,6 +3183,9 @@ end;
 
 {
   $Log$
+  Revision 1.77  2003/01/16 11:14:20  mk
+  - some *BSD-releated changes
+
   Revision 1.76  2003/01/13 22:05:19  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups
