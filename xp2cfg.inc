@@ -1495,8 +1495,8 @@ begin
           getb(su,  'isdn1-int',ISDN_int) or
           getc(su,  'isdn1-eaz',ISDN_EAZ) or
           getb(su,  'isdn1-controller',ISDN_controller) or
-          gets(s,su,'isdn1-MSN-incoming',ISDN_outgoing, 10) or
-          gets(s,su, 'isdn1-msn-outgoing', isdn_incoming, 10) or
+          gets(s,su,'isdn1-MSN-incoming',ISDN_incoming, 10) or
+          gets(s,su, 'isdn1-msn-outgoing', isdn_outgoing, 10) or
           getx(su,  'autotic',AutoTIC) or
           getb(su,  'maxcrosspost',maxcrosspost) or
           getx(su,  'maildelxpost',maildelxpost) or
@@ -1706,6 +1706,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.20  2001/02/18 11:16:42  mk
+  - bug bei isdn-eintraegen beseitigt
+
   Revision 1.62.2.19  2001/02/11 20:57:23  mk
   - Logpfad immer speichern
 
