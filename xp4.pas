@@ -1106,9 +1106,13 @@ var t,lastt: taste;
   end;
 
   procedure _brief_senden(c:char);
-  var hdp : headerp;
-      hds : longint;
+  var
+    hdp : headerp;
+    hds : longint;
   begin
+    { Nur ausfÅhren, wenn wirklich einer der benîtigten Tasten }
+    if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
+
     if (left(dispspec,1)='1') then
     begin                           { Bei PM-Brett und Msg ohne Replyto }
       new(hdp);                     { automatisch "P" statt "B" benutzen }
@@ -1119,7 +1123,7 @@ var t,lastt: taste;
         if c=k2_b  then c:=k2_p;
         if c=k2_cb then c:=k2_cp;
         if c=k2_SB then c:=k2_SP;
-        end;
+      end;
       dispose(hdp);
       end;
     if c=k2_b  then brief_senden(true,false,false,0) else
@@ -2106,6 +2110,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.13  2000/10/26 10:29:01  mk
+  - Crash bei _brief_senden behoben
+
   Revision 1.26.2.12  2000/10/26 09:08:10  mk
   - MIME-Fixes
 
