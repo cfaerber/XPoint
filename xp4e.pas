@@ -2520,13 +2520,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.30  2003/03/17 23:08:04  my
+  MY:- Text des letzten Commits korrigiert.
+
   Revision 1.25.2.29  2003/03/17 22:58:52  my
   MY:- Buttons "Nachricht" und "Request" im Nodelist-Browser bei
-       _brief_senden, datei_senden, <Alt-P>, <Alt-R> und <Alt-A> deaktiviert.
-
-  MY:- Datenbanken werden in 'TClose' nicht geschlossen, wenn
-       Nodelist-Browser aktiv ist (erzeugt sonst Datenbankfehler
-       beim Scrollen, wenn Browser mit Hotkey augerufen wurde).
+       msgdirect deaktiviert.
 
   MY:- Source-Header aktualisiert/korrigiert.
 
