@@ -12,6 +12,10 @@ var
 WSAData:  tWSAData;
 {$ENDIF}
 
+{$ifdef FreeBSD}
+  const FIONREAD = $4004667F;
+{$endif}
+
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 constructor tRawIPObj.Init;
@@ -487,6 +491,9 @@ end; { func. ReadyToSend }
 
 {
   $Log$
+  Revision 1.7  2001/07/11 20:43:40  mv
+   * Small FreeBSD patches
+
   Revision 1.6  2001/05/10 20:56:24  ma
   - adjusted debug levels
 

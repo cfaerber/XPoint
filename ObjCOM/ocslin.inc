@@ -96,7 +96,9 @@ begin
     57600       : tios.c_cflag:= B57600;
     115200      : tios.c_cflag:= B115200;
     230400      : tios.c_cflag:= B230400;
+{$ifndef FreeBSD}
     460800      : tios.c_cflag:= B460800;
+{$ENDIF}
   else
     tios.c_cflag:= B38400;      { Gewohnheit ;-) }
   end;
@@ -257,7 +259,9 @@ begin
   else if ((tios.c_cflag and B57600)<>0) then GetBpsRate:= 57600
   else if ((tios.c_cflag and B115200)<>0) then GetBpsRate:= 115200
   else if ((tios.c_cflag and B230400)<>0) then GetBpsRate:= 230400
+{$ifndef FreeBSD}
   else if ((tios.c_cflag and B460800)<>0) then GetBpsRate:= 460800
+{$endif}
   else GetBpsRate:= 1;
 end; { func. tSerialObj.GetBpsRate }
 
@@ -314,6 +318,9 @@ procedure StopSerial; begin end;
 
 {
   $Log$
+  Revision 1.7  2001/07/11 20:43:40  mv
+   * Small FreeBSD patches
+
   Revision 1.6  2000/12/27 13:23:33  hd
   - Fix: Modem: if echo requiered function tried to get -1 bytes
   - Fix: DSR not checked
