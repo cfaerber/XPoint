@@ -64,7 +64,7 @@ procedure msgall(art:byte; aktdispmode,rdmode:shortint);
 procedure NeuerEmpfaenger(name:string);
 function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
-procedure AppPuffer(Box,fn:string);
+procedure AppPuffer(const Box,fn:string);
 procedure empfang_bestaetigen(var box:string);
 procedure CancelMessage;
 procedure ErsetzeMessage;
@@ -967,18 +967,13 @@ end;
 {$I xp3o.inc}     { PufferEinlesen() }
 
 
-procedure AppPuffer(Box,fn:string);
+procedure AppPuffer(const Box,fn:string);
 var d     : DB;
-    bf    : string[12];
     f1,f2 : file;
 begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  bf := dbReadStr(d,'dateiname');
-  dbClose(d);
   assign(f1,fn);
   reset(f1,1);
-  assign(f2,bf+BoxFileExt);
+  assign(f2, GetServerFilename(Box, BoxFileExt));
   if existf(f2) then begin
     reset(f2,1);
     seek(f2,filesize(f2));
@@ -1523,6 +1518,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2001/09/07 10:56:00  mk
+  - added GetServerFilename
+
   Revision 1.68  2001/09/07 09:17:55  mk
   - added AddNewBrett procedure
 

@@ -47,6 +47,7 @@ uses
   typeform,
   InOut,
   xp1,                          { dialoge }
+  xp1o,
   xpnetcall,
   zcrfc,
   xp3o;                         { ForceRecipient }
@@ -112,8 +113,8 @@ begin
     SMTP.Password:= bp^.smtp_pwd;
   end;
 
+  List := TStringList.Create;
   try
-    List := TStringList.Create;
     List.LoadFromFile(RFCFile);
 
     SMTP.Connect(SMTP.GetFQDomain(List));
@@ -201,8 +202,7 @@ begin
   end;
 
   { Get last retrieved UIDLs from file }
-  GetServerFileName(BoxName,UIDLFileName);
-  UIDLFileName:=FileUpperCase(OwnPath+UIDLFileName+'.udl');
+  UIDLFileName:=FileUpperCase(OwnPath+GetServerFilename(Boxname, '.udl'));
   if FileExists(UIDLFileName)then
     POP.UIDLs.LoadFromFile(UIDLFileName);
 
@@ -269,10 +269,12 @@ begin
     end;
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.21  2001/09/07 10:56:02  mk
+  - added GetServerFilename
+
   Revision 1.20  2001/08/27 09:18:08  ma
   - Envelope-From is server mail address now even if From has been changed
     by roles or other feature
@@ -333,3 +335,5 @@ end.
   - renamed IPC to Progr.Output
 
 }
+end.
+

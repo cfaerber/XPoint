@@ -56,7 +56,7 @@ function  UniExtract(_from,_to,dateien:string):boolean;
 function  g_code(s:string):string;
 procedure SeekLeftBox(var d:DB; var box:string);
 procedure KorrBoxname(var box:string);
-function  BoxFilename(const box:string):string;
+function GetServerFilename(const boxname: String; Extension: String): String;
 
 procedure AddBezug(var hd:Theader; dateadd:byte);
 procedure DelBezug;
@@ -590,6 +590,25 @@ begin
   dbWriteN(bezbase,bezb_datum, Datum);
 end;
 
+function GetServerFilename(const boxname: String; Extension: String): String;
+var 
+  d: DB;
+begin
+  try
+    dbOpen(d,BoxenFile,1);
+    dbSeek(d,boiName, UpperCase(BoxName));
+    if dbFound then 
+      Result := FileUpperCase(dbReadStr(d,'dateiname') + Extension)
+    else
+    begin 
+      Result := '';
+      // raise exception 
+    end;
+  finally
+    dbClose(d);
+  end;
+end;
+
 procedure AddBezug(var hd:Theader; dateadd:byte);
 var c1,c2 : longint;
     satz  : longint;
@@ -742,7 +761,6 @@ begin
   end;
 end;
 
-
 procedure KorrBoxname(var box:string);
 var d : DB;
 begin
@@ -754,18 +772,6 @@ begin
     box := dbReadStr(d,'boxname');  { -> korrekte Schreibweise des Systemnamens }
   dbClose(d);
 end;
-
-
-function BoxFilename(const box:string):string;
-var d : DB;
-begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  if dbFound then BoxFilename:=dbReadStr(d,'dateiname')
-  else BoxFilename:=UpperCase(box);
-  dbClose(d);
-end;
-
 
 function testtelefon(var s:string):boolean;
 var tele,tnr : string;
@@ -1014,9 +1020,11 @@ begin
   end;
 end;
 
-end.
 {
   $Log$
+  Revision 1.93  2001/09/07 10:55:59  mk
+  - added GetServerFilename
+
   Revision 1.92  2001/09/07 08:28:02  mk
   - added new procedure: AddNewBezug, collects three pieces of code
 
@@ -1344,3 +1352,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

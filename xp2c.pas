@@ -86,7 +86,7 @@ implementation  {----------------------------------------------------}
 
 uses
   {$ifdef Win32} xpwin32, {$endif}
-  xp1o,xp2,xp4o2,xp9bp, xpnt;
+  xp1o,xp2,xp3, xp4o2,xp9bp, xpnt;
 
 const
   MaxProtocols = 2;
@@ -1281,16 +1281,11 @@ end;
 var x,y : Integer;
     brk : boolean;
     com : string;
-    d   : DB;
-    fn  : string;
 begin
   dialog(ival(getres2(270,0)),10,getres2(270,1),x,y);  { 'Terminal-Einstellungen' }
-  if (TermCOM=0) or (TermBaud=0) then begin
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,UpperCase(DefaultBox));
-    fn := dbReadStr(d,'dateiname');
-    dbClose(d);
-    ReadBox(0,fn,boxpar);
+  if (TermCOM=0) or (TermBaud=0) then 
+  begin
+    ReadBoxPar(0, DefaultBox);
     if TermCom=0 then TermCom:=boxpar^.bport;
     if TermBaud=0 then TermBaud:=boxpar^.baud;
     end;
@@ -1444,6 +1439,9 @@ end;
 
 {
   $Log$
+  Revision 1.101  2001/09/07 10:56:00  mk
+  - added GetServerFilename
+
   Revision 1.100  2001/09/06 18:04:57  ma
   - commented out mouse config options
 

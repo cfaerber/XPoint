@@ -1036,12 +1036,10 @@ begin
   if (box='') and
      not ReadJN(getres(2711),true)   { 'Keine Box angegeben - internes Brett anlegen' }
      then exit;
-  if box<>'' then begin
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,UpperCase(box));
-    dbClose(d);
-    if not dbFound and
-       not ReadJN(getres(2712),false)    { 'Unbekannte Serverbox - Brett trotzdem anlegen' }
+  if box<>'' then 
+  begin
+    if not IsBox(Box) then 
+      if not ReadJN(getres(2712),false)    { 'Unbekannte Serverbox - Brett trotzdem anlegen' }
        then exit;
     end;
 
@@ -2438,6 +2436,9 @@ end;
 
 {
   $Log$
+  Revision 1.76  2001/09/07 10:56:00  mk
+  - added GetServerFilename
+
   Revision 1.75  2001/09/07 09:17:56  mk
   - added AddNewBrett procedure
 

@@ -56,7 +56,6 @@ procedure SendNetzanruf(logfile: string);
 //**procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
 //**procedure MoveRequestFiles(var packetsize:longint);
 //**procedure MoveLastFileIfBad;
-function GetServerFilename(boxname: string; var bfile: string): boolean;
 
 procedure AssignUniqueDownloadName(var f:file;var s:string;path:string); { makes a a download filename usable and unique }
 
@@ -94,21 +93,6 @@ uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp9bp,xpconfigedit,xp10,xpheader,
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
-function GetServerFilename(boxname: string; var bfile: string): boolean;
-var d: DB;
-begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(BoxName));
-  if not dbFound then begin
-    dbClose(d);
-    trfehler1(709,BoxName,60);
-    result:=false;
-    exit;
-    end;
-  bfile := dbReadStr(d,'dateiname');
-  dbClose(d);
-  result:=true;
-end;
 
 function exclude_time:byte;
 var i : integer;
@@ -1371,6 +1355,9 @@ end.
 
 {
   $Log$
+  Revision 1.32  2001/09/07 10:56:02  mk
+  - added GetServerFilename
+
   Revision 1.31  2001/09/06 19:31:22  mk
   - removed some hints und warnings
 

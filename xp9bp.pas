@@ -41,18 +41,18 @@ const conn_mode_modem = 1;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 procedure DefaultBoxPar(nt:byte; bp:BoxPtr);
-procedure ReadBox(nt:byte; dateiname:string; bp:BoxPtr);
-procedure WriteBox(dateiname:string; bp:BoxPtr);
-procedure ReadBoxPar(nt:byte; box:string);
-function  BoxBrettebene(box:string):string;
+procedure ReadBox(nt:byte; const dateiname:string; bp:BoxPtr);
+procedure WriteBox(const dateiname:string; bp:BoxPtr);
+procedure ReadBoxPar(nt:byte; const box:string);
+function  BoxBrettebene(const box:string):string;
 
-procedure ReadQFG(dateiname:string; var qrec:QfgRec);
-procedure WriteQFG(dateiname:string; qrec:QfgRec);
+procedure ReadQFG(const dateiname:string; var qrec:QfgRec);
+procedure WriteQFG(const dateiname:string; qrec:QfgRec);
 
 
 implementation  { ------------------------------------------------- }
 
-uses debug;
+uses xp1o, debug;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 var i : integer;
@@ -228,7 +228,7 @@ end;
 { Box- Parameter aus angegebener Datei lesen }
 { bp^ muss initialisiert sein.                }
 
-procedure ReadBox(nt:byte; dateiname:string; bp:BoxPtr);
+procedure ReadBox(nt:byte; const dateiname:string; bp:BoxPtr);
 var t      : text;
     s,su   : string;
     p      : byte;
@@ -426,7 +426,7 @@ begin
 end;
 
 
-procedure WriteBox(dateiname:string; bp:BoxPtr);
+procedure WriteBox(const dateiname:string; bp:BoxPtr);
 var t : text;
     i : byte;
 
@@ -593,22 +593,13 @@ begin
 end;
 
 
-procedure ReadBoxPar(nt:byte; box:string);
-var d     : DB;
-    bfile : string;
+procedure ReadBoxPar(nt:byte; const box:string);
 begin
-  dbOpen(d,BoxenFile,1);               { zugehoerigen Dateiname holen }
-  dbSeek(d,boiName,UpperCase(box));
-  if dbFound then
-  begin
-    bfile := dbReadStr(d,'dateiname');
-    ReadBox(nt,bfile,BoxPar);             { Pollbox-Parameter einlesen }
-  end;
-  dbClose(d);
+  ReadBox(nt, GetServerFilename(Box, ''),BoxPar);             { Pollbox-Parameter einlesen }
 end;
 
 
-procedure ReadQFG(dateiname:string; var qrec:QfgRec);
+procedure ReadQFG(const dateiname:string; var qrec:QfgRec);
 var t  : text;
     s  : String;
     id : string[10];
@@ -640,7 +631,7 @@ begin
 end;
 
 
-procedure WriteQFG(dateiname:string; qrec:QfgRec);
+procedure WriteQFG(const dateiname:string; qrec:QfgRec);
 var t1,t2 : text;
     s,ss  : string;
     id    : string[10];
@@ -690,16 +681,18 @@ begin
 end;
 
 
-function BoxBrettebene(box:string):string;
+function BoxBrettebene(const box:string):string;
 begin
   ReadBoxPar(nt_Fido {egal} ,box);
   BoxBrettebene:=boxpar^.MagicBrett;
 end;
 
 
-end.
 {
   $Log$
+  Revision 1.49  2001/09/07 10:56:01  mk
+  - added GetServerFilename
+
   Revision 1.48  2001/09/06 22:01:13  mk
   - client mode updates
 
@@ -866,3 +859,5 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
+end.
+

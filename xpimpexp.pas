@@ -150,20 +150,22 @@ begin
           mon;
           name:='A'+name;
           dbSeek(bbase,biBrett,UpperCase(name));
-          if not dbFound then begin
+          if not dbFound then 
+          begin
             dbAppend(bbase);
             dbWriteN(bbase,bb_brettname,name);
             savecursor;
             setbrettindex;
             restcursor;
-            end;
-          if not dbFound or replbretter then begin
+          end;
+          if not dbFound or replbretter then 
+          begin
             dbWriteN(bbase,bb_pollbox,pollbox);
             wrhalten(bbase);
             grnr:=NetzGruppe;
             dbWriteN(bbase,bb_gruppe,grnr);
-            end;
           end;
+        end;
         if (typ=0) and getuser and
            ((useraufnahme<>1) or ((cPos('%',name)=0) and (cPos(':',name)=0)))
         then begin
@@ -322,7 +324,7 @@ begin
                      rfehler1(2414,ZQWKBin)  { %s fehlt! alt: 'ZQWK.EXE fehlt!
                       (ZQWK.EXE ist im getrennt erh„ltlichen QWK-Paket enthalten)' }
                    else begin
-                     shell(ZQWKBin+' -qz -c'+BoxFilename(box)+' -b'+box+
+                     shell(ZQWKBin+' -qz -c'+GetServerFilename(box, '')+' -b'+box+
                            ' -i'+fn+' -o'+ExtractFilePath(fn)+' -h'+BoxPar^.MagicBrett+
                            iifs(nt=nt_Fido,' -t30',''),600,1);
                      if errorlevel=100 then begin
@@ -664,6 +666,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/09/07 10:56:02  mk
+  - added GetServerFilename
+
   Revision 1.40  2001/08/11 23:06:38  mk
   - changed Pos() to cPos() when possible
 

@@ -1059,7 +1059,6 @@ begin
 end;
 
 
-
 function MakeFidoAdr(var frec:fidoadr; usepoint:boolean):string;
 begin
   with frec do
@@ -1132,9 +1131,11 @@ initialization
   EmpfList := TStringList.Create;
 finalization
   EmpfList.Free;
-end.
 {
   $Log$
+  Revision 1.65  2001/09/07 10:56:00  mk
+  - added GetServerFilename
+
   Revision 1.64  2001/09/07 08:28:02  mk
   - added new procedure: AddNewBezug, collects three pieces of code
 
@@ -1341,3 +1342,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

@@ -52,6 +52,7 @@ uses
   typeform,
   xpnetcall,
   xp1,                          { dialoge }
+  xp1o,
   database,
   datadef,
   xp1input;                     { JN }
@@ -97,10 +98,12 @@ begin
     { Nun die Liste holen }
     List:= TStringList.Create;
     List.Duplicates:= dupIgnore;
-    if GetServerFilename(BoxName,bfile) and NNTP.List(List,false) then begin
+    bfile := GetServerFilename(BoxName, '.bl');
+    if (bFile <> '') and NNTP.List(List,false) then 
+    begin
       { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
         (Sonst gibt es einen RTE) }
-      assign(f,FileUppercase(bfile+'.bl'));
+      assign(f, bfile);
       rewrite(f);
       for i:= 0 to List.Count-1 do
         write(f,List[i],#13,#10);
@@ -187,9 +190,9 @@ begin
   end;
 
   { Verbinden }
+  List := TStringList.Create;
   try
     result:= true;
-    List := TStringList.Create;
     List.LoadFromFile(RFCFileDummy);
     NNTP.Connect;
 
@@ -245,7 +248,6 @@ var
    procedure SaveNews;
    var
      aFile: string;
-     i: Integer;
    begin
      aFile:= FileUpperCase(OwnPath + XFerDir + IntToStr(iNewsFile) + '.nws');
      List.SaveToFile(aFile);
@@ -276,8 +278,7 @@ begin
     NNTP.Password:= bp^.NNTP_pwd;
   end;
 
-  GetServerFilename(BoxName,RCFilename); // add error handling
-  RCFilename:=FileUpperCase(RCFilename+'.rc');
+  RCFilename:=GetServerFilename(BoxName, '.rc');
 
   { Verbinden }
   try
@@ -346,10 +347,12 @@ begin
   ProcessIncomingFiles(IncomingFiles);
 end;
 
-end.
 
 {
         $Log$
+        Revision 1.25  2001/09/07 10:56:02  mk
+        - added GetServerFilename
+
         Revision 1.24  2001/08/11 23:06:44  mk
         - changed Pos() to cPos() when possible
 
@@ -428,3 +431,5 @@ end.
         - renamed IPC to Progr.Output
 
 }
+end.
+

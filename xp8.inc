@@ -87,7 +87,7 @@ label
 begin
   GetFilescanBox(box);
   if box='' then exit;
-  fl:=FileUpperCase(BoxFilename(box)+'.fbl');
+  fl:=GetServerFilename(box, '.fbl');
   if not FileExists(fl) then begin
     rfehler1(853,box); exit;
     end;
@@ -211,7 +211,8 @@ begin
   else begin                            { markierte Bretter abbestellen }
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do begin
-      if dbReadInt(d,'netztyp')=nt_Fido then begin
+      if dbReadInt(d,'netztyp')=nt_Fido then 
+      begin
         box:= UpperCase(dbReadStr(d,'boxname'));
         ReadBoxPar(nt_Fido,box);
         n:=0;
@@ -256,7 +257,7 @@ begin
       rfehler1(851,box)    { '%s ist kein eingetragener Fido-Server!' }
     else begin
       message(getreps(850,box));       { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
-      extract_msg(xTractMsg,'',FileUpperCase(BoxFilename(box)+'.fbl'),false,0);
+      extract_msg(xTractMsg,'',GetServerFilename(box, '.fbl'),false,0);
       mdelay(500);
       closebox;
       end;
@@ -283,10 +284,7 @@ begin
   fn:=WildCard;
   useclip:=true;
   if not ReadFilename(getres(822),fn,true,useclip) then exit;   { 'Fileecho-Liste einlesen' }
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  bfile:= dbReadStr(d,'dateiname');
-  dbClose(d);
+  bfile := GetServerFilename(Box, '');
   ReadBox(0,bfile,boxpar);
   message(getreps(806,UpperCase(box)));   { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
   if filecopy(fn,FileUpperCase(bfile+'.fbl')) then;
@@ -348,6 +346,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2001/09/07 10:56:01  mk
+  - added GetServerFilename
+
   Revision 1.15  2001/08/24 08:20:35  mk
   JG:- Fixed crash with F/A/A and empty Message Area database
 

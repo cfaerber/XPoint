@@ -506,18 +506,12 @@ begin
     else if x<>'NETCALL' then begin
       testaction:=false;
       rfehler(1001);      { 'unbekannter Befehl' }
-      end
-    else begin
-      dbOpen(d,BoxenFile,1);
-      dbSeek(d,boiName,UpperCase(box));
-      if dbFound then
-        testaction:=true
-      else begin
-        testaction:=false;
-        rfehler(1002);    { 'unbekannte Box' }
-        end;
-      dbClose(d);
-      end;
+    end
+    else 
+    begin
+      Result := IsBox(Box);
+      if not Result then Rfehler(1002);    { 'unbekannte Box' }
+    end;
 end;
 
 function CheckDay(var s:string):boolean;
@@ -2074,6 +2068,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.59  2001/09/07 10:55:59  mk
+  - added GetServerFilename
+
   Revision 1.58  2001/08/11 23:06:28  mk
   - changed Pos() to cPos() when possible
 

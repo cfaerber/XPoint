@@ -275,7 +275,7 @@ var
     end;
 
   begin
-    sysfile:=FileUpperCase(BoxFilename(box)+'.bbl');
+    sysfile:=GetServerFilename(box, '.bbl');
     root:=nil;
     if FileExists(sysfile) then begin         { alte .BBL-Datei einlesen }
       assign(t,sysfile);
@@ -442,10 +442,10 @@ var
   s1 : string;
 begin
   ReadBox(0,box,boxpar);
-  s1:=UpperCase(boxfilename(box));
+  s1:=FileUpperCase(GetServerFilename(box, ''));
   if not FileExists(s1+'.BL')                               { Brettliste im XP-Verzeichnis }
     then s1:=Boxpar^.ClientPath+s1;
-  Get_BL_Name:=s1+iifs(FileExists(s1+'.BL'),'.BL','.GR');   { oder .BL/.GR im Client-Verz. }
+  Get_BL_Name:=FileUpperCase(s1+iifs(FileExists(s1+'.BL'),'.BL','.GR'));   { oder .BL/.GR im Client-Verz. }
 end;
 
 { RFC/Client: RC-File anhand der im Lister markierten Bretter manipulieren }
@@ -468,7 +468,7 @@ begin
   moment;
   MakeRc:=true;
   ReadBox(0,box,boxpar);
-  rcfile:=BoxPar^.ClientPath + UpperCase(boxfilename(box))+'.RC';
+  rcfile:=FileUpperCase(BoxPar^.ClientPath) + GetServerFilename(box, '.rc');
   blfile:=Get_BL_Name(box);
   if not FileExists(blfile) then
   begin
@@ -692,7 +692,7 @@ var t1    : text;
 begin
 
   ReadBox(0,box,boxpar);
-  s1:=BoxPar^.ClientPath + UpperCase(boxfilename(box))+'.RC';
+  s1:=FileUpperCase(BoxPar^.ClientPath) + GetServerFilename(box, '.rc');
   Assign(t1,s1);       { BOX.RC }
   if not (FileExists(s1)) then
   begin
@@ -946,7 +946,7 @@ begin
         if copy(UpperCase(brett),2,length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett)
         then
           if qwk then begin
-            bfile:=boxfilename(box);
+            bfile:=GetServerFilename(box, '');
             writeln(t,'DROP ',qwkbrett(brett));
             end
           else begin
@@ -1127,7 +1127,7 @@ begin
         exit;
         end
       else
-        bfile:=BoxFilename(box);
+        bfile:=GetServerFilename(box, '');
       end;
 
   dbClose(d);
@@ -2066,7 +2066,7 @@ begin
       readln(t,s);
     s:=trim(s); p:=cpos(':',s);
     if not eof(t) and (p>0) then begin
-      assign(t2,FileUpperCase(BoxFilename(boxpar^.boxname)+'.bbl'));
+      assign(t2, GetServerFilename(boxpar^.boxname, '.bbl'));
       rewrite(t2);
       delete(s,1,p);
       while RightStr(s,1)='\' do begin
@@ -2094,6 +2094,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2001/09/07 10:56:01  mk
+  - added GetServerFilename
+
   Revision 1.54  2001/08/27 09:13:43  ma
   - changes in net type handling (1)
 

@@ -449,14 +449,8 @@ begin
 end;
 
 function initcom:boolean;
-var d  : DB;
-    fn : string;
 begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(DefaultBox));
-  fn:= dbReadStr(d,'dateiname');
-  dbClose(d);
-  ReadBox(0,fn,boxpar);
+  ReadBoxPar(0, DefaultBox);
   if TermCOM<>0 then boxpar^.bport:=TermCOM;
   if TermBaud<>0 then boxpar^.baud:=TermBaud;
   ComNr := BoxPar^.BPort;
@@ -742,6 +736,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/09/07 10:56:02  mk
+  - added GetServerFilename
+
   Revision 1.8  2001/08/11 23:06:39  mk
   - changed Pos() to cPos() when possible
 
