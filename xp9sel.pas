@@ -21,7 +21,7 @@ interface
 uses
   crt,dos,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
   maus2,mouse,resource,xpglobal,
-     xp0,xp1,xp1o,xp1o2,xp1input,xp2c, lfn;
+     xp0,xp1,xp1o,xp1o2,xp1input,xp2c,dosx,lfn;
 
 procedure SelSchab(var cr:CustomRec);
 function  xp9_testbox(var s:string):boolean;
@@ -59,12 +59,105 @@ function  testZCpointname(var s:string):boolean;
 function  JanusSwitch(var s:string):boolean;
 function  PPPClientPathTest(var s:string):boolean;
 function  PPPClientTest(var s:string):boolean;
+function  is_mailaddress(var s:string):boolean;
 function  multi_Mailstring(var s:string):boolean;
+function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
 
 implementation
 
 uses
   xp2b, xp2,xp3,xp3o,xp4e,xp9bp,xp9,xp10,xpnt,xpterm;
+
+
+function  ReadExtCfgFilename(txt:atext; var s1:string; var cdir:PathStr; subs:boolean):boolean;
+var   x,y,n   : byte;
+      brk     : boolean;
+      fn      : string[20];
+      cconfig : Searchrec;
+      seldir  : dirstr;
+      s2      : string;
+      dir     : dirstr;
+      name    : namestr;
+      ext     : extstr;
+const cfgext  : array [1..4] of string = ('*.CFG','*.BFG','*.BFE','*.$CF');
+label restart;
+begin
+restart:
+  s2 := '';
+  if (cpos(':',s1) = 2) or (cpos(DirSepa, s1) = 1) then
+  begin
+    fsplit(Fexpand(s1),dir,name,ext);
+    seldir := dir;
+  end
+  else seldir := cdir;
+  fn:=getres(106);
+  dialog(45+length(fn),3,txt,x,y);
+  maddstring(3,2,fn,s1,37,60,'');   { Dateiname: }
+  for n:= 1 to 4 do
+  begin
+    findfirst(seldir+cfgext[n],ffAnyfile,cconfig);
+    while Doserror = 0 do
+    begin
+      if seldir = cdir then mappsel(false,cconfig.name)
+      else mappsel(false,seldir+cconfig.name);
+      findnext(cconfig);
+    end;
+  end;
+  readmask(brk);
+  enddialog;
+  if not brk then
+  begin
+    if (trim(s1) = '') then s2 := WildCard else s2 := s1;
+    if (cpos(':',s2) = 2) or (cpos(DirSepa, s2) = 1) then
+      s2 := FExpand(s2)
+    else s2 := FExpand(cdir + s2);
+    if ((length(s2) = 2) and (cpos(':',s2) = 2)) or
+       (right(s2,1) = DirSepa) then
+      s2 := FExpand(s2 + WildCard)
+    else
+    if IsPath(s2) then
+      s2 := FExpand(s2 + DirSepa + WildCard);
+    fsplit(s2,dir,name,ext);
+    if not IsPath(dir) then
+    begin
+      rfehler1(949,dir);  { 'Verzeichnis "%s" ist nicht vorhanden!' }
+      goto restart;
+    end;
+    if (pos('*',s2)>0) or (pos('?',s2)>0) then
+    begin
+      selcol;
+      pushhp(89);
+      s2:=fsbox(actscreenlines div 2 - 5,s2,'','',subs,false,false);
+      pophp;
+      if s2 <> '' then   { <Esc> gedrÅckt? }
+      begin
+        fsplit(s2,dir,name,ext);
+        if dir = cdir then s1 := name + ext else s1 := s2;
+      end;
+      goto restart;
+    end;
+    if (s2<>'') and (IsDevice(s2) or not ValidFilename(s2)) then
+    begin
+      rfehler(3);   { UngÅltiger Pfad- oder Dateiname! }
+      goto restart;
+    end;
+    s1 := s2;
+    ReadExtCfgFilename := (s1<>'');
+  end else
+    ReadExtCfgFilename := false;
+end;
+
+
+function is_mailaddress(var s:string):boolean;
+var b: byte;
+begin
+  is_mailaddress:=true;
+  b:=cpos('@',s);
+  if (b<=1) or (cpos('@',mid(s,b+1))<>0)
+    or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
+    or (s<>mailstring(s,false))
+  then is_mailaddress:=false;
+end;
 
 
 function multi_Mailstring(var s:string):boolean;
@@ -81,11 +174,8 @@ begin
       s2:=left(s1,n-1);
       s1:=trim(mid(s1,n+1));
       end;
-    b:=cpos('@',s2);
-    if (b<=1) or (cpos('@',mid(s2,b+1))<>0)
-      or (cpos('.',mid(s2,b+1))=0)
-      or (s2<>mailstring(s2,false))
-    then begin
+    if not is_mailaddress(s2) then
+    begin
       multi_mailstring:=false;
       fehler(Getres2(10900,8)+': ' +s2); { 'UngÅltige Adresse: 's2 }
       exit;
@@ -691,13 +781,11 @@ begin
     exit;
     end;
   b:=cpos('@',s);
-  if (b<=1) or (cpos('@',mid(s,b+1))<>0)
-    or (cpos('.',mid(s,b+1))=0) or (cpos(' ',s)<>0)
-    or (s<>mailstring(s,false))
-   then begin
-     rfehler(908);
-     exit;
-     end;
+  if not is_mailaddress(s)
+  then begin
+    rfehler(908);
+    exit;
+    end;
   xp9_setclientFQDN:=true;
   s1:=s; s1[b]:='.';
   for u:=cposx('_',s1) to length(s1) do
@@ -741,6 +829,14 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.10  2001/07/31 15:36:41  my
+  MY+JG:- new function is_mailaddress, also implemented in all
+          functions and procedures involved (multi_Mailstring and
+          xp9_setclientFQDN in xp9sel.pas, NameRead in xp9.inc and
+          get_first_box in xp9.pas)
+  - RFC/Client: implemented "External Settings" under
+    Edit/Servers/Edit/... (load external config file)
+
   Revision 1.1.2.9  2001/07/23 16:53:14  my
   JG+MY:- RFC/Client: implemented check for valid (multiple) eMail addresses
           under Edit/Servers/Edit/Mail/News_Servers/Envelope_address (In+Out)
