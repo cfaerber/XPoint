@@ -667,6 +667,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 13   Show complete user addresses in reference tree
 14   Show realnames, if possible
 15   Show recipients of echomail messages (FidoNet)
+16   Show newest messages on top of list
 + 260
 1    Screen-saver (sec.) ~
 2    Scroll out
@@ -3888,6 +3889,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.41  2002/01/06 15:43:59  ma
+# - ported "new messages first" feature from OpenXP/16 (JG+MY)
+#
 # Revision 1.40  2002/01/01 12:00:32  mk
 # - fixed 10000,24
 #

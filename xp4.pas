@@ -393,24 +393,26 @@ var t,lastt: taste;
   { Achtung! Bei der Verwendung von Back und Forth die }
   {          Seiteneffekte beachten!!                  }
 
-  function forth:boolean;
+  { _forth and _back are called by forth and back depending on MsgNewFirst }
+
+  function _forth:boolean;
   var
       _brett : string;
   begin
     case dispmode of
-      11 : if markpos>=markanz-1 then forth:=false
+      11 : if markpos>=markanz-1 then result:=false
            else begin
              inc(markpos);
              dbGo(mbase,marked^[markpos].recno);
-             forth:=true;
+             result:=true;
              end;
       12 : if bezpos>= ReplyTree.Count - 1 then
-             forth:=false
+             result:=false
            else
            begin
              inc(bezpos);
              dbGo(mbase,TReplyTreeItem(ReplyTree[bezpos]^).msgpos);
-             forth:=true;
+             result:=true;
            end;
     else
       if (dispmode=10) and (rdmode=rmUngelesen) then begin
@@ -426,38 +428,38 @@ var t,lastt: taste;
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
             end;
-        forth:=not dbEOF(mbase) and not wrongline;
+        result:=not dbEOF(mbase) and not wrongline;
         end
       else if (dispmode<>0) or brettall or dispext then begin
         dbSkip(dispdat,1);
-        if dbEOF(dispdat) then forth:=false
-        else forth:=not wrongline;
+        if dbEOF(dispdat) then result:=false
+        else result:=not wrongline;
         end
       else begin
         repeat
           dbSkip(dispdat,1);
         until dbEOF(dispdat) or not wrongline {or brettok(true)};
-        forth:=not dbEOF(dispdat);
+        result:=not dbEOF(dispdat);
         end;
     end;
   end;
 
-  function Back:boolean;
+  function _Back:boolean;
   var
       _brett : string;
   begin
     case dispmode of
-      11 : if markpos=0 then Back:=false
+      11 : if markpos=0 then result:=false
            else begin
              dec(markpos);
              dbGo(mbase,marked^[markpos].recno);
-             back:=true;
+             result:=true;
              end;
-      12 : if bezpos=0 then Back:=false
+      12 : if bezpos=0 then result:=false
            else begin
              dec(bezpos);
              dbGo(mbase,TReplyTreeItem(ReplyTree[bezpos]^).msgpos);
-             back:=true;
+             result:=true;
              end;
     else
       if (dispmode=10) and (rdmode=rmUngelesen) then begin
@@ -473,21 +475,33 @@ var t,lastt: taste;
                   (_brett<>_dispspec);
             dbSetIndex(mbase,miGelesen);
             end;
-        Back:=not dbBOF(mbase) and not wrongline;
+        result:=not dbBOF(mbase) and not wrongline;
         end
       else if (dispmode<>0) or brettall or dispext then begin
         dbSkip(dispdat,-1);
-        if dbBOF(dispdat) then Back:=false
-        else Back:=not wrongline;
+        if dbBOF(dispdat) then result:=false
+        else result:=not wrongline;
         end
       else begin
         repeat
           dbSkip(dispdat,-1);
         until dbBOF(dispdat) or not wrongline{ or brettok(true)};
-        back:=not dbBOF(dispdat);
+        result:=not dbBOF(dispdat);
         end;
     end;
   end;
+
+  function forth:boolean;
+  begin
+  if MsgNewfirst and ((dispmode=10) or (dispmode=11)) 
+    then forth:=_back else forth:=_forth;
+  end;
+
+  function back:boolean;
+  begin
+  if MsgNewfirst and ((dispmode=10) or (dispmode=11)) 
+    then back:=_forth else back:=_back;
+  end; 
 
   procedure Do_XPhilite(wait:boolean);
   const xtxt : string = 'CrossPoint';
@@ -566,7 +580,7 @@ var t,lastt: taste;
     trennzeile:=(LeftStr(dbReadStrN(bbase,bb_brettname),3)='$/T');
   end;
 
-  procedure gostart;
+  procedure _gostart;
   begin
     case dispmode of
         -1  : if not ArchivWeiterleiten or (ArchivBretter='') then
@@ -616,7 +630,7 @@ var t,lastt: taste;
     aufbau:=true;
   end;
 
-  procedure goend;
+  procedure _goend;
   var mi : word;
   begin
     case dispmode of
@@ -665,7 +679,22 @@ var t,lastt: taste;
               end;
       20    : dbGoEnd(dispdat);
     end;
+    if dbBOF(dispdat) or dbEOF(dispdat) or wrongline then disprec[1]:=0
+    else disprec[1]:=dbRecNo(dispdat);
+    aufbau:=true;
   end;
+
+  Procedure GoStart;
+  begin
+  if MsgNewfirst and ((dispmode=10) or (dispmode=11))
+    then _GoEnd else _GoStart;
+  end; 
+
+  Procedure GoEnd;
+  begin
+  if MsgNewfirst and ((dispmode=10) or (dispmode=11))
+    then _GoStart else _GoEnd;
+  end; 
 
   procedure selcall(nr,gl:byte);
   begin
@@ -1520,7 +1549,9 @@ begin      { --- select --- }
     user_msgs:=false;
   if (dispmode=10) and user_msgs then begin { User-Fenster }
     rdmode:=0;         { immer Alles anzeigen }
-    autokey:=keyend;   { ab ans Ende          }
+    if msgnewfirst 
+      then autokey:=keyhome 
+      else autokey:=keyend;  { ab ans Ende          }
     end
   else
     if set_allmode then begin
@@ -2050,7 +2081,7 @@ begin      { --- select --- }
         if t=keyup then
           if ScrollLock and ScrollMode then begin
             GoPos(1);
-            if Back then begin
+            if back then begin
               scrolldown(true);
               disprec[1]:=dbRecno(dispdat);
               write_disp_line(1,p,true);
@@ -2283,6 +2314,9 @@ end;
 
 {
   $Log$
+  Revision 1.117  2002/01/06 15:44:00  ma
+  - ported "new messages first" feature from OpenXP/16 (JG+MY)
+
   Revision 1.116  2002/01/05 16:01:09  mk
   - changed TSendUUData from record to class
 

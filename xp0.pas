@@ -892,6 +892,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        defExtrakttyp: byte;          { .. in XPOINT.CFG        }
        brettanzeige : byte;          { 0=gross, 1=top, 2=klein }
        ShowMsgDatum : boolean;       { Datum im Nachrichtenf.  }
+       MsgNewFirst  : boolean;       { Display new messages at top of list }
        viewers      : ^viewert;
        VarEditor,
        VarLister    : string;    { externer Editor/Lister  }
@@ -1203,6 +1204,9 @@ implementation
 
 {
   $Log$
+  Revision 1.149  2002/01/06 15:43:59  ma
+  - ported "new messages first" feature from OpenXP/16 (JG+MY)
+
   Revision 1.148  2002/01/03 19:19:13  cl
   - added and improved UTF-8/charset switching support
 

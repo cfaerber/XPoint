@@ -598,6 +598,7 @@ begin
   MausPSA:=true;
   ShowFidoEmpf:=true;
   ShowRealnames:=true;
+  MsgNewFirst:=false;
   ss_passwort:=false;
   NewsMIME:=true;
   MIMEqp:=false;
@@ -899,6 +900,7 @@ begin
   writeln(t,'TrennKommentar=',trennkomm);
   writeln(t,'TerminalBIOS=',jnf(termbios));
   writeln(t,'Tonsignal=',jnf(tonsignal));
+  writeln(t,'MsgNewFirst=',jnf(MsgNewFirst));
   writeln(t,'MsgFeldTausch=',MsgFeldTausch);
   writeln(t,'UsrFeldTausch=',UsrFeldTausch);
   writeln(t,'Magics=',jnf(Magics));
@@ -1527,6 +1529,7 @@ begin
           getx(su,  'vesa-dpms',vesa_dpms) or
           getx(su,  'terminalbios',termbios) or
           getx(su,  'tonsignal',tonsignal) or
+          getx(su,  'MsgNewFirst',MsgNewFirst) or
           xp1.gets(s,su,'msgfeldtausch',MsgFeldTausch) or
           xp1.gets(s,su,'usrfeldtausch',UsrFeldTausch) or
           getx(su,  'magics',magics) or
@@ -1712,6 +1715,9 @@ begin
 
 {
   $Log$
+  Revision 1.133  2002/01/06 15:44:00  ma
+  - ported "new messages first" feature from OpenXP/16 (JG+MY)
+
   Revision 1.132  2002/01/03 19:11:41  cl
   - added config option for internal preliminal UTF-8 support
 

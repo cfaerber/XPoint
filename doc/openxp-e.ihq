@@ -4930,22 +4930,13 @@ changed at any time whilst viewing a message list by
 pressing <Ctrl-A>
 @
 845
-Some nets differentiate between upper and lower case
-for user names. "\" characters (escape characters)
-are put in front of all upper case letters when
-converting to Z-Netz format.
+<<[x]>> ->  New messages are shown on top of the Message
+        Reading Window. The older a message is, the
+        more down below you will find it.
 
-For display, CrossPoint can convert these addresses
-back to their original form.
-For this you need to enter the full names of the
-gates  which use such conversions:
-eg. \@UUCP.ZER @MAUS.ZER
-
-For gates where "\" shows lower case and not upper
-case, you also need to put a "+" in front, as in
-"+\NAME". At present, however, very few gates seem to
-use this method.
-
+<<[ ]>> ->  The display is as in previous versions of
+        XP: Old messages on top, older ones at the
+        bottom.
 @
 280
 The screen saver blanks the screen if no key is

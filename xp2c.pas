@@ -746,7 +746,7 @@ var x,y   : Integer;
   end;                         { 'Splt./klein'                         }
 
 begin
-  dialog(65,7,getres2(259,10),x,y);   { 'Nachrichtenanzeige' }
+  dialog(65,8,getres2(259,10),x,y);   { 'Nachrichtenanzeige' }
   maddbool(3,2,getres2(259,11),ShowMsgDatum); mhnr(840);   { 'Nachrichten-Datum' }
   sabs:=abstyp(sabsender);
   maddstring(35,2,getres2(259,12),sabs,11,11,'');    { 'Absendernamen ' }
@@ -754,6 +754,7 @@ begin
   maddbool(3,4,getres2(259,13),BaumAdresse);     { 'vollst„ndige Adressen im Kommentarbaum' }
   maddbool(3,5,getres2(259,14),showrealnames);   { 'Realname anzeigen, falls vorhanden' }
   maddbool(3,6,getres2(259,15),showfidoempf);    { 'Empf„nger von Fido-Brettnachrichten anzeigen' }
+  maddbool(3,7,getres2(259,16),MsgNewFirst);     { 'Neue Nachrichten oben' }
 { maddstring(3,8,getres2(259,16),unescape,49,100,'>'); } { 'UnEscape ' }
   readmask(brk);
   if not brk and mmodified then begin
@@ -1534,6 +1535,9 @@ end;
 
 {
   $Log$
+  Revision 1.115  2002/01/06 15:43:59  ma
+  - ported "new messages first" feature from OpenXP/16 (JG+MY)
+
   Revision 1.114  2002/01/04 19:39:00  ma
   - cleaned up Config/Modem a bit
 

@@ -7368,6 +7368,14 @@ Diese Einstellung wird erst nach einem Programmneu-
 start wirksam. Sie kann innerhalb jedes Fido-Brettes
 mit <<<Ctrl-A> >>umgeschaltet werden.
 @
+845
+<<[ ]>> -> Alte Nachrichten stehen oben, neuere Nach-
+       richten unten.
+
+<<[x]>> -> Neue Nachrichten werden im Nachrichten-
+       Lesefenster oben angezeigt. Je „lter eine
+       Nachricht ist, desto weiter unten steht sie.
+@
 280
 Der Screen-Saver (Bildschirmschoner) schaltet den
 Bildschirm dunkel, falls fr die angegebene Sekun-
