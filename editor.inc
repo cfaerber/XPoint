@@ -1391,6 +1391,7 @@ begin
       SetBlock(1,ActAbs,workpos,2);
       SetBlock(2,pos.absatz,pos.offset,2);
       KorrBlockScrolled(false);
+      GotoPos(pos,0);
     end;
   end;
 end;
@@ -2417,6 +2418,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.14  2000/12/07 13:45:39  mk
+  RB:- move cursor to end of block after block insert functions
+
   Revision 1.19.2.13  2000/11/28 10:13:49  mk
   RB:- major Bugfix for special Ctrg-Y/Ctrg-B handling
 
