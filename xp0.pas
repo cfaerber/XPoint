@@ -683,7 +683,7 @@ type   textp  = ^text;
        fkeyp  = ^fkeyt;
 
        KeyRec = record
-                  keypos : byte;   { X-Position in 2. Bildzeile }
+                  keypos : integer;   { X-Position in 2. Bildzeile }
                   keylen : byte;
                   keyspot: shortint;  { <0 : mehrere Zeichen ab Pos. 0 }
                   key    : taste;  { LowerCase-Taste }
@@ -1082,7 +1082,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        mono         : boolean;       { monochrome Anzeige      }
        fnkeylines   : byte;          { wird durch DispFunctionKeys gesetzt }
-       lesemodepos  : byte;          { X-Position Lesemode }
+       lesemodepos  : integer;          { X-Position Lesemode }
 
        orgcbreak    : boolean;
 
@@ -1200,6 +1200,9 @@ implementation
 
 {
   $Log$
+  Revision 1.144  2001/10/17 10:07:37  ml
+  - use integer for cursorpos to prevent range errors
+
   Revision 1.143  2001/10/07 17:12:30  cl
   - added charset recoding for external editors
     and corresponding config option

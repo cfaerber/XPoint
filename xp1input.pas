@@ -67,7 +67,7 @@ var p,n,p1,i : Integer;
     butt     : array[1..maxbutt] of string;
     butthigh : array[1..maxbutt] of byte;
     buttsp   : array[1..maxbutt] of byte;
-    bpx      : array[1..maxbutt] of byte;
+    bpx      : array[1..maxbutt] of integer;
     hot      : string[maxbutt];
     t        : taste;
     stop     : boolean;
@@ -418,6 +418,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2001/10/17 10:07:38  ml
+  - use integer for cursorpos to prevent range errors
+
   Revision 1.23  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

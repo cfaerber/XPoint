@@ -124,7 +124,7 @@ procedure setmenupos(mnu:string; newpos:byte);
 procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 
 procedure SetExtraktMenu;
-function  getmenu(nr:byte; enterkey:taste; x,y:byte):integer;
+function  getmenu(nr:byte; enterkey:taste; x,y:integer):integer;
 procedure setscreensize;
 procedure lines(fnkey:byte);   { setzt gl usw. }
 procedure xp_maus_aus;
@@ -280,7 +280,7 @@ const isotab1   : array[$c0..$ff] of byte =
 
 var  menulevel : byte;                  { Menebene }
      menustack : array[0..4] of byte;   { fr Rekonstruktion im Config-Men }
-     hmpos     : array[1..10] of byte;  { Hauptmen-XPos }
+     hmpos     : array[1..10] of integer;  { Hauptmen-XPos }
      main_n    : integer;               { MPs im Hauptmen }
      mainrange : array[1..10,0..1] of byte;
      listhicol : byte;
@@ -2067,6 +2067,9 @@ end;
 
 {
   $Log$
+  Revision 1.127  2001/10/17 10:07:38  ml
+  - use integer for cursorpos to prevent range errors
+
   Revision 1.126  2001/10/11 15:27:02  mk
   - implemented direct screen writes for DOS32, no more LocalScreen
 

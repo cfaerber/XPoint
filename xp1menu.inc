@@ -325,14 +325,14 @@ end;
 {            -1: Untermen nach links verlassen            }
 {            -2: Untermen nach rechts verlassen           }
 
-function getmenu(nr:byte; enterkey:taste; x,y:byte):integer;
+function getmenu(nr:byte; enterkey:taste; x,y:integer):integer;
 var ma    : map;
     n,i   : integer;
     t     : taste;
     p,ml  : byte;
     pold  : byte;
     get2  : integer;
-    xx,yy : byte;
+    xx,yy : integer;
     autolr: byte;
     dead  : boolean;   { alle disabled }
     has_checker : boolean;
@@ -610,6 +610,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2001/10/17 10:07:38  ml
+  - use integer for cursorpos to prevent range errors
+
   Revision 1.33  2001/09/26 00:18:43  mk
   - support of a umlaut as menu shortkey
 

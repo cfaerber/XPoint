@@ -721,6 +721,8 @@ var
   x, y: integer;
 begin
   WhereXY(x, y);
+// prevent invalid values
+  if x > 10000 then x := 10000;
   WhereX:= x;
 end;
 
@@ -729,6 +731,8 @@ var
   x, y: integer;
 begin
   WhereXY(x, y);
+// prevent invalid values
+  if y > 10000 then y := 10000;
   WhereY:= y;
 end;
 
@@ -1548,6 +1552,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2001/10/17 10:07:38  ml
+  - use integer for cursorpos to prevent range errors
+
   Revision 1.56  2001/10/15 09:33:17  ml
   - exit works now with Kylix-compiled openxp
 
