@@ -1679,7 +1679,6 @@ end;
 procedure PrintLine(const s:string);
 begin
   {$IFDEF Unix }
-    s := IBMToISO(s);
     writeln(lst,sp(DruckLira),IBMToISO(s));
   {$ELSE }
     writeln(lst,sp(DruckLira),s);
@@ -3376,6 +3375,9 @@ end;
 
 {
   $Log$
+  Revision 1.199  2003/10/07 09:13:10  mk
+  - more fixes for last commit :(
+
   Revision 1.198  2003/10/07 09:09:53  mk
   - fixed linux compile problem from last comitt
 
