@@ -5749,6 +5749,51 @@ pressing <Ctrl-A>
         versions of XP, i.e. old messages at the top, 
         newer ones at the bottom.
 @
+846
+<<RFC / ZConnect:>>
+
+CrossPoint uses the character ##238 (Epsilon in Code-
+page 437) for the Euro currency symbol. This option
+determines how this character is being displayed in
+full screen mode:
+
+<<[ ]>> ->  As in earlier versions of XP, the character
+        ##238 is being displayed as a Greek "Epsilon"
+        (which is fairly similar to the Euro symbol).
+
+<<[x]>> ->  CrossPoint displays the character ##238 as
+        a true Euro currency symbol in all screen
+        line modes.
+
+
+<<Notes:>>
+
+þ This option does only affect the display in full
+  screen mode. For the display in a Windows DOS Box
+  there is a tool <<EURO4WIN>> available for download at
+  <<http://www.openxp16.de>> which makes the necessary
+  changes to the standard Windows fonts. Furthermore,
+  OpenXP/16 itself provides some (even much better
+  than the standard Windows stuff) fonts for the
+  Windows DOS box (see archive <<EUROFONT.ZIP>>) that
+  have the Euro currency symbol already built-in at
+  position ##238.
+
+þ CrossPoint supports the Euro currency symbol only
+  with the net types RFC and ZConnect, because only
+  there specific ISO character sets are used that
+  contain the Euro symbol. Nonetheless please be
+  aware that this option affects the message display
+  of *all* net types, i.e. an "Epsilon" in a Fido
+  message for instance will - if this option is
+  activated - now be displayed as an Euro symbol as
+  well. Whether you activate this option or not will
+  thus depend on the net types you are (mainly) using
+  with XP, and if you want the (extremely rarely
+  used) "Epsilon" or the Euro symbol to be displayed
+  correctly.
+
+@
 280
 The screen saver blanks the screen if no key is
 pressed for the number of seconds entered here.
@@ -8669,14 +8714,16 @@ For example Germany at present (1994):
 etc. etc.
 @
 806
-^^805
+(ToDo: comprehensive explanation, \@806)
 @
 807
 Enter the cost here in your currency units for 100
 charge units.
+
+(ToDo: comprehensive explanation, \@807)
 @
 808
-^^807
+(ToDo: comprehensive explanation, \@808)
 @
 809
 Enter a list here of all the dialling codes that
@@ -9257,6 +9304,50 @@ Examples:
             (same as Alt-N)
 
 <<Abort>>       Self-explanatory, really :-)
+@
+970
+ùù not implemented yet
+@
+971
+<<[x]>> -> German holidays as well as Dec 24th and
+       Dec 31st will be considered in the phone fee
+       calculation (category Holiday 1).
+
+<<[ ]>> -> XP considers holidays only which have been
+       entered in [FEIERTAG.DAT].@979
+@
+972
+<<[x]>> -> If you are an ISDN user and have installed
+       the FOSSIL driver cFos v1.04 or higher XP will
+       calculate your phone fees based on the units
+       cFos has determined. This is usually the most
+       precise way of calculating phone fees.
+
+<<[ ]>> -> XP uses the built-in algorithm for phone
+       fee calculation always.
+@
+973
+The currency unit that is being displayed in the
+phone fee calculation.
+@
+974
+<<[ ]>> -> XP uses the old phone fee model
+       (costs per tariff unit and duration of a
+       tariff unit).
+
+<<[x]>> -> XP uses the new phone fee model
+       (costs per minute and fee frequency).
+@
+979
+The file <<FEIERTAG.DAT>> holds an arbitrary number of
+holidays or other special days where deviating phone
+tariffs are being charged.
+
+The first column holds the date, the second the
+holiday category and the third a comment. 3 different
+holiday categories may be used.
+
+<<<Esc> >>leaves the editor and saves the changes.
 @
 1500
 Select <<Yes>> to archive a copy of the selected
