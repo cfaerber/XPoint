@@ -189,6 +189,7 @@ uses
   dos in 'delphi/dos.pas',
   objcom in 'ObjCOM/objcom.pas',
   Ringbuff in 'ObjCOM/ringbuff.pas',
+  ncursix in 'ncursix.pas',
 {$ENDIF}
   archive in 'archive.pas',
   xpsendmessage_unsent in 'xpsendmessage_unsent.pas',
@@ -196,7 +197,6 @@ uses
   xpsendmessage in 'xpsendmessage.pas',
   RegExpr in 'regexpr.pas',
   main in 'main.pas',
-  ncursix in 'ncursix.pas',
   xpsendmessage_attach_analyze in 'xpsendmessage_attach_analyze.pas',
   mime in 'mime.pas';
 
