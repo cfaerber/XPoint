@@ -11,9 +11,6 @@
 { CrossPoint-MenÅeditor }
 
 uses
-{$IFDEF BP }
-  xdelay,
-{$ENDIF }
   winxp, crt,typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
 
 const menus      = 99;
@@ -696,6 +693,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/03/24 20:38:12  mk
+  - xdelay entfernt
+
   Revision 1.8  2000/03/04 22:41:37  mk
   LocalScreen fuer xpme komplett implementiert
 
