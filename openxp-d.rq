@@ -3501,10 +3501,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 52 Verzeichnis "%s" ist nicht vorhanden!
 #
 53 Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!
-54 Maximal %s Serverbox-EintrÑge mîglich!
 57 Serverbox "%s" bereits vorhanden - trotzdem hinzufÅgen
-60 Serverbox "%s"
-61 ist %s mal vorhanden!
+60 Serverbox "%s" mehrfach vorhanden!
 62 Serverbox "%s" existiert nicht!
 63 Serverbox "%s" ist identisch mit editierter Serverbox!
 64 ist nicht vom Netztyp %s!
@@ -3993,6 +3991,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.19  2003/09/21 16:08:44  mk
+# - rewrote addServersTest
+#
 # Revision 1.57.2.18  2003/09/16 13:06:55  mk
 # - fixed #801901: Sendefenster ˆffentl. Nachricht FIDO
 #

@@ -114,7 +114,7 @@ implementation  {---------------------------------------------------}
 
 uses
   {$IFDEF unix}xplinux,{$ENDIF}
-  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts, replytoall, lister;
+  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts, replytoall, lister, classes;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -158,7 +158,6 @@ var   UpArcnr   : integer;    { fÅr EditPointdaten }
       EMSIfield : integer;
       pp_da     : boolean;    { unversandte Nachrichten vorhanden }
       amvfield  : integer;    { EditDiverses }
-      downprotnr: integer;    { Edit/Point - Download-Protokoll }
       MailInServerFld : integer; { Name MailInServer RFC/Client }
 
 
@@ -1971,13 +1970,11 @@ begin  { --- of EditAddServersList --- }
 end;
 
 
-function addServersTest(var s:string):boolean;
-var   p,nt,i,j,
-      box_anz    : Integer;
-      s1         : string;
-      d          : DB;
-      boxlist    : array[1..maxboxen] of string;
-      dupelist   : array[1..maxboxen] of byte;       { Array fÅr Dupes }
+function addServersTest(var s: String): Boolean;
+var
+  i, Dummy: Integer;
+  s1: string;
+  BoxList: TStringList;
 
   { Die hier mehrfach vorkommende PrÅfung "if own_Name <> '' then..."  }
   { dient zur Feststellung, ob wir in einem Box-Config-Dialog (z.B.    }
@@ -2002,122 +1999,63 @@ var   p,nt,i,j,
   { Åber Variablen ab.                                                 }
 
 begin
-  addServersTest:=true;
+  Result := true;
   s1:=trim(s);
-  if s1='' then exit;
-  if own_Name <> '' then
-    maxbox:=80;                      { (lfd. Nr.) in 'EditNetcallDat' }
-  for i:=1 to maxbox do boxlist[i] := '';
-  box_anz:=0;
-  repeat
-    inc(box_anz);
-    p:=cpos(' ',s1);
-    if p=0 then boxlist[box_anz]:=s1
-    else begin
-      boxlist[box_anz]:=leftstr(s1,p-1);             { Boxen-Array fÅllen }
-      s1:=trim(mid(s1,p+1));
-    end;
-  until p=0;
-  { ------------------------------------------------------ }
-  { Dupeschleife - fÅllt ein Array mit den Werten:         }
-  {   0 = Box ist ein Dupe                                 }
-  {   i = Anzahl gleicher EintrÑge (wird im ersten         }
-  {       (Element, in dem die Box vorkommt, eingetragen)  }
-  { In AbhÑngigkeit von diesen Werten in 'dupelist' werden }
-  { die in 'boxlist' hinterlegten Boxen durch die Funktion }
-  { gejagt oder Åbersprungen (wenn Wert=0). Grund: Wir     }
-  { wollen fÅr jede mehrfach vorkommende Box nur einmal    }
-  { die Fehlermeldung(en) ausgeben (und damit auch die     }
-  { Performance erhîhen).                                  }
-  { Diese Dupebehandlung gilt nur im Box-Config-Dialog     }
-  { (weil in 'EditNetcallDat' Dupes zulÑssig sind).        }
-  { ------------------------------------------------------ }
-  for i:=1 to box_anz do dupelist[i] := 1;
-  for i:=1 to box_anz do                           { Dupe-Array fÅllen }
-  begin
-    if dupelist[i]=0 then continue;
-    for j:=i to box_anz do
+  if s1='' then
+    Exit;
+
+  BoxList := TStringList.Create;
+  BoxList.Sorted := true;
+  try
+    for i := 1 to WordCount(s1) do
     begin
-      if (j=i) or (dupelist[j]=0) then continue;
-      if uppercase(boxlist[j]) = uppercase(boxlist[i]) then
+      s := Trim(UpperCase(ExtractWord(i, s1)));
+      if (Own_Name <> '') and BoxList.Find(s, Dummy) then
       begin
-        inc(dupelist[i]);                { Anzahl der EintrÑge erhîhen }
-        dupelist[j]:=0;                  { 0 = Dupe                    }
-      end;
-    end;
-  end;
-  { ----------------- Ende Dupeschleife ------------------ }
-  dbOpen(d,BoxenFile,1);
-  for i:=1 to box_anz do
-  begin
-    if own_Name <> '' then
-    begin
-      if dupelist[i]=0 then continue;
-      if dupelist[i] > 1                          { Box-Config-Dialog? }
-      then begin
-        addServersTest:=false;
-        if showErrors then
-          fehler(getreps2(10900,60,boxlist[i]) + ' ' +
-                 getreps2(10900,61,strs(dupelist[i])))
-                              { 'Serverbox "%s" ist %s mal vorhanden!' }
-        else begin
-          dbClose(d);
-          exit;
-        end;
-      end;
-    end;
-    dbSeek(d,boiName,uppercase(boxlist[i]));
-    if not dbFound then
-    begin
-      addServersTest:=false;
-      if showErrors then
-        rfehler1(962,boxlist[i])   { 'Serverbox "%s" existiert nicht!' }
-      else begin
-        dbClose(d);
-        exit;
-      end;
-    end
-    else if own_Name <> '' then                   { Box-Config-Dialog? }
-    begin
-      if uppercase(boxlist[i]) = own_Name then
+        Result := false;
+        if ShowErrors then
+          fehler(getreps2(10900,60, s)) { 'Serverbox "%s" ist mehrfach vorhanden!' }
+        else
+          break;
+      end else
+        BoxList.Add(s);
+
+      if GetServerFileName(s, '') = '' then
       begin
-        addServersTest:=false;
-        if showErrors then
-          rfehler1(963,boxlist[i])
-              { Serverbox "%s" ist identisch mit editierter Serverbox!'}
-        else begin
-          dbClose(d);
-          exit;
-        end;
-      end
-      else begin
-        dbRead(d,'Netztyp',nt);
-        if nt <> own_Nt then
+        Result := false;
+        if ShowErrors then
+          RFehler1(962, s)   { 'Serverbox "%s" existiert nicht!' }
+        else
+          break;
+      end else
+      if own_Name <> '' then                   { Box-Config-Dialog? }
+      begin
+        if s = Uppercase(own_Name) then
         begin
-          addServersTest:=false;
-          if showErrors then
-            fehler(getreps2(10900,60,boxlist[i])+' '+
-                   getreps2(10900,64,Netz_Typ(own_Nt)))
-                   { 'Serverbox "%s" ist nicht vom Netztyp %s!' }
-          else begin
-            dbClose(d);
-            exit;
+          Result := false;
+          if ShowErrors then
+            RFehler1(963, s)
+                { Serverbox "%s" ist identisch mit editierter Serverbox!'}
+          else
+            break;
+        end else
+        begin
+          if ntBoxNetztyp(s) <> own_Nt then
+          begin
+            Result := false;
+            if ShowErrors then
+              Fehler(getreps2(10900,60, s) + ' ' +
+                     getreps2(10900,64,Netz_Typ(own_Nt)))
+                     { 'Serverbox "%s" ist nicht vom Netztyp %s!' }
+            else
+              break;
           end;
         end;
       end;
     end;
+  finally
+    BoxList.Free;
   end;
-  if box_anz >= maxbox then
-  begin
-    addServersTest:=false;
-    if showErrors then
-      rfehler1(954,strs(maxbox)) { 'Maximal %s Serverbox-EintrÑge mîglich!' }
-    else begin
-      dbClose(d);
-      exit;
-    end;
-  end;
-  dbClose(d);
 end;
 
 
@@ -2392,6 +2330,9 @@ end;
 
 {
   $Log$
+  Revision 1.45.2.10  2003/09/21 16:08:45  mk
+  - rewrote addServersTest
+
   Revision 1.45.2.9  2003/09/15 15:42:23  mk
   - cleaned up mutiserver code
   - removed some limits

@@ -3397,14 +3397,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 52 Directory "%s" not found!
 #
 53 There are no (more) servers that could be added!
-54 This list may contain a maximum of %s servers!
 55 Maximum input length (%s) for server names reached!
 56 Maximum input length (%s) for file names (.BFG) reached!
 57 Server "%s" does already exist - add, anyway
 58 Input too long (Server names)! %s characters still available.
 59 Input too long (file names (.BFG))! %s characters still available.
-60 Server "%s"
-61 does exist %s times!
+60 Server "%s" does exists already!
 62 Server "%s" does not exist!
 63 Server "%s" is identical with the server currently edited!
 64 is not of net type %s!
@@ -3989,6 +3987,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49.2.14  2003/09/21 16:08:44  mk
+# - rewrote addServersTest
+#
 # Revision 1.49.2.13  2003/09/16 13:06:56  mk
 # - fixed #801901: Sendefenster öffentl. Nachricht FIDO
 #
