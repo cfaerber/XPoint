@@ -340,7 +340,15 @@ begin
                 cmp byte ptr es:[si+bx],0
                 jne @@1
 
-                cmp bl,maxlen                       { Stringlaenge auf MaximallÑnge kÅrzen }
+                cmp oneline,0
+                je @@1b
+  @@1a:         cmp byte ptr es:[si+bx-1],20
+                jnbe @@1b
+                dec bx
+                jz @nope
+                jmp @@1a
+
+  @@1b:         cmp bl,maxlen                       { Stringlaenge auf MaximallÑnge kÅrzen }
                 jna @1
                 mov bl,maxlen
   @1:           mov es:[si-1],bl
@@ -632,6 +640,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.15  2002/03/10 15:25:59  my
+  JG:- Beim einzeiligen EinfÅgen des Clipboard-Inhalts (z.B. in Eingabe-
+       felder) werden Steuerzeichen am Stringende nicht mehr in
+       Leerzeichen umgewandelt, sondern entfernt.
+
   Revision 1.19.2.14  2002/03/08 23:15:25  my
   JG+MY:- Fix: Beim Kopieren/EinfÅgen von "nichts" (0 Bytes) bzw. Leer-
           oder Steuerzeichen in das bzw. aus dem Clipboard wird kein
