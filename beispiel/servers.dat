@@ -21,6 +21,7 @@
 [POP3/SMTP/IMAP (Mail eingehend/incoming)]
 pop.t-online.de
 pop.gmx.net
+pop3.arcor.de
 pop3.nexgo.de
 mail.epost.de
 pop3.epost.de
@@ -39,6 +40,7 @@ mail.komtel.net
 mailto.t-online.de
 smtprelay.t-online.de
 mail.gmx.net
+mail.arcor.de
 mail.nexgo.de
 postman.nexgo.de
 mail.epost.de
@@ -56,10 +58,11 @@ mail.komtel.net
 [NNTP (News)]
 news.t-online.de
 news.cis.dfn.de
-news.nexgo.de
-xnews.nexgo.de
 news.arcor.de
 news.arcor-ip.de
+xnews.arcor.de
+news.nexgo.de
+xnews.nexgo.de
 news.compuserve.de
 news.tiscali.de
 news.worldonline.de
