@@ -2134,8 +2134,8 @@ fromstart:
 
     { --- 4. Schritt: Nachricht ins Pollpaket schreiben -------------- }
 
-      for ii:=1 to msgCPanz-1 do
-        hdp.Empfaenger.Add(cc^[ii]);
+{      for ii:=1 to msgCPanz-1 do
+        hdp.Empfaenger.Add(cc^[ii]); }
 
       if not flCrash or not MayCrash then
         fn2 := boxfile+ExtBoxfile
@@ -2332,6 +2332,9 @@ finalization
 
 {
   $Log$
+  Revision 1.46  2002/03/03 11:25:24  mk
+  - fixed cc bug
+
   Revision 1.45  2002/02/21 13:52:34  mk
   - removed 21 hints and 28 warnings
 
