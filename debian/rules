@@ -1,45 +1,146 @@
 #!/usr/bin/make -f
-# Made with the aid of debmake, by Christoph Lameter,
-# based on the sample debian/rules file for GNU hello by Ian Jackson.
+# $Id$
+#
+# OpenXP Debian rules file
+# Copyright (C) 2003 OpenXP <http://www.openxp.de>
+# Copyright (C) 2003 Claus Faerber <cl@openxp.de>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-package=openxp
-
-build:
-	$(checkdir)
-	./configure --prefix=/usr
-	$(MAKE) CFLAGS="-O2 -g -Wall"
-	touch build
-
-clean:
-	$(checkdir)
-	-rm -f build
-	-$(MAKE) distclean
-	-rm -f `find . -name "*~"`
-	-rm -rf debian/tmp debian/files* core debian/substvars
-
-binary-indep: checkroot build
-	$(checkdir)
-
-binary-arch: checkroot build
-	$(checkdir)
-	-rm -rf debian/tmp
-	install -d debian/tmp
-	cd debian/tmp && install -d `cat ../dirs`
-	$(MAKE) install prefix=`pwd`/debian/tmp/usr
-	debstd README.TXT 
-	dpkg-gencontrol -isp
-	chown -R root.root debian/tmp
-	chmod -R go=rX debian/tmp
-	dpkg --build debian/tmp ..
+# --- include helper files --------------------------------------------
 
 define checkdir
 	test -f debian/rules
 endef
 
-binary: binary-indep binary-arch
-
-checkroot:
+define checkroot
 	$(checkdir)
 	test root = "`whoami`"
+endef
+
+# --- build* targets --------------------------------------------------
+
+build: build-arch build-indep
+
+build-arch: build-arch-stamp
+build-arch-stamp:
+	$(checkdir)
+	./configure --prefix=/usr
+	$(MAKE)
+	touch build-arch-stamp
+
+build-indep: build-indep-stamp
+build-indep-stamp:
+	$(checkdir)
+	./configure --prefix=/usr
+	$(MAKE) doc
+	touch build-indep-stamp
+
+Makefile: Makefile.in
+	autoconf
+
+# --- binary* targets -------------------------------------------------
+
+binary: binary-arch binary-indep
+
+binary-arch: openxp
+
+binary-indep: openxp-doc openxp-tools
+
+# -- individual packages ----------------------------------------------
+
+openxp: build-arch-stamp
+	$(checkroot)
+
+	-rm -rf debian/tmp/openxp
+
+	install -d -D debian/tmp/openxp/usr/bin/
+	install -d -D debian/tmp/openxp/usr/share/openxp/
+	$(MAKE) install prefix=`pwd`/debian/tmp/openxp/usr
+
+	install -D debian/README    debian/tmp/openxp/usr/share/doc/openxp/README.Debian
+	install -D debian/copyright debian/tmp/openxp/usr/share/doc/openxp/copyright
+	install -D debian/changelog debian/tmp/openxp/usr/share/doc/openxp/changelog.Debian
+	
+	install -D debian/openxp.1  debian/tmp/openxp/usr/share/man/man1/openxp.1
+	gzip -9                     debian/tmp/openxp/usr/share/man/man1/openxp.1
+
+	install -d -D debian/tmp/openxp/DEBIAN/
+	dpkg-gencontrol -isp -popenxp -Pdebian/tmp/openxp/
+
+	chown -R root.root debian/tmp/openxp
+	chmod -R go=rX debian/tmp/openxp
+
+	dpkg --build debian/tmp/openxp ..
+
+openxp-doc:
+	$(checkroot)
+
+	-rm -rf debian/tmp/openxp-doc
+
+	#
+	# TODO: install manual
+	#
+
+	install -D debian/copyright 		debian/tmp/openxp-doc/usr/share/doc/openxp-doc/copyright
+	install -D debian/changelog 		debian/tmp/openxp-doc/usr/share/doc/openxp-doc/changelog.Debian
+
+	install -d -D debian/tmp/openxp-doc/DEBIAN/
+	dpkg-gencontrol -isp -popenxp-doc -Pdebian/tmp/openxp-doc/
+
+	# install -D debian/openxp-doc.doc-base 	debian/tmp/openxp-doc/usr/share/doc-base/openxp-doc
+	# install -D --mode=755 debian/openxp-doc.postinst debian/tmp/openxp-doc/DEBIAN/postinst
+	# install -D --mode=755 debian/openxp-doc.prerm debian/tmp/openxp-doc/DEBIAN/prerm
+
+	chmod -R go=rX debian/tmp/openxp-doc
+	chown -R root.root debian/tmp/openxp-doc
+
+	dpkg --build debian/tmp/openxp-doc ..
+
+openxp-tools: openxp-tools-ftn openxp-tools-zconnect openxp-tools-uucp
+
+openxp-tools-%:
+	$(checkroot)
+
+	-rm -rf debian/tmp/$@
+
+	install -d -D debian/tmp/$@/DEBIAN/
+	dpkg-gencontrol -isp -p$@ -Pdebian/tmp/$@/
+
+	chown -R root.root debian/tmp/$@
+	chmod -R go=rX debian/tmp/$@
+
+	dpkg --build debian/tmp/$@ ..
+
+# --- clean target ----------------------------------------------------
+
+clean:
+	$(checkroot)
+	-rm -f build-arch-stamp
+	-rm -f build-indep-stamp
+	-$(MAKE) distclean
+	rm -rf debian/tmp/
+
+# ---------------------------------------------------------------------
 
 .PHONY: binary binary-arch binary-indep clean checkroot
+
+# ---------------------------------------------------------------------
+#
+#  $Log$
+#  Revision 1.2  2003/08/05 23:31:28  cl
+#  - Update for Debian package build data
+#
+# ---------------------------------------------------------------------

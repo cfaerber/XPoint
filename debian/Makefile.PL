@@ -22,6 +22,11 @@
 
 use Date::Format;
 
+my @dist = (
+  ['unstable',	    'unstable-snapshot'],
+  ['experimental',  'experimental-snapshot'],
+);
+
 my $debian_changelog_version	= undef;
 my $debian_changelog_version_e	= undef;
 my $debian_changelog_version_d	= undef;
@@ -56,17 +61,25 @@ while(<XPGLOBAL>) {
   if(m/verstr[\t ]*=[\t ]*'v([^']+)'/) {
     $xpglobal_version	= $1;
     $xpglobal_version =~ s/[^a-z0-9\.\+]+/-/;
-    if($xpglobal_version =~ m/^([0-9]+)\.([0-9]+)/) {
-      $xpglobal_distrib = ((($1 % 2)==0)?'unstable':'experimental');
-    }
     last;
   }
 }
 close XPGLOBAL;
 
 my $debian_version = $debian_changelog_version;
-my $snapshot = 1;
 
+# --- read snapshot status from xpdefine.inc --------------------------
+
+my $snapshot = undef;
+
+open XPDEFINE, "<xpdefine.inc";
+while(<XPDEFINE>) {
+  if(m/({|\(\*)\$DEFINE *Snapshot *(}|\*\))/i) {
+    $snapshot++;
+    last;
+  }
+}
+close XPDEFINE;
 
 
 
@@ -80,15 +93,20 @@ if ($xpglobal_version ne $debian_changelog_version || $snapshot) {
       ? '-0'
       : '-'.$debian_changelog_version_d ) .
     ( $snapshot
-      ? sprintf('+%04d%02d%02d',
+      ? sprintf('.%04d%02d%02d',
         ((localtime)[5]+1900),
 	((localtime)[4]+1),
 	((localtime)[3]) )
       : '' );
+
+    if($xpglobal_version =~ m/^([0-9]+)\.([0-9]+)/) {
+      $xpglobal_distrib = $dist[(($1 % 2)==0)?0:1]->[$snapshot?1:0];
+    }
+      
   printf DEB_CHANGELOG "%s (%s) %s; urgency=low\n", $debian_changelog_package, $new_version,
   	$xpglobal_distrib || $debian_changelog_dist;
   print  DEB_CHANGELOG "\n";
-  printf DEB_CHANGELOG "  * New Upstream %s.\n",($snapshot?'Snapshot':'Release');
+  printf DEB_CHANGELOG "  * New Upstream %s.\n",($snapshot?'Snapshot':"Version\n    (NB: This is a preliminary, autocreated package.)");
   print  DEB_CHANGELOG "\n";
   printf DEB_CHANGELOG " -- OpenXP Autobuild <dev\@openxp.de>  %s\n",
     time2str('%a, %d %b %Y %T %z', time() );
