@@ -134,6 +134,8 @@ type
 
 implementation
 
+uses debug;
+
 constructor TSocketNetcall.Create;
 begin
   inherited Create;
@@ -350,12 +352,14 @@ end;
 procedure TSocketNetcall.SWriteln(s: String);
 begin
   s := s + #13#10;
+  Debug.DebugLog('ncsocket','SWriteln '+s,DLDebug+1);
   WriteBuffer(s[1], Length(s));
 end;
 
 procedure TSocketNetcall.SWritelnFmt(s: string; args: array of const);
 begin
   s := Format(s, args) + #13#10;
+  Debug.DebugLog('ncsocket','SWritelnFmt '+s,DLDebug+1);
   WriteBuffer(s[1], Length(s));
 end;
 
@@ -371,7 +375,7 @@ begin
     begin
       ReadBuffer;
       if Time < Now then
-        raise ETimeoutError.Create('Socket Timout Error');
+        raise ETimeoutError.Create('Socket Timeout Error');
     end;
     c := FInBuf[FinPos]; Inc(FinPos);
     if c = #10 then
@@ -380,11 +384,15 @@ begin
       if c <> #13 then
         s := s + c;
   until false;
+  Debug.DebugLog('ncsocket','SReadln '+s,DLDebug+1);
 end;
 
 end.
 {
   $Log$
+  Revision 1.20  2001/04/16 18:09:35  ma
+  - added VERBOSE debug logs (DLDebug+1 :-)
+
   Revision 1.19  2001/01/14 10:13:33  mk
   - MakeHeader() integreated in new unit
 
