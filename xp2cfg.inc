@@ -759,6 +759,13 @@ begin
   writeln(t,'ListVollbild=',jnf(listvollbild));
   writeln(t,'ListEndCR=',jnf(listendcr));
   writeln(t,'ListWrap=',jnf(listwrap));
+<<<<<<< xp2cfg.inc
+=======
+  writeln(t,'ViewerSave=',viewer_save);
+  writeln(t,'ViewerLister=',viewer_lister);
+  writeln(t,'ViewerVirscan=',viewer_scanner);
+  writeln(t,'DelViewTmp=',jnf(delviewtmp));
+>>>>>>> 1.56
   writeln(t,'Editor=',VarEditor);
   writeln(t,'EditorKB=',editorkb);
 { writeln(t,'EditVollbild=',jnf(editvollbild)); }
@@ -1606,6 +1613,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.3  2000/05/27 08:15:01  mk
+  - DelViewTemp wird in XPOINT.CFG gespeichert
+
   Revision 1.13.2.2  2000/05/02 04:19:00  jg
   - XPoint.cfg Schalter DelViewTmp
     macht dasselbe wie die Umgebungsvariable DELVTMP
