@@ -25,12 +25,12 @@
       yy   : byte;
   begin
     DomainNt:=nt;
-    real:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP,nt_NNTP,nt_POP3];
-    dom:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_Fido,nt_UUCP,nt_NNTP,nt_POP3];
+    real:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_UUCP];
+    dom:=nt in [nt_ZConnect,nt_Magic,nt_Pronet,nt_Fido,nt_UUCP];
     {Eingabe fuer FQDN nur bei ZC und RFC }
-    fqdom:=nt in [nt_ZConnect,nt_UUCP,nt_NNTP,nt_POP3];
+    fqdom:=nt in [nt_ZConnect,nt_UUCP];
     bdom:=(nt=nt_UUCP);
-    map:=not (nt in [nt_Maus,nt_Fido,nt_UUCP,nt_NNTP,nt_POP3,nt_QWK]);
+    map:=not (nt in [nt_Maus,nt_Fido,nt_UUCP,nt_QWK]);
     fido:=(nt=nt_Fido);
     dialog(ival(getres2(912,0)),7+iif(map,2,0)+iif(real,2,0)+iif(dom,2,0)+
            iif(fqdom,2,0)+iif(bdom,2,0)+iif(fido,2,0),txt,x,y);  {16.01.00 HS}
@@ -109,6 +109,32 @@
       end;
     enddialog;
   end;
+
+  // 'Namen' fuer die Internet-Boxentypen
+  procedure InetNameRead(nt:byte; var name,user,komm,realname,fqdn:string;
+    var brk:boolean);
+  var x,y  : byte;
+      blen : byte;
+      s    : string;
+  begin
+    DomainNt:=nt;
+    dialog(ival(getres2(912,0)),11,name,x,y);
+    blen:=ntBoxnameLen(nt);
+    maddstring(3,2,getres2(912,2),name,blen,blen, '"!'+range('#','?')+range('A',#126)+'éôö');
+    msetvfunc(xp9_testbox);
+    maddstring(3,4,getres2(912,6),komm,30,30,'');    { 'Kommentar ' }
+    maddstring(3,6,getres2(912,8),realname,30,40,'A'+without(range('!','~'),' @<>/'));
+    msetvfunc(notempty);
+    maddstring(3,8,getres2(912,12),user,30,30,grosschar(ntGrossUser(nt))+
+               'A'+without(allchar,'()'+iifs(ntNamespace(nt),'',' ')));
+    msetvfunc(notempty);
+    maddstring(3,10,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
+           'A'+without(range('!','~'),' @<>/')); mhnr(30001);
+    freeres;
+    readmask(brk);
+    enddialog;
+  end;
+
 
   procedure ReadNetztyp(box:string; var nt:byte; var brk:boolean);
   var x,y  : byte;
@@ -709,6 +735,7 @@
     end;
   end;
 
+
   procedure EditName(var brk:boolean);
   var name,user,komm  : string;
       dname,old_dname : string;
@@ -743,7 +770,6 @@
     fqdom:= dbReadStr(d,'fqdn');  {16.01.00 HS}
     bdom:= dbReadStr(d,'boxdomain');
     fidoname:= dbReadStr(d,'fidoname');
-    {16.01.00 HS}
     NameRead(nt,name,user,komm,maps,realname,dom,fqdom,bdom,fidoname,kompname,brk);
     if not brk then begin
       newbox:=(name<>dbReadStr(d,'boxname'));
@@ -772,7 +798,7 @@
           { evtl. User&Bretter Åberarbeiten }
         { DefaultBox:=name;   ?????
           SaveConfig2; }
-          if dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
+          if             dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
             renbox('.pp');
             renbox(BfgExt);
             renbox('.fl');
@@ -800,6 +826,94 @@
         dbWriteStr(d,'fqdn',fqdom);  {16.01.00 HS}
         dbWriteStr(d,'boxdomain',bdom);
         dbWriteStr(d,'fidoname',fidoname);
+        dbFlushClose(d);
+        dbGo(d,drec[1]); aufbau:=true;
+        end;
+      brk:=true;  { siehe unten! }
+      end;
+  end;
+
+  // Edit Namen fÅr alle Internet-Boxtypen au·er UUCP
+  procedure EditInetName(var brk:boolean);
+  var name,user,komm  : string;
+      dname,old_dname : string;
+      realname        : string;
+      fqdom           : string;
+      nt              : byte;
+      newbox,newibox  : boolean;
+
+    procedure renbox(ext:string);
+    var f : file;
+    begin
+      assign(f,ownpath+old_dname+ext);
+      if existf(f) then begin
+        if exist(ownpath+dname+ext) then
+          _era(ownpath+dname+ext);
+        rename(f,ownpath+dname+ext);
+        end;
+    end;
+
+  begin
+    dbGo(d,drec[p]);
+    dbRead(d,'netztyp',nt);
+    name:= dbReadStr(d,'boxname');
+    dnAme:= dbReadStr(d,'dateiname');
+    user:= dbReadStr(d,'username');
+    komm:= dbReadStr(d,'kommentar');
+    realname:= dbReadStr(d,'realname');
+    fqdom:= dbReadStr(d,'fqdn');  {16.01.00 HS}
+    INetNameRead(nt,name,user,komm,realname,fqdom,brk);
+    if not brk then begin
+      newbox:=(name<>dbReadStr(d,'boxname'));
+      newibox:=(UpperCase(name)<>UpperCase(dbReadStr(d,'boxname')));
+      if newbox then begin
+        if newibox then begin
+          dbSeek(d,boiName,UpperCase(name));
+          if dbFound then begin
+            rfehler(921);         { 'Box bereits vorhanden!' }
+            brk:=true;
+            end;
+          end;
+        if not brk then begin
+          dbGo(d,drec[p]);
+          if UpperCase(dbReadStr(d,'boxname'))=UpperCase(DefaultBox) then begin
+            DefaultBox:=name; SaveConfig2; end else
+          if dbReadstr(d,'boxname')=DefFidoBox then begin
+            DefFidoBox:=name; SaveConfig2; end;
+          old_dname:=dname;
+          dname:='';
+          dbWriteStr(d,'dateiname',dname);   { ! }
+          dname:=getdname(nt,name);
+          unique(dname);        { verÑndert pos(d)! }
+          dbGo(d,drec[p]);
+          dbWriteStr(d,'dateiname',dname);
+          { evtl. User&Bretter Åberarbeiten }
+        { DefaultBox:=name;   ?????
+          SaveConfig2; }
+          if             dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
+            renbox('.pp');
+            renbox(BfgExt);
+            renbox('.fl');
+            renbox('.bl');
+            renbox('.fbl');
+            renbox('.inf');
+            end;
+          end;
+        end;
+      if not brk then begin
+        boxpar^.boxname:=name;
+        boxpar^.username:=user;
+        if (nt=nt_Maus) then
+          boxpar^.pointname:=name;
+        // boxpar^._domain:=dom;
+        boxpar^._fqdn:=fqdom;  {16.01.00 HS}
+        WriteBox(dname,boxpar);
+        dbWriteStr(d,'boxname',name);
+        dbWriteStr(d,'username',user);
+        dbWriteStr(d,'dateiname',dname);
+        dbWriteStr(d,'kommentar',komm);
+        dbWriteStr(d,'realname',realname);
+        dbWriteStr(d,'fqdn',fqdom);  {16.01.00 HS}
         dbFlushClose(d);
         dbGo(d,drec[1]); aufbau:=true;
         end;
@@ -1484,12 +1598,12 @@
                         7: EditSysopdaten(nt,brk);
                       end;
         nt_NNTP     : case n of
-                        1: EditName(brk);
+                        1: EditInetName(brk);
                         2: EditNNTP(brk);
                         3: EditNNTPMisc(nt,brk);
                       end;
         nt_POP3     : case n of
-                        1: EditName(brk);
+                        1: EditInetName(brk);
                         2: EditPOP3(brk);
                         3: EditSMTP(brk);
                         4: EditNNTPMisc(nt,brk);
