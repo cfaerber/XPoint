@@ -1,0 +1,38 @@
+	----------------------------------------------------------------
+	Tools fuer CrossPoint                                 (c) OpenXP
+	----------------------------------------------------------------
+
+	Fuer CrossPoint existiert eine Reihe von Tools. Diese Uebersicht
+	soll dazu dienen, die bekannten Tools tabellarisch zu erfassen.
+
+	Name		Version	OS	Puffer	Beschreibung
+	----------------------------------------------------------------
+	CrossSecretary	n.b.	D		
+	FidoROut	n.b.	D		
+	NoSpam		n.b.	D		Anti-Spam-Tool
+	PktXCode	n.b.	D		
+	URLGrep		n.b.	D		
+	XenPoll		n.b.	D		
+	XPCbC		n.b.	D		
+	XPFilter	n.b.	D		Filterprogramm
+	XPHatch		n.b.	D		
+	----------------------------------------------------------------
+
+	Legende:
+
+	OS:	2 - Windows 2000
+		9 - Windows 9x
+		B - BeOS
+		D - Dos
+		L - Linux
+		N - Windows NT
+		O - OS/2
+		W - Windows (alle Versionen)
+
+	Puffer:	F - Filter (Vor-/Nachbearbeitung)
+		M - Das Tool greift direkt auf MPUFFER.* zu.
+		
+
+	----------------------------------------------------------------
+	EoF
+	----------------------------------------------------------------
