@@ -39,7 +39,14 @@
 {$DEFINE DEBUG}
 
 {$IFDEF FPC}
-{$MODE Delphi}
+  {$MODE Delphi}
+  {$IFNDEF ver1_0}
+    {$DEFINE SEEK64}
+  {$ELSE}
+    {$UNDEF SEEK64}
+  {$ENDIF}
+{$ELSE}
+  {$DEFINE SEEK64}
 {$ENDIF}
 
 unit xprope;
@@ -52,12 +59,12 @@ type
   TRopeStream = class(TStream)
   private
     FRootNode: pointer;
-    FPosition: Int64;
+    FPosition: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF};
     FLastNode: pointer;
 
   protected 
     procedure Optimise;
-    procedure SetSize(const NewSize: Int64); override;
+    procedure SetSize({$IFNDEF FPC}const{$ENDIF} NewSize: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}); override;
   
   public
     constructor Create;
@@ -65,7 +72,7 @@ type
     
     function Read(var Buffer; Count: Longint): Longint; override;
     function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(const Offset: Int64; Origin: TSeekOrigin): Int64; override;
+    function Seek({$IFNDEF FPC}const{$ENDIF} Offset: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; Origin: {$IFDEF FPC}Word{$ELSE}TSeekOrigin{$ENDIF}): {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; override;
 
     procedure Assign(otherRope: TRopeStream);
   end;
@@ -86,17 +93,17 @@ type
   TRopeNodeP = ^TRopeNode;  
   TRopeNode  = packed record
     ReferenceCount: Integer;
-    Size:       Int64;
+    Size:       {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF};
     Depth:      Integer;
     case NodeType: TRopeNodeType of
       rntLeaf: ( 
-        MaxSize: Int64;
+        MaxSize: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF};
         Data: PChar; );
       rntConcat: ( 
         Left, Right: TRopeNodeP; );
       rntSubstring: ( 
         Source: TRopeNodeP; 
-        StartPos: Int64; );
+        StartPos: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; );
       rntFill: (
         FillValue: Byte; );
   end;
@@ -115,7 +122,7 @@ begin
   result^.Depth    := 0;
 end;
 
-function alloc_fill_node(Size: Int64; FillValue: Byte): TRopeNodeP;
+function alloc_fill_node(Size: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; FillValue: Byte): TRopeNodeP;
 begin
   result := alloc_node;
   result^.NodeType := rntFill;
@@ -133,7 +140,7 @@ begin
   result^.Depth := Max(Left^.Depth,Right^.Depth);
 end;
 
-function alloc_substr_node(Source: TRopeNodeP; StartPos: Int64): TRopeNodeP; overload;
+function alloc_substr_node(Source: TRopeNodeP; StartPos: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}): TRopeNodeP; overload;
 begin
   result := alloc_node;
   result^.NodeType := rntSubstring;
@@ -143,7 +150,7 @@ begin
   result^.Depth := Source^.Depth +1;
 end;
 
-function alloc_substr_node(Source: TRopeNodeP; StartPos, Count: Int64): TRopeNodeP; overload;
+function alloc_substr_node(Source: TRopeNodeP; StartPos, Count: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}): TRopeNodeP; overload;
 begin
   result := alloc_substr_node(Source,StartPos);
   result^.Size := Min(result^.Size,Count);
@@ -584,7 +591,7 @@ begin
   Inc(FPosition, Result)
 end;
 
-function TRopeStream.Seek(const Offset: Int64; Origin: TSeekOrigin): Int64;
+function TRopeStream.Seek({$IFNDEF FPC}const{$ENDIF} Offset: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; Origin: {$IFDEF FPC}Word{$ELSE}TSeekOrigin{$ENDIF}): {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF};
 var mySize: Longint;
 begin
   mySize := TRopeNodeP(FRootNode)^.Size;
@@ -602,7 +609,7 @@ begin
   FPosition := Result;
 end;
 
-procedure TRopeStream.SetSize(const NewSize: Int64);
+procedure TRopeStream.SetSize({$IFNDEF FPC}const{$ENDIF} NewSize: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF});
 var mySize: Longint;
 begin
   mySize := TRopeNodeP(FRootNode)^.Size;
@@ -631,6 +638,9 @@ end;
 end.
 
 // $Log$
+// Revision 1.2  2003/01/13 23:31:34  cl
+// - FPC compile fix
+//
 // Revision 1.1  2003/01/13 22:48:51  cl
 // - enabled TRopeStream
 //

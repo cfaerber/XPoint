@@ -170,6 +170,7 @@ type
     constructor _Create(const addr: string); overload;
     constructor _Create(CopyFrom: TFTNAddress); overload;
   public
+    constructor Create; overload;
     constructor Create(const addr: string; DefaultZone: Integer); overload;
     class function Create(const addr: string):TFTNAddress; overload;
     class function Create(CopyFrom: TFTNAddress):TFTNAddress; overload;
@@ -694,6 +695,12 @@ begin
   result := RFCNormalizeAddress('"'+FUsername+'"@['+GetFidoAddr+']','');
 end;
 
+constructor TFTNAddress.Create;
+begin
+  FZC := '';
+  F4DOk := false;
+end;
+
 constructor TFTNAddress.Create(const addr: string; DefaultZone: Integer);
 begin
   FZC := addr;
@@ -753,6 +760,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2003/01/13 23:31:34  cl
+  - FPC compile fix
+
   Revision 1.22  2003/01/13 22:05:19  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups

@@ -15,13 +15,13 @@ if not "%arg%"=="" goto ok
 echo Platform must be dos32 or win32.
 goto Fehler
 :ok
-%comp% -ddevelop %arg% -Fu.\objcom -Fu.\netcall -Fi.\charsets openxp
+%comp% -ddevelop %arg% -Fuxplib -Fu.\objcom -Fu.\netcall -Fi.\charsets openxp
 if errorlevel 1 goto Fehler
-%comp% -Fu.\objcom -Fu.\netcall -Fi.\charsets ndiff
+%comp% -Fu.\objcom -Fuxplib -Fu.\netcall -Fi.\charsets ndiff
 if errorlevel 1 goto Fehler
-%comp% -Fu.\objcom -Fu.\netcall -Fi.\charsets rc
+%comp% -Fu.\objcom -Fuxplib -Fu.\netcall -Fi.\charsets rc
 if errorlevel 1 goto Fehler
-%comp% -Fu.\objcom -Fu.\netcall -Fi.\charsets ihs
+%comp% -Fu.\objcom -Fuxplib -Fu.\netcall -Fi.\charsets ihs
 if errorlevel 1 goto Fehler
 rc openxp-d.rq
 if errorlevel 1 goto Fehler
