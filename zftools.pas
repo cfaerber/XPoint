@@ -91,7 +91,7 @@ type  FidoAdr  = record
                    filterattr : word;
                    fido_to    : string;
                    fido_flags : string;
-                   x_charset  : string;
+                   charset,x_charset  : string;
                    keywords   : string;
                    summary    : string;
                    distribution:string;
@@ -201,6 +201,7 @@ uses
   resource,
   inout,
   maus2,
+  mime,
   xp0,
   xp1;
 
@@ -306,7 +307,6 @@ end ['EAX', 'EBX', 'ECX', 'ESI'];
 {$ELSE }
 end;
 {$ENDIF }
-
 
 { --- Allgemeines --------------------------------------------------- }
 
@@ -567,6 +567,7 @@ begin
           if id='PRIO' then prio:=minmax(ival(line),0,20) else
           if id='F-TO' then fido_to:=LeftStr(line,36) else
           if id='CRYPT' then pgpencode:=true else
+          if id='CHARSET' then charset:=LeftStr(line,25) else
           if id='SIGNED' then pgpsigned:=(pos('PGP',UpperCase(line))>0) else
           if id[1]='X' then
             if id='X-XP-NTP' then netztyp:=minmax(ival(line),0,99) else
@@ -868,8 +869,8 @@ var f1,f2   : file;
         wrs(^A'FLAGS '+xflags);
       if XPointCtl<>0 then
         wrs(^A'XPCTL: '+strs(XPointCtl));
-      if x_charset<>'' then
-        wrs(^A'CHRS: '+x_charset);
+      if charset<>'' then
+        wrs(^A'CHRS: '+MimeCharsetToFido(charset));
       if uuadr<>'' then begin
         wrs('To: '+uuadr);
         wrs('');
@@ -1490,7 +1491,7 @@ begin
               else else
             if tt.kenn=kChrs then
               if LeftStr(s,1)=':' then
-                hd.x_charset:=trim(mid(s,2))
+                hd.x_charset:=FidoCharsetToMime(trim(mid(s,2)))
               else else
             if tt.kenn=kXPCt then
               if LeftStr(s,2)='L:' then
@@ -1631,9 +1632,9 @@ begin
         end;
 
       if not DelEmpty or (hd.groesse>0) then begin
-        if LeftStr(UpperCase(hd.x_charset),7)='LATIN-1' then
+        if LeftStr(UpperCase(hd.x_charset),7)='ISO-8859-1' then
           cxlate:=1
-        else if LeftStr(UpperCase(hd.x_charset),3)='MAC' then
+        else if LeftStr(UpperCase(hd.x_charset),3)='macintosh' then
           cxlate:=2
         else
           cxlate:=0;
@@ -1802,6 +1803,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.23  2001/09/08 14:53:19  cl
+        - adaptions/fixes for MIME support
+
         Revision 1.22  2001/09/07 23:24:55  ml
         - Kylix compatibility stage II
 
