@@ -1394,7 +1394,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                showflags;
               end;
        23   : begin
-                SendAttach(Parts);
+                SendAttach(Parts,Umlaute=1);
               end;
 
       else    if n<0 then begin
@@ -2118,6 +2118,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.2  2001/08/09 19:06:02  cl
+  - update
+
   Revision 1.1  2001/08/08 20:30:33  cl
   - import from xp6*.*
 

@@ -103,9 +103,9 @@ begin
     end;
 end;
 
-destructor TQuotedPrintableEncodingStream.Destroy;
+destructor TQuotedPrintableEncodicngStream.Destroy;
 begin
-  if Length(Line)>0 then 
+  if Length(Line)>0 then
   begin
     PrepareCRLF;
     OutputStream.Write(Line[1],Length(Line));
@@ -141,6 +141,7 @@ var i: integer;
       s:=Line[Length(Line)];
       Line[Length(Line)]:='=';
       Line:=Line+#13#10;
+      if s='.' then s:='=2E';
     end;
     OutputStream.Write(Line[1],Length(Line));
     Inc(BytesWritten,Length(Line));
@@ -192,7 +193,10 @@ begin
       if (c=#9) and IsText then
         PutChar(#9)
       else
-      if Ord(c) in [32,33..60,62..126] then
+      if (Ord(c) in [32,33..60,62..126]) and
+        ((c<>'.') or (Length(line)>0)) and
+        ((c<>' ') or ((Uppercase(Line)<>'FROM') and (Uppercase(Line)<>'>FROM')))
+      then
         PutChar(c)
       else
         PutEncodedChar(c);
@@ -309,6 +313,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/08/09 19:06:02  cl
+  - update
+
   Revision 1.1  2001/08/04 12:54:23  cl
   - PLAYGROUND: new files for MIME support
 
