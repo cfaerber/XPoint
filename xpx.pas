@@ -46,13 +46,18 @@ end;
 { Diese Funktion und deren Aufruf dÅrfen nicht verÑndert werden }
 { (siehe LIZENZ.TXT).                                           }
 procedure logo;
+{$ifndef Linux}
 var t : text;
+{$endif}
 begin
-{$ifdef NCRT}
-  AssignCrt(t);
+{$ifdef Linux}
+  writeln;
+  writeln(xp_xp,' ',verstr,pformstr,betastr);
+  writeln(x_copyright,' by ',author_name,' <',author_mail,'>');
+  writeln('basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
+  writeln;
 {$else}
   assign(t,'');
-{$endif}
   rewrite(t);
   writeln(t);
   write(t,xp_xp);
@@ -65,6 +70,7 @@ begin
 {$IFNDEF VP }
   close(t); { !? }
 {$ENDIF }
+{$endif} { Linux }
 end;
 
 
@@ -214,6 +220,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/07/07 08:33:14  hd
+  - Linux: Startausgabe angepasst
+
   Revision 1.23  2000/07/04 17:32:40  hd
   - Beruecksichtigung von "_deutsch"
 
