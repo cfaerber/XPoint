@@ -27,6 +27,10 @@
   {$M 32768,150000,655360}
 {$ENDIF}
 
+{$IFDEF OS2 }
+  {$M 32768,150000}
+{$ENDIF }
+
 program xp;
 
 uses xpx,crt,dos,typeform,uart,keys,fileio,inout,help,video,datadef,
@@ -212,6 +216,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.21  2000/04/30 23:22:10  mk
+  - Stackgroesse wird jetzt auch unter OS/2 gesetzt
+
   Revision 1.20  2000/04/29 16:10:40  mk
   - CRC16 als Overlay definiert
 
