@@ -423,7 +423,7 @@ begin
     config.rechter_rand:=74;
     config.AutoIndent:=true;
     { 01/2000 oh }
-    config.PersistentBlocks:=false;
+    config.PersistentBlocks:=true;
     { /oh }
     { 10.02.2000 robo }
     config.QuoteReflow:=true;
@@ -1880,6 +1880,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.1  2000/03/20 11:29:48  mk
+  - Persistene Bloecke im Editor sind jetzt default
+
   Revision 1.9  2000/03/02 20:51:22  rb
   Wrapper-Funktionen vap und vap2 aus Editor entfernt
 
