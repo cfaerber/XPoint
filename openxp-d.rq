@@ -2238,10 +2238,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # RFC/Client
 40   Mail-/^News-Server,
 41   E^xterne Einstellungen,
-42   Externe Konfigurationsdatei laden
+42   Externe Konfiguration starten/laden
 43   ^POP3,
 44   ^SMTP,
 45   ^NNTP,
+46   Gespeicherten Dateinamen aus Konfigurationsdatei entfernen
 + 928
 1    UUCP-Einstellungen
 2    Vertreter
@@ -3989,6 +3990,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57  2002/04/10 20:42:54  mk
+# - little client-mode fixes
+#
 # Revision 1.56  2002/04/06 14:25:34  mk
 # - fixed Edit/Boxen/RFClient-Dialog
 #

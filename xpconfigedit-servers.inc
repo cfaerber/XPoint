@@ -234,7 +234,7 @@
     maddtext(3,11,getres2(920,89),col.coldiahigh);          { 'Client' }
     maddstring(3,12,getres2(920,90),ClientClientPath,41,
       MaxLenPathname,ValidDirCh);                           { 'Client-Verzeichnis' }
-      mappsel(false,'UKAD\¨UKAW\¨UKAX\¨UKA_Client\¨XPNEWS\');
+      mappsel(false,'UKAD\ùUKAW\ùUKAX\ùUKA_Client\ùXPNEWS\');
       msetvfunc(PPPClientpathTest);
     maddstring(3,13,getres2(920,91),ClientClient,41,
       MaxLenPathname,'');                                   { Client-Aufruf }
@@ -898,7 +898,7 @@
     s1:=''; s2:='';
     with boxpar^ do
     begin
-      fullClientDir := ExpandFileName(ClientExec);
+      fullClientDir := ExpandFileName(ClientPath);
       if (not (IsPath(fullClientDir))) or (fullClientDir = '') then
       begin
         rfehler1(951, UpperCase(fullClientDir));  { 'Client-Verzeichnis "%s" ist nicht vorhanden!' }
@@ -938,7 +938,7 @@
       { 'Externe Konfigurationsdatei laden' }
 {*}   restart:
       WinExec:=false; DOSExec:=false;
-      if ReadExtCfgFilename(getres2(927,10),extcfg_file,fullClientDir,true) then
+      if ReadExtCfgFilename(getres2(927,42),extcfg_file,fullClientDir,true) then
       begin
         if extcfg_file = '' then   { Feld mit <Ctrl-Del> gelöscht }
         begin
@@ -985,7 +985,6 @@
         begin
           if not DOSExec then s2:=extcfg_file;
           if not fileexists(s2) then exit;
-//        if LFNEnabled then s2 := GetShortName(s2);
           if uppercase(dir) = uppercase(fullClientDir) then
             s2 := name + ext
           else
@@ -1059,27 +1058,27 @@
 
       maddtext(3,2,getres2(920,110),col.coldiahigh);
    { 'Mail-Server für eingehende Mail (POP3/SMTP/IMAP)' }
-      maddstring(3,3,getres2(920,113),ClientMailInServer,19,160,''); { 'Servername  ' }
+      maddstring(3,3,getres2(920,113), ClientMailInServer,19,160,''); { 'Servername  ' }
         ReadServersDat('POP3');             { SERVERS.DAT lesen      }
         for j:=1 to ServersMax do
-          if ServersList[j] <> '' then      { nur Einträge anzeigen, }
+          if ServersList[j] <> '' then      { nur Eintr„ge anzeigen, }
             mappsel(false,ServersList[j]);  { die nicht leer sind    }
         mhnr(30130);
         MailInServerFld:=fieldpos;
-      maddstring(44,3,getres2(920,114),ClientMailInPort,6,50,'0123456789 ');
-        mappsel(false,'110¨25¨143¨585¨993');                      { 'Port' }
-      maddstring(60,3,getres2(920,115),ClientMailInProtocol,5,5,''); { 'Protok.' }
-        mappsel(false,'POP3¨SMTP¨IMAP4');
-      maddstring(3,4,getres2(920,117),ClientMailInEnv,19,160,'');    { 'Envelope-Adresse' }
+      maddstring(44,3,getres2(920,114), ClientMailInPort,6,50,'0123456789 ');
+        mappsel(false,'110ù25ù143ù585ù993');                      { 'Port' }
+      maddstring(60,3,getres2(920,115), ClientMailInProtocol,5,5,''); { 'Protok.' }
+        mappsel(false,'POP3ùSMTPùIMAP4');
+      maddstring(3,4,getres2(920,117), ClientMailInEnv,19,160,'');    { 'Envelope-Adresse' }
         msetvfunc(check_envelope);
-      maddstring(3,5,getres2(920,118),ClientMailInUser,19,160,'');   { 'Benutzername' }
-      maddstring(3,6,getres2(920,119),ClientMailInPass,19,75,'');    { 'Paßwort     ' }
+      maddstring(3,5,getres2(920,118), ClientMailInUser,19,160,'');   { 'Benutzername' }
+      maddstring(3,6,getres2(920,119), ClientMailInPass,19,75,'');    { 'Paáwort     ' }
       maddtext(44,4,getres2(920,120),0);                          { 'Envelope-To auswerten' }
       maddbool(70,4,'',ClientMailInUseEnvTo);
       maddtext(44,5,getres2(920,121),0);                          { 'Mail auf Server belassen' }
-      maddbool(70,5,'',ClientMailInKeep);
+      maddbool(70,5,'', ClientMailInKeep);
       maddtext(44,6,getres2(920,122),0);                          { 'APOP-Authentifizierung' }
-      maddbool(70,6,'',ClientMailInAPOP);
+      maddbool(70,6,'', ClientMailInAPOP);
 
       maddtext(3,8,getres2(920,111),col.coldiahigh);
    { 'Mail-Server für ausgehende Mail (SMTP)' }
@@ -1130,10 +1129,10 @@
       maddint(44,18,getres2(920,126),NewsMaxLenKB,6,3,0,999);     { 'Max. Artikelgröße (KB)' }
         mappsel(false,'0¨5¨10¨20¨50¨100¨200¨500¨999');
       maddint(44,19,getres2(920,127),ClientNewsMax,6,5,0,99999);     { 'Max. Artikel pro Newsgroup' }
-        mappsel(false,'0¨10¨100¨200¨500¨1000¨2000¨5000¨10000¨20000¨50000¨99999');
+        mappsel(false,'0ù10ù100ù200ù500ù1000ù2000ù5000ù10000ù20000ù50000ù99999');
 
-      maddtext(0,7,'+'+dup(76,'-')+'¦', 0);  { Linie }
-      maddtext(0,14,'+'+dup(76,'-')+'¦', 0); { Linie }
+      maddtext(0,7,'Ã'+dup(76,'Ä')+'´', 0);  { Linie }
+      maddtext(0,14,'Ã'+dup(76,'Ä')+'´', 0); { Linie }
 
       readmask(brk);
       if not brk then
@@ -2361,6 +2360,9 @@
 
 {
   $Log$
+  Revision 1.48  2002/04/10 20:42:54  mk
+  - little client-mode fixes
+
   Revision 1.47  2002/04/06 14:25:34  mk
   - fixed Edit/Boxen/RFClient-Dialog
 
