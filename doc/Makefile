@@ -73,12 +73,14 @@ prefix ?= \OPENXP
 datadir = $(prefix)
 docdir = $(prefix)\DOC
 
-SEP = \\
+# Weil ein Backslash am Ende einer Zeile eine Sonderbedeutung hat,
+# muss hier getrickst werden
+SEP = $(subst ,,\)
 MAKE ?= make.exe
 RM ?= rm
 RMDIR ?= rmdir
 INSTALLDIR ?= mkdir
-INSTALLDAT ?= xcopy
+INSTALL_DATA ?= xcopy
 DOCFORM ?= ..\docform.exe
 IHS ?= ..\ihs.exe
 
@@ -95,7 +97,7 @@ MAKE ?= make
 RM ?= rm
 RMDIR ?= rmdir
 INSTALLDIR ?= install -m 755 -d
-INSTALLDAT ?= install -b -V existing -p -m 644
+INSTALL_DATA ?= install -b -V existing -p -m 644
 DOCFORM ?= ../docform
 IHS ?= ../ihs
 
@@ -105,7 +107,7 @@ HELP = xp xp-e
 OLDDOC = fido uucp
 TXT = authors.txt dbform devtodo.txt files.txt gpl.txt make.txt \
 	planung.txt readme.txt slizenz.txt tools.txt versions.txt
-CONTRIBDOC = bestell.doc lizenz.doc xpoint.log xpoint.txt zm.txt
+CONTRIBDOC = bestell.doc lizenz.doc xpoint.log xpoint.txt
 
 ifeq ($(OS),linux)
 TXT += readme.lnx
@@ -131,16 +133,16 @@ install_datadir:
 	-$(INSTALLDIR) $(datadir)
 
 $(patsubst %,install_%,$(HELPFILES)): install_%: %
-	$(INSTALLDAT) $* $(datadir)
+	$(INSTALL_DATA) $* $(datadir)
 
 install_docdir:
 	-$(INSTALLDIR) $(docdir)
 
 $(patsubst %,install_%,$(TXT)): install_%: %
-	$(INSTALLDAT) $* $(docdir)
+	$(INSTALL_DATA) $* $(docdir)
 
 $(patsubst %,install_%,$(CONTRIBDOC)): install_%:
-	$(INSTALLDAT) $(contribdir)$(SEP)doc$(SEP)$* $(docdir)
+	$(INSTALL_DATA) $(contribdir)$(SEP)doc$(SEP)$* $(docdir)
 
 uninstall: $(patsubst %,uninstall_%,$(TXT)) \
 	$(patsubst %,install_%,$(HELPFILES))
@@ -161,6 +163,10 @@ $(patsubst %,clean_%,$(OLDDOCFILES)): clean_%:
 
 #
 # $Log$
+# Revision 1.2  2000/09/27 21:22:25  fe
+# Zmodem-Anleitung (zm.txt) wird nicht mehr installiert, da zm.exe und
+# zconfig.exe nicht mehr installiert werden.
+#
 # Revision 1.1  2000/09/26 14:00:37  fe
 # Makefile fuer GNU make
 #
