@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Bin„rfile-Viewer }
 
@@ -234,6 +235,10 @@ begin
   if fn1<>'' then era(fn1);
 end;
 
-
 end.
+{
+  $Log$
+  Revision 1.8  2000/03/04 11:55:28  mk
+  Loginfo hinzugefuegt
 
+}
