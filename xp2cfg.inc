@@ -1572,8 +1572,7 @@ begin
     if lastchar(viewer_Lister)<>'.' then viewer_lister:=Viewer_Lister+'.';
 
     for i:=1 to 2 do
-      if (length(mheadercustom[i])>0) and (LastChar(mheadercustom[i])=':') then
-        delete(mheadercustom[i],length(mheadercustom[i]),1);
+  	  TrimLastChar(mheadercustom[i], ':');
 
     GetUsrFeldPos;
 
@@ -1704,6 +1703,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.9  2003/08/25 22:38:50  mk
+  - simplyfied cutting of ':' from mcustomheader
+
   Revision 1.144.2.8  2003/08/25 18:01:31  mk
   - added XPFirstStart again and fixed incorrect RTA Message at first start
 
