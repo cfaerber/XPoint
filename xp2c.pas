@@ -1250,7 +1250,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(57,iif(deutsch,19,13),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,19,12),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
@@ -1505,6 +1505,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.19  2001/07/20 15:51:10  my
+  - corrected height of English Config/Options/Nets dialogue
+
   Revision 1.39.2.18  2001/07/18 17:20:27  my
   - removed switch and netcall routine
     "update date entries after netcall"
