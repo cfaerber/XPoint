@@ -24,7 +24,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{.$DEFINE Debug }
+{$DEFINE Debug }
 
 { Unter Virtual Pascal werden Informationen Åber die Zeilennummern
   gespeichert, vergrî·ert die EXE-Datei etwas.
@@ -32,13 +32,13 @@
   Under FPC use -gl. Prints a backtrace with unit-name and linenumber info.
 }
 
-{.$DEFINE DebugInfo }
+{$DEFINE DebugInfo }
 
 { Ist definiert, wenn Beta-Informationen anzeigt werden sollen }
 {$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{.$DEFINE Snapshot}
+{$DEFINE Snapshot}
 
 { EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
   Konfiguration mittels EASY-Mode verfÅgbar }
@@ -239,6 +239,9 @@
 
 {
   $Log$
+  Revision 1.77  2001/12/31 15:18:10  mk
+  - changed to 3.7.7
+
   Revision 1.76  2001/12/31 15:07:11  mk
   - changes for version 3.7.6
 
