@@ -64,9 +64,6 @@ implementation
 
 //no uses here, leave it to the inluded files!
 
-uses
-  Debug;
-
 {$ifdef BSD}   {$i osdbsd.inc}   {$endif}
 {$ifdef Dos32} {$i osddos32.inc} {$endif}
 {$ifdef OS2}   {$i osdos2.inc}   {$endif}
@@ -75,6 +72,9 @@ uses
 
 {
         $Log$
+        Revision 1.14  2003/09/17 00:19:09  mk
+        - moved uses debug to correct place
+
         Revision 1.13  2003/09/16 23:48:54  mk
         - added Debug log to GetTimeZone
 

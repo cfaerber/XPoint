@@ -26,6 +26,9 @@
 
 { OS specific uses }
 
+uses
+  Debug;
+
 { local declarations }
 
 { local functions }
@@ -70,6 +73,9 @@ end;
 
 {
         $Log$
+        Revision 1.7  2003/09/17 00:19:09  mk
+        - moved uses debug to correct place
+
         Revision 1.6  2003/09/16 23:48:54  mk
         - added Debug log to GetTimeZone
 
