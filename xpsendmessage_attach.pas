@@ -874,8 +874,8 @@ begin
       display
     else if p<>p0 then begin
       // mwrt(x+5,y,'p='+StrS(p)+', q='+StrS(q)+', parts.count='+Strs(Parts.count));
-      if p0 in [q..(q+gl-1)] then DispLine(p0);
-      if p  in [q..(q+gl-1)] then DispLine(p);
+      if (p0 <> -1) and (p0 in [q..(q+gl-1)]) then DispLine(p0);
+      if (p <>-1) and (p in [q..(q+gl-1)]) then DispLine(p);
     end;
     p0:=p;
 
