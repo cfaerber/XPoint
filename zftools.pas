@@ -1633,8 +1633,9 @@ begin
                   '/'+strs(node)+iifs(ispoint,'.'+strs(point),'');
         end;
 
-      if not DelEmpty or (hd.groesse>0) then begin
-        if LeftStr(UpperCase(hd.x_charset),7)='ISO-8859-1' then
+      if not DelEmpty or (hd.groesse>0) then
+      begin
+        if FidoCharsetToMime(hd.x_charset)='ISO-8859-1' then
           cxlate:=1
         else if LeftStr(UpperCase(hd.x_charset),3)='macintosh' then
           cxlate:=2
@@ -1801,9 +1802,11 @@ begin
   else FidoZ(1,1);
 end;
 
-end.
 {
         $Log$
+        Revision 1.29.2.1  2002/07/20 09:04:05  mk
+        MK+MY:- fixed FIDO Charset detection (LATIN-1 was not converted to ISO-8859-1)
+
         Revision 1.29  2001/12/08 14:21:58  mk
         - implemented zfido command line
 
@@ -1911,3 +1914,5 @@ end.
         - ZFido enthaelt keine Konvertierungen mehr
 
 }
+end.
+
