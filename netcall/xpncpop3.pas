@@ -142,24 +142,33 @@ end;
 
 
 function GetPOP3Mails(box: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
-
-const RFCFile= 'POP3TEMP';
+var
+  List          : TStringList;
+  aFile         : string;
+  i             : integer;              { -----"------- }
 
   procedure ProcessIncomingFiles(IncomingFiles: TStringList);
   var iFile: Integer; uu: TUUZ;
   begin
     uu := TUUZ.Create;
-    for iFile:=0 to IncomingFiles.Count-1 do begin
+    for iFile:=0 to IncomingFiles.Count-1 do
+    begin
       uu.source := IncomingFiles[iFile];
-      uu.dest := RFCFile;
+      uu.dest := ChangeFileExt(IncomingFiles[iFile], '.z');
+      IncomingFiles[iFile] := uu.dest;
       uu.OwnSite := boxpar^.pointname+domain;
       uu.ClearSourceFiles := true;
       uu.utoz;
-      end;
+    end;
     uu.free;
-    iFile:=IncomingFiles.Count;
-    IncomingFiles.Clear;
-    if iFile>0 then IncomingFiles.Add(RFCFile);
+  end;
+
+  procedure SaveMail;
+  begin
+    aFile:=OwnPath + XFerDir + IntToStr(i) + '.mail';
+    List.SaveToFile(aFile);
+    List.Clear;
+    IncomingFiles.Add(aFile);
   end;
 
 var
@@ -167,9 +176,6 @@ var
   ProgressOutputXY: TProgressOutputXY;  { ProgressOutputXY }
   x,y           : byte;                 { Fenster-Offset }
   f             : text;                 { Zum Speichern }
-  i             : integer;              { -----"------- }
-  List          : TStringList;
-  aFile         : string;
 begin
   { ProgressOutputXY erstellen }
   ProgressOutputXY:= TProgressOutputXY.Create;
@@ -210,13 +216,13 @@ begin
     for i := 1 to POP.MailCount do
     begin
       MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(i) + '             ');
-      List.Clear;
       POP.Retr(i, List);
-      aFile:=OwnPath + XFerDir + IntToStr(i) + '.mail';
-      List.SaveToFile(aFile);
-      IncomingFiles.Add(aFile);
+// UUZ muá erweitert werden,wenn das funktionieren soll
+//   if List.Count > 10000 then
+        SaveMail;
     end;
 
+    SaveMail;
     POP.Disconnect;
   except
     trfehler(831,31);
@@ -232,6 +238,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/04/05 13:51:47  ml
+  - POP3 is working now!
+
   Revision 1.2  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

@@ -234,6 +234,10 @@ end;
 
 
 function GetNNTPMails(box: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
+var
+  List          : TStringList;
+  Group: String;
+  ArticleIndex, RCIndex: Integer;
 
   procedure ProcessIncomingFiles(IncomingFiles: TStringList);
   var
@@ -253,6 +257,21 @@ function GetNNTPMails(box: string; bp: BoxPtr; IncomingFiles: TStringList): bool
     uu.free;
    end;
 
+   procedure SaveNews;
+   var
+     aFile: string;
+     i: Integer;
+   begin
+     aFile:=OwnPath + XFerDir;
+     for i := 1 to Length(Group) do
+       if Group[i] in ['a'..'z', 'A'..'Z'] then
+         aFile := aFile + Group[i];
+     aFile := aFile  + IntToStr(ArticleIndex) + '.news';
+     List.SaveToFile(aFile);
+     IncomingFiles.Add(aFile);
+     List.Clear;
+   end;
+
 var
   NNTP           : TNNTP;                { Socket }
   ProgressOutputXY: TProgressOutputXY;  { ProgressOutputXY }
@@ -260,12 +279,8 @@ var
   x,y           : byte;                 { Fenster-Offset }
   f             : text;                 { Zum Speichern }
   p, i          : integer;              { -----"------- }
-  List          : TStringList;
   RCList        : TStringList;          { .rc-File }
-  ArticleIndex, RCIndex: Integer;
   RCFilename    : String;
-  aFile         : string;
-  Group: String;
 begin
   { ProgressOutputXY erstellen }
   ProgressOutputXY:= TProgressOutputXY.Create;
@@ -333,20 +348,12 @@ begin
 
         NNTP.GetMessage(ArticleIndex, List);
         if List.Count > 10000 then
-        begin
-          aFile:=OwnPath + XFerDir;
-          for i := 1 to Length(Group) do
-            if Group[i] in ['a'..'z', 'A'..'Z'] then
-              aFile := aFile + Group[i];
-          aFile := aFile  + IntToStr(ArticleIndex) + '.news';
-          List.SaveToFile(aFile);
-          IncomingFiles.Add(aFile);
-          List.Clear;
-        end;
+          SaveNews;
       end;
       RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex);
     end;
 
+    SaveNews;
     NNTP.Disconnect;
   except
     trfehler(831,31);
@@ -364,6 +371,9 @@ end.
 
 {
         $Log$
+        Revision 1.4  2001/04/05 13:51:47  ml
+        - POP3 is working now!
+
         Revision 1.3  2001/04/05 13:25:47  ml
         - NNTP is working now!
 

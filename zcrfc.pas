@@ -2905,6 +2905,8 @@ var
       FileType := 0;
   end;
 
+var
+  s1: String;
 begin
   assign(f2,dest);
   rewrite(f2,1);
@@ -2916,9 +2918,14 @@ begin
   while sres = 0 do
   begin
   try
+    s1 := ExtractFileExt(sr.name);
     if not (UpperCase(RightStr(sr.name,4))='.OUT') then
     if ExtractFileExt(sr.name) = '.mail' then
-      ConvertMailfile(spath + sr.name, '', mails)
+    begin
+      ConvertMailfile(spath + sr.name, '', mails);
+      if ClearSourceFiles then DeleteFile(spath+sr.name) else
+        RenameFile(spath+sr.name,spath+sr.name+'.BAK');
+    end
     else
     if ExtractFileExt(sr.name) = '.news' then
     begin
@@ -3854,6 +3861,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2001/04/05 13:51:47  ml
+  - POP3 is working now!
+
   Revision 1.43  2001/04/05 13:25:46  ml
   - NNTP is working now!
 
