@@ -768,8 +768,6 @@ asm
 @taende:    pop eax
             mov ecx,edx
             popa
-            ret
-
 {-------------------------}
 @ende:
 end; { of MakeListdisplay }
@@ -2097,6 +2095,9 @@ end;
 
 {
   $Log$
+  Revision 1.150  2002/04/30 08:54:03  mk
+  - removed unnecessary ret
+
   Revision 1.149  2002/04/25 23:04:30  cl
   - fixed last commit
 
