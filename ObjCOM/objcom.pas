@@ -123,7 +123,7 @@ uses
 {$IFNDEF Fossil}
 //todo: make const? unused???
 function FossilDetect: Boolean; begin FossilDetect:=False end;
-//$else?
+// else?
 {$ENDIF}
 
 const CommandTimeout= 500;
@@ -498,6 +498,9 @@ end.
 
 {
   $Log$
+  Revision 1.31  2002/12/08 12:34:37  mk
+  - fixed commpiler directive in comment (not allowed with FPC)
+
   Revision 1.30  2002/12/06 14:27:31  dodi
   - updated uses, comments and todos
 
