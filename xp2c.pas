@@ -1033,7 +1033,7 @@ end;
 procedure DispArcs;
   procedure ww(y:byte; var p:string);
   begin
-    wrt(64,fy+y,iifc(FileDa(p),#251,' '));
+    wrt(64+(screenwidth-80) div 2 ,fy+y,iifc(FileDa(p),#251,' '));
   end;
 begin
   attrtxt(col.coldialog);
@@ -1492,6 +1492,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/08/15 11:12:23  mk
+  MO: Bugfixes und Anpassungen fuer > 80 Spalten
+
   Revision 1.52  2000/08/14 21:08:54  mk
   - Bugfix fuer MiscAnzeigeCfg
 

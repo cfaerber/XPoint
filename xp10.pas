@@ -547,7 +547,7 @@ var
       1: result:=e.Count;               //Timingliste or
       2: result:=e.Count;               //TastenMakros
       3: result:=anzahl;                //GebÅhren
-      4: result:=anzahl;                //Header
+      4: result:=xhd.anz+1;             //Header
       5: result:=Nodelist.Count;        //nodeliste
       6: result:=tables;                //Tarif
     else
@@ -619,7 +619,7 @@ var
                 Setlength(bunla, mtypes-1); {bunla[0]:=chr(mtypes-1);}
                 for j:=2 to mtypes do
                   bunla[j-1]:=iifc(e.Strings[i+a-1][14+j]=' ',' ',_bunla[j]);
-                write(' ',tt,bunla,' ',forms(mid(e.Strings[i+a-1],26),51-length(komm)),
+                write(' ',tt,bunla,' ',forms(mid(e.Strings[i+a-1],26),50-length(komm)),
                       ' ',komm,' ');
               end;
           3 : with phones^[i+a] do begin      { GebÅhrenliste Array}
@@ -630,7 +630,7 @@ var
                 Wrt2(forms(s,53));
               end;
           4 : begin
-                s:=getres2(222,xhd[i+a]);                    { header??? }
+                s:=getres2(222,xhd.v[i+a-1]);                    { headerzeilen in der Nachrichtenanzeige }
                 Wrt2(' ' + iifc(i+a=movefrom,#16,' ') +
                       forms(mid(s,blankpos(s)),width-2));
               end;
@@ -1317,13 +1317,13 @@ var
       brk  : boolean;
       s    : string[40];
   begin
-    if anzahl=maxheaderlines then begin
+    if xhd.anz=maxheaderlines then begin
       rfehler1(1007,strs(maxheaderlines));    { 'Maximal %s Zeilen mîglich!' }
       exit;
       end;
     used:=[];
-    for i:=1 to anzahl do
-      include(used,xhd[i]);
+    for i:=0 to xhd.anz do
+      include(used,xhd.v[i]);
     anz:=1;
     for i:=1 to res2anz(222)-1 do
       if not (i in used) then inc(anz);
@@ -1341,8 +1341,9 @@ var
         (pos(s,getres2(222,i))+length(s)<length(getres2(222,i))-1)) do
         dec(i);
       inc(anzahl);
-      Move(xhd[CurRow+a],xhd[CurRow+a+1],(anzahl-CurRow-a));
-      xhd[CurRow+a]:=i;
+      Move(xhd.v[CurRow+a-1],xhd.v[CurRow+a],(xhd.anz-CurRow-a+1));    {um eine Position nach unten verschieben }
+      xhd.v[CurRow+a-1]:=i;
+      inc(xhd.anz);
       modi:=true;
       end;
     closelist;
@@ -1351,27 +1352,28 @@ var
   procedure MoveHeaderLine;
   var b : byte;
   begin
-    b:=xhd[movefrom];
-    if movefrom<a+CurRow then
-      Move(xhd[movefrom+1],xhd[movefrom],a+CurRow-movefrom)
+    b:=xhd.v[movefrom-1];                   { zu verschiebendes Element }
+    if movefrom<a+CurRow then               { nach unten einfÅgen }
+      Move(xhd.v[movefrom],xhd.v[movefrom-1],a+CurRow-movefrom)  { Elemente eine Pos nach oben moven }
     else if movefrom>a+CurRow then
-      Move(xhd[a+CurRow],xhd[a+CurRow+1],movefrom-a-CurRow);
-    xhd[a+CurRow]:=b;
-    movefrom:=0;
+      Move(xhd.v[a+CurRow-1],xhd.v[a+CurRow],movefrom-a-CurRow); { Elemente eine Pos nach unten moven }
+    xhd.v[a+CurRow-1]:=b;
+    movefrom:=0;                            { Element an CursorPosition einfÅgen }
     modi:=true;
   end;
 
   procedure DelHeaderLine;
   var s : string;
   begin
-    if anzahl=1 then
+    if xhd.anz = 0 then
       rfehler(1008)         { 'Es mu· mindestens eine Zeile vorhanden sein.' }
     else begin
-      s:=getres2(222,xhd[a+CurRow]);
+      s:=getres2(222,xhd.v[a+CurRow-1]);
       s:=mid(s,blankpos(s)+1);
-      if ReadJN(getreps2(1018,iif(xhd[a+CurRow]=0,6,5),s),true) then begin   { 'Zeile "%s" lîschen' }
-        if a+CurRow<anzahl then Move(xhd[a+CurRow+1],xhd[a+CurRow],anzahl-a-CurRow);   { / 'Trennzeile lîschen' }
+      if ReadJN(getreps2(1018,iif(xhd.v[a+CurRow-1]=0,6,5),s),true) then begin   { 'Zeile "%s" lîschen' }
+        if a+CurRow-1<xhd.anz then Move(xhd.v[a+CurRow],xhd.v[a+CurRow-1],xhd.anz-a-CurRow+1);   { / 'Trennzeile lîschen' }
         dec(anzahl);
+        dec(xhd.anz);
         modi:=true;
         end;
       end;
@@ -1587,12 +1589,13 @@ begin   {procedure UniEdit(typ:byte); }
         end;
     4 : begin                       { Nachrichtenkopf }
           filewidth:=30;
-          anzahl:=HeaderLines;
+          anzahl:=xhd.anz;
           width:=ival(getres2(1018,1));
           buttons:=getres2(1018,2);   { ' ^EinfÅgen , ^Verschieben , ^Lîschen ,  ^OK  ' }
           okb:=4; edb:=0;
           pushhp(900);
           xhd:=ExtraktHeader;
+          anzahl:=xhd.anz;          { das ist ÅberflÅssig ?}
         end;
     5 : begin                       { Nodelisten }
           DisableAltN:=true;
@@ -1747,7 +1750,6 @@ begin   {procedure UniEdit(typ:byte); }
     if (typ=4) and (nr=okb) and modi then begin
       { if ReadJNesc(getres(1019),true,brk) then begin  } { 'énderungen sichern' }
       ExtraktHeader:=xhd;
-      HeaderLines:=anzahl;
       GlobalModified;
       modi:=false;
       end;
@@ -2039,6 +2041,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.35  2000/08/15 11:12:23  mk
+  MO: Bugfixes und Anpassungen fuer > 80 Spalten
+
   Revision 1.34  2000/08/14 23:04:35  mk
   MO:- eanzahl() liefert jetzt immer den richtigen Wert
 

@@ -600,7 +600,10 @@ type   textp  = ^text;
        komliste = array[0..maxkomm-1] of komrec;   { Kommentarbaum }
        komlistp = ^komliste;
 
-       ExtHeaderType = array[1..maxheaderlines] of byte;
+       ExtHeaderType = record
+       		         v      :array[0..maxheaderlines] of byte;
+       		         anz	:integer;
+       		       end;    
 
        viewert  = array[1..maxviewers] of record
                                             ext : string;
@@ -1026,7 +1029,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        extheadersize : integer;      { gr”áe des Kopfes bei xp3.extract_msg() }
        extHdLines  : integer;        { Anzahl Kopfzeilen bei Extrakt mit Kopf }
        fidobin     : boolean;        { Bin„rnachrichten im FidoNet m”glich }
-       HeaderLines : integer;        { Def. Anzahl Zeilen bei Extrakt m.Kopf }
        ExtraktHeader : ExtHeaderType;
        reg_hinweis : boolean;        { Fenster bei Programmstart anzeigen }
 
@@ -1084,6 +1086,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.85  2000/08/15 11:12:22  mk
+  MO: Bugfixes und Anpassungen fuer > 80 Spalten
+
   Revision 1.84  2000/08/01 08:40:40  mk
   - einige String-Parameter auf const geaendert
 

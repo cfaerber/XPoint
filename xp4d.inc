@@ -137,9 +137,9 @@ begin  { __ Suchmarke }
                 if length(s)>43 then                    { Brettbersicht in Normal mode }
 
                   if ( length(komm) > 1 ) then                  { Kommentar vorhanden ?}
-                    dispbuf[y]:=c+                                                  {   3  }
+                    dispbuf[y]:=c+                                                  {   4  }
                                 + forms(copy(s,2,100)+'_', 60 + over80 div 2)+' '   {+ 60 }
-                                + forms( komm , 17 + over80 div 2)                  {+ 17 }
+                                + forms( komm , 16 + over80 div 2)                  {+ 16 }
                   else
                      dispbuf[y]:=c+forms(copy(s,2,76+over80),77+over80)
 
@@ -599,6 +599,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2000/08/15 11:12:24  mk
+  MO: Bugfixes und Anpassungen fuer > 80 Spalten
+
   Revision 1.36  2000/08/09 21:08:18  mk
   MO: -Anzeige > 80 Spalten Anzeigefehler behoben
 

@@ -747,11 +747,11 @@ begin
     if (art=xTractHead) or (art=xTractDump) then begin
       mailerflag:=false;
       lasttrenn:=false;
-      for hdln:=1 to HeaderLines do
-        case ExtraktHeader[hdln] of
+      for hdln:=0 to ExtraktHeader.anz  do
+        case ExtraktHeader.v[hdln] of
 
     hdf_Trenn :  if not lasttrenn then begin
-                   if hdln=HeaderLines then TestSoftware;
+                   if hdln=ExtraktHeader.anz then TestSoftware;
                    wrs(dup(iif(art=xTractHead,70,72)+ScreenWidth-80,'-'));    { Trennzeile }
                    lasttrenn:=true;
                  end;
@@ -1056,6 +1056,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/08/15 11:12:24  mk
+  MO: Bugfixes und Anpassungen fuer > 80 Spalten
+
   Revision 1.41  2000/08/12 11:20:48  mk
   JG:- Quotereflow Fix
 

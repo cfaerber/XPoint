@@ -362,13 +362,13 @@ var hddef    : array[0..40] of string;
     hddefs,i : integer;
     ss       : string;
 begin
-  hddefs:=res2anz(222);
+  hddefs:=res2anz(222)-1;
   for i:=0 to hddefs do begin
     hddef[i]:=getres2(222,i);
     truncstr(hddef[i],blankpos(hddef[i])-1);
     end;
   freeres;
-  HeaderLines:=0;
+  ExtraktHeader.anz:=-1;
   s:=trim(s)+' ';
   while s<>'' do begin
     ss:=left(s,blankpos(s)-1);
@@ -376,8 +376,8 @@ begin
     i:=0;
     while (i<=hddefs) and (ss<>hddef[i]) do inc(i);
     if i<=hddefs then begin
-      inc(HeaderLines);
-      ExtraktHeader[HeaderLines]:=i;
+      inc(ExtraktHeader.anz);
+      ExtraktHeader.v[ExtraktHeader.anz]:=i;
       end;
     end;
 end;
@@ -645,7 +645,7 @@ begin
   ListHighlight:=true;
   ListFixedhead:=false;
   MaggiVerkettung:=false;
-  HeaderLines:=0;
+  ExtraktHeader.anz:=0;
 {$IFNDEF Linux }
   timezone:=iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
 {$ENDIF }
@@ -741,8 +741,8 @@ var t   : text;
       s : string;
   begin
     write(t,'Header=');
-    for i:=1 to HeaderLines do begin
-      s:=getres2(222,extraktheader[i]);
+    for i:=0 to extraktheader.anz do begin
+      s:=getres2(222,extraktheader.v[i]);
       write(t,left(s,blankpos(s)));
       end;
     writeln(t);
@@ -1698,6 +1698,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.84  2000/08/15 11:12:23  mk
+  MO: Bugfixes und Anpassungen fuer > 80 Spalten
+
   Revision 1.83  2000/08/01 16:32:26  mk
   - Define Windows in Win32 geaendert
 
