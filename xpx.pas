@@ -19,10 +19,7 @@ interface
 uses
   xpglobal,
 {$IFDEF unix}
-  linux,
   xplinux,
-{$else}
-  dos,          { getenv }
 {$ENDIF }
 {$IFDEF NCRT }
   xpcurses,
@@ -149,6 +146,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.36  2000/11/16 12:11:18  hd
+  - Units entfernt
+
   Revision 1.35  2000/11/16 12:08:43  hd
   - Fix: Zu späte Arbeit
 
