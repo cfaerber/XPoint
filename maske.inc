@@ -114,7 +114,7 @@ var ax,p,myp  : integer;
               end { not enabled }
               else if checkbutt then begin { enabled, checkbutt }
                 attrtxt(stat.col.colbuttons);
-                wrt(xx2,yy-a,' ['+iifc(cont=yesno[1]'x',' ')+'] ');
+                wrt(xx2,yy-a,' ['+iifc(cont=yesno[1],'x',' ')+'] ');
               end { enabled, checkbutt }
               else begin { enabled, not checkbutt }
                 attrtxt(stat.col.colfeldinput);
@@ -1120,6 +1120,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 end;   { readHmask }
 {
   $Log$
+  Revision 1.34  2001/03/19 12:43:04  cl
+  - fixed missing ,
+
   Revision 1.33  2001/03/19 12:17:02  cl
   - changed #$9E back to 'x' due to charset problems
 
