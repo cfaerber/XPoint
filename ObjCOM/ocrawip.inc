@@ -131,9 +131,9 @@ begin
   { TODO: IPv6 support }
 
   DestIPnr  := 0;
-  DestIP[DestIPNr] := inet_addr(PChar(DestHost));
+  {$R-} DestIP[DestIPNr] := Cardinal(inet_addr(PChar(DestHost))); {$R+}
 
-  if DestIP[DestIPNr] <> INADDR_NONE then
+  if DestIP[DestIPNr] <> Cardinal(INADDR_NONE) then
     DestIPnr := 1
   else begin
     DestHE:={$IFDEF WIN32}WinSock.{$ENDIF}GetHostByName(PChar(DestHost));
@@ -148,7 +148,7 @@ begin
       DestIP[DestIPNr] := DestHEP^^;
       Inc(DestHEP); Inc(DestIPNr);
     end;
-    if DestIPNr=0 then begin SetErrorStr('Host has no address'); exit; end;
+    if DestIPNr=0 then begin SetErrorStr('Host has no IPv4 address'); exit; end;
   end;
 
   {$IFDEF WIN32}
@@ -174,7 +174,7 @@ begin
 
   for c:=0 to DestIPNr-1 do
   begin
-    addr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF} := DestIP[c];
+    {$R-} addr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF} := DestIP[c]; {$R+}
 
     if {$IFDEF WIN32}0=WinSock{$ELSE}sockets{$ENDIF}.Connect(SHandle,Addr,SizeOf(Addr)) then
     begin
@@ -607,6 +607,9 @@ end;
 
 {
   $Log$
+  Revision 1.13  2001/09/08 14:53:55  cl
+  - Delphi fixes
+
   Revision 1.12  2001/09/07 23:24:56  ml
   - Kylix compatibility stage II
 
