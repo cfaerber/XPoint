@@ -32,7 +32,7 @@ begin
   if ReadFilename(getres2(330,1),s,true,useclip) then   { 'Puffer einlesen' }
     if not FileExists(s) then
       rfehler(304)   { 'Datei nicht vorhanden!' }
-    else if pos(UpperCase(AblagenFile),UpperCase(s))>0 then
+    else if pos(UpperCase(AblagenFile),UpperCase(s))=1 then
       rfehler(305)   { 'Interne Ablage - bitte erst umbenennen!' }
     else begin
       dialog(46,6,fitpath(s,38),x,y);
@@ -1295,6 +1295,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.15  2003/08/23 23:45:54  mk
+  - corrected dectection of own puffer files
+
   Revision 1.83.2.14  2003/04/25 20:52:23  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
