@@ -1391,7 +1391,7 @@ var brk      : boolean;
   var fn : string;
       ft : longint;
   begin
-    fn:=FidoDir+NLfilename(n-1);
+    fn:=FidoDir+NLfilename(n);
     ft:=filetime(fn);
     editfile(fn,false,false,0,false);
     if filetime(fn)<>ft then reindex:=true;
@@ -2022,6 +2022,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/08/08 17:15:31  mk
+  MO: TextEditNodelist nutzt jetzt den richtigen Index
+
   Revision 1.28  2000/08/08 13:18:14  mk
   - s[Length(s)] durch Lastchar ersetzt
 
