@@ -2351,9 +2351,6 @@ Wenn Sie den Dateinamen ohne Pfad angeben, legt XP
 die Datei im Extrakt-Verzeichnis ([/Config/Pfade/Ext.])@261
 ab.
 
-Mit F2 kommen sie zur Auswahl fr das
-Windows-Clipboard.
-
 Mit <<<F2> >>kommen sie zur Auswahl fr das Clipboard
 (Zwischenablage).
 
@@ -4394,8 +4391,8 @@ Userliste aufgenommen werden:
         Gateways ins Z-Netz gelangen, herausgefil-
         tert.
 
-<<PMs>>     nimmt nur User auf, die Ihnen eine PM schrei-
-        ben.
+<<PMs>>     nimmt nur User auf, die Ihnen eine PM
+        schreiben.
 
 Achtung: Bei Einstellung "Alle" oder "Z-Netz" kann
 die Userdatenbank sehr schnell sehr groá werden!
@@ -11072,7 +11069,7 @@ Siehe auch:  [interner Editor]@54
 
 Hier k”nnen Sie einen Text eingeben, der an jede
 automatisch erstellte Empfangsbest„tigung angeh„ngt
-wird (s. [/C/O/Nachrichten/autom.Empfangsbest.]).@249
+wird (s. [/C/O/Nachrichten/autom. Empfangsbest.]).@250
 
 Siehe auch:  [interner Editor]@54
              [Signatur-Wechsler]@2001
@@ -14285,11 +14282,11 @@ richten "von Hand" mit dem Programm ZFIDO.EXE zu
 konvertieren.
 @
 22401
-Die uu-codierte Nachricht ist fehlerhaft; daher wurde
+Die UU-codierte Nachricht ist fehlerhaft; daher wurde
 die Decodierung abgebrochen. Die decodierte Datei ist
 vorhanden, aber unvollst„ndig.
 
-Falls es sich um die erste von mehrern uu-codierten
+Falls es sich um die erste von mehreren UU-codierten
 Teilnachrichten handelt, so mssen Sie vor dem Deco-
 dieren alle Teile markieren.
 @
