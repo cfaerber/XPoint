@@ -63,9 +63,9 @@ mkdir $RPM_BUILD_ROOT%{Prefix}/bin
 mkdir $RPM_BUILD_ROOT%{Prefix}/lib
 mkdir $RPM_BUILD_ROOT%{Prefix}/doc
 mkdir -p %{Prefix}
-mkdir %{Prefix}/bin
-mkdir %{Prefix}/lib
-mkdir %{Prefix}/doc
+mkdir -p %{Prefix}/bin
+mkdir -p %{Prefix}/lib
+mkdir -p %{Prefix}/doc
 
 # copy bins
 cp openxp $RPM_BUILD_ROOT%{Prefix}/bin
@@ -95,16 +95,20 @@ popd
 
 %pre
 # echo pre >> /tmp/rpm.log
-%define Prefix /usr/local/lib/openxp
+#%define Prefix /usr/local/lib/openxp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/xp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/openxp
 #/bin/ln -sf %{Prefix}/bin/rc /usr/local/bin/rc
 #/bin/ln -sf %{Prefix}/bin/ihs /usr/local/bin/ihs
-/bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
+#/bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
 # echo preend >> /tmp/rpm.log
 
 %post
 # echo post >> /tmp/rpm.log
+/bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
+/bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/xp
+/bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/openxp
+
 
 %preun
 # echo preun >> /tmp/rpm.log

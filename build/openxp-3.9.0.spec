@@ -8,7 +8,8 @@ Name: openxp
 %define version 3.9.0
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
-%define ppcopts -gl -XX -FU. -FuObjCOM -Funetcall -Fl.
+#%define ppcopts -gl -XX -FU. -FuObjCOM -Funetcall -Fl.
+%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fl. -Ci -Co -Cr
 #%define helpdir /home/boettger/openxp/openxp/contrib
 ##%define filelist /home/boettger/openxp/openxptools/filelist.lst
 %define filelist /tmp/filelist.lst
@@ -96,16 +97,20 @@ popd
 
 %pre
 # echo pre >> /tmp/rpm.log
-%define Prefix /usr/local/lib/openxp
+#%define Prefix /usr/local/lib/openxp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/xp
 /bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/openxp
 #/bin/ln -sf %{Prefix}/bin/rc /usr/local/bin/rc
 #/bin/ln -sf %{Prefix}/bin/ihs /usr/local/bin/ihs
-/bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
+#/bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
 # echo preend >> /tmp/rpm.log
 
 %post
 # echo post >> /tmp/rpm.log
+/bin/ln -sf %{Prefix}/doc/openxp-d.hlp %{Prefix}/doc/openxp.hlp
+/bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/xp
+/bin/ln -sf %{Prefix}/bin/openxp /usr/local/bin/openxp
+
 
 %preun
 # echo preun >> /tmp/rpm.log
