@@ -51,6 +51,7 @@ begin
       fn[i]:='-';
   p:=cpos('.',fn);
   if not Short83 then
+  begin
     if p=0 then
     begin             { Datei ohne Extension auf 8 Zeichen kÅrzen }
       name:=left(fn,8); ext:='';
@@ -58,6 +59,8 @@ begin
     begin                    { Datei mit Extension auf 8+3 zeichen kÅrzen }
       name:=left(fn,min(8,p-1)); ext:=mid(fn,p);
     end;
+  end else
+    name := fn;
   if length(ext)=2 then n:=10
   else n:=1;
   while (destdir<>'') and (n<999) and exist(destdir+name+ext) do begin
