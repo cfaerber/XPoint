@@ -199,19 +199,12 @@ var aresult   : integer;
     fileatts : integer;   { File-Attaches }
     rflist   : rfnodep;
     dir      : TDirectory;
+    FilesToSend,FilesReceived: TStringList;
 
 label fn_ende,fn_ende0;
 
   procedure InitFidomailer;
   var i : integer;
-
-    procedure AddFile(const s: string);
-    begin
-      if Fidomailer.FilesToSend='' then
-        Fidomailer.FilesToSend:= s
-      else
-        Fidomailer.FilesToSend:= Fidomailer.FilesToSend+#9+s;
-    end;
 
     procedure WriteAttach(const puffer:string);
 
@@ -233,7 +226,7 @@ label fn_ende,fn_ende0;
             if not FileExists(hd.betreff) then begin
               tfehler(hd.betreff+' fehlt!',15);
             end else begin
-              AddFile(FileUpperCase(hd.betreff));
+              FilesToSend.Add(FileUpperCase(hd.betreff));
               inc(fileatts);
             end;
           inc(adr,hds+hd.groesse);
@@ -314,17 +307,17 @@ label fn_ende,fn_ende0;
         Fidomailer.sendempty:= true;
       if ((request='') and (FileAtts=0)) or not EmptyPKTs then
         if packmail then
-          AddFile(sendfile)
+          FilesToSend.Add(sendfile)
         else begin
-          AddFile(upuffer);
+          FilesToSend.Add(upuffer);
 //**          for i:=1 to addpkts^.anzahl do
-//**            AddFile(addpkts^.addpkt[i]);
+//**            FilesToSend.Add(addpkts^.addpkt[i]);
         end;
       if request<>'' then
-        AddFile(request);
+        FilesToSend.Add(request);
 //**      for i:=1 to addpkts^.akanz do
 //**        if addpkts^.reqfile[i]<>'' then
-//**          AddFile(addpkts^.reqfile[i]);
+//**          FilesToSend.Add(addpkts^.reqfile[i]);
       if komment='' then
         Fidomailer.txt:= 'Netcall  -  '+boxname
     { else writeln(t,LeftStr(komment,32-length(boxname)),' (',boxname,')'); }
@@ -338,45 +331,6 @@ label fn_ende,fn_ende0;
         Fidomailer.addtxt:= getres(727)+boxpar^.gebzone;   { 'Tarifzone' }
       WrAKAs;
     end; { while }
-  end;
-
-  procedure BuildIncomingFilelist(logfile:string);
-  var t  : text;
-      buf: array[0..511] of byte;
-      s  : string;
-      fp : rfnodep;
-      p  : byte;
-  begin
-    rflist:=nil;
-    assign(t,logfile);
-    settextbuf(t,buf);
-    if existf(t) then
-    begin
-      reset(t);
-      while not eof(t) do
-      begin
-        readln(t,s);
-        LoString(s);
-        DebugLog('xpncfido','BuildIncoming "'+s+'"',DLDebug);
-        if (Copy(s,1,1)='*') and
-           ((pos('rcvd',s)>0) or (pos('skipped',s)>0)) and
-           (pos(', error',s)=0) then begin
-          if pos('rcvd',s)>0 then
-            delete(s,1,pos('rcvd',s)+4)
-          else
-            delete(s,1,pos('skipped',s)+7);
-          s:=trim(s);
-          p:=pos(';',s);
-          if p=0 then p:=blankposx(s);
-          new(fp);
-          fp^.next:=rflist;
-          fp^.fn:=UpperCase(extractfilename(LeftStr(s,p-1)));
-          DebugLog('xpncfido','rcvd file found: "'+fp^.fn+'"',DLDebug);
-          rflist:=fp;
-          end;
-        end;
-      close(t);
-      end;
   end;
 
   procedure ProcessRequestResult(fa:string);   { Requests zurÅckstellen }
@@ -445,16 +399,6 @@ label fn_ende,fn_ende0;
         SetRequest(fa,'');
   end;
 
-  procedure ReleaseIncomingFilelist;
-  var fp : rfnodep;
-  begin
-    while rflist<>nil do begin
-      fp:=rflist^.next;
-      dispose(rflist);
-      rflist:=fp;
-      end;
-  end;
-
 begin { FidoNetcall }
   Debug.DebugLog('xpncfido','fido netcall starting',DLInform);
   Fidomailer:=TFidomailer.Create;
@@ -495,6 +439,8 @@ begin { FidoNetcall }
     goto fn_ende;
     end;
   Fidomailer.IPC:=TXPMessageWindow.CreateWithSize(50,10,'Fidomailer',True);
+  FilesToSend:=TStringList.Create; FilesReceived:=TStringList.Create;
+  Fidomailer.FilesToSend:=FilesToSend; Fidomailer.FilesReceived:=FilesReceived;
   InitFidomailer;
   FidoNetcall:=EL_noconn;
   aresult:=Fidomailer.PerformNetcall;
@@ -534,12 +480,10 @@ begin { FidoNetcall }
   if (aresult=EL_ok) or (aresult=EL_recerr) then begin   { Senden OK }
     Moment;
     if not crash and packmail then SaveArcname(boxpar^.boxname,sendfile);
-    BuildIncomingFilelist(FidoLogfile);
     if request<>'' then ProcessRequestResult(MakeFidoAdr(fa,true));
 //**    for i:=1 to addpkts^.akanz do
 //**      if addpkts^.reqfile[i]<>'' then
 //**        ProcessRequestResult(addpkts^.akabox[i]);
-    ReleaseIncomingFilelist;
     if crash then SetCrash(MakeFidoAdr(fa,true),false);
     outmsgs:=0;
     if FileExists(ppfile) then begin
@@ -823,6 +767,10 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/02/03 18:40:33  ma
+  - added StringLists for tracking sent/rcvd files
+  - ncfido using OO ZModem now
+
   Revision 1.5  2001/02/02 20:59:57  ma
   - moved log routines to ncmodem
 

@@ -24,8 +24,9 @@
 
 procedure TFidomailer.WaZOOsession;
 var FileToSend : String;
-    ErrorFlag: Boolean;
-    ErrorWord: system.word;
+    ZModemOkay: Boolean;
+    ZModemObj: TZModemObj;
+    I: Integer;
 
 begin
   log(lcStart,'starting mail transfer');
@@ -38,31 +39,20 @@ begin
   end;
 
   ZedZap:=(hello.h.capabilities and Zed_Zapper<>0);
+  ZModemObj:=TZModemObj.Init(FCommObj);
+  ZModemObj.FIPC:=IPC;
 
-  {ZModem-Ausgaberoutinen setzen}
-  FidomailerObj:=Self;
-  ZModem.StartProc:=ZModemStartProc; ZModem.EndProc:=ZModemEndProc;
-  LogSending:=True; ZModemTimer.Init;
   WriteIPC(mcVerbose,getres2(30004,12),[0]);  { 'Senden' }
-  if sendempty and ZedZap then
-    ZModemSend(FCommObj,'',True,ErrorWord)
+  ZModemOkay:=True;
+  if(sendempty and ZedZap)and(FilesToSend.Count<=0)then
+    ZModemOkay:=ZModemObj.Send('',True)
   else
-    begin
-      repeat
-        if Pos(#9,FilesToSend)>0 then begin
-          FileToSend:=Copy(FilesToSend,1,Pos(#9,FilesToSend)-1);
-          Delete(FilesToSend,1,Pos(#9,FilesToSend));
-          DebugLog('ncfido','Sending file "'+FileToSend+'", remaining: "'+FilesToSend+'"',DLInform);
-        end else begin
-          FileToSend:=FilesToSend; FilesToSend:='';
-        end;
-        ZModemSend(FCommObj,FileToSend,FilesToSend='',ErrorWord);
-      until(ErrorWord<>0)or(FilesToSend='');
-    end;
+    for i:=1 to FilesToSend.Count do
+      if ZModemOkay then
+        ZModemOkay:=ZModemObj.Send(FilesToSend[i-1],i=FilesToSend.Count);
 
-  if ErrorWord<>0 then begin
+  if not ZModemOkay then begin
     WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
-    DebugLog('ncfido','ZModemSend error: "'+ZModem.TransferMessage+'"',DLError);
     if not FCommObj^.Carrier then begin
       WriteIPC(mcError,'carrier lost',[0]);            { 'CARRIER futsch :-( ' }
       log(lcError,'carrier lost');
@@ -70,17 +60,12 @@ begin
       log(lcError,'transfer aborted');
     SleepTime(1000);
     aresult:=EL_senderr
-
   end else
   begin                                        { ZModem empfangen }
     {ZModem-Ausgaberoutinen setzen}
-    FidomailerObj:=Self;
-    ZModem.StartProc:=ZModemStartProc; ZModem.EndProc:=ZModemEndProc;
     WriteIPC(mcVerbose,getres2(30004,13),[0]);    { 'Empfangen' }
-    LogSending:=False;  {Am Ende der Uebertragung wird von ZModemEndProc 'Rcvd' geloggt}
-    ZModemReceive(FCommObj,MailPath,ErrorFlag);
-    if (ErrorFlag) then begin
-      DebugLog('ncfido','ZModemReceive error: "'+ZModem.TransferMessage+'"',DLError);
+    ZModemOkay:=ZModemObj.Receive(MailPath,FilesReceived);
+    if (not ZModemOkay) then begin
       WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
       aresult:=EL_recerr;
     end;
@@ -89,6 +74,10 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/02/03 18:40:33  ma
+  - added StringLists for tracking sent/rcvd files
+  - ncfido using OO ZModem now
+
   Revision 1.3  2001/02/02 20:59:57  ma
   - moved log routines to ncmodem
 

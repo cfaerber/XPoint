@@ -25,7 +25,7 @@ unit ncfido;
 
 interface
 
-uses ncmodem,timer,fidoglob,xpglobal;
+uses ncmodem,timer,fidoglob,xpglobal,classes;
 
 type
   hellor = record
@@ -64,7 +64,8 @@ type
     procedure WaZOOsession;
 
   public
-    FilesToSend: String;
+    {These HAVE to be initialized when calling PerformNetcall}
+    FilesToSend,FilesReceived: TStringList;
     AKAs: String;
     Username: String;
     OwnAddr: String;
@@ -114,72 +115,9 @@ const
 
 
 var   ZedZap,LogSending  : boolean;
-      ZModemTimer: tTimer; {Wird zum Ausrechnen der ZModem-Restzeit genutzt}
       TimerObj: tTimer;
-      FidomailerObj: TFidomailer; // workaround, obsolete as soon as ZModem has gone OO
       Timers : array[0..qTimers-1] of tTimer;
       Dummy  : LongInt;
-
-{ -- ZModem-Ausgaberoutinen -------------------------------}
-// will be replaced as soon as ZModem has gone OO
-
-var
-  LastErrorCount: Integer;
-
-procedure ZModemDispProc;
-var Remain: LongInt;
-begin
-  FidomailerObj.WriteIPC(mcVerbose,'*%d',[System.Round(TimerObj.ElapsedSec)]);
-  if (ZModemTimer.ElapsedSec<=0)or(TransferBytes<=0) then
-    Remain:=1
-  else
-    Remain:=System.Round((TransferSize-TransferCount)/(TransferBytes/ZModemTimer.ElapsedSec)-ZModemTimer.ElapsedSec);
-  if Remain<0 then
-    Remain:=0;
-
-  FidomailerObj.WriteIPC(mcVerbose,'%db %d sec',[TransferBytes,Remain]);
-  if LastErrorCount<>TransferError then begin
-    FidomailerObj.WriteIPC(mcInfo,'%s',[TransferMessage]);
-    LastErrorCount:=TransferError;
-  end;
-end;
-
-procedure ZModemStartProc;
-var
-  I,P: Integer;
-begin
-  {Ab jetzt Statusmeldungen anzeigen}
-  ZModemTimer.Start;
-  DispProc:=ZModemDispProc;
-  LastErrorCount:=0;
-  if LogSending then
-    FidomailerObj.WriteIPC(mcInfo,getreps2(30004,10,TransferName),[0])
-  else begin
-    FidomailerObj.WriteIPC(mcInfo,getreps2(30004,11,TransferName),[0]);
-    { Mailpakete, erkennbar an ihrer Extension, wandern in anderes
-      Verzeichnis als sonstige Dateien. }
-    if(not isCompressedFidoPacket(TransferName,FidomailerObj.ExtFNames))and
-      (Pos('.PKT',UpperCase(TransferName))=0)then
-      TransferPath:=FidomailerObj.FilePath;
-  end;
-end;
-
-procedure ZModemEndProc;
-var
-  s     : String;
-  cps   : LongInt;
-  t     : Real;
-begin
-  DispProc:=NIL; {Keine Statusmeldungen mehr anzeigen}
-  if LogSending then s:='Sent ' else S:='Rcvd ';
-  t:=ZModemTimer.ElapsedSec;
-  if t<=0 then t:=1; {Verhindere Division by zeros}
-  cps:=System.Round(TransferBytes/t);
-  if TransferName<>'' then begin
-    FidomailerObj.WriteIPC(mcInfo,'%db %d cps',[TransferBytes,cps]);
-    FidomailerObj.Log(lcFile,s+TransferPath+TransferName+'; '+StrS(TransferBytes)+'b, '+StrS(System.Round(t))+'s, '+StrS(cps)+' cps');
-  end;
-end;
 
 { ----- some generic routines ------------------------------------------------------}
 
@@ -304,8 +242,8 @@ begin
   until ENDE;
   SleepTime(2000);
   TimerObj.Done;
-  Disconnect;
   Log(lcExit,'exiting');
+  Disconnect;
   PerformNetcall:=aresult;
 end;
 
@@ -313,6 +251,10 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/02/03 18:40:33  ma
+  - added StringLists for tracking sent/rcvd files
+  - ncfido using OO ZModem now
+
   Revision 1.8  2001/02/02 20:59:57  ma
   - moved log routines to ncmodem
 

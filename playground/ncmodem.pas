@@ -49,7 +49,7 @@ type
   protected
     FCommObj: tpCommObj;
     FTimerObj: tTimer;
-    FConnected,FActive,FDialupRequired: Boolean;
+    FConnected,FActive,FDialupRequired,FCommObjReleased: Boolean;
     FPhonenumbers: String;
     WaitForAnswer,GotUserBreak: Boolean;
     FLogfile: Text; FLogfileOpened: Boolean;
@@ -62,6 +62,7 @@ type
     FConnectString: String;
 
     procedure SLogfileName(S: String);
+    function SCommObj: tpCommObj;
 
     {Process incoming bytes from modem: store in ReceivedUpToNow or move
      all bytes received yet to ModemAnswer and set WaitForAnswer to False
@@ -84,6 +85,7 @@ type
     function SendMultCommand(s:string; TimeoutModemAnswer: real): String;
 
   public
+    {-------- Variables to initialize for modem dialing -----------------}
     {Phone numbers to dial (separated by spaces)}
     Phonenumbers: String;
     {Modem init string}
@@ -99,6 +101,7 @@ type
     {Modem init timeout}
     TimeoutModemInit: Integer;
 
+    {-------- Variables available after modem dialing -----------------}
     {Phone number connected to}
     property Phonenumber: String read FPhonenumber;
     {Detected line speed (bps)}
@@ -106,16 +109,20 @@ type
     {Modem string received upon connection}
     property ConnectString: String read FConnectString;
 
+    {------------------------- Properties ----------------------------}
     {Opens log file. Overwrites if first char is '*'.}
     property LogfileName: String read FLogfileName write SLogfileName;
 
-    { True if comm channel initialized }
-    property Active: Boolean read FActive;
-    { True if connected to peer }
-    property Connected: Boolean read FConnected;
     { True if dialing is required in order to connect. Not necessary
       for IP connections or online calls. }
     property DialupRequired: Boolean read FDialupRequired write FDialupRequired;
+    { True if comm channel initialized }
+    property Active: Boolean read FActive;
+    { Either get CommObj via this property or have it released on
+      disposing this class. }
+    property CommObj: tpCommObj read SCommObj;
+    { True if connected to peer }
+    property Connected: Boolean read FConnected;
     { Sets/reads timeout (activates on idleing of peer) }
 //    property Timeout: Real read FGetTimeout write FSetTimeout;
 
@@ -123,11 +130,19 @@ type
 
     constructor Create;
     { Create with CommObj. Intended for online calls. Active and
-      Connected return true after call. }
+      Connected return true after call. This class does not care
+      for CommObj release even when disposed if created with this
+      constructor. }
     constructor CreateWithCommObj(p: tpCommObj);
+    { Disconnects if DialUpRequired.
+      Disposes CommObj if not released via property CommObj before.
+      Closes log file.
+      Disposes IPC. }
     destructor Destroy; override;
 
-    { Initializes comm channel, s is ObjCOM CommInit string }
+    { Initializes comm channel, s is ObjCOM CommInit string.
+      CommObj will be disposed with this class if not released
+      by using property CommObj before. }
     function Activate(s: String): Boolean;
     { Connects (= dials if necessary) }
     function Connect: boolean; virtual;
@@ -135,7 +150,9 @@ type
     { Logs an event in log file. See lc* log char consts.}
     procedure Log(c: Char; const s: String);
 
-    { Disconnects (= hangs up if necessary) }
+    { Disconnects.
+      Closes log file.
+      Hangs up if DialUpRequired. }
     procedure Disconnect; virtual;
   end;
 
@@ -182,18 +199,28 @@ begin
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
   FLogfileOpened:=False; FPhonenumber:=''; FLineSpeed:=0; FConnectString:='';
-  DebugBadge:='ncmodem';
+  DebugBadge:='ncmodem'; FCommObjReleased:=False;
 end;
 
 constructor TModemNetcall.CreateWithCommObj(p: tpCommObj);
 begin
   Create;
-  FCommObj:=p; FActive:=True; FConnected:=True;
+  FCommObj:=p; FActive:=True; FConnected:=True; FCommObjReleased:=True;
+end;
+
+function TModemNetcall.SCommObj: tpCommObj;
+begin
+  if FActive then begin
+    result:=FCommObj;
+    FCommObjReleased:=True;
+    end
+  else result:=NIL;
 end;
 
 destructor TModemNetcall.Destroy;
 begin
-  if FLogfileOpened then Close(FLogfile);
+  if DialupRequired and FConnected then Disconnect;
+  if not FCommObjReleased then Dispose(FCommObj,Done);
   inherited destroy;
 end;
 
@@ -209,8 +236,9 @@ end;
 
 function TModemNetcall.Activate(s: String): Boolean;
 begin
-  result:=CommInit(s,FCommObj);
-  if not result then FErrorMsg:='Error activating comm channel: '+ObjCOM.ErrorStr;
+  FActive:=CommInit(s,FCommObj);
+  if not FActive then FErrorMsg:='Error activating comm channel: '+ObjCOM.ErrorStr;
+  result:=FActive;
 end;
 
 procedure TModemNetcall.ProcessIncoming;
@@ -351,7 +379,7 @@ begin
                             if ((pos('CONNECT',UpperCase(ModemAnswer))>0)or(LeftStr(UpperCase(ModemAnswer),7)='CARRIER'))or
                                 (FCommObj^.Carrier and(not FCommObj^.IgnoreCD))then begin {Connect!}
                               StateDialup:=SDConnect; result:=True;
-                              FConnectString:=ModemAnswer;
+                              FConnectString:=ModemAnswer; FConnected:=True;
                               FLineSpeed:=Bauddetect(FConnectString);
                               if not FCommObj^.Carrier then SleepTime(500);  { falls Carrier nach CONNECT kommt }
                               if not FCommObj^.Carrier then SleepTime(1000);
@@ -395,27 +423,34 @@ end;
 procedure TModemNetcall.Disconnect;
 var i : integer;
 begin
-  if not FDialupRequired then exit;
-  WriteIPC(mcInfo,'Hanging up',[0]);
-  DebugLog('ncmodem','Hangup',DLInform);
-  FCommObj^.PurgeInBuffer; FCommObj^.SetDTR(False);
-  SleepTime(500); for i:=1 to 6 do if(not FCommObj^.IgnoreCD)and FCommObj^.Carrier then SleepTime(500);
-  FCommObj^.SetDTR(True); SleepTime(500);
-  if FCommObj^.ReadyToSend(3)then begin
-    FCommObj^.SendString('+++',False);
-    for i:=1 to 4 do if((not FCommObj^.IgnoreCD)and FCommObj^.Carrier)then SleepTime(500);
-    SleepTime(100);
+  if FDialupRequired then begin
+    WriteIPC(mcInfo,'Hanging up',[0]);
+    DebugLog('ncmodem','Hangup',DLInform);
+    FCommObj^.PurgeInBuffer; FCommObj^.SetDTR(False);
+    SleepTime(500); for i:=1 to 6 do if(not FCommObj^.IgnoreCD)and FCommObj^.Carrier then SleepTime(500);
+    FCommObj^.SetDTR(True); SleepTime(500);
+    if FCommObj^.ReadyToSend(3)then begin
+      FCommObj^.SendString('+++',False);
+      for i:=1 to 4 do if((not FCommObj^.IgnoreCD)and FCommObj^.Carrier)then SleepTime(500);
+      SleepTime(100);
+    end;
+    if FCommObj^.ReadyToSend(6)then begin
+      FCommObj^.SendString('AT H0'#13,True);
+      SleepTime(1000);
+    end;
   end;
-  if FCommObj^.ReadyToSend(6)then begin
-    FCommObj^.SendString('AT H0'#13,True);
-    SleepTime(1000);
-  end;
+  FConnected:=False;
+  if FLogfileOpened then Close(FLogfile);
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.7  2001/02/03 18:40:33  ma
+  - added StringLists for tracking sent/rcvd files
+  - ncfido using OO ZModem now
+
   Revision 1.6  2001/02/02 20:59:57  ma
   - moved log routines to ncmodem
 

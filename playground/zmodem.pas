@@ -14,7 +14,7 @@ unit ZModem;
 
 interface
 
-uses xpglobal, montage, typeform, ObjCOM, IPCClass, Timer;
+uses xpglobal, montage, typeform, ObjCOM, IPCClass, Timer, Classes;
 
 const
   ZBUFSIZE = 8192;
@@ -33,7 +33,7 @@ type
     constructor Init(vCommObj: tpCommObj);
     destructor Done;
 
-    function Receive(path: string): Boolean;
+    function Receive(path: string; FileList: TStringList): Boolean;
     function Send(pathname: string; lastfile: Boolean): Boolean;
 
   protected
@@ -107,7 +107,7 @@ type
     function RZ_GetHeader: integer16;
     function RZ_SaveToDisk(var rxbytes: LONGINT): integer16;
     function RZ_ReceiveFile: integer16;
-    function RZ_ReceiveBatch: integer16;
+    function RZ_ReceiveBatch(FileList: TStringList): integer16;
 
     procedure SZ_Z_SendByte(b: BYTE);
     procedure SZ_SendBinaryHeader(htype: BYTE; var hdr: hdrtype);
@@ -133,6 +133,7 @@ var TimerObj: tTimer;
 procedure TZModemObj.startproc;
 begin
   ElapsedSec.Start;
+  FIPC.WriteFmt(mcInfo,TransferName,[0]);
 end;
 
 procedure TZModemObj.dispproc;
@@ -161,10 +162,8 @@ begin
   t:=ElapsedSec.ElapsedSec;
   if t<=0 then t:=1; {Verhindere Division by zeros}
   cps:=System.Round(TransferBytes/t);
-  if TransferName<>'' then begin
+  if TransferName<>'' then
     FIPC.WriteFmt(mcInfo,'%db %d cps',[TransferBytes,cps]);
-//    FileList.Add(TransferName);
-    end;
 end;
 
 function TZModemObj.Z_OpenFile(var f: file; pathname: string): BOOLEAN;
@@ -1858,7 +1857,7 @@ end;
 
 (*************************************************************************)
 
-function TZModemObj.RZ_ReceiveBatch: integer16;
+function TZModemObj.RZ_ReceiveBatch(Filelist: TStringList): integer16;
 
 var
   c: integer16;
@@ -1899,6 +1898,7 @@ begin
       ZEOF,
         ZSKIP:
         begin
+          Filelist.Add(TransferPath+TransferName);
           c := RZ_InitReceiver;
           case c of
             ZFILE:
@@ -1935,13 +1935,12 @@ begin
 
     AddLogMessage(TransferMessage, DLDebug);
     dispproc;
-
   end;                                  {while}
 end;
 
 (*************************************************************************)
 
-function TZModemObj.Receive(path: string): Boolean;
+function TZModemObj.Receive(path: string; Filelist: TStringList): Boolean;
 
 var
   i: integer16;
@@ -1966,7 +1965,7 @@ begin
 
   TransferTime := TimeCounter; TransferPath := zrxpath;
 
-  if (i = ZCOMPL) or ((i = ZFILE) and (RZ_ReceiveBatch = ZOK)) then
+  if (i = ZCOMPL) or ((i = ZFILE) and (RZ_ReceiveBatch(Filelist) = ZOK)) then
   begin
     result := true
   end
@@ -2729,6 +2728,10 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/02/03 18:40:33  ma
+  - added StringLists for tracking sent/rcvd files
+  - ncfido using OO ZModem now
+
   Revision 1.1  2001/02/03 17:41:33  ma
   - made OO. Compiles. Untested.
 

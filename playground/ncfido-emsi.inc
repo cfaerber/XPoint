@@ -78,8 +78,6 @@ var OtherData: String;
     Convert2SevenBit:=s;
   end;
 
-const baud= 38400;
-
 var EMSIString,ED,EMSIData,EMSIData2,adr,hex4  : string;
     count     : byte;
     scount,dl : integer;
@@ -97,8 +95,8 @@ begin
   sec70:=secsfrom70;
   EMSIData:='{'+Password+'}{8N1,PUA}{ZAP,ZMO,XMA,ARC,FNC}{'+
             hex(prodcode,2)+'}{OpenXP}{'+verstr+'}{}{IDENT}{['+Convert2SevenBit(SysName)+']'+
-            '[]['+Convert2SevenBit(UserName)+'][-Unpublished-]['+iifs(baud>=9600,
-            '9600',strs(baud))+'][]}'+
+            '[]['+Convert2SevenBit(UserName)+'][-Unpublished-]['+iifs(LineSpeed>=9600,
+            '9600',strs(LineSpeed))+'][]}'+
             iifs(SendTrx,'{TRX#}{['+hex(sec70,8)+']}','');
   if OwnDomain<>'' then adr:=OwnAddr+'@'+OwnDomain else adr:=OwnAddr;
   EMSIData2:='EMSI_DAT'+hex(8+length(adr)+iif(akas<>'',length(akas)+1,0)+
@@ -207,6 +205,10 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/02/03 18:40:33  ma
+  - added StringLists for tracking sent/rcvd files
+  - ncfido using OO ZModem now
+
   Revision 1.3  2001/02/02 20:59:57  ma
   - moved log routines to ncmodem
 
