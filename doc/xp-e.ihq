@@ -752,10 +752,7 @@ The selected colour is accepted with <Enter>, <Esc>
 breaks off without changing.
 @
 54
-
-Full details for using the editor are in the docu-
-mentation XPOINT.DOC. The online help gives a brief
-overview.
+Using the editor, a brief overview:
 
        [Status Line]@55
        [Function Keys]@56
@@ -896,11 +893,13 @@ They can be <<recalled with Ctrl-U>>
         reformatted.
 @
 8063
+<<Line length>>
   The value you enter here determines the
   line-length. A suggested value would be "70" to
   allow for displaying multiple quotes correctly.
 @
 8064
+<<End of line (EOL) marker>>
   Press F2 to select the end of line marker. If you
   do <<NOT>> want to see the end of line marker,
   cursor down to the bottom of the list and press
