@@ -141,7 +141,11 @@ end;
 
 procedure dbReleaseFL(var flp:dbFLP);
 begin
-  freemem(flp,2+sizeof(dbFeldTyp)*(flp^.felder+1));
+  if flp <> nil then
+  begin
+    freemem(flp,2+sizeof(dbFeldTyp)*(flp^.felder+1));
+    flp := nil;
+  end;
 end;
 
 
@@ -1581,6 +1585,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.37  2000/08/26 09:10:27  mk
+  - Pointercheck hinzugefuegt
+
   Revision 1.36  2000/08/25 22:40:30  mk
   - Datenbank Indexcache freigeschaltet
 
