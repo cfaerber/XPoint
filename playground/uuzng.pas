@@ -29,16 +29,15 @@ interface
 uses xpmessage;
 
 type
-  IUUZMessageSink = interface(IInterface)
-    procedure Put(msg:IXPMessage);
-    procedure PutDone;
-  end;
-
-  IUUZMessageSource = interface(IInterface)
-    function Get: IXPMessage;
-  end;
-
-  TNetcallSpool = class(TInterfacedObject)
+  TNetcallSpool = class
+  protected
+    procedure Put(msg:TMessage); virtual;
+    procedure PutDone; virtual;
+  protected
+    function Get: TMessage; virtual;
+  public
+    AddMessages(source:TNetcallSpool);
+    AddDone;
   end;
 
   TNetcallSpoolDir = class(TNetcallSpool)
@@ -48,22 +47,45 @@ type
     property SpoolDir: String read FSpoolDir write FSpoolDir;
   end;
 
-procedure ConvertMessages(source:IUUZMessageSource;sink:IUUZMessageSink);
+procedure ConvertMessages(source,sink:TNetcallSpool);
 
 implementation
 
-procedure ConvertMessages(source:IUUZMessageSource;sink:IUUZMessageSink);
+{$HINTS OFF}
+procedure TNetcallSpool.TNetcallSpool.Put(msg:TMessage);
+begin
+end;
+{$HINTS ON}
+
+procedure TNetcallSpool.PutDone;
+begin
+end;
+
+function TNetcallSpool.Get: TMessage;
+begin
+  result := nil;
+end;
+
+procedure AddMessages(source:TNetcallSpool);
 var msg: IXPMessage;
 begin
   repeat
     msg := Source.Get;
     if assigned(msg) then
-      Sink.Put(msg);
+      self.Put(msg);
   until not assigned(msg)
+end;
+
+procedure TNetcallSpool.AddDone;
+begin
+  PutDone;
 end;
 
 //
 // $Log$
+// Revision 1.2  2003/08/28 18:53:18  cl
+// - draft update
+//
 // Revision 1.1  2003/08/26 22:34:32  cl
 // - skeleton for UUZ Next Generation
 //

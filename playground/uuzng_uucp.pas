@@ -36,29 +36,54 @@ type
     compress_compress,    { compressed   }
     compress_freeze );    { frozen       }
 
-  TUUCPSpool = class(TNetcallSpoolDir, IUUZMessageSink, IUUZMessageSource)
+  TUUCPSpool = class(TNetcallSpoolDir)
   public
-    procedure PutMessage(msg:TMessage);
-    function GetMessage: TMessage;
+    procedure Put(msg:TMessage); override;
+    procedure PutDone; override;
+    function Get: TMessage; override;
+
   public
     constructor Create;
     constructor CreateFromServer(box: TXPServer);
+
   private
+    FLocalUUCPName: string;
+    FRemoteUUCPName: string;
+    
     FOutMailCompression: TUUCPCompression;
     FOutNewsCompression: TUUCPCompression;
-    FOutBSMTP: boolean;
+    FOutUseBSMTP: boolean;
+    FOutCreateCommandFile: boolean;
+    FOutUseECmd: boolean;
+
+    FUUNumber: integer16;
+
   public
-    property OutMailCompression: TUUCPCompression
-      read FOutMailCompression write FOutMailCompression;
-    property OutNewsCompression: TUUCPCompression
-      read FOutNewsCompression write FOutNewsCompression;
-    property OutBSMTP: boolean read FOutBSMTP write FOutBSMTP;
+    property LocalUUCPName: string read FLocalUUCPName write FLocalUUCPName;
+    property RemoteUUCPName: string read FLocalUUCPName write FLocalUUCPName;
+    
+    property OutMailCompression: TUUCPCompression read FOutMailCompression write FOutMailCompression;
+    property OutNewsCompression: TUUCPCompression read FOutNewsCompression write FOutNewsCompression;
+    property OutUseBSMTP: boolean read FOutBSMTP write FOutBSMTP;
+    property OutUseECmd: boolean read FOutUseECmd write FOutUseECmd;
+
+    property UUNumber: integer16 read FUUNumber write FUUNumber;
+    function NextUUNumber: integer16;
   end;
 
 implementation
 
+function TUUCPSpool.NextUUNumber: integer16;
+begin
+  Inc(FUUNumber);
+  result := FUUNumber;
+end;
+
 //
 // $Log$
+// Revision 1.2  2003/08/28 18:53:18  cl
+// - draft update
+//
 // Revision 1.1  2003/08/26 22:34:32  cl
 // - skeleton for UUZ Next Generation
 //

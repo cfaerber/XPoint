@@ -27,20 +27,11 @@ unit xpmessage;
 interface
 
 uses
-  Classes,
-  XPHeader;
+  classes,
+  xpheader;
 
 type
-  IXPMessage = interface(IInterface)
-    function GetMessageHead: THeader;
-    procedure SetMessageBody(NewBody: TStream);
-    function GetMessageBody: TStream;
-
-    property Head: THeader read GetMessageHead;
-    property Body: TStream read GetMessageBody write SetMessageBody;
-  end;
-
-  TXPMessage = class(TInterfacedObject,IXPMessage)
+  TXPMessage = class
   private
     FMessageHead: THeader;
     FMessageBody: TStream;
@@ -48,9 +39,13 @@ type
     constructor Create;
     destructor Destroy; override;
 
+  private
     function GetMessageHead: THeader;
     procedure SetMessageBody(NewBody: TStream);
     function GetMessageBody: TStream;
+  public
+    property Head: THeader read GetMessageHead;
+    property Body: TStream read GetMessageBody write SetMessageBody;
   end;
 
 implementation
@@ -90,6 +85,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2003/08/28 18:53:18  cl
+// - draft update
+//
 // Revision 1.1  2003/08/26 22:34:32  cl
 // - skeleton for UUZ Next Generation
 //
