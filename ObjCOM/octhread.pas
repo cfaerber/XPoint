@@ -17,6 +17,7 @@ unit OCThread;
     OS2Base;
   {$ELSE }
     doscalls,
+    OS2def,
     pmwin;
   {$ENDIF }
 {$ENDIF}
@@ -371,7 +372,11 @@ begin
   {$ENDIF}
 
   {$IFDEF OS2}
-    Os2Base.DosExit(exit_Thread, 0);
+    {$IFDEF VP }
+      Os2Base.DosExit(exit_Thread, 0);
+    {$ELSE }
+      Doscalls.DosExit(exit_Thread, 0);
+    {$ENDIF }
   {$ENDIF}
 end; { proc. ExitThread }
 
@@ -381,6 +386,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/01/04 10:59:50  mk
+  - some changes for FPC and OS/2 compatibility
+
   Revision 1.7  2001/01/01 20:21:41  mk
   - added FPC OS2 Units to uses
 
