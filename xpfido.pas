@@ -1598,9 +1598,11 @@ procedure SetRequest(const adr,files:string);   { '' -> Request l”schen }
 var t1,t2   : text;
     s       : string;
     crash   : boolean;
+    TempFileName: String;
 begin
   crash:=false;
-  assign(t2,TempFile(''));
+  TempFileName := TempFile('');
+  assign(t2, TempFileName);
   rewrite(t2);
   if FileExists(ReqDat) then begin
     assign(t1,ReqDat);
@@ -1631,7 +1633,9 @@ begin
     writeln(t2);
     end;
   close(t2);
-  rename(t2,ReqDat);
+  // do not use rename(t2,ReqDat) as of problems under linux
+  CopyFile(TempFileName, ReqDat);
+  SafeDeleteFile(TempFilename);
 end;
 
 
@@ -2255,6 +2259,9 @@ end;
 
 {
   $Log$
+  Revision 1.68.2.3  2003/08/23 19:12:15  mk
+  - fixed #670787: Requestdatei nicht verschiebbar
+
   Revision 1.68.2.2  2002/07/21 20:14:40  ma
   - changed copyright from 2001 to 2002
 
