@@ -90,6 +90,7 @@ function  pfadbox(zconnect:boolean; var pfad:String):string;
 function  file_box(d:DB; dname:string):string;
 function  box_file(box:string):string;
 function  brettok(trenn:boolean):boolean;
+function Addr2DB(const addr: string): string;
 
 function  extmimetyp(typ:string):string;
 function  compmimetyp(typ:string):string;
@@ -1159,6 +1160,21 @@ begin
   hdp.pgpflags:=hdp.pgpflags and (not fPGP_haskey);
 end;
 
+function Addr2DB(const addr: string): string;
+var i: integer;
+    q: boolean;
+begin
+  result := (addr);
+  q := FirstChar(result)='"';
+
+  for i := 2 to Length(result) do 
+    if (result[i-1]<>'\')and(result[i]='"') then
+      q := not q else
+    if (not q)and(result[i-1]=' ')and(result[i]='(') then begin
+      SetLength(result,i-2);
+      break;
+    end;
+end;
 
 function extmimetyp(typ:string):string;
 begin
@@ -1179,6 +1195,9 @@ end;
 
 {
   $Log$
+  Revision 1.81  2002/04/14 22:22:13  cl
+  - added Addr2DB (converts ZConnect Address to DB address)
+
   Revision 1.80  2002/04/13 16:29:13  ma
   - clarified comments
 
