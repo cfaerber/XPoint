@@ -647,7 +647,7 @@ end;
 
 procedure EdSetConfig(cf:EdConfig);
 begin
-  akted^.config:=cf;
+  if akted <> nil then akted^.config:=cf;
 end;
 
 procedure EdSetUkonv(umlaute_konvertieren:boolean);
@@ -2015,6 +2015,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.10  2001/07/11 19:21:19  mk
+  - Sicherheitscheck bei EdSetConfig
+
   Revision 1.9.2.9  2000/11/19 10:34:55  mk
   - more crlf fixes
 
