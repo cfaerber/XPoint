@@ -1,19 +1,6 @@
 (*
-**
 ** ObjCOM dos serial communication implementation include file
-** Tested with: FreePascal    v0.99.14 (DOS)
-**
-** Ported from ASYNC.ZIP by M.Kiesel 2000
-** See history at end of file
-**
-** Original copyright:
-** This unit was written by Patrick Hunlock, 10/19/1994     
-** Copyright @ 1994 by Patrick Hunlock - all rights reserved
-** Free Pascal support added by Hristo Chilingirov
-** New functions added by Hristo Chilingirov
-** Bug fixed by Hristo Chilingirov hgch@usa.net
-** FIFO and HighIRQ support by M.Kiesel 2000
-**
+** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
 {$IFNDEF FPC}
@@ -37,100 +24,61 @@
 
 Const
    BufferSize= 8192;
-{$IFNDEF FPC}
-   Disable_Interrupts = $FA;       {Used in INLINE statements}
-   Enable_Interrupts  = $FB;       {Used in INLINE statements}
-{$ENDIF}
+   PO_DATA=0; PO_IER=1; PO_IIR=2; PO_LCR=3; PO_MCR=4; PO_LSR=5; PO_MSR=6; {Port offsets}
+   {$IFNDEF FPC}Disable_Interrupts=$FA; Enable_Interrupts=$FB;{$ENDIF}
 
-Type
-   BufType = Array[0..64000] Of Char;
-
-   {ComBufferType is the actual buffer used by the COM_ISR routine and the
-    record which actually makes COM_PORT work.  In reality COM_PORT is just
-    a shell which is wrapped around this record to give the illusion of
-    OOP.  Take away COM_PORT, write your own procedures to reference
-    ComBufferType and your program will work just fine}
-
-   ComBufferType = Record
-                      Active       : Boolean;  {True if this buffer is active}
-                      R_Buffer     : ^BufType; {receive buffer pointer       }
-                      R_Head,R_Tail: Word;     {Buffer Head and Buffer Tail  }
-                                               {Head: Next byte to return    }
-                                               {Tail: Last byte received     }
-                      R_Size       : Word;     {Size of the receive buffer   }
-                      T_Buffer     : ^BufTYpe; {Transmit Buffer Pointer      }
-                      T_Head,T_Tail: Word;     {Transmit Buffer Head & Tail  }
-                                               {Head: Next byte to transmit  }
-                                               {Tail: Last byte scheduled tt }
-                      T_Size       : Word;     {Size of the transmit buffer  }
-                      UART_Data    : Word;     {Uart data address            }
-                      UART_IER     : Word;     {Uart interrupt enable registr}
-                      UART_IIR     : Word;     {Uart interrupt identification}
-                      UART_LCR     : Word;     {UArt Line Control Register   }
-                      UART_MCR     : Word;     {UArt Modem COntrol Register  }
-                      UART_LSR     : Word;     {UArt Line Status Register    }
-                      UART_MSR     : Word;     {UArt Modem Status Register   }
-                      OLD_MCR      : Byte;     {Old Modem control register   }
-                      IRQ          : Byte;
-                      Fifo         : Boolean;
-                      {$IFNDEF FPC}
-                      Org_Vector   : Pointer;  {Original interrupt vector    }
-                      {$ELSE}
-                      Org_Vector   : TSegInfo;  {Original interrupt vector    }
-                      {$ENDIF}
-                   End;
-
-Var
-   Bufs: Array[1..qComports] Of ComBufferType; {This declares 4 com buffers for  }
-                                       {coms 1 - 4                       }
+var
+  pSerialObjAnchor: tpSerialObj; {A linear list for proper memory releasement and the irq handler}
+  IRQsInUse: Array[1..15]of Boolean; {Used to determine whether irq handler has already been installed on irq}
 
 Procedure COM_ISR; Interrupt;
 
-{COM_ISR is the main interrupt procedure which handles all the serial IO.
- This procedure is called >AUTOMATICALLY< by DOS whenever data arrives at
- the com port - or when it is clear to send data.  >SEVERE< restrictions
- as to what you can and can not add to this procedure apply.  You can not
- use WRITELN.  You can not reference any turbo pascal objects.  This unit
- may not be overlaid.  Etc, Etc, Etc}
+{COM_ISR is the main interrupt procedure which handles all the serial IO. This
+ procedure is called whenever data arrives at the com port - or when it is
+ clear to send data.  >SEVERE< restrictions as to what you can and can not add
+ to this procedure apply.  You can not use WriteLn.  You can not call any
+ object methods. This unit may not be overlaid.  Etc, Etc, Etc}
 
-Const Ktr: Byte = 0;  {These are STATIC variables so pascal doesn't }
-      IIR: Byte = 0;  {constantly have to redeclare them on the heap}
+Const IIR: Byte= 0;  {Constant variables in order to avoid stack trashing}
       highirq: Boolean= False; {True if triggering IRQ was > 7}
+      pSerialObj: tpSerialObj= nil;
 
 Begin
    asm cli end;
    highirq:=False;
-   For Ktr:= 1 to qComports Do begin
-      With Bufs[Ktr] Do Begin
+   pSerialObj:=pSerialObjAnchor;
+   while pSerialObj<>nil do begin {Go thru comm object list}
+      With pSerialObj^ Do Begin
          If Active Then Begin
-            iir:= Port[UART_IIR];
+            iir:=Port[IOBase+PO_IIR];
             While Not Odd(IIR) Do Begin
                Case ((iir SHR 1)and 7) Of
-                  0: iir:= Port[UART_MSR]; {Modem status change, skip it}
+                  0: iir:=Port[IOBase+PO_MSR]; {Modem status change, skip it}
                   1: If T_Head = T_Tail Then Begin    {Ok to transmit      }
                         {Transmit buffer empty - disable transmit interrupt}
-                        Port[UART_IER]:= Port[UART_IER] And (Not 2);
+                        Port[IOBase+PO_IER]:= Port[IOBase+PO_IER] And (Not 2);
                      End Else Begin
-                        Port[UART_DATA]:= Byte(T_Buffer^[T_Head]);
+                        Port[IOBase+PO_DATA]:= Byte(T_Buffer^[T_Head]);
                         Inc(T_Head);
-                        If T_Head > T_Size Then T_Head:= 0;
+                        If T_Head > BufferSize Then T_Head:= 0;
                      End;
                   2,6: repeat                  {receive buffer}
-                        R_Buffer^[R_Tail]:= Char(Port[Uart_Data]);
+                        R_Buffer^[R_Tail]:= Char(Port[IOBase+PO_Data]);
                         Inc(R_Tail);
-                        If R_Tail > R_Size Then R_Tail:= 0;
+                        If R_Tail > BufferSize Then R_Tail:= 0;
                         If (R_Tail = R_Head) Then Begin
                            Inc(R_Head); {Overflow}
-                           If R_Head > R_Size Then R_Head:= 0;
+                           If R_Head > BufferSize Then R_Head:= 0;
                         End;
-                     until(not Fifo)or(not odd(Port[UART_LSR]));
-                  3: iir:= Port[UART_LSR]; {Line status change, skip it}
+                     until(not Fifo)or(not odd(Port[IOBase+PO_LSR]));
+                  3: iir:= Port[IOBase+PO_LSR]; {Line status change, skip it}
                End;
-               iir:= Port[UART_IIR];
+               iir:= Port[IOBase+PO_IIR];
                if IRQ>7 then highirq:=true;
             End;
          End;
       End;
+      pSerialObj:=pSerialObj^.Next;
    End;
    {We're done processing the interrupt}
    if highirq then Port[$a0]:=$20;
@@ -152,122 +100,94 @@ begin
     Port[PIC]:=Port[PIC] or(1 shl IRQNumber);
 end;
 
-function TSerialObj.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
-                         Parity: Char; StopBits: Byte): Boolean;
+function TSerialObj.HOpen(iIOBase,iIRQ: Integer; BaudRate: Longint; DataBits: Byte;
+                          Parity: Char; StopBits: Byte): Boolean;
 
-Var InUse: Boolean;     {Scratch variable to check for active interrupts}
-    Ktr  : Byte;        {Counter Variable                               }
-    temp : byte; shelp: String;
-{$IFDEF FPC}
-    New_ISR : TSegInfo;
-{$ENDIF}
+Var temp : byte; shelp: String; pSerialObj: tpSerialObj; ppSerialObjLast: ^tpSerialObj;
+    {$IFDEF FPC}New_ISR : TSegInfo;{$ENDIF}
 Begin
    {Set the initial state of the return code to OK}
-   Open:=True; ErrorStr:='';
-   {Check the comport validity}
-   If (ComPort < 1) Or (ComPort > qComports) Then Begin
-      Open:=False; ErrorStr:='Invalid comport'; Exit;
-   End;
-   {Check to see if the comport is already in use by another object}
-   If Bufs[ComPort].Active Then Begin
-      Open:=False; ErrorStr:='Comport already opened'; Exit;
+   HOpen:=True; ErrorStr:=''; Active:=False;
+
+   {Check to see if the comport (IOPort) is already in use by another object}
+   pSerialObj:=pSerialObjAnchor; ppSerialObjLast:=@pSerialObjAnchor;
+   while pSerialObj<>nil do begin
+     if pSerialObj^.IOBase=iIOBase Then
+      Begin HOpen:=False; ErrorStr:='Comport already opened'; Exit; end;
+     ppSerialObjLast:=@pSerialObj^.Next; pSerialObj:=pSerialObj^.Next;
    End;
 
    {Begin main setup}
-   CPort:=ComPort;                        {Store the comport for future use}
-   Getmem(Bufs[ComPort].R_Buffer,BufferSize+1);{Allocate memory for the buffer  }
-   Bufs[ComPort].R_Size:= BufferSize;        {Store the size of the buffer    }
-   GetMem(Bufs[ComPort].T_Buffer,BufferSize+1);{Allocate transmit buffer memory }
-   Bufs[ComPort].T_Size:= BufferSize;        {Store the size of the buffer    }
-
-   {This next section sets up the PORT addresses used by the comport
-    requested.  The base addresses are stored in PORTBASES, a constant
-    declared at the top of the implenetation section of this unit.  Your
-    program may need to change the address and/or interrupts found in
-    that section for serial cards with unusual addresses and interrupts.
-    Since PortBases and Interrupts are typed constant arrays you can
-    easilly add an object method to change the address or interrupt for
-    a given comm port}
-
-    Bufs[ComPort].UART_DATA:= ComportResources[Comport].IOBase+0;
-    Bufs[ComPort].UART_IER := ComportResources[Comport].IOBase+1;
-    Bufs[ComPort].UART_IIR := ComportResources[Comport].IOBase+2;
-    Bufs[ComPort].UART_LCR := ComportResources[Comport].IOBase+3;
-    Bufs[ComPort].UART_MCR := ComportResources[Comport].IOBase+4;
-    Bufs[ComPort].UART_LSR := ComportResources[Comport].IOBase+5;
-    Bufs[ComPort].UART_MSR := ComportResources[Comport].IOBase+6;
-    Bufs[ComPort].IRQ      := ComportResources[Comport].IRQ;
-
-    Str(Bufs[Comport].UART_DATA,SHelp); DebugLog('ObjCOM','SDos IOBase '+SHelp,2);
-    Str(ComportResources[Comport].IRQ,SHelp); DebugLog('ObjCOM','SDos IRQ '+SHelp,2);
+   ppSerialObjLast^:=@Self; {Add this object at last position of comm object list}
+   New(R_Buffer); New(T_Buffer); {Allocate memory for the buffers}
+   IOBase:=iIOBase; IRQ:=iIRQ;
+   Str(IOBase,SHelp); DebugLog('ObjCOM','SDos IOBase '+SHelp,2);
+   Str(IRQ,SHelp); DebugLog('ObjCOM','SDos IRQ '+SHelp,2);
 
    {Enable FIFO}
-   Bufs[ComPort].Fifo:=False;
-   Port[Bufs[ComPort].UART_IIR]:=0;
-   if port[Bufs[ComPort].UART_DATA]=0 then;
-   port[Bufs[ComPort].UART_IIR]:=$80 + 7;
-   if port[Bufs[ComPort].UART_IIR] and $40=0 then
-     port[Bufs[ComPort].UART_IIR]:=0
+   Fifo:=False;
+   Port[IOBase+PO_IIR]:=0;
+   if port[IOBase]=0 then;
+   port[IOBase+PO_IIR]:=$80 + 7;
+   if port[IOBase+PO_IIR] and $40=0 then
+     port[IOBase+PO_IIR]:=0
    else
-     Bufs[ComPort].Fifo:=True;
-
-   {Test if IRQ is handled already by COM_ISR}
-   InUse:= False;
-   For Ktr:= 1 to qComports Do
-      If (ComportResources[Ktr].IRQ = Bufs[CPort].IRQ) And Bufs[Ktr].Active Then
-         InUse:= True;
+     Fifo:=True;
 
    {Setup IRQ handling routine COM_ISR only if IRQ is not already been handled.}
    {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
-   temp:=port[Bufs[ComPort].UART_DATA];
-   If Not InUse Then Begin
+   temp:=port[IOBase];
+   If Not IRQsInUse[IRQ] Then Begin
+      IRQsInUse[IRQ]:=True;
       {Get the old DOS interrupt vector, save it then change it to point
        to the COM_ISR procedure in this unit}
-      ControlIRQ(ComportResources[ComPort].IRQ,False);
+      ControlIRQ(IRQ,False);
       {$IFNDEF FPC}
-      GetIntVec(8+ComportResources[ComPort].IRQ,Bufs[ComPort].Org_Vector);
-      SetIntVec(8+ComportResources[ComPort].IRQ,@COM_ISR);
+      GetIntVec(8+IRQ,Org_Vector); SetIntVec(8+IRQ,@COM_ISR);
       {$ELSE}
       lock_code(@COM_ISR,longint(@ISR_endmarker)-longint(@COM_ISR));
-      lock_data(Bufs[ComPort],sizeof(Bufs[ComPort]));
-      Get_PM_Interrupt(8+ComportResources[ComPort].IRQ,Bufs[ComPort].Org_Vector);
-      New_ISR.offset:=@COM_ISR;
-      New_ISR.segment:=get_cs;
-      Set_PM_Interrupt(8+ComportResources[ComPort].IRQ,New_ISR);
+      lock_data(Self,SizeOf(Self));
+      Get_PM_Interrupt(8+IRQ,Org_Vector);
+      New_ISR.offset:=@COM_ISR; New_ISR.segment:=get_cs;
+      Set_PM_Interrupt(8+IRQ,New_ISR);
       {$ENDIF}
-      ControlIRQ(ComportResources[ComPort].IRQ,True);
+      ControlIRQ(IRQ,True);
    End;
 
-   Bufs[ComPort].Old_MCR:= Port[Bufs[ComPort].UART_MCR]; {Store MCR        }
-   Port[Bufs[ComPort].UART_LCR]:= 3; {No parity, no break, 1 stop bit, 8 data bits}
-   PORT[Bufs[ComPort].UART_IER]:= 1; {Enable data received interrupts      }
+   Old_MCR:=Port[IOBase+PO_MCR]; {Store MCR        }
+   Port[IOBase+PO_LCR]:= 3; {No parity, no break, 1 stop bit, 8 data bits}
+   Port[IOBase+PO_IER]:= 1; {Enable data received interrupts             }
 
    {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 
-   Bufs[Comport].Active:= True;      {Let COM_ISR know to check this port  }
+   Active:=True; {Let COM_ISR know to check this port}
 
-   DebugLog('ObjCOM','SDos Call SetLine',2); SetLine(Baudrate,Parity,DataBits,Stopbits);
-   DebugLog('ObjCOM','SDos Call ResumeCom',2); ResumeCom(True);
-   DebugLog('ObjCOM','SDos Finished open',2); 
+   SetLine(Baudrate,Parity,DataBits,Stopbits);
+   ResumeCom(True);
 End;
 
-Procedure TSerialObj.SetLine(Bpsrate: Longint; Parity: Char; DataBits,StopBits: Byte);
+function TSerialObj.Open(Comport: Byte; BaudRate: Longint; DataBits: Byte;
+                         Parity: Char; StopBits: Byte): Boolean;
+begin
+  Open:=HOpen(ComportResources[Comport].IOBase,ComportResources[Comport].IRQ,Baudrate,Databits,Parity,Stopbits);
+end;
 
+destructor TSerialObj.Done;
+begin if Active then Close end;
+
+function TSerialObj.SetLine(Bpsrate: Longint; Parity: Char; DataBits,StopBits: Byte): Boolean;
 Const MaxBPSRate      = 115200;  {Maximum baud rate                            }
-
 Var Divisor: Word;
     lcr    : Byte;
-
 Begin
    {This next section sets the baud rate based on the divisor of MAXBAUD}
-   If BPSRate < 50 Then BPSRate:= 50;
+   If BPSRate < 50 Then BPSRate:=50;
    If BPSRate > MaxBPSRate Then BPSRate:= MaxBPSRate;
    Divisor:= MaxBPSRate Div BPSRate;
    {$IFNDEF FPC} InLine(Disable_Interrupts); {$ELSE} asm cli end; {$ENDIF}
-   Port [Bufs[CPort].uart_lcr ]:= Port[Bufs[Cport].uart_lcr] Or $80;
-   Portw[Bufs[CPort].uart_Data]:= divisor;
-   Port [Bufs[CPort].uart_lcr] := Port[Bufs[CPort].uart_lcr] And NOT $80;
-   {$IFNDEF FPC} InLine(Enable_Interrupts); {$ELSE} asm sti end; {$ENDIF}
+   Port [IOBase+PO_lcr]:=Port[IOBase+PO_lcr]or $80;
+   Portw[IOBase]:=divisor; Port[IOBase+PO_lcr]:=Port[IOBase+PO_lcr]and not $80;
+   {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 
    {This next section sets the parity}
    Case upcase(Parity) Of
@@ -278,63 +198,60 @@ Begin
       'M': lcr:= $28 OR $02; {7M}
       Else Lcr:= $00 or $03;
    End;
-   If StopBits = 2 Then lcr:= Lcr OR $04;
+   If StopBits = 2 Then lcr:=Lcr or $04;
 
-   {$IFNDEF FPC} InLine(Disable_Interrupts); {$ELSE} asm cli end; {$ENDIF}
-   Port[Bufs[CPort].Uart_lcr]:= Port[Bufs[CPort].uart_lcr] And $40 Or LCR;
-   {$IFNDEF FPC} InLine(Enable_Interrupts); {$ELSE} asm sti end; {$ENDIF}
+   {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
+   Port[IOBase+PO_lcr]:=Port[IOBase+PO_lcr] and $40 or LCR;
+   {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
+   SetLine:=True;
 End;
 
 Procedure TSerialObj.Close;
-
-{Use this procedure when you are done with your program.  You >MUST< run
- this procedure for each COM variable you have initialized.  If you don't
- if any data comes in to the comm port DOS will still try to go to the
- place where the COM_ISR >>>USED<<< to be!  Meaning your computer >COULD<
- crash.  Since this is an OOP approach exit-proc wasn't used since there
- could be any number of variables open and running.  Therefore it is YOUR
- responsibility to call this procedure for each COM_PORT object you have
- created}
-
-Var InUse: Boolean;     {Scratch variable to test for shared interrupt}
-    Ktr  : byte;        {Counter variable                             }
-
+Var
+  InUse: Boolean;     {Scratch variable to test for shared interrupt}
+  pSerialObj: tpSerialObj;
 Begin
    {Check for shared interrupt usage}
-   Bufs[CPort].Active:= False;
-   InUse:= False;
-   For Ktr:= 1 to qComports Do
-      If (ComportResources[Ktr].IRQ = Bufs[CPort].IRQ) And Bufs[Ktr].Active Then
-         InUse:= True;
+   Active:=False; InUse:=False; pSerialObj:=pSerialObjAnchor;
+   while pSerialObj<>nil do begin
+     if(pSerialObj^.Active)and(pSerialObj^.IRQ=IRQ)then InUse:=True;
+     pSerialObj:=pSerialObj^.Next;
+   end;
 
-   if InUse then DebugLog('ObjCOM','SDos Close: IRQ in use, not closed.',2);
+   if InUse then DebugLog('ObjCOM','SDos Close: IRQ in use, not released.',2);
 
-   {$IFNDEF FPC} InLine(Disable_Interrupts); {$ELSE} asm cli end; {$ENDIF}
+   {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
 
    {Restore the old Modem Control Register and disable incoming data
     interrupts}
-   Port[Bufs[CPort].UART_MCR] := Bufs[CPort].Old_MCR;
-   Port[Bufs[CPort].UART_IER] := 0;
-   port[Bufs[CPort].UART_IIR]:=0; {FIFO off}
+   Port[IOBase+PO_MCR]:=Old_MCR;
+   Port[IOBase+PO_IER]:=0;
+   Port[IOBase+PO_IIR]:=0; {FIFO off}
 
    If Not InUse Then Begin
       {Remove the interrupt only if another object is not using it}
-      ControlIRQ(ComportResources[CPort].IRQ,False);
+      IRQsInUse[IRQ]:=False; ControlIRQ(IRQ,False);
       {$IFNDEF FPC}
-      SetIntVec(8+ComportResources[CPort].IRQ,Bufs[CPort].Org_Vector);
+      SetIntVec(8+IRQ,Org_Vector);
       {$ELSE}
-      Set_PM_Interrupt(8+ComportResources[CPort].IRQ,Bufs[CPort].Org_Vector);
+      Set_PM_Interrupt(8+IRQ,Org_Vector);
       unlock_code(@COM_ISR,longint(@ISR_endmarker)-longint(@COM_ISR));
-      unlock_data(Bufs[CPort],sizeof(Bufs[CPort]));
+      unlock_data(Self,SizeOf(Self));
       {$ENDIF}
    End;
 
-   {$IFNDEF FPC} InLine(Enable_Interrupts); {$ELSE} asm sti end; {$ENDIF}
+   {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 
-   {Release the buffer memory and set the active flag to false}
-   Freemem(Bufs[CPort].R_Buffer,Bufs[CPort].R_Size+1);
-   Freemem(Bufs[CPort].T_Buffer,Bufs[CPort].T_Size+1);
-   CPort:= 0;                {Set CPort variable to 0     }
+   {Release buffer memory}
+   Dispose(R_Buffer); Dispose(T_Buffer);
+
+   {Remove this object from comm object list}
+   if pSerialObjAnchor=@Self then pSerialObjAnchor:=nil
+   else begin
+     pSerialObj:=pSerialObjAnchor;
+     while(pSerialObj<>nil)and(pSerialObj^.Next<>@Self)do pSerialObj:=pSerialObj^.Next;
+     if pSerialObj<>nil then pSerialObj^.Next:=Next;
+   end;
 End;
 
 Function TSerialObj.GetChar: Char;
@@ -343,28 +260,22 @@ Function TSerialObj.GetChar: Char;
  back the first character it finds in the receive buffer}
 {* add timeout}
 
- Begin
-    With Bufs[CPort] Do Begin
-       While R_Head = R_Tail Do;
-       GetChar:= R_Buffer^[R_Head];
-       Inc(R_Head);
-       If R_Head > R_Size THen R_Head:= 0;
-    End;
- End;
+Begin
+  While R_Head = R_Tail Do;
+  GetChar:= R_Buffer^[R_Head];
+  Inc(R_Head);
+  If R_Head > BufferSize Then R_Head:= 0;
+End;
 
 Function TSerialObj.CharAvail: Boolean;
-Begin
-   CharAvail:= (Bufs[CPort].R_Head <> Bufs[CPort].R_Tail);
-End;
+Begin CharAvail:=R_Head<>R_Tail End;
 
 Procedure TSerialObj.GetBufferStatus(var InFree, OutFree, InUsed, OutUsed: Longint);
 Begin
-   With Bufs[CPort] do begin
-     if T_Head<=T_Tail then OutUsed:=T_Tail-T_Head else OutUsed:=T_Size-T_Head+T_Tail+1;
-     OutFree:=T_Size-OutUsed;
-     if R_Head<=R_Tail then InUsed:=R_Tail-R_Head else InUsed:=R_Size-R_Head+R_Tail+1;
-     InFree:=R_Size-InUsed;
-   end;
+  if T_Head<=T_Tail then OutUsed:=T_Tail-T_Head else OutUsed:=BufferSize-T_Head+T_Tail+1;
+  OutFree:=BufferSize-OutUsed;
+  if R_Head<=R_Tail then InUsed:=R_Tail-R_Head else InUsed:=BufferSize-R_Head+R_Tail+1;
+  InFree:=BufferSize-InUsed;
 End;
 
 Procedure TSerialObj.ResumeCom(OpenCom: Boolean);
@@ -386,13 +297,10 @@ Procedure TSerialObj.ResumeCom(OpenCom: Boolean);
  mouse will begin working again once you call .DONE}
 
 Begin
-   {$IFNDEF FPC} InLine(Disable_Interrupts); {$ELSE} asm cli end; {$ENDIF}
-   Port[Bufs[CPort].Uart_MCR]:= 11; {DTR on, Loopback on (?)}
-   with Bufs[CPort] do begin
-     R_Head  := 0; R_Tail  := 0;
-     T_Head  := 0; T_Tail  := 0;
-   end;
-   {$IFNDEF FPC} InLine(Enable_Interrupts); {$ELSE} asm sti end; {$ENDIF}
+  {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
+  Port[IOBase+PO_MCR]:= 11; {DTR on, Loopback on (?)}
+  R_Head:=0; R_Tail:=0; T_Head:=0; T_Tail:=0;
+  {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 End;
 
 Procedure TSerialObj.PauseCom(CloseCom: Boolean);
@@ -401,31 +309,27 @@ Procedure TSerialObj.PauseCom(CloseCom: Boolean);
  uses the same interrupt, see TSerialObj.Enable for more information}
 
 Begin
-   {$IFNDEF FPC} InLine(Disable_Interrupts); {$ELSE} asm cli end; {$ENDIF}
-   Port[Bufs[CPort].Uart_MCR]:= 3;
-   {$IFNDEF FPC} InLine(Enable_Interrupts); {$ELSE} asm sti end; {$ENDIF}
+   {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
+   Port[IOBase+PO_MCR]:= 3;
+   {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 End;
 
 Function TSerialObj.SendChar(C: Char): Boolean;
-
 {This procedure places a character on the transmit buffer}
-
 Begin
-   With Bufs[CPort] Do Begin
-      while ((T_Tail+1>T_Size) and (T_Head=0)) or (T_Tail+1=T_Head) do;
-      T_Buffer^[T_Tail]:= C;
-      Inc(T_Tail);
-      If T_Tail > T_Size Then T_Tail:=0;
-      If (T_Tail = T_Head) Then Begin
-         Inc(T_Head); {Overflow}
-         If T_Head > T_Size Then T_Head:=0;
-      End;
-      {$IFNDEF FPC} InLine(Disable_Interrupts); {$ELSE} asm cli end; {$ENDIF}
-      {Tell the modem to alert us when it is OK to send data}
-      Port[UART_IER]:= Port[UART_IER] Or 2;
-      {$IFNDEF FPC} InLine(Enable_Interrupts); {$ELSE} asm sti end; {$ENDIF}
-   End;
-   SendChar:=True; {* asdf}
+  while ((T_Tail+1>BufferSize) and (T_Head=0)) or (T_Tail+1=T_Head) do;
+  T_Buffer^[T_Tail]:= C;
+  Inc(T_Tail);
+  If T_Tail > BufferSize Then T_Tail:=0;
+  If (T_Tail = T_Head) Then Begin
+     Inc(T_Head); {Overflow}
+     If T_Head > BufferSize Then T_Head:=0;
+  End;
+  {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
+  {Tell the modem to alert us when it is OK to send data}
+  Port[IOBase+PO_IER]:=Port[IOBase+PO_IER] or 2;
+  {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
+  SendChar:=True; {* asdf}
 End;
 
 Function TSerialObj.Carrier: Boolean;
@@ -439,7 +343,7 @@ Function TSerialObj.Carrier: Boolean;
  direct serial connections (pins 2, 3, and 7 wired all others unwired)}
 
 Begin
-    Carrier := IgnoreCD OR((Port[Bufs[CPort].UART_MSR] And $80) > 0);
+  Carrier := IgnoreCD OR((port[IOBase+PO_MSR] and $80) > 0);
 End;
 
 Procedure TSerialObj.SetDTR(State: Boolean);
@@ -453,26 +357,24 @@ Procedure TSerialObj.SetDTR(State: Boolean);
 Var Org_MCR: Byte;  {Scratch var to store the original MCR stuff}
 
 Begin
-  With Bufs[CPort] Do Begin
-     Org_Mcr := Port[UART_MCR];
-     if State then 
-       Port[UART_MCR]:= Org_MCR AND NOT $FE
-     else
-       Port[UART_MCR]:= Org_MCR Or $FE;
-  End;
+  Org_Mcr := Port[IOBase+PO_MCR];
+  if State then 
+    Port[IOBase+PO_MCR]:= Org_MCR and not $FE
+  else
+    Port[IOBase+PO_MCR]:= Org_MCR or $FE;
 End;
 
 procedure TSerialObj.SendBlock(var Block; BlockLen: Longint; var Written: Longint);
 Var I: Longint;
 Begin
-  for I:=0 to BlockLen-1 do SendChar(BufType(Block)[I]);
+  for I:=0 to BlockLen-1 do SendChar(tCharArray(Block)[I]);
   Written:=BlockLen;
 End;
 
 procedure TSerialObj.SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc);
 Var I: Longint;
 Begin
-  for I:=0 to BlockLen-1 do begin SendChar(BufType(Block)[I]); Slice end;
+  for I:=0 to BlockLen-1 do begin SendChar(tCharArray(Block)[I]); Slice end;
   Written:=BlockLen;
 End;
 
@@ -480,46 +382,46 @@ procedure TSerialObj.ReadBlock(var Block; BlockLen: Longint; var Reads: Longint)
 Var I: Longint;
 Begin
   while CharCount<BlockLen do SleepTime(1);
-  for I:=0 to BlockLen-1 do BufType(Block)[I]:=GetChar;
+  for I:=0 to BlockLen-1 do tCharArray(Block)[I]:=GetChar;
   Reads:=BlockLen;
 End;
 
 procedure TSerialObj.PurgeInBuffer;
 Begin
-   {$IFNDEF FPC} InLine(Disable_Interrupts); {$ELSE} asm cli end; {$ENDIF}
-   Bufs[CPort].R_Head:=Bufs[CPort].R_Tail;
-   {$IFNDEF FPC} InLine(Enable_Interrupts); {$ELSE} asm sti end; {$ENDIF}
+   {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
+   R_Head:=R_Tail;
+   {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 End;
 
 procedure TSerialObj.PurgeOutBuffer;
 Begin
-   {$IFNDEF FPC} InLine(Disable_Interrupts); {$ELSE} asm cli end; {$ENDIF}
-   Bufs[CPort].T_Head:=Bufs[CPort].T_Tail;
-   {$IFNDEF FPC} InLine(Enable_Interrupts); {$ELSE} asm sti end; {$ENDIF}
+   {$IFNDEF FPC}InLine(Disable_Interrupts); {$ELSE} asm cli end;{$ENDIF}
+   T_Head:=T_Tail;
+   {$IFNDEF FPC}InLine(Enable_Interrupts); {$ELSE} asm sti end;{$ENDIF}
 End;
 
 procedure Initserial;
-var Ktr: Integer;
-begin
-   For Ktr:= 1 to qComports Do Begin
-      Bufs[Ktr].Active  := False;
-      Bufs[Ktr].R_Buffer:= Nil;
-      Bufs[Ktr].R_Head  := 0;
-      Bufs[Ktr].R_Tail  := 0;
-      Bufs[Ktr].R_Size  := 0;
-      Bufs[Ktr].T_Buffer:= Nil;
-      Bufs[Ktr].T_Head  := 0;
-      Bufs[Ktr].T_Tail  := 0;
-      Bufs[Ktr].T_Size  := 0;
-   End;
-end;
+begin pSerialObjAnchor:=nil; FillChar(IRQsInUse,SizeOf(IRQsInUse),0)end;
 
 procedure Stopserial;
+var p: tpSerialObj;
 begin
+  {Dispose all remaining comm objects}
+  while pSerialObjAnchor<>nil do begin
+    p:=pSerialObjAnchor^.Next;
+    if pSerialObjAnchor^.Active then Dispose(pSerialObjAnchor,Done);
+    pSerialObjAnchor:=p
+  end;
 end;
 
 {
   $Log$
+  Revision 1.4  2000/10/28 09:37:12  ma
+  - moved ComData structure to tSerialObj
+  - tSerialObj objects are now organized in a linear list
+  - added HOpen function
+  - introduced credits.txt
+
   Revision 1.3  2000/09/29 23:20:02  ma
   - cleaned up compiler directives
   - spell checking ;-)
