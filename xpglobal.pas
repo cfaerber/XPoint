@@ -84,14 +84,6 @@ type
     rtlword =    system.word; { 16 Bit bei FPC }
   {$endif}
 
-  { Der Typ HugeString enth„lt in der 16 Bit Version einen normalen,
-    auf 255 Zeichen begrenzten String, in den 32 Bit Versionen
-    einen Hugestring mit bis zu 2 GB L„nge }
-  HugeString = AnsiString;
-
-const
-  MaxInt = MaxLongint;
-
 const
 {$IFDEF UnixFS }
   DirSepa  = '/';
@@ -107,6 +99,10 @@ const
   MaxLenFilename = 255;
   MaxLenPathname = 255;
 
+type
+  TCharArray = array[0..MaxInt] of Char;
+  TByteArray = array[0..MaxInt] of Char;
+
 implementation
 
 {$IFDEF Beta }
@@ -121,6 +117,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.34  2000/07/20 17:02:21  mk
+  - TCharArray, TByteArray hinzugefuegt
+
   Revision 1.33  2000/07/04 17:34:42  hd
   - "Compiled at..." unter Linux entfernt
 
