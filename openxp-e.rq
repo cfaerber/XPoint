@@ -22,9 +22,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 + 10
 # Achtung: Das erste Wort in den folgen Zeilen (Main, XPoint, Nachricht etc.)
-#          darf *nicht* Åbersetzt werden. Es wird von XP nur intern verwendet
+#          darf *nicht* Åbersetzt werden. Es wird von OpenXP nur intern verwendet
 #          und nicht angezeigt.
-0   Main,001^XPoint˘1,002^Re-Org˘7,003^Message˘3,004^Netcall˘15,005^Fido˘31,006E^dit˘16,007^Config˘6,008^Tools˘2
+0   Main,001Open^XP˘1,002^Re-Org˘7,003^Message˘3,004^Netcall˘15,005^Fido˘31,006E^dit˘16,007^Config˘6,008^Tools˘2
 1   XPoint,011I^nformation,012^Import˘10,013^Export˘36,014^Statistics˘17,015^Terminal,016^DOS       F9,-,018^Quit
 2   Zusatz,021^Calendar,022^Archive Viewer
 3   Nachricht,031^Search˘5,032E^xtract˘12,033^Unsent˘4,034^All˘14,035^Change˘22,036Ac^tion˘21,-,038News/Echo ^Manager˘19,039F^ileserver˘20,03aP^GP˘40,03b^Direct
@@ -202,7 +202,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
   2  None
   3  PMs
 -
-113  Type EXIT to return to CrossPoint.
+113  Type EXIT to return to OpenXP.
 115  Error while executing program.
 116  DOS shell is not possible right now.
 
@@ -254,10 +254,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # XP1
 160  Interrupt process
 + 161
-1    A internal databse error has occured. If the error occurs again ~
-2    after restarting XP, probaby a message database file has been   ~
-3    damaged. Then first delete the index files (DEL *.IX1). If that ~
-4    doesn't help, read the hints in the manual.                     ~
+1    A internal databse error has occured. If the error occurs again  ~
+2    after restarting OpenXP, probaby a message database file has been~
+3    damaged. Then first delete the index files (DEL *.IX1). If that  ~
+4    doesn't help, read the hints in the manual.                      ~
 -
 
 # --- XP2, XP2F, XP2C -------------------------------------------------
@@ -287,7 +287,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 19   Level ^1,Level ^2,Level ^3,Level ^4,Level ^5,Level ^6,Level ^7,Level ^8,Level ^9
 -
 + 202
-1    Syntax:    XP [/Opt1 /Opt2 ...]
+1    Syntax:    OpenXP [/Opt1 /Opt2 ...]
 2
 3    Options:
 4    ~          /LCD    fixes display problems on some laptops
@@ -345,10 +345,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # The Windows width must be kept, the number of lines may vary:
 2    The file USER.EB1 is missing! This file contains all
 3    user password definitions and forward addresses.
-4    Do you want to stop CrossPoint to recover the file
-5    - e.g. from a backup -, or shall XP rebuild the file
-6    (which will result in losing all passwords and for-
-7    ward addresses)?
+4    Do you want to stop OpenXP in order to recover the file
+5    manually - e.g. from a backup -, or shall OpenXP rebuild
+6    the file (which will result in losing all passwords and
+7    forward addresses)?
 -
 212  Program stopped.
 213  illegal color configuration: ~
@@ -412,7 +412,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 224  Settings have changed - save
 + 225
-1    More than %s days have passed since your last use of XP.
+1    More than %s days have passed since your last use of OpenXP.
 2    The system date has been changed.
 3    Please check date:~
 -
@@ -437,7 +437,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 16   KBytes
 17   Look for files in AUTOEXEC directory
 -
-241  CrossPoint - Color configuration
+241  OpenXP - Color configuration
 242  Reset default color settings
 + 243
 1    # This file is used for phone fee calculations.
@@ -447,8 +447,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 5
 6    01.01.96  1  New year
 + 244
-1    CrossPoint is already running in another window. It is not
-2    possible to run multiple instances of CrossPoint at the same
+1    OpenXP is already running in another window. It is not
+2    possible to run multiple instances of OpenXP at the same
 3    time.
 -
 
@@ -680,7 +680,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 9    Ignore CTS
 10   Detect RING
 11   16550A FIFO
-12   Sure? XP did not recognize a 16550A!
+12   Sure? OpenXP did not recognize a 16550A!
 13   Use FOSSIL driver
 14   No FOSSIL driver installed.
 15   Dial comm.~
@@ -878,7 +878,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # XP3EX
 360  decoding message...     %
 + 361
-1    ~ (internal CrossPoint Newsgroup)
+1    ~ (internal OpenXP Newsgroup)
 2    To:       ~
 3    Followup: ~
 4    Copy:     ~
@@ -1164,7 +1164,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 500
 1   Memory usage
 2   Total
-3   CrossPoint
+3   OpenXP
 4   Free
 6   Available
 7   ~version
@@ -1205,13 +1205,13 @@ K (c) '2000 OpenXP Team, www.openxp.de
 21   3
 22   If you enter a new password, please note this password at
 23   a safe place! If you forget it, you will have to re-install
-24   CrossPoint!
+24   OpenXP!
 -
 
 + 520
 # number of lines
 0    8
-1    Thank you for using CrossPoint.
+1    Thank you for using OpenXP.
 2    !
 3    !
 4    !
@@ -1222,7 +1222,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 #
 20   Choose "Continue" if you agree to these terms of license.
 21
-26   You have been using XP unregistered for more than %s months!
+26   You have been using OpenXP unregistered for more than %s months!
 30   ^Continue
 # same key for printing as in 22.5:
 42   D=Print    <Esc>=End~
@@ -1231,26 +1231,26 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    You are registered already. Would you like to delete the reg. key
 2    Registration key:~
 3    Changed your mind?
-4    Oops... I guess that wasn't a XP registration key.
-5    The registration key has been saved. Cross-
-6    Point will quit now and must be restarted
-7    to have registation taking effect.
+4    Oops... I guess that wasn't a OpenXP registration key.
+5    The registration key has been saved. OpenXP
+6    will quit now and must be restarted to have
+7    registation taking effect.
 8    Key was deleted.
 -
 
 + 530
 # Zeilenanzahl
 0    13
-1    This is a !!BETA!! version of CrossPoint, created by the OpenXP
-2    development team. Please note that there will still be bugs in
-3    this BETA version which could corrupt your databases or cause
-4    problems to others if you use this version of CrossPoint in public.
+1    This is a BETA version of OpenXP. Please note it is likely that
+2    there are bugs in this BETA version which may corrupt your database
+3    or cause problems if you use this version of OpenXP in public net-
+4    works.
 5    By using this version, you are fully responsible for all damage
-6    you may cause with it. If you can't agree to these terms, please
-7    use an official release version of Crosspoint.
+6    you may cause with it. If you do not agree to these terms please
+7    use an official release version of OpenXP.
 8    If you have questions and/or suggestions for the project, please
-9    use the CrossPoint support forums, especially the usenet newsgroup
-10   de.comm.software.crosspoint and the official OpenXP Homepage at
+9    use the OpenXP support forums, especially the usenet newsgroup
+10   de.comm.software.crosspoint and the official OpenXP homepage at
 11   http://www.openxp.com
 12
 13  Choose "Continue" to use this BETA version ...
@@ -2583,7 +2583,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 11   Show max.
 + 2604
 1    Calculating statistics
-2    CrossPoint~
+2    OpenXP~
 3    ~of~
 4    for %s selected newsgroups
 5    for %s
@@ -2600,7 +2600,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2607 Groups
 + 2608
 1    Calculating statistics
-2    CrossPoint Group Statistics of %s
+2    OpenXP Group Statistics of %s
 3    ~No    Name                       KBytes    Messages      % KB
 4    ~total:    ~
 + 2609
@@ -2640,7 +2640,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 23   Number of largest nets~
 24   Show flags from       ~
 25   Calculating statistics ...
-26   CrossPoint Nodelist Statistics of %s
+26   OpenXP Nodelist Statistics of %s
 27   Nodelist
 + 2614
 1    Last netcalls
@@ -2821,7 +2821,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 +  3000
 1  PGP key request answer
 2  The header of this message contains the requested PGP public key.
-3  This message was automatically created by CrossPoint.
+3  This message was automatically created by OpenXP.
 +  3001
 1  Request PGP Key from ...
 2  PGP key request
@@ -3093,7 +3093,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2  Invalid server name!
 3  The serial number must have a length of 4 digits.
 4  Invalid file name
-5  Directory must be different from XP working directory
+5  Directory must be different from OpenXP working directory
 6  Can't creare directory!
 7  Warnung: Programm "%s" not found!
 8  Invalid address
@@ -3274,7 +3274,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 162 Hardware error
 202 Stack overflow
 203 Memory overflow
-209 Error in XP.OVR
+209 Error in OpenXP.OVR
 
 +   12810
 # BSD Error Codes
@@ -3513,7 +3513,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 # Fuer die Studie der neuen Cfg-Datei. Resource z.Zt. nur in Deutsch
 # Ich wuerde ja eine hoehere Nummer nehmen, aber ist sicher, dass
-# XP keinen signed int benutzt? :-/
+# OpenXP keinen signed int benutzt? :-/
 # Die Resource 0 enthaelt die Zeilenzahl.
 
 + 31000
@@ -3693,6 +3693,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.8  2001/04/17 21:54:44  ma
+# - replaced "XP"/"CrossPoint" by "OpenXP"
+#
 # Revision 1.7  2001/04/16 16:43:26  ml
 # - pop3 now only gets new mail
 # - added switch in pop3-boxconfig for getting only new mail

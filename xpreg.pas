@@ -57,9 +57,9 @@ begin
   msglines:=ival(getres2(520,0));
   msgbox(70,msglines+11,'',x,y);
   moff;
-  wrt(x+3,y+1,'Cross \\//    '+
+  wrt(x+3,y+1,'Open \\//     '+
               RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
-  wrt(x+3,y+2,'      //\\ Point');
+  wrt(x+3,y+2,'     //\\ XP');
   s:=x_copyright + ' ' + author_name;
   wrt(x+67-length(s),y+2,s);
 
@@ -98,11 +98,11 @@ begin
   msglines:=ival(getres2(530,0));
   msgbox(73,msglines+7,'',x,y);
   moff;
-  wrt(x+3,y+1,'Cross \\//    '+
-              RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
-  wrt(x+3,y+2,'      //\\ Point');
+  wrt(x+3,y+1,'Open \\//    '+
+              RightStr('              ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 53));
+  wrt(x+3,y+2,'     //\\ XP');
   s:=x_copyright + ' ' + author_name;
-  wrt(x+67-length(s),y+2,s);
+  wrt(x+69-length(s),y+2,s);
 
   for i:=1 to msglines do
   begin
@@ -120,6 +120,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/04/17 21:54:44  ma
+  - replaced "XP"/"CrossPoint" by "OpenXP"
+
   Revision 1.25  2001/03/14 20:46:05  mk
   - removed registration routines
 

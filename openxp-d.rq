@@ -22,7 +22,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 + 10
 # Do NOT change the first word in each of the following lines!
-0   Main,001^XPointù1,002^Wartungù7,003^Nachrichtù3,004Ne^Tcallù15,005^Fidoù31,006E^Ditù16,007^Configù6,008^Zusatzù2
+0   Main,001Open^XPù1,002^Wartungù7,003^Nachrichtù3,004Ne^Tcallù15,005^Fidoù31,006E^Ditù16,007^Configù6,008^Zusatzù2
 1   XPoint,011I^nformation,012^Importù10,013^Exportù36,014^Statistikù17,015^Terminal,017Tel^net,016^DOS        F9,-,018^Beenden
 # Zusatz-Men hier nur fr XPME (s.u.) :
 2   Zusatz,021^Kalender,022^Archiv-Viewer
@@ -204,7 +204,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
   2  Keine
   3  PMs
 -
-113  Mit EXIT geht's zurck zu CrossPoint.
+113  Mit EXIT geht's zurck zu OpenXP.
 115  Fehler bei Programm-Aufruf
 116  DOS-Shell hier nicht m”glich
 
@@ -257,10 +257,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 160  Abbrechen
 + 161
 1    Es ist ein Datenbankfehler aufgetreten. Falls sich der Fehler  ~
-2    nach dem Neustart von XP wiederholt, ist vermutlich eine Datei ~
-3    der Nachrichtendatenbank besch„digt. L”schen Sie dann zun„chst ~
-4    die Indexdateien (DEL *.IX1). Falls das nicht hilft, lesen Sie ~
-5    Anhang H von XPOINT.TXT.                                       ~
+2    nach dem Neustart von OpenXP wiederholt, ist vermutlich eine   ~
+3    Datei der Nachrichtendatenbank besch„digt. L”schen Sie dann    ~
+4    zun„chst die Indexdateien (DEL *.IX1). Falls das nicht hilft,  ~
+5    lesen Sie Anhang H von XPOINT.TXT.                             ~
 -
 
 # --- XP2, XP2F, XP2C -------------------------------------------------
@@ -289,8 +289,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 19   Ebene ^1,Ebene ^2,Ebene ^3,Ebene ^4,Ebene ^5,Ebene ^6,Ebene ^7,Ebene ^8,Ebene ^9
 -
 + 202
-# XP /? - Zeilenzahl ist variabel
-1    Aufruf:    XP [/Opt1 /Opt2 ...]
+# OpenXP /? - Zeilenzahl ist variabel
+1    Aufruf:    OpenXP [/Opt1 /Opt2 ...]
 2
 3    Optionen:
 4    ~          /j       kein dummer Spruch bei Programmende
@@ -352,8 +352,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3    User-Paáworteinstellungen und Vertreteradressen.
 4    M”chten Sie das Programm verlassen, um die Datei
 5    z.B. von einem Backup wiederherzustellen, oder soll
-6    XP die Datei neu anlegen (wobei alle Paáworteinstel-
-7    lungen und Vertreteradressen verloren gehen)?
+6    OpenXP die Datei neu anlegen (wobei alle Paáwortein-
+7    stellungen und Vertreteradressen verloren gehen)?
 -
 212  Programmabbruch.
 213  ungltige Farbkonfiguration: ~
@@ -442,7 +442,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 16   KByte
 17   AUTOEXEC-Verzeichnis bearbeiten
 -
-241  CrossPoint - Farbkonfiguration
+241  OpenXP - Farbkonfiguration
 242  Standard-Farbeinstellungen wiederherstellen
 + 243
 1    # Diese Datei wird fr die Telefonkostenberechnung verwendet.
@@ -460,8 +460,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 13
 14   01.01.98  1  Neujahr
 + 244
-1    CrossPoint wurde bereits in einem anderen Fenster gestartet.
-2    Es ist nicht m”glich, CrossPoint mehrfach gleichzeitig auszufhren.
+1    OpenXP wurde bereits in einem anderen Fenster gestartet.
+2    Es ist nicht m”glich, OpenXP mehrfach gleichzeitig auszufhren.
 -
 
 # XP2C
@@ -691,7 +691,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 9    CTS ignorieren
 10   RING-Erkennung
 11   16550A-FIFO
-12   Sicher? XP hat keinen 16550A erkannt!
+12   Sicher? OpenXP hat keinen 16550A erkannt!
 13   FOSSIL-Treiber verwenden
 14   Kein FOSSIL-Treiber geladen!
 15   W„hlbefehl~
@@ -888,7 +888,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # XP3EX
 360  DES-Decodierung...     %
 + 361
-1    ~ (internes CrossPoint-Brett)
+1    ~ (internes OpenXP-Brett)
 2    Empfaenger :~
 3    Antwort in :~
 4    Kopie      :~
@@ -1173,7 +1173,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 500
 1   Speicher-Ausnutzung
 2   gesamt
-3   CrossPoint
+3   OpenXP
 4   frei
 6   verfgbar
 7   -Version
@@ -1214,7 +1214,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 21   5
 22   Wenn Sie ein neues Paáwort eintragen, notieren Sie sich dieses
 23   bitte an einem gegen Datenverluste geschtzten Ort! Falls Sie das
-24   Paáwort vergessen, mssen Sie CrossPoint komplett neu installie-
+24   Paáwort vergessen, mssen Sie OpenXP komplett neu installie-
 25   ren und die Nachrichtendatenbank neu einlesen (s. XPOINT.TXT,
 26   Anhang H).
 -
@@ -1234,7 +1234,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 520
 # Zeilenanzahl
 0    11
-1    Vielen Dank, daá  Sie sich zum Arbeiten mit CrossPoint entschie-
+1    Vielen Dank, daá  Sie sich zum Arbeiten mit OpenXP entschie-
 2    den haben.
 3    !
 4    !
@@ -1248,7 +1248,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 #
 20   W„hlen Sie "Weiter", wenn Sie mit den Lizenzbestimmungen einver-
 21   standen sind.
-26   Sie arbeiten seit ber %s Monaten unregistriert mit CrossPoint!
+26   Sie arbeiten seit ber %s Monaten unregistriert mit OpenXP!
 30   ^Weiter
 # gleiche Taste zum Drucken wie in 22.5:
 42   <Ctrl-D>=Drucken    <Esc>=Ende~
@@ -1259,7 +1259,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3    Na, dann eben nicht.
 4    Ungltiger Registrierungs-Code.
 5    Der Registrierungscode wurde gespeichert.
-6    CrossPoint beendet sich jetzt selbst und
+6    OpenXP beendet sich jetzt selbst und
 7    muá danach neu gestartet werden.
 8    Registrierung wurde gel”scht.
 + 522
@@ -1269,21 +1269,22 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 + 530
 # Zeilenanzahl
-0    14
-1    Sie nutzen eine Betaversion von CrossPoint, die vom Entwicklerteam
-2    des OpenXP-Projekts erstellt wurde. Bitte beachten Sie, daá diese
-3    Betaversion mit einiger Sicherheit Fehler enth„lt, die manchen
-4    rger in ”ffentlichen Netzen nach sich ziehen oder Ihre komplette
-5    Datenbank besch„digen k”nnen. Wenn Sie diese Version nutzen, sind
-6    Sie fr alle Folgen selbst verantwortlich. Sollten Sie nicht damit
-7    einverstanden sein, nutzen Sie die offiziellen Release-Versionen
-8    von CrossPoint. Bei Fragen, Problemen oder Anregungen wenden Sie
-9    sich bitte an den OpenXP-Support in den entsprechenden Support-
-10   Foren der jeweiligen Netze, insbesondere an die Newsgroup
-11   de.comm.software.crosspoint (Usenet), an die Area CROSSPOINT.GER
-12   (Fido) sowie die offizielle OpenXP-Homepage http://www.openxp.de/.
-13
-14   W„hlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
+0    15
+1    Sie nutzen eine Betaversion von OpenXP. Bitte beachten Sie, daá
+2    diese Betaversion mit einiger Sicherheit Fehler enth„lt, die bei
+3    Benutzung in ”ffentlichen Netzen rger nach sich ziehen oder Ihre
+4    Datenbank besch„digen k”nnen. Wenn Sie diese Version nutzen, sind
+5    Sie fr alle Folgen selbst verantwortlich. Sollten Sie nicht damit
+6    einverstanden sein, nutzen Sie die offiziellen Release-Versionen
+7    von OpenXP. Bei Fragen, Problemen oder Anregungen k”nnen sie ber
+8    folgende Wege Kontakt mit dem OpenXP-Team aufnehmen:
+9
+10   WWW:    http://www.openxp.de/
+11   Usenet: de.comm.software.crosspoint
+12   Fido:   crosspoint.ger
+13   E-Mail: dev@openxp.de
+14
+15   W„hlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
 30   ~^Weiter , ^Abbruch~
 -
 
@@ -2042,7 +2043,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    notwendig.
 7
 8    Protokolle, die nicht die Angabe eines Empfangsverzeich-
-9    nisses erlauben, k”nnen mit CrossPoint nicht fr Janus
+9    nisses erlauben, k”nnen mit OpenXP nicht fr Janus
 10   Plus verwendet werden.
 + 933
 0    44
@@ -2631,7 +2632,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 11   Maximal anzeigen
 + 2604
 1    Statistik wird berechnet
-2    CrossPoint-
+2    OpenXP-
 3    ~vom~
 4    fr %s gew„hlte Bretter
 5    fr %s
@@ -2648,7 +2649,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2607 Gruppen
 + 2608
 1    Statistik wird berechnet
-2    CrossPoint-Gruppenstatistik vom %s
+2    OpenXP-Gruppenstatistik vom %s
 3    ~Nr.   Name                       KBytes    Nachrichten   % KB
 4    ~gesamt:   ~
 + 2609
@@ -2688,7 +2689,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 23   Anzahl gr”áter Netze~
 24   Flags anzeigen ab   ~
 25   Statistik wird berechnet...
-26   CrossPoint-Nodelistenstatistik vom %s
+26   OpenXP-Nodelistenstatistik vom %s
 27   Nodelisten
 + 2614
 1    Letzte Netzanrufe
@@ -3145,7 +3146,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2  ungltiger Boxname!
 3  Die Seriennummer muá 4 Zeichen lang sein.
 4  ungltiger Dateiname
-5  Verzeichnis darf nicht gleich dem XP-Verzeichnis sein!
+5  Verzeichnis darf nicht gleich dem OpenXP-Verzeichnis sein!
 6  Verzeichnis kann nicht angelegt werden!
 7  Achtung: Das Programm "%s" ist nicht vorhanden!
 8  ungltige Adresse
@@ -3326,10 +3327,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 162 Hardware-Fehler
 202 Stapelberlauf
 203 Speicher voll
-209 Fehler in XP.OVR
+209 Fehler in OpenXP.OVR
 
 +   12900
-1   Fr die Online-Registrierung wird das XP-Fido-Paket ben”tigt.
+1   Fr die Online-Registrierung wird das OpenXP-Fido-Paket ben”tigt.
 
 +   13000
 1   %s fehlt oder ist nicht per Pfad erreichbar.
@@ -3341,21 +3342,21 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7   PGP meldet ungltige Signatur!
 -
 
-# --- XP-Easy Modus ---------------------------------------------------
+# --- OpenXP-Easy Modus ---------------------------------------------------
 +   14000
 #   Zeilenanzahl
 0   10
-1   Willkommen als neuer Benutzer
-2   Als allererstes mssen sie noch einige Einstellungen t„tigen
-3   Hierzu geh”ren u.a. auch die Einstellungen rund um den verwendeten
-4   Server. Hierzu gibt es zwei M”glichkeiten
+1   Willkommen als neuer Benutzer!
+2   Als allererstes mssen sie noch einige Einstellungen t„tigen.
+3   Hierzu geh”ren u.a. auch die Einstellungen rund um den ver-
+4   wendetenServer. Hierzu gibt es zwei M”glichkeiten:
 5   Sie k”nnen alles klassisch in den Mens des Hauptprogramms
-6   einstellen oder den neuen XP-Easy Modus benutzen.
-7   Dieser Xp-Easy Modus fragt sie einfach nacheinander nach allem
-8   was unbedingt von CrossPoint ben”tigt wird
+6   einstellen oder den neuen OpenXP-Easy Modus benutzen.
+7   Dieser OpenXP-Easy Modus fragt sie einfach nacheinander nach
+8   allem, was unbedingt von OpenXP ben”tigt wird
 9
 10  Bitte w„hlen Sie jetzt Ihren Konfigurationsmodus
-30  ~^XP-Easy , ^Klassik-Config~
+30  ~Open^XP-Easy , ^Klassik-Config~
 
 +   14001
 #   Zeilenanzahl
@@ -3473,7 +3474,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 # Fr die Studie der neuen Cfg-Datei. Resource z.Zt. nur in Deutsch
 # Ich wrde ja eine h”here Nummer nehmen, aber ist sicher, daá
-# XP keinen signed int benutzt? :-/
+# OpenXP keinen signed int benutzt? :-/
 # Die Resource 0 enth„lt die Zeilenzahl.
 
 + 31000
@@ -3653,6 +3654,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.8  2001/04/17 21:54:44  ma
+# - replaced "XP"/"CrossPoint" by "OpenXP"
+#
 # Revision 1.7  2001/04/17 07:41:06  ml
 # - /? - fix for linux
 # -    - german resfix for 202.4
