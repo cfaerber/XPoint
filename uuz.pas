@@ -86,6 +86,7 @@ const
 { Envelope-EmpfÑnger aus Received auslesen? }
       getrecenvemp: boolean = false;
       client      : boolean = false;         { -client (fÅr UKA* etc.) }
+      UseEnvTo    : boolean = false;
       MailUser    : string[30] = 'mail';     { fuer U-Zeile im X-File }
       NewsUser    : string[30] = 'news';
       FileUser    : string[30] = 'root';
@@ -318,6 +319,7 @@ begin
   writeln('              -qp     =  MIME: quoted-printable (default: 8bit)');
   writeln('              -1522   =  MIME: create RFC-1522 headers');
   writeln('              -uUser  =  User to return error messages to');
+  writeln('              -UseEnvTo = Use (X-)Envelope-To instead RCPT TO');
   writeln('zu/uz:        -LFN    =  Support Long Filenames');
   halt(1);
 end;
@@ -346,6 +348,8 @@ begin
         { Envelope-EmpfÑnger aus Received auslesen? }
         if switch='graberec' then
           getrecenvemp:=true else
+        if switch='useenvto' then
+          UseEnvTo := true else
         if switch='lfn' then
         begin
           EnableLFN;
@@ -2407,6 +2411,7 @@ begin
       until nofrom;
       mempf:=SetMailUser(hd.empfaenger);
       ReadRFCheader(true,s);
+      if (hd.envemp <> '') and UseEnvTo then mempf := hd.envemp;
       binaer:=(hd.typ = 'B') or (hd.typ = 'M');
       if (mempf<>'') and (mempf<>hd.xempf[1]) then
       begin
@@ -3466,6 +3471,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.59  2002/01/04 12:03:35  mk
+  - implemented UseEnvTo
+
   Revision 1.35.2.58  2001/12/20 15:11:09  my
   MY:- Nur unwichtige Kosmetik
 

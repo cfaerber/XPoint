@@ -187,6 +187,7 @@ begin
       opt := opt + '-SMTP '
     end;
     if ClientSmtp or client then opt := opt+'-client ';
+    if BoxPar^.PPPMailInUseEnvTo then opt := opt + '-UseEnvTo ';
     if NewsMIME then opt:=opt+'-MIME ';
     if MIMEqp then opt:=opt+'-qp ';
     if RFC1522 then opt:=opt+'-1522 ';
@@ -624,6 +625,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.23  2002/01/04 12:03:36  mk
+  - implemented UseEnvTo
+
   Revision 1.13.2.22  2001/12/20 15:07:18  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
