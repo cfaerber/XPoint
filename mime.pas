@@ -986,7 +986,7 @@ outer:
       (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
       (*                     ^c          ^e                         ^t  *)
 
-      e:=p+2; while ss[e]<>'?' do { encoding position }
+      e:=p+2; while (e<= Length(ss)) and (ss[e]<>'?') do { encoding position }
       begin
         if (e<=length(ss)-5) and (not(ss[e] in [#0..#32,'(',')','<','>','@',
           ';',':','"',',','[',']','?','.','='])) then
@@ -1007,7 +1007,7 @@ outer:
         continue;     { don't decode anything   }
       end;
 
-      t:=e+2; while ss[t]<>'?' do  { end marker position }
+      t:=e+2; while (t<= Length(ss)) and (ss[t]<>'?') do  { end marker position }
       begin
         if (t<=length(ss)-2) and(not(ss[t] in ['?',#8,#10,#13])) then
           t:=t+1
@@ -1201,6 +1201,9 @@ end;
 
 //
 // $Log$
+// Revision 1.9  2001/11/28 09:35:51  mk
+// - fixed range check error
+//
 // Revision 1.8  2001/09/10 17:24:26  cl
 // - BUGFIX: return value of TMimeSingleChartoCRLFStream.Write
 //
