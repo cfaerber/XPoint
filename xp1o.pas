@@ -118,7 +118,7 @@ end;
 function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
 const
-  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':','/','~','?',
+  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':',';','/','~','?',
     '-','_','#','=','&','%','@','$',',','+'];
 var x,y : Integer;
   brk : boolean;
@@ -1081,6 +1081,10 @@ end;
 
 {
   $Log$
+  Revision 1.110.2.8  2003/10/06 10:49:10  mk
+  - added ";" to list of valid urlchars
+  - fixed: #815959: Makro $CLIP (URL)
+
   Revision 1.110.2.7  2003/09/07 18:41:00  mk
   - added special handling of "," while detecting URLs
 
