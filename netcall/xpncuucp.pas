@@ -399,7 +399,7 @@ var
 
       UUCICO.MaxDialAttempts    := BoxPar^.RedialMax;
       UUCICO.RedialWaitTime     := BoxPar^.RedialWait;
-      UUCICO.TimeoutConnectionEstablish := BoxPar^.ConnectMax;
+      UUCICO.TimeoutConnectionEstablish := BoxPar^.ConnWait;
     end;
 
     UUCICO.UUremote      := BoxName;
@@ -494,6 +494,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/04/22 21:02:05  ma
+  - fixed: timeout was initialized incorrectly
+
   Revision 1.4  2001/04/22 11:00:32  ma
   - In filter is handled in netcall unit now
 
