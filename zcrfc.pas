@@ -3159,6 +3159,7 @@ type rcommand = (rmail,rsmtp,rnews);
     nr: string;
     fs: longint;
     ct: TCompression;
+    cline: string;
 
   begin
 
@@ -3180,14 +3181,15 @@ type rcommand = (rmail,rsmtp,rnews);
     name2 := FirstChar(fn) + '.' + LeftStr(_to, 7) + 'D' + RightStr(fn, 4);
 
     { queue data file }
-    write(fc,iifs(ParECmd,'E ','S '), name2, ' ', name, ' ', iifs(t in [rmail,rsmtp], MailUser,
-      NewsUser), ' - ', name2, ' 0666');
+    cline := iifs(ParECmd,'E ','S ') + name2 + ' ' + name + ' ' + iifs(t in [rmail,rsmtp], MailUser,
+      NewsUser) + ' - ' + name2 + ' 0666';
+    if ParECmd or ParSize then
+      cline := cline + ' "" ' + StrS(_filesize(dest + fn + ExtOut));
     if ParECmd then
-      writeln(fc, ' "" ', _filesize(dest + fn + ExtOut),' ',command)
-    else if ParSize then
-      writeln(fc, ' "" ', _filesize(dest + fn + ExtOut))
-    else
-      writeln(fc);
+      cline := cline + ' ' + command;
+
+    Debug.DebugLog('uuz','Adding to command file: '+cline,dlDebug);
+    writeln(fc,cline);
 
     if not ParECmd then
     begin
@@ -3195,6 +3197,8 @@ type rcommand = (rmail,rsmtp,rnews);
       nr := hex(NextUunumber, 4);
       f2 := TFileStream.Create(dest + 'X-' + nr + ExtOut,fmCreate);
     try
+      Debug.DebugLog('uuz','Creating execution file: '+dest + 'X-' + nr + ExtOut,dlDebug);
+    
       wrs(f2, 'U ' + iifs(t in [rmail,rsmtp],MailUser,NewsUser) + ' ' + _from);
 
       wrs(f2, 'F ' + name);
@@ -3207,9 +3211,13 @@ type rcommand = (rmail,rsmtp,rnews);
     end;
 
       name2 := 'X.' + LeftStr(_to, 7) + 'X' + nr;
-      write(fc, 'S ', name2, ' X.', LeftStr(_from, 7), iifc(t in [rmail,rsmtp], 'C', 'd'),
-        nr, ' ', iifs(t in [rmail,rsmtp], MailUser, NewsUser), ' - ', name2, ' 0666');
-      if ParSize then writeln(fc, ' "" ', fs) else writeln(fc);
+      
+      cline := 'S '+ name2+ ' X.'+ LeftStr(_from, 7) + iifc(t in [rmail,rsmtp], 'C', 'd') +
+        nr + ' ' + iifs(t in [rmail,rsmtp], MailUser, NewsUser) + ' - ' + name2 + ' 0666';
+      if ParSize then cline := cline + ' "" ' + StrS(fs);
+      
+      Debug.DebugLog('uuz','Adding to command file: '+cline,dlDebug);
+      writeln(fc,cline);
     end;
   end;
 
@@ -3341,6 +3349,12 @@ type rcommand = (rmail,rsmtp,rnews);
 begin
   Debug.DebugLog('uuz', Format('ZtoU: Source:%s Dest:%s _From:%s _To:%s', 
     [Source, Dest, _From, _To]), DLDebug);
+
+  Debug.DebugLog('uuz', '- PPP mode is '+iifs(ppp,'ON','OFF'),dlTrace);
+  Debug.DebugLog('uuz', '- Client mode is '+iifs(client,'ON','OFF'),dlTrace);
+  Debug.DebugLog('uuz', '- Batched SMTP mode is '+iifs(smtp,'ON','OFF'),dlTrace);
+  Debug.DebugLog('uuz', '- Source file is '+Source,dlTrace);
+    
   assign(f1, source);
   reset(f1, 1);
   adr := 0; n := 0;
@@ -3351,9 +3365,11 @@ begin
     CommandFile := Dest+UpperCase('C-'+hex(NextUunumber, 4) + ExtOut);
     assign(fc, CommandFile); { "C."-File }
     rewrite(fc);
+    Debug.DebugLog('uuz', 'Opened command file '+Commandfile,dlDebug);
   end;
   if filesize(f1) < 10 then
   begin
+    Debug.DebugLog('uuz', 'Source file '+Source+' is empty',dlDebug);
     close(f1);
     if not ppp then close(fc);
     exit;
@@ -3362,6 +3378,8 @@ begin
   server := UpperCase(UUserver + '@' + _to);
   files := 0;
 
+  Debug.DebugLog('uuz', 'Pass 1: News',dlDebug);
+  
   if not client then CreateNewfile(false);           { 1. Durchgang: News }
   fs := filesize(f1);
   repeat
@@ -3381,6 +3399,8 @@ begin
 //      end else
       begin                             { AM }
         inc(n);if CommandLine then  write(#13'News: ', n);
+        Debug.DebugLog('uuz', 'Message #'+StrS(n)+' - <'+hd.msgid+'>',dlTrace);
+        
         if client then CreateNewFile(false);
         seek(f1, adr + hds);
 
@@ -3431,6 +3451,8 @@ begin
     if CommandLine then writeln;
   end;
 
+  Debug.DebugLog('uuz', 'Pass 2: Mail',dlDebug);
+  
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
   if SMTP and not client then CreateNewfile(true);
   repeat
@@ -3446,6 +3468,7 @@ begin
         end else
         begin
           inc(n); if CommandLine then write(#13'Mails: ', n);
+          Debug.DebugLog('uuz', 'Message #'+StrS(n)+' - <'+hd.msgid+'>',dlTrace);
           if not SMTP or Client then
             CreateNewfile(true);
           SetMimeData;
@@ -3680,6 +3703,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.18  2002/08/23 10:20:03  cl
+  - Added DebugLog output for TUUZ.ZToU
+
   Revision 1.97.2.17  2002/08/05 09:35:10  mk
   - fixed several issues and hangs
 
