@@ -10,7 +10,11 @@
 
 Library xp_ntvdm;
 
-uses windows;
+uses windows
+///////////////////////////////////////////////////////////////////
+,sysutils
+;
+///////////////////////////////////////////////////////////////////
 
 { --- Imports from ntvdm.exe ------------------------------------ }
 
@@ -67,7 +71,7 @@ uses windows;
 { procedure setOF(para:ULONG);   external 'ntvdm.exe';  }
 { procedure setMSW(para:USHORT); external 'ntvdm.exe';  }
 
-function  GetVDMPointer(Address,Size:ULONG; ProtectedMode:BOOL):Pointer; begin GetVDMPointer:=Pointer(DWORD(Hi(Address)*16+Lo(Address))); end;
+function  GetVDMPointer(Address,Size:ULONG; ProtectedMode:BOOL):Pointer; begin GetVDMPointer:=Pointer(DWORD(Hi(Address))*16+DWORD(Lo(Address))); end;
 function  FreeVDMPointer(Address:ULONG; Size:USHORT; Buffer:Pointer; ProtectedMode:BOOL):BOOL; begin FreeVDMPointer:=true; end;
 
 { --- Exact Windows Version ------------------------------------- }
@@ -132,7 +136,7 @@ begin
 
   if OpenClipboard(0) then 
   begin
-    hm := GlobalAlloc(cl+1,GMEM_MOVEABLE);
+    hm := GlobalAlloc(GMEM_MOVEABLE,cl+1);
     if hm <> 0 then
     begin
       pm := GlobalLock(hm);
@@ -253,6 +257,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.5  2002/04/12 14:50:11  cl
+  - fixed GetVDMPointer
+  - fixed mem_to_clip (called by String2Clip)
+
   Revision 1.1.2.4  2001/07/18 20:13:19  cl
   - removed unnecessary imports from NTVDM.EXE
 
