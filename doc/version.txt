@@ -492,7 +492,7 @@ v3.12d  (22.12.1999)
    korrigiert
 
 
-v3.20 - Stand bei šbernahme des Original-XP-Codes  (xx.1x.1999)
+v3.20 - Stand bei šbernahme des Original-XP-Codes  (26.12.1999)
 ---------------------------------------------------------------
 !  šberlauf in Gebhrenstatistik bei ber 2 GB Daten behoben
 +  /Config/Optionen/Terminal
