@@ -20,6 +20,7 @@ uses
 
 const
   ZBUFSIZE = 8192;
+  MAXSENDBLKSIZE = 512; // testing... Problems with blocks > 1024 bytes reported.
   txtimeout = 10 * 18;
   DiskBufferSize = $7FFF;
   zbaud= 14400;
@@ -2295,6 +2296,7 @@ begin
     maxblklen := (smallword(zbaud) div 300) * 256;
 
   if (maxblklen > ZBUFSIZE) then maxblklen := ZBUFSIZE;
+  if (maxblklen > MAXSENDBLKSIZE) then maxblklen := MAXSENDBLKSIZE;
   if (rxbuflen > 0) and (rxbuflen < maxblklen) then maxblklen := rxbuflen;
 
   blklen := maxblklen;
@@ -2723,6 +2725,10 @@ begin
 
 {
   $Log$
+  Revision 1.28.2.1  2002/12/10 20:53:22  ma
+  - restrict outgoing ZModem block len to 512 bytes
+    (problems with bigger block sizes reported)
+
   Revision 1.28  2001/11/11 12:06:44  ma
   - fixed some potential range check errors
 
