@@ -1009,7 +1009,20 @@ var d   : DB;
         InsertIntoList(dl^.right);
   end;
 
+  procedure freeDomainList(var DomainList:DomainNodeP);
+  var lauf : DomainNodeP;
+  begin
+    if Assigned(Domainlist) then begin
+      freeDomainList(DomainList^.left);
+      lauf:=DomainList^.right;
+      Dispose(DomainList);
+      freeDomainList(lauf);
+    end;
+  end;
+
 begin
+  freeDomainList(DomainList);
+  DomainList:=nil;
   dbOpen(d,BoxenFile,0);
   while not dbEOF(d) do
   begin
@@ -1092,6 +1105,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.15.2.3  2000/05/18 22:41:25  mk
+  JG, SV: - Veraenderte Boxeneinstellungen wurden ohne XP-Neustart nicht uebernommen
+
   Revision 1.15.2.2  2000/05/07 17:26:12  mk
   SV: - bei eingetragenen FQDN wurden zu viele Mails hervorgehoben
 

@@ -1259,6 +1259,10 @@
       end;
       if not brk then
         WriteBox(fn,boxpar);
+      brk:=reg_hinweis;
+      reg_hinweis:=false; { Damit der Lizenz-Bildschirm nicht angezeigt wird }
+      ReadDomainList;
+      reg_hinweis:=brk;
       end;
     pophp;
   end;
