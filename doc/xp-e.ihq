@@ -11066,7 +11066,47 @@ newsgroups.
 The result will usually come with the next netcall
 @
 11904
-<<Message / News/Echo manager / Misc.
+<<Message / News/Echo Manager / Others
+
+<<RFC/Client:>>
+
+  <<Sort>>        Sort newsgroup list alphabetically.
+
+  <<Sync>>        Synchronise newsgroup list with RC
+              file.
+
+  <<Delete>>      Delete newsgroup list.
+
+
+<<Fido:>>
+
+  <<List>>        Request an area list. The list arrives
+              as a netmail and should be read in with
+              [/News/Echo Manager/List/Import list]@11906
+
+  <<Query>>       Request a list of areas you are linked
+              to.
+
+  <<Rescan>>      Rescans the contents of an area.
+
+
+<<RFC/UUCP:>>
+
+  <<getgroups>>   Orders a list of available
+              newsgroups.
+
+  <<getsys>>      Orders your Sysfile-Entry, ie. a list
+              of newsgroups you subscribe to.
+
+  <<setsys>>      re-sends your most recent Sysfile-Entry
+
+  <<help>>        Orders the help text for manual
+              usage of Changesys.
+
+<<----------------------------------------------------->>
+
+The following are probably only of interest to German
+users:
 
 <<MausNetz:>>
 
@@ -11096,32 +11136,6 @@ The following commands require extra input:
 
 Note that in Z-Netz not all MAPS versions support all
 the commands listed here.
-
-<<Fido:>>
-
-  <<List>>        Orders an area list. The list arrives
-              as PM and should be read-in with
-              [/News manager/List/import list]@11906
-
-  <<Query>>       Orders a list of areas you subscribe
-              to.
-
-  <<Rescan>>      Orders the contents of an area.
-
-
-<<RFC/UUCP:>>
-
-  <<getgroups>>   Orders a list of available
-              newsgroups.
-
-  <<getsys>>      Orders your Sysfile-Entry, ie. a list
-              of newsgroups you subscribe to.
-
-  <<setsys>>      re-sends your most recent Sysfile-Entry
-
-  <<help>>        Orders the help text for manual
-              usage of Changesys.
-
 @
 11906
 <<Message / News/Echo manager / Import list
