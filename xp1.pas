@@ -1680,8 +1680,10 @@ procedure PrintLine(const s:string);
 begin
   {$IFDEF Unix }
     s := IBMToISO(s);
+    writeln(lst,sp(DruckLira),IBMToISO(s));
+  {$ELSE }
+    writeln(lst,sp(DruckLira),s);
   {$ENDIF }
-  writeln(lst,sp(DruckLira),s);
   inc(printlines);
   if (DruckFormlen>0) and (printlines>=DruckFormlen) then
     PrintPage;
@@ -3374,6 +3376,9 @@ end;
 
 {
   $Log$
+  Revision 1.198  2003/10/07 09:09:53  mk
+  - fixed linux compile problem from last comitt
+
   Revision 1.197  2003/10/06 16:01:32  mk
   - some little code optimizations (mostly added const parameters and
     use of new file system RTL functions)
