@@ -558,8 +558,8 @@ begin
   begin
     c:='*';
     Articles := '10';
-    dialog(30,3,'Newsgroups bestellen',x,y);
-    maddstring(2,2,'Anzahl der Artikel', Articles,4,4,'1234567890');
+    dialog(length(getres2(10800,40))+9,3,getres2(10800,39),x,y);  { 'Newsgroups bestellen' }
+    maddstring(2,2,getres2(10800,40), Articles,4,4,'1234567890');  { 'Anzahl der Artikel'   }
     mhnr(11910);
     readmask(brk);
     enddialog;
@@ -2194,6 +2194,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.36  2002/03/10 13:52:06  my
+  MY:- /Nachricht/Brettmanager/Bestellen: Abfrage "Anzahl Artikel" in
+       Ressource verlagert und fÅr englische User lesbar gemacht. :)
+
   Revision 1.10.2.35  2002/03/08 23:10:05  my
   MY:- Bugfix RFC/Client: Mehrere Fehler im Brettmanager behoben. An vier
        Stellen wurde bei Boxnamen lÑnger als 8 Zeichen nicht der korrekte
