@@ -1976,27 +1976,18 @@ doubt, ask!
 In general you don't have to use this field.
 @
 154
-Here you can enter a list of "AKA" [("Also Known As")]@4009
-which CrossPoint sends <<in addition>> to the main
-server address during a netcall.
+Here you can enter a list of servers whose mail
+will be sent <<in addition>> to the mail for the
+main server on performing a netcall.
 
-If you use 4D addressing you have to specify the
-full address (<<with>> trailing point number).
+The individual node addresses must be separated
+by a <space>.
 
-The individual addresses must be separated by a
-<space>. Make sure you enter them correctly.
-@
-155
-You can enter a space separated list of FIDO servers
-here. All messages for these servers will be sent
-<<additionally>> to the messages for the main server
-in the same netcall.
-
-See also FIDO.DOC.
+See FIDO.DOC for further information.
 @
 156
-4D Addresses are a new standard, which are by now
-supported by nearly all FIDO Box programmes.
+4D addresses is a standard that is supported by
+nearly all FIDO Box programmes.
 
 If in doubt, ask your Sysop.
 

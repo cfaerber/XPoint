@@ -1881,7 +1881,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 43   Packer-Extension ~
 44   Janus Plus
 # Fido
-45   AKAs (Eingang)   ~
 46   4D-Adressen
 47   TosScan o.„.
 48   Uhrzeit setzen
@@ -1889,7 +1888,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 50   Node statt Point
 51   Dummypaket senden
 52   erw. Paketdateinamen
-53   Boxen (Ausgang)  ~
+53   Pakete mitsenden ~
 # Turbo + Maus(55)
 55   Brettnachrichten anfordern
 56   Seriennr.~
@@ -3652,6 +3651,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.2  2001/04/03 13:25:40  ma
+# - cleaned up fido aka handling
+#
 # Revision 1.1  2001/03/30 13:09:34  mk
 # - renamed config/help/main-files
 #

@@ -556,8 +556,7 @@ type   textp  = ^text;
                   FileScanner:string;  { Fido: Filescan-Name       }
                   FilescanPW: string;  { Fido: Filescan-Passwort    }
                   EMSIenable: boolean;     { Fido: EMSI moeglich        }
-                  AKAs      : string; { Fido: lokale AKA-Liste }
-                  SendAKAs  : string; { Fido: Pakete mitsenden fuer.. }
+                  AdditionalServers  : string; { Pakete mitsenden }
                   GetTime   : boolean;     { Fido: TRX#-Zeit setzen    }
                   SendTrx   : boolean;     { Fido: TRX# senden - undok }
                   NotSEmpty : boolean;     { Fido: kein sendempty - "  }
@@ -1122,6 +1121,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.123  2001/04/03 13:25:40  ma
+  - cleaned up fido aka handling
+
   Revision 1.122  2001/03/14 20:46:02  mk
   - removed registration routines
 

@@ -1843,7 +1843,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 43   UpPack extension ~
 44   Janus Plus
 # Fido
-45   AKAs (incoming)  ~
 46   4D addresses
 47   TosScan
 48   Set system clock
@@ -1851,7 +1850,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 50   Use node address
 51   Send dummy packet
 52   Ext. packet names
-53   Servers (outgoing)
+53   additional servers
 # Turbo
 55   Get news
 56   Serial no
@@ -3674,7 +3673,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
-# Revision 1.1  2001/03/30 13:09:34  mk
+# Revision 1.2  2001/04/03 13:25:40  ma
+# - cleaned up fido aka handling
+#
+# Revision 1.130  2001/03/30 13:09:35  mk
 # - renamed config/help/main-files
 #
 # Revision 1.129  2001/03/24 22:57:21  cl

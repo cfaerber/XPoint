@@ -250,7 +250,7 @@
             AreaPW:='';
             FilescanPW:='';
             EMSIenable:=true;
-            AKAs:=''; SendAKAS:='';
+            AdditionalServers:='';
             GetTime:=false;
             end;
           if nt=nt_Maus then begin
@@ -404,10 +404,10 @@
     xx:=66; yy:=11; YOffset:=0;
     case nt of
       nt_Fido    : begin
-                     yy:=17;
+                     yy:=16;
                      fnode:=(flags and 4<>0);
                    end;
-      nt_UUCP    : yy:=20;
+      nt_UUCP    : yy:=21;
       nt_pronet  : xx:=55;
       nt_ZConnect: yy:=9;
     end;
@@ -526,18 +526,19 @@
 
       if fido then
       begin
-        maddstring(3,9,getres2(920,45),AKAs,41,AKAlen,''); mhnr(154);  { 'AKAs (Eingang)' }
-        maddstring(3,10,getres2(920,53),SendAKAs,41,AKAlen,'');   { 'Boxen (Ausgang)' }
+        maddstring(3,9,getres2(920,53),AdditionalServers,41,AKAlen,'');   { 'Pakete mitsenden' }
+          mhnr(154);
         msetvfunc(TestAKAservers);
-        maddbool(3,12,getres2(920,46),f4d);         { '4D-Adressen' }
-        maddbool(3,13,getres2(920,47),ftosscan);    { 'TosScan o.ae.' }
-        maddbool(29,12,'EMSI',EMSIenable);
+        maddbool(3,11,getres2(920,46),f4d);         { '4D-Adressen' }
+          mhnr(156);
+        maddbool(3,12,getres2(920,47),ftosscan);    { 'TosScan o.ae.' }
+        maddbool(29,11,'EMSI',EMSIenable);
           emsifield:=fieldpos;
-        maddbool(29,13,getres2(920,48),gettime);    { 'Uhrzeit setzen' }
-        maddbool(3,15,getres2(920,49),PacketPW); mhnr(8000);  { 'Paketpasswort' }
-        maddbool(3,16,getres2(920,50),fnode);       { 'Node statt Point' }
-        maddbool(29,15,getres2(920,51),NotSEmpty);  { 'leeres Paket senden' }
-        maddbool(29,16,getres2(920,52),ExtPFiles);  { 'erw. Paketdateinamen' }
+        maddbool(29,12,getres2(920,48),gettime);    { 'Uhrzeit setzen' }
+        maddbool(3,14,getres2(920,49),PacketPW); mhnr(8000);  { 'Paketpasswort' }
+        maddbool(3,15,getres2(920,50),fnode);       { 'Node statt Point' }
+        maddbool(29,14,getres2(920,51),NotSEmpty);  { 'leeres Paket senden' }
+        maddbool(29,15,getres2(920,52),ExtPFiles);  { 'erw. Paketdateinamen' }
           mhnr(8003);
         UpArcNr:=0; DownArcNr:=0;
         Conn_setmode  (_conn_mode);
@@ -659,9 +660,9 @@
         flags:=flags and (not 4) + iif(fnode,4,0);
         dbWrite(d,'script',flags);
         pname:=strs(pnr);
-        pp:=pos(boxname,SendAKAs);
-        if (pp=1) or ((pp>0) and (SendAKAs[pp-1]=' ')) then
-          delete(SendAKAs,pp,length(boxname)+1);
+        pp:=pos(boxname,AdditionalServers);
+        if (pp=1) or ((pp>0) and (AdditionalServers[pp-1]=' ')) then
+          delete(AdditionalServers,pp,length(boxname)+1);
       end else
 
       if uucp then with boxpar^ do
@@ -1743,6 +1744,9 @@
 
 {
   $Log$
+  Revision 1.44  2001/04/03 13:25:40  ma
+  - cleaned up fido aka handling
+
   Revision 1.43  2001/03/21 19:17:07  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

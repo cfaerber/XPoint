@@ -395,8 +395,7 @@ var sr    : tsearchrec;
       if errorlevel<>0 then
         trfehler(2208,tfs)   { 'Fehler bei Fido-Paketkonvertierung' }
       else begin
-        if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,
-                          iif(length(trim(BoxPar^.akas))>0,pe_ForcePfadbox,0)) then begin
+        if PufferEinlesen('FPUFFER',DefFidoBox,ctlErstDat,false,ctlEbest,pe_ForcePfadbox) then begin
           erase_mask(AutoXDir+'*.pkt');
           erase_mask(AutoXDir+'*.PKT');
         end;
@@ -676,6 +675,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/04/03 13:25:40  ma
+  - cleaned up fido aka handling
+
   Revision 1.36  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

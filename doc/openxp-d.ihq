@@ -3029,30 +3029,15 @@ fahren Sie von Ihrem Sysop.
 Normalerweise ist dieses Eingabefeld ohne Bedeutung.
 @
 154
-Hier k”nnen Sie eine Liste von AKAs (Alternativ-
-Adressen) angeben, deren Mail OpenXP beim Netcall
-<<zus„tzlich>> zur eigentlichen Adresse mitsendet.
-Die einzelnen Adressen mssen durch Leerzeichen
-getrennt werden. Normalerweise (bei Verwendung
-von 4D-Adressierung) <<muá>> Ihre Pointnummer in
-den einzelnen AKAs enthalten sein.
+Hier k”nnen Sie eine Liste von Boxen angeben, deren
+Nachrichten OpenXP beim Netcall <<zus„tzlich>> zu den
+Nachrichten der eigentlichen Box mitsendet.
+Die einzelnen Nodeadressen mssen durch Leerzeichen
+getrennt werden.
 
-Sinn dieser AKAs ist es insbesondere, mit einem
-einzigen Anruf gleichzeitig Nachrichten aus ver-
-schiedenen Fido-kompatiblen Netzen abzuholen.
-
-N„heres zu AKAs finden Sie in FIDO.TXT.
-@
-155
-Hier k”nnen Sie eine durch Leerzeichen getrennte
-Liste von Fido-Serverboxen angeben (bzw. deren
-Adressen, also insbesondere <<ohne>> angeh„ngte
-Pointnummer oder „hnliches), deren Nachrichten
-beim Anruf <<zus„tzlich>> mitgeschickt werden
-sollen.
-Dies wird dann ben”tigt, wenn Sie mit einem Anruf
-gleichzeitig Nachrichten fr mehrere verschiedene
-Fido-kompatible Netze absenden m”chten.
+Sinn dieser Liste ist es, mit einem einzigen Anruf
+gleichzeitig Nachrichten aus verschiedenen Fido-
+kompatiblen Netzen abzuholen.
 
 N„heres hierzu finden Sie in FIDO.TXT.
 @

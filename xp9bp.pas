@@ -52,6 +52,7 @@ procedure WriteQFG(dateiname:string; qrec:QfgRec);
 
 implementation  { ------------------------------------------------- }
 
+uses debug;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 var i : integer;
@@ -144,7 +145,7 @@ begin
     areaplus:=false;
     areabetreff:=true;
     EMSIenable:=true;
-    AKAs:=''; SendAKAs:='';
+    AdditionalServers:='';
     FileScanner:='FileScan'; FilescanPW:='GEHEIM';
     LocalIntl:=true;
     GetTime:=false;
@@ -293,8 +294,7 @@ begin
             gets(s,su,'FileScanner',filescanner,15) or
             gets(s,su,'FilescanPW',filescanpw,12) or
             getx(su,  'EMSI',EMSIenable) or
-            gets(s,su,'AKAs',akas,AKAlen) or
-            gets(s,su,'SendAKAs',sendakas,AKAlen) or
+            gets(s,su,'AdditionalServers',AdditionalServers,AKAlen) or
             getx(su,  'GetTime',gettime) or
             getx(su,  'SendTrx',sendtrx) or
             getx(su,  'PacketPW',packetpw) or
@@ -346,7 +346,7 @@ begin
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
             getr(su,  'Letzte Verbindung',LastCall)
           ) then
-            trfehler1(901,LeftStr(s,35),30);   { 'Ungueltige Box-Config-Angabe: %s' }
+            debug.debuglog('xp9bp','Invalid server config line: '+s,DLWarning);
           end;
         end;
     close(t);
@@ -450,8 +450,7 @@ begin
     writeln(t,'FilescanPW=',filescanpw);
     writeln(t,'EMSI=',jnf(EMSIenable));
     writeln(t,'GetTime=',jnf(gettime));
-    if akas<>'' then writeln(t,'AKAs=',akas);
-    if SendAKAs<>'' then writeln(t,'SendAKAs=',SendAKAs);
+    if AdditionalServers<>'' then writeln(t,'AdditionalServers=',AdditionalServers);
     if sendtrx  then writeln(t,'SendTrx=J');
     if notsempty then writeln(t,'NotSEmpty=J');
     if packetpw then writeln(t,'PacketPW=J');
@@ -608,6 +607,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2001/04/03 13:25:40  ma
+  - cleaned up fido aka handling
+
   Revision 1.31  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -1535,7 +1535,7 @@ begin
           if Pos('=', s) > 0 then
             BadConfigLinesList.Add(s)
           else
-            TFehler(getres(219)+LeftStr(s,30),30);  { 'ungÅltige Konfigurationszeile:  ' }
+            debug.debuglog('xp2cfg','Invalid config line: '+s,DLWarning);
         end;
       end;
     close(t);
@@ -1684,6 +1684,9 @@ end;
 
 {
   $Log$
+  Revision 1.111  2001/04/03 13:25:40  ma
+  - cleaned up fido aka handling
+
   Revision 1.110  2001/03/14 20:46:03  mk
   - removed registration routines
 

@@ -139,7 +139,7 @@ var
 
 var
   tempboxpar : boxrec;
-  sendakas   : string;
+  OutgoingServers: string;
   aBoxName   : string;
   bfile,rfile: string;
   upbuffer   : string;
@@ -149,7 +149,7 @@ var
   t          : text;
 
 begin { ProcessAKABoxes }
-  sendakas:=trim(boxpar^.boxname+' '+Boxpar^.SendAKAs); AKAs:='';
+  OutgoingServers:=trim(boxpar^.boxname+' '+Boxpar^.AdditionalServers); AKAs:='';
   upbuffer:=leftstr(date,2)+leftstr(typeform.time,2)+
             copy(typeform.time,4,2)+rightstr(typeform.time,2)+
             '.PKT';
@@ -157,40 +157,38 @@ begin { ProcessAKABoxes }
   rewrite(t);
   writeln(t,'# ',getres(721));    { 'Temporäre Fido-Konfigurationsdatei' }
   writeln(t);
-  if sendakas<>'' then begin
-    repeat
-      p:=blankpos(sendakas);
-      if p=0 then p:=length(sendakas)+1;
-      if p>3 then begin
-        aBoxName:=LeftStr(sendakas,p-1);
-        Debug.DebugLog('xpncfido','Processing sendaka '+aboxname,DLDebug);
-        sendakas:=trim(mid(sendakas,p));
-        if GetBoxData(aboxname,alias,domain,bfile)then begin
-          Debug.DebugLog('xpncfido','server file name is '+bfile,DLDebug);
-          AKAs:=AKAs+GetPointAdr(aboxname,true)+' ';
-          ReadBox(nt_Fido,bfile,@tempboxpar);
-          writeln(t,'Bretter=',aBoxName,' ',tempboxpar.magicbrett);
-          if FileExists(bfile+BoxFileExt)and
-             (tempboxpar.notsempty or(_filesize(bfile+BoxFileExt)>10)) then begin
-            Debug.DebugLog('xpncfido','PP exists '+bfile+BoxFileExt,DLDebug);
-            AKABoxes.BoxName.Add(aBoxName);
-            AKABoxes.PPFile.Add(bfile+BoxFileExt);
-            ownfidoadr:=GetPointAdr(aboxname,false);
-            Convert(@tempboxpar,bfile+BoxFileExt,upbuffer);
-            ConvertedFiles.Add(upbuffer);
-            upbuffer:=formi(ival(leftstr(upbuffer,8))+1,8)+'.PKT';
-            end
-          else begin
-            AKABoxes.BoxName.Add(aBoxName);
-            AKABoxes.PPFile.Add('');
-            end;
-          splitfido(aBoxName,fa,DefaultZone);
-          rfile:=FidoAppendRequestFile(fa);
-          AKABoxes.ReqFile.Add(rfile);
-          if rfile<>'' then OutgoingFiles.Add(rfile);
+  while length(OutgoingServers)>3 do begin
+    p:=blankpos(OutgoingServers);
+    if p=0 then p:=length(OutgoingServers)+1;
+    if p>3 then begin
+      aBoxName:=LeftStr(OutgoingServers,p-1);
+      Debug.DebugLog('xpncfido','Processing sendaka '+aboxname,DLDebug);
+      OutgoingServers:=trim(mid(OutgoingServers,p));
+      if GetBoxData(aboxname,alias,domain,bfile)then begin
+        Debug.DebugLog('xpncfido','server file name is '+bfile,DLDebug);
+        AKAs:=AKAs+GetPointAdr(aboxname,true)+' ';
+        ReadBox(nt_Fido,bfile,@tempboxpar);
+        writeln(t,'Bretter=',aBoxName,' ',tempboxpar.magicbrett);
+        if FileExists(bfile+BoxFileExt)and
+           (tempboxpar.notsempty or(_filesize(bfile+BoxFileExt)>10)) then begin
+          Debug.DebugLog('xpncfido','PP exists '+bfile+BoxFileExt,DLDebug);
+          AKABoxes.BoxName.Add(aBoxName);
+          AKABoxes.PPFile.Add(bfile+BoxFileExt);
+          ownfidoadr:=GetPointAdr(aboxname,false);
+          Convert(@tempboxpar,bfile+BoxFileExt,upbuffer);
+          ConvertedFiles.Add(upbuffer);
+          upbuffer:=formi(ival(leftstr(upbuffer,8))+1,8)+'.PKT';
+          end
+        else begin
+          AKABoxes.BoxName.Add(aBoxName);
+          AKABoxes.PPFile.Add('');
           end;
+        splitfido(aBoxName,fa,DefaultZone);
+        rfile:=FidoAppendRequestFile(fa);
+        AKABoxes.ReqFile.Add(rfile);
+        if rfile<>'' then OutgoingFiles.Add(rfile);
         end;
-      until (p<=3);
+      end;
     end;
   AKAs:=trim(AKAs);
   Debug.DebugLog('xpncfido','AKAs: '+AKAs,DLInform);
@@ -526,7 +524,7 @@ var i        : integer;
       with boxpar^ do begin
         boxname:=MakeFidoAdr(CrashBox,true);
         uparcer:='';
-        SendAKAs:='';
+        AdditionalServers:='';
         telefon:=FidoPhone(CrashBox,CrashPhone);
         //GetPhoneGebdata(crashphone);
         passwort:='';
@@ -849,6 +847,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/04/03 13:25:41  ma
+  - cleaned up fido aka handling
+
   Revision 1.7  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
