@@ -86,13 +86,13 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
 {$O xp2}     {$O xp2c}    {$O xp2f}     {$O xp2db}
 {$O xp3o}    {$O xp3o2}   {$O xp3ex}    {$O xp4rta}
 {$O xp4}     {$O xp4e}    {$O xp4o}     {$O xp4o2}    {$O xp4o3}
-{$O xpauto}  {$O xp5}     {$O xpreg}    {$O xp6}      {$o xp6o}
+{$O xpauto}  {$O xp5}     {$O xpreg}    {$O xp6}      {$O xp6o}
 {$O xp7}     {$O xp7o}    {$O xp7f}
 {$O xpuu}    {$O xp8}     {$O xp9}      {$O xp9bp}    {$O xp10}    {$O xpe}
 {$O xpstat}  {$O xpterm}  {$O xpcc}     {$O xpmaus}   {$O xp_iti}
 {$O xpfido}  {$O xpf2}    {$O xpfidonl}
 {$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}  {$O xpglobal }
-{$O xpnt}    {$O xpdatum} {$O xp3}      {$O crc }
+{$O xpnt}    {$O xpdatum} {$O xp3}      {$O crc }     {$O mimedec}
 {$O xp_des}  {$O xpkeys}  {$O xpdiff}   {$O eddef}    {$O stack}
 {$O montage} {$O xpovl}   {$O xp9sel }  {$O xp1 }     {$O xpcfg }
 
@@ -204,6 +204,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.26  2002/04/13 15:36:57  my
+  MY:- Unit mimedec ins Overlay verschoben (3k gespart)
+
   Revision 1.29.2.25  2002/03/08 22:53:54  my
   JG:- Fix: Tempor„rdateien werden jetzt auch dann korrekt gel”scht, wenn
        sie sich nicht im aktuellen Verzeichnis befinden (Pfad wurde nicht
