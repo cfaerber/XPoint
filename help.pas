@@ -37,8 +37,8 @@ uses
   xp0, typeform,keys,fileio,inout,winxp,mouse,maus2,printerx,debug;
 
 const maxpages = 1200;
-      maxqvw   = 350;
-      maxlines = 350;   { max. Zeilen pro Hilfsseite }
+      maxqvw   = 400;
+      maxlines = 400;   { max. Zeilen pro Hilfsseite }
 
       HBlocksatz     = true;
       HKeinBlocksatz = false;
@@ -780,6 +780,9 @@ finalization
 
 {
   $Log$
+  Revision 1.46  2002/05/26 12:18:28  ma
+  - increased max help page size
+
   Revision 1.45  2002/04/08 23:02:47  mk
   - changed some AddDirSepa in IncludeTrailingPathDelimiter
 
