@@ -1,0 +1,214 @@
+Datenbank-Formate von CrossPoint
+--------------------------------
+
+MSGS:  Nachrichtendatei
+
+ 1. Brett       String(5)   i    $/1/A/U + Int-Nr. aus BRETTER oder USER
+ 2. Betreff     String(40)
+ 3. Absender    String(80)  i
+ 4. OrigDatum   Longint
+ 5. EmpfDatum   Longint     i
+ 6. Groesse     LongInt          Nachrichtengrî·e ohne Header
+ 7. Typ         Char             'T' / 'B'
+ 8. HalteFlags  Byte             0=normal, 1=halten, 2=lîschen
+ 9. gelesen     Byte        i    1=gelesen
+10. unversandt  Byte             Flags: 1=unversandt, 2=BinÑrmeldung, 4=pmCrypt
+                                        8=Wiedervorlage, 16=Crash, 32=zurÅckgest.
+                                        64=interne Nachricht - keine Statusabfrage
+                                        128=gecancelt
+11. Ablage      Byte             0..9 / 10..19
+12. Adresse     Longint          Offset in der Ablage
+13. MsgSize     Longint          Gesamtgrî·e incl. Header
+14. WVdatum     Longint          ab 0.9g: Original-Empfangsdatum bei Wiedervlg.
+15. MsgID       String(19)       ab 1.01
+16. Netztyp     Longint          ab 2.0:  LSB=Netztyp, $100=rÅckwÑrts-verkettet
+                                          $200=File Attached, $400=pm_reply
+                                          $800=WAB vorhanden, $1000=highlight
+                                          $2000=ISO-Zeichensatz
+                                          $4000=PGP-signiert
+                                          $8000=KOM-Header vorhanden
+                                          HSB-1=EMP-Anzahl gesamt
+                                          HSB=EMP-Nummer (Cross-Postings)
+17. Name        String(25)       ab 2.1:  Fido: Brettempf, sonst: Realname
+18. Flags       Longint          ab 3.1:  1=PGP-Signatur ok
+                                          2=PGP-Signatur fehlerhaft
+
+Indizes:
+
+ 1. Brett/EmpfDatum/Int_Nr              miBrett
+ 2. Brett/gelesen/EmpfDatum/Int_Nr      miGelesen
+
+DUPEKILL: gleiches Format, aber anderer Index:
+
+ 1. Halteflags/Brett/OrigDatum/MsgID/EmpfDatum
+
+Userflags[8] = Random(65536)
+Userflags[1] = (Userflags[8] shr 3) xor (Userflags[8] shl 2) xor HPasswdSum
+Userflags[2] = (Userflags[8] shr 3) xor (Userflags[8] shl 2) xor SPasswdSum
+Userflags[3] = Zeitpunkt der letzten Copyright-Anzeige
+Userflags[4] = 0 (bis XP 3.11), 1 (XP 3.12), 2 (XP 3.12c), 3 (XP 3.12d),
+               4 (ab XP 3.2)
+
+-----------------------------------------------------------------------
+
+BRETTER:   Brettdatei
+
+ 1. Brettname   String(81)  i    Brettyp: $=intern, 1=PM, A=Netz, U=User
+ 2. Kommentar   String(30)
+ 3. Pollbox     String(20)       '' == internes Brett
+ 4. HalteZeit   Integer
+ 5. Flags       Byte             1=Haltezahl, 2=ungelesene Msgs, 4=kein Filter
+                                 8=Schreibsperre, 16=UUCP-Brett
+                                 32: Adresse = Fido-Origin
+ 6. LDatum      Longint          Datum der letzten Nachricht
+ 7. Gruppe      Longint     i    Verkettung in Gruppendatei
+ 8. Index       Longint     i    ab 1.13: Anzeige-Reihenfolge
+ 9. Adresse     String(81)       ab 2.11: Followup-To / Vertreteradresse
+
+Indizes:
+
+ 1. +Brettname           biBrett
+ 2. Gruppe               biGruppe
+ 3. Int_nr               biIntnr
+ 4. Index                biIndex  (Default in XP4)
+
+Userflags[1] = Zeitpunkt der Erstinstallation
+
+-----------------------------------------------------------------------
+
+USER:   User(U)/Verteiler
+
+ 1. Username    String(80)  i       (Verteiler: #255[Name]@VERTEILER)
+ 2. Adresse     Extern           U
+ 3. Kommentar   String(30)
+ 4. Pollbox     String(20)
+ 5. Haltezeit   Integer             (Verteiler: Anzahl EmpfÑnger)
+ 6. AdrBuch     Byte        i       1=User steht im Adressbuch
+ 7. Passwort    Extern           U
+ 8. UserFlags   Byte                ~1=DummUser, 2=Default:codieren, 4=Verteiler
+                                    8=keine Umlaute, 16=EBs
+ 9. Codierer    Byte             U  0=Nix, 1=QPC, 2=DES, 3-5=pmc1-3, 9=PGP
+
+Indizes:
+
+ 1. +Username            uiName
+ 2. AdrBuch/+Username    uiAdrbuch
+
+-----------------------------------------------------------------------
+
+BOXEN:  Boxendatei
+
+ 1. Boxname     String(20)  i    Eingabe: 8
+ 2. Username    String(30)
+ 3. Kommentar   String(30)
+ 4. Dateiname   String(8)        plus .BFG
+ 5. Script      Byte             1=Script vorhanden (Dateiname.SCR)
+                                 2=~/Netcall/Alle, ~8=MsgIDs
+                                 Z: 16=eigener Absendername im PP ohne @BOX
+                                 4=User@Point(Z), AliasP.(Maggi), /node(Fido)
+ 6. NameOMaps   String(20)       MAPS-Name (ab 0.9g)
+ 7. Netztyp     Byte             ab 1.12: 0=Netcall, 2=ZConnect, 3=Magic
+                                 4=ProNet, 10=QuickMail, 11=G+S, 20=Maus,
+                                 30=Fido, 31=QWK, 40=UUCP, 90=Turbo-Box
+ 8. Realname    String(40)       ab 1.2
+ 9. Pointname   String(25)       ab 1.2
+10. Domain      String(60)       ab 1.2
+11. Fidoname    String(40)       ab 1.93: eigener Systemname
+12. ReplyTo     String(80)       ab 1.97: Vertreteradresse
+13. AVertreter  String(20)       ab 2.15: Vertreterbox fÅr AMs
+14. PVertreter  String(20)       ab 2.15: Vertreterbox fÅr PMs
+15. Boxdomain   String(60)       ab 2.15: Domain des Servers
+
+Indizes:
+
+ 1. +Boxname             boiName
+ 2. +Dateiname           boiDatei
+
+-----------------------------------------------------------------------
+
+GRUPPEN:  Brettgruppendatei
+
+ 1. Name        String(30)  i
+ 2. Haltezeit   Integer
+ 3. MsgLimit    Longint
+ 4. Flags       Byte             1=Standard-Gruppe (nicht lîschbar)
+                                 0=Default, 2=Re^n, 4=Re:, 6=nix
+ 5. Umlaute     Byte             0=IBM, 1=ASCII, 2=ISO, 3-5=eigene
+ 6. Kopf        String(8)        Kopfschablone; Extension .XPS
+ 7. Signatur    String(8)        Signatur-Schablone; Extension .XPS
+ 8. QuoteMsk    String(8)        ab 0.9e: Quote-Schablone; Extension .XPS
+ 9. Origin      String(50)       ab 1.92: Fido-Origin
+10. Adresse     String(50)       ab 1.92: Fido-Brettadresse
+
+Indizes:
+
+ 1. +Name                giName
+ 2. Int_Nr               giIntnr
+
+-----------------------------------------------------------------------
+
+SYSTEME:  Fileserver u.a.
+
+ 1. Name        String(20)  i
+ 2. Kommentar   String(30)
+ 3. Flags       Word             1=Fileserver
+ 4. FS-Name     String(20)       Username des Fileservers
+ 5. FS-Passwd   String(20)       Fileserver-SERVICE-Pa·wort, oder Indexdatei
+ 6. FS-Typ      Byte             0=SendZMsg, 1=iMLS, 2=NCBmail, 3=UUCP
+ 7. ZBV1        String(60)       ab 2.15: UUCP: Listen-Konvertierer
+ 8. ZBV2        String(60)       ab 2.15
+
+Indizes:
+
+ 1. +Name                siName
+
+-----------------------------------------------------------------------
+
+AUTOMSG:  automatischer Nachrichten-Versand (ab 1.11)
+
+ 1. Dateiname   String(80)       Default-Pfad: Sendeverzeichnis
+ 2. Betreff     String(40)  i
+ 3. Typ         Char             'T' / 'B'
+ 4. Empfaenger  String(80)  i    Brett, User@Kiste oder [Verteiler]
+ 5. Pollbox     String(20)       (optional)
+ 6. Wochentage  Byte             Bit 0=Mo, 1=Di, .., 6=So
+ 7. Tage        Longint          Bit 0=1, Bit 1=2, ... Bit 30=31
+ 8. Monate      Word             Bit 0=Jan, 1=Feb, ... 11=Dez
+ 9. Datum1      Longint          einzelnes Datum
+10. Datum2      Longint          dito
+11. Flags       Word             1=aktiv, 2=AutoLîschen, 4=nur geÑnderte Dat.
+12. LastDate    Longint          letztes Sendedatum
+13. LastFdate   Longint          Dateidatum beim letzten Absenden
+
+Indizes:
+
+ 1. +Betreff/EmpfÑnger   aiBetreff
+
+-----------------------------------------------------------------------
+
+PSEUDOS:  EmpfÑnger-Pseudonyme
+
+ 1. Kurzname    String(15)  i
+ 2. Langname    String(80)
+ 3. Pollbox     String(20)
+ 4. Flags       Word
+
+Indizes:
+
+ 1. +Kurzname            piKurzname
+
+-----------------------------------------------------------------------
+
+BEZUEGE:  Bezugsverkettung
+
+ 1. MsgPos      Longint          RecNo() in MSGS
+ 2. MsgID       Longint     i    CRC32
+ 3. Ref         Longint     i    Bezug (0, falls keiner)
+ 4. Datum       Longint          Erstellungsdatum, au·er Bit 0-3:
+                                 1=erste Kopie eines CrossPostings
+                                 2=weitere Kopie eines CrossPostings
+
+Indizes:
+
+ 1. MsgID       beiMsgID
+ 2. Ref         beiRef
