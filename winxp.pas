@@ -292,8 +292,9 @@ begin
     WritePos.X := x-1; WritePos.Y := y-1;  Len := Length(s);
     WriteConsoleOutputCharacter(OutHandle, @s[1], Len, WritePos, OutRes);
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
-    WritePos.X := x + Len;
-    SetConsoleCursorPosition(OutHandle, WritePos); 
+    WhereX := x + len; WhereY := y;
+    WritePos.X := WhereX - 1; 
+    SetConsoleCursorPosition(OutHandle, WritePos);   
   {$ELSE }
     FWrt(x, y, s);
     GotoXY(x+Length(s), y);
@@ -312,7 +313,7 @@ begin
     WritePos.X := WhereX-1; WritePos.Y := WhereY-1; Len := Length(s);
     WriteConsoleOutputCharacter(OutHandle, @s[1], Len, WritePos, OutRes);
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
-    WhereX := WhereX + Len;
+    WhereX := WhereX + Len; 
     WritePos.X := WhereX;
     SetConsoleCursorPosition(OutHandle, WritePos);  
   {$ELSE }
@@ -1058,6 +1059,9 @@ end;
 
 {
   $Log$
+  Revision 1.69  2001/12/05 18:24:45  mk
+  - fixed last commit
+
   Revision 1.68  2001/12/05 17:42:56  mk
   - optimized Win32 screen draw speed, part I
 
