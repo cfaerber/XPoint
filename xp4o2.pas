@@ -425,7 +425,7 @@ var hdp    : theader;
       r      : brec;
       mid    : longint;
       spnr,
-      spb    : Integer;
+      spb    : Cardinal;
 
     procedure wr;
     var
@@ -545,10 +545,13 @@ var hdp    : theader;
           begin
             mmore:=more or (i<anz);
             xlines:=spuren;
-            if mmore and (ebene<MaxKommLevels-1) then begin
+            if mmore and (ebene<MaxKommLevels-1) then
+            begin
               spnr:=ebene div 32;
               spb:=ebene and (32-1);
-              xlines[spnr]:=xlines[spnr] or (1 shl spb);
+              writeln(' ', spnr, '  ', spb);
+              // Cardinal() prevents range check error
+              xlines[spnr]:=xlines[spnr] or (Cardinal(1) shl spb);
              end;
             RecurBez(ebene+1,ba^[i].pos,xlines,not mmore,newbetr,_brett);
           end;
@@ -926,6 +929,9 @@ end;
 
 {
   $Log$
+  Revision 1.48  2002/01/07 19:44:17  mk
+  - fixed range check error
+
   Revision 1.47  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
