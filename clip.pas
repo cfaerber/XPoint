@@ -287,7 +287,10 @@ asm
 
               mov ax,1701h                        { Clipboard ”ffnen }
               int multiplex
-              mov di,ax                           { Aktuellen Clipboardstatus merken }
+              push ax                             { Aktuellen Clipboardstatus merken }
+
+              mov ax,1702h
+              int multiplex                       { Clipboard leeren}      
 
               les bx,ldata
               mov si,0
@@ -296,19 +299,16 @@ asm
               inc bx                              {Textstart    -> es:bx}
 
               mov ax,1703h                        {String Ins Clipboard schreiben...}
-              mov dx,7                            {Als OEMTEXT}
-              int multiplex
-              mov ax,1703h                        
-              mov dx,1                            {und als text}
+              mov dx,cf_Oemtext                   {Als OEMTEXT}
               int multiplex
 
-              cmp di,0                            { Wenn clipboard nicht auf war }
+              pop ax
+              or ax,ax                            { Wenn clipboard nicht auf war }
               je @end               
               mov ax,1708h                        { wieder schliessen }
               int multiplex
 @end:   
 end;
-
 
 procedure Idle; assembler;
 asm
@@ -536,6 +536,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/02/24 16:21:52  jg
+  -Clip2string konservativer geschrieben
+
   Revision 1.6  2000/02/18 18:39:03  jg
   Speichermannagementbugs in Clip.pas entschaerft
   Prozedur Cliptest in Clip.Pas ausgeklammert
