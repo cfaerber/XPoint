@@ -1095,16 +1095,16 @@ begin
           if nxo<min(size,ofse) then
           begin
             blockwrite(f,spc[1],3); { cr:=true;}
-          end else
-            {cr:=false; }
-            ofs:=nxo;
-          end;
-        end
-      else begin
+          end; {else
+            cr:=false; }
+          ofs:=nxo;
+        end;
+      end else
+      begin
         blockwrite(f,cont[ofs0],min(size,ofse)-ofs0);
         { cr:=false;}
         ofs0:=0;
-        end;
+      end;
     if ap=pende.absatz then ap:=nil
     else ap:=absatzp(ap)^.next;
     if assigned(ap) and (ofse=maxint) then begin
@@ -1993,6 +1993,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/03/15 21:49:47  mk
+  - kleiner Bugfix fuer Editor (im letzten Patch eingebaut)
+
   Revision 1.11  2000/03/14 15:15:35  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
