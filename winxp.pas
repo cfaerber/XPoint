@@ -75,6 +75,12 @@ procedure Wrt2(const s:string);
   Der LocalScreen wird wenn nîtig aktualisiert }
 procedure FWrt(const x,y:word; const s:string);
 
+{$IFDEF Win32 }
+{ Schreiben eines Strings ohne Update der Cursor-Position
+  Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
+procedure SDisp(const x,y:word; const s:string);
+{$ENDIF }
+
 {$IFDEF Ver32 }
 { Routinen fÅr 32 Bit Versionen, die den Zugriff auf den Bildschirm
   managen }
@@ -441,6 +447,20 @@ begin
     end;
    end;
 {$ENDIF }
+end;
+{$ENDIF }
+
+{$IFDEF Win32 }
+procedure SDisp(x,y:word; const s:string);
+var
+  WritePos: TCoord;                       { Upper-left cell to write from }
+  OutRes: LongInt;
+begin
+  { Kompletten String an einem StÅck auf die Console ausgeben }
+  WritePos.X := x-1; WritePos.Y := y-1;
+  WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, @OutRes);
+  { !! Hier mÅsste noch die Textfarbe verÑndert werden,
+    nicht aber der Texthintergrund }
 end;
 {$ENDIF }
 
@@ -1045,6 +1065,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/03/20 11:26:21  mk
+  - SDisp-Routine teilweise nach Win32 portiert
+
   Revision 1.12  2000/03/14 15:15:37  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -29,11 +29,10 @@ procedure CfgColors;
 
 implementation  { -------------------------------------------------- }
 
-{ 10.02.2000 MK: In Inline-ASM umgebaut }
 { wie windows.fwrt(), allerdings bleibt der TextBackground unver„ndert }
+{$IFDEF BP }
 procedure sdisp(x,y:word; var s:string); assembler;
 asm
-{$IFDEF BP }
          cld
          mov    es,base
          mov    ax,y
@@ -61,10 +60,8 @@ asm
          inc    di
          loop   @lp
 @nowrt:
-{$ENDIF }
 end;
-
-
+{$ENDIF }
 
 procedure EditFkeys(typ:byte);
 { const n_typ : array[0..3] of string[9] =
@@ -1168,6 +1165,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/03/20 11:26:21  mk
+  - SDisp-Routine teilweise nach Win32 portiert
+
   Revision 1.5  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 
