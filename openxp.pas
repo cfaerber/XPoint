@@ -33,6 +33,14 @@ uses
 {$IFDEF Win32 }
   cmem,
 {$ENDIF } *)
+
+(* {$IFDEF Linux }
+  compheap,
+{$ENDIF }
+{$IFDEF Win32 }
+  compheap,
+{$ENDIF }  *)
+
   Main;
 
 begin
