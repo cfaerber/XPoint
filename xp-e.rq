@@ -962,7 +962,7 @@ K (c) '93-96 Peter Mandrella
 424  messages since last netcall
 425  messages since %s
 426  ~Select archive newsgroup:
-427  ~Select destination Newsgroup
+427  ~Select destination
 428  ~Select recipient
 429  Record no:~
 430  Show file contents
@@ -2516,9 +2516,9 @@ K (c) '93-96 Peter Mandrella
 5    Comment ~
 6    Hold time
 7    Days
-8    Umlauts
+8    Convert Umlauts
 9    Add to "Twit" filter
-10   Receipt requests
+10   Send receipt requests (RRQ's)
 11   Usergroup
 -
 2702 Add new user
@@ -2554,7 +2554,7 @@ K (c) '93-96 Peter Mandrella
 13   Origin   ~
 -
 2709 User not in database - create new user
-2710 Edit user
+2710 Edit User
 2711 No Server - create internal newsgroup
 2712 Unknown server - add newsgroup, anyway
 2713 Name of newsgroup has changed - adjust message headers
