@@ -121,7 +121,7 @@ const k0_S  : char = 'S';      { Spezial-Mode         }
 
 implementation  { -------------------------------------------------- }
 
-uses xp4o,xp7,xp9,xpauto;
+uses xp4o,xpnetcall,xp9,xpauto;
 
 
 { Funktionstaste in Hauptfenster oder ArcViewer }
@@ -239,6 +239,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2001/01/04 16:10:45  ma
+  - adjusted unit names in "uses" statement
+
   Revision 1.15  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 

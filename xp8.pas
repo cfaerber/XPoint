@@ -24,7 +24,7 @@ uses sysutils,
   crt,
 {$ENDIF }
   typeform,fileio,inout,keys,datadef,database,lister,
-  maske,maus2, resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti,
+  maske,maus2,resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti,
   xpglobal,fidoglob;
 
 
@@ -60,7 +60,7 @@ implementation  { ------------------------------------------------- }
 
 uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,
 {$IFDEF Sockets }
-  xpnntp,
+  xpncnntp,
 {$ENDIF }
   xp9bp,xp9,xpnt, crc;
 
@@ -1615,6 +1615,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/01/04 16:10:45  ma
+  - adjusted unit names in "uses" statement
+
   Revision 1.33  2000/12/27 22:36:32  mo
   -new class TfidoNodeList
 

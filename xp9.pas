@@ -77,7 +77,7 @@ uses
 {$IFDEF unix}
   xplinux,
 {$ENDIF}
-  xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterm;
+  xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterminal,xpmodemscripts;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -1838,6 +1838,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.53  2001/01/04 16:10:45  ma
+  - adjusted unit names in "uses" statement
+
   Revision 1.52  2000/12/28 14:45:03  mk
   CL:- first things for UUCP over IP
 

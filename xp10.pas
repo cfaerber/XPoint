@@ -51,7 +51,7 @@ function _getmacro(s:string):string;
 
 implementation  { ---------------------------------------------------- }
 
-uses  xp2,xp3,xp3o,xp4o,xp4o2,xp7,xp9bp,xpauto,xpfido,xpfidonl;
+uses  xp2,xp3,xp3o,xp4o,xp4o2,xpnetcall,xp9bp,xpauto,xpfido,xpfidonl;
 
 const maxentries  = 100;   { s. auch XP0.maxkeys }
       TimingWidth = 116;
@@ -2052,6 +2052,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.50  2001/01/04 16:10:45  ma
+  - adjusted unit names in "uses" statement
+
   Revision 1.49  2000/12/29 16:44:25  mo
   - class TNodeList, new procedure AddEntry
 

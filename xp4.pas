@@ -57,8 +57,8 @@ const
 
 implementation  {----------------------------------------------------}
 
-uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,xp8,
-      xpe,xp9,xp10,xpauto,xpstat,xpterm,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
+uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xpnetcall,xp8,
+      xpe,xp9,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister, viewer;
 
 const suchch    = #254;
@@ -2130,6 +2130,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.77  2001/01/04 16:10:45  ma
+  - adjusted unit names in "uses" statement
+
   Revision 1.76  2000/12/25 14:02:42  mk
   - converted Lister to class TLister
 
