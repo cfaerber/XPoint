@@ -37,7 +37,7 @@ uses
   sysutils,xpcfg,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
   databaso,maske,help,printerx,lister,win2,maus2,crc,clip,
   resource,montage, xpglobal,
-  xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,
+  xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,
 {$IFDEF XPEasy }
   xpeasy,
 {$ENDIF }
@@ -251,6 +251,30 @@ var i  : integer;
     if z in [25,26,28,30,33,36,40,44,50] then ParZeilen:=z;
   end;
 
+  procedure Par_mailto; { Mailto: Parameter auswerten }
+  Var i,j,k :  Byte;
+      s2    : string[8];
+      s3    : string;
+  begin                                      { -mailto:user@name?subject=betreff;serverbox }
+    keyboard('nd');
+    i:=cposx('\',s);
+    if i <= length(s) then keyboard(keyup+mid(s,i+1)+keydown);
+    j:=cpos('?',s);
+    k:=cpos('&',s);
+    if (k=0) or (j<k) then k:=j;
+    if k=0 then k:=i;
+    keyboard(copy(s,9,k-9)+keydown);
+    if j>0 then
+    begin
+      s3:=copy(s,j+1,i-j-1);  { Zwischen ? und ; }
+      if UpperCase(left(s3,4))='SUBJ' then
+      begin
+        k:=cposX('&',s3);
+        keyboard(copy(s3,9,k-9));
+        end;
+      end;
+  end;
+
   procedure ParAuswerten;
   begin
     if _is('h') or _is('?') then ParHelp:=true else
@@ -285,7 +309,13 @@ var i  : integer;
     if _is('x')    then ParExit:=true else
     if _is('xx')   then ParXX:=true else
     if isl('user:') then UserPar(mid(s,7)) else
-    if isl('k:')  then ParKey:=iifc(length(s)>3,s[4],' ') else
+    if isl('k:')  then begin
+                         if length(s) = 4 then Parkey:=s[4]
+                         else begin
+                           parkey:=' ';
+                           if length(s)>4 then keyboard(_getmacro(mid(s,4)));
+                           end;
+                         end else
     if _is('eb')   then ParEmpfbest:=true else
     if _is('pa')   then ParPass:='*' else
     if isl('pa:') then ParPass:=mid(s,5) else
@@ -319,6 +349,7 @@ var i  : integer;
 {$ELSE } { nb Åbergehen, auch wenn nicht benîtigt }
     if _is('nb')   then else
 {$ENDIF }
+    if isl('mailto:') then Par_mailto else
     if _is('nolock') then ParNolock:=true
     else               begin
                          writeln('unbekannte Option: ',paramstr(i),#7);
@@ -1081,6 +1112,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2000/08/25 23:02:07  mk
+  JG:
+  - "< >" in Macros funktioniert jetzt wie dokumentiert als Leertastenersatz
+    XP10.PAS
+  - Parameter -K verarbeitet jetzt ganze Zeichenketten. Benoetigt
+    Anfuehrungszeichenauswertung damit Tasten wie <Enter> funktionieren !
+    XP10.PAS,XP2.PAS
+  - Neuer Parameter -mailto: dem direkt ein Mailto-Link uebergeben wird
+    Subjects mit Leerzeichen benoetigen Anfuehrungszeichenauswertung !
+    XP2.PAS
+
   Revision 1.67  2000/08/20 11:22:38  mk
   - Landessprache wird jetzt richtig erkannt (BP inkompatiblitaet)
 
