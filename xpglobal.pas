@@ -22,7 +22,7 @@ const
        xp_xp       : string[17] = 'CrossPoint/OpenXP';
        xp_client   : string[17] = 'CrossPoint/Client';
        xp_origin   : string[21] = '--- CrossPoint/OpenXP';
-  x_copyright = '(c) 2000';
+  x_copyright = '(c) 2001';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -98,6 +98,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29.2.15  2001/06/07 15:42:59  mk
+  - Copyright auf 2001 geaendert
+
   Revision 1.29.2.14  2001/04/09 16:47:19  mk
   - arbeiten am Client-Modus
 
