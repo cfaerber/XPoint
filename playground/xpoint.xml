@@ -953,7 +953,7 @@
           sinnvoll, dabei direkt mit
           <MENUCHOICE MOREINFO="NONE"><GUIMENU MOREINFO="NONE">Nachricht</GUIMENU><GUISUBMENU MOREINFO="NONE">Brettmanager</GUISUBMENU><GUIMENUITEM MOREINFO="NONE">Liste_anfordern</GUIMENUITEM></MENUCHOICE> eine
           Brettliste zu bestellen.</PARA><PARA>Nach der Durchführung des Netcalls befindet sich im
-          Brett <COMPUTEROUTPUT MOREINFO="NONE">/&raquo;Netzanruf</COMPUTEROUTPUT>
+          Brett <COMPUTEROUTPUT MOREINFO="NONE">/»Netzanruf</COMPUTEROUTPUT>
           eine Nachricht, in der das genaue Ergebnis des Anrufs
           aufgelistet ist.</PARA></SECT2><SECT2 LABEL="3.1.10" ID="KA030110"><TITLE>Wenn der Netcall nicht funktioniert ...</TITLE><PARA>dann haben Sie sich vermutlich bei
           <MENUCHOICE MOREINFO="NONE"><GUIMENU MOREINFO="NONE">Edit</GUIMENU><GUISUBMENU MOREINFO="NONE">Boxen</GUISUBMENU><GUISUBMENU MOREINFO="NONE">Edit</GUISUBMENU><GUIMENUITEM MOREINFO="NONE">Point</GUIMENUITEM></MENUCHOICE> verschrieben.
@@ -1097,7 +1097,7 @@
           ebenfalls eine Bestätigung, allerdings befindet sie
           sich am Ende des Netzanruf-Berichtes (einer Nachricht, die
           <APPLICATION MOREINFO="NONE">OpenXP</APPLICATION> nach jedem Netzanruf erzeugt und im Brett
-          <COMPUTEROUTPUT MOREINFO="NONE">/&raquo;Netzanruf</COMPUTEROUTPUT> ablegt).
+          <COMPUTEROUTPUT MOREINFO="NONE">/»Netzanruf</COMPUTEROUTPUT> ablegt).
           Im Usenet (changesys) erhalten Sie als Antwort Ihren
           aktuellen Sysfile-Eintrag (s.
           <FILENAME MOREINFO="NONE">uucp.txt</FILENAME>).</PARA></SECT2><SECT2 LABEL="3.2.6" ID="KA030206"><TITLE>gekürzte Brettnamen im Z-Netz</TITLE><PARA>Wenn Sie im Z-Netz eine ausführliche Brettliste
@@ -1112,7 +1112,7 @@
           senden.</PARA></SECT2><SECT2 LABEL="3.2.7" ID="KA030207"><TITLE>Bretter bearbeiten</TITLE><PARA><APPLICATION MOREINFO="NONE">OpenXP</APPLICATION> kennt vier Arten von Brettern:</PARA><ITEMIZEDLIST><LISTITEM><PARA>Systembretter</PARA></LISTITEM><LISTITEM><PARA>PM-Bretter</PARA></LISTITEM><LISTITEM><PARA>Netz-Bretter</PARA></LISTITEM><LISTITEM><PARA>User-Bretter</PARA></LISTITEM></ITEMIZEDLIST><PARA>User-Bretter werden in der Userliste mitverwaltet und
           sollen hier nicht weiter behandelt werden.</PARA><PARA>Systembretter stehen immer am Anfang der Brettliste und
           beginnen mit einem
-          <COMPUTEROUTPUT MOREINFO="NONE">&raquo;</COMPUTEROUTPUT>-Zeichen. In diesen
+          <COMPUTEROUTPUT MOREINFO="NONE">»</COMPUTEROUTPUT>-Zeichen. In diesen
           Brettern werden Systemmeldungen von <APPLICATION MOREINFO="NONE">OpenXP</APPLICATION> abgelegt, z.B.
           Netzanruf-Reports oder Statistiken. Systembretter sind
           <EMPHASIS>nicht</EMPHASIS> beschreibbar.</PARA><PARA>PM-Bretter stehen direkt unterhalb der Systembretter; in
@@ -2065,7 +2065,7 @@ MF*BXR-CH^ @9*3E)66EYB9FIN&lt;G9Z?D)&amp;BHZ2EIJ&gt;HJ:JKK*VNKZ&quot;ALK.TM;w
             unter <MENUCHOICE MOREINFO="NONE"><GUIMENU MOREINFO="NONE">Nachricht</GUIMENU><GUISUBMENU MOREINFO="NONE">Brettmanager</GUISUBMENU><GUIMENUITEM MOREINFO="NONE">Sonstiges</GUIMENUITEM></MENUCHOICE>. Der
             Text wird Ihnen beim nächsten Netcall automatisch
             zugesandt und im Brett
-            <COMPUTEROUTPUT MOREINFO="NONE">/&raquo;Mausinfos</COMPUTEROUTPUT>
+            <COMPUTEROUTPUT MOREINFO="NONE">/»Mausinfos</COMPUTEROUTPUT>
             abgelegt.</PARA></LISTITEM><LISTITEM><PARA>automatisch: Stellen Sie unter
             <MENUCHOICE MOREINFO="NONE"><GUIMENU MOREINFO="NONE">Nachricht</GUIMENU><GUISUBMENU MOREINFO="NONE">Brettmanager</GUISUBMENU><GUIMENUITEM MOREINFO="NONE">Maus-Infos</GUIMENUITEM></MENUCHOICE> ein, in
             welchen Abständen (in Tagen) <APPLICATION MOREINFO="NONE">OpenXP</APPLICATION> geänderte
@@ -2086,7 +2086,7 @@ MF*BXR-CH^ @9*3E)66EYB9FIN&lt;G9Z?D)&amp;BHZ2EIJ&gt;HJ:JKK*VNKZ&quot;ALK.TM;w
         <COMPUTEROUTPUT MOREINFO="NONE">gelesen</COMPUTEROUTPUT> erhält.</PARA><PARA>Bei <APPLICATION MOREINFO="NONE">OpenXP</APPLICATION> können Sie die Status auf zweierlei
         Weise verfolgen: Zum einen werden alle geänderten Status
         automatisch als Nachrichten im Brett
-        <COMPUTEROUTPUT MOREINFO="NONE">/&raquo;Mausstatus</COMPUTEROUTPUT> abgelegt,
+        <COMPUTEROUTPUT MOREINFO="NONE">/»Mausstatus</COMPUTEROUTPUT> abgelegt,
         zum anderen wird beim Lesen von selbstgeschriebenen PMs der
         Status, sofern er nicht
         <COMPUTEROUTPUT MOREINFO="NONE">ungelesen</COMPUTEROUTPUT> ist, im
@@ -2996,7 +2996,7 @@ MF*BXR-CH^ @9*3E)66EYB9FIN&lt;G9Z?D)&amp;BHZ2EIJ&gt;HJ:JKK*VNKZ&quot;ALK.TM;w
         <GUIBUTTON MOREINFO="NONE">Parken</GUIBUTTON>. Die Nachricht wird dann mit
         einer Originalempfänger-Zeile (erste Nachrichtenzeile)
         versehen und im Brett
-        <COMPUTEROUTPUT MOREINFO="NONE">/&raquo;Unversandt</COMPUTEROUTPUT> abgelegt.
+        <COMPUTEROUTPUT MOREINFO="NONE">/»Unversandt</COMPUTEROUTPUT> abgelegt.
         Dort können Sie die Nachricht beliebig mit
         <MENUCHOICE MOREINFO="NONE"><GUIMENU MOREINFO="NONE">Nachricht</GUIMENU><GUISUBMENU MOREINFO="NONE">Ändern</GUISUBMENU><GUIMENUITEM MOREINFO="NONE">Text</GUIMENUITEM></MENUCHOICE> bearbeiten und
         schließlich mit <MENUCHOICE MOREINFO="NONE"><GUIMENU MOREINFO="NONE">Nachricht</GUIMENU><GUISUBMENU MOREINFO="NONE">Weiterleiten</GUISUBMENU><GUIMENUITEM MOREINFO="NONE">Erneut</GUIMENUITEM></MENUCHOICE>
@@ -3053,7 +3053,7 @@ MF*BXR-CH^ @9*3E)66EYB9FIN&lt;G9Z?D)&amp;BHZ2EIJ&gt;HJ:JKK*VNKZ&quot;ALK.TM;w
           die nach dem neuen ZConnect-Verfahren arbeiten.</PARA></SECT2><SECT2 LABEL="5.9.3" ID="KA050903"><TITLE>Empfangsbestätigungen im MausNet</TITLE><PARA>Im MausNet erhalten Sie für jede verschickte
           Nachricht automatisch Bestätigungen in Form von
           Nachrichtenstatus, die im Brett
-          <COMPUTEROUTPUT MOREINFO="NONE">/&raquo;Mausstatus</COMPUTEROUTPUT> abgelegt
+          <COMPUTEROUTPUT MOREINFO="NONE">/»Mausstatus</COMPUTEROUTPUT> abgelegt
           werden (s. <LINK LINKEND="KA040200">Kapitel 4.2</LINK>). Das
           explizite Anfordern von Empfangsbestätigungen ist also
           unnötig.</PARA></SECT2><SECT2 LABEL="5.9.4" ID="KA050904"><TITLE>Empfangsbestätigungen im Internet und
@@ -4569,7 +4569,7 @@ Wochentage:   Sa
                   <EMPHASIS>halten</EMPHASIS></ENTRY></ROW><ROW><ENTRY><COMPUTEROUTPUT MOREINFO="NONE">ShowUsername</COMPUTEROUTPUT></ENTRY><ENTRY>Username bei Stammbox in 2. Bildzeile
                   anzeigen</ENTRY></ROW><ROW><ENTRY><COMPUTEROUTPUT MOREINFO="NONE">SaveUnversandt</COMPUTEROUTPUT></ENTRY><ENTRY>Bei <KEYCAP MOREINFO="NONE">Esc</KEYCAP> im Sendefenster
                   Nachricht im Brett
-                  <COMPUTEROUTPUT MOREINFO="NONE">/&raquo;Unversandt</COMPUTEROUTPUT>
+                  <COMPUTEROUTPUT MOREINFO="NONE">/»Unversandt</COMPUTEROUTPUT>
                   sichern</ENTRY></ROW><ROW><ENTRY><COMPUTEROUTPUT MOREINFO="NONE">EmpfangsBestaetigung</COMPUTEROUTPUT></ENTRY><ENTRY>autom. Empfangsbestätigungen
                   versenden</ENTRY></ROW><ROW><ENTRY><COMPUTEROUTPUT MOREINFO="NONE">12:00</COMPUTEROUTPUT></ENTRY><ENTRY>Erstellungszeit 00:00 bei allen ausgehenden
                   Nachrichten (war in einer früheren Version mal
