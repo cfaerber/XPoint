@@ -240,11 +240,20 @@ procedure miscschab;
 var s       : pathstr;
     useclip : boolean;
 begin
+{$IFDEF UnixFS }
+  s:= '*.xps';
+{$ELSE }
   s:='*.XPS';
+{$ENDIF }
   useclip:=false;
   if readfilename(getres(103),s,false,useclip) then begin  { Schablone bearbeiten }
+{$IFDEF UnixFS }
+    addext(s,'xps');
+    if ustr(right(s,4))<>'.xps' then begin
+{$ELSE }
     addext(s,'XPS');
     if ustr(right(s,4))<>'.XPS' then begin
+{$ENDIF }
       rfehler(2);    { Dateierweiterung muá .XPS sein! }
       exit;
       end;
@@ -595,6 +604,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10  2000/05/03 20:35:44  hd
+  - Anpassung an UnixFS (miscschab)
+
   Revision 1.9  2000/04/13 12:48:35  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
