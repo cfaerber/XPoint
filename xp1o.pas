@@ -924,7 +924,7 @@ function XPWinShell(prog:string; parfn:pathstr; space:word;
       et:=exetype(exepath);
 
     win := (et=ET_Win16) or (et=ET_Win32);
-    os2 := (et=ET_OS2_16) or (et=ET_OS2_32);
+    os2 := (lo(dosversion)>=20) and ((et=ET_OS2_16) or (et=ET_OS2_32));
     winnt:=win and (lstr(getenv('OS'))='windows_nt');
 
     if win then begin
@@ -954,7 +954,7 @@ function XPWinShell(prog:string; parfn:pathstr; space:word;
         end;
       PrepareExe:=1;
     end
-    else if os2 then begin
+    else if os2 and not delviewtmp then begin
       batfile:=TempExtFile('','os2r','.cmd');
       assign(t,batfile);
       rewrite(t);
@@ -990,6 +990,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/05/09 20:02:51  jg
+  - Externe Viewer: OS2/DOS Hybridprogramme die nicht unter OS/2
+    gestartet werden, werden als DOS-Programme behandelt.
+
   Revision 1.38  2000/05/09 13:13:41  hd
   - UnixFS: ReadFilename angepasst
 
