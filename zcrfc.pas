@@ -67,6 +67,8 @@ type
     compress_freeze);     { frozen       }
 
   TUUZ = class
+  private 
+    smtpfirst: boolean;
   protected
     f1, f2: file;                         { Quell/Zieldatei     }
     addpath: String;
@@ -2677,8 +2679,6 @@ begin
 end;
 
 procedure TUUZ.WriteRFCheader(f: TStream; mail,mpart: boolean);
-const
-  smtpfirst: boolean = true;
 var
   dat: string;
   p: integer;
@@ -3329,6 +3329,8 @@ begin
   assign(f1, source);
   reset(f1, 1);
   adr := 0; n := 0;
+  smtpfirst := true;
+
   if not ppp then
   begin
     CommandFile := Dest+UpperCase('C-'+hex(NextUunumber, 4) + '.OUT');
@@ -3648,6 +3650,11 @@ end;
 
 {
   $Log$
+  Revision 1.93  2002/03/06 16:51:25  cl
+  - BUGFIX *** FIXES POSSIBLE MAIL LOSS WITH BSMTP ***
+    HELO was missing on all BSMTP packages not converted during first use
+    of TUUZ after OpenXP start.
+
   Revision 1.92  2002/03/04 01:13:49  mk
   - made uuz -uz three times faster
 
