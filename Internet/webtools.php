@@ -36,6 +36,7 @@ function ShowHeader($title) {
 	// we like robots because of the web-directories
     	echo("<meta name='robots' content='index'>\n");
 	echo("<title>$title</title>\n</head>\n\n");
+
 	// now the body follows
 	echo("<body bgcolor=\"white\" text=\"black\" leftmargin=10>\n");
 	echo("\n<table width='100%'><tr>\n<td width=75 align='right' valign='bottom'>&nbsp;</td>");
@@ -48,13 +49,15 @@ function ShowHeader($title) {
 		echo("<a href='http://www.openxp.de/'>Deutsch</a>");
 	};
 	echo("</small></td>\n</tr>\n</table>\n\n<hr color='Blue' noshade size=1>");
-	// now open main table
-	echo("\n<table width='100%' border=0 cellspacing=0 cellpadding=5>");
+
+	// open main table
+	echo("\n<table border=0 cellspacing=0 cellpadding=5><tr>");
 	// build site map
-	echo("\n<tr><td align='left' valign='top' width=140>");
+	echo("\n<td align='left' valign='top' width=140>");
 	// now underlaying a blue table and then set the header
-	echo("\n<table width='100%' border=0 cellpadding=0 bgcolor='blue'>\n<tr>\n<td>\n<table width='100%' border=0 cellpadding=4>");
-	echo("\n<tr bgcolor='yellow'><th align='center'>Site Map</th>\n</tr>\n<tr bgcolor='white'>\n<td align='left'>");
+	echo("\n<table width='100%' border=0 cellpadding=0 bgcolor='blue'><tr>");
+	echo("\n<td>\n<table width='100%' border=0 cellpadding=4><tr bgcolor='yellow'>");
+	echo("\n<th align='center'>Site Map</th>\n</tr>\n<tr bgcolor='white'>\n<td align='left'>");
 	echo("\n<dl>"); // start definition list
 	$InSub = false;
 	reset($Menu);

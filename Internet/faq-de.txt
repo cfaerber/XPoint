@@ -2,12 +2,12 @@ Allgemeine OpenXP-FAQ
 
 Ich habe vermutlich einen Fehler/Bug entdeckt.
 Es existiert eine Bugliste (siehe Kontakt). Evtl. ist der Fehler dort schon verzeichnet.
-<br>Welche Version von OpenXP wird benutzt?- Insbesondere falls es sich um einen Release Candidate oder eine Release handelt, unter Angabe der genauen Umstände (OpenXP-Version, Netztyp, wie wird das Fehlverhalten hervorgerufen?) an die openxp-dev-Mailingliste schreiben (siehe Kontakt). Ggf. hilft auch ein genaues Debuglog (ab OpenXP 3.70, mit Parametern "/dl:default=10" starten, debuglog.txt ansehen) oder der Mailbuffer, bei dem der Fehler auftritt, weiter.
-<br><small>2001-01-16</small>
+<br>Welche Version von OpenXP wird benutzt?- Insbesondere falls es sich um einen Release Candidate oder eine Release handelt, unter Angabe der genauen Umstände (OpenXP-Version, Netztyp, wie wird das Fehlverhalten hervorgerufen?) an die openxp-dev-Mailingliste schreiben (siehe Kontakt). Ggf. hilft auch ein genaues Debuglog (ab OpenXP 3.70, mit Parametern "/dl:default=10" starten, debuglog.txt ansehen) oder der Mailbuffer, bei dem der Fehler auftritt, weiter. Sollte der Bug nicht gleich behebbar sein, auf der Bugliste eintragen.
+<br><small>2001-01-18</small>
 
 Ich habe einen Vorschlag für ein neues Feature.
-Wenn es eine Kleinigkeit ist, am besten direkt an den jeweiligen Programmierer wenden; ansonsten in der Mailingliste nachfragen (beides siehe Kontakt). Wegen des im Moment noch immer ziemlich undurchsichtigen Codes von OpenXP kann es aber einige Zeit dauern. Viele Wünsche lassen sich immerhin bereits mit Tools oder z.B. den Tastaturmakros erfüllen.
-<br><small>2001-01-16</small>
+Wenn es eine Kleinigkeit ist, am besten direkt an den jeweiligen Programmierer wenden; ansonsten in der Mailingliste nachfragen bzw. in die Bugliste eintragen (ich gleichzeitig Featurerequestliste; alles siehe Kontakt). Wegen des im Moment noch immer ziemlich undurchsichtigen Codes von OpenXP kann es aber einige Zeit dauern. Viele Wünsche lassen sich immerhin bereits mit Tools oder z.B. den Tastaturmakros erfüllen.
+<br><small>2001-01-18</small>
 
 Was muß ich bei der Umstellung von XP auf OpenXP beachten?
 Eigentlich gar nichts (natürlich schadet ein Backup der Datenbank und der
@@ -51,8 +51,8 @@ Wie kann ich regelmäßig informiert werden, wenn eine neue (Beta)Version erschein
 <br><small>2001-01-16</small>
 
 Wo finde ich eine Version, die noch auf einem 286er läuft?
-(nicht beantwortet)
-<br><small>2001-01-16</small>
+Im Moment ist die letzte auf einem 286er lauffähige Version OpenXP 3.20 (siehe <a href="ftp://ftp.openxp.de/openxp">FTP-Server</a>). Von OpenXP 3.40 wird es auch eine 286er-Version geben, sobald eine Release verfügbar ist.
+<br><small>2001-01-18</small>
 
 UKAW meldet eventuelle Inkompatibilitäten.
 (nicht beantwortet).
@@ -64,5 +64,5 @@ Unter Windows sind CAPI-Hayes-Konverter meistens in den ISDN-Treibern integriert
 <br><small>2001-01-16</small>
 
 Kann ich OpenXP mit ADSL nutzen?
-(nicht beantwortet)
+Ja. ;-)
 <br><small>2001-01-16</small>

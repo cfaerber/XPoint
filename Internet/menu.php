@@ -31,7 +31,7 @@ $Menu = array(
 		"sub"	=> true),
 	6 => array("de"	=> "Downloads",
 		"en" 	=> "Downloads",
-		"url"	=> $indexname . "?file=download-de.html",
+		"url"	=> $indexname . "?file=download-" . $language . ".html",
 		"sub"	=> false),
 	7 => array("de"	=> "Handbuch",
 		"en" 	=> "Manual",
