@@ -1,12 +1,13 @@
-{ --------------------------------------------------------------- }
+{ ----------------------------------------------------------------}
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 { Nodelisten-Konfiguration; Diffs verarbeiten }
@@ -469,6 +470,12 @@ Begin
             format:=nlPoints24;
             detect:=true;
             End
+          Else If listfile='R24PNT.###' Then Begin      { Typvorgabe 'FD-Pointliste' }
+            updatefile:='R24PNT_D.###';
+            updatearc:='R24PNT_D.Z##';
+            format:=nlFDpointlist;
+            detect:=true;
+            End
           Else If getfileext(listfile)='PVT' Then Begin { Typvorgabe 'PVT-Liste' }
             updatefile:=listfile;
             format:=3;
@@ -752,6 +759,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.8.2.4  2003/03/17 23:03:56  my
+  MY:- UnterstÅtzung der R24PNT-Liste verbessert: Beim Einbinden werden alle
+       Daten (Listenformat, Update-Datei, Update-Archiv) jetzt automatisch
+       korrekt eingetragen.
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.8.2.3  2003/03/17 22:36:58  my
   TS [+MY]:- Fido: Abfrage, Durchsuchen und Verwalten von Nodelisten
                    geÑndert/korrigiert/erweitert
