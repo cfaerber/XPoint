@@ -1,0 +1,73 @@
+ÍÍÍÍ  Version 3.12 -> 3.2 ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+Die folgende šbersicht beschreibt die wichtigsten nderungen der Version
+3.2 gegenber Version 3.12. Eine ausfhrlichere Liste finden Sie am Ende
+von XPOINT.DOC.
+
+
+
+ş Fehlerkorrekturen
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Neben vielen kleinen und groáen Bugs, die man kaum z„hlen kann, sind vor
+allem noch weitere sog. Jahr2000-Probleme entdeckt und natrlich entfernt
+worden. Damit drfte sich die Zahl unerkl„rlicher Abstrze drastisch re-
+duzieren. Auáerdem drfen die Mauser jetzt endlich mit gengend XMS auch
+mehr als 5000 Zeilen schreiben.
+
+
+ş Neues
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Endlich weren MIME-Mails korrekt erkannt und mit einem "M" vor der Nach-
+richt gekennzeichnet. Diese vor allem im Usenet vorkommenden Typen sind
+recht unangenehm zu lesen, wenn keine Auswahl des richtigen Teils (eben
+Text) vorgenommen wird: Und XP kann genau das jetzt. 
+
+Die zweite groáe nderung hat im Editor stattgefunden, der komplett ber-
+arbeitet wurde und damit hoffentlich sicherer/besser. Besonders hat sich 
+XP nun etwas von den WordStar-kompatiblen Tastaturbefehlen gel”st und 
+bietet nun auch so die mittlerweile blicheren Tasten wie <Shift> zum 
+Markieren an. Natrlich sind auch Makros weiterhin eine gute Wahl, um 
+sich da selber was zu basteln! 
+
+Quote-Reflow ist wohl auch ein Komfortmerkmal, das nun endlich in XP Ein-
+zug h„lt, damit werden Quotezeilen korrekt umgebrochen, d.h. Quotes 
+werden durch ein <Enter> mittendrin nicht mehr zerst”rt.
+
+Ebenfalls an den aktuellen Stand wurde die PGP-Schnittstelle gebracht,
+da die Kommandos sich mit Version 5 doch erheblich ge„ndert haben.
+
+Die Suchfunktionen wurden ebenfalls optimiert und erweitert, z.B. mit
+Nachricht/Suchen/MessageID und einer Umlautabh„ngigkeit bei "User", 
+"Betreff" und "Fidoempf„nger". Zus„tzlich ist eine Integration der Such-
+optionen in den Lister dazugekommen, siehe XPOINT.DOC in der Versionsge-
+schichte.
+
+
+ş Fido
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+Die Nodelistabfrage unter <Alt N> wurde komplett berarbeitet, u.a.
+werden jetzt der Status des Nodes (Node, Host etc.) und mehr Flags ange-
+zeigt.
+
+Bisher war XP nicht in der Lage, die ISDN-Flags korrekt zu erkennen. 
+Damit ist jetzt Schluss! Also kein Request bei Analog-Boxen mehr, 
+endlich.
+
+Requests werden jetzt von einer komplett neuen Einheit abgewickelt, so
+daá jetzt auch Magics korrekt erkannt und mehrere markierte Nodes ange-
+crasht werden k”nnen.
+
+
+ş UUCP
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+UUZ wurde ziemlich berarbeitet und ist speziell in der Zeichenkonver-
+tierung besser geworden, dabei wurden nebenbei auch direkt viele kleine
+Bugs beseitigt.
+
+Als neues Flag ist X-Priority dazugekommen, untersttzt in den versch-
+iedenen Varianten diverser Mailer, aber an der Behandlung der Mail in-
+nerhalb von XP „ndert sich nichts.
