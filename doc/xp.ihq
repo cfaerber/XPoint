@@ -14579,13 +14579,48 @@ selnd bei den einzelnen Boxen an, bis alle Netcalls
 erfolgreich waren. Vorgabe sind alle Boxen, bei denen
 Sie unter /Edit/Boxen/Edit/Diverses/Netcall_Alle <<[x]>>
 eingetragen haben. Sie k”nnen aber auch beliebige
-Boxen aus der Liste entfernen oder hinzufgen.
+Boxen aus der Liste entfernen oder hinzufgen oder
+die Reihenfolge „ndern.
 
 Die Anrufe werden durch eine tempor„re Timing-Liste
-gesteuert.
+gesteuert. Die Boxen werden in alphabetischer Reihen-
+folge vorsortiert, mit einer Ausnahme: Boxen vom
+Netztyp <<RFC/Client>> werden immer ans Ende sortiert.
+Der Grund dafr liegt darin, daá Boxen dieses Netz-
+typs h„ufig eine DFš-Netzwerkverbindung von Windows
+zum Verbindungsaufbau nutzen und gleichzeitig die
+Verbindung zwischen den Netcalls der einzelnen Boxen
+nicht trennen. Wrde jetzt nach einem Netcall einer
+RFC/Client-Box z.B. eine RFC/UUCP-Box versuchen, eine
+Direktverbindung bei noch bestehender DFš-Netzwerk-
+verbindung herzustellen, wrde das nicht nur nicht
+funktionieren, sondern m”glicherweise sogar das
+gesamte System destabilisieren.
 
-Dieser Menpunkt entspricht dem
+Sie sollten daher bei manuellen nderungen der vorge-
+gebenen Reihenfolge darauf achten, daá RFC/Client-
+Boxen immer als gemeinsamer Block am Ende der Liste
+stehen. Fr Netcalls von RFC/Client-Boxen, die ber
+eine Batchdatei gesteuert werden, stellt CrossPoint
+zwei Steuerdateien zur Verfgung:
+
+<<NETCALL.ALL>> - anhand der Existenz dieser Datei
+kann die Batchdatei erkennen, daá es sich um einen
+Netcall/Alle handelt <<und>> daá noch weitere Netcalls
+von RFC/Client-Boxen folgen. In diesem Fall k”nnte
+dann z.B. das Trennen der Verbindung vermieden
+werden.
+
+<<NETCALL.END>> - wenn diese Datei existiert, weiá die
+Batchdatei, daá es sich um einen Netcall/Alle handelt
+und daá <<keine>> weiteren Netcalls fr RFC/Client-Boxen
+folgen. Daraus k”nnte dann z.B. die Konsequenz
+gezogen werden, die Verbindung zu trennen.
+
+
+Der Menpunkt Netcall/Alle entspricht dem
 [Kommandozeilen-Parameter] <</n:*>>.@7
+
 @
 11503
 <<Netcall / Letzte Anrufe
