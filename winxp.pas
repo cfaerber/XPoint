@@ -452,9 +452,12 @@ end;
 {$ELSE }
 procedure FWrt(const x,y:word; const s:string);
 {$IFDEF NCRT }
+var
+  x0, y0: integer;
 begin
+  WhereXY(x0,y0);
   StringOutXY(x, y, s);
-  GotoXY(x, y);
+  GotoXY(x0, y0);
 end;
 {$ELSE }
 var
@@ -1282,6 +1285,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.31  2000/05/07 09:24:02  hd
+  FWrt-Korrektur
+
   Revision 1.30  2000/05/06 17:29:21  mk
   - DOS DPMI32 Portierung
 
