@@ -235,18 +235,18 @@ M”gliche Optionen sind:
       Sie das XP-Tool PKT2ZER einsetzen und dabei
       Probleme feststellen.
 
-<</av:>>  aktiviert den eingebauten Archiv-Viewer und
-      beendet das Programm anschlieáend. Als Para-
-      meter muá der Name einer Datei oder eine Wild-
-      card (z.B. *.*) angegeben werden.
+<</av:<Datei> >>aktiviert den eingebauten Archiv-Viewer
+      und beendet das Programm anschlieáend. Als
+      Parameter muá der Name einer Datei oder eine
+      Wildcard (z.B. *.*) angegeben werden.
 
 <</f:<Datei> >>l„dt eine EGA/VGA-Schriftdatei (Bild-
       schirm-Font) in den blichen Formaten (8x8 bis
       8x16 Punkte). Falls keine Dateierweiterung an-
       gegeben wird, nimmt XP ".FNT" an.
 
-<</gd:>>  w„hlt eine andere Gebhrendatei (Default:
-      GEBUEHR.DAT). N„heres s. FIDO.TXT.
+<</gd:<Datei> >>w„hlt eine andere Gebhrendatei
+      (Default: GEBUEHR.DAT). N„heres s. FIDO.TXT.
 
 <</j>>    fr ein Programmende ohne irgendeinen dummen
       Spruch...

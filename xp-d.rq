@@ -314,7 +314,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 20   ~          /k:xxx   (Sonder-)Tasten xxx Åbergeben (fÅr Tastenmakro)
 21   ~          /mailto:[user@do.main][?subject:"xxx"][\BOX]
 22   ~                   /Nachricht/Direkt nach Start ausfÅhren
-23   ~                   und Parameter an Eingabefelder Åbergeben
+23   ~                   und /mailto:-Parameter an Dialog Åbergeben
 24   ~          /pw:xxx  Startpa·wort xxx Åbergeben
 25   ~          /nb      Warnhinweis bei Beta-Versionen abschalten
 26   ~          /z:nn    stellt nn Bildschirmzeilen ein
