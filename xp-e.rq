@@ -1566,6 +1566,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 8    Entry "Client directory" not OK
 9    Entry "Client call" is missing
 10   Entry "Client call" not OK
+11   Entry "Additional servers" not OK
 -
 707 <broken in>
 708 Break
@@ -1922,10 +1923,11 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 104  News server (NNTP)
 105  news.btinternet.com
 106  Server name    ~
-107  Envelope address
-108  User name      ~
-109  Password       ~
-110  Port
+107  Fallback server~
+108  Envelope address
+109  User name      ~
+110  Password       ~
+111  Port
 #
 40   UpPack extension ~
 41   DownPack ext.~
@@ -2078,7 +2080,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 4    load destination directory ($DOWNPATH).
 5
 6    You cannot use protocols for Janus Plus which do not
-7    support download destionation paths.
+7    support download destination paths.
 + 933
 0    44
 1    QWK settings
@@ -2099,8 +2101,14 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 3    MIME type       ~
 4    File extension  ~
 5    Viewer program  ~
++ 936
+# window width /Edit/Servers/Edit/Client/Additional_Servers/<F2>
+#          and /Netcall/Special_list/2x<Enter>
+1    45
+2    ~^Insert , ^Move , ^Delete ,  ^OK ~
+3    Servers (Net type %s)
+4    Delete Server "%s"
 -
-
 
 # --- XP10 ------------------------------------------------------------
 
@@ -2174,13 +2182,12 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 1    Netcall to:
 2    -- no more tasks listed for current date --
 3    Netcall Automatics
-4    Special Netcall to:
 + 1017
 1    You haven't defined any key macros for this window!
 2    Select macro ...
 3    No key macros defined!
 + 1018
-# window with /config/display/header
+# window width /config/display/header
 1    45
 2    ~^Insert , ^Move , ^Delete ,  ^OK ~
 3    add line:
@@ -2217,6 +2224,13 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 3    Currency ~
 4    cFos phone fee calculation
 5    German holidays
+# Netcall/Special
++ 1024
+1    Special Netcall to:
+2    Server list for
+3    /Netcall/Special
+4    No.  Server
+5    to:
 -
 
 # --- XPTERM ----------------------------------------------------------
@@ -3152,7 +3166,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 # log file
 28 Invalid file name!
 #
-29 %s is no fido server!
+29 "%s" is no fido server!
 30 Warning - illegal characters in point name: %s
 31 Default entry cannot be deleted.
 32 MIME type or file extension required.
@@ -3178,6 +3192,24 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 #
 49 Client directory "%s" not found!
 50 Directory "%s" not found!
+#
+51 There are no (more) servers that could be added!
+52 This list may contain a maximum of %s servers!
+53 Maximum input length (%s) for server names reached!
+54 Maximum input length (%s) for file names (.BFG) reached!
+55 Server "%s" does already exist - add, anyway
+56 Input too long (Server names)! %s characters still available.
+57 Input too long (file names (.BFG))! %s characters still available.
+58 Server "%s"
+59 does exist %s times!
+60 Server "%s" does not exist!
+61 Server "%s" is identical with the server currently edited!
+62 is not of net type %s!
+63 Maximum total length (%s) of file names (.BFG) exceeded!
+64 Maximum total length (%s) of Server names exceeded!
+65 Invalid server configuration file name: "%s.BFG"
+66 Server for file name "%s.BFG" not found!
+67 Invalid Server name: "%s"
 
 +  11000
 1  unknown command
@@ -3199,13 +3231,6 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 17 - create it
 18 NETCALL.DAT does not contain any valid entries (lines 1-20)!
 19 /nsp: NETCALL.DAT does not contain a valid entry in line %s!
-20 Server list for
-21 /Netcall/Special
-22 No.  Server
-23 to:
-24 Server
-25 does already exist - add, anyway
-26 Input too long! %s characters still available.
 
 +  12000
 1  Invalid logfile name
@@ -3262,7 +3287,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 10 unsupported net type
 11 Error while converting messages
 12 Unknown server - select with <F2>
-13 Wrong net type - must be QWK od Fido!
+13 Wrong net type - must be QWK or Fido!
 14 ZQWK.EXE not found! (ZQWK.EXE is part of the XP QWK module)
 15 ZQWK error %s
 
