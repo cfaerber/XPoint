@@ -25,7 +25,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 0   Main,001^XPointù1,002^Re-Orgù7,003^Messageù3,004^Netcallù15,005^Fidoù31,006E^ditù16,007^Configù6,008^Toolsù2
 1   XPoint,011^Register,012^Importù10,013^Exportù36,014^Statisticsù17,015^Terminal,016^DOS       F9,-,018^Quit
 2   Zusatz,021^Calendar,022^Archive Viewer
-3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038News ^managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
+3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038News/Echo ^Managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark     ^E,058Message^ID
 6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
@@ -468,7 +468,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 17   MBytes
 19   Use descriptions from newsgroup list
 20   Enables umlauts for new Users
-21   Treat : and | as quote characters
+21   Enable alternate quote characters
 22   Sort User-window by Server name
 23   Default Usergroup
 24   Create an archive-note
