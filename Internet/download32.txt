@@ -1,0 +1,13 @@
+*OpenXP/32 Snapshot<br /><small>"das Neueste vom Neuesten", keine Garantie, zeitweise u.U. nicht funktionsfähig!</small>
+OpenXP/32 snapshot<br /><small>"bleeding edge code", no guarantees, may not work from time to time!</small>
+/openxp/snapshot/oxp32win.rar
+Win32-Version
+Win32 version
+
+/openxp/snapshot/openxp-3.70.3-24.i386.rpm
+Linux-Version
+Linux version
+
+/openxp/snapshot/oxp32src.rar
+Quelltexte
+Source code

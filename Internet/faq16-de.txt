@@ -1,4 +1,8 @@
-FAQ zu OpenXP 3.40
+FAQ zu OpenXP/16
+
+Welche Version von OpenXP/16 ist für mich die richtige?&nbsp;&nbsp;<small>2001-09-24</small>
+Von OpenXP/16 existiert die Version 3.20, die in erster Linie etliche Bugfixes gegenüber den letzten CrossPoint-Versionen von Peter Mandrella enthält. Die Betonung bei der v3.20 liegt auf Stabilität.
+<br />Von der Version 3.40 liegt im Moment zum einen der letzte "Release Candidate" bereit, zum anderen die aktuellen Snapshots. Das Release der v3.40 verzögert  sich zugunsten etlicher neuer Features wie z.B. dem Client-Mode. Da der Release Candidate schon etwas älter ist, sind dort etliche Features noch nicht implementiert. Die Snapshots sind aber auch recht stabil, da im Moment nicht mehr umfangreichere Features eingebaut werden, sondern eher noch Feinschliff betrieben wird.
 
 Wie gehe ich mit den User-Gruppen im Adreßbuch um?&nbsp;&nbsp;<small>2001-02-07</small>
 ...ist in der Onlinehilfe erläutert: Hilfe in der User-Übersicht (Text zu Tasten "A" und "R") sowie User-Übersicht/Spezialmodus/User editieren/F1 im Feld "Adreßbuchgruppe".

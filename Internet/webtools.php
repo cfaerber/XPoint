@@ -91,7 +91,6 @@ function ShowHeader($title) {
 // concludes the HTML page
 function ShowFooter() {
 	global $language;
-        echo("\n</td></tr><tr>");
 	echo("\n</td></tr></table>\n<hr noshade=\"noshade\" size=\"1\" />");
 	echo("\n<table width=\"100%\"><tr>\n<td align=\"left\" width=\"25%\">");
 	if ($language == "de") {
@@ -243,7 +242,7 @@ function ShowDownloadTable($downfile) {
 	    ftp_quit($fhandle);
 	}
 
-        $popen=false;
+	$popen=false;
 	echo("\n");
 	while(!feof($pdfile)) {
 	  $line=fgets($pdfile,300);
@@ -257,12 +256,15 @@ function ShowDownloadTable($downfile) {
 	      echo("<h3>".$line."</h3>");
 	    }
 	  } else {
-	    if ($fhandle)
-	      $fsize = sprintf("%01.2f MB", (ftp_size($fhandle, $line)/1024/1024));
-	    else
+	    if ($fhandle) {
+	      $fsize = sprintf("%01.2f MB", ftp_size($fhandle, $line)/1024/1024);
+	      $ftime = date("Y-m-d", ftp_mdtm($fhandle, $line));
+	    } else {
 	      $fsize = ""; // no ftp connection made
+	      $ftime = "";
+	    }
 
-            if($popen) {
+	    if($popen) {
 	      echo("<br />\n");
 	    } else {
               echo("\n<p>"); $popen=true;
@@ -277,7 +279,7 @@ function ShowDownloadTable($downfile) {
 	    }
 	    echo("\n".htmlspecialchars($fdesc));
 	    echo(" (<a href=\"".htmlspecialchars("ftp://ftp.openxp.de".$line)."\">FTP</a>/");
-	    echo("<a href=\"".htmlspecialchars("http://www.happyarts.de/ftp".$line)."\">HTTP</a>, ".$fsize.")");
+	    echo("<a href=\"".htmlspecialchars("http://www.happyarts.de/ftp".$line)."\">HTTP</a>, ".$fsize.", ".$ftime.")");
 	    fgets($pdfile,20); // skip empty line
 	  }
 	}

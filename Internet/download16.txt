@@ -1,0 +1,41 @@
+*OpenXP/16 v3.40 Release Candidate 2
+OpenXP/16 v3.40 Release Candidate 2
+/openxp/oxp340.zip
+DOS 16 Bit komplett
+DOS 16 bit complete
+
+/openxp/oxp340up.rar
+DOS 16 Bit Update
+DOS 16 bit update
+
+/openxp/oxp340s.rar
+Quelltexte
+Source code
+
+*OpenXP/16 v3.40 Snapshot<br /><small>"das Neueste vom Neuesten", keine Garantie!</small>
+OpenXP/16 v3.40 snapshot<br /><small>"bleeding edge code", no guarantees!</small>
+/openxp/snapshot/oxp340.zip
+DOS 16 Bit komplett
+DOS 16 bit complete
+
+/openxp/snapshot/oxp340up.rar
+DOS 16 Bit Update
+DOS 16 bit update
+
+/openxp/snapshot/oxp340s.rar
+Quelltexte
+Source code
+
+*OpenXP/16 v3.20d Release
+OpenXP/16 v3.20d release
+/openxp/oxp320.zip
+DOS 16 Bit komplett
+DOS 16 bit complete
+
+/openxp/oxp320up.rar
+DOS 16 Bit Update
+DOS 16 bit update
+
+/openxp/oxp320s.rar
+Quelltexte
+Source code

@@ -76,19 +76,19 @@ ReplaceOwn
 x
 x
 
-Client-Modus<br /><small>universelle Schnittstelle für UKA_PPP, UKAW/UKAD, XPNews etc.</small>
-Client mode<br /><small>universal interface for UKA_PPP, UKAW/UKAD, XPNews etc.</small>
+Client-Modus<br /><small>Universelle Schnittstelle für UKA_PPP, UKAW/UKAD, XPNews etc.</small>
+Client mode<br /><small>Universal interface for UKA_PPP, UKAW/UKAD, XPNews etc.</small>
 -
 o
 o
 
-32 Bit<br /><small>praktisch alle Limits entschärft</small>
-32 bit<br /><small>nearly all limits removed</small>
+32 Bit<br /><small>Praktisch alle Limits entschärft</small>
+32 bit<br /><small>Nearly all limits removed</small>
 -
 -
 x
 
-Bildschirmgröße frei wählbar<br /><small>unter Win32/Linux</small>
+Bildschirmgröße frei wählbar<br /><small>Unter Win32/Linux</small>
 Screen size configurable freely<br /><small>Win32/Linux only</small>
 -
 -
@@ -100,14 +100,14 @@ Integrated NNTP/SMTP/POP3 support<small>Win32/Linux, with APOP and SMTP Auth sup
 -
 x
 
-Integriertes ZFido/UUZ
-Integrated ZFido/UUZ
+Integriertes ZFido/UUZ/UUCICO<br /><small>Incl. UUCP-t und UUCP over IP</small>
+Integrated ZFido/UUZ/UUCICO<br /><small>Supporting UUCP-t and UUCP over IP</small>
 -
 -
 x
 
-Verbesserter Netcall-Support<br /><small>Netcall-over-IP/nativer Schnittstellenzugriff</small>
-Improved netcall support<br /><small>Netcall over IP/native serial port support</small>
+Verbesserter Netcall-Support<br /><small>Remote Modems/nativer Schnittstellenzugriff</small>
+Improved netcall support<br /><small>Remote modem/native serial port support</small>
 -
 -
 x
