@@ -128,6 +128,12 @@
 #
 #contribdir = 
 
+# Sollen unter Linux bei "make install" Softlinks nach /usr/bin und
+# /usr/lib gesetzt werden?
+# (KANN gesetzt werden.  Voreingestellt auf yes.)
+#
+#SETLINKS = yes
+
 # Name des Quellcode-Archivs
 # (MUSS gesetzt werden, falls "make dist" aufgerufen wird.)
 #
@@ -156,6 +162,7 @@ gesetzt werden)
 endif
 
 CPU ?= 386
+SETLINKS ?= yes
 
 ifeq (,$(findstring $(COMPILER),fpc vpc))
 $(error Variable "COMPILER" muss auf "fpc" oder "vpc" gesetzt werden)
@@ -2333,9 +2340,14 @@ install_bindir:
 # Installiert Binaries.  Linux bekommt Softlinks nach /usr/bin.
 
 ifeq ($(OS),linux)
+ifeq ($(SETLINKS),yes)
 $(patsubst %,install_%,$(BINFILES)): install_%: %
 	$(INSTALL_PROGRAM) $* $(bindir)
 	$(LN) $(bindir)$(SEP)$* $(binlinkdir)$(SEP)$*
+else
+$(patsubst %,install_%,$(BINFILES)): install_%: %
+	$(INSTALL_PROGRAM) $* $(bindir)
+endif
 else
 $(patsubst %,install_%,$(BINFILES)): install_%: %
 	$(INSTALL_PROGRAM) $* $(bindir)
@@ -2345,6 +2357,7 @@ install_datadir:
 	-$(INSTALLDIR) $(datadir)
 
 ifeq ($(OS),linux)
+ifeq ($(SETLINKS),yes)
 $(patsubst %,install_%,$(RESFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
 	$(LN) $(datadir)$(SEP)$* $(datalinkdir)$(SEP)$*
@@ -2352,11 +2365,20 @@ else
 $(patsubst %,install_%,$(RESFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
 endif
+else
+$(patsubst %,install_%,$(RESFILES)): install_%: %
+	$(INSTALL_DATA) $* $(datadir)
+endif
 
 ifeq ($(OS),linux)
+ifeq ($(SETLINKS),yes)
 $(patsubst %,install_%,$(RSTFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
 	$(LN) $(datadir)$(SEP)$* $(datalinkdir)$(SEP)$*
+else
+$(patsubst %,install_%,$(RSTFILES)): install_%: %
+	$(INSTALL_DATA) $* $(datadir)
+endif
 else
 $(patsubst %,install_%,$(RSTFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
@@ -2372,9 +2394,14 @@ $(patsubst %,install_%,$(CONTRIBBIN)): install_%:
 	$(INSTALL_DATA) $(contribdir)$(SEP)$(OS)$(SEP)$* $(bindir)
 
 ifeq ($(OS),linux)
+ifeq ($(SETLINKS),yes)
 $(patsubst %,install_%,$(CONTRIBDATA)): install_%:
 	$(INSTALL_DATA) $(contribdir)$(SEP)data$(SEP)$* $(datadir)
 	$(LN) $(datadir)$(SEP)$* $(datalinkdir)$(SEP)$*
+else
+$(patsubst %,install_%,$(CONTRIBDATA)): install_%:
+	$(INSTALL_DATA) $(contribdir)$(SEP)data$(SEP)$* $(datadir)
+endif
 else
 $(patsubst %,install_%,$(CONTRIBDATA)): install_%:
 	$(INSTALL_DATA) $(contribdir)$(SEP)data$(SEP)$* $(datadir)
@@ -2395,6 +2422,7 @@ $(patsubst %,uninstall_%,$(CONTRIBEXAMPLE)): uninstall_%:
 	-$(RM) $(exampledir)$(SEP)$*
 
 ifeq ($(OS),linux)
+ifeq ($(SETLINKS),yes)
 $(patsubst %,uninstall_%,$(DATAFILES)): uninstall_%:
 	-$(RM) $(datalinkdir)$(SEP)$*
 	-$(RM) $(datadir)$(SEP)$*
@@ -2402,11 +2430,20 @@ else
 $(patsubst %,uninstall_%,$(DATAFILES)): uninstall_%:
 	-$(RM) $(datadir)$(SEP)$*
 endif
+else
+$(patsubst %,uninstall_%,$(DATAFILES)): uninstall_%:
+	-$(RM) $(datadir)$(SEP)$*
+endif
 
 ifeq ($(OS),linux)
+ifeq ($(SETLINKS),yes)
 $(patsubst %,uninstall_%,$(INSTALLBINFILES)): uninstall_%:
 	-$(RM) $(binlinkdir)$(SEP)$*
 	-$(RM) $(bindir)$(SEP)$*
+else
+$(patsubst %,uninstall_%,$(INSTALLBINFILES)): uninstall_%:
+	-$(RM) $(bindir)$(SEP)$*
+endif
 else
 $(patsubst %,uninstall_%,$(INSTALLBINFILES)): uninstall_%:
 	-$(RM) $(bindir)$(SEP)$*
@@ -2497,6 +2534,10 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.25  2000/10/19 19:39:44  fe
+# Neue SETLINKS-Variable bestimmt, ob bei Linux bei "make install"
+# Softlinks nach /usr/bin und /usr/lib gesetzt werden.
+#
 # Revision 1.24  2000/10/19 18:15:35  fe
 # Fuer FPC SmartLinking und RangeChecking ausgestellt.
 # Anpassungen der FPC-Linux-Aufrufparameter.
