@@ -24,12 +24,12 @@ K (c) '93-96 Peter Mandrella
 0   Main,001^XPointù1,002^Re-Orgù7,003^Messageù3,004^Netcallù15,005^Fidoù31,006E^ditù16,007^Configù6,008^Toolsù2
 1   XPoint,011^Register,012^Importù10,013^Exportù36,014^Statisticsù17,015^Terminal,016^DOS       F9,-,018^Quit
 2   Zusatz,021^Calendar,022^Archive Viewer
-3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036^Forwardù21,-,038News ^managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
+3   Nachricht,031^Searchù5,032E^xtractù12,033^Unsentù4,034^Allù14,035^Changeù22,036Ac^tionù21,-,038News ^managerù19,039F^ileserverù20,03aP^GPù40,03b^Direct
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark     ^E,058Message^ID
 6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^scù33
-8   Schablonen,081!^Head,082!^PrivHead,083!P^ublicQuote,084!P^RivQuote,085!PrivP^MQuote,086!^QuoteTo,087!^Forward,088!^Repost,-,08a!^Signature,08b!Pr^IvSignature,08c!^Receipt req.,08d!^Cancel,08e!^Others
+8   Schablonen,081!^Header (Pub),082!Header (^Priv),-,083!Quote (P^ub),084!Quote (Pu^b > Priv),085!Quote (Pri^v),086!^QuoteTo (other area),087!^Forward,088!^Repost,-,08a!^Signature (Pub),08b!Signature (Pr^iv),08c!R^eceipt req.,08d!^Cancel,08e!^Others
 9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Linesù11,096M^isc,098^Accessibility,097^PD-Zmodem
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
 # Dummy for XPME:
@@ -43,7 +43,7 @@ K (c) '93-96 Peter Mandrella
 18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Subscribe,132^Unsubscribe,133^Get list,134^Others,-,136^Import list,137Read ^file
 20  Fileserver,141^Request,142^Send,143^Listù27,144^Help,145^Transfer,146S^ervice
-21  Weiter,151^Copy,152^Original,153Comm^ent,154^Quote,-,156C^onfirmation,157Ca^ncel,158^Repost      @R,159^Archive     @A,15aUser-^PM     @P
+21  Weiter,151^Copy,152^Original,153^Forward,154^Quote,-,156C^onfirmation,157Ca^ncel,158^Supersede,159^Repost      @R,15a^Archive     @A,15bUser-^PM     @P
 22  Žndern,161^Subject,162^Receive date,163R^ot13,164^Text,165T^ype,166r^ead,167^Highlight
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Macros
 24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
@@ -228,15 +228,15 @@ K (c) '93-96 Peter Mandrella
 1    Template for new public messages
 2    Template for new private messages
 3    Quote template for public messages
-4    Quote template for mail answers to public messages
-5    Quote template for mail answers
-6    Template for /Message/Forward/QuoteTo
-7    Template for /Message/Forward/Copy
-8    Template for /Message/Forward/Repost
+4    Quote template for private replies to public messages
+5    Quote template for private replies
+6    Template for /Message/Action/Quote
+7    Template for /Message/Action/Forward
+8    Template for /Message/Action/Repost
 10   Signature for public messages
 11   Signature for private messages
 12   Signature for automatic receipt
-13   Signature for /Message/Forward/Cancel
+13   Signature for /Message/Action/Cancel
 14
 -
 133  Menu
@@ -262,7 +262,7 @@ K (c) '93-96 Peter Mandrella
 
 200  Color Setup
 + 201
-0    ^Main menu,^1st menu level,^2nd menu level,^3rd menu level,^F-Keys,M^iscellaneous,^User/Newsgr.,Messa^ges,Message ^window,^Dialog window,Selection 1,Selection 2,^Buttons,Uti^lities,Hel^p,Liste^r,^Editor,uu^cico/Mailer,¯Defaul^t®,¯^Save®,¯^OK®
+0    ^Main menu,^1st menu level,^2nd menu level,^3rd menu level,^F-Keys,M^iscellaneous,^User/Newsgr.,Messa^ges,Message ^window,^Dialog window,Selection 1,Selection 2,^Buttons,Uti^lities,Hel^p,Reade^r,^Editor,uu^cico/Mailer,¯Defaul^t®,¯^Save®,¯^OK®
 1    ^Text,^Keys,^Bar,^Selected key,^Inactive
 2    ^Text,^Keys,^Bar,^Selected key,^Inactive,I^nactive+selected
 3    ^Text,^Keys,^Bar,^Selected key,^Inactive,I^nactive+selected
@@ -320,7 +320,7 @@ K (c) '93-96 Peter Mandrella
 33   ~          /ipe:PUF  import puffer file with receive date = creation date
 34   ~          /g        sets /ip and /ips messages to status 'read'
 35   ~          /eb       return receipts (for /ip..)
-36   ~          /r        start messagebase reorganization
+36   ~          /r        start messagebase reorganisation
 37   ~          /pack     do /Reorg/Pack
 38   ~          /t:n      start timing list no. n
 39
@@ -642,20 +642,22 @@ K (c) '93-96 Peter Mandrella
 14   Show realnames, if possible
 15   Show recipients of echomail messages (FidoNet)
 + 260
-1    Screen saver (sec.) ~
+1    Screen-saver (sec.) ~
 2    Scroll out
-3    Ask start password
-4    Show user name
+3    Password at startup?
+4    Show User-name
 5    Cursor in menus and lists
-6    blank screen
+6    Lock screen-blanker
 7    optical sound signal
 8    blank window background
 9    Power saver
 10   Terminal BIOS output
 11   Accessibility options
 12   additional sound signals
-13   headline 1
-14   headline 2
+13   Headline 1
+14   Headline 2
+15   Message-list column order
+16   User-list column order  ~
 + 261
 # Window width
 0    50
@@ -716,13 +718,13 @@ K (c) '93-96 Peter Mandrella
 7    Import nodelist updates automatically
 # length of field "standard echomail recipient" (maximum: 20)
 8    13
-9    Standard echomail recipient~
+9    Default echomail recipient~
 10   Delete empty messages
 11   4D point list
 12   Automatic TIC file processing
 13   Hold requests if files are missing
-14   Automatic node list indexing
-15   Delete Via lines
+14   Automatic nodelist indexing
+15   Delete hidden kludges
 + 268
 1    PM size limits / bytes
 2    net
@@ -785,12 +787,12 @@ K (c) '93-96 Peter Mandrella
 320  Rereading group dates...     %
 321  ~done.~~
 + 322
-1    Move messages to other newsgroup
+1    Move messages to another Newsgroup
 2    Source
-3    Destinat.~~
+3    Dest.~~~~~~
 4    Change message header?
 5    Working ...
-6    Newsgroup does not exist
+6    Newsgroup does not exist!
 -
 + 323
 1    Move messages to other mailgroup
@@ -847,10 +849,10 @@ K (c) '93-96 Peter Mandrella
 338  Testing message packet...     ~
 339  Building newsgroup index...     %
 340  Rebuilding newsgroup index ...     %
-341  Cancelling and superseding messages ...~
+341  Processing control messages ...~
 342  Form feed after each message
 343  <no subject>
-344  Auch gehaltene Nachrichten l”schen
+344  Delete "held" messages as well?
 
 # XP3EX
 360  decoding message...     %
@@ -884,7 +886,7 @@ K (c) '93-96 Peter Mandrella
 27   Reply to: ~
 28   CC:       ~
 29   PGP staus:~
-30   Fido To:  ~
+30   Fido-To:  ~
 31   Distrib.: ~
 32   Homepage: ~
 35   Priority: ~
@@ -943,7 +945,7 @@ K (c) '93-96 Peter Mandrella
 424  messages since last netcall
 425  messages since %s
 426  ~Select archive newsgroup:
-427  ~Select destionation newsgroup
+427  ~Select destination
 428  ~Select recipient
 429  Record no:~
 430  Show file contents
@@ -1012,10 +1014,10 @@ K (c) '93-96 Peter Mandrella
 9    delete %s from address book
 10   delete %s
 -
-446  Stop reorganization
+446  Stop reorganisation
 447  Stop
 + 448
-1    Messagebase Reorganization
+1    Messagebase Reorganisation
 2    Nessagebase Test
 3    Messagebase Statistics
 # die L„nge von Feld Nr. 4 bestimmt die Fensterbreite:
@@ -1027,7 +1029,7 @@ K (c) '93-96 Peter Mandrella
 449  Stop at the end of file
 450  ~Stop at the end of file.
 + 451
-1   Reorganization
+1   Reorganisation
 2   File No %s
 3   ~- not enough disk space!
 4   not enough disk space to pack messagebase file no %s
@@ -1060,14 +1062,14 @@ K (c) '93-96 Peter Mandrella
 + 459
 1    ~ (Text)
 2    ~ (binary)
-3    To        :
-4    Fido-to   :
+3    Msg. Area :
+4    To        :
 5    Subject   :
 6    Sender    :
 7    Realname  :
 8    Organizat.:
 9    Reply to  :
-10   Date code :
+10   Date      :
 11   Path      :
 12   ~         ~
 13   MessageID :
@@ -1313,13 +1315,13 @@ K (c) '93-96 Peter Mandrella
 8    Fido-to ~
 # Send window
 10   To       ~
-11   Fido-to
+11   ^Recipient
 12   Subject
 13   Server
 14   Size
 15   Code:
 16   Copies:
-20   P^ark,^Date,R^ecConf,^withoutSig,de^lete,C^rash,P^GP,^Back
+20   P^ark,^Date,R^ecConf,^withoutSig,de^lete,Cras^h,P^GP,^Back
 21   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^MausNet,^Lokal,^Back
 22   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
 23   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
@@ -1327,7 +1329,7 @@ K (c) '93-96 Peter Mandrella
 25   YNIùSVOT
 28   ^Yes,^No,^Internal,S^pecial,ù4To^:,^Subj.,Ser^ver,C^ode
 29   ,^Text
-30   ADEWLRùLMG
+30   ADEWLHùLMG
 # Editor Header
 40   Message to ~
 41   Message in ~
@@ -1779,6 +1781,7 @@ K (c) '93-96 Peter Mandrella
 # UUCP
 30   max. UUCP-g packet size ~
 31   max. UUCP-g window size    ~
+62   maximum file size       ~
 32   variable UUCP-g packet size
 60   force send packet size
 61   7/E/1 login
@@ -2016,12 +2019,12 @@ K (c) '93-96 Peter Mandrella
 1015 Discard changes
 + 1016
 1    Netcall to:
-2    -- no more tasls listed for current date --
+2    -- no more tasks listed for current date --
 3    Netcall Automatics
 + 1017
-1    You haven't defined key macros for this window.
+1    You haven't defined any key macros for this window!
 2    Select macro ...
-3    No key macros defined
+3    No key macros defined!
 + 1018
 # window with /config/display/header
 1    45
@@ -2033,11 +2036,11 @@ K (c) '93-96 Peter Mandrella
 + 1019
 1  ~^New , ^Edit , ^TextEdit , ^Delete , ^Info ,  ^OK ~
 2  37
-3  Delete node/point list entry?
+3  Delete Node/Pointlist entry?
 4  ~^Yes ,  ^No  , with ^File~
-10 Add new node or point list
+10 Add new Node or Pointlist
 -
-1020 activate nodediff / pointdiff
+1020 Update nodediff/pointdiff
 1021 phone fees
 + 1022
 1    Phone fee group
@@ -2108,7 +2111,7 @@ K (c) '93-96 Peter Mandrella
 # --- XPFIDO ----------------------------------------------------------
 
 + 2100
-1    Get node infos (Esc to quit)
+1    Find Node info (Esc to quit)
 2    BBS
 3    AKA    [                    ]
 4    Sysop
@@ -2124,12 +2127,12 @@ K (c) '93-96 Peter Mandrella
 2    File
 3    Net
 4    User
-5    Sorting net index ...
-6    Sorting user index ...
-7    Packing user index ...      %
+5    Sorting Net index ...
+6    Sorting User index ...
+7    Packing User index ...      %
 -
 2102 Nodelist configuration - see FIDO.TXT
-2103 Copying point list
+2103 Copying Pointlist
 + 2104
 1    Shrink nodelist
 2    Zones/Regions~
@@ -2197,8 +2200,8 @@ K (c) '93-96 Peter Mandrella
 3    For more information ask the BBS' SysOp!
 + 2127
 0    51
-1    Activate node/point list
-2    Configure node/point list
+1    Activate Node/Pointlist
+2    Configure Node/Pointlist
 5    List name      ~
 6    Number~
 7    Format of list ~
@@ -2209,14 +2212,14 @@ K (c) '93-96 Peter Mandrella
 12   Diff update
 13   Delete update after processing
 + 2128
-1    Node list
+1    Nodelist
 2    Points24 list
-3    PVT point list
-4    4D point list
-5    FD point list
+3    PVT Pointlist
+4    4D Pointlist
+5    FD Pointlist
 + 2129
 0    30
-1    Node/point list info
+1    Node/Pointlist info
 2    File
 3    Bytes
 4    Entries
@@ -2387,7 +2390,7 @@ K (c) '93-96 Peter Mandrella
 0    30
 1    Editor setup
 2    Right margin ~
-3    Paragraph end marker~
+3    End of line marker~
 4    Auto indent
 5    Persistent Blocks
 6    Quote-Reflow
@@ -2494,9 +2497,10 @@ K (c) '93-96 Peter Mandrella
 5    Comment ~
 6    Hold time
 7    Days
-8    Umlauts
-9    Message filter
-10   Receipt requests
+8    Convert Umlauts
+9    Add to "Twit" filter
+10   Send receipt requests (RRQ's)
+11   Usergroup
 -
 2702 Add new user
 + 2703
@@ -2530,10 +2534,10 @@ K (c) '93-96 Peter Mandrella
 12   Group    ~
 13   Origin   ~
 -
-2709 User not in database - create new user
-2710 Edit user
+2709 User not in database - create new User?
+2710 Edit User
 2711 No Server - create internal newsgroup
-2712 Unknown server - add newsgroup, anyway
+2712 Unknown Server - add newsgroup anyway?
 2713 Name of newsgroup has changed - adjust message headers
 2714 One moment please ...
 + 2715
@@ -2599,8 +2603,8 @@ K (c) '93-96 Peter Mandrella
 -
 2730 Sort newsgroups alphabetical
 + 2731
-1    Add split line
-2    Split char. ~
+1    Add dividing line
+2    Line char. ~
 3    Comment     ~
 -
 2732 Move 1 marked newsgroup
@@ -2620,23 +2624,23 @@ K (c) '93-96 Peter Mandrella
 12   short names
 + 2735
 0    55
-1    Change newsgroup access / followup-to
-2    Followup to~
-3    No write access
-10   You have unlimited access to this newsgroup.
+1    Change Newsgroup access / Re-direct
+2    Re-direct to~
+3    Write access forbidden
+10   You have read/write access to this Newsgroup.
 11
 12
-20   You may not write in this newsgroup.
+20   You do NOT have write-access in this Newsgroup!
 21
 22
 30   All new messages and all replies that you post in
 31   this newsgroup will be redirected to the followup
 32   group/address.
-40   All public replies that you post in this newsgroup
-41   will be redirected to the followup group/address.
+40   All public replies that you post in this Newsgroup
+41   will be redirected to the "Re-direct to" group/address.
 42
 50   All public replies by other users to your messages
-51   in this newsgroup will be redirected to to followup
+51   in this newsgroup will be redirected to followup
 52   newsgroup.
 -
 2736 %s contains messages. Delete
@@ -2712,6 +2716,7 @@ K (c) '93-96 Peter Mandrella
 18 First enable ZCONNECT PGP support!
 19 Your graphics adapter does not support VESA DPMS.
 20 Please enter the full URL (http://do.main/...).
+21 The device '/dev/%s' does not exist!
 
 +  10300
 1  not possible with user groups
@@ -2731,6 +2736,9 @@ K (c) '93-96 Peter Mandrella
 14 Not possible within this net!
 15 Function is not allowed here.
 16 Illegal path or file name.
+17 Only possible with public messages!
+18 Not possible within this net!
+19 That's not your message!
 
 +  10400
 1  No message selected
@@ -2780,6 +2788,7 @@ K (c) '93-96 Peter Mandrella
 44 User is not present in XP's user list.
 45 Mesagebase is bad; use /Re-Org/Pack!
 46 Close this newsgroup and *then* press "W" ...
+47 You can't supersede a unsent message
 
 50 Writing to this newsgroup is disabled
 # XP4O3
@@ -2792,27 +2801,27 @@ K (c) '93-96 Peter Mandrella
 1  Date must be same or newer than today.
 2  empty message - not sent
 3  File was not crypted!
-4  Plese send message to server system as normal netmail.
+4  Plese send message to Server as a normal netmail.
 5  not enough memory to send the message
 6  Internal newsgroup - writing not allowed!
-7  Unknown server system: %s
+7  Unknown Server: %s
 8  file path too long
-9  Binary mails are not possible in this net
+9  Binary messages are not allowed in this Net
 10 Subject of file attaches cannnot be changed
 11 not possible - internal message
 12 Not possible with binary mails.
 13 Not possible with carbon copies.
 14 Receipts only allowed for PMs
-15 Only possible with PMs
+15 Only possible with Private messages!
 16 File not found
 17 Not enough disk space on temporary drive
 18 Invalid send message!
-19 This is no unsent message!
+19 This is not an unsent message!
 20 Not possible - please resend file
 21 Bad message packet:  %s
 22 Message does not exist in message packet !?
 24 Forwarding to this newsgroup is not allowed.
-25 Wrinting to this newsgroup is not allowed.
+25 Writing to this newsgroup is not allowed.
 26 Invalid original recipient line!
 27 Not possible in this type of net.
 28 In MausNet only possible with PMs.
@@ -2825,7 +2834,7 @@ K (c) '93-96 Peter Mandrella
 35 Message must have a subject.
 36 Binary mails are not possible here.
 37 Cannot change server - different newsgroup names!
-38 You are not allowed to change this Message!
+38 You are not allowed to change this message!
 
 +  10700
 1  Internal error: Newsgroup with unsent message not found!
@@ -3104,4 +3113,3 @@ K (c) '93-96 Peter Mandrella
 2 downloaden
 3 **B
 -
-
