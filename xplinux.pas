@@ -1,6 +1,6 @@
 {   $Id$
 
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Markus Kaemmerer
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Markus Kaemmerer
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -514,6 +514,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.31.2.1  2002/07/21 20:14:40  ma
+  - changed copyright from 2001 to 2002
+
   Revision 1.31  2001/10/21 12:49:57  ml
   - removed some warnings
 

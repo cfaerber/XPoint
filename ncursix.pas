@@ -13,7 +13,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
     Kylix compatibility-changes
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de) & Matthias Leonhardt
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de) & Matthias Leonhardt
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1763,6 +1763,9 @@ end;
 
 {
   $Log$
+  Revision 1.7.2.1  2002/07/21 20:14:33  ma
+  - changed copyright from 2001 to 2002
+
   Revision 1.7  2001/10/17 10:06:54  ml
   - use packed records
 

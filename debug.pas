@@ -1,7 +1,7 @@
 { $Id$
 
    Debug logfile unit
-   Copyright (C) 2000-2001 by OpenXP team (www.openxp.de) and M.Kiesel
+   Copyright (C) 2000-2002 by OpenXP team (www.openxp.de) and M.Kiesel
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the Lesser GNU General Public License (LGPL) as
@@ -307,6 +307,9 @@ finalization
 
 {
   $Log$
+  Revision 1.29.2.2  2002/07/21 20:14:31  ma
+  - changed copyright from 2001 to 2002
+
   Revision 1.29.2.1  2002/06/20 23:36:16  mk
   - write line information to ERROR.TXT, too
 

@@ -1,7 +1,7 @@
 {   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -106,16 +106,9 @@ begin
     end;
 end;
 
-procedure CompleteMaintenance;
-begin
-  xp4o.CompleteMaintenance;
-  disprec[1]:=0;
-  aufbau:=true;
-end;
-
 procedure Breorg(user,adrbuch:boolean);
 begin
-  BU_reorg(user,adrbuch,false);
+  BU_reorg(user,adrbuch);
   signal;
   disprec[1]:=0;
   aufbau:=true;
@@ -252,7 +245,6 @@ begin
             4 : Breorg(true,false);
             5 : Breorg(true,true);
             6 : DupeKill (false);
-            7 : CompleteMaintenance;
             8 : ChangePollbox;
           end;
 
@@ -815,8 +807,8 @@ begin
 end;
 {
   $Log$
-  Revision 1.40  2002/04/14 22:25:09  cl
-  - added Wartung/Komplett
+  Revision 1.39.2.1  2002/07/21 20:14:36  ma
+  - changed copyright from 2001 to 2002
 
   Revision 1.39  2002/02/10 14:54:06  mk
   - removed menu entry for MausEditInfos

@@ -1,6 +1,6 @@
 { $Id$
 
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
 
    This program is free software; you can redistribute it and/or modify
@@ -1253,6 +1253,9 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.5  2002/07/21 20:14:36  ma
+  - changed copyright from 2001 to 2002
+
   Revision 1.83.2.4  2002/05/27 16:05:19  ma
   - fixed: Crosspostings from filtered users were put in /Junk
   - added comments

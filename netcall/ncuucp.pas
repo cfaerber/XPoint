@@ -1,7 +1,7 @@
 {  $Id$
 
    OpenXP UUCP netcall class
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and Claus F"aerber
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Claus F"aerber
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
 
    This program is free software; you can redistribute it and/or modify
@@ -1122,6 +1122,9 @@ end;
 
 {
   $Log$
+  Revision 1.24.2.2  2002/07/21 20:14:47  ma
+  - changed copyright from 2001 to 2002
+
   Revision 1.24.2.1  2002/05/06 17:58:53  mk
   - use correct file name case (.bak, .out) with linux
 

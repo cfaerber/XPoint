@@ -3,7 +3,7 @@
     OpenXP printer unit
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -174,6 +174,9 @@ end;
 
 {
   $Log$
+  Revision 1.23.2.1  2002/07/21 20:14:33  ma
+  - changed copyright from 2001 to 2002
+
   Revision 1.23  2001/12/30 19:56:48  cl
   - Kylix 2 compile fixes
 

@@ -2,7 +2,7 @@
 
    OpenXP fido netcall EMSI handshake implementation include file
    Copyright (C) 1991-2001 Peter Mandrella
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -205,6 +205,9 @@ end;
 
 {
   $Log$
+  Revision 1.4.2.1  2002/07/21 20:14:47  ma
+  - changed copyright from 2001 to 2002
+
   Revision 1.4  2001/10/01 19:35:02  ma
   - compiles again (DOS32)
 

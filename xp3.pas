@@ -1,7 +1,7 @@
 {   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -90,7 +90,6 @@ function  pfadbox(zconnect:boolean; var pfad:String):string;
 function  file_box(d:DB; dname:string):string;
 function  box_file(box:string):string;
 function  brettok(trenn:boolean):boolean;
-function Addr2DB(const addr: string): string;
 
 function  extmimetyp(typ:string):string;
 function  compmimetyp(typ:string):string;
@@ -1160,21 +1159,6 @@ begin
   hdp.pgpflags:=hdp.pgpflags and (not fPGP_haskey);
 end;
 
-function Addr2DB(const addr: string): string;
-var i: integer;
-    q: boolean;
-begin
-  result := (addr);
-  q := FirstChar(result)='"';
-
-  for i := 2 to Length(result) do 
-    if (result[i-1]<>'\')and(result[i]='"') then
-      q := not q else
-    if (not q)and(result[i-1]=' ')and(result[i]='(') then begin
-      SetLength(result,i-2);
-      break;
-    end;
-end;
 
 function extmimetyp(typ:string):string;
 begin
@@ -1195,8 +1179,8 @@ end;
 
 {
   $Log$
-  Revision 1.81  2002/04/14 22:22:13  cl
-  - added Addr2DB (converts ZConnect Address to DB address)
+  Revision 1.80.2.1  2002/07/21 20:14:36  ma
+  - changed copyright from 2001 to 2002
 
   Revision 1.80  2002/04/13 16:29:13  ma
   - clarified comments

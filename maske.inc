@@ -1,7 +1,7 @@
 {   $Id$
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,7 +25,8 @@ var ax,p,myp  : integer;
     afld      : feldp;
     helpsave  : Integer;          { zum Sichern von help_page }
     t         : taste;
-
+    newfld    : boolean;
+    redisplay : boolean;
     replace   : boolean;
     doreplace : boolean;
     s         : string;
@@ -49,7 +50,7 @@ var ax,p,myp  : integer;
       moff;
       for i:=1 to felder do
         with fld[i]^ do
-          if disnodisp then begin
+          if disnodisp and not enabled then begin
             attrtxt(stat.col.ColFeldName);
             wrt(xx,yy,dup(length(txt)+len+3,' '));
           end;
@@ -66,7 +67,7 @@ var ax,p,myp  : integer;
       moff;
       for i:=1 to felder do
         with fld[i]^ do
-          if not disnodisp then begin
+          if enabled or (not disnodisp) then begin
             s:=txt;
             if enabled then
               if owncol then attrtxt(ownattr)
@@ -83,7 +84,7 @@ var ax,p,myp  : integer;
       end;
     normtxt;
   end;
-                                     
+
   procedure FldDisplay;
   var i   : integer;
       l   : String;
@@ -99,7 +100,7 @@ var ax,p,myp  : integer;
       for i:=1 to felder do
         with fld[i]^ do
           if (yy0>=a+1) and (yy<=a+un) then begin
-            if not disnodisp then begin
+            if enabled or (not disnodisp) then begin
               if not enabled then { not enabled }
 	      begin
                 attrtxt(stat.col.ColBack);
@@ -286,9 +287,6 @@ var ax,p,myp  : integer;
   begin
     with amaskp^ do
       with afld^ do begin
-        if disnodisp then 
-          exit;
-      
         moff;
         if checkbutt then
         begin
@@ -616,7 +614,7 @@ var ax,p,myp  : integer;
 
   procedure exitmask;
   begin
-    if not amaskp^.newfld then
+    if not newfld then
       with amaskp^.stat,afld^ do begin
         test3(cont);
         replace:=false;
@@ -772,8 +770,7 @@ var ax,p,myp  : integer;
   end;
 
 begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
-  amaskp^.newfld:=true;
-  amaskp^.redisplay:=true;
+  newfld:=true; redisplay:=true;
   mzu:=mauszuu; mzo:=mauszuo;
   mzl:=mauszul; mzr:=mauszur;
   mauszul:=true; mauszur:=true;
@@ -852,14 +849,11 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         if newfld then begin
           replace:=autohigh and doreplace;
           doreplace:=true;
-          newfld := false;
           test0(cont);
-          if newfld then continue;
-          
           if autoup then UpString(cont)
           else if autodown then LoString(cont);
           showfield;
-
+          newfld:=false;
           if hpx<>0 then begin           { Hilfszeile anzeigen }
             s:=hpline;
             if hcenter then s:=center(s,hpl)
@@ -876,22 +870,13 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
             else
               fillfnhelp;
             normtxt;
-          end;
-        end                            {-----------------------------------}
+            end;
+          end                            {-----------------------------------}
         else
           showfield;
-          
         setcur;
         mauszuo:=yp>1;
         mauszuu:=yp<felder;
-
-        if done then begin
-          if donebrk then 
-            t:=KeyESC 
-          else 
-            t:=^J;
-        end else
-        
         if maussel then
           t:=selboxkey
         else
@@ -1177,13 +1162,8 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
-  Revision 1.44  2002/04/14 22:09:17  cl
-  - added:
-      procedure masksetscrollfunc(scrollfn:scrollfunc);
-      procedure setfieldpos(nr: Integer);
-      procedure mscroll(distance: Integer);
-      procedure mquit(brk: boolean);
-    for better external control of masks
+  Revision 1.43.2.1  2002/07/21 20:14:33  ma
+  - changed copyright from 2001 to 2002
 
   Revision 1.43  2002/02/04 16:26:53  mk
   - more after merge fixes

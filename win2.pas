@@ -3,7 +3,7 @@
     OpenXP window handling and file chooser unit
 
     Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1150,6 +1150,9 @@ end;
 
 {
   $Log$
+  Revision 1.50.2.3  2002/07/21 20:14:34  ma
+  - changed copyright from 2001 to 2002
+
   Revision 1.50.2.2  2002/05/01 17:38:12  mk
   JG:- optimized last commit
 

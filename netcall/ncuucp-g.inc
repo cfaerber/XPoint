@@ -2,7 +2,7 @@
 
    OpenXP UUCICO 'g'/'G'/'v' protocols
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
-   Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and 3247
+   Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and 3247
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the NU eneral Public License as published by
@@ -659,6 +659,9 @@ end;
 
 {
   $Log$
+  Revision 1.10.2.1  2002/07/21 20:14:47  ma
+  - changed copyright from 2001 to 2002
+
   Revision 1.10  2002/03/05 19:14:44  cl
   - optimized UUCP-g flow control
 
