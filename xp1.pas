@@ -27,50 +27,39 @@ unit xp1;
 interface
 
 uses
+  classes,
   sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
 {$IFDEF linux }
 {$IFDEF Kylix}
   libc,
   xplinux,
 {$ELSE}
   linux,
-{$ENDIF}  
+{$ENDIF}
 {$ENDIF }
-{$IFDEF Win32 }
-  windows,
-  xpwin32,
-{$ENDIF }
-{$IFDEF DOS32 }
-  xpdos32,
-  crt,
-{$ENDIF }
-{$IFDEF OS2 }
-  xpos2,
-{$ENDIF }
-  typeform,montage,keys,fileio,inout,winxp,win2,
-  datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
-  resource,xp0,crc,xpglobal,classes,debug,xpheader, osdepend;
+  typeform,
+  keys, //taste
+  inout,datadef,help,lister,
+  xp0,winxp,
+  xpglobal;
 
-const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
+const maxhidden  = 500;                 { max. versteckte Menuepunkte }
 
       DisableDOS : boolean = false;
       shellkey   : boolean = false;
-      ListMakros : byte    = 0;         { Flag fÅr XPKEYS.XMakro     }
+      ListMakros : byte    = 0;         { Flag fuer XPKEYS.XMakro     }
       Errorlevel : word    = 0;
       miscbase   : DB      = nil;       { wird bei Shell geschlossen }
-      menurestart: boolean = false;     { fÅr Config-MenÅ            }
+      menurestart: boolean = false;     { fuer Config-Menue            }
 
 type mprec     = record
                    mstr    : string[30];
                    hpos    : byte;
                    hkey    : char;
                    enabled : boolean;
-                   chain   : byte;      { UntermenÅ-Nr. }
-                   keep    : boolean;   { MenÅ nicht verlassen }
-                   mpnr    : integer;   { Nummer des MenÅpunkts }
+                   chain   : byte;      { Untermenue-Nr. }
+                   keep    : boolean;   { Menue nicht verlassen }
+                   mpnr    : integer;   { Nummer des Menuepunkts }
                  end;
      menuarray = array[1..22] of mprec;
      map       = ^menuarray;
@@ -88,9 +77,9 @@ var printlines : longint;
     WaitKey    : taste;               { Taste, mit der wkey beendet wurde }
     llh        : boolean;             { "L"/"H" im Lister -> xp1o.listExt }
                                       { == Nachrichten-Lister             }
-    rbx,rby    : Integer;             { Cursorposition fÅr ReadButton     }
-    hidden     : ^ahidden;            { Liste der unsichtbaren MenÅpkte.  }
-    anzhidden  : SmallInt;            { Anzahl der unsichtbaren MenÅpkte. }
+    rbx,rby    : Integer;             { Cursorposition fuer ReadButton     }
+    hidden     : ^ahidden;            { Liste der unsichtbaren Menuepkte.  }
+    anzhidden  : SmallInt;            { Anzahl der unsichtbaren Menuepkte. }
 
 
 procedure XpIdle;
@@ -98,7 +87,7 @@ procedure XpIdle;
 procedure showscreen(newmode:boolean);
 procedure showusername;
 procedure exitscreen(joke:shortint);
-procedure showmain(nr:shortint);      { HauptmenÅ anzeigen: nr=Position  }
+procedure showmain(nr:shortint);      { Hauptmenue anzeigen: nr=Position  }
 function  mainkey(p:byte):taste;
 procedure freemain;
 procedure wait(cur:curtype);
@@ -261,7 +250,19 @@ procedure InitXP1Unit;
 implementation  {-------------------------------------------------------}
 
 uses
-  xp1o,xp1o2,xp1help,xp1input,xpe,xpnt, xp3,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+{$IFDEF Win32 }
+  xpwin32,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+  crt,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
 {$IFDEF Linux }
   {$IFDEF Kylix}
     ncursix,
@@ -269,13 +270,16 @@ uses
     ncurses,
   {$ENDIF}
 {$ENDIF }
+  montage,fileio,win2,
+  database,mouse,maus2,maske,printerx,clip,
+  resource,crc,debug,  osdepend,
+  xp1o,xp1o2,xp1help,xp1input,xpe,xpnt, xp3,
   direct,
-  mime,
-  utftools,
-  unicode;
+  mime;
 
-{ Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
-{ vollstÑndige ISO-Konvertierung: siehe XP3 }
+{ Diese Tabelle konvertiert NUR ô ö ae oe ue ss !    }
+{ todo: remove!
+  vollstaendige ISO-Konvertierung: siehe XP3 }
 
 const isotab1   : array[$c0..$ff] of byte =
              ($c0,$c1,$c2,$c3,{ $8e,}$c4,$c5,$c6,$c7,$c8,$c9,$ca,$cb,$cc,$cd,$ce,$cf,
@@ -287,24 +291,24 @@ const isotab1   : array[$c0..$ff] of byte =
 
       closed    : boolean = false;
       opendb    : boolean = false;
-      mainmenu  : map = nil;            { HauptmenÅ }
-      menulast  : byte = 0;             { Hîhe des Menu-Stacks }
+      mainmenu  : map = nil;            { Hauptmenue }
+      menulast  : byte = 0;             { Hoehe des Menu-Stacks }
       winstp    : integer = 0;
 
-var  menulevel : byte;                  { MenÅebene }
-     menustack : array[0..4] of byte;   { fÅr Rekonstruktion im Config-MenÅ }
-     hmpos     : array[1..10] of integer;  { HauptmenÅ-XPos }
-     main_n    : integer;               { MPs im HauptmenÅ }
+var  menulevel : byte;                  { Menueebene }
+     menustack : array[0..4] of byte;   { fuer Rekonstruktion im Config-Menue }
+     hmpos     : array[1..10] of integer;  { Hauptmenue-XPos }
+     main_n    : integer;               { MPs im Hauptmenue }
      mainrange : array[1..10,0..1] of byte;
      listhicol : byte;
-     winstack  : array[1..maxwinst] of scrptr;   { fÅr Blindensupport }
+     winstack  : array[1..maxwinst] of scrptr;   { fuer Blindensupport }
      mst       : boolean;
 
 
 function  ixdat(s:shortstring):longint; assembler;  {&uses ebx, esi}
 asm
          mov   esi,s
-         inc   esi                      { LÑnge ist z.Zt. immer 10 }
+         inc   esi                      { Laenge ist z.Zt. immer 10 }
          call  @getbyte                 { Jahr }
          cmp   al,70
          jae   @neunzehn
@@ -512,10 +516,10 @@ const
             0                            ,{ DEL }
 
             0  +      2 + 4              ,{ Ä }
-            0  +      2 + 4              ,{ Å }
+            0  +      2 + 4              ,{ ue }
             0  +      2 + 4              ,{ Ç }
             0  +      2 + 4              ,{ É }
-            0  +      2 + 4              ,{ Ñ }
+            0  +      2 + 4              ,{ ae }
             0  +      2 + 4              ,{ Ö }
             0  +      2 + 4              ,{ Ü }
             0  +      2 + 4              ,{ á }
@@ -531,7 +535,7 @@ const
             0  +      2 + 4              ,{ ë }
             0  +      2 + 4              ,{ í }
             0  +      2 + 4              ,{ ì }
-            0  +      2 + 4              ,{ î }
+            0  +      2 + 4              ,{ oe }
             0  +      2 + 4              ,{ ï }
             0  +      2 + 4              ,{ ñ }
             0  +      2 + 4              ,{ ó }
@@ -608,7 +612,7 @@ const
             0                            ,{ ﬁ }
             0                            ,{ ﬂ }
             0  +      2 + 4              ,{ ‡ }
-            0  +      2 + 4              ,{ · }
+            0  +      2 + 4              ,{ ss }
             0  +      2 + 4              ,{ ‚ }
             0  +      2 + 4              ,{ „ }
             0  +      2 + 4              ,{ ‰ }
@@ -767,7 +771,7 @@ asm
             dec ecx
             jns  @tacopy2
 
-@addspace:  mov word ptr charbuf[edi],'  '        { 2 Leerzeichen anhÑngen }
+@addspace:  mov word ptr charbuf[edi],'  '        { 2 Leerzeichen anhaengen }
             pop eax
             jmp @ta1                               { ... und das Ganze nochmal }
 
@@ -873,7 +877,7 @@ begin
 end;
 
 
-{$I xp1menu.inc}   { MenÅfunktionen }
+{$I xp1menu.inc}   { Menuefunktionen }
 
 
 { ----- Externe Programme ------------------------------------------- }
@@ -997,7 +1001,7 @@ end;
 
 { --- Bildschirmzeilen -------------------------------------}
 
-{ Zeilenzahl einstellen; evtl. Videomodus zurÅcksetzen }
+{ Zeilenzahl einstellen; evtl. Videomodus zuruecksetzen }
 
 procedure setscreensize;
 var
@@ -1098,7 +1102,7 @@ begin
   clrscr;
   if deutsch then
     case joke of
-      1 : cm_wl('Vielen Dank. Sie haben ein einfaches Pointprogramm sehr glÅcklich gemacht.');
+      1 : cm_wl('Vielen Dank. Sie haben ein einfaches Pointprogramm sehr gluecklich gemacht.');
       2 : cm_wl('Leider verloren.');
     end;
   if (res2anz(221)>0) and (getres2(221,1)<>'(dummy)') then begin
@@ -1358,7 +1362,7 @@ begin
   if ioresult<>0 then rewrite(f);
   writeln(f,LeftStr(date,6),RightStr(date,2),' ',time,' ',txt);
   close(f);
-  if ioresult<>0 then;   { Logpath kînnte falsch gewesen sein }
+  if ioresult<>0 then;   { Logpath koennte falsch gewesen sein }
 end;
 
 procedure tfehler(const txt:string; sec:integer);
@@ -1543,7 +1547,7 @@ begin
 end;
 
 
-{ Tastaturpuffer lîschen, falls kein Makro aktiv }
+{ Tastaturpuffer loeschen, falls kein Makro aktiv }
 
 procedure CondClearKeybuf;
 begin
@@ -1762,7 +1766,7 @@ begin
 end;
 
 
-{--- Allgemeine VFuncs fÅr Eingabemasken -------------------------}
+{--- Allgemeine VFuncs fuer Eingabemasken -------------------------}
 
 function notempty(var s:string):boolean;
 begin
@@ -1907,13 +1911,13 @@ end;
 procedure _era(const Filename:string);
 begin
   if (FileName <> '')  and not sysutils.DeleteFile(Filename) then
-    trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht lîschen!?' }
+    trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht loeschen!?' }
 end;
 
 procedure SafeDeleteFile(const Filename: String);
 begin
   if (FileName <> '') and FileExists(Filename) and not Sysutils.DeleteFile(Filename) then
-    trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht lîschen!?' }
+    trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht loeschen!?' }
 end;
 
 procedure SafeMakeBak(const Filename, NewExt: string);
@@ -1931,7 +1935,7 @@ begin
     TrimLastChar(p, DirSepa);
     chdir(p);
     if ioresult<>0 then
-      trfehler1(5,UpperCase(p),30);   { ungÅltiges Verzeichnis: }
+      trfehler1(5,UpperCase(p),30);   { ungueltiges Verzeichnis: }
     end;
 end;
 
@@ -1990,7 +1994,7 @@ begin
   attrtxt(15);
   writeln;
   writeln;
-  for i:=1 to res2anz(161) do   { Hinweise, was bei beschÑdigter Datenbank }
+  for i:=1 to res2anz(161) do   { Hinweise, was bei beschaedigter Datenbank }
     writeln(getres2(161,i));    { zu tun ist                               }
   writeln;
 end;
@@ -2144,6 +2148,9 @@ end;
 
 {
   $Log$
+  Revision 1.164  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.163  2002/12/04 16:57:01  dodi
   - updated uses, comments and todos
 
@@ -2208,18 +2215,18 @@ end;
   - fixed reading of xpmenu.dat from xpme
 
   Revision 1.143  2002/03/25 22:03:08  mk
-  MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
-       und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+  MY:- Anzeige der Stammbox-Adresse unterhalb der Menueleiste korrigiert
+       und ueberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
        anzeigen"):
-       - VollstÑndige Adresse (statt nur Feld "Username") inkl. Domain
+       - Vollstaendige Adresse (statt nur Feld "Username") inkl. Domain
          wird angezeigt;
-       - Alias-Points werden berÅcksichtigt (RFC/UUCP und ZConnect);
+       - Alias-Points werden beruecksichtigt (RFC/UUCP und ZConnect);
        - Realname wird in Klammern angezeigt (falls es sich um einen
-         Netztyp mit Realnames handelt) und ggf. automatisch gekÅrzt, wenn
-         die GesamtlÑnge von Adresse und Realname grî·er als 76 Zeichen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekuerzt, wenn
+         die Gesamtlaenge von Adresse und Realname groesser als 76 Zeichen
          ist;
        - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
-         der Absenderadresse unterhalb der MenÅleiste unmittelbar nach dem
+         der Absenderadresse unterhalb der Menueleiste unmittelbar nach dem
          Wechsel aktualisiert.
 
   Revision 1.142  2002/03/03 21:55:16  mk

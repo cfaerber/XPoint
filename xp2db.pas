@@ -26,22 +26,23 @@ unit xp2db;
 
 interface
 
+procedure InitDatabase;
+
+implementation  { --------------------------------------------------- }
+
 uses
+  sysutils,
 {$IFDEF Linux }
 {$IFDEF Kylix }
   xplinux,
 {$ENDIF }
   xpcurses,
 {$ENDIF }
-      typeform,fileio,inout,keys,datadef,database,databaso,
-      sysutils,resource,maus2,xpglobal, datadef1,
-      xp0,xp1,xp1o,xp1o2,xp1input,xp3,xp3o,xp5,xp9bp,xpnt;
-
-procedure InitDatabase;
-
-implementation  { --------------------------------------------------- }
-
-uses xpheader, xp4o2, winxp,debug;
+  typeform,fileio,inout,keys,datadef,database,databaso,
+  resource,maus2,datadef1,
+  xp0,xp1,xp1o,xp1input,xp3,xp3o,xp5,xp9bp,xpnt,
+  xpheader, xp4o2, winxp,debug,
+  xpglobal;
 
 
 procedure GetFieldNumbers;
@@ -120,7 +121,7 @@ var flp : dbFLP;
       end;
   end;
 
-  { Typ mit fester LÑnge anlegen }
+  { Typ mit fester Laenge anlegen }
 
   procedure AppX(name:dbFeldStr; typ,size,len:byte);
   begin
@@ -169,7 +170,7 @@ var flp : dbFLP;
   end;
   {$ENDIF}
   
-  { Feld 'MsgID' in Nachrichtendatei einfÅgen (ab 1.01) }
+  { Feld 'MsgID' in Nachrichtendatei einfuegen (ab 1.01) }
   procedure NewFieldMessageID;
   var fld : dbFeldTyp;
       hdp : Theader;
@@ -214,7 +215,7 @@ var flp : dbFLP;
     dbClose(mbase);
   end;
 
-  { Feld 'Netztyp' in Boxendatei einfÅgen (ab 1.12) }
+  { Feld 'Netztyp' in Boxendatei einfuegen (ab 1.12) }
   procedure NewFieldNetztyp;
   var fld : dbFeldTyp;
   begin
@@ -225,7 +226,7 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'index' in Brettdatei  einfÅgen (ab 1.2) }
+  { Feld 'index' in Brettdatei  einfuegen (ab 1.2) }
   procedure NewFieldIndex;
   var fld : dbFeldTyp;
   begin
@@ -238,7 +239,7 @@ var flp : dbFLP;
     AlphaBrettindex;
   end;
 
-  { Feld 'Realname' in Boxendatei einfÅgen }
+  { Feld 'Realname' in Boxendatei einfuegen }
   procedure NewFieldRealname;
   var fld : dbFeldTyp;
   begin
@@ -249,7 +250,7 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'Pointname' in Boxendatei einfÅgen }
+  { Feld 'Pointname' in Boxendatei einfuegen }
   procedure NewFieldPointname;
   var fld : dbFeldTyp;
       d   : DB;
@@ -270,7 +271,7 @@ var flp : dbFLP;
     dbClose(d);
   end;
 
-  { Feld 'Domain' in Boxendatei einfÅgen }
+  { Feld 'Domain' in Boxendatei einfuegen }
   procedure NewFieldDomain;
   var fld : dbFeldTyp;
   begin
@@ -281,7 +282,7 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'Email' in Boxendatei einfÅgen }
+  { Feld 'Email' in Boxendatei einfuegen }
   procedure NewFieldemail;
   var fld : dbFeldTyp;
   begin
@@ -292,7 +293,7 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'FQDN' in Boxendatei einfÅgen }  { fÅr Message-IDs}
+  { Feld 'FQDN' in Boxendatei einfuegen }  { fuer Message-IDs}
   procedure NewFieldFQDN;
   var fld : dbFeldTyp;
   begin
@@ -303,7 +304,7 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'Fidoname' in Boxendatei einfÅgen }
+  { Feld 'Fidoname' in Boxendatei einfuegen }
   procedure NewFieldFidoname;
   var fld : dbFeldTyp;
   begin
@@ -314,7 +315,7 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'ReplyTo' in Boxendatei einfÅgen }
+  { Feld 'ReplyTo' in Boxendatei einfuegen }
   procedure NewFieldReplyto;
   var fld : dbFeldTyp;
   begin
@@ -325,7 +326,7 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'AVertreter/PVertreter' in Boxendatei einfÅgen }
+  { Feld 'AVertreter/PVertreter' in Boxendatei einfuegen }
   procedure AddBoxVertreter(c:char);
   var fld : dbFeldTyp;
   begin
@@ -336,7 +337,7 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'Boxdomain' in Boxendatei einfÅgen }
+  { Feld 'Boxdomain' in Boxendatei einfuegen }
   procedure NewFieldBoxdomain;
   var fld : dbFeldTyp;
   begin
@@ -347,7 +348,7 @@ var flp : dbFLP;
     dbAppendField(BoxenFile,fld);
   end;
 
-  { Feld 'Netztyp' in Nachrichtendatei einfÅgen (ab 1.9) }
+  { Feld 'Netztyp' in Nachrichtendatei einfuegen (ab 1.9) }
   procedure NewFieldMsgNetztyp;
   var fld : dbFeldTyp;
   begin
@@ -381,7 +382,7 @@ var flp : dbFLP;
     dbGoTop(mbase);
   end; *)
 
-  { Feld 'Origin' in Gruppendatei einfÅgen (ab 1.92) }
+  { Feld 'Origin' in Gruppendatei einfuegen (ab 1.92) }
   procedure NewFieldOrigin;
   var fld : dbFeldTyp;
   begin
@@ -392,7 +393,7 @@ var flp : dbFLP;
     dbAppendField(GruppenFile,fld);
   end;
 
-  { Feld 'Adresse' in Gruppendatei einfÅgen (ab 1.92) }
+  { Feld 'Adresse' in Gruppendatei einfuegen (ab 1.92) }
   procedure NewFieldAdresse;
   var fld : dbFeldTyp;
   begin
@@ -441,7 +442,7 @@ var flp : dbFLP;
     dbAppendField(GruppenFile,fld);
   end;
 
-  { Feld 'ZBVx' in Systemdatei einfÅgen (ab 2.15) }
+  { Feld 'ZBVx' in Systemdatei einfuegen (ab 2.15) }
   procedure NewFieldZBV(n:char);
   var fld : dbFeldTyp;
   begin
@@ -452,7 +453,7 @@ var flp : dbFLP;
     dbAppendField(SystemFile,fld);
   end;
 
-  { Feld 'Adresse' in Brettdatei einfÅgen (ab 2.11) }
+  { Feld 'Adresse' in Brettdatei einfuegen (ab 2.11) }
   procedure NewFieldBrettadresse;
   var fld : dbFeldTyp;
       b   : byte;
@@ -476,7 +477,7 @@ var flp : dbFLP;
     closebox;
   end;
 
-  { Feld 'Name' in Nachrichtendatei einfÅgen (ab 2.1) }
+  { Feld 'Name' in Nachrichtendatei einfuegen (ab 2.1) }
   procedure NewFieldMsgname;
   var fld   : dbFeldTyp;
       hdp   : Theader;
@@ -493,9 +494,9 @@ var flp : dbFLP;
       end;
     dbAppendField(MsgFile,fld);
 
-    hdp := THeader.Create;                        { Realnames / BrettempfÑnger einlesen }
+    hdp := THeader.Create;                        { Realnames / Brettempfaenger einlesen }
     msgbox(40,3,'',x,y);
-    wrt(x+3,y+1,'Nachrichten Åberarbeiten...');
+    wrt(x+3,y+1,'Nachrichten ueberarbeiten...');
     attrtxt(col.colmboxhigh);
     n:=0;
     dbOpen(mbase,MsgFile,0);
@@ -521,7 +522,7 @@ var flp : dbFLP;
     Hdp.Free;
   end;
 
-  { Feld 'Flags' in Nachrichtendatei einfÅgen (ab 3.1) }
+  { Feld 'Flags' in Nachrichtendatei einfuegen (ab 3.1) }
   procedure NewFieldMsgFlags;
   var fld : dbFeldTyp;
   begin
@@ -532,7 +533,7 @@ var flp : dbFLP;
     dbAppendField(MsgFile,fld);
   end;
 
-  { Feld 'MIMEtyp' in Nachrichtendatei einfÅgen (ab 3.2) }
+  { Feld 'MIMEtyp' in Nachrichtendatei einfuegen (ab 3.2) }
   procedure NewFieldMsgMimetyp;
   var fld   : dbFeldTyp;
       hdp   : THeader;
@@ -585,8 +586,8 @@ var flp : dbFLP;
     moff;
     for i:=2 to anz+1 do
       wrt(x+3,y+i,getres2(211,i));
-   { 'Die Datei USER.EB1 fehlt! Diese Datei enthÑlt alle'
-     'User-Pa·worteinstellungen und Vertreteradressen.' ... }
+   { 'Die Datei USER.EB1 fehlt! Diese Datei enthaelt alle'
+     'User-Passworteinstellungen und Vertreteradressen.' ... }
     mon;
     t:='';
     nr:=readbutton(x+3,y+anz+3,2,getres2(211,1),1,true,t);  { ' ^verlassen , ^neu anlegen ' }
@@ -597,7 +598,7 @@ var flp : dbFLP;
     freeres;
   end;
 
-  { Feld 'LastMsgID' in Autoversand einfÅgen (ab 3.3) }
+  { Feld 'LastMsgID' in Autoversand einfuegen (ab 3.3) }
   procedure NewFieldLastMsgID;
   var fld : dbFeldTyp;
   begin
@@ -805,9 +806,9 @@ begin
       NewFieldPointname;
     if not dbHasField(BoxenFile,'Domain') then
       NewFieldDomain;
-    if not dbHasField(BoxenFile,'FQDN') then  { fÅr Message-IDs }
+    if not dbHasField(BoxenFile,'FQDN') then  { fuer Message-IDs }
       NewFieldFQDN;
-    if not dbHasField(BoxenFile,'Email') then { fÅr schnelle EMail-Adresse }
+    if not dbHasField(BoxenFile,'Email') then { fuer schnelle EMail-Adresse }
       NewFieldEmail;
     if not dbHasField(BoxenFile,'Fidoname') then
       NewFieldFidoname;
@@ -914,7 +915,7 @@ begin
       NewFieldLastMsgID;
   end;
 
-  if not FileExists(PseudoFile+dbExt) then begin      { PSEUDOS: EmpfÑnger-KÅrzel }
+  if not FileExists(PseudoFile+dbExt) then begin      { PSEUDOS: Empfaenger-Kuerzel }
     initflp(4);
     AppS('Kurzname',15);
     AppS('Langname',80);
@@ -997,6 +998,9 @@ end;
 
 {
   $Log$
+  Revision 1.46  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.45  2002/11/20 23:04:01  cl
   - Fixed error reported in <8a41csTy3TB@ferdy.wiesibox.de>:
     ("<DB> interner Fehler: unbekannter Feldname: PMSignatur")

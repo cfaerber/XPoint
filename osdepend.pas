@@ -26,6 +26,9 @@ unit osdepend;
 
 interface
 
+uses
+  xpglobal; //not really
+
 { Consts }
 
 { Global Vars }
@@ -47,6 +50,9 @@ implementation
 
 {
         $Log$
+        Revision 1.8  2002/12/06 14:27:27  dodi
+        - updated uses, comments and todos
+
         Revision 1.7  2002/12/04 16:57:00  dodi
         - updated uses, comments and todos
 

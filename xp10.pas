@@ -29,15 +29,16 @@ interface
 
 uses
   sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  stack,typeform,fileio,inout,keys,montage,feiertag,winxp,classes,
-  maske,datadef,database,maus2,lister,resource,xpglobal,xp0,xp1,xp1o2,
-  xp1help,xp1input,xp5,fidoglob;
+  classes,
+  typeform, //datetimest
+  keys, //taste
+  lister, //TLister
+  xpglobal;
 
 
-procedure UniEdit(typ:byte);     { 1=Timing, 2=Tasten, 3=Gebuehren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
+{todo: make enum, see mtypes, mtyp...
+  typ 1=Timing, 2=Tasten, 3=Gebuehren, 4=Header, 5=Nodelisten, 6=Tarifgruppen }
+procedure UniEdit(typ:byte);
 
 procedure AutoTiming(tnr:integer; callall,crashall,special:boolean; datLine:byte);
 procedure GetPhoneGebdata(var telefon:string);  { -> BoxPar^ }
@@ -61,7 +62,14 @@ procedure EditNetcallDat;
 
 implementation  { ---------------------------------------------------- }
 
-uses  xp2,xp3,xp3o,xp4o,xp4o2,xpnetcall,xp9bp,xpconfigedit,xpauto,xpfido,
+uses
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  stack,fileio,inout,montage,feiertag,
+  winxp,maske,datadef,database,maus2,resource,fidoglob,
+  xp0,xp1,xp1help,xp1input,
+  xp2,xp3,xp3o,xp4o,xp4o2,xp5,xpnetcall,xp9bp,xpconfigedit,xpauto,xpfido,
   xpfidonl, xpnt;
 
 const maxentries  = 100;   { s. auch XP0.maxkeys }
@@ -83,7 +91,7 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
 
       maxphone = 9*105;
       maxzones = 17;   { max. Gebuehrenzonen }
-      maxzeitbereiche = 12;   { muá vielfaches von 4 sein! }
+      maxzeitbereiche = 12;   { muss vielfaches von 4 sein! }
       maxtables= 10;   { max. Tabellen (Wochentage+Feiertage) }
       maxwotage= 10;   { max. Tagesbereiche }
 
@@ -370,9 +378,10 @@ begin
     begin
       readln(t,s);
       if trim(s)<>'' then
-        if (typ=2) and (FirstChar(s)='!') then                          //ein kommentar?
+        if (typ=2) and (FirstChar(s)='!') then         //ein kommentar?
           if e.count > 0 then
-            e.Strings[lastIdx]:=forms(e.Strings[lastIdx],225)+copy(s,2,24)      //Kommentar anh„ngen
+          //Kommentar anhaengen
+            e.Strings[lastIdx]:=forms(e.Strings[lastIdx],225)+copy(s,2,24)
           else
         else begin
           lastIdx:=e.Add(LeftStr(s,filewidth));
@@ -380,7 +389,7 @@ begin
     end;
     close(t);
   end;
-  anzahl:=e.Count;                                                      //globale var setzen :(
+  anzahl:=e.Count;  //globale var setzen :(
 end;
 
 
@@ -647,7 +656,7 @@ var
                 s:=' '+forms(komment,25);
                 if anz>0 then
                   if anz=1 then s:=s+'1 '+getres2(1003,1)   { 'Eintrag' }
-                  else s:=s+strs(anz)+' '+getres2(1003,2);  { 'Eintr„ge' }
+                  else s:=s+strs(anz)+' '+getres2(1003,2);  { 'Eintraege' }
                 Wrt2(forms(s,53));
               end;
           4 : begin
@@ -765,10 +774,10 @@ var
   procedure DelEntry( strIdx :integer);
   begin
     if ReadJN(getres(1005),true) then
-    begin    { 'Eintrag l”schen' }
+    begin    { 'Eintrag loeschen' }
       if strIdx<e.Count then begin
         e.Delete(strIdx);
-        dec(anzahl);                           //behalten wir noch vol„ufig bei
+        dec(anzahl);                           //behalten wir noch volaeufig bei
       end;
       modi:=true;
     end;
@@ -894,7 +903,7 @@ var
       readmkey(false,x+13,y+5,ta,tt);
 
       attrtxt(col.coldialog);
-      mwrt(x+33,y+1,'<ESC> '#17'Ä    = '+getres2(1006,6));   { 'l”schen' }
+      mwrt(x+33,y+1,'<ESC> '#17'Ä    = '+getres2(1006,6));   { 'loeschen' }
       mwrt(x+33,y+2,'<ESC> c     = '+getres2(1006,7));       { 'Abbruch' }
       mwrt(x+33,y+3,'<ESC> '#17'ÄÙ   = '+getres2(1006,8));   { 'ok'      }
       mwrt(x+33,y+4,'<ESC> <ESC> = <ESC>');
@@ -1105,7 +1114,7 @@ var
       if nr>2 then begin
         if n=1 then begin
           maddtext(36,2,getres2(1010,2),col.ColDiaHigh);   { 'Die Vorwahlentabelle wird nur fuer' }
-          maddtext(36,3,getres2(1010,3),col.CoLDiaHigh);   { 'Fido-Direktanrufe ben”tigt.' }
+          maddtext(36,3,getres2(1010,3),col.CoLDiaHigh);   { 'Fido-Direktanrufe benoetigt.' }
           end;
         if anz>0 then
           Move(ph^,phe^,anz*sizeof(phone1));
@@ -1122,7 +1131,7 @@ var
         modi:=true;
         if nr>2 then begin
           i:=0;
-          for j:=1 to maxphone do         { leere Eintr„ge entfernen }
+          for j:=1 to maxphone do         { leere Eintraege entfernen }
             if (phe^[j]<>'') then begin
               inc(i);
               if i<>j then phe^[i]:=phe^[j];
@@ -1132,7 +1141,7 @@ var
           anz:=i;
           if anz>0 then begin
             qsort(1,anz);                 { Nummern sortieren }
-            i:=0;                         { doppelte Eintr„ge entfernen }
+            i:=0;                         { doppelte Eintraege entfernen }
             for j:=1 to anz do
               if (i=0) or (phe^[j]<>phe^[i]) then begin
                 inc(i);
@@ -1155,7 +1164,7 @@ var
       i,j : integer;
   begin
     if anzahl=maxzones then begin
-      rfehler1(1011,strs(maxzones));   { 'Maximal %s Zonen m”glich!' }
+      rfehler1(1011,strs(maxzones));   { 'Maximal %s Zonen moeglich!' }
       exit;
       end;
     inc(anzahl);
@@ -1176,9 +1185,9 @@ var
   var i,j : integer;
   begin
     if nr<=2 then
-      rfehler(1003)   { 'Dieser Eintrag kann nicht gel”scht werden.' }
+      rfehler(1003)   { 'Dieser Eintrag kann nicht geloescht werden.' }
     else
-      if ReadJN(getres(1005),true) then begin   { 'Eintrag l”schen' }
+      if ReadJN(getres(1005),true) then begin   { 'Eintrag loeschen' }
         if phones^[nr].anz>0 then
           freemem(phones^[nr].ph,phones^[nr].anz*sizeof(phone1));
         if a+CurRow<anzahl then begin
@@ -1299,7 +1308,7 @@ var
       wt  : wt_array;
   begin
     if tables=maxtables then begin
-      rfehler1(1012,strs(maxtables));   { 'Maximal %s Tarifgruppen m”glich!' }
+      rfehler1(1012,strs(maxtables));   { 'Maximal %s Tarifgruppen moeglich!' }
       exit;
       end;
     fillchar(wt,sizeof(wt),true);
@@ -1330,8 +1339,8 @@ var
   var i : integer;
   begin
     if nr=1 then
-      rfehler(1014)      { 'Tarifgruppe 1 kann nicht gel”scht werden.' }
-    else if readjn(getreps2(1022,11,strs(nr)),false) then begin  { 'Tarifgruppe %s l”schen' }
+      rfehler(1014)      { 'Tarifgruppe 1 kann nicht geloescht werden.' }
+    else if readjn(getreps2(1022,11,strs(nr)),false) then begin  { 'Tarifgruppe %s loeschen' }
       for i:=nr+1 to maxtables do
         tarif^[i-1]:=tarif^[i];
       dec(tables);
@@ -1352,7 +1361,7 @@ var
       s    : string[40];
   begin
     if xhd.anz=maxheaderlines then begin
-      rfehler1(1007,strs(maxheaderlines));    { 'Maximal %s Zeilen m”glich!' }
+      rfehler1(1007,strs(maxheaderlines));    { 'Maximal %s Zeilen moeglich!' }
       exit;
       end;
     used:=[];
@@ -1400,12 +1409,12 @@ var
   var s : string;
   begin
     if xhd.anz = 0 then
-      rfehler(1008)         { 'Es muá mindestens eine Zeile vorhanden sein.' }
+      rfehler(1008)         { 'Es muss mindestens eine Zeile vorhanden sein.' }
     else begin
       s:=getres2(222,xhd.v[a+CurRow-1]);
       s:=mid(s,blankpos(s)+1);
-      if ReadJN(getreps2(1018,iif(xhd.v[a+CurRow-1]=0,6,5),s),true) then begin   { 'Zeile "%s" l”schen' }
-        if a+CurRow-1<xhd.anz then Move(xhd.v[a+CurRow],xhd.v[a+CurRow-1],xhd.anz-a-CurRow+1);   { / 'Trennzeile l”schen' }
+      if ReadJN(getreps2(1018,iif(xhd.v[a+CurRow-1]=0,6,5),s),true) then begin   { 'Zeile "%s" loeschen' }
+        if a+CurRow-1<xhd.anz then Move(xhd.v[a+CurRow],xhd.v[a+CurRow-1],xhd.anz-a-CurRow+1);   { / 'Trennzeile loeschen' }
         dec(anzahl);
         dec(xhd.anz);
         modi:=true;
@@ -1467,7 +1476,7 @@ var
   begin
     pushhp(932);
     case ReadIt(ival(getres2(1019,2)),getres2(1019,3),
-                                 { 'Node-/Pointlisteneintrag l”schen' }
+                                 { 'Node-/Pointlisteneintrag loeschen' }
                 getres2(1019,4), { ' ^Ja , ^Nein , incl. ^Datei ' }
                 1,brk) of
       1 : del_it;
@@ -1495,7 +1504,7 @@ var
     attrtxt(col.colmboxhigh);
     wrt(x+3,y+2,getres2(2129,2));       { 'Datei' }
     wrt(x+3,y+3,getres2(2129,3));       { 'Bytes' }
-    wrt(x+3,y+4,getres2(2129,4));       { 'Eintr„ge' }
+    wrt(x+3,y+4,getres2(2129,4));       { 'Eintraege' }
     attrtxt(col.colmbox);
     fn:=NodeList.GetFilename(a+CurRow-1);
     wrt(x+14,y+2,fn);
@@ -1594,7 +1603,7 @@ begin   {procedure UniEdit(typ:byte); }
           if brk then exit;
           loadfile(1,TimingFile+strs(tnr));
           width:=74;
-          buttons:=getres(1011);   { ' ^Neu , ^L”schen , ^Edit , ^Aktiv , ^Sichern , ^OK ' }
+          buttons:=getres(1011);   { ' ^Neu , ^Loeschen , ^Edit , ^Aktiv , ^Sichern , ^OK ' }
           okb:=6; edb:=3;
           getboxsel;
           pushhp(510);
@@ -1605,7 +1614,7 @@ begin   {procedure UniEdit(typ:byte); }
           loadfile(2,keydeffile);
           sort_e;
           width:=66+mtypes;
-          buttons:=getres(1012);   { ' ^Neu , ^L”schen , ^Edit , ^Taste , ^*** , ^Sichern , ^OK ' }
+          buttons:=getres(1012);   { ' ^Neu , ^Loeschen , ^Edit , ^Taste , ^*** , ^Sichern , ^OK ' }
           okb:=7; edb:=3;
           _bunla:='ù'+getres2(1000,0); freeres;
           pushhp(540);
@@ -1616,7 +1625,7 @@ begin   {procedure UniEdit(typ:byte); }
           filewidth:=gebWidth;
           LoadPhoneZones;
           width:=53;
-          buttons:=getres(1013);   { ' ^Neu , ^L”schen , ^Edit , ^Sichern , ^OK ' }
+          buttons:=getres(1013);   { ' ^Neu , ^Loeschen , ^Edit , ^Sichern , ^OK ' }
           okb:=5; edb:=3;
           pushhp(iif(typ=3,800,805));
         end;
@@ -1624,7 +1633,7 @@ begin   {procedure UniEdit(typ:byte); }
           filewidth:=30;
           anzahl:=xhd.anz;
           width:=ival(getres2(1018,1));
-          buttons:=getres2(1018,2);   { ' ^Einfuegen , ^Verschieben , ^L”schen ,  ^OK  ' }
+          buttons:=getres2(1018,2);   { ' ^Einfuegen , ^Verschieben , ^Loeschen ,  ^OK  ' }
           okb:=4; edb:=0;
           pushhp(900);
           xhd:=ExtraktHeader;
@@ -1635,7 +1644,7 @@ begin   {procedure UniEdit(typ:byte); }
           filewidth:=255;
           anzahl:=NodeList.Count;
           width:=70;
-          buttons:=getres2(1019,1);   { ' ^Neu , ^Edit , ^TextEdit , ^L”schen , ^Info , ^OK ' }
+          buttons:=getres2(1019,1);   { ' ^Neu , ^Edit , ^TextEdit , ^Loeschen , ^Info , ^OK ' }
           okb:=6; edb:=2;
           pushhp(930);
           reindex:=false;
@@ -1677,7 +1686,7 @@ begin   {procedure UniEdit(typ:byte); }
     if (nr<>0) and (nr<>99) then bp:=abs(nr);
     { c:=UpCase(t[1]); }
     if (nr=1) and (eanzahl=maxentries) then
-      rfehler1(1004,strs(maxentries))   { 'Maximal %s Eintr„ge m”glich!' }
+      rfehler1(1004,strs(maxentries))   { 'Maximal %s Eintraege moeglich!' }
     else
       case typ of
         1 : case nr of
@@ -1693,7 +1702,7 @@ begin   {procedure UniEdit(typ:byte); }
             end;
         2 : case nr of
               1 : NewMacro;
-              2 : if CurRow+a<=anzahl then DelEntry(a+CurRow-1);  //EintragL”schen
+              2 : if CurRow+a<=anzahl then DelEntry(a+CurRow-1);  //Eintrag Loeschen
               3 : if CurRow+a<=anzahl then EditMacro(a+CurRow-1); //Macro Tastenfolge bearbeiten
               4 : if CurRow+a<=anzahl then MacroKey(a+CurRow-1);  //
               5 : if CurRow+a<=anzahl then MacroScope(a+CurRow-1);
@@ -1789,7 +1798,7 @@ begin   {procedure UniEdit(typ:byte); }
       oldft:=filetime(NodelistCfg);
       NodeList.SaveConfigToFile;
       if (oldft<>0) and not reindex then  { autom. Neuindizierung bei }
-        setfiletime(NodelistCfg,oldft);   { n„chstem Programmstart verhindern }
+        setfiletime(NodelistCfg,oldft);   { naechstem Programmstart verhindern }
       modi:=false;
       end;
   until ((nr=0) or (nr=okb)) and
@@ -1963,7 +1972,7 @@ begin           {function CalcGebuehren(var startdate,starttime:datetimest; secs
     m:=ival(copy(starttime,4,2));
     s:=ival(copy(starttime,7,2));
     starttime:=LeftStr(starttime,5);   { Sekunden abschneiden }
-    repeat                          { Z„hlschleife; wird pro Einheit }
+    repeat                          { Zaehlschleife; wird pro Einheit }
       i:=zeitbereiche+1;            { einmal durchlaufen             }
       repeat
         dec(i);
@@ -1977,7 +1986,7 @@ begin           {function CalcGebuehren(var startdate,starttime:datetimest; secs
         if sekunden<0.01 then break;
         incr(sum,pfennig);
         secs := secs-sekunden;      { berechnete Sekunden abziehen   }
-        s := s + sekunden;          { Startzeitpunkt der n„chsten... }
+        s := s + sekunden;          { Startzeitpunkt der naechsten... }
         while (s>59) do begin       { Einheit berechnen              }
           s := s-60; inc(m);
           if m>59 then begin
@@ -2104,7 +2113,7 @@ const lines  = NetcallSpecialMax;
     own_Name:='';      { Flag fuer EditAddServersList }
     showErrors:=true;  { Flag fuer EditAddServersList }
     boxline.s:=NetcallSpecialList[p];
-    boxline.y:=p; { wir miábrauchen customrec zur Speicherung der Position }
+    boxline.y:=p; { wir missbrauchen customrec zur Speicherung der Position }
     EditAddServersList(boxline);
     NetcallSpecialList[p]:=trim(boxline.s);          { Array aktualisieren }
     assign(netcalldat,ownpath+NetcallSpecialDat);
@@ -2188,6 +2197,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.74  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.73  2002/12/02 14:04:30  dodi
   made xpmenu internal tool
 

@@ -27,27 +27,16 @@ unit winxp;
 interface
 
 uses
-  sysutils,
   {$IFDEF Win32 }
     windows,
     {$IFDEF Delphi }
       messages,
     {$ENDIF }
   {$ENDIF }
-  {$IFDEF DOS32}
-    crt, {for GotoXY}
-  {$ENDIF}
-  {$IFDEF unix}
-    xplinux,
-    xpcurses,
-  {$ENDIF }
-  osdepend,
-  keys,
+  sysutils,
   inout,
-  maus2,
-  typeform,
-  xpglobal,
-  mime;
+  mime,
+  xpglobal;
 
 const
 {$IFDEF NCRT }
@@ -93,7 +82,7 @@ type  TxpHandle = byte; //0..maxpull
 var   wpstack  : array[1..maxpush] of TxpHandle;
       wpp      : byte;
       warrows  : boolean;     { Pfeile bei wslct anzeigen }
-      warrcol  : byte;        { Farbe fÅr Pfeile          }
+      warrcol  : byte;        { Farbe fuer Pfeile          }
       selp     : selproc;
 
 procedure clwin(l,r,o,u:TWord);
@@ -106,7 +95,7 @@ procedure rahmen2d(li,re,ob,m,un: Integer; const txt:string); { Doppelrahmen ∫ z
 procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:TWord; const txt:string);
 procedure wshadow(li,re,ob,un: Integer);                { 8-Schatten }
 
-procedure setrahmen(n:shortint);                 { Rahmenart fÅr wpull+ setzen }
+procedure setrahmen(n:shortint);                 { Rahmenart fuer wpull+ setzen }
 function  getrahmen:shortint;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
 Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: TxpHandle);
@@ -120,7 +109,7 @@ procedure wpop;
 
 {$IFNDEF NCRT }
 { Schreiben eines Strings mit Update der Cursor-Posititon }
-{ Diese Routine aktualisiert wenn nîtig den LocalScreen }
+{ Diese Routine aktualisiert wenn noetig den LocalScreen }
 { Die Koordinaten beginnen bei 1,1 }
 procedure Wrt(const x,y: Integer; const s:string);
 { Schreiben eines Strings, wie Write, CursorPosition
@@ -128,7 +117,7 @@ procedure Wrt(const x,y: Integer; const s:string);
 { Die Koordinaten beginnen bei 1,1 }
 procedure Wrt2(const s:string);
 { Schreiben eines Strings ohne Update der Cursor-Position
-  Der LocalScreen wird wenn nîtig aktualisiert }
+  Der LocalScreen wird wenn noetig aktualisiert }
 { Die Koordinaten beginnen bei 1,1 }
 procedure FWrt(const x,y: Integer; const s:string);
 procedure Clreol;
@@ -139,13 +128,13 @@ procedure ClrScr;
 {$ENDIF }
 
 { Schreiben eines Strings ohne Update der Cursor-Position
-  Der Textbackground (nicht die Farbe!) wird nicht verÑndert }
+  Der Textbackground (nicht die Farbe!) wird nicht veraendert }
 procedure SDisp(const x,y:TWord; const s:string);
 
 procedure consolewrite(x,y:TWord; num: Integer);
 
 
-{ Routinen fÅr 32 Bit Versionen, die den Zugriff auf den Bildschirm
+{ Routinen fuer 32 Bit Versionen, die den Zugriff auf den Bildschirm
   managen }
 
 { Liest ein Zeichen direkt von der Konsole aus
@@ -153,25 +142,25 @@ procedure consolewrite(x,y:TWord; num: Integer);
 procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
 
 { Diese Routinen kopieren rechteckige Bildschirmbereiche aus
-  der Console heraus und wieder hinein. Der Buffer mu· dabei
-  die dreifache Grî·e (Win32) der Zeichenzahl besitzen. Die Koordinaten
+  der Console heraus und wieder hinein. Der Buffer muss dabei
+  die dreifache Groesse (Win32) der Zeichenzahl besitzen. Die Koordinaten
   beginnen bei 1/1.
 
-  Unter Win32 enthÑlt der Buffer ein Byte Zeichen und zwei Byte
-  fÅr das Attribut. Unter anderen Betriebssystemen darf das
+  Unter Win32 enthaelt der Buffer ein Byte Zeichen und zwei Byte
+  fuer das Attribut. Unter anderen Betriebssystemen darf das
   anders gemacht werden. }
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
 
 
-{ FÅllt eine Bildschirmzeile mit konstantem Zeichen und Attribut
+{ Fuellt eine Bildschirmzeile mit konstantem Zeichen und Attribut
   Die Koordinaten beginnen bei 1/1.
-  Die Routine ist bis jetzt unter Win32 mit API und fÅr den
+  Die Routine ist bis jetzt unter Win32 mit API und fuer den
   Rest mit FWrt implementiert }
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
 
 {$IFDEF Win32 }
-var { EnthÑlt das Fensterhandle fÅr die Console }
+var { Enthaelt das Fensterhandle fuer die Console }
     OutHandle     : THandle;
 {$ENDIF }
 
@@ -209,7 +198,18 @@ procedure InitWinXPUnit;
 
 implementation
 
-uses 
+uses
+  {$IFDEF DOS32}
+    crt, {for GotoXY}
+  {$ENDIF}
+  {$IFDEF unix}
+    xplinux,
+    xpcurses,
+  {$ENDIF }
+  osdepend,
+  keys,
+  maus2,
+  typeform,
   xp0,
 {$IFDEF DOS32}
   Go32,
@@ -231,14 +231,14 @@ const rchar : array[1..3,1..6] of char =
 {$else }
       LSSize = $1fff;
 {$endif }
-      shad  : byte = 0;  { Zusatz-Fensterbreite/hîhe }
+      shad  : byte = 0;  { Zusatz-Fensterbreite/hoehe }
 
-type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
+type  { Achtung: hier muss der komplette Bildschirm mit Attributen reinpassen }
   memarr     = array[0..$1fff] of byte;
 
   { Speicher den kompletten Bildschirm lokal zwischen, damit beim Auslesen
-    des Fensterinhaltes nicht auf API-Funktionen zurÅckgegriffen werden mu·.
-    Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
+    des Fensterinhaltes nicht auf API-Funktionen zurueckgegriffen werden muss.
+    Jede énderung am Bildschirm _muss_ gleichzeitig hier gemacht werden }
   TLocalScreen = array[0..LSSize] of char;
 
 {$IFDEF LocalScreen }
@@ -270,7 +270,7 @@ begin
   Fwrt(l, o, rchar[typ,1] + Dup(r-l-1, rchar[typ, 2]) + rchar[typ,3]);
   Fwrt(l, u, rchar[typ,5] + Dup(r-l-1, rchar[typ, 2]) + rchar[typ,6]);
 
-  { Wird benutzt, wenn Fenster im Rahmen gefÅllt werden soll }
+  { Wird benutzt, wenn Fenster im Rahmen gefuellt werden soll }
   for i := o+1 to u -1 do
   begin
     FWrt(l, i, rchar[typ, 4]);
@@ -397,7 +397,7 @@ var
   i, Count: Integer;
 begin
   {$IFDEF Win32Console }
-    { Kompletten String an einem StÅck auf die Console ausgeben }
+    { Kompletten String an einem Stueck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
     Len := Win32_Wrt(WritePos,s);
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
@@ -414,7 +414,7 @@ begin
   {$ENDIF Win32 }
 
   {$IFDEF Localscreen }
-  { LocalScreen Åbernimmt die énderungen }
+  { LocalScreen uebernimmt die énderungen }
     if s <> '' then
       begin
         Count := ((x-1)+(y-1)*ScreenWidth)*2;
@@ -517,7 +517,7 @@ procedure SDisp(const x,y:TWord; const s:string);
     i,Len: Integer;
     a: PWordArray;
   begin
-    { Kompletten String an einem StÅck auf die Console ausgeben }
+    { Kompletten String an einem Stueck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
     Len := Win32_Wrt(WritePos,s);
     GetMem(a,SizeOf(a[0])*Len);
@@ -1525,6 +1525,9 @@ end;
 
 {
   $Log$
+  Revision 1.89  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.88  2002/12/05 19:36:21  dodi
   - removed ambiguous word type
 

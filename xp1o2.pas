@@ -24,23 +24,24 @@ unit xp1o2;
 
 interface
 
-
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,keys,fileio,inout,maus2,datadef,database, sysutils,
-  stack,resource, xp0;
+  datadef;  //dbIndexCRec
 
-procedure wkey(sec:word; count:boolean);
+procedure wkey(sec:word; count:boolean);  //todo: word -> Integer
 function  DruckWiederholen:boolean;
 procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
 
 
 implementation  { --------------------------------------------------- }
 
-uses xp1,xp1input, winxp;
+uses
+  sysutils,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  keys,inout,maus2,resource,
+  xp0,xp1,xp1input, winxp,
+  xpglobal;
 
 
 procedure wkey(sec:word; count:boolean);
@@ -217,6 +218,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.23  2002/07/25 20:43:53  ma
   - updated copyright notices
 

@@ -29,6 +29,7 @@ unit xpcrt;
 interface
 
 uses
+  SysUtils, //before xpglobal
   Windows, XPGlobal;
 
 function keypressed: boolean;
@@ -50,7 +51,8 @@ implementation
 {$ENDIF}
 
 uses
-  Debug, SysUtils, Mouse;
+  Debug,
+  Mouse;
 
 //function SetConsoleCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
 //function SetConsoleOutputCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
@@ -297,6 +299,9 @@ initialization
 
 {
   $Log$
+  Revision 1.23  2002/12/06 14:27:29  dodi
+  - updated uses, comments and todos
+
   Revision 1.22  2002/03/16 18:25:43  cl
   - compile fix for FPC 1.0.4 (also works with FPC snapshot)
 

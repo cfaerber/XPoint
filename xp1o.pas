@@ -27,27 +27,19 @@ unit xp1o;
 interface
 
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$IFDEF Kylix}
-  xplinux,
-  libc,
-{$ELSE}
-  linux,
-{$ENDIF}  
-{$ENDIF }
-  sysutils,typeform,keys,fileio,inout,maus2,lister, xpheader,
-  printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
+  typeform, //atext
+  keys, //taste
+  lister, xpheader,
+  datadef;  //DB
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg  : string = '';
-      ListXHighlight: boolean = true;    { fÅr F-Umschaltung }
+      ListXHighlight: boolean = true;    { fuer F-Umschaltung }
       ListShowSeek  : boolean = false;
-      ListWrapToggle: boolean = false;   { fÅr Wortumbruch-Umschaltung }
+      ListWrapToggle: boolean = false;   { fuer Wortumbruch-Umschaltung }
       no_ListWrapToggle : boolean = false;   { Wortumbruch-Umschaltung verhindern }
 
-var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
+var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts, todo: enum? }
      listkey  : taste;
 
 
@@ -89,9 +81,21 @@ function XPWinShell(prog:string; parfn:string; space:word;
 implementation
 
 uses
+  sysutils,
+{$IFDEF NCRT }
+  xpcurses,
+{$IFDEF Kylix}
+  xplinux,
+  libc,
+{$ELSE}
+  linux,
+{$ENDIF}
+{$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF DOS32} xpdos32, {$ENDIF}
-  stringtools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
+  stringtools,fileio,inout,maus2,printerx,database,maske,archive,resource,clip,
+  xp0,xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue,
+  xpglobal;
 
 
 // get one line from lister, check for marked lines
@@ -111,7 +115,7 @@ begin
 end;
 
 
-{ Dateinamen abfragen. Wenn Esc gedrÅckt wird, ist s undefiniert! }
+{ Dateinamen abfragen. Wenn Esc gedrueckt wird, ist s undefiniert! }
 
 function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
@@ -180,7 +184,7 @@ begin
       s:=s+DirSepa+WildCard;
     file_box(s,subs);
     if (s<>'') and (not ValidFilename(s)) then begin
-      rfehler(3);   { UngÅltiger Pfad- oder Dateiname! }
+      rfehler(3);   { Ungueltiger Pfad- oder Dateiname! }
       s:='';
       end;
     ReadFilename:=(s<>'');
@@ -198,7 +202,7 @@ var x,y : Integer;
     t   : taste;
 begin
   if FileGetAttr(fname) and faReadonly<>0 then begin
-    rfehler(9);        { 'Datei ist schreibgeschÅtzt.' }
+    rfehler(9);        { 'Datei ist schreibgeschuetzt.' }
     brk:=true;
     Overwrite := false;
     exit;
@@ -207,16 +211,16 @@ begin
   mwrt(x+2,y+1,UpperCase(fitpath(fname,28))+getres(117));  { ' ist bereits vorhanden.' }
   t:='';
   pushhp(76);
-  nr:=readbutton(x+2,y+3,2,getres(118),iif(replace,2,1),true,t);  { ' ^AnhÑngen , ^öberschreiben , A^bbruch ' }
+  nr:=readbutton(x+2,y+3,2,getres(118),iif(replace,2,1),true,t);  { ' ^Anhaengen , ^öberschreiben , A^bbruch ' }
   pophp;
   closebox;
   overwrite:=(nr=2);
   if nr=2 then
-  begin    { Datei lîschen -> evtl. Undelete mîglich }
+  begin    { Datei loeschen -> evtl. Undelete moeglich }
     FileSetAttr(fname, 0);
     if not DeleteFile(fname) then
     begin
-      rfehler(9);        { 'Datei ist schreibgeschÅtzt.' }
+      rfehler(9);        { 'Datei ist schreibgeschuetzt.' }
       brk:=true;
       exit;
     end;
@@ -285,7 +289,7 @@ begin
     end;
   c:=t[1];
   if (UpCase(c)=k4_D) or (deutsch and (UpCase(c)='D')) then begin   { ^D }
-    rmessage(119);   { 'Ausdruck lÑuft...' }
+    rmessage(119);   { 'Ausdruck laeuft...' }
     InitPrinter;
     all:=(LSelf.SelCount=0);
     if all then s:= LSelf.FirstLine
@@ -313,7 +317,7 @@ begin
         fname[cpos('/',fname)]:='\';
       {$ENDIF }
       if not validfilename(fname) then begin
-        rfehler(316);   { 'UngÅltiger Pfad- oder Dateiname!' }
+        rfehler(316);   { 'Ungueltiger Pfad- oder Dateiname!' }
         exit;
         end;
       if FileExists(fname) and not useclip then
@@ -420,7 +424,7 @@ begin
       dbWriteN(mbase,mb_halteflags,b);
       listhalten:=b;
       if t=k4_cL then begin
-        rmessage(121);   { 'Nachricht ist auf ''lîschen'' gesetzt.' }
+        rmessage(121);   { 'Nachricht ist auf ''loeschen'' gesetzt.' }
         wkey(1,false);
         closebox;
         end
@@ -454,10 +458,10 @@ begin
         assign(tt,ListQuoteMsg);
         rewrite(tt);
 
-{ Die Quote-Routine von XP erhÑlt immer eine Nachricht mit Header und
+{ Die Quote-Routine von XP erhaelt immer eine Nachricht mit Header und
   wirft den Header vor dem Quoten weg. Wenn nur einige markierte Zeilen
   zitiert werden sollen, kann nicht die komplette Nachricht mit Header
-  extrahiert und an den Quoter Åbergeben werden. Stattdessen wird vor
+  extrahiert und an den Quoter uebergeben werden. Stattdessen wird vor
   dem extrahieren der markierten Zeilen ein Dummy-Header erzeugt. Die
   acht Leerzeilen sind ein Dummy-Header im alten Z-Netz-Format ("Z2.8"). }
 
@@ -674,7 +678,7 @@ begin
     { s. auch XP3O.Bezugsverkettung }
     satz:=dbRecno(mbase);
     dbReadN(mbase,mb_origdatum,datum);
-    datum:=Longint(LongWord(datum) and LongWord($fffffff0));  { Bit 0-3 lîschen }
+    datum:=Longint(LongWord(datum) and LongWord($fffffff0));  { Bit 0-3 loeschen }
     if dateadd>0 then
       inc(datum,dateadd)
     else begin
@@ -912,7 +916,7 @@ end;
 
 { externer Programmaufruf (vgl. xp1s.shell())               }
 {                                                           }
-{ Bei Windows-Programmen wird direkt Åber START gestartet.  }
+{ Bei Windows-Programmen wird direkt ueber START gestartet.  }
 { Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
 function XPWinShell(prog:string; parfn:string; space:word;
@@ -949,7 +953,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
     else if odd(hdadr) then
       exetype:=ET_DOS
     else
-    begin { Fix fÅr LZEXE gepackte Dateien }
+    begin { Fix fuer LZEXE gepackte Dateien }
       if (hdadr > 0) and (hdadr < FileSize(f)-54) then
       begin
         seek(f,hdadr);
@@ -1020,7 +1024,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
         writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von Windows-Viewern');
         writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
         writeln(t);
-        writeln(t,'echo Windows-Programm wird ausgefÅhrt ...');
+        writeln(t,'echo Windows-Programm wird ausgefuehrt ...');
         writeln(t,'echo.');
         writeln(t,'start '+iifs(fileattach,'','/wait ')+prog);
         if not fileattach then writeln(t,'del '+parfn);
@@ -1038,7 +1042,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
       writeln(t,'rem  Diese Datei wird von CrossPoint zum Starten von OS/2-Viewern');
       writeln(t,'rem  aufgerufen (siehe Online-Hilfe zu /Edit/Viewer).');
       writeln(t);
-      writeln(t,'echo OS/2-Programm wird ausgefÅhrt ...');
+      writeln(t,'echo OS/2-Programm wird ausgefuehrt ...');
       writeln(t,'echo.');
       writeln(t,prog);
       writeln(t,'del '+parfn);
@@ -1063,6 +1067,9 @@ end;
 
 {
   $Log$
+  Revision 1.114  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.113  2002/07/25 20:43:53  ma
   - updated copyright notices
 
@@ -1077,18 +1084,18 @@ end;
     should resolve misc problems with linux
 
   Revision 1.109  2002/03/25 22:03:08  mk
-  MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
-       und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+  MY:- Anzeige der Stammbox-Adresse unterhalb der Menueleiste korrigiert
+       und ueberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
        anzeigen"):
-       - VollstÑndige Adresse (statt nur Feld "Username") inkl. Domain
+       - Vollstaendige Adresse (statt nur Feld "Username") inkl. Domain
          wird angezeigt;
-       - Alias-Points werden berÅcksichtigt (RFC/UUCP und ZConnect);
+       - Alias-Points werden beruecksichtigt (RFC/UUCP und ZConnect);
        - Realname wird in Klammern angezeigt (falls es sich um einen
-         Netztyp mit Realnames handelt) und ggf. automatisch gekÅrzt, wenn
-         die GesamtlÑnge von Adresse und Realname grî·er als 76 Zeichen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekuerzt, wenn
+         die Gesamtlaenge von Adresse und Realname groesser als 76 Zeichen
          ist;
        - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
-         der Absenderadresse unterhalb der MenÅleiste unmittelbar nach dem
+         der Absenderadresse unterhalb der Menueleiste unmittelbar nach dem
          Wechsel aktualisiert.
 
   Revision 1.108  2002/01/30 22:36:03  mk
@@ -1414,7 +1421,7 @@ end;
   - kleine Aenderungen am Tempfilehandling fuer externe Windowsviewer
 
   Revision 1.19  2000/03/03 20:26:40  rb
-  Aufruf externer MIME-Viewer (Win, OS/2) wieder geÑndert
+  Aufruf externer MIME-Viewer (Win, OS/2) wieder geaendert
 
   Revision 1.18  2000/03/02 21:39:01  rb
   Starten externer Windows-Viewer verbessert
@@ -1449,10 +1456,10 @@ end;
   -!Todo.txt aktualisiiert
 
   Revision 1.9  2000/02/22 15:51:20  jg
-  Bugfix fÅr "O" im Lister/Archivviewer
-  Fix fÅr Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
-  O, I,  ALT+M, ALT+U, ALT+V, ALT+B nur noch im Lister gÅltig.
-  Archivviewer-Macros gÅltig im MIME-Popup
+  Bugfix fuer "O" im Lister/Archivviewer
+  Fix fuer Zusatz/Archivviewer - Achivviewer-Macros jetzt aktiv
+  O, I,  ALT+M, ALT+U, ALT+V, ALT+B nur noch im Lister gueltig.
+  Archivviewer-Macros gueltig im MIME-Popup
 
   Revision 1.8  2000/02/21 15:07:55  mk
   MH: * Anzeige der eMail beim Nodelistbrowsen

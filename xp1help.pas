@@ -27,9 +27,7 @@ unit xp1help;
 interface
 
 uses
-  {$IFDEF NCRT} xpcurses,{$ENDIF}
-  typeform,fileio,inout,keys,resource,maus2,help,winxp,printerx,sysutils,
-  maske,xp0,xpglobal;
+  xpglobal; //todo: word -> Integer?
 
 const inithlp : boolean = false;
       maxhelpst = 20;
@@ -47,7 +45,12 @@ procedure do_help(n:word);
 
 implementation  { --------------------------------------------------- }
 
-uses xp1;
+uses
+  {$IFDEF NCRT} xpcurses,{$ENDIF}
+  typeform,inout,
+  keys, //taste
+  resource,maus2,help,winxp,printerx,
+  maske,xp0,xp1;
 
 var lastkeys : integer;
 
@@ -413,6 +416,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.33  2002/07/25 20:43:53  ma
   - updated copyright notices
 

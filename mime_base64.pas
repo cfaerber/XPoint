@@ -81,7 +81,7 @@ const
 implementation
 
 uses
-  SysUtils, Typeform;
+  SysUtils, Typeform, xpglobal;
 
 { TBase64EncoderStream }
 
@@ -221,6 +221,9 @@ end;
 
 //
 // $Log$
+// Revision 1.8  2002/12/06 14:27:26  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.7  2002/12/04 16:57:00  dodi
 // - updated uses, comments and todos
 //

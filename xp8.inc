@@ -262,14 +262,14 @@ var fa  : FidoAdr;
     box : string;
 begin
   if (aktdispmode<10) or (aktdispmode>19) or (mbNetztyp<>nt_Fido) then
-    rfehler(850)     { 'Keine Filescan-Nachricht gewÑhlt!' }
+    rfehler(850)     { 'Keine Filescan-Nachricht gewaehlt!' }
   else begin
     splitfido(dbReadStrN(mbase,mb_absender),fa,DefaultZone);
     box:=MakeFidoAdr(fa,false);
     if not IsBox(box) then
       rfehler1(851,box)    { '%s ist kein eingetragener Fido-Server!' }
     else begin
-      message(getreps(850,box));       { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
+      message(getreps(850,box));       { 'Fileecho-Liste fuer %s wird eingelesen ...' }
       extract_msg(xTractMsg,'',GetServerFilename(box, extFbl),false,0);
       mdelay(500);
       closebox;
@@ -298,10 +298,10 @@ begin
   if not ReadFilename(getres(822),fn,true,useclip) then exit;   { 'Fileecho-Liste einlesen' }
   bfile := GetServerFilename(Box, '');
   ReadBox(0,bfile,boxpar);
-  message(getreps(806,UpperCase(box)));   { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
+  message(getreps(806,UpperCase(box)));   { 'Fileecho-Liste fuer %s wird eingelesen ...' }
   Filecopy(fn, bfile + extFbl);
   Closebox;
-  if useclip or ReadJN(getreps(817,fn),false) then   { '%s lîschen' }
+  if useclip or ReadJN(getreps(817,fn),false) then   { '%s loeschen' }
     _era(fn);
 end;
 
@@ -358,6 +358,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.26  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 

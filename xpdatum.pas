@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Datumsroutinen fÅr XP, MAGGI, ZFIDO }
+{ Datumsroutinen fuer XP, MAGGI, ZFIDO }
 
 {$I xpdefine.inc }
 
@@ -27,14 +27,8 @@ unit xpdatum;
 interface
 
 uses
-{$IFDEF unix}
-{$IFDEF fpc}
-  linux,
-{$ENDIF }
-{$ENDIF }
   sysutils,
   typeform,
-  montage,
   xpglobal;
 
 {$IFNDEF unix}
@@ -61,7 +55,14 @@ function DateTimeToLongDate(Date: TDateTime): LongInt;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1;
+uses
+{$IFDEF unix}
+{$IFDEF fpc}
+  linux,
+{$ENDIF }
+{$ENDIF }
+  montage,
+  xp1;
 
 procedure AddD(var datum:s20; hours:shortint);
 var h,min  : integer;
@@ -267,6 +268,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/12/06 14:27:29  dodi
+  - updated uses, comments and todos
+
   Revision 1.22  2002/07/25 20:43:56  ma
   - updated copyright notices
 

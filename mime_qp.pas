@@ -53,15 +53,16 @@ type
 
 implementation
 
-uses SysUtils
+uses
+  SysUtils,
   {$IFDEF Delphi}
   {$IFDEF Kylix}
-  ,typeform
+  typeform,
   {$ELSE}
-  ,StrUtils
+  StrUtils,
   {$ENDIF}
   {$ENDIF}
-  ;
+  xpglobal;
 
 { TQuotedPrintableEncoderStream }
 
@@ -257,6 +258,9 @@ end;
 
 //
 // $Log$
+// Revision 1.10  2002/12/06 14:27:27  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.9  2002/12/04 16:57:00  dodi
 // - updated uses, comments and todos
 //

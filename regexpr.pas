@@ -186,7 +186,8 @@ type
 implementation
 
 uses
- SysUtils;
+  SysUtils,
+  xpglobal; //not really
 
 const
  MAGIC = #156; // programm signature ($9C)
@@ -241,6 +242,8 @@ const
 {=============================================================}
 {===================== Common section ========================}
 {=============================================================}
+
+{ TRegExpr }
 
 constructor TRegExpr.Create;
  begin

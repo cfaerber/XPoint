@@ -39,8 +39,8 @@ begin
       ed:=false; pb:=true;
       ebest:=false; read:=false;
       maddbool(3,2,getres2(330,2),ed); mhnr(101);   { 'Empfangsdatum = Erstellungsdatum' }
-      maddbool(3,3,getres2(330,3),pb);     { 'Server aus Pfad Åbernehmen' }
-      maddbool(3,4,getres2(330,4),ebest);  { 'EmpfangsbestÑtigungen versenden' }
+      maddbool(3,3,getres2(330,3),pb);     { 'Server aus Pfad uebernehmen' }
+      maddbool(3,4,getres2(330,4),ebest);  { 'Empfangsbestaetigungen versenden' }
       maddbool(3,5,getres2(330,5),read);   { 'Nachrichten als "gelesen" markieren' }
       readmask(brk);
       closemask;
@@ -55,7 +55,7 @@ begin
 end;
 
 
-{ Pollbox='' -> Pollbox wird aus Pfad Åbernommen, falls vor-  }
+{ Pollbox='' -> Pollbox wird aus Pfad uebernommen, falls vor-  }
 {               handen, sonst aus DefaultBox                  }
 { Replace-ED :  Empfangsdatum durch Erstellungsdatum ersetzen }
 
@@ -86,7 +86,7 @@ var x,y      : Integer;
     _brett   : string;
     mapsname : string;
     seekbr   : string;
-    msgid2   : string;    { gekÅrzte MsgID (FormMsgid) fÅr mbase }
+    msgid2   : string;    { gekuerzte MsgID (FormMsgid) fuer mbase }
     amvertreter,
     pmvertreter : string;
     sysbetreff  : string;  { Betreff von Changesys/getsys }
@@ -112,14 +112,14 @@ var x,y      : Integer;
     p0       : byte;
     zconnect : boolean;
     pm       : boolean;
-    mnt      : longint;       { Netztyp-Feld fÅr mbase }
+    mnt      : longint;       { Netztyp-Feld fuer mbase }
     today    : longint;
     empfnr   : integer;
     junk     : boolean;
     msgsent  : boolean;
     forcepfadbox: boolean;
     IsGelesen   : boolean;
-    cmessagefile:text;         { Datei fÅr Controlmessages (Cancels/Supersedes) }
+    cmessagefile:text;         { Datei fuer Controlmessages (Cancels/Supersedes) }
     num_cmessages : integer;   { Anzahl Controlmessages (Cancels/Supersedes) }
     mbflags  : longint;
     mstr     : string;          { Message-Text }
@@ -134,7 +134,7 @@ var x,y      : Integer;
   begin
     moff;
     mstr:=getres(331);
-    FWrt(x+2,y+2,mstr);    { 'Puffer ÅberprÅfen...' }
+    FWrt(x+2,y+2,mstr);    { 'Puffer ueberpruefen...' }
     mon;
     MsgCount:=0; adr:=0; lastsubj:=''; lastmid:='';
     repeat
@@ -151,7 +151,7 @@ var x,y      : Integer;
         inc(adr,hdsize+hdp.groesse);
         lastsubj:=hdp.betreff; lastmid:=hdp.msgid;
         end;
-    until not ok or (adr>=fs-3);     { Der Puffer kann maximal 3 zusÑtzliche }
+    until not ok or (adr>=fs-3);     { Der Puffer kann maximal 3 zusaetzliche }
     if (MsgCount>0) then begin
       moff;
       FWrt(x+3+length(mstr),y+2,strs(MsgCount));
@@ -226,13 +226,13 @@ var x,y      : Integer;
     var b : byte;
     begin
       b:=1;  dbWriteN(mbase,mb_gelesen,b);
-      b:=2;  dbWriteN(mbase,mb_halteflags,b);   { gelîscht }
+      b:=2;  dbWriteN(mbase,mb_halteflags,b);   { geloescht }
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 128;                              { gecancelt }
       dbWriteN(mbase,mb_unversandt,b);
     end;
 
-    { FÅr die Bearbeitung von Cancel-Nachrichten wurde u.a. der folgende
+    { Fuer die Bearbeitung von Cancel-Nachrichten wurde u.a. der folgende
       Abschnitt aus RFC 1036 zu Grunde gelegt:
 
       "Only the author of the message or the local news administrator is
@@ -271,12 +271,12 @@ var x,y      : Integer;
           end;
           dbNext(bezbase);
         until (hdp2.msgid=id) or dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_msgid)<>crc);
-        if okay then DelMsg; { zu lîschende/zu ersetzende Nachricht lîschen }
+        if okay then DelMsg; { zu loeschende/zu ersetzende Nachricht loeschen }
       end;
     Hdp2.Free;
     if cancel then begin
       dbGo(mbase,mrec);
-      DelMsg;   { Cancel-Nachricht auf 'gelesen' / 'lîschen' }
+      DelMsg;   { Cancel-Nachricht auf 'gelesen' / 'loeschen' }
     end;
   end;
 
@@ -494,7 +494,7 @@ var x,y      : Integer;
     savecursor;
     sichern(sp);
     shell(s,600,3);                     { Nachricht decodieren }
-    if existf(f) then erase(f);       { codierte Msg lîschen, falls noch da }
+    if existf(f) then erase(f);       { codierte Msg loeschen, falls noch da }
     if not FileExists(uncfile) then
       trfehler(306,5)         { 'Fehler beim Decodieren' }
     else begin
@@ -909,7 +909,7 @@ begin
               { mwrt(29,wherey,forms(absender,22)); }
               AddNewUser(Absender, pollbox_str(zconnect,true));
               writeln(userlog,logstr(absender));
-            end;        { NetzunabhÑngige Useraufnahme }
+            end;        { Netzunabhaengige Useraufnahme }
             aufnehmen:=true;
           end
           else
@@ -983,7 +983,7 @@ begin
 
           { hier kein adrok: TO-User werden immer aufgenommen! }
           if FirstChar(FirstEmpfaenger)='U' then begin
-            dbSeek(ubase,uiName,UpperCase(copy(FirstEmpfaenger,2,80))); {Adre·buch-Eintrag}
+            dbSeek(ubase,uiName,UpperCase(copy(FirstEmpfaenger,2,80))); {Adressbuch-Eintrag}
             if not dbFound then begin
               dbAppend(ubase);
               name:=copy(FirstEmpfaenger,2,79);
@@ -1038,7 +1038,7 @@ begin
               end;
             dbAppend(mbase);
             mnt:=netztyp and $FF;
-            if References.Count > 0 then inc(mnt,$100); // rÅckwÑrtsverkettet
+            if References.Count > 0 then inc(mnt,$100); // rueckwaertsverkettet
             if attrib and attrFile<>0 then inc(mnt,$200);
             if pm_reply then inc(mnt,$400);
             if (wab<>'') or (oem.Count > 0) then inc(mnt,$800);
@@ -1109,7 +1109,7 @@ begin
             { message again. Necessary for cancels. }
             if OwnMessageReplaced then mbflags:= mbflags or 256;
             dbWriteN(mbase,mb_flags,mbflags);
-            wrll(dbRecno(mbase));     { fÅr Bezugsverkettung merken }
+            wrll(dbRecno(mbase));     { fuer Bezugsverkettung merken }
             l:=LongInt(LongWord(ixdat(datum)) and LongWord($fffffff0));
             if Empfaenger.Count >1 then
               inc(l,iif(msgsent,2,1));
@@ -1151,7 +1151,7 @@ begin
         begin
           { Nachricht nach /Junk }
           junk:=true;
-          empfnr:=1;            { kein passendes Brett fÅr Crossposting }
+          empfnr:=1;            { kein passendes Brett fuer Crossposting }
           FlushLL;
           seek(pfile,filesize(pfile)-8);
         { seek(pfile,filesize(pfile)-8*hdp.empfanz); }
@@ -1161,8 +1161,8 @@ begin
     (*  else
           if junk then begin
             FlushLL;
-            seek(pfile,sizeof(pfile));   { 0/0-EintrÑge fÅr nicht einsor- }
-            end;                         { tierte Xpostings Åberspringen  } *)
+            seek(pfile,sizeof(pfile));   { 0/0-Eintraege fuer nicht einsor- }
+            end;                         { tierte Xpostings ueberspringen  } *)
 
       until (empfnr>hdp.Empfaenger.Count)or(forcerecipient<>'');
 
@@ -1208,7 +1208,7 @@ begin
     close(userlog);
     puffereinlesen:=true;
 
-(*    Wrt(x+2,y+7,getres(320)); { 'DatumsbezÅge werden Åberarbeitet...     %' }
+(*    Wrt(x+2,y+7,getres(320)); { 'Datumsbezuege werden ueberarbeitet...     %' }
     GotoXY(WhereX-5, WhereY);
     Debug.DebugLog('xp3o','set area date',DLInform);
     BrettDatumSetzen(true);
@@ -1245,7 +1245,7 @@ begin
     mon;
     errsound;
     moff;
-    Wrt(x+2,y+7,getres(12));   { 'Taste drÅcken ...' }
+    Wrt(x+2,y+7,getres(12));   { 'Taste druecken ...' }
     mon;
     errsound;
     cursor(curon);
@@ -1294,6 +1294,9 @@ end;
 
 {
   $Log$
+  Revision 1.99  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.98  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 

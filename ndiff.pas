@@ -30,7 +30,8 @@ procedure processlist(const nl, nd: String);
 implementation
 
 uses
-  dos, sysutils, typeform, fileio, xpglobal;
+  sysutils,
+  typeform, xpglobal;
 
 const
   shrink: boolean = false;
@@ -337,6 +338,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.18  2002/07/25 20:43:52  ma
   - updated copyright notices
 

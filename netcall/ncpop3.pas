@@ -14,7 +14,7 @@
    along with this software; see the file gpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-   Created on August, 1st 2000 by Markus KÑmmerer <mk@happyarts.de>
+   Created on August, 1st 2000 by Markus Kaemmerer <mk@happyarts.de>
 
    This software is part of the OpenXP project (www.openxp.de).
 }
@@ -28,12 +28,10 @@ unit ncpop3;
 interface
 
 uses
-  xpglobal,             { Nur wegen der Typendefinition }
+  Classes,              { TStringList }
   ProgressOutput,       { TProgressOutput }
   Netcall,              { TNetcall }
-  NCSocket,             { TSocketNetcall }
-  Classes,              { TStringList }
-  sysutils;
+  NCSocket;             { TSocketNetcall }
 
 type
   EPOP3          = class(ESocketNetcall);
@@ -94,19 +92,22 @@ type
 
     // Initializes UIDL and statistical variables, should be called after Connect
     function Stat: boolean;
-    // EmpfÑngt eine Nachricht
+    // Empfaengt eine Nachricht
     function Retr(ID: Integer; List: TStringList): boolean;
-    // EmpfÑngt alle Nachrichten
+    // Empfaengt alle Nachrichten
     function RetrAll(List: TStringList): boolean;
-    // Lîscht die angegebene Nachricht
+    // Loescht die angegebene Nachricht
     function Dele(ID: Integer): boolean;
-    // Lîscht High-Watermark und als gelîscht markierte Nachrichten
+    // Loescht High-Watermark und als geloescht markierte Nachrichten
     function RSet: boolean;
   end;
 
 implementation
 
-uses md5,typeform;
+uses
+  sysutils,
+  xpglobal,             { Nur wegen der Typendefinition }
+  md5,typeform;
 
 const
   DefaultPOP3Port       = 110;
@@ -121,7 +122,7 @@ resourcestring
   res_connect3          = 'Anmeldung fehlgeschlagen: %s';
   res_connect4          = 'Verbunden mit %s';
 
-  res_loginplaintext    = 'UnverschlÅsselter Login';
+  res_loginplaintext    = 'Unverschluesselter Login';
   res_apoplogin         = 'Sicherer Login (APOP)';
   res_noapop            = 'Server bietet keinen APOP-Support';
 
@@ -174,7 +175,7 @@ begin
   Result := false;
   if Connected then
   begin
-    // Authorisierung bei POP3 immer nîtig
+    // Authorisierung bei POP3 immer noetig
     if (FUser='') or (FPassword='') then
       raise EPOP3.CreateFmt(res_connect3, ['Invalid account info']); // Anmeldung fehlgeschlagen
 
@@ -184,13 +185,13 @@ begin
          SWritelnFmt('USER %s', [FUser]);
          SReadLn(s);
 
-         if ParseError(s) then // RÅckmeldung auswerten
+         if ParseError(s) then // Rueckmeldung auswerten
            raise EPOP3.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
 
          SWritelnFmt('PASS %s', [FPassword]);
          SReadLn(s);
 
-         if ParseError(s) then // RÅckmeldung auswerten
+         if ParseError(s) then // Rueckmeldung auswerten
            raise EPOP3.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
 
          Result := true;
@@ -204,7 +205,7 @@ begin
          SWritelnFmt('APOP %s %s', [FUser,LowerCase(MD5_Digest(FTimestamp+FPassword))]);
          SReadLn(s);
 
-         if ParseError(s) then // RÅckmeldung auswerten
+         if ParseError(s) then // Rueckmeldung auswerten
            raise EPOP3.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
 
          Result := true;
@@ -227,7 +228,7 @@ begin
   Sreadln(s);
   FServer := s;
 
-  if ParseError(s) then // RÅckmeldung auswerten
+  if ParseError(s) then // Rueckmeldung auswerten
     raise EPOP3.CreateFmt(res_connect2, [ErrorMsg]) // Unerreichbar
   else begin
     Output(mcInfo,res_connect4, [Host.Name]); // Verbunden
@@ -418,6 +419,9 @@ end;
 
 {
   $Log$
+  Revision 1.19  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.18  2002/02/21 13:52:35  mk
   - removed 21 hints and 28 warnings
 

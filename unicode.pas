@@ -19,6 +19,8 @@ unit unicode;
   {$MODE objfpc}
 {$ENDIF }
 
+//todo: redesign into classes of general string types
+
 interface
 
 uses
@@ -183,6 +185,7 @@ end;
 
 // same as UnicodeToUTF8, but changes a given string at position index
 // length of the given string is not checked!
+//todo: assert same size, or handle replacement of chars of different size
 procedure UnicodeToUTF8ToString(c: UCChar; var s: String; var Index: Integer);
 begin
   if c <= $007f then
@@ -197,7 +200,7 @@ begin
   begin
     Inc(Index); s[Index] := Chr($e0 or (c shr 12));
     Inc(Index); s[Index] := Chr($80 or ((c shr 6) and $3f));
-    Inc(Index); s[Index] := Chr($80 or (c and $3f));         
+    Inc(Index); s[Index] := Chr($80 or (c and $3f));
   end;
 end;
 
@@ -287,6 +290,8 @@ end;
 //   Ansi (ISO8859-1) character set
 // -------------------------------------------------------------------
 
+{ TAnsiUTF8Encoder }
+
 function TAnsiUTF8Encoder.Encode(const Source: String): UTF8String;
 var
   i: Integer;
@@ -295,6 +300,8 @@ begin
   for i := 1 to Length(Source) do
       Result := Result + UnicodeToUTF8(UCChar(Ord(Source[i])));
 end;
+
+{ TAnsiUTF8Decoder }
 
 function TAnsiUTF8Decoder.Decode(const Source: UTF8String): String;
 var
@@ -325,6 +332,8 @@ begin
   end;
 end;
 
+{ TAsciiUTF8Decoder }
+
 function TAsciiUTF8Decoder.Decode(const Source: UTF8String): String;
 var
   p: integer;
@@ -343,6 +352,8 @@ end;
 //   Simple 8-bit character sets
 // -------------------------------------------------------------------
 
+{ T8BitUTF8Encoder }
+
 constructor T8BitUTF8Encoder.Create(const ATable: T8BitTable);
 begin
   FTable := ATable;
@@ -357,6 +368,7 @@ begin
     Result := Result + UnicodeToUTF8(FTable[Source[i]]);
 end;
 
+{ T8BitUTF8Decoder }
 
 constructor T8BitUTF8Decoder.Create(const ATable: T8BitTable);
 var
@@ -464,6 +476,8 @@ end;
 //   Windows (windows-1252) character set
 // -------------------------------------------------------------------
 
+{ TWindowsUTF8Encoder }
+
 function TWindowsUTF8Encoder.Encode(const Source: String): UTF8String;
 var
   i, j: Integer;
@@ -483,6 +497,8 @@ begin
   SetLength(Result, j);
 end;
 
+{ TWindowsUTF8Decoder }
+
 constructor TWindowsUTF8Decoder.Create;
 begin
   inherited Create(CP1252TransTable);
@@ -491,6 +507,8 @@ end;
 // -------------------------------------------------------------------
 //   Multi-byte character sets (MBCS)
 // -------------------------------------------------------------------
+
+{ TMBCSUTF8Encoder }
 
 constructor TMBCSUTF8Encoder.Create(const ATable: array of TMBCSTableEntry);
 var
@@ -532,6 +550,9 @@ end;
 
 {
   $Log$
+  Revision 1.13  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.12  2002/03/04 01:13:49  mk
   - made uuz -uz three times faster
 

@@ -27,11 +27,7 @@ unit xp3o;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  sysutils,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2, xpheader,
-  osdepend, resource,printerx,xp0,xp1,xp1o2,xp1input,crc,xpdatum,xpglobal;
+  maske;
 
 const pe_ForcePfadbox = 1;     { Flags fuer PufferEinlesen }
       pe_Bad          = 2;     { Puffer bei Fehler nach BAD verschieben }
@@ -84,11 +80,19 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xpsendmessage,xpsendmessage_rta,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,classes,
+uses
+  sysutils,classes,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
 {$IFDEF Kylix}
   xplinux,
-{$ENDIF}  
-  xpmakeheader;
+{$ENDIF}
+  datadef,database,typeform,fileio,inout,keys,maus2,xpheader,osdepend,resource,
+  printerx,xp0,xp1,xp1o2,xp1input,
+  xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
+  xpmakeheader,xpsendmessage,xpsendmessage_rta,
+  xpglobal;
 
 
 { Customselectroutinen fuer Brett/User }
@@ -409,7 +413,7 @@ begin
   closebox;
   if not brk then begin
     newempf:=newbrett;
-    if FirstChar(dbReadStrN(bbase,bb_brettname))='1' then 
+    if FirstChar(dbReadStrN(bbase,bb_brettname))='1' then
     begin
       DeleteFirstChar(newempf);
       if cPos('/',newempf)>0 then   { Boxname im PM-Brett }
@@ -749,7 +753,7 @@ end;
 
 
 { Alle angezeigten Msgs im aktuellen Msg-Fenster bearbeiten  }
-{ art: 1=halten, 2=l”schen, 3=markieren, 4=normal, 5=gelesen }
+{ art: 1=halten, 2=loeschen, 3=markieren, 4=normal, 5=gelesen }
 {      6=ungelesen, 7=entfernen, 8=Liste erzeugen, 9=drucken }
 { Aufruf bei dispmode in [10..19]                            }
 
@@ -1553,6 +1557,9 @@ end;
 
 {
   $Log$
+  Revision 1.97  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.96  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 
@@ -1592,18 +1599,18 @@ end;
   - changes for new address handling
 
   Revision 1.85  2002/03/25 22:03:09  mk
-  MY:- Anzeige der Stammbox-Adresse unterhalb der Menleiste korrigiert
-       und berarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+  MY:- Anzeige der Stammbox-Adresse unterhalb der Menueleiste korrigiert
+       und ueberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
        anzeigen"):
        - Vollst„ndige Adresse (statt nur Feld "Username") inkl. Domain
          wird angezeigt;
-       - Alias-Points werden bercksichtigt (RFC/UUCP und ZConnect);
+       - Alias-Points werden beruecksichtigt (RFC/UUCP und ZConnect);
        - Realname wird in Klammern angezeigt (falls es sich um einen
-         Netztyp mit Realnames handelt) und ggf. automatisch gekrzt, wenn
-         die Gesamtl„nge von Adresse und Realname gr”áer als 76 Zeichen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekuerzt, wenn
+         die Gesamtl„nge von Adresse und Realname groesser als 76 Zeichen
          ist;
        - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
-         der Absenderadresse unterhalb der Menleiste unmittelbar nach dem
+         der Absenderadresse unterhalb der Menueleiste unmittelbar nach dem
          Wechsel aktualisiert.
 
   Revision 1.84  2002/02/21 13:52:32  mk

@@ -134,6 +134,9 @@ type
 
 implementation
 
+uses
+  xpglobal; //not really
+
 { --- TDirEntry --------------------------------------------- }
 
 constructor TDirEntry.Create(const item: TSearchRec);
@@ -315,6 +318,9 @@ end;
 
 {
         $Log$
+        Revision 1.7  2002/12/06 14:27:26  dodi
+        - updated uses, comments and todos
+
         Revision 1.6  2002/02/21 13:52:30  mk
         - removed 21 hints and 28 warnings
 

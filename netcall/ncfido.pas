@@ -28,7 +28,9 @@ unit ncfido;
 
 interface
 
-uses ncmodem,timer,fidoglob,xpglobal,classes,fileio,osdepend;
+uses
+  classes,
+  ncmodem,timer,fidoglob,xpglobal,fileio,osdepend;
 
 type
   hellor = record
@@ -95,7 +97,8 @@ type
 implementation
 
 uses
-  keys,zmodem,progressoutput,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom,md5;
+  sysutils,
+  keys,zmodem,progressoutput,resource,typeform,debug,montage,crc,xpdiff,objcom,md5;
 
 const {Y_DietIfna = $0001;}   { Capability Flags }
       Zed_Zipper = $0004;
@@ -239,6 +242,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.10  2002/07/25 20:44:02  ma
   - updated copyright notices
 

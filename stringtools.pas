@@ -26,9 +26,8 @@ unit stringtools;
 interface
 
 uses
-  xpglobal,             { Nur wegen der Typendefinition }
-  typeform,
-  sysutils;
+  sysutils, //TDateTime
+  xpglobal;             { Nur wegen der Typendefinition }
 
 // converts TDateTime to ZConnect Date and Time String
 function DateTimeToZCDateTime(DateTime: TDateTime): String;
@@ -37,6 +36,9 @@ function ZCDateTimeToDateTime(const s: String): TDateTime;
 
 
 implementation
+
+uses
+  typeform;
 
 function DateTimeToZCDateTime(DateTime: TDateTime): String;
 begin
@@ -51,6 +53,9 @@ end;
 
 {
   $Log$
+  Revision 1.7  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.6  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -21,11 +21,11 @@
 { --- Timing-Listen-Interpreter --------------------------------------- }
 
 { Es wird pro Tag eine Timing-Liste zusammengestellt, sortiert nach     }
-{ Anfangszeit. Der erste Eintrag wird jeweils als nÑchstes ausgefÅhrt.  }
-{ Nicht erfolgreiche Netcalls werden zurÅckgestellt. Alle EintrÑge mit  }
-{ von<=time<=bis sind *aktiv*. Sind unter den aktiven EintrÑgen mehrere }
-{ Netcalls, dann werden diese immer vor anderen Aktionen ausgefÅhrt.    }
-{ öber nxtime wird bei Ende eines Netcalls festgelegt, wann er frÅhe-   }
+{ Anfangszeit. Der erste Eintrag wird jeweils als naechstes ausgefuehrt.  }
+{ Nicht erfolgreiche Netcalls werden zurueckgestellt. Alle Eintraege mit  }
+{ von<=time<=bis sind *aktiv*. Sind unter den aktiven Eintraegen mehrere }
+{ Netcalls, dann werden diese immer vor anderen Aktionen ausgefuehrt.    }
+{ Ueber nxtime wird bei Ende eines Netcalls festgelegt, wann er fruehe-   }
 { stens wiederholt werden darf (time+RedialWait).                       }
 {                                                                       }
 { Achtung: 'active' hat hier eine andere Bedeutung als im Timinglisten- }
@@ -56,7 +56,7 @@ var brk     : boolean;
     f       : file;
 
   { testen, ob tr.action am tag dat zwischen von und bis }
-  { ausgefÅhrt wurde.                                    }
+  { ausgefuehrt wurde.                                    }
 
   function intime(dat,von,bis:string; var tr:TimeRec):boolean;
   var t   : text;
@@ -232,19 +232,19 @@ var brk     : boolean;
         i:=datLine;
         if trim(NetcallSpecialList[i]) = '' then
         begin
-          trfehler1(1019,strs(i),60);  { 'NETCALL.DAT enthÑlt keinen gÅltigen Eintrag in Zeile %s!' }
+          trfehler1(1019,strs(i),60);  { 'NETCALL.DAT enthaelt keinen gueltigen Eintrag in Zeile %s!' }
           dbClose(d);
           exit;
         end;
       end
       else begin     { Netcall/Spezial (manuell) }
-      { ersten nicht-leeren Eintrag fÅr Anzeige im Eingabefeld ermitteln }
+      { ersten nicht-leeren Eintrag fuer Anzeige im Eingabefeld ermitteln }
         i:=1;
         while (i <= NetcallSpecialMax) and (trim(NetcallSpecialList[i]) = '') do
           inc(i);
         if (i > NetcallSpecialMax) then
         begin
-          rfehler(1018);  { 'NETCALL.DAT enthÑlt keine gÅltigen EintrÑge (Zeilen 1-20)!' }
+          rfehler(1018);  { 'NETCALL.DAT enthaelt keine gueltigen Eintraege (Zeilen 1-20)!' }
           dbClose(d);
           exit;
         end;
@@ -282,7 +282,7 @@ var brk     : boolean;
         maddstring(3,2,'',all,66,255,'');
         if special then
           for i:=1 to NetcallSpecialMax do
-            if trim(NetcallSpecialList[i]) <> '' then  { nur EintrÑge anzeigen, die nicht leer sind }
+            if trim(NetcallSpecialList[i]) <> '' then  { nur Eintraege anzeigen, die nicht leer sind }
               mappsel(false,iifs(i>9,'',' ')+strs(i)+':  '+
                       trim(NetcallSpecialList[i]));
         readmask(brk);
@@ -418,7 +418,7 @@ var brk     : boolean;
     attrtxt(col.colmboxhigh);
     if anz=0 then begin
       clwin(x+1,x+58,y+1,y+gl+2);
-      mwrt(x+10,y+3,getres2(1016,2));  { '-- keine weiteren EintrÑge fÅr heute --' }
+      mwrt(x+10,y+3,getres2(1016,2));  { '-- keine weiteren Eintraege fuer heute --' }
       end
     else begin
       moff;
@@ -450,7 +450,7 @@ var brk     : boolean;
       end;
   end;
 
-  { evtl. noch hinzufÅgen: untenstehende, aktive Netcalls }
+  { evtl. noch hinzufuegen: untenstehende, aktive Netcalls }
   { "nach oben schwimmen" lassen                          }
 
   procedure set_active;
@@ -479,7 +479,7 @@ var brk     : boolean;
              formi(l mod 60,2);
   end;
 
-  { tl[1]^ ausfÅhren }
+  { tl[1]^ ausfuehren }
   procedure execute1;
   var ok,brk : boolean;
       i      : integer;
@@ -517,7 +517,7 @@ var brk     : boolean;
             end;
         3 : PackAll(false);      { PACK }
         4 : begin                { EXEC <Cmd> }
-              shell(trim(mid(action,6)),600,1);   { Bild komplett lîschen }
+              shell(trim(mid(action,6)),600,1);   { Bild komplett loeschen }
               wrtiming(action);
             end;
       5,6 : begin                { QUIT [n] }
@@ -599,7 +599,7 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
     MakeAllListe(brk,tnr<0);
     if brk then exit;
     tnr:=0;
-    _anz:=anzahl;                          { Anzahl der EintÑge merken }
+    _anz:=anzahl;                          { Anzahl der Eintaege merken }
     end;
   if _anz=0 then begin
     trfehler(iif(callall,1005,1006),60);   { 'keine zutreffenden Boxen' / 'leere Timing-Liste' }
@@ -626,12 +626,12 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
     initscs;
     lsec:=RightStr(time,2);
 
-    repeat                              { Die Gro·e Schleife, Warten auf das nÑchste Ereignis }
+    repeat                              { Die Grosse Schleife, Warten auf das naechste Ereignis }
       if RightStr(time,2)<>lsec then begin { eine neue Sekunde angebrochen }
         lsec:=RightStr(time,2);            { lsec erneuern }
         dec(scsavecnt);                 { SreenSaveCounter }
         if scsavecnt=0 then begin
-          if timediff(endtime,time)>10 then begin     { ist die Zeit bis zum nÑhsten Ereignis > 10 sec }
+          if timediff(endtime,time)>10 then begin     { ist die Zeit bis zum naehsten Ereignis > 10 sec }
             addendtime(-2); TimedScsaver(endtime); addendtime(2);  {screensaver einschlten }
             end;
           initscs;                      { screensave counter neu initialisieren }
@@ -649,12 +649,12 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
         initscs;
         end;
       ende:=ende or (callall and (anz=0));
-      while keypressed do                                       { wurde Taste gedrÅckt }
+      while keypressed do                                 { wurde Taste gedrueckt }
         case readkey of
-          #27 : ende:=true;                                     { esc   = timing abbrechen }
-          ' ' : endtime:=time;                                  { space = sofort ausfÅhren }
-          '+' : if endtime<'23:59:59' then addendtime(1);       { +     = Zeitspanne erhîhen }
-          '-' : if endtime>time then addendtime(-1);            { +     = Zeitspanne ernidrigen}
+          #27 : ende:=true;                               { esc   = timing abbrechen }
+          ' ' : endtime:=time;                            { space = sofort ausfuehren }
+          '+' : if endtime<'23:59:59' then addendtime(1); { +     = Zeitspanne erhoehen }
+          '-' : if endtime>time then addendtime(-1);      { +     = Zeitspanne ernidrigen}
         end;
       if not ende then XpIdle;
     until ende or (date<>ldate);
@@ -679,13 +679,15 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
 end;
 
 
-{ nr:  1 = Bretter, 2 = User, 3 = Msgs, 4=Lister, 5=ArcViewer, 6=Editor,
-       7 = Terminal }
-
 procedure MakSelKeys(LSelf: TLister; var t:taste);
 begin
   if t=keyf6 then t:=keyesc;
 end;
+
+{ nr:  1 = Bretter, 2 = User, 3 = Msgs, 4=Lister, 5=ArcViewer, 6=Editor,
+       7 = Terminal
+todo: make enum?
+}
 
 procedure Makroliste(nr:byte);
 var
@@ -724,9 +726,9 @@ begin
     end;
     close(t);
     if anz=0 then
-      hinweis(getres2(1017,1))   { 'keine Tastenmakros fÅr dieses Fenster definiert' }
+      hinweis(getres2(1017,1))   { 'keine Tastenmakros fuer dieses Fenster definiert' }
     else begin
-      selbox(41,min(anz+2,screenlines-6),getres2(1017,2),x,y,true);   { 'Makro wÑhlen ...' }
+      selbox(41,min(anz+2,screenlines-6),getres2(1017,2),x,y,true);   { 'Makro waehlen ...' }
       List.SetSize(x+1,x+39,y+1,y+min(anz+2,screenlines-6)-2);
       List.OnKeypressed := MakSelKeys;
       listboxcol(list);
@@ -748,6 +750,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.26  2002/12/02 14:04:30  dodi
   made xpmenu internal tool
 

@@ -26,6 +26,8 @@ unit timer;
 
 interface
 
+//todo: only use under DOS! move into dos directory or unit?
+
 type
   TPTimer = ^TTimer;
   TTimer = object
@@ -67,6 +69,8 @@ begin
   DecodeTime(now, H, M, S, S100);
   GetTicks := S100 div 10 + S * 100 + M * 60 * 100 + H * 60 * 60 * 100
 end;
+
+{ TTimer }
 
 constructor tTimer.Init;
 begin
@@ -133,6 +137,9 @@ end.
 
 {
   $Log$
+  Revision 1.23  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.22  2002/07/25 20:43:53  ma
   - updated copyright notices
 

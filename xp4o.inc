@@ -53,7 +53,7 @@ begin
     brk := false
   else  
   if not adrbuch then
-    ask:=ReadJNesc(getres2(445,iif(user,3,4)),true,brk)   { 'Beim L”schen von '+typ+'n nachfragen' }
+    ask:=ReadJNesc(getres2(445,iif(user,3,4)),true,brk)   { 'Beim Loeschen von '+typ+'n nachfragen' }
   else
     ask:=ReadJNesc(getres2(445,5),false,brk);   { 'Beim Austragen von Usern nachfragen' }
   if not brk then begin
@@ -65,7 +65,7 @@ begin
     msgbox(25,4,'',x,y);
     if not adrbuch then begin
       mwrt(x+3,y+1,forms(typ,8)+':');
-      mwrt(x+3,y+2,getres2(445,6));    { 'gel”scht:' }
+      mwrt(x+3,y+2,getres2(445,6));    { 'geloescht:' }
       xx:=x+13;
       end
     else begin
@@ -126,7 +126,7 @@ begin
           if (not user or
              ((dbReadInt(d,'adrbuch')=0) and (dbReadInt(d,'userflags') and 5=1)))
             and (not ask or (ReadJNesc(getreps2(445,10,LeftStr(loesch,60)),true,brk)and not brk))
-          then begin                                      { '%s l”schen' }
+          then begin                                      { '%s loeschen' }
             if (user and (aktdispmode in [1..4])) or
                (not user and (aktdispmode<=0)) then
               UBunmark(dbRecno(d));
@@ -293,7 +293,7 @@ begin
   wdt:=length(getres2(448,4));
   msgbox(max(45,wdt+33),iif(_del,9,10),getres2(448,iif(_del,1,iif(repair,2,3))),x,y);
   mwrt(x+3,y+4,getres2(448,4)+'        /        KB');   { 'Nachrichten:' }
-  mwrt(x+3,y+5,getres2(448,5)+'        /        KB');   { 'auf L”schen:' }
+  mwrt(x+3,y+5,getres2(448,5)+'        /        KB');   { 'auf Loeschen:' }
   mwrt(x+3,y+6,getres2(448,6)+'        /        KB');   { 'fehlerhaft: ' }
   n:=0; ndel:=0; nbesch:=0;
   bt:=0; dbt:=0; bbt:=0;
@@ -359,8 +359,8 @@ begin
 end;
 
 
-{ Alle Nachrichten mit halteflags=2 l”schen; Puffer berarbeiten }
-{ Nachrichten mit defekter Gr”áe werden auf 'l”schen' gesetzt    }
+{ Alle Nachrichten mit halteflags=2 loeschen; Puffer ueberarbeiten }
+{ Nachrichten mit defekter Groesse werden auf 'loeschen' gesetzt    }
 
 procedure MsgReorg;
 const tmp     = 'REORG.$$$';
@@ -386,7 +386,7 @@ var x,y,yy  : Integer;
     bufs    : byte;
     break   : boolean;
     mi      : word;
-    voll    : boolean;        { kein Platz fr eine ode mehrere Abl. }
+    voll    : boolean;        { kein Platz fuer eine ode mehrere Abl. }
     errflag : boolean;
 
   procedure test_killed;
@@ -575,7 +575,7 @@ var x,y,yy  : Integer;
     reobufs:=b;
   end;
 
-  { Zugriff fr /T/S/XPOINT und /Z/ALT/S/XPOINT setzen }
+  { Zugriff fuer /T/S/XPOINT und /Z/ALT/S/XPOINT setzen }
 
   procedure Rerout(znetz:boolean; brett:string; sperre:boolean);
   var b        : byte;
@@ -644,7 +644,7 @@ begin
           lastproz:=101;
           reset(f1,1);
           f1s:=filesize(f1);
-          assign(f2,FileUpperCase(tmp));  { muá wg. rename jedesmal neu assigned werden! }
+          assign(f2,FileUpperCase(tmp));  { muss wg. rename jedesmal neu assigned werden! }
           rewrite(f2,1);
           newadr:=0;
           dbGoTop(mbase);
@@ -702,7 +702,7 @@ begin
     GotoXY(WhereX-5, WhereY);   { 'Einen Moment noch...     %' }
     brettdatumsetzen(true);
   end else
-    mwrt(x+3,yy+2,getres2(451,7));   { 'nix zu l”schen' }
+    mwrt(x+3,yy+2,getres2(451,7));   { 'nix zu loeschen' }
   DisableDOS:=false;
   signal;
   Rerout(false,'MELDUNGEN',true);
@@ -719,6 +719,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.54  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.53  2002/09/09 08:42:34  mk
   - misc performance improvements
 

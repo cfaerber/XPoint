@@ -1,11 +1,27 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 2000 OpenXP Team (Urversion von Martin Wodrich )            }
-{ , http://www.openxp.de                                          }
-{                                                                 }
-{ Xp-Easy-Konfigurationsmodus (OpenXP)                            }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{ $Id$
+
+    Copyright (C) 1991-2001 Peter Mandrella
+    (c) 2000 OpenXP Team (Urversion von Martin Wodrich )
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+  http://www.openxp.de
+
+  Xp-Easy-Konfigurationsmodus (OpenXP)
+}
 
 {$I xpdefine.inc}
 
@@ -13,18 +29,18 @@ unit xpeasy;
 
 interface
 
-uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
-  maus2,mouse,resource,xpglobal,
-  xp0,xp1,xp1o,xp1o2,xp1input,xp2c;
-
 function NeuBenutzergruss:boolean;
 procedure EasyMainDialog;
 
 implementation
+
+uses
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  typeform,keys,winxp,maske,maus2,resource,
+  xp0,xp1,xp1o,xp1input,xp2c,
+  xpglobal;
 
 function NeuBenutzergruss:boolean;
   var x,y,i : integer;
@@ -35,9 +51,6 @@ function NeuBenutzergruss:boolean;
     msglines:=ival(getres2(14000,0));
     msgbox(73,msglines+7,'',x,y);
     moff;
-//    wrt(x+3,y+1,'Cross \\//    '+
-//                 RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
-//    wrt(x+3,y+2,'      //\\ Point');
     s:=x_copyright + ' ' + author_name;
     wrt(x+67-length(s),y+2,s);
     for i:=1 to msglines do
@@ -60,7 +73,7 @@ function NeuBenutzergruss:boolean;
   begin
     {Adressconfig fuer Easy}
     msglines:=ival(getres2(14001,0));
-    dialog(ival(getres2(252,100)),8+msglines,getres2(252,101),x,y);  { 'Adreáeinstellungen (ZCONNECT / RFC)' }
+    dialog(ival(getres2(252,100)),8+msglines,getres2(252,101),x,y);  { 'Adresseinstellungen (ZCONNECT / RFC)' }
     msglines:=ival(getres2(14001,0));
     for i:=1 to msglines do
     begin
@@ -81,6 +94,9 @@ function NeuBenutzergruss:boolean;
   end;
 {
   $Log$
+  Revision 1.19  2002/12/06 14:27:29  dodi
+  - updated uses, comments and todos
+
   Revision 1.18  2002/06/12 09:14:52  mk
   - removed some length limits including AdressLength (for RFC nets only)
 
@@ -131,7 +147,7 @@ function NeuBenutzergruss:boolean;
 
   - MIME in News voreingestellt
   - Triggerlevel 2 voreingestellt
-  - EASY-Mode Aufruf ver„ndert
+  - EASY-Mode Aufruf veraendert
 
   Revision 1.3  2000/04/22 20:08:15  mw
 
@@ -139,16 +155,16 @@ function NeuBenutzergruss:boolean;
     noch nicht drin !!!)
   - Elegantere Programmierung des Aufrufs
   - Umbennenung der neuen Procedure und Function
-  - Fehler durch unvollst„ndiges Init beseitigt (FirstBox wurde noch nicht
+  - Fehler durch unvollstaendiges Init beseitigt (FirstBox wurde noch nicht
     angelegt
   - Organisation wird nicht mehr im EASY-Mode abgefragt, Rest der Adressconfig
     aber weiterhin
-  - Beseitigung unn”tiger MW-Verweise
+  - Beseitigung unnoetiger MW-Verweise
 
   Revision 1.2  2000/04/22 18:24:05  mw
 
   - Erste Dialoge des Easy-Mode
-  Achtung: Easy-Mode ist noch unvollst„ndig
+  Achtung: Easy-Mode ist noch unvollstaendig
            Man kann sich aber schon die ersten Dialoge ansehen
            Derzeit aber nur in der deutschen Version !!!
 

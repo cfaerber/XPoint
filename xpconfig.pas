@@ -28,8 +28,9 @@ unit xpconfig;
 interface
 
 uses
-  Classes,
-  SysUtils;
+  Classes,  //TList
+  SysUtils, //Exception
+  xpglobal;
 
 type
   { This is used to identify the correct class }
@@ -95,7 +96,7 @@ type
 type
   TXPConfig = class
     protected
-    
+
       VItems            : TList;        { all config elements }
 
     public
@@ -112,6 +113,8 @@ implementation
 
 { ----- TXPConfigItem ----------------------------------------------- }
 
+{ TXPConfigItem }
+
 constructor TXPConfigItem.Create(const s: string);
 begin
   inherited Create;
@@ -122,13 +125,15 @@ end;
 
 { ----- TXPConfigNumber --------------------------------------------- }
 
+{ TXPConfigNumber }
+
 constructor TXPConfigNumber.Create(const s: string);
 begin
   inherited Create(s);
   VValue:= 0;
   VBounds:= false;
 end;
-      
+
 constructor TXPConfigNumber.CreateDefaultValue(const s: string; const v: integer);
 begin
   inherited Create(s);
@@ -169,12 +174,16 @@ end;
 
 { ----- TXPConfigString --------------------------------------------- }
 
+{ TXPConfigString }
+
 function TXPConfigString.ConfigType: TXPConfigType;
 begin
   result:= ccString;
 end;
 
 { ----- TXPConfigPath ----------------------------------------------- }
+
+{ TXPConfigPath }
 
 function TXPConfigPath.ConfigType: TXPConfigType;
 begin
@@ -183,12 +192,16 @@ end;
 
 { ----- TXPConfigFilename ------------------------------------------- }
 
+{ TXPConfigFilename }
+
 function TXPConfigFilename.ConfigType: TXPConfigType;
 begin
   result:= ccFilename;
 end;
 
 { ----- TXPConfig --------------------------------------------------- }
+
+{ TXPConfig }
 
 constructor TXPConfig.Create;
 begin
@@ -205,6 +218,9 @@ end;
 
 {
 $Log$
+Revision 1.5  2002/12/06 14:27:29  dodi
+- updated uses, comments and todos
+
 Revision 1.4  2002/02/21 13:52:33  mk
 - removed 21 hints and 28 warnings
 

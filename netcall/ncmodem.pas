@@ -170,7 +170,9 @@ function CountPhonenumbers(Phonenumbers: string): integer;
 implementation
 
 uses
-  fileio,keys,xpglobal,sysutils,typeform,debug,xpprogressoutputwindow,osdepend;
+  sysutils,
+  fileio,keys,xpglobal,
+  typeform,debug,xpprogressoutputwindow,osdepend;
 
 function GetNextPhonenumber(var Phonenumbers: string): string;
 var p : byte;
@@ -195,6 +197,8 @@ begin
     end;
   result:=n;
 end;
+
+{ TModemNetcall }
 
 constructor TModemNetcall.CreateWithCommInitAndProgressOutput(const aCommInit: string; aProgressOutput: TProgressOutput);
 begin
@@ -238,7 +242,7 @@ end;
 
 function TModemNetcall.Activate: Boolean;
 begin
-  if not FActive then begin 
+  if not FActive then begin
     FCommObj:=CommInit(FCommInit);
     FActive:=Assigned(FCommObj);
   end;
@@ -526,6 +530,9 @@ end.
 
 {
   $Log$
+  Revision 1.14  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.13  2002/07/25 20:44:02  ma
   - updated copyright notices
 

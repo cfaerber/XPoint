@@ -26,13 +26,15 @@ unit xpcc;
 
 interface
 
-uses  sysutils,typeform,fileio,inout,maske,datadef,database,stack,resource,
-      xp0,xp1,xp1input, xpglobal;
+uses
+  sysutils, //before xpglobal
+  xp0,  //adrstr
+  xpglobal;
 
 const maxcc = 50;
       ccte_nobrett : boolean = false;
       cc_NT :byte = 0;
-      _UserAutoCreate : boolean = false;  { User ohne RÅckfrage anlegen }
+      _UserAutoCreate : boolean = false;  { User ohne Rueckfrage anlegen }
 
 type  ccl   = array[1..maxcc] of AdrStr;
       ccp   = ^ccl;
@@ -54,11 +56,12 @@ function is_vname(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt, xpsendmessage_internal,xpsendmessage,
+uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  winxp;
+  typeform,fileio,maske,datadef,database,stack,resource,
+  xp1,xp1input, xp3,xp3o2,xp3o,xp4e,xpnt, xpsendmessage_internal, winxp;
 
 const CCtemp = 'verteil.$$$';
       hinweisGegeben :boolean = true;
@@ -138,7 +141,7 @@ var p,p2 : byte;
       if not hinweisGegeben then
       begin
         pushhp(8091);
-        hinweis (getres (623));  { 'Inkompatible Netztypen - Serverbox-énderungen werden zurÅckgesetzt.' }
+        hinweis (getres (623));  { 'Inkompatible Netztypen - Serverbox-Aenderungen werden zurueckgesetzt.' }
         pophp;
       end;
       hinweisGegeben := true;
@@ -172,7 +175,7 @@ begin
         else begin
           p2:=cpos(':',s);
           if (s[1]='+') and (p2>2) and IsBox(copy(s,2,p2-2)) then begin
-            cc_testempf:=true;     { Crossposting-EmpfÑnger mit '+Server:' }
+            cc_testempf:=true;     { Crossposting-Empfaenger mit '+Server:' }
             dbClose(d);
             exit;
             end
@@ -187,7 +190,7 @@ begin
       if p=0 then
       begin
         if ccte_nobrett then begin
-          rfehler(2251);    { 'ungÅltige Adresse' }
+          rfehler(2251);    { 'ungueltige Adresse' }
           cc_testempf:=false;
           exit;
           end
@@ -446,10 +449,10 @@ procedure write_verteiler(var name:string; var cc:ccp; cc_anz:integer);
 var t2 : text;
     i  : integer;
 begin
-  del_verteiler(name);          { alten Eintrag lîschen, falls vorhanden }
+  del_verteiler(name);          { alten Eintrag loeschen, falls vorhanden }
   assign(t2,CCfile);
   append(t2);
-  writeln(t2,name);             { neuen Eintrag anhÑngen }
+  writeln(t2,name);             { neuen Eintrag anhaengen }
   for i:=1 to cc_anz do
     writeln(t2,cc^[i]);
   writeln(t2);
@@ -470,6 +473,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.37  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 
@@ -477,18 +483,18 @@ end;
   - updated copyright notices
 
   Revision 1.35  2002/07/09 13:37:20  mk
-  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
+  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolet due to new adress handling
 
   Revision 1.34  2002/04/14 22:27:15  cl
   - added is_vname to exports
 
   Revision 1.33  2002/03/17 11:20:36  mk
-  JG+MY:- Fix: Beim éndern des EmpfÑngers im Sendefenster konnte es zu
+  JG+MY:- Fix: Beim Aendern des Empfaengers im Sendefenster konnte es zu
           Problemen ("unbekanntes Brett: /FIDO.CROSSPOINT.GER - neu
           anlegen?") kommen, wenn es sich z.B. um Fido-Bretter mit
           Brettebenen handelte und unter /Config/Anzeige/Bretter die
-          Punktschreibweise fÅr alle Bretter gewÑhlt war. Zusatz-Fix fÅr
-          prÑzisere Anzeige und Bestimmung der Brettebene im Sendefenster
+          Punktschreibweise fuer alle Bretter gewaehlt war. Zusatz-Fix fuer
+          praezisere Anzeige und Bestimmung der Brettebene im Sendefenster
           implementiert.
 
   Revision 1.32  2002/01/19 14:17:03  mk

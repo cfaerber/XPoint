@@ -84,6 +84,9 @@ function GetT8BitTable(CharSet: TMimeCharsets): T8BitTable;
 
 implementation
 
+uses
+  xpglobal; //not really
+
 function GetT8BitTable(CharSet: TMimeCharsets): T8BitTable;
 begin
   case CharSet of
@@ -118,6 +121,9 @@ end.
 
 //
 // $Log$
+// Revision 1.10  2002/12/06 14:27:26  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.9  2002/12/04 16:56:55  dodi
 // - updated uses, comments and todos
 //

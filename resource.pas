@@ -26,9 +26,7 @@ unit  resource;
 interface
 
 uses
-  xpglobal,
-  sysutils,
-  typeform,fileio;
+  xpglobal;
 
 procedure OpenResource(const fn:string; preloadmem:longint);
 procedure CloseResource;
@@ -47,7 +45,10 @@ procedure InitResourceUnit;
 
 implementation  { --------------------------------------------------- }
 
-uses debug;
+uses
+  sysutils,
+  typeform,fileio,
+  debug;
 
 const maxblocks = 4;
       maxindex  = 4096;   { max. Strings pro Block }
@@ -59,7 +60,7 @@ type
       rblock = packed record case integer of
                  0 : (anzahl   : smallword; { Anzahl Strings in diesem Block  }
                       fileadr  : longint;   { Startadresse in RES-Datei       }
-                      contsize : smallword; { Gr”áe des Inhalts (Texte)       }
+                      contsize : smallword; { Groesse des Inhalts (Texte)       }
                       lastnr   : smallword; { letzte Res.-Nr. in diesem Block }
                       flags    : smallword; { 1 = preload                     }
                       emshandle: smallword;
@@ -79,10 +80,10 @@ var   block  : packed array[1..maxblocks] of rblock;
       index  : packed array[1..maxblocks] of ^tindex;
       FH: Integer;
 
-      clsize : word;         { Cluster-Gr”áe }
+      clsize : word;         { Cluster-Groesse }
       clindex: ^tindex;      { Cluster-Index  }
       clcont : barrp;        { Cluster-Inhalt }
-      clcsize: word;         { Gr”áe des Inhalts }
+      clcsize: word;         { Groesse des Inhalts }
       clbnr  : integer;
 
 
@@ -350,6 +351,9 @@ end;
 
 {
   $Log$
+  Revision 1.28  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.27  2002/07/25 20:43:53  ma
   - updated copyright notices
 

@@ -27,9 +27,9 @@ unit xp3;
 interface
 
 uses
-  sysutils,
-  typeform,fileio,inout,datadef,database,montage,resource, xpheader,
-  xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal,classes,fidoglob,addresses;
+  sysutils,classes,
+  datadef,xpheader,fidoglob,addresses,
+  xpglobal;
 
 const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
@@ -106,7 +106,8 @@ implementation  {-----------------------------------------------------}
                 'U'  ==  Userbretter (nur in der MBase) }
 
 uses
-  xp3o, xp3ex, xpnt, xpmakeheader, debug;
+  typeform,fileio,database,resource,
+  xp0,xp1,xp3o, xp3ex, xpnt, xpmakeheader, debug;
 
 const
   GlobalAblageOpen : Boolean = false;
@@ -1171,6 +1172,9 @@ end;
 
 {
   $Log$
+  Revision 1.87  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.86  2002/09/09 09:06:35  mk
   - added const parameters
 

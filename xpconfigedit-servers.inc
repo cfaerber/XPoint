@@ -1067,7 +1067,7 @@
       maddstring(3,3,getres2(920,113), ClientMailInServer,19,160,''); { 'Servername  ' }
         ReadServersDat('POP3');             { SERVERS.DAT lesen      }
         for j:=1 to ServersMax do
-          if ServersList[j] <> '' then      { nur EintrÑge anzeigen, }
+          if ServersList[j] <> '' then      { nur Eintraege anzeigen, }
             mappsel(false,ServersList[j]);  { die nicht leer sind    }
         mhnr(30130);
         MailInServerFld:=fieldpos;
@@ -1078,7 +1078,7 @@
       maddstring(3,4,getres2(920,117), ClientMailInEnv,19,160,'');    { 'Envelope-Adresse' }
         msetvfunc(check_envelope);
       maddstring(3,5,getres2(920,118), ClientMailInUser,19,160,'');   { 'Benutzername' }
-      maddstring(3,6,getres2(920,119), ClientMailInPass,19,75,'');    { 'Pa·wort     ' }
+      maddstring(3,6,getres2(920,119), ClientMailInPass,19,75,'');    { 'Passwort     ' }
       maddtext(44,4,getres2(920,120),0);                          { 'Envelope-To auswerten' }
       maddbool(70,4,'',ClientMailInUseEnvTo);
       maddtext(44,5,getres2(920,121),0);                          { 'Mail auf Server belassen' }
@@ -1187,9 +1187,9 @@
       if not fido then
         maddint(3,3,getres2(921,2),loginwait,5,4,1,1000);    { 'Warten auf Login     ' }
         if nt=nt_Client then mhnr(30131) else mhnr(161);
-      maddint(3,4+add,getres2(921,3),redialwait,5,4,2,1000); { 'WÑhlpause           ' }
+      maddint(3,4+add,getres2(921,3),redialwait,5,4,2,1000); { 'Waehlpause           ' }
       if nt=nt_Client then mhnr(30132) else mhnr(162);
-      maddint(3,5+add,getres2(921,4),redialmax,5,4,iif(fido,2,1),1000);   { 'maximale WÑhlversuche' }
+      maddint(3,5+add,getres2(921,4),redialmax,5,4,iif(fido,2,1),1000);   { 'maximale Waehlversuche' }
       if nt=nt_Client then mhnr(30133) else mhnr(163);
       if not fido then begin
         maddint(35,2,getres2(921,5),retrylogin,5,4,1,100);   { 'Login-Versuche  ' }
@@ -1999,7 +1999,7 @@
             old_dname:=dname;
             dname:='';
             dbWriteStr(d,'dateiname',dname);   { ! }
-            dname:=CreateServerFilename(d,nt_Client,name); { verÑndert pos(d)! }
+            dname:=CreateServerFilename(d,nt_Client,name); { veraendert pos(d)! }
             dbGo(d,drec[p]);
             dbWriteStr(d,'dateiname',dname);
             if dname<>old_dname then  { kann bei Fido evtl. gleich sein! }
@@ -2356,7 +2356,7 @@
       ReadNetztyp(box,nt,brk);
       if not brk and (nt<>nt1) and
          ReadJN(getreps2(929,5,box),true) then 
-      begin { 'Mîchten Sie den Netztyp fÅr %s wirklich Ñndern' }
+      begin { 'Moechten Sie den Netztyp fuer %s wirklich aendern' }
         WriteBox(fn,BoxPar);
         dbWrite(d,'netztyp',nt);
         dec(ntused[nt1]);
@@ -2374,6 +2374,9 @@
 
 {
   $Log$
+  Revision 1.63  2002/12/06 14:27:29  dodi
+  - updated uses, comments and todos
+
   Revision 1.62  2002/11/01 14:17:05  ma
   - reimplemented Janus+ switch, should solve problems with non-standard
     servers

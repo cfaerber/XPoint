@@ -195,7 +195,7 @@ begin
         getb(colmsgsprio4); getb(colmsgsprio5);
         end
       else
-        tfehler(getres(213)+UpperCase(s1),60);  { 'ungÅltige Farbkonfiguration:  ' }
+        tfehler(getres(213)+UpperCase(s1),60);  { 'ungueltige Farbkonfiguration:  ' }
       end;
       if (colmsgsprio1=7) and (colmsgsprio2=7) and (colmsgsprio5=7) and (colmsgs<>7)
       then begin
@@ -506,7 +506,7 @@ begin
       UseRTS:=true;
       tlevel:=2; {alt:=8}
     end;
-  COMn[5].IgCTS:=true;    { Dummy-COM fÅr ISDN }
+  COMn[5].IgCTS:=true;    { Dummy-COM fuer ISDN }
   COmn[5].UseRTS:=true;
   COMn[5].Ring:=false;
   ISDN_int:=$f1;
@@ -649,7 +649,7 @@ begin
   tonsignal:=false;
 
   MsgFeldTausch:=MsgFeldDef; { Flags/Groesse/Datum/Abs/Empf/Betreff }
-  UsrFeldTausch:=UsrFeldDef; { Flags/Haltezeit/Box/Adre·buchgruppe/Adresse/Verteiler/Kommentar }
+  UsrFeldTausch:=UsrFeldDef; { Flags/Haltezeit/Box/Adressbuchgruppe/Adresse/Verteiler/Kommentar }
   Magics:=false;
 
   UsePGP:=false;
@@ -904,7 +904,7 @@ begin
   writeln (t, 'RTA-OwnAddresses=', RTAOwnAddresses);
   writeln (t, 'RTA-NoOwnAddresses=', RTANoOwnAddresses);
 
-  // Alle nicht erkannten Zeilen werden jetzt wieder eingefÅgt
+  // Alle nicht erkannten Zeilen werden jetzt wieder eingefuegt
   for i := 0 to BadConfigLinesList.Count -1  do
     Writeln(t, BadConfigLinesList[i]);
 
@@ -1072,7 +1072,7 @@ begin
   case SaveType of
     0 : SaveConfig;          { automatisch }
     1 : cfgmodified:=true;   { manuell     }
-    2 : cfgmodified:=true;   { RÅckfrage   }
+    2 : cfgmodified:=true;   { Rueckfrage   }
   end;
 end;
 
@@ -1081,7 +1081,7 @@ var brk : boolean;
 begin
   brk:=false;
   if (SaveType=2) and cfgmodified and
-    ReadJNesc(getres(224),true,brk) then  { 'GeÑnderte Einstellungen sichern' }
+    ReadJNesc(getres(224),true,brk) then  { 'Geaenderte Einstellungen sichern' }
       CfgSave;
   AskSave:=not brk;
 end;
@@ -1150,12 +1150,12 @@ var t       : text;
         j:=ival(copy(su,p0,p-p0));
         end;
       if (nr<0) or (j<1) or (j>10) then
-        tfehler(getres(218)+LeftStr(s,45),60)   { 'ungÅltige FKey-Config-Zeile:  ' }
+        tfehler(getres(218)+LeftStr(s,45),60)   { 'ungueltige FKey-Config-Zeile:  ' }
       else begin
-        ss:=copy(s,p+3,200);     { 'P' Åberlesen }
+        ss:=copy(s,p+3,200);     { 'P' ueberlesen }
         p0:=cPos('~',ss);
         if p0>0 then with fkeys[nr][j] do begin
-          menue:=LeftStr(ss,p0-1);         { MenÅ-Anzeige }
+          menue:=LeftStr(ss,p0-1);         { Menue-Anzeige }
           ss:=copy(ss,p0+1,200);
           p0:=cPos('~',ss);
           while (p0>0) and (cPos('\',mid(ss,p0))>0) and
@@ -1543,7 +1543,7 @@ begin
         end;
         if not EntryFound then
         begin
-          // Zeile wurde nicht erkannt und wird fÅr das spÑtere
+          // Zeile wurde nicht erkannt und wird fuer das spaetere
           // Neuschreiben der Config aufgehoben
           // Evtl. weitere Fehlerbehandlung/Logfile
           if cPos('=', s) > 0 then
@@ -1695,6 +1695,9 @@ begin
 
 {
   $Log$
+  Revision 1.150  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.149  2002/07/26 08:19:23  mk
   - MarkedList is now a dynamically created list, instead of a fixed array,
     removes limit of 5000 selected messages
@@ -1758,7 +1761,7 @@ begin
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
   Revision 1.130  2001/11/04 15:20:20  my
-  MY: - Default fÅr "Systemname in PM-Brettern" (userboxname) true
+  MY: - Default fuer "Systemname in PM-Brettern" (userboxname) true
 
   Revision 1.129  2001/10/07 17:12:30  cl
   - added charset recoding for external editors

@@ -32,6 +32,8 @@ uses
 function IsKnownCharset(Charset: String): Boolean;
 function MimeGetCharsetFromName(Charset: String): TMIMECharsets;
 
+//todo: make unique unit, see unicode.pas
+
 function Convert8BitToUTF(Str: String; CharSet: TMimeCharsets): String;
 function ConvertUTFTo8Bit(Str: String; CharSet: TMimeCharsets): String;
 
@@ -43,7 +45,9 @@ function RecodeCharset(const s: String; cs_from,cs_to: TMimeCharsets): String;
 implementation
 
 uses
-  SysUtils,Typeform,charmaps;
+  SysUtils,
+  Typeform,charmaps,
+  xpglobal; //not really
 
 // -------------------------------------------------------------------
 //   UTF-8 (null encoder)
@@ -92,10 +96,14 @@ end;
 //   UTF-8 (null encoder)
 // -------------------------------------------------------------------
 
+{ TUTF8NullEncoder }
+
 function TUTF8NullEncoder.Encode(const Source: String): UTF8String;
 begin
   result:=source;
 end;
+
+{ TUTF8NullDecoder }
 
 function TUTF8NullDecoder.Decode(const Source: UTF8String): String;
 begin
@@ -109,9 +117,9 @@ end;
 function CreateUTF8Encoder(Charset: TMimeCharsets): TUTF8Encoder;
 begin
   case Charset of
-    csUTF8,csUnknown:          
+    csUTF8,csUnknown:
           result:=TUTF8NullEncoder.Create;
-    csISO8859_1, csASCII, csCP1252:           
+    csISO8859_1, csASCII, csCP1252:
           result:=TWindowsUTF8Encoder.Create;
     else  result:=T8BitUTF8Encoder.Create(GetT8BitTable(Charset));
   end;
@@ -197,6 +205,9 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.17  2002/12/06 14:27:27  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.16  2002/01/04 22:34:32  cl
 // - added IBM codepages 850 and 858
 // - moved Get8BitTable to unit charmaps

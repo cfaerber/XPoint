@@ -27,7 +27,9 @@ unit ncgeneric;
 
 interface
 
-uses ncmodem,xpglobal,classes;
+uses
+  classes,  //TStringList
+  ncmodem;  //TModemNetcall
 
 type
   TGenericMailer = class(TModemNetcall)
@@ -41,7 +43,11 @@ type
 implementation
 
 uses
-  zmodem,sysutils,debug;
+  sysutils,
+  xpglobal,
+  zmodem,debug;
+
+{ TGenericMailer }
 
 function TGenericMailer.SendFiles(OutgoingFiles: TStringList): boolean;
 var
@@ -78,6 +84,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.3  2002/02/21 13:52:35  mk
   - removed 21 hints and 28 warnings
 

@@ -27,7 +27,12 @@ unit xp0;
 interface
 
 uses
-  typeform,keys,xpglobal,log,classes,sysutils,fidoglob, markedlist;
+  classes,
+  keys, //taste, todo: declare taste here? rename into TTaste?
+  log,  //TLog
+  fidoglob, //TNodeList, todo: move vars into fidoglob?
+  markedlist, //TMarkedList
+  xpglobal;
 
 
 { Die folgenden drei Konstanten muessen Sie ergaenzen, bevor Sie     }
@@ -1217,6 +1222,9 @@ implementation
 
 {
   $Log$
+  Revision 1.169  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.168  2002/12/02 14:04:29  dodi
   made xpmenu internal tool
 

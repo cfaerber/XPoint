@@ -28,9 +28,9 @@ unit netcall;
 interface
 
 uses
-  xpglobal,		{ Nur wegen der Typendefinition }
+  sysutils,
   progressoutput,	{ TProgressOutput }
-  sysutils;
+  xpglobal;		{ Nur wegen der Typendefinition }
 
 type
   ENetcall 		= class(Exception);	{ Allgemein (und Vorfahr) }
@@ -40,9 +40,9 @@ type
 
 type
   TNetcall = class
-  
+
   protected
-    
+
   public
 
     ProgressOutput		: TProgressOutput;
@@ -50,9 +50,9 @@ type
     constructor Create;
 
     destructor Destroy; override;
-    
+
     procedure Output(mc: TMsgClass; fmt: string; args: array of const); virtual;
-  
+
   end;
 
 implementation
@@ -95,10 +95,13 @@ end.
 
 {
 	$Log$
+	Revision 1.7  2002/12/06 14:27:31  dodi
+	- updated uses, comments and todos
+
 	Revision 1.6  2001/10/15 13:12:25  mk
 	/bin/bash: ?: command not found
 	/bin/bash: q: command not found
-
+	
 	Revision 1.5  2001/09/07 23:24:57  ml
 	- Kylix compatibility stage II
 	

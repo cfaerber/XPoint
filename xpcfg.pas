@@ -23,10 +23,6 @@ unit xpcfg;
 
 interface
 
-uses
-  xpglobal,
-  sysutils;
-
 { Sektionen. Im Implementationsteil wird MySection definiert. Dieses muss
   fuer die einzelnen Betriebssysteme angepasst werden }
 type
@@ -73,12 +69,14 @@ procedure PutCfg(k, v: string; cs: TCfgSection; resid: integer);
 
 implementation
 
+
 uses
-  resource,
+  sysutils,
 {$IFDEF unix}
   xplinux,
 {$ENDIF}
-  typeform;
+  typeform, 
+  xpglobal;
 
 type
   PCfgEntry = ^TCfgEntry;
@@ -500,6 +498,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2002/12/06 14:27:29  dodi
+  - updated uses, comments and todos
+
   Revision 1.13  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

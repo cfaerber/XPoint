@@ -62,7 +62,8 @@ type
 implementation
 
 uses
-  xp1;
+  xp1,
+  xpglobal; //not really
   
 { TMarkedList }
 

@@ -26,26 +26,26 @@ unit xp3o2;
 
 interface
 
-uses sysutils,classes, typeform,datadef,database,resource,xp0,xpsendmessage,xpheader,
-  xpglobal,xp1;
+uses
+  xpheader;
 
 procedure WriteHeader(var hd:theader; var f:file);
 procedure SetBrettindex;
 procedure SetBrettindexEnde;
 procedure makebrett(s:string; var n:longint; const box:string; netztyp:byte;
                     order_ende:boolean);
-(*                    
-procedure get_bezug(pm:boolean; var repto:string; var reptoanz:integer;
-                    var betreff:string; sdata: TSendUUData;
-                    indirectquote:boolean);
-*)
 procedure SetUngelesen;
 function  UserNetztyp(adr:string):byte;
 
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xp4, xp4e, xpnt,xpdatum,xp_pgp, xpmakeheader, mime;
+uses
+  sysutils,
+  classes,  //TMemoryStream
+  typeform,database,
+  xp0,xp3o,xp4, xp4e, xpnt,
+  xpglobal;
 
 procedure WriteHeader(var hd:theader; var f:file);
 var s:TMemoryStream;
@@ -176,74 +176,11 @@ begin
       else
         SetBrettindex;
       end
-    else 
+    else
       if komm<>'' then
         dbWriteNStr(bbase,bb_kommentar,komm);
   end;
 end;
-
-(*
-procedure get_bezug(pm:boolean; var repto:string; var reptoanz:integer;
-                    var betreff:string; sdata: TSendUUData;
-                    indirectquote:boolean);
-var hd : THeader;
-    hds : longint;
-    p   : integer;
-begin
-  hd := THeader.Create;
-  ReadHeader(hd,hds,false);
-  betreff:=hd.betreff;
-  if betreff='' then betreff:=getres(343);    { '<kein Betreff>' }
-  with hd do
-  begin
-    xpsendmessage._bezug:=msgid;
-    xpsendmessage._orgref:=org_msgid;
-    xpsendmessage._beznet:=netztyp;
-    xpsendmessage._pmReply:=pm and (cpos('@', FirstEmpfaenger)=0);
-    if netztyp=nt_Maus then
-    begin
-      xpsendmessage._ReplyPath:=pfad;
-      if cpos('@',hd.FirstEmpfaenger)=0 then
-        sData.ReplyGroup:=FirstEmpfaenger;
-    end;
-    p:=cpos('@',absender);
-    if p=0 then p:=length(absender)+1;
-    if netztyp in (netsRFC + [nt_ZConnect]) then
-      if hd.fido_to<>'' then xp0.fidoto:=realname
-      else xp0.fidoto:=''
-    else begin
-      if indirectquote and (hd.fido_to<>'') then
-        xp0.fidoto:=hd.fido_to
-      else
-        xp0.fidoto:=LeftStr(absender,minmax(p-1,0,35));
-      if (netztyp=nt_Fido) and (cpos('#',xp0.fidoto)>0) then
-        xp0.fidoto:=realname;
-      end;
-    reptoanz:=0;
-
-    if pm then
-    begin
-      repto := ReplyTo;
-      reptoanz := 0;
-    end
-    else
-      if (Followup.count=0) or ((Empfaenger.Count = 0) and (followup.count > 0) and (FirstEmpfaenger=followup[0])) then
-        repto:=''
-      else
-      begin
-        if Followup.count > 0 then
-          repto:='A'+followup[0]
-        else repto := '';
-           reptoanz:=followup.count;
-        end;
-    if not pm then
-      sData.References.Assign(hd.References);
-    sData.keywords:=keywords;
-    sData.distribute:=distribution;
-    end;
-  hd.Free;
-end;
-*)
 
 procedure SetUngelesen;     { akt. Nachricht auf 'ungelesen' }
 var rec : longint;
@@ -270,6 +207,9 @@ end;
 
 {
   $Log$
+  Revision 1.56  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.55  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 

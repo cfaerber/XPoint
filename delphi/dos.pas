@@ -3,7 +3,8 @@ unit dos;
 interface
 
 uses
-  SysUtils;
+  SysUtils,
+  xpglobal; //not really
 
 const
   ReadOnly   = $01;

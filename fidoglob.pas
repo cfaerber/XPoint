@@ -29,7 +29,8 @@ unit fidoglob;
 interface
 
 uses
-  xpglobal,classes;
+  classes,
+  xpglobal;
 
 const
 {$IFDEF UnixFS }
@@ -328,6 +329,9 @@ end;
 
 {
   $Log$
+  Revision 1.20  2002/12/06 14:27:26  dodi
+  - updated uses, comments and todos
+
   Revision 1.19  2002/12/04 16:56:57  dodi
   - updated uses, comments and todos
 

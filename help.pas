@@ -27,7 +27,7 @@ unit help;
 interface
 
 uses
-  xpglobal, //todo: word
+  xpglobal, 
   keys; //taste
 
 const maxpages = 1200;
@@ -785,6 +785,9 @@ finalization
 
 {
   $Log$
+  Revision 1.49  2002/12/06 14:27:26  dodi
+  - updated uses, comments and todos
+
   Revision 1.48  2002/12/04 16:56:57  dodi
   - updated uses, comments and todos
 

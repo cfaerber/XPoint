@@ -27,6 +27,8 @@ type TUUCProtocolT = class(TUUCProtocolSimple)
     procedure RecFile (var f:file);                 override;
 end;
 
+{ TUUCProtocolT }
+
 procedure TUUCProtocolT.SendCommand(s:string);
 begin
   DebugLog('uucp-t','Sending Command: '+s,dlInform);
@@ -124,6 +126,9 @@ end;
 
 {
   $Log$
+  Revision 1.6  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.5  2002/07/25 20:44:02  ma
   - updated copyright notices
 

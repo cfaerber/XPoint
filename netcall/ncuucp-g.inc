@@ -57,20 +57,22 @@ type TUUCProtocolG = class(TUUCProtocolSimple)
   private
     Send_SeqNr    : byte;   { naechste zu sendende sequence number, 0..7 }
     Recv_SeqNr    : byte;   { letzte korrekt erhaltene sequence number  }
-    Recv_WinSize  : byte;   { eigene Window-Recv_oesse, 1..7 }
-    Send_WinSize  : byte;   { Window-Recv_oesse der egenseite, 1..7  }
+    Recv_WinSize  : byte;   { eigene Window-Recv Groesse, 1..7 }
+    Send_WinSize  : byte;   { Window-Recv Groesse der Gegenseite, 1..7  }
     Send_BufSize  : word;   { 32..4096 }
     Recv_BufSize  : word;   { 32..4096 }
     Send_BufSizeLog2 : byte; { max. Groesse der ausgehenden Pakete, 0..7 }
     Recv_BufSizeLog2 : byte; { max. Groesse der eingehenden Pakete, 0..7 }
     Buffer    : array[0..7] of CP_Buffer;
     Header    : array[0..7] of CP_Header;
-    BufFirst  : shortint; { Window-Nummer des ersten epufferten Pakets }
-    BufAnz    : shortint; { Anzahl epufferte Pakete }
+    BufFirst  : shortint; { Window-Nummer des ersten gepufferten Pakets }
+    BufAnz    : shortint; { Anzahl gepufferte Pakete }
     Close     : boolean;  { Close-Packet erhalten }
   end;
 
 { --- Initialization/Destruction ------------------------------------------ }
+
+{ TUUCProtocolG }
 
 constructor TUUCProtocolG.Create(caller: TUUCPNetcall);
 begin
@@ -575,7 +577,7 @@ begin
       
       if BlkSize<=0 then
         break;
-    
+
       SetLength(s,length(s)+blksize);
       Move(Buffer[Recv_SeqNr,off],s[1+length(s)-blksize],blksize);
 
@@ -659,6 +661,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.11  2002/07/25 20:44:02  ma
   - updated copyright notices
 

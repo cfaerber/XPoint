@@ -24,15 +24,12 @@
 
 unit xp3ex;
 
+//todo: update string literals (codepage!)
+
 interface
 
 uses
-  sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,fileio,inout,database,resource,stack, xpheader, winxp,
-  xp0,xp1,xpglobal, classes, xpmime;
+  xpmime;
 
 const xTractMsg   = 0;
       xTractHead  = 1;
@@ -57,7 +54,14 @@ procedure extract_msg(art:Integer; schablone:string; name:string;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp_des,xpnt,xpfido,xpmakeheader,mime,utftools,unicode,xpstreams;
+uses
+  classes, sysutils,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  xpglobal,typeform,
+  database,resource,xpheader, winxp,
+  xp0,xp1,xp1o,xp3,xp_des,xpnt,xpfido,mime,utftools,unicode,xpstreams;
 
 var  ex_MimePart : TMimePart;
 
@@ -159,7 +163,9 @@ end;
 { Aktuelle Nachricht in Tempfile extrahieren       }
 { art: 0=ohne Kopf, 1=mit Kopf, 2=Puffer, 3=Quote  }
 {      4=Hex-Dump                                  }
-{ decode: 0=nicht, -1=Rot13, 1=Betreff analysieren }
+{ decode: 0=nicht, -1=Rot13, 1=Betreff analysieren
+todo: enums
+}
 
 procedure extract_msg(art:integer; schablone:string; name:string;
                       append:boolean; decode:shortint);
@@ -452,7 +458,7 @@ var size   : longint;
          copy(s,10,2)+':'+copy(s,12,2);
     case s[1] of
       'N' : mausstat:='noch nicht gelesen';
-      'Z' : mausstat:='zurÅckgestellt am '+dat;
+      'Z' : mausstat:='zurueckgestellt am '+dat;
       'B' : mausstat:='beantwortet am '+dat;
       'G' : mausstat:='erhalten/gelesen am '+dat;
       'W' : mausstat:='weitergeleitet am '+dat;
@@ -1226,6 +1232,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.98  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.97  2002/07/25 20:43:54  ma
   - updated copyright notices
 
@@ -1233,18 +1242,18 @@ finalization
   - rpsuser(): changed var to const
 
   Revision 1.95  2002/03/25 22:03:08  mk
-  MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
-       und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+  MY:- Anzeige der Stammbox-Adresse unterhalb der Menueleiste korrigiert
+       und ueberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
        anzeigen"):
-       - VollstÑndige Adresse (statt nur Feld "Username") inkl. Domain
+       - Vollstaendige Adresse (statt nur Feld "Username") inkl. Domain
          wird angezeigt;
-       - Alias-Points werden berÅcksichtigt (RFC/UUCP und ZConnect);
+       - Alias-Points werden beruecksichtigt (RFC/UUCP und ZConnect);
        - Realname wird in Klammern angezeigt (falls es sich um einen
-         Netztyp mit Realnames handelt) und ggf. automatisch gekÅrzt, wenn
-         die GesamtlÑnge von Adresse und Realname grî·er als 76 Zeichen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekuerzt, wenn
+         die Gesamtlaenge von Adresse und Realname groesser als 76 Zeichen
          ist;
        - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
-         der Absenderadresse unterhalb der MenÅleiste unmittelbar nach dem
+         der Absenderadresse unterhalb der Menueleiste unmittelbar nach dem
          Wechsel aktualisiert.
 
   Revision 1.94  2002/03/03 15:53:32  cl

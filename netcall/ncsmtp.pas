@@ -14,7 +14,7 @@
    along with this software; see the file gpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
-   Created on August, 15st 2000 by Markus K„mmerer <mk@happyarts.de>
+   Created on August, 15st 2000 by Markus Kaemmerer <mk@happyarts.de>
 
    This software is part of the OpenXP project (www.openxp.de).
 }
@@ -28,12 +28,10 @@ unit ncsmtp;
 interface
 
 uses
-  xpglobal,             { Nur wegen der Typendefinition }
-  ProgressOutput,       { TProgressOutput }
-  Netcall,              { TNetcall }
-  NCSocket,             { TSocketNetcall }
   Classes,              { TStringList }
-  sysutils;
+  sysutils,
+  xpglobal,             { Nur wegen der Typendefinition }
+  NCSocket;             { TSocketNetcall }
 
 type
   ESMTP                = class(ESocketNetcall);        { Allgemein (und Vorfahr) }
@@ -64,7 +62,7 @@ type
     property SecureLoginMandatory: boolean read FSecureLoginMandatory write FSecureLoginMandatory;
 
     { Verbindung herstellen }
-    function Connect(AFQDomain: String): boolean; 
+    function Connect(AFQDomain: String): boolean;
 
     { Abmelden }
     procedure Disconnect; override;
@@ -81,7 +79,9 @@ type
 
 implementation
 
-uses typeform, encoder, md5, mime;
+uses
+  ProgressOutput,       { TProgressOutput }
+  typeform, encoder, md5, mime;
 
 const
   DefaultSMTPPort       = 25;
@@ -107,6 +107,8 @@ resourcestring
   res_disconnect        = 'Trenne Verbindung...';
   res_error             = 'Fehler: %s';
   res_postmsg           = 'Verschicke Mail %d (gesamt %.0f%%)';
+
+{ TSMTP }
 
 constructor TSMTP.Create;
 begin
@@ -344,6 +346,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.21  2002/07/23 23:30:27  mk
   - additional fixes for last commit
 

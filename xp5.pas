@@ -27,20 +27,8 @@ unit xp5;
 interface
 
 uses
-  sysutils,
-  {$IFDEF virtualpascal}
-    vpsyslow,
-    vputils,
-  {$endif}
-{$IFDEF unix}
-{$IFDEF fpc}
-  linux,
-{$ENDIF}  
-  xplinux,
-  xpcurses,
-{$ENDIF}
-  xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,datadef,database,
-  maus2,maske,clip,resource,xp0,xp1,xp1input,xp1o,xp1o2,fidoglob, OSDepend;
+  sysutils, //must come before typeform
+  typeform; //datetimest
 
 procedure kalender;
 procedure memstat;
@@ -61,12 +49,29 @@ function reorgdate:datetimest;
 function timingdate(s1:string):datetimest;
 
 implementation  {-----------------------------------------------------}
+
+uses
 {$IFDEF Kylix}
-  uses libc;
+  libc,
 {$ENDIF}
 {$IFDEF Win32}
-  uses mime;
+  mime,
 {$ENDIF}
+{$IFDEF virtualpascal}
+  vpsyslow,
+  vputils,
+{$endif}
+{$IFDEF unix}
+{$IFDEF fpc}
+  linux,
+{$ENDIF}
+  xplinux,
+  xpcurses,
+{$ENDIF}
+  maus2,resource,xp0,xp1,xp1input,xp1o,xp1o2,
+  fidoglob,OSDepend,fileio,inout,keys,winxp,montage,feiertag,datadef,  database,
+  xpglobal;
+
 
 function timingdate(s1:string):datetimest;
 var t   : text;
@@ -476,7 +481,7 @@ begin
  {$endif}
 end;
 
-{ USER.EB1 - Fragmentstatistik, nur deutsche Version }
+{ USER.EB1 - Fragmentstatistik, nur deutsche Version (todo...) }
 
 procedure fragstat;
 var x,y         : Integer;
@@ -485,7 +490,7 @@ var x,y         : Integer;
     gsize,n,sum : longint;
 begin
   msgbox(60,12,'Fragmentierung der User-Zusatzdatei',x,y);
-  mwrt(x+5,y+2,'Grî·e   Anzahl   Bytes        Grî·e   Anzahl   Bytes');
+  mwrt(x+5,y+2,'Groesse Anzahl   Bytes        Groesse Anzahl   Bytes');
   n:=0; sum:=0;
   for i:=0 to 9 do begin
     dbGetFrag(ubase,i,fsize,anz,gsize);
@@ -511,7 +516,7 @@ procedure TimedScsaver(const endtime:string);
 const maxstars = 40;
       scactive : boolean = false;
 
-var 
+var
     p       : scrptr;
     star    : array[1..maxstars] of record
                   x,y,state,xs : byte;
@@ -550,7 +555,7 @@ var
   begin
     n:=n div 2;
     n:=n div screenlines;
-    { weil das innere delay wg. ticker von 10 ms auf 50 ms geÑndert wurde }
+    { weil das innere delay wg. ticker von 10 ms auf 50 ms geaendert wurde }
 
     t:=ticker;
     while (n>0) and not endss do begin
@@ -691,7 +696,7 @@ var x,y : Integer;
 begin
   msgbox(54,18,getres2(502,1),x,y);    { 'Datenbank' }
   attrtxt(col.colmboxhigh);
-  mwrt(x+3,y+2,getres2(502,2));   { 'Datei       DatensÑtze   Ausnutzung      Bytes' }
+  mwrt(x+3,y+2,getres2(502,2));   { 'Datei       Datensaetze   Ausnutzung      Bytes' }
   attrtxt(col.colmbox);
   wrd(4,MsgFile,mbase);
   wrd(5,BrettFile,bbase);
@@ -703,7 +708,7 @@ begin
   wrd(11,PseudoFile,nil);
   wrd(12,BezugFile,bezbase);
   wrd(13,MimetFile,mimebase);
-  mwrt(x+3,y+15,getres(12));    { 'Taste drÅcken...' }
+  mwrt(x+3,y+15,getres(12));    { 'Taste druecken...' }
   xp1.wait(curon);
   closebox;
   freeres;
@@ -764,9 +769,9 @@ ende:
 end;
 
 
-{ --- Pa·wortschutz ------------------------------------------------- }
+{ --- Passwortschutz ------------------------------------------------- }
 
-{ 0 = kein Pa·wort }
+{ 0 = kein Passwort }
 
 function U8:word;
 begin
@@ -792,9 +797,9 @@ procedure WritePassword(main:boolean; p:word);
 begin
   dbWriteUserflag(mbase,iif(main,1,2),p xor U8);
   if p<>0 then
-    rmessage(504)    { 'Pa·wort wird gespeichert.' }
+    rmessage(504)    { 'Passwort wird gespeichert.' }
   else
-    rmessage(505);   { ' Pa·wort wurde gelîscht. ' }
+    rmessage(505);   { ' Passwort wurde geloescht. ' }
   dbFlushClose(mbase);
   wkey(1,false);
   closebox;
@@ -866,7 +871,7 @@ begin
   else
     TestPassword:=(p=EnterPassword(iifs(edit,getres(506),'')+  { 'Altes ' }
         getres(iif(main,507,iif(edit,508,509))),brk));
-                    { 'Hauptpa·wort' / 'Startpa·wort' / 'Pa·wort' }
+                    { 'Hauptpasswort' / 'Startpasswort' / 'Passwort' }
 end;
 
 procedure EditPassword;
@@ -884,20 +889,20 @@ begin
   attrtxt(col.colmbox);
   for i:=1 to ival(getres2(510,21)) do
     wrt(x+3,y+2+i,getres2(510,21+i));
-  wrt(x+3,wherey+2,getres(12));   { 'Taste drÅcken... ' }
+  wrt(x+3,wherey+2,getres(12));   { 'Taste druecken... ' }
   mon;
   xp1.wait(curon);
   closebox;
 
-  main:=(ReadIt(42,getres2(510,1),            { 'Welches Pa·wort soll geÑndert werden?' }
-                   getres2(510,2),1,brk)=1);  { ' ^Hauptpa·wort , ^Startpa·wort ' }
+  main:=(ReadIt(42,getres2(510,1),            { 'Welches Passwort soll geaendert werden?' }
+                   getres2(510,2),1,brk)=1);  { ' ^Hauptpasswort , ^Startpasswort ' }
   if not brk then begin
     typ:=getres(iif(main,507,508));
     if TestPassword(true,main) and
        (main or TestPassword(false,true)) then begin
       p:=EnterPassword(getres2(510,3)+typ,brk);   { 'neues ' }
       if brk then exit;
-      if ((p=0) and ((ReadPassword(main)=0) or ReadJN(reps(getres2(510,4),typ),true))) or   { '%s lîschen' }
+      if ((p=0) and ((ReadPassword(main)=0) or ReadJN(reps(getres2(510,4),typ),true))) or   { '%s loeschen' }
          ((p<>0) and (p=EnterPassword(reps(getres2(510,5),typ),brk)) and not brk)  { '%s wiederholen' }
       then
         WritePassword(main,p)
@@ -965,7 +970,7 @@ begin
   attrtxt(col.colmbox);
   for i:=2 to anz do
     wrt(x+3,y+2+i,getres2(511,i));
-  wrt(x+3,y+anz+4,getres(12));   { 'Taste drÅcken ...' }
+  wrt(x+3,y+anz+4,getres(12));   { 'Taste druecken ...' }
   mon;
   xp1.wait(curon);
   closebox;
@@ -974,6 +979,9 @@ end;
 
 {
   $Log$
+  Revision 1.68  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.67  2002/09/09 09:06:35  mk
   - added const parameters
 

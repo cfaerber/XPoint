@@ -92,7 +92,7 @@ var
 begin
   if msg then begin
     if (LeftStr(UpperCase(dbReadStrN(mbase,mb_betreff)),5)<>'FILES') and
-       not ReadJN(getres(811),true) then   { 'Sind Sie sicher, da· das eine Fileliste ist' }
+       not ReadJN(getres(811),true) then   { 'Sind Sie sicher, dass das eine Fileliste ist' }
       exit;
     absender:= dbReadStrN(mbase,mb_absender);
     p:=cpos('@',absender);
@@ -124,7 +124,7 @@ begin
     end;
 
   msgbox(48,3,'',x,y);
-  mwrt(x+3,y+1,getreps(813,UpperCase(box)));   { 'File-Liste fÅr %s wird eingelesen ...' }
+  mwrt(x+3,y+1,getreps(813,UpperCase(box)));   { 'File-Liste fuer %s wird eingelesen ...' }
   if msg then begin
     fn:=TempS(dbReadInt(mbase,'groesse')+5000);
     assign(f,fn);
@@ -156,7 +156,7 @@ begin
     fstype:=iif(pos('Beschreibung',s)>0,1,iif(pos('description',LowerCase(s))>0,2,0));
     WriteFST(fstype);
     end;
-  GetServerName(box); { Gro·- und Kleinschreibung korrigieren }
+  GetServerName(box); { Gross- und Kleinschreibung korrigieren }
   makebak(MangleBoxName(box)+ extFl, ExtBak);
   case fstype of
     0 : begin      { SendZMsg }
@@ -212,9 +212,9 @@ begin
     3 : begin      { UUCP-Fileserver }
           GetConvert;
           if pos('$INFILE',convert)=0 then
-            rfehler(824)    { 'UngÅltiger Konvertierer-Eintrag: $INFILE fehlt' }
+            rfehler(824)    { 'Ungueltiger Konvertierer-Eintrag: $INFILE fehlt' }
           else if pos('$OUTFILE',convert)=0 then
-            rfehler(825)    { 'UngÅltiger Konvertierer-Eintrag: $OUTFILE fehlt' }
+            rfehler(825)    { 'Ungueltiger Konvertierer-Eintrag: $OUTFILE fehlt' }
           else begin
             exchange(convert,'$INFILE',fn);
             exchange(convert,'$OUTFILE', MangleBoxName(box)+ extFl);
@@ -491,13 +491,13 @@ begin
     dbClose(d);
     enterfiles:=not FileExists(MangleBoxName(fs)+extFl);
     if w and 1=0 then
-      rfehler(815)      { 'Das gewÑhlte System ist kein Fileserver!' }
+      rfehler(815)      { 'Das gewaehlte System ist kein Fileserver!' }
     else if (request>0) and (fstyp<>3) and enterfiles then
-      rfehler1(816,fs)  { 'keine Fileliste fÅr %s vorhanden' }
+      rfehler1(816,fs)  { 'keine Fileliste fuer %s vorhanden' }
     else if (comm='SERVICE') and (fpass='') then
-      rfehler(817)      { 'Pa·wort erforderlich - bitte unter /Edit/Systeme eintragen!' }
+      rfehler(817)      { 'Passwort erforderlich - bitte unter /Edit/Systeme eintragen!' }
     else if (comm='SENDEN') and (fstyp<>3) then
-      rfehler(822)      { 'Senden ist nur bei UUCP-Fileservern mîglich!' }
+      rfehler(822)      { 'Senden ist nur bei UUCP-Fileservern moeglich!' }
     else begin
       fn:=TempS(1000);
       assign(t,fn);
@@ -549,7 +549,7 @@ begin
         else if comm='SENDEN' then
           UUSendfile
         else                     { HILFE, TRANSFER, SERVICE }
-          rfehler(819);          { 'Bei UUCP-Fileservern nicht mîglich.' }
+          rfehler(819);          { 'Bei UUCP-Fileservern nicht moeglich.' }
         end
       else begin                 { SendZMsg/iMLS/NCB-Mail-Fileserver }
         rewrite(t);
@@ -588,6 +588,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.37  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.36  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 

@@ -26,14 +26,6 @@ unit xp4o2;
 
 interface
 
-uses
-  sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,fileio,inout,keys,datadef,database,databaso,maus2, classes, osdepend, winxp,
-  resource,help,xpglobal,xp0,xp1,xp1input,xpnt,crc;
-
 { Deklaration des Kommentarbaums in XP0 }
 
 
@@ -49,7 +41,7 @@ function  BezSeek(back:boolean):boolean;
 function  BezSeekBezug:boolean;
 function  BezSeekKommentar:boolean;
 procedure GetKomflags(var _left,_right,up,down:boolean);
-function  BaumBlatt(Ofs:byte; bezpos:word; var s,s1:string):string;
+function  BaumBlatt(Ofs:byte; bezpos:word; var s,s1:string):string; //todo: word=Integer
 procedure ClearReplyTree;
 
 procedure SetLanguage;
@@ -57,7 +49,15 @@ procedure SetLanguage;
 
 implementation  { ---------------------------------------------------- }
 
-uses xpheader, xp1o,xp2, xp3,xp3o,xp3ex, xp10, debug;
+uses
+  sysutils,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  typeform,fileio,inout,keys,datadef,database,databaso,maus2, winxp,
+  resource,xp0,xp1,xp1input,xpnt,
+  xpheader, xp1o,xp2, xp3,xp3o,xp3ex, xp10, debug,
+  xpglobal;
 
 procedure packit(xpack:boolean; const fname:string);
 var d  : DB;
@@ -141,7 +141,7 @@ var
     reset(t);
     n:=0;
     s:='*';
-    while (n<8) and not eof(t) do begin     { Header Åberlesen }
+    while (n<8) and not eof(t) do begin     { Header ueberlesen }
       readln(t,s);
       if not ntZConnect(hdp.netztyp) then inc(n)
       else if s='' then n:=8;
@@ -264,7 +264,7 @@ var nn,n : longint;
     nr   : byte;
 
   procedure wrn;
-  var 
+  var
     p : Integer;
   begin
     if nn=0 then exit;
@@ -277,7 +277,7 @@ var nn,n : longint;
     end;
   end;
 
-  function BezNr:byte;      { 1 = erster Crossposting-EmpfÑnger, sonst 2 }
+  function BezNr:byte;      { 1 = erster Crossposting-Empfaenger, sonst 2 }
   var mcrc,dat : longint;
       nr       : byte;
   begin
@@ -311,7 +311,7 @@ begin
   dbZAP(bezbase);
   n:=0; nn:=dbRecCount(mbase);
   msgbox(33,5,'',x,y);
-  mwrt(x+3,y+2,getres(472));     { 'BezÅge herstellen ...     %' }
+  mwrt(x+3,y+2,getres(472));     { 'Bezuege herstellen ...     %' }
   xx:=wherex-5;
   lp:=101;
   dbSetIndex(mbase,0);
@@ -473,7 +473,7 @@ var hdp    : theader;
       _last:=dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_ref)<>ID);
     end;
 
-    procedure AddD0;     { erste (noch) vorhandene Kopie hinzufÅgen }
+    procedure AddD0;     { erste (noch) vorhandene Kopie hinzufuegen }
     begin
       while not _last and (dbReadIntN(bezbase,bezb_msgid)=mid) do begin
         if dbReadIntN(bezbase,bezb_datum) and 3<>2 then begin
@@ -485,7 +485,7 @@ var hdp    : theader;
         end;
     end;
 
-    function AddDx:boolean;     { Kopie aus xp0.kombrett hinzufÅgen }
+    function AddDx:boolean;     { Kopie aus xp0.kombrett hinzufuegen }
     var rec,rec2 : longint;
         found    : boolean;
     begin
@@ -598,7 +598,7 @@ begin
 end;
 
 
-{ nÑchste/letzte Nachricht mit gleichem Bezug suchen }
+{ naechste/letzte Nachricht mit gleichem Bezug suchen }
 
 function BezSeek(back:boolean):boolean;
 var hdp      : theader;
@@ -759,7 +759,7 @@ end;
 
 function BaumBlatt(ofs:byte; bezpos:word; var s,s1:string):string;
 var ss : string[255];
-    i  : integer;   { mu· longint sein, damit (1 shl i) longint ist }
+    i  : integer;   { muss longint sein, damit (1 shl i) longint ist }
     p  : Integer;
     bs : string;
     sn,
@@ -846,11 +846,11 @@ var s  : string;
     message(getres(5));
     ParLanguage:=LowerCase(nl);
     deutsch:=(ParLanguage='d');
-    CloseResource;           { alte Ressourcendatei schlie·en }
-    freehelp;                { Online-Hilfe schlie·en         }
+    CloseResource;           { alte Ressourcendatei schliessen }
+    freehelp;                { Online-Hilfe schliessen         }
     OpenResource(sa[nr],ResMinmem);
-    GetResdata;              { neue Resourcendatei îffnen     }
-    freemenus;               { MenÅs neu belegen              }
+    GetResdata;              { neue Resourcendatei oeffnen     }
+    freemenus;               { Menues neu belegen              }
     setmenus;
     freemain;
     readkeydefs;
@@ -929,6 +929,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.59  2002/09/09 08:28:03  mk
   - disable indexcache in reply tree
 

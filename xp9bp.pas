@@ -26,8 +26,8 @@ unit xp9bp;
 
 interface
 
-uses typeform,fileio,datadef,database,
-     sysutils,xp0,xp1,xp2,xpnt, xpglobal;
+uses
+  xp0;  //BoxRec...
 
 const bm_changesys = 1;
       bm_GUP       = 2;
@@ -52,7 +52,10 @@ procedure WriteQFG(const dateiname:string; qrec:QfgRec);
 
 implementation  { ------------------------------------------------- }
 
-uses xp1o, debug;
+uses
+  sysutils,
+  typeform,fileio,xp1,xp2,xp1o, debug,  xpnt,
+  xpglobal;
 
 procedure nt_bpar(nt:byte; var bpar:BoxRec);
 var i : integer;
@@ -745,6 +748,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.64  2002/07/25 20:43:55  ma
   - updated copyright notices
 

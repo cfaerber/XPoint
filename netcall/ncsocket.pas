@@ -15,12 +15,12 @@
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 
    Created on July, 21st 2000 by Hinrich Donner <hd@tiro.de>
-   Modified on August 2000 by Markus KÑmmerer <mk@happyarts.de>
+   Modified on August 2000 by Markus Kaemmerer <mk@happyarts.de>
 
    This software is part of the OpenXP project (www.openxp.de).
 }
 
-{ Abstrakte Klasse TSoketNetcall }
+{ Abstrakte Klasse TSocketNetcall }
 
 {$I xpdefine.inc}
 
@@ -29,14 +29,7 @@ unit ncsocket;
 interface
 
 uses
-  xpglobal,             { Nur wegen der Typendefinition }
-  NetCall,              { TNetcall }
-  ipaddr,               { TIP }
-{$ifdef NCRT}
-  xpcurses,
-{$else}
-  keys,
-{$endif}
+  sysutils,
 {$IFDEF Win32 }
   winsock,
 {$ELSE }
@@ -54,7 +47,9 @@ uses
   {$ENDIF }
 {$ENDIF }
 {$ENDIF }
-  sysutils;
+  NetCall,              { TNetcall }
+  ipaddr,               { TIP }
+  xpglobal;             { Nur wegen der Typendefinition }
 
 
 type
@@ -85,7 +80,7 @@ type
     FConnected  : boolean;              { Flag }
     FInBuf: TSocketBuffer;              { In-Buffer des Sockets }
     FInPos, FInCount: Integer;          { Position und Anzahl der Zeichen im Buffer }
-    FTimeOut: TDateTime;                { Zahl der Sekunden fÅr den Timeout }
+    FTimeOut: TDateTime;                { Zahl der Sekunden fuer den Timeout }
     FInBytesCount, FOutBytesCount: Integer; { Anzahl der Bytes in beide Richtungen }
   protected
     FPort               : integer;      { Portnummer }
@@ -152,8 +147,16 @@ type
 
 implementation
 
-uses debug,typeform;
+uses
+{$ifdef NCRT}
+  xpcurses,
+{$else}
+  keys,
+{$endif}
+  debug,typeform;
 
+{ TSocketNetcall }
+  
 constructor TSocketNetcall.Create;
 begin
   inherited Create;
@@ -412,7 +415,7 @@ var
   Time: TDateTime;
 begin
   s := '';
-  Time := Now + FTimeOut; // Zu diesem Zeitpunkt mÅssen wir abbrechen
+  Time := Now + FTimeOut; // Zu diesem Zeitpunkt muessen wir abbrechen
   repeat
     if KeyPressed then
       case ReadKey of
@@ -437,6 +440,9 @@ end;
 
 {
   $Log$
+  Revision 1.36  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.35  2002/11/14 21:06:15  cl
   - DoSend/send window rewrite -- part I
 

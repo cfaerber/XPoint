@@ -28,25 +28,10 @@ unit win2;
 interface
 
 uses
-  xpglobal,
-{$ifdef NCRT}
-  xpcurses,
-{$endif}
-{$IFDEF Win32 }
-  windows,
-  xpwin32,
-{$ENDIF }
-{$IFDEF DOS32 }
-  xpdos32,
-{$ENDIF }
-{$IFDEF OS2 }
-  xpos2,
-{$ENDIF }
-  sysutils, osdepend,
-  keys,inout,maus2,typeform,winxp;
+  inout,typeform;
 
 const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
-      fsb_info   : boolean = false;   { fsbox: Dategrî·e/Datum anzeigen }
+      fsb_info   : boolean = false;   { fsbox: Dategroesse/Datum anzeigen }
       fsb_rcolor : byte    = 0;       { fsbox: eigene Rahmenfarbe       }
 
 type  diskstat = record
@@ -71,7 +56,7 @@ function  pslcted(p: Integer):boolean;
 function  pnum: Integer;
 procedure punselect;
 procedure pdel;
-procedure psave;   { Path-Liste sichern (1 x mîglich!) }
+procedure psave;   { Path-Liste sichern (1 x moeglich!) }
 procedure prest;   { Path-Liste wiederherstellen       }
 
 
@@ -80,7 +65,26 @@ procedure prest;   { Path-Liste wiederherstellen       }
 implementation
 
 uses
-  Classes, FileIO, xp1;
+{$IFDEF Win32 }
+  windows,  //must come before SysUtils!
+{$ENDIF }
+  sysutils,
+  Classes,  //TStringList
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+{$IFDEF Win32 }
+  xpwin32,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
+{$ifdef NCRT}
+  xpcurses,
+{$endif}
+  osdepend,maus2,
+  keys, FileIO, xp1,winxp,
+  xpglobal;
 
 const maxpath  = 2000;
       pdrive   : char = ' ';
@@ -102,7 +106,7 @@ var  pntl  : pntslcta;
      sr    : tsearchrec;
      rc    : integer;
      n     : Tword;  //var parameter!
-     lnum,
+     lnum   : Integer;
      handle : TxpHandle;  //Integer;
      p      : Integer;
      s      : string[20];
@@ -1002,7 +1006,7 @@ begin
               if IORes =3 then
                 pmsg('ungÅltiger Name - Taste')
               else
-                pmsg('Anlegen nicht mîglich - Taste');
+                pmsg('Anlegen nicht moeglich - Taste');
               errproc;
               get(t2,curoff);
               end
@@ -1039,7 +1043,7 @@ begin
           delete(path,length(path),1);
           rmdir(drive+':'+path);
           if ioresult<>0 then begin
-            pmsg('Lîschen nicht mîglich - Taste');
+            pmsg('Loeschen nicht moeglich - Taste');
             errproc;
             get(t2,curoff);
             end
@@ -1111,7 +1115,7 @@ begin
 end;
 
 
-procedure psave;   { Path-Liste sichern (1 x mîglich!) }
+procedure psave;   { Path-Liste sichern (1 x moeglich!) }
 var i : integer;
 begin
   if pdrive<>' ' then 
@@ -1151,6 +1155,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.54  2002/12/05 19:36:21  dodi
   - removed ambiguous word type
 
@@ -1163,7 +1170,7 @@ end;
   Revision 1.51  2002/05/01 17:21:48  mk
   MY:- Fix: Ein Laufwerkswechsel auf Laufwerk M: mit <Ctrl-M>
        funktionierte nicht, weil XP dies als <Enter> interpretierte und
-       die entsprechende Aktion (Verzeichniswechsel, Datei îffnen)
+       die entsprechende Aktion (Verzeichniswechsel, Datei oeffnen)
        ausf?hrte.
 
   Revision 1.50  2002/04/06 17:07:47  mk

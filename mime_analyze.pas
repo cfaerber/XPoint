@@ -26,7 +26,7 @@ unit mime_analyze;
 
 uses
   classes,
-  //xpglobal - todo: word, is System.word in this unit
+  xpglobal, //todo: word, is System.word in this unit
   mime;
 
 type TMimeAnalyzer = class(TStream)
@@ -562,6 +562,9 @@ end;
 
 //
 // $Log$
+// Revision 1.10  2002/12/06 14:27:26  dodi
+// - updated uses, comments and todos
+//
 // Revision 1.9  2002/12/04 16:56:59  dodi
 // - updated uses, comments and todos
 //

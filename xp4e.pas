@@ -27,11 +27,10 @@ unit xp4e;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  sysutils,typeform,fileio,inout,keys,maske,datadef,database,winxp, xpheader,
-  win2,maus2,resource,xpglobal,xp0,xp1,xp1input,xp3,fidoglob;
+  sysutils,
+  typeform, //atext
+  maske,  //customrec
+  xpglobal;
 
 var   testmailstring_nt : byte; { Netztyp fuer Testmailstring }
 
@@ -106,10 +105,16 @@ procedure AddNewBrett(const Brettname, Kommentar, Pollbox: String; Haltezeit: In
 
 implementation  { --------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido,xp5;
+uses
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  fileio,inout,keys,datadef,database,winxp,xpheader,win2,maus2,resource,fidoglob,
+  xp0,xp1,xp1input,xp1o,xp1o2,xp2,xp3,xp3o,xp3o2,xpnt,xp4,xp5,xp9bp,
+  xpsendmessage,xpconfigedit,xpcc,xpauto,xpfido;
 
 var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
-      wcy         : byte;       { fÅr writecode() }
+      wcy         : byte;       { fuer writecode() }
       grnr_found  : longint;    { von Testgruppe gefundene INT_NR }
       empfx,empfy : byte;       { msgdirect() -> empftest()       }
       _pmonly     : boolean;    {    "                            }
@@ -122,7 +127,7 @@ var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       pbox        : string;     { intern EditBrett/ReadDirect }
       rdforcebox  : boolean;    { intern ReadDirect    }
       rdorgbox    : string;     { intern ReadDirect    }
-      mbx,mby     : byte;       { Text fÅr modibrett2() }
+      mbx,mby     : byte;       { Text fuer modibrett2() }
       mblasttext  : shortint;
 
 
@@ -250,7 +255,7 @@ var d : DB;
 begin
   dbOpen(d,GruppenFile,1);
   dbSeek(d,giName,UpperCase(s));
-  if not dbFound then rfehler(2701)   { 'unbekannte Brettgruppe - wÑhlen mit <F2>' }
+  if not dbFound then rfehler(2701)   { 'unbekannte Brettgruppe - waehlen mit <F2>' }
   else dbRead(d,'INT_NR',grnr_found);
   dbClose(d);
   testgruppe:=dbFound;
@@ -300,7 +305,7 @@ begin
       pbox:=s;
       end;
     dbClose(d);
-    if not dbFound then rfehler(2702);   { 'unbekannte Serverbox - wÑhlen mit <F2>' }
+    if not dbFound then rfehler(2702);   { 'unbekannte Serverbox - waehlen mit <F2>' }
     testpollbox:=dbFound;
     if dbFound then begin
       pb_wrntyp(s);
@@ -377,7 +382,7 @@ begin
     filt:=not odd(flags); mhnr(424);
     maddbool(3,11,getres2(2701,9),filt);   { 'Nachrichtenfilter' }
     ebs:=(flags and 16<>0);
-    maddbool(3,12,getres2(2701,10),ebs);   { 'EmpfangsbestÑtigungen' }
+    maddbool(3,12,getres2(2701,10),ebs);   { 'Empfangsbestaetigungen' }
     maddint(35,10,getres2(2701,6),halten,4,4,0,9999);   { 'Haltezeit' }
     maddtext(52,10,getres2(2701,7),col.coldialog);      { 'Tage'      }
     farb:=(flags shr 5);
@@ -477,7 +482,7 @@ begin
     SeekLeftBox(d,s);
     if dbFound then s := dbReadStr(d,'boxname');
     dbClose(d);
-    if not dbFound then rfehler(2702);    { 'unbekannte Serverbox - wÑhlen mit <F2>' }
+    if not dbFound then rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
     vtestpollbox:=dbFound;
     end;
 end;
@@ -531,7 +536,7 @@ begin
       dbWriteNStr(ubase,ub_pollbox,pollbox);
       b:=1;
       dbWriteN(ubase,ub_adrbuch,adr); {NeuUserGruppe nicht fuer Verteiler...}
-      dbWriteN(ubase,ub_codierer,b);      { dÅrfte egal sein }
+      dbWriteN(ubase,ub_codierer,b);      { duerfte egal sein }
       b:=5;
       dbWriteN(ubase,ub_userflags,b);     { aufnehmen & Verteiler }
       dbFlushClose(ubase);
@@ -601,7 +606,7 @@ var hdp      : Theader;
   begin
     absender:= dbReadNStr(mbase,mb_absender);
     dbSeek(bbase,biIntnr,copy(dbReadStrN(mbase,mb_brett),2,4));
-    if dbFound then       { mÅ·te IMMER true sein }
+    if dbFound then       { muesste IMMER true sein }
       pollbox:= dbReadNStr(bbase,bb_pollbox)
     else
       pollbox:=DefaultBox;
@@ -653,7 +658,7 @@ begin
     adr:= dbReadNStr(ubase,ub_username);
     SplitFido(adr,fa,2);
 {  if fa.zone<=6 then begin
-      message(getres(2737)); } { 'Warnung: Nachrichtencodierung ist im FidoNet nicht zulÑssig!' }
+      message(getres(2737)); } { 'Warnung: Nachrichtencodierung ist im FidoNet nicht zulaessig!' }
 {     errsound;
       wkey(2,false);
       closebox;
@@ -678,7 +683,7 @@ begin
   name:= dbReadStrN(ubase,ub_username);
   dialog(67,7,LeftStr(fuser(name),60),x,y);
   wcy:=y+3;
-  maddstring(3,2,getres2(2706,1),pw,52,250,''); mhnr(480);   { 'Pa·wort ' }
+  maddstring(3,2,getres2(2706,1),pw,52,250,''); mhnr(480);   { 'Passwort ' }
   mnotrim;
   maddstring(3,4,getres2(2706,2),cod,8,8,'');   { 'Codier-Verfahren   ' }
   if ntBinary(netztyp) then
@@ -727,7 +732,7 @@ begin
     msgbox(53,8,_fehler_,x,y);
     wrt(x+3,y+2,getres2(2707,1));   { '"@" ist in Brettnamen nicht erlaubt! Falls Sie' }
     wrt(x+3,y+3,getres2(2707,2));   { 'die /BRETT@BOX.ZER-Adressierung im Z-Netz ver-' }
-    wrt(x+3,y+4,getres2(2707,3));   { 'wenden mîchten, legen Sie das Brett bitte als'  }
+    wrt(x+3,y+4,getres2(2707,3));   { 'wenden moechten, legen Sie das Brett bitte als'  }
     wrt(x+3,y+5,getres2(2707,4));   { 'User an!'                                       }
     freeres;
     errsound;
@@ -931,7 +936,7 @@ begin
     exit;
     end;
   wdt:=ival(getres2(2735,0));
-  diabox(wdt+2,11,getres2(2735,1),x,y);   { 'Brettzugriff/Brettvertreter Ñndern' }
+  diabox(wdt+2,11,getres2(2735,1),x,y);   { 'Brettzugriff/Brettvertreter aendern' }
   attrtxt(col.coldiarahmen);
   wrt(x,y+6,'√'+dup(wdt,'ƒ')+'¥');
   openmask(x+1,x+wdt,y+1,y+5,false);
@@ -1126,7 +1131,7 @@ begin
       rec:=dbRecno(bbase);
       dbSeek(bbase,biBrett,UpperCase(brett));
       if dbFound then begin
-        rfehler(2714);       { 'Umbennenen nicht mîglich - Brett existiert bereits!' }
+        rfehler(2714);       { 'Umbennenen nicht moeglich - Brett existiert bereits!' }
         dbGo(bbase,rec);
         goto ende;
         end;
@@ -1138,10 +1143,10 @@ begin
       else dbSkip(mbase,-1);
       while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
             (dbReadInt(mbase,'unversandt') and 8<>0) do
-        dbSkip(mbase,-1);     { Wiedervorlage-Nachrichten Åberspringen }
+        dbSkip(mbase,-1);     { Wiedervorlage-Nachrichten ueberspringen }
       if not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
          odd(dbReadInt(mbase,'unversandt')) then begin
-        rfehler(2711);    { 'Unversandte Nachrichten vorhanden - Brettname nicht Ñnderbar' }
+        rfehler(2711);    { 'Unversandte Nachrichten vorhanden - Brettname nicht aenderbar' }
         brett:= dbReadNStr(bbase,bb_brettname);
         modin:=false;
         end;
@@ -1151,7 +1156,7 @@ begin
     if modin then begin
       dbSeek(mbase,mb_brett,_brett);
       if not dbEOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
-         ReadJN(getres(2713),true) then begin   { 'Brettname geÑndert - Nachrichtenkîpfe anpassen' }
+         ReadJN(getres(2713),true) then begin   { 'Brettname geaendert - Nachrichtenkoepfe anpassen' }
         msgbox(32,3,'',x,y);
         wrt(x+2,y+1,getres(2714));   { 'Einen Moment bitte ...' }
         n:=0;
@@ -1200,7 +1205,7 @@ begin
   pushhp(iif(user,429,409));
   n:=MiniSel(34,10+(screenlines-25)div 2,'',getres2(2715,iif(user,1,2)),nn);
   if n<>0 then nn:=abs(n);
-  { ^Kommentar,^Serverbox,^Haltezeit,Umlaute,^Filter,^Gruppe^,^PrioritÑt,^Empfangsbest.,^Vertreteradr.,^Lîschen }
+  { ^Kommentar,^Serverbox,^Haltezeit,Umlaute,^Filter,^Gruppe^,^Prioritaet,^Empfangsbest.,^Vertreteradr.,^Loeschen }
   if n<>0 then nn:=abs(n);
   pophp;
   case n of
@@ -1291,7 +1296,7 @@ begin
           end;
     8 : begin
           filter:=false;
-          maddbool(3,2,getres2(2701,10),filter);   { 'EmpfangsbestÑtigungen' }
+          maddbool(3,2,getres2(2701,10),filter);   { 'Empfangsbestaetigungen' }
           mhnr(426);
           end;
     9 : begin
@@ -1346,7 +1351,7 @@ begin
               if FirstChar(brett)='A' then
                 dbWriteN(bbase,bb_gruppe,grnr_found)
               else
-                rfehler1(2707,copy(brett,2,26));   { '%s ist internes Brett - Gruppe nicht Ñnderbar!' }
+                rfehler1(2707,copy(brett,2,26));   { '%s ist internes Brett - Gruppe nicht aenderbar!' }
               end;
         5 : if user then begin
               dbReadN(ubase,ub_userflags,flags);
@@ -1402,7 +1407,7 @@ var i              : integer;
 begin
   if user then dispdat:=ubase
   else dispdat:=bbase;
-  if ReadJN(getreps(iif(user,2716,2717),strs(bmarkanz)),false)   { '%s markierte User/Bretter lîschen' }
+  if ReadJN(getreps(iif(user,2716,2717),strs(bmarkanz)),false)   { '%s markierte User/Bretter loeschen' }
   then begin
     moment;
     i:=0;
@@ -1463,7 +1468,7 @@ begin
   if trim(s)='' then
     exit
   else if brett and _pmonly then begin
-    rfehler(2709);    { 'Direktnachricht an ein Brett ist NICHT mîglich' }
+    rfehler(2709);    { 'Direktnachricht an ein Brett ist NICHT moeglich' }
     result:=false;
     end
   else
@@ -1512,7 +1517,7 @@ begin
     if cpos('@',s)=0 then dbSeek(bbase,biBrett,'A'+mid(UpperCase(s),1)) {ohne "/"}
     else dbSeek(ubase,uiName,UpperCase(s));
     attrtxt(iif(dbFound,col.coldialog,col.coldiahigh));
-    wrt(empfx,empfy,getres2(2718,2));    { 'EmpfÑnger' }
+    wrt(empfx,empfy,getres2(2718,2));    { 'Empfaenger' }
     freeres;
 
     if not dbFound and (cpos('@',s)=0) then  { Nicht Vorhandenes Brett }
@@ -1604,10 +1609,10 @@ begin
     pb_wrntyp(s);
     set_ubrett;
     if not stricmp(s,rdorgbox) then
-      rdforcebox:=true;   { Benutzer hat abweichenden Server gewÑhlt }
+      rdforcebox:=true;   { Benutzer hat abweichenden Server gewaehlt }
     end
   else
-    rfehler(2702);    { 'unbekannte Serverbox - wÑhlen mit <F2>' }
+    rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
 end;
 
 
@@ -1640,7 +1645,7 @@ begin
     pb_field:=0;
     pb_Netztyp:=ntBoxNetztyp(pbox);
     end;
-  maddstring(3,2+pba,getres2(2718,2),empf,40,eAdrLen,   { 'EmpfÑnger ' }
+  maddstring(3,2+pba,getres2(2718,2),empf,40,eAdrLen,   { 'Empfaenger ' }
     iifs(ntGrossUser(ntBoxNetztyp(box)),'>',''));
   if pmonly then mappcustomsel(seluser,false)
   else mappcustomsel(auto_empfsel,false);
@@ -1722,7 +1727,7 @@ begin
           end;
       7 : begin
             write_lastcall(longdat(readdate));
-            brk:=true;  { Readmode-Einstellung nicht Ñndern }
+            brk:=true;  { Readmode-Einstellung nicht aendern }
           end;
     end;
     if not brk then get_lesemode:=n-1;
@@ -1771,7 +1776,7 @@ var i   : integer;
     wot : string;
 begin
   if wotage=127 then
-    wostring:=getres(2723)     { 'tÑglich' }
+    wostring:=getres(2723)     { 'taeglich' }
   else begin
     wot:='';
     for i:=1 to 7 do
@@ -1787,7 +1792,7 @@ var i : integer;
     b : byte;
 begin
   UpString(wot);
-  if wot=UpperCase(getres(2723)) then     { 'TéGLICH' }
+  if wot=UpperCase(getres(2723)) then     { 'TAeGLICH' }
     wobyte:=127
   else begin
     b:=0;
@@ -1904,7 +1909,7 @@ begin
       pbox:=s;
       end
     else
-      rfehler(2702);    { 'unbekannte Serverbox - wÑhlen mit <F2>' }
+      rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
     dbClose(d);
     atestpollbox:=dbFound;
     end;
@@ -1952,7 +1957,7 @@ begin
     mappcustomsel(AutoFilename,false);
     msetvfunc(AutoExistfile);
     maddstring(3,4,getres2(2726,5),empf,42,eAdrLen,'');
-    mappcustomsel(auto_empfsel,false);                { 'EmpfÑnger ' }
+    mappcustomsel(auto_empfsel,false);                { 'Empfaenger ' }
     msetvfunc(auto_testempf);
     maddstring(3,6,getres2(2726,6),box,17,BoxnameLen,'');    { 'Server    ' }
     mappcustomsel(BoxSelProc,false);
@@ -1961,14 +1966,14 @@ begin
     mset3proc(auto_tagtest3);
     maddstring(3,10,getres2(2726,8),wot,17,20,'');    { 'Wochentage' }
     mappsel(false,getres2(2726,9));   { 'Mo˘Di˘Mi˘Do˘Fr˘Sa˘So' }
-    mappsel(false,getres(2723));      { 'tÑglich' }
+    mappsel(false,getres(2723));      { 'taeglich' }
     mset3proc(testwot);
     maddstring(3,12,getres2(2726,10),mon,17,30,'0123456789,');  { 'Monate    ' }
     mappsel(false,getres(2724));   { 'alle' }
     mset3proc(testmon);
-    maddbool  (39,6,getres2(2726,11),bin);          { 'binÑr' }
-    maddbool  (39,7,getres2(2726,12),loesch);       { 'lîschen' }
-    maddbool  (39,8,getres2(2726,13),modif);        { 'bei énderung' }
+    maddbool  (39,6,getres2(2726,11),bin);          { 'binaer' }
+    maddbool  (39,7,getres2(2726,12),loesch);       { 'loeschen' }
+    maddbool  (39,8,getres2(2726,13),modif);        { 'bei Aenderung' }
     maddbool  (39,9,getres2(2726,16),supers);       { 'ersetzen' }
     madddate  (39,11,getres2(2726,14),dat1,false,true);   { 'Datum 1 ' }
     mset3proc(atestdate);
@@ -2047,7 +2052,7 @@ var nr  : shortint;
 begin
   AutoRead(ar);
   pushhp(77);
-  nr:=ReadIt(31,getres(2727),getres(2728),   { 'GewÑhlten Eintrag lîschen?' / ' ^Ja , ^Nein , ^Datei ' }
+  nr:=ReadIt(31,getres(2727),getres(2728),   { 'Gewaehlten Eintrag loeschen?' / ' ^Ja , ^Nein , ^Datei ' }
              iif(RightStr(ar.datei,4)='.MSG',3,1),brk);
   pophp;
   if (not brk) and (nr<>2) then begin
@@ -2101,7 +2106,7 @@ begin
   msgbox(minmax(length(fn)+14,35,70),8,getres2(2729,1),x,y);  { 'AutoVersand-Datei' }
   attrtxt(col.colmboxhigh);
   mwrt(x+3,y+2,getres2(2729,2));    { 'Datei:' }
-  mwrt(x+3,y+3,getres2(2729,3));    { 'Grî·e:' }
+  mwrt(x+3,y+3,getres2(2729,3));    { 'Groesse:' }
   mwrt(x+3,y+4,getres2(2729,4));    { 'Datum:' }
   attrtxt(col.colmbox);
   mwrt(x+11,y+2,fitpath(fn,56));
@@ -2115,7 +2120,7 @@ begin
     gotoxy(x+11,y+4);
     write(DateToStr(dt), ', ', TimeToStr(dt));
   end;
-  wrt(x+3,y+6,getres(12));    { 'Taste drÅcken ...' }
+  wrt(x+3,y+6,getres(12));    { 'Taste druecken ...' }
   mon;
   findclose(sr);
   freeres;
@@ -2137,8 +2142,8 @@ begin
 end;
 
 
-{ liefert neue Indexnummern fÅr Bretter, die an der aktuellen }
-{ Position in bbase einzufÅgen sind; ggf. Index-Reorg         }
+{ liefert neue Indexnummern fuer Bretter, die an der aktuellen }
+{ Position in bbase einzufuegen sind; ggf. Index-Reorg         }
 
 procedure GetIndexnr(anz:integer; var nr:longint; var step:integer);
 var rec,_nr,
@@ -2201,7 +2206,7 @@ var x,y: Integer;
     step  : integer;
 begin
   oldtc:=trennchar;
-  dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfÅgen' }
+  dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfuegen' }
   komm:='';
   maddstring(3,2,getres2(2731,2),trennchar,1,1,range(' ',#254)); mhnr(620);
   mappsel(false,'ƒ˘Õ˘˘∞˘±˘Ø˘Æ˘˙˘˛');              { 'Trennzeichen ' }
@@ -2240,7 +2245,7 @@ var x,y: Integer;
     ab    : integer;
 begin
   oldtc:=trennchar;
-  dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfÅgen' }
+  dialog(50,5,getres2(2731,1),x,y);    { 'Trennzeile einfuegen' }
   komm:='';
   maddstring(3,2,getres2(2731,2),trennchar,1,1,range(' ',#254)); mhnr(620);
   mappsel(false,'ƒ˘Õ˘˘∞˘±˘Ø˘Æ˘˙˘˛');              { 'Trennzeichen ' }
@@ -2279,7 +2284,7 @@ var rec,nr : longint;
 begin
   if (bmarkanz=0) or ReadJN(getreps(iif(bmarkanz=1,2732,2733),strs(bmarkanz)),true)
   then if bmarkanz>90 then          { '%s markierte Bretter verschieben' }
-    rfehler(2710)   { 'Es kînnen maximal 90 Bretter gleichzeitig verschoben werden.' }
+    rfehler(2710)   { 'Es koennen maximal 90 Bretter gleichzeitig verschoben werden.' }
   else begin
     rec:=dbRecno(bbase);
     wlpos:=rec; wltrenn:=true;
@@ -2326,7 +2331,7 @@ var rec    : longint;
 begin
   if (bmarkanz=0) or ReadJN(getreps(iif(bmarkanz=1,2732,2733),strs(bmarkanz)),true)
   then if bmarkanz>90 then          { '%s markierte Bretter verschieben' }
-    rfehler(2710)   { 'Es kînnen maximal 90 Bretter gleichzeitig verschoben werden.' }
+    rfehler(2710)   { 'Es koennen maximal 90 Bretter gleichzeitig verschoben werden.' }
   else begin
     rec:=dbRecno(ubase);
     wlpos:=rec; wltrenn:=true;
@@ -2468,6 +2473,9 @@ end;
 
 {
   $Log$
+  Revision 1.100  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.99  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 

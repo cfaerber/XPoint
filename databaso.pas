@@ -53,7 +53,8 @@ uses
   database,
   datadef1,
   xp1,
-  debug;
+  debug,
+  xpglobal; //not really
 
 
 
@@ -432,6 +433,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/12/06 14:27:26  dodi
+  - updated uses, comments and todos
+
   Revision 1.22  2002/12/04 16:56:56  dodi
   - updated uses, comments and todos
 

@@ -15,7 +15,9 @@ unit objcom;
 
 {$I ocdefine.inc}
 
-uses ringbuff,classes,osdepend
+uses
+  classes,
+  ringbuff,osdepend
      {$IFDEF DOS32},Ports,DOS{$ENDIF}
      {$IFDEF Win32},Windows,WinSock{$ENDIF}
      {$IFDEF Linux}
@@ -109,16 +111,24 @@ function FossilDetect: Boolean;
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-uses Sysutils,timer,debug;
+uses
+  Sysutils,
+  timer,debug;
 
 {$IFDEF Win32} {$I OCSWin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
 {$IFDEF Linux} {$I ocslin.inc} {$I ocrawip.inc} {$I octelnet.inc} {$ENDIF}
 {$IFDEF Go32v2} {$I OCSDos.inc} {$I OCFDos.inc} {$ENDIF}
 {$IFDEF OS2} {$I OCSOS2.inc} {$ENDIF}
 
-{$IFNDEF Fossil}function FossilDetect: Boolean; begin FossilDetect:=False end;{$ENDIF}
+{$IFNDEF Fossil}
+//todo: make const? unused???
+function FossilDetect: Boolean; begin FossilDetect:=False end;
+//$else?
+{$ENDIF}
 
 const CommandTimeout= 500;
+
+{ TCommStream }
 
 constructor TCommStream.Create;
 begin
@@ -488,6 +498,9 @@ end.
 
 {
   $Log$
+  Revision 1.30  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.29  2001/12/30 19:56:49  cl
   - Kylix 2 compile fixes
 

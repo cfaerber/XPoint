@@ -26,18 +26,6 @@ unit xp2c;
 
 interface
 
-uses
-  {$IFDEF NCRT}
-  xpcurses,
-  {$IFDEF fpc}
-  linux,
-  {$ENDIF}
-  {$ENDIF }
-  sysutils,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
-  printerx,mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
-  utftools, mime,
-  xpglobal;
-
 procedure options;
 procedure UI_options;
 procedure msgoptions;
@@ -66,7 +54,7 @@ procedure PGP_Options;
 procedure ViewerOptions;
 
 
-{ Testfunktionen; mÅssen wg. Overlay im Interface-Teil stehen: }
+{ Testfunktionen; muessen wg. Overlay im Interface-Teil stehen: }
 
 function smalladr(var s:string):boolean;
 function testbrett(var s:string):boolean;
@@ -93,12 +81,23 @@ procedure TestQC(var s:string);
 implementation  {----------------------------------------------------}
 
 uses
+  sysutils,
+  {$IFDEF NCRT}
+  xpcurses,
+  {$IFDEF fpc}
+  linux,
+  {$ENDIF}
+  {$ENDIF }
   {$ifdef Win32} xpwin32, {$endif}
   {$ifdef Dos32} xpdos32, {$endif}
 {$IFDEF Kylix}
   libc,
-{$ENDIF}  
-  xp1o,xp2,xp3, xp4o2,xp9bp,xpnt;
+{$ENDIF}
+  xp1o,xp2,xp4o2,xp9bp,xpnt,
+  typeform,fileio,inout,winxp,win2,keys,maske,
+  mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
+  mime,utftools, 
+  xpglobal;
 
 const
   MaxProtocols = 2;
@@ -147,14 +146,14 @@ begin
   maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
   maddstring(3,8,getres2(250,12),archivbretter,35,BrettLen-1,'>'); mhnr(217);
   msetvfunc(testbrett);                                   { 'Archivbretter ' }
-  maddbool(3,10,getres2(250,13),archivloesch);            { 'archivierte Nachrichten lîschen' }
+  maddbool(3,10,getres2(250,13),archivloesch);            { 'archivierte Nachrichten loeschen' }
   maddbool(3,11,getres2(250,24),archivtext); mhnr(8070);  { 'Archivierungsvermerk erstellen' }
-  maddbool(3,12,getres2(250,14),newbrettende); mhnr(219); { 'neue Bretter am Ende anhÑngen' }
+  maddbool(3,12,getres2(250,14),newbrettende); mhnr(219); { 'neue Bretter am Ende anhaengen' }
   maddbool(3,13,getres2(250,15),UserBoxname);             { 'Systemname in PM-Brettern' }
-  maddbool(3,14,getres2(250,19),brettkomm);               { 'Kommentare aus Brettliste Åbernehmen' }
-  maddbool(3,15,getres2(250,20),newuseribm);              { 'Umlaute fÅr neue User zulassen' }
+  maddbool(3,14,getres2(250,19),brettkomm);               { 'Kommentare aus Brettliste uebernehmen' }
+  maddbool(3,15,getres2(250,20),newuseribm);              { 'Umlaute fuer neue User zulassen' }
   maddbool(3,16,getres2(250,22),_UserSortBox);            { 'Useranzeigen nach Server sortieren' }
-  maddbool(3,17,getres2(250,21),OtherQuoteChars);         { 'Farbe auf fÅr Quotezeichen : und |' }
+  maddbool(3,17,getres2(250,21),OtherQuoteChars);         { 'Farbe auf fuer Quotezeichen : und |' }
 
 {$IFDEF UnixFS}
   maddint(3,19,getres2(250,25),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk' }
@@ -198,7 +197,7 @@ begin
   for i:=0 to 2 do
     dbl[i]:=getres2(251,i+10); { 'langsam' / 'normal' / 'schnell' }
   for i:=0 to 2 do
-    stp[i]:=getres2(251,i+40); { 'automatisch' / 'manuell' / 'RÅckfrage' }
+    stp[i]:=getres2(251,i+40); { 'automatisch' / 'manuell' / 'Rueckfrage' }
   dialog(66,12,getres2(251,15),x,y);    { 'Bedienungs-Optionen' }
   maddbool(3,2,getres2(251,16),AAmsg);  mhnr(550);   { 'Nachr.-Weiterschalter' }
   maddbool(3,3,getres2(251,17),AAbrett);   { 'Brett-Weiterschalter' }
@@ -212,8 +211,8 @@ begin
   save:=stp[SaveType];
   maddstring(3,8,getres2(251,26),save,14,14,'');  { 'Sichern ' }
   for i:=0 to 2 do mappsel(true,stp[i]); mhnr(586);
-  maddbool(3,10,getres2(251,25),leaveconfig); mhnr(585);  { 'Config-MenÅ bei <Esc> vollstÑndig verlassen' }
-  maddbool(3,11,getres2(251,27),msgbeep); mhnr(587);  { 'Tonsignal in Brett-, User- und NachrichtenÅbersicht' }
+  maddbool(3,10,getres2(251,25),leaveconfig); mhnr(585);  { 'Config-Menue bei <Esc> vollstaendig verlassen' }
+  maddbool(3,11,getres2(251,27),msgbeep); mhnr(587);  { 'Tonsignal in Brett-, User- und Nachrichtenuebersicht' }
 
   oldm:=_maus;
   maddbool(39,2,getres2(251,21),_maus); mhnr(556);       { 'Mausbedienung' }
@@ -306,7 +305,7 @@ var x,y : Integer;
       getRTAMode := getres2 (252, 40)
     else if RTAMode = 15 then   { Kopienempf. u. Antwort-an }
       getRTAMode := getres2 (252, 41)
-    else if RTAMode = 13 then   { KopienempfÑnger }
+    else if RTAMode = 13 then   { Kopienempfaenger }
       getRTAMode := getres2 (252, 42)
     else if RTAMode = 3 then    { Antwort-an }
       getRTAMode := getres2 (252, 43)
@@ -323,12 +322,12 @@ var x,y : Integer;
 	else if RTAErg = getres2 (252, 41) then
 	  RTAMode := 15             { Kopienempf. u. Antwort-an }
 	else if RTAErg = getres2 (252, 42) then
-	  RTAMode := 13             { KopienempfÑnger }
+	  RTAMode := 13             { Kopienempfaenger }
 	else if RTAErg = getres2 (252, 43) then
 	  RTAMode := 3              { Antwort-an }
 	else if RTAErg = getres2 (252, 44) then
 	  RTAMode := 0;             { nie }
-	{ Wenn der User 'benutzerdefiniert gewÑhlt hat, dann bleibt diese
+	{ Wenn der User 'benutzerdefiniert gewaehlt hat, dann bleibt diese
 	  Einstellung erhalten }
   end;
 
@@ -342,7 +341,7 @@ begin
   j := iif (RFC_ZConnectUsed, 1, 0);
 
   dialog(57,21 + j,getres2(252,5),x,y);   									{ 'Nachrichten-Optionen' }
-  maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   					{ 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
+  maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   					{ 'max. Speichergroesse fuer Binaernachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
   maddint(3,4,getres2(252,11),stdhaltezeit,4,4,0,9999);  					{ 'Standard-Bretthaltezeit:     ' }
   maddtext(length(getres2(252,11))+11,4,getres2(252,12),col.coldialog);   	{ 'Tage' }
@@ -375,13 +374,13 @@ begin
   if replaceetime then mdisable;
 {$ENDIF }
   maddbool(3,12 + j,getres2(252,17),SaveUVS); mhnr(248);   { 'unversandte Nachrichten nach /ØUnversandt' }
-  maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
+  maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. Empfangsbestaetigungen versenden' }
   maddbool(3,14 + j,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
   maddbool(3,15 + j,getres2(252,26),DefaultNokop); { 'alle Kopien als Blindkopien verschicken' }
   maddbool(3,16 + j,getres2(252,29),NoArchive); mhnr(253); { 'News nicht archivieren lassen' }
   maddbool(3,17 + j,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
-  maddint (3,19 + j,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
-  maddtext(9+length(getres2(252,24)),19 + j,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
+  maddint (3,19 + j,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit ueber ' }
+  maddtext(9+length(getres2(252,24)),19 + j,getres2(252,25),0);  { 'Empfaengern loeschen' }
   maddbool(3,20 + j,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
   freeres;
   readmask(brk);
@@ -425,7 +424,7 @@ function testurl(var s:string):boolean;
 
 begin { testurl }
   if (s<>'') and (NoProtocol) then begin
-    rfehler(220);    { 'Geben Sie die vollstÑndige URL (http://do.main/...) an!' }
+    rfehler(220);    { 'Geben Sie die vollstaendige URL (http://do.main/...) an!' }
     testurl:=false;
     end
   else
@@ -436,7 +435,7 @@ procedure adroptions;
 var x,y : Integer;
     brk : boolean;
 begin
-  dialog(ival(getres2(252,100)),8,getres2(252,101),x,y);  { 'Adre·einstellungen (ZCONNECT / RFC)' }
+  dialog(ival(getres2(252,100)),8,getres2(252,101),x,y);  { 'Adresseinstellungen (ZCONNECT / RFC)' }
   maddstring(3,2,getres2(252,102),orga,47,OrgLen,'');    { 'Organisation  ' }
     mhnr(1040);
   maddstring(3,3,getres2(252,103),postadresse,47,MaxInt,'');   { 'Postanschrift ' }
@@ -462,7 +461,7 @@ begin
   else begin
     msgbox(69,7,getres2(253,5),x,y);    { 'ACHTUNG!' }
     mwrt(x+3,y+2,getres2(253,6));   { 'Im Z-Netz sind z.Zt. keine kleingeschriebenen Adressen erlaubt!' }
-    mwrt(x+3,y+3,getres2(253,7));   { 'Mîchten Sie diese Option wirklich einschalten?' }
+    mwrt(x+3,y+3,getres2(253,7));   { 'Moechten Sie diese Option wirklich einschalten?' }
     t:='';
     errsound; errsound;
     ok:=(readbutton(x+3,y+5,2,getres2(253,8),2,true,t)=1);  { '  ^Ja  , ^Nein ' }
@@ -482,9 +481,9 @@ begin
 else begin
   msgbox(69,10,getres2(253,5),x,y); { 'VORSICHT: MôGLICHE KOMPATIBILITéTSPROBLEME' }
   mwrt(x+3,y+2,getres2(253,21));  { 'Der ZConnect-Standard 3.1, der die Verwendung von MIME in ZConnect' }
-  mwrt(x+3,y+3,getres2(253,22));  { 'erlaubt wurde sehr spÑt verabschiedet und wird daher kaum von' }
-  mwrt(x+3,y+4,getres2(253,23));  { 'von Pointsoftware oder Gateways unterstÅtzt.' }
-  mwrt(x+3,y+6,getres2(253,7));   { 'Mîchten Sie diese Option wirklich einschalten?' }
+  mwrt(x+3,y+3,getres2(253,22));  { 'erlaubt wurde sehr spaet verabschiedet und wird daher kaum von' }
+  mwrt(x+3,y+4,getres2(253,23));  { 'von Pointsoftware oder Gateways unterstuetzt.' }
+  mwrt(x+3,y+6,getres2(253,7));   { 'Moechten Sie diese Option wirklich einschalten?' }
   t:='';
   errsound; errsound;
   ok:=(readbutton(x+3,y+8,2,getres2(253,8),2,true,t)=1);  { '  ^Ja  , ^Nein ' }
@@ -503,7 +502,7 @@ begin
   if (s=_jn_[1]) or not hayes then testhayes:=true
   else begin
     msgbox(71,10,getres2(254,8),x,y);    { 'ACHTUNG!' }
-    mwrt(x+3,y+2,getres2(254,9));   { 'Diese Option dÅrfen Sie nur dann ausschalten, wenn Sie kein Modem' }
+    mwrt(x+3,y+2,getres2(254,9));   { 'Diese Option duerfen Sie nur dann ausschalten, wenn Sie kein Modem' }
     mwrt(x+3,y+3,getres2(254,10));  { 'verwenden und die Verbindung auf andere Weise (z.B.Handwahl) her-' }
     mwrt(x+3,y+4,getres2(254,11));  { 'gestellt wird.' }
     mwrt(x+3,y+6,getres2(254,12));  { 'Hayes-Befehle wirklich abschalten?' }
@@ -528,10 +527,10 @@ begin
   maddbool(34,2,getres2(254,4),hayescomm);   { 'Hayes-Befehle' }
   msetvfunc(testhayes);
   { maddbool(34,3,getres2(254,5),RenCALLED);  } { 'CALLED umbenennen' }
-  maddbool(3,5,getres2(254,6),nDelPuffer);   { 'Nachrichtenpakete nach Einlesen lîschen' }
+  maddbool(3,5,getres2(254,6),nDelPuffer);   { 'Nachrichtenpakete nach Einlesen loeschen' }
     mhnr(564);
-  maddbool(3,6,getres2(254,7),grosswandeln);    { 'Z-Netz-Adressen in Gro·schreibung umwandeln' }
-  maddbool(3,7,getres2(254,14),netcalllogfile); { 'vollstÑndiges Netcall-Logfile (NETCALL.LOG)' }
+  maddbool(3,6,getres2(254,7),grosswandeln);    { 'Z-Netz-Adressen in Grossschreibung umwandeln' }
+  maddbool(3,7,getres2(254,14),netcalllogfile); { 'vollstaendiges Netcall-Logfile (NETCALL.LOG)' }
   maddbool(3,9,getres2(254,15),netcallunmark);  { 'Nachrichtenmarkierungen nach Netcall aufheben' }
   freeres;
   readmask(brk);
@@ -618,7 +617,7 @@ var brk   : boolean;
     edtype: array[1..3] of string;
 begin
   for i:=1 to 3 do
-    edtype[i]:=getres2(256,i);  { 'gro·e Nachrichten','alle Nachrichten','alle Texte' }
+    edtype[i]:=getres2(256,i);  { 'grosse Nachrichten','alle Nachrichten','alle Texte' }
 {$IFDEF unix}
   dialog(ival(getres2(256,0)),12,getres2(256,5),x,y);   { 'Editor' }
 {$ELSE }
@@ -634,7 +633,7 @@ begin
   mhnr(308);
 
   eds:=edtype[exteditor];
-  maddstring(3,8,getres2(256,9),eds,18,18,'');    { 'externen Editor verwenden fÅr ' }
+  maddstring(3,8,getres2(256,9),eds,18,18,'');    { 'externen Editor verwenden fuer ' }
   for i:=1 to 3 do
     mappsel(true,edtype[i]);
   mhnr(303);
@@ -661,7 +660,7 @@ end;
 function testenv(var s:string):boolean;
 begin
   if (ival(s)>0) and (ival(s)<128) then begin
-    rfehler(207);     { 'ungÅltige Eingabe - siehe Online-Hilfe' }
+    rfehler(207);     { 'ungueltige Eingabe - siehe Online-Hilfe' }
     testenv:=false;
     end
   else
@@ -679,7 +678,7 @@ begin
 {$ELSE }
   dialog(ival(getres2(257,0)),8,getres2(257,1),x,y);    { 'Shell' }
   maddbool(3,2,getres2(257,2),shell25); mhnr(310);   { '25 Bildzeilen bei DOS-Shell' }
-  maddint(3,4,getres2(257,3),envspace,4,4,0,9999);   { 'Environment-Grî·e:  ' }
+  maddint(3,4,getres2(257,3),envspace,4,4,0,9999);   { 'Environment-Groesse:  ' }
   maddtext(length(getres2(257,3))+11,4,getres(13),0);   { 'Bytes' }
   maddbool(3,6,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
   maddbool(3,7,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
@@ -734,7 +733,7 @@ begin
   maddbool(3,3,getres2(258,7),trennall);                     { 'Trennzeilen bei "Alle"'       }
   maddbool(3,4,getres2(258,9),NewsgroupDisp); mhnr(273);     { 'Usenetgruppen mit "."'        }
   MSet1Func(ngdispChanged);
-  maddbool(3,5,getres2(258,11),NewsgroupDispall); mhnr(275); { '... gilt fÅr alle Bretter     }
+  maddbool(3,5,getres2(258,11),NewsgroupDispall); mhnr(275); { '... gilt fuer alle Bretter     }
   MSet1Func(ngdispaChanged);
   maddbool(3,6,getres2(258,12),ShowUngelesen);
   brett:=btyp(brettanzeige);                                 { 'kombinierter Ungelesen-Modus' }
@@ -777,9 +776,9 @@ begin
   sabs:=abstyp(sabsender);
   maddstring(35,2,getres2(259,12),sabs,11,11,'');    { 'Absendernamen ' }
   for i:=0 to 6 do mappsel(true,abstyp(i));
-  maddbool(3,4,getres2(259,13),BaumAdresse);     { 'vollstÑndige Adressen im Kommentarbaum' }
+  maddbool(3,4,getres2(259,13),BaumAdresse);     { 'vollstaendige Adressen im Kommentarbaum' }
   maddbool(3,5,getres2(259,14),showrealnames);   { 'Realname anzeigen, falls vorhanden' }
-  maddbool(3,6,getres2(259,15),showfidoempf);    { 'EmpfÑnger von Fido-Brettnachrichten anzeigen' }
+  maddbool(3,6,getres2(259,15),showfidoempf);    { 'Empfaenger von Fido-Brettnachrichten anzeigen' }
   maddbool(3,7,getres2(259,16),MsgNewFirst);     { 'Neue Nachrichten oben' }
   { 'Feldtausch Nachrichten-Lesefenster': }
   maddstring(3,9,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,
@@ -822,7 +821,7 @@ begin
 	msetvfunc(scstest);
   maddbool(3,4,getres2(260,2),softsaver); mhnr(281);     { 'weich ausblenden' }
   maddbool(3,5,getres2(260,6),blacksaver); mhnr(282);   { 'schwarzschalten' }
-  maddbool(3,7,getres2(260,3),ss_passwort); mhnr(284);   { 'Startpa·wort abfragen' }
+  maddbool(3,7,getres2(260,3),ss_passwort); mhnr(284);   { 'Startpasswort abfragen' }
   du:=dispusername;
   maddbool(3,9,getres2(260,4),dispusername); mhnr(285);  { 'Username anzeigen' }
 
@@ -845,14 +844,14 @@ begin
 end;
 
 
-{ UnterstÅtzung fÅr seh-/hîrbehinderte Anwender }
+{ Unterstuetzung fuer seh-/hoerbehinderte Anwender }
 
 procedure AccessibilityOptions;
 var x,y: Integer;
     brk : boolean;
 begin
   dialog(41,11,getres2(260,11),x,y);
-  maddbool(3,2,getres2(260,5),auswahlcursor);{ 'Auswahlcursor in MenÅs/Listen' }
+  maddbool(3,2,getres2(260,5),auswahlcursor);{ 'Auswahlcursor in Menues/Listen' }
     mhnr(1030);
   maddbool(3,3,getres2(260,8),blind);        { 'Fensterhintergrund ausblenden' }
   { 'Feldtausch in Nachrichten-Liste': }
@@ -867,7 +866,7 @@ begin
 {$IFNDEF unix}
   maddbool(3,8,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
 {$ENDIF}
-  maddbool(3,9,getres2(260,12),tonsignal);   { 'zusÑtzliches Tonsignal' }
+  maddbool(3,9,getres2(260,12),tonsignal);   { 'zusaetzliches Tonsignal' }
   maddbool(3,10,getres2(260,7),soundflash);   { 'optisches Tonsignal' }
   freeres;
   readmask(brk);
@@ -922,17 +921,17 @@ begin
   end;
   with COMn[nr] do begin
 {$ifdef Unix }
-    dialog(ival(getres2(261,0)),10,getreps2(261,20,strs(nr)),x,y);{ 'GerÑt Nummer %s Konfigurieren' }
+    dialog(ival(getres2(261,0)),10,getreps2(261,20,strs(nr)),x,y);{ 'Geraet Nummer %s Konfigurieren' }
     maddstring(3,2,getres2(261,4),MInit,32,200,'');     { 'Modem-Init ' }
     mappsel(false,'ATZ˘ATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1˘ATZ\\ATX3˘AT&F');
     {Weitere Optionen eingefuegt MW 04/2000}
     maddstring(3,3,getres2(261,5),MExit,32,200,'');     { 'Modem-Exit ' }
     mappsel(false,'ATZ˘AT&F');
-    maddstring(3,4,getres2(261,15),MDial,32,100,'');    { 'WÑhlbefehl ' }
+    maddstring(3,4,getres2(261,15),MDial,32,100,'');    { 'Waehlbefehl ' }
     mappsel(false,'ATDT˘ATDP˘ATDT0W˘ATDP0W');
     maddstring(3,5,getres2(261,19),MCommInit,32,100,'');    { 'Comminit   ' }
     mappsel(false,'Serial /dev/modem Speed:115200˘Serial /dev/ttyS0 Speed:115200˘Serial /dev/ttyI0 Speed:115200');
-    maddbool (3,7,getres2(261,16),postsperre); { 'postkompatible WÑhlpause' }
+    maddbool (3,7,getres2(261,16),postsperre); { 'postkompatible Waehlpause' }
     maddbool (3,8,getres2(261,8),IgCD);             { 'CD ignorieren' }
     maddbool (3,9,getres2(261,9),IgCTS);            { 'CTS ignorieren' }
     maddbool (28,8,getres2(261,17),UseRTS);          { 'RTS verwenden'  }
@@ -943,11 +942,11 @@ begin
     maddstring(3,6,getres2(261,4),MInit,32,200,''); mhnr(292);     { 'Modem-Init ' }
     mappsel(false,'ATZ˘ATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1˘ATZ\\ATX3');
     maddstring(3,7,getres2(261,5),MExit,32,200,'');     { 'Modem-Exit ' }
-    maddstring(3,8,getres2(261,15),MDial,32,100,'');    { 'WÑhlbefehl ' }
+    maddstring(3,8,getres2(261,15),MDial,32,100,'');    { 'Waehlbefehl ' }
     mappsel(false,'ATDT˘ATDP˘ATDT0W˘ATDP0W');
     maddstring(3,9,getres2(261,19),MCommInit,32,100,'');    { 'Comminit   ' }
     mappsel(false,'Serial Port:'+strs(nr)+' Speed:115200');
-    maddbool (3,11,getres2(261,16),postsperre); { 'postkompatible WÑhlpause' }
+    maddbool (3,11,getres2(261,16),postsperre); { 'postkompatible Waehlpause' }
 {$endif}
 {$ifdef DOS32}
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
@@ -962,13 +961,13 @@ begin
     maddstring(3,6,getres2(261,4),MInit,32,200,'');  mhnr(292);   { 'Modem-Init ' }
     mappsel(false,'ATZ˘ATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1˘ATZ\\ATX3');
     maddstring(3,7,getres2(261,5),MExit,32,200,'');     { 'Modem-Exit ' }
-    maddstring(3,8,getres2(261,15),MDial,32,100,'');    { 'WÑhlbefehl ' }
+    maddstring(3,8,getres2(261,15),MDial,32,100,'');    { 'Waehlbefehl ' }
     mappsel(false,'ATDT˘ATDP˘ATDT0W˘ATDP0W');
     maddstring(3,9,getres2(261,19),MCommInit,32,100,'');    { 'Comminit   ' }
     if Cport<$1000 then pstr:=LowerCase(hex(Cport,3))else pstr:=LowerCase(hex(Cport,4));
     mappsel(false,'Serial Port:'+strs(nr)+' Speed:115200˘Serial IO:'+pstr+' IRQ:'+strs(Cirq)+
                   ' Speed:115200˘Fossil Port:'+strs(nr)+' Speed:115200');
-    maddbool (3,11,getres2(261,16),postsperre); { 'postkompatible WÑhlpause' }
+    maddbool (3,11,getres2(261,16),postsperre); { 'postkompatible Waehlpause' }
 //    maddbool (3,12,getres2(261,8),IgCD);             { 'CD ignorieren' }
 //    maddbool (3,13,getres2(261,9),IgCTS);            { 'CTS ignorieren' }
 //    maddbool (3,14,getres2(261,17),UseRTS);          { 'RTS verwenden'  }
@@ -1022,7 +1021,7 @@ var brk : boolean;
 begin
   delete_tempfiles;
   dialog(ival(getres2(262,0)),11,'',x,y);
-  maddstring(3,2,getres2(262,2),temppath,31,MaxLenPathname,''); mhnr(260);   { 'TemporÑr-Verzeichnis ' }
+  maddstring(3,2,getres2(262,2),temppath,31,MaxLenPathname,''); mhnr(260);   { 'Temporaer-Verzeichnis ' }
   msetVfunc(formpath);
   maddstring(3,4,getres2(262,3),extractpath,31,MaxLenPathname,'');   { 'Extrakt-Verzeichnis  ' }
   msetVfunc(formpath);
@@ -1045,7 +1044,7 @@ var fy : byte;
 function testarc(var s:string):boolean;
 begin
   if (pos('$ARCHIV',UpperCase(s))=0) or (pos('$DATEI',UpperCase(s))=0) then begin
-    rfehler(209);    { 'Die Packer-Angabe mu· $ARCHIV und $DATEI enthalten!' }
+    rfehler(209);    { 'Die Packer-Angabe muss $ARCHIV und $DATEI enthalten!' }
     testarc:=false;
     end
   else begin
@@ -1074,7 +1073,7 @@ procedure ArcOptions;
 var x,y : Integer;
     brk : boolean;
 begin
-  dialog(53,17,getres(263),x,y); fy:=y;   { 'Archiv-Entpacker fÅr...' }
+  dialog(53,17,getres(263),x,y); fy:=y;   { 'Archiv-Entpacker fuer...' }
   with unpacker do
   begin
     maddstring(3,2,'ARC ',UnARC,38,50,'');
@@ -1114,7 +1113,7 @@ end;
 procedure DruckConfig;
 const
 {  lpts : array[1..5] of string[4] = ('LPT1','LPT2','LPT3','COM1','COM2');  }
-  { MK 01/00 Das drucken auf COM-Ports wird im Moment nicht unterstÅtzt }
+  { MK 01/00 Das drucken auf COM-Ports wird im Moment nicht unterstuetzt }
   lpts : array[1..3] of string = ('LPT1','LPT2','LPT3');
 var x,y : Integer;
     brk : boolean;
@@ -1128,7 +1127,7 @@ begin
   for i:=1 to high(lpts) do
     mappsel(true,lpts[i]);
   allc:=range(' ',#255);
-  maddint(31,2,getres2(264,3),DruckFormLen,3,3,0,255);    { 'SeitenlÑnge  ' }
+  maddint(31,2,getres2(264,3),DruckFormLen,3,3,0,255);    { 'Seitenlaenge  ' }
   maddstring(3,4,getres2(264,4),DruckInit,30,80,allc);    { 'Drucker-Init  ' }
   maddstring(3,6,getres2(264,5),DruckExit,30,80,allc);    { 'Drucker-Exit  ' }
   maddstring(3,8,getres2(264,6),DruckFF,30,80,allc);      { 'Seitenvorschub' }
@@ -1193,13 +1192,13 @@ begin
   maddstring(3,4,getres2(267,4),Vorwahl,8,15,'0123456789-,@');      { 'eigene Vorwahl    ' }
   mset3proc(setvorwahl);
   maddbool(3,6,getres2(267,7),AutoDiff); mhnr(725);  { 'Diffs automatisch einbinden' }
-  maddbool(3,7,getres2(267,10),FidoDelEmpty);  { 'leere Nachrichten lîschen' }
+  maddbool(3,7,getres2(267,10),FidoDelEmpty);  { 'leere Nachrichten loeschen' }
   maddbool(3,8,getres2(267,12),AutoTIC);       { 'TIC-Files automatisch auswerten' }
-  maddbool(3,9,getres2(267,13),KeepRequests);  { 'unerledigte Requests zurÅckstellen' }
+  maddbool(3,9,getres2(267,13),KeepRequests);  { 'unerledigte Requests zurueckstellen' }
   via:=not keepvia;
-  maddbool(3,11,getres2(267,15),via); mhnr(718);   { 'Via-Zeilen lîschen' }
+  maddbool(3,11,getres2(267,15),via); mhnr(718);   { 'Via-Zeilen loeschen' }
   maddstring(3,13,getres2(267,9),BrettAlle,ival(getres2(267,8)),20,'');
-  msetvfunc(notempty); mhnr(729);              { 'Standard-BrettempfÑnger  ' }
+  msetvfunc(notempty); mhnr(729);              { 'Standard-Brettempfaenger  ' }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1231,7 +1230,7 @@ begin
   maddbool(14,yi,getres2(253,15),multipartbin);  { 'Keine einteiligen Binaernachrichten' }
   maddbool(14,yi,getres2(253,16),RFCAppendOldSubject); mhnr(7991);  { 'Alten Betreff anhaengen' }
   inc(y);
-  
+
   maddtext(3,y,'Fido (FTN)',col.coldiahigh);
   maddbool(14,yi,getres2(253,17),Magics); mhnr(8103);
   maddbool(14,yi,getres2(253,18),XP_Tearline); { Werbung in der Tearline }
@@ -1252,10 +1251,10 @@ begin
   
  if deutsch then begin
     maddtext(3,y,'Maus',col.coldiahigh);
-    maddbool(14,yi,'OUTFILE-Grî·e begrenzen',MaxMaus); mhnr(793);
-    maddbool(14,yi,'RÅckfrage fÅr Nachrichtenstatus',MausLeseBest);
+    maddbool(14,yi,'OUTFILE-Groesse begrenzen',MaxMaus); mhnr(793);
+    maddbool(14,yi,'Rueckfrage fuer Nachrichtenstatus',MausLeseBest);
     maddbool(14,yi,'Bearbeitungsstatus anfordern',MausPSA);
-    maddbool(14,yi,'BinÑrnachrichten als "Attachments"',mausmpbin);
+    maddbool(14,yi,'Binaernachrichten als "Attachments"',mausmpbin);
       mhnr(8102);
     inc(y);
  end;
@@ -1297,7 +1296,7 @@ var x,y   : Integer;
   end;
 begin
   anz:=iif(deutsch,maxpmlimits,3);
-  dialog(38,anz+4,getres2(268,1),x,y);   { 'Grî·enlimits' }
+  dialog(38,anz+4,getres2(268,1),x,y);   { 'Groessenlimits' }
   maddtext(18,2,getres2(268,2),0);       { 'Netz'         }
   maddtext(29,2,getres2(268,3),0);       { 'lokal'        }
   for i:=1 to anz do begin
@@ -1323,12 +1322,12 @@ var x,y : Integer;
 begin
   dialog(ival(getres2(1023,0)),6,getres2(1023,1),x,y);  { 'Telefonkosten-Einstellungen' }
   r:=GebNoconn/100.0;
-(*  maddreal(3,2,getres2(1023,2),r,8,2,0,99999);   { 'Kosten fÅr nicht zustandegekommene Verbindung        ' }
+(*  maddreal(3,2,getres2(1023,2),r,8,2,0,99999);   { 'Kosten fuer nicht zustandegekommene Verbindung        ' }
     mhnr(970); *)
-  maddbool(3,2,getres2(1023,5),autofeier);  { 'deutsche Feiertage berÅcksichtigen' }
+  maddbool(3,2,getres2(1023,5),autofeier);  { 'deutsche Feiertage beruecksichtigen' }
     mhnr(971);
-  maddbool(3,3,getres2(1023,4),gebCfos);    { 'GebÅhrenÅbernahme von cFos' }
-  maddstring(3,5,getres2(1023,3),waehrung,5,5,'');   { 'WÑhrung' }
+  maddbool(3,3,getres2(1023,4),gebCfos);    { 'Gebuehrenuebernahme von cFos' }
+  maddstring(3,5,getres2(1023,3),waehrung,5,5,'');   { 'Waehrung' }
     mhnr(973);
   readmask(brk);
   if not brk and mmodified then begin
@@ -1425,7 +1424,7 @@ function testxpgp(var s:string):boolean;
 begin
   result:=True;
   if (s=_jn_[1]) and (getfield(1)=_jn_[2]) then begin
-    rfehler(218);    { 'Aktivieren Sie zuerst die ZCONNECT-PGP-UnterstÅtzung! }
+    rfehler(218);    { 'Aktivieren Sie zuerst die ZCONNECT-PGP-Unterstuetzung! }
     s:=_jn_[2];
     end;
 end;
@@ -1459,13 +1458,13 @@ begin
     mhnr(1010);
   inc(y);
   
-  maddbool(3,yi,getres2(271,3),UsePGP);                { 'PGP-UnterstÅtzung' }
+  maddbool(3,yi,getres2(271,3),UsePGP);                { 'PGP-Unterstuetzung' }
   inc(y);
   
 //    mset1func(testpgpexe);
-  maddbool(3,yi,getres2(271,4),PGPbatchmode);          { 'PGP-RÅckfragen Åbergehen' }
+  maddbool(3,yi,getres2(271,4),PGPbatchmode);          { 'PGP-Rueckfragen uebergehen' }
   maddbool(3,yi,getres2(271,5),PGP_WaitKey);           { 'Warten auf Tastendruck nach PGP-Aufruf' }
-  maddbool(3,yi,getres2(271,6),PGP_log);               { 'Logfile fÅr automatische Aktionen' }
+  maddbool(3,yi,getres2(271,6),PGP_log);               { 'Logfile fuer automatische Aktionen' }
   inc(y);
   
   maddbool(3,yi,getres2(271,7),PGP_AutoPM);            { 'Keys aus PMs automatisch einlesen' }
@@ -1490,9 +1489,9 @@ begin
   GPGEncodingOptionsField:= fieldpos;
   inc(y);
 
-(*  maddbool(3,12,getres2(271,12),PGP_UUCP);          { 'PGP auch fÅr RFC/UUCP verwenden' }
+(*  maddbool(3,12,getres2(271,12),PGP_UUCP);          { 'PGP auch fuer RFC/UUCP verwenden' }
     mset1func(testxpgp);
-  maddbool(3,13,getres2(271,13),PGP_Fido);            { 'PGP auch fÅr Fido verwenden' }
+  maddbool(3,13,getres2(271,13),PGP_Fido);            { 'PGP auch fuer Fido verwenden' }
     mset1func(testxpgp); *)
 
   readmask(brk);
@@ -1535,7 +1534,7 @@ begin
   maddstring(3,13,'',viewer_lister,50,255,'>');
   mset1func(testfilename);
   mappsel(false,'.TXT.ASC');
-  maddtext(3,15,getres2(273,5),0);         {Viewerprogramm fuer verdÑchtige Dateiformate}
+  maddtext(3,15,getres2(273,5),0);         {Viewerprogramm fuer verdaechtige Dateiformate}
   maddstring(3,16,'',viewer_scanner,50,viewproglen,'');
   msetvfunc(testexecutable);
   readmask(brk);
@@ -1551,6 +1550,9 @@ end;
 
 {
   $Log$
+  Revision 1.134  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.133  2002/07/25 20:43:54  ma
   - updated copyright notices
 
@@ -1568,8 +1570,8 @@ end;
   - added comment
 
   Revision 1.128  2002/05/01 17:10:35  mk
-  MY:-  Bei BestÑtigung des Config-Men?s C/O/B wird die
-        Anzeige entfernt, da dann wieder die Men?optionen gelten.
+  MY:-  Bei Bestaetigung des Config-Menues C/O/B wird die
+        Anzeige entfernt, da dann wieder die Menueoptionen gelten.
 
   Revision 1.127  2002/04/06 13:52:35  mk
   - fixed SetTimezone

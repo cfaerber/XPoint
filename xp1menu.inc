@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ XP1: Menfunktionen }
+{ XP1: Menuefunktionen }
 
 
 function MenuHidden(mpnr:integer):boolean;
@@ -77,7 +77,7 @@ again:
           mpnr:=0;
           enabled:=true;
           end;
-        if FirstChar(s)='!' then begin      { Men nicht verlassen? }
+        if FirstChar(s)='!' then begin      { Menue nicht verlassen? }
           keep:=true;
           delete(s,1,1);
           end
@@ -104,7 +104,7 @@ again:
           if (nr>0) and (pos('..',mstr)=0) then mstr:=mstr+'..';
           end
         else chain:=0;
-        if MenuHidden(mpnr) or    { versteckten Menpunkt berspringen }
+        if MenuHidden(mpnr) or    { versteckten Menuepunkt ueberspringen }
           ((mstr='-') and ((n=1) or (ma^[n-1].mstr='-')))   { doppelter Sep.? }
         then
           dec(n);
@@ -185,11 +185,11 @@ begin
 end;
 
 
-{ Menpunkt suchen             }
-{ mnu:  Menname               }
-{ nr :  Nummer des Menpunkts  }
-{ &n :  Mennummer             }
-{ &p :  Position im Menstring }
+{ Menuepunkt suchen             }
+{ mnu:  Menuename               }
+{ nr :  Nummer des Menuepunkts  }
+{ &n :  Menuenummer             }
+{ &p :  Position im Menuestring }
 
 procedure findnr(var mnu:string; nr:byte; var n,p:byte);
 begin
@@ -200,9 +200,9 @@ begin
 end;
 
 
-{ Menpunkt ein- uder ausschalten    }
-{ mnu:  Name des Mens               }
-{ nr :  Nummer des Menpunkts        }
+{ Menuepunkt ein- uder ausschalten    }
+{ mnu:  Name des Menues               }
+{ nr :  Nummer des Menuepunkts        }
 
 procedure setenable(mnu,nr:byte; flag:boolean);
 begin
@@ -211,12 +211,12 @@ begin
 end;
 
 
-{ Menpunkt „ndern             }
-{ mnu: Name des Mens          }
-{ nr : Position des Menpunkts }
-{ new: neuer Menpunkt         }
+{ Menuepunkt aendern             }
+{ mnu: Name des Menues          }
+{ nr : Position des Menuepunkts }
+{ new: neuer Menuepunkt         }
 
-{ ACHTUNG!! es muss auf dem Heap genuf Platz fr menu[n]^ belegt sein!! }
+{ ACHTUNG!! es muss auf dem Heap genuf Platz fuer menu[n]^ belegt sein!! }
 
 procedure setmenup(mnu:string; nr:byte; anew:string);
 var n,p,p2 : byte;
@@ -229,7 +229,7 @@ begin
 end;
 
 
-{ neue Men-Position setzen }
+{ neue Menue-Position setzen }
 
 procedure setmenupos(mnu:string; newpos:byte);
 var n,p : byte;
@@ -252,7 +252,7 @@ begin
 
     if FileUpperCase(ExtractFileExt(s)) <> extXps then
     begin
-      rfehler(2);    { Dateierweiterung muá .XPS sein! }
+      rfehler(2);    { Dateierweiterung muss .XPS sein! }
       exit;
     end;
     EditFile(s,false,false,false,0,false);
@@ -270,7 +270,7 @@ begin
 end;
 
 
-{ Menpunkt direkt ausfhren und zurck zum Men }
+{ Menuepunkt direkt ausfuehren und zurueck zum Menue }
 
 procedure menu_keep(m:integer);
 var m1 : byte;
@@ -312,14 +312,14 @@ begin
 end;
 
 
-{ Mensystem. -------------------------------------------- }
-{ nr       : Mennummer                                    }
+{ Menuesystem. -------------------------------------------- }
+{ nr       : Menuenummer                                    }
 { enterkey : erster Tastendruck                            }
-{ x,y      : Koordinaten fr Untermen-Anzeige             }
-{ Return   : xxy (Hex!) : Punkt y in Men xx wurde gew„hlt }
-{             0: Men mit Esc oder sonstwie abgebrochen    }
-{            -1: Untermen nach links verlassen            }
-{            -2: Untermen nach rechts verlassen           }
+{ x,y      : Koordinaten fuer Untermenue-Anzeige             }
+{ Return   : xxy (Hex!) : Punkt y in Menue xx wurde gewaehlt }
+{             0: Menue mit Esc oder sonstwie abgebrochen    }
+{            -1: Untermenue nach links verlassen            }
+{            -2: Untermenue nach rechts verlassen           }
 
 function getmenu(nr:byte; enterkey:taste; x,y:integer):integer;
 var ma    : map;
@@ -447,7 +447,7 @@ begin
     end;
   getmem(ma,sizeof(menuarray));
   splitmenu(nr,ma,n,true);
-  if n=0 then begin    { leeres Men durch XPME }
+  if n=0 then begin    { leeres Menue durch XPME }
     dispose(ma);
     getmenu:=0;
     exit;
@@ -580,8 +580,8 @@ begin
              -3  : begin autolr:=4; t:=''; end;
             end  { case }
           end
-        else begin   { kein Untermen }
-          { get2:=16*nr+p; - altes Mensystem bis XP 3.1 }
+        else begin   { kein Untermenue }
+          { get2:=16*nr+p; - altes Menuesystem bis XP 3.1 }
           get2:=ma^[p].mpnr;
           menustack[menulevel]:=p;
           menulast:=menulevel;
@@ -592,7 +592,7 @@ begin
         end;
 
       if (ma^[p].keep) and (get2>0) then begin
-        menu_keep(get2);        { direkt auswerten - Men nicht verlassen }
+        menu_keep(get2);        { direkt auswerten - Menue nicht verlassen }
         splitmenu(nr,ma,n,true);
         display;
         t:='';
@@ -624,6 +624,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.44  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.43  2002/07/29 07:17:19  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 

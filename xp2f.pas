@@ -26,19 +26,21 @@ unit xp2f;
 
 interface
 
-uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-     sysutils,typeform,inout,keys,winxp,maske,maus2,resource,
-     xp0,xp1,xp1help,xp1input,xp2, xpglobal;
 
-
-procedure EditFkeys(typ:byte);    { 0=Zusatz, 1=Alt, 2=Ctrl, 3=Shift }
+procedure EditFkeys(typ:byte);    { 0=Zusatz, 1=Alt, 2=Ctrl, 3=Shift todo: enum}
 procedure CfgColors;
 
 
 implementation  { -------------------------------------------------- }
+
+uses
+  sysutils,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  typeform,inout,keys,winxp,maske,maus2,resource,
+  xp0,xp1,xp1help,xp1input,xp2,
+  xpglobal;
 
 procedure EditFkeys(typ:byte);
 { const n_typ : array[0..3] of string[9] =
@@ -55,8 +57,8 @@ var anzahl  : Integer;
       brk   : boolean;
   begin
     with fkeys[iif(p>10,4,typ)][iif(p>10,p-10,p)] do begin
-      dialog(55,12,iifs(txt='',getres2(240,1)+' ',txt)+strs(p),x,y);  { 'Zusatz-Men' }
-      maddstring(3,2,getres2(240,4),menue,20,20,''); mhnr(440);   { 'Menanzeige  ' }
+      dialog(55,12,iifs(txt='',getres2(240,1)+' ',txt)+strs(p),x,y);  { 'Zusatz-Menue' }
+      maddstring(3,2,getres2(240,4),menue,20,20,''); mhnr(440);   { 'Menueanzeige  ' }
       maddstring(3,4,getres2(240,5),prog,35,60,'');   { 'Programmname ' }
       s:=getres2(240,ntyp+7);
       maddstring(3,6,getres2(240,6),s,10,10,'');      { '$FILE-Nachr. ' }
@@ -119,9 +121,9 @@ begin
     3 : txt:='Alt-F';
   end;
   selbox(73+length(txt),anzahl+3,getres2(240,iif(typ=0,1,2)),x,y,false);
-  attrtxt(col.colsel2high);            { 'Zusatz-Men' / 'Funktionstasten' }
+  attrtxt(col.colsel2high);            { 'Zusatz-Menue' / 'Funktionstasten' }
   mwrt(x+1,y+1,forms(sp(5+length(txt))+getres2(240,3),73+length(txt)-2));
-               { 'Men           Programm                   $FILE      B W L A  Mem' }
+               { 'Menue           Programm                   $FILE      B W L A  Mem' }
   p:=1;
   modi:=false;
   repeat
@@ -271,7 +273,7 @@ begin
   len:=Screenwidth-80;
   with col do begin
     at(colkeys);
-    wrt(31,2,forms('  Alle  Brief  Textfile  Bin„r  Spezial  Lesen    ',len+50));
+    wrt(31,2,forms('  Alle  Brief  Textfile  Binaer  Spezial  Lesen    ',len+50));
     wrt(31,screenlines,forms('F1-Hilfe  F6-Makros  F9-DOS'
                               +dup(13+len,' ')
                               +RightStr(sp(10)+xp_xp,10),len+50));
@@ -316,7 +318,7 @@ begin
     wrt(31,11,forms('  /Z-NETZ/TELECOM/0130',len));
     wrt(31,12,forms('  /Z-NETZ/TELECOM/MODEM',len));
     at(colbretterinv);
-    wrt(31,6,forms('  /Z-NETZ/RECHNER/IBM/HARDWARE       (gew„hlt)',len));
+    wrt(31,6,forms('  /Z-NETZ/RECHNER/IBM/HARDWARE       (gewaehlt)',len));
     at(colbretterhi);
     wrt(31,8,forms('  /Z-NETZ/RECHNER/IBM/SPIELE         (markiert)',len));
     at(colbrettertr);
@@ -541,7 +543,7 @@ end;
 procedure subox;
 begin
   with col do begin
-    wwin(35,75,10,18,'Kalender u.„.',colutility,colutility);
+    wwin(35,75,10,18,'Kalender u.ae.',colutility,colutility);
     moff;
     wrt(40,12,'normaler Text');
     at(colutihigh);
@@ -563,7 +565,7 @@ begin
     wrt(37,15,'mit ');
     at(colhelpQVW); write('Querverweis');
     at(colhelp); write(' und ');
-    at(colhelpslQVW); write('gew„hltem');
+    at(colhelpslQVW); write('gewaehltem');
     at(colhelp); write(' Querver-');
     wrt(37,16,'weis.');
     mon;
@@ -636,10 +638,10 @@ begin
     at(coleditendmark);
     wrt(31,14,#4);
     at(coleditmenu);
-    wrt(57,7, 'Ú Men ÄÄÄÄÄÄÄÄÄÄÄÄ¿');
+    wrt(57,7, 'Ú Menue ÄÄÄÄÄÄÄÄÄÄÄ¿');
     wrt(57,8, '³ Kopieren       * ³');
     wrt(57,9, '³ Ausschneiden   - ³');
-    wrt(57,10,'³ Einfgen       + ³');
+    wrt(57,10,'³ Einfuegen      + ³');
     wrt(57,11,'³ Laden        ^KR ³');
     wrt(57,12,'³ Speichern    ^KW ³');
     wrt(57,13,'ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´');
@@ -669,9 +671,9 @@ begin
     wrt(31,8,hbar(48));
     wrt(31,17,hbar(48));
     wrt(69,7,'00:00:12');
-    wrt(33,9,'Senden'); wrt(33,11,'Dateigr”áe');
-    wrt(33,12,'bertragen'); wrt(33,14,'Restzeit');
-    wrt(57,11,'Blockgr”áe'); wrt(57,12,'Durchsatz        cps');
+    wrt(33,9,'Senden'); wrt(33,11,'Dateigroesse');
+    wrt(33,12,'uebertragen'); wrt(33,14,'Restzeit');
+    wrt(57,11,'Blockgroesse'); wrt(57,12,'Durchsatz        cps');
     wrt(57,14,'Fehler');
     at(colmailerhi2);
     wrt(33,7,^P' Klystron BBS, Koblenz (2:243/97)');
@@ -799,7 +801,7 @@ var y,ax,xp,yp : shortint;
     moff;
     fwrt(2,y-1,s0);
     fwrt(2,screenlines,s0);
-    for i:=0 to 15 do begin    { Zeichne Farbpallete}
+    for i:=0 to 15 do begin    { Zeichne Farbpalette}
       xx:=3;
       wrt(2,y+i,' ');
       for j:=0 to 7 do begin
@@ -940,7 +942,7 @@ begin
     n:=readmenu(0);
     with col do
     case n of
-       1 : repeat    { Hauptme }
+       1 : repeat    { Hauptmeue }
              ssp:=showmenus0; ssp;
              m:=readmenu(1);
              case m of
@@ -952,7 +954,7 @@ begin
                6 : cset(colmenuseldis[0]);
              end;
            until m=0;
-   2,3,4 : begin     { Untermen 1.-3. Ebene }
+   2,3,4 : begin     { Untermenue 1.-3. Ebene }
              showmenus0;
              ssp:=showmenus1;
              if n>2 then begin
@@ -1165,6 +1167,9 @@ end;
 
 {
   $Log$
+  Revision 1.34  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.33  2002/07/25 20:43:54  ma
   - updated copyright notices
 

@@ -24,8 +24,9 @@ unit xp4o3;
 
 interface
 
-uses typeform,fileio,datadef,inout,keys,resource,
-     sysutils,xp0,xp1,xp1input, xpglobal;
+uses
+  keys, //taste
+  xp0;  //adrstr
 
 function  __getfilename(nr,nn:byte):string;
 function  go_pm:boolean;
@@ -37,8 +38,11 @@ procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 
 implementation  { --------------------------------------------------- }
 
-uses xpheader, xpmakeheader, xp3,xp3ex,xp4,xpsendmessage,xpnt,xpkeys,xpcc,
-  database;
+uses
+  sysutils,
+  typeform,datadef,database,fileio,resource,
+  xp1,xp1input,xpheader, xp3,xp3ex,xp4,xpsendmessage,xpkeys,xpcc,
+  xpglobal;
 
 
 function __getfilename(nr,nn:byte):string;
@@ -106,7 +110,7 @@ end;
 
 
 procedure Smenu(var t:taste);
-const sm_pos : byte = 1;        { Position im Spezial-MenÅ }
+const sm_pos : byte = 1;        { Position im Spezial-Menue }
 var   n,x,y  : shortint;
       s      : string;
 begin
@@ -123,7 +127,7 @@ begin
   n:=MiniSel(x,y,'',
              '^EditUser    ^U,^Rot13       ^R,^Hex-Dump    ^H,^Datum       ^D,'+
              '^Ausdruck     R'+iifs(aktdispmode=11,'',',^Markieren,'+
-             'Wieder^vlg.   V,^Textdatei   ^F,B^inÑrdatei  ^I,^UserSuche   @U'+
+             'Wieder^vlg.   V,^Textdatei   ^F,B^inaerdatei  ^I,^UserSuche   @U'+
              iifs(aktdispmode<>12,',^BetrSuche   @B','')),
              sm_pos);
 }
@@ -308,6 +312,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.40  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 

@@ -26,55 +26,24 @@ unit xpf2;
 
 interface
 
-uses
-  sysutils,
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,fileio,archive,montage,
-  xp0,xp1,xp1o,xp3,xp3o;
-
 
 procedure TestTICfiles(var logfile:string);   { TIC-Files verarbeiten }
 
 
 implementation   { -------------------------------------------------- }
 
-uses xpheader, xpnt,xp3o2;
 
-(*
-function UNIX2Zdate(secs:longint):string;
-const tage : array[1..12] of byte = (31,28,31,30,31,30,31,31,30,31,30,31);
-      tagsec = 86400;  { 24*60*60 }
-var y,m,d,dow : word;
-    h,min   : word;
-
-  procedure setfeb(y:word);
-  begin
-    if schaltj(y) then tage[2]:=29
-    else tage[2]:=28;
-  end;
-
-begin
-  y:=1970;
-  while secs>=iif(schaltj(y),366,365)*tagsec do begin
-    dec(secs,iif(schaltj(y),366,365)*tagsec);
-    inc(y);
-    end;
-  setfeb(y); m:=1;
-  while (secs>=tagsec*tage[m]) do begin
-    dec(secs,tagsec*tage[m]);
-    inc(m);
-    end;
-  d:=secs div tagsec + 1; secs:=secs mod tagsec;
-  h:=secs div 3600;       secs:=secs mod 3600;
-  min:=secs div 60;       secs:=secs mod 60;
-  UNIX2Zdate:=formi(y mod 100,2)+formi(m,2)+formi(d,2)+formi(h,2)+formi(min,2);
-end; *)
+uses
+  sysutils,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  typeform,fileio,archive,
+  xp0,xp1,xp1o,xp3o,xpheader, xpnt,xp3o2,
+  xpglobal;
 
 
-{ TIC-Files verarbeiten; BoxPar^ muá korrekte geladen sein! }
+{ TIC-Files verarbeiten; BoxPar^ muss korrekte geladen sein! }
 
 procedure TestTICfiles(var logfile:string);
 var t    : text;
@@ -156,7 +125,7 @@ begin
       s:=LeftStr(s,cpos(';',s)-1);  { Pfad\Dateiname isolieren }
       UpString(s);
       if (hexval(LeftStr(extractfilename(s),8))<>0) or (LeftStr(extractfilename(s),4)='TO__')
-      then begin   { m”gliches TIC-Paket? }
+      then begin   { moegliches TIC-Paket? }
         at:=ArcType(s);
         if at<>0 then begin
           OpenArchive(s,at,ar);

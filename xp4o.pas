@@ -29,13 +29,8 @@ unit xp4o;
 interface
 
 uses
-  sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,fileio,inout,keys,montage,maske,datadef,database,
-  lister,archive,maus2,winxp,printerx,resource,xpglobal, osdepend,
-  xp0,xp1,xp1o2,xp1help,xp1input;
+  keys, //taste
+  lister; //TLister
 
 
 var  such_brett  : string;    { fuer Suche im gewaehlten Brett }
@@ -113,12 +108,21 @@ Procedure Brettmarksuche;
 
 implementation  {-----------------------------------------------------}
 
-uses xpkeys,xpnt,xp1o,xp4,xp4o2,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,{xpview,} xpheader, xpmakeheader,
-     xp_pgp,debug,viewer, rfc2822, MarkedList,
+uses
+  sysutils,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
 {$IFDEF Kylix}
-     xplinux,
+   xplinux,
 {$ENDIF}
-     regexpr;
+  typeform,fileio,inout,
+  maske,datadef,database,
+  archive,maus2,winxp,printerx,resource,osdepend,
+  xp0,xp1,xp1o,xp1o2,xp1help,xp1input,xp3,xp3o,xp3o2,xp3ex,xp4,xp4o2,
+  xpkeys,xpnt,xpfido,xpmaus,xpheader, xpmakeheader,
+  xp_pgp,debug,viewer, MarkedList, regexpr,
+  xpglobal;
 
 type arcbuf = record
                 arcer_typ : shortint;
@@ -126,7 +130,7 @@ type arcbuf = record
               end;
 
 const arcbufp : byte = 0;
-      suchopt : string = '*';  { Flag fÅr erste Suche seit Programmstart }
+      suchopt : string = '*';  { Flag fuer erste Suche seit Programmstart }
 
     history : array[0..histmax] of String[Suchlen]=
      ('','','','','','','','','','','','','','','');
@@ -1127,7 +1131,7 @@ restart:
                             ((bereich=2) and (FirstChar(_brett)='U')) then
             TestMsg;
           if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
-            dbNext(mbase);            { Satz gelîscht wurde               }
+            dbNext(mbase);            { Satz geloescht wurde               }
           Inc(i);
           if i mod 50 = 0 then testbrk(brk);
         end;
@@ -1182,7 +1186,7 @@ restart:
     then begin 
       if me then begin
         hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
-        aufbau:=true;               { wg. gelîschter Markierung! }
+        aufbau:=true;               { wg. geloeschter Markierung! }
         end; 
       goto ende;                    { Fenster wiedeherstellen...} 
       end
@@ -2082,7 +2086,7 @@ var hdp   : Theader;
     _(42,dbReadStrN(mbase,mb_absender));        { 'Absender  :' }
     _(43,StrS(dbReadIntN(mbase,mb_origdatum))); { 'OrigDatum :' }
     _(44,StrS(dbReadIntN(mbase,mb_empfdatum))); { 'EmpfDatum :' }
-    _(45,StrS(dbReadIntN(mbase,mb_groesse)));   { 'Grî·e     :' }
+    _(45,StrS(dbReadIntN(mbase,mb_groesse)));   { 'Groesse   :' }
     _(46,Chr(dbReadIntN(mbase,mb_typ)));        { 'Typ       :' }
     _(47,StrS(dbReadIntN(mbase,mb_HalteFlags)));{ 'HalteFlags:' }
     _(48,StrS(dbReadIntN(mbase,mb_gelesen)));   { 'gelesen   :' }
@@ -3037,6 +3041,9 @@ end;
 
 {
   $Log$
+  Revision 1.148  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.147  2002/12/02 14:04:30  dodi
   made xpmenu internal tool
 

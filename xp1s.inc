@@ -168,7 +168,7 @@ begin
   begin
     if shell25 and (screenlines>25) then
       SysSetScreenSize(25, 80);
-    if cls=2 then writeln(getres(113));  { Mit EXIT geht''s zurÅck zu CrossPoint. }
+    if cls=2 then writeln(getres(113));  { Mit EXIT geht''s zurueck zu CrossPoint. }
   end;
   cursor(curon);
 
@@ -176,8 +176,8 @@ begin
 
   if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then
   begin
-    if deutsch and (random<0.02) then write('Pressen Sie einen SchlÅssel ...')
-    else write(getres(12));  { Taste drÅcken ... }
+    if deutsch and (random<0.02) then write('Pressen Sie einen Schluessel ...')
+    else write(getres(12));  { Taste druecken ... }
     m2t:=false;
     pushhp(51);
     clearkeybuf;
@@ -459,7 +459,7 @@ end;
 
 
 { reedit: Nachbearbeiten einer XP-erzeugten-Nachricht - }
-{         TED-Softreturns zurÅckwandeln                 }
+{         TED-Softreturns zurueckwandeln                 }
 
 procedure editfile(const name: string; nachricht,reedit,senden:boolean;
                    keeplines:byte;ed_ukonv:boolean);
@@ -505,7 +505,7 @@ procedure dosshell;
 
 begin
   if DisableDos then
-    fehler(getres(116))   { DOS-Shell hier nicht mîglich }
+    fehler(getres(116))   { DOS-Shell hier nicht moeglich }
   else begin
     SetCurrentDir(ShellPath);
     if ioresult<>0 then SetCurrentDir(ownpath);
@@ -519,6 +519,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.84  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.83  2002/09/09 09:06:34  mk
   - added const parameters
 
@@ -541,18 +544,18 @@ begin
   - fixed Bug #502625, shell with linux
 
   Revision 1.76  2002/03/25 22:03:08  mk
-  MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
-       und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+  MY:- Anzeige der Stammbox-Adresse unterhalb der Menueleiste korrigiert
+       und ueberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
        anzeigen"):
-       - VollstÑndige Adresse (statt nur Feld "Username") inkl. Domain
+       - Vollstaendige Adresse (statt nur Feld "Username") inkl. Domain
          wird angezeigt;
-       - Alias-Points werden berÅcksichtigt (RFC/UUCP und ZConnect);
+       - Alias-Points werden beruecksichtigt (RFC/UUCP und ZConnect);
        - Realname wird in Klammern angezeigt (falls es sich um einen
-         Netztyp mit Realnames handelt) und ggf. automatisch gekÅrzt, wenn
-         die GesamtlÑnge von Adresse und Realname grî·er als 76 Zeichen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekuerzt, wenn
+         die Gesamtlaenge von Adresse und Realname groesser als 76 Zeichen
          ist;
        - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
-         der Absenderadresse unterhalb der MenÅleiste unmittelbar nach dem
+         der Absenderadresse unterhalb der Menueleiste unmittelbar nach dem
          Wechsel aktualisiert.
 
   Revision 1.75  2002/03/03 15:45:54  cl

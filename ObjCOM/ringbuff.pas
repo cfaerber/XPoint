@@ -11,6 +11,9 @@ unit ringbuff;
  INTERFACE
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
+uses
+  xpglobal; //not really
+
 type tCharArray = Array[0..65520] of Char;
      tpCharArray = ^tCharArray;
 
@@ -37,6 +40,8 @@ type tCharArray = Array[0..65520] of Char;
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+{ tRingbuffer }
 
 constructor tRingbuffer.Init(iBufferSize: Longint);
 begin
@@ -123,10 +128,11 @@ end; { proc. Clear }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-end. { bufunit }
-
 {
   $Log$
+  Revision 1.7  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.6  2001/09/07 23:24:56  ml
   - Kylix compatibility stage II
 
@@ -148,3 +154,5 @@ end. { bufunit }
   - please keep comments in English
 
 }
+end.
+

@@ -24,9 +24,11 @@
 { OpenXP UUCP netcall class }
 unit ncuucp;
 
-{ ------------------------------ } INTERFACE { ------------------------------- }
+INTERFACE
 
-uses ncmodem,timer,fidoglob,xpglobal,classes,xpprogressoutputwindow,xp1;
+uses
+  classes,
+  ncmodem,xpprogressoutputwindow;
 
 type
   TUUCPNetcall = class(TModemNetcall)
@@ -55,17 +57,21 @@ type
     ForcePktSize  : boolean; (* use forced packet size          *)
 
     SizeNego      : boolean; (* use size negotiation            *)
-    ECommand	  : boolean; (* use UUCP E command		*)
+    ECommand	    : boolean; (* use UUCP E command		*)
     MaxFSize      : LongInt; (* size limit for incoming packets *)
   end;
 
-{ ---------------------------- } IMPLEMENTATION { ---------------------------- }
+IMPLEMENTATION
 
-uses typeform, zmodem, progressoutput, resource, sysutils, debug,
-xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, Math, ipaddr
-{$IFDEF Unix} ,xpcurses {$ENDIF}
-{$IFDEF Win32} ,xpwin32 {$ENDIF}
-{$IFDEF DOS32} ,xpdos32 {$ENDIF};
+uses
+  sysutils, Math,
+{$IFDEF Unix} xpcurses, {$ENDIF}
+{$IFDEF Win32} xpwin32, {$ENDIF}
+{$IFDEF DOS32} xpdos32, {$ENDIF}
+  timer,xp1,
+  typeform, progressoutput, resource, debug,
+  xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, ipaddr,
+  xpglobal;
 
 { - - Planned class hierarchy: - - - - - - - - - - - - - - - - - - - - - - - - }
 {                                                                              }
@@ -287,6 +293,8 @@ begin
   end;
 end;
 
+{ TUUCPResponse }
+
 function TUUCPResponse.Parse(s:string):boolean;
 
   function NextToken:string;
@@ -330,6 +338,8 @@ end;
 {$I ncuucp-fz.inc}
 
 { --- TUUCPNetcall -------------------------------------------------------- }
+
+{ TUUCPNetcall }
 
 function TUUCPNetcall.PerformNetcall: Integer;
 var pprot: TUUCProtocol;
@@ -505,6 +515,8 @@ begin
   result := UpperCase(s);
 end;
 
+{ TUUCProtocol }
+
 procedure TUUCProtocol.AssignUp  (var f:file;var fn:string;var ftype:integer);
 {$IFNDEF UnixFS}
 var p: integer;
@@ -581,6 +593,8 @@ destructor  TUUCProtocol.Destroy; begin end;
 { --- TUUCProtocolSimple Base class ------------------------------------------ }
 
 { - - initialization/destruction - - - - - - - - - - - - - - - - - - - - - - - }
+
+{ TUUCProtocolSimple }
 
 constructor TUUCProtocolSimple.Create(caller: TUUCPNetcall);
 begin
@@ -1122,6 +1136,9 @@ end;
 
 {
   $Log$
+  Revision 1.27  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.26  2002/07/25 20:44:02  ma
   - updated copyright notices
 

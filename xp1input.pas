@@ -27,11 +27,8 @@ unit xp1input;
 interface
 
 uses
-  xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  sysutils,typeform,keys,maus2,inout,resource,winxp,maske, xp0;
+  typeform, //atext, todo: remove
+  keys; //taste, todo: move
 
 
 function readbutton(x,y,abs:byte; buttons:string; default:shortint;
@@ -46,18 +43,24 @@ procedure EditDate(x,y: Integer; const txt: atext; var zdatestr: datetimest;
 
 implementation
 
-uses xp1;
+uses
+  sysutils,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  maus2,inout,resource,winxp,maske, xp0,xp1,
+  xpglobal;
 
 
 { Button-Abfrage -----------------------------------------------------}
 { x,y     : Position des linken Buttons                               }
 { abs     : Leerabstand zwischen Buttons                              }
 { buttons : '^Butt1,^Butt2...'                                        }
-{ default : Startwert fÅr p                                           }
+{ default : Startwert fuer p                                           }
 { homeend : die Tasten Home/End sind zugelassen                       }
 { retkey  : '' -> Normale Abfrage. '*' -> bei jeder unbekannten Taste }
-{           wird die Taste in 'retkey' und readbutton<0 zurÅckgegeben }
-{           '!' -> nur Anzeige der Buttons, und direkt zurÅck         }
+{           wird die Taste in 'retkey' und readbutton<0 zurueckgegeben }
+{           '!' -> nur Anzeige der Buttons, und direkt zurueck         }
 { RETURN:  0 oder p bei normaler Abfrage, -p bei retkey='*' und Esc   }
 
 function readbutton(x,y,abs:byte; buttons:string; default:shortint;
@@ -438,6 +441,9 @@ end;
 
 {
   $Log$
+  Revision 1.32  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.31  2002/07/25 20:43:53  ma
   - updated copyright notices
 

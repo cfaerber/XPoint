@@ -27,27 +27,26 @@ unit xpconfigedit;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ENDIF}
-  sysutils,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
-  maus2,mouse,resource,xpglobal,
-  xp0,xp1,xp1o,xp1o2,xp1input,xp2c,fidoglob;
+  typeform, //atext
+  maske,  //customrec
+  datadef;  //DB
 
 const
-      maxboxen = 127;         { max. Grî·e des Arrays 'boxlist' }
+    maxboxen = 127;         { max. Groesse des Arrays 'boxlist' }
      own_Nt    : byte = 255;
-        { Netztyp f. "ZusÑtzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
+        { Netztyp f. "Zusaetzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
       own_Name  : string = '';
-        { Boxname f. "ZusÑtzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
+        { Boxname f. "Zusaetzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
       showErrors: boolean = true;
-        { Flag fÅr 'addServersTest' in xp9sel.pas }
+        { Flag fuer 'addServersTest' in xp9sel.pas }
       BfgToBoxOk: boolean = true;
-        { Flag fÅr 'ChkAddServers' in xp7.inc }
+        { Flag fuer 'ChkAddServers' in xp7.inc }
       maxbox    : byte = maxboxen;
         { max. Boxen-Anzahl in Box-Config bzw. NETCALL.DAT }
 
       delete_on_cDel  : boolean = false; { Steuerung des Verhaltens...   }
       leave_on_cDel   : boolean = false; { ... bei <Ctrl-Del> in Feldern }
-      may_insert_clip : boolean = true;  { Clipboard in Felder (nicht) einfÅgen }
+      may_insert_clip : boolean = true;  { Clipboard in Felder (nicht) einfuegen }
 
 function  Netz_Typ(nt:byte):string;
 function  UniSel(typ:byte; edit:boolean; default:string):string;
@@ -113,8 +112,13 @@ function  BoxToBfg(var s:string):string;
 implementation  {---------------------------------------------------}
 
 uses
+  sysutils,
+  {$IFDEF NCRT}xpcurses,{$ENDIF}
   {$IFDEF unix}xplinux,{$ENDIF}
-  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts, replytoall, lister;
+  fileio,inout,keys,winxp,win2,database,maus2,mouse,resource,  fidoglob,
+  xp0,xp1,xp1o,xp1input,xp2,xp2c,xp3,xp3o,xp9bp,xpnt,
+  xpmodemscripts, replytoall, 
+  xpglobal;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -127,7 +131,7 @@ const umtyp : array[0..5] of string[5] =
         (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ENDIF}
 
-var   UpArcnr   : integer;    { fÅr EditPointdaten }
+var   UpArcnr   : integer;    { fuer EditPointdaten }
       DownArcNr : integer;
       userfield : integer;    { Masken-Nr., s. get_first_box }
       gf_fido   : boolean;
@@ -209,7 +213,7 @@ function zidtest(var s:string):boolean;       { Pointdaten - Serienner }
 begin
   if length(s)=4 then zidtest:=true
   else begin
-    rfehler(903);    { 'Die Seriennummer mu· 4 Zeichen lang sein.' }
+    rfehler(903);    { 'Die Seriennummer muss 4 Zeichen lang sein.' }
     zidtest:=false;
     end;
 end;
@@ -229,7 +233,7 @@ end;
 function validfile(var s:string):boolean;     { Sysop-Mode }
 begin
   if (trim(s)<>'') and not ValidFilename(s) then begin
-    rfehler(904);    { 'ungÅltiger Dateiname' }
+    rfehler(904);    { 'ungueltiger Dateiname' }
     validfile:=false
     end
   else
@@ -372,12 +376,12 @@ begin
         testreplyto:=true;
         if cPos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
           begin
-            rfehler(908);               { 'ungÅltige Adresse' }
+            rfehler(908);               { 'ungueltige Adresse' }
             testreplyto:=false;
             end;
         end
       else begin
-        rfehler(908);     { 'ungÅltige Adresse' }
+        rfehler(908);     { 'ungueltige Adresse' }
         dbclose(d);
         testreplyto:=false;
         end;
@@ -464,7 +468,7 @@ begin
         exit;
       end;
 
-  rfehler(909);    { 'Mindestens ein Protokoll mu· eingeschaltet sein!' }
+  rfehler(909);    { 'Mindestens ein Protokoll muss eingeschaltet sein!' }
   result:=false;
 end;
 
@@ -526,7 +530,7 @@ begin
     end;
 end;
 
-{ Fileserver: Feldbezeichnung Ñndern }
+{ Fileserver: Feldbezeichnung aendern }
 
 procedure setpasswdfield(var s:string);
 begin
@@ -573,7 +577,7 @@ begin
         rfehler(2713);
     end else
     begin
-      rfehler(2702);    { 'unbekannte Serverbox - wÑhlen mit <F2>' }
+      rfehler(2702);    { 'unbekannte Serverbox - waehlen mit <F2>' }
       testvertreterbox:=false;
     end;
     dbClose(d);
@@ -606,7 +610,7 @@ begin
     if validfilename(fn) then
       testlogfile:=true
     else begin
-      rfehler(928);         { 'ungÅltiger Dateiname!' }
+      rfehler(928);         { 'ungueltiger Dateiname!' }
       testlogfile:=false;
       end;
     end;
@@ -635,7 +639,7 @@ begin
 end;
 
 
-{ ZCONNECT-Pointname auf ungÅltige Zeichen ÅberprÅfen }
+{ ZCONNECT-Pointname auf ungueltige Zeichen ueberpruefen }
 
 function testZCpointname(var s:string):boolean;
 var us : string[40];
@@ -649,12 +653,12 @@ begin
       us:=us+s[i];
       end;
   if us<>'' then
-    rfehler1(930,us);    { 'Warnung: UngÅltige Zeichen im Pointname: %s' }
+    rfehler1(930,us);    { 'Warnung: Ungueltige Zeichen im Pointname: %s' }
   testZCpointname:=true;  { (us=''); }
 end;
 
 { Typ :  1=Boxen, 2=Gruppen, 3=Systeme, 4=Kurznamen, 5=MIME-Typen }
-{ edit:  true=editieren, false=nur auswÑhlen                      }
+{ edit:  true=editieren, false=nur auswaehlen                      }
 
 function UniSel(typ:byte; edit:boolean; default:string):string;
 const maxgl   = 100;
@@ -675,7 +679,7 @@ var d         : DB;
     setdefault: boolean;
     umlaut    : byte;
     poutside  : boolean;
-    startmkey : boolean;   { beim Start war Maustaste gedrÅckt }
+    startmkey : boolean;   { beim Start war Maustaste gedrueckt }
     directsel : string;
     nameofs   : byte;
 
@@ -898,7 +902,7 @@ begin { --- UniSel --- }
             exit;
           end;
           width:=67;
-          buttons:=getres(907);   { ' ^Neu , ^Lîschen , ^WÑhlen , ^Edit , Netz^typ , ^OK ' }
+          buttons:=getres(907);   { ' ^Neu , ^Loeschen , ^Waehlen , ^Edit , Netz^typ , ^OK ' }
           okb:=6; edb:=4;
           pushhp(iif(edit,130,139));
           nameofs:=3;
@@ -906,7 +910,7 @@ begin { --- UniSel --- }
     2 : begin     { Gruppen }
           dbOpen(d,GruppenFile,1);
           width:=59;
-          buttons:=getres(908);   { ' ^Neu , ^Lîschen , ^Edit , ^OK ' }
+          buttons:=getres(908);   { ' ^Neu , ^Loeschen , ^Edit , ^OK ' }
           okb:=4; edb:=3;
           pushhp(iif(edit,200,209));
           nameofs:=11;
@@ -914,7 +918,7 @@ begin { --- UniSel --- }
     3 : begin     { Systeme }
           dbOpen(d,SystemFile,1);
           width:=51;
-          buttons:=getres(909);   { ' ^Neu , ^Lîschen , ^Edit , ^OK ' }
+          buttons:=getres(909);   { ' ^Neu , ^Loeschen , ^Edit , ^OK ' }
           okb:=4; edb:=3;
           pushhp(iif(edit,460,469));
           nameofs:=5;
@@ -922,7 +926,7 @@ begin { --- UniSel --- }
     4 : begin     { Kurznamen }
           dbOpen(d,PseudoFile,1);
           width:=63;
-          buttons:=getres(909);   { ' ^Neu , ^Lîschen , ^Edit , ^OK ' }
+          buttons:=getres(909);   { ' ^Neu , ^Loeschen , ^Edit , ^OK ' }
           okb:=4; edb:=3;
           pushhp(iif(edit,710,719));
           nameofs:=2;
@@ -930,7 +934,7 @@ begin { --- UniSel --- }
     5 : begin     { MIME-Typen }
           d:=mimebase;
           width:=65;
-          buttons:=getres(909);   { ' ^Neu , ^Lîschen , ^Edit , ^OK ' }
+          buttons:=getres(909);   { ' ^Neu , ^Loeschen , ^Edit , ^OK ' }
           okb:=4; edb:=3;
           pushhp(820);
           nameofs:=2;
@@ -1111,7 +1115,7 @@ begin { --- UniSel --- }
 end;
 
 
-{ fÅr maske.CustomSel }
+{ fuer maske.CustomSel }
 
 
 function Netz_Typ(nt:byte):string;
@@ -1181,7 +1185,7 @@ begin
         real:=dbReadStr(d,'realname');
         dialog(length(getres(930))+length(box)+35,iif(hasreal,5,3),'',x,y);
         gross:=ntGrossUser(dbReadInt(d,'netztyp'));
-        maddstring(3,2,getreps(930,box),user,30,30,iifs(gross,'>',''));   { 'Neuer Username fÅr %s:' }
+        maddstring(3,2,getreps(930,box),user,30,30,iifs(gross,'>',''));   { 'Neuer Username fuer %s:' }
         mhnr(1502);
         if hasreal then
           maddstring(3,4,forms(getreps(931,box),length(getreps(930,box))),real,30,40,'');  { 'Neuer Realname:' }
@@ -1288,7 +1292,7 @@ restart:
   dialog(ival(getres2(911,0)),13,'',x,y);
   maddtext(3,2,getres2(911,1),col.coldiahigh);    { 'Bitte geben Sie Netztyp und Name Ihrer Stamm-' }
   maddtext(3,3,getres2(911,2),col.coldiahigh);    { 'box sowie Username bzw. eMail-Adresse ein.' }
-  maddtext(3,5,getres2(911,3),col.coldiahigh);    { 'Bei Einsatz des Netztyps RFC/Client benîtigen' }
+  maddtext(3,5,getres2(911,3),col.coldiahigh);    { 'Bei Einsatz des Netztyps RFC/Client benoetigen' }
   maddtext(3,6,getres2(911,4),col.coldiahigh);    { 'Sie einen externen Mail-/News-Client.' }
   name:=''; user:='';
   ntyp:=ntName(nt_Client); nt:=nt_Client;
@@ -1449,7 +1453,7 @@ begin
     if not ok then
     begin
       msgbox(62,6,_fehler_,x,y);
-      mwrt(x+3,y+2,getres2(10900,37));   { 'Pfadangabe mu· RELATIV sein und auf ein Verzeichnis EINE' }
+      mwrt(x+3,y+2,getres2(10900,37));   { 'Pfadangabe muss RELATIV sein und auf ein Verzeichnis EINE' }
       mwrt(x+3,y+3,getres2(10900,38));   { 'Ebene DIREKT unterhalb des XP-Verzeichnisses verweisen!' }
       errsound;
       wait(curoff);
@@ -1534,7 +1538,7 @@ begin
     if not IsMailAddress(s) then
     begin
       multi_mailstring:=false;
-      fehler(Getres2(10900,8)+': ' +s2); { 'Ung_ltige Adresse: 's2 }
+      fehler(Getres2(10900,8)+': ' +s2); { 'Ungueltige Adresse: 's2 }
       exit;
     end;
   until n=0;
@@ -1547,7 +1551,7 @@ begin
     if not multi_Mailstring(s) then exit;
   if (getfield(MailInServerFld) <> '') and (s = '') then
   begin
-    rfehler(970);        { 'Envelope-Adresse mu· angegeben werden' }
+    rfehler(970);        { 'Envelope-Adresse muss angegeben werden' }
     exit;
   end;
   check_envelope:=true;
@@ -1574,7 +1578,7 @@ var   d          : DB;
       brk        : boolean;
       nt         : Byte;
       x,y,height,
-      i, sel_anz : integer;     { Anzahl der auszuwÑhlenden Boxen }
+      i, sel_anz : integer;     { Anzahl der auszuwaehlenden Boxen }
       box        : string;      { Name der aktuellen Box          }
       user       : string;      { Username der aktuellen Box      }
       komm       : string;      { Kommentar der aktuellen Box     }
@@ -1593,8 +1597,8 @@ begin
     box:=dbReadStr(d,'Boxname');
     if own_Name <> '' then
       for i:=1 to entries do
-        if uppercase(box)=uppercase(boxlist[i]) then  { Box schon ausgewÑhlt?      }
-          goto nextBox;                     { ...dann nÑchsten Datensatz }
+        if uppercase(box)=uppercase(boxlist[i]) then  { Box schon ausgewaehlt?      }
+          goto nextBox;                     { ...dann naechsten Datensatz }
     dbRead(d,'Netztyp',nt);
     if ((nt=own_Nt) and (uppercase(box)<>own_Name))   { passende Box gefunden }
       or (own_name='') then
@@ -1647,7 +1651,7 @@ nextBox:
       Result :=trim(copy(list.getselection,2,BoxNameLen));
     List.Free;
   end else
-    rfehler(953); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
+    rfehler(953); { 'Keine (weiteren) hinzuzufuegenden Serverboxen vorhanden!' }
 end;
 
 
@@ -1669,21 +1673,21 @@ var   d          : DB;
 var   boxlist    : box_array;
 label Start;
 
-  { Die hier mehrfach vorkommende PrÅfung "if own_Name <> '' then..."  }
+  { Die hier mehrfach vorkommende Pruefung "if own_Name <> '' then..."  }
   { dient zur Feststellung, ob wir in einem Box-Config-Dialog (z.B.    }
-  { 'ZusÑtzliche Server' bei RFC/Client oder 'Pakete mitsenden' bei    }
+  { 'Zusaetzliche Server' bei RFC/Client oder 'Pakete mitsenden' bei    }
   { Fido) sind oder aus 'EditNetcallDat' in xp10.pas kommen. In        }
   { letzterem Fall ziehen wir abweichende (= weniger restriktive)      }
   { Konsequenzen - z.B. lassen wir nach positiv beantworteter          }
-  { RÅckfrage Dupes zu und Åbergehen ÅberflÅssige bzw. unzutreffende   }
+  { Rueckfrage Dupes zu und uebergehen ueberfluessige bzw. unzutreffende   }
   { Tests wie "eingetragene Box = editierte Box?".                     }
 
   { Hinweis: 'EditAddServersList' wird sowohl als 'normale' Prozedur   }
-  { als auch als Select-Routine (User drÅckt <F2> im Eingabefeld)      }
+  { als auch als Select-Routine (User drueckt <F2> im Eingabefeld)      }
   { mittels 'mappcustomsel(EditAddServersList,true)' in '_EditPPP'     }
-  { (xp9.inc) aufgerufen. Aus diesem Grund kînnen wir die oben         }
-  { angesprochenen Bedingungen nicht als Parameter Åbergeben (geht bei }
-  { 'mappcustomsel' halt nicht) und fragen sie daher Åber Variablen ab.}
+  { (xp9.inc) aufgerufen. Aus diesem Grund koennen wir die oben         }
+  { angesprochenen Bedingungen nicht als Parameter uebergeben (geht bei }
+  { 'mappcustomsel' halt nicht) und fragen sie daher ueber Variablen ab.}
 
   procedure display;
   var i    : Integer;
@@ -1741,13 +1745,13 @@ label Start;
         if dbfound then
         begin
           bfg:=dbreadStr(d,'dateiname');
-          bfglen:=bfglen + (length(bfg)+1);    { GesamtlÑnge BFG-Namen }
+          bfglen:=bfglen + (length(bfg)+1);    { Gesamtlaenge BFG-Namen }
         end;
       end;
     end;
     if own_Name <> '' then
       if bfglen >= maxbfglen then
-      begin { 'Maximale EingabelÑnge (%s) fÅr Dateinamen (.BFG) erreicht!' }
+      begin { 'Maximale Eingabelaenge (%s) fuer Dateinamen (.BFG) erreicht!' }
         too_long:=true;
         rfehler1(956,strs(maxbfglen));
       end;
@@ -1766,7 +1770,7 @@ label Start;
           dec(i);                           { Eintrag schon vorhanden? }
         if i > 0 then
           if not ReadJN(getreps2(10900,57,box),false) then
-           { 'Serverbox "%s" bereits vorhanden - trotzdem hinzufÅgen?' }
+           { 'Serverbox "%s" bereits vorhanden - trotzdem hinzufuegen?' }
           begin
             dbClose(d);
             exit;
@@ -1783,7 +1787,7 @@ label Start;
         begin
           too_long:=true;
           rfehler1(959,strs(maxbfglen-bfglen));
-   { 'Eingabe zu lang (Dateinamen (.BFG))! Noch %s Zeichen verfÅgbar.' }
+   { 'Eingabe zu lang (Dateinamen (.BFG))! Noch %s Zeichen verfuegbar.' }
         end;
       if too_long then
       begin
@@ -1839,7 +1843,7 @@ label Start;
     s:=boxlist[a+p];
     s:=mid(s,blankpos(s)+1);
     if ReadJN(getreps2(936,4,s),true) then
-    begin { 'Serverbox "%s" lîschen' }
+    begin { 'Serverbox "%s" loeschen' }
       if a+p<entries then
       begin  { a+p = Ziel }
         for i:=(a+p) to entries-1 do
@@ -1892,7 +1896,7 @@ begin  { --- of EditAddServersList --- }
   if own_Name <> '' then maxbox:=80;
   s1:=trim(cr.s);
   if (s1='') and (own_Name<>'') then      { Sind Boxen im Eingabefeld? }
-  begin                        { Wenn nicht, auf passende Boxen prÅfen }
+  begin                        { Wenn nicht, auf passende Boxen pruefen }
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do
     begin
@@ -1905,12 +1909,12 @@ begin  { --- of EditAddServersList --- }
       dbNext(d);
     end;
     dbClose(d);                          { keine passende Box gefunden }
-    rfehler(953); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
+    rfehler(953); { 'Keine (weiteren) hinzuzufuegenden Serverboxen vorhanden!' }
     exit;
   end;
   Start:
   width:=ival(getres2(936,1));
-  buttons:=getres2(936,2);  { ' ^EinfÅgen , ^Verschieben , ^Lîschen ,  ^OK  ' }
+  buttons:=getres2(936,2);  { ' ^Einfuegen , ^Verschieben , ^Loeschen ,  ^OK  ' }
   okb:=4; edb:=0;
   if own_name = '' then pushhp(508);
   for ii:=0 to maxbox do boxlist[ii] := '';
@@ -1930,7 +1934,7 @@ begin  { --- of EditAddServersList --- }
   if own_Name <> '' then
   begin
     selbox(width+2,gl+4,getres2(920,92),x,y,false);
-    attrtxt(col.colsel2rahmen);                 { 'ZusÑtzliche Server' }
+    attrtxt(col.colsel2rahmen);                 { 'Zusaetzliche Server' }
   end
   else begin
     selbox(width+2,gl+4,getres2(1024,3)+' #'+strs(cr.y)+' '+
@@ -1963,7 +1967,7 @@ begin  { --- of EditAddServersList --- }
     else if t=keydel then nr:=3;
     if (nr<>0) and (nr<>99) then bp:=abs(nr);
     if (nr=1) and (entries >= maxbox) then
-      rfehler1(954,strs(maxbox)) { 'Maximal %s Serverbox-EintrÑge mîglich!' }
+      rfehler1(954,strs(maxbox)) { 'Maximal %s Serverbox-Eintraege moeglich!' }
     else
       if (nr>0) and (movefrom<>0) then
         MoveBox
@@ -2012,7 +2016,7 @@ begin  { --- of EditAddServersList --- }
       begin
         s1:='';
         for ii:=1 to entries do
-          s1:=s1+boxlist[ii]+' ';  { neuen Eintrag fÅr Eingabefeld erstellen }
+          s1:=s1+boxlist[ii]+' ';  { neuen Eintrag fuer Eingabefeld erstellen }
         cr.s:=trim(s1);
         modi:=false;
       end;
@@ -2035,17 +2039,17 @@ var   p,nt,i,j,
       s1         : string;
       d          : DB;
       boxlist    : array[1..maxboxen] of string;
-      dupelist   : array[1..maxboxen] of byte;       { Array fÅr Dupes }
+      dupelist   : array[1..maxboxen] of byte;       { Array fuer Dupes }
 const maxboxlen  : byte = 255;
       maxbfglen = 160;
 
-  { Die hier mehrfach vorkommende PrÅfung "if own_Name <> '' then..."  }
+  { Die hier mehrfach vorkommende Pruefung "if own_Name <> '' then..."  }
   { dient zur Feststellung, ob wir in einem Box-Config-Dialog (z.B.    }
-  { 'ZusÑtzliche Server' bei RFC/Client oder 'Pakete mitsenden' bei    }
+  { 'Zusaetzliche Server' bei RFC/Client oder 'Pakete mitsenden' bei    }
   { Fido) sind oder aus 'EditNetcallDat' in xp10.pas kommen. In        }
   { letzterem Fall ziehen wir abweichende (= weniger restriktive)      }
   { Konsequenzen - z.B. lassen wir nach positiv beantworteter          }
-  { RÅckfrage Dupes zu und Åbergehen ÅberflÅssige bzw. unzutreffende   }
+  { Rueckfrage Dupes zu und uebergehen ueberfluessige bzw. unzutreffende   }
   { Tests wie "eingetragene Box = editierte Box?".                     }
 
   { Die Variable 'showErrors' dient als Flag, ob die Einzel-Fehlermel- }
@@ -2056,10 +2060,10 @@ const maxboxlen  : byte = 255;
 
   { Hinweis: 'addServersTest' wird sowohl als 'normale' Funktion als   }
   { auch als Masken-Testfunktion mittels 'msetvfunc(addServersTest)'   }
-  { (siehe '_EditPPP' in xp9.inc) aufgerufen. Aus diesem Grund kînnen  }
+  { (siehe '_EditPPP' in xp9.inc) aufgerufen. Aus diesem Grund koennen  }
   { wir die oben angesprochenen Bedingungen nicht als Parameter        }
-  { Åbergeben (geht bei 'msetvfunc' halt nicht) und fragen sie daher   }
-  { Åber Variablen ab.                                                 }
+  { uebergeben (geht bei 'msetvfunc' halt nicht) und fragen sie daher   }
+  { ueber Variablen ab.                                                 }
 
 begin
   addServersTest:=true;
@@ -2074,26 +2078,26 @@ begin
     p:=cpos(' ',s1);
     if p=0 then boxlist[box_anz]:=s1
     else begin
-      boxlist[box_anz]:=leftstr(s1,p-1);             { Boxen-Array fÅllen }
+      boxlist[box_anz]:=leftstr(s1,p-1);             { Boxen-Array fuellen }
       s1:=trim(mid(s1,p+1));
     end;
   until p=0;
   { ------------------------------------------------------ }
-  { Dupeschleife - fÅllt ein Array mit den Werten:         }
+  { Dupeschleife - fuellt ein Array mit den Werten:         }
   {   0 = Box ist ein Dupe                                 }
-  {   i = Anzahl gleicher EintrÑge (wird im ersten         }
+  {   i = Anzahl gleicher Eintraege (wird im ersten         }
   {       (Element, in dem die Box vorkommt, eingetragen)  }
-  { In AbhÑngigkeit von diesen Werten in 'dupelist' werden }
+  { In Abhaengigkeit von diesen Werten in 'dupelist' werden }
   { die in 'boxlist' hinterlegten Boxen durch die Funktion }
-  { gejagt oder Åbersprungen (wenn Wert=0). Grund: Wir     }
-  { wollen fÅr jede mehrfach vorkommende Box nur einmal    }
+  { gejagt oder uebersprungen (wenn Wert=0). Grund: Wir     }
+  { wollen fuer jede mehrfach vorkommende Box nur einmal    }
   { die Fehlermeldung(en) ausgeben (und damit auch die     }
-  { Performance erhîhen).                                  }
+  { Performance erhoehen).                                  }
   { Diese Dupebehandlung gilt nur im Box-Config-Dialog     }
-  { (weil in 'EditNetcallDat' Dupes zulÑssig sind).        }
+  { (weil in 'EditNetcallDat' Dupes zulaessig sind).        }
   { ------------------------------------------------------ }
   for i:=1 to box_anz do dupelist[i] := 1;
-  for i:=1 to box_anz do                           { Dupe-Array fÅllen }
+  for i:=1 to box_anz do                           { Dupe-Array fuellen }
   begin
     if dupelist[i]=0 then continue;
     for j:=i to box_anz do
@@ -2101,7 +2105,7 @@ begin
       if (j=i) or (dupelist[j]=0) then continue;
       if uppercase(boxlist[j]) = uppercase(boxlist[i]) then
       begin
-        inc(dupelist[i]);                { Anzahl der EintrÑge erhîhen }
+        inc(dupelist[i]);                { Anzahl der Eintraege erhoehen }
         dupelist[j]:=0;                  { 0 = Dupe                    }
       end;
     end;
@@ -2167,10 +2171,10 @@ begin
       end;
       if own_Name <> '' then
         bfglen:=bfglen+length(dbReadStr(d,'dateiname'))+1;
-                                               { GesamtlÑnge BFG-Namen }
-(*    hinweis('Anzahl = '+strs(box_anz)+', BFG-LÑnge = '+strs(bfglen)); *)
+                                               { Gesamtlaenge BFG-Namen }
+(*    hinweis('Anzahl = '+strs(box_anz)+', BFG-Laenge = '+strs(bfglen)); *)
     end;
-    boxlen:=boxlen+length(boxlist[i])+1;        { GesamtlÑnge Boxnamen }
+    boxlen:=boxlen+length(boxlist[i])+1;        { Gesamtlaenge Boxnamen }
   end;
   if own_Name <> '' then                          { Box-Config-Dialog? }
   begin
@@ -2180,7 +2184,7 @@ begin
       addServersTest:=false;
       if showErrors then
         rfehler1(965,strs(maxbfglen))
-    { 'Maximale GesamtlÑnge (%s) der Dateinamen (.BFG) Åberschritten!' }
+    { 'Maximale Gesamtlaenge (%s) der Dateinamen (.BFG) ueberschritten!' }
       else begin
         dbClose(d);
         exit;
@@ -2193,7 +2197,7 @@ begin
     addServersTest:=false;
     if showErrors then
       rfehler1(966,strs(maxboxlen))
-      { 'Maximale GesamtlÑnge (%s) der Serverbox-Namen Åberschritten!' }
+      { 'Maximale Gesamtlaenge (%s) der Serverbox-Namen ueberschritten!' }
     else begin
       dbClose(d);
       exit;
@@ -2203,7 +2207,7 @@ begin
   begin
     addServersTest:=false;
     if showErrors then
-      rfehler1(954,strs(maxbox)) { 'Maximal %s Serverbox-EintrÑge mîglich!' }
+      rfehler1(954,strs(maxbox)) { 'Maximal %s Serverbox-Eintraege moeglich!' }
     else begin
       dbClose(d);
       exit;
@@ -2218,7 +2222,7 @@ var x,y : integer;
 begin
   msgbox(length(s)+6,6,_fehler_,x,y);
   attrtxt(col.colmboxhigh);
-  mwrt(x+3,y+2,getres2(920,92)+':');  { '"ZusÑtzliche Server:"' }
+  mwrt(x+3,y+2,getres2(920,92)+':');  { '"Zusaetzliche Server:"' }
   attrtxt(col.colmbox);
   mwrt(x+3,y+3,s);
   errsound;
@@ -2255,7 +2259,7 @@ var   d      : DB;
   end;
 
 begin
-  BfgToBoxOk:=true;  { Flag fÅr 'ChkAddServers' in xp7.inc }
+  BfgToBoxOk:=true;  { Flag fuer 'ChkAddServers' in xp7.inc }
   if s = '' then
   begin
     BfgToBox:='';
@@ -2276,7 +2280,7 @@ begin
       if showErrors then
       begin
         fehler:=getreps2(10900,67,uppercase(s1));
-       { 'UngÅltiger Name fÅr Serverbox-Konfigurationsdatei: "%s.BFG"' }
+       { 'Ungueltiger Name fuer Serverbox-Konfigurationsdatei: "%s.BFG"' }
         ConvertAddServersFehler(fehler);
       end
       else exit;
@@ -2294,7 +2298,7 @@ begin
           begin
             fehler:=getreps2(10900,66,strs(maxboxlen));
 *)            
-      { 'Maximale GesamtlÑnge (%s) der Serverbox-Namen Åberschritten!' }
+      { 'Maximale Gesamtlaenge (%s) der Serverbox-Namen ueberschritten!' }
 (*      
             ConvertAddServersFehler(fehler);
           end
@@ -2346,7 +2350,7 @@ begin
     end;
     if length(s1) > BoxNameLen then
     begin
-      fehler:=getreps2(10900,69,s1); { 'UngÅltiger Serverbox-Name: %s' }
+      fehler:=getreps2(10900,69,s1); { 'Ungueltiger Serverbox-Name: %s' }
       ConvertAddServersFehler(fehler);
     end
     else begin
@@ -2357,7 +2361,7 @@ begin
         if length(s3)+length(s2) > maxbfglen then
         begin
           fehler:=getreps2(10900,65,strs(maxbfglen));
-    { 'Maximale GesamtlÑnge (%s) der Dateinamen (.BFG) Åberschritten!' }
+    { 'Maximale Gesamtlaenge (%s) der Dateinamen (.BFG) ueberschritten!' }
           ConvertAddServersFehler(fehler);
         end else
           s3:=s3+s2+' ';
@@ -2374,9 +2378,9 @@ end;
 
 
 procedure SingleServerSel(var cr:customrec); { einzelne Serverbox (nur vom }
-var i     : Integer;                            { eigenen Netztyp) auswÑhlen  }
+var i     : Integer;                            { eigenen Netztyp) auswaehlen  }
     s1    : string;
-    dummy : box_array; { wir brauchen keine Serverboxen-Liste zu Åbergeben }
+    dummy : box_array; { wir brauchen keine Serverboxen-Liste zu uebergeben }
 begin
   for i:=0 to maxboxen do dummy[i] := '';
   cr.brk:=false;
@@ -2427,7 +2431,7 @@ const cfgext  : array [1..7] of string[5] = ('*.CFG','*.BFG','*.BFE','*.$CF',
 label restart;
 begin
 restart:
-  set_ExtCfg_Allowances;   { Lîschen mit <Ctrl-Del> erlauben }
+  set_ExtCfg_Allowances;   { Loeschen mit <Ctrl-Del> erlauben }
   s2 := '';
   if (cpos(':',s1) = 2) or (cpos(DirSepa, s1) = 1) then
   begin
@@ -2453,7 +2457,7 @@ restart:
   end;
   readmask(brk);
   enddialog;
-  if (cDel_pressed) then          { <Ctrl-Del> gedrÅckt => Dateiname lîschen }
+  if (cDel_pressed) then          { <Ctrl-Del> gedrueckt => Dateiname loeschen }
   begin
     reset_Allowances(s1);  { s1 = Dummy }
     if boxpar^.ClientExternalConfig <> '' then
@@ -2493,7 +2497,7 @@ restart:
       pushhp(89);
       s2:=fsbox(Screenlines div 2 - 5,s2,'','',subs,false,false);
       pophp;
-      if s2 <> '' then   { <Esc> gedrÅckt? }
+      if s2 <> '' then   { <Esc> gedrueckt? }
       begin
         fsplit(s2,dir,name,ext);
         if dir = cdir then s1 := name + ext else s1 := s2;
@@ -2502,7 +2506,7 @@ restart:
     end;
     if (s2<>'') and ({IsDevice(s2) or }not ValidFilename(s2)) then
     begin
-      rfehler(3);   { UngÅltiger Pfad- oder Dateiname! }
+      rfehler(3);   { Ungueltiger Pfad- oder Dateiname! }
       goto restart;
     end;
     s1 := s2;
@@ -2514,6 +2518,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/12/06 14:27:29  dodi
+  - updated uses, comments and todos
+
   Revision 1.51  2002/11/01 14:17:05  ma
   - reimplemented Janus+ switch, should solve problems with non-standard
     servers

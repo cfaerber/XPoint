@@ -361,6 +361,7 @@ function CPosX(c:char; const s:string):integer;   { pos=0 -> pos:=length(s)+1   
 function CPosXFrom(c:char; const s:string; start: integer):integer;  { schnelles POS fuer CHARs -- ab Position start }
 function CreditCardOk(s:string):boolean;     { Kreditkartennummer ueberpruefen }
 function CVal(const s:string):longint;       { C Value Integer - nnnn/0nnn/0xnnn }
+//todo: rename!!!
 function Date:DateTimeSt;                    { dt. Datumsstring             }
 function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
 function FileName(var f):string;                { Dateiname Assign             }
@@ -1864,6 +1865,9 @@ end;
 
 {
   $Log$
+  Revision 1.122  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.121  2002/12/04 16:57:00  dodi
   - updated uses, comments and todos
 

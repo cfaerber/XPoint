@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Nachrichten-Autoversandt; Autoexec }
+{ Nachrichten-Autoversand; Autoexec }
 
 {$I xpdefine.inc}
 
@@ -27,8 +27,8 @@ unit xpauto;
 interface
 
 uses
-  sysutils,montage,typeform,fileio,inout,datadef,database,resource, xpheader,
-  xp0,xp1,xpglobal, zftools;
+  sysutils,
+  xpglobal;
 
 type  AutoRec = record                     { AutoVersand-Nachricht }
                   datei   : string;
@@ -41,7 +41,7 @@ type  AutoRec = record                     { AutoVersand-Nachricht }
                   monate  : smallword;           { Bit 0=Januar    }
                   datum1  : longint;
                   datum2  : longint;
-                  flags   : word;       { 1=aktiv, 2=lîschen, 4=énderung, 8=supersede }
+                  flags   : word;       { 1=aktiv, 2=loeschen, 4=Aenderung, 8=supersede }
                   lastdate: longint;
                   lastfd  : longint;             { Dateidatum }
                   lastmid : string;     { letzte verwendete mid }
@@ -51,7 +51,7 @@ procedure AutoRead(var ar:AutoRec);
 procedure AutoWrite(var ar:AutoRec);
 procedure AutoSend;
 function  PostFile(var ar:AutoRec; sendbox:boolean):boolean;
-function  AutoShow:string;      { fÅr XP4D.INC }
+function  AutoShow:string;      { fuer XP4D.INC }
 
 procedure AutoExec(startbatch:boolean);
 procedure AutoStop;
@@ -59,7 +59,9 @@ procedure AutoStop;
 
 implementation
 
-uses xp1o,xp3,xp3o,xpsendmessage,xp9bp,xpmaus,xpnt, debug;
+uses
+  montage,typeform,fileio,datadef,database,resource,
+  xp0,xp1,xp1o,xp3,xp3o,xpsendmessage,xp9bp,xpmaus,xpnt, debug, zftools;
 
 
 procedure AutoRead(var ar:AutoRec);
@@ -100,7 +102,7 @@ begin
 end;
 
 
-{ nÑchstes Absendedatum fÅr Automatik-Nachricht berechnen }
+{ naechstes Absendedatum fuer Automatik-Nachricht berechnen }
 { 0 -> kein zutreffendes Datum, Nachricht nicht absenden  }
 
 function AutoNextdate(var ar:AutoRec):longint;
@@ -242,7 +244,7 @@ begin
       if UpperCase(box)='*CRASH*' then begin
         box:='';
         sData.flCrash:=true;
-        sData.flCrashAtOnce:=true;    { keine RÅckfrage 'sofort versenden' }
+        sData.flCrashAtOnce:=true;    { keine Rueckfrage 'sofort versenden' }
         end;
       sData.forcebox:=box;
       if not tmp then begin
@@ -336,7 +338,7 @@ var sr    : tsearchrec;
     rc    : integer;
     first : boolean;
     ctlEbest,ctlErstDat : boolean;
-    mgel  : boolean;       { Save fÅr ParGelesen }
+    mgel  : boolean;       { Save fuer ParGelesen }
     fnstart: string;      { Name der Start.bat }
 
   function find(const ext:string):boolean;
@@ -373,7 +375,7 @@ var sr    : tsearchrec;
     else begin
       box:=NamePollbox;
       if box='' then
-        trfehler1(2204,sr.name,tfs)   { 'Kann %s nicht einlesen - ungÅltige Pollbox' }
+        trfehler1(2204,sr.name,tfs)   { 'Kann %s nicht einlesen - ungueltige Pollbox' }
       else begin
         ReadBoxpar(0,box);
         shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
@@ -395,7 +397,7 @@ var sr    : tsearchrec;
   var x,y: Integer;
   begin
     if not IsBox(DefFidoBox) then
-      trfehler(2207,tfs)     { 'Keine gÅltige Fido-Stammbox gewÑhlt' }
+      trfehler(2207,tfs)     { 'Keine gueltige Fido-Stammbox gewaehlt' }
     else begin
       ReadBoxpar(0,DefFidoBox);
       msgbox(70,10,GetRes2(30003,10),x,y);
@@ -471,19 +473,19 @@ var sr    : tsearchrec;
     attach:=(box<>'') and (datei<>'') and
             ((nt=nt_Fido) or
              (nt=nt_UUCP) and (LeftStr(empf,16)='UUCP-Fileserver@'));
-    if empf='' then axerr(2,'') else    { 'EmpfÑnger fehlt' }
+    if empf='' then axerr(2,'') else    { 'Empfaenger fehlt' }
     if betr='' then axerr(3,'') else    { 'Betreff fehlt'   }
     if (box<>'') and not IsBox(box) then
-      axerr(4,box) else                 { 'ungÅltige Serverbox: %s' }
+      axerr(4,box) else                 { 'ungueltige Serverbox: %s' }
     if datei<>'' then begin
       if not multipos(_MPMask,datei) then
         datei:=SendPath+datei;
       if not FileExists(datei) then
         axerr(5,UpperCase(datei)) else       { 'Datei "%s" fehlt' }
       if attach and (cpos('@',empf)=0) then
-        axerr(6,'') else   { 'File Attaches kînnen nur als PM verschicht werden!' }
+        axerr(6,'') else   { 'File Attaches koennen nur als PM verschicht werden!' }
       if attach and (length(datei)>BetreffLen) then
-        axerr(7,'')        { 'Pfadname zu lang fÅr File Attach' }
+        axerr(7,'')        { 'Pfadname zu lang fuer File Attach' }
       else
         err:=false;
       end
@@ -557,7 +559,7 @@ var sr    : tsearchrec;
     SendPuffer:=false;
     box:=NamePollbox;
     if not IsBox(box) then
-      trfehler1(2209,box,tfs)    { 'IPS - ungÅltige Box: %s' }
+      trfehler1(2209,box,tfs)    { 'IPS - ungueltige Box: %s' }
     else
       if PufferEinlesen(AutoxDir+sr.name,box,false,true,false,0) then begin
         AppPuffer(box,AutoXdir+sr.name);
@@ -587,38 +589,38 @@ begin
       DeleteFile(AutoXdir+sr.name);
       //delfile;
       end;
-    while find('.zer') do     { Z-Puffer einlesen + lîschen }
+    while find('.zer') do     { Z-Puffer einlesen + loeschen }
       if PufferEinlesen(AutoxDir+sr.name,NamePollbox,ctlErstDat,false,ctlEbest,0) then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find('.zee') do     { Z-Puffer einlesen, EB's versenden + lîschen }
+    while find('.zee') do     { Z-Puffer einlesen, EB's versenden + loeschen }
       if PufferEinlesen(AutoxDir+sr.name,NamePollbox,ctlErstDat,false,true,0) then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find('.out') do     { Maus-OUTFILE einlesen + lîschen }
+    while find('.out') do     { Maus-OUTFILE einlesen + loeschen }
       if MausImport then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    if FileExists(AutoxDir+'*.pkt') then    { Fido-Paket(e) einlesen + lîschen }
+    if FileExists(AutoxDir+'*.pkt') then    { Fido-Paket(e) einlesen + loeschen }
       FidoImport;
 
     while find('.ips') do     { Puffer versenden }
       if SendPuffer then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find('.msg') do     { Nachricht/Datei senden + lîschen }
+    while find('.msg') do     { Nachricht/Datei senden + loeschen }
       if SendMsg(false) then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find('.msd') do     { Datei senden + incl. Datei lîschen }
+    while find('.msd') do     { Datei senden + incl. Datei loeschen }
       if SendMsg(true) then
         DeleteFile(AutoXdir+sr.name);
         //delfile;
-    while find(ExtBak) do     { BAK-files lîschen }
+    while find(ExtBak) do     { BAK-files loeschen }
       DeleteFile(AutoXdir+sr.name);
       //delfile;
 
-    while find('.bat') do     { Batchdateien ausfÅhren }
+    while find('.bat') do     { Batchdateien ausfuehren }
       if (LeftStr(FileUpperCase(sr.name),5)<>FileUpperCase('start')) and
         (LeftStr(FileUpperCase(sr.name),4)<>FileUpperCase('stop')) then begin
         shell(AutoxDir+sr.name,600,1);
@@ -629,7 +631,7 @@ begin
       fnstart:=AutoxDir+FileUpperCase('start' + extBatch);        { START.BAT }
       if FileExists(fnstart) then
         shell(fnstart,500,1);
-      fnstart:=AutoxDir+FileUpperCase('start1' + extBatch);       { START1.BAT, lîschen }
+      fnstart:=AutoxDir+FileUpperCase('start1' + extBatch);       { START1.BAT, loeschen }
       if FileExists(fnstart) then begin
         shell(fnstart,500,1);
         DeleteFile(fnstart);
@@ -648,7 +650,7 @@ begin
   fnstop:= AutoxDir+FileUpperCase('stop' + extBatch);     { STOP.BAT }
   if FileExists(fnstop) then
     shell(fnstop,500,1);
-  fnstop:= AutoxDir+FileUpperCase('stop1' + extBatch);    { STOP1.BAT, lîschen }
+  fnstop:= AutoxDir+FileUpperCase('stop1' + extBatch);    { STOP1.BAT, loeschen }
   if FileExists(fnstop) then 
   begin
     shell(fnstop,500,1);
@@ -657,7 +659,7 @@ begin
 end;
 
 
-function AutoShow:string;      { fÅr XP4D.INC }
+function AutoShow:string;      { fuer XP4D.INC }
 var ar   : autorec;
     c    : string;
     ldat,
@@ -697,6 +699,9 @@ end;
 
 {
   $Log$
+  Revision 1.59  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.58  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 

@@ -26,15 +26,6 @@ unit xp8;
 
 interface
 
-uses sysutils,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,fileio,inout,keys,datadef,database,lister, winxp,
-  maske,maus2,resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti,
-  xpglobal,fidoglob;
-
-
 procedure SendMaps(bef:string; var box,datei:string);
 procedure MapsDelBrett(brett:string);
 procedure MapsReadList;
@@ -65,11 +56,21 @@ function fileechocolfunc(const s:string; line:longint):byte;
 
 implementation  { ------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xpsendmessage,xpsendmessage_resend,
+
+uses
+  sysutils,
+  classes,  //TStringList
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
 {$IFDEF Sockets }
   xpncnntp,
 {$ENDIF }
-  xp9bp,xpconfigedit,xpnt, crc, classes;
+  typeform,fileio,inout,keys,datadef,database,lister, winxp,
+  maske,maus2,resource,win2,xp_iti,fidoglob,
+  xp0,xp1,xp1o2,xp1help,xp1input,xp1o,xp3,xp3o2,xp3ex,xp4,xp9bp,
+  xpsendmessage,xpsendmessage_resend,xpconfigedit,xpnt, crc,
+  xpglobal;
 
 const mapsbox : string = '';
 
@@ -87,7 +88,7 @@ begin                                { 13=Feeder, 14=postmaster, 15=online, 16=c
   if not dbFound then
     mapstype:=0
   else begin
-    mapsname:= dbReadStr(d,'nameomaps');     { mu· vor MAF-Test stehen !! }
+    mapsname:= dbReadStr(d,'nameomaps');     { muss vor MAF-Test stehen !! }
     dbRead(d,'netztyp',nt);
     if ntMAF(nt) then
       mapstype:=2
@@ -126,7 +127,7 @@ end;
 function BoxHasMaps(box:string):boolean;
 begin
   if ntNoMaps(ntBoxNetztyp(box)) then begin
-    rfehler(801);   { 'Diese Box unterstÅtzt keine Brettbestell-Funktionen.' }
+    rfehler(801);   { 'Diese Box unterstuetzt keine Brettbestell-Funktionen.' }
     BoxHasMaps:=false;
     end
   else
@@ -234,7 +235,7 @@ var
 
     begin
       if bn=nil then
-        if add then begin   { ADD - Brett hinzufÅgen }
+        if add then begin   { ADD - Brett hinzufuegen }
           new(bn);
           bn^.l:=nil; bn^.r:=nil; bn^.del:=false;
           bn^.c:=s;
@@ -244,7 +245,7 @@ var
       else
         if found then
           if add then         { ADD - Brett schon vorhanden }
-          else bn^.del:=true  { Brett lîschen }
+          else bn^.del:=true  { Brett loeschen }
         else
           if smaller then SetBrett(add,bn^.l)   { links suchen }
           else SetBrett(add,bn^.r);             { rechts suchen }
@@ -317,7 +318,7 @@ var
     close(t);
     freelist(root);
     bef:='setsys';
-    s:=mapsname+'@'+box+ntServerDomain(box);  { evtl. alten setsys-Befehl lîschen }
+    s:=mapsname+'@'+box+ntServerDomain(box);  { evtl. alten setsys-Befehl loeschen }
     dbSeek(ubase,uiName,UpperCase(s));
     if dbFound then begin
       _brett:=mbrettd('U',ubase);
@@ -445,7 +446,7 @@ begin
   bretter:=getres2(800,iif(news,2,3));
   write(t,'##  ',getreps2(800,iif(del,4,5),bretter),#13#10);
   write(t,'##',#13#10);
-  write(t,'##  ',getres2(800,6),#13#10);   { 'mit virtuellen GrÅ·en' }
+  write(t,'##  ',getres2(800,6),#13#10);   { 'mit virtuellen Gruessen' }
   write(t,'##     '+xp_xp+' ',verstr,#13#10);
   write(t,#13#10);
   write(t,dup(40,'-'),#13#10);
@@ -781,7 +782,7 @@ begin
   blfile:=get_BL_Name(Box);
   if not FileExists(blfile) then
   begin
-    rfehler(807);         { Keine Brettliste fÅr diese Box vorhanden! }
+    rfehler(807);         { Keine Brettliste fuer diese Box vorhanden! }
     exit;
   end;
   moment;
@@ -805,7 +806,7 @@ var
   Filename: string;
 begin
   Filename := get_BL_Name(Box);
-  if ReadJN(getreps2(810,93, LeftStr(Filename, 60)),false) then _era(Filename);  { '%s wirklich lîschen' }
+  if ReadJN(getreps2(810,93, LeftStr(Filename, 60)),false) then _era(Filename);  { '%s wirklich loeschen' }
 end;
 
 
@@ -850,7 +851,7 @@ var t     : text;
     assign(t,bfile+extBl);
     reset(t);
     if ioresult=0 then begin
-      message(getreps(801,UpperCase(box)));   { 'Brettliste fÅr %s laden...' }
+      message(getreps(801,UpperCase(box)));   { 'Brettliste fuer %s laden...' }
       while (mm<maxmaggi) and not eof(t) do begin
         readln(t,s);
         if maf then begin
@@ -1078,7 +1079,7 @@ begin
 end;
 
 
-{ Unterprozeduren fÅr MapsReadList und MapsReadFile }
+{ Unterprozeduren fuer MapsReadList und MapsReadFile }
 
 function ReadMafList(fn:string; var bfile:string):boolean;
 var t1,t2 : text;
@@ -1182,7 +1183,7 @@ begin
   fillchar(boxpar^,sizeof(BoxRec),0);
   ReadBox(0,bfile,boxpar);
   if mapstype(box) in [2,8] then begin
-    message('Brettliste fÅr '+UpperCase(box)+' wird eingelesen ...');
+    message('Brettliste fuer '+UpperCase(box)+' wird eingelesen ...');
     fn:=TempS(dbReadInt(mbase,'msgsize'));
     extract_msg(0,'',fn,false,0);
     case mapstype(box) of
@@ -1195,12 +1196,12 @@ begin
     if (pos('BRETT',UpperCase(betreff))=0) and (betreff<>'Gruppenliste') and
        (pos('list',LowerCase(betreff))=0) and
       not (fido or turbo or uucp)
-      and not ReadJN(getres(805),true) then   { 'Sind Sie sicher, da· das eine Brettliste ist' }
+      and not ReadJN(getres(805),true) then   { 'Sind Sie sicher, dass das eine Brettliste ist' }
       goto ende;
     if cPos('@',absender)=0 then
-      trfehler(805,60)    { 'UngÅltige Absenderangabe' }
+      trfehler(805,60)    { 'Ungueltige Absenderangabe' }
     else begin
-      message(getreps(806,UpperCase(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
+      message(getreps(806,UpperCase(box)));   { 'Brettliste fuer %s wird eingelesen ...' }
       makebak(bfile+extBl,ExtBak);
       fn:=TempS(dbReadInt(mbase,'msgsize'));
       extract_msg(xTractMsg,'',fn,false,0);
@@ -1240,7 +1241,7 @@ begin
   bfile:= dbReadStr(d,'dateiname');
   dbClose(d);
   ReadBox(0,bfile,boxpar);
-  message(getreps(806,UpperCase(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
+  message(getreps(806,UpperCase(box)));   { 'Brettliste fuer %s wird eingelesen ...' }
   if maggi then
     if not ReadMafList(fn,bfile) then exit
     else
@@ -1250,7 +1251,7 @@ begin
     ExpandTabs(fn,FileUpperCase(bfile+extBl));
     closebox;
     end;
-  if useclip or ReadJN(getreps(817,fn),false) then    { '%s lîschen' }
+  if useclip or ReadJN(getreps(817,fn),false) then    { '%s loeschen' }
     _era(fn);
 end;
 
@@ -1359,7 +1360,7 @@ label again;
     if p>0 then s:=LeftStr(s,p-1);
     TrimFirstChar(s, '+');
     TrimFirstChar(s, '*');
-    p:=pos('....',s);         { direkt angehÑngten Kommentar abschneiden }
+    p:=pos('....',s);         { direkt angehaengten Kommentar abschneiden }
     if p>0 then truncstr(s,p-1);
     fidobrett:=s;
   end;
@@ -1581,7 +1582,7 @@ begin
   if not BoxHasMaps(box) then exit;
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  if dbFound then 
+  if dbFound then
   begin
     fn:= dbReadStr(d,'dateiname');
     netztyp:=dbReadInt(d,'netztyp');
@@ -1609,7 +1610,7 @@ begin
     end;
   dbClose(d);
   if fn='' then
-    rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte lîschen!' }
+    rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte loeschen!' }
   else begin
     if (art=1) and FileExists(fn +  extBbl) and changesys then
       lfile:=fn+ extBbl else
@@ -1618,7 +1619,7 @@ begin
     else lfile:=fn+extBl;
     lfile := FileUpperCase(lfile);
     if not FileExists(lfile) then
-      rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
+      rfehler(807)    { 'Keine Brettliste fuer diese Box vorhanden!' }
     else begin
       if fido or maus or qwk then
         ReadBoxpar(netztyp,box);
@@ -1671,7 +1672,7 @@ begin
             0 : ask:=reps(reps(getreps2(807,3,strs(anz)),bretter),box);
             1 : ask:=reps(reps(getreps2(807,4,strs(anz)),bretter),box);
             2 : ask:=reps(getreps2(807,5,strs(anz)),bretter);
-          3,4 : ask:=getres2(807,6);   { 'Inhalt der gewÑhlten Bretter anfordern' }
+          3,4 : ask:=getres2(807,6);   { 'Inhalt der gewaehlten Bretter anfordern' }
         end;
         if not ReadJN(ask,true) then
           goto again;
@@ -1699,7 +1700,7 @@ begin
               BretterAnlegen;
             List.Free;
             if art=3 then
-              verbose:=ReadJN(getres2(810,20),false);  { 'ausfÅhrliche Liste' }
+              verbose:=ReadJN(getres2(810,20),false);  { 'ausfuehrliche Liste' }
             if not NNTP then
               case art of
                 0 : sendmaps('ADD',box,fn);
@@ -1828,7 +1829,7 @@ var brk     : boolean;
         else
           delete(gruppe,1,length(magicbrett));
       end;
-    dialog(44,5,'User '+iifs(aufnehm,'aufnehmen','ausschlie·en'),x,y);
+    dialog(44,5,'User '+iifs(aufnehm,'aufnehmen','ausschliessen'),x,y);
     maddstring(3,2,'Gruppe ',gruppe,30,eBrettLen,''); mhnr(670);
     maddstring(3,4,'User   ',user,30,eAdrLen,'');
     readmask(brk);
@@ -1875,7 +1876,7 @@ begin
   promaf:=ntProMaf(nt);
   case defcom of
     0 : if (not ppp) and (not ntMapsOthers(nt) or ((nt=nt_UUCP) and postmaster)) then begin
-          rfehler(818);     { 'Bei dieser Box nicht mîglich.' }
+          rfehler(818);     { 'Bei dieser Box nicht moeglich.' }
           exit;
           end;
     1 : if ppp then
@@ -1883,11 +1884,11 @@ begin
           msgbox(63,10,_hinweis_,x,y);
           for j := 2 to 7 do
             { 'Netztyp RFC/Client: Zum Anfordern einer neuen Newsgroup-'  }
-            { 'Liste mu· die entsprechende Funktion beim externen Client' }
+            { 'Liste muss die entsprechende Funktion beim externen Client' }
             { 'aktiviert sein (siehe auch "Newsgroup-Liste pflegen" bei'  }
             { '/Edit/Boxen/Edit/Mail-/News-Server) und die bisherige'     }
-            { 'Newsgroup-Liste gelîscht werden (siehe /Nachricht/Brett-'  }
-            { 'manager/Sonstiges/Lîschen).'                               }
+            { 'Newsgroup-Liste geloescht werden (siehe /Nachricht/Brett-'  }
+            { 'manager/Sonstiges/Loeschen).'                               }
             mwrt(x+3,y+j,getres2(10800,30+j));
           errsound;
           wait(curoff);
@@ -1946,7 +1947,7 @@ begin
     List := listbox(iif(maus,45,57),lines,getres2(810,0)+mapsname+   { 'Nachricht an ' }
       iifs((mapsname='MAPS') and (random<0.07),'-o-MAT','') + ' @ ' + box);
     if fido then begin
-      app('List',getres2(810,40));      { 'Liste der verfÅgbaren Bretter' }
+      app('List',getres2(810,40));      { 'Liste der verfuegbaren Bretter' }
       app('Query',getres2(810,41));     { 'Liste der bestellten Bretter' }
       app('Unlinked',getres2(810,42));  { 'Liste der nicht bestellten Bretter' }
       app('Help',getres2(810,43));      { 'Hilfe zu den Areafix-Befehlen' }
@@ -1971,7 +1972,7 @@ begin
       for i:=1 to infos do
         app(info^[i].ID,info^[i].text);
       app('GU>','Gruppenmitglied aufnehmen');
-      app('GU<','Gruppenmitglied ausschlie·en');
+      app('GU<','Gruppenmitglied ausschliessen');
       end
     else if gs then begin
       app('BESTELLBARE BRETTER','Liste der bestellbaren Bretter');
@@ -1983,20 +1984,20 @@ begin
       if gup then begin
         app('help',getres2(810,70));      { 'Hilfe zu Gup anfordern' }
         app('list',getres2(810,71));      { 'Liste der bestellten Bretter' }
-        app('newsgroups *',getres2(810,72));   { 'Liste der verfÅgbaren Bretter' }
+        app('newsgroups *',getres2(810,72));   { 'Liste der verfuegbaren Bretter' }
         end
       else if autosys then begin
         app('help',getres2(810,75));        { 'Hilfe zu AutoSys anfordern' }
-        app('newsgroups',getres2(810,72));  { 'Liste der verfÅgbaren Bretter' }
-        app('active',getres2(810,77));      { 'Traffic-öbersicht' }
+        app('newsgroups',getres2(810,72));  { 'Liste der verfuegbaren Bretter' }
+        app('active',getres2(810,77));      { 'Traffic-Uebersicht' }
         app('perms',getres2(810,76));       { 'Brett-Zugriffsrechte abfragen' }
         app('show',getres2(810,71));        { 'Liste der bestellten Bretter' }
         end
       else if feeder then begin
         app('@help',getres2(810,80));        { 'Hilfe zu Feeder anfordern' }
-        app('@active',getres2(810,72));      { 'Liste der verfÅgbaren Bretter' }
+        app('@active',getres2(810,72));      { 'Liste der verfuegbaren Bretter' }
         app('@get',getres2(810,71));         { 'Liste der bestellten Bretter' }
-        app('@suspend',getres2(810,81));     { 'alle Bretter vorÅbergehend abbestellen' }
+        app('@suspend',getres2(810,81));     { 'alle Bretter voruebergehend abbestellen' }
         app('@resume',getres2(810,82));      { 'alle Bretter reaktivieren' }
         end
       else begin
@@ -2008,8 +2009,8 @@ begin
     else begin
       app('HILFE *',getres2(810,1));          { 'Hilfe zu allen MAPS-Befehlen' }
       app('HILFE <Thema>',getres2(810,2));    { 'Hilfe zu einem Befehl' }
-      app('HILFE THEMEN',getres2(810,3));     { 'Themen-öbersicht' }
-      app('HOLD ON',getres2(810,21));         { 'Bretter vorÅbergehend abbestellen (Urlaub)' }
+      app('HILFE THEMEN',getres2(810,3));     { 'Themen-Uebersicht' }
+      app('HOLD ON',getres2(810,21));         { 'Bretter voruebergehend abbestellen (Urlaub)' }
       app('HOLD OFF',getres2(810,22));        { 'Bretter wieder aktivieren' }
       app('INHALT',getres2(810,4));           { 'Brettinhalt' }
       app('INFO',getres2(810,5));             { 'Infos zum eigenen System' }
@@ -2023,7 +2024,7 @@ begin
       app('LIST MY BRETTER',getres2(810,12));   { 'bestellte Bretter' }
       if not request then app('LIST OTHER BRETTER',getres2(810,13));   { 'nicht bestellte Bretter' }
       if not (area or request) then begin
-        app('PM LOESCHEN',getres2(810,14));   { 'Postfachinhalt in *Mailbox* lîschen' }
+        app('PM LOESCHEN',getres2(810,14));   { 'Postfachinhalt in *Mailbox* loeschen' }
         app('STATUS',getres2(810,18));   { 'Eigenen Userstatus abfragen' }
         end;
       app('ADD',getres2(810,16));        { 'Bretter bestellen' }
@@ -2043,7 +2044,7 @@ begin
        and ((LeftStr(comm,4)='LIST') and (comm<>'LIST SYSTEME')) and (defcom=0)
     then begin
       pushhp(69);
-      if ReadJNesc(getres2(810,20),true,brk) then begin   { 'ausfÅhrliche Liste' }
+      if ReadJNesc(getres2(810,20),true,brk) then begin   { 'ausfuehrliche Liste' }
         insert(' VERBOSE',comm,cPos(' ',comm));
         comm:=comm+' *';
         end;
@@ -2125,7 +2126,7 @@ end;
 
 
 { Usenet-Sysfile aus akt. Nachricht auslesen   }
-{ BoxPar der betreffenden Box mu· geladen sein }
+{ BoxPar der betreffenden Box muss geladen sein }
 
 { This is your latest sys file entry
 
@@ -2191,6 +2192,9 @@ end;
 
 {
   $Log$
+  Revision 1.79  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.78  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 

@@ -38,7 +38,7 @@ type  stp = ^ste;
       ste = record
               inhalt : pointer;
               groesse: word;
-              adr    : pointer;    { fÅr IntegritÑts-Test }
+              adr    : pointer;    { fuer Integritaets-Test }
               next   : stp;
               last   : stp;
             end;
@@ -94,6 +94,9 @@ end;
 
 {
   $Log$
+  Revision 1.13  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.12  2002/07/25 20:43:53  ma
   - updated copyright notices
 

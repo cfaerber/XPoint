@@ -93,7 +93,8 @@ uses
   {$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF Dos32} xpdos32, {$ENDIF}
-  TypeForm;
+  TypeForm,
+  xpglobal; //not really
 
 const
   Logging: Boolean = False;
@@ -309,6 +310,9 @@ finalization
 
 {
   $Log$
+  Revision 1.33  2002/12/06 14:27:26  dodi
+  - updated uses, comments and todos
+
   Revision 1.32  2002/12/04 16:56:56  dodi
   - updated uses, comments and todos
 

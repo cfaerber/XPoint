@@ -49,6 +49,9 @@ function IsFeiertag(d:fdate):boolean;
 
 IMPLEMENTATION
 
+uses
+  xpglobal; //not really
+  
 const jahr : word = 0;
 
 
@@ -142,6 +145,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2002/12/06 14:27:26  dodi
+  - updated uses, comments and todos
+
   Revision 1.10  2002/12/04 16:56:57  dodi
   - updated uses, comments and todos
 

@@ -19,7 +19,7 @@
 }
 
 { Product Code / Versionsnummer / Diverses }
-{ fÅr ZFIDO, XP-FM, XP7 und XP7T           }
+{ fuer ZFIDO, XP-FM, XP7 und XP7T           }
 
 {$I xpdefine.inc }
 
@@ -54,6 +54,9 @@ implementation
 
 {
   $Log$
+  Revision 1.11  2002/12/06 14:27:29  dodi
+  - updated uses, comments and todos
+
   Revision 1.10  2002/07/25 20:43:56  ma
   - updated copyright notices
 

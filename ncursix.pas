@@ -36,7 +36,11 @@
   Many thanks to Ken Wright for his patches !
 }
 unit ncursix;
+
 interface
+
+uses
+  xpglobal; //not really
 
 {$WEAKPACKAGEUNIT}
 
@@ -1763,6 +1767,9 @@ end;
 
 {
   $Log$
+  Revision 1.9  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.8  2002/07/25 20:43:52  ma
   - updated copyright notices
 

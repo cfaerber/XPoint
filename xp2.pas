@@ -27,21 +27,9 @@ unit xp2;
 interface
 
 uses
-  {$IFDEF unix}
-  xplinux,
-  xpcurses,
-  {$IFDEF fpc}
-  linux,
-  {$ENDIF}
-  {$ENDIF}
-  {$IFDEF Win32} xpwin32, {$ENDIF }
-  {$IFDEF DOS32} xpdos32, {$ENDIF }
-  {$IFDEF OS2} xpos2, {$ENDIF }
-  {$IFDEF XPEasy} xpeasy, {$ENDIF }
-  sysutils,xpcfg,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
-  databaso,maske,help,printerx,lister,win2,maus2,crc,clip,resource,montage,
-  xpglobal,debug,xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,fidoglob,
-  classes, osdepend;
+  sysutils, classes,  //conflicting type names
+  keys, //taste
+  xpglobal;
 
 procedure zusatz_menue;
 procedure setaltfkeys;
@@ -86,11 +74,25 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 implementation  {-----------------------------------------------------}
 
 uses
- xp1o,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,xpreg,mime,utftools,markedlist
 {$IFDEF Kylix}
-  ,libc
-{$ENDIF}  
- {$IFDEF UnixFS},xpx{$ENDIF};
+  libc,
+{$ENDIF}
+ {$IFDEF UnixFS},xpx{$ENDIF}
+  {$IFDEF unix}
+  xplinux,
+  xpcurses,
+  {$IFDEF fpc}
+  linux,
+  {$ENDIF}
+  {$ENDIF}
+  {$IFDEF Win32} xpwin32, {$ENDIF }
+  {$IFDEF DOS32} xpdos32, {$ENDIF }
+  {$IFDEF OS2} xpos2, {$ENDIF }
+  {$IFDEF XPEasy} xpeasy, {$ENDIF }
+  xpcfg,typeform,fileio,inout,winxp,mouse,datadef,database,osdepend,
+  maske,help,lister,win2,maus2,clip,resource,montage,debug,fidoglob,
+  xp0,xp1,xp1o2,xp1input,xp1help,xpe,xp3,xp5,xp9bp,xp10,xpdatum,
+  xpconfigedit,xpnt,xpfido,xpkeys,mime,utftools,markedlist;
 
 var   zaehlx,zaehly : byte;
 
@@ -98,7 +100,7 @@ var   zaehlx,zaehly : byte;
 {$INCLUDE config.inc}
 {$ENDIF}
 
-procedure zusatz_menue;         { Zusatz-MenÅ neu aufbauen }
+procedure zusatz_menue;         { Zusatz-Menue neu aufbauen }
 var s       : string;
     i,ml    : byte;
     m1empty : boolean;
@@ -127,7 +129,7 @@ begin
         s:=s+','+hex(i+$24,3)+menue;
         ml:=max(ml,length(menue)-iif(cpos('^',menue)>0,3,2));
       end;
-  if m1empty and (s<>'') then s:=',-'+s; 
+  if m1empty and (s<>'') then s:=',-'+s;
   menu[menus]:=s;
 end;
 
@@ -151,7 +153,7 @@ begin
 end;
 
 
-procedure readmenudat;   { Liste der unsichtbaren MenÅpunkte einlesen }
+procedure readmenudat;   { Liste der unsichtbaren Menuepunkte einlesen }
 var f       : file;
     version : SmallInt;
     i,j,w   : integer;
@@ -225,7 +227,7 @@ begin
     erase(f);
   end else begin
     writeln;
-    writeln(xp_xp+' kann nicht von einem schreibgeschÅtzten Laufwerk gestartet');
+    writeln(xp_xp+' kann nicht von einem schreibgeschuetzten Laufwerk gestartet');
     writeln('werden. Kopieren Sie das Programm bitte auf Festplatte.');
     runerror:=false;
 {$IFDEF Unix}
@@ -522,7 +524,7 @@ var i  : integer;
     if _is('g2')   then ParG2:=true else
 {$IFDEF Beta } { Keine Beta-Meldung anzeigen }
     if _is('nb')   then ParNoBeta := true else
-{$ELSE } { nb Åbergehen, auch wenn nicht benîtigt }
+{$ELSE } { nb uebergehen, auch wenn nicht benîtigt }
     if _is('nb')   then else
 {$ENDIF }
     if isl('mailto:') then Par_mailto else
@@ -557,7 +559,7 @@ begin
     s:=paramstr(i);
     ParAuswerten;
   end;
-  { temporÑre Parameter-Datei }
+  { temporaere Parameter-Datei }
   if findfirst(AutoxDir+'*.par',faAnyFile,sr)=0 then repeat
     assign(t,AutoxDir+sr.name);
     ReadParfile;
@@ -764,19 +766,19 @@ begin
   if logpath='' then logpath:=ownpath
   else
     if not IsPath(logpath) then
-      trfehler(204,60);  { 'ungÅltiges Logfileverzeichnis' }
+      trfehler(204,60);  { 'ungueltiges Logfileverzeichnis' }
   if temppath='' then temppath:=ownpath
   else
     if not IsPath(temppath) then
-      trfehler(201,60);   { 'ungÅltiges TemporÑr-Verzeichnis eingestellt' }
+      trfehler(201,60);   { 'ungueltiges Temporaer-Verzeichnis eingestellt' }
   if extractpath='' then extractpath:=OwnPath
   else
     if not IsPath(extractpath) then
-      trfehler(202,60);   { 'ungÅltiges Extrakt-Verzeichnis eingestellt' }
+      trfehler(202,60);   { 'ungueltiges Extrakt-Verzeichnis eingestellt' }
   if sendpath='' then sendpath:=ownpath
   else
     if not IsPath(sendpath) then
-      trfehler(203,60);   { 'ungÅltiges Sendeverzeichnis' }
+      trfehler(203,60);   { 'ungueltiges Sendeverzeichnis' }
   editname:=sendpath+WildCard;
   TestDir(XFerDir, True);
   TestDir(JanusDir, True);
@@ -929,7 +931,7 @@ begin
       wrt(x+3,y+1,getres2(206,1));   { 'WARNUNG!' }
       wrt(x+3,y+3,reps(getres2(206,2),trim(strsrn(free div $100000,0,1))));
       wrt(x+3,y+4,reps(getres2(206,3),LeftStr(ownpath,2)));
-      wrt(x+3,y+6,getres(12));   { 'Taste drÅcken ...' }
+      wrt(x+3,y+6,getres(12));   { 'Taste druecken ...' }
       freeres;
       mon;
       errsound; errsound;
@@ -1005,7 +1007,7 @@ begin
       { 'Das Systemdatum liegt vor dem Datum des letzten Programmstarts.' }
       maddtext(3,2,getreps2(225,2,strs(maxdays)),0);
     dat:=LeftStr(date,6)+RightStr(date,2);
-    madddate(3,4,getres2(225,3),dat,false,false);   { 'Bitte bestÑtigen Sie das Datum: ' }
+    madddate(3,4,getres2(225,3),dat,false,false);   { 'Bitte bestaetigen Sie das Datum: ' }
       mhnr(92);
     zaehler[1]:=30; zaehlx:=x+wdt-6; zaehly:=y-1;
     m3s:=multi3;
@@ -1091,6 +1093,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.148  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.147  2002/08/10 18:46:57  cl
   - autoconf: install location now configurable
 

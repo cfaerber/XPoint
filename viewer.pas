@@ -25,11 +25,6 @@ unit viewer;
 
 interface
 
-uses
-  xpglobal, sysutils;
-
-
-
 type
   // Viewer for one specific message type
   TMessageViewer = class
@@ -37,7 +32,7 @@ type
     fProg: String;              // selected viewer
     fExt: String;               // file extension for selected viewer
   public
-    constructor Init;
+    constructor Init; //todo: rename into Create, conforming to classes
     procedure GetFromMimeType(const MimeType: String);
     procedure GetFromExtension(const Extension: String);
     procedure UseInternal;
@@ -50,8 +45,12 @@ type
 implementation
 
 uses
-  database, xp0, xp1, xp1o, fileio, typeform;
+  sysutils,
+  database, xp0, xp1, xp1o, fileio, typeform,
+  xpglobal;
 
+
+{ TMessageViewer }
 
 constructor TMessageViewer.Init;
 begin
@@ -77,7 +76,7 @@ begin
   begin
     fProg := dbReadNStr(mimebase,mimeb_programm);
     fExt := '.' + dbReadNStr(mimebase,mimeb_extension);
-  end else  
+  end else
     if SeekMimeType(LeftStr(MimeType, cposx('/',MimeType))+'*') then
     begin
       fProg := dbReadNStr(mimebase,mimeb_programm);
@@ -158,6 +157,9 @@ end;
 
 {
   $Log$
+  Revision 1.6  2002/12/06 14:27:27  dodi
+  - updated uses, comments and todos
+
   Revision 1.5  2002/12/02 14:04:29  dodi
   made xpmenu internal tool
 

@@ -28,12 +28,10 @@ unit ncnntp;
 interface
 
 uses
-  xpglobal,             { Nur wegen der Typendefinition }
-  ProgressOutput,       { TProgressOutput }
-  netcall,              { TNetcall }
-  ncsocket,             { TSocketNetcall }
   Classes,              { TStringList }
-  sysutils;
+  sysutils,
+  xpglobal,             { Nur wegen der Typendefinition }
+  ncsocket;             { TSocketNetcall }
 
 type
   ENNTP                 = class(ESocketNetcall);        { Allgemein (und Vorfahr) }
@@ -93,7 +91,7 @@ type
     { Holen einer Gruppenbeschreibung }
     function GroupDescription(group: string): string;
 
-    { aktuelle Gruppe ausw„hlen }
+    { aktuelle Gruppe auswaehlen }
     procedure SelectGroup(const AGroupName: String); virtual;
 
     { Message vom server holen }
@@ -120,7 +118,9 @@ type
 
 implementation
 
-uses Timer,TypeForm;
+uses
+  ProgressOutput,       { TProgressOutput }
+  Timer,TypeForm;
 
 const
   DefaultNNTPPort               = 119;
@@ -152,8 +152,10 @@ resourcestring
   res_posterror         = 'Fehler %d beim Absenden des Artikels';
   res_postmsg           = 'Verschicke Artikel %d (gesamt %.0f%%)';
 
-  res_auth              = 'Authentifikation benötigt';
+  res_auth              = 'Authentifikation benötigt';  //todo:ö
 
+
+{ TNNTP }
 
 procedure TNNTP.InitVars;
 begin
@@ -540,6 +542,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2002/12/06 14:27:31  dodi
+  - updated uses, comments and todos
+
   Revision 1.39  2002/11/14 10:14:03  ma
   - fixed: Newsgroup list sometimes not read entirely
 

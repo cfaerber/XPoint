@@ -26,22 +26,6 @@ unit xp4;
 
 interface
 
-uses xpglobal,
-{$IFDEF Win32 }
-  xpwin32,
-{$ENDIF }
-{$IFDEF unix}
-  xpcurses,
-{$ENDIF}
-{$IFDEF DOS32 }
-  xpdos32,
-{$ENDIF }
-{$IFDEF OS2 }
-  xpos2,
-{$ENDIF }
-  sysutils,typeform,fileio,inout,winxp,keys,maske,datadef,database,
-  archive,montage,maus2,resource,stack,xp0,xp1,xp1help,xp1input;
-
 
 const
   maxgl   = 150;        { auf 100 erhoeht (hd/2000-07-09) }
@@ -65,11 +49,30 @@ const
 
 implementation  {----------------------------------------------------}
 
-uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xpsendmessage,xpnetcall,xp8,
-      xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
-      xp4o3,{xpview,}xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_resend,xpmime,lister, viewer,
-      xpmakeheader, replytoall, mime,debug, 
-      addresses, addresslist, classes, xpsendmessage_rta, xpstreams;
+uses
+  sysutils,classes,
+{$IFDEF Win32 }
+  xpwin32,
+{$ENDIF }
+{$IFDEF unix}
+  xpcurses,
+{$ENDIF}
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+{$IFDEF OS2 }
+  xpos2,
+{$ENDIF }
+  typeform,fileio,inout,winxp,keys,maske,datadef,database,
+  archive,montage,maus2,resource,stack,
+  xp0,xp1,xp1help,xp1input,
+  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3ex,xp4e,xp4o,xp5,xp8,xp10,
+  xpsendmessage,xpnetcall,xpheader,lister,viewer,
+  xpe,xpconfigedit,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2,
+  xp4o3,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_resend,xpmime,
+  mime,debug,
+  addresses, addresslist, xpsendmessage_rta, xpstreams,
+  xpglobal;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
@@ -497,7 +500,7 @@ var t,lastt: taste;
 
   function forth:boolean;
   begin
-  if MsgNewfirst and ((dispmode=10) or (dispmode=11)) 
+  if MsgNewfirst and ((dispmode=10) or (dispmode=11))
     then forth:=_back else forth:=_forth;
   end;
 
@@ -695,7 +698,7 @@ var t,lastt: taste;
 
   procedure _brief_senden(c:char); forward;
   procedure Bezugsbaum; forward;
-  
+
   {$I xp4w.inc}   { Bretter/User/Nachrichten bearbeiten }
 
 
@@ -703,7 +706,7 @@ var t,lastt: taste;
 
 {$IFNDEF __undefined}
   { quote: 0=nein, 1=ja, 2=evtl. MultiQuote, 3=Indirekt, 4=Indirekt-Multi
-           10=Textdatei, 11=Binärdatei }
+           10=Textdatei, 11=Binaerdatei }
 
   procedure brief_senden(reply,pm,xposting:boolean; quote:byte);
   var sData  : TSendUUData;
@@ -798,7 +801,7 @@ var t,lastt: taste;
     end;
 
   { quote: 0=nein, 1=ja, 2=evtl. MultiQuote, 3=Indirekt, 4=Indirekt-Multi 
-           10=Textdatei, 11=Binärdatei
+           10=Textdatei, 11=Binaerdatei
   procedure brief_senden(reply,pm,xposting:boolean; quote:byte); }
   begin
     sData := nil;
@@ -1096,7 +1099,7 @@ var t,lastt: taste;
         if sData.Subject='' then sData.Subject:=ExtractFileName(fn)
         else sData.Subject:=LeftStr(ExtractFilename(fn)+' ('+sData.Subject,39)+')';
         sData.AddFile(fn,false,'');        
-      
+
         sData.DoIt(Getres(iif(quote=11,613,614)),false,false,true);        
       end else
       begin
@@ -2749,6 +2752,9 @@ end;
 
 {
   $Log$
+  Revision 1.132  2002/12/06 14:27:28  dodi
+  - updated uses, comments and todos
+
   Revision 1.131  2002/12/02 14:04:30  dodi
   made xpmenu internal tool
 

@@ -27,11 +27,9 @@ unit xpe;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,fileio,inout,keys,winxp,maus2,resource,maske, sysutils,
-  eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10;
+  keys, //taste
+  eddef,  //ECB
+  editor; //EdtProc
 
 
 const EditXkeyfunc : EdTProc = nil;
@@ -51,7 +49,7 @@ function  EditGetBetreff:string;
 function  EditKeyFunc(var t:taste):boolean;
 
 function  EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
-function  EditOverwrite(ed:ECB; fn:string):taste;   { öberschr.: J/N/Esc }
+function  EditOverwrite(ed:ECB; fn:string):taste;   { Ueberschr.: J/N/Esc }
 procedure EditMessage(txt:string; error:boolean);
 procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
 function  EditFindfunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
@@ -62,7 +60,14 @@ procedure Editor_options;
 
 implementation  {--------------------------------------------------------}
 
-uses  xp1,xpsendmessage;
+uses
+  sysutils,
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  typeform,fileio,inout,maus2,resource,maske,
+  xp0,xp1,xp1o,xp1help,xp1input, xp10, xpkeys,xpsendmessage,
+  xpglobal;
 
 const
       doautosave: boolean = false;
@@ -70,7 +75,7 @@ const
 
 var
       edbetreff : string;
-      edbmaxlen : Integer;      { maximale BetrefflÑnge }
+      edbmaxlen : Integer;      { maximale Betrefflaenge }
       EdCfg     : EdConfig;
 
 
@@ -125,7 +130,7 @@ begin
   freeres;
 end;
 
-function EditOverwrite(ed:ECB; fn:string):taste;   { öberschr.: J/N/Esc }
+function EditOverwrite(ed:ECB; fn:string):taste;   { Ueberschr.: J/N/Esc }
 var brk : boolean;
 begin
   if Overwrite(fn,false,brk) then EditOverwrite:=_jn_[1]
@@ -202,8 +207,8 @@ begin
     ec:=absatzendezeichen;
     maddstring(3,4,getres2(2508,3),ec,1,1,range(#1,#254));  { 'Absatzendezeichen' }
     mappsel(false,'˙˘'#20'˘˛˘Æ˘'#17'˘ ');
-    maddbool(3,6,getres2(2508,4),AutoIndent);             { 'autom. einrÅcken' }
-    maddbool(3,7,getres2(2508,5),PersistentBlocks);       { 'persistente Blîcke' }
+    maddbool(3,6,getres2(2508,4),AutoIndent);             { 'autom. einruecken' }
+    maddbool(3,7,getres2(2508,5),PersistentBlocks);       { 'persistente Bloecke' }
     maddbool(3,8,getres2(2508,6),QuoteReflow);            { 'Quote-Reflow' }
     readmask(brk);
     enddialog;
@@ -386,7 +391,7 @@ begin
         msgbox(51,nn+6,getres2(2501,0),x,y);     { 'Hinweis' }
         for i:=1 to nn-1 do
           mwrt(x+3,y+1+i,getreps2(2501,i+1,strs(MaxSigsize)));
-        mwrt(x+3,y+2+nn,getres2(2501,nn+1));      { 'ZurÅck zum Editor?' }
+        mwrt(x+3,y+2+nn,getres2(2501,nn+1));      { 'Zurueck zum Editor?' }
         errsound;
         a:='';
         n:=readbutton(x+3,y+8,2,getres2(2501,6),1,true,a);   { '  ^Ja  , ^Nein ' }
@@ -502,6 +507,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2002/12/06 14:27:29  dodi
+  - updated uses, comments and todos
+
   Revision 1.38  2002/08/26 15:29:26  mk
   - fixed incorrect calculation of with of EditBetreff dialog box
 
