@@ -4,6 +4,8 @@
 
     Copyright (C) 2003 OpenXP team (www.openxp.de)
     Copyright (C) 2003 Claus F"arber.
+
+    Derieved from parts of bogofilter
     Copyright (C) 2002 Eric S. Raymond et. al.
 
     Credits:
@@ -327,11 +329,15 @@ var
   Words:   TWordList;
   Word:    string;
   Count:   integer;
-  GoodFld,BadFld,WordFld: integer;
+  GoodFld,BadFld,WordFld,DatFld: integer;
   d:       DB;
   GoodCount,GoodOld: integer;
   BadCount, BadOld: integer;
+  Dat, DatOld: integer;
 
+var t,m,j   : smallword;
+    h,mm,s,ss: smallword;
+    
 begin
   if OldSpamStatus=SpamStatus then exit;
   dbOpen(d,SpamFltFile,1);
@@ -339,6 +345,7 @@ begin
   GoodFld := dbGetFeldNr(d,'goodcnt');
   BadFld  := dbGetFeldNr(d,'badcnt');
   WordFld  := dbGetFeldNr(d,'word');
+  DatFld  := dbGetFeldNr(d,'datum');
   Words := make_wordlist(Content);
   try
     Words.Restart;
@@ -375,8 +382,13 @@ begin
       if GoodCount > MaxInt div 2 then GoodCount := MaxInt div 2;
       if BadCount  > MaxInt div 2 then BadCount  := MaxInt div 2;
 
+      DatOld := dbReadIntN(d,DatFld);
+      Dat := Trunc(Double(Now) * 24); // date + hours only
+      if (DatOld < Dat)and(DatOld<>0) then Dat := (DatOld + Dat +1) div 2;
+
       if GoodCount<>GoodOld then dbWriteN(d,GoodFld,GoodCount);
       if BadCount <>BadOld  then dbWriteN(d,BadFld, BadCount);
+      if Dat      <>DatOld  then dbWriteN(d,DatFld, Dat);
     end;
 
   finally
@@ -698,6 +710,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2003/02/07 16:13:02  cl
+// - added field ``DATUM'' to SPAMFLT.DB1
+//
 // Revision 1.1  2003/01/28 10:42:25  cl
 // - Added statistical SPAM filter
 //

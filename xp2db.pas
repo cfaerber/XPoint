@@ -233,12 +233,13 @@ const
   );
 
 { SPAMFLT: Spamfilter }
-  SpamDbFieldCount = 3;
+  SpamDbFieldCount = 4;
   SpamDbFields: array[0..SpamDbFieldCount] of dbFeldTyp = (
     (fname:'INT_NR';    ftyp:dbTypeInt;     fsize:4; fnlen:11),
     (fname:'Word';      ftyp:dbTypeString;  fsize:7),
     (fname:'GoodCnt';   ftyp:dbTypeInt;     fsize:4; fnlen:10),
-    (fname:'BadCnt';    ftyp:dbTypeInt;     fsize:4; fnlen:10)
+    (fname:'BadCnt';    ftyp:dbTypeInt;     fsize:4; fnlen:10),
+    (fname:'Datum';     ftyp:dbTypeInt;     fsize:4; fnlen:10)
   );
 
 procedure GetFieldNumbers;
@@ -1562,6 +1563,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2003/02/07 16:13:02  cl
+  - added field ``DATUM'' to SPAMFLT.DB1
+
   Revision 1.53  2003/01/28 10:42:25  cl
   - Added statistical SPAM filter
 

@@ -278,6 +278,7 @@ SPAMFLT: Wortliste fuer statistischen Spamfilter (ab OpenXP/32 3.9.5)
  1. WORD        String(7)   i    Wort (Grossbuchstaben, max. 7 Zeichen)
  2. GOODCNT	Longint		 Anzahl in "guten" Nachrichten (Ham)
  3. BADCNT	Longint		 Anzahl in "schlechten" Nachrichten (Spam)
+ 4. DATUM	Longint          Datum (spezielles Format)
 
 Indizes:
 
