@@ -31,19 +31,37 @@ type TRawIPStream = Class(TCommStream)
 	function  GetDriverInfo: String;override;
         procedure PurgeOutBuffer; override;
         procedure PurgeInBuffer; override;
-        private
+
+      private
         procedure SetErrorStr(prefix: string);
         procedure _ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); virtual;
         function  _CharCount: Integer; virtual;
-        private
+      private
         SHandle: LongInt; 
 	SOpened: Boolean;
 	SBuffer: packed array[1..8192] of char;
 	SBufBeg,SBufEnd: Longint;
+
+      private  
+        RemoteAddr,LocalAddr: {$IFDEF WIN32} TSockAddrIn; {$ELSE} TInetSockAddr; {$ENDIF}
+
+      protected
+	function GetRemoteIP  : Cardinal; virtual;
+	function GetRemotePort: Integer;  virtual;
+	function GetLocalIP   : Cardinal; virtual;
+	function GetLocalPort : Integer;  virtual;
+      public
+	property RemoteIP  : Cardinal read GetRemoteIP;
+	property RemotePort: Integer  read GetRemotePort;
+	property LocalIP   : Cardinal read GetLocalIP;
+	property LocalPort : Integer  read GetLocalPort;
      end; { object tRawIPObj }
 
 {
   $Log$
+  Revision 1.6  2001/08/04 14:23:43  cl
+  - Show IP address:port in progress window
+
   Revision 1.5  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

@@ -92,6 +92,7 @@ end; { func. OpenKeep }
   function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
   function inet_addr(Name:PChar): Cardinal; cdecl; external;
   function htons(host:Word): Word; cdecl; external;
+  function ntohs(host:Word): Word; cdecl; external;
 {$ENDIF}
 
 function TRawIPStream.ConnectIP(DestHost: String; DestPort:Integer): Boolean;
@@ -109,6 +110,7 @@ var
     DestIP:   array [0..15] of Cardinal;
     DestIPnr: Integer;
     C:        Integer;
+    idummy:   Integer;
 begin
   ConnectIP:=False;
   SOpened:=False;
@@ -151,7 +153,13 @@ begin
     addr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF} := DestIP[c];
 
     if {$IFDEF WIN32}0=WinSock{$ELSE}sockets{$ENDIF}.Connect(SHandle,Addr,SizeOf(Addr)) then
-    begin SOpened:=True; ConnectIP:=True; exit; end
+    begin 
+      SOpened:=True;
+      IDummy:=Sizeof(LocalAddr);  getsockname(SHandle,LocalAddr, IDummy);
+      IDummy:=Sizeof(RemoteAddr); getpeername(SHandle,RemoteAddr,IDummy);
+      ConnectIP:=True;
+      exit;
+    end
   end;
 
   { Could not connect to any of the addresses :-( }
@@ -489,8 +497,39 @@ end; { func. ReadyToSend }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
+function TRawIPStream.GetRemoteIP:   Cardinal; 
+begin 
+  Result := RemoteAddr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF}; 
+end;
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+function TRawIPStream.GetRemotePort: Integer;  
+begin 
+  Result := NToHS(RemoteAddr.{$IFDEF WIN32}sin_port{$ELSE}port{$ENDIF}); 
+end;
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+function TRawIPStream.GetLocalIP:   Cardinal; 
+begin 
+  Result := LocalAddr.{$IFDEF WIN32}sin_addr.s_addr{$ELSE}addr{$ENDIF}; 
+end;
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
+function TRawIPStream.GetLocalPort: Integer;  
+begin 
+  Result := NToHS(LocalAddr.{$IFDEF WIN32}sin_port{$ELSE}port{$ENDIF}); 
+end;
+
+(*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
+
 {
   $Log$
+  Revision 1.10  2001/08/04 14:23:43  cl
+  - Show IP address:port in progress window
+
   Revision 1.9  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

@@ -62,7 +62,7 @@ type
 { ---------------------------- } IMPLEMENTATION { ---------------------------- }
 
 uses typeform, zmodem, progressoutput, resource, sysutils, debug,
-xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math,
+xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math, ipaddr,
 {$IFDEF NCRT}xpcurses{$ELSE}{$IFDEF Win32}xpwin32{$ELSE}
 {$IFDEF OS2}xpos2{$ELSE}xpdos32{$ENDIF}{$ENDIF},crt{$ENDIF};
 
@@ -332,14 +332,27 @@ end;
 
 function TUUCPNetcall.PerformNetcall: Integer;
 var pprot: TUUCProtocol;
+    ip:    TIP;
 begin
   pprot:=nil;
 
   if ProgressOutput is TProgressOutputWindow then
     if Phonenumber<>'' then
-      TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+Phonenumber+')' (*
-    else if CommObj is TRawIPObj then
-      TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+TRawIPObj(CommObj).Hostname+', '+TRawIPObj(CommObj).IPAddr+')' *);
+    begin
+      Log('=','Connected with: '+Phonenumber);
+      TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+Phonenumber+')'
+    end
+    else if CommObj is TRawIPStream then 
+    begin
+      ip := TIP.Create;
+      ip.Raw := TRawIPStream(CommObj).RemoteIP;
+      ip.Resolve;
+      TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+
+	ip.AsString+':'+StrS(TRawIPStream(CommObj).RemotePort)+')';
+      Log('=','Connected with: '+
+	ip.AsString+', Port: '+StrS(TRawIPStream(CommObj).RemotePort));
+      ip.Free;
+    end;
 
   try
     case InitHandshake of
@@ -1108,6 +1121,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/08/04 14:23:43  cl
+  - Show IP address:port in progress window
+
   Revision 1.11  2001/08/03 11:44:10  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 
