@@ -239,6 +239,7 @@ ifeq ($(OS),dos32)
 
 UNITEXT = .ppu
 OBJEXT = .o
+LNKEXT = .a
 LIBPREF = 
 LIBEXT = .a
 
@@ -248,6 +249,7 @@ ifeq ($(OS),linux)
 
 UNITEXT = .ppu
 OBJEXT = .o
+LNKEXT = .a
 LIBPREF = lib
 LIBEXT = .a
 
@@ -257,6 +259,7 @@ ifeq ($(OS),os2)
 
 UNITEXT = .ppu
 OBJEXT = .o
+LNKEXT = .a
 LIBPREF = lib
 LIBEXT = .a
 
@@ -266,6 +269,7 @@ ifeq ($(OS),win32)
 
 UNITEXT = .ppw
 OBJEXT = .ow
+LNKEXT = .aw
 LIBPREF = lib
 LIBEXT = .aw
 
@@ -287,25 +291,28 @@ endif
 ifeq ($(COMPILER),vpc)
 PC = vpc
 
+VPPREFIX ?= \vp21
+
 ifeq ($(DEBUG),yes)
-PFLAGS += -DDEBUG -UObjCOM
+PFLAGS += -DDEBUG -$D+ -$Q- -$R- -$S- -$V+ -M -U"$(VPPREFIX)$(SEP)units.%p;ObjCOM" -L"$(VPPREFIX)$(SEP)lib.%p;$(VPPREFIX)$(SEP)units.%p" -R"$(VPPREFIX)$(SEP)res.%p"
 else
-PFLAGS += -UObjCOM
+PFLAGS += -$$SmartLink+ -M -U"$(VPPREFIX)$(SEP)units.%p;ObjCOM" -L"$(VPPREFIX)$(SEP)lib.%p;$(VPPREFIX)$(SEP)units.%p" -R"$(VPPREFIX)$(SEP)res.%p"
 endif
 
-UNITEXT = .ppu
-OBJEXT = .o
-LIBPREF = lib
-LIBEXT = .a
+UNITEXT = .vpi
+OBJEXT = .obj
+LNKEXT = .lnk
+LIBPREF =
+LIBEXT = .lib
 
 PF_dos32 = 
 PF_os2 = -CO
 PF_win32 = -CW
 PF_linux = 
-PF_386 = 
-PF_486 = 
-PF_586 = 
-PF_686 = 
+PF_386 = -$$G3+
+PF_486 = -$$G4+
+PF_586 = -$$G5+
+PF_686 = -$$G5+
 
 endif
 
@@ -366,7 +373,7 @@ PFLAGS += $(PF_$(CPU))
 
 RARFLAGS = a -m5 -zfile_id.diz
 
-all: $(COMPBINFILES) $(RESFILES) documentation
+all: objcomunit $(COMPBINFILES) $(RESFILES) documentation
 
 # Programme
 
@@ -2266,6 +2273,11 @@ endif
 zmodem$(UNITEXT): zmodem.pas crc$(UNITEXT) debug$(UNITEXT) timer$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
+# ObjCOM-Unit
+
+objcomunit: debug$(UNITEXT) timer$(UNITEXT)
+	$(MAKE) -C ObjCOM
+
 # Sprachmodule
 
 $(RESFILES): %.res: %.rq rc$(EXEEXT)
@@ -2375,7 +2387,7 @@ localclean: $(patsubst %,clean_%,$(COMPBINFILES)) \
 $(patsubst %,clean_%,$(COMPBINFILES)): clean_%$(EXEEXT):
 	-$(RM) $*$(EXEEXT)
 	-$(RM) $*$(OBJEXT)
-	-$(RM) $*$(LIBEXT)
+	-$(RM) $*$(LNKEXT)
 
 $(patsubst %,clean_%,$(UNITS)): clean_%:
 	-$(RM) $*$(UNITEXT)
@@ -2443,6 +2455,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.20  2000/10/11 21:51:50  fe
+# Korrekturen fuer Virtual Pascal.
+#
 # Revision 1.19  2000/10/10 20:00:39  fe
 # Restliche GNU-Targets ergaenzt.
 #

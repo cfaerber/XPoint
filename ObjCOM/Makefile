@@ -86,15 +86,16 @@ ifeq ($(COMPILER),fpc)
 PC = ppc386
 
 ifeq ($(DEBUG),yes)
-PFLAGS += -Ct -dDEBUG -Sg -pg
+PFLAGS += -Ct -dDEBUG -Sg -pg -Fu..
 else
-PFLAGS += -CX -O2 -Sg
+PFLAGS += -CX -O2 -Sg -Fu..
 endif
 
 ifeq ($(OS),dos32)
 
 UNITEXT = .ppu
 OBJEXT = .o
+LNKEXT = .a
 LIBPREF = 
 LIBEXT = .a
 
@@ -104,6 +105,7 @@ ifeq ($(OS),linux)
 
 UNITEXT = .ppu
 OBJEXT = .o
+LNKEXT = .a
 LIBPREF = lib
 LIBEXT = .a
 
@@ -113,6 +115,7 @@ ifeq ($(OS),os2)
 
 UNITEXT = .ppu
 OBJEXT = .o
+LNKEXT = .a
 LIBPREF = lib
 LIBEXT = .a
 
@@ -122,6 +125,7 @@ ifeq ($(OS),win32)
 
 UNITEXT = .ppw
 OBJEXT = .ow
+LNKEXT = .aw
 LIBPREF = lib
 LIBEXT = .aw
 
@@ -136,32 +140,33 @@ PF_486 = -Op1
 PF_586 = -Op2
 PF_686 = -Op3
 
-PFLAGS += -Fu..
-
 endif
 
 ifeq ($(COMPILER),vpc)
 PC = vpc
 
+VPPREFIX ?= \vp21
+
 ifeq ($(DEBUG),yes)
-PFLAGS += -DDEBUG -UObjCOM
+PFLAGS += -DDEBUG -$D+ -$Q- -$R- -$S- -$V+ -M -U"$(VPPREFIX)$(SEP)units.%p;.." -L"$(VPPREFIX)$(SEP)lib.%p;$(VPPREFIX)$(SEP)units.%p" -R"$(VPPREFIX)$(SEP)res.%p"
 else
-PFLAGS += -UObjCOM
+PFLAGS += -$$SmartLink+ -M -U"$(VPPREFIX)$(SEP)units.%p;.." -L"$(VPPREFIX)$(SEP)lib.%p;$(VPPREFIX)$(SEP)units.%p" -R"$(VPPREFIX)$(SEP)res.%p"
 endif
 
-UNITEXT = .ppu
-OBJEXT = .o
-LIBPREF = lib
-LIBEXT = .a
+UNITEXT = .vpi
+OBJEXT = .obj
+LNKEXT = .lnk
+LIBPREF =
+LIBEXT = .lib
 
 PF_dos32 = 
 PF_os2 = -CO
 PF_win32 = -CW
 PF_linux = 
-PF_386 = 
-PF_486 = 
-PF_586 = 
-PF_686 = 
+PF_386 = -$$G3+
+PF_486 = -$$G4-
+PF_586 = -$$G5-
+PF_686 = -$$G5-
 
 endif
 
@@ -208,7 +213,7 @@ clean: $(patsubst %,clean_%,$(BIN)) $(patsubst %,clean_%,$(UNITS))
 $(patsubst %,clean_%,$(BIN)): clean_%:
 	-$(RM) $*$(EXEEXT)
 	-$(RM) $*$(OBJEXT)
-	-$(RM) $*$(LIBEXT)
+	-$(RM) $*$(LNKEXT)
 
 $(patsubst %,clean_%,$(UNITS)): clean_%:
 	-$(RM) $*$(UNITEXT)
@@ -223,6 +228,9 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.7  2000/10/11 21:50:46  fe
+# Korrekturen fuer Virtual Pascal.
+#
 # Revision 1.6  2000/10/08 18:06:06  fe
 # Targets distclean, mostlyclean und maintainer-clean ergaenzt.
 #
