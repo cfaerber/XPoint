@@ -923,41 +923,51 @@ begin
     maddbool (3,9,getres2(261,9),IgCTS);            { 'CTS ignorieren' }
     maddbool (28,8,getres2(261,17),UseRTS);          { 'RTS verwenden'  }
     maddbool (28,9,getres2(261,10),Ring);            { 'RING-Erkennung' }
-
-{$else}
+{$endif}
+{$ifdef Win32}
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
-    if Cport<$1000 then pstr:=LowerCase(hex(Cport,3))else pstr:=LowerCase(hex(Cport,4));
-//    if not fossildetect then fossil:=false;
-    maddbool  (3,2,getres2(261,13),fossil); mhnr(960);  { 'FOSSIL-Treiber verwenden' }
-    mset1func(testfossil);
-    maddstring(3,4,getres2(261,2),pstr,4,4,hexchar); mhnr(290);   { 'Port-Adresse (Hex) ' }
-    mappsel(false,'3f8ù2f8ù3e8ù2e8');
-    if fossil then MDisable;
-    maddint  (33,4,getres2(261,3),Cirq,3,2,0,15);    { 'IRQ-Nummer ' }
-    if fossil then MDisable;
-    maddstring(3,6,getres2(261,4),MInit,32,200,'');     { 'Modem-Init ' }
+    maddstring(3,6,getres2(261,4),MInit,32,200,''); mhnr(292);     { 'Modem-Init ' }
     mappsel(false,'ATZùATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1ùATZ\\ATX3');
-    {Weitere Optionen eingefuegt MW 04/2000}
     maddstring(3,7,getres2(261,5),MExit,32,200,'');     { 'Modem-Exit ' }
     maddstring(3,8,getres2(261,15),MDial,32,100,'');    { 'W„hlbefehl ' }
     mappsel(false,'ATDTùATDPùATDT0WùATDP0W');
     maddstring(3,9,getres2(261,19),MCommInit,32,100,'');    { 'Comminit   ' }
+    mappsel(false,'Serial Port:'+strs(nr)+' Speed:115200');
+    maddbool (3,11,getres2(261,16),postsperre); { 'postkompatible W„hlpause' }
+{$endif}
+{$ifdef DOS32}
+    dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
+//    if not fossildetect then fossil:=false;
+//    maddbool  (3,2,getres2(261,13),fossil); mhnr(960);  { 'FOSSIL-Treiber verwenden' }
+//    mset1func(testfossil);
+//    maddstring(3,4,getres2(261,2),pstr,4,4,hexchar); mhnr(290);   { 'Port-Adresse (Hex) ' }
+//    mappsel(false,'3f8ù2f8ù3e8ù2e8');
+//    if fossil then MDisable;
+//    maddint  (33,4,getres2(261,3),Cirq,3,2,0,15);    { 'IRQ-Nummer ' }
+//    if fossil then MDisable;
+    maddstring(3,6,getres2(261,4),MInit,32,200,'');  mhnr(292);   { 'Modem-Init ' }
+    mappsel(false,'ATZùATZ\\AT S0=0 Q0 E1 M1 V1 X4 &C1ùATZ\\ATX3');
+    maddstring(3,7,getres2(261,5),MExit,32,200,'');     { 'Modem-Exit ' }
+    maddstring(3,8,getres2(261,15),MDial,32,100,'');    { 'W„hlbefehl ' }
+    mappsel(false,'ATDTùATDPùATDT0WùATDP0W');
+    maddstring(3,9,getres2(261,19),MCommInit,32,100,'');    { 'Comminit   ' }
+    if Cport<$1000 then pstr:=LowerCase(hex(Cport,3))else pstr:=LowerCase(hex(Cport,4));
     mappsel(false,'Serial Port:'+strs(nr)+' Speed:115200ùSerial IO:'+pstr+' IRQ:'+strs(Cirq)+
                   ' Speed:115200ùFossil Port:'+strs(nr)+' Speed:115200');
     maddbool (3,11,getres2(261,16),postsperre); { 'postkompatible W„hlpause' }
-    maddbool (3,12,getres2(261,8),IgCD);             { 'CD ignorieren' }
-    maddbool (3,13,getres2(261,9),IgCTS);            { 'CTS ignorieren' }
-    maddbool (3,14,getres2(261,17),UseRTS);          { 'RTS verwenden'  }
-    if fossil then mdisable;
-    maddbool(28,12,getres2(261,10),Ring);            { 'RING-Erkennung' }
-      mhnr(961);
-    maddbool(28,13,getres2(261,11),u16550);          { '16550A-FIFO'    }
+//    maddbool (3,12,getres2(261,8),IgCD);             { 'CD ignorieren' }
+//    maddbool (3,13,getres2(261,9),IgCTS);            { 'CTS ignorieren' }
+//    maddbool (3,14,getres2(261,17),UseRTS);          { 'RTS verwenden'  }
+//    if fossil then mdisable;
+//    maddbool(28,12,getres2(261,10),Ring);            { 'RING-Erkennung' }
+//    mhnr(961);
+//    maddbool(28,13,getres2(261,11),u16550);          { '16550A-FIFO'    }
 //    mset1func(SetTrigger);
 //    msetvfunc(TestFifo);
-    if fossil then mdisable;
-    maddint (28,14,getres2(261,18),tlevel,3,2,2,14); { 'FIFO-Triggerlevel' }
-    mappsel(true,'2ù4ù8ù14');
-    if fossil or not u16550 then MDisable;
+//    if fossil then mdisable;
+//    maddint (28,14,getres2(261,18),tlevel,3,2,2,14); { 'FIFO-Triggerlevel' }
+//    mappsel(true,'2ù4ù8ù14');
+//    if fossil or not u16550 then MDisable;
 {$endif}
     readmask(brk);
     if not brk and mmodified then
@@ -1524,6 +1534,9 @@ end;
 
 {
   $Log$
+  Revision 1.114  2002/01/04 19:39:00  ma
+  - cleaned up Config/Modem a bit
+
   Revision 1.113  2001/11/01 08:25:52  mk
   - allow RTA menu in msgoptions when client and pop3, nntp and imap-boxes are available
 
