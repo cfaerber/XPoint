@@ -784,7 +784,7 @@ var RTAEmpfList : TRTAEmpfaengerList;
     List.SetSize(x + 1, x + 63, y + 1, y + h);
     listboxcol(List);
     List.SetArrows(x,y+1,y+h,col.colselrahmen,col.colselrahmen,'³');
-    List.StartPos := iif(RTAEmpfaengerVorhanden, iif (RTAStandard, 1, 3), 2);
+    List.StartPos := iif(RTAEmpfaengerVorhanden, iif (RTAStandard, 0, 2), 1);
 again:
     pushhp (3000);
     brk := List.Show;
@@ -980,6 +980,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2001/12/09 21:27:41  mk
+  - changed default position of selbar
+
   Revision 1.24  2001/12/09 14:17:36  mk
   - fixed little bug: some to adresses where cut at char 91
 
