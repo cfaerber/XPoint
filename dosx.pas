@@ -29,11 +29,8 @@ uses
   xpglobal, 
 {$ifdef NCRT}
   oCrt,
-{$else}
-  crt,
 {$endif}
-  dos, 
-  typeform;
+  dos;
 
 function  GetDrive:char;
 function  dospath(d:byte):pathstr;
@@ -440,6 +437,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/04/30 15:37:30  mk
+  - crt-Unit aus uses entfernt
+
   Revision 1.14  2000/04/29 16:19:45  hd
   Linux-Anpassung
 
