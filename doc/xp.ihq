@@ -3542,6 +3542,16 @@ Diese Einstellung gilt auch fr den Editor.
 <<[x]>> -> Der Lister kann durch Drcken der <<Return->>
        Taste verlassen werden.
 @
+8062
+<<[x]>> -> Uhranzeige beim Vollbild-Lister aktivieren.
+       Die Uhr wird am rechten Rand der obersten
+       Textzeile eingeblendet.
+
+       Dieser Schalter gilt nicht, wenn mit dem 
+       Kommandozeilen-Parameter /W2 die h”chste 
+       Stufe der Rechenzeitfreigabe aktiviert wurde.    
+       
+@
 240
 Hier k”nnen Sie angeben, bis zu welcher Gr”áe von
 Ihnen verschickte Bin„rnachrichten komplett in XP

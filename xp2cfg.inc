@@ -487,6 +487,7 @@ begin
   MinMB:=4;
   AskQuit:=false;
   ListVollbild:=true;
+  ListUhr:=true;
   ListEndCR:=false;
   ListWrap:=true;
   with unpacker^ do begin
@@ -761,6 +762,7 @@ begin
   writeln(t,'Lister=',VarLister);
   writeln(t,'ListerKB=',listerkb);
   writeln(t,'ListVollbild=',jnf(listvollbild));
+  writeln(t,'ListUhr=',jnf(ListUhr));
   writeln(t,'ListEndCR=',jnf(listendcr));
   writeln(t,'ListWrap=',jnf(listwrap));
   writeln(t,'Editor=',VarEditor);
@@ -1344,6 +1346,7 @@ begin
           getw(su,  'MinMB',minmb) or
           getx(su,  'AskQuit',askquit) or
           getx(su,  'ListVollbild',listvollbild) or
+          getx(su,  'ListUhr',listuhr) or
           getx(su,  'ListEndCR',listendcr) or
           gets(s,su,'UnARC',unpacker^.unarc,50) or
           gets(s,su,'UnLZH',unpacker^.unlzh,50) or
@@ -1605,6 +1608,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/03/25 11:46:10  jg
+  - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
+  - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr
+
   Revision 1.19  2000/03/24 02:20:17  oh
   - Schalter Config/Anzeige/Hilfen: Feldtausch in Listen eingefuegt
 

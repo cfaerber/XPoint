@@ -449,21 +449,24 @@ procedure listoptions;
 var brk : boolean;
     x,y : byte;
 begin
-  dialog(ival(getres2(255,0)),15,getres2(255,1),x,y);    { 'Lister' }
+  dialog(ival(getres2(255,0)),16,getres2(255,1),x,y);    { 'Lister' }
   maddbool(3,2,getres2(255,4),listvollbild);   { 'interner Lister - Vollbild' }
     mhnr(232);
-  maddbool(3,3,getres2(255,5),listwrap);       { 'Wortumbruch in Spalte 80' }
-  maddbool(3,4,getres2(255,6),KomArrows);      { 'Kommentarpfeile anzeigen' }
-  maddbool(3,5,getres2(255,7),ListFixedHead);  { 'feststehender Nachrichtenkopf' }
-  maddbool(3,7,getres2(255,8),ConvISO);        { 'ISO-Umlaute konvertieren' }
-  maddbool(3,8,getres2(255,9),ListHighlight);  { 'farbliche *Hervorhebungen*' }
-  maddbool(3,9,getres2(255,12),QuoteColors);   { 'verschiedenfarbige Quoteebenen' }
+  maddbool(3,3,getres2(255,14),listuhr);        { 'interner Lister - Uhr bei Vollbild' }  
+    mhnr(8062);
+  maddbool(3,4,getres2(255,5),listwrap);       { 'Wortumbruch in Spalte 80' }
+    mhnr(233);
+  maddbool(3,5,getres2(255,6),KomArrows);      { 'Kommentarpfeile anzeigen' }
+  maddbool(3,6,getres2(255,7),ListFixedHead);  { 'feststehender Nachrichtenkopf' }
+  maddbool(3,8,getres2(255,8),ConvISO);        { 'ISO-Umlaute konvertieren' }
+  maddbool(3,9,getres2(255,9),ListHighlight);  { 'farbliche *Hervorhebungen*' }
+  maddbool(3,10,getres2(255,12),QuoteColors);   { 'verschiedenfarbige Quoteebenen' }
     mhnr(8060);
-  maddbool(3,11,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
+  maddbool(3,12,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
     mhnr(238);
-  maddbool(3,12,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
+  maddbool(3,13,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
   { 22.01.2000 robo }
-  maddbool(3,14,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
+  maddbool(3,15,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
     mhnr(8061);
   { /robo }
   freeres;

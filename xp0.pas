@@ -842,6 +842,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        MinMB        : smallword;
        AskQuit      : boolean;
        ListVollbild : boolean;       { Vollbild bei internem Lister }
+       ListUhr      : Boolean;       { Uhr bei Vollbildlister }   
        ListEndCR    : boolean;       { internen Lister mit <cr> beenden }
        ListWrap     : boolean;
        FKeys        : array[0..3] of fkeyp;
@@ -1085,6 +1086,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.16  2000/03/25 11:46:09  jg
+  - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
+  - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr
+
   Revision 1.15  2000/03/24 04:15:22  oh
   - PGP 6.5.x Unterstuetzung
 

@@ -316,13 +316,18 @@ begin
   else begin
     if savescr then sichern(p);
     lfirst:=iif(listvollbild,1,4); lofs:=0;
-    if listvollbild then begin                      { Im Volbildlister : }
-      if listmsg and ListFixedhead then begin       { Wenn fester Header und Msg-Lister }
-        dphb:=dphback;                              { dann Uhr aktiv mit Headerfarbe } 
-        dphback:=col.collistheader;
-        end 
-      else m2t:=false;                              { Ansonsten Uhr aus } 
-      end;
+    if listvollbild then begin                      { Bei Vollbild-lister : }
+      if not listmsg or not listuhr then m2t:=false { Uhr nur im Message Lister... }   
+      else begin      
+        dphb:=dphback;
+        if ListFixedhead then                      {   Wenn fester Header }
+          dphback:=col.collistheader               {   dann Uhr aktiv mit Headerfarbe } 
+        else begin
+          dphback:=col.colliststatus;              {   bei freiem Header }
+          timey:=2;                                {   Uhr in Zeile 2 und Statuszeilenfarbe}
+          end;                                    
+        end;
+      end;   
     if ListMsg and ListFixedHead then
       ShowMsgHead;
     openlist(1,iif(_maus and listscroller,79,80),lfirst,
@@ -357,8 +362,11 @@ begin
     list(brk);
     pophp;
     ListMakros:=oldm;
-    if listvollbild and ListMsg and Listfixedhead then dphback:=dphb; {Uhrfarbe reseten}
-    m2t:=resetclock;
+    if listvollbild and listuhr and ListMsg then begin
+     dphback:=dphb;                        {Uhrfarbe reseten}
+     if not Listfixedhead then timey:=1;   {Und evtl. Position}
+     end;  
+   m2t:=true;
     if savescr then holen(p);
     closelist;
     end;
@@ -464,6 +472,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2000/03/25 11:46:10  jg
+  - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
+  - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr
+
   Revision 1.16  2000/03/23 15:47:23  jg
   - Uhr im Vollbildlister aktiv
     (belegt jetzt 7 Byte (leerzeichen vorne und hinten)

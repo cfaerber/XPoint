@@ -305,10 +305,8 @@ begin
 
     if upcase(c) = 'O' then                                   { 'O' fuer Lister }
     begin   
-      if listvollbild and not Listfixedhead  { bei Vollbild ohne Festen Nachrichtenkopf }                  
-       then resetclock:=false;               { Uhr abschalten } 
       ShowHeader;                                               
-      resetclock:=true;
+      ex(5);
       end;
     end;
 
@@ -958,6 +956,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/03/25 11:46:10  jg
+  - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
+  - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr
+
   Revision 1.29  2000/03/23 15:47:23  jg
   - Uhr im Vollbildlister aktiv
     (belegt jetzt 7 Byte (leerzeichen vorne und hinten)

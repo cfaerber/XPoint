@@ -37,8 +37,6 @@ const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
       Errorlevel : word    = 0;
       miscbase   : DB      = nil;       { wird bei Shell geschlossen }
       menurestart: boolean = false;     { fÅr Config-MenÅ            }
-      resetclock : boolean = true;      { Uhr aktivieren beim Beenden von Listfile }
-                                        { Benoetigt fuer xp1o.pas - "O" aus lister }  
 
 type mprec     = record
                    mstr    : string[30];
@@ -2156,6 +2154,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/03/25 11:46:09  jg
+  - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
+  - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr
+
   Revision 1.21  2000/03/25 09:03:56  mk
   - xdelay jetzt komplett entfernt
 
