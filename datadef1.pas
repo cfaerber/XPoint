@@ -29,7 +29,7 @@ const   db_magic  = 'DB1'^Z;
         maxifelder= 7;        { maximale Anzahl Felder in einem Ind.-Key }
                               { fÅr mehr ist SchlÅssel-Funktion nîtig    }
         dbdMaxSize= 51;
-        maxcache  = 50;       { maximale Index-Cacheseiten }
+        maxcache  = 25;       { maximale Index-Cacheseiten }
 
 
 type    proctype  = procedure;
@@ -219,6 +219,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.3  2001/08/12 11:38:24  mk
+  - indexcache von 50 auf 25 verkleinert
+
   Revision 1.7.2.2  2000/11/01 10:36:36  mk
   - dbEnableIndexCache und dbDisableIndexCache hinzugefuegt
 
