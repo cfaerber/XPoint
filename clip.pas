@@ -43,7 +43,7 @@ const
 implementation  { ---------------------------------------------------- }
 
 uses
-  fileio, typeform;
+  fileio, typeform, crt;
 
 const
   Multiplex = $2f;
@@ -362,9 +362,15 @@ begin
                 jns @@2
                 jmp @bye
 
-  @nope:        mov ah,2                            { Fehler: }
-                mov dl,7                            { BEEP }
-                int 21h
+  @nope:        push 1000                           { Fehler: }
+                call far ptr sound                  { BEEP }
+                push 25
+                call far ptr delay
+                push 780
+                call far ptr sound
+                push 25
+                call far ptr delay
+                call far ptr nosound
 
   @Bye:         cmp di,0                            { Wenn Clipboard nicht auf war }
                 je @jup
@@ -640,6 +646,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.17  2002/03/11 21:23:42  my
+  JG:- Fehlerton beim EinfÅgen eines nicht vorhandenen oder zu gro·en
+       Clipboard-Inhalts wird jetzt (wie alle anderen akustischen
+       Meldungen von XP auch) immer Åber den PC-Lautsprecher ausgegeben.
+
   Revision 1.19.2.16  2002/03/11 20:36:38  my
   JG:- Typo gefixt
 
