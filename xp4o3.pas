@@ -303,11 +303,15 @@ begin
     empf:=iifs(pm,'','A')+SendEmpflist[0];
     SendEmpfList.Delete(0);
     xpsendmessage.forcebox:='';
-  end;
+  end else
+    SendEmpfList.Clear;
 end;
 
 {
   $Log$
+  Revision 1.38  2002/07/09 13:37:19  mk
+  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
+
   Revision 1.37  2002/02/21 13:52:32  mk
   - removed 21 hints and 28 warnings
 

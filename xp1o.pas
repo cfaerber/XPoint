@@ -63,10 +63,11 @@ function  GetDecomp(atyp:shortint; var decomp:string):boolean;
 function  UniExtract(_from,_to,dateien:string):boolean;
 function  g_code(s:string):string;
 procedure SeekLeftBox(var d:DB; var box:string);
-procedure KorrBoxname(var box:string);
 // get Boxfilename from Boxname, add Extension
 // Result is already FileUpperCase
 function GetServerFilename(const boxname: String; Extension: String): String;
+// korrekte Schreibeweise des Systemnamens ermitteln
+procedure GetServerName(var box:string);
 
 procedure AddBezug(var hd:Theader; dateadd:byte);
 procedure DelBezug;
@@ -617,7 +618,7 @@ end;
 
 procedure AddNewBezug(MsgPos, MsgId, Ref, Datum: Integer);
 begin
-  dbAppend(bezbase);           
+  dbAppend(bezbase);
   dbWriteN(bezbase,bezb_msgpos, MsgPos);
   dbWriteN(bezbase,bezb_msgid, MsgId);
   dbWriteN(bezbase,bezb_ref, Ref);
@@ -625,19 +626,34 @@ begin
 end;
 
 function GetServerFilename(const boxname: String; Extension: String): String;
-var 
+var
   d: DB;
 begin
   try
     dbOpen(d,BoxenFile,1);
     dbSeek(d,boiName, UpperCase(BoxName));
-    if dbFound then 
+    if dbFound then
       Result := FileUpperCase(dbReadStr(d,'dateiname') + Extension)
     else
-    begin 
+    begin
       Result := '';
-      // raise exception 
+      // raise exception
     end;
+  finally
+    dbClose(d);
+  end;
+end;
+
+procedure GetServerName(var box:string);
+var
+  d : DB;
+begin
+  try
+    dbOpen(d, BoxenFile, 1);
+    dbSeek(d, boiName, UpperCase(box));
+    if dbFound or
+      (not dbEOF(d) and (UpperCase(LeftStr(dbReadStr(d,'boxname'),length(box)))=UpperCase(box))) then
+      box := dbReadStr(d, 'boxname');  { -> korrekte Schreibweise des Systemnamens }
   finally
     dbClose(d);
   end;
@@ -799,17 +815,6 @@ begin
 {$ENDIF}
 end;
 
-procedure KorrBoxname(var box:string);
-var d : DB;
-begin
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  if dbFound or
-     (not dbEOF(d) and (UpperCase(LeftStr(dbReadStr(d,'boxname'),length(box)))=UpperCase(box)))
-  then
-    box := dbReadStr(d,'boxname');  { -> korrekte Schreibweise des Systemnamens }
-  dbClose(d);
-end;
 
 function testtelefon(var s:string):boolean;
 var tele,tnr : string;
@@ -1058,6 +1063,9 @@ end;
 
 {
   $Log$
+  Revision 1.112  2002/07/09 13:37:19  mk
+  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
+
   Revision 1.111  2002/04/20 00:19:09  mk
   - use environment variable comspec
 

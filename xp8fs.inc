@@ -156,7 +156,7 @@ begin
     fstype:=iif(pos('Beschreibung',s)>0,1,iif(pos('description',LowerCase(s))>0,2,0));
     WriteFST(fstype);
     end;
-  KorrBoxName(box); { Groá- und Kleinschreibung korrigieren }
+  GetServerName(box); { Groá- und Kleinschreibung korrigieren }
   makebak(MangleBoxName(box)+ extFl, ExtBak);
   case fstype of
     0 : begin      { SendZMsg }
@@ -375,7 +375,7 @@ var d     : DB;
   procedure uucomm(comm:string);
   begin
     forcebox:=fs;
-    KorrBoxname(fs);      { korrekte Schreibweise ermitteln }
+    GetServerName(fs);      { korrekte Schreibweise ermitteln }
     if DoSend(true,fn,false,false,fname+'@'+fs+ntServerDomain(fs),comm,
               false,false,false,false,false,nil,hd,0) then;
   end;
@@ -398,7 +398,7 @@ var d     : DB;
       writeln(t,dest);
       close(t);
       xpsendmessage.EditAttach:=false; xpsendmessage.noCrash:=true;
-      KorrBoxname(fs);      { korrekte Schreibweise ermitteln }
+      GetServerName(fs);      { korrekte Schreibweise ermitteln }
       if DoSend(true,fn,false,false,fname+'@'+fs+ntServerDomain(fs),
                 expandfilename(source),
                 false,true,false,false,false,nil,hd,0) then;
@@ -474,7 +474,7 @@ begin
         if not isBox(fs) then
           rfehler(820)
         else if comm='FILES' then begin
-          KorrBoxname(fs);
+          GetServerName(fs);
           rewrite(t);
           writeln(t,fpass);
           close(t);
@@ -556,6 +556,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2002/07/09 13:37:19  mk
+  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
+
   Revision 1.32  2002/05/20 07:47:57  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 

@@ -1055,6 +1055,7 @@ again:
                xpsendmessage._replyPath:=hdp.replypath;
                xpsendmessage._pmReply:=(hdp.attrib and attrPmReply<>0);
                xpsendmessage.ControlMsg:=(hdp.attrib and attrControl<>0);
+               forcebox:=hdp.real_box;
                sdata:= TSendUUData.Create;
                with sData do
                begin
@@ -1342,6 +1343,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/07/09 13:37:20  mk
+  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
+
   Revision 1.22  2002/04/20 15:15:45  mk
   JG:- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
        (Priorität, PGP-signiert, MIME-Multipart usw.) jetzt auch dann

@@ -419,6 +419,7 @@ var f,f2     : file;
     s1,s2,s3,s4,s5 : TStream;
     Boundary : String;
     i        : Integer;
+    firststart :boolean;
 
   label fromstart,ReadAgain;
 
@@ -1452,6 +1453,9 @@ finalization
 
 {
   $Log$
+  Revision 1.58  2002/07/09 13:37:20  mk
+  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
+
   Revision 1.57  2002/06/23 15:30:41  cl
   - Fixed List Index Error
 

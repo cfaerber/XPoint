@@ -133,7 +133,7 @@ end;
 
 
 procedure showbox;
-var ss : string[BoxNameLen];
+var ss : string;
 
    function SameServer:boolean;
    var i : integer;
@@ -144,17 +144,43 @@ var ss : string[BoxNameLen];
        if ccm^[i].server<>ss then begin
          ss:=''; SameServer:=false;
          end;
+     GetServerName(ss); { -> korrekte Schreibweise des Systemnamens }
    end;
 
 begin
   attrtxt(col.coldiahigh);
-  gotoxy(x+14,y+6);
+  gotoxy(x+13,y+8);
   moff;
-  if cc_anz=0 then Wrt2(forms(box,17))
+  if cc_anz=0 then
+    if forcebox = '' then Wrt2(forms(' '+box,BoxNameLen+5))
+    else begin
+      Wrt2(' '+forcebox);
+      attrtxt(col.coldialog);
+      Wrt2(' (');
+      attrtxt(col.coldiahigh);
+      Wrt2('*');
+      attrtxt(col.coldialog);
+      Wrt2(forms(')',(BoxNameLen+1)-length(forcebox)));
+    end
   else if forcebox='' then
-          if SameServer then Wrt2(forms(ss,17))
-          else Wrt2(forms('('+box+')',17))
-       else Wrt2(forms(forcebox,17));
+          if SameServer then Wrt2(forms(' '+ss,BoxNameLen+5))
+          else begin
+            attrtxt(col.coldialog);
+            Wrt2('(');
+            attrtxt(col.coldiahigh);
+            Wrt2(box);
+            attrtxt(col.coldialog);
+            Wrt2(forms(')',(BoxNameLen+4)-length(box)));
+          end
+       else begin
+         Wrt2(' '+forcebox);
+         attrtxt(col.coldialog);
+         Wrt2(' (');
+         attrtxt(col.coldiahigh);
+         Wrt2('*');
+         attrtxt(col.coldialog);
+        Wrt2(forms(')',(BoxNameLen+1)-length(forcebox)));
+       end;
   mon;
 end;
 
@@ -1147,6 +1173,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2002/07/09 13:37:20  mk
+  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
+
   Revision 1.23  2002/06/23 15:03:07  cl
   - Adapted Nachricht/Direkt to new address handling.
 

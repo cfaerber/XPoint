@@ -30,12 +30,15 @@ uses  sysutils,typeform,fileio,inout,maske,datadef,database,stack,resource,
       xp0,xp1,xp1input, xpglobal;
 
 const maxcc = 50;
-      ccte_nobrett    : boolean = false;
+      ccte_nobrett : boolean = false;
+      cc_NT :byte = 0;
       _UserAutoCreate : boolean = false;  { User ohne RÅckfrage anlegen }
 
 type  ccl   = array[1..maxcc] of AdrStr;
       ccp   = ^ccl;
 
+
+var pm :boolean;
 
 procedure SortCCs(cc:ccp; cc_anz:integer);
 procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
@@ -51,13 +54,14 @@ function is_vname(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt,
+uses xp3,xp3o2,xp3o,xp4e,xpnt, xpsendmessage_internal,xpsendmessage,
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
   winxp;
 
 const CCtemp = 'verteil.$$$';
+      hinweisGegeben :boolean = true;
 
 var ccused   : array[1..maxcc] of boolean;
 
@@ -100,6 +104,47 @@ var p,p2 : byte;
     n    : longint;
     d    : DB;
     s2   : String;
+
+  procedure checkAdressNTIsValid;
+  var res :boolean;
+      server :string;
+      i :integer;
+      nt :byte;
+  begin
+    res := true; server := '';
+    dbSeek(ubase, uiName, UpperCase (s));
+    if dbFound then
+      Server := dbReadNStr (ubase, ub_pollbox)
+    else begin
+      dbSeek(bbase, biBrett, 'A' + UpperCase (s));
+      if dbFound then
+        Server := dbReadNStr (bbase, bb_pollbox);
+    end;
+    if server <> '' then
+    begin
+      dbOpen (d, BoxenFile, 1);
+      dbSeek (d, boiName, UpperCase (server));
+      if dbFound then
+      begin
+        dbRead(d, 'netztyp', nt);
+        if not ntAdrCompatible (nt, cc_NT) then res := false;
+        for i := 0 to cc_anz do
+          if (ccm^[i].server <> '') and (not ntAdrCompatible (nt, ccm^[i].ccnt)) then res := false;
+      end;
+      dbClose (d);
+    end;
+    if not res then
+    begin
+      if not hinweisGegeben then
+      begin
+        pushhp(8091);
+        hinweis (getres (623));  { 'Inkompatible Netztypen - Serverbox-énderungen werden zurÅckgesetzt.' }
+        pophp;
+      end;
+      hinweisGegeben := true;
+    end;
+  end;
+
 begin
   if trim(s)='' then begin
     if ccte_nobrett then errsound;
@@ -215,6 +260,8 @@ begin
           end
         else
           cc_testempf:=false;
+        if xpsendmessage.forcebox <> '' then
+          checkAdressNTIsValid
       end;
   freeres;
 end;
@@ -228,7 +275,7 @@ var i,j  : shortint;
   begin
     if cc1[1]='+' then cc1[1]:=#255;
     if cc2[1]='+' then cc2[1]:=#255;
-    ccsmaller:=(cc1<cc2);
+    ccsmaller:=(iifs(pm and (cc1[1]='/'),#255+cc1,cc1)<iifs(pm and (cc2[1]='/'),#255+cc2,cc2));
   end;
 
 begin
@@ -241,7 +288,7 @@ begin
         xchg:=true;
         end;
     dec(j);
-  until not xchg or (j=1);
+  until not xchg or (j=0);
 end;
 
 procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
@@ -252,6 +299,7 @@ var x,y   : Integer;
     t     : text;
     s     : string;
 begin
+  hinweisGegeben := false;
   h:=minmax(cc_anz+2,6,screenlines-13);
   _UserAutoCreate:=false;
   diabox(62,h+4,getres(2201),x,y);    { 'Kopien an:' }
@@ -325,6 +373,8 @@ begin
       cc^[i]:='';
     SortCCs(cc,cc_anz);
     end;
+  hinweisGegeben := true;
+  cc_NT := 0;
 end;
 
 
@@ -420,6 +470,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2002/07/09 13:37:20  mk
+  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolte due to new adress handling
+
   Revision 1.34  2002/04/14 22:27:15  cl
   - added is_vname to exports
 
