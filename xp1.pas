@@ -203,7 +203,7 @@ function  aFile(nr:byte):string;
 
 function  mbrett(typ:char; intnr:longint):string; { Xpoint.Db1/Bretter erz. }
 function  mbrettd(typ:char; dbp:DB):string;       { Int_Nr auslesen }
-function  ixdat(s:string):longint;              { Z-Date -> Long  }
+function  ixdat(s:shortstring):longint;           { Z-Date -> Long  }
 function  longdat(l:longint):string;              { Long -> Z-Date  }
 function  ixdispdat(dat:datetimest):longint;      { Datum -> Long   }
 function  smdl(d1,d2:longint):boolean;            { Datum1 < Datum2 }
@@ -293,7 +293,7 @@ var  menulevel : byte;                  { Menebene }
      mst       : boolean;
 
 
-function  ixdat(s:string):longint; assembler;  {&uses ebx, esi}
+function  ixdat(s:shortstring):longint; assembler;  {&uses ebx, esi}
 asm
          mov   esi,s
          inc   esi                      { L„nge ist z.Zt. immer 10 }
@@ -2032,6 +2032,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.63  2000/07/12 14:55:03  hd
+  - Ansistring
+
   Revision 1.62  2000/07/12 14:43:44  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

@@ -26,7 +26,7 @@ uses
   sysutils,
   typeform,keys,inout,maus2,winxp,montage, clip; {JG:+CLIP}
 
-const digits : string[12] = '-0123456789 ';
+const digits : string{[12]} = '-0123456789 ';
       allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
                 'Z[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡‰‹‘’“”•–'+
                 '—™› ΅Ά£¤¥¦§¨©ª«¬­®―ΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώ';
@@ -1294,6 +1294,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2000/07/12 14:55:03  hd
+  - Ansistring
+
   Revision 1.11  2000/07/03 16:20:02  hd
   - RTrim/LTrim durch TrimRight/TrimLeft ersetzt
 

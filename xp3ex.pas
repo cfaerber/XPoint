@@ -451,6 +451,7 @@ var size   : longint;
       stmp       : string;
       lastqc     : string[20];
       qspaces    : string[QuoteLen];
+      convstr	 : shortstring; 	{ Workaround fuer iso_conv }
       p,q        : byte;
       lastquote  : boolean;   { vorausgehende Zeile war gequotet }
       blanklines : longint;
@@ -513,8 +514,11 @@ var size   : longint;
       p:=length(reads);                      { rtrim, falls kein Leer-Quote }
       while (p>0) and (reads[p]=' ') do dec(p);
       s:=left(reads,p);
-      if not iso1 and ConvIso and (s<>'') then
-        ISO_conv(s[1],length(s));            { ISO-Konvertierung }
+      if not iso1 and ConvIso and (s<>'') then begin
+        convstr:= s;
+        ISO_conv(convstr[1],length(convstr));            { ISO-Konvertierung }
+	s:= convstr;
+      end;
       if s=#3 then begin
         FlushStmp;                           { #3 -> Leerzeile einfÅgen }
         wrslong('');
@@ -592,8 +596,11 @@ var size   : longint;
             if not eoln(t) and (length(stmp)+length(LastQC)<QuoteBreak) then begin
               read(t,reads);      { Rest der Zeile nachladen }
               endspace:=(reads[length(reads)]=' ') or eoln(t);
-              if not iso1 and ConvIso and (reads<>'') then
-                ISO_conv(reads[1],length(reads));    { ISO-Konvertierung }
+              if not iso1 and ConvIso and (reads<>'') then begin
+		convstr:= reads;
+                ISO_conv(convstr[1],length(convstr));    { ISO-Konvertierung }
+		reads:= convstr;
+	      end;
               stmp:=stmp+trimright(reads)+iifs(endspace,' ','');
             end;
             if length(stmp)+length(LastQC)>=QuoteBreak then begin
@@ -1062,6 +1069,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/12 14:55:03  hd
+  - Ansistring
+
   Revision 1.28  2000/07/11 08:12:31  mk
   -- $DAY2, $SUBJECT hinzugefuegt
 
