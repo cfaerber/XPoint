@@ -146,8 +146,10 @@ var
   Dat, ExtLogFile: String;
   IDList: TStringList;
   i: Integer;
+  AllInMessages: Integer; // complete count of incomming messages
 begin
   Result := EL_ok;
+  AllInMessages := 0;
   Dat := ZDate; // Save time from first Netcall so 'Neues' will display
                 // new messages from all Systems, not only the last one
 
@@ -228,6 +230,7 @@ begin
           if PufferEinlesen(ClientPuffer, CurrentBoxName, false, false, true, pe_Bad) then
           begin
             SafeDeleteFile(ClientPuffer);
+            Inc(AllInMessages, inmsgs);
             // *.MSG -> *.IN
             RenameInboundMessages(ClientSpool);
           end;
@@ -249,7 +252,11 @@ begin
     end;
   finally
     IDList.Free;
-    Write_LastCall(Dat);
+    if AllInMessages > 0 then
+    begin
+      Write_LastCall(Dat);
+      inmsgs := AllInMessages; // set global variable inmsgs correctly for all boxes
+    end;
   end;
   // load calling system, important for xpnetcall
   LoadBox(BoxFileName);
@@ -257,6 +264,9 @@ end;
 
 {
   $Log$
+  Revision 1.2.2.10  2003/09/18 18:27:28  mk
+  - update NEUES.DAT only if something was received in the netcall
+
   Revision 1.2.2.9  2003/09/10 16:51:03  mk
   - added extensive debug infos for client netcall
 
