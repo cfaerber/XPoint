@@ -35,6 +35,7 @@ uses
   {$ENDIF }
   sysutils,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
   printerx,mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
+  utftools, mime,
   xpglobal;
 
 procedure options;
@@ -1522,6 +1523,9 @@ end;
 
 {
   $Log$
+  Revision 1.111  2001/10/08 18:03:39  mk
+  - added units mime and utftools to allow this unit compile
+
   Revision 1.110  2001/10/07 17:12:30  cl
   - added charset recoding for external editors
     and corresponding config option
