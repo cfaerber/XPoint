@@ -77,14 +77,14 @@ begin
   fillchar(gCtlHeader,sizeof(gCtlHeader),0);
   time(t);
   repeat
-    multi2(mcur);
+    multi2;
   until (receive(comnr,b) and (b=ord(^P))) or timeout(true) or test_break;
   if not timeout(true) and not break then begin
     gCtlHeader[0]:=b;
     { if ParDebug then write(hex(b,2),' '); }
     i:=1;
     repeat
-      multi2(mcur);
+      multi2;
       if receive(comnr,b) then begin
         gCtlHeader[i]:=b;
         { if ParDebug then write(hex(b,2),' '); }
@@ -479,7 +479,7 @@ begin
         inc(i);
         end;
       testbrk;
-      multi2(mcur);
+      multi2;
     until (i=size) or timeout(true) or break;
     ShowTime:=true;
     { R+}

@@ -7,15 +7,15 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - UUCICO }
-
-{$B-,V-,R-}
+{$I XPDEFINE.INC }
 
 { define debug}    { Empfangs-Logfile UU-DEBUG.                }
 { define sim}      { Simulierter Netcall; Eingabedatei: UUSIM. }
 
-uses  crt,dos,uart,typeform,fileio,video,windows,inout,resource;
+uses  crt,dos,uart,typeform,fileio,video,winxp,inout,resource,xpglobal,lfn;
 
 const uu_ok      = 0;       { Ergebniscodes von ucico }
       uu_parerr  = 1;
@@ -24,7 +24,6 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       uu_recerr  = 4;
       XFerDir    = 'SPOOL\';
       uucicores  = 'uucicor.tmp';
-      verstr     = 'v3.2';
 
       ParDebug      : boolean = false;
       DebugWinX1    : byte = 0;
@@ -41,9 +40,9 @@ const uu_ok      = 0;       { Ergebniscodes von ucico }
       ForcePktSize  : boolean = false;
       UUprotos      : string[10] = 'gfe';
       SizeNego      : boolean = false;
-      FilePath      : pathstr = 'FILES\';
-      commandfile   : pathstr = '';
-      uulogfile     : pathstr = '';
+      FilePath      : string = 'FILES\';
+      commandfile   : string = '';
+      uulogfile     : string = '';
       fossil        : boolean = false;
       releasetime   : byte    = 0;
       maxfsize      : longint = 0;
@@ -103,6 +102,9 @@ begin
   assign(t,''); rewrite(t);
   writeln(t);
   writeln(t,'XP UUCICO ',verstr,'  (c) ''93-99 by Peter Mandrella');
+  writeln(t);
+  writeln(t, 'OpenXP-Version ',verstr,betastr,' ',x_copyright,
+            ' by ',author_name,' <',author_mail,'>');
   writeln(t);
   if FOSSILdetect then begin
     writeln(t,'FOSSIL driver detected');
@@ -480,7 +482,7 @@ begin
       if b=0 then wrdebug('ú')
       else wrdebug(chr(b));
     end;
-  multi2(mcur);
+  multi2;
   testbrk;
 end;
 
@@ -504,7 +506,7 @@ begin
   time(secs);
   repeat
     if receive(comnr,b) then time(secs)
-    else multi2(mcur);
+    else multi2;
   until timeout(true);
   flushinput(comnr);
 end;
@@ -863,7 +865,7 @@ begin
         end;
       end
     else begin
-      multi2(mcur);
+      multi2;
       testbrk;
       end;
   until (b=0) or timeout(true) or break;
@@ -884,7 +886,7 @@ begin
 end;
 
 
-function e_SendFile(fn:pathstr; offset:longint):shortint;   { Datei senden }
+function e_SendFile(fn:string; offset:longint):shortint;   { Datei senden }
 const bufsize = 1024;
 var f   : file;
     buf : array[0..bufsize-1] of byte;
@@ -914,7 +916,7 @@ begin
 end;
 
 
-function e_RecFile(fn:pathstr):shortint;
+function e_RecFile(fn:string):shortint;
 const bufsize = 1024;
 var len   : string[20];
     i     : integer;
@@ -935,7 +937,7 @@ begin
       time(eProtTimeout);
       end
     else begin
-      multi2(mcur);
+      multi2;
       testbrk;
       end;
   if timeout(true) or break then exit;
@@ -1007,7 +1009,7 @@ begin
         end;
       end
     else begin
-      multi2(mcur);
+      multi2;
       testbrk;
       end;
   until (b=13) or timeout(true) or break;
@@ -1028,7 +1030,7 @@ begin
 end;
 
 
-function fz_SendFile(fprot:boolean; fn:pathstr; offset:longint):shortint;
+function fz_SendFile(fprot:boolean; fn:string; offset:longint):shortint;
 const bufsize = 1024;                                     { Datei senden }
 var f   : file;
     buf : array[0..bufsize-1] of byte;
@@ -1091,7 +1093,7 @@ begin
 end;
 
 
-function fz_RecFile(fprot:boolean; fn:pathstr):shortint;
+function fz_RecFile(fprot:boolean; fn:string):shortint;
 const bufsize = 1024;
 var b       : byte;
     f       : file;
@@ -1189,7 +1191,7 @@ begin
       time(eProtTimeout);
       end
     else begin
-      multi2(mcur);
+      multi2;
       testbrk;
       end;
     if not ftyped and (bp>110) then begin
@@ -1291,7 +1293,7 @@ begin
   RepeatGetcommand:=s;
 end;
 
-function SendFile(fn:pathstr; offset:longint):boolean;   { true = ok }
+function SendFile(fn:string; offset:longint):boolean;   { true = ok }
 var result : shortint;
 begin
   repeat
@@ -1310,7 +1312,7 @@ begin
   SendFile:=(result=fileOK);
 end;
 
-function RecFile(fn:pathstr; size:longint):boolean;    { true = ok }
+function RecFile(fn:string; size:longint):boolean;    { true = ok }
 var result : shortint;
 begin
   FileRetries:=0;
@@ -1443,13 +1445,13 @@ end;
 
 { Mails/News/Dateien senden, Dateien anfordern }
 
-function SendFiles(CommandFile:pathstr; var sendtime,rectime:longint):boolean;
+function SendFiles(CommandFile:string; var sendtime,rectime:longint):boolean;
 var t   : ^text;
     s   : string;
     sf  : string[200];
     s2  : string[20];
     o   : longint;
-    fn  : pathstr;
+    fn  : string;
     ti  : longint;
     p   : byte;
     fs  : longint;
@@ -1656,7 +1658,7 @@ begin
 end;
 
 
-{$I xpfiles.inc}    { function Unix2DOSfile(fn,destdir:pathstr):pathstr; }
+{$I xpfiles.inc}    { function Unix2DOSfile(fn,destdir:string):string; }
 
 
 { Mails/News empfangen }
@@ -1664,7 +1666,7 @@ end;
 function RecFiles(var rectime:longint):boolean;
 var ok    : boolean;
     s     : string;
-    fn    : pathstr;
+    fn    : string;
     c     : char;
     p     : byte;
     ti,tf : longint;
@@ -1672,7 +1674,7 @@ var ok    : boolean;
     fs    : longint;
     secs  : longint;
     n     : integer;
-    source: pathstr;
+    source: string;
 
 label ende;
 
@@ -1926,3 +1928,9 @@ begin
   CloseResource; resopen:=false;
 end.
 
+{
+  $Log$
+  Revision 1.1.2.2  2000/12/30 10:56:45  mk
+  - LFN Unterstuetzung
+
+}
