@@ -171,7 +171,10 @@ function MinimumScreen(Cols, Rows: Word): boolean;
 
 { Schreiben }
 procedure StringOut(s: string);
+{ Schreiben an relativer Position }
 procedure StringOutXY(x, y: integer; s: string);
+{ Schreibt immer in den Hauptscreen }
+procedure StringOutXYBaseWin(x, y: integer; s: string);
 
 { Cursor-Funktionen }
 procedure GotoXY(x,y : integer);
@@ -268,6 +271,64 @@ type
 procedure Window(x1, y1, x2, y2: integer);
 begin
   { Erstmal sehen, ob die Funktion benoetigt wird }
+end;
+
+{ initialize a color pair }
+function SetColorPair(att: integer): integer;
+var
+  i: integer;
+{ ncurses constants
+   COLOR_BLACK   = 0;
+   COLOR_RED     = 1;
+   COLOR_GREEN   = 2;
+   COLOR_YELLOW  = 3;
+   COLOR_BLUE    = 4;
+   COLOR_MAGENTA = 5;
+   COLOR_CYAN    = 6;
+   COLOR_WHITE   = 7;
+}
+begin
+  bg := att div 16;
+  fg := att - ((att div 16) * 16);
+  while bg > 7 do dec(bg,8);
+  while fg > 7 do dec(fg,8);
+  { map to ncurses color values }
+  case bg of
+    0: bg:= COLOR_BLACK;
+    1: bg:= COLOR_BLUE;
+    2: bg:= COLOR_GREEN;
+    3: bg:= COLOR_CYAN;
+    4: bg:= COLOR_RED;
+    5: bg:= COLOR_MAGENTA;
+    6: bg:= COLOR_YELLOW;
+    7: bg:= COLOR_WHITE;
+  end;
+  case fg of
+    0: fg:= COLOR_BLACK;
+    1: fg:= COLOR_BLUE;
+    2: fg:= COLOR_GREEN;
+    3: fg:= COLOR_CYAN;
+    4: fg:= COLOR_RED;
+    5: fg:= COLOR_MAGENTA;
+    6: fg:= COLOR_YELLOW;
+    7: fg:= COLOR_WHITE;
+  end;
+  i:= cp[bg,fg];
+  init_pair(i,fg,bg);
+  SetColorPair:= i;
+end;
+
+{ map a standard color attribute to an ncurses attribute }
+function CursesAtts(att: byte): longint;
+var
+  atts: longint;
+begin
+  atts:= color_pair(SetColorPair(att));
+  if IsBold(att) then 
+    atts:= atts or A_BOLD;
+  if (att and $80) = $80 then 
+    atts:= atts or A_BLINK;
+  CursesAtts:= atts;
 end;
 
 function ScreenRows: integer;
@@ -408,6 +469,25 @@ begin
     CvtToISOConsole:= Ord(ch);
 end;
 
+procedure StringOutXYBaseWin(x, y: integer; s: string);
+var
+  i, x0, y0: integer;
+  ta: byte;
+begin
+  WhereXY(x0, y0);
+  wmove(BaseWin.wHnd, y-1, x-1);
+  ta:= TextAttr;
+  wattr_set(BaseWin.wHnd, CursesAtts(TextAttr));
+  for i:= 1 to Length(s) do
+    { ToDo: Andere Consolen unterstuetzen }
+    waddch(BaseWin.wHnd, CvtToISOConsole(s[i]));
+  wrefresh(BaseWin.wHnd);
+  { Ursprung restaurieren }
+  GotoXY(x0, y0);
+  SetTextAttr(ta);
+  touchwin(ActWin.wHnd);
+  update_panels;
+end;
 
 procedure StringOut(s: string);
 var
@@ -450,63 +530,6 @@ begin
   isbold := (fg > 7);
 end;
 
-{ initialize a color pair }
-function SetColorPair(att: integer): integer;
-var
-  i: integer;
-{ ncurses constants
-   COLOR_BLACK   = 0;
-   COLOR_RED     = 1;
-   COLOR_GREEN   = 2;
-   COLOR_YELLOW  = 3;
-   COLOR_BLUE    = 4;
-   COLOR_MAGENTA = 5;
-   COLOR_CYAN    = 6;
-   COLOR_WHITE   = 7;
-}
-begin
-  bg := att div 16;
-  fg := att - ((att div 16) * 16);
-  while bg > 7 do dec(bg,8);
-  while fg > 7 do dec(fg,8);
-  { map to ncurses color values }
-  case bg of
-    0: bg:= COLOR_BLACK;
-    1: bg:= COLOR_BLUE;
-    2: bg:= COLOR_GREEN;
-    3: bg:= COLOR_CYAN;
-    4: bg:= COLOR_RED;
-    5: bg:= COLOR_MAGENTA;
-    6: bg:= COLOR_YELLOW;
-    7: bg:= COLOR_WHITE;
-  end;
-  case fg of
-    0: fg:= COLOR_BLACK;
-    1: fg:= COLOR_BLUE;
-    2: fg:= COLOR_GREEN;
-    3: fg:= COLOR_CYAN;
-    4: fg:= COLOR_RED;
-    5: fg:= COLOR_MAGENTA;
-    6: fg:= COLOR_YELLOW;
-    7: fg:= COLOR_WHITE;
-  end;
-  i:= cp[bg,fg];
-  init_pair(i,fg,bg);
-  SetColorPair:= i;
-end;
-
-{ map a standard color attribute to an ncurses attribute }
-function CursesAtts(att: byte): longint;
-var
-  atts: longint;
-begin
-  atts:= color_pair(SetColorPair(att));
-  if IsBold(att) then 
-    atts:= atts or A_BOLD;
-  if (att and $80) = $80 then 
-    atts:= atts or A_BLINK;
-  CursesAtts:= atts;
-end;
 
 procedure SetTextAttr(attr: byte);
 begin
@@ -1042,6 +1065,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/05/03 20:37:26  hd
+  - Neue Funktion: StringOutXYBaseWin: Schreibt Fensterunabhaengig
+    (keine Aenderung des Cursors)
+
   Revision 1.6  2000/05/02 15:48:40  hd
   Cursor unter Linux an-/ausschalten
 
