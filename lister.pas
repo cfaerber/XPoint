@@ -988,14 +988,19 @@ end;
 
 function TLister.FirstMarked: string;
 begin
-  MarkPos := 0;
-  while (MarkPos < Lines.Count) and (not Marked(MarkPos)) do
-    Inc(MarkPos);
-  if MarkPos = Lines.Count then
-    Result := #0
+  MarkPos := SelLine;
+  if SelCount = 0 then
+    Result := GetSelection
   else
-    Result := Lines[MarkPos];
-  Inc(MarkPos);
+  begin
+    while (MarkPos < Lines.Count) and (not Marked(MarkPos)) do
+      Inc(MarkPos);
+    if MarkPos = Lines.Count then
+      Result := #0
+    else
+      Result := Lines[MarkPos];
+    Inc(MarkPos);
+  end;
   FLinePos := MarkPos;
 end;
 
@@ -1083,6 +1088,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.43  2000/12/25 20:40:24  mk
+  - fixed FirstMarked
+
   Revision 1.42  2000/12/25 20:30:20  mk
   - test if Event functions are not nil
 
