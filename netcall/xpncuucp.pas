@@ -499,13 +499,16 @@ begin {function UUCPNetcall}
 
   if result IN [el_recerr,el_ok] then begin
     Debug.DebugLog('xpncuucp','sending upbuffer was successful, clearing unsent flags',DLInform);
-    if FileExists(ppfile) then begin ClearUnversandt(ppfile,boxname); _era(ppfile); end;
+    if FileExists(ppfile) then begin ClearUnversandt(ppfile,boxname, nil); _era(ppfile); end;
   end;
 
 end; { function UUCPNetcall}
 
 {
   $Log$
+  Revision 1.17.2.3  2002/08/03 16:31:46  mk
+  - fixed unsendt-handling in client-mode
+
   Revision 1.17.2.2  2002/05/20 07:55:44  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 

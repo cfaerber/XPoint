@@ -48,7 +48,7 @@ procedure CallFilter(input:boolean; const fn:string);
 function  OutFilter(var ppfile:string):boolean;
 procedure AppLog(var logfile:string; const dest:string);   { Log an Fido/UUCP-Gesamtlog anhängen }
 
-procedure ClearUnversandt(const puffer,BoxName:string);
+procedure ClearUnversandt(const puffer,BoxName:string; IDList: TStringList);
 procedure MakeMimetypCfg;
 //**procedure LogNetcall(secs:word; FidoCrash:boolean);
 procedure SendNetzanruf(const logfile: string);
@@ -159,7 +159,7 @@ begin
 end;
 
 
-procedure ClearUnversandt(const puffer,boxname:string);
+procedure ClearUnversandt(const puffer,boxname:string; IDList: TStringList);
 var f      : file;
     adr,fs : longint;
     Header : THeader;
@@ -179,20 +179,9 @@ var f      : file;
   var pbox : string;
       uvl  : boolean;
       uvs  : byte;
-      IDList: TStringList;
-      HaveIDFile: boolean;
       MsgIDFound : boolean;
-      Outmsgid   : string;
       CCs, i: Integer;
   begin
-    HaveIDFile := FileExists('UNSENT.ID') and TempPPPMode;
-    if HaveIDFile then
-    begin
-      IDList := TStringList.Create;
-      IDList.LoadFromFile('UNSENT.ID');
-      IDList.Sort;
-    end;
-
     with Header do
     begin
       pbox:='!?!';
@@ -239,14 +228,14 @@ var f      : file;
               MsgIDFound := false;
               CCs := 0;
               { Check, ob MsgID in unversandten Nachrichten enthalten ist }
-              if HaveIDFile and (IDList.IndexOf(FormMsgId(OutMsgID)) <> - 1) then
+              if Assigned(IDList) and (IDList.IndexOf(InMsgID) <> - 1) then
               begin
                 MsgIDFound := true;
                 if Header.Empfaenger.Count > 1 then
                 begin
-                  CCList.Add(OutMsgId);
+                  CCList.Add(InMsgId);
                   CCList.Sort;
-                  if CCList.IndexOf(FormMsgId(OutMsgID)) <> -1 then
+                  if CCList.IndexOf(FormMsgId(InMsgID)) <> -1 then
                     Inc(CCs);
                 end;
               end;
@@ -282,8 +271,6 @@ var f      : file;
           trfehler(703,esec);   { 'unversandte Nachricht nicht mehr in der Datenbank vorhanden!' }
       end;
     end;
-    if HaveIDFile then
-      IDList.Free;
   end;
 
 begin
@@ -298,6 +285,7 @@ begin
   fs:=filesize(f);
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,miBrett);
+  IDList.Sort;
   while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
     inc(outmsgs);
     seek(f,adr);
@@ -887,7 +875,7 @@ end;
     if FileExists(ppfile) then begin
       Moment;
       outmsgs:=0;
-      ClearUnversandt(ppfile,BoxName);
+      ClearUnversandt(ppfile,BoxName, nil);
       closebox;
       _era(ppfile);
       end;
@@ -1383,6 +1371,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.5  2002/08/03 16:31:46  mk
+  - fixed unsendt-handling in client-mode
+
   Revision 1.52.2.4  2002/05/20 07:55:44  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 

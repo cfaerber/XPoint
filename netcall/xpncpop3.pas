@@ -143,7 +143,7 @@ begin
   List.Free;
   SMTP.Free;
   if result then begin
-    ClearUnversandt(PPFile,BoxName);
+    ClearUnversandt(PPFile,BoxName, nil);
     SafeDeleteFile(PPFile);
     SafeDeleteFile(RFCFile);
   end;
@@ -278,6 +278,9 @@ end;
                       
 {
   $Log$
+  Revision 1.32.2.2  2002/08/03 16:31:46  mk
+  - fixed unsendt-handling in client-mode
+
   Revision 1.32.2.1  2002/07/16 22:13:55  ma
   - backported SMTP Auth Login/Plain
 

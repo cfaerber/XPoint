@@ -650,7 +650,7 @@ begin { FidoNetcall }
       outmsgs:=0;
       for i:=0 to AKABoxes.PPFile.Count-1 do
         if AKABoxes.PPFile[i]<>'' then begin
-          ClearUnversandt(AKABoxes.PPFile[i],AKABoxes.BoxName[i]);
+          ClearUnversandt(AKABoxes.PPFile[i],AKABoxes.BoxName[i], nil);
           _era(AKABoxes.PPFile[i]);
           end;
       end;
@@ -901,6 +901,9 @@ end;
 
 {
   $Log$
+  Revision 1.32.2.3  2002/08/03 16:31:45  mk
+  - fixed unsendt-handling in client-mode
+
   Revision 1.32.2.2  2002/07/21 20:14:47  ma
   - changed copyright from 2001 to 2002
 

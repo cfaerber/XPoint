@@ -3409,7 +3409,7 @@ begin
   f2:=nil;
 
   if n = 0 then
-     _era(iifs(ppp and not client,dest,dest+fn+ExtOut))
+     if not client then _era(iifs(ppp,dest,dest+fn+ExtOut))
   else
   begin
     if not ppp then QueueCompressFile(rnews);
@@ -3665,6 +3665,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.14  2002/08/03 16:31:44  mk
+  - fixed unsendt-handling in client-mode
+
   Revision 1.97.2.13  2002/08/02 13:24:07  cl
   - backport from 3.9.x:
 

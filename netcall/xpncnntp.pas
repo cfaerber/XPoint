@@ -225,7 +225,7 @@ begin
   List.Free;
   NNTP.Free;
   if result then begin
-    ClearUnversandt(PPFile,BoxName);
+    ClearUnversandt(PPFile,BoxName, nil);
     SafeDeleteFile(PPFile);
     SafeDeleteFile(RFCFileDummy);
     RFCFileDummy := RFCFile + 'X-0002'+ExtOut;
@@ -369,6 +369,9 @@ end;
 
 {
         $Log$
+        Revision 1.39.2.3  2002/08/03 16:31:45  mk
+        - fixed unsendt-handling in client-mode
+
         Revision 1.39.2.2  2002/05/26 15:05:21  ma
         - fixed: outgoing postings were marked "sent" even if not accepted by server
 
