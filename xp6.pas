@@ -1629,10 +1629,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       hdp.ref:=_bezug;
       sData^.References.Add(_bezug);
     end;
-
-    if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
-      hdp.org_xref:=_orgref;
-
+    if (_beznet>=0) then begin  // bugfiy fÅr VP
+      if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
+        hdp.org_xref:=_orgref;
+      end;
     hdp.replypath:=_replypath;
     hdp.typ:=iifs(binary,'B','T');
 (*    if (netztyp<>nt_Fido) or pm {or not XP_ID_AMs} then *)
@@ -2102,6 +2102,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.91  2001/01/04 08:18:37  mo
+  -bugfix f¸r VP
+
   Revision 1.90  2001/01/03 18:02:11  mk
   - fixed typo from last commit
 
