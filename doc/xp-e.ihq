@@ -530,7 +530,7 @@ You can also use <space> instead of PgDn
 
  <<I>>    shows the information in the message header.
 
- <<O>>    shows the original message-header
+<<Ctrl-O>>  Shows the original message-header
 
  <<G>>    jumps to the preceding message. (Like <<->>)
 
@@ -5266,6 +5266,12 @@ Option is only read at program start
 
 Option is only read at program start
 @
+587
+<<[x]>> -> When you try to go past the beginning or
+       the end of a window, by either pressing
+       <PgUp> or <PgDn>, an audible warning beep
+       will be sounded.
+@
 560
 <<[x]>>  The welcome screens displayed by systems
      being netcalled are displayed (for doubting
@@ -6536,7 +6542,6 @@ Datei mit dem XP-Internen Lister/Viewer angezeigt.
 Siehe auch:
 [Lister-Dateiendungen]@8073
 [Ungef„hrliche Dateiendungen]@8072
-
 
 @
 830
