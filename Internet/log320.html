@@ -25,7 +25,7 @@
 
 
 
-<p><b>06.06.2001 MK 3.20e</b> Minior fixes, die dritte
+<p><b>27.08.2001 MK 3.21</b> Minior fixes, die dritte 
 <ul>
   <li>JG: Fix: When browsing through messages with &lt;Ctrl-PgUp&gt;/&lt;Ctrl-PgDn&gt; 
     and +/- the message that has been entered with the last &lt;Ctrl-Pg*&gt; was 
@@ -56,11 +56,20 @@
   <li>MK: am_replyto bei N/W/K/D loeschen 
   <li>JG: COM-Reset-Fix 
   <li>MK: Maggi: Betreffzeilen k&ouml;nnen jetzt 250 statt 70 Zeichen lang sein 
-  <li>SV: fixed Crash if WAB header was longer than 80
+  <li>SV: fixed Crash if WAB header was longer than 80 
   <li>JG: Fixed bug in select routine: Switching to the user window with &lt;F2&gt; 
     from a Message/Direct dialogue and activating the &quot;all user&quot; view 
     with the &quot;a&quot; key lead to a garbled display of the user window if 
-    the user switched to it again with &lt;Tab&gt; after sending the message<br>
+    the user switched to it again with &lt;Tab&gt; after sending the message 
+  <li>JG: Fixed crash with F/A/A and empty Message Area database 
+  <li>JG: If the search term was found in the second or any subsequent line of 
+    a paragraph, the search was stuck at this place
+  <li>MK: fixed crash with addresses longer then 80 chars, when xp try to add 
+    a domain name
+  <li>JG+MY:- Fix: When auto-creating a user with an address longer than 80 chars 
+    the user flags (Prio, Filter, Return Receipt) of the last DB entry were used 
+    (dbSeek couldn't find the address with more than 80 chars). Address string 
+    is truncated to eAdrLen now<br>
     <br>
 </ul>
 <p><b>01.01.2001 MK 3.20d </b>Minior fixes, die zweite 
