@@ -526,7 +526,7 @@ var f  : file;
 begin
   with alist^ do
   begin
-    txt:=fitpath(UpperCase(fn),40);
+    txt:=fitpath(FileUpperCase(fn),40);
     ps:=min(10000,memavail-10000);
     getmem(p,ps);
     assign(f,fn);
@@ -1372,6 +1372,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/09/11 17:13:53  hd
+  - Kleine Arbeiten an NNTP
+
   Revision 1.29  2000/07/21 21:17:43  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

@@ -80,6 +80,9 @@ type
 
     { Liste holen (withDescr = Description, wenn moeglich }
     function List(aList: TStringList; withDescr: boolean): boolean;
+    
+    { Holen einer Gruppenbeschreibung }
+    function GroupDescription(group: string): string;
 
     { aktuelle Gruppe ausw„hlen }
     procedure SelectGroup(const AGroupName: String); virtual;
@@ -112,6 +115,7 @@ resourcestring
   res_list2             = 'Kann nicht mit %s kommunizieren!';
   res_list3             = '%s gibt die Liste nicht frei!';
   res_list4             = '%d gelesen';
+  res_list5		= 'Suche Beschreibung fuer %s...';
 
   res_group1            = 'setze Gruppe %s';
   res_group2            = 'Gruppe %s gesetzt';
@@ -120,6 +124,7 @@ resourcestring
   res_msg1            = 'hole Artikel %d';
   res_msg2            = 'Artikel %d geholt';
   res_msg3            = 'Fehler beim Holen von Artikel %d';
+
 
 constructor TNNTP.Create;
 begin
@@ -203,29 +208,63 @@ begin
   inherited DisConnect;
 end;
 
-function TNNTP.List(aList: TStringList; withDescr: boolean): boolean;
+function TNNTP.GroupDescription(group: string): string;
 var
-  s, grdesc,
-  gn       : string;
-  code     : integer;
-  i,ni     : integer;
-
-  // extract the first word of GroupString - which is the only the Name
-  function GetGroupName(Group: String; var GroupDescription: String): String;
-  var
-    p      : integer;
+  s    : string;
+  code : integer;
+begin
+  result:= '';
+  { Leerer Gruppenname/Wildcard ist nicht erlaubt }
+  if (group='') or (pos('*',group)<>0) then
+    exit;
+  { Verbinden }
+  if Connected then
   begin
-    Result := Trim(Group);
-
-    p:= pos(#9,Result);
-    if p=0 then p:= pos(' ',Result);
-    if p<>0 then
-    begin
-      GroupDescription := Copy(Result,p+1,length(Result)-p);
-      Result:= Copy(Result,1,p-1);
+    WriteIPC(mcInfo,res_list5,[group]);
+    SWriteln('MODE READER');
+    SReadln(s);
+    { if not (ParseResult(s) in [200..299]) then begin }	{ !! FPC-Bug # 1135 }
+    code := ParseResult(s);					{ Workaround }
+    if (code<200) or (code>299) then begin			{ Workaround }
+      WriteIPC(mcError,res_list2,[Host.Name]);
+      exit;
     end;
-  end;
+    
+    { Get Description }
+    SWriteln('LIST NEWSGROUPS '+group);
+    SReadln(s);
+    { if not (ParseResult(s) in [200..299]) then begin }	{ !! FPC-Bug # 1135 }
+    code := ParseResult(s);					{ Workaround }
+    if (code<200) or (code>299) then begin			{ Workaround }
+      WriteIPC(mcError,res_list3,[Host.Name]);
+      exit;
+    end;
 
+    { Abfragen }
+    while true do begin
+      SReadln(s);
+      code:= ParseResult(s);
+      if code=0 then
+        break
+      else if code<>-1 then begin
+        WriteIPC(mcError,res_list3,[Host.Name]);
+        exit;
+      end;
+      s:= Trim(s);
+      if (s<>'') then
+        result:= s;
+    end; { while }
+
+  end; { if Connected... }
+end;
+
+
+function TNNTP.List(aList: TStringList; withDescr: boolean): boolean;
+const
+  counter	: integer	= 0;	{ Fuer die Anzeige }
+var
+  s		: string;		{ group }
+  code, i 	: integer;		{ NNTP-Result, Hilfsvar. }
 begin
   Result := false;
   aList.Clear;
@@ -233,80 +272,62 @@ begin
   if Connected then
   begin
     WriteIPC(mcInfo,res_list1,[0]);
-    SWriteln('MODE READER');
+    SWriteln('MODE READER');				{ Modus setzen }
     SReadln(s);
-    if ParseResult(s)<>200 then begin
-      WriteIPC(mcError,res_list2,[Host.Name]);
+    code:= ParseResult(s);
+    if (code<200) or (code>299) then begin		{ Fehler? }
+      WriteIPC(mcError,res_list2,[Host.Name]);		{ -> Ja, Ende }
       exit;
     end;
 
-
-    // get list of newsgroups
-    SWriteln('LIST');
+    SWriteln('LIST');					{ Liste anfordern }
     SReadln(s);
-    if not (ParseResult(s) in [200, 215]) then
-    begin
+    code:= ParseResult(s);
+    if (code<200) or (code>299) then begin
       WriteIPC(mcError,res_list3,[Host.Name]);
       exit;
     end;
 
-    i:=0;
-    while true do
-    begin
-      SReadln(s);
+    repeat
+      SReadln(s); Inc(counter);				{ Zeile lesen }
+      if (counter mod 25)=0 then			{ User beruhigen }
+        WriteIPC(mcVerbose,res_list4, [counter]);
       code:= ParseResult(s);
-      if code=0 then break
-      else if code<>-1 then begin
+      case code of
+        -1 : begin					{ Gruppe }
+	       s:= Trim(s);
+	       i:= pos(#32,s); 				{ Leerzeichen/ }
+	       if i=0 then				{ Tabulator suchen }
+	         i:= pos(#9,s);
+	       if i>0 then				{ Gefunden ? }
+	         SetLength(s,i-1);			{ -> Abschneiden }
+	       if s<>'' then
+	         aList.Add(s);
+	     end;
+        0  : result:= true;				{ Listenende }
+      else						{ Fehler }
         WriteIPC(mcError,res_list3,[Host.Name]);
         Result:= false;
-        exit;
-      end;
-      inc(i);
-      if (i mod 25)=0 then WriteIPC(mcVerbose,res_list4, [i]);
-
-      aList.Add(GetGroupName(s, grdesc));
-    end; { while }
-
+      end; { case }
+    until code<>-1;					{ Bis zum Ende lesen }
     WriteIPC(mcInfo,res_list4, [aList.Count]);
-    aList.Sort;
 
-    // get optional descriptions of newsgroups
-    SWriteln('LIST NEWSGROUPS');
-    SReadln(s);
-    if not (ParseResult(s) in [200, 215]) then
-    begin
-      WriteIPC(mcError,res_list3,[Host.Name]);
-      exit;
-    end;
-
-    i:=0;
-    if withDescr then
-    while true do
-    begin
-      SReadln(s);
-      code:= ParseResult(s);
-      if code=0 then break
-      else if code<>-1 then begin
-        WriteIPC(mcError,res_list3,[Host.Name]);
-        Result:= false;
-        exit;
-      end;
-      inc(i);
-      if (i mod 25)=0 then WriteIPC(mcVerbose,res_list4, [i]);
-
-      gn := GetGroupName(s, grdesc);
-
-      // kill 1-Char-Descriptions like '?'...
-      if length(grdesc) > 1 then
-      // replace the Groupname with Groupname+Description
-        if aList.Find(gn, ni) then
-          aList[ni] := s;
-
-    end; { while }
+    { Dieses Unterroutine ist noch sehr ineffizient.
+      Es waere sinnvoll, eine zweite Verbindung zum NNTP
+      aufzubauen und gleichzeitig die Gruppenbeschreibung zu
+      holen. Da ich es in XP aber nicht brauche, lasse ich
+      es erstmal so }
+    if withDescr then 					{ Beschreibungen }
+      for i:= 0 to aList.Count-1 do begin
+        if (i mod 25)=0 then				{ User beruhigen }
+	  WriteIPC(mcVerbose,res_list4, [i]);
+        s:= GroupDescription(aList[i]);
+	if s<>'' then
+	  aList[i]:= aList[i]+' '+s;
+      end; { for i... }
     WriteIPC(mcInfo,res_list4, [aList.Count]);
-    aList.Sort;
 
-    Result:= true;
+    aList.Sort;						{ Sortieren }
   end;
 end;
 
@@ -400,6 +421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/09/11 17:13:54  hd
+  - Kleine Arbeiten an NNTP
+
   Revision 1.12  2000/08/19 09:41:36  mk
   - Code aufgeraeumt
 

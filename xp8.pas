@@ -74,7 +74,7 @@ var mapsname : string;
 function mapstype(box:string):byte;  { 0=MAPS, 1=AREAFIX, 2=MAF, 3=Maus, 4=Q. }
 var d  : DB;                         { 5=Fido, 6=G&S, 7=changesys, 8=Pronet,  }
     nt : byte;                       { 9=Turbobox, 10=ZQWK, 11=GUP, 12=AutoSys}
-begin                                { 13=Feeder, 14=postmaster               }
+begin                                { 13=Feeder, 14=postmaster, 15=online    }
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   if not dbFound then
@@ -104,6 +104,8 @@ begin                                { 13=Feeder, 14=postmaster               }
       mapstype:=8
     else if nt=nt_QWK then
       mapstype:=10
+    else if nt=nt_NNTP then
+      mapstype:=15
     else
       if mapsname='AREAFIX' then mapstype:=1
       else if mapsname='SYSTEM' then mapstype:=6  { G&S }
@@ -401,6 +403,13 @@ begin
    12 : Guppie(2);
    13 : Guppie(3);
    14 : ;   { Postmaster }
+   15 : begin
+          writeln('bef   = ',bef);
+	  writeln('box   = ',box);
+	  writeln('datei = ', datei);
+	  writeln('<Enter>');
+	  readln;
+        end;
   end;
   hf:='';
   _sendmaps:=true;
@@ -1603,6 +1612,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/09/11 17:13:54  hd
+  - Kleine Arbeiten an NNTP
+
   Revision 1.25  2000/08/01 16:34:13  mk
   - Define Sockets wegen DOS32 wieder eingefuert :/
 

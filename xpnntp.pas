@@ -59,6 +59,8 @@ var
   IPC		: TXPIPC;		{ IPC }
   List		: TStringList;		{ Die Liste }
   x,y		: byte;			{ Fenster-Offset }
+  f		: text;			{ Zum Speichern }
+  i		: integer;		{ -----"------- }
 begin
   if not ReadJN(getres2(30010,2),false) then begin { ' Kann dauern, wirklich? '}
     result:= true;
@@ -100,9 +102,15 @@ begin
     { Nun die Liste holen }
     List:= TStringList.Create;
     List.Duplicates:= dupIgnore;
-    if NNTP.List(List,true) then begin
+    if NNTP.List(List,false) then begin
       MWrt(x+15,y+2,Format(getres2(30010,11),[List.Count])); { Liste speichern (%d Gruppen) }
-      List.SaveToFile(box+'.bl');
+      { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
+        (Sonst gibt es einen RTE) }
+      assign(f,box+'.bl');
+      rewrite(f);
+      for i:= 0 to List.Count-1 do
+        write(f,List[i],#13,#10);
+      close(f);
       result:= true;
     end else
       result:= false;
@@ -137,7 +145,10 @@ end;
 end.
 {
 	$Log$
+	Revision 1.2  2000/09/11 17:13:54  hd
+	- Kleine Arbeiten an NNTP
+
 	Revision 1.1  2000/07/25 18:02:19  hd
 	- NNTP-Unterstuetzung (Anfang)
-
+	
 }
