@@ -34,7 +34,7 @@ uses
 {$IFDEF Dos32 }
   crt,
 {$ENDIF }
-  xp0, typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
+  xp0, typeform,keys,fileio,inout,winxp,mouse,maus2,printerx,debug;
 
 const maxpages = 1200;
       maxqvw   = 350;
@@ -368,7 +368,11 @@ laden:
         end;
     inc(p);
     end;
-  dec(lines);
+  if nr=illp then begin
+    z^[lines]:='['+inttostr(ap)+']';
+    Debug.DebugLog('help','Help page missing: '+inttostr(ap),dlWarning);
+  end else
+    dec(lines);
   _lines:=iif(noheader,lines,lines-1);
   if copy(z^[1],1,2)='^^' then begin
     val(mid(z^[1],3),nr,res);
@@ -772,8 +776,12 @@ end;
 initialization
 finalization
   ReleaseHelp;
+
 {
   $Log$
+  Revision 1.44  2002/03/20 23:44:35  ma
+  - number of page is displayed now if help page missing
+
   Revision 1.43  2002/01/13 15:07:22  mk
   - Big 3.40 Update Part I
 
@@ -783,126 +791,7 @@ finalization
 
   Revision 1.41  2001/10/11 15:27:01  mk
   - implemented direct screen writes for DOS32, no more LocalScreen
-
-  Revision 1.40  2001/09/26 23:51:28  mk
-  - fixed freemem for pa variable
-
-  Revision 1.39  2001/09/21 16:16:47  mk
-  - fixed some memory leaks (thanks to BoundsChecker)
-
-  Revision 1.38  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.37  2001/09/07 13:54:17  mk
-  - added SaveDeleteFile
-  - moved most file extensios to constant values in XP0
-  - added/changed some FileUpperCase
-
-  Revision 1.36  2001/08/11 23:06:26  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.35  2001/07/28 12:04:08  mk
-  - removed crt unit as much as possible
-
-  Revision 1.34  2001/07/11 20:03:19  mk
-  SV:- All ASCII characters can be displayed in the online help now xxx
-
-  Revision 1.33  2001/05/02 19:57:34  mk
-  - check for \axxx implemented (merge from 3.40)
-
-  Revision 1.32  2001/03/13 19:24:55  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.31  2000/11/26 10:40:43  mk
-  - neue Hilfe mit Querverweisen in langen Texten
-
-  Revision 1.30  2000/11/18 16:55:36  hd
-  - Unit DOS entfernt
-
-  Revision 1.29  2000/11/14 11:14:31  mk
-  - removed unit dos from fileio and others as far as possible
-
-  Revision 1.28  2000/11/11 19:26:48  ml
-  - changed libdirs for rpm
-
-  Revision 1.27  2000/11/07 20:55:17  mk
-  - workaround for FPC Bug in $Q+ Mode
-
-  Revision 1.26  2000/11/01 22:59:23  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.25  2000/10/17 10:05:39  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.24  2000/10/09 22:11:05  mk
-  - Hilfe drucken stellt jetzt Hervorhebungen richtig dar (Bug #116196)
-
-  Revision 1.23  2000/09/30 16:31:40  mk
-  - AnsiString-Bugfix
-
-  Revision 1.22  2000/08/08 13:18:13  mk
-  - s[Length(s)] durch Lastchar ersetzt
-
-  Revision 1.21  2000/07/17 13:29:51  mk
-  - AnsiString-Updates, Hilfe geht jetzt
-
-  Revision 1.20  2000/07/16 16:59:28  mk
-  - AnsiString Updates
-
-  Revision 1.19  2000/07/06 10:32:04  hd
-  - Typ 'stringp' entfernt (fuer AnsiString nicht noetig)
-  - Linux
-    - Zugriffstest auf die Hilfedatei
-
-  Revision 1.18  2000/07/05 09:09:28  hd
-  - Anpassungen AnsiString
-  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
-    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
-
-  Revision 1.17  2000/07/04 12:04:16  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.16  2000/07/02 14:24:47  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.15  2000/06/23 15:59:11  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.14  2000/06/22 19:53:26  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.13  2000/06/05 16:16:20  mk
-  - 32 Bit MaxAvail-Probleme beseitigt
-
-  Revision 1.12  2000/05/06 17:29:20  mk
-  - DOS DPMI32 Portierung
-
-  Revision 1.11  2000/05/02 19:13:58  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.10  2000/04/29 17:01:04  hd
-  Linux-Anpassung
-
-  Revision 1.9  2000/04/04 21:01:20  mk
-  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.8  2000/03/24 15:41:01  mk
-  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
-
-  Revision 1.7  2000/03/17 11:16:34  mk
-  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
-
-  Revision 1.6  2000/03/08 22:36:33  mk
-  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
-
-  Revision 1.5  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
 }
+
 end.
 
