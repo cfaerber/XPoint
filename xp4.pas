@@ -24,7 +24,7 @@ uses xpglobal,
 
 
 const
-  maxgl   = 46;
+  maxgl   = 60;
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
@@ -2741,6 +2741,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.30  2001/05/17 15:14:54  mk
+  - bix 60 Zeilen zugelassen
+
   Revision 1.26.2.29  2001/04/29 13:16:11  sv
   - sender won't be displayed, if reply-to exists und sender = reply-to
   - fixed bug if sender has a stand-in address
