@@ -951,6 +951,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ISDN_Int     : byte;          { CAPI-Int, Default=$f1 }
        ISDN_EAZ     : char;          { eigene EAZ, Default='0' }
        ISDN_Controller:byte;         { Nummer des Controllers, Default=0 }
+       ISDN_incoming, isdn_outgoing: string;
        SaveType     : byte;          { 0=Sofort, 1=Alt-S, 2=Rueckfrage }
        XSA_NetAlle  : boolean;       { Netcall/Alle-Schalter bei /Netcall/L }
        maxcrosspost : byte;          { Filter fuer Massen-Crosspostings }
@@ -1121,6 +1122,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.118  2001/02/11 20:59:22  mk
+  - added isdn1-msn-incoming/outing to cfg
+
   Revision 1.117  2001/01/22 16:15:14  mk
   - added ReplaceOwn-Feature (merge from 3.40 branch)
 
