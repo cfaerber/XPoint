@@ -146,7 +146,6 @@ Procedure delfirst(var s:string);            { ersten Buchstaben l”schen    }
 Procedure dellast(var s:string);             { letzten Buchstaben l”schen   }
 Procedure incr(var r1:real; r2:real);        { r1:=r1+r2                    }
 Procedure LoString(var s:string);            { LowerString                  }
-Procedure release;                           { system.release abfangen      }
 Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
 Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf Parit„t setzen  }
 Procedure TruncStr(var s:string; n:integer);    { String krzen                }
@@ -314,17 +313,17 @@ end;
 
 
 function FormR(const r:real; const vk,nk:integer):string;
-var i  : integer;
-    st : string;
+var
+  i  : integer;
 begin
   i:=vk+nk; if nk>0 then i:=succ(i);
-  str(r:i:nk,st);
+  str(r:i:nk,Result);
   i:=1;
-  while st[i]=' ' do begin
-    st[i]:='0';
+  while Result[i]=' ' do
+  begin
+    Result[i]:='0';
     i:=succ(i);
-    end;
-  formr:=st;
+  end;
 end;
 
 function Time:DateTimeSt;
@@ -338,14 +337,13 @@ begin
 end;
 
 function Dup(const n:integer; const c:Char):string;
-VAR h : String;
 begin
-  if n<=0 then Dup:=''
+  if n<=0 then
+    Dup:=''
   else begin
-    SetLength(h, n);
-    fillchar(h[1],n,c);
-    dup:=h;
-    end;
+    SetLength(Result, n);
+    fillchar(Result[1],n,c);
+  end;
 end;
 
 
@@ -367,37 +365,29 @@ end;
 
 
 function StrS(const l:longint):string;
-var s : string;
 begin
-  str(l:0,s);
-  strs:=s;
+  str(l:0,Result);
 end;
 
 
 function StrSn(const l:longint; const n:integer):string;
-var s : string;
 begin
-  str(l:n,s);
-  strsn:=s;
+  str(l:n,Result);
 end;
 
 
 function StrSr(const r:real; const nk:integer):string;
-var s : string;
 begin
-  str(r:0:nk,s);
-  strsr:=s;
+  str(r:0:nk,result);
 end;
 
 
 function StrSrn(const r:real; const vk,nk:integer):string;
-var s : string;
 begin
   if nk=0 then
-    str(r:vk:0,s)
+    str(r:vk:0,result)
   else
-    str(r:vk+nk+1:nk,s);
-  strsrn:=s;
+    str(r:vk+nk+1:nk,result);
 end;
 
 
@@ -685,13 +675,12 @@ begin
 end;
 
 function Range(const c1,c2:char):string;
-var s : string;
-    c : char;
+var
+  c : char;
 begin
-  s:='';
+  result := '';
   for c:=c1 to c2 do
-    s:=s+c;
-  range:=s;
+    Result := Result +c;
 end;
 
 
@@ -918,13 +907,6 @@ begin
     end;
   MultiPos:=mp;
 end;
-
-
-Procedure release;
-begin
-  writeln(#7#7#7'Release???');
-end;
-
 
 function QSum(const s:string):longint;             { Quersumme }
 var l : longint;
@@ -1299,6 +1281,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2000/08/04 14:52:53  mk
+  - Einige Verbesserung durch Nutzung von Result
+
   Revision 1.62  2000/08/01 23:55:29  mk
   - Endlosschleife in Without beseitigt
 
