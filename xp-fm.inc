@@ -321,7 +321,7 @@ begin
             end;
             if CommObj^.CharAvail then begin
               c:=CommObj^.GetChar;
-              if c=#13 then begin mdelay(1000); state:=2 end;
+              if c=#13 then begin SleepTime(1000); state:=2 end;
             end;
             if Timers[ti_CRs].Timeout then begin
               Timers[ti_CRs].SetTimeout(2);
@@ -347,9 +347,9 @@ begin
               if Timers[ti_Sync].Timeout then begin
                 CommObj^.PurgeInBuffer;
                 if UseEMSI then begin
-                  CommObj^.SendString(EMSI_INQ+#13,False); mdelay(60);      { EMSI INQ   }
+                  CommObj^.SendString(EMSI_INQ+#13,False); SleepTime(60);      { EMSI INQ   }
                 end;
-                CommObj^.SendChar(YooHoo); mdelay(60);         { YooHoo INQ }
+                CommObj^.SendChar(YooHoo); SleepTime(60);         { YooHoo INQ }
                 CommObj^.SendChar(TSync);                      { FTS-1 INQ  }
                 Timers[ti_Sync].SetTimeout(3);
                 ems_req:='';
@@ -428,7 +428,7 @@ begin
       DisplayStatus(getres(180)+' #'+strs(retrycount),True);   { 'Hello-Sendefehler' }
       log(ErrChar,'yoohoo hello send error');
     end;
-    mdelay(200);
+    SleepTime(200);
   until Timers[ti_Hello].Timeout or (c=ACK) or (RetryCount=10);
   if RetryCount=10 then
     fmSH:=0
@@ -472,7 +472,7 @@ begin
                 if b=$1f then state:=5
               end
             else begin
-              mdelay(50);
+              SleepTime(50);
               if not CommObj^.Carrier then
                 state:=99
               else
@@ -727,7 +727,7 @@ begin
     if EMSIString='' then begin
       if Timers[TI_EMS1].Timeout then begin
         CommObj^.SendString(EMSI_HBT+#13,False);
-        mdelay(200);
+        SleepTime(200);
       end;
     end else begin
       while LeftStr(EMSIString,length(EMSI_ACK))=EMSI_ACK do delete(EMSIString,1,length(EMSI_ACK));
@@ -743,7 +743,7 @@ begin
           CommObj^.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
           DisplayAndLog(ErrChar,getres(186));  { 'fehlerhaftes EMSI-Paket erhalten' }
         end else begin
-          mdelay(150); CommObj^.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
+          SleepTime(150); CommObj^.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
         end;
       end;
     end;
@@ -800,7 +800,7 @@ procedure fmS;          { FTS-001 / FTS-007 }
 begin
   DisplayStatus('FTS-0001 / '+getres(184),True);    { 'nicht implementiert' }
   log(' ','sType: FTS-0001');
-  mdelay(2000);
+  SleepTime(2000);
 end;
 
 
@@ -817,7 +817,7 @@ begin
   if hello.h.capabilities and MyCap=0 then begin
     DisplayStatus(getres(185),True);    { 'keine Uebertragung m"glich :-(' }
     log(ErrChar,'no common transfer protocol');
-    mdelay(1000);
+    SleepTime(1000);
     aresult:=EL_nologin;
     exit;
   end;
@@ -850,7 +850,7 @@ begin
       log(ErrChar,'carrier lost');
     end else
       log(ErrChar,'transfer aborted');
-    mdelay(1000);
+    SleepTime(1000);
     aresult:=EL_senderr
 
   end else begin                                        { ZModem empfangen }
@@ -891,10 +891,13 @@ begin
     if aresult=EL_nologin then
       log(ErrChar,'login handshake failed');
   until ENDE;
-  mdelay(2000);
+  SleepTime(2000);
 end;
 {
   $Log$
+  Revision 1.21  2000/11/29 16:56:39  ma
+  - using SleepTime, output works again
+
   Revision 1.20  2000/11/14 14:47:52  hd
   - Anpassung an Linux
 

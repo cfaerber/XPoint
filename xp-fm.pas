@@ -40,8 +40,8 @@ const aresult    : byte = 0;
       brk_result : byte = EL_Break;
 
       ErrChar   = '#';
-      gl        = 10;
-      width     = 46;
+      DisplayTextHeight    = 10;
+      DisplayTextWidth     = 46;
 
       Language  : string  = 'D';
       FilePath  : pathstr    = '';      { eingehende Dateien        }
@@ -52,7 +52,7 @@ const aresult    : byte = 0;
       OwnDomain : string = '';
       DestAddr  : string = '';      { zone:net/node.point       }
       Password  : string = '';
-      txt       : string = 'NetCalling ...';
+      txt       : string = 'Netcalling ...';
       addtxt    : string = '';
       SendEmpty : boolean = false;      { moeglichst leerer Upload-Batch }
       DebugMode : boolean = false;
@@ -76,7 +76,7 @@ const aresult    : byte = 0;
       tlevel    : byte       = 8;       { FIFO-Triggerlevel }
       Baud      : longint    = 2400;
       ModemInit : string = '';
-      CommInitString: string = '';      { EleCOM comm object init string}
+      CommInitString: string = '';      { ObjCOM comm object init string}
       CommandModemDial  : string = '';      { ATDx }
       Phone     : string = '';      { eine oder mehrere Nummern }
       IgCTS     : boolean    = false;
@@ -109,11 +109,10 @@ var   FilesToSend  : String;
       ColText   : byte;     { Bildschirm }
       ColStatus : byte;
       ColXfer   : byte;
-      scx,scy   : Byte;     { linke obere Fensterecke }
-      scrsave   : pointer;
-      mx,my     : byte;
+      DisplayWinX,DisplayWinY   : Byte;     { linke obere Fensterecke }
       lastdispline  : string;
       disppos   : byte;
+
       Connects  : integer;
 
       CommObj   : tpCommObj;
@@ -152,7 +151,7 @@ end;
 
 procedure error(txt:string);
 begin
-  DebugLog('XPFM',Txt,1);
+  Debuglog('XPFM',Txt,1);
   writeln(txt,#7);
   SleepTime(2000);
   if resopen then CloseResource;
@@ -161,7 +160,7 @@ end;
 
 procedure logwithtime(typ:char; time,txt:string);
 begin
-  DebugLog('XPFM','Log: '+Typ+' '+Txt,1);
+  Debuglog('XPFM','Log: '+Typ+' '+Txt,1);
   writeln(logf,typ,' ',time,'  ',txt);
 end;
 
@@ -260,7 +259,7 @@ begin
                         else
                           FilesToSend:=FilesToSend+#9+FileUppercase(s)
       { keine bekannte Option angegeben: }
-      else begin DebugLog('XPFM','Unknown option: '+id+'='+s,1); writeln('Warning - unknown Option: '+s0)end;
+      else begin Debuglog('XPFM','Unknown option: '+id+'='+s,1); writeln('Warning - unknown Option: '+s0)end;
     end;
   end;
   close(t);
@@ -274,7 +273,7 @@ begin
           if igcd then CommInitString:=CommInitString+' IGNORECD';
         end;
     end;
-  DebugLog('XPFM','Port initialization: '+CommInitString,1);
+  Debuglog('XPFM','Port initialization: '+CommInitString,1);
   if fileexists('RTS.FM') then UseRTS:=true;
 end;
 
@@ -355,11 +354,6 @@ begin
 {$endif}
 end;
 
-function getscreenlines:byte;
-begin
-   getscreenlines:=24;
-end;
-
 function CountPhoneNumbers:integer;
 {Anzahl angegebene Telefonnummern zaehlen}
 var n : integer;
@@ -393,8 +387,8 @@ begin
       2,4 : IRQ:=3;
     end;
 {$endif}
-  scx:=15;
-  scy:=GetScreenlines div 2 - 6;
+  DisplayWinX:=15;
+  DisplayWinY:=6;
   if SysName='' then SysName:=UserName;
   if (redialmax=1) and (CountPhoneNumbers>1) then begin
     redialmax:=2;
@@ -418,50 +412,22 @@ end;
 
 { --- Bildschirmanzeige --------------------------------------------- }
 
-const wdt    = width+4;
-      hgh    = gl+4;
-      scsize = 2500;
-
-procedure Col(b:byte);
-begin
-  textcolor(b and $8f);
-  textbackground((b and $7f) shr 4);
-end;
-
-procedure PushWindow;
-begin
-  Cursor(curoff);
-  mx:=wherex; my:=wherey;
-  getmem(scrsave,scsize);
-  col(ColText);
-  // window(scx,scy,scx+wdt-1,scy+hgh-1);
-  clrscr;
-  // window(1,1,80,25);
-  inc(windmax,$1900);
-  wrt(scx,scy,'Õ'+dup(wdt-2,'Í')+'¸');
-  col(ColStatus);
-  wrt(scx+2,scy+1,LeftStr(#16+' '+txt,38));
-end;
-
-procedure PopWindow;
-begin freemem(scrsave,scsize); gotoxy(mx,my); Cursor(curnorm)end;
-
 procedure DisplayTime(l: longint);
 begin
   if l<0 then exit;
-  Col(ColText); wrt(scx+wdt-10,scy+1,formi(l div 3600,2)+':'+formi((l mod 3600) div 60,2)+':'+formi(l mod 60,2));
+  TextAttr:=ColText; fwrt(DisplayWinX+DisplayTextWidth-6,DisplayWinY,formi(l div 3600,2)+':'+formi((l mod 3600) div 60,2)+':'+formi(l mod 60,2));
 end;
 
 procedure DisplayStatus(s:string; UseNewLine: Boolean);
 begin
-  DebugLog('XPFM','Display: '+S,2);
+  Debuglog('XPFM','Display: '+S,2);
   if s<>'' then begin
     if UseNewLine and(lastdispline<>'')then begin
-      Col(ColText); wrt(scx+2,scy+2+disppos,forms(lastdispline,width));
-      disppos:=(disppos mod gl)+1;
+      TextAttr:=ColText; fwrt(DisplayWinX+2,DisplayWinY+2+disppos,forms(lastdispline,DisplayTextWidth));
+      disppos:=(disppos mod DisplayTextHeight)+1;
     end;
     lastdispline:=time+'  '+s;
-    Col(ColXFer); wrt(scx+2,scy+2+disppos,forms(lastdispline,width)); Col(ColText);
+    TextAttr:=ColXFer; fwrt(DisplayWinX+2,DisplayWinY+2+disppos,forms(lastdispline,DisplayTextWidth)); TextAttr:=ColText;
   end;
 end;
 
@@ -502,6 +468,8 @@ begin
 end;
 
 begin
+  InitZModemUnit;
+  InitWinXPUnit;
   test8086:=0;
   logo;
   ReadConfig;
@@ -517,7 +485,9 @@ begin
     error(getres(117)+' "'+CommInitString+'"'); { 'Fehler bei Portinitialisierung' }
   Modem.CommObj:=CommObj;
 
-  PushWindow;
+  TextAttr:=ColText;
+  rahmen2(DisplayWinX,DisplayWinX+DisplayTextWidth+4,DisplayWinY,DisplayWinY+DisplayTextHeight+4,'Fidomailer'); { Open a window :-) }
+
   DisplayStatus(getreps(166,DestAddr),True);   { 'Anruf bei %s' }
   if addtxt<>'' then DisplayStatus(addtxt,True);
 
@@ -548,14 +518,16 @@ begin
   CommObj^.PurgeInBuffer; CommObj^.SetDTR(False); CommObj^.Close;
   Dispose(CommObj,Done);
   if timediff<>0 then set_time(secsfrom70+timediff);
-  PopWindow;
   CloseResource;
-  DebugLog('XPFM','Result code: '+strs(aresult),3);
+  Debuglog('XPFM','Result code: '+strs(aresult),3);
   halt(aresult);
 end.
 
 {
   $Log$
+  Revision 1.31  2000/11/29 16:56:39  ma
+  - using SleepTime, output works again
+
   Revision 1.30  2000/11/19 17:52:31  ma
   - compiles again
 
