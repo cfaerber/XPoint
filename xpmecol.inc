@@ -346,7 +346,7 @@ var p,n,p1,i : byte;
 
 begin
   spenter:=(firstchar(buttons)='*');
-  if spenter then delfirst(buttons);
+  if spenter then DeleteFirstChar(buttons);
   SetLength(buttons,Length(buttons)); { inc(byte(buttons[0])); }
   buttons[length(buttons)]:=',';
   n:=0;
@@ -413,6 +413,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2002/11/30 04:40:28  mk
+  - made xpme to a unit and compilable
+
   Revision 1.15  2002/07/29 07:17:21  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 

@@ -19,8 +19,17 @@
 }
 
 { CrossPoint-Menueeditor }
+// !! not tested yet!!
 
 {$I xpdefine.inc }
+
+unit xpme;
+
+interface
+
+procedure StartXPME;
+
+implementation
 
 uses
 {$IFDEF unix}
@@ -39,7 +48,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils, typeform,fileio,keys,maus2,inout,resource,xpglobal;
+  osdepend, sysutils, typeform,fileio,keys,maus2,inout,resource,xpglobal, xp1;
 
 const menus      = 99;
       maxhidden  = 500;
@@ -168,7 +177,6 @@ begin
   cursor(curoff);
   attrtxt(7);
   clrscr;
-  inc(windmax,$100);
   syssetbackintensity;
   attrtxt(col.colmenu[0]);
   {$IFDEF NCRT } { <- Evntl. neuer Token: VarScrSize ? }
@@ -236,22 +244,6 @@ begin
   wpop;
 end;
 
-
-procedure errsound;
-begin
-{$IFDEF VP }
-  PlaySound(1000,25);
-  PlaySound(780,25);
-{$ELSE }
-  sound(1000);
-  delay(25);
-  sound(780);
-  delay(25);
-  nosound;
-{$ENDIF }
-end;
-
-
 { --- Menuesystem -------------------------------------------------------- }
 
 function special(nr:integer):boolean;
@@ -275,13 +267,7 @@ end;
 
 procedure click;
 begin
-{$IFDEF VP }
-  PlaySound(4000,10);
-{$ELSE }
-  sound(4000);
-  delay(10);
-  nosound;
-{$ENDIF }
+  SysBeep(4000, 10);
 end;
 
 
@@ -745,7 +731,7 @@ begin
   closebox;
 end;
 
-
+procedure StartXPME;
 begin
   readmenus;
   readconfig;
@@ -764,9 +750,13 @@ begin
     XPNoticeLog('Changes saved');
     {$ENDIF }
   end;
-end.
+end;
+
 {
   $Log$
+  Revision 1.39  2002/11/30 04:40:28  mk
+  - made xpme to a unit and compilable
+
   Revision 1.38  2002/07/25 20:43:57  ma
   - updated copyright notices
 
@@ -894,3 +884,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+
