@@ -391,9 +391,8 @@ end;
 function FindFile(fn: string): string;
 begin
   result:='';
-  fn:=trim(fn);
   // strip parameters
-  fn:=Copy(fn,1,iif(cPos(' ',fn)<>0,cPos(' ',fn)-1,Length(fn)));
+  fn := ExtractWord(1, Trim(fn));
 
   if ExtractFilePath(fn)<>'' then
     if FileExists(fn)then
@@ -409,13 +408,13 @@ end;
 
 function FindExecutable(fn: string): string;
 begin
-  fn:=trim(fn);
   // strip parameters
-  fn:=Copy(fn,1,iif(cPos(' ',fn)<>0,cPos(' ',fn)-1,Length(fn)));
+  fn := ExtractWord(1, Trim(fn));
   {$ifndef UnixFS}
   if UpperCase(fn)='COPY' then
     begin result:=fn; exit end; // built-in in cli
-  if ExtractFileExt(fn)='' then begin
+  if ExtractFileExt(fn)='' then
+  begin
     result:=FindFile(fn+'.exe');
     if result='' then result:=FindFile(fn+'.com');
     if result='' then result:=FindFile(fn +'.bat' { extBatch} );
@@ -694,6 +693,9 @@ end;
 
 {
   $Log$
+  Revision 1.116.2.8  2003/10/26 17:08:34  mk
+  - simplified FindFile and FindExecutable with help of ExtractWord
+
   Revision 1.116.2.7  2003/08/25 17:38:11  mk
   - fixed CreateMultipleDirectories
 
