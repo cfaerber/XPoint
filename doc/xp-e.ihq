@@ -1625,6 +1625,12 @@ numbers a la FIDO at the top.
         address, client directory and the command
         line that runs the client.
 
+<<Mail/News Server>>  The basic parameters of the Mail
+        and News servers CrossPoint shall connect to
+        when doing a netcall for this server. These
+        settings only take effect if they are inter-
+        preted by your client or client kit.
+
 <<Modem>>   Optional parameters governing the behaviour
         of the modem during netcalls. As CrossPoint
         doesn't invoke the dialling itself when
@@ -3277,7 +3283,251 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<Client-Password=>>" in your
 server configuration file <server>.BFG.
 @
+30115
+Name of the Server for incoming mail, uses one of the
+protocols POP3, SMTP or IMAP. Most Servers (and most
+clients, too) support POP3 only.
+
+Your client may support multiple entries here. In
+this case you can specify more than one Server, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailInServer=>>" in
+your server configuration file <server>.BFG.
+@
+30116
+The 'envelope address' of your account. This is
+usually the same as your eMail address of the server
+box.
+
+This entry is useful (and even necessary!) if you are
+receiving CC (carbon copy) and BCC (blind carbon
+copy) mail. Normally CrossPoint would sort this mail
+into a 'wrong' folder as your address is not part of
+To: header. Some clients have a facility that adds
+and rewrites headers so that the mail gets sorted in
+the right place (= your mail folder).
+
+Your client may support multiple entries here. In
+this case you can specify more than one address, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailInEnvelope=>>" in
+your server configuration file <server>.BFG.
+
+@
+30117
+Your user name, which is used for authentication (if
+authentication is required and supported by both the
+mail server and the client).
+
+Your client may support multiple entries here. In
+this case you can specify more than one name, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailInUser=>>" in
+your server configuration file <server>.BFG.
+@
+30118
+Your password, which is used for authentication (if
+authentication is required and supported by both the
+mail server and the client).
+
+Your client may support multiple entries here. In
+this case you can specify more than one password,
+each one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailInPassword=>>" in
+your server configuration file <server>.BFG.
+@
+30119
+Port number (on the Server) for incoming mail. The
+standard ports are:
+
+POP3: 110
+SMTP:  25
+IMAP: 143
+
+Please consult your provider for information about
+which port to use. Usually the standard ports should
+work fine.
+
+Your client may support multiple entries here. In
+this case you can specify more than one port, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailInPort=>>" in
+your server configuration file <server>.BFG.
+
+@
 30120
+Name of the Server for outgoing mail, commonly known
+as a "SMTP Server".
+
+Your client may support multiple entries here. In
+this case you can specify more than one Server, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailOutServer=>>" in
+your server configuration file <server>.BFG.
+@
+30121
+The 'envelope address' for outgoing messages. If you
+leave this field empty, it will be created from the
+From: header of your messages. There are cases where
+you might not want this:
+
+Some Servers accept only envelope addresses of their
+own address space. Other Servers again require the
+envelope addres that has been used for the previous
+POP3 login.
+
+If you want to deliver Mail with sender addresses of
+a different address space, you can here enter your
+address that is valid for the Server you are deli-
+vering mail to, and this way 'cheat' your Server: the
+sender's address (From: header) will not get changed
+(at least it shouldn't).
+
+But, generally spoken, if you want to deliver mail
+with sender addresses of a different address space,
+you should use SMTP Servers that allow a true
+"Relaying".
+
+Your client may support multiple entries here. In
+this case you can specify more than one address, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailOutEnvelope=>>"
+in your server configuration file <server>.BFG.
+
+@
+30122
+Your user name, which is used for SMTP authentication
+(if authentication is required and supported by both
+the mail server and the client).
+
+NOTE: Not many ISPs require this and usually it is
+      NOT necessary to provide a user name.
+
+Your client may support multiple entries here. In
+this case you can specify more than one name, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailOutUser=>>" in
+your server configuration file <server>.BFG.
+
+@
+30123
+Your password, which is used for SMTP Server
+authentication (if authentication is required and
+supported by both the mail server and the client).
+
+NOTE: Not many ISPs require this and usually it is
+      NOT necessary to provide a password.
+
+Your client may support multiple entries here. In
+this case you can specify more than one password,
+each one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailOutPassword=>>"
+in your server configuration file <server>.BFG.
+
+@
+30124
+Port number (on the Server) for outgoing mail. The
+standard port for the SMTP protocol is 25.
+
+Please consult your provider for information about
+which port to use. Usually the standard port should
+work fine.
+
+Your client may support multiple entries here. In
+this case you can specify more than one port, each
+one separated with a space.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-MailOutPort=>>" in
+your server configuration file <server>.BFG.
+
+@
+30125
+Name of the Server for public Newsgroups. Often
+referred to as a NNTP Server.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-NewsServer=>>" in
+your server configuration file <server>.BFG.
+@
+30126
+Your user name, which is used for NNTP authentication
+(if authentication is required and supported by both
+the mail server and the client).
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-NewsUser=>>" in your
+server configuration file <server>.BFG.
+@
+30127
+Your password, which is used for NNTP authentication
+(if authentication is required and supported by both
+the mail server and the client).
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-NewsPass=>>" in your
+server configuration file <server>.BFG.
+@
+30128
+Port number (on the Server) for incoming/outgoing
+news (articles, postings). The standard port for the
+NNTP protocol is 119.
+
+Please consult your provider for information about
+which port to use. Usually the standard port should
+work fine.
+
+<<Note:>> Your client has to make sure to interpret this
+setting. Please consult the documentation of your
+client or client kit if this is the case. The setting
+is written to the keyname "<<Client-NewsPort=>>" in your
+server configuration file <server>.BFG.
+@
+30130
 CrossPoint waits this many seconds after sending the
 command to dial to receive a "connect" answer. After
 this time CrossPoint breaks off, and starts waiting
@@ -3296,7 +3546,7 @@ is written to the keyname "<<ConnWait=>>" in your server
 configuration file <server>.BFG.
 
 @
-30121
+30131
 CrossPoint waits this many seconds after the
 "connect" message, to obtain a successful Login.
 
@@ -3305,7 +3555,7 @@ next try.
 
 This might cost money, since the other side answered
 the phone! You can set the number of these attempts
-separately in another box here, [Max. Connects], to@30125
+separately in another box here, [Max. Connects], to@30135
 limit costs.
 
 <<Note:>> Your client has to make sure to interpret this
@@ -3315,7 +3565,7 @@ is written to the keyname "<<LoginWait=>>" in your server
 configuration file <server>.BFG.
 
 @
-30122
+30132
 CrossPoint waits this many seconds after an aborted
 netcall attempt, before trying again.
 
@@ -3325,7 +3575,7 @@ client or client kit if this is the case. The setting
 is written to the keyname "<<RedialWait=>>" in your
 server configuration file <server>.BFG.
 @
-30123
+30133
 This sets the number of times CrossPoint will try to
 call a number if it does not achieve a successful
 netcall, at intervals set by Dial Pause.
@@ -3351,7 +3601,7 @@ is written to the keyname "<<RedialMax=>>" in your server
 configuration file <server>.BFG.
 
 @
-30124
+30134
 This limits the number of attempts <<during one connect>>
 that CrossPoint will make to log on. Not to be con-
 fused with the setting for "max. connects".
@@ -3378,7 +3628,7 @@ is written to the keyname "<<RetryLogin=>>" in your
 server configuration file <server>.BFG.
 
 @
-30125
+30135
 Limits the number of tries where a connect happens
 but goes wrong.
 
@@ -3413,7 +3663,7 @@ is written to the keyname "<<ConnectMax=>>" in your
 server configuration file <server>.BFG.
 
 @
-30126
+30136
 You can enter a default setting for resetting
 your modem (see modem handbook about resetting,
 or initialising) under the menu /Config/Modem.
@@ -3443,7 +3693,7 @@ is written to the keyname "<<ModemInit=>>" in your server
 configuration file <server>.BFG.
 
 @
-30127
+30137
 The COM Port number to which the modem to be used
 for dialling the selected box is connected.
 Ports COM1 to COM4 are supported.
@@ -3464,7 +3714,7 @@ is written to the keyname "<<Port=>>" in your server
 configuration file <server>.BFG.
 
 @
-30128
+30138
 This is for setting the port speed, "baud rate"
 "DTE speed" or "DTE rate", the bit rate for data
 transfer between modem and computer. This speed can,
@@ -3520,7 +3770,7 @@ is written to the keyname "<<Baud=>>" in your server
 configuration file <server>.BFG.
 
 @
-30130
+30140
 Select the phone fee zone for this server by pressing
 <F2>.
 
@@ -3534,7 +3784,7 @@ is written to the keyname "<<Tarifzone=>>" in your
 server configuration file <server>.BFG.
 
 @
-30131
+30141
 Enter the time it usually takes for this server
 between answering the phone and the "connect"
 message.  This is to calculate charges correctly.
@@ -3556,7 +3806,7 @@ is written to the keyname "<<ConnectTime=>>" in your
 server configuration file <server>.BFG.
 
 @
-30140
+30150
 These are settings if you do not want XP to transfer
 the data via your client, but to put or take the
 prepared files to or from some place on your hard

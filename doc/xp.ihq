@@ -2826,6 +2826,12 @@ Reihenfolge.
         das [Client-Verzeichnis] und der [Aufrufbefehl]@30107 30108
         zum Starten des Clients.
 
+<<Mail-/News-Server>>  Basisparameter der Mail- und News-
+        Server, die bei Netcalls dieser Serverbox an-
+        gesprochen werden sollen. Diese Einstellungen
+        sind nur wirksam, wenn sie von Ihrem Client
+        oder Client-Kit ausgewertet werden.
+
 <<Modem>>   Hier k”nnen Sie optionale Angaben zu Ihren
         Modemeinstellungen machen. Da CrossPoint beim
         Betrieb mit externen Clients keine eigene
@@ -4924,7 +4930,378 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner
 "<<Client-Password=>>" gespeichert.
 @
+30115
+Der Name Ihres Servers fr eingehende Mail. Hierfr
+stehen prinzipiell die Protokolle POP3, SMTP oder
+IMAP zur Verfgung, die meisten Server (und auch die
+g„ngigen Clients) untersttzen jedoch lediglich das
+POP3-Protokoll. Mit <<<F2> >>erhalten Sie hier eine
+Auswahl derzeit g„ngiger POP3-Server.
+
+M”glicherweise untersttzt Ihr Client auch die Angabe
+mehrerer Mail-Server gleichzeitig. Sie k”nnen daher
+hier auch mehrere Server hintereinander, jeweils
+durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailInServer=>>" gespeichert.
+
+@
+30116
+Tragen Sie hier Ihre "Envelope"-Adresse ein. Diese
+ist normalerweise mit Ihrer eMail-Adresse fr diese
+Serverbox identisch.
+
+Zur Erl„uterung: Auáer den in den Kopfzeilen (Header)
+einer Nachricht sichtbaren Empf„ngeradressen besitzt
+jede eMail einen "Envelope" (Umschlag), auf dem bild-
+lich gesprochen nochmals die Adresse des Empf„ngers
+"draufsteht". Damit ist sichergestellt, daá die Mail
+z.B. auch an Kopien- (CC) und Blindkopien-Empf„nger
+(BCC) korrekt zugestellt wird, obwohl diese nicht in
+der Empf„nger-Kopfzeile (To:-Header) aufgefhrt sind.
+
+Leider geht diese Envelope-Adresse z.B. beim POP3-
+Protokoll verloren. Die konkrete Folge in XP davon
+w„re, daá CC- und BCC-Mails in ein falsches PM-Brett
+einsortiert wrden, das den Namen des eigentlichen
+Empf„ngers (der, der im To:-Header steht) tr„gt.
+
+Einige Clients besitzen daher eine Funktion, die
+durch Umschreiben und nachtr„gliches Einfgen von
+Headern dafr sorgt, daá Nachrichten auch dann in Ihr
+"richtiges" PM-Brett einsortiert werden, wenn Sie
+nur CC- oder BCC-Empf„nger der Nachricht sind. Die
+Adresse, die Sie hier eingeben, ist die Adresse, die
+in den nachtr„glich hinzugefgten Header geschrieben
+wrde - falls der Client diese Angabe auswertet.
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Envelope-Adressen hinterein-
+ander, jeweils durch ein Leerzeichen getrennt, ein-
+tragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailInEnvelope=>>" gespeichert.
+
+@
+30117
+Ihr Benutzername, den Sie zur Authentifizierung bei
+diesem Mail-Server ben”tigen. Wenn der Server keine
+Authentifizierung erfordert, lassen Sie den Eintrag
+frei.
+
+Ob Ihr Mail-Server eine Authentifizierung untersttzt
+bzw. erfordert, erfahren Sie vom Betreiber des Mail-
+Servers. So ben”tigen T-Online-Benutzer z.B. keine
+Authentifizierung, wenn die Einwahl ber T-Online
+erfolgt, weil diese dann eben schon bei der Einwahl
+stattgefunden hat.
+
+Die Untersttzung von Authentifizierungsverfahren ist
+einem st„ndigen Wandel unterworfen. Bitte informieren
+Sie sich bei Ihrem Server-Betreiber sowie in Ihrer
+Client-Dokumentation, welche Verfahren beidseitig
+untersttzt werden.
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Benutzernamen hintereinander,
+jeweils durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. M”glicher-
+weise k”nnen oder mssen Sie weitere Einstellungen
+(wie z.B. das Authentifizierungsverfahren selbst) in
+einer externen Client-Konfigurationsdatei im Client-
+Verzeichnis vornehmen. Der Wert, den Sie hier eintra-
+gen, wird in der Konfigurationsdatei <Box>.BFG unter
+dem Bezeichner "<<Client-MailInUser=>>" gespeichert.
+
+@
+30118
+Das Paáwort, daá Sie fr die Authentifizierung bei
+diesem Mail-Server ben”tigen. Wenn der Server keine
+Authentifizierung erfordert, lassen Sie den Eintrag
+frei.
+
+Zu Authentifizierung siehe auch: [Benutzername]@30117
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Paáw”rter hintereinander,
+jeweils durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailInPassword=>>" gespeichert.
+
+@
+30119
+Der "Port" dieses Mail-Servers. Die Standard-Ports
+fr die jeweiligen Protokolle fr eingehende Mail
+sind:
+
+POP3: 110
+SMTP:  25
+IMAP: 143
+
+Server stellen ihre Dienste unter verschiedenen
+"Ports" zur Verfgung. Welchen Port Sie fr das von
+Ihnen verwendete Protokoll verwenden mssen (falls
+abweichend vom Standard), erfahren Sie vom Betreiber
+des Servers. I.d.R. sollten die Standardwerte funk-
+tionieren.
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Ports hintereinander, jeweils
+durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailInPort=>>" gespeichert.
+
+@
 30120
+Der Name Ihres Servers fr ausgehende Mail (SMTP-
+Protokoll). Mit <<<F2> >>erhalten Sie hier eine Auswahl
+derzeit g„ngiger SMTP-Server. Bitte beachten Sie, daá
+fr die Benutzung von Servern, die "Relaying" - die
+Einlieferung von Mail mit Absenderadressen aus einem
+fremden Adreáraum - erlauben ("smtprelay.t-online.de"
+z.B.) i.d.R. eine Anmeldung erforderlich ist.
+
+M”glicherweise untersttzt Ihr Client auch die Angabe
+mehrerer Mail-Server gleichzeitig. Sie k”nnen daher
+hier auch mehrere Server hintereinander, jeweils
+durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailOutServer=>>" gespeichert.
+
+@
+30121
+Tragen Sie hier Ihre "Envelope"-Adresse fr ausgehen-
+de Nachrichten ein. Wenn Sie hier nichts eintragen,
+wird diese normalerweise aus dem Absender (From:-
+Header) Ihrer Nachricht gebildet. In einigen F„llen
+kann es aber sinnvoll sein, eine abweichende Adresse
+anzugeben:
+
+Manche Server gestatten nur die Einlieferung von
+Mails, die eine Envelope-Adresse aus dem eigenen
+Adreáraum tragen (z.B. kann bei "mailto.t-online.de"
+nur Mail mit T-Online-Adressen eingeliefert werden).
+Andere SMTP-Server wiederum, die zur Authentifizie-
+rung das Verfahren "POP before SMTP" verwenden,
+akzeptieren mitunter nur den Envelope-Absender, der
+beim vorherigen POP3-Login verwendet wurde.
+
+Wenn Sie Mails aus einem fremden Adreáraum bei einem
+SMTP-Server einliefern wollen, k”nnen Sie also hier
+Ihre fr diesen SMTP-Server gltige Adresse eintragen
+und so den Server quasi "austricksen": Die eigent-
+liche Absenderadresse (From:-Header) „ndert sich
+dadurch n„mlich nicht (jedenfalls sollte sie das
+nicht tun).
+
+Prinzipiell sollten Sie fr das Einliefern von Nach-
+richten aus einem fremden Adreáraum jedoch einen
+SMTP-Server verwenden, der echtes "Relaying" erlaubt
+(siehe auch [Servername]).@30120
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Envelope-Adressen hinterein-
+ander, jeweils durch ein Leerzeichen getrennt, ein-
+tragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailOutEnvelope=>>" gespeichert.
+
+@
+30122
+Ihr Benutzername, den Sie zur Authentifizierung bei
+diesem SMTP-Server ben”tigen. Wenn der Server keine
+Authentifizierung erfordert, lassen Sie den Eintrag
+frei.
+
+Ob Ihr Server SMTP-Authentifizierung untersttzt bzw.
+erfordert, erfahren Sie vom Betreiber des Servers.
+SMTP-Authentifizierung ist (noch) nicht sehr weit
+verbreitet, bekannte Verfahren sind "POP before SMTP"
+und "SMTP AUTH" nach RFC 2554 mit unterschiedlichen
+Methoden zur šbermittlung und Verschlsselung des
+Usernamens und Paáworts.
+
+Die Untersttzung von Authentifizierungsverfahren ist
+einem st„ndigen Wandel unterworfen. Bitte informieren
+Sie sich bei Ihrem Server-Betreiber sowie in Ihrer
+Client-Dokumentation, welche Verfahren beidseitig
+untersttzt werden.
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Benutzernamen hintereinander,
+jeweils durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. M”glicher-
+weise k”nnen oder mssen Sie weitere Einstellungen
+(wie z.B. das Authentifizierungsverfahren selbst) in
+einer externen Client-Konfigurationsdatei im Client-
+Verzeichnis vornehmen. Der Wert, den Sie hier eintra-
+gen, wird in der Konfigurationsdatei <Box>.BFG unter
+dem Bezeichner "<<Client-MailOutUser=>>" gespeichert.
+
+@
+30123
+Das Paáwort, daá Sie fr die Authentifizierung bei
+diesem SMTP-Server ben”tigen. Wenn der Server keine
+Authentifizierung erfordert, lassen Sie den Eintrag
+frei.
+
+Zu Authentifizierung siehe auch: [Benutzername]@30122
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Paáw”rter hintereinander,
+jeweils durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailOutPassword=>>" gespeichert.
+
+@
+30124
+Der "Port" dieses SMTP-Servers. Der Standard-Port
+fr das SMTP-Protokoll ist 25.
+
+Server stellen ihre Dienste unter verschiedenen
+"Ports" zur Verfgung. Welchen Port Sie verwenden
+mssen (falls abweichend vom Standard), erfahren
+Sie vom Betreiber des Servers. I.d.R. sollte der
+Standardwert funktionieren.
+
+Falls Sie einen Client verwenden, der die Angabe
+mehrerer Server gleichzeitig untersttzt, k”nnen Sie
+hier ebenfalls mehrere Ports hintereinander, jeweils
+durch ein Leerzeichen getrennt, eintragen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-MailOutPort=>>" gespeichert.
+
+@
+30125
+Der Name Ihres Servers fr ein- und ausgehende News
+(Postings, Artikel). Mit <<<F2> >>erhalten Sie hier eine
+Auswahl derzeit g„ngiger NNTP-Server.
+
+Bitte beachten Sie, daá nicht jeder News-Server das
+Senden von Artikeln ohne weiteres zul„át. Sie mssen
+sich m”glicherweise erst dort anmelden, bevor Sie
+eigene Artikel versenden k”nnen.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-NewsServer=>>" gespeichert.
+
+@
+30126
+Ihr Benutzername, den Sie zur Authentifizierung bei
+diesem News-Server ben”tigen. Wenn der Server keine
+Authentifizierung erfordert, lassen Sie den Eintrag
+frei.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-NewsUser=>>" gespeichert.
+@
+30127
+Das Paáwort, daá Sie fr die Authentifizierung bei
+diesem News-Server ben”tigen. Wenn der Server keine
+Authentifizierung erfordert, lassen Sie den Eintrag
+frei.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-NewsPassword=>>" gespeichert.
+@
+30128
+Der "Port" dieses NNTP-Servers. Der Standard-Port
+fr das NNTP-Protokoll ist 119.
+
+Server stellen ihre Dienste unter verschiedenen
+"Ports" zur Verfgung. Welchen Port Sie verwenden
+mssen (falls abweichend vom Standard), erfahren
+Sie vom Betreiber des Servers. I.d.R. sollte der
+Standardwert funktionieren.
+
+<<Hinweis:>> Diese Einstellung wird von CrossPoint
+*nicht* ausgewertet. Ob und wie der externe Client
+diese Angabe auswertet, entnehmen Sie bitte der Doku-
+mentation Ihres Clients oder Client-Kits. Der Wert,
+den Sie hier eintragen, wird in der Konfigurations-
+datei <Box>.BFG unter dem Bezeichner
+"<<Client-NewsPort=>>" gespeichert.
+
+@
+30130
 So viele Sekunden wartet der Client nach dem Senden
 des W„hlbefehls darauf, daá eine Verbindung mit dem
 angerufenen Provider zustandekommt. Danach betrachtet
@@ -4947,7 +5324,7 @@ datei <Box>.BFG unter dem Bezeichner "<<ConnWait=>>"
 gespeichert.
 
 @
-30121
+30131
 So viele Sekunden wartet der Client nach erfolgrei-
 cher Verbindung auf das Einloggen. Ist nach Verstrei-
 chen der Zeit kein erfolgreicher Login zustandegekom-
@@ -4961,7 +5338,7 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<LoginWait=>>"
 gespeichert.
 @
-30122
+30132
 So viele Sekunden wartet der Client nach einem abge-
 brochenen Anruf; danach fhrt er einen erneuten Anruf
 durch.
@@ -4974,7 +5351,7 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<RedialWait=>>"
 gespeichert.
 @
-30123
+30133
 So oft wiederholt der Client - falls n”tig - den
 Netzanruf. Wurde auch nach der angegebenen Zahl von
 Versuchen kein Anruf korrekt beendet, so fhrt XP
@@ -4989,7 +5366,7 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<RedialMax=>>"
 gespeichert.
 @
-30124
+30134
 So oft versucht der Client, sich bei dem angerufenen
 Provider <<w„hrend jeder hergestellten Verbindung>> ein-
 zuloggen. Funktioniert das Einloggen auch nach der
@@ -5011,7 +5388,7 @@ datei <Box>.BFG unter dem Bezeichner "<<RetryLogin=>>"
 gespeichert.
 
 @
-30125
+30135
 Es gibt zwei M”glichkeiten fr einen erfolglosen
 Netcall-Versuch:
 
@@ -5040,7 +5417,7 @@ datei <Box>.BFG unter dem Bezeichner "<<ConnectMax=>>"
 gespeichert.
 
 @
-30126
+30136
 Grunds„tzlich wird der Befehl zur Modem-Initialisie-
 rung mit /Config/Modem eingestellt. Ben”tigen Sie
 jedoch fr unterschiedliche Zug„nge spezielle Modem-
@@ -5067,7 +5444,7 @@ datei <Box>.BFG unter dem Bezeichner "<<ModemInit=>>"
 gespeichert.
 
 @
-30127
+30137
 Die Nummer der Schnittstelle, an der das Modem ange-
 schlossen ist, das fr den Anruf bei der gew„hlten
 Box verwendet wird. Es werden die Schnittstellen
@@ -5088,7 +5465,7 @@ datei <Box>.BFG unter dem Bezeichner "<<Port=>>"
 gespeichert.
 
 @
-30128
+30138
 Die Geschwindigkeit ("Baudrate" oder "DTE-Rate"),
 mit der die Daten zwischen Computer und Modem ausge-
 tauscht werden. Diese Geschwindigkeit kann, muá aber
@@ -5125,7 +5502,7 @@ datei <Box>.BFG unter dem Bezeichner "<<Baud=>>"
 gespeichert.
 
 @
-30130
+30140
 W„hlen Sie mit <<<F2> >>die Telefon-Tarifzone fr diesen
 Zugangsprovider.
 
@@ -5141,7 +5518,7 @@ datei <Box>.BFG unter dem Bezeichner "<<Tarifzone=>>"
 gespeichert.
 
 @
-30131
+30141
 Die Connect-Dauer gibt an, wie lange das Modem zum
 Verbindungsaufbau ben”tigt. Diese Option befindet
 sich deshalb unter dem Stichwort "Gebhren", weil
@@ -5160,7 +5537,7 @@ den Sie hier eintragen, wird in der Konfigurations-
 datei <Box>.BFG unter dem Bezeichner "<<ConnectTime=>>"
 gespeichert.
 @
-30140
+30150
 Wenn Sie m”chten, daá ein- und ausgehende Nachrichten
 nicht mittels Ihres Clients bertragen, sondern lokal
 auf Ihrer Festplatte gespeichert werden, sind Sie
