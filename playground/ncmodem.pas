@@ -48,7 +48,7 @@ type
 
   protected
     FCommObj: tpCommObj;
-    FTimerObj: tTimer;
+    FTimerObj: tpTimer;
     FConnected,FActive: Boolean;
     FPhonenumbers: String;
     WaitForAnswer,FGotUserBreak: Boolean;
@@ -59,7 +59,9 @@ type
     FLineSpeed: Longint;
     FConnectString: String;
 
+  protected
     procedure SLogfileName(S: String);
+
     { Creates FCommObj from FCommInit }
     function Activate: Boolean;
 
@@ -117,11 +119,14 @@ type
 
     { True if comm channel initialized }
     property Active: Boolean read FActive;
-    property CommObj: tpCommObj read FCommObj;
+
+    property CommObj: TPCommObj read FCommObj;
+    property Timer:   TPTimer   read FTimerObj;
+
     { True if connected to peer }
     property Connected: Boolean read FConnected;
     { Sets/reads timeout (activates on idleing of peer) }
-//    property Timeout: Real read FGetTimeout write FSetTimeout;
+//  property Timeout: Real read FGetTimeout write FSetTimeout;
 
     { True if interrupted by user }
     property GotUserBreak: Boolean read FGotUserBreak;
@@ -146,9 +151,14 @@ type
     procedure LogRxFile(fn: string);
     procedure LogTxFile(fn: string);
 
-    { Disconnects.
-      Hangs up if phonenumbers specified. }
+    { throws ENetcallHangup on no carrier, ENetcallBreak }
+    { on user break (and ENetcallTimeout on timeout)     }
+    procedure TestBreak;
+    procedure TestTimeout;
+
+    { Disconnects. Hangs up if phonenumbers specified. }
     procedure Disconnect; virtual;
+
   end;
 
 { Get first phone number in list and rotate list }
@@ -198,6 +208,7 @@ begin
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
   FLogfileOpened:=False; FPhonenumber:=''; FLineSpeed:=0; FConnectString:='';
+  FTimerObj:=new(TPTimer);
 end;
 
 constructor TModemNetcall.CreateWithCommObjAndIPC(p: tpCommObj; aIPC: TIPC);
@@ -210,6 +221,7 @@ destructor TModemNetcall.Destroy;
 begin
   if FConnected then Disconnect;
   if FActive then begin FCommObj^.Close; Dispose(FCommObj,Done)end;
+  if Assigned(FTimerObj) then dispose(FTimerObj);
   Log(lcExit,'exiting');
   if FLogfileOpened then Close(FLogfile);
   inherited destroy;
@@ -231,7 +243,7 @@ end;
 function TModemNetcall.Activate: Boolean;
 begin
   if not FActive then FActive:=CommInit(FCommInit,FCommObj);
-  if not FActive then begin 
+  if not FActive then begin
     FErrorMsg:=ObjCOM.ErrorStr;
     WriteIPC(mcError,'%s',[FErrorMsg]);
     Log(lcError,FErrorMsg);
@@ -479,10 +491,39 @@ begin
   FConnected:=False;
 end;
 
+{ throws ENetcallHangup on no carrier, ENetcallBreak on user break }
+procedure TModemNetcall.TestBreak;
+begin
+  if not FCommObj^.Carrier then
+    raise ENetcallHangup.Create('carrier lost');
+
+  if not FGotUserBreak then
+    if keypressed and (readkey=#27) then
+    begin
+      FGotUserBreak:=true;
+      Log(lcExit,'User break.');
+      WriteIPC(mcInfo,'User break - aborting...',[0]);
+    end;
+
+  if FGotUserBreak then
+    raise ENetcallBreak.Create('user break');
+end;
+
+procedure TModemNetcall.TestTimeout;
+begin
+  if FTimerObj.Timeout then
+    raise ENetcallTimeout.Create('timeout');
+  TestBreak;
+end;
+
 end.
 
 {
   $Log$
+  Revision 1.21  2001/03/19 12:22:26  cl
+  - property Timer:TPTimer ...;
+  - procedure TModemNetcall.TestTimer;
+
   Revision 1.20  2001/03/03 00:25:48  ma
   - small fixes
 
