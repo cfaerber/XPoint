@@ -782,7 +782,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 5    Lowest
 6    None
 7    Send-Priority
-8    Priority ~
+8    Priority  ~
 9    HighestùHighùNormalùLowùLowestùNone
 -
 
@@ -2527,8 +2527,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7    Days
 8    Convert Umlauts
 9    Add to "Twit" filter
-10   Send receipt requests (RRQ's)
-11   Usergroup
+10   Send receipt requests
 -
 2702 Add new user
 + 2703
