@@ -1,4 +1,4 @@
-{ ----------------------------------------------------------------}
+{ --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { (c) 2000-2001 OpenXP-Team                                       }
@@ -7,7 +7,7 @@
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
-{ ----------------------------------------------------------------}
+{ --------------------------------------------------------------- }
 { $Id$ }
 
 { Lister - PM 11/91 }
@@ -117,7 +117,7 @@ uses xp0,database,xp4o,xpovl,xp1o,xp1;
 
 const maxlst  = 10;                { maximale Lister-Rekursionen }
       MinListMem : word = 40000;   { min. Bytes fr app_l        }
-      XmsPagesize = 4096;          { min. 1024 Bytes             }
+      XmsPagesize = 32768;         { min. 1024 Bytes             }
       XmsPageKB = XmsPagesize div 1024;
 
 type  lnodep  = ^listnode;
@@ -608,31 +608,34 @@ end;
 
 procedure ListInitEMS(kb:longint);
 begin
-  with alist^ do begin
+  with alist^ do
+  begin
     if EmsPages>0 then exit;   { EMS schon belegt!? }
     EmsPages:=EmsAvail;
     if EmsPages>0 then dec(EmsPages);
-    if EmsPages>0 then begin
+    if EmsPages>0 then
+    begin
       EmsPages:=min(EmsPages,(kb+15)div 16+1);
       EmsAlloc(EmsPages,EmsHandle);
       EmsBseg:=emsbase and $f000;
-      end;
     end;
+  end;
   lEMSpage:=0; lEMSoffs:=0;
   with alist^ do
-    if not ListUseXms or (EmsPages*16>=kb) or (memavail<2*XmsPagesize) then
+    if not ListUseXms or (EmsPages*16>=kb) or (memavail<XmsPagesize+4096) then
       XmsPages:=0
     else begin
       XmsPages:=min($1000,XmsAvail div XmsPageKB);
       if XmsPages>0 then dec(XmsPages);
-      if XmsPages>0 then begin
+      if XmsPages>0 then
+      begin
         XmsPages:=min(XmsPages,(kb-16*EmsPages+XmsPageKB-1)div XmsPageKB+1);
         XmsHandle:=XmsAlloc(XmsPages*XmsPageKB);
         if XmsResult<>0 then XmsPages:=0
         else getmem(XmsPtr,XmsPagesize);
         XmsPage:=0;
-        end;
       end;
+    end;
   lXMSpage:=0; lXMSoffs:=1;    { bei Offset 1 beginnen, wg. NIL-Pointer }
 end;
 
@@ -1385,7 +1388,7 @@ begin
         if stat.rot13enable and (t=^R) then
           ListRot13;
 
-        if ListDebug and (t=KeyAlt0) then ShowMem;
+        if {ListDebug and} (t=KeyAlt0) then ShowMem;
 
         if (t=keycr) and not stat.endoncr and (@crproc<>@list_dummycrp)
         then begin
@@ -1619,6 +1622,32 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.15  2003/04/18 22:32:33  my
+  JG [+MY]:- Lister kann jetzt Dateien/Nachrichten bis 64 Megabyte
+             anzeigen:
+             -------------------------------------------------------------
+             1. Konstante 'XmsPagesize' von 4096 auf 32768 Bytes
+                vergr”áert, dadurch bisheriges internes Limit von 4096
+                Bl”cken   4096 Bytes (= 16 Megabyte) aufgehoben.
+             2. Kalkulation des erforderlichen verfgbaren unteren
+                Speichers zum Anfordern von XMS auf sinnvollen Wert
+                angepaát (bisher: 2*XmsPagesize, jetzt: XmsPagesize+4096).
+             3. In Verbindung mit der jetzt korrekten Ermittlung des
+                verfgbaren XMS unter Windows 9x (s. XMS.ASM) kann der
+                Lister damit unter DOS und Windows 9x auf Systemen mit
+                entsprechender Speicherausstattung jetzt Dateien bis max.
+                64 Megabyte anzeigen, wenn EMS und XMS vorhanden sind. Ist
+                nur XMS vorhanden, liegt der Maximalwert bei ca. 53
+                Megabyte.
+             4. Damit ist gleichzeitig sichergestellt, daá Brettlisten von
+                Boxen des Netztyps RFC/Client, die vor dem Laden in den
+                Lister eine interne Konvertierung durchlaufen und dadurch
+                h„ufig auf mehr als das Doppelte ihrer eigentlichen Gr”áe
+                anwachsen, immer vollst„ndig geladen werden.
+             5. Unter Windows NT/2000/XP liegt das Limit aufgrund der
+                Beschr„nkungen seitens des Betriebssystems weiterhin bei
+                16 Megabyte.
+
   Revision 1.19.2.14  2003/03/17 22:54:25  my
   MY+JG:- Fix: Wenn sich eine Fundstelle nach einer Markiersuche im letzten
           Eintrag des Nodelist-Browsers befand, dann war diese zwar farblich
@@ -1652,16 +1681,16 @@ end.
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
           Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
-          <Tab> springt der Cursorbalken die nächste Zeile mit einem
+          <Tab> springt der Cursorbalken die n„chste Zeile mit einem
           markierten Suchbegriff an.
 
   JG+MY:- Text-Markiersuche im Lister mit "S": mehrere Suchbegriffe,
-          Suchoptionen (z.B. umlautunabhängige Suche), Suchbegriff-History
-          und Suchbegriffs-Bibliothek verfügbar. "Alte" Suchfunktionen
-          jetzt über <Ctrl-S> (früher "S") bzw. wie bisher über <Shift-S>
+          Suchoptionen (z.B. umlautunabh„ngige Suche), Suchbegriff-History
+          und Suchbegriffs-Bibliothek verfgbar. "Alte" Suchfunktionen
+          jetzt ber <Ctrl-S> (frher "S") bzw. wie bisher ber <Shift-S>
           erreichbar.
 
-  JG+MY:- Übergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay)
+  JG+MY:- šbergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay)
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
@@ -1685,7 +1714,8 @@ end.
   - neuer Brettmanager
 
   Revision 1.19.2.4  2000/12/27 21:46:30  mk
-  - crash bei 0 zeilen langen Nachrichten, feststehenden Headern und Mausklick behoben
+  - crash bei 0 zeilen langen Nachrichten, feststehenden Headern
+    und Mausklick behoben
 
   Revision 1.19.2.3  2000/11/11 19:53:11  mk
   - moved some strings into resources
@@ -1724,7 +1754,7 @@ end.
   - ret statt retn in Make_List (32 Bit)
 
   Revision 1.12  2000/04/04 21:01:21  mk
-  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fr VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.11  2000/04/04 10:33:56  mk
   - Compilierbar mit Virtual Pascal 2.0
@@ -1744,10 +1774,9 @@ end.
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 
   Revision 1.7  2000/03/08 22:36:33  mk
-  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+  - Bugfixes fr die 32 Bit-Version und neue ASM-Routinen
 
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 
 }
-ÿ
