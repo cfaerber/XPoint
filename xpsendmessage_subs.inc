@@ -65,7 +65,8 @@ begin
     s:='';
     while not eof(t) and (s<>sigsep) do begin
       readln(t,s);
-      if pm then rpsuser(s,sData.Empf1Address,sData.Empf1RealName);
+      if pm then
+        rpsuser(s,empfaenger,sdata.empfrealname);
       rpsdate(s);
       if s<>sigsep then write(t2,s+#13#10);
       end;
@@ -142,10 +143,10 @@ begin
   wrt(x+14,y+8,strs(fs+addsize));
   attrtxt(col.coldialog);
   Wrt2(getres(13));    { ' Bytes' }
-  ms:=sdata.maxsize;
+  ms:=maxsize;
   if binary and ntBinEncode(netztyp) then  { aut. uu-Codierung }
     ms:=system.round((ms-400)/1.415);
-  oversize:=iif((sdata.maxsize>0) and (fs+addsize>ms),fs+addsize-ms,0);
+  oversize:=iif((maxsize>0) and (fs+addsize>ms),fs+addsize-ms,0);
   if oversize>0 then Wrt2('!');
   mon;
 end;
@@ -286,6 +287,18 @@ begin
     end;
 end;
 
+procedure showcc;
+begin
+  attrtxt(col.coldialog);
+  mwrt(x+51,y+8,sp(20)); (* 05.02.2000 MH: y+47 -> x+51 *) { unbedenklich }
+  if cc_anz=0 then
+    mwrt(x+51,y+8,getres(602))   { 'keine' }
+  else begin
+    attrtxt(col.coldiahigh);
+    mwrt(x+51,y+8,strs(cc_anz));
+    end;
+end;
+
 procedure ShowLine(spezial:boolean);
 begin
   attrtxt(col.coldialog);
@@ -349,9 +362,9 @@ begin
   if flPGPreq then flags:=flags+getres2(604,12);   { 'PGP-Req ' }
   attrtxt(col.coldiarahmen);
   if trim(flags)='' then
-    mwrt(x+35,y2,dup(41,'Ä'))
+    mwrt(x+35,y-iif(echomail,2,0),dup(41,'Ä'))
   else { x+33 -> x+35                 34 -> 41 }
-    mwrt(x+40,y2,RightStr(dup(39,'Ä')+' '+flags,36));
+    mwrt(x+40,y-iif(echomail,2,0),RightStr(dup(39,'Ä')+' '+flags,36));
 end;   { x+33 -> x+40                       37 -> 39          34 -> 36 }
 
 
@@ -367,7 +380,7 @@ end;   { x+33 -> x+40                       37 -> 39          34 -> 36 }
 
 { Es wird dei INT_NR des aktuellen Datensatzes der mbase verwendet }
 
-function MessageID(msgidtyp:integer):string;
+function MessageID:string;
 const rev = 'B';   { Revision des MsgID-Algorithmus }
 var inr     : longint;
     t,m,j   : smallword;
@@ -376,10 +389,12 @@ var inr     : longint;
     count   : word;
     rand    : word;
     csum    : word;
-    _domain : string;
+    _domain : string[80];
+    msgidtyp: byte;
     local_part : string[20];
 
 begin
+  msgidtyp:=ntMessageID(netztyp);
   if nomids or (msgidtyp=0) then
     MessageID:=''
   else begin
@@ -389,13 +404,13 @@ begin
     dat:=(t-1)+(m-1)*32+(j mod 165)*32*12;
     dbRead(mbase,'INT_NR',inr);
     case msgidtyp of
-      midMausNet : MessageID:=formi(t,2)+formi(inr mod 1000000,6)+    { MausTausch }
+      3 : MessageID:=formi(t,2)+formi(inr mod 1000000,6)+    { MausTausch }
                      formi(random(100),2)+'@'+box;
-      midFido : MessageID:=fidoAbsAdr+iifs(domain<>'','@'+domain,'')+' '+ { Fido }
+      4 : MessageID:=fidoAbsAdr+iifs(domain<>'','@'+domain,'')+' '+ { Fido }
                      LowerCase(hex(longint(dat and $1fff) shl 19+(inr and $ffff) shl 3
                           +random(8),8));   { eindeutig f. 16 Jahre, }
                                             { max. 65536 Msgs/Tag    }
-      midProNet : MessageID:=iifc(pm,iifc(_bezug='','P','Q'),iifc(_bezug='','A','R'))
+      6 : MessageID:=iifc(pm,iifc(_bezug='','P','Q'),iifc(_bezug='','A','R'))
                      +'/'+formi(h,2)+formi(mm,2)+formi(inr mod 10000,4)+
                      formi(t,2)+formi(m,2)+formi(j,4)+'_013@'+box+';'+ { ProNet }
                      pointname+domain; { X/HHMMSSssDDMMYYYY_KKK@BOX;NR.pro }
@@ -484,10 +499,8 @@ begin
   SetCryptFlag;
   hdp.betreff:=LeftStr(iifs(des,DES_ID,QPC_ID)+hdp.betreff,BetreffLen);
   hdp.archive:=false;
-{  
   if hdp.Empfaenger.Count > 0 then
     hdp.Empfaenger[0] :=iifs(pm, empfaenger,mid(empfaenger,2));
-}
 
   b:=cpos('@',hdp.absender);
 
@@ -690,17 +703,9 @@ begin
   if FileExists(datei) then begin
     assign(f,TempS(_filesize(fn)+200));
     rewrite(f,1);
-
-    for i := 0 to sData.EmpfList.Count-1 do
-      case sData.EmpfList[i].AddressType of
-        atTo,atNewsgroup:
-          wrs(getres2(600,1){oempf}+' '+sData.EmpfList[i].ZCAddress);
-        atCC:
-          wrs(getres2(600,2){oempf(cc)}+' '+sData.EmpfList[i].ZCAddress);
-        atBCC:
-          wrs(getres2(600,3){oempf(bcc)}+' '+sData.EmpfList[i].ZCAddress);
-      end;
-      
+    wrs(getres(600){oempf}+' '+mid(vert_name(empfaenger),iif(pm,1,2)));
+    for i:=1 to cc_anz do
+      wrs(getres(600)+' '+cc^[i]);
     wrs('');
     assign(f2,datei);
     reset(f2,1);
@@ -756,7 +761,8 @@ begin
   dbAppend(auto);
   dbWriteStr(auto,'dateiname',fn);
   dbWriteStr(auto,'betreff',betreff);
-  empf:=sData.Empf1Address;
+  if pm then empf:=empfaenger
+  else empf:=mid(empfaenger,2);
   dbWriteStr(auto,'empfaenger',empf);
   typ:=iifc(binary,'B','T');
   dbWrite(auto,'typ',typ);
@@ -809,7 +815,7 @@ begin
   Hdp.Free;
 end;
 
-procedure LoadBoxData(d:DB);
+procedure LoadBoxData;
 var flags : byte;
 begin
   if forceabs='' then
@@ -856,11 +862,9 @@ end;
 procedure SetLocalPM;
 var l : byte;
 begin
-  { !! TODO: Geringstes Limit aller Addressen herausfinden }
-
-  lokalPM:=(RightStr(sData.Empf1Address,length(box)+4)=box+'.ZER') or
-           stricmp(RightStr(sData.Empf1Address,length(box)+length(domain)),box+domain) or
-           stricmp(RightStr(sData.Empf1Address,length(box)),box);
+  lokalPM:=(RightStr(empfaenger,length(box)+4)=box+'.ZER') or
+           stricmp(RightStr(empfaenger,length(box)+length(domain)),box+domain) or
+           stricmp(RightStr(empfaenger,length(box)),box);
   case netztyp of
     nt_Netcall,nt_ZCONNECT : l:=1;
     nt_Fido                : l:=2;
@@ -871,10 +875,10 @@ begin
     if netztyp in netsRFC then
       l:=3
     else begin
-      sdata.maxsize:=0; exit;      { nt_Pronet (s. SizeOK) }
+      maxsize:=0; exit;      { nt_Pronet (s. SizeOK) }
       end;
   end;
-  sdata.maxsize:=pmlimits[l,iif(lokalPM,2,1)];
+  maxsize:=pmlimits[l,iif(lokalPM,2,1)];
 end;
 
 function steuerzeichen(var s:string):boolean;
@@ -885,7 +889,6 @@ begin
   steuerzeichen:=(i<=length(s));
 end;
 
-(*
 function Empferror:boolean;
 var p  : byte;
     ee : string[40];
@@ -915,9 +918,7 @@ begin
     afehler(getreps2(609,6,ee),not sendbox);   { 'fehlerhafter Empf„nger: %s' }
   EmpfError:=(ee<>'');
 end;
-*)
 
-(*
 function FidoAdrOK(testbox:boolean):boolean;
 var ni : NodeInfo;
     fa : fidoadr;
@@ -942,7 +943,6 @@ begin
       FidoAdrOK:=true;
     end;
 end;
-*)
 
 procedure SetCrashInfo;
 var fa : FidoAdr;
@@ -973,7 +973,7 @@ begin
     message(s+'...')
   else
     message(getres2(610,iif(intern,4,5))+   { 'Speichere Nachricht in ' / 'Sende Nachricht an ' }
-            LeftStr(sData.Empf1Address,50)+' ');
+            copy(empfaenger,iif(pm,1,2),50)+' ');
 end;
 
 procedure EditSdata;
@@ -996,7 +996,6 @@ begin
       if ntGrossBrett(netztyp) then sml:='>'
       else if ntKleinBrett(netztyp) then sml:='<'
       else sml:='';
-      { suboptimal }
       if followup.count>0 then
         tmpFollowUp := followup[0]
       else
@@ -1026,7 +1025,10 @@ begin
   readmask(brk);
   if not brk then
   with sData do
-    if FollowUp.Count > 0 then FollowUp[0] := tmpFollowUp;
+    if FollowUp.Count > 0 then
+      FollowUp[0] := tmpFollowUp
+    else
+      if tmpFollowUp <> '' then FollowUp.Add(tmpFollowUp);
   enddialog;
 end;
 
@@ -1118,11 +1120,8 @@ end;
 
 {
   $Log$
-  Revision 1.18  2002/04/14 22:33:10  cl
-  - New address handling, supports To, CC, and BCC
-  - Nearly complete rewrite of DoSend's message creation
-  - Added TAddress and TAddressList
-  - Moved many local variables from DoSend into TSendUUData fields
+  Revision 1.17.2.1  2002/04/30 08:53:02  mk
+  - fixed bug: f'ups where not saved in editsdata
 
   Revision 1.17  2002/02/21 13:52:34  mk
   - removed 21 hints and 28 warnings
