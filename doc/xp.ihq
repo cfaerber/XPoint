@@ -12,9 +12,9 @@ Keine Hilfe verfÅgbar.
 
      [Hilfe zur Hilfe]             <<Cross>> \\//@3
                                        //\\ <<Point>>
-     [Hotkeys]@4
+     [Bedienung]@13
 
-     [Tastaturkonventionen]@10
+     [Hotkeys]@4
 
      [Kommandozeilen-Parameter]@7
 
@@ -1000,24 +1000,22 @@ Ersetzen lokaler Kopien keine Rolle.
 
 @
 13
-<<∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞ Bedienung der CrossPoint-Hauptfenster
+<<∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞ CrossPoint - Bedienung
 
 
 [Hilfe]@3
 
 [Brett-öbersicht]@20
-
 [User-öbersicht]@21
-
 [Nachrichten-Lesefenster]@30
-
 [Lister]@39
-
 [Editor]@54
 
+[Tastaturkonventionen und -bedienung]@10
+[Tastenfunktionen in Texteingabe-Feldern]@8076
 [Hotkeys]@4
 
-[Tastenfunktionen in Texteingabe-Feldern]@8076
+[Spezielle Themen]@14
 
 
 FÅr den Aufruf von MenÅpunkten und Funktionen in
@@ -1052,6 +1050,18 @@ CrossPoint haben Sie folgende Mîglichkeiten:
   entsprechenden Treiber installiert haben, wird die
   mittlere Maustaste als Doppelklick links gewertet.
 
+@
+14
+<<     ∞∞∞∞∞∞∞∞∞∞∞   Online-Hilfe: Spezielle Themen
+
+
+     [PGP-VerschlÅsselung]@1010
+
+     [CrossPoint und Mailinglisten]@12
+
+     [Netztyp RFC/Client]@30100
+
+     [CrossPoint als Standard-Mailer in Windows]@11
 @
 19
 Bitte wÑhlen Sie das gewÅnschte Brett. Mit <<<Enter> >>
@@ -14953,8 +14963,8 @@ Der MenÅpunkt /Netcall/Spezial entspricht dem
 11509
 <<Netcall / Spezial-Liste
 
-Hier editieren Sie die Boxenliste, die Sie zur Aus-
-fÅhrung von [/Netcall/Spezial] benîtigen.@11508
+Hier editieren Sie die Serverboxen-Liste, die Sie
+zur AusfÅhrung von [/Netcall/Spezial] benîtigen.@11508
 
 WÑhlen Sie die gewÅnschte Position (1 bis 20) und
 bearbeiten Sie diese mit <<E>> (Editieren) (<<<Enter> >>geht
@@ -14970,15 +14980,16 @@ hierbei aber folgendes beachten:
 - Es werden nur die ersten 20 Zeilen berÅcksichtigt;
 - Die Zeilennumerierung ist nicht in NETCALL.DAT
   enthalten und darf dort auch nicht enthalten sein;
-- Sie mÅssen selbst sicherstellen, da· die Boxen, die
-  Sie in NETCALL.DAT eingeben, in XP auch existieren.
+- Sie mÅssen selbst sicherstellen, da· die Server-
+  boxen, die Sie in NETCALL.DAT eingeben, in XP auch
+  existieren.
 
 @
 11511
 <<Netcall / Bereitschaft
 
-Hinter diesem MenÅpunkt steckt die universelle Net-
-callautomatik von CrossPoint.
+Hinter diesem MenÅpunkt steckt die universelle
+Netcall-Automatik von CrossPoint.
 
 Geben Sie die Nummer einer Timing-Liste an, die Sie
 mit [/Netcall/Timingliste] erstellt haben - CrossPoint@11512
