@@ -88,7 +88,7 @@ const kss : byte = 2;
       end;
   end;
 
-  procedure ende(s1,s2:string);
+  procedure ende(const s1,s2:string);
   begin
     Wrt2(sp(79-length(s1)-length(s2)-wherex));
     attrtxt(col.colkeyshigh);
@@ -129,7 +129,7 @@ const kss : byte = 2;
     ende('Q','uit');
   end;
 
-  procedure hitxt(s:string);
+  procedure hitxt(const s:string);
   begin
     attrtxt(col.colkeyshigh);
     Wrt2(s);
@@ -143,7 +143,7 @@ const kss : byte = 2;
     dec(shortkeys);
   end;
 
-  procedure kscr(txt:string);
+  procedure kscr(const txt:string);
   begin
     AddSK(wherex,length(txt)+4,-3,keycr);
     hitxt(#17'Ä');
@@ -410,6 +410,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.6  2001/12/18 14:10:22  mk
+  - weitere const parameter hinzugefügt
+
   Revision 1.7.2.5  2001/12/18 14:06:59  mk
   - const parameter für wf()
 
