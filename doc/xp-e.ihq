@@ -17,7 +17,7 @@ Sorry, no help available!
 
                       [Support]@5
 
-                 [Licence Conditions]@6
+                 [Licence conditions]@6
 
 <<<Tab> >> ... go to next [cross-reference]@7000
 <<Alt-F1>> ... go back one page
@@ -30,20 +30,20 @@ Starting Online Help:
 
 <<F1>>      Shows context sensitive help
 
-<<Tab>> to go to next [cross-reference] and <<shift-Tab>>@7000
+<<Tab>> to go to next [cross-reference] and <<Shift-Tab>>@7000
             to go to previous [cross-reference].
 <Enter>.
 
-<<Alt F1>>  Shows the previous help page.
+<<Alt-F1>>  Shows the previous help page.
 
 When displaying a help page...:
 
 <<F1>>      Shows help contents list
 
-<<Alt F1>>  Shows the previous help page. Repeated <Alt
+<<Alt-F1>>  Shows the previous help page. Repeated <Alt
         F1> flips back through previous pages.
 
-<<Ctrl D>>  Prints the current help page. The current
+<<Ctrl-D>>  Prints the current help page. The current
         printer settings used as: [/Config/Printer].@10606
 
 Large Help topics covering several screens can be
@@ -52,8 +52,8 @@ PgUp/PgDn keys can be used to turn pages.
 
 Many Help pages contain coloured [cross-references] to@7000
 other pages. You can view these pages by keying its
-<<first letter>> to select the reference then <<ENTER>> or
-by using the keys <<Tab>> and <<shift-Tab>>. <<Alt-F1>> brings
+<<first letter>> to select the reference then <<Enter>> or
+by using the keys <<Tab>> and <<Shift-Tab>>. <<Alt-F1>> brings
 you back to where you were. Press the <<Tab>> key, and
 see what happens.
 @
@@ -62,17 +62,17 @@ You can use the following Keys (almost) everywhere
 in CrossPoint:
 
    <<F1>>       Help
-   <<Alt F1>>   Previous Help
+   <<Alt-F1>>   Previous help
    <<F9>>       DOS-Shell
-   <<Alt F4>>   End Program
+   <<Alt-F4>>   End program
 
-   <<Alt K>>    Calendar
-   <<Alt E>>    Editor
-   <<Alt T>>    Notepad
-   <<Alt I>>    Print Screen to File
-   <<Alt 1>>    Switch off monitor display
+   <<Alt-K>>    Calendar
+   <<Alt-E>>    Editor
+   <<Alt-T>>    Notepad
+   <<Alt-I>>    Print screen to file
+   <<Alt-1>>    Switch off monitor display
 
-   <<Alt N>>    Browse Nodelist
+   <<Alt-N>>    Browse nodelist
 @
 5
 <<CrossPoint - Support
@@ -80,22 +80,23 @@ in CrossPoint:
 OpenXP/16 users can get extensive support whenever
 faced with problems and/or have questions. It doesn't
 make any difference whether you're a registered user
-(see [Licence Conditions]) or if you're still@6
+(see [Licence conditions]) or if you're still@6
 evaluating CrossPoint, your questions will still be
 welcome. If you're facing a problem that cannot be
 solved with the online help, please feel free to use
-one of the following channels:
+one of the following support channels:
 
 
 þ  Post your question to one of the following support
    forums:
 
    FidoNet    <<XPOINT>>                  (International)
+              <<POINTS>>                  (International)
               <<CROSSPOINT.OPENXP16.GER>> (German)
               <<CROSSPOINT.GER>>          (German)
               <<CROSSPOINT.EXPERT.GER>>   (German)
 
-   Usenet     <<crosspoint.openxp16.pub.allgemein
+   UseNet     <<crosspoint.openxp16.pub.allgemein
               <<de.comm.software.crosspoint
 
    eMail      <<support\@openxp16.de>>    (Mailing list)
@@ -115,7 +116,7 @@ one of the following channels:
    (in descending priority):
 
 
-   Usenet     Write an article to:
+   UseNet     Write an article in:
               <<crosspoint.openxp16.pub.allgemein
 
               This is the general and publicly
@@ -128,7 +129,8 @@ one of the following channels:
               report to <<de.comm.software.crosspoint>>,
               which is a forum for all CrossPoint
               versions and should be available at
-              *any* (German) news server.
+              *any* (German) news server and at most
+              English news servers.
 
               The OpenXP/16 developer newsgroup
               (<<crosspoint.openxp16.pub.developer>>)
@@ -157,7 +159,7 @@ one of the following channels:
               OpenXP/16. Under "šber OpenXP/16" all
               contact channels can be used with a
               mouse click. A website for OpenXP/16
-              in English language is available at:
+              in English is available at:
               <<http://mysite.freeserve.com/openxp16eng>>
 
 
@@ -174,8 +176,8 @@ one of the following channels:
               <<CROSSPOINT.OPENXP16.GER>>
               Here, you are connected via a gate to
               the general newsgroup of OpenXP/16
-              (see under "Usenet"). All echomails
-              that you write to this area are "gated"
+              (see under "UseNet"). All echomails
+              that you write in this area are "gated"
               to the newsgroup and all Usenet
               postings in this newsgroup are gated
               to the echomail area.
@@ -215,13 +217,13 @@ also be helpful (and are sometimes very necessary).
          the World Wide Web.)
 
 <<         http://www.openxp.de/
-         (Homepage of the OpenXP Project that is
+         (Homepage of the OpenXP Project which is
          developing the 32-bit version of OpenXP.)
 
 <<         http://www.xp2.de/
-         (Homepage of the XP2 Team that is developing
-         its own 16-bit version and which cooperates
-         with OpenXP/16.)
+         (Homepage of the XP2 Team which is
+         developing its own 16-bit version and which
+         cooperates with OpenXP/16.)
 
 <<         http://xpoint.da.ru/
          (Homepage of the 16-bit version from Jochen
