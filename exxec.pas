@@ -282,14 +282,6 @@ var regs  : registers;
     else environment:=' /E:'+strs(envspace);
   end;
 
-  function exist(s:string):boolean;
-  var sr : searchrec;
-  begin
-    FindFirst(s,ffAnyfile,sr);
-    exist:=doserror=0;
-    FindClose(sr);
-  end;
-
 begin
   Xec:=ExecOk;
   if so(freeptr).o>0 then          { Gr”áe der Free-Liste ermitteln }
@@ -420,6 +412,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.4  2000/12/12 14:03:55  mk
+  - weitere lfn-fixes
+
   Revision 1.20.2.3  2000/12/12 11:30:26  mk
   - FindClose hinzugefuegt
 

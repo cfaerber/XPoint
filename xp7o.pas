@@ -27,7 +27,7 @@ uses  {$IFDEF virtualpascal}sysutils,{$endif}
   crt,
 {$ENDIF }
       dos,typeform,inout,fileio,datadef,database,resource,maus2,
-      uart, archive,xp0,xp1,xp7,xp_iti;
+      uart, archive,xp0,xp1,xp7,xp_iti, lfn;
 
 procedure ttwin;
 procedure twin;
@@ -688,9 +688,9 @@ begin
         end;
       findnext(sr);
     end;
-    FindClose(sr);
     close(f1);
   end;
+  FindClose(sr);
   cursor(curoff);
   moff; clrscr; mon;
 end;
@@ -773,6 +773,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.9  2000/12/12 14:03:56  mk
+  - weitere lfn-fixes
+
   Revision 1.13.2.8  2000/12/12 11:30:30  mk
   - FindClose hinzugefuegt
 

@@ -16,7 +16,7 @@ interface
 
 {$I XPDEFINE.INC }
 
-uses xpglobal, dos,keys;
+uses xpglobal, dos,keys,lfn;
 
 
 type   ECB     = pointer;
@@ -84,9 +84,7 @@ const  EditfLeft        = 1;          { Cursor links                   }
        EditfDeltoEnd    = 77;         { L”schen bis Absatzende         }
        EditfParagraph   = 78;         { ^P^U                           }
        EditfChangeCase  = 79;         { Alt-3                          }
-       { 31.01.2000 robo }
        EditfReadUUeBlock= 80;         { Block aus Datei einlesen & UU-Encode }
-       { /robo }
        EditfFormatBlock = 81;         { Block reformatieren            }
 
        EditfFind        = 100;        { Suchen                         }
@@ -144,21 +142,14 @@ type   EdColrec = record
                     absatzendezeichen : char;
                     rechter_rand      : word;
                     AutoIndent        : boolean;
-                    { 01/2000 oh }
                     PersistentBlocks  : boolean;
-                    { /oh }
-                    { 10.02.2000 robo }
                     QuoteReflow       : boolean;
-                    { /robo }
                   end;
 
        EdAskQuit   = function(ed:ECB):taste;  { J/N/Esc }
-       EdAskOverwrite = function(ed:ECB; fn:pathstr):taste;
+       EdAskOverwrite = function(ed:ECB; fn:string):taste;
        EdMessage   = procedure(txt:string; error:boolean);   { Meldung anzeigen }
-       { 04.02.2000 robo }
-       { EdAskFile   = procedure(ed:ECB; var fn:pathstr; save:boolean); }  { Dateinameneingabe }
-       EdAskFile   = procedure(ed:ECB; var fn:pathstr; save,uuenc:boolean);  { Dateinameneingabe }
-       { /robo }
+       EdAskFile   = procedure(ed:ECB; var fn:string; save,uuenc:boolean);  { Dateinameneingabe }
        EdFindPanel = function(ed:ECB; var txt:string; var igcase:boolean):boolean;
        EdReplPanel = function(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
        EdConfigPanel = procedure(var cfg:EdConfig; var brk:boolean);
@@ -179,6 +170,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.5.2.2  2000/12/12 14:03:55  mk
+  - weitere lfn-fixes
+
   Revision 1.5.2.1  2000/07/21 17:32:26  jg
   - Editor: Glossary Funktion mit Strg+Enter bzw. Alt+G
 

@@ -24,7 +24,7 @@ uses xpglobal,
   crt,
 {$ENDIF }
   dos,typeform,fileio,inout,keys,datadef,database,lister,
-  maske,maus2, resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti;
+  maske,maus2, resource,win2,xp0,xp1,xp1o2,xp1help,xp1input,xp2c,xp_iti, lfn;
 
 
 procedure SendMaps(bef:string; var box,datei:string);
@@ -1584,6 +1584,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.5  2000/12/12 14:03:56  mk
+  - weitere lfn-fixes
+
   Revision 1.10.2.4  2000/11/18 22:11:28  mk
   - einige Dirname, extname, pathname in string geaendert
 

@@ -1730,7 +1730,7 @@ end;
 
 
 procedure BlockEinlesen;
-var fn : pathstr;
+var fn : string;
     ap : absatzp;
 begin
   with e^ do begin
@@ -1747,7 +1747,7 @@ end;
 
 { 31.01.2000 robo }
 procedure BlockUUeEinlesen;
-var fn : pathstr;
+var fn : string;
     ap : absatzp;
 begin
   with e^ do begin
@@ -1764,7 +1764,7 @@ end;
 { /robo }
 
 procedure BlockSpeichern;
-var fn : pathstr;
+var fn : string;
 begin
   with e^ do
     if blockinverse or blockhidden then
@@ -2418,6 +2418,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.15  2000/12/12 14:03:55  mk
+  - weitere lfn-fixes
+
   Revision 1.19.2.14  2000/12/07 13:45:39  mk
   RB:- move cursor to end of block after block insert functions
 

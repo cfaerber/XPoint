@@ -27,7 +27,7 @@ uses  xpglobal,
 {$ENDIF }
   dos,dosx,typeform,fileio,inout,keys,winxp,maus2,
   maske,lister, archive,stack,montage,resource,datadef,database,
-  xp0,xp1,xp1o,xp1input;
+  xp0,xp1,xp1o,xp1input, lfn;
 
 const nfComp   = $0001;
       nfHST    = $0002;
@@ -1232,7 +1232,6 @@ begin
     if (s<>'') and (s[1]<>'#') and (s[1]<>';') and (p>0) then begin
       fn:=mid(s,p+1);
       findfirst(FidoDir+fn,ffAnyFile,sr);
-      findclose(sr);
       if (doserror=0) and (sr.size>0) then begin
         node:=left(s,p-1);
         GetNodeinfo(node,ni,1);
@@ -1242,9 +1241,10 @@ begin
         app_l(' '+forms(node,14)+' '+
               forms(iifs(ni.found,ni.boxname+', '+ni.standort,'???'),32)+
               '  '+fdate+'  '+forms(fn,9)+strsn(sr.size div 1024,5)+'k ');
-        end;
       end;
+      findclose(sr);
     end;
+  end;
   KeepNodeindexClosed;
   close(t);
   if anz>0 then begin
@@ -2260,6 +2260,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.3  2000/12/12 14:03:57  mk
+  - weitere lfn-fixes
+
   Revision 1.15.2.2  2000/12/12 11:30:31  mk
   - FindClose hinzugefuegt
 

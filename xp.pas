@@ -19,7 +19,7 @@
 
 program xp;
 
-uses lfn, xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
+uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc,resource,stack,clip,eddef,editor,feiertag,
      xpdiff,xpdatum,xpglobal,
@@ -75,7 +75,8 @@ uses lfn, xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      xpview,   { Binfile-Viewer     }
      xpmime,   { Multipart-Decode   }
      xpfonts,  { interne Fonts      }
-     xpimpexp; { Import/Export      }
+     xpimpexp, { Import/Export      }
+     lfn;      { Long filenames     }
 
 {$O win2}    {$O help}    {$O maske}    {$O lister}   {$O archive}
 {$O clip}    {$O editor}  {$O databaso} {$O feiertag}
@@ -195,6 +196,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.8  2000/12/12 14:03:56  mk
+  - weitere lfn-fixes
+
   Revision 1.29.2.7  2000/11/17 12:18:58  mk
   - Probleme beim aktualisieren der Defautviewer behoben
 

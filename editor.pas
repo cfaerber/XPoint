@@ -19,10 +19,10 @@ interface
 
 
 uses
-  xpglobal, crt, dos,keys,clip,mouse,eddef, encoder;
+  xpglobal, crt, dos,keys,clip,mouse,eddef, encoder, lfn;
 
 
-const EdTempFile  : pathstr = 'TED.TMP';
+const EdTempFile  : string = 'TED.TMP';
       EdConfigFile: string[14] = 'EDITOR.CFG';
       EdSelcursor : boolean = false;    { Auswahllistencursor }
       OtherQuoteChars : boolean = false; { Andere Quotezeichen neben > }
@@ -36,7 +36,7 @@ procedure EdSetScreenwidth(w:byte);         { globale Einstellungen }
 
 function  EdInit(l,r,o,u:byte; rand:integer; savesoftbreaks:boolean;
                  NeuerAbsatzUmbruch:byte; iOtherQuoteChars:boolean):ECB;
-function  EdLoadFile(ed:ECB; fn:pathstr; sbreaks:boolean; umbruch:byte):boolean;
+function  EdLoadFile(ed:ECB; fn:string; sbreaks:boolean; umbruch:byte):boolean;
 function  EdEdit(ed:ECB):EdToken;
 function  EdSave(ed:ECB):boolean;
 procedure EdExit(var ed:ECB);               { Release }
@@ -54,14 +54,14 @@ procedure EdSetUkonv(umlaute_konvertieren:boolean);
 procedure EdAutoSave;
 
 function  EdModified(ed:ECB):boolean;       { externer Zugriff }
-function  EdFilename(ed:ECB):pathstr;
+function  EdFilename(ed:ECB):string;
 procedure EdAddToken(ed:ECB; t:EdToken);
 
 
 function  EddefQuitfunc(ed:ECB):taste;
-function  EddefOverwrite(ed:ECB; fn:pathstr):taste;
+function  EddefOverwrite(ed:ECB; fn:string):taste;
 procedure EddefMsgproc(txt:string; error:boolean);
-procedure EddefFileproc(ed:ECB; var fn:pathstr; save,uuenc:boolean);
+procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
 function  EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
 procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
@@ -99,7 +99,7 @@ type  charr    = array[0..65500] of char;
       EdData   = record                       { je aktivem Editorobjekt }
                    lastakted  : edp;
                    x,y,w,h,gl : byte;         { --- Startup }
-                   edfile     : pathstr;
+                   edfile     : string;
                    showfile   : string[40];
                    savesoftbreak : boolean;      { beim Speichern }
                    tproc      : EdTProc;
@@ -328,7 +328,7 @@ begin
   EddefQuitfunc:=AskJN(ed,1,language^.ja);
 end;
 
-function EddefOverwrite(ed:ECB; fn:pathstr):taste;
+function EddefOverwrite(ed:ECB; fn:string):taste;
 begin
   EddefOverwrite:=AskJN(ed,2,language^.ja);
 end;
@@ -352,8 +352,8 @@ begin
   errsound;
 end;
 
-{ procedure EddefFileproc(ed:ECB; var fn:pathstr; save:boolean); }
-procedure EddefFileproc(ed:ECB; var fn:pathstr; save,uuenc:boolean);
+{ procedure EddefFileproc(ed:ECB; var fn:string; save:boolean); }
+procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
 { /robo }
 var brk : boolean;
     mf  : char;
@@ -533,7 +533,7 @@ begin
   EdModified:=edp(ed)^.modified;
 end;
 
-function EdFilename(ed:ECB):pathstr;
+function EdFilename(ed:ECB):string;
 begin
   EdFilename:=edp(ed)^.edfile;
 end;
@@ -677,7 +677,7 @@ end;
 {           1 = nur lange Zeilen ohne Softbreak ohne Umbruch laden  }
 {           2 = alles mit Umbruch laden                             }
 
-function LoadBlock(fn:pathstr; sbreaks:boolean; umbruch,rrand:byte):absatzp;
+function LoadBlock(fn:string; sbreaks:boolean; umbruch,rrand:byte):absatzp;
 var mfm   : byte;
     s     : string;
     t     : text;
@@ -774,7 +774,7 @@ begin
 end;
 
 { 31.01.2000 robo }
-function LoadUUeBlock(fn:pathstr):absatzp;
+function LoadUUeBlock(fn:string):absatzp;
 const blen = 45;
 var mfm   : byte;
     s     : str90;
@@ -846,7 +846,7 @@ end;
 { /robo }
 
 
-function EdLoadFile(ed:ECB; fn:pathstr; sbreaks:boolean; umbruch:byte):boolean;
+function EdLoadFile(ed:ECB; fn:string; sbreaks:boolean; umbruch:byte):boolean;
 begin
   with edp(ed)^ do begin
     edfile:=FExpand(fn);
@@ -922,7 +922,7 @@ end;
 
 { Block von pstart bis pende in Datei schreiben }
 
-function SaveBlock(pstart,pende:position; fn:pathstr; rand:integer;
+function SaveBlock(pstart,pende:position; fn:string; rand:integer;
                    softbreak,overwrite,forcecr:boolean):boolean;
 const crlf : string[2] = #13#10;
       spc  : string[3] = ' '#13#10;
@@ -1880,6 +1880,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.11  2000/12/12 14:03:55  mk
+  - weitere lfn-fixes
+
   Revision 1.25.2.10  2000/11/10 05:21:11  mk
   RB:- Umbruch Fix
 

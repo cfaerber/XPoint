@@ -402,6 +402,7 @@ var sr    : searchrec;
             _era(AutoxDir+sr.name);
             findnext(sr);
           end;
+          findclose(sr);
         end;
         _era('FPUFFER');
       end;
@@ -676,6 +677,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.6  2000/12/12 14:03:57  mk
+  - weitere lfn-fixes
+
   Revision 1.13.2.5  2000/12/12 11:30:30  mk
   - FindClose hinzugefuegt
 

@@ -11,28 +11,21 @@
 { CrossPoint - Editor }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpe;
 
 interface
 
-uses 
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-     dos,dosx,typeform,fileio,inout,keys,winxp,maus2,resource,maske,
-     eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10;
+uses
+  crt, dos,dosx,typeform,fileio,inout,keys,winxp,maus2,resource,maske,
+  eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10, lfn;
 
 
 const EditXkeyfunc : EdTProc = nil;
 
-procedure TED(var fn:pathstr; reedit:boolean; keeplines:byte; ukonv:boolean);
-procedure SigEdit(datei:pathstr);
+procedure TED(var fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
+procedure SigEdit(datei:string);
 procedure EditText;
 procedure Notepad;
 procedure EditSetbetreff(betr:string; maxlen:byte);
@@ -41,12 +34,9 @@ function  EditGetBetreff:string;
 function  EditKeyFunc(var t:taste):boolean;
 
 function  EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
-function  EditOverwrite(ed:ECB; fn:pathstr):taste;   { šberschr.: J/N/Esc }
+function  EditOverwrite(ed:ECB; fn:string):taste;   { šberschr.: J/N/Esc }
 procedure EditMessage(txt:string; error:boolean);
-{ 04.02.2000 robo }
-{ procedure EditAskFile(ed:ECB; var fn:pathstr; save:boolean); }
-procedure EditAskFile(ed:ECB; var fn:pathstr; save,uuenc:boolean);
-{ /robo }
+procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
 function  EditFindfunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EditReplfunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
 procedure EditCfgFunc(var cfg:EdConfig; var brk:boolean);
@@ -101,7 +91,7 @@ begin
   freeres;
 end;
 
-function EditOverwrite(ed:ECB; fn:pathstr):taste;   { šberschr.: J/N/Esc }
+function EditOverwrite(ed:ECB; fn:string):taste;   { šberschr.: J/N/Esc }
 var brk : boolean;
 begin
   if Overwrite(fn,false,brk) then EditOverwrite:=_jn_[1]
@@ -114,24 +104,15 @@ begin
   else hinweis(txt);
 end;
 
-{ 04.02.2000 robo }
-{ procedure EditAskFile(ed:ECB; var fn:pathstr; save:boolean); }
-procedure EditAskFile(ed:ECB; var fn:pathstr; save,uuenc:boolean);
-{ /robo }
+procedure EditAskFile(ed:ECB; var fn:string; save,uuenc:boolean);
 var useclip : boolean;
 begin
   if save then fn:='' else fn:=SendPath+WildCard;
   useclip:=false;          { 'Block speichern' / 'Block laden' }
   if readfilename(getres(iif(save,2504,2505))
-  { 04.02.2000 robo }
                   +iifs(uuenc,' '+getres(2509),'')
-  { /robo }
                   ,fn,true,useclip) then begin
-{$IFDEF UNIXFS}
-    if not multipos('/',fn) 
-{$ELSE}
-    if not multipos('\:',fn) 
-{$ENDIF}
+    if not multipos('\:',fn)
       then fn:=sendpath+fn;
     end
   else
@@ -255,7 +236,7 @@ begin
 end;
 
 
-procedure TED(var fn:pathstr; reedit:boolean; keeplines:byte; ukonv:boolean);
+procedure TED(var fn:string; reedit:boolean; keeplines:byte; ukonv:boolean);
 const inited : boolean = false;
       EditFusszeile = false;
 var   ed     : ECB;
@@ -342,7 +323,7 @@ end;
 { --- Signatureditor ---------------------------------------------- }
 
 
-procedure SigEdit(datei:pathstr);
+procedure SigEdit(datei:string);
 var ok   : boolean;
     x,y  : byte;
     n,nn : shortint;
@@ -381,7 +362,7 @@ end;
 
 
 procedure EditText;
-var s       : pathstr;
+var s       : string;
     useclip : boolean;
 begin
   if keepedname then
@@ -406,7 +387,7 @@ end;
 
 
 procedure Notepad;
-var s  : pathstr;
+var s  : string;
     ma : byte;
 begin
   s:='NOTEPAD';
@@ -485,6 +466,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.2  2000/12/12 14:03:57  mk
+  - weitere lfn-fixes
+
   Revision 1.16.2.1  2000/11/24 15:23:47  mk
   - Edit/Config uebernimmt Optionen jetzt immer
 
@@ -506,16 +490,5 @@ end.
 
   Revision 1.11  2000/04/14 14:55:35  jg
   - Bugfix: es gab zwei Routinen namens Editoptions...
-
-  Revision 1.10  2000/04/13 12:48:40  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }

@@ -293,8 +293,8 @@ var sr : searchrec;
 begin
   { Auf keinen Fall das XP-Verzeichnis l”schen! }
   Findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
-  FindClose(sr);
   er:=doserror;
+  FindClose(sr);
   { xp.ovr gefunden, dann wahrscheinlich im XP-Verzeichnis! }
   if (er=0) then exit;
   { Oops, XPVerzeichnis erwischt! }
@@ -725,6 +725,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.8  2000/12/12 14:03:56  mk
+  - weitere lfn-fixes
+
   Revision 1.41.2.7  2000/12/12 11:30:26  mk
   - FindClose hinzugefuegt
 
