@@ -29,6 +29,7 @@ uses
   mime, xpsendmessage_attach;
 
 procedure SendAttach_Analyze(pa:TMIME_Part;Change:Boolean);
+function  GuessContentTypeFromFileName(FileName:String):String;
 
 { ------------------------} implementation { ------------------------- }
 
@@ -47,7 +48,7 @@ var ext: string;
     reg: HKEY;
     value_data: String;
     value_size: DWORD;
-    reg_res: LONG;
+    reg_res: Cardinal;
 {$ENDIF}
 begin
   Result := '';
@@ -69,7 +70,7 @@ begin
 
 {$IFDEF Win32} 
   if (Result='') and (RegOpenKeyEx(HKEY_CLASSES_ROOT, PChar(Ext), 0,
-    KEY_QUERY_VALUE, @reg) = ERROR_SUCCESS) then
+    KEY_QUERY_VALUE, {$IFNDEF Delphi}@{$ENDIF}reg) = ERROR_SUCCESS) then
   begin
     SetLength(value_data,255);
     value_size:=Length(value_data);
@@ -87,7 +88,7 @@ begin
   end;
 {$ENDIF}
 end;
-      
+
 procedure SendAttach_Analyze(pa:TMIME_Part;Change:Boolean);
 var f:   TFileStream;
     ext: String;
@@ -99,80 +100,18 @@ var f:   TFileStream;
     GuessedCharset:	String;
     GuessedEncoding:	String;
 
-//  HasEOL:     Array[eol_cr,eol_lf,eol_crlf] of Integer; (* Number of line end types *)
-//  HasByte:    Array[0..255]                 of Integer; (* Number of byte values    *)
-//  HasUTF8:    Array[boolean]                of Integer; (* Number of UTF-8 sequences/non-UTF-8 8bit values *)
-
-//  MaxLineLen: Array[eol_cr,eol_lf,eol_crlf] of Integer;
-//  CurLineLen: Array[eol_cr,eol_lf,eol_crlf] of Integer;
-
-//procedure SetLineLength(eol_type: (eol_cr,eol_lf,eol_crlf); 
-//  chars_before,chars_after: Integer);
-//begin
-//  CurLineLen:=CurLineLen+chars_before;
-//  if CurLineLen>MaxLineLen then MaxLineLen:=CurLineLen;
-//  CurLineLen:=chars_after;
-//end;
-
 begin
 
   GuessedType := GuessContentTypeFromFileName(
     iifs(pa.IsFile,pa.FileName,pa.FileNameO));
 
-//	  { analyze the data to determine possible encodings       }
-//	  f := TFileStream(pa.FileName,fmRead);
-//	
-//	  CurLineLen:=0;
-//	  MaxLineLen:=0;
-//	
-//	  n := f.Read(Buffer,Sizeof(Buffer));
-//	
-//	  while n>0 do
-//	  begin
-//	    for i:=1 to n do 
-//	    begin 
-//	      c:=Buffer[i];
-//	      Inc(CurLineLen[eol_CRLF]);
-//	      Inc(CurLineLen[eol_LF]);
-//	      Inc(CurLineLen[eol_CR]);
-//	
-//	      { check for line endings                             }
-//	      if c=#10 then begin
-//	        if Lastchar=#13 then begin
-//	          Inc(HasEOL[eol_CRLF]);
-//		  MaxLineLen[eol_CRLF]:=Max(CurLineLen[eol_CRLF]-2,MaxLineLen[eol_CRLF]);
-//		  CurLineLen[eol_CRLF]:=0;
-//		  MaxLineLen[eol_LF  ]:=Max(CurLineLen[eol_LF  ]-1,MaxLineLen[eol_LF  ]);
-//		  CurLineLen[eol_LF  ]:=0;
-//		  MaxLineLen[eol_CR  ]:=Max(CurLineLen[eol_CR  ]-2,MaxLineLen[eol_CR  ]);
-//		  CurLineLen[eol_CR  ]:=1;
-//		end
-//	        else begin
-//	          Inc(HasEOL[eol_LF]);
-//		  MaxLineLen[eol_LF  ]:=Max(CurLineLen[eol_LF  ]-1,MaxLineLen[eol_LF  ]);
-//		  CurLineLen[eol_LF  ]:=0;
-//		end;
-//	      end else 
-//	        if Lastchar=#13 then begin
-//	          Inc(HasEOL[eol_CR]);
-//		  MaxLineLen[eol_CR  ]:=Max(CurLineLen[eol_CR  ]-2,MaxLineLen[eol_CR  ]);
-//		  CurLineLen[eol_CR  ]:=1;
-//		end;
-//	    
-//	      LastChar:=c;
-//	    end;
-//	    n := f.Read(Buffer,Sizeof(Buffer));
-//	  end;
-//	  
-//	  f.Free;
-//	
   if Change then
   { change all parameters to the values determined through }
   { our analyzation					   }
   begin
-    pa.ContentType := iifs(Length(GuessedType)>0,GuessedType,'application/octet-stream');
+    pa.ContentType.AsString := iifs(Length(GuessedType)>0,GuessedType,'application/octet-stream');
 
-  end else 
+  end else
   { only change those parameters where we would otherwise  }
   { create illegal messages 				   }
   begin

@@ -25,30 +25,46 @@ unit xpsendmessage_attach;
 { ---------------------------} interface { --------------------------- }
 
 uses
-  classes,mime,sysutils;
+  classes,mime,sysutils,mime_ctype;
 
-type 
+type
+  MIME_EOL = (Eol_LF,Eol_CRLF,Eol_CR,Eol_none);
+  MIME_CharsetClass = (charset_8bit,charset_utf8,charset_utf16be,charset_utf16le);
+
   TMIME_Part = class
+  private
+    function GContentCharset:String;
+    procedure SContentCharset(const newvalue:string);
+
   public
-    FileName   	: TFileName;	(* Name of file 		*)
+    FileName   	: String;	(* Name of file 		*)
     IsTemp      : Boolean;	(* Created temporarily 		*)
     IsFile      : Boolean;      (* Was create from file         *)
-  
-    FileCharset : String;	(* charset of data		*)
-    FileEOL	: (Eol_LF,Eol_CRLF,Eol_CR,Eol_none);
 
-    ContentType 	: String;
-    ContentCharset	: String;	(* charset for transfer	*)
+    FileCharset : String;	(* charset of data		*)
+    FileEOL	: MIME_EOL;     (* line ends                    *)
+
+    ContentType 	: TMimeContentType;
+
     ContentEncoding	: MIME_Encoding;
     ContentDescription 	: String;
     ContentDisposition	: MIME_Disposition;
+
+    AllowedCharsets     : set of MIME_CharsetClass;
+    AllowedEOL          : set of MIME_EOL;
+    AllowedEncoding     : set of MIME_Encoding;
 
     FileNameO   : TFileName;	(* Original file name		*)
     FileCreate  : TDateTime;	(* file creation date		*)
     FileModify  : TDateTime;	(* file modification date	*)
     FileAccess  : TDateTime;	(* file access date		*)
+
+    property ContentCharset: String read GContentCharset write SContentCharset;
+
+    constructor Create;
+    destructor Destroy;
   end;
-  
+
 procedure SendAttach(parts:TList;Umlaute:Boolean);
 procedure SendAttach_Add(parts:TList;x,y:Integer;Umlaute:Boolean);
 procedure SendAttach_Delete(parts:TList;n:integer);
@@ -66,6 +82,41 @@ uses
   fileio, inout, keys, lister, maus2, resource, typeform, winxp, xp0, xp1,
   xp1input, xp1o, xp3, xp3o, xp4e, xpe, xpglobal, xpnt,
   xpsendmessage_attach_analyze, maske;
+
+constructor TMIME_Part.Create;
+begin
+  IsTemp	:= False;
+  IsFile	:= False;
+
+  ContentType := TMimeContentType.Create('');
+
+  FileCharset := '';
+  FileEOL	:= EOL_CRLF;
+
+  ContentEncoding := mime_auto;
+  ContentDescription := '';
+  ContentDisposition := mime_attach;
+
+  FileNameO	:= '';
+  FileCreate	:= NaN;
+  FileModify	:= NaN;
+  FileAccess	:= NaN;
+end;
+
+destructor TMIME_Part.Destroy;
+begin
+  ContentType.Free;
+end;
+
+function TMIME_Part.GContentCharset:String;
+begin
+  result := ContentType.Charset;
+end;
+
+procedure TMIME_Part.SContentCharset(const newvalue:string);
+begin
+  ContentType.Charset := newvalue;
+end;
 
 { SendAttach:                                                          }
 { add/delete/remove/edit content parts				       }
@@ -101,7 +152,7 @@ var p,p0      :	integer;	(* current line                 *)
     s1:=iifs((i=0) and
       (pa.FileNameO='') and
       (pa.ContentDisposition=mime_inline) and
-      (UpperCase(pa.ContentType)='TEXT/PLAIN'),'N', 
+      (UpperCase(pa.ContentType.Verb)='TEXT/PLAIN'),'N', 
       iifs(pa.ContentDisposition=mime_inline,' ','A'))+
       iifs(pa.IsFile,'F',' ') {$IFDEF Debug}+
       iifs(pa.IsTemp,'T',' ') {$ENDIF};
@@ -115,7 +166,7 @@ var p,p0      :	integer;	(* current line                 *)
       else        s3:='???';
     end;
     
-    s2:=pa.ContentType;
+    s2:=pa.ContentType.Verb;
     s2:=Trim(LeftStr(s2,PosX(';',s2)));
     
     if Length(s2)+Length(s3)>16 then
@@ -305,7 +356,7 @@ begin { SendAttach }
   until false;
 
   maus_popinside;
-(*  
+(*
   pophp;
 *)
   closebox;
@@ -365,12 +416,15 @@ var pa: TMIME_Part;
   function WinFileTimeToDateTime(var utc:TFILETIME):TDateTime;
   var local: Windows.TFileTime;
       wsyst: Windows.TSystemTime;
+    {$IFNDEF Delphi}
       systm: SysUtils.TSystemTime;
+    {$ENDIF}
   begin
-    if (utc.dwLowDateTime or utc.dwHighDateTime)<>0 then 
+    if (utc.dwLowDateTime or utc.dwHighDateTime)<>0 then
     begin
-      Windows.FileTimeToLocalFileTime(utc,@local);
-      Windows.FileTimeToSystemTime(local,@wsyst);
+      Windows.FileTimeToLocalFileTime(utc,{$IFNDEF Delphi}@{$ENDIF}local);
+      Windows.FileTimeToSystemTime(local,{$IFNDEF Delphi}@{$ENDIF}wsyst);
+    {$IFNDEF Delphi}
       systm.year        := wsyst.wYear;
       systm.month       := wsyst.wMonth;
       systm.day         := wsyst.wDay;
@@ -379,6 +433,9 @@ var pa: TMIME_Part;
       systm.second      := wsyst.wSecond;
       systm.millisecond := wsyst.wMilliSeconds;
       Result:=SystemTimeToDateTime(systm);
+    {$ELSE}
+      Result:=SystemTimeToDateTime(wsyst);
+    {$ENDIF}
     end else
       Result:=NaN;
   end;
@@ -386,24 +443,6 @@ var pa: TMIME_Part;
 
 begin
   pa := TMIME_Part.Create;
-
-  pa.FileName   := '';
-  pa.IsTemp	:= False;
-  pa.IsFile	:= False;
-     
-  pa.FileCharset := '';
-  pa.FileEOL	:= EOL_CRLF;
- 
-  pa.ContentType     := '';
-  pa.ContentCharset  := '';
-  pa.ContentEncoding := mime_auto;
-  pa.ContentDescription := '';
-  pa.ContentDisposition := mime_attach;
- 
-  pa.FileNameO	:= '';
-  pa.FileCreate	:= NaN;	
-  pa.FileModify	:= NaN;	
-  pa.FileAccess	:= NaN;	
 
   nn:=MiniSel(x+10,min(y+1,screenlines-3),'',GetRes2(624,1),1);
 
@@ -415,15 +454,13 @@ begin
           pa.FileName := '*.*';
         {$endif}
          uc:=false;
-         ReadFileName(GetRes2(624,50),pa.FileName,true,uc);
+         xp1o.ReadFileName(GetRes2(624,50),pa.FileName,true,uc);
          if (pa.FileName='') then begin 
            pa.Free; exit; 
          end;
          if not FileExists(pa.FileName) then begin
            Fehler(Getres2(624,52)); pa.Free; exit; 
          end;
-
-	 pa.ContentType:='none';
 
          pa.IsFile := true;
          pa.IsTemp := false;
@@ -432,7 +469,7 @@ begin
          pa.FileNameO:=ExtractFileName(pa.FileName);
 
          {$IFDEF Win32}
-           Handle := Windows.FindFirstFile(PChar(pa.FileName), @FindData);
+           Handle := Windows.FindFirstFile(PChar(pa.FileName), {$IFNDEF Delphi}@{$ENDIF}FindData);
            if Handle <> INVALID_HANDLE_VALUE then
            begin
              Windows.FindClose(Handle);
@@ -459,7 +496,8 @@ begin
     	 pa.IsTemp	:= True;
     	 pa.FileCharset := 'CP850';
     	 pa.FileEOL	:= EOL_CRLF;
-    	 pa.ContentType	:= 'text/plain';
+         
+    	 pa.ContentType.AsString := 'text/plain';
 
          SendAttach_EditText(pa,false,Umlaute);
        end;
@@ -514,8 +552,10 @@ var x,y  : Integer;
     ContentType	      : string;
     ContentCharset    : string;
 begin
-  ContentType		:= pa.ContentType;
-  ContentCharset	:= pa.ContentCharset;
+  ContentCharset	:= pa.ContentType.Charset;
+                           pa.ContentType.Charset:='';
+  ContentType		:= pa.ContentType.AsString;
+                           pa.ContentType.Charset:=ContentCharset;
   FileCharset		:= pa.FileCharset;
 
   case pa.ContentEncoding of
@@ -529,27 +569,29 @@ begin
   dialog(60,11,GetRes2(624,40),x,y);
   maddtext(2,2,GetRes2(624,41),0);
   maddtext(2,3,GetRes2(624,42),0);
-  
+
   maddstring(2,5,GetRes2(624,45),ContentType,41,maxint,'');
   mappsel(false,GetRes2(624,37));
   mset1func(@on_contenttype_change);
-  
+
   maddstring(2,7,GetRes2(624,46),FileCharset,12,maxint,'');
   mappsel(false,GetRes2(624,35)); If Not IsTxt then MDisable;
-  
+
   maddstring(2,8,GetRes2(624,47),ContentCharset,12,maxint,'');
   mappsel(false,GetRes2(624,36)); If Not IsTxt then MDisable;
 
   maddstring(2,10,GetRes2(624,48),ContentEncoding,16,maxint,'');
   mappsel(true,IIfs(IsTxt,GetRes2(624,30)+'ù','')+GetRes2(624,31)+'ù'+GetRes2(624,32));
-  
+
   freeres;
   readmask(brk);
   enddialog;
 
   if brk then exit;
 
-  pa.ContentType 	:= ContentType;
+  pa.ContentType.AsString := ContentType;
+  if ContentCharset<>'' then
+    pa.ContentType.Charset := ContentCharset;
 
   if (ContentEncoding=GetRes2(624,30)) then
     pa.ContentEncoding := mime_8bit else { DoSend will check whether 8bit is actually needed }
@@ -633,8 +675,8 @@ begin
   if parts.count<=0 then exit;
   pa := TMIME_Part(parts[n]);
   
-  t:=(Uppercase(LeftStr(pa.ContentType,5))='TEXT/') or
-     (Uppercase(LeftStr(pa.ContentType,8))='MESSAGE/');
+  t:=(Uppercase(pa.ContentType.MainType)='TEXT') or
+     (Uppercase(pa.ContentType.MainType)='MESSAGE');
 
   if t then
     s:=GetRes2(624,7)+GetRes2(624,8)
@@ -648,7 +690,7 @@ begin
     1: SendAttach_EditText(pa,(n=0) and
          (pa.FileNameO='') and
          (pa.ContentDisposition=mime_inline) and
-         (UpperCase(pa.ContentType)='TEXT/PLAIN'),Umlaute);
+         (UpperCase(pa.ContentType.Verb)='TEXT/PLAIN'),Umlaute);
     2: SendAttach_EditMeta(pa);
     3: SendAttach_EditType(pa);
     4: (* debug *);
