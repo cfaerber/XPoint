@@ -3449,15 +3449,18 @@ Systemnamen (Pointnamen).
        SMTP-Format erstellt, das bestimmte Steuer-
        befehle fr den SMTP-Transfer enth„lt.
 
+       Des weiteren haben Sie bei aktivierter Option
+       auch Zugriff auf den zus„tzlichen Schalter
+       "[PPP-Modus: eine Datei je PM]".@8018
+
 Nicht jedes UUCP-System untersttzt Batched SMTP. Im
 Zweifelsfall fragen Sie bitte den Systembetreiber.
 
-Siehe auch: [fr jede PM eine Datei erstellen]@8018
 @
 8018
 Dies ist ein Zusatzschalter fr "Batched SMTP" und
 nur fr Anwender sinnvoll (und empfohlen!), die einen
-externen PPP-Client wie UKA_PPP oder UKAW in einer
+externen PPP-Client wie <<UKA_PPP>> oder <<UKAW>> in einer
 RFC/UUCP-Box betreiben (und sollte auch nur von
 diesen verwendet werden):
 
@@ -3466,33 +3469,75 @@ diesen verwendet werden):
        gemeinsam in dieselbe Datei zu schreiben.
 
        Dies ist sinnvoll, um das mehrfache Senden
-       derselben Nachrichten im Falle von šbertra-
-       gungsproblemen im PPP-Betrieb mit externen
-       Clients zu verhindern.
+       derselben Nachrichten (und somit das Erzeugen
+       von 'Dupes' bei den Empf„ngern) im Falle von
+       šbertragungsproblemen im PPP-Betrieb mit
+       externen Clients zu verhindern.
 
-<<Hinweis:>> Das Aktivieren dieses Zusatzschalters ist
-*nicht* gleichbedeutend mit dem Deaktivieren des
-Schalters "[Batched SMTP]" insgesamt.  Zwar wird in@8017
-beiden F„llen jede PM als eigene Datei bertragen,
-jedoch in unterschiedlichen Formaten: Nur wenn Sie
-"Batched SMTP" <<und>> den Zusatzschalter "fr jede PM
-eine Datei erstellen" aktivieren, wird jede Nachricht
-in einer eigenen Datei im <<SMTP-Format>> erstellt und
-bertragen.
 
-Konkrete Vorteile des SMTP-Formats im PPP-Betrieb mit
-externen Clients: Nachrichten, die Kopienempf„nger
-(CC, Carbon Copies) enthalten, werden physikalisch
-nur einmal erstellt und gesendet, und die Empf„nger
-k”nnen korrekt erkennen, wer eigentlicher Empf„nger
-und wer Kopienempf„nger ist.
+<<Hinweise:>>
 
-Beides ist nicht der Fall, wenn Sie "Batched SMTP"
-insgesamt deaktivieren: Dann wird auch fr *jeden*
-Kopienempf„nger physikalisch immer eine eigene Nach-
-richt erstellt und bertragen, und jeder der Empf„n-
-ger sieht sich selbst als eigentlichen Empf„nger und
-den/die anderen Empf„nger als Kopienempf„nger.
+1. Das Aktivieren dieses Zusatzschalters ist *nicht*
+   gleichbedeutend mit dem Deaktivieren des Schalters
+   "[Batched SMTP]" insgesamt.  Zwar wird in beiden@8017
+   F„llen jede PM als eigene Datei bertragen, jedoch
+   in unterschiedlichen Formaten: Nur wenn Sie
+   "Batched SMTP" <<und>> den Zusatzschalter "PPP-
+   Modus: eine Datei je PM" aktivieren, wird jede
+   Nachricht in einer eigenen Datei im <<SMTP-Format>>
+   erstellt und bertragen.
+
+   Konkrete Vorteile des SMTP-Formats im PPP-Betrieb
+   mit externen PPP-Clients: Nachrichten, die Kopien-
+   empf„nger (CC, Carbon Copies) enthalten, werden
+   physikalisch nur einmal erstellt und gesendet, und
+   die Empf„nger k”nnen korrekt erkennen, wer eigent-
+   licher Empf„nger und wer Kopienempf„nger ist.
+
+   Beides ist nicht der Fall, wenn Sie "Batched SMTP"
+   insgesamt deaktivieren: Dann wird auch fr *jeden*
+   Kopienempf„nger physikalisch immer eine eigene
+   Nachricht erstellt und bertragen, und jeder der
+   Empf„nger sieht sich selbst als eigentlichen
+   Empf„nger und den/die anderen Empf„nger als
+   Kopienempf„nger.
+
+2. Bei Verwendung des Schalters "PPP-Modus: eine
+   Datei je PM" werden die von XP erzeugten Dateien
+   unmittelbar mit dem Dateinamen und in dem Format
+   erstellt, in dem sie von externen PPP-Clients wie
+   <<UKA_PPP>> oder <<UKAW>> erwartet werden (<<M>>nnnn.<<out>> fr
+   Mails und <<N>>nnnn.<<out>> fr News/Artikel, wobei "nnnn"
+   fr eine fortlaufende vierstellige Zahl steht). Im
+   normalen RFC/UUCP-Modus wrde XP hingegen Datei-
+   namen erzeugen, die von dem jeweiligen Client erst
+   noch umbenannt und in das Ausgangsverzeichnis ver-
+   schoben werden máten.
+
+   In der Praxis heiát das, daá in der Standard-
+   installation von externen PPP-Clients wie UKA_PPP
+   und/oder UKAW an zwei Stellen Anpassungen vorge-
+   nommen werden mssen, wenn Sie den Schalter
+   "PPP-Modus: eine Datei je PM" verwenden:
+
+   - Das bisher notwendige "Umspoolen" der von XP
+     erzeugten Dateien entf„llt. In den Scripts bzw.
+     Batchdateien der jeweiligen PPP-Clients sind da-
+     her alle Aufrufe des jeweiligen Spool-Programms
+     (X_SPOOL.EXE im Falle UKA_PPP, E-SPOOL.EXE im
+     Falle UKAW) zu entfernen bzw. auszukommentieren.
+
+   - Im Ausgangsverzeichnis unter /Edit/Boxen/Edit/
+     SysopMode ist das Verzeichnis einzustellen, in
+     dem der jeweilige PPP-Client die versandfertigen
+     Dateien erwartet. Im Falle von UKA_PPP w„re das
+     also das Verzeichnis .\UKA_PPP\SPOOL, im Falle
+     UKAW das Verzeichnis .\UKAW\SPOOL.
+
+   Bei anderen externen PPP-Clients entnehmen Sie die
+   entsprechenden Pfad- und Dateinamen bitte der
+   Dokumentation und/oder den Batch- bzw. Scriptda-
+   teien des jeweiligen Clients.
 
 @
 8019
