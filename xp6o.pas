@@ -677,7 +677,8 @@ label ende,again;
              (left(empf,21)='## Originalempf„nger:');   { Kompatibilit„t zu XP 1.0-2.1 }
   end;
 
- :¼Çcedure GetOEmpflist;
+
+  procedure GetOEmpflist;
   var s : string;
   begin
     repeat
