@@ -553,7 +553,6 @@ VAR c       : Char;
        (not fnpactive[state,nr]) then begin
       fnpactive[state,nr]:=true;
       savecursor;
-      window(1,1,screenwidth,screenlines);
       r1:=retonfn; retonfn:='';
       p;
       retonfn:=r1;
@@ -1661,6 +1660,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2000/12/26 16:39:34  mk
+  - removed Window()
+
   Revision 1.66  2000/11/19 18:22:52  hd
   - Replaced initlization by InitxxxUnit to get control over init processes
 
