@@ -1357,6 +1357,7 @@ var dat    : longint;
   end;
 
   procedure mw2;
+  var s:string[81];
   begin
     if U_read then begin                   { Brett-Ungelesen-Flag ÅberprÅfen }
       dbSeek(mbase,miGelesen,_brett+#0);
@@ -1369,8 +1370,23 @@ var dat    : longint;
           end;
         end;
       end;
-    if not brettall and wrongline then nobrettweiter := true;
-    if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
+      if not brettall and wrongline { BrettModus "A" und Brett passt nicht mehr }
+      then begin                    { dann Cursor nicht weiterschalten }
+        s:=' ';  { Dummy: s<>'' und s<>'$/T'... }
+        repeat
+          inc(p);
+          GoP;
+          if not dbBOF(bbase) then dbReadN(bbase,bb_brettname,s);
+        until dbBOF(bbase) or (left(s,3)<>'$/T');   {keine Trennzeile anspringen }
+        dec(p);
+        if p>=gl then begin
+          disprec[1]:=dbrecno(bbase);
+          p:=1;
+          aufbau:=true;
+          end;
+        end
+      else
+      if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
       p2:=p;
       if not dispext and (readmode>0) and not alle and brettweiter then
       begin
@@ -1574,6 +1590,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.18  2001/01/15 22:24:27  mk
+  JG:- Brettweiterschalt-Fix, Teil 2
+
   Revision 1.25.2.17  2001/01/10 17:39:05  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 
