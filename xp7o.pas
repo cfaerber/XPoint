@@ -26,7 +26,6 @@ uses  {$IFDEF virtualpascal}sysutils,{$endif}
 {$ELSE }
   crt,
 {$ENDIF }
-  winxp,
       dos,typeform,inout,fileio,datadef,database,resource,maus2,
       uart, archive,xp0,xp1,xp7,xp_iti;
 
@@ -57,9 +56,7 @@ uses xp1o,xp3,xp3o,xp3o2,xp6,xp7l,xp9bp,xp10,xpnt,xp3ex;
 
 procedure ttwin;
 begin
-  {$IFNDEF NCRT}
-  window(1,4,screenwidth,screenlines-2);       { Fenster-Problem beim Netcall (hd) }
-  {$ENDIF}
+  window(1,4,80,screenlines-2);
 end;
 
 procedure twin;
@@ -67,11 +64,7 @@ begin
   attrtxt(7);
   ttwin;
   moff;
-  {$IFDEF NCRT}
-  clwin(1,screenwidth,4,screenlines-2);
-  {$ELSE}
   clrscr;
-  {$ENDIF}
   mon;
   cursor(curon);
 end;
@@ -409,10 +402,10 @@ begin
     markanz:=0;          { ggf. /N/U/Z-Nachrichten demarkieren }
   { 01/2000 oh: Nach dem Netcall DatumsbezÅge setzen, damit
     /ØNetzanruf korrekt in der Brettliste auftaucht }
-  if AutoDatumsBezuege then begin
+  if AutoDatumsBezuege then begin 
     window(1,1,80,screenlines); {Screenfenster vorher korrigieren!}
     bd_setzen(true);
-    end;
+    end; 
   { /oh }
 end;
 
@@ -669,7 +662,7 @@ begin
   mon;
   assign(f1,dest);
   if existf(f1) then _era(dest);
-  Dos.findfirst(fmask,ffAnyFile,sr);
+  findfirst(fmask,ffAnyFile,sr);
   if doserror=0 then begin
     rewrite(f1,1);
     cursor(curon);
@@ -694,9 +687,9 @@ begin
           end;
         erase(f2);
         end;
-      Dos.findnext(sr);
+      findnext(sr);
     end;
-    {$IFDEF Ver32}
+    {$IFDEF virtualpascal}
     FindClose(sr);
     {$ENDIF}
     close(f1);
@@ -714,12 +707,12 @@ var sr : searchrec;
 begin
   { ToDo }
   packetsize:=0;
-  Dos.findfirst(XferDir+Wildcard,ffAnyFile,sr);
+  findfirst(XferDir+'*.*',ffAnyFile,sr);
   while doserror=0 do begin
     inc(packetsize,sr.size);
-    Dos.findnext(sr);
+    findnext(sr);
   end;
-  {$IFDEF Ver32}
+  {$IFDEF virtualpascal}
   FindClose(sr);
   {$ENDIF}
 end;
@@ -733,13 +726,13 @@ var sr   : searchrec;
     last : string[12];
     arc  : shortint;
 begin
-  dos.findfirst(XferDir+WildCard,ffAnyFile,sr);
+  findfirst(XferDir+'*.*',ffAnyFile,sr);
   if doserror=0 then begin
     while doserror=0 do begin
       last:=sr.name;
-      Dos.findnext(sr);
+      findnext(sr);
     end;
-    {$IFDEF Ver32}
+    {$IFDEF virtualpascal}
     FindClose(sr);
     {$ENDIF}
     arc:=ArcType(XferDir+last);
@@ -787,18 +780,8 @@ end;
 end.
 {
   $Log$
-  Revision 1.13  2000/05/26 13:59:12  hd
-  - Fix: Ganzes Fenster loeschen
-  - Fix: findclose bei allen 32-Bit-Versionen
-
-  Revision 1.12  2000/05/21 17:00:25  sv
-  - Netcall-Bildschirm fuer DOS gefixt
-
-  Revision 1.11  2000/05/20 02:07:40  mk
-  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
-
-  Revision 1.10  2000/05/16 12:53:53  hd
-  - Bildschirm beim Netcall (Fix-Versuch, bitte testen)
+  Revision 1.13.2.1  2000/07/06 21:20:23  mk
+  - Alten Puffereinlesenscreen wiederhergestellt
 
   Revision 1.9  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units

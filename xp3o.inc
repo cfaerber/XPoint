@@ -62,7 +62,7 @@ const
 {$ENDIF }
   maxll    = 64;
 
-var x,y      : byte;
+var x,y,fm   : byte;
     f,pfile  : file;
     llbuf    : array[1..maxll] of longint;
     llanz    : integer;
@@ -116,16 +116,14 @@ var x,y      : byte;
     num_cmessages : integer;   { Anzahl Controlmessages (Cancels/Supersedes) }
     orgempf  : string[AdrLen];
     mbflags  : longint;
-    mstr     : string;          { Message-Text }
-    sp       : scrptr;
     cust_header : custheadstr;
 
   function puffer_ok:boolean;
   var ok : boolean;
   begin
     moff;
-    mstr:=getres(331);
-    FWrt(x+2,y+2,mstr);    { 'Puffer ÅberprÅfen...' }
+    writeln;
+    write(getres(331));    { 'Puffer ÅberprÅfen...' }
     mon;
     MsgCount:=0; adr:=0;
     repeat
@@ -133,43 +131,20 @@ var x,y      : byte;
       if MsgCount mod 10=0 then
       begin
         moff;
-        FWrt(x+3+length(mstr),y+2, StrS(MsgCount));
+        write(MsgCount:6,#8#8#8#8#8#8);
         mon;
       end;
       seek(f,adr);
       makeheader(zconnect,f,0,0,hdsize,hdp^,ok,true);
       inc(adr,hdsize+hdp^.groesse);
     until not ok or (adr>=fs-3);     { Der Puffer kann maximal 3 zusÑtzliche }
-    if (MsgCount>0) then begin
-      moff;
-      FWrt(x+3+length(mstr),y+2,strs(MsgCount));
-      mon;
-    end;
+    moff;
+    if MsgCount>1 then writeln(MsgCount:6)     { Zeichen enthalten, die      }
+    else writeln;                              { weggeschluckt werden.       }
+    mon;
     puffer_ok:=ok and (adr<=fs+8);
     diff:=min(maxint,max(0,fs-adr));
   end;
-
-{
-  procedure writemsg;
-  var size : longint;
-      rr   : word;
-  begin
-    dbWriteN(mbase,mb_ablage,ablage);
-    dbWriteN(mbase,mb_adresse,padr);
-    size:=hdp^.groesse+hdsize;
-    dbWriteN(mbase,mb_msgsize,size);
-    blockwrite(pfile,p^,min(readfirst,hdsize+hdp^.groesse));
-    dec(size,readfirst);
-    if size>0 then begin
-      repeat
-        blockread(f,p^,min(bufsize,size),rr);
-        blockwrite(pfile,p^,rr);
-        dec(size,rr);
-      until size=0;
-    end;
-    inc(padr,hdp^.groesse+hdsize);
-  end;
-}
 
   function pollbox_str(zconnect,user:boolean):string;
   begin
@@ -192,9 +167,31 @@ var x,y      : byte;
            ((useraufnahme=3) and pm);
   end;
 
+  procedure showbetreff;
+  begin
+    mwrt(52,wherey,forms(hdp^.betreff,23));
+  end;
+
+  procedure wwin;
+  begin
+    window(x+2,y+1,x+76,y+screenlines-8);
+  end;
+
   function isl(s:string):boolean;
   begin
     isl:=left(hdp^.betreff,length(s))=s;
+  end;
+
+  procedure w0;
+  begin
+    savecursor;
+    window(1,1,80,25);
+  end;
+
+  procedure w1;
+  begin
+    wwin;
+    restcursor;
   end;
 
   function LeftAbsender(s:string):boolean;
@@ -263,7 +260,8 @@ var x,y      : byte;
         if okay then DelMsg; { zu lîschende/zu ersetzende Nachricht lîschen }
       end;
     dispose(hdp2);
-    if cancel then begin
+    if cancel then
+    begin
       dbGo(mbase,mrec);
       DelMsg;   { Cancel-Nachricht auf 'gelesen' / 'lîschen' }
     end;
@@ -277,14 +275,19 @@ var x,y      : byte;
       rec: longint;
       n  : longint;
       l  : integer;
+      x: Integer;
   begin
+    moff; writeln; mon;
     reset(cmessagefile);
     n:=0;
-    FWrt(x+2,y+6,getres(341)); { 'Bearbeite Steuernachrichten...' }
+    Write(getres(341)); { 'Bearbeite Steuernachrichten...' }
     l:=Length(getres(341));
-    while not eof(cmessagefile) do begin
+    while not eof(cmessagefile) do
+    begin
       Inc(n);
-      FWrt(x+2+l,y+6,strs((n * 100) div num_cmessages)+'%');
+      x := WhereX;
+      Write(strs((n * 100) div num_cmessages)+'%');
+      GotoXY(x, WhereY);
       readln(cmessagefile,str);
       if str='cancel' then begin
         readln(cmessagefile,rec);
@@ -301,7 +304,8 @@ var x,y      : byte;
       end;
     end;
     close(cmessagefile);
-    FWrt(x+2+l,y+6,getres2(324,7)); { 'fertig.' }
+    Write(getres2(324,7)); { 'fertig.' }
+    moff; writeln; mon;
   end;
 
   function IsCancelMsg:boolean;
@@ -364,7 +368,10 @@ var x,y      : byte;
            (ustr(betreff)='BESTELLBARE BRETTER')  or  { G & S     }
            (pos('BRETTLISTE',ustr(betreff))>0)))      { ZQWK }
           then begin
+        showbetreff;
+        w0;
         MapsReadList;
+        w1;
         end;
 
       if (left(ustr(betreff),6)='FILES.') and (cpos('@',absender)>0) and
@@ -374,7 +381,10 @@ var x,y      : byte;
         if cpos('.',box)>0 then begin
           box:=left(box,cpos('.',box)-1);
           if IsServer(box,fstype) and (fstype<>3) then begin
+            showbetreff;
+            w0;
             FS_Readlist(true);
+            w1;
             end;
           end;
         end;
@@ -384,14 +394,20 @@ var x,y      : byte;
           ((empfbkennung<>'') and (isl(empfbkennung) or
             isl(QPC_ID+empfbkennung) or isl(DES_ID+empfbkennung)))) then
       begin
+        showbetreff;
+        w0;
         empfang_bestaetigen(pollbox);
+        w1;
         end;
 
       if (sysbetreff<>'') and (empfaenger[1]='1') and (lstr(betreff)=sysbetreff) and
          (LeftAbsender('changesys') or LeftAbsender('news') or
           LeftAbsender('postmaster') or LeftAbsender('root')) then
       begin
+        showbetreff;
+        w0;
         GetSysfile;
+        w1;
         end;
 
       if UsePGP and (empfaenger[1]='1') { PM } and
@@ -402,7 +418,9 @@ var x,y      : byte;
           xp6.forcebox:=pfadbox(true,pfad);
         xp6._bezug:=msgid;
         xp6._beznet:=netztyp;
+        w0;
         PGP_SendKey(iifs(pgp_uid='',absender,pgp_uid));
+        w1;
         xp6.forcebox:='';
         end;
 
@@ -423,8 +441,12 @@ var x,y      : byte;
         inc(num_cmessages);
       end;
 
-      if IsSupportCFG then
+      if IsSupportCFG then begin
+        showbetreff;
+        w0;
         XRead(SupportCfg,false);
+        w1;
+        end;
       end;
     automessaging:=false;
   end;
@@ -447,7 +469,6 @@ var x,y      : byte;
       ok       : boolean;
       orgsize  : longint;
       orgempf  : AdrStr;
-      sp       : scrptr;
   begin
     size:=0;
     dbSeek(ubase,uiName,ustr(hdp^.absender));
@@ -470,7 +491,7 @@ var x,y      : byte;
     rps(s,'$USER',hdp^.absender);
     if exist(uncfile) then _era(uncfile);
     savecursor;
-    sichern(sp);
+    window(1,1,80,25);
     shell(s,600,3);                     { Nachricht decodieren }
     if existf(f) then erase(f);       { codierte Msg lîschen, falls noch da }
     if not exist(uncfile) then
@@ -510,25 +531,39 @@ var x,y      : byte;
         hdp^.empfaenger:=orgempf;
         end;
       end;
-    holen(sp);
+    wwin;
     restcursor;
     dispose(hdp2);
   end;
 
   procedure DecPGP;
   var s : string[AdrLen];
-      sp: scrptr;
   begin
     s:=hdp^.empfaenger;
     hdp^.empfaenger:=orgempf;
+    attrtxt(col.colmboxhigh);
+    showbetreff;
     savecursor;
-    sichern(sp);
+    window(1,1,80,25);
     LogPGP(getreps2(3002,2,hdp^.absender));  { 'decodiere Nachricht von %s' }
     PGP_DecodeMessage(hdp,false);
-    holen(sp);
+    wwin;
     restcursor;
     hdp^.empfaenger:=s;
   end;
+
+  procedure wrp;
+  var ps : string[3];
+  begin
+    w0;
+    ps:=strs(inmsgs*100 div msgcount);
+    gotoxy(x+73-length(ps),y);
+    moff;
+    write(' ',ps,'% ');
+    mon;
+    w1;
+  end;
+
 
   procedure Bezugsverkettung;
   var n,nbez : longint;
@@ -538,11 +573,12 @@ var x,y      : byte;
                  dat : longint;
                end;
       empfnr : integer;
+      xx     : byte;
   begin
     moff;
-    mstr:= getres(332);
-    FWrt(x+2,y+5,mstr); { 'Bezugsverkettung...' }
-    FWrt(x+3+length(mstr),y+5,'0%');
+    writeln;
+    write(getres(332));   { 'Bezugsverkettung...' }
+    xx:=wherex+1;
     mon;
     reset(f,1);
     fs:=filesize(f);
@@ -555,11 +591,9 @@ var x,y      : byte;
       repeat
         seek(f,adr);
         makeheader(zconnect,f,empfnr,0,hdsize,hdp^,ok,true);
-        { 20.01.2000 robo - Schalter maildelxpost beachten }
-{        if hdp^.empfanz>maxcrosspost then begin }
+        { Schalter maildelxpost beachten }
         if (hdp^.empfanz>maxcrosspost)
         and ((cpos('@',hdp^.empfaenger)=0) or maildelxpost) then begin
-        { /robo }
           empfnr:=hdp^.empfanz+1;                { Crossposting-Filter }
           continue;
           end;
@@ -577,17 +611,16 @@ var x,y      : byte;
           end;
         inc(empfnr);
       until empfnr>hdp^.empfanz;
-      if ((n mod 5)=0) then begin
-        moff;
-        FWrt(x+3+length(mstr),y+5,StrS(n*100 div msgcount)+'%');
-        mon;
-      end;
+      gotoxy(xx,wherey);
+      moff;
+      write(nbez,' (',n*100 div msgcount,'%) ');
+      mon;
       inc(adr,hdp^.groesse+hdsize);
     until adr>=fs-3;     { 3 Byte Toleranz }
     dbRestartHU(bezbase);
     dbFlush(bezbase);
     close(f);
-    Wrt(x+3+length(mstr),y+5,getres2(324,7)); { 'fertig.' }
+    writeln;
   end;
 
   procedure wrll(l:longint);
@@ -628,24 +661,20 @@ begin
   inmsgs:=0;
   puffereinlesen:=false;
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
-  zconnect:=ZC_puffer(puffer);
-  if (zconnect) then
-    msgbox(45,9,getres(333),x,y)        { 'Puffer einlesen' }
-  else
-    msgbox(45,10,getres(333),x,y);
+  msgbox(78,screenlines-6,getres(333),x,y);    { 'Puffer einlesen' }
+  wwin;
   attrtxt(col.colmbox);
+  zconnect:=ZC_puffer(puffer);
   assign(f,puffer);
   reset(f,1);
   fs:=filesize(f);
   if fs<16 then begin
     close(f);
     moff;
-    rmessage(334);      { 'leerer Puffer' }
+    writeln(#10,getres(334));    { 'leerer Puffer' }
     mon;
     wkey(1,false);
     closebox;
-    closebox;
-    freeres;
     puffereinlesen:=true;
     exit;
     end;
@@ -696,9 +725,7 @@ begin
       dbClose(d);
       end;
 
-    moff;
-    Wrt(x+2,y+3,getres(335));           { 'Puffer kopieren...' }
-    mon;
+    moff; writeln(getres(335)); mon;    { 'Puffer kopieren...' }
     assign(pfile,aFile(ablage));        { Puffer in die kleinste }
     if existf(pfile) then begin         { Ablage kopieren ..     }
       reset(pfile,1);
@@ -717,17 +744,11 @@ begin
       dec(size,rr);
     until eof(f);
     close(pfile);
-    moff;
-    Wrt2(' '+getres2(324,7));           { fertig }
-    mstr:= getres2(330,6);              { Importiere Nachrichten }
-    FWrt(x+2,y+4,mstr+' 0%');
-    mon;
 
     assign(pfile,TempS(msgcount*8+2048));
     rewrite(pfile,1);
     llanz:=0;
     seek(f,0);
-
     assign(cmessagefile,TempS(msgcount*40+2048));
     rewrite(cmessagefile);
     num_cmessages:=0;
@@ -748,17 +769,15 @@ begin
         seek(f,adr);
         makeheader(zconnect,f,empfnr,0,hdsize,hdp^,ok,true);
         orgempf:=hdp^.empfaenger;
-        { 20.01.2000 robo - Schalter maildelxpost beachten }
-{        if hdp^.empfanz>maxcrosspost then begin }
+        { Schalter maildelxpost beachten }
         if (hdp^.empfanz>maxcrosspost)
         and ((cpos('@',hdp^.empfaenger)=0) or maildelxpost) then begin
-        { /robo }
           empfnr:=hdp^.empfanz+1;                { Crossposting-Filter }
           continue;
           end;
         if junk then begin
           hdp^.empfanz:=1;
-          { KH 01/00 Unterscheidung von der Pseudo-Newsgroup junk }
+          { Unterscheidung von der Pseudo-Newsgroup junk }
           hdp^.empfaenger:='/ØNix'
           end;
         if grosswandeln and not zconnect then begin
@@ -812,13 +831,21 @@ begin
                       empfaenger:='1/'+left(empfaenger,atp-1);
                   pm:=true;
                   end;
-
+          moff;
+          writeln;
+          if empfaenger[1]='U' then begin
+            write('AN:'); fm:=24; end
+          else
+            fm:=27;
+          write(forms(copy(empfaenger,2,40),fm),' ',forms(absender,22),' ',forms(betreff,23));
+          mon;
           multi2; initscs;
 
+          attrtxt(col.colmboxhigh);
           dbSeek(ubase,uiName,ustr(absender));
           if not dbFound then begin          { neuen User anlegen }
             if adrok(absender) then begin
-              { mwrt(29,wherey,forms(absender,22)); }
+              mwrt(29,wherey,forms(absender,22));
               dbAppend(ubase);
               dbWrite(ubase,'username',absender);
               pb:=pollbox_str(zconnect,true);
@@ -847,7 +874,7 @@ begin
               if (empfanz>1) or (attrib and AttrControl<>0) then
                 aufnehmen:=false
               else if aufnehmen then begin          { neues Brett anlegen }
-
+                mwrt(1,wherey,forms(copy(empfaenger,2,27),27));
                 if left(empfaenger,1)<>'A' then grnr:=IntGruppe
                 else begin
                   seekbr:=empfaenger;
@@ -882,8 +909,11 @@ begin
                 dbWriteN(bbase,bb_flags,flags);
                 if newbrettende then
                   SetBrettindexEnde
-                else
+                else begin
+                  w0;
                   SetBrettindex;
+                  w1;
+                  end;
                 writeln(brettlog,logstr(copy(empfaenger,2,255)));
                 end;   { aufnehmen }
               end    { not dbFound }
@@ -899,7 +929,7 @@ begin
               dbAppend(ubase);
               name:=copy(empfaenger,2,79);
               pb:=pollbox_str(zconnect,true);
-              if cpos('@',name)=0 then name:=left(name+'@'+pb+'.ZER',79);
+              if pos('@',name)=0 then name:=left(name+'@'+pb+'.ZER',79);
               dbWriteN(ubase,ub_username,name);
               dbWriteN(ubase,ub_pollbox,pb);
               dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
@@ -946,8 +976,12 @@ begin
               (filterattr and fattrHilite<>0) {or}
               { Nachricht mit Priority High und Highest hevorheben }
               {(hdp^.Priority in [1..2])}
-            then
+            then begin
+              attrtxt(col.colmboxhigh);
+              showbetreff;
+              attrtxt(col.colmbox);
               inc(mnt,$1000);        { Antwort auf eigene Nachricht }
+              end;
             if charset='iso1' then inc(mnt,$2000);
             if komlen>0 then inc(mnt,$8000);
             dbWriteN(mbase,mb_netztyp,mnt);
@@ -1005,31 +1039,41 @@ begin
                ((PGP_AutoAM and (firstchar(empfaenger)='A')) or
                 (PGP_AutoPM and (firstchar(empfaenger)='1')))
             then begin
+              attrtxt(col.colmboxhigh);
+              showbetreff;
               savecursor;
-              sichern(sp);
+              window(1,1,80,25);
               PGP_ImportKey(true);
-              holen(sp);
+              wwin;
               restcursor;
               end;
             if (firstchar(empfaenger)='1') and UsePGP and
                (pgpflags and fPGP_encoded<>0) then
               DecPGP else
             if (firstchar(empfaenger)='1') and
-               (left(betreff,length(PMC_ID))=PMC_ID) then
+               (left(betreff,length(PMC_ID))=PMC_ID) then begin
+              attrtxt(col.colmboxhigh);
+              showbetreff;
               pmCryptDecode;
+              attrtxt(col.colmboxhigh);
+              showbetreff;
+              end;
 
             msgsent:=true;
             end
           else begin   { nicht aufnehmen }
             wrll(0);
             wrll(0);
+            gotoxy(wherex,wherey-1);
             end;
 
           inc(empfnr);
           end;           { with hdp^ }
-        if msgsent then
+        if msgsent then begin
+          attrtxt(col.colmboxhigh);
           TestControlMessage;
-
+          end;
+        attrtxt(col.colmbox);
         if (hdp^.empfanz>1) and (empfnr>hdp^.empfanz) and not msgsent and
            not IsCancelMsg then begin
           { Nachricht nach /Junk }
@@ -1051,20 +1095,17 @@ begin
       inc(adr,hdp^.groesse+hdsize);
       inc(padr,hdp^.groesse+hdsize);
       inc(inmsgs);
-      if ((inmsgs mod 3) = 0) then begin        { User beruhigen }
-        moff;
-        FWrt(x+3+length(mstr),y+4,strs((inmsgs * 100) div MsgCount)+'%');
-        mon;
-      end;
+      wrp;
     until adr>=fs-3;     { 3 Byte Toleranz }
-    moff;
-    FWrt(x+3+length(mstr),y+4,getres2(324,7));
-    mon;
     dbrestartHU(mbase);
     dbFlush(mbase);
     close(f);
     inc(ablsize[ablage],fs);
 
+    moff;
+    writeln;
+    if not aufnehmen then writeln;
+    mon;
     FlushLL;
     if zconnect then
       Bezugsverkettung;
@@ -1083,43 +1124,45 @@ begin
     puffereinlesen:=true;
 
     mheadercustom[1]:=cust_header; { Custom-Header wieder zuruecksetzen }
-
-    end   { if Puffer_ok }
+  end   { if Puffer_ok }
 
   else begin
     close(f);
     moff;
-    msgbox(78,9,getres2(336,1),x,y);    { 'ACHTUNG !!!' }
+    writeln;
     attrtxt(col.colmboxhigh);
-
+    writeln(getres2(336,1));    { 'ACHTUNG !!!' }
+    writeln;
     if check then
-      FWrt(x+2,y+2,getres2(336,2)+fustr(puffer))   { 'Fehlerhafte Pufferdatei:  ' }
+      writeln(getres2(336,2)+ustr(puffer))   { 'Fehlerhafte Pufferdatei:  ' }
     else
-      FWrt(x+2,y+2,getres2(336,3));    { 'Zu wenig Platz auf der Festplatte.' }
-    FWrt(x+2,y+3,getres2(336,4));      { 'Puffer wurde NICHT eingelesen!' }
+      writeln(getres2(336,3));    { 'Zu wenig Platz auf der Festplatte.' }
+    writeln(getres2(336,4));      { 'Puffer wurde NICHT eingelesen!' }
     if pflags and pe_Bad<>0 then begin
       MoveToBad(puffer);
-      FWrt(x+2,y+5,getres2(336,5));    { 'Datei wurde im Unterverzeichnis BAD abgelegt.' }
+      writeln;
+      writeln(getres2(336,5));    { 'Datei wurde im Unterverzeichnis BAD abgelegt.' }
       logerror(getres2(336,6));   { 'Fehlerhafter Netcallpuffer wurde im Unterverzeichnis BAD abgelegt.' }
       end
     else
       logerror(getres2(336,8)+puffer);   { 'Netcallpuffer wurde nicht eingelesen: ' }
     attrtxt(col.colmbox);
+    writeln;
     mon;
     errsound;
     moff;
-    Wrt(x+2,y+7,getres(12));   { 'Taste drÅcken ...' }
+    write(getres(12));   { 'Taste drÅcken ...' }
     mon;
     errsound;
     cursor(curon);
     wkey(180,true);    { max. 3 Minuten }
     cursor(curoff);
-    closebox;
+    freeres;
     end;
 
   dispose(hdp);
-  freeres;
   freemem(p,bufsize);
+  window(1,1,80,25);
   closebox;
   aufbau:=true; xaufbau:=true;
 end;
@@ -1153,34 +1196,8 @@ begin
 end;
 {
   $Log$
-  Revision 1.21  2000/06/17 13:09:09  hd
-  - Fix: Puffer ko[emailadresse]
-
-  Revision 1.20  2000/06/04 16:57:25  sv
-  - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
-    (RFC/ZConnect)
-  - Cancel-Auswertung ueberarbeitet und fuer ZConnect implementiert
-  - Schalter, der das Ignorieren von Ersetzt- und Cancelmails moeglich
-    macht in C/O/N eingefuehrt
-  - Anzeige beim Puffereinlesen leicht ueberarbeitet
-
-  Revision 1.19  2000/06/01 16:03:05  mk
-  - Verschiedene Aufraeumarbeiten
-
-  Revision 1.18  2000/05/15 20:02:38  mk
-  - Optische Korrekturen fuer Puffer importieren
-
-  Revision 1.17  2000/05/15 10:03:04  hd
-  Bezuege im gleichen Fenster beim Puffereinlesen
-
-  Revision 1.16  2000/05/14 17:05:36  hd
-  - Beim Puffereinlesen wird nur noch die %-Zahl gezeigt.
-    Die Funktionen hinsichtlich PGP/DES beim Einlesen konnte ich
-    hier nicht pruefen. Ich kann daher nicht sagen, ob die
-    komplette Sicherung des Schirms (sichern/holen) ausreicht.
-
-    Durch den Wegfall der ueberfluessigen Anzeige beim Einlesen
-    duerfte sich die Geschwindigkeit drastisch erhoehen.
+  Revision 1.21.2.1  2000/07/06 21:20:23  mk
+  - Alten Puffereinlesenscreen wiederhergestellt
 
   Revision 1.15  2000/05/14 13:58:05  hd
   - WildCard (readpuffer)
