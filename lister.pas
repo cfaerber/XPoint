@@ -110,7 +110,6 @@ implementation  { ------------------------------------------------ }
 
 const maxlst  = 10;                { maximale Lister-Rekursionen }
       ListerBufferCount = 16383;   { LÑnge des Eingangspuffers }
-      ListerMaxLineLength = 255;   { maximale LÑnge einer Zeile im Lister }
 
 type  lnodep  = ^listnode;
       listnode= record
@@ -188,7 +187,6 @@ var   lstack  : array[0..maxlst] of record
       markpos : lnodep;
       mmm     : word;
       linepos : lnodep;
-      MemFlag : byte;      { Ziel fÅr app_l: 0=Heap, 3=full }
 
 
 
@@ -197,19 +195,27 @@ function make_list(var buf: ListerCharArray; BufLen: Integer; wrap:byte): Intege
 var
   i, j: Integer;
   s: String;
+  MaxLen: Integer; // Maximale Leselaenge
+  TempIJ: Integer; // Temporaer i + j in der Hauptschleife
 begin
   Result := 0;
   if BufLen = 0 then exit;
   if wrap = 0 then wrap := 255;
+  Wrap := Min(Wrap, 255); // Begrenzung der ZeilenlÑnge auf 255 Zeichen
   j := 0;
   while j < BufLen do
   begin
     i := 0;
+
+    // vorher auswerten, um Rechenzeit in der Hauptschleife zu sparen
+    MaxLen := Min(Wrap + j, BufLen);
+    TempIJ := j;
+
     // solange, bis entweder Zeilenende, Wrap-Bereich Åberschritten,
     // LÑnge des Buffers erreicht oder maximale ZeilenÑnge erreicht
-    while (buf[i+j] <> #13) and (buf[i+j] <> #10) and (i < wrap) and
-      (i+j < BufLen) and (i < ListerMaxLineLength) do
-      inc(i);
+    while (buf[TempIJ] <> #13) and (buf[TempIJ] <> #10) and (TempIJ < MaxLen) do
+      inc(TempIJ);
+    i := TempIJ - j; // i = lÑnge der neuen Zeile
 
     // Spezialbehandlung, wenn Zeile umgebrochen werden mu·
     if i = wrap then
@@ -223,10 +229,10 @@ begin
         i := wrap
       else
         inc(i);
-      end;
+    end;
 
     // wenn kein Zeilenende gefunden wurde, aber Puffer alle ist
-    if j+i = BufLen then
+    if i+j = BufLen then
     begin
       Result := i;
       Move(Buf[j], Buf[0], i);
@@ -361,7 +367,6 @@ begin
     startpos:=1;
     end;
   mmm:=0;
-  memflag:=0;
 end;
 
 procedure closelist;
@@ -390,7 +395,8 @@ end;
 
 procedure app_l(ltxt:string);
 const TAB = #9;
-var p  : byte;
+var
+  p: integer;
 
   procedure appnode(var lnp:lnodep; back:lnodep);
   begin
@@ -421,12 +427,12 @@ var p  : byte;
 
 begin
   if ltxt=#13 then  exit;    { einzelnes CR ignorieren }
-  p:=cpos(TAB,ltxt);
+  p:=pos(TAB,ltxt);
   while p>0 do
   begin
     delete(ltxt,p,1);
     insert(sp(8-(p-1) mod 8),ltxt,p);
-    p:=cpos(TAB,ltxt);
+    p:=pos(TAB,ltxt);
   end;
   apptxt;
   inc(mmm);
@@ -449,7 +455,7 @@ var f  : file;
     s     : string;
     p     : ^ListerCharArray;
     ps    : word;
-    rp : word;
+    rp, TempRP: Integer;
     rr: word;
     fm    : byte;
 begin
@@ -462,13 +468,14 @@ begin
     filemode:=fm;
     ps:=ListerBufferCount;
     getmem(p,ps);
-    rp:=0;
+    rp:=0; rr := 0;
     if ioresult=0 then
     begin
       seek(f,ofs);
       repeat
         blockread(f,p^[rp],ps-rp,rr);
         if (@ConvProc<>nil) and (rr>0) then ConvProc(p^[rp],rr);
+        TempRP := rp;
         rp := make_list(p^,rr+rp,stat.wrappos);
       until eof(f);
       close(f);
@@ -477,10 +484,10 @@ begin
         SetLength(s, rp);
         Move(p^[0],s[1],rp);
         app_l(s);
-        end;
       end;
-      // Sonderbehandlung wenn letzte Zeile eine Leerzeile ist
-      if p^[rr] = #10 then App_l('');
+      // Sonderbehandlung fÅr die letzte Leerzeile
+      if p^[rr+TempRP-1] = #10 then App_l('');
+    end;
     freemem(p,ps);
   end;
 end;
@@ -1304,6 +1311,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/09/28 16:44:43  mk
+  - make_list deutlich optimiert
+
   Revision 1.33  2000/09/28 03:02:04  mk
   - Bugfixes fuer Make_list
 
