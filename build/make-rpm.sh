@@ -53,6 +53,6 @@ popd
 echo "$scriptdir"openxp-"$version".spec
 pwd
 # for older rpm (or new with /etc/popt )
-rpm -ba "$scriptdir"openxp-"$version".spec
+# rpm -ba "$scriptdir"openxp-"$version".spec
 # for rpm >= 4.1.1
 rpmbuild -ba "$scriptdir"openxp-"$version".spec
