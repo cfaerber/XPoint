@@ -1,6 +1,6 @@
 
-	Hinweise fuer die Benutzung von OpenXP unter Linux       v3.70-alpha-1
-	----------------------------------------------------------------------
+	Hinweise fuer die Benutzung von OpenXP unter Linux       v3.8.x-beta
+	--------------------------------------------------------------------
 
 	ACHTUNG: OpenXP ist als Linux-Portierung zur Zeit eher
 	         als Alpha- denn als Beta-Version zu verstehen.
@@ -23,13 +23,9 @@
 		RC		- Resource-Compiler fuer OpenXP
 		UUZ		- ZConnect-RFC-Konverter
 		XPME		- Menueeditor
-
-		Alpha-Status
-		------------
-
 		XP		- OpenXP-Hauptprogramm
 
-	Install	Voraussetzung: FreePascal Compiler ab 1.00 (am besten den
+	Install	Voraussetzung: FreePascal Compiler ab 1.0.10 (am besten den
 		aktuellen Snapshot von www.freepascal.org). Dann wie folgt
 		die Sources kompilieren:
 
@@ -50,12 +46,9 @@
 	Alle	Die Ausgabe auf dem Bildschrim verlangt zur Zeit
 		einen ISO-8859-1-konfomren Zeichensatz.
 
-		Die Tastaturunterstuetzung ist nicht vollstaendig. Sie muessen
-		vorerst auf deutsche Umlaute und andere Spielereien verzichten.
+		Die Tastaturunterstuetzung ist nicht vollstaendig. 
 
-		Maus? Haben Sie eine Falle?
-
-		Die Farben funktionieren im Standard nicht so, wie man es gerne
+		Die Farben funktionieren z.T. im Standard nicht so, wie man es gerne
 		moechte: Config/Anzeige/Farben loest das Problem.
 
 		Unter X darf die Groesse der Konsole nach dem
