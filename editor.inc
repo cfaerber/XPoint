@@ -2116,12 +2116,12 @@ label sok;
           attrtxt(col.colmenuhi)
         else
           attrtxt(col.colmenuhiinv);
-        Wrt2(menue[i,highp[i]]);
+        Write(menue[i,highp[i]]);
         if i<>p then
           attrtxt(col.colmenu)
         else
           attrtxt(col.colmenuinv);
-        Wrt2(forms(mid(menue[i],highp[i]+1),ml-highp[i]+1));
+        Write(forms(mid(menue[i],highp[i]+1),ml-highp[i]+1));
       end;
     mon;
     with e^ do
@@ -2290,6 +2290,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.10.2.4  2000/05/08 14:23:03  mk
+  - Write statt Wrt2 genutzt
+
   Revision 1.10.2.3  2000/05/08 14:20:34  mk
   - Editor.inc aus Thrunk uebernommen
 
