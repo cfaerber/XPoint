@@ -63,7 +63,7 @@ begin
         collistquote[1+i*3]:=3; collistquote[2+i*3]:=12; collistquote[3+i*3]:=2;
         collistqhigh[1+i*3]:=11; collistqhigh[2+i*3]:=14; collistqhigh[3+i*3]:=10;
         end;
-      collistscroll:=7; collistheader:=7; collisthigh:=$f;
+      collistscroll:=7; collistheader:=7; collisthigh:=$f; collistheaderhigh:=7;
       coledittext:=7; coleditmarked:=$17; coleditstatus:=$17; coleditmessage:=$1e;
       coledithead:=$70; coleditendmark:=7;
       for i:=1 to 9 do coleditquote[i]:=collistquote[i];
@@ -102,7 +102,7 @@ begin
       collisttext:=7; collistselbar:=$70; collistmarked:=$f;
       for i:=1 to 9 do collistquote[i]:=$f;
       collistfound:=$70; colliststatus:=$f; collistscroll:=7; collistheader:=7;
-      collisthigh:=$f;
+      collisthigh:=$f; collistheaderhigh:=7;
       for i:=1 to 9 do collistqhigh[i]:=$f;
       coledittext:=7; coleditmarked:=$70; coleditstatus:=$f; coleditmessage:=$f;
       coledithead:=$70; coleditendmark:=7;
@@ -216,7 +216,7 @@ begin
         getb(collisttext); getb(collistmarked); getb(collistselbar);
         getb(collistfound); getb(colliststatus); getb(collistquote[1]);
         getb(collistscroll); getb(collistheader); getb(collisthigh);
-        getb(collistqhigh[1]);
+        getb(collistqhigh[1]); getb(collistheaderhigh);
         end
       else if s1='editor' then begin
         getb(coledittext); getb(coleditmarked); getb(coleditstatus);
@@ -251,6 +251,8 @@ begin
         colmsgsprio1:=colmsgs; colmsgsprio2:=colmsgs;
         colmsgsprio4:=colmsgs; colmsgsprio5:=colmsgs;
         end;
+      if (collistheaderhigh=7) and (collistheader<>7)
+        then collistheaderhigh:=collistheader;   
     end;
   close(t);
 end;
@@ -1714,6 +1716,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.48  2000/05/04 18:43:15  jg
+  - Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten
+    entsprechender Menuepunkt unter Config/Anzeige/Farben/Lister
+
   Revision 1.47  2000/05/04 10:32:57  mk
   - unbenutzer TurboBox Code entfernt
 

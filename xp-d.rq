@@ -280,7 +280,7 @@ K (c) '93-98 Peter Mandrella
 13   ^Text,^Hotkey,^Pfeile
 14   ^Text,^hervorgehoben,^Invers
 15   ^Text,^hervorgehoben,^Querverweis,^gew„hlter Querverweis
-16   ^Nachrichtenkopf,^Text,^Auswahlbalken,^Zeilenmarkierung,^Wortmarkierung,^Statuszeile,^Scroller,^hervorgehoben,^Quote,Q^uote/hervorgehoben
+16   ^Nachrichtenkopf,^N.-Kopf hervorgehoben,^Text,^Auswahlbalken,^Zeilenmarkierung,^Wortmarkierung,^Statuszeile,^Scroller,^hervorgehoben,^Quote,Q^uote/hervorgehoben
 17   ^Kopf,^Statuszeile,^Text,^Quote,^markiert,^Endmarke,M^en,Me^ntasten,Men^balken,^gew„hlte Taste
 18   ^Text,^Daten,^Statuszeile
 19   Ebene ^1,Ebene ^2,Ebene ^3,Ebene ^4,Ebene ^5,Ebene ^6,Ebene ^7,Ebene ^8,Ebene ^9

@@ -221,13 +221,20 @@ Begin
 End;
 {$ENDIF }
 
+function listheadercol:byte; { Headerzeilenfarbe entsprechend Hervorhebungsflag waehlen }
+var nt : longint;
+begin
+  dbreadN(mbase,mb_netztyp,nt);
+  listheadercol:=iif(nt and $1000 = 0,col.collistheader,col.collistheaderhigh);
+end;   
+
 function listcolor(var s:string; line:longint):byte; {$IFNDEF Ver32 } far; {$ENDIF }
 var p,p0,ml : byte;
     qn,pdiff: integer;
 begin
   listhicol:=col.collisthigh;
   if line<=exthdlines then
-    listcolor:=col.collistheader
+    listcolor:=listheadercol
   else if s='' then
     listcolor:=0
   else if s[1]<=^c then
@@ -288,7 +295,7 @@ var brk    : boolean;
       i : integer;
   begin
     assign(t,name); reset(t);
-    attrtxt(col.collistheader);
+    attrtxt(listheadercol);
     for i:=1 to exthdlines do begin
       readln(t,s);
       if s[1]<>'-' then mwrt(1,lfirst,' '+forms(s,79))
@@ -321,7 +328,7 @@ begin
       else begin
         dphb:=dphback;
         if ListFixedhead then                      {   Wenn fester Header }
-          dphback:=col.collistheader               {   dann Uhr aktiv mit Headerfarbe }
+          dphback:=listheadercol                   {   dann Uhr aktiv mit Headerfarbe }
         else begin
           dphback:=col.colliststatus;              {   bei freiem Header }
           timey:=2;                                {   Uhr in Zeile 2 und Statuszeilenfarbe}
@@ -485,6 +492,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2000/05/04 18:43:15  jg
+  - Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten
+    entsprechender Menuepunkt unter Config/Anzeige/Farben/Lister
+
   Revision 1.20  2000/04/24 13:17:39  jg
   - Anzeige der Nachrichtenflags (Halten,Wiedervorlage etc) im Lister
   - "H" im Lister kann jetzt das Halteflag auch ausschalten

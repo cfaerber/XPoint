@@ -259,7 +259,7 @@ begin
     wrl('Lister'); wrh(collisttext); wrh(collistmarked); wrh(collistselbar);
                    wrh(collistfound); wrh(colliststatus); wrh(collistquote[1]);
                    wrh(collistscroll); wrh(collistheader); wrh(collisthigh);
-                   wrhl(collistqhigh[1]);
+                   wrh(collistqhigh[1]); wrhl(collistheaderhigh); 
     wrl('Editor'); wrh(coledittext); wrh(coleditmarked); wrh(coleditstatus);
                    wrh(coleditmessage); wrh(coledithead); wrh(coleditquote[1]);
                    wrh(coleditendmark); wrh(coleditmenu); wrh(coleditmenuhi);
@@ -1118,19 +1118,20 @@ begin
              m:=readmenu(16);
              case m of
                1 : cset(collistheader);
-               2 : cset(collisttext);
-               3 : cset(collistselbar);
-               4 : cset(collistmarked);
-               5 : cset(collistfound);
-               6 : cset(colliststatus);
-               7 : cset(collistscroll);
-               8 : cset(collisthigh);
-               9 : repeat
+               2 : cset(collistheaderhigh);
+               3 : cset(collisttext);
+               4 : cset(collistselbar);
+               5 : cset(collistmarked);
+               6 : cset(collistfound);
+               7 : cset(colliststatus);
+               8 : cset(collistscroll);
+               9 : cset(collisthigh);
+              10 : repeat
                      ssp;
                      l:=readmenu(19);
                      if l>0 then cset(collistquote[l]);
                    until l=0;
-              10 : repeat
+              11 : repeat
                      ssp;
                      l:=readmenu(19);
                      if l>0 then cset(collistqhigh[l]);
@@ -1185,6 +1186,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/04 18:43:16  jg
+  - Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten
+    entsprechender Menuepunkt unter Config/Anzeige/Farben/Lister
+
   Revision 1.9  2000/05/02 19:14:00  hd
   xpcurses statt crt in den Units
 

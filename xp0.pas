@@ -357,6 +357,7 @@ type   textp  = ^text;
                   ColListQuote  : ColQArr; { Quote-Zeilen + Maps"J" }
                   ColListScroll : byte;   { vertikaler Scroller     }
                   ColListHeader : byte;   { Nachrichtenkopf         }
+                  ColListHeaderhigh : byte; { Nachrichtenkopf hervorgehobene Msg} 
                   ColListHigh   : byte;   { *hervorgehoben*         }
                   ColListQHigh  : ColQArr; { Quote / *hervorgehoben* }
                   ColEditText   : byte;   { Editor, normaler Text   }
@@ -1133,6 +1134,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.36  2000/05/04 18:43:15  jg
+  - Lister: eigene Headerfarbe fuer hervorgehobene Nachrichten
+    entsprechender Menuepunkt unter Config/Anzeige/Farben/Lister
+
   Revision 1.35  2000/05/04 10:26:04  mk
   - UUZ teils auf HugeString umgestellt
 
