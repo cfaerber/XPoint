@@ -555,7 +555,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 30   Cancel-Nachrichten ignorieren
 #
 100  68
-101  Adre·einstellungen (ZCONNECT / RFC)
+101  Adre·einstellungen (ZConnect / RFC)
 102  Organisation ~
 103  Postanschrift~
 104  Telefon      ~
@@ -571,7 +571,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    Mîchten Sie diese Option wirklich einschalten?
 8    ~ ^Ja  , ^Nein~
 9    MIME in News
-10   ZCONNECT: ISO-Zeichensatz
+10   ZConnect: ISO-Zeichensatz
 11   MIME: "quoted-printable" verwenden
 12   MIME in Headerzeilen verwenden
 14   Kommentarverkettung
@@ -768,7 +768,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 271
 0    50
 1    PGP-Einstellungen
-2    ZCONNECT-PGP-UnterstÅtzung
+2    ZConnect-PGP-UnterstÅtzung
 3    PGP-RÅckfragen Åbergehen
 4    Warten auf Tastendruck nach PGP-Aufruf
 5    Keys aus PMs automatisch einlesen
@@ -2727,7 +2727,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 +  3001
 1  PGP-Key anfordern bei...
 2  PGP-Keyanforderung
-3  Falls Ihre Software PGP nach dem ZCONNECT-Standard unterstÅtzt,
+3  Falls Ihre Software PGP nach dem ZConnect-Standard unterstÅtzt,
 4  sollte sie auf diese Nachricht mit dem Verschicken Ihres PGP
 5  Public Key antworten.
 6  - automatisch erzeugte Nachricht -
@@ -2784,7 +2784,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 14 Node-/Pointliste %s fehlt
 16 Bei Monochrom-Grafikkarten nicht mîglich!
 17 PGP ist nicht vorhanden oder nicht per Pfad erreichbar.
-18 Aktivieren Sie zuerst die ZCONNECT-PGP-UnterstÅtzung!
+18 Aktivieren Sie zuerst die ZConnect-PGP-UnterstÅtzung!
 19 Ihre Grafikkarte unterstÅtzt kein VESA-DPMS.
 20 Geben Sie die vollstÑndige URL (http://do.main/...) an!
 
