@@ -801,7 +801,14 @@ begin
       if fido then
         writeln(t,'---');
       close(t);
-      SendMaps('DEL',box,fn);
+      if not (uucp and boxpar^.pppMode) then SendMaps('DEL',box,fn)
+      else begin
+        OpenList(1,1,80,1,-1,'/M/SB/S/');
+        app_l(newsgroup(brett));
+        pushkey(keycr);
+        list(uucp);
+        makeRC(false,box);
+        end;
       end
     else begin   { mehrere markierte Bretter }
       dbOpen(d,OwnPath+BoxenFile,1);
@@ -852,7 +859,14 @@ begin
           if fido then
             writeln(t,'---');
           close(t);
-          SendMaps('DEL',box,fn);
+          if not (uucp and boxpar^.pppMode) then SendMaps('DEL',box,fn)
+          else begin
+            OpenList(1,1,80,1,-1,'/M/SB/S/');
+            app_l(newsgroup(brett));
+            pushkey(keycr);
+            list(uucp);
+            makeRC(false,box);
+            end;
           topen:=false;
           end;
         dbSkip(d,1);
@@ -1839,6 +1853,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.17  2001/05/29 21:14:34  my
+  JG:- Unsubscribing a newsgroup works correctly now with RFC/Client.
+
   Revision 1.10.2.16  2001/04/28 13:38:55  mk
   - Client-Boxen umbenennen implementiert
 
