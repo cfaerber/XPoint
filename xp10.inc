@@ -192,7 +192,7 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fr Batchauswertung bei 
       clientbox  : string;
       currentbox : string;
       box        : string;
-      x,y        : byte;
+      x,y        : integer;
       i,p,nt     : byte;
       datDa      : boolean;
 
@@ -291,9 +291,9 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fr Batchauswertung bei 
         enddialog;
         end;
       if special and (cpos(':',all)=3) then
-        all:=ustr(trim(Mid(all,4)))+' '
+        all:=uppercase(trim(Mid(all,4)))+' '
       else
-        all:=ustr(trim(all))+' ';
+        all:=uppercase(trim(all))+' ';
 
       if not brk then begin
         fn:=TempS(1000+dbRecCount(d)*200);
@@ -645,8 +645,8 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
       multi2;
       if endtime>=time then disprest;
       if (anz>0) and (time>=endtime) then begin
-        if (anz=1) and (callall) and (exist(ownpath+NetcallAlleFlag)) then
-          _rename(ownpath+NetcallAlleFlag,ownpath+NetcallEndeFlag);
+        if (anz=1) and (callall) and (Fileexists(ownpath+NetcallAlleFlag)) then
+          RenameFile(ownpath+NetcallAlleFlag,ownpath+NetcallEndeFlag);
         execute1;
         initscs;
         end;
@@ -674,8 +674,8 @@ begin    { procedure AutoTiming(tnr:integer; callall,crashall:boolean);}
   freeres;
   releaseliste;
   if callall then begin
-    ExErase(ownpath+NetcallAlleFlag);
-    ExErase(ownpath+NetcallEndeFlag);
+    Deletefile(ownpath+NetcallAlleFlag);
+    Deletefile(ownpath+NetcallEndeFlag);
   end;
 end;
 
@@ -749,6 +749,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2002/01/22 18:08:33  cl
+  - the never-ending after 3.40 merge story
+
   Revision 1.20  2002/01/22 13:59:21  mk
   - after 3.40 merge fixes
 

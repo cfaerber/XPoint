@@ -602,8 +602,8 @@ var x,y : integer;
       end; *)
   end;
 
-+  { Funktionstastenhandling fuer letzte Bildschirmzeile }
-+
+  { Funktionstastenhandling fuer letzte Bildschirmzeile }
+(*
   function getfkeyfromscreen(x,y,mode:byte):byte; assembler;
   asm
          push ds
@@ -700,7 +700,7 @@ var x,y : integer;
          mov ah,0
    @end: pop ds
   end;
-
+*)
 begin
   maus_gettext(x,y);
   if y=2 then begin                                                 {2. Menueleiste }
@@ -719,9 +719,9 @@ begin
         dispshort(true);
         end;
       end else
-+  {  if (t=mauslmoved) and (shortp>0) then
-+      dispshort(n=shortp); }
-+    end
+  {  if (t=mauslmoved) and (shortp>0) then
+      dispshort(n=shortp); }
+    end
 
   else if y=screenlines then                                      { untere Menueleiste }
   begin
@@ -807,6 +807,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.37  2002/01/22 18:08:33  cl
+  - the never-ending after 3.40 merge story
+
   Revision 1.36  2002/01/13 15:07:28  mk
   - Big 3.40 Update Part I
 

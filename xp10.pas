@@ -61,7 +61,7 @@ procedure EditNetcallDat;
 
 implementation  { ---------------------------------------------------- }
 
-uses  xp2,xp3,xp3o,xp4o,xp4o2,xpnetcall,xp9bp,xpconfigedit,xpauto,xpfido,xpfidonl;
+uses  xp2,xp3,xp3o,xp4o,xp4o2,xpnt,xpnetcall,xp9bp,xpconfigedit,xpauto,xpfido,xpfidonl;
 
 const maxentries  = 100;   { s. auch XP0.maxkeys }
       TimingWidth = 116;
@@ -2183,6 +2183,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.68  2002/01/22 18:08:33  cl
+  - the never-ending after 3.40 merge story
+
   Revision 1.67  2002/01/22 13:59:21  mk
   - after 3.40 merge fixes
 

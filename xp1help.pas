@@ -42,7 +42,7 @@ procedure showlastkeys;
 procedure hilfe;
 procedure hilfealt;
 procedure dispfunctionkeys(editor:boolean);
-
+procedure do_help(n:word);
 
 implementation  { --------------------------------------------------- }
 
@@ -412,6 +412,9 @@ end;
 
 {
   $Log$
+  Revision 1.30  2002/01/22 18:08:33  cl
+  - the never-ending after 3.40 merge story
+
   Revision 1.29  2001/12/18 14:09:54  mk
   - added some const parameters
 
