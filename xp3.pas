@@ -474,7 +474,7 @@ begin
   getmem(p,bufs);
   dbReadN(mbase,mb_adresse,adr);
   minus:=0;
-  if dbReadInt(mbase,'msgsize') and $8000<>0 then begin  { KOM vorhanden }
+  if dbReadInt(mbase,'netztyp') and $8000<>0 then begin  { KOM vorhanden }
     hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,false);
     if (hdp^.komlen>0) and (ofs=hds+hdp^.komlen) then
@@ -1219,6 +1219,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.42  2000/07/26 09:29:37  mk
+  - Fehler beim Anzeigen von Nachrichten mit KOM-Header beseitigt
+
   Revision 1.41  2000/07/23 21:20:47  mk
   - Bugfix fuer neue makeheader-definition
 
