@@ -114,7 +114,7 @@ openxp-%.hlp: doc/openxp-%.ihq $(IHS)
 # --- files list ------------------------------------------------------
 
 MANIFEST.snap:
-	(for a in $(OPENXP) $(RESSOURCE_FILES) $(HELP_FILES) ; do echo $$a ; done) > FILELIST
+	(for a in $(OPENXP) $(RESSOURCE_FILES) $(HELP_FILES) ; do echo $$a ; done) > MANIFEST.snap
 
 # --- autoconf configuration PASCAL adaptions -------------------------
 # config.inc: config.h Makefile
@@ -146,8 +146,11 @@ ${srcdir}/configure: configure.in $(wildcard aclocal.m4)
 # ---------------------------------------------------------------------
 #
 # $Log$
-# Revision 1.2.2.1  2003/01/13 16:15:47  cl
-# - autoconf update for cross-compilation
+# Revision 1.2.2.2  2003/01/13 16:17:57  cl
+# - Makefile update
+#
+# Revision 1.7  2003/01/13 16:17:32  cl
+# - Makfile update
 #
 # Revision 1.6  2003/01/13 16:13:29  cl
 # - autoconf updates for cross-compilation
