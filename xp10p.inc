@@ -20,12 +20,12 @@ begin
   writeln(t,'Dummy=');
   writeln(t);
   for i:=1 to anzahl do
-    with phones^[i] do begin
+    with phones[i] do begin
       writeln(t,'Zone=',komment);
       for j:=1 to (anz+7) div 8 do begin
         for k:=1 to 8 do
           if (j-1)*8+k<=anz then
-            write(t,ph^[(j-1)*8+k],' ');
+            write(t,ph[(j-1)*8+k],' ');
         writeln(t);
         end;
       writeln(t);
@@ -65,7 +65,7 @@ end;
 
 
 procedure LoadPhonezones;
-var pa    : phoneap;
+var pa    : TStringList;
     t     : text;
     s     : string;
     ss    : string;
@@ -77,29 +77,29 @@ var pa    : phoneap;
   procedure AddP(s:string; _anz:integer);
   begin
     inc(anzahl);
-    with phones^[anzahl] do begin
+    with phones[anzahl] do begin
       komment:=s;
       anz:=_anz;
-      if anz>0 then
-        getmem(ph,anz*sizeof(phone1));
-      end;
+      ph := TStringList.Create;
+    end;
     ppos:=0;
   end;
 
   procedure x(nr:integer);
   begin
-    with phones^[anzahl] do begin
+    with phones[anzahl] do begin
       inc(ppos);
-      ph^[ppos]:=strs(nr)+'-';
+      ph[ppos]:=strs(nr)+'-';
       end;
   end;
 
   procedure xs(s:string);
   begin
-    with phones^[anzahl] do begin
+    with phones[anzahl] do
+    begin
       inc(ppos);
-      ph^[ppos]:=s;
-      end;
+      ph[ppos]:=s;
+    end;
   end;
 
   procedure x7(nr:word);
@@ -128,13 +128,12 @@ var pa    : phoneap;
   end;
 
 begin
-  getmem(phones,sizeof(phonea2));
-  fillchar(phones^,sizeof(phonea2),0);
+  fillchar(phones,sizeof(phonea2),0);
   assign(t,ParGebdat);
   anzahl:=0;
-  if existf(t) then begin
-    getmem(pa,sizeof(phonea2));
-    fillchar(pa^,sizeof(phonea2),0);
+  if existf(t) then
+  begin
+    pa := TStringList.Create;
     reset(t);
     while not eof(t) do begin
       repeat                         { Kopf berlesen }
@@ -155,8 +154,8 @@ begin
         until eof(t) or (p>0);
         if not eof(t) then begin
           inc(anzahl);               { Zonendaten einlesen }
-          fillchar(phones^[anzahl],sizeof(phones^[anzahl]),0);
-          with phones^[anzahl] do begin
+          with phones[anzahl] do
+          begin
             repeat
               if LowerCase(left(s,p-1))='zone' then komment:=trim(mid(s,p+1));
               readln(t,s);
@@ -169,19 +168,14 @@ begin
                   p:=cpos(' ',s);
                   if anz<maxphone then begin
                     inc(anz);
-                    pa^[anz]:=left(s,p-1);
+                    pa[anz]:=left(s,p-1);
                     end;
                   s:=trimleft(mid(s,p+1));
                   end;
                 if eof(t) then s:=''
                 else readln(t,s);
-                end;
-            if memavail<sizeof(pa^)+anz*sizeof(phone1) then
-              anz:=0;
-            if anz>0 then begin
-              getmem(ph,anz*sizeof(phone1));
-              Move(pa^,ph^,anz*sizeof(phone1));
               end;
+              pa.Assign(ph);
             end;
           end;
         end;
@@ -312,14 +306,16 @@ procedure FreePhoneZones;
 var i : integer;
 begin
   for i:=1 to anzahl do
-    if phones^[i].anz>0 then
-      freemem(phones^[i].ph,phones^[i].anz*sizeof(phone1));
-  freemem(phones); phones:= nil;
+    if phones[i].anz>0 then
+      Phones[i].ph.Free;
   anzahl:=0;
   freemem(tarif); tarif:= nil;
 end;
 {
   $Log$
+  Revision 1.9  2000/10/11 14:44:49  mk
+  - Gebuehrenabrechnung sehr notduerftig und nicht funktionsfaehig portiert
+
   Revision 1.8  2000/07/23 13:24:12  hd
   - Vorlaeufige Struktur (Masken) fuer Box-Typ 'NNTP'
 

@@ -103,12 +103,11 @@ type  TimeRec   = record
       tasten = array[mincode..codes] of string;
       tap    = ^tasten;
 
-      phone1   = string;
-      phonearr = array[1..maxphone] of phone1;
-      phoneap  = ^phonearr;
-      phonea2  = array[0..maxzones] of record
+//!!      phonearr = array[1..maxphone] of String;
+//      phoneap  = ^phonearr;
+      phonea2  = array[0..maxzones] of packed record
                    anz    : integer;
-                   ph     : phoneap;
+                   ph     : TStringList;
                    komment: string;
                  end;
       wt_array = array[1..maxwotage] of boolean;
@@ -131,7 +130,7 @@ var   e         : TStringList;
       filewidth : integer;
       _bunla    : string{[mtypes]};     { 'BUNLAET' }
 
-      phones    : ^phonea2;
+      phones    : phonea2;
       tarif     : tarifap;
       tables    : integer;    { Anzahl Tarif-Tabellen }
       dayused   : wt_array;   { fr CheckDay() }
@@ -631,7 +630,7 @@ var
                 write(' ',tt,bunla,' ',forms(mid(e.Strings[i+a-1],26),50-length(komm)),
                       ' ',komm,' ');
               end;
-          3 : with phones^[i+a] do begin      { Gebhrenliste Array}
+          3 : with phones[i+a] do begin      { Gebhrenliste Array}
                 s:=' '+forms(komment,25);
                 if anz>0 then
                   if anz=1 then s:=s+'1 '+getres2(1003,1)   { 'Eintrag' }
@@ -1035,27 +1034,9 @@ var
   var x,y   : byte;
       n     : integer;
       add   : integer;
-      phe   : phoneap;
+      phe   : TStringList;
       i,j   : integer;
       first : boolean;
-
-    procedure qsort(l,r:integer);
-    var i,j : integer;
-        x,w : phone1;
-    begin
-      i:=l; j:=r;
-      x:=phe^[(l+r) div 2];
-      repeat
-        while phe^[i]<x do inc(i);
-        while phe^[j]>x do dec(j);
-        if i<=j then begin
-          w:=phe^[i]; phe^[i]:=phe^[j]; phe^[j]:=w;
-          inc(i); dec(j);
-          end;
-      until i>j;
-      if l<j then qsort(l,j);
-      if r>i then qsort(i,r);
-    end;
 
   begin
     first:=(nr=1) or (nr=2);
@@ -1069,28 +1050,29 @@ var
       if n<1 then exit;
       end;
     add:=(n-1)*105;
-    new(phe);
-    fillchar(phe^,sizeof(phe^),0);
+    phe := TStringList.Create;
     dialog(iif(first,31,73),iif(first,3,iif(n=1,20,17)),
-           iifs(n=1,'',phones^[nr].komment+' / ')+
+           iifs(n=1,'',phones[nr].komment+' / ')+
            iifs(first,'',getreps2(1010,11,strs(gpagepos))),
            x,y);                                     { 'Seite %s' }
-    with phones^[nr] do begin
-      if n=1 then begin
+    with phones[nr] do
+    begin
+      if n=1 then
         maddstring(3,2,getres2(1010,1),komment,19,19,''); mhnr(801);   { 'Zone ' }
-        end;
       if nr>2 then begin
         if n=1 then begin
           maddtext(36,2,getres2(1010,2),col.ColDiaHigh);   { 'Die Vorwahlentabelle wird nur fr' }
           maddtext(36,3,getres2(1010,3),col.CoLDiaHigh);   { 'Fido-Direktanrufe ben”tigt.' }
           end;
         if anz>0 then
-          Move(ph^,phe^,anz*sizeof(phone1));
+          ph.Assign(phe);
         for i:=0 to 6 do
-          for j:=1 to 15 do begin
-            maddstring(3+i*10,iif(n=1,4,1)+j,'',phe^[add+i*15+j],7,15,'0123456789-');
+          for j:=1 to 15 do
+          begin
+            // !!!! Achtung, hier kann icht direkt auf die Liste zugegriffen werden
+            // maddstring(3+i*10,iif(n=1,4,1)+j,'',phe[add+i*15+j],7,15,'0123456789-');
             mhnr(802);
-            end;
+          end;
         end;
       freeres;
       readmask(brk);
@@ -1100,31 +1082,28 @@ var
         if nr>2 then begin
           i:=0;
           for j:=1 to maxphone do         { leere Eintr„ge entfernen }
-            if (phe^[j]<>'') then begin
+            if (phe[j]<>'') then begin
               inc(i);
-              if i<>j then phe^[i]:=phe^[j];
+              if i<>j then phe[i]:=phe[j];
               end;
-          if anz>0 then
-            freemem(ph,anz*sizeof(phone1));
+          ph.Free;
           anz:=i;
           if anz>0 then begin
-            qsort(1,anz);                 { Nummern sortieren }
+            phe.Sort;                      { Nummern sortieren }
             i:=0;                         { doppelte Eintr„ge entfernen }
             for j:=1 to anz do
-              if (i=0) or (phe^[j]<>phe^[i]) then begin
+              if (i=0) or (phe[j]<>phe[i]) then
+              begin
                 inc(i);
-                if i<>j then phe^[i]:=phe^[j];
-                end;
-            anz:=i;
-            if anz>0 then begin
-              getmem(ph,anz*sizeof(phone1));
-              Move(phe^,ph^,anz*sizeof(phone1));
+                if i<>j then phe[i]:=phe[j];
               end;
+            anz:=i;
+            ph.Assign(phe);
             end;
           end;
         end;
       end;
-    dispose(phe);
+    phe.Free;
   end;
 
   procedure NewPhone;
@@ -1136,8 +1115,8 @@ var
       exit;
       end;
     inc(anzahl);
-    phones^[anzahl]:=phones^[1];
-    phones^[anzahl].komment:='neue Zone';
+    phones[anzahl]:=phones[1];
+    phones[anzahl].komment:='neue Zone';
     EditPhoneEntry(true,anzahl,brk);
     if brk then
       dec(anzahl)
@@ -1156,15 +1135,13 @@ var
       rfehler(1003)   { 'Dieser Eintrag kann nicht gel”scht werden.' }
     else
       if ReadJN(getres(1005),true) then begin   { 'Eintrag l”schen' }
-        if phones^[nr].anz>0 then
-          freemem(phones^[nr].ph,phones^[nr].anz*sizeof(phone1));
-        if a+CurRow<anzahl then begin
-          Move(phones^[nr+1],phones^[nr],(anzahl-nr)*sizeof(phones^[1]));
+          PHones[nr].ph.Free;
+        if a+CurRow<anzahl then
+          Move(phones[nr+1],phones[nr],(anzahl-nr)*sizeof(phones[1]));
           for i:=1 to tables do
             for j:=1 to tarif^[i].zeitbereiche do
               with tarif^[i].zeitbereich[j] do
                 Move(tarif[nr+1],tarif[nr],(anzahl-nr)*sizeof(tarif[1]));
-          end;
       dec(anzahl);
       modi:=true;
       end;
@@ -1208,7 +1185,7 @@ var
       maddtext(17,2,getres2(1022,4),0);    { 'von' }
       maddtext(17,3,getres2(1022,5),0);    { 'bis' }
       for j:=1 to anzahl do
-        maddtext(3,j+4,phones^[sort[j]].komment,0);
+        maddtext(3,j+4,phones[sort[j]].komment,0);
       for i:=1 to 4 do with zeitbereich[add+i] do begin
         maddtime(24+(i-1)*12,2,'',von,false); mhnr(807);
         maddtime(24+(i-1)*12,3,'',bis,false); mhnr(807);
@@ -1823,11 +1800,11 @@ var pfound: integer;
 
   procedure Seek(i:integer; exact:boolean);
   var j : integer;
-      s : phone1;
+      s : string;
   begin
-    with phones^[i] do
+    with phones[i] do
       for j:=1 to anz do begin
-        s:=ph^[j];
+        s:=ph[j];
         if left(s,length(natvorwahl))=natvorwahl then
           delete(s,1,length(natvorwahl));              { '0' entfernen }
         if cpos('-',s)=0 then
@@ -1853,9 +1830,9 @@ begin
   LoadPhonezones;
   lvw:=left(vorwahl,cpos('-',vorwahl));   { eigene Landesvorwahl incl. "-" }
   if left(telefon,cpos('-',vorwahl))=lvw then
-    BoxPar^.gebzone:=phones^[1].komment
+    BoxPar^.gebzone:=phones[1].komment
   else
-    BoxPar^.gebzone:=phones^[2].komment;
+    BoxPar^.gebzone:=phones[2].komment;
   pfound:=0; lfound:=0;
   for i:=1 to anzahl do
     Seek(i,true);
@@ -1869,7 +1846,7 @@ begin
   if pfound=0 then
     for i:=1 to anzahl do
       Seek(i,false);
-  if pfound>0 then with phones^[pfound] do
+  if pfound>0 then with phones[pfound] do
     BoxPar^.gebzone:=komment;
   FreePhonezones;
   if manz>0 then begin
@@ -1928,7 +1905,7 @@ begin           {function CalcGebuehren(var startdate,starttime:datetimest; secs
   sum:=0;
   LoadPhonezones;
   zone:=anzahl;     { Nummer der Gebhrenzone ermitteln }
-  while (zone>0) and not stricmp(boxpar^.gebzone,phones^[zone].komment) do
+  while (zone>0) and not stricmp(boxpar^.gebzone,phones[zone].komment) do
     dec(zone);
   GetDow;           { Wochentag bzw. Feiertagskategorie ermitteln }
   tag:=tables;
@@ -1992,7 +1969,7 @@ var i : integer;
 begin
   LoadPhoneZones;
   for i:=1 to anzahl do
-    mappsel(true,phones^[i].komment);
+    mappsel(true,phones[i].komment);
   FreePhoneZones;
 end;
 
@@ -2050,6 +2027,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.39  2000/10/11 14:44:49  mk
+  - Gebuehrenabrechnung sehr notduerftig und nicht funktionsfaehig portiert
+
   Revision 1.38  2000/09/29 11:27:43  fe
   Ungenutzte, lokale Variablen entfernt.
 
