@@ -1050,29 +1050,26 @@ again:
              end;
          6 : begin
                dbSeek(ubase,uiName,UpperCase(name));
-               if not dbFound then begin   { User noch nicht vorhanden }
-                 dbAppend(ubase);
-                 dbWriteNStr(ubase,ub_username,name);
+               if not dbFound then
+               begin   { User noch nicht vorhanden }
                  pollbox:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
-                 if not IsBox(pollbox) then begin
+                 if not IsBox(pollbox) then
+                 begin
                    dbSeek(bbase,biIntnr,copy(_brett,2,4));
                    pollbox := dbReadNStr(bbase,bb_pollbox);
-                   end
+                 end
                  else
                    ReplaceVertreterbox(pollbox,true);
-                 dbWriteNStr(ubase,ub_pollbox,pollbox);
-                 dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
-                 b:=1+iif(newuseribm,0,8);;
-                 dbWriteN(ubase,ub_userflags,b);  { aufnehmen }
-                 dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);    { Adressbuch }
+                 AddNewUser(Name, Pollbox);
                end
                else begin
                  dbReadN(ubase,ub_adrbuch,b);
-                 if b=0 then begin
+                 if b=0 then
+                 begin
                    b:=1;
                    dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
-                   end;
                  end;
+               end;
                _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
                obrett := dbreadNStr(mbase,mb_brett);   { Originalbrett retten }
                dbWriteNStr(mbase,mb_brett,_brett);
@@ -1160,7 +1157,7 @@ begin
     dbSeek(bbase,biIntNr,typeform.mid(dbReadStr(mbase,'brett'),2));
     if dbFound then Box := dbReadNStr(bbase,bb_pollbox)
     else box:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
-    makeuser(hdp.absender,box);
+    AddNewUser(hdp.absender,box);
     end;
   tmp:=TempS(_filesize(fn)+2000);
   assign(tf,tmp);
@@ -1285,6 +1282,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/12/05 14:58:11  mk
+  - AddNewUser
+
   Revision 1.49  2000/12/03 12:38:24  mk
   - Header-Record is no an Object
 

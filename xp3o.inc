@@ -816,19 +816,14 @@ begin
 
           dbSeek(ubase,uiName,UpperCase(absender));
           if not dbFound then begin          { neuen User anlegen }
-            if adrok(absender) then begin
+            if adrok(absender) then
+            begin
               { mwrt(29,wherey,forms(absender,22)); }
-              dbAppend(ubase);
-              dbWriteStr(ubase,'username',absender);
-              pb:=pollbox_str(zconnect,true);
-              dbWriteStr(ubase,'pollbox',pb);
-              dbWrite(ubase,'haltezeit',stduhaltezeit);
-              flags:=1+iif(newuseribm,0,8);  { aufnehmen / Umlaute }
-              dbWrite(ubase,'userflags',flags);
+              AddNewUser(Absender, pollbox_str(zconnect,true));
               writeln(userlog,logstr(absender));
-              end;        { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
+            end;        { 14.02.2000 MH: Netzunabh„ngige Useraufnahme }
             aufnehmen:=true;
-            end
+          end
           else
             if empfaenger[1]<>'A' then
               aufnehmen:=true
@@ -1164,6 +1159,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.40  2000/12/05 14:58:09  mk
+  - AddNewUser
+
   Revision 1.39  2000/12/03 12:38:21  mk
   - Header-Record is no an Object
 

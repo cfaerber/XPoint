@@ -1462,19 +1462,13 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     DoSend:=true;
 
     if empfneu then
-      if pm then begin
-        dbAppend(ubase);                        { neuen User anlegen }
-        dbWriteStr(ubase,'username',empfaenger);
-        dbWriteStr(ubase,'pollbox',box);
-        halten:=stduhaltezeit;
-        dbWrite(ubase,'haltezeit',halten);
-        dbWrite(ubase,'adrbuch',NeuUserGruppe);
-        b:=1+iif(newuseribm,0,8);;
-        dbWrite(ubase,'userflags',b);      { aufnehmen }
-        dbFlushClose(ubase);
+      if pm then
+      begin
+        AddNewUser(Empfaenger, Box);
         _brett:=mbrettd('U',ubase);
-        end
-      else begin
+      end
+      else
+      begin
         dbAppend(bbase);                        { neues Brett anlegen }
         dbWriteNStr(bbase,bb_brettname,empfaenger);
         wbox:=iifs(empfaenger[1]='$','',box);
@@ -2106,6 +2100,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.83  2000/12/05 14:58:11  mk
+  - AddNewUser
+
   Revision 1.82  2000/12/03 12:38:24  mk
   - Header-Record is no an Object
 

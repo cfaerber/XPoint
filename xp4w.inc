@@ -341,7 +341,7 @@ var s      : string;
     else
       pollbox:=DefaultBox;
     ReplaceVertreterbox(pollbox,true);
-    xp3.makeuser(s,pollbox);
+    AddNewUser(s,pollbox);
   end;
 
 begin
@@ -1561,6 +1561,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.60  2000/12/05 14:58:10  mk
+  - AddNewUser
+
   Revision 1.59  2000/12/03 12:38:24  mk
   - Header-Record is no an Object
 

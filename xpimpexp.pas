@@ -174,11 +174,10 @@ begin
           write(#13#10'User:   ',name);
           mon;
           dbSeek(ubase,uiName,UpperCase(name));
-          if not dbFound then begin
-            dbAppend(ubase);
-            dbWriteN(ubase,ub_username,name);
-            end;
-          if not dbFound or repluser then begin
+          if not dbFound then
+            AddNewUser(Name, Pollbox);
+          if not dbFound or repluser then
+          begin
             if name<>adresse then
               dbWriteXStr(ubase,'adresse',length(adresse)+1,adresse);
             dbWriteN(ubase,ub_pollbox,pollbox);
@@ -668,6 +667,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/12/05 14:58:12  mk
+  - AddNewUser
+
   Revision 1.31  2000/11/19 17:53:35  ma
   - renamed existBin to ExecutableExists
 

@@ -174,7 +174,7 @@ begin
             if modibrett then;
             end
           else begin
-            MakeUser(s,DefaultBox);
+            AddNewUser(s,DefaultBox);
             if modiuser(false) then;
             end;
           aufbau:=true;
@@ -388,6 +388,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/12/05 14:58:11  mk
+  - AddNewUser
+
   Revision 1.21  2000/10/17 10:05:57  mk
   - Left->LeftStr, Right->RightStr
 

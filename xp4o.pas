@@ -1293,7 +1293,7 @@ begin
           dbSeek(ubase,uiName,UpperCase(s));
           if not dbFound then begin
             inc(n);
-            makeuser(s,DefaultBox);
+            AddNewUser(s,DefaultBox);
             if not adrb then dbWriteN(ubase,ub_adrbuch,b);
             gotoxy(x+26,y+2); write(n:5);
             end;
@@ -2419,6 +2419,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.83  2000/12/05 14:58:10  mk
+  - AddNewUser
+
   Revision 1.82  2000/12/03 12:38:23  mk
   - Header-Record is no an Object
 

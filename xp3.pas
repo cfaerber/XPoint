@@ -75,7 +75,7 @@ function  TxtSeek(adr:pointer; size:word; var key:shortstring; igcase,umlaut:boo
 
 function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
 
-procedure makeuser(absender,pollbox:string);
+procedure AddNewUser(const UserName, PollBox: string);
 function  EQ_betreff(var betr:string):boolean;
 function  grQuoteMsk:string;
 function  isbox(box:string):boolean;
@@ -849,17 +849,19 @@ begin
   else betr:=LeftStr('Re^'+strs(cnt+1)+': '+betr,betrefflen);
 end;
 
-
-procedure makeuser(absender,pollbox:string);
-var b : byte;
+// Add a new user to the database
+procedure AddNewUser(const UserName, PollBox: string);
+var
+  b: byte;
 begin
   dbAppend(ubase);
-  dbWriteNStr(ubase,ub_username,absender);
+  dbWriteNStr(ubase,ub_username,UserName);
   dbWriteNStr(ubase,ub_pollbox,pollbox);
   dbWriteN(ubase,ub_haltezeit,stduhaltezeit);
   dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
   b := 1 + iif(newuseribm,0,8);
-  dbWriteN(ubase,ub_userflags, b);  { aufnehmen }
+  dbWriteN(ubase,ub_userflags, b);
+  dbFlushClose(ubase);
 end;
 
 
@@ -1218,6 +1220,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.51  2000/12/05 14:58:09  mk
+  - AddNewUser
+
   Revision 1.50  2000/12/03 12:38:21  mk
   - Header-Record is no an Object
 
