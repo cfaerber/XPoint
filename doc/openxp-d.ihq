@@ -6749,7 +6749,7 @@ mit Leerzeichen getrennt hintereinander eingeben.
 Wenn Sie die Suchoptionen <<a>> oder <<o>> nicht verwenden,
 wird exakt nach dem Text gesucht, der hier eingege-
 ben wurde (natÅrlich unter BerÅcksichtigung der Such-
-optionen <<i>> und <<Ñ>>). Es wird auch nach Wortteilen
+optionen <<i>> und <<u>>). Es wird auch nach Wortteilen
 gesucht ("name" findet "Username" und auch "Namens-
 tag").
 
@@ -6768,7 +6768,7 @@ begriff zusammengefa·t werden:
 "frische Fische"
 
 
-Mit einer Tilde (<<~>>) am Beginn des Suchbegriffs wird
+Mit einer Tilde ("<<~>>") am Beginn des Suchbegriffs wird
 bestimmt, da· der Suchbegriff NICHT gefunden werden
 darf:
 
@@ -6779,9 +6779,12 @@ darf:
 Fritz" noch "fischt" vorkommt.
 
 
-Mit den Wildcard-Zeichen <<?>> oder <<*>> kînnen Sie Platz-
-halter fÅr ein oder mehrere (bzw. kein) Zeichen an-
-geben:
+Es kînnen auch Platzhalter (Wildcards) verwendet
+werden:
+
+<<?>> = Platzhalter fÅr ein einzelnes Zeichen
+<<*>> = Platzhalter fÅr eine Zeichenkette (die auch leer
+    sein kann)
 
 Fi???e
 
@@ -6799,12 +6802,11 @@ F*sche
 Geben Sie hier die gewÅnschten Suchoptionen als
 Buchstabenfolge ein:
 
-<<i>>  Gro·-/Kleinschreibung ignorieren (statt <<i>> kann
-   auch <<u>> verwendet werden).
+<<i>>  Gro·-/Kleinschreibung ignorieren.
 
-<<Ñ>>  Umlaut-insensitive (ae=Ñ, oe=î, ue=Å, ss=· usw.)
-   Suche (statt <<Ñ>> kann auch <<î>> oder <<Å>> verwendet
-   werden).
+<<u>>  Umlaut-unabhÑngige (ae=Ñ, oe=î, ue=Å, ss=·) Suche.
+   Diese Option beinhaltet automatisch die Option <<i>>
+   (Gro·-/Kleinschreibung ignorieren).
 
 <<a>>  <<A>>ND-VerknÅpfung: <<ALLE>> im Suchbegriff angegebenen
    Worte (bzw. in "" eingeschlossenen Phrasen) mÅssen

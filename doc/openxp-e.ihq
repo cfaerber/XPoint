@@ -5446,50 +5446,60 @@ Enter the activity which CrossPoint should carry out.
 @
 530
 Enter the search string.
-With [F2] you get a history-menu
-of the last 3 search-strings.
+
+With <F2> you get a history menu of the last 3
+search strings.
 
 
 If you are using AND/OR combination
 (Options "a" or "o") you may use quotes to
 mark some words as a phrase:
 
-"i dont know" what "to write here"
+"i don't know" what "to write here"
 
 will search for
 
-"i dont know"
+"i don't know"
 "what"
 "to write here"
 
 
-<<~>> works as NOT-Operator: If a word is found
-that is marked with (~) the search fails.
+"<<~>>" works as NOT-Operator: If a word is found
+that is marked with <<~>>, the search fails.
 
 
+Wildcard search is also allowed:
 
-type <<Ctrl V>> or <<Shift Ins>> to insert the
-Windows-Clipboard. A acustic signal indicates,
-that the clipboard contains to much (or none) text.
+<<?>> = Wildcard for a single character
+<<*>> = Wildcard for a string (that may also be
+    an empty string)
+
+
+Type <<Ctrl V>> or <<Shift Ins>> to insert the
+Windows Clipboard. An acoustic signal indicates
+that the clipboard contains too much (or none) text.
 
 <<Ctrl C>> or <<Strg Ins>> copies the text of this
-box to the Windows-Clipboard.
+box to the Windows Clipboard.
 
 @
 531
 Enter the type of search.
 
-<<i>>  Ignore case ("u" may also be used instead of
-   i") when searching.
+<<i>>  Ignore case.
 
-<<a>>  AND-Combined: Searching is succesfull,
+<<u>>  Disregard German <<U>>mlauts (ae=Ñ, oe=î, ue=Å, ss=·).
+   This option always includes the <<i>> option (ignore
+   case).
+
+<<a>>  AND-Combined: Searching is successful,
    if ALL keywords are found.
 
 <<o>>  OR-Combined: Searching is successful,
    if ANY keyword is found.
 
 
-(delete entries with the space key or Ctrl-Y.)
+(Delete entries with the <Del> or <Space> key.)
 @
 532
 CrossPoint searches in the groups defined here.
