@@ -790,7 +790,7 @@ procedure MiscAnzeigeCfg;
 var i,x,y    : byte;
     brk,du : boolean;
 begin
-  dialog(36,13,'',x,y);
+  dialog(ival(getres2(260,0)),14,'',x,y);
   maddint(3,2,getres2(260,1),scrsaver,5,5,0,10000); mhnr(280);   { 'Screen-Saver (Sek.)  ' }
     msetvfunc(scstest);
   maddbool(3,4,getres2(260,2),softsaver);     { 'weich ausblenden' }
@@ -800,7 +800,7 @@ begin
     mset1func(dpmstest);
   maddbool(3,8,getres2(260,3),ss_passwort);   { 'Startpaáwort abfragen' }
   du:=dispusername;
-  maddbool(3,10,getres2(260,4),dispusername); { 'Username anzeigen' }
+  maddbool(3,10,getres2(260,4),dispusername); { 'Stammbox-Adresse anzeigen' }
 
   maddstring(3,12,getres2(260,13),mheadercustom[1],19,custheadlen,''); { 'userdef. Kopfzeile 1' }
   maddstring(3,13,getres2(260,14),mheadercustom[2],19,custheadlen,''); { 'userdef. Kopfzeile 2' }
@@ -1521,6 +1521,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.34  2002/03/10 13:51:26  my
+  MY:- H”he/Breite von /Config/Anzeige/Diverses korrigiert und an
+       englische Ressource angepaát (Breite aus res. 260,0 aulesen).
+
   Revision 1.39.2.33  2002/03/08 23:40:10  my
   MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
