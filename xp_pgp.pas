@@ -328,7 +328,7 @@ begin
 
   if fido_origin<>'' then StripOrigin;
   if PGPVersion=PGP2 then
-    t:=iifs(hd.typ='T','-t',' +textmode=off')
+    t:=iifs(hd.typ='T','t',' +textmode=off')
   else
     t:=iifs(hd.typ='T','-t','');
 
@@ -340,7 +340,7 @@ begin
   { --- codieren --- }
   if encode and not sign then begin
     if PGPVersion=PGP2 then
-      RunPGP('-ea '+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
+      RunPGP('-ea'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
     else if PGPVersion=PGP5 then
       RunPGP5('PGPE.EXE','-a '+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp)
     else begin
@@ -801,6 +801,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/05/08 22:15:55  oh
+  -PGP 2.6.x: einmal war ein Space vor dem t drin, zweimal nicht. Angeglichen. Fix fuer den vorherigen Fix.
+
   Revision 1.18  2000/05/07 17:50:07  mk
   - Limits fuer Dateinamen entfernt
 
