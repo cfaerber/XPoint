@@ -184,6 +184,7 @@ var
   c: Char;
   i: Integer;
 begin
+  Result := 0;
   p := s;
   while True do
   begin
@@ -433,6 +434,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/09/06 18:48:44  mk
+  - fixed function result was unddefined in UCLength
+
   Revision 1.2  2001/08/10 20:57:57  mk
   - removed some hints and warnings
   - fixed some minior bugs
