@@ -118,6 +118,13 @@ const
   MaxInt = MaxLongint;
 {$ENDIF }
 
+const
+{$IFDEF Linux }              { ML 07.05.2000 unter linux '/' als Verzeichnis-Trennung }
+      dirdivchar   = '/';
+{$ELSE }
+      dirdivchar   = '\';
+{$ENDIF }
+
 implementation
 
 begin
@@ -130,6 +137,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.24  2000/05/07 11:29:48  ml
+  Bug in typeform unter Linux keine '\' als Verzeichnistrennung...
+
   Revision 1.23  2000/04/24 08:10:11  mk
   - Versionsinfo auf 3.21.024 angepasst
 

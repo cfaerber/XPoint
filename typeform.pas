@@ -1565,7 +1565,7 @@ begin
   fsplit(path,ds,ns,es);
   ds:=left(ds,n-length(ns+es));
   dellast(ds);
-  shortpath:=ds+'\'+ns+es;
+  shortpath:=ds+dirdivchar+ns+es;
 end;
 
 
@@ -1663,10 +1663,10 @@ begin
     fsplit(path,dir,name,ext);
     while length(dir)+length(name)+length(ext)+4>n do begin
       p:=length(dir)-1;
-      while dir[p]<>'\' do dec(p);
+      while dir[p]<>dirdivchar do dec(p);
       dir:=left(dir,p);
       end;
-    fitpath:=dir+'...\'+name+ext;
+    fitpath:=dir+'...'+dirdivchar+name+ext;
     end;
 end;
 
@@ -2246,6 +2246,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/05/07 11:29:47  ml
+  Bug in typeform unter Linux keine '\' als Verzeichnistrennung...
+
   Revision 1.33  2000/05/04 10:32:55  mk
   - unbenutzer TurboBox Code entfernt
 
