@@ -146,9 +146,10 @@ resourcestring
   res_groupnotfound     = 'Gruppe %s nicht gefunden';
 
   res_msg1              = 'hole Artikel %d, Zeile %d';
-  res_msg3              = 'Fehler beim Holen von Artikel %d';
+  res_msg3              = 'Artikel %d nicht mehr auf Server vorhanden';
 
-  res_posterror         = 'Fehler %d beim Holen des Artikels';
+  res_posterror         = 'Fehler %d beim Absenden des Artikels';
+  res_postmsg           = 'Verschicke Artikel %d (gesamt %5.1f%%)';
 
   res_auth              = 'Authentifikation benötigt';
 
@@ -501,7 +502,7 @@ end;
 
 function TNNTP.PostPlainRFCMessages(Message: TStringList): Integer;
 var
-  Error, I: Integer;
+  Error, I, iPosting: Integer;
   s: String;
 begin
   Result := nntp_NotConnected;
@@ -510,14 +511,16 @@ begin
     SWriteln('POST');
     SReadln(s);
     Error := ParseResult(s);
-    I := 1;
+    I := 1; iPosting := 0;
     while Error = nntp_PostPleaseSend do
     begin
+      inc(iPosting);
       repeat
         SWriteln(Message[I]);
         Inc(I);
       until (I >= Message.Count) or (Pos('#! rnews', Message[I]) = 1);
       SWriteln(nntpMsg_EndSign);
+      Output(mcInfo,res_postmsg,[iPosting,(I/Message.Count*100)]);
       SReadln(s);
       Error := ParseResult(s);
       if (Error = nntp_PostArticlePosted) and (I < Message.Count) then
@@ -539,6 +542,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2001/04/21 15:43:56  ma
+  - added sending progress messages
+
   Revision 1.21  2001/04/16 14:28:25  ma
   - using ProgrOutputWindow now
 
