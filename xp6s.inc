@@ -2,7 +2,7 @@
 
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
-
+                                                          
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -611,7 +611,7 @@ end;
 function QuoteOK:boolean;
 var t     : text;
     buf   : array[0..2047] of byte;
-    n,nq  : integer;
+    n,nq  : double;
     s     : string;
     x,y,i : Integer;
     lines : Integer;
@@ -624,21 +624,21 @@ begin
   if not existf(t) or (trim(QChar)='') then exit;
   fm_ro; reset(t); fm_rw;
   n:=0; nq:=0;
-  while not eof(t) do begin
-    inc(n);
+  while not eof(t) do
+  begin
+    n := n + 1;
     readln(t,s);
     p:=cpos('>',s);
     if ((p>0) and (p<5)) or (LeftStr(s,length(QChar))=QChar) then
-      inc(nq);
+      nq := nq + 1;
     end;
   close(t);
-{$IFNDEF Delphi }
-  if real(nq)/ real(n)>=0.5 then
+  if nq / n >= 0.5 then
   begin
     lines:=ival(getres2(606,1));
     msgbox(51,lines+6,getres2(606,0),x,y);    { 'Hinweis' }
     for i:=1 to lines-1 do
-      mwrt(x+3,y+i+1,getreps2(606,i+1,strsr(real(nq) / real(n)*100,0)));
+      mwrt(x+3,y+i+1,getreps2(606,i+1,strsr(nq / n *100,0)));
     mwrt(x+3,y+lines+2,getres2(606,lines+1));
     errsound;
     a:='';
@@ -649,8 +649,7 @@ begin
       end;
     closebox;
     freeres;
-    end;
-{$ENDIF }
+  end;
 end;
 
 
@@ -1109,6 +1108,11 @@ end;
 
 {
   $Log$
+  Revision 1.59  2001/07/31 16:18:41  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.58  2001/07/31 13:10:33  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

@@ -259,9 +259,8 @@ end;
 //
 
 procedure splitfido(adr:string; var frec:fidoadr; defaultzone:word);
-var p1,p2,p3 : byte;
-    res      : integer;
-    l        : longint;
+var
+  p1,p2,p3 : Integer;
 begin
   fillchar(frec,sizeof(frec),0);
   with frec do begin
@@ -312,6 +311,11 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/07/31 16:18:38  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.13  2001/07/31 13:10:31  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

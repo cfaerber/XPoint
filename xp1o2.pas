@@ -99,7 +99,8 @@ begin
   t:='';
   case readbutton(x+2,y+3,2,getres(125),1,true,t) of  { ' ^Wiederholen , ^Abbruch ' }
     0,2 : DruckWiederholen:=true;
-    1   : DruckWiederholen:=false;
+  else
+    DruckWiederholen:=false;
   end;
   closebox;
 end;
@@ -220,6 +221,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2001/07/31 16:18:40  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.19  2001/07/28 12:04:10  mk
   - removed crt unit as much as possible
 

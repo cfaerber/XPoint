@@ -55,9 +55,6 @@ var
 
   procedure NL_Datecheck;      { testen, ob neue Liste dazugekommen }
   var
-      dt      : tdatetime;
-      dummy   : rtlword;
-      ActTime : longint;
       fh: Integer;
   begin
     if FileDateToDateTime(FileAge(NodeListCfg)) > FileDateToDateTime(FileAge(UserIndexF)) then
@@ -526,6 +523,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/07/31 16:18:41  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.35  2001/07/23 16:05:23  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -45,7 +45,6 @@ var ax,p,myp  : integer;
 
   procedure ClearFields;
   var i : integer;
-      s : string;
   begin
     with amaskp^ do begin
       moff;
@@ -1120,6 +1119,11 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 end;   { readHmask }
 {
   $Log$
+  Revision 1.35  2001/07/31 16:18:39  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.34  2001/03/19 12:43:04  cl
   - fixed missing ,
 

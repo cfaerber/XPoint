@@ -193,7 +193,7 @@ end;
 procedure ReadNode(offs:longint; var np:inodep);
 var rbuf : barrp;
     wp   : ^smallword absolute rbuf;
-    i,o: integer;
+//    i,o: integer;
 begin
   with np^ do
     with dp(db_p)^ do begin
@@ -285,6 +285,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2001/07/31 16:18:38  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.18  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

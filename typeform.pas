@@ -1406,7 +1406,7 @@ Begin
   result:=(X and $ff) shl 8 + (X shr 8)
 End;
 
-Function Swap32(X: Longint): Longint; {$IFNDEF Delphi} inline; {$ENDIF }
+Function Swap32(X: DWord): DWord; {$IFNDEF Delphi} inline; {$ENDIF }
 Begin
   result:=(x and $ff) shl 24 + (x and $ff00) shl 8 + (x and $ff0000) shr 8 + (x and $ff000000) shr 24;
 End;
@@ -1449,6 +1449,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.92  2001/07/31 16:18:40  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.91  2001/07/31 13:10:32  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

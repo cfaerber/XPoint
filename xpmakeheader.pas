@@ -365,7 +365,10 @@ begin
           else begin
             id:=LeftStr(line,p-1);
             id0:=id;
-            if length(line)>p then tc:=line[p+1]; { Fix: Exception bei leeren Headern }
+            if length(line)>p then
+              tc:=line[p+1] { Fix: Exception bei leeren Headern }
+            else
+              tc := '_';
             for i:=1 to length(id) do         { UpperCase }
               if (id[i]>='a') and (id[i]<='z') then
                 dec(byte(id[i]),32);
@@ -570,6 +573,11 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/07/31 16:18:42  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.9  2001/07/31 13:10:35  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

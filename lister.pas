@@ -195,8 +195,6 @@ begin
   j := 0;
   while j < BufLen do
   begin
-    i := 0;
-
     // vorher auswerten, um Rechenzeit in der Hauptschleife zu sparen
     MaxLen := Min(Wrap + j, BufLen);
     TempIJ := j;
@@ -330,7 +328,7 @@ var
   s: string;
   p: ^ListerCharArray;
   ps: word;
-  rp, TempRP: Integer;
+  rp: Integer;
   rr: word;
   fm: byte;
 begin
@@ -348,7 +346,7 @@ begin
     repeat
       blockread(f, p^[rp], ps - rp, rr);
       if Assigned(FOnConvert) and (rr > 0) then FOnConvert(p^[rp], rr);
-      TempRP := rp;
+      // TempRP := rp;
       rp := make_list(p^, rr + rp, stat.wrappos);
     until eof(f);
     close(f);
@@ -373,7 +371,6 @@ var
   y: integer;
   xa: byte;
   t: taste;
-  i: longint;
   s: string;
   FirstLine: integer;                   // number of first line in display
   f7p, f8p: longint;
@@ -386,10 +383,10 @@ var
   vstart,
     vstop: integer;                     { Scrollbutton-Position }
   _unit: longint;
-  scrolling: boolean;
-  scrolladd: integer;
-  scrollpos: integer;
-  mausdown: boolean;                    { Maus innerhalb des Fensters gedrÅckt }
+  // scrolling: boolean;
+  // scrolladd: integer;
+  // scrollpos: integer;
+  // mausdown: boolean;                    { Maus innerhalb des Fensters gedrÅckt }
 
   procedure showstat;
   begin
@@ -545,7 +542,6 @@ var
   var
     found, brk: boolean;
     pp: byte;
-    i: longint;
     sw: byte;
     nftxt: atext;
     mi: byte;
@@ -616,7 +612,6 @@ var
   procedure listrot13;
   var
     i: Integer;
-    s: string;
   begin
     for i := 0 to Lines.Count - 1 do
       Lines[i] := DecodeRot13String(Lines[i]);
@@ -771,10 +766,10 @@ begin
   f7p := 1; f8p := 0;
   mzo := mauszuo; mzu := mauszuu;
   mzl := mauszul; mzr := mauszur;
-  mausdown := false;
+  // mausdown := false;
   maus_pushinside(l, l + w - 2, y + 1, y + DispLines - 2);
   mb := InOut.AutoBremse; AutoBremse := true;
-  scrolling := false;
+  // scrolling := false;
   repeat
     display;
     showstat;
@@ -1072,6 +1067,11 @@ finalization
 end.
 {
   $Log$
+  Revision 1.54  2001/07/31 16:18:39  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.53  2001/07/28 12:04:08  mk
   - removed crt unit as much as possible
 

@@ -701,7 +701,7 @@ var f1,f2   : file;
   end;
 
   procedure MakePacketHeader;
-  var dummy : smallword;
+  var //dummy : smallword;
       phd   : pheader;
   begin
     fillchar(phd,sizeof(phd),0);
@@ -1802,6 +1802,11 @@ end;
 end.
 {
         $Log$
+        Revision 1.19  2001/07/31 16:18:42  mk
+        - removed some unused variables
+        - changed some LongInt to DWord
+        - removed other hints and warnings
+
         Revision 1.18  2001/07/31 13:10:35  mk
         - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

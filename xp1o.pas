@@ -44,7 +44,7 @@ var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
 
 function  ReadFilename(txt:atext; var s:string; subs:boolean;
                        var useclip:boolean):boolean;
-function  overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
+function  overwrite(const fname:string; replace:boolean; var brk:boolean):boolean;
 procedure listExt(Self: TLister; var t:taste);
 procedure ExtListKeys;
 function  filecopy(const fn1,fn2:string):boolean;
@@ -62,7 +62,7 @@ procedure DelBezug;
 function  GetBezug(const ref:string):longint;
 function  KK:boolean;
 function  HasRef:boolean;
-function  ZCfiletime(var fn:string):string;   { ZC-Dateidatum }
+function  ZCfiletime(const fn:string):string;   { ZC-Dateidatum }
 procedure SetZCftime(const fn:string; const ddatum:string);
 
 function  testtelefon(var s:string):boolean;
@@ -175,7 +175,7 @@ begin
 end;
 
 
-function overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
+function overwrite(const fname:string; replace:boolean; var brk:boolean):boolean;
 var x,y : Integer;
     nr  : shortint;
     t   : taste;
@@ -712,9 +712,7 @@ begin
 end;
 
 
-function ZCfiletime(var fn:string):string;   { ZC-Dateidatum      }
-var l  : longint;
-    f  : file;
+function ZCfiletime(const fn:string):string;   { ZC-Dateidatum      }
 begin
   if FileExists(fn) then
     ZCFileTime := DateTimeToZCDateTime(FileDateToDateTime(FileAge(fn)))
@@ -1011,6 +1009,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.86  2001/07/31 16:18:40  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.85  2001/07/29 12:54:55  ma
   - removed Developer and ntAllowed variables
 

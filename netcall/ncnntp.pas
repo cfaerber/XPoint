@@ -206,7 +206,8 @@ begin
   SReadln(s);
 
   { Ergebnis auswerten }
-  if ParseResult(s)<>200 then
+  Code := ParseResult(s);
+  if Code <>200 then
   begin
     Output(mcError,res_connect2, [ErrorMsg]);
     DisConnect;
@@ -532,6 +533,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/07/31 16:18:43  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.27  2001/06/08 16:07:05  ma
   - fixed: Numerical newsgroup names were interpreted as error codes
 

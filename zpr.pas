@@ -751,10 +751,11 @@ var i,j  : integer;
       if (zone[1]<>'S') and (zone[1]<>'W') then zone[1]:='W';
       if (zone[2]<>'+') and (zone[2]<>'-') then zone[2]:='+';
       p:=cpos(':',zone);
-      if p=0 then begin
+      if p=0 then
+      begin
         val(mid(zone,3),zh,res);
         if res<>0 then zone:=LeftStr(zone,2)+'0';
-        end
+      end
       else begin
         val(copy(zone,3,p-3),zh,res);
         val(mid(zone,p+1),zm,res2);
@@ -1297,6 +1298,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2001/07/31 16:18:42  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.34  2001/07/31 13:10:36  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

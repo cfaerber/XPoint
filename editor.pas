@@ -1495,6 +1495,7 @@ var  dl         : displp;
   function PosCoord(pos:position; disp:byte):longint;
   var i : integer;
   begin
+    PosCoord := -1;
     with e^ do
       case disp of
         1 : PosCoord:=-1;
@@ -1680,6 +1681,11 @@ end.
 
 {
   $Log$
+  Revision 1.56  2001/07/31 16:18:38  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.55  2001/07/31 13:10:31  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

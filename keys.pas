@@ -311,8 +311,6 @@ end;
 {$ENDIF }
 
 function kb_shift:boolean;          { Shift gedrÅckt }
-var
-  I:Integer;
 begin
 {$IFDEF Win32 }
   kb_shift := GetAsyncKeyState(VK_SHIFT) < 0;
@@ -370,6 +368,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/07/31 16:18:39  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.36  2001/07/28 12:54:44  mk
   - added some defines for Delphi compatibility
 

@@ -173,8 +173,6 @@ begin
 end;
 
 procedure TLog.PFilename(const fn: string);
-var
-  s: string;
 begin
   if fn<>FFilename then begin
     Open;
@@ -219,6 +217,11 @@ end;
 end.
 {
         $Log$
+        Revision 1.8  2001/07/31 16:18:39  mk
+        - removed some unused variables
+        - changed some LongInt to DWord
+        - removed other hints and warnings
+
         Revision 1.7  2001/03/22 18:25:09  ma
         - FmtDateTime: "mm" means "month", *not* "minute".
 

@@ -90,11 +90,14 @@
 {$ENDIF }
 
 {$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
+  {$APPTYPE CONSOLE}
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
-
   {$DEFINE i386}
+  {$A+,B-,C+,D+,E-,F-,G+,H+,I-,J+,K-,L+,M-,N+,O+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y+,Z1}
+  {$MINSTACKSIZE $00004000}
+  {$MAXSTACKSIZE $00100000}
+  {$IMAGEBASE $00400000}
 {$ENDIF }
 
 {$IFDEF i386}
@@ -204,6 +207,11 @@
 
 {
   $Log$
+  Revision 1.67  2001/07/31 16:18:41  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.66  2001/07/28 12:22:09  mk
   - added support for Delphi 6
 

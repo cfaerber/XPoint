@@ -92,7 +92,7 @@ end;
 { Ganze EmpfÑngerlisten an eine RTA-EmpfÑngerliste anfÅgen }
 
 procedure addList (var orginalList :RTAEmpfaengerP; newList: TStringList; const typ :byte);
-var lauf, neu :RTAEmpfaengerP;
+var neu :RTAEmpfaengerP;
     loesch: TStringList;
 begin
   if NewList.Count = 0 then exit;
@@ -1059,6 +1059,11 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/07/31 16:18:39  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.5  2001/07/31 13:10:32  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

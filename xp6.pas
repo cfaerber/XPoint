@@ -103,8 +103,6 @@ implementation  { --------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xpconfigedit,xp9bp,xpcc,xpnt,xpfido, xpmakeheader,
      xp_pgp,xp6l;
-var
-  i: integer;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
 asm
@@ -2099,6 +2097,11 @@ finalization
 end.
 {
   $Log$
+  Revision 1.121  2001/07/31 16:18:40  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.120  2001/07/29 12:57:27  ma
   - removed Developer and ntAllowed variables
   - fixed setting of NNTP area db flags

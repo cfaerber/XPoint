@@ -291,7 +291,7 @@ const  maxsave     = 50;  { max. fÅr savecursor }
 
 type   editsa      = array[1..500] of edits;   { nur fÅr Type Cast }
 
-var    ca,ce,ii,jj : byte;
+var    ca,ce: byte;
        sx,sy,sa,se,
        wl,wr,wo,wu : array[1..maxsave] of byte;
 {$IFNDEF NCRT }
@@ -1550,7 +1550,7 @@ end;
 
 procedure checkpm;        { lokal }
 var check : longint;
-  ii: byte;
+  ii: Integer;
 begin
   check:=0;
   for ii:=1 to length(pm) do
@@ -1618,6 +1618,8 @@ begin
 end;
 
 procedure InitInOutUnit;
+var
+  ii, jj: Integer;
 begin
 {$IFDEF NCRT}
   InitXPCurses;
@@ -1656,6 +1658,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2001/07/31 16:18:39  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.71  2001/07/28 12:04:08  mk
   - removed crt unit as much as possible
 

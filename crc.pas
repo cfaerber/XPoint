@@ -12,7 +12,7 @@ uses
 
 {Iterativ: CRC wird jeweils fuer ein Byte aktualisiert}
 function UpdCRC16(cp: byte; crc: smallword): smallword;
-function UpdCRC32(octet: byte; crc: longint) : longint;
+function UpdCRC32(octet: byte; crc: DWord) : DWord;
 
 {Explizit: CRC wird blockweise berechnet}
 function CRC16Block(var data; size:smallword): smallword;
@@ -127,7 +127,7 @@ end;
 (* Converted to Turbo Pascal (tm) V4.0 March, 1988 by J.R.Louvau       *)
 (* Copyright (C) 1986 Gary S. Brown.  You may use this program, or     *)
 (* code or tables extracted from it, as desired without restriction.   *)
-CONST crc_32_tab: ARRAY[0..255] OF LONGINT = (
+CONST crc_32_tab: ARRAY[0..255] OF Cardinal = (
 $00000000, $77073096, $ee0e612c, $990951ba, $076dc419, $706af48f, $e963a535, $9e6495a3,
 $0edb8832, $79dcb8a4, $e0d5e91e, $97d2d988, $09b64c2b, $7eb17cbd, $e7b82d07, $90bf1d91,
 $1db71064, $6ab020f2, $f3b97148, $84be41de, $1adad47d, $6ddde4eb, $f4d4b551, $83d385c7,
@@ -162,9 +162,9 @@ $bdbdf21c, $cabac28a, $53b39330, $24b4a3a6, $bad03605, $cdd70693, $54de5729, $23
 $b3667a2e, $c4614ab8, $5d681b02, $2a6f2b94, $b40bbe37, $c30c8ea1, $5a05df1b, $2d02ef8d
 );
 
-function UpdCRC32(octet: BYTE; crc: LONGINT) : LONGINT;
+function UpdCRC32(octet: BYTE; crc: DWord) : Dword;
 begin { UpdCRC32 }
-   UpdCRC32 := crc_32_tab[(BYTE(crc XOR LONGINT(octet))AND $FF)] XOR ((crc SHR 8) AND $00FFFFFF)
+   UpdCRC32 := crc_32_tab[(BYTE(crc XOR DWord(octet))AND $FF)] XOR ((crc SHR 8) AND $00FFFFFF)
 end;
 
 procedure CCITT_CRC32_calc_Block(var block; size: word);
@@ -210,6 +210,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2001/07/31 16:18:38  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.5  2000/08/01 09:25:30  mk
   - AnsiString in CRC16StrXP beseitigt
 

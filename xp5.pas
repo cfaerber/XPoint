@@ -615,10 +615,11 @@ begin
       sdelay(200);
     until endflag;
 
-    if keypressed then begin
+    if keypressed then
+    begin
       c:=readkey;
       if c=#0 then c:=readkey;
-      end;
+    end;
     initscs;
     Holen(p);
     textattr:=mattr;
@@ -947,6 +948,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2001/07/31 16:18:40  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.52  2001/07/31 13:10:33  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

@@ -98,7 +98,7 @@ procedure GetReqFiles(adr:string; var files:string);
 function  FidoPhone(var fa:FidoAdr; var nl_phone:string):string;
 function  FidoAppendRequestfile(var fa:FidoAdr):string;
 procedure ShrinkPointToNode(var fa:FidoAdr; var ni:NodeInfo);
-function  FindFidoAddress(fn:string; var fa:FidoAdr):boolean;
+function  FindFidoAddress(const fn:string; var fa:FidoAdr):boolean;
 
 procedure NodelistBrowser;
 
@@ -2208,7 +2208,7 @@ end;
 
 { In Textfile nach erster brauchbarer Nodeadresse suchen }
 
-function FindFidoAddress(fn:string; var fa:FidoAdr):boolean;
+function FindFidoAddress(const fn:string; var fa:FidoAdr):boolean;
 var t    : text;
     s    : string;
     n    : byte;
@@ -2250,6 +2250,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2001/07/31 16:18:41  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
   Revision 1.53  2001/07/28 12:04:15  mk
   - removed crt unit as much as possible
 
