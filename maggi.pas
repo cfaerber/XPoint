@@ -1224,7 +1224,7 @@ begin
               else
                 writeln(t,'-',ref);
               end;
-	    { suboptimal }
+            { suboptimal }
             if followup.count>0 then
               writeln(t,':Followup-To: ',mid(followup[0],length(bretth)+1));
             end;
@@ -1581,12 +1581,10 @@ begin
           wrs('MID: '+msgid);
           if organisation<>'' then wrs('ORG: '+organisation);
           if ref<>'' then wrs('BEZ: '+ref);
-          if replyto.count>0 then
-	    for i:=0 to replyto.count-1 do
-              wrs('ANTWORT-AN: '+replyto[i]);
-          if followup.count>0 then
-	    for i:=0 to followup.count-1 do
-              wrs('DISKUSSION-IN: '+followup[i]);
+          for i:=0 to replyto.count-1 do
+            wrs('ANTWORT-AN: '+replyto[i]);
+          for i:=0 to followup.count-1 do
+            wrs('DISKUSSION-IN: '+followup[i]);
           if programm<>''  then wrs('Mailer: '+programm);
           if gate<>''      then wrs('Gate: '+gate);
           if distribution<>'' then wrs('U-Distribution: '+distribution);
@@ -1648,6 +1646,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.31  2000/11/24 09:40:11  mk
+  - fixed Franks suboptimal changes :(
+
   Revision 1.30  2000/11/23 22:33:22  fe
   Fixed some ugly bugs with followup and replyto.
 

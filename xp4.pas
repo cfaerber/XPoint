@@ -792,13 +792,12 @@ var t,lastt: taste;
 {      for i:=2 to rtanz do with hdp^ do begin
         ReadHeadDisk:=i;
         ReadHeader(hdp^,hds,false);}
-	{ suboptimal }
+        { suboptimal }
       with hdp^ do
-	if followup.count>0 then
-	  for i:=0 to followup.count-1 do begin
-            dbSeek(bbase,biBrett,'A'+UpperCase(followup[i]));
-            EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
-          end;
+        for i:=0 to followup.count-1 do begin
+          dbSeek(bbase,biBrett,'A'+UpperCase(followup[i]));
+          EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
+        end;
 {      end;}
       SendEmpfList.Assign(EmpfList); EmpfList.Clear;
     end;
@@ -2134,6 +2133,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2000/11/24 09:40:11  mk
+  - fixed Franks suboptimal changes :(
+
   Revision 1.65  2000/11/23 22:33:22  fe
   Fixed some ugly bugs with followup and replyto.
 

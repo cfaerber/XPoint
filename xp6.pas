@@ -1694,7 +1694,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       attrib := attrib and (not attrReqEB) + attrIsEB;
       if netztyp=nt_UUCP then begin
         if (followup.count=0) and (absender<>'') then
-	  replyto.add(absender);
+          replyto.add(absender);
         absender:='MAILER-DAEMON'+mid(absender,cpos('@',absender));
         if (realname<>'') and (length(realname)<=31) then begin
           realname:=realname+'''';
@@ -1736,13 +1736,12 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       with sData^.orghdp^ do begin
         { hdp^.zdatum:=zdatum; hdp^.orgdate:=true;  !! Unversandt/* !! }
         hdp^.organisation:=organisation;
-	{ suboptimal }
+        { suboptimal }
         hdp^.replyto.add(replyto[0]);
         hdp^.datei:=datei; hdp^.ddatum:=ddatum;
         end;
     if _sendmaps then
-      for i:=0 to hdp^.replyto.count-1 do
-        hdp^.replyto.delete(i);
+      hdp^.replyto.clear;
     SetXpointCtl;
     if cc_anz=0 then     { Anzahl der Crossposting-EMPS ermitteln }
       msgCPanz:=0
@@ -2135,6 +2134,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.78  2000/11/24 09:40:11  mk
+  - fixed Franks suboptimal changes :(
+
   Revision 1.77  2000/11/23 22:33:22  fe
   Fixed some ugly bugs with followup and replyto.
 
