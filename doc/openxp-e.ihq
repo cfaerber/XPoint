@@ -4304,13 +4304,35 @@ New Users will be placed in this [Usergroup]@8069
 
 @
 8069
-Here, you can organise Users into groups. This allows
-the User-window to be sorted alphabetically into
-Groups. Groups with lower numbers will not be sorted,
-whilst Groups with higher numbers will be placed at
-the end of the User-list.
+Users may be organised into Groups. This allows the
+User Window to be sorted by Groups. Groups with
+lower numbers will be listed before Groups with
+higher numbers. A good strategy would be to assign
+Users whom you write to regularly with a low Group
+number so that they would be listed towards the top
+of the UserList.
 
 Valid Usergroup numbers are in the range 1 - 99
+
+@
+8075
+Users may be assigned a priority level but for this
+to work, priority levels must be assigned a colour
+in /Config/Display/Colours/Messages.
+
+Valid levels are:
+
+<<0>> - Normal User
+<<1>> - Highest priority
+<<2>> - High priority
+<<4>> - Low priority
+<<5>> - Lowest priority
+
+The object of all this is to display messages in
+different colours in the message list, e.g. messages
+from Users to whom you message with often can be
+displayed in one colour whilst messages from "twits"
+can be displayed in another colour etc.
 
 @
 214
