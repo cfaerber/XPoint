@@ -1520,13 +1520,17 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.37  2002/04/26 23:11:52  my
+  MY:- Ein paar Commit-Texte ge„ndert/pr„zisiert.
+
   Revision 1.39.2.36  2002/04/25 22:17:38  my
-  MY:- Anzeige des manuell mit <Ctrl-W> bet„tigten Nachrichten-Weiter-
-       schalters zur besseren Unterscheidung nochmals ge„ndert: Groáes "W"
-       (Farbe: Mentext) steht fr "Weiterschalter aktiviert", kleines "w"
-       (Farbe: deaktivierter Mentext) steht fr "Weiterschalter
-       deaktiviert". Bei Best„tigung des Config-Mens C/O/B wird die
-       Anzeige entfernt, da dann wieder die Menoptionen gelten.
+  MY:- Anzeige des mit <Ctrl-W> manipulierten Nachrichten-Weiterschalters
+       zur besseren Unterscheidung nochmals ge„ndert: Groáes "W"
+       (= Weiterschalter aktiviert) wird in der Farbe fr den Mentext,
+       kleines "w" (= Weiterschalter deaktiviert) wird in der Farbe fr
+       deaktivierten Mentext dargestellt. Bei Best„tigung des Config-
+       Mens C/O/B wird die Anzeige entfernt, da dann wieder die
+       Menoptionen gelten.
 
   Revision 1.39.2.35  2002/04/12 14:34:15  my
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett

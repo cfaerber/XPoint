@@ -3400,6 +3400,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.75  2002/04/26 23:11:51  my
+  MY:- Ein paar Commit-Texte ge„ndert/pr„zisiert.
+
   Revision 1.35.2.74  2002/04/26 22:44:59  my
   MY:- Fix: Beim Entfernen von Kommentaren aus der Message-ID wurde die
        schlieáende spitze Klammer nicht entfernt. Der Fix besteht darin,
@@ -3423,7 +3426,7 @@ end.
   MY:- Anzahl der erforderlichen UUZ-Parameter bei ausgehenden Nachrichten
        auf 3 (vorher 4) reduziert. Routine erfllt ohnehin nicht ihren
        vermutlichen Zweck (n„mlich die Angabe von <fromSite> und <toSite>
-       zu erzwingen) und máte mal komplett erneuert werden.
+       zu erzwingen) und máte mal komplett berarbeitet werden.
 
   Revision 1.35.2.69  2002/04/09 21:40:44  my
   MY[+JG]:- Der From:-Header durchl„uft jetzt die MIME-Decodierung nach

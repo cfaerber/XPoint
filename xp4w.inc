@@ -1771,16 +1771,22 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.43  2002/04/26 23:11:52  my
+  MY:- Ein paar Commit-Texte ge„ndert/pr„zisiert.
+
   Revision 1.25.2.42  2002/04/25 22:16:50  my
   JG:- Fix: Die Unterdrckung des Brettweiterschalters mit <Ctrl-Esc> bzw.
-       <Shift-Esc> funktionierte nicht im Lesemodus "Alles".
+       <Shift-Esc> funktionierte nicht im Lesemodus "Alles". Nebeneffekt:
+       "B" in einem leeren Brett erzeugte eine Nachricht fr das nach-
+       folgende Brett.
 
-  MY:- Anzeige des manuell mit <Ctrl-W> bet„tigten Nachrichten-Weiter-
-       schalters zur besseren Unterscheidung nochmals ge„ndert: Groáes "W"
-       (Farbe: Mentext) steht fr "Weiterschalter aktiviert", kleines "w"
-       (Farbe: deaktivierter Mentext) steht fr "Weiterschalter
-       deaktiviert". Bei Best„tigung des Config-Mens C/O/B wird die
-       Anzeige entfernt, da dann wieder die Menoptionen gelten.
+  MY:- Anzeige des mit <Ctrl-W> manipulierten Nachrichten-Weiterschalters
+       zur besseren Unterscheidung nochmals ge„ndert: Groáes "W"
+       (= Weiterschalter aktiviert) wird in der Farbe fr den Mentext,
+       kleines "w" (= Weiterschalter deaktiviert) wird in der Farbe fr
+       deaktivierten Mentext dargestellt. Bei Best„tigung des Config-
+       Mens C/O/B wird die Anzeige entfernt, da dann wieder die
+       Menoptionen gelten.
 
   Revision 1.25.2.41  2002/04/20 17:27:25  my
   MY:- Fix: Im Ungelesen-Modus wurde bei MIME-Multipart-Nachrichten trotz
@@ -1796,10 +1802,14 @@ end;
        MIME-Viewers mit <Ctrl-Enter> oder <Space> im MIME-Auswahlmen
        funktionierte nicht, wenn eine Dateierweiterung eingetragen war.
 
-  MY:- Logik bei der Anzeige des manuell mit <Ctrl-W> bet„tigten
-       Nachrichten-Weiterschalters ge„ndert: Groáes "W" steht fr
-       "Weiterschalter aktiviert", kleines "w" steht fr "Weiterschalter
-       deaktiviert".
+  MY:- Logik der Anzeige des mit <Ctrl-W> manipulierten Nachrichten-
+       Weiterschalters ge„ndert: Groáes "W" steht fr "Weiterschalter
+       manuell aktiviert", kleines "w" steht fr "Weiterschalter manuell
+       deaktiviert"; keine Anzeige bedeutet, daá die Einstellung unter
+       C/O/B aktiv ist. Vorher stand ein groáes "W" fr "Weiterschalter
+       manuell deaktiviert" (Grmpf), keine Anzeige konnte entweder
+       bedeuten, daá die Einstellung unter C/O/B aktiv ist, oder daá der
+       Weiterschalter manuell deaktiviert wurde (Grmpf).
 
   JG+MY:- Wortumbruch-Umschaltung im Lister (<Ctrl-W>) intern komplett
           umgebaut: Die Repeat-Schleife wird jetzt direkt in xp1s.listfile

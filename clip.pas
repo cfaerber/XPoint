@@ -659,15 +659,19 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.19  2002/04/26 23:11:51  my
+  MY:- Ein paar Commit-Texte geÑndert/prÑzisiert.
+
   Revision 1.19.2.18  2002/04/09 21:26:22  my
   JG:- Beim Kopieren von Text in die Zwischenablage wird das Zeichen
        ASCII #0 jetzt in ein Leerzeichen (#20) umgewandelt statt den
        String an dieser Stelle abzuschneiden.
 
   Revision 1.19.2.17  2002/03/11 21:23:42  my
-  JG:- Fehlerton beim EinfÅgen eines nicht vorhandenen oder zu gro·en
+  JG:- Tonsignal beim EinfÅgen eines nicht vorhandenen oder zu gro·en
        Clipboard-Inhalts wird jetzt (wie alle anderen akustischen
-       Meldungen von XP auch) immer Åber den PC-Lautsprecher ausgegeben.
+       Meldungen von XP auch) immer Åber den PC-Lautsprecher (statt unter
+       Windows Åber die Soundkarte) ausgegeben.
 
   Revision 1.19.2.16  2002/03/11 20:36:38  my
   JG:- Typo gefixt
