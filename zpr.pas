@@ -145,8 +145,8 @@ type  header    = record
                     hds     : longint;    { Gr”áe inc. CR/LF am Ende }
                     fldanz  : integer;    { Anzahl eingelesener Felder }
                     fld     : array[1..maxhdlines] of string;   { Felder }
-                    contpos : array[1..maxhdlines] of byte;   { Startoffst des Feldinhalts }
-                    fldtype : array[1..maxhdlines] of byte;   { Headerindex-Nr. }
+                    contpos : array[1..maxhdlines] of Integer;   { Startoffst des Feldinhalts }
+                    fldtype : array[1..maxhdlines] of Integer;   { Headerindex-Nr. }
                     fldsize : array[1..maxhdlines] of longint;  { phys. Feldl„nge }
                     hdfound : array[1..knownheaders] of integer;
                     lferror : boolean;    { falsche Zeilentrennung }
@@ -1281,6 +1281,9 @@ end;
 
 {
   $Log$
+  Revision 1.46  2001/12/09 13:01:00  mk
+  - fixed range check error
+
   Revision 1.45  2001/12/05 11:18:31  mk
   - use BufSize instead of numeric constant in blockreaad
 
