@@ -79,10 +79,10 @@ var s  : string;
       end;
   end;
 
-begin
-  ni.found:=false;
-  if (nfile<1) or (nfile>NodeList.Count-1) then exit;
-  new(nodelf);
+begin           { begin procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo) };
+  ni.found:=false;                                        //war (nfile<1)
+  if (nfile<0) or (nfile>NodeList.Count-1) then exit;     //hier scheint der Fehler zu sein nfile = 0
+  new(nodelf);                                            //es kann ein nodelisten index von
   assign(nodelf^,FidoDir+NLfilename(nfile));
   resetfm(nodelf^,fmRead);
   if ioresult=0 then
@@ -138,10 +138,11 @@ again:
   if i>0 then begin
     new(bp);
     seek(nodef,NX_adrnetx+berliste^[i].adr);
-    banz:=berliste^[i].anz;
+    banz:=berliste^[i].anz;                     //Bereichsliste, array[1..maxber] of berrec
     if banz>bersize then
       writeln(getres(2121),#7);   { 'Fehler in Nodelisten-Index!' }
-    blockread(nodef,bp^,banz*sizeof(netrec));
+    //alle netze einer Zone
+    blockread(nodef,bp^,banz*sizeof(netrec));   // bp netrecL   {net,zone,ant, dateiNo(fnr), flag (1=Pointliste), adr, sortl }
     l:=$10000*fa.zone+fa.net;
     {$R-}
     netp:=1;
@@ -152,7 +153,7 @@ again:
       if found then begin
         nanz:=bp^[netp].anz;
         nadr:=bp^[netp].adr;
-        nfile:=bp^[netp].fnr;
+        nfile:=bp^[netp].fnr;                           //der index fÅr die nodeliste
         ni.datei:=nfile;
         end;
       if found and (fa.ispoint=odd(bp^[netp].flags)) then begin
@@ -160,17 +161,17 @@ again:
         seek(nodef,nadr);
         blockread(nodef,np^,nanz*sizeof(noderec));
         i:=0;
-        while (i<nanz) and (np^[i].node<fa.node) do
-          inc(i);
+        while (i<nanz) and (np^[i].node<fa.node) do      //np bis zur Node# abklappern
+          inc(i);                                        //enthÑlz nun den passenden Satz
 {$IFDEF Debug }
   {$R+}
 {$ENDIF }
         if (i<nanz) and (np^[i].node=fa.node) then
-          _adr:=np^[i].adr
+          _adr:=np^[i].adr                               //adresse zur Node#'12478'
         else
           _adr:=-1;
         freemem(np,nanz*sizeof(noderec));
-        if (_adr>=0) and fa.ispoint then begin
+        if (_adr>=0) and fa.ispoint then begin           //node gefunden aber point
           seek(nodef,_adr);
           blockread(nodef,points,2);
           getmem(pp,points*sizeof(pointrec));
@@ -186,7 +187,7 @@ again:
           end;
         if _adr>=0 then begin
           ni.ispoint:=fa.ispoint;
-          ReadNData(nfile,_adr,ni);
+          ReadNData(nfile,_adr,ni);                     //Nodedaten nach ni auslesen
           end;
         end;
       inc(netp);
@@ -882,6 +883,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.18  2000/08/08 17:18:43  mk
+  MO: Dokumentation hinzugefuegt
+
   Revision 1.17  2000/08/05 10:06:59  mk
   - Ansistring Verbesserungen
 
