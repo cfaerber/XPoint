@@ -1714,14 +1714,13 @@ Function Ltrim(const s:string):string;
 var i : byte;
 begin
   i:=1;
-  if s <> '' then
-    while (i<=length(s)) and ((s[i]=' ') or (s[i]=#9)) do inc(i);
+  while (i<=length(s)) and ((s[i]=' ') or (s[i]=#9)) do inc(i);
   ltrim:=copy(s,i,255);
 end;
 
 Function Rtrim(s:string):string;
 begin
-  while (Length(s) <> 0) and (s[length(s)]=' ') or (s[length(s)]=#9) do
+  while (s[length(s)]=' ') or (s[length(s)]=#9) do
     dec(byte(s[0]));
   Rtrim:=s;
 end;
@@ -2200,6 +2199,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37.2.4  2000/08/09 13:27:00  mk
+  - LStr/RStr Aenderungen rueckgaengig gemacht
+
   Revision 1.37.2.3  2000/08/07 23:56:20  mk
   - Bugfixes fuer LTrim und RTim bei leeren Strings
 
