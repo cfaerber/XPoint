@@ -47,7 +47,7 @@ implementation  { ---------------------------------------------------- }
 
 uses xp1o,xp2,xp3,xp3o,xp3ex,xp10;
 
-const  emax = 34;   { maximale Tiefe }
+const  emax = 65;   { maximale Tiefe }
 
 
 procedure packit(xpack:boolean; fname:pathstr);
@@ -395,7 +395,7 @@ var hdp    : headerp;
     realmaxkom : word;
     kb2    : komlistp;
 
-  procedure RecurBez(ebene:shortint; rec,spuren:longint; last:boolean;
+  procedure RecurBez(ebene:byte; rec,spuren1,spuren2:longint; last:boolean;
                      var betr,brett:string);
   const bmax  = 205;
   type  brec  = record
@@ -422,7 +422,8 @@ var hdp    : headerp;
       if nullid=0 then begin
         with kombaum^[komanz] do begin
           MsgPos:=dbRecno(mbase);
-          lines:=spuren;
+          lines1:=spuren1;
+          lines2:=spuren2;
           _ebene:=ebene;
           flags:=iif(last,kflLast,0);
           if recount(newbetr^)=0 then;
@@ -495,7 +496,7 @@ var hdp    : headerp;
     if (ebene<emax) and (komanz<realmaxkom) and
        (rec<>0) and not dbDeleted(mbase,rec) then begin
       if ebene>maxebene then inc(maxebene);
-      getmem(newbetr,BetreffLen+1);
+      getmem(newbetr, 41); { Das Feld in der Datenbank ist 40 Zeichen groá }
       new(ba);
       if nullid=0 then
         dbGo(mbase,rec);
@@ -520,16 +521,27 @@ var hdp    : headerp;
           if more then dbReadN(bezbase,bezb_msgpos,rec);
           for i:=1 to anz do begin
             mmore:=more or (i<anz);
-            RecurBez(ebene+1,ba^[i].pos,spuren+iif(mmore,1 shl longint(ebene),0),
-                     not mmore,newbetr^,_brett);
+            if ebene < 32 then
+              RecurBez(ebene+1,ba^[i].pos,
+                spuren1+iif(mmore,1 shl longint(ebene),0),
+                spuren2,
+                not mmore,newbetr^,_brett)
+            else
+              RecurBez(ebene+1,ba^[i].pos,
+                spuren1,
+                spuren2+iif(mmore,1 shl longint(ebene-32),0),
+                not mmore,newbetr^,_brett);
             end;
           if more then dbGo(bezbase,rec);
         until not more;
       dispose(ba);
-      freemem(newbetr,BetreffLen+1);
+      freemem(newbetr, 41);
       end;
   end;
 
+var
+  f: File;
+  FSize: Word;
 begin
   if ReCount(betr)=0 then;
   rmessage(475);    { 'Kommentarbaum einlesen...' }
@@ -552,18 +564,33 @@ begin
       end;
     inc(n);
   until (n=emax) or (bez=0);
+  dispose(hdp);
   dbReadN(mbase,mb_brett,brett);
   komanz:=0; maxebene:=0;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
-  RecurBez(0,dbRecno(mbase),0,true,betr,brett);
+  RecurBez(0,dbRecno(mbase),0,0,true,betr,brett);
   kombaum^[0].flags:=kombaum^[0].flags or kflBetr;
   dbSetIndex(bezbase,mi);
-  getmem(kb2,komanz*sizeof(komrec));
-  FastMove(kombaum^,kb2^,komanz*sizeof(komrec));
-  freemem(kombaum,realmaxkom*sizeof(komrec));
+  FSize := Komanz * sizeof(komrec);
+  if MaxAvail < (FSize+2048) then
+  begin
+    assign(f, 'KOMMBAUM.TMP');
+    rewrite(f, 1);
+    BlockWrite(f, KomBaum^, FSize);
+    freemem(kombaum,realmaxkom*sizeof(komrec));
+    getmem(kb2,komanz*sizeof(komrec));
+    Seek(f, 0);
+    BlockRead(f, kb2^, FSize);
+    Close(f);
+    Erase(f);
+  end else
+  begin
+    getmem(kb2,komanz*sizeof(komrec));
+    FastMove(kombaum^,kb2^,komanz*sizeof(komrec));
+    freemem(kombaum,realmaxkom*sizeof(komrec));
+  end;
   kombaum:=kb2;
-  dispose(hdp);
   closebox;
   if maxebene<10 then komwidth:=3
   else if maxebene<23 then komwidth:=2
@@ -755,8 +782,13 @@ begin
       _ebene:=min(_ebene,emax);
       ss:=sp((_ebene-1)*komwidth);
       for i:=0 to _ebene-2 do
-        if lines and (1 shl i)<>0 then
-          ss[i*komwidth+1]:='³';
+        if i < 32 then
+        begin
+          if lines1 and (1 shl i)<>0 then
+            ss[i*komwidth+1]:='³'
+        end else
+          if lines2 and (1 shl (i-32))<>0 then
+            ss[i*komwidth+1]:='³' ;
       if flags and kflLast<>0 then ss:=ss+left('ÀÄÄÄ',komwidth)
       else ss:=ss+left('ÃÄÄÄ',komwidth);
       end;
@@ -768,7 +800,7 @@ begin
     end;
 end;
 
-                                         
+
 (*
 {
 Prozedur zum Sprachwechsel aus Configmenue ausgeklammert wegen Bug: 
@@ -886,6 +918,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.2  2000/11/01 10:34:44  mk
+  - Limits im Kommentarbaum erhoeht
+
   Revision 1.6.2.1  2000/10/28 09:37:01  mk
   - Kommentarbaumlimits erhoeht
 
