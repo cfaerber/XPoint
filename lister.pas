@@ -115,7 +115,7 @@ const maxlst  = 10;                { maximale Lister-Rekursionen }
       ListerBufferCount = 16383;   { LÑnge des Eingangspuffers }
 
 type  lnodep  = ^listnode;
-      listnode= record
+      listnode= packed record
                   prev,next : lnodep;       { 14 Bytes + Inhalt }
                   linenr    : longint;
                   marked    : boolean;
@@ -181,12 +181,9 @@ var
 const
       mcursor : boolean = false;   { Auswahlcursor fÅr Blinde }
 
-var   lstack  : array[0..maxlst] of record
-                                      l    : lrp;
-                                      emsb : word;
-                                    end;
+var   lstack  : array[0..maxlst] of lrp;
       lstackp : word;
-      sel_line: lnodep;    { mit <cr> gewÑhltes Listenelement }
+      sel_line: listnode;    { mit <cr> gewÑhltes Listenelement }
       markpos : lnodep;
       mmm     : word;
       linepos : lnodep;
@@ -288,9 +285,9 @@ end;
 procedure init;
 begin
   lstackp:=0;
-  new(lstack[0].l);
-  lstack[0].emsb:=$ffff;
-  alist:=lstack[0].l;
+  new(lstack[0]);
+  fillchar(lstack[0]^, sizeof(lstack[0]^), 0);
+  alist:=lstack[0];
   with alist^ do begin
     with col do
       if color then begin
@@ -336,12 +333,12 @@ begin
   if not inited then init;
   if lstackp>=maxlst then interr('Overflow');
   inc(lstackp);
-  new(lstack[lstackp].l);
-  alist:=lstack[lstackp].l;
+  new(lstack[lstackp]);
+  alist:=lstack[lstackp];
   fillchar(alist^,sizeof(alist^),0);
   with alist^ do begin
-    col:=lstack[0].l^.col;
-    stat:=lstack[0].l^.stat;
+    col:=lstack[0]^.col;
+    stat:=lstack[0]^.stat;
     SetListsize(_l,_r,_o,_u);
     options:= UpperCase(options);
     selbar:=pos('/SB/',options)>0;
@@ -387,9 +384,9 @@ begin
       last:=lnp;
     end;
   end;
-  dispose(lstack[lstackp].l);
+  dispose(lstack[lstackp]);
   dec(lstackp);
-  alist:=lstack[lstackp].l;
+  alist:=lstack[lstackp];
 end;
 
 
@@ -930,7 +927,7 @@ begin
     pl:=actl;
     for i:=1 to p-1 do pl:=pl^.next;
     f7p:=1; f8p:=0;
-    sel_line:=nil;
+    fillchar(sel_line, sizeof(sel_line), 0);
     mzo:=mauszuo; mzu:=mauszuu;
     mzl:=mauszul; mzr:=mauszur;
     mausdown:=false;
@@ -940,8 +937,9 @@ begin
     repeat
       display;
       showstat;
-      if actl<>nil then begin
-        sel_line:=pl;
+      if actl<>nil then
+      begin
+        sel_line:=pl^;
         dproc(get_selection);
         end;
       mauszuo:=(pl<>nil) and (pl^.prev<>nil);
@@ -960,7 +958,7 @@ begin
 
       if (t>=mausfirstkey) and (t<=mauslastkey) then
         Maus_bearbeiten;
-      sel_line:=pl;
+      sel_line:=pl^;
       tproc(t);
 
       if actl<>nil then begin   { Liste nicht leer }
@@ -1128,8 +1126,12 @@ begin
     maus_popinside;
     AutoBremse:=mb;
     brk:=(t=keyesc);
-    if brk then sel_line:=nil;
+    if brk then
+    begin
+      Sel_line.cont := '';
+      fillchar(sel_line, sizeof(sel_line), 0);
     end;
+  end;
 end;
 
 
@@ -1215,16 +1217,14 @@ end;
 
 function get_selection:string;
 begin
-  if sel_line=nil then
-    get_selection:=''
-  else
-    get_selection:=sel_line^.cont;
+  get_selection:=sel_line.cont;
 end;
 
 
 function first_marked:string;
 begin
-  markpos:=sel_line;
+  new(markpos);
+  markpos^:=sel_line;
   if alist^.markanz=0 then
     first_marked:=get_selection
   else begin
@@ -1236,6 +1236,7 @@ begin
     else
       first_marked:=markpos^.cont;
     end;
+  Dispose(Markpos); Markpos := nil;
   linepos:=markpos;
 end;
 
@@ -1314,6 +1315,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2000/10/24 20:42:44  mk
+  - Ansistring-Updates
+
   Revision 1.36  2000/10/17 10:05:40  mk
   - Left->LeftStr, Right->RightStr
 
