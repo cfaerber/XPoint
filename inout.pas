@@ -623,7 +623,7 @@ begin
           else begin
             mox:=mausx; moy:=mausy;
           end;
-          if ParWintime>0 then mdelay(0);
+          {if ParWintime>0 then }mdelay(0);
         end;
         z:=#255;
         if maus and iomaus and (maust and mausst<>0) then begin
@@ -1673,6 +1673,9 @@ end;
 
 {
   $Log$
+  Revision 1.89.2.7  2003/05/01 11:02:32  mk
+  - fixed dos compile problem
+
   Revision 1.89.2.6  2003/04/12 12:59:47  mk
   - added more debug info for getkey
 
