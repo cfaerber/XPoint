@@ -48,7 +48,7 @@ function ClipGetDatasize(format:word):longint;
 function ClipRead(format:word; var ldata):boolean;   { Daten lesen }
 function Clip2String(maxlen,oneline:byte):string;  { Clipboardinhalt als String }
 
-Procedure String2Clip(var ldata);                  { STring ins Clipboard}
+procedure String2Clip(var str: String);            { STring ins Clipboard}
 
 procedure FileToClip(fn:pathstr);
 procedure ClipToFile(fn:pathstr);
@@ -167,17 +167,23 @@ end;
 
 function ClipWrite2(format:word; lsize:longint; var ldata):boolean; near; assembler;
 asm
-              mov    ax,1703h
-              mov    dx,format
-              mov    si,word ptr lsize+2
-              mov    cx,word ptr lsize
-              mov    es,word ptr ldata+2
-              mov    bx,word ptr ldata
-              int    multiplex
-              or     ax,ax
-              jz     @cw1
-              mov    ax,1
-@cw1:   
+              mov ax,1703h
+              mov dx,format
+              mov si,word ptr lsize+2             { lsize ist zwar longint }
+              mov cx,word ptr lsize               { aber es werden maximal 64K genutzt } 
+              les bx,ldata
+
+              cmp cx,0ffffh                                                                        
+              je @1                               {Text MUSS mit #0 enden !!!!} 
+              mov di,cx
+              mov byte ptr es:[bx+di],0 
+              inc cx
+@1:
+              int multiplex
+              or ax,ax
+              jz @cw1
+              mov ax,1
+@cw1:
 end;
 
 
@@ -281,7 +287,7 @@ end;
 
 {JG:10.02.00 String ins Clipboard kopieren}
 
-Procedure String2Clip(var ldata); assembler;
+procedure String2Clip(var Str: String); assembler;
 asm
               mov ax,1700h                        { Clipboard verfuegbar ? }
               int multiplex
@@ -293,24 +299,30 @@ asm
               push ax                             { Aktuellen Clipboardstatus merken }
 
               mov ax,1702h
-              int multiplex                       { Clipboard leeren}      
+              int multiplex                       { Clipboard leeren}
 
-              les bx,ldata
+              les bx,str
               mov si,0
               mov cx,si
-              mov cl,es:[bx]                      {Stringlaenge -> si:cx}      
+              mov cl,es:[bx]                      {Stringlaenge -> si:cx}          
               inc bx                              {Textstart    -> es:bx}
 
+              cmp cl,255                                                                        
+              je @1                               {Text MUSS mit #0 enden !!!!} 
+              mov di,cx
+              mov byte ptr es:[bx+di],0 
+              inc cx
+@1:
               mov ax,1703h                        {String Ins Clipboard schreiben...}
               mov dx,cf_Oemtext                   {Als OEMTEXT}
               int multiplex
 
               pop ax
               or ax,ax                            { Wenn clipboard nicht auf war }
-              je @end               
+              je @end
               mov ax,1708h                        { wieder schliessen }
               int multiplex
-@end:   
+@end:
 end;
 
 procedure Idle; assembler;
@@ -540,6 +552,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.1  2000/05/08 15:04:46  jg
+  - Bugfix: 32*n Byte ins Clipboard kopieren (#0 Fehlte)
+
   Revision 1.11  2000/02/25 18:30:20  jg
   - Clip2string sauberer gemacht
   - Menues: STRG+A entfernt, STRG+V kann jetzt auch einfuegen
