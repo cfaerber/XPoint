@@ -783,7 +783,7 @@ begin
         pophp;
         if brk then goto nextmsg;
         if copy(get_selection,2,10)=left(getres2(2440,10),10) {'gesamte Na'}
-          then viewer.prog:='';
+          then viewer.prog:='*intern*';
         Testviralextension;
       end else
       begin
@@ -815,7 +815,7 @@ begin
           Testviralextension;                    { Schutz vor Mail-Viren }
 
           if viewer.prog<>'' then viewer.fn:=mpdata.fname;
-          end;
+        end;
       end
       else begin
         fillchar(mpdata,sizeof(mpdata),0);
@@ -1549,6 +1549,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.10  2000/10/19 12:55:00  mk
+  - bei Singlepart MIME und ganze Nachricht den internen Viewer nutzen
+
   Revision 1.25.2.9  2000/10/19 07:24:47  mk
   - optische Korrektur fuer TestViralExtension
 
