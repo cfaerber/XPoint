@@ -136,6 +136,7 @@ type  suchrec    = record
                      status        : string;
                      typ           : string;
                    end;
+
 const srec       : ^suchrec = nil;
       history0   : string='';
       history1   : string='';
@@ -723,12 +724,12 @@ begin
     sst:=suchstring;
     igcase:=multipos('iu',LowerCase(suchopt));
     umlaut:=multipos('ÑîÅ',LowerCase(suchopt));  {JG:15.02.00 Umlautschalter}
-    bereich:=0;
+    bereich:=0;                                                 // default = Alles ( 0)
     for i:=1 to 4 do
-      if UpperCase(bretter)=UpperCase(bera[i]) then bereich:=i;
+      if UpperCase(bretter)=UpperCase(bera[i]) then bereich:=i; // 0='Alle' 1='Netz' 'User' 'markiert' 'gewÑhlt'
     statb:=0;
     for i:=1 to 5 do
-      if UpperCase(status)=UpperCase(stata[i]) then statb:=i;
+      if UpperCase(status)=UpperCase(stata[i]) then statb:=i;   //'Alles' 'halten' 'lîschen' 'h o. l' 'ungelesen' 'gelesen'
     me:=true;
     attrtxt(col.coldialog);
 
@@ -811,7 +812,7 @@ begin
         if markanzback<>0 then freemem(markedback,maxmark * sizeof(markrec));
       end
 
-      else if bereich<3 then begin                       {-- Suche: Alle/Netz/User --}
+      else if bereich<4 then begin              //0='Alle' 'Netz' 'User' 'markiert' 'gewÑhlt'
         mi:=dbGetIndex(mbase);
         dbSetIndex(mbase,0);
         dbGoTop(mbase);
@@ -820,6 +821,7 @@ begin
         begin
           _brett := dbReadNStr(mbase,mb_brett);
           if (bereich=0) or ((bereich=1) and (_brett[1]='A')) or
+                            ((bereich=3) and (_brett[1]='A')) or
                             ((bereich=2) and (_brett[1]='U')) then
             TestMsg;
           if not dbEOF(mbase) then    { kann passieren, wenn fehlerhafter }
@@ -2419,6 +2421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.86  2000/12/30 18:45:17  mo
+  -Spezialsuche in markierten Bretter auch aus der Nachrichten/User ‹bersicht
+
   Revision 1.85  2000/12/26 16:40:14  mk
   - fixed fido request detection
 
