@@ -239,7 +239,7 @@ type
                    disnodisp   : boolean;
                    txt         : string;   { Feld-Text }
                    typ         : byte;     { Feldtyp }
-                   variable    : pointer;  { Adresse der Variablen }
+                   variable    : variant;  { Adresse der Variablen }
                    xx,yy,len   : byte;     { Position, Anzeigel„nge }
                    yy0,xx2     : byte;     { Position des Inhalts }
                    maxlen      : byte;     { maximale L„nge des Inhalts }
@@ -1270,6 +1270,9 @@ end.
 
 {
   $Log$
+  Revision 1.20  2000/07/22 10:15:36  hd
+  - Variant-Typ by Maske
+
   Revision 1.19  2000/07/21 17:39:51  mk
   - Umstellung auf AllocHeaderMem/FreeHeaderMem
 
