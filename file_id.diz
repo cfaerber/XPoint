@@ -1,8 +1,6 @@
-OpenXP/32 v3.7.4 BETA - Source Code -
+OpenXP/32 v3.7.5 BETA - DOS 32 Binaries -
 Multiplatform and multiprotocol mail/news
-software featuring POP3/SMTP, NNTP, UUCP,
-Fido and ZConnect protocols and running in
-text mode. Compilable for DOS32, Win32 and
-Linux with Free Pascal compiler or Borland
-Delphi. Documentation and interface available
-in German and English. Released under GPL.
+software featuring UUCP, Fido and ZConnect
+protocols and running in text mode.
+Documentation and interface available in
+German and English. Released under GPL.
