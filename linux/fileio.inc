@@ -170,7 +170,7 @@ begin
   SetCurrentDir(curdir);
 end;
 
-function dospath(d:byte):pathstr;
+function dospath(d:byte):string;
 var s : string;
 begin
   getdir(0, s);
@@ -492,7 +492,7 @@ begin
   if ioresult<>0 then;
 end;
 
-function IsDevice(fn:pathstr):boolean;
+function IsDevice(fn:string):boolean;
 begin
   { COMs sind Devices, der Rest nicht }
 
@@ -502,6 +502,9 @@ end;
 
 {
         $Log$
+        Revision 1.9  2000/11/09 16:09:49  hd
+        - Fix: pathstr<->string
+
         Revision 1.8  2000/11/09 10:50:06  hd
         - Neu: XPRewrite(var F: File|Text [; l: longint]; cm: TCreateMode);
         - Fix: Invalid Types dirstr<->string
