@@ -42,8 +42,8 @@ type
   public
     constructor Create(var AFile: file);
 
-    function Read(var Buffer; Count: Longint): Longint; override; // only raises exception
-    function Write(const Buffer; Count: Longint): Longint; override; // only raises exception
+    function Read(var Buffer; Count: Longint): Longint; override;
+    function Write(const Buffer; Count: Longint): Longint; override;
     function Seek(Offset: Longint; Origin: System.Word): Longint; override;
   end;
 
@@ -206,7 +206,7 @@ var
 begin
   IOResult;
   Buffervar := @Buffer; // fpc gets error if assigning const to var-param
-  System.BlockWrite(FPFile^,Buffervar,Count,R);
+  System.BlockWrite(FPFile^,Buffervar^,Count,R);
   IOExcept(EWriteError);
   Result := R;
 end;
