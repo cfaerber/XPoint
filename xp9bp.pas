@@ -148,6 +148,7 @@ begin
     SizeNego:=true;
     UUsmtp:=false;
     UUprotos:='Ggz';
+    ReplaceOwn := false;
     efilter:='';
     afilter:='';
     SysopNetcall:=true;
@@ -160,9 +161,9 @@ begin
     BMdomain:=false;
     maxfsize:=0;
 
-    uucp_mode:=uucp_mode_modem;		{ UUCP: Modus, _modem oder _tcpip }
-    uucp_ip:='uucp';			{ UUCP: IP oder Domain }
-    uucp_port:=540;			{ UUCP: Port }
+    uucp_mode:=uucp_mode_modem;         { UUCP: Modus, _modem oder _tcpip }
+    uucp_ip:='uucp';                    { UUCP: IP oder Domain }
+    uucp_port:=540;                     { UUCP: Port }
 
     nntp_ip:='news';             { Default IP }
     nntp_port:= 119;             { Port }
@@ -298,6 +299,7 @@ begin
             getx(su,  'UU-ForcePacketSize',forcepacketsize) or
             getx(su,  'UU-SizeNegotiation',sizenego) or
             getx(su,  'UU-SMTP',UUsmtp) or
+            getx(su,  'ReplaceOwn', ReplaceOwn) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
             gets(s,su,'Ausgangsfilter',aFilter,60) or
@@ -458,6 +460,7 @@ begin
     writeln(t,'UU-SizeNegotiation=',jnf(sizenego));
     if uusmtp then writeln(t,'UU-SMTP=',jnf(uusmtp));
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
+    writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
 
     writeln(t,'UU-Mode=',uucp_mode);
     if uucp_ip<>''   then writeln(t,'UU-Host=',uucp_ip);
@@ -592,6 +595,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2001/01/22 16:15:16  mk
+  - added ReplaceOwn-Feature (merge from 3.40 branch)
+
   Revision 1.28  2000/12/29 22:29:05  mk
   CL:- fixes for UUCP config dialogue
 

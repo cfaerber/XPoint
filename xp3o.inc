@@ -122,6 +122,7 @@ var x,y      : byte;
     mbflags  : longint;
     mstr     : string;          { Message-Text }
     sp       : scrptr;
+    ReplaceOwnHoldFlag: byte;
     cust_header : custheadstr;
 
   function puffer_ok:boolean;
@@ -630,9 +631,37 @@ var x,y      : byte;
       end;
   end;
 
+  procedure HandleReplaceOwn;
+  var
+    MsgPos: Integer;
+  begin
+    { Nach RÅcklÑufern suchen }
+    if BoxPar^.ReplaceOwn and Aufnehmen then
+    begin
+      dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(Hdp.msgid)));
+      if dbFound then
+      begin { RÅcklÑufer gefunden }
+        msgpos := dbReadInt(bezbase,'msgpos');
+        if not dbDeleted(mbase, msgpos) then
+        begin
+          dbGo(mbase, msgpos);
+          dbReadN(mbase,mb_flags,flags); { Flags holen }
+          if flags and 256 <> 0 then
+          begin
+            dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
+            wrkilled; { Ablage auf jeden Fall reorganisieren }
+            DelBezug;
+            dbDelete(mbase);
+          end;
+        end;
+      end;
+    end;
+  end;
+
+
 begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
-  inmsgs:=0;
+  inmsgs:=0; ReplaceOwnHoldFlag := 255;
   puffereinlesen:=false;
   forcepfadbox:=(pflags and pe_ForcePfadbox<>0);
   zconnect:=ZC_puffer(puffer);
@@ -924,10 +953,12 @@ begin
             _brett:=mbrettd('U',ubase);
             end;
 
+          HandleReplaceOwn;
+
           IsGelesen:=ParGelesen or sendbuf or
                      ((netztyp=nt_Maus) and (LeftStr(pm_bstat,1)='G')) or
                      (filterattr and fattrGelesen<>0) or
-                     (pflags and pe_gelesen<>0);
+                     (pflags and pe_gelesen<>0) or (ReplaceOwnHoldFlag < 255);
 
           if aufnehmen then begin
             if LeftStr(empfaenger,1)<>'U' then begin
@@ -988,6 +1019,11 @@ begin
             flags:=0;
             if filterattr and fattrLoeschen<>0 then flags:=2;
             if filterattr and fattrHalten<>0 then flags:=1;
+            if ReplaceOwnHoldFlag < 255 then
+            begin
+              Flags := ReplaceOwnHoldflag;
+              ReplaceOwnHoldFlag := 255;
+            end;
             dbWriteN(mbase,mb_halteflags,flags);
 
                                                    {Fuer User spezifizierte Farbe einstellen}
@@ -1183,6 +1219,9 @@ end;
 
 {
   $Log$
+  Revision 1.47  2001/01/22 16:15:15  mk
+  - added ReplaceOwn-Feature (merge from 3.40 branch)
+
   Revision 1.46  2001/01/14 10:13:33  mk
   - MakeHeader() integreated in new unit
 

@@ -562,6 +562,7 @@ type   textp  = ^text;
                   UUprotos  : string;  { UUCP: moegl. Protokolle    }
                   SizeNego  : boolean;     { UUCP: size negotiation    }
                   UUsmtp    : boolean;     { UUCP: SMTP                }
+                  ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
                   eFilter   : string;  { Eingangsfilter            }
                   aFilter   : string;  { Ausgangsfilter            }
                   SysopNetcall : boolean;  { Netzanruf-Bericht im S.M. }
@@ -1120,6 +1121,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.117  2001/01/22 16:15:14  mk
+  - added ReplaceOwn-Feature (merge from 3.40 branch)
+
   Revision 1.116  2001/01/15 23:27:35  mk
   - removed Editorkb, Listerkb
 
