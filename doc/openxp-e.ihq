@@ -7659,30 +7659,31 @@ you. :-] Yer'r on yer own, pal..
 <<Message / Search
 
 The search menu contains several options for
-searching the data base for messages fitting given
+searching the database for messages matching given
 criteria.
 
-Found messages are marked, and displayed in a window.
-They remain marked until unmarked with <Ctrl-E>.
-During the search, you can break off by pressing
-<Esc>.
+Matching messages are marked and displayed in a
+window. They remain marked until unmarked with
+<Ctrl-E>. During the search, you can abort by
+pressing <Esc>.
 
 Depending on available memory, the maximum number of
-messages that can be marked as "found" (ie. fitting
-the search criteria) lies between 2000 and 5000.
+messages that can be marked as "found" (i.e. matching
+the search criteria) is between 2000 and 5000.
 @
 10302
 <<Message / Extract
 
-Messages (or files) can be extracted from the data
-bank and written to a file that you can name.
+Messages (or files) can be extracted from the
+database and written to a file. You may choose the
+name of the file prior to writing it to disk.
 @
 10303
-<<Message / Outgoing
-This finds and marks outgoing messages, so you can
-review them, edit them, abort them or whatever.
-Useful for checking everything you have written,
-before starting a netcall.
+<<Message / Unsent
+This finds and marks messages which are waiting to be
+sent. You can review them, edit them, delete them or 
+whatever. Useful for checking messages you have
+written before starting a netcall.
 @
 10304
 <<Message / All
