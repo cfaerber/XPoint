@@ -56,7 +56,7 @@ begin
   repeat
     p:=pos(s1,ustr(s));
     if p>0 then
-      s:=Left(s,p-1)+Trim(s2)+Mid(s,p+length(s1));
+      s:=Left(s,p-1)+s2+Mid(s,p+length(s1));
   until p=0;
 end;
 
@@ -1043,6 +1043,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.6  2000/07/30 07:59:25  mk
+  - Trim aus RPS() entfernt
+
   Revision 1.17.2.5  2000/07/11 08:12:22  mk
   -- $DAY2, $SUBJECT hinzugefuegt
 
