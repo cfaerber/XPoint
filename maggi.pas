@@ -47,7 +47,7 @@ const nt_ZConnect  = 2;
       msgids    : boolean = false;   { MagicNET - MsgID's }
       mausinfos : boolean = false;   { Infofiles bestellen / BOX.INF }
       g_und_s   : boolean = false;   { keine Brettslashs „ndern }
-      maxmaus   : longint = 0;       { vorgegebene Maximalgr”áe }
+      maxmaus   : Int64 = 0;       { vorgegebene Maximalgr”áe }
       mkoutfile : boolean = false;   { OUTFILE statt INFILE erzeugen }
       mausOE    : boolean = true;
       mausPSA   : boolean = true;
@@ -77,7 +77,7 @@ type  charr       = array[0..65530] of char;
 var   f1,f2     : file;
       bretter   : integer;
       brettp    : array[1..maxbrett] of ^brett;
-      
+
       empflist,uline,xline,mail : tstringlist;
       hd : header;
 
@@ -1643,6 +1643,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/10/17 20:36:49  mk
+  - Diskfree/Disksize von Longint auf Int64 umgestellt
+
   Revision 1.26  2000/10/17 10:05:41  mk
   - Left->LeftStr, Right->RightStr
 

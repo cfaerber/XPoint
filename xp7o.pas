@@ -656,7 +656,7 @@ end;
 procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
 var f1,f2 : file;
     sr    : searchrec;
-    df    : longint;
+    df    : Int64;
 begin
   moff;
   writeln;
@@ -777,6 +777,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/10/17 20:36:50  mk
+  - Diskfree/Disksize von Longint auf Int64 umgestellt
+
   Revision 1.29  2000/10/17 10:05:55  mk
   - Left->LeftStr, Right->RightStr
 

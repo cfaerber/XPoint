@@ -881,12 +881,8 @@ end;
 
 procedure testdiskspace;
 var
-{$IFDEF Int64 }
   free : Int64;
-{$ELSE }
-  free: Longint;
-{$ENDIF }
-    x,y  : byte;
+  x,y  : byte;
 begin
   if ParNomem then exit;
 {$IFDEF Debug }
@@ -1210,6 +1206,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.74  2000/10/17 20:36:50  mk
+  - Diskfree/Disksize von Longint auf Int64 umgestellt
+
   Revision 1.73  2000/10/17 10:05:47  mk
   - Left->LeftStr, Right->RightStr
 

@@ -370,7 +370,7 @@ var x,y,yy  : byte;
     n,count : longint;
     f1,f2   : file;
     f1s     : longint;
-    hdfree  : longint;
+    hdfree  : int64;
     hflags  : byte;
     uflags  : byte;
     p       : pointer;
@@ -713,6 +713,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2000/10/17 20:36:50  mk
+  - Diskfree/Disksize von Longint auf Int64 umgestellt
+
   Revision 1.24  2000/10/17 10:05:51  mk
   - Left->LeftStr, Right->RightStr
 

@@ -250,7 +250,7 @@ procedure PrintPage;
 procedure PrintLine(s:string);
 procedure ExitPrinter;
 
-function  TempFree:longint;                 { Platz auf Temp-Laufwerk }
+function  TempFree:Int64;                 { Platz auf Temp-Laufwerk }
 function  TempS(bytes:longint):string;
 procedure _era(fn:string);
 procedure _chdir(p:string);
@@ -1853,7 +1853,7 @@ begin
 end;
 
 
-function TempFree:longint;                 { Platz auf Temp-Laufwerk }
+function TempFree:Int64;                 { Platz auf Temp-Laufwerk }
 begin
   if temppath='' then
     TempFree:=diskfree(0)
@@ -2004,6 +2004,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.82  2000/10/17 20:36:50  mk
+  - Diskfree/Disksize von Longint auf Int64 umgestellt
+
   Revision 1.81  2000/10/17 12:53:18  mk
   - einige Funktionen auf Sysutils umgestellt
 
