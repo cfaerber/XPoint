@@ -664,7 +664,7 @@ begin { FidoNetcall }
   DeleteFile(UpArcFilename);
   for i:=0 to AKABoxes.ReqFile.Count-1 do
     if AKABoxes.ReqFile[i]<>'' then begin
-      ProcessRequestResult(AKABoxes.ReqFile[i]);
+      ProcessRequestResult(AKABoxes.BoxName[i]);
       DeleteFile(AKABoxes.ReqFile[i]);
       end;
   for i:=0 to ConvertedFiles.Count-1 do
@@ -889,6 +889,9 @@ end;
 
 {
   $Log$
+  Revision 1.22  2001/10/14 21:22:40  ma
+  - fixed: Request result processing
+
   Revision 1.21  2001/09/26 23:34:21  mk
   - fixed FPC compile error with newest snapshot:
     Error: Self can only be an explicit parameter in message handlers or class methods
