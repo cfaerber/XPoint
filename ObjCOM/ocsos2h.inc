@@ -3,7 +3,7 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-type TSerialStream = Object(TCommStream)
+type TSerialStream = Class(TCommStream)
         constructor Create;
         destructor Destroy; override;
 
@@ -38,6 +38,9 @@ type TSerialStream = Object(TCommStream)
 
 {
   $Log$
+  Revision 1.5  2003/08/25 07:01:30  mk
+  - added RAW IP Support for OS/2
+
   Revision 1.4  2003/01/06 22:43:02  cl
   - made TCommStream.Write compatible with TStream.Write
 

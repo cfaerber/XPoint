@@ -146,7 +146,7 @@
 
 {$IFDEF OS2 }
   {$IFNDEF VP }
-    {a$DEFINE TCP }
+    {$DEFINE TCP }
   {$ENDIF }
 {$ENDIF }
 
@@ -175,6 +175,9 @@
 
 {
   $Log$
+  Revision 1.13  2003/08/25 07:01:30  mk
+  - added RAW IP Support for OS/2
+
   Revision 1.12  2003/01/23 10:03:44  mk
   - changes for Kylix and Linux
 

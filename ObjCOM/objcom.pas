@@ -28,7 +28,7 @@ uses
   {$IFDEF fpc}Linux,sockets,{$ENDIF}
   {$IFDEF Kylix}libc,KernelIoctl,{$ENDIF}
 {$ENDIF}
-{$IFDEF OS2}OCThread,
+{$IFDEF OS2}OCThread,pmwsock,
   OS2Def,DosCalls,
 {$ENDIF}
 {$IFDEF Go32V2}Go32,{$ENDIF}
@@ -109,8 +109,8 @@ function CommInit(S: String): TCommStream;
 function FossilDetect: Boolean;
 
 {$IFDEF Win32} {$I OCSWinh.inc} {$I OCRawIPh.inc} {$I OCTelneth.inc} {$ENDIF}
-{$IFDEF Unix} {$I ocslinh.inc} {$I ocrawiph.inc} {$I octelneth.inc} {$ENDIF}
-{$IFDEF OS2} {$I OCSOS2h.inc} {$ENDIF}
+{$IFDEF Unix}  {$I ocslinh.inc} {$I ocrawiph.inc} {$I octelneth.inc} {$ENDIF}
+{$IFDEF OS2}   {$I OCSOS2h.inc} {$I OCRawIPh.inc} {$I octelneth.inc} {$ENDIF}
 {$IFDEF DOS32} {$I OCSDosh.inc} {$I OCFDosh.inc} {$ENDIF}
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -121,10 +121,10 @@ uses
   Sysutils,
   timer,debug;
 
-{$IFDEF Win32} {$I OCSWin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
-{$IFDEF Unix} {$I ocslin.inc} {$I ocrawip.inc} {$I octelnet.inc} {$ENDIF}
+{$IFDEF Win32}  {$I OCSWin.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
+{$IFDEF Unix}   {$I ocslin.inc} {$I ocrawip.inc} {$I octelnet.inc} {$ENDIF}
+{$IFDEF OS2}    {$I OCSOS2.inc} {$I OCRawIP.inc} {$I OCTelnet.inc} {$ENDIF}
 {$IFDEF Go32v2} {$I OCSDos.inc} {$I OCFDos.inc} {$ENDIF}
-{$IFDEF OS2} {$I OCSOS2.inc} {$ENDIF}
 
 {$IFNDEF Fossil}
 //todo: make const? unused???
@@ -506,6 +506,9 @@ end
 
 {
   $Log$
+  Revision 1.37  2003/08/25 07:01:30  mk
+  - added RAW IP Support for OS/2
+
   Revision 1.36  2003/01/09 22:40:42  mk
   - changed ifdef Linux to Ifdef Unix
 
