@@ -294,17 +294,19 @@ end;
 
 function THeader.GetLastReference: String;
 begin
-  try
-    Result := References[References.Count-1];
-  except
+  if References.Count>0 then
+    Result := References[References.Count-1]
+  else
     Result := '';
-  end;
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.12  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.11  2001/08/11 21:20:52  mk
   - THeader.OEM is now TStringList (before: String)
 

@@ -37,7 +37,7 @@ procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 
 implementation  { --------------------------------------------------- }
 
-uses xpheader, xpmakeheader, xp3,xp3ex,xp4,xp6,xpnt,xpkeys,xpcc;
+uses xpheader, xpmakeheader, xp3,xp3ex,xp4,xpsendmessage,xpnt,xpkeys,xpcc;
 
 
 function __getfilename(nr,nn:byte):string;
@@ -305,7 +305,7 @@ begin
     EmpfList.Delete(0);
     // Achtung, das ist bestimmt falsch :-(
     sendempflist.Add(EmpfList[0]);
-    xp6.forcebox:='';
+    xpsendmessage.forcebox:='';
   end
   else
     EmpfList.Clear;
@@ -315,6 +315,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.28  2001/08/12 11:50:41  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

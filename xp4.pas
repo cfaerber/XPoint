@@ -64,9 +64,9 @@ const
 
 implementation  {----------------------------------------------------}
 
-uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xpnetcall,xp8,
+uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xpsendmessage,xpnetcall,xp8,
       xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
-      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister, viewer,
+      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_unsent,xpmime,lister, viewer,
       xpmakeheader, replytoall;
 
 const suchch    = #254;
@@ -1232,7 +1232,7 @@ var t,lastt: taste;
   procedure datei_senden(pm,binary:boolean);
   begin
     GoP;
-    xp6.send_file(pm,binary);
+    xpsendmessage.send_file(pm,binary);
     setall;
   end;
 
@@ -2212,6 +2212,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.99  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.98  2001/08/12 11:50:38  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

@@ -57,7 +57,7 @@ procedure PGP_EndSavekey;
 
 implementation  { --------------------------------------------------- }
 
-uses  xp3,xp3o,xp3o2,xp3ex,xp6,
+uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$ifdef Win32} xpwin32, {$endif}
   xpcc,xpnt;
 
@@ -843,6 +843,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.41  2001/08/12 11:50:43  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

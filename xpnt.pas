@@ -71,6 +71,7 @@ function ntXPctl(nt:byte):boolean;            { XP-Control-Messages }
 
 function ntBinary(nt:byte):boolean;           { Bin„rmails erlaubt    }
 function ntBinaryBox(box:string):boolean;     { dito                  }
+function ntMIME(nt:byte):boolean;
 function ntBinEncode(nt:byte):boolean;        { Bin„rmails werden uucodiert }
 function ntMessageID(nt:byte):byte;           { Message-ID-Format     }
 function ntDomainReply(nt:byte):boolean;      { Replys auf eig. Nachr. erkennbar }
@@ -173,6 +174,12 @@ begin
   ntBinary:=(nt in [nt_Netcall,nt_ZCONNECT,nt_Quick,nt_GS,nt_Maus,
                     nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP]) or
             (fidobin and (nt=nt_Fido));
+end;
+
+function ntMIME(nt:byte):boolean;
+begin
+  ntMIME  :=(nt in [nt_UUCP, nt_POP3, nt_IMAP, nt_NNTP]) { or
+            (zconnect_mime and (nt in [nt_ZConnect])) }; { !! }
 end;
 
 function ntBinEncode(nt:byte):boolean;        { Bin„rmails werden uucodiert }
@@ -761,6 +768,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.29  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.28  2001/08/10 20:58:01  mk
   - removed some hints and warnings
   - fixed some minior bugs

@@ -22,6 +22,7 @@
 {$I XPDEFINE.INC}
 
 { OpenXP multipart messages handling unit }
+
 unit xpmime;
 
 interface
@@ -738,6 +739,9 @@ end.
 
 {
   $Log$
+  Revision 1.47  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.46  2001/08/11 23:06:39  mk
   - changed Pos() to cPos() when possible
 

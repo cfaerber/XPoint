@@ -84,7 +84,7 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xpsendmessage,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
   xpmakeheader;
 
 
@@ -1523,6 +1523,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2001/08/12 20:01:39  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.64  2001/08/12 11:50:37  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

@@ -57,7 +57,7 @@ procedure Editor_options;
 
 implementation  {--------------------------------------------------------}
 
-uses  xp1,xp6;
+uses  xp1,xpsendmessage;
 
 const
       doautosave: boolean = false;
@@ -316,7 +316,7 @@ begin
   if edbetreff='' then exit;
   dialog(min(edbmaxlen+7+length(getres(2507)),70),3,'',x,y);
   maddstring(3,2,getres(2507),edbetreff,min(edbmaxlen,48),edbmaxlen,'');
-  msetvfunc(xp6.umlauttest); mhnr(88);
+  msetvfunc(xpsendmessage.umlauttest); mhnr(88);
   readmask(brk);
   enddialog;
   if not brk then begin
@@ -472,6 +472,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.29  2001/07/28 12:04:15  mk
   - removed crt unit as much as possible
 

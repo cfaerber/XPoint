@@ -104,7 +104,7 @@ function testnoverteiler(var s:string):boolean; {Verteileradressen verboten}
 
 implementation  { --------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xp6,xp9bp,xpconfigedit,xpcc,xpauto,xpfido;
+uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido;
 
 var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       wcy         : byte;       { fr writecode() }
@@ -2430,6 +2430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.64  2001/08/12 11:50:39  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

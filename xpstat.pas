@@ -47,7 +47,7 @@ function testbmarked(var s:string):boolean;
 
 implementation  { ------------------------------------------------- }
 
-uses xp3,xp3o,xp3o2,xp6,xp9bp,xpconfigedit,xpnt,xpfidonl,winxp;
+uses xp3,xp3o,xp3o2,xpsendmessage,xp9bp,xpconfigedit,xpnt,xpfidonl,winxp;
 
 var  statbrett : boolean;
 
@@ -1257,6 +1257,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.41  2001/08/12 11:50:44  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

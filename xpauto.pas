@@ -59,7 +59,7 @@ procedure AutoStop;
 
 implementation
 
-uses xp1o,xp3,xp3o,xp6,xp9bp,xpmaus,xpnt;
+uses xp1o,xp3,xp3o,xpsendmessage,xp9bp,xpmaus,xpnt;
 
 
 procedure AutoRead(var ar:AutoRec);
@@ -241,8 +241,8 @@ begin
       leer:='';
       if UpperCase(box)='*CRASH*' then begin
         box:='';
-        xp6.flCrash:=true;
-        xp6.NoCrash:=true;    { keine Rckfrage 'sofort versenden' }
+        xpsendmessage.flCrash:=true;
+        xpsendmessage.NoCrash:=true;    { keine Rckfrage 'sofort versenden' }
         end;
       forcebox:=box;
       if not tmp then begin
@@ -675,6 +675,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.39  2001/08/11 23:06:36  mk
   - changed Pos() to cPos() when possible
 

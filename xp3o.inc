@@ -408,13 +408,13 @@ var x,y      : Integer;
       if UsePGP and (empfaenger[1]='1') { PM } and
          (pgpflags and fPGP_request<>0) and ebest then begin
         if pollbox<>'' then
-          xp6.forcebox:=pollbox
+          xpsendmessage.forcebox:=pollbox
         else
-          xp6.forcebox:=pfadbox(true,pfad);
-        xp6._bezug:=msgid;
-        xp6._beznet:=netztyp;
+          xpsendmessage.forcebox:=pfadbox(true,pfad);
+        xpsendmessage._bezug:=msgid;
+        xpsendmessage._beznet:=netztyp;
         PGP_SendKey(iifs(pgp_uid='',absender,pgp_uid));
-        xp6.forcebox:='';
+        xpsendmessage.forcebox:='';
         end;
 
       if isSupersedesMsg and (not ignoreSupCancel) then begin
@@ -1237,6 +1237,9 @@ end;
 
 {
   $Log$
+  Revision 1.62  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.61  2001/08/12 11:50:37  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

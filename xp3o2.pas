@@ -26,7 +26,7 @@ unit xp3o2;
 
 interface
 
-uses sysutils,classes, typeform,datadef,database,resource,xp0,xp6, xpheader,
+uses sysutils,classes, typeform,datadef,database,resource,xp0,xpsendmessage,xpheader,
   xpglobal,xp1;
 
 procedure WriteHeader(var hd:theader; var f:file);
@@ -373,12 +373,12 @@ begin
   if betreff='' then betreff:=getres(343);    { '<kein Betreff>' }
   with hd do
   begin
-    xp6._bezug:=msgid;
-    xp6._orgref:=org_msgid;
-    xp6._beznet:=netztyp;
-    xp6._pmReply:=pm and (cpos('@',empfaenger)=0);
+    xpsendmessage._bezug:=msgid;
+    xpsendmessage._orgref:=org_msgid;
+    xpsendmessage._beznet:=netztyp;
+    xpsendmessage._pmReply:=pm and (cpos('@',empfaenger)=0);
     if netztyp=nt_Maus then begin
-      xp6._ReplyPath:=pfad;
+      xpsendmessage._ReplyPath:=pfad;
       if cpos('@',hd.empfaenger)=0 then
         sData^.ReplyGroup:=empfaenger;
       end;
@@ -447,6 +447,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2001/08/12 20:01:39  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.45  2001/08/12 11:50:38  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

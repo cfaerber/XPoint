@@ -32,7 +32,7 @@ uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
   sysutils,xpglobal,typeform,datadef,database,fileio,inout,keys,winxp,
   maske,maus2,montage,lister,zcrfc,debug,resource,stack,xp0,xp1,xp1help,
-  xp1input,xp2c,xp3o2,xp6,xpdiff,xpncuucp,zftools,fidoglob,
+  xp1input,xp2c,xp3o2,xpsendmessage,xpdiff,xpncuucp,zftools,fidoglob,
   classes,archive,xp3ex,xpterminal;
 
 const CrashGettime : boolean = false;  { wird nicht automatisch zurueckgesetzt }
@@ -1372,6 +1372,9 @@ end.
 
 {
   $Log$
+  Revision 1.29  2001/08/12 20:04:53  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.28  2001/08/11 23:06:44  mk
   - changed Pos() to cPos() when possible
 

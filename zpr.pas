@@ -47,7 +47,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils, dos, typeform, xpglobal;
+  sysutils, typeform, xpglobal;
 
 const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -1298,6 +1298,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.36  2001/08/11 23:06:40  mk
   - changed Pos() to cPos() when possible
 

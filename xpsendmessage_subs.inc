@@ -1108,6 +1108,9 @@ end;
 
 {
   $Log$
+  Revision 1.1  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.60  2001/08/11 23:06:35  mk
   - changed Pos() to cPos() when possible
 

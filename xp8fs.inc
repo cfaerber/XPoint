@@ -399,7 +399,7 @@ var d     : DB;
       rewrite(t);
       writeln(t,dest);
       close(t);
-      xp6.EditAttach:=false; xp6.noCrash:=true;
+      xpsendmessage.EditAttach:=false; xpsendmessage.noCrash:=true;
       KorrBoxname(fs);      { korrekte Schreibweise ermitteln }
       if DoSend(true,fn,fname+'@'+fs+ntServerDomain(fs),
                 expandfilename(source),
@@ -558,6 +558,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.23  2001/08/12 11:50:43  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

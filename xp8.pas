@@ -65,7 +65,7 @@ function fileechocolfunc(var s:string; line:longint):byte;
 
 implementation  { ------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xpsendmessage,xpsendmessage_unsent,
 {$IFDEF Sockets }
   xpncnntp,
 {$ENDIF }
@@ -2094,6 +2094,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.52  2001/08/12 11:50:43  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

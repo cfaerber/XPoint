@@ -45,7 +45,7 @@ procedure MausGetInfs(box, logfile:string);
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xpnt,xp6,xp6o,xpconfigedit, winxp;
+uses xp1o,xp3,xp3o2,xpnt,xpsendmessage,xpsendmessage_unsent,xpconfigedit, winxp;
 
 
 { art=0 : Zurueckgelieferte Maus-MessageIDs aus Logfile in  }
@@ -819,6 +819,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.29  2001/08/12 11:50:44  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

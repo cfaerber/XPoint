@@ -45,7 +45,7 @@ uses
      xpauto,   { Autoversand/-Exec  }
      xp5,      { Utilities          }
      xpreg,    { Registrierung      }
-     xp6,      { Nachrichten senden }
+     xpsendmessage, { Nachrichten senden }
      xpnetcall,
      xp8,      { 'maps & Filesercer }
      xp10,     { Timing-Lst./Makros }
@@ -189,6 +189,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/08/12 20:01:39  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.5  2001/07/31 13:10:32  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

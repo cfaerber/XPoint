@@ -34,7 +34,7 @@ uses xpglobal,
   xpcurses,
 {$ENDIF}
 typeform,fileio,inout,winxp,keys,maske,datadef,database,
-  resource,xp0,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xp6, maus2,lister, sysutils,
+  resource,xp0,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xpsendmessage, maus2,lister, sysutils,
   classes, xpHeader, xpconfigedit, xpmakeheader;
 
 procedure askRTA (const XPStart :boolean);
@@ -1025,6 +1025,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2001/08/12 20:01:39  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.11  2001/08/12 11:50:36  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

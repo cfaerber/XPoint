@@ -20,7 +20,7 @@
 
 {$I XPDEFINE.INC}
 
-unit xp6o;
+unit xpsendmessage_unsent;
 
 interface
 
@@ -43,7 +43,7 @@ function testmausempf(var s:string):boolean;
 implementation  { ----------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido, xpmakeheader,
-     xp6,xp6l;
+     xpsendmessage,xpsendmessage_internal;
 
 const
   mauswlbox : string = '';
@@ -331,20 +331,20 @@ begin
         hdp.empfaenger:=hdp.empfaenger+'@'+box+'.ZER';
     dbReadN(mbase,mb_typ,typ);
     set_forcebox;
-    xp6._bezug:=hdp0.GetLastReference;
-    xp6._orgref:=hdp0.org_xref;
-    xp6._beznet:=hdp0.netztyp;
-    xp6._replyPath:=hdp0.replypath;
-    xp6._pmReply:=(hdp.attrib and attrPmReply<>0);
-    xp6.flQTo:=(hdp.attrib and attrQuoteTo<>0);
+    xpsendmessage._bezug:=hdp0.GetLastReference;
+    xpsendmessage._orgref:=hdp0.org_xref;
+    xpsendmessage._beznet:=hdp0.netztyp;
+    xpsendmessage._replyPath:=hdp0.replypath;
+    xpsendmessage._pmReply:=(hdp.attrib and attrPmReply<>0);
+    xpsendmessage.flQTo:=(hdp.attrib and attrQuoteTo<>0);
     xp0.fidoto:=hdp0.fido_to;
-    xp6.flCrash:=crash;
-    xp6l.flEB:=(hdp0.attrib and attrReqEB<>0);
-    { xp6.NoCrash:=true; }
-    xp6.FileAttach:=(hdp0.attrib and attrFile<>0);
-    xp6.msgprio:=hdp0.prio;
-    xp6.rfcprio:=hdp0.priority;
-    xp6.ControlMsg:=(hdp.attrib and attrControl<>0);
+    xpsendmessage.flCrash:=crash;
+    xpsendmessage_internal.flEB:=(hdp0.attrib and attrReqEB<>0);
+    { xpsendmessage.NoCrash:=true; }
+    xpsendmessage.FileAttach:=(hdp0.attrib and attrFile<>0);
+    xpsendmessage.msgprio:=hdp0.prio;
+    xpsendmessage.rfcprio:=hdp0.priority;
+    xpsendmessage.ControlMsg:=(hdp.attrib and attrControl<>0);
     sendfilename:=hdp0.datei;
     sendfiledate:=hdp0.ddatum;
     sendflags:=0;
@@ -975,7 +975,7 @@ again:
                  if typ in [1,4,7] then sdata^.quotestr:=hdp.quotestring;
                  if typ=7 then sData^.orghdp:=hdp;
                  if typ in [1,2,7] then
-                   xp6.FileAttach:=(hdp.attrib and attrFile<>0);
+                   xpsendmessage.FileAttach:=(hdp.attrib and attrFile<>0);
                  if nextwl>=0 then begin
                    ua:=uvs_active; uvs_active:=false;
                    end;
@@ -1029,12 +1029,12 @@ again:
                fidoto:=hdp.fido_to;
                flQTo:=true;   { (hdp.attrib and attrQuoteTo<>0); }
                flEB:=(hdp.attrib and attrReqEB<>0);
-               xp6.FileAttach:=(hdp.attrib and attrFile<>0);
+               xpsendmessage.FileAttach:=(hdp.attrib and attrFile<>0);
                sendfilename:=hdp.datei;
                sendfiledate:=hdp.ddatum;
-               xp6._replyPath:=hdp.replypath;
-               xp6._pmReply:=(hdp.attrib and attrPmReply<>0);
-               xp6.ControlMsg:=(hdp.attrib and attrControl<>0);
+               xpsendmessage._replyPath:=hdp.replypath;
+               xpsendmessage._pmReply:=(hdp.attrib and attrPmReply<>0);
+               xpsendmessage.ControlMsg:=(hdp.attrib and attrControl<>0);
                sdata:=allocsenduudatamem;
                with sData^ do
                begin
@@ -1046,7 +1046,7 @@ again:
                  Distribute:=hdp.Distribution;
                  ReplyGroup:=hdp.ReplyGroup;
                  oab:=hdp.oab;
-                 oem:=hdp.oem;
+                 oem.Assign(hdp.oem);
                  wab:=hdp.wab;
                  onetztyp:=hdp.netztyp;
                  quotestr:=hdp.quotestring;
@@ -1312,6 +1312,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.1  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.68  2001/08/12 11:50:41  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

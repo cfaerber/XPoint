@@ -2013,7 +2013,8 @@ end;
 
 procedure freesenduudatamem(var sdata: senduuptr);
 begin
-  if sdata<>nil then
+  if not assigned(sdata) then
+    exit;
   with sdata^ do begin
     followup.free;
     References.Free;
@@ -2045,6 +2046,9 @@ end.
 
 {
   $Log$
+  Revision 1.115  2001/08/12 20:01:39  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.114  2001/08/11 23:06:28  mk
   - changed Pos() to cPos() when possible
 

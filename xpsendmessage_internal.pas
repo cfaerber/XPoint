@@ -22,7 +22,7 @@
 
 {$I XPDEFINE.INC}
 
-unit xp6l;
+unit xpsendmessage_internal;
 
 interface
 
@@ -61,6 +61,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.1  2001/08/12 20:01:40  cl
+  - rename xp6*.* => xpsendmessage*.*
+
   Revision 1.9  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
