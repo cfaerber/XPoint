@@ -2205,9 +2205,10 @@ var
   Puffer: array[0..511] of Char;
 begin
   StrPCopy(Puffer, OldName + #0 + NewName);
+  fillchar(regs, Sizeof(regs), 0);
   Regs.dx := Ofs(Puffer);
   Regs.Ds := Seg(Puffer);
-  Regs.di := Ofs(Puffer) + Length(OldName) + 1;
+  Regs.di := Ofs(Puffer) + Length(OldName) +1;
   Regs.Es := Seg(Puffer);
 {  if LFNSupport then
     Regs.Eax := $7156
@@ -2247,6 +2248,9 @@ procedure UTF82IBM(var s: String); { by robo; nach RFC 2279 }
 end.
 {
   $Log$
+  Revision 1.37.2.15  2001/04/23 18:42:46  mk
+  - Regs fuer RenameDir loeschen
+
   Revision 1.37.2.14  2001/04/20 17:28:48  mk
   - misc updates
 
