@@ -113,9 +113,9 @@ begin
   filemode:=fm;
   if inoutres<>0 then
     error(ioerror(ioresult,'can''t open '+ustr(fn)));
-  seek(f^,128);
+  seek(f^,256);
   blockread(f^,blocks,2);
-  seek(f^,128+16);
+  seek(f^,256+16);
   blockread(f^,block,sizeof(block));
   for i:=1 to blocks do begin          { Indextabellen laden }
     getmem(index[i],block[i].anzahl*4);
@@ -370,6 +370,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.4  2003/01/14 20:02:52  mw
+  MW: - Resourcenheader jetzt 256 Bytes groá, statt bisher 128 Bytes.
+
   Revision 1.7.2.3  2001/08/12 08:50:38  mk
   - added const parameters
 

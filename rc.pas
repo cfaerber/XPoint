@@ -108,7 +108,7 @@ end;
 
 
 procedure ReadHeader;
-var header : array[0..127] of byte;
+var header : array[0..255] of byte;
     ofs    : integer;
     s      : string;
 begin
@@ -120,15 +120,15 @@ begin
     readln(t,s);
     if left(s,1)='K' then begin
       s:=mid(s,3)+#13#10;
-      if ofs+length(s)<127 then begin
+      if ofs+length(s)<255 then begin
         FastMove(s[1],header[ofs],length(s));
         inc(ofs,length(s));
         end;
       end;
   until trim(s)='';
   header[ofs]:=26;
-  blockwrite(f,header,128);
-  seek(f,256);
+  blockwrite(f,header,256);
+  seek(f,384);
 end;
 
 
@@ -300,7 +300,7 @@ procedure WriteBlocks;
 var d : array[1..8] of word;
     i : integer16;
 begin
-  seek(f,128);
+  seek(f,256);
   fillchar(d,sizeof(d),0);
   d[1]:=blocks;
   blockwrite(f,d,16);
@@ -316,7 +316,7 @@ end;
 
 begin
   writeln;
-  writeln('Ressource Compiler v1.01   PM 12/92, 06/93');
+  writeln('Ressource Compiler v1.02   PM 12/92, 06/93, OXP/16 01/03');
   writeln;
   infile:=paramstr(1);
 
