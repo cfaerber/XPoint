@@ -664,7 +664,7 @@ begin
       if append then system.append(t)
       else rewrite(t);
       for i:=1 to lines do begin
-        readln(input,s);
+        read(input,s);
         if code=mcodeQP then begin
           softbreak:=(lastchar(s)='=');
           QP_decode;
@@ -673,12 +673,15 @@ begin
         end
         else
           softbreak:=false;
-        if softbreak then begin
-          dellast(s);
-          write(t,s);
-          end
-        else
-          writeln(t,s);
+
+        if softbreak then
+          s[0] := Char(Length(s)-1);
+        write(t,s);
+        if s[0]=#255 then dec (i) { Rest der langen Zeile Weiterbearbeiten }
+        else begin                { Tricky aber erspart ein GOTO...}
+          readln (input);
+          if not softbreak then writeln (t);
+        end;
         end;
       close(t);
       end
@@ -732,6 +735,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.11  2001/06/09 18:18:44  mk
+  JG:- MIME multipart messages with lines longer than 255 chars are
+       extracted correctly now (before they were truncated at pos 255)
+
   Revision 1.7.2.10  2000/12/15 21:25:50  mk
   - fix fuer letzen Commit
 
