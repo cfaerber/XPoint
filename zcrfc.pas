@@ -1143,12 +1143,11 @@ begin
     else
       hd.typ:='B';
 
-    if (hd.x_charset='') and (hd.typ<>'M') then
-      hd.x_charset:='windows-1252'
-    else
-    if MimeContentTypeNeedCharset(ctype) and
-      (not IsKnownCharset(hd.x_charset)) then
-      hd.error := 'Unsupported character set: ' + hd.x_charset;
+    if MimeContentTypeNeedCharset(ctype) and (hd.typ<>'M') then
+      if ((hd.x_charset='')or(UpperCase(hd.x_charset)='UNKNOWN-8BIT'))  then
+        hd.x_charset:='windows-1252' else
+      if not IsKnownCharset(hd.x_charset) then
+        hd.error := 'Unsupported character set: ' + hd.x_charset;
   end;
 end;
 
@@ -2044,7 +2043,7 @@ var
   p, p2, p3: Integer;
   i: integer;
   c: char;
-  binaer,multi,LastLineWasBlank,FirstLineHasBeenRead: boolean;
+  binaer,multi,recode,LastLineWasBlank,FirstLineHasBeenRead: boolean;
   pfrec: ^filerec;
 begin
   if CommandLine then write('mail: ', fn);
@@ -2124,6 +2123,8 @@ begin
       inc(mails);
       binaer := (hd.typ = 'B');
       multi  := (hd.typ = 'M');
+      recode := (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
+      hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
 
       if (mailuser='') and (hd.envemp<>'') then
       begin
@@ -2150,11 +2151,6 @@ begin
       // of next mail and unquote '>From ' to 'From '.
       LastLineWasBlank:=False;
 
-      if not(binaer or multi) then
-        hd.charset:='IBM437'
-      else
-        hd.charset:=MimeCharsetToZC(hd.x_charset);
-
       while (bufpos < bufanz) and (hd.Lines<>0) do
       begin
         ReadString;
@@ -2169,7 +2165,7 @@ begin
                 DeleteFirstChar(s);
         LastLineWasBlank:=(s=''); DecodeLine;
 
-        if not(binaer or multi) then
+        if recode then
           s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
 
         Mail.Add(s);
@@ -2200,7 +2196,7 @@ var
   n: longint;
   p1, p2: integer;
   mempf: string;
-  binaer,multi: boolean;
+  binaer,multi,recode: boolean;
   nofrom: boolean;
   smtpende: boolean;
   pfrec: ^filerec;
@@ -2268,6 +2264,8 @@ begin
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
       multi  := (hd.typ = 'M');
+      recode := (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
+      hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
 
       if (mempf <> '') and (hd.xempf.count > 0) and (mempf <> hd.xempf[0]) then
       begin
@@ -2295,11 +2293,6 @@ begin
       WriteHeader;
       smtpende := false;
 
-      if not(not binaer or multi) then
-        hd.charset:='IBM437'
-      else
-        hd.charset:=MimeCharsetToZC(hd.x_charset);
-
       while (bufpos < bufanz) and not smtpende do
       begin
         ReadString;
@@ -2309,7 +2302,7 @@ begin
           if FirstChar(s) = '.' then { SMTP-'.' entfernen }
             DeleteFirstChar(s);
           DecodeLine;           { haengt CR/LF an, falls kein Base64 }
-          if not(not binaer or multi) then
+          if recode then
             s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
 
           wrfs(s);
@@ -2339,7 +2332,7 @@ var
   size: longint; // Groesse des Headers in Byte
   fp, bp, n: longint;
   p: integer;
-  binaer,multi: boolean;
+  binaer,multi,recode: boolean;
   pfrec: ^filerec;
 label
   ende;
@@ -2390,6 +2383,9 @@ begin
       ReadRFCheader(false, s);
       binaer := (hd.typ = 'B');
       multi  := (hd.typ = 'M');
+      recode := (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
+      hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
+
       seek(f1, fp); ReadBuf; bufpos := bp;
       repeat                        { Header ueberlesen }
         ReadString;
@@ -2399,11 +2395,6 @@ begin
 
       if hd.Lines = 0 then
         hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
-
-      if not (binaer or multi) then
-        hd.charset:='IBM437'
-      else
-        hd.charset:=MimeCharsetToZC(hd.x_charset);
 
       //** clean up: ignore size if line count is given
       while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
@@ -2419,7 +2410,7 @@ begin
           Dec(hd.lines);
         dec(Size, length(s) + eol);
         DecodeLine;
-        if not (binaer or multi) then
+        if recode then
           s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
 
         if not(NNTPSpoolFormat and(hd.lines=0))then begin // skip last '.' if NNTP spool format
@@ -3646,6 +3637,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.78  2001/09/15 19:51:26  cl
+  - optimized some code related to charset recoding
+
   Revision 1.77  2001/09/10 17:42:04  cl
   - BUGFIX: ZConnect Charset header only written if not in ['US-ASCII','IBM437']
 
