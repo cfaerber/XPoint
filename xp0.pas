@@ -23,7 +23,7 @@ uses   dos,typeform,keys,xpglobal;
 { CrossPoint compilieren kînnen. Falls Die das compilierte Programm }
 { weitergeben mîchten, mÅssen der angegebene Name korrekt und die   }
 { E-Mail-Adresse erreichbar sein (siehe LIZENZ.TXT).                }
-{
+{                                                                   }
 { Beispiel:                                                         }
 {                                                                   }
 { const  author_name = 'Ralf MÅller';                               }
@@ -99,7 +99,7 @@ const  {$IFDEF DPMI}
        uuserver    = 'UUCP-Fileserver';
 
 {$IFDEF UnixFS }
-       BaseDir	   = '.openxp/';     { Basisverzeichnis }
+       BaseDir     = '.openxp/';     { Basisverzeichnis }
        ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
 {$ELSE}
        ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=*?';
@@ -116,41 +116,24 @@ const  {$IFDEF DPMI}
        AutoxDir    = 'autoexec'+DirSepa;    { AutoStart-Daten }
        BadDir      = 'bad'+DirSepa;
 
-       HeaderFile  = 'header.xps';     { Schablonen-Dateien }
-       HeaderPriv  = 'privhead.xps';
-       SignatFile  = 'signatur.xps';
-       PrivSignat  = 'privsig.xps';
-       QuoteMsk    = 'qbrett.xps';
-       QuotePriv   = 'qpriv.xps';
-       QuotePMpriv = 'qpmpriv.xps';
-       QuoteToMsk  = 'quoteto.xps';
-       WeiterMsk   = 'weiter.xps';
-       ErneutMsk   = 'erneut.xps';
-       EB_Msk      = 'empfbest.xps';
-       CancelMsk   = 'cancel.xps';
+       HeaderFile  = 'HEADER.XPS';     { Schablonen-Dateien }
+       HeaderPriv  = 'PRIVHEAD.XPS';
+       SignatFile  = 'SIGNATUR.XPS';
+       PrivSignat  = 'PRIVSIG.XPS';
+       QuoteMsk    = 'QBRETT.XPS';
+       QuotePriv   = 'QPRIV.XPS';
+       QuotePMpriv = 'QPMPRIV.XPS';
+       QuoteToMsk  = 'QUOTETO.XPS';
+       WeiterMsk   = 'WEITER.XPS';
+       ErneutMsk   = 'ERNEUT.XPS';
+       EB_Msk      = 'EMPFBEST.XPS';
+       CancelMsk   = 'CANCEL.XPS';
 
-       BfgExt      = '.bfg';           { Boxen-Config-File }
-       QfgExt      = '.qfg';           { QWK-Config-File   }
-       SwapExt     = '.swp';
-{$IFDEF UnixFS}
-       BatchExt	   = '.sh';
-{$ELSE}
-       BatchExt	   = '.bat';
-{$ENDIF}
+       BfgExt      = '.BFG';           { Boxen-Config-File }
+       QfgExt      = '.QFG';           { QWK-Config-File   }
+       SwapExt     = '.SWP';
+       BatchExt    = '.BAT';
 
-{$IFDEF UnixFS }
-       MsgFile     = 'msgs';           { DB1-Dateinamen }
-       BrettFile   = 'bretter';
-       UserFile    = 'user';
-       BoxenFile   = 'boxen';
-       GruppenFile = 'gruppen';
-       SystemFile  = 'systeme';
-       DupeFile    = 'dupekill';       { temporÑr in XP4O.DupeKill }
-       AutoFile    = 'automsg';
-       PseudoFile  = 'pseudos';
-       BezugFile   = 'bezuege';
-       MimetFile   = 'mimetyp';
-{$ELSE }
        MsgFile     = 'MSGS';           { DB1-Dateinamen }
        BrettFile   = 'BRETTER';
        UserFile    = 'USER';
@@ -162,59 +145,58 @@ const  {$IFDEF DPMI}
        PseudoFile  = 'PSEUDOS';
        BezugFile   = 'BEZUEGE';
        MimetFile   = 'MIMETYP';
-{$ENDIF }
 
-       CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
-       Cfg2File    = 'xpoint2.cfg';
-       Cfg3File	   = 'openxp.cfg';	{ NEue cfg mit Sektionen }
-       ColCfgfile  = 'xpoint.col';
-       NewDateFile = 'neues.dat';
-       MsgTempFile = 'msg.tmp';
-       AblagenFile = 'mpuffer.';
-       UncryptedFile = 'crypt.msg';
-       CryptedFile = 'crypt.enc';
-       TimingFile  = 'timing.';
-       TimingDat   = 'timing.dat';
-       KilledDat   = 'reorg.dat';
-       CCfile      = 'verteil.dat';
-       FidoCfg     = 'fido.cfg';
-       OldNLCfg    = FidoDir+'nodelist.cfg';
-       NodelistCfg = FidoDir+'nodelst.cfg';
-       NodeindexF  = FidoDir+'nodelist.idx';
-       UserindexF  = FidoDir+'nodeuser.idx';
-       ARCmailDat  = 'arcmail.dat';
-       FileLists   = FidoDir+'filelist.cfg';
-       ReqDat      = 'request.dat';    { Crashs + Requests }
-       RegDat      = 'regdat.xp';
-       UUnumdat    = 'uunummer.dat';
-       FeierDat    = 'feiertag.dat';
-       PGPkeyfile  = 'pgp-key.bin';
-       menufile    = 'xpmenu.dat';
-       CrashTemp   = 'crash.tmp';
+       CfgFile     = 'XPOINT.CFG';     { verschiedene Dateien }
+       Cfg2File    = 'XPOINT2.CFG';
+       Cfg3File    = 'OPENXP.CFG';      { NEue cfg mit Sektionen }
+       ColCfgfile  = 'XPOINT.COL';
+       NewDateFile = 'NEUES.DAT';
+       MsgTempFile = 'MSG.TMP';
+       AblagenFile = 'MPUFFER.';
+       UncryptedFile = 'CRYPT.MSG';
+       CryptedFile = 'CRYPT.ENC';
+       TimingFile  = 'TIMING.';
+       TimingDat   = 'TIMING.DAT';
+       KilledDat   = 'REORG.DAT';
+       CCfile      = 'VERTEIL.DAT';
+       FidoCfg     = 'FIDO.CFG';
+       OldNLCfg    = FidoDir+'NODELIST.CFG';
+       NodelistCfg = FidoDir+'NODELST.CFG';
+       NodeindexF  = FidoDir+'NODELIST.IDX';
+       UserindexF  = FidoDir+'NODEUSER.IDX';
+       ARCmailDat  = 'ARCMAIL.DAT';
+       FileLists   = FidoDir+'FILELIST.CFG';
+       ReqDat      = 'REQUEST.DAT';    { Crashs + Requests }
+       RegDat      = 'REGDAT.XP';
+       UUnumdat    = 'UUNUMMER.DAT';
+       FeierDat    = 'FEIERTAG.DAT';
+       PGPkeyfile  = 'PGP-KEY.BIN';
+       menufile    = 'XPMENU.DAT';
+       CrashTemp   = 'CRASH.TMP';
 
-       ErrlogFile  = 'errors.log';     { LogFiles }
-       Logfile     = 'xpoint.log';
-       BiLogFile   = 'logfile';        { fÅr BiModem-öbertragung }
-       BrettlogFile= 'bretter.log';    { automatisch angelegte Bretter }
-       UserlogFile = 'user.log';       { automatisch angelegte User }
-       DupeLogfile = 'dupes.log';      { s. XP4.DupeKill }
-       MausLogfile = 'maus.log';       { MAGGI: MausTausch-Logfile }
-       MausPmLog   = 'mauspm.log';     { MAGGI: MausTausch-PM-Logfile }
-       MausStLog   = 'mausstat.log';   { MAGGI: MausTausch-Nachrichtenstati }
-       FidoLog     = 'xpfido.log';     { XP-FM-Logfile   }
-       UUCPlog     = 'xpuucp.log';     { uucico-Logfile  }
-       ScerrLog    = 'scerrors.log';   { Script-Fehler   }
-       NetcallLog  = 'netcall.log';    { Netcall-Logfile }
+       ErrlogFile  = 'ERRORS.LOG';     { LogFiles }
+       Logfile     = 'XPOINT.LOG';
+       BiLogFile   = 'LOGFILE';        { fÅr BiModem-öbertragung }
+       BrettlogFile= 'BRETTER.LOG';    { automatisch angelegte Bretter }
+       UserlogFile = 'USER.LOG';       { automatisch angelegte User }
+       DupeLogfile = 'DUPES.LOG';      { s. XP4.DupeKill }
+       MausLogfile = 'MAUS.LOG';       { MAGGI: MausTausch-Logfile }
+       MausPmLog   = 'MAUSPM.LOG';     { MAGGI: MausTausch-PM-Logfile }
+       MausStLog   = 'MAUSSTAT.LOG';   { MAGGI: MausTausch-Nachrichtenstati }
+       FidoLog     = 'XPFIDO.LOG';     { XP-FM-Logfile   }
+       UUCPlog     = 'XPUUCP.LOG';     { uucico-Logfile  }
+       ScerrLog    = 'SCERRORS.LOG';   { Script-Fehler   }
+       NetcallLog  = 'NETCALL.LOG';    { Netcall-Logfile }
 
-       TempBatchFN = 'tmp.bat';	       { Temp. Batchdatei (siehe fileio) }
+       TempBatchFN = 'TMP.BAT';        { Temp. Batchdatei (siehe fileio) }
 
-				       { Namen der Exe-Dateien }
-       MaggiBin		= 'MAGGI.EXE';
-       UUCICOBin	= 'UUCICO.EXE';
-       UUZBin		= 'UUZ.EXE';
-       Yup2PktBin	= 'YUP2PKT.EXE';
-       ZFidoBin		= 'ZFIDO.EXE';
-       ZQWKBin		= 'ZQWK.EXE';
+                                       { Namen der Exe-Dateien }
+       MaggiBin         = 'MAGGI.EXE';
+       UUCICOBin        = 'UUCICO.EXE';
+       UUZBin           = 'UUZ.EXE';
+       Yup2PktBin       = 'YUP2PKT.EXE';
+       ZFidoBin         = 'ZFIDO.EXE';
+       ZQWKBin          = 'ZQWK.EXE';
 
        miBrett     = 1;                { BRETTNAME/EMPFDATUM/INT_NR         }
        miGelesen   = 2;                { BRETTNAME/GELESEN/EMPFDATUM/INT_NR }
@@ -366,7 +348,7 @@ type   textp  = ^text;
                   ColListQuote  : ColQArr; { Quote-Zeilen + Maps"J" }
                   ColListScroll : byte;   { vertikaler Scroller     }
                   ColListHeader : byte;   { Nachrichtenkopf         }
-                  ColListHeaderhigh : byte; { Nachrichtenkopf hervorgehobene Msg} 
+                  ColListHeaderhigh : byte; { Nachrichtenkopf hervorgehobene Msg}
                   ColListHigh   : byte;   { *hervorgehoben*         }
                   ColListQHigh  : ColQArr; { Quote / *hervorgehoben* }
                   ColEditText   : byte;   { Editor, normaler Text   }
@@ -804,10 +786,10 @@ const
        SupportCfg : string[12] = 'SUPPORT.CFG';
 {$ENDIF }
        UseNewCfg  : boolean = false; { neue cfg, wird in initvar (xp2cfg) gesetzt (hd) }
-       
+
        Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)}
 
-                         { Externe Viewer: Extension-abhaengige Sicherheitseinstellungen: }                                  
+                         { Externe Viewer: Extension-abhaengige Sicherheitseinstellungen: }
 
        viewer_danger : string[37] = '.EXE.COM.BAT.BTM.CMD.PIF.LNK.INF.REG.'; { Immer Abfragen }
        viewer_save   : string = '.BMP.GIF.JPG.PCX.IFF.PDF';        { ohne Sicherheitsabfrage }
@@ -1058,7 +1040,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        AutoUpload   : boolean;       { CrossTerm - PD-Zmodem-Autoupload }
        AutoDownload : boolean;       { Autodownload }
        TermCOM      : byte;          { Schnittstelle }
-       TermDevice   : string;	     { Device fuer das Terminal }
+       TermDevice   : string;        { Device fuer das Terminal }
        TermBaud     : longint;       { Baudrate }
        TermStatus   : boolean;       { Statuszeile }
        TermInit     : string[40];    { Modem-Init }
@@ -1165,8 +1147,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
 {$IFDEF Ver32}
 {$IFDEF NCRT}
-       charbuf	   : string[254];		  { Nicht zu klein :-) }
-       attrbuf	   : array [1..254] of smallword;
+       charbuf     : string[254];                 { Nicht zu klein :-) }
+       attrbuf     : array [1..254] of smallword;
 {$ELSE }
        charbuf     : string[82];                  {82 Zeichen   Reihenfolge nicht vertauschen!}
        attrbuf     : array [1..82] of smallword;  {82 Attribute}
@@ -1178,6 +1160,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.8  2000/10/06 20:18:34  mk
+  - Dateinamen in Grossschreibung geaendert
+
   Revision 1.54.2.7  2000/09/24 04:45:51  mk
   - Joker bei ValidDirCh hinzugefuegt
 
