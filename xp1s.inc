@@ -236,7 +236,7 @@ begin
   listheadercol:=iif(nt and $1000 = 0,col.collistheader,col.collistheaderhigh);
 end;
 
-function listcolor(var s:string; line:longint):byte;
+function listcolor(const s:string; line:longint):byte;
 var p,p0,ml : byte;
     qn,pdiff: integer;
 begin
@@ -525,6 +525,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.75  2002/03/03 15:45:54  cl
+  - changed TListerColorEvent's first parameter from var => const
+
   Revision 1.74  2002/01/28 20:32:25  mk
   - completed 3.40 merge, source is compilable for dos and win
     linux is still untested

@@ -54,7 +54,7 @@ begin
     fileechomarkfunc:=true;
 end;
 
-function fileechocolfunc(var s:string; line:longint):byte;
+function fileechocolfunc(const s:string; line:longint):byte;
 begin
   if (s<>'') and (s[1]='*') then
     fileechocolfunc:=col.ColMapsBest
@@ -347,6 +347,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2002/03/03 15:45:54  cl
+  - changed TListerColorEvent's first parameter from var => const
+
   Revision 1.23  2002/02/26 11:09:23  ma
   - fixed: Fido file area requests (wrong line endings with Linux)
 

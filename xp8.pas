@@ -57,10 +57,10 @@ procedure FS_command(comm:string; request:byte);
 
 function testmark(const s:string; block:boolean):boolean;
 function BrettMark(const s:string; block:boolean):boolean;
-function MapsListcolor(var s:string; line:longint):byte;
+function MapsListcolor(const s:string; line:longint):byte;
 function UUsendTestSourcefile(var s:string):boolean;
 function fileechomarkfunc(const s:string; block:boolean):boolean;
-function fileechocolfunc(var s:string; line:longint):byte;
+function fileechocolfunc(const s:string; line:longint):byte;
 
 
 implementation  { ------------------------------------------------- }
@@ -1247,7 +1247,7 @@ end;
 
 var LcolType : byte;  { 0=nix, 1=Z, 2=Maus, 3=ProNet, 4=Fido }
 
-function MapsListcolor(var s:string; line:longint):byte;
+function MapsListcolor(const s:string; line:longint):byte;
 begin
   MapsListcolor:=col.collisttext;
   case LColType of
@@ -2146,6 +2146,9 @@ end;
 
 {
   $Log$
+  Revision 1.69  2002/03/03 15:45:54  cl
+  - changed TListerColorEvent's first parameter from var => const
+
   Revision 1.68  2002/02/26 11:30:24  ma
   - fixed: Misc area requests (wrong line endings with Linux)
 

@@ -65,7 +65,7 @@ type
   TListerKeyPressedEvent = procedure(LSelf: TLister; var t: taste);
   TListerShowLinesEvent = procedure(s: string);
   TListerDisplayLineEvent = procedure(x, y: word; var s: string);
-  TListerColorEvent = function(var s: string; line: longint): byte;
+  TListerColorEvent = function(const s: string; line: longint): byte;
 
   { m”gliche Optionen fr den Lister                             }
   {                                                              }
@@ -1134,6 +1134,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.67  2002/03/03 15:45:54  cl
+  - changed TListerColorEvent's first parameter from var => const
+
   Revision 1.66  2002/01/29 11:47:38  mk
   - fixed crash in getline (xp1o.pas)
 
