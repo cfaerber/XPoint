@@ -43,7 +43,7 @@ K (c) '93-96 Peter Mandrella
 18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
 19  MAPS,131^Subscribe,132^Unsubscribe,133^Get list,134^Others,-,136^Import list,137Read ^file
 20  Fileserver,141^Request,142^Send,143^Listù27,144^Help,145^Transfer,146S^ervice
-21  Weiter,151^Copy,152^Original,153^Forward,154^Quote,-,156C^onfirmation,157Ca^ncel,158^Supersede,159^Repost      @R,15a^Archive     @A,15bUser-^PM     @P
+21  Weiter,151^Copy,152^Original,153^Forward,154^Quote,-,156C^onfirmation,157Ca^ncel,158^Repost      @R,159^Archive     @A,15aUser-^PM     @P
 22  Žndern,161^Subject,162^Receive date,163R^ot13,164^Text,165T^ype,166r^ead,167^Highlight
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Macros
 24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
