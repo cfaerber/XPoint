@@ -1,0 +1,47 @@
+#
+# OpenXP Makefile
+#
+# $Id$
+#
+# Copy to Makefile.inc if using Linux
+
+# VERSION can be one of the following: (mind the case)!
+#
+# DEBUG		uses all debug symbols
+# RELEASE	unse no debug symbols
+
+VERSION=DEBUG
+
+# Define your compiler (only 1)
+#
+FPC=1
+# VPC=1
+
+# Define your CPU (386,586,686)
+#
+CPU=686
+
+#
+# No changes from here
+#
+
+# OS can be one of the following (also mind the case)
+#
+# DOS		DOS 32 Bit
+# LINUX		Linux
+# OS2		OS/2
+# WIN		Windows
+
+OS=LINUX
+
+
+INLINUX=1
+
+#
+#
+# $Log$
+# Revision 1.1  2000/08/07 10:08:24  hd
+# - Makefile angepasst
+#
+#
+#

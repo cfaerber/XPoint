@@ -3,35 +3,123 @@
 #
 # $Id$
 #
-# Funktioniert nur mit Borland Make
+# Funktioniert nur mit Borland Make oder unter Linux
 
-flags=-Sg
+# HINWEIS: Kopieren Sie zunaechst eine der gewuenschten Dateien
+#          Makefile.dos, Makefile.lnx, Makefile.os2 oder Makefile.win
+#          nach Makefile.inc
+#
+#	   Nehmen Sie nach Moeglichkeit in dieser Datei keine Aenderungen
+#          vor, sondern nur in der Makefile.inc.
 
-openxp: xp 
+include Makefile.inc
 
-xp:	xp.exe res
+ifdef INLINUX
+EXE_EXT=
+MAKE=make
+MOVE=cp
+COPY=cp
+REMOVE=rm
+MKDIR=install -m 755 -d
+RMDIR=rmdir
+ECHO=echo
+INSTALL_EXE=install -m 755
+INSTALL_DAT=install -m 644
+INSTALL_DIR=/usr/local/xp/
+BIN_DIR=/usr/bin/
+LINK=ln -s
+TEMP_RC=./rc
+else
+EXE_EXT=.exe
+MAKE=make.exe
+COPY=copy
+MOVE=move
+REMOVE=del
+MKDIR=mkdir
+RMDIR=rmdir
+ECHO=echo
+INSTALL_EXE=$(MOVE)
+INSTALL_DAT=$(MOVE)
+INSTALL_DIR=bin/
+BIN_DIR=bin/
+LINK=REM
+TEMP_RC=RC.EXE
+endif
 
-xp.exe:	xp.pas
-	ppc386.exe $(flags) xp.pas
+ifdef FPC
+CC=ppc386$(EXE_EXT)
 
-rc.exe:	rc.pas
-	ppc386.exe $(flags) rc.pas
+CF_DEBUG=-Ct -dDEBUG -Sg -pg
+CF_RELEASE=-CX -O2 -Sg
+CF_DOS=-TGO32V2
+CF_LINUX=-TLINUX
+CF_OS2=-TOS2
+CF_WIN=-TWIN32
+CF_386=-Op1
+CF_586=-Op2
+CF_686=-Op3
 
-res: 	xp-d.rq xp-e.rq rc.exe
-	rc.exe xp-d.rq
-	rc.exe xp-e.rq	
+else
+ifdef VPC
+CC=vpc$(EXE_EXT)
+
+CF_DEBUG=
+CF_RELEASE=
+CF_DOS=
+CF_LINUX=
+CF_OS2=
+CF_WIN=
+CF_386=
+CF_586=
+CF_686=
+
+
+endif
+endif
+
+RC=rc$(EXE_EXT)
+XP=xp$(EXE_EXT)
+
+flags=$(CF_$(VERSION)) $(CF_$(OS))
+
+openxp: $(XP)
+
+$(XP):	xp.pas res
+	$(CC) $(flags) xp.pas
+
+$(RC):	rc.pas
+	$(CC) $(flags) rc.pas
+
+res: 	xp-d.rq xp-e.rq $(RC)
+	$(TEMP_RC) xp-d.rq
+	$(TEMP_RC) xp-e.rq
 
 clean:
-	del *.exe *.res
+	-$(REMOVE) *.res
+	-$(REMOVE) *.o
+	-$(REMOVE) *.ow
+	-$(REMOVE) *.ppu
+	-$(REMOVE) *.ppw
+	-$(REMOVE) $(XP)
+	-$(REMOVE) $(RC)
 
-install: xp
-	mkdir bin
-	move xp.exe bin
-	move xp-d.res bin
-	move xp-e.res bin
+dist-clean:
+	-$(MAKE) clean
+	-$(REMOVE) $(INSTALL_DIR)$(XP)
+	-$(REMOVE) $(INSTALL_DIR)*.res
+
+install: $(XP)
+	-$(MKDIR) $(INSTALL_DIR)
+	$(INSTALL_EXE) $(XP) $(INSTALL_DIR)
+	$(LINK) $(INSTALL_DIR)$(XP) $(BIN_DIR)$(XP)
+	$(INSTALL_DAT) xp-d.res $(INSTALL_DIR)
+	$(INSTALL_DAT) xp-e.res $(INSTALL_DIR)
 
 #
 # $Log$
+# Revision 1.2  2000/08/07 10:08:23  hd
+# - Makefile angepasst
+#
 # Revision 1.1  2000/08/06 20:10:32  mk
 # - erster Versuch eines Makefiles
 #
