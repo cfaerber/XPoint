@@ -1153,20 +1153,15 @@ var  dl         : displp;
             if (ap=block[2].pos.absatz) and (nxo>=block[2].pos.offset) then
               bende:=block[2].pos.offset-dofs;
             end;
-          SetLength(s, minmax(nxo-dofs-xoffset,0,w)); { s[0]:=chr(minmax(nxo-dofs-xoffset,0,w));}
+          SetLength(s, minmax(nxo-dofs-xoffset,0,w));
           if s<>'' then Move(ap^.cont[dofs+xoffset],s[1],length(s));
-          if length(s)<w then begin
-            if (s<>'') and absende then begin               { Absatzende-Marke }
-              s:= s+absatzende;
-              {s[length(s)+1]:=absatzende;
-              inc(byte(s[0]));}
-              end;
-            if length(s)<w then begin           { mit Space auffllen }
-              SetLength(s,w);
-              fillchar(s[length(s)+1],w-length(s),32);
-              {s[0]:=chr(w);}
-              end;
-            end;
+          if length(s)<w then
+          begin
+            if (s<>'') and absende then
+              s:= s+absatzende;          { Absatzende-Marke }
+            if length(s)<w then
+              s := s + Sp(w-Length(s)); { mit Space auffllen }
+          end;
           attrtxt(acol);              { Zeile anzeigen }
           if blockstat<>1 then
             fwrt(x,y+i,s)
@@ -1839,6 +1834,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/07/20 10:54:36  mk
+  - AnsiString Update, Editor funktioniert jetzt wieder
+
   Revision 1.35  2000/07/15 20:02:59  mk
   - AnsiString updates, noch nicht komplett
 
