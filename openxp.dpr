@@ -21,6 +21,8 @@ program openxp;
 {%File 'xpsendmessage_subs.inc'}
 
 uses
+	addresses in 'addresses.pas',
+  addresslist in 'addresslist.pas',
   archive in 'archive.pas',
   charmaps in 'charmaps.pas',
   clip in 'clip.pas',

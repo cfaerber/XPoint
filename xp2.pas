@@ -77,7 +77,7 @@ uses
 {$IFDEF Kylix}
   libc,
 {$ENDIF}
- {$IFDEF UnixFS},xpx{$ENDIF}
+ {$IFDEF UnixFS}xpx,{$ENDIF}
   {$IFDEF unix}
   xplinux,
   xpcurses,
@@ -2769,6 +2769,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.150  2002/12/10 10:03:23  dodi
+  - updated uses
+
   Revision 1.149  2002/12/07 04:41:48  dodi
   remove merged include files
 

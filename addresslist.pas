@@ -22,15 +22,11 @@
 
 unit addresslist;       
 
-{ =========================== } interface { ========================== }
+interface
 
-uses classes
-  {$IFDEF Delphi}
-  {$IFNDEF Kylix}
-    , contnrs
-  {$ENDIF}
-  {$ENDIF}
-    , addresses;
+uses
+  classes,
+  addresses;
 
 type
 
@@ -91,7 +87,7 @@ type
     function GetEmpty: boolean;
     function GetVerteiler: boolean;
     function GetDisplayString: string;
-    
+
   public
     constructor Create; overload;
     constructor CreateXP(pm:boolean;const addr,rname:string); overload;
@@ -160,7 +156,7 @@ type
     procedure AddList(Source: TAddressList); virtual;
     procedure InsertList(Index: Integer;Source: TAddressList);
 
-    procedure AddStrings(Source: TStrings); virtual;    
+    procedure AddStrings(Source: TStrings); virtual;
 
     function AddNew: TAddressListItem;
     function InsertNew(Index: Integer): TAddressListItem;
@@ -194,7 +190,9 @@ function  RFCWriteAddressListFolded(List: TAddressList;Encoder: TRFCWriteAddress
 { ======================== } implementation { ======================== }
 
 uses
-  rfc2822,typeform,xpcc,xpnt,sysutils;
+  sysutils,
+  rfc2822,typeform,xpnt,
+  xpglobal;
 
 { ----------------------- > TAddressListItem < ----------------------- }
 
@@ -810,6 +808,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.10  2002/12/10 10:03:23  dodi
+// - updated uses
+//
 // Revision 1.9  2002/11/14 19:59:29  cl
 // - made FTNParse public
 // - added more fields to TAddressListItem

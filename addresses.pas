@@ -24,14 +24,6 @@ unit addresses;
 
 { =========================== } interface { ========================== }
 
-uses classes
-  {$IFDEF Delphi}
-  {$IFNDEF Kylix}
-    , contnrs
-  {$ENDIF}
-  {$ENDIF}
-  ;
-
 type
 
   TAddress = class
@@ -203,8 +195,9 @@ function FTNParse(addr: string; var z,n,f,p: integer): boolean;
 
 { ======================== } implementation { ======================== }
 
-uses 
-  rfc2822,addresslist,typeform,xpcc,xpnt,sysutils;
+uses
+  rfc2822,addresslist,typeform,
+  xpglobal;
 
 // -- TAddress ---------------------------------------------------------
 
@@ -815,6 +808,9 @@ end;
 
 //    
 // $Log$
+// Revision 1.6  2002/12/10 10:03:23  dodi
+// - updated uses
+//
 // Revision 1.5  2002/11/14 19:59:29  cl
 // - made FTNParse public
 // - added more fields to TAddressListItem
