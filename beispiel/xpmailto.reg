@@ -1,16 +1,16 @@
 REGEDIT4
 ;
-;CrossPoint/OpenXP Registry-Datei fÅr Windows 9x/ME/2000/NT
-;(CrossPoint als Standard-Mailer in Windows)
+;OpenXP Registry-Datei fÅr Windows 9x/ME/2000/NT
+;(OpenXP als Standard-Mailer in Windows)
 ;----------------------------------------------------------
 ;
-;Die EintrÑge in dieser Registry-Datei haben den Zweck, CrossPoint als
-;Standard-Mailer in Windows zu registrieren. CrossPoint startet dann
+;Die EintrÑge in dieser Registry-Datei haben den Zweck, OpenXP als
+;Standard-Mailer in Windows zu registrieren. OpenXP startet dann
 ;automatisch, wenn Sie in Ihrem Web-Browser auf einen sog. mailto:-Link
 ;klicken. Dabei werden die Serverbox und die eMail-Adresse des EmpfÑngers
-;an den XP-Nachrichtendialog (Nachricht/Direkt) Åbergeben und Sie kînnen
+;an den Nachrichtendialog (Nachricht/Direkt) Åbergeben, und Sie kînnen
 ;nach Eingabe des Betreffs direkt mit dem Editieren Ihrer Nachricht beginnen.
-;Hierzu wird CrossPoint mit dem XP-eigenen Parameter /mailto: aufgerufen.
+;Hierzu wird OpenXP mit Parameter /mailto: aufgerufen.
 ;
 ;Leider funktioniert dieses Verfahren nicht, wenn Sie Netscape als Standard-
 ;Browser installiert haben sollten - Sie werden dann trotz dieser EintrÑge
@@ -24,15 +24,15 @@ REGEDIT4
 ;Passen Sie mit einem Texteditor an *allen* entsprechenden Stellen
 ;folgende Angaben an:
 ;
-;1. Pfad zu Ihrer XP-Installation (Default: "C:\XP").
+;1. Pfad zu Ihrer OpenXP-Installation (Default: "C:\OPENXP").
 ;
 ;2. Name der fÅr RFC-Mail zu verwendenden Serverbox (Default: "t-online").
 ;
-;3. Pfad und Name Ihres XP-Startbefehls (Default: "C:\BAT\XP.BAT").
-;   Sinnvollerweise sollten Sie fÅr XP eine PIF-Datei anlegen, dort
+;3. Pfad und Name Ihres OpenXP-Startbefehls (Default: "C:\BAT\OPENXP.BAT").
+;   Sinnvollerweise sollten Sie fÅr OpenXP eine PIF-Datei anlegen, dort
 ;   den eigentlichen Startbefehl eintragen, und in dieser Registry-
 ;   Datei auf die PIF-Datei verweisen
-;   (z.B. "C:\WINDOWS\StartmenÅ\CrossPoint.pif").
+;   (z.B. "C:\WINDOWS\StartmenÅ\OpenXP.pif").
 ;
 ;Bitte beachten Sie, da· Backslashes in Pfadangaben doppelt anzugeben sind!
 ;
@@ -40,9 +40,9 @@ REGEDIT4
 ;ist also, mit der Editor-Suchfunktion in dieser Datei nach folgenden
 ;Strings zu suchen und diese entsprechend abzuÑndern:
 ;
-;Pfad zu CrossPoint: C:\\XP
+;Pfad zu OpenXP: C:\\OPENXP
 ;Serverbox:          \\t-online
-;XP-Startbefehl:     C:\\BAT\\XP.BAT
+;OpenXP-Startbefehl:     C:\\BAT\\OPENXP.BAT
 ;
 ;
 ;Abschlie·end fÅhren Sie diese Datei (z.B. mit einem Doppelklick im
@@ -51,32 +51,32 @@ REGEDIT4
 ;
 
 [HKEY_LOCAL_MACHINE\Software\Clients\Mail]
-@="CrossPoint"
+@="OpenXP"
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint]
-@="CrossPoint"
-"DLLPath"="C:\\XP\\XPICONS.DLL"
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP]
+@="OpenXP"
+"DLLPath"="C:\\OPENXP\\XPICONS.DLL"
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols]
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols]
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto]
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto]
 @="URL:MailTo Protocol"
 "EditFlags"=hex:02,00,00,00
 "URL Protocol"=""
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto\DefaultIcon]
-@="C:\\XP\\XPICONS.DLL,-1"
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto\DefaultIcon]
+@="C:\\OPENXP\\XPICONS.DLL,-1"
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto\shell]
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto\shell]
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto\shell\open]
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto\shell\open]
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\Protocols\mailto\shell\open\command]
-@="\"C:\\BAT\\XP.BAT\" \"-nb -%1\\t-online\""
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\Protocols\mailto\shell\open\command]
+@="\"C:\\BAT\\OPENXP.BAT\" \"-nb -%1\\t-online\""
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\shell]
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\shell]
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\shell\open]
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\shell\open]
 
-[HKEY_LOCAL_MACHINE\Software\Clients\Mail\CrossPoint\shell\open\command]
-@="C:\\BAT\\XP.BAT"
+[HKEY_LOCAL_MACHINE\Software\Clients\Mail\OpenXP\shell\open\command]
+@="C:\\BAT\\OPENXP.BAT"
