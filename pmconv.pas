@@ -16,55 +16,35 @@
   {$APPTYPE CONSOLE }
 {$ENDIF }
 
-uses  xpglobal, dos,typeform,xpdatum;
+uses  xpglobal, dos,typeform,xpdatum,sysutils,classes,xpnt;
 
 const
-      readfirst = 2500;
       TO_ID     : string[10] = '/'#0#0#8#8'TO:';
       xparc     : string[15] = 'X-XP-ARC:'#13#10;
-      midlen    = 120;
       nt_ZConnect=2;
 
-      attrCrash   = $0002;            { header.attrib: Crashmail   }
-      attrFile    = $0010;            { File attached              }
       attrReqEB   = $1000;            { EB anfordern               }
       attrIsEB    = $2000;            { EB                         }
-      AttrPmReply = $0100;            { PM-Reply auf AM (Maus)     }
-      AttrQuoteTo = $0400;            { QuoteTo (Maus)             }
+      AttrControl = $0020;            { Cancel-Nachricht }
+      AttrQPC     = $0001;
 
-type   header = record
-                  netztyp    : byte;
-                  archive    : boolean;       { archivierte PM }
-                  empfaenger : string[90];    { Brett / User / TO:User }
-                  betreff    : string[40];
-                  absender   : string[80];
-                  datum      : string[11];    { Netcall-Format }
-                  zdatum     : string[20];    { ZConnect-Format; nur auslesen }
-                  ddatum     : string[14];    { Dateidatum, jjjjmmtthhmmss }
-                  empfanz    : integer;       { Anzahl EMP-Zeilen }
-                  pfad       : string;        { Netcall-Format }
-                  msgid,ref  : string[midlen];{ ohne <> }
-                  typ        : string[1];     { T / B }
-                  groesse    : longint;
-                  komlen     : longint;       { Kommentar-L„nge }
-                  realname   : string[40];
-                  programm   : string[40];    { Mailer-Name }
-                  datei      : string[40];    { Dateiname }
-                  prio       : byte;          { 10=direkt, 20=Eilmail }
-                  real_box   : string[20];    { falls Adresse = User@Point }
-                  hd_point   : string[25];    { eigener Pointname }
-                  pm_bstat   : string[20];    { Bearbeitungs-Status }
-                  attrib     : word;          { Attribut-Bits }
-                  fido_to    : string[36];
-                end;
+      readempflist = false;
+      readkoplist = false;
+      mheadercustom: array[1..2] of string = ('', '');
 
+type
       charr   = array[0..65530] of char;
       charrp  = ^charr;
+
+{$I xpheader.inc }
 
 var   f,f2  : file;
       nn    : longint;
       uname : string;
       zconn : boolean;
+      
+      empflist,uline,xline,mail : tstringlist;
+      hd : header;
 
 
 procedure helppage;
@@ -83,6 +63,44 @@ begin
   halt(1);
 end;
 
+
+function compmimetyp(typ:string):string;
+begin
+  if left(typ,12)='application/' then
+    compmimetyp:=LowerCase(mid(typ,12))
+  else
+    compmimetyp:=LowerCase(typ);
+end;
+
+
+// Frischen Header erzeugen
+procedure ClearHeader;
+begin
+  with hd do
+  if Assigned(AddRef) then
+  begin
+    AddRef.Free;
+    XEmpf.Free;
+    XOEM.Free;
+    Followup.Free;
+  end;
+
+  ULine.Clear; XLine.Clear; Mail.Clear;
+  Fillchar(hd, sizeof(hd), 0);
+
+  with hd do
+  begin
+    Netztyp := nt_UUCP;
+    AddRef := TStringList.Create;
+    XEmpf := TStringList.Create;
+    XOEM := TStringList.Create;
+    Followup := TStringList.Create;
+  end;
+end;
+
+
+{$DEFINE uuzmime }
+
 {$I xpmakehd.inc}
 
 
@@ -90,12 +108,10 @@ procedure checkit;
 var p      : charrp;
     ps     : word;
     fs,adr : longint;
-    rr     : word;
     hd     : header;
     hds    : longint;
     ok     : boolean;
     n      : longint;
-    c      : char;
 
   procedure copymsg;
   var rr   : word;
@@ -131,7 +147,7 @@ begin
   rewrite(f2,1);
   while (adr<fs) do begin
     seek(f,adr);
-    makeheader(zconn,f,hds,hd,ok);
+    makeheader(zconn,f,1,0,hds,hd,ok,false);
     if not ok then
       error('Fehlerhafter Puffer!'#7);
     inc(n);
@@ -153,7 +169,6 @@ end;
 Procedure MakeBak(n,newext:string);
 var bakname : string;
     f       : file;
-    res     : integer;
 begin
   assign(f,n);
   if cpos('.',n)=0 then bakname:=n+'.'+newext
@@ -162,7 +177,6 @@ begin
   {$I-}
     setfattr(f,archive);
     erase(f);
-    res:=ioresult;
   {$I+}
   assign(f,n);
   setfattr(f,archive);
@@ -172,7 +186,6 @@ end;
 
 function ZC_puffer(fn:pathstr):boolean;
 var t : text;
-    z : boolean;
     s : string;
     abs,emp,eda : boolean;
 begin
@@ -215,6 +228,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/09/30 14:48:53  fe
+  Notduerftig zum Ubersetzen gebracht.
+
   Revision 1.5  2000/07/04 12:04:18  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
