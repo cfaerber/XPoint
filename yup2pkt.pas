@@ -6,10 +6,17 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
+
+{$I XPDEFINE.INC }
+
+{$IFDEF Delphi }
+  {$APPTYPE CONSOLE }
+{$ENDIF }
 
 { Yuppie Mailbase -> Fido-PKT }
 
-uses dos,typeform,fileio,dbase;
+uses xpglobal, dos, typeform, fileio, dbase;
 
 
 const NetmailDB = 'NET-MAIL';
@@ -85,7 +92,9 @@ var   YupDir,Outfile : pathstr;
 procedure logo;
 begin
   writeln;
-  writeln('Yuppie-Mailbase -> PKT - Konvertierer v0.9      PM 12/92');
+  writeln('Yuppie-Mailbase -> PKT - Konvertierer, Peter Mandrella, 12/92');
+  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
+            ' by ',author_name,' <',author_mail,'>');
   writeln;
 end;
 
@@ -355,4 +364,9 @@ begin
   writeln(dup(26,'-'));
   writeln('Nachrichten gesamt',msgs:8);
 end.
+{
+  $Log$
+  Revision 1.3  2000/03/03 13:24:45  mk
+  YUP2PKT compilierbar gemacht und in Distribution aufgenommen
 
+}

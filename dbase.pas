@@ -23,7 +23,7 @@ unit dbase;
 interface  {------------------------------------------------}
 
 
-uses dos;
+uses dos, typeform;
 
 const  MaxFelder  = 50;                   { max Felder pro Datei          }
        memoblock  = 512;
@@ -468,6 +468,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.4  2000/03/03 13:24:45  mk
+  YUP2PKT compilierbar gemacht und in Distribution aufgenommen
+
   Revision 1.3  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 
