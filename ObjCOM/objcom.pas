@@ -52,7 +52,7 @@ type tCommObj = Object
         function  GetChar: Char; virtual;
         procedure ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); virtual; {Wait until BlockLen chars are ready, Reads normally = BlockLen}
         function  SendChar(C: Char): Boolean; virtual;
-        function  SendString(Temp: ShortString; ExpectEcho: Boolean): Boolean; virtual;
+        function  SendString(Temp: String; ExpectEcho: Boolean): Boolean; virtual;
         function  ReadyToSend(BlockLen: Longint): Boolean; virtual;
         procedure SendBlock(var Block; BlockLen: Longint; var Written: Longint); virtual; {Send BlockLen chars, Written normally = Blocklen, waits for OutBuffer}
         procedure SendWait(var Block; BlockLen: Longint; var Written: Longint; Slice: SliceProc); virtual;
@@ -85,7 +85,7 @@ function CommInit(S: String; var CommObj: tpCommObj): boolean;
   "Fossil Port:1 Speed:57600"
   "Telnet 192.168.0.1:23"
   "RawIP 192.168.0.1:20000"
-  "Telnet Port:20000" *
+  "Telnet Port:20000"
   *: not yet working.}
 
 function FossilDetect: Boolean;
@@ -341,8 +341,8 @@ end; { proc. SendWait }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-function tCommObj.SendString(Temp: ShortString; ExpectEcho: Boolean): Boolean;
-var Written,ReadBytes,I: Longint; Echo: ShortString;
+function tCommObj.SendString(Temp: String; ExpectEcho: Boolean): Boolean;
+var Written,ReadBytes,I: Longint; Echo: String;
 begin
   if ExpectEcho then PurgeInBuffer;
   SendBlock(Temp[1], Length(Temp), Written);
@@ -441,6 +441,9 @@ end.
 
 {
   $Log$
+  Revision 1.20  2001/03/16 17:10:47  cl
+  - changed SendString to ansistrings
+
   Revision 1.19  2001/01/28 18:06:38  ma
   - added a bit real telnet functionality
   - renamed former connection type "telnet" to "rawip"
