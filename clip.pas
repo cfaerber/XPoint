@@ -469,6 +469,18 @@ begin
     ClipWrite:=false;
 end;
 
+procedure replace_asc0(var puffer;len:word); assembler;
+asm
+    les di,puffer
+    mov cx,len
+    mov al,0
+@1: repne scasb
+    jne @end
+    mov byte ptr [es:di-1],' '
+    jmp @1
+@end:
+end;
+
 procedure FileToClip(fn:pathstr);       { Dateiinhalt ins Clipboard schicken }
 var f  : file;
     p  : pointer;
@@ -501,6 +513,7 @@ begin
       getmem(p,bs);
       blockread(f,p^,bs,rr);
       ClipEmpty;
+      replace_asc0(p^,rr);
       ClipWrite(cf_Oemtext,rr,p^);
       ClipClose;
       freemem(p,bs);
@@ -646,6 +659,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.18  2002/04/09 21:26:22  my
+  JG:- Beim Kopieren von Text in die Zwischenablage wird das Zeichen
+       ASCII #0 jetzt in ein Leerzeichen (#20) umgewandelt statt den
+       String an dieser Stelle abzuschneiden.
+
   Revision 1.19.2.17  2002/03/11 21:23:42  my
   JG:- Fehlerton beim EinfÅgen eines nicht vorhandenen oder zu gro·en
        Clipboard-Inhalts wird jetzt (wie alle anderen akustischen
