@@ -95,8 +95,8 @@ uses
 const  maxinside = 25;
 
        koo_da : boolean = false;   { Koordinaten abholbereit }
-       lx     : byte    = 255;     { letzte Maus-Textcursor-Positionen }
-       ly     : byte    = 255;
+       lx     : word    = 255;     { letzte Maus-Textcursor-Positionen }
+       ly     : word    = 255;
        dbcl   : byte    = mausdbl_norm;
        istack : byte    = 0;
 {$IFDEF Win32}
@@ -108,9 +108,9 @@ var
   inside : array[1..maxinside,0..3] of byte;
   insen  : array[1..maxinside,0..2] of boolean;
 
-function has_moved(x,y:byte): boolean;
+function has_moved(x,y:word): boolean;
 begin
-  result:=not(lx in [x,255]) and (ly in [y,255]);
+  result:=(lx<>x)or(y<>ly);
   lx:=x; ly:=y;
 end;
 
@@ -197,8 +197,7 @@ begin
     if (dwEventFlags and MOUSE_MOVED)<>0 then // mouse moved
     begin
       Debug.DebugLog('maus2', Format('mouse moved (buttons=0x%s)',[hex(dwButtonState,8)]), DLTrace);
-      if has_moved(mausx,mausy) then
-      else
+      if not has_moved(mausx,mausy) then
         if ((dwButtonState and 1)<>0) then
         begin
           if (istack>0) and not (was_inside and auto_move) then
@@ -555,6 +554,9 @@ end;
 
 {
   $Log$
+  Revision 1.41  2001/10/17 12:07:28  ma
+  - fixed range check errors
+
   Revision 1.40  2001/10/15 09:04:21  ml
   - compilable with Kylix ;-)
 

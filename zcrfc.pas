@@ -1672,17 +1672,16 @@ var
       p: integer;
     begin
       while (FirstChar(line) = '<') do
-         with hd do
-        begin
+        with hd do begin
           p := cpos('>', line);
           if p < 3 then p := length(line) + 1;
 
           References.Add(copy(line, 2, p - 2));
 
-          while (p <= length(line)) and ((line[p + 1] = ' ') or (line[p + 1] = #9)) do
+          while (p < length(line)) and ((line[p + 1] = ' ') or (line[p + 1] = #9)) do
             inc(p);
           delete(line, 1, p);
-        end;
+          end;
     end;
 
   var
@@ -3637,6 +3636,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.79  2001/10/17 12:07:28  ma
+  - fixed range check errors
+
   Revision 1.78  2001/09/15 19:51:26  cl
   - optimized some code related to charset recoding
 
