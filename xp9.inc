@@ -547,11 +547,11 @@
             maddbool(3,15,getres2(920,57), PPPMode); { 'PPP-Modus (externe Clients)' }
             mhnr(8026);
             maddstring(3,17,getres2(920,67),PPPClientPath,40,60,ValidDirCh);   { 'Client-Verzeichnis' }
-            mappsel(false,'XPNEWS\');
+            mappsel(false,'UKAD\ùUKAW\ùUKAX\ùUKA_PPP\ùXPNEWS\');
             msetvfunc(PPPClientpathTest);
             maddstring(3,18,getres2(920,59),PPPClient,40,60,'');   { 'PPP-Client-Aufruf' }
             mappsel(false,'UKAD.BAT /M $CLPATH $CONFIGùUKAW.BAT /M $CLPATH $CONFIGùUKAX.BAT /M $CLPATH $CONFIGù' +
-              'UKA_PPP.BAT /M $CLPATH $CONFIGù$CLPATH+\XPNEWS $CONFIG');
+              'UKA_PPP.BAT /M $CLPATH $CONFIGù$CLPATH+XPNEWS.EXE $CONFIG');
             msetvfunc(pppclienttest);
             maddstring(3,19,getres2(920,63),PPPAddServers,40,60,ValidDirCh);   { 'Zus„tzliche Boxen' }
             uparcnr:=0; downarcnr:=0;
@@ -1389,6 +1389,9 @@
 
 {
   $Log$
+  Revision 1.10.2.17  2001/04/10 11:36:38  mk
+  - weitere Anpassungen Client-Modus
+
   Revision 1.10.2.16  2001/04/09 16:47:18  mk
   - arbeiten am Client-Modus
 

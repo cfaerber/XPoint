@@ -523,6 +523,7 @@ begin
       end;
     end else
     begin
+      MkDir(PPPSpool);
       if not IsPath(PPPSpool) then begin
         trfehler(728,44);   { 'ungÅltiges Spoolverzeichnis' }
         exit;
@@ -546,12 +547,12 @@ begin
       NC^.Sendbuf:= filesum(PPPSpool+'*.OUT');
       s := PPPClient;
       exchange(s, '$CONFIG', bfile);
-      exchange(s, '$CLPATH+\', PPPClientpath);
+      exchange(s, '$CLPATH+', PPPClientpath);
       exchange(s, '$CLPATH', PPPClientpath);
       exchange(s, '$CLPATH', PPPClientpath);
       exchange(s, '$CLSPOOL', PPPSpool);
-      Wrt2(sp(screenwidth+1-length(xp_client)-wherex) + xp_client);   { 'CrossPoint/Client' }
-      MkDir(PPPSpool);
+      attrtxt(col.colkeys);
+      Wrt(Screenwidth-Length(xp_client), Screenlines, xp_client);   { 'CrossPoint/Client' }
       shell(s,600,3);
     end;
 
@@ -616,6 +617,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.12  2001/04/10 11:36:38  mk
+  - weitere Anpassungen Client-Modus
+
   Revision 1.13.2.11  2001/04/09 16:47:18  mk
   - arbeiten am Client-Modus
 

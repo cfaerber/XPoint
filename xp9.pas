@@ -257,14 +257,14 @@ begin
     s1 := GetField(23);
     if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
     if ustr(s1) =  ustr(Dir) then Ok := true;
-    if Dir = '$CLPATH+\' then ok := true;
+    if Dir = '$CLPATH+' then ok := true;
     if not ok then
     begin
       rfehler1(936, UStr(fn)); { 'Dieser Eintrag darf keinen Pfad enthalten!' }
       PPPClientTest := false;
     end else
     begin
-      exchange(fn, '$CLPATH+\', s1);
+      exchange(fn, '$CLPATH+', s1);
       if ext<>'' then
         ok:=fsearch(fn,ownpath)<>''
       else
@@ -1869,6 +1869,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.19  2001/04/10 11:36:38  mk
+  - weitere Anpassungen Client-Modus
+
   Revision 1.19.2.18  2001/04/09 16:47:19  mk
   - arbeiten am Client-Modus
 
