@@ -1,6 +1,6 @@
 K CrossPoint v3.30 resource file
 K English
-K (c) '93-96 Peter Mandrella
+K (c) '93-99 Peter Mandrella
 K (c) '2000 OpenXP Team, www.openxp.de
 
 # Online Help File, Key Macros
@@ -131,7 +131,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 20   Start call
 # Fileserver
 21   order
-22 S^uche
 
 + 22
 # Keys in Newsgroup window:
@@ -250,7 +249,6 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # XP1O
 135  waiting for end of external viewer ...
 136  List of marked messages active -> search function disabled!
-
 
 # XPKEYS
 150  No files in AUTOEXEC directory
@@ -482,7 +480,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7    PMs
 10   Ask before Quit
 11   Swap to EMS
-12   Archive prefix~
+12   Archive grps.~
 13   Delete archived messages
 14   Append new message areas at end
 15   Full name/address in Private mail areas
@@ -490,7 +488,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 17   MBytes
 18   Use XMS
 19   Use descriptions from newsgroup list
-20   Enable umlauts for new Users
+20   Enable special characters for new users
 21   Enable alternative quote characters
 22   Sort User-window by Server name
 23   Default Usergroup
@@ -1233,11 +1231,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1    Thank you for using CrossPoint. Please note that CrossPoint is
 2    NOT free software, it is shareware and you must register after a
 3    30-day evaluation period. For further information, including
-4    prices and a registration form, contact the author.
+4    prices and a registration form, read the file *LIZENZ.DOC*.
 5
 6    If you have any questions, problems or suggestions concerning XP,
-7    please feel free to post in either the FidoNet echo XPOINT or the
-8    German newsgroup de.comm.software.crosspoint
+7    please feel free to send a message to one of the addresses listed
+8    in the online help (press *<F1>*, *<F1>*, *S*, *<Enter>* within XP).
 19   License No:~
 #
 20   Choose "Continue" if you agree to these terms of license.
@@ -1265,19 +1263,19 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 530
 # Zeilenanzahl
 0    13
-1    This is a Beta-Version of Crosspoint, created by the OpenXP-
-2    Development-Team. Please notice, that there are surely still bugs
-3    in this betaVersion, which could damage your database
-4    or cause trouble if you use this XP-Version in public.
-5    If you use this version, you are fully responsible for all damage,
-6    you may cause with it. If you don't agree with this terms,
-7    please use a official release-version of Crosspoint.
-8    If you have questions or suggestions to the project,
-9    please apply to the XP-support-forums, esp. the usenet-newsgroup
-10   de.comm.software.crosspoint and the official OpenXP Homepage
-11   http://www.openxp.de.
+1    This is a *beta* version of CrossPoint, created by the OpenXP
+2    Development Team. Please note that there may still be bugs in
+3    this beta version, which could corrupt your database or cause
+4    problems if you use this version of CrossPoint in public. If you
+5    use this version, you are solely responsible for all damage you
+6    may cause with it. If you can't agree to these terms, please use
+7    an official release version of CrossPoint. If you have questions
+8    about the project or wish to make suggestions, please use the
+9    CrossPoint support forum, viz. the usenet newsgroup
+10   de.comm.software.crosspoint, or the official OpenXP Homepage
+11   *http://www.openxp.de/*, or write eMail to *dev@openxp.de*.
 12
-13  Choose "Continue", to work with this betaversion.
+13  Choose "Continue", to use this beta version.
 30   ~^Continue , ^Cancel~
 -
 # --- XP6 -------------------------------------------------------------
@@ -2704,7 +2702,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2736 %s contains messages. Delete
 2737 Warning: Message encryption is not allowed in FidoNet!
 2738 Delete User from address book
-2739 Vertreter nicht in der Datenbank - neu anlegen
+2739 Forward address not in database - create new user
 
 
 # --- XP_DES, XP_PGP --------------------------------------------------
@@ -3009,9 +3007,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 #
 29 %s is no fido server!
 30 Warning - illegal characters in point name: %s
+31 Standard entry cannot be deleted.
+32 MIME type or file extension required.
 33 "rz" and "sz" must be installed!
-34 Duplicate MIME-Types or File-Extensions are not allowed!
-35 Standardeintrag kann nicht editiert werden.
+34 Duplicate MIME types or file extensions not allowed!
+35 Standard entry cannot be edited.
 
 +  11000
 1  unknown command

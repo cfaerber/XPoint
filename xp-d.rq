@@ -1,6 +1,6 @@
 K CrossPoint v3.30 resource file
 K Deutsch
-K (c) '93-98 Peter Mandrella
+K (c) '93-99 Peter Mandrella
 K (c) '2000 OpenXP-Team, www.openxp.de
 
 # Online-Hilfe, Tastenmakros
@@ -130,7 +130,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 20   Anruf starten
 # Fileserver
 21   bestellen
-22 S^uche
 
 + 22
 # Tasten im Brettfenster:
