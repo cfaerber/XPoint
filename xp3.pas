@@ -73,7 +73,7 @@ function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
 procedure makeuser(absender,pollbox:string);
 function  EQ_betreff(var betr:string):boolean;
 function  grQuoteMsk:pathstr;
-function  isbox(box:string):boolean;
+function  isbox(const box:string):boolean;
 procedure ReplaceVertreterbox(var box:string; pm:boolean);
 
 procedure wrkilled;
@@ -954,7 +954,7 @@ begin
 end;
 
 
-function isbox(box:string):boolean;
+function isbox(const box:string):boolean;
 var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
@@ -1239,6 +1239,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.7  2001/01/04 16:53:07  mk
+  - const-Parameter in isbox() verwenden
+
   Revision 1.25.2.6  2000/11/30 14:15:25  mk
   - fixed NewUserIBM when adding new uesers
 
