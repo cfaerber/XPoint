@@ -435,7 +435,9 @@ begin
     errsound;
     testmausempf:=false;
     end
-  else begin
+  else 
+  begin
+    TestMausEmpf := true;
     dbOpen(d,PseudoFile,1);
     dbSeek(d,piKurzname,UpperCase(s));
     if dbFound and ((dbReadStr(d,'pollbox')='') or
@@ -1316,10 +1318,12 @@ begin
 end;
 
 
-end.
 
 {
   $Log$
+  Revision 1.10  2001/12/09 14:01:32  mk
+  - fixed compiler warning
+
   Revision 1.9  2001/12/09 13:57:45  mk
   - fixed crash/corrupted message base with Alt-P
 
@@ -1389,3 +1393,5 @@ end.
   Revision 1.60  2001/06/04 17:31:37  ma
   - implemented role feature
 }
+end.
+
