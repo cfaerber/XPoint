@@ -3105,6 +3105,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1  Warning: Fido packet '%s' has errors!
 2  Broken Fido packet '%s'!
 3  Broken Puffer!
+#  XPFM
+40 Error while initialize port "%s"
+97 Invalid address: "%s"
+98 Invalid log file name: %s
+99 XPFM error: %s
+
 
 +  12400
 1  Bad line - uudecode aborted
@@ -3232,6 +3238,44 @@ K (c) '2000 OpenXP Team, www.openxp.de
 50 Copy %s to BAD.
 51 Unknown group pattern '%s'
 -
+
+# XPFM
++30004
+1   Call to %s
+2   Hangup modem
+3   Can't hangup modem - line still up?
+4   Initialize modem
+5   Dial %s (try %s)...
+6   Wait for next call...
+7   canceled
+# Uebertragung
+10  Send %s...
+11  Receiving %s...
+12  Send...
+13  Receiving...
+14  Transmission aborted
+# Login, Handshake
+20  Hello-Send error
+21  Hello-Receive error
+22  Handshake OK
+23  EMSI_NAK: repeat EMSI packet
+24  Invalid EMSI packet received
+25  Adjusting time
+26  not implemented
+27  No transmission possible :-(
+# Fehler
+80  InPath missing
+81  InPath invalid
+82  MailPath missing
+83  MailPath invalid
+84  Invalid file name (temp. file)
+85  Name missing
+86  'Address' missing
+87  Invalid baud rate
+88  Port address is missing
+89  IRQ is missing
+-
+
 
 
 # --- NNTP ------------------------------------------------------------
@@ -3435,6 +3479,12 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.113  2000/12/14 14:11:09  hd
+# - merges some resources from XPFM-?.RQ
+#   - 12300 for errors
+#   - 30003 for ZFIDO
+#   - 30004 for XP-FM
+#
 # Revision 1.112  2000/12/13 14:14:46  hd
 # - some changes on the fido-sysop-poll
 #   - a little state window
