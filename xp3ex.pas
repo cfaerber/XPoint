@@ -996,7 +996,7 @@ begin
         SetQC(hdp^.netztyp);
         assign(t,tmp);
         reset(t);
-        if not multipart or (ListQuoteMsg<>'') then
+        if not multipart or (ListQuoteMsg<>'') then  { ZC-Header 'Åberlesen' }
           if ntZCablage(dbReadInt(mbase,'ablage')) then
             repeat
               readln(t,s)
@@ -1029,6 +1029,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.8  2000/02/23 23:49:47  rb
+  'Dummy' kommentiert, Bugfix beim Aufruf von ext. Win+OS/2 Viewern
+
   Revision 1.7  2000/02/21 14:55:43  mk
   MH: Prioritaetenbehandlung eingebaut
 

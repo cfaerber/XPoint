@@ -634,7 +634,7 @@ var f       : file;
     version : byte;
 begin
   assign(f,fn);
-  resetfm(f,0);
+  resetfm(f,FMDenyWrite);
   blockread(f,magic,2);
   seek(f,60);
   blockread(f,hdadr,4);
@@ -652,7 +652,7 @@ begin
         exetype:=ET_DOS
       else if magic='PE' then
         exetype:=ET_Win32
-      else if magic='LE' then
+      else if magic='LX' then
         exetype:=ET_OS2_32
       else if magic<>'NE' then
         exetype:=ET_DOS
@@ -674,6 +674,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/23 23:49:47  rb
+  'Dummy' kommentiert, Bugfix beim Aufruf von ext. Win+OS/2 Viewern
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

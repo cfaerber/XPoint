@@ -380,7 +380,7 @@ begin
         ListQuoteMsg:=TempS(dbReadInt(mbase,'msgsize'));
         assign(tt,ListQuoteMsg);
         rewrite(tt);
-        if ntZConnect(mbNetztyp) then begin
+        if ntZConnect(mbNetztyp) then begin  { Dummy-ZC-Header erzeugen }
           writeln(tt,'Dummy: das ist ein Dummy-Header');
           writeln(tt);
           end
@@ -905,7 +905,7 @@ procedure XPWinShell(prog:string; space:word; cls:shortint);
         writeln(t);
         writeln(t,'echo OS/2-Programm wird ausgefÅhrt ...');
         writeln(t,'echo.');
-        writeln(t,'%1 %2 %3 %4 %5 %6');
+        writeln(t,'cmd /c %1 %2 %3 %4 %5 %6');
         writeln(t,'echo.');
         close(t);
         end;
@@ -922,6 +922,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/02/23 23:49:47  rb
+  'Dummy' kommentiert, Bugfix beim Aufruf von ext. Win+OS/2 Viewern
+
   Revision 1.10  2000/02/23 19:11:04  jg
   -Suchfunktionen im Lister benutzen Autosuche,
    "Global_Suchstring" und dessen auswertung entfernt.
