@@ -508,8 +508,6 @@ Folgende Funktionen stehen zur Verfgung:
        den Weg ("Pfad") herausuzufinden, auf dem eine
        Nachricht zu Ihnen gelangt ist.
 
-   O   Zeigt den Original-Nachrichtenkopf an.
-
   ^R   decodiert eine Rot13-codierte Nachricht.
 
   ^H   zeigt eine Nachricht als Hex-Dump (^H ist
@@ -682,9 +680,6 @@ Der Lister wird mit <Esc> verlassen.
 
 <<F>>   schaltet farbliche *Hervorhebungen* ein/aus
     (s. [/Config/ExternLister]).@237
-
-<<Q>>   schaltet um, ob "|" und ":" als Quote-Zeichen
-    interpretiert werden oder nicht.
 
 <<Ctrl R>> schaltet die Rot13-Codierung ein/aus.
 
@@ -1169,9 +1164,9 @@ soll.
 <<Emp.>>    Der Empf„nger der Nachricht wird ge„ndert.
         Wird der aktuelle Eintrag gel”scht, kann mit
         <F2> zwischen Brett und Usern gew„hlt werden.
-        ACHTUNG ! Bitte berdenken Sie vor dem 
+        ACHTUNG ! Bitte berdenken Sie vor dem
         Benutzen dieser Funktion, ob Sie damit nicht
-        andere Netzteilnehmer ver„rgern k”nnten. 
+        andere Netzteilnehmer ver„rgern k”nnten.
 
 <<Betreff>> „ndert den Betreff.
 
@@ -3421,10 +3416,6 @@ Zeichen "|" und ":". Da dann aber die Farben fr die
 verschiedenen Quoteebenen nicht mehr stimmen, kann
 hier eingestellt werden, daá diese zwei Zeichen auch
 wie Quote-Zeichen behandelt werden sollen.
-
-Diese Einstellung gilt sowohl fr den Lister als auch
-den Editor. Sie l„át sich im Lister jederzeit
-mit der Taste "Q" umschalten.
 @
 224
 So viele Megabytes Festplattenplatz ben”tigt Cross-
