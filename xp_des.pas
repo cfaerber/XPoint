@@ -26,7 +26,7 @@ uses
 {$ENDIF }
   fileio,inout,maus2,xp0, xpglobal;
 
-procedure DES_PW(keystr:string);
+procedure DES_PW(const keystr:string);
 procedure DES_code(decode:boolean; var data; ofs,total:longint;
                    size:word; x,y:byte);
 
@@ -533,7 +533,7 @@ begin
 end;
 
 
-procedure DES_PW(keystr:string);
+procedure DES_PW(const keystr:string);
 var i : byte;
 begin
   fillchar(key,sizeof(key),0);
@@ -571,6 +571,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.2  2001/08/12 08:59:02  mk
+  - added some const parameters
+
   Revision 1.9.2.1  2001/07/01 15:42:12  my
   SV:- moved unit to overlay
 

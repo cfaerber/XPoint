@@ -46,7 +46,7 @@ type  diskstat = record
       perrproc = procedure;
 
 procedure setwinselcursor(cur:curtype);
-procedure fslct(x,y1,y2:byte; txt:string; sla:string; errdisp:boolean;
+procedure fslct(x,y1,y2:byte; const txt:string; sla:string; errdisp:boolean;
                 var fi:string; var brk:boolean);
 function  fsbox(y:byte; path,pathx:pathstr; vorgabe:string; xdir,invers,
                 vert:boolean):pathstr;
@@ -81,7 +81,7 @@ var   pa,mpa   : ^parr;
       pn,mpn   : integer;
 
 
-procedure fslct(x,y1,y2:byte; txt:string; sla:string; errdisp:boolean;
+procedure fslct(x,y1,y2:byte; const txt:string; sla:string; errdisp:boolean;
                 var fi:string; var brk:boolean);
 
 const maxs = 5;
@@ -1117,6 +1117,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.12  2001/08/12 08:59:02  mk
+  - added some const parameters
+
   Revision 1.16.2.11  2001/08/11 22:17:54  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

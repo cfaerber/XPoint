@@ -36,7 +36,7 @@ type  MausInfRec = record
       MausInfAP  = ^MausInfArr;
 
 
-procedure MausReadITI(bfile:string; info:MausInfAP; var infos:integer);
+procedure MausReadITI(const bfile:string; info:MausInfAP; var infos:integer);
 
 
 implementation  { --------------------------------------------------- }
@@ -94,7 +94,7 @@ begin
 end;
 
 
-procedure MausReadITI(bfile:string; info:MausInfAP; var infos:integer);
+procedure MausReadITI(const bfile:string; info:MausInfAP; var infos:integer);
 var t : text;
     s : string;
 begin

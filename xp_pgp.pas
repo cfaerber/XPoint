@@ -19,12 +19,12 @@ interface
 
 uses  xpglobal, dos,typeform,fileio,resource,database,maske,xp0,xp1, lfn;
 
-procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
-procedure RunPGP(par:string);                { PGP 2.6.x bzw. 6.5.x aufrufen  }
-procedure RunPGP5(exe:string;par:string);    { PGP 5.x aufrufen               }
+procedure LogPGP(const s:string);                  { s in PGP.LOG schreiben         }
+procedure RunPGP(const par:string);                { PGP 2.6.x bzw. 6.5.x aufrufen  }
+procedure RunPGP5(const exe:string;const par:string);    { PGP 5.x aufrufen               }
 procedure UpdateKeyfile;
 procedure WritePGPkey_header(var f:file);    { PGP-PUBLIC-KEY: ... erzeugen   }
-procedure PGP_SendKey(empfaenger:string);    { Antwort auf Key-Request senden }
+procedure PGP_SendKey(const empfaenger:string);    { Antwort auf Key-Request senden }
 procedure PGP_EncodeFile(var source:file; var hd:xp0.header;
                          fn,UserID:string; encode,sign:boolean;
                          var fido_origin:string);
@@ -32,7 +32,7 @@ procedure PGP_EncodeFile(var source:file; var hd:xp0.header;
 procedure PGP_RequestKey;
 procedure PGP_DecodeMessage(hdp:headerp; sigtest:boolean);
 procedure PGP_DecodeMsg(sigtest:boolean);  { dec. und/oder Signatur testen }
-procedure PGP_DecodeKey(source,dest:string);
+procedure PGP_DecodeKey(const source,dest:string);
 procedure PGP_ImportKey(auto:boolean);
 procedure PGP_EditKey;
 procedure PGP_RemoveID;
@@ -88,7 +88,7 @@ end;
 {$ENDIF }
 {$ENDIF}
 
-procedure LogPGP(s:string);
+procedure LogPGP(const s:string);
 var t : text;
 begin
   assign(t,LogPath+'PGP.LOG');
@@ -100,7 +100,7 @@ begin
 end;
 
 { PGP 2.6.x und 6.5.x }
-procedure RunPGP(par:string);
+procedure RunPGP(const par:string);
 const
   {$ifdef linux}
     PGPEXE = 'pgp';
@@ -136,7 +136,7 @@ begin
 end;
 
 { PGP 5.x }
-procedure RunPGP5(exe,par:string);
+procedure RunPGP5(const exe,par:string);
 var path : string;
     pass,batch : string;
     {$ifdef linux}
@@ -252,7 +252,7 @@ begin
 end;
 
 
-procedure PGP_SendKey(empfaenger:string);   { Antwort auf Key-Request senden }
+procedure PGP_SendKey(const empfaenger:string);   { Antwort auf Key-Request senden }
 var t   : text;
     tmp : string;
     hd  : string[12];
@@ -638,7 +638,7 @@ end;
 
 { Key aus ZCONNECT-Header auslesen und in Bin„rdatei speichern }
 
-procedure PGP_DecodeKey(source,dest:string);
+procedure PGP_DecodeKey(const source,dest:string);
 const b64tab : array[43..122] of byte =         (63, 0, 0, 0,64,
                 53,54,55,56,57,58,59,60,61,62, 0, 0, 0, 0, 0, 0,
                  0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,
@@ -799,6 +799,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.4  2001/08/12 08:59:02  mk
+  - added some const parameters
+
   Revision 1.19.2.3  2001/08/11 22:18:04  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
