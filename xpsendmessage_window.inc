@@ -41,6 +41,8 @@ var
   max_h,new_h,h: 1..20;
   brk: boolean;
 
+  FieldSend: integer;
+
   FieldUp:  integer;
   FieldDwn: integer;
   Field1st: integer;
@@ -1297,6 +1299,8 @@ begin
 
   SetEncryptionField;
   SetSigningField;
+
+  SetFieldPos(FieldSend);
 end;
 
 function OnExit(brk,modif:boolean):boolean;
@@ -1314,6 +1318,7 @@ end;
 procedure OnTextButton(var cont: string);
 begin
   gsData.EditText;
+  SetFieldPos(FieldSend);
 end;
 
 procedure OnServerSelect(var cr:customrec);
@@ -1570,6 +1575,7 @@ begin
       ok_pos := FieldPos;
       inc(p,Length(s)+3);
       MHNr(2925);
+      FieldSend := FieldPos;
 
       s := GetRes2(610,21); { ' ^Nein ' }
       MAddButton(p,h+add_h+Max(ll,rr),s,senden,-1,true);
@@ -2064,6 +2070,9 @@ end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.14  2003/09/16 23:56:42  cl
+// - USABILITY FIX: #704179 - 3.9.4: n/u/ä -> Änderungen speichern
+//
 // Revision 1.13  2003/09/07 14:49:42  cl
 // - send window: postpone message
 //   CLOESES task #76797: "Sendefenster: Parken"
