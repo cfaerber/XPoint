@@ -251,7 +251,8 @@ end;
 
 procedure SetNtAllowed;
 begin
-  ntAllowed:=[nt_ZConnect,nt_Fido,nt_Maus,nt_QWK,nt_UUCP,nt_NNTP,nt_POP3];
+  ntAllowed:={$ifndef DOS32}[nt_ZConnect,nt_Fido,nt_UUCP,nt_NNTP,nt_POP3];
+             {$else}[nt_ZConnect,nt_Fido,nt_UUCP];{$endif}
   developer:=FileExists('developer');
   exclude(ntAllowed,nt_Pronet);
 end;
@@ -1684,6 +1685,9 @@ end;
 
 {
   $Log$
+  Revision 1.112  2001/04/15 19:32:24  ma
+  - TCP/IP netcalls disabled in DOS32
+
   Revision 1.111  2001/04/03 13:25:40  ma
   - cleaned up fido aka handling
 
