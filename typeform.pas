@@ -758,15 +758,15 @@ end;
 
 
 function FileName(var f):string;
-var s : TFilename;
-    i : integer;
+var
+  i : integer;
 begin
-  //!!
-  Move(filerec(f).name,s[1],79);
-  i:=1;
-  while (i<79) and (s[i]<>#0) do inc(i);
-  SetLength(s, (i-1));
-  FileName:=s;
+  i := 0; Result := '';
+  while filerec(f).name[i] <> #0 do
+  begin
+    Result := Result + char(filerec(f).name[i]);
+    inc(i);
+  end;
 end;
 
 function iif(b:boolean; l1,l2:longint):longint;
@@ -1302,6 +1302,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2000/07/22 21:48:25  mk
+  - Ansistring-Fix fuer Filename
+
   Revision 1.58  2000/07/21 13:22:59  mk
   - Bugfix fuer AnsiStrings
 
