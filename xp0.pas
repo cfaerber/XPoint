@@ -848,6 +848,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        AutoCpgd     : boolean;       { automatisches Ctrl-PgDn im Editor }
        XP_ID_PMs    : boolean;
        XP_ID_AMs    : boolean;
+       XP_Tearline  : boolean;
        UserSlash    : boolean;
        BAKext       : string[3];
        keepedname   : boolean;
@@ -1070,6 +1071,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.10.2.9  2001/07/20 15:56:18  my
+  - implemented Fido tear line switch under
+    Config/Options/Nets
+
   Revision 1.10.2.8  2001/07/18 17:13:17  my
   - removed switch and netcall routine
     "update date entries after netcall"

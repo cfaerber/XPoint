@@ -1160,7 +1160,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(57,iif(deutsch,16,9),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,18,11),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
@@ -1190,6 +1190,9 @@ begin
                        MaggiVerkettung); mhnr(iif(knoten,8101,8100));
     inc(add,2);
     end;
+  maddtext(3,10+add,'Fido',col.coldiahigh);
+  maddbool(14,10+add,getres2(253,16),XP_Tearline); { Werbung in der Tearline }
+    mhnr(8103);
   freeres;
   readmask(brk);
   if not brk and mmodified then begin

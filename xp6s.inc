@@ -199,9 +199,9 @@ begin
     fido_origin:=''
   else begin
     if not pm then
-    { if XP_ID_AMs then
-        s:=#13#10+XP_origin+' '+verstr+krk(regstr1)
-      else              }
+      if XP_Tearline then
+        s:=#13#10+xp_origin + ' ' + verstr + betastr
+      else
         s:=#13#10+'---'
     else
       s:='';
@@ -1136,6 +1136,10 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.9.2.4  2001/07/20 15:56:18  my
+  - implemented Fido tear line switch under
+    Config/Options/Nets
+
   Revision 1.9.2.3  2000/11/10 19:39:30  mk
   - Tearline gekuertzt
 

@@ -512,6 +512,12 @@ begin
   autocpgd:=true;
   XP_ID_PMs:=true;
   XP_ID_AMs:=true;
+{ Keine XP-Zeile unter AMs und PMs setzen.
+  Die Shareware-EinschrÑnkung, da· das unregistrierte
+  XP unter PMs immer die XP-Zeile setzt, bleibt davon
+  unberÅhrt. Dies wird an anderer Stelle geprÅft und
+  gesetzt. }
+  XP_Tearline := true;
   UserSlash:=true;
   BAKext:='BAK';
   keepedname:=false;
@@ -827,6 +833,7 @@ begin
   writeln(t,'DruckRand=',DruckLira);
   writeln(t,'XPoint-PM-ID=',jnf(XP_ID_PMs));
   writeln(t,'XPoint-AM-ID=',jnf(XP_ID_AMs));
+  writeln(t,'XPoint-Tearline=',jnf(XP_Tearline));
   writeln(t,'UserSlash=',jnf(UserSlash));
   writeln(t,'EditBackup=',BAKext);
   writeln(t,'KeepEdName=',jnf(keepedname));
@@ -1368,6 +1375,7 @@ begin
           getb(su,  'DruckRand',drucklira) or
           getx(su,  'XPoint-PM-ID',XP_ID_PMs) or
           getx(su,  'XPoint-AM-ID',XP_ID_AMs) or
+          getx(su,  'XPoint-Tearline',XP_Tearline) or
           getx(su,  'UserSlash',userslash) or
           gets(s,su,'EditBackup',BAKext,3) or
           getx(su,  'KeepEDName',keepedname) or
@@ -1605,6 +1613,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.9  2001/07/20 15:56:18  my
+  - implemented Fido tear line switch under
+    Config/Options/Nets
+
   Revision 1.13.2.8  2001/07/18 17:13:17  my
   - removed switch and netcall routine
     "update date entries after netcall"
