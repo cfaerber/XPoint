@@ -911,7 +911,7 @@ var w1,w2: word;
 
     if win then begin        
 
-      if getenv('DELVTMP')<>'' then 
+      if Delviewtmp then 
       begin
         if ustr(left(prog,5))<>'START' then prog:='start '+prog;
         end
@@ -971,6 +971,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/03/07 17:45:14  jg
+  - Viewer: Bei Dateien mit Leerzeichen im Namen wird
+    grundsaetzlich ein .tmp File erzeugt
+  - Env.Variable DELVTMP setzt jetzt nur noch beim Start
+    die Globale Variable DELVIEWTMP
+
   Revision 1.24  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

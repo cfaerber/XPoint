@@ -747,6 +747,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        MoreMode   : boolean = true;
        Developer  : boolean = false;
        SupportCfg : string[12] = 'SUPPORT.CFG';
+       Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)  
        
        { 01/2000 oh }
        
@@ -1074,6 +1075,12 @@ implementation
 end.
 {
   $Log$
+  Revision 1.12  2000/03/07 17:45:13  jg
+  - Viewer: Bei Dateien mit Leerzeichen im Namen wird
+    grundsaetzlich ein .tmp File erzeugt
+  - Env.Variable DELVTMP setzt jetzt nur noch beim Start
+    die Globale Variable DELVIEWTMP
+
   Revision 1.11  2000/03/04 22:41:37  mk
   LocalScreen fuer xpme komplett implementiert
 

@@ -134,6 +134,8 @@ begin
     showscreen(true);
     DelTmpfiles('*.$$$');
     if getenv('DELVTMP')<>''then begin  {Temporaere Viewer-Files loeschen}
+      Delviewtmp:=true;
+      DelTmpfiles('TMP-????.*'); 
       chdir(temppath); 
       DelTmpfiles('TMP-????.*');
       chdir(ownpath);
@@ -194,6 +196,12 @@ ende:
 end.
 {
   $Log$
+  Revision 1.11  2000/03/07 17:45:11  jg
+  - Viewer: Bei Dateien mit Leerzeichen im Namen wird
+    grundsaetzlich ein .tmp File erzeugt
+  - Env.Variable DELVTMP setzt jetzt nur noch beim Start
+    die Globale Variable DELVIEWTMP
+
   Revision 1.10  2000/03/04 12:39:36  jg
   - weitere Aenderungen fuer externe Windowsviewer
     Umgebungsvariable DELVTMP

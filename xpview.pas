@@ -216,7 +216,7 @@ begin
 
   if not fileattach then 
   begin
-  if stricmp(fn,orgfn) or not ValidFileName(orgfn)
+  if stricmp(fn,orgfn) or not ValidFileName(orgfn) or (cpos(' ',orgfn)>0)
     then orgfn:=TempS(_filesize(fn)+5000);                              
     if copyfile(fn,orgfn) then fn1:=orgfn;
     end;
@@ -225,14 +225,14 @@ begin
   orgfn:=iifs(fn1<>'',fn1,fn);
 
                              {Tempdatei bei aktivem DELVTMP nach TMP-????.??? umbenennen }
-  if not fileattach and ((getenv('DELVTMP')<>'')) then
+  if not fileattach and delviewtmp then
   Begin
     parfn:=TempS(_filesize(fn)+5000);      
     parfn:=left(parfn,length(parfn)-8)+'TMP-'+right(parfn,8)
     end
   else parfn:=orgfn; 
                               {Korrekte File-extension verwenden}  
-  parfn:=trim(left(parfn,rightpos('.',parfn)-1))+'.'+iifs(viewer.ext='','TMP',viewer.ext);
+  parfn:=left(parfn,rightpos('.',parfn)-1)+'.'+iifs(viewer.ext='','TMP',viewer.ext);
   _rename(orgfn,parfn);
 
   p:=pos('$FILE',ustr(prog));
@@ -249,6 +249,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/03/07 17:45:14  jg
+  - Viewer: Bei Dateien mit Leerzeichen im Namen wird
+    grundsaetzlich ein .tmp File erzeugt
+  - Env.Variable DELVTMP setzt jetzt nur noch beim Start
+    die Globale Variable DELVIEWTMP
+
   Revision 1.12  2000/03/05 19:46:12  jg
   - Edit/Viewer: kein neuerstellen von */* mehr moeglich.
   - Externe Viewer: Gesamtlaenge von Programmname+Dateiname beruecksichtigt
