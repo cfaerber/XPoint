@@ -261,7 +261,7 @@ begin
   case umlaute of
     1 : for i:=1 to 7 do
           if pos(um[i],s)>0 then typeform.ukonv(s,betrefflen);
-          
+
   { 2 : for i:=1 to 7 do begin
           p:=pos(um[i],s);
           if p>0 then s[p]:=iso[i];
@@ -297,18 +297,18 @@ begin
       dbSeek(d,piKurzname,ustr(s));
       if dbFound then
       begin
-        dbRead(d,'Langname',s);  
+        dbRead(d,'Langname',s);
         dbclose(d);                     { ists ein Kurzname ? }
         testreplyto:=true;
         if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
           begin
             rfehler(908);               { 'ungltige Adresse' }
             testreplyto:=false;
-            end;             
-        end 
-      else begin     
+            end;
+        end
+      else begin
         rfehler(908);                   { 'ungltige Adresse' }
-        dbclose(d); 
+        dbclose(d);
         testreplyto:=false;
         end;
       end
@@ -743,10 +743,10 @@ end;
 
 {JG:06.02.00}
   Procedure changeempf;                         {Empfaenger der Mail aendern}
-  begin                 
+  begin
     pm:=cpos('@',empfaenger)>0;
-    if pm then adresse:=empfaenger  
-      else adresse:=uucpbrett(empfaenger,2);    
+    if pm then adresse:=empfaenger
+      else adresse:=uucpbrett(empfaenger,2);
     if not pm and (Netztyp=nt_fido) then y:=y-2;           {Zeile fuer Fidoempf beachten}
     openmask(x+13,x+13+51+2,y+2,y+2,false);
     maskrahmen(0,0,0,0,0);
@@ -756,10 +756,10 @@ end;
     closemask;
     attrtxt(col.coldiahigh);
     mwrt(x+13,y+2,' '+forms(adresse,53)+'   ');
-    if (adresse<>'') and (cc_testempf(adresse)) then begin 
+    if (adresse<>'') and (cc_testempf(adresse)) then begin
       if cpos('@',adresse)=0 then adresse:='A'+adresse;
       empfaenger:=adresse;
-      end;  
+      end;
     pm:=cpos('@',empfaenger)>0;
     end;
 {/JG}
@@ -1237,7 +1237,7 @@ fromstart:
           goto ReadAgain;
           end;
 
-        if (n=5) or (t='/') then    { Empfaenger aendern? } 
+        if (n=5) or (t='/') then    { Empfaenger aendern? }
         begin
           Changeempf;
           betreffbox:=false; edit:=false; sendbox:=true;
@@ -1281,7 +1281,7 @@ fromstart:
                 { neuer Betreff }
                 readstring(x+13,y+4,'',betreff,min(betrlen,52),betrlen,'',brk);
                 betreff:=trim(betreff);
-                if umlauttest(betreff) then; 
+                if umlauttest(betreff) then;
                 showbetreff;
                 n:=1;
               end;
@@ -1301,6 +1301,9 @@ fromstart:
                     dbSeek(d,boiName,ustr(newbox));
                     if binary and not ntBinary(dbReadInt(d,'netztyp')) then
                       rfehler(609)  { 'In diesem Netz sind leider keine Bin„rnachrichten m”glich :-(' }
+                     else if (((not pm) and (netztyp<>dbReadInt(d,'netztyp'))) or
+                     not ntAdrCompatible(netztyp,dbReadInt(d,'netztyp'))) then
+                     rfehler(629)   { 'nicht m”glich - unterschiedliche Netztypen' }
                     else begin
                       KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
@@ -2064,6 +2067,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.16  2001/06/26 23:43:22  mk
+  JG:- fixed ancient 'forcebox' bug: it was possible to e.g. create a mail to
+       an RFC recipient and then select a Fido server in the send window.
+
   Revision 1.7.2.15  2001/06/06 20:48:49  my
   JG:- Fix (DoSend): clear list of CC recipients after rfehler(606)
        ("Internal newsgroup - writing not allowed!"). Ancient bug
