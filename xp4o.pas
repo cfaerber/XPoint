@@ -624,15 +624,14 @@ begin
       mhnr(530);                                       { 'Suchbegriff ' }
       maddstring(3,4,getres2(441,3),suchopt,8,8,'');   { 'Optionen    ' }
       mid_options:=fieldpos;
-      maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }
-      mid_bretter:=fieldpos;
-      if aktdispmode=11 then
-        MDisable
-      else begin
+      if aktdispmode<>11 then
+      begin
+        maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }
+        mid_bretter:=fieldpos;
         for i:=0 to 4 do
           mappsel(true,bera[i]);    { Alle / Netz / User / markiert / gew„hlt }
         mset1func(testbrettscope);
-        end;
+      end;
       if autosuche<>'' then _keyboard(keypgdn);
 
       if suchfeld='MsgID' then
@@ -2427,6 +2426,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2000/09/25 17:56:13  mk
+  - nicht aktivierter Eintrag Bretter ist jetzt richtig verschwunden
+
   Revision 1.66  2000/08/27 20:47:50  mk
   OH: F3-Request, ist die automatische Magic-Erkennung abgeschaltet, werden
       sie trotzdem erkannt, und zwar dann, wenn keine normalen Dateinamen gefunden
