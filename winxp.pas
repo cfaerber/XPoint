@@ -76,7 +76,7 @@ const
 
 type  selproc = procedure(var sel:slcttyp);
 
-type  TxpHandle = byte; //0..maxpull
+type  TxpHandle = Integer; //0..maxpull
 
 var   wpstack  : array[1..maxpush] of TxpHandle;
       wpp      : byte;
@@ -1527,6 +1527,10 @@ end;
 
 {
   $Log$
+  Revision 1.93  2002/12/28 20:04:29  mk
+  - made TXpHandle an integer
+  - scrptr is now TXpHandle with ncrt
+
   Revision 1.92  2002/12/21 05:37:52  dodi
   - removed questionable references to Word type
 

@@ -64,7 +64,7 @@ type mprec     = record
      menuarray = array[1..22] of mprec;
      map       = ^menuarray;
 {$IFDEF NCRT }
-     scrptr    = xpWord;  { Handle }
+     scrptr    = TxpHandle;  { Handle }
 {$ELSE }
      scrptr    = record
                    scsize  : xpWord;
@@ -3267,6 +3267,10 @@ end;
 
 {
   $Log$
+  Revision 1.169  2002/12/28 20:04:30  mk
+  - made TXpHandle an integer
+  - scrptr is now TXpHandle with ncrt
+
   Revision 1.168  2002/12/21 05:37:53  dodi
   - removed questionable references to Word type
 
