@@ -98,19 +98,14 @@ implementation  { ------------------------------------------------ }
 uses  typeform,fileio,inout,maus2,winxp,printerx, xp1, xp2, xpe, xp0;
 
 const maxgl     = 60;
-      minfree   = 12000;             { min. freier Heap }
       asize     = 16;                { sizeof(absatzt)-sizeof(absatzt.cont) }
       maxtokens = 128;
       maxabslen = 16363;
 
       screenwidth : byte = 80;
-      message   : string[40] = '';
-      ecbopen   : integer = 0;       { Semaphor fr Anzahl der offenen ECB's }
+      message   : string = '';
 
 type
-//    charr    = array[0..65500] of char;
-//    charrp   = ^charr;
-
       absatzp  = ^absatzt;
       absatzt  = packed record
                    next,prev  : absatzp;
@@ -148,15 +143,15 @@ type
                    absatzende : char;
                    lastpos    : position;     { fr Ctrl-Q-P }
 
-         { disp: 1 = Markierung oberhalb Bildausschnitt, 2=in, 3=unterhalb }
+                   { disp: 1 = Markierung oberhalb Bildausschnitt, 2=in, 3=unterhalb }
 
                    block      : array[1..7] of record    { 3..7 = Marker }
                                                  pos  : position;
-                                                 disp : byte;
+                                                 disp : Byte;
                                                end;
                    blockinverse : boolean;  { Endmarkierung vor Anfangsmark. }
                    blockhidden  : boolean;  { Blockmarkierung ausgeschaltet  }
-                   na_umbruch   : byte;
+                   na_umbruch   : Boolean;
                    forcecr      : boolean;  { CR am Textende beim Speichern }
                    pointswitch  : boolean;  { XPoint-Editor }
                    Config       : EdConfig;
@@ -179,6 +174,7 @@ var   Defaults : edp;
       delroot  : delnodep;         { Liste gel”schter Bl”cke }
       ClipBoard: absatzp;
       NoCursorsave : boolean;
+      ECBOpen   : integer;           { Semaphor fr Anzahl der offenen ECB's }
 
 
 { ------------------------------------------------ externe Routinen }
@@ -634,17 +630,16 @@ begin
   akted^.Procs.MsgProc(txt,true);
 end;
 
-function allocabsatz(size:integer):absatzp;
-var p  : absatzp;
-    ms : integer;
+function AllocAbsatz(size:integer):absatzp;
+var
+  ms : integer;
 begin
   ms:=(size+15) and $fff0;        { auf 16 Bytes aufrunden }
-  getmem(p,asize+ms);
-  fillchar(p^,asize,0); { next, prev implizit auf NIL setzen, Rest auf 0 }
-  p^.size:=size;
-  p^.msize:=ms;
-  p^.umbruch:=true;
-  allocabsatz:=p;
+  Getmem(Result, asize + ms);     // evtl. hier EOutOfMemory-Fehler abfangen
+  Fillchar(Result^, asize, 0);    { next, prev implizit auf NIL setzen, Rest auf 0 }
+  Result^.size:=size;
+  Result^.msize:=ms;
+  Result^.umbruch:=true;
 end;
 
 function freeabsatz(const p:absatzp): absatzp;
@@ -677,7 +672,7 @@ end;
 {           1 = nur lange Zeilen ohne Softbreak ohne Umbruch laden  }
 {           2 = alles mit Umbruch laden                             }
 
-function LoadBlock(fn:string; sbreaks:boolean; umbruch,rrand:byte):absatzp;
+function LoadBlock(const fn:string; sbreaks:boolean; umbruch,rrand:byte):absatzp;
 var mfm   : byte;
     s, s2 : string;
     t     : text;
@@ -727,12 +722,13 @@ begin
       s2 := '';
       sbrk:=false;
       endlf:=false;
-      while (srest and (length(s2)=0) or not (eoln(t) or endlf)) do
+      while (srest and (Length(s2)=0) or not (eoln(t) or endlf)) do
       begin
         if not srest then
           read(t,s)
         else
           srest:=false;
+        if s = '' then break;
         pp:=cpos(#10, s);
         if pp>0 then
         begin
@@ -761,8 +757,8 @@ begin
       if assigned(p) then begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
-                     ((umbruch=1) and ((length(s)<=rrand) or sbrk)));
-        if length(s)>0 then
+                     ((umbruch=1) and ((length(s2)<=rrand) or sbrk)));
+        if length(s2)>0 then
           Move(s2[1],p^.cont,length(s2));
         AppP;
       end;
@@ -861,7 +857,8 @@ end;
 
 function EdLoadFile(ed:ECB; fn:string; sbreaks:boolean; umbruch:byte):boolean;
 begin
-  with edp(ed)^ do begin
+  with edp(ed)^ do
+  begin
     edfile:=ExpandFilename(fn);
     showfile:='  '+fitpath(edfile,max(14,w-40));
     if assigned(root) then FreeBlock(root);
@@ -872,9 +869,9 @@ begin
     firstpar:=root; firstline:=1;     { Anzeigeposition setzen }
     scx:=1; scy:=1;
     block[1].pos.absatz:=nil;
-    block[1].disp:=3;                 { Anfangsmarkierung am Ende }
+    block[1].disp := 3;       { Anfangsmarkierung am Ende }
     block[2].pos.absatz:=root;
-    block[2].disp:=1;                 { Endmarkierung am Anfang }
+    block[2].disp := 1;       { Endmarkierung am Anfang }
     blockinverse:=true;
     end;
 end;
@@ -898,7 +895,7 @@ begin
     else rrand:=Config.rechter_rand;
     absatzende:=Config.absatzendezeichen;
     savesoftbreak:=savesoftbreaks;
-    na_Umbruch:=NeuerAbsatzUmbruch;
+    na_Umbruch:=(NeuerAbsatzUmbruch = 2);
     OtherQuoteChars:=iOtherQuoteChars;
     end;
   inc(ecbopen);
@@ -1046,7 +1043,6 @@ var  dl         : displp;
         Wrt2(sp(8))
       else
         Wrt2(forms('+'+strs(xoffset),8));
-      // Write(memavail);  Unter 32 Bit nicht sehr sinnvoll
       if message='' then
       begin
         showfile[1]:=iifc(modified,'þ',' ');
@@ -1140,10 +1136,10 @@ var  dl         : displp;
 
   begin
     with e^ do begin
-      if blockinverse or blockhidden or (block[1].disp=3) or (block[2].disp=1)
+      if blockinverse or blockhidden or (block[1].disp= 3) or (block[2].disp= 1)
       then
         blockstat:=2
-      else if (block[1].disp=1) and (block[2].disp>=2) then blockstat:=1
+      else if (block[1].disp= 1) and (block[2].disp>= 2) then blockstat:=1
       else blockstat:=0;
       banfang:=0; bende:=bemax;
       ap:=firstpar; dofs:=0;
@@ -1479,7 +1475,7 @@ var  dl         : displp;
                                BlockClpEinfuegen;
                                BlockEinAus;
                              end;
-//        editfFormatBlock  : BlockFormatieren;
+        editfFormatBlock  : FormatBlock ;
         editfDelToEOF     : RestLoeschen;
         editfDeltoEnd     : AbsatzRechtsLoeschen;
 
@@ -1834,11 +1830,15 @@ end;
 initialization
   AktEd := nil;
   Defaults := nil;
+  ECBOpen := 0;
 finalization
   if assigned(Defaults) then Dispose(Defaults);
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.82.2.4  2003/04/25 20:05:39  mk
+  - added FormatBlock (<Ctrl-B>)
+
   Revision 1.82.2.3  2003/04/12 14:33:28  mk
   - fixed LoadBlock: Umbruch is handled correctly again
 

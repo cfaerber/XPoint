@@ -104,7 +104,7 @@ begin
       block[n].disp:=2
     else
       if block[n].disp=2 then block[n].disp:=newdisp;
-    end;
+  end;
 end;
 
 procedure KorrBlockScrolled(up:boolean);   { up = Bild nach oben! }
@@ -354,7 +354,8 @@ begin
         inc(xoffset); aufbau:=true; end;
       end
     else if not overline then
-      if ZeileUnten then Zeilenanfang;
+      if ZeileUnten then
+        Zeilenanfang;
     end;
 end;
 
@@ -722,24 +723,22 @@ begin
     end;
 end;
 
-function createacopy(ap1:absatzp; var ap2:absatzp; from,len:integer):boolean;
+procedure CreateCopy(ap1:absatzp; var ap2:absatzp; from,len:integer);
 begin
-  ap2:=AllocAbsatz(len);
-  if ap2=nil then
-    createacopy:=false
-  else begin
-    copyflags(ap1,ap2);
+  ap2:= AllocAbsatz(len);
+  Copyflags(ap1, ap2);
+  if len > 0 then
     Move(ap1^.cont[from],ap2^.cont,len);
-    createacopy:=true;
-    end;
 end;
 
 function AbsDelete(const ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp;
 var apnew : absatzp;
 begin
   result:=ap;
-  if len>0 then begin
-    if delentry and (memavail-len-asize-16>minfree) then begin
+  if len>0 then
+  begin
+    if delentry then
+    begin
       apnew:=AllocAbsatz(len);
       Move(ap^.cont[from],apnew^.cont,len);
       AddDelEntry(apnew);
@@ -793,19 +792,19 @@ end;
 
 { see GetQChar in xp3ex.pas }
 function GetQuote(ap:absatzp):string;
-var 
+var
   p,q : Integer;
 begin
-  if e^.Config.QuoteReflow and Assigned(ap) then 
+  if e^.Config.QuoteReflow and Assigned(ap) then
   begin
     p:= ap^.size;
     SetString(Result, ap^.cont, p);
-  
+
     p:=cpos('>', Result);
-    if p > 5 then 
+    if p > 5 then
       p:=0
-    else 
-      if p>0 then 
+    else
+      if p>0 then
       begin
         repeat        { korrektes Ende des (mehrfach-?)Quotezeichens }
           q:=p+1;     { ermitteln                                    }
@@ -821,94 +820,146 @@ begin
     Result := '';
 end;
 
+function DelQuoteAbs(ap: AbsatzP; Quote1, Quote2: String): Boolean;
+begin
+  if (Length(Quote1)>0) and (Trim(Quote1)=Trim(Quote2)) then
+  begin
+    AbsDelete(ap, 0, Length(Quote2), false, true);
+    Result := true;
+  end else
+    Result := false;
+end;
+
+function CountSpaces(ap: AbsatzP): Integer;
+begin
+  Result := 0;
+  if not e^.Config.AutoIndent then Exit;
+  while (Result < ap^.size) and (ap^.cont[Result]=' ') do
+    inc(Result);
+end;
+
+function BreakBlock(ap: AbsatzP; wp, spaces, QuoteCharCount, delSp: Integer; QuoteChars: String): AbsatzP;
+var
+  ap2: AbsatzP;
+  CopySize: Integer;
+begin
+  Copysize := max(0, ap^.size-wp);
+  CreateCopy(ap,ap2,wp-spaces-QuoteCharCount+delsp,copysize+spaces+QuoteCharCount-delsp);
+  if spaces>0 then
+    fillchar(ap2^.cont,spaces,' ')
+  else
+    if QuoteCharCount>0 then
+      Move(QuoteChars[1],ap2^.cont[0],QuoteCharCount);
+  if assigned(ap^.next) then
+    ap^.next^.prev:=ap2;
+  ap2^.next:=ap^.next;
+  ap^.next:=ap2;
+  ap2^.prev:=ap;
+  blockabssplit(ap,ap,ap2,wp,spaces+QuoteCharCount-delsp);
+  ap:=AbsDelete(ap,wp,copysize,false,false);
+  with e^ do
+  begin
+    if ap^.Size < rrand - 10 then
+       ap^.Umbruch := na_umbruch;
+    if ap2^.Size < rrand - 10 then
+       ap2^.Umbruch := na_umbruch;
+  end;
+  KorrBlockScrolled(false);
+  Result := ap2;
+end;
+
 procedure NewLine;              { Enter - Absatz einfgen }
 var ap,ap2   : absatzp;
     wp       : integer;
-    copysize : integer;
     delsp    : integer;
     spaces   : integer;
     QuoteCharCount: integer;  { Anzahl Quotezeichen fuer Quote-Reflow }
     QuoteChars: string;       { Quotezeichen im aktuellen Absatz }
-
-  procedure su(ap:absatzp);    { Umbruch einstellen }
-  begin
-    with e^ do
-      if ap^.size<rrand-10 then
-        if na_umbruch=0 then ap^.umbruch:=false
-        else if na_umbruch=2 then ap^.umbruch:=true;
-  end;
-
 begin
   with e^ do
-    if insertmode then begin
+    if insertmode then
+    begin
       ap:=ActAbs;
       wp:=workpos;
-      copysize:=max(0,ap^.size-wp);
-      spaces:=0;
       delsp:=0;
+
       { Quote-Reflow }
-      if not kb_shift then 
+      if not kb_shift then
       begin
         QuoteChars := GetQuote(ap);
         if (wp>0) and (QuoteChars<>'') and (length(QuoteChars)>wp) then
-        begin
           wp:=length(QuoteChars);
-          copysize:=max(0,ap^.size-wp);
-        end;
+          
         if (QuoteChars <>'') and (wp>= Length(TrimRight(QuoteChars))) then
         begin
           delsp:=wp;
           while (delsp<ap^.size) and (ap^.cont[delsp]=' ') do inc(delsp);
           dec(delsp,wp);
         end;
-      end else 
+      end else
         QuoteChars := '';
       QuoteCharCount := Length(QuoteChars);
-      if wp>=ap^.size
-        then QuoteCharCount:=0; { kein Reflow bei Zeilenende }
-      if QuoteCharCount>wp then QuoteCharCount:=0;
-      if config.autoindent and (QuoteCharCount=0) then begin
-        while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
-          inc(spaces);
-        if spaces>=wp then spaces:=0;
-      end;
-      if createacopy(ap,ap2,wp-spaces-QuoteCharCount,copysize+spaces+QuoteCharCount)
-      then begin
-        if spaces>0 then
-          fillchar(ap2^.cont,spaces,' ')
-        else if QuoteCharCount>0 then
-          Move(QuoteChars[1],ap2^.cont[0],QuoteCharCount);
-        if assigned(ap^.next) then
-          ap^.next^.prev:=ap2;
-        ap2^.next:=ap^.next;
-        ap^.next:=ap2;
-        ap2^.prev:=ap;
-        blockabssplit(ap,ap,ap2,wp,spaces+QuoteCharCount-delsp);
-        ap:=AbsDelete(ap,wp,copysize,false,false);
-        su(ap);
-        su(ap2);
-        KorrBlockScrolled(false);
-        if ActAbs<>ap2 then if ZeileUnten then;
-        Zeilenanfang;
-        moveworkpos(spaces,actabs);           { Cursor an Zeilenanfang }
-        modified:=true;
-        aufbau:=true;
-        end;
-      end
+      if wp>=ap^.size then
+        QuoteCharCount:=0; { kein Reflow bei Zeilenende }
+
+      if QuoteCharCount > wp then
+        QuoteCharCount:=0;
+
+      Spaces := iif(QuoteCharCount = 0, CountSpaces(ap), 0);
+      if spaces >= wp then spaces:=0;
+
+      ap2 := BreakBlock(ap, wp, Spaces, QuoteCharCount, delSp, QuoteChars);
+
+      if ActAbs<>ap2 then
+        ZeileUnten;
+      Zeilenanfang;
+      moveworkpos(spaces+QuoteCharCount,actabs);           { Cursor an Zeilenanfang }
+      modified:=true;
+      aufbau:=true;
+    end
     else begin
       Zeilenanfang;
-      if ZeileUnten then;
-      end;
+      ZeileUnten;
+    end;
+end;
+
+function ConcatBlock(ap: AbsatzP; addspaces: Integer): AbsatzP;
+var
+  Size1: Integer;
+  ap2: AbsatzP;
+begin
+  ap2 := ap^.next;
+  Result := AllocAbsatz(ap^.size + ap2^.size + addspaces);
+  Copyflags(ap, Result);
+  Blockabsinsert(ap, Result,maxint,maxint);
+  Blockabsinsert(ap2, Result,0,ap^.size+addspaces);
+  if Assigned(ap^.prev) then
+  begin
+    Result^.prev:=ap^.prev;
+    ap^.prev^.next:= Result;
+  end;
+  if Assigned(ap2^.next) then
+  begin
+    Result^.next:=ap2^.next;
+    ap2^.next^.prev:= Result;
+  end;
+  Size1:=ap^.size;
+  Move(ap^.cont, Result^.cont,size1);
+  Fillchar(Result^.cont[size1],addspaces,32);
+  Move(ap2^.cont,Result^.cont[size1+addspaces],ap2^.size);
+  absatzwechsel(ap,Result,false);
+  FreeAbsatz(ap);
+  FreeAbsatz(ap2);
+  KorrBlockScrolled(true);
 end;
 
 procedure DELchar;              { DEL - Zeichen l”schen }
-var ap,ap2,apnew : absatzp;
-    ss,size1,wp  : word;
+var ap: absatzp;
+    wp  : word;
     addspaces    : integer;
     wpa          : absatzp;
-    QuoteCharCount: Integer;    { Anzahl Quotezeichen fuer Quote-Reflow }
-    QuoteCharsActAbs,           { Quotezeichen für aktuellen Absatz }
-    QuoteCharsNextAbs: string;  { Quotezeichen für nächsten Absatz }
+    QuoteChars1: string;
+    QuoteChars2: string;
 begin
   with e^ do begin
     ap:=ActAbs;
@@ -924,50 +975,18 @@ begin
         if (addspaces=0) and (ap^.size>0) and (ap^.next^.size>0)
           then if not (ap^.cont[ap^.size-1] in ['-','/'])
                   and (ap^.next^.cont[0]<>' ') then addspaces:=1;
-        ss:=ap^.size + ap^.next^.size + addspaces;
-        if ss>maxabslen then
-          error(2)    { 'Absatz zu groá' }
-        else 
+        if ap^.size + ap^.next^.size + addspaces <= maxabslen then
         begin   { Abs„tze zusammenh„ngen }
           { Quote-Reflow }
-          if Config.QuoteReflow then 
-          begin
-            QuoteCharsActAbs := GetQuote(ap);
-            QuoteCharsNextAbs := GetQuote(ap^.next);
-            QuoteCharCount := Length(QuoteCharsActAbs);
-            if (QuoteCharCount>0) and (Trim(QuoteCharsActAbs)=Trim(QuoteCharsNextAbs)) then 
-            begin
-              ap2:=ap^.next;
-              AbsDelete(ap2,0,Length(QuoteCharsNextAbs),false,true);
-              dec(ss, Length(QuoteCharsNextAbs));
-            end;
-          end;
-          apnew:=AllocAbsatz(ss);
-          wpa:=apnew;
-          copyflags(ap,apnew);
-          ap2:=ap^.next;
-          blockabsinsert(ap,apnew,maxint,maxint);
-          blockabsinsert(ap2,apnew,0,ap^.size+addspaces);
-          if assigned(ap^.prev) then 
-          begin
-            apnew^.prev:=ap^.prev;
-            ap^.prev^.next:=apnew;
-          end;
-          if assigned(ap2^.next) then 
-          begin
-            apnew^.next:=ap2^.next;
-            ap2^.next^.prev:=apnew;
-          end;
-          size1:=ap^.size;
-          Move(ap^.cont,apnew^.cont,size1);
-          fillchar(apnew^.cont[size1],addspaces,32);
-          Move(ap2^.cont,apnew^.cont[size1+addspaces],ap2^.size);
-          absatzwechsel(ap,apnew,false);
-          FreeAbsatz(ap);
-          FreeAbsatz(ap2);
-          KorrBlockScrolled(true);
-          modified:=true;
-        end;
+          QuoteChars1 := GetQuote(ap);
+          QuoteChars2 := GetQuote(ap^.next);
+          if Config.QuoteReflow and (Length(QuoteChars1) > 0) and
+            (Trim(QuoteChars1)=Trim(QuoteChars2)) then
+            AbsDelete(ap^.next, 0, Length(QuoteChars1), false, true);
+          wpa := ConcatBlock(ap, addspaces);
+          Modified:=true;
+        end else
+          error(2)    { 'Absatz zu groá' }
       end;
     MoveWorkpos(wp,wpa);
     aufbau:=true;
@@ -1118,12 +1137,13 @@ begin
               Move(ap^.cont[wp],apnew^.cont[wp+1],ap^.size-wp);
             FreeAbsatz(ap);
             MoveWorkpos(wp+1,nil);
-            end;
-      if not fast then KorrBlockScrolled(false);
-      end;
+          end;
+      if not fast then
+        KorrBlockScrolled(false);
+    end;
     modified:=true;
     aufbau:=true;
-    end;
+  end;
 end;
 
 procedure Steuerzeichen;        { ^P - Steuerzeicheneingabe }
@@ -1810,6 +1830,148 @@ begin
     end;
 end;
 
+{ Block reformatieren }
+
+procedure FormatBlock;
+var
+  ap,ap2    : absatzp;
+  fp        : integer;
+  addspaces : integer;
+  spaces    : integer;
+  QuoteCharCount: integer;  { Anzahl Quotezeichen fuer Quote-Reflow }
+  QuoteChars1: string;
+  QuoteChars2: string;
+  saveumbr  : boolean;
+begin
+  with e^ do
+  begin
+    if blockinverse or blockhidden then
+    begin
+      { kein Block markiert oder Blockmarkierung ausgeschaltet:
+        ActAbs bis Leerzeile formatieren }
+      if ActAbs^.Size = 0 then
+      begin // break on space
+        Errsound;
+        Exit;
+      end;
+
+      // mark a new block
+
+      ap := ActAbs; // search upwards
+      QuoteCharCount := Length(GetQuote(ap^.Next));
+      while Assigned(ap^.Prev) and (ap^.prev^.Size > QuoteCharCount) do
+      begin
+        ap := ap^.Prev;
+        QuoteCharCount := Length(GetQuote(ap^.Prev))
+      end;
+      SetBlock(1, ap, 0, 2); // set to start of block
+
+      ap := ActAbs; // search downwards
+      QuoteCharCount := Length(GetQuote(ap^.next));
+      while Assigned(ap^.next) and (ap^.Next^.Size > QuoteCharCount) do
+      begin
+        ap := ap^.Next;
+        QuoteCharCount := Length(GetQuote(ap^.Next))
+      end;
+    end else
+    begin
+      // set block 1 and 2 to the beginning and end of the block
+      SetBlock(1, Block[1].Pos.Absatz, 0, 2); // mark from the beginning of the block
+      with Block[2].Pos do
+        if Offset = 0 then
+          ap := Absatz^.Prev  // cursor is on beginning of last block, set to prev block
+        else
+          ap := Absatz;
+    end;
+    SetBlock(2, ap, MaxInt, 3); // set to end of block
+
+    { Cursor auf Blockanfang setzen }
+    GotoPos(block[1].pos, drBoth);
+    ap:=ActAbs;
+    saveumbr := ap^.umbruch;
+    ap^.umbruch := true;
+
+    repeat
+      fp:=advance(ap,0,rrand);
+      QuoteChars1 := GetQuote(ap);
+      QuoteCharCount := Length(QuoteChars1);
+
+      if fp < ap^.size then
+      begin  { Absatz umbrechen }
+        if QuoteCharCount > rrand div 2 then
+        begin
+          QuoteChars1 := TrimRight(QuoteChars1);
+          QuoteCharCount := Length(QuoteChars1);
+          if QuoteCharCount > rrand div 2 then
+            QuoteCharCount:=0;
+        end;
+
+        Spaces := iif(QuoteCharCount = 0, CountSpaces(ap), 0);
+        if Spaces > e^.rrand div 2 then
+          Spaces := 0;
+
+        if (fp<=QuoteCharCount) or (fp<=spaces) then
+        begin { Absatz kann nicht umgebrochen werden }
+          if ap=block[1].pos.absatz then ap^.umbruch:=saveumbr;
+          errsound;
+          break;
+        end;
+
+        ap2 := BreakBlock(ap, fp, Spaces, QuoteCharCount, 0, QuoteChars1);
+        TruncAbs(ap);
+        ap:=ap2;
+      end
+      else
+      if assigned(ap^.next) and (ap<>block[2].pos.absatz) then
+      begin  { Absaetze ggf. zusammenfuegen }
+        addspaces:=1;
+        if ap^.size > 0 then
+          if ap^.cont[ap^.size-1] in ['-','/'] then
+            addspaces:=0;
+        TruncAbs(ap^.next); { Leerzeichen am Absatzende entfernen }
+
+        if ap^.size + ap^.next^.size + addspaces <= maxabslen then
+        begin
+          QuoteChars2 := GetQuote(ap^.next);
+
+          Spaces := iif((Length(QuoteChars1) = 0) and (Length(QuoteChars2) = 0), CountSpaces(ap^.next), 0);
+          if Spaces > e^.rrand div 2 then
+            Spaces := 0;
+
+          TruncAbs(ap);
+          TruncAbs(ap^.next);
+
+          // keep empty lines and concat only with identical QuoteChars
+          if (ap^.size > length(QuoteChars1)) and
+            (ap^.next^.size > length(QuoteChars2)) and
+            (Trim(QuoteChars1) = Trim(QuoteChars2)) then
+          begin
+            if Length(QuoteChars1) > 0 then
+              AbsDelete(ap^.next, 0, Length(QuoteChars2), false, true)
+            else
+              AbsDelete(ap^.next, 0, spaces, false, true);
+
+            ap := ConcatBlock(ap, addspaces);
+            ap.umbruch:=true;
+          end else
+            ap := ap^.next;
+        end else
+        begin
+          Error(2); // 'Absatz zu gross'
+          break;
+        end;
+      end else
+        ap := ap^.next;
+    until ap=block[2].pos.absatz^.next;
+    GotoPos(block[2].pos, drBoth);
+    Modified := true;
+    BlockHidden := true; // do not show block
+  end;
+  CheckBlockOrder;
+  Aufbau := true;
+end;
+
+
 { Markierten Block als String zurueckgeben }
 
 function Marked2String:string;
@@ -2222,6 +2384,9 @@ end;
 
 {
   $Log$
+  Revision 1.51.2.3  2003/04/25 20:05:39  mk
+  - added FormatBlock (<Ctrl-B>)
+
   Revision 1.51.2.2  2003/03/28 23:55:59  mk
   - fixed Bug #65208: 3.8: Quote Reflow-Einstellung flüchtig
 
@@ -2270,3 +2435,4 @@ end;
   Revision 1.39  2000/12/25 14:02:39  mk
   - converted Lister to class TLister
 }
+
