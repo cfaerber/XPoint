@@ -231,6 +231,8 @@ begin
         then begin
           line2:=mime_charset(line);
           iso_part:=iso_charset(line2);
+          if iso_part and (mime_typ(line)='text/plain')
+            then line:='Content-Type: text/plain; charset=ISO-8859-1'
           end;
       if (not header_end) and (first_textpart=0)   { Ersten Textpart merken }
        and (ustr(left(line,13))='CONTENT-TYPE:')
@@ -576,6 +578,11 @@ end;
 
 {
   $Log$
+  Revision 1.1.2.3  2002/04/25 22:16:08  my
+  MY:- Fix: Beim Weiterleiten von MIME-Multipart-Nachrichten wurden Text-
+       AnhÑnge nach ISO-8859-1 konvertiert, aber mit dem ursprÅnglichen
+       Zeichensatz deklariert.
+
   Revision 1.1.2.2  2002/04/20 13:46:11  my
   JG:- Fix: Beim Weiterleiten von MIME-Multipart-Nachrichten mit quoted-
        printable-codierten Textteilen wurden diese zwar korrekt decodiert
