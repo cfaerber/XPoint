@@ -141,11 +141,11 @@ var collnr : word;
 
   procedure wrnr;
   begin
-    write(#13,'Compiling line ',line:5,' : ');
+  { write(#13,'Compiling line ',line:5,' : ');
     if collnr=0 then write(nr:5,'    ')
     else if res[collnr].collect=0 then
       write(res[collnr].nummer,'.0    ')
-      else write(res[collnr].nummer,'.',nr,'   ');
+      else write(res[collnr].nummer,'.',nr,'   '); }
   end;
 
   procedure SortCollect(from,count:word);
@@ -327,6 +327,9 @@ begin  {programm}
 end.
 {
         $Log$
+        Revision 1.21  2001/01/06 14:20:03  mk
+        CL:- speed increased
+
         Revision 1.20  2000/11/18 16:55:36  hd
         - Unit DOS entfernt
 

@@ -236,7 +236,7 @@ var  fname,
      readln(t,st);
      val(st,pnr,res); if res<>0 then exiterr('Illegal Page number: '+st);
      inspage(pnr,filepos(f));
-     write(#13,pages:4,' : ',pnr:4);
+   { write(#13,pages:4,' : ',pnr:4); }
      blockwfw(pnr);
      if no_lastnext then begin
        last:=0; next:=0;
@@ -419,6 +419,9 @@ end.
 
 {
   $Log$
+  Revision 1.22  2001/01/06 14:20:03  mk
+  CL:- speed increased
+
   Revision 1.21  2000/11/26 10:40:53  mk
   - neue Hilfe mit Querverweisen in langen Texten
 
