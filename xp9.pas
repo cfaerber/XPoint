@@ -68,11 +68,15 @@ uses
 { fÅr maske.CustomSel }
 
 procedure BoxSelProc(var cr:customrec);
+var
+  TempBoxRec: BoxRec;
 begin
+  TempBoxRec := BoxPar^;
   with cr do begin
     s:=UniSel(1,false,s);
     brk:=(s='');
-    end;
+  end;
+  BoxPar^ := TempBoxRec;
 end;
 
 procedure GruppenSelproc(var cr:customrec);
@@ -1286,6 +1290,10 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.29  2001/07/19 18:37:38  mk
+  - bei Vertreterauswahl werden jetzt nicht mehr die Boxensettings
+    ¸berschrieben. Temp-Record f¸r BoxPar in BoxSelProc eingebaut
+
   Revision 1.19.2.28  2001/07/11 01:49:33  my
   JG:- Display net type "RFC" for RFC/UUCP and RFC/Client
        in Edit User and Edit Message Area dialogues
