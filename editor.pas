@@ -449,7 +449,7 @@ begin
     Procs.FileProc:=EddefFileProc;
     Procs.FindFunc:=EddefFindFunc;
     Procs.ReplFunc:=EddefReplFunc;
-    forcecr:=true;
+    forcecr:=false;
     config.absatzendezeichen:='ú';
     config.rechter_rand:=74;
     config.AutoIndent:=true;
@@ -687,16 +687,13 @@ end;
 
 function LoadBlock(const fn:string; sbreaks:boolean; umbruch,rrand:byte):absatzp;
 var mfm   : byte;
-    s, s2 : string;
+    s     : string;
     t     : text;
     p     : absatzp;
     tail  : absatzp;
     sbrk  : boolean;
     root  : absatzp;
-    endlf : boolean;          { LF am Zeilenende }
-    endcr : boolean;          { CR am Dateiende }
-    srest : boolean;
-    pp    : byte;
+    endcr : boolean;
 
   procedure AppP;
   begin
@@ -728,55 +725,30 @@ begin
     p := Pointer(1);
 {$ENDIF }
     tail:=nil;
-    srest:=false;
     endcr:=false; 
-    while (srest or not eof(t)) and assigned(p) do
-    begin
-      s2 := '';
-      sbrk:=false;
-      endlf:=false;
-      while (srest and (length(s2)=0) or not (eoln(t) or endlf)) do
-      begin
-        if not srest then
-          read(t,s)
-        else
-          srest:=false;
-        if s = '' then break;
-        pp:=cpos(#10, s);
-        if pp>0 then
-        begin
-          endlf:=(pp=length(s));
-          s2 := s2 + Copy(s, 1, pp-1);
-          Delete(s, 1, pp);
-          srest:=true;
-        end else
-        begin
-          if (length(s)>40) and sbreaks and eoln(t) and (s[length(s)]=' ')
-             and not eof(t) then
-          begin
-            SetLength(s, Length(s)-1);
-            sbrk:=true;
-            readln(t);
-          end;
-          s2 := s2 + s;
-        end;
-      end;
-      if eoln(t) and not srest then begin
-        endcr:=not eof(t);
-        readln(t);
-      end;
 
-      p:=AllocAbsatz(length(s2));
+    while not eof(t) and assigned(p) do
+    begin
+      read(t,s);           // read until line end (not including line end)
+      endcr := not eof(t); // end of file is at line end => no cr at end
+      readln(t);           // skip over line end
+
+      sbrk := (Length(s)>40) and sbreaks and (s[length(s)]=' ');
+      if sbrk then
+        SetLength(s, Length(s)-1);
+        
+      p:=AllocAbsatz(length(s));
       if assigned(p) then begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
-                     ((umbruch=1) and ((length(s2)<=rrand) or sbrk)));
-        if length(s2)>0 then
-          Move(s2[1],p^.cont,length(s2));
+                    ((umbruch=1) and ((length(s)<=rrand) or sbrk)));
+        if length(s)>0 then
+          Move(s[1],p^.cont,length(s));
         AppP;
-      end;
-    end;
+      end; // if assigned(p) ...
+    end; // while ...
     Close(t);
+    
     if endcr then
     begin
       p:=AllocAbsatz(0);
@@ -784,7 +756,8 @@ begin
       AppP;
     end; 
     if ioresult<>0 then error(3);
-  End;
+  End; // if FileExists(fn)
+  
   LoadBlock:=root;
 end;
 
@@ -969,13 +942,16 @@ begin
   while assigned(ap) do begin
     if ap=pende.absatz then ofse:=pende.offset;
     with absatzp(ap)^ do
-      if softbreak then begin
+      if softbreak then 
+      begin
         ofs:=0;
 
         { Signaturtrenner beachten }
         if (size<>3) or (cont[0]<>'-') or (cont[1]<>'-') or (cont[2]<>' ') then
         { Signaturtrenner, nicht anfassen }
-        while (size>0) and (cont[size-1]=' ') do dec(size);
+        while (size>0) and (cont[size-1]=' ') do 
+          dec(size);
+
         while (ofs<min(size,ofse)) do
         begin
           nxo:=Advance(ap,ofs,rand);
@@ -993,10 +969,15 @@ begin
         cr:=false;
         ofs0:=0;
       end;
-    if ap=pende.absatz then ap:=nil
-    else ap:=absatzp(ap)^.next;
-    if assigned(ap) and (ofse=maxint) then begin
-      blockwrite(f,crlf[1],2); cr:=true;
+      
+      if ap=pende.absatz then 
+        ap:=nil
+      else 
+        ap:=absatzp(ap)^.next;
+      if assigned(ap) and (ofse=maxint) then 
+      begin
+        blockwrite(f,crlf[1],2); 
+        cr:=true;
       end;
     end;
   if not cr and forcecr then
@@ -4216,6 +4197,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.97  2003/04/27 22:25:12  cl
+  - simplified and fixed Editor.LoadBlock
+
   Revision 1.96  2003/04/25 20:24:48  mk
   - added BloclFormat (<Ctrl-B>)
 
