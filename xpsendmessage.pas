@@ -923,7 +923,7 @@ fromstart:
   if not intern then
     CheckEmpfaengerList(sData.EmpfList, false, false, sData);
 
-  betreff:=LeftStr(betreff,betrlen);
+// betreff:=LeftStr(betreff,betrlen);
 
   if betreffbox then begin
     editbetreff;
@@ -1421,6 +1421,9 @@ finalization
 
 {
   $Log$
+  Revision 1.51  2002/05/20 15:23:10  cl
+  - BUGFIX: subject truncated (preliminiary fix)
+
   Revision 1.50  2002/05/09 15:18:06  cl
   - fixed internal messages
 
