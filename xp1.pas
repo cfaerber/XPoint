@@ -169,6 +169,9 @@ function  ioerror(i:integer; otxt:atext):atext;
 
 procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
 
+{ Execute an external program and add any files created in current dir to SL }
+function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
+
 function  listfile(name,header:string; savescr,listmsg:boolean;
                    cols:shortint):shortint; { Lister }
 procedure RemoveEOF(fn:string);
@@ -248,7 +251,7 @@ procedure InitXP1Unit;
 implementation  {-------------------------------------------------------}
 
 uses
-  xp1o,xp1o2,xp1help,xp1input,xpe,xpnt;
+  xp1o,xp1o2,xp1help,xp1input,xpe,xpnt,direct;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -2055,6 +2058,9 @@ end.
 
 {
   $Log$
+  Revision 1.106  2001/05/20 12:21:06  ma
+  - added ShellTrackNewFiles
+
   Revision 1.105  2001/04/21 12:57:04  ma
   - fmove is a function now
 

@@ -197,6 +197,32 @@ begin
   TempOpen;
 end;
 
+{ Execute an external program and add any files created in current dir to SL }
+function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
+var dir1,dir2: TDirectory; curdir,newfiles: string; i,j: Integer; fileexisted: boolean;
+begin
+  curdir:=GetCurrentDir;
+  dir1:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
+  Shell(prog,space,cls);
+  result:=errorlevel;
+  newfiles:='';
+  SetCurrentDir(curdir);
+  dir2:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
+  for i:=0 to dir2.Count-1 do begin
+    fileexisted:=false;
+    for j:=0 to dir1.Count-1 do
+      if dir2.Name[i]=dir1.Name[j] then fileexisted:=true;
+    if not fileexisted then begin
+      SL.Add(ExpandFilename(dir2.Name[i]));
+      if newfiles<>'' then newfiles:=newfiles+', ';
+      newfiles:=newfiles+ExpandFilename(dir2.Name[i]);
+      end;
+    end;
+  dir1.destroy; dir2.destroy;
+  Debug.DebugLog('xpnetcall','new files created by external program: '+newfiles,DLDebug);
+  SetCurrentDir(OwnPath);
+end;
+
 function listheadercol:byte; { Headerzeilenfarbe entsprechend Hervorhebungsflag waehlen }
 var nt : longint;
 begin
@@ -482,6 +508,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2001/05/20 12:21:06  ma
+  - added ShellTrackNewFiles
+
   Revision 1.53  2001/05/08 17:41:32  ma
   - fixed: cli built-in commands could not be executed
 
