@@ -1,0 +1,7 @@
+cvs\*.*
+Beispiel\cvs\*.*
+Build\cvs\*.*
+Doc\cvs\*.*
+Samples\cvs\*.*
+Build\Distri\*.*
+Build\xpdir\*.*

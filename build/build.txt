@@ -1,0 +1,18 @@
+{ $Id$ }
+
+Build\Build.bat erstellt in Build\XPDIR alle Dateien die zur Distribution von Openxp/16 gehören.
+
+Build\make.bat erstellt die ZIP-Archive (Vollversion, Update und Source) die die Distribution darstellen.
+
+Build\clean.bat löscht alles wieder, was Build.bat und make.bat erstellt haben.
+
+Build\exclude.lst enthält alle Dateinamen der Dateien die nicht ins Sourcearchiv aufgenommen werden sollen.
+
+Build\update.lst enthält alle Dateinamen der Dateien im Update-Archiv
+
+{
+  $Log$
+  Revision 1.1.4.1  2003/04/11 09:21:02  mw
+  MW: - Neues Buildsystem fr Openxp/16 3.40 implementiert
+
+}
