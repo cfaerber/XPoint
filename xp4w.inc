@@ -1328,6 +1328,7 @@ var s       : string[90];
 
 begin
   newsuch:=suchst;
+  if (dispmode<1) and newsgroupdispall and (ch='@') then ch:='/';
   if ch=keybs then
     if ((newsuch='/') and (dispmode<1))
     or (newsuch='') then begin
@@ -1341,23 +1342,24 @@ begin
         newsuch:=newsuch+UpCase(ch);
 
   if (dispmode<1) then begin
-    dbSeek(bbase,biBrett,'A'+ustr(newsuch));
-    if dbEOF(bbase) then exit;
-    dbReadN(bbase,bb_brettname,s);
+    dbgotop(bbase);
+    dbreadN(bbase,bb_brettname,s);
     delfirst(s);
-    if ustr(left(s,length(newsuch)))<>ustr(newsuch) then
+    while not dbeof(bbase) and
+     (ustr(left(s,length(newsuch)))<>ustr(newsuch)) do
     begin
-      dbSeek(bbase,biBrett,'1'+ustr(newsuch));
-      if dbEOF(bbase) then exit;
-      dbReadN(bbase,bb_brettname,s);
-      delfirst(s);
+      dbnext(bbase);
+      if not dbeof(bbase) then begin
+        dbreadN(bbase,bb_brettname,s);
+        delfirst(s);
+        end;
       end;
-    if ustr(left(s,length(newsuch)))<>ustr(newsuch) then 
+    if dbeof(bbase) then
       errsound
     else if ch<>'/' then
       suchok
     else begin
-      pp:=pos('/',mid(s,length(newsuch)+1));
+      pp:=cpos('/',mid(s,length(newsuch)+1));
       if pp=0 then begin
         dbSeek(bbase,biBrett,'A'+ustr(s)+'/');
       {  if dbEOF(bbase) then dbSeek(bbase,biBrett,'1'+ustr(s)+'/');}
@@ -1728,6 +1730,16 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.34  2002/03/14 21:07:17  my
+  JG:- Fix: Bei der Brett-Schnellsuche mit "." wurden keine PM-Bretter
+       mehr gefunden, wenn vorher aufgrund der Eingabe schon ein
+       îffentliches Brett (oder umgekehrt) gefunden worden war - die Suche
+       hing dann beim jeweiligen Brett-Typ fest.
+
+  JG+MY:- Bei der Brett-Schnellsuche werden "@" und "/" bei der Eingabe
+          jetzt gleichwertig behandelt (falls die Punktdarstellung fÅr
+          alle Bretter aktiviert ist).
+
   Revision 1.25.2.33  2002/03/09 21:51:07  my
   JG:- Fix: Wenn unter /Edit/Viewer der MIME-Typ "text/plain" angelegt und
        kein externer Viewer eingetragen war, fÅhrte dies beim ôffnen einer
