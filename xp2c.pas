@@ -1348,33 +1348,18 @@ procedure TerminalOptions;
 var x,y : byte;
     brk : boolean;
     ok  : boolean;
-    dev : string;
 begin
-  dialog(ival(getres2(270,0)),10,getres2(270,1),x,y);  { 'Terminal-Einstellungen' }
-  dev:= TermDevice;
-  maddstring(3,2,getres2(270,2),dev,6,6,'');  { 'Schnittstelle    ' }
-  mhnr(990);
-  mappsel(false,'modemùttys0ùttys1ùttys2ùttys3ùttyI0ùttyI1ùttyI2ùttyI3'); { aus: XP9.INC }
-  maddint(3,3,getres2(270,3),TermBaud,6,6,150,115200);  { 'šbertragungsrate ' }
-  mappsel(false,'300ù1200ù2400ù4800ù9600ù19200ù38400ù57600ù115200ù230400');
-  maddtext(14+length(getres2(270,3)),3,getres2(270,4),0);   { 'bps' }
-  maddstring(3,5,getres2(270,5),TermInit,16,40,'');     { 'Modem-Init       ' }
+  dialog(ival(getres2(270,0)),7,getres2(270,1),x,y);  { 'Terminal-Einstellungen' }
+  maddstring(3,2,getres2(270,5),TermInit,16,40,'');     { 'Modem-Init       ' }
+  mhnr(992);
   mappsel(false,'ATZùATùATZ\\ATX3');
-  maddbool(3,7,getres2(270,6),AutoDownload);  { 'automatisches Zmodem-Download' }
-  maddbool(3,8,getres2(270,7),AutoUpload);    { 'automatisches Zmodem-Upload'   }
-  maddbool(3,9,getres2(270,8),TermStatus);    { 'Statuszeile' }
+  maddbool(3,4,getres2(270,6),AutoDownload);  { 'automatisches Zmodem-Download' }
+  maddbool(3,5,getres2(270,7),AutoUpload);    { 'automatisches Zmodem-Upload'   }
+  maddbool(3,6,getres2(270,8),TermStatus);    { 'Statuszeile' }
   repeat
     readmask(brk);
-    if not brk then
-      ok:= exist('/dev/'+dev);
-    if not ok then begin
-      rfehler1(221,TermDevice); { Das Device '/dev/%s' existiert nicht }
-      dev:= TermDevice;         { Alte Vorgabe wiederholen }
-    end;
-    if not brk and mmodified and ok then begin
-      TermDevice:= dev;
+    if not brk and mmodified and ok then
       GlobalModified;
-    end;
   until ok or brk;
   enddialog;
   freeres;
@@ -1535,6 +1520,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2000/11/12 17:28:45  hd
+  - Terminal funktioniert (aber nur im Direkten Modus)
+
   Revision 1.61  2000/11/10 19:21:31  hd
   - Erste Vorbereitungen fuer das Terminal unter Linux
     - Funktioniert prinzipiell, aber noch nicht wirklich

@@ -259,6 +259,8 @@ function SetColorPair(att: integer): integer;
 procedure MakeWindow(var win: TWinDesc; x1, y1, x2, y2: integer; s: string; f: boolean);
 procedure RestoreWindow(var win: TWinDesc);
 
+procedure Scroll(w: TWinDesc; mode: boolean);
+
 implementation
 
 uses
@@ -319,6 +321,11 @@ type
     buffer    : textbuf;
   End;
 {==========================================================================}
+
+procedure Scroll(w: TWinDesc; mode: boolean);
+begin
+  scrollok(w.wHnd,bool(mode));
+end;
 
 { Farben zwischen Curses und IBM konvertieren }
 function Curses2IBM(attr: integer): integer;
@@ -1421,6 +1428,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/11/12 17:28:45  hd
+  - Terminal funktioniert (aber nur im Direkten Modus)
+
   Revision 1.30  2000/10/24 17:37:24  fe
   Zirkulaere Abhaengigkeiten beseitigt.
 

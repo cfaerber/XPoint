@@ -12153,4 +12153,8 @@ Press <Enter> to read about [Fido addresses].@4010
 
 <<See also FIDO.DOC, "nodelists"
 
+@
+24001
+Choose a device. At the moment you can setup up to
+for devices (/Config/Modem).
 @@

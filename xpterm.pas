@@ -371,9 +371,6 @@ var b : byte;
 begin
   if CommObj^.CharAvail then begin
     b:=Ord(CommObj^.GetChar);
-{$ifdef Debug}
-    DebugLog('XPTerm','Received char: "'+chr(b)+'"',9);
-{$endif}
     if ansichar then add_ansi(char(b))
     else
       if ansimode and (b=27) then begin
@@ -564,17 +561,14 @@ begin
     trfehler(799,30);
     exit;
   end;
-{$ifdef Debug}
-  nr:= minisel(0,0,'Logging','Level ^1,Level ^2,Level ^3,Level ^4,Level ^5,Level ^6,Level ^7,Level ^8,Level ^9',9);
-  SetLogLevel('ObjCOM',nr);
-  SetLogLevel('XPTerm',nr);
-{$endif}
   { Gerät wählen }
+  pushhp(24001);
   s:= '^1 "'+COMn[1].MCommInit
         +'",^2 "'+COMn[2].MCommInit
         +'",^3 "'+COMn[3].MCommInit
         +'",^4 "'+COMn[4].MCommInit+'"';
   nr:= minisel(0,0,getres2(30001,4),s,1);
+  pophp;
   if nr<0 then begin
     freeres;
     menurestart:= true;
@@ -587,6 +581,7 @@ begin
   end;
   Modem.CommObj:=CommObj;
   MakeWindow(win, 1, 4, SysGetScreenCols, SysGetScreenLines-3, '', false);
+  Scroll(win, true);
   attrtxt(15); 
   writeln('OpenXP ', verstr, betastr, pformstr);
   writeln('Terminal Emulation Ready');
@@ -611,13 +606,6 @@ begin
   ansifg:=7; ansibg:=0;
   ansihigh:=0;
   ansirev:=false;
-{$ifdef Debug}
-  DebugLog('XPTerm','Ignore CD...: '+iifs(IgnCD,'Ja','Nein'),5);
-  DebugLog('XPTerm','Ignore CTS..: '+iifs(IgnCTS,'Ja','Nein'),5);
-  DebugLog('XPTerm','Handle......: '+IntToStr(CommObj^.GetHandle),5);
-  DebugLog('XPTerm','Speed.......: '+IntToStr(CommObj^.GetBpsRate),5);
-  DebugLog('XPTerm','Enter main loop',5);
-{$endif}
   while not ende do begin
     if connected and not IgnCD and not CommObj^.Carrier then begin
       moff;
@@ -1471,6 +1459,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/11/12 17:28:45  hd
+  - Terminal funktioniert (aber nur im Direkten Modus)
+
   Revision 1.23  2000/11/10 19:21:31  hd
   - Erste Vorbereitungen fuer das Terminal unter Linux
     - Funktioniert prinzipiell, aber noch nicht wirklich

@@ -13526,5 +13526,10 @@ Sie bei /Config/Extern/PGP den Schalter "Warten auf
 Tastendruck ..." und versuchen Sie erneut, die Nach-
 richt mit /Nachricht/PGP/Decodieren zu decodieren.
 Sie sollten dann die PGP-Fehlermeldung lesen k”nnen.
+@
+24001
+W„hlen Sie hier ein Ger„t. OpenXP erlaubt Ihnen zur
+Zeit die Verwaltung von bis zu vier Ger„ten. Sie
+k”nnen diese unter /Config/Modem einstellen.
 @@
 
