@@ -515,6 +515,11 @@ Bugfixes
   mehr doppelt in die Suchbegriff-History Åbernommen.
   XP4O.PAS
 
+- Ein paar unsinnige PrÅfungen auf xp_xp='CrossPoint'" in der
+  Farbkonfiguration auskommentiert, dadurch wieder richtige Anzeige der
+  MenÅs.
+  XP2F.PAS
+
 
 
 Interne énderungen
