@@ -29,7 +29,7 @@ unit xpsendmessage_addr_edit;
 uses 
   addresslist,xpnt,xpheader;
 
-procedure EditEmpfaengerList(
+function EditEmpfaengerList(
   const DialogueTitle: String;          // Dialog-Titel
 
   EditRecipients:   Boolean;            // Empfänger bearbeiten
@@ -47,7 +47,7 @@ procedure EditEmpfaengerList(
   AMAllowedNets:    TNetClassSet;       // Erlaubte Netztypen für AMs
   
   sData:            TSendUUData         // may be nil
-);
+):boolean;
 
 procedure CheckEmpfaengerList(
   List:             TAddressList;       // Addresse to check
@@ -197,10 +197,11 @@ var
     if result >= List.Count then result := List.Count-1;
     if result < 0 then result := 0;
   end;
-
   
   function CurFieldStart: Integer;
-  begin result := FieldPos - ((FieldPos - Field1st) mod FieldInc); end;
+  begin 
+    result := FieldPos - ((FieldPos - Field1st) mod FieldInc); 
+  end;
 
   function CheckType(var inhalt:string):boolean;
   var at: TAddressListType;
@@ -231,9 +232,6 @@ var
     ii := IndexPos;
     inhalt := Trim(inhalt);
 
-//  Wrt(1,1,'<<FieldPos='+StrS(FieldPos)+', IndexPos='+StrS(ii)+
-//    ', List.Count='+StrS(List.Count)+', List.GroupNames.Count='+StrS(List.GroupNames.count)+'>>');
-    
     if inhalt='' then
     begin
       G := List[ii].Group;
@@ -516,7 +514,7 @@ var
     result := true;
   end;
   
-procedure EditEmpfaengerList(
+function EditEmpfaengerList(
   const DialogueTitle: String;          // Dialog-Titel
 
   EditRecipients:   Boolean;            // Empfänger bearbeiten
@@ -534,7 +532,7 @@ procedure EditEmpfaengerList(
   AMAllowedNets:    TNetClassSet;       // Erlaubte Netztypen für AMs
 
   sData:            TSendUUData         // may be nil
-);
+): boolean;
 
   procedure ComposeEditableList;
   var i: Integer;
@@ -580,6 +578,7 @@ procedure EditEmpfaengerList(
       LastGroup[it] := -1;
     
     for ii := 0 to List.Count-1 do
+     if not List[ii].Empty then
       with EmpfList.AddNew do 
       begin
         Assign(List[ii]);        
@@ -657,7 +656,7 @@ begin
       Maddstring(2+70,1+h-1,'',Dummy2,0,0,''); FieldDwn := FieldPos;
       MSet0Proc(ScrollDown);
 
-      if ShowSubject then
+      if ShowSubject or EditSubject then
       begin
         MaddText  (2,h+2,GetRes2(2203,6),col.coldiahigh);
         if EditSubject then
@@ -667,6 +666,12 @@ begin
       end;
 
       ScrollDone;
+
+      if Editsubject then
+        if List.Count>=2 then
+          SetFieldPos(FieldPos)
+        else 
+          SetFieldPos(Field1st+1);
       
       readmask(brk);
       closemask;
@@ -681,6 +686,8 @@ begin
   except
     on e:Exception do fehler(e.message);
   end;
+
+  result := not brk;
 end;
 
 // -- Adressen überprüfen ----------------------------------------------
@@ -746,7 +753,7 @@ var Index: integer;
       NoDB, BoxAgain;
 
     function PMEdit: boolean;
-    var user,adresse,komm,pollbox: string;
+    var user,adresse,komm,pollbox,real,oreal: string;
         halten: Integer16;
         adr,flags,b: byte;        
         brk: boolean;
@@ -754,18 +761,28 @@ var Index: integer;
       user    := EMail.XPAddress;
       adresse := EMail.XPAddress;
       komm    := '';
+
+      if EMail is TDomainEMailAddress then
+      begin
+        real    := TDomainEMailAddress(EMail).RealName;
+        oreal   := real;
+      end;
+      
       pollbox := List[Index].BoxName; if pollbox='' then pollbox := DefaultBox;
       halten  := StdUHaltezeit;
       Adr     := NeuUserGruppe;
       Flags   := 1 + iif(newuseribm,0,8);
 
-      EditUser('<TODO>',user,adresse,komm,pollbox,halten,adr,flags,true,brk);
+      EditUser('####',user,adresse,komm,pollbox,halten,adr,flags,true,brk);
 
       if brk then
         result := false
       else
       begin
         List[Index].ZCAddress := Adresse;
+
+        if List[Index].Address is TDomainEMailAddress then
+          TDomainEMailAddress(List[Index].Address).RealName  := iifs(real='',oreal,real);
 
        dbSeek(ubase,uiName,UpperCase(user));
        if dbFound then
@@ -1044,6 +1061,10 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2002/06/23 13:49:37  cl
+// - more intelligent cursor placement
+// - preserve real name when creating new users
+//
 // Revision 1.3  2002/05/09 15:17:45  cl
 // - fixed creation of editable list
 //
