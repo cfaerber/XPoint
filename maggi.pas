@@ -83,6 +83,7 @@ const nt_ZConnect=2;
       AttrPmReply = $0100;            { PM-Reply auf AM (Maus)     }
       AttrQuoteTo = $0400;            { QuoteTo (Maus)             }
       AttrQPC     = $0001;            { QPC-codiert                }
+      AttrControl = $0020;            { Cancel-Nachricht }
 
 type  charr       = array[0..65530] of char;
       charrp      = ^charr;
@@ -1826,6 +1827,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/06/04 18:10:28  sv
+  - Maggi wieder kompilierbar
+
   Revision 1.13  2000/06/04 16:57:23  sv
   - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
     (RFC/ZConnect)

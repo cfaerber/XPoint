@@ -512,7 +512,7 @@ begin
             if id = 'F-TO'   then LRead(fido_to,36) else
             if id = 'VER'    then GetName(vertreter,dummy) else
             if id = 'CONTROL' then LRead(control,150) else
-            if id = 'ERSETZT' then LRead(ersetzt,MidLen) else
+            if id = 'ERSETZT' then LRead(ersetzt,120) else
 
             if id[1]='X' then begin               { XP }
               if id = 'X-CHARSET' then LRead(x_charset,25) else
@@ -604,6 +604,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/06/04 18:10:28  sv
+  - Maggi wieder kompilierbar
+
   Revision 1.14  2000/06/04 16:57:26  sv
   - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
     (RFC/ZConnect)
