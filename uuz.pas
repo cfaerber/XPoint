@@ -1508,7 +1508,28 @@ begin
 @@7: cmp   al,10
      jnz   @@1
 
-@@8: mov   ax,di
+     jmp @@9
+     
+@@8: cmp dl,0                     { Wenn Umbruch aktiv ist: }
+     je @@9
+     lea bx,[s+di+1]              { Vom Stringende zurueck bis zum }
+     xor cx,cx
+@_8: dec bx
+     mov al,byte ptr[bx]          { letzten Trennzeichen gehen }
+     cmp al,' '
+     je @@9
+     cmp al,','
+     je @@9
+     cmp al,';'
+     je @@9
+     inc cx
+     dec si
+     dec di
+     jne @_8
+     add si,cx          { wenn keine Trennmîglichkeit gefunden wurde }
+     add di,cx          { StringlÑnge und Bufferposition zurÅcksetzen }
+
+@@9: mov   ax,di
      mov   byte ptr s,al           { s[0]:=char(l) }
      mov   bufpos,si
    end;
@@ -2163,7 +2184,7 @@ begin
              if zz='x-homepage'   then homepage := s0 else
              if zz='x-envelope-to' then envemp := s0 else
 
-             if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
+             if { (zz<>'xref') and } (left(zz,4)<>'x-xp') then AppUline(s1);
         else if zz='from'         then GetAdr(absender,realname) else
              if zz='to'           then GetEmpf else
              if zz='message-id'   then msgid:=GetMsgid else
@@ -3474,6 +3495,12 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.40  2001/05/29 21:02:13  my
+  JG:- Header longer than 255 characters are splitted correctly now
+       (at the last " ", "," or ";" before pos 255 rather than exactly
+       at pos 255).
+  JG:- 'Xref' headers are not thrown away anymore
+
   Revision 1.35.2.39  2001/04/28 15:47:30  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.
