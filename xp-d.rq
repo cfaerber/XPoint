@@ -3166,6 +3166,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 50 Verteiler sind hier nicht erlaubt.
 51 ungÅltige Adresse
 
++  12300
+#  ZFtools
+1  Warnung: Fido-Paket '%s' fehlerhaft!
+2  Fehlerhaftes Fido-Paket '%s'!
+3  Fehlerhafter Puffer!
+
 +  12400
 1  fehlerhafte Zeile - Decodierung abgebrochen
 2  Nachricht enthÑlt keine UUcodierte Datei
@@ -3313,6 +3319,22 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3 Seriell ^1 (COM1),Seriell ^2 (COM2),Seriell ^3 (COM3),Seriell ^4 (COM4),^ISDN (CAPI)
 4 GerÑte
 5 Device ^1,Device ^2,Device ^3,Device ^4
+-
+
+# --- Neue Fido-Darstellung
++30003
+1  Pakete suchen (%s)
+2  Entpacke %s
+10 Konvertiere FTS -> ZConnect
+11 Datei......:
+12 Nummer.....:
+13 Von........:
+14 An.........:
+15 Betreff....:
+16 Status.....:
+20 Konvertiere ZConnect -> FTS
+50 Kopiere %s ins Verzeichnis BAD.
+51 Unbekannte Brettebene '%s'
 -
 
 # --- NNTP-UnterstÅtzung
@@ -3516,6 +3538,11 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.85  2000/12/13 14:14:46  hd
+# - some changes on the fido-sysop-poll
+#   - a little state window
+#   - allways enabled with defined symbol DEVELOP
+#
 # Revision 1.84  2000/12/08 01:10:07  mk
 # MH:- Usersuche bei Auswahl ueber F2 moeglich
 #

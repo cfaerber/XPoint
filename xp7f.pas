@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-{$ifdef Unix}
+{$ifdef Develop}
   ZFTools,      { ZFido }
 {$endif}
   typeform,montage,fileio,keys,maus2,
@@ -224,18 +224,19 @@ var p       : byte;
     i,rc    : integer;
     via     : string;
     dir     : TDirectory;
+    x,y     : byte;
 begin
   FidoImport:=false;
   with BoxPar^ do begin
-    ttwin; attrtxt(7); moff; clrscr; mon;
+    msgbox(40,5,GetRepS2(30003,1,boxname),x,y);      { 'Pakete suchen (%s)' }
     p:=pos('$PUFFER',UpperCase(downarcer));         { Empfangspakete entpacken }
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
     { using wildcard does not require case sensetive }
     dir:= TDirectory.Create(ImportDir+WildCard,faAnyFile-faDirectory,false);
-    window(1,1,screenwidth,screenlines); attrtxt(7);
     for i:= 0 to dir.Count-1 do begin
       if isPacket(dir.name[i]) then begin
+        MWrt(x+3,y+3,GetRepS2(30003,2,dir.Name[i]));
         ImportDir:=ExpandFilename(ImportDir);
         SetCurrentDir(OwnPath+XFerDir);
         shell(LeftStr(downarcer,p-1)+dir.LongName[i]+mid(downarcer,p+9),500,1);
@@ -245,7 +246,7 @@ begin
         end;
     end;
     dir.Free;
-    ttwin;
+    closebox;
     { Read only files }
     dir:= TDirectory.Create(XFerDir+'*.PKT',(faAnyFile-faDirectory),true);
     if not(dir.isEmpty) then begin
@@ -291,6 +292,7 @@ begin
       CallFilter(true,fpuffer);
     end;
   end; { with }
+  freeres;
 end;
 {$else}
 const fpuffer = 'FPUFFER';
@@ -403,6 +405,7 @@ var t        : text;
     ni       : NodeInfo;
     fileatts : integer;   { File-Attaches }
     rflist   : rfnodep;
+    dir      : TDirectory;
 
 label fn_ende,fn_ende0;
 
@@ -673,7 +676,7 @@ label fn_ende,fn_ende0;
       end;
   end;
 
-begin
+begin { FidoNetcall }
   Fidonetcall:=EL_ok;
   for i:=1 to addpkts^.akanz do begin    { Zusatz-Req-Files erzeugen }
     splitfido(addpkts^.akabox[i],fa,DefaultZone);
@@ -698,19 +701,23 @@ begin
       DeleteFile(addpkts^.addpkt[i]);
     end;
 
+{$ifndef Develop}
   window(1,1,screenwidth,screenlines);
-  rc:= findfirst(XFerDir+WildCard,faAnyFile-faDirectory,sr);            { SPOOL leeren }
-  while rc=0 do begin
-    sr.name:= FileUpperCase(sr.name);
-    if isPacket(sr.name) or (RightStr(sr.name,4)=FileUpperCase('.pkt')) then
-      DeleteFile(XFerDir+sr.name);
-    rc:= findnext(sr);
-  end;
-  FindClose(sr);
-
+{$endif}
+  { Spool/ leeren }
+  dir:= TDirectory.Create(XFerDir+WildCard,faAnyFile-faDirectory,false);
+  for i:= 0 to dir.Count-1 do
+    if UpperCase(ExtractFileExt(dir.Name[i]))='.PKT' then
+      DeleteFile(dir.LongName[i]);
+  dir.Free;
+  
+{$ifndef Develop}
   ttwin;
+{$endif}
   FidoNetcall:=EL_noconn;
+
   shell(XPFMBin+' '+FidoCfg,300,4);         { --- Anruf --- }
+
   aresult:=errorlevel;
 {  if carrier(comnr) and not comn[comnr].IgCD then
     aufhaengen; }
@@ -1031,6 +1038,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/12/13 14:14:46  hd
+  - some changes on the fido-sysop-poll
+    - a little state window
+    - allways enabled with defined symbol DEVELOP
+
   Revision 1.41  2000/12/08 11:17:01  hd
   - Add: Sysop-Call (Incoming) on Fido Packets works propper
     (the screen output doesn't). The ZFido is integrated to
