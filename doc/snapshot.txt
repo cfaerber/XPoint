@@ -490,7 +490,9 @@ Allgemeine Bedienung und Sonstiges
 
 - Sysop-Mode wird jetzt Åber einen Schalter aktiviert/deaktiviert.
   Dadurch kein Lîschen bzw. Neueintragen der Verzeichnisdaten beim
-  Umschalten mehr erforderlich.
+  Umschalten mehr erforderlich. Bei Serverboxen, bei denen in alten
+  Versionen bisher der Sysop-Mode aktiviert war, mu· der Schalter
+  einmal manuell aktiviert werden.
   XP0.PAS, XP7.PAS, XP7.INC, XP7L.PAS, XP7O.PAS, XP7U.INC, XP9.INC,
   XP9BP.PAS, XP9SEL.PAS, XP.IHQ, XP-E.IHQ
 
@@ -612,7 +614,7 @@ Bugfixes
 - Sysop-Mode RFC/Client funktioniert jetzt.
   XP7.PAS, XP7.INC, XP7L.PAS, XP7O.PAS, XP7U.INC
 
-- Ausschlu·zeiten werden bei SysopMode und RFC/Client nicht mehr
+- Ausschlu·zeiten werden bei Sysop-Mode und RFC/Client nicht mehr
   berÅcksichtigt (war zwar so dokumentiert, funktionierte aber nicht).
   XP7.PAS
 
