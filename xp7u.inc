@@ -95,6 +95,7 @@ var sr    : searchrec;
     news  : boolean;
     freeze: boolean;
     gzip  : boolean;
+    bzip  : boolean;
     f     : boolean;
     uu: TUUZ;
 
@@ -173,6 +174,7 @@ begin
       if UpArcer='' then uu.SMTP := true
       else if pos('freeze',LowerCase(uparcer))>0 then uu.fSMTP := true
       else if pos('gzip',LowerCase(uparcer))>0 then uu.zSMTP := true
+      else if pos('bzip2',LowerCase(uparcer))>0 then uu.bSMTP := true
       else uu.cSMTP := true;
     if NewsMIME then uu.NewsMime := true;
     if MIMEqp then uu.MakeQP := true;
@@ -199,11 +201,13 @@ begin
   else begin                                   { Mail/News packen }
     freeze:=pos('freeze',LowerCase(BoxPar^.uparcer))>0;
     gzip:=pos('gzip',LowerCase(BoxPar^.uparcer))>0;
+    bzip:=pos('bzip2',LowerCase(BoxPar^.uparcer))>0;
     new(f1); new(f2);
     p:=pos('$PUFFER',UpperCase(boxpar^.uparcer));
     s[0]:=#8;
     if freeze then cunb:='#! funbatch'#10
     else if gzip then cunb:='#! gunbatch'#10
+    else if bzip then cunb:='#! bunbatch'#10
     else cunb:='#! cunbatch'#10;
     findfirst(DestDir+'D*.OUT',ffAnyFile,sr);
     while doserror=0 do begin
@@ -261,11 +265,12 @@ var sr      : searchrec;
     dummy   : longint;
     uu : TUUZ;
 
-  procedure uncompress(fn:string; freeze,gzip:boolean);
+  procedure uncompress(fn:string; freeze,gzip,bzip:boolean);
   var s : string;
   begin
     if freeze then s:=boxpar^.unfreezer
     else if gzip then s:=boxpar^.ungzipper
+    else if bzip then s:=boxpar^.unbzipper
     else s:=BoxPar^.downarcer;
     exchange(s,'$DOWNFILE',XFerDir+fn+'.Z');
     gotoxy(1,uncompy);
@@ -304,14 +309,16 @@ begin
         fmove(f1^,f2^);
         close(f1^); close(f2^);
         uncompress(sr.name,pos('funbatch',s)>0,
-                   (pos('gunbatch',s)>0) or (pos('zunbatch',s)>0));
+                   (pos('gunbatch',s)>0) or (pos('zunbatch',s)>0),
+		   pos('bunbatch',s)>0);
         end
       else begin
         close(f1^);
         if (LeftStr(s,2)=#$1f#$9d) or (LeftStr(s,2)=#$1f#$9f) or
-           (LeftStr(s,2)=#$1f#$8b) then begin     { compressed/frozen SMTP o.„. }
+           (LeftStr(s,2)=#$1f#$8b) or (LeftStr(s,2)=#$42#$5a) then 
+	   begin     { compressed/frozen SMTP o.„. }
           rename(f1^,XFerDir+sr.name+'.Z');
-          uncompress(sr.name,s[2]=#$9f,s[2]=#$8b);
+          uncompress(sr.name,s[2]=#$9f,s[2]=#$8b,s[2]=#$5a);
           end;
         end;
       inc(NC^.recbuf,_filesize(XFerDir+sr.name));
@@ -469,6 +476,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2000/11/02 21:27:04  fe
+  bzip2 support added.
+
   Revision 1.21  2000/10/17 10:05:55  mk
   - Left->LeftStr, Right->RightStr
 

@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -33,7 +33,7 @@ begin
   writeln('uz switches:  -graberec  =  grab envelope recipient from Received-header');
   writeln;
   writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
-  writeln('              -SMTP   =  Batched SMTP (-c/f/zSMTP = compressed)');
+  writeln('              -SMTP   =  Batched SMTP (-c/f/z/bSMTP = compressed)');
   writeln('              -MIME   =  Use MIME for news');
   writeln('              -noMIME =  Do not create any MIME headers');
   writeln('              -qp     =  MIME: quoted-printable (default: 8bit)');
@@ -74,6 +74,9 @@ end.
 
 {
   $Log$
+  Revision 1.3  2000/11/02 21:27:04  fe
+  bzip2 support added.
+
   Revision 1.2  2000/10/10 12:27:35  mk
   - added xpdefine.inc
 
@@ -81,4 +84,3 @@ end.
   - UUZ ist jetzt intern
 
 }
-

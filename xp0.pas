@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -21,18 +21,18 @@ uses
   dos,typeform,keys,xpglobal, classes,sysutils;
 
 
-{ Die folgenden drei Konstanten mÅssen Sie ergÑnzen, bevor Sie      }
-{ CrossPoint compilieren kînnen. Falls Die das compilierte Programm }
-{ weitergeben mîchten, mÅssen der angegebene Name korrekt und die   }
-{ E-Mail-Adresse erreichbar sein (siehe LIZENZ.TXT).                }
-{ Beispiel:                                                         }
-{                                                                   }
-{ const  author_name = 'Ralf MÅller';                               }
-{        author_mail = 'ralf@t-offline.de';                         }
-{        x_copyright = '(c) 2001';                                  }
-{                                                                   }
-{ Diese Informationen werden bei Programmstart und bei              }
-{ /XPoint/Registrierung angezeigt.                                  }
+{ Die folgenden drei Konstanten muessen Sie ergaenzen, bevor Sie     }
+{ CrossPoint compilieren koennen. Falls Die das compilierte Programm }
+{ weitergeben moechten, muessen der angegebene Name korrekt und die  }
+{ E-Mail-Adresse erreichbar sein (siehe LIZENZ.TXT).                 }
+{ Beispiel:                                                          }
+{                                                                    }
+{ const  author_name = 'Ralf Mueller';                               }
+{        author_mail = 'ralf@example.org';                           }
+{        x_copyright = '(c) 2001';                                   }
+{                                                                    }
+{ Diese Informationen werden bei Programmstart und bei               }
+{ /XPoint/Registrierung angezeigt.                                   }
 
 
 const
@@ -41,12 +41,12 @@ const
        ZeilenMenue = 11;
        maxbmark    = 1000;           { maximal markierbare User/Bretter }
        maxmarklist = 5000;           { MK: Maximale Anzahl markierter Msgs }
-       QuoteLen    = 5;              { maximale QuoteChar-LÑnge }
+       QuoteLen    = 5;              { maximale QuoteChar-Laenge }
        Ablagen     = 20;             { 0..9 }
        maxpmc      = 3;              { installierbare pmCrypt-Verfahren }
-       MaxSigsize  = 300;            { maximale Signaturgrî·e (Bytes) }
+       MaxSigsize  = 300;            { maximale Signaturgroesse (Bytes) }
        maxkeys     = 100;            { s. auch XP10.maxentries }
-       excludes    = 4;              { Anzahl Ausschlu·zeiten  }
+       excludes    = 4;              { Anzahl Ausschlusszeiten  }
        maxskeys    = 15;             { max. Tasten in Zeile 2  }
        mausdefx    = 620;            { Maus-Startposition      }
        mausdefy    = 28;
@@ -58,8 +58,8 @@ const
        MaxXposts   = 15;
        MaxCom      = 5;
 
-       BoxNameLen  = 20;             { diese LÑngenangaben sollten fÅr }
-       BoxRealLen  = 15;             { alle Bearbeitungs-Variablen fÅr }
+       BoxNameLen  = 20;             { diese Laengenangaben sollten fuer }
+       BoxRealLen  = 15;             { alle Bearbeitungs-Variablen fuer }
        BrettLen    = 81;             { die entsprechenden Felder ver-  }
        eBrettLen   = 79;             { wendet werden                   }
        AdrLen      = 80;
@@ -74,9 +74,9 @@ const
        HomepageLen = 90;             { WWW-Homepage }
        CustHeadLen = 60;             { Customizable Header-Lines }
        hdErrLen    = 60;
-       ViewprogLen = 70;             { Kommandozeile fÅr ext. Viewer }
+       ViewprogLen = 70;             { Kommandozeile fuer ext. Viewer }
        ResMinmem   = 340000;
-       realnlen = 120;               { LÑnge der Realnames }
+       realnlen = 120;               { Laenge der Realnames }
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
@@ -169,7 +169,7 @@ const
        BoxenFile   = 'boxen';
        GruppenFile = 'gruppen';
        SystemFile  = 'systeme';
-       DupeFile    = 'dupekill';       { temporÑr in XP4O.DupeKill }
+       DupeFile    = 'dupekill';       { temporaer in XP4O.DupeKill }
        AutoFile    = 'automsg';
        PseudoFile  = 'pseudos';
        BezugFile   = 'bezuege';
@@ -207,7 +207,7 @@ const
 
        ErrlogFile  = 'errors.log';     { LogFiles }
        Logfile     = 'xpoint.log';
-       BiLogFile   = 'logfile';        { fÅr BiModem-öbertragung }
+       BiLogFile   = 'logfile';        { fuer BiModem-Uebertragung }
        BrettlogFile= 'bretter.log';    { automatisch angelegte Bretter }
        UserlogFile = 'user.log';       { automatisch angelegte User }
        DupeLogfile = 'dupes.log';      { s. XP4.DupeKill }
@@ -225,7 +225,7 @@ const
        BoxenFile   = 'BOXEN';
        GruppenFile = 'GRUPPEN';
        SystemFile  = 'SYSTEME';
-       DupeFile    = 'DUPEKILL';       { temporÑr in XP4O.DupeKill }
+       DupeFile    = 'DUPEKILL';       { temporaer in XP4O.DupeKill }
        AutoFile    = 'AUTOMSG';
        PseudoFile  = 'PSEUDOS';
        BezugFile   = 'BEZUEGE';
@@ -263,7 +263,7 @@ const
 
        ErrlogFile  = 'ERRORS.LOG';     { LogFiles }
        Logfile     = 'XPOINT.LOG';
-       BiLogFile   = 'LOGFILE';        { fÅr BiModem-öbertragung }
+       BiLogFile   = 'LOGFILE';        { fuer BiModem-Uebertragung }
        BrettlogFile= 'BRETTER.LOG';    { automatisch angelegte Bretter }
        UserlogFile = 'USER.LOG';       { automatisch angelegte User }
        DupeLogfile = 'DUPES.LOG';      { s. XP4.DupeKill }
@@ -324,7 +324,7 @@ const
        rmNeues     = 2;                { ReadMode: Lesen/Neues      }
        rmHeute     = 3;                { ReadMode: Lesen/Heute      }
 
-       MaxHdsize   = 2000;             { maximal *erzeugte* Headergrî·e }
+       MaxHdsize   = 2000;             { maximal *erzeugte* Headergroesse }
 
        AttrQPC     = $0001;            { QPC-codierte Nachricht     }
        AttrCrash   = $0002;            { header.attrib: Crashmail   }
@@ -346,11 +346,11 @@ const
        fPGP_sigerr   = $0020;          { Signatur war fehlerhaft    }
        fPGP_please   = $0040;          { Verifikations-Anforderung  }
        fPGP_request  = $0080;          { Key-Request                }
-       fPGP_haskey   = $0100;          { Nachricht enthÑlt PGP-Key  }
-       fPGP_comprom  = $0200;          { Nachricht enthÑlt compromise }
+       fPGP_haskey   = $0100;          { Nachricht enthaelt PGP-Key  }
+       fPGP_comprom  = $0200;          { Nachricht enthaelt compromise }
 
        fattrHalten   = $0001;          { Nachricht auf "halten"     }
-       fattrLoeschen = $0002;          { Nachricht auf "lîschen"    }
+       fattrLoeschen = $0002;          { Nachricht auf "loeschen"    }
        fattrGelesen  = $0004;          { Nachricht auf "gelesen"    }
        fattrHilite   = $0008;          { Nachricht hervorheben      }
 
@@ -360,7 +360,7 @@ const
        kflPM      = 4;
        kflBrett   = 8;                 { Brettwechsel }
 
-       hdf_Trenn  = 0;                 { Nummern fÅr Header-Felder }
+       hdf_Trenn  = 0;                 { Nummern fuer Header-Felder }
        hdf_EMP    = 1;
        hdf_ABS    = 2;
        hdf_BET    = 3;        hdf_OAB     = 13;     hdf_TEL      = 23;
@@ -385,27 +385,27 @@ type   textp  = ^text;
        ColArr = array[0..3] of byte;
        ColQArr= array[1..9] of byte;
        ColRec = record
-                  ColMenu       : ColArr; { Normaler MenÅtext       }
+                  ColMenu       : ColArr; { Normaler Menuetext       }
                   ColMenuHigh   : ColArr; { Direkt-Buchstaben       }
-                  ColMenuInv    : ColArr; { MenÅ-Balken             }
-                  ColMenuInvHi  : ColArr; { MenÅ-Balken/Buchstabe   }
-                  ColMenuDis    : ColArr; { MenÅ disabled           }
-                  ColMenuSelDis : ColArr; { MenÅ disabled/gewÑhlt   }
+                  ColMenuInv    : ColArr; { Menue-Balken             }
+                  ColMenuInvHi  : ColArr; { Menue-Balken/Buchstabe   }
+                  ColMenuDis    : ColArr; { Menue disabled           }
+                  ColMenuSelDis : ColArr; { Menue disabled/gewaehlt   }
                   ColKeys       : byte;   { Direkttasten            }
                   ColKeysHigh   : byte;   { Direkttasten-Buchstaben }
                   ColKeysAct    : byte;   { aktivierte Taste        }
                   ColKeysActHi  : byte;   { aktivierter Buchstabe   }
                   ColTLine      : byte;   { Trennlinie              }
                   ColBretter    : byte;   { User / Bretter          }
-                  ColBretterInv : byte;   { User / Bretter, gewÑhlt }
+                  ColBretterInv : byte;   { User / Bretter, gewaehlt }
                   ColBretterHi  : byte;   { User / Bretter, markiert}
                   ColBretterTr  : byte;   { Trennzeile              }
                   ColMsgs       : byte;   { Msgs                    }
                   ColMsgsHigh   : byte;   { Msgs, markiert          }
-                  ColMsgsInv    : byte;   { Msgs, gewÑhlt           }
+                  ColMsgsInv    : byte;   { Msgs, gewaehlt           }
                   ColMsgsInfo   : byte;   { Msgs, 1. Zeile          }
                   ColMsgsUser   : byte;   { PM-archivierte Msgs     }
-                  ColMsgsInvUser: byte;   { gewÑhlt+hervorgehoben   }
+                  ColMsgsInvUser: byte;   { gewaehlt+hervorgehoben   }
                   ColMsgsPrio1  : byte;   { Farbe fuer Priority 1   }
                   ColMsgsPrio2  : byte;   { ... 2 }
                   ColMsgsPrio4  : byte;   { ... 4 }
@@ -413,7 +413,7 @@ type   textp  = ^text;
                   ColMbox       : byte;   { Meldungs-Box, Text      }
                   ColMboxRahmen : byte;   { Meldungs-Box, Rahmen    }
                   ColMboxHigh   : byte;   { Meldungs-Box, hervorgeh.}
-                  ColDialog     : byte;   { Dialoge, Feldnamen u.Ñ. }
+                  ColDialog     : byte;   { Dialoge, Feldnamen u.ae. }
                   ColDiaRahmen  : byte;   { Dialogbox, Rahmen       }
                   ColDiaHigh    : byte;   { Dialogbox, hervorgeh.T. }
                   ColDiaInp     : byte;   { Dialogbox, Eingabefeld  }
@@ -434,13 +434,13 @@ type   textp  = ^text;
                   ColButton     : byte;   { Button                  }
                   ColButtonHigh : byte;   { Button - Hotkeys        }
                   ColButtonArr  : byte;   { aktiver Button: Pfeile  }
-                  ColUtility    : byte;   { Kalender u.Ñ.           }
+                  ColUtility    : byte;   { Kalender u.ae.           }
                   ColUtiHigh    : byte;
                   ColUtiInv     : byte;
                   ColHelp       : byte;   { Hilfe normal            }
                   ColHelpHigh   : byte;   { hervorgehobener Text    }
                   ColHelpQVW    : byte;   { Querverweis             }
-                  ColHelpSlQVW  : byte;   { gewÑhlter Querverweis   }
+                  ColHelpSlQVW  : byte;   { gewaehlter Querverweis   }
                   ColListText   : byte;   { Lister, normaler Text   }
                   ColListMarked : byte;   { Lister, markiert        }
                   ColListSelbar : byte;   { Lister, Auswahlbalken   }
@@ -459,10 +459,10 @@ type   textp  = ^text;
                   ColEditHead   : byte;   { TED: Info-Kopf          }
                   ColEditQuote  : ColQArr; { TED: farbige Quotes     }
                   ColEditEndmark: byte;   { TED: Endmarkierung      }
-                  ColEditMenu   : byte;   { TED: MenÅ               }
+                  ColEditMenu   : byte;   { TED: Menue               }
                   ColEditMenuHi : byte;   { TED: Hotkey             }
                   ColEditMenuInv: byte;   { TED: Selbar             }
-                  ColEditHiInv  : byte;   { TED: gewÑhlter Hotkey   }
+                  ColEditHiInv  : byte;   { TED: gewaehlter Hotkey   }
                   ColArcStat    : byte;   { Status-Zeile ArcViewer  }
                   ColMapsBest   : byte;   { bestellte Bretter       }
                   ColMailer     : byte;   { Fido-Mailer/uucico      }
@@ -478,7 +478,7 @@ type   textp  = ^text;
        AdrStr      = string;
        CustHeadStr = string;
 
-       refnodep= ^refnode;             { Datentyp fÅr Reference-Liste }
+       refnodep= ^refnode;             { Datentyp fuer Reference-Liste }
        refnode = record
                    next  : refnodep;
                    ref   : string;
@@ -502,14 +502,14 @@ type   textp  = ^text;
                   MCommInit : string;  { ObjCOM-Comminit-String }
                   MInit  : string;
                   MExit  : string;
-                  MDial  : string;     { WÑhlbefehl     }
+                  MDial  : string;     { Waehlbefehl     }
                   Warten : byte;        { Warten auf Modem-Antwort }
                   IgCD   : boolean;     { CD ignorieren  }
                   IgCTS  : boolean;     { CTS ignorieren }
                   UseRTS : boolean;     { RTS-Handshake  }
                   Ring   : boolean;     { RING-Erkennung }
                   u16550 : boolean;     { FIFO verwenden }
-                  postsperre : boolean; { 30-Sek.-MinimalwÑhlpause }
+                  postsperre : boolean; { 30-Sek.-Minimalwaehlpause }
                   tlevel : byte;        { FIFO trigger level }
                 end;
 
@@ -530,6 +530,7 @@ type   textp  = ^text;
                   downarcer : string;
                   unfreezer : string;
                   ungzipper : string;
+                  unbzipper : string;
                   uparcext  : string;
                   downarcext: string;
                   connwait  : integer;
@@ -547,15 +548,15 @@ type   textp  = ^text;
                   params    : string;
                   baud      : longint;
                   gebzone   : string;
-                  SysopInp  : string;  { Eingabe-Puffer fÅr SysMode }
-                  SysopOut  : string;  { Zieldatei fÅr Sysop-Mode  }
+                  SysopInp  : string;  { Eingabe-Puffer fuer SysMode }
+                  SysopOut  : string;  { Zieldatei fuer Sysop-Mode  }
                   SysopStart: string;
                   SysopEnd  : string;
-                  O_passwort: string;  { Online-Pa·wort }
+                  O_passwort: string;  { Online-Passwort }
                   O_logfile : string;  { Online-Logfile }
                   O_script  : string;  { Online-Script  }
                   MagicNet  : string;   { Name des MagicNet's..     }
-                  MagicBrett: string;  { Bretthierarchie fÅr Magic }
+                  MagicBrett: string;  { Bretthierarchie fuer Magic }
                   lightlogin: boolean;     { LightNET-Login: \ statt ^F}
                   exclude   : array[1..excludes,1..2] of string;
                   FPointNet : smallword;   { Fido: Pointnetz-Nr.       }
@@ -565,24 +566,24 @@ type   textp  = ^text;
                   AreaBetreff:boolean;     { Fido: -q / -l             }
                   AreaPW    : string;  { Fido/UUCP: Areafix-PW     }
                   FileScanner:string;  { Fido: Filescan-Name       }
-                  FilescanPW: string;  { Fido: Filescan-Pa·wort    }
-                  EMSIenable: boolean;     { Fido: EMSI mîglich        }
+                  FilescanPW: string;  { Fido: Filescan-Passwort    }
+                  EMSIenable: boolean;     { Fido: EMSI moeglich        }
                   AKAs      : string; { Fido: lokale AKA-Liste }
-                  SendAKAs  : string; { Fido: Pakete mitsenden fÅr.. }
+                  SendAKAs  : string; { Fido: Pakete mitsenden fuer.. }
                   GetTime   : boolean;     { Fido: TRX#-Zeit setzen    }
                   SendTrx   : boolean;     { Fido: TRX# senden - undok }
                   NotSEmpty : boolean;     { Fido: kein sendempty - "  }
-                  PacketPW  : boolean;     { Fido: Paketpa·wort senden }
+                  PacketPW  : boolean;     { Fido: Paketpasswort senden }
                   ExtPFiles : boolean;     { Fido: erweiterte Paketdateinamen }
                   LocalIntl : boolean;     { Fido: ~d'Bridge-Areafix   }
                   Brettmails: boolean;     { Turbo-Box/Maus:  Brettnachr. }
                   LoginName : string;  { UUCP/QM: login-Username   }
                   UUCPname  : string;   { uucico-Systemname         }
-                  MaxWinSize: byte;        { UUCP: max. Windowgrî·e    }
-                  MaxPacketSize:smallword;      { UUCP: max. Blockgrî·e     }
-                  VarPacketSize:boolean;   { UUCP: variable Blockgrî·e }
+                  MaxWinSize: byte;        { UUCP: max. Windowgroesse    }
+                  MaxPacketSize:smallword;      { UUCP: max. Blockgroesse     }
+                  VarPacketSize:boolean;   { UUCP: variable Blockgroesse }
                   ForcePacketSize:boolean; { UUCP: SendWinsize=RecvWinsize }
-                  UUprotos  : string;  { UUCP: mîgl. Protokolle    }
+                  UUprotos  : string;  { UUCP: moegl. Protokolle    }
                   SizeNego  : boolean;     { UUCP: size negotiation    }
                   UUsmtp    : boolean;     { UUCP: SMTP                }
                   eFilter   : string;  { Eingangsfilter            }
@@ -596,19 +597,19 @@ type   textp  = ^text;
                   DelQWK    : boolean;     { ZQWK-Schalter -del }
                   BMtyp     : byte;        { UUCP: Brettmanager-Typ }
                   BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
-                  maxfsize  : smallword;   { UUCP: max. Empfangsdateigrî·e / KB }
+                  maxfsize  : smallword;   { UUCP: max. Empfangsdateigroesse / KB }
                   nntp_ip   : string;      { NNTP: IP oder Domain }
                   nntp_port : integer;     { NNTP: Port, default: 119 }
-                  nntp_id   : string;      { NNTP: User-ID, falls nîtig }
-                  nntp_pwd  : string;      { NNTP: Passwort, falls nîtig }
+                  nntp_id   : string;      { NNTP: User-ID, falls noetig }
+                  nntp_pwd  : string;      { NNTP: Passwort, falls noetig }
                   pop3_ip   : string;      { POP3: IP oder Domain }
-                  pop3_id   : string;      { POP3: User-ID, falls nîtig }
-                  pop3_pwd  : string;      { POP3: Passwort, falls nîtig }
-                  pop3_clear: boolean;     { POP3: Nachrichten lîschen }
+                  pop3_id   : string;      { POP3: User-ID, falls noetig }
+                  pop3_pwd  : string;      { POP3: Passwort, falls noetig }
+                  pop3_clear: boolean;     { POP3: Nachrichten loeschen }
                   smtp_ip   : string;      { SMTP: IP oder Domain }
-                  smtp_id   : string;      { SMTP: User-ID, falls nîtig }
-                  smtp_pwd  : string;      { SMTP: Password, falls nîtig }
-                  SmtpAfterPOP: Boolean;   { SMTP: Vorher POP3 Login nîtig }
+                  smtp_id   : string;      { SMTP: User-ID, falls noetig }
+                  smtp_pwd  : string;      { SMTP: Password, falls noetig }
+                  SmtpAfterPOP: Boolean;   { SMTP: Vorher POP3 Login noetig }
                   LastCall  : TDateTime;   { Letzter Call }
                 end;
        BoxPtr = ^BoxRec;
@@ -617,8 +618,8 @@ type   textp  = ^text;
                   RepFile   : string;   { REP-Dateinahme ohne Ext. }
                   Packer    : string;   { Packer-Typ (Extension)   }
                   Door      : string;  { Name des Doorprogramms   }
-                  requests  : boolean;     { File Requests mîglich    }
-                  ebs       : boolean;     { EmpfangsbestÑtigungen "  }
+                  requests  : boolean;     { File Requests moeglich    }
+                  ebs       : boolean;     { Empfangsbestaetigungen "  }
                   privecho  : string;  { PM-Echo                  }
                   netecho   : string;  { Netmail-Echo             }
                   emailecho : string;  { EMail-Echo (Oerx)        }
@@ -643,10 +644,10 @@ type   textp  = ^text;
                    updatearc  : string;    { gepackte Update-Datei }
                    processor  : string;    { externer Bearbeiter   }
                    DoDiff     : boolean;
-                   DelUpdate  : boolean;   { Diff lîschen }
+                   DelUpdate  : boolean;   { Diff loeschen }
                    format     : byte;      { 1=NL, 2=P24, 3=PVT, 4=4D, 5=FD }
                    zone,net,node : word;
-                   sort       : longint;   { TemporÑrfeld }
+                   sort       : longint;   { Temporaerfeld }
                  end;
 
 
@@ -726,12 +727,12 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        mimebase   : pointer = nil;     { MIME-Typen-Datenbank   }
        runerror   : boolean = true;    { Runtime Error aufgetreten }
        Timing_Nr  : byte = 1;          { zuletzt eingegebene Nummer}
-       ErrLevel   : byte = 0;          { bei Beenden Åber XP.PAS   }
+       ErrLevel   : byte = 0;          { bei Beenden ueber XP.PAS   }
        startup    : boolean = true;    { Datenbank noch nicht initialisier }
        netcalling : boolean = false;   { laufender Netcall }
        autoactive : boolean = false;   { select(20) aktiv  }
        extended   : boolean = false;
-       keydisp    : boolean = true;    { TastenkÅrzel anzeigen  }
+       keydisp    : boolean = true;    { Tastenkuerzel anzeigen  }
        Clipboard  : boolean = false;   { Windows-Clipboard }
        deutsch    : boolean = true;
        screenlines: byte    = 25;      { Bildschirmzeilen       }
@@ -744,10 +745,10 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        fidolastseek:string  = '';      { Fido/Fileliste/Suchen  }
        abgelaufen1: boolean = false;   { Betaversion ist abgelaufen }
        abgelaufen2: boolean = false;   {  " }
-       cfgmodified: boolean = false;   { Einstellungen geÑndert }
+       cfgmodified: boolean = false;   { Einstellungen geaendert }
        DisableAltN: boolean = false;   { Alt-N deaktiviert      }
        automessaging: boolean = false; { Nachrichten werden nicht-manuell }
-       lockopen   : boolean = false;   { LOCKFILE geîffnet }
+       lockopen   : boolean = false;   { LOCKFILE geoeffnet }
 
        XPhilite   : byte    = 20;
        XPdisplayed: boolean = false;   { 'CrossPoint' rechts unten angezeigt }
@@ -766,9 +767,9 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParReorg   : boolean = false;   { autom. Reorganisation  }
        ParSpecial : boolean = false;   { Spezial-Reorg - Puffer-reparieren }
        ParPack    : boolean = false;   { autom. Packen          }
-       ParXPack   : boolean = false;   { autom. Packen / nur Dateien mit LÅcken }
+       ParXPack   : boolean = false;   { autom. Packen / nur Dateien mit Luecken }
        ParXPfile  : string  = '';    { optional zu /xpack: Datenbankname }
-       ParQuiet   : boolean = false;   { keine GerÑusche        }
+       ParQuiet   : boolean = false;   { keine Geraeusche        }
        ParTestres : boolean = true;    { Test auf residente Prg. }
        ParMaus    : boolean = false;   { Pseudo-Maus            }
        ParPuffer  : string = '';      { autom. Puffer einlesen }
@@ -779,25 +780,25 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParSetuser : string  = '';   { Username setzen        }
        ParSendbuf : string  = '';      { Puffer automatisch versenden }
        ParKey     : char    = ' ';     { autom. Tastendruck     }
-       ParEmpfbest: boolean = false;   { Zusatzschalter fÅr /IPx }
+       ParEmpfbest: boolean = false;   { Zusatzschalter fuer /IPx }
        ParPass    : string  = '';   { * -> ausgeben; Hex -> setzen }
-       ParPasswd  : string  = '';   { Pa·wort }
+       ParPasswd  : string  = '';   { Passwort }
        ParZeilen  : byte = 0;          { Bildzeilen }
        ParWintime : byte    = 1;       { Unter 32 Bit immer Default einschalten }
        ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
        ParAutost  : string  = '';   { /autostart: }
-       ParGebdat  : string  = 'gebuehr.dat';  { GebÅhrenzonenliste }
+       ParGebdat  : string  = 'gebuehr.dat';  { Gebuehrenzonenliste }
        ParGebdat2 : string  = 'tarife.dat';   { 2. Teil der " }
        ParAV      : string  = '';      { Archiv-Viewer }
        ParLanguage: string  = '';    { /l: Sprache }
-       ParNomem   : boolean = false;   { Speichertest Åbergehen }
+       ParNomem   : boolean = false;   { Speichertest uebergehen }
        ParNoSmart : boolean = false;   { kein Schreibcache-Flush }
        ParLCD     : boolean = false;   { keine Int10/CharGen-Zugriffe }
-       ParMenu    : boolean = false;   { /menu: XP mit vollen MenÅs starten }
-       ParG1      : boolean = false;   { GebÅhrenzone ermitteln }
-       ParG2      : boolean = false;   { GebÅhren berechnen }
-       ParNolock  : boolean = false;   { keine Lockfile-öberprÅfung }
+       ParMenu    : boolean = false;   { /menu: XP mit vollen Menues starten }
+       ParG1      : boolean = false;   { Gebuehrenzone ermitteln }
+       ParG2      : boolean = false;   { Gebuehren berechnen }
+       ParNolock  : boolean = false;   { keine Lockfile-Ueberpruefung }
 {$IFDEF Beta }
        ParNoBeta  : boolean = false;   { keine Beta-Meldung }
 {$ENDIF }
@@ -869,9 +870,9 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        EditSendpath : String;
        lockfile     : file;          { gelockte Datei LOCKFILE }
 
-       DefaultViewer: string;  { Viewer fÅr */* }
-       DefTextViewer: string;  { Viewer fÅr text/* }
-       PtextViewer  : string;  { Viewer fÅr text/plain }
+       DefaultViewer: string;  { Viewer fuer */* }
+       DefTextViewer: string;  { Viewer fuer text/* }
+       PtextViewer  : string;  { Viewer fuer text/plain }
 
        col          : ColRec;        { CFG-Variablen :  ------ }
        ExtraktTyp   : byte;          { 0=ohne Kopf, 1=mit, 2=Puffer, 3=Quote }
@@ -886,7 +887,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        stdhaltezeit,
        stduhaltezeit: integer16;
        QuoteChar    : string;
-       QuoteBreak   : byte;          { Zeilenumbruch fÅr Quoter }
+       QuoteBreak   : byte;          { Zeilenumbruch fuer Quoter }
        COMn         : array[1..MaxCom] of ComRec;  { Schnitten-Paras }
        BoxPar       : BoxPtr;
        DefaultBox   : string;
@@ -899,13 +900,13 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        UserAufnahme : byte;          { 0=Alle, 1=Zerberus, 2=keine, 3=PM }
        NeuUserGruppe: integer16;     { Gruppe der neuangelegte User angehoeren }
        MaxBinSave   : longint;
-       MaxNetMsgs   : longint;       { Default-Wert fÅr neue Gruppen }
+       MaxNetMsgs   : longint;       { Default-Wert fuer neue Gruppen }
        ReHochN      : boolean;
        HayesComm    : boolean;
        ShowLogin    : boolean;
        BreakLogin   : boolean;
        ArchivBretter: string;
-       ArchivLoesch : boolean;       { Msgs nach Archivierung lîschen }
+       ArchivLoesch : boolean;       { Msgs nach Archivierung loeschen }
        ArchivText   : boolean;       { Archivier-Vermerk erstellen}
        shell25      : boolean;       { 25-Zeilen-Mode bei DOS-Shell }
        edit25       : boolean;       { dito bei externem Editor }
@@ -918,14 +919,14 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        FKeys        : array[0..3] of fkeyp;
        Unpacker     : ^UnpackRec;
        EditVollbild : boolean;
-       ExtEditor    : byte;          { 3=immer, 2=Nachrichten, 1=gro·e Files }
+       ExtEditor    : byte;          { 3=immer, 2=Nachrichten, 1=grosse Files }
        ShowMsgPath  : boolean;
        ShowMsgID    : boolean;
        ShowMsgSize  : boolean;
        DruckLPT     : smallword;          { 1-5: LPT1-3, COM1-2 }
        DruckInit    : string;
        DruckExit    : string;
-       DruckFormlen : byte;          { SeitenlÑnge; 0 = kein autom. Vorschub }
+       DruckFormlen : byte;          { Seitenlaenge; 0 = kein autom. Vorschub }
        DruckFF      : string;
        DruckLira    : byte;
        AutoCpgd     : boolean;       { automatisches Ctrl-PgDn im Editor }
@@ -940,24 +941,24 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
                           name          : string;
                           binary        : boolean;
                         end;
-       wpz          : longint;       { DM/Zeile bei GebÅhrenstat. *1000  }
+       wpz          : longint;       { DM/Zeile bei Gebuehrenstat. *1000  }
        sabsender    : byte;          { 0=normal, 1=klein, 2=mit space,   }
        envspace     : smallword;     { ..3=nur User, 4=Spalten           }
-       DefReadmode  : integer;       { Default fÅr 'readmode' (s.u.) }
+       DefReadmode  : integer;       { Default fuer 'readmode' (s.u.) }
        AAmsg        : boolean;       { Auto-Advace }
        AAbrett      : boolean;
        AAuser       : boolean;
        ScrollLock   : boolean;       { umschaltbarer Scroll-Mode }
-       GrossWandeln : boolean;       { Adressen in Gro·schreibung wandeln }
+       GrossWandeln : boolean;       { Adressen in Grossschreibung wandeln }
        HaltOwn      : boolean;
        HaltOwnPM    : boolean;
        DispUsername : boolean;
        SaveUVS      : boolean;       { AutoPark }
-       EmpfBest     : boolean;       { autom. EmpfangsbestÑtigungen }
+       EmpfBest     : boolean;       { autom. Empfangsbestaetigungen }
        EmpfBkennung : string;    { '##' }
        unescape     : string;   { UUCP-Adressen... }
        ReplaceEtime : boolean;       { 00:00 Erstellungszeit }
-       trennchar    : string;     { Trennzeichen fÅr Brett-Trennzeilen }
+       trennchar    : string;     { Trennzeichen fuer Brett-Trennzeilen }
        AutoArchiv   : boolean;       { automatische PM-Archivierung }
        NewBrettEnde : boolean;       { neue Bretter ans Listenende }
        _maus        : boolean;       { Mausbedienung }
@@ -970,18 +971,18 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        KomArrows    : boolean;       { Kommentarpfeile im Lister anzeigen }
        ListScroller : boolean;       { Scrollbalken bei Mausbedienung }
        ListAutoscroll:boolean;       { Scrolling am Bildschirmrand }
-       LargestNets  : integer;       { Conf2: die n grî·ten Netze bei Nodestat }
+       LargestNets  : integer;       { Conf2: die n groessten Netze bei Nodestat }
        NS_MinFlags  : integer;       { Conf2: min. Flags bei Nodestatistik }
-       CountDown    : boolean;       { Conf2: Down-Nodes mitzÑhlen }
+       CountDown    : boolean;       { Conf2: Down-Nodes mitzaehlen }
        UserBoxname  : boolean;       { Boxname in Userbrettern belassen }
-       nDelPuffer   : boolean;       { PUFFER nach Einlesen lîschen }
-       MaxMaus      : boolean;       { Outfile-Grî·e begrenzen }
+       nDelPuffer   : boolean;       { PUFFER nach Einlesen loeschen }
+       MaxMaus      : boolean;       { Outfile-Groesse begrenzen }
        Auswahlcursor: boolean;       { Blinden-Option }
-       Soundflash   : boolean;       { Gehîrlosen-Option }
-       MausLeseBest : boolean;       { manuelle Maus-BestÑtigen }
+       Soundflash   : boolean;       { Gehoerlosen-Option }
+       MausLeseBest : boolean;       { manuelle Maus-Bestaetigen }
        MausPSA      : boolean;       { Stati anfordern }
        ShowRealnames: boolean;       { Realnames anzeigen, falls vorhanden }
-       ss_passwort  : boolean;       { Startpa·wort nach Screensaver }
+       ss_passwort  : boolean;       { Startpasswort nach Screensaver }
        NewsMIME     : boolean;       { MIME auch in News verwenden }
        MIMEqp       : boolean;       { quoted-printable }
        RFC1522      : boolean;       { RFC-1522-Header erzeugen }
@@ -989,9 +990,9 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        pmlimits     : array[1..maxpmlimits,1..2] of longint;
        ZC_xposts    : boolean;       { ZConnect-Crosspostings }
        ZC_ISO       : boolean;       { ISO-8859-1 verwenden }
-       leaveconfig  : boolean;       { /Config-MenÅ bei <Esc> ganz verlassen }
+       leaveconfig  : boolean;       { /Config-Menue bei <Esc> ganz verlassen }
        NewsgroupDisp: boolean;       { Anzeige mit "." statt "/" }
-       NetcallLogfile:boolean;       { Logfile Åber Netcalls fÅhren }
+       NetcallLogfile:boolean;       { Logfile ueber Netcalls fuehren }
        ShrinkUheaders : boolean;     { UUZ-Schalter -r }
        ListHighlight: boolean;       { ** und __ auswerten }
        ListFixedHead: boolean;       { feststehender Nachrichtenkopf }
@@ -999,53 +1000,53 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ISDN_Int     : byte;          { CAPI-Int, Default=$f1 }
        ISDN_EAZ     : char;          { eigene EAZ, Default='0' }
        ISDN_Controller:byte;         { Nummer des Controllers, Default=0 }
-       SaveType     : byte;          { 0=Sofort, 1=Alt-S, 2=RÅckfrage }
+       SaveType     : byte;          { 0=Sofort, 1=Alt-S, 2=Rueckfrage }
        XSA_NetAlle  : boolean;       { Netcall/Alle-Schalter bei /Netcall/L }
-       maxcrosspost : byte;          { Filter fÅr Massen-Crosspostings }
+       maxcrosspost : byte;          { Filter fuer Massen-Crosspostings }
        maildelxpost : boolean;       { 20.01.2000 robo - auch bei Mail? }
-       KeepRequests : boolean;       { Requests zurÅckstellen }
+       KeepRequests : boolean;       { Requests zurueckstellen }
        waehrung     : string;
-       gebnoconn    : longint;       { GebÅhren fÅr nicht zustandegek. Verb. }
-       gebCfos      : boolean;       { GebÅhrenÅbernahme von cFos }
-       autofeier    : boolean;       { Feiertage bei GebÅhren berÅcksichtigen }
+       gebnoconn    : longint;       { Gebuehren fuer nicht zustandegek. Verb. }
+       gebCfos      : boolean;       { Gebuehrenuebernahme von cFos }
+       autofeier    : boolean;       { Feiertage bei Gebuehren beruecksichtigen }
        ShellShowpar : boolean;       { Anzeige vor Shell-Aufruf }
        ShellWaitkey : boolean;       { warten nach Shell-Aufruf }
-       msgbeep      : boolean;       { Tonsignal in N/B/U-öbersicht }
+       msgbeep      : boolean;       { Tonsignal in N/B/U-Uebersicht }
        Netcallunmark: boolean;       { Nachrichten nach Netcall ent-markieren }
        DefaultNokop : boolean;       { Default STAT: NOKOP }
-       blind        : boolean;       { AnzeigeunterstÅtzung fÅr Blinde }
+       blind        : boolean;       { Anzeigeunterstuetzung fuer Blinde }
        quotecolors  : boolean;       { verschiedenfarbige Quoteebenenen }
        trennkomm    : byte;          { 1=links, 2=Mitte, 3=rechts }
        vesa_dpms    : boolean;       { Screen-Saver-Stromsparmodus }
        termbios     : boolean;       { BIOS-Ausgabe im Terminal }
-       tonsignal    : boolean;       { zusÑtzliches Tonsignal nach Reorg u.a. }
-       MsgFeldTausch   : string;     { fÅr blinde Benutzer,
-                                       die sich Ausgaben vorlesen lassen, kînnen
+       tonsignal    : boolean;       { zusaetzliches Tonsignal nach Reorg u.a. }
+       MsgFeldTausch   : string;     { fuer blinde Benutzer,
+                                       die sich Ausgaben vorlesen lassen, koennen
                                        in der Brettliste Felder vertauscht werden }
-       UsrFeldTausch   : string;     { fÅr blinde Benutzer,
-                                       die sich Ausgaben vorlesen lassen, kînnen
+       UsrFeldTausch   : string;     { fuer blinde Benutzer,
+                                       die sich Ausgaben vorlesen lassen, koennen
                                        in der Userliste Felder vertauscht werden }
        UsrFeldPos1  : Byte;          { Spezialmodus Position der Usernamen (FeldTausch) }
        UsrFeldPos2  : Byte;          { Normalmodus Position der Uusernamen (FeldTausch) }
        Magics       : boolean;       { Auch Magics im F3-Request erkennen j/n }
-       brettkomm    : boolean;       { Kommentar aus Brettliste Åbernehmen }
+       brettkomm    : boolean;       { Kommentar aus Brettliste uebernehmen }
        adrpmonly    : boolean;       { Telefon/Adresse nur in PMs }
        newuseribm   : boolean;       { Default-Umlauteinstellung f. neue User }
        Usersortbox  : boolean;       {im Userfenster nach Boxname Sortieren}
        _Usersortbox : boolean;       {Hilfszeiger fuer Config }
-       multipartbin : boolean;       { RFC-BinÑrnachrichten als Multipart }
-       mausmpbin    : boolean;       { dto. fÅr MausTausch }
+       multipartbin : boolean;       { RFC-Binaernachrichten als Multipart }
+       mausmpbin    : boolean;       { dto. fuer MausTausch }
        askreplyto   : boolean;       { 03.02.2000 robo - fragen bei ANTWORT-AN }
 
        UsePGP       : boolean;       { PGP verwenden }
        PGPbatchmode : boolean;       { PGP-Schalter +batchmode verwenden }
-       PGP_UUCP     : boolean;       { PGP fÅr RFC/UUCP }
-       PGP_Fido     : boolean;       { PGP fÅr Fido }
+       PGP_UUCP     : boolean;       { PGP fuer RFC/UUCP }
+       PGP_Fido     : boolean;       { PGP fuer Fido }
        PGP_UserID   : string;        { Netzadresse von Key }
        PGP_AutoPM   : boolean;       { Keys aus PMs automatisch einlesen }
        PGP_AutoAM   : boolean;       { Keys aus AMs automatisch einlesen }
-       PGP_waitkey  : boolean;       { 'Taste drÅcken ...' nach PGP }
-       PGP_log      : boolean;       { Logfile fÅr PGP-AktivitÑten }
+       PGP_waitkey  : boolean;       { 'Taste druecken ...' nach PGP }
+       PGP_log      : boolean;       { Logfile fuer PGP-Aktivitaeten }
        PGP_signall  : boolean;       { alle Nachrichten signieren }
 
        IntVorwahl   : string;    { internationale Vorwahl }
@@ -1053,7 +1054,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        Vorwahl      : string;    { eigene Vorwahl }
        AutoDiff     : boolean;       { Node/Pointdiffs automatisch einbinden }
        ShowFidoEmpf : boolean;       { von/an/Betreff-Anzeige }
-       HighlightName: string;    { eigenen Fido-BrettempfÑnger hervorheben }
+       HighlightName: string;    { eigenen Fido-Brettempfaenger hervorheben }
        AutoTIC      : boolean;       { TIC-Files auswerten }
 
        AutoUpload   : boolean;       { CrossTerm - PD-Zmodem-Autoupload }
@@ -1071,7 +1072,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        orgcbreak    : boolean;
 
        gl,actgl     : integer;      { Anzeige-Zeilen im Hauptfenster }
-       aufbau       : boolean;       { neuer Bildschirm-Aufbau nîtig  }
+       aufbau       : boolean;       { neuer Bildschirm-Aufbau noetig  }
        xaufbau      : boolean;       { Bezugsbaum neu einlesen        }
        readmode     : integer;       { 0=Alles, 1=Ungelesen, 2=Neues }
        readdate     : longint;       { 3=Heute, 4=Datum              }
@@ -1088,10 +1089,10 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        bmarked   : bmarkp;           { Liste der markierten Bretter/User }
        bmarkanz  : integer;          { Anzahl markierte Bretter/User }
 
-       ablsize     : array[0..ablagen-1] of longint;   { Dateigrî·en }
+       ablsize     : array[0..ablagen-1] of longint;   { Dateigroessen }
        AktDispmode : integer;
        AktDisprec  : longint;
-       editname    : string;         { Dateiname fÅr /Edit/Text }
+       editname    : string;         { Dateiname fuer /Edit/Text }
        keymacros   : integer;        { Anzahl geladene Tastenmakros }
        macrokey    : array[1..maxkeys] of taste;
        macroflags  : array[1..maxkeys] of byte;
@@ -1104,13 +1105,13 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
                             komreg,           { R-Kom / R-Org anzeigen }
                             orgreg:boolean;
                      end;
-       regstr1     : string;      { mu· unmittelbar hinter registriert stehen! }
-       regstr2     : string;      { fÅr UUCP }
+       regstr1     : string;      { muss unmittelbar hinter registriert stehen! }
+       regstr2     : string;      { fuer UUCP }
        AutoCrash   : string;     { Crash automatisch starten; *.. -> normaler Netcall }
-       ntAllowed   : set of byte;    { zulÑssige Netztypen }
-       extheadersize : integer;      { grî·e des Kopfes bei xp3.extract_msg() }
+       ntAllowed   : set of byte;    { zulaessige Netztypen }
+       extheadersize : integer;      { groesse des Kopfes bei xp3.extract_msg() }
        extHdLines  : integer;        { Anzahl Kopfzeilen bei Extrakt mit Kopf }
-       fidobin     : boolean;        { BinÑrnachrichten im FidoNet mîglich }
+       fidobin     : boolean;        { Binaernachrichten im FidoNet moeglich }
        ExtraktHeader : ExtHeaderType;
        reg_hinweis : boolean;        { Fenster bei Programmstart anzeigen }
 
@@ -1122,8 +1123,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        DefaultNet  : word;           {      - eigenes Net }
        DefaultNode : word;           {      - eigener Node}
        Nodelist    : TList;          { Node-/Pointlisten }
-       NodeOpen    : boolean;        { Nodelist(en) vorhanden & geîffnet }
-       ShrinkNodes : string;    { Nodeliste einschrÑnken }
+       NodeOpen    : boolean;        { Nodelist(en) vorhanden & geoeffnet }
+       ShrinkNodes : string;    { Nodeliste einschraenken }
        kludges     : boolean;        { ^A-Zeilen im Lister anzeigen }
        KomShowadr  : boolean;        { <-> BaumAdresse }
        gAKAs       : string;        { globale AKA-Adressliste }
@@ -1131,13 +1132,13 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        Postadresse : String;
        TelefonNr   : String;
        wwwHomepage : String;
-       BrettAlle   : string;     { StandardempfÑnger fÅr Brettnachrichten }
-       fidoto      : string;     { XP6: EmpfÑngername bei Brettnachr.     }
-       FidoDelEmpty: boolean;        { 0-Byte-Nachrichten lîschen }
+       BrettAlle   : string;     { Standardempfaenger fuer Brettnachrichten }
+       fidoto      : string;     { XP6: Empfaengername bei Brettnachr.     }
+       FidoDelEmpty: boolean;        { 0-Byte-Nachrichten loeschen }
        KeepVia     : boolean;        { ZFIDO: Option -via }
 
        kombaum     : komlistp;       { Kommentarbaum }
-       komanz      : word;           { Anzahl EintrÑge }
+       komanz      : word;           { Anzahl Eintraege }
        maxebene    : integer;
        komwidth    : integer;       { Anzeigeabstand zwischen Ebenen }
        kombrett    : string;      { Brettcode der Ausgangsnachricht }
@@ -1147,9 +1148,9 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        _hinweis_   : string;
        _days_      : string;        { 'Monatag Dienstag ... ' }
        _daylen_    : word;
-       StatBrett,                    { /ØStatistik  }
-       UnvBrett,                     { /ØUnversandt }
-       NetBrett    : string;     { /ØNetzanruf  }
+       StatBrett,                    { /ªStatistik  }
+       UnvBrett,                     { /ªUnversandt }
+       NetBrett    : string;     { /ªNetzanruf  }
        _wotag_     : string;     { 'MoDiMiDoFrSaSo' }
        _jn_        : string;      { 'JN' }
 
@@ -1168,6 +1169,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.97  2000/11/02 21:27:04  fe
+  bzip2 support added.
+
   Revision 1.96  2000/11/01 11:01:14  mk
   - Autodatumsbezuege jetzt immer in Netcall
 
@@ -1485,7 +1489,7 @@ end.
   LocalScreen fuer xpme komplett implementiert
 
   Revision 1.10  2000/03/01 23:49:02  rb
-  Rechenzeitfreigabe komplett Åberarbeitet
+  Rechenzeitfreigabe komplett ueberarbeitet
 
   Revision 1.9  2000/03/01 22:30:21  rb
   Dosemu-Erkennung eingebaut

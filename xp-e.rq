@@ -3,6 +3,8 @@ K English
 K (c) '93-96 Peter Mandrella
 K (c) '2000 OpenXP Team, www.openxp.de
 
+# $Id$
+
 # Online Help File, Key Macros
 1 xp-e.hlp
 2 KEYS-E.CFG
@@ -1795,7 +1797,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 24   Download unpacker~
 25   Uncompress       ~
 26   Unfreeze         ~
-27   GNU-unzipper     ~
+27   gunzip           ~
+57   bunzip2          ~
 28   Zmodem options   ~
 # UUCP
 30   max. UUCP-g packet size ~
@@ -3382,3 +3385,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 5 auf /dev/modem zu. Fuer ISDN-Karten kann hier 'ttyI#' angegeben werden.
 6
 -
+
+# $Log$
+# Revision 1.102  2000/11/02 21:27:04  fe
+# bzip2 support added.
+#

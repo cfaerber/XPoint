@@ -1,5 +1,9 @@
-K XP UUCICO v3.0 resource file
+K XP UUCICO v3.7 resource file
 K Deutsch
+K (c) '93-98 Peter Mandrella
+K (c) '2000 OpenXP-Team, www.openxp.de
+
+# $Id$
 
 13  ~Bytes
 
@@ -14,7 +18,7 @@ K Deutsch
 106 UngÅltiger Logfilename: %s
 107 UngÅltige Baudrate
 
-# ----- öbertragung
+# ----- Uebertragung
 
 + 2300
 1    Server
@@ -63,9 +67,16 @@ K Deutsch
 61   gepacktes Newspaket (compress)
 62   gepacktes Newspaket (freeze)
 63   gepacktes Newspaket (gzip)
+69   gepacktes Newspaket (bzip2)
 64   ungepacktes Mailpaket
 65   gepackte Datei (compress)
 66   gepackte Datei (freeze)
 67   gepackte Datei (gzip)
+70   gepackte Datei (bzip2)
 68   Mail von~
 -
+
+# $Log$
+# Revision 1.2  2000/11/02 21:27:04  fe
+# bzip2 support added.
+#

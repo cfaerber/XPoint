@@ -3,6 +3,8 @@ K Deutsch
 K (c) '93-98 Peter Mandrella
 K (c) '2000 OpenXP-Team, www.openxp.de
 
+# $Id$
+
 # Online-Hilfe, Tastenmakros
 1 XP.HLP
 2 KEYDEF.CFG
@@ -11,7 +13,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Dateiversion
 6 13
 
-# --- MenÅs -----------------------------------------------------------
+# --- Menues -----------------------------------------------------------
 
 # HauptmenÅ-Hotkeys: Nachrichten / Sonstige / AutoVersand
 7 XWNTFDCZ
@@ -1838,7 +1840,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 24   Download-Entpacker
 25   Compress-Entpacker
 26   Freeze-Entpacker ~
-27   GNU-ZIP-Entpacker~
+27   gzip-Entpacker   ~
+57   bzip2-Entpacker  ~
 28   ZModem-Optionen  ~
 # UUCP
 30   max. UUCP-g-Paketgrî·e ~
@@ -3493,3 +3496,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 5 auf /dev/modem zu. FÅr ISDN-Karten kann hier 'ttyI#' angegeben werden.
 6
 -
+
+# $Log$
+# Revision 1.75  2000/11/02 21:27:04  fe
+# bzip2 support added.
+#

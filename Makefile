@@ -215,7 +215,7 @@ INSTALL_DATA ?= xcopy
 RC = rc
 RAR ?= rar
 
-CONTRIBBIN = compress.exe freeze.exe gzip.exe tar.exe
+CONTRIBBIN = compress.exe freeze.exe gzip.exe bzip2.exe tar.exe
 CONTRIBDATA = fido.pc
 
 endif
@@ -438,7 +438,7 @@ PFLAGS += $(PF_$(CPU))
 
 RARFLAGS = a -m5 -zfile_id.diz
 
-all: objcomunit $(COMPBINFILES) $(RESFILES) documentation
+all: $(COMPBINFILES) $(RESFILES) documentation
 
 # Programme
 
@@ -2625,6 +2625,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.36  2000/11/02 21:27:04  fe
+# bzip2 support added.
+#
 # Revision 1.35  2000/10/29 16:19:26  fe
 # Abhaengigkeiten angepasst.
 # Korrekturen

@@ -1,9 +1,11 @@
-K XP UUCICO v3.0 resource file
+K XP UUCICO v3.7 resource file
 K English
+
+# $Id$
 
 13  ~bytes
 
-# ----- Fehler in UUCICO.CFG
+# ----- Errors in UUCICO.CFG
 
 100 Parameter error:~
 101 Server name missing
@@ -61,9 +63,16 @@ K English
 61   compressed news batch
 62   frozen news batch
 63   g-zipped news batch
+69   bzip2'ed news batch
 64   uncompressed mail batch
 65   compressed file
 66   frozen file
 67   g-zipped file
+70   bzip2'ed file
 68   mail from~
 -
+
+# $Log$
+# Revision 1.2  2000/11/02 21:27:04  fe
+# bzip2 support added.
+#

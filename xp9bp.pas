@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -72,6 +72,7 @@ begin
                    downarcer:='gzip -vdf $DOWNFILE'; {alt: compress}
                    unfreezer:='freeze -vdif $DOWNFILE';
                    ungzipper:='gzip -vdf $DOWNFILE';
+                   unbzipper:='bzip2 -vdf $DOWNFILE';
                    chsysbetr:='your latest sys file entry';
                  end;
       nt_Pronet: begin
@@ -164,21 +165,21 @@ begin
     nntp_pwd:= '';               { PAssword }
 
     pop3_ip := 'localhost';             { POP3: IP oder Domain }
-    pop3_id := '';                      { POP3: User-ID, falls nîtig }
-    pop3_pwd  := '';                    { POP3: Passwort, falls nîtig }
-    pop3_clear := true;                 { POP3: Nachrichten lîschen }
+    pop3_id := '';                      { POP3: User-ID, falls noetig }
+    pop3_pwd  := '';                    { POP3: Passwort, falls noetig }
+    pop3_clear := true;                 { POP3: Nachrichten loeschen }
 
     SMTP_ip := 'localhost';             { SMTP: IP oder Domain }
-    SMTP_id := '';                      { SMTP: User-ID, falls nîtig }
-    SMTP_pwd  := '';                    { SMTP: Passwort, falls nîtig }
-    SmtpAfterPOP := false;              { SMTP: Vorher POP3 Login nîtig }
+    SMTP_id := '';                      { SMTP: User-ID, falls noetig }
+    SMTP_pwd  := '';                    { SMTP: Passwort, falls noetig }
+    SmtpAfterPOP := false;              { SMTP: Vorher POP3 Login noetig }
   end;
   nt_bpar(nt,bp^);
 end;
 
 
 { Box- Parameter aus angegebener Datei lesen }
-{ bp^ mu· initialisiert sein.                }
+{ bp^ muss initialisiert sein.                }
 
 procedure ReadBox(nt:byte; dateiname:pathstr; bp:BoxPtr);
 var t      : text;
@@ -235,6 +236,7 @@ begin
             gets(s,su,'DownArc',downarcer,60) or
             gets(s,su,'UnFreeze',unfreezer,40) or
             gets(s,su,'UnGZIP',ungzipper,40) or
+            gets(s,su,'UnBzip2',unbzipper,40) or
             gets(s,su,'UpArcExt',uparcext,3) or
             gets(s,su,'DownArcExt',downarcext,3) or
             geti(su,  'ConnWait',connwait) or
@@ -321,7 +323,7 @@ begin
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
             getr(su,  'Letzte Verbindung',LastCall)
           ) then
-            trfehler1(901,LeftStr(s,35),30);   { 'UngÅltige Box-Config-Angabe: %s' }
+            trfehler1(901,LeftStr(s,35),30);   { 'Ungueltige Box-Config-Angabe: %s' }
           end;
         end;
     close(t);
@@ -353,7 +355,7 @@ begin
   assign(t,OwnPath+dateiname+BfgExt);
   rewrite(t);
   if ioresult<>0 then begin
-    rfehler(902);     { 'ungÅltiger Boxname!' }
+    rfehler(902);     { 'ungueltiger Boxname!' }
     exit;
     end;
   with
@@ -376,6 +378,8 @@ begin
       writeln(t,'UnFreeze=',unfreezer);
     if Ungzipper<>'' then
       writeln(t,'UnGZIP=',ungzipper);
+    if Unbzipper<>'' then
+      writeln(t,'UnBzip2=',unbzipper);
     writeln(t,'UpArcExt=',uparcext);
     writeln(t,'DownArcExt=',downarcext);
     writeln(t,'ConnWait=',connwait);
@@ -472,7 +476,7 @@ procedure ReadBoxPar(nt:byte; box:string);
 var d     : DB;
     bfile : pathstr;
 begin
-  dbOpen(d,BoxenFile,1);               { zugehîrigen Dateiname holen }
+  dbOpen(d,BoxenFile,1);               { zugehoerigen Dateiname holen }
   dbSeek(d,boiName,UpperCase(box));
   if dbFound then
   begin
@@ -549,7 +553,7 @@ begin
       if id='BEB' then writeln(t2,'BEB: '+bretter)
       else begin
         if LowerCase(ss)='[brettstart]' then begin
-            { MID: und HDR: kînnen fehlen, weil ZQWK sie nicht }
+            { MID: und HDR: koennen fehlen, weil ZQWK sie nicht }
             { automatisch erzeugt                              }
           if midtyp>=0 then writeln(t2,'MID: '+strs(midtyp));
           if hdr then writeln(t2,'HDR: J');
@@ -575,6 +579,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/11/02 21:27:04  fe
+  bzip2 support added.
+
   Revision 1.23  2000/10/17 10:05:56  mk
   - Left->LeftStr, Right->RightStr
 
@@ -633,10 +640,10 @@ end.
 
   Revision 1.8  2000/05/13 21:23:05  mw
 
-  - Defaults angepasst: - max. Paketgrî·e statt 64 jetzt 4096
+  - Defaults angepasst: - max. Paketgroesse statt 64 jetzt 4096
                         - compress-Entpacker jetzt gzip
 
-  - In der uucp.dq im Glosar den Hinweis auf die Auflîsung des IN e.V.
+  - In der uucp.dq im Glosar den Hinweis auf die Aufloesung des IN e.V.
     eingebaut (Kann man vielleicht noch detailierter machen).
 
   Revision 1.7  2000/05/04 10:33:00  mk

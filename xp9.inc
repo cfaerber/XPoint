@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -9,7 +9,7 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-  { --- Bearbeitungs-Routinen fÅr Boxen-Liste -----------------------}
+  { --- Bearbeitungs-Routinen fuer Boxen-Liste -----------------------}
 
   procedure NameRead(nt:byte; var name,user,komm,maps,realname,domain,fqdn,
                      bdomain,fidoname:string; txt:atext; var brk:boolean);
@@ -37,7 +37,7 @@
            iif(fqdom,2,0)+iif(bdom,2,0)+iif(fido,2,0),txt,x,y);  {16.01.00 HS}
     blen:=ntBoxnameLen(nt);
     btxt:=getres2(912,iif(fido,1,2));    { 'Nodenummer','Boxname   ' }
-    { Kleinschreibung fÅr Boxname zulassen}
+    { Kleinschreibung fuer Boxname zulassen}
     s:=iifs(nt=nt_UUCP,'','');
     maddstring(3,2,btxt,name,blen,blen,
                s+'"!'+range('#','?')+range('A',#126)+'éôö');
@@ -97,7 +97,7 @@
       end
     else
       bDomainNt:=0;
-    if fqdom then begin  { Eingabemîglichkeit fÅr FQDNs}
+    if fqdom then begin  { Eingabemoeglichkeit fuer FQDNs}
       maddstring(3,yy,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
                  'A'+without(range('!','~'),' @<>/')); mhnr(30001);
       inc(yy,2);
@@ -289,7 +289,7 @@
     dbGo(d,drec[p]);
     name:= dbReadStr(d,'boxname');
     if name=DefaultBox then
-      rfehler(922)            { 'Stammbox kann nicht gelîscht werden!' }
+      rfehler(922)            { 'Stammbox kann nicht geloescht werden!' }
     else begin
       dname:= dbReadStr(d,'dateiname');
       if (dname='') or (length(dname)>8) then begin
@@ -297,22 +297,22 @@
         dname:= dbReadStr(d,'boxname');
         end;
       pp:=_filesize(ownpath+dname+BoxFileExt)>0;
-      if ReadJN(iifs(pp,getres(916),'')+getreps(917,name),not pp)   { 'Polldaten vorhanden!! ' / '%s wirklich lîschen' }
+      if ReadJN(iifs(pp,getres(916),'')+getreps(917,name),not pp)   { 'Polldaten vorhanden!! ' / '%s wirklich loeschen' }
       then begin
         dec(ntused[dbReadInt(d,'netztyp')]);
         dbDelete(d);
         dbFlushClose(d);
-        if exist(ownpath+dname+bfgext) then     { .BFG lîschen }
+        if exist(ownpath+dname+bfgext) then     { .BFG loeschen }
           _era(ownpath+dname+bfgext);
-        if exist(ownpath+dname+'.bl') then      { Brettliste lîschen }
+        if exist(ownpath+dname+'.bl') then      { Brettliste loeschen }
           _era(ownpath+dname+'.bl');
-        if exist(ownpath+dname+'.fl') then      { Fileliste lîschen }
+        if exist(ownpath+dname+'.fl') then      { Fileliste loeschen }
           _era(ownpath+dname+'.fl');
-        if exist(ownpath+dname+'.fbl') then     { Fileare-Liste lîschen }
+        if exist(ownpath+dname+'.fbl') then     { Fileare-Liste loeschen }
           _era(ownpath+dname+'.fbl');
-        if exist(ownpath+dname+'.inf') then     { Maus-Infofileliste lîschen }
+        if exist(ownpath+dname+'.inf') then     { Maus-Infofileliste loeschen }
           _era(ownpath+dname+'.inf');
-        if pp then _era(OwnPath+dname+BoxFileExt);   { Pollpaket lîschen }
+        if pp then _era(OwnPath+dname+BoxFileExt);   { Pollpaket loeschen }
         if p=1 then dbGoTop(d)
         else dbGo(d,drec[1]);
         if name=DefFidoBox then begin
@@ -338,7 +338,7 @@
       if n=1 then DefaultBox:=name
       else begin
         if dbReadInt(d,'netztyp')<>nt_Fido then begin
-          rfehler(923);     { 'Die gewÑhlte Box ist keine Fido-Box!' }
+          rfehler(923);     { 'Die gewaehlte Box ist keine Fido-Box!' }
           exit;
           end;
         if DefFidobox=name then DefFidobox:=''
@@ -406,7 +406,7 @@
         nt_Maus : begin
                     pname:= dbReadStr(d,'boxname');
                     maddstring(3,2,getres2(920,1),passwort,20,20,''); mhnr(141);
-                  end;                                       { 'Pa·wort  ' }
+                  end;                                       { 'Passwort  ' }
         nt_Fido : begin
                     pnr:=ival(pname);
                     maddint(3,2,getres2(920,2),pnr,5,5,0,32767); mhnr(151);  { 'Pointnummer' }
@@ -415,7 +415,7 @@
         nt_Pronet:begin
                     maddstring(3,2,getres2(920,5),telefon,20,60,''); mhnr(142);
                     malltrim;                             { 'Telefon ' }
-                    maddstring(3,3,getres2(920,6),passwort,20,20,'>'); mhnr(141); { 'Pa·wort ' }
+                    maddstring(3,3,getres2(920,6),passwort,20,20,'>'); mhnr(141); { 'Passwort ' }
                     maddstring(39,2,getres2(920,7),pname,2,2,'0123456789');  { 'Pointnr.  ' }
                       mhnr(8005);
                   end;
@@ -428,7 +428,7 @@
                     if uucp then mset3proc(uucp_getloginname);
                     maddstring(3,3,getres2(920,11),passwort,20,20,
                                    iifs(ntGrossPW(nt),'>',''));
-                  end;                                       { 'Pa·wort  ' }
+                  end;                                       { 'Passwort  ' }
       end;
       if not pronet then begin
         maddstring(iif(fido,27,38),2,getres2(920,12),telefon,
@@ -448,7 +448,7 @@
         end;
       if fido then begin
         maddstring(27,3,getres2(920,15),passwort,18,18,''); mhnr(153);
-        mset3proc(fidotestpasslen);                            { 'Pa·wort' }
+        mset3proc(fidotestpasslen);                            { 'Passwort' }
         end;
       if uucp then begin
         maddstring(38,3,getres2(920,16),loginname,17,20,'');   { 'Login  ' }
@@ -486,7 +486,7 @@
       begin
         maddstring(3,7+add,getres2(920,23),uparcer,br,60,''); mhnr(146);
           if uucp then begin                        { 'Upload-Packer     ' }
-            mappsel(false,'compress -vf -b12 $PUFFER˘compress -vf -b16 $PUFFER˘freeze -vif $PUFFER˘gzip -vf $PUFFER');
+            mappsel(false,'compress -vf -b12 $PUFFER˘compress -vf -b16$PUFFER˘freeze -vif $PUFFER˘gzip -vf $PUFFER˘bzip2 -vf $PUFFER');
             mhnr(8020);
             end
           else
@@ -508,40 +508,43 @@
           maddstring(3,9+add,getres2(920,26),unfreezer,br,40,'');  { 'Freeze-Entpacker' }
           mappsel(false,'freeze -vdif $DOWNFILE');
           msetvfunc(progtest);
-          maddstring(3,10+add,getres2(920,27),ungzipper,br,40,''); { 'GNU-ZIP-Entpacker' }
+          maddstring(3,10+add,getres2(920,27),ungzipper,br,40,''); { 'gzip-Entpacker' }
           mappsel(false,'gzip -vdf $DOWNFILE');
+          msetvfunc(progtest);
+          maddstring(3,11+add,getres2(920,57),unbzipper,br,40,''); { 'bzip2-Entpacker' }
+          mappsel(false,'bzip2 -vdf $DOWNFILE');
           msetvfunc(progtest);
           end;
         if not fido then
           if uucp then begin
-            maddint(3,10,getres2(920,30),maxpacketsize,5,4,64,4096);
-              mhnr(8010);                           { 'max. UUCP-Paketgrî·e ' }
+            maddint(3,11,getres2(920,30),maxpacketsize,5,4,64,4096);
+              mhnr(8010);                           { 'max. UUCP-Paketgroesse ' }
             mappsel(true,'64˘128˘256˘512˘1024˘2048˘4096');
-            maddint(3,11,getres2(920,31),maxwinsize,3,1,2,7);  { 'max. UUCP-Fenstergrî·e  ' }
-            maddint(3,12,getres2(920,62),maxfsize,5,4,0,9999); { 'maximale Dateigrî·e   ' }
+            maddint(3,12,getres2(920,31),maxwinsize,3,1,2,7);  { 'max. UUCP-Fenstergroesse  ' }
+            maddint(3,13,getres2(920,62),maxfsize,5,4,0,9999); { 'maximale Dateigroesse   ' }
               mhnr(8025);
-            maddtext(35,12,'KB',0);
-            maddbool(3,14,getres2(920,32),VarPacketSize);     { 'variable Paketgrî·e' }
+            maddtext(35,13,'KB',0);
+            maddbool(3,15,getres2(920,32),VarPacketSize);     { 'variable Paketgroesse' }
               mhnr(8012);
-            maddbool(3,15,getres2(920,60),ForcePacketsize);   { 'Ausgangspaketgrî·e vorgeben' }
-            maddbool(3,16,getres2(920,35),SizeNego);          { 'Dateigrî·e Åbertragen' }
-            maddbool(3,17,getres2(920,36),uusmtp); mhnr(8017);  { 'SMTP' }
+            maddbool(3,16,getres2(920,60),ForcePacketsize);   { 'Ausgangspaketgroesse vorgeben' }
+            maddbool(3,17,getres2(920,35),SizeNego);          { 'Dateigroesse uebertragen' }
+            maddbool(3,18,getres2(920,36),uusmtp); mhnr(8017);  { 'SMTP' }
             Ug:=cpos('g',uuprotos)>0; U_G:=cpos('G',uuprotos)>0;
             Ue:=cpos('e',uuprotos)>0; Uz:=cpos('z',uuprotos)>0;
             Uf:=cpos('f',uuprotos)>0;
-            maddbool(43,10,getres2(920,34),Ug);    { 'g-Protokoll' }
+            maddbool(43,11,getres2(920,34),Ug);    { 'g-Protokoll' }
             mset1func(testuucp); mhnr(8015);
             uup1:=fieldpos;
-            maddbool(43,11,getres2(920,33),U_G);    { 'G-Protokoll' }
+            maddbool(43,12,getres2(920,33),U_G);    { 'G-Protokoll' }
             mset1func(testuucp); mhnr(8015);
-            maddbool(43,12,getres2(920,37),Uz);    { 'z-Protokoll' }
+            maddbool(43,13,getres2(920,37),Uz);    { 'z-Protokoll' }
             mset1func(testuucp); mhnr(8015);
-            maddbool(43,13,getres2(920,38),Uf);    { 'f-Protokoll' }
+            maddbool(43,14,getres2(920,38),Uf);    { 'f-Protokoll' }
             mset1func(testuucp); mhnr(8015);
-            maddbool(43,14,getres2(920,39),Ue);    { 'e-Protokoll' }
+            maddbool(43,15,getres2(920,39),Ue);    { 'e-Protokoll' }
             mset1func(testuucp); mhnr(8015);
             uupl:=fieldpos;
-            maddbool(43,16,getres2(920,61),uucp7e1);   { 'Login mit 7e1' }
+            maddbool(43,17,getres2(920,61),uucp7e1);   { 'Login mit 7e1' }
             mhnr(8024);
             uparcnr:=0; downarcnr:=0;
             end
@@ -570,11 +573,11 @@
           maddstring(3,11,getres2(920,53),SendAKAs,31,AKAlen,'');   { 'Pakete mitsenden ' }
           msetvfunc(TestAKAservers);
           maddbool(3,13,getres2(920,46),f4d);         { '4D-Adressen' }
-          maddbool(3,14,getres2(920,47),ftosscan);    { 'TosScan o.Ñ.' }
+          maddbool(3,14,getres2(920,47),ftosscan);    { 'TosScan o.ae.' }
           maddbool(29,13,'EMSI',EMSIenable);
             mset3proc(fidotestpasslen); EMSIfield:=fieldpos;
           maddbool(29,14,getres2(920,48),gettime);    { 'Uhrzeit setzen' }
-          maddbool(3,16,getres2(920,49),PacketPW); mhnr(8000);  { 'Paketpa·wort' }
+          maddbool(3,16,getres2(920,49),PacketPW); mhnr(8000);  { 'Paketpasswort' }
           maddbool(3,17,getres2(920,50),fnode);       { 'Node statt Point' }
           maddbool(29,16,getres2(920,51),NotSEmpty);  { 'leeres Paket senden' }
           maddbool(29,17,getres2(920,52),ExtPFiles);  { 'erw. Paketdateinamen' }
@@ -622,9 +625,9 @@
       maddint(3,2,getres2(921,1),connwait,5,4,1,1000); mhnr(160);   { 'Warten auf Verbindung' }
       if not fido then
         maddint(3,3,getres2(921,2),loginwait,5,4,1,1000);    { 'Warten auf Login     ' }
-      maddint(3,4+add,getres2(921,3),redialwait,5,4,         { 'WÑhl-Pause           ' }
+      maddint(3,4+add,getres2(921,3),redialwait,5,4,         { 'Waehl-Pause           ' }
                       2,1000); mhnr(162);
-      maddint(3,5+add,getres2(921,4),redialmax,5,4,iif(fido,2,1),1000);   { 'maximale WÑhlversuche' }
+      maddint(3,5+add,getres2(921,4),redialmax,5,4,iif(fido,2,1),1000);   { 'maximale Waehlversuche' }
       if not fido then begin
         maddint(35,2,getres2(921,5),retrylogin,5,4,1,100);   { 'Login-Versuche  ' }
         if (nt<>nt_UUCP) then
@@ -647,7 +650,7 @@
 {$IFDEF CAPI }
       if ntISDN(nt) then mappsel(true,'ISDN');
 {$ENDIF }
-      maddint(28,9+add,getres2(921,11),baud,6,6,150,115200); { 'öbertragungsrate:' }
+      maddint(28,9+add,getres2(921,11),baud,6,6,150,115200); { 'Uebertragungsrate:' }
       mappsel(false,'300˘1200˘2400˘4800˘9600˘19200˘38400˘57600˘115200');
       msetvfunc(testbaud);
       maddtext(length(getres2(921,11))+39,9+add,getres2(921,12),0);  { 'bd' }
@@ -712,7 +715,7 @@
         range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
       maddstring(3,4,GetRes2(951,2), pop3_id,25,255,'');        { 'Loginname ~' }
       maddstring(3,6,GetRes2(951,3), pop3_pwd,25,255,'');      { 'Passwort  ~' }
-      maddbool(3,8, GetRes2(951,4), pop3_clear); { 'Abgeholte Mails lîschen' }
+      maddbool(3,8, GetRes2(951,4), pop3_clear); { 'Abgeholte Mails loeschen' }
       freeres;
       readmask(brk);
       enddialog;
@@ -729,7 +732,7 @@
         range('0','9')+range('A','Z')+range('a','z')+'.'+'-');
       maddstring(3,4,GetRes2(952,2),smtp_id,25,255,'');      { 'Loginname ~' }
       maddstring(3,6,GetRes2(952,3), smtp_pwd,25,255,'');    { 'Passwort  ~' }
-      maddbool(3,8,GetRes2(952,4), smtpafterpop); { 'Vor SMTP einen POP3 Login ausfÅhren' }
+      maddbool(3,8,GetRes2(952,4), smtpafterpop); { 'Vor SMTP einen POP3 Login ausfuehren' }
       freeres;
       readmask(brk);
       enddialog;
@@ -793,10 +796,10 @@
           dname:='';
           dbWriteStr(d,'dateiname',dname);   { ! }
           dname:=getdname(nt,name);
-          unique(dname);        { verÑndert pos(d)! }
+          unique(dname);        { veraendert pos(d)! }
           dbGo(d,drec[p]);
           dbWriteStr(d,'dateiname',dname);
-          { evtl. User&Bretter Åberarbeiten }
+          { evtl. User&Bretter ueberarbeiten }
         { DefaultBox:=name;   ?????
           SaveConfig2; }
           if             dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
@@ -834,7 +837,7 @@
       end;
   end;
 
-  // Edit Namen fÅr alle Internet-Boxtypen au·er UUCP
+  // Edit Namen fuer alle Internet-Boxtypen ausser UUCP
   procedure EditInetName(var brk:boolean);
   var name,user,komm  : string;
       dname,old_dname : string;
@@ -885,10 +888,10 @@
           dname:='';
           dbWriteStr(d,'dateiname',dname);   { ! }
           dname:=getdname(nt,name);
-          unique(dname);        { verÑndert pos(d)! }
+          unique(dname);        { veraendert pos(d)! }
           dbGo(d,drec[p]);
           dbWriteStr(d,'dateiname',dname);
-          { evtl. User&Bretter Åberarbeiten }
+          { evtl. User&Bretter ueberarbeiten }
         { DefaultBox:=name;   ?????
           SaveConfig2; }
           if             dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
@@ -926,7 +929,7 @@
   var x,y   : byte;
       flags : byte;
       nobox : boolean;
-      fl,el : byte;      { 923.fl = eines der Eingabefelder (fÅr LÑngenermittlung) }
+      fl,el : byte;      { 923.fl = eines der Eingabefelder (fuer Laengenermittlung) }
   begin
     dialog(ival(getres2(923,iif(nt in [nt_Fido,nt_UUCP],0,1))),
            iif(nt=nt_QWK,12,11),
@@ -963,11 +966,11 @@
       maddstring(3,8,forms(getres2(923,21),fl),sysopend,el,MaxLenPathname,''); mhnr(8037);
           { 'Endprogramm   ' }
       if nt=nt_QWK then begin
-        maddbool(3,10,getres2(933,8),delqwk);  { 'QWK-Pakete nach Verarbeitung lîschen' }
+        maddbool(3,10,getres2(933,8),delqwk);  { 'QWK-Pakete nach Verarbeitung loeschen' }
         mhnr(8039);
         end;
       maddbool(3,iif(nt=nt_QWK,11,10),getres2(923,7),SysopNetcall); mhnr(184);
-          { '/ØNetzanruf-Bericht' }
+          { '/>>Netzanruf-Bericht' }
       if nt=nt_Netcall then begin  { s. auch XP6 - Absender-Erzeugung f. PP }
         maddbool(ival(getres2(923,10)),10,getres2(923,8),nobox); mhnr(185);
         end;                                      { 'Username ohne @BOX' }
@@ -1001,7 +1004,7 @@
     nall:=(flags and 2=0);
     with boxpar^ do begin
       maddtext(3,2,getres2(924,2),col.coldiahigh);    { 'Online-Anruf' }
-      maddstring(20,2,getres2(924,3),o_passwort,25,25,''); mhnr(187);  { 'Pa·wort ' }
+      maddstring(20,2,getres2(924,3),o_passwort,25,25,''); mhnr(187);  { 'Passwort ' }
       maddstring(20,3,getres2(924,4),o_logfile,25,60,''); { 'Logfile ' }
       msetvfunc(testlogfile);
       maddstring(20,4,getres2(924,13),o_script,25,50,''); { 'Script'   }
@@ -1009,7 +1012,7 @@
       mset3proc(scripterrors);
       if ntNetcall(nt) then begin
         maddtext(3,6,getres2(924,5),col.coldiahigh);    { 'Netzanruf'  }
-        maddtext(20,6,getres2(924,14),0);               { 'Ausschlu·-' }
+        maddtext(20,6,getres2(924,14),0);               { 'Ausschluss-' }
         maddtext(20,7,getres2(924,15),0);               { 'zeiten:'    }
         x2:=42+length(getres2(924,6));
         for i:=1 to excludes do begin
@@ -1029,11 +1032,11 @@
       maddstring(20,7+add,getres2(924,10),aFilter,25,60,''); mhnr(8050); { 'Ausgang' }
       maddtext(3,9+add,getres2(924,16),col.coldiahigh);   { 'Vertretersystem' }
       DomainNt:=nt;
-      maddstring(20,9+add,getres2(924,17),av,20,20,'>'); mhnr(8032);  { 'fÅr AMs' }
+      maddstring(20,9+add,getres2(924,17),av,20,20,'>'); mhnr(8032);  { 'fuer AMs' }
       amvfield:=fieldpos;
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
-      maddstring(20,10+add,getres2(924,18),pv,20,20,'>'); mhnr(8033);  { 'fÅr PMs' }
+      maddstring(20,10+add,getres2(924,18),pv,20,20,'>'); mhnr(8033);  { 'fuer PMs' }
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
       maddtext(3,12+add,getres2(924,11),col.coldiahigh);    { 'Sonstiges' }
@@ -1074,7 +1077,7 @@
       maddstring(20,2,getres2(924,4),o_logfile,25,60,'');       { 'Logfile ' }
       msetvfunc(testlogfile);
       maddtext(3,4,getres2(924,5),col.coldiahigh);    { 'Netzanruf'  }
-      maddtext(20,4,getres2(924,14),0);               { 'Ausschlu·-' }
+      maddtext(20,4,getres2(924,14),0);               { 'Ausschluss-' }
       maddtext(20,5,getres2(924,15),0);               { 'zeiten:'    }
       x2:=42+length(getres2(924,6));
       for i:=1 to excludes do begin
@@ -1087,11 +1090,11 @@
       maddstring(20,6+add,getres2(924,10),aFilter,25,60,''); mhnr(8050); { 'Ausgang' }
       maddtext(3,8+add,getres2(924,16),col.coldiahigh);   { 'Vertretersystem' }
       DomainNt:=nt;
-      maddstring(20,8+add,getres2(924,17),av,20,20,'>'); mhnr(8032);  { 'fÅr AMs' }
+      maddstring(20,8+add,getres2(924,17),av,20,20,'>'); mhnr(8032);  { 'fuer AMs' }
       amvfield:=fieldpos;
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
-      maddstring(20,9+add,getres2(924,18),pv,20,20,'>'); mhnr(8033);  { 'fÅr PMs' }
+      maddstring(20,9+add,getres2(924,18),pv,20,20,'>'); mhnr(8033);  { 'fuer PMs' }
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
       maddtext(3,11+add,getres2(924,11),col.coldiahigh);    { 'Sonstiges' }
@@ -1153,11 +1156,11 @@
                         _nname:=true; _brett:=true;
                       end;
         nt_Quick    : begin
-                        fehler('keine Einstellungen fÅr QuickMail nîtig');
+                        fehler('keine Einstellungen fuer QuickMail noetig');
                         exit;
                       end;
         nt_GS       : begin
-                        fehler('keine Einstellungen fÅr G&S-Mailbox nîtig');
+                        fehler('keine Einstellungen fuer G&S-Mailbox noetig');
                         exit;
                       end;
         nt_Maus     : begin
@@ -1246,7 +1249,7 @@
       maddstring(14,2,getres2(926,3),maps,12,20,''); mhnr(700);  { 'Name       ' }
       mappsel(false,'Areafix˘Areamgr');
       msetvfunc(notempty);
-      maddstring(14,3,getres2(926,4),AreaPW,12,12,'');   { 'Pa·wort    ' }
+      maddstring(14,3,getres2(926,4),AreaPW,12,12,'');   { 'Passwort    ' }
       maddbool(14,5,getres2(926,5),AreaPlus);      { '"+" bei Bestellungen' }
       maddbool(14,6,getres2(926,6),AreaBetreff);   { 'Befehle im Betreff' }
       nli:=not LocalINTL;
@@ -1254,7 +1257,7 @@
       maddtext(3,9,getres2(926,9),col.coldiahigh);       { 'FileScan' }
       maddstring(14,9,getres2(926,10),Filescanner,12,15,''); { 'Name       ' }
       mappsel(false,'Allfix˘FileFix˘FileMgr˘FileScan˘JunkTick');
-      maddstring(14,10,getres2(926,11),FilescanPW,12,12,'');  { 'Pa·wort    ' }
+      maddstring(14,10,getres2(926,11),FilescanPW,12,12,'');  { 'Passwort    ' }
       maddtext(3,12,getres2(926,7),col.coldiahigh); { 'Diverses' }
       maddstring(14,12,getres2(926,8),MagicBrett,12,25,'A'+without(AllChar,' '));  { 'Brettebene ' }
       mappsel(false,'/FIDO/˘/GERNET/˘/VIRNET/');
@@ -1297,7 +1300,7 @@
       bmname:= dbReadStr(d,'nameomaps');
       maddstring(3+bl,5,getres2(928,5),bmname,15,15,'');   { 'Name    ' }
       mappsel   (false,'changesys˘GUP˘feeder˘autosys˘postmaster'); mhnr(658);
-      maddstring(3+bl,6,getres2(928,6),AreaPW,12,12,'');   { 'Pa·wort ' }
+      maddstring(3+bl,6,getres2(928,6),AreaPW,12,12,'');   { 'Passwort ' }
         mhnr(658);
       maddbool  (3+bl,8,getres2(928,7),BMdomain); mhnr(658);  { 'Domain mitsenden' }
       maddstring(3,10,getres2(928,8),chsysbetr,30,50,'');   { 'Sysfile-Betreff ' }
@@ -1659,12 +1662,12 @@
     dbGo(d,drec[p]);
     if exist(dbReadStr(d,'dateiname')+BoxFileExt) then begin
       msgbox(60,9,_fehler_,x,y);
-      mwrt(x+3,y+2,getreps2(929,1,    { 'Es sind Polldaten fÅr diese Box vorhanden (%s.PP)' }
+      mwrt(x+3,y+2,getreps2(929,1,    { 'Es sind Polldaten fuer diese Box vorhanden (%s.PP)' }
                    FileUpperCase(dbReadStr(d,'dateiname'))));
-      mwrt(x+3,y+3,getres2(929,2));   { '- Netztyp kann nicht geÑndert werden.  Versenden oder' }
-      mwrt(x+3,y+4,getres2(929,3));   { 'lîschen Sie bitte zuerst die unversandten Nachrichten' }
-      mwrt(x+3,y+5,getres2(929,4));   { 'fÅr diese Box!' }
-      mwrt(x+3,y+7,getres(12));       { 'Taste drÅcken...' }
+      mwrt(x+3,y+3,getres2(929,2));   { '- Netztyp kann nicht geaendert werden.  Versenden oder' }
+      mwrt(x+3,y+4,getres2(929,3));   { 'loeschen Sie bitte zuerst die unversandten Nachrichten' }
+      mwrt(x+3,y+5,getres2(929,4));   { 'fuer diese Box!' }
+      mwrt(x+3,y+7,getres(12));       { 'Taste druecken...' }
       errsound;
       wait(curon);
       closebox;
@@ -1694,6 +1697,9 @@
 
 {
   $Log$
+  Revision 1.29  2000/11/02 21:27:04  fe
+  bzip2 support added.
+
   Revision 1.28  2000/10/22 21:59:00  mk
   - case of .pp and .epp is now UnixFS dependent
 

@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -40,8 +40,8 @@ type
     f1, f2: file;                         { Quell/Zieldatei     }
     addpath: String;
     ppp: boolean;
-    CopyXLines: Boolean;         { Alle X-Lines nach RFC zurÅckkopieren }
-    getrecenvemp: boolean; { Envelope-EmpfÑnger aus Received auslesen? }
+    CopyXLines: Boolean;         { Alle X-Lines nach RFC zurueckkopieren }
+    getrecenvemp: boolean; { Envelope-Empfaenger aus Received auslesen? }
     NoMIME: boolean ;              { -noMIME }
     shrinkheader: boolean;        { uz: r-Schalter }
     nomailer: boolean;
@@ -66,7 +66,7 @@ type
      u2z: boolean;                         { Richtung; mail/news }
     source, dest: String;                { Quell-/Zieldateien  }
     _from, _to: string;                   { UUCP-Systemnamen }
-    OwnSite: string;             { fÅr EmpfÑngeradresse von Mails }
+    OwnSite: string;             { fuer Empfaengeradresse von Mails }
     uunumber: word;                       { fortlaufende Hex-Paketnummer }
     MailUser: string;        { fuer U-Zeile im X-File }
     NewsUser: string;
@@ -75,9 +75,10 @@ type
     MakeQP: boolean;                   { -qp: MIME-quoted-printable }
     NewsMIME: boolean ;
     SMTP: boolean ;
-    zsmtp: boolean ;               { GNU-Zipped SMTP  }
+    zSMTP: boolean ;               { GNU-Zipped SMTP  }
     cSMTP: boolean ;               { compressed SMTP  }
     fSMTP: boolean ;               { frozen SMTP      }
+    bSMTP: boolean ;               { BZIP2'ed SMTP    }
     ParSize: boolean ;             { Size negotiation }
     constructor create;
     destructor Destroy; override;
@@ -133,19 +134,21 @@ const
 
   fPGP_please = $0040;                  { Verifikations-Anforderung  }
   fPGP_request = $0080;                 { Key-Request                }
-  fPGP_haskey = $0100;                  { Nachricht enthÑlt PGP-Key  }
-  fPGP_comprom = $0200;                 { Nachricht enthÑlt compromise }
+  fPGP_haskey = $0100;                  { Nachricht enthaelt PGP-Key  }
+  fPGP_comprom = $0200;                 { Nachricht enthaelt compromise }
 
   nt_ZConnect = 2;
   nt_RFC = 40;
   {$IFDEF unix}
-  uncompress = '/usr/bin/compress -dvf ';
-  unfreeze = '/usr/bin/freeze -dif ';
-  ungzip = '/usr/bin/gzip -df ';
+  uncompress = 'compress -dvf ';
+  unfreeze = 'freeze -dif ';
+  ungzip = 'gzip -df ';
+  unbzip = 'bzip2 -df ';
   {$ELSE}
   uncompress = 'compress.exe -df ';
   unfreeze = 'freeze.exe -dif ';
   ungzip = 'gzip.exe -df ';
+  unbzip = 'bzip2.exe -df ';
   {$ENDIF}
   UUserver = 'UUCP-Fileserver';
   tspecials = '()<>@,;:\"/[]?=';        { RFC822-Special Chars    }
@@ -183,23 +186,23 @@ var
   s: string;
   qprint, b64: boolean;                 { MIME-Content-TT's (ReadRFCheader) }
   qprchar: set of char;
-  // Speichert zusÑtzliche Headertypen, Object-Pointer speichert Boolean
+  // Speichert zusaetzliche Headertypen, Object-Pointer speichert Boolean
   // true wenn mail, false wenn keine Mail
   addhd: TStringList;
   RawNews: Boolean;
-  // EnthÑlt die eigentliche Nachricht
+  // Enthaelt die eigentliche Nachricht
   Mail: TStringList;
-  // Liste der EmpfÑnger
+  // Liste der Empfaenger
   empflist: TStringList;
   uline: TStringList;
-  xline: TStringList;                    // X-Zeilen, die 'Åbrig' sind
+  xline: TStringList;                    // X-Zeilen, die 'uebrig' sind
   TempS: ShortString;
 
 const
-  { Wird zum Einlesen der Customizable Headerlines benîtigt }
+  { Wird zum Einlesen der Customizable Headerlines benoetigt }
   mheadercustom: array[1..2] of string = ('', '');
 
-  // S wird StandardmÑ·ig mit dieser LÑnge allociert
+  // S wird Standardmaessig mit dieser Laenge allociert
   MaxSLen = 4096;
 
 // Frischen Header erzeugen
@@ -310,20 +313,21 @@ begin
   addpath := '';
   MakeQP := false;
   ppp := false;
-  CopyXLines := false;         { Alle X-Lines nach RFC zurÅckkopieren }
+  CopyXLines := false;         { Alle X-Lines nach RFC zurueckkopieren }
   RFC1522 := false;             { Headerzeilen gem. RFC1522 codieren }
-  getrecenvemp := false; { Envelope-EmpfÑnger aus Received auslesen? }
+  getrecenvemp := false; { Envelope-Empfaenger aus Received auslesen? }
   ParSize := false;             { Size negotiation }
   SMTP:= false;
   cSMTP:= false;               { compressed SMTP  }
   fSMTP:= false;               { frozen SMTP      }
-  zsmtp:= false;               { GNU-Zipped SMTP  }
+  zSMTP:= false;               { GNU-Zipped SMTP  }
+  bSMTP:= false;               { BZIP2'ed SMTP    }
   NewsMIME:= false;
   NoMIME:= false;              { -noMIME }
   MailUser:= 'mail';        { fuer U-Zeile im X-File }
   NewsUser:= 'news';
   FileUser:= 'root';
-  OwnSite:= '';             { fÅr EmpfÑngeradresse von Mails }
+  OwnSite:= '';             { fuer Empfaengeradresse von Mails }
   shrinkheader:= false;        { uz: r-Schalter }
   nomailer:= false;
   uunumber:= 0;
@@ -338,7 +342,7 @@ begin
   qprchar := [^L, '=', #127..#255];
   getmem(outbuf, bufsize);
 
-  // zusÑtzliche Headerzeilen einlesen
+  // zusaetzliche Headerzeilen einlesen
   AddHd := TStringList.Create;
   EmpfList := TStringList.Create;
   Mail := TStringList.Create;
@@ -376,7 +380,7 @@ begin
       if LeftStr(paramstr(i), 1) = '-' then
       begin
         switch := LowerCase(mid(paramstr(i), 2));
-        { Envelope-EmpfÑnger aus Received auslesen? }
+        { Envelope-Empfaenger aus Received auslesen? }
         if switch = 'graberec' then
           getrecenvemp := true
         else
@@ -430,6 +434,11 @@ begin
           if switch = 'zsmtp' then
         begin
           SMTP := true; zSMTP := true;
+        end
+        else
+          if switch = 'bsmtp' then
+        begin
+          SMTP := true; bSMTP := true;
         end
         else
           if switch = 'mime' then
@@ -782,7 +791,7 @@ begin
   j := minmax(IVal(getstr), 0, 2099);
   if j < 100 then
     if j < 70 then
-      inc(j, 2000)                      { 2stellige Jahreszahl ergÑnzen }
+      inc(j, 2000)                      { 2stellige Jahreszahl ergaenzen }
     else
       inc(j, 1900);
   ti := getstr;
@@ -910,7 +919,7 @@ var
   begin
     inc(p);
     while (p <= length(s)) and (s[p] in [' ', #9]) do
-      inc(p);                           { whitespaces Åberlesen }
+      inc(p);                           { whitespaces ueberlesen }
     delete(s, 1, p - 1);
     p := 1;
   end;
@@ -1049,7 +1058,7 @@ var
   p, b: Integer;
   softbrk: boolean;
 
-  procedure AddCrlf;                    { CR/LF an s anhÑngen }
+  procedure AddCrlf;                    { CR/LF an s anhaengen }
   begin
     s := s + #13#10;
   end;
@@ -1154,11 +1163,11 @@ begin
     end;
     inc(p);
   end;
-  p := 76;                              { Zeilen auf 76 Zeichen kÅrzen }
+  p := 76;                              { Zeilen auf 76 Zeichen kuerzen }
   while p < length(s) do
   begin
     if s[p - 1] = '=' then
-      dec(p)                            { keine qp's auseinanderrei·en }
+      dec(p)                            { keine qp's auseinanderreissen }
     else
       if s[p - 2] = '=' then
       dec(p, 2);
@@ -1175,7 +1184,7 @@ begin
   if RFC1522 then
   begin
     p := 1;
-    { wenn =? und ?= von Hand in den Header geschrieben wurden, mÅssen
+    { wenn =? und ?= von Hand in den Header geschrieben wurden, muessen
       sie codiert werden: }
     encoded := (pos('=?', s) > 0) and (pos('?=', s) > 0);
     while p <= length(s) do
@@ -1349,7 +1358,7 @@ begin
     begin
       inc(l);
       // Die ersten MaxSLen Bytes machen wir effizient, danach machen
-      // wir uns ersteinmal keinen grî·eren Aufwand
+      // wir uns ersteinmal keinen groesseren Aufwand
       if l <= MaxSlen then
         s[l] := c
       else
@@ -1546,7 +1555,7 @@ var
       adr := s0;
     if (adr[1] = '@') and (cpos(':', adr) > 0) then
     begin
-      delete(adr, 1, cpos(':', adr));   { Route-Adresse nach RFC-822 auflîsen }
+      delete(adr, 1, cpos(':', adr));   { Route-Adresse nach RFC-822 aufloesen }
       if cpos('@', adr) = 0 then adr := adr + '@nowhere';
     end;
     if (realname <> '') and (realname[1] = '"') then UnQuote(realname);
@@ -1744,7 +1753,7 @@ var
     hd.ref := s0;
   end;
 
-  procedure GetReceived; { Mail - "Received: by" an Pfad anhÑngen }
+  procedure GetReceived; { Mail - "Received: by" an Pfad anhaengen }
   var
     by, from: string;
 
@@ -1766,11 +1775,11 @@ var
     end;
   begin
     Uline.Add('U-' + s1);
-    { "(qmail id xxx invoked from network)" enthÑlt "from " }
+    { "(qmail id xxx invoked from network)" enthaelt "from " }
     RFCRemoveComment(s0);
     by := GetRec('by ');
     from := GetRec('from ');
-    { Envelope-EmpfÑnger ermitteln }
+    { Envelope-Empfaenger ermitteln }
     if (hd.envemp='') and getrecenvemp then hd.envemp:=GetRec('for ');
     if (by <> '') and (LowerCase(by) <> LowerCase(RightStr(hd.pfad, length(by))))
       then
@@ -1792,7 +1801,7 @@ var
     ZCtoZdatum(hd.zdatum, hd.datum);
   end;
 
-  { vollstÑndig RFC-1522-Decodierung }
+  { vollstaendig RFC-1522-Decodierung }
 
   procedure MimeIsoDecode(var ss: string);
   var
@@ -1886,7 +1895,7 @@ var
         inc(p);
       if p = 1 then
       begin
-        { keine Zahl: auf urgent/high, normal, low prÅfen }
+        { keine Zahl: auf urgent/high, normal, low pruefen }
         s0 := LowerCase(LeftStr(s0, 3));
         { laufzeitoptimierte Abfrage: das Wahrscheinlichste zuerst }
         if s0 = 'nor' then
@@ -2179,7 +2188,7 @@ begin
                   dec(p2);                  { rechtes "!" suchen }
                 p := p2 - 1;
                 while (p > 0) and (hd.wab[p] <> '!') do
-                  dec(p);                   { nÑchstes "!" suchen }
+                  dec(p);                   { naechstes "!" suchen }
                 p3 := pos('@', mid(hd.wab, p2 + 1));
                 if p3 > 0 then
                   if stricmp(copy(hd.wab, p2 + 1, p3 - 1) + '@' + copy(hd.wab, p +
@@ -2226,7 +2235,7 @@ begin
 
       if (mailuser <> '') and (mailuser <> hd.xempf[0]) then
       begin
-        // Envelope-EmpfÑnger einsetzen
+        // Envelope-Empfaenger einsetzen
         hd.xoem.Assign(hd.xempf);
         hd.xempf.Clear;
         hd.xempf.Add(mailuser);
@@ -2291,7 +2300,7 @@ begin
     blockread(f, s[1], 4, rr);
     close(f);
     if (LeftStr(s, 2) = #$1F#$9D) or (LeftStr(s, 2) = #$1F#$9F) or
-      (LeftStr(s, 2) = #$1F#$8B) then
+      (LeftStr(s, 2) = #$1F#$8B) or (LeftStr(s, 2) = #$42#$5a) then
     begin
       rename(f, fn + '.Z');
       case s[2] of
@@ -2309,6 +2318,11 @@ begin
           begin
             write(' - unzipping SMTP mail ...');
             shell(ungzip + fn);
+          end;
+        #$5A:
+          begin
+            write(' - unbzip2`ing SMTP mail ...');
+            shell(unbzip + fn);
           end;
       end;
     end;
@@ -2349,7 +2363,7 @@ begin
         end;
       inc(n); inc(mails);
       write(#8#8#8#8#8, n: 5);
-      repeat                            { UUCP-Envelope Åberlesen }
+      repeat                            { UUCP-Envelope ueberlesen }
         ReadString;
         nofrom := (LowerCase(LeftStr(s, 5)) <> 'from ') and (LowerCase(LeftStr(s, 5))
           <> '>from');
@@ -2369,14 +2383,14 @@ begin
       hd.groesse := 0;
       smtpende := false;
       while (bufpos < bufanz) and not smtpende do
-      begin                             { Mailgrî·e berechnen }
+      begin                             { Mailgroesse berechnen }
         ReadString;
         smtpende := (s = '.');
         if not smtpende then
         begin
           if (s <> '') and (s[1] = '.') then { SMTP-'.' entfernen }
             delfirst(s);
-          UnquotePrintable;             { hÑngt CR/LF an, falls kein Base64 }
+          UnquotePrintable;             { haengt CR/LF an, falls kein Base64 }
           inc(hd.groesse, length(s));
         end;
       end;
@@ -2391,7 +2405,7 @@ begin
         begin
           if (s <> '') and (s[1] = '.') then { SMTP-'.' entfernen }
             delfirst(s);
-          UnQuotePrintable;             { hÑngt CR/LF an, falls kein Base64 }
+          UnQuotePrintable;             { haengt CR/LF an, falls kein Base64 }
           if not binaer then s := ISOtoIBM(s);
           wrfs(s);
         end;
@@ -2415,10 +2429,11 @@ procedure TUUz.ConvertNewsfile(fn: String; var news: Integer);
 var
   f: file;
   i: Integer;
-  size: longint; // Grî·e des Headers in Byte
+  size: longint; // Groesse des Headers in Byte
   fp, bp, n: longint;
   freeze: boolean;
   gzip: boolean;
+  bzip: boolean;
   p: integer;
   newfn: String;
   dir: dirstr;
@@ -2436,6 +2451,7 @@ begin
     freeze := (pos('funbatch', LowerCase(s)) > 0);
     gzip := (pos('gunbatch', LowerCase(s)) > 0) or (pos('zunbatch', LowerCase(s))
       > 0);
+    bzip := (pos('bunbatch', LowerCase(s)) > 0);
     seek(f1, length(s) + 1);
     fsplit(fn, dir, name, ext);
     {$IFDEF unix}
@@ -2446,6 +2462,9 @@ begin
       else
         if (gzip) then
         newfn := fn + '.gz'
+      else
+        if (bzip) then
+        newfn := fn + '.bz2'
       else
         newfn := fn + '.Z';
     end;
@@ -2474,6 +2493,12 @@ begin
     begin
       write(' - unzipping news...');
       shell(ungzip + newfn);
+    end
+    else
+      if bzip then
+    begin
+      write(' - unbzip2`ing news...');
+      shell(unbzip + newfn);
     end
     else
     begin
@@ -2519,7 +2544,7 @@ begin
           ReadRFCheader(false, s);
           binaer := (hd.typ = 'B');
           seek(f1, fp); ReadBuf; bufpos := bp;
-          repeat                        { Header Åberlesen }
+          repeat                        { Header ueberlesen }
             ReadString;
             dec(size, length(s) + eol);
           until (s = '') or (bufpos >= bufanz);
@@ -2528,7 +2553,7 @@ begin
             hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
 
           while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
-          begin                         { Grî·e des Textes berechnen }
+          begin                         { Groesse des Textes berechnen }
             ReadString; Dec(hd.lines);
             dec(Size, length(s) + eol);
             UnQuotePrintable;
@@ -2536,7 +2561,7 @@ begin
             Mail.Add(s);
             inc(hd.groesse, length(s));
           end;
-          WriteHeader;                  { ZC-Header inkl. Grî·enangabe erzeugen }
+          WriteHeader;                  { ZC-Header inkl. Groessenangabe erzeugen }
           for i := 0 to Mail.Count - 1 do
             wrfs(Mail[i]);
         end;
@@ -2612,7 +2637,7 @@ var
             end;
           'F':
             if dfile = '' then
-            begin                       { zugehîriges Datenfile }
+            begin                       { zugehoeriges Datenfile }
               s := trim(mid(s, 2));
               dfile := U2DOSfile(s);
             end;
@@ -2686,7 +2711,8 @@ begin
           if (typ = 'rsmtp') or (typ = 'crsmtp') or (typ = 'rcsmtp') or
           (typ = 'frsmtp') or (typ = 'rfsmtp') or
           (typ = 'rzsmtp') or (typ = 'zrsmtp') or
-          (typ = 'rgsmtp') or (typ = 'grsmtp') then
+          (typ = 'rgsmtp') or (typ = 'grsmtp') or
+          (typ = 'rbsmtp') or (typ = 'brsmtp') then
           ConvertSmtpFile(spath + dfile, typ <> 'rsmtp', mails);
       end;
     end
@@ -2736,7 +2762,7 @@ begin
   p:=length(fn);
   while (p>0) and (fn[p]<>'.') do dec(p);
   if p>1 then begin
-    fn:=LeftStr(fn,p+3);           { Extension auf 3 Zeichen kÅrzen }
+    fn:=LeftStr(fn,p+3);           { Extension auf 3 Zeichen kuerzen }
     dec(p);
     end;
   allowed:=['A'..'Z','_','-','é','ô','ö','Ñ','î','Å','#','@','$','!','0'..'9'];
@@ -2748,10 +2774,10 @@ begin
     if not (fn[i] in allowed) then
       fn[i]:='-';
   p:=cpos('.',fn);
-  if p=0 then begin             { Datei ohne Extension auf 8 Zeichen kÅrzen }
+  if p=0 then begin             { Datei ohne Extension auf 8 Zeichen kuerzen }
     name:=LeftStr(fn,8); ext:='';
     end
-  else begin                    { Datei mit Extension auf 8+3 zeichen kÅrzen }
+  else begin                    { Datei mit Extension auf 8+3 zeichen kuerzen }
     name:=LeftStr(fn,min(8,p-1)); ext:=mid(fn,p);
     end;
   if length(ext)=2 then n:=10
@@ -2979,13 +3005,13 @@ begin
       end
       else
       begin
-        // References einigermassen RFC-konform kÅrzen
+        // References einigermassen RFC-konform kuerzen
         repeat
           j := 12 + length(ref) + 2;
           for i := 0 to AddRef.Count - 1 do
             j := j + length(Addref[i]) + 3;
           if j > 980 then
-            // Erste Referenz lîschen um Platz zu schaffen
+            // Erste Referenz loeschen um Platz zu schaffen
             AddRef.Delete(0);
         until j <= 980;
 
@@ -3173,7 +3199,7 @@ var
   server: string;                       { Adresse UUCP-Fileserver }
   files: longint;
   binmail: boolean;
-  copycount: integer;                   { fÅr Mail-'CrossPostings' }
+  copycount: integer;                   { fuer Mail-'CrossPostings' }
 
   procedure FlushOutbuf(var f: file);
   begin
@@ -3219,6 +3245,9 @@ var
     else
       if smtp and zsmtp then
       wrs(f2, 'C rgsmtp')
+    else
+      if smtp and bsmtp then
+      wrs(f2, 'C rbsmtp')
     else
       wrs(f2, 'C r' + sender + iifs(mail, ' ' + hd.empfaenger, ''));
     fs := filesize(f2);
@@ -3314,8 +3343,8 @@ var
       WriteTransfer(LowerCase(ExtractFilename(fromfile)));
   end;
 
-  { String abkÅrzen, falls Zeile nicht mit CR/LF beendet }
-  { und nachfolgendes EMP: angehÑngt wurde               }
+  { String abkuerzen, falls Zeile nicht mit CR/LF beendet }
+  { und nachfolgendes EMP: angehaengt wurde               }
 
   procedure ShortS;
   begin
@@ -3371,7 +3400,7 @@ begin
           hd.lines := (hd.groesse + 53) div 54 { Anzahl Base64-Zeilen }
         else
         begin
-          ReadBuf;                      { Zeilen zÑhlen }
+          ReadBuf;                      { Zeilen zaehlen }
           while fpos + bufpos < adr + hds + hd.groesse do
           begin
             ReadString;
@@ -3494,6 +3523,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2000/11/02 21:27:04  fe
+  bzip2 support added.
+
   Revision 1.69  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
@@ -3712,10 +3744,10 @@ end.
   - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
 
   Revision 1.8  2000/02/25 20:01:46  rb
-  unbenîtigte Funktion und Variable ausgeklammert
+  unbenoetigte Funktion und Variable ausgeklammert
 
   Revision 1.7  2000/02/25 19:07:08  rb
-  UnterstÅtzung von 'Priority:' und 'urgent' (incoming)
+  Unterstuetzung von 'Priority:' und 'urgent' (incoming)
 
   Revision 1.6  2000/02/21 00:36:56  rb
   X-Priority Konvertierung verbessert
@@ -3724,3 +3756,4 @@ end.
   RB: * Verbesserte X-Priority Konvertierung
 
 }
+k

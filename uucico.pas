@@ -818,12 +818,14 @@ begin
     if copy(s,4,8)='funbatch' then s:=getres2(2300,62) else   { 'gepacktes Newspaket (freeze)' }
     if copy(s,4,8)='gunbatch' then s:=getres2(2300,63) else   { 'gepacktes Newspaket (gzip)' }
     if copy(s,4,8)='zunbatch' then s:=getres2(2300,63) else   { 'gepacktes Newspaket (gzip)' }
+    if copy(s,4,8)='bunbatch' then s:=getres2(2300,69) else   { 'gepacktes Newspaket (bzip2)' }
     s:=''
   else
     if LeftStr(s,5)='HELO '  then s:=getres2(2300,64) else   { 'ungepacktes Mailpaket' }
     if LeftStr(s,2)=#$1f#$9d then s:=getres2(2300,65) else   { 'gepackte Datei (compress)' }
     if LeftStr(s,2)=#$1f#$9f then s:=getres2(2300,66) else   { 'gepackte Datei (freeze) }
     if LeftStr(s,2)=#$1f#$8b then s:=getres2(2300,67) else   { 'gepackte Datei (gzip) }
+    if LeftStr(s,2)=#$42#$5a then s:=getres2(2300,70) else   { 'gepackte Datei (bzip2) }
     begin
       LoString(s);
       if (LeftStr(s,5)='>from') or (LeftStr(s,4)='from') then begin
@@ -1947,6 +1949,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.4  2000/11/02 21:27:04  fe
+  bzip2 support added.
+
   Revision 1.3  2000/10/27 16:14:29  fe
   uucico notduerftig uebersetzbar gemacht.
 
