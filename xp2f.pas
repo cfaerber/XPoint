@@ -59,7 +59,7 @@ var anzahl  : Integer;
     with fkeys[iif(p>10,4,typ)][iif(p>10,p-10,p)] do begin
       dialog(55,12,iifs(txt='',getres2(240,1)+' ',txt)+strs(p),x,y);  { 'Zusatz-Menue' }
       maddstring(3,2,getres2(240,4),menue,20,20,''); mhnr(440);   { 'Menueanzeige  ' }
-      maddstring(3,4,getres2(240,5),prog,35,60,'');   { 'Programmname ' }
+      maddstring(3,4,getres2(240,5),prog,35,248,'');  { 'Programmname ' }
       s:=getres2(240,ntyp+7);
       maddstring(3,6,getres2(240,6),s,10,10,'');      { '$FILE-Nachr. ' }
       for i:=7 to 10 do
@@ -149,7 +149,7 @@ begin
 		  + ' ' + chk(bname)
 		  + ' ' + chk(warten)
 		  + ' ' + chk(listout)
-		  + ' ' + chk(autoexec){
+		  + ' ' + chk(autoexec) +  '      '{
 		  + ' ' + IntToStr(speicher)});
 	end;
       end;
@@ -1169,6 +1169,10 @@ end;
 
 {
   $Log$
+  Revision 1.36  2003/08/23 20:17:10  mk
+  - allow longer program name in Zusatzmenü
+  - fixed little display problem in Zusatzmenü
+
   Revision 1.35  2002/12/12 11:58:44  dodi
   - set $WRITEABLECONT OFF
 
