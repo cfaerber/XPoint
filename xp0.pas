@@ -168,9 +168,7 @@ const  {$IFDEF DPMI}
 
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
-{$IFDEF Linux }
-       Cfg3File	   = '.openxprc';	{ Zusaetzliche Cfg's unter Linux }
-{$ENDIF }
+       Cfg3File	   = 'openxp.cfg';	{ NEue cfg mit Sektionen }
        ColCfgfile  = 'xpoint.col';
        NewDateFile = 'neues.dat';
        MsgTempFile = 'msg.tmp';
@@ -1153,6 +1151,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.44  2000/05/12 13:33:52  hd
+  - weiter CFG-Datei
+
   Revision 1.43  2000/05/10 13:45:17  jg
   - Viewer-Sicherheitslisten: im Default war ein Punkt zuviel
 
