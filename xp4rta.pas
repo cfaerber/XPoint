@@ -1,11 +1,11 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 2001 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de      }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 
@@ -1048,6 +1048,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.11  2001/11/20 23:18:45  my
+  MY:- Lizenz-Header aktualisiert
+
   Revision 1.1.2.10  2001/11/01 17:16:59  sv
   - Statt der Stammbox wird nun der richtige Server angeboten (Dank an
     Jochen Gehring fuer die Codevorlage)
