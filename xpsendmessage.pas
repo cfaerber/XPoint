@@ -498,14 +498,14 @@ var f,f2     : file;
       mon;
       end;
     if pushpgdn then pushkey(keycpgd);
-    if exteditor<3 then EditSetBetreff(betreff,betrlen);
+    if (exteditor<3) or (VarEditor='') or (VarEditor[1]='*') then EditSetBetreff(betreff,betrlen);
 
     if (parts.count<=0) or not TSendAttach_Part(parts[0]).IsMessage then
       addMessagePart(TempS($FFFF),true,false);
 
     SendAttach_EditText(TSendAttach_Part(parts[0]),true,umlaute=1,iifs(flOhneSig,'',SigFile),netztyp,docode,flPGPSig);
 
-    if exteditor<3 then betreff:=EditGetbetreff;
+    if (exteditor<3) or (VarEditor='') or (VarEditor[1]='*') then betreff:=EditGetbetreff;
     if edpush then begin
       moff; wpop; mon;
       end;
@@ -2509,6 +2509,10 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.13  2002/08/28 18:47:45  mk
+  JG:- fixed: Alt-B in editor sometimes doesn't work
+    see <8Vf7E22S6pB.3.219@jochen.gehring.dialin.t-online.de>
+
   Revision 1.48.2.12  2002/08/25 19:34:00  cl
   - BUGFIX: <8VUmTJAKnKB@zocki.toppoint.de> Auto-MIME bei XP32
 
