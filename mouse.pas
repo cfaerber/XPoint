@@ -43,8 +43,8 @@ var    MouseThreadID: LongInt;
 {$ENDIF }
 
 type   mausstat   = record
-                      tasten : word;
-                      x,y    : word;
+                      tasten : integer;
+                      x,y    : integer;
                     end;
        mausintp   = procedure(intsource,tasten,x,y,mx,my:word);
 
@@ -276,6 +276,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.18  2000/08/03 21:27:08  mk
+  - Variablengroessen angepasst (xp_maus_an)
+
   Revision 1.17  2000/07/09 09:09:54  mk
   - Newexit in Initialization/Finalization umgewandelt
 

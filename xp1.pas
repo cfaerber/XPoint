@@ -143,7 +143,7 @@ function  getmenu(nr:byte; enterkey:taste; x,y:byte):integer;
 procedure setscreensize;
 procedure lines(screen,fnkey:byte);   { setzt gl usw. }
 procedure xp_maus_aus;
-procedure xp_maus_an(x,y: integer16);
+procedure xp_maus_an(x,y: integer);
 procedure SetMausEmu;
 
 procedure blindon(total:boolean);
@@ -889,7 +889,7 @@ begin
     end;
 end;
 
-procedure xp_maus_an(x,y: integer16);
+procedure xp_maus_an(x,y: integer);
 begin
   if _maus then begin
     if startup or MausShInit then
@@ -2005,6 +2005,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.75  2000/08/03 21:27:08  mk
+  - Variablengroessen angepasst (xp_maus_an)
+
   Revision 1.74  2000/08/01 20:14:32  mk
   - ResetVideo entfernt
 
