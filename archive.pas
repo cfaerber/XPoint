@@ -302,7 +302,7 @@ var f    : file;
                3 : (txt : array[0..19] of char;
                     id : longint);
                4 : (hb : byte;
-                    hw : word);
+                    hw : smallword);
                5 : (buf: array[0..$7f] of char);    { Anfang tar-Record }
              end;
     rr   : word;
@@ -904,11 +904,11 @@ var f1,f2 : file;
       rec : record
               compsize : longint;
               orgsize  : longint;
-              namelen  : word;
-              elen     : word;
-              commlen  : word;
-              disk     : word;
-              intattr  : word;
+              namelen  : smallword;
+              elen     : smallword;
+              commlen  : smallword;
+              disk     : smallword;
+              intattr  : smallword;
               extattr  : longint;
               lheader  : longint;
             end;
@@ -986,6 +986,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/08/09 13:22:12  mk
+  - noch ein paar weitere word->smallword Anpassungen
+
   Revision 1.18  2000/08/09 13:19:09  mk
   MO: weitere Anpassungen fuer ARJ, ZIP, LZH
 
