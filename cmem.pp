@@ -20,19 +20,18 @@ unit cmem;
 
 interface
 
-{$IFDEF Win32 }
-Function Malloc (Size : Longint) : Pointer;cdecl; external 'msvcrt' name 'malloc';
-Procedure Free (P : pointer); cdecl; external 'msvcrt' name 'free';
-Procedure FreeMem (P : Pointer); cdecl; external 'msvcrt' name 'free';
-function ReAlloc (P : Pointer; Size : longint) : pointer; cdecl; external 'msvcrt' name 'realloc';
-Function CAlloc (unitSize,UnitCount : Longint) : pointer;cdecl;external 'msvcrt' name 'calloc';
-{$ELSE }
-Function Malloc (Size : Longint) : Pointer;cdecl; external 'c' name 'malloc';
-Procedure Free (P : pointer); cdecl; external 'c' name 'free';
-Procedure FreeMem (P : Pointer); cdecl; external 'c' name 'free';
-function ReAlloc (P : Pointer; Size : longint) : pointer; cdecl; external 'c' name 'realloc';
-Function CAlloc (unitSize,UnitCount : Longint) : pointer;cdecl;external 'c' name 'calloc';
-{$ENDIF }
+Const
+{$ifndef win32}
+  LibName = 'c';
+{$else}
+  LibName = 'msvcrt';
+{$endif}
+
+Function Malloc (Size : Longint) : Pointer; {$ifndef win32}stdcall{$else}cdecl{$endif}; external LibName name 'malloc';
+Procedure Free (P : pointer); {$ifndef win32}stdcall{$else}cdecl{$endif}; external LibName name 'free';
+Procedure FreeMem (P : Pointer); {$ifndef win32}stdcall{$else}cdecl{$endif}; external LibName name 'free';
+function ReAlloc (P : Pointer; Size : longint) : pointer; {$ifndef win32}stdcall{$else}cdecl{$endif}; external LibName name 'realloc';
+Function CAlloc (unitSize,UnitCount : Longint) : pointer; {$ifndef win32}stdcall{$else}cdecl{$endif}; external LibName name 'calloc';
 
 implementation
 
@@ -42,14 +41,14 @@ begin
   result:=Malloc(Size);
 end;
 
-Function CFreeMem (Var P : pointer) : Longint;
+Function CFreeMem (P : pointer) : Longint;
 
 begin
   Free(P);
   Result:=0;
 end;
 
-Function CFreeMemSize(var p:pointer;Size:Longint):Longint;
+Function CFreeMemSize(p:pointer;Size:Longint):Longint;
 
 begin
   Result:=CFreeMem(P);
@@ -120,8 +119,14 @@ end.
 
 {   
  $Log$
- Revision 1.1  2002/06/05 09:21:37  mk
- - use cmem for Win32, too
+ Revision 1.2  2002/06/14 08:36:48  mk
+ - update from FPC cvs
+
+ Revision 1.3  2002/06/13 05:01:44  michael
+ + Added windows msvcrt support
+
+ Revision 1.2  2002/06/13 04:54:47  michael
+ + Fixed parameter type mismatch
 
  Revision 1.1  2002/01/29 17:54:59  peter
    * splitted to base and extra
