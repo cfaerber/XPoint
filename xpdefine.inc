@@ -90,7 +90,7 @@
   {$INLINE ON }
   {$PACKRECORDS Default } { Default: 2 }
   {$PACKENUM Default }    { Default: 4, valid: 1, 2, 4, Normal, Default }
-  {$H+,I-,P-,T-,V-,X+}
+  {$H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
 {$ENDIF }
 
@@ -99,25 +99,25 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C+,D+,E-,F-,G+,H+,I-,J+,K-,L+,M-,N+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y+,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
 {$ENDIF }
 
-{$IFDEF Kylix }
+{$IFDEF Kylix }         
   {$APPTYPE CONSOLE}
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C+,D+,E-,F-,G+,H+,I-,J+,K-,L+,M-,N+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y+,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
-  {$MAXSTACKSIZE $00100000}
+  {$MAXSTACKSIZE $00100000} 
   {$IMAGEBASE $00400000}
 {$ENDIF }
 
 {$IFDEF i386}
-  {$DEFINE LittleEndian}
+  {$DEFINE LittleEndian} 
 {$ELSE}
   !! Only i386 platform supported
 {$ENDIF}
@@ -125,6 +125,16 @@
 {$IFDEF DebugInfo }
   {$IFDEF VirtualPascal }
     {$D+,LocInfo+}
+  {$ENDIF }
+  {$IFDEF Delphi }
+    {$D+}                 { Debug-Informationen }
+    {$L+}                 { Locale Symbole }
+    {$Y+}                 { Symbol declarations }
+  {$ENDIF }
+  {$IFDEF Kylix }
+    {$D+}                 { Debug-Informationen }
+    {$L+}                 { Locale Symbole }
+    {$Y+}                 { Symbol declarations }
   {$ENDIF }
 {$ENDIF }
 
@@ -140,12 +150,15 @@
     {$D+}
     {$M+}                 { Typeinfo for RTTI }
     {$L+}                 { Local Symbols }
-    {$Q-}                 { Overflow-Check }
-    {$R-}                 { Range Check (must be off!) }
+    {$Q+}                 { Overflow-Check }
+    {$R+}                 { Range Check }
     {$Y+}                 { Browser Informations }
   {$ENDIF }
   {$IFDEF Delphi }
     {$O-}
+    {$C+}                 { Assertation support }
+    {$Q+}                 { Overflow-Check }
+    {$R+}                 { Range Check }
   {$ENDIF }
 {$ELSE }
   {$IFDEF FPC }
@@ -226,6 +239,10 @@
 
 {
   $Log$
+  Revision 1.73  2001/10/17 04:06:12  mk
+  - fine tuned delphi compiler settings
+  - enabled Range Check again in debug version
+
   Revision 1.72  2001/10/15 09:04:22  ml
   - compilable with Kylix ;-)
 
