@@ -18,7 +18,7 @@ unit xpmime;
 interface
 
 uses  xpglobal,sysutils,dos,typeform,montage,fileio,keys,lister,database,resource,
-      xp0,xp1,xpkeys;
+      xp0,xp1,xpkeys, utftools;
 
 
 type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
@@ -33,6 +33,7 @@ type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
                      ddatum     : string;   { Dateidatum fÅr extrakt }
                      part,parts : integer;
                      alternative: boolean;
+                     Charset  : TUnicodeCharsets;
                    end;
       pmpdata    = ^multi_part;
 
@@ -48,7 +49,20 @@ function typname(typ,subtyp:string):string;
 
 implementation  { --------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3ex;
+uses
+  {$IFDEF Win32 }
+  xpwin32,
+  {$ENDIF }
+  {$IFDEF Linux }
+  xpcurses,
+  {$ENDIF }
+  {$IFDEF DOS32 }
+  xpdos32,
+  {$ENDIF }
+  {$IFDEF OS2 }
+  xpos2,
+  {$ENDIF }
+  xp1o,xp3,xp3o,xp3ex;
 
 
 { lokale Variablen von SelectMultiPart() und SMP_Keys }
@@ -258,6 +272,7 @@ var   hdp      : headerp;
         _encoding   : string;
         filename    : string;
         filedate    : string;
+        CharSetName: String;
         subboundary : string;
         hdline      : string;
         ctype,subtype: string;    { content type }
@@ -297,6 +312,7 @@ var   hdp      : headerp;
     begin
       filename:='';
       filedate:='';
+      CharsetName := '';
       _encoding:='';
       ctype:='';
       subtype:='';
@@ -404,6 +420,7 @@ var   hdp      : headerp;
           code:=codecode(_encoding);
           fname:=filename;
           ddatum:=filedate;
+          charset := GetCharsetFromName(CharsetName);
           startline:=_start;
           lines:=n-startline;
           part:=anzahl;
@@ -453,7 +470,9 @@ var   hdp      : headerp;
               else if (parname='name') or (parname='filename') then
                 filename:=parvalue
               else if (parname='x-date') then
-                filedate:=RFC2Zdate(parvalue);
+                filedate:=RFC2Zdate(parvalue)
+              else if (parname='charset') then
+                CharsetName := parvalue;
             end;
           end else
             { Manchmal ist der Dateiname nur im disposition-Teil enthalten }
@@ -656,7 +675,8 @@ begin
   settextbuf(input,buf^,bufsize);
   reset(input);
 
-  with mpdata do begin
+  with mpdata do
+  begin
     for i:=1 to startline-1 do
       readln(input);
 
@@ -669,8 +689,13 @@ begin
         if code=mcodeQP then begin
           softbreak:=(lastchar(s)='=');
           QP_decode;
-          if (typ<>'text') or (subtyp<>'html') then
-            s := IsoToIBM(s);
+
+          // convert s to Unicode (UTF-8)
+          if Charset <> csUnicode then
+            s := Convert8BitToUTF(s, Charset);
+
+          // convert s (now UTF-8) back in the used Codepage
+          s := ConvertUTFTo8Bit(s, SysGetConsoleCodepage);
         end
         else
           softbreak:=false;
@@ -700,7 +725,7 @@ begin
       begin
         readln(input,s);
         DecodeBase64;
-        blockwrite(f,s[1],length(s));
+        if s <> '' then blockwrite(f,s[1],length(s));
       end;
 
       if lines>500 then closebox;
@@ -732,6 +757,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/10/10 12:25:34  mk
+  - extract_msg now uses Unicode
+
   Revision 1.26  2000/10/10 05:34:56  mk
   - Ansistring-Bugfix
 
