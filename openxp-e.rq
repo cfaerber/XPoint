@@ -295,38 +295,40 @@ K (c) '2000 OpenXP Team, www.openxp.de
 6    ~          /rp     doesn't test for TSR programs after DOS-shell
 7    ~          /sd     prevents automatic Smartdrive cache flushing
 8    ~          /ss     start screen saver at once
-9    ~          /trace  enable script protocol (see XPOINT.TXT, 8.1)
-10   ~          /w0     don't free unused system resources
-11   ~          /w, /w1 free unused system resources for Win & OS/2 (timeslice)
-12   ~          /w2     free unused system resources for Win & OS/2 (conservative)
-13   ~          /os2x   kind of freeing of free unused system resources (time)
-14   ~                  under OS/2 (x ranges from a to d)
-15
-16   ~          /k:X    send key X (for key macro)
-17   ~          /pw:xx  enter start password xx
-18   ~          /z:nn   set nn screen lines
-19   ~          /l:X    set language (e.g. /l:E for Englisch)
-20
-21   ~          /n:Server[:hh:mm]   start netcall to Server
-22   ~          /n:*                netcall to all Servers
-23   ~          /nr:Server          relogin netcall to Server
-24   ~          /user:Server:NAME   set user name at Server to NAME
-25   ~          /ips:Server:PUFFER  import and send puffer file
-26   ~          /autostart:...      start program by time range
-27
-28   ~          /av:<File>          view archive file
-29   ~          /f:<File>[.FNT]     load font file
-30   ~          /gd:<File>          select phone fee file (see FIDO.TXT)
-31
-32   ~          /ip:PUF   import puffer file
-33   ~          /ipe:PUF  import puffer file with receive date = creation date
-34   ~          /g        sets /ip and /ips messages to status 'read'
-35   ~          /eb       return receipts (for /ip..)
-36   ~          /r        start messagebase reorganisation
-37   ~          /pack     do /Reorg/Pack
-38   ~          /t:n      start timing list no. n
-39
-40   ~          /x        quit program
+9    ~          /w0     don't free unused system resources
+10   ~          /w, /w1 free unused system resources for Win & OS/2 (timeslice)
+11   ~          /w2     free unused system resources for Win & OS/2 (conservative)
+12   ~          /os2x   kind of freeing of free unused system resources (time)
+13   ~                  under OS/2 (x ranges from a to d)
+14   ~          /trace  enable script protocol (see XPOINT.TXT, 8.1)
+15   ~          /dl:... enable debug logs (debuglog.txt). Parameters adjust ver-
+16   ~                  bosity ("/dl:default=10").
+17
+18   ~          /k:X    send key X (for key macro)
+19   ~          /pw:xx  enter start password xx
+20   ~          /z:nn   set nn screen lines
+21   ~          /l:X    set language (e.g. /l:E for Englisch)
+22
+23   ~          /n:Server[:hh:mm]   start netcall to Server
+24   ~          /n:*                netcall to all Servers
+25   ~          /nr:Server          relogin netcall to Server
+26   ~          /user:Server:NAME   set user name at Server to NAME
+27   ~          /ips:Server:PUFFER  import and send puffer file
+28   ~          /autostart:...      start program by time range
+29
+30   ~          /av:<File>          view archive file
+31   ~          /f:<File>[.FNT]     load font file
+32   ~          /gd:<File>          select phone fee file (see FIDO.TXT)
+33
+34   ~          /ip:PUF   import puffer file
+35   ~          /ipe:PUF  import puffer file with receive date = creation date
+36   ~          /g        sets /ip and /ips messages to status 'read'
+37   ~          /eb       return receipts (for /ip..)
+38   ~          /r        start messagebase reorganisation
+39   ~          /pack     do /Reorg/Pack
+40   ~          /t:n      start timing list no. n
+41
+42   ~          /x        quit program
 -
 
 203  Error: Can't create directory %s !
@@ -3693,6 +3695,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.9  2001/04/22 11:31:41  ma
+# - added /dl description (/?)
+#
 # Revision 1.8  2001/04/17 21:54:44  ma
 # - replaced "XP"/"CrossPoint" by "OpenXP"
 #

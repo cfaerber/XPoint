@@ -299,38 +299,40 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    ~          /rp      Åbergeht bei DOS-Shell Test auf residente Programme
 8    ~          /sd      verhindert das Leeren des Smartdrive-Schreibcaches
 9    ~          /ss      Screensaver aktivieren
-10   ~          /trace   schaltet Script-Protokoll ein (XPOINT.TXT, Kap. 8.1)
-11   ~          /w0      keine Rechenzeit-Freigabe
-12   ~          /w, /w1  Win & OS/2-Rechenzeit-Freigabe (Timeslice)
-13   ~          /w2      Win & OS/2-Rechenzeit-Freigabe (konservativ)
-14   ~          /os2x    Art der Rechenzeit-Freigabe unter OS/2 (x = a bis d)
-15   ~          /nolock  keine öberprÅfung auf mehrfachen Programmstart
-16
-17   ~          /k:X     Taste X Åbergeben (fÅr Tastenmakro)
-18   ~          /pw:xx   Startpa·wort xx Åbergeben
-19   ~          /z:nn    stellt nn Bildschirmzeilen ein
-20   ~          /l:X     Sprache wÑhlen (z.B. /l:D fÅr deutsch)
-21
-22   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfÅhren
-23   ~          /n:*             Netcall bei allen Boxen
-24   ~          /nr:BOX          Relogin-Netcall bei BOX
-25   ~          /user:BOX:NAME   Username bei BOX setzen
-26   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
-27   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
-28
-29   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
-30   ~          /f:<Datei>       Schriftdatei laden
-31   ~          /gd:<Datei>      GebÅhrendatei wÑhlen (s. FIDO.TXT)
-32
-33   ~          /ip:PUF   liest die angegebene Pufferdatei ein
-34   ~          /ipe:PUF  liest Puffer mit Empfangsdatum = Erstelldatum ein
-35   ~          /g        trÑgt /ip- und /ips-Nachrichten als 'gelesen' ein.
-36   ~          /eb       EmpfangsbestÑtigungen (Zusatzschalter fÅr /ip..)
-37   ~          /r        Nachrichten-Reorganisation durchfÅhren
-38   ~          /pack     /Wartung/Packen durchfÅhren
-39   ~          /t:n      Timing-Liste Nr. n ausfÅhren
-40
-41   ~          /x        Programm beenden
+10   ~          /w0      keine Rechenzeit-Freigabe
+11   ~          /w, /w1  Win & OS/2-Rechenzeit-Freigabe (Timeslice)
+12   ~          /w2      Win & OS/2-Rechenzeit-Freigabe (konservativ)
+13   ~          /os2x    Art der Rechenzeit-Freigabe unter OS/2 (x = a bis d)
+14   ~          /nolock  keine öberprÅfung auf mehrfachen Programmstart
+15   ~          /trace   schaltet Script-Protokoll ein (XPOINT.TXT, Kap. 8.1)
+16   ~          /dl:...  Debug-Logs (debuglog.txt) erzeugen, Parameter geben
+17   ~                   Grad der AusfÅhrlichkeit an (z.B. "/dl:default=10")
+18
+19   ~          /k:X     Taste X Åbergeben (fÅr Tastenmakro)
+20   ~          /pw:xx   Startpa·wort xx Åbergeben
+21   ~          /z:nn    stellt nn Bildschirmzeilen ein
+22   ~          /l:X     Sprache wÑhlen (z.B. /l:D fÅr deutsch)
+23
+24   ~          /n:BOX[:hh:mm]   Netcall bei BOX durchfÅhren
+25   ~          /n:*             Netcall bei allen Boxen
+26   ~          /nr:BOX          Relogin-Netcall bei BOX
+27   ~          /user:BOX:NAME   Username bei BOX setzen
+28   ~          /ips:BOX:PUFFER  importiert und verschickt Pufferdatei
+29   ~          /autostart:...   Programm zu bestimmten Uhrzeiten starten
+30
+31   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
+32   ~          /f:<Datei>       Schriftdatei laden
+33   ~          /gd:<Datei>      GebÅhrendatei wÑhlen (s. FIDO.TXT)
+34
+35   ~          /ip:PUF   liest die angegebene Pufferdatei ein
+36   ~          /ipe:PUF  liest Puffer mit Empfangsdatum = Erstelldatum ein
+37   ~          /g        trÑgt /ip- und /ips-Nachrichten als 'gelesen' ein.
+38   ~          /eb       EmpfangsbestÑtigungen (Zusatzschalter fÅr /ip..)
+39   ~          /r        Nachrichten-Reorganisation durchfÅhren
+40   ~          /pack     /Wartung/Packen durchfÅhren
+41   ~          /t:n      Timing-Liste Nr. n ausfÅhren
+42
+43   ~          /x        Programm beenden
 -
 
 203  Fehler: Kann %s-Verzeichnis nicht anlegen!
@@ -3654,6 +3656,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.9  2001/04/22 11:31:41  ma
+# - added /dl description (/?)
+#
 # Revision 1.8  2001/04/17 21:54:44  ma
 # - replaced "XP"/"CrossPoint" by "OpenXP"
 #
