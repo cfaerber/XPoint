@@ -11,7 +11,7 @@
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    GNU General Public License for more detailss.
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
@@ -871,8 +871,8 @@
   end;
 
   procedure EditExtern(const bfg:string; var brk:boolean);
-  var extcfg_file   : string[MaxLenPathname];
-      s1,s2,prg     : string[MaxLenPathname];
+  var extcfg_file   : string;
+      s1,s2,prg     : string;
       p             : byte;
       fullClientDir : String;
       dir           : String;
@@ -922,7 +922,7 @@
       { ständigen Pfad oder ohne führenden Backslash werden als        }
       { relativ zum Client-Verzeichnis betrachtet.                     }
 
-      if ustr(left(extcfg_file,5))='<XP>' + DirSepa then
+      if UpperCase(LeftStr(extcfg_file,5))='<XP>' + DirSepa then
         extcfg_file:= ownpath + Mid(extcfg_file,6);
       { Wenn Datei ohne Pfad im XP- *und* im Client-Verzeichnis vorhanden }
       { sein sollte, würde 'GetLongName' immer das XP-Verzeichnis als     }
@@ -930,7 +930,7 @@
       { Verzeichnis hinzu und entfernen es nach 'GetLongName' wieder.     }
       if not ((cpos(':',extcfg_file) = 2) or (cpos(DirSepa, extcfg_file) = 1)) then
         extcfg_file:= fullClientDir + extcfg_file;
-      if LFNEnabled then extcfg_file := GetLongName(extcfg_file);
+//    if LFNEnabled then extcfg_file := GetLongName(extcfg_file);
       fsplit(extcfg_file,dir,name,ext);
       if dir=fullClientDir then extcfg_file := name + ext;
       pushhp(30180);
@@ -944,7 +944,7 @@
           save_boxpar;
           goto restart;
         end;
-        if Pos('start ', lstr(extcfg_file)) = 1 then
+        if Pos('start ', LowerCase(extcfg_file)) = 1 then
         begin
           WinExec:=true;
           s2:=extcfg_file;
@@ -953,15 +953,15 @@
           p:=blankpos(extcfg_file);  { Auf Leerzeichen prüfen }
           if p=0 then s2:=extcfg_file
           else begin
-            s2:=left(extcfg_file,p-1);
+            s2:=LeftStr(extcfg_file,p-1);
             s1:=trim(mid(extcfg_file,p));
           end;
           fsplit(s2,dir,name,ext);
-          uext:=ustr(ext);
+          uext:=uppercase(ext);
           if (uext='.EXE') or (uext='.COM') or (uext='.BAT') then
           begin
             DOSExec:=true;
-            if not exist(s2) then
+            if not fileexists(s2) then
             begin
               rfehler1(907,s2);  { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
               goto restart;
@@ -975,20 +975,20 @@
           shell(prg,600,1);
         end
         else begin
-          if not exist(extcfg_file) then
+          if not fileexists(extcfg_file) then
             if not ReadJN(getres(2725),false) then  { 'Datei nicht vorhanden - neu anlegen' }
               goto restart;
-          EditFile(extcfg_file,false,false,false,0,false);
+          EditFile(extcfg_file,false,false,0,false);
         end;
         if not WinExec then
         begin
           if not DOSExec then s2:=extcfg_file;
-          if not exist(s2) then exit;
-          if LFNEnabled then s2 := GetShortName(s2);
-          if ustr(dir) = ustr(fullClientDir) then
+          if not fileexists(s2) then exit;
+//        if LFNEnabled then s2 := GetShortName(s2);
+          if uppercase(dir) = uppercase(fullClientDir) then
             s2 := name + ext
           else
-          if ustr(left(dir, Length(ownpath))) = ustr(ownpath) then
+          if uppercase(leftstr(dir, Length(ownpath))) = uppercase(ownpath) then
             s2 := '<XP>' + mid(s2, Length(ownpath));
           if DOSExec then s2 := s2+' '+s1;
         end;
@@ -1004,9 +1004,9 @@
   procedure EditTransport(nt:byte; var brk:boolean);
   const ServersMax = 20;        { max. Größe des Arrays 'ServersList' }
         ServersDat = 'SERVERS.DAT'; { Datei für POP3/SMTP/NNTP-Server }
-  var   x,y,j                : byte;
-        MailFallbackName     : string[BoxNameLen];
-        NewsFallbackName     : string[BoxNameLen];
+  var   x,y,j                : integer;
+        MailFallbackName     : string;
+        NewsFallbackName     : string;
         NewsMaxLenKB         : longint;
         ServersList          : array[1..ServersMax] of string;
                               { Array für Dateiinhalt SERVERS.DAT }
@@ -1017,7 +1017,7 @@
         t       : text;
     begin
       for i:=1 to ServersMax do ServersList[i] := '';
-      if exist(ownpath+ServersDat) then
+      if fileexists(ownpath+ServersDat) then
       begin
         i:=1;
         s:=''; s1:=''; s2:='';
@@ -1028,8 +1028,8 @@
           while (not eof(t)) do
           begin
             readln(t,s);     { Beginn der Section ([POP3,[SMTP,[NNTP) suchen }
-            s1:=ustr(left(trim(s),length(section)+1));
-            s2:=ustr('['+section);
+            s1:=uppercase(leftstr(trim(s),length(section)+1));
+            s2:=uppercase('['+section);
             if s1 = s2 then break;                        { Section gefunden }
           end;
           if s1 <> s2 then                          { Section nicht gefunden }
@@ -1481,7 +1481,7 @@
 
 
   procedure EditSysopdaten(nt:byte; var brk:boolean);
-  var x,y   : byte;
+  var x,y   : integer;
       flags : byte;
       nobox : boolean;
       fl,el : byte;      { 923.fl = eines der Eingabefelder (für Längenermittlung) }
@@ -1548,11 +1548,11 @@
       fl:=length(getres2(923,fl));
       maddstring(3,8,forms(getres2(923,20),fl),sysopstart,el,MaxLenPathname,''); mhnr(8037);
           { 'Startprogramm ' }
-        msetvfunc(progtest);
+        msetvfunc(testexecutable);
         if not SysopMode then mdisable;
       maddstring(3,10,forms(getres2(923,21),fl),sysopend,el,MaxLenPathname,''); mhnr(8037);
           { 'Endprogramm   ' }
-        msetvfunc(progtest);
+        msetvfunc(testexecutable);
         if not SysopMode then mdisable;
       if nt=nt_QWK then begin
         maddbool(3,12,getres2(933,8),delqwk);  { 'QWK-Pakete nach Verarbeitung löschen' }
@@ -1959,8 +1959,10 @@
       Komm := dbReadStr(d,'kommentar');
       dName := dbReadStr(d,'dateiname');
 
-      _EditClient(brk,name,komm,email,realname,replyto,fqdn,ClientPath,
-               ClientExec,ClientAddServers,ClientDialUp,ClientPhone,ClientLogin,ClientPass,getres2(920,80));
+      _EditClient(brk,name,komm,email,realname,replyto,fqdn, ClientPath,
+        ClientExec, ClientAddServers, ClientDialUp, ClientPhone,
+        ClientLogin, ClientPass, ClientAskIfConnect, 
+        ClientAskIfDisconnect, ClientKeepConnectStatus,getres2(920,80));
 
       if not brk then begin
         b:=cpos('@',email);
@@ -2359,6 +2361,9 @@
 
 {
   $Log$
+  Revision 1.44  2002/01/21 22:45:48  cl
+  - fixes after 3.40 merge
+
   Revision 1.43  2002/01/19 14:17:03  mk
   - Big 3.40 update part IV
 

@@ -796,7 +796,7 @@ var f,f2     : file;
     kb_s:=kb_shift;
     pm:=cpos('@',empfaenger)>0;
     if pm then adresse:=empfaenger
-      else adresse:=uucpbrett(empfaenger,2);
+      else adresse:=RFCbrett(empfaenger,2);
     if pm and (adresse[1]=vert_char)
       then adresse:=copy(adresse,2,length(adresse)-3);
     attrtxt(col.coldiarahmen);
@@ -864,7 +864,7 @@ var f,f2     : file;
     if empfaenger[1]=vert_char then
       wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
     else
-      wrt(x+14,y+2-fadd,LeftStr(uucpbrett(empfaenger,edis),52));
+      wrt(x+14,y+2-fadd,LeftStr(RFCbrett(empfaenger,edis),52));
 
     pgpkey:=getres2(611,50);
     if pgpkey='^' then pgpkey:=chr(ord(lastchar(getres2(611,50)))-64);
@@ -914,12 +914,12 @@ begin
   if empfaenger[1]=vert_char then
     Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
   else
-    Wrt2(left(rfcbrett(empfaenger,edis),bboxwid));
+    Wrt2(leftstr(rfcbrett(empfaenger,edis),bboxwid));
     for ii:=1 to min(showempfs,14) do
     if ccm^[ii].ccpm then
-      wrt(x+3+length(getres2(611,6)),y+2+ii,left(cc^[ii],bboxwid))
+      wrt(x+3+length(getres2(611,6)),y+2+ii,leftstr(cc^[ii],bboxwid))
     else
-      wrt(x+3+length(getres2(611,6)),y+2+ii,left(rfcbrett(ohnebox(ii),2),bboxwid));
+      wrt(x+3+length(getres2(611,6)),y+2+ii,leftstr(rfcbrett(ohnebox(ii),2),bboxwid));
   if showempfs=15 then
     wrt(x+3+length(getres2(611,6)),y+17,'(...)');
   mon;
@@ -944,9 +944,9 @@ begin
     brk:=false;
   end;
   if (_bezug<>'') and ntKomkette(netztyp) and
-                  (ustr(betreff)<>ustr(oldbetr)) then begin
+                  (uppercase(betreff)<>uppercase(oldbetr)) then begin
     pushhp(1501);
-    if not ReadJNesc(getres(617),(left(betreff,5)=left(oldbetr,5)) or   { 'Betreff ge„ndert - Verkettung beibehalten' }
+    if not ReadJNesc(getres(617),(leftstr(betreff,5)=leftstr(oldbetr,5)) or   { 'Betreff ge„ndert - Verkettung beibehalten' }
            ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
     begin
       _bezug:='';
@@ -2346,6 +2346,9 @@ finalization
 
 {
   $Log$
+  Revision 1.38  2002/01/21 22:45:48  cl
+  - fixes after 3.40 merge
+
   Revision 1.37  2002/01/13 15:15:54  mk
   - new "empfaenger"-handling
 

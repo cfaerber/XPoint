@@ -98,7 +98,7 @@ implementation  {---------------------------------------------------}
 
 uses
   {$IFDEF unix}xplinux,{$ENDIF}
-  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts, replytoall;
+  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts, replytoall, lister;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -1140,9 +1140,8 @@ end;
 function Netz_Typ(nt:byte):string;
 var i : integer;
 begin
-  Netz_Typ:=ntName(nt_Netcall);
-  for i:=0 to enetztypen-1 do
-    if nt=ntnr[i] then Netz_Typ:=ntName(ntnr[i]);
+  // if nt in [ ??? was kommt hier rein ??? ] then
+    Netz_Typ:=ntName(nt);
 end;
 
 
@@ -1564,7 +1563,7 @@ begin
   until n=0;
 end;
 
-function check_envelope(var s:str,ng):boolean;
+function check_envelope(var s:string):boolean;
 begin
   check_envelope:=false;
   if s <> '' then
@@ -1598,14 +1597,17 @@ var   d          : DB;
       brk        : boolean;
       x,y,height,
       i,nt,
-      sel_anz    : byte;               { Anzahl der auszuwÑhlenden Boxen }
-      box        : string[BoxNameLen]; { Name der aktuellen Box          }
-      user       : string[20];         { Username der aktuellen Box      }
-      komm       : string[25];         { Kommentar der aktuellen Box     }
-      boxline    : string[width];      { angezeigte Zeile in Boxauswahl  }
+      sel_anz    : integer;     { Anzahl der auszuwÑhlenden Boxen }
+      box        : string;      { Name der aktuellen Box          }
+      user       : string;      { Username der aktuellen Box      }
+      komm       : string;      { Kommentar der aktuellen Box     }
+      boxline    : string;      { angezeigte Zeile in Boxauswahl  }
+      list       : TLister;
 label nextBox;
 begin
   BoxSelect:=''; brk:=false;
+  list := nil;
+try
   height:=screenlines-17;
   if screenlines>30 then dec(height,2);
   if screenlines>40 then dec(height,2);
@@ -1616,10 +1618,10 @@ begin
     box:=dbReadStr(d,'Boxname');
     if own_Name <> '' then
       for i:=1 to entries do
-        if ustr(box)=ustr(boxlist[i]) then  { Box schon ausgewÑhlt?      }
+        if uppercase(box)=uppercase(boxlist[i]) then  { Box schon ausgewÑhlt?      }
           goto nextBox;                     { ...dann nÑchsten Datensatz }
     dbRead(d,'Netztyp',nt);
-    if ((nt=own_Nt) and (ustr(box)<>own_Name))   { passende Box gefunden }
+    if ((nt=own_Nt) and (uppercase(box)<>own_Name))   { passende Box gefunden }
       or (own_name='') then
     begin
       inc(sel_anz);
@@ -1635,29 +1637,26 @@ begin
           if colsel2 then
           begin                             { 'Serverboxen (Netztyp %s)' }
             selbox(width+2,height+4,getreps2(936,3,Netz_Typ(nt)),x,y,false);
-            openlist(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
-            Listbox2col;
-            listarrows(x,y+1,y+height+2,col.colsel2rahmen,
-                       col.colsel2rahmen,'≥');
+            list := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
+            Listboxcol(list);
+            list.setarrows(x,y+1,y+height+2,col.colsel2rahmen,col.colsel2rahmen,'≥');
           end
           else begin                        { 'Serverboxen (Netztyp %s)' }
             selbox(width+2,height+4,getreps2(936,3,Netz_Typ(nt)),x,y,true);
-            openlist(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
-            Listboxcol;
-            listarrows(x,y+1,y+height+2,col.colselrahmen,
-                       col.colselrahmen,'≥');
+            list := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
+            Listboxcol(list);
+            list.setarrows(x,y+1,y+height+2,col.colselrahmen,col.colselrahmen,'≥');
           end;
         end
         else begin                             { '/Netcall/Spezial bei:' }
           selbox(width+2,height+4,getres2(1024,3)+' '+getres2(1024,5),
           x,y,false);
-          openlist(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
-          Listbox2col;
-          listarrows(x,y+1,y+height+2,col.colsel2rahmen,
-                     col.colsel2rahmen,'≥');
+          list := TLister.CreateWithOptions(x+1,x+width,y+1,y+height+2,0,'/NS/SB/DM/NLR/NA');
+          Listboxcol(list);
+            list.setarrows(x,y+1,y+height+2,col.colsel2rahmen,col.colsel2rahmen,'≥');
         end;
       end;
-      app_L(boxline);
+      List.addline(boxline);
     end;
     nextBox:
     dbNext(d);
@@ -1665,20 +1664,23 @@ begin
   dbClose(d);
   if sel_anz > 0 then       { Wenn Box(en) gefunden, Auswahl }
   begin
-    list(brk);
-    BoxSelect:=trim(copy(get_selection,2,BoxNameLen));
-    closelist;
-    closebox;
+    brk := list.Show;
+    BoxSelect:=trim(copy(list.getselection,2,BoxNameLen));
     if brk then BoxSelect:='';
   end else
     rfehler(953); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
-  if own_Name <> '' then
+finally
+  list.Free;
+  list:=nil;
+end;
+    
+//if own_Name <> '' then
 end;
 
 
 procedure EditAddServersList(var cr:customrec);
 var   d          : DB;
-      x,y,nt     : byte;
+      x,y,nt     : integer;
       t          : taste;
       nr,bp      : shortint;
       gl,width   : byte;
@@ -1765,7 +1767,7 @@ label Start;
       boxlen:=boxlen + (length(boxlist[i])+1);  { GesamtlÑnge Boxnamen }
       if own_Name <> '' then
       begin
-        dbSeek(d,boiName,ustr(boxlist[i]));
+        dbSeek(d,boiName,uppercase(boxlist[i]));
         if dbfound then
         begin
           bfg:=dbreadStr(d,'dateiname');
@@ -1795,7 +1797,7 @@ label Start;
       if own_Name = '' then      { Abfrage nicht bei Box-Config-Dialog }
       begin
         i:=entries;
-        while (i>0) and (ustr(box)<>ustr(boxlist[i])) do
+        while (i>0) and (uppercase(box)<>uppercase(boxlist[i])) do
           dec(i);                           { Eintrag schon vorhanden? }
         if i > 0 then
           if not ReadJN(getreps2(10900,57,box),false) then
@@ -1807,7 +1809,7 @@ label Start;
       end;
       if own_Name <> '' then
       begin
-        dbSeek(d,boiName,ustr(box));
+        dbSeek(d,boiName,uppercase(box));
         if dbfound then
           bfg:=dbreadStr(d,'dateiname');
       end;
@@ -1934,7 +1936,7 @@ begin  { --- of EditAddServersList --- }
     while not dbEOF(d) do
     begin
       dbRead(d,'Netztyp',nt);
-      if (nt=own_Nt) and (ustr(dbReadStr(d,'boxname')) <> own_Name) then
+      if (nt=own_Nt) and (uppercase(dbReadStr(d,'boxname')) <> own_Name) then
       begin                           { erste passende Box gefunden... }
         dbClose(d);
         goto start;        { ...dann Schleife verlassen und los geht's }
@@ -1958,7 +1960,7 @@ begin  { --- of EditAddServersList --- }
       p:=cpos(' ',s1);
       if p=0 then boxlist[entries]:=s1
       else begin
-        boxlist[entries]:=left(s1,p-1);
+        boxlist[entries]:=leftstr(s1,p-1);
         s1:=trim(mid(s1,p+1));
       end;
     until p=0;
@@ -2111,7 +2113,7 @@ begin
     p:=cpos(' ',s1);
     if p=0 then boxlist[box_anz]:=s1
     else begin
-      boxlist[box_anz]:=left(s1,p-1);             { Boxen-Array fÅllen }
+      boxlist[box_anz]:=leftstr(s1,p-1);             { Boxen-Array fÅllen }
       s1:=trim(mid(s1,p+1));
     end;
   until p=0;
@@ -2136,7 +2138,7 @@ begin
     for j:=i to box_anz do
     begin
       if (j=i) or (dupelist[j]=0) then continue;
-      if ustr(boxlist[j]) = ustr(boxlist[i]) then
+      if uppercase(boxlist[j]) = uppercase(boxlist[i]) then
       begin
         inc(dupelist[i]);                { Anzahl der EintrÑge erhîhen }
         dupelist[j]:=0;                  { 0 = Dupe                    }
@@ -2163,7 +2165,7 @@ begin
         end;
       end;
     end;
-    dbSeek(d,boiName,ustr(boxlist[i]));
+    dbSeek(d,boiName,uppercase(boxlist[i]));
     if not dbFound then
     begin
       addServersTest:=false;
@@ -2176,7 +2178,7 @@ begin
     end
     else if own_Name <> '' then                   { Box-Config-Dialog? }
     begin
-      if ustr(boxlist[i]) = own_Name then
+      if uppercase(boxlist[i]) = own_Name then
       begin
         addServersTest:=false;
         if showErrors then
@@ -2251,7 +2253,7 @@ end;
 
 
 procedure ConvertAddServersFehler(const s:string);
-var x,y : byte;
+var x,y : integer;
 begin
   msgbox(length(s)+6,6,_fehler_,x,y);
   attrtxt(col.colmboxhigh);
@@ -2265,14 +2267,13 @@ begin
 end;
 
 
-unction BfgToBox(var s:string):string;
+function BfgToBox(var s:string):string;
 var   d      : DB;
       i,p    : byte;
       s1     : string;              { BFG-Datei }
-      s2     : string[BoxNameLen];  { Boxname   }
+      s2     : string;              { Boxname   }
       s3     : string;              { Gesamtstring aller Boxnamen }
       fehler : string;
-const maxboxlen = 255;
 
   function isValidBfgName(const s1:string):boolean;
   var   i  : byte;
@@ -2280,7 +2281,7 @@ const maxboxlen = 255;
   const ValidBfgCh : set of char=['A'..'Z','0'..'9','_','^','$','~','!',
                           '#','%','&','-','{','}','(',')','@','''','`'];
   begin
-    if (length(s1) > 8) or (IsDevice(s1)) then
+    if (length(s1) > 8) or (IsDOSDevice(s1)) then
     begin
       isValidBfgName:=false;
       exit;
@@ -2305,44 +2306,48 @@ begin
     p:=cpos(' ',s);
     if p=0 then s1:=s
     else begin
-      s1:=left(s,p-1);
+      s1:=leftstr(s,p-1);
       s:=trim(mid(s,p+1));
     end;
-    if not isValidBfgName(ustr(s1)) then
+    if not isValidBfgName(uppercase(s1)) then
     begin
       BfgToBoxOk:=false;
       if showErrors then
       begin
-        fehler:=getreps2(10900,67,ustr(s1));
+        fehler:=getreps2(10900,67,uppercase(s1));
        { 'UngÅltiger Name fÅr Serverbox-Konfigurationsdatei: "%s.BFG"' }
         ConvertAddServersFehler(fehler);
       end
       else exit;
     end
     else begin
-      dbSeek(d,boidatei,ustr(s1));
+      dbSeek(d,boidatei,uppercase(s1));
       if dbFound then
       begin
         s2:=dbReadStr(d,'boxname');
+(*        
         if length(s3)+length(s2) > maxboxlen then
         begin
           BfgToBoxOk:=false;
           if showErrors then
           begin
             fehler:=getreps2(10900,66,strs(maxboxlen));
+*)            
       { 'Maximale GesamtlÑnge (%s) der Serverbox-Namen Åberschritten!' }
+(*      
             ConvertAddServersFehler(fehler);
           end
           else exit;
         end
         else
+*)        
           s3:=s3+s2+' ';
       end
       else begin
         BfgToBoxOk:=false;
         if showErrors then
         begin
-          fehler:=getreps2(10900,68,ustr(s1));
+          fehler:=getreps2(10900,68,uppercase(s1));
                    { 'Serverbox zu Dateiname "%s.BFG" nicht gefunden!' }
           ConvertAddServersFehler(fehler);
         end
@@ -2375,7 +2380,7 @@ begin
     p:=cpos(' ',s);
     if p=0 then s1:=s
     else begin
-      s1:=left(s,p-1);
+      s1:=leftstr(s,p-1);
       s:=trim(mid(s,p+1));
     end;
     if length(s1) > BoxNameLen then
@@ -2384,7 +2389,7 @@ begin
       ConvertAddServersFehler(fehler);
     end
     else begin
-      dbSeek(d,boiname,ustr(s1));
+      dbSeek(d,boiname,uppercase(s1));
       if dbFound then
       begin
         s2:=dbReadStr(d,'dateiname');
@@ -2403,7 +2408,7 @@ begin
     end;
   until p=0;
   dbClose(d);
-  BoxToBfg:=ustr(trim(s3));
+  BoxToBfg:=uppercase(trim(s3));
 end;
 
 
@@ -2490,7 +2495,7 @@ restart:
   if (cDel_pressed) then          { <Ctrl-Del> gedrÅckt => Dateiname lîschen }
   begin
     reset_Allowances(s1);  { s1 = Dummy }
-    if boxpar^.pppExternCfg <> '' then
+    if boxpar^.ClientExternalConfig <> '' then
     begin
       if ReadJN(getres2(927,11),true) then  { 'Gespeicherten Dateinamen aus Konfigurationsdatei entfernen' }
       begin
@@ -2548,6 +2553,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2002/01/21 22:45:48  cl
+  - fixes after 3.40 merge
+
   Revision 1.39  2002/01/19 14:17:03  mk
   - Big 3.40 update part IV
 

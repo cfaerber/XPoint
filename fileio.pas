@@ -192,6 +192,9 @@ function  ioerror(i: integer; otxt: string):string;
 { raises an exception if there was an IOError }
 procedure IOExcept(e: ExceptClass);
 
+{ to avoid collisons with DOS device names (AUX, COMn, LPTn, CON,...) }
+function IsDOSDevice(s:string):boolean;
+
 {$ifndef Unix}
 { Returns concatenation of all valid drive letters }
 function  alldrives: string;
@@ -681,9 +684,29 @@ begin
   result:= FileMaskSize(AddDirSepa(dir)+WildCard);
 end;
 
+{ to avoid collisons with DOS device names (AUX, COMn, LPTn, CON,...) }
+{ NB: This is also implemented on non-DOS systems as it would be very }
+{ unfortunate if we were to create files that a DOS-XP could not      }
+{ handle }
+function IsDOSDevice(s:string):boolean;
+begin
+  s:=UpperCase(s);
+
+  result :=
+    ( LastChar(s)='$') or
+    ( s = 'CON' ) or
+    ( s = 'AUX' ) or
+    ( s = 'NUL' ) or
+    ( s = 'PRN' ) or
+    ( LeftStr(s,3)='COM' ) or
+    ( LeftStr(s,3)='LPT' );
+end;
 
 {
   $Log$
+  Revision 1.110  2002/01/21 22:45:48  cl
+  - fixes after 3.40 merge
+
   Revision 1.109  2001/10/21 12:49:57  ml
   - removed some warnings
 
