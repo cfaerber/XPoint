@@ -360,10 +360,8 @@ begin
   umlauttest:=true;
   case umlaute of
     1 : for i:=1 to 7 do
-          if pos(um[i],s)>0 then begin
-            umlauttest:=false;
-            errsound;
-            end;
+          if pos(um[i],s)>0 then ukonvstr(s,betrefflen); 
+          
   { 2 : for i:=1 to 7 do begin
           p:=pos(um[i],s);
           if p>0 then s[p]:=iso[i];
@@ -1193,7 +1191,7 @@ fromstart:
     openmask(x+3,x+bboxwid+10,y+showempfs+4,y+showempfs+iif(fidoam,6,4),false);
     oldbetr:=left(betreff,20);
     maddstring(1,1,getres2(611,7),betreff,bboxwid,betrlen,'');   { 'Betreff   ' }
-    mset1func(umlauttest); mhnr(86);
+    msetvfunc(umlauttest); mhnr(86);
     if fidoam then begin
       maddstring(1,3,getres2(611,8),fidoto,35,35,'');  { 'An        ' }
       mhnr(90);
@@ -1340,6 +1338,7 @@ fromstart:
                 { neuer Betreff }
                 readstring(x+13,y+4,'',betreff,min(betrlen,52),betrlen,'',brk);
                 betreff:=trim(betreff);
+                if umlauttest(betreff) then; 
                 showbetreff;
                 n:=1;
               end;
@@ -2162,6 +2161,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/04/09 08:01:26  jg
+  - Umlaute in Betreffs, werden jetzt (falls verboten) automatisch konvertiert
+
   Revision 1.14  2000/04/04 21:01:24  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 
