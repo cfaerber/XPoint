@@ -329,6 +329,20 @@ var s      : string[adrlen];
     size   : smallword;
     hdp    : headerp;
     hds    : longint;
+
+  procedure makeuser;
+  var
+    pollbox  : string[BoxNameLen];
+  begin
+    dbSeek(bbase,biIntnr,copy(dbReadStr(mbase,'brett'),2,4));
+    if dbFound then       { mÅ·te IMMER true sein }
+      dbReadN(bbase,bb_pollbox,pollbox)
+    else
+      pollbox:=DefaultBox;
+    ReplaceVertreterbox(pollbox,true);
+    xp3.makeuser(s,pollbox);
+  end;
+
 begin
   d1:=disprec[1];             { Mu· gesichert werden, da Zielfenster }
   GoP;
@@ -341,7 +355,7 @@ begin
     if hdp^.PmReplyTo<>'' then begin
       dbSeek(ubase,uiName,ustr(hdp^.PmReplyTo));
       if dbFound then s:=hdp^.PmReplyTo;
-      end;
+    end;
     if s='' then
       dbReadN(mbase,mb_absender,s);   { auch auf mbase arbeitet.     }
     dispose(hdp);
@@ -354,8 +368,13 @@ begin
         dbReadX(ubase,'adresse',size,s);
         dbSeek(ubase,uiName,ustr(s));
         if not dbFound then
+          if ReadJN(getres(2739),true) then   { 'Vertreter nicht in der Datenbank - neu anlegen' }
+            makeuser else begin
           dbReadN(mbase,mb_absender,s);
+          dbSeek(ubase,uiName,ustr(s));
         end;
+      end;
+      dbGo(ubase,dbRecno(ubase));
       oldds:=dispspec;
       _oldds:=_dispspec;
       dispspec:='U'+left(s,40);
@@ -1552,6 +1571,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.14  2000/11/11 10:18:20  mk
+  - DBEOF Crash behoben
+
   Revision 1.25.2.13  2000/11/09 12:51:41  mk
   - MIME-Fix
 
