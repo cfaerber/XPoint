@@ -92,6 +92,7 @@ procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode ”ffn.}
 procedure addext(var fn:string; ext:string);
 procedure adddir(var fn:string; dir:string);
 function  GetFileDir(p:string):string;
+function GetBareFileName(p:string):string;
 procedure WildForm(var s: string);              { * zu ??? erweitern }
 
 function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
@@ -575,6 +576,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/10/17 17:38:18  mk
+  - fixed typo
+
   Revision 1.53  2000/10/17 12:53:18  mk
   - einige Funktionen auf Sysutils umgestellt
 
