@@ -2294,6 +2294,16 @@ JG:
 
 
 +--------------+
+|  08.09.2002  |
++--------------+
+
+AB[+MY]:
+- Spezial-Suche kann jetzt auch nach dem Empfangsdatum von Nachrichten
+  suchen.
+  XP4O.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+
++--------------+
 |  09.10.2002  |
 +--------------+
 
