@@ -370,7 +370,7 @@ begin
 	    int 10h
     end;
     VGAPal^.SetPal;
-    Dispose(VGAPal);
+    Dispose(VGAPal, Done);
     FreeMem(pal1, SizeOf(TPal1));
   end;
 end;
@@ -380,6 +380,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.12  2001/08/11 23:17:31  mk
+  - fixed memory leak, destructor Done of TVGAPal was not called
+
   Revision 1.20.2.11  2001/05/17 15:15:16  mk
   - fixes fuer 60 Zeilen VESA Modus (ungetestet)
 
