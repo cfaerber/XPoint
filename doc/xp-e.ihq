@@ -421,9 +421,8 @@ or mixed case. This can be configured in /Config
 
 @
 21
-<<User-Overview
-
-See also [User display].@4017
+<<User Overview
+(See also [User display].)@4017
 
 All recorded Users and their respective PM Newsgroups
 can be displayed in the user window. Depending on
@@ -439,8 +438,6 @@ recorded in the address book.
 <<<Tab> >>  Toggles back to the Newsgroup overview.
 
    <<Q>>    End the program.
-        You can define a "QUIT? Yes/No" safety
-        question under /Config/Options/Miscellaneous
 
  <<<Sp> >>  Marks the User at the cursor position.
         Up to 1000 Users can be marked at any time.
@@ -474,15 +471,14 @@ recorded in the address book.
 <<Functions in Read/Write mode
 
    <<W>>    Allows writing a message to the current User
-        or carbon copy group. The Editor, as set in
-       /Config/External/Editor, will be used.
+        or carbon copy group.
 
 <<Shift-W>> Allows writing (crossposting) a message
-       to all currently marked users. (Only possible
-       with ZCONNECT-Servers)
+        to all currently marked users. (Only possible
+        with ZCONNECT Servers)
 
    <<E>>    Sends a [Text file] from disk to the current@4002
-       User (at cursor) or carbon copy group.
+        User (at cursor) or carbon copy group.
 
    <<I>>    Sends a [Binary file] from disk to the@4002
         current User (at cursor) or carbon copy group.
@@ -496,20 +492,20 @@ recorded in the address book.
 
    <<W>>    Add a new User
 
-   <<O>>    Add new distribution group (carbon copies)
+   <<Y>>    Add new distribution group (carbon copies)
 
    <<L>>    Delete a user or carbon copy group from the
-        list. Only possible for users when no messa-
-        ges are present.
+        list. Only possible for users when no
+        messages are present.
 
    <<E>>    Edit User or carbon copy group.
 
-   <<J>>    Link Users. (not shown in menu). User's
+   <<J>>    Link Users (not shown in menu). User's
         messages are put into the linked User's area.
 
 L and E apply to all marked Users.
 
-<<see also>>  [ User display ]  <<(<Enter> here)@4017
+<<See also>>  [ User display ]@4017
 
 @
 22
