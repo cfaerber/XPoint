@@ -23,7 +23,7 @@ uses
 {$ENDIF }
   sysutils, dos, typeform, dosx, xpglobal;
 
-const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
+const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Grî·e Kopier/Einlesepuffer                   }
       maxzchdlen  = 100;    { max. erlaubte LÑnge von Headernamen          }
       knownheaders= 24;     { Headerzeilen, deren Syntax bekannt ist       }
@@ -48,9 +48,6 @@ const maxhdlines  = 120;    { max. ausgewertete Headerzeilen pro Nachricht }
 
 type
   PathStr = string;          { Full file path string }
-  DirStr  = string;          { Drive and directory string }
-  NameStr = string;          { File name string }
-  ExtStr  = string;          { File extension string }
 
 const ParLogfile  : boolean = false;    { -l Logfile anlegen                }
       ParKillmsg  : boolean = false;    { -l defekte Nachrichten lîschen    }
@@ -133,12 +130,10 @@ type  header    = record
                     modified: boolean;    { Header wurde korrigiert }
                     XPnt    : byte;       { X-XP-NTP }
                   end;
-      headerp   = ^header;
-
 
 var
       buf       : array[0..bufsize-1] of char;  { allg. Einlese/Kopierpuffer }
-      hd0,hd1   : headerp;
+      hd0,hd1   : header;
       f1,f2,f3  : file;       { Ein/Ausgabedatei, Fehlerdatei }
       logfile   : text;
       fsize     : longint;    { Grî·e der Eingabedatei }
@@ -156,29 +151,15 @@ var
       kchar     : set of char;  { in Header-Bezeichnern erlaubte Zeichen }
       brchar    : set of char;  { in Brettnamen erlaubte Zeichen         }
 
-function  TestControlChar(var s:string):boolean; assembler; {&uses esi}
-asm
-         mov    esi, s
-         cld
-         lodsb
-         xor   ecx,ecx
-         mov   cl, al
-         xor   edx, edx                  { true }
-         jecxz @tcende
-@tclp:   lodsb
-         cmp   al, ' '
-         jae   @tok
-         cmp   al, 9
-         je    @tok
-         inc   edx                       { false }
-         jmp   @tcende
-@tok:    loop  @tclp
-@tcende: mov   eax,edx                   { Funktionsergebnis }
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'EDX', 'ESI'];
-{$ELSE }
+function  TestControlChar(var s:string):boolean;
+var
+ i: Integer;
+begin
+  Result := false;
+  for i := 1 to Length(s) do
+    if (s[i] < ' ') and (s[i] <> '9') then
+      Result := true;
 end;
-{$ENDIF }
 
 procedure logo;
 begin
@@ -458,7 +439,6 @@ procedure initvar;
 begin
   msgs:=0; errmsgs:=0;
   warnungen:=0; unzustmsgs:=0;
-  new(hd0); new(hd1);
   if not ParRep then begin
     ww:='wÅrde '; wwn:='wÅrden '; wwnn:='wÅrde(n) '; end
   else begin
@@ -496,7 +476,7 @@ end;
 { minstdh: so viele der 7 Pflichtzeilen mÅssen vorhanden sein, }
 { damit der Header als korrekt erkannt wird.                   }
 
-procedure ReadHeader(adr:longint; hdp:headerp; minstdh:byte; var ok:boolean);
+procedure ReadHeader(adr:longint; var hdp:header; minstdh:byte; var ok:boolean);
 var bufanz,
     bufpos  : word;
     s       : string;
@@ -518,7 +498,7 @@ var bufanz,
     inc(bufpos);
     inc(totallen);
     if (bufpos=bufanz) and not eof(f1) then begin
-      inc(hdp^.hds,bufanz);
+      inc(hdp.hds,bufanz);
       ReadBuf;
       { bufpos:=0; Wird in ReadBuf schon gemacht }
       end;
@@ -534,13 +514,13 @@ var bufanz,
     end;
     if bufpos=bufanz then ok:=false
     else if buf[bufpos]=#10 then begin   { LF statt CR/LF }
-      IncO; hdp^.lferror:=true;
+      IncO; hdp.lferror:=true;
       end
     else begin
       IncO;
       if bufpos=bufanz then ok:=false    { nur CR am Dateiende }
       else if buf[bufpos]=#10 then IncO
-           else hdp^.lferror:=true;      { CR statt CR/LF }
+           else hdp.lferror:=true;      { CR statt CR/LF }
       end;
   end;
 {$IFDEF Debug }
@@ -548,12 +528,12 @@ var bufanz,
 {$ENDIF }
 
 begin
-  getmem(hdp, sizeof(header));
-  hdp^.adr:=adr;
+  fillchar(hdp, Sizeof(hdp), 0);
+  hdp.adr:=adr;
   seek(f1,adr);
   ReadBuf;
   ok:=true;
-  with hdp^ do begin
+  with hdp do begin
     repeat
       GetString;
       p:=cpos(':',s);
@@ -599,7 +579,7 @@ begin
 end;
 
 
-procedure WriteHeader(var f:file; hdp:headerp);
+procedure WriteHeader(var f:file; var hdp:header);
 const bufs  = 1024;
 type  charr = array[0..bufs-1] of char;
 var i,j : integer;
@@ -611,7 +591,7 @@ var i,j : integer;
 begin
   new(buf);
   fp:=0;
-  with hdp^ do
+  with hdp do
     for i:=1 to fldanz do
       if fld[i]<>'' then begin                      { langes Feld:         }
         if (length(fld[i])=253) and (fldsize[i]>255) then begin
@@ -662,7 +642,7 @@ end;
 procedure wr(txt:atext; modi:boolean);
 const middl = 39;
 begin
-  with hd0^ do begin
+  with hd0 do begin
     if prozent then write(#13);
     if newcheckmsg then begin
       if length(msgid)<middl then begin
@@ -697,7 +677,7 @@ end;
 
 procedure SetLen(newlen:longint);    { NachrichtenlÑnge korrigieren }
 begin
-  with hd0^ do
+  with hd0 do
     if newlen<>groesse then begin
       if newlen<groesse then wr('Nachricht '+ww+'gekÅrzt',true)
       else wr('Nachricht '+ww+'vergrî·ert',true);
@@ -718,7 +698,7 @@ var i,j  : integer;
       i : integer;
   begin
     if ParShowHd then begin
-      s:=hd0^.fld[n];
+      s:=hd0.fld[n];
       for i:=1 to length(s) do if s[i]=#9 then s[i]:=' ';
       wr(left('('+s+')',39),false);
       end;
@@ -766,7 +746,7 @@ var i,j  : integer;
         end;
      end;
 
-   with hd0^ do
+   with hd0 do
      if cont+zone<>mid(fld[i],contpos[i]) then begin
        wr('Datum '+ww+'korrigiert',true);
        wrehd(i);
@@ -779,9 +759,9 @@ var i,j  : integer;
   begin
     p1:=pos(' (',cont);
     if (p1>1) and (cont[p1-1]=' ') then begin   { zuviele Leerz. vor Realname }
-      wr('Leerzeichen '+ww+'aus '+headerindex[hd0^.fldtype[i]].name+' entfernt',true);
+      wr('Leerzeichen '+ww+'aus '+headerindex[hd0.fldtype[i]].name+' entfernt',true);
       wrehd(i);
-      with hd0^ do
+      with hd0 do
         fld[i]:=left(fld[i],contpos[i]-1)+trim(left(cont,p1-1))+mid(cont,p1);
       end;
     if not _xpnt then begin
@@ -789,7 +769,7 @@ var i,j  : integer;
       p1:=cpos('@',cont);
       p2:=pos('.',mid(cont,p1+1));
       if (p1<=1) or (p2<=1) or (lastchar(cont)='.') then begin
-        warnung('Fehler in '+headerindex[hd0^.fldtype[i]].name);
+        warnung('Fehler in '+headerindex[hd0.fldtype[i]].name);
         wrehd(i);
         end;
       end;
@@ -801,7 +781,7 @@ var i,j  : integer;
   begin
     if cont='' then begin
       wr('Leerer EmpfÑnger '+ww+'entfernt',true);
-      with hd0^ do begin
+      with hd0 do begin
         wrehd(i);
         fld[i]:='';
         dec(hdfound[fldtype[i]]);
@@ -839,7 +819,7 @@ var i,j  : integer;
       if error then begin
         wr('Fehlerhafter Brettname '+ww+'korrigiert',true);
         wrehd(i);
-        with hd0^ do begin
+        with hd0 do begin
           j:=contpos[i];
           if cont[1]<>'/' then insert('/',fld[i],j);
           if not _xpnt then    { '/' am Anfang fehlt }
@@ -868,7 +848,7 @@ var i,j  : integer;
     if multipos('\/:',cont) then begin
       p:=length(cont);
       while (p>0) and not (cont[p] in ['/','\',':']) do dec(p);
-      with hd0^ do
+      with hd0 do
         if p=length(cont) then begin
           wr('fehlerhafter Dateiname '+ww+'entfernt',true);
           wrehd(i);
@@ -890,7 +870,7 @@ var i,j  : integer;
     if res<>0 then begin
       wr('PRIO '+ww+'korrigiert',true);
       wrehd(i);
-      with hd0^ do
+      with hd0 do
         fld[i]:=left(fld[i],contpos[i]-1)+'0';
       end;
   end;
@@ -926,7 +906,7 @@ var i,j  : integer;
   procedure AddLine(txt:string);         { fehlende Pflichtzeile ergÑnzen }
   var hdf : string[15];
   begin
-    with hd0^ do
+    with hd0 do
       if fldanz<maxhdlines then begin
         hdf:=headerindex[stdhdindex[i]].name;
         wr(hdf+' '+ww+'ergÑnzt',true);
@@ -948,7 +928,7 @@ var i,j  : integer;
     if (res<>0) or (l<0) then begin
       wr('LEN '+ww+'korrigiert',true);
       wrehd(i);
-      with hd0^ do begin
+      with hd0 do begin
         if length(fld[i])=4 then s:=#9
         else s:='';
         fld[i] := left(fld[i],contpos[i]-1) + s + iifs(l<0,'0',strs(ival(cont)));
@@ -964,10 +944,10 @@ var i,j  : integer;
       s   : string[1];
   begin
     val(cont,l,res);
-    if (res<>0) or (l<0) or (l>hd0^.groesse) then begin
+    if (res<>0) or (l<0) or (l>hd0.groesse) then begin
       wr('KOM '+ww+'korrigiert',true);
       wrehd(i);
-      with hd0^ do begin
+      with hd0 do begin
         if length(fld[i])=4 then s:=#9
         else s:='';
         fld[i] := left(fld[i],contpos[i]-1) + s + '0';
@@ -982,7 +962,7 @@ var i,j  : integer;
 
       flag : boolean;
   begin
-    with hd0^ do begin
+    with hd0 do begin
       i:=1;                 { Test auf Whitespaces vor Header }
       while (fld[n][i]=' ') or (fld[n][i]=#9) do inc(i);
       flag:=(i>1);
@@ -1010,7 +990,7 @@ var i,j  : integer;
   end;
 
 begin
-  with hd0^ do
+  with hd0 do
   begin
     if lferror then                   { fehlerhafte Zeilentrennungen }
       wr('Zeilentrennungen '+wwn+'korrigiert',true);
@@ -1169,20 +1149,20 @@ begin
         minpos:=255; minfld := 1;
         for i:=1 to knownheaders do
           if i<>hdf_LEN then begin
-            p:=pos(headerindex[i].name+':',UpperCase(hd1^.fld[hdlc]));
+            p:=pos(headerindex[i].name+':',UpperCase(hd1.fld[hdlc]));
             if (p>0) and (p<minpos) then begin
               minpos:=p; minfld:=i;
               end;
             end;
         if minpos=255 then begin    { Zeile komplett unbrauchbar }
-          hd1^.fld[hdlc]:='';
-          inc(adr,hd1^.fldsize[hdlc]);
-          hd1^.adr:=adr;
-          dec(hd1^.hds,hd1^.fldsize[hdlc]);      { || énderung bei v1.02 }
+          hd1.fld[hdlc]:='';
+          inc(adr,hd1.fldsize[hdlc]);
+          hd1.adr:=adr;
+          dec(hd1.hds,hd1.fldsize[hdlc]);      { || énderung bei v1.02 }
           inc(hdlc);
           end
         else begin
-          with hd1^ do begin
+          with hd1 do begin
             fld[hdlc]:=mid(fld[hdlc],minpos);
             fldtype[hdlc]:=minfld;
             dec(contpos[hdlc],minpos-1);
@@ -1197,8 +1177,8 @@ begin
       until ok;      { korrekt vorhanden sind!                            }
       end
     else
-      inc(adr,hd1^.hds)
-  until ok or (hd1^.hds=0);
+      inc(adr,hd1.hds)
+  until ok or (hd1.hds=0);
   if ok then SeekHeader:=adr
   else SeekHeader:=fsize;
 end;
@@ -1206,28 +1186,28 @@ end;
 
 procedure CheckRepair;
 var ok  : boolean;
-    hdt : headerp;
+    hdt : header;
 
   procedure Write0msg;
   begin
     if adr0>=0 then
-      if hd0^.modified then begin
+      if hd0.modified then begin
         if errfile then begin
           WriteHeader(f3,hd0);     { vorausgehende Nachricht kopieren }
-          fmove2(adr0+hd0^.hds,hd0^.groesse);
+          fmove2(adr0+hd0.hds,hd0.groesse);
           end
         else if ParRep and not ParKillmsg then begin
           WriteHeader(f2,hd0);
-          fmove(adr0+hd0^.hds,hd0^.groesse);
+          fmove(adr0+hd0.hds,hd0.groesse);
           end;
         inc(errmsgs);
         end
       else
-        fmove(adr0,hd0^.hds+hd0^.groesse);
+        fmove(adr0,hd0.hds+hd0.groesse);
   end;
 
 begin
-  adr0:=-1; hd0^.hds:=1;    { -1 = nicht vorhanden; hds=1 gleicht -1 aus }
+  adr0:=-1; hd0.hds:=1;    { -1 = nicht vorhanden; hds=1 gleicht -1 aus }
   adr1:=0;
   newcheckmsg:=true;
   while adr0<fsize do
@@ -1242,10 +1222,10 @@ begin
         ReadHeader(adr1,hd1,7,ok);
      if not ok then
       begin
-        adr1:=SeekHeader(adr0+hd0^.hds);
-        if adr0>=0 then SetLen(adr1-adr0-hd0^.hds)
+        adr1:=SeekHeader(adr0+hd0.hds);
+        if adr0>=0 then SetLen(adr1-adr0-hd0.hds)
         else begin
-          hd0^.msgid:='';
+          hd0.msgid:='';
           if adr1>0 then
             wr('headerloser Text '+ww+'entfernt',false);
           end;
@@ -1253,12 +1233,12 @@ begin
       Write0msg;
       hdt:=hd0; hd0:=hd1; hd1:=hdt;
       adr0:=adr1;
-      inc(adr1,hd0^.hds+hd0^.groesse);
+      inc(adr1,hd0.hds+hd0.groesse);
       newcheckmsg:=true;
       if adr0<fsize then CheckContents;
       end
     else begin     { letzte Nachricht kÅrzen }
-      SetLen(fsize-adr0-hd0^.hds);
+      SetLen(fsize-adr0-hd0.hds);
       Write0msg;
       adr0:=fsize;
       end;
@@ -1286,7 +1266,6 @@ begin
   CheckRepair;
   closefiles;
   statistik;
-  dispose(hd0); dispose(hd1);
   halt(sgn(errmsgs));
 (* !! mu· noch umgebaut werden
   finalization
@@ -1299,6 +1278,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.25  2000/09/25 18:53:25  mk
+  - jetzt auf Ansistring portiert
+
   Revision 1.24  2000/07/23 10:00:14  mk
   - ZPR compiliert wieder
 
