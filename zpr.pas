@@ -548,7 +548,7 @@ var bufanz,
 {$ENDIF }
 
 begin
-  fillchar(hdp^,sizeof(hdp^),0);
+  hdp := AllocHeaderMem;
   hdp^.adr:=adr;
   seek(f1,adr);
   ReadBuf;
@@ -1298,6 +1298,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.23  2000/07/21 17:39:58  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.22  2000/07/20 16:50:00  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

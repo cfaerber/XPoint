@@ -609,10 +609,10 @@ procedure PGP_DecodeMsg(sigtest:boolean);
 var hdp : headerp;
     hds : longint;
 begin
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,true);
   PGP_DecodeMessage(hdp,sigtest);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   aufbau:=true;
 end;
 
@@ -694,7 +694,7 @@ var hdp      : headerp;
     mk       : boolean;
 begin
   tmp:=TempS(dbReadInt(mbase,'msgsize'));
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,true);
   if hdp^.pgpflags and fPGP_haskey = 0 then
     extract_msg(xTractMsg,'',tmp,false,0)
@@ -719,7 +719,7 @@ begin
     PGP_WaitKey:=mk;
     if exist(tmp) then _era(tmp);
   end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -756,7 +756,7 @@ var hdp : headerp;
     hds : longint;
     tmp : string;
 begin
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   if hdp^.pgpflags and fPGP_haskey<>0 then begin
     tmp:=TempS(dbReadInt(mbase,'msgsize'));
@@ -765,7 +765,7 @@ begin
     PGP_DecodeKey(tmp,savekey);
     if exist(tmp) then _era(tmp);
   end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -780,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/07/21 17:39:57  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.25  2000/07/09 13:37:21  mk
   - Fehlermeldung wenn PGP nicht gefunden korrigiert
 

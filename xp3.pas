@@ -387,10 +387,10 @@ var ok     : boolean;
     ablg   : byte;
     flags  : byte;
     errstr : string[30];
-    empfnr : smallword; { MK 06.02.00 }
+    empfnr : smallword;
     nopuffer: boolean;
 begin
-  fillchar(hd,sizeof(hd),0);
+  ClearHeader(@hd);
   ok:=true;
   dbRead(mbase,'ablage',ablg);
   hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
@@ -475,11 +475,11 @@ begin
   dbReadN(mbase,mb_adresse,adr);
   minus:=0;
   if dbReadInt(mbase,'msgsize') and $8000<>0 then begin  { KOM vorhanden }
-    new(hdp);
+    hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,false);
     if (hdp^.komlen>0) and (ofs=hds+hdp^.komlen) then
       minus:=hdp^.komlen;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     end;
   if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(puffer) then begin
     berr:=buferr(ablage);
@@ -1219,6 +1219,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.38  2000/07/21 17:39:52  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.37  2000/07/21 13:23:45  mk
   - Umstellung auf TStringList
 

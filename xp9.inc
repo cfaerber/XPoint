@@ -10,13 +10,12 @@
 
   { --- Bearbeitungs-Routinen fÅr Boxen-Liste -----------------------}
 
-  {16.01.00 HS: Eingabemîglichkeit fÅr FQDNs hinzugefÅgt.}
   procedure NameRead(nt:byte; var name,user,komm,maps,realname,domain,fqdn,
                      bdomain,fidoname:string; txt:atext; var brk:boolean);
   var x,y  : byte;
       real : boolean;
       dom  : boolean;
-      fqdom: boolean;  {16.01.00 HS}
+      fqdom: boolean;
       bdom : boolean;
       map  : boolean;
       blen : byte;
@@ -37,7 +36,7 @@
            iif(fqdom,2,0)+iif(bdom,2,0)+iif(fido,2,0),txt,x,y);  {16.01.00 HS}
     blen:=ntBoxnameLen(nt);
     btxt:=getres2(912,iif(fido,1,2));    { 'Nodenummer','Boxname   ' }
-    {16.01.00 HS: Kleinschreibung fÅr Boxname zulassen}
+    { Kleinschreibung fÅr Boxname zulassen}
     s:=iifs(nt=nt_UUCP,'','');
     maddstring(3,2,btxt,name,blen,blen,
                s+'"!'+range('#','?')+range('A',#126)+'éôö');
@@ -97,7 +96,7 @@
       end
     else
       bDomainNt:=0;
-    if fqdom then begin  {16.01.00 HS: Eingabemîglichkeit fÅr FQDNs}
+    if fqdom then begin  { Eingabemîglichkeit fÅr FQDNs}
       maddstring(3,yy,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
                  'A'+without(range('!','~'),' @<>/')); mhnr(30001);
       inc(yy,2);
@@ -144,16 +143,8 @@
   end;
 
   procedure NewBox;
-  var name : string;
-      dname: string;
-      user : string;
-      komm : string;
-      maps : string;
-      real : string;
-      dom  : string;
-      fqdom: string;  {16.01.00 HS}
-      bdom : string;
-      fido : string;
+  var name, user, komm, maps, real, dom, fqdom, bdom, fido: String;
+    dname: String;
       brk  : boolean;
       fn   : string;
       nt,i : byte;
@@ -171,7 +162,6 @@
     dom:=ntDefaultDomain(nt); bdom:=dom;
     fqdom:='';  {17.01.00 HS}
     real:='';
-    {16.01.00 HS}
     NameRead(nt,name,user,komm,maps,real,dom,fqdom,bdom,fido,getreps(915,Netz_Typ(nt)),brk);
     if not brk then begin            { 'neue Box anlegen (Typ: %s)' }
       dbSeek(d,boiName,UpperCase(name));
@@ -377,12 +367,13 @@
       nt_ZConnect: yy:=12;
     end;
     dialog(xx,yy,kompname,x,y);
-    with boxpar^ do begin
+    with boxpar^ do
+    begin
       case nt of
         nt_Maus : begin
                     pname:= dbReadStr(d,'boxname');
                     maddstring(3,2,getres2(920,1),passwort,20,20,''); mhnr(141);
-                  end;                                        { 'Pa·wort  ' }
+                  end;                                       { 'Pa·wort  ' }
         nt_Fido : begin
                     pnr:=ival(pname);
                     maddint(3,2,getres2(920,2),pnr,5,5,0,32767); mhnr(151);  { 'Pointnummer' }

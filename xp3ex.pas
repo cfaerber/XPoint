@@ -24,7 +24,7 @@ uses
   crt,
 {$ENDIF }
   dos,typeform,fileio,inout,database,resource,stack,
-  xp0,xp1,xpglobal;
+  xp0,xp1,xpglobal, classes;
 
 const xTractMsg   = 0;
       xTractHead  = 1;
@@ -171,6 +171,7 @@ var size   : longint;
     sizepos : longint;
     mpsize  : longint;
     mehdl, mehds : integer;
+    TempKopien: TStringList;
 
   procedure wrs(s:string);
   begin
@@ -619,11 +620,7 @@ var size   : longint;
 
   function telestring(s:string):string;
   var ts    : string;
-{$ifdef hasHugeString}
       tn,vs : string;
-{$else}
-      tn,vs : string[40];
-{$endif}
   begin
     s:='ù'+s;
     if not testtelefon(s) then
@@ -667,16 +664,15 @@ var size   : longint;
         end;
   end;
 
-  { 01/2000 oh }
   function ohfill(s:string;l:byte) : string;
   begin
     while (length(s)<l) do s:=s+#32;
     ohfill:=s;
   end;
-  { /oh }
 
 begin
   extheadersize:=0; exthdlines:=0; hdlines:=0;
+  TempKopien := TStringList.Create;
   if ex_mpdata=nil then mpdata.startline:=0
   else mpdata:=ex_mpdata^;
   ex_mpdata:=nil;
@@ -686,7 +682,7 @@ begin
     Xread(name,append)
   else begin
     ReadHeadEmpf:=1; ReadKoplist:=true;
-    new(hdp);
+    hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,true);
     assign(f,name);
     if hds=1 then begin
@@ -779,9 +775,9 @@ begin
                      s:=gr(2)+hdp^.empfaenger;     { 'Empfaenger : ' }
                      for i:=2 to hdp^.empfanz do begin
                        ReadHeadEmpf:=i;
-                       spush(hdp^.kopien,sizeof(hdp^.kopien));
+                       TempKopien.Assign(Hdp^.Kopien);
                        ReadHeader(hdp^,hds,false);
-                       spop(hdp^.kopien);
+                       Hdp^.Kopien.Assign(TempKopien);
                        if length(s)+length(hdp^.empfaenger)>iif(listscroller,76,77)
                        then begin
                          wrs(s); s:=gr(2{15});
@@ -817,9 +813,9 @@ begin
                      s:=gr(3)+hdp^.amreplyto;
                      for i:=2 to hdp^.amrepanz do begin
                        ReadHeadDisk:=i;
-                       spush(hdp^.kopien,sizeof(hdp^.kopien));
+                       TempKopien.Assign(Hdp^.Kopien);
                        ReadHeader(hdp^,hds,false);
-                       spop(hdp^.kopien);
+                       Hdp^.Kopien.Assign(TempKopien);
                        if length(s)+length(hdp^.amreplyto)>iif(listscroller,76,77)
                        then begin
                          wrs(s); s:=gr(3{15});
@@ -1056,17 +1052,20 @@ begin
     if (hdp^.netztyp=nt_Fido) and (art=xTractMsg) and ExtCliptearline then
       Clip_Tearline;
     close(f);
-    Hdp^.Kopien.Free;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
   end;
   freeres;
   ExtCliptearline:=true;
+  TempKopien.Free;
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.32  2000/07/21 17:39:52  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.31  2000/07/21 13:23:45  mk
   - Umstellung auf TStringList
 

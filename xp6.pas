@@ -75,7 +75,6 @@ const sendIntern = 1;     { force Intern              }
 var
   SendEmpfList: TStringList;
 
-{$ifdef hasHugeString}
 type  SendUUdata = record
                      AmReplyTo  : string;
                      PmReplyTo  : string;
@@ -92,24 +91,6 @@ type  SendUUdata = record
                      empfrealname : string;
                      ersetzt    : string;
                    end;
-{$else}
-type  SendUUdata = record
-                     AmReplyTo  : string[AdrLen];
-                     PmReplyTo  : string[AdrLen];
-                     keywords   : string[60];
-                     summary    : string[200];
-                     distribute : string[40];
-                     ReplyGroup : string[40];     { Maus-QuoteTo }
-                     oab,oem,wab: string[AdrLen];
-                     oar,war    : string[40];
-                     onetztyp   : byte;
-                     orghdp     : headerp;
-                     quotestr   : string[20];
-                     UV_edit    : boolean;        { <Esc> -> "J" }
-                     empfrealname : string[40];
-                     ersetzt    : string[MidLen];
-                   end;
-{$endif}
       SendUUptr   = ^SendUUdata;
 
 var
@@ -498,7 +479,7 @@ begin
     wrt(1,1,' ');
     if verteiler then Wrt2(forms(getres2(611,40)+vert_name(empfaenger),79))
     else
-      if pm then Wrt2(forms(getres2(611,40)+left(empfaenger,p-1)+' @ '+
+      if pm then Wrt2(forms(getres2(611,40)+left(empfaenger,p-1)+'@'+
                        mid(empfaenger,p+1),70)+sp(9))
       else Wrt2(forms(getres2(611,41)+copy(empfaenger,edis,55)+
                  iifs(ntBrettEmpf(netztyp) and (fidoto<>''),
@@ -899,7 +880,7 @@ begin      {-------- of DoSend ---------}
     goto xexit1;
   end;
 
-  new(hdp);
+  hdp := AllocHeaderMem;
 
   MakeSignature(signat,sigfile,sigtemp);
 
@@ -991,7 +972,7 @@ fromstart:
           if dbBOF(mbase) or dbEOF(mbase) then
             box:=DefaultBox         { /Nachricht/Direkt }
           else begin
-            dbRead(mbase,'brett',_brett);
+            _brett := dbReadStr(mbase,'brett');
             if _brett[1]='1' then begin    { PM-Reply an nicht eingetr. User }
               if origbox='' then get_origbox;
               if (OrigBox='') or not IsBox(OrigBox) then
@@ -1417,7 +1398,7 @@ fromstart:
                 rfehler(615);
        20   : EditSdata;
        21   : SendPgpOptions;
-       22   : begin                    { 06.02.2000 MH: RFC-Priority }
+       22   : begin                    { RFC-Priority }
                if netztyp<>nt_uucp then rfehler(622);
                 getprio;
                showflags;
@@ -1502,22 +1483,22 @@ fromstart:
     if empfneu then
       if pm then begin
         dbAppend(ubase);                        { neuen User anlegen }
-        dbWrite(ubase,'username',empfaenger);
+        dbWriteStr(ubase,'username',empfaenger);
         dbWrite(ubase,'pollbox',box);
         halten:=stduhaltezeit;
         dbWrite(ubase,'haltezeit',halten);
         b:=1;
         dbWrite(ubase,'adrbuch',NeuUserGruppe);
-        {if netztyp=nt_Fido then inc(b,8);}  { ASCII-Umlaute }
-        { 14.02.2000 MH: UserFlags: 8=ASCII }
-      if not newuseribm then inc(b,8); { MH: NewUserIBM berÅcksichtigen }
+        { if netztyp=nt_Fido then inc(b,8);}  { ASCII-Umlaute }
+        { UserFlags: 8=ASCII }
+      if not newuseribm then inc(b,8); { NewUserIBM berÅcksichtigen }
         dbWrite(ubase,'userflags',b);      { aufnehmen }
         dbFlushClose(ubase);
         _brett:=mbrettd('U',ubase);
         end
       else begin
         dbAppend(bbase);                        { neues Brett anlegen }
-        dbWriteN(bbase,bb_brettname,empfaenger);
+        dbWriteNStr(bbase,bb_brettname,empfaenger);
         wbox:=iifs(empfaenger[1]='$','',box);
         intern:=intern or (wbox='');
         dbWriteN(bbase,bb_pollbox,wbox);
@@ -1591,7 +1572,7 @@ fromstart:
       close(f2);
       assign(f,TempPath+'binmsg');
       end;
-    fillchar(hdp^,sizeof(hdp^),0);
+    ClearHeader(hdp);
     hdp^.netztyp:=netztyp;
     if ntZConnect(netztyp) then begin
       if pm then
@@ -2017,7 +1998,7 @@ xexit:
   freeres;
   dispose(ccm);
   dispose(cc);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   if sigtemp then _era(sigfile);
 xexit1:
   if sdNope then dispose(sdata);
@@ -2115,13 +2096,8 @@ end;
 
 function SendPMmessage(betreff,fn:string; var box:string):boolean;
 var d    : DB;
-{$ifdef hasHugeString}
     empf : string;
     s    : string;
-{$else}
-    empf : string[80];
-    s    : string[10];
-{$endif}
     l    : longint;
 begin
   SendPMmessage:=false;
@@ -2147,6 +2123,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/07/21 17:39:54  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.52  2000/07/21 13:23:47  mk
   - Umstellung auf TStringList
 

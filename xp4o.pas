@@ -779,7 +779,7 @@ begin
       mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16)); { 'Suche:         passend:' }
       if aktdispmode<>11 then markanz:=0;
       n:=0; nf:=0;
-      new(hdp);
+      hdp := AllocHeaderMem;
       attrtxt(col.coldiahigh);
       psize:=65536;
       getmem(p,psize);
@@ -871,7 +871,7 @@ begin
 
       freemem(p,psize);
       CloseBox;
-      dispose(hdp);
+      FreeHeaderMem(hdp);
       end;
 
 {--Suche beendet--}
@@ -1027,7 +1027,7 @@ var brk  : boolean;
     f    : file;
 begin
   if testuvs(getres(453)) then exit;   { 'Žndern' }
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,true);
   if hds>1 then begin
     diabox(63,5,'',x,y);
@@ -2415,6 +2415,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/07/21 17:39:53  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.53  2000/07/09 08:35:17  mk
   - AnsiStrings Updates
 

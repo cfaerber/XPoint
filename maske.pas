@@ -239,8 +239,7 @@ type
                    disnodisp   : boolean;
                    txt         : string;   { Feld-Text }
                    typ         : byte;     { Feldtyp }
-                   variable    : variant;  { Adresse der Variablen }
-                   {variable    : pointer;}  { Adresse der Variablen }
+                   variable    : pointer;  { Adresse der Variablen }
                    xx,yy,len   : byte;     { Position, Anzeigel„nge }
                    yy0,xx2     : byte;     { Position des Inhalts }
                    maxlen      : byte;     { maximale L„nge des Inhalts }
@@ -1271,6 +1270,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2000/07/21 17:39:51  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.18  2000/07/21 13:14:09  hd
   - Fix: Strings in der Maske
   - Fix: Einige Datenbankzugriffe wegen AnsiString

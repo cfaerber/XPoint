@@ -256,7 +256,7 @@ var x,y      : byte;
     if right(id,1)='>' then dellast(id);
     if cpos('@',id)=0 then exit;
     crc:=MsgidIndex(id);
-    new(hdp2);
+    hdp2 := AllocHeaderMem;
     if cancel then mrec:=dbRecno(mbase); { Position der Cancel-Mail merken }
     dbSeek(bezbase,beiMsgId,dbLongStr(crc));
     if dbFound then
@@ -272,7 +272,7 @@ var x,y      : byte;
         until (hdp2^.msgid=id) or dbEOF(bezbase) or (dbReadInt(bezbase,'msgid')<>crc);
         if okay then DelMsg; { zu l”schende/zu ersetzende Nachricht l”schen }
       end;
-    dispose(hdp2);
+    FreeHeaderMem(hdp2);
     if cancel then begin
       dbGo(mbase,mrec);
       DelMsg;   { Cancel-Nachricht auf 'gelesen' / 'l”schen' }
@@ -474,7 +474,7 @@ var x,y      : byte;
     dbRead(ubase,'codierer',codierer);
     if (passwd='') or (codierer<3) or (codierer>2+maxpmc) or
       (TempFree<2*dbReadInt(mbase,'msgsize')) then exit;
-    new(hdp2);
+    hdp2 := AllocHeaderMem;
     ReadHeader(hdp2^,hds2,true);
     assign(f,temppath+cryptedfile);
     rewrite(f,1);
@@ -530,7 +530,7 @@ var x,y      : byte;
       end;
     holen(sp);
     restcursor;
-    dispose(hdp2);
+    FreeHeaderMem(hdp2);
   end;
 
   procedure DecPGP;
@@ -670,7 +670,7 @@ begin
   check:=(fs*1.3<diskfree(0));
 
   getmem(p,bufsize);
-  new(hdp);
+  hdp := AllocHeaderMem;
   if check and puffer_ok then begin
     abadd:=iif(zconnect,10,0);
     l:=ablsize[1+abadd]; ablage:=1+abadd;   { 0/10 = PM-Ablage }
@@ -1139,7 +1139,7 @@ begin
     closebox;
     end;
 
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   freeres;
   freemem(p,bufsize);
   closebox;
@@ -1178,6 +1178,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2000/07/21 17:39:53  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.27  2000/07/20 16:49:58  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

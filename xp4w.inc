@@ -335,7 +335,7 @@ begin
   if left(dbReadStr(mbase,'brett'),1)='U' then
     fehler('In diesem Brett nicht m”glich.')
   else begin
-    new(hdp);
+    hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,false);
     s:='';
     if hdp^.PmReplyTo<>'' then begin
@@ -344,7 +344,7 @@ begin
       end;
     if s='' then
       s:= dbReadNStr(mbase,mb_absender);   { auch auf mbase arbeitet.     }
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     dbSeek(ubase,uiName,UpperCase(s));
     if not dbFound then
       rfehler(444)  { 'User nicht erfaát' }
@@ -658,7 +658,7 @@ var fn     : string;
       hds : longint;
       f   : file;
   begin
-    new(hdp);
+    hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,true);
     assign(f,fn);
     rewrite(f,1);
@@ -674,10 +674,10 @@ var fn     : string;
   var hdp : headerp;
       hds : longint;
   begin
-    hdp:= AllocHeaderMem; {new(hdp);}
+    hdp:= AllocHeaderMem;
     ReadHeader(hdp^,hds,false);
     GetMsgFilename:=hdp^.datei;
-    FreeHeaderMem(hdp); {dispose(hdp);}
+    FreeHeaderMem(hdp);
   end;
 
 label ende0,nextmsg;
@@ -908,15 +908,15 @@ begin
       end
 
     else if lres = -2 then  {Wiedervorageflag mit "V" aus Lister heraus aendern }
-    begin 
+    begin
       rec:=disprec[1];
       wiedervorlage;
       if p=1 then begin    {Bei 1. Bildschirmzeile wieder alte Msg anspringen}
         disprec[1]:=rec;
         dpp:=rec;
-        end; 
-      ende:=false; 
-      end  
+        end;
+      ende:=false;
+      end
 
     else begin
      {  if (dispmode=10) and (rdmode=1) and not ntKomKette(netztyp) then
@@ -1507,6 +1507,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2000/07/21 17:39:54  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.35  2000/07/18 14:30:28  hd
   - Fix: Ansistring
 

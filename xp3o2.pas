@@ -33,7 +33,7 @@ function  UserNetztyp(adr:string):byte;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xpnt,xpdatum,xp_pgp;
+uses xp3,xp3o,xpnt,xpdatum,xp_pgp, xp1;
 
 
 procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
@@ -372,7 +372,7 @@ var hdp : headerp;
     hds : longint;
     p   : integer;
 begin
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   betreff:=hdp^.betreff;
   if betreff='' then betreff:=getres(343);    { '<kein Betreff>' }
@@ -417,7 +417,7 @@ begin
     sData^.keywords:=keywords;
     sData^.distribute:=distribution;
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -446,6 +446,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/07/21 17:39:53  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.16  2000/07/21 13:23:46  mk
   - Umstellung auf TStringList
 

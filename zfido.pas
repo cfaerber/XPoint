@@ -503,7 +503,7 @@ var b       : charr absolute buf;
 begin
   o:=0;
   ok:=true;
-  fillchar(hd,sizeof(hd),0);
+  ClearHeader(@hd);
   with hd do begin
     typ:='T';
     repeat
@@ -1671,6 +1671,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.30  2000/07/21 17:39:58  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.29  2000/07/13 10:23:48  mk
   - Zeiger auf Strings entfernt
 

@@ -144,10 +144,10 @@ var fn  : string;
     hdp : headerp;
     hds : longint;
 begin
-  hdp:= AllocHeaderMem; {new(hdp);}
+  hdp:= AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   fn:=hdp^.betreff;
-  FreeHeaderMem(hdp); {dispose(hdp);}
+  FreeHeaderMem(hdp);
   if not multipos(_MPMask,fn) then fn:=FilePath+fn;
   readmsg_getfilename:=fn;
 end;
@@ -314,6 +314,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/21 17:39:54  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.12  2000/07/21 13:23:46  mk
   - Umstellung auf TStringList
 

@@ -123,6 +123,7 @@ procedure pophp;
 procedure freehelp;
 
 function  AllocHeaderMem: headerp;
+procedure ClearHeader(hdp: headerp);
 procedure FreeHeaderMem(var hdp: headerp);
 
 procedure setenable(mnu,nr:byte; flag:boolean);
@@ -2014,9 +2015,14 @@ begin
   getmem(hdp, sizeof(header));
   if hdp=nil then
     trfehler(6,30);
+  ClearHeader(hdp);
+  AllocHeaderMem:= hdp;
+end;
+
+procedure ClearHeader(hdp: headerp);
+begin
   FillChar(hdp^, SizeOf(header), 0);
   Hdp^.Kopien := TStringList.Create;
-  AllocHeaderMem:= hdp;
 end;
 
 procedure FreeHeaderMem(var hdp: headerp);
@@ -2037,6 +2043,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.69  2000/07/21 17:39:51  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.68  2000/07/21 13:23:44  mk
   - Umstellung auf TStringList
 

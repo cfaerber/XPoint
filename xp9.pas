@@ -1091,8 +1091,8 @@ var d         : DB;
       brk     : boolean;
   begin
     if isNew then begin
-      kurz:=''; 
-      lang:=''; 
+      kurz:='';
+      lang:='';
       pollbox:='';
     end else begin
       dbGo(d,drec[p]);
@@ -1106,9 +1106,9 @@ var d         : DB;
         dbSeek(d,piKurzname,UpperCase(kurz));
         if dbFound then begin
           rfehler(915);     { 'Diesen Kurznamen gibt es bereits.' }
-	  exit;
-	end;
-	dbAppend(d);
+          exit;
+        end;
+        dbAppend(d);
       end; { isNew }
       dbWriteStr(d,'Kurzname',kurz);
       dbWriteStr(d,'Langname',lang);
@@ -1196,8 +1196,10 @@ var d         : DB;
     readmimetyp(true,typ,ext,prog,brk);
     if not brk and (typ<>'*/*') then begin
       if isNew then begin
+      {$IFDEF FPC }
         {$hint Soll hier noch auf doppelte Mime-Typen geprueft werden? }
-	dbAppend(d);
+      {$ENDIF }
+        dbAppend(d);
       end;
       dbWriteNStr(d,mimeb_typ,typ);
       dbWriteNStr(d,mimeb_extension,ext);
@@ -1274,7 +1276,7 @@ var d         : DB;
       dnew  : string;
       i     : integer;
   begin
-    if (c<' ') and (c<>#8) then 
+    if (c<' ') and (c<>#8) then
       exit;
     if ((c=#8) and (directsel='')) or ((c>=' ') and (length(directsel)=dsellen)) then begin
       errsound;
@@ -1286,12 +1288,12 @@ var d         : DB;
       3 : nfeld:='name';
       4 : nfeld:='kurzname';
     end;
-    if c=#8 then 
+    if c=#8 then
       dnew:=left(directsel,length(directsel)-1)
-    else 
+    else
       dnew:=directsel+c;
     dbSeek(d,1,UpperCase(dnew));
-    if dbBOF(d) then 
+    if dbBOF(d) then
       dbGoTop(d);
     if dbEOF(d) or (UpperCase(left(dbReadStr(d,nfeld),length(dnew)))<>UpperCase(dnew)) then
       errsound
@@ -1728,7 +1730,7 @@ begin
   dbWriteStr(d,'NameOMaps',maps);
   dom:=ntDefaultDomain(nt);
   dbWriteStr(d,'Domain',dom);
-  fqdom:=''; 
+  fqdom:='';
   dbWriteStr(d,'FQDN',fqdom);  {17.01.00 HS}
   case nt of
     nt_Maus   : boxpar^.pointname:=name;
@@ -1756,6 +1758,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.30  2000/07/21 17:39:56  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.29  2000/07/21 14:42:39  hd
   - Ansistring
   - Datenbankanpassung

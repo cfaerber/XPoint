@@ -224,7 +224,7 @@ var x,y,wdt: byte;
       end;
     nzahl:=1;
 
-    new(hdp);
+    hdp := AllocHeaderMem;
     repeat
       testbrk(brk);
       if brk then
@@ -279,7 +279,7 @@ var x,y,wdt: byte;
         if n mod 10=0 then display;
         end;
     until brk or (_mbrett<>_brett) or dbEOF(mbase) or dbBOF(mbase);
-    dispose(hdp);
+    FreeHeaderMem(hdp);
   end;
 
 begin
@@ -439,11 +439,11 @@ var x,y,yy  : byte;
       else begin
         seek(f2,adr);
         enr:=dbReadInt(mbase,'netztyp') shr 24;
-        new(hdp);
+        hdp := AllocHeaderMem;
         MakeHeader(true,f2,enr,0,hds,hdp^,ok,true);
         MsgOK:=ok and (size=hds+hdp^.groesse) and (hdp^.empfanz>=min(2,enr))
                   and (dbReadInt(mbase,'groesse')=hdp^.groesse);
-        dispose(hdp);
+        FreeHeaderMem(hdp);
         seek(f2,fs);
         end;
     end;
@@ -712,6 +712,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/07/21 17:39:53  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.19  2000/07/15 20:02:59  mk
   - AnsiString updates, noch nicht komplett
 

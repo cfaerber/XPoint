@@ -403,7 +403,7 @@ var   hdp      : headerp;
           if vorspann then ctype:=getres2(2440,1)     { 'Vorspann' }
           else ctype:=getres2(2440,2);                { 'Nachspann' }
       until isbound or eof(t);
-      { MK 04.02.2000: Letzte Zeile im letzen Part wird sonst unterschlagen }
+      { Letzte Zeile im letzen Part wird sonst unterschlagen }
       { if eof(t) then inc(n); }
       vorspann:=false;
 
@@ -534,7 +534,7 @@ var i : integer;
 begin                         { SelectMultiPart }
   brk:=false;
   fillchar(mpdata,sizeof(mpdata),0);
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,true);
   new(mf);
   MakePartlist;
@@ -588,13 +588,12 @@ begin                         { SelectMultiPart }
       end;
 
   dispose(mf);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
 { Teil einer Multipart-Nachricht decodieren und extrahieren }
 
-{$H+}
 procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
 const bufsize = 2048;
 
@@ -752,6 +751,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/21 17:39:58  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.19  2000/07/09 08:35:19  mk
   - AnsiStrings Updates
 

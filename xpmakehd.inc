@@ -340,9 +340,7 @@ begin
   {$ifdef allrefs}
     DisposeReflist(reflist);
   {$endif}
-  {$IFNDEF UUZREfs }
-  fillchar(hd,sizeof(hd),0);
-  {$ENDIF }
+  ClearHeader(@hd);
   bufsize := 32768;
   getmem(buf,bufsize);
   size:=0; Readbuf;
@@ -542,6 +540,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2000/07/21 17:39:57  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.25  2000/07/21 13:23:48  mk
   - Umstellung auf TStringList
 

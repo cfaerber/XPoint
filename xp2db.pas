@@ -172,7 +172,7 @@ var flp : dbFLP;
       msgbox(54,5,'',x,y);
       mwrt(x+3,y+2,'Und jetzt noch die MessageIDs einlesen ...     %');
       idnr:=dbGetFeldNr(mbase,'msgid');
-      new(hdp);
+      hdp := AllocHeaderMem;
       while not dbEOF(mbase) do begin
         inc(n); wrn;
         ReadHeader(hdp^,hds,false);
@@ -180,7 +180,7 @@ var flp : dbFLP;
           dbWriteN(mbase,idnr,hdp^.msgid);
         dbNext(mbase);
         end;
-      dispose(hdp);
+      FreeHeaderMem(hdp);
       inc(n); wrn;
       closebox;
       end;
@@ -330,7 +330,7 @@ var flp : dbFLP;
     dbSetIndex(mbase,0);
     dbGoTop(mbase);
     nn:=0;
-    new(hdp);
+    hdp := AllocHeaderMem;
     while not dbEOF(mbase) do begin
       ReadHeader(hdp^,hds,false);
       mnt:=hdp^.netztyp;
@@ -339,7 +339,7 @@ var flp : dbFLP;
       inc(nn); write(#13,nn);
       dbNext(mbase);
       end;
-    dispose(hdp);
+    FreeHeaderMem;
     dbSetIndex(mbase,1);
     dbGoTop(mbase);
   end; *)
@@ -426,7 +426,7 @@ var flp : dbFLP;
       end;
     dbAppendField(MsgFile,fld);
 
-    new(hdp);                        { Realnames / BrettempfÑnger einlesen }
+    hdp := AllocHeadermem;                        { Realnames / BrettempfÑnger einlesen }
     msgbox(40,3,'',x,y);
     wrt(x+3,y+1,'Nachrichten Åberarbeiten...');
     attrtxt(col.colmboxhigh);
@@ -451,7 +451,7 @@ var flp : dbFLP;
       end;
     dbClose(mbase);
     closebox;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
   end;
 
   { Feld 'Flags' in Nachrichtendatei einfÅgen (ab 3.1) }
@@ -480,7 +480,7 @@ var flp : dbFLP;
       end;
     dbAppendField(MsgFile,fld);
 
-    new(hdp);                        { MIME-Typen einlesen }
+    hdp := AllocHeaderMem;                        { MIME-Typen einlesen }
     msgbox(46,3,'',x,y);
     wrt(x+3,y+1,'MIME-Nachrichtentypen einlesen ...     %');
     attrtxt(col.colmboxhigh);
@@ -504,7 +504,7 @@ var flp : dbFLP;
       end;
     dbClose(mbase);
     closebox;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
   end;
 
   procedure UserEbError;
@@ -901,6 +901,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/21 17:39:52  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.15  2000/07/09 08:35:14  mk
   - AnsiStrings Updates
 

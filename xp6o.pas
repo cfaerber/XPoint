@@ -263,7 +263,7 @@ begin
     end;
   rec:=dbRecno(mbase);
   new(hdp0);
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp0^,hds,true);
 
   if (hdp0^.wab<>'') and edit and modi then begin
@@ -452,7 +452,7 @@ begin
   xaufbau:=true;
 ende:
   FlushClose;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   dispose(hdp0);
   aufbau:=true;
 end;
@@ -689,7 +689,7 @@ label ende,again;
     mappcustomsel(xp3o.seluser,false);
     msetvfunc(testmausempf);
     maddstring(3,4,'Kommentar ',komm,43,255,'');
-    new(hdp); ReadHeader(hdp^,hds,false);
+    hdp := AllocHeaderMem; ReadHeader(hdp^,hds,false);
     mauswlbox:=pfadbox(true,hdp^.pfad);
     readmask(brk);
     enddialog;
@@ -815,7 +815,7 @@ begin
     end;
 
   oempf:=getres(600);          { 'Originalempfaenger' }
-  new(hdp);
+  hdp := AllocHeaderMem;
 
 again:
   dbReadN(mbase,mb_typ,ntyp);
@@ -1184,7 +1184,7 @@ begin
     dbReadN(mbase,mb_empfdatum,edat);
   dbReadN(mbase,mb_typ,ntyp);
   fn:=TempS(dbReadInt(mbase,'msgsize')+2048);
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   if archivtext and (ntyp<>'B') then begin
     assign(t,fn);
@@ -1327,6 +1327,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/07/21 17:39:55  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.28  2000/07/21 13:23:47  mk
   - Umstellung auf TStringList
 

@@ -427,7 +427,7 @@ begin
   if decmark then begin
     mlanz:=markanz;
     moment;
-    new(hdp);
+    hdp := AllocHeaderMem;
     sortmark;
     for i:=1 to mlanz do begin              { Liste der Nachrichten nach }
       marklist[i].recno:=marked^[i-1].recno;  { Datum sortieren            }
@@ -439,7 +439,7 @@ begin
       marklist[i].sortfld[fldSection]:=0;
       end;
     unsortmark;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     GetMsize;
     ReadSections;
     if ok then SortFor(fldSection);
@@ -531,6 +531,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/21 17:39:57  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.18  2000/07/16 16:52:29  mk
   JG:  UUE-Decoding auch bei mehreren Files in einer Nachricht moeglich
 

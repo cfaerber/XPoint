@@ -114,7 +114,7 @@ begin
   x:=wherex-3; y:=wherey;
   reset(t);
 {$IFNDEF Ver32 }
-  system.new(hdp);
+  system.hdp := AllocHeaderMem;
 {$ENDIF }
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiMsgID);
@@ -280,7 +280,7 @@ begin
         end;
     _era(tfn);
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -388,7 +388,7 @@ begin
     exit;
     end;
   MausBestPM:=false;
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   if hdp^.pfad='' then           { Pfad='' -> eigene Nachricht }
     MausBestPM:=true
@@ -837,6 +837,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/21 17:39:57  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.12  2000/07/09 08:35:19  mk
   - AnsiStrings Updates
 

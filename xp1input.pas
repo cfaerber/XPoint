@@ -390,7 +390,8 @@ end;
 
 
 procedure EditDate(x,y:byte; txt:atext; var d:datetimest; var brk:boolean);
-var width,height,i : byte;
+var
+  width,height,i : byte;
 begin
   width:=length(txt)+17; height:=3;
   if x=0 then getpos(width,height,x,y);
@@ -415,6 +416,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/07/21 17:39:52  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.13  2000/07/20 16:49:57  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

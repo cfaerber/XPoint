@@ -102,8 +102,7 @@ label ende;
       p   : byte;
   begin
     ProcessTICfile:=false;
-    new(hdp);
-    fillchar(hdp^,sizeof(hdp^),0);
+    hdp := AllocHeaderMem;
     assign(t2,fn);
     reset(t2);
     while not eof(t2) do begin
@@ -137,7 +136,7 @@ label ende;
         ProcessTICfile:=true;
         end;
       end;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
   end;
 
 begin

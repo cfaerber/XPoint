@@ -28,7 +28,11 @@ uses
   sysutils,xpcfg,dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
   databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
   resource,montage, xpglobal,
-  xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy, classes;
+  xp0,xp1,xp1o2,xp1input,xp1help,xp5,xpdatum,
+{$IFDEF XPEasy }
+  xpeasy,
+{$ENDIF }
+  classes;
 
 
 procedure zusatz_menue;
@@ -1069,6 +1073,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.62  2000/07/21 17:39:52  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.61  2000/07/21 13:14:09  hd
   - Fix: Strings in der Maske
   - Fix: Einige Datenbankzugriffe wegen AnsiString

@@ -447,7 +447,7 @@ type   textp  = ^text;
                   pointname : string;
                   username  : string;
                   _domain   : string;   { .. BOXEN.DB1 kopiert   }
-                  _fqdn     : string;   {16.01.00 HS}
+                  _fqdn     : string;
                   passwort  : string;
                   telefon   : string;
                   zerbid    : string;
@@ -1401,6 +1401,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.77  2000/07/21 17:39:51  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.76  2000/07/20 18:11:55  mk
   - unbekannte Konfigurationszeilen werden in einer TStringList gespeichert
 

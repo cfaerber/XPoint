@@ -198,7 +198,7 @@ var f      : file;
 begin
   assign(f,puffer);
   if not existf(f) then exit;
-  new(hdp);
+  hdp := AllocHeaderMem;
   zconnect:=ntZConnect(ntBoxNetztyp(box));
   reset(f,1);
   adr:=0;
@@ -220,7 +220,7 @@ begin
     end;
   close(f);
   dbSetIndex(mbase,mi);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   inc(outemsgs,TestPuffer(left(puffer,cpos('.',puffer))+'.EPP',false,ldummy));
 end;
 
@@ -795,6 +795,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/07/21 17:39:56  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.20  2000/07/09 08:35:19  mk
   - AnsiStrings Updates
 

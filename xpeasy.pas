@@ -68,6 +68,7 @@ function NeuBenutzergruss:boolean;
     begin
       maddtext(3,i+1,getres2(14001,i),col.coldialog);
     end;
+
     maddstring(3,3+msglines,getres2(252,103),postadresse,47,PostadrLen,'');   { 'Postanschrift ' }
     msetvfunc(TestPostanschrift);
     maddstring(3,4+msglines,getres2(252,104),telefonnr,47,TeleLen,'>VFBQP +-0123456789');
@@ -83,6 +84,9 @@ function NeuBenutzergruss:boolean;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/21 17:39:57  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.8  2000/07/12 14:43:47  mk
   - einige ^AnsiString in einen normalen String umgewandelt
   - AnsiString-Fixes fuer die Datenbank

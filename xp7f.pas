@@ -748,7 +748,7 @@ begin
   gotoxy(rdispx,rdispy);
   attrtxt(col.colselbox);
   if s[2]='C' then begin                { Crash-Empf„ngerliste anzeigen }
-    new(hdp);
+    hdp := AllocHeaderMem;
     assign(f,CrashFile(copy(s,6,18)));
     reset(f,1);
     if ioresult=0 then with hdp^ do begin
@@ -781,7 +781,7 @@ begin
       if not sh then write(', ...');
       mon;
       end;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     end;
   moff; write(sp(72-wherex)); mon;
   if UpCase(s[3])='R' then begin
@@ -945,6 +945,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/21 17:39:56  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.22  2000/07/12 16:49:42  ma
   - Comminit-String-Konfigurationseintrag hinzugefuegt
 

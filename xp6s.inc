@@ -566,7 +566,7 @@ begin
   assign(f2,temppath+uncryptedfile); rewrite(f2,1);
   assign(f,fn);
   fm_ro; reset(f,1); fm_rw;
-  new(hdp);
+  hdp := AllocHeaderMem;
   makeheader(ntZConnect(hd.netztyp),f,0,0,hds,hdp^,ok,false);
   oemp:=hdp^.empfaenger;
   if hdp^.netztyp=nt_ZConnect then with hdp^ do begin
@@ -583,7 +583,7 @@ begin
   rps(s,'$INFILE',temppath+uncryptedfile);
   rps(s,'$OUTFILE',temppath+cryptedfile);
   rps(s,'$USER',oemp);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   shell(s,500,3);                     { Nachricht codieren }
   if exist(temppath+uncryptedfile) then
     _era(temppath+uncryptedfile);
@@ -786,7 +786,7 @@ var hdp : headerp;
     hds : longint;
     p   : byte;
 begin
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   with hdp^ do begin
     _bezug:=msgid;
@@ -813,7 +813,7 @@ procedure get_origbox;
 var hdp : headerp;
     hds : longint;
 begin
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),hdp^.pfad);
   dispose(hdp);
@@ -1144,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.25  2000/07/21 17:39:56  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
   Revision 1.24  2000/07/20 16:49:59  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 
