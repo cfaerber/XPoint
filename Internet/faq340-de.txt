@@ -2,4 +2,4 @@ FAQ zu OpenXP 3.40
 
 Wie gehe ich mit den Usergruppen im Adreßbuch um?
 (eintragen...)
-<br><font size=-2>2001-01-x</font>
+<br><small>2001-01-x</small>

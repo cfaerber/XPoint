@@ -82,20 +82,20 @@ PPP netcall type
 x
 x
 
-32 Bit<br><font size=-2>praktisch alle Limits entschärft</font>
-32 bit<br><font size=-2>nearly all limits removed</font>
+32 Bit<br><small>praktisch alle Limits entschärft</small>
+32 bit<br><small>nearly all limits removed</small>
 -
 -
 x
 
-Bildschirmgröße frei wählbar<br><font size=-2>unter Win32/Linux</font>
-Screen size configurable freely<br><font size=-2>Win32/Linux only</font>
+Bildschirmgröße frei wählbar<br><small>unter Win32/Linux</small>
+Screen size configurable freely<br><small>Win32/Linux only</small>
 -
 -
 x
 
-Integrierter NNTP/SMTP/POP3-Support<br><font size=-2>in Arbeit</font>
-Integrated NNTP/SMTP/POP3 support<br><font size=-2>currently in progress</font>
+Integrierter NNTP/SMTP/POP3-Support<br><small>in Arbeit</small>
+Integrated NNTP/SMTP/POP3 support<br><small>currently in progress</small>
 -
 -
 x
@@ -106,8 +106,8 @@ Integrated ZFido/UUZ
 -
 x
 
-Verbesserter Netcall-Support<br><font size=-2>Netcall-over-IP/nativer Schnittstellenzugriff</font>
-Improved netcall support<br><font size=-2>Netcall over IP/native serial port support</font>
+Verbesserter Netcall-Support<br><small>Netcall-over-IP/nativer Schnittstellenzugriff</small>
+Improved netcall support<br><small>Netcall over IP/native serial port support</small>
 -
 -
 x

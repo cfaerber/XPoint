@@ -1,9 +1,23 @@
 Hinweise für Entwickler
 
 Infos zu CVS
-<ul><li>Logeintr&auml;ge: Bitte darauf achten, da&szlig; die Logs auch im Kontext
+<ul>
+<li>Logeintr&auml;ge: Bitte darauf achten, da&szlig; die Logs auch im Kontext
 Sinn ergeben. Also lieber mehrere einzelne Commits als ein gro&szlig;es, bei dem
-man dann aber f&uuml;r die einzelnen Dateien die Logeintr&auml;ge vergessen kann.</ul>
+man dann aber f&uuml;r die einzelnen Dateien die Logeintr&auml;ge vergessen kann.
+Das CVS-Log sollte eine Kurzzusammenfassung des Diffs sein, da&szlig; die
+&Auml;nderung widerspiegelt.</li>
+<li>cvs diff -u -r (rev1) -r (rev2) (datei) gibt ein Diff aus, in dem steht, welche
+&Auml;nderungen von Revision1 zu Revision2 der Datei vorgenommen wurden; ohne
+Revisionsangaben werden die &Auml;nderungen der lokalen Dateiversion gegen&uuml;ber
+dem Repository ausgegeben; bei einem Commit ist das also die Basis f&uuml;r den
+Logeintrag.</li>
+<li>Es ist guter Stil, nicht-triviale &Auml;nderungen nicht einfach einzuchecken,
+sondern erst per Posten des Diffs in die Mailingliste sicherzustellen, da&szlig;
+die &Auml;nderung nichts kaputtmacht und auch optimal ist (letzteres ist nicht
+ganz einfach sicherzustellen, da es z.B. viele Hilfsfunktionen gibt, die kleine
+Arbeiten abnehmen k&ouml;nnen).</li>
+</ul>
 
 Allgemeines
 <ul><li>Dateien, die man sich kurz ansehen sollte: XPDefine.inc (f&uuml;r $IFDEFs),
@@ -55,6 +69,3 @@ L&auml;ngenbeschr&auml;nkung von Strings der Art var s: String[3] (unn&ouml;tig,
 da eh' dynamisch). Falls man mittels String[Zeichen]:=Ch einen String ver&auml;ndern
 will, darauf achten, <i>vorher</i> mittels SetLength eine ausreichende L&auml;nge
 angegeben zu haben.
-
-OOP
-(Unterschied Object zu Class, Kapselung mittels Properties, implizite Verpointerung...)

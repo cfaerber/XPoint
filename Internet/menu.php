@@ -18,7 +18,7 @@ $Menu = array(
 		"en" 	=> "FAQ",
 		"sub"	=> false),
 	3 => array("de"	=> "Allgemein",
-		"en" 	=> "general",
+		"en" 	=> "General",
 		"url"	=> $indexname . "?news=faq-de.txt&genindex=1",
 		"sub"	=> true),
 	4 => array("de"	=> "3.40",
@@ -71,7 +71,7 @@ $Menu = array(
 		"sub"	=> true),
 	16 => array("de"	=> "Links",
 		"en" 	=> "Links",
-		"url"	=> "links-" .$language . ".html?file=links-" . $language . ".html",
+		"url"	=> $indexname . "?file=links-" . $language . ".html",
 		"sub"	=> false));
 
 
