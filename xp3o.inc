@@ -818,7 +818,7 @@ begin
           dbSeek(ubase,uiName,ustr(absender));
           if not dbFound then begin          { neuen User anlegen }
             if adrok(absender) then begin
-              mwrt(29,wherey,forms(absender,22));
+              { mwrt(29,wherey,forms(absender,22)); }
               dbAppend(ubase);
               dbWrite(ubase,'username',absender);
               pb:=pollbox_str(zconnect,true);
@@ -1153,6 +1153,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21  2000/06/17 13:09:09  hd
+  - Fix: Puffer ko[emailadresse]
+
   Revision 1.20  2000/06/04 16:57:25  sv
   - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
     (RFC/ZConnect)
