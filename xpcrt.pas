@@ -168,6 +168,7 @@ begin
     case Scancode of
     // Function keys
     $57..$58: inc(Scancode, $2E); // F11 and F12
+    28: ScanCode := 13;
   end;
   Debug.DebugLog('xpcrt', Format('Result: %d ', [ScanCode]), DLTrace);
   Result := ScanCode;
@@ -215,15 +216,17 @@ begin
     Debug.DebugLog('xpcrt', Format('KeyPressed: %d %d %d %d', [wVirtualKeyCode, wVirtualScanCode, Ord(AsciiChar), Ord(UnicodeChar)]), DLTrace);
 
                       if (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = 0) or
-                         (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState = 2)
-//                         (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = $E0)  or
-//                         (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState and (LEFT_ALT_PRESSED or ENHANCED_KEY) > 0)
-//                         (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState = LEFT_ALT_PRESSED)
+                         (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState and (LEFT_ALT_PRESSED or ENHANCED_KEY) > 0)
                       then
                         begin
+                          if Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualScanCode = $1C then // Num-Block-Enter
+                            ScanCode := #13
+                          else
+                          begin
                            SpecialKey := TRUE;
                            ScanCode := Chr(RemapScanCode(Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualScanCode, Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState,
                                            Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.wVirtualKeyCode));
+                          end;             
                         end
                       else
                         begin
@@ -300,10 +303,14 @@ end;
 
 initialization
   do_initialization;
-end.
 
 {
   $Log$
+  Revision 1.14  2001/09/19 20:41:33  mk
+  - fixed checkin 1.9 from ma: special handling for cursor keys in Win98 is
+    now included again
+  - added special handing for Return Key on Num Block
+
   Revision 1.13  2001/09/17 16:29:17  cl
   - mouse support for ncurses
   - fixes for xpcurses, esp. wrt forwardkeys handling
@@ -354,3 +361,5 @@ end.
   - added xpcrt: contains crt compatible Win32 keyboard handling
   - changed crt to xpcrt in uses
 }
+end.
+
