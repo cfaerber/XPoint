@@ -1,5 +1,9 @@
 Die letzten News von www.openxp.de...
 
+31. Dezember 2001: OpenXP/32 v3.7.6 Beta verfügbar
+In den letzten beiden Monaten wurden hauptsächlich Fehler der letzten Beta-Version
+beseitigt und ein paar kleinere Features eingebaut. Zeit für eine neue Beta...
+
 21. Oktober 2001: OpenXP/32 v3.7.4 Beta verfügbar
 Nach über einem Jahr der Snapshots ist es soweit: Die 32-Bit-Version von OpenXP geht
 in eine neue Beta-Version.
