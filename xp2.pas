@@ -1099,6 +1099,10 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.142.2.9  2003/10/08 20:54:11  cl
+  - fixed autoconf for stable branch
+
+
   Revision 1.142.2.8  2003/09/30 15:01:55  mk
   - added /dlmax as shortcut for /dl:default=10
 
