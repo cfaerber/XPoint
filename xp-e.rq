@@ -999,7 +999,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 22   Binary
 23   FAttach
 24   Multipart
-25   Find MID-Parts 
+25   Find MID-Parts
 -
 443  One moment please...     %
 444  No marked messages found
@@ -1225,10 +1225,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    or cause trouble if you use this XP-Version in public.
 5    If you use this version, you are fully responsible for all damage,
 6    you may cause with it. If you don't agree with this terms,
-7    please use a official release-version of Crosspoint. 
+7    please use a official release-version of Crosspoint.
 8    If you have questions or suggestions to the project,
 9    please apply to the XP-support-forums, esp. the usenet-newsgroup
-10   de.comm.software.crosspoint and the official OpenXP Homepage 
+10   de.comm.software.crosspoint and the official OpenXP Homepage
 11   http://www.openxp.de.
 12
 13  Choose "Continue", to work with this betaversion.
@@ -2961,6 +2961,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 29 %s is no fido server!
 30 Warning - illegal characters in point name: %s
 33 "rz" and "sz" must be installed!
+34 Duplicate MIME-Types or File-Extensions are not allowed!
 
 +  11000
 1  unknown command

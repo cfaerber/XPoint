@@ -1137,45 +1137,55 @@ var d         : DB;
     typ:=compmimetyp(typ);
   end;
 
-  procedure NeuerMimetyp;
+  procedure EditMimetyp(isNew: Boolean);
   var typ  : string[30];
       ext  : string[5];
       prog : string[ViewprogLen];
       brk  : boolean;
+      isValid: boolean;
   begin
-    typ:=''; ext:=''; prog:='';
+    if isNew then begin
+      typ:= ''; ext:= ''; prog:= '';
+    end else
+    begin
+      dbGo(d,drec[p]);
+      dbReadN(d,mimeb_typ,typ);
+      dbReadN(d,mimeb_extension,ext);
+      dbReadN(d,mimeb_programm,prog);
+    end;
     readmimetyp(false,typ,ext,prog,brk);
-    if not brk and (typ<>'*/*') then begin
-      dbAppend(d);
-      dbWriteN(d,mimeb_typ,typ);
-      dbWriteN(d,mimeb_extension,ext);
-      dbWriteN(d,mimeb_programm,prog);
-      dbFlushClose(d);
-      dbGo(d,drec[1]);
-      dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
-      aufbau:=true;
+    if not brk and (typ<>'*/*') then
+    begin
+      {  check for duplicate entries }
+      isValid := true;
+      if typ <> '' then
+      begin
+        dbSeek(mimebase,mtiTyp,UStr(typ));
+        isValid := not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+            stricmp(typ,dbReadStr(mimebase,'typ')));
       end;
-  end;
+      if Ext <> '' then
+      begin
+        dbSeek(mimebase,mtiExt,UStr(Ext));
+        isValid := isValid and not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+            stricmp(ext,dbReadStr(mimebase,'extension')));
+      end;
 
-  procedure EditMimetyp;
-  var typ  : string[30];
-      ext  : string[5];
-      prog : string[ViewprogLen];
-      brk  : boolean;
-  begin
-    dbGo(d,drec[p]);
-    dbReadN(d,mimeb_typ,typ);
-    dbReadN(d,mimeb_extension,ext);
-    dbReadN(d,mimeb_programm,prog);
-    readmimetyp(true,typ,ext,prog,brk);
-    if not brk and (typ<>'*/*') then begin
-      dbWriteN(d,mimeb_typ,typ);
-      dbWriteN(d,mimeb_extension,ext);
-      dbWriteN(d,mimeb_programm,prog);
-      dbFlushClose(d);
-      dbGo(d,drec[1]);
-      aufbau:=true;
-      end;
+      if isValid then
+      begin
+        if isNew then
+          dbAppend(d);
+        dbWriteN(d,mimeb_typ,typ);
+        dbWriteN(d,mimeb_extension,ext);
+        dbWriteN(d,mimeb_programm,prog);
+        dbFlushClose(d);
+        dbGo(d,drec[1]);
+        if isNew then
+          dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+        aufbau:=true;
+      end else
+        RFehler(934); { Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt! }
+    end;
   end;
 
   procedure DelMimetyp;
@@ -1407,9 +1417,9 @@ begin
                 3 : if not empty then EditPseudo;
               end;
           5 : case rb of
-                1 : NeuerMimetyp;
+                1 : EditMimetyp(true);
                 2 : if not empty then DelMimetyp;
-                3 : if not empty then EditMimetyp;
+                3 : if not empty then EditMimetyp(false);
               end;
         end;
     if not empty and (not edit or (rb<0)) then begin
@@ -1725,6 +1735,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.3  2000/10/18 23:54:45  mk
+  - Test auf doppelte MIME-Typen (merged aus 3.30)
+
   Revision 1.9.2.2  2000/07/15 18:43:45  mk
   ML: - Nilpointerzugriff gefixt
 

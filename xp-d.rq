@@ -3004,6 +3004,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 30 Warnung: Ungltige Zeichen im Pointname: %s
 31 Standardeintrag kann nicht gel”scht werden.
 32 Es muá ein MIME-Typ oder eine Dateierweiterung angegeben werden!
+34 Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
 
 +  11000
 1  unbekannter Befehl
