@@ -1307,6 +1307,7 @@ begin
   assign(t,ownpath+CfgFile);
   if FileExists(OwnPath+CfgFile) then
   begin
+    XPFirstStart := False;
     settextbuf(t,buf);
     reset(t);
     while not eof(t) do
@@ -1630,6 +1631,7 @@ begin
 //  if RightStr(date,4)<'1996' then ZC_ISO:=false;
     end
   else begin
+    XPFirstStart := true;
     SetDefaultHeader;
     SaveConfig;
     end;
@@ -1702,6 +1704,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.8  2003/08/25 18:01:31  mk
+  - added XPFirstStart again and fixed incorrect RTA Message at first start
+
   Revision 1.144.2.7  2003/08/11 22:28:21  mk
   - removed Edit/netze/verschiedens/mime in news
 

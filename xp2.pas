@@ -43,6 +43,9 @@ uses
   xpglobal,debug,xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,fidoglob,
   classes, osdepend;
 
+var
+  XPFirstStart: Boolean;
+
 procedure zusatz_menue;
 procedure setaltfkeys;
 
@@ -1095,6 +1098,9 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.142.2.7  2003/08/25 18:01:31  mk
+  - added XPFirstStart again and fixed incorrect RTA Message at first start
+
   Revision 1.142.2.6  2003/04/25 20:52:23  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view

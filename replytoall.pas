@@ -268,8 +268,8 @@ var x,y,i       : Integer;
     s           :string;
 begin
   if (ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] + ntUsed[nt_Client] +
-    ntUsed[nt_NNTP] + ntUsed[nt_POP3] + ntUsed[nt_IMAP]> 0) and (RTAMode and 128 = 128) {and
-     (not XPFirstStart) } then
+    ntUsed[nt_NNTP] + ntUsed[nt_POP3] + ntUsed[nt_IMAP]> 0) and (RTAMode and 128 = 128) and
+     (not XPFirstStart)  then
   begin
     msglines := ival (getres2 (2750, 0));
     msgbox (64, msglines + 5, '', x, y);
@@ -302,8 +302,8 @@ begin
       saveConfig
     else
       globalModified;
-  end;{ else }
-{  if XPFirstStart then RTAMode := 13; }
+  end else
+  if XPFirstStart then RTAMode := 13; 
 end;
 
 function IsUserUnbekannt (const user :string) :boolean;
@@ -985,6 +985,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29.2.4  2003/08/25 18:01:31  mk
+  - added XPFirstStart again and fixed incorrect RTA Message at first start
+
   Revision 1.29.2.3  2003/03/26 09:56:36  mk
   - fixed checklist: while cutting realname from addresses, the last
     space was not cut
