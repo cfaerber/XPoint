@@ -134,8 +134,8 @@ begin
     // Diese Žnderungen speichern wir auch in der Config ab
     ConfigScreenLines := ScreenLines;
     ConfigScreenWidth := ScreenWidth;
-    SetScreenSize;
-    lines(screenlines,fnkeylines);
+    lines(fnkeylines);
+    // Setzt auch die Zeilenzahl neu
     showscreen(false);
     XPhilite:=0;
     showlastkeys;
@@ -595,6 +595,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24  2000/09/30 16:42:56  mk
+  - CAZ fuer DOS32
+
   Revision 1.23  2000/07/31 15:07:24  mk
   - SetScreenSize wird nach Aendern der Bildschirmgroesse aufgerufen
 
