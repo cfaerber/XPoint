@@ -1,12 +1,21 @@
-{ ---------------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                      }
-{                                                                        }
-{ Urversion: Hinrich Donner <hd@tiro.de>                                 }
-{                                                                        }
-{ (c) 2000 OpenXP Team, http://www.openxp.de                             }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.            }
-{ ---------------------------------------------------------------------- }
-{ $Id$ }
+{  $Id$
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+  
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+   General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this software; see the file gpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   This software is part of the OpenXP project (www.openxp.de).
+}
 
 {$I XPDEFINE.INC }
 
@@ -490,6 +499,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/07/21 08:20:23  hd
+  - Umstellung auf die GPL
+
   Revision 1.5  2000/07/07 11:00:33  hd
   - AnsiString
   - Fix: JumpSection/JumpKey in xpcfg.pas, Zugriffsverletzung
