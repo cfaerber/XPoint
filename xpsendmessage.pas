@@ -1487,7 +1487,7 @@ fromstart:
         case n of     { Ansonsten eins zurueckzaehlen fuer alte Keys }
           1..4: ;               { Ja, Nein, Intern, Spezial     }
           5..7: ;               { Betreff, Box, Code            }
-          8:    n:=23;          { Anhänge                       }
+          8:   if netztyp = nt_fido then n := 9 else n:=23; // Anhänge oder Text
           9:    ;               { Text                          }
         end;
 
@@ -2514,6 +2514,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.22  2004/01/18 14:44:07  mk
+  - fixed Bug #845234: Fido 'T'ext im Absendefenster geht nicht
+
   Revision 1.48.2.21  2003/09/16 13:06:58  mk
   - fixed #801901: Sendefenster öffentl. Nachricht FIDO
 
