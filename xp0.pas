@@ -806,8 +806,8 @@ const
        ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
        ParAutost  : string[12] = '';   { /autostart: }
-       ParGebdat  : string[12] = 'gebuehr.dat';  { GebÅhrenzonenliste }
-       ParGebdat2 : string[12] = 'tarife.dat';   { 2. Teil der " }
+       ParGebdat  : string[12] = 'GEBUEHR.DAT';  { GebÅhrenzonenliste }
+       ParGebdat2 : string[12] = 'TARIFE.DAT';   { 2. Teil der " }
        ParAV      : string = '';      { Archiv-Viewer }
        ParLanguage: string[4] = '';    { /l: Sprache }
        ParFontfile: string = '';      { /f: Fontdatei laden }
@@ -1236,6 +1236,9 @@ end.
 
 {
   $Log$
+  Revision 1.54.2.59  2003/01/11 14:23:38  my
+  MY:- 'GEBUEHR.DAT' und 'TARIFE.DAT' in Gro·schreibung (wg. LFN-Leichen)
+
   Revision 1.54.2.58  2003/01/10 21:55:36  my
   MY:- Log- und Kommentarkosmetik
 
