@@ -167,7 +167,6 @@ begin
   if FConnected then
     DisConnect;
   Host.Clear;
-  FPort:= 0;
   inherited destroy;
 end;
 
@@ -218,6 +217,7 @@ procedure TSocketNetcall.DisConnect;
 begin
   if FConnected then begin
     ShutDown(FHandle, 2);
+    FConnected := false;
   end;
 end;
 
@@ -330,6 +330,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/08/01 18:07:52  mk
+  - Crash nach Liste holen beseitigt
+
   Revision 1.8  2000/08/01 17:54:26  mk
   - Oops, ein kleiner Bug weniger
   - Lauft jetzt unter Linux und Win32
