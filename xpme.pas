@@ -14,7 +14,7 @@ uses
 {$IFDEF BP }
   xdelay,
 {$ENDIF }
-  winxp, crt,typeform,fileio,keys,maus2,inout,resource,video, xpglobal;
+  winxp, crt,typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
 
 const menus      = 99;
       maxhidden  = 500;
@@ -142,12 +142,14 @@ begin
   attrtxt(7);
   clrscr;
   inc(windmax,$100);
+{$IFDEF BP }
   setbackintensity(true);
+{$ENDIF }
   attrtxt(col.colmenu[0]);
-  write(sp(80));
+  wrt2(sp(80));
   attrtxt(col.colback);
   for i:=1 to 24 do
-    write(dup(80,'±'));
+    wrt2(dup(80,'±'));
   attrtxt(col.colutility);
   forcecolor:=true;
   rahmen1(38,78,18,23,'');
@@ -337,20 +339,20 @@ begin
         if nr=i then attrtxt(col.colmenuinv[0])
         else attrtxt(col.colmenu[0]);
         s:=mstr;
-        write(' ');
+        wrt2(' ');
         if hpos>1 then
-          write(left(s,hpos-1));
+          Wrt2(left(s,hpos-1));
         if i=nr then attrtxt(col.colmenuinvhi[0])
         else attrtxt(col.colmenuhigh[0]);
-        write(s[hpos]);
+        wrt2(s[hpos]);
         if i=nr then attrtxt(col.colmenuinv[0])
         else attrtxt(col.colmenu[0]);
-        write(copy(s,hpos+1,20),' ');
+        Wrt2(copy(s,hpos+1,20) + ' ');
         end
       else begin
         if nr=i then attrtxt(col.colmenuseldis[0])
         else attrtxt(col.colmenudis[0]);
-        write(' ',mstr,' ');
+        Wrt2(' '+mstr+' ');
         end;
       end;
 end;
@@ -405,10 +407,10 @@ var ma    : map;
           wrt(x+1,y+i,check+left(s,hp-1));
           if i<>p then attrtxt(col.colmenuhigh[menulevel])
           else attrtxt(col.colmenuinvhi[menulevel]);
-          write(s[hp]);
+          wrt2(s[hp]);
           if i<>p then attrtxt(col.colmenu[menulevel])
           else attrtxt(col.colmenuinv[menulevel]);
-          write(forms(copy(s,hp+1,40),ml-hp-1));
+          wrt2(forms(copy(s,hp+1,40),ml-hp-1));
           end;
         end;
       end;
@@ -694,6 +696,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/03/04 22:41:37  mk
+  LocalScreen fuer xpme komplett implementiert
+
   Revision 1.7  2000/03/04 19:33:37  mk
   - Video.pas und inout.pas komplett aufgeraeumt
 

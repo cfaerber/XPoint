@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 (***********************************************************)
 (*                                                         *)
@@ -28,7 +29,7 @@ UNIT inout;
 
 INTERFACE
 
-uses   xpglobal, dos,crt,keys,typeform,fileio,mouse;
+uses   xpglobal, dos, crt,keys,typeform,fileio,mouse, xp0;
 
 const  lastkey   : taste = '';
 
@@ -167,7 +168,7 @@ Procedure initscs;                              { Screen-Saver init       }
 
 procedure IoVideoInit;                       { nach Modewechsel aufrufen! }
 Procedure window(l,o,r,u:byte);              { Statt CRT.WINDOW         }
-Procedure CurLen(a,e:Integer);               { Cursorbereich festlegen  }
+Procedure CurLen(a,e:byte);               { Cursorbereich festlegen  }
 Procedure Cursor(t:curtype);                 { Cursorschalter setzen    }
 Procedure GetCur(var a,e,x,y:byte);          { Cursorbereich abfragen   }
 Procedure SaveCursor;                        { Cursor retten            }
@@ -262,7 +263,7 @@ procedure mdelay(msec:word);
 
 IMPLEMENTATION
 
-uses   xp0,maus2, winxp;
+uses   maus2, winxp;
 
 const  maxsave     = 50;  { max. fÅr savecursor }
 
@@ -316,17 +317,15 @@ begin
 end;
 
 
-Procedure CurLen(a,e:Integer);
-var regs : registers;
-begin
-  with regs do begin
-    ah:=1;
-    ch:=a;
-    cl:=e;
-    intr($10,regs);
-  end;
+Procedure CurLen(a,e:byte); assembler;
+asm
+{$IFDEF BP }
+  mov ah, 1
+  mov ch, a
+  mov cl, e
+  int $10
+{$ENDIF }
 end;
-
 
 Procedure Cursor(t:curtype);
 begin
@@ -340,16 +339,19 @@ end;
 
 
 Procedure GetCur(var a,e,x,y:byte);
-
-var regs : registers;
-
 begin
-  with regs do begin
-    ah:=3; bh:=0;
-    intr($10,regs);
-    a:=ch and $7f; e:=cl and $7f;
-    end;
-  x:=wherex; y:=wherey;
+  asm
+{$IFDEF BP }
+        mov ah, 3
+        mov bh, 0
+        int $10
+        and ch, $7f
+        mov byte ptr a, ch
+        and cl, $7f
+        mov byte ptr e, cl
+{$ENDIF }
+  end;
+  x :=wherex; y:=wherey;
 end;
 
 
@@ -1722,3 +1724,9 @@ begin
   fillchar(zaehlproc,sizeof(zaehlproc),0);
   mwl:=1; mwo:=1; mwr:=80; mwu:=25;
 end.
+{
+  $Log$
+  Revision 1.9  2000/03/04 22:41:37  mk
+  LocalScreen fuer xpme komplett implementiert
+
+}

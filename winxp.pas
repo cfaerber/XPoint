@@ -22,6 +22,8 @@
 {$ENDIF }
 
 unit winxp;
+{.$undef bp}
+{.$define ver32}
 
 {  ==========================  Interface-Teil  ==========================  }
 
@@ -69,6 +71,8 @@ procedure wpop;
 
 { Schreiben eines Strings mit Update der Cursor-Posititon }
 procedure Wrt(x,y:word; const s:string);
+{ Schreiben eines Strings, wie Writeln }
+procedure Wrt2(const s:string);
 { Schreiben eines Strings ohne Update der Cursor-Position }
 procedure FWrt(x,y:word; const s:string);
 
@@ -92,9 +96,8 @@ type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
     des Fensterinhaltes nicht auf API-Funktionen zurÅckgegriffen werden mu·.
     Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
   TLocalScreen = array[0..$1fff] of char;
-  PLocalScreen = ^TLocalScreen;
 var
-  LocalScreen: PLocalScreen;
+  LocalScreen: ^TLocalScreen;
 {$ENDIF }
 
 var pullw   : array[1..maxpull] of record
@@ -175,12 +178,13 @@ asm
          stosw
 end;
 {$ELSE }
-{ !! Attr noch auswerten !! }
 procedure qrahmen(l,r,o,u:word; typ,attr:byte; clr:boolean);
 var
   i: integer;
   s: String;
+  SaveAttr: Byte;
 begin
+  SaveAttr := TextAttr; TextAttr := Attr;
   wrt(l, o, rchar[typ,1] + Dup(r-l-1, rchar[typ, 2]) + rchar[typ,3]);
   wrt(l, u, rchar[typ,5] + Dup(r-l-1, rchar[typ, 2]) + rchar[typ,6]);
 
@@ -194,6 +198,7 @@ begin
     wrt(l, i, rchar[typ, 4]);
     wrt(r, i, rchar[typ, 4]);
   end;
+  TextAttr := SaveAttr;
 end;
 {$ENDIF }
 
@@ -262,12 +267,12 @@ begin
   textattr := shadowcol;
   for i := ob to un do
   begin
-    c := LocalScreen^[(re+i*zpz)*2];
+    c := Char(LocalScreen^[(re+i*zpz)*2+i*2]);
     fwrt(re, i, c);
   end;
   for i := li to re do
   begin
-    c := LocalScreen^[(i+un*zpz)*2];
+    c := LocalScreen^[(i+un*zpz)*2+i*2];
     fwrt(i, un, c);
   end;
   textattr := save;
@@ -325,7 +330,9 @@ end;
 
 procedure Wrt(x,y:word; const s:string);
 begin
+{$IFDEF BP }
   GotoXY(x+Length(s), y);
+{$ENDIF }
   FWrt(x, y, s);
 end;
 
@@ -362,16 +369,32 @@ begin
   GotoXY(x, y);
   Write(s);
   { LocalScreen Åbernimmt die énderungen }
-  Count := (x+y*zpz)*2;
+  Count := ((x-1)+(y-1)*zpz)*2;
   if s <> '' then
-    for i := 1 to Length(s) do
+    for i := 0 to Length(s)-1 do
     begin
-      LocalScreen^[Count+i] := s[i];
-      LocalScreen^[Count+i+1] := Char(TextAttr);
+      LocalScreen^[Count+i*2] := s[i+1];
+      LocalScreen^[Count+i*2+1] := Char(TextAttr);
     end;
 end;
 {$ENDIF }
 
+procedure Wrt2(const s:string);
+var
+  i, Count: Integer;
+begin
+{$IFDEF Ver32 }
+  { LocalScreen Åbernimmt die énderungen }
+  Count := ((Wherex-1)+(Wherey-1)*zpz)*2;
+  if s <> '' then
+    for i := 0 to Length(s)-1 do
+    begin
+      LocalScreen^[Count+i*2] := s[i+1];
+      LocalScreen^[Count+i*2+1] := Char(TextAttr);
+    end;
+{$ENDIF }
+  Write(s);
+end;
 { attr1 = Rahmen/Background; attr2 = Kopf }
 
 procedure explode(l,r,o,u,typ,attr1,attr2:byte; msec:word; txt:string);
@@ -530,7 +553,7 @@ end;
 Procedure wrest(handle:word);
 var i : byte;
 {$IFDEF Ver32 }
-  j: integer;
+  j, Offset: integer;
 {$ENDIF }
 begin
   normwin;
@@ -541,10 +564,16 @@ begin
       Fastmove(savemem^[(i-o+1)*wi],mem[base:i*zpz*2+(l-1)*2],wi);
 {$ELSE }
       begin
+        { in den lokalen Screen kopieren }
         Fastmove(savemem^[(i-o+1)*wi],LocalScreen^[i*zpz*2+(l-1)*2],wi);
-        for j := 0 to wi div 2-1 do
+        { Offset nur einmal berechnen, beschleunigt das ganze etwas }
+        Offset := (i-o+1)*wi;
+        GotoXY(l, i+1);
+        for j := 0 to wi div 2 - 1 do
         begin
-          GotoXY(l+j, i+1); Write(savemem^[(i-o+1)*wi+j]);
+          TextAttr := savemem^[Offset+1];
+          Write(Char(Savemem^[Offset]));
+          Inc(Offset, 2);
         end;
       end;
 {$ENDIF}
@@ -808,11 +837,14 @@ begin
   warrcol:=7;
   selp:=seldummy;
 {$IFDEF Ver32 }
-  GetMem(LocalScreen, SizeOf(LocalScreen));
+  GetMem(LocalScreen, SizeOf(LocalScreen^));
 {$ENDIF }
 end.
 {
   $Log$
+  Revision 1.8  2000/03/04 22:41:37  mk
+  LocalScreen fuer xpme komplett implementiert
+
   Revision 1.7  2000/03/04 14:53:49  mk
   Zeichenausgabe geaendert und Winxp portiert
 

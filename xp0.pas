@@ -17,7 +17,7 @@ unit xp0;
 
 interface
 
-uses   dos,typeform,keys,database, xpglobal;
+uses   dos,typeform,keys,xpglobal;
 
 
 { Die folgenden drei Konstanten mÅssen Sie ergÑnzen, bevor Sie      }
@@ -1074,6 +1074,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.11  2000/03/04 22:41:37  mk
+  LocalScreen fuer xpme komplett implementiert
+
   Revision 1.10  2000/03/01 23:49:02  rb
   Rechenzeitfreigabe komplett Åberarbeitet
 
