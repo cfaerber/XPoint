@@ -1090,7 +1090,7 @@ var d         : DB;
     username  : string[30];
     pointname : string[25];
     domain    : string[60];
-    email     : string[80];
+    email     : string[eAdrLen];
     aliaspt   : boolean;
 begin
   dbOpen(d,BoxenFile,1);
@@ -1104,8 +1104,8 @@ begin
     dbRead (d, 'domain', domain);
     dbRead (d, 'email', email);
     case netztyp of
-      nt_UUCP,
-      nt_Client  : getBoxAdresse:=iifs(email<>'', email, username + '@' +
+      nt_Client  : getBoxAdresse:=email;
+      nt_UUCP    : getBoxAdresse:=iifs(email<>'', email, username + '@' +
                                   iifs (aliaspt, box + ntServerDomain(box),
                                                  pointname + domain));
       nt_Maus    : getBoxAdresse:=username + '@' + box;
@@ -1520,6 +1520,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.14  2002/03/08 23:00:29  my
+  MY:- Routine zum Ermitteln der eigenen Adresse bei Cancel- und
+       Supersedes-Nachrichten fÅr RFC/Client sauberer gestaltet.
+
   Revision 1.21.2.13  2001/12/20 15:04:29  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
