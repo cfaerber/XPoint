@@ -512,6 +512,7 @@ var size   : longint;
       p:=length(reads);                      { rtrim, falls kein Leer-Quote }
       while (p>0) and (reads[p]=' ') do dec(p);
       s:=LeftStr(reads,p);
+      if (leftStr(s,11)=' * Origin: ') or (leftStr(s,4)='--- ') or (s='---') then s[2]:='+';
       if not iso1 and ConvIso and (s<>'') then begin
         convstr:= s;
         ISO_conv(convstr[1],length(convstr));            { ISO-Konvertierung }
@@ -1063,6 +1064,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48  2000/10/26 13:24:53  mk
+  RB:- Tearline und Origin beim Quoten von Echomail verfremden
+
   Revision 1.47  2000/10/26 12:06:32  mk
   - AllocHeaderMem/FreeHeaderMem Umstellung
 
