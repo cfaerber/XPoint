@@ -63,7 +63,7 @@ type
   TListerTestSelectEvent = function(const s: string; down: boolean): boolean;
   TListerKeyPressedEvent = procedure(LSelf: TLister; var t: taste);
   TListerShowLinesEvent = procedure(s: string);
-  TListerDisplayLineEvent = procedure(x, y: Integer; var s: String);
+  TListerDisplayLineEvent = procedure(x, y, start_col, columns: Integer; var s: String);
   TListerColorEvent = function(const s: string; line: longint): byte;
 
   { moegliche Optionen fuer den Lister                             }
@@ -458,20 +458,19 @@ var
         else
           attrtxt(col.coltext);
 
-      if FUTF8Mode then
-        s := UTF8FormS(s,xa,w)
+
+      if Assigned(FOnDisplayLine) then
+        FOnDisplayLine(l, y + i, xa, w, s)
       else
       begin
-        if xa = 1 then
+        if FUTF8Mode then
+          s := UTF8FormS(s,xa,w)
+        else if xa = 1 then
           s := forms(s, w)
         else
           s := forms(Mid(s, xa), w);
-      end;
-      
-      if Assigned(FOnDisplayLine) then
-        FOnDisplayLine(l, y + i, s)
-      else
         FWrt(l, y + i, s);
+      end;
 
       if (FirstLine + i = suchline) and (slen > 0) and (spos >= xa) and (spos
         <= xa + w - slen) then
@@ -1111,6 +1110,10 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.94  2003/10/02 20:50:12  cl
+  - TLister.OnDisplay now gets the full line to be displayed
+  - tweaks and optimisations for xp1.ListDisplay
+
   Revision 1.93  2003/09/29 20:47:12  cl
   - moved charset handling/conversion code to xplib
 

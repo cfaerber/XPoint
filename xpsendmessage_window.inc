@@ -511,7 +511,7 @@ end;
     result := (FirstChar(s)<>'=') or ((Length(s)>=2)and(s[2]<>'-'));
   end;
 
-  procedure SelectAddress_OnDisplay(x, y: Integer; var s: string);
+  procedure SelectAddress_OnDisplay(x, y, start_col, columns: Integer; var s: string);
   var i: Integer;
   begin
     i := CPos('=',s);
@@ -539,7 +539,7 @@ end;
       end;
     end else
     begin
-      FWrt(x,y,' '+LeftStr(s,i-1)+Mid(s,i+1));
+      FWrt(x,y,Copy(' '+LeftStr(s,i-1)+Mid(s,i+1),start_col,columns));
     end;
   end;
 
@@ -2070,6 +2070,10 @@ end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.16  2003/10/02 20:50:13  cl
+// - TLister.OnDisplay now gets the full line to be displayed
+// - tweaks and optimisations for xp1.ListDisplay
+//
 // Revision 1.15  2003/09/21 20:17:41  mk
 // - rewrite of Listdisplay:
 //   removed Assemlber function MakeListDisplay, now

@@ -660,44 +660,59 @@ const
 { attrbuf     : array [1..255] of smallword;}
 *)
 
-procedure ListDisplay(x,y: Integer; var s: string);
-var Pos : integer;
-    OutPos : integer;
-    XPos : integer;
-    i : integer;
+procedure ListDisplay(x,y, StartC, Columns: Integer; var s: string);
+var Pos:     integer;   // current position in bytes
+    NewPos:  integer;   // save for current pos
+    PosC:    integer;   // position in columns
+    OutPos:  integer;   // current position of data already written in bytes
+    OutPosC: integer;   // position in columns
 
-    C, LastC : TUnicodeChar;
-    W : Integer;
-    B, LastB : TUnicodeLineBreakType;
+    C, LastC: TUnicodeChar;     // current and last character
+    W: Integer;                 // width of current character (columns)
+    B, LastB : TUnicodeLineBreakType; // lb class of current and last character
 
-    HiChar : TUnicodeChar;
-    HiStart : Integer;
-    HiCount : Integer;
+    HiChar : TUnicodeChar;      // character that started highlighting
+    HiStart: Integer;           // position of starting char in bytes
+    HiStartC: Integer;          // ...in columns
+    HiDelimCount : Integer;     // count of occurrence of HiChar within hilighting sequence
+    HiWordCCount : Integer;     // count of word characters within hilighting sequence
 
-    URL: boolean;
-    URLStart, URLEnd: integer;
+    URL: boolean;               // URL has been found
+    URLStart, URLEnd: integer;  // URL start and end position in bytes
+    URLStartC: integer;
 
-    DefaultAttr: SmallWord;
+    DefaultAttr: SmallWord;     // saved text attribute
 
-  procedure _(Attr: SmallWord; ToPos: integer);
-  var s2: string;
+    i : Integer;
+
+    j: Integer;
+
+  procedure _(Attr: SmallWord; ToPos, ToPosC: integer);
+  var s1,s2: string;
+    SPos, OutPos2: integer;
+    XPos2: integer;
+       w: integer;
   begin
     if ToPos <= OutPos then exit;
-    s2 := Copy(s,Outpos,ToPos-Outpos);
     TextAttr := Attr;
-    // TODO: replace with a function that moves the cursor
-    FWrt(x+XPos,y,s2); Inc(XPos, UTF8StringWidth(s2));
-    OutPos := ToPos; if Pos <= OutPos then Pos := OutPos+1;
-  end;    
+    FWrt(x+OutPosC-StartC,y,Copy(s,OutPos,ToPos-OutPos));
+    OutPosC := ToPosC;
+    OutPOs := ToPos;
+  end;
 
 begin
   if not ListXHighlight then begin
-    FWrt(x,y,s);
+    FWrt(x,y,UTF8FormS(s,StartC,Columns));
     exit;
   end;
 
   DefaultAttr := TextAttr;
-  Pos := 1; OutPos := 1; XPos := 0;
+  
+  Pos := 1; PosC := 1;
+  OutPos := 1; OutPosC := 1;
+
+  URLStartC := 0;
+  HiChar := 0;
 
   // put a space at the start
   LastC := 32;
@@ -708,66 +723,97 @@ begin
 
   URL := FindUrl(s, URLStart, URLEnd);
 
-  while Pos <= Length(s) do
+  while (Pos <= Length(s)) do
   begin
-    C := UTF8GetCharNext(s, Pos);
+    NewPos := Pos;
+    C := UTF8GetCharNext(s, NewPos);
     W := UnicodeCharacterWidth(C);
     B := UnicodeCharacterLineBreakType(C);
 
-    if URL and (Pos >= URLStart) then begin
-      _(DefaultAttr,URLStart);
-      _(ListHiCol,  URLEnd);
-      URL := false;
+    if PosC <= StartC then begin OutPos := Pos; OutPosC := PosC; end;
+
+    if URL and (Pos >= URLStart) and (URLStartC <= 0) then
+    begin
+      URLStartC := PosC;
       HiChar := 0; // URLs break the highlighting
+    end else
+
+    if URL and (Pos >= URLStart) and (Pos < UrlEnd) then
+    begin
+    end else
+
+    if URL and (Pos >= URLEnd) and (URLStartC > 0) then
+    begin
+      _(DefaultAttr,URLStart, URLStartC);
+      _(ListHiCol,  Pos,      PosC);
+      URL := false;
     end else
 
     if (HiChar<>0) and (C=HiChar) then
     begin
       // Count the delimiters seen
-      Inc(HiCount);
+      Inc(HiDelimCount);
     end else
 
     if (HiChar<>0) and (LastC=HiChar) and not (B in [ UNICODE_BREAK_AL,
       UNICODE_BREAK_ID,UNICODE_BREAK_GL, UNICODE_BREAK_UNKNOWN,
-      UNICODE_BREAK_CM ]) and (Pos - HiStart - HiCount >= 2) then
+      UNICODE_BREAK_CM ]) and (HiWordCCount >= 1) then
     begin
       // replace continuations by ' '
-      if(HiCount > 1) then
+      if(HiDelimCount > 1) and (HiChar <> Ord('_')) then
         for i := HiStart+1 to Pos-1 do
           if Ord(s[i]) = HiChar then
             s[i] := ' ';
-      _(DefaultAttr,HiStart-1);
+      _(DefaultAttr, HiStart, HiStartC);
       Inc(OutPos); // ignore starting delimiter
-      _(ListHiCol,Pos-2);
+      Dec(PosC,2);
+      _(ListHiCol, Pos-1, PosC);
       Inc(OutPos); // ignore ending delimiter
-      s := s+ '  '; // add removed characters
+      HiChar := 0;
+    end else
+
+    if (HiChar<>0) and (B in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,
+      UNICODE_BREAK_NU ]) then
+    begin
+      // count "word" chars
+      Inc(HiWordCCount);
     end else
 
     if (HiChar<>0) and not (B in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,
       UNICODE_BREAK_GL, UNICODE_BREAK_UNKNOWN, UNICODE_BREAK_CM,
       UNICODE_BREAK_B2, UNICODE_BREAK_BA, UNICODE_BREAK_NU,
-      UNICODE_BREAK_BB, UNICODE_BREAK_HY ]) then
+      UNICODE_BREAK_BB, UNICODE_BREAK_HY, UNICODE_BREAK_SP ]) then
     begin
       // not a valid highlighting sequence, ignore
       HiChar := 0;
     end else
 
-    // check for c < 256 to avoid ragne check error with fpc
+    // check for c < 256 to avoid range check error with fpc
     if (HiChar = 0) and (C <= 255) and (C in [Ord('*'),Ord('_'),Ord('/')]) and not
       (LastB in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,UNICODE_BREAK_GL,
       UNICODE_BREAK_UNKNOWN, UNICODE_BREAK_CM, UNICODE_BREAK_NU ]) then
     begin
       HiStart := Pos;
-      HiCount := 0;
+      HiStartC := PosC;
+      HiDelimCount := 0;
+      HiWordCCount := 0;
       HiChar := C;
     end;
 
     LastC := C;
     LastB := B;
+
+    Pos := NewPos;
+    if Pos <= Length(s) then Inc(PosC, W);
   end;
 
   // the last char is the space inserted above and should not be output
-  _(DefaultAttr,Length(s)-1);
+  _(DefaultAttr,Length(s),PosC);
+
+  TextAttr := DefaultAttr;
+  // fill end of line
+  if(OutPosC <= Columns) then
+    FWrt(Max(1,x+OutPosC-StartC),y,sp(Min(Columns,Columns-OutPosC+StartC)));
 end;
 
 (*
@@ -3333,6 +3379,10 @@ end;
 
 {
   $Log$
+  Revision 1.196  2003/10/02 20:50:13  cl
+  - TLister.OnDisplay now gets the full line to be displayed
+  - tweaks and optimisations for xp1.ListDisplay
+
   Revision 1.195  2003/10/01 20:56:39  mk
   - fixed range check error in ListDisplay
 
