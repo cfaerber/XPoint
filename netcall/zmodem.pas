@@ -29,9 +29,8 @@ uses xpglobal, ObjCOM;
 var
   MakeCRC32, (* TRUE, wenn 32-Bit-CRC benutzt werden darf  *)
   RecoverAllow: BOOLEAN; (* TRUE, wenn das File-Recover zugelassen ist *)
-  startproc, endproc, dispproc: procedure;
-    {Start-/Transfer-/Ende-Anzeige-Prozedur;
-  Start wird *vor* Oeffnen der Datei ausgefuehrt}
+  startproc, endproc, dispproc: procedure; {Start-/Transfer-/Ende-Anzeige-Prozedur;
+                                            Start wird *vor* Oeffnen der Datei ausgefuehrt}
 
 (* Empfangen eines File mit dem ZMODEM-Protokoll *)
 
@@ -426,9 +425,6 @@ var
   txpos: LONGINT;
   txhdr: hdrtype;
   ztime: LONGINT;
-
-  zstartproc,
-    zdispproc: POINTER;
 
   CommObj: tpCommObj;
   TimerObj: tTimer;
@@ -1640,7 +1636,7 @@ begin
   begin
     filestart := 0;
     TransferCount := 0;
-    {IF startproc<>NIL THEN startproc;}
+    if @startproc<>nil then startproc;
     if (not Z_MakeFile(outfile, TransferPath + TransferName)) then
     begin
       TransferMessage := 'Unable to create ' + TransferName;
@@ -1957,9 +1953,6 @@ begin
   TransferBlockSize := 0;
   TransferCheck := '';
   TransferMessage := '';
-
-  zstartproc := @startproc;
-  zdispproc := @dispproc;
 
   zbaud := CommObj^.GetBPSrate;
 
@@ -2631,9 +2624,6 @@ begin
   TransferMessage := '';
   FileAddition := NewFile;
 
-  zstartproc := @startproc;
-  zdispproc := @dispproc;
-
   zbaud := CommObj^.GetBPSRate;
 
   if not CommObj^.Carrier then
@@ -2757,6 +2747,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2000/11/28 21:28:38  ma
+  - StartProc call fixed
+
   Revision 1.9  2000/11/19 22:34:27  mk
   - fixed some compile bugs
   - applyed source code formatting
