@@ -1976,23 +1976,24 @@ doubt, ask!
 In general you don't have to use this field.
 @
 154
-Here you can enter a list of servers whose mail
-will be sent <<in addition>> to the mail for the
-main server on performing a netcall.
+Here you can enter a list of "AKA" [("Also Known As")]@4009
+which CrossPoint sends <<in addition>> to the main
+Server address during a netcall.
 
-The individual node addresses must be separated
-by a <space>.
+If you use 4D addressing you have to specify the
+full address (<<with>> trailing point number).
 
-See FIDO.DOC for further information.
+The individual addresses must be separated by a
+<space>. Make sure you enter them correctly.
 @
 156
-4D addresses is a standard that is supported by
-nearly all FIDO Box programmes.
+4D addressing is a standard which is supported by
+most FIDO mailers.
 
 If in doubt, ask your Sysop.
 
 If the switch "Use Node Address" is ON, (also found
-here), then this setting is inactive.
+here), then this setting is ignored.
 @
 157
 Some "Tossers" in FIDO Box software, especially
@@ -6140,11 +6141,16 @@ select from. Possible entries are:
 <<Fido>>        Fido and compatible Networks
 <<QWK>>         QWK Network
 <<ZConnect>>    ZERBERUS-5.0 systems
-<<Z-Netz>>      Z-Netz or ComLink
+<<MausTausch>>
+<<NNTP>>        News Server
+<<POP3/SMTP>>   Mail Server
 @
 682
 Your Username for this Server. This will usually be
 your <<OWN>> name.
+
+For <<POP3/SMTP>> and <<NNTP>> Servers this <<MUST>> be your
+eMail address.
 @
 690
 <<Fido
