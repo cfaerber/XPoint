@@ -183,61 +183,65 @@ var
   RFCFileDummy : String;
 begin
   ZtoRFC(bp,PPFile,RFCFile);
-  { ProgressOutput erstellen }
-  ProgressOutputXY:= TProgressOutputXY.Create;
-  { Host und ... }
-  NNTP:= TNNTP.CreateWithHost(bp^.NNTP_ip);
-  { IPC erstellen }
-  NNTP.ProgressOutput:= ProgressOutputXY;
-  { ggf. Zugangsdaten uebernehmen }
-  if (bp^.NNTP_id<>'') and (bp^.NNTP_pwd<>'') then begin
-    NNTP.User:= bp^.NNTP_id;
-    NNTP.Password:= bp^.NNTP_pwd;
-  end;
-  { Fenster oeffnen }
-  diabox(70,11,box+' NNTP Mails verschicken',x,y);
-  Inc(x,3);
-  MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
-  MWrt(x,y+4,getres2(30010,5));                 { 'NNTP-Status..: ' }
-  MWrt(x,y+6,getres2(30010,6));                 { 'Host.........: ' }
-  MWrt(x,y+8,getres2(30010,7));                 { 'Server.......: ' }
-  MWrt(x+15,y+2,getres2(30010,8));              { 'Verbinden...' }
-  MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
-  MWrt(x+15,y+6,bp^.NNTP_ip);
-  { IPC einrichten }
-  ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
-  { Verbinden }
-  try
-    result:= true;
-    List := TStringList.Create;
-    List.LoadFromFile(RFCFile + 'D-0001.OUT');
-    NNTP.Connect;
-
-    { Name und IP anzeigen }
-    MWrt(x+15,y+6,NNTP.Host.Name+' ['+NNTP.Host.AsString+']');
-    MWrt(x+15,y+8,FormS(NNTP.Server,50));
-    MWrt(x+15,y+2,'Mails senden');
-
-    NNTP.PostPlainRFCMessages(List);
-
-    NNTP.Disconnect;
-  except
-    trfehler(831,31);
-    result:= false;
-  end;
-  List.Free;
-  NNTP.Free;
-  if result then begin
-    ClearUnversandt(PPFile,BoxFile);
-    if FileExists(PPFile)then _era(PPFile);
-    RFCFileDummy := RFCFile + 'C-0000.OUT';
-    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
-    RFCFileDummy := RFCFile + 'D-0001.OUT';
-    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
-    RFCFileDummy := RFCFile + 'X-0002.OUT';
-    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+  RFCFileDummy := RFCFile + 'D-0001.OUT';
+  result:= true;
+  if FileExists(RFCFileDummy) then
+  begin
+    { ProgressOutput erstellen }
+    ProgressOutputXY:= TProgressOutputXY.Create;
+    { Host und ... }
+    NNTP:= TNNTP.CreateWithHost(bp^.NNTP_ip);
+    { IPC erstellen }
+    NNTP.ProgressOutput:= ProgressOutputXY;
+    { ggf. Zugangsdaten uebernehmen }
+    if (bp^.NNTP_id<>'') and (bp^.NNTP_pwd<>'') then begin
+      NNTP.User:= bp^.NNTP_id;
+      NNTP.Password:= bp^.NNTP_pwd;
     end;
-  closebox;
+    { Fenster oeffnen }
+    diabox(70,11,box+' NNTP Mails verschicken',x,y);
+    Inc(x,3);
+    MWrt(x,y+2,getres2(30010,4));                 { 'Vorgang......: ' }
+    MWrt(x,y+4,getres2(30010,5));                 { 'NNTP-Status..: ' }
+    MWrt(x,y+6,getres2(30010,6));                 { 'Host.........: ' }
+    MWrt(x,y+8,getres2(30010,7));                 { 'Server.......: ' }
+    MWrt(x+15,y+2,getres2(30010,8));              { 'Verbinden...' }
+    MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
+    MWrt(x+15,y+6,bp^.NNTP_ip);
+    { IPC einrichten }
+    ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
+    { Verbinden }
+    try
+      result:= true;
+      List := TStringList.Create;
+      List.LoadFromFile(RFCFileDummy);
+      NNTP.Connect;
+
+      { Name und IP anzeigen }
+      MWrt(x+15,y+6,NNTP.Host.Name+' ['+NNTP.Host.AsString+']');
+      MWrt(x+15,y+8,FormS(NNTP.Server,50));
+      MWrt(x+15,y+2,'Mails senden');
+
+      NNTP.PostPlainRFCMessages(List);
+
+      NNTP.Disconnect;
+    except
+      trfehler(831,31);
+      result:= false;
+    end;
+    List.Free;
+    NNTP.Free;
+    if result then begin
+      ClearUnversandt(PPFile,BoxFile);
+      if FileExists(PPFile)then _era(PPFile);
+      if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+      RFCFileDummy := RFCFile + 'X-0002.OUT';
+      if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+      end;
+    closebox;
+  end;
+  RFCFileDummy := RFCFile + 'C-0000.OUT';
+  if FileExists(RFCFileDummy)then _era(RFCFileDummy);
 end;
 
 
@@ -379,6 +383,9 @@ end.
 
 {
         $Log$
+        Revision 1.8  2001/04/06 21:12:44  ml
+        - nntpsend only if unsend mails available
+
         Revision 1.7  2001/04/06 21:06:38  ml
         - nntpsend now working
 
