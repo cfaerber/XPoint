@@ -359,7 +359,7 @@ begin  { __ Suchmarke }
                 { Datum }
                 taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
                 { Absender }
-                taus[pos('A',MsgFeldTausch)] := forms(s,ulen-1);
+                taus[pos('A',MsgFeldTausch)] := forms(s,ulen-1-iif(showmsgdatum,0,1));
                 { Betreff }
                 taus[pos('B',MsgFeldTausch)] := forms(s1,blen-1);
               end;  
