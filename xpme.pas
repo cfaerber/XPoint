@@ -11,6 +11,9 @@
 { CrossPoint-MenÅeditor }
 
 uses
+{$IFDEF Linux }
+  xplinux,
+{$ENDIF }
   winxp, crt,typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
 
 const menus      = 99;
@@ -57,7 +60,11 @@ var   menu      : array[0..menus] of ^string;
 procedure wrlogo;
 begin
   writeln;
+{$IFDEF Linux }
+    writeln(StrDosToLinux('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware'));
+{$ELSE }
   writeln('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware');
+{$ENDIF }   
   writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
             ' by ',author_name,' <',author_mail,'>');
   writeln;
@@ -83,7 +90,11 @@ begin
     writeln('Fehler: XP-D.RES nicht gefunden.'#7);
     writeln;
     writeln('Starten Sie dieses Programm bitte in einem Verzeichnis, in dem');
+{$IFDEF Linux }
+    writeln(StrDosToLinux('CrossPoint vollstÑndig installiert wurde.'));
+{$ELSE }
     writeln('CrossPoint vollstÑndig installiert wurde.');
+{$ENDIF }
     writeln;
     halt;
     end;
@@ -91,6 +102,9 @@ begin
   if existf(t) then begin
     reset(t);
     readln(t,s);
+{$IFDEF Linux }
+    LoString(s);                   { ML Linux braucht Lowcase }
+{$ENDIF }
     close(t);
     end
   else
@@ -100,7 +114,11 @@ begin
   OpenResource(s,10000);
   ropen:=true;
   if ival(getres(6))<11 then
-    error('Es wird CrossPoint Version 3.11 oder hîher benîtigt!');
+{$IFDEF Linux }
+  error(StrDosToLinux('Es wird CrossPoint Version 3.11 oder hîher benîtigt!'));
+{$ELSE }
+  error('Es wird CrossPoint Version 3.11 oder hîher benîtigt!');
+{$ENDIF }
   for i:=0 to menus do begin
     s:=getres2(10,i);   { "[fehlt:...]" kann hier ignoriert werden. }
     getmem(menu[i],length(s)+1);
@@ -616,12 +634,21 @@ begin
     read(f,version);
     if version<>meversion then begin
       wrlogo;
+{$IFDEF Linux }
+      writeln(StrDosToLinux('WARNUNG: XPME kann das Format der MenÅdatei (XPMENU.DAT) nicht'));
+      writeln('         erkennen. Die Datei wurde entweder mit einer neueren');
+      writeln(StrDosToLinux('         Version des MenÅeditors erstellt oder ist beschÑdigt.'));
+      writeln(StrDosToLinux('         Wenn Sie jetzt fortfahren, wird diese Datei gelîscht,'));
+      writeln(StrDosToLinux('         d.h. eventuelle Informationen Åber (de)aktivierte'));
+      writeln(StrDosToLinux('         MenÅpunkte gehen verloren.'));
+{$ELSE }
       writeln('WARNUNG: XPME kann das Format der MenÅdatei (XPMENU.DAT) nicht');
       writeln('         erkennen. Die Datei wurde entweder mit einer neueren');
       writeln('         Version des MenÅeditors erstellt oder ist beschÑdigt.');
       writeln('         Wenn Sie jetzt fortfahren, wird diese Datei gelîscht,');
       writeln('         d.h. eventuelle Informationen Åber (de)aktivierte');
       writeln('         MenÅpunkte gehen verloren.');
+{$ENDIF }
       writeln;
       write('Fortfahren (J/N)? '#7);
       rdjn(c,'N');
@@ -663,9 +690,15 @@ var x,y : byte;
     t   : taste;
 begin
   msgbox(34,4,'',x,y);
+{$IFDEF Linux }
   wrt(x+3,y+1,'énderungen sichern?');
   t:='';
-  case readbutton(x+3,y+3,2,' ^Ja , ^Nein , ^ZurÅck ',1,true,t) of
+ case readbutton(x+3,y+3,2,StrDosToLinux(' ^Ja , ^Nein , ^ZurÅck '),1,true,t) of
+{$ELSE }
+  wrt(x+3,y+1,'énderungen sichern?');
+  t:='';
+ case readbutton(x+3,y+3,2,' ^Ja , ^Nein , ^ZurÅck ',1,true,t) of
+{$ENDIF }
     1 : begin
           writemdata;
           askquit:=true;
@@ -693,6 +726,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/03/27 16:34:23  ml
+  lauff‰hig unter linux
+
   Revision 1.9  2000/03/24 20:38:12  mk
   - xdelay entfernt
 
