@@ -1288,9 +1288,9 @@ begin                  { of Netcall }
       case LoginTyp of
         ltPOP3:
         begin
-          GetPOP3Mails(Box, BoxPar, 'spool\');
+          GetPOP3Mails(Box, BoxPar, 'spool'+DirSepa);
           uu := TUUZ.Create;
-          uu.source := 'spool\*.mail';
+          uu.source := 'spool'+DirSepa+'*.mail';
           uu.dest := dpuffer;
           uu.OwnSite := boxpar^.pointname+domain;
           uu.utoz;
@@ -1527,6 +1527,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/12/26 19:51:27  ml
+  - pop3 works now in linux
+
   Revision 1.52  2000/12/26 13:03:36  mk
   - implemented POP3 Support
 
