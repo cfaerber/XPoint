@@ -72,7 +72,6 @@ type
     AKAs: String;
     Username: String;
     OwnAddr: String;
-    OwnDomain: String;
     DestAddr: String;
     Password: String;
     SysName: String;
@@ -247,6 +246,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/02/19 14:15:15  ma
+  - proper AKA handling (primarily for BinkP)
+
   Revision 1.16  2001/02/19 12:18:28  ma
   - simplified ncmodem usage
   - some small improvements

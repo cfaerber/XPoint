@@ -108,22 +108,27 @@ begin
 end;
 
 function ShellNTrackNewFiles(prog:string; space:word; cls:shortint; SL: TStringList): Integer;
-var dir1,dir2: TDirectory; curdir: string; i,j: Integer; fileexisted: boolean;
+var dir1,dir2: TDirectory; curdir,newfiles: string; i,j: Integer; fileexisted: boolean;
 begin
   curdir:=GetCurrentDir;
   dir1:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
   Shell(prog,space,cls);
   result:=errorlevel;
+  newfiles:='';
   SetCurrentDir(curdir);
   dir2:= TDirectory.Create(WildCard,faAnyFile-faDirectory,false);
   for i:=0 to dir2.Count-1 do begin
     fileexisted:=false;
     for j:=0 to dir1.Count-1 do
       if dir2.Name[i]=dir1.Name[j] then fileexisted:=true;
-    if not fileexisted then SL.Add(ExpandFilename(dir2.Name[i]));
+    if not fileexisted then begin 
+      SL.Add(ExpandFilename(dir2.Name[i]));
+      if newfiles<>'' then newfiles:=newfiles+', ';
+      newfiles:=newfiles+ExpandFilename(dir2.Name[i]);
+      end;
     end;
   dir1.destroy; dir2.destroy;
-  Debug.DebugLog('xpnetcall','new files created by external program: '+Stringlist(SL),DLDebug);
+  Debug.DebugLog('xpnetcall','new files created by external program: '+newfiles,DLDebug);
   SetCurrentDir(OwnPath);
 end;
 
@@ -866,7 +871,7 @@ begin                  { function Netcall }
       case LoginTyp of
         ltFido: begin
           Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
-          case FidoNetcall(BoxName,Boxpar,crash,sysopmode,domain,NetcallLogfile,IncomingFiles) of
+          case FidoNetcall(BoxName,Boxpar,crash,sysopmode,NetcallLogfile,IncomingFiles) of
             EL_ok     : begin Netcall_connect:=true; Netcall:=true; end;
             EL_noconn : begin Netcall_connect:=false; end;
             EL_recerr,
@@ -1121,6 +1126,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2001/02/19 14:15:15  ma
+  - proper AKA handling (primarily for BinkP)
+
   Revision 1.11  2001/02/19 12:18:29  ma
   - simplified ncmodem usage
   - some small improvements

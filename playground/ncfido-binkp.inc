@@ -174,7 +174,7 @@ begin
     case State of
       WaitConn: begin
         BpF.SendCommandFrame(M_NUL,'SYS OpenXP test system');
-        BpF.SendCommandFrame(M_ADR,ownaddr+'@fidonet');
+        BpF.SendCommandFrame(M_ADR,AKAs);
         State:=SendPasswd;
         end;
       SendPasswd: begin
@@ -488,6 +488,9 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/02/19 14:15:15  ma
+  - proper AKA handling (primarily for BinkP)
+
   Revision 1.6  2001/02/19 12:18:28  ma
   - simplified ncmodem usage
   - some small improvements

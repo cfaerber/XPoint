@@ -35,7 +35,6 @@ uses
 function FidoNetcall(boxname: string;
                      boxpar: boxptr;
                      crash,diskpoll: boolean;
-                     domain: string;
                      Logfile: String;
                      IncomingFiles: TStringList): shortint;
 
@@ -59,20 +58,44 @@ type
 
 var
   AKABoxes: TAKABoxes;
-  alias: boolean;
+  AKAs: string;
 
-function GetFidoPointAdr(bp: boxptr; alias: boolean): String;
+function GetBoxData(boxname: string; var alias: boolean; var domain,bfile: string): boolean;
+var d: DB;
 begin
-  if alias then
-    result:=leftstr(bp^.boxname,cpos('/',bp^.boxname))+bp^.pointname
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,UpperCase(BoxName));
+  if not dbFound then begin
+    dbClose(d);
+    trfehler1(709,BoxName,60);
+    result:=false;
+    exit;
+    end;
+  bfile := dbReadStr(d,'dateiname');
+  domain := dbReadStr(d,'domain');
+  alias:=(dbReadInt(d,'script') and 4<>0);
+  dbClose(d);
+  result:=true;
+end;
+
+function GetPointAdr(boxname: string; IncludeDomain: boolean): String;
+var alias: boolean; domain,bfile: string; boxpar: boxrec;
+begin
+  if GetBoxData(boxname,alias,domain,bfile)then begin
+    ReadBox(nt_Fido,bfile,@boxpar);
+    if alias then
+      result:=leftstr(boxname,cpos('/',boxname))+boxpar.pointname
+    else
+      result:=boxname+'.'+boxpar.pointname;
+    if (domain<>'') and IncludeDomain then result:=result+'@'+domain;
+    end
   else
-    result:=bp^.boxname+'.'+bp^.pointname;
+    result:='';
 end;
 
 { Convert to ZC, process requests (add to outgoingfiles). }
 procedure ProcessAKABoxes(boxpar: boxptr;
                           upbuffer: string;
-                          screen:byte;
                           outgoingfiles: tstringlist);
 
 var
@@ -111,67 +134,55 @@ var
   end;
 
 var
-  tempboxpar: boxptr;
-  d         : DB;
-  sendakas  : string;
-  BoxName   : string;
-  bfile     : string;
-  fa        : FidoAdr;
-  p         : byte;
-  t         : text;
+  tempboxpar : boxrec;
+  sendakas   : string;
+  aBoxName   : string;
+  bfile,rfile: string;
+  domain     : string;
+  fa         : FidoAdr;
+  p          : byte;
+  t          : text;
 
 begin { ProcessAKABoxes }
-  sendakas:=trim(GetFidoPointAdr(boxpar,alias)+' '+Boxpar^.SendAKAs);
+  sendakas:=trim(boxpar^.boxname+' '+Boxpar^.SendAKAs); AKAs:='';
   assign(t,'ZFIDO.CFG');
   rewrite(t);
   writeln(t,'# ',getres(721));    { 'Temporäre Fido-Konfigurationsdatei' }
   writeln(t);
   if sendakas<>'' then begin
-    dbOpen(d,BoxenFile,1);
     repeat
       p:=blankpos(sendakas);
       if p=0 then p:=length(sendakas)+1;
       if p>3 then begin
-        BoxName:=LeftStr(sendakas,p-1);
-        Debug.DebugLog('xpncfido','Processing AKA '+boxname,DLDebug);
-        if Pos('.',BoxName)>0 then
-          BoxName:=LeftStr(BoxName,Pos('.',BoxName)-1);
-        Debug.DebugLog('xpncfido','Server is '+boxname,DLDebug);
+        aBoxName:=LeftStr(sendakas,p-1);
+        Debug.DebugLog('xpncfido','Processing sendaka '+aboxname,DLDebug);
         sendakas:=trim(mid(sendakas,p));
-        dbSeek(d,boiName,UpperCase(BoxName));
-        if not dbfound then begin
-          Debug.DebugLog('xpncfido','box is no server. BoxName: '+BoxName,DLError);
-          rfehler1(733,BoxName);         { 'Ungültiger AKA-Eintrag - %s ist keine Serverbox!' }
-          end
-        else begin
-          bfile:=dbReadStr(d,'dateiname');
+        if GetBoxData(aboxname,alias,domain,bfile)then begin
           Debug.DebugLog('xpncfido','server file name is '+bfile,DLDebug);
-
-          new(tempboxpar);
-          ReadBox(nt_Fido,bfile,tempboxpar);
-
-          writeln(t,'Bretter=',BoxName,' ',tempboxpar^.magicbrett);
+          ReadBox(nt_Fido,bfile,@tempboxpar);
+          writeln(t,'Bretter=',aBoxName,' ',tempboxpar.magicbrett);
           if FileExists(bfile+BoxFileExt) then begin
             Debug.DebugLog('xpncfido','PP exists '+bfile+BoxFileExt,DLDebug);
-            AKABoxes.BoxName.Add(BoxName);
+            AKABoxes.BoxName.Add(aBoxName);
             AKABoxes.PPFile.Add(bfile+BoxFileExt);
-            alias:=(dbReadInt(d,'script') and 4<>0);
-            ownfidoadr:=GetFidoPointAdr(tempboxpar,alias);
-            Convert(tempboxpar,bfile+BoxFileExt,upbuffer);
+            AKAs:=AKAs+GetPointAdr(aboxname,true)+' ';
+            ownfidoadr:=GetPointAdr(aboxname,false);
+            Convert(@tempboxpar,bfile+BoxFileExt,upbuffer);
             end
           else begin
-            AKABoxes.BoxName.Add(BoxName);
+            AKABoxes.BoxName.Add(aBoxName);
             AKABoxes.PPFile.Add('');
             end;
-          splitfido(boxname,fa,DefaultZone);
-          AKABoxes.ReqFile.Add(FidoAppendRequestFile(fa));
-          dispose(tempboxpar);
+          splitfido(aBoxName,fa,DefaultZone);
+          rfile:=FidoAppendRequestFile(fa);
+          AKABoxes.ReqFile.Add(rfile);
+          if rfile<>'' then OutgoingFiles.Add(rfile);
           end;
         end;
       until (p<=3);
-    dbClose(d);
-    end
-  else Debug.DebugLog('xpncfido','no sendakas',DLInform);
+    end;
+  AKAs:=trim(AKAs);
+  Debug.DebugLog('xpncfido','AKAs: '+AKAs,DLError);
   close(t);
 end;
 
@@ -294,7 +305,6 @@ end;
 function FidoNetcall(boxname: string;
                      boxpar: boxptr;
                      crash,diskpoll: boolean;
-                     domain: string;
                      Logfile: String;
                      IncomingFiles: TStringList): shortint;
 
@@ -343,30 +353,14 @@ label fn_ende,fn_ende0;
       end;
     end;
 
-    procedure WrAKAs;
-    var aka : string;
-        p   : byte;
-    begin
-      aka:=without(trim(gAKAs+' '+boxpar^.AKAs),'*');
-      p:=pos(OwnAddr,aka);
-      if p>0 then begin
-        while (p<=length(aka)) and (aka[p]<>' ') do
-          delete(aka,p,1);
-        delete(aka,p,1);
-        end;
-      if aka<>'' then
-        Fidomailer.AKAs:= aka;
-    end;
-
   begin   { InitFidomailer }
+    Fidomailer.AKAs:= AKAs;
     with BoxPar^,ComN[BoxPar^.bport] do begin
       { set up unit's parameter }
       if Logfile<>'' then
         Fidomailer.logfilename:= '*'+Logfile;
       Fidomailer.Username:= username;
-      Fidomailer.OwnAddr:=GetFidoPointAdr(boxpar,alias);
-      if domain<>'' then
-        Fidomailer.OwnDomain:= domain;
+      Fidomailer.OwnAddr:= GetPointAdr(boxname,true);
       Fidomailer.DestAddr:= boxname;
       Fidomailer.Password:= passwort;
       if orga<>'' then
@@ -401,7 +395,6 @@ label fn_ende,fn_ende0;
       Fidomailer.MinCPS:= MinCPS;
       if crash then
         Fidomailer.addtxt:= getres(727)+boxpar^.gebzone;   { 'Tarifzone' }
-      WrAKAs;
     end; { while }
   end;
 
@@ -469,48 +462,6 @@ label fn_ende,fn_ende0;
         SetRequest(fa,'');
   end;
 
-  { Gets crash box data if crash true; returns alias flag if crash false }
-  function FidoGetBoxData(boxpar: boxptr; box:string; crash: boolean): Boolean;
-  var bp : BoxPtr;
-      d  : DB;
-  begin
-    dbOpen(d,BoxenFile,1);
-    dbSeek(d,boiName,box);
-    if crash then begin
-      new(bp);
-      ReadBox(nt_Fido,dbReadStr(d,'dateiname'),bp);
-      dbClose(d);
-      BoxPar^.AKAs        := bp^.AKAs;
-      BoxPar^.fTosScan    := bp^.fTosScan;
-      BoxPar^.EMSIenable  := bp^.EMSIenable;
-      BoxPar^.GetTime     := bp^.GetTime;
-      BoxPar^.NotSEmpty   := bp^.NotSEmpty;
-      BoxPar^.PacketPW    := bp^.PacketPW;
-      BoxPar^.eFilter     := bp^.eFilter;
-      BoxPar^.aFilter     := bp^.aFilter;
-      BoxPar^.connwait    := bp^.connwait;
-      BoxPar^.loginwait   := bp^.loginwait;
-      BoxPar^.redialwait  := bp^.redialwait;
-    { BoxPar^.redialmax   := bp^.redialmax; }
-      BoxPar^.connectmax  := bp^.connectmax;
-      BoxPar^.packwait    := bp^.packwait;
-      BoxPar^.retrylogin  := bp^.retrylogin;
-      BoxPar^.conn_time   := bp^.conn_time;
-      BoxPar^.mincps      := bp^.mincps;
-      BoxPar^.modeminit   := bp^.modeminit;
-      BoxPar^.bport       := bp^.bport;
-      BoxPar^.params      := bp^.params;   { unused }
-      BoxPar^.baud        := bp^.baud;
-      BoxPar^.ZMoptions   := bp^.ZMoptions;
-      dispose(bp);
-      result:=true;
-      end
-    else begin
-      result:=(dbReadInt(d,'script')and 4)<>0;
-      dbClose(d);
-      end;
-  end;
-
   function GetArcFilename(_from,_to:string):string;   { Fido-Dateiname ermitteln }
   var fn    : string[12];
       a1,a2 : fidoadr;
@@ -540,68 +491,72 @@ label fn_ende,fn_ende0;
     dbClose(d);
   end;
 
+  function ProcessCrash: boolean;
+  begin
+    result:=false;
+    (*GetBoxData(boxname,alias,domain);
+    if crash then begin
+      if not isbox(DefFidoBox) then begin
+        rfehler(705); exit;   { 'keine Fido-Stammbox gewaehlt' }
+        end
+      else if not Nodelist.Open then begin
+        rfehler(706); exit;   { 'keine Nodeliste aktiviert' }
+        end
+      else begin
+        if BoxName='' then BoxName:=GetCrashbox;
+        if (BoxName=' alle ') or (BoxName=CrashTemp) then begin
+          AutoCrash:=BoxName; exit; end;
+        if BoxName='' then exit;
+        if IsBox(BoxName) then
+          crash:=false              { Crash beim Bossnode - normaler Anruf }
+        else begin
+          SplitFido(BoxName,CrashBox,DefaultZone);
+          BoxName:=DefFidoBox;
+          end;
+        end;
+      ppfile:=FidoFilename(CrashBox)+'.cp';
+       if FidoIsISDN(CrashBox) and IsBox('99:99/98') then
+        FidoGetBoxData(boxpar,'99:99/98',true)
+      else
+        if IsBox('99:99/99') then
+          FidoGetBoxData(boxpar,'99:99/99',true);
+      with boxpar^ do begin
+        boxname:=MakeFidoAdr(CrashBox,true);
+        uparcer:='';
+        SendAKAs:='';
+        telefon:=FidoPhone(CrashBox,CrashPhone);
+        //GetPhoneGebdata(crashphone);
+        passwort:='';
+        SysopInp:=''; SysopOut:='';
+        f4D:=true;
+        fillchar(exclude,sizeof(exclude),0);
+        GetTime:=CrashGettime;
+        if not IsBox(boxpar^.boxname) then
+          Passwort:=CrashPassword(Boxpar^.boxname);
+        end;
+      end;*)
+  end;
+
 var
-  ShellCommandUparcer,UpBufferFilename,UpArcFilename,CrashPhone,PPFile: String;
+  ShellCommandUparcer,UpBufferFilename,UpArcFilename: String;
 
 begin { FidoNetcall }
   Debug.DebugLog('xpncfido','fido netcall starting',DLInform);
   result:=el_noconn;
 
-  alias:=FidoGetBoxData(boxpar,boxname,false);
-  // Some handling in case of crash netcall
-  if crash then begin
-    if not isbox(DefFidoBox) then begin
-      rfehler(705); exit;   { 'keine Fido-Stammbox gewaehlt' }
-      end
-    else if not Nodelist.Open then begin
-      rfehler(706); exit;   { 'keine Nodeliste aktiviert' }
-      end
-    else begin
-      if BoxName='' then BoxName:=GetCrashbox;
-      if (BoxName=' alle ') or (BoxName=CrashTemp) then begin
-        AutoCrash:=BoxName; exit; end;
-      if BoxName='' then exit;
-      if IsBox(BoxName) then
-        crash:=false              { Crash beim Bossnode - normaler Anruf }
-      else begin
-        SplitFido(BoxName,CrashBox,DefaultZone);
-        BoxName:=DefFidoBox;
-        end;
-      end;
-    ppfile:=FidoFilename(CrashBox)+'.cp';
-//**     if FidoIsISDN(CrashBox) and IsBox('99:99/98') then
-{      FidoGetBoxData(boxpar,'99:99/98',true)
-    else
-      if IsBox('99:99/99') then
-        FidoGetBoxData(boxpar,'99:99/99',true);}
-    with boxpar^ do begin
-      boxname:=MakeFidoAdr(CrashBox,true);
-      uparcer:='';
-      SendAKAs:='';
-      telefon:=FidoPhone(CrashBox,CrashPhone);
-//      GetPhoneGebdata(crashphone);
-      passwort:='';
-      SysopInp:=''; SysopOut:='';
-      f4D:=true;
-      fillchar(exclude,sizeof(exclude),0);
-      GetTime:=CrashGettime;
-      if not IsBox(boxpar^.boxname) then
-        Passwort:=CrashPassword(Boxpar^.boxname);
-      end;
-    end;
-
   // Convert outgoing buffers
-  OutgoingFiles:=TStringList.Create;
+  OutgoingFiles:=TStringList.Create; OutgoingFiles.Duplicates:=DupIgnore;
   AKABoxes.BoxName:=TStringList.Create;
   AKABoxes.ReqFile:=TStringList.Create;
   AKABoxes.PPFile:=TStringList.Create;
   UpBufferFilename:=LeftStr(date,2)+LeftStr(typeform.time,2)+
                             copy(typeform.time,4,2)+RightStr(typeform.time,2)+
                             '.PKT';
-  ProcessAKABoxes(boxpar,UpBufferFilename,1,OutgoingFiles);
+  if crash then crash:=ProcessCrash;
+  if not crash then ProcessAKABoxes(boxpar,UpBufferFilename,OutgoingFiles);
 
   // Compress outgoing buffers
-  UpArcFilename:=boxpar^.sysopout+GetArcFilename(GetFidoPointAdr(boxpar,alias),boxpar^.boxname);
+  UpArcFilename:=boxpar^.sysopout+GetArcFilename(GetPointAdr(boxname,false),boxname);
   ShellCommandUparcer:=boxpar^.uparcer;
   exchange(ShellCommandUparcer,'$PUFFER',UpBufferFilename);
   exchange(ShellCommandUparcer,'$UPFILE',UpArcFilename);
@@ -613,15 +568,9 @@ begin { FidoNetcall }
     end
   else _era(UpBufferFilename);
 
-//**  for i:=1 to addpkts^.akanz do begin    { Zusatz-Req-Files erzeugen }
-//**    splitfido(addpkts^.akabox[i],fa,DefaultZone);
-//**    addpkts^.reqfile[i]:=FidoAppendRequestfile(fa);
-//**    end;
-  splitfido(boxpar^.boxname,fa,DefaultZone);
-  request:=FidoAppendRequestfile(fa);     { an .REQ-File anh„ngen }
-
   if crash then begin
     getNodeInfo(boxpar^.boxname,ni,2);
+    splitfido(boxpar^.boxname,fa,DefaultZone);
     if not ni.found then komment:='???'
     else if fa.ispoint then komment:=ni.sysop
          else komment:=ni.boxname+', '+ni.standort;
@@ -651,7 +600,6 @@ begin { FidoNetcall }
 
   _era(UpArcFilename);
   if (result IN [el_ok,el_recerr]) then begin   { Senden OK }
-    Moment;
     for i:=0 to AKABoxes.ReqFile.Count-1 do
       if AKABoxes.ReqFile[i]<>'' then
         ProcessRequestResult(AKABoxes.ReqFile[i]);
@@ -890,6 +838,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/02/19 14:15:15  ma
+  - proper AKA handling (primarily for BinkP)
+
   Revision 1.16  2001/02/19 12:18:29  ma
   - simplified ncmodem usage
   - some small improvements

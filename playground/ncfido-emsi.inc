@@ -78,7 +78,7 @@ var OtherData: String;
     Convert2SevenBit:=s;
   end;
 
-var EMSIString,ED,EMSIData,EMSIData2,adr,hex4  : string;
+var EMSIString,ED,EMSIData,EMSIData2,hex4  : string;
     count     : byte;
     scount,dl : integer;
     ok        : boolean;
@@ -98,10 +98,7 @@ begin
             '[]['+Convert2SevenBit(UserName)+'][-Unpublished-]['+iifs(LineSpeed>=9600,
             '9600',strs(LineSpeed))+'][]}'+
             iifs(SendTrx,'{TRX#}{['+hex(sec70,8)+']}','');
-  if OwnDomain<>'' then adr:=OwnAddr+'@'+OwnDomain else adr:=OwnAddr;
-  EMSIData2:='EMSI_DAT'+hex(8+length(adr)+iif(akas<>'',length(akas)+1,0)+
-             length(EMSIData),4)+'{EMSI}{'+adr;
-  if akas<>'' then EMSIData2:=EMSIData2+' '+akas;
+  EMSIData2:='EMSI_DAT'+hex(8+length(akas)+length(EMSIData),4)+'{EMSI}{'+akas;
   EMSIData:=EMSIData2+'}'+EMSIData;
 
   Debug.DebugLog('ncfido','EMSIData: "'+EMSIData+'"',DLDebug);
@@ -205,6 +202,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/02/19 14:15:15  ma
+  - proper AKA handling (primarily for BinkP)
+
   Revision 1.4  2001/02/03 18:40:33  ma
   - added StringLists for tracking sent/rcvd files
   - ncfido using OO ZModem now

@@ -46,7 +46,7 @@ begin
     product:=prodcode;
     HiVersion:=Hi(version);
     LoVersion:=Lo(version);
-    SetZero(MyName,LeftStr(username,58-length(OwnDomain))+#0+OwnDomain,59);
+    SetZero(MyName,username,59);
     SetZero(SysopName,UserName,19);
     zone:=FA.zone;
     net:=FA.net;
@@ -54,7 +54,7 @@ begin
     point:=FA.point;
     SetZero(my_password,password,8);
     capabilities:=MyCap;
-    if OwnDomain<>'' then inc(capabilities,do_domain);
+    if pos('@',username)<>0 then inc(capabilities,do_domain);
   end;
 end;
 
@@ -425,6 +425,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/02/19 14:15:15  ma
+  - proper AKA handling (primarily for BinkP)
+
   Revision 1.3  2001/02/02 20:59:57  ma
   - moved log routines to ncmodem
 
