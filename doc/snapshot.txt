@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 20.12.2001 (letzter Update)
+DÅsseldorf, den 21.12.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -493,6 +493,18 @@ Allgemeine Bedienung und Sonstiges
   Umschalten mehr erforderlich.
   XP0.PAS, XP7.PAS, XP7.INC, XP7L.PAS, XP7O.PAS, XP7U.INC, XP9.INC,
   XP9BP.PAS, XP9SEL.PAS, XP.IHQ, XP-E.IHQ
+
+- Neuer Schalter "User bei Beantwortung automatisch anlegen" unter
+  Config/Optionen/Nachrichten. Damit kann die RÅckfrage, ob ein
+  unbekannter User beim Beantworten oder Archivieren angelegt werden
+  soll sowie der anschlie·ende Bearbeitungsdialog abgeschaltet und der
+  User automatisch mit den Standardeinstellungen angelegt werden.
+  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP4.PAS, XP4E.PAS, XP6.PAS, XP6O.PAS,
+  XPCC.PAS, XP_PGP.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
+
+- Schalter "News-Archivierung verhindern" wieder bei Config/Optionen/
+  Netze untergebracht.
+  XP2C.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 
 
