@@ -1335,7 +1335,7 @@ var t,lastt: taste;
       if typ='B' then
         rfehler(413)   { 'nicht m”glich - Bin„rdatei' }
       else
-        EditFile(fn,true,true,0,false);
+        EditFile(fn,true,true,false,0,false);
       end;
   end;
 
@@ -2238,6 +2238,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.53  2001/10/22 23:04:18  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T z.B.)
+
   Revision 1.26.2.52  2001/10/17 02:12:54  my
   MY:- Fix: <Ctrl-#> funktionierte nicht mit Win-Tastaturen. Neuer
        Key daher <Alt-G>, <Ctrl-#> ist aber noch aktiv.

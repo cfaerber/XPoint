@@ -538,7 +538,7 @@ begin
   store_arrays;
   editfile(datei,true,
            (sendFlags and SendReedit<>0) or (filetime(datei)<>orgftime),
-           iif(editvollbild,0,2),umlaute=1);
+           true,iif(editvollbild,0,2),umlaute=1);
   get_arrays;
   if exteditor<3 then betreff:=EditGetbetreff;
   if edpush then begin
@@ -2396,6 +2396,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.42  2001/10/22 23:04:19  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T z.B.)
+
   Revision 1.39.2.41  2001/10/16 18:37:55  my
   MY:- Bei <Alt-A> im Sendefenster "[F2]" reinmalen
 

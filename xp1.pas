@@ -172,8 +172,8 @@ Procedure Start_OS2(const Programm,Parameter,Title:String);
 function  listfile(const name,header:string; savescr,listmsg:boolean;
                    cols:shortint):shortint; { Lister }
 procedure RemoveEOF(const fn:pathstr);
-procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
-                   ed_ukonv:boolean);
+procedure editfile(name:pathstr; nachricht,reedit,senden:boolean;
+                   keeplines:byte;ed_ukonv:boolean);
 procedure dosshell;
 procedure delete_tempfiles;
 procedure FlushSmartdrive(show:boolean);
@@ -2278,6 +2278,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.26  2001/10/22 23:04:17  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T z.B.)
+
   Revision 1.48.2.25  2001/09/16 20:18:05  my
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):

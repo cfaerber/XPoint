@@ -419,8 +419,8 @@ end;
 { reedit: Nachbearbeiten einer XP-erzeugten-Nachricht - }
 {         TED-Softreturns zurÅckwandeln                 }
 
-procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
-                   ed_ukonv:boolean);
+procedure editfile(name:pathstr; nachricht,reedit,senden:boolean;
+                   keeplines:byte;ed_ukonv:boolean);
 var
     bak : string[3];
     ms  : boolean;
@@ -436,7 +436,7 @@ begin
     end
   else begin
     if nachricht then pushhp(54);
-    TED(name,reedit,keeplines,ed_ukonv,nachricht);
+    TED(name,reedit,keeplines,ed_ukonv,nachricht,senden);
     if nachricht then pophp;
     if nachricht and (left(VarEditor,1)='*') then begin
       delfirst(VarEditor);
@@ -491,6 +491,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.11  2001/10/22 23:04:18  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/é/T z.B.)
+
   Revision 1.24.2.10  2001/09/16 20:19:33  my
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):

@@ -466,7 +466,7 @@ begin
               2 : UniEdit(6);
               3 : begin
                     Pushhp(979);
-                    EditFile(FeierDat,false,false,0,false);
+                    EditFile(FeierDat,false,false,false,0,false);
                     pophp;
                   end;
               4 : GebuehrOptions;
@@ -781,6 +781,11 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.7  2001/10/22 23:04:18  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T z.B.)
+
   Revision 1.14.2.6  2001/10/16 18:36:01  my
   XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ
   ------------------------------------------------------------------------

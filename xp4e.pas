@@ -1914,7 +1914,7 @@ begin
     adddir(fn,sendpath);
     if not exist(fn) then begin
       if ReadJN(getres(2725),true) then    { 'Datei nicht vorhanden - neu anlegen' }
-        EditFile(fn,false,false,0,false);
+        EditFile(fn,false,false,false,0,false);
       AutoExistfile:=exist(fn);
       end
     else
@@ -2511,6 +2511,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.24  2001/10/22 23:04:18  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T z.B.)
+
   Revision 1.25.2.23  2001/09/16 20:26:14  my
   JG+MY:- User editieren: bei "Adreßbuchgruppe" <F2>-Auswahl aus den
           aktuell bereits verwendeten Adreßbuchgruppen möglich.

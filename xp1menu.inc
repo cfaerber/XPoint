@@ -257,7 +257,7 @@ begin
       rfehler(2);    { Dateierweiterung muá .XPS sein! }
       exit;
       end;
-    EditFile(s,false,false,0,false);
+    EditFile(s,false,false,false,0,false);
     end;
 end;
 
@@ -290,18 +290,18 @@ begin
             mon;
             end;
           case m1 of           { Schablonen }
-            1 : editfile(headerfile,false,false,1,false);
-            2 : editfile(headerpriv,false,false,1,false);
-            3 : editfile(quotemsk,false,false,1,false);
-            4 : editfile(quotepriv,false,false,1,false);
-            5 : editfile(quotepmpriv,false,false,1,false);
-            6 : editfile(quotetomsk,false,false,1,false);
-            7 : editfile(weitermsk,false,false,1,false);
-            8 : editfile(erneutmsk,false,false,1,false);
+            1 : editfile(headerfile,false,false,false,1,false);
+            2 : editfile(headerpriv,false,false,false,1,false);
+            3 : editfile(quotemsk,false,false,false,1,false);
+            4 : editfile(quotepriv,false,false,false,1,false);
+            5 : editfile(quotepmpriv,false,false,false,1,false);
+            6 : editfile(quotetomsk,false,false,false,1,false);
+            7 : editfile(weitermsk,false,false,false,1,false);
+            8 : editfile(erneutmsk,false,false,false,1,false);
            10 : sigedit(signatfile);
            11 : sigedit(privsignat);
-           12 : editfile(EB_msk,false,false,1,false);
-           13 : editfile(CancelMsk,false,false,1,false);
+           12 : editfile(EB_msk,false,false,false,1,false);
+           13 : editfile(CancelMsk,false,false,false,1,false);
            14 : miscschab;
           end;
           if wp then wpop;
@@ -621,6 +621,11 @@ end;
 
 {
   $Log$
+  Revision 1.11.2.4  2001/10/22 23:04:18  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T z.B.)
+
   Revision 1.11.2.3  2001/09/16 20:20:42  my
   JG+MY:- Zusatzmenü faßt jetzt bis zu 20 Einträge (bei 25 Bildschirm-
           zeilen stehen nur die ersten 19 zur Verfügung).

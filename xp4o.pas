@@ -151,7 +151,7 @@ end;
 procedure OldSEEK_ed(var t:taste); {Lister-Tastenabfrage fuer Seek-Menue}
 begin
   if (ustr(t)='E') then begin
-    EditFile(libraryFile,false,false,0,false);
+    EditFile(libraryFile,false,false,false,0,false);
     t:=keyesc;
     pushkey(keysf2);
     end;
@@ -1385,7 +1385,7 @@ begin
     XReadIsoDecode:=true;
     XreadF(hds,f);                { Nachrichtentext in Tempfile.. }
     close(f);
-    editfile(fn,true,false,0,false);          { ..editieren.. }
+    editfile(fn,true,false,false,0,false);    { ..editieren.. }
     fn2:=TempS(_filesize(fn)+2000);
     assign(f2,fn2);
     rewrite(f2,1);
@@ -2891,6 +2891,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.30  2001/10/22 23:04:18  my
+  MY:- Option "Parken" beim Editieren von Nachrichten erscheint nur noch,
+       wenn es sich auch um eine zu versendende Nachricht handelt (also
+       nicht bei N/Ž/T z.B.)
+
   Revision 1.47.2.29  2001/09/16 20:27:02  my
   JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
           Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
