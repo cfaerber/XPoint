@@ -88,31 +88,6 @@ begin
     end;
 end;
 
-function GetT8BitTable(CharSet: TMimeCharsets): T8BitTable;
-begin
-  case CharSet of
-    csCP437: Result := CP437Transtable;
-    csCP866: Result := CP866Transtable;
-    csCP1251: Result := CP1251Transtable;
-    csCP1252: Result := CP1252Transtable;
-    csCP1255: Result := CP1255Transtable;
-    csISO8859_1: Result := ISO8859_1TransTable;
-    csISO8859_2: Result := ISO8859_2TransTable;
-    csISO8859_3: Result := ISO8859_3TransTable;
-    csISO8859_4: Result := ISO8859_4TransTable;
-    csISO8859_5: Result := ISO8859_5TransTable;
-    csISO8859_6: Result := ISO8859_6TransTable;
-    csISO8859_7: Result := ISO8859_7TransTable;
-    csISO8859_8: Result := ISO8859_8TransTable;
-    csISO8859_9: Result := ISO8859_9TransTable;
-    csISO8859_10: Result := ISO8859_10TransTable;
-    csISO8859_13: Result := ISO8859_13TransTable;
-    csISO8859_14: Result := ISO8859_14TransTable;
-    csISO8859_15: Result := ISO8859_15TransTable;
-    csISO8859_16: Result := ISO8859_16TransTable;
-  end;
-end;
-
 // -------------------------------------------------------------------
 //   UTF-8 (null encoder)
 // -------------------------------------------------------------------
@@ -222,6 +197,10 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.16  2002/01/04 22:34:32  cl
+// - added IBM codepages 850 and 858
+// - moved Get8BitTable to unit charmaps
+//
 // Revision 1.15  2002/01/04 22:28:12  cl
 // - removed unneccessary include of charset\aliases.inc
 //
