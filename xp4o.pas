@@ -83,16 +83,15 @@ const max_arc = 3;   { maximale verschachtelte Archivdateien }
 
 type arcbuf = record
                 arcer_typ : shortint;
-                arcname   : shortstring;
+                arcname   : string;
               end;
-     arcbp  = ^arcbuf;
 
 const arcbufp : byte = 0;
       suchopt : string = '*';               {JG:Dummy-Suchoptionen fuer wahl Deutsch/Englisch}
 
 var  reobuf : array[0..ablagen-1] of boolean;
      bufsiz : array[0..ablagen-1] of longint;  { Grî·e nach Reorg }
-     abuf   : array[1..max_arc+1] of arcbp;
+     abuf   : array[1..max_arc+1] of arcbuf;
      exdir  : string;
      arctyp_save : shortint;
      mid_options       : byte;
@@ -1753,7 +1752,7 @@ var decomp : string;
     viewer : viewinfo;
 begin
   ats:=arctyp_save;
-  atyp:=abuf[arcbufp]^.arcer_typ;
+  atyp:=abuf[arcbufp].arcer_typ;
   if atyp>arctypes then exit;  { ??? }
   if not getDecomp(atyp,decomp) then
     exdir:=''
@@ -1781,7 +1780,7 @@ begin
     else SetCurrentDir(temppath);
     decomp:=copy(decomp,1,p-1)+datei+copy(decomp,p+6,127);
     p:=pos('$ARCHIV',UpperCase(decomp));
-    decomp:=copy(decomp,1,p-1)+abuf[arcbufp]^.arcname+copy(decomp,p+7,127);
+    decomp:=copy(decomp,1,p-1)+abuf[arcbufp].arcname+copy(decomp,p+7,127);
     shell(decomp,400,3);
     if exdir='' then begin
       { !?! GoDir(temppath); }    { wurde durch Shell zurÅckgesetzt }
@@ -1922,11 +1921,10 @@ begin
   attrtxt(col.colarcstat);
   mwrt(1,4,forms(getres(464),80));   { ' Name            OrgGrî·e  CompGrî·e    %    Methode    Datum    Uhrzeit' }
   inc(arcbufp);
-  new(abuf[arcbufp]);
   with ar do begin
     arctyp_save:=arctyp;
-    abuf[arcbufp]^.arcer_typ:=arctyp;
-    abuf[arcbufp]^.arcname:=fn;
+    abuf[arcbufp].arcer_typ:=arctyp;
+    abuf[arcbufp].arcname:=fn;
     mwrt(77,4,arcname[arctyp]);
     while not ende do begin
       if (name<>'') or (path='') then
@@ -1939,6 +1937,7 @@ begin
       end;
     end;
   CloseArchive(ar);
+
   exdir:='';
   llh:=true; listexit:=0;
   lm:=ListMakros; ListMakros:=16;
@@ -1946,7 +1945,6 @@ begin
   list(brk);
   pophp;
   ListMakros:=lm;
-  dispose(abuf[arcbufp]);
   dec(arcbufp);
   CloseList;
   attrtxt(col.colkeys);
@@ -2426,6 +2424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2000/09/28 03:30:48  mk
+  - AnsiString-Fixes
+
   Revision 1.68  2000/09/26 05:12:26  mk
   - Archivviewer AnsiString-Fix
 
