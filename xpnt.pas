@@ -280,7 +280,8 @@ begin
     31  : ntTransferType:=ltQWK;
     40  : ntTransferType:=ltUUCP;
     50  : ntTransferType:=ltNNTP;
-    51  : ntTransferType:=ltPOP3;
+  else
+    ntTransferType:=ltPOP3;
   end;
 end;
 
@@ -760,6 +761,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2001/08/10 20:58:01  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.27  2001/07/29 13:58:23  ma
   - removed nt_UUCP_U, some fixes
 

@@ -40,6 +40,7 @@ program openxp;
 {%File 'netcall\ncuucp-fz.inc'}
 {%File 'netcall\ncuucp-g.inc'}
 {%File 'netcall\ncfido-binkp.inc'}
+{%File 'ObjCOM\ocsdos.inc'}
 
 uses
   Forms,

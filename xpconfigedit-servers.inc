@@ -30,7 +30,7 @@
       btxt : string;
       fido : boolean;
       s    : string;
-      p, yy: Integer;
+      yy: Integer;
   label restart;
   begin
   restart:
@@ -117,7 +117,6 @@
       maddstring(3,yy,getres2(912,11),fqdn,30,60,          { 'FQDN      ' }
                  'A'+without(range('!','~'),' @<>/_')); mhnr(40001);
       msetvfunc(xp9_FQDNTest);
-      inc(yy,2);
     end;
     freeres;
     readmask(brk);
@@ -2077,6 +2076,10 @@
 
 {
   $Log$
+  Revision 1.17  2001/08/10 20:58:00  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.16  2001/08/03 07:52:42  mk
   EditExtern:
   - added UpperCase

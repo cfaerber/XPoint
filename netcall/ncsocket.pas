@@ -306,14 +306,12 @@ end;
 
 procedure TSocketNetcall.ReadBuffer;
 var
-  Size: DWord;
+  Size: Longint;
   Count: Integer;
 begin
 {$IFDEF Win32}
-  {$IFNDEF Delphi } {!!}
-  if IOCTLSocket(FHandle, FIONREAD, @Size) < 0 then
+  if IOCTLSocket(FHandle, FIONREAD, {$IFNDEF Delphi}@{$ENDIF}Size) < 0 then
     RaiseSocketError;
-  {$ENDIF }
   if Size > 0 then
   begin
 {$ENDIF }
@@ -403,6 +401,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2001/08/10 20:58:03  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.23  2001/07/31 13:10:38  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

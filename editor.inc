@@ -1067,7 +1067,7 @@ begin
             apnew^.cont[wp]:=t[1];
             if ap^.size>wp then
               Move(ap^.cont[wp],apnew^.cont[wp+1],ap^.size-wp);
-            ap:=FreeAbsatz(ap);
+            FreeAbsatz(ap);
             MoveWorkpos(wp+1,nil);
             if pointswitch and (t[1]='e') then Juppheidi(apnew,wp+1);
             end;
@@ -1279,7 +1279,7 @@ begin
       endpos.offset:=wp+ss;
       absatzwechsel(ap,ap2,true);
       blockabsinsert(ap,ap2,wp,ss);
-      ap:=FreeAbsatz(ap);
+      FreeAbsatz(ap);
       e^.modified:=true;
     end;
     blk:=FreeAbsatz(blk);
@@ -1318,9 +1318,9 @@ begin
       absatzwechsel(ap,ap2,false);
       endpos.absatz:=ap3;
       endpos.offset:=apn^.size;
-      apn:=FreeAbsatz(apn);
+      FreeAbsatz(apn);
       blk:=FreeAbsatz(blk);
-      ap:=FreeAbsatz(ap);
+      FreeAbsatz(ap);
       e^.modified:=true;
     end
     else
@@ -1798,7 +1798,6 @@ var ap : absatzp;
     if IoResult<>0 then errsound  { Keine Glossary Datei? }
     else begin
       brk:=false;
-      lsi:=length(si)+2;
       repeat
         Readln(t,s);
       until EOF(t) or (pos('>'+AnsiUpperCase(si)+'<',AnsiUpperCase(s))=1);
@@ -2165,6 +2164,10 @@ end;
 
 {
   $Log$
+  Revision 1.45  2001/08/10 20:57:56  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.44  2001/07/31 13:10:30  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

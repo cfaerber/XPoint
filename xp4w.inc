@@ -588,7 +588,6 @@ var fn     : string;
     dbReadN(mbase,mb_gelesen,b);
     nt:=mbNetztyp;
     dbReadN(mbase,mb_unversandt,flags);
-    rflag:=false;
     if (b=0) or ((nt=nt_Maus) and (flags and 32<>0)) then begin
       brett:= dbReadNStr(mbase,mb_brett);       { ^^ Maus-zurueckgestellt }
       if (nt=nt_Maus) and MausLeseBest and ((brett[1]='1') or (brett[1]='U'))
@@ -1614,6 +1613,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.74  2001/08/10 20:57:59  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.73  2001/06/08 13:16:16  ma
   - fixed: File attachments were deleted (!) on viewing message content
 

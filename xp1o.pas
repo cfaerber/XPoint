@@ -184,8 +184,9 @@ begin
   if FileGetAttr(fname) and faReadonly<>0 then begin
     rfehler(9);        { 'Datei ist schreibgeschÅtzt.' }
     brk:=true;
+    Overwrite := false;
     exit;
-    end;
+    end;                                         
   diabox(57,5,'',x,y);
   mwrt(x+2,y+1,UpperCase(fitpath(fname,28))+getres(117));  { ' ist bereits vorhanden.' }
   t:='';
@@ -485,11 +486,9 @@ end;
 
 function filecopy(const fn1,fn2:string):boolean;
 var f1,f2 : file;
-    time  : longint;
     res   : integer;
-
+    fh1: Integer;
 begin
-
   if (FileUpperCase(ExpandFileName(fn1))=FileUpperCase(ExpandFileName(fn2)))
       and FileExists(fn1) then
   begin
@@ -510,14 +509,16 @@ begin
       exit;
     end;
 
-  assign(f1,fn1);
-  reset(f1,1);
-//!!  getftime(f1,time);
-  assign(f2,fn2);
-  rewrite(f2,1);
-    fmove(f1,f2);
-//!!  setftime(f2,time);
+  Assign(f1,fn1);
+  Reset(f1,1);
+  Assign(f2,fn2);
+  Rewrite(f2,1);
+  FMove(f1,f2);
   close(f1); close(f2);
+  
+  fh1 := FileOpen(fn2,  fmOpenReadWrite);
+  FileSetDate(fh1, FileAge(fn1));
+  FileClose(fh1);
 
   filecopy:=(inoutres=0);
   if inoutres<>0 then begin
@@ -638,7 +639,7 @@ var crc : string;
 
   function DatOK:boolean;
   begin
-    DatOK:=(dbReadInt(bezbase,'datum') and $fffffff0)=dat;
+    DatOK:=(dbReadInt(bezbase,'datum') and Integer($fffffff0))=dat;
   end;
 
 begin
@@ -1010,6 +1011,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.88  2001/08/10 20:57:57  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.87  2001/08/03 21:40:42  ml
   - compilable with fpc (linux)
 

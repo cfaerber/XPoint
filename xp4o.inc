@@ -271,8 +271,6 @@ var x,y,wdt: Integer;
     Hdp.Free;
   end;
 
-var
-  t, m, j: smallword;
 begin
   if dbRecCount(mbase)=0 then begin
     rfehler(420);   { 'keine Nachrichten vorhanden!' }
@@ -706,6 +704,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2001/08/10 20:57:58  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.38  2001/08/05 22:27:32  mk
   - Write changed to Wrt
 

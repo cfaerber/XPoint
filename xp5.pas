@@ -480,7 +480,7 @@ procedure TimedScsaver(endtime:string);
 const maxstars = 40;
       scactive : boolean = false;
 
-var c       : char;
+var 
     p       : scrptr;
     mattr   : byte;
     star    : array[1..maxstars] of record
@@ -618,8 +618,7 @@ begin
 
     if keypressed then
     begin
-      c:=readkey;
-      if c=#0 then c:=readkey;
+      if readkey =#0 then readkey;
     end;
     initscs;
     Holen(p);
@@ -949,6 +948,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2001/08/10 20:57:59  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.54  2001/08/03 21:40:43  ml
   - compilable with fpc (linux)
 

@@ -683,8 +683,8 @@ type   textp  = ^text;
        TReplyTreeItem = packed record
                           msgpos : longint;
                           Lines: KommLines;
-                         _ebene: shortint;
-                         flags : byte;
+                          _ebene: Integer;
+                          flags : byte;
                         end;
        TReplyTree = TList;   { Kommentarbaum }
 
@@ -1179,9 +1179,12 @@ var
 
 implementation
 
-end.
 {
   $Log$
+  Revision 1.135  2001/08/10 20:57:57  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.134  2001/08/04 19:40:49  mk
   - Autodatumsbezuege removed
 
@@ -1641,3 +1644,5 @@ end.
   AF: Kommandozeilenoption Dupekill hinzugefuegt
 
 }
+end.
+

@@ -341,10 +341,13 @@ begin
     end;
 end;
 
-
 end.
 {
   $Log$
+  Revision 1.28  2001/08/10 20:57:56  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.27  2001/08/10 16:56:15  mk
   - const parameter for mwrt()
 

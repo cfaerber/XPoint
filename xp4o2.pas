@@ -405,7 +405,7 @@ var hdp    : theader;
     nullid : longint;
     xlines : kommLines;
 
-  procedure RecurBez(ebene:shortint; rec: LongInt; Spuren: KommLines; last:boolean;
+  procedure RecurBez(ebene: Integer; rec: LongInt; Spuren: KommLines; last:boolean;
                      var betr,brett:string);
   const bmax  = 205;
   type  brec  = record
@@ -759,7 +759,7 @@ end;
 function BaumBlatt(ofs:byte; bezpos:word; var s,s1:string):string;
 var ss : string[255];
     i  : integer;   { muá longint sein, damit (1 shl i) longint ist }
-    p  : byte;
+    p  : Integer;
     bs : string;
     sn,
     sb : Integer;
@@ -840,8 +840,7 @@ var s  : string;
     old: string[4];
     Result: Integer;
 
-  function _SetLanguage(nl:string):boolean;
-  var i : integer;
+  function _SetLanguage(const nl:string):boolean;
   begin
     message(getres(5));
     ParLanguage:=LowerCase(nl);
@@ -925,9 +924,12 @@ begin
     end;
 end;
 
-end.
 {
   $Log$
+  Revision 1.43  2001/08/10 20:57:58  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.42  2001/08/10 16:56:33  mk
   - changed Write() to MWrt()
 
@@ -1060,3 +1062,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

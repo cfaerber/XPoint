@@ -877,7 +877,7 @@ begin
       pmsg('einen Moment bitte ...');
       papp(' \');
       psearch(drive+_MPMask,1);
-      i:=ioresult;
+      if ioresult = 0 then ;
       if not brk then pdrive:=drive
       else pdel;
       end
@@ -1104,6 +1104,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/08/10 20:57:57  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.39  2001/07/31 13:10:32  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

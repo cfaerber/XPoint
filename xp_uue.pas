@@ -327,7 +327,7 @@ begin
       while (LeftStr(s,12)='sum -r/size ') and not EOFinput do begin
         if pos('entire',s)>0 then begin
           s:=trim(mid(s,13));
-          l:=ival(GetToken(s,'/'));   { Summe Åberlesen }
+          ival(GetToken(s,'/'));   { Summe Åberlesen }
           l:=ival(GetToken(s,' '));
           if (l<filesize(f2^)) and (l>filesize(f2^)-20) then begin
             seek(f2^,l);
@@ -547,6 +547,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/08/10 20:58:00  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.27  2001/07/28 12:04:15  mk
   - removed crt unit as much as possible
 

@@ -1575,9 +1575,9 @@ var hdp   : Theader;
   end;
 
   procedure refliste;   { Fenster mit Referenzliste }
-  var ml  : byte;
-      i,j : integer;
-      x,y : Integer;
+  var 
+    ml, i: integer;
+    x, y: Integer;
   begin
     ml:=length(getres2(459,31))+8;
     with hdp do
@@ -2414,6 +2414,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.101  2001/08/10 20:57:58  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.100  2001/08/10 17:45:26  mk
   - fixed litte type in SucheWiedervorlage
 

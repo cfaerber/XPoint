@@ -642,8 +642,8 @@ end;
 
 { RFC/Client: Bretter anhand eines Files abbestellen (Brettfenster) }
 
-procedure File_abbestellen(box,f:string);
-var t1,t2 : text;
+procedure File_abbestellen(const box,f:string);
+var t1: Text;
     s1,s2 : string;
     brk   : boolean;
     List: TLister;
@@ -744,7 +744,7 @@ end;
 
 Procedure ClientBL_Sort(box:string);
 var
-  TempBl, blfile: String;
+  blfile: String;
   List: TStringList;
 begin
   blfile:=get_BL_Name(Box);
@@ -2092,9 +2092,12 @@ end;
 {$I xp8fs.inc}     { Fileserver }
 {$I xp8.inc}       { Fido FileScan }
 
-end.
 {
   $Log$
+  Revision 1.50  2001/08/10 20:58:00  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.49  2001/07/31 13:10:33  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 
@@ -2253,3 +2256,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

@@ -33,12 +33,12 @@ uses
   SysUtils;
 
 
-procedure dbCreate(filename:dbFileName; flp:dbFLP);
+procedure dbCreate(const filename:dbFileName; flp:dbFLP);
 procedure dbZAP(var dbp:DB);
-procedure dbAppendField(filename:string; feld:dbFeldTyp);
-procedure dbDeleteField(filename:string; feldname:dbFeldStr);
-procedure dbKillXbase(filename:dbFilename);
-function  dbPack(filename:string):boolean;
+procedure dbAppendField(const filename:string; feld:dbFeldTyp);
+procedure dbDeleteField(const filename:string; const feldname:dbFeldStr);
+procedure dbKillXbase(const filename: dbFilename);
+function  dbPack(const filename: string):boolean;
 
 
 implementation
@@ -103,7 +103,7 @@ end;
 { INT_NR wird automatisch angelegt,   }
 { ist nicht in flp^.felder enthalten! }
 
-procedure dbCreate(filename:dbFileName; flp:dbFLP);
+procedure dbCreate(const filename:dbFileName; flp:dbFLP);
 var hd    : dbheader;
     ehd   : dbdheader;
     f     : file;
@@ -212,7 +212,7 @@ end;
 { Datenbank muss geschlossen sein             }
 { geht noch nicht bei ext. Feldern!           }
 
-procedure dbAppendField(filename:string; feld:dbFeldTyp);
+procedure dbAppendField(const filename:string; feld:dbFeldTyp);
 var d       : DB;
     df      : dbfeld;
     i       : longint;
@@ -260,8 +260,8 @@ end;
 { Datenbank muss geschlossen sein        }
 { gehn noch nicht bei ext. Feldern!      }
 
-procedure dbDeleteField(filename:string; feldname:dbFeldStr);
-var fnr     : integer; {war ein Word, muﬂ integer sein, da fkt -1 zur¸ckgeben kann!!  MK 12/99 }
+procedure dbDeleteField(const filename:string; const feldname:dbFeldStr);
+var fnr     : integer; { muﬂ integer sein, da fkt -1 zur¸ckgeben kann }
     d       : DB;
     irec    : dbIndexCRec;
     newsize : word;
@@ -311,7 +311,7 @@ end;
 
 { alle extenen FeldbezÅge lîschen }
 
-procedure dbKillXbase(filename:dbFilename);
+procedure dbKillXbase(const filename:dbFilename);
 var d      : DB;
     i      : integer;
     ll     : array[0..1] of longint;
@@ -370,7 +370,7 @@ end;
 
 { Dateiname *ohne* Extension! }
 
-function dbPack(filename:string):boolean;
+function dbPack(const filename:string):boolean;
 var n,i   : longint;
     irec  : dbIndexCRec;
     f1,f2 : file;
@@ -440,10 +440,12 @@ begin
     end;
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.16  2001/08/10 20:57:56  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.15  2001/06/18 17:58:10  ma
   - fixed: Improper case for new field names
 
@@ -482,3 +484,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

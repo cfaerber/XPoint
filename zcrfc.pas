@@ -69,28 +69,28 @@ type
     addpath: String;
     CopyXLines: Boolean;         { Alle X-Lines nach RFC zurueckkopieren }
     getrecenvemp: boolean; { Envelope-Empfaenger aus Received auslesen? }
-    NoMIME: boolean ;              { -noMIME }
+    NoMIME: boolean;              { -noMIME }
     shrinkheader: boolean;        { uz: r-Schalter }
     nomailer: boolean;
     eol: Integer;
-    function SetMailUser(mailuser: string): string;
+    function SetMailUser(const mailuser: string): string;
     procedure FlushOutbuf;
-    procedure wrfs(s: string);
+    procedure wrfs(const s: string);
     procedure WriteHeader;
     procedure ReadBuf;
-    procedure OpenFile(var fn: String);
+    procedure OpenFile(const fn: String);
     procedure ReadString;
     procedure ReadBinString(bytesleft: longint); { Base64-Codierung }
     procedure ReadRFCheader(mail: boolean; s0: string);
-    procedure ConvertMailfile(fn: String; mailuser: string; var mails: Integer);
-    procedure ConvertSmtpFile(fn: String; (* compressed: boolean; *) var mails: Integer);
-    procedure ConvertNewsfile(fn: String; var news: Integer);
+    procedure ConvertMailfile(const fn: String; mailuser: String; var mails: Integer);
+    procedure ConvertSmtpFile(const fn: String; var mails: Integer);
+    procedure ConvertNewsfile(const fn: String; var news: Integer);
     procedure MakeQuotedPrintable;          { ISO-Text -> quoted-printable }
     procedure RFC1522form;                  { evtl. s mit quoted-printable codieren }
     procedure SetMimeData;
     procedure WriteRFCheader(var f: file; mail: boolean);
 
-    procedure Compress  (fn: String; news:boolean; var ctype:TCompression);
+    procedure Compress  (const fn: String; news:boolean; var ctype:TCompression);
     procedure DeCompress(fn: String; batch: boolean);
   public
     u2z: boolean;                         { Richtung; mail/news }
@@ -119,18 +119,10 @@ type
     { change from default for non-cmdline mode }
     downarcers: array [compress_gzip..compress_freeze] of string;
 
-//  zSMTP: boolean ;               { GNU-Zipped SMTP  }
-//  cSMTP: boolean ;               { compressed SMTP  }
-//  fSMTP: boolean ;               { frozen SMTP      }
-//  bSMTP: boolean ;               { BZIP2'ed SMTP    }
     ParSize: boolean ;             { Size negotiation }
     ParECmd: boolean ;
     ClearSourceFiles: boolean; // clear source files after converting
     CommandLine: Boolean;      // uuz is started from CommandLine
-//  uncompress : string;
-//  unfreeze : string;
-//  ungzip : string;
-//  unbzip : string;
     constructor create;
     destructor Destroy; override;
     procedure testfiles;
@@ -291,10 +283,6 @@ begin
   ParSize := false;             { Size negotiation }
   ParECmd := false;
   SMTP:= false;
-//cSMTP:= false;               { compressed SMTP  }
-//fSMTP:= false;               { frozen SMTP      }
-//zSMTP:= false;               { GNU-Zipped SMTP  }
-//bSMTP:= false;               { BZIP2'ed SMTP    }
   NewsMIME:= false;
   NoMIME:= false;              { -noMIME }
   NNTPSpoolFormat:= false;
@@ -542,10 +530,9 @@ end;
 
 { --- Compression -------------------------------------------- 3247 - }
 
-procedure TUUZ.Compress(fn: String; news:boolean; var ctype:TCompression);
+procedure TUUZ.Compress(const fn: String; news:boolean; var ctype:TCompression);
 var f1,f2 :file;
     p     : integer;
-    rr    : word;
     uparc : string;
 
 begin
@@ -744,7 +731,7 @@ begin
   outbufpos := 0;
 end;
 
-procedure TUUz.wrfs(s: string);
+procedure TUUz.wrfs(const s: string);
 begin
   if outbufpos + length(s) >= bufsize then
     FlushOutbuf;
@@ -818,7 +805,7 @@ begin
           for i:=0 to mailcopies.count-1 do
             wrs('DISKUSSION-IN: '+mailcopies[i])
       else if ReplyTo <> '' then
-          wrs('DISKUSSION-IN: '+replyto[i])
+          wrs('DISKUSSION-IN: '+replyto)
       else
         if absender<>'' then
           wrs('DISKUSSION-IN: '+absender)
@@ -1499,7 +1486,7 @@ begin
   bufpos := 0;
 end;
 
-procedure TUUz.OpenFile(var fn: String);
+procedure TUUz.OpenFile(const fn: String);
 begin
   assign(f1, fn);
   reset(f1, 1);
@@ -1823,7 +1810,7 @@ var
   { liesst eine Followup-To-Zeile }
   procedure getfollowup(line: string; FollowUp: TStringList; var poster: boolean);
   var
-    i,j: integer;
+    i: integer;
     lposter: boolean;
   begin
     lposter:=false;
@@ -2350,7 +2337,7 @@ begin
   end;
 end;
 
-function TUUZ.SetMailUser(mailuser: string): string;
+function TUUZ.SetMailUser(const mailuser: string): string;
 begin
   if (OwnSite = '') or (mailuser = '') then
     if cpos('@', mailuser) = 0 then
@@ -2369,7 +2356,7 @@ end;
 
 { UUCP-Mail -> ZCONNECT }
 
-procedure TUUz.ConvertMailfile(fn: String; mailuser: string; var mails: Integer);
+procedure TUUz.ConvertMailfile(const fn: String; mailuser: String; var mails: Integer);
 var
   p, p2, p3: Integer;
   i: integer;
@@ -2409,7 +2396,7 @@ begin
               hd.wab := LeftStr(s, p - 1);
               delete(s, 1, p);
               p := cpos('!', hd.wab);
-              if cpos('!', hd.wab) > 0 then
+              if p > 0 then
               begin
                 p2 := length(hd.wab);
                 while hd.wab[p2] <> '!' do
@@ -2459,7 +2446,7 @@ begin
         if cpos('<',hd.envemp)=1 then delete (hd.envemp,1,1);
         if (cpos('>',hd.envemp)=length(hd.envemp))
           and (length(hd.envemp)>0) then dellast(hd.envemp);
-        mailuser:=SetMailuser(hd.envemp);
+        mailuser:= SetMailuser(hd.envemp);
       end;
 
       try
@@ -2478,7 +2465,6 @@ begin
       // If not, assume mbox format: Recognize 'crlfFrom ' as beginning
       // of next mail and unquote '>From ' to 'From '.
       LastLineWasBlank:=False;
-      FirstLineHasBeenRead:=False;
       while (bufpos < bufanz) and (hd.Lines<>0) do
       begin
         ReadString;
@@ -2486,11 +2472,11 @@ begin
           Dec(hd.Lines)
         else // seems to be mbox format
           if LastLineWasBlank then
-            if LeftStr(s,5)='From ' then begin
-              FirstLineHasBeenRead:=True; break;
-              end
-            else if LeftStr(s,6)='>From ' then
-              DelFirst(s);
+            if LeftStr(s,5)='From ' then 
+              break
+            else 
+              if LeftStr(s,6)='>From ' then
+                DelFirst(s);
         LastLineWasBlank:=(s=''); DecodeLine;
         if (not binaer)and(hd.mime.ctype<>tMultipart)
           then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
@@ -2508,19 +2494,16 @@ begin
   end;
   close(f1);
   pfrec:= @f1;
-  FileSetAttr(pfrec^.name,0);
-  //setfattr(f1, 0);                      { Archivbit abschalten }
+  FileSetAttr(pfrec^.name,0);             { Archivbit abschalten }
 end;
 
 { SMTP-Mail -> ZCONNECT }
 
-procedure TUUz.ConvertSmtpFile(fn: String; (* compressed: boolean; *) var mails: Integer);
+procedure TUUz.ConvertSmtpFile(const fn: String; var mails: Integer);
 var
-  f: file;
   ende: boolean;
   fp, bp: longint;
   n: longint;
-  rr: word;
   p1, p2: integer;
   mempf: string;
   binaer: boolean;
@@ -2551,14 +2534,13 @@ begin
   repeat
     ClearHeader;
     hd.netztyp:=nt_RFC;
-    ende := false;
     repeat
       ReadString;
       if UpperCase(LeftStr(s, 9)) = 'MAIL FROM' then
         hd.wab := GetAdr
       else                              { Envelope-From }
         if UpperCase(LeftStr(s, 7)) = 'RCPT TO' then
-        hd.empfaenger := GetAdr;        { Envelope-To }
+          hd.empfaenger := GetAdr;        { Envelope-To }
       ende := (bufpos >= bufanz) {or (s='QUIT')};
     until ende or (s = 'DATA') or (s = 'QUIT');
     if s = 'DATA' then
@@ -2635,8 +2617,7 @@ begin
   until ende;
   close(f1);
   pfrec:= @f1;
-  FileSetAttr(pfrec^.name, 0);
-  //setfattr(f1, 0);                      { Archivbit abschalten }
+  FileSetAttr(pfrec^.name, 0); { Archivbit abschalten }
   if CommandLine then writeln(' - ok');
 end;
 
@@ -2648,18 +2629,12 @@ end;
 
 { Newsbatch -> ZCONNECT }
 
-procedure TUUz.ConvertNewsfile(fn: String; var news: Integer);
+procedure TUUz.ConvertNewsfile(const fn: String; var news: Integer);
 var
-  f: file;
   i: Integer;
   size: longint; // Groesse des Headers in Byte
   fp, bp, n: longint;
-  freeze: boolean;
-  gzip: boolean;
-  bzip: boolean;
   p: integer;
-  newfn: String;
-  dir, name, ext: string;
   binaer: boolean;
   pfrec: ^filerec;
 label
@@ -2683,27 +2658,22 @@ begin
   if CommandLine then write(sp(7));
   n := 0;
   repeat
-    case RawNews of
-      false: begin
+    Size := 0;
+    if not RawNews then
+    begin
 // TODO: BUG
-        while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and
-               (bufpos < bufanz) do
-          ReadString;
-        p := pos('#! rnews', s);
-        if p > 1 then begin
-          delete(s, 1, p - 1);
-          size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
-          end else begin
-          size := 0;
-          end;
-        end;
-      true: begin
-        // first line for ReadRFCHeader is already read if first message (see OpenFile)
-        // if not on first message, read next line
-        if n>0 then ReadString;
-        size := 0;
-        end;
-      end; {case}
+      while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and (bufpos < bufanz) do
+        ReadString;
+      p := pos('#! rnews', s);
+      if p > 1 then 
+      begin
+        delete(s, 1, p - 1);
+        size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
+      end;
+    end else
+      // first line for ReadRFCHeader is already read if first message (see OpenFile)
+      // if not on first message, read next line
+      if n>0 then ReadString;
 
     if bufpos < bufanz then
     begin
@@ -2756,8 +2726,7 @@ begin
   ende:
   close(f1);
   pfrec:= @f1;
-  FileSetAttr(pfrec^.name, 0);
-  //setfattr(f1, 0);                      { Archivbit abschalten }
+  FileSetAttr(pfrec^.name, 0);            { Archivbit abschalten }
   if CommandLine then  if n = 0 then writeln;
 end;
 
@@ -3835,6 +3804,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.66  2001/08/10 20:58:01  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.65  2001/08/07 16:54:12  mk
   - convert Ctrl-Z in ReadString to ?
 

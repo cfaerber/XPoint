@@ -1011,9 +1011,12 @@ begin
   ExitProc:= @ExitWinXPUnit;
 end;
 
-end.
 {
   $Log$
+  Revision 1.60  2001/08/10 20:57:57  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.59  2001/08/03 21:40:42  ml
   - compilable with fpc (linux)
 
@@ -1158,3 +1161,5 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
+end.
+

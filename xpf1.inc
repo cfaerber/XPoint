@@ -89,10 +89,10 @@ var s  : string;
       end;
   end;
 
-begin           { begin procedure ReadNData(nfile:byte; adr:longint; var ni:NodeInfo) };
-  ni.found:=false;                                              //war (nfile<1)
-  if (nfile<0) or (nfile>NodeList.Count-1) then exit;
-        new(nodelf);                                            //es kann ein nodelisten index von
+begin           
+  ni.found:=false;                                             
+  if nfile>NodeList.Count-1 then exit;
+  new(nodelf);                                            //es kann ein nodelisten index von
   assign(nodelf^,FidoDir+NodeList.GetFilename(nfile));
   resetfm(nodelf^,fmRead);
   if ioresult=0 then
@@ -901,6 +901,10 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.34  2001/08/10 20:58:01  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.33  2001/07/23 16:05:23  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

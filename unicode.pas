@@ -431,12 +431,15 @@ begin
   end;
 end;
 
-end.
-
-
 {
   $Log$
+  Revision 1.2  2001/08/10 20:57:57  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.1  2000/10/10 12:25:06  mk
   - Unicode-Support added
 
 }
+end.
+

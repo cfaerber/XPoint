@@ -368,7 +368,8 @@ begin
     csMaus:   begin r^.key:='[Maus]';   ro:= ResMAin+9; end;
     csFido:   begin r^.key:='[FTN]';    ro:= ResMain+10; end;
     csUser:   begin r^.key:='[User]';   ro:= ResMain+11; end;
-    csFKeys:  begin r^.key:='[F-Keys]'; ro:= ResMain+12; end;
+  else
+    r^.key:='[F-Keys]'; ro:= ResMain+12; 
   end;
   j:= ival(getres2(ro,0));
   for i:= 1 to j do begin               { Defaultbeschreibung aus der Res holen }
@@ -387,7 +388,8 @@ function AddKeyInSection(start: PCfgEntry): PCfgEntry;
 var
   last: PCfgEntry;
 begin
-  while (start^.next<>nil) and (length(start^.key)>0) and (start^.key<>'[') do begin
+  while (start^.next<>nil) and (length(start^.key)>0) and (start^.key<>'[') do 
+  begin
     last:= start;
     start:= start^.next;
   end;
@@ -499,6 +501,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2001/08/10 20:58:00  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.8  2000/11/14 15:51:36  mk
   - replaced Exist() with FileExists()
 

@@ -307,10 +307,12 @@ begin
     end;
 end;
 
-end.
-
 {
   $Log$
+  Revision 1.15  2001/08/10 20:57:56  mk
+  - removed some hints and warnings
+  - fixed some minior bugs
+
   Revision 1.14  2001/07/31 16:18:38  mk
   - removed some unused variables
   - changed some LongInt to DWord
@@ -347,3 +349,5 @@ end.
   - added GPL and CVS Info
 
 }
+end.
+

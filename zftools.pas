@@ -1440,7 +1440,7 @@ begin
       inc(adr,p);
       isfmpt:=false; istopt:=false;
       fmzone:=0; tozone:=0;
-      fromline:=''; fllen:=0; inetadr:=false;
+      fromline:=''; inetadr:=false;
       viaanz:=0;
       MWrt(x+15,y+4,IntToStr(anz_msg));
       MWrt(x+15,y+5,FormS(fromu,50));
@@ -1802,6 +1802,10 @@ end;
 end.
 {
         $Log$
+        Revision 1.20  2001/08/10 20:58:02  mk
+        - removed some hints and warnings
+        - fixed some minior bugs
+
         Revision 1.19  2001/07/31 16:18:42  mk
         - removed some unused variables
         - changed some LongInt to DWord
