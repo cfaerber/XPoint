@@ -103,7 +103,7 @@
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
-  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
+  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
@@ -249,6 +249,9 @@
 
 {
   $Log$
+  Revision 1.78.2.4  2002/06/15 14:27:56  mk
+  - O- with delphi to avoid various crashes in asm function
+
   Revision 1.78.2.3  2002/06/12 08:44:12  mk
   - debug modus switched off
 

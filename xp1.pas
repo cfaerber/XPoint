@@ -21,6 +21,7 @@
 
 {$I xpdefine.inc }
 
+
 unit xp1;
 
 interface
@@ -366,6 +367,7 @@ end ['EAX', 'EBX', 'ECX', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
+
 
 { Hervorhebungsregeln fuer * und _ im Lister: }
 { 1 = vor  Startzeichen erlaubt }
@@ -768,7 +770,8 @@ asm
 @taende:    pop eax
             mov ecx,edx
             popa
-            ret // do not remove (problems with fpc)!
+            ret
+            // this is end of internal function testattr
 {-------------------------}
 @ende:
 {$IFDEF FPC }
@@ -777,16 +780,13 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end; { of MakeListdisplay }
 {$ENDIF }
 
-
-
-procedure ListDisplay(x,y:word; var s:string);
+procedure ListDisplay(x,y:word; var s: string);
 var
   s0: shortstring;
 begin
   s0:= s;
   makelistdisplay(s0);
   Consolewrite(x,y,length(s0));
-  s:= s0;                               { Falls var irgendeine Bedeutung hat }
 end;
 
 procedure interr(const txt:string);
@@ -2097,6 +2097,9 @@ end;
 
 {
   $Log$
+  Revision 1.147.2.7  2002/06/15 14:27:56  mk
+  - O- with delphi to avoid various crashes in asm function
+
   Revision 1.147.2.6  2002/05/07 09:13:41  mk
   - last checkin fixed for fpc
 
