@@ -1251,8 +1251,7 @@ begin
   else if b64 then
     DecodeBase64
   else
-    AddCrlf;
-  if add_cr_lf then AddCrlf;
+    if add_cr_lf then AddCrlf;
 end;
 
 
@@ -3511,6 +3510,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.12  2000/10/03 15:48:50  mk
+  - Typo in UnQuotePrintable wegen doppeltem CRLF beseitigt
+
   Revision 1.35.2.11  2000/09/25 17:53:27  mk
   - Typ wird nicht mehr auf Binaer gesetzt, wenn Msg B64 codiert ist
 
