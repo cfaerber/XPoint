@@ -23,11 +23,10 @@
      Modul der v3.12 kann weiterhin verwendet werden.
 
 
-     CrossPoint/OpenXP liegt darber hinaus bereits in einer Beta-
-     Version 3.30 (16-bit) vor, von der demn„chst der erste "Release
-     Candidate v3.40" erscheinen wird. OpenXP v3.30 zeichnet sich neben
-     ebenfalls hoher Stabilit„t durch eine ganze Reihe neuer Features
-     aus.
+     CrossPoint/OpenXP liegt darber hinaus bereits in einer Version
+     3.40 (16-bit) als "Release Candidate 2" vor. OpenXP v3.40 zeichnet
+     sich neben ebenfalls hoher Stabilit„t durch eine ganze Reihe neuer
+     Features aus.
 
      Parallel dazu befindet sich eine Beta-Version 3.70 (32-bit) in
      Entwicklung, die in vieler Hinsicht neue Maást„be setzen wird.
@@ -67,4 +66,4 @@
 
 
 
-     Letzte nderung, 31.12.2000
+     Letzte nderung, 01.01.2001
