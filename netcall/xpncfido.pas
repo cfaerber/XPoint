@@ -405,10 +405,10 @@ var i        : integer;
     end; { while }
   end;
 
-  procedure ProcessRequestResult(fa:string; IncomingRequestedFiles: TStringList);
+  procedure ProcessRequestResult(const fa:string; IncomingRequestedFiles: TStringList);
   { Requests zurckstellen }
 
-    function match(wfn,fn:string):boolean;
+    function match(wfn, fn:string):boolean;
     var
       p, i : integer;
       dir, name, ext : string;
@@ -428,7 +428,8 @@ var i        : integer;
         fn:=forms(LeftStr(fn,p-1),8)+forms(mid(fn,p),4);
         p:=cpos('.',wfn);
         if p>0 then wfn:=forms(LeftStr(wfn,p-1),8)+forms(mid(wfn,p),4);
-        for i:=1 to length(fn) do
+        p := Min(Length(fn), Length(wfn)); // check this!
+        for i:=1 to p do
           if (wfn[i]<>'?') and (UpCase(fn[i])<>UpCase(wfn[i])) then
             match:=false;
       end;
@@ -893,6 +894,9 @@ end;
 
 {
   $Log$
+  Revision 1.27  2001/11/17 13:35:12  mk
+  - fixed range check error in match()
+
   Revision 1.26  2001/10/30 09:54:24  ma
   - fixed requested file processing once again
 
