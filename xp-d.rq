@@ -1,4 +1,4 @@
-K CrossPoint v3.7 resource file
+K CrossPoint v3.70 resource file
 K Deutsch
 K (c) '93-98 Peter Mandrella
 K (c) '2000 OpenXP-Team, www.openxp.de
@@ -547,7 +547,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 31   Eigene PMs halten
 #
 100  68
-101  Adreáeinstellungen (ZCONNECT / RFC)
+101  Adreáeinstellungen (ZConnect / RFC)
 102  Organisation ~
 103  Postanschrift~
 104  Telefon      ~
@@ -563,7 +563,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    M”chten Sie diese Option wirklich einschalten?
 8    ~ ^Ja  , ^Nein~
 9    MIME in News
-10   ZCONNECT: ISO-Zeichensatz
+10   ZConnect: ISO-Zeichensatz
 11   MIME: "quoted-printable" verwenden
 12   MIME in Headerzeilen verwenden
 14   Kommentarverkettung
@@ -765,7 +765,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 271
 0    50
 1    PGP-Einstellungen
-2    ZCONNECT-PGP-Untersttzung
+2    ZConnect-PGP-Untersttzung
 3    PGP-Rckfragen bergehen
 4    Warten auf Tastendruck nach PGP-Aufruf
 5    Keys aus PMs automatisch einlesen
@@ -2802,7 +2802,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 +  3001
 1  PGP-Key anfordern bei...
 2  PGP-Keyanforderung
-3  Falls Ihre Software PGP nach dem ZCONNECT-Standard untersttzt,
+3  Falls Ihre Software PGP nach dem ZConnect-Standard untersttzt,
 4  sollte sie auf diese Nachricht mit dem Verschicken Ihres PGP
 5  Public Key antworten.
 6  - automatisch erzeugte Nachricht -
@@ -2858,7 +2858,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 12 Telefonnummern haben ungltiges Format - s. Online-Hilfe!
 14 Node-/Pointliste %s fehlt
 17 PGP ist nicht vorhanden oder nicht per Pfad erreichbar.
-18 Aktivieren Sie zuerst die ZCONNECT-PGP-Untersttzung!
+18 Aktivieren Sie zuerst die ZConnect-PGP-Untersttzung!
 19 Ihre Grafikkarte untersttzt kein VESA-DPMS.
 20 Geben Sie die vollst„ndige URL (http://do.main/...) an!
 21 Das Device '/dev/%s' existiert nicht!
@@ -3580,6 +3580,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.87  2000/12/16 16:10:52  my
+# - changed "ZCONNECT" -> "ZConnect"
+#
 # Revision 1.86  2000/12/14 14:11:09  hd
 # - merges some resources from XPFM-?.RQ
 #   - 12300 for errors
