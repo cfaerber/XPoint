@@ -546,7 +546,7 @@ begin
       set_active;
       if anzeige then display
       else show_active;
-      multi2(curoff);
+      multi2;
       if endtime>=time then disprest;
       if (anz>0) and (time>=endtime) then begin
         execute1;
@@ -644,6 +644,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.1  2000/06/01 15:17:04  mk
+  - Unnoetigen Parameter in Multi2 entfernt
+
   Revision 1.3  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -1280,7 +1280,7 @@ begin                  { of Netcall }
         time(iif((numpos=1) or postsperre,redialwait,4));
         rz:='';
         repeat
-          multi2(curon);
+          multi2;
           if rz<>restzeit then begin
             moff;
             write(#13,getres2(703,iif(net,6,7)),  { 'Warten auf n„chsten (Netz)anruf... ' }
@@ -1417,7 +1417,7 @@ begin
       mwrt(xx,y+4,timediff);
       td:=timediff;
       end;
-    multi2(curoff);
+    multi2;
     if keypressed then begin
       spush(hotkeys,sizeof(hotkeys));
       hotkeys:=false;
@@ -1557,6 +1557,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.7.2.1  2000/06/01 15:17:04  mk
+  - Unnoetigen Parameter in Multi2 entfernt
+
   Revision 1.7  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
 

@@ -45,7 +45,7 @@ begin
   waitkey:='';
 again:
   while (ticker<t0) and (ticker>=t) and not keypressed do begin
-    multi2(curoff);
+    multi2;
     { XPIdle; }
     rest:=system.round((t0-ticker)/18.2);
     if count and (rest mod 60<>last) then begin
@@ -175,7 +175,7 @@ begin
                        moff;
                        write(icr.percent:3);
                        mon;
-                       multi2(curoff);
+                       multi2;
                        end;
 
       icCloseWindow: begin

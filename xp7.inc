@@ -164,7 +164,7 @@ end;
 procedure tb;
 begin
   testbyte;
-  multi2(curon);
+  multi2;
 end;
 
 procedure tkey;
@@ -332,7 +332,7 @@ begin
         if (IgnCD or carrier(comnr)) and GetCTS(comnr) then begin
           SendStr('+++');
           mdelay(500);
-          multi2(curoff);
+          multi2;
           mdelay(700);
           if (IgnCD or carrier(comnr)) and GetCTS(comnr) then begin
             SendStr('AT H'#13);
@@ -1292,7 +1292,7 @@ begin
   _ende:=false;
   zaehler[2]:=300;
   repeat
-    multi2(curoff);
+    multi2;
     write(#13,restzeit);
     if keypressed then begin
       c:=readkey;

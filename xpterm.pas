@@ -37,7 +37,7 @@ function  TermGetfilename(nr,nn:byte):pathstr;
 
 implementation  { -------------------------------------------------- }
 
-uses  xp1o,xpkeys,xp2,xp2c,xp9bp,xp10, winxp;
+uses  xp1o,xpkeys,xp2,xp2c,xp9bp,xp10;
 
 const ansimode : boolean = true;
       ansimax  = 40;       { max. L„nge von ANSI-Codes }
@@ -444,7 +444,7 @@ end;
 procedure tb;
 begin
   testbyte;
-  multi2(curon);
+  multi2;
 end;
 
 procedure sendstr(s:string);
@@ -548,7 +548,7 @@ begin
       if carrier then begin
         SendStr('+++');
         mdelay(500,true);
-        multi2(curoff);
+        multi2;
         mdelay(500,true);
         end;
       flushin;
@@ -868,7 +868,7 @@ begin
         connected:=false;
         end
       else begin
-        multi2(curon);
+        multi2;
 
         testbyte;
         if AutoDownload and (pos('*'^X'B00',recs)>0) then
@@ -1492,7 +1492,7 @@ var ip   : integer;
                 end;
             end;
         2 : begin
-              multi2(curon);
+              multi2;
               doit:=(zaehler[3]=0);
             end;
         3 : doit:=online;

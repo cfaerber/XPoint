@@ -798,7 +798,7 @@ var   i,j     : integer;
     { n1:=pn; }
     while de=0 do begin
       sn:=sr.name;
-      multi2(curoff);
+      multi2;
       dstat;
       with sr do
         repeat
@@ -1077,6 +1077,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/06/01 15:17:04  mk
+  - Unnoetigen Parameter in Multi2 entfernt
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -162,7 +162,7 @@ var    chml : Array[1..5] of string[230];
 
 procedure Disp_DT;                              { Datum/Uhrzeit anzeigen  }
 procedure SetSeconds(sec,flash:boolean);        { Sekundenanzeige ein/aus }
-Procedure multi2(cur:curtype);                  { vorgeg. Backgr.-Prozess }
+Procedure multi2;                               { vorgeg. Backgr.-Prozess }
 Procedure initscs;                              { Screen-Saver init       }
 
 procedure IoVideoInit;                       { nach Modewechsel aufrufen! }
@@ -445,7 +445,7 @@ begin
 end;
 
 
-Procedure multi2(cur:curtype);
+Procedure multi2;
 var h,m,s,s100 : smallword;
     i          : integer;
     l          : longint;
@@ -604,7 +604,7 @@ begin
               (maus and iomaus and ((mox-mx>=8*mausfx) or (mox<mx) or (moy-my>=8*mausfy) or (moy<my)))
               and not (kbstat<>st1) do begin
           getactive:=true;
-          multi2(cur);
+          multi2;
           getactive:=false;
           if maus and iomaus and ((mox<=8*mausfx-1) or (mox>=640-8*mausfx) or
                        (moy<=8*mausfy-1) or (moy>=200-8*mausfx)) then begin
@@ -1731,7 +1731,7 @@ begin
     else begin
       t:=ticker;
       for i:=1 to n do begin
-        multi2(curoff);
+        multi2;
         while t=ticker do
           idle;
         if t<ticker then inc(t)

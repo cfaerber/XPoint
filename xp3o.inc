@@ -797,7 +797,7 @@ begin
             fm:=27;
           write(forms(copy(empfaenger,2,40),fm),' ',forms(absender,22),' ',forms(betreff,23));
           mon;
-          multi2(curoff); initscs;
+          multi2; initscs;
 
           attrtxt(col.colmboxhigh);
           dbSeek(ubase,uiName,ustr(absender));
@@ -1142,6 +1142,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6.2.2  2000/06/01 15:17:04  mk
+  - Unnoetigen Parameter in Multi2 entfernt
+
   Revision 1.6.2.1  2000/04/09 11:39:26  mk
   - Priority wird nicht mehr hervorgehoben
 

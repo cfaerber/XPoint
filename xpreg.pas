@@ -1323,7 +1323,7 @@ begin
         else zaehler[2]:=(diff-1)*10;
         repeat
           mwrt(x,y+2,strs(zaehler[2])+' ');
-          multi2(curoff);
+          multi2;
         until zaehler[2]=0;
         clearkeybuf;
         mwrt(x,y,sp(66));
@@ -1566,6 +1566,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.1  2000/06/01 15:17:04  mk
+  - Unnoetigen Parameter in Multi2 entfernt
+
   Revision 1.6  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 
