@@ -30,7 +30,6 @@ const
   llWarning     = 2;    { 1 + Warnungen }
   llInform      = 3;    { 2 + Infos }
   llDebug       = 4;    { 3 + Alles }
-  newline=#13#10;
 
 type
   TLog = class
@@ -220,6 +219,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.6  2000/11/19 18:00:37  ma
+        - newline removed, my fault.
+
         Revision 1.5  2000/11/19 17:52:13  ma
         - added newline declaration missing (Win32)
 
