@@ -1,4 +1,4 @@
-{ --------------------------------------------------------------- }
+ÿ{ --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
@@ -370,7 +370,7 @@ begin
     for i:=0 to sizeof(hellor)-1 do     { Hello senden }
       SeriellWrite(HelloPkt[i]);
     flushinput(sh);
-    crc:=_CRC16(hello,sizeof(hellor));
+    crc:=_CRC16Ver2(hello,sizeof(hellor));
     SeriellWrite(char(hi(crc)));        { CRC senden }
     SeriellWrite(char(lo(crc)));
     StartTimer(ti_Hello,40);
@@ -1056,6 +1056,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/03/21 18:59:12  mk
+  - Bug in CRC-Berechnung behoben
+
   Revision 1.6  2000/03/14 15:15:37  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
