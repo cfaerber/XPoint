@@ -1106,8 +1106,6 @@ begin
         if IsNaN(pa.FileCreate) then pa.FileCreate := NewTime2;
       end;
       pa.IsTemp := true;
-      pa.IsFile := false;
-      pa.IsExtract := false;
     end
     else                (* not modified - just delete copy      *)
       _era(FileName);
@@ -1115,12 +1113,13 @@ begin
 
   if NewTime<>OldTime then
   begin               (* modified - use this file from now on *)
-    pa.FileCharset := MyEditCharset
+    pa.FileCharset := MyEditCharset;
+    pa.IsFile := false;
+    pa.IsExtract := false;
   end;
 
   if (NewTime<>OldTime) or (pa.Analyzed.Size<=0) then
     SendAttach_Analyze(pa,false,Signature,netztyp,docode,pgpsig);
 end;
-
 
 end.
