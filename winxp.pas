@@ -22,7 +22,7 @@ uses
 {$IFDEF Win32 }
   windows, strings,
 {$ENDIF }
-{$IFDEF Linux }
+{$IFDEF unix}
   xplinux, strings,
 {$ENDIF }
 {$IFDEF VP }
@@ -912,6 +912,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.50  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.49  2000/09/29 11:27:43  fe
   Ungenutzte, lokale Variablen entfernt.
 

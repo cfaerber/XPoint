@@ -83,7 +83,7 @@ end;
 { PGP 2.6.x und 6.5.x }
 procedure RunPGP(par:string);
 const
-  {$ifdef linux}
+  {$ifdef unix}
     PGPEXE = 'pgp';
     PGPBAT = 'xpgp.sh';
   {$else}
@@ -120,13 +120,13 @@ end;
 procedure RunPGP5(exe,par:string);
 var path : string;
     pass,batch : string;
-    {$ifdef linux}
+    {$ifdef unix}
     dir:dirstr;
     name:namestr;
     ext:extstr;
     {$endif}
 begin
-  {$ifdef linux}
+  {$ifdef unix}
   fsplit(exe,dir,name,ext);
   exe:=LowerCase(name); { aus PGPK.EXE wird pgpk etc ...}
   {$endif}
@@ -780,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.27  2000/10/17 10:05:57  mk
   - Left->LeftStr, Right->RightStr
 

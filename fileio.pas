@@ -17,7 +17,7 @@ unit fileio;
 
 interface
 
-{$ifdef Linux}
+{$ifdef unix}
   {$i linux/fileioh1.inc}
 {$else}
 
@@ -104,7 +104,7 @@ function  IsDevice(fn:pathstr):boolean;
 
 implementation  { ------------------------------------------------------- }
 
-{$ifdef Linux}
+{$ifdef unix}
   {$i linux/fileio.inc}
 {$else}
 uses
@@ -113,7 +113,7 @@ uses
 
 {$i fileio.inc}
 
-{$ifndef Linux}
+{$ifndef unix}
 
 const
   PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
@@ -574,6 +574,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.57  2000/10/19 20:52:20  mk
   - removed Unit dosx.pas
 

@@ -30,7 +30,7 @@ function Xec(prog:string; const prompt:string):Integer;
 implementation  { --------------------------------------------------- }
 
 uses
-{$ifdef Linux}Linux,{$endif}sysutils;
+{$ifdef unix}Linux,{$endif}sysutils;
 
 function Xec(prog:string; const prompt:string):Integer;
 { Gibt Errorlevel des aufgerufenen Programms zurueck, falls Aufruf
@@ -43,7 +43,7 @@ var
     TempError: Integer;
 begin
 {$ifdef UnixFS}
-{$ifdef Linux}
+{$ifdef unix}
   { ToDo: Prompt Modifizieren (vielleicht) }
   Result := Shell(prog);
 {$else}
@@ -85,6 +85,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.30  2000/10/17 10:05:39  mk
   - Left->LeftStr, Right->RightStr
 

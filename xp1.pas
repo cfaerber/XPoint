@@ -267,7 +267,7 @@ implementation  {-------------------------------------------------------}
 
 uses
   xp1o,xp1o2,xp1help,xp1input,
-{$ifndef Linux}
+{$ifndef unix}
   xp2,
   strings,
 {$endif}
@@ -2004,6 +2004,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.84  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.83  2000/10/19 20:52:21  mk
   - removed Unit dosx.pas
 

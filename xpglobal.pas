@@ -37,9 +37,12 @@ const
   {$IFDEF OS2 }
   pformstr    = ' OS/2';      { 32 Bit OS/2 mit FPC oder VP }
   {$ENDIF}
-  {$IFDEF Linux }
+  {$IFDEF Linux}
   pformstr    = ' Linux';     { 32 Bit Linux mit FPC oder VP }
   {$ENDIF}
+  {$IFDEF FreeBSD}
+   pformstr    = ' FreeBSD';  { 32 Bit native FreeBSD v4+ mit FPC }
+  {$endif}
   {$IFDEF Dos32 }
   pformstr    = ' DOS/32';    { 32 Bit DOS mit FPC oder VP }
   {$ENDIF}
@@ -137,7 +140,7 @@ implementation
 
 {$IFDEF Beta }
 {$IFDEF FPC }
-{$ifndef Linux}
+{$ifndef Unix}
 begin
   Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
         ' with Compiler ', {$I %FPCVERSION%}, ' for ', {$I %FPCTARGET%});
@@ -147,6 +150,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.42  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.41  2000/10/17 20:35:50  mk
   - Int64=LongInt (urghl!) bei VirtualPascal hinzugefuegt
 

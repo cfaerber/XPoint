@@ -341,7 +341,7 @@ label abbruch,ende0;
     spush(dphback,sizeof(dphback));
     dphback:=col;
     moff;
-    {$IFDEF Linux }
+    {$IFDEF unix}
     writeln('To Do: XP7::Netcall::WRScript -> ''', txt, '''');
     {$ELSE }
     disphard(x,y,txt);
@@ -1539,6 +1539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.38  2000/10/28 15:34:17  mk
   - Workaround for VP Bug
 

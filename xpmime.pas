@@ -53,7 +53,7 @@ uses
   {$IFDEF Win32 }
   xpwin32,
   {$ENDIF }
-  {$IFDEF Linux }
+  {$IFDEF unix}
   xpcurses,
   {$ENDIF }
   {$IFDEF DOS32 }
@@ -763,6 +763,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.33  2000/10/26 13:17:20  mk
   - ISO859-1 Umwandlung immer durchfuerhen
 

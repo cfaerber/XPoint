@@ -18,7 +18,7 @@ unit xpdatum;
 interface
 
 uses
-{$IFDEF Linux }
+{$IFDEF unix}
   linux,
 {$ENDIF }
   sysutils,
@@ -26,7 +26,7 @@ uses
   montage,
   xpglobal;
 
-{$IFNDEF Linux }
+{$IFNDEF unix}
 const timezone      : string = 'W+1';
 {$ELSE }
 { Unix-Systeme haben detailierte Informationen ueber die Zeitzonen.
@@ -114,7 +114,7 @@ begin
   datum:=dat;
 end;
 
-{$IFDEF Linux }
+{$IFDEF unix}
 function TimeZone: string[7];
 var
   tzBase, tzMinutes, tzHours: LongInt;
@@ -158,6 +158,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.13  2000/10/17 10:13:23  mk
   - Unit Sysutils hinzugefuegt
 

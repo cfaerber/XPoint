@@ -23,7 +23,7 @@ const
 {$ifdef Win32}
   ClipAvailable         = true;
 {$else}
-  {$ifdef Linux}
+  {$ifdef unix}
   ClipAvailAble         = true;         { Simuliertes Clipboard a la MC }
   {$DEFINE UseClipFile }                { Clipboard in ein File }
   {$else}
@@ -47,7 +47,7 @@ implementation  { ---------------------------------------------------- }
 uses
   xp0,
   fileio,
-{$ifdef Linux}
+{$ifdef unix}
   linux,
   xplinux;
 {$else}
@@ -64,7 +64,7 @@ uses
 {$ifdef UseClipFile }
 function ClipFilename: TFilename;
 begin
-  {$IFDEF Linux }
+  {$IFDEF unix}
     ClipFilename:= TempPath+'.openxp.clipboard.'+IntToStr(GetUid);
   {$ELSE }
     ClipFilename:= TempPath+'CLIPBRD.TEMP';
@@ -154,7 +154,7 @@ begin
   if ioresult=0 then begin
     writeln(f,str);
     close(f);
-    {$IFDEF Linux }
+    {$IFDEF unix}
     SetAccess(ClipFilename, taUserRW);
     {$ENDIF }
   end;
@@ -198,7 +198,7 @@ procedure FileToClip(fn:TFilename);
 begin
   if FileExists(fn) then begin
     if CopyFile(fn, ClipFilename) then
-{$IFDEF Linux }
+{$IFDEF unix}
       SetAccess(ClipFilename, taUserRW)
 {$ENDIF }
       ;
@@ -323,6 +323,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.26  2000/10/04 15:38:45  mk
   - Clipboard-Support auch fuer DOS32
 

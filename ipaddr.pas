@@ -105,7 +105,7 @@ resourcestring
   res_IPAddrTypeError      = 'Unknown address typ: %d, expected %d!';
   res_IPNoIPv4Error        = 'This is not an IPv4 address!';
 
-{$ifdef Linux}
+{$ifdef unix}
 
 {$LINKLIB c}
 
@@ -221,6 +221,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.8  2000/08/01 22:55:19  mk
   - Sockets fuer Linux wieder hinzugefuegt
 

@@ -15,7 +15,7 @@
 {$I XPDEFINE.INC }
 
 uses
-{$IFDEF Linux }
+{$IFDEF unix}
   XPLinux,
 {$ENDIF }
 {$IFDEF NCRT }
@@ -39,7 +39,7 @@ const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
       stdhdlines  = 7;      { Anzahl Pflichtheaderzeilen                   }
       TO_ID       = '/'#0#0#8#8'TO:';
 
-{$IFDEF Linux }              { ML 13.02.2000 unter linux keine '/' als Param verwenden }
+{$IFDEF unix}              { ML 13.02.2000 unter linux keine '/' als Param verwenden }
       paramchars   = ['-'];
 {$ELSE }
       paramchars   = ['-','/'];
@@ -182,7 +182,7 @@ begin
 end;
 
 procedure helppage;
-{$IFDEF Linux }
+{$IFDEF unix}
 { Linux benutzt kein Carriage Return... }
 const crlf = #10;
 {$ELSE}
@@ -318,7 +318,7 @@ begin
         end;
       end
     else begin
-{$IFNDEF Linux }
+{$IFNDEF unix}
       UpString(s);
 {$ENDIF }
       if fi='' then fi:=s
@@ -1287,6 +1287,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.30  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.29  2000/10/20 08:00:38  mk
   - outputredirected auf SysOutputRedirected umgestellt
 

@@ -23,7 +23,7 @@ unit uuz;
 interface
 
 uses xpglobal,
-  {$IFDEF Linux }
+  {$IFDEF unix}
   linux,
   XPLinux,
   {$ENDIF }
@@ -138,7 +138,7 @@ const
 
   nt_ZConnect = 2;
   nt_RFC = 40;
-  {$IFDEF Linux}
+  {$IFDEF unix}
   uncompress = '/usr/bin/compress -dvf ';
   unfreeze = '/usr/bin/freeze -dif ';
   ungzip = '/usr/bin/gzip -df ';
@@ -384,7 +384,7 @@ begin
           shrinkheader := true;
       end
       else
-        {$IFDEF Linux}
+        {$IFDEF unix}
         if source = '' then
         source := paramstr(i)
       else
@@ -2438,7 +2438,7 @@ begin
       > 0);
     seek(f1, length(s) + 1);
     fsplit(fn, dir, name, ext);
-    {$IFDEF Linux}
+    {$IFDEF unix}
     if (ext <> '.Z') or (ext <> '.gz') or (ext <> '.xz') then
     begin
       if (freeze) then
@@ -3494,6 +3494,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.68  2000/10/17 10:05:43  mk
   - Left->LeftStr, Right->RightStr
 

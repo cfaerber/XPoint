@@ -27,7 +27,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-{$IFDEF Linux}
+{$IFDEF unix}
   linux,
   xplinux,
 {$ENDIF}
@@ -357,16 +357,23 @@ begin
 end;
 
 procedure memstat;
+{MvdV: No sysctl implementation for FreeBSD to replace this yet.
+ So I IFNDEF'ed BSD the entire function.}
+
 const rnr = 500;
 var
     x,y  : byte;
-{$IFDEF Linux}
-    info : TSysInfo;
+{$IFDEF Unix}
+ {$ifndef BSD}
+    info : TSysInfo; 
+ {$endif}
+{$endif}
 begin
+{$ifndef BSD}
+ {$ifdef Unix}
   sysinfo(info);
   msgbox(45,15, getres2(rnr,1),x,y);
 {$ELSE}
-begin
   msgbox(45,11, getres2(rnr,1),x,y);
 {$ENDIF}
   attrtxt(col.colmboxhigh);
@@ -374,7 +381,7 @@ begin
 {$IFDEF Linux}
   wrt(x+21,y+2,'RAM         '+RightStr('     ~/openxp',8));
 {$ELSE }
-  wrt(x+21,y+2,'RAM         '+RightStr('     '+getres2(rnr,8)+' '+LeftStr(ownpath,2),8));
+   wrt(x+21,y+2,'RAM         '+RightStr('     '+getres2(rnr,8)+' '+LeftStr(ownpath,2),8));
 {$ENDIF}
   wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
   wrt(x+4,y+5,xp_xp);             { CrossPoint }
@@ -413,9 +420,9 @@ begin
     gotoxy(x+17,y+5); write((heapsize -MaxAvail) div 1024:7,' KB');
     gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
     gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
-  {$ENDIF}
+   {$ENDIF}
 {$ENDIF }
-  gotoxy(x+31,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
+   gotoxy(x+31,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
     xpspace(XferDir)) div 1024 div 1024:8,' MB');
 {$IFDEF Linux}
   wrt(x+30,y+13,RightStr('     '+getres2(rnr,10),7)+'...');
@@ -426,6 +433,7 @@ begin
   freeres;
   wait(curon);
   closebox;
+ {$endif}
 end;
 
 { USER.EB1 - Fragmentstatistik, nur deutsche Version }
@@ -933,6 +941,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.39  2000/10/20 11:33:35  mk
   - Fix for Bug #116155, Bildschirmauszug fehlerhaft
 

@@ -22,7 +22,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-{$IFDEF Linux}
+{$IFDEF unix}
   xplinux,
 {$ENDIF}
 {$IFDEF Win32 }
@@ -77,7 +77,7 @@ procedure TestAutostart;
 {$ifdef FPC}
   {$HINT Soll denn nun die Check-Date-Geschichte ganz raus, oder NTP-Variante? }
 {$endif}
-{$ifndef Linux}
+{$ifndef unix}
 procedure check_date;
 {$endif}
 procedure ReadDomainlist;
@@ -1056,7 +1056,7 @@ begin
     end;
 end;
 
-{$ifndef Linux}
+{$ifndef unix}
 procedure check_date;      { Test, ob Systemdatum verstellt wurde }
 const maxdays = 14;
 var dt   : DateTime;
@@ -1205,6 +1205,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.78  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.77  2000/10/19 20:52:22  mk
   - removed Unit dosx.pas
 

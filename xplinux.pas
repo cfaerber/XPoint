@@ -12,7 +12,7 @@ unit xplinux;
 
 {$I XPDEFINE.INC }
 
-{$IFNDEF Linux }
+{$IFNDEF unix}
   {$FATAL Die Unit XPLINUX kann nur unter Linux compiliert werden }
 {$ENDIF }
 
@@ -417,6 +417,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.18  2000/10/19 20:52:24  mk
   - removed Unit dosx.pas
 

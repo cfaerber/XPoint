@@ -17,7 +17,7 @@ unit typeform;
 interface
 
 uses
-{$IFNDEF Linux }
+{$IFNDEF unix}
   dos, // wird fr den filerecord in filename() ben”tigt
 {$ENDIF }
   xpglobal, sysutils;
@@ -1287,6 +1287,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.70  2000/10/17 10:05:43  mk
   - Left->LeftStr, Right->RightStr
 

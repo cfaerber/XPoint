@@ -13,7 +13,7 @@
 {$I XPDEFINE.INC }
 
 uses
-{$IFDEF Linux }
+{$IFDEF unix}
   xplinux,
 {$ENDIF }
   winxp,
@@ -481,7 +481,7 @@ var ma    : map;
       DelHidden(ma^[p].mpnr);
       display;
       modi:=true;
-      {$IFDEF Linux }
+      {$IFDEF unix}
       XPInfoLog('Entry '''+ma^[p].mstr+''' enabled');
       {$ENDIF }
       end;
@@ -495,7 +495,7 @@ var ma    : map;
       AddHidden(ma^[p].mpnr);
       display;
       modi:=true;
-      {$IFDEF Linux }
+      {$IFDEF unix}
       XPInfoLog('Entry '''+ma^[p].mstr+''' disabled');
       {$ENDIF }
       end;
@@ -752,13 +752,16 @@ begin
   wrlogo;
   if saved then begin
     writeln('Žnderungen wurden gesichert.'#10);
-    {$IFDEF Linux }
+    {$IFDEF unix}
     XPNoticeLog('Changes saved');
     {$ENDIF }
   end;
 end.
 {
   $Log$
+  Revision 1.29  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.28  2000/10/29 16:18:25  fe
   Mit VPC uebersetzbar gemacht.
 

@@ -73,7 +73,7 @@ function  JanusSwitch(var s:string):boolean;
 implementation  {---------------------------------------------------}
 
 uses
-{$IFDEF Linux}
+{$IFDEF unix}
   xplinux,
 {$ENDIF}
   xp2,xp3,xp3o,xp9bp,xp10,xpnt,xpterm;
@@ -1827,6 +1827,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.40  2000/11/01 10:23:40  mk
   - Edit/Viewer: Eintrag */* wird jetzt auch gespeichert
 

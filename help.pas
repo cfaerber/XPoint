@@ -60,7 +60,7 @@ procedure releasehelp;
 
 IMPLEMENTATION
 
-{$ifdef Linux}
+{$ifdef unix}
 uses XPLinux;
 {$endif}
 
@@ -168,7 +168,7 @@ function inithelp(name:pathstr; xh,yh:byte;
 
 var ixadr : longint;
     fm      : byte;
-{$ifdef Linux}
+{$ifdef unix}
   {$ifdef FPC}
     {$hint name muss noch angepasst werden (Verzeichnisstruktur RPM) }
   {$endif}
@@ -179,7 +179,7 @@ begin
   fm:=filemode; filemode:=0;
   reset(f,1);
   if (ioresult<>0)
-{$ifdef Linux}
+{$ifdef unix}
      or not TestAccess(name, taUserR)
 {$endif}
   then begin
@@ -760,6 +760,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.25  2000/10/17 10:05:39  mk
   - Left->LeftStr, Right->RightStr
 

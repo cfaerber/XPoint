@@ -118,7 +118,7 @@ procedure OpenIndex(dbp:DB);   { intern }
 implementation  {=======================================================}
 
 uses
-{$IFDEF Linux }
+{$IFDEF unix}
   xplinux,
 {$ENDIF }
   datadef1;
@@ -1501,7 +1501,7 @@ procedure dbLog(const s:string);
 begin
   if dl then
     writeln(dblogfile,s);
-  {$IFDEF Linux }
+  {$IFDEF unix }
   XPDebugLog(s);
   {$ENDIF }
 end;
@@ -1585,6 +1585,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.39  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.38  2000/10/04 15:39:54  mk
   - Alignemt-Probleme beseitigt
 

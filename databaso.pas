@@ -31,7 +31,7 @@ implementation
 
 uses
 {$IFDEF UnixFS }
-  {$IFDEF Linux}
+  {$IFDEF unix}
     xplinux,
   {$ELSE }
     {$FATAL Need chmod - look at xplinux for procedure SetAccess }
@@ -430,6 +430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.10  2000/07/04 12:04:15  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

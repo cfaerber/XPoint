@@ -25,7 +25,7 @@
 program xp;
 
 uses xpx,
-{$IFDEF Linux }
+{$IFDEF unix}
      linux,
      xplinux,
 {$ENDIF }
@@ -161,7 +161,7 @@ begin
       test_systeme;
       ReadDefaultViewers;
       testtelefon(telefonnr);
-{$ifndef Linux}
+{$ifndef unix}
       check_date;
 {$endif}
       InitNodelist;
@@ -187,6 +187,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.37  2000/11/01 22:59:23  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.36  2000/08/27 10:37:09  mk
   - UUZ ist jetzt intern
 

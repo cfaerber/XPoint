@@ -18,7 +18,7 @@ interface
 
 uses
   xpglobal,
-{$IFDEF Linux }
+{$IFDEF unix}
   xplinux,
 {$ENDIF }
 {$IFDEF NCRT }
@@ -49,11 +49,11 @@ end;
 { Diese Funktion und deren Aufruf dÅrfen nicht verÑndert werden }
 { (siehe LIZENZ.TXT).                                           }
 procedure logo;
-{$ifndef Linux}
+{$ifndef unix}
 var t : text;
 {$endif}
 begin
-{$ifdef Linux}
+{$ifdef unix}
   writeln;
   writeln(xp_xp,' ',verstr,pformstr,betastr);
   writeln(x_copyright,' by ',author_name,' <',author_mail,'>');
@@ -138,7 +138,7 @@ end;
 initialization
   checkbreak:=false;
   readname;
-{$ifndef Linux}
+{$ifndef unix}
   if LeftStr(getenv('PROMPT'),4)='[XP]' then
     if _deutsch then stop('ZurÅck zu '+xp_xp+' mit EXIT.')
     else stop('Type EXIT to return to '+xp_xp+'.');
@@ -167,6 +167,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.31  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.30  2000/10/19 20:52:24  mk
   - removed Unit dosx.pas
 

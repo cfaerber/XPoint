@@ -90,7 +90,7 @@ procedure IsdnConfig;
 implementation  {----------------------------------------------------}
 
 uses
-{$IFDEF Linux}
+{$IFDEF unix}
   {$IFDEF FPC}
   serial,
   {$ELSE}
@@ -219,7 +219,7 @@ begin
   maddbool(3,10,getres2(251,25),leaveconfig); mhnr(585);  { 'Config-MenÅ bei <Esc> vollstÑndig verlassen' }
   maddbool(3,11,getres2(251,27),msgbeep); mhnr(587);  { 'Tonsignal in Brett-, User- und NachrichtenÅbersicht' }
   oldm:=_maus;
-{$IFDEF Linux }
+{$IFDEF unix}
   { Maus-Bedienung noch nicht implementiert }
 {$ELSE }
   maddbool(39,2,getres2(251,21),_maus); mhnr(556);       { 'Maus-Bedienung' }
@@ -316,7 +316,7 @@ begin
   maddbool(3,9,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
   mset1func(SetTimezone);
   maddbool(3,10,getres2(252,16),rehochn);        { 'Re^n verwenden' }
-{$IFNDEF Linux }
+{$IFNDEF unix}
   maddstring(36,8,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
   mappsel(false,'W+1˘S+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
@@ -494,7 +494,7 @@ procedure listoptions;
 var brk : boolean;
     x,y : byte;
 begin
-{$IFDEF Linux }
+{$IFDEF unix}
   dialog(ival(getres2(255,0)),15,getres2(255,1),x,y);    { 'Lister' }
   maddbool(3,2,getres2(255,4),listvollbild);   { 'interner Lister - Vollbild' }
     mhnr(232);
@@ -566,7 +566,7 @@ var brk   : boolean;
 begin
   for i:=1 to 3 do
     edtype[i]:=getres2(256,i);  { 'gro·e Nachrichten','alle Nachrichten','alle Texte' }
-{$IFDEF Linux }
+{$IFDEF unix}
   dialog(ival(getres2(256,0)),10,getres2(256,5),x,y);   { 'Editor' }
 {$ELSE }
   dialog(ival(getres2(256,0)),11,getres2(256,5),x,y);   { 'Editor' }
@@ -582,7 +582,7 @@ begin
   maddbool(3,8,getres2(256,10),autocpgd);      { 'automatisches <Ctrl PgDn>' }
 { maddbool(3,9,getres2(256,11),editvollbild);}  { 'interner Editor - Vollbild' }
   maddbool(3,9,getres2(256,12),keepedname); mhnr(306);  { 'Edit/Text-Name beibehalten' }
-{$IFNDEF Linux }
+{$IFNDEF unix}
   maddbool(3,10,getres2(256,13),edit25);       { '25 Bildzeilen bei ext. Editor' }
 {$ENDIF }
   freeres;
@@ -612,7 +612,7 @@ procedure shelloptions;
 var brk : boolean;
     x,y : byte;
 begin
-{$IFDEF Linux }
+{$IFDEF unix}
   dialog(ival(getres2(257,0)),4,getres2(257,1),x,y);    { 'Shell' }
   maddbool(3,2,getres2(257,4),ShellShowpar);    { 'Parameterzeile anzeigen' }
   maddbool(3,3,getres2(257,5),ShellWaitkey);    { 'auf Tastendruck warten' }
@@ -727,7 +727,7 @@ procedure MiscAnzeigeCfg;
 var i,x,y    : byte;
     brk,du : boolean;
 begin
-{$IFDEF Linux }
+{$IFDEF unix}
   dialog(36,5,'',x,y);
   maddbool(3,2,getres2(260,4),dispusername);  { 'Username anzeigen' }
   maddstring(3,4,getres2(260,13),mheadercustom[1],19,19,''); { 'userdef. Kopfzeile 1' }
@@ -781,7 +781,7 @@ begin
              '>'+UsrFeldDef+LowerCase(UsrFeldDef));
   mappsel(false,UsrFeldDef);
 
-{$IFNDEF Linux}
+{$IFNDEF unix}
   maddbool(3,6,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
 {$ENDIF}
   maddbool(3,7,getres2(260,12),tonsignal);   { 'zusÑtzliches Tonsignal' }
@@ -1301,7 +1301,7 @@ begin
 end;
 
 procedure TerminalOptions;
-{$ifdef Linux}
+{$ifdef unix}
 var x,y : byte;
     brk : boolean;
     ok  : boolean;
@@ -1337,7 +1337,7 @@ begin
   freeres;
   menurestart:=brk;
 end;
-{$else} { Linux }
+{$else} { unix}
 var x,y : byte;
     brk : boolean;
     com : string;
@@ -1492,6 +1492,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.58  2000/11/01 11:01:14  mk
   - Autodatumsbezuege jetzt immer in Netcall
 

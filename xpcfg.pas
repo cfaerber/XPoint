@@ -76,7 +76,7 @@ implementation
 uses
   fileio,
   resource,
-{$IFDEF Linux}
+{$IFDEF unix}
   xplinux,
 {$ENDIF}
   typeform;
@@ -499,6 +499,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.6  2000/07/21 08:20:23  hd
   - Umstellung auf die GPL
 

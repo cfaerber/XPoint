@@ -91,7 +91,7 @@ begin
     close(t);
     end;
   if exist(ResultFile) then _era(ResultFile);
-  {$ifdef Linux}
+  {$ifdef unix}
   {$hint Muss noch angepasst werden }
   {$endif}
   shell('UUCICO.EXE '+ConfigFile,500,4);            { --- uucico.exe }
@@ -123,6 +123,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.11  2000/10/17 10:06:01  mk
   - Left->LeftStr, Right->RightStr
 

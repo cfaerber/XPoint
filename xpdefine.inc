@@ -27,7 +27,10 @@
 {$DEFINE Debug }
 
 { Unter Virtual Pascal werden Informationen ber die Zeilennummern
-  gespeichert, vergr”áert die EXE-Datei etwas. }
+  gespeichert, vergr”áert die EXE-Datei etwas.
+
+  Under FPC use -gl. Prints a backtrace with unit-name and linenumber info.
+}
 
 {$DEFINE DebugInfo }
 
@@ -103,11 +106,18 @@
   {$DEFINE Unix }        { Linux is a Unix Platform }
 {$ENDIF }
 
-{$IFDEF FreeBSD }
-  {$DEFINE UnixFS }      { Unix-FS wird verwendet }
-  {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-  {$DEFINE Unix }        { FreeBSD is a Unix Platform }
-{$ENDIF }
+{$IFDEF BSD}
+  {$IFDEF FreeBSD }        { FPC >= 1.0.2, FreeBSD >=4.0 }
+    {$DEFINE UnixFS }      { Unix-FS wird verwendet }
+    {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
+    {$DEFINE Sockets}      { Sockets for FreeBSD are near the same as for
+                            Linux. Maybe some non POSIX values for
+                            flag-parameters aren't allowed}
+    {$DEFINE Unix }        { FreeBSD is a Unix Platform }
+  {$ELSE}
+    !! Non FreeBSD BSD targets (NetBSD, OpenBSD, BSDI) aren't supported yet
+  {$ENDIF}
+{$ENDIF}
 
 { --- Erkl„rungen der selbst gesetzen Defines --- }
 
@@ -142,6 +152,9 @@
 
 {
   $Log$
+  Revision 1.57  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.56  2000/11/01 15:24:56  mk
   - added FreeBSD-Support
 

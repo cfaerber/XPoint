@@ -33,7 +33,7 @@ function imptestpollbox(var s:string):boolean;
 implementation  { ----------------------------------------------------- }
 
 uses
-{$IFDEF Linux }
+{$IFDEF unix}
   xplinux,
 {$ENDIF }
 {$IFDEF NCRT }
@@ -697,6 +697,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/11/01 22:59:24  mv
+   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
+
   Revision 1.24  2000/10/17 10:05:59  mk
   - Left->LeftStr, Right->RightStr
 
