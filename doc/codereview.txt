@@ -1,0 +1,89 @@
+OpenXP code review policy
+-------------------------
+
+Um die Qualit„t des Sourcecodes und damit des resultiernden Programmes
+nachhaltig zu verbessern, muá jede nderung an OpenXP von einer
+weiteren Person vorher berprft uns autorisiert werden. Dazu wird vor
+dem Checkin der Code an die Maillingliste openxp-core geschickt und
+von mindestens einem zust„ndigen Modul Owner auf Korrektheit und
+Bugfreiheit sowohl inhaltlich als auch vom Design her untersucht. Erst
+wenn der Code berprft wurde, darf er mit CVS commit in den aktuellen
+CVS Baum eingecheckt werden. Bis auf Code im Verzeichnis /playground
+oder reine Source-Formatierungen ohne nderung von Code muá _jeder_
+Code autorisiert werden.
+
+Es gibt strong hackers, die jeden neuen Code aus allen Bereichen
+autorisieren drfen und module owners, die Code fr das entsprechende
+von ihnen verwaltete Modul autorisieren. Selbstverst„ndlich sollen so
+viel wie m”glich Programmierer ber den Code schauen und Vorschl„ge
+bringen. Sollte der Code autorisiert worden sein, allerdings ein
+wichtiger Einwand  von einem anderen Programmierer vorliegt, dann darf
+der code nicht eingecheckt werden, solange bis alle Unklarheiten
+beseitigt sind. Ein code von einem strong hacker darf ohne weitere
+autorisierung eingecheckt werden, wenn 48h nach dem posten des DIFF
+kein Einwand erfolgte.
+
+
+Die Autorisierung erfolgt, in dem der neue Code als DIFF (nur
+komplett, mit Option -u) in die ML openxp-core oder openxp-dev
+gepostet wird. Der Code sollte m”glichst schnell autorisiert werden,
+muá aber mindestens 24h ver”ffentlich sein (um gengend Programmieren
+die M”glichkeit zu geben, den Code zu prfen), bevor er eingecheckt
+werden darf. Bei gr”áerem Code kann sich der/die modul owner eine
+Verl„ngerung der Frist erbitten, um den Code ausfhrlich zu prfen.
+Fr jeden Bug oder jedes Feature muá ein einzelnes DIFF erstellt und
+einzeln autorisiert werden.
+
+
+Code-šberprfung
+----------------
+Mindestens folgende Punkte sollten bei der šberprfung des Codes
+beachtet werden:
+
+- Ist der code offensichtlich korrekt und l”st die Ursache des
+  Problemes (und nicht nur das Problem selbst) auf direktem Weg?
+
+- Sind die Variablennamen ausagekr„ftig gew„hlt?
+
+- Ist der Code ausreichend verst„ndlich und gut dokumentiert?
+
+- Werden alle Konventionen von Objekt Pascal eingehalten?
+
+
+Wird von einem Programmierer mehrfach gegen diese Regeln verstoáen,
+wird der cvs Schreibzugriff abgesetzt. Die DIFFs werden dann von einem
+strong hacker oder module owner eingecheckt.
+
+Das cvs log beim Einchecken muss ausfhrlich und in englisch sein.
+Wenn m”glich, wird die Bugnmmer aus Sourceforge mit aufgelistet. Am
+Ende der Beschreibung wird in Klammern das Handle des/der code
+reviewers geschrieben. Zum Beispiel:
+
+- fixed Bug #117177: Alt-P in reply tree (hd, mo)
+
+
+
+Aktuelle strong hackers
+-----------------------
+Hinrich Donner <hd@openxp.de>
+Markus K„mmerer <mk@openxp.de>
+Matthias Leohardt <ml@openxp.de>
+
+Aktuelle module owner (unvollst„ndig)
+---------------------
+Netcall
+  Malte Kiesel <ma@openxp.de>
+
+FIDO Nodeliste
+  Michael Koppel <mo@openxp.de>
+
+THeader-Struktur
+  Markus K„mmerer <mk@openxp.de>
+
+NNTP-Routinen, Sockets
+  Matthias Leonhardt <ml@openxp.de>
+
+Dokumentation, Resourcen und Hilfe
+  Michael Heydekamp <mh@openxp.de>
+
+
