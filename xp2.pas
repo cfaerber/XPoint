@@ -1017,29 +1017,20 @@ begin
     if ntDomainReply(dbReadInt(d,'netztyp')) then
     begin
       new(p);
-      if dbReadInt(d,'netztyp')=nt_UUCP then
-        dom:=lstr(dbReadStr(d,'pointname')+dbReadStr(d,'domain'))
-      else
-        dom:=lstr(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
-                  dbReadStr(d,'domain'));
+      if dbReadInt(d,'netztyp')=nt_UUCP then begin
+        dom:=dbReadStr(d,'fqdn');
+        if dom='' then dom:=lstr(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
+      end
+      else begin
+        dom:=dbReadStr(d,'fqdn');
+        if dom='' then dom:=lstr(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
+                                 dbReadStr(d,'domain'));
+      end;
       getmem(p^.domain,length(dom)+1);
       p^.domain^:=dom;
       p^.left:=nil;
       p^.right:=nil;
       insertintolist(DomainList);
-
-      {16.01.00 HS: Replies auf eigene Message-IDs erkennen}
-      dom:=dbReadStr(d,'fqdn');
-      if dom<>'' then
-      begin
-        new(p);
-        getmem(p^.domain,length(dom)+1);
-        p^.domain^:=dom;
-        p^.left:=nil;
-        p^.right:=nil;
-        insertintolist(DomainList);
-      end;
-
     end;
     dbNext(d);
   end;
@@ -1101,6 +1092,9 @@ end;
 end.
 { 
   $Log$
+  Revision 1.15.2.2  2000/05/07 17:26:12  mk
+  SV: - bei eingetragenen FQDN wurden zu viele Mails hervorgehoben
+
   Revision 1.15.2.1  2000/03/25 21:47:46  mk
   - Statistik/Systeme: Nummer auf 4 Stellen angepasst
   - Funktion zur DOSEmu-Erkennung gefixt
