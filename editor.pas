@@ -78,7 +78,7 @@ procedure EddefMsgproc(txt:string; error:boolean);
 procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
 function  EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
-procedure Glossary_ed(Self: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
+procedure Glossary_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 
 
 implementation  { ------------------------------------------------ }
@@ -1751,7 +1751,7 @@ begin
     end;
 end;
 
-procedure Glossary_ed(Self: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
+procedure Glossary_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 const 
   locked:boolean=false;
 begin
@@ -1771,6 +1771,10 @@ finalization
   Dispose(Language);
 {
   $Log$
+  Revision 1.67  2001/09/26 23:34:18  mk
+  - fixed FPC compile error with newest snapshot:
+    Error: Self can only be an explicit parameter in message handlers or class methods
+
   Revision 1.66  2001/09/21 16:16:47  mk
   - fixed some memory leaks (thanks to BoundsChecker)
 

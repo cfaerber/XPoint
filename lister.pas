@@ -62,7 +62,7 @@ type
   TListerConvertEvent = procedure(var buf; Size: word) of object; { fÅr Zeichensatzkonvert. }
   TListerTestMarkEvent = function(const s: string; block: boolean): boolean;
   TListerEnterEvent = procedure(const s: string);
-  TListerKeyPressedEvent = procedure(Self: TLister; var t: taste);
+  TListerKeyPressedEvent = procedure(LSelf: TLister; var t: taste);
   TListerShowLinesEvent = procedure(s: string);
   TListerDisplayLineEvent = procedure(x, y: word; var s: string);
   TListerColorEvent = function(var s: string; line: longint): byte;
@@ -1084,6 +1084,10 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.59  2001/09/26 23:34:18  mk
+  - fixed FPC compile error with newest snapshot:
+    Error: Self can only be an explicit parameter in message handlers or class methods
+
   Revision 1.58  2001/09/20 18:28:23  cl
   - mouse support in message lister
 

@@ -48,7 +48,7 @@ var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
 function  ReadFilename(txt:atext; var s:string; subs:boolean;
                        var useclip:boolean):boolean;
 function  overwrite(const fname:string; replace:boolean; var brk:boolean):boolean;
-procedure listExt(Self: TLister; var t:taste);
+procedure listExt(LSelf: TLister; var t:taste);
 procedure ExtListKeys;
 function  filecopy(const fn1,fn2:string):boolean;
 procedure ExpandTabs(const fn1,fn2:string);
@@ -213,7 +213,7 @@ begin
   brk:=(nr=0) or (nr=3);
 end;
 
-procedure listExt(Self: TLister; var t:taste);
+procedure listExt(LSelf: TLister; var t:taste);
 var s     : string;
     all   : boolean;
     b     : byte;
@@ -276,13 +276,13 @@ begin
   if (UpCase(c)=k4_D) or (deutsch and (UpCase(c)='D')) then begin   { ^D }
     rmessage(119);   { 'Ausdruck l„uft...' }
     InitPrinter;
-    all:=(Self.SelCount=0);
-    if all then s:= Self.FirstLine
-    else s:= Self.FirstMarked;
+    all:=(LSelf.SelCount=0);
+    if all then s:= LSelf.FirstLine
+    else s:= LSelf.FirstMarked;
     while checklst and (s<>#0) do begin
       PrintLine(s);
-      if all then s:= Self.NextLine
-      else s:= Self.NextMarked;
+      if all then s:= LSelf.NextLine
+      else s:= LSelf.NextMarked;
       end;
     ExitPrinter;
     closebox;
@@ -312,13 +312,13 @@ begin
         assign(tt,fname);
         if append then system.append(tt)
         else rewrite(tt);
-        all:=(Self.SelCount=0);
-        if all then s:= Self.FirstLine
-        else s:= Self.FirstMarked;
+        all:=(LSelf.SelCount=0);
+        if all then s:= LSelf.FirstLine
+        else s:= LSelf.FirstMarked;
         while s<>#0 do begin
           writeln(tt,s);
-          if all then s:= Self.NextLine
-          else s:= Self.NextMarked;
+          if all then s:= LSelf.NextLine
+          else s:= LSelf.NextMarked;
           end;
         close(tt);
         if useclip then WriteClipfile(fname);
@@ -422,7 +422,7 @@ begin
        ((listmakros<>16) and ((c=k2_cB) or (c=k2_cP) or (c=k2_cQ))) then
     begin
       ListKey:=t;
-      if ((c=k2_cB) or (c=k2_cQ) or (c=k2_cP)) and (Self.SelCount>0) then begin
+      if ((c=k2_cB) or (c=k2_cQ) or (c=k2_cP)) and (LSelf.SelCount>0) then begin
         ListQuoteMsg:=TempS(dbReadInt(mbase,'msgsize'));
         assign(tt,ListQuoteMsg);
         rewrite(tt);
@@ -441,13 +441,13 @@ begin
         else
           for i:=1 to 8 do writeln(tt);
 
-        s:= Self.FirstMarked;
-        nr:= Self.LinePos;
+        s:= LSelf.FirstMarked;
+        nr:= LSelf.LinePos;
         while s<>#0 do begin
           writeln(tt,s);
-          s:= Self.NextMarked;
-          if Self.LinePos>nr+1 then writeln(tt,#3);
-          nr:= Self.LinePos;
+          s:= LSelf.NextMarked;
+          if LSelf.LinePos>nr+1 then writeln(tt,#3);
+          nr:= LSelf.LinePos;
           end;
         close(tt);
         end;
@@ -1026,6 +1026,10 @@ end;
 
 {
   $Log$
+  Revision 1.98  2001/09/26 23:34:19  mk
+  - fixed FPC compile error with newest snapshot:
+    Error: Self can only be an explicit parameter in message handlers or class methods
+
   Revision 1.97  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

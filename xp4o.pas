@@ -66,7 +66,7 @@ procedure FileArcViewer(fn:string);
 
 procedure ShowArch(const fn:string);
 function  a_getfilename(nr,nn:byte):string;
-procedure ArcSpecial(Self: TLister; var t:taste);
+procedure ArcSpecial(LSelf: TLister; var t:taste);
 
 procedure DupeKill(autodupekill:boolean);
 procedure print_msg(initpr:boolean);
@@ -1925,7 +1925,7 @@ begin
 end;
 
 
-procedure ArcSpecial(Self: TLister; var t:taste);
+procedure ArcSpecial(LSelf: TLister; var t:taste);
 var s   : string;
     dp  : string;
     x,y : Integer;
@@ -1949,10 +1949,10 @@ begin
     else begin
       sex:=exdir;
       exdir:=dp;
-      s:=Self.FirstMarked;
+      s:=LSelf.FirstMarked;
       while (s<>#0) and (exdir<>'') do begin
         ShowArch(s);
-        s:=Self.NextMarked;
+        s:=LSelf.NextMarked;
         end;
       exdir:=sex;
       end;
@@ -1962,7 +1962,7 @@ begin
     fk:=forwardkeys; forwardkeys:='';
     if test_fkeys(t) then;
     keyboard(fk);
-    xp1o.listext(Self, t);
+    xp1o.listext(LSelf, t);
     end;
 end;
 
@@ -2512,6 +2512,10 @@ end;
 
 {
   $Log$
+  Revision 1.115  2001/09/26 23:34:20  mk
+  - fixed FPC compile error with newest snapshot:
+    Error: Self can only be an explicit parameter in message handlers or class methods
+
   Revision 1.114  2001/09/14 18:09:56  cl
   - added database info to message <i>nfo screen
 

@@ -590,7 +590,7 @@ end;
 { nr:  1 = Bretter, 2 = User, 3 = Msgs, 4=Lister, 5=ArcViewer, 6=Editor,
        7 = Terminal }
 
-procedure MakSelKeys(Self: TLister; var t:taste);
+procedure MakSelKeys(LSelf: TLister; var t:taste);
 begin
   if t=keyf6 then t:=keyesc;
 end;
@@ -656,6 +656,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2001/09/26 23:34:19  mk
+  - fixed FPC compile error with newest snapshot:
+    Error: Self can only be an explicit parameter in message handlers or class methods
+
   Revision 1.17  2001/09/08 16:29:30  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes

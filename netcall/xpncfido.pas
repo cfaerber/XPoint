@@ -41,7 +41,7 @@ function FidoNetcall(boxname: string;
 
 function GetCrashbox:string;
 
-procedure EditRequest(Self: TLister; var t:taste);
+procedure EditRequest(LSelf: TLister; var t:taste);
 procedure ShowRQ(s:string);
 
 implementation   { -------------------------------------------------- }
@@ -684,12 +684,12 @@ begin
       SetRequest(adr,'');
 end;
 
-procedure EditRequest(Self: TLister; var t:taste);
+procedure EditRequest(LSelf: TLister; var t:taste);
 var adr : string[20];
 begin
   if UpperCase(t)='E' then
-    if UpperCase(copy(Self.GetSelection,3,1))='R' then begin
-      adr:=trim(copy(Self.GetSelection,5,18));
+    if UpperCase(copy(LSelf.GetSelection,3,1))='R' then begin
+      adr:=trim(copy(LSelf.GetSelection,5,18));
       closebox;
       if IsFidoNode(adr) then begin
         _keyboard(keycr);
@@ -889,6 +889,10 @@ end;
 
 {
   $Log$
+  Revision 1.21  2001/09/26 23:34:21  mk
+  - fixed FPC compile error with newest snapshot:
+    Error: Self can only be an explicit parameter in message handlers or class methods
+
   Revision 1.20  2001/09/16 19:52:13  ma
   - fixed Fido/Crash dialog display problems
 

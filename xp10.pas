@@ -53,7 +53,7 @@ function __dateok(var s:string):boolean;
 function __timeok(var s:string):boolean;
 function testaction(var s:string):boolean;
 
-procedure MakSelKeys(Self: TLister; var t:taste);
+procedure MakSelKeys(LSelf: TLister; var t:taste);
 function checkday(var s:string):boolean;
 function _getmacro(s:string):string;
 
@@ -2067,6 +2067,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.63  2001/09/26 23:34:19  mk
+  - fixed FPC compile error with newest snapshot:
+    Error: Self can only be an explicit parameter in message handlers or class methods
+
   Revision 1.62  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

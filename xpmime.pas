@@ -52,7 +52,7 @@ procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
 
-procedure SSP_Keys(Self: TLister; var t:taste);
+procedure SSP_Keys(LSelf: TLister; var t:taste);
 function typname(typ,subtyp:string):string;
 
 function RFC2Zdate(s0:string):string;
@@ -129,15 +129,15 @@ begin
 end;
 
 
-procedure SMP_Keys(Self: TLister; var t:taste);
+procedure SMP_Keys(LSelf: TLister; var t:taste);
 begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
   if UpperCase(t)='X' then
-    m_extrakt(mf[ival(mid(Self.getselection,57))]);
+    m_extrakt(mf[ival(mid(LSelf.getselection,57))]);
 end;
 
 // select keys for SINGLE-PART MIME
-procedure SSP_Keys(Self: TLister; var t:taste);
+procedure SSP_Keys(LSelf: TLister; var t:taste);
 var OldET : byte;
 begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
@@ -726,6 +726,10 @@ end;
 
 {
   $Log$
+  Revision 1.51  2001/09/26 23:34:20  mk
+  - fixed FPC compile error with newest snapshot:
+    Error: Self can only be an explicit parameter in message handlers or class methods
+
   Revision 1.50  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
