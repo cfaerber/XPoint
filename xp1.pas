@@ -937,10 +937,13 @@ end;
 procedure XPFont;
 begin
   if not ParLCD then
+  begin
     if ParFontfile[1]='*' then
       InternalFont
     else
       LoadFontfile(ParFontfile);
+    ScreenLines := GetScreenLines;
+  end;
 end;
 
 procedure SetXPborder;
@@ -2031,6 +2034,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.6  2000/11/27 21:42:59  mk
+  RB:- Screenlines nach Userfont setzen
+
   Revision 1.48.2.5  2000/11/10 11:30:41  mk
   - fixed Bug #116292: Mehrfachstart von XP abfangen
 
