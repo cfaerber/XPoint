@@ -989,25 +989,24 @@ They can be <<recalled with Ctrl-U>>
        "unread".
 @
 8063
-  The value you enter here determines the
-  line-length. A suggested value would be "70" to
-  allow for displaying multiple quotes correctly.
+The value you enter here determines the line-length.
+A suggested value would be "70" to allow for
+displaying multiple quotes correctly.
 @
 8064
-  Press F2 to select the end of line marker. If you
-  do <<NOT>> want to see the end of line marker,
-  cursor down to the bottom of the list and press
-  <enter>.
+Press <F2> to select the end of line marker. If you
+do <<NOT>> want to see the end of line marker, cursor
+down to the bottom of the list and press <Enter>.
 @
 8065
-<<[x]>> -> Turns on automatic line indentation.
+<<[x]>> ->  Turns on automatic line indentation.
 @
 8066
-<<[x]>> -> Marked blocks will not be marked again or
-       overwritten.
+<<[x]>> ->  Marked blocks will not be marked again or
+        overwritten.
 @
 8067
-<<[x]>> -> Enable quote-reflow
+<<[x]>> ->  Enable quote-reflow
 @
 65
 Use the cursor keys to page through years and months.
@@ -1098,8 +1097,11 @@ sent.
 
 <<To:>>     Changes the recipient of the message.
         Delete the current entry to choose (with <F2>)
-        between users and newsgroups.
-        ATTENTION! only experienced users should
+        between users and newsgroups. You can also
+        enter one of the pre-defined [short-names]@11605
+        as defined under /Edit/Short names instead
+        of the complete address.
+        ATTENTION! Only experienced users should
         use this function.
 
 <<Subject>> Changes the subject of the message.
@@ -9040,7 +9042,7 @@ up.
 3 entries are necessary;
 
 
-<<Server:>>    The Server over which the message
+<<Server>>     The Server over which the message
            should be despatched. (This only appears
            when you have more than 1 server)
            The first letter(s) of the box-name are
@@ -9059,7 +9061,8 @@ up.
 
 You can enter one of the pre-defined [short-names]@11605
 as defined under /Edit/Short names instead of the
-complete address.
+complete address. This also works in the Server input
+field.
 
 <<Fido:>>  In Fido you can enter a part of the
 address and select the correct completion from the
