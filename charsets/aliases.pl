@@ -15,16 +15,85 @@
 # for internal or external distribution as long as this notice
 # remains attached.
 
-$name=undef;
-@alias=();
+my $name=undef;
+my $name_pref=0;
+my @alias=();
 
 use LWP::UserAgent;
 use HTTP::Request;
 
-$data = undef;
-$started = undef;
+my $data = undef;
+my $started = undef;
 
-print STDERR "Connecting www.iana.org:80...\n";
+my $MODE = 'MIME';
+
+my %more_aliases=();
+my %preferred_aliases=();
+
+my @saved=();
+
+open MORE_ALIASES, "<more_aliases.txt";
+while(<MORE_ALIASES>) {
+  next if /^#/;
+  unless(m/^([^\s]+)\s+([^\s]+)\s*$/) { print STDERR "WARNING: malformated input $_"; next; }
+  my ($cs,$al)=($1,uc($2));
+  if(exists $more_aliases{$al}) { print STDERR "WARNING: re-definition of $al ignored.\n"; next; }
+  $more_aliases{$al}=$cs;
+}
+
+open PREFERRED_ALIASES, "<preferred_aliases.txt";
+while(<PREFERRED_ALIASES>) {
+  next if /^#/;
+  unless(m/^([^\s]+)\s+([^\s]+)\s*$/) { print STDERR "WARNING: malformated input $_"; next; }
+  my ($sc,$re)=(uc($1),$2);
+  push @{$preferred_aliases{$sc}}, $re;
+}
+
+sub add_name {
+  my ($cs) = @_;
+  next if $cs =~ m/^none$/i;
+
+  my @pa = (@{$preferred_aliases{uc $MODE}}, @{$preferred_aliases{'ALL'}});
+  
+  for(my $p=0; ($p<=$#pa) && ((!defined $name_pref)||($p<$name_pref)); $p++) {
+    if($cs =~ m/^$pa[$p]$/i) {
+      $name = $cs;
+      $name_pref = $p;
+      last;
+    }
+  }
+  $name ||= $cs;
+  push @alias, $cs;
+}
+
+sub write_name {
+  printf STDERR $name.(($#alias>0)?(" (".($#alias)." aliases)\n"):"\n");
+  my $nl = "\n";
+
+  foreach my $alias (keys %more_aliases) {
+    unless (grep { uc $alias eq uc $_ } @alias ) {
+      if (grep { uc $more_aliases{$alias} eq uc $_ } @alias ) {
+        printf "$nl  (* additioanal alias: %-51s *)\n", $alias;
+	add_name($alias);
+	$nl = '';
+      }
+    }
+  }	 
+
+  printf "$nl  (* overridden preference for %-44s *)\n", 
+    sprintf "%s: %s", $MODE, $name 
+    if (defined $name_pref) && $name_pref>=0;
+
+  print  "\n";
+  foreach (@alias) {
+    printf "  if UName=%-63s else\n",
+      sprintf "%-25s then result :=%s","'".uc($_)."'","'$name'";
+  };
+
+  @alias = ();
+  $name = undef;
+  $name_pref = undef;
+}	
 
 $UserAgent = LWP::UserAgent->new;
 $Request = HTTP::Request->new('GET', 'http://www.iana.org/assignments/character-sets');
@@ -46,21 +115,16 @@ $UserAgent->request($Request,sub {
   
     if (/^Name: *([^ ]*)/) 
     {
-      printf STDERR $name.(($#alias>0)?(" (".($#alias)." aliases)\n"):"\n");
-      print "\n";
-      foreach (@alias) {
-        printf "  if UName=%-63s else\n",
-          sprintf "%-25s then result :=%s","'".uc($_)."'","'$name'";
-      };
-  
-      $name=$1;
-      @alias=($name);
+      write_name();
+      add_name($1);
     } elsif(/^Alias: *([^ ]+) +\(.*preferred MIME.*\)/) {
       $name=$1;
+      $name_pref = -1 if $MODE eq 'MIME';
       push @alias,$name;
     } elsif(/^Alias: *([^ ]+)/) {
-      push @alias,$1 unless lc($1) eq "none";
+      add_name($1);
     } elsif(/^REFERENCES[ \t]*$/) {
+      write_name();
       print "\n  result:=name;\nend;\n";
     }
    
@@ -76,7 +140,12 @@ $UserAgent->request($Request,sub {
   }
 } );
 
+
 # $Log$
+# Revision 1.6  2003/08/24 19:11:51  cl
+# - better aliases for charsets
+# - additional aliases for charsets not registered w/ IANA (e.g. x-mac-roman)
+#
 # Revision 1.5  2003/01/07 00:22:28  cl
 # - made parameter const
 #

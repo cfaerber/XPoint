@@ -208,7 +208,7 @@ const
     'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-3', 'ISO-8859-4', 'ISO-8859-5',
     'ISO-8859-6', 'ISO-8859-7', 'ISO-8859-8', 'ISO-8859-9', 'ISO-8859-10',
     'ISO-8859-13','ISO-8859-14','ISO-8859-15','ISO-8859-16', 
-    'US-ASCII',   'DIN_66003',
+    'US-ASCII',   'ISO646-DE',
     'x-unknown');
 
 type
@@ -942,22 +942,6 @@ end;
 
 function ZCCharsetToMIME(const Name:string):string;
 begin
-  result := Uppercase(Name);
-  if result='ISO1' then result:='ISO-8859-1' else
-  if result='ISO2' then result:='ISO-8859-2' else
-  if result='ISO3' then result:='ISO-8859-3' else
-  if result='ISO4' then result:='ISO-8859-4' else
-  if result='ISO5' then result:='ISO-8859-5' else
-  if result='ISO6' then result:='ISO-8859-6' else
-  if result='ISO7' then result:='ISO-8859-7' else
-  if result='ISO8' then result:='ISO-8859-8' else
-  if result='ISO9' then result:='ISO-8859-9' else
-  if result='ISO10' then result:='ISO-8859-10' else
-  if result='ISO13' then result:='ISO-8859-13' else
-  if result='ISO14' then result:='ISO-8859-14' else
-  if result='ISO15' then result:='ISO-8859-15' else
-  if result='ISO16' then result:='ISO-8859-16' else
-  if result='UNICODE' then result:='UTF-16' else
   result := MimeCharsetCanonicalName(Name);
 end;
 
@@ -1008,38 +992,7 @@ begin
     (Result[Length(Result)] in ['1'..'4']) then
     result:=Trim(LeftStr(result,Length(result)-2));
 
-  if result='DUTCH' then result:='ISO646-NL' else
-  if result='FINNISH' then result:='SEN_850200_B' else
-  if result='FRENCH' then result:='NF_Z_62-010' else
-  if result='CANADIAN' then result:='CSA_Z243.4-1985-1' else
-  if result='GERMAN' then result:='DIN_66003' else
-  if result='ITALIAN' then result:='IT' else
-  if result='NORWEG' then result:='NS_4551-1' else
-  if result='PORTU' then result:='PT' else
-  if result='SPANISH' then result:='ES' else
-  if result='SWEDISH' then result:='SEN_850200_B' else
-  if result='SWISS' then result:='ISO646-CH' else
-  if result='UK' then result:='BS_4730' else
-  if result='LATIN-1' then result:='ISO-8859-1' else
-  if result='ASCII' then result:='US-ASCII' else
-  if result='IBMPC' then result:='IBM437' else
-  if result='MAC' then result:='macintosh' else
-  if result='VT100' then result:='VT100' else
-  if result='LATIN-2' then result:='ISO-8859-2' else
-  if result='LATIN-3' then result:='ISO-8859-3' else
-  if result='LATIN-4' then result:='ISO-8859-4' else
-  if result='LATIN-5' then result:='ISO-8859-9' else
-  if result='LATIN-6' then result:='ISO-8859-10' else
-  if result='LATIN-7' then result:='ISO-8859-14' else
-  if result='ARABIC' then result:='ISO-8859-6' else
-  if result='CYRILLIC' then result:='ISO-8859-5' else
-  if result='GREEK' then result:='ISO-8859-7' else
-  if result='HEBREW' then result:='ISO-8859-8' else
-  if result='KATAKANA' then result:='JISX0201.1776-0' else
-  if result='HANZU' then result:='GB2312.1980-0' else
-  if result='KANJI' then result:='JISX0208.1983-0' else
-  if result='KOREAN' then result:='KSC5601.1987-0' else
-  if result='UNICODE' then result:='UTF-16';
+  result := MimeCharsetCanonicalName(Name);
 end;
 
 { ----------------------------- RFC 2047 ----------------------------- }
@@ -1317,6 +1270,10 @@ end;
 
 //
 // $Log$
+// Revision 1.26  2003/08/24 19:12:33  cl
+// - better aliases for charsets
+// - additional aliases for charsets not registered w/ IANA (e.g. x-mac-roman)
+//
 // Revision 1.25  2003/01/07 00:22:28  cl
 // - made parameter const
 //

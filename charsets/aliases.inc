@@ -1,4 +1,4 @@
-(* $Id: aliases.pl,v 1.4 2002/03/25 18:42:24 cl Exp )
+(* $Id$ *)
 (* generated from IANA charset list -- do not edit *)
 
 function MimeCharsetCanonicalName(Const Name: String): String;
@@ -63,6 +63,8 @@ begin
 (* Character Set                                               Reference      *)
 (* -------------                                               ---------      *)
 
+  (* overridden preference for MIME:                                        *)
+
 
 (* Name: ANSI_X3.4-1968                                   [RFC1345,KXS2]      *)
 (* MIBenum: 3                                                                 *)
@@ -124,10 +126,12 @@ begin
 (* Alias: irv                                                                 *)
 (* Alias: csISO2IntlRefVersion                                                *)
 
-  if UName='ISO_646.IRV:1983'        then result :='ISO_646.irv:1983'      else
-  if UName='ISO-IR-2'                then result :='ISO_646.irv:1983'      else
-  if UName='IRV'                     then result :='ISO_646.irv:1983'      else
-  if UName='CSISO2INTLREFVERSION'    then result :='ISO_646.irv:1983'      else
+  (* overridden preference for MIME: iso-ir-2                               *)
+
+  if UName='ISO_646.IRV:1983'        then result :='iso-ir-2'              else
+  if UName='ISO-IR-2'                then result :='iso-ir-2'              else
+  if UName='IRV'                     then result :='iso-ir-2'              else
+  if UName='CSISO2INTLREFVERSION'    then result :='iso-ir-2'              else
 
 (* Name: BS_4730                                           [RFC1345,KXS2]     *)
 (* MIBenum: 20                                                                *)
@@ -138,12 +142,14 @@ begin
 (* Alias: uk                                                                  *)
 (* Alias: csISO4UnitedKingdom                                                 *)
 
-  if UName='BS_4730'                 then result :='BS_4730'               else
-  if UName='ISO-IR-4'                then result :='BS_4730'               else
-  if UName='ISO646-GB'               then result :='BS_4730'               else
-  if UName='GB'                      then result :='BS_4730'               else
-  if UName='UK'                      then result :='BS_4730'               else
-  if UName='CSISO4UNITEDKINGDOM'     then result :='BS_4730'               else
+  (* overridden preference for MIME: ISO646-GB                              *)
+
+  if UName='BS_4730'                 then result :='ISO646-GB'             else
+  if UName='ISO-IR-4'                then result :='ISO646-GB'             else
+  if UName='ISO646-GB'               then result :='ISO646-GB'             else
+  if UName='GB'                      then result :='ISO646-GB'             else
+  if UName='UK'                      then result :='ISO646-GB'             else
+  if UName='CSISO4UNITEDKINGDOM'     then result :='ISO646-GB'             else
 
 (* Name: NATS-SEFI                                         [RFC1345,KXS2]     *)
 (* MIBenum: 31                                                                *)
@@ -151,9 +157,11 @@ begin
 (* Alias: iso-ir-8-1                                                          *)
 (* Alias: csNATSSEFI                                                          *)
 
-  if UName='NATS-SEFI'               then result :='NATS-SEFI'             else
-  if UName='ISO-IR-8-1'              then result :='NATS-SEFI'             else
-  if UName='CSNATSSEFI'              then result :='NATS-SEFI'             else
+  (* overridden preference for MIME: iso-ir-8-1                             *)
+
+  if UName='NATS-SEFI'               then result :='iso-ir-8-1'            else
+  if UName='ISO-IR-8-1'              then result :='iso-ir-8-1'            else
+  if UName='CSNATSSEFI'              then result :='iso-ir-8-1'            else
 
 (* Name: NATS-SEFI-ADD                                     [RFC1345,KXS2]     *)
 (* MIBenum: 32                                                                *)
@@ -161,9 +169,11 @@ begin
 (* Alias: iso-ir-8-2                                                          *)
 (* Alias: csNATSSEFIADD                                                       *)
 
-  if UName='NATS-SEFI-ADD'           then result :='NATS-SEFI-ADD'         else
-  if UName='ISO-IR-8-2'              then result :='NATS-SEFI-ADD'         else
-  if UName='CSNATSSEFIADD'           then result :='NATS-SEFI-ADD'         else
+  (* overridden preference for MIME: iso-ir-8-2                             *)
+
+  if UName='NATS-SEFI-ADD'           then result :='iso-ir-8-2'            else
+  if UName='ISO-IR-8-2'              then result :='iso-ir-8-2'            else
+  if UName='CSNATSSEFIADD'           then result :='iso-ir-8-2'            else
 
 (* Name: NATS-DANO                                         [RFC1345,KXS2]     *)
 (* MIBenum: 33                                                                *)
@@ -171,9 +181,11 @@ begin
 (* Alias: iso-ir-9-1                                                          *)
 (* Alias: csNATSDANO                                                          *)
 
-  if UName='NATS-DANO'               then result :='NATS-DANO'             else
-  if UName='ISO-IR-9-1'              then result :='NATS-DANO'             else
-  if UName='CSNATSDANO'              then result :='NATS-DANO'             else
+  (* overridden preference for MIME: iso-ir-9-1                             *)
+
+  if UName='NATS-DANO'               then result :='iso-ir-9-1'            else
+  if UName='ISO-IR-9-1'              then result :='iso-ir-9-1'            else
+  if UName='CSNATSDANO'              then result :='iso-ir-9-1'            else
 
 (* Name: NATS-DANO-ADD                                     [RFC1345,KXS2]     *)
 (* MIBenum: 34                                                                *)
@@ -181,9 +193,11 @@ begin
 (* Alias: iso-ir-9-2                                                          *)
 (* Alias: csNATSDANOADD                                                       *)
 
-  if UName='NATS-DANO-ADD'           then result :='NATS-DANO-ADD'         else
-  if UName='ISO-IR-9-2'              then result :='NATS-DANO-ADD'         else
-  if UName='CSNATSDANOADD'           then result :='NATS-DANO-ADD'         else
+  (* overridden preference for MIME: iso-ir-9-2                             *)
+
+  if UName='NATS-DANO-ADD'           then result :='iso-ir-9-2'            else
+  if UName='ISO-IR-9-2'              then result :='iso-ir-9-2'            else
+  if UName='CSNATSDANOADD'           then result :='iso-ir-9-2'            else
 
 (* Name: SEN_850200_B                                      [RFC1345,KXS2]     *)
 (* MIBenum: 35                                                                *)
@@ -195,13 +209,19 @@ begin
 (* Alias: se                                                                  *)
 (* Alias: csISO10Swedish                                                      *)
 
-  if UName='SEN_850200_B'            then result :='SEN_850200_B'          else
-  if UName='ISO-IR-10'               then result :='SEN_850200_B'          else
-  if UName='FI'                      then result :='SEN_850200_B'          else
-  if UName='ISO646-FI'               then result :='SEN_850200_B'          else
-  if UName='ISO646-SE'               then result :='SEN_850200_B'          else
-  if UName='SE'                      then result :='SEN_850200_B'          else
-  if UName='CSISO10SWEDISH'          then result :='SEN_850200_B'          else
+  (* additioanal alias: SWEDISH                                             *)
+  (* additioanal alias: FINNISH                                             *)
+  (* overridden preference for MIME: ISO646-SE                              *)
+
+  if UName='SEN_850200_B'            then result :='ISO646-SE'             else
+  if UName='ISO-IR-10'               then result :='ISO646-SE'             else
+  if UName='FI'                      then result :='ISO646-SE'             else
+  if UName='ISO646-FI'               then result :='ISO646-SE'             else
+  if UName='ISO646-SE'               then result :='ISO646-SE'             else
+  if UName='SE'                      then result :='ISO646-SE'             else
+  if UName='CSISO10SWEDISH'          then result :='ISO646-SE'             else
+  if UName='SWEDISH'                 then result :='ISO646-SE'             else
+  if UName='FINNISH'                 then result :='ISO646-SE'             else
 
 (* Name: SEN_850200_C                                      [RFC1345,KXS2]     *)
 (* MIBenum: 21                                                                *)
@@ -211,11 +231,13 @@ begin
 (* Alias: se2                                                                 *)
 (* Alias: csISO11SwedishForNames                                              *)
 
-  if UName='SEN_850200_C'            then result :='SEN_850200_C'          else
-  if UName='ISO-IR-11'               then result :='SEN_850200_C'          else
-  if UName='ISO646-SE2'              then result :='SEN_850200_C'          else
-  if UName='SE2'                     then result :='SEN_850200_C'          else
-  if UName='CSISO11SWEDISHFORNAMES'  then result :='SEN_850200_C'          else
+  (* overridden preference for MIME: ISO646-SE2                             *)
+
+  if UName='SEN_850200_C'            then result :='ISO646-SE2'            else
+  if UName='ISO-IR-11'               then result :='ISO646-SE2'            else
+  if UName='ISO646-SE2'              then result :='ISO646-SE2'            else
+  if UName='SE2'                     then result :='ISO646-SE2'            else
+  if UName='CSISO11SWEDISHFORNAMES'  then result :='ISO646-SE2'            else
 
 (* Name: KS_C_5601-1987                                    [RFC1345,KXS2]     *)
 (* MIBenum: 36                                                                *)
@@ -226,12 +248,14 @@ begin
 (* Alias: korean                                                              *)
 (* Alias: csKSC56011987                                                       *)
 
-  if UName='KS_C_5601-1987'          then result :='KS_C_5601-1987'        else
-  if UName='ISO-IR-149'              then result :='KS_C_5601-1987'        else
-  if UName='KS_C_5601-1989'          then result :='KS_C_5601-1987'        else
-  if UName='KSC_5601'                then result :='KS_C_5601-1987'        else
-  if UName='KOREAN'                  then result :='KS_C_5601-1987'        else
-  if UName='CSKSC56011987'           then result :='KS_C_5601-1987'        else
+  (* overridden preference for MIME: iso-ir-149                             *)
+
+  if UName='KS_C_5601-1987'          then result :='iso-ir-149'            else
+  if UName='ISO-IR-149'              then result :='iso-ir-149'            else
+  if UName='KS_C_5601-1989'          then result :='iso-ir-149'            else
+  if UName='KSC_5601'                then result :='iso-ir-149'            else
+  if UName='KOREAN'                  then result :='iso-ir-149'            else
+  if UName='CSKSC56011987'           then result :='iso-ir-149'            else
 
 (* Name: ISO-2022-KR  (preferred MIME name)                [RFC1557,Choi]     *)
 (* MIBenum: 37                                                                *)
@@ -286,12 +310,14 @@ begin
 (* Alias: x0201-7                                                             *)
 (* Alias: csISO13JISC6220jp                                                   *)
 
-  if UName='JIS_C6220-1969-JP'       then result :='JIS_C6220-1969-jp'     else
-  if UName='JIS_C6220-1969'          then result :='JIS_C6220-1969-jp'     else
-  if UName='ISO-IR-13'               then result :='JIS_C6220-1969-jp'     else
-  if UName='KATAKANA'                then result :='JIS_C6220-1969-jp'     else
-  if UName='X0201-7'                 then result :='JIS_C6220-1969-jp'     else
-  if UName='CSISO13JISC6220JP'       then result :='JIS_C6220-1969-jp'     else
+  (* overridden preference for MIME: iso-ir-13                              *)
+
+  if UName='JIS_C6220-1969-JP'       then result :='iso-ir-13'             else
+  if UName='JIS_C6220-1969'          then result :='iso-ir-13'             else
+  if UName='ISO-IR-13'               then result :='iso-ir-13'             else
+  if UName='KATAKANA'                then result :='iso-ir-13'             else
+  if UName='X0201-7'                 then result :='iso-ir-13'             else
+  if UName='CSISO13JISC6220JP'       then result :='iso-ir-13'             else
 
 (* Name: JIS_C6220-1969-ro                                 [RFC1345,KXS2]     *)
 (* MIBenum: 42                                                                *)
@@ -301,11 +327,13 @@ begin
 (* Alias: ISO646-JP                                                           *)
 (* Alias: csISO14JISC6220ro                                                   *)
 
-  if UName='JIS_C6220-1969-RO'       then result :='JIS_C6220-1969-ro'     else
-  if UName='ISO-IR-14'               then result :='JIS_C6220-1969-ro'     else
-  if UName='JP'                      then result :='JIS_C6220-1969-ro'     else
-  if UName='ISO646-JP'               then result :='JIS_C6220-1969-ro'     else
-  if UName='CSISO14JISC6220RO'       then result :='JIS_C6220-1969-ro'     else
+  (* overridden preference for MIME: ISO646-JP                              *)
+
+  if UName='JIS_C6220-1969-RO'       then result :='ISO646-JP'             else
+  if UName='ISO-IR-14'               then result :='ISO646-JP'             else
+  if UName='JP'                      then result :='ISO646-JP'             else
+  if UName='ISO646-JP'               then result :='ISO646-JP'             else
+  if UName='CSISO14JISC6220RO'       then result :='ISO646-JP'             else
 
 (* Name: IT                                                [RFC1345,KXS2]     *)
 (* MIBenum: 22                                                                *)
@@ -314,10 +342,14 @@ begin
 (* Alias: ISO646-IT                                                           *)
 (* Alias: csISO15Italian                                                      *)
 
-  if UName='IT'                      then result :='IT'                    else
-  if UName='ISO-IR-15'               then result :='IT'                    else
-  if UName='ISO646-IT'               then result :='IT'                    else
-  if UName='CSISO15ITALIAN'          then result :='IT'                    else
+  (* additioanal alias: ITALIAN                                             *)
+  (* overridden preference for MIME: ISO646-IT                              *)
+
+  if UName='IT'                      then result :='ISO646-IT'             else
+  if UName='ISO-IR-15'               then result :='ISO646-IT'             else
+  if UName='ISO646-IT'               then result :='ISO646-IT'             else
+  if UName='CSISO15ITALIAN'          then result :='ISO646-IT'             else
+  if UName='ITALIAN'                 then result :='ISO646-IT'             else
 
 (* Name: PT                                                [RFC1345,KXS2]     *)
 (* MIBenum: 43                                                                *)
@@ -326,10 +358,14 @@ begin
 (* Alias: ISO646-PT                                                           *)
 (* Alias: csISO16Portuguese                                                   *)
 
-  if UName='PT'                      then result :='PT'                    else
-  if UName='ISO-IR-16'               then result :='PT'                    else
-  if UName='ISO646-PT'               then result :='PT'                    else
-  if UName='CSISO16PORTUGUESE'       then result :='PT'                    else
+  (* additioanal alias: PORTU                                               *)
+  (* overridden preference for MIME: ISO646-PT                              *)
+
+  if UName='PT'                      then result :='ISO646-PT'             else
+  if UName='ISO-IR-16'               then result :='ISO646-PT'             else
+  if UName='ISO646-PT'               then result :='ISO646-PT'             else
+  if UName='CSISO16PORTUGUESE'       then result :='ISO646-PT'             else
+  if UName='PORTU'                   then result :='ISO646-PT'             else
 
 (* Name: ES                                                [RFC1345,KXS2]     *)
 (* MIBenum: 23                                                                *)
@@ -338,10 +374,14 @@ begin
 (* Alias: ISO646-ES                                                           *)
 (* Alias: csISO17Spanish                                                      *)
 
-  if UName='ES'                      then result :='ES'                    else
-  if UName='ISO-IR-17'               then result :='ES'                    else
-  if UName='ISO646-ES'               then result :='ES'                    else
-  if UName='CSISO17SPANISH'          then result :='ES'                    else
+  (* additioanal alias: SPANISH                                             *)
+  (* overridden preference for MIME: ISO646-ES                              *)
+
+  if UName='ES'                      then result :='ISO646-ES'             else
+  if UName='ISO-IR-17'               then result :='ISO646-ES'             else
+  if UName='ISO646-ES'               then result :='ISO646-ES'             else
+  if UName='CSISO17SPANISH'          then result :='ISO646-ES'             else
+  if UName='SPANISH'                 then result :='ISO646-ES'             else
 
 (* Name: greek7-old                                        [RFC1345,KXS2]     *)
 (* MIBenum: 44                                                                *)
@@ -349,9 +389,11 @@ begin
 (* Alias: iso-ir-18                                                           *)
 (* Alias: csISO18Greek7Old                                                    *)
 
-  if UName='GREEK7-OLD'              then result :='greek7-old'            else
-  if UName='ISO-IR-18'               then result :='greek7-old'            else
-  if UName='CSISO18GREEK7OLD'        then result :='greek7-old'            else
+  (* overridden preference for MIME: iso-ir-18                              *)
+
+  if UName='GREEK7-OLD'              then result :='iso-ir-18'             else
+  if UName='ISO-IR-18'               then result :='iso-ir-18'             else
+  if UName='CSISO18GREEK7OLD'        then result :='iso-ir-18'             else
 
 (* Name: latin-greek                                       [RFC1345,KXS2]     *)
 (* MIBenum: 45                                                                *)
@@ -359,9 +401,11 @@ begin
 (* Alias: iso-ir-19                                                           *)
 (* Alias: csISO19LatinGreek                                                   *)
 
-  if UName='LATIN-GREEK'             then result :='latin-greek'           else
-  if UName='ISO-IR-19'               then result :='latin-greek'           else
-  if UName='CSISO19LATINGREEK'       then result :='latin-greek'           else
+  (* overridden preference for MIME: iso-ir-19                              *)
+
+  if UName='LATIN-GREEK'             then result :='iso-ir-19'             else
+  if UName='ISO-IR-19'               then result :='iso-ir-19'             else
+  if UName='CSISO19LATINGREEK'       then result :='iso-ir-19'             else
 
 (* Name: DIN_66003                                         [RFC1345,KXS2]     *)
 (* MIBenum: 24                                                                *)
@@ -371,11 +415,15 @@ begin
 (* Alias: ISO646-DE                                                           *)
 (* Alias: csISO21German                                                       *)
 
-  if UName='DIN_66003'               then result :='DIN_66003'             else
-  if UName='ISO-IR-21'               then result :='DIN_66003'             else
-  if UName='DE'                      then result :='DIN_66003'             else
-  if UName='ISO646-DE'               then result :='DIN_66003'             else
-  if UName='CSISO21GERMAN'           then result :='DIN_66003'             else
+  (* additioanal alias: GERMAN                                              *)
+  (* overridden preference for MIME: ISO646-DE                              *)
+
+  if UName='DIN_66003'               then result :='ISO646-DE'             else
+  if UName='ISO-IR-21'               then result :='ISO646-DE'             else
+  if UName='DE'                      then result :='ISO646-DE'             else
+  if UName='ISO646-DE'               then result :='ISO646-DE'             else
+  if UName='CSISO21GERMAN'           then result :='ISO646-DE'             else
+  if UName='GERMAN'                  then result :='ISO646-DE'             else
 
 (* Name: NF_Z_62-010_(1973)                                [RFC1345,KXS2]     *)
 (* MIBenum: 46                                                                *)
@@ -384,10 +432,12 @@ begin
 (* Alias: ISO646-FR1                                                          *)
 (* Alias: csISO25French                                                       *)
 
-  if UName='NF_Z_62-010_(1973)'      then result :='NF_Z_62-010_(1973)'    else
-  if UName='ISO-IR-25'               then result :='NF_Z_62-010_(1973)'    else
-  if UName='ISO646-FR1'              then result :='NF_Z_62-010_(1973)'    else
-  if UName='CSISO25FRENCH'           then result :='NF_Z_62-010_(1973)'    else
+  (* overridden preference for MIME: ISO646-FR1                             *)
+
+  if UName='NF_Z_62-010_(1973)'      then result :='ISO646-FR1'            else
+  if UName='ISO-IR-25'               then result :='ISO646-FR1'            else
+  if UName='ISO646-FR1'              then result :='ISO646-FR1'            else
+  if UName='CSISO25FRENCH'           then result :='ISO646-FR1'            else
 
 (* Name: Latin-greek-1                                     [RFC1345,KXS2]     *)
 (* MIBenum: 47                                                                *)
@@ -395,15 +445,19 @@ begin
 (* Alias: iso-ir-27                                                           *)
 (* Alias: csISO27LatinGreek1                                                  *)
 
-  if UName='LATIN-GREEK-1'           then result :='Latin-greek-1'         else
-  if UName='ISO-IR-27'               then result :='Latin-greek-1'         else
-  if UName='CSISO27LATINGREEK1'      then result :='Latin-greek-1'         else
+  (* overridden preference for MIME: iso-ir-27                              *)
+
+  if UName='LATIN-GREEK-1'           then result :='iso-ir-27'             else
+  if UName='ISO-IR-27'               then result :='iso-ir-27'             else
+  if UName='CSISO27LATINGREEK1'      then result :='iso-ir-27'             else
 
 (* Name: ISO_5427                                          [RFC1345,KXS2]     *)
 (* MIBenum: 48                                                                *)
 (* Source: ECMA registry                                                      *)
 (* Alias: iso-ir-37                                                           *)
 (* Alias: csISO5427Cyrillic                                                   *)
+
+  (* overridden preference for MIME: ISO_5427                               *)
 
   if UName='ISO_5427'                then result :='ISO_5427'              else
   if UName='ISO-IR-37'               then result :='ISO_5427'              else
@@ -415,9 +469,11 @@ begin
 (* Alias: iso-ir-42                                                           *)
 (* Alias: csISO42JISC62261978                                                 *)
 
-  if UName='JIS_C6226-1978'          then result :='JIS_C6226-1978'        else
-  if UName='ISO-IR-42'               then result :='JIS_C6226-1978'        else
-  if UName='CSISO42JISC62261978'     then result :='JIS_C6226-1978'        else
+  (* overridden preference for MIME: iso-ir-42                              *)
+
+  if UName='JIS_C6226-1978'          then result :='iso-ir-42'             else
+  if UName='ISO-IR-42'               then result :='iso-ir-42'             else
+  if UName='CSISO42JISC62261978'     then result :='iso-ir-42'             else
 
 (* Name: BS_viewdata                                       [RFC1345,KXS2]     *)
 (* MIBenum: 50                                                                *)
@@ -425,9 +481,11 @@ begin
 (* Alias: iso-ir-47                                                           *)
 (* Alias: csISO47BSViewdata                                                   *)
 
-  if UName='BS_VIEWDATA'             then result :='BS_viewdata'           else
-  if UName='ISO-IR-47'               then result :='BS_viewdata'           else
-  if UName='CSISO47BSVIEWDATA'       then result :='BS_viewdata'           else
+  (* overridden preference for MIME: iso-ir-47                              *)
+
+  if UName='BS_VIEWDATA'             then result :='iso-ir-47'             else
+  if UName='ISO-IR-47'               then result :='iso-ir-47'             else
+  if UName='CSISO47BSVIEWDATA'       then result :='iso-ir-47'             else
 
 (* Name: INIS                                              [RFC1345,KXS2]     *)
 (* MIBenum: 51                                                                *)
@@ -435,9 +493,11 @@ begin
 (* Alias: iso-ir-49                                                           *)
 (* Alias: csISO49INIS                                                         *)
 
-  if UName='INIS'                    then result :='INIS'                  else
-  if UName='ISO-IR-49'               then result :='INIS'                  else
-  if UName='CSISO49INIS'             then result :='INIS'                  else
+  (* overridden preference for MIME: iso-ir-49                              *)
+
+  if UName='INIS'                    then result :='iso-ir-49'             else
+  if UName='ISO-IR-49'               then result :='iso-ir-49'             else
+  if UName='CSISO49INIS'             then result :='iso-ir-49'             else
 
 (* Name: INIS-8                                            [RFC1345,KXS2]     *)
 (* MIBenum: 52                                                                *)
@@ -445,9 +505,11 @@ begin
 (* Alias: iso-ir-50                                                           *)
 (* Alias: csISO50INIS8                                                        *)
 
-  if UName='INIS-8'                  then result :='INIS-8'                else
-  if UName='ISO-IR-50'               then result :='INIS-8'                else
-  if UName='CSISO50INIS8'            then result :='INIS-8'                else
+  (* overridden preference for MIME: iso-ir-50                              *)
+
+  if UName='INIS-8'                  then result :='iso-ir-50'             else
+  if UName='ISO-IR-50'               then result :='iso-ir-50'             else
+  if UName='CSISO50INIS8'            then result :='iso-ir-50'             else
 
 (* Name: INIS-cyrillic                                     [RFC1345,KXS2]     *)
 (* MIBenum: 53                                                                *)
@@ -455,9 +517,11 @@ begin
 (* Alias: iso-ir-51                                                           *)
 (* Alias: csISO51INISCyrillic                                                 *)
 
-  if UName='INIS-CYRILLIC'           then result :='INIS-cyrillic'         else
-  if UName='ISO-IR-51'               then result :='INIS-cyrillic'         else
-  if UName='CSISO51INISCYRILLIC'     then result :='INIS-cyrillic'         else
+  (* overridden preference for MIME: iso-ir-51                              *)
+
+  if UName='INIS-CYRILLIC'           then result :='iso-ir-51'             else
+  if UName='ISO-IR-51'               then result :='iso-ir-51'             else
+  if UName='CSISO51INISCYRILLIC'     then result :='iso-ir-51'             else
 
 (* Name: ISO_5427:1981                                     [RFC1345,KXS2]     *)
 (* MIBenum: 54                                                                *)
@@ -465,9 +529,11 @@ begin
 (* Alias: iso-ir-54                                                           *)
 (* Alias: ISO5427Cyrillic1981                                                 *)
 
-  if UName='ISO_5427:1981'           then result :='ISO_5427:1981'         else
-  if UName='ISO-IR-54'               then result :='ISO_5427:1981'         else
-  if UName='ISO5427CYRILLIC1981'     then result :='ISO_5427:1981'         else
+  (* overridden preference for MIME: iso-ir-54                              *)
+
+  if UName='ISO_5427:1981'           then result :='iso-ir-54'             else
+  if UName='ISO-IR-54'               then result :='iso-ir-54'             else
+  if UName='ISO5427CYRILLIC1981'     then result :='iso-ir-54'             else
 
 (* Name: ISO_5428:1980                                     [RFC1345,KXS2]     *)
 (* MIBenum: 55                                                                *)
@@ -475,9 +541,11 @@ begin
 (* Alias: iso-ir-55                                                           *)
 (* Alias: csISO5428Greek                                                      *)
 
-  if UName='ISO_5428:1980'           then result :='ISO_5428:1980'         else
-  if UName='ISO-IR-55'               then result :='ISO_5428:1980'         else
-  if UName='CSISO5428GREEK'          then result :='ISO_5428:1980'         else
+  (* overridden preference for MIME: iso-ir-55                              *)
+
+  if UName='ISO_5428:1980'           then result :='iso-ir-55'             else
+  if UName='ISO-IR-55'               then result :='iso-ir-55'             else
+  if UName='CSISO5428GREEK'          then result :='iso-ir-55'             else
 
 (* Name: GB_1988-80                                        [RFC1345,KXS2]     *)
 (* MIBenum: 56                                                                *)
@@ -487,11 +555,13 @@ begin
 (* Alias: ISO646-CN                                                           *)
 (* Alias: csISO57GB1988                                                       *)
 
-  if UName='GB_1988-80'              then result :='GB_1988-80'            else
-  if UName='ISO-IR-57'               then result :='GB_1988-80'            else
-  if UName='CN'                      then result :='GB_1988-80'            else
-  if UName='ISO646-CN'               then result :='GB_1988-80'            else
-  if UName='CSISO57GB1988'           then result :='GB_1988-80'            else
+  (* overridden preference for MIME: ISO646-CN                              *)
+
+  if UName='GB_1988-80'              then result :='ISO646-CN'             else
+  if UName='ISO-IR-57'               then result :='ISO646-CN'             else
+  if UName='CN'                      then result :='ISO646-CN'             else
+  if UName='ISO646-CN'               then result :='ISO646-CN'             else
+  if UName='CSISO57GB1988'           then result :='ISO646-CN'             else
 
 (* Name: GB_2312-80                                        [RFC1345,KXS2]     *)
 (* MIBenum: 57                                                                *)
@@ -500,10 +570,12 @@ begin
 (* Alias: chinese                                                             *)
 (* Alias: csISO58GB231280                                                     *)
 
-  if UName='GB_2312-80'              then result :='GB_2312-80'            else
-  if UName='ISO-IR-58'               then result :='GB_2312-80'            else
-  if UName='CHINESE'                 then result :='GB_2312-80'            else
-  if UName='CSISO58GB231280'         then result :='GB_2312-80'            else
+  (* overridden preference for MIME: iso-ir-58                              *)
+
+  if UName='GB_2312-80'              then result :='iso-ir-58'             else
+  if UName='ISO-IR-58'               then result :='iso-ir-58'             else
+  if UName='CHINESE'                 then result :='iso-ir-58'             else
+  if UName='CSISO58GB231280'         then result :='iso-ir-58'             else
 
 (* Name: NS_4551-1                                         [RFC1345,KXS2]     *)
 (* MIBenum: 25                                                                *)
@@ -514,12 +586,16 @@ begin
 (* Alias: csISO60DanishNorwegian                                              *)
 (* Alias: csISO60Norwegian1                                                   *)
 
-  if UName='NS_4551-1'               then result :='NS_4551-1'             else
-  if UName='ISO-IR-60'               then result :='NS_4551-1'             else
-  if UName='ISO646-NO'               then result :='NS_4551-1'             else
-  if UName='NO'                      then result :='NS_4551-1'             else
-  if UName='CSISO60DANISHNORWEGIAN'  then result :='NS_4551-1'             else
-  if UName='CSISO60NORWEGIAN1'       then result :='NS_4551-1'             else
+  (* additioanal alias: NORWEG                                              *)
+  (* overridden preference for MIME: ISO646-NO                              *)
+
+  if UName='NS_4551-1'               then result :='ISO646-NO'             else
+  if UName='ISO-IR-60'               then result :='ISO646-NO'             else
+  if UName='ISO646-NO'               then result :='ISO646-NO'             else
+  if UName='NO'                      then result :='ISO646-NO'             else
+  if UName='CSISO60DANISHNORWEGIAN'  then result :='ISO646-NO'             else
+  if UName='CSISO60NORWEGIAN1'       then result :='ISO646-NO'             else
+  if UName='NORWEG'                  then result :='ISO646-NO'             else
 
 (* Name: NS_4551-2                                          [RFC1345,KXS2]    *)
 (* MIBenum: 58                                                                *)
@@ -529,11 +605,13 @@ begin
 (* Alias: no2                                                                 *)
 (* Alias: csISO61Norwegian2                                                   *)
 
-  if UName='NS_4551-2'               then result :='NS_4551-2'             else
-  if UName='ISO646-NO2'              then result :='NS_4551-2'             else
-  if UName='ISO-IR-61'               then result :='NS_4551-2'             else
-  if UName='NO2'                     then result :='NS_4551-2'             else
-  if UName='CSISO61NORWEGIAN2'       then result :='NS_4551-2'             else
+  (* overridden preference for MIME: ISO646-NO2                             *)
+
+  if UName='NS_4551-2'               then result :='ISO646-NO2'            else
+  if UName='ISO646-NO2'              then result :='ISO646-NO2'            else
+  if UName='ISO-IR-61'               then result :='ISO646-NO2'            else
+  if UName='NO2'                     then result :='ISO646-NO2'            else
+  if UName='CSISO61NORWEGIAN2'       then result :='ISO646-NO2'            else
 
 (* Name: NF_Z_62-010                                        [RFC1345,KXS2]    *)
 (* MIBenum: 26                                                                *)
@@ -543,11 +621,15 @@ begin
 (* Alias: fr                                                                  *)
 (* Alias: csISO69French                                                       *)
 
-  if UName='NF_Z_62-010'             then result :='NF_Z_62-010'           else
-  if UName='ISO-IR-69'               then result :='NF_Z_62-010'           else
-  if UName='ISO646-FR'               then result :='NF_Z_62-010'           else
-  if UName='FR'                      then result :='NF_Z_62-010'           else
-  if UName='CSISO69FRENCH'           then result :='NF_Z_62-010'           else
+  (* additioanal alias: FRENCH                                              *)
+  (* overridden preference for MIME: ISO646-FR                              *)
+
+  if UName='NF_Z_62-010'             then result :='ISO646-FR'             else
+  if UName='ISO-IR-69'               then result :='ISO646-FR'             else
+  if UName='ISO646-FR'               then result :='ISO646-FR'             else
+  if UName='FR'                      then result :='ISO646-FR'             else
+  if UName='CSISO69FRENCH'           then result :='ISO646-FR'             else
+  if UName='FRENCH'                  then result :='ISO646-FR'             else
 
 (* Name: videotex-suppl                                     [RFC1345,KXS2]    *)
 (* MIBenum: 59                                                                *)
@@ -555,9 +637,11 @@ begin
 (* Alias: iso-ir-70                                                           *)
 (* Alias: csISO70VideotexSupp1                                                *)
 
-  if UName='VIDEOTEX-SUPPL'          then result :='videotex-suppl'        else
-  if UName='ISO-IR-70'               then result :='videotex-suppl'        else
-  if UName='CSISO70VIDEOTEXSUPP1'    then result :='videotex-suppl'        else
+  (* overridden preference for MIME: iso-ir-70                              *)
+
+  if UName='VIDEOTEX-SUPPL'          then result :='iso-ir-70'             else
+  if UName='ISO-IR-70'               then result :='iso-ir-70'             else
+  if UName='CSISO70VIDEOTEXSUPP1'    then result :='iso-ir-70'             else
 
 (* Name: PT2                                                [RFC1345,KXS2]    *)
 (* MIBenum: 60                                                                *)
@@ -566,10 +650,12 @@ begin
 (* Alias: ISO646-PT2                                                          *)
 (* Alias: csISO84Portuguese2                                                  *)
 
-  if UName='PT2'                     then result :='PT2'                   else
-  if UName='ISO-IR-84'               then result :='PT2'                   else
-  if UName='ISO646-PT2'              then result :='PT2'                   else
-  if UName='CSISO84PORTUGUESE2'      then result :='PT2'                   else
+  (* overridden preference for MIME: ISO646-PT2                             *)
+
+  if UName='PT2'                     then result :='ISO646-PT2'            else
+  if UName='ISO-IR-84'               then result :='ISO646-PT2'            else
+  if UName='ISO646-PT2'              then result :='ISO646-PT2'            else
+  if UName='CSISO84PORTUGUESE2'      then result :='ISO646-PT2'            else
 
 (* Name: ES2                                                [RFC1345,KXS2]    *)
 (* MIBenum: 61                                                                *)
@@ -578,10 +664,12 @@ begin
 (* Alias: ISO646-ES2                                                          *)
 (* Alias: csISO85Spanish2                                                     *)
 
-  if UName='ES2'                     then result :='ES2'                   else
-  if UName='ISO-IR-85'               then result :='ES2'                   else
-  if UName='ISO646-ES2'              then result :='ES2'                   else
-  if UName='CSISO85SPANISH2'         then result :='ES2'                   else
+  (* overridden preference for MIME: ISO646-ES2                             *)
+
+  if UName='ES2'                     then result :='ISO646-ES2'            else
+  if UName='ISO-IR-85'               then result :='ISO646-ES2'            else
+  if UName='ISO646-ES2'              then result :='ISO646-ES2'            else
+  if UName='CSISO85SPANISH2'         then result :='ISO646-ES2'            else
 
 (* Name: MSZ_7795.3                                         [RFC1345,KXS2]    *)
 (* MIBenum: 62                                                                *)
@@ -591,11 +679,13 @@ begin
 (* Alias: hu                                                                  *)
 (* Alias: csISO86Hungarian                                                    *)
 
-  if UName='MSZ_7795.3'              then result :='MSZ_7795.3'            else
-  if UName='ISO-IR-86'               then result :='MSZ_7795.3'            else
-  if UName='ISO646-HU'               then result :='MSZ_7795.3'            else
-  if UName='HU'                      then result :='MSZ_7795.3'            else
-  if UName='CSISO86HUNGARIAN'        then result :='MSZ_7795.3'            else
+  (* overridden preference for MIME: ISO646-HU                              *)
+
+  if UName='MSZ_7795.3'              then result :='ISO646-HU'             else
+  if UName='ISO-IR-86'               then result :='ISO646-HU'             else
+  if UName='ISO646-HU'               then result :='ISO646-HU'             else
+  if UName='HU'                      then result :='ISO646-HU'             else
+  if UName='CSISO86HUNGARIAN'        then result :='ISO646-HU'             else
 
 (* Name: JIS_C6226-1983                                     [RFC1345,KXS2]    *)
 (* MIBenum: 63                                                                *)
@@ -605,11 +695,13 @@ begin
 (* Alias: JIS_X0208-1983                                                      *)
 (* Alias: csISO87JISX0208                                                     *)
 
-  if UName='JIS_C6226-1983'          then result :='JIS_C6226-1983'        else
-  if UName='ISO-IR-87'               then result :='JIS_C6226-1983'        else
-  if UName='X0208'                   then result :='JIS_C6226-1983'        else
-  if UName='JIS_X0208-1983'          then result :='JIS_C6226-1983'        else
-  if UName='CSISO87JISX0208'         then result :='JIS_C6226-1983'        else
+  (* overridden preference for MIME: iso-ir-87                              *)
+
+  if UName='JIS_C6226-1983'          then result :='iso-ir-87'             else
+  if UName='ISO-IR-87'               then result :='iso-ir-87'             else
+  if UName='X0208'                   then result :='iso-ir-87'             else
+  if UName='JIS_X0208-1983'          then result :='iso-ir-87'             else
+  if UName='CSISO87JISX0208'         then result :='iso-ir-87'             else
 
 (* Name: greek7                                             [RFC1345,KXS2]    *)
 (* MIBenum: 64                                                                *)
@@ -617,9 +709,11 @@ begin
 (* Alias: iso-ir-88                                                           *)
 (* Alias: csISO88Greek7                                                       *)
 
-  if UName='GREEK7'                  then result :='greek7'                else
-  if UName='ISO-IR-88'               then result :='greek7'                else
-  if UName='CSISO88GREEK7'           then result :='greek7'                else
+  (* overridden preference for MIME: iso-ir-88                              *)
+
+  if UName='GREEK7'                  then result :='iso-ir-88'             else
+  if UName='ISO-IR-88'               then result :='iso-ir-88'             else
+  if UName='CSISO88GREEK7'           then result :='iso-ir-88'             else
 
 (* Name: ASMO_449                                           [RFC1345,KXS2]    *)
 (* MIBenum: 65                                                                *)
@@ -629,16 +723,20 @@ begin
 (* Alias: iso-ir-89                                                           *)
 (* Alias: csISO89ASMO449                                                      *)
 
-  if UName='ASMO_449'                then result :='ASMO_449'              else
-  if UName='ISO_9036'                then result :='ASMO_449'              else
-  if UName='ARABIC7'                 then result :='ASMO_449'              else
-  if UName='ISO-IR-89'               then result :='ASMO_449'              else
-  if UName='CSISO89ASMO449'          then result :='ASMO_449'              else
+  (* overridden preference for MIME: ISO_9036                               *)
+
+  if UName='ASMO_449'                then result :='ISO_9036'              else
+  if UName='ISO_9036'                then result :='ISO_9036'              else
+  if UName='ARABIC7'                 then result :='ISO_9036'              else
+  if UName='ISO-IR-89'               then result :='ISO_9036'              else
+  if UName='CSISO89ASMO449'          then result :='ISO_9036'              else
 
 (* Name: iso-ir-90                                          [RFC1345,KXS2]    *)
 (* MIBenum: 66                                                                *)
 (* Source: ECMA registry                                                      *)
 (* Alias: csISO90                                                             *)
+
+  (* overridden preference for MIME: iso-ir-90                              *)
 
   if UName='ISO-IR-90'               then result :='iso-ir-90'             else
   if UName='CSISO90'                 then result :='iso-ir-90'             else
@@ -650,10 +748,12 @@ begin
 (* Alias: jp-ocr-a                                                            *)
 (* Alias: csISO91JISC62291984a                                                *)
 
-  if UName='JIS_C6229-1984-A'        then result :='JIS_C6229-1984-a'      else
-  if UName='ISO-IR-91'               then result :='JIS_C6229-1984-a'      else
-  if UName='JP-OCR-A'                then result :='JIS_C6229-1984-a'      else
-  if UName='CSISO91JISC62291984A'    then result :='JIS_C6229-1984-a'      else
+  (* overridden preference for MIME: iso-ir-91                              *)
+
+  if UName='JIS_C6229-1984-A'        then result :='iso-ir-91'             else
+  if UName='ISO-IR-91'               then result :='iso-ir-91'             else
+  if UName='JP-OCR-A'                then result :='iso-ir-91'             else
+  if UName='CSISO91JISC62291984A'    then result :='iso-ir-91'             else
 
 (* Name: JIS_C6229-1984-b                                   [RFC1345,KXS2]    *)
 (* MIBenum: 68                                                                *)
@@ -663,11 +763,13 @@ begin
 (* Alias: jp-ocr-b                                                            *)
 (* Alias: csISO92JISC62991984b                                                *)
 
-  if UName='JIS_C6229-1984-B'        then result :='JIS_C6229-1984-b'      else
-  if UName='ISO-IR-92'               then result :='JIS_C6229-1984-b'      else
-  if UName='ISO646-JP-OCR-B'         then result :='JIS_C6229-1984-b'      else
-  if UName='JP-OCR-B'                then result :='JIS_C6229-1984-b'      else
-  if UName='CSISO92JISC62991984B'    then result :='JIS_C6229-1984-b'      else
+  (* overridden preference for MIME: iso-ir-92                              *)
+
+  if UName='JIS_C6229-1984-B'        then result :='iso-ir-92'             else
+  if UName='ISO-IR-92'               then result :='iso-ir-92'             else
+  if UName='ISO646-JP-OCR-B'         then result :='iso-ir-92'             else
+  if UName='JP-OCR-B'                then result :='iso-ir-92'             else
+  if UName='CSISO92JISC62991984B'    then result :='iso-ir-92'             else
 
 (* Name: JIS_C6229-1984-b-add                               [RFC1345,KXS2]    *)
 (* MIBenum: 69                                                                *)
@@ -676,10 +778,12 @@ begin
 (* Alias: jp-ocr-b-add                                                        *)
 (* Alias: csISO93JIS62291984badd                                              *)
 
-  if UName='JIS_C6229-1984-B-ADD'    then result :='JIS_C6229-1984-b-add'  else
-  if UName='ISO-IR-93'               then result :='JIS_C6229-1984-b-add'  else
-  if UName='JP-OCR-B-ADD'            then result :='JIS_C6229-1984-b-add'  else
-  if UName='CSISO93JIS62291984BADD'  then result :='JIS_C6229-1984-b-add'  else
+  (* overridden preference for MIME: iso-ir-93                              *)
+
+  if UName='JIS_C6229-1984-B-ADD'    then result :='iso-ir-93'             else
+  if UName='ISO-IR-93'               then result :='iso-ir-93'             else
+  if UName='JP-OCR-B-ADD'            then result :='iso-ir-93'             else
+  if UName='CSISO93JIS62291984BADD'  then result :='iso-ir-93'             else
 
 (* Name: JIS_C6229-1984-hand                                [RFC1345,KXS2]    *)
 (* MIBenum: 70                                                                *)
@@ -688,10 +792,12 @@ begin
 (* Alias: jp-ocr-hand                                                         *)
 (* Alias: csISO94JIS62291984hand                                              *)
 
-  if UName='JIS_C6229-1984-HAND'     then result :='JIS_C6229-1984-hand'   else
-  if UName='ISO-IR-94'               then result :='JIS_C6229-1984-hand'   else
-  if UName='JP-OCR-HAND'             then result :='JIS_C6229-1984-hand'   else
-  if UName='CSISO94JIS62291984HAND'  then result :='JIS_C6229-1984-hand'   else
+  (* overridden preference for MIME: iso-ir-94                              *)
+
+  if UName='JIS_C6229-1984-HAND'     then result :='iso-ir-94'             else
+  if UName='ISO-IR-94'               then result :='iso-ir-94'             else
+  if UName='JP-OCR-HAND'             then result :='iso-ir-94'             else
+  if UName='CSISO94JIS62291984HAND'  then result :='iso-ir-94'             else
 
 (* Name: JIS_C6229-1984-hand-add                            [RFC1345,KXS2]    *)
 (* MIBenum: 71                                                                *)
@@ -700,10 +806,12 @@ begin
 (* Alias: jp-ocr-hand-add                                                     *)
 (* Alias: csISO95JIS62291984handadd                                           *)
 
-  if UName='JIS_C6229-1984-HAND-ADD' then result :='JIS_C6229-1984-hand-add' else
-  if UName='ISO-IR-95'               then result :='JIS_C6229-1984-hand-add' else
-  if UName='JP-OCR-HAND-ADD'         then result :='JIS_C6229-1984-hand-add' else
-  if UName='CSISO95JIS62291984HANDADD' then result :='JIS_C6229-1984-hand-add' else
+  (* overridden preference for MIME: iso-ir-95                              *)
+
+  if UName='JIS_C6229-1984-HAND-ADD' then result :='iso-ir-95'             else
+  if UName='ISO-IR-95'               then result :='iso-ir-95'             else
+  if UName='JP-OCR-HAND-ADD'         then result :='iso-ir-95'             else
+  if UName='CSISO95JIS62291984HANDADD' then result :='iso-ir-95'           else
 
 (* Name: JIS_C6229-1984-kana                                [RFC1345,KXS2]    *)
 (* MIBenum: 72                                                                *)
@@ -711,9 +819,11 @@ begin
 (* Alias: iso-ir-96                                                           *)
 (* Alias: csISO96JISC62291984kana                                             *)
 
-  if UName='JIS_C6229-1984-KANA'     then result :='JIS_C6229-1984-kana'   else
-  if UName='ISO-IR-96'               then result :='JIS_C6229-1984-kana'   else
-  if UName='CSISO96JISC62291984KANA' then result :='JIS_C6229-1984-kana'   else
+  (* overridden preference for MIME: iso-ir-96                              *)
+
+  if UName='JIS_C6229-1984-KANA'     then result :='iso-ir-96'             else
+  if UName='ISO-IR-96'               then result :='iso-ir-96'             else
+  if UName='CSISO96JISC62291984KANA' then result :='iso-ir-96'             else
 
 (* Name: ISO_2033-1983                                      [RFC1345,KXS2]    *)
 (* MIBenum: 73                                                                *)
@@ -721,6 +831,8 @@ begin
 (* Alias: iso-ir-98                                                           *)
 (* Alias: e13b                                                                *)
 (* Alias: csISO2033                                                           *)
+
+  (* overridden preference for MIME: ISO_2033-1983                          *)
 
   if UName='ISO_2033-1983'           then result :='ISO_2033-1983'         else
   if UName='ISO-IR-98'               then result :='ISO_2033-1983'         else
@@ -735,11 +847,13 @@ begin
 (* Alias: NAPLPS                                                              *)
 (* Alias: csISO99NAPLPS                                                       *)
 
-  if UName='ANSI_X3.110-1983'        then result :='ANSI_X3.110-1983'      else
-  if UName='ISO-IR-99'               then result :='ANSI_X3.110-1983'      else
-  if UName='CSA_T500-1983'           then result :='ANSI_X3.110-1983'      else
-  if UName='NAPLPS'                  then result :='ANSI_X3.110-1983'      else
-  if UName='CSISO99NAPLPS'           then result :='ANSI_X3.110-1983'      else
+  (* overridden preference for MIME: iso-ir-99                              *)
+
+  if UName='ANSI_X3.110-1983'        then result :='iso-ir-99'             else
+  if UName='ISO-IR-99'               then result :='iso-ir-99'             else
+  if UName='CSA_T500-1983'           then result :='iso-ir-99'             else
+  if UName='NAPLPS'                  then result :='iso-ir-99'             else
+  if UName='CSISO99NAPLPS'           then result :='iso-ir-99'             else
 
 (* Name: ISO_8859-1:1987                                    [RFC1345,KXS2]    *)
 (* MIBenum: 4                                                                 *)
@@ -753,6 +867,9 @@ begin
 (* Alias: CP819                                                               *)
 (* Alias: csISOLatin1                                                         *)
 
+  (* additioanal alias: LATIN-1                                             *)
+  (* additioanal alias: ISO1                                                *)
+
   if UName='ISO_8859-1:1987'         then result :='ISO-8859-1'            else
   if UName='ISO-IR-100'              then result :='ISO-8859-1'            else
   if UName='ISO_8859-1'              then result :='ISO-8859-1'            else
@@ -762,6 +879,8 @@ begin
   if UName='IBM819'                  then result :='ISO-8859-1'            else
   if UName='CP819'                   then result :='ISO-8859-1'            else
   if UName='CSISOLATIN1'             then result :='ISO-8859-1'            else
+  if UName='LATIN-1'                 then result :='ISO-8859-1'            else
+  if UName='ISO1'                    then result :='ISO-8859-1'            else
 
 (* Name: ISO_8859-2:1987                                    [RFC1345,KXS2]    *)
 (* MIBenum: 5                                                                 *)
@@ -773,6 +892,9 @@ begin
 (* Alias: l2                                                                  *)
 (* Alias: csISOLatin2                                                         *)
 
+  (* additioanal alias: LATIN-2                                             *)
+  (* additioanal alias: ISO2                                                *)
+
   if UName='ISO_8859-2:1987'         then result :='ISO-8859-2'            else
   if UName='ISO-IR-101'              then result :='ISO-8859-2'            else
   if UName='ISO_8859-2'              then result :='ISO-8859-2'            else
@@ -780,6 +902,8 @@ begin
   if UName='LATIN2'                  then result :='ISO-8859-2'            else
   if UName='L2'                      then result :='ISO-8859-2'            else
   if UName='CSISOLATIN2'             then result :='ISO-8859-2'            else
+  if UName='LATIN-2'                 then result :='ISO-8859-2'            else
+  if UName='ISO2'                    then result :='ISO-8859-2'            else
 
 (* Name: T.61-7bit                                          [RFC1345,KXS2]    *)
 (* MIBenum: 75                                                                *)
@@ -787,9 +911,11 @@ begin
 (* Alias: iso-ir-102                                                          *)
 (* Alias: csISO102T617bit                                                     *)
 
-  if UName='T.61-7BIT'               then result :='T.61-7bit'             else
-  if UName='ISO-IR-102'              then result :='T.61-7bit'             else
-  if UName='CSISO102T617BIT'         then result :='T.61-7bit'             else
+  (* overridden preference for MIME: iso-ir-102                             *)
+
+  if UName='T.61-7BIT'               then result :='iso-ir-102'            else
+  if UName='ISO-IR-102'              then result :='iso-ir-102'            else
+  if UName='CSISO102T617BIT'         then result :='iso-ir-102'            else
 
 (* Name: T.61-8bit                                          [RFC1345,KXS2]    *)
 (* MIBenum: 76                                                                *)
@@ -798,10 +924,12 @@ begin
 (* Alias: iso-ir-103                                                          *)
 (* Alias: csISO103T618bit                                                     *)
 
-  if UName='T.61-8BIT'               then result :='T.61-8bit'             else
-  if UName='T.61'                    then result :='T.61-8bit'             else
-  if UName='ISO-IR-103'              then result :='T.61-8bit'             else
-  if UName='CSISO103T618BIT'         then result :='T.61-8bit'             else
+  (* overridden preference for MIME: iso-ir-103                             *)
+
+  if UName='T.61-8BIT'               then result :='iso-ir-103'            else
+  if UName='T.61'                    then result :='iso-ir-103'            else
+  if UName='ISO-IR-103'              then result :='iso-ir-103'            else
+  if UName='CSISO103T618BIT'         then result :='iso-ir-103'            else
 
 (* Name: ISO_8859-3:1988                                    [RFC1345,KXS2]    *)
 (* MIBenum: 6                                                                 *)
@@ -813,6 +941,9 @@ begin
 (* Alias: l3                                                                  *)
 (* Alias: csISOLatin3                                                         *)
 
+  (* additioanal alias: LATIN-3                                             *)
+  (* additioanal alias: ISO3                                                *)
+
   if UName='ISO_8859-3:1988'         then result :='ISO-8859-3'            else
   if UName='ISO-IR-109'              then result :='ISO-8859-3'            else
   if UName='ISO_8859-3'              then result :='ISO-8859-3'            else
@@ -820,6 +951,8 @@ begin
   if UName='LATIN3'                  then result :='ISO-8859-3'            else
   if UName='L3'                      then result :='ISO-8859-3'            else
   if UName='CSISOLATIN3'             then result :='ISO-8859-3'            else
+  if UName='LATIN-3'                 then result :='ISO-8859-3'            else
+  if UName='ISO3'                    then result :='ISO-8859-3'            else
 
 (* Name: ISO_8859-4:1988                                    [RFC1345,KXS2]    *)
 (* MIBenum: 7                                                                 *)
@@ -831,6 +964,9 @@ begin
 (* Alias: l4                                                                  *)
 (* Alias: csISOLatin4                                                         *)
 
+  (* additioanal alias: LATIN-4                                             *)
+  (* additioanal alias: ISO4                                                *)
+
   if UName='ISO_8859-4:1988'         then result :='ISO-8859-4'            else
   if UName='ISO-IR-110'              then result :='ISO-8859-4'            else
   if UName='ISO_8859-4'              then result :='ISO-8859-4'            else
@@ -838,6 +974,8 @@ begin
   if UName='LATIN4'                  then result :='ISO-8859-4'            else
   if UName='L4'                      then result :='ISO-8859-4'            else
   if UName='CSISOLATIN4'             then result :='ISO-8859-4'            else
+  if UName='LATIN-4'                 then result :='ISO-8859-4'            else
+  if UName='ISO4'                    then result :='ISO-8859-4'            else
 
 (* Name: ECMA-cyrillic                                      [RFC1345,KXS2]    *)
 (* MIBenum: 77                                                                *)
@@ -845,9 +983,11 @@ begin
 (* Alias: iso-ir-111                                                          *)
 (* Alias: csISO111ECMACyrillic                                                *)
 
-  if UName='ECMA-CYRILLIC'           then result :='ECMA-cyrillic'         else
-  if UName='ISO-IR-111'              then result :='ECMA-cyrillic'         else
-  if UName='CSISO111ECMACYRILLIC'    then result :='ECMA-cyrillic'         else
+  (* overridden preference for MIME: iso-ir-111                             *)
+
+  if UName='ECMA-CYRILLIC'           then result :='iso-ir-111'            else
+  if UName='ISO-IR-111'              then result :='iso-ir-111'            else
+  if UName='CSISO111ECMACYRILLIC'    then result :='iso-ir-111'            else
 
 (* Name: CSA_Z243.4-1985-1                                  [RFC1345,KXS2]    *)
 (* MIBenum: 78                                                                *)
@@ -858,12 +998,16 @@ begin
 (* Alias: ca                                                                  *)
 (* Alias: csISO121Canadian1                                                   *)
 
-  if UName='CSA_Z243.4-1985-1'       then result :='CSA_Z243.4-1985-1'     else
-  if UName='ISO-IR-121'              then result :='CSA_Z243.4-1985-1'     else
-  if UName='ISO646-CA'               then result :='CSA_Z243.4-1985-1'     else
-  if UName='CSA7-1'                  then result :='CSA_Z243.4-1985-1'     else
-  if UName='CA'                      then result :='CSA_Z243.4-1985-1'     else
-  if UName='CSISO121CANADIAN1'       then result :='CSA_Z243.4-1985-1'     else
+  (* additioanal alias: CANADIAN                                            *)
+  (* overridden preference for MIME: ISO646-CA                              *)
+
+  if UName='CSA_Z243.4-1985-1'       then result :='ISO646-CA'             else
+  if UName='ISO-IR-121'              then result :='ISO646-CA'             else
+  if UName='ISO646-CA'               then result :='ISO646-CA'             else
+  if UName='CSA7-1'                  then result :='ISO646-CA'             else
+  if UName='CA'                      then result :='ISO646-CA'             else
+  if UName='CSISO121CANADIAN1'       then result :='ISO646-CA'             else
+  if UName='CANADIAN'                then result :='ISO646-CA'             else
 
 (* Name: CSA_Z243.4-1985-2                                  [RFC1345,KXS2]    *)
 (* MIBenum: 79                                                                *)
@@ -873,11 +1017,13 @@ begin
 (* Alias: csa7-2                                                              *)
 (* Alias: csISO122Canadian2                                                   *)
 
-  if UName='CSA_Z243.4-1985-2'       then result :='CSA_Z243.4-1985-2'     else
-  if UName='ISO-IR-122'              then result :='CSA_Z243.4-1985-2'     else
-  if UName='ISO646-CA2'              then result :='CSA_Z243.4-1985-2'     else
-  if UName='CSA7-2'                  then result :='CSA_Z243.4-1985-2'     else
-  if UName='CSISO122CANADIAN2'       then result :='CSA_Z243.4-1985-2'     else
+  (* overridden preference for MIME: ISO646-CA2                             *)
+
+  if UName='CSA_Z243.4-1985-2'       then result :='ISO646-CA2'            else
+  if UName='ISO-IR-122'              then result :='ISO646-CA2'            else
+  if UName='ISO646-CA2'              then result :='ISO646-CA2'            else
+  if UName='CSA7-2'                  then result :='ISO646-CA2'            else
+  if UName='CSISO122CANADIAN2'       then result :='ISO646-CA2'            else
 
 (* Name: CSA_Z243.4-1985-gr                                 [RFC1345,KXS2]    *)
 (* MIBenum: 80                                                                *)
@@ -885,9 +1031,11 @@ begin
 (* Alias: iso-ir-123                                                          *)
 (* Alias: csISO123CSAZ24341985gr                                              *)
 
-  if UName='CSA_Z243.4-1985-GR'      then result :='CSA_Z243.4-1985-gr'    else
-  if UName='ISO-IR-123'              then result :='CSA_Z243.4-1985-gr'    else
-  if UName='CSISO123CSAZ24341985GR'  then result :='CSA_Z243.4-1985-gr'    else
+  (* overridden preference for MIME: iso-ir-123                             *)
+
+  if UName='CSA_Z243.4-1985-GR'      then result :='iso-ir-123'            else
+  if UName='ISO-IR-123'              then result :='iso-ir-123'            else
+  if UName='CSISO123CSAZ24341985GR'  then result :='iso-ir-123'            else
 
 (* Name: ISO_8859-6:1987                                    [RFC1345,KXS2]    *)
 (* MIBenum: 9                                                                 *)
@@ -900,6 +1048,8 @@ begin
 (* Alias: arabic                                                              *)
 (* Alias: csISOLatinArabic                                                    *)
 
+  (* additioanal alias: ISO6                                                *)
+
   if UName='ISO_8859-6:1987'         then result :='ISO-8859-6'            else
   if UName='ISO-IR-127'              then result :='ISO-8859-6'            else
   if UName='ISO_8859-6'              then result :='ISO-8859-6'            else
@@ -908,6 +1058,7 @@ begin
   if UName='ASMO-708'                then result :='ISO-8859-6'            else
   if UName='ARABIC'                  then result :='ISO-8859-6'            else
   if UName='CSISOLATINARABIC'        then result :='ISO-8859-6'            else
+  if UName='ISO6'                    then result :='ISO-8859-6'            else
 
 (* Name: ISO_8859-6-E                                       [RFC1556,IANA]    *)
 (* MIBenum: 81                                                                *)
@@ -941,6 +1092,8 @@ begin
 (* Alias: greek8                                                              *)
 (* Alias: csISOLatinGreek                                                     *)
 
+  (* additioanal alias: ISO7                                                *)
+
   if UName='ISO_8859-7:1987'         then result :='ISO-8859-7'            else
   if UName='ISO-IR-126'              then result :='ISO-8859-7'            else
   if UName='ISO_8859-7'              then result :='ISO-8859-7'            else
@@ -950,6 +1103,7 @@ begin
   if UName='GREEK'                   then result :='ISO-8859-7'            else
   if UName='GREEK8'                  then result :='ISO-8859-7'            else
   if UName='CSISOLATINGREEK'         then result :='ISO-8859-7'            else
+  if UName='ISO7'                    then result :='ISO-8859-7'            else
 
 (* Name: T.101-G2                                            [RFC1345,KXS2]   *)
 (* MIBenum: 83                                                                *)
@@ -957,9 +1111,11 @@ begin
 (* Alias: iso-ir-128                                                          *)
 (* Alias: csISO128T101G2                                                      *)
 
-  if UName='T.101-G2'                then result :='T.101-G2'              else
-  if UName='ISO-IR-128'              then result :='T.101-G2'              else
-  if UName='CSISO128T101G2'          then result :='T.101-G2'              else
+  (* overridden preference for MIME: iso-ir-128                             *)
+
+  if UName='T.101-G2'                then result :='iso-ir-128'            else
+  if UName='ISO-IR-128'              then result :='iso-ir-128'            else
+  if UName='CSISO128T101G2'          then result :='iso-ir-128'            else
 
 (* Name: ISO_8859-8:1988                                     [RFC1345,KXS2]   *)
 (* MIBenum: 11                                                                *)
@@ -970,12 +1126,15 @@ begin
 (* Alias: hebrew                                                              *)
 (* Alias: csISOLatinHebrew                                                    *)
 
+  (* additioanal alias: ISO8                                                *)
+
   if UName='ISO_8859-8:1988'         then result :='ISO-8859-8'            else
   if UName='ISO-IR-138'              then result :='ISO-8859-8'            else
   if UName='ISO_8859-8'              then result :='ISO-8859-8'            else
   if UName='ISO-8859-8'              then result :='ISO-8859-8'            else
   if UName='HEBREW'                  then result :='ISO-8859-8'            else
   if UName='CSISOLATINHEBREW'        then result :='ISO-8859-8'            else
+  if UName='ISO8'                    then result :='ISO-8859-8'            else
 
 (* Name: ISO_8859-8-E                                  [RFC1556,Nussbacher]   *)
 (* MIBenum: 84                                                                *)
@@ -1003,9 +1162,11 @@ begin
 (* Alias: iso-ir-139                                                          *)
 (* Alias: csISO139CSN369103                                                   *)
 
-  if UName='CSN_369103'              then result :='CSN_369103'            else
-  if UName='ISO-IR-139'              then result :='CSN_369103'            else
-  if UName='CSISO139CSN369103'       then result :='CSN_369103'            else
+  (* overridden preference for MIME: iso-ir-139                             *)
+
+  if UName='CSN_369103'              then result :='iso-ir-139'            else
+  if UName='ISO-IR-139'              then result :='iso-ir-139'            else
+  if UName='CSISO139CSN369103'       then result :='iso-ir-139'            else
 
 (* Name: JUS_I.B1.002                                        [RFC1345,KXS2]   *)
 (* MIBenum: 87                                                                *)
@@ -1016,12 +1177,14 @@ begin
 (* Alias: yu                                                                  *)
 (* Alias: csISO141JUSIB1002                                                   *)
 
-  if UName='JUS_I.B1.002'            then result :='JUS_I.B1.002'          else
-  if UName='ISO-IR-141'              then result :='JUS_I.B1.002'          else
-  if UName='ISO646-YU'               then result :='JUS_I.B1.002'          else
-  if UName='JS'                      then result :='JUS_I.B1.002'          else
-  if UName='YU'                      then result :='JUS_I.B1.002'          else
-  if UName='CSISO141JUSIB1002'       then result :='JUS_I.B1.002'          else
+  (* overridden preference for MIME: ISO646-YU                              *)
+
+  if UName='JUS_I.B1.002'            then result :='ISO646-YU'             else
+  if UName='ISO-IR-141'              then result :='ISO646-YU'             else
+  if UName='ISO646-YU'               then result :='ISO646-YU'             else
+  if UName='JS'                      then result :='ISO646-YU'             else
+  if UName='YU'                      then result :='ISO646-YU'             else
+  if UName='CSISO141JUSIB1002'       then result :='ISO646-YU'             else
 
 (* Name: ISO_6937-2-add                                      [RFC1345,KXS2]   *)
 (* MIBenum: 14                                                                *)
@@ -1029,9 +1192,11 @@ begin
 (* Alias: iso-ir-142                                                          *)
 (* Alias: csISOTextComm                                                       *)
 
-  if UName='ISO_6937-2-ADD'          then result :='ISO_6937-2-add'        else
-  if UName='ISO-IR-142'              then result :='ISO_6937-2-add'        else
-  if UName='CSISOTEXTCOMM'           then result :='ISO_6937-2-add'        else
+  (* overridden preference for MIME: iso-ir-142                             *)
+
+  if UName='ISO_6937-2-ADD'          then result :='iso-ir-142'            else
+  if UName='ISO-IR-142'              then result :='iso-ir-142'            else
+  if UName='CSISOTEXTCOMM'           then result :='iso-ir-142'            else
 
 (* Name: IEC_P27-1                                           [RFC1345,KXS2]   *)
 (* MIBenum: 88                                                                *)
@@ -1039,9 +1204,11 @@ begin
 (* Alias: iso-ir-143                                                          *)
 (* Alias: csISO143IECP271                                                     *)
 
-  if UName='IEC_P27-1'               then result :='IEC_P27-1'             else
-  if UName='ISO-IR-143'              then result :='IEC_P27-1'             else
-  if UName='CSISO143IECP271'         then result :='IEC_P27-1'             else
+  (* overridden preference for MIME: iso-ir-143                             *)
+
+  if UName='IEC_P27-1'               then result :='iso-ir-143'            else
+  if UName='ISO-IR-143'              then result :='iso-ir-143'            else
+  if UName='CSISO143IECP271'         then result :='iso-ir-143'            else
 
 (* Name: ISO_8859-5:1988                                     [RFC1345,KXS2]   *)
 (* MIBenum: 8                                                                 *)
@@ -1052,12 +1219,15 @@ begin
 (* Alias: cyrillic                                                            *)
 (* Alias: csISOLatinCyrillic                                                  *)
 
+  (* additioanal alias: ISO5                                                *)
+
   if UName='ISO_8859-5:1988'         then result :='ISO-8859-5'            else
   if UName='ISO-IR-144'              then result :='ISO-8859-5'            else
   if UName='ISO_8859-5'              then result :='ISO-8859-5'            else
   if UName='ISO-8859-5'              then result :='ISO-8859-5'            else
   if UName='CYRILLIC'                then result :='ISO-8859-5'            else
   if UName='CSISOLATINCYRILLIC'      then result :='ISO-8859-5'            else
+  if UName='ISO5'                    then result :='ISO-8859-5'            else
 
 (* Name: JUS_I.B1.003-serb                                   [RFC1345,KXS2]   *)
 (* MIBenum: 89                                                                *)
@@ -1066,10 +1236,12 @@ begin
 (* Alias: serbian                                                             *)
 (* Alias: csISO146Serbian                                                     *)
 
-  if UName='JUS_I.B1.003-SERB'       then result :='JUS_I.B1.003-serb'     else
-  if UName='ISO-IR-146'              then result :='JUS_I.B1.003-serb'     else
-  if UName='SERBIAN'                 then result :='JUS_I.B1.003-serb'     else
-  if UName='CSISO146SERBIAN'         then result :='JUS_I.B1.003-serb'     else
+  (* overridden preference for MIME: iso-ir-146                             *)
+
+  if UName='JUS_I.B1.003-SERB'       then result :='iso-ir-146'            else
+  if UName='ISO-IR-146'              then result :='iso-ir-146'            else
+  if UName='SERBIAN'                 then result :='iso-ir-146'            else
+  if UName='CSISO146SERBIAN'         then result :='iso-ir-146'            else
 
 (* Name: JUS_I.B1.003-mac                                    [RFC1345,KXS2]   *)
 (* MIBenum: 90                                                                *)
@@ -1078,10 +1250,12 @@ begin
 (* Alias: iso-ir-147                                                          *)
 (* Alias: csISO147Macedonian                                                  *)
 
-  if UName='JUS_I.B1.003-MAC'        then result :='JUS_I.B1.003-mac'      else
-  if UName='MACEDONIAN'              then result :='JUS_I.B1.003-mac'      else
-  if UName='ISO-IR-147'              then result :='JUS_I.B1.003-mac'      else
-  if UName='CSISO147MACEDONIAN'      then result :='JUS_I.B1.003-mac'      else
+  (* overridden preference for MIME: iso-ir-147                             *)
+
+  if UName='JUS_I.B1.003-MAC'        then result :='iso-ir-147'            else
+  if UName='MACEDONIAN'              then result :='iso-ir-147'            else
+  if UName='ISO-IR-147'              then result :='iso-ir-147'            else
+  if UName='CSISO147MACEDONIAN'      then result :='iso-ir-147'            else
 
 (* Name: ISO_8859-9:1989                                     [RFC1345,KXS2]   *)
 (* MIBenum: 12                                                                *)
@@ -1093,6 +1267,9 @@ begin
 (* Alias: l5                                                                  *)
 (* Alias: csISOLatin5                                                         *)
 
+  (* additioanal alias: ISO9                                                *)
+  (* additioanal alias: LATIN-5                                             *)
+
   if UName='ISO_8859-9:1989'         then result :='ISO-8859-9'            else
   if UName='ISO-IR-148'              then result :='ISO-8859-9'            else
   if UName='ISO_8859-9'              then result :='ISO-8859-9'            else
@@ -1100,6 +1277,8 @@ begin
   if UName='LATIN5'                  then result :='ISO-8859-9'            else
   if UName='L5'                      then result :='ISO-8859-9'            else
   if UName='CSISOLATIN5'             then result :='ISO-8859-9'            else
+  if UName='ISO9'                    then result :='ISO-8859-9'            else
+  if UName='LATIN-5'                 then result :='ISO-8859-9'            else
 
 (* Name: greek-ccitt                                         [RFC1345,KXS2]   *)
 (* MIBenum: 91                                                                *)
@@ -1108,10 +1287,12 @@ begin
 (* Alias: csISO150                                                            *)
 (* Alias: csISO150GreekCCITT                                                  *)
 
-  if UName='GREEK-CCITT'             then result :='greek-ccitt'           else
-  if UName='ISO-IR-150'              then result :='greek-ccitt'           else
-  if UName='CSISO150'                then result :='greek-ccitt'           else
-  if UName='CSISO150GREEKCCITT'      then result :='greek-ccitt'           else
+  (* overridden preference for MIME: iso-ir-150                             *)
+
+  if UName='GREEK-CCITT'             then result :='iso-ir-150'            else
+  if UName='ISO-IR-150'              then result :='iso-ir-150'            else
+  if UName='CSISO150'                then result :='iso-ir-150'            else
+  if UName='CSISO150GREEKCCITT'      then result :='iso-ir-150'            else
 
 (* Name: NC_NC00-10:81                                       [RFC1345,KXS2]   *)
 (* MIBenum: 92                                                                *)
@@ -1121,11 +1302,13 @@ begin
 (* Alias: ISO646-CU                                                           *)
 (* Alias: csISO151Cuba                                                        *)
 
-  if UName='NC_NC00-10:81'           then result :='NC_NC00-10:81'         else
-  if UName='CUBA'                    then result :='NC_NC00-10:81'         else
-  if UName='ISO-IR-151'              then result :='NC_NC00-10:81'         else
-  if UName='ISO646-CU'               then result :='NC_NC00-10:81'         else
-  if UName='CSISO151CUBA'            then result :='NC_NC00-10:81'         else
+  (* overridden preference for MIME: ISO646-CU                              *)
+
+  if UName='NC_NC00-10:81'           then result :='ISO646-CU'             else
+  if UName='CUBA'                    then result :='ISO646-CU'             else
+  if UName='ISO-IR-151'              then result :='ISO646-CU'             else
+  if UName='ISO646-CU'               then result :='ISO646-CU'             else
+  if UName='CSISO151CUBA'            then result :='ISO646-CU'             else
 
 (* Name: ISO_6937-2-25                                       [RFC1345,KXS2]   *)
 (* MIBenum: 93                                                                *)
@@ -1133,9 +1316,11 @@ begin
 (* Alias: iso-ir-152                                                          *)
 (* Alias: csISO6937Add                                                        *)
 
-  if UName='ISO_6937-2-25'           then result :='ISO_6937-2-25'         else
-  if UName='ISO-IR-152'              then result :='ISO_6937-2-25'         else
-  if UName='CSISO6937ADD'            then result :='ISO_6937-2-25'         else
+  (* overridden preference for MIME: iso-ir-152                             *)
+
+  if UName='ISO_6937-2-25'           then result :='iso-ir-152'            else
+  if UName='ISO-IR-152'              then result :='iso-ir-152'            else
+  if UName='CSISO6937ADD'            then result :='iso-ir-152'            else
 
 (* Name: GOST_19768-74                                       [RFC1345,KXS2]   *)
 (* MIBenum: 94                                                                *)
@@ -1144,10 +1329,12 @@ begin
 (* Alias: iso-ir-153                                                          *)
 (* Alias: csISO153GOST1976874                                                 *)
 
-  if UName='GOST_19768-74'           then result :='GOST_19768-74'         else
-  if UName='ST_SEV_358-88'           then result :='GOST_19768-74'         else
-  if UName='ISO-IR-153'              then result :='GOST_19768-74'         else
-  if UName='CSISO153GOST1976874'     then result :='GOST_19768-74'         else
+  (* overridden preference for MIME: iso-ir-153                             *)
+
+  if UName='GOST_19768-74'           then result :='iso-ir-153'            else
+  if UName='ST_SEV_358-88'           then result :='iso-ir-153'            else
+  if UName='ISO-IR-153'              then result :='iso-ir-153'            else
+  if UName='CSISO153GOST1976874'     then result :='iso-ir-153'            else
 
 (* Name: ISO_8859-supp                                       [RFC1345,KXS2]   *)
 (* MIBenum: 95                                                                *)
@@ -1156,10 +1343,12 @@ begin
 (* Alias: latin1-2-5                                                          *)
 (* Alias: csISO8859Supp                                                       *)
 
-  if UName='ISO_8859-SUPP'           then result :='ISO_8859-supp'         else
-  if UName='ISO-IR-154'              then result :='ISO_8859-supp'         else
-  if UName='LATIN1-2-5'              then result :='ISO_8859-supp'         else
-  if UName='CSISO8859SUPP'           then result :='ISO_8859-supp'         else
+  (* overridden preference for MIME: iso-ir-154                             *)
+
+  if UName='ISO_8859-SUPP'           then result :='iso-ir-154'            else
+  if UName='ISO-IR-154'              then result :='iso-ir-154'            else
+  if UName='LATIN1-2-5'              then result :='iso-ir-154'            else
+  if UName='CSISO8859SUPP'           then result :='iso-ir-154'            else
 
 (* Name: ISO_10367-box                                       [RFC1345,KXS2]   *)
 (* MIBenum: 96                                                                *)
@@ -1167,9 +1356,11 @@ begin
 (* Alias: iso-ir-155                                                          *)
 (* Alias: csISO10367Box                                                       *)
 
-  if UName='ISO_10367-BOX'           then result :='ISO_10367-box'         else
-  if UName='ISO-IR-155'              then result :='ISO_10367-box'         else
-  if UName='CSISO10367BOX'           then result :='ISO_10367-box'         else
+  (* overridden preference for MIME: iso-ir-155                             *)
+
+  if UName='ISO_10367-BOX'           then result :='iso-ir-155'            else
+  if UName='ISO-IR-155'              then result :='iso-ir-155'            else
+  if UName='CSISO10367BOX'           then result :='iso-ir-155'            else
 
 (* Name: ISO-8859-10 (preferred MIME name)                   [RFC1345,KXS2]   *)
 (* MIBenum: 13                                                                *)
@@ -1180,12 +1371,18 @@ begin
 (* Alias: csISOLatin6                                                         *)
 (* Alias: latin6                                                              *)
 
+  (* additioanal alias: ISO10                                               *)
+  (* additioanal alias: LATIN-6                                             *)
+  (* overridden preference for MIME: ISO-8859-10                            *)
+
   if UName='ISO-8859-10'             then result :='ISO-8859-10'           else
   if UName='ISO-IR-157'              then result :='ISO-8859-10'           else
   if UName='L6'                      then result :='ISO-8859-10'           else
   if UName='ISO_8859-10:1992'        then result :='ISO-8859-10'           else
   if UName='CSISOLATIN6'             then result :='ISO-8859-10'           else
   if UName='LATIN6'                  then result :='ISO-8859-10'           else
+  if UName='ISO10'                   then result :='ISO-8859-10'           else
+  if UName='LATIN-6'                 then result :='ISO-8859-10'           else
 
 (* Name: latin-lap                                           [RFC1345,KXS2]   *)
 (* MIBenum: 97                                                                *)
@@ -1194,10 +1391,12 @@ begin
 (* Alias: iso-ir-158                                                          *)
 (* Alias: csISO158Lap                                                         *)
 
-  if UName='LATIN-LAP'               then result :='latin-lap'             else
-  if UName='LAP'                     then result :='latin-lap'             else
-  if UName='ISO-IR-158'              then result :='latin-lap'             else
-  if UName='CSISO158LAP'             then result :='latin-lap'             else
+  (* overridden preference for MIME: iso-ir-158                             *)
+
+  if UName='LATIN-LAP'               then result :='iso-ir-158'            else
+  if UName='LAP'                     then result :='iso-ir-158'            else
+  if UName='ISO-IR-158'              then result :='iso-ir-158'            else
+  if UName='CSISO158LAP'             then result :='iso-ir-158'            else
 
 (* Name: JIS_X0212-1990                                      [RFC1345,KXS2]   *)
 (* MIBenum: 98                                                                *)
@@ -1206,10 +1405,12 @@ begin
 (* Alias: iso-ir-159                                                          *)
 (* Alias: csISO159JISX02121990                                                *)
 
-  if UName='JIS_X0212-1990'          then result :='JIS_X0212-1990'        else
-  if UName='X0212'                   then result :='JIS_X0212-1990'        else
-  if UName='ISO-IR-159'              then result :='JIS_X0212-1990'        else
-  if UName='CSISO159JISX02121990'    then result :='JIS_X0212-1990'        else
+  (* overridden preference for MIME: iso-ir-159                             *)
+
+  if UName='JIS_X0212-1990'          then result :='iso-ir-159'            else
+  if UName='X0212'                   then result :='iso-ir-159'            else
+  if UName='ISO-IR-159'              then result :='iso-ir-159'            else
+  if UName='CSISO159JISX02121990'    then result :='iso-ir-159'            else
 
 (* Name: DS_2089                                             [RFC1345,KXS2]   *)
 (* MIBenum: 99                                                                *)
@@ -1219,11 +1420,13 @@ begin
 (* Alias: dk                                                                  *)
 (* Alias: csISO646Danish                                                      *)
 
-  if UName='DS_2089'                 then result :='DS_2089'               else
-  if UName='DS2089'                  then result :='DS_2089'               else
-  if UName='ISO646-DK'               then result :='DS_2089'               else
-  if UName='DK'                      then result :='DS_2089'               else
-  if UName='CSISO646DANISH'          then result :='DS_2089'               else
+  (* overridden preference for MIME: ISO646-DK                              *)
+
+  if UName='DS_2089'                 then result :='ISO646-DK'             else
+  if UName='DS2089'                  then result :='ISO646-DK'             else
+  if UName='ISO646-DK'               then result :='ISO646-DK'             else
+  if UName='DK'                      then result :='ISO646-DK'             else
+  if UName='CSISO646DANISH'          then result :='ISO646-DK'             else
 
 (* Name: us-dk                                               [RFC1345,KXS2]   *)
 (* MIBenum: 100                                                               *)
@@ -1247,18 +1450,23 @@ begin
 (* Alias: X0201                                                               *)
 (* Alias: csHalfWidthKatakana                                                 *)
 
+  (* additioanal alias: KATAKANA                                            *)
+
   if UName='JIS_X0201'               then result :='JIS_X0201'             else
   if UName='X0201'                   then result :='JIS_X0201'             else
   if UName='CSHALFWIDTHKATAKANA'     then result :='JIS_X0201'             else
+  if UName='KATAKANA'                then result :='JIS_X0201'             else
 
 (* Name: KSC5636                                             [RFC1345,KXS2]   *)
 (* MIBenum: 102                                                               *)
 (* Alias: ISO646-KR                                                           *)
 (* Alias: csKSC5636                                                           *)
 
-  if UName='KSC5636'                 then result :='KSC5636'               else
-  if UName='ISO646-KR'               then result :='KSC5636'               else
-  if UName='CSKSC5636'               then result :='KSC5636'               else
+  (* overridden preference for MIME: ISO646-KR                              *)
+
+  if UName='KSC5636'                 then result :='ISO646-KR'             else
+  if UName='ISO646-KR'               then result :='ISO646-KR'             else
+  if UName='CSKSC5636'               then result :='ISO646-KR'             else
 
 (* Name: ISO-10646-UCS-2                                                      *)
 (* MIBenum: 1000                                                              *)
@@ -1309,9 +1517,12 @@ begin
 (* Alias: mac                                                                 *)
 (* Alias: csMacintosh                                                         *)
 
+  (* additioanal alias: X-MAC-ROMAN                                         *)
+
   if UName='MACINTOSH'               then result :='macintosh'             else
   if UName='MAC'                     then result :='macintosh'             else
   if UName='CSMACINTOSH'             then result :='macintosh'             else
+  if UName='X-MAC-ROMAN'             then result :='macintosh'             else
 
 (* Name: IBM037                                              [RFC1345,KXS2]   *)
 (* MIBenum: 2028                                                              *)
@@ -1519,10 +1730,13 @@ begin
 (* Alias: 437                                                                 *)
 (* Alias: csPC8CodePage437                                                    *)
 
+  (* additioanal alias: IBMPC                                               *)
+
   if UName='IBM437'                  then result :='IBM437'                else
   if UName='CP437'                   then result :='IBM437'                else
   if UName='437'                     then result :='IBM437'                else
   if UName='CSPC8CODEPAGE437'        then result :='IBM437'                else
+  if UName='IBMPC'                   then result :='IBM437'                else
 
 (* Name: IBM500                                              [RFC1345,KXS2]   *)
 (* MIBenum: 2044                                                              *)
@@ -2003,10 +2217,16 @@ begin
 (* Alias: CP00858                                                             *)
 (* Alias: PC-Multilingual-850+euro                                            *)
 
-  if UName='IBM00858'                then result :='IBM00858'              else
-  if UName='CCSID00858'              then result :='IBM00858'              else
-  if UName='CP00858'                 then result :='IBM00858'              else
-  if UName='PC-MULTILINGUAL-850+EURO' then result :='IBM00858'             else
+  (* additioanal alias: CP858                                               *)
+  (* additioanal alias: IBM858                                              *)
+  (* overridden preference for MIME: PC-Multilingual-850+euro               *)
+
+  if UName='IBM00858'                then result :='PC-Multilingual-850+euro' else
+  if UName='CCSID00858'              then result :='PC-Multilingual-850+euro' else
+  if UName='CP00858'                 then result :='PC-Multilingual-850+euro' else
+  if UName='PC-MULTILINGUAL-850+EURO' then result :='PC-Multilingual-850+euro' else
+  if UName='CP858'                   then result :='PC-Multilingual-850+euro' else
+  if UName='IBM858'                  then result :='PC-Multilingual-850+euro' else
 
 (* Name: IBM00924                                                             *)
 (* MIBenum: 2090                                                              *)
@@ -2147,7 +2367,6 @@ begin
 (* Name: Big5-HKSCS                                                  [Yick]   *)
 (* MIBenum: 2101                                                              *)
 (* Source:   See (http://www.iana.org/assignments/charset-reg/Big5-HKSCS)     *)
-(* Alias: None                                                                *)
 
   if UName='BIG5-HKSCS'              then result :='Big5-HKSCS'            else
 
@@ -2185,37 +2404,38 @@ begin
 (* Name: SCSU                                                                 *)
 (* MIBenum: 1011                                                              *)
 (* Source: SCSU See (http://www.iana.org/assignments/charset-reg/SCSU)     [Scherer] *)
-(* Alias: None                                                                *)
 
   if UName='SCSU'                    then result :='SCSU'                  else
 
 (* Name: UTF-7                                                    [RFC2152]   *)
 (* MIBenum: 1012                                                              *)
 (* Source: RFC 2152                                                           *)
-(* Alias: None                                                                *)
 
   if UName='UTF-7'                   then result :='UTF-7'                 else
 
 (* Name: UTF-16BE                                                 [RFC2781]   *)
 (* MIBenum: 1013                                                              *)
 (* Source: RFC 2781                                                           *)
-(* Alias: None                                                                *)
+
+  (* additioanal alias: UNICODEFFFE                                         *)
 
   if UName='UTF-16BE'                then result :='UTF-16BE'              else
+  if UName='UNICODEFFFE'             then result :='UTF-16BE'              else
 
 (* Name: UTF-16LE                                                 [RFC2781]   *)
 (* MIBenum: 1014                                                              *)
 (* Source: RFC 2781                                                           *)
-(* Alias: None                                                                *)
 
   if UName='UTF-16LE'                then result :='UTF-16LE'              else
 
 (* Name: UTF-16                                                   [RFC2781]   *)
 (* MIBenum: 1015                                                              *)
 (* Source: RFC 2781                                                           *)
-(* Alias: None                                                                *)
+
+  (* additioanal alias: UNICODE                                             *)
 
   if UName='UTF-16'                  then result :='UTF-16'                else
+  if UName='UNICODE'                 then result :='UTF-16'                else
 
 (* Name: CESU-8                                                    [Phipps]   *)
 (* MIBenum: 1016                                                              *)
@@ -2228,21 +2448,18 @@ begin
 (* Name: UTF-32                                                     [Davis]   *)
 (* MIBenum: 1017                                                              *)
 (* Source: <http://www.unicode.org/unicode/reports/tr19/>                     *)
-(* Alias: None                                                                *)
 
   if UName='UTF-32'                  then result :='UTF-32'                else
 
 (* Name: UTF-32BE                                                   [Davis]   *)
 (* MIBenum: 1018                                                              *)
 (* Source: <http://www.unicode.org/unicode/reports/tr19/>                     *)
-(* Alias: None                                                                *)
 
   if UName='UTF-32BE'                then result :='UTF-32BE'              else
 
 (* Name: UTF-32LE                                                   [Davis]   *)
 (* MIBenum: 1019                                                              *)
 (* Source: <http://www.unicode.org/unicode/reports/tr19/>                     *)
-(* Alias: None                                                                *)
 
   if UName='UTF-32LE'                then result :='UTF-32LE'              else
 
@@ -2265,16 +2482,18 @@ begin
 (* Name: UTF-8                                                    [RFC2279]   *)
 (* MIBenum: 106                                                               *)
 (* Source: RFC 2279                                                           *)
-(* Alias: None                                                                *)
 
   if UName='UTF-8'                   then result :='UTF-8'                 else
 
 (* Name: ISO-8859-13                                                          *)
 (* MIBenum: 109                                                               *)
 (* Source: ISO See (http://www.iana.org/assignments/charset-reg/iso-8859-13)[Tumasonis]  *)
-(* Alias: None                                                                *)
+
+  (* additioanal alias: ISO13                                               *)
+  (* overridden preference for MIME: ISO-8859-13                            *)
 
   if UName='ISO-8859-13'             then result :='ISO-8859-13'           else
+  if UName='ISO13'                   then result :='ISO-8859-13'           else
 
 (* Name: ISO-8859-14                                                          *)
 (* MIBenum: 110                                                               *)
@@ -2286,6 +2505,12 @@ begin
 (* Alias: iso-celtic                                                          *)
 (* Alias: l8                                                                  *)
 
+  (* additioanal alias: LATIN-7                                             *)
+  (* additioanal alias: ISO14                                               *)
+  (* additioanal alias: LATIN7                                              *)
+  (* additioanal alias: L7                                                  *)
+  (* overridden preference for MIME: ISO-8859-14                            *)
+
   if UName='ISO-8859-14'             then result :='ISO-8859-14'           else
   if UName='ISO-IR-199'              then result :='ISO-8859-14'           else
   if UName='ISO_8859-14:1998'        then result :='ISO-8859-14'           else
@@ -2293,6 +2518,10 @@ begin
   if UName='LATIN8'                  then result :='ISO-8859-14'           else
   if UName='ISO-CELTIC'              then result :='ISO-8859-14'           else
   if UName='L8'                      then result :='ISO-8859-14'           else
+  if UName='LATIN-7'                 then result :='ISO-8859-14'           else
+  if UName='ISO14'                   then result :='ISO-8859-14'           else
+  if UName='LATIN7'                  then result :='ISO-8859-14'           else
+  if UName='L7'                      then result :='ISO-8859-14'           else
 
 (* Name: ISO-8859-15                                                          *)
 (* MIBenum: 111                                                               *)
@@ -2301,9 +2530,21 @@ begin
 (* Alias: ISO_8859-15                                                         *)
 (* Alias: Latin-9                                                             *)
 
+  (* additioanal alias: LATIN-8                                             *)
+  (* additioanal alias: L9                                                  *)
+  (* additioanal alias: LATIN8                                              *)
+  (* additioanal alias: LATIN9                                              *)
+  (* additioanal alias: L8                                                  *)
+  (* overridden preference for MIME: ISO-8859-15                            *)
+
   if UName='ISO-8859-15'             then result :='ISO-8859-15'           else
   if UName='ISO_8859-15'             then result :='ISO-8859-15'           else
   if UName='LATIN-9'                 then result :='ISO-8859-15'           else
+  if UName='LATIN-8'                 then result :='ISO-8859-15'           else
+  if UName='L9'                      then result :='ISO-8859-15'           else
+  if UName='LATIN8'                  then result :='ISO-8859-15'           else
+  if UName='LATIN9'                  then result :='ISO-8859-15'           else
+  if UName='L8'                      then result :='ISO-8859-15'           else
 
 (* Name: ISO-8859-16                                                          *)
 (* MIBenum: 112                                                               *)
@@ -2314,12 +2555,20 @@ begin
 (* Alias: latin10                                                             *)
 (* Alias: l10                                                                 *)
 
+  (* additioanal alias: ISO16                                               *)
+  (* additioanal alias: LATIN-9                                             *)
+  (* additioanal alias: LATIN9                                              *)
+  (* overridden preference for MIME: ISO-8859-16                            *)
+
   if UName='ISO-8859-16'             then result :='ISO-8859-16'           else
   if UName='ISO-IR-226'              then result :='ISO-8859-16'           else
   if UName='ISO_8859-16:2001'        then result :='ISO-8859-16'           else
   if UName='ISO_8859-16'             then result :='ISO-8859-16'           else
   if UName='LATIN10'                 then result :='ISO-8859-16'           else
   if UName='L10'                     then result :='ISO-8859-16'           else
+  if UName='ISO16'                   then result :='ISO-8859-16'           else
+  if UName='LATIN-9'                 then result :='ISO-8859-16'           else
+  if UName='LATIN9'                  then result :='ISO-8859-16'           else
 
 (* Name: GBK                                                                  *)
 (* MIBenum: 113                                                               *)
@@ -2338,7 +2587,6 @@ begin
 (* MIBenum: 114                                                               *)
 (* Source: Chinese IT Standardization Technical Committee                     *)
 (*         Please see: <http://www.iana.org/assignments/charset-reg/GB18030>  *)
-(* Alias: None                                                                *)
 
   if UName='GB18030'                 then result :='GB18030'               else
 
@@ -2362,9 +2610,14 @@ begin
 (* Alias: MS_Kanji                                                            *)
 (* Alias: csShiftJIS                                                          *)
 
+  (* additioanal alias: SHIFT-JIS                                           *)
+  (* additioanal alias: X-SJIS                                              *)
+
   if UName='SHIFT_JIS'               then result :='Shift_JIS'             else
   if UName='MS_KANJI'                then result :='Shift_JIS'             else
   if UName='CSSHIFTJIS'              then result :='Shift_JIS'             else
+  if UName='SHIFT-JIS'               then result :='Shift_JIS'             else
+  if UName='X-SJIS'                  then result :='Shift_JIS'             else
 
 (* Name: Extended_UNIX_Code_Packed_Format_for_Japanese                        *)
 (* MIBenum: 18                                                                *)
@@ -2666,8 +2919,11 @@ begin
 (*         PCL Symbol Set Id: 18C                                             *)
 (* Alias: csGB2312                                                            *)
 
+  (* additioanal alias: HANZI                                               *)
+
   if UName='GB2312'                  then result :='GB2312'                else
   if UName='CSGB2312'                then result :='GB2312'                else
+  if UName='HANZI'                   then result :='GB2312'                else
 
 (* Name: Big5  (preferred MIME name)                                          *)
 (* MIBenum: 2026                                                              *)
@@ -2675,69 +2931,65 @@ begin
 (*         PCL Symbol Set Id: 18T                                             *)
 (* Alias: csBig5                                                              *)
 
+  (* additioanal alias: X-BIG5                                              *)
+  (* additioanal alias: X-X-BIG5                                            *)
+
   if UName='BIG5'                    then result :='Big5'                  else
   if UName='CSBIG5'                  then result :='Big5'                  else
+  if UName='X-BIG5'                  then result :='Big5'                  else
+  if UName='X-X-BIG5'                then result :='Big5'                  else
 
 (* Name: windows-1250                                                         *)
 (* MIBenum: 2250                                                              *)
 (* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1250) [Lazhintseva] *)
-(* Alias: None                                                                *)
 
   if UName='WINDOWS-1250'            then result :='windows-1250'          else
 
 (* Name: windows-1251                                                         *)
 (* MIBenum: 2251                                                              *)
 (* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1251) [Lazhintseva] *)
-(* Alias: None                                                                *)
 
   if UName='WINDOWS-1251'            then result :='windows-1251'          else
 
 (* Name: windows-1252                                                         *)
 (* MIBenum: 2252                                                              *)
 (* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1252)       [Wendt] *)
-(* Alias: None                                                                *)
 
   if UName='WINDOWS-1252'            then result :='windows-1252'          else
 
 (* Name: windows-1253                                                         *)
 (* MIBenum: 2253                                                              *)
 (* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1253) [Lazhintseva] *)
-(* Alias: None                                                                *)
 
   if UName='WINDOWS-1253'            then result :='windows-1253'          else
 
 (* Name: windows-1254                                                         *)
 (* MIBenum: 2254                                                              *)
 (* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1254) [Lazhintseva] *)
-(* Alias: None                                                                *)
 
   if UName='WINDOWS-1254'            then result :='windows-1254'          else
 
 (* Name: windows-1255                                                         *)
 (* MIBenum: 2255                                                              *)
 (* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1255) [Lazhintseva] *)
-(* Alias: None                                                                *)
 
   if UName='WINDOWS-1255'            then result :='windows-1255'          else
 
 (* Name: windows-1256                                                         *)
 (* MIBenum: 2256                                                              *)
 (* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1256) [Lazhintseva] *)
-(* Alias: None                                                                *)
 
   if UName='WINDOWS-1256'            then result :='windows-1256'          else
 
 (* Name: windows-1257                                                         *)
 (* MIBenum: 2257                                                              *)
 (* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1257) [Lazhintseva] *)
-(* Alias: None                                                                *)
 
   if UName='WINDOWS-1257'            then result :='windows-1257'          else
 
 (* Name: windows-1258                                                         *)
 (* MIBenum: 2258                                                              *)
 (* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1258) [Lazhintseva] *)
-(* Alias: None                                                                *)
 
   if UName='WINDOWS-1258'            then result :='windows-1258'          else
 
@@ -2751,6 +3003,8 @@ begin
 (* MIBenum: 2085                                                              *)
 (* Source: RFC 1842, RFC 1843                              [RFC1842, RFC1843] *)
 
+
+  if UName='HZ-GB-2312'              then result :='HZ-GB-2312'            else
 
   result:=name;
 end;
