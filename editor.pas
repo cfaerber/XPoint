@@ -748,7 +748,7 @@ begin
       if assigned(p) then begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
-                     ((umbruch=1) and ((isize<rrand-15) or sbrk)));
+                     ((umbruch=1) and ((isize<=rrand) or sbrk)));
         Move(ibuf^,p^.cont,isize);
         AppP;
       end;
@@ -1857,6 +1857,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/11/10 05:20:25  mk
+  RB:- Umbruch Fix
+
   Revision 1.45  2000/11/05 15:08:31  mk
   RB:- Aenderungen bezueglich - und /
 
