@@ -268,15 +268,17 @@ end;
 procedure DisplayStatus(const s:string; const UseNewLine: Boolean);
 begin
   Debuglog('XPFM','Display: '+S,2);
-  if s<>'' then begin
-    if UseNewLine and(lastdispline<>'')then begin
+  if s<>'' then
+  begin
+    if UseNewLine and(lastdispline<>'')then
+    begin
       TextAttr:=col.colmailer;
-      fwrt(DisplayWinX+2,DisplayWinY+2+disppos,forms(lastdispline,DisplayTextWidth));
+      fwrt(DisplayWinX+2,DisplayWinY+1+disppos,forms(lastdispline,DisplayTextWidth));
       disppos:=(disppos mod DisplayTextHeight)+1;
     end;
     lastdispline:=time+'  '+s;
     TextAttr:=col.colmailerhigh;
-    fwrt(DisplayWinX+2,DisplayWinY+2+disppos,forms(lastdispline,DisplayTextWidth));
+    fwrt(DisplayWinX+2,DisplayWinY+1+disppos,forms(lastdispline,DisplayTextWidth));
     TextAttr:=col.colmailer;
   end;
 end;
@@ -373,6 +375,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.5  2000/12/25 19:08:47  mk
+        - some optical improvements
+
         Revision 1.4  2000/12/25 16:26:45  mk
         - paint a nice window during fido poll
 

@@ -75,7 +75,7 @@ begin
     Remain:=System.Round((TransferSize-TransferCount)/(TransferBytes/ZModemTimer.ElapsedSec)-ZModemTimer.ElapsedSec);
   if Remain<0 then
     Remain:=0;
-  DisplayStatus(StrS(TransferBytes)+'b '+Strs(Remain)+'sec',UseNextLine);
+  DisplayStatus(StrS(TransferBytes)+'b '+Strs(Remain)+' sec',UseNextLine);
   UseNextLine:=False;
   if LastErrorCount<>TransferError then begin
     DisplayStatus(StrS(TransferBytes)+'b '+TransferMessage,False);
@@ -911,6 +911,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.6  2000/12/25 19:08:46  mk
+        - some optical improvements
+
         Revision 1.5  2000/12/25 18:47:27  mk
         - Variable GotUserBreak initalisieren
 
