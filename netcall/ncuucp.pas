@@ -792,7 +792,7 @@ begin
         'X': begin SendCommand('XN'); end;        (* refuse xfer requests *)
         'E': begin SendCommand('EN'); end;        (* refuse exec requests *)
         'S': begin Do_S; end;
-        'H': begin Do_H; exit; end;
+        'H': begin Do_H; result:=true; exit; end;
         else begin SendCommand(LeftStr(c.cmd,1)+'N'); end;
       end;
     except
@@ -802,8 +802,6 @@ begin
       end;
     end; //try
     end;
-    result:=true;
-    exit;
 
   except
     on e:Exception do begin
@@ -1011,6 +1009,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/07/29 17:10:38  cl
+  - fixed return value of TUUCProtocolSimple.Slave
+
   Revision 1.6  2001/05/16 01:59:16  mk
   - fixed os/2 compatibility with FPC very quick and dirty
 
