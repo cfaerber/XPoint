@@ -59,7 +59,6 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
     _uucp      : boolean;
     netlog     : textp;
     logopen    : boolean;
-    in7e1,out7e1 : boolean;   { UUCP: Parity-Bit strippen/erzeugen }
 
 
 implementation
@@ -67,6 +66,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.7  2001/01/02 10:37:20  mk
+  - removed some unused UART variables
+
   Revision 1.6  2000/07/21 21:17:47  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 

@@ -692,7 +692,7 @@ begin                  { of Netcall }
       { bisherige Netcall-Typen                                         }
       { --------------------------------------------------------------- }
 
-      ComNr:=bport; in7e1:=false; out7e1:=false; IgnCD:=IgCD; IgnCTS:=IgCTS;
+      ComNr:=bport; IgnCD:=IgCD; IgnCTS:=IgCTS;
 
 
       display:=ParDebug;
@@ -798,7 +798,6 @@ begin                  { of Netcall }
 
       nulltime:=typeform.time;
       repeat
-        in7e1:=false; out7e1:=false;
         showkeys(15);
         if net and FileExists(called) and (caller<>called) then _era(called);
         if net then TempToCaller;
@@ -891,8 +890,7 @@ begin                  { of Netcall }
         ConnTicks:=ticker;
         NC^.ConnSecs:=conn_time;    { in BoxPar^ }
 
-        in7e1:=(logintyp=ltUUCP) or uucp7e1;
-        out7e1:=uucp7e1;
+        // in7e1:=(logintyp=ltUUCP) or uucp7e1;
         startscreen:=BreakLogin and not relogin;    { ^X-Kennzeichen }
         if not net then begin
           display:=true;
@@ -1528,6 +1526,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.57  2001/01/02 10:37:20  mk
+  - removed some unused UART variables
+
   Revision 1.56  2001/01/01 16:18:17  mo
   -Sysoppoll: arcmail wird wieder entpackt,
   -aus dem Indir werden nur noch die pkts und die arc gelöscht

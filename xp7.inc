@@ -163,7 +163,6 @@ begin
               zaehler[2]:=0;
             end;
     else begin
-      if out7e1 then SetParity(byte(c),true);
 (*        if IgnCTS then SendByte(comnr,byte(c))
           else HSendByte(comnr,byte(c)); *)
       end;
@@ -181,7 +180,6 @@ begin
 {$ENDIF }
     for i:=1 to length(s) do begin
       testbyte;
-      if out7e1 then SetParity(byte(s[i]),true);
 //!!      if IgnCTS then SendByte(comnr,byte(s[i]))
 //      else HSendByte(comnr,byte(s[i]));
       end;
@@ -277,7 +275,6 @@ end;
 
 procedure sb(b:byte);
 begin
-  if out7e1 then SetParity(b,true);
 //    if IgnCTS then SendByte(comnr,b)
 //    else HSendByte(comnr,b);
 end;
@@ -1346,6 +1343,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.54  2001/01/02 10:37:20  mk
+  - removed some unused UART variables
+
   Revision 1.53  2001/01/02 09:29:38  mo
   -Kommentare hinzugefügt und ergänzt
 
