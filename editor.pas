@@ -1024,6 +1024,7 @@ var  dl         : displp;
      e          : edp;
      tk         : EdToken;
      trennzeich : set of char;     { fÅr Wort links/rechts }
+     ShiftBlockMarker: Integer;      
 
   procedure showstat;
   begin
@@ -1266,9 +1267,80 @@ var  dl         : displp;
       if EdSave(ed) then Quit;
     end;
 
+    procedure ShiftMarkStart;
+    var 
+      MarkPos: Position;
+    begin
+      with e^ do
+        if kb_shift then 
+        begin
+          GetPosition(MarkPos);
+          MarkPos.offset:=min(MarkPos.offset,MarkPos.absatz^.size);
+          if ((PosCoord(MarkPos,2)<>PosCoord(block[1].pos,block[1].disp))
+            and (PosCoord(MarkPos,2)<>PosCoord(block[2].pos,block[2].disp)))
+            or blockinverse or blockhidden then 
+          begin
+            SetBlockMark(1);
+            SetBlockMark(2);
+            ShiftBlockMarker := 3;
+          end;
+        end else
+          if not config.persistentblocks and not blockhidden then 
+          begin
+            blockhidden:=true;
+            aufbau:=true;
+          end;
+    end;
+
+    procedure ShiftMarkEnd(MoveCursorAbove: Boolean);
+    var 
+      MarkPos: Position;
+    begin
+      if not kb_shift then Exit;
+      with e^ do 
+      begin
+        GetPosition(MarkPos);
+        MarkPos.Offset:=min(MarkPos.offset,MarkPos.absatz^.size);
+        if MoveCursorAbove then 
+        begin
+          if (ShiftBlockMarker = 1) or (ShiftBlockMarker = 3) then 
+          begin
+            SetBlockMark(1);
+            ShiftBlockMarker := 1;
+          end else 
+            if PosCoord(MarkPos,2)<=PosCoord(block[1].pos,block[1].disp) then 
+            begin
+               block[2]:=block[1];
+               SetBlockMark(1);
+               ShiftBlockMarker := 1;
+            end else 
+              SetBlockMark(2);
+        end else 
+        begin
+          if (ShiftBlockMarker = 2) or (ShiftBlockMarker = 3) then 
+          begin
+            SetBlockMark(2);
+            ShiftBlockMarker := 2;
+          end else 
+            if PosCoord(MarkPos,2)>=PosCoord(block[2].pos,block[2].disp) then 
+            begin
+              block[1]:=block[2];
+              SetBlockMark(2);
+              ShiftBlockMarker :=2;
+            end else 
+              SetBlockMark(1);
+        end;
+      end;
+    end;
+
   begin
     with e^ do begin
       if (tk>=1) and (tk<=29) then GetPosition(lastpos);
+
+      if tk in [editfBOL, editfEOL, editfPgUp, editfPgDn, editfUp, editfDown, 
+        editfLeft, editfRight, editfPageTop, editfPageBottom, editfTop, 
+        editfBottom, editfWordLeft, editfWordRight] then ShiftMarkStart;
+      
       case tk of
         -1                : CorrectWorkpos;
 
@@ -1368,6 +1440,12 @@ var  dl         : displp;
         editfBreak        : Quit;
         editfGlossary     : Glossary;
       end;
+
+      if tk in [editfBOL, editfPgUp, editfUp, editfLeft, editfPageTop, 
+        editfTop, editfWordLeft] then ShiftMarkEnd(true)
+      else
+        if tk in [editfEOL, editfPgDn, editfDown, editfRight, editfPageBottom, 
+          editfBottom, editfWordRight] then ShiftMarkEnd(false);
     end;
   end;
 
@@ -1684,6 +1762,9 @@ end.
 
 {
   $Log$
+  Revision 1.58  2001/08/10 18:58:18  mk
+  - added support for marking blocks with shift-cursor
+
   Revision 1.57  2001/08/03 21:40:42  ml
   - compilable with fpc (linux)
 
