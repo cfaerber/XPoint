@@ -55,7 +55,7 @@
     Siehe LFN.GER unter "Sonderfall DISKFREE/DISKSIZE".}
   {-DiskFree/DiskSize return the result as Comp, otherwise as LongInt.
     See LFN.ENG section "Special case DISKFREE/DISKSIZE".}
-{$DEFINE DFSReturnComp}
+{.$DEFINE DFSReturnComp}
 
   {-DiskFree/DiskSize liefern die Grî·e in Kilobytes, ansonsten in Bytes
     zurÅck}

@@ -19,19 +19,10 @@ unit xp2;
 
 interface
 
-uses {$IFDEF virtualpascal}sysutils,{$endif}
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-{$IFDEF Linux}
-  xplinux, sysutils,
-{$ENDIF}
-  xpcfg,
+uses crt, xpcfg,
      dos,dosx,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
      databaso,maske,video,help,printerx,lister,win2,maus2,crc,clip,
-     resource,montage, xpglobal,
+     resource,montage, xpglobal, lfn,
      xp0,xp1,xp10,xp1o2,xp1input,xp1help,xp5,xpdatum,xpeasy;
 
 
@@ -354,6 +345,7 @@ var i  : integer;
     if _is('nb')   then else
 {$ENDIF }
     if isl('mailto:') then Par_mailto else
+    if isl('lfn') then EnableLFN else
     if _is('nolock') then ParNolock:=true
     else               begin
                          writeln('unbekannte Option: ',paramstr(i),#7);
@@ -375,40 +367,27 @@ var i  : integer;
 
 begin
   { Unter Win/OS2/Linux: Default "/w", Rechenzeitfreigabe abschalten mit "/w0" }
-{$IFDEF BP }
   if (winversion>0) or (lo(dosversion)>=20) or (DOSEmuVersion <> '')
     then ParWintime:=1;
-{$ENDIF }
   extended:=exist('xtended.15');
-{$IFDEF UnixFS }
-  findfirst(AutoxDir+'*.opt',0,sr);
-{$ELSE }
-  Dos.findfirst(AutoxDir+'*.OPT',0,sr);    { permanente Parameter-Datei }
-{$ENDIF }
+  findfirst(AutoxDir+'*.OPT',0,sr);    { permanente Parameter-Datei }
   while doserror=0 do begin
     assign(t,AutoxDir+sr.name);
     ReadParfile;
-    dos.findnext(sr);
+    findnext(sr);
   end;
-  {$IFDEF Ver32 }
-  FindClose(sr);
-  {$ENDIF}
   for i:=1 to paramcount do begin      { Command-Line-Parameter }
     s:=paramstr(i);
     ParAuswerten;
     end;
-{$IFDEF UnixFS }
-  findfirst(AutoxDir+'*.par',0,sr);
-{$ELSE }
-  Dos.findfirst(AutoxDir+'*.PAR',0,sr);    { tempor„re Parameter-Datei }
-{$ENDIF }
+  findfirst(AutoxDir+'*.PAR',0,sr);    { tempor„re Parameter-Datei }
   while doserror=0 do begin
     assign(t,AutoxDir+sr.name);
     ReadParfile;
     erase(t);
     if ioresult<>0 then
       writeln('Fehler: kann '+AutoxDir+sr.name+' nicht l”schen!');
-    dos.findnext(sr);
+    findnext(sr);
   end;
   {$IFDEF Ver32 }
   FindClose(sr);
@@ -949,14 +928,11 @@ end;
 procedure DelTmpfiles(fn:string);
 var sr : searchrec;
 begin
-  dos.findfirst(fn,ffAnyFile,sr);
+  findfirst(fn,ffAnyFile,sr);
   while doserror=0 do begin
     _era(sr.name);
-    dos.findnext(sr);
+    findnext(sr);
   end;
-  {$IFDEF Ver32}
-  FindClose(sr);
-  {$ENDIF}
 end;
 
 
@@ -1174,6 +1150,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.4  2000/08/27 08:39:38  mk
+  - LFN-Unterstuetzung aktiviert, Parameter /LFN schaltet explizit zu
+
   Revision 1.45.2.3  2000/08/25 19:22:52  jg
   - "< >" in Macros funktioniert jetzt wie dokumentiert als Leertastenersatz
     XP10.PAS

@@ -19,9 +19,7 @@
 
 program xp;
 
-uses xpx,
-     crt,
-     dos,typeform,uart,keys,fileio,inout,help,video,datadef,
+uses lfn, xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc,resource,stack,clip,eddef,editor,feiertag,
      xpdiff,xpdatum,xpglobal,
@@ -193,6 +191,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.4  2000/08/27 08:39:38  mk
+  - LFN-Unterstuetzung aktiviert, Parameter /LFN schaltet explizit zu
+
   Revision 1.29.2.3  2000/07/01 11:17:27  mk
   - 32 Bit Teile entfernt
 
