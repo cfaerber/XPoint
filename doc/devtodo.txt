@@ -35,5 +35,6 @@ Text                                                Version Prio Autor
 - Modem-Implementation				    *       1    na
 - NNTP						    LOW     1    hd,mk
 - POP3						    LOW     1    hd,mk
-- IMAP						    LOW     3    na
+- IMAP						    LOW     2    na
+- UUCP over TCP/IP                                  *       1    na
 - Nodelisteneinbinden gibt RTE 216 haufenweise      LOW     1    na
