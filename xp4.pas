@@ -36,8 +36,6 @@ const
   maxgl   = 60;
 {$ENDIF }
 
-      showungelesen : boolean = false;  { Bretter mit ungel. Nachrichten auch markieren }
-
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
       wltrenn : boolean;   { Trennzeilen als Ziel m”glich        }
@@ -1609,7 +1607,8 @@ begin      { --- select --- }
                    if c='U' then               { 'U' }
                    begin
                      Showungelesen:=not showungelesen;
-                     aufbau:=true;
+                     saveconfig;
+                     aufbau:=true;                     
                      end;  
                    if (c=k0_Le) or (t=keyaltl) then set_lesemode;       { 'L'esemode }
                    if not empty and (markflag[p]<>2) then begin
@@ -2045,6 +2044,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/06/03 19:30:25  jg
+  - Ungelesen Anzeige fuer Bretter wird in XPOINT.CFG gespeichert
+
   Revision 1.22  2000/06/03 08:39:55  jg
   - Nachrichtenfenster "U" zeigt ungelesene Nachrichten
 

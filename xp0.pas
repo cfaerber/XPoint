@@ -836,6 +836,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
        UsrFeldDef = 'FHGBAK'; { Standardreihenfolge: Feldtausch Userliste }
 
+       showungelesen : boolean = false;   { Bretter mit ungel. Nachrichten auch markieren }
        { /oh }
 
 var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
@@ -1176,6 +1177,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.51  2000/06/03 19:30:25  jg
+  - Ungelesen Anzeige fuer Bretter wird in XPOINT.CFG gespeichert
+
   Revision 1.50  2000/05/22 17:07:36  hd
   - BatchExt
 

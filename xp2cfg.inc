@@ -855,6 +855,7 @@ begin
   wrhd(3);                           { 'allgemeine Einstellungen' }
   writeln(t,'ExtraktTyp=',defExtraktTyp);
   writeln(t,'Brettanzeige=',brettanzeige);
+  writeln(t,'Showungelesen=',jnf(showungelesen));
   writeln(t,'ShowMsgDatum=',jnf(showmsgdatum));
   writeln(t,'Lister=',VarLister);
   writeln(t,'ListerKB=',listerkb);
@@ -1432,6 +1433,7 @@ begin
           getviewers or
           getb(su,  'ExtraktTyp',defextrakttyp) or
           getb(su,  'Brettanzeige',brettanzeige) or
+          getx(su,  'ShowUngelesen',showungelesen) or
           getx(su,  'ShowMsgdatum',showmsgdatum) or
           gets(s,su,'lister',varlister,40) or
           getw(su,  'listerkb',listerkb) or
@@ -1808,6 +1810,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.59  2000/06/03 19:30:25  jg
+  - Ungelesen Anzeige fuer Bretter wird in XPOINT.CFG gespeichert
+
   Revision 1.58  2000/05/29 15:13:29  oh
   -Vertipper korrigiert
 
