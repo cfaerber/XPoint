@@ -285,7 +285,7 @@ begin
   fs:=filesize(f);
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,miBrett);
-  IDList.Sort;
+  if Assigned(IDList) then IDList.Sort;
   while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
     inc(outmsgs);
     seek(f,adr);
@@ -1371,6 +1371,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2002/08/04 11:42:10  mk
+  - fixed AV in ClearUnversandt
+
   Revision 1.59  2002/08/04 11:25:12  mk
   - fixed possible problems with nt_Client in BoxParOk
 
