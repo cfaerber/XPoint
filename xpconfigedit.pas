@@ -1322,7 +1322,7 @@ restart:
     mhnr(680);                                       { 'Server' bzw. 'Boxname' }
   DomainNt:=-1;
   msetvfunc(xp9_testbox);
-  maddstring(3,12,getres2(912,12),user,30,80,'>'); mhnr(682);   { 'eMail-Adr.' bzw. 'Username' }
+  maddstring(3,12,getres2(912,12),user,30,30,'>'); mhnr(682);   { 'eMail-Adr.' bzw. 'Username' }
   userfield:=fieldpos;
   msetvfunc(notempty2);
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
@@ -2536,6 +2536,9 @@ end;
 
 {
   $Log$
+  Revision 1.46  2002/05/25 07:24:44  mk
+  - UserName has only 30 characters
+
   Revision 1.45  2002/02/10 14:23:56  mk
   - misc 3.40 update fixes
 

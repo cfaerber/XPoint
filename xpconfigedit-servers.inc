@@ -168,7 +168,7 @@
       mhnr(192);
     maddstring(3,6,getres2(912,8),realname,30,40, ''); { 'Realname' }
       mhnr(194);
-    maddstring(3,8,getres2(912,12),user,30,AdrLen,grosschar(ntGrossUser(nt))+
+    maddstring(3,8,getres2(912,12),user,30,30,grosschar(ntGrossUser(nt))+
                'A'+without(allchar,'() '));  { 'eMail-Adr.' }
       msetvfunc(notempty);
       mhnr(40002);
@@ -2366,6 +2366,9 @@
 
 {
   $Log$
+  Revision 1.53  2002/05/25 07:24:44  mk
+  - UserName has only 30 characters
+
   Revision 1.52  2002/05/23 08:32:01  mk
   - added WildCardCh
 
