@@ -922,7 +922,7 @@ MO:    Der erste Nodelistenindex ist jetzt ca. 10% kleiner.
 MK:    Bugfix: Hotkey fr Drucken funktionierte nicht, wenn in der User-
        šbersicht ein User ausgew„hlt war. (Bug aus v3.12d)
 MK:    Test auf Share entfernt, da Abstrze mit Novell Client32. (Bug
-       aus v3.12d) 
+       aus v3.12d)
 MO:    Alten Fehler im Ressourcen-Caching beseitigt. (Bug aus v3.12d)
 JG:    Bei den Zeilenmodi 28, 30, 33 und 36 wird ein interner Font
        geladen (Fix fr neuere VGA-Karten mit VESA-Standard 2.0).
@@ -1049,7 +1049,7 @@ MK:    Bugfix: Share-Test modifiziert, da Abstrze mit Novell Client32.
 MK:    Fido-Tearline enth„lt jetzt keine XP-Werbung mehr.
 
 
-v3.40 RC1/OpenXP  (25.12.2000)
+v3.40 RC1/OpenXP  (26.12.2000)
 ------------------------------
 MK:    Problem beim Aktualisieren von MIME-Viewern behoben.
 MK:    Einige Bugs bei Serverboxen behoben, bei denen die Boxnamen
@@ -1104,6 +1104,9 @@ MK:    Schalter "PPP-Modus" in RFC/UUCP-Box fr Option -ppp eingebaut.
 JG:    Bugs bei Spezial-Suche behoben.
 MK:    Auch die letzten noch verbliebenen kleingeschriebenen Dateien
        in Groáschreibung ge„ndert (REGDATA.CFG, LASTMSG, HEADER.HDR).
+MK:    Fehlerhafte Base64-Zeilen werden soweit m”glich erkannt und nicht
+       decodiert - dadurch sehen z.B. PktXCode-User keinen Zeichenmll
+       mehr, sondern die korrekte PktXCode-Meldung.
 MY:    Komplett berarbeitete, korrigierte und erg„nzte Ressourcen und
        Online-Hilfe (deutsch)
 MY+MF: šberarbeitete englische Ressourcen und Online-Hilfe

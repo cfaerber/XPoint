@@ -1021,7 +1021,8 @@ richten und Bretteinstellungen.
 
 <<<Ctrl-Y> >>springt zur n„chsten Trennzeile.
 
-   <</>>     Schnellsuche
+   <</>>     Schnellsuche - etwas schneller und komfor-
+         tabler geht's auch mit dem Punkt "<<.>>".
 
   <<<F4> >>  wiederholt letzten Menbefehl.
 
@@ -1194,7 +1195,8 @@ angezeigt.
          Paáwort eingetragen wurde, k”nnen verschls-
          selte Nachrichten geschickt werden.
 
-   <</>>     Schnellsuche
+   <</>>     Schnellsuche - etwas schneller und komfor-
+         tabler geht's auch mit dem Punkt "<<.>>".
 
 <<<Ctrl-G> >>markiert alle User, die zur gleichen Gruppe
          geh”ren wie der gew„hlte User.
@@ -3458,7 +3460,7 @@ Zweifelsfall fragen Sie bitte den Systembetreiber.
 
 @
 8018
-Dies ist ein Zusatzschalter fr "Batched SMTP" und
+Dies ist ein Zusatzschalter fr "[Batched SMTP]" und@8017
 nur fr Anwender sinnvoll (und empfohlen!), die einen
 externen PPP-Client wie <<UKA_PPP>> oder <<UKAW>> in einer
 RFC/UUCP-Box betreiben (und sollte auch nur von
@@ -3479,7 +3481,7 @@ diesen verwendet werden):
 
 1. Das Aktivieren dieses Zusatzschalters ist *nicht*
    gleichbedeutend mit dem Deaktivieren des Schalters
-   "[Batched SMTP]" insgesamt.  Zwar wird in beiden@8017
+   "Batched SMTP" insgesamt.  Zwar wird in beiden
    F„llen jede PM als eigene Datei bertragen, jedoch
    in unterschiedlichen Formaten: Nur wenn Sie
    "Batched SMTP" <<und>> den Zusatzschalter "PPP-
@@ -3536,8 +3538,8 @@ diesen verwendet werden):
 
    Bei anderen externen PPP-Clients entnehmen Sie die
    entsprechenden Pfad- und Dateinamen bitte der
-   Dokumentation und/oder den Batch- bzw. Scriptda-
-   teien des jeweiligen Clients.
+   Dokumentation und/oder den Batch- bzw. Script-
+   dateien des jeweiligen Clients.
 
 @
 8019
