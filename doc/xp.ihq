@@ -1,4 +1,4 @@
-CrossPoint v3.2
+CrossPoint v3.20
 15 6
 53 19
 2 1
@@ -105,10 +105,12 @@ Allgemeine Hotkeys in Texteingabe-Feldern:
 Zwischenablage verwendet, die das jeweilige Betriebs-
 system (Windows, OS/2 etc.) zur Verfgung stellt.
 Stellt das Betriebssystem keine Zwischenablagefunk-
-tion zur Verfgung (wie z.B. DOS), sind die o.g.
-Clipboard-Funktionen ohne Wirkung. Dies gilt nicht
-fr den Editor, der eine eigene Zwischenablage ver-
-wendet.
+tion zur Verfgung (wie z.B. DOS), oder kann die zur
+Verfgung stehende Zwischenablage nicht von DOS-Pro-
+grammen angesprochen werden (Windows 2000/NT), sind
+die o.g. Clipboard-Funktionen ohne Wirkung. Dies gilt
+nicht innerhalb des XP-Editors, der eine eigene
+interne Zwischenablage verwendet.
 
 @
 5
@@ -422,22 +424,6 @@ nur die jeweils letzte Option ausgefhrt:
          allen anderen Parametern angegeben werden.
 
 
-Statt die Optionen als Parameter bei Programmstart
-anzugeben, k”nnen Sie sie auch in einer Datei mit
-Erweiterung .OPT im AUTOEXEC-Unterverzeichnis able-
-gen; jede Zeile der Datei muá genau eine Option ent-
-halten. Mehrere .OPT-Dateien sind m”glich.
-
-
-Weitere Optionen und Parameter siehe:
-[Diagnose- und Environment-Parameter, Errorlevel]@8
-
-@
-8
-<<CrossPoint - Diagnose-Optionen, Environment-Parameter
-<<             und Errorlevel
-
-
 Die folgenden Optionen sind nur zu Diagnosezwecken
 gedacht:
 
@@ -460,6 +446,20 @@ gedacht:
          auf einen Tastendruck. Entspricht dem Schal-
          ter [auf Tastendruck warten] bei /Config/@313
          Extern/Shell.
+
+
+Statt die Optionen als Parameter bei Programmstart
+anzugeben, k”nnen Sie sie auch in einer Datei mit
+Erweiterung .OPT im AUTOEXEC-Unterverzeichnis able-
+gen; jede Zeile der Datei muá genau eine Option ent-
+halten. Mehrere .OPT-Dateien sind m”glich.
+
+
+Siehe auch: [Environment-Parameter und Errorlevel]@8
+
+@
+8
+<<CrossPoint - Environment-Parameter und Errorlevel
 
 
 <<Environment-Parameter
@@ -1034,10 +1034,6 @@ Folgende Funktionen stehen zur Verfgung:
 
    <<##>>     zeigt bei Fido-, MausNet-, ZCONNECT- und
          Usenet-Nachrichten den Kommentarbaum an.
-         Komplexe Kommentarb„ume mit entsprechend
-         vielen Ebenen und/oder Nachrichten k”nnen
-         mit <<<Ctrl-Cursor-links/rechts> >>horizontal
-         verschoben werden.
 
 <<<Ctrl-W> >>schaltet die automatische Weiterschaltung
          beim Lesen ein bzw. aus.
@@ -1974,6 +1970,15 @@ auszuschneiden, und kopiert diese ins Clipboard.
 <<Win-Clipboard (MAIL)>>
 Analog zur vorherigen Funktion, nur wird hier
 versucht, eine eMail-Adresse zu extrahieren.
+
+<<Hinweis:>> Bei allen Clipboard-Funktionen wird die
+Zwischenablage verwendet, die das jeweilige Betriebs-
+system (Windows, OS/2 etc.) zur Verfgung stellt.
+Stellt das Betriebssystem keine Zwischenablagefunk-
+tion zur Verfgung (wie z.B. DOS), oder kann die zur
+Verfgung stehende Zwischenablage nicht von DOS-Pro-
+grammen angesprochen werden (Windows 2000/NT), stehen
+die o.g. Clipboard-Funktionen nicht zur Verfgung.
 
 @
 75
@@ -10354,6 +10359,17 @@ sofort wirksam.
 
 Falls sie mit dem Parameter /f: eine eigene Schrift
 geladen haben, ist diese Einstellung wirkungslos.
+
+<<Hinweis:>> Bei modernen Grafikkarten, die den VESA-
+Standard 2.0 untersttzen, fehlt m”glicherweise der
+EGA-Zeichensatz 8x14, der fr die Darstellung der
+Zeilenmodi 28, 30, 33 und 36 notwendig ist. In diesen
+F„llen werden Sie daher u.U. unleserliches "Pixel-
+chaos" auf Ihrem XP-Bildschirm sehen. Verwenden Sie
+dann bitte einen anderen Zeilenmodus.
+
+Dies ist <<kein>> Bug von XP!
+
 @
 10906
 <<Config / Anzeige / Diverses
