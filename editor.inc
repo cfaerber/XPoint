@@ -121,7 +121,7 @@ begin
           if from<pos.offset then begin
             pos.offset:=max(from,pos.offset-len);
             if (i=1) or (i=2) then BlockAbsCut:=true;
-            if from>=oldabs^.size-len then
+            if from>{=}oldabs^.size{-len} then
               case i of
                 1,3..7 : if assigned(nxt) then begin
                            pos.absatz:=nxt; pos.offset:=0; end;
@@ -1864,9 +1864,12 @@ begin
           then quotec1:=GetQuote(ap)
           else quotec1:='';
         quotes:=length(quotec1);
-        if config.autoindent and (quotes=0) then
+        if quotes>rrand div 2 then quotes:=0;
+        if config.autoindent and (quotes=0) then begin
           while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
             inc(spaces);
+          if spaces>rrand div 2 then spaces:=0;
+        end;
         copysize:=max(0,ap^.size-fp);
         if memtest(ap^.size)
         and createacopy(ap,ap2,fp-spaces-quotes,copysize+spaces+quotes)
@@ -1902,6 +1905,7 @@ begin
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
         else if memtest(ss) then begin
+          spaces:=0;
           if config.QuoteReflow then begin
             quotec1:=getquote(ap);
             quotec2:=getquote(ap^.next);
@@ -1911,6 +1915,12 @@ begin
             quotec1:='';
             quotec2:='';
             quotes:=0;
+          end;
+          if config.autoindent and (quotes=0) and (length(quotec2)=0) then
+          begin
+            while (spaces<ap^.next^.size) and (ap^.next^.cont[spaces]=' ') do
+              inc(spaces);
+            if spaces>rrand div 2 then spaces:=0;
           end;
           TruncAbs(ap);
           TruncAbs(ap^.next);
@@ -1922,6 +1932,11 @@ begin
               ap2:=ap^.next;
               wpa:=AbsDelete(ap2,0,length(quotec2),false,true);
               dec(ss,length(quotec2));
+            end
+            else if spaces>0 then begin
+              ap2:=ap^.next;
+              wpa:=AbsDelete(ap2,0,spaces,false,true);
+              dec(ss,spaces);
             end;
             apnew:=AllocAbsatz(ss);
             wpa:=apnew;
@@ -2248,6 +2263,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.14  2000/03/21 21:19:09  rb
+  Bugfixes ('Block reformatieren' u. a.), 'Block reformatieren' jetzt auf <Ctrl-B>
+
   Revision 1.13  2000/03/21 01:01:55  rb
   'Block reformatieren' verbessert, weiterer kleiner Bugfix
 

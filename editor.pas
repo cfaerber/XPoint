@@ -1766,6 +1766,7 @@ var  dl         : displp;
     if t=keysf8  then b:=EditfMarkPara    else
     if t=keysf9  then b:=EditfMarkLine    else
     if t=keysf10 then b:=EditfMarkAll     else
+    if t=^B      then b:=EditfFormatBlock else
 
     if t=keyf2   then b:=EditfSave        else
     if t=keysf2  then b:=EditfSaveQuit    else
@@ -1813,7 +1814,6 @@ var  dl         : displp;
                         'P' : b:=EditfPrint;
                         'D' : b:=EditfBreak;
                         'S' : b:=EditfChangeCase;
-                        'F' : b:=EditfFormatBlock;
                       end else
 
     if t=^O      then case GetPrefixChar('O',true) of
@@ -1996,6 +1996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/03/21 21:19:09  rb
+  Bugfixes ('Block reformatieren' u. a.), 'Block reformatieren' jetzt auf <Ctrl-B>
+
   Revision 1.15  2000/03/20 11:27:44  mk
   - Persistene Bloecke im Editor sind jetzt default
 
