@@ -123,7 +123,7 @@ RC = rc
 RAR ?= rar
 
 CONTRIBBIN = compress.exe freeze.exe gzip.exe tar.exe uucico.exe
-CONTRIBDATA = fido.pc xpicons.dll
+CONTRIBDATA = fido.pc
 
 endif
 
@@ -208,6 +208,18 @@ export RM
 #	zfido zpr
 BIN = maggi ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
 COMPBIN = $(BIN) docform ihs rc
+UNITS = archive clip crc database databaso datadef datadef1 dbase \
+	debug dosx eddef editor encoder exxec feiertag fileio help \
+	inout ipaddr ipcclass keys lister maske maus2 modem montage \
+	mouse ncnntp ncpop3 ncsmtp ncsocket ncurses netcall printerx \
+	regexpr resource stack timer typeform uart uuz win2 winxp xp0 \
+	xp1 xp10 xp1help xp1input xp1o xp1o2 xp2 xp2c xp2db xp2f xp3 \
+	xp3ex xp3o xp3o2 xp4 xp4e xp4o xp4o2 xp4o3 xp5 xp6 xp6l xp6o \
+	xp7 xp7f xp7l xp7o xp8 xp9 xp9bp xp_des xp_iti xp_pgp xp_uue \
+	xpauto xpcc xpcfg xpcurses xpdatum xpdiff xpdos32 xpe xpeasy \
+	xpf2 xpfido xpfidonl xpftnadr xpglobal xpimpexp xpipc xpkeys \
+	xplinux xpmaus xpmime xpnntp xpnodes xpnt xpos2 xpreg xpstat \
+	xpterm xpuu xpview xpwin32 xpx zmodem
 RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
@@ -217,7 +229,7 @@ BINFILES = $(patsubst %,%$(EXE_EXT),$(BIN))
 COMPBINFILES = $(patsubst %,%$(EXE_EXT),$(COMPBIN))
 INSTALLBINFILES = $(BINFILES) $(CONTRIBBIN)
 RESFILES = $(patsubst %,%.res,$(RES))
-DATAFILES = $(RESFILES) $(CONTRIBDATA)
+DATAFILES = $(RESFILES) icons.res $(CONTRIBDATA)
 CONTRIB = $(CONTRIBBIN) $(CONTRIBDATA)
 
 PFLAGS += $(PF_$(OS))
@@ -1353,6 +1365,7 @@ install: install_bindir $(patsubst %,install_%,$(BINFILES)) \
 	install_datadir $(patsubst %,install_%,$(RESFILES)) \
 	install_exampledir $(patsubst %,install_%,$(EXAMPLES)) \
 	$(patsubst %,install_%,$(CONTRIB))
+	$(INSTALL_DATA) icons.res $(datadir)
 	$(MAKE) -C doc install
 
 install_bindir:
@@ -1415,16 +1428,24 @@ endif
 
 # Aufraeumen
 
-clean: $(patsubst %,clean_%,$(COMPBINFILES))
-	-$(RM) *.res
-	-$(RM) *.o
-	-$(RM) *.a
-	-$(RM) *.ppu
+clean: $(patsubst %,clean_%,$(COMPBINFILES)) \
+	$(patsubst %,clean_%,$(UNITS)) $(patsubst %,clean_%,$(RESFILES))
 	-$(RM) $(DISTFILE)
 	$(MAKE) -C ObjCOM clean
 	$(MAKE) -C doc clean
 
-$(patsubst %,clean_%,$(COMPBINFILES)): clean_%:
+$(patsubst %,clean_%,$(COMPBINFILES)): clean_%$(EXE_EXT):
+	-$(RM) $*$(EXE_EXT)
+	-$(RM) $*.o
+	-$(RM) $*.a
+
+$(patsubst %,clean_%,$(UNITS)): clean_%:
+	-$(RM) $*.ppu
+	-$(RM) $*.o
+	-$(RM) $*.a
+	-$(RM) lib$*.a
+
+$(patsubst %,clean_%,$(RESFILES)): clean_%:
 	-$(RM) $*
 
 # Erstellen eines Quellcodearchivs
@@ -1433,8 +1454,8 @@ $(patsubst %,clean_%,$(COMPBINFILES)): clean_%:
 
 dist:
 	-$(RM) $(DISTFILE)
-	$(RAR) $(RARFLAGS) $(DISTFILE) file_id.diz Makefile *.inc \
-	*.pas *.rq *.bat
+	$(RAR) $(RARFLAGS) $(DISTFILE) file_id.diz Makefile icons.res \
+	*.inc *.pas *.rq *.bat
 	$(RAR) $(RARFLAGS) $(DISTFILE) beispiel$(SEP)*.scr \
 	beispiel$(SEP)*.xps
 	$(RAR) $(RARFLAGS) $(DISTFILE) doc$(SEP)Makefile doc$(SEP)*.txt \
@@ -1446,6 +1467,10 @@ dist:
 
 #
 # $Log$
+# Revision 1.13  2000/10/02 17:31:02  fe
+# icons.res wird nicht mehr geloescht.  Statt xpicons.dll wird jetzt
+# icons.res installiert.
+#
 # Revision 1.12  2000/10/02 13:38:10  fe
 # Vergessenes nachgetragen.
 #
