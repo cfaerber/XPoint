@@ -558,14 +558,17 @@ begin
     if not (result[i] in ['.','A'..'Z','a'..'z','0'..'9',
         '!','#','$','%','&',#$27,'*','+','-','/','=','?',
         '^','_','`','{','|','}','~']) then begin q:=true; break; end;
-  
-  if (p=0) or (FirstChar(addr)='.') or (addr[p]='.') then q:=true;
+
+  if (p=0) or (FirstChar(result)='.') or (result[p]='.') then q:=true;
 
   if q then result:='"'+Copy(result,1,p)+'"'+Mid(result,p+1);
 end;
 
 //
 // $Log$
+// Revision 1.12  2002/08/09 22:16:15  cl
+// - fixed Range Check error in RFCNormalizeAddress
+//
 // Revision 1.11  2002/06/29 13:54:00  mk
 // - removed unused variables
 // - initialize some uninitialized variables before use
