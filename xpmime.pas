@@ -119,10 +119,10 @@ var fn      : string;
     brk,o   : boolean;
 begin
   fn:=mpdata.fname;
-  useclip:=true;                          { 'Nachrichtenteil extrahieren' }
-  if ReadFilename(getres(2441),fn,true,useclip) then
+  useclip:=true;
+  if ReadFilename(getres(2441),fn,true,useclip) then   { 'Nachrichtenteil extrahieren' }
   begin
-    if not multipos(':\',fn) then fn:=ExtractPath+fn;
+    if not multipos(':\/',fn) then fn:=ExtractPath+fn;
     if not UseClip then
     begin
       if FileExists(fn) then
@@ -885,6 +885,9 @@ finalization
 
 {
   $Log$
+  Revision 1.59.2.6  2003/09/02 16:42:29  mk
+  - fixed filename handling for unix in m_extract
+
   Revision 1.59.2.5  2003/08/25 20:24:33  mk
   - fixed #589633: 3.8: Taste "v" im Lister bei Multipart
 
