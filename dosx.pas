@@ -29,12 +29,15 @@ uses
   xpglobal, 
   dos;
 
+{$IFNDEF UnixFS }
 function  GetDrive:char;
-function  dospath(d:byte):pathstr;
-procedure GoDir(path:pathstr);
+function  alldrives:string;
 function  DriveType(drive:char):byte;       { 0=nix, 1=Disk, 2=RAM, 3=Subst }
                                             { 4=Device, 5=Netz              }
-function  alldrives:string;
+{$ENDIF }
+function  dospath(d:byte):pathstr;
+procedure GoDir(path:pathstr);
+
 
 function  OutputRedirected:boolean;
 {$IFDEF BP }
@@ -54,25 +57,24 @@ procedure DPMIfreeDOSmem(selector:word);
 
 implementation
 
+{$IFNDEF UnixFS } { Wird alles nicht benoetigt }
 {$IFDEF Ver32 }
 uses
   {$ifdef vp }
   vpsyslow,
-  {$endif}
-  {$ifdef Linux }
-  xplinux,
   {$endif}
   {$IFDEF Win32 }
   windows,
   {$ENDIF }
   sysutils;
 {$ENDIF }
-
+{$ENDIF } { UnixFS }
 
 {$IFDEF BP }
 const DPMI   = $31;
 {$ENDIF }
 
+{$IFNDEF UnixFS }
 function GetDrive:char;
 {$IFDEF BP }
 var regs : registers;
@@ -90,16 +92,22 @@ begin
   GetDrive := s[1];
 {$ENDIF }
 end;
+{$ENDIF } { UnixFS }
 
 { 0=aktuell, 1=A, .. }
 
 function dospath(d:byte):pathstr;
 var s : string;
 begin
+{$IFDEF UnixFS }
+  getdir(0, s);
+{$ELSE }
   getdir(d,s);
+{$ENDIF }
   dospath:=s;
 end;
 
+{$IFNDEF UnixFS }
 procedure SetDrive(drive:char);
 {$IFDEF BP }
 var regs : registers;
@@ -114,13 +122,18 @@ begin
   SetCurrentDir(Drive + ':');
 {$ENDIF }
 end;
+{$ENDIF } { UnixFS }
 
 procedure GoDir(path:pathstr);
 begin
   if path='' then exit;
+{$IFNDEF UnixFS }
   SetDrive(path[1]);
-  if (length(path)>3) and (path[length(path)]='\') then
-    dec(byte(path[0]));
+  if (length(path)>3) and (path[length(path)]=DirSepa) then
+{$ELSE }
+  if (path[length(path)]=DirSepa) then
+{$ENDIF }
+    Delete(path, Length(path), 1); { dec(byte(path[0])); }
   chdir(path);
 end;
 
@@ -157,6 +170,7 @@ end;
 
 { 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz, 6=CD-ROM }
 
+{$IFNDEF UnixFS }
 function DriveType(drive:char):byte;
 {$IFDEF Ver32  }
 const
@@ -227,7 +241,9 @@ begin
     end;
 end;
 {$ENDIF }
+{$ENDIF } { UnixFS }
 
+{$IFNDEF UnixFS }
 function alldrives:string;
 
   {$IFDEF BP  }
@@ -281,6 +297,7 @@ begin
   s[0]:=chr(b);
   alldrives:=s;
 end;
+{$ENDIF } { UnixFS }
 
 {$IFDEF BP }
 function ConfigFILES:byte;                  { FILES= .. - DOS >= 2.0! }
@@ -434,6 +451,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/05/09 13:10:14  hd
+  - UnixFS: get/setdrive entfernt
+  - GoDir: dec(path[0]) durch delete(path, length(path), 1) ersetzt
+  - UnixFS: AllDrives entfernt
+  - UnixFS: DriveType entfernt
+  - UnixFS: Uses optimiert
+
   Revision 1.16  2000/04/30 17:55:58  hd
   Keine crt-Unit, keine nCrt-Unit! :-)
 
