@@ -133,11 +133,13 @@ asm
               les bx,ldata
 
               cmp cx,0ffffh
-              je @1                               {Text MUSS mit #0 enden !!!!}
+              jne @1                              {Text MUSS mit #0 enden !!!!}
+              dec cx                              { Wenn 65536 Zeichen wird das letze auf #0 gesetzt }
+@1:
               mov di,cx
               mov byte ptr es:[bx+di],0
               inc cx
-@1:
+
               int multiplex
               or ax,ax
               jz @cw1
@@ -259,6 +261,9 @@ end;
 
 { String ins Clipboard kopieren}
 
+var
+  CharBuffer: array[0..255] of char;
+
 procedure String2Clip(var Str: String);
 var
   f: Text;
@@ -277,27 +282,37 @@ begin
                 mov ax,1702h
                 int multiplex                       { Clipboard leeren}
 
-                les bx,str
-                mov si,0
-                mov cx,si
-                mov cl,es:[bx]                      {Stringlaenge -> si:cx}
-                inc bx                              {Textstart    -> es:bx}
+              push ds
+              push ds
+              pop es
+              mov di,offset CharBuffer              { ES:DI Charbuffer }
+              lds si, Str
+              mov cl,ds:[si]
+              xor ch,ch
+              mov dx, cx           { Stringl„nge merken }
+              inc si
+              cld
+              rep movsb            { String in Puffer kopieren ... }
+              xor al,al
+              stosb                { ... und #0 dranpappen }
+              pop ds
 
-                cmp cl,255
-                je @1                               {Text MUSS mit #0 enden !!!!}
-                mov di,cx
-                mov byte ptr es:[bx+di],0
-                inc cx
-  @1:
-                mov ax,1703h                        {String Ins Clipboard schreiben...}
-                mov dx,cf_Oemtext                   {Als OEMTEXT}
-                int multiplex
+              push ds
+              pop es
+              mov bx, offset Charbuffer           {Textstart    -> es:bx}
+              mov si, 0                           {Stringlaenge -> si:cx}
+              mov cx, dx                          { Stringl„nge holen }
+              inc cx                              { + 1 wegen #0 }
 
-                pop ax
-                or ax,ax                            { Wenn clipboard nicht auf war }
-                je @end
-                mov ax,1708h                        { wieder schliessen }
-                int multiplex
+              mov ax,1703h                        {String Ins Clipboard schreiben...}
+              mov dx,cf_Oemtext                   {Als OEMTEXT}
+              int multiplex
+
+              pop ax
+              or ax,ax                            { Wenn clipboard nicht auf war }
+              je @end
+              mov ax,1708h                        { wieder schliessen }
+              int multiplex
   @end:
   end else
   begin
@@ -470,6 +485,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.5  2000/10/07 02:52:55  mk
+  - Fixes fuer Clipboard
+
   Revision 1.19.2.4  2000/10/03 15:55:12  mk
   - CLIPBOARD.TMP in CLIPBRD.TMP umbenannt
 
