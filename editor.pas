@@ -1084,7 +1084,7 @@ var ap  : pointer;
     ofs : integer;
     nxo : integer;
     ofs0,ofse : integer;
-{    cr  : boolean; }
+    cr  : boolean;
 begin
   if overwrite then MakeBak(fn,'BAK');
   assign(f,fn);
@@ -1095,7 +1095,7 @@ begin
   ap:=pstart.absatz;
   ofs0:=pstart.offset;
   ofse:=maxint;
-{  cr:=true; }
+  cr:=true;
   while assigned(ap) do begin
     if ap=pende.absatz then ofse:=pende.offset;
     with absatzp(ap)^ do
@@ -1112,15 +1112,15 @@ begin
           blockwrite(f,cont[ofs],min(nxo,ofse)-ofs);
           if nxo<min(size,ofse) then
           begin
-            blockwrite(f,spc[1],3); { cr:=true;}
-          end; {else
-            cr:=false; }
+            blockwrite(f,spc[1],3); cr:=true;
+          end else
+            cr:=false;
           ofs:=nxo;
         end;
       end else
       begin
         blockwrite(f,cont[ofs0],min(size,ofse)-ofs0);
-        { cr:=false;}
+        cr:=false;
         ofs0:=0;
       end;
     if ap=pende.absatz then ap:=nil
@@ -1129,7 +1129,7 @@ begin
       blockwrite(f,crlf[1],2); {cr:=true; }
       end;
     end;
-  if {not cr and} forcecr then
+  if not cr and forcecr then
     blockwrite(f,crlf[1],2);
   close(f);
   if ioresult<>0 then begin
@@ -2014,6 +2014,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.6  2000/11/01 10:08:14  mk
+  - fixes Bug #116197, last CRLLF in SaveBlock
+
   Revision 1.9.2.5  2000/10/25 06:22:17  mk
   - fixes Bug #116197, last CRLF in LoadBlock
 
