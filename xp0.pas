@@ -96,7 +96,7 @@ const
        BaseDir     = '.openxp/';     { Basisverzeichnis }
        ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
 {$ELSE}
-       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=';
+       ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=*?';
 {$ENDIF }
 
        PufferFile  = 'puffer';        { Z-Netz-Puffer }
@@ -1093,6 +1093,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.89  2000/09/24 04:46:18  mk
+  - Joker bei ValidDirCh hinzugefuegt
+
   Revision 1.88  2000/08/27 10:37:09  mk
   - UUZ ist jetzt intern
 
