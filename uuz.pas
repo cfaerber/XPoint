@@ -1839,6 +1839,7 @@ var p,i   : integer; { byte -> integer }
 
   function GetMsgid:string;
   begin
+    s0 := Trim(s0);
     RFCRemoveComment(s0);
     if firstchar(s0)='<' then delfirst(s0);
     if lastchar(s0)='>' then dellast(s0);
@@ -3428,6 +3429,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.19  2000/11/27 21:40:49  mk
+  RB:- Trim in GetMsgId hinzugefuegt
+
   Revision 1.35.2.18  2000/10/18 21:37:34  mk
   - Typo in F-TO gefixt
 
