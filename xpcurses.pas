@@ -91,11 +91,7 @@ const
    { these get initialized by StartCurses }
 
    { ESCSequenztable }
-   {$IFDEF Linux }
-     lastESCSeq = 103;
-   {$ELSE }
-     lastESCSeq = 93;
-   {$ENDIF }
+   lastESCSeq = 93;
    ncad = #27#27#27;  { already defined by ncurses }
 
    keyESCSeqs: array [0..lastESCSeq] of record
@@ -199,7 +195,7 @@ const
       (Sequenz: #27#91#53#59#53#126;    ncCode: 431; DosCode : #0#132), { Ctrl-PgUp }
       (Sequenz: #27#79#72;          ncCode: 432; DosCode : #0#71),   { Home on NetBSD }
       (Sequenz: #27#79#70;          ncCode: 433; DosCode : #0#79)    { End on NetBSD }
-      {$IFDEF Linux }
+(*      {$IFDEF Linux }
         ,
         (Sequenz: #27#91#49#59#53#67; ncCode: 434; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
         (Sequenz: #27#91#49#59#53#68; ncCode: 435; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
@@ -211,7 +207,7 @@ const
         (Sequenz: #27#79#53#68;       ncCode: 441; DosCode : #0#115),  { Ctrl+Cursor left on Linux }
         (Sequenz: #27#0#77;           ncCode: 442; DosCode : #0#116),  { Ctrl+Cursor right on Linux }
         (Sequenz: #27#0#79;           ncCode: 443; DosCode : #0#115)   { Ctrl+Cursor left on Linux }
-      {$ENDIF }
+      {$ENDIF } *)
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
@@ -1567,6 +1563,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.81  2003/09/06 22:29:30  mk
+  - removd new added keyboard codes due hangs with linux/netbios
+    we have to find another way to support this keycodes
+
   Revision 1.80  2003/09/06 17:44:20  mk
   - do not add Linux keycodes under NetBSD
 
