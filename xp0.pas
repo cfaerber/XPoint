@@ -584,11 +584,13 @@ type   textp  = ^text;
                   PPPMailInPass  : string[75];   { PPP Mail-Passwort incoming }
                   PPPMailInPort  : string[50];   { PPP Mail-Port     incoming }
                   PPPMailOutSrvr : string[160];  { PPP Mail-Server   outgoing }
+                  PPPMailFallback: string[8];    { PPP Fallback-Server (Mail) }
                   PPPMailOutEnv  : string[160];  { PPP Mail-Envelope outgoing }
                   PPPMailOutUser : string[160];  { PPP Mail-User     outgoing }
                   PPPMailOutPass : string[75];   { PPP Mail-Passwort outgoing }
                   PPPMailOutPort : string[50];   { PPP Mail-Port     outgoing }
                   PPPNewsSrvr    : string[160];  { PPP News-Server            }
+                  PPPNewsFallback: string[8];    { PPP Fallback-Server (News) }
                   PPPNewsUser    : string[160];  { PPP News-User              }
                   PPPNewsPass    : string[160];  { PPP News-Passwort          }
                   PPPNewsPort    : string[50];   { PPP News-Port              }
@@ -1211,6 +1213,14 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.44  2001/11/20 23:12:57  my
+  MY:- Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche_Server und
+       D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
+       siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In
+       den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
+       editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
+       abgelegt.
+
   Revision 1.54.2.43  2001/10/26 17:40:01  my
   MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.

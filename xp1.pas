@@ -134,6 +134,7 @@ procedure diabox(width,height:byte; const txt:string; var x,y:byte);
 procedure selbox(width,height:byte; const txt:string; var x,y:byte; hell:boolean);
 procedure listbox(width,height:byte; const txt:string);
 procedure listboxcol;
+procedure listbox2col;
 procedure utilbox(l,r,o,u:byte; const txt:string);
 procedure dialog(width,height:byte; const txt:string; var x,y:byte);
 procedure enddialog;
@@ -1417,6 +1418,18 @@ begin
     end;
 end;
 
+procedure Listbox2Col;
+var lc : listcol;
+begin
+  with lc do begin
+    coltext:=col.colsel2box;
+    colselbar:=col.colsel2bar;
+    colmarkline:=col.colsel2high;
+    colmarkbar:=col.colsel2bar and $f0 + col.colsel2high and $f;
+    setlistcol(lc);
+    end;
+end;
+
 procedure listbox(width,height:byte; const txt:string);
 var x,y : byte;
 begin
@@ -2285,6 +2298,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.29  2001/11/20 23:14:05  my
+  MY:- Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche_Server und
+       D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
+       siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In
+       den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
+       editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
+       abgelegt.
+
   Revision 1.48.2.28  2001/10/30 11:15:02  mk
   - JG: fixed Listdisplay, see <8Bj$$d0DkpB@ralle.post.rwth-aachen.de>
 
