@@ -42,6 +42,14 @@ Linux version [rpm]
 Linux-Version [tar.bz2]
 Linux version [tar.bz2]
 
+/openxp/snapshot/openxp-3.8.0-freebsd-<Date>.tar.bz2
+FreeBSD-Version [tar.bz2]
+FreeBSD version [tar.bz2]
+
+/openxp/snapshot/openxp-3.8.0-netbsd-<Date>.tar.bz2
+NetBSD-Version [tar.bz2]
+NetBSD version [tar.bz2]
+
 /openxp/snapshot/openxp-3.8.x-dos.rar
 DOS-Version [RAR]
 DOS version [RAR]
