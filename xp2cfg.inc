@@ -809,13 +809,13 @@ begin
   writeln(t,'SwapToEMS=',jnf(swaptoems));
   writeln(t,'SwapToXMS=',jnf(swaptoxms));
   if (OSType<>os_linux) then begin              { DOS-Einstellungen nicht veraendern! }
-    if fustr(temppath)<>fustr(ownpath) then     { FUStr wie UStr, wenn nicht UnixFS }
+    if fustr(temppath)<>fustr(ownpath+'TEMP\') then     { FUStr wie UStr, wenn nicht UnixFS }
       writeln(t,'TempDir=',temppath);
     if extractpath<>'' then
       writeln(t,'ExtractDir=',extractpath);
     if sendpath<>'' then
       writeln(t,'SendfileDir=',sendpath);
-    if fustr(logpath)<>fustr(ownpath) then
+    if fustr(logpath)<>fustr(ownpath+'LOG\') then
       writeln(t,'LogDir=',logpath);
     if fustr(filepath)<>ownpath+InfileDir then
       writeln(t,'FileDir=',filepath);
@@ -1695,6 +1695,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.14  2000/12/29 02:44:42  mk
+  - fixed another bug with temppath and logpath
+
   Revision 1.62.2.13  2000/12/20 18:46:59  mk
   - Schalter Binaernachrichten fuer ZC entfernt
 
