@@ -1,4 +1,4 @@
-(* $ID: $ *)
+(* $Id$ *)
 (* generated from IANA charset list -- do not edit *)
 
 function MimeCharsetCanonicalName(Name: String): String;
@@ -7,6 +7,8 @@ begin
 
 (* ===================================================================        *)
 (* CHARACTER SETS                                                             *)
+
+(* (last updated 2001 August 23)                                              *)
 
 (* These are the official names for character sets that may be used in        *)
 (* the Internet and may be referred to in Internet documentation.  These      *)
@@ -908,19 +910,23 @@ begin
 
 (* Name: ISO_8859-6-E                                       [RFC1556,IANA]    *)
 (* MIBenum: 81                                                                *)
-(* Source: RFC-1556                                                           *)
+(* Source: RFC1556                                                            *)
 (* Alias: csISO88596E                                                         *)
+(* Alias: ISO-8859-6-E (preferred MIME name)                                  *)
 
-  if name='ISO_8859-6-E'            then result :='ISO_8859-6-E'          else
-  if name='CSISO88596E'             then result :='ISO_8859-6-E'          else
+  if name='ISO_8859-6-E'            then result :='ISO-8859-6-E'          else
+  if name='CSISO88596E'             then result :='ISO-8859-6-E'          else
+  if name='ISO-8859-6-E'            then result :='ISO-8859-6-E'          else
 
 (* Name: ISO_8859-6-I                                       [RFC1556,IANA]    *)
 (* MIBenum: 82                                                                *)
-(* Source: RFC-1556                                                           *)
+(* Source: RFC1556                                                            *)
 (* Alias: csISO88596I                                                         *)
+(* Alias: ISO-8859-6-I (preferred MIME name)                                  *)
 
-  if name='ISO_8859-6-I'            then result :='ISO_8859-6-I'          else
-  if name='CSISO88596I'             then result :='ISO_8859-6-I'          else
+  if name='ISO_8859-6-I'            then result :='ISO-8859-6-I'          else
+  if name='CSISO88596I'             then result :='ISO-8859-6-I'          else
+  if name='ISO-8859-6-I'            then result :='ISO-8859-6-I'          else
 
 (* Name: ISO_8859-7:1987                            [RFC1947,RFC1345,KXS2]    *)
 (* MIBenum: 10                                                                *)
@@ -972,19 +978,23 @@ begin
 
 (* Name: ISO_8859-8-E                                  [RFC1556,Nussbacher]   *)
 (* MIBenum: 84                                                                *)
-(* Source: RFC-1556                                                           *)
+(* Source: RFC1556                                                            *)
 (* Alias: csISO88598E                                                         *)
+(* Alias: ISO-8859-8-E (preferred MIME name)                                  *)
 
-  if name='ISO_8859-8-E'            then result :='ISO_8859-8-E'          else
-  if name='CSISO88598E'             then result :='ISO_8859-8-E'          else
+  if name='ISO_8859-8-E'            then result :='ISO-8859-8-E'          else
+  if name='CSISO88598E'             then result :='ISO-8859-8-E'          else
+  if name='ISO-8859-8-E'            then result :='ISO-8859-8-E'          else
 
 (* Name: ISO_8859-8-I                                  [RFC1556,Nussbacher]   *)
 (* MIBenum: 85                                                                *)
-(* Source: RFC-1556                                                           *)
+(* Source: RFC1556                                                            *)
 (* Alias: csISO88598I                                                         *)
+(* Alias: ISO-8859-8-I (preferred MIME name)                                  *)
 
-  if name='ISO_8859-8-I'            then result :='ISO_8859-8-I'          else
-  if name='CSISO88598I'             then result :='ISO_8859-8-I'          else
+  if name='ISO_8859-8-I'            then result :='ISO-8859-8-I'          else
+  if name='CSISO88598I'             then result :='ISO-8859-8-I'          else
+  if name='ISO-8859-8-I'            then result :='ISO-8859-8-I'          else
 
 (* Name: CSN_369103                                          [RFC1345,KXS2]   *)
 (* MIBenum: 86                                                                *)
@@ -1886,9 +1896,10 @@ begin
 (* Name: EBCDIC-PT                                           [RFC1345,KXS2]   *)
 (* MIBenum: 2073                                                              *)
 (* Source: IBM 3270 Char Set Ref Ch 10, GA27-2837-9, April 1987               *)
-(* Alais: csEBCDICPT                                                          *)
+(* Alias: csEBCDICPT                                                          *)
 
   if name='EBCDIC-PT'               then result :='EBCDIC-PT'             else
+  if name='CSEBCDICPT'              then result :='EBCDIC-PT'             else
 
 (* Name: EBCDIC-ES                                           [RFC1345,KXS2]   *)
 (* MIBenum: 2074                                                              *)
@@ -2193,18 +2204,18 @@ begin
 (* Name: UTF-8                                                    [RFC2279]   *)
 (* MIBenum: 106                                                               *)
 (* Source: RFC 2279                                                           *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='UTF-8'                   then result :='UTF-8'                 else
 
-(* Name: iso-8859-13                                                          *)
+(* Name: ISO-8859-13                                                          *)
 (* MIBenum: 109                                                               *)
 (* Source: ISO See (...assignments/character-set-info/iso-8859-13)[Tumasonis]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
-  if name='ISO-8859-13'             then result :='iso-8859-13'           else
+  if name='ISO-8859-13'             then result :='ISO-8859-13'           else
 
-(* Name: iso-8859-14                                                          *)
+(* Name: ISO-8859-14                                                          *)
 (* MIBenum: 110                                                               *)
 (* Source: ISO See (...assignments/character-set-info/iso-8859-14) [Simonsen] *)
 (* Alias: iso-ir-199                                                          *)
@@ -2214,13 +2225,13 @@ begin
 (* Alias: iso-celtic                                                          *)
 (* Alias: l8                                                                  *)
 
-  if name='ISO-8859-14'             then result :='iso-8859-14'           else
-  if name='ISO-IR-199'              then result :='iso-8859-14'           else
-  if name='ISO_8859-14:1998'        then result :='iso-8859-14'           else
-  if name='ISO_8859-14'             then result :='iso-8859-14'           else
-  if name='LATIN8'                  then result :='iso-8859-14'           else
-  if name='ISO-CELTIC'              then result :='iso-8859-14'           else
-  if name='L8'                      then result :='iso-8859-14'           else
+  if name='ISO-8859-14'             then result :='ISO-8859-14'           else
+  if name='ISO-IR-199'              then result :='ISO-8859-14'           else
+  if name='ISO_8859-14:1998'        then result :='ISO-8859-14'           else
+  if name='ISO_8859-14'             then result :='ISO-8859-14'           else
+  if name='LATIN8'                  then result :='ISO-8859-14'           else
+  if name='ISO-CELTIC'              then result :='ISO-8859-14'           else
+  if name='L8'                      then result :='ISO-8859-14'           else
 
 (* Name: ISO-8859-15                                                          *)
 (* MIBenum: 111                                                               *)
@@ -2229,6 +2240,13 @@ begin
 
   if name='ISO-8859-15'             then result :='ISO-8859-15'           else
   if name='ISO_8859-15'             then result :='ISO-8859-15'           else
+
+(* Name: ISO-8859-16                                                          *)
+(* MIBenum: 112                                                               *)
+(* Source: ISO                                                                *)
+(* Alias:                                                                     *)
+
+  if name='ISO-8859-16'             then result :='ISO-8859-16'           else
 
 (* Name: JIS_Encoding                                                         *)
 (* MIBenum: 16                                                                *)
@@ -2569,63 +2587,63 @@ begin
 (* Name: windows-1250                                                         *)
 (* MIBenum: 2250                                                              *)
 (* Source: Microsoft  (see ../character-set-info/windows-1250) [Lazhintseva]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='WINDOWS-1250'            then result :='windows-1250'          else
 
 (* Name: windows-1251                                                         *)
 (* MIBenum: 2251                                                              *)
 (* Source: Microsoft  (see ../character-set-info/windows-1251) [Lazhintseva]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='WINDOWS-1251'            then result :='windows-1251'          else
 
 (* Name: windows-1252                                                         *)
 (* MIBenum: 2252                                                              *)
 (* Source: Microsoft  (see ../character-set-info/windows-1252)       [Wendt]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='WINDOWS-1252'            then result :='windows-1252'          else
 
 (* Name: windows-1253                                                         *)
 (* MIBenum: 2253                                                              *)
 (* Source: Microsoft  (see ../character-set-info/windows-1253) [Lazhintseva]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='WINDOWS-1253'            then result :='windows-1253'          else
 
 (* Name: windows-1254                                                         *)
 (* MIBenum: 2254                                                              *)
 (* Source: Microsoft  (see ../character-set-info/windows-1254) [Lazhintseva]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='WINDOWS-1254'            then result :='windows-1254'          else
 
 (* Name: windows-1255                                                         *)
 (* MIBenum: 2255                                                              *)
 (* Source: Microsoft  (see ../character-set-info/windows-1255) [Lazhintseva]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='WINDOWS-1255'            then result :='windows-1255'          else
 
 (* Name: windows-1256                                                         *)
 (* MIBenum: 2256                                                              *)
 (* Source: Microsoft  (see ../character-set-info/windows-1256) [Lazhintseva]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='WINDOWS-1256'            then result :='windows-1256'          else
 
 (* Name: windows-1257                                                         *)
 (* MIBenum: 2257                                                              *)
 (* Source: Microsoft  (see ../character-set-info/windows-1257) [Lazhintseva]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='WINDOWS-1257'            then result :='windows-1257'          else
 
 (* Name: windows-1258                                                         *)
 (* MIBenum: 2258                                                              *)
 (* Source: Microsoft  (see ../character-set-info/windows-1258) [Lazhintseva]  *)
-(* Alias:                                                                     *)
+(* Alias: None                                                                *)
 
   if name='WINDOWS-1258'            then result :='windows-1258'          else
 
@@ -2749,3 +2767,9 @@ end;
 (* [Yick] Nicky Yick, <cliac@itsd.gcn.gov.hk>, October 2000.                  *)
 
 (* []                                                                         *)
+
+
+
+
+
+
