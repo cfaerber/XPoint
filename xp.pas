@@ -43,6 +43,9 @@ uses xpx,
 {$ELSE }
      crt,
 {$ENDIF }
+{$IFDEF OS2 }
+     os2base,
+{$ENDIF }
      dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      database,databaso,maske,mouse,maus2,winxp,win2,montage,lister,archive,
      printerx,crc16,resource,stack,clip,eddef,editor,feiertag,
@@ -166,6 +169,9 @@ begin
     {$IFDEF BP }
     testfilehandles;
     {$ENDIF }
+    {$IFDEF OS2 }
+      DosSetMaxFH(255);
+    {$ENDIF }
     initdatabase;
     pwcnt:=0; { drei PW-Versuche, dann beenden }
     repeat
@@ -225,6 +231,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.27  2000/05/10 16:37:25  mk
+  - Filehandles fuer OS/2 setzen
+
   Revision 1.26  2000/05/06 15:57:04  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog
