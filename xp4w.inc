@@ -768,9 +768,7 @@ begin
       fn:=Readmsg_GetFilename;
       if not FileExists(fn) then
         FileAttach:=false
-      else
-      begin
-        if dbReadInt(mbase,'groesse')>4 then
+      else if dbReadInt(mbase,'groesse')>4 then
         begin
           pushhp(81);
           brk:=false;
@@ -778,12 +776,17 @@ begin
           pophp;
           if brk then goto ende0;
         end;
-        fn2:=fn;
-        typ:='B';
-        mpart_nr:=1;
       end;
-    end else
-    begin
+
+    // caution: both fn and fn2 will be deleted on exiting viewer
+    // if FileAttach=false!
+
+    if FileAttach then begin
+      fn2:=fn;
+      typ:='B';
+      mpart_nr:=1;
+      end
+    else begin
       fn:=TempS(dbReadInt(mbase,'msgsize')+5000);
       dbReadN(mbase,mb_typ,typ);
 
@@ -1611,6 +1614,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.73  2001/06/08 13:16:16  ma
+  - fixed: File attachments were deleted (!) on viewing message content
+
   Revision 1.72  2001/06/02 22:08:30  mk
   JG:- fixed last commit
 
