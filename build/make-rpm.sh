@@ -1,7 +1,7 @@
 #! /bin/sh
 # has to be called in main source dir for desired version
 cd build
-eval $(get_build_nr.pl)
+eval $(./get_build_nr.pl)
 mainversion=$OPENXP_MAINVER
 subversion=$OPENXP_SUBVER
 buildnr=$OPENXP_BUILD
