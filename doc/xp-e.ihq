@@ -3612,8 +3612,12 @@ POP3 protocol.
 
 But in the meantime some providers create a special
 header that contains this real envelope address.
-Usually the headers <<X-Envelope-To>> or <<Envelope-To>> are
-used for that and CrossPoint supports both of them.
+CrossPoint currently supports the following headers
+(with this priority):
+
+<<Envelope-To:
+<<X-Envelope-To:
+<<U-Delivered-To:
 
 If you enable this option CrossPoint uses the address
 in the envelope header rather than the address

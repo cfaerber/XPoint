@@ -5509,9 +5509,12 @@ POP3-Protokoll der Envelope i.d.R. nicht bertragen.
 Einige Mail-Provider sind aber inzwischen dazu ber-
 gegangen, auch beim POP3-Protokoll einen speziellen
 Header zu erzeugen, der die Envelope-Adresse enth„lt.
-Hierfr haben sich die Header <<X-Envelope-To>> und
-<<Envelope-To>> eingebrgert, die beide von CrossPoint
-untersttzt werden.
+CrossPoint untersttzt derzeit die folgenden Header
+(mit dieser Priorit„t):
+
+<<Envelope-To:
+<<X-Envelope-To:
+<<U-Delivered-To:
 
 Wenn Sie diese Option aktivieren, sorgt CrossPoint
 (genauer: der Nachrichtenkonvertierer UUZ) selbst
