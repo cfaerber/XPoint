@@ -440,19 +440,14 @@ begin
     end;
 
     Timer.Init; Timer.SetTimeout(5); iLine:=0;
-    SReadln(s);
     repeat
+      SReadln(s);
       inc(iLine);
       if Timer.Timeout then begin
         Output(mcVerbose,res_msg1, [msgNr,iLine]);
         Timer.SetTimeout(1);
         end;
-      if (s <> '') and (s[1] = '.') then
-        Message.Add(Copy(s, 2, MaxInt))
-      else
-        Message.Add(s);
-
-      SReadln(s);
+      Message.Add(s);
     until s = '.';
     Timer.Done;
 
@@ -542,6 +537,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2001/04/27 10:18:56  ma
+  - using "new" NNTP spool format
+
   Revision 1.23  2001/04/23 06:57:45  ml
   - NNTP-BoxPar for getting last X Mails
 
