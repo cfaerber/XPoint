@@ -8,10 +8,12 @@ Keine Hilfe verfgbar.
 @
 2
 <<     °°°°°°°°°°°°°°°°°°°°°   Online-Hilfe: Inhalt
-
+                                <<Stand: 2002-03-31
 
      [Hilfe zur Hilfe]              <<Open>> \\//@3
                                        //\\ <<XP>>
+     [Neueinrichtung & Einstieg]@59900
+                                   
      [Hotkeys]@4
 
      [Tastaturkonventionen]@10
@@ -23,6 +25,10 @@ Keine Hilfe verfgbar.
      [Bezugsquellen]@9
 
      [Lizenzbestimmungen]@6
+
+
+
+
 
 @
 3
@@ -174,16 +180,20 @@ verschiedene M”glichkeiten:
 6
 <<CrossPoint - Lizenzbestimmungen
 
-CrossPoint ist ein Shareware-Programm. Es ist weder
-kostenlos noch "frei", sondern muá nach Ablauf einer
-Testphase von maximal 30 Tagen (ab Datum der Erst-
-installation) kostenpflichtig registriert werden.
-W„hrend der Testphase drfen Sie das Programm unein-
-geschr„nkt nutzen.
+Dieses Version von OpenXP ist freie Software. Sie 
+k”nnen es unter den Bedingungen der GNU General 
+Public License, wie von der Free Software Foundation 
+herausgegeben, weitergeben und/oder modifizieren, 
+entweder unter Version 2 der Lizenz oder (wenn Sie 
+es wnschen) jeder sp„teren Version.
 
-N„heres zur Registrierung finden Sie in der beilie-
-genden Datei <<LIZENZ.DOC>> und unter dem Menpunkt
-/XPoint/Registrierung.
+Die Ver”ffentlichung dieses Programms erfolgt in 
+der Hoffnung, daá es Ihnen von Nutzen sein wird, aber 
+ohne jede Gew„hrleistung - auch ohne implizite 
+Gew„hrleistung der Marktreife oder der Eignung fr 
+einen bestimmten Zweck.
+
+Details finden Sie in der GNU General Public License.
 @
 7
 <<OpenXP - Kommandozeilen-Parameter
@@ -1038,7 +1048,7 @@ Brettnachrichten und Bretteinstellungen.
 
           Brett enth„lt nur zum aktiven Lesemodus
            passende Nachrichten.
-         ¯ Brett enth„lt sowohl zum aktiven Lesemodus
+         " Brett enth„lt sowohl zum aktiven Lesemodus
            passende als auch ungelesene Nachrichten.
          > Brett enth„lt ungelesene, aber keine auf
            den aktiven Lesemodus passenden Nachrich-
@@ -1435,9 +1445,9 @@ Folgende Funktionen stehen zur Verfgung:
 
 <<<Ctrl-S> >>schaltet die Datumsanzeige ein/aus.
 
-<<<Ctrl-N> >>schaltet bei ZConnect, RFC und MagicNET
-         zwischen Anzeige der "Realnames" und der
-         Useradressen ein/aus.
+<<<Ctrl-N> >>schaltet bei Zconnect und RFC zwischen 
+         Anzeige der "Realnames" und der Useradressen 
+         ein/aus.
 
    <<V>>     „ndert den Wiedervorlage-Status einer
          Nachricht.
@@ -1649,7 +1659,7 @@ von der Einstellung bei /Config/Optionen/Bedienung.
   zwischen Kommentaren auf die gleiche Nachricht.
 
 
-<<Bei nicht verketteten Nachrichten (QuickMail u.a.):
+<<Bei nicht verketteten Nachrichten:
 
 <<+>> springt zur nachfolgenden Nachricht.
 
@@ -1739,13 +1749,18 @@ Lesemodi gew„hlt werden:
 <<Heute>>     selektiert alle Nachrichten, die am heu-
           tigen Tag eingegangen sind.
 
-<<Datum>>     Hier k”nnen Sie selbst w„hlen, ab welchem
-          (Eingangs-)Datum die Nachrichten angezeigt
+<<Reorg.>>   Es werden alle Nachrichten angezeigt, die
+          seit der letzten Reorganisation eingegan-
+          gen sind.
+
+<<Datum/>>    Hier k”nnen Sie selbst w„hlen, ab welchem
+<<Zeit>>      (Eingangs-)Datum die Nachrichten angezeigt
           werden sollen.
 
-<<Zeit>>      Dies ist die Feinabstimmung zum Lesedatum.
-          Sie ist recht ntzlich, wenn Sie mehrere
-          Netcalls pro Tag durchfhren.
+          Durch die Eingabe einer Zeit kann die Ein-
+          stellung verfeinert werden, zum Beispiel 
+          falls Sie mehrere Netcalls pro Tag durch-
+          fhren.
 
 <<Sichern>>   Speichert den eingestellten Lesezeitpunkt
           als Zeitpunkt des letzten Netcalls. Wenn
@@ -1774,12 +1789,12 @@ W„hlen Sie mit den blichen Tasten das Anzeigeele-
 ment, dessen Farbe ge„ndert werden soll, mit <<<Enter> >>
 best„tigen Sie die Auswahl.
 
-Mit der Option ¯Default® werden die Standard-Farben
+Mit der Option "Default" werden die Standard-Farben
 von OpenXP gew„hlt; alle eigenen Farbeinstellun-
 gen gehen dabei verloren. Wahlweise k”nnten Sie auch
 die Datei XPOINT.COL l”schen.
 
-Mit ¯Sichern® werden die ge„nderten Farben in
+Mit "Sichern" werden die ge„nderten Farben in
 XPOINT.COL gesichert. Nicht gesicherte nderungen
 bleiben nur bis zum Beenden des Programms aktiv.
 @
@@ -2290,7 +2305,7 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
 
 <<Spezial-Funktionen:
 
-<<Parken>>   die Nachricht wird im Brett /¯Unversandt ge-
+<<Parken>>   die Nachricht wird im Brett /"Unversandt ge-
          parkt. Von dort kann sie mit /Nachricht/Wei-
          terleiten/Erneut oder <<<Alt-R> >>endgltig ver-
          sandt werden.
@@ -2357,13 +2372,311 @@ oder <</>>   Wird der aktuelle Eintrag gel”scht, kann mit
          dings noch nicht endgltig gel”scht, sondern
          liegt unter dem Namen LASTMSG im Tempor„rver-
          zeichnis. Wenn Sie /Config/Opt/Nachrichten
-         /../¯Unversandt eingeschaltet haben, wird
+         /../"Unversandt eingeschaltet haben, wird
          die Nachricht automatisch geparkt (s.o.).
 
 
 Wenn der Server in Klammern angezeigt wird, bedeutet
 dies, daá mehrere Nachrichten-Kopien ber unter-
 schiedliche Server verschickt werden.
+
+@
+275
+Diese Einstellung ist eine Erweiterung der vorherigen
+und kann nur mit ihr zusammen aktiviert werden:
+
+<<[x]>> -> Es wird eine fr alle Bretter gltige Brett-
+       schreibweise aktiviert: 
+
+       - Die ZConnect-blichen "<</>>" werden durch
+         Punkte ersetzt, fhrende "<</>>" entfallen.
+
+       - In PM-Brettern wird der erste "<</>>" durch "<<\@>>"
+         ersetzt.
+
+Bitte beachten Sie, daá diese Einstellung NUR die An-
+zeige betrifft; bei der Eingabe von Brettnamen und
+der Schnellsuche (einzuleiten mit "<</>>" oder "<<.>>" in
+der Brett-šbersicht) mssen Sie immer die ZConnect-
+Schreibweise verwenden.
+@
+276
+<<[x]>> -> Es wird eine Kombination aus dem jeweilig
+       aktiven Lesemodus und dem Ungelesen-Modus
+       erzeugt. Es gibt dann drei Varianten von
+       Brettmarkierungen:
+
+       <<>>  Brett enth„lt auf den aktiven Lesemodus
+          passende Nachrichten, die aber bereits
+          alle gelesen sind.
+
+       <<">>  Brett enth„lt ...
+
+          - Nachrichten, die sowohl auf den aktiven
+            Lesemodus passen als auch ungelesen sind,
+
+          - <<und/oder>> es enth„lt sowohl ungelesene
+            Nachrichten (unabh„ngig davon, ob sie auf
+            den aktiven Lesemodus passen oder nicht)
+            als auch Nachrichten, die auf den aktiven
+            Lesemodus passen (unabh„ngig davon, ob
+            sie gelesen sind oder nicht).
+
+       <<{026}>>  Brett enth„lt ungelesene, aber keine
+          auf den aktiven Lesemodus passenden
+          Nachrichten.
+
+       Im Lesemodus "Alles" wird die Brettmarkierung
+       <<>> zwecks besserer šbersichtlichkeit entfernt
+       (es w„ren sonst <<alle>> Bretter mit <<>> markiert).
+       Bretter mit ungelesenen Nachrichten werden je-
+       doch weiterhin mit der Markierung <<">> versehen.
+       Im kombinierten Ungelesen-Modus sind also die
+       Lesemodi "Alles" und "Ungelesen" identisch.
+
+<<[ ]>> -> XP versieht nur die Bretter mit einer Mar-
+       kierung (<<>>), die auf den aktiven Lesemodus
+       passende Nachrichten enthalten.
+
+       Im Lesemodus "Alles" wird die Brettmarkierung
+       <<>> zwecks besserer šbersichtlichkeit entfernt
+       (es w„ren sonst <<alle>> Bretter mit <<>> markiert).
+
+@
+258
+<<Nachrichten-Optionen / Empf„nger-Auswahlliste
+
+<<ZConnect / RFC:
+
+CrossPoint kann beim Beantworten einer PM (Mail) mit
+mehreren Empf„ngern eine Auswahlliste der m”glichen
+Empf„nger anzeigen. Hier legen Sie fest, ob und wann
+diese Empf„nger-Auswahlliste erscheinen soll.
+
+<<immer>>            Immer eben. :-) Diese Option ist
+                 normalerweise nicht sinnvoll.
+
+<<Kopienempf.>>      Wenn der Fall "<<Kopienempf„nger>>"
+<<+ Antwort-an>>     und/oder der Fall "<<Antwort-an>>"
+                 zutrifft. N„heres dazu erfahren Sie
+                 bei den Erl„uterungen zu den jewei-
+                 ligen Einzeloptionen.
+
+<<Kopienempf„nger>>  Wenn die beantwortete Nachricht
+                 mehrere Empf„nger enth„lt. Hierbei
+                 wertet XP die ZConnect-Header <<EMP>>
+                 (Empf„nger), <<KOP>> (Kopienempf„nger)
+                 und <<OEM>> (Originalempf„nger) aus.
+
+                 Mit dieser Option stellt XP Ihnen
+                 eine echte "<<Reply-To-All>>"-Funktion
+                 zur Verfgung, also das automatische
+                 Senden einer Antwort an den Absender
+                 und *alle* Empf„nger einer Mail
+                 *gleichzeitig*.
+                 Siehe auch: [Reply-To-All] @3000
+
+                 Die Auswahlliste wird selbst bei
+                 mehreren Empf„ngern jedoch *nicht*
+                 angezeigt, wenn nach Abzug von
+                 doppelten, ungltigen und 'eigenen'
+                 Adressen (letztere werden aus allen
+                 eingerichteten RFC- und ZConnect-
+                 Boxen ermittelt) auáer dem Absender
+                 (<<ABS>>) keine weitere 'reply-f„hige'
+                 Adresse brigbleibt.
+
+<<Antwort-an>>       Wenn die beantwortete Nachricht
+                 einen "Antwort-an"-Header (RFC:
+                 "Reply-To") enth„lt. Sie k”nnen
+                 dann zwischen der Absender- und der
+                 Antwort-an-Adresse w„hlen.
+
+<<Hinweis>>: Unabh„ngig davon, welche der obigen Optionen
+Sie w„hlen - die Auswahlliste wird immer angezeigt,
+wenn ein Original-Absender (<<OAB>>) oder ein Weiterleit-
+Absender (<<WAB>>) vorhanden ist.
+
+<<nie>>              Nie eben (auch nicht bei Original-
+                 oder Weiterleit-Absendern).
+
+<<benutzerdefiniert>>  Diese Einstellung k”nnen Sie zwar
+                 nicht mit <<<F2> >> ausw„hlen, aber
+                 dennoch nutzen, indem Sie eine be-
+                 liebige Kombination der folgenden
+                 Werte addieren und manuell in der
+                 Datei <<XPOINT.CFG>> hinter dem Bezeich-
+                 ner "<<RTA-Mode=>>" eintragen:
+
+<<RTA-Mode=0>>   =>  Entspricht der Einstellung <<nie>>.
+<<RTA-Mode=1>>   =>  Dann, wenn Original- (OAB) oder Wei
+                 leit-Absender (WAB) vorhanden ist.
+<<RTA-Mode=2>>   =>  Dann, wenn "Antwort-an"-Header
+                 (Reply-To) vorhanden ist.
+<<RTA-Mode=4>>   =>  Dann, wenn Adressen in einem der
+                 Header EMP (Empf„nger), OEM (Origi-
+                 nal-Empf„nger) oder KOP (Kopienemp-
+                 f„nger) vorhanden sind, die nicht
+                 eigene sind.
+<<RTA-Mode=8>>   =>  Dann, wenn Adressen in einem der
+                 Header EMP (Empf„nger), OEM (Origi-
+                 nal-Empf„nger) oder KOP (Kopienemp-
+                 f„nger) vorhanden sind, die nicht
+                 eigene sind und gleichzeitig der Ab
+                 sender (ABS) ebenfalls keine eigene
+                 Adresse ist.
+<<RTA-Mode=64>>  =>  Entspricht der Einstellung <<immer>>;
+                 die Auswahlm”glichkeit "alle" wird
+                 in der Empf„nger-Auswahlliste nicht
+                 angeboten.
+
+Bei einem "RTA-Mode" von 3 oder kleiner werden keine
+Adressen aus OEM- und KOP-Headern angezeigt.
+
+<<Beispiele:>>
+----------
+
+Die Einstellung "<<Kopienempf. + Antwort-an>>" ist also
+eine Kombination aus den RTA-Modi 1, 2, 4 und 8,
+demzufolge steht bei Auswahl dieser Einstellung in
+XPOINT.CFG dann der Wert "<<RTA-Mode=15>>".
+
+Wenn Sie von diesem Wert die Zahl 1 abziehen und dort
+"<<RTA-Mode=14>>" eintragen, wrde die Empf„nger-Auswahl-
+liste dann nicht mehr erscheinen, wenn ein OAB- oder
+WAB-Header vorhanden ist (und es auch sonst keinen
+Grund gibt, warum sie erscheinen sollte).
+
+Es sind alle Kombinationen m”glich, aber nicht alle
+Kombinationen ergeben Sinn: 64 + 1 ist z.B. sinnlos,
+64 + 8 kann aber durchaus Sinn ergeben.
+
+Siehe auch: [Weitere spezielle Einstellungen] @59999
+
+@
+3000
+
+W„hlen Sie hier den/die Empf„nger aus. Dafr stehen
+Ihnen je nach Konstellation alle oder ein Teil der
+folgenden Funktionen zur Verfgung:
+
+
+<<1>>. Sie w„hlen "<<alle>> (ohne eigene und ohne markierte
+   Adressen)". Das ist ein sog. "<<Reply-To-All>>" und
+   eigentlich selbsterkl„rend - dennoch ein paar
+   zus„tzliche Hinweise, welche Regeln bei dieser
+   Funktion gelten:
+
+   a) Die Mail wird an <<alle>> in der Liste aufgefhrten
+      Adressen versandt, <<auáer>>:
+      - an von Ihnen markierte und
+      - an Ihre eigenen Adressen.
+        "Eigene Adressen" heiát: alle ZConnect- und
+        RFC-Adressen, die aus den von Ihnen einge-
+        richteten Serverboxen ermittelt werden 
+        k”nnen. Dabei werden auch Vertreteradressen 
+        und Schalter wie 
+        "Absender Username\@Boxname.Serverdomain"
+        bei /Edit/Boxen/Edit/<Netztyp> bercksichtigt.
+
+   b) Wenn eine Reply-To-Adresse ("Antwort-an") in
+      der Auswahlliste vorhanden ist, wird diese
+      *statt* der als "Absender" aufgefhrten Adresse
+      in die Sendeliste bernommen.
+
+   c) Ein Original- (OAB) oder Weiterleit-Absender
+      (WAB) wird nie in die Sendeliste bernommen.
+
+   Alle Adressen, die bei Auswahl der Funktion
+   "<<alle>> (...)" unter Anwendung dieser Regeln in
+   die Sendeliste bernommen wrden, sind mit dem
+   Zeichen "<<ø>>" zu Beginn des jeweiligen Eintrags
+   gekennzeichnet.
+
+   Die Auswahl "<<alle>> (...)" steht nur zur Verfgung,
+   wenn nach Anwendung der obigen Filterregeln ber-
+   haupt noch weitere 'reply-f„hige' Adressen vor-
+   handen sind.
+
+ Siehe auch: Spezielle Einstellungen ##MS##
+
+
+<<2>>. Sie w„hlen "<<markierte>>". Diese Funktion tut ohne
+   jegliche weitere Prfung genau das: Sie erstellt
+   eine Nachricht an alle markierten Adressen. :-)
+   Damit k”nnen Sie auch an die Adressen antworten,
+   die bei der Auswahl "alle (...)" automatisch
+   gefiltert werden (eigene Adressen, Absender bei
+   'Reply-To', Weiterleit-Absender) - sie mssen
+   eben nur markiert sein.
+
+   Die Auswahl "<<markierte>>" steht immer zur Verfgung.
+
+
+Fr beide Funktionen ("<<alle>> (...)" und "<<markierte>>")
+gilt: Mit <<<Space> >> (Leertaste) werden einzelne, mit
+<<<Ctrl-A> >> alle Adressen markiert. <<<Ctrl-E> >> hebt alle
+Markierungen wieder auf.
+
+
+<<3>>. Sie w„hlen mit den Cursortasten einen Empf„nger
+   aus. Die Nachricht wird ohne jede Prfung an den
+   ausgew„hlten Empf„nger gesendet.
+
+
+Ihre Auswahl darf maximal 126 Empf„nger umfassen. Die
+Auswahl ist jeweils mit <<<Enter> >> zu best„tigen, der
+Dialog kann mit <<<Esc> >> verlassen werden.
+
+Noch nicht in der User-Datenbank vorhandene Adressen
+werden in der Empf„ngerliste in Klammern <<(>>...<<)>> ange-
+zeigt und automatisch angelegt. Per Rckfrage durch
+XP haben Sie dabei die M”glichkeit, entweder allen
+neuen Usern dieselbe oder jedem User einzeln eine
+
+Serverbox zuzuweisen. XP schl„gt Ihnen hier zun„chst
+die Serverbox des Brettes vor, in dem sich die beant-
+wortete Nachricht befindet. Sie k”nnen diesen Vor-
+schlag bernehmen oder fr alle User (und fr jeden
+einzelnen sowieso) eine andere Serverbox ausw„hlen.
+
+Beim Aufbau der Empf„nger-Auswahlliste geht XP wie
+folgt vor:
+
+ş Ungltige Adressen (dem Format <<User>>\@<<Domain>>.<<TLD>>
+  nicht entsprechend) werden verworfen und nicht
+  angezeigt;
+
+ş In den Nachrichten-Headern vorhandene doppelte
+  Adressen ('Dupes') werden gefiltert;
+
+ş In den User-Datens„tzen eingetragene Vertreter-
+  Adressen werden bercksichtigt und mit einem "<<*>>"
+  zu Beginn der Adresse kenntlich gemacht. Sollten
+  sich durch das Ersetzen einer Adresse durch ihre
+  Vertreteradresse wiederum Dupes ergeben (z.B. wenn
+  mehrere Adressen auf dieselbe Vertreteradresse
+  zeigen), werden auch diese Dupes gefiltert.
+
+Alle danach noch verbleibenden Adressen werden in der
+Auswahlliste angezeigt.
+
+
+<<Empf„ngerlisten-Anzeige
+
+ øAbsender           :  *theo1@tester.de
+  Empf„nger          :  (theo2@tester.de)
+ øOriginal-Empf„nger :   theo3@tester.de
+ øKopien-Empf„nger   :   theo4@tester.de
+ øKopien-Empf„nger   : *(theo5@tester.de)
+ ³³                    ³³³
+ ³³                    ³³ÀÄÄÄÄÄÄ Empf„nger
+ ³³                    ³ÃÄÄ () = Empf„nger nicht
+ ³³                    ³³        in User-Datenbank
+ ³³                    ÀÁÄÄÄ * = Vertreteradresse
+ ³ÀÄÄÄÄÄ Eigenschaft gem„á ZConnect-Header
+ ÀÄÄ ? = User wird bei Auswahl "alle (...)"
+         in Sendeliste bernommen
 
 @
 17932
@@ -2954,9 +3267,7 @@ Auswahl mit <<<Esc> >>ab.
 Dies ist der <<Pointname>> ("Nodename"), den Sie mit
 Ihren Sysop vereinbart haben. Er ist nicht zu ver-
 wechseln mit dem <<Usernamen>>, unter dem Ihre Nachrich-
-ten im Netz erscheinen (ausgenommen bei QuickMail,
-GS-Mailbox und bei MagicNET-Namenpoints; dort schrei-
-ben Sie auch im Netz unter Ihrem Pointnamen).
+ten im Netz erscheinen.
 @
 141
 <<MausNet:>>
@@ -2989,10 +3300,6 @@ und die Nummer muá sich immer von derjenigen des an-
 gerufenen Systems unterscheiden. Da Boxprogramm-
 Seriennummern immer gr”áer als 0 sind, sollte die
 Angabe von "0000" eigentlich immer funktionieren.
-
-<<MagicNET>>
-
-Hier sollte "2200" stehen.
 
 @
 144
@@ -3161,12 +3468,6 @@ Tragen Sie den o.g. copy-Befehl ein.
 L”schen Sie die UploadPacker-Einstellung, um Ihre
 Nachrichtenpakete ungepackt zur Box zu bertragen.
 
-<<MagicNET
-
-Falls Sie bei einer AlphaBox pollen, mssen Sie hier
-einen ARC-Packer (PKARC o.„.) eintragen. Andere
-Packformate werden nicht untersttzt!
-
 <<Batchdatei
 
 Statt des Packers k”nnen Sie auch eine Batchdatei
@@ -3212,12 +3513,6 @@ Der "Download-Entpacker" bei ungepackter šbertragung
 sieht so aus:
 
 copy $DOWNFILE $PUFFER
-
-<<MagicNET
-
-Falls Sie bei einer AlphaBox pollen, mssen Sie hier
-einen ARC-Entpacker eintragen, z.B. PKXARC. Andere
-Packformate werden nicht untersttzt!
 
 @
 148
@@ -3405,13 +3700,7 @@ Geben Sie hier Ihre zweistellige Pointnummer ein.
 @
 8005
 Dies ist der Name, mit dem beim Login das Netcall-
-Modul der Box gestartet wird. Fr QuickMail-Boxen
-sollte hier immer <<NET410>> stehen, fr GS-Mailbox
-je nach Version <<NET410>> oder <<NETCALL>>.
-
-Einige QuickMail-Boxen bieten zus„tzliche Features
-an, die ber andere Loginnamen ausgel”st werden.
-N„heres dazu erfahren Sie bei Ihrem Sysop.
+Modul der Box gestartet wird. 
 @
 8006
 Hier k”nnen Sie w„hlen, ob die Verbindung ber ein
@@ -4072,7 +4361,7 @@ gestartet.
 @
 184
 <<[x]>> -> Bei SysopMode-Netzanrufen wird ein Netzanruf-
-       bericht im Brett /¯Netzanruf erzeugt.
+       bericht im Brett /"Netzanruf erzeugt.
 
 <<[ ]>> -> Bei SysopMode-Netzanrufen wird im Gegensatz
        zu "telefonischen" Netzanrufen *kein* Netz-
@@ -4168,7 +4457,7 @@ nicht mehr eingelesen werden.
 ş  Das Ganze funktioniert auch im Sysop-Mode.
 
 ş  Zum Filtern von Fremdformat-Paketen im Original-
-   zustand (Maustausch, MagicNET etc.) sollten Sie
+   zustand (Maustausch etc.) sollten Sie
    das Filterprogramm per Batchdatei im Entpacker-
    Eingabefeld einbinden.
 
@@ -4365,14 +4654,6 @@ zu verwenden:
 
 <<Fido>>        Areafix oder Areamgr, je nach Box
 
-<<MagicNET>>    MAF (evtl. auch SYS-MAN)
-
-<<GS-Mailbox>>  SYSTEM
-
-<<QuickMail>>   tragen Sie den Namen des Sysops ein.
-            Einen automatischen Brettbestelldienst
-            gibt es nicht.
-
 Im Zweifelsfall fragen Sie bitte Ihren Sysop.
 
 @
@@ -4424,14 +4705,6 @@ z.B. "2:345/678\@fidonet".
 
 (<<Technischer Hinweis:>> Die Fido-Domain wird nur in
 der Message-ID verwendet.)
-
-<<MagicNET>>
-
-Geben Sie die im jeweiligen Netz bliche Phantasie-
-Domain ein (normalerweise ".magic" bzw. ".pro").
-
-(<<Technischer Hinweis:>> Die MagicNET-Domain wird nur
-in der Message-ID verwendet.)
 
 @
 40001
@@ -6391,7 +6664,7 @@ ge andere Zwecke einsetzen.
 Intern    Gruppe fr OpenXP-Interne Bretter. Nach-
           richten in diesen Brettern werden NICHT
           verschickt.
-          Beispiel:  /¯Netzanruf
+          Beispiel:  /"Netzanruf
 
 Lokal     Gruppe fr lokale Bretter innerhalb Ihrer
           Serverbox. Nachrichten an diese Bretter
@@ -6854,9 +7127,10 @@ Trennzeile zu Beginn (einstellbar bei /Config/Anzei-
 ge/Kopf) oder das Entfernen der Trennzeile am Ende.
 @
 236
-Eigentlich drfen Nachrichten im Z-Netz oder im
-MagicNET, die keine spezielle Zeichensatzkennzeich-
-nung besitzen, nur Umlaute im IBM-Format enthalten.
+Eigentlich drfen Nachrichten im Z-Netz die keine 
+spezielle Zeichensatzkennzeichnung besitzen, nur 
+Umlaute im IBM-Format enthalten.
+
 Leider halten sich viele Programmierer von nicht-
 IBM-Rechnern nicht an diesen Standard, wodurch oft
 unlesbare "Amiga-Sonderzeichen" (Sonderzeichen nach
@@ -7031,7 +7305,7 @@ Einstellung ohne Bedeutung.
 @
 248
 <<[x]>> -> Nicht abgeschickte Nachrichten (<<<Esc> >>im Sen-
-       defenster) werden im Brett /¯Unversandt ge-
+       defenster) werden im Brett /"Unversandt ge-
        parkt und k”nnen dann mit /Nachricht/Weiter-
        leiten/Erneut reaktiviert werden. Dies ent-
        spricht der Funktion "Parken" im Sendefenster.
@@ -7358,7 +7632,7 @@ Diese Option kann auch im Nachrichtenfenster mit
 <<<Ctrl-S> >>umgeschaltet werden.
 @
 841
-<<Z-Netz alt, MagicNET, QM/GS-Box:
+<<Z-Netz alt:
 
 Hier k”nnen Sie einstellen, wie die Absenderadressen
 von Nachrichten angezeigt werden sollen.
@@ -7384,7 +7658,7 @@ Diese Einstellung kann auch im Kommentarbaum mit <<A>>
 nicht-permanent ge„ndert werden.
 @
 843
-<<ZConnect / MagicNET:>>
+<<ZConnect:>>
 
 <<[x]>> -> Bei der Nachrichtenanzeige innerhalb von
        Brettern wird statt der Absenderadresse der
@@ -8240,8 +8514,7 @@ sind *nicht* innerhalb von CrossTerm verfgbar:
               NAME weglassen, wird er jeweils abge-
               fragt. Die Angabe des Realnames (in
               Klammern) ist optional und nur bei
-              ZConnect, RFC/UUCP und MagicNET rele-
-              vant.
+              Zconnect und RFC/UUCP relevant.
 
 @
 442
@@ -8337,7 +8610,7 @@ tigt.
        tet.
 @
 454
-<<[x]>> -> Die Statistik wird in das Brett /¯Statistik
+<<[x]>> -> Die Statistik wird in das Brett /"Statistik
        geschrieben.
 
 <<[ ]>> -> Die Statistik wird im Lister angezeigt.
@@ -8637,7 +8910,7 @@ keine Bin„rnachrichten zu erzeugen, um eine zus„tz-
 liche Bin„r-nach-ASCII-Codierung in Netzen ohne
 Bin„rnachrichten zu verhindern (z.B. im Internet
 oder im MausNet) oder um die Verwendung in Netzen
-ohne Bin„rnachrichten (Fido, MagicNET) zu erm”gli-
+ohne Bin„rnachrichten (z.B. Fido) zu erm”gli-
 chen.
 
 Was Sie dabei beachten sollten:
@@ -9260,8 +9533,7 @@ Kapitel "Erste Hilfe bei Datenverlust", unter dem
 Stichwort "Netcall verschwunden?".
 
 <<Hinweis:>> Bei MausTausch heiáen die Dateien OUTFILE,
-nicht CALLED, im MagicNET heiáen sie OUT, und bei
-QuickMail/GS-Mailbox heiáen sie PUFFER.
+nicht CALLED.
 @
 564
 <<[x]>> -> Eingegehende Nachrichtenpakete werden nach
@@ -9659,14 +9931,9 @@ diese (z.B. mit <<<Del> >>oder der Leertaste).
 Normalerweise wird jede von Ihnen verschickte Nach-
 richt mit einer eindeutigen Kennung versehen, der
 sogenannten Message-ID.
-
-Im ursprnglichen MagicNET-Format sind keine Message-
-IDs vorgesehen, aber inzwischen werden sie im Seven-
-NET und wohl auch im MagicNET verwendet. Sie sollten
-den Schalter normalerweise eingeschaltet lassen.
 @
 651
-Der Name des Magic-kompatiblen Netzes.
+Der Name des Magic-kompatiblen Netzes. (obsolete)
 @
 652
 Unter dieser Bretthierarchie werden die Nachrichten-
@@ -9680,10 +9947,6 @@ Net).
 
 Beispiele:
 
-/MAGIC/  ->   /MAGIC/Allgemeines
-              /MAGIC/Dfue
-              /MAGIC/Virenforum
-
 /        ->   /Allgemeines
               /Dfue
               /Virenforum
@@ -9695,9 +9958,6 @@ Beispiele:
 <<Achtung!>> Wenn Sie die Bretthierarchie „ndern, <<mssen>>
 Sie anschlieáend auch den Namen ALLER zugeh”rigen
 Bretter „ndern!
-
-Im MagicNET werden nderungen erst wirksam, nachdem
-Sie eine neue Brettliste eingelesen haben.
 
 @
 653
@@ -9799,25 +10059,31 @@ mssen Sie diesen Schalter aktivieren.
 Hier wird eingestellt, wie und in welchem Format die
 Daten von und zur Box bertragen werden:
 
+<<RFC/Client>>  Boxentyp der die [RFC/Client]@30100 
+            Schnittstelle verwendet.
+
+<<POP3/SMTP>>   wird sehr h„ufig fr Email versenden
+            und empfangen benutzt.
+
+<<NNTP>>        Boxentyp, wenn Sie Ihre Newsgruppen
+            an einem Newsserver abholen wie z.B.
+            news.cis.dfn.de.
+
+<<RFC/UUCP>>    fr Usenet, SubNet etc.
+
+<<Fido>>        fr Fido und kompatible Netze
+
 <<ZConnect>>    (= "JANUS")  fr das Z-Netz
+
+------ derzeit nicht implementiert ------
 
 <<Z-Netz alt>>  fr Z-Netz-Systeme, die das neue ZCon-
             nect-Format noch nicht untersttzen
 
-<<RFC/UUCP>>    fr Usenet, SubNet etc.
-
 <<MausTausch>>  fr das Maus-Netz
-
-<<Fido>>        fr Fido und kompatible Netze
 
 <<QWK>>         hiermit wird OpenXP zum QWK-Offline-
             Reader
-
-<<MagicNET>>    fr MagicNET und LightNET
-
-<<QuickMail>>   fr QuickNet, PhantomNet und Kompatible
-
-<<GS-Mailbox>>  fr verschiedene GS-Box-Netze
 
 @
 670
@@ -9849,9 +10115,6 @@ einen Typ mit <<<F2> >>aus. M”gliche Eingaben sind:
 <<MausTausch>>  Maus-Netz
 <<Fido>>        FidoNet und Kompatible
 <<QWK>>         fr Boxen mit QWK-Schnittstelle
-<<MagicNET>>    MagicNET oder LightNET
-<<QuickMail>>   QuickNet, PhantomNet und Kompatible
-<<GS-Mailbox>>  diverse GS-Box-Netze
 @
 682
 Ihr Username in der angegebenen Box.
@@ -9997,7 +10260,6 @@ Geben Sie die <<exakte>> Empf„ngeradresse ein, also
 
       /BRETTNAME
 oder  USER\@BOX.ZER             (Z-Netz alt)
-oder  USER\@SYSTEM              (MagicNET/QuickMail)
 oder  Vorname Nachname \@ BOX   (MausNet)
 oder  Vorname Nachname \@ zone:netz/node[.p]  (Fido)
 @
@@ -10241,7 +10503,7 @@ mit gleichem Netztyp, oder w„hlen Sie eine Box mit
        bei /Config/Optionen/Nachr. aktiviert sein.
 @
 770
-<<[x]>> -> Die Statistik wird in das Brett /¯Statistik
+<<[x]>> -> Die Statistik wird in das Brett /"Statistik
        geschrieben.
 
 <<[ ]>> -> Die Statistik wird im Lister angezeigt.
@@ -10410,7 +10672,7 @@ sollten Sie auch die Adreá-Groáwandlung unter
 795
 <<[x]>> -> OpenXP fordert bei jedem Netzanruf die
        Bearbeitungsstatus Ihrer PMs an und legt
-       alle ge„nderten Status im Brett /¯Mausstatus
+       alle ge„nderten Status im Brett /"Mausstatus
        ab. Dadurch haben Sie immer einen šberblick
        darber, welche Nachrichten angekommen sind
        und welche noch nicht.
@@ -11282,8 +11544,7 @@ typen, die maximale Gr”áe von privaten Nachrichten
 einstellen. Die linke Spalte gilt fr Netz-Nachrich-
 ten, die rechte Spalte fr lokale Nachrichten, die
 Sie an User innerhalb Ihrer Serverbox verschicken.
-Geben Sie 0 ein, falls kein Gr”áenlimit gilt. "QM/GS"
-steht fr "QuickMail/GS-Mailbox".
+Geben Sie 0 ein, falls kein Gr”áenlimit gilt. 
 
 Diese Einstellung dient nur zur Kontrolle - bei
 gr”áeren Nachrichten erscheint ein entsprechender
@@ -12609,12 +12870,12 @@ Sollten Sie stattdessen jedoch den Netztyp "RFC/UUCP"
 verwenden, ben”tigen Sie hierfr die gesonderte
 RFC/UUCP-Registrierung.
 
-Falls Sie das Programm im Z-Netz, Fido-Net, MausNet,
-MagicNET o.„. einsetzen m”chten, ben”tigen Sie eine
-Registrierung fr "Fido, Z-Netz, MausNet etc.". Fr
-einen Einsatz in <<allen>> Arten von Netzen ist nur dann
-eine Komplettregistrierung erforderlich, wenn Sie
-fr Usenet/Internet den Netztyp "RFC/UUCP" verwenden
+Falls Sie das Programm im Z-Netz, Fido-Net, MausNet
+o.„. einsetzen m”chten, ben”tigen Sie ein Registrierung 
+fr "Fido, Z-Netz, MausNet etc.". Fr einen Einsatz 
+in <<allen>> Arten von Netzen ist nur dann eine 
+Komplettregistrierung erforderlich, wenn Sie fr 
+Usenet/Internet den Netztyp "RFC/UUCP" verwenden
 (siehe oben).
 
 Mit einer Update-Registrierung k”nnen Sie Ihre
@@ -12973,6 +13234,16 @@ Mit EXIT kommen Sie von DOS wieder zurck zu OpenXP.
 
 Beachten Sie, daá innerhalb der DOS-Shell <<keine re-
 <<sidenten Programme>> aufgerufen werden drfen!
+@
+10107
+<<OpenXP / Telnet
+
+OpenXP enth„lt die M”glichkeit sich mit einem Server 
+per Telnet zu verbinden. Dies kann zum Beispiel sinn-
+voll sein, um mal kurz nachzuschauen ob eine Datei
+auf dem Server vorhanden ist, wie viel Speicherplatz
+in Benutzung ist und anderes mehr.
+
 @
 10108
 <<OpenXP / Beenden
@@ -13728,15 +13999,12 @@ und User hervorgehoben angezeigt.
 11002
 <<OpenXP / Import / Fremdformat
 
-Hier k”nnen Sie beliebige Fido-(PKT)-, MagicNET-,
-QuickMail-, QWK- oder MausTausch-(OUTFILE)-Pakete
-einlesen. OpenXP konvertiert das Nachrichtenformat
-automatisch. Es muá eine Serverbox eingetragen sein
-und angegeben werden, deren Netztyp dem einzulesen-
-den Nachrichtenformat entspricht.
-
-Zum korrekten Einlesen von MagicNET-Paketen muá eine
-Brettliste fr die betreffende Box vorhanden sein.
+Hier k”nnen Sie beliebige Fido-(PKT)-, QWK- oder 
+MausTausch-(OUTFILE)-Pakete einlesen. OpenXP kon-
+vertiert das Nachrichtenformat automatisch. Es muá 
+eine Serverbox eingetragen sein und angegeben wer-
+den, deren Netztyp dem einzulesenden Nachrichten-
+format entspricht.
 
 Das Einlesen von RFC/UUCP-Daten ist ber diesen
 Menpunkt z.Zt. nicht m”glich. Gehen Sie stattdessen
@@ -14038,10 +14306,8 @@ laufender Verbindung verlassen und mit OpenXP einen
 Netcall durchfhren, um die angebrochene Gebhren-
 einheit auszunutzen.
 
-Fr einen Relogin bei Zerberus oder QuickMail muá
-die Box sich bei der Anzeige "Username:" befinden,
-im MagicNET bei der Anzeige "(8-N-1) .... >", bei
-einem MausNet-Relogin im Hauptmen.
+Fr einen Relogin bei Zerberus muá die Box sich bei 
+der Anzeige "Username:" befinden.
 
 Bei Fido-Boxen ist ein Relogin aus technischen Grn-
 den unm”glich.
@@ -14074,19 +14340,78 @@ Client muá diese dann ggf. selbst„ndig erkennen.
 
 @
 11508
+<<Netcall / Spezial
+
+Hiermit k”nnen Sie Ihre Netcalls individuell steuern
+und eine beliebige Anzahl von Boxen in beliebiger
+Reihenfolge anrufen.
+
+Es stehen 20 verschiedene Eintr„ge zur Verfgung, von
+denen jeder die Namen der Boxen enth„lt, fr die ein
+Netcall durchgefhrt werden soll. Der jeweilige
+Eintrag wird mit <F2> ausgew„hlt (Sie k”nnen aber
+auch Boxnamen manuell eingeben). Leere Listeneintr„ge
+werden bei der Auswahl automatisch ausgeblendet.
+
+Die hierfr notwendige Netcall-Liste (NETCALL.DAT)
+k”nnen Sie mit dem Menpunkt /Netcall/Spezial-Liste
+erstellen und editieren.
+
+Bitte beachten Sie, daá bei Auswahl eines Eintrags
+mit <F2> die lfd. Nummer des Eintrags zur besseren
+Kontrolle mit in das Eingabefeld bernommen wird.
+Diese Nummer wird XP-intern ignoriert, sie braucht
+also nicht manuell gel”scht zu werden. Umgekehrt ist
+es bei manueller Eingabe von Boxnamen nicht erfor-
+derlich, eine lfd. Nummer voranzustellen.
+
+Hinweis:  Bei /Netcall/Spezial werden ebenso wie bei
+/Netcall/Alle die Steuerdateien NETCALL.ALL und
+NETCALL.END erzeugt - N„heres siehe dort.
+
+Der Menpunkt /Netcall/Spezial entspricht dem
+Kommandozeilen-Parameter /nsp:1..20.
+@
+11509
+<<Netcall / Spezial-Liste
+
+Hier editieren Sie die Serverboxen-Liste, die Sie
+zur Ausfhrung von /Netcall/Spezial ben”tigen.
+
+W„hlen Sie die gewnschte Position (1 bis 20) und
+bearbeiten Sie diese mit E (Editieren) (<Enter> geht
+auch). Mit <Esc> wird der Bearbeitungsmodus beendet.
+
+Die Angaben werden in die Datei NETCALL.DAT im
+XP-Verzeichnis geschrieben. Sie k”nnen diese Datei
+auch mit einem externen Editor bearbeiten, mssen
+hierbei aber folgendes beachten:
+
+- Die maximale Zeilenl„nge betr„gt 249 Zeichen;
+- Die Boxnamen sind durch ein Leerzeichen zu trennen;
+- Es werden nur die ersten 20 Zeilen bercksichtigt;
+  die Datei darf mehr oder weniger Zeilen enthalten;
+- Die Zeilennumerierung ist nicht in NETCALL.DAT
+  enthalten und darf dort auch nicht enthalten sein;
+- Sie mssen selbst sicherstellen, daá die Server-
+  boxen, die Sie in NETCALL.DAT eingeben, in XP auch
+  existieren.
+
+@
+11511
 <<Netcall / Bereitschaft
 
 Hinter diesem Menpunkt steckt die universelle Net-
 callautomatik von OpenXP.
 
 Geben Sie die Nummer einer Timing-Liste an, die Sie
-mit [/Netcall/Timingliste] erstellt haben - OpenXP@11509
+mit [/Netcall/Timingliste] erstellt haben - OpenXP@11512
 schaltet dann in den Automatik-Modus um und fhrt
 alle zeitgesteuerten Befehle aus, so lange, bis Sie
 mit <<<Esc> >>abbrechen. Alles Weitere hierzu finden Sie
 unter "Automatische Netcalls" im Handbuch.
 @
-11509
+11512
 <<Netcall / Timing-Liste
 
 Hier k”nnen Sie bis zu 99 Timing-Listen erstellen,
@@ -14232,8 +14557,8 @@ Schablonen erlaubt:
   $ERHALTEN  -  .. und das Empfangsdatum
   $MSGID     -  die Message-ID der Bezugsnachricht
 
-Die folgenden Makros gelten nur fr ZConnect, RFC-
-basierende und MagicNET-kompatible Netze:
+Die folgenden Makros gelten nur fr Zconnect und 
+RFC-basierende Netze:
 
   $RNAME     -  der Realname des Absenders der
                 Bezugsnachricht mit Space am Ende
@@ -14384,14 +14709,14 @@ beitet werden.
 11904
 <<Nachricht / Brettmanager / Sonstiges
 
-<<MausNetz:>>
+<<MausNetz:>> (derzeit nicht verfgbar)
 
 Hier k”nnen Sie die verschiedenen Info-Files anfor-
 dern oder als Gruppenchef User in Gruppen aufnehmen
 oder aus Gruppen ausschlieáen. Die Info-Files ISB
 und ISG sind nur fr Sysops verfgbar.
 
-<<Z-Netz, MagicNET:>>
+<<Z-Netz:>>
 
 šber diesen Menpunkt haben Sie Zugriff auf s„mtliche
 MAPS- bzw. MAF-Befehle. W„hlen Sie einfach den ge-
@@ -14483,7 +14808,7 @@ lesen.
 Hier k”nnen Sie angeben, in welchen Intervallen ge„n-
 derte Informationstexte der Maus-Box(en) bestellt
 werden sollen. Es werden jeweils nur ge„nderte Texte
-bertragen und im Brett /¯Mausinfo abgelegt. Geben
+bertragen und im Brett /"Mausinfo abgelegt. Geben
 Sie jeweils den Abstand in Tagen an, oder 0, um ein-
 zelne Texte gar nicht zu bestellen.
 
@@ -14683,7 +15008,7 @@ verschicken wollen. Falls Sie eine [Erneut-Schablone]@10808
 definiert haben, wird diese der Nachricht vorange-
 stellt.
 
-Auáerdem k”nnen Sie hiermit eine in /¯Unversandt ge-
+Auáerdem k”nnen Sie hiermit eine in /"Unversandt ge-
 parkte Nachricht absenden.
 @
 12110
@@ -15405,7 +15730,7 @@ Hier wird eine Kopie des anzeigten Bildschirms in
 eine Datei geschrieben.
 @
 13701
-<<Config / Optionen / Netze / Allgemeines
+<<Config / Optionen / Netze / Verschiedenes
 
 Hier sind verschiedene Optionen zusammengefaát, die
 jeweils nur fr ein bestimmtes Netz gltig sind, mit
@@ -15611,6 +15936,93 @@ fenden Adresse mit <<Y>>.
 Voraussetzung ist, daá unter /Config/Extern/PGP eine
 Ihrer User-IDs eingetragen ist. Vergessen Sie nicht,
 dort ggf. eine neue User-ID einzutragen!
+
+@
+14101
+<<Aktuelle Hilfe
+
+Egal wo in OpenXP Sie sich befinden, ein Druck auf 
+die <<F1>>-Taste zeigt (sofern vorhanden) eine Hilfe
+zur aktuellen Situation an.
+
+@
+14102
+<<Voriges Thema
+
+Befinden Sie sich in der Hilfe, so kommen Sie mit der 
+Tastenkombination <<<Alt-F1> >> wieder auf den vor-
+herigen Hilfebildschirm zurck.
+
+@
+14103
+<<Inhaltsverzeichnis
+
+Auch dem zweifachen Druck auf <<<F1> >> wurde eine 
+Funktion zugedacht, Sie bekommen die Startseite der
+Hilfe angezeigt, also die ganz groáe Themenauswahl.
+
+@
+14104
+<<Hilfe zur Hilfe
+
+Zwar wrde ich annehmen dass die <<Hilfe zur Hilfe>>
+eine der am seltensten aufgerufenen Hilfeseiten ist,
+aber trotzdem ist sie vorhanden, falls Sie alle diese
+einzelnen Hilfe-Hilfen noch mal am Stck nachlesen 
+wollen...
+
+@
+14105
+<<XP-Bedienung
+
+Wenn Sie diesen Meneintrag gefunden haben, dann 
+haben Sie das wohl umfangreichste und wichtigste 
+Hilfethema vor sich. Es beschreibt die allgemeine 
+Arbeitsweise mit OpenXP und weist daher eine ganze 
+Menge an Unterkapiteln auf.
+
+@
+14106
+<<Aktuelle Makros
+
+Zeigt Ihnen eine Liste der aktuell gltigen Makros 
+an. Das sind also alle Makros, welche fr den Lister, 
+Editor, Brett- oder Userliste (oder wo Sie sich halt 
+gerade befinden) definiert wurden.
+
+@
+14107
+<<Spezielle Themen...
+
+Neben den allgemeinen Themen zur Bedienung von OpenXP
+gibt es noch verschiedene Themen die sich um die In-
+tegration von OpenXP bzw. dessen Anwendung in der 
+wilden Netzwelt kmmern. Kann ganz interessant sein.
+
+@
+14108
+<<šber OpenXP
+
+Hier bekommen Sie angezeigt dass Sie mit OpenXP ar-
+beiten und (wichtiger) welche Version Sie benutzen. 
+Gerade fr die jenigen die mit Snapshots arbeiten 
+sollten bei Fehlermeldungen <<in jedem Fall>> die 
+Versionsnummer und den Build angeben.
+
+Beides erfahren Sie mittels diesen Menpunktes.
+
+@
+14201
+^^14107
+@
+14202
+^^14107
+@
+14203
+^^14107
+@
+14204
+^^14107
 @
 20000
 Drcken Sie zweimal <<<Esc> >>und dann <<<F1> >>fr Hilfe.
@@ -15678,12 +16090,11 @@ ben”tigt, der im getrennt erh„ltlichen OpenXP-Fido-
 Paket enthalten ist.
 @
 20102
-Fr MausTausch-, MagicNET- und QuickMail-Netcalls
-und zum Einlesen entsprechender Nachrichten wird der
-Nachrichtenkonvertierer MAGGI.EXE ben”tigt, der im
-OpenXP-Paket enthalten ist. Bitte stellen Sie
-sicher, daá sich dieses Programm im OpenXP-Verzeich-
-nis befindet!
+Fr MausTausch-, und zum Einlesen entsprechender 
+Nachrichten wird der Nachrichtenkonvertierer 
+MAGGI.EXE ben”tigt, der im OpenXP-Paket enthalten 
+ist. Bitte stellen Sie sicher, daá sich dieses Pro-
+gramm im OpenXP-Verzeichnis befindet!
 @
 20103
 Zum Einbinden von Nodediff-Dateien wird das Programm
@@ -16200,7 +16611,7 @@ Nachrichten ist hier nicht m”glich.
 @
 20626
 Wenn Sie eine Nachricht mit der Taste <<P>> im Absende-
-fenster parken, wird sie im Brett /¯Unversandt abge-
+fenster parken, wird sie im Brett /"Unversandt abge-
 legt, und der tats„chliche Empf„nger wird als Origi-
 nalempf„nger in die erste Nachrichtenzeile gesetzt.
 Mit /Nachricht/Weiterleiten/Erneut bzw. <<<Alt-R> >>kann
@@ -16964,5 +17375,292 @@ Sie sollten dann die PGP-Fehlermeldung lesen k”nnen.
 W„hlen Sie hier ein Ger„t. OpenXP erlaubt Ihnen zur
 Zeit die Verwaltung von bis zu vier Ger„ten. Sie
 k”nnen diese unter /Config/Modem einstellen.
+
+@
+59900
+<<Neueirichtung & Einstieg
+
+Wenn auch OpenXP ein recht einfach zu bedienendes
+Programm ist, und sich all die folgende Information
+auch in den beiliegenden Textdateien findet, so 
+sollen doch die wichtigsten Punkte einer Neueinrich-
+tung von OpenXP kurz angesprochen werden.
+
+
+<<Einrichtung einer Box/ eines Servers:
+
+     1. [NNTP]@59901
+
+@
+59901
+<<°°°°°°°°°°°°°°°°° Einrichtung eines NNTP Servers
+
+
+
+    1. [Einrichtung eines Newsservers]@59902
+
+    2. [Liste der Newsgroups holen]@59903
+
+    3. [Newsgroups bestellen]@59904
+
+    4. [Artikel holen]@59905
+
+@
+59902
+<<°°°°°°°°°°°°°°°°°° Einrichtung eines Newsservers
+
+Die Einrichtung eines NNTP Accounts ist eine schnelle
+und einfache Sache, zu der man haupts„chlich die fol-
+genden Informationen braucht:
+
+    - Namen des Servers (z.B. news.cis.dfn.de)
+    - Username/Passwort an diesem Server
+
+Das Anlegen eines neuen NNTP Servers beginnt mit der
+Tastenkombination <<DBN>>, oder fr die die es lang
+m”gen <<E>>dit/<<B>>oxen/<<N>>eu. Hierbei wird zuerst die 
+Auswahl der verfgbaren Netztypen sichtbar. 
+
+™ffnen Sie die Liste mit <<F2>>, w„hlen Sie <<NNTP>> aus und 
+best„tigen Sie mit <<Enter>>. In die nun ge”ffnete 
+Maske mssen Sie ein paar Eingaben vornehmen:
+
+  <<Boxname>>:  ...lediglich ein Name
+
+  <<Realname>>: Im UseNet ist es blich Artikel mit dem
+            realen Namen zu schreiben, dieser wird
+            hier eingegeben. Tragen Sie hier keinen
+            Realnamen ein, so mssen Sie damit rech-
+            nen weniger Beachtung, aber viele dumme
+            Kommentare zu finden.
+
+  <<eMail-Adr.>>: Diese Adresse wird im Header eines
+              Artikels eingetragen. An ihn gehen alle
+              Antworten auf Ihren Artikel die per 
+              Email geschickt werden. 
+
+              Da Newsgroups von Spammern st„ndig nach
+              Emailadressen durchsucht werden bietet
+              es sich an hierfr eine Email a la
+              GMX oder Web.de (etc.) zu benutzen, 
+              welche nur fr diesen Zweck angelegt
+              wurde. Dies erspart Werbemails auf dem
+              eigentlichen Mailaccount und man ist 
+              fr den Fall der F„lle doch erreichbar.
+
+  <<FQDN>>:     Dieser Wert ist wichtig, da er Bestand-
+            teil der einmaligen ID eines jeden 
+            Artikels ist. Lesen Sie zu diesem Feld un-
+            bedingt die Onlinehilfe (<<F1>>).
+
+            Sollten Sie spontan keine eigene Domain
+            oder Subdomain haben, so k”nnen Sie <<kurz->>
+            <<fristig>> einen Namen nach dem Schema
+            <<NAME>>.<<LOCAL>> benutzen. Dies ist in jedem
+            Fall eine <<NOTL™SUNG>> die Sie schnellstens
+            ersetzen sollten.
+
+Mit einem weitern Druck auf die <<Enter>>-Taste haben 
+Sie 50% der notwendigen Arbeit getan. Mit der Auswahl-
+markierung auf dem gerade eingerichteten Server 
+k”nnen Sie nun die Taste <<E>>dit drcken, um die Kon-
+figuration abzuschlieáen.
+
+Drcken Sie nun ein <<P>>, oder w„hlen Sie <<NNTP>> mit
+den Pfeiltasten aus. <<Enter>> ”ffnet den Eingabedialog.
+
+  <<Server>>:   Hier muss der Name des Newsservers rein,
+            also z.B. news.cis.dfn.de
+
+  <<Port>>:     Ohne Grund sollte dieser Wert nicht ge-
+            „ndert werden, der Wert 119 entspricht 
+            dem Standard.
+
+  <<Loginname & Passwort>>:
+
+            Die wenigsten Newsserver sind offen und 
+            ohne Anmeldung wird man daher abgewiesen.
+            Diese Daten bekommen Sie also vom Admin
+            des Newsservers.
+
+            Ausnahmen sind die Newsserver der groáen 
+            Internet Provider. So diese Newsserver 
+            anbieten ben”tigen Sie hierfr meist kei-
+            nen Loginnamen, da Sie hier bereits ber 
+            die Einwahl identifiziert werden.
+
+Mit <<Enter>> schlieáen Sie die Konfiguration des News-
+accounts ab.
+
+
+
+    [Liste der Newsgroups holen]@59903
+
+@
+59903
+<<°°°°°°°°°°°°°°°°°°°°° Liste der Newsgroups holen
+
+Nachdem Sie die Einrichtung des Newsservers in OpenXP
+problemlos abgeschlossen haben muss OpenXP wissen 
+welche Newsgroups der Server zur Verfgung stellt. 
+Eine Liste k”nnen Sie anfordern, indem Sie im Haupt-
+fenster von OpenXP die Tasten <<NML>> drcken 
+(<<N>>achricht/Brett<<m>>anager/<<L>>iste anfordern).
+
+<<Sp„testens an dieser Stelle mssen Sie eine Verbin-
+<<dung zum Internet aufbauen, oder dafr Sorgen, dass 
+<<diese automatisch aufgebaut wird.
+
+W„hlen Sie anschlieáend den eben eingerichteten Ser-
+ver aus und w„hlen Sie als n„chstes <<Alle Gruppen>>. 
+Die folgende Sicherheitsabfrage mssen Sie in diesem 
+Fall mit <<Ja>> beantworten. 
+
+Nun baut OpenXP eine Verbindung zum Newsserver und 
+empf„ngt die Liste der verfgbaren Newsgroups. Die 
+Anzahl kann von Server zu Server sehr schwanken, 
+groáe Server bieten schon mal 15.000 oder mehr News-
+groups an. 
+
+In Abh„ngigkeit von der Schnelligkeit der Verbind-
+ung wird der Vorgang eine Weile dauern. Wenn die 
+Liste bertragen ist k”nnen auch Sie die Verbindung 
+zu Ihrem Internet Provider abbauen.
+
+
+    [Newsgroups bestellen]@59904
+
+
+@
+59904
+<<°°°°°°°°°°°°°°°°°°°°°°°°°°° Newsgroups bestellen
+
+Nachdem nun eine Liste der verfgbaren Newsgroups 
+vorliegt, k”nnen Sie nun die fr Sie relevanten News-
+groups bestellen.
+
+Hierzu drcken Sie im Hauptfenster die Tasten <<NMB>> 
+(<<N>>achricht/Brett<<m>>anager/<<B>>estellen).
+
+W„hlen Sie aus der Liste die interessanten News-
+groups mit den Pfeiltasten aus und drcken Sie zum 
+Markieren jeweils die <<Space>>-Taste. Haben Sie 
+alle Newsgroups markiert schlieáen Sie den Vorgang 
+mit der <<Enter>> Taste ab.
+
+
+    [Artikel holen]@59905
+
+
+
+@
+59905
+<<°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°° Artikel holen
+
+Im letzten Schritt holen Sie nun das erste Mal die 
+Artikel der bestellten Newsgroups ab. Bauen Sie hier-
+zu eine Verbindung zu Ihrem Internet Provider auf und 
+drcken dann die Tasten <<TE>> (Ne<<T>>call/<<E>>inzeln), 
+w„hlen Sie den Server aus und drcken <<Enter>>. 
+
+OpenXP baut eine Verbindung zum Server auf und ruft 
+die Artikel ab.
+
+<<Viel Spass beim Lesen und Posten!
+
+@
+59999
+
+Es gibt drei spezielle Einstellungen zu Reply-To-All
+die nicht in CrossPoint selbst konfiguriert werden
+k”nnen, sondern bei Bedarf manuell in der Datei
+<<XPOINT.CFG>> vorgenommen werden mssen. Bitte nehmen
+Sie die folgenden Eintragungen bei Bedarf in der
+Datei XPOINT.CFG am Ende des Bereiches "# allgemeine
+Einstellungen" vor:
+
+<<RTA-OwnAddresses=>>    Hier k”nnen Sie beliebige mit
+                     Leerzeichen getrennte Adressen
+                     eingeben, die von der Reply-To-
+                     All-Routine dann ebenfalls als
+                     eigene Adressen erkannt werden,
+                     obwohl sie sich *nicht* aus der
+                     Konfiguration einer Ihrer RFC-
+                     oder ZConnect-Boxen als eigene
+                     Adresse ergeben.
+
+<<RTA-NoOwnAddresses=>>  Hier k”nnen Sie beliebige mit
+                     Leerzeichen getrennte Adressen
+                     eingeben, die von der Reply-To-
+                     All-Routine *nicht* als eigene
+                     Adressen erkannt werden, obwohl
+                     sie sich aus der Konfiguration
+                     Ihrer RFC- und ZConnect-Boxen
+                     als eigene Adresse ergeben.
+
+<<RTA-NoOwnAddresses>> hat Vorrang vor <<RTA-OwnAddresses>>.
+Bitte achten Sie auf genaue Schreibweise der Bezeich-
+ner und der Adressen!
+
+<<RTA-Standard=>>        Hier k”nnen Sie festlegen, ob
+                     der Auswahlbalken in der Empf„n-
+                     ger-Auswahlliste standardm„áig
+                     auf "alle" (Wert <<J>>) oder auf
+                     der ersten angezeigten Adresse
+                     (Wert <<N>>) stehen soll. Ist der
+                     Eintrag nicht vorhanden, wird
+                     "<<RTA-Standard=J>>" angenommen.
+@
+60001
+<< Changelog der Onlinehilfe
+
+     (Hinweise & sonstiges an: openxp\@stuebner.de)
+---------------------------------------------------
+2002-03-31
+
+ - Hilfe fr die /C/A/B <<...gilt fr alle>> und 
+   <<kombinierte Ungelesen Modus>>
+
+---------------------------------------------------
+2002-03-24
+
+ - diverse Kleinigkeiten (hab vergessen welche)
+
+---------------------------------------------------
+2002-03-21
+
+ - Weitesgehend alle Verweise auf MagicNet, Quick-
+   mail und GS-Mailbox entfernt da diese nicht mehr
+   untersttzt werden
+
+ - Hilfe fr /D/B/T korrigiert
+
+ - Hilfe fr <<Netcall / Spezial>> und <<Netcall / Spezial->>
+   <<liste>> bernommen
+
+ - Lesemodus <<Reorg.>> hinzugefgt
+
+ - /C/O/N <<Empf„nger-Auswahlliste>> hinzugefgt
+
+ - <<Reply-to-All>> hinzugefgt
+
+---------------------------------------------------
+
+2002-03-20
+
+ - Lizenztext fr OpenXP (freie Software) angepasst
+
+ - Verschiebungen der Hilfe im Men Netcall (Bereit-
+   schaft / Timing-Liste) korrigiert
+
+ - Hilfeseiten fr <<OpenXP / Telnet>>, <<Spezial>>,
+   <<Spezial-Liste>> und das gesamte <<?>>-Men 
+   angefangen
+
+ - <<Lesemodus / Datum/Zeit>> angepasst
+
+ - <<Lesemodus / Reorg>> eingefgt
+
+
 @@
 vim:enc=cp437:tw=53:expandtab:
