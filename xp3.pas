@@ -177,7 +177,7 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
          boolean;assembler;
 asm
-         push bp
+         push ebp
          cld
          mov   esi,adr
          mov   ecx,size
@@ -221,7 +221,6 @@ asm
          pop   esi
 	 pop   ecx
 
-
 @case:   mov   edi,key
          sub   cl,[edi]
          sbb   ch,0
@@ -239,7 +238,6 @@ asm
          dec   dl
          jz    @found
 	 jmp   @sblp2
-
                                         {--------------}
 @testul: cmp dh,0                       { UMLAUTSUCHE }
          je @nextb                       { Aber nur wenn erwuenscht... }
@@ -276,7 +274,7 @@ asm
 @nfound: xor   eax,eax
          jmp   @ende
 @found:  mov   eax,1
-@ende:   pop bp
+@ende:   pop ebp
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 
 procedure Iso1ToIBM(var data; size:word); assembler;
@@ -1414,6 +1412,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/03/19 21:31:51  mk
+  - Fix für 32 Bit TxtSeek
+
   Revision 1.15  2000/03/17 11:16:34  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 
