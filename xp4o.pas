@@ -2185,6 +2185,7 @@ begin
     decomp:=copy(decomp,1,p-1)+'"'+abuf[arcbufp]^.arcname+'" "'+copy(decomp,p+8,127) + '"';
     shell(decomp,400,3);
     if exdir='' then begin
+      datei:=mid(datei,rightpos('\',datei)+1);
       { !?! GoDir(temppath);     { wurde durch Shell zurÅckgesetzt }
       if not exist(temppath+datei) then
         rfehler(430)       { 'Datei wurde nicht korrekt entpackt.' }
@@ -2330,11 +2331,14 @@ begin
     abuf[arcbufp]^.arcname:=fn;
     mwrt(77,4,arcname[arctyp]);
     while not ende do begin
-      if (name <>'') or (path='') then
-        app_l(iifc(path<>'','*',' ')+forms(name,12)+strsn(orgsize,11)+
-              strsn(compsize,11)+'   '+ prozent+'  '+forms(method,10)+
-              dt(datum,uhrzeit)+'       ' + name)
-      else
+      if (name<>'') or (path='') then begin
+        lm:=max(1,rightpos('.',name)); 
+        app_l(forms(iifc(path<>'','*',' ')+forms(left(name,min(8,lm-1))+forms(mid(name,lm),4),12)
+              +strsn(orgsize,11)+strsn(compsize,11)+'   '+ prozent+'  '+forms(method,10)+
+              dt(datum,uhrzeit),80)+path+name)
+      
+      end else
+
         app_l(forms('*'+path+name,80)+path+name);
       ArcNext(ar);
       end;
@@ -2898,6 +2902,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.37  2002/03/09 21:52:20  my
+  JG:- Einige kleinere Korrekturen bei der Anzeige von LFN-Dateinamen in
+       Archiven vorgenommen und die Anzeige von Dateien, die sich in einem
+       Unterverzeichnis des Archivs befinden, implementiert.
+
   Revision 1.47.2.36  2002/03/08 23:03:22  my
   MK:- Kleine Codeoptimierung/Variableneinsparung.
 

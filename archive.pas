@@ -77,7 +77,7 @@ implementation   { ------------------------------------------------- }
 type archd = record
                id       : byte;   { $1a }
                method   : byte;
-               name     : array[0..12] of char;
+               name     : array[0..255] of char;
                compsize : longint;
                dosdate  : word;
                dostime  : word;
@@ -163,7 +163,7 @@ type archd = record
                end;
 
      dwcrec  = record
-                 name     : string[12];
+                 name     : string;
                  orgsize  : longint;
                  secsf70  : longint;
                  compsize : longint;
@@ -996,6 +996,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.6  2002/03/09 21:52:20  my
+  JG:- Einige kleinere Korrekturen bei der Anzeige von LFN-Dateinamen in
+       Archiven vorgenommen und die Anzeige von Dateien, die sich in einem
+       Unterverzeichnis des Archivs befinden, implementiert.
+
   Revision 1.10.2.5  2001/09/06 18:34:36  mk
   - fixed uninitialized variable
 
