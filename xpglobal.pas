@@ -31,7 +31,7 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.8.7';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.8.7pl1';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
@@ -191,6 +191,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.12  2002/08/04 11:39:51  mk
+  - Version 3.8.7pl1
+
   Revision 1.63.2.11  2002/08/03 14:46:07  mk
   - Beta 3.8.7
 
