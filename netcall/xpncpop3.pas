@@ -96,10 +96,10 @@ var
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
   List          : TStringList;
 begin
+  result:= true;
   if bp^.smtp_ip='' then exit; // exit immediately if no server specified
   DeleteFile(RFCFile);
   ZtoRFC(bp,PPFile,RFCFile);
-  result:= true;
   if not FileExists(RFCFile) then exit;
 
   { ProgressOutput erstellen }
@@ -185,6 +185,7 @@ var
   FirstMail,LastMail : Integer;
   UIDLFileName  : String;
 begin
+  Result := true;
   if bp^.pop3_ip='' then exit; // exit immediately if no server specified
   { POWindow erstellen }
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_pop3init,[BoxName]),True);
@@ -207,7 +208,6 @@ begin
 
   { Verbinden }
   try
-    result:= true;
     List := TStringList.Create;
     POP.Connect;
     POP.Stat;
@@ -272,6 +272,9 @@ end;
                       
 {
   $Log$
+  Revision 1.25  2001/10/10 20:57:47  mk
+  - function result for SendSMTPMails and GetOP3Mails is now always defined
+
   Revision 1.24  2001/10/10 20:55:03  mk
   - check for "Systemname in PM-Brettern" when "Alle Mails in ein Brett einordnen"
     is enabled in POP3/SMTP servers
