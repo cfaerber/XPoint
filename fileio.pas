@@ -1,49 +1,39 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{ $Id$
 
-{ File-I/O und Dateinamenbearbeitung }
+   File I/O and file name processing functions
+   Copyright (C) 2001 OpenXP team (www.openxp.de) and M.Kiesel
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
 
 {$I XPDEFINE.INC }
 
-{$IFDEF FPC }
-  {$mode objfpc}
-{$ENDIF }
+{$ifdef FPC} {$mode objfpc} {$endif}
 
+{ File I/O and file name processing functions }
 unit fileio;
 
 interface
 
 {$ifdef unix}
-uses
-  sysutils,
-  linux,
-  xplinux,
-  xpglobal,
-  debug,
-  typeform;
+uses sysutils,linux,xplinux,xpglobal,typeform;
 {$else }
-uses
-{$ifdef vp }
-  vpusrlow,
-{$endif}
-{$IFDEF Win32 }
-  windows,
-{$ENDIF }
-{$IFDEF DOS32 }
-  xpdos32,
-{$ENDIF }
-  sysutils,
-  xpglobal,
-  debug,dos,
-  typeform;
+uses sysutils,xpglobal,dos,typeform
+  {$ifdef vp} ,vpusrlow {$endif}
+  {$ifdef Win32} ,windows {$endif}
+  {$ifdef Dos32} ,xpdos32 {$endif};
 {$endif}
 
 const
@@ -63,8 +53,9 @@ const
   { Neue AnyFile-Konstante, da $3F oft nicht laeuft }
   ffAnyFile = $20;
 
-{ Zugriffsrechte beim Erstellen einer Datei }
-type TCreateMode = (
+type
+  { Zugriffsrechte beim Erstellen einer Datei }
+  TCreateMode = (
         cmUser,                         { Nur User RW }
         cmUserE,                        { mit Ausfuehrung }
         cmGrpR,                         { User RW, Group R }
@@ -85,64 +76,127 @@ procedure XPRewrite(var F: text; cm: TCreateMode);
 {$ENDIF }
 procedure XPRewrite(var F: file; cm: TCreateMode);
 
-{ DOS-Routinen }
+{ Works like Dos.FSplit }
 procedure FSplit(const path: string; var dir, name, ext: string);
 
-function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
-Function  existf(var f):boolean;                { Datei vorhanden ?       }
-function  ExecutableExists(fn: string): boolean;  { ausfuehrbare Datei vorhanden? (PATH), fn (auch) ohne Extension }
-Function  ValidFileName(const name:string):boolean;  { gueltiger Dateiname ?    }
+{ Append directory separator; resolve DRIVE: if necessary }
+function  AddDirSepa(const p: string): string;
+
+{ Checks whether file exists - note f has to be a file type, NOT a string.
+  Use SysUtils.FileExists to check using a filename. }
+function  existf(var f):boolean;
+
+{ Searches for file in current directory, program's directory and path.
+  Path is ignored if specified but not correct. Characters after a space
+  in fn are ignored. Reports empty string if file not found. }
+function  FindFile(fn: string): string;
+
+{ Searches for file in current directory, program's directory and path.
+  Characters after a space in fn are ignored. File MAY be specified
+  without extension; returned name WILL contain extension. Path is
+  ignored if specified but not correct. Returns empty string if not found. }
+function  FindExecutable(fn: string): string;
+
+{ Searches for file in current directory, program's directory and path
+  if no path is given; if path is specified, checks if executable exists
+  in this path. Characters after a space in fn are ignored. File MAY be
+  specified without extension. }
+function  ExecutableExists(fn: string): boolean;
+
+{ Checks whether file name is valid (= a file of this name could be created
+  or exists already) }
+Function  ValidFileName(const name:string):boolean;
+
 function  isEmptyDir(const path: string): boolean;
-function  IsPath(const Fname:string):boolean;         { Pfad vorhanden ?        }
-function  TempFile(const path:string):string;       { TMP-Namen erzeugen      }
-function  TempExtFile(path,ld,ext:string):string; { Ext-Namen erzeugen }
-function  _filesize(const fn:string):longint;        { Dateigroesse in Bytes     }
-function  filetime(fn:string):longint;         { Datei-Timestamp         }
-function  setfiletime(fn:string; newtime:longint): boolean;  { Dateidatum setzen  }
-function  copyfile(srcfn, destfn:string):boolean; { Datei kopieren }
-procedure erase_mask(const s: string);          { Datei(en) loeschen       }
-Procedure MakeBak(n,newext:string);             { sik anlegen             }
-procedure MakeFile(fn:string);                 { Leerdatei erzeugen      }
-procedure mklongdir(path:string; var res:integer);  { mehrere Verz. anl. }
 
-procedure fm_ro;                                { Filemode ReadOnly       }
-procedure fm_rw;                                { Filemode Read/Write     }
-procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode oeffn.}
+{ Checks whether this path exists }
+function  IsPath(const Fname:string):boolean;
 
-procedure adddir(var fn:string; dir:string);
+{ Generate name for a temp file, returns empty string if not successful }
+function  TempFile(const path:string):string;
+
+{ Generate a name for a temp file beginning with ld (max. 4 chars).
+  Specify ext with a trailing "." (in Dos). Returns empty string if
+  not successful }
+function  TempExtFile(path,ld,ext:string):string;
+
+{ Return file size or zero if file does not exist }
+function  _filesize(const fn:string):longint;
+
+{ Return file time or zero if file does not exist }
+function  filetime(fn:string):longint;
+
+{ Set file time, report true on success }
+function  setfiletime(fn:string; newtime:longint): boolean;
+
+{ Copy file, report true on success; an existing dest file will be
+  overwritten! }
+function  copyfile(srcfn, destfn:string):boolean;
+
+{ Erase file(s). Wildcards are allowed }
+procedure erase_mask(const s: string);
+
+{ Move file to backup file with extension newext. Report true on success }
+function MakeBak(n,newext:string): boolean;
+
+{ Create empty file, return true on success }
+function MakeFile(const fn: string): Boolean;
+
+{ Create multiple directories (separated by PathSepa).
+  Returns empty string on success; if no success, returns
+  directory which creation has failed }
+function CreateMultipleDirectories(path:string): String;
+
+{ Sets filemode readonly (used when opening files) }
+procedure fm_ro;
+
+{ Sets filemode r/w (used when opening files) }
+procedure fm_rw;
+
+{ Open only THIS file with filemode fm }
+procedure resetfm(var f:file; fm:byte);
+
+{ Add path dir to filename fn if no path specified in fn }
+procedure AddDir(var fn: string; dir: string);
+
+{ Returns sum of size of all files in dir }
 function  DirectorySize(const dir: string): longint;
-function  FileMaskSize(const mask: string): longint;
-function  GetBareFileName(const p:string):string;
-function  GetEnv(const name: string): string;
-function  ioerror(i:integer; otxt:string):string; { Fehler-Texte            }
 
-{$IFNDEF Unix }
-function  alldrives:string;
-{$ENDIF }
+{ Returns sum of size of all files that match mask }
+function  FileMaskSize(const mask: string): longint;
+
+{ Return file name (without extension) }
+function  GetBareFileName(const p: string):string;
+
+{ Replacement for Dos.GetEnv }
+function  GetEnv(const name: string): string;
+
+{ Returns clear text error messages for IOError values; otxt if unknown }
+function  ioerror(i: integer; otxt: string):string;
+
+{$ifndef Unix}
+{ Returns concatenation of all valid drive letters }
+function  alldrives: string;
+{$endif}
+
 
 implementation  { ------------------------------------------------------- }
 
-uses
-  StringTools, xp0;
+uses xp0;
 
-const
 {$ifdef unix}
+const
   STAT_IRWUSR           = STAT_IRUSR or STAT_IWUSR;
   STAT_IRWGRP           = STAT_IRGRP or STAT_IWGRP;
   STAT_IRWOTH           = STAT_IROTH or STAT_IWOTH;
-
-  PathSepaChar          = ':'; { Trennzeichen in der Environment-Var PATH }
-{$else}
-  PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
 {$endif}
 
 function SetAccessMode(const fn: string; const cm: TCreateMode): boolean;
+
 {$ifdef Unix}
 var
   fm: longint;
-{$endif}
 begin
-{$ifdef Unix}
   case cm of
     cmUser   : fm:= STAT_IRWUSR;
     cmUserE  : fm:= STAT_IRWXU;
@@ -157,10 +211,10 @@ begin
   end; { case }
   { Mode setzen }
   result:= chmod(fn, fm);
-{$else}
-  result:= true;
-{$endif}
 end;
+{$else}
+begin result:=true end;
+{$endif}
 
 {$IFDEF FPC }
 procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
@@ -208,7 +262,6 @@ begin
   System.Rewrite(F);
 end;
 
-{ Liefert True zurueck, falls ein Verzeichnis leer ist }
 function isEmptyDir(const path: string): boolean;
 var
   sr: TSearchRec;
@@ -242,19 +295,6 @@ begin
   fr:= @f;
   result:= FileExists(fr^.name);
 end;
-{
-var
-  fm : byte;
-begin
-  fm:=filemode;
-  filemode:=FMDenyNone;
-  reset(file(f));
-  existf:=(ioresult=0);
-  close(file(f));
-  filemode:=fm;
-  if ioresult = 0 then ;
-end;
-}
 
 function ioerror(i:integer; otxt:string):string;
 begin
@@ -303,8 +343,6 @@ begin
   filemode:=fm0;
 end;
 
-{ Haengt einen fehlenden Verzeichnisseparator an.
-  Loest dabei C: auf (nur Nicht-Unix }
 function  AddDirSepa(const p: string): string;
 {$ifndef Unix}
 var
@@ -329,95 +367,107 @@ begin
     result:= p;
 end;
 
-{ Sucht die Datei 'fn' in folgender Reihenfolge:
-  - Aktuelles Verzeichnis
-  - Startverzeichnis der aktuellen Programmdatei
-  - Environment-Var PATH sysutils
-}
-function ExecutableExists(fn: string): boolean;
-var
-  i      : integer;
-  fname,path,SearchingFor   : string;
+function FindFile(fn: string): string;
 begin
-  result:= false;
-  {$IFNDEF UnixFS}
-  if(Pos('.COM',UpperCase(fn))=0)and(Pos('.EXE',UpperCase(fn))=0)then fn:=fn+'.exe';
-  {$ENDIF}
-  fname:= ExtractFileName(fn);
-  if FileExists(fn) then
-    result:= true
-  else if FileExists(AddDirSepa(ExtractFilePath(ParamStr(0)))+fname) then
-    result:= true
-  else begin
-    path:=getenv('PATH');
-    Debug.DebugLog('FILEIO','Searching in path: '+path,4);
-    i:= pos(PathSepaChar, path);
-    while i>0 do begin
-      SearchingFor:=AddDirSepa(Copy(path,1,i-1))+fname;
-      Debug.DebugLog('FILEIO','Searching: '+SearchingFor,4);
-      if FileExists(SearchingFor)then begin
-        result:= true;
-        path:= '';
-        break;
-      end;
-      Delete(path,1,i); i:=pos(PathSepaChar, path);
-    end;
-    if Length(path)>0 then
-      result:= FileExists(AddDirSepa(path)+fname);
-  end;
+  result:='';
+  fn:=trim(fn);
+  fn:=Copy(fn,1,iif(Pos(' ',fn)<>0,Pos(' ',fn)-1,Length(fn)));
+
+  if ExtractFilePath(fn)<>'' then
+    if FileExists(fn)then begin
+      result:=fn; exit
+      end
+    else // path not correct, get rid of it
+      fn:=ExtractFileName(fn);
+
+  // fn is without path now
+
+  result:=FileSearch(fn,'.'+PathSepa+
+                        ExtractFilePath(ParamStr(0))+PathSepa+
+                        GetEnv('PATH'));
+  {$ifndef UnixFS} result:=UpperCase(result); {$endif}
+end;
+
+function FindExecutable(fn: string): string;
+begin
+  fn:=trim(fn);
+  fn:=Copy(fn,1,iif(Pos(' ',fn)<>0,Pos(' ',fn)-1,Length(fn)));
+  {$ifndef UnixFS}
+  if UpperCase(fn)='COPY' then exit(fn); // built-in in cli
+  if ExtractFileExt(fn)='' then begin
+    result:=FindFile(fn+'.exe');
+    if result='' then result:=FindFile(fn+'.com');
+    if result='' then result:=FindFile(fn+'.bat');
+    end
+  else result:=FindFile(fn);
+  {$else}
+  result:=FindFile(fn);
+  {$endif}
+end;
+
+function ExecutableExists(fn: string): boolean;
+var found: string;
+begin
+  found:=FindExecutable(fn);
+  // caution: FindExecutable ignores specified path if it's not correct,
+  // therefore...
+  if ExtractFilePath(fn)<>'' then
+    {$ifdef UnixFS}
+    result:=fn=found
+    {$else}
+    result:=UpperCase(fn)=UpperCase(found)
+    {$endif}
+  else result:=found<>'';
 end;
 
 function ValidFileName(const name:string):boolean;
-var
-  f: file;
+var handle: longint;
 begin
   if (name='') or multipos('*?&',name) then
-    ValidFileName:=false
+    exit(false)
   else if FileExists(name) then
-    ValidFileName:=true
+    exit(true)
   else begin
-    assign(f,name);
-    rewrite(f);
-    result:= (ioresult=0);
-    close(f);
-    erase(f);
-    if ioresult<>0 then ;       { Wert zuruecksetzen }
+    handle:=FileCreate(name);
+    if handle<>-1 then begin
+      FileClose(handle);
+      exit(SysUtils.DeleteFile(name));
+    end else exit(false);
   end;
 end;
 
-function IsPath(const fname:string):boolean;         { Pfad vorhanden ? }
+function IsPath(const fname:string):boolean;
 var
   curdir: string;
 begin
+  if fname='' then exit(true);
   curdir:= GetCurrentDir;
-  IsPath:= SetCurrentDir(fname);
+  result:= SetCurrentDir(fname);
   SetCurrentDir(curdir);
 end;
 
-function copyfile(srcfn, destfn:string):boolean;  { Datei kopieren }
-{ keine Ueberpruefung, ob srcfn existiert oder destfn bereits existiert }
-var bufs,rr:word;
-    buf:pointer;
-    f1,f2:file;
+function copyfile(srcfn, destfn:string):boolean;
+const bufs= 65536;
+var buf:pointer;
+    f1,f2,bytesread:longint;
 begin
-  bufs:=65536;
+  result:=false;
+  if not FileExists(srcfn)then exit;
   getmem(buf,bufs);
-  assign(f1,srcfn);
-  assign(f2,destfn);
-  reset(f1,1);
-  rewrite(f2,1);
-  while not eof(f1) and (inoutres=0) do begin
-    blockread(f1,buf^,bufs,rr);
-    blockwrite(f2,buf^,rr);
-  end;
-  close(f2);
-  close(f1);
-  copyfile:=(inoutres=0);
-  if ioresult<>0 then ;
+  f2:=FileCreate(destfn);
+  if f2<=0 then exit;
+  f1:=FileOpen(srcfn,fmOpenRead);
+  if f1<=0 then begin FileClose(f2); exit end;
+  repeat
+    bytesread:=FileRead(f1,buf^,bufs);
+    if bytesread>0 then bytesread:=FileWrite(f2,buf^,bytesread);
+  until bytesread<>bufs;
+  FileClose(f1); FileClose(f2);
   freemem(buf,bufs);
+  result:=bytesread<>-1;
 end;
 
-procedure erase_mask(const s: string);                 { Datei(en) loeschen }
+procedure erase_mask(const s: string);
 var
   sr : TSearchrec;
 begin
@@ -427,85 +477,60 @@ begin
   sysutils.FindClose(sr);
 end;
 
-
-Procedure MakeBak(n,newext:string);
+function MakeBak(n,newext:string): boolean;
 var bakname : string;
-    f       : file;
 begin
+  result:=false;
   if not FileExists(n) then exit;
   BakName := ChangeFileExt(n, '.' + NewExt);
   if FileExists(BakName) then
   begin
-    Assign(f, Bakname);
-    FileSetAttr(BakName,faArchive);
-    erase(f);
+    if FileSetAttr(BakName,faArchive)=-1 then exit;
+    if not SysUtils.DeleteFile(Bakname)then exit;
   end;
-  Assign(f,n);
-  FileSetAttr(n, faArchive);
-  RenameFile(n, bakname);
-  if ioresult<>0 then;
+  if FileSetAttr(n, faArchive)=-1 then exit;
+  if not RenameFile(n, bakname)then exit;
+  result:=true;
 end;
 
-{ res:  0 = Pfad bereits vorhanden }
-{       1 = Pfad angelegt          }
-{     < 0 = IO-Fehler              }
-
-procedure mklongdir(path:string; var res:integer);
-const testfile = 'test0000.$$$';
-var p : byte;
+function CreateMultipleDirectories(path:string): String;
+var
+  p : byte;
+  adir : string;
 begin
+  result:='';
   path:=trim(path);
-  if path='' then begin
-    res:=0;
-    exit;
+  if path='' then exit;
+
+  while path<>'' do begin
+    p:=iif(Pos(PathSepa,path)>0,Pos(PathSepa,path),Length(path)+1);
+    adir:=Copy(path,1,p-1);
+    CreateDir(adir);
+    if not IsPath(adir)then exit(adir);
+    Delete(path,1,p);
   end;
-  if RightStr(path,1)<>DirSepa then path:=path+DirSepa;
-  if validfilename(path+testfile) then
-    res:=0
-  else
-    if pos(DirSepa,path)<=1 then begin
-      mkdir(path);
-      res:=-ioresult;
-    end
-    else begin
-      p:=iif(path[1]=DirSepa,2,1);
-      res:=0;
-      while (p<=length(path)) do begin
-        while (p<=length(path)) and (path[p]<>DirSepa) do inc(p);
-        if not IsPath(LeftStr(path,p)) then begin
-          mkdir(LeftStr(path,p-1));
-          if inoutres<>0 then begin
-            res:=-ioresult;
-            exit;
-          end;
-        end
-        else
-          res:=1;
-        inc(p);
-      end;
-    end;
 end;
 
-function TempFile(const path: string): string;       { TMP-Namen erzeugen }
+function TempFile(const path: string): string;
 var
   n: string;
 begin
+  if not IsPath(path)then exit('');
   repeat
     n:=formi(random(10000),4)+'.tmp'
   until not FileExists(AddDirSepa(path)+n);
-  TempFile:=AddDirSepa(path)+n;
+  result:=AddDirSepa(path)+n;
 end;
 
-function TempExtFile(path,ld,ext:string):string;  { Ext-Namen erzeugen }
-{ ld max. 4 Zeichen, ext mit Punkt '.bat' }
+function TempExtFile(path,ld,ext:string):string;
 var n : string[MaxLenFilename];
 begin
+  if not IsPath(path)then exit('');
   repeat
     n:=ld+formi(random(10000),4)+ext
-  until not Fileexists(path+n);
-  TempExtFile:=path+n;
+  until not FileExists(path+n);
+  result:=path+n;
 end;
-
 
 function _filesize(const fn:string):longint;
 var sr : TSearchrec;
@@ -517,16 +542,12 @@ begin
   sysutils.Findclose(sr);
 end;
 
-procedure MakeFile(fn:string);
-var
-  t : text;
+function MakeFile(const fn: string): Boolean;
+var handle: longint;
 begin
-  assign(t,fn);
-  rewrite(t);
-  if ioresult=5 then
-    FileSetAttr(fn,0)
-  else
-    close(t);
+  handle:=FileCreate(fn);
+  result:=handle<>-1;
+  if result then FileClose(handle);
 end;
 
 function filetime(fn:string):longint;
@@ -539,7 +560,7 @@ begin
   sysutils.findclose(sr);
 end;
 
-function setfiletime(fn:string; newtime:longint): boolean;  { Dateidatum setzen }
+function setfiletime(fn:string; newtime:longint): boolean;
 var
   fh: longint;
 begin
@@ -550,16 +571,7 @@ begin
   end else
     result:= false;
 end;
-{
-var f : file;
-begin
-  assign(f,fn);
-  reset(f,1);
-  setftime(f,newtime);
-  close(f);
-  if ioresult<>0 then;
-end;
-}
+
 function GetBareFileName(const p:string):string;
 var d,
     n,
@@ -569,10 +581,7 @@ begin
   GetBareFileName:=n;
 end;
 
-
-{ Verzeichnis einfuegen, falls noch nicht vorhanden }
-
-procedure adddir(var fn: string; dir: string);
+procedure AddDir(var fn: string; dir: string);
 var s: string;
 begin
 {$IFDEF UnixFS }
@@ -582,7 +591,6 @@ begin
   if s='' then
     fn:= AddDirSepa(dir)+fn;
 end;
-
 
 {$ifndef Unix }
 function alldrives:string;
@@ -613,10 +621,10 @@ end;
 
 function GetEnv(const name: string): string;
 begin
-  {$IFDEF Linux}result:= Linux.GetEnv(name);{$ELSE}result:=Dos.GetEnv(name){$ENDIF}
+  {$ifdef Linux} result:= Linux.GetEnv(name);
+  {$else} result:=Dos.GetEnv(name); {$endif}
 end;
 
-{ Dir muﬂ WildCards enthalten }
 function FileMaskSize(const mask: string): longint;
 var
   sr: tsearchrec;
@@ -637,8 +645,15 @@ begin
 end;
 
 end.
+
 {
   $Log$
+  Revision 1.86  2001/01/06 16:13:30  ma
+  - general cleanup
+  - using SysUtil functions instead of System functions
+  - new functions: FindFile, FindExecutable
+  - renamed mklongdir to CreateMultipleDirectories and changed function
+
   Revision 1.85  2000/11/19 22:29:36  hd
   - fix: missing uses-statement
 
@@ -660,258 +675,4 @@ end.
 
   Revision 1.80  2000/11/16 22:35:29  hd
   - DOS Unit entfernt
-
-  Revision 1.79  2000/11/16 22:04:09  hd
-  - DirectorySize: Diese Funktion liefert die Summe der Bytes, die die
-    einzelnen Dateien haben. Derivate dieser Funktion finden sich mehrfach
-    im Source (XSpace, TotalSize...)
-
-  Revision 1.78  2000/11/16 20:41:47  hd
-  - DOS Unit entfernt
-
-  Revision 1.77  2000/11/16 20:00:50  hd
-  - DOS Unit entfernt
-
-  Revision 1.76  2000/11/16 12:50:27  fe
-  Made compileable with VP.
-
-  Revision 1.75  2000/11/16 12:35:47  mk
-  - Unit Stringtools added
-
-  Revision 1.74  2000/11/16 12:08:42  hd
-  - Fix: Zu sp‰te Arbeit
-
-  Revision 1.73  2000/11/15 23:00:39  mk
-  - updated for sysutils and removed dos a little bit
-
-  Revision 1.72  2000/11/15 20:30:58  hd
-  - GetFTime
-  - PackTime
-  - UnpackTime
-
-  Revision 1.71  2000/11/15 17:59:30  hd
-  - Fix: BackSlash unter UnixFS gibt es nicht
-
-  Revision 1.70  2000/11/15 17:57:02  hd
-  - FSplit implementiert
-  - DOS-Unit entfernt
-
-  Revision 1.69  2000/11/15 15:51:18  hd
-  - Neu: isEmptyDir, da FileExists('/path/*.*') immer false liefert
-
-  Revision 1.68  2000/11/15 12:24:37  mk
-  - vp compatiblity update
-
-  Revision 1.67  2000/11/14 20:49:22  ma
-  - geht jetzt auch unter Dos/Win wieder...
-
-  Revision 1.66  2000/11/14 20:13:58  hd
-  - Laeuft unter Linux wieder
-  - existBin optimiert
-  - existf umgestellt (Datei wird nicht mehr geoffnet)
-
-  Revision 1.65  2000/11/14 15:51:26  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.63  2000/11/14 11:14:31  mk
-  - removed unit dos from fileio and others as far as possible
-
-  Revision 1.62  2000/11/09 18:12:22  mk
-  - ispath corrections
-
-  Revision 1.61  2000/11/09 15:27:02  mk
-  - Compilierfaehigkeit wiederhergestellt
-
-  Revision 1.60  2000/11/09 10:50:06  hd
-  - Neu: XPRewrite(var F: File|Text [; l: longint]; cm: TCreateMode);
-  - Fix: Invalid Types dirstr<->string
-
-  Revision 1.59  2000/11/04 23:12:56  mk
-  - fixed false reporting in IsPath
-
-  Revision 1.58  2000/11/01 22:59:23  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.57  2000/10/19 20:52:20  mk
-  - removed Unit dosx.pas
-
-  Revision 1.56  2000/10/19 12:57:43  mk
-  - deleted unused function erase_all
-
-  Revision 1.55  2000/10/17 20:36:13  mk
-  - falschen Kommentar zu Disksize/Diskfree entfernt
-
-  Revision 1.54  2000/10/17 17:38:18  mk
-  - fixed typo
-
-  Revision 1.53  2000/10/17 12:53:18  mk
-  - einige Funktionen auf Sysutils umgestellt
-
-  Revision 1.52  2000/10/17 10:05:39  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.51  2000/07/05 18:57:53  mk
-  - AnsiString Updates
-
-  Revision 1.50  2000/07/05 17:10:53  mk
-  - AnsiString Updates
-
-  Revision 1.49  2000/07/05 09:09:28  hd
-  - Anpassungen AnsiString
-  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
-    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
-
-  Revision 1.48  2000/07/04 21:23:07  mk
-  - erste AnsiString-Anpassungen
-
-  Revision 1.47  2000/07/04 12:04:16  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.46  2000/07/01 13:18:28  hd
-  - Uses-Anweisung in ifdef
-
-  Revision 1.45  2000/06/30 19:11:31  mk
-  - wieder compilierbar
-
-  Revision 1.44  2000/06/30 13:48:10  hd
-  - Linux extrahiert
-  - fileio.inc fuer systemunabhaengige Routinen
-  - Linux: IsPath, era, erase_mask vereinfacht
-
-  Revision 1.43  2000/06/23 15:59:10  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.42  2000/06/22 19:53:25  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.41  2000/06/20 18:22:27  hd
-  - Kleine Aenderungen
-
-  Revision 1.40  2000/06/17 13:14:02  hd
-  - Laesst sich jetzt auch wieder unter Linux compilieren :-)
-
-  Revision 1.39  2000/06/16 19:56:24  mk
-  - jetzt geht es auch unter nicht Linux wieder zu compilieren, bitte die Aenderungen pruefen!
-
-  Revision 1.38  2000/06/16 14:50:43  hd
-  - Neue Funktion: existBin: Sucht eine Datei auch in PATH
-  - Neue Funktion: AddDirSepa: Haengt Slash/Backslash an, wenn er fehlt
-
-  Revision 1.37  2000/06/05 16:16:20  mk
-  - 32 Bit MaxAvail-Probleme beseitigt
-
-  Revision 1.36  2000/05/29 15:12:57  oh
-  -delete_all() abgesichert
-
-  Revision 1.35  2000/05/26 20:13:03  mk
-  - Lock war unter DOS32 Bit undefiniert
-
-  Revision 1.34  2000/05/20 02:07:39  mk
-  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
-
-  Revision 1.33  2000/05/17 18:45:33  mk
-  - Wieder unter allen Platformen compilierbar
-
-  Revision 1.32  2000/05/17 16:11:03  ml
-  Zeilenanzahl aendern nun auch in Win32
-
-  Revision 1.31  2000/05/14 12:21:42  hd
-  - Anpassungen an UnixFS
-
-  Revision 1.30  2000/05/09 15:51:23  hd
-  - UnixFS: WriteBatch angepasst
-  - $I- wieder entfernt (war FPC Workaround)
-  - WildForm wird unter UnixFS nicht benutzt (8+3 ist nun wirklich Stone-Age)
-
-  Revision 1.29  2000/05/08 19:02:30  hd
-  - Bedingte Compilierung optimiert
-
-  Revision 1.28  2000/05/06 17:11:53  hd
-  - $I- eingefuegt
-
-  Revision 1.27  2000/05/05 00:10:49  oh
-  -PGP-Aufrufe ueber Batch-Datei
-
-  Revision 1.26  2000/05/03 07:33:56  mk
-  - unbenutze Variablen/Units rausgeworfen
-
-  Revision 1.25  2000/04/29 16:45:06  mk
-  - Verschiedene kleinere Aufraeumarbeiten
-
-  Revision 1.24  2000/04/28 16:23:53  hd
-  Linux-Anpassungen (UnixFS):
-   - Backslash -> Slash
-   - *.* -> *
-   - Neuer Exe-Typ: ET_ELF
-   - ACHTUNG: Flags fehlen noch.
-
-  Revision 1.23  2000/04/18 11:23:47  mk
-  - AnyFile in ffAnyFile ($3F->$20) ersetzt
-
-  Revision 1.22  2000/04/16 19:50:38  mk
-  - Fixes fuer FindFirst
-
-  Revision 1.21  2000/04/15 14:18:21  mk
-  - Fix fuer FindFirst mit Diretories
-
-  Revision 1.20  2000/04/13 12:48:31  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-  Revision 1.19  2000/03/28 08:38:28  mk
-  - Debugcode in Testshare entfernt
-
-  Revision 1.18  2000/03/26 09:41:12  mk
-  - erweiterte Share-Erkennung
-
-  Revision 1.17  2000/03/25 23:20:30  mk
-  - LockFile geht unter Win9x nicht, wohl aber unter NT. Ausgeklammert
-
-  Revision 1.16  2000/03/25 18:46:59  ml
-  uuz lauffaehig unter linux
-
-  Revision 1.15  2000/03/24 23:11:17  rb
-  VP Portierung
-
-  Revision 1.14  2000/03/24 20:25:50  rb
-  ASM-Routinen gesaeubert, Register fuer VP + FPC angegeben, Portierung FPC <-> VP
-
-  Revision 1.13  2000/03/24 04:16:21  oh
-  - Function GetBareFileName() (Dateiname ohne EXT) fuer PGP 6.5.x
-
-  Revision 1.12  2000/03/24 00:03:39  rb
-  erste Anpassungen fuer die portierung mit VP
-
-  Revision 1.11  2000/03/16 19:25:10  mk
-  - fileio.lock/unlock nach Win32 portiert
-  - Bug in unlockfile behoben
-
-  Revision 1.10  2000/03/09 23:39:32  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.9  2000/03/07 23:41:07  mk
-  Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
-
-  Revision 1.8  2000/03/04 14:53:49  mk
-  Zeichenausgabe geaendert und Winxp portiert
-
-  Revision 1.7  2000/03/03 20:26:40  rb
-  Aufruf externer MIME-Viewer (Win, OS/2) wieder geaendert
-
-  Revision 1.6  2000/02/23 23:49:47  rb
-  'Dummy' kommentiert, Bugfix beim Aufruf von ext. Win+OS/2 Viewern
-
-  Revision 1.5  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
 }
