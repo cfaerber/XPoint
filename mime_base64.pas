@@ -166,7 +166,7 @@ var b:Byte;
   begin
     if BBeg>=BEnd then
     begin
-      ReadCount:=((Count-R)*8-BufBits+5)div 6+BBeg;
+      ReadCount:=((Count-R)*8-BufBits+5)div 6;
       ReadCount:=Min(ReadCount,High(BBuf)-Low(BBuf)+1);
       ReadCount:=Max(ReadCount,1);
       ReadCount:=OtherStream.Read(BBuf[Low(BBuf)],ReadCount);
@@ -216,6 +216,9 @@ end;
 
 //
 // $Log$
+// Revision 1.6  2002/02/28 21:26:09  cl
+// - fixed Base64 decoder
+//
 // Revision 1.5  2001/09/11 14:22:15  cl
 // - BUGFIX: Reading small amounts of data with TBase64DecoderStream.Read
 //
