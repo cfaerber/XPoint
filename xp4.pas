@@ -196,12 +196,13 @@ label selende;
       PmArchiv(einzel);
       if _brett[1]='1' then begin
         dbGo(mbase,disprec[1]);
-        if left(dbReadStr(mbase,'brett'),1)<>'1' then
+        if (DispMode <> 12) and (left(dbReadStr(mbase,'brett'),1)<>'1') then
           disprec[1]:=0;
         end
       else
         GoP;
       end;
+    aufbau := true; xaufbau := true;
   end;
 
   procedure setmainkeys(dispmode:shortint);
@@ -2019,6 +2020,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.12  2000/12/11 09:39:50  mk
+  - fixed Bug #117177: Alt-P in reply tree
+
   Revision 1.6.2.11  2000/12/06 21:33:43  mk
   - removed false fix for Bug #117117
 
