@@ -328,6 +328,7 @@ var   hdp      : headerp;
     reset(t);
     anzahl:=0;
     stackwarn:=false;
+    firstline := '';
 
     if hdp^.boundary='' then begin     { Boundary erraten ... }
       n:=0; s:=''; bound:='';
@@ -363,7 +364,7 @@ var   hdp      : headerp;
         else begin
           readln(t,s);
           inc(n);
-          if n=1 then firstline:=s;
+          if (n>=1) and (Firstline = '') then firstline:=s;
           end;
         endbound:=(s=bound+'--');
         isbound:=endbound or (s=bound);
@@ -724,6 +725,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.8  2000/11/18 23:29:52  mk
+  - MIME-Erkennung wegen schrottiger Microsoft Outlook Software angepasst
+
   Revision 1.7.2.7  2000/08/03 14:48:36  mk
   - ein (nicht dringend noetiges) Freeres hinzugefuegt
 
