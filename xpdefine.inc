@@ -38,6 +38,10 @@
   UnterstÅzung compiliert }
 {.$DEFINE CAPI }
 
+{ Wenn dieser Schalter definiert ist, wird der Overlay-Buffer im
+  XMS angelegt, wenn kein EMS zur Verfuegung steht }
+{.$DEFINE XMSOVR }
+
 { --- ab hier sind keine énderungen nîtig --- }
 
 { GrundsÑtzlich mu· ersteinmal in jeder Version die Registrierungs-
@@ -75,6 +79,11 @@
 
 {
   $Log$
+  Revision 1.30.2.7  2003/01/10 18:11:49  mw
+
+  MW: - Overlaycache im XMS per Compilerschalter ausgeschaltet.
+        (Teil 1)
+
   Revision 1.30.2.6  2001/09/03 19:19:54  mw
 
   - Small Cleanup

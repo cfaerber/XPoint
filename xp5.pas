@@ -475,8 +475,8 @@ begin
     gotoxy(x+32,y+6); write(emsavail*16:5,' KB');
   end;
   if xmstest then begin
-    gotoxy(x+44,y+4); write(xmstotal:5,' KB');
-    gotoxy(x+44,y+5); write(0:5,' KB');
+    gotoxy(x+44,y+4); write(xmst:5,' KB');
+    gotoxy(x+44,y+5); write(xmst-xmstotal:5,' KB');
     gotoxy(x+44,y+6); write(xmsavail:5,' KB');
     end;
   gotoxy(x+57,y+4);
@@ -1061,6 +1061,20 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.15  2003/01/10 18:11:50  mw
+
+  MW: - Overlaycache im XMS per Compilerschalter ausgeschaltet.
+        (Teil 1)
+
+  Revision 1.1.1.1  2002/08/24 17:03:25  mw
+
+  - Overlaycache im XMS.
+  - Speicherstatistik zeigt jetzt auch XMS-Belegung an.
+
+  Achtung: Diese Feature sind noch nicht auf jedem Betriebsystem stabil
+           und liegen daher hier im Playground.
+
+
   Revision 1.27.2.14  2002/03/08 23:40:11  my
   MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte

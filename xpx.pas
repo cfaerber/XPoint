@@ -18,7 +18,7 @@ unit xpx;
 interface
 
 uses
-  ems, crt, dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal, mcb;
+  ems, xms,{$IFDEF XMSOVR} overxms, {$ENDIF} crt, dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal, mcb;
 
 implementation
 
@@ -290,12 +290,19 @@ begin
     Halt(1);
   end;
   {$ENDIF }
-
+  xmst:=xmstotal; 
   {$IFNDEF DPMI}     { mit DPMI auch nicht }
     TestOVR;
-    OvrInit('xp.ovr');
+    OvrInit('xp.ovr'); 
+    {$IFDEF XMSOVR } 
+    if EmsTest and (ustr(left(paramstr(1),4))<>'/AV:') and (paramstr(1)<>'/?') then
+      OvrInitEMS
+    else if XmsTest and (ustr(left(paramstr(1),4))<>'/AV:') and (paramstr(1)<>'/?') then
+      OvrInitXMS;
+    {$ELSE }
     if EmsTest and (ustr(left(paramstr(1),4))<>'/AV:') and (paramstr(1)<>'/?') then
       OvrInitEMS;
+    {$ENDIF }
     OvrSetBuf(OvrGetBuf+50000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
   logo;
@@ -320,6 +327,20 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.14  2003/01/10 18:11:50  mw
+
+  MW: - Overlaycache im XMS per Compilerschalter ausgeschaltet.
+        (Teil 1)
+
+  Revision 1.1.1.1  2002/08/24 17:03:27  mw
+
+  - Overlaycache im XMS.
+  - Speicherstatistik zeigt jetzt auch XMS-Belegung an.
+
+  Achtung: Diese Feature sind noch nicht auf jedem Betriebsystem stabil
+           und liegen daher hier im Playground.
+
+
   Revision 1.18.2.13  2002/03/08 23:40:11  my
   MY:- Registrierungs-, Beta-, "šber OpenXP"- und sonstige Dialoge auf
        OpenXP/16 umgestellt und Copyright-Hinweise sowie Kontakte
