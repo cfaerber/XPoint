@@ -14177,6 +14177,13 @@ Options are:
 
    /maus   activates a  Cursor-Mouse emulation.
 
+   /noovrbuf   prevents creation of overlay cache in
+         EMS/XMS (and forces overlay access via hard
+         disk). This option increases the available
+         EMS/XMS memory by the file size of XP.OVR
+         but may reduce the execution speed of XP
+         depending on the system's hardware.
+
    /pw:xxx  passes the start-up password direct.
 
    /q    deactivates all sounds, so as not to

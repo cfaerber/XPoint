@@ -430,6 +430,14 @@ M”gliche Optionen sind:
       denn berfllte Festplatten fhren ziemlich
       sicher zu Datenverlust.
 
+<</noovrbuf>> Legt keinen Overlaycache im EMS/XMS an
+      (sondern erzwingt den Overlay-Zugriff ber die
+      Festplatte). Diese Option erh”ht den verfg-
+      baren EMS/XMS-Speicher um die Dateigr”áe der
+      XP.OVR, kann aber je nach Hardware-Ausstattung
+      die Ausfhrungsgeschwindigkeit von XP
+      verringern.
+
 <</os2x>> verwendet eine von vier (<<x>> = <<a>> bis <<d>>) undoku-
       mentierten OS/2-Funktionen zur Rechenzeit-
       Freigabe. Die Verwendung der Schalter <</os2a>>
