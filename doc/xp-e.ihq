@@ -746,7 +746,7 @@ breaks off without changing.
 54
 
 Full details for using the editor are in the docu-
-mentation XPOINT.DOC. The on-line help gives a brief
+mentation XPOINT.TXT. The on-line help gives a brief
 overview.
 
        [Status Line]@55
@@ -1008,7 +1008,7 @@ decided if and how a message will actually be sent
 <<RRQ>> Requests an (automatic) confirmation of
         receipt from the recipient to be sent back.
         Note advice about "Request Confirmation"
-        in XPOINT.DOC.
+        in XPOINT.TXT.
 
 <<withoutSig>> Leaves off the automatic signature.
 
@@ -1829,7 +1829,7 @@ You can enter a list of FIDO Servers here, messages
 for which will be all be sent in the same Netcall.
 This is needed to send messages into the various
 [FIDO compatible nets.]@4009
-See also FIDO.DOC.
+See also FIDO.TXT.
 @
 156
 4D Addresses are a new standard, which are by now
@@ -2484,7 +2484,7 @@ method, or do anything else you want.
 <<Note:>> CrossPoint will not delete these files
 so make sure they are deleted as necessary!
 
-See also the chapter in FIDO.DOC, "Sysop Mode"
+See also the chapter in FIDO.TXT, "Sysop Mode"
 
 @
 8035
@@ -2507,7 +2507,7 @@ files to or from some place on your hard disk.
 
 Note that XP expects and issues UUCP file names in a
 particular form. In most cases it will be necessary
-to rename them. See also the documentation UUCP.DOC.
+to rename them. See also the documentation UUCP.TXT.
 
 <<Input directory>>
 This is the directory from which CrossPoint will
@@ -2524,7 +2524,7 @@ some other method, or do anything else you want.
 <<Note:>> CrossPoint will not delete these files
 so make sure they are deleted as necessary!
 
-See also the chapter "Sysop Mode" in UUCP.DOC.
+See also the chapter "Sysop Mode" in UUCP.TXT.
 
 @
 8037
@@ -2644,7 +2644,7 @@ automatically for an on-line session ([Netcall/Online])@11505
 The script will be checked automatically for errors.
 as soon as you enter its name.
 
-See also Part VIII of XPOINT.DOC
+See also Part VIII of XPOINT.TXT
 @
 8031
 Enter the name of a script file that will be started
@@ -2652,7 +2652,7 @@ automatically for a Netcall.
 The script will be checked automatically for errors.
 as soon as you enter its name.
 
-See also Part VIII of XPOINT.DOC
+See also Part VIII of XPOINT.TXT
 @
 8032
 You can enter a box here, which XP will enter as the
@@ -2767,7 +2767,7 @@ Your real name in true life (you may leave it empty).
 Enter your full first and last name.
 @
 195
-(For more about domains: see XPOINT.DOC, Ch. 1.3).
+(For more about domains: see XPOINT.TXT, Ch. 1.3).
 
 <<ZConnect:>>
 Enter the name of the domain to which your server
@@ -4730,7 +4730,7 @@ and displayed as follows:
 � 읕컴컴컴컴컴컴컴 Time period
 읕컴컴컴컴컴컴컴컴 + = shows it is active
 
-There is more in XPOINT.DOC under "automatic
+There is more in XPOINT.TXT under "automatic
 Netcalls".
 
 @
@@ -4909,7 +4909,7 @@ The functions are as follows:
 
 <<OK>>       exit macro editor
 
-See also the documentation in XPOINT.DOC.
+See also the documentation in XPOINT.TXT.
 
 @
 545
@@ -5669,7 +5669,7 @@ This setting is only here for compatibility reasons
 to older versions of CrossPoint.
 
 See [AKA] for further informatiom@4009
-or FIDO.DOC
+or FIDO.TXT
 @
 700
 The name for the system that manages areas,
@@ -5815,7 +5815,7 @@ imported. (FileReq see /Config/Paths)
      deleted.
 
 This switch is intended for users who receive all
-message packets as File Attaches (see FIDO.DOC).
+message packets as File Attaches (see FIDO.TXT).
 
 It saves deleting the empty messages by hand.
 However, for normal use, it means in-going File
@@ -6071,7 +6071,7 @@ domain addresses.
 <<[ ]>> -> ZConnect-"Crosspostings" will only be
        generated for PMs.
 
-See XPOINT.DOC; "Crosspostings".
+See XPOINT.TXT; "Crosspostings".
 @
 793
 <<[x]>>  CrossPoint informs the Maus box when calling
@@ -6151,8 +6151,8 @@ See also [/Message/Forward/Delete].@12107
 @
 799
 <<[ ]>>  All lines from RFC message-headers (see also
-     UUCP.DOC) are included in the ZConnect (see
-     XPOINT.DOC) header. A "U" is put in front of
+     UUCP.TXT) are included in the ZConnect (see
+     XPOINT.TXT) header. A "U" is put in front of
      unrecognised lines.
 
 <<[x]>>  Lines not required by CrossPoint and
@@ -6491,7 +6491,7 @@ information of this type)
                reply is replying to.
 
 <<Maus-PM-Status:>>  the current status of a PM in
-                 MausNet; see XPOINT.DOC.
+                 MausNet; see XPOINT.TXT.
 
 
 All other lines are only valid for ZConnect and
@@ -7932,7 +7932,7 @@ This menu entry serves to hold various attributes and
 functions for systems (boxes). At present the
 following details can be recorded:
 * Z-Netz fileservers which work with SendMsg,
-* UUCP fileservers (see UUCP.DOC),
+* UUCP fileservers (see UUCP.TXT),
 * The entries for crash passwords for FIDO
   systems.
 
@@ -8337,7 +8337,7 @@ box, the list is ordered direct simply with
 /Message/fileserver/list/request.
 
 Otherwise you will have to [request] one by hand.@4023
-See also UUCP.DOC
+See also UUCP.TXT
 @
 12002
 <<Message / Fileserver / Send  (UUCP only)
@@ -8785,7 +8785,7 @@ subdirectory FIDO and indexes it for use.
 
 At least once at the beginning you will have to
 activate a complete NodeList in this way. After that
-the [NODEDIFF] system (see FIDO.DOC, "NodeList")@4024
+the [NODEDIFF] system (see FIDO.TXT, "NodeList")@4024
 should keep your list up to date.
 @
 13002
@@ -8799,7 +8799,7 @@ the next nodediff in line can update a NodeList.
 [Nodediffs] must be unpacked first when handled like@4024
 this.
 
-See also FIDO.DOC, "NodeList".
+See also FIDO.TXT, "NodeList".
 @
 13003
 <<Fido / Nodelist / Index
@@ -9437,7 +9437,7 @@ to read them in again.
 
 If you wish to re-import the puffer files, perhaps
 because the Message base is defective, follow
-carefully the instructions in XPOINT.DOC in the
+carefully the instructions in XPOINT.TXT in the
 chapter under repairing data loss.
 @
 20306
@@ -9583,7 +9583,7 @@ was being written to. For example:
   before the buffers were flushed with lazy-write on.
   (A well known error with Smartdrive)
 
-See XPOINT.DOC for advice about how to proceed if the
+See XPOINT.TXT for advice about how to proceed if the
 message base becomes damaged.
 
 Note: The message base files (MPUFFER.xxx) themselves
@@ -9682,7 +9682,7 @@ Mode.
 20480
 CrossPosting, messages sent with several recipients,
 are only allowed in certain nets.
-More details under "CrossPostings" in XPOINT.DOC.
+More details under "CrossPostings" in XPOINT.TXT.
 @
 20482
 ^^20450
@@ -9781,7 +9781,7 @@ FIDO Server".
 FIDO crashes are only possible when a valid node list
 is present.
 
-See also FIDO.DOC.
+See also FIDO.TXT.
 @
 20707
 A relogin is not possible with this box; the box
@@ -9793,7 +9793,7 @@ There is no standard login procedure for this type of
 net. You must therefore prescribe the login procedure
 for CrossPoint with a Script File.
 
-See "Script Programming" in XPOINT.DOC
+See "Script Programming" in XPOINT.TXT
 @
 20710
 ^^20427
@@ -9819,7 +9819,7 @@ message packet. Check the packer settings under
 The CTS signal from the modem is indicating that the
 modem is not ready.
 
-See Modem FAQ in Appendix F in XPOINT.DOC
+See Modem FAQ in Appendix F in XPOINT.TXT
 @
 20715
 CrossPoint was unable to unpack a file. The following
@@ -9862,7 +9862,7 @@ on the screen, and send it to the programmer together
 with your FIDO point configuration.
 @
 20721
-See Modem FAQ in Appendix F in XPOINT.DOC
+See Modem FAQ in Appendix F in XPOINT.TXT
 @
 20723
 You have specified an invalid output file name under
@@ -9901,7 +9901,7 @@ driver to be active, but at present no Fossil driver
 is loaded. CrossPoint will continue to use its own
 Driver.
 
-See Modem FAQ in Appendix F in XPOINT.DOC
+See Modem FAQ in Appendix F in XPOINT.TXT
 @
 20733
 Under /Edit/Servers/Edit/Point there is the address
@@ -9919,7 +9919,7 @@ There is no standard relogin procedure for this type
 of net. You must therefore prescribe the relogin
 procedure for CrossPoint with a Script File.
 
-See "Script Programming" in XPOINT.DOC
+See "Script Programming" in XPOINT.TXT
 @
 20801
 Automatic subscribing and unsubscribing to newsgroups
@@ -9947,7 +9947,7 @@ Message/News Manager/Get List first to order the
 list.
 
 See also the section on administering newsgroups in
-XPOINT.DOC.
+XPOINT.TXT.
 @
 20808
 You have used the news manager command SCRIPT, but
@@ -9988,7 +9988,7 @@ Before you can request files by UUCP, the
 (file)server must be entered and configured under
 /Edit/Servers.
 
-See UUCP.DOC for details of setting up for UUCP
+See UUCP.TXT for details of setting up for UUCP
 systems.
 @
 20821
@@ -10056,14 +10056,14 @@ You have programmed a function key with the command
 *SETUSER, but the desired User name has been omitted.
 Correct the entry under /Config/Keys.
 
-See also XPOINT.DOC under "SETUSER"
+See also XPOINT.TXT under "SETUSER"
 @
 20925
 The given script file has an error. Exit the help now
 and press any key to get an error report. Correct the
 error (tip: <Alt-E> allows you to edit any file).
 
-See also "Script Programming" in XPOINT.DOC.
+See also "Script Programming" in XPOINT.TXT.
 @
 20927
 First send all outgoing messages for this box, before
@@ -10073,7 +10073,7 @@ rename all connected newsgroups afterwards.
 21001
 The timing list contains an invalid command. There is
 a list of valid commands in the On-Line-Help and in
-XPOINT.DOC. Note that the command PACKEN was changed
+XPOINT.TXT. Note that the command PACKEN was changed
 to PACK after Ver. 2.9.
 @
 21002
@@ -10093,7 +10093,7 @@ The modem is not sending a CTS signal, it is in some
 way not ready: maybe switched off or configured
 incorrectly.
 
-See Modem FAQ in Appendix F in XPOINT.DOC
+See Modem FAQ in Appendix F in XPOINT.TXT
 @
 22003
 You have pressed a function key which tried to use
@@ -10114,7 +10114,7 @@ get one and activate it. See On-line Help under
 /Fido/Nodelist/....
 
 You can set up a mini-NodeList just for your server,
-if you only want order files from there. See FIDO.DOC
+if you only want order files from there. See FIDO.TXT
 under "Requesting from Boss Node without a node
 list".
 @
@@ -10181,7 +10181,7 @@ the extension .OUT) in the AutoExec directory whose
 name (the first part) does not correspond to any
 entered server box.
 
-See also under AUTOEXEC in XPOINT.DOC.
+See also under AUTOEXEC in XPOINT.TXT.
 @
 22205
 An error has occurred while converting the message
@@ -10808,7 +10808,7 @@ A number in place of the "Outgoing" sign (!) shows
 the number of targets for a message with more than
 one. If more than 9, "#" is shown.
 
-(*) See FIDO.DOC for details of FIDO Crashes.
+(*) See FIDO.TXT for details of FIDO Crashes.
 
 For [details] of how to do things, press <Enter>.@30
 
@@ -11376,7 +11376,7 @@ above, but select UUCP-FL2.EXE.
 
 Either write, or get somebody to write, a converter
 for this format. For details see Chap. 4.3 in
-UUCP.DOC
+UUCP.TXT
 
 Or, send me an excerpt, best the first 5-10KB from
 the list, and I will try to find time to write a
@@ -11431,6 +11431,6 @@ shown in its filename extension.
 
 Press <Enter> to read about [Fido addresses].@4010
 
-<<See also FIDO.DOC, "nodelists"
+<<See also FIDO.TXT, "nodelists"
 
 @@

@@ -14,7 +14,7 @@ uses
 {$IFDEF BP }
   xdelay,
 {$ENDIF }
-  winxp, crt,typeform,fileio,keys,maus2,inout,resource,video,xpglobal;
+  winxp, crt,typeform,fileio,keys,maus2,inout,resource,video, xpglobal;
 
 const menus      = 99;
       maxhidden  = 500;
@@ -55,6 +55,7 @@ var   menu      : array[0..menus] of ^string;
       hidden    : array[1..maxhidden] of integer;
       anzhidden : integer;
       specials  : string;
+      mback     : boolean;
 
 
 procedure wrlogo;
@@ -142,14 +143,13 @@ begin
   attrtxt(7);
   clrscr;
   inc(windmax,$100);
-{$IFDEF BP }
+  mback:=getbackintensity;
   setbackintensity(true);
-{$ENDIF }
   attrtxt(col.colmenu[0]);
-  wrt2(sp(80));
+  write(sp(80));
   attrtxt(col.colback);
   for i:=1 to 24 do
-    wrt2(dup(80,'±'));
+    write(dup(80,'±'));
   attrtxt(col.colutility);
   forcecolor:=true;
   rahmen1(38,78,18,23,'');
@@ -205,7 +205,7 @@ begin
   if pos('$'+hex(nr,3),ustr(specials))>0 then begin
     msgbox(60,6,'',x,y);
     wrt(x+3,y+2,'Dieser Menpunkt wird von XP automatisch aktiviert bzw.');
-    wrt(x+3,y+3,'deaktiviert (s. XPME.DOC).');
+    wrt(x+3,y+3,'deaktiviert (s. XPME.TXT).');
     wrt(x+3,y+5,'Taste drcken ...');
     errsound;
     get(t,curon);
@@ -339,20 +339,20 @@ begin
         if nr=i then attrtxt(col.colmenuinv[0])
         else attrtxt(col.colmenu[0]);
         s:=mstr;
-        wrt2(' ');
+        write(' ');
         if hpos>1 then
-          Wrt2(left(s,hpos-1));
+          write(left(s,hpos-1));
         if i=nr then attrtxt(col.colmenuinvhi[0])
         else attrtxt(col.colmenuhigh[0]);
-        wrt2(s[hpos]);
+        write(s[hpos]);
         if i=nr then attrtxt(col.colmenuinv[0])
         else attrtxt(col.colmenu[0]);
-        Wrt2(copy(s,hpos+1,20) + ' ');
+        write(copy(s,hpos+1,20),' ');
         end
       else begin
         if nr=i then attrtxt(col.colmenuseldis[0])
         else attrtxt(col.colmenudis[0]);
-        Wrt2(' '+mstr+' ');
+        write(' ',mstr,' ');
         end;
       end;
 end;
@@ -407,10 +407,10 @@ var ma    : map;
           wrt(x+1,y+i,check+left(s,hp-1));
           if i<>p then attrtxt(col.colmenuhigh[menulevel])
           else attrtxt(col.colmenuinvhi[menulevel]);
-          wrt2(s[hp]);
+          write(s[hp]);
           if i<>p then attrtxt(col.colmenu[menulevel])
           else attrtxt(col.colmenuinv[menulevel]);
-          wrt2(forms(copy(s,hp+1,40),ml-hp-1));
+          write(forms(copy(s,hp+1,40),ml-hp-1));
           end;
         end;
       end;
@@ -691,21 +691,16 @@ begin
   until not modi or AskQuit;
   attrtxt(7);
   clrscr;
+  setbackintensity(mback);
   wrlogo;
   if saved then writeln('Žnderungen wurden gesichert.'#10);
 end.
 {
   $Log$
-  Revision 1.8  2000/03/04 22:41:37  mk
-  LocalScreen fuer xpme komplett implementiert
+  Revision 1.5.2.1  2000/04/15 11:42:22  mk
+  - 1001x .DOC in .TXT geandert
 
-  Revision 1.7  2000/03/04 19:33:37  mk
-  - Video.pas und inout.pas komplett aufgeraeumt
-
-  Revision 1.6  2000/03/04 14:53:50  mk
-  Zeichenausgabe geaendert und Winxp portiert
-
-  Revision 1.3  2000/02/15 20:43:37  mk
-  MK: Aktualisierung auf Stand 15.02.2000
+  Revision 1.5  2000/03/04 10:42:25  mk
+  Versionsinfos hinzugefuegt und weiter portiert
 
 }

@@ -3,7 +3,7 @@ Dateien in TOOLS.ZIP
 --------------------
 
 RC.EXE          Compiler fÅr *.RQ -> *.RC
-DOCFORM.EXE     Formatierer fÅr *.DQ -> *.DOC
+DOCFORM.EXE     Formatierer fÅr *.DQ -> *.TXT
 IHS.EXE         Compiler fÅr *.IHQ -> *.HLP
 BPC.CFG         Optionen fÅr BPC
 TPC.BAT         Batch zum Compilieren von XP.EXE

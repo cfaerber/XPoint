@@ -258,7 +258,7 @@ K (c) '93-98 Peter Mandrella
 2    nach dem Neustart von XP wiederholt, ist vermutlich eine Datei ~
 3    der Nachrichtendatenbank beschÑdigt. Lîschen Sie dann zunÑchst ~
 4    die Indexdateien (DEL *.IX1). Falls das nicht hilft, lesen Sie ~
-5    Anhang H von XPOINT.DOC.                                       ~
+5    Anhang H von XPOINT.TXT.                                       ~
 -
 
 # --- XP2, XP2F, XP2C -------------------------------------------------
@@ -297,7 +297,7 @@ K (c) '93-98 Peter Mandrella
 7    ~          /rp      Åbergeht bei DOS-Shell Test auf residente Programme
 8    ~          /sd      verhindert das Leeren des Smartdrive-Schreibcaches
 9    ~          /ss      Screensaver aktivieren
-10   ~          /trace   schaltet Script-Protokoll ein (XPOINT.DOC, Kap. 8.1)
+10   ~          /trace   schaltet Script-Protokoll ein (XPOINT.TXT, Kap. 8.1)
 11   ~          /w0      keine Rechenzeit-Freigabe
 12   ~          /w, /w1  Win & OS/2-Rechenzeit-Freigabe (Timeslice)
 13   ~          /w2      Win & OS/2-Rechenzeit-Freigabe (konservativ)
@@ -318,7 +318,7 @@ K (c) '93-98 Peter Mandrella
 28
 29   ~          /av:<Datei>      Archivdatei im Archiv-Viewer anzeigen
 30   ~          /f:<Datei>       Schriftdatei laden
-31   ~          /gd:<Datei>      GebÅhrendatei wÑhlen (s. FIDO.DOC)
+31   ~          /gd:<Datei>      GebÅhrendatei wÑhlen (s. FIDO.TXT)
 32
 33   ~          /ip:PUF   liest die angegebene Pufferdatei ein
 34   ~          /ipe:PUF  liest Puffer mit Empfangsdatum = Erstelldatum ein
@@ -1187,7 +1187,7 @@ K (c) '93-98 Peter Mandrella
 22   Wenn Sie ein neues Pa·wort eintragen, notieren Sie sich dieses
 23   bitte an einem gegen Datenverluste geschÅtzten Ort! Falls Sie das
 24   Pa·wort vergessen, mÅssen Sie CrossPoint komplett neu insstal-
-25   lieren und die Nachrichtendatenbank neu einlesen (s. XPOINT.DOC,
+25   lieren und die Nachrichtendatenbank neu einlesen (s. XPOINT.TXT,
 26   Anhang H).
 -
 + 511
@@ -1216,7 +1216,7 @@ K (c) '93-98 Peter Mandrella
 8
 9    Bei Fragen, Problemen oder  Anregungen wenden  Sie sich bitte an
 10   den CrossPoint-Support - entsprechende Netzadressen und eine Li-
-11   ste der CrossPoint-Supportbretter finden Sie in *XPOINT.DOC*.
+11   ste der CrossPoint-Supportbretter finden Sie in *XPOINT.TXT*.
 19   Lizenznummer:~
 #
 20   WÑhlen Sie "Weiter", wenn Sie mit den Lizenzbestimmungen einver-
@@ -2182,7 +2182,7 @@ K (c) '93-98 Peter Mandrella
 6    Userindex sortieren ...
 7    Userindex packen ...      %
 -
-2102 Nodelisten-Konfiguration - s. FIDO.DOC
+2102 Nodelisten-Konfiguration - s. FIDO.TXT
 2103 Pointliste kopieren
 + 2104
 1    Nodelist einschrÑnken
