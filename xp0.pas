@@ -467,6 +467,7 @@ type   textp  = ^text;
                   ColListHeaderhigh : byte; { Nachrichtenkopf hervorgehobene Msg}
                   ColListHigh   : byte;   { *hervorgehoben*         }
                   ColListQHigh  : ColQArr; { Quote / *hervorgehoben* }
+                  ColListSignatur: Byte;  { Lister, Signatur        }
                   ColEditText   : byte;   { Editor, normaler Text   }
                   ColEditStatus : byte;   { Editor, Statuszeile     }
                   ColEditMarked : byte;   { Editor, markierter Blck.}
@@ -1238,6 +1239,9 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.19  2003/09/11 22:28:55  mk
+  - added special color for signatures
+
   Revision 1.158.2.18  2003/09/05 18:22:14  mk
   - fixed for printing support under linux
 

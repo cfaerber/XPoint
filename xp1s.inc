@@ -370,7 +370,7 @@ begin
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
              iifs(_maus and ListScroller,'VSC/','')+
-             iifs(listmsg,'ROT/',''));
+             iifs(listmsg,'ROT/SIG/',''));
     if listwrap {or listkommentar} then
       list.Stat.WrapPos := iif(_maus and listscroller,78,80)+ScreenWidth-80;
 //!!    if listmsg and ConvIso then List.OnConvert := ISO_conv;
@@ -530,6 +530,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.76.2.4  2003/09/11 22:28:56  mk
+  - added special color for signatures
+
   Revision 1.76.2.3  2002/09/09 09:02:42  mk
   - added const parameters
 

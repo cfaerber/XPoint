@@ -55,6 +55,7 @@ type
     colscroll,                          { Scroller                }
     colhigh,                            { *hervorgehoben*         }
     colqhigh: byte;                     { Quote / *hervorgehoben* }
+    colsignatur: byte;                  { Signatur                }
   end;
 
   TLister = class;
@@ -94,6 +95,7 @@ type
     scrollx: Integer;
     rot13enable: boolean;               { ^R m”glich }
     autoscroll: boolean;
+    Signatur: boolean;                  { Highlight beginning from signatur }
   end;
 
   listarr = record                      { Pfeile }
@@ -137,10 +139,11 @@ type
 
   private
     FIsUTF8: boolean;
+    SignaturPosition: Integer;         // line number where signatur starts
   protected
     procedure SetUTF8;
-    procedure SetCP437;    
-    
+    procedure SetCP437;
+
   public
     col: listcol;
     stat: liststat;
@@ -278,6 +281,7 @@ begin
   FIsUTF8 := false;
   
   FLines := TStringList.Create;
+  SignaturPosition := MaxInt; // no signature found
 end;
 
 constructor TLister.CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
@@ -299,6 +303,7 @@ begin
   stat.directmaus := pos('/DM/', options) > 0;
   stat.vscroll := pos('/VSC/', options) > 0;
   stat.rot13enable := pos('/ROT/', options) > 0;
+  stat.signatur := pos('/SIG/', options) > 0;
   if stat.vscroll then
     stat.scrollx := ScreenWidth;
   stat.autoscroll := true;
@@ -365,6 +370,8 @@ begin
     insert(sp(8 - (p - 1) mod 8), Line, p);
     p := pos(#9, Line);
   end;
+  if (Line = '-- ') and (SignaturPosition = MaxInt) then
+    SignaturPosition := Lines.Count;
   // add one line, not marked
   Lines.AddObject(Line, nil);
 end;
@@ -503,6 +510,8 @@ var
           else
             if b = $FF then
             b := (col.coltext and $F0) + (col.coltext shr 4);
+          if stat.Signatur and (FirstLine + i >= SignaturPosition) then
+            b := col.colsignatur;
           attrtxt(b);
         end
         else
@@ -830,7 +839,7 @@ begin // Show
   scrolling := false;
   mausdown := false;
   oldselb := true; {!}
-  
+
   repeat
     if SelBar then
     begin
@@ -1139,6 +1148,7 @@ initialization
       colmarkbar := $30 + green;
       colfound := $71;
       colstatus := 3;
+      colsignatur := 7;
     end
     else
     begin
@@ -1148,10 +1158,14 @@ initialization
       colmarkbar := $70;
       colfound := 1;
       colstatus := $F;
+      colsignatur := $F;
     end;
 finalization
 {
   $Log$
+  Revision 1.69.2.7  2003/09/11 22:28:54  mk
+  - added special color for signatures
+
   Revision 1.69.2.6  2003/08/26 01:33:18  mk
   - improved display of actual line in lister (showstat)
 

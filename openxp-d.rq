@@ -291,7 +291,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 13   ^Text,^Hotkey,^Pfeile
 14   ^Text,^hervorgehoben,^Invers
 15   ^Text,^hervorgehoben,^Querverweis,^gewÑhlter Querverweis
-16   ^Nachrichtenkopf,^N.-Kopf hervorgehoben,^Text,^Auswahlbalken,^Zeilenmarkierung,^Wortmarkierung,^Statuszeile,^Scroller,^hervorgehoben,^Quote,Q^uote/hervorgehoben
+16   ^Nachrichtenkopf,^N.-Kopf hervorgehoben,^Text,^Auswahlbalken,^Zeilenmarkierung,^Wortmarkierung,^Statuszeile,^Scroller,^hervorgehoben,^Quote,Q^uote/hervorgehoben,S^ignatur
 17   ^Kopf,^Statuszeile,^Text,^Quote,^markiert,^Endmarke,M^enÅ,Me^nÅtasten,MenÅ^balken,^gewÑhlte Taste
 18   ^Text,^Daten,^Statuszeile
 19   Ebene ^1,Ebene ^2,Ebene ^3,Ebene ^4,Ebene ^5,Ebene ^6,Ebene ^7,Ebene ^8,Ebene ^9
@@ -3998,6 +3998,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.16  2003/09/11 22:28:54  mk
+# - added special color for signatures
+#
 # Revision 1.57.2.15  2003/08/28 21:59:24  mk
 # - fixed display of ressource 10800
 #

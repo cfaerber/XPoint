@@ -58,6 +58,7 @@ begin
       collistqhigh[1+i*3]:=11; collistqhigh[2+i*3]:=14; collistqhigh[3+i*3]:=10;
       end;
     collistscroll:=7; collistheader:=7; collisthigh:=$f; collistheaderhigh:=7;
+    collistsignatur:=7;
     coledittext:=7; coleditmarked:=$17; coleditstatus:=$17; coleditmessage:=$1e;
     coledithead:=$70; coleditendmark:=7;
     for i:=1 to 9 do coleditquote[i]:=collistquote[i];
@@ -170,6 +171,7 @@ begin
         getb(collistfound); getb(colliststatus); getb(collistquote[1]);
         getb(collistscroll); getb(collistheader); getb(collisthigh);
         getb(collistqhigh[1]); getb(collistheaderhigh);
+        getb(collistsignatur);
         end
       else if s1='editor' then begin
         getb(coledittext); getb(coleditmarked); getb(coleditstatus);
@@ -234,6 +236,7 @@ begin
     colfound:=col.collistfound;
     colstatus:=col.colliststatus; colscroll:=col.collistscroll;
     colhigh:=col.collisthigh; colqhigh:=col.collistqhigh[1];
+    colsignatur := col.collistsignatur;
     end;
   ListColors := lc;
   fsb_rcolor:=col.colselrahmen;
@@ -1716,6 +1719,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.15  2003/09/11 22:28:56  mk
+  - added special color for signatures
+
   Revision 1.144.2.14  2003/09/06 13:50:19  cl
   - workaround for deliberately changed format of nodelist indexes in
     "FreeXP 3.40 RC3" [2003-08-31].
