@@ -522,12 +522,12 @@ begin
   autocpgd:=true;
   XP_ID_PMs:=false;  {alt: XP_ID_PMs:=true;}
   XP_ID_AMs:=false;  {alt: XP_ID_AMs:=true;}
-  {Keine Xp-Zeile unter AMs und PMs setzen.
-  Die Sharewareeinschr‰nkung das das unregistrierte
-  Xp unter PMs immer die XP-Zeile setzt bleibt davon
+{ Keine XP-Zeile unter AMs und PMs setzen.
+  Die Shareware-EinschrÑnkung, da· das unregistrierte
+  XP unter PMs immer die XP-Zeile setzt, bleibt davon
   unberÅhrt. Dies wird an anderer Stelle geprÅft und
   gesetzt. }
-  XP_Tearline := true;
+  XP_Tearline:=true;
   UserSlash:=true;
   BAKext:='BAK';
   keepedname:=false;
@@ -1751,6 +1751,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.23  2001/07/20 15:51:48  my
+  - corrected some typos
+
   Revision 1.62.2.22  2001/07/18 17:20:27  my
   - removed switch and netcall routine
     "update date entries after netcall"
