@@ -9491,19 +9491,6 @@ Instead of an address, you can enter the name of a
 sysop or point. Enter the surname, first part of the
 surname or the full name.
 @
-13008
-<<Fido / Nodelists / Find
-
-You can browse the data for Fido nodes. Enter the
-node address in the usual form <Zone>:<Net>/<Node>.
-If you leave off the zone and even the net,
-CrossPoint will take the zone and net of your main
-Fido server (Bossnode) as default.
-
-Instead of an address you can enter the name of a
-sysop or point. Enter the surname, first part of the
-surname or the full name.
-@
 13101
 <<Fido / Request
 
