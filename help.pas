@@ -30,7 +30,14 @@ UNIT help;
 
 INTERFACE
 
-uses xpglobal, crt,dos,typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
+uses
+  xpglobal,
+{$IFDEF NCRT }
+  oCrt,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
 
 const maxpages = 1200;
       maxqvw   = 200;
@@ -166,7 +173,11 @@ var ixadr : longint;
     fm      : byte;
 
 begin
+{$IFDEF UnixFS }
+  if pos('.',getfilename(name))=0 then name:=name+'.hlp';
+{$ELSE }
   if pos('.',getfilename(name))=0 then name:=name+'.HLP';
+{$ENDIF }
   assign(f,name);
   fm:=filemode; filemode:=0;
   reset(f,1);
@@ -769,6 +780,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/04/29 17:01:04  hd
+  Linux-Anpassung
+
   Revision 1.9  2000/04/04 21:01:20  mk
   - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
 

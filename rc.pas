@@ -9,7 +9,13 @@
 
 {$I XPDEFINE.INC }
 
-uses  crt,dos,typeform,fileio, xpglobal;
+uses
+{$IFDEF NCRT }
+  oCrt,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,typeform,fileio, xpglobal;
 
 const open   : boolean = false;
       maxblk = 4;                  { max. 4 Resourcen-Segmente }
@@ -79,13 +85,22 @@ begin
   if (paramcount=2) then begin
     outpath:=paramstr(2);
     if outpath<>'' then begin
+{$IFDEF UnixFS }
+      if outpath[length(outpath)]<>'/' then
+        outpath:=outpath+'/';
+{$ELSE }
       if outpath[length(outpath)]<>'\' then
         outpath:=outpath+'\';
+{$ENDIF }
     end
   end;
   if (outpath='') then outpath:=dir;
 
+{$IFDEF UnixFS }
+  assign(f,outpath+infile+'.res');
+{$ELSE }
   assign(f,outpath+infile+'.RES');
+{$ENDIF }
   rewrite(f,1);
   open:=true;
   getmem(buf1,16384);
@@ -313,9 +328,15 @@ begin
     writeln('Source File: ',infile);
   writeln;
   if trim(infile)<>'' then begin
+{$IFNDEF UnixFS }
     UpString(infile);
+{$ENDIF }
     if cpos('.',infile)=0 then
+{$IFDEF UnixFS}
+      infile:=infile+'.rq';
+{$ELSE }
       infile:=infile+'.RQ';
+{$ENDIF }
     if not exist(infile) then
       fehler('"'+infile+'" not found.');
     InitVar;

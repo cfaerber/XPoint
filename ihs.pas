@@ -10,7 +10,14 @@
 {$I XPDEFINE.INC }
 {$R-,S-}
 
-uses crt,dos,typeform,fileio, xpglobal;
+uses
+{$IFDEF NCRT } 
+  oCrt,
+{$ELSE }
+  crt,
+{$ENDIF }
+  dos,
+  typeform,fileio, xpglobal;
 
 const maxpages = 1200;
       version  = '1.21';
@@ -421,6 +428,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2000/04/29 16:57:54  hd
+  Linux-Anpassung
+
   Revision 1.7  2000/04/27 22:59:28  mk
   - 32 Bit fixes
 
