@@ -192,7 +192,11 @@ var
   C: Integer;
 begin
   C := FindBadge(Badge);
-  if C >= 0 then Logbadges.Objects[C] := Pointer(Level);
+  if C >= 0 then
+  begin
+    Logbadges.Objects[C] := Pointer(Level);
+    DebugLog('debug',Format('debug level for %s set to %d',[Badge,Level]),DLNone);
+  end;
   if UpperCase(Badge)='DEFAULT' then DLDefault := Level;
 end;
 
@@ -304,6 +308,9 @@ finalization
 
 {
   $Log$
+  Revision 1.28  2002/02/13 16:55:01  ma
+  - added SetLoglevel log
+
   Revision 1.27  2002/02/09 18:05:43  ma
   - fixed: exception trace was not written to ERROR.TXT (please check)
 
