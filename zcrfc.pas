@@ -2120,7 +2120,7 @@ var
   end;
 
 begin
-  zz := ''; s0 := '';
+  zz := '';
   hd.mime.ctype := tText;               { Default: Text }
   repeat
     ReadString;
@@ -2656,66 +2656,75 @@ begin
   OpenFile(fn);
   ReadString;
 
-  n := 0;
-  if (LeftStr(s, 2) = '#!') or RawNews then
-    if (LeftStr(s, 8) <> '#! rnews') and not RawNews then
+  if (not RawNews) and (LeftStr(s, 2) = '#!') then
+    if LeftStr(s, 8) <> '#! rnews' then
     begin
       if CommandLine then  writeln(' - unbekanntes Batchformat');
       goto ende;
-    end
-    else
-    begin
-      if CommandLine then write(sp(7));
-      repeat
-        if not RawNews then
-        while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and
-          (bufpos < bufanz) do
-           ReadString;
-        if bufpos < bufanz then
-        begin
-          p := pos('#! rnews', s);
-          if p > 1 then begin
-            delete(s, 1, p - 1);
-            size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
-            end else begin
-            size := 0;
-            end;
-          inc(n);
-          if CommandLine then write(#8#8#8#8#8, n: 5);
-          inc(news);
-          fp := fpos; bp := bufpos;
-          ClearHeader;
-          hd.netztyp:=nt_RFC;
-          ReadRFCheader(false, s);
-          binaer := (hd.typ = 'B');
-          seek(f1, fp); ReadBuf; bufpos := bp;
-          repeat                        { Header ueberlesen }
-            ReadString;
-            //** clean up: ignore size if line count is given
-            dec(size, length(s) + eol);
-          until (s = '') or (bufpos >= bufanz);
-
-          if hd.Lines = 0 then
-            hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
-
-          //** clean up: ignore size if line count is given
-          while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
-          begin                         { Groesse des Textes berechnen }
-            ReadString; Dec(hd.lines);
-            dec(Size, length(s) + eol);
-            DecodeLine;
-            if (not binaer)and(hd.mime.ctype<>tMultipart)
-              then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
-            Mail.Add(s);
-            inc(hd.groesse, length(s));
-          end;
-          WriteHeader;                  { ZC-Header inkl. Groessenangabe erzeugen }
-          for i := 0 to Mail.Count - 1 do
-            wrfs(Mail[i]);
-        end;
-      until (bufpos >= bufanz) or (s = '');
-      if CommandLine then writeln(' - ok');
     end;
+
+  if CommandLine then write(sp(7));
+  n := 0;
+  repeat
+    case RawNews of
+      false: begin
+        while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and
+               (bufpos < bufanz) do
+          ReadString;
+        p := pos('#! rnews', s);
+        if p > 1 then begin
+          delete(s, 1, p - 1);
+          size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
+          end else begin
+          size := 0;
+          end;
+        end;
+      true: begin
+        // first line for ReadRFCHeader is already read if first message (see OpenFile)
+        // if not on first message, read next line
+        if n>0 then ReadString;
+        size := 0;
+        end;
+      end; {case}
+
+    if bufpos < bufanz then
+    begin
+      inc(n);
+      if CommandLine then write(#8#8#8#8#8, n: 5);
+      inc(news);
+      fp := fpos; bp := bufpos;
+      ClearHeader;
+      hd.netztyp:=nt_RFC;
+      ReadRFCheader(false, s);
+      binaer := (hd.typ = 'B');
+      seek(f1, fp); ReadBuf; bufpos := bp;
+      repeat                        { Header ueberlesen }
+        ReadString;
+        //** clean up: ignore size if line count is given
+        dec(size, length(s) + eol);
+      until (s = '') or (bufpos >= bufanz);
+
+      if hd.Lines = 0 then
+        hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
+
+      //** clean up: ignore size if line count is given
+      while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
+      begin                         { Groesse des Textes berechnen }
+        ReadString; Dec(hd.lines);
+        dec(Size, length(s) + eol);
+        DecodeLine;
+        if (not binaer)and(hd.mime.ctype<>tMultipart)
+          then s := DecodeCharset(s,GetCharsetFromName(hd.mime.charset));
+        Mail.Add(s);
+        inc(hd.groesse, length(s));
+      end;
+      WriteHeader;                  { ZC-Header inkl. Groessenangabe erzeugen }
+      for i := 0 to Mail.Count - 1 do
+        wrfs(Mail[i]);
+    end;
+  until (bufpos >= bufanz) or (s = '');
+  if CommandLine then writeln(' - ok');
+
   ende:
   close(f1);
   pfrec:= @f1;
@@ -3789,6 +3798,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2001/04/11 19:37:52  ma
+  - fixed: First posting line was ignored sometimes :-(
+  - getting rid of ReadString/BufPos/BufAnz is definitely a must.
+  - shortened CVS logs
+
   Revision 1.50  2001/04/10 17:38:01  mk
   - Stringlist Code cleanup
 
@@ -3825,94 +3839,4 @@ end.
 
   Revision 1.41  2001/03/26 23:18:17  cl
   - fix for news batch decompression
-
-  Revision 1.40  2001/03/26 22:57:28  cl
-  - moved compression routines from xpncuucp to zcrfc/uuz
-  - fixed decompression
-  - zcrfc/uuz now ignores *.OUT (X-* does match these on some systems!)
-  - new uuz switches: -cnews -gnews -fnews -fbnews for compressed news packages
-  - separate compressors for news and smtp (no UI yet)
-  - fixed default parameters to include $PUFFER/$DOWNFILE
-
-  Revision 1.39  2001/03/25 11:43:00  mk
-  - fixed VP compile problem and bug with new properties
-
-  Revision 1.38  2001/03/25 11:30:28  cl
-  - uncompressors are now properties of TUUZ
-
-  Revision 1.37  2001/03/13 19:24:58  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.36  2001/03/13 00:18:07  cl
-  - if ClearSourceFiles is false, files are renamed to *.BAK
-    (so on error, files are not deleted upon next netcall, only files named *.BAK)
-
-  Revision 1.35  2001/03/12 23:51:57  cl
-  - fixed crash when To header was empty/missing in mails
-
-  Revision 1.34  2001/03/03 19:54:05  cl
-  - name of created command file is now a readable property of TUUZ
-  - leave file name conversion of requested files to UUCICO
-
-  Revision 1.33  2001/03/02 10:22:49  mk
-  - removed/modified non GPL code
-
-  Revision 1.32  2001/02/28 23:56:21  ma
-  fix ;-)
-
-  Revision 1.31  2001/02/28 23:06:58  ma
-  - replaced some non-GPL'd code
-
-  Revision 1.30  2001/02/28 14:25:47  mk
-  - removed some tainted comments
-
-  Revision 1.29  2001/02/22 17:13:22  cl
-  - ClearSourceFiles works now
-
-  Revision 1.28  2001/02/19 15:27:19  cl
-  - marked/modified non-GPL code by RB and MH
-
-  Revision 1.27  2001/01/28 08:50:59  mk
-  - fixed bug in envelope handling
-
-  Revision 1.26  2001/01/14 10:13:37  mk
-  - MakeHeader() integreated in new unit
-
-  Revision 1.25  2001/01/11 13:21:35  mk
-  - fixed chararr-bugs and removed some unnecessary defines
-
-  Revision 1.24  2001/01/05 09:33:11  mk
-  - removed THeader.Ref
-
-  Revision 1.23  2001/01/02 15:48:55  mk
-  - fixed bugs with replyto and references
-
-  Revision 1.22  2001/01/02 15:08:24  mk
-  - fixed GetPar
-
-  Revision 1.21  2000/12/31 15:13:41  mk
-  - overwrite destination file
-
-  Revision 1.20  2000/12/31 11:51:05  mk
-  - append to dest file instead of error
-
-  Revision 1.19  2000/12/30 17:47:41  mk
-  - renamed AddRef to References
-
-  Revision 1.18  2000/12/28 00:29:56  mk
-  - CommandLine is default false
-
-  Revision 1.17  2000/12/27 12:42:55  mk
-  - uuz can now started with xp uuz
-
-  Revision 1.16  2000/12/26 22:34:39  mk
-  - removed random writes to screen
-
-  Revision 1.15  2000/12/26 22:05:37  mk
-  - fixed some more bugs introduced by Frank Ellert
-
-  Revision 1.14  2000/12/07 10:35:01  mk
-  - fixed three bugs
-
 }
