@@ -221,8 +221,8 @@ begin
     else begin
       if fname[length(fname)]='\' then
         dellast(fname);
-      Dos.findfirst(fname,Directory,sr);
-      IsPath:=(doserror=0) and (sr.attr and directory<>0);
+      findfirst(fname,Directory,sr);
+      IsPath:=((doserror=0) or (doserror=18)) and (sr.attr and directory<>0);
     end;
   findclose(sr);
   end;
@@ -574,6 +574,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.59  2000/11/04 23:12:56  mk
+  - fixed false reporting in IsPath
+
   Revision 1.58  2000/11/01 22:59:23  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
