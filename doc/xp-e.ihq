@@ -5025,7 +5025,7 @@ CrossPoint searches in the groups defined here.
 540
 You are in the key-macro editor. You can redefine
 keys in the main window (newsgroups, users, messages)
-in the (internal) lister and editor.
+in the message reader (internal) and in the editor.
 
 <<Macro-Display:
 
@@ -5039,7 +5039,7 @@ in the (internal) lister and editor.
    ³          ³³³³³³  ÀÄÄ the key-macro
    ³          ³³³³³ÀÄ E = Macro functions for editor
    ³          ³³³³ÀÄÄ A = for Archive-Viewer
-   ³          ³³³ÀÄÄÄ L = for lister
+   ³          ³³³ÀÄÄÄ L = for message reader
    ³          ³³ÀÄÄÄÄ N = for message window
    ³          ³ÀÄÄÄÄÄ U = for user window
    ³          ÀÄÄÄÄÄÄ B = for newsgroup window
@@ -5048,7 +5048,7 @@ in the (internal) lister and editor.
 
 The functions are as follows:
 
-<<New>>      begin a new macro.
+<<New>>      start a new macro.
 
 <<Delete>>   delete the selected macro.
 
@@ -5058,13 +5058,13 @@ The functions are as follows:
          macro.
 
 <<***>>      Change the window where the macro
-         functions
+         functions.
 
 <<Save>>     save all macro definitions.
 
 <<OK>>       exit macro editor
 
-See also the documentation in XPOINT.DOC.
+See also the documentation in XPOINT.TXT
 
 @
 545
@@ -5078,7 +5078,7 @@ See also the documentation in XPOINT.DOC.
 
 <<Messages>>   functions only in the message window.
 
-<<Lister>>     functions only in the lister
+<<Lister>>     functions only in the message reader.
 
 <<ArcViewer>>  functions only in the archive viewer.
 
@@ -5108,7 +5108,7 @@ o  Special keys enclosed in pointed brackets.
 Special keys are:
 
 <Shift Tab>          Shift-Tab
-<F1> to <F10>       Function keys, also in Combi-
+<F1> to <F10>        Function keys, also in Combi-
                      nation with Shift, Ctrl or Alt
 <Home>, <End>
 <Ctrl-Home>, -End
@@ -6818,6 +6818,80 @@ FIDO sub-directory and all compiled Node/Pointlists,
 along with their associated index files, are placed
 in the FIDO sub-directory too.
 
+@
+940
+Here, you must define the correct format of the list
+you are configuring:
+
+<<Nodelist>>        "Normal" Fido Nodelist, commonly
+                referred to as a "St. Louis format"
+                nodelist. If you want to work with
+                only one single Zone, you must put
+                the Zone number in the "Zone/Address"
+                field. It is normal, however, to work
+                with all Zones.
+
+<<Points24 list>>   Standard Region 24 Pointlist,
+                i.e Germany, commonly referred to as
+                a "German Pointlist".
+
+<<PVT Pointlist>>   Pointlist for a single Node,
+                commonly referred to as a "Private
+                Pointlist". You must put the Node
+                address in the "Zone/Address" field.
+
+<<4D Pointlist>>    "Normal" International Pointlist
+                format. This format may be identified
+                by every entry starting with "Point".
+
+<<FD Pointlist>>    "FrontDoor format" Pointlist. This
+                format may be identified by every
+                Node having a "Boss" entry.
+@
+941
+For PVT Pointlists, you must enter here the address
+of the Node to whom the Pointlist belongs.
+
+For Nodelists and with 4D Pointlists, you may
+(if desired) enter a Zone number to use.
+@
+942
+This is the filename of the <<raw (uncompressed)>> diff
+file. The wildcard "\###" may be used to denote the
+newest diff file. For a standard Fido nodediff, this
+would be "NODEDIFF.\###"
+@
+943
+This is the filename of the <<compressed>> diff file.
+The most common archivers used for this are ZIP and
+ARC. For nodediffs compressed with ZIP, the filename
+extension would be .Z??, where "??" equals the last
+two digits of the Julian date. For nodediffs
+compressed with ARC, the filename extension would be
+.A??, where "??" equals the last two digits of the
+Julian date. The filename extension may be
+substituted by a widcard, either "Z###" for ZIP or
+"A###" for ARC.
+@
+944
+You can enter here the name of either a programme or
+a batch file to process your nodediffs, instead of
+allowing CrossPoint to do it. The full path and name
+of the update file may be passed to either the
+programme or batch file with the macro <<$FILE>>.
+@
+945
+<<[x]>> -> CrossPoint will call its own NDIFF.EXE to
+       process the diff update.
+
+<<[ ]>> -> Update files will <<NOT>> be processed by
+       CrossPoint. The external programme or batch
+       file, as defined in "Process by", will be used
+       instead.
+@
+946
+<<[x]>> -> Update files will be deleted after being
+       processed.
 @
 1500
 Select <<Yes>> to archive a copy of the selected
