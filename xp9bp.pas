@@ -379,7 +379,7 @@ var t : text;
   end;
 
 begin
-  assign(t,OwnPath+dateiname+BfgExt);
+  assign(t,FileUpperCase(OwnPath+dateiname+BfgExt));
   rewrite(t);
   if ioresult<>0 then begin
     rfehler(902);     { 'ungueltiger Boxname!' }
@@ -613,6 +613,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37  2001/04/21 17:40:21  ma
+  - case in file name of new .BFGs was wrong
+
   Revision 1.36  2001/04/20 22:07:09  ma
   - SMTP/POP3 server entries can now be left empty
 
