@@ -1236,17 +1236,17 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 520
 # Zeilenanzahl
 0    11
-1    Vielen Dank, daá  Sie sich zum Arbeiten mit OpenXP entschie-
-2    den haben.
-3    !
-4    !
-5    !
-6    !
-7    !
-8
-9
-10   !
-11   !
+1    Dieses Programm ist freie Software. Sie k”nnen es unter den
+2    Bedingungen der GNU General Public License, wie von der Free
+3    Software Foundation herausgegeben, weitergeben und/oder modi-
+4    fizieren, entweder unter Version 2 der Lizenz oder (wenn Sie
+5     es wnschen) jeder sp„teren Version.
+6    Die Ver”ffentlichung dieses Programms erfolgt in der Hoff-
+7    nung, daá es Ihnen von Nutzen sein wird, aber ohne jede Ge-
+8    w„hrleistung - auch ohne implizite Gew„hrleistung der Markt-
+9    reife oder der Eignung fr einen bestimmten Zweck.
+10
+11   Details finden Sie in der GNU General Public License.
 #
 20   W„hlen Sie "Weiter", wenn Sie mit den Lizenzbestimmungen einver-
 21   standen sind.
@@ -3657,6 +3657,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.11  2001/04/29 22:58:03  ma
+# - added GPL infos
+#
 # Revision 1.10  2001/04/23 06:57:44  ml
 # - NNTP-BoxPar for getting last X Mails
 #

@@ -1212,15 +1212,16 @@ K (c) '2000 OpenXP Team, www.openxp.de
 
 + 520
 # number of lines
-0    8
-1    Thank you for using OpenXP.
-2    !
-3    !
-4    !
-5    !
-6    !
-7    !
-8    !
+0    9
+1    This program is free software; you can redistribute it and/or
+2    modify it under the terms of the GNU General Public License as
+3    published by the Free Software Foundation; either version 2 of
+4    the License, or (at your option) any later version.
+5    This program is distributed in the hope that it will be useful,
+6    but without any warranty; without even the implied warranty of
+7    merchantibility or fitness for a particular purpose.
+8 
+9    See the GNU General Public License for more details.
 #
 20   Choose "Continue" if you agree to these terms of license.
 21
@@ -3696,6 +3697,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.11  2001/04/29 22:58:03  ma
+# - added GPL infos
+#
 # Revision 1.10  2001/04/23 06:57:44  ml
 # - NNTP-BoxPar for getting last X Mails
 #
