@@ -1324,7 +1324,10 @@ begin      { --- select --- }
   oldrec:=disprec[1];
   empty:=false;
   if dispmode=11 then SortMark;
-  user_msgs:=(dispspec[1]='U');
+  if length(dispspec) > 0 then 
+    user_msgs:=(dispspec[1]='U')
+  else 
+    user_msgs:=false;
   if (dispmode=10) and user_msgs then begin { User-Fenster }
     rdmode:=0;         { immer Alles anzeigen }
     autokey:=keyend;   { ab ans Ende          }
@@ -2036,6 +2039,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/07/12 11:49:30  ml
+  - workaround für Ansistring
+
   Revision 1.34  2000/07/10 14:41:59  hd
   - Ansistring
 
