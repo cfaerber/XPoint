@@ -433,7 +433,8 @@ label ende,happyend;
       end;
 
 {--Spezialsuche--}
-    if spez then with srec^ do
+    if spez then
+    with srec^ do begin
       if DateFit and SizeFit and TypeFit and StatOk then begin
         dbReadN(mbase,mb_betreff,betr2);
         if (betr<>'') and (length(betr2)=40) then begin
@@ -465,16 +466,19 @@ label ende,happyend;
           UpString(realn);
           UpString(hdp^.fido_to);
           end;
-        if txt<>'' then volltextcheck;             { verknuepfte Volltextsuche (SST!) }
         if ((betr='') or (pos(betr,betr2)>0) xor nbetr) and
            ((user='') or ((pos(user,user2)>0) or (pos(user,realn)>0)) xor nuser) and
-           ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0) xor nfidoempf) and
-           ((txt='') or found) then begin
-          MsgAddmark;
-          inc(nf);
-          end;
-        end
-      else
+           ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0) xor nfidoempf) then
+          begin
+            if txt<>'' then volltextcheck;          { verknuepfte Volltextsuche (SST!) }
+            if (txt='') or found then 
+            begin
+              MsgAddmark;
+              inc(nf);
+              end;
+            end;
+        end; 
+      end
 
 
 {--Normale Suche--}
