@@ -502,13 +502,14 @@ end;
 
 procedure XPFont;
 begin
-{$IFDEF BP }
   if not ParLCD then
+  begin
     if ParFontfile[1]='*' then
       InternalFont
     else
       LoadFontfile(ParFontfile);
-{$ENDIF }
+    ScreenLines := GetScreenLines;
+  end;
 end;
 
 {$IFDEF BP }
@@ -1598,6 +1599,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.4  2000/11/27 21:42:37  mk
+  RB:- Screenlines nach Userfont setzen
+
   Revision 1.11.2.3  2000/11/17 22:34:36  mk
   - OpenXP erscheint jetzt ab und zu auch mal oeffentlich ;)
 
