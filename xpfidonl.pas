@@ -73,8 +73,8 @@ begin           //procedure InitNodelist;
       trfehler1(214,FidoDir+NodeList.GetFilename(i),10);  { 'Node-/Pointliste %s fehlt!' }
   if NodeList.mEntrys.Count > 0 then
   begin
-    NL_Datecheck;
     xni:=FileExists(NodeIndexF);                //exists 'FIDO\NODELIST.IDX'
+    if xni then NL_Datecheck;
     if indexflag or not xni or not FileExists (UserIndexF) then
       MakeNodelistIndex;
     OpenNodeindex(NodeIndexF);
@@ -521,6 +521,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/12/29 22:46:57  mo
+  - kein crash wenn bei Programmstart 'FIDO\NODELIST.IDX nicht vorhanden
+
   Revision 1.29  2000/12/29 16:44:25  mo
   - class TNodeList, new procedure AddEntry
 
