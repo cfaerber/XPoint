@@ -190,15 +190,15 @@ Messages and adjust the Message Area settings.
 
    <<I>>    Send a binary file into this Newsgroup.
 
-   <<H>>    Selects a View mode.
+   <<H>>    Selects a View-mode.
 
         A "" character to the left of a Newsgroup
-        indicates there are messages to be read in
-        that Newsgroup.
+        indicates there are unread messages in that
+        Newsgroup.
 
-   <<A>>    Switches between showing <<all>> Messages in the
-        Newsgroup and showing just those matching the
-        current view mode.
+   <<A>>    Switches between displaying <<ALL>> messages in
+        the Newsgroup or only those that match the
+        current View-mode.
 
    <<+>>    Jumps to the next appropriate Newsgroup
 
@@ -244,7 +244,6 @@ groups.
 Newsgroup names may be displayed in either upper or
 lower case. This can be configured in:
                         /Config/Display/Newsgroups.
-
 @
 21
 <<User-Overview
@@ -3550,20 +3549,20 @@ future reference.
 
 <<[ ]>>     PMs are not archived, no questions asked.
 @
-251
-You can enter a line here, which will appear in the
-header of ZConnect and UseNet messages. You can use
+1040
+You can enter a line here which will appear in the
+header of ZCONNECT and UseNet messages. You can use
 this line for your company name, if you use
-CrossPoint commercially, or similar information.
+CrossPoint commercially, or for similar information.
 
-The Line is put into Fido Mails as the name of your
-system.
-
-If it is left blank, CrossPoint puts your Username
-in.
+In FidoNet, this line is transmitted in the EMSI
+packet as the name of your system. If this line is
+left blank, CrossPoint transmits your Username as
+your system name.
 @
-252
-<<at present only ZConnect:>>
+1041
+<<At present, only ZCONNECT:>>
+
 You may give your postal address here; the individual
 lines must be separated by semi-colons.
 
@@ -3571,8 +3570,8 @@ This address will be sent in the header of all
 ZConnect messages, and can be seen publicly using
 suitable software.
 @
-253
-<<at present only ZConnect:>>
+1042
+<<At present, only ZCONNECT:>>
 
 You can enter your telephone numbers here. The
 numbers should have the following format, and must be
@@ -3618,7 +3617,7 @@ message reader to display other user's Homepages.
        will only be written to private messages.
 
 <<[ ]>> -> Your address, phone and Homepage details
-       will be written to private <<AND public>> 
+       will be written to private <<AND public>>
        messages.
 
 @
@@ -8361,9 +8360,9 @@ menu entry [/Netcall/Automatic].@11506
 11601
 <<Edit / Templates
 
-Under this entry the various templates for mails can
+Under this entry, the various message templates can
 be written and edited. These templates form the basis
-for messages, by entering a certain framework of text
+of messages, by entering a certain framework of text
 of your choice which is always the same for each
 message, like the date, your introductory text, your
 signature at the end and so on. There are some
@@ -10679,9 +10678,9 @@ importing it "by hand" using MAGGI.EXE to get a clue.
 @
 22207
 Before you can import a FIDO message packet from
-the AUTOEXEC directory you must have main FIDO
-Server (for CrossPoint to use as a reference)
-entered under /Edit/Servers.
+the AUTOEXEC directory you must have entered the
+main FIDO Server (for CrossPoint to use as a
+reference) under /Edit/Servers.
 @
 22208
 An error has occurred while converting the FIDO
