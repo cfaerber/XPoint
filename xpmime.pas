@@ -499,19 +499,29 @@ var i : integer;
 begin                         { SelectMultiPart }
   brk:=false;
   fillchar(mpdata,sizeof(mpdata),0);
-
   new(hdp);
   ReadHeader(hdp^,hds,true);
   new(mf);
   MakePartlist;
-  if not forceselect and (hdp^.mimetyp='multipart/alternative')
-     and (mf^[1].typ='text') and (mf^[1].subtyp='plain') then begin
+  if not forceselect and (anzahl=3) and (mf^[2].typ='text')
+     and (mf^[1].typ='text') and (mf^[1].subtyp='plain')
+     and (((hdp^.mimetyp='multipart/alternative')      { Text+HTML Messis }
+            and (mf^[2].subtyp='html'))
+         or (mf^[2].subtyp='x-vcard'))                 { oder Text mit VCard }
+  then begin
     index:=1;
-    select:=false;
+    select:=false;                         { Standardmaessig Nur Text zeigen }
     alter:=true;
     end
   else
     alter:=false;
+
+
+
+
+
+
+
 
   if (index=0) and (anzahl>anzahl0) then
     index:=anzahl
@@ -713,6 +723,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.4  2000/07/12 08:00:49  mk
+  JG: - MIME-Auswahldialog nur noch wenn wirklich sinnvoll und noetig
+
   Revision 1.7.2.3  2000/05/05 14:21:19  mk
   - erweiterte Filenamenerkennung bei MIME-Mails
 
