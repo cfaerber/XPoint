@@ -3646,10 +3646,8 @@ N Deutsch
 52 Verzeichnis "%s" ist nicht vorhanden!
 #
 53 Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!
-54 Maximal %s Serverbox-EintrÑge mîglich!
 57 Serverbox "%s" bereits vorhanden - trotzdem hinzufÅgen
-60 Serverbox "%s"
-61 ist %s mal vorhanden!
+60 Serverbox "%s" mehrfach vorhanden!
 62 Serverbox "%s" existiert nicht!
 63 Serverbox "%s" ist identisch mit editierter Serverbox!
 64 ist nicht vom Netztyp %s!
@@ -4138,6 +4136,9 @@ N Deutsch
 -
 
 # $Log$
+# Revision 1.85  2003/09/21 16:09:24  mk
+# - rewrote addServersTest
+#
 # Revision 1.84  2003/09/15 16:06:30  mk
 # - cleaned up RFC/Client code
 # - removed some limits
