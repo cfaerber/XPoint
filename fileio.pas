@@ -37,28 +37,28 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
                   ET_OS2_16, ET_OS2_32, ET_ELF);
 
 
-function  AddDirSepa(p: pathstr): pathstr;	{ Verz.-Trenner anhaengen }
-Function  exist(n:string):boolean;              { Datei vorhanden ?       }
+function  AddDirSepa(p: pathstr): pathstr; { Verz.-Trenner anhaengen }
+Function  exist(const n:string):boolean;         { Datei vorhanden ?       }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 Function  existrf(var f):boolean;               { D.v. (auch hidden etc.) }
-function  existBin(fn: pathstr): boolean;	{ Datei vorhanden (PATH)  }
-Function  ValidFileName(name:PathStr):boolean;  { gÅltiger Dateiname ?    }
+function  existBin(const fn: pathstr): boolean;	{ Datei vorhanden (PATH)  }
+Function  ValidFileName(const name:PathStr):boolean;  { gÅltiger Dateiname ?    }
 Function  IsPath(name:PathStr):boolean;         { Pfad vorhanden ?        }
-function  TempFile(path:pathstr):pathstr;       { TMP-Namen erzeugen      }
-function  TempExtFile(path,ld,ext:pathstr):pathstr; { Ext-Namen erzeugen }
-function  _filesize(fn:pathstr):longint;        { Dateigrî·e in Bytes     }
-function  filetime(fn:pathstr):longint;         { Datei-Timestamp         }
-procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen  }
-function  copyfile(srcfn, destfn:pathstr):boolean; { Datei kopieren }
-Procedure era(s:string);                        { Datei lîschen           }
-procedure erase_mask(s:string);                 { Datei(en) lîschen       }
+function  TempFile(const path:pathstr):pathstr;       { TMP-Namen erzeugen      }
+function  TempExtFile(const path,ld,ext:pathstr):pathstr; { Ext-Namen erzeugen }
+function  _filesize(const fn:pathstr):longint;        { Dateigrî·e in Bytes     }
+function  filetime(const fn:pathstr):longint;         { Datei-Timestamp         }
+procedure setfiletime(const fn:pathstr; newtime:longint);  { Dateidatum setzen  }
+function  copyfile(const srcfn, destfn:pathstr):boolean; { Datei kopieren }
+Procedure era(const s:string);                        { Datei lîschen           }
+procedure erase_mask(const s:string);                 { Datei(en) lîschen       }
 Procedure erase_all(path:pathstr);              { Lîschen mit Subdirs     }
-function  _rename(n1,n2:pathstr):boolean;       { Lîschen mit $I-         }
-Procedure MakeBak(n,newext:string);             { sik anlegen             }
-procedure MakeFile(fn:pathstr);                 { Leerdatei erzeugen      }
+function  _rename(const n1,n2:pathstr):boolean;       { Lîschen mit $I-         }
+Procedure MakeBak(const n,newext:string);             { sik anlegen             }
+procedure MakeFile(const fn:pathstr);                 { Leerdatei erzeugen      }
 procedure mklongdir(path:pathstr; var res:integer);  { mehrere Verz. anl. }
 function  diskfree(drive:byte):longint;         { 2-GB-Problem umgehen    }
-function  exetype(fn:pathstr):TExeType;
+function  exetype(const fn:pathstr):TExeType;
 
 procedure fm_ro;                                { Filemode ReadOnly       }
 procedure fm_rw;                                { Filemode Read/Write     }
@@ -70,14 +70,14 @@ procedure unlockfile(var datei:file);
 
 procedure addext(var fn:pathstr; ext:extstr);
 procedure adddir(var fn:pathstr; dir:dirstr);
-function  GetFileDir(p:pathstr):dirstr;
-function  GetFileName(p:pathstr):string;
-function  GetBareFileName(p:pathstr):string;    { Filename ohne .ext }
-function  GetFileExt(p:pathstr):string;         { Extension *ohne* "." }
+function  GetFileDir(const p:pathstr):dirstr;
+function  GetFileName(const p:pathstr):string;
+function  GetBareFileName(const p:pathstr):string;    { Filename ohne .ext }
+function  GetFileExt(const p:pathstr):string;         { Extension *ohne* "." }
 procedure WildForm(var s: pathstr);              { * zu ??? erweitern }
 
 function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
-procedure WriteBatch(s:string);                 { Batchfile erstellen     }
+procedure WriteBatch(const s:string);                 { Batchfile erstellen     }
 
 implementation  { ------------------------------------------------------- }
 
@@ -119,7 +119,7 @@ end;
   - Startverzeichnis der aktuellen Programmdatei
   - Environment-Var PATH
 }
-function  existBin(fn: pathstr): boolean;
+function  existBin(const fn: pathstr): boolean;
 var
   envpath: string;			{ Opps, bug in brain. PATH kann > 256 sein }
   filename, path: PathStr;
@@ -158,7 +158,7 @@ begin
     existBin:= false;
 end;
 
-function exist(n:string):boolean;
+function exist(const n:string):boolean;
 var
   sr : searchrec;
   ex : boolean;
@@ -199,7 +199,7 @@ begin
   existrf:=e;
 end;
 
-Function ValidFileName(name:PathStr):boolean;
+Function ValidFileName(const name:PathStr):boolean;
 var f : file;
 begin
   if (name='') or multipos('*?/',name) then  { Fehler in DR-DOS 5.0 umgehen }
@@ -241,7 +241,7 @@ begin
   end;
 end;
 
-function copyfile(srcfn, destfn:pathstr):boolean;  { Datei kopieren }
+function copyfile(const srcfn, destfn:pathstr):boolean;  { Datei kopieren }
 { keine öberprÅfung, ob srcfn existiert oder destfn bereits existiert }
 var bufs,rr:word;
     buf:pointer;
@@ -263,7 +263,7 @@ begin
   freemem(buf,bufs);
 end;
 
-Procedure era(s:string);
+Procedure era(const s:string);
 var f : file;
 begin
   assign(f,s);
@@ -271,7 +271,7 @@ begin
 end;
 
 
-procedure erase_mask(s:string);                 { Datei(en) lîschen }
+procedure erase_mask(const s:string);                 { Datei(en) lîschen }
 var sr : searchrec;
 begin
   findfirst(s,ffAnyfile,sr);
@@ -317,7 +317,7 @@ begin
   end;
 end;
 
-Procedure MakeBak(n,newext:string);
+Procedure MakeBak(const n,newext:string);
 var bakname : string;
     f       : file;
     dir     : dirstr;
@@ -367,7 +367,7 @@ begin
 end;
 
 
-procedure WriteBatch(s:string);
+procedure WriteBatch(const s:string);
 var
   f:text;
   io:integer;
@@ -424,7 +424,7 @@ begin
     end;
 end;
 
-function TempFile(path:pathstr):pathstr;       { TMP-Namen erzeugen }
+function TempFile(const path:pathstr):pathstr;       { TMP-Namen erzeugen }
 var n : string[12];
 begin
   repeat
@@ -433,7 +433,7 @@ begin
   TempFile:=path+n;
 end;
 
-function TempExtFile(path,ld,ext:pathstr):pathstr;  { Ext-Namen erzeugen }
+function TempExtFile(const path,ld,ext:pathstr):pathstr;  { Ext-Namen erzeugen }
 { ld max. 4 Zeichen, ext mit Punkt '.bat' }
 var n : string[MaxLenFilename];
 begin
@@ -444,7 +444,7 @@ begin
 end;
 
 
-function _filesize(fn:pathstr):longint;
+function _filesize(const fn:pathstr):longint;
 var sr : searchrec;
 begin
   findfirst(fn,ffAnyFile,sr);
@@ -454,7 +454,7 @@ begin
     _filesize:=sr.size;
 end;
 
-procedure MakeFile(fn:pathstr);
+procedure MakeFile(const fn:pathstr);
 var t : text;
 begin
   assign(t,fn);
@@ -465,7 +465,7 @@ begin
     close(t);
 end;
 
-function filetime(fn:pathstr):longint;
+function filetime(const fn:pathstr):longint;
 var sr : searchrec;
 begin
   findfirst(fn,ffAnyFile,sr);
@@ -475,7 +475,7 @@ begin
     filetime:=0;
 end;
 
-procedure setfiletime(fn:pathstr; newtime:longint);  { Dateidatum setzen }
+procedure setfiletime(const fn:pathstr; newtime:longint);  { Dateidatum setzen }
 var f : file;
 begin
   assign(f,fn);
@@ -485,7 +485,7 @@ begin
   if ioresult<>0 then;
 end;
 
-function GetFileDir(p:pathstr):dirstr;
+function GetFileDir(const p:pathstr):dirstr;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -494,7 +494,7 @@ begin
   GetFileDir:=d;
 end;
 
-function GetFileName(p:pathstr):string;
+function GetFileName(const p:pathstr):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -503,7 +503,7 @@ begin
   GetFileName:=n+e;
 end;
 
-function GetBareFileName(p:pathstr):string;
+function GetBareFileName(const p:pathstr):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -512,7 +512,7 @@ begin
   GetBareFileName:=n;
 end;
 
-function GetFileExt(p:pathstr):string;
+function GetFileExt(const p:pathstr):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -521,7 +521,7 @@ begin
   GetFileExt:=mid(e,2);
 end;
 
-function _rename(n1,n2:pathstr):boolean;
+function _rename(const n1,n2:pathstr):boolean;
 var f : file;
 begin
   assign(f,n1);
@@ -676,7 +676,7 @@ begin
   diskfree:=l;
 end;
 
-function exetype(fn:pathstr):TExeType;
+function exetype(const fn:pathstr):TExeType;
 var f       : file;
     magic   : array[0..1] of char;
     magic2  : array[0..2] of char;
@@ -735,6 +735,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.4  2000/10/19 12:55:20  mk
+  - const-Parameter sparen 600 Byte in der EXE-Datei ;-)
+
   Revision 1.41.2.3  2000/08/28 23:14:59  mk
   - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext usw. LFN-faehig zu machen; das muss bei den anderen Units noch nachgeholt werden
 
