@@ -30,7 +30,7 @@ uses
   capi,
 {$ENDIF CAPI }
      printerx,mouse,maus2,uart,resource,lister,editor,video,
-     xp0,xp1,xp1input,xpdatum, xpglobal, xpnt;
+     xp0,xp1,xp1input,xpdatum, xpglobal, xpnt, lfn;
 
 procedure options;
 procedure UI_options;
@@ -1506,6 +1506,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.21  2001/08/02 21:34:03  mk
+  - add lfn-unit to uses
+
   Revision 1.39.2.20  2001/07/23 18:40:09  mk
   - removed nested comments
 
