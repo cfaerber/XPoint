@@ -1533,7 +1533,7 @@ var   x,y,n   : Integer;
       dir, name, ext: String;
       FindRes: Integer;
 const
-  cfgext  : array [1..4] of string = ('*.CFG','*.BFG','*.BFE','*.$CF');
+  cfgext  : array [1..4] of string[5] = ('*.CFG','*.BFG','*.BFE','*.$CF');
 label restart;
 begin
 restart:
@@ -1569,8 +1569,8 @@ restart:
       s2 := ExpandFileName(s2)
     else
       s2 := ExpandFileName(cdir + s2);
-    if ((length(s2) = 2) and (cpos(':',s2) = 2)) or
-       (RightStr(s2,1) = DirSepa) then
+    if ((length(s2) = 2) and (s2[2] = ':')) or
+       (LastChar(s2) = DirSepa) then
       s2 := ExpandFileName(s2 + WildCard)
     else
     if IsPath(s2) then
@@ -1581,7 +1581,7 @@ restart:
       rfehler1(949,dir);  { 'Verzeichnis "%s" ist nicht vorhanden!' }
       goto restart;
     end;
-    if (pos('*',s2)>0) or (pos('?',s2)>0) then
+    if multipos('*?',s2) then
     begin
       selcol;
       pushhp(89);
@@ -1605,13 +1605,13 @@ restart:
     ReadExtCfgFilename := false;
 end;
 
-
-
-
 end.
 
 {
   $Log$
+  Revision 1.15  2001/08/02 22:14:57  mk
+  JG:- ReadExtCfgFilename: optimized suboptimal (but working) code
+
   Revision 1.14  2001/07/31 18:05:39  mk
   - implemented is_emailaddress in NameRead
   - RFC/Client: implemented "External Settings" under
