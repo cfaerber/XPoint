@@ -2331,7 +2331,7 @@ begin
     if UpperCase(userauf)='ALLE' then UserAufnahme:=0
     else if UpperCase(userauf)='Z-NETZ' then UserAufnahme:=1
     else if UpperCase(userauf)='PMS' then UserAufnahme:=3
-    else UserAufnahme:=3;   { 2 = keine gibt's nicht mehr! }
+    else UserAufnahme:=2;
     scsavetime:=scrsaver;                { Screen-Saver     }
     DruckLPT:=min(5,max(DruckLpt,1));
     if aaa<>'' then
@@ -2792,6 +2792,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.158  2003/04/02 16:01:04  mk
+  - allow "keine" as "User-Aufnahme" setting again
+
   Revision 1.157  2003/03/30 11:03:13  cl
   - missing commit for new ressource file format,
     see <8ij6qW3bJeD@wombat.dyn.han.de>
