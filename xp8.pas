@@ -1370,15 +1370,16 @@ label again;
         gr:=trim(LeftStr(gr,length(gr)-1));
       writeln(t,gr);
       end
-    else if fido then begin
+    else if fido then
+    begin
       if (art=0) and boxpar^.AreaPlus then
         write(t,'+');
       if art=1 then write(t,'-');
       s:=fidobrett(s);
 {      if (art=4) and not BoxPar^.areabetreff then }
 {        s:=s+' -R';} {'%Rescan '+s;}     { rescan }
-      writeln(t,s);
-      end
+      write(t,s,#13#10);
+    end
     else if qwk then begin
       if art=0 then write(t,'ADD ')
       else write(t,'DROP ');
@@ -2193,6 +2194,9 @@ end;
 
 {
   $Log$
+  Revision 1.70.2.10  2003/08/23 18:29:03  mk
+  - fixed #721302: Fidoechos ueber Brettmanager bestellen
+
   Revision 1.70.2.9  2003/04/25 20:52:25  mk
   - added Headeronly and MessageID request
     toggle with "m" in message view
