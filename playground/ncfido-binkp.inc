@@ -229,7 +229,7 @@ var
   State: tState; RxState,LastRxState: tRxState; TxState,LastTxState: tTxState;
   InBpF,OutBpF: tBinkpFrame; TheQueue: TList; PendingFiles,PendingFilesWithPath: TStringList;
   RxFilename: string; RxFileHandle,RxResult: Longint; RxSize,RxTime,RxOffset: Cardinal;
-  TxFilename,TxFilenameWithPath: string; TxFileHandle,TxResult: Longint; TxSize,TxTime,TxOffset: Cardinal;
+  TxFilename,TxFilenameWithPath: string; TxFileHandle,TxResult: Longint; TxSize,TxTime: Cardinal;
 
   function GetPar(var s: string): string;
   var p: integer;
@@ -492,6 +492,9 @@ end;
 
 {
   $Log$
+  Revision 1.11  2001/03/03 16:21:32  ma
+  - removed unused variables/procedures
+
   Revision 1.10  2001/03/03 00:25:47  ma
   - small fixes
 

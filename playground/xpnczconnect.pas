@@ -142,7 +142,6 @@ var
 
 var
   ShellCommandUparcer,UpArcFile: string;
-  CommObj: tpCommObj;
   Proceed: Boolean;
 
 begin { ZConnectNetcall }
@@ -220,6 +219,9 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/03/03 16:21:32  ma
+  - removed unused variables/procedures
+
   Revision 1.6  2001/02/19 12:18:29  ma
   - simplified ncmodem usage
   - some small improvements

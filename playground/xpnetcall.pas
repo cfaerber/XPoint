@@ -95,7 +95,7 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 implementation  {---------------------------------------------------}
 
 uses direct,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
-     xpfido,xpfidonl,xpmaus,xpncfido,xpnczconnect,xpncpop3,xpncuucp,xpmakeheader,ncmodem;
+     xpfido,xpncfido,xpnczconnect,xpncpop3,xpncuucp,xpmakeheader,ncmodem;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
@@ -554,7 +554,7 @@ begin
 end;
 
 procedure UniqueDownloadName(var s:string;path:string);
-var pold,name,ext,ext2,i: string;
+var pold,name,ext,i: string;
     j,mlen: integer;
 begin
   s := ExtractFileName(s); (* replace path *)
@@ -636,61 +636,27 @@ end;
 function netcall(PerformDial:boolean; BoxName:string; DialOnlyOnce,relogin,crash:boolean):boolean;
 
 const crlf : array[0..1] of char = #13#10;
-      ACK  = #6;
-      NAK  = #21;
-      back7= #8#8#8#8#8#8#8;
+//      ACK  = #6;
+//      NAK  = #21;
+//      back7= #8#8#8#8#8#8#8;
 
 var
     bfile      : string;
     ppfile     : string;
     eppfile    : string;
-    user       : string;
-    noconnstr  : string;
-    rz         : string;
-    prodir     : string;
-    scrfile    : string;
     domain     : string;
-    olddpuffer : string;
-    nulltime   : string;      { Uhrzeit der ersten Anwahl }
-    ende   : boolean;
     d          : DB;
-    f          : file;
-    retries    : integer;
-    IgnCD      : boolean;
-    recs,lrec  : string;    { Empfangspuffer-String }
-    zsum       : byte;
     i          : integer;
-    size       : longint;
-    c          : char;
-    startscreen: boolean;
-    display    : boolean;
-    showconn   : boolean;
-    spufsize,
-    spacksize  : longint;
-    brkadd     : longint;         { s. tkey() }
-    s          : string;
 
-    ticks      : longint;
     connects   : integer;         { Zaehler 0..connectmax }
     netztyp    : byte;
     logintyp   : shortint;        { ltZConnect / ltMaus }
 
-    janusp     : boolean;
-    msgids     : boolean;         { fuer MagicNET }
     ldummy     : longint;
     NumCount   : byte;            { Anzahl Telefonnummern der BoxName }
-    NumPos     : byte;            { gerade gewaehlte Nummer        }
-    error      : boolean;
-    ft         : longint;
-
-    source     : string;
-    ff         : boolean;
 
     ScreenPtr  : ScrPtr; { Bildschirmkopie }
-    jperror    : boolean;
-    uu : TUUZ;
     IncomingFiles: TStringList;
-
 
   procedure AppendEPP;
   var f,f2 : file;
@@ -865,11 +831,9 @@ begin                  { function Netcall }
   bfile := dbReadStr(d,'dateiname');
   ppfile:=bfile+BoxFileExt;
   eppfile:=bfile+EBoxFileExt;
-  user := dbReadStr(d,'username');
   dbRead(d,'netztyp',netztyp);
   komment := dbReadStr(d,'kommentar');
   domain := dbReadStr(d,'domain');
-  msgids:=(dbReadInt(d,'script') and 8=0);
   dbClose(d);
 
   if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_UUCP])then begin
@@ -890,7 +854,6 @@ begin                  { function Netcall }
   _maus:=(logintyp=ltMaus);
   _fido:=(logintyp=ltFido);
   _uucp:=(logintyp=ltUUCP);
-  janusp:=(logintyp=ltZConnect) and BoxPar^.JanusPlus;
   if _maus then begin
     if FileExists(mauslogfile) then _era(mauslogfile);
     if FileExists(mauspmlog) then _era(mauspmlog);
@@ -916,7 +879,7 @@ begin                  { function Netcall }
       end;
     end;
 
-  NumCount:=CountPhonenumbers(boxpar^.telefon); NumPos:=1;
+  NumCount:=CountPhonenumbers(boxpar^.telefon);
   FlushClose;
 
   Debug.DebugLog('xpnetcall','testing utilities',DLInform);
@@ -1232,6 +1195,9 @@ end.
 
 {
   $Log$
+  Revision 1.17  2001/03/03 16:21:32  ma
+  - removed unused variables/procedures
+
   Revision 1.16  2001/02/28 22:43:13  cl
   - UniqueDownloadName, UUCP netcall
 

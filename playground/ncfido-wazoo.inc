@@ -23,8 +23,7 @@
 
 
 procedure TFidomailer.WaZOOsession;
-var FileToSend : String;
-    ZModemOkay: Boolean;
+var ZModemOkay: Boolean;
     ZModemObj: TZModemObj;
     I: Integer;
 
@@ -77,6 +76,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2001/03/03 16:21:32  ma
+  - removed unused variables/procedures
+
   Revision 1.9  2001/02/23 13:51:05  ma
   - implemented transferred file logging
   - implemented empty send batch (Fido)

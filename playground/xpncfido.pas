@@ -46,7 +46,7 @@ procedure ShowRQ(s:string);
 implementation   { -------------------------------------------------- }
 
 uses
-  direct,ncfido,xpheader,xp3,xp3o,xpmakeheader,xpmessagewindow,
+  ncfido,xpheader,xp3,xp3o,xpmakeheader,xpmessagewindow,
   datadef,database,xp9bp,xpnt,xpnetcall;
 
 type
@@ -85,8 +85,10 @@ begin
     ReadBox(nt_Fido,bfile,@boxpar);
     if alias then
       result:=leftstr(boxname,cpos('/',boxname))+boxpar.pointname
+    else if boxpar.f4d then
+      result:=boxname+'.'+boxpar.pointname
     else
-      result:=boxname+'.'+boxpar.pointname;
+      result:=leftstr(boxname,cpos(':',boxname))+IntToStr(boxpar.fpointnet)+'/'+boxpar.pointname;
     if (domain<>'') and IncludeDomain then result:=result+'@'+domain;
     end
   else
@@ -102,22 +104,21 @@ var
   ownfidoadr: string;
   alias     : boolean;
 
-  procedure Convert(boxpar: boxptr; const source,dest: string);
+  procedure Convert(boxpar: boxptr; source,dest: string);
   const
     pc: array[false..true] of string = ('', '1A');
   var
     fnet: integer;
-    res: integer;
+    f: boolean;
   begin
     with BoxPar^ do
     begin
-      if (f4d or alias) then
-        fnet:= -1
-      else
-        fnet:= fPointNet;
-
-      Debug.DebugLog('xpncfido','ZC->Fido '+MagicBrett+' '+source+' '+dest+' '+ownfidoadr+' '+boxname,DLDebug);
-      Res:=DoZFido(1,                                { Richtung ZC->FTS }
+      f:=OutFilter(source);
+      fnet:=-1;
+      if(not f4d)and(not alias)then fnet:=fPointNet;
+      Debug.DebugLog('xpncfido','ZC->Fido '+MagicBrett+' '+source+' '+dest+' '+
+                                ownfidoadr+' '+boxname+' '+IntToStr(fnet),DLDebug);
+      DoZFido(1,                                { Richtung ZC->FTS }
                    MagicBrett,                       { Basisebene }
                    source,                           { Quelldatei }
                    dest,                             { Zieldatei }
@@ -130,6 +131,7 @@ var
                    false,                            { Keep VIA }
                    true,                             { Requests }
                    false,1,1);                       { Leere loeschen? }
+      if f then _era(source); // delete filtered pp file copy
     end;
   end;
 
@@ -207,8 +209,7 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
   end;
 
 const fpuffer = 'FPUFFER';
-var p       : byte;
-    x,y     : byte;
+var x,y     : byte;
     res,iFile: integer;
     AtLeastOneConvertedOK: Boolean;
     aFile,ShellProg: String;
@@ -310,19 +311,14 @@ function FidoNetcall(boxname: string;
                      IncomingFiles: TStringList): shortint;
 
 var i        : integer;
-    request  : string;
-    ownaddr  : string;
     fa       : fidoadr;
     ni       : NodeInfo;
-    CrashBox : FidoAdr;
+//    CrashBox : FidoAdr;
     fileatts : integer;   { File-Attaches }
     OutgoingFiles: TStringList;
     Fidomailer: TFidomailer;
 
-label fn_ende,fn_ende0;
-
   procedure InitFidomailer;
-  var i : integer;
 
     procedure WriteAttach(const puffer:string);
 
@@ -466,8 +462,6 @@ label fn_ende,fn_ende0;
   function GetArcFilename(_from,_to:string):string;   { Fido-Dateiname ermitteln }
   var fn    : string[12];
       a1,a2 : fidoadr;
-      t     : text;
-      s     : string[80];
   begin
     splitfido(_from,a1,DefaultZone);
     splitfido(_to,a2,DefaultZone);
@@ -843,6 +837,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/03/03 16:21:32  ma
+  - removed unused variables/procedures
+
   Revision 1.18  2001/02/23 13:51:05  ma
   - implemented transferred file logging
   - implemented empty send batch (Fido)

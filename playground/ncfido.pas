@@ -168,12 +168,11 @@ begin
   secsfrom70:=secs;
 end;
 
-procedure set_time(secs:longint);
+(*procedure set_time(secs:longint);
 var y,m : word;
     h,min,s: word;
 begin
-{$ifndef Unix}
-(*  if secs<0 then exit;
+  if secs<0 then exit;
   y:=1970;
   while secs>=iif(schaltj(y),366,365)*tagsec do begin
     dec(secs,iif(schaltj(y),366,365)*tagsec);
@@ -188,13 +187,9 @@ begin
   secs:=secs mod tagsec;
   h:=secs div 3600;       secs:=secs mod 3600;
   min:=secs div 60;       secs:=secs mod 60;
-  s:=secs; *)
-  {$ifdef FPC}
-  {$hint under Unix we do not set up the time now. please do the dos/win-code }
-  {$endif}
-  {dos.settime(h,min,s,0);}
-{$endif}
-end;
+  s:=secs;
+  dos.settime(h,min,s,0);
+end; *)
 
 {$I ncfido-yoohoo.inc}
 {$I ncfido-emsi.inc}
@@ -244,6 +239,9 @@ end.
 
 {
   $Log$
+  Revision 1.20  2001/03/03 16:21:32  ma
+  - removed unused variables/procedures
+
   Revision 1.19  2001/03/02 22:07:20  cl
   - VPascal: define fsFromXXX constants for FileSeek
 
