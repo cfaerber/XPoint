@@ -292,13 +292,16 @@ end;
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
 begin
-  CompileTime := FormatDateTime('ddmmyyhhnn', FileDateToDateTime(FileAge(ParamStr(0))))
+  CompileTime := FormatDateTime('yyyy-dd-mm-hhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
   {$IFDEF Delphi }
     + 'd'
   {$ENDIF }
   {$IFDEF Kylix }
     + 'k'
   {$ENDIF }
+  {$IFDEF FPC }
+    + 'f'
+  {$ENDIF}
   ;
 end;
 {$ENDIF}
@@ -2323,6 +2326,9 @@ finalization
 
 {
   $Log$
+  Revision 1.26  2001/10/26 11:23:32  ma
+  - fixes and changes concerning CompileTime mailer header
+
   Revision 1.25  2001/10/17 10:19:52  mk
   - decode/docode byte instead of ShortInt
 

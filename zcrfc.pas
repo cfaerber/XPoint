@@ -888,13 +888,6 @@ begin
     if attrib <> 0 then wrs('X-XP-ATT: ' + hex(attrib, 4));
     if fido_to <> '' then wrs('F-TO: ' + fido_to);
     if XPointCtl <> 0 then wrs('X-XP-CTL: ' + strs(XPointCtl));
-{$IFDEF snapshot}
-    wrs('X-XP-ZCRFC-Version: ' + LeftStr(xp_xp,iif(cpos('/',xp_xp)<>0,cpos('/',xp_xp)-1,length(xp_xp)))
-                     +'/'+trim(verstr)
-                     +' ('+Without(Without(Trim(pformstr),'('),')')+betastr
-                     {$IFDEF Snapshot} + ' @ ' + FormatDateTime('ddmmyyhhnn', FileDateToDateTime(FileAge(ParamStr(0)))) {$ENDIF}
-                     +')');
-{$ENDIF}
     wrs('');
   end;
 end;
@@ -3638,6 +3631,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.82  2001/10/26 11:23:32  ma
+  - fixes and changes concerning CompileTime mailer header
+
   Revision 1.81  2001/10/21 13:09:05  ml
   - removed some more warnings (only 130 yet...)
 
