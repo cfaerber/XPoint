@@ -105,9 +105,10 @@ var s       : string;
     i,ml    : byte;
     n       : byte;
     m1empty : boolean;
-  begin
-  freemem(menu[2],length(menu[2]^)+1);
-  freemem(menu[menus],length(menu[menus]^)+1);
+
+begin
+  menu[2] := '';
+  menu[menus] := '';
   s:=''; ml:=14;
   n:=0;
 
@@ -121,8 +122,7 @@ var s       : string;
   m1empty:=false;
   if s<>'' then s:=',-'+s else m1empty:=true;
   s:='Zusatz,'+forms(getres2(10,100),ml+4)+'@K,'+getres2(10,101)+s;
-  getmem(menu[2],length(s)+1);
-  menu[2]^:=s;
+  menu[2]:=s;
 
   s:='';
   for i:=1 to iif(screenlines=25,9,10) do            { Zusatzmenue 11-20 }
@@ -133,8 +133,7 @@ var s       : string;
         inc(n);
         end;
   if m1empty and (s<>'') then s:=',-'+s; 
-  getmem(menu[menus],length(s)+1);
-  menu[menus]^:=s;
+  menu[menus]:=s;
 end;
 
 procedure setmenus;
@@ -466,7 +465,7 @@ var i  : integer;
                          ParRelogin:=true;
                        end else
     if isl('nsp:') then begin
-                          NetPar(ustr(mid(s,6)));
+                          NetPar(UpperCase(mid(s,6)));
                           ParNSpecial:=true;
                         end else
     if _is('r')    then ParReorg:=true else
@@ -1126,6 +1125,9 @@ finalization
 //!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.132  2002/01/22 13:59:21  mk
+  - after 3.40 merge fixes
+
   Revision 1.131  2002/01/13 15:07:26  mk
   - Big 3.40 Update Part I
 

@@ -61,7 +61,7 @@ procedure EditNetcallDat;
 
 implementation  { ---------------------------------------------------- }
 
-uses  xp2,xp3,xp3o,xp4o,xp4o2,xpnetcall,xp9bp,xpauto,xpfido,xpfidonl;
+uses  xp2,xp3,xp3o,xp4o,xp4o2,xpnetcall,xp9bp,xpconfigedit,xpauto,xpfido,xpfidonl;
 
 const maxentries  = 100;   { s. auch XP0.maxkeys }
       TimingWidth = 116;
@@ -2069,7 +2069,7 @@ procedure ReadNetcallSpecialData;
 var i : byte;
 begin
   for i:=1 to NetcallSpecialMax do NetcallSpecialList[i] := '';
-  if exist(ownpath+NetcallSpecialDat) then
+  if FileExists(ownpath+NetcallSpecialDat) then
   begin
     i:=1;
     assign(netcalldat,ownpath+NetcallSpecialDat);
@@ -2086,7 +2086,7 @@ end;
 
 
 procedure EditNetcallDat;
-var x,y,p,i    : byte;
+var x,y,p,i    : Integer;
     t          : taste;
 
 const lines  = NetcallSpecialMax;
@@ -2167,7 +2167,7 @@ begin  { --- of EditNetcallDat --- }
     if (t=keydown) and (p<lines) then inc(p);
     if (t=keyhome) or (t=keypgup) then p:=1;
     if (t=keyend) or (t=keypgdn) then p:=lines;
-    if (t=keycr) or (ustr(t)='E') then edit(p);
+    if (t=keycr) or (UpperCase(t)='E') then edit(p);
   until t=keyesc;
   closebox;
   freeres;
@@ -2183,6 +2183,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.67  2002/01/22 13:59:21  mk
+  - after 3.40 merge fixes
+
   Revision 1.66  2002/01/13 15:07:25  mk
   - Big 3.40 Update Part I
 

@@ -32,6 +32,23 @@ uses
   maus2,mouse,resource,xpglobal,
   xp0,xp1,xp1o,xp1o2,xp1input,xp2c,fidoglob;
 
+const
+      maxboxen = 127;         { max. Grî·e des Arrays 'boxlist' }
+     own_Nt    : byte = 255;
+        { Netztyp f. "ZusÑtzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
+      own_Name  : string = '';
+        { Boxname f. "ZusÑtzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
+      showErrors: boolean = true;
+        { Flag fÅr 'addServersTest' in xp9sel.pas }
+      BfgToBoxOk: boolean = true;
+        { Flag fÅr 'ChkAddServers' in xp7.inc }
+      maxbox    : byte = maxboxen;
+        { max. Boxen-Anzahl in Box-Config bzw. NETCALL.DAT }
+
+      delete_on_cDel  : boolean = false; { Steuerung des Verhaltens...   }
+      leave_on_cDel   : boolean = false; { ... bei <Ctrl-Del> in Feldern }
+      may_insert_clip : boolean = true;  { Clipboard in Felder (nicht) einfÅgen }
+
 function  Netz_Typ(nt:byte):string;
 function  UniSel(typ:byte; edit:boolean; default:string):string;
 procedure BoxSelProc(var cr:customrec);
@@ -110,7 +127,6 @@ const umtyp : array[0..5] of string[5] =
       SupportedNetTypes: array[0..3] of byte =
         (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ENDIF}
-      maxboxen = 127;         { max. Grî·e des Arrays 'boxlist' }
 
 var   UpArcnr   : integer;    { fÅr EditPointdaten }
       DownArcNr : integer;
@@ -145,21 +161,6 @@ var   UpArcnr   : integer;    { fÅr EditPointdaten }
       amvfield  : integer;    { EditDiverses }
       downprotnr: integer;    { Edit/Point - Download-Protokoll }
       MailInServerFld : integer; { Name MailInServer RFC/Client }
-
-const own_Nt    : byte = 255;
-        { Netztyp f. "ZusÑtzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
-      own_Name  : string[BoxNameLen] = '';
-        { Boxname f. "ZusÑtzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
-      showErrors: boolean = true;
-        { Flag fÅr 'addServersTest' in xp9sel.pas }
-      BfgToBoxOk: boolean = true;
-        { Flag fÅr 'ChkAddServers' in xp7.inc }
-      maxbox    : byte = maxboxen;
-        { max. Boxen-Anzahl in Box-Config bzw. NETCALL.DAT }
-
-      delete_on_cDel  : boolean = false; { Steuerung des Verhaltens...   }
-      leave_on_cDel   : boolean = false; { ... bei <Ctrl-Del> in Feldern }
-      may_insert_clip : boolean = true;  { Clipboard in Felder (nicht) einfÅgen }
 
 
 function CreateServerFilename(d: db; nt:byte; const boxname:string):string;
@@ -2551,6 +2552,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2002/01/22 13:59:22  mk
+  - after 3.40 merge fixes
+
   Revision 1.41  2002/01/22 01:25:37  mk
   - hopefully fixed net_type
 

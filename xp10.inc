@@ -185,7 +185,7 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei 
 
   procedure MakeAllListe(var brk:boolean; auto:boolean);
   var d          : DB;
-      fn         : pathstr;
+      fn         : String;
       t          : text;
       ti         : string;
       all        : string;
@@ -200,7 +200,7 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fÅr Batchauswertung bei 
     var i          : byte;
         netcalldat : text;
     begin
-      if not exist(ownpath+NetcallSpecialDat) then
+      if not FileExists(ownpath+NetcallSpecialDat) then
       begin
         datDa:=false;
         if auto then
@@ -749,6 +749,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2002/01/22 13:59:21  mk
+  - after 3.40 merge fixes
+
   Revision 1.19  2002/01/13 15:07:25  mk
   - Big 3.40 Update Part I
 

@@ -250,6 +250,8 @@ end;
 
 
 procedure initvar;
+var
+  i: Integer;
 begin
   {$IFDEF unix }
     OSType := os_Linux;
@@ -1705,6 +1707,9 @@ begin
 
 {
   $Log$
+  Revision 1.138  2002/01/22 13:59:22  mk
+  - after 3.40 merge fixes
+
   Revision 1.137  2002/01/13 15:07:27  mk
   - Big 3.40 Update Part I
 
