@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ ----------------------------------------------------------------}
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ ----------------------------------------------------------------}
 { $Id$ }
 
 const cfs  : array[0..4] of string[5] = ('Z','Shift','Ctrl','Alt','#Z');
@@ -442,18 +443,22 @@ begin
   altproc[4].schluessel:=keyalte;
   altproc[4].funktion:=EditText;
   altproc[5].schluessel:=keyaltn;
-  altproc[5].funktion:=NodelistSeek;
+  altproc[5].funktion:=NodelistSeek;        { = NodelistBrowser(true) }
   altproc[6].schluessel:=keyalti;
   altproc[6].funktion:=ScreenShot;
   altproc[7].schluessel:=keyaltt;
   altproc[7].funktion:=Notepad;
+  altproc[maxalt+1].schluessel:=keyaltn;    { 'keyaltn' = Dummy, reagiert nur auf <AltGr-N> }
+  altproc[maxalt+1].funktion:=NodelistGrep; { = NodelistBrowser(false) }
+  altproc[maxalt+2].schluessel:=keyaltn;    { 'keyaltn' = Dummy, wird nur via 'get' (inout.pas) aufgerufen }
+  altproc[maxalt+2].funktion:=NodelistBrowserDisabled;  { nur Fehlermeldung }
   shortkeys:=0;
   scsaveadr:=scsaver;
   prterror:=DruckWiederholen;
   hlp(1);
-  DefaultZone:=2;    {alt: 2}
-  DefaultNet:=248;   {alt: 243}
-  DefaultNode:=2004; {alt: 97}
+  DefaultZone:=2;   {alt:   2}
+  DefaultNet:=2433; {alt: 243}
+  DefaultNode:=460; {alt:  97}
   nodeopen:=false;
   kludges:=true;
   getmem(gAKAs,AKAlen+1); gAKAs^:='';
@@ -1837,6 +1842,16 @@ end;
 
 {
   $Log$
+  Revision 1.62.2.40  2003/03/17 22:56:45  my
+  MY:- Hotkey <AltGr-N> fÅr Nodeliste durchsuchen implementiert.
+
+  MY:- Pseudo-Hotkeyfunktion fÅr Fehlermeldung bei deaktiviertem
+       Nodelist-Browser implementiert.
+
+  MY:- Default-Zone/Net/Node aktualisiert ("2:2433/460").
+
+  MY:- Source-Header aktualisiert/korrigiert.
+
   Revision 1.62.2.39  2003/01/12 07:42:33  mw
 
   MW: Kleine ErgÑnzungen zum gro·en GebÅhrenupdate :
