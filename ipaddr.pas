@@ -30,7 +30,6 @@ interface
 
 uses
   xpglobal,             { Nur wegen der Typendefinition }
-  Sockets,              { Socket-Interface }
   sysutils;
 
 
@@ -222,6 +221,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/08/01 20:42:41  mk
+  - Unit Sockets entfernt
+
   Revision 1.6  2000/08/01 11:08:01  mk
   - auf neues TNetCallSocket umgestellt
 
