@@ -16,8 +16,10 @@ require("menu.php");
 require("webtools.php");
 ShowHeader("OpenXP Online");
 
-if ($file!="")
-  include($file);
+if ($file!="") {
+  $url = parse_url($file);
+  include($url[path]);
+}
 else if ($bare!="") { 
   set_time_limit(240);
   if($bare_fp = fopen($bare,"r")) {
