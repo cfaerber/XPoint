@@ -39,6 +39,12 @@
 #
 #DBDIR = 
 
+# Verzeichnis, in dem die ISO 8879 Entities liegen.
+# <http://fallout.camputview.indiana.edu/ports/distfiles/isoENTS.zip>
+# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+#
+#ENTDIR = 
+
 # Verzeichnis, in dem die DSSSL-Dateien von OpenJade liegen.
 # <http://www.netfolder.com/DSSSL/>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
@@ -46,14 +52,15 @@
 #JADEDIR = C:\Programme\OpenJade-1.3\dsssl
 
 # Verzeichnis, in dem die Modular DSSSL-Stylesheets liegen.
-# <http://nwalsh.com/docbook/dsssl/>
+# <http://nwalsh.com/docbook/dsssl/db157.zip>
 # (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
 #
 #MODDIR = 
 
 # Verzeichnis, in dem notwendige Dateien liegen, die nicht Bestandteil
-# des Quellcode sind
-# (MUSS gesetzt werden.)
+# des Quellcode sind.
+# <ftp://ftp.openxp.de/openxp/snapshot/oxpcontr.rar>
+# (MUSS gesetzt werden, falls "make install" aufgerufen wird.)
 #
 #contribdir = 
 
@@ -90,6 +97,10 @@ ifeq (,$(DBDIR))
 $(error Variable "DBDIR" muss gesetzt werden)
 endif
 
+ifeq (,$(ENTDIR))
+$(error Variable "ENTDIR" muss gesetzt werden)
+endif
+
 ifeq (,$(JADEDIR))
 $(error Variable "JADEDIR" muss gesetzt werden)
 endif
@@ -98,10 +109,6 @@ ifeq (,$(MODDIR))
 $(error Variable "MODDIR" muss gesetzt werden)
 endif
 
-endif
-
-ifeq (,$(contribdir))
-$(error Variable "contribdir" muss gesetzt werden)
 endif
 
 DOCFORMFLAGS ?= 72 1 N
@@ -159,7 +166,8 @@ OLDDOC = fido uucp
 TXT = authors.txt dbform devtodo.txt files.txt gpl.txt make.txt \
 	planung.txt readme.txt slizenz.txt tools.txt versions.txt
 CONTRIBDOC = bestell.txt lizenz.doc xpoint.log
-HBFILES = xpoint.htm catalog xpoint.tmp xpoint.tm1 tidyerr.tmp
+HBFILES = xpoint.htm catalog xpoint.tmp xpoint.tm1 xpoint.tm2 \
+	tidyerr.tmp
 
 ifeq ($(OS),linux)
 TXT += readme.lnx
@@ -169,11 +177,12 @@ HELPFILES = $(patsubst %,%.hlp,$(HELP))
 OLDDOCFILES = $(patsubst %,%.txt,$(OLDDOC))
 TXT += $(OLDDOCFILES) xpoint.txt
 
-# "/" und "\" fuer sed quoten und $(SEP) anhaengen
+# "/" und "\" fuer sed quoten und $(SEP) bzw. $(SEP)docbook$(SEP) anhaengen
 
 DBDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(DBDIR)$(SEP))))
+ENTDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(ENTDIR)$(SEP))))
 JADEDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(JADEDIR)$(SEP))))
-MODDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(MODDIR)$(SEP))))
+MODDIRQ = $(subst @QUOTE@,\,$(subst \,@QUOTE@\,$(subst /,@QUOTE@/,$(MODDIR)$(SEP)docbook$(SEP))))
 
 ifeq ($(MAKEHB),yes)
 all: xpoint.txt $(HELPFILES) $(OLDDOCFILES)
@@ -195,15 +204,21 @@ xpoint.htm: xpoint.sgm xpoint.dsl catalog
 
 catalog: xpoint.cat
 	$(SED) 's/@DBDIR@/$(DBDIRQ)/' xpoint.cat > xpoint.tmp
-	$(SED) 's/@JADEDIR@/$(JADEDIRQ)/' xpoint.tmp > xpoint.tm1
-	$(SED) 's/@MODDIR@/$(MODDIRQ)/' xpoint.tm1 > catalog
+	$(SED) 's/@ENTDIR@/$(ENTDIRQ)/' xpoint.tmp > xpoint.tm1
+	$(SED) 's/@JADEDIR@/$(JADEDIRQ)/' xpoint.tm1 > xpoint.tm2
+	$(SED) 's/@MODDIR@/$(MODDIRQ)/' xpoint.tm2 > catalog
 
 $(OLDDOCFILES): %.txt: %.dq
 	$(DOCFORM) $< $@ $(DOCFORMFLAGS)
 
+ifeq (,$(contribdir))
+install:
+	$(error Variable "contribdir" muss gesetzt werden)
+else
 install: install_datadir $(patsubst %,install_%,$(HELPFILES)) \
 	install_docdir $(patsubst %,install_%,$(TXT)) \
 	$(patsubst %,install_%,$(CONTRIBDOC))
+endif
 
 install_datadir:
 	-$(INSTALLDIR) $(datadir)
@@ -260,6 +275,9 @@ maintainer-clean: clean
 
 #
 # $Log$
+# Revision 1.7  2000/10/09 22:10:02  fe
+# Ergaenzungen fuer Handbuch, v.a. ISO 8879 Entities.
+#
 # Revision 1.6  2000/10/08 18:14:16  fe
 # Uebersetzung des Handbuchs ergaenzt.
 #
