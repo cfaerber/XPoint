@@ -162,18 +162,21 @@ begin  { __ Suchmarke }
             dbReadN(ubase,ub_kommentar,komm);
                                                      { Trennzeilenerkennung }
 
-            if left(s,3)='$/T' then begin
+           { if left(s,3)='$/T' then s:=#0+s; }       { Altes Trennzeichenformat unterstuetzen }
+
+            if left(s,4)=#0+'$/T' then begin
+
               if komm='' then
-                dispbuf[y]^:='     '+dup(74,s[4])+' '
+                dispbuf[y]^:='     '+dup(74,s[5])+' '
               else
                 case trennkomm of
-                  1 : dispbuf[y]^:='     '+komm+' '+dup(73-length(komm),s[4])+' ';
+                  1 : dispbuf[y]^:='     '+komm+' '+dup(73-length(komm),s[5])+' ';
                   2 : begin
-                        dispbuf[y]^:='     '+dup((72-length(komm))div 2,s[4])+' '+
+                        dispbuf[y]^:='     '+dup((72-length(komm))div 2,s[5])+' '+
                                      komm+' ';
-                        dispbuf[y]^:=dispbuf[y]^+dup(79-length(dispbuf[y]^),s[4])+' ';
+                        dispbuf[y]^:=dispbuf[y]^+dup(79-length(dispbuf[y]^),s[5])+' ';
                       end;
-                  3 : dispbuf[y]^:='     '+dup(73-length(komm),s[4])+' '+komm+' ';
+                  3 : dispbuf[y]^:='     '+dup(73-length(komm),s[5])+' '+komm+' ';
                 end;
               markflag[y]:=2;
               end

@@ -287,7 +287,7 @@ var x,y  : byte;
     ebs  : boolean;
 begin
   new(adp);
-  if left(user,3)<>'$/T' then
+  if left(user,4)<>#0+'$/T' then
   begin  
     dialog(57,13,txt,x,y);
     maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxRealLen,'>'); mhnr(423);
@@ -415,7 +415,7 @@ begin
 end;
 
 
-procedure editverteiler(txt:atext; var name,komm,pollbox:string;
+procedure editverteiler(txt:atext; var name,komm,pollbox:string; Var adr:integer16;
                         var brk:boolean);
 var x,y : byte;
 begin
@@ -426,8 +426,9 @@ begin
   maddstring(3,4,getres2(2703,2),komm,30,30,''); mhnr(422);  { 'Kommentar' }
   maddstring(3,6,getres2(2703,3),pollbox,BoxRealLen,BoxRealLen,'>'); mhnr(612);
   mappcustomsel(BoxSelProc,false);               { 'Server   ' }
-  freeres;
   msetvfunc(vtestpollbox);
+  maddint(35,6,getres2(2701,11),adr,2,2,1,99); mhnr(8069);       { 'Adressbuchgruppe' }
+  freeres;
   readmask(brk);
   if not brk then
     name:=vert_long(name);
@@ -441,12 +442,14 @@ var name    : string[AdrLen];
     pollbox : string[BoxNameLen];
     b       : byte;
     brk     : boolean;
+    adr     : integer16; 
 begin
   name:='';
   komm:='';
   pollbox:='';
   newverteiler:=false;
-  editverteiler(getres(2704),name,komm,pollbox,brk);  { 'neuen Verteiler anlegen' }
+  adr:=1;
+  editverteiler(getres(2704),name,komm,pollbox,adr,brk);  { 'neuen Verteiler anlegen' }
   if not brk then begin
     dbSeek(ubase,uiName,ustr(name));
     if dbFound then
@@ -457,11 +460,12 @@ begin
       dbWriteN(ubase,ub_kommentar,komm);
       dbWriteN(ubase,ub_pollbox,pollbox);
       b:=1;
-      dbWriteN(ubase,ub_adrbuch,b); {NeuUserGruppe nicht fuer Verteiler...}
+      dbWriteN(ubase,ub_adrbuch,adr); {NeuUserGruppe nicht fuer Verteiler...}
       dbWriteN(ubase,ub_codierer,b);      { dÅrfte egal sein }
       b:=5;
       dbWriteN(ubase,ub_userflags,b);     { aufnehmen & Verteiler }
       dbFlushClose(ubase);
+      aufbau:=true; 
       newverteiler:=true;
       end;
     end;
@@ -474,7 +478,7 @@ var name,oldname : string[AdrLen];
     pollbox      : string[BoxNameLen];
     brk          : boolean;
     cc           : ccp;
-    anz          : integer16;
+    anz,adr      : integer16;
     rec          : longint;
 begin
   modiverteiler:=false;
@@ -482,7 +486,8 @@ begin
   oldname:=name;
   dbReadN(ubase,ub_kommentar,komm);
   dbReadN(ubase,ub_pollbox,pollbox);
-  editverteiler(getres(2705),name,komm,pollbox,brk);   { 'Verteiler bearbeiten' }
+  dbReadN(ubase,ub_adrbuch,adr); 
+  editverteiler(getres(2705),name,komm,pollbox,adr,brk);   { 'Verteiler bearbeiten' }
   if not stricmp(name,oldname) then begin
     rec:=dbRecno(ubase);
     dbSeek(ubase,uiName,ustr(name));
@@ -497,6 +502,7 @@ begin
     dbWriteN(ubase,ub_username,name);
     dbWriteN(ubase,ub_kommentar,komm);
     dbWriteN(ubase,ub_pollbox,pollbox);
+    dbWriteN(ubase,ub_adrbuch,adr); 
     dbFlushClose(ubase);
     if name<>oldname then begin
       new(cc);
@@ -506,8 +512,8 @@ begin
       del_verteiler(oldname);
       write_verteiler(name,cc,anz);
       dispose(cc);
-      aufbau:=true;
-      end;
+      end;  
+    aufbau:=true;
     modiverteiler:=true;
     end;
 end;
@@ -2096,7 +2102,7 @@ begin
     rec:=dbRecno(ubase);
     dbAppend(ubase);
     rec2:=dbRecno(ubase);
-    s:='$/T'+trennchar;
+    s:=#0+'$/T'+trennchar;
     dbWriteN(ubase,ub_username,s);
     dbWriteN(ubase,ub_kommentar,komm);
     s:=#0;
@@ -2312,6 +2318,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/05/01 08:40:57  jg
+  - Addressbuch-Trennzeilen sind jetzt immer vor Verteilern einsortiert.
+  - Adressbuchgruppe von Verteilern direkt bestimmbar
+
   Revision 1.19  2000/04/30 19:17:35  mk
   - Y2K-Fix fuer Info in Autoversand, nur optisch
 

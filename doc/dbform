@@ -84,7 +84,7 @@ Userflags[1] = Zeitpunkt der Erstinstallation
 
 USER:   User(U)/Verteiler
 
- 1. Username    String(80)  i       (Verteiler: #255[Name]@VERTEILER)
+ 1. Username    String(80)  i       (Verteiler: #4[Name]@V  ; Trennzeile: #0$/T+Trennzeichen )
  2. Adresse     Extern           U
  3. Kommentar   String(30)
  4. Pollbox     String(20)  i

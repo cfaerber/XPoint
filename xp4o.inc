@@ -83,7 +83,15 @@ begin
         dbReadN(mbase,mb_brett,_mbrett);
         leer:=_mbrett<>_brett;
         end;
-      if leer and (left(brett,3)<>'$/T') then begin
+ 
+      if user and (left(brett,3)='$/T') then     { User Trennzeilenformat aktualisieren }
+      begin
+        brett:=#0+brett;
+        dbwriteN(ubase,ub_username,brett);
+        end;
+ 
+      if leer and (left(brett,4)<>#0+'$/T') then 
+      begin
         dbReadN(d,nfeld,loesch);
         if not user then loesch:=copy(loesch,2,80);
         if adrbuch then
@@ -708,6 +716,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/05/01 08:40:57  jg
+  - Addressbuch-Trennzeilen sind jetzt immer vor Verteilern einsortiert.
+  - Adressbuchgruppe von Verteilern direkt bestimmbar
+
   Revision 1.10  2000/04/23 07:58:53  mk
   - OS/2-Portierung
 
