@@ -1428,7 +1428,7 @@ var
     var
       Item: PNodeListItem;
     begin
-      if a+CurRow<anzahl then
+      if a+CurRow-1<anzahl then
       begin
         Item := NodeList[strIdx];
         Dispose(Item);
@@ -2050,6 +2050,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.45  2000/12/06 22:29:44  mo
+  -indexfehler bei nodelistenlöschung besetigt
+
   Revision 1.44  2000/12/05 17:55:56  ml
   - removed illegal character
 

@@ -724,7 +724,7 @@ var f1,f2   : file;
       DestNode:=_to.node;
       DecodeDate(Now,year,month,day);
       dec(month);
-      DecodeTime(Now,hour,min,sec,dummy);
+//      DecodeTime(Now,hour,min,sec,dummy);
       PktVer:=2;
       DestNet:=_to.net;
       PrdCodL:=lo(prodcode);
@@ -1790,6 +1790,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.7  2000/12/06 22:29:44  mo
+        -indexfehler bei nodelistenlöschung besetigt
+
         Revision 1.6  2000/11/19 00:11:49  mk
         - rtlword -> smallword
 
