@@ -3368,6 +3368,31 @@ K (c) '2000 OpenXP Team, www.openxp.de
 47 Please consult the client documentation for more details.
 48 Client directory "%s" not found!
 49 Directory "%s" not found!
+50 Please consult the client documentation for more details.
+#
+51 Client directory "%s" not found!
+52 Directory "%s" not found!
+#
+53 There are no (more) servers that could be added!
+54 This list may contain a maximum of %s servers!
+55 Maximum input length (%s) for server names reached!
+56 Maximum input length (%s) for file names (.BFG) reached!
+57 Server "%s" does already exist - add, anyway
+58 Input too long (Server names)! %s characters still available.
+59 Input too long (file names (.BFG))! %s characters still available.
+60 Server "%s"
+61 does exist %s times!
+62 Server "%s" does not exist!
+63 Server "%s" is identical with the server currently edited!
+64 is not of net type %s!
+65 Maximum total length (%s) of file names (.BFG) exceeded!
+66 Maximum total length (%s) of Server names exceeded!
+67 Invalid server configuration file name: "%s.BFG"
+68 Server for file name "%s.BFG" not found!
+69 Invalid Server name: "%s"
+70 Envelope address must be specified!
+71 Input/Output data incomplete!
+
 
 +  11000
 1  unknown command
@@ -3941,6 +3966,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.46  2002/02/20 22:11:08  mk
+# - added missing 10900 resourceses
+#
 # Revision 1.45  2002/02/06 21:32:55  mk
 # - fixed resource 10700,10 (now 10700,48)
 #

@@ -3474,6 +3474,30 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 47 N„heres entnehmen Sie bitte Ihrer Client-Dokumentation.
 48 Client-Verzeichnis "%s" ist nicht vorhanden!
 49 Verzeichnis "%s" ist nicht vorhanden!
+50 Näheres entnehmen Sie bitte Ihrer Client-Dokumentation.
+#
+51 Client-Verzeichnis "%s" ist nicht vorhanden!
+52 Verzeichnis "%s" ist nicht vorhanden!
+#
+53 Keine (weiteren) hinzuzufügenden Serverboxen vorhanden!
+54 Maximal %s Serverbox-Einträge möglich!
+55 Maximale Eingabelänge (%s) für Serverbox-Namen erreicht!
+56 Maximale Eingabelänge (%s) für Dateinamen (.BFG) erreicht!
+57 Serverbox "%s" bereits vorhanden - trotzdem hinzufügen
+58 Eingabe zu lang (Serverbox-Namen)! Noch %s Zeichen verfügbar.
+59 Eingabe zu lang (Dateinamen (.BFG))! Noch %s Zeichen verfügbar.
+60 Serverbox "%s"
+61 ist %s mal vorhanden!
+62 Serverbox "%s" existiert nicht!
+63 Serverbox "%s" ist identisch mit editierter Serverbox!
+64 ist nicht vom Netztyp %s!
+65 Maximale Gesamtlänge (%s) der Dateinamen (.BFG) überschritten!
+66 Maximale Gesamtlänge (%s) der Serverbox-Namen überschritten!
+67 Ungültiger Name für Serverbox-Konfigurationsdatei: "%s.BFG"
+68 Serverbox zu Dateiname "%s.BFG" nicht gefunden!
+69 Ungültiger Serverbox-Name: "%s"
+70 Envelope-Adresse muß angegeben werden!
+71 Angaben Eingang/Ausgang unvollständig!
 
 +  11000
 1  unbekannter Befehl
@@ -3954,6 +3978,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.53  2002/02/20 22:11:08  mk
+# - added missing 10900 resourceses
+#
 # Revision 1.52  2002/02/10 14:51:48  mk
 # - added missing help text
 #
