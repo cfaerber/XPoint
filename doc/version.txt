@@ -1110,3 +1110,49 @@ MK:    Fehlerhafte Base64-Zeilen werden soweit m”glich erkannt und nicht
 MY:    Komplett berarbeitete, korrigierte und erg„nzte Ressourcen und
        Online-Hilfe (deutsch)
 MY+MF: šberarbeitete englische Ressourcen und Online-Hilfe
+
+
+v3.40 RC2/OpenXP  (01.01.2001)
+------------------------------
+MK:     Bugfix: Crash bei Aufruf des lokalen Mens mit <F10> im Editor
+        behoben, wenn keine Maus vorhanden ist.
+MK:     Bugfix: Crash im Lister bei 0-Byte-Nachrichten, feststehendem
+        Nachrichtenkopf und Mausklick unterhalb des Nachrichtenkopfes
+        beseitigt. (Bug aus v3.12d)
+JG:     Ein paar „ltere kleine Bugs in der Spezial-Suche behoben.
+MK:     Bug #109282: Nachrichten/Weiterleiten/Kopie von Fido-Nachrichten
+        erzeugt jetzt auch dann keine "doppelten" Tearlines und Origins
+        mehr, wenn diese nur mit CRs (statt mit CR/LFs) eingeleitet
+        werden.
+MK:     Neue Version des UUZ und UUCICO beigelegt, jetzt mit LFN-
+        Untersttzung (fr Windows 2000 bei UUCICO Config-Parameter
+        "lfn" und bei UUZ Aufrufparameter -LFN angeben).
+MK:     VGA-Farbpalette wird von XP jetzt nicht mehr angetastet, dadurch
+        beliebige externe Manipulationen m”glich.
+MK:     Bugfix: Verschiedene Probleme beim XP-Start mit TEMP- und LOG-
+        Verzeichnis behoben.
+MK:     XPoint/Statistik/Datenbank zeigt jetzt pr„zisere Werte an.
+MK:     Bugfix: Beim Hinzufgen eines neuen Users konnte XP abstrzen,
+        wenn im Feld "Adresse" die <F2>-Auswahl benutzt wurde und sich
+        noch kein User in der Datenbank befand.
+MK:     Beim XP-Start mit Parameter /t:n (Timingliste) wird kein
+        Betahinweis mehr angezeigt.
+MK:     UUZ: bei Verwendung des Parameters -uz wird bei existierender
+        Zieldatei jetzt nicht mehr mit einer Fehlermeldung abgebrochen,
+        sondern ein Backup der Zieldatei (<datei>.BAK) angelegt. Dadurch
+        Problem des m”glichen Datenverlustes bei einigen UKA_PPP-
+        Installationen behoben, die den Eingangspuffer nach dem Einlesen
+        in XP nicht gel”scht haben.
+MK:     Probleme mit der Meldung von zu wenig Festplattenplatz bei OS/2
+        behoben.
+JG:     Suche nach mehreren Message-IDs gleichzeitig m”glich (s. Hilfe).
+JG:     Bei Message-ID-Suche aus einer Liste markierter Nachrichten
+        heraus Auswahlfeld "Bretter" ausgeblendet (wie bei den anderen
+        Suchen auch).
+JG:     Bugfix: Unter bestimmten Umst„nden wurden PMs beim Versenden mit
+        dem Halte-Flag versehen, obwohl "eigene PMs halten" abgeschaltet
+        war.
+MK:     Schalter unter Config/Optionen/Netze/Verschiedenes/Fido:
+        "OpenXP-Version in Tearline schreiben"
+JG:     Nachrichten-Kopfzeile "erhalten:" zeigt jetzt Datum *und*
+        Uhrzeit an.
