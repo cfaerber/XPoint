@@ -19,7 +19,7 @@ unit databaso;
 
 interface
 
-uses xpglobal, dos,typeform,datadef;
+uses xpglobal,dos,typeform,datadef;
 
 
 procedure dbCreate(filename:dbFileName; flp:dbFLP);
@@ -32,7 +32,16 @@ function  dbPack(filename:string):boolean;
 
 implementation
 
-uses database,datadef1;
+uses
+{$IFDEF UnixFS }
+  {$IFDEF Linux}
+    xplinux,
+  {$ELSE }
+    {$FATAL Need chmod - look at xplinux for procedure SetAccess }
+  {$ENDIF }
+{$ENDIF }
+  database,
+  datadef1;
 
 
 
@@ -72,6 +81,9 @@ begin
     if not iohandler then exit;
     blockwrite(f,ehd,256);
     close(f);
+{$IFDEF UnixFS }
+    SetAccess(filename+dbExtExt, taUserRW);
+{$ENDIF }
     end;
 end;
 
@@ -126,6 +138,9 @@ begin
       blockwrite(f,fld,sizeof(fld));
       end;
     close(f);
+{$IFDEF UnixFS }
+    SetAccess(filename+dbExt, taUserRW);	{ User Read/Write }
+{$ENDIF }
     end;
 
   if xflag then
@@ -369,6 +384,15 @@ begin
     reset(f1,1);
     assign(f2,'pack.$$$');
     rewrite(f2,1);
+{$IFDEF UnixFS }
+    { Wir muessen an dieser Stelle bereits eingreifen, da sonst
+      pack.$$$ waehrend des Pack-Vorganges auch fuer andere
+      lesbar sein koennte }
+    close(f2);
+    SetAccess('pack.$$$', taUserRW);
+    assign(f2, 'pack.$$$');
+    reset(f2, 1);
+{$ENDIF }
     blockread(f1,hd,sizeof(hd));
     blockwrite(f2,hd,sizeof(hd));
     for i:=0 to hd.felder do begin     { incl. Int_Nr }
@@ -409,6 +433,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/05/09 15:52:40  hd
+  - UnixFS: Access-Mode eingefuegt
+
   Revision 1.6  2000/04/29 07:59:03  mk
   - Funktion FUStr fuer Filenamen Up/Locase eingebaut
 
