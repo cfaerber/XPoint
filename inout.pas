@@ -593,6 +593,8 @@ VAR
     if z='' then z:='!!';
   end;
 
+var
+  s: String;
 begin
   if autoup or autodown then begin
     if AutoBremse then
@@ -698,6 +700,10 @@ begin
               doaltfunc(i);
   until z<>'!!';
 
+  if Length(z) = 1 then
+    s := Format(iifs(z[1]>#32, '$%X ''%s''', '$%X'), [Integer(ord(z[1])), z[1]])
+  else
+    s := Format(iifs(z[2]>#32, '$%X $%X ''%s''', '$%X $%X'), [Integer(ord(z[1])), Integer(ord(z[2])), z[2]]);
   Debug.DebugLog('inout',
     Format('Get: '+iifs(length(z)=2,'#%d#%d',
                    iifs(z[1]>#32,'#%d (%2:s)','#%d')),
@@ -1668,6 +1674,9 @@ end;
 
 {
   $Log$
+  Revision 1.104  2003/04/12 13:02:12  mk
+  - added more debug info for getkey
+
   Revision 1.103  2003/04/12 08:03:42  mk
   - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
 
