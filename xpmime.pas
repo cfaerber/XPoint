@@ -487,7 +487,7 @@ var   hdp      : headerp;
               parname:=lstr(GetToken(s,'='));
               if firstchar(s)='"' then delfirst(s);
               if lastchar(s)='"' then dellast(s);
-              if (pos('name', parname) >0) then filename:=s;
+              if (pos('name', parname) >0) then filename:=left(s,cposx(';',s)-1);
             end;
         until endhd or eof(t);
 
@@ -720,6 +720,15 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.28  2002/03/27 19:45:18  my
+  JG+MY:- Fix: Bei DateianhÑngen in MIME-Multipart-Nachrichten, die nach
+          der Deklaration des Dateinamens in einem "gefalteten" Header
+          noch weitere Angaben wie "modification-date" enthielten, hielt
+          XP diese Angaben fÅr einen Bestandteil des Dateinamens und
+          konnte daher die Datei im Archiv-Viewer nicht korrekt
+          extrahieren (bzw. gab die Fehlermeldung "Fehler beim
+          Dateizugriff :-(") aus.
+
   Revision 1.12.2.27  2002/03/17 22:00:35  my
   JG:- Fix: Wenn beim Lesen von MIME-Multipart-Nachrichten die Auswahl
        "gesamte Nachricht" getroffen wurde, wurde je nach zufÑlligem
