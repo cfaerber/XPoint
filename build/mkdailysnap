@@ -29,7 +29,7 @@ pwd
 sleep 1
 #cvs up -r branch_3_7_8
 cvs up -r branch_3_7_8 -d
-cvs diff -u  -D "-1 day" | grep -v -w "\?" > $dailydifffile38
+cvs diff -u -r branch_3_7_8 -D "-1 day" | grep -v -w "\?" > $dailydifffile38
 
 echo Starting snapshot builds if needed
 test -s $dailydifffile38 && "$scriptdir"snapshot 3.8
