@@ -1,0 +1,268 @@
+
+   CrossPoint (R)   (c) 1992-99 Peter Mandrella     Lizenzbestimmungen
+   
+   CrossPoint ist ein eingetragenes Warenzeichen von Peter Mandrella,
+   Nackenheim.
+
+   Diese Datei muá in jedem weitergegebenen CrossPoint-Paket enthalten
+   sein. Sie darf weder ver„ndert noch entfernt werden.
+
+
+   Allgemeines
+       
+       Ziel der  Entwicklung von  CrossPoint war und ist es, Ihnen ein
+       sehr leistungsf„higes  und stabiles  Programm zur  Verfgung zu
+       stellen. Nach  dem heutigen Stand der Technik ist es allerdings
+       nicht m”glich,  vollst„ndig fehlerfreie  Software herzustellen.
+       Wir werden  uns bemhen,  alle etwaigen  Fehler mit den uns zur
+       Verfgung stehenden  Mitteln zu  beseitigen, k”nnen  aber keine
+       Garantie fr Fehlerfreiheit und keine Haftung fr durch etwaige
+       Fehler entstandene Sch„den bernehmen.
+       
+       Die Rechte  zur Benutzung  von CrossPoint  erwerben  Sie  durch
+       Zahlung einer  Registrierungsgebhr. Fr private, nicht-gewerb-
+       liche Anwendung  ist CrossPoint  SHAREWARE, d.h.  das  Programm
+       darf fr eine Dauer von 30 Tagen kostenlos, uneingeschr„nkt und
+       mit vollem  Support getestet werden. Wird das Programm darber-
+       hinaus genutzt,  so wird  die Registrierungsgebhr f„llig. Wird
+       das Programm nicht binnen 30 Tagen registriert, so ist es umge-
+       hend zu l”schen.
+       
+       Wegen des  entstehenden Verwaltungsaufwandes ist nur eine Regi-
+       strierung der  jeweils aktuellen Programmversion m”glich; dabei
+       gelten ausschlieálich die der betreffenden Version beiliegenden
+       Lizenzbestimmungen. Fr  alle Betaversionen  gelten die Lizenz-
+       bestimmungen der n„chsten ver”ffentlichten Vollversion.
+       
+       
+       
+   Nicht-private Nutzung
+       
+       Fr gewerbliche  Nutzung sowie  fr Beh”rden, Schulen, Vereine,
+       Verb„nde, Parteien  und alle anderen nicht-natrlichen Personen
+       ist CrossPoint  keine Shareware;  die Registrierungsgebhr wird
+       also ab Nutzungsbeginn f„llig.
+       
+       N„here Bedingungen  und Preise fr nicht-private Nutzung erfra-
+       gen Sie bitte bei:
+       
+               Jochen Herz
+               Sch”fferstr. 23
+               D-67547 Worms
+               
+               E-Mail:  joherz@codev.de
+               Telefon: 06241-935010
+               Fax:     06241-935011
+       
+       
+       
+   Registrierungsgebhr fr private Nutzung
+
+       Ab CrossPoint  Version 3.0 gibt es zwei Programmteile, die ein-
+       zeln oder  im Paket  registriert werden  k”nnen: CrossPoint fr
+       UUCP/RFC-Netze und  CrossPoint fr  alle brigen  Netztypen (Z-
+       Netz, Fido, Maus, MagicNET etc.). Sie erwerben also jeweils das
+       Recht, CrossPoint in bestimmten Netzen einzusetzen.
+       
+       Neuregistrierungen:
+
+          CrossPoint fr alle Netztypen auáer RFC/UUCP:         50,-
+          CrossPoint fr RFC/UUCP:                              50,-
+          CrossPoint Komplettpaket:                             80,-
+          nachtr„gliches Upgrade auf Komplettpaket:             40,-
+
+       Upgrades von „lteren Versionen:
+
+          CrossPoint v3.x auf v3.x                           kostenlos
+          CrossPoint v1.x/2.x auf v3.x ohne RFC/UUCP:        kostenlos
+          CrossPoint v1.x/2.x auf v3.x Komplettpaket            40,-
+
+       Alle Preise verstehen sich incl. 15% MwSt.
+       
+       Die Testzeit  von 30  Tagen gilt  getrennt fr beide Teile; Sie
+       k”nnen also z.B. als registrierter Z-Netz-Anwender das Programm
+       fr maximal  30 Tage  in einem  UUCP/RFC-Netz testen, bevor die
+       Updategebhr von 40,- f„llig wird.
+       
+       
+       
+   Registrierungsformular
+       
+       Verwendem Sie  fr  private  Registrierungen  das  im  Programm
+       enthaltene  Registrierungsformular.   Drcken  Sie   dazu  beim
+       Startbildschirm  zweimal   "R",  oder   w„hlen  Sie  den  Punkt
+       "Registrierung" im  Men "XPoint".  Drcken Sie  innerhalb  des
+       Formulars <F1>, um ausfhrliche Erl„uterungen zum Ausfllen der
+       einzelnen Felder zu erhalten. Bei Feldern, die rechts mit einem
+       Pfeil nach  unten gekennzeichnet  sind, erhalten  Sie mit  <F2>
+       eine Auswahlliste.
+       
+       Sie k”nnen  uns das  Formular per  Post oder  per Mail zusenden
+       oder es direkt "online" in der CrossPoint-Supportbox abliefern.
+       N„heres hierzu  finden Sie  innerhalb des  Formulars und in der
+       Online-Hilfe. Beachten  Sie, daá  die  Telefonnummern  der  XP-
+       Supportbox  sich  in  Zukunft  „ndern  k”nnten.  Die  aktuellen
+       Telefonnummern werden  regelm„áig zusammen  mit allen  Adressen
+       des  CrossPoint-Supports  in  den  CrossPoint-Supportforen  der
+       verschiedenen   Netze   ver”ffentlicht.   Falls   die   Online-
+       Registrierung nicht  funktionieren  sollte,  w„hlen  Sie  bitte
+       einen anderen Registrierungsweg.
+       
+       Bei "Postregistrierung"  senden Sie  das Registrierungsformular
+       an folgende Adresse:
+       
+               Jochen Herz
+               Sch”fferstr. 23
+               D-67547 Worms
+       
+       Versenden Sie das Registrierungsformular bitte nicht per Fax!
+       
+       
+       
+   Zahlungsweg
+       
+       Sie  k”nnen  uns  die  Registrierungsgebhr  zusammen  mit  dem
+       Registrierungsformular zusenden,  per Kreditkarte zahlen (n„he-
+       res dazu finden Sie innerhalb des Formulars) oder auf folgendes
+       Konto berweisen:
+       
+               Jochen Herz
+               Volksbank Worms
+               BLZ: 553 900 00
+               Kto: 291 817 05
+       
+       Geben Sie dabei als Verwendungszweck Folgendes an:
+       
+               CROSSPOINT   Netzname
+               Ihre Netzadresse
+       
+       Als User im Seven-Netz geben Sie bitte als Netz SEVEN an, nicht
+       MAGICNET. Verwenden  Sie bitte nur gedruckte Groábuchstaben und
+       schreiben Sie  deutlich! Ersetzen Sie alle Sonderzeichen wie @,
+       / und : durch Leerzeichen oder Punkte, z.B.
+       
+               CROSSPOINT   Z-NETZ
+               A.MUELLER BOX.domain.de
+       
+       oder:   CROSSPOINT   FIDO
+               ALFRED MUELLER 2.243.1234.56
+       
+       
+       
+   Registrierungscode ("Key")
+       
+       Eingehende Registrierungen  werden  innerhalb  von  1-3  Wochen
+       bearbeitet, d.h.  Sie erhalten innerhalb von max. 4 Wochen eine
+       Best„tigung mit  Ihrem Registrierungscode,  der ber  den Men-
+       punkt /XPoint/Info einzugeben ist. Durch den Registrierungscode
+       wird zum  Einen der  Sharewarehinweis bei Programmstart deakti-
+       viert, und  zum Anderen  l„át sich  dann die CrossPoint-Kennung
+       unter Ihren pers”nlichen Nachrichten abschalten.
+       
+       NOTIEREN SIE SICH IHREN REGISTRIERUNGSCODE BITTE AN EINEM GEGEN
+       DATENVERLUSTE GESCHšTZTEN ORT!
+       
+       Wir geben  uns gr”áte  Mhe bei  der Zustellung  der Registrie-
+       rungscodes. Trotzdem kann es in einzelnen F„llen vorkommen, daá
+       ein Code  nicht ankommt  (bei E-Mail-Registrierung)  oder nicht
+       zugestellt werden  kann, z.B.  wegen einer unvollst„ndigen oder
+       fehlerhaften Adresse.  Falls  Sie  innerhalb  von  vier  Wochen
+       keinen Code  erhalten haben, kontaktieren Sie uns bitte telefo-
+       nisch (06241-935010).
+       
+       ACHTUNG: Die  Weitergabe von  CrossPoint-Registrierungscodes an
+       Dritte ist  ausdrcklich verboten!  Wenn Sie CrossPoint weiter-
+       geben, dann  verwenden Sie  dazu bitte  eine  nichtregistrierte
+       Originalversion!
+       
+   
+   
+   Registrierungscode verloren?
+       
+       Falls Sie  Ihren Registrierungscode  verloren haben, senden wir
+       ihn Ihnen  auf Wunsch  gegen eine Barbeitungsgebhr von DM 10,-
+       noch einmal  zu. Bitte  verwenden Sie dafr das Registrierungs-
+       formular unter  dem Menpunkt  XPoint/Registierung, und kreuzen
+       Sie "verlorenen Registierungscode zusenden" an.
+   
+   
+   
+   Gltigkeitsbereich und Updates
+   
+       Eine private  CrossPoint-Registrierung berechtigt  zur  Nutzung
+       des Programms  durch EINE Person in beliebig vielen Netzen, fr
+       die die  Registierung gltig  ist (also  je nach  Registrierung
+       entweder in allen RFC/UUCP-Netzen, in allen nicht-RFC/UUCP-Net-
+       zen oder in jedem beliebigen Netz) und auf beliebigen Rechnern.
+       Wird das Programm von mehreren Personen unter unterschiedlichen
+       Usernamen bzw.  Netzadressen eingesetzt, so ist pro Person eine
+       Registrierung erforderlich.
+       
+       Die Registrierung  von  CrossPoint  v3.x beinhaltet  kostenlose
+       Updates auf alle  zuknftigen DOS-Programmversionen.  Sie bein-
+       haltet Programmversionen in allen verfgbaren Landessprachen.
+       
+       
+   
+   Sammelregistrierungen
+   
+       Es besteht  die M”glichkeit  von Sammelregistrierung, wobei Sie
+       fr je  fnf Registrierungen  eine zus„tzliche Gratisregistrie-
+       rung erhalten.  Kreuzen Sie dazu das Feld "Sammelregistrierung"
+       im Registrierungsformular an. Voraussetzung ist,
+       
+       -  daá  es sich  ausslieálich um Points  ein- und derselben
+          Mailbox handelt (UUCP/RFC: innerhalb der gleichen Lokal-
+          domain, z.B. pfalz.de; t-online.de, aol.com etc. sind keine
+          Lokaldomains!),
+       
+       -  daá der Organisator der Sammelregistrierung anschlieáend
+          auch die Verteilung der  Registrierungscodes bernimmt.
+       
+       Bei     gemischten      Sammelregistrierungen     gilt      die
+       Gratisregistrierung  fr   den  "kleinsten"  darin  enthaltenen
+       Registrierungstyp, d.h.  bei  einer  Registrierung  von  sieben
+       nicht-RFC/UUCP- und drei Komplettpaketen erhalten Sie z.B. zwei
+       kostenlose nicht-RFC/UUCP-Registrierungen  und bei  drei  UUCP-
+       Registrierungen plus zwei Updates ein Gratis-Update.
+       
+       
+       
+   Weitergabe
+   
+       CrossPoint darf  - nein: soll :-) in *unver„nderter* Form (d.h.
+       in  den   Original-Archivdateien)  und  unentgeltlich  beliebig
+       weiterverbreitet  werden.   Die  Weitergabe   durch  Shareware-
+       Vertriebe ist  nur bei  einer Kopiergebhr  von maximal  5,- je
+       Exemplar zul„ssig.  Bei Weitergabe  auf CD-ROM  entf„llt  diese
+       Einschr„nkung,  sofern   Sie   zwei   Belegexemplare   an   die
+       untenstehende  Adresse   senden.  Jede   darber  hinausgehende
+       Verbreitung sowie das Bndeln mit anderen Produkten ist nur mit
+       ausdrcklicher,  schriftlicher   Erlaubnis  des  Programmautors
+       zul„ssig.
+       
+       
+       
+   Support-Kontaktadressen fr private Anwender
+   
+       Diese  Adressen   gelten  fr   alle  Nachrichten   zum   Thema
+       CrossPoint, die  nichts mit  der Registrierung  zu  tun  haben.
+       Nachrichten zur  Registrierung senden  Sie bitte an Jochen Herz
+       unter einer der o.g. Adressen.
+       
+       Beachten Sie  bitte, daá  die Antwort  wegen des  groáen  Nach-
+       richtenaufkommens 1-2  Wochen dauern  kann. Eine schnellere und
+       oft ausfhrlichere  Antwort erhalten  Sie  auf  Nachrichten  in
+       einem der  CrossPoint-Supportbretter, die in XPOINT.DOC genannt
+       sind.
+       
+       Internet:      peter@mandrella.de
+       
+       Post:          Peter Mandrella
+                      R”merstraáe 14
+                      D-55299 Nackenheim
+       
+       (Die Postanschrift  „ndert sich erfahrungsgem„á relativ h„ufig.
+       Im Zweifelsfall verwenden Sie bitte die Maildresse.)
+       
+       

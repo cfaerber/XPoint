@@ -1,0 +1,116 @@
+-----------------------------------------------------------------------
+SLIZENZ.TXT                                       CrossPoint-Quelltexte
+                                            (c) 1992-99 Peter Mandrella
+
+                                                     Lizenzbestimmungen
+-----------------------------------------------------------------------
+
+
+
+Die folgenden Bestimmungen legen fest, wie die CrossPoint-Quelltexte
+verwendet und weitergegeben werden drfen. Zu einigen Detailfragen
+wird es sicher noch Kl„rungsbedarf geben. Akutelle Anmerkungen hierzu
+finden Sie ggf. unter http://www.crosspoint.de/srclicense.html.
+
+Die Programme (und Quelltexte der Programme) UUZ, ZFIDO, XP-FM und
+MAGGI werden als Bestandteil von CrossPoint betrachtet. Dies gilt
+ebenfalls fr die beiliegende CrossPoint-Dokumentation und die Online-
+Hilfe.
+
+Die Programme XPME, NDIFF, YUP2PKT und ZPR sind Freeware, und deren
+Quelltexte sind hiermit ebenfalls als Freeware freigegeben, d.h. die
+Punkte 2 bis 5 der nachfolgenden Bestimmungen - mit Ausnahme von
+Punkt 4, Einschr„nkung 2 - gelten fr diese Programme nicht.
+
+Fr folgende Quelltextdateien gelten diese Bestimmungen nicht oder
+nur mit Einschr„nkungen: UART.PAS, XPNODES.PAS und UUCP-FL1.PAS sind
+Public Domain. Teile von CRC16.PAS und TPZCRC.PAS sind (c) 1987 Steven
+Satchell, Chuck Forsberg, J.R.Louvau und Gary S. Brown (siehe Hinweise
+im Quelltext). Die Abdruckrechte fr Teile von DBASE.PAS liegen beim
+Heise-Verlag.
+
+
+
+1. Das Urheberrecht an CrossPoint und an dessen Quelltexten liegt bei
+   Peter Mandrella. Das Urheberrecht an nderungen und Erweiterungen
+   der Quelltexte liegt - soweit nicht anders vereinbart - beim
+   jeweiligen Autor.
+
+
+2. Die CrossPoint-Quelltexte drfen in beliebiger Form - einschlieálich
+   Modifikationen - weitergegeben werden, mit folgenden Einschr„nkun-
+   gen:
+
+       - Die Dateien SLIZENZ.TXT und LIZENZ.DOC mssen immer in
+         unver„nderter Form beigelegt werden.
+
+       - Es muss eine mit README.TXT vergleichbare Datei beigelegt
+         werden, die einen Hinweis auf SLIZENZ.TXT und LIZENZ.DOC ent-
+         h„lt.
+
+       - Modifizierte Quelltexte drfen nur weitergegeben werden, wenn
+         die Modifikationen mit Punkt 4 konform sind.
+
+   Fr alle modifizierte Versionen der Quelltexte gelten die gleichen
+   Lizenzbedingungen wie fr das Original.
+
+
+3. Die CrossPoint-Quelltexte drfen ausschlieálich zu folgenden Zwecken
+   genutzt werden:
+
+        - Erstellung neuer CrossPoint-Versionen
+        - Erstellung von Patches oder Tools fr CrossPoint
+        - Erstellung sonstiger DFš-Tools, soweit diese als Public
+          Domain oder Freeware ver”ffentlicht werden.
+
+   Nicht zul„ssig ist die Erstellung von Tools oder Patches oder die
+   Ver”ffentlichung von aus den CrossPoint-Quelltexten gewonnen
+   Informationen, sofern diese zum Abschalten, Ver„ndern oder Umgehen
+   der Registierungsfunktion von CrossPoint dienen.
+
+
+4. Sie drfen beliebige nderungen an CrossPoint vornehmen, mit folgen-
+   den Einschr„nkungen:
+
+        - Es drfen keine nderungen an Programmteilen vorgenommen
+          werden, die mit der Registrierungsfunktion zu tun haben
+          (Registrierungscode-šberprfung, Registrierungsformular,
+          Erinnerungsbildschirm etc.)
+
+        - Copyright-Hinweise drfen nicht ver„ndert oder entfernt
+          werden. Das Hinzufgen eigener Copyright-Hinweise ist
+          zul„ssig (und erwnscht!)
+
+        - Der Name des Programms - "CrossPoint" - darf nicht ver„ndert
+          werden. [Abweichende Vereinbarungen hiervon sind in gut
+          begrndeten F„llen m”glich. Bitte wenden Sie sich hierzu
+          an peter@mandrella.de]
+
+
+5. Sie drfen entsprechend Punkt 4 ver„nderte CrossPoint-Versionen
+   in beliebiger Form unentgeltlich oder gegen Bezahlung weitergeben,
+   mit folgenden Einschr„nkungen:
+
+        - Die beiliegende Dabei LIZENZ.DOC muá immer in unver„nderter
+          Form mit weitergegeben werden.
+
+        - Es muss in der Dokumentation und im Programm ein Hinweis
+          auf den Autor der modifizierten CrossPoint-Version ein-
+          schliesslich einer funktionierenden Internet-Mailadresse
+          angegeben werden.
+
+        - Die vollst„ndigen Quelltexte der weitergegebenen CrossPoint-
+          Versionen mssen auf Verlangen jedem Interessenten unent-
+          geltlich zur Verfgung gestellt werden, z.B. durch eine
+          Ver”ffentlichung im Internet.
+
+   Falls Sie fr Ihre eigene CrossPoint-Version Geld verlagen, ist der
+   obligatorische Registrierungsbetrag gem„á LIZENZ.DOC darin nicht
+   enthalten.
+
+
+Jede Art der Verwendung oder Weitergabe der CrossPoint-Quelltexte,
+die weder in diesem Text noch auf der oben genannten Web-Seite
+ausdrcklich erlaubt ist, ist nicht zul„ssig.
+
+
