@@ -48,7 +48,7 @@ implementation   { -------------------------------------------------- }
 
 uses
   ncfido,xpheader,xp3,xp3o,xpmakeheader,xpprogressoutputwindow,
-  datadef,database,xp9bp,xpnt,xpnetcall;
+  datadef,database,xp9bp,xpnt,xpnetcall,direct;
 
 type
   TAKABoxes= record
@@ -537,6 +537,7 @@ var i        : integer;
 
 var
   ShellCommandUparcer,UpArcFilename,CommInit: String;
+  Dir: TDirectory;
 
 begin { FidoNetcall }
   Debug.DebugLog('xpncfido','fido netcall starting',DLInform);
@@ -592,14 +593,25 @@ begin { FidoNetcall }
       Fidomailer.Destroy;
       end;
     true: begin  // diskpoll, call appropriate programs
-      result:=el_noconn;
-      SetCurrentDir(boxpar^.sysopinp);
-      if ShellNTrackNewFiles(boxpar^.sysopstart,500,1,IncomingFiles)<>0 then result:=el_senderr;
-      SetCurrentDir(boxpar^.sysopout);
-      if (result<>el_senderr)and(ShellNTrackNewFiles(boxpar^.sysopend,500,1,IncomingFiles)<>0)then
-        result:=el_ok
-      else
-        result:=el_recerr;
+      result:=el_ok;
+      if boxpar^.sysopstart<>'' then begin
+        SetCurrentDir(boxpar^.sysopinp);
+        if ShellNTrackNewFiles(boxpar^.sysopstart,500,1,IncomingFiles)<>0 then result:=el_senderr;
+        end;
+      if boxpar^.sysopend<>'' then begin
+        SetCurrentDir(boxpar^.sysopout);
+        if (result<>el_senderr)and(ShellNTrackNewFiles(boxpar^.sysopend,500,1,IncomingFiles)<>0)then
+          result:=el_ok
+        else
+          result:=el_recerr;
+        end;
+      SetCurrentDir(ownpath);
+      IncomingFiles.Clear;
+      if result=el_ok then begin
+        Dir:=TDirectory.Create(boxpar^.sysopinp+Wildcard,faAnyFile-faDirectory,true);
+        for i:=0 to Dir.Count-1 do IncomingFiles.Add(Dir.LongName[i]);
+        Dir.Destroy;
+        end;
       end;
     end;
 
@@ -625,7 +637,7 @@ begin { FidoNetcall }
   if result IN [el_ok,el_recerr] then begin
     if AutoDiff then
       if DoDiffs(FilePath+'*.*',true)=0 then;
-    if AutoTIC then
+    if AutoTIC and FileExists(Logfile)then
       TestTICfiles(Logfile);
     end;
 
@@ -844,6 +856,10 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/04/21 12:59:11  ma
+  - fixed: both sysop start and end program had to be specified
+  - sysop in is blindly processed now
+
   Revision 1.9  2001/04/19 23:27:51  ma
   - fixed: compressed packets were not recognized if '.' in path
 

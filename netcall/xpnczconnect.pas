@@ -191,14 +191,18 @@ begin { ZConnectNetcall }
       GenericMailer.Destroy;
       end;
     true: begin  // diskpoll, call appropriate programs
-      result:=el_noconn;
-      SetCurrentDir(boxpar^.sysopinp);
-      if ShellNTrackNewFiles(boxpar^.sysopstart,500,1,IncomingFiles)<>0 then result:=el_senderr;
-      SetCurrentDir(boxpar^.sysopout);
-      if (result<>el_senderr)and(ShellNTrackNewFiles(boxpar^.sysopend,500,1,IncomingFiles)<>0)then
-        result:=el_ok
-      else
-        result:=el_recerr;
+      result:=el_ok;
+      if boxpar^.sysopstart<>'' then begin
+        if ShellNTrackNewFiles(boxpar^.sysopstart,500,1,IncomingFiles)<>0 then result:=el_senderr;
+        end;
+      if boxpar^.sysopend<>'' then begin
+        if (result<>el_senderr)and(ShellNTrackNewFiles(boxpar^.sysopend,500,1,IncomingFiles)<>0)then
+          result:=el_ok
+        else
+          result:=el_recerr;
+        end;
+      IncomingFiles.Clear;
+      if FileExists(boxpar^.sysopinp)then IncomingFiles.Add(boxpar^.sysopinp);
       end;
     end;
 
@@ -219,6 +223,10 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/04/21 13:00:59  ma
+  - fixed: both sysop start and end program had to be specified
+  - sysop in is blindly processed now
+
   Revision 1.1  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output
