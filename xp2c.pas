@@ -260,6 +260,7 @@ begin
         end;
       SetMausEmu;
       end;
+    nachweiter:=AAmsg; brettweiter:=AAbrett; userweiter:=AAuser;
     GlobalModified;
     end;
   enddialog;
@@ -1518,6 +1519,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2000/11/25 01:35:56  mk
+  - Weiterschalter sofort uebernehmen
+
   Revision 1.68  2000/11/20 19:54:09  mk
   - Automatische Datumsbezuege wieder wie immer (schaltbar)
 
