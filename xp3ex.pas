@@ -460,7 +460,7 @@ var size   : longint;
     procedure FlushStmp;
     begin
       if stmp<>'' then begin
-        wrslong(lastqc+stmp);
+        wrslong(trimRight(lastqc+stmp)); { Auch hier Leerzeichen entfernen }
         stmp:='';
         end;
     end;
@@ -1056,6 +1056,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2000/08/12 11:20:48  mk
+  JG:- Quotereflow Fix
+
   Revision 1.40  2000/08/08 13:18:14  mk
   - s[Length(s)] durch Lastchar ersetzt
 

@@ -1920,6 +1920,7 @@ begin
       and (ap<>block[2].pos.absatz)
       then begin  { Abs„tze ggf. zusammenfgen }
         addspaces:=1;
+        TruncAbs(ap^.Next); { Leerzeichen am Absatzende entfernen }
         ss:=ap^.size + ap^.next^.size + addspaces;
         if ss>maxabslen then
           error(2)    { 'Absatz zu groá' }
@@ -2288,6 +2289,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.28  2000/08/12 11:20:48  mk
+  JG:- Quotereflow Fix
+
   Revision 1.27  2000/07/31 22:05:04  mk
   RB:- Quotereflow verfeinert
 
