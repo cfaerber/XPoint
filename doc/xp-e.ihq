@@ -4770,6 +4770,16 @@ CrossPoint searches in the groups defined here.
 
 <<selected>> the currently selected newsgroup.
 @
+533
+<<[ ]>> --> Fast search in the Reference Database
+        this will only find complete message-ids. 
+        searching for MID-Parts is impossible.
+
+<<[x]>> --> Slower search in the Message-headers.
+        Similar to subject-search, the search-line
+        may contain only MID-Parts to search for.
+        Options and Newsgroup-selection are allowed. 
+@
 540
 You are in the key-macro editor. You can redefine
 keys in the main window (newsgroups, users, messages)

@@ -5313,6 +5313,17 @@ soll:
 
 <<gew„hlt>>   das momentan gew„hlte Brett
 @
+533
+<<[ ]>> --> Sehr schnelle Suche ber Bezugsdatenbank.
+        Es muss die komplette Message-ID angegeben 
+        werden. Teilstring-Suche oder Verknpfungen 
+        sind nicht m”glich.
+
+<<[x]>> --> Langsamere Suche ber Nachrichtenheader.
+        Es k”nnen wie z.B bei der Betreffsuche 
+        Teilstrings gesucht, Suchoptionen benutzt,
+        und zu durchsuchende Bretter gew„hlt werden.
+@
 540
 Sie befinden sich im Tastenmakro-Editor - hier k”n-
 nen Sie beliebige Tasten innerhalb der Hauptfenster

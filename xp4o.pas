@@ -95,7 +95,9 @@ var  reobuf : array[0..ablagen-1] of boolean;
      abuf   : array[1..max_arc+1] of arcbp;
      exdir  : pathstr;
      arctyp_save : shortint;
-
+     mid_options       : byte;
+     mid_bretter       : byte;  
+     Mid_teilstring    : boolean;
 
 function testbrettscope(var s:string):boolean;
 var i : integer;
@@ -115,6 +117,12 @@ begin
   if s=' ' then s:='';
 end;
 
+function mid_suchoption(var s:string):boolean;
+begin  
+  setfieldenable(mid_options,s='J');
+  setfieldenable(mid_bretter,s='J'); 
+  mid_suchoption:=true;
+  end; 
 
 { Suchfeld:  '' (Volltext), '*' (Umiversal), 'Betreff', 'Absender', 'MsgID' }       
 
@@ -472,12 +480,10 @@ label ende;
         if length(hdp^.betreff)>40 then
           such:=hdp^.betreff;
         end;
-(*                                         {JG: Erstmal ausgeklammert, da unbenutzt}  
        if suchfeld='MsgID' then begin               
         ReadHeader(hdp^,hds,false);
         such:=hdp^.msgid;
         end;
-*)
       if umlaut then UkonvStr(such,high(such));
 
       j:=0;
@@ -604,20 +610,27 @@ begin
       mappsel(false,history2);
       mset3proc(seek_cutspace);
       mhnr(530);                                       { 'Suchbegriff ' }
-      if suchfeld<>'MsgID'
-      then Begin 
-        maddstring(3,4,getres2(441,3),suchopt,8,8,'');   { 'Optionen    ' }
-        maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }
-       
-        if aktdispmode=11 then
-          MDisable
-        else begin
-          for i:=0 to 4 do
-            mappsel(true,bera[i]);    { Alle / Netz / User / markiert / gew„hlt }
-          mset1func(testbrettscope);
-          end;
-        if autosuche<>'' then _keyboard(keypgdn);
-        end; 
+      maddstring(3,4,getres2(441,3),suchopt,8,8,'');   { 'Optionen    ' }
+      mid_options:=fieldpos;
+      maddstring(31,4,getres2(441,4),bretter,8,8,'');  { 'Bretter '     }      
+      mid_bretter:=fieldpos;
+      if aktdispmode=11 then
+        MDisable
+      else begin
+        for i:=0 to 4 do
+          mappsel(true,bera[i]);    { Alle / Netz / User / markiert / gew„hlt }
+        mset1func(testbrettscope);
+        end;
+      if autosuche<>'' then _keyboard(keypgdn);
+
+      if suchfeld='MsgID' then
+      Begin 
+        Mid_teilstring:=false;
+        Maddbool(3,6,getres2(442,25),Mid_teilstring);
+        MSet1func(Mid_suchoption);
+        if mid_suchoption(suchfeld) then;
+        end;
+
       readmask(brk);
       closemask;
       if suchstring <> seek then
@@ -740,7 +753,7 @@ begin
 
 {--Start der Suche--}
 
-    if suchfeld='MsgID' then begin                         {-- Suche: Message-ID  --}
+    if (suchfeld='MsgID') and NOT MID_teilstring then begin      {-- Suche: Message-ID  --}
       suche:=false;
       if not brk then begin
         markanz:=0;  
@@ -2376,6 +2389,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/03/18 10:39:06  jg
+  - Suche-MessageID Wahlmoeglichkeit:  schnelle Bezugs-DB Suche
+    oder langsamere Msg-Base Suche mit Teilstrings und Suchoptionen
+
   Revision 1.26  2000/03/14 15:15:40  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
