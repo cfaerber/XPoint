@@ -71,6 +71,14 @@ var mo,bo,uo : boolean;
     mp,bp,up : longint;
     mi,bi,ui : shortint;
 
+function getline:string;                          { Eine Zeile vom Lister uebernehmen }
+begin
+  if list_markanz<>0
+    then getline:=first_marked                    { erste markierte Zeile }
+    else if list_selbar
+      then getline:=get_selection                 { oder Zeile unter Markierbalken }
+      else getline:='';                           { oder eben nichts }
+end;
 
 
 { Dateinamen abfragen. Wenn Esc gedrÅckt wird, ist s undefiniert! }
@@ -101,19 +109,18 @@ begin
       ClipToFile(s);
       end
     else
-{JG:11.02.00}
     if useclip and (s='WIN-CLIPBOARD (MAIL)') then begin     { Markierten Text als Mailadresse}
-      s:=mailstring(first_marked,false);
+      s:=mailstring(getline,false);
       string2clip(s);                                        { ins Clipboard }
       ReadFilename:=false;
       exit;
       end
-    else  
-    if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}      
-      s:=first_marked;
+    else
+    if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
+      s:=getline;
       y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
       if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
-      if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }   
+      if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }
       if y<>0 then begin
         s:=mid(s,y); x:=0;                                      
         repeat
@@ -127,8 +134,7 @@ begin
       ReadFilename:=false;
       exit;
       end
-    else 
-{/JG}
+    else
       useclip:=false;
     if (trim(s)='') or ((length(s)=2) and (s[2]=':')) or (right(s,1)='\') then
       s:=s+'*.*'
@@ -235,8 +241,9 @@ var s     : string;
     setenable(0,6,true);   {Edit}
     setenable(0,7,true);   {Config}
     setenable(3,8,true);   {Nachricht/Brettmannager}
-    setenable(3,9,true);   {N/Fileserver}     
-    setenable(3,11,true);  {N/Direkt} 
+    setenable(3,9,true);   {N/Fileserver}
+    setenable(3,11,true);  {N/Direkt}
+    ex(5);
   end;
 {/JG}
 
@@ -318,35 +325,29 @@ begin
     end;
 
   if t = keyaltm then                                       { ALT+M = Suche MessageID }
-  begin                                                     
-    if list_markanz=0 then s:=''                            {Nullstring ohne Markierung}
-    else s:=mailstring(first_marked,false);
+  begin
+    s:=mailstring(getline,false);
     if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
-    ex(5)                                                   { Weiter im Lister }
-    end ;
+    end;
 
   if t = keyaltv then                                        { ALT+V = Suche text }
-  begin                                    
-    if list_markanz=0 then s:=''
-    else s:=first_marked;
-    if Suche(getres(414),'',s) then Showfromlister;          
-    ex(5)
+  begin
+    s:=getline;
+    if Suche(getres(414),'',s) then Showfromlister;
     end;
 
   if t = keyaltb then                                        { Alt+B = Betreff }
   begin
-    if list_markanz=0 then s:=dbreadstr(mbase,'Betreff')
-    else s:=first_marked;
+    s:=getline;
+    if s='' then s:=dbreadstr(mbase,'Betreff');
     if Suche(getres(415),'Betreff',s) then Showfromlister;
-    ex(5)
     end;
 
   if t = keyaltu then                                        { Alt+U = User }
-  begin                                        
-    if list_markanz=0 then s:=dbreadstr(mbase,'Absender')
-    else s:=mailstring(first_marked,false);      
+  begin
+    s:=mailstring(getline,false);
+    if s='' then s:=dbreadstr(mbase,'Absender');
     if Suche(getres(416),'Absender',s) then Showfromlister;
-    ex(5)
     end;
 
 
@@ -962,6 +963,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.3  2000/04/21 20:57:37  mk
+  JG: - verschiedene kleinere Bugfixes
+
   Revision 1.19.2.2  2000/03/26 14:10:41  mk
   - Fix fuer O im Lister
 
