@@ -15,6 +15,7 @@ unit eddef;
 interface
 
 {$I XPDEFINE.INC }
+{$F+,O+}
 
 uses xpglobal, dos,keys,lfn;
 
@@ -170,6 +171,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.5.2.3  2001/07/01 15:42:12  my
+  SV:- moved unit to overlay
+
   Revision 1.5.2.2  2000/12/12 14:03:55  mk
   - weitere lfn-fixes
 

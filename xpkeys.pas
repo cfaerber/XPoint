@@ -12,7 +12,7 @@
 { (Funktions)tasten & Makros }
 
 {$I XPDEFINE.INC }
-{$F+}
+{$F+,O+}
 
 unit xpkeys;
 
@@ -241,6 +241,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.2  2001/07/01 15:42:12  my
+  SV:- moved unit to overlay
+
   Revision 1.6.2.1  2000/10/17 00:16:45  mk
   - LFN Unit hinzugefuegt (Bug #112966)
 

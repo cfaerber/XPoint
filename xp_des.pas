@@ -11,8 +11,10 @@
 { DES-Routinen fÅr CrossPoint }
 
 {$I XPDEFINE.INC }
+{$O+,F+}
 
 unit xp_des;
+
 
 interface
 
@@ -569,6 +571,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.1  2001/07/01 15:42:12  my
+  SV:- moved unit to overlay
+
   Revision 1.9  2000/05/02 19:14:02  hd
   xpcurses statt crt in den Units
 

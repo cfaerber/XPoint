@@ -11,6 +11,7 @@
 { Allgemeiner Stapel }
 
 {$I XPDEFINE.INC }
+{$F+,O+}
 
 unit stack;
 
@@ -94,6 +95,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.1  2001/07/01 15:42:12  my
+  SV:- moved unit to overlay
+
   Revision 1.5  2000/04/30 16:07:09  mk
   - xpglobal in den Interface-Teil vorgezogen
 

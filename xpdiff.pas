@@ -12,6 +12,7 @@
 { fÅr ZFIDO, XP-FM, XP7 und XP7T           }
 
 {$I XPDEFINE.INC }
+{$F+,O+}
 
 unit  xpdiff;
 
@@ -45,6 +46,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.6.2.1  2001/07/01 15:42:12  my
+  SV:- moved unit to overlay
+
   Revision 1.6  2000/05/22 16:13:04  hd
   - Dateiname in Kleinschreibung
 

@@ -20,6 +20,7 @@
 UNIT montage;
 
 {$I XPDEFINE.INC }
+{$F+,O+}
 
 interface
 
@@ -189,6 +190,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.1  2001/07/01 15:42:12  my
+  SV:- moved unit to overlay
+
   Revision 1.5  2000/04/30 15:54:21  mk
   - unbenutze globale Variable adow entfernt
 
