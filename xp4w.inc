@@ -908,10 +908,15 @@ begin
       end
 
     else if lres = -2 then  {Wiedervorageflag mit "V" aus Lister heraus aendern }
-    begin
+    begin 
+      rec:=disprec[1];
       wiedervorlage;
-      ende:=false;
-      end
+      if p=1 then begin    {Bei 1. Bildschirmzeile wieder alte Msg anspringen}
+        disprec[1]:=rec;
+        dpp:=rec;
+        end; 
+      ende:=false; 
+      end  
 
     else begin
      {  if (dispmode=10) and (rdmode=1) and not ntKomKette(netztyp) then
@@ -1502,6 +1507,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.34  2000/07/11 16:35:56  mk
+  JG: - Bugfix: Wiedervorlage-Umschalten im Lister
+
   Revision 1.33  2000/07/10 14:42:00  hd
   - Ansistring
 
