@@ -316,7 +316,7 @@ begin
         if CurLineLenLF=0 then HasFromOrDotAfterLF:=true;
       end;
 
-      if (not HasBinary) and (c in [#0..#8,#11,#14..#31]) then {CTLs except HT,LF,FF,CR}
+      if (not HasBinary) and (c in [#0..#8,#11,#14..#20,#22..#31]) then {CTLs except HT,LF,FF,CR}
         HasBinary := true;
 
       if (not HasCP850NonISO) and (c in cp850_not_in_latin1) then
@@ -513,6 +513,10 @@ end;
 
 //
 // $Log$
+// Revision 1.3  2001/09/08 21:58:09  cl
+// - BUGFIX: Paragraph character (IBM437 #21) now does not trigger binary flag
+// - BUGFIX: Paragraph character recoded correctly
+//
 // Revision 1.2  2001/09/08 18:46:43  cl
 // - small bug/compiler warning fixes
 //
