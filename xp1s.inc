@@ -113,12 +113,12 @@ begin
   end;
 
   SysSetBackintensity;
+  SetScreenSize;
   cursor(curoff);
   if (cls<>4) and (cls<>5) then holen(sp);
   m2t:=sm2t;
   Disp_DT;
   if (cls<>4) and (cls<>5) then restcursor;
-  SetScreenSize;
 
   xp_maus_an(maussave.x,maussave.y);
 
@@ -409,6 +409,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2000/10/03 15:44:50  mk
+  - Fix fuer restaurierung des Screens nach DOS-Shell
+
   Revision 1.38  2000/09/30 16:34:50  mk
   - SysSetBackIntensity
 
