@@ -199,10 +199,7 @@ begin
     fido_origin:=''
   else begin
     if not pm then
-    { if XP_ID_AMs then }
-        s:=#13#10+XP_origin+' '+verstr+krk(regstr1)
-    { else
-        s:=#13#10+'---' }
+      s:=#13#10+'---'
     else
       s:='';
     if not pm then begin
@@ -1127,6 +1124,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.18.2.3  2000/11/10 19:39:48  mk
+  - Tearline gekuertzt
+
   Revision 1.18.2.2  2000/08/05 17:17:38  mk
   - SetTextBuf in MakeSignatur verwendet jetzt Buffer statt String
 
