@@ -2793,12 +2793,7 @@ var
 
 begin
   assign(f2,dest);
-  if FileExists(dest) then
-  begin
-    reset(f2,1);
-    seek(f2,filesize(f2));
-  end else
-    rewrite(f2,1);
+  rewrite(f2,1);
   outbufpos := 0;
   Mails := 0; News := 0;
   spath := ExtractFilePath(source);
@@ -3724,6 +3719,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/12/31 15:13:41  mk
+  - overwrite destination file
+
   Revision 1.20  2000/12/31 11:51:05  mk
   - append to dest file instead of error
 
