@@ -10,7 +10,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
 { Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
   und es kann eine ausfhrliche Map-Datei erstellt werden. Žndert den
@@ -49,20 +49,20 @@
 {$DEFINE NeedReg }
 
 {$IFDEF VER70 }
-  {$DEFINE BP }   { 16 Bit Borland Pascal 7 oder 8 (Delphi 1) }
+  {$DEFINE BP }           { 16 Bit Borland Pascal 7 oder 8 (Delphi 1) }
   {$IFDEF DPMI }
     {$DEFINE DPMI16 }
   {$ENDIF }
 {$ENDIF }
 
 {$IFDEF VER80 }
-  {$DEFINE BP }   { 16 Bit Borland Pascal 7 oder 8 (Delphi 1) }
+  {$DEFINE BP }           { 16 Bit Borland Pascal 7 oder 8 (Delphi 1) }
   {$IFDEF DPMI }
     {$DEFINE DPMI16 }
   {$ENDIF }
 {$ENDIF }
 
-{$IFDEF BP } { Nur fr Borland Pascal 7 und 8 }
+{$IFDEF BP }              { Nur fr Borland Pascal 7 und 8 }
   {$A+,B-,D-,E-,F-,I-,G+,L-,N-,O-,P-,Q-,R-,S-,T-,V-,X+,Y-}
   {$IFDEF NO386 }
     {$G-,E+,N+} { keine 286er Befehle, kein CoPro n”tig }
@@ -75,13 +75,6 @@
   {$DEFINE Delphi }
   {$A+,B-,C-,D+,E-,F-,G+,H-,I-,J+,K-,L+,M-,N+,O+,P+,Q-,R-,S-,T-,U+,V-,W-,X+,Y-,Z1}
   {$UNDEF NeedReg }
-{$ENDIF }
-
-{$IFDEF __CON__ }         { Nur fr TMT Pascal >= 3.30 }
-  {$DEFINE VER32 }
-  {$DEFINE TMT }
-  {$DEFINE DOS32 }
-  {$A+,B-,D-,F-,I-,L-,O-,P-,Q-,R-,S-,T-,V-,X+}
 {$ENDIF }
 
 {$IFDEF VirtualPascal }   { Virtual Pascal ab 2.0 }
@@ -173,6 +166,9 @@
 
 {
   $Log$
+  Revision 1.30  2000/05/27 08:42:33  mk
+  - Debugmodus wieder standardmaessig aus
+
   Revision 1.29  2000/05/14 09:19:22  mk
   - Debuginfos eingeschaltet und Beta 25 eingetragen
 
