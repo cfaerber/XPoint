@@ -29,6 +29,9 @@ begin
   else
     case mpnr of
          0 : MenuHidden:=false;                      { zur Sicherheit ... }
+{$ifdef DOS32}
+      $017 : MenuHidden:=true;                       { X/Telnet }
+{$endif}
       $069 : MenuHidden:=(SaveType=0);               { Config/Sichern }
       $0f5,$0f6 : MenuHidden:=true;                  { Netcall/Relogin, Netcall/Online }
       $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
@@ -603,6 +606,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.30  2001/04/21 12:57:32  ma
+  - disabled Telnet in DOS32
+
   Revision 1.29  2001/03/14 20:46:03  mk
   - removed registration routines
 
