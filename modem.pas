@@ -6,6 +6,13 @@
 
 unit Modem;
 
+{Debugfaehig: Environmentvariablen
+ DEBUG=C:\LOGFILE.TXT
+ MODEM=10
+ erzeugen ausfuehrliches Logfile.
+ Levels: 1 - Prozeduraufrufe
+         2 - Interna}
+
 interface
 
 uses Sysutils,ObjCOM,Typeform,Timer,Debug,{$IFDEF NCRT}xpcurses{$ELSE}crt{$ENDIF};
@@ -77,10 +84,10 @@ begin
     if (c=#13) or (c=#10) then begin
       if WaitForAnswer and(ReceivedUpToNow<>'') then begin
         ModemAnswer:=ReceivedUpToNow; ReceivedUpToNow:='';
-        DebugLog('Modem','Modem answer: '+ModemAnswer,3);
+        DebugLog('Modem','Modem answer: "'+ModemAnswer+'"',2);
         WaitForAnswer:=false;
       end;
-    end else if length(ReceivedUpToNow)<255 then ReceivedUpToNow:=ReceivedUpToNow+c;
+    end else if c<>#0 then ReceivedUpToNow:=ReceivedUpToNow+c;
   end else if idle then SleepTime(10);
 end;
 
@@ -92,7 +99,7 @@ begin
     case c of
       #27 : begin
               TimerObj.SetTimeout(0); WaitForAnswer:=False; ReceivedUpToNow:='';
-              DebugLog('Modem','User break',1); GotUserBreak:=true;
+              DebugLog('Modem','User break',2); GotUserBreak:=true;
             end;
       '+' : TimerObj.SetTimeout(TimerObj.SecsToTimeout+1);
       '-' : if TimerObj.SecsToTimeout>1 then TimerObj.SetTimeout(TimerObj.SecsToTimeout-1);
@@ -104,30 +111,31 @@ end;
 function SendCommand(s:string): String;
 var p : byte; EchoTimer: tTimer;
 begin
-  DebugLog('Modem','Sending modem command: '+s,3);
+  DebugLog('Modem','SendCommand: "'+s+'"',1);
   CommObj^.PurgeInBuffer; s:=trim(s);
   if s<>'' then begin {Nicht-leerer Modembefehl; Tilde im Befehl bedeutet ca. 1 Sec Pause}
     repeat
       p:=cpos('~',s);
       if p>0 then begin
-        if not CommObj^.SendString(left(s,p-1),True)then DebugLog('Modem','Sending failed '+left(s,p-1),3);
+        if not CommObj^.SendString(left(s,p-1),True)then DebugLog('Modem','Sending failed, received "'+left(s,p-1)+'"',2);
         delete(s,1,p); SleepTime(1000);
       end;
     until p=0;
-    if not CommObj^.SendString(s+#13,True)then DebugLog('Modem','Sending failed '+CommObj^.ErrorStr,3);
+    if not CommObj^.SendString(s+#13,True)then DebugLog('Modem','Sending failed, received "'+CommObj^.ErrorStr+'"',2);
     EchoTimer.Init; EchoTimer.SetTimeout(TimeoutModemAnswer); ReceivedUpToNow:=''; WaitForAnswer:=True;
     repeat
       ProcessIncoming(true); ProcessKeypresses(false);
     until EchoTimer.Timeout or (not WaitForAnswer); {Warte auf Antwort}
     if EchoTimer.Timeout then ModemAnswer:='';
     SleepTime(200); EchoTimer.Done;
-    SendCommand:=ModemAnswer; DebugLog('Modem','SendCommand: Returned modemanswer '+ModemAnswer,3);
+    SendCommand:=ModemAnswer; DebugLog('Modem','SendCommand: Got modem answer "'+ModemAnswer+'"',2);
   end;
 end;
 
 function SendMultCommand(s:string): String;
 var p : byte; cmd: String;
 begin
+  DebugLog('Modem','SendMultCommand: "'+s+'"',1);
   while (length(trim(s))>1) and not TimerObj.Timeout do begin
     p:=pos('\\',s);
     if p=0 then p:=length(s)+1;
@@ -171,6 +179,8 @@ var
   CurrentPhonenumber: String;
 
 begin
+  DebugLog('Modem','Dialup: Numbers "'+Phonenumbers+'", Init "'+ModemInit+'", Dial "'+ModemDial+'", MaxDials '+
+                   Strs(MaxDials)+', ConnectionTimeout '+Strs(TimeoutConnectionEstablish)+', RedialWait '+Strs(RedialWait),1);
   StateDialup:=SDInitialize; iDial:=0; DialUp:=False;
 
   while StateDialup<=SDWaitForNextCall do begin {alles nach SDWaitForNextCall wird nur fuer DisplayProc benutzt}
@@ -192,10 +202,10 @@ begin
                     DebugLog('Modem','Dialup send dial command',2);
                     inc(iDial); CurrentPhonenumber:=NumberRotate(Phonenumbers);
                     DUDState:=StateDialup; DUDNumber:=CurrentPhonenumber; DUDTry:=iDial;
-DebugLog('Modem','1',1); DisplayProc;DebugLog('Modem','2',1);
+                    DisplayProc;
                     {Ausgabe: 'Waehle [DUDNumber] (Versuch [DUDTry]) ...' }
-                    while cpos('-',CurrentPhonenumber)>0 do delete(CurrentPhonenumber,cpos('-',CurrentPhonenumber),1);DebugLog('Modem','3',1);
-                    SendMultCommand(ModemDial+CurrentPhonenumber); {Gegenstelle anwaehlen}DebugLog('Modem','4',1);
+                    while cpos('-',CurrentPhonenumber)>0 do delete(CurrentPhonenumber,cpos('-',CurrentPhonenumber),1);
+                    SendMultCommand(ModemDial+CurrentPhonenumber); {Gegenstelle anwaehlen}
                     StateDialup:=SDWaitForConnect;
                   end;
       SDWaitForConnect: begin
@@ -248,6 +258,7 @@ end;
 function Hangup: Boolean;
 var i : integer;
 begin
+  DebugLog('Modem','Hangup',1);
   CommObj^.PurgeInBuffer; CommObj^.SetDTR(False);
   SleepTime(500); for i:=1 to 6 do if(not CommObj^.IgnoreCD)and CommObj^.Carrier then SleepTime(500);
   CommObj^.SetDTR(True); SleepTime(500);
@@ -266,6 +277,9 @@ begin TimerObj.Init; DisplayProc:=VoidDisplayProc end.
 
 {
   $Log$
+  Revision 1.2  2000/07/13 23:58:50  ma
+  - Kosmetik
+
   Revision 1.1  2000/07/12 16:50:50  ma
   - aus XP-FM.PAS ausgelagert
 

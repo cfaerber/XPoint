@@ -2,14 +2,11 @@
 
 unit Debug;
 
-
-
 {Debug logfile unit for development issues}
+{$h+} {using ANSIStrings}
 
 INTERFACE
 
-uses
-  xpglobal;
 {Messages will be logged only if environment variable DEBUG exists
  pointing to a file. If file starts with *, the logfile will be
  overwritten each time.}
@@ -55,7 +52,7 @@ END;
 
 PROCEDURE DebugLog(Badge,Message: String; Level: Integer);
 VAR
-  H,M,S,S100,C: RTLWord;
+  H,M,S,S100,C: Integer;
 BEGIN
   IF NOT Logging THEN Exit;
   C:=FindBadge(Badge);
@@ -105,6 +102,9 @@ END.
 
 {
   $Log$
+  Revision 1.3  2000/07/13 23:58:50  ma
+  - Kosmetik
+
   Revision 1.2  2000/06/29 13:00:49  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder
@@ -117,6 +117,3 @@ END.
   - wird erstmal nur fuer den neuen XP-FM benoetigt
 
 }
-
-{ 2000-06-15 m.kiesel: Added TempCloseLog procedure}
-{ 2000-06-13 m.kiesel: Log file will now be created even if no * filename prefix is given}

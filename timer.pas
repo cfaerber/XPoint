@@ -1,15 +1,10 @@
 unit Timer;
 
-{$I XPDEFINE.INC }
-
 { $Id$ }
 
 {Timer unit. Also provides delay routines. Timer object is secure for delays shorter than 12h.}
 
 interface
-
-uses
-   xpglobal;
 
 TYPE
         tTimer= OBJECT
@@ -43,7 +38,7 @@ begin {$IFDEF Win32}Sleep(Round(Milliseconds)){$else}Delay(Round(Milliseconds)){
 
 FUNCTION GetTicks: LongInt;
 var
-  H,M,S,S100: RTLWord;
+  H,M,S,S100: Integer;
 begin
   GetTime(H,M,S,S100);
   GetTicks:=S100+S*100+M*60*100+H*60*60*100
@@ -70,14 +65,14 @@ begin
  T:=GetTicks;
  if TimeoutTicks>T then {Timeout vermutlich in der Zukunft}
   IF(TimeoutTicks-T)>(TickCap DIV 2)then {doch in der Vergangenheit, aber Reset seitdem}
-   SecsToTimeout:=(T+TickCap-TimeoutTicks)/CLKTICKS
+   SecsToTimeout:=Real(T+TickCap-TimeoutTicks)/CLKTICKS
   else {tatsächlich in der Zukunft}
-   SecsToTimeout:=(TimeoutTicks-T)/CLKTICKS
+   SecsToTimeout:=Real(TimeoutTicks-T)/CLKTICKS
  else {Timeout vermutlich in der Vergangenheit}
   IF(T-TimeoutTicks)>(TickCap DIV 2)then {doch in der Zukunft, aber Reset kommt}
-   SecsToTimeout:=(TimeoutTicks+TickCap-T)/CLKTICKS
+   SecsToTimeout:=Real(TimeoutTicks+TickCap-T)/CLKTICKS
   else
-   SecsToTimeout:=(TimeoutTicks-T)/CLKTICKS;
+   SecsToTimeout:=Real(TimeoutTicks-T)/CLKTICKS;
 end;
 
 FUNCTION tTimer.Timeout: Boolean;
@@ -116,6 +111,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2000/07/13 23:58:49  ma
+  - Kosmetik
+
   Revision 1.4  2000/06/29 13:00:49  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder
