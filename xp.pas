@@ -99,14 +99,21 @@ uses xpx,
      xpview,   { Binfile-Viewer     }
      xpmime,   { Multipart-Decode   }
      xpimpexp, { Import/Export      }
+     zpr,      { zc buffer repair   }
      zcrfc;    { RFC<->ZConnect     }
 
 
 function StartInternalTools: Boolean;
+var
+  Prog: String;
 begin
   Result := true;
-  if Uppercase(ParamStr(1)) = 'UUZ' then
+  Prog := UpperCase(ParamStr(1));
+  if Prog = 'UUZ' then
     StartCommandLineUUZ
+  else
+  if Prog = 'ZPR' then
+    StartCommandlineZPR
   else
     Result := false;
 end;
@@ -224,6 +231,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.48  2000/12/31 12:49:08  mk
+  - integrated zpr in openxp
+
   Revision 1.47  2000/12/30 16:06:46  mk
   - bei Parameter /t:x keinen Betahinweis zeigen
 

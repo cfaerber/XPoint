@@ -14,6 +14,14 @@
 
 {$I XPDEFINE.INC }
 
+unit zpr;
+
+interface
+
+procedure StartCommandlineZPR;
+
+implementation
+
 uses
 {$IFDEF unix}
   XPLinux,
@@ -39,7 +47,7 @@ const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
       stdhdlines  = 7;      { Anzahl Pflichtheaderzeilen                   }
       TO_ID       = '/'#0#0#8#8'TO:';
 
-{$IFDEF unix}              { ML 13.02.2000 unter linux keine '/' als Param verwenden }
+{$IFDEF unix}              { unter linux keine '/' als Param verwenden }
       paramchars   = ['-'];
 {$ELSE }
       paramchars   = ['-','/'];
@@ -292,30 +300,32 @@ var i,j : integer;
 begin
   if paramcount=0 then helppage;
   err:=false;
-  for i:=1 to paramcount do begin
+  for i:=2 to paramcount do
+  begin
     s:=trim(paramstr(i));
     if length(LeftStr(s,1)) > 0 then
-    begin    { ML 13.02.2000 Überprüfung nun mit paramchars }
-      if s[1] in paramchars then begin
-      delete(s,1,1);
-      s:=LowerCase(s);
-      j:=1;
-      while (j<=length(s)) do begin
-        c:=s[j];
-        inc(j);
-        if c='h' then ParExact:=true
-        else if c='l' then ParKillmsg:=true
-        else if c='f' then ParLogfile:=true
-        else if c='r' then ParRep:=true
-        else if c='d' then GetFilename
-        else if c='w' then ParNowarn:=true
-        else if c='z' then ParShowhd:=true
-        else if (c='?') or (c='h') then helppage
-        else begin
-          writeln(#7'unbekannter Schalter:  ',c);
-          err:=true;
+    begin
+      if FirstChar(s) in paramchars then
+      begin
+        delete(s,1,1);
+        s:=LowerCase(s);
+        j:=1;
+        while (j<=length(s)) do begin
+          c:=s[j];
+          inc(j);
+          if c='h' then ParExact:=true
+          else if c='l' then ParKillmsg:=true
+          else if c='f' then ParLogfile:=true
+          else if c='r' then ParRep:=true
+          else if c='d' then GetFilename
+          else if c='w' then ParNowarn:=true
+          else if c='z' then ParShowhd:=true
+          else if (c='?') or (c='h') then helppage
+          else begin
+            writeln(#7'unbekannter Schalter:  ',c);
+            err:=true;
+            end;
           end;
-        end;
       end
     else begin
 {$IFNDEF unix}
@@ -363,18 +373,10 @@ begin
   close(f);
   bakname:=ChangeFileExt(n, newext);
   assign(f,bakname);
-{$IFNDEF Delphi }
   setfattr(f,archive);  { evtl. altes BAK l”schen }
-{$ELSE }
-  FileSetAttr(bakname, faArchive);
-{$ENDIF }
   erase(f);
   assign(f,n);
-{$IFNDEF Delphi }
   setfattr(f,archive);
-{$ELSE }
-  FileSetAttr(n, faArchive);
-{$ENDIF }
   rename(f,bakname);
   if ioresult<>0 then;
 end;
@@ -1265,7 +1267,7 @@ begin
     writeln('headerlose Texte:   ',unzustmsgs:6);
 end;
 
-
+procedure StartCommandlineZPR;
 begin
   logo;
   getpar;
@@ -1276,17 +1278,21 @@ begin
   closefiles;
   statistik;
   halt(sgn(errmsgs));
-(* !! muá noch umgebaut werden
-  finalization
+(* !!
   if (RightStr(fo,3)='$$$') then
   begin     { evtl. Tempfile l”schen }
     assign(f2,fo);
     erase(f2);
     if ioresult<>0 then;
   end; *)
+end;
+
 end.
 {
   $Log$
+  Revision 1.31  2000/12/31 12:49:08  mk
+  - integrated zpr in openxp
+
   Revision 1.30  2000/11/01 22:59:24  mv
    * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
 
