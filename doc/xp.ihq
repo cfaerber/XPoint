@@ -3753,13 +3753,17 @@ legen neuer User mit "H" im User-Bearbeitungsmodus
 und beim automatischen Anlegen neuer User.
 @
 243
-<<[x]>> -> Selbstgeschriebene Nachrichten werden automa-
-       tisch auf "Halten" gesetzt, werden also bei
-       der Reorganisation nicht gel”scht (sog. 'EGO-
-       Archiv').
+<<[x]>> -> Selbstgeschriebene `”ffentliche` Nachrichten
+       werden automatisch auf "Halten" gesetzt, werden
+       also bei der Reorganisation nicht gel”scht
+       (sog. 'EGO-Archiv'). 
+       Selbstgeschriebene `private` Nachrichten k”nnen
+       im jeweiligen Userbrett, durch aktivieren der
+       Haltezeit "0" auf halten gesetzt werden.
 
-<<[ ]>> -> Selbstgeschriebene Nachrichten werden behan-
-       delt wie alle anderen Nachrichten auch.
+<<[ ]>> -> Selbstgeschriebene `”ffentliche` Nachrichten
+       werden behandelt wie alle anderen Nachrichten
+       auch.
 @
 244
 šblicherweise wird jede von Ihnen verschickte Nach-
@@ -4880,10 +4884,11 @@ eintragen!
 @
 427
 So viele Tage werden die Nachrichten im PM-Brett
-dieses Users aufbewahrt. Alle Nachrichten, die „lter
-sind und nicht mit "H" auf Halten gesetzt wurden,
-werden bei der n„chsten Reorganisation gel”scht.
-Stichtag ist das Eingangsdatum der Nachricht.
+dieses Users aufbewahrt. Alle Nachrichten, also
+auch die selbstgeschriebenen, die „lter sind und nicht
+mit "H" auf Halten gesetzt wurden, werden bei der
+n„chsten Reorganisation gel”scht.Stichtag ist das
+Eingangsdatum der Nachricht.
 
 Mit 0 wird der User auf unendliche Haltezeit gesetzt.
 @
