@@ -184,7 +184,8 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         if ckomlen>0    then wrs('Crypt-Content-KOM: '+strs(ckomlen));
         end;
 
-      if ntConv(netztyp) then begin
+      if ntConv(netztyp) then
+      begin
         wrs('X_C:');
         wrs('X-XP-NTP: '+strs(netztyp));
         if x_charset<>'' then wrs('X-Charset: '+x_charset);
@@ -192,15 +193,16 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         if hd_point<>''  then wrs('X-XP-PNT: '+hd_point);
         if pm_bstat<>''  then wrs('X-XP-BST: '+pm_bstat);
         if attrib<>0     then wrs('X-XP-ATT: '+hex(attrib,4));
+        if fido_to<>''   then
+          if OldXPComp then
+            wrs('X-XP-FTO: '+fido_to)
+          else
+            wrs('F-TO: '+fido_to);
         if ReplyPath<>'' then wrs('X-XP-MRP: '+replypath);
         if ReplyGroup<>''then wrs('X-XP-RGR: '+replygroup);
         if org_xref<>''  then wrs('X-XP-ORGREF: '+org_xref);
-        end;
-      if fido_to<>''   then
-        if OldXPComp then
-          wrs('X-XP-FTO: '+fido_to)
-        else
-          wrs('F-TO: '+fido_to);
+      end else
+        if fido_to<>''   then wrs('F-TO: '+fido_to);
       if boundary<>''  then wrs('X-XP-Boundary: '+boundary);
       if mimetyp<>''   then wrs('U-Content-Type: '+extmimetyp(mimetyp)+
                                 iifs(boundary<>'','; boundary="'+boundary+'"','')+
@@ -443,6 +445,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.5  2000/10/18 21:39:11  mk
+  - Fixes fuer F-TO
+
   Revision 1.9.2.4  2000/10/18 08:49:40  mk
   - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
 
