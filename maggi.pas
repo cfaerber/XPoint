@@ -432,7 +432,7 @@ begin
         end;
       if ok then begin
         rdln; absender:=trim(s);
-        rdln; while pos('@',LeftStr(s,15))>0 do s[cpos('@',s)]:='#';  { @ -> # }
+        rdln; while cPos('@',LeftStr(s,15))>0 do s[cpos('@',s)]:='#';  { @ -> # }
               absender:=trim(LeftStr(s,15))+'@'+absender;
               realname:=trim(mid(s,16));
               if pronet and ((length(realname)<3) or
@@ -713,7 +713,7 @@ begin
           end
         else begin
           i:=cpos('@',empfaenger);
-          while pos('#',LeftStr(empfaenger,i))>0 do
+          while cPos('#',LeftStr(empfaenger,i))>0 do
             empfaenger[cpos('#',empfaenger)]:='@';    { # -> @ }
           node:=mid(empfaenger,i+1);
           if cpos('.',node)>0 then
@@ -817,7 +817,7 @@ begin
       pm:=(p1>0);
       if pm then
         if zq then begin
-          p2:=pos('.',mid(empfaenger,p1+1));
+          p2:=cPos('.',mid(empfaenger,p1+1));
           if p2>0 then empfaenger:=LeftStr(empfaenger,p1+p2-1);
           end
         else
@@ -1655,6 +1655,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.33  2001/08/11 23:06:26  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.32  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

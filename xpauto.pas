@@ -233,10 +233,10 @@ begin
         writeln(t);
         close(t);
       end;
-      pm:=(pos('@',empf)<>0);
+      pm:=(cPos('@',empf)<>0);
       if pm and (betreff='') then betreff:='<nope>';
       empf:=vert_long(empf);
-      pm:=(pos('@',empf)<>0);
+      pm:=(cPos('@',empf)<>0);
       if not pm then insert('A',empf,1);
       leer:='';
       if UpperCase(box)='*CRASH*' then begin
@@ -675,6 +675,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2001/08/11 23:06:36  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.38  2001/07/23 16:05:22  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -229,7 +229,7 @@ var ax,p,myp  : integer;
         end;
       if (typ>=2) and (typ<=7) then begin
         s:=trim(cont);
-        if pos(' ',s)>0 then s:=copy(s,1,pos(' ',s)-1);
+        if cPos(' ',s)>0 then s:=copy(s,1,cPos(' ',s)-1);
         if typ<7 then begin
           val(s,l,res);
           if not entered then begin
@@ -1119,6 +1119,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 end;   { readHmask }
 {
   $Log$
+  Revision 1.36  2001/08/11 23:06:27  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.35  2001/07/31 16:18:39  mk
   - removed some unused variables
   - changed some LongInt to DWord

@@ -1212,7 +1212,7 @@ begin
   KeepNodeindexOpen;
   while not eof(t) do begin
     readln(t,s); s:=trim(s);
-    p:=pos('=',s);
+    p:=cPos('=',s);
     if (s<>'') and (s[1]<>'#') and (s[1]<>';') and (p>0) then begin
       fn:=mid(s,p+1);
       rc:= findfirst(FidoDir+fn,faAnyFile,sr);
@@ -2250,6 +2250,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2001/08/11 23:06:37  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.54  2001/07/31 16:18:41  mk
   - removed some unused variables
   - changed some LongInt to DWord

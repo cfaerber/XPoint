@@ -131,9 +131,9 @@ label ende,nextpp;
       uvsXgroesse:=0;
       end
     else begin
-      s:=trim(copy(s,pos(':',s)+1,20));
-      if pos(' ',s)>0 then
-        s:=LeftStr(s,pos(' ',s)-1);
+      s:=trim(copy(s,cpos(':',s)+1,20));
+      if cpos(' ',s)>0 then
+        s:=LeftStr(s,cpos(' ',s)-1);
       uvsXgroesse:=ival(s);
       end;
     close(t);
@@ -161,7 +161,7 @@ label ende,nextpp;
       p:=cpos('@',abs);
       if p>0 then begin
         bbox:=mid(abs,p+1);      { Box aus Absendername }
-        p:=pos('.',bbox);
+        p:=cpos('.',bbox);
         if p>0 then bbox:=LeftStr(bbox,p-1);
         if isbox(bbox) then forcebox:=bbox;
         end;
@@ -327,7 +327,7 @@ begin
     headerf:='';
     if not pm then hdp.empfaenger:=_brett[1]+hdp.empfaenger
     else
-      if pos('@',hdp.empfaenger)=0 then
+      if cpos('@',hdp.empfaenger)=0 then
         hdp.empfaenger:=hdp.empfaenger+'@'+box+'.ZER';
     dbReadN(mbase,mb_typ,typ);
     set_forcebox;
@@ -368,7 +368,7 @@ begin
       oem.Assign(hdp.oem);
       SenderMail:=hdp.absender;
       SenderRealname:=hdp.realname;
-      FQDN:=Mid(hdp.msgid,Pos('@',hdp.msgid)+1);
+      FQDN:=Mid(hdp.msgid,cPos('@',hdp.msgid)+1);
       onetztyp:=hdp.netztyp;
       quotestr:=hdp.quotestring;
       UV_edit:=true;
@@ -888,7 +888,7 @@ again:
                        goto ende;
                      end;
                      if ((empf<>'') and (zg_flags and 32=0)) then begin
-{ true=Userbrett  }    pm:=pos('@',empf)>0;
+{ true=Userbrett  }    pm:=cpos('@',empf)>0;
 { Brettvertreter  }    if not pm then begin
                          pollbox := dbReadNStr(bbase,bb_pollbox);
                          if (ntBoxNetztyp(pollbox) in [nt_POP3,nt_NNTP,nt_IMAP,nt_UUCP,nt_ZConnect]) then
@@ -1312,6 +1312,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2001/08/11 23:06:34  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.66  2001/08/11 21:20:51  mk
   - THeader.OEM is now TStringList (before: String)
 

@@ -60,7 +60,7 @@ begin
   s:=menu[nr];
   n:=0;
   repeat
-    p:=pos(',',s);
+    p:=cPos(',',s);
     if p>0 then begin
       inc(n);
       with ma^[n] do begin
@@ -81,8 +81,8 @@ begin
           end
         else
           keep:=false;
-        p2:=pos('^',s);
-        p3:=pos(',',s);
+        p2:=cPos('^',s);
+        p3:=cPos(',',s);
         if (p3=0) or ((p2>0) and (p2<p3)) then begin
           if p2>0 then delete(s,p2,1);
           if p3>0 then dec(p3);
@@ -95,8 +95,8 @@ begin
         else mstr:=LeftStr(s,p2-1);
         if hpos>0 then hkey:=UpCase(mstr[hpos])
         else hkey:=#255;
-        if pos('ù',mstr)>0 then begin
-          p2:=pos('ù',mstr);
+        if cPos('ù',mstr)>0 then begin
+          p2:=cPos('ù',mstr);
           chain:=ival(copy(mstr,p2+1,40));
           mstr:=copy(mstr,1,p2-1);
           if (nr>0) and (pos('..',mstr)=0) then mstr:=mstr+'..';
@@ -226,7 +226,7 @@ procedure setmenup(mnu:string; nr:byte; anew:string);
 var n,p,p2 : byte;
 begin
   findnr(mnu,nr,n,p);
-  p2:=pos(',',Mid(menu[n],p));
+  p2:=cPos(',',Mid(menu[n],p));
   if p2=0 then p2:=length(menu[n])+1
   else inc(p2,p+1);
   menu[n]:=LeftStr(menu[n],p-1)+anew+Mid(menu[n],p2);
@@ -606,6 +606,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.31  2001/08/11 23:06:29  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.30  2001/04/21 12:57:32  ma
   - disabled Telnet in DOS32
 

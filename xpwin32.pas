@@ -58,7 +58,7 @@ uses
   {$IFDEF VP}
   vputils,
   {$ENDIF }
-  SysUtils, Math, windows, winxp;
+  Typeform, SysUtils, Math, windows, winxp;
 
 function SysGetScreenLines: Integer;
 var
@@ -223,7 +223,7 @@ begin
    while hp^<>#0 do
      begin
         s:=strpas(hp);
-        i:=pos('=',s);
+        i:=cPos('=',s);
         if uppercase(copy(s,1,i-1))=uppercase(envvar) then
           begin
              Getenv:=copy(s,i+1,length(s)-i);
@@ -238,6 +238,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2001/08/11 23:06:39  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.18  2001/07/29 12:08:06  mk
   - fixed SysExec
 

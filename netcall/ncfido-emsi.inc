@@ -57,7 +57,7 @@ var OtherData: String;
    ihn daraus}
   var I,J: Integer; S: String;
   begin
-    I:=Pos('{',EMSIString); J:=Pos('}',EMSIString);
+    I:=cPos('{',EMSIString); J:=cPos('}',EMSIString);
     if J>I then begin S:=Copy(EMSIString,I+1,J-I-1); Delete(EMSIString,1,J)end
     else if I=0 then begin S:=''; EMSIString:='' end
     else begin
@@ -205,6 +205,9 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/08/11 23:06:43  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.2  2001/08/03 11:44:10  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

@@ -111,7 +111,7 @@ begin
   cursor(curoff);
   new(pntl);
   lnum:=0;
-  p:=pos(';',sla);
+  p:=cPos(';',sla);
   if p=0 then begin
     sla:=sla+';';
     p:=length(sla);
@@ -121,7 +121,7 @@ begin
     inc(slan);
     slas[slan]:=LeftStr(sla,p-1);
     delete(sla,1,p);
-    p:=pos(';',sla);
+    p:=cPos(';',sla);
     end;
 
   for i:=1 to slan do begin
@@ -131,7 +131,7 @@ begin
         inc(lnum);
         n:=lnum;
         s:=' '+sr.name;
-        p:=pos('.',s);
+        p:=cPos('.',s);
         if p=0 then
           s:=forms(s,9)+'.'
         else
@@ -379,14 +379,14 @@ begin
     end
   else begin
     pathn:=0;
-    CposY:=pos(';',pathx);
+    CposY:=cPos(';',pathx);
     path := ExtractFilePath(path);
     dpath:=pathx;        { dpath wird hier als Temp genutzt! }
     while CposY>0 do begin
       inc(pathn);
       paths[pathn]:=path+LeftStr(dpath,CposY-1);
       delete(dpath,1,CposY);
-      CposY:=pos(';',dpath);
+      CposY:=cPos(';',dpath);
       end;
     end;
 
@@ -697,8 +697,8 @@ var x    : byte;
 begin
   path:='';
   while p>1 do begin
-    x:=pos('Ã',pa^[p]^);
-    if x=0 then x:=pos('À',pa^[p]^);
+    x:=cPos('Ã',pa^[p]^);
+    if x=0 then x:=cPos('À',pa^[p]^);
     path:=copy(pa^[p]^,x+3,80)+'\'+path;
     while pa^[p]^[x] in ['³','Ã','À'] do dec(p);
     end;
@@ -1104,6 +1104,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/08/11 23:06:28  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.40  2001/08/10 20:57:57  mk
   - removed some hints and warnings
   - fixed some minior bugs

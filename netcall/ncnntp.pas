@@ -247,7 +247,7 @@ var
 begin
   result:= '';
   { Leerer Gruppenname/Wildcard ist nicht erlaubt }
-  if (group='') or (pos('*',group)<>0) then
+  if (group='') or (cPos('*',group)<>0) then
     exit;
   { Verbinden }
   if Connected then
@@ -371,7 +371,7 @@ var
     var
       P: Integer;
     begin
-      P := Pos(' ', IntChecker);
+      P := cPos(' ', IntChecker);
       if P <> 0 then
       begin
         try
@@ -533,6 +533,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2001/08/11 23:06:43  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.28  2001/07/31 16:18:43  mk
   - removed some unused variables
   - changed some LongInt to DWord

@@ -226,9 +226,9 @@ begin  { __ Suchmarke }
             if vert then begin
               { Verteiler }
               s := vert_name(s);
-              taus[pos('F',UsrFeldTausch)] := 'V   '; { Laenge 4 }
+              taus[cPos('F',UsrFeldTausch)] := 'V   '; { Laenge 4 }
             end else
-              taus[pos('F',UsrFeldTausch)] := abc+pw+dadr; { Laenge 4 }
+              taus[cPos('F',UsrFeldTausch)] := abc+pw+dadr; { Laenge 4 }
 
             markflag[y]:=iif(UBmarked(dbRecno(ubase)),1,0);
             brettform(s,0,true);
@@ -240,33 +240,33 @@ begin  { __ Suchmarke }
               brettform(s,0,true);
 
               { (H)altezeit }
-              taus[pos('H',UsrFeldTausch)] := '  '+hz(hzeit);
+              taus[cPos('H',UsrFeldTausch)] := '  '+hz(hzeit);
 
               { (B)OX }
-              taus[pos('B',UsrFeldTausch)] := forms(pbox,9 + ( over80 div 3 ) );
+              taus[cPos('B',UsrFeldTausch)] := forms(pbox,9 + ( over80 div 3 ) );
 
               { Adressbuch-(G)ruppe }
-              taus[pos('G',UsrFeldTausch)] := strsn(ab,2);
+              taus[cPos('G',UsrFeldTausch)] := strsn(ab,2);
             end;
 
             { Falls (S)pezial EIN, dann mu· der folgende Resttext um
               20 Zeichen gekÅrzt werden: }
 
             { Verteilername bzw. (A)dresse }
-            taus[pos('A',UsrFeldTausch)]
+            taus[cPos('A',UsrFeldTausch)]
               := Forms(s,
                    { Adresse vor Kommentar: beide kÅrzen, sonst nur Adresse }
-                   iif(pos('K',UsrFeldTausch)>pos('A',UsrFeldTausch),
+                   iif(cPos('K',UsrFeldTausch)>cPos('A',UsrFeldTausch),
                      44+(over80 div 3) -iif(kuerzen,12, 0),
                      44+(over80 div 3) -iif(kuerzen,20, 0)
                    )
                  );
 
             { (K)ommentar }
-            taus[pos('K',UsrFeldTausch)]
+            taus[cPos('K',UsrFeldTausch)]
               := Forms(komm,
                    { Kommentar nur kÅrzen, wenn er hinter der Adresse steht }
-                   iif(pos('K',UsrFeldTausch)<pos('A',UsrFeldTausch),
+                   iif(cPos('K',UsrFeldTausch)<cPos('A',UsrFeldTausch),
                      30,
                      30+(over80 div 3)-iif(kuerzen,8,0)
                    )
@@ -416,22 +416,22 @@ begin  { __ Suchmarke }
               s0:= dbReadNStr(mbase,mb_name);
 
               { (F)lags }
-              taus[pos('F',MsgFeldTausch)] := dflags;
+              taus[cPos('F',MsgFeldTausch)] := dflags;
 
               { (G)roesse }
-              taus[pos('G',MsgFeldTausch)] := siz;
+              taus[cPos('G',MsgFeldTausch)] := siz;
 
               { (D)atum }
-              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
+              taus[cPos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
 
               { (A)bsender }
-              taus[pos('A',MsgFeldTausch)] := forms(s,19);
+              taus[cPos('A',MsgFeldTausch)] := forms(s,19);
 
               { (E)mpfaenger }
-              taus[pos('E',MsgFeldTausch)] := forms(s0,19);
+              taus[cPos('E',MsgFeldTausch)] := forms(s0,19);
 
               { (B)etreff }
-              taus[pos('B',MsgFeldTausch)] :=
+              taus[cPos('B',MsgFeldTausch)] :=
                 forms(s1,iif(showmsgdatum,21+over80,27+over80));
 
               userflag[y]:=IIf((HighlightName=UpperCase(s0)) or (mnt and $1000<>0),1,0);
@@ -446,19 +446,19 @@ begin  { __ Suchmarke }
               end else begin
 
               { (F)lags }
-              taus[pos('F',MsgFeldTausch)] := dflags;
+              taus[cPos('F',MsgFeldTausch)] := dflags;
 
               { (G)roesse }
-              taus[pos('G',MsgFeldTausch)] := siz;
+              taus[cPos('G',MsgFeldTausch)] := siz;
 
               { (D)atum }
-              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
+              taus[cPos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
 
               { (A)bsender }
-              taus[pos('A',MsgFeldTausch)] := forms(s,ulen);
+              taus[cPos('A',MsgFeldTausch)] := forms(s,ulen);
 
               { (B)etreff }
-              taus[pos('B',MsgFeldTausch)] := forms(s1,blen-1);
+              taus[cPos('B',MsgFeldTausch)] := forms(s1,blen-1);
 
               end;
 
@@ -611,6 +611,9 @@ end;
 
 {
   $Log$
+  Revision 1.47  2001/08/11 23:06:31  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.46  2001/07/31 13:10:33  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

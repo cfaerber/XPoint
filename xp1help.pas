@@ -57,7 +57,7 @@ const kss : byte = 2;
   procedure ks(s:string);
   var p : byte;
   begin
-    p:=pos('^',s);
+    p:=cPos('^',s);
     delete(s,p,1);
     inc(shortkeys);
     if shortkeys>maxskeys then
@@ -362,9 +362,9 @@ var fks,fkn : integer;
   procedure wf(s:string);
   begin
     attrtxt(col.colkeyshigh);
-    Wrt2(LeftStr(s,pos('-',s)-1));
+    Wrt2(LeftStr(s,cPos('-',s)-1));
     attrtxt(col.colkeys);
-    Wrt2(copy(s,pos('-',s),60) + sp(spc));
+    Wrt2(copy(s,cPos('-',s),60) + sp(spc));
   end;
 
 begin
@@ -413,6 +413,9 @@ end.
 
 {
   $Log$
+  Revision 1.25  2001/08/11 23:06:28  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.24  2001/07/28 12:04:10  mk
   - removed crt unit as much as possible
 

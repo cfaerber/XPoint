@@ -106,8 +106,8 @@ begin
       rps(s,'$VORNAME',TopAllStr(name))
       else rps(s,'$VORNAME',TopAllStr(LeftStr(name,cpos('@',name)-1)));
     end;
-  p:=pos('%',name);
-  if p=0 then p:=pos('@',name);
+  p:=cpos('%',name);
+  if p=0 then p:=cpos('@',name);
   if p>0 then begin
     rps(s,'$MUSER',LeftStr(name,p-1));
     rps(s,'$TUSER',TopAllStr(LeftStr(name,p-1)));
@@ -325,7 +325,7 @@ var size   : longint;
     p:=cpos('@',qchar);
     empty:=false;
     if p=0 then begin
-      p:=pos('$',qchar);
+      p:=cpos('$',qchar);
       empty:=true;
       end;
     if p>0 then with hdp do
@@ -842,7 +842,7 @@ begin
                    if ((hdp.netztyp=nt_fido) or (hdp.netztyp=nt_QWK)) and
                       (hdp.realname='') and
                       (length(hdp.absender)<54) and Nodelist.Open and
-                      (pos(':',hdp.absender)>0) then begin
+                      (cpos(':',hdp.absender)>0) then begin
                                   { sieht nach einer Fido-Adresse aus ... }
                      GetNodeinfo(hdp.absender,ni,0);
                      if ni.found then begin
@@ -1102,6 +1102,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.75  2001/08/11 23:06:31  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.74  2001/08/11 21:20:50  mk
   - THeader.OEM is now TStringList (before: String)
 

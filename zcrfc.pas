@@ -1007,7 +1007,7 @@ begin
     else
       inc(j, 1900);
   ti := getstr;
-  if pos(':', ti) = 0 then
+  if cPos(':', ti) = 0 then
     if length(ti) = 4 then
       ti := LeftStr(ti, 2) + ':' + RightStr(ti, 2) + ':00' { RFC 822 }
     else
@@ -1673,13 +1673,13 @@ var
     line := trim(line);
     if (firstchar(line) = '"') and (cpos('<', line) > 5) then
     begin                               { neu in 3.11 }
-      p := pos('"', mid(line, 2));
+      p := cPos('"', mid(line, 2));
 
       { Realname-Konvertierung: Hans \"Hanswurst\" Wurst }
       while line[p] = '\' do
       begin
         delete(line, p, 1);
-        p := pos('"', mid(line, p + 1)) + p - 1;
+        p := cPos('"', mid(line, p + 1)) + p - 1;
       end;
 
       if p > 0 then
@@ -2404,7 +2404,7 @@ begin
                 p := p2 - 1;
                 while (p > 0) and (hd.wab[p] <> '!') do
                   dec(p);                   { naechstes "!" suchen }
-                p3 := pos('@', mid(hd.wab, p2 + 1));
+                p3 := cPos('@', mid(hd.wab, p2 + 1));
                 if p3 > 0 then
                   if stricmp(copy(hd.wab, p2 + 1, p3 - 1) + '@' + copy(hd.wab, p +
                     1, p2 - p - 1),
@@ -3804,6 +3804,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.68  2001/08/11 23:06:39  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.67  2001/08/11 21:20:52  mk
   - THeader.OEM is now TStringList (before: String)
 

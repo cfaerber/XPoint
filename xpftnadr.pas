@@ -87,6 +87,9 @@ type
 
 implementation
 
+uses 
+  Typeform;
+
 const
   DefaultUsername	= 'SysOp';	{ Default Username }
   DefaultZone		= 2;		{ Default Zone }
@@ -199,21 +202,21 @@ begin { --- SAsString --- }
     raise EFidoAdr.Create('Can''t guess FTN address out of an empty string!');
 
   { Usernamen pruefen }
-  p:= pos('@',s);
+  p:= cPos('@',s);
   if p>0 then begin
     Username:= Copy(s,1,p-1);
     s:= Cut(s,p);
   end;
 
   { Zone extrahieren }
-  p:= pos(':',s);
+  p:= cPos(':',s);
   if p>0 then begin
     FZone:= StrToIntDef(Copy(s,1,p-1),DefaultZone);
     s:= Cut(s,p);
   end;
   
   { Netz }
-  p:= pos('/',s);
+  p:= cPos('/',s);
   if p=0 then
     raise EFidoAdrNode.Create('Can''t find the node: '+so)
   else begin
@@ -222,7 +225,7 @@ begin { --- SAsString --- }
   end;
   
   { Node & Point }
-  p:= pos('.',s);
+  p:= cPos('.',s);
   if p=0 then begin
     Node:= StrToIntDef(s,-1);
     FPoint:= 0;
@@ -236,6 +239,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.2  2001/08/11 23:06:37  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.1  2000/07/21 15:41:45  hd
   - Init
 

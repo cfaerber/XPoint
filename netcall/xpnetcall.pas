@@ -216,7 +216,7 @@ var f      : file;
           end;
         end
       else begin
-        dbSeek(ubase,uiName,UpperCase(empfaenger+iifs(pos('@',empfaenger)=0,'@'+BoxName+'.ZER','')));
+        dbSeek(ubase,uiName,UpperCase(empfaenger+iifs(cPos('@',empfaenger)=0,'@'+BoxName+'.ZER','')));
         if not dbFound then
           trfehler(702,esec)   { 'Interner Fehler: UV-Userbrett nicht mehr vorhanden!' }
         else begin
@@ -755,7 +755,7 @@ function BoxParOk: string;
       begin
         if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
         if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
-        ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
+        ok := (cPos(':', fn) = 0) and (cPos('\', fn) = 0) and (cPos('.', fn) < 2)
           and (Length(fn) > 0) and (fn[length(fn)] <> '.');
         if (not ok) or (not IsPath(s)) or (RightStr(s,1)<>DirSepa) then
           ChkPPPClientPath := false;
@@ -1372,6 +1372,9 @@ end.
 
 {
   $Log$
+  Revision 1.28  2001/08/11 23:06:44  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.27  2001/07/29 19:54:28  cl
   - FIX: received mail now sorted correctly into <local>@<point><domain>
     instead of <local>@<point> (parameter BoxPtr^._domain read in correctly)

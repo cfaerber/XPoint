@@ -56,7 +56,7 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
   var i,p: Integer;
   begin
     s:=ExtractFilename(s);
-    p:=Pos('.',s);
+    p:=cPos('.',s);
     result:=(UpperCase(Copy(s,2,1))='P')and(p<>0);
     if result then
       for i:=3 to p-1 do result:=result and(s[i] IN ['0'..'9']);
@@ -250,6 +250,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/08/11 23:06:44  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.7  2001/08/10 19:13:01  mk
   - removed use of crt unit completly
   - added xpcrt: contains crt compatible Win32 keyboard handling

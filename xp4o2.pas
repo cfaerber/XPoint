@@ -192,7 +192,7 @@ var
     close(t);
     erase(t);
     if (ref<>'') or (length(user)<4) then user:='';
-    if (user<>'') and (pos('.',user)=0) and ntAutoZer(hdp.netztyp) then
+    if (user<>'') and (cPos('.',user)=0) and ntAutoZer(hdp.netztyp) then
       user:=user+'.ZER';
   end;
 
@@ -926,6 +926,9 @@ end;
 
 {
   $Log$
+  Revision 1.44  2001/08/11 23:06:33  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.43  2001/08/10 20:57:58  mk
   - removed some hints and warnings
   - fixed some minior bugs

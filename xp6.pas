@@ -272,7 +272,7 @@ var p : byte;
     d : DB;
 begin
   p:=cpos('@',s);
-  if (s<>'') and ((p=0) or (pos('.',mid(s,p))=0)) then
+  if (s<>'') and ((p=0) or (cpos('.',mid(s,p))=0)) then
   begin
       dbOpen(d,PseudoFile,1);           { Wenns keine gueltige Adresse ist...}
       dbSeek(d,piKurzname,UpperCase(s));
@@ -281,7 +281,7 @@ begin
         s:= dbReadStr(d,'Langname');
         dbclose(d);                     { ists ein Kurzname ? }
         testreplyto:=true;
-        if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
+        if cpos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
           begin
             rfehler(908);               { 'ungueltige Adresse' }
             testreplyto:=false;
@@ -1635,7 +1635,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     hdp.replypath:=_replypath;
     hdp.typ:=iifs(binary,'B','T');
     if (netztyp<>nt_Fido) or pm then
-      hdp.programm:=LeftStr(xp_xp,iif(pos('/',xp_xp)<>0,pos('/',xp_xp)-1,length(xp_xp)))
+      hdp.programm:=LeftStr(xp_xp,iif(cpos('/',xp_xp)<>0,cpos('/',xp_xp)-1,length(xp_xp)))
                      +'/'+trim(verstr)
                      +' ('+Without(Without(Trim(pformstr),'('),')')+betastr
                      {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF}
@@ -2101,6 +2101,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.124  2001/08/11 23:06:34  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.123  2001/08/11 21:20:51  mk
   - THeader.OEM is now TStringList (before: String)
 

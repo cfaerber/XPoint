@@ -294,7 +294,7 @@ begin
       // skip Lines special lines in .rc
       if (Group <> '') and (Group[1] in ['$', '#', '!']) then Continue;
 
-      p := Pos(' ', Group);
+      p := cPos(' ', Group);
       if p > 0  then
       begin
         ArticleIndex := StrToIntDef(Mid(Group, p + 1), 0);
@@ -350,6 +350,9 @@ end.
 
 {
         $Log$
+        Revision 1.24  2001/08/11 23:06:44  mk
+        - changed Pos() to cPos() when possible
+
         Revision 1.23  2001/06/13 10:38:59  ma
         - Incoming news files use short file names now for better compatibility
           with external filters.

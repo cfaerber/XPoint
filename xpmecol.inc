@@ -351,7 +351,7 @@ begin
   buttons[length(buttons)]:=',';
   n:=0;
   repeat
-    p:=pos(',',buttons);
+    p:=cPos(',',buttons);
     if p>0 then begin
       inc(n);
       if buttons[1]='ù' then begin
@@ -364,7 +364,7 @@ begin
         buttsp[n]:=0;
       butt[n]:=LeftStr(buttons,p-1);
       buttons:=copy(buttons,p+1,255);
-      p:=pos('^',butt[n]);
+      p:=cPos('^',butt[n]);
       delete(butt[n],p,1);
       butthigh[n]:=p;
       hot[n]:=butt[n,p];
@@ -413,6 +413,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2001/08/11 23:06:38  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.11  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

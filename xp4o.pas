@@ -1434,7 +1434,7 @@ begin
       zconnect:=true;
       end
     else begin
-      box:=file_box(nil,LeftStr(sr.name,pos('.',sr.name)-1));
+      box:=file_box(nil,LeftStr(sr.name,cPos('.',sr.name)-1));
       zconnect:=ntZConnect(ntBoxNetztyp(box));
       end;
     dbSetIndex(mbase,miBrett);
@@ -1459,7 +1459,7 @@ begin
           end
         else begin
           dbSeek(ubase,uiName,UpperCase(empfaenger+
-                 iifs(pos('@',empfaenger)>0,'','@'+box+'.ZER')));
+                 iifs(cPos('@',empfaenger)>0,'','@'+box+'.ZER')));
           if not dbFound then rfehler(426)   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
           else _brett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
           end;
@@ -2255,7 +2255,7 @@ begin
 {     if (s='') then lMagics:=false; }
 
       { Usernamen vor Quotes killen }
-      k:=pos('>',s);
+      k:=cPos('>',s);
       if (k>0) then if (k<6) then delete(s,1,k);
 
       k:=0;
@@ -2298,11 +2298,11 @@ begin
         for ic:=1 to Length(t) do if t[ic]='.' then inc(k);
         if (k>1) then continue;
         if (pos('**',t)>0) then continue;
-        if not lMagics then if (pos('.',t)<3) and (Length(t)<5) then continue;
+        if not lMagics then if (cPos('.',t)<3) and (Length(t)<5) then continue;
 
         { Passwort suchen, erkennen und speichern }
         p1:='';
-        ic:=pos('/',t); if (ic>0) then begin
+        ic:=cPos('/',t); if (ic>0) then begin
           p1:=copy(t,ic,20); delete(t,ic,99)
         end;
 
@@ -2319,7 +2319,7 @@ begin
         if (s1='FAQ') or (s1='OS') then continue;
         if (s1='DOS') then continue;
         if (length(s1)=3) then if (copy(s1,1,2)='RC') and (s1[3] in ['0'..'9']) then continue;
-        ic:=pos('@',t); if (ic>1) and (ic<>Length(t)) then continue;
+        ic:=cPos('@',t); if (ic>1) and (ic<>Length(t)) then continue;
 
         { Auf Beschreibungs-Datei testen }
         FSplit(u,dir,name,ext);
@@ -2364,7 +2364,7 @@ begin
           continue
         end;
         u := Uppercase(t);
-        ic := pos('.',u); if not (ic in [2..9]) then continue;
+        ic := cPos('.',u); if not (ic in [2..9]) then continue;
         if (length(u)<4) then continue;
         if (length(u)-ic>3) then continue;
         if (p1<>'') then u:=u+p1; p1:='';
@@ -2414,6 +2414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.102  2001/08/11 23:06:32  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.101  2001/08/10 20:57:58  mk
   - removed some hints and warnings
   - fixed some minior bugs

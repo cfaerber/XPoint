@@ -207,9 +207,9 @@ begin
                      // see if we got an md5 challenge: format "OPT xxx CRAM-MD5/SHA1-challenge yyy"
                      if(Copy(s,1,3)='OPT')and(Pos(' CRAM-',s)<>0) then begin
                        Delete(s,1,Pos(' CRAM-',s)+5);
-                       if Pos(' ',s)<>0 then s:=LeftStr(s,Pos(' ',s)-1);
+                       if cPos(' ',s)<>0 then s:=LeftStr(s,cPos(' ',s)-1);
                        if Pos('MD5',s)<>0 then begin
-                         Delete(s,1,Pos('-',s));
+                         Delete(s,1,cPos('-',s));
                          CRAM_MD5_Challenge:=s;
                          end;
                        end;
@@ -283,7 +283,7 @@ var
 
   function GetPar(var s: string): string;
   var p: integer;
-  begin p:=pos(' ',s); if p<=0 then p:=length(s)+1; result:=copy(s,1,p-1); delete(s,1,p); end;
+  begin p:=cPos(' ',s); if p<=0 then p:=length(s)+1; result:=copy(s,1,p-1); delete(s,1,p); end;
 
   function BpReceive: tResult;
   var s: string; RxFilePos: Cardinal;
@@ -550,6 +550,9 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/08/11 23:06:43  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.6  2001/08/03 11:44:10  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

@@ -263,7 +263,7 @@ begin
         readln(t,s);
         if (s<>'') and (LeftStr(s,1)<>'#') then begin
           su:=UpperCase(s);
-          p:=pos('=',s);
+          p:=cpos('=',s);
           if (p=0) or not (
             get_exclude or
             gets(s,su,'Boxname',boxname,BoxNameLen) or
@@ -698,6 +698,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2001/08/11 23:06:36  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.45  2001/07/31 16:59:33  mk
   - RFC/Client: implemented "External Settings" under
     Edit/Servers/Edit/... (load external config file)

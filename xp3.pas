@@ -1071,8 +1071,8 @@ function IsNodeAddress(adr:string):boolean;
 var p : byte;
 begin
   p:=cpos(':',adr);
-  if p=0 then p:=pos('/',adr);
-  if p=0 then p:=pos('.',adr);
+  if p=0 then p:=cPos('/',adr);
+  if p=0 then p:=cPos('.',adr);
   IsNodeAddress := ((p>0) and (ival(LeftStr(adr,p-1))>0)) or
                    (ival(adr)>0) or (adr=',') or
                    ((p=1) and (ival(mid(adr,p+1))>0));
@@ -1135,6 +1135,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.60  2001/08/11 23:06:30  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.59  2001/07/31 13:10:33  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

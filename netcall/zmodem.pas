@@ -1553,8 +1553,8 @@ begin
 
   (* get rid of drive & path specifiers *)
   {$IFNDEF UnixFS}
-  while (Pos(':', s) > 0) do
-    Delete(s, 1, Pos(':', s));
+  while (cPos(':', s) > 0) do
+    Delete(s, 1, cPos(':', s));
   {$ENDIF}
   while (Pos(DirSepa, s) > 0) do
     Delete(s, 1, Pos(DirSepa, s));
@@ -2731,6 +2731,9 @@ end.
 
 {
   $Log$
+  Revision 1.21  2001/08/11 23:06:44  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.20  2001/08/10 19:13:01  mk
   - removed use of crt unit completly
   - added xpcrt: contains crt compatible Win32 keyboard handling

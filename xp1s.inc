@@ -64,7 +64,7 @@ procedure shell(prog:string; space:word; cls:shortint);
     parameters,commandsave : string;
     callviacli : boolean; // "call via command line interpreter" (usually via COMMAND /C)
   begin
-    pp:=pos(' ',command);
+    pp:=cPos(' ',command);
     if pp=0 then parameters:=''
     else begin
       parameters:=trim(Mid(command,pp+1));
@@ -72,7 +72,7 @@ procedure shell(prog:string; space:word; cls:shortint);
     end;
     command:=FileUpperCase(command);
 
-    callviacli:=(pos('|',parameters)>0) or (pos('>',parameters)>0) or (pos('<',parameters)>0);
+    callviacli:=(cPos('|',parameters)>0) or (cPos('>',parameters)>0) or (cPos('<',parameters)>0);
     commandsave:=command;
     if not callviacli then begin
       command:=FindExecutable(command);
@@ -504,6 +504,9 @@ end;
 
 {
   $Log$
+  Revision 1.59  2001/08/11 23:06:29  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.58  2001/08/01 00:41:35  mk
   - fixed bak file deletion in EditFilename
 

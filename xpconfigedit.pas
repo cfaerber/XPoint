@@ -306,7 +306,7 @@ begin
     testreplyto:=true
   else begin                            { Wenns keine gueltige Adresse ist...}
     p:=cpos('@',s);
-    if (p=0) or (pos('.',mid(s,p))=0) then
+    if (p=0) or (cPos('.',mid(s,p))=0) then
     begin
       dbOpen(d,PseudoFile,1);
       dbSeek(d,piKurzname,UpperCase(s));
@@ -315,7 +315,7 @@ begin
         s:= dbReadStr(d,'Langname');    { ists ein Kurzname ? }
         dbclose(d);
         testreplyto:=true;
-        if pos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
+        if cPos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
           begin
             rfehler(908);               { 'ungÅltige Adresse' }
             testreplyto:=false;
@@ -1413,7 +1413,7 @@ begin
     s := AddDirSepa(s);
     if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
     if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
-    ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0) and (Pos('.', fn) < 2)
+    ok := (cPos(':', fn) = 0) and (cPos('\', fn) = 0) and (cPos('.', fn) < 2)
       and (Length(fn) > 0) and (fn[length(fn)] <> '.');
     if not ok then
     begin
@@ -1609,6 +1609,9 @@ end.
 
 {
   $Log$
+  Revision 1.16  2001/08/11 23:06:37  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.15  2001/08/02 22:14:57  mk
   JG:- ReadExtCfgFilename: optimized suboptimal (but working) code
 

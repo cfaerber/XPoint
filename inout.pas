@@ -946,7 +946,7 @@ begin
       if autogr then a:=UpperCase(a);
       IF (POS(a,li)>0) AND (p<ml) AND
          (NOT ((li=chml[2]) AND (p>0) AND (a='-'))) AND
-         (NOT ((li=chml[2]) AND (POS('.',ste)>0) AND (a='.'))) THEN begin
+         (NOT ((li=chml[2]) AND (cPos('.',ste)>0) AND (a='.'))) THEN begin
          p:=succ(p);
          if einfueg then begin
            ste:=s;
@@ -1658,6 +1658,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.73  2001/08/11 23:06:26  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.72  2001/07/31 16:18:39  mk
   - removed some unused variables
   - changed some LongInt to DWord

@@ -57,7 +57,7 @@ begin
     point:=FA.point;
     SetZero(my_password,password,8);
     capabilities:=MyCap;
-    if pos('@',username)<>0 then inc(capabilities,do_domain);
+    if cPos('@',username)<>0 then inc(capabilities,do_domain);
   end;
 end;
 
@@ -71,7 +71,7 @@ begin
   reset(t);
   s:=''; p:=1;
   while not eof(t) and (hexval(LeftStr(s,p-1))<>pc) do begin
-    readln(t,s); p:=max(1,pos(',',s));
+    readln(t,s); p:=max(1,cPos(',',s));
   end;
   if hexval(LeftStr(s,p-1))=pc then begin
     delete(s,1,p);
@@ -428,6 +428,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/08/11 23:06:43  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.3  2001/08/03 11:44:10  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

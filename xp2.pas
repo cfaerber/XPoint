@@ -407,9 +407,9 @@ var i  : integer;
     if(s<>'')and(GetEnv('DEBUG')='')then
       Debug.OpenLogfile(False,'debuglog.txt');
     while s<>'' do begin
-      i:=Pos('=',s);
+      i:=cPos('=',s);
       if i=0 then s:='' else begin
-        j:=Pos(',',s); if j=0 then j:=Length(s)+1;
+        j:=cPos(',',s); if j=0 then j:=Length(s)+1;
         Badge:=Copy(s,1,i-1); Val(Copy(s,i+1,j-i-1),Level,Res);
         Debug.SetLoglevel(Badge,Level);
         Delete(s,1,j);
@@ -1090,6 +1090,9 @@ end.
 
 {
   $Log$
+  Revision 1.117  2001/08/11 23:06:30  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.116  2001/08/03 21:40:42  ml
   - compilable with fpc (linux)
 

@@ -346,7 +346,7 @@ var tmp  : string;
 begin
   if RemoteUserID='' then                       { User-ID ermitteln }
     RemoteUserID:=hd.empfaenger;
-  if pos('/',RemoteUserID)>0 then
+  if cPos('/',RemoteUserID)>0 then
     RemoteUserID:='';                           { Empfaenger ist Brett }
 
   fm_ro; reset(source,1); fm_rw;
@@ -843,6 +843,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/08/11 23:06:36  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.39  2001/08/03 21:40:43  ml
   - compilable with fpc (linux)
 

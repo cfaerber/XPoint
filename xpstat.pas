@@ -1248,7 +1248,7 @@ begin
   brk := List.Show;
   pophp;
   if not brk then
-    AutoCrash:='*'+copy(List.GetSelection,2,pos(' ',mid(List.GetSelection,2))-1);
+    AutoCrash:='*'+copy(List.GetSelection,2,cPos(' ',mid(List.GetSelection,2))-1);
   List.Free;
   closebox;
 end;
@@ -1257,6 +1257,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/08/11 23:06:39  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.39  2001/07/28 12:04:16  mk
   - removed crt unit as much as possible
 

@@ -290,7 +290,7 @@ begin
     ok:=ReadFileName(getres(120),fname,true,useclip);  { 'Text in Datei schreiben' }
     pophp;
     if ok then begin
-      if (pos('\',fname)=0) and (pos(':',fname)=0) then
+      if (cPos('\',fname)=0) and (cPos(':',fname)=0) then
         fname:=extractpath+fname;
       while cpos('/',fname)>0 do
         fname[cpos('/',fname)]:='\';
@@ -784,12 +784,12 @@ begin
       tnr:=LeftStr(tele,p-1);
       tele:=trimleft(mid(tele,p));
       endc:=['0'..'9'];
-      if pos('V',tnr)>0 then include(endc,'Q');
+      if cPos('V',tnr)>0 then include(endc,'Q');
       while firstchar(tnr) in ['V','F','B','P'] do
         delfirst(tnr);
       if (firstchar(tnr)<>'+') or not (lastchar(tnr) in endc) then
         ok:=false;
-      if pos('+',mid(tnr,2))>0 then
+      if cPos('+',mid(tnr,2))>0 then
         ok:=false;
     until tele='';
     if not ok and errmsg then
@@ -1011,6 +1011,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.89  2001/08/11 23:06:29  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.88  2001/08/10 20:57:57  mk
   - removed some hints and warnings
   - fixed some minior bugs

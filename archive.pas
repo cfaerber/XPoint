@@ -616,10 +616,10 @@ label again;
       while ba(fname)[b]<>#0 do inc(b);
       SetLength(s, b);
       Move(fname,s[1],b);
-      p:=pos('/',s);
-      if p=0 then p:=pos('\',s);
+      p:=cPos('/',s);
+      if p=0 then p:=cPos('\',s);
       if p=0 then begin
-        p:=pos(':',s);
+        p:=cPos(':',s);
         if p=0 then begin
           path:=''; name:=s;
           end
@@ -941,6 +941,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2001/08/11 23:06:26  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.25  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

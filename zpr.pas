@@ -354,7 +354,7 @@ Function ValidFileName(name:PathStr):boolean;
 var f : file;
 begin
   if (name='') or
-     (pos('*',name)+pos('?',name)>0) then    { Fehler in DR-DOS 5.0 umgehen }
+     (cPos('*',name)+cPos('?',name)>0) then    { Fehler in DR-DOS 5.0 umgehen }
     ValidFileName:=false
   else begin
     assign(f,name);
@@ -785,7 +785,7 @@ var i,j  : integer;
     if not _xpnt then begin
       if p1>0 then TruncStr(cont,p1-1);
       p1:=cpos('@',cont);
-      p2:=pos('.',mid(cont,p1+1));
+      p2:=cPos('.',mid(cont,p1+1));
       if (p1<=1) or (p2<=1) or (lastchar(cont)='.') then begin
         warnung('Fehler in '+headerindex[hd0.fldtype[i]].name);
         wrehd(i);
@@ -809,7 +809,7 @@ var i,j  : integer;
 { !!! bei AM wird EMP geupcaset }
     { nach ZC 3.1a _3.3.1.1.3 Brettnamenformat }
     { KE 01/00 }
-    if Pos('@',hd0^.fld[i]) = 0 then { keine PM, sondern AM }
+    if cPos('@',hd0^.fld[i]) = 0 then { keine PM, sondern AM }
     begin;
       for DummyI := 1 to Length(hd0^.fld[i]) do
         if hd0^.fld[i][DummyI] in ['a'..'z'] then
@@ -853,7 +853,7 @@ var i,j  : integer;
   var p1,p2 : byte;
   begin
     p1:=cpos('@',cont);
-    p2:=pos('.',mid(cont,p1+1));
+    p2:=cPos('.',mid(cont,p1+1));
     if (p1<=1) or (p2<=1) or (lastchar(cont)='.') then begin
       warnung('Fehler in '+iifs(msgid,'Message-ID','BEZugs-ID'));
       wrehd(i);
@@ -1298,6 +1298,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/08/11 23:06:40  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.35  2001/07/31 16:18:42  mk
   - removed some unused variables
   - changed some LongInt to DWord

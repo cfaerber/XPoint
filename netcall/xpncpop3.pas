@@ -263,7 +263,7 @@ begin
   if BoxPar^.POP3_ForceOneArea then begin
     // tell xp3o.PufferEinlesen to put all messages to standard mail area
     xp3o.ForceRecipient:= '1/' + BoxPar^.username;
-    i:= Pos('@',xp3o.ForceRecipient);
+    i:= cPos('@',xp3o.ForceRecipient);
     if i>0 then
       xp3o.ForceRecipient:= LeftStr(xp3o.ForceRecipient, i - 1);
     end;
@@ -273,6 +273,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/08/11 23:06:44  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.18  2001/06/09 10:58:54  ma
   - added ForceOneArea feature (for POP3 server type)
 

@@ -793,8 +793,8 @@ var f1,f2   : file;
         end
       else begin
         RepKlammer(empfaenger);
-        p:=pos('#',empfaenger);
-        if (p>0) and (pos('.',mid(empfaenger,p+1))>0) then begin
+        p:=cPos('#',empfaenger);
+        if (p>0) and (cPos('.',mid(empfaenger,p+1))>0) then begin
           uuadr:=trim(LeftStr(empfaenger,p-1))+'@'+trim(mid(empfaenger,p+1));
           p:=rightpos('@',uuadr);
           empfaenger:='UUCP'+mid(uuadr,p);
@@ -1358,7 +1358,7 @@ label abbr;
   procedure InternetAdresse(s:string);
   var p : byte;
   begin
-    p:=pos('<',s);
+    p:=cPos('<',s);
     if p>0 then begin
       s:=mid(s,p+1);      { User Name <...> -> Realname und <> wegschneiden }
       dellast(s);
@@ -1689,7 +1689,7 @@ begin
   { Kill outfile only on wildcards. Otherwise the
     function was called by XP and then allways without
     wildcards because of the processing of the directory }
-  fst:= (pos('*',infile)+pos('?',infile)>0);
+  fst:= (cPos('*',infile)+cPos('?',infile)>0);
   dir:= AddDirSepa(ExtractFilePath(infile));
   rc:= findfirst(infile,faAnyFile-faDirectory,sr);
   MWrt(x+2,y+2,GetRes2(30003,11));      { 'Datei......: ' }
@@ -1802,6 +1802,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.21  2001/08/11 23:06:40  mk
+        - changed Pos() to cPos() when possible
+
         Revision 1.20  2001/08/10 20:58:02  mk
         - removed some hints and warnings
         - fixed some minior bugs

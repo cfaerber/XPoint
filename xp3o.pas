@@ -137,8 +137,8 @@ begin                         { user: 1 = Userauswahl  0 = Brettauswahl }
           exit;
         end;
         if ((s<>'') and (zg_flags and 32=0)) then begin      { FollowUp-To? }
-          {_pm:=pos('@',s)>0;}
-          if pos('@',s)=0 then begin
+          {_pm:=cPos('@',s)>0;}
+          if cPos('@',s)=0 then begin
             pollbox := dbReadNStr(bbase,bb_pollbox);
             if (ntBoxNetztyp(pollbox) in [nt_fido,nt_UUCP,nt_ZConnect]) then begin
               { _AmReplyTo:=s; }
@@ -407,8 +407,8 @@ begin
     newempf:=newbrett;
     if LeftStr(dbReadStr(bbase,'brettname'),1)='1' then begin
       delfirst(newempf);
-      if pos('/',newempf)>0 then   { Boxname im PM-Brett }
-        newempf[pos('/',newempf)]:='@'
+      if cPos('/',newempf)>0 then   { Boxname im PM-Brett }
+        newempf[cPos('/',newempf)]:='@'
       else
         newempf:=newempf+'@';
       end;
@@ -630,8 +630,8 @@ begin
         if LeftStr(betreff,length(EmpfBKennung))=EmpfBkennung then
           delete(betreff,1,length(EmpfBKennung));
         if recount(betreff)>0 then;  { entfernt Re^n }
-        if pos(' ',betreff)=0 then fname:=betreff
-        else fname:=copy(betreff,1,pos(' ',betreff)-1);
+        if cPos(' ',betreff)=0 then fname:=betreff
+        else fname:=copy(betreff,1,cPos(' ',betreff)-1);
         end
       else
         fname:=hdp.datei;
@@ -660,7 +660,7 @@ begin
     useclip:=true;
     ok:=ReadFileName(text,fname,true,useclip);
     pophp;
-    if (pos('\',fname)=0) and (pos(':',fname)=0) then
+    if (cPos('\',fname)=0) and (cPos(':',fname)=0) then
       fname:=extractpath+fname;
     if ok then
       if not ValidFileName(fname) then
@@ -1078,7 +1078,7 @@ begin
   { suboptimal }
   if empf='' then empf:=hdp.replyto;
   if empf='' then empf:=hdp.wab;
-  if (empf='') or (cpos('@',empf)=0) or (pos('.',mid(empf,cpos('@',empf)))=0)
+  if (empf='') or (cpos('@',empf)=0) or (cPos('.',mid(empf,cpos('@',empf)))=0)
   then
     empf:=hdp.absender;
   Hdp.Free;
@@ -1523,6 +1523,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2001/08/11 23:06:31  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.62  2001/08/02 22:48:10  mk
   - Write -> Wrt()
 

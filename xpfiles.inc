@@ -37,7 +37,7 @@ begin
   if fn='~' then fn:='';
   if RightStr(fn,6)='.TAR.Z' then            { .tar.z -> .taz }
     fn:=LeftStr(fn,length(fn)-5)+'TAZ';
-  p:=pos(':',fn);
+  p:=cPos(':',fn);
   if (p>0) and (p<length(fn)) then        { device: entfernen }
     delete(fn,1,p);
   p:=length(fn);

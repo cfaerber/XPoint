@@ -338,7 +338,7 @@ begin
   s:=menu[nr];
   n:=0;
   repeat
-    p:=pos(',',s);
+    p:=cPos(',',s);
     if p>0 then begin
       inc(n);
       with ma^[n] do begin
@@ -356,8 +356,8 @@ begin
           end
         else
           keep:=false;
-        p2:=pos('^',s);
-        p3:=pos(',',s);
+        p2:=cPos('^',s);
+        p3:=cPos(',',s);
         if (p3=0) or ((p2>0) and (p2<p3)) then begin
           if p2>0 then delete(s,p2,1);
           if p3>0 then dec(p3);
@@ -370,8 +370,8 @@ begin
         else mstr:=LeftStr(s,p2-1);
         if hpos>0 then hkey:=UpCase(mstr[hpos])
         else hkey:=#255;
-        if pos('ù',mstr)>0 then begin
-          p2:=pos('ù',mstr);
+        if cPos('ù',mstr)>0 then begin
+          p2:=cPos('ù',mstr);
           chain:=ival(copy(mstr,p2+1,40));
           mstr:=copy(mstr,1,p2-1);
           if (nr>0) and (pos('..',mstr)=0) then mstr:=mstr+'..';
@@ -767,6 +767,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36  2001/08/11 23:06:38  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.35  2001/08/01 09:06:24  cl
   - renamed openxp.res to openxp.rsp
 

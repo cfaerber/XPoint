@@ -169,7 +169,8 @@ uses
   dos in 'delphi\dos.pas',
   ObjCOM in 'objcom\objcom.pas',
   Ringbuff in 'ObjCOM\ringbuff.pas',
-  xpcrt in 'xpcrt.pas';
+  xpcrt in 'xpcrt.pas',
+  archive in 'archive.pas';
 
 {$R *.RES}
 function StartInternalTools: Boolean;

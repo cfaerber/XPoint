@@ -404,7 +404,7 @@ begin
                         else _domain:=rev+'@'+fqdn;
         nt_NNTP,
         nt_POP3,
-        nt_IMAP     : if fqdn='' then _domain:=rev+'@'+Mid(username,Pos('@',username)+1)
+        nt_IMAP     : if fqdn='' then _domain:=rev+'@'+Mid(username,cPos('@',username)+1)
                         else _domain:=rev+'@'+fqdn;
       else
         _domain:='@'+box;
@@ -517,7 +517,7 @@ var s   : string;
   var  p,p2: byte;
   begin
     p:=cpos('@',s);
-    p2:=pos('.',mid(s,p+1));
+    p2:=cPos('.',mid(s,p+1));
     if p2>0 then s:=LeftStr(s,p+p2)+'ZER';
   end;
 
@@ -598,7 +598,7 @@ var d      : DB;
 begin
   p:=cpos('@',adresse);
   if p=0 then exit;
-  p2:=p+pos('.',Mid(adresse,p+1));
+  p2:=p+cPos('.',Mid(adresse,p+1));
   if p2=0 then exit;
   dbOpen(d,SystemFile,siName);
   dbSeek(d,siName,copy(adresse,p+1,p2-p-1));
@@ -880,7 +880,7 @@ begin
   p:=cpos('@',empfaenger);
   if p=0 then
     ee:=getres2(609,1)     { '"@" fehlt!' }
-  else if (pos(' ',LeftStr(empfaenger,p))>0) and not ntNameSpace(netztyp) then
+  else if (cPos(' ',LeftStr(empfaenger,p))>0) and not ntNameSpace(netztyp) then
     ee:=iifs(ReadJN(getres2(609,2),true),'','*')   { 'Warnung: Leerzeichen in Adresse! Trotzdem absenden' }
   else if steuerzeichen(empfaenger) then
     ee:=getres2(609,7)     { 'unerlaubte Steuerzeichen in Useradresse' }
@@ -894,7 +894,7 @@ begin
               SplitFido(empfaenger,fa,DefaultZone);
               if fa.net=0 then ee:=getres2(609,4);   { 'Fido-Netznummer fehlt!' }
             end;
-        5 : if pos('.',mid(empfaenger,p+1))=0 then ee:=getres2(609,5);  { 'Domain fehlt!' }
+        5 : if cPos('.',mid(empfaenger,p+1))=0 then ee:=getres2(609,5);  { 'Domain fehlt!' }
     end;
   if (ee<>'') and (ee<>'*') then
     afehler(getreps2(609,6,ee),not sendbox);   { 'fehlerhafter Empf„nger: %s' }
@@ -1108,6 +1108,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2001/08/11 23:06:35  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.59  2001/07/31 16:18:41  mk
   - removed some unused variables
   - changed some LongInt to DWord

@@ -151,7 +151,7 @@ var  fname,
          w : word;
          r : integer;
      begin
-       p:=pos(' ',qvref);
+       p:=cPos(' ',qvref);
        if p=0 then
          s:=qvref
        else begin
@@ -251,10 +251,10 @@ var  fname,
        last:=0; next:=0;
      end else begin
        readln(t,st);
-       if pos(' ',st)=0 then exiterr('Illegal/missing LAST/NEXT statement');
-       val(LeftStr(st,pos(' ',st)-1),last,res);
+       if cPos(' ',st)=0 then exiterr('Illegal/missing LAST/NEXT statement');
+       val(LeftStr(st,cPos(' ',st)-1),last,res);
        if res<>0 then exiterr('Illegal LAST statement');
-       val(mid(st,pos(' ',st)+1),next,res);
+       val(mid(st,cPos(' ',st)+1),next,res);
        if res<>0 then exiterr('Illegal NEXT statement');
      end;
      blockwfw(last); blockwfw(next);
@@ -272,13 +272,13 @@ var  fname,
      repeat
        readln(t,s);
        if (s<>'@') and (s<>'@@') then begin
-         p:=pos('@',s);
+         p:=cPos('@',s);
          if p>0 then if (p>1) and (s[p-1]='\') then
            delete(s,p-1,1)
          else begin
            qvref:=copy(s,p+1,80);
            s:=copy(s,1,p-1);
-           p1:=pos('[',s);
+           p1:=cPos('[',s);
            while p1>0 do begin
              p2:=p1+1;
              while (p2<length(s)) and (s[p2]<>']') do inc(p2);
@@ -428,6 +428,9 @@ end.
 
 {
   $Log$
+  Revision 1.25  2001/08/11 23:06:26  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.24  2001/07/28 12:04:08  mk
   - removed crt unit as much as possible
 

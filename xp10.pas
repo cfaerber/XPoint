@@ -452,7 +452,7 @@ end;
 
 function __timeok(var s:string):boolean;
 begin
-  if pos(' ',s)>0 then
+  if cPos(' ',s)>0 then
     case fieldpos of
       1 : s:='00:00';
       2 : s:='23:59';
@@ -1364,7 +1364,7 @@ var
     List := Listbox(30,min(anz,screenlines-5),getres2(1018,3));
     for i:=1 to res2anz(222)-1 do
       if not (i in used) then
-        List.AddLine(' '+mid(getres2(222,i),pos(' ',getres2(222,i))));
+        List.AddLine(' '+mid(getres2(222,i),cPos(' ',getres2(222,i))));
     List.AddLine('  ------------- '+getres2(1018,4));
     brk := List.Show;
     closebox;
@@ -2074,6 +2074,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.58  2001/08/11 23:06:28  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.57  2001/07/28 12:04:09  mk
   - removed crt unit as much as possible
 

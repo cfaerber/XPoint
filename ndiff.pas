@@ -298,7 +298,7 @@ begin
       begin
         ss := LowerCase(LeftStr(s, p - 1));
         keep := (ss = 'host') or (ss = 'region') or (ss = 'zone');
-        p2 := pos(',', mid(s, p + 1));
+        p2 := cPos(',', mid(s, p + 1));
         if keep and (ss <> 'host') and (p2 > 0) then
         begin
           nr := minmax(0, ival(copy(s, p + 1, p2 - 1)), 65535);
@@ -345,6 +345,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2001/08/11 23:06:27  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.14  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

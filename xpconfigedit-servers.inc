@@ -1422,7 +1422,7 @@
         dbWriteStr(d,'AVertreter',av);
         dbWriteStr(d,'PVertreter',pv);
         for i:=1 to excludes do
-          if pos(' ',exclude[i,1]+exclude[i,2])>0 then begin
+          if cPos(' ',exclude[i,1]+exclude[i,2])>0 then begin
             exclude[i,1]:='  :  '; exclude[i,2]:='  :  ';
             end;
         if ntOnePW(nt) then passwort:=o_passwort;
@@ -1482,7 +1482,7 @@
         dbWriteStr(d,'AVertreter',av);
         dbWriteStr(d,'PVertreter',pv);
         for i:=1 to excludes do
-          if pos(' ',exclude[i,1]+exclude[i,2])>0 then begin
+          if cPos(' ',exclude[i,1]+exclude[i,2])>0 then begin
             exclude[i,1]:='  :  '; exclude[i,2]:='  :  ';
             end;
         if ntOnePW(nt) then passwort:=o_passwort;
@@ -2076,6 +2076,9 @@
 
 {
   $Log$
+  Revision 1.18  2001/08/11 23:06:36  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.17  2001/08/10 20:58:00  mk
   - removed some hints and warnings
   - fixed some minior bugs

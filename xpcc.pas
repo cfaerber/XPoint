@@ -135,7 +135,7 @@ begin
           end;
         dbClose(d);
         end;
-      if ntZonly and (p>0) and (pos('.',mid(s,p+1))=0) then
+      if ntZonly and (p>0) and (cPos('.',mid(s,p+1))=0) then
         s:=s+'.ZER';
       if p=0 then
       begin
@@ -407,6 +407,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2001/08/11 23:06:36  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.26  2001/07/23 16:05:22  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

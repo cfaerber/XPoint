@@ -165,7 +165,7 @@ begin
             end;
           end;
         if (typ=0) and getuser and
-           ((useraufnahme<>1) or ((pos('%',name)=0) and (pos(':',name)=0)))
+           ((useraufnahme<>1) or ((cPos('%',name)=0) and (cPos(':',name)=0)))
         then begin
           if cpos('@',name)=0 then name:=LeftStr(name+'@'+DefaultBox+'.ZER',79);
           moff;
@@ -664,6 +664,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/08/11 23:06:38  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.39  2001/07/23 16:05:24  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

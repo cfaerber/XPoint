@@ -286,7 +286,7 @@ begin
     exit;
   if s[1]='.' then Result:= 0
   else begin
-    p:= pos(' ',s);
+    p:= cPos(' ',s);
     if p=0 then
       p:= pos(#9,s);
     if p=0 then
@@ -301,7 +301,7 @@ end;
 function TSocketNetcall.ParseError(s: string): Boolean;
 begin
   Result := Copy(s, 1, 3) <> '+OK';
-  if not Result then FErrorMsg:= Mid(s, iif(Pos(' ',s)>0,Pos(' ',s)+1,1));
+  if not Result then FErrorMsg:= Mid(s, iif(cPos(' ',s)>0,cPos(' ',s)+1,1));
 end;
 
 procedure TSocketNetcall.ReadBuffer;
@@ -401,6 +401,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2001/08/11 23:06:44  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.24  2001/08/10 20:58:03  mk
   - removed some hints and warnings
   - fixed some minior bugs

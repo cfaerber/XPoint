@@ -198,7 +198,7 @@ var x,y      : Integer;
   function adrok(var s:string):boolean;
   begin
     adrok:=(useraufnahme=0) or
-           ((useraufnahme=1) and (pm or ((pos('%',s)=0) and (pos(':',s)=0)))) or
+           ((useraufnahme=1) and (pm or ((cPos('%',s)=0) and (cPos(':',s)=0)))) or
            ((useraufnahme=3) and pm);
   end;
 
@@ -828,7 +828,7 @@ begin
             _datum:=today;
             end;
           tobrett:=archive or (copy(empfaenger,1,TO_len)=TO_ID);
-          atp:=pos('@',empfaenger);
+          atp:=cPos('@',empfaenger);
           if sendbuf then begin   { pollbox <> '' !  }
             if (LeftStr(empfaenger,1)<>'/') and (cpos('@',empfaenger)=0) then
               empfaenger:=empfaenger+'@'+pollbox+'.ZER';
@@ -1237,6 +1237,9 @@ end;
 
 {
   $Log$
+  Revision 1.60  2001/08/11 23:06:31  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.59  2001/08/11 21:20:51  mk
   - THeader.OEM is now TStringList (before: String)
 

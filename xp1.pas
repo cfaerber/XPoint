@@ -1413,7 +1413,7 @@ end;
 
 procedure file_box(var name:string; changedir:boolean);
 begin
-  if (pos('*',name)>0) or (pos('?',name)>0) then begin
+  if (cpos('*',name)>0) or (cpos('?',name)>0) then begin
     selcol;
     pushhp(89);
     name:=fsbox(ScreenLines div 2 - 5,name,'','',changedir,false,false);
@@ -1537,7 +1537,7 @@ function getb(var su:string; v:string; var b:byte):boolean;
 const res : integer = 0;
 var   p   : byte;
 begin
-  p:=pos('=',su);
+  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),b,res);
     getb:=(res=0);
@@ -1548,8 +1548,7 @@ end;
 function getc(var su:string; v:string; var c:char):boolean;
 var p : byte;
 begin
-  { MK 09.02.00 Getc war nicht initialisiert }
-  p:=pos('=',su);
+  p:=cpos('=',su);
   if scomp(su,v,p) and (p + 1 <= Length(su)) then
   begin
     c:=su[p+1];
@@ -1562,7 +1561,7 @@ function geti(var su:string; v:string; var i:integer):boolean;
 const res : integer = 0;
 var   p   : byte;
 begin
-  p:=pos('=',su);
+  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),i,res);
     geti:=(res=0);
@@ -1574,7 +1573,7 @@ function geti16(var su:string; v:string; var i:integer16):boolean;
 const res : integer = 0;
 var   p   : byte;
 begin
-  p:=pos('=',su);
+  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),i,res);
     geti16:=(res=0);
@@ -1586,7 +1585,7 @@ function getw(var su:string; v:string; var w:smallword):boolean;
 const res : integer = 0;
 var   p   : byte;
 begin
-  p:=pos('=',su);
+  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),w,res);
     getw:=(res=0);
@@ -1598,7 +1597,7 @@ function getl(var su:string; v:string; var l:longint):boolean;
 const res : integer = 0;
 var   p   : byte;
 begin
-  p:=pos('=',su);
+  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),l,res);
     getl:=(res=0);
@@ -1610,7 +1609,7 @@ function getr(var su:string; v:string; var r:double):boolean;
 const res : integer = 0;
 var   p   : byte;
 begin
-  p:=pos('=',su);
+  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     val(trim(Mid(su,p+1)),r,res);
     getr:=(res=0);
@@ -1622,7 +1621,7 @@ function getx(var su:string; v:string; var b:boolean):boolean;
 var ss : string;
     p  : byte;
 begin
-  p:=pos('=',su);
+  p:=cpos('=',su);
   if scomp(su,v,p) then begin
     ss:=trim(copy(su,p+1,1));
     if ss='J' then begin
@@ -1640,7 +1639,7 @@ end;
 function gets(var s,su:string; v:string; var ss:string; maxlen: Integer):boolean;
 var p : cardinal;
 begin
-  p:=pos('=',su);
+  p:=cpos('=',su);
   if scomp(su,v,p) then
   begin
     if MaxLen = 0 then MaxLen := MaxInt;
@@ -1654,7 +1653,7 @@ end;
 function fuser(s:string):string;              { Spacec vor/hinter '@' }
 var p : byte;
 begin
-  p:=pos('@',s);
+  p:=cpos('@',s);
   if p=0 then fuser:=s
   { else fuser:=LeftStr(s,p-1)+' @ '+copy(s,p+1,80); }
   else fuser:=LeftStr(s,p-1)+' @ '+RightStr(s,length(s)-p+1);
@@ -2046,6 +2045,9 @@ end.
 
 {
   $Log$
+  Revision 1.114  2001/08/11 23:06:28  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.113  2001/08/11 21:20:50  mk
   - THeader.OEM is now TStringList (before: String)
 

@@ -131,7 +131,7 @@ begin
   Buttons := Buttons + ',';
   n:=0;
   repeat
-    p:=pos(',',buttons);
+    p:=cPos(',',buttons);
     if p>0 then begin
       inc(n);
       if buttons[1]='ù' then begin
@@ -144,7 +144,7 @@ begin
         buttsp[n]:=0;
       butt[n]:=LeftStr(buttons,p-1);
       buttons:= Mid(buttons,p+1);
-      p:=pos('^',butt[n]);
+      p:=cPos('^',butt[n]);
       if p=0 then interr('Button: kein ShortKey!');
       delete(butt[n],p,1);
       butthigh[n]:=p;
@@ -333,12 +333,12 @@ begin
   n:=0; ml:=0;
   poutside:=false;
   repeat
-    p:=pos(',',auswahl);
+    p:=cPos(',',auswahl);
     if p>0 then begin
       inc(n);
       sel[n]:=LeftStr(auswahl,p-1);
       auswahl:=Mid(auswahl,p+1);
-      p:=pos('^',sel[n]);
+      p:=cPos('^',sel[n]);
       if p=0 then begin
         selhigh[n]:=0; hot[n]:=#0;
         p:=1;
@@ -421,6 +421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2001/08/11 23:06:29  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.20  2001/07/28 12:04:10  mk
   - removed crt unit as much as possible
 

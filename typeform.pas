@@ -187,6 +187,7 @@ function BigEndianToHost32(host:    dword):    dword;
 
 function StringListToString(SL: TStringList): String;
 
+
 { ================= Implementation-Teil ==================  }
 
 implementation
@@ -1449,6 +1450,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.94  2001/08/11 23:06:28  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.93  2001/08/02 22:24:46  mk
   - use AnsiUpperCase instead of UpperCase in FileUpperCase
 

@@ -95,7 +95,7 @@ begin
       exit;
     absender:= dbReadStr(mbase,'absender');
     p:=cpos('@',absender);
-    p2:=p+pos('.',copy(absender,p+1,20));
+    p2:=p+cPos('.',copy(absender,p+1,20));
     if (p=0) then begin { or (p2 = 0) rausgenomme!!  MK 12/99 }
       trfehler(809,60);   { 'fehlerhafter Absender!?' }
       exit;
@@ -541,7 +541,7 @@ begin
                 while s<>#0 do begin
                   if fstyp=0 then
                     s:=trim(Mid(s,2));
-                  s:=LeftStr(s,pos(' ',s)-1);
+                  s:=LeftStr(s,cPos(' ',s)-1);
                   fscomm(iifs(request=1,'SEND ','TRANSFER ')+s);
                   s:=List.NextMarked;
                   end;
@@ -558,6 +558,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.22  2001/08/11 23:06:35  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.21  2001/07/23 16:05:22  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

@@ -841,7 +841,7 @@ begin
             rewrite(t);
             s:=List.FirstMarked;
             repeat
-              if Pos(':',s) > 0 then        { Nur Fido Nodes, keine Meneuzeilen... }
+              if cPos(':',s) > 0 then        { Nur Fido Nodes, keine Meneuzeilen... }
                 writeln(t,trim(copy(s,5,18)));
               s:=List.NextMarked;
             until s=#0;
@@ -884,6 +884,9 @@ end.
 
 {
   $Log$
+  Revision 1.16  2001/08/11 23:06:44  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.15  2001/07/28 12:04:19  mk
   - removed crt unit as much as possible
 

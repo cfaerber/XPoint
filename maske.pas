@@ -984,7 +984,7 @@ var s1 : string[80];
 begin
   with feld^ do begin
     while s<>'' do begin
-      p:=pos('ù',mid(s,2));
+      p:=cPos('ù',mid(s,2));
       if p=0 then p:=length(s)+1
       else inc(p);
       s1:=copy(s,1,p-1);
@@ -1289,6 +1289,9 @@ end.
 
 {
   $Log$
+  Revision 1.29  2001/08/11 23:06:27  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.28  2001/07/31 13:10:31  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 

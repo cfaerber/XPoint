@@ -1154,7 +1154,7 @@ begin
       not (fido or turbo or uucp)
       and not ReadJN(getres(805),true) then   { 'Sind Sie sicher, da· das eine Brettliste ist' }
       goto ende;
-    if pos('@',absender)=0 then
+    if cPos('@',absender)=0 then
       trfehler(805,60)    { 'UngÅltige Absenderangabe' }
     else begin
       message(getreps(806,UpperCase(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
@@ -1326,7 +1326,7 @@ label again;
     else begin
       s:=trim(s);
       if length(s)<2 then exit;
-      p:=pos(' ',s);
+      p:=cPos(' ',s);
       if p=0 then p:=pos(#9,s);
       if p>0 then
         if uucp then
@@ -1334,8 +1334,8 @@ label again;
         else begin
           if p<5 then
             s:=copy(s,p+1,80);
-          if pos(' ',s)>0 then
-            s:=copy(s,1,pos(' ',s)-1);
+          if cPos(' ',s)>0 then
+            s:=copy(s,1,cPos(' ',s)-1);
           end;
       if s='' then exit;
       if not (quick or gs or uucp) and (s[1]<>'/') then
@@ -1435,7 +1435,7 @@ label again;
       s:=List.FirstMarked;
       while s<>#0 do
       begin
-        if Pos(' ', s) > 0 then s1 := Copy(s, 1, Pos(' ', s)-1) else s1 := s;
+        if cPos(' ', s) > 0 then s1 := Copy(s, 1, cPos(' ', s)-1) else s1 := s;
 
         try
           case Art of
@@ -1948,7 +1948,7 @@ begin
     then begin
       pushhp(69);
       if ReadJNesc(getres2(810,20),true,brk) then begin   { 'ausfÅhrliche Liste' }
-        insert(' VERBOSE',comm,pos(' ',comm));
+        insert(' VERBOSE',comm,cPos(' ',comm));
         comm:=comm+' *';
         end;
       pophp;
@@ -2094,6 +2094,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2001/08/11 23:06:35  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.50  2001/08/10 20:58:00  mk
   - removed some hints and warnings
   - fixed some minior bugs

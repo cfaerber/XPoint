@@ -242,7 +242,7 @@ begin
     if j<70 then inc(j,2000)   { 2stellige Jahreszahl erg„nzen }
     else inc(j,1900);
   ti:=getstr;
-  if pos(':',ti)=0 then
+  if cPos(':',ti)=0 then
     if length(ti)=4 then ti:=LeftStr(ti,2)+':'+RightStr(ti,2)+':00'  { RFC 822 }
     else ti:='00:00:00';
   zone:=getstr;
@@ -738,6 +738,9 @@ end.
 
 {
   $Log$
+  Revision 1.46  2001/08/11 23:06:39  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.45  2001/04/09 13:18:15  cl
   - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
   - zcrfc.pas: regognition of all known charsets for news and smtp batches

@@ -190,7 +190,7 @@ begin
   if (hdp.replyto <> '') and not askreplyto then
     abs:=hdp.replyto
   else begin
-    wabok:=(pos('.',mid(hdp.wab,cpos('@',hdp.wab)))<>0);
+    wabok:=(cPos('.',mid(hdp.wab,cpos('@',hdp.wab)))<>0);
     if (hds=1) or ((hdp.wab='') and (hdp.oem.Count > 0) and (hdp.replyto <> '')) or
                   ((hdp.wab='') and (hdp.oem[0]=hdp.vertreter) and (hdp.replyto <> '')) or
                   (not wabok and (hdp.oem.count = 0) and (hdp.replyto = ''))
@@ -315,6 +315,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2001/08/11 23:06:33  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.26  2001/08/11 21:20:51  mk
   - THeader.OEM is now TStringList (before: String)
 

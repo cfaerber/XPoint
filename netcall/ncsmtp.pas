@@ -146,7 +146,7 @@ begin
     SReadln(s);
     if ParseResult(s) <> 334 then
       raise ESMTP.CreateFmt(res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
-    Delete(s, 1, Pos(' ', s));
+    Delete(s, 1, cPos(' ', s));
     s:= User + ' ' + LowerCase(CRAM_MD5(Password, DecodeBase64(s)));
     SWriteln(EncodeBase64(s[1], length(s)));
     SReadln(s);
@@ -293,6 +293,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2001/08/11 23:06:44  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.8  2001/06/02 14:09:27  ma
   - added sending progress messages
 

@@ -605,8 +605,8 @@ begin
     else begin
       multi2;
       testbyte;
-(*      if AutoDownload and (pos('*'^X'B00',recs)>0) then UpDown(true,true)
-      else if AutoUpload and (pos('*'^X'B01',recs)>0) then UpDown(true,false); *)
+(*      if AutoDownload and (cPos('*'^X'B00',recs)>0) then UpDown(true,true)
+      else if AutoUpload and (cPos('*'^X'B01',recs)>0) then UpDown(true,false); *)
       if keypressed then begin
         get(t,curon);
         inout.cursor(curon);
@@ -742,6 +742,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/08/11 23:06:39  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.7  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

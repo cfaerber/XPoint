@@ -168,7 +168,7 @@ function inithelp(name:string; xh,yh:byte;
 var ixadr : longint;
     fm      : byte;
 begin
-  if pos('.',ExtractFileName(name))=0 then name:=name+FileUpperCase('.hlp');
+  if cPos('.',ExtractFileName(name))=0 then name:=name+FileUpperCase('.hlp');
   assign(f,name);
   fm:=filemode; filemode:=0;
   reset(f,1);
@@ -383,9 +383,9 @@ laden:
       if p1>0 then p:=p+p1+1 else p:=0;
       end;
     if blocksatz and (length(s)>wd div 3) then begin
-      if pos('@',s)>0 then lc:=s[pos('@',s)-1]
+      if cPos('@',s)>0 then lc:=s[cPos('@',s)-1]
       else lc:=LastChar(s);
-      if pos('#',s)>0 then lc:='#';
+      if cPos('#',s)>0 then lc:='#';
       if pos(lc,'#.?!:')=0 then begin
         while length(s)<wd do begin
           ps:=random(length(s)-2)+1;
@@ -395,7 +395,7 @@ laden:
           end;
         end;
       end;
-    ps:=pos('#',s);
+    ps:=cPos('#',s);
     if ps>0 then begin
       if s[ps-1]='\' then dec(ps);   { ord(\) = 92 > length(s) }
       delete(s,ps,1);
@@ -768,6 +768,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/08/11 23:06:26  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.35  2001/07/28 12:04:08  mk
   - removed crt unit as much as possible
 

@@ -147,7 +147,7 @@ begin
         if art<2 then begin
           p:=cpos('@',anew);
           if p>0 then begin
-            p2:=pos('.',mid(anew,p));   { mit Domain? }
+            p2:=cPos('.',mid(anew,p));   { mit Domain? }
             if p2=0 then
               s:=s+mid(anew,p)
             else
@@ -819,6 +819,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/08/11 23:06:38  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.27  2001/07/28 12:04:15  mk
   - removed crt unit as much as possible
 

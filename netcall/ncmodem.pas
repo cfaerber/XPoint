@@ -177,7 +177,7 @@ function GetNextPhonenumber(var Phonenumbers: string): string;
 var p : byte;
 begin
   PhoneNumbers:=trim(Phonenumbers);
-  p:=Pos(' ',Phonenumbers);
+  p:=cPos(' ',Phonenumbers);
   if p=0 then result:=Phonenumbers
   else begin
     result:=LeftStr(Phonenumbers,p-1);
@@ -190,7 +190,7 @@ var n : integer;
 begin
   Phonenumbers:=trim(Phonenumbers);
   n:=1;
-  while pos(' ',Phonenumbers)>0 do begin
+  while cPos(' ',Phonenumbers)>0 do begin
     Phonenumbers:=trim(mid(Phonenumbers,cpos(' ',Phonenumbers)));
     inc(n);
     end;
@@ -519,6 +519,9 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/08/11 23:06:43  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.5  2001/08/10 19:13:01  mk
   - removed use of crt unit completly
   - added xpcrt: contains crt compatible Win32 keyboard handling

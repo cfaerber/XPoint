@@ -407,7 +407,7 @@ begin
   result:='';
   fn:=trim(fn);
   // strip parameters
-  fn:=Copy(fn,1,iif(Pos(' ',fn)<>0,Pos(' ',fn)-1,Length(fn)));
+  fn:=Copy(fn,1,iif(cPos(' ',fn)<>0,cPos(' ',fn)-1,Length(fn)));
 
   if ExtractFilePath(fn)<>'' then
     if FileExists(fn)then
@@ -425,7 +425,7 @@ function FindExecutable(fn: string): string;
 begin
   fn:=trim(fn);
   // strip parameters
-  fn:=Copy(fn,1,iif(Pos(' ',fn)<>0,Pos(' ',fn)-1,Length(fn)));
+  fn:=Copy(fn,1,iif(cPos(' ',fn)<>0,cPos(' ',fn)-1,Length(fn)));
   {$ifndef UnixFS}
   if UpperCase(fn)='COPY' then
     begin result:=fn; exit end; // built-in in cli
@@ -679,6 +679,9 @@ end.
 
 {
   $Log$
+  Revision 1.100  2001/08/11 23:06:26  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.99  2001/08/01 01:00:30  mk
   - added IncludeTrailingPathDelimiter and fixed compile problems
 

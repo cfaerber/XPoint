@@ -126,7 +126,7 @@ var i : word;
 
 begin
   fillchar(f^,sizeof(f^),0);
-  if pos('.',name)=0 then name:=name+'.dbf';
+  if cPos('.',name)=0 then name:=name+'.dbf';
   assign(f^.datei,name);
   reset(f^.datei,1);
   DbResult:=IOResult;
@@ -317,7 +317,7 @@ var i : word;
     ta,mo,ja,wt : rtlword;
 
 begin
-  if pos('.',name)=0 then name:=name+'.dbf';
+  if cPos('.',name)=0 then name:=name+'.dbf';
   assign(f^.datei,name);
   rewrite(f^.datei,1);
   DbResult:=IOResult;
@@ -469,6 +469,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2001/08/11 23:06:26  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.10  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -232,8 +232,8 @@ begin
   else begin
     Output(mcInfo,res_connect4, [Host.Name]); // Verbunden
     FServer:= Copy(s,5,length(s)-5);
-    if (pos('<',s)<pos('@',s))and(pos('@',s)<pos('>',s)) then // APOP timestamp found
-      FTimestamp:=Trim(Mid(s,pos('<',s)))
+    if (cPos('<',s)<cPos('@',s))and(cPos('@',s)<cPos('>',s)) then // APOP timestamp found
+      FTimestamp:=Trim(Mid(s,cPos('<',s)))
     else
       FTimestamp:='';
   end;
@@ -283,10 +283,10 @@ begin
   if not ParseError(s) then
   begin
     // +OK 2 320
-    s := Copy(s, 5, Length(s)); p := Pos(' ', s);
+    s := Copy(s, 5, Length(s)); p := cPos(' ', s);
     FMailCount := StrToInt(Trim(Copy(s, 1, p)));
     s := Trim(Copy(s, p, Length(s)))+ ' ';
-    FMailSize := StrToInt(Copy(s, 1, Pos(' ', s)-1));
+    FMailSize := StrToInt(Copy(s, 1, cPos(' ', s)-1));
   end else
     exit;
   Result := true;
@@ -298,8 +298,8 @@ begin
     ServerUIDLs := TStringList.Create;
     SReadln(s);
     while s <> '.' do begin
-      UIDL := Mid(s, Pos(' ', s) + 1);
-      Nr := StrToIntDef(LeftStr(s, Pos(' ', s) - 1), 0);
+      UIDL := Mid(s, cPos(' ', s) + 1);
+      Nr := StrToIntDef(LeftStr(s, cPos(' ', s) - 1), 0);
       if UIDLs.IndexOf(UIDL) = -1 then begin
         // This UIDL is new, add to available list
         FAvailableUIDLs.Add(UIDL);
@@ -328,7 +328,7 @@ begin
     else
       exit;
   s := Copy(s, 5, Length(s));
-  s := Copy(s, 1, Pos(' ', s) - 1);
+  s := Copy(s, 1, cPos(' ', s) - 1);
   FLastRead := StrToIntDef(s, 0);
 end;
 
@@ -420,6 +420,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2001/08/11 23:06:43  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.14  2001/05/23 23:55:04  ma
   - full UIDL support (needs testing)
   - cleaned up exceptions

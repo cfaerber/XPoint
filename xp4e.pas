@@ -197,7 +197,7 @@ begin
     usertest:=true;
     p:=cpos('@',s);
     if p>0 then
-      if (pos('.',mid(s,p+1))=0) then
+      if (cPos('.',mid(s,p+1))=0) then
         s:=s+ntAutoDomain(pbox,false);
     if p>0 then
       s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1))
@@ -1434,7 +1434,7 @@ begin
           end;
         dbClose(d);
         end
-      else if pos('.',mid(s,cpos('@',s)))=0 then
+      else if cPos('.',mid(s,cpos('@',s)))=0 then
         s:=LeftStr(s+ntAutoDomain(pbox,false),eAdrLen);
       end;
   if ok and not verteiler then begin
@@ -1516,7 +1516,7 @@ begin
   if not dbfound then begin
     dbOpen(d,PseudoFile,1);
     dbSeek(d,piKurzname,UpperCase(s));
-    if dbFound {and (pos('@',dbReadStr(d,'langname'))>0)} then begin
+    if dbFound {and (cPos('@',dbReadStr(d,'langname'))>0)} then begin
       pbox:= dbReadStr(d,'pollbox');
       if (pbox='') or not IsBox(pbox) then
         pbox:=DefaultBox;
@@ -1609,7 +1609,7 @@ begin
   fn:=TempS(2000);
   dbGo(mbase,0);    { -> Kennung fr dosend(), daá kein Brett-Reply }
   real:='';
-  pm:=(pos('@',empf)>0);
+  pm:=(cPos('@',empf)>0);
   if pm then
   begin                                            {User}
     BriefSchablone(true,HeaderPriv,fn,empf,real);
@@ -2430,6 +2430,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.63  2001/08/11 23:06:32  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.62  2001/07/29 12:58:16  ma
   - fixed setting of NNTP area db flags
 

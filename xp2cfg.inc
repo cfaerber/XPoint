@@ -1163,22 +1163,22 @@ var t       : text;
         tfehler(getres(218)+LeftStr(s,45),60)   { 'ungÅltige FKey-Config-Zeile:  ' }
       else begin
         ss:=copy(s,p+3,200);     { 'P' Åberlesen }
-        p0:=pos('~',ss);
+        p0:=cPos('~',ss);
         if p0>0 then with fkeys[nr]^[j] do begin
           menue:=LeftStr(ss,p0-1);         { MenÅ-Anzeige }
           ss:=copy(ss,p0+1,200);
-          p0:=pos('~',ss);
-          while (p0>0) and (pos('\',mid(ss,p0))>0) and
-                (pos('~',mid(ss,p0+1))>0) do
-            inc(p0,pos('~',mid(ss,p0+1)));   { wegen kurzen Win95-Dateinamen }
+          p0:=cPos('~',ss);
+          while (p0>0) and (cPos('\',mid(ss,p0))>0) and
+                (cPos('~',mid(ss,p0+1))>0) do
+            inc(p0,cPos('~',mid(ss,p0+1)));   { wegen kurzen Win95-Dateinamen }
           if p0>0 then begin
             prog:=LeftStr(ss,p0-1);        { Programmname }
             ss:=copy(ss,p0+1,40);
-            p0:=pos('~',ss);
+            p0:=cPos('~',ss);
             if p0>0 then begin
               speicher:=ival(LeftStr(ss,p0-1));
               ss:=copy(ss,p0+1,30);
-              p0:=pos('~',ss);
+              p0:=cPos('~',ss);
               if p0>0 then begin
                 ntyp:=min(3,ival(LeftStr(ss,p0-1)));
                 ss:=UpperCase(copy(ss,p0+1,30));
@@ -1207,19 +1207,19 @@ var t       : text;
       with pmcrypt[ival(su[8])] do begin
         encode:=''; decode:='';
         s2:=copy(s,10,200);
-        p:=pos('~',s2);
+        p:=cPos('~',s2);
         if p=0 then
           name:=s2
         else begin
           name:=LeftStr(s2,p-1);
           s2:=mid(s2,p+1);
-          p:=pos('~',s2);
+          p:=cPos('~',s2);
           if p=0 then
             encode:=s2
           else begin
             encode:=LeftStr(s2,p-1);
             s2:=mid(s2,p+1);
-            p:=pos('~',s2);
+            p:=cPos('~',s2);
             if p=0 then
               decode:=s2
             else begin
@@ -1311,7 +1311,7 @@ begin
       s:=trim(s);
       su:=UpperCase(s);
       if (s<>'') and (s[1]<>'#') then begin
-        p:=pos('=',s);
+        p:=cPos('=',s);
         if (p=0) or not (
           getcommpar or
           getfkeys or
@@ -1538,7 +1538,7 @@ begin
           // Zeile wurde nicht erkannt und wird fÅr das spÑtere
           // Neuschreiben der Config aufgehoben
           // Evtl. weitere Fehlerbehandlung/Logfile
-          if Pos('=', s) > 0 then
+          if cPos('=', s) > 0 then
             BadConfigLinesList.Add(s)
           else
             debug.debuglog('xp2cfg','Invalid config line: '+s,DLWarning);
@@ -1560,7 +1560,7 @@ begin
 
     MsgFeldTausch:=UpperCase(MsgFeldTausch);
     { (F)lags mÅssen immer vorne stehen }
-    i:=pos('F',MsgFeldTausch); if (i>1) then begin
+    i:=cPos('F',MsgFeldTausch); if (i>1) then begin
       delete(MsgFeldTausch,i,1); MsgFeldTausch:='F'+MsgFeldTausch;
     end;
     { Alle Buchstaben fÅr den MsgFeldTausch vorhanden? }
@@ -1570,7 +1570,7 @@ begin
 
     UsrFeldTausch:=UpperCase(UsrFeldTausch);
     { (F)lags mÅssen immer vorne stehen }
-    i:=pos('F',UsrFeldTausch); if (i>1) then begin
+    i:=cPos('F',UsrFeldTausch); if (i>1) then begin
       delete(UsrFeldTausch,i,1); UsrFeldTausch:='F'+UsrFeldTausch;
     end;
     { Alle Buchstaben fÅr den UsrFeldTausch vorhanden? }
@@ -1638,7 +1638,7 @@ begin
       su:=UpperCase(s);
       if (s <> '') and (s[1] <>'#') then
       begin
-        p:=pos('=',s);
+        p:=cPos('=',s);
         if (p=0) or not (
           gets(s,su,'defaultbox',defaultbox,20) or
           gets(s,su,'defaultfidobox',deffidobox,20) or
@@ -1695,6 +1695,9 @@ end;
 
 {
   $Log$
+  Revision 1.119  2001/08/11 23:06:30  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.118  2001/08/04 19:40:49  mk
   - Autodatumsbezuege removed
 

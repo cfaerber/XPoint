@@ -76,7 +76,7 @@ var icr : dbIndexCRec;
             if_flag:=false;
           icr.indexstr:=UpperCase(icr.indexstr)+'/';
           repeat
-            p:=pos('/',icr.indexstr);
+            p:=cpos('/',icr.indexstr);
             fn:=copy(icr.indexstr,1,p-1);
             icr.indexstr:=copy(icr.indexstr,p+1,255);
             upflag:=0;
@@ -253,6 +253,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2001/08/11 23:06:26  mk
+  - changed Pos() to cPos() when possible
+
   Revision 1.11  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
