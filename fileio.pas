@@ -552,35 +552,19 @@ begin
   end;
 end;
 
-
 procedure TestShare;
-{$IFDEF Ver32 }
+var
+  regs : registers;
 begin
-end;
-{$ELSE}
-var regs : registers;
-begin
-  fillchar(regs,sizeof(regs),0);
-  with regs do begin
-    ax:=$5c00;
-    di:=1;
-    msdos(regs);
-    if flags and fcarry=0 then begin
-      ax:=$5c01;
-      msdos(regs);
-      end;
-    ShareDa:=(ax<>1);
-    end;
-  { Weiterer Installcheck fÅr Share, um Probleme mit einem Plain
-    DR-DOS zu umgehen }
+  { Installcheck fÅr Share }
   with regs do
   begin
-    ax:=$1000;
+    fillchar(regs, sizeof(regs), 0);
+    ah:=$10;
     intr($2f, regs);
-    if al <> $ff then ShareDa := false;
+    ShareDa := al = $ff;
   end;
 end;
-{$ENDIF}
 
 procedure resetfm(var f:file; fm:byte);
 var fm0 : byte;
@@ -719,6 +703,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.7.2.6  2000/11/20 10:04:08  mk
+  - neuer Sharetest von 3.30
+
   Revision 1.7.2.5  2000/11/10 11:29:10  mk
   - fixed Bug #116292: Mehrfachstart von XP abfangen
 
