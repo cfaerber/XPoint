@@ -255,6 +255,16 @@ begin
   sender:= '';
   lines := 0;
   envemp:= '';
+  with mime do
+  begin
+    mversion := '';
+    encoding := 0;
+    ctype := 0;
+    subtype := '';
+    charset := '';
+    filetype := '';
+    boundary := ''
+  end;
 end;
 
 destructor THeader.Destroy;
@@ -275,6 +285,9 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/01/02 15:47:33  mk
+  - clear mimedata in THeader.Clear
+
   Revision 1.4  2001/01/02 10:05:27  mk
   - implemented Header.References
 
