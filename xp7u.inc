@@ -191,7 +191,7 @@ begin
     if RFC1522 then opt:=opt+'-1522 ';
     f:=OutFilter(source);
     if TempPPPMode then
-      shell(UUZBin+' -zu '+opt+source+' '+DestDir+' '+boxpar^.pointname+' '+
+      shell(UUZBin+' -zu '+opt+OwnPath+source+' '+DestDir+' '+boxpar^.pointname+' '+
           boxpar^.boxname,400,0)
     else
       shell(UUZBin+' -zu '+opt+source+' '+DestDir+' '+boxpar^.pointname+' '+
@@ -460,7 +460,7 @@ var
     Error := false;
     with BoxPar^ do
     begin
-      Assign(IDFile, 'UNVERS.ID');
+      Assign(IDFile, 'UNSENT.ID');
       ReWrite(IDFile);
       FindFirst(PPPSpool+'*.OUT', ffAnyFile, sr);
       while doserror=0 do
@@ -493,6 +493,20 @@ var
     end;
   end;
 
+  procedure RenameFiles;
+  var
+    sr  : searchrec;
+    f: File;
+  begin
+    findfirst(BoxPar^.PPPSpool + '*.MSG',ffAnyFile,sr);
+    while doserror=0 do
+    begin
+      _rename(BoxPar^.PPPSpool + sr.name, BoxPar^.PPPSpool + GetBareFileName(sr.name) + '.IN');
+      findnext(sr);
+    end;
+    FindClose(sr);
+  end;
+
 begin
   inmsgs:=0; outmsgs:=0; outemsgs:=0;
   with boxpar^ do
@@ -513,7 +527,7 @@ begin
         trfehler(728,44);   { 'ungltiges Spoolverzeichnis' }
         exit;
       end;
-      EmptyDir(PPPSpool, '*.MSG');
+      EmptyDir(PPPSpool, '*.IN');
       EmptyDir(PPPSpool, '*.OUT');
     end;
 
@@ -525,14 +539,14 @@ begin
       cursor(curoff);
 
       ZtoRFC(false,ppfile,iifs(TempPPPMode, PPPSpool, SysopOut));
-      NC^.Sendbuf:= filesum(PPPSpool+'*.OUT');
     end;
 
     if TempPPPMode then
     begin
+      NC^.Sendbuf:= filesum(PPPSpool+'*.OUT');
       s := PPPClient;
       exchange(s, '$CONFIG', bfile);
-      exchange(s, '$CLPATHS', PPPClientpaths);
+      exchange(s, '$CLPATH', PPPClientpath);
       shell(s,600,3);
     end;
 
@@ -552,10 +566,10 @@ begin
       if exist(eppfile) then _era(eppfile);
       if TempPPPMode then
       begin
-        if Exist('UNVERS.PP') then
-         if filecopy('UNVERS.PP', ownpath+ppfile) then
-           _era('UNVERS.PP');
-        _era('UNVERS.ID');
+        if Exist('UNSENT.PP') then
+         if filecopy('UNSENT.PP', ownpath+ppfile) then
+           _era('UNSENT.PP');
+        _era('UNSENT.ID');
         EmptyDir(PPPSpool, '*.OUT'); { nicht verschickte N. l”schen }
         if Error then trFehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
       end;
@@ -569,7 +583,7 @@ begin
         NC^.Recbuf := filesum(PPPSpool+'*.MSG');
         if (NC^.RecBuf + NC^.SendBuf) > 0 then wrtiming('NETCALL ' + boxname);
         shell(UUZBin+' -uz -w:'+strs(screenlines)+
-          ' '+PPPSpool+'*.MSG '+dpuffer+' '+boxpar^.pointname+domain,600,3);
+          ' '+PPPSpool+'*.MSG '+OwnPath + dpuffer,600,3);
         if nDelPuffer and (errorlevel=0) and
           (testpuffer(dpuffer,false,dummy)>=0) then
             EmptyDir(PPPSpool, '*.MSG'); { entpackte Dateien l”schen }
@@ -577,8 +591,13 @@ begin
         CallFilter(true,dpuffer);
       end;
       if _filesize(dpuffer)>0 then
+      begin
         if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then
+        begin
           _era(dpuffer);
+          RenameFiles;
+        end;
+      end;
     end else
       if exist(SysopInp+WildCard) then                   { -- Eingangspaket -- }
         if ImportUUCPfromSpool(SysopInp) then
@@ -589,6 +608,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.8  2001/01/30 10:01:23  mk
+  - weitere arbeiten am Client-Modus
+
   Revision 1.13.2.7  2001/01/19 09:09:00  mk
   - Unversandmeldung nach erstellung des neuen .PP
 

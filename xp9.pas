@@ -215,33 +215,19 @@ end;
 function progtest(var s:string):boolean;
 var ok   : boolean;
     fn   : pathstr;
-{$IFNDEF UnixFS}
     dir  : dirstr;
     name : namestr;
     ext  : extstr;
-{$ENDIF}
     path : string[127];
 begin
   progtest:=true;                               { Warum immer TRUE? (hd/22.5.2000) }
   path:=getenv('PATH');
   if ustr(left(s+' ',7))='ZMODEM ' then
-{$IFDEF UnixFS}
-    begin
-      if (fsearch('rz',path)='') or (fsearch('sz',path)='') then
-        rfehler(933);                   { '"rz" und "sz" muessen installiert....' }
-      { Hier koennte noch eine UID-Pruefung hin, vielleicht... }
-      exit;
-    end
-{$ELSE}
     fn:='ZM.EXE'
-{$ENDIF}
   else
     fn:=trim(s);
   if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
   if (fn<>'') and (pos('*'+ustr(fn)+'*','*COPY*DIR*PATH*')=0) then begin
-{$IFDEF UnixFS}
-    ok:=fsearch(fn,path)<>'';           { Extension ist unbedeutend }
-{$ELSE}
     fsplit(fn,dir,name,ext);
     if ext<>'' then
       ok:=fsearch(fn,path)<>''
@@ -249,10 +235,101 @@ begin
       ok:=(fsearch(fn+'.exe',path)<>'') or
           (fsearch(fn+'.com',path)<>'') or
           (fsearch(fn+'.bat',path)<>'');
-{$ENDIF}
     if not ok then rfehler1(907,ustr(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
   end;
 end;
+
+function PPPClientTest(var s:string):boolean;
+var ok   : boolean;
+    fn   : pathstr;
+    dir  : dirstr;
+    name : namestr;
+    ext  : extstr;
+begin
+  PPPClientTest:=true;
+  fn:=trim(s);
+  if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
+  if (fn<>'') then
+  begin
+    fsplit(fn,dir,name,ext);
+    ok := dir = '';
+    if not ok then
+    begin
+      rfehler1(936, UStr(fn)); { 'Dieser Eintrag darf keinen Pfad enthalten!' }
+      PPPClientTest := false;
+    end else
+    begin
+      if ext<>'' then
+        ok:=fsearch(fn,ownpath)<>''
+      else
+        ok:=(fsearch(fn+'.exe',ownpath)<>'') or
+          (fsearch(fn+'.com',ownpath)<>'') or
+          (fsearch(fn+'.bat',ownpath)<>'');
+      if not ok then rfehler1(907,ustr(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
+    end;
+  end;
+end;
+
+function PPPSpoolTest(var s:string):boolean;
+var res : integer;
+begin
+  if s='' then
+    PPPSpoolTest := true
+  else begin
+    PPPSpoolTest := false;
+    if right(s,1)<>DirSepa then s:=s+DirSepa;
+    s:=FExpand(s);
+    if s=ownpath +XFerDir then
+      rfehler(937)    { 'Verzeichnis darf nicht gleich dem XP-Verzeichnis sein' }
+    else
+      if IsPath(s) then
+         PPPSpoolTest:=true
+      else
+        if ReadJN(getres(900),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
+        begin
+          mklongdir(s,res);
+          if res<0 then
+            rfehler(906)           { 'Verzeichnis kann nicht angelegt werden!' }
+          else
+            PPPSpoolTest:=true;
+          end;
+    end;
+end;
+
+function PPPClientPathTest(var s:string):boolean;
+var ok   : boolean;
+    fn   : pathstr;
+    res: Integer;
+    path : string;
+begin
+  PPPClientPathTest:=true;
+  fn:=trim(s);
+  if (fn<>'') then
+  begin
+    if right(s,1)<>DirSepa then s:=s+DirSepa;
+    if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
+    if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
+    ok := (Pos(':', fn) = 0) and (Pos('\', fn) = 0);
+    if not ok then
+    begin
+      rfehler1(938, UStr(s)); { 'Dieser Pfad muá darf nur eine relative Verzeichnisebene enthalten!' }
+      PPPClientPathTest := false;
+      Exit;
+    end;
+    if not IsPath(s) then
+      if ReadJN(getres(900),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
+      begin
+        mklongdir(s,res);
+        if res<0 then
+        begin
+          PPPClientPathTest:=false;
+          rfehler(906)           { 'Verzeichnis kann nicht angelegt werden!' }
+        end;
+      end else
+        PPPClientPathTest:=false;
+  end;
+end;
+
 
 function testmbretter(var s:string):boolean;
 begin
@@ -1778,6 +1855,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.16  2001/01/30 10:01:23  mk
+  - weitere arbeiten am Client-Modus
+
   Revision 1.19.2.15  2001/01/13 14:07:01  mk
   - nur noch 10 Netztypen
 

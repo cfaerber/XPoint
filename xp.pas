@@ -33,6 +33,7 @@ uses xpx, crt, dos,typeform,uart,keys,fileio,inout,help,video,datadef,
      xp1help,  { Online-Hilfe u.a.  }
      xp1input, { Eingabefunktionen  }
      xp2b,
+
      xpnt,     { Netztypen          }
      xp_des,   { DES-Codierung      }
      xp_pgp,   { PGP-Codierung      }
@@ -101,7 +102,10 @@ label ende;
 var pwcnt:byte;
     pwrc:boolean;
 
+var
+ s: String;
 begin
+  s := 'XP2';
   readpar;
   loadresource;
   initvar;
@@ -196,6 +200,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.11  2001/01/30 10:01:21  mk
+  - weitere arbeiten am Client-Modus
+
   Revision 1.29.2.10  2001/01/10 17:39:02  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

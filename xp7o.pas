@@ -140,9 +140,9 @@ var f      : file;
       Outmsgid   : string[MidLen];
       CCs: Byte;
   begin
-    HaveIDFile := Exist('UNVERS.ID');
+    HaveIDFile := Exist('UNSENT.ID') and TempPPPMode;
     if HaveIDFile then
-      Assign(IDFile, 'UNVERS.ID');
+      Assign(IDFile, 'UNSENT.ID');
 
     with hdp^ do begin
       pbox:='!?!';
@@ -223,10 +223,10 @@ var f      : file;
                 if not ((hdp^.typ='B') and (maxbinsave>0) and
                   (hdp^.groesse > maxbinsave*1024)) then
                 begin
-                  if exist('UNVERS.PP') then
-                    extract_msg(2,'','UNVERS.PP',true,1)
+                  if exist('UNSENT.PP') then
+                    extract_msg(2,'','UNSENT.PP',true,1)
                   else
-                    extract_msg(2,'','UNVERS.PP',false,1);
+                    extract_msg(2,'','UNSENT.PP',false,1);
                   Dec(OutMsgs);
                 end else
                 begin
@@ -252,7 +252,7 @@ var f      : file;
 begin
   assign(f,puffer);
   if not existf(f) then exit;
-  Assign(CCFile, 'UNVERS.ID2');
+  Assign(CCFile, 'UNSENT.ID2');
   ReWrite(CCFile); Close(CCFile); { Anlegen fÅr Append }
   new(hdp);
   zconnect:=ntZConnect(ntBoxNetztyp(box));
@@ -337,7 +337,13 @@ begin
     writeln(t);
     bytes:=getres(13);
     cps:=getres2(700,28);
-    if sysopmode and not TempPPPMode then
+    if TempPPPMode then
+    begin
+      abbruch:=false;
+      writeln(t,getreps2(700,43,strsn(sendbuf,7)));   { 'Sendepuffer: %s Bytes' }
+      writeln(t,getreps2(700,44,strsn(recbuf,7)));   { 'Empfangspuffer: %s Bytes' }
+    end else
+    if sysopmode then
     begin
       abbruch:=false;
       writeln(t,getreps2(700,9,strsn(sendbuf,7)));   { 'Ausgangspuffer: %s Bytes' }
@@ -837,6 +843,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.14  2001/01/30 10:01:23  mk
+  - weitere arbeiten am Client-Modus
+
   Revision 1.13.2.13  2001/01/18 23:59:59  mk
   - verschiedene Aenderungen fuer PPP-Modus
 

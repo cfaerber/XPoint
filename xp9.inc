@@ -376,7 +376,7 @@
                      xx:=56; yy:=18;
                      fnode:=(flags and 4<>0);
                    end;
-      nt_UUCP    : yy:=18;
+      nt_UUCP    : yy:=19;
       nt_pronet  : xx:=55;
       nt_ZConnect: yy:=12;
     end;
@@ -443,7 +443,7 @@
       end;
       if uucp then
       begin
-        maddstring(45,3,getres2(920,16),loginname,20,20,'');   { 'Login  ' }
+        maddstring(45,3,getres2(920,16),loginname,20,60,'');   { 'Login  ' }
         mhnr(8016);
         loginfld:=fieldpos;
       end;
@@ -488,7 +488,7 @@
           mappsel(false,'pkarc a $UPFILE $PUFFERùpkpak a $UPFILE $PUFFERùlharc a'+lhapar+' $UPFILE $PUFFERù'+
                         'lha a'+lhapar+' $UPFILE $PUFFERùpkzip $UPFILE $PUFFERùarj a $UPFILE $PUFFERù'+
                           'rar -std a $UPFILE $PUFFERùcopy $PUFFER $UPFILE');
-        msetvfunc(progtest);
+        if not UUCP then msetvfunc(progtest);
         mset3proc(set_uparcext);
         maddstring(3,8+add,getres2(920,25),downarcer,iif(uucp, 26, br),60,'');
         if uucp then                              { 'Download-Entpacker' }
@@ -497,16 +497,16 @@
           mappsel(false,'pkxarc $DOWNFILEùpkunpak $DOWNFILEùlharc e $DOWNFILEùlha e $DOWNFILEù'+
                         'pkunzip $DOWNFILEùarj e $DOWNFILEùcopy $DOWNFILE $PUFFERù'+
                         'rar -std e $DOWNFILE');
-        msetvfunc(progtest);
+        if not uucp then msetvfunc(progtest);
         mset3proc(set_downarcext);
         if uucp then
         begin
           maddstring(3,9+add,getres2(920,26),unfreezer,iif(uucp, 26, br),40,'');  { 'Freeze-Entpacker' }
           mappsel(false,'freeze -vdif $DOWNFILE');
-          msetvfunc(progtest);
+          { msetvfunc(progtest); }
           maddstring(3,10+add,getres2(920,27),ungzipper,iif(uucp, 26, br),40,''); { 'GNU-ZIP-Entpacker' }
           mappsel(false,'gzip -vdf $DOWNFILE');
-          msetvfunc(progtest);
+          { msetvfunc(progtest);    }
         end;
         if not fido then
           if uucp then begin
@@ -547,11 +547,13 @@
             maddbool(3,15,getres2(920,57), PPPMode); { 'PPP-Modus (externe Clients)' }
             mhnr(8026);
             maddstring(3,17,getres2(920,59),PPPClient,40,60,'');   { 'PPP-Client-Aufruf' }
+            msetvfunc(pppclienttest);
             maddstring(3,18,getres2(920,63),PPPSpool,40,60,ValidDirCh);   { 'Spool-Verzeichnis' }
-            msetvfunc(testfidodir);
-
+            msetvfunc(PPPSpoolTest);
+            maddstring(3,19,getres2(920,67),PPPClientPath,40,60,ValidDirCh);   { 'Client-Verzeichnis' }
+            msetvfunc(PPPClientpathTest);
             uparcnr:=0; downarcnr:=0;
-            end
+          end
           else begin
             if zc then begin
               maddbool(3,10+add,getres2(920,44),JanusPlus);    { 'Janus+' }
@@ -1369,6 +1371,9 @@
 
 {
   $Log$
+  Revision 1.10.2.13  2001/01/30 10:01:23  mk
+  - weitere arbeiten am Client-Modus
+
   Revision 1.10.2.12  2001/01/18 23:59:59  mk
   - verschiedene Aenderungen fuer PPP-Modus
 

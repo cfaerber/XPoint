@@ -546,7 +546,7 @@ type   textp  = ^text;
                   ExtPFiles : boolean;     { Fido: erweiterte Paketdateinamen }
                   LocalIntl : boolean;     { Fido: ~d'Bridge-Areafix   }
                   Brettmails: boolean;     { Turbo-Box/Maus:  Brettnachr. }
-                  LoginName : string[20];  { UUCP/QM: login-Username   }
+                  LoginName : string[60];  { UUCP/QM: login-Username   }
                   UUCPname  : string[8];   { uucico-Systemname         }
                   MaxWinSize: byte;        { UUCP: max. Windowgrî·e    }
                   MaxPacketSize:smallword;      { UUCP: max. Blockgrî·e     }
@@ -559,7 +559,7 @@ type   textp  = ^text;
                   PPPMode   : Boolean;     { PPP Mode Switch           }
                   PPPClient : string[60];  { PPP Client                }
                   PPPSpool  : string[60];  { PPP Spool                 }
-                  PPPClientPaths: string[60]; { PPP Client Paths       }
+                  PPPClientPath: string[60]; { PPP Client Path         }
                   ReplaceOwn: boolean;     { Eigene N. durch RÅcklÑufer ersetzen }
                   eFilter   : string[60];  { Eingangsfilter            }
                   aFilter   : string[60];  { Ausgangsfilter            }
@@ -969,6 +969,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ISDN_Int     : byte;          { CAPI-Int, Default=$f1 }
        ISDN_EAZ     : char;          { eigene EAZ, Default='0' }
        ISDN_Controller:byte;         { Nummer des Controllers, Default=0 }
+       ISDN_incoming, isdn_outgoing: string[30];
        SaveType     : byte;          { 0=Sofort, 1=Alt-S, 2=RÅckfrage }
        XSA_NetAlle  : boolean;       { Netcall/Alle-Schalter bei /Netcall/L }
        maxcrosspost : byte;          { Filter fÅr Massen-Crosspostings }
@@ -1149,6 +1150,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.28  2001/01/30 10:01:21  mk
+  - weitere arbeiten am Client-Modus
+
   Revision 1.54.2.27  2001/01/10 17:39:02  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

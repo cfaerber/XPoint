@@ -1489,6 +1489,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 40   ----------------------- Fido Logfile -----------------------
 41   -------------------------- Logfile -------------------------
 42   additional outgoing messages:
+43   Send packet     : %s Bytes
+44   Received packet : %s Bytes
 -
 701  Netcalls not allowed between %s and %s!
 # wrong server config
@@ -1522,6 +1524,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    incomplete packer settings
 5    no uploader setting
 6    unpacker not found
+7    unvollst„ndige Client-Modus Angaben
 -
 707 <broken in>
 708 Break
@@ -3023,6 +3026,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 33 "rz" and "sz" must be installed!
 34 Duplicate MIME types or file extensions not allowed!
 35 Default entry cannot be edited.
+36 Dieser Eintrag darf keinen Pfad enthalten!
+37 Verzeichnis darf nicht gleich dem Spoolverzeichnis sein!
+38 Dieser Pfad darf nur eine relative Verzeichnisebene enthalten!
 
 +  11000
 1  unknown command

@@ -2389,7 +2389,8 @@ begin
     repeat
       ReadString(false);
       if ustr(left(s,9))='MAIL FROM' then hd.wab:=GetAdr else      { Envelope-From }
-      if ustr(left(s,7))='RCPT TO'   then hd.empfaenger:=GetAdr;   { Envelope-To }
+      if ustr(left(s,7))='RCPT TO'   then
+        hd.empfaenger:=GetAdr;   { Envelope-To }
       ende:=(bufpos>=bufanz) {or (s='QUIT')};
     until ende or (s='DATA') or (s='QUIT');
     if s='DATA' then begin
@@ -2418,7 +2419,7 @@ begin
       mempf:=SetMailUser(hd.empfaenger);
       ReadRFCheader(true,s);
       binaer:=(hd.typ='B');
-      if (mailuser<>'') and ((hd.empfanz = 0) or ((hd.empfanz > 0) and (mailuser<>hd.xempf[1]))) then
+      if (mempf<>'') and (mempf<>hd.xempf[1]) then
       begin
         hd.xoem:=hd.xempf;
         hd.oemanz:=hd.empfanz;
@@ -3470,6 +3471,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.34  2001/01/30 10:01:20  mk
+  - weitere arbeiten am Client-Modus
+
   Revision 1.35.2.33  2001/01/10 17:39:01  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

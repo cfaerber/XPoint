@@ -147,7 +147,7 @@ begin
     PPPMode := false;
     PPPClient := '';
     PPPSpool := '';
-    PPPClientPaths := '';
+    PPPClientPath := '';
     ReplaceOwn := false;
     UUprotos:='Ggz';
     efilter:='';
@@ -272,7 +272,7 @@ begin
             getx(su,  'ExtFidoFNames',ExtPFiles) or
             getx(su,  'LightLogin',lightlogin) or
             getx(su,  'NotSEmpty',notsempty) or
-            gets(s,su,'LoginName',loginname,20) or
+            gets(s,su,'LoginName',loginname,60) or
             gets(s,su,'UUCPname',UUCPname,8) or
             getb(su,  'UU-MaxWinSize',maxwinsize) or
             getw(su,  'UU-MaxPacketSize',maxpacketsize) or
@@ -282,10 +282,10 @@ begin
             getx(su,  'UU-SMTP',UUsmtp) or
             getx(su,  'UU-SMTP-PPP', PPPSmtp) or
             gets(s,su,'UU-SMTP-OneFilePerMsg',dummys,1) or
-            getx(su,  'PPP-Mode', PPPMode) or
-            gets(s,su,'PPP-Client', PPPClient, 60) or
-            gets(s,su,'PPP-Spool', PPPSpool, 60) or
-            gets(s,su,'PPP-Client-Paths', PPPClientPaths, 60) or
+            getx(su,  'Client-Mode', PPPMode) or
+            gets(s,su,'Client-Exec', PPPClient, 60) or
+            gets(s,su,'Client-Spool', PPPSpool, 60) or
+            gets(s,su,'Client-Path', PPPClientPath, 60) or
             getx(su,  'ReplaceOwn', ReplaceOwn) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
@@ -422,10 +422,10 @@ begin
     writeln(t,'UU-SizeNegotiation=',jnf(sizenego));
     writeln(t,'UU-SMTP=',jnf(uusmtp));
     writeln(t,'UU-SMTP-PPP=', jnf(PPPSmtp));
-    writeln(t,'PPP-Mode=', Jnf(PPPMode));
-    writeln(t,'PPP-Client=', PPPClient);
-    writeln(t,'PPP-Spool=', PPPSpool);
-    writeln(t,'PPP-Client-Paths=', PPPClientPaths);
+    writeln(t,'Client-Mode=', Jnf(PPPMode));
+    writeln(t,'Client-Exec=', PPPClient);
+    writeln(t,'Client-Spool=', PPPSpool);
+    writeln(t,'Client-Path=', PPPClientPath);
     writeln(t,'ReplaceOwn=', Jnf(ReplaceOwn));
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
     if maxfsize>0 then writeln(t,'MaxFileSize=',maxfsize);
@@ -547,6 +547,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.7  2001/01/30 10:01:24  mk
+  - weitere arbeiten am Client-Modus
+
   Revision 1.10.2.6  2001/01/19 00:00:00  mk
   - verschiedene Aenderungen fuer PPP-Modus
 

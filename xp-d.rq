@@ -1529,6 +1529,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 40   ----------------------- UUCP-Logfile -----------------------
 41   ------------------------- Logfile --------------------------
 42   mitverschickte Nachr. :
+43   Sendepuffer:    %s Bytes
+44   Empfangspuffer: %s Bytes
 -
 701  Netcalls zwischen %s und %s nicht erlaubt!
 # falsche Boxkonfiguration
@@ -1562,6 +1564,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 4    unvollst„ndige Packer-Angaben
 5    fehlende UpLoader-Angabe
 6    Entpacker fehlt
+7    unvollst„ndige Client-Modus Angaben
 -
 707  <abgebrochen>
 708  Abbruch
@@ -1908,6 +1911,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 64   Batched SMTP-Modus~
 65   ausùSMTP/UUCPùSMTP/PPP
 66   ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+67   Client-Verzeichnis~
 + 921
 0    59
 1    Warten auf Verbindung
@@ -3075,6 +3079,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 33 "rz" und "sz" mssen installiert sein!
 34 Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt!
 35 Standardeintrag kann nicht editiert werden.
+36 Dieser Eintrag darf keinen Pfad enthalten!
+37 Verzeichnis darf nicht gleich dem Spoolverzeichnis sein!
+38 Dieser Pfad darf nur eine relative Verzeichnisebene enthalten!
 
 +  11000
 1  unbekannter Befehl

@@ -38,12 +38,23 @@ begin
     if SysopInp+SysopOut<>'' then TempPPPMode := false;
     SysopMode:=(SysopInp+SysopOut<>'') or TempPPPMode;
     if SysopMode then
-      if (sysopinp='') and (not TempPPPMode) then
-        BoxParOK:=getres2(706,1)    { 'kein Eingangspuffer-Name' }
-      else if (sysopout='') and (not TempPPPMode) then
-        BoxParOK:=getres2(706,2)    { 'kein Ausgangspuffer-Name' }
-      else
-        BoxParOk:=''
+    begin
+      if TempPPPMode then
+      begin
+        if PPPClient + PPPSpool + PPPCLientPath = '' then
+          BoxParOK := getres2(706,2)    { 'unvollst„ndige Client-Modus Angaben' }
+        else
+          BoxParOK := '';
+      end else
+      begin
+        if sysopinp='' then
+          BoxParOK:=getres2(706,1)    { 'kein Eingangspuffer-Name' }
+        else if sysopout='' then
+          BoxParOK:=getres2(706,2)    { 'kein Ausgangspuffer-Name' }
+        else
+          BoxParOk:='';
+      end;
+    end
     else
       if (pointname='') or (not (_fido or uucp) and (passwort='')) or
          (telefon='') or (telefon='08-15') then
@@ -1436,6 +1447,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.6  2001/01/30 10:01:22  mk
+  - weitere arbeiten am Client-Modus
+
   Revision 1.24.2.5  2001/01/16 08:13:04  mk
   - Grosschreibung von Dateinamen
 
