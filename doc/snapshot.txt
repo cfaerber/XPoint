@@ -371,11 +371,17 @@ Allgemeine Bedienung und Sonstiges
   (z.B. um zwischen den Netcalls mehrerer Boxen die Verbindung *nicht*
   zu trennen). Beim Netcall der letzten Box in der Netcall-Liste wird
   die Datei in NETCALL.END umbenannt.
-  XP.PAS, XP10.INC
+  XP.PAS, XP10.INC, XP.IHQ
 
 - Die Headerzeile X-XP-BOX wird jetzt auch bei ZConnect-Nachrichten
   erzeugt.
   XP3O2.PAS, XP6.PAS
+
+- Bei einem "Netcall/Alle" werden RFC/Client-Boxen ans Ende der
+  Netcall-Liste sortiert (um existierende DFš-Netzwerkverbindung
+  stehenlassen zu k”nnen).
+  XP10.PAS, XP.IHQ
+
 
 
 Bugfixes
