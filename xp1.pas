@@ -117,6 +117,7 @@ procedure blindon(total:boolean);
 procedure blindoff;
 procedure getpos(width,height: Integer; var x,y: Integer);
 procedure openbox(width,height:Integer; const txt:string; var x,y: Integer; c1,c2: Integer);
+procedure openboxat(width,height:Integer; const txt:string; x,y: Integer; c1,c2: Integer);
 procedure msgbox(width,height: Integer; const txt:string; var x,y: Integer);
 procedure diabox(width,height: Integer; const txt:string; var x,y: Integer);
 procedure selbox(width,height: Integer; const txt:string; var x,y: Integer; hell:boolean);
@@ -2246,11 +2247,15 @@ begin
   y:=(ScreenLines-height+1) div 2 +1;
 end;
 
-
 procedure openbox(width,height: Integer; const txt:string; var x,y: Integer; c1,c2: Integer);
 begin
-  blindon(true);
   getpos(width,height,x,y);
+  openboxat(width,height,txt,x,y,c1,c2);
+end;
+
+procedure openboxat(width,height: Integer; const txt:string; x,y: Integer; c1,c2: Integer);
+begin
+  blindon(true);
   wpushs(x,x+width-1,y,y+height-1,'-');
   attrtxt(c1);
   forcecolor:=true;
@@ -2264,7 +2269,6 @@ begin
   attrtxt(c2);
   clwin(x+1,x+width-2,y+1,y+height-2);
 end;
-
 
 procedure msgbox(width,height: Integer; const txt:string; var x,y: Integer);
 begin
@@ -3258,6 +3262,9 @@ end;
 
 {
   $Log$
+  Revision 1.172  2003/01/07 00:24:44  cl
+  - added openboxat to allow non-centered boxes
+
   Revision 1.171  2003/01/01 16:19:44  mk
   - changes to made FreeBSD-Version compilable
 
