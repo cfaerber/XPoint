@@ -644,7 +644,7 @@ var lf : string;
        if length(sr.name) < LanguagePos then
        begin
 	 SetLength(sr.name, LanguagePos);
-	 sr.name[LanguagePos] := 'D'
+	 sr.name[LanguagePos] := 'd'
        end;
       parlanguage:=sr.name[LanguagePos];
       write ('<D>eutsch / <E>nglish ?  '+parlanguage);
@@ -1081,6 +1081,9 @@ end.
 
 {
   $Log$
+  Revision 1.107  2001/04/05 16:28:44  ml
+  - ressourcefile in linux
+
   Revision 1.106  2001/04/05 15:58:36  ml
   - removed access-violation while getting the language
 
