@@ -1050,7 +1050,7 @@ begin
   Inc(MarkPos);
   while (MarkPos < Lines.Count) and (not Marked[MarkPos]) do
     Inc(MarkPos);
-  if MarkPos = Lines.Count then
+  if MarkPos >= Lines.Count then
     Result := #0
   else
     Result := Lines[MarkPos];
@@ -1134,6 +1134,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.69.2.1  2002/08/01 17:21:08  mk
+  - fixed TLister.NextMarked: AV when Lines.Count = 0 and MarkPos = 1
+
   Revision 1.69  2002/04/07 18:36:40  mk
   - fixed some with newsgroup lists
 
