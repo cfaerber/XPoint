@@ -367,7 +367,7 @@ var i  : integer;
     if _is('nb')   then else
 {$ENDIF }
     if isl('mailto:') then Par_mailto else
-    if isl('lfn') then EnableLFN else
+    if isl('lfn') and (not LFNEnabled) then EnableLFN else
     if isl('312') then OldXPComp := true else
     if _is('nolock') then ParNolock:=true
     else               begin
@@ -1026,6 +1026,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.30  2002/03/27 19:52:12  my
+  MY:- Interne Žnderung: Die LFN-Untersttzung wird bei Angabe des
+       Kommandozeilenschalters "/lfn" nur noch dann aktiviert, wenn sie
+       nicht bereits sowieso schon aktiviert war.
+
   Revision 1.45.2.29  2001/12/20 15:03:54  my
   MY:- Registrierroutine fr RFC/Client gem„á Vereinbarung mit Peter
        Mandrella (Mail vom 21.11.2001) angepaát => kein UUCP-Key mehr
