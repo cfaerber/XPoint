@@ -85,11 +85,11 @@ const
       RFC1522     : boolean = false;         { Headerzeilen gem. RFC1522 codieren }
 { Envelope-EmpfÑnger aus Received auslesen? }
       getrecenvemp: boolean = false;
-      client         : boolean = false;         { -client (fÅr UKA* etc.) }
+      client      : boolean = false;         { -client (fÅr UKA* etc.) }
       MailUser    : string[30] = 'mail';     { fuer U-Zeile im X-File }
       NewsUser    : string[30] = 'news';
       FileUser    : string[30] = 'root';
-      OwnSite     : string[60] = '';        { fÅr EmpfÑngeradresse von Mails }
+      OwnSite     : string[60] = '';         { fÅr EmpfÑngeradresse von Mails }
       shrinkheader: boolean = false;         { uz: r-Schalter }
       nomailer    : boolean = false;
       UseLFN: Boolean = false;
@@ -3466,6 +3466,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.58  2001/12/20 15:11:09  my
+  MY:- Nur unwichtige Kosmetik
+
   Revision 1.35.2.57  2001/11/20 23:09:12  my
   MY:- Lizenz-Header aktualisiert
 
