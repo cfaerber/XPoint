@@ -498,7 +498,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 16   Nachr.-Weiterschalter
 17   Brett-Weiterschalter
 18   User-Weiterschalter
-19   Lesemodus ~
+19   Lesemodus  ~
 20   Extrakt als~
 21   Mausbedienung
 22   Tasten vertauschen
@@ -785,7 +785,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 1    Viewer-Einstellungen
 2    Sicherheit bei Multiformat-MIME-Viewern
 3    Sichere Dateierweiterungen fr externen Viewer:
-4    Fr diese Dateierweiterungen internen Lister benutzen:
+4    Fr diese Dateierweiterungen Intern-Lister benutzen:
 5    Viewer-Programm fr verd„chtige Dateierweiterungen:
 6    Allgemeines
 7    Keine Warte-Batch bei Windows-Viewern
