@@ -120,10 +120,10 @@ var fn      : string;
     brk,o   : boolean;
 begin
   fn:=mpdata.fname;
-  useclip:=true;                          { 'Nachrichtenteil extrahieren' }
-  if ReadFilename(getres(2441),fn,true,useclip) then
+  useclip:=true;
+  if ReadFilename(getres(2441),fn,true,useclip) then   { 'Nachrichtenteil extrahieren' }
   begin
-    if not multipos(':\',fn) then fn:=ExtractPath+fn;
+    if not multipos(':\/',fn) then fn:=ExtractPath+fn;
     if not UseClip then
     begin
       if FileExists(fn) then
@@ -886,6 +886,9 @@ finalization
 
 {
   $Log$
+  Revision 1.67  2003/09/02 16:42:52  mk
+  - fixed filename handling for unix in m_extract
+
   Revision 1.66  2003/08/26 22:47:17  cl
   - split xpstreams into individual small files to remove some dependencies
 
