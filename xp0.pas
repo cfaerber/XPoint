@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - Deklarationen }
 { 06.02.2000 MH: X-Priority  }
@@ -694,6 +695,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParDebug   : boolean = false;   { Debugging-Mode         }
        ParDDebug  : boolean = false;   { Database-Debug         }
        ParDebFlags: byte    = 0;       { 1 = Shell-Commands     }
+       ParDupeKill: boolean = false;   { autom. DupeKill        }
        ParTrace   : boolean = false;   { Script-Tracefile       }
        ParMono    : boolean = false;   { monochrome Anzeige     }
        ParNojoke  : boolean = false;   { Spruch am Ende abschalten }
@@ -1069,3 +1071,9 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 implementation
 
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/18 17:28:08  mk
+  AF: Kommandozeilenoption Dupekill hinzugefuegt
+
+}

@@ -62,7 +62,7 @@ procedure ShowArch(var fn:string);
 function  a_getfilename(nr,nn:byte):pathstr;
 procedure ArcSpecial(var t:taste);
 
-procedure DupeKill;
+procedure DupeKill(autodupekill:boolean);
 procedure print_msg(initpr:boolean);
 function  UserMarkSuche(allmode:boolean):boolean;
 procedure BrettInfo;
@@ -1709,7 +1709,7 @@ begin
 end;
 
 
-procedure DupeKill;
+procedure DupeKill(autodupekill:boolean);
 var d     : DB;
     f1,f2 : file;
     n,ll  : longint;
@@ -1799,10 +1799,13 @@ begin
   close(log);
   FlushSmartdrive(true);
   dbTempOpen(mbase);
-  signal;
-  attrtxt(col.colmbox);
-  wrt(x+2,y+6,' '+getres(12)+' '#8);
-  wait(curon);
+  if not autodupekill then
+  begin
+    signal;
+    attrtxt(col.colmbox);
+    wrt(x+2,y+6,' '+getres(12)+' '#8);
+    wait(curon);
+  end;
   closebox;
   freeres;
   aufbau:=true; xaufbau:=true;
@@ -2148,6 +2151,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/02/18 17:28:08  mk
+  AF: Kommandozeilenoption Dupekill hinzugefuegt
+
   Revision 1.9  2000/02/18 15:54:52  jg
   Suchoptionen-Laenderabfrage verbessert
 

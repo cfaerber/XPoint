@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { Netcall-Teil }
 
@@ -1529,6 +1530,8 @@ begin
     AutoTiming(ParTiming,false,false);
     if quit then automode:=true;
     end;
+  if ParDupeKill then
+    DupeKill(true);
   if ParReorg then begin
     MsgReorgScan(true,false,brk);
     if not brk then MsgReorg;
@@ -1561,4 +1564,9 @@ end;
 
 
 end.
+{ 
+  $Log$
+  Revision 1.5  2000/02/18 17:28:09  mk
+  AF: Kommandozeilenoption Dupekill hinzugefuegt
 
+}

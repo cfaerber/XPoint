@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { CrossPoint - HauptmenÅ }
 
@@ -193,7 +194,7 @@ begin
             3 : Breorg(false,false);
             4 : Breorg(true,false);
             5 : Breorg(true,true);
-            6 : DupeKill;
+            6 : DupeKill (false);
             8 : ChangePollbox;
           end;
 
@@ -569,4 +570,9 @@ begin
   lasty:=y;
   mauskey:=(t<mausfirstkey) or (t>mauslastkey);
 end;
+{ 
+  $Log$
+  Revision 1.4  2000/02/18 17:28:08  mk
+  AF: Kommandozeilenoption Dupekill hinzugefuegt
 
+}
