@@ -396,7 +396,7 @@ var i  : integer;
   begin
     if(s<>'')and(GetEnv('DEBUG')='')then
       Debug.OpenLogfile(False,'debuglog.txt');
-    while s<>''do begin
+    while s<>'' do begin
       i:=Pos('=',s);
       if i=0 then s:='' else begin
         j:=Pos(',',s); if j=0 then j:=Length(s)+1;
@@ -405,6 +405,7 @@ var i  : integer;
           Debug.SetLoglevel(Badge,Level)
         else
           Debug.DLDefaultIfInDebugMode:=Level;
+        Delete(s,1,j);
       end;
     end;
   end;
@@ -1193,6 +1194,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.89  2000/11/19 13:32:55  ma
+  - oops. Debugged debug procedure ;-)
+
   Revision 1.88  2000/11/19 13:03:06  ma
   - added "dl:badge=level,badge=level"... switch, sets debug level of
     module badge to level. Output will be in "debuglog.txt", default levels
