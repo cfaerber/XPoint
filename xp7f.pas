@@ -306,11 +306,7 @@ function FidoNetcall(box:string; var ppfile,eppfile,sendfile,upuffer:string;
 
 type rfnodep     = ^reqfilenode;
      reqfilenode = record
-{$ifdef hasHugeString}
                      fn   : string;
-{$else}
-                     fn   : string[12];
-{$endif}
                      next : rfnodep;
                    end;
 
@@ -318,13 +314,8 @@ var t        : text;
     sr       : searchrec;
     aresult   : integer;
     i      : byte;
-{$ifdef hasHugeString}
     request  : string;
     ownaddr  : string;
-{$else}
-    request  : string[12];
-    ownaddr  : string[30];
-{$endif}
     fa       : fidoadr;
     ni       : NodeInfo;
     fileatts : integer;   { File-Attaches }
@@ -521,13 +512,8 @@ label fn_ende,fn_ende0;
   procedure ProcessRequestResult(fa:string);   { Requests zurÅckstellen }
   var files,
       nfiles : string;
-{$ifdef hasHugeString}
       fname  : string;
       pw     : string;
-{$else}
-      fname  : string[50];
-      pw     : string[30];
-{$endif}
       fp     : rfnodep;
       p      : byte;
 
@@ -957,6 +943,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/07/05 18:57:54  mk
+  - AnsiString Updates
+
   Revision 1.18  2000/07/05 17:35:37  hd
   - AnsiString
 

@@ -74,13 +74,8 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
      wahlcnt   : integer;  { Anwahlversuche }
      bimodem   : boolean;
      SysopMode : boolean;
-{$ifdef hasHugeString}
      komment   : string;
      fidologfile: string;
-{$else}
-     komment   : string[35];
-     fidologfile: string[12];
-{$endif}
     _turbo     : boolean;
     _uucp      : boolean;
     netlog     : textp;
@@ -91,8 +86,11 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 implementation
 
 end.
-{ 
+{
   $Log$
+  Revision 1.5  2000/07/05 18:57:54  mk
+  - AnsiString Updates
+
   Revision 1.4  2000/07/05 17:35:37  hd
   - AnsiString
 

@@ -448,7 +448,7 @@ begin
   if ioresult<>0 then;
 end;
 
-function GetFileDir(p:string):dirstr;
+function GetFileDir(p:string):string;
 var d : dirstr;
     n : namestr;
     e : extstr;
@@ -596,6 +596,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/07/05 18:57:53  mk
+  - AnsiString Updates
+
   Revision 1.50  2000/07/05 17:10:53  mk
   - AnsiString Updates
 

@@ -430,9 +430,9 @@ end;
 
 
 procedure SetHeader(s:string);
-var hddef    : array[0..40] of string[10];
+var hddef    : array[0..40] of string;
     hddefs,i : integer;
-    ss       : string[10];
+    ss       : string;
 begin
   hddefs:=res2anz(222);
   for i:=0 to hddefs do begin
@@ -1783,6 +1783,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.69  2000/07/05 18:57:54  mk
+  - AnsiString Updates
+
   Revision 1.68  2000/07/04 12:04:21  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
