@@ -422,8 +422,10 @@ begin
         if s[p1]=' ' then p1:=0 else dec(p1);
       if (p1>0) and (s[p1+1]='?') then begin
         p2:=p+3;
-        while (p2<length(s)) and (p2>0) and (s[p2]<>'?') do
-          if s[p2]=' ' then p2:=0 else inc(p2);
+        (* eingeklammerte Teile: fehlertolerantere Fassung fÅr VSOUP & Co.,
+           bei Leerzeichen im codierten String nicht abbrechen *)
+        while (p2<length(s)) { and (p2>0) } and (s[p2]<>'?') do
+        { if s[p2]=' ' then p2:=0 else } inc(p2);
         if not ((p2<length(s)) and (p2>0) and (s[p2+1]='=')) then p2:=0;
       end;
     end
@@ -481,6 +483,11 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.5  2002/03/27 19:48:28  my
+  RB+MY:- Fehlertolerantere Fassung fÅr die Decodierung von nach RFC 1522
+          codierten Headerzeilen: Bei Leerzeichen im codierten String wird
+          nicht mehr abgebrochen (relevant z.B. bei VSOUP).
+
   Revision 1.1.2.4  2002/03/22 20:14:37  my
   RB:- base64-Decodierung korrigiert und optimiert.
 
