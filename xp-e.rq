@@ -2038,12 +2038,12 @@ K (c) '93-96 Peter Mandrella
 1015 Discard changes
 + 1016
 1    Netcall to:
-2    -- no more tasls listed for current date --
+2    -- no more tasks listed for current date --
 3    Netcall Automatics
 + 1017
-1    You haven't defined key macros for this window.
+1    You haven't defined any key macros for this window!
 2    Select macro ...
-3    No key macros defined
+3    No key macros defined!
 + 1018
 # window with /config/display/header
 1    45
@@ -2057,7 +2057,7 @@ K (c) '93-96 Peter Mandrella
 2  37
 3  Delete Node/Pointlist entry?
 4  ~^Yes ,  ^No  , with ^File~
-10 Add new node or point list
+10 Add new Node or Pointlist
 -
 1020 activate nodediff / pointdiff
 1021 phone fees
