@@ -976,7 +976,7 @@ begin
   while not dbEOF(bbase) and not brk do begin
     inc(n);
     attrtxt(col.colmboxhigh);
-    Wrt(xx, y+2, Format('%3d', [n*100 div n]));
+    Wrt(xx, y+2, Format('%3d', [n*100 div nn]));
 
     if not smdl(dbReadInt(bbase,'ldatum'),ixDat('2712310000')) then begin
       _brett:=copy(dbReadStr(bbase,'brettname'),1,1)+
@@ -2414,6 +2414,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.100  2001/08/10 17:45:26  mk
+  - fixed litte type in SucheWiedervorlage
+
   Revision 1.99  2001/07/30 08:41:24  ma
   - fixed: Mail header info box was displayed incorrectly
 
