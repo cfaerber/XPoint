@@ -88,7 +88,7 @@ const
    { these get initialized by StartCurses }
 
    { ESCSequenztable }
-   lastESCSeq = 93;
+   lastESCSeq = 95;
    ncad = #27#27#27;  { already defined by ncurses }
 
    keyESCSeqs: array [0..lastESCSeq] of record
@@ -189,10 +189,10 @@ const
       (Sequenz: #27#91#54#59#53#126;    ncCode: 430; DosCode : #0#118), { Ctrl-PgDn }
       (Sequenz: #27#91#53#59#53#126;    ncCode: 431; DosCode : #0#132), { Ctrl-PgUp }
       (Sequenz: #27#79#72;          ncCode: 432; DosCode : #0#71),   { Home on NetBSD }
-      (Sequenz: #27#79#70;          ncCode: 433; DosCode : #0#79)    { End on NetBSD }
-(*    (Sequenz: #27#91#49#59#53#67; ncCode: 434; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
-      (Sequenz: #27#91#49#59#53#68; ncCode: 435; DosCode : #0#115),  { Ctrl+Cursor left on NetBSD }
-      (Sequenz: #27#0#77;           ncCode: 436; DosCode : #0#116),  { Ctrl+Cursor right on Linux }
+      (Sequenz: #27#79#70;          ncCode: 433; DosCode : #0#79),   { End on NetBSD }
+      (Sequenz: #27#91#49#59#53#67; ncCode: 434; DosCode : #0#116),  { Ctrl+Cursor right on NetBSD }
+      (Sequenz: #27#91#49#59#53#68; ncCode: 435; DosCode : #0#115)   { Ctrl+Cursor left on NetBSD }
+(*    (Sequenz: #27#0#77;           ncCode: 436; DosCode : #0#116),  { Ctrl+Cursor right on Linux }
       (Sequenz: #27#0#75;           ncCode: 437; DosCode : #0#115),  { Ctrl+Cursor left on Linux }
       (Sequenz: #27#79#99;          ncCode: 438; DosCode : #0#116),  { Ctrl+Cursor right on Linux }
       (Sequenz: #27#79#100;         ncCode: 439; DosCode : #0#115),  { Ctrl+Cursor left on Linux }
@@ -1554,6 +1554,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.64.2.15  2003/09/14 19:09:58  st
+  Reactivate CTRL-left & CTRL-right for NetBSD. There should be no problem with
+  the startup of OpenXP under Linux and/or Win32.
+
   Revision 1.64.2.14  2003/09/06 22:29:44  mk
   - removd new added keyboard codes due hangs with linux/netbios
     we have to find another way to support this keycodes
