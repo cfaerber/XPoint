@@ -15,7 +15,6 @@ unit zmodem;
 interface
 
 uses
- {$IFDEF Delphi} dos, {$ENDIF }
  xpglobal, montage, typeform, ObjCOM, ProgressOutput, Timer, Classes, OSDepend;
 
 const
@@ -1727,7 +1726,7 @@ end;
 function TZModemObj.RZ_ReceiveBatch(Filelist: TStringList): integer16;
 
 var
-  pfrec: ^filerec;
+  pfrec: ^Tfilerec;
   fh: longint;
 begin
   Result := ZERROR;
@@ -2489,6 +2488,9 @@ begin
 
 {
   $Log$
+  Revision 1.34  2003/09/21 21:45:58  mk
+  - removed old delphi dos unit
+
   Revision 1.33  2003/08/28 00:17:00  mk
   - SchaltJ() -> IsLeapYear()
 

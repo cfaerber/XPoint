@@ -31,7 +31,7 @@ procedure StartCommandLinePMConv;
 implementation
 
 uses
-  xpglobal, dos,typeform,xpdatum,sysutils,classes,xpnt, xpheader,
+  xpglobal, typeform,xpdatum,sysutils,classes,xpnt, xpheader,
   xpmakeheader, Fileio;
 
 const
@@ -181,6 +181,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2003/09/21 21:45:58  mk
+  - removed old delphi dos unit
+
   Revision 1.14  2003/08/23 23:02:35  mk
   - removed hints and warnings
 
