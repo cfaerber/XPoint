@@ -6,8 +6,8 @@
 
 Die nachfolgend aufgelisteten Features, Funktionen, Fixes und énderungen
 sind erst seit kurzer Zeit in OpenXP enthalten - bitte intensiv testen.
-Es handelt sich zum grî·ten Teil um Features, die Jochen Gehring im
-Laufe der letzten 1 1/2 Jahre entwickelt hat.
+Bei einem Teil der énderungen handelt es sich um Features, die Jochen
+Gehring im Laufe der letzten 1 1/2 Jahre entwickelt hat.
 
 Bitte auch testen, ob die Åbrigen XP-Funktionen weiterhin problemlos
 funktionieren!
@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fÅr Nicht-Abonnenten)
 
 
-DÅsseldorf, den 07.12.2001 (letzter Update)
+DÅsseldorf, den 11.12.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -59,11 +59,11 @@ Lister
   zurÅck.
   XP1O.PAS, XP4W.INC, XP4.PAS, XP.IHQ
 
-- <Alt-M> (Message-ID-Suche) schneidet in der markierten Zeile '/' ab
+- <Alt-M> (Message-ID-Suche) schneidet in der markierten Zeile '/' ab.
   XP1O.PAS
 
 - Die Header Betreff, Message-ID und Zusammenfassung werden jetzt
-  umbrochen, wenn lÑnger als 78 Zeichen
+  umbrochen, wenn lÑnger als 78 Zeichen.
   XP3EX.PAS
 
 - Bei Nachrichten mit ungÅltigem Datum (i.d.R. Spam) wird nun "N/A"
@@ -102,18 +102,18 @@ Editor
   XP-D.RQ, XP-E.RQ
 
 - <Ctrl-X/C/V> auf MS-Standard gesetzt (Ausschneiden, Kopieren,
-  EinfÅgen)
+  EinfÅgen).
   EDITOR.PAS, XP.IHQ
 
 - Editor-MenÅ (<F10>) erweitert: "Suchen/Ersetzen/Weitersuchen" und
-  "Beenden" hinzugefÅgt
+  "Beenden" hinzugefÅgt.
   EDITOR.PAS, EDITOR.INC, EDDEF.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
 
-- Suche im Editor markiert jetzt die aktuell gefundene Stelle
+- Suche im Editor markiert jetzt die aktuell gefundene Stelle.
   EDITOR.INC
 
 - Quotereflow verfeinert (<Enter> mitten in Quotezeichen entspricht
-  <Enter> am Ende von Quotezeichen)
+  <Enter> am Ende von Quotezeichen).
   EDITOR.INC
 
 - Editor benutzt jetzt statt TED.TMP immer Clipboard-Datei, wenn
@@ -131,11 +131,11 @@ Nachrichten-Suchfunktionen (Lister-Suchfunktionen siehe unter Lister)
 
 - Suchbegriff-History: Mit <F2> werden die letzten 15 benutzten
   Suchbegriffe angezeigt und stehen beim nÑchsten Programmstart wieder
-  zur VerfÅgung (SEEK.TXT)
+  zur VerfÅgung (SEEK.TXT).
 
 - Optionen-History: Mit <F2> werden die letzten 5 benutzten Options-
   Kombinationen angezeigt und stehen beim nÑchsten Programmstart wieder
-  zur VerfÅgung (OPTIONS.TXT)
+  zur VerfÅgung (OPTIONS.TXT).
 
 - Neue Such-Optionen:
   l = sucht nur in Nachrichten, die dem aktuellen Lesemodus entsprechen
@@ -153,15 +153,15 @@ Nachrichten-Suchfunktionen (Lister-Suchfunktionen siehe unter Lister)
 - Betreffsuche (<Alt-B>) markiert jetzt nur noch Nachrichten mit
   gleichem Betreff und nicht mehr die Nachrichten, bei denen im
   Vergleichspaar der kÅrzere Betreff mit dem Anfang des lÑngeren
-  Åbereinstimmt (z.B. "toll" und "toller Betreff")
+  Åbereinstimmt (z.B. "toll" und "toller Betreff").
 
-- Nachricht/Suchen/Wiedervorlage durchsucht auch User-Bretter
+- Nachricht/Suchen/Wiedervorlage durchsucht auch User-Bretter.
 
-- Message-ID-Suche: Suchoptionen sind wieder verfÅgbar
+- Message-ID-Suche: Suchoptionen sind wieder verfÅgbar.
 
-- max. Anzahl der Teil-Suchbegriffe auf 20 erhîht
+- max. Anzahl der Teil-Suchbegriffe auf 20 erhîht.
 
-- max. LÑnge des Suchbegriffs auf 160 Zeichen erhîht
+- max. LÑnge des Suchbegriffs auf 160 Zeichen erhîht.
 
 XP4O.PAS, XP4O.INC, MASKE.PAS, MASKE.INC, XP-D.RQ, XP-E.RQ, XP.IHQ
 
@@ -198,7 +198,7 @@ Brett-öbersicht
 Nachrichten-Lesefenster
 -----------------------
 
-- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte unten)
+- Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte unten).
   XP0.PAS, XP2C.PAS, XP2CFG.INC, XP4.PAS, XP-D.RQ, XP-E.RQ,
   XP.IHQ, XP-E.IHQ
 
@@ -209,7 +209,7 @@ Nachrichten-Lesefenster
   XP2C.PAS, XP2CFG.INC, XP4D.INC, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 - Beim Umschalten auf Realname mit <Ctrl-N> wird der Absender um 5
-  Zeichen verkÅrzt und der Betreff um 5 Zeichen verlÑngert
+  Zeichen verkÅrzt und der Betreff um 5 Zeichen verlÑngert.
   XP4D.INC
 
 - Verbesserung fÅr blinde XP-User: Wenn unter Config/Anzeige/Hilfen die
@@ -231,7 +231,7 @@ User-öbersicht
 
 - User-Markiersuche ("U") benutzt jetzt Standard-Suchstringeingabe,
   dadurch mehrere Suchbegriffe, <F2>-Auswahl, AND/OR/NOT-VerknÅpfung
-  und UmlautunabhÑngigkeit mîglich
+  und UmlautunabhÑngigkeit mîglich.
   XP4O.PAS, XP.IHQ
 
 - Mit '#' kann in der User-öbersicht eine Adre·buchgruppe angegeben
@@ -243,7 +243,7 @@ User-öbersicht
 - Adre·buch: <Alt-A> schaltet Zugang zu Adre·buchgruppe 0 frei.
   XP4.PAS, XP.IHQ
 
-- User editieren: bei "Adre·buchgruppe" <F2>-Auswahl aus den aktuell
+- User editieren: Bei "Adre·buchgruppe" <F2>-Auswahl aus den aktuell
   bereits verwendeten Adre·buchgruppen mîglich.
   XP4E.PAS, XP.IHQ
 
@@ -262,7 +262,7 @@ User-öbersicht
 Mausbedienung
 -------------
 
-- Online-Hilfe unterstÅtzt jetzt Maussteuerung
+- Online-Hilfe unterstÅtzt jetzt Maussteuerung.
   HELP.PAS, XP.IHQ
 
 - Untere Funktionstasten-Leiste ist jetzt mausbedienbar. Linksklick auf
@@ -270,14 +270,14 @@ Mausbedienung
   About-Dialog ("öber OpenXP").
   XP4.INC
 
-- Mittlere Maustaste lîst Doppelklick aus
+- Mittlere Maustaste lîst Doppelklick aus.
   MAUS2.PAS, XP.IHQ
 
-- Scrolling in Datei-Auswahlbox jetzt auch mit Maus mîglich
+- Scrolling in Datei-Auswahlbox jetzt auch mit Maus mîglich.
   WIN2.PAS
 
 - Bei Maus-Scrolling in Brett-/User-/Nachrichtenfenster "Autobremse"
-  fÅr schnellere PCs gesetzt
+  fÅr schnellere PCs gesetzt.
   XP4.PAS
 
 
@@ -302,7 +302,7 @@ Allgemeine Bedienung und Sonstiges
   XP0.PAS, XP1.PAS, XP1HELP.PAS, XP2.PAS, XP4.INC, XP6.PAS, XPREG.PAS,
   XPGLOBAL.PAS, XPX.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
 
-- 'Editdate' nimmt jetzt Datums- und Uhrzeitangaben an
+- 'Editdate' nimmt jetzt Datums- und Uhrzeitangaben an.
   XP1INPUT.PAS
 
 - Bei Nachricht/éndern/Empfangsdatum jetzt Eingabe von Datum und Uhrzeit
@@ -325,7 +325,7 @@ Allgemeine Bedienung und Sonstiges
   XP1.PAS, XP8.PAS, XP.IHQ
 
 - Option "Keine" bei /Config/Optionen/Useraufnahme mit <F2> wieder
-  verfÅgbar
+  verfÅgbar.
   XP2C.PAS, XP2CFG.INC, XP.IHQ
 
 - Dateinamenabfrage: Letzter benutzter Pfad (ohne Dateinamen) wird
@@ -337,28 +337,28 @@ Allgemeine Bedienung und Sonstiges
   XP1O.PAS
 
 - <F2>-Auswahl unterstÅtzt jetzt Links-/Rechts-Scrolling (angezeigt
-  durch Hinweispfeile)
+  durch Hinweispfeile).
   MASKE.INC
 
-- Datei-Auswahlbox zeigt Scroll-Mîglichkeit durch Hinweispfeile an
+- Datei-Auswahlbox zeigt Scroll-Mîglichkeit durch Hinweispfeile an.
   WIN2.PAS
 
-- Online-Hilfe zeigt Scroll-Mîglichkeit durch Hinweispfeile an
+- Online-Hilfe zeigt Scroll-Mîglichkeit durch Hinweispfeile an.
   HELP.PAS
 
 - Neue Tastenfunktion in Texteingabe-Feldern: <Ctrl-A> markiert das
-  gesamte Eingabefeld
+  gesamte Eingabefeld.
   MASKE.INC, XP.IHQ
 
 - UUDECODE: Richtiges Hilfe-Fenster auch aus Lister heraus; Hilfe
   Åberarbeitet; Bugfix fÅr Aufruf aus Lister: Datenbank am Ende auf
-  alte Nachricht zurÅcksetzen
+  alte Nachricht zurÅcksetzen.
   XP_UUE.PAS, XP.IHQ
 
-- Uhr im Archiv-Viewer aktiviert
+- Uhr im Archiv-Viewer aktiviert.
   XP1S.INC
 
-- ASCII-Code-Auswertung in der Hilfe beschleunigt
+- ASCII-Code-Auswertung in der Hilfe beschleunigt.
   HELP.PAS
 
 - String "CrossPoint" statt "CrossPoint/OpenXP" wird bei RFC/Client-
@@ -368,7 +368,7 @@ Allgemeine Bedienung und Sonstiges
   XP7U.INC
 
 - Verbesserungen an Displayroutinen (u.a. Feldtausch, rund 1k weniger
-  Speicherverbrauch)
+  Speicherverbrauch).
   XP4D.INC
 
 - Online-Hilfe an die neuen Features und Funktionen angepa·t, weitere
@@ -411,18 +411,59 @@ Allgemeine Bedienung und Sonstiges
   XP.PAS, XP0.PAS, XP1.PAS, XP2.PAS, XP2C.PAS, XP2CFG.INC, XP6.PAS,
   MONTAGE.PAS, XPDATUM.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
-- Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche_Server und
-  D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert, Details
-  siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen. In den
-  Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
+- RFC/Client: Konfiguration Multiserverbetrieb (D/B/E/C/ZusÑtzliche
+  Server und D/B/E/N/Fallback) gemÑ· Vereinbarung mit XP2 implementiert,
+  Details siehe MenÅs und Hilfe; umfangreiche Auswahl- und Testroutinen.
+  In den Dialogen werden immer die Boxnamen angezeigt, in der .BFG der
   editierten Box jedoch die BFG-Namen der ausgewÑhlten Boxen(en)
   abgelegt. Netcall-Teil steht noch aus.
-  XP0.PAS, XP1.PAS, XP9.INC, XP9.PAS, XP9BP.PAS, XP9SEL.PAS,
+  XP0.PAS, XP1.PAS, XP7.INC, XP9.INC, XP9.PAS, XP9BP.PAS, XP9SEL.PAS,
   XP-D.RQ, XP-E.RQ, XP.IHQ, XP-E.IHQ
 
 - Netcall/Spezial-Liste verwendet fÅr die Boxauswahl jetzt (fast)
   denselben Dialog wie die Multiserverbetrieb-Konfiguration.
   XP10.INC, XP10.PAS, XP4.INC, XP7.PAS, XP-D.RQ, XP-E.RQ,
+  XP.IHQ, XP-E.IHQ
+
+- RFC/Client: Client- und Server-Konfiguration erheblich umgestaltet
+  und erweitert. Neue Einstellungen:
+  - D/B/E/C/Verbindung: RÅckfrage vor Anwahl
+                        RÅckfrage vor Auflegen
+                        Verbindungsstatus halten
+  - D/B/E/N/Mail (In) : Protokoll
+                        Envelope-To auswerten
+                        Mail auf Server belassen
+                        APOP-Authentifizierung
+  - D/B/E/N/Mail (Out): SMTP after POP
+                        SMTP-Login nach RFC 2554
+  - D/B/E/N/News      : Newsgroup-Liste pflegen
+                        Max. Artikelgrî·e (KB)
+                        Max. Artikel je Gruppe
+  XP0.PAS, XP9.INC, XP9BP.PAS, XP9SEL.PAS, XP-D.RQ, XP-E.RQ,
+  XP.IHQ, XP-E.IHQ
+
+- RFC/Client: Das gegen Eingaben gesperrte Feld "ZusÑtzliche Server"
+  unter D/B/E/C kann jetzt mit <Ctrl-Del> gelîscht werden und ist gegen
+  das EinfÅgen des Clipboard-Inhalts mit <Ctrl-C> geschÅtzt.
+  XP9.PAS, XP9.INC, XP9SEL.PAS, MASKE.PAS, MASKE.INC, XP.IHQ
+
+- RFC/Client: Envelope-Adresse (eingehende Mail) ist jetzt ein Pflicht-
+  feld (falls ein POP3/SMTP/IMAP-Server eingetragen ist). Beim Netcall
+  fÅhrt eine fehlende Adresse zu einem Fehler und bricht den Netcall ab.
+  XP7.INC, XP9.PAS, XP9.INC, XP9SEL.PAS, XP-D.RQ, XP-E.RQ
+
+- RFC/Client: Die Servernamen fÅr die <F2>-Auswahl bei Mail- und News-
+  Servern werden nicht mehr aus der Ressource, sondern aus der Textdatei
+  SERVERS.DAT im XP-Verzeichnis ausgelesen (=> user-editierbar).
+  XP9.INC, XP.IHQ, XP-E.IHQ
+
+- RFC/Client: Bei D/B/E/X (Externe Einstellungen) kann jetzt auch ein
+  Programmname (EXE, COM, BAT) eingetragen und mit <Enter> gestartet
+  werden (alle anderen Dateien werden in den Editor geladen). Der
+  Boxname (ohne Dateierweiterung .BFG) kann mit $CONFIG als Parameter
+  Åbergeben werden. Mit <Ctrl-Del> kann der in <Box>.BFG gespeicherte
+  Dateiname entfernt werden.
+  XP9.PAS, XP9.INC, XP9SEL.PAS, MASKE.PAS, MASKE.INC, XP-D.RQ, XP-E.RQ,
   XP.IHQ, XP-E.IHQ
 
 
@@ -433,16 +474,16 @@ Bugfixes
 - Nach Aufruf der User-Auswahl mit <F2> (z.B. Weiterleiten/User oder
   Nachricht/Direkt) und Umschalten auf Alle ("A") war nach Absenden der
   Nachricht und Wechsel in die User-öbersicht mit <Tab> die User-Anzeige
-  verstÅmmelt
+  verstÅmmelt.
   XP4.PAS
 
 - Select-Routine (mappsel) stÅrzt nicht mehr ab, wenn String grî·er als
-  Bildschirmbreite ist (akut in Suchbegriff-History)
+  Bildschirmbreite ist (akut in Suchbegriff-History).
   MASKE.INC
 
 - <Ctrl-D> (Drucken) in Nachrichten-öbersicht war zwar dokumentiert,
   funktionierte aber nicht. Drucken mit "R" geht auch noch, weil in 2.
-  MenÅzeile der User-öbersicht so dokumentiert
+  MenÅzeile der User-öbersicht so dokumentiert.
   XP4.PAS, XP-D.RQ
 
 - "O" nach <Ctrl-PgUp/PgDn> im Lister Åberschrieb den Bildschirm-
@@ -452,7 +493,7 @@ Bugfixes
   XP4W.INC, XP1O.PAS
 
 - Wenn im Editor der Suchbegriff ab der zweiten Zeile eines Absatzes
-  auftauchte, hing die Suche an dieser Fundstelle fest
+  auftauchte, hing die Suche an dieser Fundstelle fest.
   EDITOR.INC
 
 - Wenn in Pos1 einer eingerÅckten Zeile <Enter> gedrÅckt wird, bleibt
@@ -515,33 +556,47 @@ Bugfixes
   mehr doppelt in die Suchbegriff-History Åbernommen.
   XP4O.PAS
 
-- Ein paar unsinnige PrÅfungen auf xp_xp='CrossPoint'" in der
-  Farbkonfiguration auskommentiert, dadurch wieder richtige Anzeige der
+- Ein paar unsinnige PrÅfungen auf xp_xp='CrossPoint' in der
+  Farbkonfiguration auskommentiert, dadurch wieder korrekte Anzeige der
   MenÅs.
   XP2F.PAS
+
+- RFC/Client: Bei den Select-Routinen fÅr "ZusÑtzliche Server" und
+  "Fallback-Server" wird bei <Esc> nicht mehr zum nÑchsten Feld
+  gesprungen.
+  XP9SEL.PAS
+
+- Breite des englischen SysopMode-Dialogs bei RFC-Boxen korrigiert.
+  XP-E.RQ
 
 
 
 Interne énderungen
 ==================
 
-- öbergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay)
+- öbergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay).
   XP1S.INC, LISTER.PAS
 
-- DoSend: Betreffabfrage ausgelagert als "EditBetreff"
+- DoSend: Betreffabfrage ausgelagert als "EditBetreff".
   (Prozedurrumpfgrî·e)
   XP6.PAS
 
-- DOSEmuVersion nach CLIP.PAS verlagert (Overlay)
+- DOSEmuVersion nach CLIP.PAS verlagert (Overlay).
   TYPEFORM.PAS, CLIP.PAS
 
 - Einige Funktionen nach ASM umgeschrieben (Trim, Range, Hex, Sgn, Min,
-  Max, Minmax, Blankpos, Firstchar, Lastchar)
+  Max, Minmax, Blankpos, Firstchar, Lastchar).
   TYPEFORM.PAS
 
 - Selten benutzte Routinen von TYPEFORM nach XPOVL verlagert
   (damit ca. 4k von EXE/Speicher ins Overlay verfrachtet).
   TYPEFORM.PAS, [XPOVL.PAS], *.* ('uses xpovl')
 
-- 'Testshare' jetzt in ASM
+- 'Testshare' jetzt in ASM.
   FILEIO.PAS
+
+- Einige Defaults beim Anlegen einer neuen RFC/Client-Box geÑndert.
+  XP9.INC, XP9BP.PAS
+
+- PrÅfung auf gÅltigen .BFG-Dateinamen vereinfacht ('IsDevice').
+  XP9SEL.PAS
