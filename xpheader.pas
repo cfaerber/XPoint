@@ -45,19 +45,36 @@ type
   THeader = class
   private
     function GetFirstEmpfaenger: String;
-    function GetTypChar: Char;
     procedure SetFistEmpfaenger(const Value: String);
+    function GetTypChar: Char;
+
+  private
+    FTo,FCC,FBCC: string;        
+    function GetTo: string;         procedure SetTo(s:string);
+    function GetCC: string;         procedure SetCC(s:string);
+    function GetBCC: string;        procedure SetBCC(s:string);
+    function GetNewsgroups: string; procedure SetNewsgroups(s:string);
+    
   public
     netztyp: byte;                      { --- intern ----------------- }
     archive: boolean;                   { archivierte PM               }
     attrib: word;                       { Attribut-Bits                }
     filterattr: word;                   { Filter-Attributbits          }
 
-    Empfaenger: TStringList;            { List of EMP: and To: }
-    Kopien: TStringList;                { KOP: - Liste }
-    CC: TStringList;                    { List of CC: }
-    BCC: TStringList;                   { List of BCC: }
+  { -- Envelope-Empfänger -------------------------------------------- }
+    Empfaenger: TStringList;            { EMP:                         }
+    Kopien:     TStringList;            { KOP: = bereits versendet     }
 
+  { -- Informative Empfänger ----------------------------------------- }
+    property UTo: string read GetTo  write SetTo;
+    property CC:  string read GetCC  write SetCC;
+    property BCC: string read GetBCC write SetBCC;
+    property Newsgroups: string read GetNewsgroups write SetNewsgroups;
+
+  { -- MakeEnvelope -------------------------------------------------- }
+    procedure ReconstructEnvelope;
+    
+  public
     betreff: string;
     absender: string;
     datum: string;                      { Netcall-Format               }
@@ -142,6 +159,10 @@ type
     // get managled Message ID
     function BinaryMsgId: string;
 
+  { -- Flags --------------------------------------------------------- }    
+
+
+  { -- Write/Read ---------------------------------------------------- }
     procedure WriteToStream(stream:TStream);
     procedure WriteZ38(stream:TStream);
     procedure WriteZConnect(stream:TStream);
@@ -152,7 +173,6 @@ type
 //  procedure ReadRFC(stream:TStream);
 
     property FirstEmpfaenger: String read GetFirstEmpfaenger write SetFistEmpfaenger;
-
     property TypChar: Char read GetTypChar;
   end;
 
@@ -195,8 +215,8 @@ begin
   inherited Create;
   Empfaenger := TStringList.Create;
   Kopien := TStringList.Create;
-  CC := TStringList.Create;
-  BCC := TStringList.Create;
+//  CC := TStringList.Create;
+//  BCC := TStringList.Create;
   ULine := TStringList.Create;
   XLIne := TStringList.Create;
   fLine := TStringList.Create;
@@ -220,8 +240,8 @@ begin
   filterattr := 0;
   Empfaenger.Clear;
   Kopien.Clear;
-  CC.Clear;
-  BCC.Clear;
+//  CC.Clear;
+//  BCC.Clear;
   betreff := '';
   absender := '';
   datum := '';
@@ -312,8 +332,8 @@ end;
 destructor THeader.Destroy;
 begin
   Empfaenger.Free;
-  CC.Free;
-  BCC.Free;
+//  CC.Free;
+//  BCC.Free;
   Kopien.Free;
   ULine.Free;
   XLine.Free;
@@ -620,6 +640,128 @@ begin
   Result := FormMsgId(MsgId);
 end;
 
+function THeader.GetTo: string;
+var i: integer;
+begin
+  { -- if we have non-envelope information, use it ------------------- }
+  if (Length(FTo)>0) or (Length(FCC)>0) or (Length(FBCC)>0) then
+    result := FTo else
+    
+  { -- construct to out of EMP if STAT: BCC is not set --------------- }
+  if nokop then
+    result := '' else
+  begin
+    result := '';
+    for i:=0 to Empfaenger.Count-1 do
+      if cpos('@',Empfaenger[i])<>0 then
+        result:=result+Empfaenger[i]+',';
+    for i:=0 to Kopien.Count-1 do
+      if cpos('@',Kopien[i])<>0 then
+        result:=result+Kopien[i]+',';
+    SetLength(result,Length(result)-1);
+  end;
+end;
+
+procedure THeader.SetTo(s:string);
+begin
+  FTo := S;
+end;
+
+function THeader.GetCC: string;
+begin
+  result := FCC;
+end;
+
+procedure THeader.SetCC(s:string);
+begin
+  FCC := S;
+end;
+
+function THeader.GetBCC: string;
+var i: integer;
+begin
+  { -- if we have non-envelope information, use it ------------------- }
+  if (Length(FTo)>0) or (Length(FCC)>0) or (Length(FBCC)>0) then
+    result := FTo else
+    
+  { -- construct BCC out of EMP if STAT: BCC is set ------------------ }
+  if not nokop then
+    result := '' else
+  begin
+    result := '';
+    for i:=0 to EMPfaenger.Count-1 do
+      if cpos('@',EMPfaenger[i])<>0 then
+        result:=result+EMPfaenger[i]+',';
+    for i:=0 to KOPien.Count-1 do
+      if cpos('@',KOPien[i])<>0 then
+        result:=result+KOPien[i]+',';
+    SetLength(result,Length(result)-1);
+  end;
+end;
+
+procedure THeader.SetBCC(s:string);
+begin
+  FBCC := S;
+end;
+
+function THeader.GetNewsgroups: string;
+var i: integer;
+begin
+  { -- Construct Newsgroups out of EMP/KOP --------------------------- }
+  result := '';
+  for i:=0 to EMPfaenger.Count-1 do
+    if cpos('@',EMPfaenger[i])=0 then
+      result:=result+EMPfaenger[i]+',';
+  for i:=0 to KOPien.Count-1 do
+    if cpos('@',KOPien[i])=0 then
+      result:=result+KOPien[i]+',';
+  SetLength(result,Length(result)-1);
+end;
+
+procedure THeader.SetNewsgroups(s:string);
+var n:   TSTringList;
+    i,j: integer;
+begin
+  n := TStringList.Create;
+ try
+
+  { -- Build list of Newsgroups -------------------------------------- } 
+  n.Sorted := true;
+  n.CaseSensitive := false;
+
+  while Length(s)>0 do
+  begin
+    i:=RightPos(',',s);
+    n.Add(Mid(s,i+1));
+    SetLength(s,max(0,i-1));
+  end;
+
+  { -- Walk KOP ------------------------------------------------------ } 
+  for i:=KOPien.Count-1 downto 0 do
+    if cpos('@',KOPien[i])<=0 then      // ignore mail addreses
+      if N.Find(KOPien[i],j) then          
+        N.Delete(j)                     // no need to add
+      else
+        Kopien.Delete(i);               // no longer in Newsgroups
+      
+  { -- Walk EMP ------------------------------------------------------ }
+  for i:=EMPfaenger.Count-1 downto 0 do
+    if cpos('@',EMPfaenger[i])=0 then  
+      EMPfaenger.Delete(i);             // delete all Newsgroups
+
+  { -- Add new Newsgroups to EMP ------------------------------------- }
+  EMPfaenger.AddStrings(N);
+
+ finally
+  n.Free;
+ end;
+end;
+
+procedure THeader.ReconstructEnvelope;
+begin
+
+end;
+
 { TSendUUData }
 
 constructor TSendUUData.Create;
@@ -668,6 +810,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2002/03/03 15:52:36  cl
+  - start for envelope/informative recipient handling
+
   Revision 1.24  2002/02/18 16:59:41  cl
   - TYP: MIME no longer used for RFC and not written into database
 
