@@ -1112,8 +1112,9 @@ label abbr;
   end;
 
   { MK 06.02.2000 aus Inline in Asm konvertiert }
-  function seek0(var buf; smallsize:smallword):smallword; assembler; { suche #0 }
+  function seek0(var buf; smallsize:word):word; assembler; { suche #0 }
   asm
+{$IFDEF BP }
     mov cx, smallsize
     les di, buf
     mov al, 0
@@ -1122,12 +1123,22 @@ label abbr;
     repnz scasb
     mov ax, dx
     sub ax, cx
+{$ELSE }
+    mov  ecx, smallsize
+    mov  edi, buf
+    mov  al, 0
+    mov  edx, ecx
+    cld
+    repnz scasb
+    mov eax, edx
+    sub eax, ecx
+{$ENDIF }
   end;
 
   { MK 06.02.2000 aus Inline in Asm konvertiert }
-  function seekt(var buf; size:smallword):smallword; assembler;  { suche _'---'_ }
+  function seekt(var buf; size:word):word; assembler;  { suche _'---'_ }
   asm
-{$IFNDEF Ver32 }
+{$IFDEF BP }
         mov cx, size
         les di, buf
         mov ax, '--'
@@ -1144,6 +1155,23 @@ label abbr;
         ja  @lp
 @ok:    mov ax, dx
         sub ax, cx
+{$ELSE }
+        mov ecx, size
+        mov edi, buf
+        mov ax, '--'
+        mov bl, ' '
+        mov edx, ecx
+        cld
+@lp:    repnz scasb
+        jcxz @ok
+        cmp [edi], ax
+        jnz @lp
+        cmp [edi-2],bl
+        jnb @lp
+        cmp [edi+2],bl
+        ja  @lp
+@ok:    mov eax, edx
+        sub eax, ecx
 {$ENDIF }
   end;
 
@@ -1675,6 +1703,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/04/15 14:26:04  mk
+  - Assemblerroutinen portiert
+
   Revision 1.9  2000/04/15 12:30:58  mk
   - Compilierfaehigkeit mit VP wieder hergestellt
 
