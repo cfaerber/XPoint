@@ -41,7 +41,7 @@ const EdTempFile  : string = 'TED.TMP';
       EdSelcursor : boolean = false;    { Auswahllistencursor }
       OtherQuoteChars : boolean = false; { Andere Quotezeichen neben > }
 
-type  EdToken = byte;
+type  EdToken = Byte;
       EdTProc = function(var t:taste):boolean;   { true = beenden }
 
 
@@ -157,7 +157,7 @@ type  charr    = array[0..65500] of char;
                    next   : delnodep;
                  end;
 
-      modiproc = procedure(var data; size: word);
+      modiproc = procedure(var data; Size: Integer);
 
 
 var   Defaults : edp;
@@ -169,7 +169,7 @@ var   Defaults : edp;
 
 { ------------------------------------------------ externe Routinen }
 
-function SeekStr(var data; len:word;
+function SeekStr(var data; len: LongWord;
                  var s:string; igcase:boolean):integer; assembler; {&uses ebx, esi, edi}
 
   { -1 = nicht gefunden, sonst Position }
@@ -298,7 +298,7 @@ end ['EAX', 'EBX', 'ESI'];
 end;
 {$ENDIF }
 
-procedure FlipCase(var data; size: word);
+procedure FlipCase(var data; size: Integer);
 var
   i: integer;
 begin
@@ -778,7 +778,7 @@ var mfm   : byte;
     p     : absatzp;
     tail  : absatzp;
     ibuf  : ^tbytestream;
-    b_read: word;
+    b_read: Integer;
     root  : absatzp;
 
   procedure AppP;
@@ -1240,7 +1240,7 @@ var  dl         : displp;
 
   function PosCoord(pos:position; disp:byte):longint; forward;
 
-  procedure InterpreteToken(tk:integer);
+  procedure InterpreteToken(tk: EdToken);
 
     { --------------------------------------------------- Steuerung }
 
@@ -1342,8 +1342,7 @@ var  dl         : displp;
         editfBottom, editfWordLeft, editfWordRight] then ShiftMarkStart;
       
       case tk of
-        -1                : CorrectWorkpos;
-
+        editCorrectWorkpos: CorrectWorkPos;
         { Blockoperationen }
         editfText         : ZeichenEinfuegen(false);
         editfBS           : BackSpace;
@@ -1713,7 +1712,7 @@ begin
     repeat
       if aufbau then display;
       showstat;
-      InterpreteToken(-1);         { CorrectWorkpos }
+      InterpreteToken(EditCorrectWorkpos);         { CorrectWorkpos }
       gotoxy(x+scx-1,y+scy);
       if insertmode then get(t,curon)
       else get(t,cureinf);
@@ -1771,6 +1770,10 @@ finalization
   Dispose(Language);
 {
   $Log$
+  Revision 1.68  2001/10/17 07:29:11  mk
+  - corrected range check error
+  - converted some Word to Integer
+
   Revision 1.67  2001/09/26 23:34:18  mk
   - fixed FPC compile error with newest snapshot:
     Error: Self can only be an explicit parameter in message handlers or class methods
