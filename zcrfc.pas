@@ -177,7 +177,7 @@ type TDotEscapeStream = class(TStream)
 implementation
 
 uses
-  xpheader, UTFTools, xpmakeheader, resource, Debug;
+  xpheader, UTFTools, xpmakeheader, resource, Debug, addresslist;
 
 const
   cr: char = #13;
@@ -231,6 +231,20 @@ procedure ClearHeader;
 begin
   hd.Clear;
   Mail.Clear;
+end;
+
+function DecodePhrase(const input: string): string;
+begin
+  result := RFC2047_Decode(rfcUnQuotePhrase(input),csCP437);
+end;
+
+function RFCAddressToZConnect(const input: string):string;
+var a,n:string;
+begin
+  RFCReadAddress(input,a,n,DecodePhrase);
+  result := a;
+  if n<>'' then
+  result := a+' ('+n+')';
 end;
 
 function unbatch(s: string): boolean; forward;
@@ -399,7 +413,7 @@ begin
         begin
           SMTP := true; smtp_compression:=compress_none;
         end
-        else
+        else  
           if switch = 'bsmtp' then
         begin
           SMTP := true; smtp_compression:=compress_bzip2;
@@ -763,17 +777,17 @@ var
 begin
   with hd do
   begin
-    if XEmpf.Count = 0 then wrs('EMP: /UNZUSTELLBAR');
-    for i := 0 to XEmpf.Count - 1 do
-      wrs('EMP: ' + xempf[i]);
-    for i := 0 to XOEM.Count - 1 do
+    if Empfaenger.Count = 0 then wrs('EMP: /UNZUSTELLBAR');
+    for i := 0 to Empfaenger.Count - 1 do
+      wrs('EMP: ' + Empfaenger[i]);
+    for i := 0 to OEM.Count - 1 do
     begin
-      ml := min(length(xoem[i]), length(xempf[0]));
-      if (xoem[i] <> '') and (LeftStr(LowerCase(xoem[i]), ml) <>
-        LeftStr(LowerCase(xempf[0]), ml)) then
-        wrs('OEM: ' + xoem[i]);
+      ml := min(length(oem[i]), length(empfaenger[0]));
+      if (oem[i] <> '') and (LeftStr(LowerCase(oem[i]), ml) <>
+        LeftStr(LowerCase(empfaenger[0]), ml)) then
+        wrs('OEM: ' + oem[i]);
     end;
-    if not getrecenvemp and (envemp<>'') then wrs('U-X-Envelope-To: '+envemp);
+//  if not getrecenvemp and (envemp<>'') then wrs('U-X-Envelope-To: '+envemp);
     wrs('ABS: ' + absender + iifs(realname = '', '', ' (' + realname + ')'));
     if wab <> '' then wrs('WAB: ' + wab);
     wrs('BET: ' + betreff);
@@ -816,8 +830,8 @@ begin
           for i:=0 to mailcopies.count-1 do
             wrs('DISKUSSION-IN: '+mailcopies[i]);
         if (mailcopies.count>0) and (followup.count=0) then
-          for i:=0 to xempf.count-1 do
-            wrs('DISKUSSION-IN: '+xempf[i])
+          for i:=0 to Empfaenger.count-1 do
+            wrs('DISKUSSION-IN: '+Empfaenger[i])
       end
     end;
     if typ = 'B' then wrs('TYP: BIN'); (* else
@@ -1441,64 +1455,6 @@ var
 
   drealn: string;
 
-  procedure getadr(line: string;var adr, realname: string);
-  var
-    p, p2: integer;
-  begin
-    realname := '';
-    line := trim(line);
-    if (firstchar(line) = '"') and (cpos('<', line) > 5) then
-    begin                               { neu in 3.11 }
-      p := cPos('"', mid(line, 2));
-
-      { Realname-Konvertierung: Hans \"Hanswurst\" Wurst }
-      while line[p] = '\' do
-      begin
-        delete(line, p, 1);
-        p := cPos('"', mid(line, p + 1)) + p - 1;
-      end;
-
-      if p > 0 then
-      begin
-        realname := copy(line, 2, p - 1);
-        line := trim(mid(line, p + 2));
-      end;
-    end;                                { ... bis hier }
-    p := cpos('(', line);
-    p2 := cpos('<', line); { Klammer im Realname beachten }
-    if (p > 0) and ((p2 = 0) or (p2 > cpos('>', line))) then
-    begin
-      realname := copy(line, p + 1, length(line) - p - 1);
-      line := trim(LeftStr(line, p - 1));
-      p := pos('),', realname);         { mehrerer ","-getrennte Adressen }
-      if p > 0 then truncstr(realname, p - 1);
-    end;
-    p := cpos('<', line);
-    if p > 0 then
-    begin
-      p2 := cpos('>', line);
-      if p2 < p then
-        adr := mid(line, p + 1)
-      else
-      begin
-        adr := copy(line, p + 1, p2 - p - 1);
-        if realname = '' then
-          if p = 1 then
-            realname := trim(mid(line, p2 + 1))
-          else
-            realname := trim(LeftStr(line, p - 1));
-      end;
-    end
-    else
-      adr := line;
-    if (FirstChar(adr) = '@') and (cpos(':', adr) > 0) then
-    begin
-      delete(adr, 1, cpos(':', adr));   { Route-Adresse nach RFC-822 aufloesen }
-      if cpos('@', adr) = 0 then adr := adr + '@invalid';
-    end;
-    if FirstChar(realname) = '"' then UnQuote(realname);
-  end;
-
   { uebersetzt einen RFC Forumnamen in einen ZC Forumnamen }
   function forumn_rfc2zc(zcforumn: string): string;
   var
@@ -1514,7 +1470,7 @@ var
   end;
 
   { liesst eine Newsgroups-Zeile in einen tstring }
-  procedure getnewsgroupsline(line: string; List: TStringlist);
+  procedure GetNewsgroups(line: string; List: TStringlist);
   var
     p: integer;
   begin
@@ -1529,7 +1485,7 @@ var
       end
     end;
   end;
-
+(*
   procedure GetEmpf;
   var
     p, p2: Integer;
@@ -1582,7 +1538,7 @@ var
       until (sto = '');
     end;
   end;
-
+*)
   { liesst eine Followup-To-Zeile }
   procedure getfollowup(line: string; FollowUp: TStringList; var poster: boolean);
   var
@@ -1592,7 +1548,7 @@ var
     lposter:=false;
     if cpos('@',line)=0 then
     begin
-      getnewsgroupsline(line,FollowUp);
+      getnewsgroups(line,FollowUp);
       for i:=0 to FollowUp.count-1 do
         if lowercase(Followup[i])='/poster' then
         begin
@@ -1604,54 +1560,28 @@ var
     end
   end;
 
-//  procedure GetNewsgroups;
-//  var
-//    p: integer;
-//
-//    procedure replslash(var s0: string);
-//    var
-//      p: integer;
-//    begin
-//      repeat
-//        p := cpos('.', s0);
-//        if p > 0 then s0[p] := '/';     { '.' -> '/' }
-//      until p = 0;
-//    end;
-//
-//  begin
-//    if mail then exit;
-//    RFCRemoveComment(s0);
-//    s0 := trim(s0);
-//    replslash(s0);
-//    i := 1;
-//    while s0 <> '' do
-//      with hd do
-//      begin
-//        p := cpos(',', s0);
-//        if p = 0 then p := length(s0) + 1;
-//        if p > 2 then
-//          XEmpf.Add('/' + LeftStr(s0, p - 1));
-//        s0 := trim(mid(s0, p + 1));
-//      end;
-//  end;
 
-  procedure GetKOPs;
-  var
-    p: integer;
-    s, a, r: string;
+  procedure GetCC;
+  var List: TAddressList;
   begin
-    s0 := trim(s0) + ',';
-    while cpos(',', s0) > 0 do
-    begin
-      p := cpos(',', s0);
-      s := trim(mid(s0, p + 1));
-      if p > 2 then
-      begin
-        truncstr(s0, p - 1);
-        GetAdr(s0,a,r);
-        hd.Uline.Add('KOP: ' + a + iifs(r <> '', ' (' + r + ')', ''));
-      end;
-      s0 := s;
+    List := TAddressList.Create;
+    try
+      RFCReadAddressList(s0,List,DecodePhrase);  
+      hd.CC := RFCWriteAddressList(List,nil,[atCC]);
+    finally
+      List.Free;
+    end;
+  end;
+
+  procedure GetTo;
+  var List: TAddressList;
+  begin
+    List := TAddressList.Create;
+    try
+      RFCReadAddressList(s0,List,DecodePhrase);  
+      hd.UTo := RFCWriteAddressList(List,nil,[atTo]);
+    finally
+      List.Free;
     end;
   end;
 
@@ -1746,7 +1676,7 @@ var
     by := GetRec('by ');
     from := GetRec('from ');
     { Envelope-Empfaenger ermitteln }
-    if (hd.envemp='') and getrecenvemp then hd.envemp:=GetRec('for ');
+    if (hd.Empfaenger.Count<=0) and getrecenvemp then hd.Empfaenger.Add(RFCNormalizeAddresS(GetRec('for '),''));
     if (by <> '') and (LowerCase(by) <> LowerCase(RightStr(hd.pfad, length(by))))
       then
     begin
@@ -1813,7 +1743,7 @@ begin
         case zz[1] of
           'c':
             if zz = 'cc' then
-              GetKOPs
+              GetCC
             else
               if zz = 'content-type' then
               GetContentType(RFCRemoveComments(s0))
@@ -1830,7 +1760,7 @@ begin
               GetDate {argl!}
             else
               if zz = 'disposition-notification-to' then
-              GetAdr(s0,EmpfBestTo,drealn)
+              RFCReadAddress(s0,EmpfBestTo,drealn,DecodePhrase)
             else
               if zz = 'distribution' then
               GetVar(distribution, s0)
@@ -1844,10 +1774,10 @@ begin
               GetReceived
             else
               if zz = 'reply-to' then
-                GetAdr(s0, ReplyTo,drealn)
+                RFCReadAddress(s0, ReplyTo,drealn,DecodePhrase)
             else
               if zz = 'return-receipt-to' then
-              GetAdr(s0,EmpfBestTo,drealn)
+              RFCReadAddress(s0,EmpfBestTo,drealn,DecodePhrase)
             else
               Uline.Add('U-' + s1);
           's':
@@ -1855,7 +1785,7 @@ begin
               betreff := s0
             else
               if zz = 'sender' then
-              GetAdr(s0,sender,drealn)
+              RFCReadAddress(s0,sender,drealn,DecodePhrase)
             else
               if zz = 'supersedes' then
               ersetzt := GetMsgid
@@ -1893,8 +1823,8 @@ begin
               if zz = 'x-priority' then
               GetPriority
             else
-              if zz='x-envelope-to'  then
-              envemp:=s0
+              if(zz='x-envelope-to')and(hd.Empfaenger.Count<=0) then
+              hd.Empfaenger.Add(RFCAddressToZConnect(s0))
             else
               if zz = 'x-homepage' then
               homepage := s0
@@ -1910,11 +1840,10 @@ begin
         else
           if zz = 'from' then
           begin
-            s0 := RFC2047_Decode(s0,csCP437);
-            GetAdr(s0,absender,realname)
+            RFCReadAddress(s0,absender,realname,DecodePhrase)
           end else
             if zz = 'to' then
-            GetEmpf
+            GetTo
           else
             if zz = 'message-id' then
             msgid := GetMsgid
@@ -1922,8 +1851,12 @@ begin
             if zz = 'organization' then
             organisation := s0
           else
-            if zz = 'newsgroups' then
-            getnewsgroupsline(s0,xempf)
+            if zz = 'newsgroups' then begin
+              if mail then
+                GetNewsGroups(s0,hd.Kopien)
+              else 
+                GetNewsGroups(s0,hd.Empfaenger);
+            end
           else
             if zz = 'path' then
             pfad := s0
@@ -1936,7 +1869,7 @@ begin
               if (s0='nobody') or (s0='never') then
                 mailcopies.add(s0)
               else begin
-                GetAdr(s0,TempS,drealn);
+                RFCReadAddress(s0,TempS,drealn,DecodePhrase);
                 mailcopies.add(TempS)
               end
             end
@@ -1963,8 +1896,8 @@ begin
             if zz = 'priority' then
             GetPriority
           else
-            if zz='envelope-to' then
-            envemp:=s0
+            if(zz='envelope-to')and(hd.empfaenger.count<=0)then
+            hd.Empfaenger.Add(RFCAddressToZConnect(s0))
           else
             if zz = 'lines' then
             Lines := IVal(Trim(s0))
@@ -1991,7 +1924,7 @@ begin
     if UpperCase(wab) = UpperCase(absender) then
       wab := '';
     betreff     := RFC2047_Decode(betreff,csCP437);
-//    realname    := RFC2047_Decode(realname,csCP437);
+//  realname    := RFC2047_Decode(realname,csCP437);
     summary     := RFC2047_Decode(summary,csCP437);
     keywords    := RFC2047_Decode(keywords,csCP437);
     organisation:= RFC2047_Decode(organisation,csCP437);
@@ -2011,7 +1944,7 @@ begin
       else
         Mailcopies.Add(Absender);
 
-    if (XEmpf.Count = 1) and (Followup.Count = 1) and (xempf[0] = Followup[0]) then
+    if (Empfaenger.Count = 1) and (Followup.Count = 1) and (Empfaenger[0] = Followup[0]) then
       Followup.Clear;
     MimeAuswerten;
   end;
@@ -2050,6 +1983,12 @@ begin
   begin
     ClearHeader;
     hd.netztyp:=nt_UUCP;
+
+  // -- Set envelope recipient from UUCP envelope ----------------------
+    if mailuser<>'' then
+      hd.Empfaenger.Add(mailuser);
+
+  // -- Read envelope recipient from UUCP envelope ---------------------
     FirstLineHasBeenRead:=False;
     repeat                                { Envelope einlesen }
       p := 0;
@@ -2126,25 +2065,9 @@ begin
         (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
       hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
 
-      if (mailuser='') and (hd.envemp<>'') then
-      begin
-        if cpos('<',hd.envemp)=1 then delete (hd.envemp,1,1);
-        if (cpos('>',hd.envemp)=length(hd.envemp))
-          and (length(hd.envemp)>0) then DeleteLastChar(hd.envemp);
-        mailuser:= SetMailuser(hd.envemp);
-      end;
-
-      try
-      if (mailuser <> '') and (mailuser <> hd.xempf[0]) then
-      begin
-       // Envelope-Empfaenger einsetzen
-        hd.xoem.Assign(hd.xempf);
-        hd.xempf.Clear;
-        hd.xempf.Add(mailuser);
-      end;
-      except
-        hd.xempf.Add(mailuser);
-      end;
+  // -- No envelope recipients so far; fake them -----------------------      
+      if hd.Empfaenger.Count<=0 then
+        hd.ReconstructEnvelope;      
 
       // hd.Lines>=0 here if line count was given in RFC header.
       // If not, assume mbox format: Recognize 'crlfFrom ' as beginning
@@ -2230,7 +2153,8 @@ begin
         hd.wab := GetAdr
       else                              { Envelope-From }
         if UpperCase(LeftStr(s, 7)) = 'RCPT TO' then
-          hd.FirstEmpfaenger := GetAdr;        { Envelope-To }
+          hd.Empfaenger.Add(RFCNormalizeAddress(GetAdr,''));
+//          hd.FirstEmpfaenger := GetAdr;        { Envelope-To }
       ende := (bufpos >= bufanz) {or (s='QUIT')};
     until ende or (s = 'DATA') or (s = 'QUIT');
     if s = 'DATA' then
@@ -2268,11 +2192,11 @@ begin
         (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
       hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
 
-      if (mempf <> '') and (hd.xempf.count > 0) and (mempf <> hd.xempf[0]) then
+      if (mempf <> '') and (hd.empfaenger.count > 0) and (mempf <> hd.empfaenger[0]) then
       begin
-        hd.xoem.Assign(hd.xempf);
-        hd.XEmpf.Clear;
-        hd.xempf.Add(mempf);
+        hd.oem.Assign(hd.Empfaenger);
+        hd.Empfaenger.Clear;
+        hd.Empfaenger.Add(mempf);
       end;
 
       fp := fpos; bp := bufpos;
@@ -3643,6 +3567,10 @@ end;
 
 {
   $Log$
+  Revision 1.98  2002/04/14 22:30:26  cl
+  - changes for new address handling
+  - fixed GetAdr
+
   Revision 1.97  2002/04/12 22:08:18  mk
   - fixed stripping of last character (">") of cancel headers
 
