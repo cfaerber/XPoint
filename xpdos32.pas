@@ -30,7 +30,7 @@ unit xpdos32;
 interface
 
 uses
-  UTFTools,MIME;
+  XPCharset, MIME;
 
 { Anzahl der aktuellen Bildschirmzeilen/Spalten }
 function SysGetScreenLines: Integer;
@@ -725,6 +725,9 @@ end.
 
 {
   $Log$
+  Revision 1.16  2003/10/01 21:05:56  mk
+  - fixed DOS32 compile problem due to new unit names
+
   Revision 1.15  2001/10/01 19:32:00  ma
   - compiles again (DOS32)
 
