@@ -311,13 +311,13 @@ begin
             geti(su,  'NNTP-Port',nntp_port) or
             gets(s,su,'NNTP-ID',nntp_id,255) or
             gets(s,su,'NNTP-Password',nntp_pwd,255) or
-            gets(s,su,'POP3_IP', pop3_ip,255) or
-            gets(s,su,'POP3_ID', pop3_id,255) or
-            gets(s,su,'POP3_Ppwd', pop3_pwd, 255) or
-            getx(su,  'POP3_Clear', pop3_clear) or
-            gets(s,su,'SMTP_IP', smtp_ip, 255) or
-            gets(s,su,'SMTP_ID', smtp_id, 255) or
-            gets(s,su,'SMTP_Pwd', smtp_pwd, 255) or
+            gets(s,su,'POP3-IP', pop3_ip,255) or
+            gets(s,su,'POP3-ID', pop3_id,255) or
+            gets(s,su,'POP3-Password', pop3_pwd, 255) or
+            getx(su,  'POP3Clear', pop3_clear) or
+            gets(s,su,'SMTP-IP', smtp_ip, 255) or
+            gets(s,su,'SMTP-ID', smtp_id, 255) or
+            gets(s,su,'SMTP-Password', smtp_pwd, 255) or
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
             getr(su,  'Letzte Verbindung',LastCall)
           ) then
@@ -356,7 +356,8 @@ begin
     rfehler(902);     { 'ungÅltiger Boxname!' }
     exit;
     end;
-  with bp^ do begin
+  with
+  bp^ do begin
     writeln(t,'Boxname=',boxname);
     writeln(t,'Pointname=',pointname);
     writeln(t,'Username=',username);
@@ -444,10 +445,22 @@ begin
     writeln(t,'7e1Login=',jnf(uucp7e1));
     if janusplus then writeln(t,'JanusPlus=J');
     writeln(t,'DelQWK=',jnf(DelQWK));
-    if nntp_ip<>'' then writeln(t,'NNTP-Host=',nntp_ip);
+
+    if nntp_ip<>''   then writeln(t,'NNTP-Host=',nntp_ip);
     if nntp_port<>-1 then writeln(t,'NNTP-Port=',nntp_port);
-    if nntp_id<>'' then writeln(t,'NNTP-ID=',nntp_id);
-    if nntp_pwd<>'' then writeln(t,'NNTP-Password=',nntp_pwd);
+    if nntp_id<>''   then writeln(t,'NNTP-ID=',nntp_id);
+    if nntp_pwd<>''  then writeln(t,'NNTP-Password=',nntp_pwd);
+    //////////////////////////////////
+    if pop3_ip <>''  then writeln(t,'POP3-IP=',pop3_ip);
+    if pop3_id <>''  then writeln(t,'POP3-ID=',pop3_id);
+    if pop3_pwd<>''  then writeln(t,'POP3-Password=',pop3_pwd);
+    if not pop3_clear then writeln(t,'POP3Clear=N');
+
+    if smtp_ip <>''  then writeln(t,'SMTP-IP=',smtp_ip);
+    if smtp_id <>''  then writeln(t,'SMTP-ID=',pop3_id);
+    if smtp_pwd<>''  then writeln(t,'SMTP-Password=',smtp_pwd);
+    if SmtpAfterPOP  then writeln(t,'SmtpAfterPOP=J');
+    ///////////////////////////////////////////
     if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall
     );
     end;
@@ -562,6 +575,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/08/20 21:50:34  mo
+  boxenparameter werden nun abgespeichert
+
   Revision 1.21  2000/08/19 20:59:09  mk
   - Auslesen der neuen Boxenparameter eingebaut
 
