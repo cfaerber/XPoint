@@ -1529,6 +1529,7 @@ begin
     if c <> #13 then
     begin
       inc(l);
+      if c = #26 then c := '?'; // Ctrl-Z abfangen
       // Die ersten MaxSLen Bytes machen wir effizient, danach machen
       // wir uns ersteinmal keinen groesseren Aufwand
       if l <= MaxSlen then
@@ -3489,28 +3490,28 @@ type rcommand = (rmail,rsmtp,rnews);
     { queue data file }
     write(fc,iifs(ParECmd,'E ','S '), name2, ' ', name, ' ', iifs(t in [rmail,rsmtp], MailUser,
       NewsUser), ' - ', name2, ' 0666');
-    if ParECmd then 
-      writeln(fc, ' "" ', _filesize(dest + fn + '.OUT'),' ',command) 
-    else if ParSize then 
-      writeln(fc, ' "" ', _filesize(dest + fn + '.OUT')) 
-    else 
+    if ParECmd then
+      writeln(fc, ' "" ', _filesize(dest + fn + '.OUT'),' ',command)
+    else if ParSize then
+      writeln(fc, ' "" ', _filesize(dest + fn + '.OUT'))
+    else
       writeln(fc);
 
-    if not ParECmd then 
+    if not ParECmd then
     begin
       { queue execution file }
       nr := hex(NextUunumber, 4);
       assign(f2, dest + 'X-' + nr + '.OUT');
       rewrite(f2, 1);
       wrs(f2, 'U ' + iifs(t in [rmail,rsmtp],MailUser,NewsUser) + ' ' + _from);
-  
+
       wrs(f2, 'F ' + name);
       wrs(f2, 'I ' + name);
       wrs(f2, 'C ' + command);
-  
+
       fs := filesize(f2);
       close(f2);
-  
+
       name2 := 'X.' + LeftStr(_to, 7) + 'X' + nr;
       write(fc, 'S ', name2, ' X.', LeftStr(_from, 7), iifc(t in [rmail,rsmtp], 'C', 'd'),
         nr, ' ', iifs(t in [rmail,rsmtp], MailUser, NewsUser), ' - ', name2, ' 0666');
@@ -3834,6 +3835,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2001/08/07 16:54:12  mk
+  - convert Ctrl-Z in ReadString to ?
+
   Revision 1.64  2001/07/31 13:10:35  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 
