@@ -1158,7 +1158,7 @@ begin
       rfehler(312);     { 'Diese Nachricht stammt nicht von Ihnen!' }
     Hdp.Free;
     exit;
-  end;
+  end;  
 
   leer:='';
   if hds>1 then
@@ -1168,10 +1168,9 @@ begin
                     _beznet:=hdp.netztyp;
                     ControlMsg:=true;
                     dat:=CancelMsk;
-                    empf:=hdp.FirstEmpfaenger;
                     SendEmpfList.Assign(hdp.Empfaenger);
                     hdp.Empfaenger.Clear;
-                    if DoSend(false,dat,false,false,'A'+empf,'cancel <'+_bezug+
+                    if DoSend(false,dat,false,false,'A','cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,
                               sendShow) then;
                   end;
@@ -1192,10 +1191,9 @@ begin
                     _bezug:=hdp.msgid;
                     _beznet:=hdp.netztyp;
                     dat:=CancelMsk;
-                    empf:=hdp.FirstEmpfaenger;
                     SendEmpfList.Assign(hdp.Empfaenger);
                     hdp.Empfaenger.Clear;
-                    if DoSend(false,dat,false,false,'A'+empf,'cancel <'+_bezug+
+                    if DoSend(false,dat,false,false,'A','cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,
                               sendShow) then;
                   end;
@@ -1508,6 +1506,9 @@ end;
 
 {
   $Log$
+  Revision 1.85.2.6  2003/10/13 19:04:33  mk
+  - fixed #821812: Cancel doppel
+
   Revision 1.85.2.5  2002/08/10 10:31:17  ma
   - dupekill when sorting in messages detects dupes in same buffer now
     (really kills crossposting dupes :-)
