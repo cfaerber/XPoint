@@ -144,14 +144,12 @@ begin  { __ Suchmarke }
                     else c:=markc+iifs(not smdl(dat,readdate),#16' ','  ');
                 end;
                 if length(s)>43 then                    { Brettbersicht in Normal mode }
-{$IFNDEF Delphi }
-                  if ( length(komm) > 1 ) then                  { Kommentar vorhanden ?}
-                    dispbuf[y]:=c+                                                  {   4  }
-         + forms(mid(s,2), 60 + over80 div 2)+' '   {+ 60!! }
-                                + forms( komm , 16 + over80 div 2)                  {+ 16 }
+                  if ( length(komm) > 1 ) then          { Kommentar vorhanden ?}
+                    dispbuf[y]:=c                                           {   4  }
+                                + forms(mid(s,2), 60 + (over80+1)div 2)+' ' {+ 60!! }
+                                + forms( komm , 16 + over80 div 2)          {+ 16 }
                   else
                      dispbuf[y]:=c+forms(copy(s,2,76+over80),77+over80)
-{$ENDIF }
                 else                                            { length(s)>43 then }
                              { 3             + 44                + 33 = 80 }
                   dispbuf[y]:=c+forms(copy(s,2,43),44)+forms(komm,over80+33);
@@ -173,7 +171,7 @@ begin  { __ Suchmarke }
                             +forms(pbox,9)                              { +9}
                             +strsn(grnr,4)                              { +4}
                             +' '                                        { +1}
-                            +forms(copy(s,2,37),38+over80 div 2)        {+38}
+                            +forms(copy(s,2,37+(over80 div 2)),38+(over80+1)div 2){+38}
                             +forms(komm,17+ over80 div 2);              {+17}
                 end;
               end;
@@ -606,6 +604,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2001/10/14 21:53:38  ma
+  - fixed: Long area names did not display properly
+
   Revision 1.50  2001/09/08 14:30:35  cl
   - adaptions/fixes for PGP/MIME support
 
