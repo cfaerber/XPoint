@@ -364,7 +364,11 @@ var flp : dbFLP;
   var fld : dbFeldTyp;
       b   : byte;
   begin
+{$IFDEF UnixFS }
+    if diskfree(0)<_filesize(BrettFile+'.db1') then
+{$ELSE }
     if diskfree(0)<_filesize(BrettFile+'.DB1') then
+{$ENDIF }
       interr('Zu wenig Plattenplatz zum Konvertieren der Bretterdatei.');
     with fld do begin
       fname:='adresse'; ftyp:=dbTypeString;
@@ -392,7 +396,11 @@ var flp : dbFLP;
       nt    : byte;
       name  : string[25];
   begin
+{$IFDEF UnixFS }
+    if diskfree(0)<_filesize(MsgFile+'.db1')*1.2 then
+{$ELSE }
     if diskfree(0)<_filesize(MsgFile+'.DB1')*1.2 then
+{$ENDIF }
       interr('Zu wenig Plattenplatz zum Konvertieren von MSGS.DB1!');
     with fld do begin
       fname:='name'; ftyp:=dbTypeString;
@@ -868,6 +876,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/03 20:36:54  hd
+  - Anpassungen an UnixFS
+
   Revision 1.8  2000/05/02 19:14:00  hd
   xpcurses statt crt in den Units
 
