@@ -233,7 +233,7 @@ function geti16(var su:string; v:string; var i:integer16):boolean;
 function getw(var su:string; v:string; var w:smallword):boolean;
 function getl(var su:string; v:string; var l:longint):boolean;
 function getx(var su:string; v:string; var b:boolean):boolean;
-function gets(var s,su:string; v:string; var ss:string; maxlen: cardinal):boolean;
+function gets(var s,su:string; v:string; var ss:string; maxlen: Integer):boolean;
 function getr(var su:string; v:string; var r:double):boolean;
 procedure exchange(var s:string; repl,by:string);
 
@@ -1670,12 +1670,13 @@ begin
   else getx:=false;
 end;
 
-function gets(var s,su:string; v:string; var ss:string; maxlen: cardinal):boolean;
+function gets(var s,su:string; v:string; var ss:string; maxlen: Integer):boolean;
 var p : cardinal;
 begin
   p:=pos('=',su);
   if scomp(su,v,p) then
   begin
+    if MaxLen = 0 then MaxLen := MaxInt;
     ss:=copy(s,p+1,maxlen);
     gets:=true;
   end else
@@ -2078,6 +2079,9 @@ end.
 
 {
   $Log$
+  Revision 1.100  2001/01/22 16:12:22  mk
+  - added special handling for gets with maxlen = 0
+
   Revision 1.99  2001/01/05 18:35:03  ma
   - moved Exxec unit into XP1 unit
 
