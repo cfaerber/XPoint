@@ -1320,9 +1320,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # CC's
 602  none
 + 603
-1    Special..  ~
-2    Send..     ~
-3    Change..   ~
+1    Special... ~
+2    Send...    ~
+3    Change...  ~
 -
 + 604
 # Flags im Sendefenster
@@ -3981,6 +3981,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.49.2.2  2002/07/17 16:21:39  ma
+# - cosmetics
+#
 # Revision 1.49.2.1  2002/07/16 22:13:53  ma
 # - backported SMTP Auth Login/Plain
 #

@@ -329,12 +329,12 @@ procedure ShowLine(spezial:boolean);
 begin
   attrtxt(col.coldialog);
   if spezial then begin
-    mwrt(x+3,y+10,getres2(603,1));   { 'Spezial..  ' }
+    mwrt(x+3,y+10,getres2(603,1));   { 'Spezial...' }
     mwrt(x+39,y+10,'               ');
-    end (* 05.02.2000 MH: x+38 -> x+42 *) { unbedenklich }
+    end
   else begin
-    mwrt(x+3,y+10,getres2(603,2));   { 'Absenden..' }
-    mwrt(x+39,y+10,getres2(603,3));  { 'Žndern..' }
+    mwrt(x+3,y+10,getres2(603,2));   { 'Absenden...' }
+    mwrt(x+36,y+10,getres2(603,3));  { 'Žndern...' }
     end;
 end;
 
@@ -1146,6 +1146,9 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.7  2002/07/17 16:21:39  ma
+  - cosmetics
+
   Revision 1.17.2.6  2002/07/17 16:15:37  ma
   - fixed: server box not displayed in "send" dialog
 

@@ -1388,9 +1388,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Kopien
 602  keine
 + 603
-1    Spezial..  ~
-2    Absenden.. ~
-3    Žndern..   ~
+1    Spezial... ~
+2    Absenden...~
+3    Žndern...  ~
 -
 + 604
 # Flags im Sendefenster
@@ -3991,6 +3991,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.57.2.3  2002/07/17 16:21:39  ma
+# - cosmetics
+#
 # Revision 1.57.2.2  2002/07/16 22:13:52  ma
 # - backported SMTP Auth Login/Plain
 #
