@@ -112,7 +112,7 @@ var
 {$else}
     if not usemulti2 and not crt.keypressed then begin
 {$endif}
-      t[0]:=#1; t[1]:=#31;
+      SetLength(t, 1); {t[0]:=#1;} t[1]:=#31;
       pushkeyv(t);
       end;
     koo_da:=true;
@@ -307,7 +307,7 @@ begin
     start:=0; stop:=0; _unit:=0;
     end
   else begin
-    mult:=(y2-y1+1) / total;
+    mult:=(y2-y1+1) / real(total);
     start:=y1+trunc(from*mult);
     stop:=start+trunc(gl*mult);
     _unit:=(total+1+(y2-y1)div 2) div (y2-y1+1);
@@ -331,6 +331,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/05 09:50:12  hd
+  - AnsiString-Anpassung
+
   Revision 1.17  2000/07/05 08:19:02  hd
   - Ansistring-Anpassung
 

@@ -777,8 +777,9 @@ var p,q : byte;
     s   : string;
 begin
   p:=min(ap^.size,80);
+  SetLength(s,p);
   Move(ap^.cont,s[1],p);
-  s[0]:=char(p);
+  {s[0]:=char(p);}
   p:=cpos('>',s);
   if p>5 then p:=0
   else if p>0 then begin
@@ -1793,7 +1794,7 @@ begin
     repeat
       nofs:=Advance(ap,ofs,rrand);
       if ap=endap then nofs:=min(nofs,endofs);
-      s[0]:=chr(nofs-ofs);
+      SetLEngth(s, nofs-ofs); {s[0]:=chr(nofs-ofs);}
       Move(ap^.cont[ofs],s[1],length(s));
       writeln(lst,s);
       if nofs=ap^.size then begin
@@ -2002,11 +2003,22 @@ end;
 { ---------------------------------------------- Suchfunktionen }
 
 procedure Suchen(again,ersetzen:boolean);
-const txt   : string[MaxFindLen] = '';
+const
+{$ifdef hasHugeString}
+      txt   : string = '';
+      repby : string = '';
+{$else}
+      txt   : string[MaxFindLen] = '';
       repby : string[MaxFindLen] = '';
+{$endif}
       igcase: boolean = true;
       lastop: byte    = 0;         { 1=suchen, 2=suchen/ersetzen }
-var   stxt  : string[MaxFindLen];
+var
+{$ifdef hasHugeString}
+      stxt  : string;
+{$else}
+      stxt  : string[MaxFindLen];
+{$endif}
       spos  : integer;
       sofs  : word;
       ap    : absatzp;
@@ -2290,6 +2302,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/07/05 09:50:12  hd
+  - AnsiString-Anpassung
+
   Revision 1.22  2000/07/04 12:04:15  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

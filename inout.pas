@@ -674,13 +674,12 @@ begin
     if c=#31 then
       z:='!!'   { s. MAUS2.mint }
     else begin
+      SetLength(z,1);
       z[1]:=c;
-      IF (c<>#0) THEN
-        z[0]:=#1
-      ELSE begin
+      if c=#0 then begin
         c:=readkey;
+	SetLength(z,2);
         z[2]:=c;
-        z[0]:=#2;
         end;
       end;
     cursor(curoff);
@@ -1665,6 +1664,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.45  2000/07/05 09:50:12  hd
+  - AnsiString-Anpassung
+
   Revision 1.44  2000/07/05 09:09:28  hd
   - Anpassungen AnsiString
   - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records

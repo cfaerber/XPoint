@@ -32,7 +32,11 @@ uses
 {$ENDIF }
   typeform;
 
+{$ifdef hasHugeString}
+type   taste   = string;
+{$else}
 type   taste   = string[2];
+{$endif}
 
 const  keyf1   = #0#59;             { Funktionstasten }
        keyf2   = #0#60;
@@ -229,13 +233,12 @@ end;
 
 procedure __get(var t:taste);        { Taste einlesen; liefert '' bei FNkey  }
 begin
+  SetLength(t,1);
   t[1]:=readkey;
   if t[1]=#0 then begin
-    t[0]:=#2;
+    SetLength(t,2); {t[0]:=#2;}
     t[2]:=readkey;
-    end
-  else
-    t[0]:=#1;
+  end;
   func_proc(t);
 end;
 
@@ -347,6 +350,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.26  2000/07/05 09:50:12  hd
+  - AnsiString-Anpassung
+
   Revision 1.25  2000/06/24 14:10:26  mk
   - 32 Bit Teile entfernt
 

@@ -42,7 +42,7 @@ procedure EdSetScreenwidth(w:byte);         { globale Einstellungen }
 
 function  EdInit(l,r,o,u:byte; rand:integer; savesoftbreaks:boolean;
                  NeuerAbsatzUmbruch:byte; iOtherQuoteChars:boolean):ECB;
-function  EdLoadFile(ed:ECB; fn:pathstr; sbreaks:boolean; umbruch:byte):boolean;
+function  EdLoadFile(ed:ECB; fn:string; sbreaks:boolean; umbruch:byte):boolean;
 function  EdEdit(ed:ECB):EdToken;
 function  EdSave(ed:ECB):boolean;
 procedure EdExit(var ed:ECB);               { Release }
@@ -60,16 +60,16 @@ procedure EdSetUkonv(umlaute_konvertieren:boolean);
 procedure EdAutoSave;
 
 function  EdModified(ed:ECB):boolean;       { externer Zugriff }
-function  EdFilename(ed:ECB):pathstr;
+function  EdFilename(ed:ECB):string;
 procedure EdAddToken(ed:ECB; t:EdToken);
 
 
 function  EddefQuitfunc(ed:ECB):taste;
-function  EddefOverwrite(ed:ECB; fn:pathstr):taste;
+function  EddefOverwrite(ed:ECB; fn:string):taste;
 procedure EddefMsgproc(txt:string; error:boolean);
 { 04.02.2000 robo }
 { procedure EddefFileproc(ed:ECB; var fn:pathstr; save:boolean); }
-procedure EddefFileproc(ed:ECB; var fn:pathstr; save,uuenc:boolean);
+procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
 { /robo }
 function  EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
 function  EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
@@ -343,7 +343,7 @@ begin
   EddefQuitfunc:=AskJN(ed,1,language^.ja);
 end;
 
-function EddefOverwrite(ed:ECB; fn:pathstr):taste;
+function EddefOverwrite(ed:ECB; fn:string):taste;
 begin
   EddefOverwrite:=AskJN(ed,2,language^.ja);
 end;
@@ -373,7 +373,7 @@ end;
 
 { 04.02.2000 robo }
 { procedure EddefFileproc(ed:ECB; var fn:pathstr; save:boolean); }
-procedure EddefFileproc(ed:ECB; var fn:pathstr; save,uuenc:boolean);
+procedure EddefFileproc(ed:ECB; var fn:string; save,uuenc:boolean);
 { /robo }
 var brk : boolean;
     mf  : char;
@@ -755,7 +755,7 @@ begin
           if (length(s)>40) and sbreaks and eoln(t) and (s[length(s)]=' ')
              and not eof(t)
           then begin
-            dec(byte(s[0]));
+            SetLength(s, Length(s)-1); {dec(byte(s[0]));}
             sbrk:=true;
             readln(t);
             end;
@@ -866,7 +866,7 @@ end;
 { /robo }
 
 
-function EdLoadFile(ed:ECB; fn:pathstr; sbreaks:boolean; umbruch:byte):boolean;
+function EdLoadFile(ed:ECB; fn:string; sbreaks:boolean; umbruch:byte):boolean;
 begin
   with edp(ed)^ do begin
     edfile:=FExpand(fn);
@@ -1184,16 +1184,18 @@ var  dl         : displp;
             if (ap=block[2].pos.absatz) and (nxo>=block[2].pos.offset) then
               bende:=block[2].pos.offset-dofs;
             end;
-          s[0]:=chr(minmax(nxo-dofs-xoffset,0,w));
+          SetLength(s, minmax(nxo-dofs-xoffset,0,w)); { s[0]:=chr(minmax(nxo-dofs-xoffset,0,w));}
           if s<>'' then Move(ap^.cont[dofs+xoffset],s[1],length(s));
           if length(s)<w then begin
             if (s<>'') and absende then begin               { Absatzende-Marke }
-              s[length(s)+1]:=absatzende;
-              inc(byte(s[0]));
+              s:= s+absatzende;
+              {s[length(s)+1]:=absatzende;
+              inc(byte(s[0]));}
               end;
             if length(s)<w then begin           { mit Space auffllen }
-              fillchar(s[length(s)+1],w-length(s),32);
-              s[0]:=chr(w);
+              SetLength(s,w);
+	      fillchar(s[length(s)+1],w-length(s),32);
+              {s[0]:=chr(w);}
               end;
             end;
           attrtxt(acol);              { Zeile anzeigen }
@@ -1883,6 +1885,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/07/05 09:50:12  hd
+  - AnsiString-Anpassung
+
   Revision 1.30  2000/07/04 12:04:15  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
