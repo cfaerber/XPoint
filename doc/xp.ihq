@@ -28,15 +28,15 @@ Aktivieren der Online-Hilfe:
 <<F1>>      zeigt zu jedem Programmteil passende Hilfs-
         informationen an
 
-<<Alt F1>>  zeigt die zuletzt abgerufene Hilfsseite an.
-        Mehrfaches Drcken von <Alt F1> bl„ttert zu
+<<Alt-F1>>  zeigt die zuletzt abgerufene Hilfsseite an.
+        Mehrfaches Drcken von <Alt-F1> bl„ttert zu
         den vorausgehenden Hilfsseiten zurck.
 
 Innerhalb einer Hilfsseite:
 
 <<F1>>      Hilfe-Inhaltsverzeichnis
 
-<<Ctrl D>>  druckt die angezeigte Hilfsseite aus. Es
+<<Ctrl-D>>  druckt die angezeigte Hilfsseite aus. Es
         gelten die Drucker-Einstellungen unter
         [/Config/Drucker].@10606
 
@@ -47,10 +47,10 @@ PgUp/PgDn etc.) innerhalb dieser Seiten bl„ttern.
 
 Viele Hilfsseiten enthalten farblich hervorgehobene
 [Querverweise] auf andere Seiten. Sie k”nnen mit den@7000
-Tasten <Tab> und <Shift Tab> oder mit den Anfangs-
+Tasten <Tab> und <Shift-Tab> oder mit den Anfangs-
 buchstaben den gewnschten Querverweis w„hlen und
 gelangen mit <Enter> zur passenden Hilfsseite. Mit
-<Alt F1> geht's wieder zurck zur vorhergehenden
+<Alt-F1> geht's wieder zurck zur vorhergehenden
 Seite.
 
 @
@@ -59,17 +59,17 @@ Die folgenden Tasten k”nnen Sie (fast) berall in
 CrossPoint verwenden:
 
    <<F1>>       Hilfe
-   <<Alt F1>>   letzte Hilfe
+   <<Alt-F1>>   letzte Hilfe
    <<F9>>       DOS-Shell
-   <<Alt F4>>   Programm beenden
+   <<Alt-F4>>   Programm beenden
 
-   <<Alt K>>    Kalender
-   <<Alt E>>    Editor
-   <<Alt T>>    Notizseite
-   <<Alt I>>    Bildschirmauszug in Datei
-   <<Alt 1>>    Bild dunkelschalten
+   <<Alt-K>>    Kalender
+   <<Alt-E>>    Editor
+   <<Alt-T>>    Notizseite
+   <<Alt-I>>    Bildschirmauszug in Datei
+   <<Alt-1>>    Bild dunkelschalten
 
-   <<Alt N>>    Fido-Nodelist abfragen
+   <<Alt-N>>    Fido-Nodelist abfragen
 
 @
 5
@@ -105,10 +105,10 @@ M”glichkeiten:
          (Offizelle XP-Homepage von Peter Mandrella)
 
          http://www.openxp.de
-         (Offizielle Homepage des OpenXP Projektes)
+         (Offizielle Homepage des OpenXP-Projekts)
 
          Bugreports fr Fehlermeldungen sollten in
-         der Usenet Newsgroup gemeldet werden.
+         der Usenet-Newsgroup gemeldet werden.
 
 <<Bei Problemen und Anfragen sollten Sie IMMER die
 <<Nummer Ihrer CrossPoint-Version angeben, bei einem
@@ -132,21 +132,32 @@ genden Datei <<LIZENZ.DOC>> und unter dem Menpunkt
 9
 <<Bezugsquellen
 
-Die aktuelle Programmversion, Zusatztools und
-Informationen zu CrossPoint finden Sie im Internet
-unter
+Die neueste Version des OpenXP-Teams und weitere
+Infos zur Weiterentwicklung von CrossPoint durch
+das OpenXP-Projekt finden Sie auf:
+
+        http://www.openxp.de/
+        oder File-Request bei 2:248/2004
+
+
+Eine sehr gut sortierte Mailbox fr alles rund um
+CrossPoint und die aktuellen Versionen des OpenXP-
+Teams ist die Kruemel Boks! des Cross-Secretary-
+Programmierers Christian von Busse im FidoNet:
+
+        2:/240/2100
+
+
+Die "klassische" Programmversion (bis v3.12d),
+Zusatztools und Informationen zu CrossPoint
+finden Sie im Internet unter:
 
         http://www.crosspoint.de/
 
-Die neuste Version und weitere Infos zur Weiter-
-entwicklung von CrossPoint durch das OpenXp-Projekt
-finden Sie auf:
 
-        http://www.openxp.de
-        oder Request bei 2:248/2004
-
-Die offizielle Support-Mailbox im FidoNet ist Max
-Raabe's Klystron BBS:
+Die offizielle Support-Mailbox fr die "klassischen"
+CrossPoint-Versionen bis v3.12d im FidoNet ist Max
+Raabes Klystron BBS:
 
         2:2454/97
 @
@@ -191,7 +202,7 @@ richten und Bretteinstellungen.
  <F8>  springt zum ersten PM-Brett
 
 
-<<Funktionen im Schreib/Lesemodus
+<<Funktionen im Schreib-/Lesemodus
 
    b   Brief in das gew„hlte Brett schreiben. Dazu
        wird der mit /Config/Extern/Editor eingestell-
@@ -224,31 +235,31 @@ richten und Bretteinstellungen.
 
 <<Funktionen im Bearbeitungsmodus ("Spezial-Modus")
 
-   H   neues Brett anlegen (hinzufgen)
+   H   neues Brett anlegen (hinzufgen).
 
   ^H   mehrere Bretter aus Brettliste w„hlen und neu
-       anlegen
+       anlegen.
 
    L   Vorhandenes Brett l”schen. Dies ist nur m”g-
        lich, wenn im Brett keine Nachrichten mehr
        vorhanden sind (was durch ein "-" am linken
        Bildrand angezeigt wird).
 
-   E   Bretteinstellungen bearbeiten (editieren)
+   E   Bretteinstellungen bearbeiten (editieren).
 
-   U   Vertreter-Einstellung/Schreibsperre „ndern
+   U   Vertreter-Einstellung/Schreibsperre „ndern.
 
    V   verknpft den Brettinhalt mit einem anderen
        Brett; es werden alle Nachrichten von diesem
        in das andere Brett "verschoben".
 
-   P   Brett(er) an neue Position verschieben
+   P   Brett(er) an neue Position verschieben.
 
-  ^T   fgt eine Trennzeile ein
+  ^T   fgt eine Trennzeile ein.
 
-   +   erh”ht die Haltezeit um einen Tag
+   +   erh”ht die Haltezeit um einen Tag.
 
-   -   verringert die Haltezeit um einen Tag
+   -   verringert die Haltezeit um einen Tag.
 
 Die Funktionen L, E und P beziehen sich auf alle
 markierten Bretter.
@@ -324,7 +335,7 @@ angezeigt.
  <F6>  Tastenmakro w„hlen
 
 
-<<Funktionen im Schreib/Lesemodus
+<<Funktionen im Schreib-/Lesemodus
 
    b   schickt einen Brief an den gew„hlten User bzw.
        an alle Empf„nger im gew„hlten Verteiler. Dazu
@@ -571,7 +582,7 @@ Nachricht auf eine „ltere Nachricht bezieht.
 
 Bei Fido-Brettnachrichten werden wahlweise statt des
 Absenders Absender und Empf„nger angezeigt. Diese
-Anzeige kann mit <Ctrl A> umgeschaltet oder unter
+Anzeige kann mit <Ctrl-A> umgeschaltet oder unter
 /Config/Anzeige/Nachrichten fest eingestellt werden.
 
 Eine Zahl statt des unversandt-Zeichens (!) gibt bei
@@ -594,10 +605,11 @@ tionen zur Verfgung.
 39
 <<Lister - allgemein
 
-Verwenden Sie die Pfeiltasten sowie Home,End,PgUp und
-PgDn zum Bl„ttern. Bei langen Zeilen kann mit <Ctrl+
-links/rechts> seitlich gebl„ttert werden. Statt PgDn
-kann auch <Space> verwendet werden.
+Verwenden Sie die Cursortasten sowie <Home>, <End>,
+<PgUp> und <PgDn> zum Bl„ttern. Bei langen Zeilen
+kann mit <Ctrl-links/rechts> der Text seitlich ge-
+bl„ttert werden. Statt <PgDn> kann auch <Space>
+verwendet werden.
 
 <<s>> sucht einen anzugebenden Begriff. Groá/Klein-
   schreibung werden dabei ignoriert. <Tab> wiederholt
@@ -694,14 +706,15 @@ antworten.
 
 <<->> springt zur Bezugsnachricht, falls vorhanden.
 
-<<Ctrl PgUp>> springt zur chronologisch vorausgehenden
+<<Ctrl-PgUp>> springt zur chronologisch vorausgehenden
       Nachricht im gleichen Brett.
 
-<<Ctrl PgDn>> springt zur chronologisch nachfolgenden
+<<Ctrl-PgDn>> springt zur chronologisch nachfolgenden
       Nachricht im gleichen Brett.
 
 <<Cursor-links>> und <<Cursor-rechts>> wechseln zwischen
   Kommentaren auf die gleiche Nachricht.
+
 
 <<Bei nicht verketteten Nachrichten (QuickMail u.a.):
 
@@ -828,15 +841,15 @@ von CrossPoint gew„hlt; alle eigenen Farbeinstellun-
 gen gehen dabei verloren. Wahlweise k”nnten Sie auch
 die Datei XPOINT.COL l”schen.
 
-Mit ¯Sichern® werden die ge„nderten Farben in XPOINT
-.COL gesichert. Nicht gesicherte nderungen bleiben
-nur bis zum Beenden des Programms aktiv.
+Mit ¯Sichern® werden die ge„nderten Farben in
+XPOINT.COL gesichert. Nicht gesicherte nderungen 
+bleiben nur bis zum Beenden des Programms aktiv.
 @
 53
 W„hlen Sie mit den blichen Tasten die gewnschte
 Farbe. Mit <Home>/<End> gelangen Sie zum oberen/un-
-teren Ende der Farbskala, mit <Ctrl links> und
-<Ctrl rechts> zum linken und rechten Ende.
+teren Ende der Farbskala, mit <Ctrl-links> und
+<Ctrl-rechts> zum linken und rechten Ende.
 
 Bei EGA- und VGA-Karten wird auch die erweiterte
 Farbpalette untersttzt; in diesem Fall k”nnen Sie
@@ -866,7 +879,7 @@ Die wichtigsten Editor-Funktionen:
 
     <F2>        Text speichern
     <Esc>       Editor verlassen
-    <Shift F2>  Text speichern und Editor verlassen
+    <Shift-F2>  Text speichern und Editor verlassen
     <F10>       [Men]@62
 
 @
@@ -893,15 +906,15 @@ links nach rechts werden angezeigt:
 <F9>        : DOS-Shell
 <F10>       : [Men]@62
 
-<Shift F2>  : Text speichern und Editor verlassen
-<Shift F3>  : Absatzumbruch im ganzen Text abschalten
-<Shift F4>  : Absatzumbruch im ganzen Text einsch.
-<Shift F5>  : Blockmarkierung ein/ausschalten
+<Shift-F2>  : Text speichern und Editor verlassen
+<Shift-F3>  : Absatzumbruch im ganzen Text abschalten
+<Shift-F4>  : Absatzumbruch im ganzen Text einsch.
+<Shift-F5>  : Blockmarkierung ein/ausschalten
 
-<Shift F7>  : Wort markieren  (= <Ctrl K><T>)
-<Shift F8>  : Absatz markieren
-<Shift F9>  : Zeile markieren
-<Shift F10> : ganzen Text markieren
+<Shift-F7>  : Wort markieren  (= <Ctrl-K><T>)
+<Shift-F8>  : Absatz markieren
+<Shift-F9>  : Zeile markieren
+<Shift-F10> : ganzen Text markieren
 
 @
 57
@@ -912,16 +925,19 @@ Durch Bewegen des Cursors, w„hrend die Umschalttaste
 <Shift> gedrckt ist, wird ebenfalls ein Textblock
 markiert.
 
-<Ctrl K><C> : Block zur Cursorposition kopieren
-<Ctrl K><V> : Block zur Cursorposition verschieben
-<Ctrl K><Y> : Block l”schen
-<Ctrl K><W> : Block in Datei schreiben
-<Ctrl K><R> : Block aus Datei lesen
-<Ctrl K><U> : Block aus Datei lesen und UU-kodieren
-<Ctrl K><O> : Block Rot13-codieren
-<Ctrl K><S> : Schreibweise (groá/klein) wechseln
-<Ctrl Q><B> : Cursor an Blockanfang bewegen
-<Ctrl Q><K> : Cursor an Blockende bewegen
+<Ctrl-K><C> : Block zur Cursorposition kopieren
+<Ctrl-K><V> : Block zur Cursorposition verschieben
+<Ctrl-K><Y> : Block l”schen
+<Ctrl-K><W> : Block in Datei schreiben
+<Ctrl-K><R> : Block aus Datei lesen
+<Ctrl-K><U> : Block aus Datei lesen und UU-kodieren
+<Ctrl-K><O> : Block Rot13-codieren
+<Ctrl-K><S> : Schreibweise (groá/klein) wechseln
+<Ctrl-Q><B> : Cursor an Blockanfang bewegen
+<Ctrl-Q><K> : Cursor an Blockende bewegen
+
+<Ctrl-Enter>: Textbaustein-Krzel auswerten
+              ([Glossary]-Funktion)@64
 
 Tasten auf dem Ziffernblock:
 
@@ -929,11 +945,11 @@ Tasten auf dem Ziffernblock:
 -  verschiebt markierten Block in die Zwischenablage
 +  fgt Zwischenablage an Cursorposition ein
 
-<Ctrl Ins>   kopiert markierten Block in die
+<Ctrl-Ins>   kopiert markierten Block in die
              Zwischenablage
-<Shift Ins>  fgt Zwischenablage an Cursorposition
+<Shift-Ins>  fgt Zwischenablage an Cursorposition
              ein
-<Shift Del>  verschiebt markierten Block in die
+<Shift-Del>  verschiebt markierten Block in die
              Zwischenablage
 
 Diese Zwischenablage arbeitet unabh„ngig von den b-
@@ -942,17 +958,17 @@ tet, wird die Windows-Zwischenablage verwendet.
 
 @
 58
-<Ctrl Q><F>  Begriff suchen
-<Ctrl Q><A>  Begriff suchen und ersetzen
-<Ctrl L>     Letzte Suchoperation wiederholen
+<Ctrl-Q><F>  Begriff suchen
+<Ctrl-Q><A>  Begriff suchen und ersetzen
+<Ctrl-L>     Letzte Suchoperation wiederholen
 @
 59
 Der Editor erlaubt das Setzen von bis zu 5 Markierun-
 gen im Text, die anschlieáend ber entsprechende
 Tastenkombinationen angesprungen werden k”nnen:
 
-<Ctrl K><x> : Markierung x an Cursorposition setzen
-<Ctrl Q><x> : springe zu Markierung x
+<Ctrl-K><x> : Markierung x an Cursorposition setzen
+<Ctrl-Q><x> : springe zu Markierung x
 
 (x = 1 bis 5)
 @
@@ -961,44 +977,44 @@ Zum L”schen von Text stehen neben der blichen <Back-
 space>- und <Del>-Taste noch folgende Funktionen zur
 Verfgung:
 
-    <Ctrl T>,
-    <Ctrl Del>       : Wort nach rechts l”schen
-    <Ctrl Backspace> : Wort nach links l”schen
-    <Ctrl Y>         : Zeile l”schen
-    <Ctrl K><Y>      : Block l”schen
-    <Ctrl Q><Y>      : bis Absatzende l”schen
-    <Alt Y>          : bis Textende l”schen (*)
+    <Ctrl-T>,
+    <Ctrl-Del>       : Wort nach rechts l”schen
+    <Ctrl-Backspace> : Wort nach links l”schen
+    <Ctrl-Y>         : Zeile l”schen
+    <Ctrl-K><Y>      : Block l”schen
+    <Ctrl-Q><Y>      : bis Absatzende l”schen
+    <Alt-Y>          : bis Textende l”schen (*)
 
 Gel”schte Textteile werden zwischengespeichert, so
 lange der Hauptspeicher ausreicht, und k”nnen mit
-<Ctrl U> wiederhergestellt werden.
+<Ctrl-U> wiederhergestellt werden.
 
 (*) Bei einigen deutschen DOS-Tastaturtreibern sind
-    <Alt Y> und <Alt Z> vertauscht.
+    <Alt-Y> und <Alt-Z> vertauscht.
 
 @
 61
-<Ctrl O><R>  aktiviert ein Einstellfenster fr ver-
+<Ctrl-O><R>  aktiviert ein Einstellfenster fr ver-
              schiedene Optionen.
 
-<Ctrl K><P>  druckt den markierten Block aus. Wurde
+<Ctrl-K><P>  druckt den markierten Block aus. Wurde
              kein Block markiert, so wird der gesamte
              Text gedruckt.
 
-<Ctrl Q><P>  springt zurck zur vorherigen Cursorpos.
+<Ctrl-Q><P>  springt zurck zur vorherigen Cursorpos.
 
-<Ctrl P>     dient zur Eingabe von Steuerzeichen.
-             Dafr ist zuerst <Ctrl P> und dann das
-             Steuerzeichen (z.B. <Ctrl A>) einzuge-
+<Ctrl-P>     dient zur Eingabe von Steuerzeichen.
+             Dafr ist zuerst <Ctrl-P> und dann das
+             Steuerzeichen (z.B. <Ctrl-A>) einzuge-
              ben.
 
-<Ctrl Q><I>  schaltet die automatische Einrckung ein
+<Ctrl-Q><I>  schaltet die automatische Einrckung ein
              bzw. aus.
 
-<Alt B>      „ndert innerhalb des Nachrichteneditors
+<Alt-B>      „ndert innerhalb des Nachrichteneditors
              den Betreff.
 
-<Ctrl B>     reformatiert den markierten Block. Ist
+<Ctrl-B>     reformatiert den markierten Block. Ist
              kein Block markiert, wird beginnend vom
              Absatz, auf dem der Cursor steht, bis
              zur n„chsten Leerzeile neu formatiert.
@@ -1006,7 +1022,7 @@ lange der Hauptspeicher ausreicht, und k”nnen mit
 @
 62
 Das Men erreichen Sie ber die Taste <F10> oder
-durch halten der rechten Maustaste.
+durch Halten der rechten Maustaste.
 
             ÚÄ Block ÄÄÄÄÄÄÄÄÄÄ¿
             ³ Kopieren       <<*>> ³
@@ -1025,7 +1041,7 @@ durch halten der rechten Maustaste.
 @
 63
 <<rechter Rand>>
-  Spalte, in der der Text automatisch umgebrochen
+  Spalte, in der der Text automatisch umbrochen
   wird.
 
 <<Absatzendezeichen>>
@@ -1120,7 +1136,7 @@ also ARC, ARJ, DWC, HYP, LZH, PAK, SQZ, ZIP oder ZOO.
 
 <<Del>>    oder <<L>> setzt die Bin„rnachricht auf "L”schen"
 
-<<Ctrl D>> druckt die angezeigte Dateiliste aus
+<<Ctrl-D>> druckt die angezeigte Dateiliste aus
 
 <<F6>>     Zeigt eine Liste aller fr den Archiv-Viewer
        definierten Tastenmakros (/Config/Tasten/M.)
@@ -1192,7 +1208,7 @@ soll.
 
 <<Parken>>  die Nachricht wird im Brett /¯Unversandt ge-
         parkt. Von dort kann sie mit /Nachricht/Wei-
-        terleiten/Erneut (Alt R) endgltig versandt
+        terleiten/Erneut (Alt-R) endgltig versandt
         werden.
 
 <<Datum>>   legt die Nachricht in der AutoVersand-Liste
@@ -1237,7 +1253,7 @@ soll.
 
 <<Weitere Funktionen:
 
-<<Ctrl K>>  (ZConnect, RFC/UUCP) schaltet die Nachrich-
+<<Ctrl-K>>  (ZConnect, RFC/UUCP) schaltet die Nachrich-
         tenmarkierung "Blindkopie" (Blind Carbon
         Copy) ein/aus. Diese bewirkt, daá bei PMs
         mit mehreren Empf„ngern die einzelnen Emp-
@@ -1293,7 +1309,7 @@ sucht und markiert alle erfaáten User der HOT.
 Achtung: Bereits vorhandene Markierungen werden nicht
 gel”scht! Auf diese Weise k”nnen Sie z.B. die User
 mehrerer Boxen markieren. Evtl. mssen also vorher
-markierte User mit <Ctrl E> ent-markiert werden.
+markierte User mit <Ctrl-E> ent-markiert werden.
 @
 74
 Geben Sie den Namen an, unter dem die markierten
@@ -1624,7 +1640,7 @@ Reihenfolge.
 
 <<Netztyp>>  „ndert den Netztyp der gew„hlten Box.
 
-<<Ok>>       verl„át die Boxen-šbersicht (geht auch mit
+<<OK>>       verl„át die Boxen-šbersicht (geht auch mit
          <Esc>).
 
 @
@@ -1708,12 +1724,12 @@ Hier sollte "2200" stehen.
 Das Upload-Protokoll ist ein externes Programm, das
 CrossPoint zum šbertragen der Nachrichten ZUR ange-
 rufenenen Box verwendet. Am einfachsten ist es, wenn
-Sie das mitgelieferte Zmodem verwenden (ZM.EXE).
+Sie das mitgelieferte ZModem verwenden (ZM.EXE).
 šbernehmen Sie dazu einfach die Voreinstellung
-"Zmodem".
+"ZModem".
 
 Wahlweise k”nnen Sie auch ein beliebiges anderes
-Protokoll verwenden, z.B. das Zmodem "GSZ" oder das
+Protokoll verwenden, z.B. das ZModem "GSZ" oder das
 bidirektionale Protokoll "HS-Link". Wenn Sie nicht
 wissen, welches Upload-Protokoll zu verwenden ist,
 dann fragen Sie bitte Ihren Sysop!
@@ -1773,8 +1789,8 @@ Pfad erreichbar ist!
 Das Download-Protokoll ist das externe Programm, mit
 dem die Nachrichten VOM angerufenen System bertra-
 gen werden. Am einfachsten ist es, wenn Sie das mit-
-gelieferte Zmodem verwenden (ZM.EXE). šbernehmen Sie
-dazu einfach die Voreinstellung "Zmodem".
+gelieferte ZModem verwenden (ZM.EXE). šbernehmen Sie
+dazu einfach die Voreinstellung "ZModem".
 
 Wahlweise k”nnen Sie auch ein beliebiges anderes Pro-
 tokoll eintragen. Dabei k”nnen die folgenden Makros
@@ -2069,10 +2085,10 @@ Diese Nummer erhalten Sie von Ihrem Sysop.
 8042
 <<Nur fr erfahrene Anwender:
 
-Hier k”nnen Sie zus„tzliche Optionen fr das Zmodem-
+Hier k”nnen Sie zus„tzliche Optionen fr das ZModem-
 Protokoll des Mailers angeben. Normalerweise sollte
 dieses Feld freibleiben - der Fido-Mailer sorgt
-dafr, daá die richtigen Zmodem-Optionen verwendet
+dafr, daá die richtigen ZModem-Optionen verwendet
 werden.
 
 Optionen, die in einzelnen F„llen sinnvoll sein
@@ -2099,9 +2115,9 @@ k”nnten:
 
 Die einzelnen Optionen mssen mit Leerzeichen ge-
 trennt werden. Eine vollst„ndige Liste finden Sie in
-ZM-GER.DOC im getrennt erh„ltlichen PD-Zmodem-Paket.
+ZM-GER.DOC im getrennt erh„ltlichen PD-ZModem-Paket.
 
-WICHTIG: Die meisten der von PD-Zmodem untersttzten
+WICHTIG: Die meisten der von PD-ZModem untersttzten
 Optionen sollten oder drfen an dieser Stelle <<nicht>>
 verwendet werden, weil der Fido-Mailer sonst nicht
 mehr korrekt arbeiten wrde. Dies gilt insbesondere
@@ -2250,7 +2266,7 @@ Wenn mehrere Protokolle angekreuzt sind, wird das
 erst(best)m”gliche verwendet; wenn Sie z.B. alle
 Protokolle eingeschaltet haben, und das angerufene
 System UUCP-g und UUCP-e untersttzt, wird UUCP-g
-verwendet. M”chten Sie statt dessen UUCP-e verwenden,
+verwendet. M”chten Sie stattdessen UUCP-e verwenden,
 mssen Sie UUCP-g abschalten.
 
 <<UUCP-g>>   Dies ist ein Standardprotokoll, das von
@@ -2492,7 +2508,7 @@ Anwahlversuchen der Netcall abgebrochen.
 
 @
 167
-Diese Einstellung legt die minimale Zmodem-šbertra-
+Diese Einstellung legt die minimale ZModem-šbertra-
 gungsgeschwindigkeit (cps-Rate) fest. Wenn die cps-
 Rate mindestens zwei Minuten lang unterhalb des
 eingestellten Wertes liegt, wird die šbertragung
@@ -2748,7 +2764,7 @@ Hand einloggen.
 Wenn Sie hier einen Dateinamen angeben, ”ffnet Cross-
 Term beim Anruf automatisch ein entprechendes Log-
 file. Ansonsten muá das Logfile - falls gewnscht -
-mit <Alt L> ge”ffnet werden.
+mit <Alt-L> ge”ffnet werden.
 
 Falls Sie keinen Pfad mit angeben, wird die Datei im
 Logfile-Pfad abgelegt, der unter /Config/Pfade ein-
@@ -2760,7 +2776,7 @@ in denen keine Netcalls erlaubt sind. CrossPoint wird
 Netcalls um diese Uhrzeiten dann abfangen. Zeitbe-
 reiche, die ber die 00:00-Grenze hinweggehen, mssen
 in zwei Eintr„ge aufgeteilt werden. Nicht mehr ben”-
-tigte Eintr„ge k”nnen mit <Ctrl Y> gel”scht werden.
+tigte Eintr„ge k”nnen mit <Ctrl-Y> gel”scht werden.
 
 Erkundigen Sie sich bei Ihrem Sysop, zu welchen Uhr-
 zeiten keine Point-Anrufe erlaubt sind!
@@ -2783,7 +2799,7 @@ ZConnect-Boxen) hat sie ZConnect-Format.
 
 Das Programm kann die Datei verarbeiten, „ndern,
 kopieren, oder beliebige andere Aktionen durchfhren.
-Es kann die Datei auch l”schen, sodaá die Daten
+Es kann die Datei auch l”schen, so daá die Daten
 nicht mehr eingelesen werden.
 
 Hinweise:
@@ -3113,7 +3129,7 @@ nur EINE.
 
 <<Fido>>     bearbeitet Fido-spezifische Einstellungen
 
-<<Ok>>       verl„át das Gruppenfenster
+<<OK>>       verl„át das Gruppenfenster
 
 Hinweis: Die Gruppen-Nummern werden von XP fortlau-
 fend vergeben. Wenn Sie eine Gruppe anlegen und an-
@@ -3229,7 +3245,7 @@ Sie die Auswahl mit <Esc> ab.
 @
 210
 Das Quote-Zeichen wird beim Zitieren ("quoten") von
-Nachrichten mit <Ctrl B>, <Ctrl P> oder /Nachricht
+Nachrichten mit <Ctrl-B>, <Ctrl-P> oder /Nachricht
 /Weiterleiten/QuoteTo oder bei /Nachricht/Extrakt
 /Als_Quote verwendet. Es wird jeder zitierten Zeile
 vorangestellt.
@@ -3424,17 +3440,17 @@ angezeigt. Dadurch sind Sie vor unliebsamen šberra-
 schungen durch berfllte Festplatten sicher.
 
 Der Mindestwert ist 1 MB. Hier sollte <<mindestens>> das
-Dreifache der gr”áten, bei Netcalls empfangenen Da-
+Dreifache der gr”áten bei Netcalls empfangenen Da-
 tenmenge stehen. Tragen Sie aber besser einen h”he-
 ren Wert ein - Fehler durch volle Festplatten fhren
 meistens zu Datenverlusten!
 @
 230
 CrossPoint besitzt einen eingebauten Nachrichten-
-Lister, sodaá eigentlich kein externer Lister ben”-
+Lister, so daá eigentlich kein externer Lister ben”-
 tigt wird. Wenn Sie sich aber nicht von Ihrem alten
 Lister trennen k”nnen, dann tragen Sie hier den Da-
-teinamen incl. Erweiterung (.COM oder .EXE) ein.
+teinamen inkl. Erweiterung (.COM oder .EXE) ein.
 
 Wahlweise kann das Makro <<$FILE>> fr die zu listende
 Datei eingesetzt werden. Ansonsten bergibt XP den
@@ -3548,8 +3564,8 @@ Diese Einstellung gilt auch fr den Editor.
        Die Uhr wird am rechten Rand der obersten
        Textzeile eingeblendet.
 
-       Dieser Schalter gilt nicht, wenn mit dem
-       Kommandozeilen-Parameter /W2 die h”chste
+       Dieser Schalter ist wirkungslos, wenn mit
+       dem Kommandozeilen-Parameter /W2 die h”chste
        Stufe der Rechenzeitfreigabe aktiviert wurde.
 
 @
@@ -3557,7 +3573,7 @@ Diese Einstellung gilt auch fr den Editor.
 Hier k”nnen Sie angeben, bis zu welcher Gr”áe von
 Ihnen verschickte Bin„rnachrichten komplett in XP
 gespeichert werden. Ist eine Nachricht gr”áer als
-angegeben, speichert CrossPoint statt dessen eine
+angegeben, speichert CrossPoint stattdessen eine
 kurze Versandmeldung, um Speicherplatz zu sparen.
 
 Achtung! Auch codierte Textnachrichten sind Bin„r-
@@ -3705,7 +3721,7 @@ daá die einzelnen Empf„nger jeweils nicht die Namen
 der brigen Empf„nger erkennen k”nnen.
 
 Der Blindkopie-Status kann auch im Sendefenster je
-Nachricht mit <Ctrl K> ein- oder ausgeschaltet
+Nachricht mit <Ctrl-K> ein- oder ausgeschaltet
 werden.
 
 Achtung: Bei ZCONNECT wird diese Funktion durch die
@@ -3780,7 +3796,7 @@ ZCONNECT- und Usenet-Nachrichten bergeben.
 
 Auáerdem wird sie bei Fido-Netcalls als Ihr System-
 name gesendet. Ist keine Organisation angegeben,
-sendet CrossPoint statt dessen Ihren Usernamen.
+sendet CrossPoint stattdessen Ihren Usernamen.
 @
 1041
 <<z.Zt. nur ZCONNECT:>>
@@ -3828,14 +3844,14 @@ angezeigt.
 <<ZCONNECT / RFC:>>
 
 Falls Sie eine Homepage im Internet haben, k”nnen
-Sie hier die vollst„ndige "URL" davon angeben, z.B.
+Sie hier die vollst„ndige "URL" ngeben, z.B.:
 
     http://meine.domain.de/~meine_homepage.html
 
-Diese Zeile wird dann im Kopf Ihrer Nachrichten mit-
+Diese Zeile wird dann im Kopf Ihrer Nachrichten mit
 bertragen. Unter /Config/Anzeige/Kopf k”nnen Sie
 einstellen, ob die Homepages anderer User im Nach-
-richtenkopf im Lister angezeigt werden sollen.
+richtenkopf des Listers angezeigt werden sollen.
 @
 1044
 <<[x]>> -> Ihre Adreáinformationen werden nur in pers”n-
@@ -3900,8 +3916,8 @@ k”nnen Sie jederzeit krzen oder ganz l”schen.
 264
 In diesem Verzeichnis werden Dateien abgelegt, die
 Sie per [Fido-Filerequest] oder per [UUCP-Filerequest]@13101 12001
-erhalten oder die im internen Terminal per Zmodem
-downgeloadet werden.
+erhalten haben oder die im internen Terminal per
+ZModem downgeloadet wurden.
 @
 270
 Spezial-Bretter und PM-Bretter werden mit "/" zu
@@ -3960,7 +3976,7 @@ Sie immer die Z-Netz-Schreibweise verwenden.
        in voller L„nge anzuzeigen.
 
 Diese Option kann auch im Nachrichtenfenster mit
-<Ctrl S> umgeschaltet werden.
+<Ctrl-S> umgeschaltet werden.
 @
 841
 <<Z-Netz alt, MagicNET, QM/GS-Box:
@@ -3998,7 +4014,7 @@ nicht-permanent ge„ndert werden.
 
 Achtung: Diese Einstellung gilt nur als Vorgabe bei
 Programmstart; sie kann jederzeit innerhalb eines
-Brettes mit <Ctrl N> umgeschaltet werden. nderungen
+Brettes mit <Ctrl-N> umgeschaltet werden. nderungen
 dieser Einstellung werden erst nach einem Programm-
 neustart wirksam.
 @
@@ -4013,7 +4029,7 @@ neustart wirksam.
 
 Diese Einstellung wird erst nach einem Programmneu-
 start wirksam. Sie kann innerhalb jedes Fido-Brettes
-mit <Ctrl A> umgeschaltet werden.
+mit <Ctrl-A> umgeschaltet werden.
 @
 280
 Der Screen-Saver (Bildschirmschoner) schaltet den
@@ -4024,7 +4040,7 @@ wieder zurckgeschaltet. Angaben von 1-4 Sekunden
 sind sicherheitshalber nicht m”glich; mit 0 wird
 der Screen-Saver komplett deaktiviert.
 
-Mit <Alt 1> k”nnen Sie den Screen-Saver testen, ohne
+Mit <Alt-1> k”nnen Sie den Screen-Saver testen, ohne
 so lange warten zu mssen.
 @
 281
@@ -4079,9 +4095,9 @@ Haben sie unter /Config/Anzeige/Kopf die Zeile
 noch die Zeichenkette eingeben, nach der im Kopf
 der Nachricht gesucht werden soll.
 
-Beispiel: U-SUPERSEDES
+Beispiel: X-COMMENT
 
-Es wird nach U-SUPERSEDES: im Kopf der Nachricht
+Es wird nach X-COMMENT: im Kopf der Nachricht
 gesucht und der Text dahinter angezeigt.
 @
 1030
@@ -4167,8 +4183,8 @@ Achtung: Falls Sie eine unbliche IRQ-Einstellung
 verwenden, mssen Sie auch alle externen šbertra-
 gungsprotokolle (GSZ, BiModem etc.) umkonfigurieren.
 Oft werden dort nur die IRQs 3/4/5/7 untersttzt.
-Wenn Sie das mitgelieferte Zmodem verwenden (Ein-
-stellung "Zmodem"), wird allerdings automatisch die
+Wenn Sie das mitgelieferte ZModem verwenden (Ein-
+stellung "ZModem"), wird allerdings automatisch die
 richtige IRQ-Nummer verwendet.
 
 @
@@ -4356,7 +4372,7 @@ zufriedenstellend funktionieren. CrossPoint bis
 Version 3.02 arbeitete mit der Einstellung 14.
 @
 300
-Der Dateiname des Editor-Programms, incl. Erweiterung
+Der Dateiname des Editor-Programms, inkl. Erweiterung
 (.COM oder .EXE). Der Editor wird zum Schreiben von
 Nachrichten und zum Editieren von Schablonen verwen-
 det.
@@ -4372,7 +4388,7 @@ ein Zusatzprogramm einbinden m”chten, das nach dem
 Editor aufgerufen wird - z.B. einen Textformatierer
 oder einen Signatur-Generator - dann k”nnen Sie dies
 statt eines externen Editors angeben. Stellen Sie
-dem Programmname dazu ein <<*>> voran.
+dem Programmnamen dazu ein <<*>> voran.
 
 @
 301
@@ -4404,7 +4420,7 @@ der interne Editor erzeugt immer BAK-Dateien.
 @
 304
 <<[x]>> -> CrossPoint sendet beim Schreiben von Briefen
-       (keine Quotes) ein <Ctrl PgDn> an den Editor,
+       (keine Quotes) ein <Ctrl-PgDn> an den Editor,
        um den Cursor unter den Briefkopf zu plazie-
        ren. Das funktioniert nur bei Editoren, die
        nicht den Tastaturpuffer l”schen.
@@ -4625,7 +4641,7 @@ User mit Vertreteradresse werden in der Userbersicht
 und im Sendefenster mit einem "*" gekennzeichnet.
 
 Die Vertreteradresse muá in jedem Fall eine voll-
-st„ndige Adresse incl. Angabe des Boxnamens sein.
+st„ndige Adresse inkl. Angabe des Boxnamens sein.
 @
 422
 Sie k”nnen hier einen beliebigen Kommentar eingeben,
@@ -4802,7 +4818,7 @@ Es stehen die gleichen Formate wie bei /Nachricht
 <<ohne Kopf>>  Der Nachrichtentext bzw. die Bin„rnach-
            richt.
 
-<<mit Kopf>>   Der Nachrichtentext incl. Kopf, wie er im
+<<mit Kopf>>   Der Nachrichtentext inkl. Kopf, wie er im
            Lister angezeigt wird.
 
 <<Puffer>>     Datei im Zerberus-Pufferformat
@@ -4834,7 +4850,7 @@ Es stehen die gleichen Formate wie bei /Nachricht
 <<[x]>> -> Die Ausgabe des aufgerufenen Programms wird
        an den Lister weitergeleitet. Dies funktio-
        niert nur, wenn die Ausgaben des Programms
-       umleitbar sind; z.B bei allen DOS-Befehlen.
+       umleitbar sind; z.B. bei allen DOS-Befehlen.
        Im Zweifelsfall hilft nur Ausprobieren.
 
 <<[ ]>> -> Die Ausgaben erscheinen "normal" am Bild-
@@ -5042,7 +5058,7 @@ Wahlweise ist auch die direkte Angabe des ASCII-Wer-
 tes mit vorangestelltem "##" m”glich, also z.B. #27
 fr Esc. Ein einzelnes "##" wird durch "^#" erzeugt.
 
-<<HP Laserjet und Kompatible:
+<<HP LaserJet und Kompatible:
 
 Tragen Sie <<\#27(10U>> ein, damit deutsche Sonderzeichen
 korrekt ausgedruckt werden.
@@ -5244,8 +5260,8 @@ Folgende Funktionen stehen zur Verfgung:
 
 <<Edit>>     den gew„hlten Eintrag editieren
 
-<<Aktiv>>    den gew„hlten Eintrag aktivieren oder deak-
-         tivieren
+<<Aktiv>>    den gew„hlten Eintrag aktivieren oder
+         deaktivieren
 
 <<Sichern>>  alle Eingaben/nderungen sichern
 
@@ -5327,80 +5343,79 @@ Aktionen sind:
 
 @
 530
-Geben Sie hier den Suchbegriff ein.
-Mit [F2] bekommen Sie eine Auswahl
-der drei zuletzt benutzten Suchbegriffe.
+Geben Sie hier den Suchbegriff ein. Mit <F2>
+bekommen Sie eine Auswahl der drei zuletzt
+benutzten Suchbegriffe.
+
+Wenn Sie die Suchoptionen "a" oder "o" nicht ver-
+wenden, wird exakt nach dem Text gesucht, der
+hier eingegeben wurde (natrlich unter Berck-
+sichtigung der Suchoptionen "i" und "„").
 
 
-Wenn Sie die Suchoptionen "a" oder "o" nicht
-verwenden, wird exakt nach dem Text gesucht
-der hier eingegeben wurde. (Natrlich unter
-Bercksichtigung der Suchoptionen "i" und "„".)
-
-
-bei AND/OR verknpften Suchen (mit den Such-
-optionen "a" bzw "o") k”nnen Sie mehrere Worte
-in G„nsefsschen (") einschliessen:
+Bei AND/OR-verknpften Suchl„ufen (mit den Such-
+optionen "a" bzw. "o") k”nnen mehrere Begriffe in
+G„nsefáchen (") eingeschlossen werden:
 
 "Fischers Fritz" fischt "frische Fische"
 
-sucht dann z.B nach:
+... sucht dann z.B. nach:
 
 "Fischers Fritz"
 "fischt"
 "frische Fische"
 
 
-Eine Tilde (~) vor einem Wort bedeutet, dass
-dieses NICHT im durchsuchten Text vorkommen darf:
+Mit einer Tilde (~) am Beginn des Suchbegriffs wird
+bestimmt, dass der Suchbegriff NICHT gefunden werden
+darf:
 
 ~"Fischers Fritz" ~fischt frische Fische
 
-sucht dann z.B nach allen Eintr„gen, in denen
-"frische" UND/ODER "Fische" aber weder
-"Fischers Fritz" noch "fischt" vorkommt.
+... sucht dann z.B. nach allen Eintr„gen, in denen
+"frische" und/oder "Fische", aber weder "Fischers
+Fritz" noch "fischt" vorkommt.
 
 
+Allgemeine Funktionen in Texteingabe-Feldern:
 
+<<Ctrl-V>> oder <<Shift-Ins>> fgt die Windows-
+         Zwischenablage (Clipboard) ein. Ein Fehler-
+         ton bedeutet, daá der Clipboard-Inhalt zu
+         groá ist oder nicht existiert.
 
-Algemeine Funkionen in Texteingabefeldern:
+<<Ctrl-C>> oder <<Ctrl-Ins>> kopiert den Inhalt des Text-
+         felds in das Clipboard.
 
-Mit <<Ctrl V>> oder <<Shift + Ins>> wird das Windows-
-Clipboard eingefuegt. Ein Fehlerton bedeutet,
-dass der Clipboard-Inhalt zu gross ist,
-oder nicht existiert.
+<<Ctrl-G>> wandelt die Eingabe in Groábuchstaben um.
 
-<<Ctrl C>> oder <<Ctrl + Ins>> kopiert den Inhalt
-des Textfelds in das Windows Clipboard.
+<<Ctrl-K>> wandelt die Eingabe in Kleinbuchstaben um.
 
-Mit <<Ctrl G>> wird die Eingabe in Grossbuchstaben
-umgewandelt. <<Crtl K>> wandelt in Kleinbuchstaben um.
-
-<<Ctrl X>> erzeugt eine gemischte Schreibweise:
-der erste Buchstaben jedes Wortes wird gross
-geschrieben, der Rest klein.
+<<Ctrl-X>> erzeugt eine gemischte Schreibweise: der
+         erste Buchstabe jedes Wortes wird groá ge-
+         schrieben, der Rest klein.
 
 @
 531
 Geben Sie hier die gewnschten Suchoptionen
 als Buchstabenfolge ein:
 
-<<i>>  Groá/Kleinschreibung ignorieren (statt "i"
+<<i>>  Groá-/Kleinschreibung ignorieren (statt "i"
    kann auch "u" verwendet werden).
 
-<<„>>  Umlaut-insensitive Suche (ae=„, oe=”, usw.)
+<<„>>  Umlaut-insensitive Suche (ae=„, oe=”, usw.) -
    statt "„" kann auch "”" oder "" verwendet werden.
 
 <<a>>  AND-Verknpfung: ALLE im Suchbegriff angegebenen
-   Worte (bzw in "" eingeschlossenen Phrasen) mssen
+   Worte (bzw. in "" eingeschlossenen Phrasen) mssen
    bei der Suche gefunden werden.
 
-<<o>>  OR-Verknpfung: Es gengt wenn ein einziges
-   der angegebenen Worte/Phrasen gefunden wird.
-
+<<o>>  OR-Verknpfung: Es gengt, wenn mindestens
+   EINE(S) der angegebenen Worte/Phrasen gefunden
+   wird.
 
 Wenn Sie keine Suchoption wnschen, dann l”schen Sie
-diese, z.B. mit der Leertaste oder <Ctrl Y>.
+diese (z.B. mit der Leertaste oder <Ctrl-Y>).
 @
 532
 Hier wird eingestellt, in welchen Brettern XP suchen
@@ -5418,13 +5433,13 @@ soll:
 @
 533
 <<[ ]>> --> Sehr schnelle Suche ber Bezugsdatenbank.
-        Es muss die komplette Message-ID angegeben
+        Es muá die komplette MessageID angegeben
         werden. Teilstring-Suche oder Verknpfungen
         sind nicht m”glich.
 
-<<[x]>> --> Langsamere Suche ber Nachrichtenheader.
-        Es k”nnen wie z.B bei der Betreffsuche
-        Teilstrings gesucht, Suchoptionen benutzt,
+<<[x]>> --> Langsamere Suche ber Nachrichten-Header.
+        Es k”nnen (wie z.B. bei der Betreffsuche)
+        Teilstrings gesucht, Suchoptionen benutzt
         und zu durchsuchende Bretter gew„hlt werden.
 @
 540
@@ -5495,19 +5510,19 @@ Beachten Sie, daá zwischen Groá- und Kleinbuchstaben
 unterschieden wird!
 @
 547
-Geben Sie die gewnschte Tastenfolge ein. <<Shift Enter>>
-best„tigt die Eingabe, <<Shift Esc>> bricht die Eingabe
-ab, und <<Shift Backspace>> l”scht die jeweils letzte
+Geben Sie die gewnschte Tastenfolge ein. <<Shift-Enter>>
+best„tigt die Eingabe, <<Shift-Esc>> bricht die Eingabe
+ab, und <<Shift-Backspace>> l”scht die jeweils letzte
 Taste.
 @
 548
-Hier kann das gew„hlte Tastanmakro bearbeitet werden.
+Hier kann das gew„hlte Tastenmakro bearbeitet werden.
 Die Tastendefinition kann folgende Elemente enthal-
 ten:
 
 o  normale Buchstaben, Zahlen und Sonderzeichen
 o  Ctrl-Kombinationen, z.B. ^A fr Ctrl-A
-o  Alt-Kombinationen, z.B. <Alt 1> oder <Alt A>
+o  Alt-Kombinationen, z.B. <Alt-1> oder <Alt-A>
 o  Sondertasten, eingeschlossen in spitze Klammern.
 
 M”gliche Sondertasten sind:
@@ -5520,7 +5535,7 @@ M”gliche Sondertasten sind:
 <ob>,<un>,<li>,<re>  Cursor nach oben/unten/links/re.
 <Ctrl li>,<Ctrl re>  Ctrl + Cursor links/rechts
 <PgUp>, <PgDn>       Seite nach oben/unten
-<Ctrl PgUp> -PgDn    Ctrl + Seite oben/unten
+<Ctrl PgUp>, -PgDn   Ctrl + Seite oben/unten
 <Ins>, <Del>         einfgen/l”schen
 <Ctrl PrtSc>         Ctrl-PrintScreen / Ctrl-Druck
 
@@ -5533,9 +5548,9 @@ codes und als solche einzugeben:
 <Esc>        =  ^[
 <Tab>        =  ^I
 <Enter>      =  ^M
-<Ctrl Enter> =  ^J
+<Ctrl-Enter> =  ^J
 <Backspace>  =  ^H
-<Ctrl 6>     =  ^^
+<Ctrl-6>     =  ^^
 
 Achten Sie auf korrekte Schreibweise!
 
@@ -5552,7 +5567,7 @@ Sie das Feld frei.
        chen Nachricht stehen.
 
 Diese Einstellung gilt NUR bei Programmstart; sie
-kann jederzeit mit <Ctrl W> umgeschaltet werden.
+kann jederzeit mit <Ctrl-W> umgeschaltet werden.
 @
 551
 <<[x]>> -> Bei der Rckkehr in die Brettliste springt
@@ -5564,7 +5579,7 @@ kann jederzeit mit <Ctrl W> umgeschaltet werden.
        folgende Brett.
 
 Diese Einstellung gilt NUR bei Programmstart; sie
-kann jederzeit mit <Ctrl W> umgeschaltet werden.
+kann jederzeit mit <Ctrl-W> umgeschaltet werden.
 @
 552
 <<[x]>> -> Bei der Rckkehr in die Userliste springt
@@ -5575,10 +5590,10 @@ kann jederzeit mit <Ctrl W> umgeschaltet werden.
        User stehen.
 
 Diese Einstellung gilt NUR bei Programmstart; sie
-kann jederzeit mit <Ctrl W> umgeschaltet werden.
+kann jederzeit mit <Ctrl-W> umgeschaltet werden.
 @
 554
-Hier wird festgelegt, welcher Lese-Modus bei Pro-
+Hier wird festgelegt, welcher Lesemodus bei Pro-
 grammstart aktiv sein soll. Der Lesemodus kann je-
 derzeit in der Brettliste mit "L" umgeschaltet
 werden.
@@ -5646,14 +5661,14 @@ Diese Einstellung gilt auch fr einige Funktionen im
              sofort gesichert.
 
 <<manuell>>      Ge„nderte Einstellungen mssen mit
-             /Config/Sichern bzw. <Alt S> manuell
+             /Config/Sichern bzw. <Alt-S> manuell
              gesichert werden.
 
 <<Rckfrage>>    Wenn Einstellungen ge„ndert wurden,
              fragt XP bei Programmende nach, ob sie
              gesichert werden sollen, es sei denn,
              Sie haben dies bereits mit /Config/Si-
-             chern bzw. <Alt S> getan.
+             chern bzw. <Alt-S> getan.
 @
 587
 <<[x]>> -> Wenn Sie am Anfang der šbersicht <Cursor
@@ -5951,18 +5966,18 @@ Geben Sie den gesuchten Absender oder einen Teil
 davon ein (z.B. nur den Boxnamen), oder lassen Sie
 das Eingabefeld frei.
 
-Mit einer Tilde (~) am Beginn des Suchbegriffs
-wird bestimmt, dass der Suchbegriff NICHT
-gefunden werden darf.
+Mit einer Tilde (~) am Beginn des Suchbegriffs wird
+bestimmt, dass der Suchbegriff NICHT gefunden werden
+darf.
 
 @
 631
 Geben Sie den gesuchten Betreff oder einen Teil
 davon ein, oder lassen Sie das Eingabefeld frei.
 
-Mit einer Tilde (~) am Beginn des Suchbegriffs
-wird bestimmt, dass der Suchbegriff NICHT
-gefunden werden darf
+Mit einer Tilde (~) am Beginn des Suchbegriffs wird
+bestimmt, dass der Suchbegriff NICHT gefunden werden
+darf.
 
 @
 632
@@ -5970,15 +5985,15 @@ Geben Sie einen Begriff ein, der sich innerhalb der
 gesuchten Texte befinden soll, oder lassen Sie das
 Eingabefeld frei.
 
-bei AND/OR verknpften Text-Suchen (mit den Such-
-optionen "a" bzw "o") k”nnen sie mehrere Worte
-in G„nsefsschen (") einschliessen:
+Bei AND/OR-verknpften Suchl„ufen (mit den Such-
+optionen "a" bzw. "o") k”nnen mehrere Begriffe in
+G„nsefáchen (") eingeschlossen werden:
 
 "Fischers Fritz" fischt "frische Fische"
 
-Mit einer Tilde (~) vor einem Wort kann bestimmt
-werden, dass dieses sich NICHT im gesuchten Text
-befinden darf.
+Mit einer Tilde (~) am Beginn des Suchbegriffs wird
+bestimmt, dass der Suchbegriff NICHT gefunden werden
+darf.
 
 @
 633
@@ -5991,10 +6006,9 @@ Eingabefeld frei.
 Wenn Sie hier Ihren Namen eingeben, sucht XP nach
 Fido-Brettnachrichten, die an Sie gerichtet sind.
 
-
-Mit einer Tilde (~) am Beginn des Suchbegriffs
-wird bestimmt, dass der Suchbegriff NICHT
-gefunden werden darf
+Mit einer Tilde (~) am Beginn des Suchbegriffs wird
+bestimmt, dass der Suchbegriff NICHT gefunden werden
+darf.
 
 @
 634
@@ -6766,12 +6780,11 @@ sollten Sie auch die Adreá-Groáwandlung unter
        deren Sonderzeichen zu kennzeichnen.
 
 <<[ ]>> -> MIME wird gem„á seiner Spezifikation nur fr
-       PMs (Mails) verwendet. Diese Option sollten
-       Sie nur verwenden, wenn Ihre ”ffentlichen
-       Nachrichten keine Sonderzeichen enthalten,
-       d.h. als Zeichensetz der betreffenden Brett-
-       gruppe bei /Edit/Gruppen sollte "ASCII" ge-
-       w„hlt sein.
+       PMs (Mails) verwendet. Dies sollten Sie nur
+       dann tun, wenn Ihre ”ffentlichen Nachrichten
+       keine Sonderzeichen enthalten, d.h. als
+       Zeichensatz der betreffenden Brettgruppe bei
+       /Edit/Gruppen sollte "ASCII" gew„hlt sein.
 
 @
 797
@@ -6821,20 +6834,20 @@ mer erkannt und ausgewertet.
 799
 <<[x]>> -> RFC-Bin„rnachrichten werden als mehrteilige
        Nachrichten - sogenannte "Attachments" - ver-
-       schickt. Dieses Format wird von allen neuen
-       Internet-Mailprogrammen verstanden.
+       schickt. Dieses Format wird von allen neueren
+       Mail-Clients im Internet verstanden.
 
 <<[ ]>> -> XP verschickt Bin„rnachrichten - wie in den
-       Programmversion 3.0 bis 3.11 - als einteilige
-       MIME-Nachrichten. Dieses Format ist einfach,
-       korrekt und platzsparend, wird aber leider
-       von einigen weitverbreiteten Mailern nicht
+       Programmversionen 3.0 bis 3.11 - als einteili-
+       ge MIME-Nachrichten. Dieses Format ist einfach,
+       korrekt und platzsparend, wird aber leider von
+       einigen weitverbreiteten Mail-Clients nicht
        untersttzt.
 
 Diese Einstellung gilt nur fr neu versandte Nach-
 richten. Um das Format von existierenden, unver-
 sandten Nachrichten zu „ndern, mssen Sie diese mit
-/Nachricht/Unversandt/l”schen l”schen und neu sen-
+/Nachricht/Unversandt/L”schen l”schen und neu sen-
 den.
 @
 8100
@@ -6933,7 +6946,7 @@ das "-" - eingetragen werden. Beispiele:
 Es sei hier noch einmal darauf hingewiesen, daá zum
 Beenden der Eingabe nicht alle Felder mit <Enter>
 best„tigt werden mssen, sondern daá man statt dessen
-auch <Ctrl Enter> verwenden kann.
+auch <Ctrl-Enter> verwenden kann.
 
 @
 805
@@ -6959,7 +6972,7 @@ aber nur eine ben”tigt wird.
 <<Edit>>      Telefongebhren fr die gew„hlte Tarif-
           gruppe editieren
 <<Sichern>>   nderungen sichern
-<<Ok>>        Eingabe beenden
+<<OK>>        Eingabe beenden
 
 @
 806
@@ -7030,33 +7043,38 @@ Feiertage sowie der 24.12. und 31.12. der Kategorie
 verbilligter Telefontarif!)
 @
 820
-Hier k”nnen sie angeben, welche Programme Crosspoint
+Hier k”nnen sie angeben, welche Programme CrossPoint
 zum Anzeigen diverser Dateiformate verwenden soll.
 
-<<Neu>>      Dient zum erstellen eines neuen Eintrags.
+<<Neu>>      dient zum Erstellen eines neuen Eintrags.
 
-<<L”schen>>  L”scht nach einer Sicherheitsabfrage den
+<<L”schen>>  l”scht nach einer Sicherheitsabfrage den
          gew„hlten Eintrag.
 
-<<Edit>>     Ruft das Bearbeitungs-Men auf. Hier k”nnen
+<<Edit>>     ruft das Bearbeitungs-Men auf. Hier k”nnen
          sie einen bestehenden Eintrag „ndern.
 
+<<OK>>       verl„át das Viewer-Fenster (geht auch mit
+         <Esc>).
 @
 821
-Geben sie hier den MIME-Typ ein fr den dieser
-Eintrag gelten soll. Der Mime-Typ ist die MIME-Header
-Beschreibung dieser Dateiart. (Usenet)
+Usenet: Geben sie hier den MIME-Typ ein, fr den
+dieser Eintrag gelten soll. Der MIME-Typ ist die
+MIME-Beschreibung dieser Dateiart im Body (Textteil)
+der Nachricht (z.B. <<image/gif>>).
 
-Wird eine entsprechende Mime-Nachricht empfangen
-kann diese mit dem Viewer-Programm angesehen werden.
+Wird eine entsprechende MIME-Nachricht empfangen,
+kann diese mit dem hier eingetragenen Viewer-
+Programm betrachtet werden.
 
 @
 822
-Geben sie hier die Dateinamenerweiterung ein.
+Geben sie hier die Dateierweiterung ein.
 
-Wird eine Binaernachricht oder ein Fido-Fileattach
-mit einer entsprechenden Datei empfangen,
-kann diese mit dem Viewer-Programm angesehen werden.
+Wird eine Bin„rnachricht, eine MIME-Nachricht mit
+entsprechendem Inhalt (Usenet) oder ein File Attach
+(FidoNet) empfangen, kann diese mit dem hier einge-
+tragenen Viewer-Programm betrachtet werden.
 
 Beachten Sie, daá bei ber das Z-Netz verschickten
 Bin„rnachrichten der Betreff der Nachricht nicht
@@ -7142,9 +7160,9 @@ Dieses Eingabefeld ist fr eine kurze Zusammenfas-
 sung des Nachrichteninhaltes in einem Satz gedacht.
 Gem„á RFC 1036 - der technischen Beschreibung des
 Nachrichtenaufbaus im Usenet - sollte w„hrend einer
-Diskusssion zu einem Thema der Betreff unver„ndert
+Diskussion zu einem Thema der Betreff unver„ndert
 bleiben, um das Finden von zusammengeh”renden Nach-
-richten zu erleichterrn. Die Zusammenfassung stellt
+richten zu erleichtern. Die Zusammenfassung stellt
 demnach einen "Ersatz-Betreff" fr Antworten auf
 andere Nachrichten dar.
 
@@ -7160,7 +7178,7 @@ angeben, z.B. "de" fr das DeNet.
 
 Bei der Verwendung dieses Features ist Vorsicht ge-
 boten: Unter Umst„nden laufen die Nachrichten eines
-bestimmten Bereiches - z.B. die des DeNet's - ber
+bestimmten Bereiches - z.B. die des DeNet - ber
 internationale Verbindungen. Wenn Sie eine Nachricht
 dann mit einem eingeschr„nkten Verbreitungsbereich
 versehen, geht sie beim Transport durch die auáer-
@@ -7332,13 +7350,15 @@ oder RFC-Netze (Usenet / "UUCP"):
 <<Status:>>     Verschiedene Statusinformationen, z.B.
             Empfangsbest„tigung, Eilmail etc.
 
-<<Userdefiniert 1 und 2>>  Sie k”nnen zwei eigene
-Zeichenketten definieren, deren zugeh”rige
-Informationen im Kopf angezeigt werden sollen.
-Beispiel: U-SUPERSEDES oder X-COMMENT. Hier erfolgt
-allerdings nur die Auswahl, wo die Zeilen
-erscheinen sollen. Definiert werden die Zeichenketten
-unter /Config/Anzeige/Diverses.
+<<Userdefiniert 1 und 2:>>  Sie k”nnen zwei eigene
+            Kopfzeilen ("Header" bzw. "Kludges")
+            definieren, deren zugeh”rige Informatio-
+            nen im Kopf des Listers angezeigt werden
+            sollen (z.B. U-SUPERSEDES oder X-COMMENT).
+            Hier erfolgt allerdings nur die Auswahl,
+            wo die Zeilen erscheinen sollen; defi-
+            niert werden die Kopfzeilen unter
+            /Config/Anzeige/Diverses.
 
 Alle brigen Zeilen sollten selbsterkl„rend sein.
 
@@ -7404,7 +7424,7 @@ z.B. Liste Nr. 329.
 <<Info>>     Zeigt Informationen ber die gew„hlte Liste
          an.
 
-<<Ok>>       Beendet die Nodelisten-Verwaltung; iden-
+<<OK>>       Beendet die Nodelisten-Verwaltung; iden-
          tisch mit <Esc>.
 
 
@@ -7431,7 +7451,7 @@ Hand einstellen.
 
 <<Nein>>     tut nix
 
-<<incl. Datei>>  l”scht den gew„hlten Listeneintrag und
+<<inkl. Datei>>  l”scht den gew„hlten Listeneintrag und
             die dazugeh”rige Datei im FIDO-Unterver-
             zeichnis.
 @
@@ -7492,13 +7512,14 @@ Nodelistenupdates.
 
 Der passende, bei /Config/Extern/Entpacker eingetra-
 gene Entpacker muá ber einen DOS-Pfad erreichbar
-sein.
+sein oder Sie mssen den vollst„ndigen Zugriffspfad
+angegeben haben.
 @
 944
 Hier k”nnen Sie ein Programm oder eine Batchdatei
 angeben, das/die jeweils vor dem Einbinden eines
 Updates aufgerufen wird. Der Name der Update-Datei
-incl. vollst„ndigem Pfad kann mit dem Makro <<$FILE>>
+inkl. vollst„ndigem Pfad kann mit dem Makro <<$FILE>>
 an das Programm bergeben werden.
 
 Auf diese Weise l„át sich ein beliebiger Mechanismus
@@ -7612,7 +7633,7 @@ Drcken Sie ...
 
 <<W>>       um die Liste in eine Datei zu schreiben.
 
-<<Ctrl D>>  um die Liste auszudrucken.
+<<Ctrl-D>>  um die Liste auszudrucken.
 
 <<Esc>>     zum Beenden.
 @
@@ -7775,9 +7796,9 @@ zum Modem geschickt. Es k”nnen auch mehrere, durch
 "AT\\ATZ".
 @
 993
-<<[x]>> -> Wenn CrossTerm eine Zmodem-Download-Start-
+<<[x]>> -> Wenn CrossTerm eine ZModem-Download-Start-
        sequenz (*B00) von der angerufenen Mailbox
-       erh„lt, wird automatisch ein PD-Zmodem-Down-
+       erh„lt, wird automatisch ein PD-ZModem-Down-
        load gestartet. Vorraussetzung ist, daá ZM.EXE
        sich im CrossPoint-Verzeichnis befindet oder
        ber einen DOS-Pfad erreichbar ist.
@@ -7786,9 +7807,9 @@ zum Modem geschickt. Es k”nnen auch mehrere, durch
        werden.
 @
 994
-<<[x]>> -> Wenn CrossTerm eine Zmodem-Upload-Startsequenz
+<<[x]>> -> Wenn CrossTerm eine ZModem-Upload-Startsequenz
        (*B01) von der angerufenen Mailbox erh„lt,
-       wird automatisch ein PD-Zmodem-Upload gestar-
+       wird automatisch ein PD-ZModem-Upload gestar-
        tet. Sie k”nnen dazu eine beliebige Datei
        ausw„hlen.
 
@@ -7799,7 +7820,7 @@ Das Markieren mehrerer zu sendender Dateien ist z.Zt.
 nicht m”glich.
 
 Falls Sie keine Datei ausw„hlen, sondern mit <Esc>
-abbrechen, schickt CrossTerm eine Zmodem-Abbruchse-
+abbrechen, schickt CrossTerm eine ZModem-Abbruchse-
 quenz (mehrmals Ctrl-X).
 @
 995
@@ -7808,7 +7829,7 @@ ausgeschaltet. Bei abgeschalteter Statuszeile ist
 das Terminalfenster 80x25 Zeichen groá, bei ein-
 geschalteter Zeile 80x24 Zeichen.
 
-Wahlweise k”nnen Sie zum Umschalten auch <<Alt D>>
+Wahlweise k”nnen Sie zum Umschalten auch <<Alt-D>>
 verwenden.
 @
 1010
@@ -7845,8 +7866,8 @@ Datei u.U. zwangsweise in .ZIP, .LZH etc um. Dadurch
 findet XP die decodierte Datei nicht, und die Deco-
 dierung schl„gt fehl. Ist +batchmode dagegen abge-
 schaltet, kann man die Frage nach dem Umbenennen
-manuell mit "nein" beantworten, sodaá die Decodierung
-funktioniert.
+manuell mit "Nein" beantworten, so daá die Decodie-
+rung funktioniert.
 
 @
 1013
@@ -7862,12 +7883,11 @@ Tritt ein Fehler beim PGP-Aufruf auf, schalten Sie
 diese Funktion ein.
 
 Ein m”glicher Fehler: der Aufrufstring wird viel zu
-lang. Versuchen sie, alles Parameter des PGP-Aufrufes
-so kurz wie m”glich zu halten, z.B. statt SET
-PASSPHRASE lieber SET PGPPASS verwenden, dann holt
-sich PGP die Passprase selbst aus dem Environment.
-Eine Krzung ist auch bei Ihrer [User-ID]@1018
-m”glich.
+lang. Versuchen sie, alle Parameter des PGP-Aufrufs
+so kurz wie m”glich zu halten (z.B. Verwendung von
+SET PGPPASS statt SET PASSPHRASE, wenn PGP sich das
+Mantra selbst aus dem Environment holen soll). Eine
+Krzung ist auch bei Ihrer [User-ID] m”glich.@1018
 @
 1014
 <<[x]>> -> CrossPoint fhrt in der Datei PGP.LOG ein
@@ -8356,19 +8376,19 @@ Zufallsprinzip aus.
 
 @
 7000
-Dies ist eine [Querverweis]-Seite. Mit [Alt F1] gelan-@7001 7002
+Dies ist eine [Querverweis]-Seite. Mit [Alt-F1] gelan-@7001 7002
 gen Sie zurck zur vorhergehenden [Seite].@7003
 @
 7001
-Sie haben <Enter> statt [Alt F1] gedrckt. Dadurch@7002
+Sie haben <Enter> statt [Alt-F1] gedrckt. Dadurch@7002
 sind Sie in einer weiteren [Querverweis]-Seite gelan-@7001
-det. Sie sollten nun [Alt F1] drcken, bevor Sie die@7002
+det. Sie sollten nun [Alt-F1] drcken, bevor Sie die@7002
 šbersicht ber die [Querverweise] verlieren.@7010
 @
 7002
-<<Alt F1
+<<Alt-F1
 
-Die Tastenkombination <Alt F1> erhalten Sie, indem
+Die Tastenkombination <Alt-F1> erhalten Sie, indem
 Sie die [Alt]-Taste drcken, sie festhalten, und@7006
 gleichzeitig die Taste [F1] bet„tigen. Anschlieáend@7005
 sollten Sie beide Tasten in beliebiger Reihenfolge
@@ -8539,7 +8559,7 @@ nen Sie sich zus„tzlich noch fragen lassen, ob Sie
 das Programm denn wirklich unbedingt sicher sofort
 und ohne Widerruf verlassen m”chten.
 
-Mit <Alt F4> k”nnen Sie CrossPoint brigens innerhalb
+Mit <Alt-F4> k”nnen Sie CrossPoint brigens innerhalb
 jedes der Hauptfenster ohne Rckfrage verlassen, vor-
 ausgesetzt, Sie haben diese Tastenkombination nicht
 umdefiniert.
@@ -8813,21 +8833,21 @@ als auch von Hand markierte Nachrichten sein.
 <<Nachricht / Suchen / Entmarkieren
 
 Dieser Menpunkt entspricht der Tastenkombination
-<Ctrl E> innerhalb des Nachrichten-Fensters und hebt
+<Ctrl-E> innerhalb des Nachrichten-Fensters und hebt
 alle Nachrichten-Markierungen auf.
 @
 10508
 <<Nachricht / Suchen / MessageID
 
-Oft wird auf andere Usenet Artikel ueber ihre
-MessageID hingewiesen, mit diesem Menuepunkt
+Oft wird auf andere Usenet Artikel ber ihre
+MessageID hingewiesen, mit diesem Menpunkt
 kann danach gesucht werden.
 @
 10601
 <<Config / Optionen
 
-Hier befinden sich verschiedene Konfigurations-Ein-
-stellungen.
+Hier befinden sich verschiedene Konfigurations-
+Einstellungen.
 @
 10602
 <<Config / Extern
@@ -8872,10 +8892,10 @@ schen Einstellungen doppelt n”tig w„ren.
 
 Hier befinden sich diverse Drucker-Einstellungen.
 Diese betreffen z.Zt. nur den Ausdruck von Nachrich-
-ten oder von Hilfsseiten mit <Ctrl D>.
+ten oder von Hilfsseiten mit <Ctrl-D>.
 
 Die Einstellungen gelten NICHT fr das Drucken mit
-<Ctrl K><P> im Editor.
+<Ctrl-K><P> im Editor.
 @
 10607
 <<Config / Tasten
@@ -8909,7 +8929,7 @@ und von /Fido/Optionen nur so lange, bis XP verlas-
 sen wird. Sollen die nderungen dauerhaft werden,
 dann mssen Sie sie mit dem Menpunkt <<Sichern>> pei-
 chen. Wahlweise kann auch jederzeit die Tastenkombi-
-nation <Alt S> verwendet werden.
+nation <Alt-S> verwendet werden.
 
 Wenn Sie die Option "Sichern" auf "Rckfrage" ein-
 stellen, berprft XP bei Programmende, ob sich
@@ -8926,8 +8946,9 @@ tion zum Sichern.
 Es k”nnen beliebige .COM- und .EXE-Programme sowie
 .BAT-Dateien in CrossPoint eingebunden werden. Die
 Programme mssen sich dazu entweder im XP-Verzeich-
-nis befinden oder ber einen DOS-Pfad erreichbar
-sein.
+nis befinden, ber den DOS-Pfad erreichbar sein,
+oder Sie mssen den vollst„ndigen Zugriffspfad
+angeben.
 
 Eine Besonderheit ist, daá Sie die gerade gew„hlte
 Nachricht als Datei an das externe Programm ber-
@@ -9178,9 +9199,9 @@ Farben sind Geschmackssache - bei CrossPoint k”nnen
 Sie alle Farben an Ihren pers”nlichen Geschmack an-
 passen.
 
-Fr das mitgelieferte Zmodem-šbertragungsprotkoll
+Fr das mitgelieferte ZModem-šbertragungsprotkoll
 ZM.EXE verwenden Sie bitte den Menpunkt /Config
-/Anzeige/PD-Zmodem.
+/Anzeige/PD-ZModem.
 @
 10902
 <<Config / Anzeige / Bretter
@@ -9219,21 +9240,21 @@ geladen haben, ist diese Einstellung wirkungslos.
 10906
 <<Config / Anzeige / Diverses
 
-Die diversen Anzeige-Optionen betreffen z.Zt. nur
-den Screen-Saver, der entweder auf eine Zeit von
-5 bis 10000 Sekunden eingestellt, oder aber durch
-Eingabe von 0 komplett abgeschaltet werden kann.
+Die diversen Anzeige-Optionen betreffen den Screen-
+Saver, die Anzeige des Usernamens in der dritten
+Bildzeile sowie die Definition der benutzerspezi-
+fischen Kopfzeilen im Nachrichten-Lister.
 
 Der Bildschirm-Schoner kann brigens auch <<direkt>>
-mit <Alt 1> aktiviert werden.
+mit <Alt-1> aktiviert werden.
 @
 10907
-<<Config / Anzeige / PD-Zmodem
+<<Config / Anzeige / PD-ZModem
 
 Dieser Menpunkt ruft das Programm ZCONFIG.EXE auf,
 um die Farben und die Sprache des šbertragungspro-
-tokolls PD-Zmodem einzustellen. Die Einstellungen
-werden innerhalb des Zmodem-Programms (ZM.EXE)
+tokolls PD-ZModem einzustellen. Die Einstellungen
+werden innerhalb des ZModem-Programms (ZM.EXE)
 gespeichert.
 @
 10908
@@ -9400,7 +9421,7 @@ Hier werden alle markierten Nachrichten in eine Datei
 extrahiert. Die Nachrichten k”nnen sich in verschie-
 denen Brettern befinden. Vergessen Sie nicht, daá
 alle Markierungen so lange erhalten bleiben, bis Sie
-sie mit <Ctrl E> bzw. [/Nachricht/Suchen/Entmarkieren]@10507
+sie mit <Ctrl-E> bzw. [/Nachricht/Suchen/Entmarkieren]@10507
 entfernen oder das Programm verlassen.
 @
 11206
@@ -9441,7 +9462,7 @@ Sie <Enter> und geben Sie den Namen der Zieldatei
 an.
 
 Zum <<Anzeigen>> der einzelnen Nachrichtenteile drcken
-Sie <Shift Enter> in der Nachrichtenbersicht.
+Sie <Shift-Enter> in der Nachrichtenbersicht.
 @
 11301
 ^^11206
@@ -10456,7 +10477,7 @@ betreffen.
 Alle diese Einstellungen gelten nur bei Programmstart
 und k”nnen danach beliebig ge„ndert werden. Einstel-
 lungen an dieser Stelle werden also erst aktiv, wenn
-Sie die Konfiguration Abspeichern und das Programm
+Sie die Konfiguration abspeichern und das Programm
 verlassen und neu starten.
 @
 12803
@@ -10478,8 +10499,8 @@ Schreiben von Nachrichten betreffen.
 
 An dieser Stelle k”nnen Sie verschiedene Adreáinfor-
 mationen eintragen, die im Kopf Ihrer Nachrichten
-mit bertragen werden. Dies ist als Alternative zu
-Adreásignaturen am Ende der Nachrichten gedacht.
+mit bertragen werden. Dies ist eine Alternative zu
+Adreásignaturen am Ende Ihrer Nachrichten.
 @
 12805
 <<Config / Optionen / Netze
@@ -10775,7 +10796,8 @@ LIST.CFG eingetragen.
 
 Gepackte Filelisten werden automatisch entpackt,
 vorausgesetzt, der passende Entpacker ist ber einen
-DOS-Pfad erreichbar.
+DOS-Pfad erreichbar oder der vollst„ndige Zugriffs-
+pfad des Packers wurde angegeben.
 @
 13202
 <<Fido / Filelisten / L”schen
@@ -11213,7 +11235,8 @@ bei /Config/Pfade!
 CrossPoint kann das eingetragene Programm nicht fin-
 den. šberprfen Sie, ob der Dateiname stimmt, und ob
 das Programm im XP-Verzeichnis oder per DOS-Pfad
-erreichbar ist.
+erreichbar ist bzw. der korrekte Zugriffspfad ange-
+geben wurde.
 @
 20207
 ^^20000
@@ -12040,10 +12063,10 @@ Konfigurationsdatei besch„digt wurde.
 Editieren Sie die Einstellungen der einzelnen Server-
 boxen unter /Edit/Server. Es gengt, eine beliebige
 Einstellung - z.B. Edit/Point - aufzurufen und mit
-Ctrl-Enter wieder unver„ndert zu speichern. Dadurch
-wird die Konfigurationsdatei neu geschrieben und der
-fehlerhafte Eintrag beseitigt. Kontrollieren Sie
-trotzdem nach M”glichkeit alle einzelnen Einstel-
+<Ctrl-Enter> wieder unver„ndert zu speichern.
+Dadurch wird die Konfigurationsdatei neu geschrieben
+und der fehlerhafte Eintrag beseitigt. Kontrollieren
+Sie trotzdem nach M”glichkeit alle einzelnen Einstel-
 lungen - es k”nnte ja sein, daá einige davon durch
 das Besch„digen der Datei ver„ndert wurden.
 @
@@ -12348,7 +12371,7 @@ In diesem Netz sind keine Bin„rnachrichten und daher
 auch keine codierten Nachrichten m”glich.
 
 (Ja, ich weiá, man kann Bin„rdaten auch nicht-bin„r
-codieren... ich arbeite daran..)
+codieren... ich arbeite daran.)
 @
 22709
 W„hlen Sie das Brett in der Brettliste und schreiben
@@ -12397,7 +12420,7 @@ Bezugsquellen erh„ltlich ist.
 Installieren Sie zun„chst das Programm PGP und
 stellen Sie sicher, daá es per DOS-Pfad (PATH) er-
 reichbar ist, oder daá die Umgebungsvariable
-PGPPATH vorhanden ist.
+PGPPATH vorhanden und korrekt gesetzt ist.
 
 PGP erhalten Sie in der CrossPoint-Supportbox
 (s. Handbuch) oder in jeder anderen gutsortierten

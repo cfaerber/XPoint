@@ -1,7 +1,7 @@
 K CrossPoint v3.2 resource file
 K Deutsch
 K (c) '93-98 Peter Mandrella
-K (c) '2000 OpenXP Team, www.openxp.de
+K (c) '2000 OpenXP-Team, www.openxp.de
 
 # Online-Hilfe, Tastenmakros
 1 XP.HLP
@@ -352,7 +352,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 4    Mîchten Sie das Programm verlassen, um die Datei
 5    z.B. von einem Backup wiederherzustellen, oder soll
 6    XP die Datei neu anlegen (wobei alle Pa·worteinstel-
-7    lungen und Verteradressen verloren gehen)?
+7    lungen und Vertreteradressen verloren gehen)?
 -
 212  Programmabbruch.
 213  ungÅltige Farbkonfiguration: ~
@@ -369,7 +369,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 10   Terminal
 -
 216  interne Einstellungen
-217  Einstellungen Sichern ...
+217  Einstellungen sichern ...
 218  ungÅltige FKey-Config-Zeile: ~
 # 219 darf auf keinen Fall verlÑngert werden!
 219  ungÅltige Konfigurationszeile: ~
@@ -503,7 +503,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 16   Nachr.-Weiterschalter
 17   Brett-Weiterschalter
 18   User-Weiterschalter
-19   Lese-Modus ~
+19   Lesemodus ~
 20   Extrakt als~
 21   Mausbedienung
 22   Tasten vertauschen
@@ -612,7 +612,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7    KByte:
 8    Backup-Dateierweiterung ~
 9    externen Editor verwenden fÅr~
-10   automatisches <Ctrl PgDn>
+10   automatisches <Ctrl-PgDn>
 11   interner Editor - Vollbild
 12   Edit/Textdatei-Name beibehalten
 13   25 Bildzeilen bei ext. Editor
@@ -751,8 +751,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    öbertragungsrate~
 4    bps
 5    Modem-Init      ~
-6    automatischer Zmodem-Download
-7    automatischer Zmodem-Upload
+6    automatischer ZModem-Download
+7    automatischer ZModem-Upload
 8    Statuszeile
 + 271
 0    50
@@ -847,13 +847,13 @@ K (c) '2000 OpenXP Team, www.openxp.de
 8    Netcallpuffer wurde nicht eingelesen:~
 -
 + 337
-1    Empfangsbestaetigung durch
-2    automatische Empfangsbestaetigung durch
+1    EmpfangsbestÑtigung durch
+2    automatische EmpfangsbestÑtigung durch
 3    erhaltene Nachricht:
 4    Brett/Newsgroup:~
 5    Message-ID:     ~
 6    Datum/Date:     ~
-7    Groesse/Size:    %s Bytes
+7    Grî·e/Size:      %s Bytes
 8    Pfad/Path:      ~
 -
 338  Puffer ÅberprÅfen...     ~
@@ -1188,8 +1188,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 21   5
 22   Wenn Sie ein neues Pa·wort eintragen, notieren Sie sich dieses
 23   bitte an einem gegen Datenverluste geschÅtzten Ort! Falls Sie das
-24   Pa·wort vergessen, mÅssen Sie CrossPoint komplett neu insstal-
-25   lieren und die Nachrichtendatenbank neu einlesen (s. XPOINT.TXT,
+24   Pa·wort vergessen, mÅssen Sie CrossPoint komplett neu installie-
+25   ren und die Nachrichtendatenbank neu einlesen (s. XPOINT.TXT,
 26   Anhang H).
 -
 + 511
@@ -1230,7 +1230,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 40   LIZENZ.DOC
 41   %s fehlt!
 # gleiche Taste zum Drucken wie in 22.5:
-42   <Ctrl D>=Drucken    <Esc>=Ende~
+42   <Ctrl-D>=Drucken    <Esc>=Ende~
 50   ~^Registrierungsformular , ^Code eingeben~
 # Registrierungsformular J/N
 99   J
@@ -1251,20 +1251,20 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 530
 # Zeilenanzahl
 0    14
-1    Sie nutzen eine Betaversion von CrossPoint, welche durch das
-2    Entwicklerteam des OpenXP-Projektes erstellt wurde. Bitte beachten
-3    Sie, da· diese Betaversion mit gro·er Sicherheit Fehler enthÑlt,
-4    die evtl. gro·en érger in îffentlichen Netzwerken nach sich ziehen
-5    oder Ihre komplette Datenbank beschÑdigen kann. Wenn Sie diese
-6    Version nutzen, sind Sie fÅr alle Folgen selbst verantwortlich.
-7    Sollten Sie nicht damit einverstanden sein, nutzen Sie die
-8    offiziellen Release-Versionen von CrossPoint.
-9    Bei Fragen, Problemen oder Anregungen wenden Sie sich bitte an den
-10   OpenXP Support in den entsprechenden Support-Foren der jeweiligen
-11   Netze, insbesondere der Newsgroup de.comm.software.crosspoint
-12   sowie der offiziellen OpenXP-Homepage http://www.openxp.de.
+1    Sie nutzen eine Betaversion von CrossPoint, die vom Entwicklerteam
+2    des OpenXP-Projekts erstellt wurde. Bitte beachten Sie, da· diese
+3    Betaversion mit gro·er Sicherheit Fehler enthÑlt, die evtl. gro·en
+4    érger in îffentlichen Netzwerken nach sich ziehen oder Ihre kom-
+5    plette Datenbank beschÑdigen kann. Wenn Sie diese Version nutzen, 
+6    sind Sie fÅr alle Folgen selbst verantwortlich. Sollten Sie nicht 
+7    damit einverstanden sein, nutzen Sie die offiziellen Release-
+8    Versionen von CrossPoint. Bei Fragen, Problemen oder Anregungen
+9    wenden Sie sich bitte an den OpenXP-Support in den entsprechenden
+10   Support-Foren der jeweiligen Netze, insbesondere an die Newsgroup
+11   de.comm.software.crosspoint (Usenet), an die Area CROSSPOINT.GER
+12   (Fido) sowie die offizielle OpenXP-Homepage http://www.openxp.de.
 13
-14  WÑhlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
+14   WÑhlen Sie "Weiter", um mit dieser Betaversion zu arbeiten.
 30   ~^Weiter , ^Abbruch~
 -
 
@@ -1819,7 +1819,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 25   Compress-Entpacker
 26   Freeze-Entpacker ~
 27   GNU-ZIP-Entpacker~
-28   Zmodem-Optionen  ~
+28   ZModem-Optionen  ~
 # UUCP
 30   max. UUCP-g-Paketgrî·e ~
 31   max. UUCP-g-Fenstergrî·e  ~
@@ -2091,7 +2091,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 1  ~^Neu , ^Edit , ^TextEdit , ^Lîschen , ^Info ,  ^OK ~
 2  40
 3  Node-/Pointlisteneintrag lîschen?
-4  ~ ^Ja  , ^Nein , incl. ^Datei~
+4  ~ ^Ja  , ^Nein , inkl. ^Datei~
 10 Neue Node-/Pointliste einbinden
 -
 1020 Node-/Pointlist-Update einbinden
@@ -2129,8 +2129,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2002 Schlie·e Logfile ...
 2003 Logfile schlie·en
 2004 trenne Verbindung
-2005 Mini-Terminal - Ende mit <Alt X>
-2006 Verbindung getrennt - Ende mit <Alt X>
+2005 Mini-Terminal - Ende mit <Alt-X>
+2006 Verbindung getrennt - Ende mit <Alt-X>
 2007 Upload
 
 + 2010
@@ -2364,7 +2364,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 98   Unbekannter Dos-Fehler
 99   QWK-File-Name fehlt (-QZ)
 101  Laufwerk nicht bereit
-102  Plattenkapazitaet nicht ausreichend
+102  PlattenkapazitÑt nicht ausreichend
 103  Nicht genÅgend Hauptspeicher!
 104  Packer-Problem
 105  Fehler beim Erstellen der Ausgabedatei
@@ -2518,7 +2518,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 + 2612
 1    Nodelist     | Zone                     | Reg. | Netze | Nodes | Nodes/Netz
 2    gesamt                                  |
-3    Die %s groessten Netze:
+3    Die %s grîssten Netze:
 4    Netz    | Name                           | Nodes
 5    Flags:
 10   Points  ~
