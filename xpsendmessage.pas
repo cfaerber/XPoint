@@ -435,7 +435,7 @@ var f,f2     : file;
   function uucpbrett(s:string; edis:byte):string;
   var i : integer;
   begin
-    if (edis=1) or (not netztyp IN [nt_UUCP,nt_NNTP]) or not NewsgroupDisp then
+    if (edis=1) or (not netztyp in netsRFC) or not NewsgroupDisp then
       uucpbrett:=mid(s,edis)
     else begin
       delete(s,1,2);
@@ -1209,11 +1209,11 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
           nt_Fido     : sendbutt:=getres2(611,20);  { 'C^rash,P^GP'     }
           nt_Maus     : sendbutt:=getres2(611,21);  { '^MausNet,^Lokal' }
           nt_ZConnect : sendbutt:=getres2(611,22);  { 'P^rio,P^GP'      }
-          nt_UUCP,
-          nt_NNTP,
-          nt_POP3,
-          nt_IMAP     : sendbutt:=getres2(611,23);  { 'Z^usatz,P^GP'    }
-          else          sendbutt:=getres2(611,24);  { '^Zurueck'        }
+        else
+            if netztyp in netsRFC then
+              sendbutt:=getres2(611,23)   { 'Z^usatz,P^GP'    }
+            else
+              sendbutt:=getres2(611,24);  { '^Zurueck'        }
         end;
         repeat
           t:='*';
@@ -1229,14 +1229,14 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                     else if n=7 then n:=10   { Zusatz      }
                     else if n=8 then n:=11   { PGP         }
                     else if n=9 then n:=0;   { MH: Zurueck }
-          nt_UUCP,
-          nt_NNTP,
-          nt_POP3,
-          nt_IMAP : if n=6 then n:=12        { MH: RFC-Prio} { unbedenklich }
-                      else if n=7 then n:=10 { Zusatz      }
-                      else if n=8 then n:=11 { MH: PGP-Sig } { unbedenklich }
-                      else if n=9 then n:=0; { Zurueck     }
-          else      if n=6 then n:=0;        { Zurueck     }
+          else
+            if netztyp in netsRFC then begin
+              if n=6 then n:=12        { MH: RFC-Prio}
+                else if n=7 then n:=10 { Zusatz      }
+                else if n=8 then n:=11 { MH: PGP-Sig }
+                else if n=9 then n:=0; { Zurueck     }
+            end else
+              if n=6 then n:=0;        { Zurueck     }
         end;
         if n=0 then n:=-1;
         if n>0 then
@@ -1278,11 +1278,11 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
             1..5 : n:=p+10;
             6    : if netztyp=nt_Fido then n:=16 else
                    if netztyp=nt_ZConnect then n:=19 else
-                   if netztyp in [nt_uucp,nt_NNTP,nt_POP3,nt_IMAP] then n:=22;
+                   if netztyp in netsRFC then n:=22;
             7    : if netztyp=nt_Maus then n:=17;
             8    : if netztyp=nt_Maus then n:=18;
-            9    : if netztyp in [nt_ZConnect,nt_UUCP,nt_NNTP,nt_POP3,nt_IMAP] then n:=20;
-            10   : if netztyp in [nt_ZConnect,nt_Fido,nt_Maus,nt_UUCP,nt_NNTP,nt_POP3,nt_IMAP] then
+            9    : if netztyp in (netsRFC + [nt_ZConnect]) then n:=20;
+            10   : if netztyp in (netsRFC + [nt_ZConnect,nt_Fido,nt_Maus]) then
                      n:=21;  { PGP }
             else   if ntBCC(netztyp) and (t=^K) then
                      flNokop:=not flNokop;
@@ -1414,7 +1414,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
        20   : EditSdata;
        21   : SendPgpOptions;
        22   : begin                    { RFC-Priority }
-               if not(netztyp in [nt_uucp,nt_NNTP,nt_POP3,nt_IMAP])then rfehler(622);
+               if not(netztyp in netsRFC)then rfehler(622);
                 getprio;
                showflags;
               end
@@ -1479,14 +1479,11 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     case netztyp of
       nt_Fido,
       nt_QWK      : fidoto:=fidoto;
-      nt_Magic,
-      nt_Pronet,
-      nt_UUCP,
-      nt_NNTP,
-      nt_ZConnect : if (fidoto=brettalle) or (blankpos(fidoto)=0) then
-                      fidoto:='';
     else
-      fidoto:='';
+      if netztyp in (netsRFC + [nt_Magic, nt_Pronet, nt_ZConnect]) then begin
+        if (fidoto=brettalle) or (blankpos(fidoto)=0) then
+          fidoto:='';
+      end else fidoto:='';
     end;
 
   RemovePhantomServers;
@@ -1513,7 +1510,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         halten:=stdhaltezeit;
         dbWriteN(bbase,bb_haltezeit,halten);
         dbWriteN(bbase,bb_gruppe,grnr);
-        b:=iif(netztyp IN [nt_UUCP,nt_NNTP],16,0);
+        b:=iif(netztyp in netsRFC,16,0);
         dbWriteN(bbase,bb_flags,b);
         SetBrettindex;
         _brett:=mbrettd(empfaenger[1],bbase);
@@ -1683,7 +1680,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       hdp.telefon:=telefonnr;
       hdp.homepage:=wwwHomepage;
       end
-    else if (netztyp=nt_UUCP) and not adrpmonly then
+    else if (netztyp in netsRFC) and not adrpmonly then
       hdp.homepage:=wwwHomepage;
     hdp.priority:=rfcprio;      { 6.2.2000 MH: X-Priority: } { unbedenklich }
     hdp.xnoarchive:=noarchive;  {!MH: X-NoArchive: Yes }     { unbedenklich }
@@ -1697,7 +1694,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     if IsEbest then with hdp do
     begin
       attrib := attrib and (not attrReqEB) + attrIsEB;
-      if netztyp=nt_UUCP { !!and BoxPar.EB_Daemon }then
+      if netztyp in netsRFC { !!and BoxPar.EB_Daemon }then
       begin
         if ReplyTo='' then ReplyTo:=absender;
         absender:='MAILER-DAEMON'+mid(absender,cpos('@',absender));
@@ -1715,7 +1712,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     if ntPmReply(netztyp) then
       if _pmReply then inc(hdp.attrib,AttrPmReply);
     if ControlMsg then inc(hdp.attrib,AttrControl);
-    if (binary and (netztyp=nt_UUCP) and multipartbin) or
+    if (binary and (netztyp in netsRFC) and multipartbin) or
        (binary and (netztyp=nt_Maus) and mausmpbin) then
       inc(hdp.attrib,AttrMPbin);
     if flPGPkey then
@@ -1730,14 +1727,10 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     hdp.prio:=msgprio;
     hdp.nokop:=flNokop;
     if umlaute=0 then
-      case netztyp of
-        nt_UUCP,
-        nt_NNTP,
-        nt_POP3,
-        nt_IMAP   : if FileContainsUmlaut then
-                      hdp.x_charset:='ISO-8859-1';
-        nt_Fido   : hdp.x_charset:='IBMPC 2';   { s. FSC-0054, grmpf }
-      end;
+      if netztyp=nt_Fido then
+        hdp.x_charset:='IBMPC 2'   { s. FSC-0054, grmpf }
+      else if netztyp in netsRFC then
+        if FileContainsUmlaut then hdp.x_charset:='ISO-8859-1';
     if iso then
       hdp.charset:='ISO1';
     if assigned(sData^.orghdp) then
@@ -2140,8 +2133,13 @@ initialization
 finalization
   SendEmpfList.Free;
 end.
+
 {
   $Log$
+  Revision 1.4  2001/08/29 19:50:47  ma
+  - changes in net type handling (2)
+  - shortened CVS logs
+
   Revision 1.3  2001/08/29 17:08:12  mk
   - Fix: first character of PM recipient in temp file HEADER.HDR is not
     truncated anymore (whatever HEADER.HDR might be needed for)
@@ -2207,369 +2205,4 @@ end.
   - removed XP_ID (shareware notice)
   - changed program id:
     "OpenXP/32 vVERSION (PLATFORM)"
-
-  Revision 1.111  2001/04/27 10:15:09  ma
-  - moved line "flags or 256" to correct position
-    (but ReplaceOwn does still not work)
-
-  Revision 1.110  2001/04/25 17:55:00  mk
-  - own mail is flagged now (needed for replaceown)
-
-  Revision 1.109  2001/04/18 11:02:13  ma
-  - using StrgList.IndexOf instead of Find, Find only works on sorted
-    Strglists.
-
-  Revision 1.108  2001/04/18 10:12:37  ma
-  - fixed: references got doubled
-
-  Revision 1.107  2001/04/17 20:21:29  ma
-  - removed "## XP ##" checking
-
-  Revision 1.106  2001/04/13 11:53:07  mk
-  - pid fixed
-
-  Revision 1.105  2001/04/05 14:58:12  ml
-  -Fix: absender doesnt end with @ anymore
-
-  Revision 1.104  2001/03/27 12:27:44  mk
-  - ops, fixed last commit
-
-  Revision 1.103  2001/03/27 08:25:43  mk
-  - snapshot datum aus der xp.ovr ermitteln
-
-  Revision 1.102  2001/03/22 18:25:09  ma
-  - FmtDateTime: "mm" means "month", *not* "minute".
-
-  Revision 1.101  2001/03/14 20:46:04  mk
-  - removed registration routines
-
-  Revision 1.100  2001/03/13 19:24:57  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.99  2001/02/28 14:25:46  mk
-  - removed some tainted comments
-
-  Revision 1.98  2001/02/19 15:27:19  cl
-  - marked/modified non-GPL code by RB and MH
-
-  Revision 1.97  2001/02/16 21:25:32  mk
-  - fixed count bug in mf_bretta
-
-  Revision 1.96  2001/01/28 08:54:26  mk
-  - fixed jump out of range
-
-  Revision 1.95  2001/01/14 10:13:35  mk
-  - MakeHeader() integreated in new unit
-
-  Revision 1.94  2001/01/07 10:03:52  mo
-  -Aenderungen an ccmore und ccmorea zurückgenommen
-
-  Revision 1.93  2001/01/06 21:13:35  mo
-  - Änderung an TnodeListItem
-
-  Revision 1.92  2001/01/05 09:33:09  mk
-  - removed THeader.Ref
-
-  Revision 1.91  2001/01/04 08:18:37  mo
-  -bugfix für VP
-
-  Revision 1.90  2001/01/03 18:02:11  mk
-  - fixed typo from last commit
-
-  Revision 1.89  2001/01/03 17:38:53  mk
-  - letzten Checkin an die 3.30er Version angeglichen
-
-  Revision 1.88  2001/01/03 16:44:31  mo
-  -Bezugsverkettung auf
-  -neue selbstgeschriebene mail repariert
-
-  Revision 1.87  2001/01/02 10:05:25  mk
-  - implemented Header.References
-
-  Revision 1.86  2000/12/31 11:51:50  mk
-  JG:- eigene PMs halten fix
-
-  Revision 1.85  2000/12/27 22:36:34  mo
-  -new class TfidoNodeList
-
-  Revision 1.84  2000/12/25 14:02:43  mk
-  - converted Lister to class TLister
-
-  Revision 1.83  2000/12/05 14:58:11  mk
-  - AddNewUser
-
-  Revision 1.82  2000/12/03 12:38:24  mk
-  - Header-Record is no an Object
-
-  Revision 1.81  2000/11/30 14:38:09  mk
-  - fixed NewUserIBM when adding new uesers
-
-  Revision 1.80  2000/11/25 10:31:47  mk
-  - some fixes for new SendUUData
-
-  Revision 1.79  2000/11/24 19:01:27  fe
-  Made a bit less suboptimal.
-
-  Revision 1.78  2000/11/24 09:40:11  mk
-  - fixed Franks suboptimal changes :(
-
-  Revision 1.77  2000/11/23 22:33:22  fe
-  Fixed some ugly bugs with followup and replyto.
-
-  Revision 1.76  2000/11/19 11:13:42  mk
-  - fixed Bug #112083: Vertreteradressen blieben bei Boxwechsel erhalten
-
-  Revision 1.75  2000/11/18 00:04:44  fe
-  Made compileable again.  (Often a suboptimal way...)
-
-  Revision 1.74  2000/11/16 22:35:30  hd
-  - DOS Unit entfernt
-
-  Revision 1.73  2000/11/15 23:00:42  mk
-  - updated for sysutils and removed dos a little bit
-
-  Revision 1.72  2000/11/14 15:51:32  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.71  2000/10/28 22:53:13  mk
-  - Workaround for VP Bug
-
-  Revision 1.70  2000/10/22 21:58:59  mk
-  - case of .pp and .epp is now UnixFS dependent
-
-  Revision 1.69  2000/10/17 10:05:52  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.68  2000/10/11 08:45:38  mk
-  RB:- Fix fuer Ersetzt-Nachrichten
-
-  Revision 1.67  2000/10/10 13:58:58  mk
-  RB:- Ersetzt-Nachrichten in Autoversand
-
-  Revision 1.66  2000/10/01 15:50:23  mk
-  - AnsiString-Fixes
-
-  Revision 1.65  2000/09/29 11:30:38  fe
-  RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
-  Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
-
-  Revision 1.64  2000/09/11 23:19:15  fe
-  Fido-To-Verarbeitung unter RFC korrigiert.
-
-  Revision 1.63  2000/08/26 08:47:43  mk
-  JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
-
-  Revision 1.62  2000/08/23 13:55:14  mk
-  - Datenbankfunktionen mit Const-Parametern wo moeglich
-  - dbReadX und Co auf 32 Bit angepasst
-
-  Revision 1.61  2000/08/23 07:49:20  mo
-  - Betreffzeile im editor fuer screenwidth > 80 angepasst
-
-  Revision 1.60  2000/08/22 14:02:40  mk
-  - SendenDefault in Shortint geaendert
-
-  Revision 1.59  2000/08/10 16:59:24  mk
-  - SendEmpfListe wird jetzt erzeugt und freigegeben
-
-  Revision 1.58  2000/08/05 10:06:59  mk
-  - Ansistring Verbesserungen
-
-  Revision 1.57  2000/07/29 14:32:30  mk
-  JG: - Dialogbox-Bug beseitigt
-
-  Revision 1.56  2000/07/27 10:13:03  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.55  2000/07/22 14:05:27  hd
-  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
-    (sollte es jetzt gewesen sein)
-
-  Revision 1.54  2000/07/21 20:56:26  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.53  2000/07/21 17:39:54  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
-
-  Revision 1.52  2000/07/21 13:23:47  mk
-  - Umstellung auf TStringList
-
-  Revision 1.51  2000/07/20 09:11:50  mk
-  - AnsiString-Fix fuer dbReadN
-
-  Revision 1.50  2000/07/15 20:02:59  mk
-  - AnsiString updates, noch nicht komplett
-
-  Revision 1.49  2000/07/12 14:43:46  mk
-  - einige ^AnsiString in einen normalen String umgewandelt
-  - AnsiString-Fixes fuer die Datenbank
-
-  Revision 1.48  2000/07/09 08:35:18  mk
-  - AnsiStrings Updates
-
-  Revision 1.47  2000/07/06 12:39:35  hd
-  - ^string entfernt
-
-  Revision 1.46  2000/07/05 14:49:29  hd
-  - AnsiString
-
-  Revision 1.45  2000/07/05 14:46:47  hd
-  - AnsiString
-
-  Revision 1.44  2000/07/05 12:47:27  hd
-  - AnsiString
-
-  Revision 1.43  2000/07/04 12:04:26  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.42  2000/07/03 13:31:41  hd
-  - SysUtils eingefuegt
-  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
-
-  Revision 1.41  2000/06/30 11:39:05  hd
-  - EditNachricht: An GetScreenLines/-Cols angepassst
-
-  Revision 1.40  2000/06/23 15:59:22  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.39  2000/06/19 20:21:46  ma
-  - von CRC16/XPCRC32 auf Unit CRC umgestellt
-
-  Revision 1.38  2000/06/13 16:57:56  jg
-  - Empfaenger-aendern im Sendefenster:
-    Bugfix:  Verteiler funktioieren jetzt wieder
-    Feature: Bei gedrueckter Shifttaste bleiben die Kopien-Eintraege erhalten
-
-  Revision 1.37  2000/06/10 20:15:11  sv
-  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
-    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
-  - ZConnectler koennen jetzt auch canceln :-)
-  - Fix beim Canceln von Crosspostings
-
-  Revision 1.36  2000/06/05 16:41:04  mk
-  - Zugriff auf uninitialisiertes sdata verhindert
-
-  Revision 1.35  2000/06/01 21:18:40  mk
-  - Resource 611,11 enthaelt jetzt Hotkey
-
-  Revision 1.34  2000/06/01 16:03:05  mk
-  - Verschiedene Aufraeumarbeiten
-
-  Revision 1.33  2000/05/21 07:21:17  jg
-  - Empfaenger aendern: [F2] wird jetzt reingemalt
-
-  Revision 1.32  2000/05/17 18:15:51  sv
-  - Auch in nicht registrierten Versionen wird keine XP-ID an mit N/W/O
-    weitergeleiteten Nachrichten angehaengt
-
-  Revision 1.31  2000/05/14 07:58:13  mk
-  - ContainsUmlaut gefixt
-
-  Revision 1.30  2000/05/13 09:14:41  jg
-  - Ueberpruefung der Adresseingaben jetzt auch Fido und Maus kompatibel
-
-  Revision 1.29  2000/05/11 18:21:53  jg
-  - Compiledatum im Mailer-String von Snapshotversionen ($IFDEF Snapshot)
-
-  Revision 1.28  2000/05/07 10:41:27  hd
-  - Linux: Variable Fensterbreite
-
-  Revision 1.27  2000/05/06 17:29:23  mk
-  - DOS DPMI32 Portierung
-
-  Revision 1.26  2000/05/05 18:08:50  jg
-  - Sendefenster: Verteiler im "Kopien an" Dialog erlaubt
-  - Empfaenger aendern Loescht alte "Kopien an" Eintraege
-
-  Revision 1.25  2000/05/02 19:14:01  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.24  2000/05/01 17:26:33  jg
-  - Verteiler als Empfaenger bei Nachricht/Direkt;  Nachricht/Weiterleiten
-    Und Sendefenster-Empfaengeraendern erlaubt
-
-  Revision 1.23  2000/04/29 19:11:51  jg
-  - Ueberpruefung der Usernameneingabe bei Nachricht/Direkt, Verteilern
-    und "Kopien an" + "Empfaenger aendern" im Sendefenster
-
-  Revision 1.22  2000/04/28 22:30:10  jg
-  - Diverse Verbesserungen beim Versenden mit Priority
-  - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail
-
-  Revision 1.21  2000/04/27 09:45:40  jg
-  - C/O/N "Eigene Nachrichten Halten" gilt nicht mehr fuer PMs
-
-  Revision 1.20  2000/04/18 16:17:33  jg
-  - Schoenheitsfix: Empfaengeraendern beim Senden mit Lister im Hintergrund
-  - Neue Selectroutine scr_auto_select (Sichert Screen und stellt Hauptmenue dar)
-  - Ein paar erledigte Sachen aus !Todo.tst geloescht.
-
-  Revision 1.19  2000/04/17 17:24:09  jg
-  - Sendefenster: Empfaengeraendern jetzt als richtiger Menuepunkt ("Emp.")
-  - xp1input.readbutton: alten Minibug bei Leerzeichen vor Buttons beseitigt.
-
-  Revision 1.18  2000/04/15 21:44:47  mk
-  - Datenbankfelder von Integer auf Integer16 gaendert
-
-  Revision 1.17  2000/04/15 09:58:00  jg
-  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
-  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
-
-  Revision 1.16  2000/04/11 19:34:01  oh
-  - [tempdir]\header.hdr fuer Mailnachbearbeitung
-
-  Revision 1.15  2000/04/09 08:01:26  jg
-  - Umlaute in Betreffs, werden jetzt (falls verboten) automatisch konvertiert
-
-  Revision 1.14  2000/04/04 21:01:24  mk
-  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.13  2000/04/01 07:41:38  jg
-  - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
-    neue Einstellung wird dann auch beim Quoten verwendet
-  - Hilfe aktualisiert, und Englische Hilfe fuer
-    Config/Optionen/Allgemeines auf Stand gebracht.
-
-  - Externe-Viewer (Windows): "START" als Allroundviewer
-    funktioniert jetzt auch mit der Loeschbatch-Variante
-  - Text fuer MIME-Auswahl in englische Resource eingebaut
-
-  Revision 1.12  2000/03/24 15:41:02  mk
-  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
-
-  Revision 1.11  2000/03/17 11:16:34  mk
-  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
-
-  Revision 1.10  2000/03/14 15:15:40  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.9  2000/03/09 23:39:33  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.8  2000/03/07 20:36:03  jg
-  - Bugfix: Versand von bereits r/w geoeffneten Dateien fehlermeldung
-    statt 0-byte Mails bei Binaerfiles bzw. RTE 200 bei Textfiles
-  - DoSend etwas kommentiert
-
-  Revision 1.7  2000/02/21 22:48:01  mk
-  MK: * Code weiter gesaeubert
-
-  Revision 1.6  2000/02/18 21:54:46  jg
-  Kurvnamen fuer UUCP + ZConnect Vertreteradressen
-
-  Revision 1.5  2000/02/15 20:43:36  mk
-  MK: Aktualisierung auf Stand 15.02.2000
-
 }

@@ -891,7 +891,7 @@ again:
 { true=Userbrett  }    pm:=cpos('@',empf)>0;
 { Brettvertreter  }    if not pm then begin
                          pollbox := dbReadNStr(bbase,bb_pollbox);
-                         if (ntBoxNetztyp(pollbox) in [nt_POP3,nt_NNTP,nt_IMAP,nt_UUCP,nt_ZConnect]) then
+                         if (ntBoxNetztyp(pollbox) in (netsRFC + [nt_ZConnect])) then
                          begin
                            Am_ReplyTo:=empf;
                            Empf := dbReadNStr(bbase,bb_brettname);
@@ -912,7 +912,7 @@ again:
                      else begin
                        re_n:=rehochn; kein_re:=false;
                        end;
-                     if hdp.netztyp=nt_UUCP then begin
+                     if hdp.netztyp in netsRFC then begin
                        re_n:=false; kein_re:=false;
                        end;
                      if (hdp.netztyp<>nt_Maus) and not kein_re then
@@ -1310,8 +1310,13 @@ end;
 
 
 end.
+
 {
   $Log$
+  Revision 1.2  2001/08/29 19:50:47  ma
+  - changes in net type handling (2)
+  - shortened CVS logs
+
   Revision 1.1  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 
@@ -1349,199 +1354,4 @@ end.
 
   Revision 1.60  2001/06/04 17:31:37  ma
   - implemented role feature
-
-  Revision 1.59  2001/03/13 19:24:57  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.58  2001/03/02 10:22:49  mk
-  - removed/modified non GPL code
-
-  Revision 1.57  2001/02/28 14:25:46  mk
-  - removed some tainted comments
-
-  Revision 1.56  2001/02/19 15:27:19  cl
-  - marked/modified non-GPL code by RB and MH
-
-  Revision 1.55  2001/01/14 10:13:35  mk
-  - MakeHeader() integreated in new unit
-
-  Revision 1.54  2001/01/05 09:33:10  mk
-  - removed THeader.Ref
-
-  Revision 1.53  2001/01/03 11:48:23  mk
-  - am_replyto bei N/W/K/D loeschen
-
-  Revision 1.52  2001/01/02 10:05:25  mk
-  - implemented Header.References
-
-  Revision 1.51  2000/12/27 22:36:33  mo
-  -new class TfidoNodeList
-
-  Revision 1.50  2000/12/05 14:58:11  mk
-  - AddNewUser
-
-  Revision 1.49  2000/12/03 12:38:24  mk
-  - Header-Record is no an Object
-
-  Revision 1.48  2000/11/30 14:38:10  mk
-  - fixed NewUserIBM when adding new uesers
-
-  Revision 1.47  2000/11/25 10:31:47  mk
-  - some fixes for new SendUUData
-
-  Revision 1.46  2000/11/24 19:01:27  fe
-  Made a bit less suboptimal.
-
-  Revision 1.45  2000/11/18 12:37:36  hd
-  - Ungueltiges Zeichen entfernt
-
-  Revision 1.44  2000/11/18 00:04:43  fe
-  Made compileable again.  (Often a suboptimal way...)
-
-  Revision 1.43  2000/11/16 22:35:30  hd
-  - DOS Unit entfernt
-
-  Revision 1.42  2000/11/14 15:51:32  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.41  2000/11/09 18:15:12  mk
-  - fixed Bug #116187: header of forwarded mails is stripped down
-
-  Revision 1.40  2000/11/01 11:37:28  mk
-  RB:- Bug #109282: Fido: Tearline+Origin bei Nachricht/Weiterleiten/Kopie&EditTo verfremden
-
-  Revision 1.39  2000/10/26 12:06:34  mk
-  - AllocHeaderMem/FreeHeaderMem Umstellung
-
-  Revision 1.38  2000/10/17 10:05:53  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.37  2000/10/16 09:32:38  mk
-  SV:- Ersetzt-Header wird nun beim Weiterleiten geloescht
-
-  Revision 1.36  2000/10/06 20:35:29  mk
-  MH:- bei Weiterleiten werden Vertreteradressen und Schreibesperern beachtet
-
-  Revision 1.35  2000/09/12 12:40:46  fe
-  Korrektur: Bei Nachricht->Weiterleiten->Kopie wird keine OAB-Zeile
-  mehr erzeugt.  Dies brach die ZConnect-Vorschrift, dass bei
-  Weiterleitungen ausser bei Verwendung der KOM-Zeile keine
-  Veraenderungen am Nachrichtentext vorgenommen werden duerfen.
-  (Das Problem betraf nur ZC-Nutzer, da uuz die OAB-Zeile bis jetzt
-  nicht wandelt.)
-
-  Revision 1.34  2000/08/23 13:55:14  mk
-  - Datenbankfunktionen mit Const-Parametern wo moeglich
-  - dbReadX und Co auf 32 Bit angepasst
-
-  Revision 1.33  2000/07/22 14:05:28  hd
-  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
-    (sollte es jetzt gewesen sein)
-
-  Revision 1.32  2000/07/22 10:10:25  hd
-  - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
-
-  Revision 1.31  2000/07/21 21:17:46  mk
-  - hasHugeStrings entfernt, weil nicht mehr noetig
-
-  Revision 1.30  2000/07/21 20:56:27  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.29  2000/07/21 17:39:55  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
-
-  Revision 1.28  2000/07/21 13:23:47  mk
-  - Umstellung auf TStringList
-
-  Revision 1.27  2000/07/20 16:49:59  mk
-  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
-
-  Revision 1.26  2000/07/11 21:39:22  mk
-  - 16 Bit Teile entfernt
-  - AnsiStrings Updates
-  - ein paar ASM-Routinen entfernt
-
-  Revision 1.25  2000/07/05 12:47:28  hd
-  - AnsiString
-
-  Revision 1.24  2000/07/04 12:04:26  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.23  2000/07/03 15:11:01  mk
-  - unnoetige Defines entfernt
-  - sysutils war zweimal in xp6o.pas enthalten
-
-  Revision 1.22  2000/07/03 13:31:41  hd
-  - SysUtils eingefuegt
-  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
-
-  Revision 1.21  2000/06/23 15:59:23  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.20  2000/06/19 20:22:13  ma
-  - von CRC16/XPCRC32 auf Unit CRC umgestellt
-
-  Revision 1.19  2000/06/10 20:15:11  sv
-  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
-    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
-  - ZConnectler koennen jetzt auch canceln :-)
-  - Fix beim Canceln von Crosspostings
-
-  Revision 1.18  2000/06/05 16:16:23  mk
-  - 32 Bit MaxAvail-Probleme beseitigt
-
-  Revision 1.17  2000/05/29 20:21:41  oh
-  -findclose: ifdef virtualpascal nach ifdef ver32 geaendert
-
-  Revision 1.16  2000/05/21 20:05:58  jg
-  - Nachricht/Weiterleiten...Direkt: Text der Fensterueberschrift
-    war fest im Programm und nicht in der .RES
-
-  Revision 1.15  2000/05/20 02:07:39  mk
-  - 32 Bit/VP: FindFirst/FindNext aus Dos-Unit statta us SysTools verwendet
-
-  Revision 1.14  2000/05/17 14:17:33  sv
-  - Mit N/W/O weitergeleitete Nachrichten koennen nun nachtraeglich
-    nicht mehr geaendert werden
-
-  Revision 1.13  2000/05/03 00:21:22  mk
-  - unbenutzte Units aus uses entfernt
-
-  Revision 1.12  2000/05/02 19:14:01  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.11  2000/04/28 22:30:10  jg
-  - Diverse Verbesserungen beim Versenden mit Priority
-  - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail
-
-  Revision 1.10  2000/04/28 18:23:11  jg
-  - Neue Prozedur XP4.SetBrettGelesen nomen est omen...
-  - Fix: Brett-Ungelesen Flag bei Alt+P im Email-Brett
-
-  Revision 1.9  2000/04/21 12:34:47  jg
-  - MIME-Flag wird jetzt beim Archivieren mit uebernommen
-  - Archivier-Vermerk ist jetzt abschaltbar
-
-  Revision 1.8  2000/04/16 19:50:38  mk
-  - Fixes fuer FindFirst
-
-  Revision 1.7  2000/04/15 09:58:00  jg
-  - User-Adressbuch Moeglichkeit zur erstellung von Usergruppen im Spezialmenue
-  - Config/Optionen/Allgemeines "standard Adressbuchgruppe" fuer neue User
-
-  Revision 1.6  2000/04/13 12:48:38  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
 }

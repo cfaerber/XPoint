@@ -402,12 +402,14 @@ begin
         nt_GS       : _domain:=rev+'@'+pointname;
         nt_UUCP     : if fqdn='' then _domain:=rev+'@'+pointname+domain
                         else _domain:=rev+'@'+fqdn;
-        nt_NNTP,
-        nt_POP3,
-        nt_IMAP     : if fqdn='' then _domain:=rev+'@'+Mid(username,cPos('@',username)+1)
-                        else _domain:=rev+'@'+fqdn;
       else
-        _domain:='@'+box;
+        if netztyp in netsRFC then
+          if fqdn='' then
+            _domain:=rev+'@'+Mid(username,cPos('@',username)+1)
+          else
+            _domain:=rev+'@'+fqdn
+        else
+          _domain:='@'+box;
       end;
       local_part:=b30(longint(dat) shl 14+count shr 2)+
                   b30(longint(count and 3) shl 28+longint(rand) shl 16 +csum);
@@ -822,7 +824,7 @@ begin
   if sData^.replyto <> '' then
     sdata^.replyto := dbReadStr(d,'ReplyTo');
   betrlen:=ntBetreffLen(netztyp);
-  if (netztyp=nt_UUCP) and (umlaute=2) then
+  if (netztyp in netsRFC) and (umlaute=2) then
     umlaute:=0;
 end;
 
@@ -852,13 +854,15 @@ begin
   case netztyp of
     nt_Netcall,nt_ZCONNECT : l:=1;
     nt_Fido                : l:=2;
-    nt_UUCP                : l:=3;
     nt_Maus                : l:=4;
     nt_Magic               : l:=5;
     nt_Quick,nt_GS         : l:=6;
-  else begin
-    maxsize:=0; exit;      { nt_Pronet (s. SizeOK) }
-    end;
+  else
+    if netztyp in netsRFC then
+      l:=3
+    else begin
+      maxsize:=0; exit;      { nt_Pronet (s. SizeOK) }
+      end;
   end;
   maxsize:=pmlimits[l,iif(lokalPM,2,1)];
 end;
@@ -965,13 +969,10 @@ var x,y : Integer;
     sml : string[1];
     tmpFollowUp: string;
 begin
-  case netztyp of
-    nt_ZConnect : y:=iif(pm,5,9);
-    nt_UUCP,
-    nt_NNTP,
-    nt_POP3,
-    nt_IMAP     : y:=iif(pm,5,11);
-  end;
+  if netztyp=nt_ZConnect then
+    y:=iif(pm,5,9)
+  else if netztyp in netsRFC then
+    y:=iif(pm,5,11);
   dialog(ival(getres2(616,0)),y,getres2(616,6),x,y);   { 'Zus„tzliche Informationen' }
   y:=2;
   asc:=range(' ',#126);
@@ -1001,7 +1002,7 @@ begin
       maddstring(3,y,getres2(616,3),summary,40,200,  { 'Zusammenfassung' }
                iifs(ntHeaderUmlaut(netztyp),'',asc));   { max. L„nge: 200! }
       inc(y,2);                                 { (wg. RFC-1522-Codierung) }
-      if netztyp in [nt_UUCP,nt_NNTP,nt_POP3,nt_IMAP] then begin
+      if netztyp in netsRFC then begin
         maddstring(3,y,getres2(616,4),distribute,40,40,asc); { 'Verbreitung' }
         inc(y,2);
         end;
@@ -1124,6 +1125,10 @@ end;
 
 {
   $Log$
+  Revision 1.3  2001/08/29 19:50:47  ma
+  - changes in net type handling (2)
+  - shortened CVS logs
+
   Revision 1.2  2001/08/23 11:15:04  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of
@@ -1167,159 +1172,4 @@ end;
 
   Revision 1.51  2001/03/14 20:46:05  mk
   - removed registration routines
-
-  Revision 1.50  2001/03/13 19:24:57  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.49  2001/03/01 14:04:18  mk
-  - removed some tinted code/comments
-
-  Revision 1.48  2001/02/19 15:27:19  cl
-  - marked/modified non-GPL code by RB and MH
-
-  Revision 1.47  2001/01/14 10:13:36  mk
-  - MakeHeader() integreated in new unit
-
-  Revision 1.46  2001/01/07 10:03:16  mo
-  -Aenderungen an ccmore und ccmorea zurückgenommen
-
-  Revision 1.45  2001/01/06 21:13:36  mo
-  - Änderung an TnodeListItem
-
-  Revision 1.44  2001/01/05 09:33:10  mk
-  - removed THeader.Ref
-
-  Revision 1.43  2001/01/02 10:05:26  mk
-  - implemented Header.References
-
-  Revision 1.42  2000/12/31 14:49:04  mk
-  - Tearlineschalter in Config/Optionen/Netze
-
-  Revision 1.41  2000/12/03 12:38:25  mk
-  - Header-Record is no an Object
-
-  Revision 1.40  2000/11/25 18:28:31  fe
-  Fixed some bugs.
-
-  Revision 1.39  2000/11/25 10:31:48  mk
-  - some fixes for new SendUUData
-
-  Revision 1.38  2000/11/24 19:01:27  fe
-  Made a bit less suboptimal.
-
-  Revision 1.37  2000/11/17 00:15:48  mk
-  - Virtual Pascal compatibility updates
-
-  Revision 1.36  2000/11/16 22:35:30  hd
-  - DOS Unit entfernt
-
-  Revision 1.35  2000/11/14 15:51:33  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.34  2000/11/10 19:41:27  mk
-  - Tearline gekuertz
-
-  Revision 1.33  2000/10/26 12:06:34  mk
-  - THeader.Create/FreeHeaderMem Umstellung
-
-  Revision 1.32  2000/10/17 10:05:53  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.31  2000/09/30 16:41:23  mk
-  - QuoteOK-Bugfix fuer Prozentzahlen
-
-  Revision 1.30  2000/08/05 17:17:49  mk
-  - SetTextBuf in MakeSignatur verwendet jetzt Buffer statt String
-
-  Revision 1.29  2000/08/05 17:13:20  mk
-  - Crash nach B behoben, Dank an Michael Koppel
-
-  Revision 1.28  2000/07/22 10:10:25  hd
-  - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
-
-  Revision 1.27  2000/07/21 21:17:46  mk
-  - hasHugeStrings entfernt, weil nicht mehr noetig
-
-  Revision 1.26  2000/07/21 20:56:28  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.25  2000/07/21 17:39:56  mk
-  - Umstellung auf THeader.Create/FreeHeaderMem
-
-  Revision 1.24  2000/07/20 16:49:59  mk
-  - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
-
-  Revision 1.23  2000/07/15 20:02:59  mk
-  - AnsiString updates, noch nicht komplett
-
-  Revision 1.22  2000/07/06 12:39:35  hd
-  - ^string entfernt
-
-  Revision 1.21  2000/07/05 14:46:47  hd
-  - AnsiString
-
-  Revision 1.20  2000/07/04 12:04:26  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.19  2000/06/29 13:00:57  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.18  2000/06/05 16:16:23  mk
-  - 32 Bit MaxAvail-Probleme beseitigt
-
-  Revision 1.17  2000/05/29 15:13:42  jg
-  - Fix: Priority-Header abschaltbar
-
-  Revision 1.16  2000/05/06 17:29:23  mk
-  - DOS DPMI32 Portierung
-
-  Revision 1.15  2000/05/04 10:32:59  mk
-  - unbenutzer TurboBox Code entfernt
-
-  Revision 1.14  2000/04/28 22:30:10  jg
-  - Diverse Verbesserungen beim Versenden mit Priority
-  - Farbige Hervorhebung auch fuer Zconnect Eil- und Direktmail
-
-  Revision 1.13  2000/04/17 17:24:09  jg
-  - Sendefenster: Empfaengeraendern jetzt als richtiger Menuepunkt ("Emp.")
-  - xp1input.readbutton: alten Minibug bei Leerzeichen vor Buttons beseitigt.
-
-  Revision 1.12  2000/04/04 10:33:57  mk
-  - Compilierbar mit Virtual Pascal 2.0
-
-  Revision 1.11  2000/03/14 15:15:40  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.10  2000/03/09 23:39:34  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.9  2000/03/01 09:24:30  mk
-  HS: - FQDN jetzt auch bei UUCP-Boxen
-
-  Revision 1.8  2000/02/21 14:55:43  mk
-  MH: Prioritaetenbehandlung eingebaut
-
-  Revision 1.7  2000/02/19 11:40:08  mk
-  Code aufgeraeumt und z.T. portiert
-
-  Revision 1.6  2000/02/18 00:03:01  mk
-  MH: * Sendepriotitaet in Resourcen aufgenommen
-
-  Revision 1.5  2000/02/17 13:04:05  mk
-  MH: * Prioauswahl fuer keine Prioritaet hinzugefuegt
-
 }
