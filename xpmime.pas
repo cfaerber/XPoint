@@ -111,13 +111,19 @@ begin
   if ReadFilename(getres(2441),fn,true,useclip) then
   begin
     if not multipos(':\',fn) then fn:=ExtractPath+fn;
-    if FileExists(fn) then begin
-      if mpdata.typ='text'then o:=false else o:=true;   {Falls vorhanden... Text: "anhaengen"}
-      o:=overwrite(fn,o,brk);                           {Rest: "ueberschreiben"}
-      end
-    else o:=true;
+    if not UseClip then
+    begin
+      if FileExists(fn) then
+      begin
+        if mpdata.typ='text'then o:=false else o:=true;   {Falls vorhanden... Text: "anhaengen"}
+        o:=overwrite(fn,o,brk);                           {Rest: "ueberschreiben"}
+      end else
+      o:=true;
+    end;
     if not FileExists(fn) or not brk then
       ExtractMultiPart(mpdata,fn,not o);
+    if UseClip then
+      WriteClipfile(fn);
   end;
 end;
 
@@ -763,6 +769,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/12/15 00:26:20  mk
+  - Extract von Multipartteilen mit X in Clipboard geht jetzt
+
   Revision 1.38  2000/12/03 12:38:26  mk
   - Header-Record is no an Object
 
