@@ -56,7 +56,7 @@ begin
   existrf:=e;
 end;
 
-function ioerror(i:integer; otxt:atext):atext;
+function ioerror(i:integer; otxt:string):string;
 begin
   case i of
       2 : ioerror:='Datei nicht gefunden';
@@ -104,10 +104,13 @@ begin
 end;
 
 {
-	$Log$
-	Revision 1.1  2000/06/30 14:00:59  hd
-	- Linux extrahiert
-	- fileio.inc fuer systemunabhaengige Routinen
-	- Linux: IsPath, era, erase_mask vereinfacht
+        $Log$
+        Revision 1.2  2000/11/09 15:27:02  mk
+        - Compilierfaehigkeit wiederhergestellt
+
+        Revision 1.1  2000/06/30 14:00:59  hd
+        - Linux extrahiert
+        - fileio.inc fuer systemunabhaengige Routinen
+        - Linux: IsPath, era, erase_mask vereinfacht
 
 }

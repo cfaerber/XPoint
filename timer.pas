@@ -8,11 +8,6 @@ unit Timer;
 
 interface
 
-{$IFDEF VirtualPascal }
-uses
-  use32;
-{$ENDIF }
-
 TYPE
         tTimer= OBJECT
                         CONSTRUCTOR Init;
@@ -133,6 +128,9 @@ end.
 
 {
   $Log$
+  Revision 1.12  2000/11/09 15:27:02  mk
+  - Compilierfaehigkeit wiederhergestellt
+
   Revision 1.11  2000/11/08 19:18:56  hd
   - Fix: XPDEFINE.INC vergessen :-(
 

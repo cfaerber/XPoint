@@ -13,7 +13,9 @@
 
 {$I XPDEFINE.INC }
 
-{$mode objfpc}
+{$IFDEF FPC }
+  {$mode objfpc}
+{$ENDIF }
 
 unit fileio;
 
@@ -21,8 +23,29 @@ interface
 
 {$ifdef unix}
   {$i linux/fileioh1.inc}
-{$else}
-  {$i fileioh1.inc}
+{$else }
+uses
+  sysutils,
+{$ifdef vp }
+  vpusrlow,
+{$endif}
+{$IFDEF Win32 }
+  windows,
+{$ENDIF }
+{$IFDEF DOS32 }
+  xpdos32,
+{$ENDIF }
+  xpglobal,
+  dos, typeform;
+const FMRead       = $00;     { Konstanten fÅr Filemode }
+      FMWrite      = $01;
+      FMRW         = $02;
+      FMDenyNone   = $40;
+      FMDenyRead   = $30;
+      FMDenyWrite  = $20;
+      FMDenyBoth   = $10;
+      FMCompatible = $00;
+
 {$endif} { Linux }
 
 type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
@@ -48,9 +71,11 @@ type TCreateMode = (
 { Funktionen zum Erstellen der Datei unter Ber¸cksichtigung
   der Zugriffsrechte. }
 
+{$IFDEF FPC }
 procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
-procedure XPRewrite(var F: file; cm: TCreateMode);
 procedure XPRewrite(var F: text; cm: TCreateMode);
+{$ENDIF }
+procedure XPRewrite(var F: file; cm: TCreateMode);
 
 function  AddDirSepa(p: string): string;      { Verz.-Trenner anhaengen }
 Function  exist(n:string):boolean;              { Datei vorhanden ?       }
@@ -83,12 +108,12 @@ procedure adddir(var fn:string; dir:string);
 function  GetFileDir(p:string):string;
 function GetBareFileName(p:string):string;
 procedure WildForm(var s: string);              { * zu ??? erweitern }
-function  dospath(d:byte):pathstr;
+function  dospath(d:byte):string;
 
-function  ioerror(i:integer; otxt:atext):atext; { Fehler-Texte            }
+function  ioerror(i:integer; otxt:string):string; { Fehler-Texte            }
 procedure WriteBatch(s:string);                 { Batchfile erstellen     }
 function alldrives:string;
-function  IsDevice(fn:pathstr):boolean;
+function  IsDevice(fn:string):boolean;
 
 implementation  { ------------------------------------------------------- }
 
@@ -106,17 +131,19 @@ uses
 const
   PathSepaChar          = ';'; { Trennzeichen in der Environment-Var PATH }
 
+{$IFDEF FPC }
 procedure XPRewrite(var F: file; l: longint; cm: TCreateMode);
 begin
   System.Rewrite(F,l);
 end;
 
-procedure XPRewrite(var F: file; cm: TCreateMode);
+procedure XPRewrite(var F: text; cm: TCreateMode);
 begin
   System.Rewrite(F);
 end;
+{$ENDIF }
 
-procedure XPRewrite(var F: text; cm: TCreateMode);
+procedure XPRewrite(var F: file; cm: TCreateMode);
 begin
   System.Rewrite(F);
 end;
@@ -232,7 +259,7 @@ begin
   end;
 end;
 
-function dospath(d:byte):pathstr;
+function dospath(d:byte):string;
 var s : string;
 begin
   getdir(d,s);
@@ -542,7 +569,7 @@ begin
   if ioresult<>0 then;
 end;
 
-function IsDevice(fn:pathstr):boolean;
+function IsDevice(fn:string):boolean;
 begin
   { COMs sind Devices, der Rest nicht }
   IsDevice := Pos('COM', fn) = 1;
@@ -578,6 +605,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2000/11/09 15:27:02  mk
+  - Compilierfaehigkeit wiederhergestellt
+
   Revision 1.60  2000/11/09 10:50:06  hd
   - Neu: XPRewrite(var F: File|Text [; l: longint]; cm: TCreateMode);
   - Fix: Invalid Types dirstr<->string
