@@ -633,3 +633,72 @@ dann bauen die Entwickler das bestimmt so ein :-)))
 Gruss von Klaus Peter
 
 
+##########################################################################
+From stefan.vinke@gmx.de Sun Feb 27 21:05:00 2000
+Return-path: <sentto-398616-2453-mk=happyarts.de@returns.onelist.com>
+Envelope-to: mk@happyarts.de
+Delivery-date: Sun, 27 Feb 2000 22:06:12 +0100
+Received: from [208.48.218.11] (helo=hi.egroups.com)
+	by mx01.kundenserver.de with smtp (Exim 2.12 #2)
+	id 12PAsy-0000Jl-00
+	for mk@happyarts.de; Sun, 27 Feb 2000 22:05:53 +0100
+X-eGroups-Return: sentto-398616-2453-mk=happyarts.de@returns.onelist.com
+Received: from [10.1.10.39] by hi.egroups.com with NNFMP; 27 Feb 2000 21:05:46 -0000
+Received: (qmail 3367 invoked from network); 27 Feb 2000 21:05:44 -0000
+Received: from unknown (10.1.10.26) by m5.onelist.org with QMQP; 27 Feb 2000 21:05:44 -0000
+Received: from unknown (HELO mailout06.sul.t-online.de) (194.25.134.19) by mta1.onelist.com with SMTP; 27 Feb 2000 21:05:42 -0000
+Received: from fmrl01.sul.t-online.de  by mailout06.sul.t-online.de with smtp  id 12PAsh-0007eE-01; Sun, 27 Feb 2000 22:05:35 +0100
+Received: from gmx.de (0522173720-0001@[62.158.126.118]) by fmrl01.sul.t-online.de with smtp id 12PAsY-1t4i0XC; Sun, 27 Feb 2000 22:05:26 +0100
+Received: by gmx.de (CrossPoint v3.13 SV R/C22601); 27 Feb 2000 22:05:18 +0200
+To: xpdeveloper@onelist.com
+Message-ID: <7ZgfB8qma5B@gmx.de>
+X-Mailer: CrossPoint v3.13 SV R/C22601, via SMTP (UKAW v1.72g)
+X-Sender: 0522173720-0001@t-dialin.net
+MIME-Version: 1.0
+Mailing-List: list xpdeveloper@onelist.com; contact xpdeveloper-owner@onelist.com
+Delivered-To: mailing list xpdeveloper@onelist.com
+Precedence: bulk
+List-Unsubscribe: <mailto:xpdeveloper-unsubscribe@onelist.com>
+Date: 27 Feb 2000 22:05:00 +0200
+X-eGroups-From: stefan.vinke@gmx.de (Stefan Vinke)
+From: stefan.vinke@gmx.de
+Reply-To: xpdeveloper@onelist.com
+Subject: [XPDEV] Fehler bei Sprachenumstellung
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+
+From: stefan.vinke@gmx.de
+
+Moin, moin!
+
+XP stuerzt u.U. beim Umstellen der Sprache im Configmenue mit dieser  
+Fehlermeldung ab:
+
+--- CUT ---
+[------------------ grauer "Balken" ------------------]
+wwqeqweqwe
+icIndexNum: falsche Datei:     BOX
+Runtime error 204 at 101C:454F.
+--- CUT ---
+
+(DATABASE.PAS, Zeile 798, Beta 21 vom CVS-Server)
+
+Zuerst wird nur der Balken angezeigt und XP wartet auf eine Eingabe,  
+wenn man etwas eintippt, dann wird das in der zweiten Zeile ausgegeben.
+
+Mit folgender Vorgehensweise laesst sich bei mir der Fehler  
+reproduzierem:
+
+1. Man startet XP und waehlt im Menue die Sprache Englisch
+2. XP beenden
+3. XP starten, Deutsch auswaehlen und <bumm>.
+
+Das Ergebnis ist, dass man XP nur noch mit dem Kommandozeilenparameter  
+auf Deutsch umstellen kann.
+
+BTW: Ich bin der Meinung, dass man "abort" nur mit einem "b" schreibt.  
+(englische Betameldung)
+
+MfG
+  Stefan
+

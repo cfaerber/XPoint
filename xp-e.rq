@@ -1209,9 +1209,9 @@ K (c) '93-96 Peter Mandrella
 # Zeilenanzahl
 0    13
 1    This is a Beta-Version of Crosspoint, created by the OpenXP-       
-2    Developer-Team. Please notice, that there are surely still Bugs
-3    in this Beta-Version, which could damage your database, 
-4    or cause troubles if you use this XP-Version in public.
+2    Development-Team. Please notice, that there are surely still bugs
+3    in this betaVersion, which could damage your database
+4    or cause trouble if you use this XP-Version in public.
 5    If you use this version, you are fully responsible for all damage,
 6    you may cause with it. If you don't agree with this terms,
 7    please use a official release-version of Crosspoint. 
@@ -1221,7 +1221,7 @@ K (c) '93-96 Peter Mandrella
 11   http://www.openxp.de.
 12
 13  Choose "Continue", to work with this betaversion.
-30   ~^Continue , ^Abbort~
+30   ~^Continue , ^Cancel~
 -
 # --- XP6 -------------------------------------------------------------
 

@@ -42,7 +42,7 @@ const  {$IFDEF DPMI}
        {$ENDIF}
 
        LangVersion = '13';           { Version des Sprachmoduls }
-       menus       = 40;
+       menus       = 40;             { Anzahl der Menus }
        ZeilenMenue = 11;
        maxbmark    = 1000;           { maximal markierbare User/Bretter }
        maxmarklist = 5000;           { MK: Maximale Anzahl markierter Msgs }
@@ -1074,6 +1074,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.8  2000/02/27 22:28:51  mk
+  - Kleinere Aenderung zum Sprachenwechseln-Bug
+
   Revision 1.7  2000/02/20 22:09:30  mk
   MO: * Fidolastseek von 28 auf 40 erweitert
 
