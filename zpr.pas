@@ -224,7 +224,12 @@ begin
 end;
 
 procedure helppage;
+{ ML 26.02.2000 Linux benutzt kein Carriage Return... }
+{$IFDEF Linux }
+const crlf = #10;
+{$ELSE }
 const crlf = #13#10;
+{$ENDIF }
 begin
   writeln('Syntax:    ZPR [Schalter] <Quelldatei> [Zieldatei]'+crlf+
           crlf,
@@ -235,7 +240,7 @@ begin
           '           -w   Warnungen unterdrcken'+crlf,
           '           -z   fehlerhafte Zeilen anzeigen'+crlf,
           crlf,
-          '   -dDateiname  fehlerhafte Nachr. in Datei schreiben');
+          '           -d   Dateiname  fehlerhafte Nachrichten in Datei schreiben');
   halt(2);
 end;
 
@@ -1347,6 +1352,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/02/26 16:01:09  ml
+  Carriage Return in linux nicht noetig
+
   Revision 1.5  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 
