@@ -1,8 +1,35 @@
+{  $Id$
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the
+   Free Software Foundation; either version 2, or (at your option) any
+   later version.
+
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this software; see the file gpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   Created on December, 27st 2000 by Michael Koppel <mo@openxp.de>
+
+   This software is part of the OpenXP project (www.openxp.de).
+
+   Global definitions, types and constants
+}
+
 {$I XPDEFINE.INC}
 
+
 unit fidoglob;
+
 interface
-uses typeform,sysutils,fileio,xpglobal,classes;
+
+uses
+  typeform,sysutils,fileio,xpglobal,classes;
 
 const
 {$IFDEF UnixFS }
@@ -224,3 +251,10 @@ begin
 end;
 
 end.
+
+{
+  $Log$
+  Revision 1.4  2000/12/28 10:59:13  mk
+  - added GPL and CVS Info
+
+}
