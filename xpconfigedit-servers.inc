@@ -455,7 +455,7 @@
     else begin
       dname:= dbReadStr(d,'dateiname');
       if (dname='') or (length(dname)>8) then begin
-        write(#7);
+//        write(#7);
         dname:= dbReadStr(d,'boxname');
         end;
       pp:=_filesize(ownpath+dname+extBoxFile)>0;
@@ -2044,7 +2044,6 @@
       nt  : byte;
       nt1 : byte;
       x,y : Integer;
-      maps: string[20];
       box : string;
       fn: String;
 
@@ -2061,9 +2060,9 @@
       dbGoTop(bbase);
       n:=dbRecCount(bbase);
       i:=1;
-      while not dbEOF(bbase) do begin
-        gotoxy(x+31,y+1); moff;
-        write(i*100 div n); mon;
+      while not dbEOF(bbase) do 
+      begin
+        MWrt(x+31, y+1, Format('%2d', [i*100 div n]));
         if UpperCase(dbReadStrN(bbase,bb_pollbox))=UpperCase(box) then begin
           flags:=dbReadInt(bbase,'flags') and not 16 + iif(nt IN [nt_UUCP,nt_NNTP],16,0);
           dbWriteN(bbase,bb_flags,flags);
@@ -2093,8 +2092,8 @@
       end
     else begin
       dbRead(d,'netztyp',nt); 
-      dbread(d,'dateiname',fn);
-      ReadBox(nt,fn,boxpar);
+      fn := dbReadStr(d,'dateiname');
+      ReadBoxPar(nt,fn);
       if (Boxpar^.ClientMode) and (nt = nt_UUCP) then nt:=nt_Client;  
       nt1:=nt;
       Box := dbReadStr(d,'boxname');
@@ -2108,10 +2107,8 @@
         dbWrite(d,'netztyp',nt);
         dec(ntused[nt1]);
         inc(ntused[nt]);
-        if nt=nt_Maus then begin
-          maps:='MAUS';
-          dbWriteStr(d,'nameomaps',maps);
-          end;
+        if nt=nt_Maus then 
+          dbWriteStr(d,'nameomaps','MAUS');
         dbFlushClose(d);
         SetBrettNetztyp;
         dbGo(d,drec[1]);
@@ -2123,6 +2120,9 @@
 
 {
   $Log$
+  Revision 1.31  2001/09/26 22:41:03  mk
+  - fixed freeze while Edit/Boxen/Netztyp aendern
+
   Revision 1.30  2001/09/24 10:38:30  ma
   - fixed: Server data was not saved
 
