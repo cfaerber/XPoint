@@ -1567,6 +1567,7 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 9    Entry "Client call" is missing
 10   Entry "Client call" not OK
 11   Entry "Additional servers" not OK
+12   Entry "Envelope address" is missing
 -
 707 <broken in>
 708 Break
@@ -1904,30 +1905,43 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 # RFC/Client
 80   Client settings
 81   Server
-82   Comment ~
-83   eMail address
-84   Real name   ~
-85   Reply to    ~
-86   FQDN        ~
-87   Client directory ~
-88   Client call      ~
-89   Additional servers
-90   Dial-Up~
-91   Phone  ~
-92   Login  ~
-93   Password
-100  Mail server for incoming mail (POP3/SMTP/IMAP)
-101  mail.btinternet.com
-102  Mail server for outgoing mail (SMTP)
-103  mail.btinternet.com
-104  News server (NNTP)
-105  news.btinternet.com
-106  Server name    ~
-107  Fallback server~
-108  Envelope address
-109  User name      ~
-110  Password       ~
-111  Port
+82   Name
+83   Comment ~
+84   User
+85   eMail address
+86   Real name   ~
+87   Reply to    ~
+88   FQDN        ~
+89   Client
+90   Client directory ~
+91   Client call      ~
+92   Additional servers
+93   Connection/Login
+94   Dial-Up~
+95   Phone  ~
+96   Login  ~
+97   Password
+98   Ask before Dial
+99   Ask before Disconnect
+100  Keep connect status
+110  Mail server for incoming mail (POP3/SMTP/IMAP)
+111  Mail server for outgoing mail (SMTP)
+112  News server (NNTP)
+113  Server name    ~
+114  Port
+115  Protoc.
+116  Fallback server~
+117  Envelope address
+118  User name      ~
+119  Password       ~
+120  Use Envelope-To
+121  Keep mail on server
+122  APOP Authentication
+123  SMTP after POP
+124  SMTP Login acc. RFC 2554
+125  Update Newsgroup list
+126  Max. article length (KB)~
+127  Max. articles per group
 #
 40   UpPack extension ~
 41   DownPack ext.~
@@ -1970,14 +1984,14 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 6    sec.
 + 923
 # Window width of Fido and UUCP SysOp Mode
-0    59
+0    61
 # Window width of other SysOp Modes
-1    57
+1    59
 2    Sysop Mode
 3    Inbound directory ~
 4    Outbound directory~
-5    Input file  ~
-6    Output file ~
+5    Input file    ~
+6    Output file   ~
 7    /¯Netcall report
 8    Name without @BOX
 9    Pack outbound mail
@@ -2050,7 +2064,8 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 # RFC/Client
 8    Mail/^News Servers,
 9    E^xternal Settings,
-10   Load external configuration file
+10   Launch/Load external configuration
+11   Remove saved file name from configuration file
 + 928
 1    UUCP Configuration
 2    Reply-to address
@@ -3180,36 +3195,39 @@ K (c) 2000-01 OpenXP-Team, http://www.openxp.de
 #
 39 This path must not be empty!
 40 User name or eMail address required!
-# The string in the following eight lines must not exceed 57 characters:
+# The string in the following ten lines must not exceed 57 characters:
 41 These settings only take effect if they are interpreted
 42 by your client or client kit.
 43
 44 Your client may support and/or require further settings,
 45 which would then have to be entered in an external confi-
-46 guration file in the client directory.
-47
-48 Please consult the client documentation for more details.
+46 guration file in the client directory or through an
+47 external configuration utility (see /Edit/Servers/Edit/
+48 External Settings).
+49
+50 Please consult the client documentation for more details.
 #
-49 Client directory "%s" not found!
-50 Directory "%s" not found!
+51 Client directory "%s" not found!
+52 Directory "%s" not found!
 #
-51 There are no (more) servers that could be added!
-52 This list may contain a maximum of %s servers!
-53 Maximum input length (%s) for server names reached!
-54 Maximum input length (%s) for file names (.BFG) reached!
-55 Server "%s" does already exist - add, anyway
-56 Input too long (Server names)! %s characters still available.
-57 Input too long (file names (.BFG))! %s characters still available.
-58 Server "%s"
-59 does exist %s times!
-60 Server "%s" does not exist!
-61 Server "%s" is identical with the server currently edited!
-62 is not of net type %s!
-63 Maximum total length (%s) of file names (.BFG) exceeded!
-64 Maximum total length (%s) of Server names exceeded!
-65 Invalid server configuration file name: "%s.BFG"
-66 Server for file name "%s.BFG" not found!
-67 Invalid Server name: "%s"
+53 There are no (more) servers that could be added!
+54 This list may contain a maximum of %s servers!
+55 Maximum input length (%s) for server names reached!
+56 Maximum input length (%s) for file names (.BFG) reached!
+57 Server "%s" does already exist - add, anyway
+58 Input too long (Server names)! %s characters still available.
+59 Input too long (file names (.BFG))! %s characters still available.
+60 Server "%s"
+61 does exist %s times!
+62 Server "%s" does not exist!
+63 Server "%s" is identical with the server currently edited!
+64 is not of net type %s!
+65 Maximum total length (%s) of file names (.BFG) exceeded!
+66 Maximum total length (%s) of Server names exceeded!
+67 Invalid server configuration file name: "%s.BFG"
+68 Server for file name "%s.BFG" not found!
+69 Invalid Server name: "%s"
+70 Envelope address must be specified!
 
 +  11000
 1  unknown command
