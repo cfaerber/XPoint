@@ -1352,22 +1352,22 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7    Subject ~
 8    Fido-to ~
 # Send window
-10   To       ~
+10   To^:      ~
 11   ^Recipient
 12   Subject
 13   Server
 14   Size
 15   Code:
 16   Copies:
-20   P^ark,^Date,R^ecConf,^withoutSig,de^lete,Cras^h,P^GP,^Back
-21   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^MausNet,^Lokal,^Back
-22   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
-23   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
-24   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^Back
+20   ^Park,^Date,R^ecConf,^withoutSig,de^lete,Cras^h,P^GP,^Back
+21   ^Park,^Date,R^ecConf,^withoutSig,de^lete,^MausNet,^Lokal,^Back
+22   ^Park,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
+23   ^Park,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
+24   ^Park,^Date,R^ecConf,^withoutSig,de^lete,^Back
 25   YNIùSVOT
-28   ^Yes,^No,^Internal,S^pecial,ù4To^:,^Subj.,Ser^ver,C^ode
+28   ^Yes,^No,^Internal,S^pecialù1,^Subj.,Ser^ver,C^ode,^Attach
 29   ,^Text
-30   ADEWLHùLMG
+30   PDEWLHùLMG
 # Editor Header
 40   Message to ~
 41   Message in ~
@@ -1400,6 +1400,11 @@ K (c) '2000 OpenXP Team, www.openxp.de
 620  Checking for crosspostings ...
 621  Origin file not found (%s)
 622  No function in this net
+
++ 624
+0  ~^New , De^lete , ^Edit , ^Up , ^Down ,ú8 ^Close~
+#  ~^Neu ,^L”schen,B^earbeiten, ^Auf , A^b ,ú4S^chlieáen
+10 (intern)
 
 # XP6.INC
 640  Rebuilding message packet...
@@ -3778,6 +3783,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.33  2001/09/08 14:17:28  cl
+# - added ressources for MIME and multipart support
+#
 # Revision 1.32  2001/09/07 21:58:27  mk
 # - fixed Edit/Boxen/Edit for new net types POP3, SMTP and NNTP
 #

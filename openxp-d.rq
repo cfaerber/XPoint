@@ -1403,7 +1403,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # sonst.
 24   ^Parken,^Datum, ^EB ,o^hneSig,l^”schen,^Zurck
 25   JNIùBOCT
-28   ~^Ja ,^Nein,^Intern,^Spezial,·3E^mp.,^Betreff,B^ox,^Code
+28   ~^Ja ,^Nein,^Intern,^Spezial,^Betreff,B^ox,^Code,^Anhang
 29   ,^Text
 30   PDEH™RMLUG
 # Kopf fr Editor
@@ -1443,6 +1443,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 624
 0  ~^Neu ,^L”schen,B^earbeiten, ^Auf , A^b ,ù4S^chlieáen
 1 ^Datei anh„ngen,^Text erstellen
+2  ~^Neu ,ù46S^chlieáen
 
 3 Nachrichtenteil sichern
 4  Dieser Nachrichtenteil wurde neu erstellt bzw. ver„ndert.
@@ -1468,12 +1469,26 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 24 Anhang
 25 Inline
 
-30 7/8 Bit
-31 Quoted-Printable
-32 Base64
+26 CRLF (DOS)
+27 LF (Unix)
+28 CR (Mac)
+29 Keine/Bin„r
 
-35 ISO-8859-1ùUTF-8ùWindows-1252ùCP850
-36 ISO-8859-1ùUTF-8ùWindows-1252
+30 7 Bit
+31 8 Bit
+32 Quoted-Printable
+33 Base64
+
+60 PGP-ASCII
+# GnuPG:
+61 ISO-8859-1ùISO-8859-2ùKOI8-RùUTF-8
+# PGP2:
+62 ISO-8859-1ùKOI8-R
+
+35 ISO-8859-1ùUTF-8ùWindows-1252ùIBM437
+36 ISO-8859-1ùUTF-8
+38 US-ASCII
+39 IBM437
 
 37 text/plainùapplication/octet-stream
 
@@ -1482,19 +1497,20 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 41   Vorsicht: nderungen an diesen Einstellungen k”nnen zu un-
 42   erwnschten Nebeneffekten fhren.
 
-45   Dateityp  ~
+45   Versand  Dateityp  ~
 
-46   Zeichensatz Original
-47   ~           Versand~
+46   ~        Kodierung ~
+47   ~        Zeichensatz
 
-48   Kodierung ~
+43   Original Zeilenenden
+44   ~        Zeichensatz
 
 50 Datei anh„ngen
-
 
 100 Kann Datei nicht zum Editieren kopieren.
 101 Kann keine Datei erstellen.
 102 Datei existiert nicht.
+103 Eine Nachricht muss mindestens einen Teil enthalten.
 -
 
 # XP6.INC
@@ -3105,7 +3121,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 20 keine Nachrichten vorhanden!
 21 Warnung: Ablagendatei %s fehlt!
 22 Bitte verwenden Sie Nachricht/Unversandt/%s
-23 Bei Bin„rdateien nicht m”glich
+23 Bei Bin„r- und Multipartnachrichten nicht m”glich
 24 Nachricht ist besch„digt  (Ablage %s)
 25 Bei unversandten Nachrichten nicht m”glich.
 26 Nachricht ist nicht mehr in der Datenbank vorhanden!
@@ -3176,6 +3192,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 36 Bin„rnachrichten sind in diesem Netz nicht m”glich.
 37 Server„nderung nicht m”glich - abweichende Brettebene!
 38 Als 'Original' weitergeleitete Nachrichen drfen nicht ge„ndert werden!
+39 Bei Multipart-Nahrichten nicht möglich.
 
 +  10700
 1  Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!
@@ -3803,6 +3820,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.34  2001/09/08 14:17:28  cl
+# - added ressources for MIME and multipart support
+#
 # Revision 1.33  2001/09/07 21:58:27  mk
 # - fixed Edit/Boxen/Edit for new net types POP3, SMTP and NNTP
 #
