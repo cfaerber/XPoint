@@ -158,9 +158,12 @@ begin
         3 : echo:='';
       end
     else begin
-      dbReadN(bbase,bb_brettname,echo);
-      if (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))<>nt_Fido) or (echo[1]<>'A') then echo:=''
-      else delfirst(echo);
+      if dbreccount(bbase)=0 then brk:=true
+      else begin
+        dbReadN(bbase,bb_brettname,echo);
+        if (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))<>nt_Fido) or (echo[1]<>'A') then echo:=''
+        else delfirst(echo);
+        end;
       end;
   if brk then begin
     freeres; exit; end;
@@ -325,6 +328,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.4.2  2001/08/23 18:47:08  my
+  JG:- Fixed crash with F/A/A and empty Message Area database.
+
   Revision 1.3.4.1  2001/08/12 11:20:37  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed
