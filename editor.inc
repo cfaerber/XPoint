@@ -2040,25 +2040,29 @@ var ap : absatzp;
       lsi:=length(si)+2;    
       repeat
         Readln(t,s);     
-      until EOF(t) or (ustr(left(s,lsi))=ustr('>'+si+'<'));
+      until EOF(t) or (pos('>'+ustr(si)+'<',ustr(s))=1);
 
       if EOF(t) then 
       begin                           { Wort nicht gefunden - Kuerzelliste als Auswahlmenue }
-        pushhp(64);
+        pushhp(64); 
         reset(t);
-        listbox(45,7,'Glossary');
+        listbox(50,8,'Glossary');
         app_l(' >- ESC -<');
         repeat
    	  readln(t,s);
           if (s[1]='>') and (cpos('<',s)>0) then
           begin             
-            readln(t,s2);
-            if s2[1]<>'>' then app_L(' '+forms(s,15)+'  '+forms(s2,26))
+            repeat 
+              readln(t,s2);
+            until eof(t) or (s2<>'');
+            if s2[1]<>'>' then app_L(' '+forms(s,15)+'  '+forms(s2,31))
             end;
         until eof(t);
         list(brk);
-        s2:=mid(get_selection,2);
-        s2:=left(s2,cpos('<',s2));
+        s2:=get_selection;
+        lsi:=cpos('<',s2)-1;
+        if lsi > 15 then lsi:=15; 
+        s2:=copy(s2,2,lsi);
         if s2='>- ESC -<' then brk:=true;
         closelist;
         closebox;
@@ -2066,7 +2070,7 @@ var ap : absatzp;
           reset(t);
           repeat 
             readln(t,s); 
-          until (left(s,cpos('<',s))=s2) or eof(t);         
+          until (pos(s2,s)=1) or eof(t);         
           end;
         setcolors;
         pophp;
@@ -2076,11 +2080,10 @@ var ap : absatzp;
       begin
         assign(t1,'glossary.tmp');     { Kuerzel gefunden, Text kopieren }
         rewrite(t1);
-        Readln(t,s);
         Repeat        
-          Writeln(t1,s);
-          Readln(t,s);
-        Until Eof(t) or (s[1]='>');  
+          readln(t,s);
+          if (s='') or (s[1]<>'>') then Writeln(t1,s);
+        Until Eof(t) or ((s<>'') and (s[1]='>'));  
         close(t1);
         ScanGlossary:=true;
         end;
@@ -2089,17 +2092,21 @@ var ap : absatzp;
     end;
 
 begin
-  Wortmarkieren(true);
-  if scanglossary(marked2string) then
-  with e^ do begin
-    if not (blockinverse or blockhidden)  { Markierung loeschen }
-    then begin
-      gotopos(block[1].pos,0);
-      BlockLoeschen;
-      end; 
-    ap:=LoadBlock('glossary.tmp',true,2,rrand);
-    Insert(ap,p);
-    gotopos(p,0);
+  with e^ do
+  begin
+    if blockinverse or blockhidden then Wortmarkieren(true);
+    display;
+    if scanglossary(marked2string) then
+    begin
+      if not (blockinverse or blockhidden)  { Markierung loeschen }
+      then begin
+        gotopos(block[1].pos,0);
+        BlockLoeschen;
+        end; 
+      ap:=LoadBlock('glossary.tmp',true,2,rrand);
+      Insert(ap,p);
+      gotopos(p,0);
+      end;
     end;
 end; 
 
@@ -2394,6 +2401,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.19.2.3  2000/07/23 12:31:37  jg
+  - Glossary: kleine Fixes und Optimierungen
+
   Revision 1.19.2.2  2000/07/21 20:30:57  jg
   * Glossary:
     - Bugfix: Endlosschleife bei Menueauswahl wenn in der Glossary.cfg
