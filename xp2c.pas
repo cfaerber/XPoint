@@ -319,46 +319,49 @@ var x,y : Integer;
   begin
     if RTAErg = getres2 (252, 40) then
       RTAMode := 64             { immer }
-    else if RTAErg = getres2 (252, 41) then
-      RTAMode := 15             { Kopienempf. u. Antwort-an }
-    else if RTAErg = getres2 (252, 42) then
-      RTAMode := 13             { KopienempfÑnger }
-    else if RTAErg = getres2 (252, 43) then
-      RTAMode := 3              { Antwort-an }
-    else if RTAErg = getres2 (252, 44) then
-      RTAMode := 0;             { nie }
-    { Wenn der User 'benutzerdefiniert gewÑhlt hat, dann bleibt diese
-      Einstellung erhalten }
+	else if RTAErg = getres2 (252, 41) then
+	  RTAMode := 15             { Kopienempf. u. Antwort-an }
+	else if RTAErg = getres2 (252, 42) then
+	  RTAMode := 13             { KopienempfÑnger }
+	else if RTAErg = getres2 (252, 43) then
+	  RTAMode := 3              { Antwort-an }
+	else if RTAErg = getres2 (252, 44) then
+	  RTAMode := 0;             { nie }
+	{ Wenn der User 'benutzerdefiniert gewÑhlt hat, dann bleibt diese
+	  Einstellung erhalten }
   end;
 
 begin
   RFC_ZConnectUsed := ntUsed[nt_UUCP] + ntUsed[nt_ZConnect] + ntUsed[nt_Client] +
-    ntUsed[nt_NNTP] + ntUsed[nt_POP3] + ntUsed[nt_IMAP]> 0;
+	ntUsed[nt_NNTP] + ntUsed[nt_POP3] + ntUsed[nt_IMAP]> 0;
 
   if RFC_ZConnectUsed then
-    for i := 0 to 4 do
-      RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
+	for i := 0 to 4 do
+	  RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
   j := iif (RFC_ZConnectUsed, 1, 0);
 
-  dialog(57,21 + j,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
-  maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
+  dialog(57,21 + j,getres2(252,5),x,y);   									{ 'Nachrichten-Optionen' }
+  maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   					{ 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
-  maddint(3,4,getres2(252,11),stdhaltezeit,4,4,0,9999);     { 'Standard-Bretthaltezeit:     ' }
-  maddtext(length(getres2(252,11))+11,4,getres2(252,12),col.coldialog);   { 'Tage' }
-  maddint(3,5,getres2(252,13),stduhaltezeit,4,4,0,9999);    { 'Standard-Userhaltezeit:      ' }
-  maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);    { 'Tage' }
+  maddint(3,4,getres2(252,11),stdhaltezeit,4,4,0,9999);  					{ 'Standard-Bretthaltezeit:     ' }
+  maddtext(length(getres2(252,11))+11,4,getres2(252,12),col.coldialog);   	{ 'Tage' }
+  maddint(3,5,getres2(252,13),stduhaltezeit,4,4,0,9999);  					{ 'Standard-Userhaltezeit:      ' }
+  maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);    	{ 'Tage' }
 
   if RFC_ZConnectUsed then
   begin
-    RTAErg := getRTAMode;
-    maddstring (3, 6, getres2 (252, 39), RTAErg, 24, 24, '');
-    for i := 0 to 4 do
-      mappsel (true, RTAStrings[i]);
-    if RTAErg = getres2 (252, 50) then
-      mappsel (true, getres2 (252, 50));         { 'benutzerdefiniert' }
-    mhnr (258);
+	RTAErg := getRTAMode;
+	maddstring (3, 6, getres2 (252, 39), RTAErg, 24, 24, '');
+	for i := 0 to 4 do
+	  mappsel (true, RTAStrings[i]);
+	if RTAErg = getres2 (252, 50) then
+	  mappsel (true, getres2 (252, 50));         				{ 'benutzerdefiniert' }
+	mhnr (258);
   end;
 
+  maddbool(3,7 + j,getres2(252,14),haltown); mhnr(243);        	{ 'Eigene Nachrichten halten' }
+  maddbool(3,8 + j,getres2(252,31),haltownPM);        			{ 'Eigene PMs halten' }
+  maddbool(3,9 + j,getres2(252,15),ReplaceEtime);   			{ 'Erstellungszeit 00:00' }
   maddbool(3,7 + j,getres2(252,14),haltown); mhnr(243);      { 'Eigene Nachrichten halten' }
   maddbool(3,8 + j,getres2(252,31),haltownPM);               { 'Eigene PMs halten' }
   maddbool(3,9 + j,getres2(252,15),ReplaceEtime);            { 'Erstellungszeit 00:00' }
@@ -1548,6 +1551,9 @@ end;
 
 {
   $Log$
+  Revision 1.124  2002/04/02 22:24:29  ms
+  HelpID Changed from mhnr(1035) to mhnr(1032)
+
   Revision 1.123  2002/04/02 20:21:02  mk
   MS:- corrected help id 1035 to 1032
 
