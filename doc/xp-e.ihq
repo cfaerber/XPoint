@@ -7200,66 +7200,61 @@ be entered with any (Mo We Fr) or no separator
 (tuthsasu). "All" means every day.
 @
 525
-Enter the activity which CrossPoint should carry out.
+Enter the activity which CrossPoint should execute.
 
-<<NETCALL BOX>>  Netcall at "BOX"
+<<NETCALL BOX>>  Netcall to "BOX"
 
-<<REORG>>        Re-organise data bank
-                 (as /Re-Org/Messages
+<<REORG>>        Reorganise the database
+                 (same as /Re-Org/Messages)
 
-<<PACK>>         Pack Data Bank
-                 (as /Re-Org pack)
+<<PACK>>         Pack the database
+                 (same as /Re-Org/Pack)
 
 <<EXEC Prog.>>   Start program or batch file
 
 <<END>>          Stop running the Timing List
 <<QUIT>>         End the program
-<<QUIT n>>       End the program with Errorlevel n
+<<QUIT n>>       End the program with errorlevel n
 <<QUIT_ONCE>>    End the program but only once in
                  the time period.
-<<QUIT_ONCE n>>  ditto, but with Errorlevel n
+<<QUIT_ONCE n>>  Ditto, but with errorlevel n
 
-<<AUTOEXEC>>     Action entries in the AUTOEXEC
+<<AUTOEXEC>>     Execute entries in the AUTOEXEC
                  directory.
-<<CRASH z:n/n>>  Fido-Crash at node z:n/n
-<<CRASHS>>       Do all waiting crashes
-<<REQUESTS>>     Do all waiting File-Requests
+<<CRASH z:n/n>>  Fido Crash to node z:n/n
+<<CRASHS>>       Execute all waiting crashes
+<<REQUESTS>>     Execute all waiting file requests
 
 @
 530
-Enter the search string.
+Enter a search string .....
 
-With <F2> you get a history menu of the last 3
+Pressing <F2> brings up a history list of the last 3
 search strings.
 
+If you are using AND/OR combination("a" or "o"), you
+may use quotes to mark some words as a phrase:
 
-If you are using AND/OR combination
-(Options "a" or "o") you may use quotes to
-mark some words as a phrase:
+"i don't know" what "to write here", will search for
+the following:
 
-"i don't know" what "to write here"
+        "i don't know"
+        "what"
+        "to write here"
 
-will search for
-
-"i don't know"
-"what"
-"to write here"
-
-
-"<<~>>" works as NOT-Operator: If a word is found
+"<<~>>" works as a NOT operator. If a word is found
 that is marked with <<~>>, the search fails.
 
-
-Wildcard search is also allowed:
+Wildcard searches are also allowed:
 
 <<?>> = Wildcard for a single character
-<<*>> = Wildcard for a string (that may also be
+<<*>> = Wildcard for a string (which may also be
     an empty string)
 
-
 Type <<Ctrl V>> or <<Shift Ins>> to insert the
-Windows Clipboard. An acoustic signal indicates
-that the clipboard contains too much (or none) text.
+contents of the Windows Clipboard. An acoustic beep
+indicates that the clipboard contains too much
+(or no) text.
 
 <<Ctrl C>> or <<Strg Ins>> copies the text of this
 box to the Windows Clipboard.
@@ -7268,9 +7263,9 @@ box to the Windows Clipboard.
 531
 Enter the type of search.
 
-<<i>>  Ignore case (Case insensitive).
+<<i>>  Ignore case (case insensitive).
 
-<<u>>  Disregard German <<U>>mlauts (ae=Ñ, oe=î, ue=Å, ss=·).
+<<u>>  Disregard German Umlauts (ae=Ñ, oe=î, ue=Å, ss=·).
    This option always includes the <<i>> option (ignore
    case).
 
