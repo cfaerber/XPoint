@@ -209,7 +209,7 @@ begin
                                                       VK_SCROLL]) then
                    begin
                       keypressed:=true;
-  with Buf.Event.KeyEvent do 
+  with Buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent do 
     Debug.DebugLog('xpcrt', Format('KeyPressed: %d %d %d %d', [wVirtualKeyCode, wVirtualScanCode, Ord(AsciiChar), Ord(UnicodeChar)]), DLDebug+1);
 
                       if (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = 0) or
@@ -287,6 +287,9 @@ end.
 
 {
   $Log$
+  Revision 1.10  2001/09/14 11:45:22  cl
+  - FPC 1.0.0..1.0.4 and VirtualPascal compile fixes
+
   Revision 1.9  2001/09/13 13:25:06  ma
   - corrected copyright statements
   - NumPad Enter working again (may need further work)
