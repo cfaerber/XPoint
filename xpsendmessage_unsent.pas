@@ -1018,6 +1018,8 @@ again:
                  begin
                    sData.orghdp := THeader.Create;
                    sData.orghdp.MIME := hdp.MIME;
+                   sdata.orghdp.datum := hdp.datum;
+                   sdata.orghdp.zdatum := hdp.zdatum;
                  end;
                  if typ in [1,2,7] then
                    xpsendmessage.FileAttach:=(hdp.attrib and attrFile<>0);
@@ -1369,6 +1371,9 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.13  2003/12/07 16:43:08  mk
+  - fixed empty EDA: with Nachricht/Weiterleiten/Kopie
+
   Revision 1.21.2.12  2003/12/07 12:49:32  mk
   - improved handling for Nachricht/Weiterleit/Original (preserve original
     charset) and preserve multipart with Nachricht/Weiterleit/Kopie
