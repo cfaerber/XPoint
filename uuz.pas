@@ -845,7 +845,7 @@ begin
     if distribution<>''  then wrs('U-Distribution: '+distribution);
     if mime.boundary<>'' then wrs('X-XP-Boundary: '+mime.boundary);
     if gateway<>''    then wrs('X-Gateway: '+gateway);
-    if sender<>''     then wrs('U-Sender: '+sender);
+    if sender<>''     then wrs(iifs(wab<>'','U-Sender: ','WAB: ')+sender);
     if control<>''    then begin
       if lstr(left(control,7))='cancel ' then wrs('STAT: CTL');
       wrs('CONTROL: '+control);
@@ -3441,6 +3441,10 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.45  2001/07/08 21:34:01  my
+  JG:- Fix: if sender<>'' then wrs(iifs(wab<>'','U-Sender: ','WAB: ')+sender)
+       (prevents creation of wrong ABS headers when doing N/W/O with News)
+
   Revision 1.35.2.44  2001/07/08 15:21:57  mk
   - neue LFN/Windows-Erkennung aktiviert
 
