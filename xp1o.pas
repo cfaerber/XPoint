@@ -57,7 +57,7 @@ function  GetBezug(var ref:string):longint;
 function  KK:boolean;
 function  HasRef:boolean;
 function  ZCfiletime(var fn:string):string;   { ZC-Dateidatum }
-procedure SetZCftime(fn:string; var ddatum:string);
+procedure SetZCftime(const fn:string; const ddatum:string);
 
 function  testtelefon(var s:string):boolean;
 function  IsKomCode(nr:longint):boolean;
@@ -747,8 +747,7 @@ begin
     end;
 end;
 
-{ fn jetzt kein var-Parameter mehr }
-procedure SetZCftime(fn:string; var ddatum:string);
+procedure SetZCftime(const fn:string; const ddatum: String);
 var dt : datetime;
     l  : longint;
     f  : file;
@@ -985,6 +984,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.64  2000/10/22 23:16:47  mk
+  - AnsiString fixes
+
   Revision 1.63  2000/10/19 20:52:21  mk
   - removed Unit dosx.pas
 

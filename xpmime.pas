@@ -30,7 +30,7 @@ type  mpcode = (mcodeNone, mcodeQP, mcodeBase64, mcode8Bit);
                      typ,subtyp : string[20];   { fÅr ext. Viewer }
                      level      : integer;      { Verschachtelungsebene 1..n }
                      fname      : string[255];   { fÅr Extrakt + ext. Viewer }
-                     ddatum     : string;   { Dateidatum fÅr extrakt }
+                     ddatum     : shortstring;   { Dateidatum fÅr extrakt }
                      part,parts : integer;
                      alternative: boolean;
                      Charset  : TUnicodeCharsets;
@@ -69,10 +69,10 @@ uses
 
 const maxparts = 100;    { max. Teile in einer Nachricht }
 
-type  mfra     = array[1..maxparts] of multi_part;
-      mfrap    = ^mfra;
-
-var   mf       : mfrap;
+type
+  TMimeMFArray= array[1..maxparts] of multi_part;
+var
+  mf: TMimeMFArray;
 
 
 function typname(typ,subtyp:string):string;
@@ -126,7 +126,7 @@ procedure SMP_Keys(var t:taste);
 begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
   if UpperCase(t)='X' then
-    m_extrakt(mf^[ival(mid(get_selection,57))]);
+    m_extrakt(mf[ival(mid(get_selection,57))]);
 end;
 
                                                       { Select-Tasten fuer SINGLE-PART MIME }
@@ -414,7 +414,7 @@ var   hdp      : headerp;
 
       if ctype<>'' then begin
         inc(anzahl);
-        with mf^[anzahl] do begin
+        with mf[anzahl] do begin
           level:=bptr+last;
           typ:=ctype;
           subtyp:=subtype;
@@ -500,7 +500,7 @@ var   hdp      : headerp;
     anzahl0:=anzahl;
     if anzahl>1 then begin
       inc(anzahl);
-      with mf^[anzahl] do begin
+      with mf[anzahl] do begin
         level:=1;
         typ:=getres2(2440,10);    { 'gesamte Nachricht' }
         subtyp:='';
@@ -536,13 +536,12 @@ begin                         { SelectMultiPart }
   fillchar(mpdata,sizeof(mpdata),0);
   hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,true);
-  new(mf);
   MakePartlist;
-  if not forceselect and (anzahl=3) and (mf^[2].typ='text')
-     and (mf^[1].typ='text') and (mf^[1].subtyp='plain')
+  if not forceselect and (anzahl=3) and (mf[2].typ='text')
+     and (mf[1].typ='text') and (mf[1].subtyp='plain')
      and (((hdp^.mimetyp='multipart/alternative')      { Text+HTML Messis }
-            and (mf^[2].subtyp='html'))
-         or (mf^[2].subtyp='x-vcard'))                 { oder Text mit VCard }
+            and (mf[2].subtyp='html'))
+         or (mf[2].subtyp='x-vcard'))                 { oder Text mit VCard }
   then begin
     index:=1;
     select:=false;                         { Standardmaessig Nur Text zeigen }
@@ -558,8 +557,8 @@ begin                         { SelectMultiPart }
 
   if anzahl>0 then
     if not select or (anzahl=1) then begin
-      if (anzahl>1) or (mf^[index].typ <> getres2(2440,1)) then begin { 'Vorspann' }
-        mpdata:=mf^[index];
+      if (anzahl>1) or (mf[index].typ <> getres2(2440,1)) then begin { 'Vorspann' }
+        mpdata:=mf[index];
         mpdata.parts:=max(1,anzahl0);
         mpdata.alternative:=alter;
         end
@@ -567,14 +566,14 @@ begin                         { SelectMultiPart }
     else begin
       listbox(56,min(screenlines-4,anzahl),getres2(2440,9));   { 'mehrteilige Nachricht' }
       for i:=1 to anzahl do
-        with mf^[i] do
+        with mf[i] do
           app_l(forms(sp((level-1)*2+1)+typname(typ,subtyp),25)+strsn(lines,6)+
                 ' ' + fnform(fname,23) + ' ' + strs(i));
       listTp(SMP_Keys);
       ListSetStartpos(index);
       list(brk);
       if not brk then begin
-        mpdata:=mf^[ival(mid(get_selection,57))];
+        mpdata:=mf[ival(mid(get_selection,57))];
         if (mpdata.typ=getres2(2440,1)) or (mpdata.typ=getres2(2440,2)) or
            (mpdata.typ=getres2(2440,10)) then begin
           mpdata.typ:='text';
@@ -587,7 +586,6 @@ begin                         { SelectMultiPart }
       closebox;
       end;
 
-  dispose(mf);
   FreeHeaderMem(hdp);
 end;
 
@@ -738,7 +736,8 @@ begin
       if lines>500 then closebox;
 
       close(f);
-      if ddatum<>'' then SetZCftime(fn,ddatum);
+      if ddatum<>'' then
+        SetZCftime(fn,ddatum);
     end;
   end;
   close(input);
@@ -764,6 +763,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/10/22 23:16:48  mk
+  - AnsiString fixes
+
   Revision 1.31  2000/10/19 13:12:40  mk
   - if Charset is unkown assume ISO8859-1 is used
 
