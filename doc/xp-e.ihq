@@ -286,7 +286,7 @@ Keys in <<both>> "Read/Write" <<and>> "Special" mode:
   <<O>>          Move a message area to a different
              position in the area list.
 
-<<Crtl-S>>       Inserts a dividing line at the cursor
+<<Ctrl-S>>       Inserts a dividing line at the cursor
              position.
 
   <<+>>          Increases the hold time by one day.
@@ -391,7 +391,7 @@ recorded in the address book.
 
 L and E apply to all marked Users.
 
-<<see also   [User display] (<Enter> here)@4017
+<<see also>>  [ User display ]  <<(<Enter> here)@4017
 
 @
 22
@@ -410,7 +410,7 @@ forwarded. Confirm <Enter> or abort with <Esc>.
 30
 <<Message Reading window
 
-<<see also>> [  message display  ] (Press <Enter>)@4015
+<<see also>>  [ message display ]  <<(Press <Enter>)@4015
 
 Note: only those messages are actually displayed
 which match the conditions set by "View", in the
@@ -501,7 +501,7 @@ Bar and the Menu under "Other")
         of the current selected message, if present.
         Can add the person to the user list if not.
 
-<<Crtl-S>>  Edits the password in your user list of the
+<<Ctrl-S>>  Edits the password in your user list of the
         sender of the current message.
 
    <<I>>    Shows the information in the message header.
@@ -518,7 +518,7 @@ Bar and the Menu under "Other")
 <<Ctrl-A>>  In FIDO, toggles showing who a public message
         is responding to (On/Off).
 
-<<Crtl-D>>  Toggles showing the date (On/Off).
+<<Ctrl-D>>  Toggles showing the date (On/Off).
 
 <<Ctrl-N>>  Toggles between RealNames and User-Names
         (ZCONNECT, RFC & MagicNET only)
@@ -545,7 +545,7 @@ Bar and the Menu under "Other")
 
 <<<F6> >>   Select a macro
 
-<<see also [  message display  ] (Press <Enter>)@4015
+<<see also>>  [ message display ]  <<(Press <Enter>)@4015
 
 @
 31
@@ -11824,7 +11824,7 @@ Options are:
    /gd:  selects another phone charge file (Default:
          GEBUEHR.DAT).
 
-   /j    no dumb remark when exiting CrossPoint....
+   /j    no dumb remark when exiting CrossPoint...
 
    /k:X  Passes the (single) keystroke X to the
          programme, whereby X is any character.
