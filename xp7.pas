@@ -333,7 +333,11 @@ label abbruch,ende0;
     spush(dphback,sizeof(dphback));
     dphback:=col;
     moff;
+    {$IFDEF Linux }
+    writeln('To Do: XP7::Netcall::WRScript -> ''', txt, '''');
+    {$ELSE }
     disphard(x,y,txt);
+    {$ENDIF }
     mon;
     spop(dphback);
   end;
@@ -1552,6 +1556,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/05/07 18:15:09  hd
+  - Kleine Aenderung fuer Linux
+
   Revision 1.10  2000/05/04 10:32:59  mk
   - unbenutzer TurboBox Code entfernt
 
