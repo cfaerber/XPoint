@@ -1,33 +1,66 @@
-     OpenXP Projekt - CrossPoint Version 3.40
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     OpenXP-Projekt - CrossPoint Version 3.40
+     ========================================
 
-     Im Dezember '99 hat Peter Mandrella neben dem Y2K-Bugfix fÅr die
-     3.12 den Quellcode von XP 3.20 freigegeben. Eine offizielle
-     Version nach 3.12 wurde allerdings nie veîffentlicht. Die Version 
-     3.20 wurde schon vor ca. 3 Jahren entwickelt, befindet sich
-     aber in einem Beta-Stadium. Das war fÅr das OpenXP Team der 
-     Anla·, den vorliegenden Source in der aktuellsten Version kompiliert
-     bereitzustellen. Die Sourcen wurden mittlerweile vom OpenXP Team 
-     deutlich erweitert und fehlerbereinigt. Auf der Homepage 
-     http://www.openxp.de befinden sich ausfÅhrliche Informationen
-     Åber die énderungen sowie Hinweise fÅr Entwickler, die sich an dem 
-     Projekt beteiligen wollen.
+     Im Dezember 1999 hat Peter Mandrella neben dem Jahr-2000-Bugfix fÅr
+     XP v3.12 die Quelltexte von CrossPoint v3.20 freigegeben. Mit der
+     Entwicklung der Version 3.20 wurde schon 1997 begonnen, eine
+     offizielle Version nach v3.12 wurde allerdings von Peter Mandrella
+     selbst nie verîffentlicht.
 
-     In diesem Archiv sind alle Dateien von XP 3.40 und dem UUCP- sowie
-     dem FIDO-Modul enthalten, das QWK-Modul der 3.12 kann weiterhin
-     extra verwendet werden.
+     Das OpenXP-Team legt mit OpenXP v3.40 nach genau einjÑhriger
+     Arbeit, etlichen Betaversionen, "Release Candidates" und den
+     Releases der v3.20 nun den aktuellen Entwicklungsstand der
+     16-bit-Linie von OpenXP vor.
 
-     Weitere Informationen finden Sie unter http://www.openxp.de
+     Die Version 3.40 enthÑlt etliche neue Features im Vergleich zur
+     Version 3.20, aber ebenfalls unzÑhlige Bugfixes und interne
+     énderungen, so da· diese Version schon mit dem hier vorliegenden
+     RC1 (Release Candidate 1) als extrem stabil einzustufen ist.
 
-     FÅr weitere Fragen steht der Teamsprecher des OpenXP Projektes
-     Markus KÑmmerer mk@openxp.de bzw. im Fido unter 2:248/2004 zur
-     VerfÅgung.
+     Die énderungen im Detail kînnen der Datei VERSION.TXT entnommen
+     werden.
 
-     WICHTIG:
-
-     In den Dateien slizenz.txt und lizenz.doc befinden sich Peter's Hinweise
-     zur Verwendung des Quelltextes und andere wichtige Copyright-Informationen.
+     In diesem Archiv sind alle Dateien von CrossPoint/OpenXP v3.40 RC1
+     einschlie·lich des UUCP- und des Fido-Moduls enthalten; das QWK-
+     Modul der v3.12 kann weiterhin verwendet werden.
 
 
+     Parallel dazu befindet sich eine Beta-Version 3.70 (32-bit) in
+     Entwicklung, die in vieler Hinsicht neue Ma·stÑbe setzen wird.
+     Diese Version wird (anders als die 16-bit-Versionen) gemÑ· einer
+     Vereinbarung mit Peter Mandrella unter der GNU GPL stehen. Das
+     bedeutet unter anderem, da· OpenXP/32 nicht mehr registrierungs-
+     pflichtig sein wird.
 
-     Letzte énderung, 01.07.2000
+     Auf der OpenXP-Homepage http://www.openxp.de/ finden sich
+     ausfÅhrliche Informationen Åber das OpenXP-Projekt sowie Hinweise
+     fÅr Entwickler, die sich an dem Projekt beteiligen wollen.
+
+
+     HINWEIS:
+     --------
+
+     In den Dateien SLIZENZ.TXT und LIZENZ.DOC befinden sich Peter
+     Mandrellas Hinweise zur Verwendung des Quelltextes und weitere
+     wichtige Informationen zu Copyright und Registrierung.
+
+
+     Kontakte zu OpenXP
+     ------------------
+
+     eMail:   mk@openxp.de  (Markus KÑmmerer, Projektkoordination)
+              dev@openxp.de (îffentliche Entwickler-Mailingliste)
+
+     WWW:     http://www.openxp.de/
+
+     FTP:     ftp.openxp.de
+
+     Usenet:  de.comm.software.crosspoint
+
+     Fido:    2:248/2004    (Markus KÑmmerer, Projektkoordination)
+              XPDEV.GER     (inoffizielle Fido-Area, Gate zur
+                             îffentlichen Mailingliste)
+
+
+
+     Letzte énderung, 26.12.2000
