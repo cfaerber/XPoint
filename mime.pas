@@ -124,6 +124,7 @@ type
 
     function    GNeedCharset:Boolean;
     function    GIsEncodeable:Boolean;
+    function    GIsComposed: Boolean;
 
   public
     property MainType: String   read FMainType  write FMainType;
@@ -134,12 +135,15 @@ type
 
     property NeedCharset:Boolean read GNeedCharset;
     property IsEncodeable:Boolean read GIsEncodeable;
+
+    property IsComposed: Boolean read GIsComposed;
   end;
 
 { ------------------ Generic Content Type Functions ------------------ }
 
 function MimeContentTypeNeedCharset(const ctype:string):Boolean;
 function MimeContentTypeIsEncodeable(const ctype:string):Boolean;
+function MimeContentTypeIsComposed(const ctype:string):Boolean;
 
 procedure MimeContentTypeSplit(const ctype:string; var main,sub:string);
 
@@ -517,6 +521,11 @@ begin
   result:=MimeContentTypeIsEncodeable(Verb);
 end;
 
+function TMimeContentType.GIsComposed: Boolean;
+begin
+  result:=MimeContentTypeIsComposed(Verb);
+end;
+
 { ------------------ Generic Content Type Functions ------------------ }
 
 procedure MimeContentTypeSplit(const ctype:string; var main,sub:string);
@@ -613,7 +622,17 @@ begin
   s:=Lowercase(s);
 
   result := (m<>'message') and (m<>'multipart') and
-    ((m<>'application') or (m<>'mac-binhex40'));
+    ((m<>'application') or (s<>'mac-binhex40'));
+end;
+
+function MimeContentTypeIsComposed(const ctype:string):Boolean;
+var m,s: string;
+begin
+  MimeContentTypeSplit(ctype,m,s);
+  m:=Lowercase(m);
+  s:=Lowercase(s);
+
+  result := (m='multipart') or ((m='message') and (s='rfc822'));
 end;
 
 var boundary_counter: smallword;
@@ -1215,6 +1234,9 @@ end;
 
 //
 // $Log$
+// Revision 1.15  2002/02/18 16:56:26  cl
+// - added TMIMEContenttype.IsComposed and MimeTypeIsComposed
+//
 // Revision 1.14  2002/01/04 23:24:24  cl
 // - added MS-DOS Codepage 857 (Multilingual Latin 5)
 //
