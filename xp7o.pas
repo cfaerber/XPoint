@@ -118,21 +118,21 @@ begin
 end;
 
 procedure ClearUnversandt(const puffer,box:string);
-var f          : file;
-    adr,fs     : longint;
-    hdp        : headerp;
-    hds        : longint;
-    ok         : boolean;
-    _brett     : string[5];
-    _mbrett    : string[5];
-    mi         : word;
-    zconnect   : boolean;
-    i          : integer;
-    ldummy     : longint;
-    InMsgID    : String;
-    IDFile     : text;
-    HaveIDFile,
-    IsUnsent   : boolean;
+var f                 : file;
+    adr,fs            : longint;
+    hdp               : headerp;
+    hds               : longint;
+    ok                : boolean;
+    _brett            : string[5];
+    _mbrett           : string[5];
+    mi                : word;
+    zconnect          : boolean;
+    i                 : integer;
+    ldummy            : longint;
+    InMsgID           : String;
+    ClientIDFile      : text;
+    HaveClientIDFile,
+    IsUnsentClientMsg : boolean;
 
 
   { Unversandt-Flag fÅr *einzelnen* EmpfÑnger aufheben }
@@ -140,7 +140,6 @@ var f          : file;
   var pbox       : string[BoxNameLen];
       uvl        : boolean;
       uvs        : byte;
-      MsgIDFound : boolean;
       OutMsgID   : string[MidLen];
   begin
 
@@ -182,28 +181,26 @@ var f          : file;
           if _mbrett = _brett then
           begin
             dbReadN(mbase,mb_unversandt,uvs);
-            InMsgID := dbReadStrN(mbase,mb_msgid);
+            dbReadN(mbase,mb_msgid,InMsgID);
             if (uvs and 1=1) and EQ_betreff(hdp^.betreff) and
                (FormMsgid(hdp^.msgid)=InMsgId) then
             begin
-              MsgIDFound:=false;
               { ----------------------------------------------------------- }
-              if HaveIDFile then              { RFC/Client: Check, ob MsgID }
+              if HaveClientIDFile then        { RFC/Client: Check, ob MsgID }
               begin                           { in UNSENT.ID enthalten ist  }
-                if CC then
-                  MsgIDFound:=IsUnsent
-                else begin
-                  Reset(IDFile);              { von vorn starten }
+                if not CC then
+                begin
+                  Reset(ClientIDFile);        { von vorn starten }
                   repeat
-                    Readln(IDFile, OutMsgID);
-                    MsgIDFound:=FormMsgid(OutMsgID)=InMsgID;
-                  until eof(IDFile) or MsgIDFound;
-                  Close(IDFile);
-                  IsUnsent:=MsgIDFound;
+                    Readln(ClientIDFile, OutMsgID);
+                    IsUnsentClientMsg:=FormMsgid(OutMsgID)=InMsgID;
+                  until eof(ClientIDFile) or IsUnsentClientMsg;
+                  Close(ClientIDFile);
                 end;
-              end;
+              end
               { ----------------------------------------------------------- }
-              if not MsgIDFound then
+              else IsUnsentClientMsg:=false;
+              if not IsUnsentClientMsg then
               begin
                 uvs:=uvs and $fe;
                 dbWriteN(mbase,mb_unversandt,uvs);       { UV-Flag aufheben }
@@ -213,11 +210,8 @@ var f          : file;
                 if not ((hdp^.typ='B') and (maxbinsave>0) and
                   (hdp^.groesse > maxbinsave*1024)) then
                 begin
-                  if exist('UNSENT.PP') then
-                    extract_msg(2,'','UNSENT.PP',true,1)
-                  else
-                    extract_msg(2,'','UNSENT.PP',false,1);
-                  Dec(OutMsgs);
+                  extract_msg(2,'','UNSENT.PP',exist('UNSENT.PP'),1);
+                  dec(OutMsgs);
                 end else
                 begin
                   { String noch in die Resource Åbernehmen }
@@ -225,7 +219,7 @@ var f          : file;
                   uvs:=uvs and $fe;
                   dbWriteN(mbase,mb_unversandt,uvs);       { UV-Flag setzen }
                 end;
-              end;  { MsgIDFound and not CC }
+              end;  { IsUnsentClientMsg and not CC }
               uvl:=true;
             end;
           end;
@@ -240,8 +234,8 @@ var f          : file;
 begin
   assign(f,puffer);
   if not existf(f) then exit;
-  HaveIDFile:=exist('UNSENT.ID') and client;
-  if HaveIDFile then assign(IDFile,'UNSENT.ID');
+  HaveClientIDFile:=exist('UNSENT.ID') and client;
+  if HaveClientIDFile then assign(ClientIDFile,'UNSENT.ID');
   new(hdp);
   zconnect:=ntZConnect(ntBoxNetztyp(box));
   reset(f,1);
@@ -837,6 +831,10 @@ end.
 
 {
   $Log$
+  Revision 1.13.2.32  2003/04/13 15:09:06  mw
+  MY:- Vorletzten Commit optimiert (dieselbe Logik kommt auch mit einer
+       Variablen weniger aus). Variablen eindeutiger benannt.
+
   Revision 1.13.2.31  2003/04/09 23:13:52  my
   MY:- Dokumentation des letzten Commits komplettiert.
 
