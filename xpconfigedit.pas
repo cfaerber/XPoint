@@ -2086,7 +2086,7 @@ begin
     if not IsPath(s) then
       if ReadJN(getres(900),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
       begin
-        if CreateMultipleDirectories(s) = '' then
+        if not CreateDir(ExcludeTrailingPathDelimiter(s)) then
         begin
           PPPClientPathTest:=false;
           rfehler(906)           { 'Verzeichnis kann nicht angelegt werden!' }
@@ -3141,6 +3141,9 @@ end;
 
 {
   $Log$
+  Revision 1.62  2003/08/25 17:44:52  mk
+  - fixed directory create in Edit/Client
+
   Revision 1.61  2003/05/01 09:52:29  mk
   - added IMAP support
 
