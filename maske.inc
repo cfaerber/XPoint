@@ -25,6 +25,7 @@ var ax,p,myp  : integer;
     afld      : feldp;
     helpsave  : Integer;          { zum Sichern von help_page }
     t         : taste;
+    new_a     : Integer;
 
     replace   : boolean;
     doreplace : boolean;
@@ -51,7 +52,7 @@ var ax,p,myp  : integer;
         with fld[i]^ do
           if disnodisp then begin
             attrtxt(stat.col.ColFeldName);
-            wrt(xx,yy,dup(length(txt)+len+3,' '));
+            wrt(xx,yy,dup(length(txt)+iif(typ=120,2,len+3),' '));
           end;
       mon;
       end;
@@ -66,7 +67,7 @@ var ax,p,myp  : integer;
       moff;
       for i:=1 to felder do
         with fld[i]^ do
-          if not disnodisp then begin
+          if (not disnodisp) and not (typ=120) then begin
             s:=txt;
             if enabled then
               if owncol then attrtxt(ownattr)
@@ -83,6 +84,35 @@ var ax,p,myp  : integer;
       end;
     normtxt;
   end;
+
+  procedure ButtonDisplay(var fld:feldp;active:boolean);
+  begin
+    with fld^,amaskp^ do 
+    begin
+      if hotkeypos>0 then
+      begin
+        attrtxt(col.colbuttonhigh);
+        FWrt(xx+1+hotkeypos-1,yy-a,txt[hotkeypos]);
+      end;
+          
+      attrtxt(col.colbutton);
+
+      if hotkeypos>1 then
+        FWrt(xx+1        ,yy-a,LeftStr(txt,hotkeypos-1));
+      FWrt(xx+1+hotkeypos,yy-a,Mid(txt,Max(1,hotkeypos+1)));
+         
+      if active then
+      begin
+        attrtxt(col.colbuttonarr);
+        FWrt(xx,              yy-a,#16);
+        FWrt(xx+Length(txt)+1,yy-a,#17);
+      end else
+      begin
+        FWrt(xx,              yy-a,' ');
+        FWrt(xx+Length(txt)+1,yy-a,' ');
+      end;
+    end;
+  end;
                                      
   procedure FldDisplay;
   var i   : integer;
@@ -91,13 +121,17 @@ var ax,p,myp  : integer;
       da  : boolean;    { Scrollpfeil nach unten }
       s: String;
   begin
-    with amaskp^ do begin
+    with amaskp^ do 
+    begin
       attrtxt(stat.col.ColFeldInput);
       l:=iifs(stat.arrowspace,' ','');
       ua:=false; da:=false;
       moff;
       for i:=1 to felder do
         with fld[i]^ do
+          if typ=120 then
+            ButtonDisplay(fld[i],i=yp)
+          else        
           if (yy0>=a+1) and (yy<=a+un) then begin
             if not disnodisp then begin
               if not enabled then { not enabled }
@@ -295,6 +329,8 @@ var ax,p,myp  : integer;
           attrtxt(stat.col.colbuttons);
           FWrt(xx2, yy-a, ' [' + iifc(cont=yesno[1],'x',' ') + '] ');
         end else
+        if typ=120 then
+          ButtonDisplay(afld,true) else
         begin
           x := xx2;
           if stat.arrowspace then
@@ -780,6 +816,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   insert_mode:=true;
   helpsave:=help_page;
   exit_mask:=false;
+  new_a := 0;
 
   with amaskp^,amaskp^.stat do begin
     if felder=0 then error('no fields!');
@@ -806,12 +843,13 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
     if rahmentyp>0 then wshadow(rl+1,rr+1,ro+1,ru+1);
     forcecolor:=false;
     if rahmentyp>0 then clwin(rl+1,rr-1,ro+1,ru-1);
+    
 
     maussel:=false;
     poutside:=false;
     repeat { main loop }
 
-      if redisplay then
+      if redisplay or (new_a<>a) then
       begin
         attrtxt(col.ColBack);
         if rahmentyp=4 then
@@ -823,11 +861,12 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
           else fwrt(rl,ru,'È'+dup(rr-rl-1,'Í')+'¼');
           mon;
         end;
-        if not dontclear then
+        if (not dontclear) or (new_a<>a) then
 	  clwin(li,re,ob,un);
         redisplay:=false;
         redispfields:=true;
         redisptext:=true;
+        a := new_a;
       end;
 
       if redispfields then
@@ -896,6 +935,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         if maussel then
           t:=selboxkey
         else
+          if typ=120 then
+            get(t,curoff) 
+          else        
           if insert_mode then
             get(t,curon)
           else
@@ -909,16 +951,16 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 
         if ((t=keyins) and not (kb_shift or kb_ctrl)) then insert_mode:=not insert_mode;
 
-        if (t=keyup) or (t=keystab) then
+        if (t=keyup) or (t=keystab) or ((t=keyleft)and(typ in [120])) then
           if yp>1 then movefield(-1)
           else
             if wrapmode=do_wrap then t:=keycpgd;
-        if (t=keydown) or (t=keytab) or (t=keycr) then
+        if (t=keydown) or (t=keytab) or (t=keycr) or ((t=keyrght)and(typ in [120])) then
           if yp<felder then movefield(+1)
           else if wrapmode=do_wrap then t:=keycpgu
           else if (wrapmode=endonlast) and (t=keycr) then t:=^J;
-        if t=keyleft then links;
-        if t=keyrght then rechts;
+        if (t=keyleft)and not(typ in [120]) then links;
+        if (t=keyrght)and not(typ in [120]) then rechts;
         if (t=keyclft) and (ax+p>1) then
           repeat
             links
@@ -975,15 +1017,21 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
           replace:=false;
           end;
         if typ=1 then
-          if (t=^G) and not (autodown or topcase) then begin
-            UpString(cont); replace:=false; end
-            else
-          if (t=^K) and not (autoup or topcase) then begin
-            cont:=LowerCase(cont); replace:=false; end
-            else
-          if (t=^X) and not (autoup or autodown) then begin
-            cont:=TopAllStr(UpperCase(cont)); replace:=false; end
-            else
+          if (t=^G) and not (autodown or topcase) then 
+          begin
+            UpString(cont); replace:=false; 
+          end
+          else
+          if (t=^K) and not (autoup or topcase) then 
+          begin
+            cont:=LowerCase(cont); replace:=false; 
+          end
+          else
+          if (t=^X) and not (autoup or autodown) then 
+          begin
+            cont:=TopAllStr(UpperCase(cont)); replace:=false; 
+          end
+          else
                                                               { JG: Clipboard fuer Menues }
           if t=^A then replace:=true;
 
@@ -1098,6 +1146,15 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         else
           testfndef;
 
+        if (t=' ') and (typ=120) then
+        begin
+          test0(cont); if test1(cont) then begin
+            if btnquit then if maxlen<0 then t := keyESC 
+                            else             t := ^J;
+            Integer(variable^) := maxlen;
+          end;
+        end 
+        else
         if (counter>0) and ((t='-') or (t='+')) then
           _count_
         else if t>=' ' then
@@ -1178,6 +1235,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
   help_page:=helpsave;
 {
   $Log$
+  Revision 1.47  2002/08/19 23:03:13  cl
+  - Schaltflaechen in Masken (Teil I)
+
   Revision 1.46  2002/07/25 20:43:52  ma
   - updated copyright notices
 

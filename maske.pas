@@ -136,6 +136,8 @@ procedure maskUpDownArrows(x1,y1,x2,y2: Integer; fill:char; col:byte);
 { Integer-Typen: 2 = ShortInt, 3 = Byte, 4 = Integer, 5 = Word, 6 = LongInt }
 
 procedure Maddtext(x,y:integer; const text:string; att:byte);   { Anzeigetext anfgen }
+procedure maddhline(x,y:integer);
+
 procedure Maddstring(x,y:integer; const text:string; var s:string; displ,maxl:integer;
                      const chml:string);
 procedure Maddint(x,y: integer; const text:string; var int; ityp,displ:integer;
@@ -148,7 +150,7 @@ procedure Madddate(x,y:integer; const text:string; var d:string; long,mbempty:bo
 procedure Maddtime(x,y:integer; const text:string; var t:string; long:boolean);
 procedure Maddcustomsel(x,y:integer; const text:string; var s:string; displ:integer;
                         cp:customsel);
-
+procedure Maddbutton(x,y:integer; const text:string; var ret:integer; retval:integer; quit:boolean);
 
 {----------------- Feld-Einstellungen ----------------}
 { beziehen ich auf das jeweils zuletzt angelegte Feld }
@@ -296,6 +298,9 @@ type
                    autohigh    : boolean;    { Feld autom. selektieren }
                    counter     : byte;       { 1/2 -> "+"/"-" bei Datum/Zeit }
                    checkbutt   : boolean;    { Check-Button }
+                   hotkeypos   : integer;    { Position des Hotkeys von 1..Length(txt), 0=kein Hotkey }
+                   hotkey      : string;     { Hotkey (string wg. UTF-8, etc.) }
+                   btnquit     : boolean;    { Dialog bei Knopf verlassen }
                  end;
       feldp    = ^feldrec;
 
@@ -343,7 +348,6 @@ begin
     ShiftF2Proc:=p;
     ShiftF2help:=helpnr;
 end;
-
 
 procedure error(const txt:string);
 begin
@@ -640,6 +644,11 @@ begin
     end;
 end;
 
+procedure maddhline(x,y:integer);
+begin
+  with amaskp^ do
+    maddtext(0,y,#$C3+dup(re-li+1,#$C4)+#$B4,stat.col.colback);
+end;
 
 function mtextpos:pointer;
 begin
@@ -695,6 +704,19 @@ begin
         forcesll:=true; slmin:=5;    { minimale SelListen-L„nge }
         autotrim:=1;
         autohigh:=stat.fautohigh;
+
+        hotkeypos := CPos('^',txt);
+        
+        if (hotkeypos>0) and (hotkeypos<Length(txt)) then
+        begin
+          hotkey := txt[hotkeypos+1];
+          txt := LeftStr(txt,hotkeypos-1)+Mid(txt,hotkeypos+1);
+        end else
+        begin
+          hotkeypos := 0;
+          hotkey := '';
+        end;
+        
         if (felder>1) and (fld[felder-1]^.helpnr>0) then
           helpnr:=fld[felder-1]^.helpnr+1;
         end;
@@ -853,6 +875,23 @@ begin
   lastfld^.counter:=2;
 end;
 
+{ Schaltfläche anfügen }
+{ ret,retval: retval wird in ret gespeichert, wenn Knopf gedrückt }
+{ quit: Dialogfeld verlassen }
+
+procedure Maddbutton(x,y:integer; const text:string; var ret:integer; retval:integer; quit:boolean);
+begin
+  setall(text,x,y,false);
+  with lastfld^ do 
+  begin
+    typ := 120;
+    variable := @ret;
+    maxlen := retval;     // na ja.
+    autohigh := false;
+    btnquit := quit;
+  end;
+
+end;
 
 { Feld mit beliebiger eigener Select-Routine anfgen  }
 { s : Feldinhalt zu Beginn; wird von cp berschrieben }
@@ -1356,6 +1395,9 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.41  2002/08/19 23:03:13  cl
+  - Schaltflaechen in Masken (Teil I)
+
   Revision 1.40  2002/07/25 20:43:52  ma
   - updated copyright notices
 
