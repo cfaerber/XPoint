@@ -150,11 +150,12 @@ function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
 
   const RFCFile= 'NNTPTEMP';
 
-  procedure ZtoRFC(boxpar: boxptr; const source,dest: string);
+  procedure ZtoRFC(boxpar: boxptr; source: String; const dest: string);
   var uu: TUUZ;
   begin
     MakeMimetypCfg;
-    with boxpar^ do begin
+    with boxpar^ do
+    begin
       uu := TUUZ.Create;
       if NewsMIME then uu.NewsMime := true;
       if MIMEqp then uu.MakeQP := true;
@@ -162,7 +163,7 @@ function SendNNTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
       uu.MailUser := BoxPar^.UserName;
       uu.NewsUser := BoxPar^.UserName;
       uu.FileUser := BoxPar^.UserName;
-//**      f:=OutFilter(source);
+      OutFilter(source);
       uu.ClearSourceFiles := false;
       uu.Source := source;
       uu.Dest := dest;
@@ -367,6 +368,9 @@ end;
 
 {
         $Log$
+        Revision 1.31  2001/12/20 15:22:29  mk
+        - implementet call to outfilter
+
         Revision 1.30  2001/10/15 13:12:25  mk
         /bin/bash: ?: command not found
         /bin/bash: q: command not found

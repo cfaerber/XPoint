@@ -66,7 +66,7 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
 
   const RFCFile= 'SMTPTEMP';
 
-  procedure ZtoRFC(boxpar: boxptr; const source,dest: string);
+  procedure ZtoRFC(boxpar: boxptr; source: String; const Dest: string);
   var uu: TUUZ;
   begin
     MakeMimetypCfg;
@@ -80,7 +80,7 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
       uu.MailUser := BoxPar^.UserName;
       uu.NewsUser := BoxPar^.UserName;
       uu.FileUser := BoxPar^.UserName;
-//**      f:=OutFilter(source);
+      OutFilter(source);
       uu.ClearSourceFiles := false;
       uu.Source := source;
       uu.Dest := dest;
@@ -88,7 +88,7 @@ function SendSMTPMails(BoxName,boxfile: string; bp: BoxPtr; PPFile: String): boo
       uu._to := boxpar^.boxname;
       uu.ztou;
       uu.Free;
-      end;
+    end;
   end;
 
 var
@@ -276,6 +276,9 @@ end;
                       
 {
   $Log$
+  Revision 1.29  2001/12/20 15:22:29  mk
+  - implementet call to outfilter
+
   Revision 1.28  2001/10/19 21:31:41  mk
   - reraise unknown exceptions in debug version to give line information
 
