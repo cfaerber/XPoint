@@ -41,6 +41,12 @@ const  mausLinks  = 0;     { linke Taste    }
        intMid1    = 32;    { .. Mitte gedrÅckt           }
        intMid0    = 64;    { .. Mitte losgelassen        }
 
+{$IFDEF VP }
+       MouseButtonbkup: byte = 0;
+       DoExitMouseThread: Boolean = false;
+var    MouseThreadID: LongInt;
+{$ENDIF }
+
 type   mausstat   = record
                       tasten : word;
                       x,y    : word;
@@ -69,6 +75,11 @@ procedure setmauswindow(xmin,xmax,ymin,ymax:integer16);     { 7/8 }
 procedure SetMausInt(intmask:word; intproc:mausintp; ssize:word);     { 12 }
 procedure ClearMausInt;
 {$ENDIF }
+{$IFDEF VP }
+procedure InitMouseThread;
+procedure DoneMouseThread;
+procedure UpdateMouseStatus;
+{$ENDIF }
 
 { ================= Implementation-Teil ==================  }
 
@@ -76,6 +87,7 @@ implementation
 
 {$IFDEF VP }
 uses
+  maus2,
   vpsyslow;
 {$ENDIF }
 
@@ -481,12 +493,64 @@ begin
   end;
 end;
 
+{$IFDEF VP }
+procedure UpdateMouseStatus;   { ML: emulate a Mouse-Interrupt-Handler }
+var
+  MouseEvent : TSysMouseEvent;
+  intsource  : word;
+
+begin
+ if SysTVGetMouseEvent(MouseEvent) then
+ with MouseEvent do
+ begin
+   intsource := intmove;
+   if ((smebuttons and mmLinks) <> 0) and ((mousebuttonbkup and mmLinks) = 0) then
+     inc(intsource, intLeft1);   {first Mousekey now pressed}
+   if ((smebuttons and mmRechts) <> 0) and ((mousebuttonbkup and mmRechts) = 0) then
+     inc(intsource, intRight1);   {second Mousekey now pressed}
+   if ((smebuttons and mmLinks) = 0) and ((mousebuttonbkup and mmLinks) <> 0) then
+     inc(intsource, intLeft0);   {first Mousekey now released}
+   if ((smebuttons and mmRechts) = 0) and ((mousebuttonbkup and mmRechts) <> 0) then
+     inc(intsource, intRight0);   {second Mousekey now released}
+   mint(intsource,smebuttons,smePos.x,smePos.y,0,0);
+ end;
+end;
+
+procedure ThreadFunc;
+begin
+  while not DoExitMouseThread do
+    UpdateMouseStatus;
+  DoExitMouseThread := false;
+end;
+
+procedure InitMouseThread;     {ML: MouseInt-Emulation}
+begin
+  DoExitMouseThread := false;
+  if SysCtrlCreateThread(nil,     { no special security (win32) }
+                      4096,    { StackSize                   }
+                      @ThreadFunc,
+                      nil,     { no parameters               }
+                      0,       { start immediately           }
+                      MouseThreadID) <> 0 then
+   Maus := false;
+end;
+
+procedure DoneMouseThread;
+begin
+  DoExitMouseThread := true;
+end;
+
+{$ENDIF }
+
 
 begin
   maus:=false;
 end.
 {
   $Log$
+  Revision 1.11  2000/05/17 15:06:59  ml
+  MausInterupt-Emulation in 32Bit (Virtual Pascal)
+
   Revision 1.10  2000/04/24 14:35:09  mk
   - Mausroutinen aufgeraeumt und teils portiert
 

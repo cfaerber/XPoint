@@ -48,7 +48,6 @@ const mausleft    = #0#240;       { links gedrÅckt  }
 
       maus_cursor  : boolean = false;
 
-
 procedure maus_tasten_an;
 procedure maus_tasten_aus;
 procedure maus_gettext(var x,y:integer);
@@ -68,13 +67,17 @@ function  _mausy:integer;
 procedure maus_showVscroller(disp,showempty:boolean; x,y1,y2:integer;
                              total,from,gl:longint; var start,stop:integer;
                              var _unit:longint);
-
+procedure mint(intsource,tasten,x,y,mx,my:word); {$IFNDEF Ver32 } far; {$ENDIF }
 
 { -------------------------------------------------------------------- }
 
 implementation
 
-uses inout, winxp;
+uses inout,
+{$IFDEF VP}
+     vpSysLow,
+{$ENDIF}
+     winxp;
 
 const  maxinside = 25;
 
@@ -180,6 +183,10 @@ begin
   if not tan then
     setmausint(intMove+intLeft0+intLeft1+intRight0+intRight1,mint,2048);
 {$ENDIF }
+{$IFDEF VP }
+  InitMouseThread;
+{$ENDIF }
+
   tan:=true;
   lx:=255; ly:=255;
 end;
@@ -190,6 +197,9 @@ begin
 {$IFDEF BP }
   if tan then
     clearmausint;
+{$ENDIF }
+{$IFDEF VP }
+  DoneMouseThread;
 {$ENDIF }
   tan:=false;
 end;
@@ -337,9 +347,13 @@ begin
     end;
 end;
 
+
 end.
 {
   $Log$
+  Revision 1.13  2000/05/17 15:06:59  ml
+  MausInterupt-Emulation in 32Bit (Virtual Pascal)
+
   Revision 1.12  2000/05/02 11:49:34  hd
   Anpassung an Curses (Linux)
 
