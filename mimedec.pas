@@ -294,7 +294,7 @@ begin
   else if charset='utf-8' then UTF8ToIBM(s)
   else if charset='utf-7' then UTF7ToIBM(s)
   else if charset='windows-1252' then ISO2IBM(s,cs_win1252)
-  else if charset='' then ISO2IBM(s,cs_win1252);  { Outlook-Fix! }
+  else if charset='' then ISO2IBM(s,cs_iso8859_1);  { Outlook-Fix! }
 end;
 
 
@@ -469,7 +469,7 @@ begin
   until (p1=0) or (p2=0);
 
   if length(ss)>maxlen then ss[0]:=char(maxlen);
-  if cset='' then CharsetToIBM('',ss);  { Default-Decode wenn kein RFC1522 }
+  if cset='' then ISO2IBM(ss,cs_iso8859_1);  { ISO-Decode wenn kein RFC1522 }
   for i:=1 to length(ss) do
     if ss[i]<' ' then ss[i]:=' ';
 end;
@@ -479,6 +479,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.9  2002/04/13 21:27:39  my
+  MY:- Letzten Commit wegen IBM-Umlauten erstmal wieder rckg„ngig gemacht.
+
   Revision 1.1.2.8  2002/04/13 20:08:48  my
   RB:- Default-Decodierung bei RFC-Nachrichten ohne Zeichensatzdeklaration
        von ISO-8859-1 auf Windows-1252 ge„ndert.
