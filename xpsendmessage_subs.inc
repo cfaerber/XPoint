@@ -1108,16 +1108,15 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 
 function getBrettUserPollBox (brett :string) :string;
-var box :string[boxNameLen];
-    s :string;
+var box :string;
 begin
   box := '';
-  dbRead (mbase, 'brett', brett);
+  brett := dbReadNStr(mbase, mb_brett);
   if brett[1] = '1' then         { Brett }
   begin
     dbSeek (bbase, biIntNr, copy (brett, 2, 4));
     if dbBOF (bbase) or dbEOF (bbase) then box := ''
-    else dbRead (bbase, 'pollbox', box);
+    else box := dbReadNStr (bbase, bb_pollbox);
   end;
   if not isBox (box) then box := '';
   getBrettUserPollBox := box;
@@ -1125,6 +1124,9 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/09/07 09:16:49  mk
+  - fixed AnsiString-Handling for getBrettUserPollBox
+
   Revision 1.4  2001/09/06 19:31:20  mk
   - removed some hints und warnings
 
