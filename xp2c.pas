@@ -329,12 +329,10 @@ begin
   maddbool(3,9,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
   mset1func(SetTimezone);
   maddbool(3,10,getres2(252,16),rehochn);        { 'Re^n verwenden' }
-{$IFNDEF Linux }
   maddstring(36,8,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
   mappsel(false,'W+1˘S+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
   if replaceetime then mdisable;
-{$ENDIF }
   xid:=xids[iif(XP_ID_PMs,1,0)+iif(XP_ID_AMs,2,0)];
   maddstring(36,9,'## XP ## ',xid,7,7,'');
   for i:=3 downto 0 do
@@ -343,16 +341,12 @@ begin
   maddbool(3,13,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
   maddbool(3,14,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
   maddbool(3,15,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-  { 03.02.2000 robo }
   maddbool(3,16,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
-  { /robo }
   maddbool(3,17,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
   maddbool(3,18,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
   maddint (3,20,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
-  maddtext(9+length(getres2(252,24)),19,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
-  { 20.01.2000 robo }
+  maddtext(9+length(getres2(252,24)),20,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
   maddbool(3,21,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
-  { /robo }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1556,6 +1550,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.2  2000/08/26 08:35:02  mk
+  - Dialogfehler in Config/Optionen/Nachrichten beseitigt
+
   Revision 1.39.2.1  2000/08/26 07:56:17  jg
   - Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
 
