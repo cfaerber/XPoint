@@ -153,7 +153,7 @@ Procedure TruncStr(var s:string; n:integer);    { String krzen                }
 Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 procedure UkonvStr(var s:string;len:integer);     { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
-procedure Rot13(var data; size: integer);         { Rot 13 Kodierung }
+procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 function IsoToIbm(s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 { Der Filename wird zur Anzeige auf den Bildschirm in den richtigen
   Zeichensatz konvertiert }
@@ -1299,6 +1299,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/07/06 12:05:27  hd
+  - Fix: Unterschiedliche Definition (Rot13)
+
   Revision 1.54  2000/07/06 08:52:12  mk
   - AnsiString-Fixes, byte->integer
 
