@@ -71,7 +71,7 @@ binary-indep: openxp-doc openxp-tools
 
 # -- individual packages ----------------------------------------------
 
-openxp: override DH_OPTIONS=--package=openxp --tmpdir=tmp/openxp
+openxp: override DH_OPTIONS=--package=openxp --tmpdir=debian/tmp/openxp
 openxp: build-arch-stamp
 	dh_testdir
 	dh_testroot
@@ -82,10 +82,12 @@ openxp: build-arch-stamp
 	$(MAKE) install prefix=`pwd`/debian/tmp/openxp/usr
 	
 	install -D --mode=644 debian/bts debian/tmp/openxp/usr/share/bug/openxp/control
+
 	dh_installdocs 		doc/authors.txt doc/linux.txt doc/update.txt doc/version.txt
 	dh_installman 		debian/openxp.1
+	dh_installmenu		debian/openxp.menu
 	dh_installchangelogs	Internet/news-en.txt Internet/news-de.txt 
-	dh_installmenu
+
 	dh_strip
 	dh_link
 	dh_compress
@@ -96,17 +98,16 @@ openxp: build-arch-stamp
 	dh_md5sums
 	dh_builddeb
 
-openxp-doc: override DH_OPTIONS=--package=openxp-doc --tmpdir=tmp/openxp-doc
-openxp-doc:
+openxp-doc: override DH_OPTIONS=--package=openxp-doc --tmpdir=debian/tmp/openxp-doc
+openxp-doc: build-indep-stamp
 	dh_testdir
 	dh_testroot
 	dh_clean -k
 
-	dh_installdirs 		usr/share/doc/openxp-doc/
+	dh_installdocs		doc/uucp.dq doc/fido.dq
 	cp -a doc/xpoint 	debian/tmp/openxp-doc/usr/share/doc/openxp-doc/html-de
 
 	install -D debian/bts 	debian/tmp/openxp/usr/share/bug/openxp/control
-	dh_installdocs		doc/uucp.dq doc/fido.dq
 
 	dh_link
 	dh_compress
@@ -118,24 +119,22 @@ openxp-doc:
 
 openxp-tools: openxp-tools-ftn openxp-tools-zconnect openxp-tools-uucp
 
-openxp-tools-%: override DH_OPTIONS=--package=$@ --tmpdir=tmp/$@
 openxp-tools-%:
-	dh_testdir
-	dh_testroot
+	dh_testdir		--package=$@ --tmpdir=debian/tmp/$@
+	dh_testroot		--package=$@ --tmpdir=debian/tmp/$@
 
 	dh_clean -k
-	dh_installdirs usr/share/doc/$@ usr/share/bug/$@
 
 	ln -sn 	'openxp' debian/tmp/$@/usr/share/doc/$@
 	ln -sn	'openxp' debian/tmp/$@/usr/share/bug/$@
 
-	dh_link
-	dh_compress
-	dh_fixperms
-	dh_installdeb
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
+	dh_link			--package=$@ --tmpdir=debian/tmp/$@
+	dh_compress		--package=$@ --tmpdir=debian/tmp/$@
+	dh_fixperms		--package=$@ --tmpdir=debian/tmp/$@
+	dh_installdeb		--package=$@ --tmpdir=debian/tmp/$@
+	dh_gencontrol		--package=$@ --tmpdir=debian/tmp/$@
+	dh_md5sums		--package=$@ --tmpdir=debian/tmp/$@
+	dh_builddeb		--package=$@ --tmpdir=debian/tmp/$@
 
 # --- clean target ----------------------------------------------------
 
@@ -155,6 +154,9 @@ clean:
 # ---------------------------------------------------------------------
 #
 #  $Log$
+#  Revision 1.2  2003/08/18 14:45:39  cl
+#  - some minor changes
+#
 #  Revision 1.1  2003/08/17 17:52:17  cl
 #  - added control files for bug tracking system
 #  - added menu configuration
