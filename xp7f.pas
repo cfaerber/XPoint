@@ -867,7 +867,8 @@ begin
             rewrite(t);
             s:=first_marked;
             repeat
-              writeln(t,trim(copy(s,5,18)));
+              if Pos(':',s) > 0 then        { Nur Fido Nodes, keine Meneuzeilen... }
+                writeln(t,trim(copy(s,5,18)));
               s:=next_marked;
             until s=#0;
             close(t);
@@ -936,6 +937,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/04/23 07:29:16  jg
+  - Fix: Fido/Crash...markiert: Menuezeilen wurden wie Nodes behandelt
+
   Revision 1.8  2000/04/18 11:23:50  mk
   - AnyFile in ffAnyFile ($3F->$20) ersetzt
 
