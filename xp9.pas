@@ -1676,11 +1676,11 @@ begin
   msetvfunc(notempty2);
   masksetstat(true,false,keyf2);    { <- zwingt zur korrekten Eingabe }
   readmask(brk);
-  closemask;
-  closebox;
   for i:=0 to enetztypen-1 do
     if lstr(ntyp)=lstr(ntName(ntnr[i])) then
       nt:=ntnr[i];
+  closemask;
+  closebox;
   if not ntNameSpace(nt) then
     for i:=1 to length(user) do    { Leerzeichen aus Username -> "_" }
       if user[i]=' ' then user[i]:='_';
@@ -1725,6 +1725,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.2  2000/07/15 18:43:45  mk
+  ML: - Nilpointerzugriff gefixt
+
   Revision 1.9.2.1  2000/04/23 14:48:46  jg
   Aenderungen fuer externe Viewer:
 
