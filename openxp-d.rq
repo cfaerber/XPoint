@@ -765,16 +765,18 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 + 271
 0    50
 1    PGP-Einstellungen
-2    ZConnect-PGP-UnterstÅtzung
-3    PGP-RÅckfragen Åbergehen
-4    Warten auf Tastendruck nach PGP-Aufruf
-5    Keys aus PMs automatisch einlesen
-6    Keys aus AMs automatisch einlesen
-7    User-ID~
-8    Logfile fÅr automatische Aktionen
+2    PGP-Version
+3    PGP-UnterstÅtzung
+4    PGP-RÅckfragen Åbergehen
+5    Warten auf Tastendruck nach PGP-Aufruf
+6    Logfile fÅr automatische Aktionen
+7    Keys aus PMs automatisch einlesen
+8    Keys aus AMs automatisch einlesen
 9    alle Nachrichten signieren
-10   PGP auch fÅr RFC/UUCP verwenden
-11   PGP auch fÅr Fido verwenden
+10   User-ID~
+11   GPG-Optionen
+12   PGP auch fÅr RFC/UUCP verwenden
+13   PGP auch fÅr Fido verwenden
 + 272
 # 06.02.2000 MH: RFC: X-Priority: 1, 2, 3, 4, 5
 0    30
@@ -3345,12 +3347,12 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 +   13000
 1   %s fehlt oder ist nicht per Pfad erreichbar.
-2   PGP-Codierung/Signierung ist fehlgeschlagen.
+2   Codierung/Signierung ist fehlgeschlagen.
 3   Beim Netztyp %s wird diese Funktion nicht unterstÅtzt.
-4   PGP-Decodierung ist fehlgeschlagen.
-5   Fehler beim Auslesen des PGP-Keys.
-6   öberprÅfung der PGP-Signatur ist fehlgeschlagen.
-7   PGP meldet ungÅltige Signatur!
+4   Decodierung ist fehlgeschlagen.
+5   Fehler beim Auslesen des Keys.
+6   öberprÅfung der Signatur ist fehlgeschlagen.
+7   UngÅltige Signatur!
 -
 
 # --- OpenXP-Easy Modus ---------------------------------------------------
@@ -3665,6 +3667,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.15  2001/06/11 22:23:26  ma
+# - added GnuPG support
+#
 # Revision 1.14  2001/06/09 10:58:53  ma
 # - added ForceOneArea feature (for POP3 server type)
 #

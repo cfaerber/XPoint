@@ -37,7 +37,7 @@ procedure UpdateKeyfile;
 procedure WritePGPkey_header(var f:file);    { PGP-PUBLIC-KEY: ... erzeugen   }
 procedure PGP_SendKey(empfaenger:string);    { Antwort auf Key-Request senden }
 procedure PGP_EncodeFile(var source:file; var hd: Theader;
-                         fn,UserID:string; encode,sign:boolean;
+                         fn,RemoteUserID:string; encode,sign:boolean;
                          var fido_origin:string);
 
 procedure PGP_RequestKey;
@@ -165,6 +165,39 @@ begin
   end;
 end;
 
+{ GnuPG 1.x+ }
+procedure RunGPG(par:string);
+const
+  {$ifdef unix}
+    PGPEXE = 'gpg';
+    PGPBAT = 'xgpg.sh';
+  {$else}
+    PGPEXE = 'GPG.EXE';
+    PGPBAT = 'XGPG.BAT';
+  {$endif}
+var
+  path : string;
+begin
+  if FileExists(PGPBAT) then
+    path:=PGPBAT
+  else begin
+    path:=getenv('PGPPATH');
+    if path<>'' then begin
+      if lastchar(path)='\' then dellast(path);
+      path:=filesearch(PGPEXE,path);
+    end;
+    if path='' then
+      path:=filesearch(PGPEXE,getenv('PATH'));
+  end;
+  if path='' then
+    trfehler(217,30)    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
+  else begin
+    shellkey:=PGP_WaitKey;
+    shell(path+' '+par,500,1);
+    shellkey:=false;
+  end;
+end;
+
 { User-ID fuer Command-Line-Aufruf in Anfuehrungszeichen setzen }
 
 function IDform(s:string):string;
@@ -186,6 +219,8 @@ begin
       if FileExists(PGPkeyfile) then _era(PGPkeyfile);
       if PGPVersion=PGP2 then
         RunPGP('-kx +armor=off '+IDform(PGP_UserID)+' '+PGPkeyfile)
+      else if PGPVersion=GPG then
+        RunGPG('--extract '+IDform(PGP_UserID)+' '+PGPkeyfile)
       else
         RunPGP5('PGPK.EXE','-x +armor=off '+IDform(PGP_UserID)+' -o '+PGPkeyfile);
     end;
@@ -271,14 +306,14 @@ end;
 { / Signierung wieder anhaengen.                             }
 
 procedure PGP_EncodeFile(var source:file; var hd: theader;
-                         fn,UserID:string; encode,sign:boolean;
+                         fn,RemoteUserID:string; encode,sign:boolean;
                          var fido_origin:string);
 var tmp  : string;
     f,f2 : file;
     b    : byte;
     nt   : longint;
     t    : string;
-    uid  : string;
+    OwnUserID  : string;
     _source: string;
 
   procedure StripOrigin;
@@ -304,37 +339,42 @@ var tmp  : string;
   end;
 
 begin
-  if UserID='' then                       { User-ID ermitteln }
-    UserID:=hd.empfaenger;
-  if (pos('/',UserID)>0) then UserID:=''; { Empfaenger ist Brett }
+  if RemoteUserID='' then                       { User-ID ermitteln }
+    RemoteUserID:=hd.empfaenger;
+  if pos('/',RemoteUserID)>0 then
+    RemoteUserID:='';                           { Empfaenger ist Brett }
 
   fm_ro; reset(source,1); fm_rw;
   tmp:=TempS(filesize(source)*2);         { Temp-Dateinamen erzeugen }
   close(source);
 
   if fido_origin<>'' then StripOrigin;
-  if PGPVersion=PGP2 then
+  if PGPVersion=GPG then
+    t:=iifs(hd.typ='T','a','')
+  else if PGPVersion=PGP2 then
     t:=iifs(hd.typ='T','t',' +textmode=off')
   else
     t:=iifs(hd.typ='T','-t','');
 
   if PGP_UserID<>'' then
-    uid:=' -u '+IDform(PGP_UserID)
+    OwnUserID:=IDform(PGP_UserID)
   else
-    uid:='';
+    OwnUserID:='';
 
   { --- codieren --- }
   if encode and not sign then begin
     if PGPVersion=PGP2 then
-      RunPGP('-ea'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp)
+      RunPGP('-ea'+t+' '+filename(source)+' '+IDform(RemoteUserID)+' -o '+tmp)
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPE.EXE','-a '+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp)
+      RunPGP5('PGPE.EXE','-a '+t+' '+filename(source)+' -r '+IDform(RemoteUserID)+' -o '+tmp)
+    else if PGPVersion=GPG then
+      RunGPG('-e'+t+' -o '+tmp+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+filename(source))
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
       _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
-      RunPGP('-e -a '+t+' '+_source+' '+IDform(UserID));
+      RunPGP('-e -a '+t+' '+_source+' '+IDform(RemoteUserID));
       if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
@@ -342,15 +382,17 @@ begin
   { --- signieren --- }
   end else if sign and not encode then begin
     if PGPVersion=PGP2 then
-      RunPGP('-sa'+t+' '+filename(source)+uid+' -o '+tmp )
+      RunPGP('-sa'+t+' '+filename(source)+OwnUserID+' -o '+tmp )
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPS.EXE','-a '+t+' '+filename(source)+uid+' -o '+tmp )
+      RunPGP5('PGPS.EXE','-a '+t+' '+filename(source)+OwnUserID+' -o '+tmp )
+    else if PGPVersion=GPG then
+      RunGPG(iifs(hd.typ='T','--clearsign','-s')+' --force-v3-sigs -o '+tmp+' -u '+OwnUserID+' '+filename(source))
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
       _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
-      RunPGP('-s -a '+t+' '+_source+' '+IDform(UserID)+uid);
+      RunPGP('-s -a '+t+' '+_source+' '+IDform(RemoteUserID)+OwnUserID);
       if FileExists(getbarefilename(tmp)) then _era(getbarefilename(tmp));         { Temporaerdatei loeschen }
       if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
@@ -359,15 +401,17 @@ begin
   { --- codieren+signieren --- }
   end else begin
     if PGPVersion=PGP2 then
-      RunPGP('-esa'+t+' '+filename(source)+' '+IDform(UserID)+uid+' -o '+tmp)
+      RunPGP('-esa'+t+' '+filename(source)+' '+IDform(RemoteUserID)+OwnUserID+' -o '+tmp)
     else if PGPVersion=PGP5 then
-      RunPGP5('PGPE.EXE','-sa '+t+' '+filename(source)+' -r '+IDform(UserID)+uid+' -o '+tmp)
+      RunPGP5('PGPE.EXE','-sa '+t+' '+filename(source)+' -r '+IDform(RemoteUserID)+OwnUserID+' -o '+tmp)
+    else if PGPVersion=GPG then
+      RunGPG('-es'+t+' --force-v3-sigs -o '+tmp+' -u '+OwnUserID+' -r '+IDform(RemoteUserID)+' '+PGP_GPGEncodingOptions+' '+filename(source))
     else begin
       { Sourcefile xxxx.TMP nach xxxx kopieren }
       _source:=ExtractFilePath(filename(source))+GetBareFileName(filename(source));
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
-      RunPGP('-e -s -a '+t+' '+_source+' '+IDform(UserID)+uid);
+      RunPGP('-e -s -a '+t+' '+_source+' '+IDform(RemoteUserID)+OwnUserID);
       if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
@@ -530,6 +574,8 @@ begin
     { ... RUNPGP5 haengt sie selbst mit an, falls noetig. }
   end else if PGPVersion=PGP5 then
     RunPGP5('PGPV.EXE',tmp+' -o '+tmp2)
+  else if PGPVersion=GPG then
+    RunGPG('-o '+tmp2+' '+tmp)
   else begin
     { Sourcefile xxxx.TMP nach xxxx kopieren }
     _source:=ExtractFilePath(tmp)+GetBareFileName(tmp)+'.asc';
@@ -544,20 +590,17 @@ begin
     if FileExists(tmp) then _era(tmp);
     if FileExists(_source) then _era(_source);
   end;
-  { Oops, keine Ausgabedatei: }
+
   if not FileExists(tmp2) then begin
-    { Signaturtest-Fehler }
     if sigtest then begin
       if errorlevel=18 then begin
-        trfehler(3007,7);  { 'PGP meldet ungueltige Signatur!' }
-        WrSigflag(flag_PGPSigErr);      { Signatur fehlerhaft }
+        trfehler(3007,30);  { 'Ungueltige Signatur!' }
+        WrSigflag(flag_PGPSigErr);
       end else
-        trfehler(3007,6)   { 'Ueberpruefung der PGP-Signatur ist fehlgeschlagen' }
-    { Dekodierungs-Fehler }
+        trfehler(3006,30)   { 'Ueberpruefung der Signatur ist fehlgeschlagen' }
     end else
-      trfehler(3004,5);     { 'PGP-Decodierung ist fehlgeschlagen.' }
-  { Ausgabedatei korrekt geschrieben: }
-  end else begin
+      trfehler(3004,30);    { 'Decodierung ist fehlgeschlagen.' }
+  end else begin { Ausgabedatei korrekt geschrieben: }
     if not SigTest then begin
       PGP_BeginSavekey;
       orgsize:=hdp.groesse;
@@ -570,10 +613,12 @@ begin
         hdp.ccharset:='';
       end;
     end;
-    { Signaturtest oder Fehler: }
     if sigtest or (errorlevel=18) then begin
-      { Fehler: }
       if errorlevel<>0 then begin
+        if errorlevel=18 then
+          trfehler(3007,30)  { 'Ungueltige Signatur!' }
+        else
+          trfehler(3006,30); { 'Ueberpruefung der Signatur ist fehlgeschlagen' }
         hdp.pgpflags := hdp.pgpflags or fPGP_sigerr;
         WrSigflag(flag_PGPSigErr);
       end else begin
@@ -582,7 +627,7 @@ begin
       end
     end;
 
-    if sigtest then begin
+    if sigtest and (errorlevel=0) then begin
       dbReadN(mbase,mb_netztyp,l);
       l:=l or $4000;                      { Flag fuer 'Signatur vorhanden' }
       dbWriteN(mbase,mb_netztyp,l);
@@ -718,10 +763,12 @@ begin
       LogPGP(reps(getreps2(3002,3,'<'+hdp.msgid+'>'),hdp.absender));
     mk:=PGP_WaitKey;
     if not auto then PGP_WaitKey:=true;
-    if PGPVersion<>PGP5 then
-      RunPGP('-ka '+tmp)
+    if PGPVersion=PGP5 then
+      RunPGP5('PGPK.EXE','-a '+tmp)
+    else if PGPVersion=GPG then
+      RunGPG('--import '+tmp)
     else
-      RunPGP5('PGPK.EXE','-a '+tmp);
+      RunPGP('-ka '+tmp);
 
     PGP_WaitKey:=mk;
     if FileExists(tmp) then _era(tmp);
@@ -735,10 +782,12 @@ var bm : boolean;
 begin
   bm:=PGPBatchMode;
   PGPBatchMode:=false;
-  if PGPVersion<>PGP5 then
-    RunPGP('-ke '+IDform(PGP_UserID))
+  if PGPVersion=PGP5 then
+    RunPGP5('PGPK.EXE','-e '+IDform(PGP_UserID))
+  else if PGPVersion=GPG then
+    RunGPG('--edit-key '+IDform(PGP_UserID))
   else
-    RunPGP5('PGPK.EXE','-e '+IDform(PGP_UserID));
+    RunPGP('-ke '+IDform(PGP_UserID));
 
   PGPBatchMode:=bm;
 end;
@@ -749,10 +798,12 @@ var bm : boolean;
 begin
   bm:=PGPBatchMode;
   PGPBatchMode:=false;
-  if PGPVersion<>PGP5 then
-    RunPGP('-kr '+IDform(PGP_UserID))
+  if PGPVersion=PGP5 then
+    RunPGP5('PGPK.EXE','-ru '+IDform(PGP_UserID))
+  else if PGPVersion=GPG then
+    RunGPG('--delete-key '+IDform(PGP_UserID))
   else
-    RunPGP5('PGPK.EXE','-ru '+IDform(PGP_UserID));
+    RunPGP('-kr '+IDform(PGP_UserID));
 
   PGPBatchMode:=bm;
 end;
@@ -787,6 +838,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/06/11 22:23:27  ma
+  - added GnuPG support
+
   Revision 1.35  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -800,6 +800,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        PGP2 = '2.6.x';
        PGP5 = '5.x';
        PGP6 = '6.5.x';
+       GPG  = 'GnuPG';
        PGPVersion : string = PGP2;
 
        mheadercustom : array[1..2] of string = ('','');
@@ -1010,6 +1011,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        PGP_waitkey  : boolean;       { 'Taste druecken ...' nach PGP }
        PGP_log      : boolean;       { Logfile fuer PGP-Aktivitaeten }
        PGP_signall  : boolean;       { alle Nachrichten signieren }
+       PGP_GPGEncodingOptions: string;
 
        IntVorwahl   : string;    { internationale Vorwahl }
        NatVorwahl   : string;    { nationale Vorwahl, normalerweise 0 }
@@ -1123,6 +1125,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.129  2001/06/11 22:23:26  ma
+  - added GnuPG support
+
   Revision 1.128  2001/06/09 10:58:53  ma
   - added ForceOneArea feature (for POP3 server type)
 

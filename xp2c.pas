@@ -96,6 +96,7 @@ const
 var hayes     : boolean;
     small     : boolean;
     tzfeld    : shortint;
+    GPGEncodingOptionsField: integer;
 
 function testbrett(var s:string):boolean;
 begin
@@ -1275,7 +1276,7 @@ end;
 
 function testpgpexe(var s:string):boolean;
 begin
-  testpgpexe:=True; {* Seltsam, Funktionsergebnis interessiert nicht?}
+  testpgpexe:=True;
   if (s=_jn_[1]) and (filesearch('PGP.EXE',getenv('PGPPATH'))='') and
                      (filesearch('PGP.EXE',getenv('PATH'))='') then begin
     rfehler(217);    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
@@ -1285,11 +1286,17 @@ end;
 
 function testxpgp(var s:string):boolean;
 begin
-  testxpgp:=True; {* Seltsam, Funktionsergebnis interessiert nicht?}
+  result:=True;
   if (s=_jn_[1]) and (getfield(1)=_jn_[2]) then begin
     rfehler(218);    { 'Aktivieren Sie zuerst die ZCONNECT-PGP-UnterstÅtzung! }
     s:=_jn_[2];
     end;
+end;
+
+function setpgpdialog(var s:string):boolean;
+begin
+  result:=True;
+  SetFieldEnable(GPGEncodingOptionsField,s=GPG);
 end;
 
 procedure PGP_Options;
@@ -1298,26 +1305,32 @@ var x,y : byte;
     sall: boolean;
 begin
   sall:=(UpperCase(GetRes2(29900,2))<>'N');
-  dialog(ival(getres2(271,0)),iif(sall,14,13),getres2(271,1),x,y);  { 'PGP-Einstellungen' }
+  dialog(ival(getres2(271,0)),iif(sall,16,15),getres2(271,1),x,y);  { 'PGP-Einstellungen' }
 
-  maddstring(3,2,'PGP-Version ',PGPVersion,5,5,'');
-  mappsel(false,PGP2+'˘'+PGP5+'˘'+PGP6);
+  maddstring(3,2,getres2(271,2),PGPVersion,5,5,'');   { 'PGP-Version' }
+    mset1func(setpgpdialog);
+  mappsel(false,PGP2+'˘'+PGP5+'˘'+PGP6+'˘'+GPG);
     mhnr(1010);
-  maddbool(3,4,getres2(271,2),UsePGP);   { 'ZCONNECT-PGP-UnterstÅtzung' }
-    mset1func(testpgpexe);
-  maddbool(3,5,getres2(271,3),PGPbatchmode);   { 'PGP-RÅckfragen Åbergehen' }
-  maddbool(3,6,getres2(271,4),PGP_WaitKey);    { 'Warten auf Tastendruck nach PGP-Aufruf' }
-  maddbool(3,7,getres2(271,8),PGP_log);        { 'Logfile fÅr automatische Aktionen' }
-  maddbool(3,9,getres2(271,5),PGP_AutoPM);     { 'Keys aus PMs automatisch einlesen' }
-  maddbool(3,10,getres2(271,6),PGP_AutoAM);     { 'Keys aus AMs automatisch einlesen' }
+  maddbool(3,4,getres2(271,3),UsePGP);                { 'PGP-UnterstÅtzung' }
+//    mset1func(testpgpexe);
+  maddbool(3,5,getres2(271,4),PGPbatchmode);          { 'PGP-RÅckfragen Åbergehen' }
+  maddbool(3,6,getres2(271,5),PGP_WaitKey);           { 'Warten auf Tastendruck nach PGP-Aufruf' }
+  maddbool(3,7,getres2(271,6),PGP_log);               { 'Logfile fÅr automatische Aktionen' }
+  maddbool(3,9,getres2(271,7),PGP_AutoPM);            { 'Keys aus PMs automatisch einlesen' }
+  maddbool(3,10,getres2(271,8),PGP_AutoAM);           { 'Keys aus AMs automatisch einlesen' }
   if sall then
-    maddbool(3,11,getres2(271,9),PGP_signall);  { 'alle Nachrichten signieren' }
-  maddstring(3,iif(sall,13,12),getres2(271,7),PGP_UserID,33,80,'');   { 'User-ID' }
+    maddbool(3,11,getres2(271,9),PGP_signall);        { 'alle Nachrichten signieren' }
+  maddstring(3,iif(sall,13,12),getres2(271,10),PGP_UserID,35,80,'');   { 'User-ID' }
     mhnr(1018);
-(*  maddbool(3,12,getres2(271,12),PGP_UUCP);       { 'PGP auch fÅr RFC/UUCP verwenden' }
+  maddstring(3,iif(sall,15,14),getres2(271,11),PGP_GPGEncodingOptions,31,120,''); { 'GPG-Optionen' }
+  mappsel(false,'--rfc1991 --cipher-algo idea˘--compress-algo 1 --cipher-algo cast5');
+  GPGEncodingOptionsField:= fieldpos;
+
+(*  maddbool(3,12,getres2(271,12),PGP_UUCP);          { 'PGP auch fÅr RFC/UUCP verwenden' }
     mset1func(testxpgp);
-  maddbool(3,13,getres2(271,13),PGP_Fido);       { 'PGP auch fÅr Fido verwenden' }
+  maddbool(3,13,getres2(271,13),PGP_Fido);            { 'PGP auch fÅr Fido verwenden' }
     mset1func(testxpgp); *)
+
   readmask(brk);
   if not brk and mmodified then
     GlobalModified;
@@ -1375,6 +1388,9 @@ end.
 
 {
   $Log$
+  Revision 1.90  2001/06/11 22:23:27  ma
+  - added GnuPG support
+
   Revision 1.89  2001/05/29 09:16:50  ma
   - fixed: C/O/N help messages were in wrong order with Unix
 

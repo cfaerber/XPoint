@@ -10100,6 +10100,20 @@ zeilen unter DOS begrenzt ist, kann es sinnvoll sein,
 diese Form der User ID zu verwenden.
 
 @
+1019
+Geben Sie hier Kommandozeilenparameter ein, die von
+GnuPG beim Verschlsseln von Nachrichten benutzt
+werden sollen.
+
+Auf diese Weise k”nnen GnuPG-verschlsselte Nach-
+richten kompatibel mit PGP bleiben. Benutzen Sie die
+erste per F2 angebotene Auswahl, um kompatibel mit
+PGP 2.x und h”her zu bleiben (dafr muá allerdings
+die IDEA-Erweiterung fr GnuPG installiert sein);
+die zweite Auswahl stellt Kompatibilit„t mit PGP
+5.x und h”her sicher, hierfr muá keine Erweiterung
+installiert sein.
+@
 1020
 <<[x]>> -> Die Nachricht wird mit einer PGP-Signatur
        versehen. Dadurch k”nnen alle User, die im

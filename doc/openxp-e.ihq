@@ -7453,6 +7453,18 @@ Examples:
 
 <<Abort>>       Self-explanatory, really :-)
 @
+1019
+Please enter GnuPG command line options that shall be
+used for encrypting mails here.
+
+This way you can create GnuPG encrypted mails that may
+be decrypted by PGP. Use the first option seen after
+pressing F2 to keep GnuPG compatible with PGP 2.x (you
+need to install GnuPG IDEA support then). Use the
+second option to keep GnuPG compatible with PGP 5.x
+and higher. IDEA support needs not to be installed
+then.
+@
 1500
 Select <<Yes>> to archive a copy of the selected
 message in the user's newsgroup. In this way you can
