@@ -527,8 +527,9 @@ begin { loadresource }
   ParLanguage:=copy(lf,4,cpos('.',lf)-4);
   assign(t,lf);
   reset(t);
-  readln(t); readln(t);
-  readln(t,s);
+  readln(t, s);
+  readln(t, s);
+  readln(t, s);
   deutsch:=(LowerCase(s)='deutsch');
   close(t);
   OpenResource(lf,ResMinmem);
@@ -1080,6 +1081,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.67  2000/08/20 11:22:38  mk
+  - Landessprache wird jetzt richtig erkannt (BP inkompatiblitaet)
+
   Revision 1.66  2000/08/01 18:13:49  mk
   - XPOS2 hinzugefuegt
 
