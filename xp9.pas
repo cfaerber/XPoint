@@ -935,7 +935,8 @@ var d         : DB;
   var x,y : byte;
   begin
     dialog(ival(getres2(903,0)),11,getres2(903,iif(edit,1,2)),x,y);    { 'Systeme bearbeiten','neues System anlegen' }
-    maddstring(3,2,getres2(903,3),name,20,20,'>'); mhnr(461);   { 'Systemname ' }
+    maddstring(3,2,getres2(903,3),name,BoxNameLen,BoxNameLen,'>'); mhnr(461);   { 'Systemname ' }
+    mappcustomsel(BoxSelProc,false);
     msetvfunc(testsysname);
     maddstring(3,4,getres2(903,4),komm,30,30,'');       { 'Kommentar  ' }
     maddstring(3,6,getres2(903,5),fs_name,20,20,'');    { 'Fileserver ' }
@@ -1817,6 +1818,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.48  2000/11/19 00:04:03  mk
+  - select feature in edit|system
+
   Revision 1.47  2000/11/18 21:42:18  mk
   - implemented new Viewer handling class TMessageViewer
 
