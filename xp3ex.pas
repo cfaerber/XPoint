@@ -467,7 +467,7 @@ var size   : longint;
           if (q<=length(s)) and (s[q]='>') then p:=q;
         until q>p;
         while (p<length(s)) and (s[p+1]='>') do inc(p);
-        while (p<length(s)) and (s[p+1]=' ') do inc(p);
+       { while (p<length(s)) and (s[p+1]=' ') do inc(p); } { Leerzeichen nicht dazu zaehlen }
         end;
       GetQCpos:=p;
     end;
@@ -1028,6 +1028,9 @@ end;
 end.
 {  
   $Log$
+  Revision 1.10.2.1  2000/04/30 05:50:30  jg
+  - Bugfix Leerzeichen NACH dem Quotezeichen bleiben erhalten
+
   Revision 1.10  2000/02/28 23:43:01  rb
   Grmpf, ich hatte vergessen, das nicht mehr ben”tigte 'IniQuote' auszukommentieren
 
