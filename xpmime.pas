@@ -347,6 +347,7 @@ var   hdp      : headerp;
     reset(t);
     anzahl:=0;
     stackwarn:=false;
+    firstline := '';
 
     if hdp^.boundary='' then begin     { Boundary erraten ... }
       n:=0; s:=''; bound:='';
@@ -383,7 +384,7 @@ var   hdp      : headerp;
         else begin
           readln(t,s);
           inc(n);
-          if n=1 then firstline:=s;
+          if (n>=1) and (FirstLine = '') then firstline:=s;
           end;
         endbound:=(s=bound+'--');
         isbound:=endbound or (s=bound);
@@ -758,6 +759,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.9  2000/11/18 23:30:57  mk
+  - MIME-Erkennung wegen schrottiger Microsoft Outlook Software angepasst
+
   Revision 1.12.2.8  2000/10/26 13:17:36  mk
   - ISO859-1 Umwandlung immer durchfuerhen
 
