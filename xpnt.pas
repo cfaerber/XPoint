@@ -60,7 +60,7 @@ function ntXPctl(nt:byte):boolean;            { XP-Control-Messages }
 
 function ntBinary(nt:byte):boolean;           { Bin„rmails erlaubt    }
 function ntBinaryBox(box:string):boolean;     { dito                  }
-function ntMIME(nt:byte):boolean;
+function ntMIME(nt:byte):boolean;             { MIME möglich          }
 function ntBinEncode(nt:byte):boolean;        { Bin„rmails werden uucodiert }
 function ntMessageID(nt:byte):byte;           { Message-ID-Format     }
 function ntDomainReply(nt:byte):boolean;      { Replys auf eig. Nachr. erkennbar }
@@ -124,6 +124,7 @@ function ntNoMaps(nt:byte):boolean;           { kein Maps-Service     }
 function ntMapsOthers(nt:byte):boolean;       { Maps/Sonstige         }
 function ntMapsBrettliste(nt:byte):boolean;   { Maps/Liste_anfordern  }
 
+function ntEnvelopes(nt: integer): boolean;   { Trennung Envelope/Header }
 function ntReplyToAll (nt :integer) :boolean;    { Reply-To-All erlaubt }
 
 function FormMsgId(MsgID: String): String;
@@ -725,6 +726,11 @@ begin
   ntReplyToAll := ((nt and $FF) in [nt_ZConnect, nt_UUCP, nt_POP3, nt_NNTP, nt_CLient]);
 end;
 
+function ntEnvelopes(nt: integer): boolean;   { Trennung Envelope/Header }
+begin
+  result := nt in (netsRFC + [nt_Maus]);
+end;
+
 function ntValidAddress(nt:byte;const addr:string):boolean;
 begin
 //  if nt in netsRFC then result:=RFC2822ValidAdress(addr) else
@@ -742,6 +748,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.43  2002/03/03 15:51:31  cl
+  - added ntEnvelope
+
   Revision 1.42  2002/02/13 18:19:53  mk
   - improvements for THeader and ClrUVS
 
