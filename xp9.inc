@@ -401,9 +401,9 @@
 
       else        begin
                     if uucp then
-                      maddstring(3,2,getres2(920,10),pname,20,25,'')
+                      maddstring(3,2,getres2(920,10),pname,20,25,'<')
                     else
-                      maddstring(3,2,getres2(920,10),pname,20,25,'>');
+                      maddstring(3,2,getres2(920,10),pname,20,25,'');
                     mhnr(140);                             { 'Pointname' }
                     if nt=nt_ZConnect then
                       msetvfunc(testZCpointname);
@@ -1340,6 +1340,9 @@
 
 {
   $Log$
+  Revision 1.10.2.8  2000/12/23 09:49:10  mk
+  - Pointname bei ZConnect jetzt auch kleingeschr. erlaubt
+
   Revision 1.10.2.7  2000/12/21 21:55:46  mk
   - Janus+ jetzt Hilfe-Nr. 8019
 
