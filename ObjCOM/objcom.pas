@@ -22,7 +22,7 @@ unit ObjCOM;
 
 uses
 {$IFDEF DOS32}
-  Ports
+  Ports,
 {$ENDIF}
   Ringbuff;
 
@@ -443,6 +443,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2000/10/16 20:46:34  mk
+  - fixes Typo
+
   Revision 1.7  2000/10/16 12:19:06  mk
   - added ocdefine.inc
 
