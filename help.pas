@@ -767,9 +767,12 @@ end;
 
 initialization
 finalization
-  FreeMem(pa);
+  ReleaseHelp;
 {
   $Log$
+  Revision 1.40  2001/09/26 23:51:28  mk
+  - fixed freemem for pa variable
+
   Revision 1.39  2001/09/21 16:16:47  mk
   - fixed some memory leaks (thanks to BoundsChecker)
 
