@@ -80,7 +80,7 @@ const
 { ------------------------} implementation { ------------------------- }
 
 uses
-  SysUtils;
+  SysUtils, Typeform;
 
 procedure TBase64EncoderStream.SetSize(NewSize:Longint);
 var
@@ -156,23 +156,25 @@ function TBase64DecoderStream.Read(var Buffer; Count: Longint): Longint;
 var b:Byte;
     d:ShortInt;
 
-    bbuf:array[0..8191] of Byte;
-    bbeg,bend: Longint;
+    BBuf:array[0..8191] of Byte;
+    BBeg,BEnd: Longint;
 
     r: Longint;
 
   function GetByte: Boolean;
+  var ReadCount: longint;
   begin
     if BBeg>=BEnd then
     begin
+      ReadCount:=((Count-R)*8-BufBits+5)div 6+BBeg;
+      ReadCount:=Min(ReadCount,High(BBuf)-Low(BBuf)+1);
+      ReadCount:=Max(ReadCount,1);
+      ReadCount:=OtherStream.Read(BBuf[Low(BBuf)],ReadCount);
       BBeg:=Low(BBuf);
-      BEnd:=((Count-R)*8-BufBits+5)div 6+BBeg;
-      if BEnd>High(BBuf)+1 then BEnd:=High(BBuf)+1;
-      if BEnd<=BBeg then BEnd:=BBeg+1; // read at least 1 character
-      BEnd:=OtherStream.Read(bbuf,BEnd-BBeg)+BBeg;
+      BEnd:=Low(BBuf)+ReadCount;
     end;
 
-    if BBeg< BEnd then
+    if BBeg<BEnd then
     begin
       b:=BBuf[BBeg];
       inc(BBeg);
@@ -208,12 +210,15 @@ begin
   end;
 
   Inc(FPosition,R);
-  Assert(BBeg< BEnd);
+  Assert(BBeg<=BEnd);
   Result := R;
 end;
 
 //
 // $Log$
+// Revision 1.5  2001/09/11 14:22:15  cl
+// - BUGFIX: Reading small amounts of data with TBase64DecoderStream.Read
+//
 // Revision 1.4  2001/09/10 15:58:01  ml
 // - Kylix-compatibility (xpdefines written small)
 // - removed div. hints and warnings
