@@ -1131,15 +1131,8 @@ var d         : DB;
 
   procedure ReadMimetyp(edit:boolean; var typ,ext,prog:string;
                         var brk:boolean);
-  var x,y,add : byte;
-
-    procedure SetV(var viewer:sstringp);
-    begin
-      if viewer<>nil then freemem(viewer,length(viewer^)+1);
-      getmem(viewer,length(prog)+1);   { auch bei prog=''! }
-      viewer^:=prog;
-    end;
-
+  var
+    x,y,add : byte;
   begin
     typ:=extmimetyp(typ);
     add:=iif(typ='*/*',0,2);
@@ -1165,9 +1158,9 @@ var d         : DB;
     until brk or (typ+ext<>'');
     enddialog;
     if not brk then
-      if typ='text/plain' then SetV(PTextViewer) else
-      if typ='text/*' then SetV(DefTextViewer) else
-      if typ='*/*' then SetV(DefaultViewer);
+      if typ='text/plain' then PTextViewer := Prog else
+      if typ='text/*' then DefTextViewer := Prog else
+      if typ='*/*' then DefaultViewer := Prog;
     typ:=compmimetyp(typ);
   end;
 
@@ -1768,6 +1761,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.37  2000/10/19 15:25:06  mk
+  - sstringp in AnsiString umgewandelt
+
   Revision 1.36  2000/10/18 10:25:25  mk
   - check for duplicate MIME-Types
 

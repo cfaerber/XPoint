@@ -1165,19 +1165,14 @@ end;
 
 procedure ReadDefaultViewers;
 
-  procedure SeekViewer(mimetyp:string; var viewer: sstringp);
-  var prog : string;
+  procedure SeekViewer(mimetyp:string; var viewer: string);
   begin
-    if viewer<>nil then freemem(viewer);
     dbSeek(mimebase,mtiTyp,UpperCase(mimetyp));
     if not dbEOF(mimebase) and not dbBOF(mimebase) and
-       stricmp(dbReadStr(mimebase,'typ'),mimetyp) then begin
-      prog:= dbReadNStr(mimebase,mimeb_programm);
-      getmem(viewer,length(prog)+1);   { auch bei prog=''! }
-      viewer^:=prog;
-      end
+       stricmp(dbReadStr(mimebase,'typ'),mimetyp) then
+      viewer := dbReadNStr(mimebase,mimeb_programm)
     else
-      viewer:=nil;
+      viewer:= '';
   end;
 
 begin
@@ -1210,6 +1205,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.76  2000/10/19 15:25:06  mk
+  - sstringp in AnsiString umgewandelt
+
   Revision 1.75  2000/10/19 14:10:40  hd
   - UnixDevelop eingefuegt
 

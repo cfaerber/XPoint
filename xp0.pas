@@ -377,8 +377,6 @@ const
 
 {$I XPHEADER.INC }
 
-type   sstringp         = ^shortstring;   { Zeiger auf einen ShortString }
-
 type   textp  = ^text;
        ColArr = array[0..3] of byte;
        ColQArr= array[1..9] of byte;
@@ -799,10 +797,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParNoBeta  : boolean = false;   { keine Beta-Meldung }
 {$ENDIF }
 
-       DefaultViewer: sstringp = nil;  { Viewer fÅr */* }
-       DefTextViewer: sstringp = nil;  { Viewer fÅr text/* }
-       PtextViewer  : sstringp = nil;  { Viewer fÅr text/plain }
-
        MoreMode   : boolean = true;
        Developer  : boolean = false;
 {$IFDEF UnixFS }
@@ -870,6 +864,10 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        EditExtpath  : String;
        EditSendpath : String;
        lockfile     : file;          { gelockte Datei LOCKFILE }
+
+       DefaultViewer: string;  { Viewer fÅr */* }
+       DefTextViewer: string;  { Viewer fÅr text/* }
+       PtextViewer  : string;  { Viewer fÅr text/plain }
 
        col          : ColRec;        { CFG-Variablen :  ------ }
        ExtraktTyp   : byte;          { 0=ohne Kopf, 1=mit, 2=Puffer, 3=Quote }
@@ -1166,6 +1164,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.93  2000/10/19 15:25:06  mk
+  - sstringp in AnsiString umgewandelt
+
   Revision 1.92  2000/10/09 22:14:45  ml
   - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
 

@@ -77,15 +77,18 @@ begin
   viewer.prog:='';
   if typ='' then exit;
   if stricmp(typ,'text/plain') then
-    if PTextViewer<>nil then begin
-      viewer.prog:=PTextViewer^;
+    if PTextViewer<>'' then
+    begin
+      viewer.prog:=PTextViewer;
       if viewer.prog='' then viewer.prog:='*intern*';
       viewer.ext:='txt';
-      end
-    else if DefTextViewer<>nil then begin
-      viewer.prog:=DefTextViewer^;
-      if viewer.prog='' then viewer.prog:='*intern*';
-      viewer.ext:='';
+    end
+    else
+      if DefTextViewer<>'' then
+      begin
+        viewer.prog:=DefTextViewer;
+        if viewer.prog='' then viewer.prog:='*intern*';
+        viewer.ext:='';
       end
     else
   else
@@ -113,8 +116,8 @@ end;
 
 procedure GetDefaultViewer(typ:string; var viewer:viewinfo);
 begin
-  if DefaultViewer<>nil then begin
-    viewer.prog:=DefaultViewer^;
+  if DefaultViewer<> '' then begin
+    viewer.prog:=DefaultViewer;
     viewer.ext:='';
     viewer.typ:=typ;
     viewer.fn:='';
@@ -249,6 +252,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/10/19 15:25:07  mk
+  - sstringp in AnsiString umgewandelt
+
   Revision 1.23  2000/10/17 10:06:02  mk
   - Left->LeftStr, Right->RightStr
 
