@@ -3553,7 +3553,7 @@ Netz dagegen ist diese Funktion recht gut anwendbar.
 Beachten Sie auch, daá dieser Eintrag <<nicht>> fr be-
 reits vorhandene Bretter gilt! Zur Umstellung dieser
 Bretter auf einen anderen Server k”nnen Sie statt-
-dessen /Wartung/Sonstiges/Server-Wechsel verwenden.
+dessen /Wartung/Server-Wechsel verwenden.
 
 @
 8033
@@ -3573,8 +3573,7 @@ oder von ZCONNECT bzw. Usenet ins MausNet m”glich.
 Beachten Sie, daá dieser Eintrag <<nicht>> fr bereits
 im Adreábuch vorhandene User gilt! Zur Umstellung
 dieser User auf einen anderen Server k”nnen Sie
-stattdessen /Wartung/Sonstiges/Server-Wechsel verwen-
-den.
+stattdessen /Wartung/Server-Wechsel verwenden.
 
 @
 190
@@ -3585,9 +3584,8 @@ des Netzes verwendet wird.
 Bitte beachten Sie bei einem eventuellen ndern des
 Namens, daá die Server-Angaben in der Brett- und
 Userliste NICHT automatisch mitge„ndert werden. Sie
-mssen also nach der nderung ber /Wartung/Sonsti-
-ges/Server-Wechsel die Servereintr„ge umstellen las-
-sen.
+mssen also nach der nderung ber /Wartung/Server-
+Wechsel die Servereintr„ge umstellen lassen.
 @
 191
 <<MausNet / FidoNet:>>
@@ -12791,7 +12789,7 @@ existierende Serverbox eingetragen. Korrigieren Sie
 bitte den Servereintrag in der User- bzw. Brettliste!
 
 Falls Sie die Serverbox gewechselt haben, empfiehlt
-sich /Wartung/Sonstiges/Server-Wechsel.
+sich /Wartung/Server-Wechsel.
 @
 20617
 Auf dem Laufwerk, daá bei /Config/Pfade als Teil des
