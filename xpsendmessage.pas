@@ -1075,6 +1075,7 @@ begin
   begin
     compatible := true;
     nt := ccm^[0].ccnt;
+    if nt = 0 then nt := NetzTyp;
     for i := 1 to cc_anz do
       if not ntAdrCompatible (nt, ccm^[i].ccnt) then
         compatible := false;
@@ -2515,6 +2516,9 @@ finalization
 
 {
   $Log$
+  Revision 1.48.2.16  2003/08/15 20:53:27  mk
+  - fixed Bug #671059: Falscher Server bei unbek.+bek. Usern
+
   Revision 1.48.2.15  2003/05/10 10:08:36  ma
   - fixed Fido file "attachments"
 
