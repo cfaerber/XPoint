@@ -290,12 +290,27 @@ end;
 procedure erase_all(path:pathstr);
 var sr : searchrec;
     f  : file;
+    er : integer;
 begin
 {$IFDEF UnixFS}
   path:= ResolvePathName(path);
 {$ENDIF}
+  
+  { Auf keinen Fall das XP-Verzeichnis l”schen! }
+  Dos.findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
+  er:=doserror;
+  {$IFDEF Ver32}
+  FindClose(sr);
+  {$ENDIF}
+  { xp.ovr gefunden, dann wahrscheinlich im XP-Verzeichnis! }
+  if (er=0) then exit;
+  { Oops, XPVerzeichnis erwischt! }
+  if (ownpath=path) then exit;
+  { Oops, Rootverzeichnis erwischt! }
+  if ((path='\') or (path='/')) then exit;
+  
   Dos.findfirst(path+WildCard,anyfile-VolumeID,sr);
-  while doserror=0 do begin
+  while (doserror=0) do begin
     with sr do
       if (name[1]<>'.') then
         if attr and Directory<>0 then
@@ -862,6 +877,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.36  2000/05/29 15:12:57  oh
+  -delete_all() abgesichert
+
   Revision 1.35  2000/05/26 20:13:03  mk
   - Lock war unter DOS32 Bit undefiniert
 
