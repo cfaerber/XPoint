@@ -29,7 +29,7 @@ K (c) '93-96 Peter Mandrella
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055M^arked(for reply),056^Marked,057U^nmark     ^E,058Message^ID
 6   Config,061^Optionsù28,062E^xternalù24,063^Paths,064^Displayù9,065^Modemù18,066P^rinter,067^Keysù23,068^Tools Menu,069^Save
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^scù33
-8   Schablonen,081!^Head,082!^PrivHead,083!P^ublicQuote,084!P^RivQuote,085!PrivP^MQuote,086!^QuoteTo,087!^Forward,088!^Repost,-,08a!^Signature,08b!Pr^IvSignature,08c!^Receipt req.,08d!^Cancel,08e!^Others
+8   Schablonen,081!^Header (Public),082!Header (^Private),-,083!Quote (P^ublic),084!Quote (P^rivate),085!PrivP^MQuote,086!^QuoteTo,087!^Forward,088!^Repost,-,08a!^Signature,08b!Pr^IvSignature,08c!^Receipt req.,08d!^Cancel,08e!^Others
 9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Linesù11,096M^isc,098^Accessibility,097^PD-Zmodem
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
 # Dummy for XPME:
@@ -168,8 +168,8 @@ K (c) '93-96 Peter Mandrella
 
 + 23
 # Message window, menu "other"
-2  ^EditUser     ^U,^Rot13        ^X,^Hex Dump     ^H,^Date         ^D,^Print        ^T,^Mark,Wieder^vlg.    V,^Text file    ^F,B^inary file  ^I,indir.^Quote ^Q
-3  ,^Seek user    @U,See^k Subj.   @B
+2  ^EditUser         ^U,^Rot13            ^X,^Hex Dump         ^H,^Date             ^D,^Print            ^T,^Mark,M^ark(for reply)   V,^Text file        ^F,B^inary file      ^I,indir.^Quote      ^Q
+3  ,^Seek user        @U,See^k Subj.       @B
 -
 
 
@@ -526,8 +526,8 @@ K (c) '93-96 Peter Mandrella
 18   Send automatic receipts on request
 19   Automatic PM archiving
 23   Time zone
-24   Delete X-postings with more than
-25   newsgroups
+24   Delete X-postings in more than
+25   Newsgroups
 26   Send all carbon copies as BCC
 27   at mail as well
 28   ask at Reply-To
