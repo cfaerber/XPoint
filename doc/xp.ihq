@@ -9279,7 +9279,7 @@ Geben Sie den Registrierungscode ein, den Sie von
 der CrossPoint-Registrierungsstelle erhalten haben.
 @
 1560
-Richten Sie Ihre Registrierung bitte an Jochen Herz.
+Ihre Registrierung wird von Jochen Herz bearbeitet.
 @
 1561
 Geben Sie hier Ihre Anschrift ein.
@@ -9295,8 +9295,8 @@ Geben Sie hier Ihre Anschrift ein.
 @
 1565
 Geben Sie hier bitte eine Mailadresse ein, unter der
-wir Sie erreichen k”nnen, oder w„hlen Sie eine
-Adresse mit <<<F2> >>aus.
+Sie erreichbar sind, oder w„hlen Sie eine Adresse mit
+<<<F2> >>aus.
 
 Diese Angabe wird insbesondere dann ben”tigt, wenn
 Sie den Registrierungscode per eMail erhalten m”ch-
@@ -9339,10 +9339,10 @@ alle beteiligten User Points der gleichen Mailbox
 oder bei RFC/UUCP Teilnehmer in der gleichen Domain
 sind.
 
-<<Wichtig:>> Wir ben”tigen bei Sammelregistrierungen die
-Namen und Netzadressen aller teilnehmenden User!
+<<Wichtig:>> Bei Sammelregistrierungen werden die Namen
+und Netzadressen aller teilnehmenden User ben”tigt!
 Falls diese noch nicht feststehen, denken Sie bitte
-daran, sie uns nachtr„glich mitzuteilen.
+daran, sie nachtr„glich mitzuteilen.
 @
 1572
 W„hlen Sie mit <<<F2> >>aus, auf welchem Weg die Zahlung
@@ -9366,10 +9366,12 @@ Gltigkeitsdatum (Monat/Jahr) ein.
 @
 1576
 <<[x]>> -> Sie erhalten zus„tzlich eine Diskette mit der
-       aktuellen Programmversion (v3.12d) und eine
-       Diskette mit CrossPoint-Tools.
+       letzten offiziellen Programmversion von Peter
+       Mandrella (v3.12d) und eine Diskette mit
+       CrossPoint-Tools.
 
-Die aktuelle Programmversion (v3.12d) ist auch auf
+Die letzte offizielle Programmversion von
+Peter Mandrella (v3.12d) ist auch auf
 <<http://www.crosspoint.de/>> erh„ltlich.
 
 Die vom OpenXP-Projekt weiterentwickelten Versionen
@@ -9378,10 +9380,19 @@ erh„ltlich.
 
 @
 1577
-<<[x]>> -> Anmerkung:
-       Das CD-ROM-Angebot existiert zur Zeit nicht -
-       bitte den Schalter nicht aktivieren.
+<<[x]>> -> Sie erhalten zus„tzlich eine CD-ROM mit
+       folgendem Dateibestand:
 
+- die letzte offizielle CrossPoint-Version 3.12d
+  von Peter Mandrella
+- eine Auswahl von CrossPoint-Zusatztools
+- alle wichtigen DFš-Tools (Packer, Protokolle,
+  FOSSIL-Treiber, UUencoder etc.)
+
+sowie eine umfangreiche Sammlung von Dokumentationen
+fr Programmierer (Polldocs, APIs, Dateiformate etc.)
+
+Der Dateibestand kann sich jederzeit „ndern.
 @
 1578
 <<[x]>> -> Sie erhalten Ihren Registrierungscode per
@@ -9457,6 +9468,10 @@ soll.
 <<Nein>>  ->  Die Registrierung wird - wie bei privat
           registrierten Anwendern - nur mit einem
           "R" gekennzeichnet.
+@
+1589
+Aktivieren Sie diesen Schalter, um einen verlorenen
+Registrierungscode nachzubestellen.
 @
 2000
 Unter einem <<Origin-Shuffler>> versteht man im FidoNet
