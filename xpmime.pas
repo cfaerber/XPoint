@@ -694,7 +694,7 @@ begin
         else
           softbreak:=false;
 
-        if code in [mcodeQP, mcode8Bit] then
+        if code in [mCodeNone, mcodeQP, mcode8Bit] then
         begin
           // convert s to Unicode (UTF-8)
           if Charset <> csUnicode then
@@ -763,6 +763,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/10/26 13:17:20  mk
+  - ISO859-1 Umwandlung immer durchfuerhen
+
   Revision 1.32  2000/10/22 23:16:48  mk
   - AnsiString fixes
 
