@@ -264,7 +264,7 @@ function replace_panel(_para1:pPANEL; _para2:pWINDOW):longint;cdecl;
 function panel_hidden(_para1:pPANEL):longint;cdecl;
 
 { Eigentlich nicht benoetigt von Aussen }
-function IsBold(att: integer): boolean;
+function IsBold(att: word): boolean;
 function SetColorPair(att: integer): integer;
 
 { Erstellt ein Fenster und macht es aktiv }
@@ -397,6 +397,7 @@ begin
   atts:= color_pair(SetColorPair(att));
   if IsBold(att) then
     atts:= atts or A_BOLD;
+  atts := atts and not A_BLINK;
   if (att and $80) = $80 then
     atts:= atts or A_BLINK;
   CursesAtts:= atts;
@@ -593,11 +594,11 @@ begin
 end;
 
 { see if the specified attribute is high intensity }
-function IsBold(att: integer): boolean;
+function IsBold(att: word): boolean;
 begin
-  bg := att div 16;
-  fg := att - (bg * 16);
-  isbold := (fg > 7);
+  bg := att shr 4;             // bg is the high-nibble
+  fg := att and $0F;           // fg is the low-nibble
+  isbold := (fg and $08) <> 0; // b00001000 is the boldbit
 end;
 
 
@@ -1447,6 +1448,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2001/04/09 14:18:25  ml
+  -disabled blinking till it is working well
+
   Revision 1.35  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
