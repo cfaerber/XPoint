@@ -703,6 +703,7 @@ var t,lastt: taste;
       gfound  : boolean;
       mqfirst : longint;
       mpdata  : multi_part;
+      OrgQuote: Integer;
 
   label ende;
 
@@ -836,13 +837,14 @@ var t,lastt: taste;
       pm:=not ReadJNesc(getres(431),false,brk);   { 'Der Absender wÅnscht eine PM-Antwort - trotzdem îffentlich antworten' }
       if brk then exit;
       end;
-    mquote:=(quote=1); mqfirst:=0;
+    OrgQuote := Quote;
     if quote=2 then
       if markanz=0 then
         quote:=1
       else
         if not multiquote(brk) and brk then exit;
       {  dbGo(mbase,marked^[0]); }
+    mquote:=(quote=1); mqfirst:=0;
     betr:='';
     rt0:='';
     realname:='';
@@ -1053,28 +1055,31 @@ var t,lastt: taste;
       end;
     sdata^.empfrealname:=realname;
 
-    dbReadN(mbase,mb_mimetyp,mimetyp);
-
-    { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
-      Multipart-Daten vorhanden, wir faken uns also welche, damit
-      die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
-    if (qmpdata = nil) and (Quote < 2) and (mimetyp <> 'text/plain') then
+    if reply then
     begin
-      pushhp(94);
-      fillchar(mpdata,sizeof(qmpdata),0);
-      mpdata.fname := fn;
-      SelectMultiPart(true,1,false,mpdata,brk);
+      mimetyp := dbReadNStr(mbase,mb_mimetyp);
 
-      { is MIME-Typ not text/plain and quote then ask
-        if quoting binary mails is desired }
-      if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
-        and (mpdata.typ <> '') and (quote=1) and
-        not ReadJN(getres(406),true)   { 'Das ist eine BinÑrnachricht! Mîchten Sie die wirklich quoten' }
-        then goto ende;
+      { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
+        Multipart-Daten vorhanden, wir faken uns also welche, damit
+        die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
+      if (qmpdata = nil) and (OrgQuote = 1) and (mimetyp <> 'text/plain') then
+      begin
+        pushhp(94);
+        fillchar(mpdata,sizeof(qmpdata),0);
+        mpdata.fname := fn;
+        SelectMultiPart(true,1,false,mpdata,brk);
 
-      qmpdata := @mpdata;
-      pophp;
-      if brk then goto ende;
+        // is MIME-Typ not text/plain and quote then ask
+        // if quoting binary mails is desired
+        if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
+          and (mpdata.typ <> '') and (quote=1) and
+          not ReadJN(getres(406),true)   { 'Das ist eine BinÑrnachricht! Mîchten Sie die wirklich quoten' }
+          then goto ende;
+
+        qmpdata := @mpdata;
+        pophp;
+        if brk then goto ende;
+      end;
     end;
 
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
@@ -2101,6 +2106,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.11  2000/10/26 08:55:11  mk
+  - MIME-Fixes
+
   Revision 1.26.2.10  2000/10/24 13:55:05  mk
   - MIME-fixes
 
