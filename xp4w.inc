@@ -752,7 +752,29 @@ begin
       mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
       Testviralextension;
 
-      multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
+                                                       {Einteilige nicht text/plain Message }
+      if (mp=1) and (mimetyp <>'') and (mimetyp<>'text/plain')
+         and (left(mimetyp,9)<>'multipart') then
+      begin                                       
+        multipart:=false;
+        pushhp(94);    
+        listbox(56,min(screenlines-4,2),getres2(2440,9));   { 'mehrteilige Nachricht' }
+        app_l(forms(' ' 
+         + typname(left(mimetyp,cpos('/',mimetyp)-1),mid(mimetyp,cpos('/',mimetyp)+1)),25)
+         + '       ' + forms(mpdata.fname,23) + ' 1');
+        app_l(' '+forms(getres2(2440,10),55)+' 1');            {'gesamte Nachricht '} 
+        listTp(SSP_Keys);
+        ListSetStartpos(1);
+        list(brk);
+        closelist;
+        closebox;
+        pophp;
+        if brk then goto nextmsg;
+        if copy(get_selection,2,10)=left(getres2(2440,10),10) {'gesamte Na'}
+          then viewer.prog:='';
+
+      end else
+        multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
                  ( (mp=2) or (left(mimetyp,10)='multipart/') or
                    ((mp=1) and (dbReadInt(mbase,'flags') and 4<>0)) ) and
                  (mp<>0);
@@ -1508,6 +1530,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2000/08/05 17:28:24  mk
+  JG: - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
+
   Revision 1.38  2000/08/03 15:42:07  mk
   MO: weitere Anpassungen fuer mehr als 80 Spalten
 
