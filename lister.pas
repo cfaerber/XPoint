@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { Lister - PM 11/91 }
@@ -25,9 +26,12 @@ uses
 const ListHelpStr : string[8] = 'Hilfe';
       ListUseXms  : boolean   = false;
       ListDebug   : boolean   = false;
-      Listunvers  : byte      = 0;
-      Listhalten  : byte      = 0;
-      Listflags   : longint   = 0;
+
+var   Listunvers  : byte;
+      Listhalten  : byte;
+      Listflags   : longint;
+      Listtyp     : char;
+      Listnetztyp : longint;
 
 type  liste   = pointer;
 
@@ -92,7 +96,6 @@ function  first_marked:string;
 procedure list_unmark;
 function  next_marked:string;
 function  list_markanz:longint;
-function  list_lineanz: longint;
 function  first_line:string;
 function  next_line:string;
 function  prev_line:string;
@@ -103,11 +106,12 @@ function  list_markdummy(var p:string; block:boolean):boolean;
 procedure list_dummycrp(var s:string);
 procedure list_dummytp(var t:taste);
 procedure list_dummydp(s:string);
+procedure list_infos(listmsg:Boolean);
 
 
 implementation  { ------------------------------------------------ }
 
-uses xpovl;
+uses xp0,database,xp4o,xpovl,xp1o,xp1;
 
 const maxlst  = 10;                { maximale Lister-Rekursionen }
       MinListMem : word = 40000;   { min. Bytes fr app_l        }
@@ -704,6 +708,7 @@ var gl,p,y    : shortint;
     mausdown  : boolean;   { Maus innerhalb des Fensters gedrckt }
 
   procedure showstat;
+  var c:char;
   begin
     with alist^ do
       if stat.statline then begin
@@ -719,14 +724,26 @@ var gl,p,y    : shortint;
         else write(' ');
         write (' ');
         write (iifs(listhalten=0,' ',iifs(listhalten=1,'+','-')));
-        if (listunvers=0) and (listflags=0) then write('  ')
-        else begin
+       (* if (listunvers=0) and (listflags=0) then write('   ') 
+        else *)begin
           if listunvers and 16 = 0
             then write (iifs(listunvers and 1 = 0,' ','!'))
             else write (iifs(listunvers and 1 = 0,'*',''));
-          if listflags and 3=1 then write('S')
-          else if listflags and 3=2 then Write('s')
-          else write (iifs(listunvers and 8 = 8,'w',iifs(listunvers and 4=4,'c',' ')));
+
+          if listflags and 3=1 then c:='S' 
+          else if listflags and 3=2 then c:='s'
+          else if listunvers and 8 = 8 then c:='w'
+          else if listunvers and 4 = 4 then c:='c'
+          else c:=' '; 
+          write(c);  
+
+          c:=listtyp;
+          if c='T' then
+          if listflags and 4 = 4 then c:='M'
+          else if listnetztyp and $200 = $200 then c:='F'
+          else c:=' ';
+          write(c); 
+
           end;
         if markanz>0 then write('  ['+forms(strs(markanz)+']',7))
         else if stat.helpinfo then write(' F1-',ListHelpStr);
@@ -764,7 +781,11 @@ var gl,p,y    : shortint;
           else
             s:=forms(copy(cont,xa,255),w);
           if @displproc=nil then
-            fwrt(l,y+i-1,s)
+           { fwrt(l,y+i-1,s) }
+          begin
+            ListXhighlight:=false;
+            xp1.listdisplay(l,y+i-1,s);
+            end
           else
             displproc(l,y+i-1,s);
           end;
@@ -845,6 +866,82 @@ var gl,p,y    : shortint;
       pp^.marked:=false;
       pp:=EmsPtr(pp^.next);
       end;
+  end;
+
+  procedure SeekNext;
+  var p1       : byte;
+      old_a    : longint;
+      old_p    : shortint;
+      old_actl,
+      old_pl   : lnodep;
+     
+    function Dispseek(p,y:byte):byte; Assembler;
+    asm
+         push 0b800h
+         pop es
+         mov al,screenlines
+         mov bl,160
+         mul bl
+         mov dx,ax                {DX=Maximum}
+         mov al,p
+         add al,y
+         dec al
+         mul bl
+         mov di,ax                {DI=Startposition}
+         mov al,col.collistfound
+     @1: inc di
+         cmp di,dx
+         jnb @end
+         scasb 
+         jne @1
+         mov ax,di
+         div bl
+         add al,2
+         sub al,y
+      @end:
+     end;
+
+  begin
+  with alist^ do begin 
+    old_a:=a; old_p:=p; 
+    old_actl:=actl; old_pl:=pl;
+    if not selbar then p:=0;
+
+    repeat
+      display;
+      p1:=dispseek(p,y);                    { Gefunden-Farbe Im aktuellen Screen suchen }
+      if p1=xp0.col.collistfound 
+      then begin                               { Nicht gefunden:}
+        if not more then begin
+          a:=old_a; p:=old_p;                                { Msg-Ende: Abbruch }
+          actl:=old_actl; pl:=old_pl;
+          display;
+          errsound;
+          exit;
+          end;
+        i:=1;
+        while (i<gl) and (stat.allpgdn or (a+gl<lines))      { ansonsten PgDn }
+        do begin
+          actl:=EmsPtr(actl)^.next;
+          if EmsPtr(pl)^.next<>nil then
+            pl:=EmsPtr(pl)^.next;
+          inc(a); inc(i);
+          end;
+        p:=0;
+        end;
+    until p1<>xp0.col.collistfound;
+                    
+    if (p1<1) or (p1>gl) then exit;            { Gefunden: Balken setzen }
+    selbar:=true;
+    stat.markable:=selbar;
+    p:=1; pl:=actl;
+    while p < p1 do
+    begin
+      inc(p);
+      if EmsPtr(pl)^.next<>nil then
+        pl:=EmsPtr(pl)^.next;
+      end;
+    end;
   end;
 
   procedure suchen(rep:boolean);
@@ -958,7 +1055,7 @@ var gl,p,y    : shortint;
 
     procedure back;
     begin
-      if EmsPtr(actl)^.prev<>nil then begin
+      if (EmsPtr(actl)^.prev<>nil) then begin
         actl:=EmsPtr(actl)^.prev; pl:=EmsPtr(pl)^.prev;
         dec(a);
         end
@@ -968,7 +1065,7 @@ var gl,p,y    : shortint;
 
     procedure forth;
     begin
-      if EmsPtr(pl)^.next<>nil then begin
+      if (EmsPtr(pl)^.next<>nil) then begin
         inc(a);
         actl:=EmsPtr(actl)^.next; pl:=EmsPtr(pl)^.next;
         end
@@ -1028,34 +1125,31 @@ var gl,p,y    : shortint;
           end
         else if t=mausunright then
           t:=keyesc
-        else if (t=mausleft) or (t=mausldouble) or (t=mauslmoved) then begin
+        else if (actl<>nil) and ((t=mausleft) or (t=mausldouble) or (t=mauslmoved))
+        then begin
           if inside and (stat.markswitch or selbar) then begin
             mausdown:=true;
             if not selbar then begin
               selbar:=true; stat.markable:=true;
               end;
-            if actl <> nil then
-            begin
-              pl:=actl;
-              p:=1;
-              for i:=1 to yy-y do
-                if EmsPtr(pl)^.next<>nil then
-                begin
-                  pl:=EmsPtr(pl)^.next; inc(p);
+            pl:=actl;
+            p:=1;
+            for i:=1 to yy-y do
+              if EmsPtr(pl)^.next<>nil then begin
+                pl:=EmsPtr(pl)^.next; inc(p);
                 end;
-              if stat.markable and testmark(EmsPtr(pl)^.cont,false) then begin
-                oldmark:=EmsPtr(pl)^.marked;
-                if t=mauslmoved then
-                  EmsPtr(pl)^.marked:=plm
-                else begin
-                  EmsPtr(pl)^.marked:=not EmsPtr(pl)^.marked;
-                  plm:=EmsPtr(pl)^.marked;
-                  end;
-                if oldmark and not EmsPtr(pl)^.marked then dec(markanz) else
-                if not oldmark and EmsPtr(pl)^.marked then inc(markanz);
+            if stat.markable and testmark(EmsPtr(pl)^.cont,false) then begin
+              oldmark:=EmsPtr(pl)^.marked;
+              if t=mauslmoved then
+                EmsPtr(pl)^.marked:=plm
+              else begin
+                EmsPtr(pl)^.marked:=not EmsPtr(pl)^.marked;
+                plm:=EmsPtr(pl)^.marked;
                 end;
-                end;
-              end
+              if oldmark and not EmsPtr(pl)^.marked then dec(markanz) else
+              if not oldmark and EmsPtr(pl)^.marked then inc(markanz);
+              end;
+            end
           else if ((t=mausleft) or (t=mausldouble)) and
                   (xx=stat.scrollx) and (yy>=y) and (yy<=y+gl) then
             if yy<vstart then
@@ -1159,6 +1253,9 @@ begin
 
         if (t=' ') and not stat.markable and not selbar then
           t:=keypgdn;
+
+        if (t=keyctab) {or (t=keystab)}
+          then if xp1o.listshowseek then seeknext else errsound;
 
         if stat.maysearch and ((ustr(t)='S') or (t='/') or (t='\')) then begin
           suchcase:=(t='S') or (t='\');
@@ -1364,6 +1461,7 @@ begin
   alist^.displproc:=dp;
 end;
 
+
 procedure listarrows(x,y1,y2,acol,bcol:byte; backchr:char);
 begin
   with alist^ do begin
@@ -1375,6 +1473,7 @@ begin
     arrows.usearrows:=true;
     end;
 end;
+
 
 procedure listNoAutoscroll;
 begin
@@ -1393,13 +1492,19 @@ begin
   if markpos=nil then
     next_marked:=#0
   else
-{  Bitte prfen, warum hier an dieser Stelle ein Leerzeichen
-   statt eines Leerstrings verwendet werden soll!?
-    if EmsPtr(markpos)^.cont='' then
+(*    if EmsPtr(markpos)^.cont='' then
       next_marked:=' '
-    else }
+    else *)
       next_marked:=EmsPtr(markpos)^.cont;
   linepos:=markpos;
+end;
+
+
+procedure list_unmark;
+begin
+  if markpos=nil then exit;
+  EmsPtr(markpos)^.marked:=false;
+  if alist^.markanz>1 then dec(alist^.markanz);
 end;
 
 
@@ -1424,17 +1529,14 @@ begin
     if markpos=nil then
       first_marked:=#0
     else
-      first_marked:=EmsPtr(markpos)^.cont;
+(*      if EmsPtr(markpos)^.cont='' then
+        first_marked:=' ' 
+      else *)
+        first_marked:=EmsPtr(markpos)^.cont;
     end;
   linepos:=markpos;
 end;
 
-procedure list_unmark;
-begin
-  if markpos=nil then exit;
-  EmsPtr(markpos)^.marked:=false;
-  if alist^.markanz>1 then dec(alist^.markanz);
-end;
 
 function list_markanz:longint;
 {var anz : longint;
@@ -1450,10 +1552,6 @@ begin
   list_markanz:=anz; }
 end;
 
-function list_lineanz: longint;
-begin
-  list_lineanz:=alist^.lines;
-end;
 
 function first_line:string;
 begin
@@ -1511,9 +1609,43 @@ begin
   list_selbar:=alist^.selbar;
 end;
 
+
+procedure list_infos(listmsg:boolean);
+begin 
+  if listmsg then
+  begin
+    dbreadN(mbase,mb_halteflags,listhalten);
+    dbreadN(mbase,mb_unversandt,listunvers);
+    dbreadN(mbase,mb_flags,listflags);
+    dbreadN(mbase,mb_typ,Listtyp);
+    dbreadN(mbase,mb_netztyp,Listnetztyp);
+    end
+  else begin
+    Listunvers:=0; Listhalten:=0; Listflags:=0; 
+    end;      
+  end;
+
+
 end.
 {
   $Log$
+  Revision 1.19.2.11  2001/09/16 20:33:10  my
+  JG+MY:- Markierung der bei der letzten Nachrichten-Suche verwendeten
+          Suchbegriffe im Lister (inkl. Umlaut- und Wildcardbehandlung):
+          Nach Suche automatisch aktiv, ansonsten durch "E" schaltbar. Mit
+          <Tab> springt der Cursorbalken die nächste Zeile mit einem
+          markierten Suchbegriff an.
+
+  JG+MY:- Text-Markiersuche im Lister mit "S": mehrere Suchbegriffe,
+          Suchoptionen (z.B. umlautunabhängige Suche), Suchbegriff-History
+          und Suchbegriffs-Bibliothek verfügbar. "Alte" Suchfunktionen
+          jetzt über <Ctrl-S> (früher "S") bzw. wie bisher über <Shift-S>
+          erreichbar.
+
+  JG+MY:- Übergabe der Msg-Flags nach LISTER.PAS verlagert (Overlay)
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.19.2.10  2001/08/11 20:16:27  mk
   - added const parameters if possible, saves about 2.5kb exe
 
