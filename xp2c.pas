@@ -1299,6 +1299,7 @@ begin
   end;
   enddialog;
   freeres;
+  menurestart:=brk;
 end;
 
 function testpgpexe(var s:string):boolean;
