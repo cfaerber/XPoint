@@ -503,7 +503,7 @@ label ende;
         inc(nf);
         end
       else
-      if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp) then
+      if (suchfeld='Absender') and (not found_not) and not ntEditBrettEmpf(mbnetztyp) then
       begin
         dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}           
         if umlaut then UkonvStr(such,high(such));    
@@ -2394,6 +2394,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/04/22 08:32:47  jg
+  - Bugfix: NOT - Verknuepfte Usersuche
+
   Revision 1.32  2000/04/15 18:21:33  mk
   - FindFirst-Fixes
 
