@@ -80,7 +80,7 @@ function UpdateMouseStatus: Taste;
 implementation
 
 {$IFDEF Win32}
-uses maus2;
+uses maus2, winxp;
 var LastEvent: MOUSE_EVENT_RECORD;
 {$ELSE}
 {$IFDEF NCRT}
@@ -196,7 +196,7 @@ begin
 {$IFDEF Win32}
   c.x:=x;
   c.y:=y;
-  Windows.SetConsoleCursorPosition(StdInputHandle,c);
+  Windows.SetConsoleCursorPosition(OutHandle,c);
 {$ENDIF }
 end;
 
@@ -265,6 +265,10 @@ initialization
 
 {
   $Log$
+  Revision 1.32  2002/01/30 22:16:51  mk
+  - fixed bug: setmouse tries to set CursorPosition on StdInputHandle instead
+    of console handle
+
   Revision 1.31  2001/10/01 19:30:09  ma
   - compiles again (DOS32)
 
