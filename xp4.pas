@@ -487,7 +487,9 @@ var t,lastt: taste;
               dispdat:=ubase;
               if dispmode<3 then showkeys(iif(dispext,4,2))
               else showkeys(8);
-              dbsetindex(dispdat,iif(dispmode in [1,3],uiAdrBuch,uiName));
+              if not usersortbox
+                then dbsetindex(dispdat,iif(dispmode in [1,3],uiAdrBuch,uiName))
+                else dbsetindex(dispdat,iif(dispmode in [1,3],uiBoxAdrBuch,uiBoxName)); 
             end;
       10  : begin   { Nachrichten }
               dispdat:=mbase;
@@ -537,8 +539,13 @@ var t,lastt: taste;
                 while wrongline and not dbEOF(dispdat) do
                   dbSkip(dispdat,1);
               end;
-       1,3  : dbSeek(ubase,uiAdrbuch,#1);
-       2,4  : dbGoTop(ubase);
+
+         1,3  : if not usersortbox then dbSeek(ubase,uiAdrbuch,#1)   { Userfenster Adressbuch }
+                else dbseek(ubase,uiBoxAdrBuch,#1);
+
+         2,4  : if not usersortbox then dbGoTop(ubase)               { Userfenster Alle User }
+                else dbSeek(ubase,uiBoxName,#1);
+
         10  : case rdmode of
                 0 : dbSeek(dispdat,miBrett,_dispspec);
                 1 : dbSeek(dispdat,miGelesen,_dispspec+#0);
@@ -1589,6 +1596,12 @@ begin      { --- select --- }
                end;
         1,2  : begin                        { Userliste }
                  if t=keyf6 then Makroliste(2);
+
+                 if c=k1_O then begin              {'O'}
+                   usersortbox:=not usersortbox; 
+                   setall; aufbau:=true;
+                   end; 
+
                  if c=k1_S then begin              { 'S' }
                    dispext:=not dispext;
                    setall; aufbau:=true;
@@ -1634,8 +1647,14 @@ begin      { --- select --- }
                    testsuche(t);
                    end;
                end;
-         3,4 : begin
-                 if c=k1_A then UserSwitch;     { Weiterleiten an User }
+         3,4 : begin                              { Weiterleiten an User }
+                 if c=k1_A then UserSwitch;       {'A'}
+
+                 if c=k1_O then begin
+                   usersortbox:=not usersortbox;  {'O'}
+                   setall; aufbau:=true;
+                   end; 
+
                  if not empty then
                    testsuche(t);
                end;
@@ -1970,6 +1989,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/04/13 20:18:03  jg
+  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
+  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
+  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
+
   Revision 1.9  2000/04/13 12:48:36  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

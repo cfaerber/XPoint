@@ -55,7 +55,7 @@ const k0_S  : char = 'S';      { Spezial-Mode         }
       k0_Ac : char = 'A';      { Spezial / Zugriff    }
 
       k1_S  : char = 'S';      { Spezialmode          }
-      k1_A  : char = 'A';      { Adre·buch-Umschalter }
+      k1_O  : char = 'O';      { Sortier-Umschalter   }
       k1_H  : char = 'H';      { User hinzufÅgen      }
       k1_V  : char = 'V';      { Verteiler anlegen    }
       k1_L  : char = 'L';      { User lîschen         }
@@ -70,6 +70,7 @@ const k0_S  : char = 'S';      { Spezial-Mode         }
       k1_cE : char = ^E;       { User entmarkieren    }
       k1_cW : char = ^W;       { Userweiterschalter   }
       k1_U  : char = 'U';      { Usersuche            }
+      k1_A  : char = 'A';      { Adre·buch-Umschalter }
 
       k2_S  : char = 'S';      { Spezial-MenÅ         }
       k2_cR : char = ^R;       { Rot13                }
@@ -241,6 +242,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/04/13 20:18:03  jg
+  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
+  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
+  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
+
   Revision 1.5  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

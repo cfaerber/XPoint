@@ -101,9 +101,9 @@ begin
   with ICR do
     case command of
 
-      icIndexNum:    if df=MsgFile then indexnr:=2
+      icIndexNum:    if df=MsgFile then indexnr:=2          { Anzahl der Indizes }
                      else if df=BrettFile then indexnr:=4
-                     else if df=UserFile then indexnr:=2
+                     else if df=UserFile then indexnr:=4
                      else if df=BoxenFile then indexnr:=2
                      else if df=GruppenFile then indexnr:=2
                      else if df=SystemFile then indexnr:=1
@@ -128,8 +128,10 @@ begin
                        end
                      else if df=UserFile then
                        case indexnr of
-                         uiName     : indexstr:='+USERNAME';
-                         uiAdrbuch  : indexstr:='ADRBUCH/+USERNAME';
+                         uiName       : indexstr:='+USERNAME';
+                         uiAdrbuch    : indexstr:='ADRBUCH/+USERNAME';
+                         uiBoxName    : indexstr:='POLLBOX/+USERNAME'; 
+                         uiBoxAdrbuch : indexstr:='ADRBUCH/POLLBOX/+USERNAME';   
                        end
                      else if df=BoxenFile then
                        case indexnr of
@@ -206,6 +208,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/13 20:18:03  jg
+  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
+  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
+  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
+
   Revision 1.6  2000/04/13 12:48:35  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

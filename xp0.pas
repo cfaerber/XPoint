@@ -195,6 +195,8 @@ const  {$IFDEF DPMI}
        miGelesen   = 2;                { BRETTNAME/GELESEN/EMPFDATUM/INT_NR }
        uiName      = 1;                { User:    +USERNAME                 }
        uiAdrbuch   = 2;                {          ADRBUCH/+USERNAME         }
+       uiBoxName   = 3;                {          POLLBOX/+USERNAME         }  
+       uiBoxAdrbuch= 4;                {          ADRBUCH/POLLBOX/+USERNAME }
        biBrett     = 1;                { Bretter: BRETTNAME                 }
        biGruppe    = 2;                {          GRUPPE                    }
        biIntnr     = 3;                {          INT_NR                    }
@@ -755,7 +757,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        MoreMode   : boolean = true;
        Developer  : boolean = false;
        SupportCfg : string[12] = 'SUPPORT.CFG';
-       Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)
+       Delviewtmp : boolean = false;   {Win-Viewertempfiles erst beim naechsten Start loeschen)}
 
        { 01/2000 oh }
 
@@ -963,6 +965,8 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        brettkomm    : boolean;       { Kommentar aus Brettliste Åbernehmen }
        adrpmonly    : boolean;       { Telefon/Adresse nur in PMs }
        newuseribm   : boolean;       { Default-Umlauteinstellung f. neue User }
+       Usersortbox  : boolean;       {im Userfenster nach Boxname Sortieren}
+       _Usersortbox : boolean;       {Hilfszeiger fuer Config }
        multipartbin : boolean;       { RFC-BinÑrnachrichten als Multipart }
        mausmpbin    : boolean;       { dto. fÅr MausTausch }
        askreplyto   : boolean;       { 03.02.2000 robo - fragen bei ANTWORT-AN }
@@ -1103,6 +1107,11 @@ implementation
 end.
 {
   $Log$
+  Revision 1.24  2000/04/13 20:18:03  jg
+  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
+  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
+  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
+
   Revision 1.23  2000/04/13 12:48:34  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

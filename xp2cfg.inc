@@ -673,6 +673,7 @@ begin
   brettkomm:=true;
   adrpmonly:=false;
   newuseribm:=false;
+  _usersortbox:=false;
   multipartbin:=true;
   mausmpbin:=false;
 
@@ -879,6 +880,7 @@ begin
   writeln(t,'MausInit=',jnf(mausshinit));
   writeln(t,'ISO2IBM=',jnf(ConvISO));
   writeln(t,'NewUserIBM=',jnf(newuseribm));
+  writeln(t,'UserSortBox=',jnf(_usersortbox));
   writeln(t,'KommPfeile=',jnf(KomArrows));
   writeln(t,'ListScroller=',jnf(listscroller));
   writeln(t,'ListAutoScroll=',jnf(listautoscroll));
@@ -1523,6 +1525,7 @@ begin
           getx(su,  'brettkommentar',brettkomm) or
           getx(su,  'adrpmonly',adrpmonly) or
           getx(su,  'newuseribm',newuseribm) or
+          getx(su,  'usersortbox',_usersortbox) or  
           getx(su,  'binmultipart',multipartbin) or
           getx(su,  'binmime',mausmpbin))
         then
@@ -1556,6 +1559,7 @@ begin
     if left(QuoteChar,1)='"' then delfirst(quotechar);
     if right(QuoteChar,1)='"' then dellast(quotechar);
     otherqcback:=otherquotechars;
+    usersortbox:=_usersortbox;
     checker[13]:=ExtraktTyp+1;
     if ustr(userauf)='ALLE' then UserAufnahme:=0
     else if ustr(userauf)='Z-NETZ' then UserAufnahme:=1
@@ -1644,6 +1648,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2000/04/13 20:18:03  jg
+  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
+  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
+  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
+
   Revision 1.28  2000/04/13 12:48:35  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

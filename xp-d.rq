@@ -103,9 +103,9 @@ K (c) '93-98 Peter Mandrella
 0    markieren
 # Bretter, User, Bretter/Spezial, User/Spezial
 1    ^Alle ^Brief T^extfile B^inÑr ^Spezial ^Lesen:
-2    ^Alle ^Brief T^extfile B^inÑr ^Spezial S^uche Ad^re·buch ^Pa·wort
+2    ^Alle S^ort ^Brief T^ext B^in ^Spez. S^uche Ad^re·buch ^Pa·wort
 3    ^Hinzuf. ^Lîschen ^Edit Z^ugriff ^VerknÅpfen ^Pos. ~Trenn. ^Spezial
-4    ^Alle ^Hinzuf. ^Vert. ^Lîschen ^Edit ^Spezial Ad^re·buch ^PW
+4    ^Alle S^ort ^Hinzu. ^Vert. ^Lîschen ^Edit ^Spez. Ad^re·b. ^PW
 # Nachrichten, Userbrett-Nachrichten, markierte Nachrichten, Kommentarbaum
 5    ^Alle ^Halten ^Lîschen ^Kill Bezu^g ^BrettBrief ^PM ^User ^Info ^Sonst.
 6    ^Alle ^Halten ^Lîschen ^Kill Bezu^g ^PM ^Info D^ruck ^Sonstiges
@@ -142,7 +142,7 @@ K (c) '93-98 Peter Mandrella
 # Address book entry, Password, Unmark users, Auto advance, Search,
 # Crossposting
 
-2  S A H V L E ^V b I E R P ^E ^W U B
+2  S A H V L E ^V b I E R P ^E ^W U B O
 
 # Tasten im Nachrichtenfenster:
 # Special menu, Rot13, HexDump, Info window, Original header, Hold, Delete,
@@ -482,6 +482,7 @@ K (c) '93-98 Peter Mandrella
 19   Kommentare aus Brettliste Åbernehmen
 20   Umlaute fÅr neue User zulassen
 21   Stelle : und | dem Quote-Zeichen gleich
+22   Userfenster nach Serverbox sortieren
 + 251
 # Extrakt als
 0    Text ohne Kopf

@@ -104,9 +104,9 @@ K (c) '93-96 Peter Mandrella
 0    mark
 # Newsgroups, Users, Newsgroups/Special, Users/Special
 1    ^All ^Write T^extfile B^inary ^Special S^how:
-2    ^All ^Write T^extfile B^inary ^Special See^k Address-^book ^PW
+2    ^All S^ort ^Write T^ext B^inary ^Special See^k Address-^book ^PW
 3    Ne^w De^lete ^Edit ^Join M^ove ~Split ^Access ^Special
-4    ^All Ne^w Carb^onCopy De^lete ^Edit ^Special Address-^book ^PW
+4    ^All S^ort Ne^w CarbonCop^y De^l ^Edit ^Spec. Addr.-^book ^PW
 # Messages, User messages, marked messages
 5    ^All ^Hold De^lete ^Kill R^eference ^Reply ^PM ^User ^Info ^Other
 6    ^All ^Hold De^lete ^Kill R^eference ^PM ^Info ^Other
@@ -143,7 +143,7 @@ K (c) '93-96 Peter Mandrella
 # Address book entry, Password, Unmark users, Auto advance, Search,
 # Crossposting
 
-2  S A W O L E J w I E B P ^E ^W K W
+2  S A W Y L E J w I E B P ^E ^W K W O
 
 # Keys in Message window:
 # Special menu, Rot13, HexDump, Info window, Original header, Hold, Delete,
@@ -471,6 +471,7 @@ K (c) '93-96 Peter Mandrella
 19   Use comments from newsgroup list
 20   Enables special characters for new users
 21   Use of : and | is equal to quote char.
+22   Sort userwindow by servername
 + 251
 # Extract as
 0    Text w/o head

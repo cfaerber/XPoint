@@ -578,7 +578,7 @@ begin
   dbLog('-- Datenbank initialisieren');
 {$ENDIF }
   dbSetICP(ICP);
-  dbSetIndexVersion(2);
+  dbSetIndexVersion(3);
 {  if (emsavail>=4) or (memavail>180000) then
     dbSetIndexCache(50,true); }
 
@@ -660,7 +660,7 @@ begin
     dbReleaseFL(flp);
     end
   else begin
-    if dbGetIndexVersion(UserFile+dbIxExt)<1 then
+    if dbGetIndexVersion(UserFile+dbIxExt)<3 then
       _era(UserFile+dbIxExt);
     if not exist(UserFile+dbExtExt) then
       UserEbError;
@@ -862,6 +862,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/13 20:18:03  jg
+  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
+  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
+  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
+
   Revision 1.6  2000/03/04 14:53:50  mk
   Zeichenausgabe geaendert und Winxp portiert
 

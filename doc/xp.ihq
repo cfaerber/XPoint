@@ -285,7 +285,13 @@ angezeigt.
 
  <cr>  zeigt den Inhalt des gew„hlten PM-Brettes
 
-   A   wechselt den Anzeige-Modus.
+   A   wechselt den Anzeige-Modus zwischen allen 
+       und den im Adressbuch eingetragenen Usern.
+
+   O   wechselt die Anordnung der Userbretter.
+       M”gliche Einstellungen sind:
+       - sortiert nach Usernamen   
+       - sortiert nach Serverbox dann Usernamen        
 
 <Tab>  schaltet auf Brettbersicht um.
 
@@ -3450,8 +3456,24 @@ wie Quote-Zeichen behandelt werden sollen.
 Diese Einstellung gilt sowohl fr den Lister als auch
 den Editor. Sie l„át sich im Lister jederzeit 
 mit der Taste "Q" umschalten.
+
 @
 224
+Dieser Schalter bestimmt,
+wie das Userfenster sortiert werden soll:
+
+<<[x]>> -> Es wird zuerst nach den Namen der Serverbox, 
+       dann nach Usernamen sortiert.
+
+<<[ ]>> -> Es wird nur nach Usernamen sortiert.
+
+
+Diese Einstellung kann im Userfenster und 
+User-Weiterleitmenue jederzeit mit der Taste "O"
+umgestellt werden.
+
+@
+225
 So viele Megabytes Festplattenplatz ben”tigt Cross-
 Point mindestens zum Arbeiten. Ist bei <<Programmstart>>
 zu wenig Platz vorhanden, dann wird eine Warnung

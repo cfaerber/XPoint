@@ -117,7 +117,7 @@ var x,y : byte;
     ua  : string[10];
     i   : integer;
 begin
-  dialog(56,17,getres2(250,1),x,y);    { 'allgemeine Optionen' }
+  dialog(56,18,getres2(250,1),x,y);    { 'allgemeine Optionen' }
   maddstring(3,2,getres2(250,2),QuoteChar,QuoteLen,QuoteLen,range(' ',#126));   { 'Quote-Zeichen ' }
   mset3proc(testqc);
   mnotrim; mhnr(210);
@@ -142,14 +142,16 @@ begin
   maddbool(3,12,getres2(250,19),brettkomm);      { 'Kommentare aus Brettliste Åbernehmen' }
   maddbool(3,13,getres2(250,20),newuseribm);     { 'Umlaute fÅr neue User zulassen' }
   maddbool(3,14,getres2(250,21),OtherQuoteChars);{ 'Farbe auf fÅr Quotezeichen : und |' }
-  maddint(3,16,getreps2(250,16,left(ownpath,2)),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk %s ' }
-  maddtext(length(getres2(250,16))+11,16,getres2(250,17),0);   { 'MByte' }
+  maddbool(3,15,getres2(250,22),_UserSortBox);   { 'Useranzeigen nach Server sortieren' }
+  maddint(3,17,getreps2(250,16,left(ownpath,2)),MinMB,5,3,1,999);   { 'minimaler Platz auf Laufwerk %s ' }
+  maddtext(length(getres2(250,16))+11,17,getres2(250,17),0);   { 'MByte' }
   readmask(brk);
   if not brk and mmodified then begin
     if ustr(ua)=ustr(getres2(250,5)) then UserAufnahme:=0       { 'ALLE' }
     else if ustr(ua)=ustr(getres2(250,6)) then UserAufnahme:=1  { 'Z-NETZ' }
     else if ustr(ua)=ustr(getres2(250,7)) then UserAufnahme:=3; { 'PMS' }
     { else UserAufnahme:=2;  keine - gibt's nicht mehr }
+    Usersortbox:=_usersortbox;        
 {$IFDEF BP }
     ListUseXms:=SwapToXms;
 {$ENDIF}
@@ -1383,6 +1385,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/04/13 20:18:03  jg
+  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
+  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
+  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
+
   Revision 1.19  2000/04/13 12:48:35  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
