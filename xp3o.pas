@@ -57,6 +57,7 @@ function  PufferEinlesen(puffer:pathstr; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
 procedure AppPuffer(Box,fn:string);
 procedure empfang_bestaetigen(var box:string);
+function  getBoxAdresse(const box:string; const netztyp:byte):string;
 procedure CancelMessage;
 procedure ErsetzeMessage;
 function  testpuffer(fn:pathstr; show:boolean; var fattaches:longint):longint;
@@ -129,7 +130,8 @@ begin                         { user: 1 = Userauswahl  0 = Brettauswahl }
           {_pm:=cpos('@',s)>0;}
           if cpos('@',s)=0 then begin
             dbReadN(bbase,bb_pollbox,pollbox);
-            if (ntBoxNetztyp(pollbox) in [nt_fido,nt_UUCP,nt_ZConnect]) then begin
+            if (ntBoxNetztyp(pollbox) in [nt_fido,nt_UUCP,nt_Client,
+                nt_ZConnect]) then begin
               { _AmReplyTo:=s; }
               dbReadN(bbase,bb_brettname,s);
             end;
@@ -1082,19 +1084,54 @@ begin
 end;
 
 
+function getBoxAdresse(const box:string; const netztyp:byte):string;
+var d         : DB;
+    flags     : byte;
+    username  : string[30];
+    pointname : string[25];
+    domain    : string[60];
+    email     : string[80];
+    aliaspt   : boolean;
+begin
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,ustr(box));
+  if dbFound then
+  begin
+    dbRead (d, 'username', username);
+    dbRead (d, 'pointname', pointname);
+    dbRead (d, 'script', flags);
+    aliaspt := (flags and 4 <> 0);
+    dbRead (d, 'domain', domain);
+    dbRead (d, 'email', email);
+    case netztyp of
+      nt_UUCP,
+      nt_Client  : getBoxAdresse:=iifs(email<>'', email, username + '@' +
+                                  iifs (aliaspt, box + ntServerDomain(box),
+                                                 pointname + domain));
+      nt_Maus    : getBoxAdresse:=username + '@' + box;
+      nt_ZConnect: getBoxAdresse:=username + '@' +
+                                  iifs (aliaspt, pointname, box) + domain;
+    end;
+  end
+  else begin
+    rfehler1(109,box);  { 'Unbekannte Serverbox:' %s }
+    getBoxAdresse:='';
+  end;
+  dbClose(d);
+end;
+
 procedure CancelMessage;
-var _brett : string[5];
-    hdp    : headerp;
-    hds    : longint;
-    dat    : string[12];
-    leer   : string[12];
-    box    : string[BoxNameLen];
-    adr    : string[adrlen];
-    d      : DB;
-    fn     : pathstr;
-    t      : text;
-    empf   : string[AdrLen];
-    i      : integer;
+var _brett    : string[5];
+    hdp       : headerp;
+    hds       : longint;
+    dat       : string[12];
+    leer      : string[12];
+    box       : string[BoxNameLen];
+    adr       : string[AdrLen];
+    fn        : pathstr;
+    t         : text;
+    empf      : string[AdrLen];
+    i         : integer;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(439);     { 'Unversandte Nachricht mit "Nachricht/Unversandt/Lîschen" lîschen!' }
@@ -1121,21 +1158,8 @@ begin
     dispose(hdp);
     if not dbFound then exit;
     dbReadN(ubase,ub_pollbox,box);
-    end;
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
-  if dbFound then
-    case mbNetztyp of
-      nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
-                       dbReadStr(d,'domain');
-      nt_Maus   : adr:=dbReadStr(d,'username')+'@'+box;
-      nt_ZConnect: adr:=dbReadStr(d,'username')+'@'+box+dbReadStr(d,'domain');
-    end
-  else begin
-    rfehler1(109,box);
-    adr:='';
-    end;
-  dbClose(d);
+  end;
+  adr:=getBoxAdresse(box,mbNetztyp);
   if adr='' then exit;
 
   new(hdp);
@@ -1156,7 +1180,8 @@ begin
   leer:='';
   if hds>1 then
     case mbNetztyp of
-      nt_UUCP   : begin
+      nt_UUCP,
+      nt_Client : begin
                     _bezug:=hdp^.msgid;
                     _beznet:=hdp^.netztyp;
                     ControlMsg:=true;
@@ -1197,19 +1222,18 @@ begin
 end;
 
 procedure ErsetzeMessage;
-var _brett : string[5];
-    _betreff : string[betrefflen];
-    hdp    : headerp;
-    hds    : longint;
-    box    : string[BoxNameLen];
-    d      : DB;
-    adr    : string[adrlen];
-    leer   : string[12];
-    empf   : string[AdrLen];
-    i      : integer;
-    fn     : pathstr;
-    sData  : SendUUptr;
-    vor    : empfnodep;
+var _brett    : string[5];
+    _betreff  : string[betrefflen];
+    hdp       : headerp;
+    hds       : longint;
+    box       : string[BoxNameLen];
+    adr       : string[AdrLen];
+    leer      : string[12];
+    empf      : string[AdrLen];
+    i         : integer;
+    fn        : pathstr;
+    sData     : SendUUptr;
+    vor       : empfnodep;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(447);     { 'Unversandte Nachrichten kînnen nicht ersetzt werden.' }
@@ -1237,20 +1261,7 @@ begin
     if not dbFound then exit;
     dbReadN(ubase,ub_pollbox,box);
     end;
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,ustr(box));
-  if dbFound then
-    case mbNetztyp of
-      nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
-                       dbReadStr(d,'domain');
-      nt_Maus   : adr:=dbReadStr(d,'username')+'@'+box;
-      nt_ZConnect: adr:=dbReadStr(d,'username')+'@'+box+dbReadStr(d,'domain');
-    end
-  else begin
-    rfehler1(109,box);
-    adr:='';
-    end;
-  dbClose(d);
+  adr:=getBoxAdresse(box,mbNetztyp);
   if adr='' then exit;
 
   new(hdp);
@@ -1509,6 +1520,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.13  2001/12/20 15:04:29  my
+  MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
+          Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
+          mÅssen einmal manuell von RFC/UUCP wieder auf RFC/Client
+          umgeschaltet werden.
+
+  MY:- Fix: Cancel/Supersedes berÅcksichtigt jetzt Alias-Adressierung
+       (ZConnect und RFC/UUCP) sowie eMail-Adresse (RFC/UUCP und
+       RFC/Client). Adressgenerierung in eigene Prozedur verlagert.
+
   Revision 1.21.2.12  2001/09/18 13:47:37  my
   MY:- Neuer Menuepunkt Nachricht/Alle/Ungelesen setzt alle angezeigten
        Nachrichten auf Ungelesen. Nachricht/Alle/Lesen umbenannt in
