@@ -847,7 +847,6 @@ begin { FidoNetcall }
 
   { Spool/ leeren }
   dir:= TDirectory.Create(XFerDir+WildCard,faAnyFile-faDirectory,false);
-  writeln(dir.count);
   for i:= 0 to dir.Count-1 do
     if UpperCase(ExtractFileExt(dir.Name[i]))='.PKT' then
       DeleteFile(dir.LongName[i]);
@@ -1189,6 +1188,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/12/25 16:05:56  mk
+  - removed writlen debug info
+
   Revision 1.45  2000/12/25 14:02:43  mk
   - converted Lister to class TLister
 
