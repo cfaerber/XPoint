@@ -83,10 +83,10 @@ Heiko Schoenfeld
 &nbsp;
 &nbsp;
 
-<a href="http://wodrich.webprovider.com"><b>Martin Wodrich</b></a>
+<a href="http://www.martinwodrich.de"><b>Martin Wodrich</b></a>
 <a href="mailto:mw@openxp.de">mw</a>
-&nbsp;
-&nbsp;
+Verschiedenes 
+Misc
 
 Christian Faulhammer
 <a href="mailto:cf@openxp.de">cf</a>
