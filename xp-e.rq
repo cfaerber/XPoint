@@ -1870,9 +1870,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 87   Client directory ~
 88   Client call      ~
 89   Additional servers
-90   Login  ~
-91   Password
-92   Phone  ~
+90   Dial-Up~
+91   Phone  ~
+92   Login  ~
+93   Password
 #
 40   UpPack extension ~
 41   DownPack ext.~
