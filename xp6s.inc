@@ -400,10 +400,11 @@ begin
                       else _domain:=rev+'@'+LowerCase(pointname)+domain;
         nt_Quick,
         nt_GS       : _domain:=rev+'@'+pointname;
-        nt_UUCP,
+        nt_UUCP     : if fqdn='' then _domain:=rev+'@'+pointname+domain
+                        else _domain:=rev+'@'+fqdn;
         nt_NNTP,
         nt_POP3,
-        nt_IMAP     : if fqdn='' then _domain:=rev+'@'+pointname+domain
+        nt_IMAP     : if fqdn='' then _domain:=rev+'@'+Mid(username,Pos('@',username)+1)
                         else _domain:=rev+'@'+fqdn;
       else
         _domain:='@'+box;
@@ -428,15 +429,11 @@ end;
 
 procedure AppendFile(code:shortint; ofs:longint; iso:boolean);
 type barr = array[0..65000] of byte;
+const siz= 32768;
 var p     : ^barr;
-    siz: word;
     rr: word;
     rr0   : word;
 begin
-{$ifdef FPC}
-{$HINT Bitte mal pruefen. 'siz' war nicht initialisiert! }
-{$endif}
-  siz:= 32768; {size := 32768; <-- War das so richtig???? }
   getmem(p,siz);
   fm_ro; reset(f,1); fm_rw;
   seek(f,ofs);
@@ -812,7 +809,7 @@ begin
   BoxFile := dbReadStr(d,'dateiname');
   Mapsname := dbReadStr(d,'nameomaps');
   dbRead(d,'netztyp',netztyp);
-  Realname := dbReadStr(d,'realname');
+  Realname := iifs(sData^.SenderRealname='',dbReadStr(d,'realname'),sData^.SenderRealname);
   dbRead(d,'script',flags);
   if fidoname='' then
     FidoName := dbReadStr(d,'fidoname');
@@ -820,7 +817,7 @@ begin
   nomids:=(flags and 8<>0);
   nobox:=(flags and 16<>0);
   Domain := dbReadStr(d,'domain');
-  FQDN := dbReadStr(d,'fqdn');
+  FQDN := iifs(sData^.FQDN='',dbReadStr(d,'fqdn'),sData^.FQDN);
   if sData^.replyto.count=0 then
     sdata^.replyto.add(dbReadStr(d,'ReplyTo'));
   betrlen:=ntBetreffLen(netztyp);
@@ -1118,6 +1115,11 @@ end;
 
 {
   $Log$
+  Revision 1.55  2001/06/04 17:40:05  ma
+  - implemented role feature
+  - fixed: MsgId was not correct if no FQDN specified with NNTP/SMTP servers
+  - removed user defined hint
+
   Revision 1.54  2001/05/27 09:31:19  ma
   - enabled PGP and some other things for NNTP/POP3/IMAP
 
