@@ -81,7 +81,7 @@ type mprec     = record
                    p       : pointer;
                  end;
 {$ENDIF }
-     ahidden   = array[1..maxhidden] of integer;
+     ahidden   = array[1..maxhidden] of SmallInt;
 
 var printlines : longint;
     WaitKey    : taste;               { Taste, mit der wkey beendet wurde }
@@ -2093,6 +2093,9 @@ end;
 
 {
   $Log$
+  Revision 1.145  2002/04/07 14:48:29  mk
+  - additional fix for xpme (ahidden is now SmalInt)
+
   Revision 1.144  2002/04/06 19:15:41  mk
   - fixed reading of xpmenu.dat from xpme
 
