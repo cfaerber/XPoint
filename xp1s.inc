@@ -512,7 +512,7 @@ begin
     if ioresult<>0 then SetCurrentDir(ownpath);
     trackpath:=true;
     {$IFDEF Unix }
-      shell(getenv('SHELL',0, 2);
+      shell(getenv('SHELL'),0, 2);
     {$ELSE }
       shell(getenv('COMSPEC')+environment,640,2);
     {$ENDIF }
@@ -520,6 +520,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.78  2002/04/20 08:43:48  mk
+  - fixed syntax error in last commit
+
   Revision 1.77  2002/04/18 21:21:12  mk
   - fixed Bug #502625, shell with linux
 
