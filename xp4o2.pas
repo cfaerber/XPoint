@@ -854,7 +854,7 @@ var s  : string;
     deutsch:=(ParLanguage='d');
     CloseResource;           { alte Ressourcendatei schliessen }
     freehelp;                { Online-Hilfe schliessen         }
-    OpenResource(sa[nr],ResMinmem);
+    OpenResource(LibDir + sa[nr],ResMinmem);
     GetResdata;              { neue Resourcendatei oeffnen     }
     freemenus;               { Menues neu belegen              }
     setmenus;
@@ -931,6 +931,9 @@ end;
 
 {
   $Log$
+  Revision 1.65  2003/10/01 19:02:30  mk
+  - fixed #814904 3.8.12: Sprachumschaltung
+
   Revision 1.64  2003/08/30 22:15:06  cl
   - fixed two rare range check errors
 
