@@ -278,7 +278,7 @@ var x,y : byte;
 begin
   for i:=0 to 3 do
     xids[i]:=getres2(252,i);   { 'nie','PMs','AMs','immer' }
-  dialog(57,19,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
+  dialog(57,20,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
   maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
   maddint(3,4,getres2(252,11),stdhaltezeit,4,4,0,9999);     { 'Standard-Bretthaltezeit:     ' }
@@ -304,10 +304,11 @@ begin
   { 03.02.2000 robo }
   maddbool(3,15,getres2(252,28),askreplyto);   { 'fragen bei Antwort-an' }
   { /robo }
-  maddint (3,17,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
-  maddtext(9+length(getres2(252,24)),17,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
+  maddbool(3,16,getres2(252,29),NoArchive); { 'News nicht archivieren lassen' }
+  maddint (3,18,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
+  maddtext(9+length(getres2(252,24)),18,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
   { 20.01.2000 robo }
-  maddbool(3,18,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
+  maddbool(3,19,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
   { /robo }
   freeres;
   readmask(brk);
@@ -1157,7 +1158,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(57,iif(deutsch,17,10),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,16,9),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
@@ -1179,12 +1180,11 @@ begin
   maddbool(14,6+add,getres2(253,11),MIMEqp); { 'MIME: "quoted-printable" verwenden' }
   maddbool(14,7+add,getres2(253,12),RFC1522);  { 'MIME in Headerzeilen (RFC 1522)' }
   maddbool(14,8+add,getres2(253,15),multipartbin);  { 'BinÑrnachrichten als "Attachments"' }
-  maddbool(14,9+add,getres2(253,16),NoArchive); mhnr(803); { 'News nicht auf DEJANEWS archivieren' }
   oldmv:=MaggiVerkettung;
   if deutsch then begin
-    maddtext(3,11+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
+    maddtext(3,10+add,'MagicNET',col.coldiahigh);     { 'Bezugsverkettung' }
     knoten:=deutsch and (random<0.05);
-    maddbool(14,11+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
+    maddbool(14,10+add,iifs(knoten,'Kommentarverknotung',getres2(253,14)),
                        MaggiVerkettung); mhnr(iif(knoten,8101,8100));
     inc(add,2);
     end;

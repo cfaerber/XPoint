@@ -3743,9 +3743,21 @@ zeile vorhanden ist.
 
 Ist der Schalter deaktiviert, wird grunds„tzlich die
 Antwort-an Adresse benutzt, wenn vorhanden.
-
 @
 253
+<<ZCONNECT / RFC:
+
+<<[X]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
+       Header "X-No-Archive: yes" versehen. Dadurch
+       werden die Usenet-Archive wie DejaNews ange-
+       wiesen, die Nachricht nicht zu speichern.
+
+Auch wenn dieser Schalter aktiviert wird, ist das
+keine Garantie dafr, dass Ihre Nachrichten nicht
+doch gespeichert werden. "Das Usenet vergisst
+nicht!"
+@
+254
 Die M”glichkeit, Nachrichten per "Crossposting" in
 mehrere Bretter gleichzeitig zu schicken, wird gele-
 gentlich miábraucht, um Werbung oder hnliches m”g-
@@ -3756,11 +3768,10 @@ baren Anzahl von Empf„ngern automatisch.
 Faustregel: Wenn eine Nachricht mehr als 10 Brett-
 Empf„nger hat, ist sie nicht lesenswert.
 @
-254
+255
 Ist dieser Schalter aktiviert, werden auch Mails
 (PMs) mit mehr als der eingestellten Zahl an im
 Header vermerkten Empf„ngern gel”scht.
-
 @
 1040
 Hier k”nnen Sie den Namen Ihrer Organisation einge-
@@ -6825,18 +6836,6 @@ richten. Um das Format von existierenden, unver-
 sandten Nachrichten zu „ndern, mssen Sie diese mit
 /Nachricht/Unversandt/l”schen l”schen und neu sen-
 den.
-
-@
-803
-<<[X]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
-       Header "X-No-Archive: yes" versehen. Dadurch
-       werden die Usenet-Archive wie DejaNews ange-
-       wiesen, die Nachricht nicht zu speichern.
-
-Auch wenn dieser Schalter aktiviert wird, ist das
-keine Garantie dafr, dass Ihre Nachrichten nicht
-doch gespeichert werden. "Das Usenet vergisst
-nicht!"
 @
 8100
 Wie in Kapitel "Kommentarverkettung" von XPOINT.TXT

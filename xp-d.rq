@@ -539,6 +539,7 @@ K (c) '93-98 Peter Mandrella
 26   alle Kopien als Blindkopien verschicken
 27   bei Mail ebenso
 28   fragen bei Antwort-an
+29   News nicht archivieren lassen
 #
 100  68
 101  Adreáeinstellungen (ZCONNECT / RFC)
@@ -562,7 +563,6 @@ K (c) '93-98 Peter Mandrella
 12   MIME in Headerzeilen verwenden
 14   Kommentarverkettung
 15   Bin„rnachrichten als "Attachments"
-16   News nicht archivieren lassen
 + 254
 1    Netcall-Optionen
 2    Login-Bild zeigen
