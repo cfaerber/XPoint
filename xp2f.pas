@@ -1,32 +1,26 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { CrossPoint Config - Farben, F-Tasten, Feiertage }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
   {$O+,F+}
-{$ENDIF }
 
 unit xp2f;
 
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-     typeform,inout,keys,winxp,maske,video,maus2,resource,
-     xp0,xp1,xp1help,xp1input,xp2, xpglobal;
+  crt,typeform,inout,keys,winxp,maske,video,maus2,resource,
+  xp0,xp1,xp1help,xp1input,xp2, xpglobal;
 
 
 procedure EditFkeys(typ:byte);    { 0=Zusatz, 1=Alt, 2=Ctrl, 3=Shift }
@@ -85,7 +79,7 @@ var anzahl  : byte;
       s     : string[10];
       brk   : boolean;
   begin
-    with fkeys[typ]^[p] do begin
+    with fkeys[iif(p>10,4,typ)]^[iif(p>10,p-10,p)] do begin
       dialog(55,12,iifs(txt='',getres2(240,1)+' ',txt)+strs(p),x,y);  { 'Zusatz-Men' }
       maddstring(3,2,getres2(240,4),menue,20,20,''); mhnr(440);   { 'Menanzeige  ' }
       maddstring(3,4,getres2(240,5),prog,35,60,'');   { 'Programmname ' }
@@ -141,7 +135,7 @@ var anzahl  : byte;
   end;
 
 begin
-  if typ=0 then anzahl:={9}10
+  if typ=0 then anzahl:=iif(screenlines=25,19,20)
   else anzahl:=10;
   case typ of
     0 : txt:='';
@@ -151,15 +145,17 @@ begin
   end;
   selbox(73+length(txt),anzahl+3,getres2(240,iif(typ=0,1,2)),x,y,false);
   attrtxt(col.colsel2high);            { 'Zusatz-Men' / 'Funktionstasten' }
-  mwrt(x+6+length(txt),y+1,getres2(240,3));   { 'Men           Programm                   $FILE      B W L A  Mem' }
+  mwrt(x+1,y+1,forms(sp(5+length(txt))+getres2(240,3),73+length(txt)-2));
+               { 'Men           Programm                   $FILE      B W L A  Mem' }
   p:=1;
   modi:=false;
   repeat
     moff;
+
     for i:=1 to anzahl do begin
       if i=p then attrtxt(col.colsel2bar)
       else attrtxt(col.colsel2box);
-      with fkeys[typ]^[i] do begin
+      with fkeys[iif(i>10,4,typ)]^[iif(i>10,i-10,i)] do begin
         wrt(x+1,y+1+i,' '+forms(txt+strs(i),length(txt)+3));
         if menue+prog='' then Wrt2(sp(67))
         else begin
@@ -819,17 +815,10 @@ var y,ax,xp,yp : shortint;
       end;
     at(15);
     x3:=3*xp+2;
-{$IFDEF NCRT }
-    FWrt(x3,y+yp-1,s1);
-    FWrt(x3,y+yp,s2);
-    FWrt(x3+4,y+yp,s2);
-    FWrt(x3,y+yp+1,s3);
-{$ELSE }
     sdisp(x3,y+yp-1,s1);
     sdisp(x3,y+yp,s2);
     sdisp(x3+4,y+yp,s2);
     sdisp(x3,y+yp+1,s3);
-{$ENDIF }
     wrt(1,y+7,iifc(ax>0,#17,' '));
     wrt(28,y+7,iifc(ax+7<nn,#16,' '));
     mon;
@@ -1190,6 +1179,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.3  2001/09/16 20:23:49  my
+  JG+MY:- Zusatzmenü faßt jetzt bis zu 20 Einträge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verfügung).
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.12.2.2  2001/08/05 11:45:34  my
   - added new unit XPOVL.PAS ('uses')
 

@@ -1,11 +1,12 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
+{ ------------------------------------------------------------------ }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
+{ (c) 1991-1999 Peter Mandrella                                      }
+{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
+{                                                                    }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
+{ ------------------------------------------------------------------ }
 { $Id$ }
 
 { XP1: Menfunktionen }
@@ -52,9 +53,11 @@ end;
 procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 var s       : string;
     p,p2,p3 : byte;
+label again;
 begin
-  s:=menu[nr]^;
   n:=0;
+again:  
+  s:=menu[nr]^;
   repeat
     p:=cpos(',',s);
     if p>0 then begin
@@ -106,6 +109,10 @@ begin
   until p=0;
   while (n>0) and (ma^[n].mstr='-') do    { Separatoren am Ende entfernen }
     dec(n);
+  if nr=2 then begin
+    nr:=menus;
+    goto again;
+    end;
 end;
 
 
@@ -190,7 +197,7 @@ end;
 { &n :  Mennummer             }
 { &p :  Position im Menstring }
 
-procedure findnr(mnu:string; nr:byte; var n,p:byte);
+procedure findnr(var mnu:string; nr:byte; var n,p:byte);
 begin
   n:=0;
   LoString(mnu);
@@ -199,7 +206,7 @@ begin
 end;
 
 
-{ Menpunkt ein- uder ausschalten    }
+{ Menpunkt ein- oder ausschalten    }
 { mnu:  Name des Mens               }
 { nr :  Nummer des Menpunkts        }
 
@@ -215,9 +222,9 @@ end;
 { nr : Position des Menpunkts }
 { new: neuer Menpunkt         }
 
-{ ACHTUNG!! es muss auf dem Heap genuf Platz fr menu[n]^ belegt sein!! }
+{ ACHTUNG!! Es muss auf dem Heap genug Platz fr menu[n]^ belegt sein!! }
 
-procedure setmenup(const mnu:string; nr:byte; const anew:string);
+procedure setmenup(mnu:string; nr:byte; const anew:string);
 var n,p,p2 : byte;
 begin
   findnr(mnu,nr,n,p);
@@ -230,7 +237,7 @@ end;
 
 { neue Men-Position setzen }
 
-procedure setmenupos(const mnu:string; newpos:byte);
+procedure setmenupos(mnu:string; newpos:byte);
 var n,p : byte;
 begin
   findnr(mnu,1,n,p);
@@ -242,20 +249,11 @@ procedure miscschab;
 var s       : pathstr;
     useclip : boolean;
 begin
-{$IFDEF UnixFS }
-  s:= '*.xps';
-{$ELSE }
   s:='*.XPS';
-{$ENDIF }
   useclip:=false;
   if readfilename(getres(103),s,false,useclip) then begin  { Schablone bearbeiten }
-{$IFDEF UnixFS }
-    addext(s,'xps');
-    if ustr(right(s,4))<>'.xps' then begin
-{$ELSE }
     addext(s,'XPS');
     if ustr(right(s,4))<>'.XPS' then begin
-{$ENDIF }
       rfehler(2);    { Dateierweiterung muá .XPS sein! }
       exit;
       end;
@@ -337,6 +335,7 @@ var ma    : map;
     dead  : boolean;   { alle disabled }
     has_checker : boolean;
     mausback : boolean;
+    longmenu : boolean; {Menue mit mehr als 13 Menuepunkten (Zusatz)}
 
   procedure display;
   var i,hp  : byte;
@@ -430,6 +429,15 @@ var ma    : map;
       else
         if t=mausright then
           t:=keyesc;
+  end;
+
+  function Zusatz_II:byte;  { Benutzte Punkte in den ersten 10 Zusatzmenue-  }
+  var i,n:byte;             { eintraegen zaehlen (ergibt die korrekte Grenze }
+  begin                     { fuer Uebergang von Fkeys[0] zu Fkeys[4])       }
+    n:=0;
+    for i:=1 to 10 do
+      if Fkeys[0]^[i].menue<>'' then inc(n);
+    Zusatz_II:=n;
   end;
 
 begin
@@ -543,6 +551,8 @@ begin
         end;
 
       get2:=0;
+      if (nr<>2) or (p<Zusatz_II+4) then longmenu:=false
+        else longmenu:=true;
       if t=keycr then
         if ma^[p].enabled then
           if ma^[p].chain>0 then begin
@@ -599,13 +609,24 @@ begin
   dispose(ma);
 
   if t=keyesc then getmenu:=0
-  else if t=keycr then getmenu:=get2
+  else if t=keycr then
+  begin
+    if longmenu then get2:=get2+$1000-4;
+    getmenu:=get2;
+    end
   else if t=keyleft then getmenu:=-1
   else if mausback then getmenu:=-3
   else getmenu:=-2;
 end;
+
 {
   $Log$
+  Revision 1.11.2.3  2001/09/16 20:20:42  my
+  JG+MY:- Zusatzmenü faßt jetzt bis zu 20 Einträge (bei 25 Bildschirm-
+          zeilen stehen nur die ersten 19 zur Verfügung).
+
+  MY:- Copyright-/Lizenz-Header aktualisiert
+
   Revision 1.11.2.2  2001/08/11 22:43:53  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 
