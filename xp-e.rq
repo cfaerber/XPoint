@@ -1834,6 +1834,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 37   z protocol
 38   f protocol
 39   e protocol
+66   t protocol
+63   a protocol
+64   i protocol
+65   j protocol
 #
 40   UpPack extension ~
 41   DownPack ext.~
@@ -3621,6 +3625,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.124  2001/03/05 00:10:18  cl
+# - added config for UUCP-t protocol
+#
 # Revision 1.123  2001/02/19 15:27:18  cl
 # - marked/modified non-GPL code by RB and MH
 #

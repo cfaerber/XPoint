@@ -1845,6 +1845,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 70   Modus   ~
 71   Modem
 72   TCP/IP
+76   Telnet
 73   Telefon~
 74   Hostname
 75   Port
@@ -1873,6 +1874,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 37   z-Protokoll
 38   f-Protokoll
 39   e-Protokoll
+66   t-Protokoll
+63   a-Protokoll
+64   i-Protokoll
+65   j-Protokoll
 #
 40   Packer-Extension ~
 # ProNet:
@@ -3598,6 +3603,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.99  2001/03/05 00:10:18  cl
+# - added config for UUCP-t protocol
+#
 # Revision 1.98  2001/02/19 15:27:18  cl
 # - marked/modified non-GPL code by RB and MH
 #
