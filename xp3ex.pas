@@ -216,7 +216,9 @@ var size   : longint;
 
   procedure wrs(s:string);
   begin
-    s:=LeftStr(s,ScreenWidth)+#13#10;
+    if UCLength(s) > ScreenWidth then
+      s := LeftStr(s, ScreenWidth); // !!Todo: handle UTF8 correct 
+    s := s + #13#10;
     blockwrite(f,s[1],length(s));
     inc(hdlines);
     if LeftStr(s,5)<>'-----' then lasttrenn:=false;
@@ -868,7 +870,7 @@ begin // extract_msg;
                    if( length(VarLister) <> 0 ) then             { wenn externer Lister verwendet wird }
                      wrs437(dup(iif(art=xTractHead,70,72),'-'))
                    else
-                     wrs437(dup(ScreenWidth-2,'Ä'));                  { interner Lister }
+                     wrs437(dup(ScreenWidth-2,'-'));                  { interner Lister }
 
                    lasttrenn:=true;
                  end;
@@ -1236,6 +1238,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.105  2003/04/03 15:56:15  mk
+  - fixed header line in lister
+
   Revision 1.104  2003/03/16 18:57:47  cl
   - better handling of unknown charsets
 
