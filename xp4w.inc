@@ -548,7 +548,7 @@ var fn     : string;
       t     : taste;
       s     : string;
   begin
-    if (viewer.ext='') and (viewer.prog<>'') then
+    if (viewer.ext='') and (viewer.prog<>'') and (viewer.prog <> '*intern*') then
     begin
       s:=UpperCase(ExtractFileExt(mpdata.fname))+'.';
       if ((pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0)) and (s <> '..') then
@@ -815,13 +815,13 @@ begin
       if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }
 
       mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+      GetDefaultViewer(mimetyp, Viewer);
       GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
       if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
         GetMimeViewer(mimetyp,viewer);
-
                                                        {Einteilige nicht text/plain Message }
-      if (mp=1) and (mimetyp <>'') and (mimetyp<>'text/plain')
-         and (LeftStr(mimetyp,9)<>'multipart') then
+      if ((mp=1) or (mp=2)) and (mimetyp <>'') and (mimetyp<>'text/plain')
+        and (LeftStr(mimetyp,9)<>'multipart') then
       begin
         multipart:=false;
         pushhp(94);
@@ -839,12 +839,15 @@ begin
         if brk then goto nextmsg;
         if copy(get_selection,2,10)=LeftStr(getres2(2440,10),10) {'gesamte Na'}
           then viewer.prog:='*intern*';
-
+        Testviralextension;
       end else
+      begin
+        Testviralextension;
         multipart:=(viewer.prog='') and   { multipart -> *interner* Mulitpart-Viewer }
                  ( (mp=2) or (LeftStr(mimetyp,10)='multipart/') or
                    ((mp=1) and (dbReadInt(mbase,'flags') and 4<>0)) ) and
                  (mp<>0);
+      end;
       if multipart then
       begin
         pushhp(94);
@@ -1597,6 +1600,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.49  2000/11/01 10:52:14  mk
+  - misc MIME-Viewer fixes
+
   Revision 1.48  2000/10/26 12:06:33  mk
   - AllocHeaderMem/FreeHeaderMem Umstellung
 
