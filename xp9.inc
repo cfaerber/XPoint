@@ -425,29 +425,29 @@
                     maddstring(3,2,getres2(920,16),loginname,15,20,'');    { 'Login  ' }
                       mhnr(8016);
                     loginfld:=fieldpos;
-	            maddstring(3,3,getres2(920,11),passwort,15,20,'');	   { 'Password' }
+                    maddstring(3,3,getres2(920,11),passwort,15,20,'');     { 'Password' }
                     maddstring(33,2,getres2(920,18),pname,20,25,'');
                       mhnr(140);                                           { 'UUCP-Name' }
                     mset3proc(uucp_getloginname);
 
-		    _uucp_mode:=iifs((uucp_mode=uucp_mode_modem),
-		      getres2(920,71),getres2(920,72));
-		    maddstring(3,5,getres2(920,70),_uucp_mode,6,6,'');	   { 'Modus   ' }
-		    mappsel(true,getres2(920,71)+'ù'+getres2(920,72));
-		    mset1func(uucp_setmode);
-		    // uucp_modefld:=fieldpos;
+                    _uucp_mode:=iifs((uucp_mode=uucp_mode_modem),
+                      getres2(920,71),getres2(920,72));
+                    maddstring(3,5,getres2(920,70),_uucp_mode,6,6,'');     { 'Modus   ' }
+                    mappsel(true,getres2(920,71)+'ù'+getres2(920,72));
+                    mset1func(uucp_setmode);
+                    // uucp_modefld:=fieldpos;
 
-		    maddstring(23,5,getres2(920,73),telefon,31,60,'');	   { 'Telefon ' }
-		      uucp_telfld:=fieldpos;
-		    maddstring(23,5,getres2(920,74),uucp_ip,18,60,'');	   { 'Hostname' }
-		      uucp_ipfld:=fieldpos;
-		    maddint   (53,5,getres2(920,75),uucp_port,5,5,1,65535);{ 'Port' }
-		    mappsel(false,'540');
-		      uucp_portfld:=fieldpos;
-		    uucp_setmode(_uucp_mode);
+                    maddstring(23,5,getres2(920,73),telefon,31,60,'');     { 'Telefon ' }
+                      uucp_telfld:=fieldpos;
+                    maddstring(23,5,getres2(920,74),uucp_ip,18,60,'');     { 'Hostname' }
+                      uucp_ipfld:=fieldpos;
+                    maddint   (53,5,getres2(920,75),uucp_port,5,5,1,65535);{ 'Port' }
+                    mappsel(false,'540');
+                      uucp_portfld:=fieldpos;
+                    uucp_setmode(_uucp_mode);
                   end;
       else        begin
-                    maddstring(33,2,getres2(920,10),pname,20,25,'>');
+                    maddstring(3,2,getres2(920,10),pname,20,25,'>');
                       mhnr(140);                             { 'Pointname' }
                     if nt=nt_ZConnect then
                       msetvfunc(testZCpointname);
@@ -1496,7 +1496,7 @@
                    end;
       nt_UUCP:     begin
                      nts:=getres2(927,5)        { ^Point, }
-			 +getres2(927,7)        { ^Modem, }
+                         +getres2(927,7)        { ^Modem, }
 //                       +getres2(927,8)        { ^Gebuehren, }
                          +getres2(927,9)        { ^Namen, }
                          +getres2(927,28)       { ^UUCP, }
@@ -1696,6 +1696,9 @@
 
 {
   $Log$
+  Revision 1.38  2001/01/14 10:17:32  mk
+  - Pointname in ZConnect replaced
+
   Revision 1.37  2001/01/06 16:15:33  ma
   - replaced progtest by xp2.testexecutable
   - removed EditGebuehren
