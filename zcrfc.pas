@@ -3564,8 +3564,10 @@ begin
   if SMTP and not client then begin
     if n <> 0 then
       wr(f2, 'QUIT'#10);
-    if n = 0 then
+    if n = 0 then begin
+      FreeAndNil(f2);
       _era(iifs(ppp,dest,dest+fn+'.OUT'))
+    end
     else if not ppp then
       QueueCompressFile(rsmtp);
   end;
@@ -3756,6 +3758,9 @@ end;
 
 {
   $Log$
+  Revision 1.131  2003/02/07 16:12:18  cl
+  - BUGFIX: Fixed ``Cannot delete X-XXXXXX.OUT'' with Batched SMTP
+
   Revision 1.130  2003/01/25 18:21:35  mk
   - removed DOS Unit
   - filerec->TFileRec
