@@ -1111,6 +1111,9 @@ var t,lastt: taste;
   var hdp : headerp;
       hds : longint;
   begin
+    // Nur ausfÅhren, wenn wirklich einer der benîtigten Tasten }
+    if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
+
     if (LeftStr(dispspec,1)='1') then
     begin                           { Bei PM-Brett und Msg ohne Replyto }
       new(hdp);                     { automatisch "P" statt "B" benutzen }
@@ -2105,6 +2108,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/10/26 10:26:26  mk
+  - Crash bei _brief_senden behoben
+
   Revision 1.51  2000/10/26 08:54:27  mk
   - MIME-Fixes (merged from 3.30
 
