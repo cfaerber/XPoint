@@ -853,6 +853,7 @@ begin
 
   getablsizes;
   reg_hinweis:=false;
+{$IFDEF NeedReg }
   dbOpen(dd,BoxenFile,0);
   while not dbEOF(dd) do
   begin
@@ -862,6 +863,7 @@ begin
     dbNext(dd);
   end;
   dbClose(dd);
+{$ENDIF }
 
   if not exist(WeiterMsk) then
   begin
@@ -901,6 +903,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/11/13 08:57:59  mk
+  - NeedReg partitally implemented
+
   Revision 1.20  2000/10/10 13:58:58  mk
   RB:- Ersetzt-Nachrichten in Autoversand
 
