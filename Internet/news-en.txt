@@ -1,9 +1,13 @@
 Latest news on www.openxp.com...
 
+2001-10-21: OpenXP/32 v3.7.4 beta available
+During the past year only snapshots of OpenXP/32 have been available. OpenXP/32 has reached a stage where a new beta version
+can be released which is available in the download area now.
+
 2001-07-15: Mail and News (OpenXP/32)
 Mail and News have been implemented in OpenXP/32. The integrated clients are simple up to now but should do the job in most cases.
 <br />Note OpenXP/32 is still in development status. Backups are mandatory.
-+
+
 2001-05-01: Reply-To-All (OpenXP v3.40)
 From now on, Reply-To-All functionality is available in OpenXP v3.40. Until a new RC is available RTA is included in snapshots only.
 

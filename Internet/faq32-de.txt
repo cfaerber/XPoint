@@ -1,5 +1,8 @@
 FAQ zu OpenXP/32
 
+Wie installiere ich OpenXP/32 bzw. wie mache ich ein Update?&nbsp;&nbsp;<small>2001-11-25</small>
+Siehe "Setup-Infos" links :-).
+
 Warum ist die Windows-Version bei mir so langsam?&nbsp;&nbsp;<small>2001-03-20</small>
 Die Unterstützung von Konsolenprogrammen ist unter Win95/98/ME
 sehr schlecht (bekanntes Problem, nachzulesen auch z.B. in der <a href="http://www.vim.org/html/os_win32.html#win32-problems">FAQ zu Vim</a>).

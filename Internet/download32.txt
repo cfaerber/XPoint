@@ -12,10 +12,6 @@ Win32 version [ZIP]
 Linux-Version [rpm]
 Linux version [rpm]
 
-/openxp/openxp.bin.tar.gz
-Linux-Version [tar.gz]
-Linux version [tar.gz]
-
 /openxp/oxp32dos.rar
 DOS-Version [RAR]
 DOS version [RAR]
@@ -30,7 +26,7 @@ OpenXP/32 snapshot<br /><small>"bleeding edge code", no guarantees, may not work
 Win32-Version
 Win32 version
 
-/openxp/snapshot/openxp-3.70.3-30.i386.rpm
+/openxp/snapshot/openxp-3.70.5-2.i386.rpm
 Linux-Version [rpm]
 Linux version [rpm]
 

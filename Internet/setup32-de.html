@@ -1,5 +1,14 @@
 <h2>Mail und News mit OpenXP/32 (Windows/Linux)</h2>
 
+<hr />
+
+<a href="#neuinstallation">Neuinstallation</a>
+<br /><a href="#update">Update</a>
+
+<hr />
+
+<h2><a name="neuinstallation">Neuinstallation</a></h2>
+
 <ol>
 <li>OpenXP/32 herunterladen und in ein neues Verzeichnis entpacken</li>
 <li>OpenXP.exe starten
@@ -37,5 +46,53 @@
   <li>Viel Spaß beim Lesen! :-)</li>
   </ol>
 </li>
+</ol>
 
+<hr />
+
+<h2><a name="update">Update von 16-Bit-XP-Versionen</a></h2>
+
+<h3>Allgemein</h3>
+
+<ol>
+  <li>Neues Verzeichnis für OpenXP anlegen.</li>
+  <li>Den kompletten Inhalt des alten XP Verzeichnisses inkl. aller  
+      Unterverzeichnisse in das neue Verzeichnis kopieren.</li>
+  <li>OpenXP/32 im neuen Verzeichnis entpacken und starten. Dabei werden ggf.  
+      die Datenbanken automatisch überarbeitet.</li>
+  <li>Nun alle Einstellungen überprüfen und anpassen. Dies betrifft  
+      insbesondere alle Pfade, Aufrufe externer Programme und alle Box-Konfigurationen.
+      Evtl. ist es sinnvoll, neuen Boxen mit neuen Typen (falls nötig) neu
+      anzulegen und anschließend einen Serverwechsel durchzuführen.
+      In den Box-Configs empfiehlt es sich, alle Fenster, in denen nichts
+      geändert werden muß, mit Ctrl-Enter zu verlassen. Dabei werden die .bfg  
+      Dateien im richtigen (neuen) Format abgespeichert.</li>
+</ol>
+
+<h3>Linux</h3>
+
+<ol>
+  <li>Das RPM-Archiv installiert die Binaries in /usr/local/lib/openxp/. In
+      /usr/local/lib/openxp/doc/ sind die Anleitungen zu finden. Diese sind z.Zt.
+      noch nicht auf dem aktuellen Stand. Besser ist die Online-Hilfe.
+      Die rpm-Installation sollte als root ausgeführt werden (und nicht etwa als  
+      User mit world-writeable Rechten auf /usr/local/lib/openxp...).</li>
+  <li>OpenXP/Linux legt alles, was benötigt wird, in $HOME/.openxp/ beim
+      ersten Programmstart an. Dann ist es natürlich zu spät, die Dateien aus  
+      einer alten XP Version komplett dorthin zu kopieren, da man dabei neue  
+      Versionen überschreiben würde.</li>
+  <li>Wenn man also von einer nicht-Linux-Version zu OpenXP/Linux wechseln möchte,  
+      muß man <i>vor</i> dem ersten Programmstart von openxp $HOME/.openxp/ manuell  
+      anlegen und alles dorthin kopieren. In $HOME/.openxp/ kann man nun  
+      natürlich alle DOS-spezifischen Dateien (*.exe, *.bat *.ovl etc) löschen.</li>
+  <li>OpenXP/Linux arbeitet (meist) mit kleingeschriebenen Dateinamen. Sollten  
+      Dateien beim Kopieren von DOS-Partitionen als großgeschriebene Dateinamen  
+      angekommen sein, muß man sie ggf. umbenennen.
+      <br />Achtung: Für die boxenspezifischen Dateien (*.bfg, *.rc usw.) wird in
+      Sachen Groß-/Kleinschreibung die gleiche Schreibweise wie in OpenXP gewählt,
+      d.h. eine Box "TesT" verwendet die Dateien "TesT.bfg", "TesT.rc" usw. im
+      Gegensatz zu "TEST.BFG" der anderen XP-Versionen. An dieser Stelle muß man
+      also die Dateien von Hand umbenennen.</li>
+  <li>openxp starten. Dabei werden ggf. die Datenbanken automatisch überarbeitet.</li>
+  <li>Weiter bei "Allgemein", Punkt 4.</li>
 </ol>

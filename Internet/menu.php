@@ -64,7 +64,7 @@ $Menu = array(
 		"sub"	=> true),
 	14 => array("de"	=> "Logs",
 		"en" 	=> "Logs",
-		"url"	=> $indexname . "?file=log370.html",
+		"url"	=> $indexname . "?file=log32.html",
 		"sub"	=> true),
 
 	15 => array("de"	=> "Kontakt",

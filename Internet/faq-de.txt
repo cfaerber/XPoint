@@ -7,7 +7,7 @@ Bei SourceForge existiert eine Bugliste (siehe "Kontakt"). Evtl. ist der Fehler 
 Ich habe einen Vorschlag für ein neues Feature.&nbsp;&nbsp;<small>2001-01-18</small>
 Wenn es eine Kleinigkeit ist, am besten direkt an den jeweiligen Programmierer wenden; ansonsten in der Mailingliste nachfragen bzw. in die Bugliste eintragen (ist gleichzeitig Featurerequestliste; alles siehe "Kontakt"). Wegen des im Moment noch immer ziemlich undurchsichtigen Codes von OpenXP kann es aber einige Zeit dauern. Viele Wünsche lassen sich immerhin bereits mit Tools oder z.B. den Tastaturmakros erfüllen.
 
-Was gibt es beim Umstieg auf OpenXP zu beachten?&nbsp;&nbsp;<small>2001-10-20</small>
+Was gibt es beim Umstieg auf OpenXP zu beachten?&nbsp;&nbsp;<small>2001-11-25</small>
 Eigentlich gar nichts (natürlich schadet ein Backup der Datenbank und der
 Konfigurationsdateien nichts ;-). OpenXP/16 und OpenXP/32 lassen sich jeweils
 einfach über eine bestehende Installation kopieren und nehmen beim ersten Start
@@ -18,7 +18,8 @@ Backup nicht möglich - es gibt aber keine Probleme mit der XP2-Datenbank.
 werden. Nach dem Kopieren einiger Dateien der bestehenden Installation (*.DB1,
 *.EB1, MPUFFER.*) sollte die Datenbank wieder zur Verfügung stehen.
 <br />Beim Umstieg auf OpenXP/32 ergeben sich einige Änderungen, dort
-in der FAQ nachsehen.
+in der FAQ nachsehen. Eine Anleitung für eine Neuinstallation bzw. den Umstieg
+von 16-Bit-XPs findet sich unter "Setup-Infos" links.
 
 Kann ich Mails aus anderen Programmen übernehmen?&nbsp;&nbsp;<small>2001-04-14</small>
 OpenXP/32 kann Mails aus dem mbox-Format in das von XP (alle Versionen) benutzte ZConnect-Format konvertieren. Dazu den Mailbuffer nach *.mail umbenennen, dann den Buffer mittels "openxp uuz -uz in.mail out.z domain.net" konvertieren. out.z läßt sich dann über XPoint/Import/Puffer einlesen nach XP importieren.
