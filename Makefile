@@ -367,7 +367,8 @@ UNITS = archive clip crc database databaso datadef datadef1 dbase \
 RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
-	qpriv.xps quark.scr quoteto.xps uucp.scr z-netz.scr
+	qpriv.xps quark.scr quoteto.xps uucp.scr z-netz.scr \
+	glossary.cfg
 
 ifeq ($(OS),win32)
 RST = ipaddr ncnntp ncpop3 ncsmtp
@@ -2462,7 +2463,7 @@ else
 dist:
 	-$(RM) $(DISTFILE).rar
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar file_id.diz Makefile icons.res *.inc *.pas *.rq *.bat
-	$(RAR) $(RARFLAGS) $(DISTFILE).rar beispiel$(SEP)*.scr beispiel$(SEP)*.xps
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar beispiel$(SEP)*.scr beispiel$(SEP)*.xps beispiel$(SEP)*.cfg
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar charsets$(SEP)*.inc
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar doc$(SEP)Makefile doc$(SEP)*.txt doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.sgm doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat doc$(SEP)dbform doc$(SEP)readme.lnx
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar linux$(SEP)*.inc
@@ -2494,6 +2495,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.22  2000/10/15 11:12:15  fe
+# beispiel/glossary.cfg eingetragen.
+#
 # Revision 1.21  2000/10/12 20:44:07  fe
 # Pfade geaendert, v.a. fuer Linux (/opt/openxp/).
 #
