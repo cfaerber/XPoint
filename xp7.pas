@@ -449,11 +449,6 @@ begin                  { of Netcall }
   alias:=(dbReadInt(d,'script') and 4<>0);
   dbClose(d);
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
-  if netztyp = nt_Client then
-  begin
-    WriteBox(bfile,BoxPar);         { "Client-Spool=" aktualisieren !! }
-    ReadBox(netztyp,bfile,BoxPar);  { Pollbox-Parameter neu einlesen }
-  end;
   isdn:=(boxpar^.bport>4);
   if relogin then
     case ntRelogin(netztyp) of
@@ -593,7 +588,7 @@ begin                  { of Netcall }
           nt_UUCP,
           nt_Client : begin
                         SetFilenames;
-                        UUCPSysopTransfer;
+                        RFCSysopTransfer;
                       end;
           else      SysopTransfer;
         end;
@@ -1614,6 +1609,18 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.24  2002/03/08 23:08:06  my
+  MY:- RFC/Client: Multiserver-Netcall implementiert. Die aus- und
+       eingehenden Nachrichten der unter "D/B/E/C/ZusÑtzliche_Server"
+       eingetragenen Serverboxen werden bei einem Netcall mit verarbeitet.
+       Die aus- und eingehenden Nachrichten der zusÑtzlichen Serverboxen
+       werden in den spezifischen Spool-Verzeichnissen der jeweiligen
+       Serverboxen abgelegt bzw. erwartet. Ausnahme ist der SysopMode, bei
+       dem die ein- und ausgehenden Nachrichten *aller* Serverboxen in dem
+       Ein- bzw. Ausgangsverzeichnis der Box erwartet bzw. abgelegt
+       werden, fÅr die der SysopMode-Transfer durchgefÅhrt wird. Weitere
+       Details siehe Hilfe (z.B. ?/S/R/<Enter>).
+
   Revision 1.16.2.23  2001/12/23 04:29:40  my
   MY:- Oops - Debug-Meldung entfernt.
 
