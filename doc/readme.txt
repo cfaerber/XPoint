@@ -1,5 +1,5 @@
-     OpenXP Projekt - CrossPoint Version 3.20·
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     OpenXP Projekt - CrossPoint Version 3.40
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
      Im Dezember '99 hat Peter Mandrella neben dem Y2K-Bugfix fÅr die
      3.12 den Quellcode von XP 3.20 freigegeben. Eine offizielle
@@ -13,7 +13,7 @@
      Åber die énderungen sowie Hinweise fÅr Entwickler, die sich an dem 
      Projekt beteiligen wollen.
 
-     In diesem Archiv sind alle Dateien von XP 3.20 und dem UUCP- sowie
+     In diesem Archiv sind alle Dateien von XP 3.40 und dem UUCP- sowie
      dem FIDO-Modul enthalten, das QWK-Modul der 3.12 kann weiterhin
      extra verwendet werden.
 
@@ -30,4 +30,4 @@
 
 
 
-     Letzte énderung, 17.02.2000
+     Letzte énderung, 01.07.2000

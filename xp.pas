@@ -75,9 +75,7 @@ uses xpx,
      xp_iti,   { Maus-ITI-Infofile  }
      xpview,   { Binfile-Viewer     }
      xpmime,   { Multipart-Decode   }
-{$IFDEF BP }
      xpfonts,  { interne Fonts      }
-{$ENDIF }
      xpimpexp; { Import/Export      }
 
 {$O win2}    {$O help}    {$O maske}    {$O lister}   {$O archive}
@@ -195,6 +193,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29.2.3  2000/07/01 11:17:27  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.29.2.2  2000/06/29 16:59:32  mk
   - 32 Bit Teile entnommen, Window wieder hergestellt
 

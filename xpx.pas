@@ -17,22 +17,10 @@ unit xpx;
 interface
 
 uses
-{$IFDEF BP }
-  ems,
-{$ENDIF }
-{$IFDEF Linux }
-  xplinux,
-{$ENDIF }
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
-  crt,
-{$ENDIF }
-  dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal;
+  ems, crt, dos,dosx,typeform,fileio,mouse,inout,xp0,crc,xpglobal;
 
 implementation
 
-{$IFDEF BP }
   {$IFDEF DPMI}
   const MinVersion = $330;
         MinVerStr  = '3.3';
@@ -44,7 +32,6 @@ implementation
         MaxHandles = 30;
   var   handles    : array[1..maxhandles] of byte;
   {$ENDIF}
-{$ENDIF}
 
 const starting : boolean = true;
 
@@ -64,11 +51,7 @@ end;
 procedure logo;
 var t : text;
 begin
-{$IFDEF NCRT}
-  AssignCrt(t);
-{$ELSE}
   assign(t,'');
-{$ENDIF}
   rewrite(t);
   writeln(t);
   write(t,xp_xp);
@@ -78,9 +61,7 @@ begin
   writeln(t);
   writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
   writeln(t);
-{$IFNDEF VP }
-  close(t); { !? }
-{$ENDIF }
+  close(t);
 end;
 
 
@@ -105,7 +86,6 @@ begin
     end;
 end;
 
-{$IFDEF BP }
 procedure SetHandles;
 var i    : integer;
     regs : registers;
@@ -128,9 +108,7 @@ begin
       end;
   {$ENDIF}
 end;
-{$ENDIF }
 
-{$IFDEF BP }
 procedure TestOVR;
 var ft   : longint;
     c,cc : char;
@@ -168,7 +146,6 @@ begin
       end;
     end;
 end;
-{$ENDIF }
 
 function _deutsch:boolean;
 var t : text;
@@ -185,7 +162,7 @@ end;
 
 
 {$S-}
-procedure setpath; {$IFNDEF Ver32 } far; {$ENDIF }
+procedure setpath; far;
 begin
   if ioresult = 0 then ;
   GoDir(shellpath);
@@ -228,28 +205,20 @@ end;
 
 begin
   checkbreak:=false;
-{$IFDEF BP } { Die Abfrage der DOS-Version ist nur bei 16 Bit sinnvoll }
   if swap(dosversion)<MinVersion then
     stop('DOS Version '+MinVerStr+' oder h”her erforderlich.');
-{$ENDIF }
   readname;
   if left(getenv('PROMPT'),4)='[XP]' then
     if _deutsch then stop('Zurck zu '+xp_xp+' mit EXIT.')
     else stop('Type EXIT to return to '+xp_xp+'.');
-{$IFDEF BP }
   SetHandles;
-{$ENDIF }
   ShellPath:=dospath(0);
   if (Shellpath+DirSepa<>progpath) then
     GoDir(progpath);
   oldexit:=exitproc;
   exitproc:=@setpath;
-{$IFDEF NCRT}
-  InitXPCurses;
-{$ENDIF}
   mausunit_init;
   logo;
-{$IFDEF BP }            { alles andere sind sowieso 32 Bit Versionen }
   {$IFNDEF NO386 }      { Die XT Version darf hier nicht testen }
   if Test8086 < 2 then
   begin
@@ -259,9 +228,7 @@ begin
     Halt(1);
   end;
   {$ENDIF }
-{$ENDIF }
 
-{$IFDEF BP }      { Unter 32 Bit haben wir keine Overlays }
   {$IFNDEF DPMI}     { mit DPMI auch nicht }
     TestOVR;
     OvrInit('xp.ovr');
@@ -269,36 +236,7 @@ begin
       OvrInitEMS;
     OvrSetBuf(OvrGetBuf+40000);   { > CodeSize(MASKE.TPU) }
   {$ENDIF}
-{$ENDIF}
 
-{$IFDEF UnixFS }
-  OwnPath:=GetEnv(ResolvePathName(envXPHome));		{ XPHOME=~/.openxp }
-  if (OwnPath='') then begin
-    OwnPath:=GetEnv('HOME');		{ HOME= }
-    if (OwnPath='') then begin
-      WriteLn('Need the environment variable ''HOME''!');
-      WriteLn;
-      Halt(2);
-    end;
-    if (right(OwnPath,1)<>DirSepa) then			{ $HOME/openxp/ }
-      OwnPath:= OwnPath+DirSepa+BaseDir
-    else
-      OwnPath:= OwnPath+BaseDir;
-  end else begin
-    if (right(OwnPath,1)<>DirSepa) then
-      OwnPath:= OwnPath+DirSepa;
-  end;
-  if not (IsPath(OwnPath)) then				{ Existent? }
-    if not (MakeDir(OwnPath, A_USERX)) then begin	{ -> Nein, erzeugen }
-      WriteLn('Can''t create ''',OwnPath,'''.');
-      Halt(2);
-    end;
-  if not (TestAccess(OwnPath, taUserRWX)) then begin	{ Ich will alle Rechte :-/ }
-    WriteLn('I need read, write and search rights on ''',OwnPath,'''.');
-    Halt(2);
-  end;
-  GoDir(OwnPath);
-{$ELSE }
   OwnPath:=progpath;
   if ownpath='' then getdir(0,ownpath);
   if right(ownpath,1)<>'\' then
@@ -308,12 +246,14 @@ begin
     ownpath:=getdrive+':'+ownpath;
     end;
   UpString(ownpath);
-{$ENDIF }
   TestCD;
   starting:=false;
 end.
 {
   $Log$
+  Revision 1.18.2.2  2000/07/01 11:17:27  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.18.2.1  2000/07/01 09:22:59  mk
   - Mailerstringanpassungen
 

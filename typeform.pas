@@ -177,9 +177,7 @@ function UStrHuge(const s:HugeString):HugeString;  { UpperString                
 { Lo/Upcase-String fÅr Files, abhÑngig von UnixFS }
 Function FUStr(const s:string):string;
 Function Without(s1,s2:string):string;       { Strings "subtrahieren"       }
-{$IFDEF BP }
 procedure SetLength(var s: String; size: Longint); { LÑnge von S setzen }
-{$ENDIF }
 
 Procedure bind(var l:longint; const min,max:longint);  { l:=minmax(l,min,max);    }
 Procedure bindr(var r:real; const min,max:real);   { r:=minmaxr(r,min,max);       }
@@ -201,11 +199,9 @@ procedure FastMove(var Source, Dest; const Count : WORD);
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 procedure UkonvStr(var s:string;len:byte);     { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
-{$IFDEF BP }
 { Gibt die Versionnummer vom DOSEmu zurÅck, wenn XP nicht unter
   dem Linux DOSEmu lÑuft, wird ein Leerstring zurÅckgegeben }
 function DOSEmuVersion: String;
-{$ENDIF }
 function IsoToIbm(s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 { Holt so viel Speicher wie mîglich, mindestens aber MinMen und
   gibt im Fehlerfalle eine Fehlermeldung aus. RÅckgabewert ist
@@ -2203,6 +2199,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.37.2.2  2000/07/01 11:17:27  mk
+  - 32 Bit Teile entfernt
+
   Revision 1.37.2.1  2000/06/24 14:16:31  mk
   - 32 Bit Teile entfernt, Fixes
 
