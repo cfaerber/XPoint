@@ -309,6 +309,7 @@ var x,y  : byte;
     uml  : boolean;
     ebs  : boolean;
     farb : byte;
+    AdrbuchDef: Integer;
 begin
   if left(user,4)<>#0+'$/T' then
   begin
@@ -353,7 +354,8 @@ begin
     if farb >2 then inc(farb);
     maddint(35,11,getres2(272,8),farb,2,2,0,5);       { ' Prioritaet ' }
     mhnr(8075);
-    maddint(35,12,getres2(2701,11),adr,2,2,1,99);       { 'Adressbuchgruppe' }
+    maddint(35,12,getres2(2701,11),adr,2,2,0,99);       { 'Adressbuchgruppe' }
+    adrbuchdef:=adr;
     mhnr(8069);
     end
 
@@ -368,6 +370,9 @@ begin
   readmask(brk);
   if not brk then
   begin
+    if (adrbuchdef<>0) and (byte(adr)=0) then
+     if not readJN('User aus Adreábuch entfernen',false) then
+       adr:=adrbuchdef;
     if farb=3 then Farb:=0;
     if farb>3 then dec(farb);
     flags:=(flags and not $E0) or (farb shl 5);
@@ -2416,6 +2421,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/10/03 16:02:11  mk
+  JG:- Beim Editieren von Usern mit Adressbuchgruppe "0" bleibt
+    diese erhalten und wird nicht in "1" geaendert"
+  MK:- Bugfix fuer RangeCheck-Problem in EditUser
+
   Revision 1.41  2000/08/23 13:55:13  mk
   - Datenbankfunktionen mit Const-Parametern wo moeglich
   - dbReadX und Co auf 32 Bit angepasst
