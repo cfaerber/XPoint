@@ -986,11 +986,11 @@ Kommentarbaumzweige, die von Ihnen verfaáte Nach-
 richten enthalten, ebenfalls dupliziert werden.
 
 Sie sollten daher bei den Boxen, mit denen Sie an
-Mailinglisten teilnehmen, unter Edit/Boxen/Edit/
+Mailinglisten teilnehmen, unter /Edit/Boxen/Edit/
 Diverses den Schalter "[lokale Kopien ersetzen]"@8051
 aktivieren. Die Nachrichten werden selbst dann
 ersetzt, wenn der Schalter "[Eigene PMs halten]"@244
-unter Config/Optionen/Nachrichten aktiviert sein
+unter /Config/Optionen/Nachrichten aktiviert sein
 sollte. In diesem Fall bernimmt die ersetzende
 Nachricht den Haltestatus der ersetzten Nachricht.
 
@@ -1082,12 +1082,9 @@ richten und Bretteinstellungen.
            passende Nachrichten.
          ¯ Brett enth„lt sowohl zum aktiven Lesemodus
            passende als auch ungelesene Nachrichten.
-         > Brett enth„lt ungelesene, aber keine auf
-           den aktiven Lesemodus passenden Nachrich-
-           ten. (Anmerkung: das Zeichen ">" symboli-
-           siert einen nach rechts gerichteten dnnen
-           Pfeil (auch als Ctrl-Z bekannt), der sich
-           hier aber leider nicht darstellen l„át.)
+         \a026 Brett enth„lt ungelesene, aber keine
+           auf den aktiven Lesemodus passenden
+           Nachrichten.
 
    <<+>>     springt zum n„chsten zutreffenden Brett.
 
@@ -1438,6 +1435,12 @@ Folgende Funktionen stehen zur Verfgung:
 <<<Shift-P> >>Schreiben einer privaten Quote-Antwort auf
          mehrere markierte Nachrichten. Schablone:
          [PrivQoute].@10804
+
+Bei <<P>>, <<<Ctrl-P> >>und <<Shift-P> >>steht Ihnen in ZConnect-
+und RFC-Netzen eine erweiterte Antwortfunktion zur
+Verfgung, wenn die Nachricht mehrere Empf„nger ent-
+h„lt und die Funktion ("<<Reply-To-All>>") aktiviert ist.
+Siehe auch [/Config/Opt./Nachr./Empf„nger-Auswahlliste]@258
 
 <<<Ctrl-F> >>Senden einer Textdatei an den Absender der
          gew„hlten Nachricht
@@ -2067,7 +2070,7 @@ sprechenden Textbaustein ersetzt. Wird kein entspre-
 chender Textbaustein gefunden (oder steht der
 Cursor nicht hinter oder inmitten einer Zeichen-
 kette), erscheint ein PopUp-Men, aus dem mit den
-Cursortasten ein Textbaustein gew„hlt werden kann.
+<<Cursortasten>> ein Textbaustein gew„hlt werden kann.
 
 Um diese Funktion nutzen zu k”nnen, muá eine Datei
 <<GLOSSARY.CFG>> im XP-Verzeichnis existieren. In
@@ -4140,7 +4143,7 @@ Nachrichten (*.MSG) werden dann am Ende des Netcalls
 automatisch mit eingelesen.
 
 UUZ wird - unabh„ngig von den UUCP-spezifischen Ein-
-stellungen unter Edit/Boxen/Edit/Point/Batched_SMTP-
+stellungen unter /Edit/Boxen/Edit/Point/Batched_SMTP-
 Modus - im Client-Modus bei der Konvertierung ZC->RFC
 (also bei ausgehenden Nachrichten) *immer* mit fol-
 genden Schaltern aufgerufen:
@@ -4550,7 +4553,7 @@ n”tig sein. N„heres hierzu finden Sie in UUCP.TXT.
 
 Das Format und die Namen der Dateien sind allerdings
 auch davon abh„ngig, ob und welche der [SMTP-Optionen]@8017
-Sie ggf. unter Edit/Boxen/Edit/Point gew„hlt haben.
+Sie ggf. unter /Edit/Boxen/Edit/Point gew„hlt haben.
 
 
 <<Eingangsverzeichnis>>
@@ -5770,25 +5773,6 @@ richtentext.
 253
 <<ZConnect / RFC:
 
-Manche Absender setzen einen Antwort-an-Header in
-ihren Mails (RFC: Reply-To), weil sie eine Antwort
-an eine andere Mail-Adresse als die Absenderadresse
-wnschen. Auch von [Mailinglisten] wird diese Header-@12
-zeile gerne benutzt, um eine Antwort an die Liste zu
-vereinfachen. Leider erschwert das aber eine Antwort
-direkt an den Autor erheblich.
-
-Dieser Schalter bewirkt, daá eine Abfrage erscheint,
-an welche Adresse (Absenderadresse oder Antwort-An-
-Adresse) geantwortet werden soll, wenn eine Antwort-
-an-Headerzeile vorhanden ist.
-
-Ist der Schalter deaktiviert, wird grunds„tzlich die
-Antwort-an-Adresse verwendet, wenn vorhanden.
-@
-254
-<<ZConnect / RFC:
-
 <<[x]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
        Header "X-No-Archive: Yes" versehen. Dadurch
        werden Usenet-Archive wie DejaNews angewiesen,
@@ -5799,7 +5783,7 @@ keine Garantie dafr, daá Ihre Nachrichten nicht
 doch gespeichert werden. "Das Usenet vergiát nicht!"
 
 @
-255
+254
 <<ZConnect / RFC:
 
 <<[ ]>> -> Cancel- und Ersetzt-Nachrichten werden immer
@@ -5818,7 +5802,7 @@ doch gespeichert werden. "Das Usenet vergiát nicht!"
 Ohne guten Grund sollte dieser Schalter nicht akti-
 viert werden.
 @
-256
+255
 Die M”glichkeit, Nachrichten per "Crossposting" in
 mehrere Bretter gleichzeitig zu schicken, wird gele-
 gentlich miábraucht, um Werbung oder hnliches m”g-
@@ -5829,10 +5813,65 @@ baren Anzahl von Empf„ngern automatisch.
 Faustregel: Wenn eine Nachricht mehr als 10 Brett-
 Empf„nger hat, ist sie nicht lesenswert.
 @
-257
+256
 Ist dieser Schalter aktiviert, werden auch Mails
 (PMs) mit mehr als der eingestellten Zahl an im
 Header vermerkten Empf„ngern gel”scht.
+@
+258
+<<ZConnect / RFC:
+
+CrossPoint kann beim Beantworten einer PM (Mail) mit
+mehreren Empf„ngern eine Auswahlliste der m”glichen
+Empf„nger anzeigen. Hier legen Sie fest, ob und wann
+diese Empf„nger-Auswahlliste erscheinen soll.
+
+<<immer>>            Immer eben. :-) Diese Option ist
+                 normalerweise nicht sinnvoll.
+
+<<Kopienempf.>>      Wenn einer (oder beide) der F„lle
+<<+ Antwort-an>>     "<<Kopienempf„nger>>" oder "<<Antwort-an>>"
+                 zutrifft. N„heres dazu erfahren Sie
+                 bei den Erl„uterungen zu den jewei-
+                 ligen Einzeloptionen.
+
+<<Kopienempf„nger>>  Wenn die beantwortete Nachricht
+                 mehrere Empf„nger enth„lt. Hierbei
+                 wertet XP die ZConnect-Header <<EMP>>
+                 (Empf„nger), <<KOP>> (Kopienempf„nger)
+                 und <<OEM>> (Originalempf„nger) aus.
+
+                 Mit dieser Option stellt XP Ihnen
+                 eine echte "<<Reply-To-All>>"-Funktion
+                 zur Verfgung, also das automatische
+                 Senden einer Antwort an den Absender
+                 und *alle* Empf„nger einer Mail
+                 *gleichzeitig*.
+                 Siehe auch: [Reply-To-All]@3000
+
+                 Die Auswahlliste wird selbst bei
+                 mehreren Empf„ngern jedoch *nicht*
+                 angezeigt, wenn nach Abzug von
+                 doppelten, ungltigen und 'eigenen'
+                 Adressen (letztere werden aus allen
+                 eingerichteten RFC- und ZConnect-
+                 Boxen ermittelt) auáer dem Absender
+                 (<<ABS>>) keine weitere 'reply-f„hige'
+                 Adresse brigbleibt.
+
+<<Antwort-an>>       Wenn die beantwortete Nachricht
+                 einen "Antwort-an"-Header (RFC:
+                 "Reply-To") enth„lt. Sie k”nnen
+                 dann zwischen der Absender- und der
+                 Antwort-an-Adresse w„hlen.
+
+<<Hinweis>>: Unabh„ngig davon, welche der obigen Optionen
+Sie w„hlen - die Auswahlliste wird immer angezeigt,
+wenn ein Weiterleit-Absender (<<WAB>>) vorhanden ist.
+
+<<nie>>              Nie eben (auch nicht bei Weiterleit-
+                 Absendern).
+
 @
 1040
 Hier k”nnen Sie den Namen Ihrer Organisation einge-
@@ -8022,7 +8061,7 @@ rige Datei gel”scht (s. Feld "l”schen").
 @
 600
 Geben Sie die gewnschten Bretter und/oder User an
-(maximal 50), an die Kopien der Nachricht verschickt
+(maximal 125), an die Kopien der Nachricht verschickt
 werden sollen. Mit <<<F2> >>k”nnen Sie die Empf„nger aus
 der User- oder Brettliste w„hlen.
 
@@ -11197,6 +11236,164 @@ XP w„hlt dann jeweils eine der Signaturen nach dem
 Zufallsprinzip aus.
 
 @
+3000
+W„hlen Sie hier den/die Empf„nger aus. Dafr stehen
+Ihnen je nach Konstellation alle oder ein Teil der
+folgenden Funktionen zur Verfgung:
+
+
+<<1.>> Sie w„hlen "<<alle>> (ohne eigene und ohne markierte
+   Adressen)". Das ist ein sog. "<<Reply-To-All>>" und
+   eigentlich selbsterkl„rend - dennoch ein paar
+   zus„tzliche Hinweise, welche Regeln bei dieser
+   Funktion gelten:
+
+   a) Die Mail wird an <<alle>> in der Liste aufgefhrten
+      Adressen versandt, <<auáer>>
+      <<\a026>> an von Ihnen markierte und
+      <<\a026>> an Ihre eigenen Adressen.
+      "Eigene Adressen" heiát: alle ZConnect- und
+      RFC-Adressen, die aus den von Ihnen eingerich-
+      teten Serverboxen ermittelt werden k”nnen. Da-
+      bei werden auch Vertreteradressen und Schalter
+      wie "Absender Username\@Boxname.Serverdomain"
+      bei /Edit/Boxen/Edit/<Netztyp> bercksichtigt.
+
+   b) Wenn eine Reply-To-Adresse ('Antwort-an') in
+      der Auswahlliste vorhanden ist, wird diese
+      *statt* der als "Absender" aufgefhrten Adresse
+      in die Sendeliste bernommen.
+
+   c) Ein Weiterleit-Absender ('WAB') wird nie in die
+      Sendeliste bernommen.
+
+   Alle Adressen, die bei Auswahl der Funktion
+   "<<alle>> (...)" unter Anwendung dieser Regeln in
+   die Sendeliste bernommen wrden, sind mit dem
+   Zeichen "<<\a007>>" zu Beginn des jeweiligen Eintrags
+   gekennzeichnet.
+
+   Die Auswahl "<<alle>> (...)" steht nur zur Verfgung,
+   wenn nach Anwendung der obigen Filterregeln ber-
+   haupt noch weitere 'reply-f„hige' Adressen vor-
+   handen sind.
+
+
+<<2.>> Sie w„hlen "<<markierte>>". Diese Funktion tut ohne
+   jegliche weitere Prfung genau das: Sie erstellt
+   eine Nachricht an alle markierten Adressen. :-)
+   Damit k”nnen Sie auch an die Adressen antworten,
+   die bei der Auswahl "alle (...)" automatisch
+   gefiltert werden (eigene Adressen, Absender bei
+   'Reply-To', Weiterleit-Absender) - sie mssen
+   eben nur markiert sein.
+
+   Die Auswahl "<<markierte>>" steht immer zur Verfgung.
+
+
+Fr beide Funktionen ("<<alle>> (...)" und "<<markierte>>")
+gilt: Mit <<<Space> >>(Leertaste) werden einzelne, mit
+<<<Ctrl-A> >>alle Adressen markiert. <<<Ctrl-E> >>hebt alle
+Markierungen wieder auf.
+
+
+<<3.>> Sie w„hlen mit den <<Cursortasten>> einen <<Empf„nger>>
+   aus. Die Nachricht wird ohne jede Prfung an den
+   ausgew„hlten Empf„nger gesendet.
+
+
+Ihre Auswahl darf maximal 126 Empf„nger umfassen. Die
+Auswahl ist jeweils mit <<<Enter> >>zu best„tigen, der
+Dialog kann mit <<<Esc> >>verlassen werden.
+
+
+Noch nicht in der User-Datenbank vorhandene Adressen
+werden in der Empf„ngerliste in Klammern <<(>>...<<)>> ange-
+zeigt und automatisch angelegt. Per Rckfrage durch
+XP haben Sie dabei die M”glichkeit, entweder allen
+neuen Usern dieselbe oder jedem User einzeln eine
+Serverbox zuzuweisen. XP schl„gt Ihnen hier zun„chst
+die Serverbox des Brettes vor, in dem sich die beant-
+wortete Nachricht befindet. Sie k”nnen diesen Vor-
+schlag bernehmen oder fr alle User (und fr jeden
+einzelnen sowieso) eine andere Serverbox ausw„hlen.
+
+
+Beim Aufbau der Empf„nger-Auswahlliste geht XP wie
+folgt vor:
+
+ş Ungltige Adressen (kein "<<\@>>", kein "<<.>>" hinter "<<@>>")
+  werden verworfen und nicht angezeigt;
+
+ş In den Nachrichten-Headern vorhandene doppelte
+  Adressen ('Dupes') werden gefiltert;
+
+ş In den User-Datens„tzen eingetragene Vertreter-
+  Adressen werden bercksichtigt und mit einem "<<*>>"
+  zu Beginn der Adresse kenntlich gemacht. Sollten
+  sich durch das Ersetzen einer Adresse durch ihre
+  Vertreteradresse wiederum Dupes ergeben (z.B. wenn
+  mehrere Adressen auf dieselbe Vertreteradresse
+  zeigen), werden auch diese Dupes gefiltert.
+
+Alle danach noch verbleibenden Adressen werden in der
+Auswahlliste angezeigt.
+
+
+<<Empf„ngerlisten-Anzeige
+
+ \a007Absender           :  *theo1\@tester.de
+  Empf„nger          :  (theo2\@tester.de)
+ \a007Original-Empf„nger :   theo3\@tester.de
+ \a007Kopien-Empf„nger   :   theo4\@tester.de
+ \a007Kopien-Empf„nger   : *(theo5\@tester.de)
+ ³³                    ³³³
+ ³³                    ³³ÀÄÄÄÄÄÄ Empf„nger
+ ³³                    ³ÃÄÄ () = Empf„nger nicht
+ ³³                    ³³        in User-Datenbank
+ ³³                    ÀÁÄÄÄ * = Vertreteradresse
+ ³ÀÄÄÄÄÄ Eigenschaft gem„á ZConnect-Header
+ ÀÄÄ \a007 = User wird bei Auswahl "alle (...)"
+         in Sendeliste bernommen
+
+@
+3001
+Sie haben einen oder mehrere Empf„nger ausgew„hlt,
+die sich noch nicht in Ihrer User-Datenbank befinden
+(in der Empf„ngerliste in Klammern <<(>>...<<)>> angezeigt).
+Diese werden jetzt von CrossPoint automatisch mit den
+Standardeinstellungen angelegt.
+
+<<Ja>>              Alle unbekannten User werden auto-
+                matisch mit der angezeigten Serverbox
+                angelegt. Sehr praktisch. :-)
+
+<<Nein>>            Es erscheint fr jeden unbekannten
+                Empf„nger eine Dialogbox, in der die
+                Serverbox manuell ausgew„hlt werden
+                kann bzw. muá. (<<*>>)
+
+<<Anderer Server>>  Sie erhalten eine Liste aller in XP
+                eingerichteten Serverboxen und w„hlen
+                daraus eine andere Serverbox aus, die
+                Sie anschlieáend mit <<Ja>> allen unbe-
+                kannten Usern zuweisen k”nnen.
+
+<<Zurck>>          Rckkehr zur Empf„ngerliste (z.B. zum
+                nochmaligen Prfen der unbekannten
+                Adressen) - <<<Esc> >>geht auch.
+
+CrossPoint schl„gt Ihnen zun„chst immer die Serverbox
+des Brettes vor, in dem sich die beantwortete Nach-
+richt befindet.
+
+(<<*>>) Wenn die Anzahl der unbekannten Empf„nger ent-
+    sprechend hoch sein sollte (die Anzahl wird im
+    Dialog in Klammern angezeigt), kann die Auswahl
+    <<Nein>> zu einer recht l„stigen Angelegenheit
+    werden. :-)
+
+@
 7000
 Dies ist eine [Querverweis]-Seite. Mit [<Alt-F1>] gelan-@7001 7002
 gen Sie zurck zur vorhergehenden [Seite].@7003
@@ -14360,7 +14557,7 @@ richt/Alle/entfernen, um alle Nachrichten in diesem
 Brett zu entfernen.
 @
 20421
-Irgendwer hat eine der CrossPoint-Ablagedatein ge-
+Irgendwer hat eine der CrossPoint-Ablagedateien ge-
 l”scht; alle in dieser Datei (ehemals) vorhanden
 Nachrichten werden jetzt aus der Nachrichtendatenbank
 ausgetragen.
@@ -14890,6 +15087,28 @@ den Abschnitt des Handbuchs.
 Sie haben ein Unterverzeichnis angelegt, das mit dem
 Namen einer Datei kollidiert. Das Verzeichnis muá
 wieder gel”scht werden.
+@
+20747
+Sie haben die Funktion "<<alle>> (ohne eigene und ohne
+markierte Adressen" gew„hlt, aber gleichzeitig alle
+passenden Empf„nger-Adressen markiert (und somit
+gefiltert).
+
+Heben Sie entweder die Markierung ganz oder teilweise
+wieder auf, oder w„hlen Sie "<<markierte>>".
+@
+20748
+Sie haben mehr Empf„nger ausgew„hlt als maximal
+erlaubt sind (126).
+
+Wenn Sie die Funktion "<<alle>> (...)" gew„hlt hatten,
+reduzieren Sie Ihre Auswahl, indem Sie entsprechend
+viele Adressen markieren. Diese werden dann nicht in
+die Sendeliste bernommen.
+
+Wenn Sie die Funktion "<<markierte>>" gew„hlt hatten,
+reduzieren Sie Ihre Auswahl, indem Sie entsprechend
+viele Adressen ent-markieren.
 @
 20801
 Das automatische (Ab-)Bestellen von Brettern mit

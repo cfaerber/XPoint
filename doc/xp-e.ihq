@@ -5957,14 +5957,18 @@ it is a .MSG file. See the field [Delete]@578
 <<[x]>>  the macro works in the internal editor
 @
 600
-Enter all (up to 50) newsgroups and/or users who are
-to receive a copy of the message. You can select
+Enter all newsgroups and/or users (up to 125) who
+are to receive a copy of the message. You can select
 using <F2> from the newsgroup or user lists.
 
 <Esc> aborts the procedure at any time.
 
 Confirm the entries when finished with <Ctrl-Enter>
 (or <Enter> in the last (empty) line).
+
+Public messages can be copied to up to 15 newsgroups
+per Server at the same time. Please send such Cross-
+postings only to the (few) newsgrous where they fit!
 @
 610
 Enter the name of the Carbon Copy (cc) list.
