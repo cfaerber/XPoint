@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -75,7 +76,8 @@ var i,res : integer;
     end else
     begin
       SetLength(s, l-o);
-      Move(Buf^[o], s[1], l-o);
+      if l-o > 0 then
+        Move(Buf^[o], s[1], l-o);
       o := l-1;
       IncO; IncO;
     end;
@@ -560,6 +562,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.35  2000/09/28 03:11:01  mk
+  - Move mit Laenge 0 verhindert
+
   Revision 1.34  2000/08/22 01:00:17  mk
   - Getline deutlich beschleunigt
 
