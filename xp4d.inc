@@ -255,7 +255,7 @@ begin  { __ Suchmarke }
               if ntKomkette(netztyp) and (mnt and $100<>0) and
                  (lstr(left(s1,3))<>'re:') and (left(s1,3)<>'Re^') then
                 s1:=left('-'+s1,40);
-              end;
+            end;
             dbReadN(mbase,mb_OrigDatum,dat);
             if dispmode=10 then
               dbReadN(mbase,mb_EmpfDatum,edat)
@@ -274,9 +274,9 @@ begin  { __ Suchmarke }
               else
                 sdat:=' '+left(s2,5);
               ulen:=25; blen:=36;
-              end
-            else begin
-              sdat:=''; ulen:=27; blen:=40; end;
+            end else begin
+              sdat:=''; ulen:=27; blen:=40;
+            end;
             if (dispmode=11) and MarkUnversandt then begin
               inc(ulen,5); dec(blen,5);
               readheader(hd,hds,true);
@@ -290,13 +290,13 @@ begin  { __ Suchmarke }
                 s:=forms(mid(hd.empfaenger,length(TO_ID)+1),ulen-length(s)-1)+' '+s
               else
                 s:=forms(hd.empfaenger,ulen-length(s)-1)+' '+s;
-              end;
+            end;
             dbReadN(mbase,mb_brett,_brett);
             pp:=iif(netztyp=nt_Maus,35,iif(fidoqwk,35,0));
             if (pp<>0) and (_brett[1]<>'$') and (blen>pp) then begin
               inc(ulen,blen-pp);
               blen:=pp;
-              end;
+            end;
             dbReadN(mbase,mb_Groesse,size);
             dbReadN(mbase,mb_unversandt,unvers);
             dbReadN(mbase,mb_Typ,typ);
@@ -321,38 +321,46 @@ begin  { __ Suchmarke }
               markflag[y]:=iif(msgmarked,1,0);
             dflags:=iifc(markflag[y]<>0,suchch,' ')+ge[gelesen]+hf[hflags]+
                     uv[unvers]+wv[wvl]+typ;
+                    
             if fidoqwk and (dispmode=10) and
                dispfto and (_brett[1]='A') then begin
               if cpos('@',s)>0 then s[0]:=chr(cpos('@',s)-1);
               dbReadN(mbase,mb_name,s0);
               
-{             
-              if Feldtauschvorlesen then
-                dispbuf[y]^:=dflags+' '+forms(s1,iif(showmsgdatum,21,27))+' '
-                +forms(s,19)+' '+forms(s0,19)+' '+siz+sdat
-              else
-}              
-                dispbuf[y]^:=dflags+siz+sdat+' '+forms(s,19)+' '+forms(s0,19)+
-                             ' '+forms(s1,iif(showmsgdatum,22,28));
-              
+              { Flags }
+              taus[pos('F',MsgFeldTausch)] := dflags;
+              { Groesse }
+              taus[pos('G',MsgFeldTausch)] := siz;
+              { Datum }
+              taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
+              { Absender }
+              taus[pos('A',MsgFeldTausch)] := forms(s,19);
+              { Empfaenger }
+              taus[pos('E',MsgFeldTausch)] := forms(s0,19);
+              { Betreff }
+              taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21,27));
+                
               userflag[y]:=(HighlightName=ustr(s0)) or (mnt and $1000<>0);
+              
             end else begin
-{             
-              if Feldtauschvorlesen then begin
-                if dispmode=12 then
-                  s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1)
-                else
-                  s:=forms(s1,blen)+' '+forms(s,ulen);
-                dispbuf[y]^:=dflags+' '+s+siz+sdat;
-              end else 
-}              
-              begin
-                if dispmode=12 then
-                  s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1)
-                else
-                  s:=forms(s,ulen)+' '+forms(s1,blen);
+            
+              { Kommentarbaum }
+              if dispmode=12 then begin
+                s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
                 dispbuf[y]^:=dflags+siz+sdat+' '+s;
-              end;
+                
+              end else begin
+                { Flags }
+                taus[pos('F',MsgFeldTausch)] := dflags;
+                { Groesse }
+                taus[pos('G',MsgFeldTausch)] := siz;
+                { Datum }
+                taus[pos('D',MsgFeldTausch)] := iifs(showmsgdatum,sdat,'');
+                { Absender }
+                taus[pos('A',MsgFeldTausch)] := forms(s,iif(showmsgdatum,28,28+5));
+                { Betreff }
+                taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,21+9,27+9));
+              end;  
               
               if fidoqwk and (_brett[1]='A') and
                  (HighlightName=ustr(dbReadStr(mbase,'name'))) then
@@ -364,12 +372,12 @@ begin  { __ Suchmarke }
                   userflag[y]:=(mnt and $1000<>0);
             end;
             
-            { Felder zusammenkopieren }
-{           
-            dispbuf[y]^ := taus[1];
-            for tausc := 2 to MsgFelderMax do dispbuf[y]^:=dispbuf[y]^+' '+taus[tausc];
-            dispbuf[y]^:=forms(dispbuf[y]^,80);
-}           
+            if (dispmode<>12) then begin
+              { Felder zusammenkopieren }
+              dispbuf[y]^ := taus[1];
+              for tausc := 2 to MsgFelderMax do dispbuf[y]^:=dispbuf[y]^+' '+taus[tausc];
+              dispbuf[y]^:=forms(dispbuf[y]^,80);
+            end;
           end;
      20 : dispbuf[y]^:=AutoShow;
   end;

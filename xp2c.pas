@@ -705,7 +705,7 @@ begin
     mhnr(1030);
   maddbool(3,3,getres2(260,8),blind);        { 'Fensterhintergrund ausblenden' }
   { 'Feldtausch in Nachrichten-Liste': }
-  maddstring(3,4,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,'FHDAEB');
+  maddstring(3,4,getres2(260,15),MsgFeldTausch,MsgFelderMax,MsgFelderMax,'FGDAEB');
   { 'Feldtausch in Userliste': }
   maddstring(3,5,getres2(260,16),UsrFeldTausch,UsrFelderMax,UsrFelderMax,'FHBAK');
   maddbool(3,6,getres2(260,10),termbios);    { 'BIOS-Ausgabe im Terminal' }
