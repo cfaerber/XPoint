@@ -1,6222 +1,3110 @@
 K CrossPoint v3.11 resource file
-
 K English
-
 K (c) '93-96 Peter Mandrella
 
-
-
 # Online Help File, Key Macros
-
 1 XP-E.HLP
-
 2 KEYS-E.CFG
-
 5 Changing language ...
 
-
-
 # file version
-
 6 13
-
-
 
 # --- Menus -----------------------------------------------------------
 
-
-
 # Main menu hot keys: Messages, Others, AutoSend
-
 7 X˘MNFDCT
-
 8 XRMNFDCT
-
 9 XR˘NFDC˘
 
-
-
 + 10
-
 # Achtung: Das erste Wort in den folgen Zeilen (Main, XPoint, Nachricht etc.)
-
 #          darf *nicht* Åbersetzt werden. Es wird von XP nur intern verwendet
-
 #          und nicht angezeigt.
-
 0   Main,001^XPoint˘1,002^Re-Org˘7,003^Message˘3,004^Netcall˘15,005^Fido˘31,006E^dit˘16,007^Config˘6,008^Tools˘2
-
 1   XPoint,011^Register,012^Import˘10,013^Export˘36,014^Statistics˘17,015^Terminal,016^DOS       F9,-,018^Quit
-
 2   Zusatz,021^Calendar,022^Archive Viewer
-
 3   Nachricht,031^Search˘5,032E^xtract˘12,033^Unsent˘4,034^All˘14,035^Change˘22,036^Forward˘21,-,038News ^manager˘19,039F^ileserver˘20,03aP^GP˘40,03b^Direct
-
 4   Unversandt,041^Edit,042^Change,043^Delete,044^Statistics,045S^how
-
 5   Suchen,051^Text,052^Subject,053^User       @U,054S^pecial,055^Wiedervlg.,056^Marked,057U^nmark     ^E,058Message^ID
-
 6   Config,061^Options˘28,062E^xternal˘24,063^Paths,064^Display˘9,065^Modem˘18,066P^rinter,067^Keys˘23,068^Tools Menu,069^Save
-
 7   Wartung,071^Messages,072^Pack,073^Newsgroups,074^Users,075^Address book,076^Dupekill,-,078^Change Server,079Mi^sc˘33
-
 8   Schablonen,081!^Head,082!^PrivHead,083!P^ublicQuote,084!P^RivQuote,085!PrivP^MQuote,086!^QuoteTo,087!^Forward,088!^Repost,-,08a!^Signature,08b!Pr^IvSignature,08c!^Receipt req.,08d!^Cancel,08e!^Others
-
 9   Anzeige,091^Colors,092^Newsgroups,093^Messages,094^Header,095^Lines˘11,096M^isc,098^Accessibility,097^PD-Zmodem
-
 10  Import,0a1Read Zerberus ^Puffer,0a2Read ^other format,0a3^User list,0a4^Newsgroup list
-
 # Dummy for XPME:
-
 11  Zeilen,0b125
-
 12  Extrakt,0c1^Message,0c2^UUdecode,0c7M^IME-Decode,0c3^Newsgroup,0c4^Reference tree,0c5Mar^ked,0c6!^As..     w/o Header˘13
-
 13  Als,0d1with^out Header,0d2^with Header,0d3^Puffer,0d4^Quote
-
 14  Alle,0e1^Hold,0e2^Delete,0e3^Mark,0e4^Normal,0e5^Read,0e6^Kill,0e7^Print
-
 15  Netcall,0f1^Single,0f2^All,0f3^Last calls,0f4^Time,0f5^Relogin,0f6^Online,-,0f8A^utomatic,0f9T^iming list
-
 16  Edit,101^Templates˘8,102^Servers,103^Groups,104S^Ystems,105S^hort names,106^AutoSend,108^Viewer,107T^ext        @E
-
 17  Status,111^Memory,112M^essagebase,113^Database,-,115^Groups,116S^Ystems,117^Newsgroups,-,119^Phone charges˘26
-
 18  Modem,121COM^1,122COM^2,123COM^3,124COM^4,125ISDN
-
 19  MAPS,131^Subscribe,132^Unsubscribe,133^Get list,134^Others,-,136^Import list,137Read ^file
-
 20  Fileserver,141^Request,142^Send,143^List˘27,144^Help,145^Transfer,146S^ervice
-
 21  Weiter,151^Copy,152^Original,153^EditTo,154^QuoteTo,-,156C^onfirmation,157Ca^ncel,158^Repost      @R,159^Archive     @A,15aUser-^PM     @P
-
 22  éndern,161^Subject,162^Receive date,163R^ot13,164^Text,165T^ype,166r^ead,167^Highlight
-
 23  FKeys,171^Shift-Fx,172^Ctrl-Fx,173^Alt-Fx,174^Macros
-
 24  Extern,181^Lister,182^Editor,183^Shell,184Un^packer,185pm^Crypt,186P^GP
-
 26  GebÅhren,1a1^All,1a2^Single
-
 27  Liste,1b1^Request,1b2read ^message,1b3read ^file
-
 28  Optionen,1c1^Miscellaneous,1c2^User interface,1c3^Lister,1cdEd^itor,1c4M^essages,1ccA^ddresses,1c5^Nets˘37,-,1c6Net^call,1c7P^hone fees˘39,1cb^Terminal,-,1c9^Password,1caL^anguage
-
 29  Brettindex,1d1^Rebuild,1d2^Alphabetic
-
 30  Nodelist,1e1^Config,1e2^Update,1e3Sh^rink,1e4Rebuild ^Index,-,1e6S^tatistics,1e7^Search,1e8^Find       @N
-
 31  Fido,1f1^Request,1f2^File lists˘32,1f3File ^Areas˘38,1f4^Crash,1f5^Nodelists˘30,1f6^Options
-
 32  Fidoliste,201^Read,202^Delete,203^Search
-
 33  Sonstiges,211Re-link ^References,212Read ^MsgIDs,213^Test Messagebase,214Read ^dates,215Newsgrp ^index..˘29
-
 34  Pointlist,221^Activate,222^Read diff
-
 36  Export,241^User list,242^Newsgroup list,243^Message list,244^Screenshot    @I
-
 37  Netze,251^Miscellaneous,252^PM limits
-
 38  Filescan,261^Subscribe,262^Unsubscribe,263^Get list,264^Import list,265Import ^File,266^Others
-
 39  Tarifzonen,271^Zones,272^Fees,273^Holidays,274^Misc
-
 40  PGP,281^Request key,282^Import key,283^Decode message,284^Test signature,-,286^Edit key,287^Remove UserID
-
 # Tools Menu
-
 100 021^Calendar
-
 101 022^Archive Viewer
-
 # special menu choices
-
 200 $069,$097,$0b1,$11a,$1ca,$125
 
-
-
 + 11
-
 1    Error
-
 2    Hint
-
 # Length of Week days:
-
 3    9
-
 4    Monday   Tuesday  WednesdayThursday Friday   Saturday Sunday
-
 # internal newsgroups
-
 5    Statistics
-
 6    Unsent
-
 7    Netcall
-
 # Yes/No
-
 8    YN
-
 9    MoTuWeThFrSaSu
-
 10   January
-
 11   February
-
 12   March
-
 13   April
-
 14   May
-
 15   June
-
 16   July
-
 17   August
-
 18   September
-
 19   October
-
 20   November
-
 21   December
-
 # Lister
-
 22   Help
-
 -
-
 12   Press any key ...
-
 13   ~Bytes
-
 14   KBytes
 
-
-
 # --- Keys in main window ---
-
 + 20
-
 0    mark
-
 # Newsgroups, Users, Newsgroups/Special, Users/Special
-
 1    ^All ^Write T^extfile B^inary ^Special S^how:
-
 2    ^All S^ort ^Write T^ext B^inary ^Special See^k Address-^book ^PW
-
 3    Ne^w De^lete ^Edit ^Join M^ove ~Split ^Access ^Special
-
 4    ^All S^ort Ne^w CarbonCop^y De^l ^Edit ^Spec. Addr.-^book ^PW
-
 # Messages, User messages, marked messages
-
 5    ^All ^Hold De^lete ^Kill R^eference ^Reply ^PM ^User ^Info ^Other
-
 6    ^All ^Hold De^lete ^Kill R^eference ^PM ^Info ^Other
-
 7    ^Hold De^lete ^Kill ^Reply ^PM ^Info ^Sender ^Other
-
 8    ^Address ^Hold De^lete ^Kill ^Reply ^PM ^Info ^Other
-
 9    confirm
-
 10   ^All
-
 11   unsubscribe
-
 12   subscribe
-
 13   E^xtract
-
 14   show
-
 15   Create newsgroups
-
 16   Start netcall immediately
-
 # AutoSend
-
 17   Acti^ve ^Add C^opy De^lete ^Edit ^TextEdit ^Info ^Send
-
 18   ~Time
-
 19   Start netcall
-
 20   Start call
-
 # Fileserver
-
 21   order
 
-
-
 + 22
-
 # Keys in Newsgroup window:
-
 # Special Mode, All Newsgroups, Add newsgroup, Add from MAPS list, Delete,
-
 # Edit, Join, Split line, Move newsgroups, Read mode, Write message,
-
 # Send binary file, Send text file, Mark group, unmark, Auto advance,
-
 # record no, Access, Crossposting
-
-
 
 1  S A W ^W L E J ^S O H w I E ^G ^E ^W ^R A W
 
-
-
 # Keys in User window:
-
 # Special Mode, Address book switch, Add user, Add Verteiler, Delete user,
-
 # Edit user, Join, Write message, Send binary file, Send text file,
-
 # Address book entry, Password, Unmark users, Auto advance, Search,
-
 # Crossposting
-
-
 
 2  S A W Y L E J w I E B P ^E ^W K W O
 
-
-
 # Keys in Message window:
-
 # Special menu, Rot13, HexDump, Info window, Original header, Hold, Delete,
-
 # Kill, UserEdit, Wiedervorlage, Entmarkieren, User window, Send text file,
-
 # Send binary file, Seek reference, Fido - switch display, Address display
-
 # in reference tree, Show address (marked messages), Auto Advance, Show Date
-
 # Print, Show Realnames, Reference tree, unsent <-> all, Reply, Quote reply,
-
 # multiquote reply, PM, Quote PM, Multiquote PM, Edit password, indirect quote
-
-
 
 3  O ^X ^H I ^O H L K ^U V ^E U ^F ^I E ^A A S ^W ^D ^T ^N # A r ^R R p ^P P ^S ^Q
 
-
-
 # Keys in AutoSend window
-
 # New entry, Edit, Delete, Active, TextEdit, File info, Send, Copy
-
-
 
 4  A E L V T I S O
 
-
-
 # Lister keys
-
 # Print, write to file, flag message "deleted" and leave lister,
-
 # flag message "deleted", flag message "hold", *higlight* color switch
-
-
 
 5  D W L ^L H C
 
-
-
 + 23
-
 # Message window, menu "other"
-
 2  ^EditUser     ^U,^Rot13        ^X,^Hex Dump     ^H,^Date         ^D,^Print        ^T,^Mark,Wieder^vlg.    V,^Text file    ^F,B^inary file  ^I,indir.^Quote ^Q
-
 3  ,^Seek user    @U,See^k Subj.   @B
-
 -
-
-
-
 
 
 # --- XP1, XPKEYS -----------------------------------------------------
 
-
-
 100  Help
-
 101  Macros
 
-
-
 102  File I/O Error
-
 103  Edit template
-
 # Extract as..
-
 + 104
-
   1  0c6!^As..~~~~~~
-
   # LÑnge der Teilstrings:
-
   2  10
-
   3  w/o Header with Head    Puffer     Quote
-
 -
-
 105  Working, please wait ...
-
 106  File name:~
-
 107  ~^Yes , ^No~
-
 + 108
-
   0  All
-
   1  Z-Netz
-
   2  None
-
   3  PMs
-
 -
-
 109  TSR program detected - aborting..
-
 110  Error while swapping memory on disk.
-
 111  Swap file lost!?
-
 112  Error reading swap file
-
 113  Type EXIT to return to CrossPoint.
-
 115  Error while executing program.
-
 116  DOS shell is not possible right now.
 
-
-
 # XP1O
-
 117  ~already exists.
-
 118  ~^Append , ^Overwrite , ^Cancel~
-
 119  Printing...
-
 120  Write text to file
-
 121  Message has been flagged 'deleted'.
-
 122  Message has been flagged 'hold'.
-
 123  Error %s while copying %s
 
-
-
 # XP1O2
-
 124  Printer not ready!
-
 125  ~^Repeat , ^Cancel~
-
 126  %s - making index
-
 # position of "%" must be kept:
-
 127  working ...         %
-
 128  Packing %s
-
 129  converting %s
 
-
-
 130  Loading file ...
-
 131  Flushing Smartdrive cache ...
-
 + 132
-
 1    Template for new public messages
-
 2    Template for new private messages
-
 3    Quote template for public messages
-
 4    Quote template for mail answers to public messages
-
 5    Quote template for mail answers
-
 6    Template for /Message/Forward/QuoteTo
-
 7    Template for /Message/Forward/Copy
-
 8    Template for /Message/Forward/Repost
-
 10   Signature for public messages
-
 11   Signature for private messages
-
 12   Signature for automatic receipt
-
 13   Signature for /Message/Forward/Cancel
-
 14
-
 -
-
 133  Menu
-
 134  %s is being copied
 
-
-
 # XP1O
-
 135  waiting for end of external viewer ...
-
 136  POSTSEM.EXE not found or corrupted ...
 
-
-
 # XPKEYS
-
 150  No files in AUTOEXEC directory
 
-
-
 # XP1
-
 160  Interrupt process
-
 + 161
-
 1    A internal databse error has occured. If the error occurs again ~
-
 2    after restarting XP, probaby a message database file has been   ~
-
 3    damaged. Then first delete the index files (DEL *.IX1). If that ~
-
 4    doesn't help, read the hints in the manual.                     ~
-
 -
-
-
 
 # --- XP2, XP2F, XP2C -------------------------------------------------
 
-
-
 200  Color Setup
-
 + 201
-
 0    ^Main menu,^1st menu level,^2nd menu level,^3rd menu level,^F-Keys,M^iscellaneous,^User/Newsgr.,Messa^ges,Message ^window,^Dialog window,Selection 1,Selection 2,^Buttons,Uti^lities,Hel^p,Liste^r,^Editor,uu^cico/Mailer,ØDefaul^tÆ,Ø^SaveÆ,Ø^OKÆ
-
 1    ^Text,^Keys,^Bar,^Selected key,^Inactive
-
 2    ^Text,^Keys,^Bar,^Selected key,^Inactive,I^nactive+selected
-
 3    ^Text,^Keys,^Bar,^Selected key,^Inactive,I^nactive+selected
-
 4    ^Text,^Keys,^Bar,^Selected key,^Inactive,I^nactive+selected
-
 5    ^Key,Te^xt,^Active key,Active ^Text
-
 6    ^Split lines,S^tatus line ArcViewer,subscribed ^newsgroups,Screen ^border
-
 7    ^Text,^Selected,^Marked,S^plit line
-
 8    ^Text,^Marked,^Selected,^Info line,^Highlighted,S^elected+highlighted,Priority ^1 (highest),Priority ^2 (high),Priority ^4 (low),Priority ^5 (lowest)
-
 9    ^Text,^Border,^Highlighted
 
-
-
 10   ^Text,^Border,^Highlighted,^Input field,^Marked input field,^Arrows,^Selection list,S^election Bar,B^utton
-
 11   ^Text,^Border,^Highlighted,B^ar
-
 12   ^Text,^Border,^Highlighted,B^ar
-
 13   ^Text,^Hotkey,^Arrows
-
 14   ^Text,^Highlighted,^Inverse
-
 15   ^Text,^Highlighted,^Reference,^Selected Reference
-
 16   ^Message Header,^Text,^Selection bar,Marked ^Line,Marked ^Word,St^atus line,Sc^roller,^highlighted,^Quote,H^ighlited quote
-
 17   ^Head,^Head highlighted^Status line,^Text,^Quote,^Marked,^End marker,M^enu,Me^nu keys,Menu ^Bar,^selected key
-
 18   ^Text,^Data,^Status line
-
 19   Level ^1,Level ^2,Level^3,Level ^4,Level ^5,Level ^6,Level ^7,Level^8,Level ^9
-
 -
-
 + 202
-
 1    Syntax:    XP [/Opt1 /Opt2 ...]
-
 2
-
 3    Options:   /m      monochrome Display
-
 4    ~          /LCD    fixes display problems on some laptops
-
 5    ~          /q      no sound signals (quiet)
-
 6    ~          /rp     doesn't test for TSR programs after DOS-shell
-
 7    ~          /sd     prevents automatic Smartdrive cache flushing
-
 8    ~          /ss     start screen saver at once
-
 9    ~          /trace  enable script protocol (see XPOINT.TXT, 8.1)
-
 10   ~          /w0     don't free unused system resources
-
 11   ~          /w, /w1 free unused system resources for Win & OS/2 (timeslice)
-
 12   ~          /w2     free unused system resources for Win & OS/2 (conservative)
-
 13   ~          /os2x   kind of freeing of free unused system resources (time)
-
 14   ~                  under OS/2 (x ranges from a to d)
-
 15
-
 16   ~          /k:X    send key X (for key macro)
-
 17   ~          /pw:xx  enter start password xx
-
 18   ~          /z:nn   set nn screen lines
-
 19   ~          /l:X    set language (e.g. /l:E for Englisch)
-
 20
-
 21   ~          /n:Server[:hh:mm]   start netcall to Server
-
 22   ~          /n:*                netcall to all Servers
-
 23   ~          /nr:Server          relogin netcall to Server
-
 24   ~          /user:Server:NAME   set user name at Server to NAME
-
 25   ~          /ips:Server:PUFFER  import and send puffer file
-
 26   ~          /autostart:...      start program by time range
-
 27
-
 28   ~          /av:<File>          view archive file
-
 29   ~          /f:<File>[.FNT]     load font file
-
 30   ~          /gd:<File>          select phone fee file (see FIDO.TXT)
-
 31
-
 32   ~          /ip:PUF   import puffer file
-
 33   ~          /ipe:PUF  import puffer file with receive date = creation date
-
 34   ~          /g        sets /ip and /ips messages to status 'read'
-
 35   ~          /eb       return receipts (for /ip..)
-
 36   ~          /r        start messagebase reorganization
-
 37   ~          /pack     do /Reorg/Pack
-
 38   ~          /t:n      start timing list no. n
-
 39
-
 40   ~          /x        quit program
-
 -
-
-
 
 203  Error: Can't create directory %s !
-
 204  Error in group file (GRUPPEN.DB1)!
-
 205  Error: Not enough disk space on drive %s !
-
 + 206
-
 1    WARNING!
-
 2    There are only %s MB disk space left on
-
 3    drive %s !
-
 -
-
 207  User defined nodelist %s not found!
-
 210  Not enough disk space!
-
 + 211
-
 0    WARNING!
-
 1    ~^stop , ^rebuild~
-
 # The Windows width must be kept, the number of lines may vary:
-
 2    The file USER.EB1 is missing! This file contains all
-
 3    user password definitions and forward addresses.
-
 4    Do you want to stop CrossPoint to recover the file
-
 5    - e.g. from a backup -, or shall XP rebuild the file
-
 6    (which will result in losing all passwords and for-
-
 7    ward addresses)?
-
 -
-
 212  Program stopped.
-
 213  illegal color configuration: ~
-
 + 214
-
 1    CrossPoint - Configuration file
-
 2    User setup
-
 3    miscellaneous
-
 4    Z-Netz (German version only)
-
 5    MausNet (German version only)
-
 6    RFC/UUCP
-
 7    Fido
-
 8    F-Keys
-
 9    Modem setup
-
 10   Terminal
-
 -
-
 216  internal configuration
-
 217  Saving settings ...
-
 218  illegal F-Key config line: ~
-
 # Max len of line 219: 32 chars!
-
 219  illegal configuration line: ~
-
 220  Font file not found or invalid: %s
-
 + 221
-
 1    (dummy)
-
 + 222
-
 0    --- -----------------
-
 1    EMP To
-
 2    ABS From
-
 3    BET Subject
-
 4    EDA Date
-
 5    ROT (Path)
-
 6    MID (Message ID)
-
 7    LEN Size
-
 8    BEZ (Reference ID)
-
 9    MAILER (Software)
-
 10   FILE (File)
-
 11   STAT (Status)
-
 12   ORG (Organization)
-
 13   OAB (Original from)
-
 14   OEM (Original to)
-
 15   WAB (Resent by)
-
 16   ERR (Error message)
-
 17   ANTW (Reply to)
-
 18   DISK (Followup to)
-
 19   STW (Keywords)
-
 20   ZUSF (Summary)
-
 21   DIST (Distribution)
-
 22   POST (Postal address)
-
 23   TEL (Phone number(s))
-
 24   MSTAT (MausNet PM Status)
-
 25   KOP (CC)
-
 26   PGP (PGP status)
-
 27   URL (Homepage)
-
 28   PART (Msg Part)
-
 29   CST1 (User defined 1)
-
 30   CST2 (User defined 2)
-
 31   PRIO (Priority)
-
 + 223
-
 1    ## Forwarded message of $MSGDATE
-
 2    ## Origin   : $BRETT
-
 3    ## Creator  : $USER
-
 -
-
 224  Settings have changed - save
-
 + 225
-
 1    More than %s days have passed since your last use of XP.
-
 2    The system date has been changed.
-
 3    Please check date:~
-
 -
-
-
 
 # XP2F
-
 + 240
-
 1    Tools Menu
-
 2    Function keys
-
 3    Menu           Program                    $FILE      S W L A  Mem
-
 4    Menu display~
-
 5    Program name~
-
 6    $FILE-Msg.  ~
-
 7    w/o header
-
 8    with head.
-
 9    Puffer
-
 10   Quote
-
 11   Subject-name
-
 12   Wait
-
 13   Fullscreen
-
 14   Output to lister
-
 15   Memory:~
-
 16   KBytes
-
 17   Look for files in AUTOEXEC directory
-
 -
-
 241  CrossPoint - Color configuration
-
 242  Reset default color settings
-
 + 243
-
 1    # This file is used for phone fee calculations.
-
 2
-
 3    # The first coloumn contains the date (dd.mm.yy format), the second
-
 4    # coloumn the holiday type (1 to 3) and the last an arbitrary comment.
-
 5
-
 6    01.01.96  1  New year
-
 + 244
-
 1    CrossPoint is already running in another window. It is not
-
 2    possible to run multiple instances of CrossPoint at the same
-
 3    time.
-
 -
-
-
 
 # XP2C
-
 + 250
-
 1    Miscellaneous Options
-
 2    Quote String ~
-
 3    Line break   ~
-
 4    User base    ~
-
 5    All
-
 6    Z-Netz
-
 7    PMs
-
 10   Ask before Quit
-
 11   Swap to EMS
-
 12   Archive prefix~
-
 13   Delete archived messages
-
 14   Append new newsgroups at end
-
 15   Server name in PM-newsgroups
-
 16   Minimum disk space on drive %s~
-
 17   MBytes
-
 18   Use XMS
-
 19   Use descriptions from newsgroup list
-
 20   Enables umlauts for new Users
-
 21   Treat : and | as quote characters
-
 22   Sort User-window by Server name
-
 23   Default Usergroup
-
 24   Create an archive-note
-
 + 251
-
 # Extract as
-
 0    Text w/o head
-
 1    Text with head
-
 2    Puffer
-
 3    Quote
-
 # Read mode
-
 5    All
-
 6    Unread
-
 7    New
-
 8    Today
-
 # Maus double click speed
-
 10   slow
-
 11   normal
-
 12   fast
-
 15   User Interface
-
 16   Message auto advance
-
 17   Newsgroup auto advance
-
 18   User auto advance
-
 19   Show mode  ~
-
 20   Extract as ~
-
 21   Use mouse
-
 22   Swap mouse keys
-
 23   Initialization
-
 24   Double click
-
 25   Leave config menu on <Esc>
-
 26   Save       ~
-
 27   Accoustic signal in message/newsgroup/user list
-
 # save config
-
 40   automatic
-
 41   manual
-
 42   ask on quit
-
 + 252
-
 0    never
-
 1    PMs
-
 2    AMs
-
 3    always
-
 5    Message options
-
 6    Save binary messages up to:~
-
 7    KB
-
 9    Bytes
-
 11   Standard news hold time:   ~
-
 12   Days
-
 13   Standard user PM hold time:~
-
 14   Hold own messages
-
 15   Creation time = 00:00
-
 16   Use Re^n
-
 17   Store unsent messages in /ØUnsent
-
 18   Send automatic receipts on request
-
 19   Automatic PM archiving
-
 23   Time zone
-
 24   Delete X-postings with more than
-
 25   newsgroups
-
 26   Send all carbon copies as BCC
-
 27   at mail as well
-
 28   ask at Reply-To
-
 29   don't archive news
-
 #
-
 100  68
-
 101  Address settings (ZCONNECT / RFC)
-
 102  Organization  ~
-
 103  Postal address~
-
 104  Phone         ~
-
 105  Homepage      ~
-
 109  Address, phone and homepage only in PMs
-
 + 253
-
 1    Net Options
-
 2    Z-Netz
-
 3    Small user names
-
 4    Z-Netz only
-
 5    Warning!
-
 6    Small names are not allowed in Z-Netz. Do you really want to
-
 7    activate this option?
-
 8    ~^Yes ,  ^No ~
-
 9    Use MIME for news
-
 10   ZCONNECT: ISO charset
-
 11   MIME: quoted-printable
-
 12   Use MIME for header contents
-
 13   remove unnessecary header lines
-
 14   use references
-
 15   binary messages as "attachments"
-
 17   Magics in <F3> file request
-
 + 254
-
 1    Netcall Options
-
 2    Show login screen
-
 3    Interrupt login screen
-
 4    Hayes commands
-
 5    Rename CALLED
-
 6    Delete netcall file after importing
-
 7    Convert all Z-Netz addresses to upper case
-
 8    Warning!
-
 9    You may deactivate this option only if you don't use a modem and
-
 10   the connection is established in some other way (e.g. by manual
-
 11   dialing).
-
 12   Do you really want do deactivate Hayes commands?
-
 13   ~^Yes ,  ^No ~
-
 14   Complete netcall logfile (NETCALL.LOG)
-
 15   Un-mark messages after netcall
-
 16   Update date entries after netcall
-
 + 255
-
 # window width
-
 0    46
-
 1    Internal message reader options
-
 4    Internal message reader - full screen
-
 5    Line break in column 80
-
 6    Show reference arrows
-
 7    Fixed message header display
-
 8    Convert German ISO Umlauts
-
 9    *Highlight* words by colour
-
 10   Mouse scroll bar
-
 11   AutoScrolling
-
 12   Multi-coloured quotes
-
 13   Exit message reader with <Return>
-
 14   Display clock in message reader
-
 #
-
 20   51
-
 21   External lister options
-
 22   Lister~
-
 23   KBytes:
-
 + 256
-
 # window width
-
 0    57
-
 1    large messages
-
 2    all messages
-
 3    all texts
-
 5    Editor Options
-
 6    Editor~
-
 7    KBytes:
-
 8    Backup file extension   ~
-
 9    Use external editor for ~
-
 10   Automatic <Ctrl PgDn>
-
 11   Internal editor - full screen
-
 12   Keep filename of Edit/Text
-
 13   25 screen lines for ext. editor
-
 + 257
-
 # window width
-
 0    40
-
 1    Shell
-
 2    25 screen lines for DOS shell
-
 3    Environment space: ~
-
 4    Show command line
-
 5    Wait for key
-
 + 258
-
 # Newsgroup/User display
-
 # window width
-
 0    36
-
 1    normal
-
 2    special
-
 3    small
-
 5    Newsgroup display
-
 6    "/" for PM newsgroups
-
 7    Split lines in "All" mode
-
 8    Newsgroup display~
-
 9    Usenet groups with "."
-
 10   separator comment~
-
 21   left
-
 22   middle
-
 23   right
-
 + 259
-
 0    normal
-
 1    small
-
 2    small/space
-
 3    name only
-
 4    name/small
-
 5    Columns
-
 6    Col./small
-
 10   Messsage display
-
 11   Message date
-
 12   User names  ~
-
 13   Show complete user addresses in reference tree
-
 14   Show realnames, if possible
-
 15   Show recipients of FidoNet echo mails
-
 + 260
-
 1    Screen saver (sec.) ~
-
 2    Scroll out
-
 3    Ask start password
-
 4    Show user name
-
 5    Cursor in menus and lists
-
 6    Screen-blanker
-
 7    optical sound signal
-
 8    Blank window background
-
 9    Power saver
-
 10   Terminal BIOS output
-
 11   Accessibility options
-
 12   additional sound signals
-
 13   headline 1
-
 14   headline 2
-
 15   Message-list column order
-
 16   User-list column order  ~
-
 + 261
-
 # Window width
-
 0    50
-
 1    Configuration of COM%s
-
 2    Port address (hex)~
-
 3    IRQ number~
-
 4    Modem init~
-
 5    Modem exit~
-
 6    Wait for modem answer:~
-
 7    sec.
-
 8    Ignore CD
-
 9    Ignore CTS
-
 10   Detect RING
-
 11   16550A FIFO
-
 12   Sure? XP did not recognize a 16550A!
-
 13   Use FOSSIL driver
-
 14   No FOSSIL driver installed.
-
 15   Dial comm.~
-
 16   Pause between dialing
-
 17   Use RTS
-
 18   ...trigger level
-
 + 262
-
 # Window width
-
 0    58
-
 1    Directory not found. Create it
-
 2    Temporary directory~
-
 3    Extract directory  ~
-
 4    Send directory     ~
-
 5    Log file directory ~
-
 6    FileReq directory  ~
-
 -
-
 263  Archive unpacker for...
-
 + 264
-
 # Window width
-
 0    51
-
 1    Printer Options
-
 2    Interface   ~
-
 3    Form length~
-
 4    Printer init~
-
 5    Printer exit~
-
 6    Form feed   ~
-
 7    Left margin:~
-
 8    chars.
-
 + 265
-
 1    External encryption programs
-
 2    Name          Crypter                Decrypter              binary
-
 -
-
 266  Viewer programs for ...
-
 + 267
-
 # window width
-
 0    48
-
 1    Fido Options
-
 2    Int. dial prefix ~
-
 3    Nat. dial prefix ~
-
 4    Your dialing code~
-
 5    Point lists~
-
 6    Point diffs~
-
 7    Import nodelist updates automatically
-
 # length of field "standard echomail recipient" (maximum: 20)
-
 8    13
-
 9    Standard echomail recipient~
-
 10   Delete empty messages
-
 11   4D point list
-
 12   Automatic TIC file processing
-
 13   Hold requests if files are missing
-
 14   Automatic node list indexing
-
 15   Delete Via lines
-
 + 268
-
 1    PM size limits / bytes
-
 2    net
-
 3    local
-
 + 269
-
 1    German ISDN/CAPI Configuration (1TR6/X.75 only)
-
 2    CAPI Interrupt~
-
 3    EAZ~
-
 10   not installed
-
 + 270
-
 0    34
-
 1    Terminal settings
-
 2    COM port  ~
-
 3    Speed     ~
-
 4    bps
-
 5    Modem init~
-
 6    Zmodem AutoDownload
-
 7    Zmodem AutoUpload
-
 8    Status line
-
 + 271
-
 0    49
-
 1    PGP settings
-
 2    ZCONNECT: PGP support
-
 3    Batch mode
-
 4    Wait for key after PGP call
-
 5    Automatic key import from Mails
-
 6    Automatic key import from News
-
 7    User ID~
-
 8    Log file for automatic actions
-
 9    Sign all messages
-
 10   Use PGP for RFC/UUCP
-
 11   Use PGP for Fido (not allowed in FidoNet!)
-
 + 272
-
 # 06.02.2000 MH: RFC: X-Priority: 1, 2, 3, 4, 5
-
 0    30
-
 1    Highest
-
 2    High
-
 3    Normal
-
 4    Low
-
 5    Lowest
-
 6    None
-
 7    Send-Priority
-
 8    Priority ~
-
 9    Highest˘High˘Normal˘Low˘Lowest˘None
-
 -
-
-
 
 # --- XP3 -------------------------------------------------------------
 
-
-
 # internal messagebase file errors
-
 300  ; wrong size field
-
 301  ; messagebase file missing
-
 302  ; wrong file address index
-
 303  message is bad  (messagebase file~
-
 304  messagebase file no %s is bad!
-
 305  messagebase file %s not found!
-
 306  Error reading from messagebase file %s
-
 307  Error writing in file
 
-
-
 # XP3O
-
 320  Rereading group dates...     %
-
 321  ~done.~~
-
 + 322
-
 1    Move messages to other newsgroup
-
 2    Source
-
 3    Destinat.~~
-
 4    Change message header?
-
 5    Working ...
-
 6    Newsgroup does not exist
-
 -
-
 + 323
-
 1    Move messages to other mailgroup
-
 2    from User
-
 3    to User~~~~
-
 4    User not found
-
 5    Working ...
-
 -
-
 + 324
-
 1    Extract messages
-
 2    Extract newsgroup messages
-
 3    Extract %s marked messages
-
 4    Extract reply tree
-
 5    wrong file or path name
-
 6    extracting message...
-
 7    done.~~
-
 -
-
 325  Delete all displayed messages in this newsgroup
-
 326  Delete all displayed messages
-
 327  Message list
-
 328  ~No    Bytes Type Date     From                      Subject
-
 329  Working on message:
-
 + 330
-
 1    Read message packet
-
 2    Receipt date = date of creation
-
 3    Take server from path line
-
 4    Send receipts on request
-
 5    Mark messages as "read"
-
 -
-
 331  Testing messages...
-
 332  Linking references...
-
 333  Reading message packet
-
 334  empty file
-
 335  Copying file...
-
 + 336
-
 1    WARNING !
-
 2    Bad message packet: ~
-
 3    Disk full.
-
 4    Messages were NOT imported!
-
 5    File was moved to subdirectory BAD.
-
 6    Bad message packed was moved to subdirectory BAD.
-
 8    Netcall packet was not imported:~
-
 -
-
 + 337
-
 1    Receipt by
-
 2    Automatic receipt by
-
 3    Received message:
-
 4    Newsgroup: ~
-
 5    Message-ID:~
-
 6    Date:      ~
-
 7    Size:       %s Bytes
-
 8    Path:      ~
-
 -
-
 338  Testing message packet...     ~
-
 339  Building newsgroup index...     %
-
 340  Rebuilding newsgroup index ...     %
-
 341  Cancelling messages ...~
-
 342  Form feed after each message
-
 343  <no subject>
 
-
-
 # XP3EX
-
 360  decoding message...     %
-
 + 361
-
 1    ~ (internal CrossPoint Newsgroup)
-
 2    To:       ~
-
 3    Followup: ~
-
 4    Copy:     ~
-
 5    Subject:  ~
-
 6    From:     ~
-
 7    Path:     ~
-
 8    MessageID:~
-
 9    Date:     ~
-
 10   received:~
-
 11   Size:      %s Bytes
-
 12   File:     ~
-
 13   PM Status:~
-
 14   Error!    ~
-
 15   ~         ~
-
 16   Orig. To: ~
-
 17   Forwarder:~
-
 18   Orig.From:~
-
 19   Reference:~
-
 20   Software: ~
-
 21   Status:   ~
-
 22   Keywords: ~
-
 23   Summary:  ~
-
 24   Organiz.: ~
-
 25   Address:  ~
-
 26   Phone:    ~
-
 27   Reply to: ~
-
 28   CC:       ~
-
 29   PGP staus:~
-
 30   Fido To:  ~
-
 31   Distrib.: ~
-
 32   Homepage: ~
-
 35   Priority: ~
-
 48   private mail
-
 50
-
 51   voice
-
 52   fax
-
 53   BBS
-
 54   pager
-
 55   answering machine
-
 60   (unregistered)
-
 -
-
 # first 6 chars of 361.6:
-
 362  From ~
-
 + 363
-
 1    , Receipt Request
-
 2    , IsReceipt
-
 3    , Control-Message
-
 4    , pulblic key available
-
 5    , mesage contains public key
-
 6    , key request
-
 7    , signature o.k.
-
 8    , invalid siganture!
-
 9    , message has signature
-
 -
-
-
-
 
 
 # --- XP4 -------------------------------------------------------------
 
-
-
 400  all       ~
-
 401  unread    ~
-
 402  new       ~
-
 403  from~
-
 404  quote %s marked messages
-
 405  invalid address:~
-
 406  That's a binary message! Do you really want to quote it
-
 407  Move message to archive
-
 # Quit
-
 408  Do you really want to quit
-
 409  no newsgroups
-
 410  no users in address book
-
 411  no users
-
 412  no messages
-
 413  no entries here
-
 # /M/Seek
-
 414  Text
-
 415  Subject
-
 416  User
-
 417  Special
-
 418  Delete user group %s
-
 419  A maximum of %s messages may be marked at the same time!
-
 420  A maximum of %s Users/Newsgroups may be marked at the same time!
-
 421  ~%s marked messages
-
 422  ~References of "%s"
-
 423  unread messages
-
 424  messages since last netcall
-
 425  messages since %s
-
 426  ~Select archive newsgroup:
-
 427  ~Select destionation newsgroup
-
 428  ~Select recipient
-
 429  Record no:~
-
 430  Show file contents
-
 431  The Sender wants a mail reply - do you really want to post it
-
 432  Finding next marked user ...
-
 433  Show comment
-
 #
-
 435  no newsgroups with new messages
-
 436  no newsgroups with unread messages
-
 437  MessageID
 
-
-
 # XP4O
-
 + 441
-
 1    Search %s
-
 2    Search for ~
-
 3    Options    ~
-
 4    Newsgr.~
-
 5    Search for:  ~
-
 6    Sender   ~
-
 7    Subject  ~
-
 8    Text     ~
-
 9    Fido-To  ~
-
 10   from Date~
-
 11   to Date  ~
-
 12   Type     ~
-
 13   Status   ~
-
 14   Newsgroups
-
 15   Options  ~
-
 16   Search:        found:
-
 17   No newsgroups selected
-
 18   No messages found
-
 19   from~
-
 20   to  ~
-
 -
-
 + 442
-
 0    All
-
 1    Net
-
 2    User
-
 3    marked
-
 4    selected
-
 10   All
-
 11   hold
-
 12   delete
-
 13   h. or d.
-
 14   unread
-
 15   read
-
 20   All
-
 21   Text
-
 22   Binary
-
 23   FAttach
-
 24   Multipart
-
-25   Find MID-Parts 
-
+25   Find MID-Parts
 -
-
 443  One moment please...     %
-
 444  no pending messages found
-
 + 445
-
 1    User
-
 2    Newsgroups
-
 3    Ask before deleting users
-
 4    Ask before deleting newsgroups
-
 5    Ask before deleting users from address book
-
 6    deleted:
-
 7    User ..... :
-
 # ?? ausgetragen:
-
 8    deleted .. :
-
 9    delete %s from address book
-
 10   delete %s
-
 -
-
 446  Stop reorganization
-
 447  Stop
-
 + 448
-
 1    Messagebase Reorganization
-
 2    Nessagebase Test
-
 3    Messagebase Statistics
-
 # die LÑnge von Feld Nr. 4 bestimmt die Fensterbreite:
-
 4    messages :
-
 5    deleted  :
-
 6    bad      :
-
 7    no bad messages found
-
 -
-
 449  Stop at the end of file
-
 450  ~Stop at the end of file.
-
 + 451
-
 1   Reorganization
-
 2   File No %s
-
 3   ~- not enough disk space!
-
 4   not enough disk space to pack messagebase file no %s
-
 5   ~- packing ...     %
-
 6   One moment please...     %
-
 7   nothing to delete
-
 -
-
 452  new receive date:
-
 # 453 und 455 sind MenÅpunkte aus /Nachricht/Unversandt
-
 453  Change
-
 454  new Subject:
-
 455  Edit
-
 + 456
-
 1    Read newsgroup list
-
 2    File not found
-
 3    Creating newsgroups ...
-
 11   Read user list
-
 12   User in Adre·buch eintragen
-
 13   Create user newsgroups
-
 -
-
 + 457
-
 1    Create user list
-
 2    Create newsgroup list
-
 3    invalid file name
-
 4    Export comments, too
-
 5    creating user list...     %
-
 6    creating newsgroup list...     %
-
 -
-
 458  No unsent messages.
-
 + 459
-
 1    ~ (Text)
-
 2    ~ (binary)
-
 3    To        :
-
 4    Fido-to   :
-
 5    Subject   :
-
 6    Sender    :
-
 7    Realname  :
-
 8    Organizat.:
-
 9    Reply to  :
-
 10   Date code :
-
 11   Path      :
-
 12   ~         ~
-
 13   MessageID :
-
 14   Reference :
-
 15   PM Status :
-
 16   Type      :
-
 17   Mailer    :
-
 18   File      :
-
 19   Size      :
-
 20   ~Bytes
-
 21   Comment   :
-
 22   Attributes:
-
 23   Message header
-
 24   ZConnect format
-
 25   Z-Netz format
-
 26   Size of header:~
-
 27   Receive date:~
-
 28   MBase file  :~
-
 29   Press any key~
-
 30   Crossposting list
-
 31   Reference list
-
 -
-
 460  Message header
-
 461  %s already exists. Overwrite
-
 462  Extract
-
 463  Destination directory:~
-
 464  ~File name       OrgSize   CompSize     %    Method     Date      Time
-
 465  Archive or text file
-
 + 466
-
 1    Copying message file...
-
 2    DupeKill
-
 3    Total messages:
-
 4    ~    processed:
-
 5    ~      deleted:
-
 6    DupeKill started on~
-
 7    ~at~
-
 -
-
 + 467
-
 1    User-(mark)-Search
-
 2    Search for:
-
 3    Searching     %        found..:
-
 4    no matching users found
-
 -
-
 468  Newsgroup index no
-
 469  Type of net: ~
-
 470  Delete message
-
 471  ~(will break reference link)
-
 472  Linking references ...     %
-
 473  ~done.~~
-
 474  Reading Message-IDs ...     %
-
 475  Reading reply tree...
-
 + 476
-
 1    Original sender:   ~
-
 2    Forwarding user:   ~
-
 3    Original recipient:~
-
 4    Select recipient ...
-
 5    Sender         :   ~
-
 6    Forward address:   ~
-
 7    Reply-To-recipient:~
-
 -
-
-
-
 
 
 # --- XP5 -------------------------------------------------------------
 
-
-
 # /XPoint/Statistics/Memory
 
-
-
 + 500
-
 1   Memory usage
-
 2   Total
-
 3   CrossPoint
-
 4   Free
-
 6   Available
-
 7   ~version
-
 8   Drive
-
 9   Press any key
-
 10  Key
-
 11  ~  > 2 GB
-
 -
-
 + 501
-
 1   Mo  Tu  We  Th  Fr  Sa~~
-
 2   Su
-
 3   ~   Calendar
-
 -
-
 + 502
-
 1   Database
-
 2   File          Records      Usage         Bytes
-
 -
-
 503  Screenshot
-
 504  Password is being saved.
-
 505  ~Password is deleted.~
-
 506  Old~
-
 507  Main password
-
 508  Start password
-
 509  Password
-
 + 510
-
 1    Which password do you want to change?
-
 2    ~^Main password , ^Start password~
-
 3    new~
-
 4    Delete %s
-
 5    Repeat %s
-
 6    Different input
-
 19   65
-
 20   WARNING!
-
 21   3
-
 22   If you enter a new password, please note this password at
-
 23   a safe place! If you forget it, you will have to re-install
-
 24   CrossPoint!
-
 -
-
-
 
 + 520
-
 # number of lines
-
 0    8
-
 1    Thank you for using CrossPoint.  Please note that  CrossPoint is
-
 2    NOT free software. It is shareware and you must register after a
-
 3    30-day evaluation period. For further information including pri-
-
 4    ces and a registration form read the file *BESTELL.DOC*.
-
 5
-
 6    If you have any questions, problems or suggestions concerning XP
-
 7    feel free to contact the CrossPoint support hotline.  E-Mail ad-
-
 8    dresses are listed in *XPOINT.TXT*.
-
 19   License No:~
-
 #
-
 20   Choose "Continue" if you agree to these terms of license.
-
 21
-
 26   You have been using XP unregistered for more than %s months!
-
 30   ~^BESTELL.DOC , ^Enter Key , ^Continue , ^Quit~
-
 32   ~^RESTELL.DOC , ^Enter Key~
-
 40   BESTELL.DOC
-
 41   %s not found!
-
 # same key for printing as in 22.5:
-
 42   D=Print    <Esc>=End~
-
 99   N
 
-
-
 + 521
-
 1    You are registered already. Would you like to delete the reg. key
-
 2    Registration key:~
-
 3    Changed your mind?
-
 4    Oops... I guess that wasn't a XP registration key.
-
 5    The registration key has been saved. Cross-
-
 6    Point will quit now and must be restarted
-
 7    to have registation taking effect.
-
 8    Key was deleted.
-
 -
-
-
 
 + 530
-
 # Zeilenanzahl
-
 0    13
-
-1    This is a Beta-Version of Crosspoint, created by the OpenXP-       
-
+1    This is a Beta-Version of Crosspoint, created by the OpenXP-
 2    Development-Team. Please notice, that there are surely still bugs
-
 3    in this betaVersion, which could damage your database
-
 4    or cause trouble if you use this XP-Version in public.
-
 5    If you use this version, you are fully responsible for all damage,
-
 6    you may cause with it. If you don't agree with this terms,
-
-7    please use a official release-version of Crosspoint. 
-
+7    please use a official release-version of Crosspoint.
 8    If you have questions or suggestions to the project,
-
 9    please apply to the XP-support-forums, esp. the usenet-newsgroup
-
-10   de.comm.software.crosspoint and the official OpenXP Homepage 
-
+10   de.comm.software.crosspoint and the official OpenXP Homepage
 11   http://www.openxp.de.
-
 12
-
 13  Choose "Continue", to work with this betaversion.
-
 30   ~^Continue , ^Cancel~
-
 -
-
 # --- XP6 -------------------------------------------------------------
 
-
-
 # Don't use any non-7bit characters in the following line:
-
 600  ## Original recipient:
-
 + 601
-
 # Crypting
-
 1    %s possible
-
 2    no password
-
 3    not possible
-
 4    maybe QPC possible
-
 -
-
 # CC's
-
 602  none
-
 + 603
-
 1    Special..  ~
-
 2    Send..     ~
-
 3    Change..   ~
-
 -
-
 + 604
-
 # Flags im Sendefenster
-
 1    withoutSig~
-
 2    RecConf~
-
 3    delete~
-
 4    (MausNet)~
-
 5    (lokal)~
-
 6    direct-mail~
-
 7    direct~
-
 8    express-mail~
-
 9    express~
-
 10   PGP-Key~
-
 11   PGP-Sig~
-
 12   PGP-Req~
-
 13   BCC~
-
 14   Highest
-
 15   High~
-
 16   Normal~
-
 17   Low~
-
 18   Lowest~
-
 -
-
 605  Crypting message...     %
-
 + 606
-
 0    Note
-
 # Number of lines:
-
 1    4
-
 2    Your message contains %s% of quoted Text.
-
 3    Long quoted passages are annoying and cause
-
 4    unnecessary costs for all nodes in the net.
-
 5    Do you really want to send THIS message?
-
 6    ~^Yes ,  ^No ~
-
 # key for reediting text:
-
 7    T
-
 -
-
 607  send on~
-
 608  Saving message...
-
 + 609
-
 # Address errors:
-
 1    "@" is missing!
-
 2    Warnung: Space in address! Send it, anyway
-
 3    .ZER is missing! Send it, anyway
-
 4    Fido net number is missing!
-
 5    Domain is missing!
-
 6    Illegal address: %s
-
 7    Invalid control characters in user address!
-
 -
-
 + 610
-
 1    Saving message
-
 2    Parking message
-
 3    Sending message
-
 4    Saving message in~
-
 5    Sending message to~
-
 -
-
 + 611
-
 1    Private message
-
 2    Internal message
-
 3    Public message
-
 4    ~(quote)
-
 5    ~(binary)
-
 # Subject winwow
-
 6    To       ~
-
 7    Subject ~
-
 8    Fido-to ~
-
 # Send window
-
 10   To       ~
-
 11   Fido-to
-
 12   Subject
-
 13   Server
-
 14   Size
-
 15   Code:
-
 16   Copies:
-
 20   P^ark,^Date,R^ecConf,^withoutSig,de^lete,C^rash,P^GP,^Back
-
 21   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^MausNet,^Lokal,^Back
-
 22   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
-
 23   P^ark,^Date,R^ecConf,^w/o Sig,de^lete,P^rio,^More,P^GP,^Back
-
 24   P^ark,^Date,R^ecConf,^withoutSig,de^lete,^Back
-
 25   YNI˘SVOT
-
 28   ^Yes,^No,^Internal,S^pecial,˘4To^:,^Subj.,Ser^ver,C^ode
-
 29   ,^Text
-
 30   ADEWLR˘LMG
-
 # Editor Header
-
 40   Message to ~
-
 41   Message in ~
-
 42   Subject:   ~
-
 43   ~ to ~
-
 # PGP key
-
 50   G
-
 + 612
-
 1    Message limit exceeded by %s Bytes! Send message, anyway
-
 2    Sent binary file
-
 3    File name: %s
-
 4    Size     : %s Bytes
-
 -
-
 613  Send binary file
-
 614  Send text file
-
 615  Start crash netcall
-
 + 616
-
 # Width of window
-
 0    60
-
 1    Followup to ~
-
 2    Keywords    ~
-
 3    Summary     ~
-
 4    Distribution~
-
 5    Reply to    ~
-
 6    Additional information
-
 -
-
 617  Subject changed - keep reference
-
 618  Send message without subject
-
 619  was
-
 620  Checking for crosspostings ...
-
 621  Origin file not found (%s)
-
 622  No function in this net
 
-
-
 # XP6.INC
-
 640  Rebuilding message packet...
-
 + 641
-
 1    ## Archived message on %s
-
 2    ## Origin
-
 3    ## Creator:~
-
 -
-
 642  Message is being archived...
-
 + 643
-
 1   Forward %s marked messages
-
 2   Forward 1 marked message
-
 3   Archive %s marked messages
-
 4   Archive 1 marked message
-
 + 644
-
 1   Forward to ...
-
 2   ~^Newsgroup , ^User , ^Direct~
-
 3   PM is being archived ...
-
 4   Archiving PMs ...
-
 5   Archive all marked PMs
-
 6   Archive message of %s
-
 7   Archiving message ...
-
 + 645
-
 0   28
-
 1   PGP Options
-
 2   Sign message
-
 3   Request public key
-
 4   send own key
-
 -
-
-
-
 
 
 # --- XP7 -------------------------------------------------------------
 
-
-
 + 700
-
 1    Phone charges~
-
 3    Net transfer
-
 4    Netcall
-
 # Datum
-
 5    ~of~
-
 # Zeit
-
 6    ~at~
-
 # Netztransfer-Box
-
 7    ~to~
-
 # Netzanruf-Box
-
 8    ~to~
-
 9    Output packet : %s Bytes
-
 10   Input packet  : %s Bytes
-
 11   == Netcall was aborted! ==
-
 12   Dial start   :~
-
 13   Dials        :~
-
 14   Connection   :~
-
 15   Connect .... :~
-
 16   Connect time :~
-
 17   Send packet    :
-
 18   Login time   :~
-
 19   Packed packet  :
-
 20   Waiting time :~
-
 21   Received packet:
-
 22   BiModem time :~
-
 23   Send time    :~
-
 24   Unpacked packet:
-
 25   Receive time :~
-
 26   Hangup time  :~
-
 27   Send rate      :
-
 28   ~cps
-
 29   ---------------------
-
 30   Receive rate   :
-
 31   Total time   :~
-
 32   Average        :
-
 33   incoming messages:
-
 34   outgoing messages:
-
 35   -------------------- MausTausch-Logfile --------------------
-
 36   ----------------------- Fido Logfile -----------------------
-
 37   Direct call to~
-
 38   ~(error)
-
 39   UUCP init    :~
-
 40   ----------------------- Fido Logfile -----------------------
-
 41   -------------------------- Logfile -------------------------
-
 42   additional outgoing messages:
-
 -
-
 701  Netcalls not allowed between %s and %s!
-
 # wrong server config
-
 702  ~- please check server config
-
 + 703
-
 1    Initializing modem...
-
 2    Netcall to~
-
 3    Calling~
-
 4    ~at~
-
 5    no Connection
-
 6    Waiting for next netcall...~
-
 7    Waiting for next call...~
-
 + 704
-
 1    Automatic Netcall at~
-
 2
-
 3    To ~
-
 4    Netcall to~
-
 5    ~at~
-
 6    Time left:~~
-
 + 705
-
 # Fido-Crash
-
 1    other
-
 2    all
-
 3    Crash call...
-
 4    Node/Name~
-
 5    marked
-
 + 706
-
 1    no input packet file name
-
 2    no output packet file name
-
 3    incomplete point data
-
 4    incomplete packer settings
-
 5    no uploader setting
-
 6    unpacker not found
-
 -
-
 707 <broken in>
-
 708 Break
-
 + 709
-
 1    busy
-
 2    voice?!
-
 3    no dial tone
-
 4    no dial tone
-
 5    no answer
-
 -
-
 710  Node name...
-
 711  Password...
-
 712  Incoming call detected!      <Enter>=continue, <Esc>=stop
-
 + 713
-
 1    Error - %s renamed to %s
-
 2    Error renaming file :-(
-
 3    Netcall stopped; CALLED could not be renamed!?
-
 4    Netcall stopped; renamed CALLED to %s
-
 5    Netcall stopped; incomplete packed moved to directory BAD.
-
 -
-
 714  Server is unpacking messages...~
-
 715  Server is packing messages...~
-
 716  %s: Netall to %s at %s
-
 717  Temporary fido mailer config file
-
 718  Temporary uucico config file
-
 719  uucico call
-
 720  Turbo-Box Mailer
-
 721  Temporary fido config file
-
 + 722
-
 1    Destination directory: ~
-
 2    requested file                  got file               size
-
 3    total
-
 4    ~file(s)
-
 5    UUCP file request / file transfer
-
 6    * file not found *
-
 -
-
 723  Merging JANUS buffer files:
-
 724  disk full - file will be moved to BAD directory
-
 725  Unknown fido node: %s. Delete request
-
 + 726
-
 0    35
-
 1    %s already exists
-
 2    ~^Replace , ^Append~
-
 -
-
 727  Phone fee zone:~
-
-
-
 
 
 # --- XP8 -------------------------------------------------------------
 
-
-
 + 800
-
 1    Dear system administrator,
-
 2    Newsgroups
-
 3    Newsgroups
-
 4    I would like to unsubscribe the %s listed below.
-
 5    I would like to subscribe the %s listed below.
-
 6    virtual greetings from
-
 -
-
 801  Loading Newsgroup list for %s...
-
 802  ~ ^Yes  ,  ^No  , ^List~
-
 803  Unsubscribe %s marked newsgroups
-
 804  Unsubscribe %s
-
 805  Are you sure that this is a newsgroup list
-
 806  Newsgroup list for %s is being copied ...
-
 + 807
-
 1    Newsgroup
-
 2    Newsgroups
-
 # subscribe number of newsgroups at server
-
 3    Subscribe %s %s at %s
-
 4    Unsubscribe %s %s at %s
-
 5    Create %s %s
-
 6    Request contents of the selected newsgroups
-
 10   Creating newsgroups ...
-
 -
-
 # MAPS-Befehl INFO
-
 808  Info <System>
-
 809  System name
-
 + 810
-
 0    Message to~
-
 1    Help for all MAPS commands
-
 2    Help for one command
-
 3    List of commands
-
 4    Request newsgroup contents list
-
 5    Info about your own system
-
 6    Info about all systems
-
 7    Info about one system
-
 8    User, newsgroup and system list
-
 9    Newsgroup list
-
 10   System list
-
 11   User list
-
 12   Subscribed newsgroups
-
 13   Unsubscribed newsgroups
-
 14   Clear your BBS mailbox contents
-
 15   Determine MAPS version
-
 16   Subscribe newsgroups
-
 17   Unsubscribe newsgroups
-
 18   Get your user status
-
 20   Verbose list
-
 # Fido Areafix
-
 40   Liste of available echos
-
 41   List of subscribed echos
-
 42   List of unsubscribed echos
-
 43   Help for Areafix commands
-
 44   Request echo contents
-
 # Alphanet 2000 AREAFIX
-
 50   Help for AREAFIX commands
-
 51   List of newsgroups
-
 # Edgar REQUEST
-
 55   Help for REQUEST commands
-
 56   List of newsgroups
-
 57   List of unsubscribed newsgroups
-
 # changesys / gup
-
 60   get newsgroup list
-
 61   changesys instructions
-
 62   get sysfile entry
-
 63   resend last sysfile entry
-
 70   gup instructions
-
 71   list of subscribed newsgroups
-
 72   list of available newsgroups
-
 75   AutoSys instructions
-
 76   query newsgroup access rights
-
 77   traffic statistics
-
 80   feeder instructions
-
 81   suspend all newsgroups
-
 82   resume all newsgroups
-
 -
-
 811  Are you sure that this is a file list
-
 812  Fileserver list
-
 813  Readinf file list for %s...
-
 + 814
-
 1    File
-
 2    Files
-
 # Request number of files at fileserver
-
 3    request %s %s at %s
-
 -
-
 815  Service Command
-
 816  Command:~
-
 817  Delete %s
-
 + 818
-
 0    66
-
 1    Send file to UUCP system
-
 2    Source file     ~
-
 3    Destination file~
-
 10   59
-
 11   UUCP File Request
-
 12   Files ~
-
 -
-
 819  Start netcall at once
-
 820  Reading sysfile entry ...
-
 821  Import newsgroup list
-
 822  Import file-area list
-
-
 
 # XP8.INC
 
-
-
 850  Reading file echo list for %s ...
-
 + 851
-
 # Window width
-
 0    50
-
 1    Message to %s
-
 # number of commands
-
 2    11
-
 3    LIST         List of all available file areas
-
 4    QUERY        List of all subscribed file areas
-
 5    UNLINKED     List of all unsubscribed file areas
-
 6    PAUSE        Stop file transfer
-
 7    RESUME       Restart file transfer
-
 8    HELP         Get help
-
 9    PWD          Change password
-
 10   INFO         Get status information
-
 11   STATUS       Get status information
-
 12   NOTIFY ON    Subscribe monthly file list
-
 13   NOTIFY OFF   Unsubscribe monthly file list
-
 20   New FileScan password:~
-
 + 852
-
 1    Subescibe file area %s
-
 2    Subscribe %s marked file areas
-
 3    Unsubscribe file area %s
-
 4    Unsubscribe %s marked file areas
-
 5    Unsubscribe file area %s?
-
 6    Unsubscribe all marked file areas?
-
 7    ~^Yes ,  ^No  , ^List~
-
 -
-
-
-
 
 
 # --- XP9 -------------------------------------------------------------
 
-
-
 900  Directory not found. Create it
-
 + 901
-
 # window width
-
 0    51
-
 1    Edit Group
-
 2    Create new group
-
 3    Name    ~
-
 4    Name
-
 5    Limit   ~
-
 6    Hold:   ~
-
 7    Days
-
 8    Spec.chr.
-
 9    ~       Head~
-
 10   ~      Quote~
-
 11   ~  Signature~
-
 15   Default
-
 16   Re^n:
-
 17   Re:
-
 18   none
-
 20   Replies ~
-
 + 902
-
 1    Fido settings
-
 2    Origin~
-
 3    Address
-
 + 903
-
 # window width
-
 0    48
-
 1    Edit systems
-
 2    Append new system
-
 3    System name
-
 4    Comment   ~
-
 5    Fileserver~
-
 6    Password  ~
-
 7    Index file~
-
 8    Converter ~
-
 -
-
 904  Delete %s
-
 + 905
-
 # window width
-
 0    54
-
 1    Edit short name
-
 2    Append new short name
-
 3    Short name ~
-
 4    Nwsgrp./User
-
 5    Server     ~
-
 -
-
 906  Delete "%s"
-
 # Servers
-
 907  ~^New , ^Delete , ^Select , ^Edit , Net ^type , ^OK~
-
 # Groups
-
 908  ~^New , ^Delete , ^Edit , ^Fido , ^OK~
-
 # Systems, Short names
-
 909  ~^New , ^Delete , ^Edit , ^OK~
-
 910  user name:~
-
 + 911
-
 # Window width
-
 0    52
-
 1    Please enter the name of your server system,
-
 2    the type of net and your user name:
-
 3    Type of net~
-
 4    Server name~
-
 5    User name  ~
-
 + 912
-
 0    49
-
 1    Node number~
-
 2    Server name~
-
 3    User name  ~
-
 4    Origin     ~
-
 5    Server name~
-
 6    Comment    ~
-
 7    News manager
-
 8    Real name  ~
-
 9    Domain     ~
-
 10   Server dom.~
-
 11   FQDN       ~
-
 + 913
-
 0    30
-
 1    Type of net~
-
 -
-
 914  New server
-
 915  Create new server entry (Type: %s)
-
 916  Poll data exist!!~
-
 917  Do you really want to delete %s
-
 918  ^Primary server,Primary ^Fido server
-
 + 920
-
 # Maus Password
-
 1    Password~
-
 # Fido
-
 2    Point number
-
 3    Point net  ~
-
 # Turbobox-PW
-
 4    Password
-
 # Pronet
-
 5    Phone  ~
-
 6    Password
-
 7    Point no ~
-
 #
-
 10   Point name
-
 11   Password ~
-
 12   Phone ~
-
 13   Ser.No.
-
 # QM
-
 14   Login ~
-
 # Fido
-
 15   Passwd.
-
 # UUCP
-
 16   Login ~
-
 #
-
 20   Upload protocol  ~
-
 21   Download protocol~
-
 22   Protocol type    ~
-
 23   Upload packer    ~
-
 24   Download unpacker~
-
 25   Uncompress       ~
-
 26   Unfreeze         ~
-
 27   GNU-unzipper     ~
-
 28   Zmodem options   ~
-
 # UUCP
-
 30   max. UUCP-g packet size ~
-
 31   max. UUCP-g window size    ~
-
 32   variable UUCP-g packet size
-
 60   force send packet size
-
 61   7/E/1 login
-
 33   G protocol
-
 34   g protocol
-
 35   Size negotiation
-
 36   Batched SMTP
-
 37   z protocol
-
 38   f protocol
-
 39   e protocol
-
 #
-
 40   UpPack extension ~
-
 41   DownPack ext.~
-
 # Pronet
-
 42   Downpack extension
-
 # ZConnect
-
 43   UpPack extension ~
-
 44   Janus Plus
-
 # Fido
-
 45   AKA's~
-
 46   4D addresses
-
 47   TosScan
-
 48   Set system clock
-
 49   Packet password
-
 50   Use node address
-
 51   Send empty packet
-
 52   Ext. packet names
-
 53   Send packets for ~
-
 # Turbo
-
 55   Get news
-
 56   Serial no
-
 + 921
-
 0    59
-
 1    Wait for connection ~
-
 2    Wait for login      ~
-
 3    Dial pause          ~
-
 4    max. dialing attempts
-
 5    Login attempts ~
-
 6    Wait for data  ~
-
 7    max. connects  ~
-
 8    min. cps rate  ~
-
 9    Modem init~
-
 10   Interface ~
-
 11   ~      Speed:
-
 12   baud
-
 + 922
-
 0    43
-
 1    Phone fee zone~
-
 5    Connect time: ~
-
 6    sec.
-
 + 923
-
 # Window width of fido and UUCP sysp-mode
-
 0    59
-
 # Window with of other sysop-modes
-
 1    57
-
 2    Sysop Mode
-
 3    Input directory ~
-
 4    Output directory~
-
 5    Input file  ~
-
 6    Output file ~
-
 7    /ØNetcall report
-
 8    Name without @BOX
-
 9    Pack output data
-
 # Position of 923.8
-
 10   31
-
 # QWK
-
 12   Input packets  ~
-
 13   Ouput directory~
-
 14   Transfer
-
 #
-
 20   Start program
-
 21   End program ~
-
 + 924
-
 0    58
-
 1    Miscellaneous Options
-
 2    Online Call
-
 3    Password
-
 4    Logfile~
-
 5    Netcall
-
 6    from
-
 7    to
-
 8    Filter
-
 9    Input  ~
-
 10   Output ~
-
 11   Misc.
-
 12   /Netcall/All
-
 13   Script ~
-
 14   Exclude
-
 15   times
-
 16   Reply servers
-
 17   for News  ~
-
 18   for Mails ~
-
 + 925
-
 1    Net Options
-
 2    Message IDs
-
 3    Alias point
-
 4    LightNET login
-
 5    Net name~
-
 6    Newsgrps.
-
 7    Sender User@Point.ZER
-
 8    Reply to ~
-
 9    newsgroup manager~
-
 10   ... passsword    ~
-
 11   sysfile subject  ~
-
 12   Sender User@Point.domain
-
 13   Sender User@Server.domain
-
 + 926
-
 0    42
-
 1    Fido Options
-
 2    Areafix
-
 3    Name      ~
-
 4    Password  ~
-
 5    "+" for area requests
-
 6    Commands as Subject
-
 7    Misc.
-
 8    Newsgroups~
-
 9    FileScan
-
 10   Name      ~
-
 11   Password  ~
-
 12   d'Bridge Areafix
-
 + 927
-
 1    ^Point,^Modem,^Charges,
-
 2    ^Names,%sM^isc.
-
 3    ,^Sysop Mode
-
 #
-
 4    ,^Transfer
-
 + 929
-
 1    There is still a data packet for this box (%s.PP)
-
 2    - type of net cannot be changed. Please send or delete
-
 3    first the unsent messages for this box!
-
 4
-
 5    Do you really want to change the net type of %s
-
 -
-
 # *SETUSER
-
 930  New user name for %s ~
-
 931  New real name
-
 + 932
-
 1    Please note that Janus Plus needs other download protocol
-
 2    settings than Janus. For Janus Plus, the download file
-
 3    name ($DOWNFILE) must be specified, for Janus the down-
-
 4    load destination directory ($DOWNPATH).
-
 5
-
 6    You cannot use protocols for Janus Plus which do not
-
 7    support download destionation paths.
-
 + 933
-
 0    44
-
 1    QWK settings
-
 2    Newsgroups    ~
-
 3    Netmail type  ~
-
 4    Netmail echo  ~
-
 5    Privmail echo ~
-
 6    MessageID type~
-
 7    Header in message body
-
 8    delete QWK packets
-
 9    E-Mail echo   ~
-
 -
-
 934  (intern)
-
 + 935
-
 0    57
-
 1    Add viewer
-
 2    Change Viewer
-
 3    MIME-Type       ~
-
 4    File extension  ~
-
 5    Viewer-Program  ~
-
 -
-
-
-
 
 
 # --- XP10 ------------------------------------------------------------
 
-
-
 + 1000
-
 # Key macros
-
 0    NUMLAT
-
 1    All
-
 2    Newsgrps.
-
 3    Users
-
 4    Messages
-
 5    Lister
-
 6    ArcViewer
-
 7    Editor
-
 8    Terminal
-
 -
-
 1001 Timing list no~
-
 1002 Phone fee zones
-
 + 1003
-
 1    ~Number
-
 2    ~Numbers
-
 + 1004
-
 1    all
-
 2    Edit entry
-
 3    New entry
-
 4    Time from~~
-
 5    ~until~
-
 6    Date from ~
-
 7    until~
-
 8    Week days ~
-
 9    Action    ~
-
 -
-
 1005 Delete selected entry
-
 + 1006
-
 1    Create key macro
-
 2    Macro for~
-
 3    Comment  ~
-
 4    Key
-
 5    Macro
-
 6    delete
-
 7    Break
-
 8    ok
-
 + 1007
-
 1    Modify key macro
-
 2    Macro    ~
-
 3    Comment  ~
-
 -
-
 1008 Change key
-
 + 1009
-
 0    Macro valid for..
-
 1    Newsgrp. window
-
 2    Users window
-
 3    Message window
-
 4    Lister
-
 5    Archive Viewer
-
 6    Editor
-
 7    Terminal
-
 + 1010
-
 1    Zone~
-
 2    ~     The area code list is only
-
 3    ~     needed for direct Fido calls.
-
 10   Page ^1,Page ^2,Page ^3,Page ^4,Page ^5,Page ^6,Page ^7,Page ^8,Page ^9
-
 11   Page %s
-
 -
-
 # Timing lists, key macros, phone zones
-
 1011 ~^New , ^Delete , ^Edit , ^Active , ^Save , ^OK~
-
 1012 ~^New , ^Delete , ^Edit , ^Key , ^*** , ^Save , ^OK~
-
 1013 ~^New , ^Delete , ^Edit , ^Save , ^OK~
-
 1014 ~normal/cheap~
-
 1015 Discard changes
-
 + 1016
-
 1    Netcall to:
-
 2    -- no more tasls listed for current date --
-
 3    Netcall Automatics
-
 + 1017
-
 1    You haven't defined key macros for this window.
-
 2    Select macro ...
-
 3    No key macros defined
-
 + 1018
-
 # window with /config/display/header
-
 1    45
-
 2    ~^Insert , ^Move , ^Delete ,  ^OK ~
-
 3    add line:
-
 4    seperator
-
 5    Delete line '%s'
-
 6    Delete seperator
-
 + 1019
-
 1  ~^New , ^Edit , ^TextEdit , ^Delete , ^Info ,  ^OK ~
-
 2  37
-
 3  Delete node/point list entry?
-
 4  ~^Yes ,  ^No  , with ^File~
-
 10 Add new node or point list
-
 -
-
 1020 activate nodediff / pointdiff
-
 1021 phone fees
-
 + 1022
-
 1    Phone fee group
-
 2    MoTuWeThFrSaSuH1H2H3
-
 3    Page ^1,Page ^2,Page ^3,^Days
-
 4    from
-
 5    to
-
 6    page
-
 7    Scope of phone fee group %s
-
 8    Holiday
-
 # width of weekday window
-
 9    42
-
 # position of holiday coloumn
-
 10   24
-
 11   Delete phone fee group %s
-
 + 1023
-
 0    39
-
 1    Phone fee settings
-
 2    Fees for unsucessfull dial~
-
 3    Currency ~
-
 4    cFos phone fee calculation
-
 5    German holidays
-
 -
-
-
 
 # --- XPTERM ----------------------------------------------------------
 
-
-
 + 2000
-
 1    Help
-
 2    Settings
-
 -
-
 2001 opening logfile ...
-
 2002 closing logfile ...
-
 2003 Close logfile
-
 2004 hanging up
-
 2005 Mini Terminal - <Alt X> to quit
-
 2006 Connection closed - <Alt X> to quit
-
 2007 Upload
 
-
-
 + 2010
-
 0    Line %s:~
-
 1    '"' is missing
-
 2    Label "%s" already exists
-
 3    Max. %s labels are possible!
-
 4    unexpected end of line
-
 5    invalid ON function
-
 6    nested ON statements are not allowed
-
 7    text parameter expected
-
 8    invalid words at end of line
-
 9    ON or OFF expected
-
 10   ERROR or FAIL expected
-
 11   invalid delay parameterr (expected number > 0)
-
 12   numeric parameter expected
-
 13   Label is missing: %s
-
 14   invalid text macro: %s
-
 15   invalid command: %s
-
 16   invalid parameter: %s
-
 -
-
 + 2011
-
 1    Script protocol:
-
 2    End of script:
-
 3    *** Script error:
-
 4    CALL without RETURN
-
 5    Stack overflow (too many nested CALLs)
-
 6    RETURN without CALL
-
 -
-
-
-
 
 
 # --- XPFIDO ----------------------------------------------------------
 
-
-
 + 2100
-
 1    Get node infos (Esc to quit)
-
 2    BBS
-
 3    AKA    [                    ]
-
 4    Sysop
-
 5    Phone
-
 6    Flags
-
 7    Search
-
 8    File
-
 9    Status
-
 10   E-Mail
-
 -
-
 + 2101
-
 1    Building nodelist index
-
 2    File
-
 3    Net
-
 4    User
-
 5    Sorting net index ...
-
 6    Sorting user index ...
-
 7    Packing user index ...      %
-
 -
-
 2102 Nodelist configuration - see FIDO.TXT
-
 2103 Copying point list
-
 + 2104
-
 1    Shrink nodelist
-
 2    Zones/Regions~
-
 3    Restrictions deleted - reactivate complete NL if necessary
-
 4    invalid entry
-
 -
-
 2105 Delete file list
-
 2106 File Request
-
 2107 Node/Name~
-
 2108 Nodelist says: No requests at this BBS. Try requesting, anyway
-
 + 2109
-
 1    Box
-
 2    Phone
-
 3    Flags
-
 4    Status
-
 -
-
 2110 Loading file list ...
-
 2111 File Request
-
 + 2112
-
 1    Files~
-
 2    ~start at once
-
 3    Deleting request ...
-
 4    Saving request ...
-
 -
-
 2113 ~already exists - overwrite
-
 2114 disk full
-
 2115 Writing to list of file lists..
-
 2116 Directory of request file lists
-
 + 2117
-
 1    Read file list
-
 2    File not found
-
 3    File
-
 4    Node~~
-
 5    Error in archive file
-
 6    Copying file list..
-
 7    Error while copying
-
 8    Error renaming file
-
 9    delete %s
-
 10   Deleting %s ...
-
 -
-
 2118 Delete file list for %s
-
 2119 Deleting file list ...
-
 + 2120
-
 1    Disk write error
-
 2    No file lists
-
 3    Seek files
-
 4    Seek for~
-
 5    Ignore case
-
 6    Seeking ..
-
 7    File
-
 8    found
-
 9    Seeking for
-
 10   no request at multiple BBS' possible
-
 11   serach only whole words
-
 -
-
 2121 Error in nodelist index!
-
 2122 Copying point list
-
 2123 Discard selection
-
 2124 Are you sure that this is a point list
-
 2125 Copying nodelist
-
 + 2126
-
 0    69
-
 1    According to nodelist this BBS ist not online 24h/day. Please
-
 2    consider that file requests may be restricted to certain hours.
-
 3    For more information ask the BBS' SysOp!
-
 + 2127
-
 0    51
-
 1    Activate node/point list
-
 2    Configure node/point list
-
 5    List name      ~
-
 6    Number~
-
 7    Format of list ~
-
 8    Zone/Address   ~
-
 9    Update file    ~
-
 10   Update archive ~
-
 11   Process by     ~
-
 12   Diff update
-
 13   Delete update after processing
-
 + 2128
-
 1    Node list
-
 2    Points24 list
-
 3    PVT point list
-
 4    4D point list
-
 5    FD point list
-
 + 2129
-
 0    30
-
 1    Node/point list info
-
 2    File
-
 3    Bytes
-
 4    Entries
-
 + 2130
-
 1    Extracting %s
-
 2    Error while extracting
-
 3    %s: Wrong version of node/point list or diff
-
 4    Error while processing node/point diff
-
 5    Not enough disk space to copy %s.
-
 6    Error while copying %s.
-
 + 2131
-
 0    49
-
 1    Search Nodelist
-
 2    Sysop      ~
-
 3    Location   ~
-
 4    BBS name   ~
-
 5    Node address
-
 6    Phone      ~
-
 7    Fee zone   ~
-
 8    Flags      ~
-
 9    Search FidoNet node list
-
 10   Search other node lists
-
 11   Search point lists
-
 20   File:
-
 21   Net:
-
 22   Entries:
-
 23   found:
-
 30   Sysop
-
 31   ~Node list
-
 32   Flags
-
 33   Point
-
 34   Point list
-
 35   Status
-
 -
-
 2132 ~^Mail , ^Request , ^Info , ^Abort~
-
-
-
 
 
 # --- XPAUTO, XPCC ----------------------------------------------------
 
-
-
 + 2200
-
 1    AutoExec error:~
-
 2    Missing Destination address
-
 3    No Subject
-
 4    Unknown server system: %s
-
 5    File "%s" not found
-
 6    File Attaches must be sent as PM!
-
 7    Path name too long for File Attach
-
 -
-
 2201 Send copies to:
-
 +2202
-
 1    unknown user
-
 2    unknown newsgroup
-
 3    add to list
-
 -
-
-
-
 
 
 # --- XP_UUE-----------------------------------------------------------
 
-
-
 2400 decoding message        / line        /         Bytes
-
 2402 Destination file
-
 2403 Decode %s marked messages
-
 2404 Warning: Order of decoded messages may not be correct!
-
 2405 Warnung: Error in line; decoded file may be corrupted.
 
 
-
-
-
 # XPIMPEXP
-
 2420 Convert/Import messages
-
 + 2421
-
 1    Message file ~
-
 2    Messages from~
-
 3    Receive date = date of creation
-
 4    Send receipts on request
-
 + 2422
-
 1    ZQWK.EXE not found!
-
 2    QWK packet:
-
 3    Newsgroup hierarchy ~
-
 4    ZQWK convesion error:~
-
 # ZQWK Errorlevels
-
 91   illegal call syntax, illegal parameter
-
 92   No messages found! (-ZQ)
-
 93   Config file not found (-ZQ)
-
 94   No packer / disk full / illegal QWK format
-
 95   No messages in QWK file! (-QZ)
-
 96   Unknown packer format (-QZ)
-
 97   Command interpreter not found
-
 98   Unknown DOS error
-
 99   No QWK file name specified (-QZ)
-
 101  Drive not ready
-
 102  Not enough disk space
-
 103  Not enough free main memory!
-
 104  Packer problem
-
 106  Output file creation error
-
 107  Error when writing to output file
-
 -
-
 # XPMIME
-
 + 2440
-
 1    Vorspann
-
 2    Nachspann
-
 3    Text
-
 4    Grafik
-
 5    Video
-
 6    Ton
-
 7    File
-
 9    Message-Part ƒƒƒƒƒƒƒƒƒƒ Lines ƒƒƒƒƒƒƒƒƒƒƒƒ Filename
-
 10   Whole Message
-
 -
-
 2441 Extract Message-Part
-
 2442 Decoding binary file ...
-
-2443 -files may contain viruses!
-2444 Start them with the external programm?
-
 
 # --- XPE -------------------------------------------------------------
 
-
-
 + 2500
-
 1    File was changed
-
 2    ~^Save , ^Don't save , ^Cancel~
-
 + 2501
-
 0    Note
-
 # Number of text lines:
-
 1    4
-
 2    The signature is larger than %s bytes. Large
-
 3    signatures cause unnecessary traffic and costs
-
 4    for all members of the net.
-
 5    Return to the editor?
-
 6    ~^Yes ,  ^No ~
-
 -
-
 2502 Edit Text
-
 + 2503
-
 # Row / Coloumn
-
 1    Row
-
 2    Col
-
 11   not enough free memory
-
 12   Paragraph exceeds size limit
-
 13   Error loading text
-
 14   Error saving text
-
 15   Error: file not found
-
 16   Text not found.
-
 20   Replace text (Yes/No/All/Esc)
-
 21   YNA
-
 22   ~ replacements
-
 23   Printing...
-
 # menu
-
 30   Block
-
 31   ^Copy        *
-
 32   C^ut         -
-
 33   ^Insert      +
-
 34   ^Read      ^KR
-
 35   R^ead UUE  ^KU
-
 36   ^Write     ^KW
-
 37   -
-
 38   ^Wrap off   F3
-
 39   W^rap on    F4
-
 40   -
-
 41   ^Options   ^OR
-
 -
-
 2504 Save block
-
 2505 Read block
-
 + 2506
-
 0    42
-
 1    Find
-
 2    Text ~
-
 3    Ignore case
-
 10   50
-
 11   Find & Replace
-
 12   Seek for  ~
-
 13   Replace by~
-
 -
-
 2507 New subject:~
-
 + 2508
-
 0    30
-
 1    Editor setup
-
 2    Right margin ~
-
 3    Paragraph end marker~
-
 4    Auto indent
-
 5    Persistent Blocks
-
 6    Quote-Reflow
-
 -
-
 2509 and UU-encode
-
-
-
 
 
 # --- XPSTAT ----------------------------------------------------------
 
-
-
 2600 ~statistics of~
-
 2601 ~statistics
-
 2602 maximal number of systems (%s) reached
-
 + 2603
-
 1    System statistics
-
 2    Newsgroup statistics
-
 3    From
-
 4    ~to~
-
 5    date of creation
-
 6    only marked newsgroups
-
 7    Output to /ØStatistics
-
 8    KBytes
-
 9    Number
-
 10   sorted by ~
-
 11   Show max.
-
 + 2604
-
 1    Calculating statistics
-
 2    CrossPoint~
-
 3    ~of~
-
 4    for %s selected newsgroups
-
 5    for %s
-
 6    for all non-internal newsgroups
-
 7    from %s to %s
-
 8    No   System               Messages        KBytes      %
-
 9    gesamt:   ~
-
 10   ~No   Newsgroup                                KBytes     Mess.     %      HT
-
 11   System
-
 12   Newsgroup
-
 -
-
 2605 %s statistics
-
 2606 Output to /ØStatistics
-
 2607 Groups
-
 + 2608
-
 1    Calculating statistics
-
 2    CrossPoint Group Statistics of %s
-
 3    ~No    Name                       KBytes    Messages      % KB
-
 4    ~total:    ~
-
 + 2609
-
 0    33
-
 1    Phone charges
-
 2    Charges for the year ~
-
 3    Output to /ØStatistics
-
 4    Split up months
-
 5    ~per line
-
 10   Reading XPOINT.LOG...
-
 11   Calculating statistics...
-
 12   Month     | Calls  |    Upload   |   Download   |   Costs
-
 13   Total:    |
-
 14   - no phone charges in this month -
-
 15   Phone fee
-
 16   Phone charges for %s
-
 -
-
 2610 There are no unsent messages!
-
 + 2611
-
 1    unsent messages
-
 2    Server           Messages         Bytes
-
 3    Crash mails
-
 4    PUFFER file bad!!
-
 + 2612
-
 1    Zones           | Regions  | Nets  |  Nodes  | Nodes/Net
-
 2    total           |
-
 3    The %s largest nets:
-
 4    Net     | Name                           | Nodes
-
 5    Flags:
-
 10   Points  ~
-
 11   Nodes ..... :~
-
 12   Points .... :~
-
 13   Points/Node :~
-
 20   Node Statistics
-
 21   Output to /ØStatistics
-
 22   Count "down" nodes
-
 23   Number of largest nets~
-
 24   Show flags from       ~
-
 25   Calculating statistics ...
-
 26   CrossPoint Nodelist Statistics of %s
-
 27   Nodelist
-
 + 2614
-
 1    Last netcalls
-
 2    today
-
 3    yesterday
-
 4    %s days ago
-
 5    %s months ago
-
 10   Show only servers with "Netcall/All" mark
-
 -
-
-
-
 
 
 # --- XP4E ------------------------------------------------------------
 
-
-
 2700 not defined
-
 + 2701
-
 1    Server  ~
-
 2    Net type
-
 3    User    ~
-
 4    Address ~
-
 5    Comment ~
-
 6    Hold time
-
 7    Days
-
 8    Umlauts
-
 9    Message filter
-
 10   Receipt requests
-
 11   Usergroup
-
 -
-
 2702 Add new user
-
 + 2703
-
 1    Name    ~
-
 2    Comment ~
-
 3    Server  ~
-
 -
-
 2704 Add new user group
-
 2705 Edit user group
-
 + 2706
-
 1    Password
-
 2    Crypt method      ~
-
 3    Default: Crypt
-
 + 2707
-
 1    "@" is not allowed in newsgroup names! If you
-
 2    want to use the Zerberus /NEWSGROUP@BOX addres-
-
 3    sing mode add the newsgroup in the user list!
-
 4
-
 + 2708
-
 1    Days
-
 2    Msgs.
-
 3    Edit newsgroup
-
 4    Add new newsgroup
-
 5    Server   ~
-
 6    Net type
-
 7    Newsgroup
-
 8    Split line
-
 9    Comment  ~
-
 10   Hold time~
-
 11   Msg. filter
-
 12   Group    ~
-
 13   Origin   ~
-
 -
-
 2709 User not in database - create new user
-
 2710 Edit user
-
 2711 No Server - create internal newsgroup
-
 2712 Unknown server - add newsgroup, anyway
-
 2713 Name of newsgroup has changed - adjust message headers
-
 2714 One moment please ...
-
 + 2715
-
 1    ^Comment,^Server,^Hold time,^Umlauts,^Filter,^Group
-
 2    ^Comment,^Server,^Hold time,^Group,^Filter,^Access
-
 3    Edit %s marked Users
-
 4    Edit %s marked newsgroups
-
 5    Comment   ~
-
 6    Server  ~
-
 7    Msgs.
-
 8    Days
-
 9    Hold time:~
-
 10   use IBM umlauts
-
 11   Group  ~
-
 12   Message filter
-
 13   Write protection
-
 -
-
 2716 Delete %s marked users
-
 2717 Delete %s marked newsgroups
-
 + 2718
-
 1    Server   ~
-
 2    To       ~
-
 3    Subject  ~
-
 -
-
 2719 Private message
-
 + 2720
-
 1    ^All,^Unread,^New,^Today,^Date,T^ime
-
 2    ,^Save
-
 3    Read from date:
-
 4    Read from time:
-
 + 2721
-
 1    To:
-
 2    ~^Newsgroup , ^User~
-
 -
-
 2723 daily
-
 2724 all
-
 2725 File not found - create it
-
 + 2726
-
 1    AutoSend message
-
 2    Copy AutoSend message
-
 3    Subject  ~
-
 4    File     ~
-
 5    To       ~
-
 6    Server   ~
-
 7    Days     ~
-
 8    Week-days~
-
 9    Mo˘Tu˘We˘Th˘Fr˘Sa˘Su
-
 10   Months   ~
-
 11   binary
-
 12   delete
-
 13   when changed
-
 14   Date 1 ~
-
 15   Date 2 ~
-
 -
-
 2727 Delete selected entry?
-
 2728 ~^Yes ,  ^No  , ^File~
-
 + 2729
-
 1    AutoSend file
-
 2    File:
-
 3    Size:
-
 4    Date:
-
 5    - File not found -
-
 -
-
 2730 Sort newsgroups alphabetical
-
 + 2731
-
 1    Add split line
-
 2    Split char. ~
-
 3    Comment     ~
-
 -
-
 2732 Move 1 marked newsgroup
-
 2733 Move %s marked newsgroups
-
 + 2734
-
 1    Change Server
-
 2    Old Server ~
-
 3    New Server ~
-
 4    Modify Newsgroups
-
 5    Modify Users
-
 6    Modify local users
-
 7    Newsgr.
-
 8    Users
-
 9    Modify AutoSend
-
 10   Modify short names
-
 11   AutoSend
-
 12   short names
-
 + 2735
-
 0    55
-
 1    Change newsgroup access / followup-to
-
 2    Followup to~
-
 3    No write access
-
 10   You have unlimited access to this newsgroup.
-
 11
-
 12
-
 20   You may not write in this newsgroup.
-
 21
-
 22
-
 30   All new messages and all replies that you post in
-
 31   this newsgroup will be redirected to the followup
-
 32   group/address.
-
 40   All public replies that you post in this newsgroup
-
 41   will be redirected to the followup group/address.
-
 42
-
 50   All public replies by other users to your messages
-
 51   in this newsgroup will be redirected to to followup
-
 52   newsgroup.
-
 -
-
 2736 %s contains messages. Delete
-
 2737 Warning: Message encryption is not allowed in FidoNet!
-
-
-
 
 
 # --- XP_DES, XP_PGP --------------------------------------------------
 
-
-
 +  3000
-
 1  PGP key request answer
-
 2  The header of this message contains the requested PGP public key.
-
 3  This message was automatically created by CrossPoint.
-
 +  3001
-
 1  Request PGP Key from ...
-
 2  PGP key request
-
 3  If your software does support ZCONNECT-PGP then it should
-
 4  answer this message by sending your PGP public key.
-
 5
-
 6  - message was created automatically -
-
 + 3002
-
 1  send public key to %s
-
 2  decode message from %s
-
 3  read key from message %s from %s
-
 -
-
-
-
 
 
 # --- Error messages --------------------------------------------------
 
-
-
 +  10000
-
 1  Help file %s not found!
-
 2  File extension must be .XPS !
-
 3  Illegal file or path name!
-
 4  Can't delete %s !?
-
 5  Unknown directory: %s
-
 6  Not enough memory
-
 7  Not enough memory for calling external program.
-
 8  The %s unpacker settings are wrong.
-
 9  File ist write protected.
-
 10 Disk write error
-
 20 *LIST: File not found!
-
 21 Unknown function:  %s
-
 22 File not found!
-
 23 *EDIT: File not found!
 
-
-
 +  10100
-
 1  Netcall converter ZFIDO.EXE not found!
-
 2  Netcall converter MAGGI.EXE not found!
-
 3  NDIFF.EXE not found!
-
 4  Where's the Fido Mailer?
-
 5  RFC converter UUZ.EXE not found!
-
 6  file not found
-
 7  Error writing %s
-
 8  Not possible in this net.
-
 9  Unknown server: %s
-
 10 UUCICO.EXE not found!
 
-
-
 +  10200
-
 1  wrong temp directory setting
-
 2  wrong extract directory setting
-
 3  wrong send directory setting
-
 4  wrong logfile directory setting
-
 5  Please close dialog box before saving.
-
 6  Can't find program (don't forget the extension!)
-
 7  Invalid input - see online help
-
 8  Can't create directory!
-
 9  The unpacker configuration must contain $ARCHIV and $DATEI!
-
 10 Not enough files - increase in CONFIG.SYS to at least FILES=%s!
-
 11 Invalid phone number format - see online help!
-
 12 Invalid phone number format - see online help!
-
 14 Nodelist/Pointlist %s not found
-
 16 Not possible with monochrome graphics adapter.
-
 17 PGP not found.
-
 18 First enable ZCONNECT PGP support!
-
 19 Your graphics adapter does not support VESA DPMS.
-
 20 Please enter the full URL (http://do.main/...).
 
-
-
 +  10300
-
 1  not possible with user groups
-
 2  No messages marked!
-
 3  No reply tree active!
-
 #  Puffer import
-
 4  File not found!
-
 5  Messagebase file - please rename!
-
 6  Error while pmCrypt decoding
-
 7  Receipt not possible here
-
 8  Message is crypted, but there's no password!
-
 9  Message is QPC-crypted, but the user has a DES password!
-
 10 Message is DES-crypted, but the user has a QPC passwerd!
-
 11 Only possible with public messages!
-
 12 That's not your message!
-
 13 User groups are not allowed here!
-
 14 Not possible within this net!
-
 15 Function is not allowed here.
-
 16 Illegal path or file name.
 
-
-
 +  10400
-
 1  No message selected
-
 2  Not enough memory
-
 3  Mail archiving is not possible in this newsgroup.
-
 4  Not allowed with that message
-
 5  Please send message as PM
-
 6  Reply tree is already active
-
 7  not enough memory
-
 8  no reply tree
-
 9  This message has no references
-
 10 Invalid address
-
 11 File not found
-
 12 Invalid file name
-
 13 Not possible - binary file
-
 14 Marked messages are already being displayed
-
 15 No messages marked!
-
 16 There are still mails in this user's newsgroup!
-
 17 Not possible with user group!
-
 18 no messages
-
 19 Newsgroup is not empty
-
 #  XP4O
-
 20 Messagebase is empty!
-
 21 Warning: Messagebase file %s is missing!
-
 22 Pleas use Mail/Unsent/%s
-
 23 Not possible with binary messages
-
 24 Message is bad  (messagebase file %s)
-
 25 Not possible with unsent messages.
-
 26 Message not found in database!
-
 27 bad poll packet:  %s
-
 28 Decompression is not possible - use another temp directory!
-
 29 File already exists - please use another extract directory!
-
 30 File was not uncompressed correctly.
-
 31 Not enough memory!
-
 32 A maximum of 3 archives may be nested!
-
 33 Illegal directory.
-
 34 That's no archive file.
-
 35 Not enough disk space.
-
 36 Cannot print binary message
-
 37 Unknown node address
-
 38 No files marked
-
 39 Delete unsent message with "Mail/Unsent/Delete" !
-
 40 XPack - unknown file: %s
-
 41 Not enough memory to pack %s!
-
 42 Function is not allowed here
-
 43 Message was cancelled by sender - reply not possible.
-
 44 User is not present in XP's user list.
-
 45 Mesagebase is bad; use /Re-Org/Pack!
-
 46 Close this newsgroup and *then* press "W" ...
 
-
-
 50 Writing to this newsgroup is disabled
-
 # XP4O3
-
 80 %s: No Crosspostings allowed.
-
 81 Crosspostings are possible only within one server!
-
 82 %s: Writing to this newsgroup is not allowed.
-
 83 %s: Crosspostings are not possible here
 
-
-
 +  10600
-
 1  Date must be same or newer than today.
-
 2  empty message - not sent
-
 3  File was not crypted!
-
 4  Plese send message to server system as normal netmail.
-
 5  not enough memory to send the message
-
 6  Internal newsgroup - writing not allowed!
-
 7  Unknown server system: %s
-
 8  file path too long
-
 9  Binary mails are not possible in this net
-
 10 Subject of file attaches cannnot be changed
-
 11 not possible - internal message
-
 12 Not possible with binary mails.
-
 13 Not possible with carbon copies.
-
 14 Receipts only allowed for PMs
-
 15 Only possible with PMs
-
 16 File not found
-
 17 Not enough disk space on temporary drive
-
 18 Invalid send message!
-
 19 This is no unsent message!
-
 20 Not possible - please resend file
-
 21 Bad message packet:  %s
-
 22 Message does not exist in message packet !?
-
 24 Forwarding to this newsgroup is not allowed.
-
 25 Wrinting to this newsgroup is not allowed.
-
 26 Invalid original recipient line!
-
 27 Not possible in this type of net.
-
 28 In MausNet only possible with PMs.
-
 29 Not possible - net types are incompatible.
-
 30 Invalid archive newsgroup configuration
-
 31 Function is not allowed here
-
 32 A maximum of %s newsgroups per server is allowed.
-
 33 Please activate PGP first at /Config/External/PGP!
-
 34 Call to %s is not possible.
-
 35 Message must have a subject.
-
 36 Binary mails are not possible here.
-
 37 Cannot change server - different newsgroup names!
 
-
-
 +  10700
-
 1  Internal error: Newsgroup with unsent message not found!
-
 2  Internal error: Mail-group with unsent message not found!
-
 3  Unsent message not found in messagebase!
-
 4  Not enough memory for netcall!
-
 5  No primary fido server selected
-
 6  No nodelist active
-
 7  Relogin not possible at this server
-
 8  Script file needed for online call!
-
 9  unknown server:  %s
-
 10 Sent message packet (%s) is bad!
-
 11 No carrier!
-
 12 Error while converting messages
-
 13 Error while packing messages
-
 14 Modem not ready - or turned off?
-
 15 No message packet ?!
-
 16 /ips: error
-
 17 /n: unknown server: %s
-
 18 File not found
-
 19 Bad Fido packet
-
 20 Internal error (%s) in Fido mailer
-
 21 Error - please check modem settings (Carrier signal)!
-
 22 Error executing XP-FM (Fido mailer)
-
 23 invalid sysop-mode output file
-
 24 Error while converting messages
-
 # File Attach-Datei fehlt
-
 25 %s missing!
-
 26 Error copying %s
-
 27 Invalid input directory
-
 28 Invalid output directory
-
 29 Error while converting Fido packets
-
 30 Error packing mail
-
 31 Syntax error in script - see SCERRORS.LOG
-
 32 No FOSSIL driver installed - using built in driver
-
 33 Invalid AKA entry - %s is no server!
-
 34 Invalid AKA entry - no server for %s found!
-
 35 QWK netcalls are not possible - use sysop mode!
-
 36 Please import a QWK packet first, to obtain the server configuration!
-
 37 QWK error %s while message conversion!
-
 38 Script file needed for relogin netcall!
-
 39 ISDN relogin not possible
-
 40 ISDN CAPI driver not installed
-
 41 Delete the subdirectory "%s"!
-
 42 Unknown node: %s
-
 43 No entries marked!
 
-
-
 +  10800
-
 1  This server offers no automatic subscribing functions.
-
 2  This newsgroup has no server!
-
 3  Unknown server: %s
-
 4  Unknown server (%s) - newsgroup list was NOT imported
-
 5  Invalid sender address
-
 6  BOXEN.IX1 is bad - please delete file!
-
 7  There's no newsgroup list for this server!
-
 8  Empty message - not sent
-
 9  Bad sender address!?
-
 10 The system %s is not configured as fileserver (Edit/Systems).
-
 11 File not found.
-
 12 %s is no file server.
-
 13 Unknown file list format :-(
-
 14 User groups are not allowed here.
-
 15 The selected system is NO file server.
-
 16 There's no file list for %s.
-
 17 Password needed - enter at /Edit/Systems!
-
 18 Not possible with this server.
-
 19 Not possible with UUCP file servers.
-
 20 System is not registered by Edit/Servers!
-
 21 Error while copying/converting file list.
-
 22 Sending is possible only to UUCP fileservers.
-
 23 File not found.
-
 24 Invalid converter configuration: no $INFILE specified
-
 25 Invalid converter configuration: no $OUTFILE specified
-
 26 This newsgroup cannot be subsribed.
-
 27 This newsgroup cannot be unsubscribed.
-
 # XP8.INC
-
 50 No file scan message selected!
-
 51 %s is no Fido server!
-
 52 %s is no Fido server!
-
 53 There is no file echo list for %s.
 
-
-
 +  10900
-
 1  Invalid server configuration line: %s
-
 2  Invalid server name!
-
 3  The serial number must have a length of 4 digits.
-
 4  Invalid file name
-
 5  Directory must be different from XP working directory
-
 6  Can't creare directory!
-
 7  Warnung: Programm "%s" not found!
-
 8  Invalid address
-
 9  At least one protocol must be enabled.
-
 10 This group already exists.
-
 11 Group can't be deleted!
-
 12 There are still newsgroups of this group.
-
 13 This system already exists.
-
 14 There must be at least one system.
-
 15 This short name already exists.
-
 16 SETUSER - missing parameter
-
 18 SETUSER - unknown server "%s"!
-
 19 Please enter the server name (press F1 for help).
-
 20 Please enter your user name (press F1 for help).
-
 21 This server already exists
-
 22 Primary server can't be deleted!
-
 23 The selected server is not a FidoNet BBS!
-
 25 Syntax error in script file
-
 26 Without EMSI the password is limited to 8 characters!
-
 27 Can't change - there are unsent messages!
-
 # log file
-
 28 Invalid file name!
-
 #
-
 29 %s is no fido server!
-
 30 Warning - illegal characters in point name: %s
 
-
-
 +  11000
-
 1  unknown command
-
 2  unknown server
-
 3  This entry can't be deleted.
-
 4  This list may contain a maximum of %s Entries!
-
 5  No matching servers.
-
 6  Empty timing list.
-
 7  No more lines possible.
-
 8  There must be at least one line.
-
 9  This node/point list is already active!
-
 10 File could not be imported as node/point list update.
-
 11 No more zones possible.
-
 12 No more phone fee groups possible.
-
 13 All weekdays and holidays are in use.
-
 14 Phone fee group 1 must not be deleted.
-
 15 %s already belongs to another phone fee group.
 
-
-
 +  12000
-
 1  Invalid logfile name
-
 2  Modem not ready.
-
 3  $FILE-Macro is not possible here.
 
-
-
 +  12100
-
 1  Error in nodelist index - please rebuild index
-
 2  No nodelist active
-
 3  This nodelist IS already active!
-
 4  That's no nodelist.
-
 5  Not enough disk space to copy nodelist
-
 6  This point list IS already active!
-
 7  That's no valid point list.
-
 8  Not enough disk space to copy point list
-
 9  NDIFF.EXE not found!
-
 10 Wrong version/date of point list or pointdiff
-
 11 %s: Wrong version/date of nodelist or nodediff
-
 12 Error while working on nodediff/pointdiff
-
 13 Not enough disk space to copy nodlist update.
-
 14 Error while working on node list
-
 15 Unknown address
-
 16 Unknown node address
-
 17 No nodelist
-
 18 No primary fido server selected (Editit/Servers)
-
 19 No file lists
-
 20 Error in nodelist user index - please rebuild index
-
 21 No node list active or missing nodelist!
-
 22 No point list active or missing pointlist!
-
 23 Can't create %s!
-
 24 This file is already active.
-
 25 No FidoNet nodelist (NODELIST.###) is active.
-
 26 No matching nodes or points were found.
 
-
-
 +  12200
-
 1  AutoSend - File "%s" not found!
-
 2  AutoSend - empty file was not sent
-
 3  MAGGI.EXE not found
-
 4  Can't read %s - unknown server system
-
 5  %s: Error while converting messages
-
 6  Message converter ZFIDO.EXE not found!
-
 7  No primary fido server selected
-
 8  Error while converting Fido packet
-
 9  IPS - unknown server: %s
-
 50 User groups are not allowed here.
-
 51 Invalid address
 
-
-
 +  12400
-
 1  Bad line - uudecode aborted
-
 2  Message contains no uu-encoded file
-
 3  Can't decode file.
-
 4  You cannot decode more than %s marked parts.
 
-
-
 10 unsupported net type
-
 11 Error while converting messages
-
 12 Unknown server - select with <F2>
-
 13 Wrong net type - must be QWK od Fido!
-
 14 ZQWK.EXE not found! (ZQWK.EXE ist part of the XP QWK module)
-
 15 ZQWK error %s
 
-
-
 +  12500
-
 1  File cannot be saved
-
 2  File creation error
-
 3  Not enough memory for the internal editor!
 
-
-
 +  12600
-
 1  no newsgroups marked
-
 2  no messages!
-
 3  there are no messages in the selected newsgroups
-
 4  There's no logfile (XPOINT.LOG)
-
 5  No data for %s
-
 6  no node or point list active
-
 7  Not possible with mail groups!
-
 8  No entries found.
-
 9  Only possible with regular newsgroups.
 
-
-
 +  12700
-
 1  Unknown group - select with <F2>
-
 2  Unknown server system - select with <F2>
-
 3  This user does already exist!
-
 4  This user group does already exist!
-
 # User passwords
-
 5  Not possible with this type of net.
-
 6  This newsgroup does already exist!
-
 7  %s is an internal newsgroup - group may not be changed!
-
 8  %s is not empty.
-
 9  Direct messages are not possible here.
-
 10 You can move a maximum of 90 newsgroups at the same time.
-
 11 There are unsent messages - can't change name of newsgroup.
-
 12 Not possible with internal newsgroups.
-
 13 Redicection ist not possible - incompatible type of net.
-
 14 Renaming is not possible - newsgroup does alreadix exist!
 
-
-
 +   12800
-
 2   File not found
-
 3   Invalid directory
-
 4   Too many files open (increase FILES in your CONFIG.SYS!)
-
 5   Access denied (file is read only or locked)
-
 7   DOS memory manager destroyed
-
 8   Not enough memory
-
 10  Invalid DOS environment
-
 11  Invalid DOS call format
-
 15  Invalid drive letter
-
 16  Directory can't be deleted
-
 18  File seek error
-
 101 Disk full
-
 150 Disk is write protected
-
 152 No disk in drive
-
 153 Invalid DOS function
-
 154 Disk read error (disk is damaged)
-
 155 DOS internal error - Disk parameter block is bad
-
 156 Disk read error (disk is damaged)
-
 157 Disk is not formatted correctly
-
 158 Disk is not formatted correctly
-
 159 Printer not ready
-
 160 Write error
-
 161 Read error
-
 162 Hardware error
-
 202 Stack overflow
-
 203 Memory overflow
-
 209 Error in XP.OVR
 
-
-
 +   13000
-
 1   %s not found.
-
 2   PGP encoding/signing was not successful.
-
 3   This function is not supported for %s.
-
 4   PGP decoding was not successful.
-
 5   Error extracting PGP key.
-
 6   PGP signature testing did not succeed.
-
 7   PGP signals illegal signature!
-
 -
-
-
 
 # --- Settings --------------------------------------------------------
 
-
-
 # The following part contains some very special configuration settings.
-
 # You should not change these settings unless you are absolutely sure
-
 # what you are doing.
-
 #
-
 # When translating this text, you may ONLY alter the comment lines. All
-
 # data lines, also those containing German text parts, must stay un-
-
 # changed!
 
-
-
 + 30000
-
 # Possible MausTausch protocol start sequences; German specific:
-
 1 protokoll startet
-
 2 downloaden
-
 3 **B
-
 -
-
-
 
