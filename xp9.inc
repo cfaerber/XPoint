@@ -36,7 +36,7 @@
          and (nt<>nt_QWK);
     fido:=(nt=nt_Fido);
     dialog(ival(getres2(912,0)),7+iif(map,2,0)+iif(real,2,0)+iif(dom,2,0)+
-           iif(fqdom,2,0)+iif(bdom,4,0)+iif(fido,2,0),txt,x,y);
+           iif(fqdom,2,0)+iif(bdom,4,0)+iif(fido,2,0),left(txt,ival(getres2(912,0))-4),x,y);
     blen:=ntBoxnameLen(nt);
     btxt:=getres2(912,iif(fido,1,2));    { 'Nodenummer','Boxname   ' }
     {16.01.00 HS: Kleinschreibung fÅr Boxname zulassen}
@@ -187,7 +187,7 @@
 
   procedure _EditPPP(var brk:boolean; var name,komm,email,realname,replyto,
                      fqdn,PPPClientPath,PPPClient,PPPAddServers,PPPDialUp,
-                     PPPPhone,PPPLogin,PPPPass:string; PPPAskIfConnect,
+                     PPPPhone,PPPLogin,PPPPass:string; var PPPAskIfConnect,
                      PPPAskIfDisconnect,PPPKeepConnectStatus:boolean;
                      const Titel:String);
   var x,y,b       : byte;
@@ -221,7 +221,7 @@
       msetvfunc(PPPClientpathTest);
     maddstring(3,13,getres2(920,91),PPPClient,41,
       MaxLenPathname,'');                                   { Client-Aufruf }
-      mappsel(false,'UKAD.BAT /M $CLPATH $CONFIG˘UKAW.BAT /M $CLPATH $CONFIG˘UKAX.BAT /M $CLPATH $CONFIG˘' +
+      mappsel(false,'UKAW.BAT $CONFIG˘UKAW.BAT /M $CLPATH $CONFIG˘UKAD.BAT /M $CLPATH $CONFIG˘UKAX.BAT /M $CLPATH $CONFIG˘' +
        'UKA_PPP.BAT /M $CLPATH $CONFIG˘start /w $CLPATH+XPNEWS.EXE $CONFIG˘$CLPATH+XPNEWS.EXE $CONFIG');
       msetvfunc(pppclienttest);
     serverNames:=BfgToBox(PPPAddServers);
@@ -265,12 +265,13 @@
       real : string[40];
       dom  : string[60];
       fqdom: string[60];
-      email: string[80];
+      email: string[eAdrLen];
       bdom : string[60];
       fido : string[40];
       brk  : boolean;
       fn   : string[12];
       nt,i : byte;
+      base_nt : byte;
       b,x,y: byte;
       pppm : boolean;
       pc,pp,ps,cldup,clphn,cllog,clpas : string;
@@ -284,7 +285,14 @@
       nt:=nt_Client
     else
       dbRead(d,'netztyp',nt);
+    base_nt:=nt;
     ReadNetztyp(getres(914),nt,brk); if brk then exit;   { 'neue Box' }
+    { Beim Neuanlegen einer Box fÅllen wir 'own_Name' mit einem ungÅltigen  }
+    { Dummy-Wert. 'own_Name' darf nur nicht leer sein, weil wir sonst in    }
+    { 'addServersTest' und anderen xp9sel-Routinen falsche SchlÅsse ziehen. }
+    own_Nt:=nt;           { fÅr 'addServersTest' }
+    own_Name:='\\//\\//'; { und 'toggleSysop'    }
+    showErrors:=true;     { in xp9sel.pas        }
     if nt <> nt_Client then
     begin
       pppM:=false;
@@ -298,14 +306,7 @@
       claskc:=false;
       claskd:=false;
       clstat:=true;
-      boxpar^.PPPMailInServer:='';
-      boxpar^.PPPMailInPort:='110';
-      boxpar^.PPPMailInProtocol:='POP3';
-      boxpar^.PPPMailOutServer:='';
-      boxpar^.PPPMailOutPort:='25';
-      boxpar^.PPPNewsServer:='';
-      boxpar^.PPPNewsPort:='119';
-      end
+    end
     else begin
       pppM:=true;
       pp:=boxpar^.PPPClientPath;
@@ -318,6 +319,16 @@
       claskc:=boxpar^.PPPAskIfConnect;
       claskd:=boxpar^.PPPAskIfDisconnect;
       clstat:=boxpar^.PPPKeepConnectStatus;
+    end;
+    if (not pppm) or (pppm and (nt <> base_nt)) then
+    begin
+      boxpar^.PPPMailInServer:='';
+      boxpar^.PPPMailInPort:='110';
+      boxpar^.PPPMailInProtocol:='POP3';
+      boxpar^.PPPMailOutServer:='';
+      boxpar^.PPPMailOutPort:='25';
+      boxpar^.PPPNewsServer:='';
+      boxpar^.PPPNewsPort:='119';
     end;
     name:=''; user:=''; komm:=''; fido:='';
     maps:=DefaultMaps(nt);
@@ -343,7 +354,7 @@
     boxpar^.PPPNewsPass:='';
     boxpar^.PPPNewsList:=true;
     boxpar^.PPPNewsMaxLen:=0;
-    boxpar^.PPPNewsMax:=0;
+    boxpar^.PPPNewsMax:=99999;
     boxpar^.PPPExternCfg:='';
 
     if pppm then 
@@ -544,15 +555,26 @@
 
   function kompname:string;
   begin
-    kompname:=dbReadStr(d,'username')+' @ '+dbReadStr(d,'boxname');
-    if (ntBoxNetztyp(dbReadStr(d,'boxname'))=nt_UUCP)
-    then begin
-      if dbreadstr(d,'email')<>'' then kompname:=dbreadstr(d,'email')
-      else if (dbReadStr(d,'pointname')<>'') then
-        kompname:=dbReadStr(d,'username')+' @ '+dbReadStr(d,'pointname')
-    end
-    else if (ntBoxNetztyp(dbReadStr(d,'boxname'))=nt_Client) then
-      kompname:=dbReadStr(d,'email');
+    case (ntBoxNetztyp(dbReadStr(d,'boxname'))) of
+      nt_Client  : kompname:=left(dbreadstr(d,'email'),cpos('@',dbreadstr(d,'email'))-1) +
+                             ' @ ' + mid(dbreadstr(d,'email'),cpos('@',dbreadstr(d,'email'))+1);
+      nt_UUCP    : kompname:=iifs(dbReadStr(d,'email')<>'',left(dbreadstr(d,'email'),
+                                  cpos('@',dbreadstr(d,'email'))-1) + ' @ ' +
+                                  mid(dbreadstr(d,'email'),cpos('@',dbreadstr(d,'email'))+1),
+                                  dbReadStr(d,'username') + ' @ ' +
+                                  iifs(dbReadInt(d,'script') and 4<>0,dbReadStr(d,'boxname') +
+                                  iifs(dbReadStr(d,'Boxdomain')<>'',dbReadStr(d,'Boxdomain'),''),
+                                  iifs(dbReadStr(d,'pointname')<>'',dbReadStr(d,'pointname'),
+                                  dbReadStr(d,'boxname')) + iifs(dbReadStr(d,'domain')<>'',
+                                  dbReadStr(d,'domain'),'')));
+      nt_ZConnect: kompname:=dbReadStr(d,'username') + ' @ ' +
+                             iifs(dbReadInt(d,'script') and 4<>0,
+                             iifs(dbReadStr(d,'pointname')<>'',dbReadStr(d,'pointname'),
+                             dbReadStr(d,'boxname')),dbReadStr(d,'boxname')) +
+                             iifs(dbReadStr(d,'domain')<>'',dbReadStr(d,'domain'),'');
+    else
+      kompname:=dbReadStr(d,'username') + ' @ ' + dbReadStr(d,'boxname');
+    end;
   end;
 
   procedure EditPointdaten(nt:byte; var brk:boolean);
@@ -592,7 +614,7 @@
       nt_pronet  : xx:=55;
       nt_ZConnect: yy:=12;
     end;
-    dialog(xx,yy,kompname,x,y);
+    dialog(xx,yy,left(kompname,xx-4),x,y);
     with boxpar^ do
     begin
       if UUSmtp then TempSmtp := 'SMTP/UUCP'
@@ -1014,7 +1036,7 @@
     end;
 
   begin
-    dialog(76,20,kompname,x,y);
+    dialog(76,20,left(kompname,72),x,y);
     with boxpar^ do begin
 
       maddtext(3,2,getres2(920,110),col.coldiahigh);
@@ -1132,7 +1154,7 @@
   begin
     fido:=(nt=nt_Fido);
     add:=iif(fido,0,1);
-    dialog(ival(getres2(921,0)),9+add,kompname,x,y);
+    dialog(ival(getres2(921,0)),9+add,left(kompname,ival(getres2(921,0))-4),x,y);
     with boxpar^ do begin
       maddint(3,2,getres2(921,1),connwait,5,4,1,1000);       { 'Warten auf Verbindung' }
       if nt=nt_Client then mhnr(30190) else mhnr(160);
@@ -1191,7 +1213,7 @@
       crash : boolean;
   begin
     crash:=(boxpar^.boxname='99:99/98') or (boxpar^.boxname='99:99/99');
-    dialog(ival(getres2(922,0)),iif(crash,3,5),kompname,x,y);
+    dialog(ival(getres2(922,0)),iif(crash,3,5),left(kompname,ival(getres2(922,0))-4),x,y);
     with boxpar^ do begin
       if not crash then begin
         maddstring(3,2,getres2(922,1),gebzone,20,20,'');   { 'Tarifzone      ' }
@@ -2132,13 +2154,58 @@
         SetBrettNetztyp;
         dbGo(d,drec[1]);
         aufbau:=true;
-        end;
+        if ustr(box)=ustr(DefaultBox) then showusername;
       end;
+    end;
     freeres;
   end;
 
 {
   $Log$
+  Revision 1.10.2.54  2002/03/08 23:11:08  my
+  MY:- Anzeige der Stammbox-Adresse unterhalb der MenÅleiste korrigiert
+       und Åberarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse
+       anzeigen"):
+       - VollstÑndige Adresse (statt nur Feld "Username") inkl. Domain
+         wird angezeigt;
+       - Alias-Points werden berÅcksichtigt (RFC/UUCP und ZConnect);
+       - Realname wird in Klammern angezeigt (falls es sich um einen
+         Netztyp mit Realnames handelt) und ggf. automatisch gekÅrzt, wenn
+         die GesamtlÑnge von Adresse und Realname grî·er als 76 Zeichen
+         ist;
+       - Bei einem Wechsel des Netztyps der Stammbox wird die Anzeige
+         der Absenderadresse unterhalb der MenÅleiste unmittelbar nach dem
+         Wechsel aktualisiert.
+
+  MY:- Anzeige der Absenderadresse im Rahmen der Box-Konfigurationsdialoge
+       (z.B. D/B/E/M) korrigiert und Åberarbeitet:
+       - VollstÑndige Adresse inkl. Domain wird angezeigt;
+       - Alias-Points werden berÅcksichtigt (RFC/UUCP und ZConnect);
+       - Zu lange Adressen werden der Breite des Dialogs entsprechend
+         gekÅrzt.
+
+  MY:- Bugfix RFC/Client: Schalter "RÅckfrage vor Anwahl", "RÅckfrage vor
+       Auflegen" und "Verbindungsstatus halten" unter D/B/E/C wurden nicht
+       gespeichert.
+
+  MY:- Bugfixes/énderungen bei der Neuanlage einer RFC/Client-Serverbox:
+       - Im Feld "ZusÑtzliche Server" konnte es vorkommen, da· die Taste
+         <F2> die Routine und den Auswahldialog fÅr /Netcall/Spezial
+         aufrief.
+       - Die Namen und Ports der Mail- und News-Server werden nur noch
+         dann automatisch von der Serverbox Åbernommen, auf der der
+         Cursorbalken im Boxauswahl-Dialog stand, wenn es sich bei dieser
+         Box auch um eine RFC/Client-Serverbox handelte.
+
+  MY:- RFC/Client: <F2>-Auswahl bei "D/B/E/C/Client-Aufruf" um Eintrag
+       "UKAW.BAT $CONFIG" erweitert.
+
+  MY:- Workaround fÅr UKAW-Quirk: Da UKAW bei D/B/E/N/Max._Artikel_je
+       Gruppe den Wert "0" nicht als "kein Limit" sondern als "keine
+       Postings empfangen" interpretiert, wird jetzt bei der Neuanlage
+       einer RFC/Client-Serverbox der Hîchstwert "99999" als Standardwert
+       eingesetzt.
+
   Revision 1.10.2.53  2002/01/02 23:14:36  my
   MY:- Fix RFC/Client: Wenn bei D/B/E/X ein externes Config-Programm ohne
        Parameter $CONFIG angegeben wurde, war eine Variable nicht
