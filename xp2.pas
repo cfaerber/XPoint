@@ -599,7 +599,7 @@ begin
 {$IFDEF UnixFS}
    lostring(helpfile);
 {$ENDIF}
-  keydeffile:=getres(2);
+  keydeffile:=FileUpperCase(getres(2));
   _fehler_:=getres2(11,1);
   _hinweis_:=getres2(11,2);
   _daylen_:=ival(getres2(11,3));
@@ -997,7 +997,7 @@ var
     x,y  : Integer;
     brk  : boolean;
     dat  : datetimest;
-    j    : word;
+//    j    : word;
     m3s  : procedure;
 begin
   // diff in days
@@ -1025,8 +1025,8 @@ begin
     begin
 //      t:=ival(LeftStr(dat,2));
 //      m:=ival(copy(dat,4,2));
-      j:=ival(RightStr(dat,2));
-      if j<80 then inc(j,2000) else inc(j,1900);
+//      j:=ival(RightStr(dat,2));
+//    if j<80 then inc(j,2000) else inc(j,1900);
 // !! not portable
 //      setdate(j,m,t);
     end;                          
@@ -1099,6 +1099,9 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.140  2002/03/25 20:49:12  mk
+  - keydeffile (keydefs.cfg and keys-e.cfg) is now lowercase
+
   Revision 1.139  2002/03/17 09:17:53  mk
   - added const parameter to DelTempFiles
 

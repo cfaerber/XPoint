@@ -7,7 +7,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 # Online-Hilfe, Tastenmakros
 1 OPENXP-D.HLP
-2 KEYDEF.CFG
+2 keydef.cfg
 5 Lade Sprachmodul...
 
 # Dateiversion
@@ -3978,6 +3978,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.54  2002/03/25 20:49:11  mk
+# - keydeffile (keydefs.cfg and keys-e.cfg) is now lowercase
+#
 # Revision 1.53  2002/02/20 22:11:08  mk
 # - added missing 10900 resourceses
 #
