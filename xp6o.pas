@@ -857,7 +857,7 @@ again:
                  else begin
                    empf:=''; ebrett:='';
                    if typ=3 then ReplyText(betr,rehochn);
-                   ReadDirect('Nachricht weiterleiten',empf,betr,pollbox,false,brk);
+                   ReadDirect('Nachricht weiterleiten',empf,betr,pollbox,true,brk);
                    if brk then goto ende
                    else forcebox:=pollbox;
                    pm:=cpos('@',empf)>0;
