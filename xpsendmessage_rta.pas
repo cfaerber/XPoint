@@ -21,6 +21,8 @@
 
 {---------------------} unit xpsendmessage_rta; {----------------------} 
 
+{$I xpdefine.inc }
+
 {----------------------------} interface {-----------------------------} 
 
 uses addresslist;
@@ -138,6 +140,9 @@ end;
 
 // ---------------------------------------------------------------------
 // $Log$
+// Revision 1.2  2002/11/17 12:28:36  mk
+// - added missing xpdefine.inc
+//
 // Revision 1.1  2002/11/14 21:35:10  cl
 // - DoSend/send window rewrite -- part I
 //
