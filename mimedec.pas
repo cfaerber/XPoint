@@ -400,170 +400,44 @@ begin
 end;
 
 
-{ vollst„ndige RFC-1522-("encoded-word")-Decodierung }
-
-Function Check_Encoded_word(s:string; p1:integer):integer;assembler;
-asm
-     les di,s         { p1: Position des zu Ueberpruefenden "=?" im String s }
-     mov ch,0
-     mov cl,es:[di]   { Rueckgabe: Position des Abschliessenden "?=" wenn OK }
-     inc cx           {            0 wenn es kein Encoded-word ist.          }
-     mov bx,p1
-     cmp bx,0
-     je @e2
-     sub cx,bx
-     js @e2
-     lea di,[bx+di+2]
-
-     mov si,di        { folgt ein "?.?" ?  }
-     mov ax,'=?'
-     repne scasb
-     cmp cx,2
-     jb @e2
-     cmp es:[di+1],al
-     jne @e2
-     inc di
-     inc di
-
-@e1: repne scasb      { "?=" suchen }
-     jne @e2
-     cmp es:[di],ah
-     jne @e1
-     inc di
-
-     lea ax,[di+bx]   { OK, wenn keine Leerzeichen zwischen '=?' und '?=' }
-     sub ax,si
-     push ax
-     push cx
-     mov cx,di
-     mov di,si
-     sub cx,si
-     mov al,' '
-     repne scasb
-     cmp cx,0
-     pop cx
-     pop ax
-
-@e2: je @e3
-     mov ax,0
-@e3: 
-end; 
-
-
-procedure process_EW_Spaces(var s:string); assembler;
-asm
-    push ds        { Leerzeichen zwischen zwei "encoded Words" (=?...?=) entfernen }
-    push bp
-    les di,s
-    push es
-    pop ds
-    mov cl,[di]
-    mov ch,0
-    mov dx,cx
-    push di
-    jcxz @end
-
-@1: mov ax,'?='
-
-@2: repne scasb        { erstes encoded-word suchen }
-    jne @end
-    cmp [di],ah
-    jne @2
-    inc di
-    call @ew
-    jne @1
-
-    mov bx,di          { wenn danach nur leerzeichen kommen }
-    mov al,' '
-    repe scasb
-    cmp cx,2
-    jb @end
-    cmp word ptr [di-1],'?='
-    jne @1
-    inc di
-
-    push cx
-    call @ew          {  und ein weiteres encoded-word folgt }
-    pop cx
-    jne @1
-
-    lea si,[bp-2]      { dann Leerzeichen loeschen }
-    mov di,bx
-    add dx,bx
-    sub dx,si
-    push cx
-    rep movsb
-    pop cx
-    mov di,bx
-    jmp @1
-{--------------}    { ist es ein encoded-word ? }    { IN:  ES=DS                     }
-                                                     {      DS:DI:  Zeichen nach "=?" }
-@ew: push cx
-     mov bp,di
-     mov ax,'=?'                                     { OUT: Flags:  Z:ist Encoded Word       }
-     repne scasb    { folgt ein "?.?" ?  }           {      BP:     altes DI                 }
-     cmp cx,2                                        {      DI:     falls EW Zeichen nach EW }
-     jb @e2                                          {              ansonsten unveraendert   }
-     cmp [di+1],al                                   {      CX:     wenn EW aktualisiert     }
-     jne @e2                                         {              ansonsten unveraendert   }
-     inc di
-     inc di                                          { Uses: AX,CX,DI,BP }
-
-@e1: repne scasb    { "?=" suchen }
-     jne @e2
-     cmp [di],ah
-     jne @e1
-     inc di
-
-     push di
-     push cx        { Weiter nur, wenn kein Leerzeichen zwischen '=?' und '?=' }
-     mov cx,di
-     mov di,bp
-     sub cx,bp
-     mov al,' '
-     repne scasb
-     cmp cx,0
-     pop cx
-     pop di
-
-@e2: je @e3
-     mov di,bp
-     pop cx
-     retn
-
-@e3: pop ax
-     retn
-{---------------}
-@end:
-    pop di
-    mov al,dl
-    stosb
-    pop bp
-    pop ds
-end;
-
-
 { vollst„ndige RFC-1522-Decodierung }
 
 procedure MimeIsoDecode(var ss:string; maxlen:integer);
 var p1,p2,p,i : integer;
+    lastEW,
+    nextW     : integer;
     code      : char;
     s         : string;
     cset      : string[20];
 begin
   for i:=1 to length(ss) do
     if ss[i]=#9 then ss[i]:=' ';
-  process_EW_Spaces(ss);
-  cset:='';
-  repeat
 
-    p1:=-1;
+  cset:='';
+  p1:=0;
+  lastEW:=0;
+  repeat
     repeat
-      p1:=posn('=?',ss,p1+2);
-      p2:=check_encoded_word(ss,p1);
+      p1:=posn('=?',ss,p1+1);
+      if p1>0 then begin
+        p2:=p1+2;
+        i:=0;
+        while (i<3) and (p2<length(ss)) do begin
+          if ss[p2]='?' then inc(i)
+          else if ss[p2]=' ' then break;
+          inc(p2);
+        end;
+        if (i<3) or (ss[p2]<>'=') then p2:=0 else dec(p2);
+      end;
     until (p1=0) or (p2>0);
 
-    if (p1>0) then begin
+    if (p1>0) and (p2>0) then begin
+      if (lastEW>0) and (lastEW<nextW) and (p1=nextW) then begin
+        nextW:=nextW-lastEW;
+        delete(ss,lastEW,nextW);
+        dec(p1,nextW);
+        dec(p2,nextW);
+      end;
       s:=copy(ss,p1+2,p2-p1-2);
       delete(ss,p1,p2-p1+2);
       p:=cpos('?',s);
@@ -588,11 +462,14 @@ begin
       end;
       CharsetToIBM(cset,s);
       insert(s,ss,p1);
+      lastEW:=p1+length(s);
+      nextW:=lastEW;
+      while (nextW<length(ss)) and (ss[nextW]=' ') do inc(nextW);
     end;
   until (p1=0) or (p2=0);
 
   if length(ss)>maxlen then ss[0]:=char(maxlen);
-  if cset='' then ISO2IBM(ss,cs_iso8859_1);  { ISO-Decode wenn kein RFC1522 }
+  if cset='' then ISO2IBM(ss,cs_iso8859_1);  { ISO-decode wenn kein RFC1522 }
   for i:=1 to length(ss) do
     if ss[i]<' ' then ss[i]:=' ';
 end;
@@ -602,6 +479,10 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.7  2002/04/13 10:19:14  my
+  RB[+MY]:- Commit mit demselben Zweck wie der vorherige, diesmal mit
+            der Pascal-Variante von RB.
+
   Revision 1.1.2.6  2002/04/13 10:01:20  my
   JG[+MY]:- MIME-Decodierung nach RFC 1522 an RFC 2822/2047 (whitespace
             zwischen "multiple 'encoded word's", auch bei Folding)
