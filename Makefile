@@ -93,7 +93,9 @@ datadir = $(prefix)
 exampledir = $(prefix)\BEISPIEL
 
 EXE_EXT = .exe
-SEP = \\
+# Weil ein Backslash am Ende einer Zeile eine Sonderbedeutung hat,
+# muss hier getrickst werden
+SEP = $(subst ,,\)
 RM ?= rm
 RMDIR ?= rmdir
 INSTALLDIR ?= mkdir
@@ -156,6 +158,7 @@ endif
 export PC
 export OS
 export CPU
+export prefix
 export COMPILER
 export DEBUG
 export contribdir
@@ -1394,10 +1397,12 @@ $(patsubst %,clean_%,$(COMPBINFILES)): clean_%:
 
 # Erstellen eines Quellcodearchivs
 
+# Etwas umstaendlich wegen der maximalen Zeilenlaenge von COMMAND.COM.
+
 dist:
 	-$(RM) $(DISTFILE)
 	$(RAR) $(RARFLAGS) $(DISTFILE) file_id.diz Makefile *.inc \
-	*.pas *.rq
+	*.pas *.rq *.bat
 	$(RAR) $(RARFLAGS) $(DISTFILE) doc$(SEP)Makefile doc$(SEP)*.txt \
 	doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.xml \
 	doc$(SEP)xpoint.dsl doc$(SEP)dbform doc$(SEP)readme.lnx 
@@ -1407,6 +1412,9 @@ dist:
 
 #
 # $Log$
+# Revision 1.5  2000/09/27 12:20:37  fe
+# kleinere Fehlerkorrekturen
+#
 # Revision 1.4  2000/09/26 14:02:48  fe
 # komlett ueberarbeitet
 #
