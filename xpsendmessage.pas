@@ -983,7 +983,7 @@ begin      //-------- of DoSend ---------
       if not is_file then
         AddMessagePart(datei,is_temp,true)
       else
-        if netztyp=nt_Fido then AddFilePart(datei,is_temp);
+        { if netztyp=nt_Fido then } AddFilePart(datei,is_temp);
     end;
     partsex:=true;
     OrigBox:='';
@@ -2330,6 +2330,9 @@ finalization
 
 {
   $Log$
+  Revision 1.42  2002/02/07 20:21:12  cl
+  - fixed sending of binary files
+
   Revision 1.41  2002/02/06 09:45:02  mk
   MA:- fixed new empfaenger handling
 
