@@ -6,6 +6,7 @@
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
 { Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
 { --------------------------------------------------------------- }
+{ $Id$ }
 
 { ZConnect <-> Magic/Quick - Konvertierer }
 { PM 04/92                                }
@@ -115,7 +116,7 @@ type  charr       = array[0..65530] of char;
                  datei      : string[40];    { Dateiname }
                  prio       : byte;          { 10=direkt, 20=Eilmail }
                  oem,oab,wab: string[90];
-                 oar,war    : string[40];
+                 oar,war    : string[realnlen]; 
                  real_box   : string[20];    { X-XP-BOX: Absendebox }
                  hd_point   : string[25];    { X-XP-PNT: Pointname  }
                  pm_bstat   : string[20];    { X-XP-BST: Bearb.-Status }
@@ -1846,3 +1847,9 @@ begin
   end;
   if halferror then halt(2);
 end.
+{
+  $Log$
+  Revision 1.5  2000/02/15 21:06:52  mk
+  RB: [40] in [realnlen] geändert
+
+}
