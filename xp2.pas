@@ -1353,7 +1353,7 @@ begin
   MaggiVerkettung:=false;
   ExtraktHeader.anz:=0;
 {$IFNDEF unix}
-  timezone:=iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
+  XpTimezone:=iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
 {$ENDIF }
   AutoTIC:=true;
   shellshowpar:=false;
@@ -1603,7 +1603,7 @@ begin
   writeheaderlines;
   for i:=1 to 2 do
     writeln(t,'HeaderCustom',i,'=',mheadercustom[i]);
-  writeln(t,'TimeZone=',xpdatum.timezone);
+  writeln(t,'TimeZone=', XpTimezone);
   writeln(t,'SaveType=',savetype);
   writeln(t,'Maxcrosspost=',maxcrosspost);
   writeln(t,'MailDelXPost=',jnf(maildelxpost));
@@ -2248,7 +2248,7 @@ begin
                     if AutomaticTimeZone then
                       if xp1.gets(su,su,'timezone',dummytz) then EntryFound := true
                     else
-                      if xp1.gets(su,su,'timezone',TimeZone) then EntryFound := true;
+                      if xp1.gets(su,su,'timezone', XpTimeZone) then EntryFound := true;
                  end;
             'U': if xp1.gets(s,su,'UserAufnahme',userauf) or
                     xp1.gets(s,su,'UnARC',unpacker.unarc) or
@@ -2794,6 +2794,10 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.167  2003/08/30 23:51:46  mk
+  - renamed Timezone to XpTimezone, avoids problems with linux
+    function with the same name (kylix)
+
   Revision 1.166  2003/08/26 22:41:24  cl
   - better compatibility with OpenXP-16/FreeXP with config files:
     - don't overwrite line number settings with incompatible values

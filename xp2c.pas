@@ -371,7 +371,7 @@ begin
 
   if not AutomaticTimeZone then
   begin
-    maddstring(35,7 + j,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
+    maddstring(35,7 + j,getres2(252,23), XpTimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
     mappsel(false,'W+1ùS+2'); tzfeld:=fieldpos;
     msetvfunc(testtimezone);
     if replaceetime then mdisable;
@@ -1553,6 +1553,10 @@ end;
 
 {
   $Log$
+  Revision 1.142  2003/08/30 23:51:47  mk
+  - renamed Timezone to XpTimezone, avoids problems with linux
+    function with the same name (kylix)
+
   Revision 1.141  2003/08/26 05:37:41  mk
   - added AutomaticTimeZone const and removed $IFDEFs
 

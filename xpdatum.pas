@@ -33,7 +33,7 @@ uses
   xpglobal;
 
 var
-  TimeZone: String;
+  XpTimeZone: String;
 
 const
   StandardTimezone = 'W+1';
@@ -114,12 +114,12 @@ var addh : shortint;
     p    : byte;
 begin
   dat:=datum;
-  p:=cpos(':',timezone);
-  if p=0 then p:=length(timezone)+1;
-  addh:=ival(copy(timezone,3,p-3));
-  if timezone[2]='-' then addh:=-addh;
+  p:=cpos(':', XpTimezone);
+  if p=0 then p:=length(XpTimezone)+1;
+  addh:=ival(copy(XpTimezone,3,p-3));
+  if XpTimezone[2]='-' then addh:=-addh;
   AddD(dat,-addh);
-  zdatum:=iifs(ival(LeftStr(datum,2))<70,'20','19')+dat+'00'+timezone;
+  zdatum:=iifs(ival(LeftStr(datum,2))<70,'20','19')+dat+'00'+XpTimezone;
 end;
 
 procedure ZCtoZdatum(var zdatum, datum:string);
@@ -162,15 +162,14 @@ begin
 
   IsDST := (tzdaylight);
 {$ELSE}
-var tz: string;
-    p:  Integer;
+var
+  p:  Integer;
 begin
-  tz := TimeZone;
-  isDST := LeftStr(tz,1)='S';
-  isNegative := Copy(tz,2,1)='-';
-  p := CposX(':',tz);
-  tzHours:=IVal(Copy(tz,3,p-3));
-  tzMinutes:=IVal(Copy(tz,p,length(tz)-p));
+  isDST := LeftStr(XpTimezone,1)='S';
+  isNegative := Copy(XpTimezone,2,1)='-';
+  p := CposX(':', XpTimeZone);
+  tzHours:=IVal(Copy(XpTimezone,3,p-3));
+  tzMinutes:=IVal(Copy(XpTimezone,p,length(XpTimezone)-p));
 {$ENDIF}
 end;
 
@@ -217,6 +216,10 @@ end;
 
 {
   $Log$
+  Revision 1.28  2003/08/30 23:51:47  mk
+  - renamed Timezone to XpTimezone, avoids problems with linux
+    function with the same name (kylix)
+
   Revision 1.27  2003/08/28 01:14:15  mk
   - removed old types s20, s40, s60 and s80
 
@@ -312,8 +315,8 @@ end;
 }
 initialization
   if AutomaticTimeZone then
-    TimeZone := GetTimeZone
+    XpTimeZone := GetTimeZone
   else
-    TimeZone := StandardTimeZone;
+    XpTimeZone := StandardTimeZone;
 end.
 
