@@ -283,16 +283,16 @@ begin
       if dbFound then
       begin
         dbRead(d,'Langname',s);
-        dbclose(d);                     { ists ein Kurzname ? }
+        dbclose(d);                     { ist's ein Kurzname ? }
         testreplyto:=true;
-        if cpos(' ',s)<>0 then           { jetzt der Langname jetzt gueltig ? }
+        if cpos(' ',s)<>0 then          { Langname jetzt gueltig ? }
           begin
-            rfehler(908);               { 'ungÅltige Adresse' }
+            rfehler(908);               { 'UngÅltige Adresse' }
             testreplyto:=false;
             end;
         end
       else begin
-        rfehler(908);                   { 'ungÅltige Adresse' }
+        rfehler(908);                   { 'UngÅltige Adresse' }
         dbclose(d);
         testreplyto:=false;
         end;
@@ -436,12 +436,17 @@ label xexit,xexit1,xexit2,fromstart,ReadAgain;
 
 function RFCBrett(s:string; edis:byte):string;
 var i : integer;
+    magic : boolean;
 begin
   if (edis=1) or ((not (netztyp in [nt_UUCP,nt_Client])) and not Newsgroupdispall) or not NewsgroupDisp then
     rfcbrett:=mid(s,edis)
   else begin
     delete(s,1,2);
-    for i:=1 to length(s) do if s[i]='/' then s[i]:='.';
+    readbox(netztyp,boxfile,boxpar);
+    magic:=(netztyp in [nt_Maus,nt_Fido,nt_QWK]) and (boxpar^.magicbrett<>'')
+           and (left(s,length(boxpar^.magicbrett)-1)=mid(boxpar^.magicbrett,2));
+    for i:=iif(magic,length(boxpar^.magicbrett),1) to length(s) do
+           if s[i]='/' then s[i]:='.';
     rfcbrett:=s;
     end;
 end;
@@ -1556,7 +1561,8 @@ fromstart:
                     dbSeek(d,boiName,ustr(newbox));
                     if binary and not ntBinary(dbReadInt(d,'netztyp')) then
                       rfehler(609)  { 'In diesem Netz sind leider keine BinÑrnachrichten mîglich :-(' }
-                    else if (((not pm) and (netztyp<>dbReadInt(d,'netztyp'))) or
+                    else if (((not pm) and (netztyp<>dbReadInt(d,'netztyp')) and
+                     (not ((netztyp in [nt_UUCP,nt_Client]) and (dbReadInt(d,'netztyp') in [nt_UUCP,nt_Client])))) or
                      not ntAdrCompatible(netztyp,dbReadInt(d,'netztyp'))) then
                       rfehler(629)   { 'nicht mîglich - unterschiedliche Netztypen' }
                     else begin
@@ -1987,13 +1993,13 @@ fromstart:
       end;
     hdp^.prio:=msgprio;
     hdp^.nokop:=flNokop;
-    if umlaute=0 then
-      case netztyp of
-        nt_UUCP,
-        nt_Client : if FileContainsUmlaut then
-                      hdp^.x_charset:='ISO-8859-1';
-        nt_Fido   : hdp^.x_charset:='IBMPC 2';   { s. FSC-0054, grmpf }
-      end;
+    case netztyp of
+      nt_UUCP,
+      nt_Client : if FileContainsUmlaut then
+                    hdp^.x_charset:='ISO-8859-1';
+      nt_Fido   : if umlaute=0 then
+                    hdp^.x_charset:='IBMPC 2';   { s. FSC-0054, grmpf }
+    end;
     if iso then
       hdp^.charset:='ISO1';
     if assigned(sData^.orghdp) then
@@ -2409,6 +2415,29 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.49  2002/03/08 23:05:08  my
+  MY:- Fix: Ein Wechsel im Sendefenster ("o") von einer RFC/Client- zu
+       einer RFC/UUCP-Box oder umgekehrt ist auch bei îffentlichen
+       Nachrichten jetzt wieder mîglich (Nachwehe der Umstellung von
+       RFC/Client auf einen eigenen Netztyp).
+
+  JG+MY:- Fix: Beim éndern des EmpfÑngers im Sendefenster konnte es zu
+          Problemen ("unbekanntes Brett: /FIDO.CROSSPOINT.GER - neu
+          anlegen?") kommen, wenn es sich z.B. um Fido-Bretter mit
+          Brettebenen handelte und unter /Config/Anzeige/Bretter die
+          Punktschreibweise fÅr alle Bretter gewÑhlt war. Zusatz-Fix fÅr
+          prÑzisere Anzeige und Bestimmung der Brettebene im Sendefenster
+          implementiert.
+
+  JG+MY:- Fix: Bei Nachrichten in eine RFC-Newsgroup, die zu einer
+          Brettgruppe mit der Sonderzeichen-Einstellung "ASCII" gehîrt,
+          werden zwar Umlaute im Editor zu "ae" usw. gewandelt, nicht aber
+          z.B. Akzent-oder andere Hi-ASCII-Zeichen. Da gleichzeitig die
+          PrÅfung, ob die Nachricht Sonderzeichen enthÑlt, gar nicht
+          durchlaufen wurde, wurde nicht der korrekte Zeichensatz
+          "ISO-8859-1" deklariert, obwohl die Nachricht Sonderzeichen
+          enthielt.
+
   Revision 1.39.2.48  2001/12/23 12:08:09  mk
   - source formatting
 
