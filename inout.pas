@@ -263,7 +263,11 @@ procedure mdelay(msec:word);
 IMPLEMENTATION
 
 
-uses   maus2, winxp;
+uses
+{$IFDEF Win32 }
+  windows,
+{$ENDIF  }
+  maus2, winxp;
 
 const  maxsave     = 50;  { max. fÅr savecursor }
 
@@ -1693,7 +1697,7 @@ var t      : longint;
 
   procedure idle;
   begin
-{$IFNDEF ver32}
+{$IFDEF BP }
     case int15delay of
       2 : intr($28,regs);
       3 : inline($b8/$00/$00/$99/$fb/$f4/$35/$ca/$90);
@@ -1702,7 +1706,11 @@ var t      : longint;
             if meml[0:$2f*4]<>0 then intr($2f,regs);
           end;
     end;
-{$ENDIF}
+{$ELSE }
+  {$IFDEF Win32 }
+    Sleep(1);
+  {$ENDIF }
+{$ENDIF }
   end;
 
 begin
@@ -1773,6 +1781,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/03/20 11:25:15  mk
+  - Sleep(1) in Idle-Routine bei Win32 eingefuegt
+
   Revision 1.17  2000/03/16 19:38:54  mk
   - ticker: globale Konstante TickFreq genutzt
 
