@@ -2177,7 +2177,7 @@ begin
       s0:=s;
       manz:=0;
       end;
-  until (s0='') and (lasteol or (bufpos>=bufanz));
+  until ((s0='') and lasteol) or (bufpos>=bufanz);
   with hd do begin
     if (cpos('@',absender)=0) and (cpos('@',sender)>0) then
       absender:=sender;
@@ -3473,6 +3473,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.61  2002/01/11 23:05:54  mk
+  - Fix: Endlosschleife bei kaputten Nachrichten
+
   Revision 1.35.2.60  2002/01/06 17:29:20  my
   MY:- Hilfeausgabe korrigiert und Åberarbeitet
   MY:- Ein paar CVS-Logs lesbarer gemacht
