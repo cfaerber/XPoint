@@ -43,7 +43,6 @@ const sendIntern = 1;     { force Intern              }
 
       pgdown    : boolean = false;
       _sendmaps : boolean = false;
-{$ifdef hasHugeString}
       forcebox  : string = '';
       forceabs  : string = '';       { 'SYSOP' fÅr ProNet-System }
       _bezug    : string = '';
@@ -53,17 +52,6 @@ const sendIntern = 1;     { force Intern              }
       sendfiledate   : string = '';
       force_quotemsk : string = '';
       CrosspostBox   : string = '';
-{$else}
-      forcebox  : string[BoxNameLen] = '';
-      forceabs  : string[10] = '';       { 'SYSOP' fÅr ProNet-System }
-      _bezug    : string[120] = '';
-      _orgref   : string[120] = '';
-      _replypath: string[8] = '';        { Box, Åber die die Bezugsnachr. kam }
-      sendfilename   : string[12] = '';
-      sendfiledate   : string[14] = '';
-      force_quotemsk : string[12] = '';
-      CrosspostBox   : string[BoxNameLen] = '';
-{$endif}
       _ref6list : refnodep = nil;
       _beznet   : shortint = -1;         { Netztyp der Bezugsnachricht }
       _pmReply  : boolean = false;
@@ -123,11 +111,7 @@ type  SendUUdata = record
       SendUUptr   = ^SendUUdata;
 
 var
-{$ifdef hasHugeString}
       InternBox : string;  { Boxname bei /Netzanruf }
-{$else}
-      InternBox : string[BoxNameLen];  { Boxname bei /Netzanruf }
-{$endif}
       msgMarkEmpf: byte;   { fÅr sendMark }
 
 
@@ -380,7 +364,6 @@ var f,f2     : ^file;
     edis     : byte;
     x,y      : byte;
     brk      : boolean;
-{$ifdef hasHugeString}
     typ      : string;   { Kopf fÅr Betreff/Sende-Box          }
     wbox     : string;
     ch       : string;    { '*'-Zeichen fÅr abweichende Adresse }
@@ -407,40 +390,12 @@ var f,f2     : ^file;
     fidokey  : string;   { (A)n     }
     pgpkey   : string;
     oldbetr  : string;
-{$else}
-    typ      : string[50];   { Kopf fÅr Betreff/Sende-Box          }
-    wbox     : string[BoxNameLen];
-    ch       : string[1];    { '*'-Zeichen fÅr abweichende Adresse }
-    box      : string[BoxNameLen]; { EmpfÑnger-Pollbox             }
-    adresse  : string[AdrLen];
-    newbox   : string[20];  { Zwischensp. fÅr geÑnderte Pollbox   }
-    boxfile  : string[12];
-    username : string[30];  { eigener Username                    }
-    pointname: string[25];
-    XP_ID    : string[40];
-    XID      : string[40];  { CrossPoint-ID                       }
-    _brett   : string[5];
-    mapsname : string[20];
-    senddate : datetimest;  { mit 'D' zeitversetzt absenden       }
-    shortmid : string[19];
-    realname : string[40];
-    domain   : string[60];
-    fqdn     : string[60];  { 16.01.00: HS}
-    fidoname : string[60];  { Origin-Systemname                   }
-    OrigBox  : string[BoxNameLen];    { Box aus Pfad  }
-    AltAdr   : string[20];  { Gruppen / Fido-Absender }
-    sendbutt : string[80];
-    kopkey   : string[1];   { (K)opien }
-    fidokey  : string[1];   { (A)n     }
-    pgpkey   : string[1];
-    oldbetr  : string[20];
-{$endif}
     d        : DB;
     fs,l     : longint;
     t        : taste;
     n,p      : shortint;
     fn,fn2,
-    fn3      : ^string;
+    fn3      : string;
     b        : byte;
     si0      : smallword;
     hdp      : headerp;
@@ -453,7 +408,7 @@ var f,f2     : ^file;
     senden   : shortint;    { 0=Nein, 1=Ja, 2=Intern              }
     halten   : integer16;   { Haltezeit fÅr neuen User            }
     sendedat : longint;     { Empfangsdatum                       }
-    passwd   : ^string;     { Pa·wort des empfangenden Users      }
+    passwd   : string;     { Pa·wort des empfangenden Users      }
     passpos  : smallword;   { PW-Position fÅr QPC                 }
     newbin   : boolean;     { Typ nach Codierung                  }
     intern,                 { interne Nachricht                   }
@@ -500,7 +455,7 @@ var f,f2     : ^file;
     m1adr    : longint;     { Pufferadresse der ersten Kopie }
     m1msgsize: longint;     { Gesamtgrî·e der ersten Kopie   }
     showempfs: shortint;    { fÅr Betreffbox }
-    fo       : ^string;
+    fo       : string;
     flags    : longint;
 
 label xexit,xexit1,xexit2,fromstart,ReadAgain;
@@ -913,7 +868,6 @@ begin      {-------- of DoSend ---------}
   _verteiler:=false;
   flOhnesig:=false; flLoesch:=false;
   new(f); new(f2);
-  new(fn); new(fn2); new(fn3);
   assign(f^,datei);
 
   sdNope:=(sdata=nil);
@@ -945,7 +899,6 @@ begin      {-------- of DoSend ---------}
     goto xexit1;
   end;
 
-  new(passwd);
   new(hdp);
 
   MakeSignature(signat,sigfile,sigtemp);
@@ -961,12 +914,12 @@ begin      {-------- of DoSend ---------}
   flPGPsig:=(sendflags and SendPGPsig<>0) or PGP_signall;
   flPGPreq:=(sendflags and SendPGPreq<>0);
   flNokop:=(sendflags and SendNokop<>0) or DefaultNokop;
-  new(fo); fo^:='';
+  fo:='';
 
 { Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }
 fromstart:
 
-  passwd^:='';         { Betreffbox true = Betreff nochmal eintippen           }
+  passwd:='';          { Betreffbox true = Betreff nochmal eintippen           }
   empfneu:=false;      { Edit       true = Editor Starten                      }
   docode:=0;           { Sendbox    true = Sendefenster zeigen                 }
   fidoname:='';        { forcebox ''-um Box entsprechend Empfaenger zu waehlen }
@@ -1010,7 +963,7 @@ fromstart:
               if dbReadInt(ubase,'userflags') and 2<>0 then
                 docode:=cancode;
             si0:=0;
-            dbReadX(ubase,'passwort',si0,passwd^);
+            dbReadX(ubase,'passwort',si0,passwd);
             end;
           umlaute:=iif(dbReadInt(ubase,'userflags') and 8=0,0,1);
           end
@@ -1595,13 +1548,13 @@ fromstart:
 
     betreff:=left(betreff,betrlen);
     if binary then
-      fn^:=datei
+      fn:=datei
     else
-      fn^:=TempS(system.round((_filesize(datei)+addsize+2000)*1.5));
+      fn:=TempS(system.round((_filesize(datei)+addsize+2000)*1.5));
     assign(f2^,datei);
     iso:=not binary and ntOptISO(netztyp) and zc_iso and (grnr<>IntGruppe);
     if not binary then begin
-      assign(f2^,fn^);
+      assign(f2^,fn);
       rewrite(f2^,1);
       if header<>'' then begin           { Header }
         assign(f^,header);
@@ -1613,9 +1566,9 @@ fromstart:
         assign(f^,sigfile);
         AppendFile(docode,0,iso);
         end;
-      fo^:=fido_origin(false);
-      if fo^<>'' then
-        wrs(fo^)
+      fo:=fido_origin(false);
+      if fo<>'' then
+        wrs(fo)
       else
         if XpID then                       { ID }
           blockwrite(f2^,XID[1],length(XID));
@@ -1626,7 +1579,7 @@ fromstart:
 
     bin_msg:=binary and (maxbinsave>0) and (fs>maxbinsave*1024);
     if not bin_msg then
-      assign(f^,fn^)
+      assign(f^,fn)
     else begin
       assign(f2^,TempPath+'binmsg');
       rewrite(f2^,1);
@@ -1808,8 +1761,8 @@ fromstart:
     reset(f^,1);
     fm_rw;
     hdp^.groesse:=filesize(f^);
-    fn2^:=TempS(hdp^.groesse+4000);
-    assign(f2^,fn2^);
+    fn2:=TempS(hdp^.groesse+4000);
+    assign(f2^,fn2);
     rewrite(f2^,1);
     for ii:=1 to msgCPanz-1 do
       AddToEmpflist(cc^[ii]);
@@ -1885,10 +1838,10 @@ fromstart:
           dbWriteN(mbase,mb_adresse,oldmsgpos);
           oldmsgsize:=0;  { zur Sicherheit.. }
           end;
-        Xwrite(fn2^);
+        Xwrite(fn2);
         dbReadN(mbase,mb_adresse,m1adr);
         dbReadN(mbase,mb_msgsize,m1msgsize);
-        _era(fn2^);
+        _era(fn2);
         if bin_msg then
           _era(TempPath+'binmsg');
         end
@@ -1941,32 +1894,32 @@ fromstart:
     if not intern then begin
       if (docode=1) or (docode=2) then begin
         SetCryptFlag;
-        assign(f^,fn^);
+        assign(f^,fn);
         fm_ro;
         reset(f^,1);
         fm_rw;
-        fn2^:=TempS(filesize(f^)+2000);
-        assign(f2^,fn2^);
+        fn2:=TempS(filesize(f^)+2000);
+        assign(f2^,fn2);
         rewrite(f2^,1);
         passpos:=1;
         case docode of
           1 : encode_file(false,f^,f2^);
           2 : begin
-                DES_PW(passwd^);
+                DES_PW(passwd);
                 encode_file(true,f^,f2^);
               end;
-        end;
+        end; { case }
         close(f^); close(f2^);
-        assign(f^,fn2^);
-        end
+        assign(f^,fn2);
+        end { if docode }
       else
-        assign(f^,fn^);
+        assign(f^,fn);
 
       fm_ro;
       reset(f^,1);
       fm_rw;
-      fn3^:=TempS(filesize(f^)+4000);
-      assign(f2^,fn3^);
+      fn3:=TempS(filesize(f^)+4000);
+      assign(f2^,fn3);
       rewrite(f2^,1);
       hdp^.archive:=false;
       hdp^.empfaenger:=iifs(pm,empfaenger,mid(empfaenger,2));
@@ -1993,12 +1946,12 @@ fromstart:
       fmove(f^,f2^);
       close(f^); close(f2^);
       if (docode=1) or (docode=2) then
-        _era(fn2^);
-      if pmc_code then pmCryptFile(hdp^,fn3^) else
+        _era(fn2);
+      if pmc_code then pmCryptFile(hdp^,fn3) else
       if (docode=9) or flPGPsig then begin
         for ii:=1 to msgCPanz-1 do
           AddToEmpflist(cc^[ii]);
-        xp_pgp.PGP_EncodeFile(f^,hdp^,fn3^,passwd^,docode=9,flPGPsig,fo^);
+        xp_pgp.PGP_EncodeFile(f^,hdp^,fn3,passwd,docode=9,flPGPsig,fo);
         DisposeEmpflist(empflist);
         end;
 
@@ -2011,13 +1964,13 @@ fromstart:
       reset(f2^,1);
       if ioresult<>0 then rewrite(f2^,1)
       else seek(f2^,filesize(f2^));
-      assign(f^,fn3^);
+      assign(f^,fn3);
       fm_ro;
       reset(f^,1);
       fm_rw;
       fmove(f^,f2^);
       close(f^); close(f2^);
-      _era(fn3^);
+      _era(fn3);
 
       if uvs_active and (aktdispmode=11) and (cc_count=0) and
          (msgCPanz<=1) then
@@ -2037,7 +1990,7 @@ fromstart:
       dec(cc_anz,msgCPanz-1); inc(cc_count,msgCPanz-1);
       end;
 
-    if not binary then _era(fn^);
+    if not binary then _era(fn);
   end;   { not verteiler }
 
   if cc_anz>0 then begin           { weitere CC-EmpfÑnger bearbeiten }
@@ -2064,13 +2017,10 @@ xexit:
   freeres;
   dispose(ccm);
   dispose(cc);
-  dispose(passwd);
   dispose(hdp);
   if sigtemp then _era(sigfile);
-  dispose(fo);
 xexit1:
   dispose(f); dispose(f2);
-  dispose(fn); dispose(fn2); dispose(fn3);
   if sdNope then dispose(sdata);
 xexit2:
   forcebox:=''; forceabs:='';
@@ -2206,6 +2156,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/07/06 12:39:35  hd
+  - ^string entfernt
+
   Revision 1.46  2000/07/05 14:49:29  hd
   - AnsiString
 

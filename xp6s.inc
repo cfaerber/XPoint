@@ -483,6 +483,7 @@ var p    : pointer;
     x,y  : byte;
     ofs  : longint;
     total: longint;
+    _pwd : ^string; { Notwendig, da QPC in Assembler :-((( }
 begin
   getmem(p,8000);
   seek(f1,0);
@@ -499,8 +500,17 @@ begin
     blockread(f1,p^,8000,rr);
     if des then
       DES_code(false,p^,ofs,total,rr,x,y)
-    else
-      QPC(false,p^,rr,passwd,passpos);
+    else begin
+      { Wenn die Prozedur QPC nicht mehr in Assembler geschrieben ist,
+        dann koennte koennte dieser Workaround entfallen }
+{$ifdef FPC}
+  {$hint Kommentar lesen und Assembler in XP3::QPC entfernen :-) }
+{$endif}
+      getmem(_pwd,length(passwd)+1);
+      _pwd^:= passwd;
+      QPC(false,p^,rr,_pwd,passpos);
+      freemem(_pwd,length(passwd)+1);
+    end;
     blockwrite(f2,p^,rr);
     inc(ofs,rr);
     end;
@@ -569,7 +579,7 @@ begin
   fmove(f^,f2^);
   close(f^); close(f2^);
   s:=pmcrypt[docode-2].encode;
-  rps(s,'$KEY',passwd^);
+  rps(s,'$KEY',passwd);
   rps(s,'$INFILE',temppath+uncryptedfile);
   rps(s,'$OUTFILE',temppath+cryptedfile);
   rps(s,'$USER',oemp);
@@ -694,7 +704,7 @@ var f : file;
   end;
 begin
   if exist(datei) then begin
-    assign(f,TempS(_filesize(fn^)+200));
+    assign(f,TempS(_filesize(fn)+200));
     rewrite(f,1);
     wrs(getres(600){oempf}+' '+mid(vert_name(empfaenger),iif(pm,1,2)));
     for i:=1 to cc_anz do
@@ -748,12 +758,12 @@ var dat   : longint;
 begin
   rmessage(608);    { 'Nachricht speichern...' }
   repeat
-    fn^:=SendPath+strs(random(10000))+'.MSG';
-  until not exist(fn^);
-  if filecopy(datei,fn^) then;
+    fn:=SendPath+strs(random(10000))+'.MSG';
+  until not exist(fn);
+  if filecopy(datei,fn) then;
   dbOpen(auto,AutoFile,1);
   dbAppend(auto);
-  dbWrite(auto,'dateiname',fn^);
+  dbWrite(auto,'dateiname',fn);
   dbWrite(auto,'betreff',betreff);
   if pm then empf:=empfaenger
   else empf:=mid(empfaenger,2);
@@ -1134,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.22  2000/07/06 12:39:35  hd
+  - ^string entfernt
+
   Revision 1.21  2000/07/05 14:46:47  hd
   - AnsiString
 
