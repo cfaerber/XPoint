@@ -36,7 +36,13 @@
 
 {$I xpdefine.inc }
 
-uses dos, sysutils, classes,
+unit maggi;
+
+interface
+
+implementation
+
+uses sysutils, classes, xpheader, xpmakeheader,
   typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
 const nt_ZConnect  = 2;
@@ -45,9 +51,9 @@ const nt_ZConnect  = 2;
       readkoplist  = false;
 
       direction : byte = 0;
-      infile    : pathstr = '';
-      outfile   : pathstr = '';
-      brettfile : pathstr = '';
+      infile    : string = '';
+      outfile   : string = '';
+      brettfile : string = '';
       netzname  : string[8] = '';
       maxbrett  = 2000;
       halferror : boolean = false;   { Teilkonvertierung }
@@ -72,7 +78,6 @@ const nt_ZConnect  = 2;
       AttrQPC     = $0001;            { QPC-codiert                }
       AttrControl = $0020;            { Cancel-Nachricht }
 
-{$I XPHEADER.INC }
 
 type  charr       = array[0..65530] of char;
       charrp      = ^charr;
@@ -88,7 +93,8 @@ var   f1,f2     : file;
       brettp    : array[1..maxbrett] of ^brett;
 
       empflist,uline,xline,mail : tstringlist;
-      hd : header;
+      hd : THeader;
+
 
 
 
@@ -320,7 +326,7 @@ procedure MZ(pronet:boolean);
 const maxmlines = 10;   { max. $-Zeilen, die in Z-Text uebernommen werden }
       readfirst = 2000;
 type buf = array[0..readfirst-1] of byte;
-var hd   : header;
+var hd   : THeader;
     s    : string;
     p    : byte;
     mc   : string[12];
@@ -375,8 +381,8 @@ var hd   : header;
   function ff(msgid:string):string;
   begin
     msgid:=trim(msgid);
-    if LeftStr(msgid,1)='<' then delfirst(msgid);
-    if RightStr(msgid,1)='>' then dellast(msgid);
+    if LeftStr(msgid,1)='<' then DeleteFirstChar(msgid);
+    if RightStr(msgid,1)='>' then DeleteLastChar(msgid);
     ff:=msgid;
   end;
 
@@ -416,19 +422,19 @@ begin
         fido_to:=trim(mid(s,5));
         s:=UpperCase(LeftStr(s,4));
         if s='' then
-          empfaenger:='/UNZUSTELLBAR'
+          Firstempfaenger:='/UNZUSTELLBAR'
         else begin
           i:=1;
           while (i<=bretter) and (brettp[i]^.code<>s) do inc(i);
-          if i>bretter then empfaenger:='/'+s
-          else empfaenger:=brettp[i]^.name;
+          if i>bretter then FirstEmpfaenger:='/'+s
+          else FirstEmpfaenger:=brettp[i]^.name;
           end;
         end
       else begin
         delete(s,1,1);
         p:=cpos(':',s);
         if p=0 then ok:=false
-        else empfaenger:=trim(mid(s,p+1))+'@'+trim(LeftStr(s,p-1));
+        else FirstEmpfaenger:=trim(mid(s,p+1))+'@'+trim(LeftStr(s,p-1));
         end;
       if ok then begin
         rdln; absender:=trim(s);
@@ -475,7 +481,7 @@ begin
           if (mc='$ MSG-ID  :') or (mc='$ MSGID   :') then
             msgid:=ff(copy(s,12,120)) else
           if (mc='$ REPLY-ID:') or (mc='$ X-REF   :') then
-            ref:=ff(copy(s,12,120)) else
+            hd.References.Add(ff(copy(s,12,120))) else
           if mc='$ ABSENDER:' then begin
             s:=trim(copy(s,12,79));
             p:=cpos('@',s);
@@ -514,11 +520,11 @@ begin
         if mlanz>0 then inc(adds,2); }
         if (direction=1) or (direction=8) then begin    { M->Z }
           wrs('ABS: '+absender+iifs(realname<>'',' ('+realname+')',''));
-          wrs('EMP: '+empfaenger);
+          wrs('EMP: '+ FirstEmpfaenger);
           wrs('BET: '+betreff);
           wrs('ROT: '+reverse(pfad));
           wrs('MID: '+msgid);
-          if ref<>'' then wrs('BEZ: '+ref);
+          if References.Count <> 0 then wrs('BEZ: '+ References[0]);
           if zdatum<>'' then
             wrs('EDA: '+zdatum)
           else
@@ -537,7 +543,7 @@ begin
           wrs('');
           end
         else begin                   { M->N }
-          wrs(empfaenger);
+          wrs(FirstEmpfaenger);
           wrs(betreff);
           wrs(absender);
           wrs(datum);
@@ -570,7 +576,7 @@ begin
          LeftStr(time,2)+copy(time,4,2);
 end;
 
-procedure setzdate(var hd:header);
+procedure setzdate(hd: Theader);
 begin
   with hd do begin
     if datum='' then datum:=zdate;
@@ -598,36 +604,7 @@ begin
 end;
 
 
-// Frischen Header erzeugen
-procedure ClearHeader;
-begin
-  with hd do
-  if Assigned(AddRef) then
-  begin
-    AddRef.Free;
-    XEmpf.Free;
-    XOEM.Free;
-    Followup.Free;
-  end;
-
-  ULine.Clear; XLine.Clear; Mail.Clear;
-  Fillchar(hd, sizeof(hd), 0);
-
-  with hd do
-  begin
-    Netztyp := nt_UUCP;
-    AddRef := TStringList.Create;
-    XEmpf := TStringList.Create;
-    XOEM := TStringList.Create;
-    Followup := TStringList.Create;
-  end;
-end;
-
-
 {$DEFINE uuzmime }
-
-{$I xpmakehd.inc}     { MakeHeader() }
-
 
 procedure cerror;
 begin
@@ -638,7 +615,7 @@ end;
 
 
 procedure ZM(pronet:boolean);
-var hd    : header;
+var hd    : THeader;
     hds   : longint;
     i     : integer;
     ok,pm : boolean;
@@ -685,11 +662,11 @@ begin
   fs:=filesize(f1);
   repeat
     seek(f1,adr);
-    makeheader(true,f1,0,0,hds,hd,ok,false);
+    makeheader(true,f1,0,hds,hd,ok,false, false);
     if ok then with hd do begin
-      UpString(empfaenger);
+      FirstEmpfaenger := UpperCase(FirstEmpfaenger);
       UpString(absender);
-      if (empfaenger='SYSTEM@'+real_box) and (betreff='REQUEST') then begin
+      if (FirstEmpfaenger='SYSTEM@'+real_box) and (betreff='REQUEST') then begin
         if not reqopen then begin
           assign(reqfile,real_box+'.REQ');
           rewrite(reqfile);
@@ -702,26 +679,26 @@ begin
         write(reqfile,s);
         end
       else begin
-        pm:=cpos('@',empfaenger)>0;
+        pm:=cpos('@', FirstEmpfaenger)>0;
         if not pm then begin
           i:=1;
-          while (i<=bretter) and (UpperCase(brettp[i]^.name)<>UpperCase(empfaenger)) do
+          while (i<=bretter) and (UpperCase(brettp[i]^.name)<>UpperCase(FirstEmpfaenger)) do
             inc(i);
           berr:=(i>bretter);
-          if berr then writeln('unbekanntes Brett:  ',empfaenger)
-          else empfaenger:=brettp[i]^.code+fido_to;
+          if berr then writeln('unbekanntes Brett:  ', FirstEmpfaenger)
+          else Firstempfaenger:=brettp[i]^.code+fido_to;
           end
         else begin
-          i:=cpos('@',empfaenger);
-          while cPos('#',LeftStr(empfaenger,i))>0 do
-            empfaenger[cpos('#',empfaenger)]:='@';    { # -> @ }
-          node:=mid(empfaenger,i+1);
+          i:=cpos('@', Firstempfaenger);
+          while cPos('#',LeftStr(Firstempfaenger,i))>0 do
+            Firstempfaenger[cpos('#', Firstempfaenger)]:='@';    { # -> @ }
+          node:=mid(Firstempfaenger,i+1);
           if cpos('.',node)>0 then
             node:=LeftStr(node,cpos('.',node)-1);
         { if (empfaenger='SYSTEM@'+node) then
             empfaenger:='-'+LeftStr(empfaenger,i-1)+sp(16-i)
           else }
-            empfaenger:='-'+node+':'+LeftStr(empfaenger,i-1)+sp(16-i);
+            Firstempfaenger:='-'+node+':'+LeftStr(Firstempfaenger,i-1)+sp(16-i);
           berr:=false;
           end;
         if berr then halferror:=true
@@ -730,7 +707,7 @@ begin
           write(#13,'Nachrichten: ',nn);
           alias:=(real_box='');
           wrs(^A);                       { ^A            }
-          wrs(empfaenger);               { Empfaenger     }
+          wrs(Firstempfaenger);               { Empfaenger     }
           i:=cpos('@',absender);
           node:=mid(absender,i+1);
           if cpos('.',node)>0 then
@@ -751,7 +728,7 @@ begin
                 LeftStr(zdatum,2)+LeftStr(datum,2)+' '+
                 copy(datum,7,2)+':'+copy(datum,9,2)+':'+copy(zdatum,13,2));
             wrs('$ MsgID   : '+msgid);
-            if ref<>'' then wrs('$ Reply-ID: '+ref);
+            if References.Count <> 0 then wrs('$ Reply-ID: '+ References[0]);
             end
           else begin
             if not alias then
@@ -765,8 +742,8 @@ begin
               wrs('$ Realname: '+realname);
             if msgids and (msgid<>'') then  { Message-ID   }
               wrs('$ Msg-ID  : <'+msgid+'>');
-            if ref<>'' then
-              wrs('$ Reply-ID: <'+ref+'>');
+            if References.Count <> 0 then
+              wrs('$ Reply-ID: <'+ References[0] +'>');
             if magicnet and (length(betreff)>25) then
               wrs('$ Betreff : '+betreff);
             if attrib and attrReqEB<>0 then
@@ -791,7 +768,7 @@ end;
 
 
 procedure ZQZ(zq:boolean);
-var hd    : header;
+var hd    : Theader;
     hds   : longint;
     i     : integer;
     ok,pm : boolean;
@@ -809,30 +786,30 @@ begin
   fs:=filesize(f1);
   repeat
     seek(f1,adr);
-    makeheader(zq,f1,0,0,hds,hd,ok,false);
+    makeheader(zq,f1,0,hds,hd,ok,false, false);
     if ok then with hd do begin
       inc(nn);
       write(#13,'Nachrichten: ',nn);
-      p1:=cpos('@',empfaenger);
+      p1:=cpos('@', Firstempfaenger);
       pm:=(p1>0);
       if pm then
         if zq then begin
-          p2:=cPos('.',mid(empfaenger,p1+1));
-          if p2>0 then empfaenger:=LeftStr(empfaenger,p1+p2-1);
+          p2:=cPos('.',mid(Firstempfaenger,p1+1));
+          if p2>0 then Firstempfaenger:=LeftStr(Firstempfaenger,p1+p2-1);
           end
         else
       else begin
-        if zq and (LeftStr(empfaenger,1)='/') then
-          empfaenger:=mid(empfaenger,2);
+        if zq and (LeftStr(Firstempfaenger,1)='/') then
+          Firstempfaenger:=mid(Firstempfaenger,2);
         if not g_und_s then
           for i:=1 to length(empfaenger) do
-            if empfaenger[i]='/' then empfaenger[i]:='\'
-            else if empfaenger[i]='\' then empfaenger[i]:='/';
+            if Firstempfaenger[i]='/' then Firstempfaenger[i]:='\'
+            else if Firstempfaenger[i]='\' then Firstempfaenger[i]:='/';
         if not zq and (LeftStr(empfaenger,1)<>'/') then
-          empfaenger:='/'+empfaenger;
+          Firstempfaenger:='/'+Firstempfaenger;
         end;
       if zq then begin
-        wrs(empfaenger);
+        wrs(Firstempfaenger);
         wrs(betreff);
         wrs(absender);
         wrs(datum);
@@ -1046,7 +1023,7 @@ var hd     : header;
     writeln(t,':size ',hd.groesse);
   end;
 
-  function GetBinType(fn:pathstr):string;    { vgl. UUZ.PAS }
+  function GetBinType(fn:string):string;    { vgl. UUZ.PAS }
   var mtype: string[30];
       p    : byte;
       ext  : string[6];
@@ -1168,10 +1145,10 @@ begin
           if p1=0 then p1:=length(msgid)+1;
           msgid:=LeftStr(msgid,min(10,p1-1));
           end;
-        p1:=cpos('@',empfaenger);
+        p1:=cpos('@',Firstempfaenger);
         if (p1=0) and
-           not stricmp(LeftStr(UpperCase(empfaenger),length(bretth)),bretth) then
-          writeln(#13#10,'unbekannte Mausgruppe: ',empfaenger)
+           not stricmp(LeftStr(UpperCase(Firstempfaenger),length(bretth)),bretth) then
+          writeln(#13#10,'unbekannte Mausgruppe: ',Firstempfaenger)
         else begin
           inc(nn);
           write(#13,'Nachrichten: ',nn);
@@ -1179,7 +1156,7 @@ begin
           komzu:=(attrib and attrQuoteTo<>0) or
                  (not mkoutfile and (p1>0) and (replypath<>boxname));
             { !!: "Kommentar zu" bei PM-Kommentar an andere Pollbox }
-          tomaus:=(ref='') and (UpperCase(LeftStr(empfaenger,5))='MAUS@');
+          tomaus:=(ref='') and (UpperCase(LeftStr(Firstempfaenger,5))='MAUS@');
           if tomaus and (betreff='<Maus-Command>') then
             writeln(t,'#CMD')
           else if tomaus and (betreff='<Maus-Direct-Command>') then
@@ -1191,8 +1168,8 @@ begin
             if p1>0 then                  { PM }
               if (ref='') or (attrib and attrPmReply<>0) or komzu or mkoutfile
               then begin
-                writeln(t,'A',trim(LeftStr(empfaenger,p1-1)),' @ ',
-                          trim(mid(empfaenger,p1+1)));
+                writeln(t,'A',trim(LeftStr(Firstempfaenger,p1-1)),' @ ',
+                          trim(mid(Firstempfaenger,p1+1)));
                 komzu:=(ref<>'');
                 end
               else
@@ -1200,7 +1177,7 @@ begin
               { fb: G-Zeile in AM auf jeden Fall schreiben }
               { if komzu or (ref='') or mkoutfile then }
               { /fb}
-                writeln(t,'G',mid(empfaenger,length(bretth)+1));
+                writeln(t,'G',mid(Firstempfaenger,length(bretth)+1));
             if mkoutfile then begin
               p2:=cpos('@',absender);
               if p2<>0 then
@@ -1411,7 +1388,7 @@ var t1,log     : text;
     blockwrite(f2,buf^,bufp);
   end;
 
-  procedure WriteInfofile(fn:pathstr);
+  procedure WriteInfofile(fn:string);
   var t : text;
       i : longint;
   begin
@@ -1504,10 +1481,10 @@ begin
                       appline(s,eoln(t1));
                       end;
                   end;
-            'A' : if empfaenger='' then empfaenger:=mausform(s);
+            'A' : if Firstempfaenger='' then Firstempfaenger:=mausform(s);
             'B' : begin pm_bstat:=LeftStr(s,15); inc(pm); end;
             'E' : begin datum:=copy(s,3,10); ZtoZCdatumNTZ(datum,zdatum); end;
-            'G' : empfaenger:=bretth+s;
+            'G' : Firstempfaenger:=bretth+s;
             'O' : organisation:=s;
             'V' : absender:=mausform(s);
             'W' : begin betreff:=s; inc(pm); keinbetreff:=false; end;
@@ -1555,7 +1532,7 @@ begin
         write(#13,'Nachrichten: ',nn);
         killmsg:=false;
         if (msgid<>'') and (cpos('@',msgid)=0) then begin   { Info-File }
-          empfaenger:='/¯Mausinfo';    { s. auch XP0.MausInfoBrett }
+          Firstempfaenger:='/¯Mausinfo';    { s. auch XP0.MausInfoBrett }
           absender:='MausInfo@'+boxname;
           if msgid='HEAD' then
             killmsg:=true            { internes Infofile loeschen }
@@ -1577,7 +1554,7 @@ begin
         if not killmsg then begin
           pfad:=boxname;
           if absender='' then absender:='Absender fehlt?!@'+boxname;
-          wrs('EMP: '+empfaenger);
+          wrs('EMP: '+Firstempfaenger);
           if cpos('@',absender)=0 then
             absender:=absender+'@'+boxname;  { fuer lokale Quark-Nachrichten }
           if realname='' then
@@ -1655,6 +1632,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.35  2002/02/21 01:39:04  mk
+  - made a litte bit more compilable :)
+
   Revision 1.34  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
