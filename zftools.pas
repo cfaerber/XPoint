@@ -27,7 +27,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,fileio,xpdiff,xpdatum,xpglobal;
+  typeform,fileio,xpdiff,xpdatum,xpglobal, winxp;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -193,12 +193,10 @@ function ZFidoMain: integer;
 implementation
 
 uses
-{$ifdef Develop}
   resource,
   inout,
   maus2,
   xp0,
-{$endif}
   xp1;
 
 procedure ExpandCR(var data; bpos:word; size:word; var addlfs:word); assembler; {&uses ebx, esi, edi}
@@ -677,9 +675,7 @@ var f1,f2   : file;
     reqfile : text;
     reqopen : boolean;
     reqnode : string;
-{$ifdef Develop}
     x,y     : byte;
-{$endif}
 
   procedure wrw(w:word);
   begin
@@ -780,13 +776,9 @@ var f1,f2   : file;
       pm:=(cpos('@',empfaenger)>0);
       uuadr:='';
       if not pm then begin
-        if LeftStr(UpperCase(empfaenger),length(bretter))<>UpperCase(bretter) then begin
-{$ifdef Develop}
-          MWrt(x+15,y+5,sp(50));
-          MWrt(x+15,y+5,copy(GetRepS2(30003,51,empfaenger),1,50));
-{$else}
-          writeln(' - unbekannte Brettebene: '+empfaenger+#7);
-{$endif}
+        if LeftStr(UpperCase(empfaenger),length(bretter))<>UpperCase(bretter) then
+        begin
+          MWrt(x+15,y+5, FormS(GetRepS2(30003,51,empfaenger),50));
           WriteMessageHeader:=false;
           exit;
           end
@@ -836,20 +828,12 @@ var f1,f2   : file;
       if attrib and attrFile<>0 then
         betreff:=ExtractFileName(betreff);
       wr0(betreff);                            { Subject      }
-{$ifdef Develop}
-      MWrt(x+15,y+3,sp(50));
-      MWrt(x+15,y+4,sp(50));
-      MWrt(x+15,y+4,copy(betreff,1,50));
-{$endif}
+      MWrt(x+15,y+4,FormS(betreff,50));
       if not pm then begin
         wrs('AREA:'+empfaenger);
-{$ifdef Develop}
-        MWrt(x+15,y+3,copy(empfaenger,1,50));
-{$endif}
+        MWrt(x+15,y+3,FormS(empfaenger,50));
       end else begin
-{$ifdef Develop}
-        MWrt(x+15,y+3,copy(fa2.username,1,50));
-{$endif}
+        MWrt(x+15,y+3,FormS(fa2.username,50));
         if fa2.ispoint then wrs(^A'TOPT '+strs(fa2.point));
         if not adr3d and (fa1.point<>0) then
           wrs(^A'FMPT '+strs(fa1.point));
@@ -966,17 +950,12 @@ begin                   //ZFidoProc
   assign(f1,infile);
   reset(f1,1);
   fs:=filesize(f1);
-{$ifdef Develop}
   msgbox(70,7,GetRes2(30003,20),x,y);   { 'Konvertiere ZConnect -> FTS' }
-  MWrt(x+3,y+2,GetRes2(30003,12));      { 'Nummer' }
-  MWrt(x+3,y+3,GetRes2(30003,14));      { 'An' }
-  MWrt(x+3,y+4,GetRes2(30003,15));      { 'Betreff' }
-  MWrt(x+3,y+5,GetRes2(30003,16));      { 'Status' }
+  MWrt(x+2,y+2,GetRes2(30003,12));      { 'Nummer' }
+  MWrt(x+2,y+3,GetRes2(30003,14));      { 'An' }
+  MWrt(x+2,y+4,GetRes2(30003,15));      { 'Betreff' }
+  MWrt(x+2,y+5,GetRes2(30003,16));      { 'Status' }
   attrtxt(col.ColMboxHigh);
-{$else}
-  writeln('Konvertierung ZConnect -> Fido ...');
-  writeln;
-{$endif}
   adr:=0;
   n:=0;
   ok:=true;
@@ -992,11 +971,7 @@ begin                   //ZFidoProc
         end
       else begin
         inc(n);
-{$ifdef Develop}
         MWrt(x+15,y+2,IntToStr(n));
-{$else}
-        write(#13,n);
-{$endif}
         if WriteMessageHeader then begin
           CopyMessageText;
           WriteMessageFooter;
@@ -1010,22 +985,13 @@ begin                   //ZFidoProc
   freemem(buf,bufsize);
   if reqopen then
     close(reqfile);
-{$ifdef Develop}
   closebox;
   if not ok then trfehler(2303,15);
   freeres;
-{$else}
-  writeln;
-  if not ok then error(#13#10'fehlerhafter Puffer!'#7);
-{$endif}
 end;
 
 { FTS-0001 -> ZCONNECT }
-{$ifdef Develop}
 procedure FidoZfile(const fn: string; append:boolean; const x,y: integer);
-{$else}
-procedure FidoZfile(const fn: string; append:boolean);
-{$endif}
 const kArea = $41455241;    { AREA   }
       kFrom = $6d6f7246;    { From   }
       kFmpt = $54504d46;    { FMPT   }
@@ -1419,12 +1385,10 @@ begin
     seek(f2,filesize(f2));
   end else
     rewrite(f2,1);
-  write(fn,' ¯ ',outfile,'      ');
+  Wrt2(fn + ' ¯ ' + outfile + '      ');
   ok:=true;
   anz_msg:=0;
-{$ifdef Develop}
-  MWrt(x+15,y+3,IntToStr(anz_msg));
-{$endif}
+  MWrt(x+15,y+4,IntToStr(anz_msg));
   mbufsize:=65536;
   getmem(msgbuf,mbufsize);
   if filesize(f1)<sizeof(phd) then
@@ -1456,11 +1420,7 @@ begin
     end;
   repeat
     if filepos(f1)>=fs then begin
-{$ifdef Develop}
       trfehler1(2301,ExtractFileName(fn),15);
-{$else}
-      writeln('Warnung: Fido-Paket fehlerhaft!'#7);
-{$endif}
       goto abbr;
       end;
     mhd.mpktver:=0;
@@ -1481,17 +1441,10 @@ begin
       fmzone:=0; tozone:=0;
       fromline:=''; fllen:=0; inetadr:=false;
       viaanz:=0;
-{$ifdef Develop}
-      MWrt(x+15,y+3,IntToStr(anz_msg));
-      MWrt(x+15,y+4,sp(50));
-      MWrt(x+15,y+4,Copy(fromu,1,50));
-      MWrt(x+15,y+5,sp(50));
-      MWrt(x+15,y+5,Copy(tou,1,50));
-      MWrt(x+15,y+6,sp(50));
-      MWrt(x+16,y+6,Copy(subj,1,50));
-{$else}
-      write(#8#8#8#8#8,anz_msg:5);
-{$endif}
+      MWrt(x+15,y+4,IntToStr(anz_msg));
+      MWrt(x+15,y+5,FormS(fromu,50));
+      MWrt(x+15,y+6,FormS(tou,50));
+      MWrt(x+15,y+7,FormS(subj,50));
 
       repeat                      { .. und die Kludges bearbeiten }
         seek(f1,adr);
@@ -1547,10 +1500,7 @@ begin
             then begin
               getrestofline;
               inc(adr,sizeof(tt));
-{$ifdef Develop}
-              MWrt(x+15,y+5,sp(50));
-              MWrt(x+15,y+5,Copy(s,1,50));
-{$endif}
+              MWrt(x+15,y+5,FormS(s,50));
               hd.empfaenger:=brt2+trim(s);
               end else
             if not inetadr and (tt.area=kFrom) and (tt.dp=':') then begin
@@ -1716,20 +1666,11 @@ abbr:
   close(f1);
   close(f2);
   if not ok then begin
-{$ifdef Develop}
     trfehler1(2302,ExtractFileName(fn),15); { 'fehlerhaftes Fido-Paket' }
-{$else}
-    writeln('  fehlerhaftes Fido-Paket!'#7); delay(1000);
-{$endif}
     _result:=1;
     if baddir then begin
-{$ifdef Develop}
       { 'Kopiere %s ins Verzeichnis BAD' }
       MWrt(x+15,y+7,GetRepS2(30003,50,ExtractFileName(fn)));
-{$else}
-      writeln(sp(length(fn)+length(outfile)+9),
-              'Datei wird im Verzeichnis BAD abgelegt.');
-{$endif}
       MoveToBad(fn);
       end;
     end
@@ -1743,9 +1684,7 @@ var sr  : TSearchRec;
     rc  : integer;
     dir : string;
     fst : boolean;
-{$ifdef Develop}
     x,y : byte;
-{$endif}
 begin
   { Kill outfile only on wildcards. Otherwise the
     function was called by XP and then allways without
@@ -1753,25 +1692,20 @@ begin
   fst:= (pos('*',infile)+pos('?',infile)>0);
   dir:= AddDirSepa(ExtractFilePath(infile));
   rc:= findfirst(infile,faAnyFile-faDirectory,sr);
-{$ifdef Develop}
   msgbox(70,10,GetRes2(30003,10),x,y);
-  MWrt(x+2,y+2,GetRes2(30003,11));       { 'Datei......: ' }
+  MWrt(x+2,y+2,GetRes2(30003,11));      { 'Datei......: ' }
+  MWrt(x+2,y+4,GetRes2(30003,12));      { 'Nummer' }
+  MWrt(x+2,y+5,GetRes2(30003,14));      { 'An' }
+  MWrt(x+2,y+6,GetRes2(30003,15));      { 'Betreff' }
+  MWrt(x+2,y+7,GetRes2(30003,16));      { 'Status' }
 
-  attrtxt(col.ColMboxHigh);
-{$endif}
-  while rc=0 do begin
-{$ifdef Develop}
-    MWrt(x+15,y+1,sr.name);
+  while  rc=0 do begin
+    MWrt(x+15,y+2,sr.name);
     FidoZfile(dir+sr.name,not fst,x,y);
-{$else}
-    FidoZfile(dir+sr.name,not fst);
-{$endif}
     fst:=false;
     rc:= findnext(sr);
   end;
-{$ifdef Develop}
   closebox;
-{$endif}
   FindClose(sr);
 end;
 
@@ -1863,6 +1797,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.11  2000/12/25 23:24:59  mk
+        - improved outfit ;)
+
         Revision 1.10  2000/12/25 20:31:18  mk
         - zfido is now completly integrated
 
