@@ -876,18 +876,15 @@ begin
   sn:=0;
   while Result = 0 do
   begin
-    // ReadOnly and DenyNone
-    {$IFDEF VP }
-    TextModeRead := $40;
-    {$ENDIF }
-    FileMode :=$40;
-    assign(t,sr.name);
+    FileMode := fmOpenRead + fmShareDenyNone;
+    assign(t,LibDir + sr.name);
     reset(t);
     s0:='';
     if not eof(t) then readln(t);
     if not eof(t) then readln(t);
     if not eof(t) then readln(t,s0);
     close(t);
+    FileMode := fmOpenReadWrite;
     fm_rw;
     if s0<>'' then begin
       inc(sn);
@@ -929,6 +926,10 @@ end;
 
 {
   $Log$
+  Revision 1.62  2003/08/24 21:03:35  mk
+  - fixed #557886: Sprachumschaltung geht nicht (Linux)
+  - fixed Filemode after language selection
+
   Revision 1.61  2002/12/21 05:37:58  dodi
   - removed questionable references to Word type
 
