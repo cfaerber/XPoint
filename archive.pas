@@ -268,6 +268,7 @@ var dt   : DateTime;
 begin
   with dt do begin
     year:=1970;
+    month:=1;
     while (secs>=iif(schaltj(year),366,365)*tagsec) and (year<=2099) do begin
       dec(secs,iif(schaltj(year),366,365)*tagsec);
       inc(year);
@@ -275,7 +276,6 @@ begin
     if year>2099 then
       secs:=0
     else begin
-      month:=1;
       while (secs>=tagsec*monthlen(year,month)) do begin
         dec(secs,tagsec*monthlen(year,month));
         inc(month);
@@ -996,6 +996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.5  2001/09/06 18:34:36  mk
+  - fixed uninitialized variable
+
   Revision 1.10.2.4  2001/08/11 22:17:50  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
