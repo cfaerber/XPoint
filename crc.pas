@@ -17,15 +17,19 @@ function UpdCRC16(cp: byte; crc: smallword): smallword;
 function UpdCRC32(octet: byte; crc: longint) : longint;
 
 {Explizit: CRC wird blockweise berechnet}
-function CRC16Block(var data; size:smallword):smallword;
-function CRC16StrXP(s:string):smallword;
-function CRC16Str(s:string):smallword;
+function CRC16Block(var data; size:smallword): smallword;
+{ Das L„ngenbyte wird mit einbezogen }
+function CRC16StrXP(s:string): smallword;
+{ Hier wird nur der String selbst genutzt }
+function CRC16Str(s:string): smallword;
 
-function CRC32Block(var data; size:word):longint;
-function CRC32File(fn:string):longint;
-function CRC32Str(st : string) : longint;
+function CRC32Block(var data; size: word): longint;
+function CRC32Str(s: string): longint;
 
-IMPLEMENTATION
+implementation
+
+var
+   CRC_Reg: LongInt;
 
 (* crctab calculated by Mark G. Mendel, Network Systems Corporation *)
 CONST crctab: ARRAY[0..255] OF smallWORD = (
@@ -165,18 +169,17 @@ BEGIN { UpdCRC32 }
    UpdCRC32 := crc_32_tab[(BYTE(crc XOR LONGINT(octet))AND $FF)] XOR ((crc SHR 8) AND $00FFFFFF)
 END;
 
-VAR
-   CRC_reg_lo     : smallWORD;
-   CRC_reg_hi     : smallWORD;
-
 procedure CCITT_CRC32_calc_Block(var block; size: word);
                                 {&uses ebx,esi,edi} assembler;  {  CRC-32  }
 {$IFDEF BP }
 asm
-     xor bx, bx        { CRC mit 0 initialisieren }
+     mov bx, word ptr CRC_reg
+     mov dx, word ptr CRC_reg+2
      mov dx, bx
      les di, block
      mov si, size
+     or  si, si
+     jz  @u4
 @u3: mov al, byte ptr es:[di]
      mov cx, 8
 @u1: rcr al, 1
@@ -189,90 +192,58 @@ asm
      inc di
      dec si
      jnz @u3
-     mov CRC_reg_lo, bx
-     mov CRC_reg_hi, dx
+     mov word ptr CRC_reg, bx
+     mov word ptr CRC_reg+2, dx
+@u4:
 end;
 {$ELSE }
 asm
-     xor ebx, ebx      { CRC mit 0 initialisieren }
-     mov edx, ebx
+     mov ebx, CRC_Reg
      mov edi, block
      mov esi, size
+     or  esi, esi
+     jz  @u4
 @u3: mov al, byte ptr [edi]
      mov ecx, 8
 @u1: rcr al, 1
-     rcr dx, 1
-     rcr bx, 1
+     rcr ebx, 1
      jnc @u2
-     xor bx, $8320
-     xor dx, $edb8
+     xor ebx, $edb88320
 @u2: loop @u1
      inc edi
      dec esi
      jnz @u3
-     mov CRC_reg_lo, bx
-     mov CRC_reg_hi, dx
+     mov CRC_reg, ebx
+@u4:
 {$ifdef FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
 {$else}
 end;
 {$endif}
 {$ENDIF }
 
-function CRC32Str(st : string) : longint;
+function CRC32Str(s: string) : longint;
 begin
-  CRC_reg_lo := 0;
-  CRC_reg_hi := 0;
-  CCITT_CRC32_calc_Block(st[1], length(st));
-  CRC32Str := longint (CRC_reg_hi) shl 16 or (CRC_reg_lo and $ffff);
+  CRC_Reg := 0;
+  CCITT_CRC32_calc_Block(s[1], length(s));
+  CRC32Str := CRC_Reg;
 end;
 
 
 function crc32block(var data; size:word):longint;
-{type barr = array[0..65530] of byte;
-var
-  a : byte; }
 begin
-  CRC_reg_lo := 0;
-  CRC_reg_hi := 0;
+  CRC_Reg := 0;
   CCITT_CRC32_calc_block(data, size);
-  CRC32block := longint (CRC_reg_hi) shl 16 or (CRC_reg_lo and $ffff);
-end;
-
-
-function crc32file(fn:string):longint;
-type barr = array[0..4095] of byte;
-var
-     f    : file;
-     mfm  : byte;
-     bp   : ^barr;
-     rr : word;
-begin
-  assign(f,fn);
-  mfm:=filemode; filemode:=$40;
-  reset(f,1);
-  filemode:=mfm;
-  if ioresult<>0 then
-    crc32file:=0
-  else begin
-    CRC_reg_lo:=0;
-    CRC_reg_hi:=0;
-    new(bp);
-    while not eof(f) do
-    begin
-      blockread(f,bp^,sizeof(bp^),rr);
-      CCITT_CRC32_calc_block(bp^, sizeof(bp^))
-    end;
-    close(f);
-    dispose(bp);
-    CRC32file := longint (CRC_reg_hi) shl 16 or (CRC_reg_lo and $ffff);
-    end;
+  CRC32block := CRC_Reg;
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.2  2000/06/19 23:14:47  mk
+  - CRCFile rausgenommen, verschiedenes
+
   Revision 1.1  2000/06/19 20:14:04  ma
   - Zusammenfuehrung von CRC16 und XPCRC32
   - neue Routine UpdCRC32 fuer ZModem

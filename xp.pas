@@ -119,7 +119,7 @@ uses xpx,
 {$O xpstat}  {$O xpterm}  {$O xpcc}     {$O xpmaus}   {$O xp_iti}
 {$O xpfido}  {$O xpf2}    {$O xpfidonl}
 {$O xpview}  {$O xpmime}  {$O xpimpexp} {$O xpfonts}
-{$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}   {$O crc16 }
+{$O xpnt}    {$O xpdatum} {$O XP3}      {$O xpeasy}   {$O crc }
 {$IFDEF CAPI }
 {$O capi }
 {$ENDIF }
@@ -231,6 +231,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.29  2000/06/19 23:14:47  mk
+  - CRCFile rausgenommen, verschiedenes
+
   Revision 1.28  2000/06/19 20:17:42  ma
   - von CRC16/XPCRC32 auf Unit CRC umgestellt
 
