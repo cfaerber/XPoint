@@ -2070,7 +2070,7 @@ begin
       begin
         p := cpos(' ', s);
         if p = 0 then p := cpos(#9, s);
-        if p = 0 then p := length(s) + 1;
+        if (p <= 1) then p := length(s) + 1;
         c := FirstChar(s);
         for i := 1 to p - 1 do
           s[i] := LoCase(s[i]);
@@ -3644,6 +3644,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.84  2001/11/11 15:46:21  mk
+  - prevent range check error in ConvertMailFile
+
   Revision 1.83  2001/10/30 23:45:20  cl
   - COMPATIBILITY FIX: rnews batches without a correct "#! unbatch" line
     should now be uncompressed correctly.
