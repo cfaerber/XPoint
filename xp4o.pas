@@ -570,7 +570,7 @@ begin
   for i:=0 to 5 do stata[i]:=getres2(442,10+i);
   for i:=0 to 4 do typa[i]:=getres2(442,20+i);
 
-  if suchopt[1]='*' then
+  if (SuchOpt <> '') and (suchopt[1]='*') then
   begin                                       {Erste Suche seit Programmstart ?}
     if UpperCase(getres(1))='XP.HLP' then
       suchopt:='ai„'
@@ -2421,6 +2421,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.60  2000/08/03 00:06:47  mk
+  - Crash bei leeren Suchoptionen beseitigt
+
   Revision 1.59  2000/07/27 10:13:02  mk
   - Video.pas Unit entfernt, da nicht mehr noetig
   - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
