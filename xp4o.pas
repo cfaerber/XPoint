@@ -1759,9 +1759,9 @@ begin
         Wrt(xx, y+2, Format('%3d', [n*100 div cnt]));
         if user then
         begin
-          s:=dbReadStr(ubase,'username');
+          s:=dbReadStrN(ubase,ub_username);
           ab:=dbreadint(ubase,'adrbuch');
-          sa:=dbreadstr(ubase,'pollbox');
+          sa:=dbReadStrN(ubase,ub_pollbox);
           if (dbReadInt(ubase,'userflags') and 4=0) AND       { keine Verteiler }
            (LeftStr(s,4)<>#0+'$/T') AND                          { keine Trennzeile }
           not (onlyadress and (ab=0))                         { Evtl. nur Adressbuch-User }
@@ -1780,7 +1780,7 @@ begin
         else begin
           if sort=2 then ab:=dbreadint(bbase,'gruppe')
           else ab:=-1;
-          s:=dbReadStr(bbase,'brettname');
+          s:=dbReadStrN(bbase,bb_brettname);
           if LeftStr(s,3)='$/T'           { keine Trennzeile }
           then begin
            if sort=1 then writeln(t,dup(40,s[4]));
@@ -2970,6 +2970,9 @@ end;
 
 {
   $Log$
+  Revision 1.131  2002/01/30 17:34:14  mk
+  - use absolute FieldConsts in dbReadX
+
   Revision 1.130  2002/01/28 20:32:25  mk
   - completed 3.40 merge, source is compilable for dos and win
     linux is still untested
