@@ -126,6 +126,7 @@ type TUUCProtocol = class
 
     procedure   AssignUp  (var f:file;var fn:string;var ftype:integer); (* fn is var to be able to   *)
     procedure   AssignDown(var f:file;var fn:string;var ftype:integer); (* use it for output/logging *)
+    procedure   AssignExec(var f:text;var fn:string);
 
   protected
     Total_Start:  Double;       (* ticks of xfer start *)
@@ -385,7 +386,7 @@ begin
   Output(mcVerbose,'UUCP Initial Handshake',[0]);
 
   CommObj.PurgeInBuffer;
-  CommObj.SendString(^P'S'+UUName+iifs(SizeNego,' -N','')+#0,false);
+  CommObj.SendString(^P'S'+UUName+' -N0'+iifs(SizeNego,'15','14')+#0,false);
 
   for n := 1 to 5 do begin
     s:=GetUUStr;
@@ -446,16 +447,18 @@ end;
 
 { - - UUCP file handling - - - - - - - - - - - - - - - - - - - - - - - - - - }
 
-function U2DOSfile(var s:string):string;
+function U2DOSfile(s:string;e:boolean):string;
 var i : integer;
     b : byte;
 begin
   s:=s[1]+'-'+RightStr(s,5);
+  if e then s[1]:='X';
   b:=0;
   for i:=0 to 3 do            { Schreibweise in einem Byte codieren }
     if (s[i+4]>='A') and (s[i+4]<='Z') then
       inc(b,1 shl i);
-  result:=s+hex(b,1);
+  if e then s:=s+chr(90-b) else s:=s+hex(b,1);
+  result := UpperCase(s);
 end;
 
 procedure TUUCProtocol.AssignUp  (var f:file;var fn:string;var ftype:integer);
@@ -491,13 +494,21 @@ begin
   if ((LeftStr(fn,2)='D.') or (LeftStr(fn,2)='X.')) and not Multipos('/',fn) then
   begin                                         { NOTE: Unix dir separators only! }
     ftype:=iif(fn[1]='D',1,2);
-    fn:=AddDirSepa(Netcall.DownSpool)+U2DOSfile(fn);
+    fn:=AddDirSepa(Netcall.DownSpool)+U2DOSfile(fn,false);
     (* Bug: not thread safe *)
     assign(f,fn);
     rewrite(f,1);
   end else begin
     AssignUniqueDownloadName(f,fn,Netcall.FilePath);
     ftype:=0; end;
+  IOExcept(EUUCProtFile);
+end;
+
+procedure TUUCProtocol.AssignExec(var f:text;var fn:string);
+begin
+  fn:=AddDirSepa(Netcall.DownSpool)+U2DOSfile(fn,true);
+  assign(f,fn);
+  rewrite(f);
   IOExcept(EUUCProtFile);
 end;
 
@@ -718,15 +729,17 @@ var c   : TUUCPCommand; { parsed incoming command }
     result:=not r.ok;
   end;
 
-  (* handle S command as slave *)
+  (* handle S/E command as slave *)
 
-  procedure Do_S;
-    var s:string;
+  procedure Do_SE(e:boolean);
+    var s,se:string;
         f:file;
+	t:text;
   begin
     s:=c.dest; if(s='')or(LastChar(s)='/')then { NOTE: Unix dir separators only! }
       if cpos('/',c.src)>=0 then
         s:=c.src else s:='/'+c.src;
+    if e then se:=s;	
 
  (* if s='' then begin                     { S ohne Dateiname }
       Netcall.Log(lcError,'got S command without file name');
@@ -734,7 +747,7 @@ var c   : TUUCPCommand; { parsed incoming command }
     end else -- will just be named "NONAME" *)
     if (c.size>0) and (Netcall.maxfsize>0) and (c.size>1024*Netcall.maxfsize) then begin
       Netcall.Log(lcError,'file too large ('+StrS(c.size div 1000)+' kB)');
-      SendCommand('SN7');
+      SendCommand(iifs(e,'EN7','SN7'));
     end else
     try
       AssignDown(f,s,file_type);
@@ -742,15 +755,23 @@ var c   : TUUCPCommand; { parsed incoming command }
 
       Netcall.Log('+','receiving '+c.src+' as '+s);
       Netcall.Output(mcVerbose,'Receiving %s as %s (%d bytes)',[c.src,s,c.size]);
-      SendCommand('SY 0x0');
+      SendCommand(iifs(e,'EY 0x0','SY 0x0'));
     except
-      SendCommand('SN4');
+      SendCommand(iifs(e,'EN4','SN4'));
       raise;
     end;
     try
       RepeatRecFile(f);
       Netcall.Log('*','received file - '+File_Str);
       Netcall.Output(mcInfo,'Received %s as %s (%s)',[c.src,s,file_str]);
+      if e then begin
+	assignExec(t,se);
+	write(t,'C ',c.exec,#10);
+	write(t,'F ',c.dest,#10);
+        close(t);
+        if IOResult<>0 then ;
+        Netcall.Log('*','created execution file '+se);
+      end;
     except
       on E:EUUCProtFile do begin
         SendCommand('CN');
@@ -790,8 +811,9 @@ begin
       case c.cmd[1] of
         'R': begin SendCommand('RN2'); end;       (* refuse recv requests *)
         'X': begin SendCommand('XN'); end;        (* refuse xfer requests *)
-        'E': begin SendCommand('EN'); end;        (* refuse exec requests *)
-        'S': begin Do_S; end;
+//      'E': begin SendCommand('EN'); end;        (* refuse exec requests *)
+        'S': begin Do_SE(false); end;
+        'E': begin Do_SE(true);  end;
         'H': begin Do_H; result:=true; exit; end;
         else begin SendCommand(LeftStr(c.cmd,1)+'N'); end;
       end;
@@ -1009,6 +1031,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2001/07/30 12:42:26  cl
+  - support for UUCP E command as slave
+
   Revision 1.7  2001/07/29 17:10:38  cl
   - fixed return value of TUUCProtocolSimple.Slave
 
