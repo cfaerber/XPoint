@@ -34,7 +34,7 @@ uses
   xpcc, xp2c,xp_des,xpe,fidoglob;
 
 type
-  TWeiterleit = (wlNone, wlKopie, wlEditTo, wlQuoteTo, wlErneut,
+  TWeiterleit = (wlKopie, wlEditTo, wlQuoteTo, wlErneut,
     wlArchiv, wlUserArchiv, wlOriginal);
     
 procedure Unversandt(edit,modi:boolean);
@@ -1437,6 +1437,9 @@ end;
 
 {
   $Log$
+  Revision 1.7  2003/03/30 12:43:41  mk
+  - fixed Weiterleit enum
+
   Revision 1.6  2003/03/28 23:22:20  mk
   - changed numeric consts for Weiterleit() to enum TWeiterleit
 

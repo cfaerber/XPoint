@@ -2484,7 +2484,7 @@ begin      { --- select --- }
                    if t=k2_cD then SwitchDatum;                     { ^D }
                    if t=keyalta then begin
                      GoP;
-                     weiterleit(wlKopie,false);  { archivieren }
+                     weiterleit(wlArchiv,false);  { archivieren }
                      setall;
                      end;
                    if (c=k2_R) or (deutsch and (c='R')) then
@@ -2788,6 +2788,9 @@ end;
 
 {
   $Log$
+  Revision 1.139  2003/03/30 12:43:41  mk
+  - fixed Weiterleit enum
+
   Revision 1.138  2003/03/28 23:22:20  mk
   - changed numeric consts for Weiterleit() to enum TWeiterleit
 
