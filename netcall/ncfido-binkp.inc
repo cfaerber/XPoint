@@ -90,19 +90,25 @@ begin
   result:=false; if IsOutgoing then exit;
   if FDataSize=0 then begin // FDataSize not yet read
     if FCommObj.CharCount>=2 then begin
+//Debug.DebugLog('ncfido-bp','1 size read',DLDebug);
       FCommObj.ReadBlock(FDataSize,2,reads); FDataSize:=Swap(FDataSize);
       end;
     end else begin // FDataSize already read
     result:=DataRead>=(FDataSize and $7fff);
+//Debug.DebugLog('ncfido-bp','2 packet complete: '+inttostr(ord(result)),DLDebug);
     if not result then begin
       reads:=(FDataSize and $7fff)-DataRead;
+//Debug.DebugLog('ncfido-bp','3 bytes left to read: '+inttostr(reads),DLDebug);
       avail:=FCommObj.CharCount; if avail<reads then reads:=avail;
+//Debug.DebugLog('ncfido-bp','4 bytes scheduled to read: '+inttostr(reads),DLDebug);
       while reads>0 do begin
         if reads>1024 then readthistime:=1024 else readthistime:=reads;
         FCommObj.ReadBlock(Data[DataRead+1],readthistime,readthistime);
         dec(reads,readthistime); inc(DataRead,readthistime);
+//Debug.DebugLog('ncfido-bp','5 chunk bytes read: '+inttostr(readthistime),DLDebug);
         end;
       result:=DataRead>=(FDataSize and $7fff);
+//Debug.DebugLog('ncfido-bp','6',DLDebug);
       if result then // now it's ready
         if FDataSize>$7fff then
           Debug.DebugLog('ncfido','got binkp frame '+stFrameType[Data[1]]+' '+SCommandPar,DLDebug)
@@ -155,6 +161,9 @@ end;
 
 // ************************** Binkp protocol implementation ************************
 
+var
+  MultipleBatchCapability: Boolean;
+
 { Binkp session setup procedure. Results are 0: OK, 1: Busy, 2: Error }
 function TFidomailer.BinkPSessionSetup: byte;
 type tState= (WaitConn,WaitAddr,SendPasswd,AuthRemote,IfSecure,WaitOk,Done);
@@ -175,7 +184,7 @@ var
 
 begin
   State:=WaitConn; LastState:=WaitConn; BpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
-  CRAM_MD5_Challenge:='';
+  CRAM_MD5_Challenge:=''; MultipleBatchCapability:=false;
   Timer.Init; Timer.SetTimeout(60);
   Output(mcVerbose,'Authenticating...',[0]);
   repeat
@@ -190,6 +199,9 @@ begin
         else
           BpF.SendCommandFrame(M_NUL,'SYS '+SysName);
         BpF.SendCommandFrame(M_NUL,'ZYZ '+Username);
+//        BpF.SendCommandFrame(M_NUL,'OPT ND');
+        BpF.SendCommandFrame(M_NUL,'VER OpenXP/'+Without(verstr,'v')+'/'+
+                                   Without(Without(Without(Trim(pformstr),'/'),'('),')')+' binkp/1.1');        
         BpF.SendCommandFrame(M_ADR,AKAs);
         State:=WaitAddr;
         BpF.ReadFromStream(False);
@@ -204,14 +216,20 @@ begin
             M_NUL: begin
                      s:=BpF.CommandPar;
                      Log(lcInfo,s);
-                     // see if we got an md5 challenge: format "OPT xxx CRAM-MD5/SHA1-challenge yyy"
-                     if(Copy(s,1,3)='OPT')and(Pos(' CRAM-',s)<>0) then begin
-                       Delete(s,1,Pos(' CRAM-',s)+5);
-                       if cPos(' ',s)<>0 then s:=LeftStr(s,cPos(' ',s)-1);
-                       if Pos('MD5',s)<>0 then begin
-                         Delete(s,1,cPos('-',s));
-                         CRAM_MD5_Challenge:=s;
+                     if Copy(s,1,3)='OPT' then begin
+                       // see if we got an md5 challenge: format "OPT xxx CRAM-MD5/SHA1-challenge yyy"
+                       if Pos(' CRAM-',s)<>0 then begin
+                         Delete(s,1,Pos(' CRAM-',s)+5);
+                         if cPos(' ',s)<>0 then s:=LeftStr(s,cPos(' ',s)-1);
+                         if Pos('MD5',s)<>0 then begin
+                           Delete(s,1,cPos('-',s));
+                           CRAM_MD5_Challenge:=s;
+                           end;
                          end;
+                       end else
+                     if Copy(s,1,3)='VER' then begin
+                       if Pos('binkp/1.1',s)<>0 then MultipleBatchCapability:=true;
+                       // bet there'll be no binkp/1.2 ;-)
                        end;
                      end;
             end;
@@ -281,6 +299,9 @@ var
   RxFilename: string; RxFileHandle,RxResult: Longint; RxSize,RxTime,RxOffset: Cardinal;
   TxFilename,TxFilenameWithPath: string; TxFileHandle,TxResult: Longint; TxSize,TxTime: Cardinal;
 
+  { Implements Multiple Batch Mode }
+  SeenCommandPacket: Boolean;
+
   function GetPar(var s: string): string;
   var p: integer;
   begin p:=cPos(' ',s); if p<=0 then p:=length(s)+1; result:=copy(s,1,p-1); delete(s,1,p); end;
@@ -289,10 +310,6 @@ var
   var s: string; RxFilePos: Cardinal;
   begin
     result:=OK;
-    if LastRxState<>RxState then begin
-      Debug.DebugLog('ncfido','binkp rxstate '+sRxState[RxState],DLDebug);
-      LastRxState:=RxState;
-      end;
     case RxState of
       RxWaitF: begin
         if not InBpF.IsReady then exit;
@@ -303,17 +320,18 @@ var
             TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
             end;
           M_NUL: Log(lcInfo,InBpF.CommandPar);
-          M_EOB: begin Output(mcInfo,'Finished receiving files',[0]); RxState:=RxDone; end; //** protocol violation
+          M_EOB: RxState:=RxDone;  //** protocol violation
           M_FILE: begin
             s:=InBpF.CommandPar; RxFilename:=GetPar(s); RxSize:=StrToIntDef(GetPar(s),0);
             RxTime:=StrToIntDef(GetPar(s),0); RxOffset:=StrToIntDef(GetPar(s),0);
             RxState:=RxAccF; result:=Continue;
             end;
           end;
+        if RxState<>RxDone then SeenCommandPacket:=true;
         InBpF.ReadFromStream(False);
         end;
       RxAccF: begin
-        Output(mcVerbose,'receiving %s',[RxFilename]);
+        Output(mcVerbose,'Receiving %s',[RxFilename]);
         if FileExists(IncomingDir+RxFilename)then begin // file exists
           RxFileHandle:=FileOpen(IncomingDir+RxFilename,fmOpenReadWrite);
           if RxFileHandle>0 then begin // opened ok
@@ -356,7 +374,7 @@ var
       RxWriteD: begin
         if RxResult<0 then begin RxState:=RxDone; result:=failure; exit; end;
         RxFilePos:=FileSeek(RxFileHandle,0,fsFromCurrent);
-        Output(mcVerbose,'receiving %s %.0f%%',[RxFilename,100.0*RxFilePos/RxSize]);
+        Output(mcVerbose,'Receiving %s %.0f%%',[RxFilename,100.0*RxFilePos/RxSize]);
         if RxFilePos>RxSize then begin RxState:=RxDone; result:=Failure; exit; end;
         if RxFilePos=RxSize then begin
           RxState:=RxWaitF; //** set file time
@@ -387,6 +405,7 @@ var
   var QBpF: tBinkpFrame; s: String; iPending: Integer;
   begin
     QBpF:=TheQueue[TheQueue.Count-1];
+    SeenCommandPacket:=true;
     case QBpF.FrameType of
       M_GET: begin
         //** implement
@@ -403,7 +422,7 @@ var
             LogTxFile(PendingFilesWithPath[iPending]);
             PendingFiles.Delete(iPending);
             PendingFilesWithPath.Delete(iPending);
-            Output(mcInfo,'sent %s',[s]);
+            Output(mcInfo,'Sent %s',[s]);
             end;
           end;
         end;
@@ -425,16 +444,13 @@ var
   const BufferSize= 8192;
   begin
     result:=OK;
-    if LastTxState<>TxState then begin
-      Debug.DebugLog('ncfido','binkp txstate '+sTxState[TxState],DLDebug);
-      LastTxState:=TxState;
-      end;
     case TxState of
       TxGNF: begin
         if OutgoingFiles.Count<=0 then begin // no more files to send
           OutBpF.SendCommandFrame(M_EOB,'');
-          TxState:=TxWLA; result:=Continue;
+          TxState:=TxDone; result:=Continue;
           end else begin                     // still files to send
+          SeenCommandPacket:=true;
           TxFilename:=ExtractFilename(OutgoingFiles[0]);
           TxFilenameWithPath:=OutgoingFiles[0];
           Output(mcInfo,'Sending %s',[TxFilename]);
@@ -492,31 +508,34 @@ var
   end;
 
 begin
-  State:=WaitConn;
+  State:=WaitConn; LastRxState:=RxWaitF; LastTxState:=TxGNF;
   InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
   TheQueue:=TList.Create; PendingFiles:=TStringList.Create; PendingFilesWithPath:=TStringList.Create;
+  InBpF.ReadFromStream(False);
   repeat
     case State of
       WaitConn: begin
-        Output(mcInfo,'Initiating file transfer',[0]);
-        RxState:=RxWaitF; TxState:=TxGNF;
-        LastRxState:=RxWaitF; LastTxState:=TxGNF;
+        SeenCommandPacket:=false; RxState:=RxWaitF; TxState:=TxGNF;
         State:=Switch; //** set timer
-        InBpF.ReadFromStream(False);
         end;
       Switch: begin
         if (RxState=RxDone)and(TxState=TxDone)then begin
-          Output(mcInfo,'File transfer complete',[0]);
-          result:=0; State:=Done;
-          end else if FCommObj.CharAvail then
-            State:=Receive
-          else if FCommObj.ReadyToSend(1024) or
-                  // Ensure transmit routine calls ProcessTheQueue - even if connection already down
-                  ((TxState=TxWLA)and(TheQueue.Count>0))then
-            State:=Transmit
-          else if not FCommObj.Carrier then
-            State:=ConnLost;
-          //** if timeout...
+          if MultipleBatchCapability and SeenCommandPacket then
+            State:=WaitConn
+          else begin
+            Output(mcInfo,'File transfer complete',[0]);
+            result:=0; State:=Done;
+            end;
+          end else
+        if FCommObj.CharAvail then
+          State:=Receive
+        else if FCommObj.ReadyToSend(1024) or
+                // Ensure transmit routine calls ProcessTheQueue - even if connection already down
+                ((TxState>=TxWLA)and(TheQueue.Count>0))then
+          State:=Transmit
+        else if not FCommObj.Carrier then
+          State:=ConnLost;
+        //** if timeout...
         end;
       Receive: begin
           case BpReceive of
@@ -538,6 +557,14 @@ begin
         State:=Done; result:=BreakTransfer;
         end;
     end;
+    if LastTxState<>TxState then begin
+      Debug.DebugLog('ncfido','binkp txstate '+sTxState[LastTxState]+' => '+sTxState[TxState],DLDebug);
+      LastTxState:=TxState;
+      end;
+    if LastRxState<>RxState then begin
+      Debug.DebugLog('ncfido','binkp rxstate '+sRxState[LastRxState]+' => '+sRxState[RxState],DLDebug);
+      LastRxState:=RxState;
+      end;
     if (KeyPressed and(ReadKey=#27))then begin
       Output(mcError,'User break',[0]);
       Log(lcError,'User break');
@@ -550,6 +577,10 @@ end;
 
 {
   $Log$
+  Revision 1.8  2001/09/16 10:48:00  ma
+  - added multiple batch mode
+  - improved debug logs
+
   Revision 1.7  2001/08/11 23:06:43  mk
   - changed Pos() to cPos() when possible
 
