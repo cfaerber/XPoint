@@ -889,6 +889,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        AutoCpgd     : boolean;       { automatisches Ctrl-PgDn im Editor }
        XP_ID_PMs    : boolean;
        XP_ID_AMs    : boolean;
+       XP_Tearline  : boolean;
        UserSlash    : boolean;
        BAKext       : string;
        keepedname   : boolean;
@@ -1127,6 +1128,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.114  2000/12/31 14:49:03  mk
+  - Tearlineschalter in Config/Optionen/Netze
+
   Revision 1.113  2000/12/29 11:08:17  mo
   -nodelist.cfg rerenamed in nodlst.cfg
 

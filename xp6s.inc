@@ -202,7 +202,10 @@ begin
     fido_origin:=''
   else begin
     if not pm then
-      s:=#13#10+'---'
+      if XP_Tearline then
+        s:=#13#10+xp_origin + ' ' + verstr + betastr
+      else
+        s:=#13#10+'---'
     else
       s:='';
     if not pm then begin
@@ -1157,6 +1160,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.42  2000/12/31 14:49:04  mk
+  - Tearlineschalter in Config/Optionen/Netze
+
   Revision 1.41  2000/12/03 12:38:25  mk
   - Header-Record is no an Object
 

@@ -1199,7 +1199,7 @@ var x,y   : byte;
     oldmv : boolean;    { save MaggiVerkettung }
     knoten: boolean;
 begin
-  dialog(57,iif(deutsch,18,11),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
+  dialog(57,iif(deutsch,19,12),getres2(253,1),x,y);        { 'netzspezifische Optionen' }
   maddtext(3,2,getres2(253,2),col.coldiahigh);   { 'Z-Netz' }
   maddbool(14,2,getres2(253,10),zc_iso); mhnr(790);      { 'ZCONNECT: ISO-Zeichensatz' }
   small:=smallnames;
@@ -1230,6 +1230,7 @@ begin
   end;
   maddtext(3,10+add,'Fido',col.coldiahigh);
   maddbool(14,10+add,getres2(253,17),Magics); mhnr(8103);
+  maddbool(14,11+add,getres2(253,18),XP_Tearline); { Werbung in der Tearline }
   freeres;
   readmask(brk);
   if not brk and mmodified then begin
@@ -1478,6 +1479,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.77  2000/12/31 14:49:04  mk
+  - Tearlineschalter in Config/Optionen/Netze
+
   Revision 1.76  2000/12/28 19:16:07  mk
   - removed editpathname variables
 

@@ -559,6 +559,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 14   use references
 15   binary messages as "attachments"
 17   Magics in <F3> file request
+18   'OpenXP' in Tearline schreiben
 + 254
 1    Netcall Options
 2    Show login screen
@@ -3611,6 +3612,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.119  2000/12/31 14:49:03  mk
+# - Tearlineschalter in Config/Optionen/Netze
+#
 # Revision 1.118  2000/12/29 22:29:04  mk
 # CL:- fixes for UUCP config dialogue
 #
