@@ -31,8 +31,11 @@ begin
       i:=cpos('/',s);
       if (i>2) and (cpos('@',s)=0) then s[i]:='@';
     end else
-      for i:=3 to length(s) do
-        if s[i]='/' then s[i]:='.';
+      for i:=3 to length(s) do if (s[i]='/') and not
+        (((i>6) and (ustr(copy(s,i-6,6))='OPENXP')) and
+         ((i<length(s)-1) and ((copy(s,i+1,2)='16') or
+          (copy(s,i+1,2)='32')))) then
+        s[i]:='.';
     end;
 end;
 
@@ -80,6 +83,8 @@ var
 
     hflags,gelesen,unvers : byte;
     ulen,blen             : byte;
+
+    Short_Realnames : boolean;  { bei <Ctrl-N> Realname kÅrzen }
 
   function siz:string;
   begin
@@ -284,6 +289,7 @@ begin  { __ Suchmarke }
             uv_anz:=(mnt shr 16) and $ff;
             pp:=cpos('@',s0);
             fidoqwk:=(netztyp=nt_Fido) or (netztyp=nt_QWK);
+            Short_Realnames:=Showrealos and not ((netztyp=nt_Maus) or fidoqwk);
 
             {-------}
             h2:=0; h3:=0;
@@ -419,7 +425,7 @@ begin  { __ Suchmarke }
               ulen:=19; {Absender-laenge}
               msgtausch('E',forms(s0,19+h3));                      { (E)mpfaenger }
               msgtausch('B',forms(s1,iif(showmsgdatum,21,27)+h3+
-                iif(Showrealos and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
+                iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
               userflag[y]:=IIf((HighlightName=ustr(s0)) or (mnt and $1000<>0),1,0);
               end 
             else begin                            { Nicht-Fido bzw. Dispmode 11,12 }
@@ -431,7 +437,7 @@ begin  { __ Suchmarke }
                 dispbuf[y]^:=forms(dflags+siz+sdat+' '+s,80);
                 end 
               else msgtausch('B',forms(s1,blen-1+h3+
-                iif(Showrealos and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
+                iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
 
               asm                  { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
                   mov al,flags     { 000=normal   -> 0     100=niedrigste -> 5       } 
@@ -459,7 +465,7 @@ begin  { __ Suchmarke }
             msgtausch('G',siz);                        { (G)roesse }
             msgtausch('D',iifs(showmsgdatum,sdat,'')); { (D)atum }
             msgtausch('A',forms(s,ulen+h3-
-              iif(showrealos and not (MarkUnversandt and (Dispmode=11)),5,0))); { (A)bsender }
+              iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (A)bsender }
 
 
             if (dispmode<>12) then begin            { Kommentarbaum-Ausgabe ist fertig }
@@ -484,7 +490,7 @@ begin  { __ Suchmarke }
     mon;
     end;
   disprec[y]:=dbRecNo(dispdat);
-  Do_XPhilite(false);
+{ Do_XPhilite(false); }
 end;
 
 procedure RedispLine;
@@ -587,6 +593,20 @@ end;
 
 {
   $Log$
+  Revision 1.27.2.10  2002/03/08 23:02:38  my
+  JG:- Fix Nachrichten-Lesefenster: Spalte Realname wird bei <Ctrl-N> bzw.
+       aktivierter Option "C/A/N/Realname_anzeigen,_falls_vorhanden" nicht
+       mehr um 5 Stellen gekÅrzt, wenn das Brett zu einem Netztyp gehîrt,
+       bei dem der Realname gleichzeitig Bestandteil der Adresse ist
+       (Fido, Maus, QWK).
+
+  MY:- öberflÅssige Prozedur 'Do_XPHilite' entfernt, 400 Bytes gespart. :)
+
+  MY:- Optik-Fix: Wenn ein Brett (z.B. Mailingliste) den String
+       "OpenXP/16" oder "OpenXP/32" enthÑlt, wird der SchrÑgstrich in der
+       Brettanzeige und der Quote-Schablone $NEWSGROUP an dieser Stelle
+       nicht mehr durch einen Punkt ersetzt.
+
   Revision 1.27.2.9  2001/11/12 17:06:50  my
   JG:- Anzeigebug gefixt (Fido-User wurden im geîffneten User-Brett als
        z.B. "2:2433.401.460" statt "2:2433/401.460" angezeigt).
