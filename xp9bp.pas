@@ -493,14 +493,14 @@ begin
     writeln(t,'POP3-IP=',pop3_ip);
     if pop3_id <>''  then writeln(t,'POP3-ID=',pop3_id);
     if pop3_pwd<>''  then writeln(t,'POP3-Password=',pop3_pwd);
-    if not pop3_clear then writeln(t,'POP3Clear=N');
-    if not pop3_APOP then writeln(t,'POP3APOP=N');
-    if not pop3_OnlyNew then writeln(t,'POP3OnlyNew=N');
+    writeln(t,'POP3Clear=N',jnf(pop3_clear));
+    writeln(t,'POP3APOP=',jnf(pop3_APOP));
+    writeln(t,'POP3OnlyNew=',jnf(pop3_OnlyNew));
 
     writeln(t,'SMTP-IP=',smtp_ip);
     if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
     if smtp_pwd<>''  then writeln(t,'SMTP-Password=',smtp_pwd);
-    if SmtpAfterPOP  then writeln(t,'SmtpAfterPOP=J');
+    writeln(t,'SmtpAfterPOP=',jnf(SMTPAfterPOP));
     ///////////////////////////////////////////
     if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall
     );
@@ -616,6 +616,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/05/27 14:24:17  ma
+  - fixed: SMTP-after-POP setting was not saved correctly
+
   Revision 1.39  2001/04/23 06:57:44  ml
   - NNTP-BoxPar for getting last X Mails
 
