@@ -157,6 +157,7 @@ type  OrgStr  = string[orglen];
                   realname   : string[realnlen];
 
                   programm   : string;        { Mailer-Name }
+                  xp_ver     : string;        { originaler XP-Mailername }
                   datei      : string[40];    { Dateiname }
                   ddatum     : string[22];    { Dateidatum, jjjjmmtthhmmss }
                   prio       : byte;          { 10=direkt, 20=Eilmail }
@@ -811,6 +812,7 @@ begin
     for i:=1 to addrefs do wrs('BEZ: '  +addref[i]);
     if ersetzt<>''    then wrs('ERSETZT: '+ersetzt);
     if error<>''      then wrs('ERR: '   +error);
+    if xp_ver<>''     then wrs('MAILER: '+xp_ver) else
     if programm<>''   then wrs('MAILER: '+programm);
     if xnoarchive     then wrs('U-X-NO-ARCHIVE: yes');
     if priority<>0    then wrs('U-X-PRIORITY: '+strs(priority));
@@ -2028,6 +2030,7 @@ begin
              if zz='x-newsreader' then programm:=s0 else
              if zz='x-news-reader'then programm:=s0 else
              if zz='x-software'   then programm:=s0 else
+             if zz='x-xp-version' then xp_ver:=s0 else
 
              if zz='x-z-post'     then postanschrift:=s0 else
              if zz='x-zc-post'    then postanschrift:=s0 else
@@ -2983,6 +2986,8 @@ begin
       wrs(f,'Supersedes: <'+ersetzt+'>');
     if fido_to<>'' then
       wrs(f,'X-Comment-To: '+fido_to);
+    if programm<>'' then
+      wrs(f,'X-XP-Version: ' + programm);
     for i:=1 to ulines do begin
       uuz.s:=uline^[i];
       IBM2ISO(uuz.s);  { Header immer konvertieren! }
@@ -3379,6 +3384,13 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.68  2002/03/30 12:49:05  my
+  MY:- Wir erzeugen ausgehend jetzt einen Header "X-XP-Version", der ein
+       Duplikat der Mailerzeile enthÑlt. Eingehend wird dieser Header,
+       sofern vorhanden, nach "MAILER:" zurÅckgeschrieben, ansonsten wie
+       bisher einer der anderen Software-Header. Ma·nahme, um von Clients
+       wie UKAW Åberschriebene Software-Header zu retten.
+
   Revision 1.35.2.67  2002/03/29 22:46:10  my
   MY:- UUZ-Schalter "-client" fÅr eingehende Nachrichten implementiert
        (damit der korrekte Header "X-XP-NTP: 41" geschrieben wird).
