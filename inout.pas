@@ -299,8 +299,8 @@ var
 begin
 {$IFDEF Ver32 }
   GetTime(h, m, s, hund);
-  Ticker := system.round(hund / (100 / Tick) + s * tick + m * tick * 60 +
-    h * tick * 60 * 60);
+  Ticker := system.round(((longint(h*60 + m)*60 + s) * tick) +
+    (hund / (100 / Tick)));
 {$ELSE }
   ticker:=meml[Seg0040:$6c];
 {$ENDIF}
@@ -1775,6 +1775,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/03/16 10:14:24  mk
+  - Ver32: Tickerabfrage optimiert
+  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
+
   Revision 1.15  2000/03/15 14:00:52  mk
   - 32 Bit Ticker Bugfix
 

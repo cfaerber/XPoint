@@ -41,8 +41,13 @@ const
       maxmore     = 15;               { max. String's pro RFC-Headerzeile }
       maxrefs     = 20;               { max. gespeicherte References }
       maxfollow   = 10;               { max. Followup-To-Zeilen }
+{$IFDEF BP }
       bufsize     = 16384;
       outbufsize  = 16384;
+{$ELSE }
+      bufsize     = 65536;
+      outbufsize  = 65536;
+{$ENDIF }
       BetreffLen  = 70;
       readempflist= true;
       postadrlen  = 80;
@@ -3498,6 +3503,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/03/16 10:14:24  mk
+  - Ver32: Tickerabfrage optimiert
+  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
+
   Revision 1.10  2000/03/14 18:47:13  rb
   'programm' (=x-mailer etc.) von 40 auf 60 Zeichen verl„ngert
 

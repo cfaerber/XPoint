@@ -554,7 +554,7 @@ end;
 
 
 procedure WriteHeader(var hd:zheader; var f:file);
-var buffer : array[0..2000] of byte;
+var buffer : array[0..2047] of byte;
     ofs    : word;
     i      : integer;
 
@@ -1665,6 +1665,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/03/16 10:14:25  mk
+  - Ver32: Tickerabfrage optimiert
+  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
+
   Revision 1.6  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

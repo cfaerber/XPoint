@@ -54,8 +54,13 @@ end;
 function  PufferEinlesen(puffer:pathstr; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
 
-const bufsize  = 30000;
-      maxll    = 64;
+const
+{$IFDEF BP }
+  bufsize  = 32768;
+{$ELSE }
+  bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
+{$ENDIF }
+  maxll    = 64;
 
 var x,y,fm   : byte;
     f,pfile  : file;
@@ -1140,6 +1145,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/03/16 10:14:24  mk
+  - Ver32: Tickerabfrage optimiert
+  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
+
   Revision 1.7  2000/03/14 15:15:39  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

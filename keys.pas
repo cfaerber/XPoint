@@ -174,8 +174,12 @@ end;
 {$ENDIF }
 
 function keypressed:boolean;
-var key_pressed:boolean;
+{$IFDEF BP }
+var
+  key_pressed:boolean;
+{$ENDIF }
 begin
+{$IFDEF BP }
   if enhKBsupport then
   asm
     mov key_pressed,false
@@ -183,10 +187,13 @@ begin
     int 16h
     jz @@nokey
     mov key_pressed,true
-  @@nokey:  
+  @@nokey:
   end
   else key_pressed:=crt.keypressed;
   keypressed:=(forwardkeys<>'') or (highbyte<>0) or key_pressed;
+{$ELSE }
+  keypressed:=(forwardkeys<>'') or (highbyte<>0) or crt.keypressed;
+{$ENDIF }
 end;
 
 function readkey:char;
@@ -453,6 +460,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/03/16 10:14:24  mk
+  - Ver32: Tickerabfrage optimiert
+  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
+
   Revision 1.12  2000/03/16 00:46:31  rb
   keys.keypressed auf enhanced keyboard support umgestellt/erweitert
 

@@ -83,7 +83,7 @@ type
       integer16 =  integer;
       integer32 =  longint;
       { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
-      integer =    longint;
+{      integer =    longint;}
       word =       longint; { = signed }
       smallword =  system.word;
       dword =      Cardinal; { = signed }
@@ -111,6 +111,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.13  2000/03/16 10:14:25  mk
+  - Ver32: Tickerabfrage optimiert
+  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
+  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
+
   Revision 1.12  2000/03/14 18:16:15  mk
   - 16 Bit Integer unter FPC auf 32 Bit Integer umgestellt
 
