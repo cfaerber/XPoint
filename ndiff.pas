@@ -110,7 +110,7 @@ var
   pp, ppn: shortint;
   dir, name, ext: string;
 
-  procedure pfehler(txt: string);
+  procedure pfehler(const txt: string);
   begin
     close(t1); close(t2); close(t3); erase(t3);
     fehler(txt);
@@ -148,13 +148,13 @@ begin
         for i := 1 to n do
         begin
           readln(t2, s);
-          writeln(t3, s);
+          write(t3, s, #13#10);
         end;
       'C':
         for i := 1 to n do
         begin
           readln(t1, s);
-          writeln(t3, s);
+          write(t3, s, #13#10);
           inc(adr, length(s) + 2);
         end;
     else
@@ -313,12 +313,12 @@ begin
         end;
       end;
       if keep or (zone = 0) or ((zone <> 0) and keepregion) then
-        writeln(t2, s)
+        write(t2, s, #13#10)
       else
-        writeln(t2, ';');
-    end
+        write(t2, ';', #13#10);
+    end                                                
     else
-      writeln(t2, s);
+      write(t2, s);
   end;
   close(t1);
   close(t2);
@@ -339,6 +339,10 @@ end;
 
 {
   $Log$
+  Revision 1.23  2003/09/21 16:28:12  mk
+  - fixed part of Bug #730125: Fido-Nodelistenupdate
+    write #1310 on linux
+
   Revision 1.22  2002/12/21 05:37:51  dodi
   - removed questionable references to Word type
 
