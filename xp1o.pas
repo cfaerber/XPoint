@@ -324,32 +324,37 @@ begin
       end;
     end;
 
-  if t = keyaltm then                                       { ALT+M = Suche MessageID }
+  { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
+  if markaktiv and (aktdispmode=12) and ((t=keyaltm) or (t=keyaltv) or
+    (t=keyaltb) or (t=keyaltu)) then errsound
+  else
   begin
-    s:=mailstring(getline,false);
-    if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
-    end;
+    if t = keyaltm then                                       { ALT+M = Suche MessageID }
+    begin
+      s:=mailstring(getline,false);
+      if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
+      end;
 
-  if t = keyaltv then                                        { ALT+V = Suche text }
-  begin
-    s:=getline;
-    if Suche(getres(414),'',s) then Showfromlister;
-    end;
+    if t = keyaltv then                                        { ALT+V = Suche text }
+    begin
+      s:=getline;
+      if Suche(getres(414),'',s) then Showfromlister;
+      end;
 
-  if t = keyaltb then                                        { Alt+B = Betreff }
-  begin
-    s:=getline;
-    if s='' then s:=dbreadstr(mbase,'Betreff');
-    if Suche(getres(415),'Betreff',s) then Showfromlister;
-    end;
+    if t = keyaltb then                                        { Alt+B = Betreff }
+    begin
+      s:=getline;
+      if s='' then s:=dbreadstr(mbase,'Betreff');
+      if Suche(getres(415),'Betreff',s) then Showfromlister;
+      end;
 
-  if t = keyaltu then                                        { Alt+U = User }
-  begin
-    s:=mailstring(getline,false);
-    if s='' then s:=dbreadstr(mbase,'Absender');
-    if Suche(getres(416),'Absender',s) then Showfromlister;
-    end;
-
+    if t = keyaltu then                                        { Alt+U = User }
+    begin
+      s:=mailstring(getline,false);
+      if s='' then s:=dbreadstr(mbase,'Absender');
+      if Suche(getres(416),'Absender',s) then Showfromlister;
+      end;
+  end;
 
   if listmakros=16 then   { Archiv-Viewer }
     if t=mausldouble then
@@ -971,6 +976,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.7  2000/10/13 12:29:35  mk
+  JG:- verschiedene ungueltige Tasten im Kommentarbaum ausgeschaltet
+
   Revision 1.19.2.6  2000/07/17 14:10:50  mk
   JG:- Bugfixes fuer URL-Erkennung
 

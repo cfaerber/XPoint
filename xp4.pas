@@ -38,6 +38,8 @@ procedure select(dispmode:shortint);
 procedure mainwindow;
 procedure SetBrettGelesen(brett:string);
 
+const
+      markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
 
 implementation  {----------------------------------------------------}
 
@@ -48,7 +50,6 @@ uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,xp8,
 const suchch    = #254;
       glnorm    : boolean = true;  { false -> gl ist um 1 verringert }
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
-      markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
       closeflag : boolean = false; { TClose -> Dateien schlieáen     }
 
       IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
