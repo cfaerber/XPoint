@@ -1956,6 +1956,27 @@ begin
               if LowerCase(RFCRemoveComments(s0)) = 'no' then
                 xnoarchive := true;
             end
+          else 
+            if zz='list-id' then
+            hd.ListID := s0
+          else 
+            if zz='list-post' then
+            hd.ListPost := s0
+          else 
+            if zz='list-subscribe' then
+            hd.ListSubscribe := s0
+          else 
+            if zz='list-unsubscribe' then
+            hd.ListUnSubscribe := s0
+          else 
+            if zz='list-help' then
+            hd.ListHelp := s0
+          else 
+            if zz='list-owner' then
+            hd.ListOwner := s0
+          else 
+            if zz='list-archive' then
+            hd.ListArchive := s0
           else
             Uline.Add('U-' + s1);
         end;                          { case }
@@ -3054,6 +3075,14 @@ begin
       wrs(f, 'X-Comment-To: ' + zcrfc.s);
     end;
 
+    if ListID <> '' then wrs(f,'List-ID: '+ListID); 
+    if ListPost <> '' then wrs(f,'List-Post: '+ListPost); 
+    if ListSubscribe <> '' then wrs(f,'List-Subscribe: '+ListSubscribe); 
+    if ListUnSubscribe <> '' then wrs(f,'List-UnSubscribe: '+ListUnSubscribe); 
+    if ListHelp <> '' then wrs(f,'List-Help: '+ListHelp); 
+    if ListOwner <> '' then wrs(f,'List-Owner: '+ListOwner); 
+    if ListArchive <> '' then wrs(f,'List-Archive: '+ListArchive); 
+
     for i := 0 to uline.Count - 1 do
     begin
       zcrfc.s := IbmToIso(uline[i]);
@@ -3412,9 +3441,9 @@ begin
     f2.Free;
   f2:=nil;
 
-  if n = 0 then
-    _era(iifs(ppp and not client,dest,dest+fn+'.OUT'))
-  else
+  if n = 0 then begin
+    if not client then _era(iifs(ppp and not client,dest,dest+fn+'.OUT'))
+  end else
   begin
     if not ppp then QueueCompressFile(rnews);
     if CommandLine then writeln;
@@ -3670,6 +3699,9 @@ end;
 
 {
   $Log$
+  Revision 1.118  2002/09/13 11:57:32  cl
+  - added List-* fields
+
   Revision 1.117  2002/08/25 19:42:18  cl
   - UUZ: Fixes for AttrMPart
 
