@@ -74,6 +74,12 @@ XP2C.PAS        Konfiguration aendern /XPoint/Config
 XP2CFG.INC      Konfiguration laden
 XP2F.*          Fressen, Ficken, Fernsehen
 XP3*.*          diverse Nachrichten-(Verarbeitungs/Datenbank)-Funktionen
+ - xp3.pas        diverse Funktionen fuer Pointdatenverwaltung 
+ - xp3o.pas       diverse Funktionen fuer Nachrichtenverwaltung 
+ - xp3o2.pas      dito
+ - xp3o.inc       Puffer einlesen
+ - xp3ex.pas      Nachrichten extrahieren
+    
 XP3EX.PAS       Nachrichten extrahieren
 XP4*.*          Nachrichten-, Brett- und Userfenster, Reorganisation, Suchfunktionen u.a.        
  - xp4.pas       Tastaturabfragen,N/B/U-Fenster
@@ -83,12 +89,13 @@ XP4*.*          Nachrichten-, Brett- und Userfenster, Reorganisation, Suchfunkti
  - xp4o.pas      Suchfunktionen, Dupekill 
  - xp4o.inc      Reorganisation
  - xp4o2.inc     DB-Packen, Kommentarbaum
+ - xp4o3.pas     diverse Hilfsfunktionen fuer XP4
  - xp4w.inc      Auswahl und Aufruf von Lister bzw. externem Viewer 
- ...
+
 XP5.PAS         Kalender, Screen Saver, Paáwort u.a.
 XP6*.*          Nachrichten verschicken (... in DB und Puffer schreiben)
  - xp6.pas       Hauptroutine Nachrichten verschicken
-  ... 
+   ... 
 XP7*.*          Netcall-Funktionen
 XP8.*           Brettmanager-Funktionen
 XP8FS.INC       Fileserver-Funktionen
