@@ -166,7 +166,7 @@
       mhnr(190);
     maddstring(3,4,getres2(912,6),komm,30,30,'');    { 'Kommentar ' }
       mhnr(192);
-    maddstring(3,6,getres2(912,8),realname,30,40,'A '+without(range('!','~'),' @<>/')); { 'Realname' }
+    maddstring(3,6,getres2(912,8),realname,30,40, ''); { 'Realname' }
       mhnr(194);
     maddstring(3,8,getres2(912,12),user,30,AdrLen,grosschar(ntGrossUser(nt))+
                'A'+without(allchar,'() '));  { 'eMail-Adr.' }
@@ -2097,6 +2097,9 @@
 
 {
   $Log$
+  Revision 1.37  2001/10/17 21:12:59  mk
+  - allow umlauts in realname
+
   Revision 1.36  2001/10/13 11:29:21  ma
   - fixed: renaming server did not rename rc file
 
