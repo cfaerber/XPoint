@@ -1,7 +1,8 @@
 {   $Id$
 
-    Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+    Copyright (C) 1997 Balazs Scheidler (bazsi@balabit.hu)
+    Copyright (C) 1999 by Florian Klaempfl
+    Copyright (C) 2001 OpenXP team (www.openxp.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -117,9 +118,7 @@ const
     ($77, $8D, $84, $8E, $73, $8F, $74, $4E, $75, $91, $76, $92, $93);
 
 begin
-{$IFDEF Debug }
-//  Debug.DebugLog('xpcrt', Format('RemapScanCode: %d %d %d', [ScanCode, CtrlKeyState, KeyCode]), 2);
-{$ENDIF Debug }
+  Debug.DebugLog('xpcrt', Format('RemapScanCode: %d %d %d', [ScanCode, CtrlKeyState, KeyCode]), DLDebug+1);
   AltKey := ((CtrlKeyState AND
             (RIGHT_ALT_PRESSED OR LEFT_ALT_PRESSED)) > 0);
   CtrlKey := ((CtrlKeyState AND
@@ -172,9 +171,7 @@ begin
     // Function keys
     $57..$58: inc(Scancode, $2E); // F11 and F12
   end;
-{$IFDEF Debug }
-//  Debug.DebugLog('xpcrt', Format('Result: %d ', [ScanCode]), 2);
-{$ENDIF Debug }
+  Debug.DebugLog('xpcrt', Format('Result: %d ', [ScanCode]), DLDebug+1);
   Result := ScanCode;
 end;
 
@@ -212,15 +209,14 @@ begin
                                                       VK_SCROLL]) then
                    begin
                       keypressed:=true;
-{$IFDEF Debug }
-//  with Buf.Event.KeyEvent do
-//    Debug.DebugLog('xpcrt', Format('KeyPressed: %d %d %d %d', [wVirtualKeyCode, wVirtualScanCode, Ord(AsciiChar), Ord(UnicodeChar)]), 2);
-{$ENDIF Debug }
+  with Buf.Event.KeyEvent do 
+    Debug.DebugLog('xpcrt', Format('KeyPressed: %d %d %d %d', [wVirtualKeyCode, wVirtualScanCode, Ord(AsciiChar), Ord(UnicodeChar)]), DLDebug+1);
 
                       if (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = 0) or
-//                       (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = $E0)  or
-                        (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState and (LEFT_ALT_PRESSED or ENHANCED_KEY) > 0)
-//                        (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState = LEFT_ALT_PRESSED) }
+                         (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState = 2)
+//                         (ord(buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.AsciiChar) = $E0)  or
+//                         (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState and (LEFT_ALT_PRESSED or ENHANCED_KEY) > 0)
+//                         (buf.{$IFNDEF FPC_OLD}{$IFNDEF VirtualPascal}Event.{$ENDIF}{$ENDIF}KeyEvent.dwControlKeyState = LEFT_ALT_PRESSED)
                       then
                         begin
                            SpecialKey := TRUE;
@@ -289,3 +285,39 @@ initialization
   end;
 end.
 
+{
+  $Log$
+  Revision 1.9  2001/09/13 13:25:06  ma
+  - corrected copyright statements
+  - NumPad Enter working again (may need further work)
+  - debug info may be enabled at runtime (xpcrt=10)
+  - added CVS logs
+
+  Revision 1.8  2001/09/10 15:58:03  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
+  Revision 1.7  2001/09/08 18:46:43  cl
+  - small bug/compiler warning fixes
+
+  Revision 1.6  2001/09/08 16:52:47  cl
+  - automaticall switch console charset to cp437 under WinNT/2k/XP
+
+  Revision 1.5  2001/09/08 14:35:23  cl
+  - fixes for VirtualPascal
+  - fixes for FPC versions <= 1.0.4
+
+  Revision 1.4  2001/09/06 09:55:25  mk
+  - fix: shift and control state was not updated always correctly
+
+  Revision 1.3  2001/09/03 14:06:57  mk
+  - fixed handling of cursor and special keys in some win versions
+
+  Revision 1.2  2001/08/10 19:22:47  mk
+  - added Ctrl and Shift detection for Win9x
+
+  Revision 1.1  2001/08/10 19:13:01  mk
+  - removed use of crt unit completly
+  - added xpcrt: contains crt compatible Win32 keyboard handling
+  - changed crt to xpcrt in uses
+}
