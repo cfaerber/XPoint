@@ -88,7 +88,7 @@ const
    { these get initialized by StartCurses }
 
    { ESCSequenztable }
-   lastESCSeq = 89;
+   lastESCSeq = 91;
    ncad = #27#27#27;  { already defined by ncurses }
 
    keyESCSeqs: array [0..lastESCSeq] of record
@@ -185,7 +185,9 @@ const
       (Sequenz: #27#91#50#52#94; ncCode: 426; DosCode : #0#202), { Ctrl-F12 }
       (Sequenz: #27#13;          ncCode: 427; DosCode : #0#200), { Alt-Enter }
       (Sequenz: #27#91#55#94;    ncCode: 428; DosCode : #0#119), { Ctrl-Home }
-      (Sequenz: #27#91#56#94;    ncCode: 429; DosCode : #0#117) { Ctrl-End }
+      (Sequenz: #27#91#56#94;    ncCode: 429; DosCode : #0#117), { Ctrl-End }
+      (Sequenz: #27#91#54#59#53#126;    ncCode: 430; DosCode : #0#118), { Ctrl-PgDn }
+      (Sequenz: #27#91#53#59#53#126;    ncCode: 431; DosCode : #0#132) { Ctrl-PgUp }
    );
 
    dphback    : byte     = 7;         { Attribut fuer DispHard          }
@@ -563,7 +565,6 @@ end;
   ISO-8859-1 an der Konsole voraus (was in D ueblich ist). }
 function CvtToISOConsole(ch: char): longint;
 begin
-  CvtToISOConsole:= 0;
   if (ch in [#0..#255]) then begin
     case ch of
       #24, #30:
@@ -817,7 +818,8 @@ function Readkey: char;
         if Code = keyESCSeqs[I].ncCode then
         begin
            Result := keyESCSeqs[I].DosCode;
-           Debug.DebugLog('xpcurses',Format('Translating KeySequence: [%d] to ', [Code]),dlTrace);
+           Debug.DebugLog('xpcurses',Format('Translating KeySequence: [%d] to [%s]',
+             [Code, keyESCSeqs[I].DosCode]),dlTrace);
            exit;
         end;
   end;
@@ -840,7 +842,6 @@ function Readkey: char;
 var
   b      : boolean;
   l      : longint;
-  I      : Integer;
   DosSeq : String;
 label again;
 begin
@@ -950,8 +951,8 @@ end;
 
 procedure AssignCrt(var F: Text);
 begin
-  Assign(F,'');
 {$IFNDEF Kylix}  {TODO1: how get this working with Kylix??!!!}
+  Assign(F,'');
   TextRec(F).OpenFunc:=@CrtOpen;
 {$ENDIF}
 end;
@@ -1006,11 +1007,6 @@ end;
 function Keypressed: boolean;
 var
   l : longint;
-{$IFDEF Kylix}
-  fd : TfdSet;
-{$ELSE}
-  fd : fdSet;
-{$ENDIF}
 begin
   if not __isInit then InitXPCurses;
   keypressed := false;
@@ -1386,11 +1382,7 @@ begin
 end;
 
 function StartCurses(var win: TWinDesc): Boolean;
-const
-  MaxESCSeq = 10; // maxlength of ESCSeq;
 var
-  i : integer;
-  s : String[MaxESCSeq];
   w : PWindow;
   m : mmask_t;
 
@@ -1398,12 +1390,16 @@ var
   var
      RegStr : String;
      I      : Integer;
+     Error  : Integer;
   begin
     for I := 0 to lastESCSeq do
        if (keyESCSeqs[I].Sequenz <> ncad) then
        begin
-         RegStr := keyESCSeqs[I].Sequenz+#0;
-         define_key(@RegStr[1], keyESCSeqs[I].nccode);
+         RegStr := keyESCSeqs[I].Sequenz;
+         Error := define_key(PChar(RegStr), keyESCSeqs[I].nccode);
+         if (Error <> OK) then
+           DebugLog('xpcurses', Format('KeyDefinition: Error defining ' +
+           'Key [%s]->[%d]', [RegStr, keyESCSeqs[I].nccode]),dlDebug);
        end;
   end;
 begin
@@ -1482,13 +1478,15 @@ begin
 end;
 
 procedure InitXPCurses;
+var
+  fgI, bgI: Integer;
 begin
   if __isInit=true then exit;
   __isInit:= true;              { Flag setzen }
 
   { load the color pairs array with color pair indices (0..63) }
-  for bg := 0 to 7 do
-    for fg := 0 to 7 do cp[bg,fg]:= (bg*8)+fg;
+  for bgI := 0 to 7 do
+    for fgI := 0 to 7 do cp[bgI,fgI]:= (bgI*8)+fgI;
 
   { initialize ncurses }
   if not StartCurses(BaseWin) then begin
@@ -1510,16 +1508,14 @@ begin
 
   { TextMode(LastMode); }
 
+{$IFNDEF Kylix}
   { Redirect the standard output }
   assigncrt(Output);
   Rewrite(Output);
-{$IFNDEF Kylix}
   TextRec(Output).Handle:=StdOutputHandle;
-{$ENDIF}
   { Redirect the standard input }
   assigncrt(Input);
   Reset(Input);
-{$IFNDEF Kylix}
   TextRec(Input).Handle:=StdInputHandle;
 {$ENDIF}
 
@@ -1551,9 +1547,16 @@ begin
   EndXPCurses;
 end;
 
+{$Warnings OFF}
 end.
 {
   $Log$
+  Revision 1.59  2001/10/20 17:12:36  ml
+  - range check errorfix
+  - removed some hints and warnings
+  - corrected debuglog
+  - 2 more keytranslations for xterm
+
   Revision 1.58  2001/10/17 10:54:58  ml
   - fix for umlaut
   - range Error fix

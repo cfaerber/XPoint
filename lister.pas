@@ -641,7 +641,6 @@ var
   procedure Maus_bearbeiten;
     var xx,yy,i : integer;
         inside  : boolean;
-        nope    : boolean;
         new1st  : integer;
        
   begin
@@ -678,7 +677,7 @@ var
         if FSelLine<FirstLine then FirstLine:=FSelLine;
       end else
         FirstLine := MinMax(FirstLine-MausWheelStep,0,Max(0,Lines.Count-DispLines));
-    end else 
+    end else
     if t=mauswheeldn then
     begin
       if SelBar then
@@ -701,16 +700,16 @@ var
         if t=keydown then FirstLine:=Min(FirstLine+1,Max(0,Lines.Count-1));
 
         FSelLine:=MinMax(MinMax(yy-y+FirstLine,FirstLine,FirstLine+DispLines-1),0,Max(0,Lines.Count-1));
-  
+
         if not SelBar then begin
           oldselb:=false;
-          FSelbar:=true; 
+          FSelbar:=true;
           Stat.markable:=true;
         end;
-        
-        if not mausdown then 
+
+        if not mausdown then
         begin
-          if not (yy-y+FirstLine) in [0..Lines.Count-1] then exit;
+          if not ((yy-y+FirstLine) in [0..Lines.Count-1]) then exit;
           mausdown:=true;
           oldmark := Marked[FSelLine];
           Marked[FSelLine]:=not oldmark;
@@ -731,7 +730,7 @@ var
       begin
         if yy<vstart then
           t:=keypgup
-        else 
+        else
         if yy>vstop then
           t:=keypgdn
         else 
@@ -1084,6 +1083,12 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.61  2001/10/20 17:12:36  ml
+  - range check errorfix
+  - removed some hints and warnings
+  - corrected debuglog
+  - 2 more keytranslations for xterm
+
   Revision 1.60  2001/10/10 20:38:52  mk
   - removed (unnecessary) ScreenWidth from Lister option VSC
   - use correct scrollbar position with more than 80 screen columns
