@@ -366,29 +366,6 @@ begin
   if not validfilename(outfile) then error('ungltige Ausgabedatei');
 end;
 
-
-procedure Iso2Ibm(var s:string);
-const ISO2IBMtab : array[128..255] of byte =
-      (128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,
-       144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,
-        32,173,155,156,120,157,124, 21, 34, 67,166,174,170, 45, 82,223,
-       248,241,253,252, 39,230,227,249, 44, 49,167,175,172,171, 47,168,
-       133,160,131, 65,142,143,146,128,138,144,136,137,141,161,140,139,
-        68,165,149,162,147,111,153,120,237,151,163,150,154,121, 80,225,
-       133,160,131, 97,132,134,145,135,138,130,136,137,141,161,140,139,
-       100,164,149,162,147,111,148,246,237,151,163,150,129,121,112,152);
-var i : integer;
-begin
-  {$R-}
-  for i:=1 to length(s) do
-    if (s[i]>=#128) then
-      s[i]:=chr(iso2ibmtab[byte(s[i])]);
-{$IFDEF Debug }
-  {$R+}
-{$ENDIF }
-end;
-
-
 { --- Konvertierung -------------------------------------------------- }
 
 
@@ -1449,7 +1426,7 @@ var t1,log     : text;
 {$ENDIF }
   begin
     if hd.mimever<>'' then
-      ISO2IBM(s);
+      s := ISOToIBM(s);
 {$IFDEF BP }
     if (xms=0) and (lines<maxilines) and
        (((lines mod 16)<>0) or (memavail>10000)) then
@@ -1851,6 +1828,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/04/29 20:54:06  mk
+  - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
+
   Revision 1.8  2000/04/13 12:48:31  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben

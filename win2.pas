@@ -29,7 +29,7 @@ UNIT win2;
 INTERFACE
 
 uses
-  xpglobal, 
+  xpglobal,
 {$ifdef NCRT}
   oCrt,
 {$else}
@@ -177,9 +177,19 @@ end;
 
 function fsbox(y:byte; path,pathx:pathstr; vorgabe:s20; xdir,invers,vert:boolean):pathstr;
 
-const maxf   = 1000;
+const
+{$IFDEF Ver32 }
+  maxf   = 8192;
+{$ELSE }
+  maxf   = 1024;
+{$ENDIF }
       maxs   = 5;
-type  fnst   = string[13];
+type
+{$IFDEF Ver32 }
+  fnst   = HugeString;
+{$ELSE }
+  fnst   = string[13];
+{$ENDIF }
       ft     = array[1..maxf+36] of fnst;
       txst   = string[70];
 var   fb     : pathstr;
@@ -225,7 +235,7 @@ var   fb     : pathstr;
       Wrt(li, i, '³');
       Wrt(re, i, '³');
     end;
-    gotoxy(li,un); write('À',dup(re-li-1,'Ä'),'Ù');
+    gotoxy(li,un); Wrt2('À' + dup(re-li-1,'Ä') + 'Ù');
     if xtext<>'' then
       Wrt((re+li+1)div 2-length(xtext)div 2-1,un, ' ' + xtext + ' ');
     mon;
@@ -243,10 +253,10 @@ var   fb     : pathstr;
         x,w : fnst;
     begin
       i:=l; j:=r;
-      x:=f^[(l+r) div 2];
+      x:=UStr(f^[(l+r) div 2]);
       repeat
-        while f^[i]<x do inc(i);
-        while f^[j]>x do dec(j);
+        while UStr(f^[i])<x do inc(i);
+        while UStr(f^[j])>x do dec(j);
         if i<=j then begin
           w:=f^[i]; f^[i]:=f^[j]; f^[j]:=w;
           inc(i); dec(j);
@@ -273,11 +283,12 @@ var   fb     : pathstr;
       gotoxy(((n-1) mod 4)*15+11,((n-1) div 4)+y+1)
     else
       gotoxy(((n-1) div 9)*15+11,(n-1) mod 9+y+1);
-    if n+add>fn then Wrt2(sp(14))
+    if n+add>fn then
+      Wrt2(sp(14))
     else begin
       s:=f^[n+add];
-      write(' ',s,sp(13-length(s)));
-      end;
+      Wrt2(' ' + forms(ConvertFileName(s), 12) + ' ');
+    end;
     mon;
   end;
 
@@ -298,7 +309,7 @@ var   fb     : pathstr;
   end;
 
   procedure disp_p;
-  var s     : string[13];
+  var s,s2  : string;
       pa    : pathstr;
       sr    : searchrec;
       t     : datetime;
@@ -323,25 +334,33 @@ var   fb     : pathstr;
           Wrt2(sp(59));
         end
       else if right(s,1)='\' then
+{$IFDEF BP }
         Wrt2(sp(59))
+{$ELSE }
+        Wrt2(Forms(ConvertFilename(s), 58))
+{$ENDIF }
       else begin
         pa:=path;
         pathonly(pa);
         if right(pa,1)<>'\' then pa:=pa+'\';
         findfirst(pa+s,ffanyfile,sr);
         if doserror<>0 then
-          write(sp(59))  { !? }
-        else begin
+          Wrt2(sp(59))
+        else
+        begin
           UnpackTime(sr.time,t);
           with t do
-            write(forms(s,15),forms(trim(strsrnp(sr.size,11,0)),15),
+          begin
+            s2 := Trim(strsrnp(sr.size,12,0));
+            Wrt2(forms(ConvertFileName(s),45 - Length(s2)) + '  ' + s2 + '  ' +
                { PM 01/00 Y2K-Patch für Dateidaten von 1.1.2000 bis 31.12.2009 }
-                 formi(day,2),'.',formi(month,2),'.',formi(year mod 100,2)
+                 formi(day,2) + '.' + formi(month,2) + '.' + formi(year mod 100,2)
                  {,'       ',formi(hour,2),':',formi(min,2),':',formi(sec,2)});
-          end;
+          end
         end;
-      mon;
       end;
+      mon;
+    end;
     if wcursor then gotoxy(xx-14,yy);
   end;
 
@@ -479,7 +498,7 @@ begin
       else normattr:=fsb_rcolor;
       end;
     iit;
-    rahmen1(9,71,y,y+height,dpath,xtext);
+    rahmen1(9,71,y,y+height,ConvertFileName(dpath),xtext);
     if fsb_info then
       mwrt(9,y+height-2,'Ã'+dup(61,'Ä')+'´');
     normattr:=na; invattr:=ia;
@@ -1087,6 +1106,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/04/29 20:54:07  mk
+  - LFN Support in fsbox und 32 Bit, ISO2IBM->Typeform
+
   Revision 1.10  2000/04/29 16:10:41  hd
   Linux-Anpassung
 
