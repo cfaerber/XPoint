@@ -658,11 +658,10 @@ begin
     wrs('EDA: ' + zdatum);
     wrs('LEN: ' + strs(groesse));
 
-{   if (PmReplyTo <> '') and (PmReplyTo <> absender) then
-      wrs('ANTWORT-AN: ' + PmReplyTo); }
-
     for i:=0 to replyto.count-1 do
-      wrs('ANTWORT-AN: '+replyto[i]);
+      if ReplyTo[i] <> Absender then // only if adress is not the sender himself
+        wrs('ANTWORT-AN: '+replyto[i]);
+
     if pm_reply then begin
       wrs('STAT: PM-REPLY');  { nur temporaer zwecks Kompatibilitaet }
       if mailcopies.count>0 then
@@ -1786,10 +1785,9 @@ var
         begin
           p := cpos('>', line);
           if p < 3 then p := length(line) + 1;
-          if ref = '' then
-            ref := copy(line, 2, p - 2)
-          else
-            References.Add(copy(line, 2, p - 2));
+
+          References.Add(copy(line, 2, p - 2));
+
           while (p <= length(line)) and ((line[p + 1] = ' ') or (line[p + 1] = #9)) do
             inc(p);
           delete(line, 1, p);
@@ -3719,6 +3717,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2001/01/02 15:48:55  mk
+  - fixed bugs with replyto and references
+
   Revision 1.22  2001/01/02 15:08:24  mk
   - fixed GetPar
 
