@@ -3720,18 +3720,22 @@ Changes to this setting here are only effective on a
 new start.
 @
 844
-<<Fido:>>
+<<FidoNet ONLY
 
 <<[x]>>     Newsgroup messages are displayed in the
-        form: "Sender / Recipient / Subject".
+        form: | "Sender" | "Recipient" | "Subject" |
 
-<<[ ]>>     They are displayed as for all other nets
-        in Nets in the form: "Sender / Subject".
+<<[ ]>>     Newsgroup messages are displayed in the
+        form: | "Sender" | "Subject" |
 
-A change in this setting here only has an effect at
+NOTE: In the first form, the name of the sender will
+      be shown but in the second form, the name <<and>>
+      address of the sender will be shown.
+
+A change in this setting only has an effect at
 program start-up. The current setting can be changed
-any time when viewing a Fido newsgroup by pressing
-<Ctrl-A>
+at any time whilst viewing a message list by
+pressing <Ctrl-A>
 @
 845
 Some nets differentiate between upper and lower case
