@@ -41,6 +41,7 @@ uses
 {$ENDIF }
   sysutils,
   xpglobal,
+  debug,dos,
   typeform;
 {$endif}
 
@@ -88,7 +89,7 @@ procedure FSplit(const path: string; var dir, name, ext: string);
 
 function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
-function  existBin(const fn: string): boolean;       { Datei vorhanden (PATH)  }
+function  ExecutableExists(fn: string): boolean;  { ausfuehrbare Datei vorhanden? (PATH), fn (auch) ohne Extension }
 Function  ValidFileName(const name:string):boolean;  { gueltiger Dateiname ?    }
 function  isEmptyDir(const path: string): boolean;
 function  IsPath(const Fname:string):boolean;         { Pfad vorhanden ?        }
@@ -213,13 +214,13 @@ var
   rc: integer;
 begin
   result:= true;
-  rc:= findfirst(AddDirSepa(path)+WildCard,ffAnyFile,sr);
+  rc:= Sysutils.FindFirst(AddDirSepa(path)+WildCard,ffAnyFile,sr);
   while rc = 0 do begin
     if (sr.name <> '.') and (sr.name <> '..') then begin
       result:= false;
       break;
     end;
-    rc:= findnext(sr);
+    rc:= SysUtils.FindNext(sr);
   end;
   sysutils.findclose(sr);
 end;
@@ -328,40 +329,41 @@ begin
 end;
 
 { Sucht die Datei 'fn' in folgender Reihenfolge:
-  - Aktuelle Verzeichnis
+  - Aktuelles Verzeichnis
   - Startverzeichnis der aktuellen Programmdatei
   - Environment-Var PATH sysutils
 }
-function existBin(const fn: string): boolean;
+function ExecutableExists(fn: string): boolean;
 var
   i      : integer;
-  fname,
-  path   : string;
+  fname,path,SearchingFor   : string;
 begin
   result:= false;
+  {$IFNDEF UnixFS}
+  if(Pos('.COM',UpperCase(fn))=0)and(Pos('.EXE',UpperCase(fn))=0)then fn:=fn+'.exe';
+  {$ENDIF}
   fname:= ExtractFileName(fn);
   if FileExists(fn) then
     result:= true
   else if FileExists(AddDirSepa(ExtractFilePath(ParamStr(0)))+fname) then
     result:= true
-  else
-{$IFDEF FPC }
-  begin
-    path:= getenv('PATH');
+  else begin
+    path:=getenv('PATH');
+    Debug.DebugLog('FILEIO','Searching in path: '+path,4);
     i:= pos(PathSepaChar, path);
     while i>0 do begin
-      if FileExists(AddDirSepa(Copy(path,1,i-1))+fname) then begin
+      SearchingFor:=AddDirSepa(Copy(path,1,i-1))+fname;
+      Debug.DebugLog('FILEIO','Searching: '+SearchingFor,4);
+      if FileExists(SearchingFor)then begin
         result:= true;
         path:= '';
         break;
       end;
-      Delete(path,1,i);
-      i:= pos(PathSepaChar, path);
+      Delete(path,1,i); i:=pos(PathSepaChar, path);
     end;
     if Length(path)>0 then
       result:= FileExists(AddDirSepa(path)+fname);
   end;
-{$ENDIF }
 end;
 
 function ValidFileName(const name:string):boolean;
@@ -418,9 +420,9 @@ procedure erase_mask(const s: string);                 { Datei(en) loeschen }
 var
   sr : TSearchrec;
 begin
-  if findfirst(s, faAnyfile, sr) = 0 then repeat
+  if SysUtils.FindFirst(s, faAnyfile, sr) = 0 then repeat
     sysutils.DeleteFile(ExtractFileDir(s) + DirSepa +sr.name);
-  until findnext(sr) <> 0;
+  until SysUtils.FindNext(sr) <> 0;
   sysutils.FindClose(sr);
 end;
 
@@ -507,7 +509,7 @@ end;
 function _filesize(const fn:string):longint;
 var sr : TSearchrec;
 begin
-  if Findfirst(fn,faAnyFile,sr) = 0 then
+  if SysUtils.FindFirst(fn,faAnyFile,sr) = 0 then
     Result := sr.Size
   else
     Result := 0;
@@ -529,7 +531,7 @@ end;
 function filetime(fn:string):longint;
 var sr : Tsearchrec;
 begin
-  if findfirst(fn,faAnyFile,sr) = 0 then
+  if SysUtils.FindFirst(fn,faAnyFile,sr) = 0 then
     filetime:=sr.time
   else
     filetime:=0;
@@ -610,11 +612,7 @@ end;
 
 function GetEnv(const name: string): string;
 begin
-{$ifdef Unix}
-  result:= Linux.GetEnv(name);
-{$else}
-  result:='';
-{$endif}
+  {$IFDEF Linux}result:= Linux.GetEnv(name);{$ELSE}result:=Dos.GetEnv(name){$ENDIF}
 end;
 
 { Dir muﬂ WildCards enthalten }
@@ -624,12 +622,12 @@ var
   rc: integer;
 begin
   result:= 0;
-  rc:= sysutils.findfirst(mask,faAnyFile,sr);
+  rc:=SysUtils.FindFirst(mask,faAnyFile,sr);
   while rc=0 do begin
     inc(result,sr.size);
-    rc:= findnext(sr);
+    rc:= SysUtils.FindNext(sr);
   end;
-  FindClose(sr);
+  SysUtils.FindClose(sr);
 end;
 
 function DirectorySize(const dir: string): longint;
@@ -640,6 +638,12 @@ end;
 end.
 {
   $Log$
+  Revision 1.84  2000/11/19 17:51:56  ma
+  - GetEnv works again under Win32. Proper replacement of
+    Dos.GetEnv will be used at request if Dos is *really*
+    that bad.
+  - renamed existBin to ExecutableExists
+
   Revision 1.83  2000/11/18 21:15:56  mk
   - removed GetCBreak, SetCBreak - this routines are not necessary anymore
 
