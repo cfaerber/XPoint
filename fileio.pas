@@ -533,10 +533,8 @@ var
   bakname : string;
 begin
   result:=false;
-  Debug.DebugLog('fileio','try to rename file ' + n + ' file exists: ' + BoolToStr(FileExists(n), true), DLInform);
   if not FileExists(n) then exit;
   BakName := ChangeFileExt(n, '.' + FileUpperCase(NewExt));
-  Debug.DebugLog('fileio','new bakname is ' + bakname + ' file exists: ' + BoolToStr(FileExists(bakname), true), DLInform);
   if FileExists(BakName) then
   begin
     {$IFNDEF UnixFS }
@@ -547,8 +545,7 @@ begin
   {$IFNDEF UnixFS }
   if FileSetAttr(n, faArchive) <> 0 then exit;
   {$ENDIF }
-  Result := not RenameFile(n, bakname);
-  Debug.DebugLog('fileio','result of rename is ' + BoolToStr(result, true), DLInform);
+  Result := RenameFile(n, bakname);
 end;
 
 function CreateMultipleDirectories(path:string): String;
@@ -722,6 +719,10 @@ end;
 
 {
   $Log$
+  Revision 1.113  2002/03/23 09:48:31  mk
+  - remove debuginfo from MakeBak
+  - MakeBak returns true on success, instead of false
+
   Revision 1.112  2002/03/20 14:44:23  mk
   - added debug infos for makebak
 
