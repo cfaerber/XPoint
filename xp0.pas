@@ -1122,7 +1122,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        userweiter   : boolean;
        qchar        : string;        { zuletzt verwendeter Quote-String }
        brettall     : boolean;       { false -> nur zutreffende Bretter anz. }
-       domainlist   : DomainNodeP;   { zum Erkennen von Replys auf eigene N. }
+       domainlist   : TStringList;   { zum Erkennen von Replys auf eigene N. }
 
        maxmark   : word;             { maximal markierbare Msgs }
        marked    : marklistp;        { Liste der markierten Msgs     }
@@ -1226,6 +1226,10 @@ implementation
 
 {
   $Log$
+  Revision 1.158  2002/02/01 10:31:54  mk
+  - fixed some bugs with new empfaenger handling
+  - made DomainList to StringList
+
   Revision 1.157  2002/01/30 22:36:03  mk
   - made viewers and unpackers static
 

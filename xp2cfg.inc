@@ -329,7 +329,7 @@ begin
   fidobin:=FileExists('fido-bin');
   Clipboard:=ClipAvailable;
 
-  domainlist:=nil;
+  DomainList:= TStringList.Create;
 end;
 
 
@@ -1706,6 +1706,10 @@ begin
 
 {
   $Log$
+  Revision 1.141  2002/02/01 10:31:54  mk
+  - fixed some bugs with new empfaenger handling
+  - made DomainList to StringList
+
   Revision 1.140  2002/01/30 22:36:03  mk
   - made viewers and unpackers static
 

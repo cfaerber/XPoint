@@ -843,7 +843,7 @@ var f,f2     : file;
     attrtxt(col.coldiahigh);
     kopkey:=FirstChar(getres2(611,16));
     wrt(x+42,y+8,kopkey); 
-    if empfaenger[1]=vert_char then
+    if FirstChar(Empfaenger)=vert_char then
       wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
     else
       wrt(x+14,y+2-fadd,LeftStr(RFCbrett(empfaenger,edis),52));
@@ -893,7 +893,7 @@ begin
   mwrt(x+3,y+2,getres2(611,6)+iifs (ch='*', '*', ''));   { 'Empf„nger  ' }
   attrtxt(col.coldiahigh);
   moff;
-  if empfaenger[1]=vert_char then
+  if FirstChar(Empfaenger)=vert_char then
     Wrt2(copy(vert_name(empfaenger),edis,bboxwid))
   else
     Wrt2(leftstr(rfcbrett(empfaenger,edis),bboxwid));
@@ -1127,16 +1127,16 @@ fromstart:
     dbSeek(bbase,biBrett,UpperCase(empfaenger));
     if not dbFound then begin
       empfneu:=true;
-      if empfaenger[1]='$' then box:=InternBox  { autom. Nachricht an neues Brett }
+      if FirstChar(Empfaenger)='$' then box:=InternBox  { autom. Nachricht an neues Brett }
       else box:=iifs(forcebox<>'',forcebox,DefaultBox);
       grnr:=iif(newbrettgr<>0,newbrettgr,IntGruppe);
       end
     else begin
       Box := dbReadStrN(bbase,bb_pollbox);    { Nachricht an vorhandenes Brett  }
-      if (box='') and (empfaenger[1]='$') then
+      if (box='') and (FirstChar(Empfaenger)='$') then
         box:=InternBox;               { /Netzanruf, /Statistik ... }
       dbReadN(bbase,bb_gruppe,grnr);
-      _brett:=mbrettd(empfaenger[1],bbase);
+      _brett:=mbrettd(FirstChar(Empfaenger),bbase);
       if dbReadInt(bbase,'flags') and 32<>0 then
         FidoName := dbReadNStr(bbase,bb_adresse);    { Brett-Origin }
     end;
@@ -2327,6 +2327,10 @@ finalization
 
 {
   $Log$
+  Revision 1.40  2002/02/01 10:31:55  mk
+  - fixed some bugs with new empfaenger handling
+  - made DomainList to StringList
+
   Revision 1.39  2002/01/21 23:30:13  cl
   - post-3.40 merge fixes
 

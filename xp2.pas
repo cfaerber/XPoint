@@ -1040,41 +1040,15 @@ end;
 
 procedure ReadDomainlist;
 var d   : DB;
-    p   : DomainNodeP;
     dom : string;
-
-  procedure InsertIntoList(var dl:DomainNodeP);
-  begin
-    if dl=nil then
-      dl:=p
-    else
-      if (dom<dl^.domain) then
-        InsertIntoList(dl^.left)
-      else
-        InsertIntoList(dl^.right);
-  end;
-
-  procedure freeDomainList(var DomainList:DomainNodeP);
-  var lauf : DomainNodeP;
-  begin
-    if Assigned(Domainlist) then begin
-      freeDomainList(DomainList^.left);
-      lauf:=DomainList^.right;
-      Dispose(DomainList);
-      freeDomainList(lauf);
-    end;
-  end;
-
 begin
-  freeDomainList(DomainList);
-  DomainList:=nil;
+  DomainList.Clear;
   dbOpen(d,BoxenFile,0);
   while not dbEOF(d) do
   begin
     inc(ntused[dbReadInt(d,'netztyp')]);
     if ntDomainReply(dbReadInt(d,'netztyp')) then
     begin
-      new(p);
       if dbReadInt(d,'netztyp') in [nt_UUCP,nt_Client] then begin
         dom:=LowerCase(dbReadStr(d,'fqdn'));
         if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+dbReadStr(d,'domain'));
@@ -1084,11 +1058,7 @@ begin
         if dom='' then dom:=LowerCase(dbReadStr(d,'pointname')+'.'+dbReadStr(d,'boxname')+
                                  dbReadStr(d,'domain'));
       end;
-      p^.domain:=dom;
-      p^.left:=nil;
-      p^.right:=nil;
-      insertintolist(DomainList);
-      Dispose(p);
+      DomainList.Add(dom);
     end;
     dbNext(d);
   end;
@@ -1130,6 +1100,10 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.136  2002/02/01 10:31:54  mk
+  - fixed some bugs with new empfaenger handling
+  - made DomainList to StringList
+
   Revision 1.135  2002/01/30 22:59:02  mk
   - free Nodelist at end of OpenXP
 

@@ -366,7 +366,7 @@ var x,y      : Integer;
            (pos('your list',LowerCase(betreff))>0))
          and
          stricmp(LeftStr(absender,length(mapsname)),mapsname) and
-         (empfaenger[1]='1') )
+         (FirstChar(FirstEmpfaenger)='1') )
       or
          ((LeftStr(absender,7)='SYSTEM@') and
           ((LeftStr(UpperCase(betreff),11)='NETZBRETTER') or  { QuickMail }
@@ -388,7 +388,7 @@ var x,y      : Integer;
           end;
         end;
 
-      if (empfaenger[1]='1') { PM } and empfbest and ebest and
+      if (FirstChar(FirstEmpfaenger)='1') { PM } and empfbest and ebest and
          (((attrib and attrReqEB<>0) and (attrib and attrIsEB=0)) or
           ((empfbkennung<>'') and (isl(empfbkennung) or
             isl(QPC_ID+empfbkennung) or isl(DES_ID+empfbkennung)))) then
@@ -396,14 +396,14 @@ var x,y      : Integer;
         empfang_bestaetigen(pollbox);
         end;
 
-      if (sysbetreff<>'') and (empfaenger[1]='1') and (LowerCase(betreff)=sysbetreff) and
+      if (sysbetreff<>'') and (FirstChar(FirstEmpfaenger)='1') and (LowerCase(betreff)=sysbetreff) and
          (LeftAbsender('changesys') or LeftAbsender('news') or
           LeftAbsender('postmaster') or LeftAbsender('root')) then
       begin
         GetSysfile;
         end;
 
-      if UsePGP and (empfaenger[1]='1') { PM } and
+      if UsePGP and (FirstChar(FirstEmpfaenger)='1') { PM } and
          (pgpflags and fPGP_request<>0) and ebest then begin
         if pollbox<>'' then
           xpsendmessage.forcebox:=pollbox
@@ -614,19 +614,16 @@ var x,y      : Integer;
   end;
 
   function IsOwnDomain(dom:string):boolean;
-  var p : DomainNodep;
+  var
+    Index: Integer;
   begin
     if cpos('@',dom)=0 then
       IsOwnDomain:=false
-    else begin
+    else
+    begin
       delete(dom,1,cpos('@',dom));
-      LoString(dom);
-      p:=DomainList;
-      while (p<>nil) and (p^.domain<>dom) do
-        if dom<p^.domain then p:=p^.left
-        else p:=p^.right;
-      IsOwnDomain:=(p<>nil);
-      end;
+      IsOwnDomain := DomainList.Find(LowerCase(dom), Index);
+    end;
   end;
 
   procedure FlushLL;
@@ -885,7 +882,7 @@ begin
             aufnehmen:=true;
           end
           else
-            if empfaenger[1]<>'A' then
+            if FirstChar(FirstEmpfaenger)<>'A' then
               aufnehmen:=true
                          {((pos('@mips.pfalz.de',absender)=0) and
                           (pos('news@pythia.lunetix.de',absender)=0) and
@@ -939,7 +936,7 @@ begin
             else
               if dbReadInt(bbase,'flags') and 4<>0 then aufnehmen:=true;
             if aufnehmen then
-              _brett:=mbrettd(FirstEmpfaenger[1],bbase);
+              _brett:=mbrettd(FirstChar(FirstEmpfaenger),bbase);
             end;
           { hier kein adrok: TO-User werden immer aufgenommen! }
           if FirstChar(FirstEmpfaenger)='U' then begin
@@ -1234,6 +1231,10 @@ end;
 
 {
   $Log$
+  Revision 1.81  2002/02/01 10:31:54  mk
+  - fixed some bugs with new empfaenger handling
+  - made DomainList to StringList
+
   Revision 1.80  2002/02/01 10:18:00  mk
   - fixed bug with new empfaenger handling
 
