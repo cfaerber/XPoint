@@ -3891,6 +3891,25 @@ doch gespeichert werden. "Das Usenet vergisst
 nicht!"
 @
 254
+<<ZCONNECT / RFC:
+
+<<[ ]>> -> Cancel- und Ersetzt-Nachrichten werden immer
+       bearbeitet. Das heisst, wenn CrossPoint eine
+       Cancel- oder eine Ersetzt-Nachricht (RFC:
+       'Supersedes') empf„ngt, dann wird die Bezugs-
+       nachricht gesucht und wenn sie gefunden wird,
+       auf 'gelesen' und auf 'l”schen' gesetzt. Die
+       Cancel-Nachricht wird bei der n„chsten
+       Reorganisation entfernt.
+
+<<[X]>> -> Cancel- und Ersetzt-Nachrichten werden
+       ignoriert und wie alle anderen Nachrichten
+       behandelt.
+
+Ohne Grund sollte dieser Schalter nicht aktiviert
+werden.
+@
+255
 Die M”glichkeit, Nachrichten per "Crossposting" in
 mehrere Bretter gleichzeitig zu schicken, wird gele-
 gentlich miábraucht, um Werbung oder hnliches m”g-
@@ -3901,11 +3920,10 @@ baren Anzahl von Empf„ngern automatisch.
 Faustregel: Wenn eine Nachricht mehr als 10 Brett-
 Empf„nger hat, ist sie nicht lesenswert.
 @
-255
+256
 Ist dieser Schalter aktiviert, werden auch Mails
 (PMs) mit mehr als der eingestellten Zahl an im
 Header vermerkten Empf„ngern gel”scht.
-
 @
 1040
 Hier k”nnen Sie den Namen Ihrer Organisation einge-
@@ -7031,7 +7049,6 @@ den.
        Dateien oder Dateinamen, die sich regelm„áig
        „ndern (k”nnen), z.B. PGPOS2 fr die aktuelle
        Version des Programms PGP fr OS/2.
-
 @
 800
 Dies ist die Gebhrenzonen-Liste. Sie k”nnen hier bis
@@ -11965,6 +11982,11 @@ werden, weil der neue Server eine andere Brettebene
 hat als der alte. Sie mssen die Nachricht stattdes-
 sen in das neue Brett weiterleiten und die alte
 Nachricht dann l”schen.
+@
+20638
+Nachrichten, die mit /Nachrichten/Weiterleiten/
+/Original versandt wurden, drfen nachtr„glich
+nicht ge„ndert werden.
 @
 20701
 CrossPoint konnte das Brett mit der unversandten
