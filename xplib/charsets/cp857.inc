@@ -1,14 +1,24 @@
-// $Id$
+//   $Id$
 //
-//   WARNING: This codepage has been adopted for OpenXP in the
-//   range 0x00..0x1F to use the graphical characters!
+//   Name:     cp857_DOSTurkish to Unicode table
+//   Unicode version: 2.0
+//   Table version: 2.00
+//   Table format:  Format A
+//   Date:          04/24/96
+//   Authors:       Lori Brownell <loribr@microsoft.com>
+//                  K.D. Chang    <a-kchang@microsoft.com>
+//   General notes: none
 //
-//   Note: Codepage 858 is basically codepage 850 with position
-//   213 replaced by EURO CURRENCY SIGN
+//   Format: Three tab-separated columns
+//       Column #1 is the cp857_DOSTurkish code (in hex)
+//       Column #2 is the Unicode (in hex as 0xXXXX)
+//       Column #3 is the Unicode name (follows a comment sign, '#')
+//
+//   The entries are in cp857_DOSTurkish order
 //
 
 const
-  CP858TransTable: T8BitTable = ( {
+  CP857TransTable: T8BitTable = ( {
 $00 } $0000, { NULL
 $01 } $0001, { START OF HEADING
 $02 } $0002, { START OF TEXT
@@ -150,7 +160,7 @@ $89 } $00eb, { LATIN SMALL LETTER E WITH DIAERESIS
 $8a } $00e8, { LATIN SMALL LETTER E WITH GRAVE
 $8b } $00ef, { LATIN SMALL LETTER I WITH DIAERESIS
 $8c } $00ee, { LATIN SMALL LETTER I WITH CIRCUMFLEX
-$8d } $00ec, { LATIN SMALL LETTER I WITH GRAVE
+$8d } $0131, { LATIN SMALL LETTER DOTLESS I
 $8e } $00c4, { LATIN CAPITAL LETTER A WITH DIAERESIS
 $8f } $00c5, { LATIN CAPITAL LETTER A WITH RING ABOVE
 $90 } $00c9, { LATIN CAPITAL LETTER E WITH ACUTE
@@ -161,22 +171,22 @@ $94 } $00f6, { LATIN SMALL LETTER O WITH DIAERESIS
 $95 } $00f2, { LATIN SMALL LETTER O WITH GRAVE
 $96 } $00fb, { LATIN SMALL LETTER U WITH CIRCUMFLEX
 $97 } $00f9, { LATIN SMALL LETTER U WITH GRAVE
-$98 } $00ff, { LATIN SMALL LETTER Y WITH DIAERESIS
+$98 } $0130, { LATIN CAPITAL LETTER I WITH DOT ABOVE
 $99 } $00d6, { LATIN CAPITAL LETTER O WITH DIAERESIS
 $9a } $00dc, { LATIN CAPITAL LETTER U WITH DIAERESIS
 $9b } $00f8, { LATIN SMALL LETTER O WITH STROKE
 $9c } $00a3, { POUND SIGN
 $9d } $00d8, { LATIN CAPITAL LETTER O WITH STROKE
-$9e } $00d7, { MULTIPLICATION SIGN
-$9f } $0192, { LATIN SMALL LETTER F WITH HOOK
+$9e } $015e, { LATIN CAPITAL LETTER S WITH CEDILLA
+$9f } $015f, { LATIN SMALL LETTER S WITH CEDILLA
 $a0 } $00e1, { LATIN SMALL LETTER A WITH ACUTE
 $a1 } $00ed, { LATIN SMALL LETTER I WITH ACUTE
 $a2 } $00f3, { LATIN SMALL LETTER O WITH ACUTE
 $a3 } $00fa, { LATIN SMALL LETTER U WITH ACUTE
 $a4 } $00f1, { LATIN SMALL LETTER N WITH TILDE
 $a5 } $00d1, { LATIN CAPITAL LETTER N WITH TILDE
-$a6 } $00aa, { FEMININE ORDINAL INDICATOR
-$a7 } $00ba, { MASCULINE ORDINAL INDICATOR
+$a6 } $011e, { LATIN CAPITAL LETTER G WITH BREVE
+$a7 } $011f, { LATIN SMALL LETTER G WITH BREVE
 $a8 } $00bf, { INVERTED QUESTION MARK
 $a9 } $00ae, { REGISTERED SIGN
 $aa } $00ac, { NOT SIGN
@@ -217,13 +227,13 @@ $cc } $2560, { BOX DRAWINGS DOUBLE VERTICAL AND RIGHT
 $cd } $2550, { BOX DRAWINGS DOUBLE HORIZONTAL
 $ce } $256c, { BOX DRAWINGS DOUBLE VERTICAL AND HORIZONTAL
 $cf } $00a4, { CURRENCY SIGN
-$d0 } $00f0, { LATIN SMALL LETTER ETH
-$d1 } $00d0, { LATIN CAPITAL LETTER ETH
+$d0 } $00ba, { MASCULINE ORDINAL INDICATOR
+$d1 } $00aa, { FEMININE ORDINAL INDICATOR
 $d2 } $00ca, { LATIN CAPITAL LETTER E WITH CIRCUMFLEX
 $d3 } $00cb, { LATIN CAPITAL LETTER E WITH DIAERESIS
 $d4 } $00c8, { LATIN CAPITAL LETTER E WITH GRAVE
-$d5   $0131,   LATIN SMALL LETTER DOTLESS I
-$d5 } $2C0A, { LATIN SMALL LETTER DOTLESS I
+$d5   $0000,   UNDEFINED
+$d5 } $20AC, { EURO CURRENCY SIGN
 $d6 } $00cd, { LATIN CAPITAL LETTER I WITH ACUTE
 $d7 } $00ce, { LATIN CAPITAL LETTER I WITH CIRCUMFLEX
 $d8 } $00cf, { LATIN CAPITAL LETTER I WITH DIAERESIS
@@ -241,18 +251,18 @@ $e3 } $00d2, { LATIN CAPITAL LETTER O WITH GRAVE
 $e4 } $00f5, { LATIN SMALL LETTER O WITH TILDE
 $e5 } $00d5, { LATIN CAPITAL LETTER O WITH TILDE
 $e6 } $00b5, { MICRO SIGN
-$e7 } $00fe, { LATIN SMALL LETTER THORN
-$e8 } $00de, { LATIN CAPITAL LETTER THORN
+$e7 } $0000, { UNDEFINED
+$e8 } $00d7, { MULTIPLICATION SIGN
 $e9 } $00da, { LATIN CAPITAL LETTER U WITH ACUTE
 $ea } $00db, { LATIN CAPITAL LETTER U WITH CIRCUMFLEX
 $eb } $00d9, { LATIN CAPITAL LETTER U WITH GRAVE
-$ec } $00fd, { LATIN SMALL LETTER Y WITH ACUTE
-$ed } $00dd, { LATIN CAPITAL LETTER Y WITH ACUTE
+$ec } $00ec, { LATIN SMALL LETTER I WITH GRAVE
+$ed } $00ff, { LATIN SMALL LETTER Y WITH DIAERESIS
 $ee } $00af, { MACRON
 $ef } $00b4, { ACUTE ACCENT
 $f0 } $00ad, { SOFT HYPHEN
 $f1 } $00b1, { PLUS-MINUS SIGN
-$f2 } $2017, { DOUBLE LOW LINE
+$f2 } $0000, { UNDEFINED
 $f3 } $00be, { VULGAR FRACTION THREE QUARTERS
 $f4 } $00b6, { PILCROW SIGN
 $f5 } $00a7, { SECTION SIGN
@@ -268,9 +278,11 @@ $fe } $25a0, { BLACK SQUARE
 $ff } $00a0  { NO-BREAK SPACE
 } );
 
-// 
+//
 // $Log$
-// Revision 1.1  2002/01/04 22:34:33  cl
-// - added IBM codepages 850 and 858
-// - moved Get8BitTable to unit charmaps
+// Revision 1.1  2003/09/29 20:47:20  cl
+// - moved charset handling/conversion code to xplib
+//
+// Revision 1.1  2002/01/04 23:24:24  cl
+// - added MS-DOS Codepage 857 (Multilingual Latin 5)
 //

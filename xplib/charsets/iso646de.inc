@@ -125,6 +125,9 @@ const
 
 // 
 // $Log$
+// Revision 1.1  2003/09/29 20:47:20  cl
+// - moved charset handling/conversion code to xplib
+//
 // Revision 1.1  2002/11/14 20:00:58  cl
 // - New charset: ISO-646-DE
 //

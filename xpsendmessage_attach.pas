@@ -92,8 +92,10 @@ uses
   DateUtils,
 {$ENDIF}
   fileio, inout, keys, lister, maske, maus2, resource, typeform,
-  utftools, winxp, xp0, xp1, xp1input, xp1o, xp2c, xp4e, xpdatum, xpe,
+  winxp, xp0, xp1, xp1input, xp1o, xp2c, xp4e, xpdatum, xpe,
   xpsendmessage_attach_analyze, xpstreams, xp_pgp,
+  xpcharset,
+  xpcharset_streams,
   xpglobal;
 
 constructor TSendAttach_Part.Create;
@@ -1115,6 +1117,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2003/09/29 20:47:14  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.26  2003/08/30 23:49:11  mk
   - added missing cvs log
 

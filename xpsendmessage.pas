@@ -435,11 +435,13 @@ function pgpo_keytest(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses mime, mime_analyze, rfc2822, StringTools, utftools, xp_pgp, xp1o, xp3,
+uses mime, mime_analyze, rfc2822, StringTools, xp_pgp, xp1o, xp3,
   xp3ex, xp3o2, xp4e, xpcc, xpfido, xpmakeheader,
   xpsendmessage_internal, xpstreams, addresses,
   xpstreams_codec, 
-  xpstreams_temporary, 
+  xpstreams_temporary,
+  xpcharset,
+  xpcharset_streams,
   xpserver, xp4;
 
 function umlauttest(var s:string):boolean;
@@ -1023,6 +1025,9 @@ finalization
 
 {
   $Log$
+  Revision 1.81  2003/09/29 20:47:14  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.80  2003/09/14 14:35:37  mk
   - fixed 803141: Editor in der 3.9.7
     write header only, if there is one, this prevents additional CRLF

@@ -1,11 +1,14 @@
 // $Id$
 //
-//   WARNING: This codepage has been adopted for OpenXP in the range 0x00..0x1F
-//   to use the graphical characters!
+//   WARNING: This codepage has been adopted for OpenXP in the
+//   range 0x00..0x1F to use the graphical characters!
+//
+//   Note: Codepage 858 is basically codepage 850 with position
+//   213 replaced by EURO CURRENCY SIGN
 //
 
 const
-  CP850TransTable: T8BitTable = ( {
+  CP858TransTable: T8BitTable = ( {
 $00 } $0000, { NULL
 $01 } $0001, { START OF HEADING
 $02 } $0002, { START OF TEXT
@@ -219,7 +222,8 @@ $d1 } $00d0, { LATIN CAPITAL LETTER ETH
 $d2 } $00ca, { LATIN CAPITAL LETTER E WITH CIRCUMFLEX
 $d3 } $00cb, { LATIN CAPITAL LETTER E WITH DIAERESIS
 $d4 } $00c8, { LATIN CAPITAL LETTER E WITH GRAVE
-$d5 } $0131, { LATIN SMALL LETTER DOTLESS I
+$d5   $0131,   LATIN SMALL LETTER DOTLESS I
+$d5 } $2C0A, { LATIN SMALL LETTER DOTLESS I
 $d6 } $00cd, { LATIN CAPITAL LETTER I WITH ACUTE
 $d7 } $00ce, { LATIN CAPITAL LETTER I WITH CIRCUMFLEX
 $d8 } $00cf, { LATIN CAPITAL LETTER I WITH DIAERESIS
@@ -266,6 +270,9 @@ $ff } $00a0  { NO-BREAK SPACE
 
 // 
 // $Log$
+// Revision 1.1  2003/09/29 20:47:20  cl
+// - moved charset handling/conversion code to xplib
+//
 // Revision 1.1  2002/01/04 22:34:33  cl
 // - added IBM codepages 850 and 858
 // - moved Get8BitTable to unit charmaps

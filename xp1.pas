@@ -277,7 +277,8 @@ uses
   resource,crc,debug,  osdepend,
   xp1o,xp1o2,xp1help,xp1input,xpe,xpnt, xp3,
   direct,
-  mime;
+  xpcharset;
+//mime;
 
 { Diese Tabelle konvertiert NUR ™ š ae oe ue ss !    }
 { todo: remove!
@@ -3217,6 +3218,9 @@ end;
 
 {
   $Log$
+  Revision 1.193  2003/09/29 20:47:13  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.192  2003/09/28 23:22:21  mk
   - added debug log info to write_lastcall
 

@@ -30,9 +30,9 @@ unit mime;
 
 uses
   Classes,
+  xpcharset,
   xpstreams,
-  xpstreams_codec,
-  unicode;
+  xpstreams_codec;
 
 { ---------------------- Enum types & Constants ---------------------- }
 
@@ -183,62 +183,6 @@ function MimeGetEncodingFromName(const s:string):TMimeEncoding;
 
 { ----------------------------- Charsets ----------------------------- }
 
-type
-  TMimeCharsets = (
-  // Unicode transformations
-    csUTF8, 	  csUTF7, 
-  // DOS/IBM codepages
-    csCP437, 	  csCP850,      csCP857,      csCP858,      csCP866, 
-  // Windows codepages    
-    csCP1250,	  csCP1251, 	csCP1252,     csCP1255,
-  // ISO/ANSI charsets
-    csISO8859_1,  csISO8859_2,  csISO8859_3,  csISO8859_4,  csISO8859_5,
-    csISO8859_6,  csISO8859_7,  csISO8859_8,  csISO8859_9,  csISO8859_10,
-    csISO8859_13, csISO8859_14, csISO8859_15, csISO8859_16, 
-  // US-ASCII
-    csASCII,      csISO646DE,
-  // unknown charset
-    csUnknown);
-
-const
-  MimeCharsetNames: array[TMIMECharsets] of String = (
-    'UTF-8',      'UTF-7',
-    'IBM437',     'IBM850',     'IBM857',     'IBM858',     'IBM866',
-    'windows-1250',
-    'windows-1251', 'windows-1252', 'windows-1255',
-    'ISO-8859-1', 'ISO-8859-2', 'ISO-8859-3', 'ISO-8859-4', 'ISO-8859-5',
-    'ISO-8859-6', 'ISO-8859-7', 'ISO-8859-8', 'ISO-8859-9', 'ISO-8859-10',
-    'ISO-8859-13','ISO-8859-14','ISO-8859-15','ISO-8859-16', 
-    'US-ASCII',   'ISO646-DE',
-    'x-unknown');
-
-type
-  TCharsetCodecStream = class(TCodecStream)
-  protected
-    Encoder: TUTF8Encoder;
-    Decoder: TUTF8Decoder;
-  public
-    constructor Create(SourceCharset,DestCharset:String); overload;
-    constructor Create(SourceCharset,DestCharset:TMimeCharsets); overload;
-    constructor Create(SourceCharset:TMimeCharsets;DestCharset:String); overload;
-    constructor Create(SourceCharset:String;DestCharset:TMimeCharsets); overload;
-    destructor Destroy; override;
-  end;
-
-  TCharsetEncoderStream = class(TCharsetCodecStream)
-    function Read(var Buffer; Count: Longint): Longint; override; // only raises exception
-    function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
-  end;
-
-function MimeCharsetCanonicalName(Const Name:string):string;
-
-function MimeCharsetToZC(const Name:string):string;
-function ZCCharsetToMIME(const Name:string):string;
-
-function MimeCharsetToFido(const Name:string):string;
-function FidoCharsetToMime(const Name:string):string;
-
 { ----------------------------- RFC 2047 ----------------------------- }
 
 function RFC2047_Decode(const ss: string; csTo: TMIMECharsets):String;
@@ -278,7 +222,6 @@ uses
   crc,
   mime_base64,
   mime_qp,
-  utftools,
   typeform;
 
 { -------------------- Content & Disposition Types ------------------- }
@@ -862,140 +805,6 @@ end;
 
 { ----------------------------- Charsets ----------------------------- }
 
-constructor TCharsetCodecStream.Create(SourceCharset,DestCharset:TMimeCharsets);
-begin
-  inherited Create;
-  Encoder := CreateUTF8Encoder(SourceCharset);
-  Decoder := CreateUTF8Decoder(DestCharset);
-end;
-
-constructor TCharsetCodecStream.Create(SourceCharset,DestCharset:String);
-begin
-  Create(MimeGetCharsetFromName(SourceCharset),
-    MimeGetCharsetFromName(DestCharset) );
-end;
-
-constructor TCharsetCodecStream.Create(SourceCharset:TMimeCharsets;DestCharset:String);
-begin Create(SourceCharset, MimeGetCharsetFromName(DestCharset)); end;
-
-constructor TCharsetCodecStream.Create(SourceCharset:String;DestCharset:TMimeCharsets);
-begin Create(MimeGetCharsetFromName(SourceCharset), DestCharset); end;
-
-destructor TCharsetCodecStream.Destroy;
-begin
-  Encoder.Free;
-  Decoder.Free;
-  inherited;
-end;
-
-{ TCharsetEncoderStream }
-
-{$WARNINGS OFF}{$HINTS OFF}
-function TCharsetEncoderStream.Read(var Buffer; Count: Longint): Longint;
-begin raise EReadError.Create('Stream does not support reading.'); end;
-{$WARNINGS ON}{$HINTS ON}
-
-function TCharsetEncoderStream.Write(const Buffer; Count: Longint): Longint;
-var buf:string;
-begin
-  SetLength(buf,Count); Move(Buffer,buf[1],count);
-  buf := Decoder.Decode(Encoder.Encode(buf));
-  OtherStream.WriteBuffer(buf[1],Length(buf));
-  inc(FPosition,Count);
-  Result := Count;
-end;
-
-function TCharsetEncoderStream.Seek(Offset: Longint; Origin: System.Word): Longint;
-begin
-  Result := FPosition;
-  if not (
-    ((Origin in [soFromCurrent,soFromEnd]) and (Offset = 0)) or
-    ((Origin = soFromBeginning) and (Offset = Result)) ) then
-    raise EStreamError.Create('Stream does not support seeking.');
-end;
-
-{$IFDEF Kylix}
-{$I charsets/aliases.inc}
-{$ELSE}
-{$I charsets\aliases.inc}
-{$ENDIF}
-// Contains:
-// function MimeCharsetCanonicalName(charset:string):string;
-
-function MimeCharsetToZC(const Name:string):string;
-begin
-  result := MimeCharsetCanonicalName(Name);
-  if result='ISO-8859-1' then result:='ISO1' else
-  if result='ISO-8859-2' then result:='ISO2' else
-  if result='ISO-8859-3' then result:='ISO3' else
-  if result='ISO-8859-4' then result:='ISO4' else
-  if result='ISO-8859-5' then result:='ISO5' else
-  if result='ISO-8859-6' then result:='ISO6' else
-  if result='ISO-8859-7' then result:='ISO7' else
-  if result='ISO-8859-8' then result:='ISO8' else
-  if result='ISO-8859-9' then result:='ISO9' else
-  if result='ISO-8859-10' then result:='ISO10' else
-  if result='ISO-8859-13' then result:='ISO13' else
-  if result='ISO-8859-14' then result:='ISO14' else
-  if result='ISO-8859-16' then result:='ISO16' else
-  if result='UTF-16' then result:='UNICODE';
-end;
-
-function ZCCharsetToMIME(const Name:string):string;
-begin
-  result := MimeCharsetCanonicalName(Name);
-end;
-
-function MimeCharsetToFido(const Name:string):string;
-begin
-  result := MimeCharsetCanonicalName(Name);
-  if result='ISO646-NL' then result:='DUTCH 1' else
-  if result='SEN_850200_B' then result:='FINNISH 1' else
-  if result='NF_Z_62-010' then result:='FRENCH 1' else
-  if result='CSA_Z243.4-1985-1' then result:='CANADIAN 1' else
-  if result='DIN_66003' then result:='GERMAN 1' else
-  if result='IT' then result:='ITALIAN 1' else
-  if result='NS_4551-1' then result:='NORWEG 1' else
-  if result='PT' then result:='PORTU 1' else
-  if result='ES' then result:='SPANISH 1' else
-  if result='SEN_850200_B' then result:='SWEDISH 1' else
-  if result='ISO646-CH' then result:='SWISS 1' else
-  if result='BS_4730' then result:='UK 1' else
-  if result='ISO-8859-1' then result:='LATIN-1 2' else
-  if result='US-ASCII' then result:='ASCII 1' else
-  if result='IBM437' then result:='IBMPC 2' else
-  if result='macintosh' then result:='MAC 2' else
-  if result='VT100' then result:='VT100 2' else
-  if result='ISO-8859-2' then result:='Latin-2 3' else
-  if result='ISO-8859-3' then result:='Latin-3 3' else
-  if result='ISO-8859-4' then result:='Latin-4 3' else
-  if result='ISO-8859-9' then result:='Latin-5 3' else
-  if result='ISO-8859-10' then result:='Latin-6 3' else
-  if result='ISO-8859-14' then result:='Latin-7 3' else
-  if result='ISO-8859-6' then result:='Arabic 3' else
-  if result='ISO-8859-5' then result:='Cyrillic 3' else
-  if result='ISO-8859-7' then result:='Greek 3' else
-  if result='ISO-8859-8' then result:='Hebrew 3' else
-  if result='JISX0201.1776-0' then result:='Katakana 3' else
-  if result='GB2312.1980-0' then result:='Hanzi 4' else
-  if result='JISX0208.1983-0' then result:='Kanji 4' else
-  if result='KSC5601.1987-0' then result:='Korean 4' else
-  if result='UTF-16' then result:='UNICODE 4' else
-  result:=result+' 3'; // rough guess ;-)
-end;
-
-function FidoCharsetToMime(const Name:string):string;
-begin
-  result := Trim(Uppercase(Name));
-
-  // ignore the level - we just decode
-  if (length(result)>2) and (Result[Length(Result)-1]=' ') and
-    (Result[Length(Result)] in ['1'..'4']) then
-    result:=Trim(LeftStr(result,Length(result)-2));
-
-  result := MimeCharsetCanonicalName(Name);
-end;
-
 { ----------------------------- RFC 2047 ----------------------------- }
 
 function RFC2047_Decode(const ss: string; csTo: TMIMECharsets):String;
@@ -1101,8 +910,8 @@ var pos:   integer; // current scan position
   begin
     if (Length(x)>MaxFirstLen-2) and (not first) then
     begin
-      Result:=Result+'?='+EOL+' =?'+MimeCharsetNames[csTo]+'?Q?';
-      MaxFirstLen := Min(76,MaxLen) - 6 - Length(MimeCharsetNames[csTo]);
+      Result:=Result+'?='+EOL+' =?'+MimeGetCharsetName(csTo)+'?Q?';
+      MaxFirstLen := Min(76,MaxLen) - 6 - Length(MimeGetCharsetName(csTo));
     end;
     Result := Result + x;
     Dec(MaxFirstLen,Length(x));
@@ -1171,8 +980,8 @@ begin
 
     MaxFirstLen := Min(76,MaxFirstLen);
 
-    Result:='=?'+MimeCharsetNames[csTo]+'?Q?';
-    Dec(MaxFirstLen,5+Length(MimeCharsetNames[csTo]));
+    Result:='=?'+MimeGetCharsetName(csTo)+'?Q?';
+    Dec(MaxFirstLen,5+Length(MimeGetCharsetName(csTo)));
 
     first := true;        
 
@@ -1271,6 +1080,9 @@ end;
 
 //
 // $Log$
+// Revision 1.28  2003/09/29 20:47:12  cl
+// - moved charset handling/conversion code to xplib
+//
 // Revision 1.27  2003/08/26 22:47:16  cl
 // - split xpstreams into individual small files to remove some dependencies
 //

@@ -35,7 +35,8 @@ uses
   {$ENDIF }
   sysutils,
   inout,
-  mime,
+  xpcharset,
+  xpcharset_codec,
   xpglobal;
 
 const
@@ -211,15 +212,13 @@ uses
   keys,
   maus2,
   typeform,
-  xp0,
 {$IFDEF DOS32}
   Go32,
 {$ENDIF}
 {$IFDEF FPC }
   Objects, (* For PWordArray *)
-{$ENDIF}  
-  unicode,
-  utftools;
+{$ENDIF}
+  xp0;
 
 const rchar : array[1..3,1..6] of char =
               ('⁄ƒø≥¿Ÿ','…Õª∫»º','’Õ∏≥‘æ');
@@ -1538,6 +1537,9 @@ end;
 
 {
   $Log$
+  Revision 1.99  2003/09/29 20:47:13  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.98  2003/09/21 20:17:39  mk
   - rewrite of Listdisplay:
     removed Assemlber function MakeListDisplay, now

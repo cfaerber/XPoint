@@ -62,7 +62,8 @@ uses
   xpglobal,typeform,
   xpstreams_pascal,
   database,resource,xpheader, winxp,
-  xp0,xp1,xp1o,xp3,xp_des,xpnt,xpfido,mime,utftools,unicode,xpstreams;
+  xp0,xp1,xp1o,xp3,xp_des,xpnt,xpfido,mime,xpstreams,
+  xpcharset,xpcharset_codec,xpcharset_streams,xpunicode;
 
 var  ex_MimePart : TMimePart;
 
@@ -217,8 +218,8 @@ var size   : longint;
 
   procedure wrs(s:string);
   begin
-    if UCLength(s) > ScreenWidth then
-      s := LeftStr(s, ScreenWidth); // !!Todo: handle UTF8 correct 
+    if UTF8StringWidth(s) > ScreenWidth then
+      s := UTF8FormS(s, ScreenWidth); // !!Todo: handle UTF8 correct 
     s := s + #13#10;
     blockwrite(f,s[1],length(s));
     inc(hdlines);
@@ -1239,6 +1240,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.108  2003/09/29 20:47:13  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.107  2003/08/26 22:47:17  cl
   - split xpstreams into individual small files to remove some dependencies
 

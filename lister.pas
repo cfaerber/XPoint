@@ -198,10 +198,11 @@ uses
   xpcurses,
   {$ENDIF }
   xpunicode_lbr,
+  xpcharset,
+  xpcharset_maps,
   typeform,
-  charmaps,     // for CP 437 map
   inout, maus2, winxp, resource,
-  xp0,mime,utftools,unicode;
+  xp0,mime;
 
 { TLister }
 
@@ -1110,6 +1111,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.93  2003/09/29 20:47:12  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.92  2003/09/28 11:00:30  mk
   - removed unused variable in ReadFromFile
 

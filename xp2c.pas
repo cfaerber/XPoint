@@ -97,7 +97,8 @@ uses
   xp1o,xp2,xp4o2,xp9bp,xpnt,
   typeform,fileio,inout,winxp,win2,keys,maske,
   mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,xp_pgp,
-  mime,utftools, osdepend, classes,
+  mime,osdepend, classes,
+  xpcharset,
   xpglobal;
 
 const
@@ -1585,6 +1586,9 @@ end;
 
 {
   $Log$
+  Revision 1.145  2003/09/29 20:47:13  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.144  2003/09/05 18:22:49  mk
   - fixed for printing support under linux
 

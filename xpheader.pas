@@ -197,6 +197,7 @@ type
 implementation
 
 uses
+  xpcharset,
   SysUtils,Typeform,xp0,xpdatum,xp_pgp,xpmakeheader,xpstreams;
 
 constructor THeader.Create;
@@ -889,6 +890,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2003/09/29 20:47:14  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.41  2003/09/07 14:49:42  cl
   - send window: postpone message
     CLOESES task #76797: "Sendefenster: Parken"

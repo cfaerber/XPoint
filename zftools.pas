@@ -203,6 +203,7 @@ uses
   maus2,
   mime,
   xp0,
+  xpcharset,
   xp1;
 
 procedure ExpandCR(var data; bpos: Integer; size: Integer; var addlfs: Integer); assembler; {&uses ebx, esi, edi}
@@ -1811,6 +1812,9 @@ begin
 end;
 {
         $Log$
+        Revision 1.38  2003/09/29 20:47:14  cl
+        - moved charset handling/conversion code to xplib
+
         Revision 1.37  2003/09/17 01:00:50  cl
         - TEMPORARY BUGFIX: charset declaration for Fido
           WORKAROUND FOR #727387 [Fido, 3.9.4] UTF-8-Deklaration

@@ -92,7 +92,7 @@ uses
   xpcfg,typeform,fileio,inout,winxp,mouse,datadef,database,osdepend,
   maske,help,lister,win2,maus2,clip,resource,montage,debug,fidoglob,
   xp0,xp1,xp1o2,xp1input,xp1help,xpe,xp3,xp5,xp9bp,xp10,xpdatum,xp_pgp,
-  xpconfigedit,xpnt,xpfido,xpkeys,mime,utftools,markedlist;
+  xpconfigedit,xpnt,xpfido,xpkeys,mime,markedlist,xpcharset;
 
 var   zaehlx,zaehly : byte;
 
@@ -2815,6 +2815,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.174  2003/09/29 20:47:13  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.173  2003/09/16 23:53:23  mk
   - set correct standard value for XPTimeZone
 

@@ -20,13 +20,13 @@
 
 {$I xpdefine.inc }
 
-unit charmaps;
+unit xpcharset_maps;
 
 interface
 
 uses
   xpunicode,    //T8BitTable
-  mime;         //TMimeCharsets
+  xpcharset;
 
 {$IFDEF Unix }
 {$I charsets/cp437.inc }
@@ -84,9 +84,6 @@ function GetT8BitTable(CharSet: TMimeCharsets): T8BitTable;
 
 implementation
 
-uses
-  xpglobal; //not really
-
 function GetT8BitTable(CharSet: TMimeCharsets): T8BitTable;
 begin
   case CharSet of
@@ -121,6 +118,9 @@ end.
 
 //
 // $Log$
+// Revision 1.1  2003/09/29 20:47:18  cl
+// - moved charset handling/conversion code to xplib
+//
 // Revision 1.12  2003/02/13 14:41:57  cl
 // - implemented correct display of UTF8 in the lister
 // - implemented Unicode line breaking in the lister

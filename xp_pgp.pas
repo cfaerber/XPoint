@@ -79,6 +79,8 @@ uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$ENDIF}
   xpstreams_temporary,
   xprope,
+  xpcharset,
+  xpcharset_streams,
   xpcc,xpnt,mime,mime_base64;
 
 var
@@ -1207,6 +1209,9 @@ end;
 
 {
   $Log$
+  Revision 1.79  2003/09/29 20:47:14  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.78  2003/08/30 22:19:26  cl
   - send window: select encryption and signature method
   - CLOSES Task #76790 Sendefenster: Kodieren/Sicherheit

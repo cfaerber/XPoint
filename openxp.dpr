@@ -24,7 +24,6 @@ uses
   addresses in 'addresses.pas',
   addresslist in 'addresslist.pas',
   archive in 'archive.pas',
-  charmaps in 'charmaps.pas',
   clip in 'clip.pas',
   CRC in 'crc.pas',
   database in 'database.pas',
@@ -58,8 +57,8 @@ uses
   StringTools in 'stringtools.pas',
   Timer in 'timer.pas',
   typeform in 'typeform.pas',
-  Unicode in 'unicode.pas',
-  UTFTools in 'utftools.pas',
+//Unicode in 'unicode.pas',
+//UTFTools in 'utftools.pas',
   viewer in 'viewer.pas',
   win2 in 'win2.pas',
   winxp in 'winxp.pas',
@@ -159,6 +158,9 @@ uses
   xprope in 'xplib\xprope.pas',
   xpunicode in 'xplib\xpunicode.pas',
   xpunicode_lbr in 'xplib\xpunicode_lbr.pas',
+  xpcharset in 'xplib\xpcharset.pas',
+  xpcharset_codec in 'xplib\xpcharset_codec.pas',
+  xpcharset_streams in 'xplib\xpcharset_streams.pas',
 {$ELSE}
   ZModem in 'netcall/zmodem.pas',
   ncgeneric in 'netcall/ncgeneric.pas',
@@ -186,7 +188,9 @@ uses
   objcom in 'ObjCOM/objcom.pas',
   Ringbuff in 'ObjCOM/ringbuff.pas',
   ncursix in 'ncursix.pas',
-  xprope in 'xplib/xprope.pas'
+  xprope in 'xplib/xprope.pas',
+  xpcharset_codec in 'xplib/xpcharset_codec.pas',
+  xpcharset_streams in 'xplib/xpcharset_streams.pas'
 {$ENDIF}
   xpserver in 'xpserver.pas',
   xpsendmessage_rta in 'xpsendmessage_rta.pas',

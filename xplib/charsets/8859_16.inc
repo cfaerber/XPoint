@@ -303,6 +303,9 @@ const
 
 //
 // $Log$
+// Revision 1.1  2003/09/29 20:47:19  cl
+// - moved charset handling/conversion code to xplib
+//
 // Revision 1.1  2002/01/03 20:53:54  cl
 // - added ISO-8859-16
 //

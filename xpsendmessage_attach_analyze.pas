@@ -38,6 +38,7 @@ uses
   {$IFDEF unix} xpcurses, {$ENDIF}
   {$IFDEF Win32} windows, {$ENDIF}
   database, inout, keys, lister, typeform, xp0, xpstreams,
+  xpcharset,
   xpglobal; //sollte immer am Ende stehen
 
 function GuessContentTypeFromFileName(FileName:String):String;

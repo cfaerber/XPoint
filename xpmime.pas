@@ -28,7 +28,7 @@ unit xpmime;
 interface
 
 uses  sysutils,typeform,montage,fileio,keys,lister,database,resource,xpheader,
-      xp0,xp1,xpkeys,utftools,Mime,xpglobal;
+      xp0,xp1,xpkeys,Mime,xpglobal,xpcharset;
 
 
 type  TMimePart = class { Teil einer Multipart-Nachricht }
@@ -80,6 +80,7 @@ uses
   {$ENDIF }
   xpstreams,
   xpstreams_partial,
+  xpcharset_streams,
   xp1o,xp3,xp3o,xp3ex;
 
 
@@ -886,6 +887,9 @@ finalization
 
 {
   $Log$
+  Revision 1.68  2003/09/29 20:47:14  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.67  2003/09/02 16:42:52  mk
   - fixed filename handling for unix in m_extract
 

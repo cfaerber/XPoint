@@ -12,7 +12,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 }
 
-unit unicode;
+unit xpcharset_codec;
 
 {$I xpdefine.inc }
 {$IFDEF FPC }
@@ -24,20 +24,7 @@ unit unicode;
 interface
 
 uses
-  xpglobal,xpunicode;
-
-type
-
-// -------------------------------------------------------------------
-//   UTF-8 support
-// -------------------------------------------------------------------
-
-  PUTF8Char = PChar;
-
-  function UCLength(const s: UTF8String): Integer;
-  function UCStrLen(const s: PUTF8Char): Integer;
-  function PrevChar(const s: PUTF8Char): PUTF8Char;
-  function NextChar(const s: PUTF8Char): PUTF8Char;
+  xpglobal, xpunicode, xpcharset;
 
 type
 
@@ -146,11 +133,15 @@ type
 
 
 // ===================================================================
+
+function CreateUTF8Encoder(Charset: TMimeCharsets): TUTF8Encoder;
+function CreateUTF8Decoder(Charset: TMimeCharsets): TUTF8Decoder;
+
 // ===================================================================
 
 implementation
 
-uses charmaps;
+uses xpcharset_maps;
 
 // -------------------------------------------------------------------
 //   Helper functions
@@ -200,84 +191,6 @@ end;
 {$IFDEF Debug }
   {$R+,Q+}
 {$ENDIF }
-
-
-// -------------------------------------------------------------------
-//   UTF8 support
-// -------------------------------------------------------------------
-
-const
-  UTF8CharLengths: array[0..15] of Integer =
-    (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 1);
-
-function UCLength(const s: UTF8String): Integer;
-var
-  p: PUTF8Char;
-  c: Char;
-  i: Integer;
-begin
-  Result := 0;
-  p := PUTF8Char(s);
-  while True do
-  begin
-    c := p[0];
-    if c = #0 then
-      break;
-    i := UTF8CharLengths[Ord(c) shr 4];
-    Inc(p, i);
-    Inc(Result, i);
-  end;
-end;
-
-function UCStrLen(const s: PUTF8Char): Integer;
-var
-  p: PUTF8Char;
-  c: Char;
-  i: Integer;
-begin
-  Result := 0;
-  p := s;
-  while True do
-  begin
-    c := p[0];
-    if c = #0 then
-      break;
-    i := UTF8CharLengths[Ord(c) shr 4];
-    Inc(p, i);
-    Inc(Result, i);
-  end;
-end;
-
-function PrevChar(const s: PUTF8Char): PUTF8Char;
-begin
-  Result := s;
-  if s = nil then
-    exit
-  else
-  begin
-    Dec(Result);
-    while (Ord(Result[0]) and $c0) = $80 do
-      Dec(Result);
-  end;
-end;
-
-function NextChar(const s: PUTF8Char): PUTF8Char;
-begin
-  if (s = nil) or (s[0] = #0) then
-    Result := nil
-  else if ShortInt(Ord(s[0])) > 0 then  // = "if Ord(s[0]) < $80 then"
-    Result := s + 1
-  else if Ord(s[0]) < $c0 then
-  begin
-    // In this case "s" starts within a multi-byte encoding
-    Result := s + 1;
-    while (Ord(s[0]) and $c0) = $80 do
-      Inc(Result);
-  end else if Ord(s[0]) < $e0 then
-    Result := s + 2
-  else
-    Result := s + 3;
-end;
 
 // -------------------------------------------------------------------
 //   Ansi (ISO8859-1) character set
@@ -541,8 +454,70 @@ begin
   end;
 end;
 
+// -------------------------------------------------------------------
+//   UTF-8 (null encoder)
+// -------------------------------------------------------------------
+
+type
+  TUTF8NullEncoder = class(TUTF8Encoder)
+  public
+    function Encode(const Source: String): UTF8String; override;
+  end;
+
+  TUTF8NullDecoder = class(TUTF8Decoder)
+  public
+    function Decode(const Source: UTF8String): String; override;
+  end;
+
+// -------------------------------------------------------------------
+//   UTF-8 (null encoder)
+// -------------------------------------------------------------------
+
+{ TUTF8NullEncoder }
+
+function TUTF8NullEncoder.Encode(const Source: String): UTF8String;
+begin
+  result:=source;
+end;
+
+{ TUTF8NullDecoder }
+
+function TUTF8NullDecoder.Decode(const Source: UTF8String): String;
+begin
+  result:=UTF8String(source);
+end;
+
+// -------------------------------------------------------------------
+//   Create En/Decoder class instance from TMimeCharsets
+// -------------------------------------------------------------------
+
+function CreateUTF8Encoder(Charset: TMimeCharsets): TUTF8Encoder;
+begin
+  case Charset of
+    csUTF8,csUnknown:
+          result:=TUTF8NullEncoder.Create;
+    csISO8859_1, csASCII, csCP1252:
+          result:=TWindowsUTF8Encoder.Create;
+    else  result:=T8BitUTF8Encoder.Create(GetT8BitTable(Charset));
+  end;
+end;
+
+function CreateUTF8Decoder(Charset: TMimeCharsets): TUTF8Decoder;
+begin
+  case Charset of
+    csUTF8,csUnknown: result:=TUTF8NullDecoder.Create;
+    csISO8859_1: result:=TAnsiUTF8Decoder.Create;
+    csASCII:     result:=TAsciiUTF8Decoder.Create;
+    csCP1252:    result:=TWindowsUTF8Decoder.Create;
+    else         result:=T8BitUTF8Decoder.Create(GetT8BitTable(Charset));
+  end;
+end;
+
 {
   $Log$
+  Revision 1.1  2003/09/29 20:47:18  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.14  2003/02/13 14:41:57  cl
   - implemented correct display of UTF8 in the lister
   - implemented Unicode line breaking in the lister

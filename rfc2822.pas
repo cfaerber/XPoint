@@ -26,9 +26,7 @@ unit rfc2822;
 
 uses
   Classes,
-  utftools,
-  mime,
-  unicode,
+  xpcharset,
   addresslist;
 
 { ---------------------- RFC 2822 Header Parsing --------------------- }
@@ -81,6 +79,7 @@ uses
   strutils,
   {$ENDIF}
 {$ENDIF}
+  mime,
   SysUtils;
 
 { -------------------------- Some constants  ------------------------- }
@@ -566,6 +565,9 @@ end;
 
 //
 // $Log$
+// Revision 1.14  2003/09/29 20:47:12  cl
+// - moved charset handling/conversion code to xplib
+//
 // Revision 1.13  2003/01/07 00:23:17  cl
 // - renamed "domain" to "defaultdomain"
 //

@@ -176,7 +176,9 @@ uses
   typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams,
   xpstreams_pascal,
   xpstreams_codec,
-  xpheader, UTFTools, xpmakeheader, resource, Debug, addresslist;
+  xpcharset,
+  xpcharset_streams,
+  xpheader, xpmakeheader, resource, Debug, addresslist;
 
 const
   cr: char = #13;
@@ -3768,6 +3770,9 @@ end;
 
 {
   $Log$
+  Revision 1.143  2003/09/29 20:47:14  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.142  2003/09/09 16:03:24  mk
   - use lowercase mail.rfc and news.rfc for Unix, uppercase for Dos+Win
 

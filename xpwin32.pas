@@ -30,7 +30,7 @@ unit xpwin32;
 interface
 
 uses
-  UTFTools,Mime;
+  xpcharset;
 
 { Gibt die Anzahl der Bildschirmzeilen/Spalten zurÅck }
 function SysGetScreenLines: Integer;
@@ -256,6 +256,9 @@ finalization
 
 {
   $Log$
+  Revision 1.29  2003/09/29 20:47:14  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.28  2003/09/07 18:42:57  mk
   - updated RTLExec to the current state of code from FPC
 

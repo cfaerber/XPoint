@@ -1,7 +1,7 @@
-(* $Id: aliases.pl,v 1.6 2003/08/24 19:11:51 cl Exp )
+(* $Id$ *)
 (* generated from IANA charset list -- do not edit *)
 
-function MimeCharsetCanonicalName(Const Name: String): String;
+function MIMECharsetCanonicalName(Const Name: String): String;
 var UName: String;
 begin
   UName:=UpperCase(Name);

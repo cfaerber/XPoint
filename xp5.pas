@@ -70,6 +70,7 @@ uses
 {$ENDIF}
   maus2,resource,xp0,xp1,xp1input,xp1o,xp1o2,
   fidoglob,OSDepend,fileio,inout,keys,winxp,montage,feiertag,datadef,  database,
+  xpcharset,
   xpglobal;
 
 
@@ -437,7 +438,7 @@ begin
   wrt(x+4,y+10,getres2(rnr,15));
 {$ENDIF}
 {$IFDEF Win32 }
-  wrt(x+4,y+8,'Win32' + getres2(rnr,7) + ' ('+MimeCharsetNames[GetConsoleOutputCharset]+')');
+  wrt(x+4,y+8,'Win32' + getres2(rnr,7) + ' ('+MimeGetCharsetName(GetConsoleOutputCharset)+')');
 {$ENDIF }
 {$IFDEF Dos32 }
   wrt(x+4,y+8,'DOS' + getres2(rnr,7));
@@ -976,6 +977,9 @@ end;
 
 {
   $Log$
+  Revision 1.74  2003/09/29 20:47:13  cl
+  - moved charset handling/conversion code to xplib
+
   Revision 1.73  2003/04/12 08:03:44  mk
   - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
 

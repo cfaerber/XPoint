@@ -279,6 +279,9 @@ const
 
 //
 // $Log$
+// Revision 1.1  2003/09/29 20:47:20  cl
+// - moved charset handling/conversion code to xplib
+//
 // Revision 1.1  2002/02/22 18:29:59  cl
 // - added windows-1250
 //
