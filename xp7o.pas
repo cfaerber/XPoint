@@ -452,7 +452,7 @@ var d         : DB;
               LocalINTL,                        { INTL }
               false,                            { Keep VIA }
               true,                             { Requests }
-              false);                           { Leere loeschen? }
+              false,1,1);                           { Leere loeschen? }
     end;
       if f then _era(source);
   end;
@@ -793,6 +793,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/12/28 13:29:57  hd
+  - Fix: packets now sorted in after netcall
+  - Adjusted: Open window once during sorting in
+
   Revision 1.43  2000/12/25 20:31:17  mk
   - zfido is now completly integrated
 

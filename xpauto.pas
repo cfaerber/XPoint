@@ -373,12 +373,15 @@ var sr    : tsearchrec;
   end;
 
   procedure FidoImport;
+  var x,y: byte;
   begin
     if not IsBox(DefFidoBox) then
       trfehler(2207,tfs)     { 'Keine gÅltige Fido-Stammbox gewÑhlt' }
     else begin
       ReadBoxpar(0,DefFidoBox);
-      DoZFido(2, BoxPar^.MagicBrett, AutoxDir+'*.pkt', 'FPUFFER', '', '', 0, '', '', true, false, false, false);
+      msgbox(70,10,GetRes2(30003,10),x,y);
+      DoZFido(2, BoxPar^.MagicBrett, AutoxDir+'*.pkt', 'FPUFFER', '', '', 0, '', '', true, false, false, false, x, y);
+      closebox;
       if errorlevel<>0 then
         trfehler(2208,tfs)   { 'Fehler bei Fido-Paketkonvertierung' }
       else begin
@@ -663,6 +666,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/12/28 13:29:57  hd
+  - Fix: packets now sorted in after netcall
+  - Adjusted: Open window once during sorting in
+
   Revision 1.32  2000/12/25 20:31:18  mk
   - zfido is now completly integrated
 

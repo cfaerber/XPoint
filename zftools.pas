@@ -182,7 +182,8 @@ function DoZFido(const dir      : integer;      { 1 ZC->FTS, 2 FTS->ZC }
                  const li       : boolean;      { Local INTL ? }
                  const via      : boolean;      { Keep VIA-Kludge? }
                  const isReq    : boolean;      { Request ? }
-                 const del      : boolean):     { Leere Mails loeschen ? }
+                 const del      : boolean;      { Leere Mails loeschen ? }
+                 const x, y     : integer):     { Fenster }
                         integer;
 
 
@@ -1679,12 +1680,11 @@ abbr:
 end;
 
 
-procedure FidoZ;
+procedure FidoZ(const x, y: integer);
 var sr  : TSearchRec;
     rc  : integer;
     dir : string;
     fst : boolean;
-    x,y : byte;
 begin
   { Kill outfile only on wildcards. Otherwise the
     function was called by XP and then allways without
@@ -1692,20 +1692,17 @@ begin
   fst:= (pos('*',infile)+pos('?',infile)>0);
   dir:= AddDirSepa(ExtractFilePath(infile));
   rc:= findfirst(infile,faAnyFile-faDirectory,sr);
-  msgbox(70,10,GetRes2(30003,10),x,y);
   MWrt(x+2,y+2,GetRes2(30003,11));      { 'Datei......: ' }
   MWrt(x+2,y+4,GetRes2(30003,12));      { 'Nummer' }
   MWrt(x+2,y+5,GetRes2(30003,14));      { 'An' }
   MWrt(x+2,y+6,GetRes2(30003,15));      { 'Betreff' }
   MWrt(x+2,y+7,GetRes2(30003,16));      { 'Status' }
-
   while  rc=0 do begin
     MWrt(x+15,y+2,sr.name);
     FidoZfile(dir+sr.name,not fst,x,y);
     fst:=false;
     rc:= findnext(sr);
   end;
-  closebox;
   FindClose(sr);
 end;
 
@@ -1722,7 +1719,8 @@ function DoZFido(const dir      : integer;      { 1 ZC->FTS, 2 FTS->ZC }
                  const li       : boolean;      { Local INTL ? }
                  const via      : boolean;      { Keep VIA-Kludge? }
                  const isReq    : boolean;      { Request ? }
-                 const del      : boolean):     { Leere Mails loeschen ? }
+                 const del      : boolean;      { Leere Mails loeschen ? }
+                 const x, y     : integer):     { Fenster }
                         integer;
 var
   t: text;
@@ -1778,7 +1776,7 @@ begin
          testadr;
          ZFidoProc;
        end;
-    2: FidoZ;
+    2: FidoZ(x,y);
   end; { case }
   result:= _result;
 end;
@@ -1790,13 +1788,17 @@ begin
   testfiles;
   if direction=1 then testadr;
   if direction=1 then ZFidoProc
-  else FidoZ;
+  else FidoZ(1,1);
   result:= _result;
 end;
 
 end.
 {
         $Log$
+        Revision 1.12  2000/12/28 13:29:57  hd
+        - Fix: packets now sorted in after netcall
+        - Adjusted: Open window once during sorting in
+
         Revision 1.11  2000/12/25 23:24:59  mk
         - improved outfit ;)
 

@@ -229,23 +229,24 @@ begin
     if p>0 then delete(downarcer,p,7);
     p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
     { using wildcard does not require case sensetive }
-    dir:= TDirectory.Create(ImportDir+WildCard,faAnyFile-faDirectory,false);
+    dir:= TDirectory.Create(OwnPath+ImportDir+WildCard,faAnyFile-faDirectory,false);
     for i:= 0 to dir.Count-1 do begin
       if isPacket(dir.name[i]) then begin
-        MWrt(x+3,y+3,GetRepS2(30003,2,dir.Name[i]));
+        MWrt(x+2,y+2,GetRepS2(30003,2,dir.Name[i]));
         ImportDir:=ExpandFilename(ImportDir);
         SetCurrentDir(OwnPath+XFerDir);
         shell(LeftStr(downarcer,p-1)+dir.LongName[i]+mid(downarcer,p+9),500,1);
         { ^^ setzt Verzeichnis zurÅck! }
         if errorlevel<>0 then
-          MoveToBad(ImportDir+dir.name[i]);
+          MoveToBad(OwnPath+ImportDir+dir.name[i]);
         end;
     end;
     dir.Free;
     closebox;
     { Read only files }
-    dir:= TDirectory.Create(XFerDir+'*.PKT',(faAnyFile-faDirectory),true);
+    dir:= TDirectory.Create(OwnPath+XFerDir+'*.PKT',(faAnyFile-faDirectory),true);
     if not(dir.isEmpty) then begin
+      msgbox(70,10,GetRes2(30003,10),x,y);
       for i:=0 to dir.Count-1 do begin
         rc:=DoZFido(2,                  { FTS -> ZC }
                     MagicBrett,         { root group }
@@ -259,13 +260,15 @@ begin
                     true,               { INTL }
                     KeepVia,            { VIA lines }
                     false,              { is not a request }
-                    FidoDelEmpty);      { delete empty messages? }
+                    FidoDelEmpty,       { delete empty messages? }
+                    x,y);               { Box-Coordinates }
 
         if rc<>0 then
           trfehler(719,30)   { 'fehlerhaftes Fido-Paket' }
         else if nDelPuffer then
           _era(dir.LongName[i]);
       end; { for }
+      closebox;
       NC^.recbuf:=_filesize(fpuffer);
       CallFilter(true,fpuffer);
       if _filesize(fpuffer)>0 then
@@ -664,12 +667,12 @@ begin { FidoNetcall }
     outmsgs:=0;
     if FileExists(ppfile) then begin
       ClearUnversandt(ppfile,box);    { Pollbox ist der BossNode! }
-      DeleteFile(ppfile);
+      _era(ppfile);
       end;
-    if FileExists(eppfile) then DeleteFile(eppfile);
+    if FileExists(eppfile) then _era(eppfile);
     for i:=1 to addpkts^.anzahl do begin
       ClearUnversandt(addpkts^.abfile[i]+BoxFileExt,addpkts^.abox[i]);
-      DeleteFile(addpkts^.abfile[i]+BoxFileExt);
+      _era(addpkts^.abfile[i]+BoxFileExt);
       end;
     closebox;
     end;
@@ -937,6 +940,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/12/28 13:29:57  hd
+  - Fix: packets now sorted in after netcall
+  - Adjusted: Open window once during sorting in
+
   Revision 1.49  2000/12/27 22:36:32  mo
   -new class TfidoNodeList
 

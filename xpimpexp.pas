@@ -315,7 +315,11 @@ begin
                      shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
                          '-it '+fn+' PUFFER',300,3);
                    end;
-        nt_Fido  : DoZFido(2, BoxPar^.MagicBrett, fn, 'PUFFER', '', '', 0, '', '', true, KeepVia, false, false);
+        nt_Fido  : begin
+                     msgbox(70,10,GetRes2(30003,10),x,y);
+                     DoZFido(2, BoxPar^.MagicBrett, fn, 'PUFFER', '', '', 0, '', '', true, KeepVia, false, false, x, y);
+                     closebox;
+                   end;
         nt_QWK   : if not ExecutableExists(ZQWKBin) then
                      rfehler1(2414,ZQWKBin)  { %s fehlt! alt: 'ZQWK.EXE fehlt!
                       (ZQWK.EXE ist im getrennt erh„ltlichen QWK-Paket enthalten)' }
@@ -576,12 +580,14 @@ var ypath : string;
 
   procedure ImportYupbase;
   const TempPKT = '1.PKT';
+  var x, y: byte;
   begin
     shell(Yup2PktBin+' '+ypath+' '+TempPKT+' '+DefFidoBox,300,3);
     if not mfehler(errorlevel=0,'Fehler bei Nachrichtenkonvertierung') then begin
       ReadBoxPar(0,DefFidoBox);
-
-      DoZFido(2, BoxPar^.MagicBrett, TempPkt, 'FPUFFER', '', '', 0, '', '', true, false, false, false);
+      msgbox(70,10,GetRes2(30003,10),x,y);
+      errorlevel:= DoZFido(2, BoxPar^.MagicBrett, TempPkt, 'FPUFFER', '', '', 0, '', '', true, false, false, false, x, y);
+      closebox;
       if errorlevel<>0 then
         fehler('Fehler bei Nachrichtenkonvertierung')
       else begin
@@ -660,6 +666,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/12/28 13:29:57  hd
+  - Fix: packets now sorted in after netcall
+  - Adjusted: Open window once during sorting in
+
   Revision 1.34  2000/12/25 23:21:38  mk
   - commented out check for maggi.exe
 
