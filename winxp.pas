@@ -208,6 +208,9 @@ implementation
 
 uses 
   xp0,
+{$IFDEF DOS32}
+  Go32,
+{$ENDIF}
 {$IFDEF FPC }
   Objects, (* For PWordArray *)
 {$ENDIF}  
@@ -1065,8 +1068,9 @@ end;
 //
 // Win32: can switch charsets on Windows NT/2k/XP, not on 95/98/ME
 //
-{$IFDEF Win32}
-{$DEFINE CS_IMPLEMENTATION}
+{$IFDEF Win32 }
+{$DEFINE CS_IMPLEMENTATION }
+{$DEFINE CS_IMPLEMENTATION_USES_CODEPAGES }
 var IsUnicode: Boolean;
     OutputCP,TrueOutputCP: Integer;
     OutputCharset: TMIMECharsets;
@@ -1074,7 +1078,13 @@ var IsUnicode: Boolean;
 var SourceToUTF8: TUTF8Encoder;
     UTF8ToDest:  TUTF8Decoder;    
 var ConvertersOK: Boolean;    
+{$ENDIF}
 
+{$IFDEF DOS32}
+{$DEFINE CS_IMPLEMENTATION_USES_CODEPAGES }
+{$ENDIF}
+
+{$IFDEF CS_IMPLEMENTATION_USES_CODEPAGES }
 function GetCPfromCharset(cs:TMimeCharsets):Integer;
 begin
   case cs of
@@ -1129,7 +1139,9 @@ begin
     else   result := csUNKNOWN;
   end;
 end;
+{$ENDIF CS_IMPLEMENTATION_USES_CODEPAGES }
 
+{$IFDEF Win32 }
 procedure MakeConverters;
 var TrueOutputCharset: TMIMECharsets;
 begin
@@ -1236,7 +1248,8 @@ function  GetConsoleOutputCharset:TMimeCharsets;
 begin
 {$IFDEF Win32Console }
   result := GetCharsetfromCP(TrueOutputCP);
-{$ENDIF }
+{$ELSE}
+{$ENDIF}
 end;
 
 procedure SetLogicalOutputCharset(NewCharset:TMimeCharsets);
@@ -1316,14 +1329,13 @@ end;
     
 procedure SetLogicalOutputCharset(NewCharset:TMimeCharsets);
 begin
-  TrueOutputCharset:=NewCharset;
+  OutputCharset:=NewCharset;
   ConvertersOK := false;
 end;
 
 procedure SetConsoleOutputCharset(NewCharset:TMimeCharsets);
 begin
-  OutputCharset := NewCharset;
-  ConvertersOK := false;
+  { No operation, charset is fixed }
 end;
 
 function Wrt_Convert(const s: string):string; 
@@ -1335,9 +1347,25 @@ begin
 end;
 
 procedure InitCharsetSystem;
+  {$IFDEF DOS32}
+  var r: TRealRegs;
+  {$ENDIF}
 begin
   OutputCharset:=csCP437;
+  {$IFDEF DOS32} 
+  { INT 21 - DOS 3.3+ - GET GLOBAL CODE PAGE TABLE		}
+  {	    AX = 6601h						}
+  Fillbyte(r,sizeof(r),0);
+  r.ax := $6601;
+  RealIntr($21,r);
+  
+  if(r.flags and carryflag)=0 then
+    TrueOutputCharset := GetCharsetFromCP(r.bx)
+  else
+    TrueOutputCharset := csUNKNOWN;
+  {$ELSE}
   TrueOutputCharset:=csCP437;
+  {$ENDIF}
   SourceToUTF8:=nil;
   UTF8ToDest:=nil;
   ConvertersOK := false;
@@ -1483,6 +1511,8 @@ begin
     Exit;
   end;
 {$ENDIF }
+{$ELSE }
+  InitCharsetSystem;
 {$ENDIF }
 
   SavedExitProc:= ExitProc;
@@ -1491,6 +1521,9 @@ end;
 
 {
   $Log$
+  Revision 1.84  2002/03/02 18:23:51  cl
+  - Correct charset handling for DOS32
+
   Revision 1.83  2002/02/22 18:29:59  cl
   - added windows-1250
 
