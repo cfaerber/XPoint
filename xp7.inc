@@ -64,7 +64,7 @@ begin
 end;
 
 function zeit:string;
-var h,m,s,s100:smallword;
+var h,m,s,s100:rtlword;
 begin
   gettime(h,m,s,s100);
   zeit:=formi(h,2)+':'+formi(m,2)+':'+formi(s,2);
@@ -1286,7 +1286,9 @@ begin
     sound(745);
     mdelay(75);
     end;
+{$IFNDEF VP }
   nosound;
+{$ENDIF }
   mwriteln;
 
   _ende:=false;
@@ -1446,6 +1448,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.11  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.10  2000/03/30 14:05:05  mk
   - unnötigen Debugcode entfernt
 

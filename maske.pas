@@ -311,9 +311,13 @@ end;
 
 procedure mbeep;
 begin
+{$IFDEF VP }
+  Playsound(600, 20);
+{$ELSE }
   sound(600);
   delay(20);
   nosound;
+{$ENDIF }
 end;
 
 {$IFDEF FPC }

@@ -365,8 +365,8 @@ end;   { x+33 -> x+40                       37 -> 39          34 -> 36 }
 function MessageID:string;
 const rev = 'B';   { Revision des MsgID-Algorithmus }
 var inr     : longint;
-    t,m,j,d : smallword;
-    h,mm,s,ss: smallword;
+    t,m,j,d : rtlword;
+    h,mm,s,ss: rtlword;
     dat     : word;
     count   : word;
     rand    : word;
@@ -474,7 +474,7 @@ end;
 
 procedure encode_file(des:boolean; var f1,f2:file);
 var p    : pointer;
-    rr   : smallword;
+    rr   : word;
     show : boolean;
     x,y  : byte;
     ofs  : longint;
@@ -715,8 +715,8 @@ function DateSend:boolean;
 var brk      : boolean;
     x,y      : byte;
     mind     : fdate;
-    dd,mm,yy : smallword;
-    dow      : smallword;
+    dd,mm,yy : rtlword;
+    dow      : rtlword;
 begin
   if AutoActive then    { dÅrfte nicht vorkommen }
     DateSend:=false
@@ -1124,6 +1124,9 @@ begin                                                  { 'Sende-PrioritÑt' }
 end;
 {
   $Log$
+  Revision 1.12  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.11  2000/03/14 15:15:40  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

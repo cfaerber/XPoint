@@ -52,7 +52,7 @@ var   s        : string[100];
       IO_Error : boolean;
 
 
-procedure flushbuf;                   {JG:08.02.00 Verschoben: wird von Decode aufgerufen...}          
+procedure flushbuf;                   {JG:08.02.00 Verschoben: wird von Decode aufgerufen...}
 begin
   if IO_error then exit;
   blockwrite(f2^,outbuf^,bufp);
@@ -68,7 +68,7 @@ end;
 { !! Ungetestet und unoptimiert }
 procedure decode; assembler;
 asm
-          mov esi, s              { Adresse des zu dekod. Strings }
+          mov esi, offset s       { Adresse des zu dekod. Strings }
           mov ebx, 2              { Offset innerhalb von s }
 
           mov cl,1                { Schleifenz„hler }
@@ -155,7 +155,7 @@ procedure getstring; assembler;
 asm
           mov esi,inbuf
           mov ebx,ibufp
-          mov edi,s
+          mov edi, offset s
           inc edi
           mov edx,ibufend
           mov ah,0
@@ -181,7 +181,7 @@ asm
           jnz @getok2
 
 @getende: mov ibufp,ebx
-          mov edi, s
+          mov edi, offset s
           mov [edi],ah             { Stringl„nge setzen (s[0]) }
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'ESI'];
@@ -210,7 +210,7 @@ asm
 @mloop0:  les di,outbuf           { Adresse des Ausgabepuffers }
           add di,bufp
 
-@mainloop: 
+@mainloop:
           cmp cl,ch               { i<=n ? }
           jle @lp1
           add word ptr ln,1       { inc(ln) }
@@ -269,7 +269,7 @@ asm
           push es
           push ds                          {+JG}
           call far ptr flushbuf            {setzt bufp auf 0   JG:FAR }
-          pop ds                           {+JG} 
+          pop ds                           {+JG}
           pop es
           pop cx
           pop bx
@@ -277,7 +277,7 @@ asm
           pop si
           jmp @mloop0
 
-@ende:    pop ds    
+@ende:    pop ds
 end;
 
 
@@ -319,7 +319,7 @@ asm
           mov di,offset s
           mov [di],ah             { Stringl„nge setzen (s[0]) }
 
-          pop ds                  {JG}                     
+          pop ds                  {JG}
 end;
 
 {$ENDIF}
@@ -663,6 +663,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.9  2000/03/24 15:41:02  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 

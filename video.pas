@@ -488,8 +488,11 @@ begin
 end;
 
 function getscreenlines:byte;
+{$IFDEF BP }
 var regs : registers;
+{$ENDIF }
 begin
+{$IFDEF BP }
   if vtype<2 then
     vlines:=25
   else with regs do begin
@@ -498,10 +501,12 @@ begin
     intr($10,regs);
     vlines:=dl+1;
     end;
+{$ENDIF }
   getscreenlines:=vlines;
 end;
 
 function SetVesaDpms(mode:byte):boolean;  { Bildschirm-Stromsparmodus }
+{$IFDEF BP }
 var regs : registers;
 begin
   with regs do begin
@@ -511,6 +516,9 @@ begin
     intr($10,regs);
     SetVesaDPMS:=(ax=$4f);
     end;
+{$ELSE }
+begin
+{$ENDIF }
 end;
 
 begin
@@ -518,6 +526,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.11  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.10  2000/03/25 19:04:00  jg
   - Bugfix: RTE 204 beim einstellen von 33 Zeilen
 

@@ -119,7 +119,9 @@ begin
   readpar;
   loadresource;
   initvar;
+{$IFNDEF VP }
   testlock;
+{$ENDIF }
   TestAutostart;
     if not quit then
   begin
@@ -144,8 +146,8 @@ begin
     DelTmpfiles('*.$$$');
     if getenv('DELVTMP')<>''then begin  {Temporaere Viewer-Files loeschen}
       Delviewtmp:=true;
-      DelTmpfiles('TMP-????.*'); 
-      chdir(temppath); 
+      DelTmpfiles('TMP-????.*');
+      chdir(temppath);
       DelTmpfiles('TMP-????.*');
       chdir(ownpath);
       end;
@@ -212,6 +214,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.17  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.16  2000/04/03 00:27:33  oh
   - Startpasswort: drei Versuche statt nur einem.
 

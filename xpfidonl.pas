@@ -232,7 +232,7 @@ var nlp       : NL_ap;
   procedure NL_Datecheck;      { testen, ob neue Liste dazugekommen }
   var
       dt      : datetime;
-      dummy   : smallword;
+      dummy   : rtlword;
       ActTime : longint;
   begin
     getdate(dt.year,dt.month,dt.day,dummy);
@@ -744,6 +744,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.7  2000/03/09 23:39:34  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

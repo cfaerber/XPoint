@@ -56,32 +56,32 @@ type mprec     = record
      ahidden   = array[1..maxhidden] of integer;
 
 Type TStartData = record
-		    Length:        Word; { Must be 0x18,0x1E,0x20,0x32, or 0x3C }
-		    Related:       Word; { 00 independent, 01 child }
-		    FgBg:          Word; { 00 foreground, 01 background }
-		    TraceOpt:      Word; { 00-02, 00 = no trace }
-		    PgmTitle:      PChar; { max 62 chars or 0000:0000 }
-		    PgmName:       PChar; { max 128 chars or 0000:0000 }
-		    PgmInputs:     PChar; { max 144 chars or 0000:0000 }
-		    TermQ:         PChar; { reserved, must be 00000000 }
-		    Environment:   PChar; { max 486 bytes or 0000:0000 }
-		    InheritOpt:    Word;  { 00 or 01 }
-		    SessionType:   Word;  { 00 OS/2 session manager determines type (default)
-					    01 OS/2 full-screen
-					    02 OS/2 window
-					    03 PM
-					    04 VDM full-screen
-					    07 VDM window }
-		    IconFile:      PChar; { max 128 chars or 0000:0000 }
-		    PgmHandle:     LongInt; { reserved, must be 00000000 }
-		    PgmControl:    Word;
-		    InitXPos:      Word;
-		    InitYPos:      Word;
-		    InitXSize:     Word;
-		    InitYSize:     Word;
-		    Reserved:      Word; { 0x00 }
-		    ObjectBuffer:  PChar; { reserved, must be 00000000 }
-		    ObjectBuffLen: LongInt; { reserved, must be 00000000 }
+                    Length:        Word; { Must be 0x18,0x1E,0x20,0x32, or 0x3C }
+                    Related:       Word; { 00 independent, 01 child }
+                    FgBg:          Word; { 00 foreground, 01 background }
+                    TraceOpt:      Word; { 00-02, 00 = no trace }
+                    PgmTitle:      PChar; { max 62 chars or 0000:0000 }
+                    PgmName:       PChar; { max 128 chars or 0000:0000 }
+                    PgmInputs:     PChar; { max 144 chars or 0000:0000 }
+                    TermQ:         PChar; { reserved, must be 00000000 }
+                    Environment:   PChar; { max 486 bytes or 0000:0000 }
+                    InheritOpt:    Word;  { 00 or 01 }
+                    SessionType:   Word;  { 00 OS/2 session manager determines type (default)
+                                            01 OS/2 full-screen
+                                            02 OS/2 window
+                                            03 PM
+                                            04 VDM full-screen
+                                            07 VDM window }
+                    IconFile:      PChar; { max 128 chars or 0000:0000 }
+                    PgmHandle:     LongInt; { reserved, must be 00000000 }
+                    PgmControl:    Word;
+                    InitXPos:      Word;
+                    InitYPos:      Word;
+                    InitXSize:     Word;
+                    InitYSize:     Word;
+                    Reserved:      Word; { 0x00 }
+                    ObjectBuffer:  PChar; { reserved, must be 00000000 }
+                    ObjectBuffLen: LongInt; { reserved, must be 00000000 }
   End;
 
 
@@ -200,7 +200,7 @@ procedure FlushClose;
 procedure xp_DB_Error;    { Aufruf bei <DB> internem Fehler }
 
 procedure fmove(var f1,f2:file);
-procedure iso_conv(var buf; size:word);
+procedure iso_conv(var buf; bufsize:word);
 
 function  aFile(nr:byte):pathstr;
 
@@ -419,11 +419,11 @@ asm
 @ende:
 end;
 
-procedure iso_conv(var buf; size:word); assembler;
+procedure iso_conv(var buf; bufsize:word); assembler;
 asm
          cld
          les   di,buf
-         mov   cx,size
+         mov   cx,bufsize
          mov   bx,offset isotab1 - 0c0h
 @isolp:  mov   al,es:[di]
          cmp   al,0c0h
@@ -850,8 +850,10 @@ end;
 
 procedure sound(hz:word);
 begin
+{$IFNDEF VP }
   if not ParQuiet then
     crt.sound(hz);
+{$ENDIF }
 end;
 
 
@@ -1384,19 +1386,20 @@ begin
   begin
 {$IFDEF BP }
     if soundflash then SetBorder16(3);
-{$ENDIF }
     sound(1000);
     delay(25);
     sound(780);
     delay(25);
     nosound;
-    if soundflash then begin
+    if soundflash then
+    begin
       mdelay(60);
       {$IFDEF BP }
       SetXPborder;
       {$ENDIF }
-      end;
     end;
+{$ENDIF }
+  end;
 end;
 
 function _errsound:boolean;
@@ -1407,7 +1410,13 @@ end;
 
 procedure signal;              { s. Config/Anzeige/Hilfen }
 begin
-  if not ParQuiet and tonsignal then begin
+  if not ParQuiet and tonsignal then
+  begin
+{$IFDEF VP }
+    PlaySound(1205, 60);
+    PlaySound(1000, 60);
+    PlaySound(800, 60);
+{$ELSE }
     mdelay(60);
     sound(1205);
     mdelay(60);
@@ -1416,7 +1425,8 @@ begin
     sound(800);
     mdelay(60);
     nosound;
-    end;
+{$ENDIF }
+  end;
 end;
 
 procedure _fehler(var txt:string; hinweis:boolean);
@@ -1634,7 +1644,7 @@ end;
 { Datum in Z-Format abfragen }
 
 function Zdate:string;
-var t,m,j,dow,h,mm,s,s100 : smallword;
+var t,m,j,dow,h,mm,s,s100 : rtlword;
 begin
   getdate(j,m,t,dow);
   gettime(h,mm,s,s100);
@@ -1969,7 +1979,7 @@ var x,y   : byte;
     fpos,
     fsize : longint;
     rr: word;
-    
+
   procedure show(n:longint);
   begin
     inc(fpos,n);
@@ -2088,7 +2098,7 @@ end;
 
 procedure set_checkdate;
 var dt    : datetime;
-    dummy : smallword;
+    dummy : rtlword;
     pdt   : longint;
 begin
   fillchar(dt,sizeof(dt),0);
@@ -2154,6 +2164,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.22  2000/03/25 11:46:09  jg
   - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
   - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr

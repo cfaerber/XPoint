@@ -338,3 +338,78 @@ Bye                   .:~~[  AvataR Design & Computer  ]~~:.
  Garvin.              `....[ http://www.AvataR-DC.de/ ]....'
 
 
+From MYXIN@W-SPECHT.e.ruhr.de Sun Apr 02 17:49:00 2000
+Return-path: <MYXIN@W-SPECHT.e.ruhr.de>
+Envelope-to: mk@openxp.de
+Delivery-date: Sun, 2 Apr 2000 18:11:58 +0200
+Received: from [141.39.230.1] (helo=mail.e.ruhr.de)
+	by mx04 with smtp (Exim 2.12 #2)
+	id 12bmyj-00025U-00
+	for mk@openxp.de; Sun, 2 Apr 2000 18:11:57 +0200
+Received: (qmail 5941 invoked by alias); 2 Apr 2000 16:11:56 -0000
+X-ZC-VIA: 19000402000000S+2@W-SPECHT.e.ruhr.de
+Subject: Anfrage XP Comporterweiterung
+Message-ID: <7b6JH91CKiB@myxin.w-specht.e.ruhr.de>
+X-Mailer: CrossPoint v3.21.022beta DOS/16 R/A16323
+To: mk@openxp.de
+From: MYXIN@W-SPECHT.e.ruhr.de (Peter Sauter)
+Date: Sun,  2 Apr 2000 16:49:00 +0100
+X-Gateway: ZCONNECT W-SPECHT.e.ruhr.de [UUWORLD RFC/ZC V2.2 SER#A45835CD]
+
+
+Hallo Herr Markus Kaemerer !
+Ich habe eine Frage zu XP-Openprojekt. Ist geplant die  
+Comporteinstellungen im Configurationsmenue upzudaten so das man beliebige
+Comportnummern Com1-Com9 angeben kann. Hintergrund ist das ich eine
+Multi-I/O-Portkarte benutze mit anderen IRQ, I/O-Adressen als bei
+fuer Com1-Com4 ueblich. Mit Tricks laesst sich XP dazu ueberreden
+Com4 mit $260 auf IRQ12 z.b. zu nutzen. Das geht nur weil ich derzeit
+noch eine ISA-Karte mit Jumper benutze. Aber im Sinne der
+Kompatiblitaet zu Multi-I/O-PCI-Karten ist dies wegen der PnP- 
+Gegebenheiten nicht so einfach. Auch die Unterstuetzung von Shared-
+PCI-IRQs waere hilfreich.
+
+Telix for DOS 3.20 erlaubt z.b. die simple Konfiguration jedes Comports
+auf jeden IRQ oder I/O-Adresse. Hier ist die Konfiguration bezgl. des
+IRQ, I/O-Adresse und Comportnummer zumindest einfacher.
+In diesem Sinne koennte man die Unterstuetzung fuer Multi/IO-Portkarten
+bei XP erweitern.
+
+--ÿ
+Author of the German USR-FAQ. http://www.mms.de/usr/usr_faq.txt
+E-Mail: TheMyxin@okay.net
+
+From S.Volquartz@amt.comlink.de Mon Apr 03 21:15:00 2000
+Lines: 14
+Newsgroups: de.comm.software.crosspoint
+Message-ID: <7bBlsEK6aDB@p-volquartz.amt.comlink.de>
+From: S.Volquartz@amt.comlink.de (Soenke Volquartz)
+Path: uni-berlin.de!fu-berlin.de!news.fh-hannover.de!news-fra.pop.de!news.hamburg.pop.de!cl-hh.comlink.de!amt.comlink.de!P-VOLQUARTZ.amt.comlink.de
+Organization: Soenke Volquartz
+Subject: kl. Fehler in 3.20.021 DOS/16 Beta
+Date: Mon, 03 Apr 2000 20:15:00 +0100
+X-Mailer: CrossPoint v3.20.021beta DOS/16 R/A6790 via ANUBIS V 1.05 / ZSort V 1.51a
+X-Gateway: ZCONNECT news.comlink.de [OdoConnect v0.76MB05#1]
+X-ZC-POST: Muehlenstr. 13; 22049 Hamburg; Germany
+X-ZC-TELEFON: V+49-40-685949Q
+X-ZC-PGP-Key-Avail: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+Xref: uni-berlin.de de.comm.software.crosspoint:40807
+--------
+Hallo Leute,
+
+ich teste gerade die "stabile" 3.20.021ß ... mir ist aufgefallen, daß bei
+ausgeschaltetem "Nachrichten-Weiterschalter" unter
+config/optionen/Bedienung trotzdem nach manchen XP-Starts weitergeschaltet
+wird. Es läßt sich kein sauberer Rhythmus erkennen - hat jemand anderes
+auch noch diese Beobachtung gemacht ?
+
+That's all folks ...
+
+Read You,
+          Soenke
+
+
+

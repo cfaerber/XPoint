@@ -18,7 +18,7 @@ unit uart;
 
 {---------------------------------------------------------------------------)
   Dieser Quelltext ist Public Domain und darf beliebig weitergegeben und
-  verwendet werden.                          Peter Mandrella <pm@daisy.de>  
+  verwendet werden.                          Peter Mandrella <pm@daisy.de>
 (---------------------------------------------------------------------------)
    Zu benutzende Schnittstellen sind zuerst mit SetUart zu initialisieren.
    Anschlie·end kînnen sie mit ActivateCom aktiviert und mit ReleaseCom
@@ -58,7 +58,11 @@ unit uart;
 interface
 
 
-uses  xpglobal, dos, typeform, dosx, inout;
+uses
+{$IFDEF Win32 }
+  Windows,
+{$ENDIF }
+  xpglobal, dos, typeform, dosx, inout;
 
 const  coms       = 4;     { Anzahl der unterstÅtzten Schnittstellen }
        fcoms      = 50;    { Anzahl unterstÅtzter FOSSIL-Schnittstellen }
@@ -172,12 +176,6 @@ implementation  {-----------------------------------------------------}
 {$IFDEF FPC }
   {$HINTS OFF }
   {$NOTES OFF }
-{$ENDIF }
-
-
-{$IFDEF Win32 }
-uses
-  Windows;
 {$ENDIF }
 
 const  FInt       = $14;   { Interrupt fÅr FOSSIL-Treiber }
@@ -667,10 +665,13 @@ end;
 
 
 procedure releasecom(no:byte);
+{$IFNDEF ver32}
 var regs : registers;
+{$ENDIF }
 begin
   if not active[no] then
     error('Schnittstelle '+strs(no)+' nicht aktiv!')
+{$IFNDEF ver32}
   else begin
     active[no]:=false;
     if fossil[no] then with regs do begin
@@ -678,19 +679,18 @@ begin
       intr(FInt,regs);
       end
     else begin
-{$IFNDEF ver32}
       port[ua[no]+intenable]:=0;
       if intcom2[no] then
         port[$a1]:=port[$a1] or intmask[no]   { Controller: COMn-Ints sperren }
       else
         port[$21]:=port[$21] or intmask[no];
       port[ua[no]+fifoctrl]:=0;
-{$ENDIF}
       setintvec(IntNr(no),savecom[no]);
       clearstatus(no);
       end;
     FreeComBuffer(no);
     end;
+{$ENDIF}
 end;
 
 
@@ -719,8 +719,11 @@ end;
 { Block aus FOSSIL-Puffer in UART-Puffer Åbertragen }
 
 procedure FossilFill(no:byte);
+{$IFDEF BP }
 var regs : registers;
+{$ENDIF }
 begin
+{$IFDEF BP }
   with regs do begin
     ah:=$18; cx:=bufsize[no] - 16;    { Platz fÅr PutByte lassen }
     es:=seg(buffer[no]^); di:=ofs(buffer[no]^);
@@ -729,6 +732,7 @@ begin
     bufo[no]:=0;
     bufi[no]:=ax;
   end
+{$ENDIF}
 end;
 
 
@@ -783,6 +787,7 @@ end;
 
 
 procedure sendbyte(no,b:byte);              { Byte senden }
+{$IFDEF BP }
 var regs : registers;
 begin
   if fossil[no] then with regs do begin
@@ -790,14 +795,16 @@ begin
     intr(FInt,regs);
     end
   else begin
-{$IFNDEF ver32}
     while (port[ua[no]+linestat] and $20) = 0 do;
     port[ua[no]]:=b;
-{$ENDIF}
     end;
+{$ELSE }
+begin
+{$ENDIF}
 end;
 
 procedure hsendbyte(no,b:byte);           { Byte senden, mit CTS-Handshake }
+{$IFDEF BP }
 var regs : registers;
 begin
   if fossil[no] then with regs do begin
@@ -805,15 +812,17 @@ begin
     intr(FInt,regs);
     end
   else begin
-{$IFNDEF ver32}
     while (port[ua[no]+modemstat] and $10) = 0 do;
     while (port[ua[no]+linestat] and $20) = 0 do;
     port[ua[no]]:=b;
-{$ENDIF}
     end;
+{$ELSE }
+begin
+{$ENDIF}
 end;
 
 procedure SendBlock(no:byte; var data; size:word);   { Datenblock senden }
+{$IFDEF BP }
 type barr = array [0..65530] of byte;
 var i,off : word;
     regs  : registers;
@@ -832,6 +841,9 @@ begin
     else
       for i:=0 to size-1 do
         sendbyte(no,barr(data)[i]);
+{$ELSE }
+begin
+{$ENDIF}
 end;
 
 procedure hSendBlock(no:byte; var data; size:word);  { Datenblock mit CTS }
@@ -887,6 +899,7 @@ begin
 end;
 
 procedure flushinput(no:byte);            { Receive-Puffer lîschen }
+{$IFDEF BP }
 var regs : registers;
 begin
   bufo[no]:=bufi[no];
@@ -894,12 +907,16 @@ begin
     ah:=10; dx:=no-1;
     intr(FInt,regs);
     end;
+{$ELSE }
+begin
+{$ENDIF}
 end;
 
 
 {--- Modem-Status-Lines ----------------------------------------------}
 
 function rring(no:byte):boolean;            { Telefon klingelt  }
+{$IFDEF BP }
 var regs : registers;
 begin
   if fossil[no] then with regs do begin
@@ -908,12 +925,14 @@ begin
     rring:=(al and MS_RI<>0);
     end
   else
-{$IFNDEF ver32}
     rring:=(port[ua[no]+modemstat] and MS_RI)<>0
-    {$ENDIF} ;
+{$ELSE }
+begin
+{$ENDIF}
 end;
 
 function carrier(no:byte):boolean;          { Carrier vorhanden }
+{$IFDEF BP }
 var regs : registers;
 begin
   if fossil[no] then with regs do begin
@@ -922,12 +941,14 @@ begin
     carrier:=(al and MS_DCD<>0);
     end
   else
-{$IFNDEF ver32}
     carrier:=(port[ua[no]+modemstat] and MS_DCD)<>0
-{$ENDIF}                                           ;
+{$ELSE }
+begin
+{$ENDIF}
 end;
 
 procedure DropDtr(no:byte);                 { DTR=0 setzen      }
+{$IFDEF BP }
 var regs : registers;
 begin
   if fossil[no] then with regs do begin
@@ -935,12 +956,14 @@ begin
     intr(FInt,regs);
     end
   else
-{$IFNDEF ver32}
     port[ua[no]+modemctrl]:=port[ua[no]+modemctrl] and (not MC_DTR)
-{$ENDIF}                                                           ;
+{$ELSE }
+begin
+{$ENDIF}
 end;
 
 procedure SetDtr(no:byte);                  { DTR=1 setzen      }
+{$IFDEF BP }
 var regs : registers;
 begin
   if fossil[no] then with regs do begin
@@ -948,8 +971,9 @@ begin
     intr(FInt,regs);
     end
   else
-{$IFNDEF ver32}
     port[ua[no]+modemctrl]:=port[ua[no]+modemctrl] or MC_DTR;
+{$ELSE }
+begin
 {$ENDIF}
 end;
 
@@ -973,6 +997,7 @@ end;
 { True -> Modem (oder entsprechendes GerÑt) ist bereit, Daten zu empfangen }
 
 function GetCTS(no:byte):boolean;
+{$IFDEF BP }
 var regs : registers;
 begin
   if fossil[no] then with regs do begin
@@ -981,18 +1006,19 @@ begin
     GetCTS:=(ah and $20<>0);
     end
   else
-{$IFNDEF ver32}
     getcts:=((port[ua[no]+modemstat] and $10)<>0){ and
              ((port[ua[no]+linestat] and $20)<>0)};
+{$ELSE }
+begin
 {$ENDIF}
 end;
 
 
 procedure SendBreak(no:byte);             { Break-Signal }
+{$IFDEF BP }
 var t0     : longint;
     regs   : registers;
 begin
-{$IFNDEF ver32}
   if fossil[no] then with regs do begin
     ax:=$1a01; dx:=no-1;
     intr(FInt,regs);
@@ -1008,6 +1034,8 @@ begin
     end
   else
     Port[ua[no]+linectrl]:=port[ua[no]+linectrl] and $bf;  { clear break }
+{$ELSE }
+begin
 {$ENDIF}
 end;
 
@@ -1021,6 +1049,7 @@ var irq,b : byte;
     c     : char;
 
   function TestReadkey:char;
+{$IFDEF BP }
   var regs : registers;
   begin
     with regs do begin
@@ -1034,6 +1063,9 @@ var irq,b : byte;
         TestReadkey:=chr(al);
         end;
       end;
+{$ELSE }
+begin
+{$ENDIF}
   end;
 
 begin
@@ -1070,6 +1102,9 @@ end.
 
 {
   $Log$
+  Revision 1.8  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.7  2000/03/14 15:15:37  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -21,10 +21,11 @@ unit winxp;
 INTERFACE
 
 uses
+  xpglobal,
 {$IFDEF Win32 }
   windows, strings,
 {$ENDIF }
-  xpglobal, crt,dos,keys,inout,maus2,typeform;
+  crt,dos,keys,inout,maus2,typeform;
 
 const maxpull = 30;
       maxpush = 20;
@@ -415,20 +416,19 @@ var
   i, Count: Integer;
 {$ELSE }
   WritePos: TCoord;                       { Upper-left cell to write from }
-  Buffer: array[1..255] of smallword;
-  OutRes: LongInt;
+  OutRes: DWord;
 {$ENDIF }
 begin
 {$IFDEF Win32 }
   { Kompletten String an einem StÅck auf die Console ausgeben }
   WritePos.X := x-1; WritePos.Y := y-1;
+{$IFDEF FPC }
   WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, @OutRes);
-
-  { Die Attribute mÅssen extra geschrieben werden, sie sind fÅr alle
-    Zeichen gleich. Da der Buffer ein Word ist, mu· die doppelte LÑnge
-    gefÅllt werden }
-  FillChar(Buffer, Length(s)*2, Textattr);
-  WriteConsoleOutputAttribute(OutHandle, SmallWord(Addr(Buffer)^), Length(s), WritePos, @OutRes);
+  FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, @OutRes);
+{$ELSE }
+  WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
+  FillConsoleOutputAttribute(OutHandle, Textattr, Length(s), WritePos, OutRes);
+{$ENDIF }
 {$ELSE }
   GotoXY(x, y);
   Write(s);
@@ -459,7 +459,11 @@ procedure SDisp(const x,y:word; const s:string);
   begin
     { Kompletten String an einem StÅck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
+{$IFDEF FPC }
     WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, @OutRes);
+{$ELSE }
+    WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
+{$ENDIF }
     { !! Hier mÅsste noch die Textfarbe verÑndert werden,
       nicht aber der Texthintergrund }
 {$ELSE }
@@ -479,8 +483,13 @@ var
   aAttr: SmallWord;
 begin
   ReadPos.X := x-1; ReadPos.Y := y-1;
+{$IFDEF FPC }
   ReadConsoleOutputCharacter(OutHandle, @aChr, 1, ReadPos, @OutRes);
   ReadConsoleOutputAttribute(OutHandle, @aAttr, 1, ReadPos, @OutRes);
+{$ELSE }
+  ReadConsoleOutputCharacter(OutHandle, @aChr, 1, ReadPos, OutRes);
+  ReadConsoleOutputAttribute(OutHandle, @aAttr, 1, ReadPos, OutRes);
+{$ENDIF }
   c := aChr; Attr := aAttr;
 {$ELSE }
 begin
@@ -498,8 +507,13 @@ var
   i: Integer;
 begin
   ReadPos.X := x; ReadPos.Y := y;
+{$IFDEF FPC }
   ReadConsoleOutputCharacter(OutHandle, @Char(Addr(CharBuffer)^), Count, ReadPos, @OutRes);
   ReadConsoleOutputAttribute(OutHandle, @SmallWord(Addr(AttrBuffer)^), Count, ReadPos, @OutRes);
+{$ELSE }
+  ReadConsoleOutputCharacter(OutHandle, CharBuffer, Count, ReadPos, OutRes);
+  ReadConsoleOutputAttribute(OutHandle, @SmallWord(Addr(AttrBuffer)^), Count, ReadPos, OutRes);
+{$ENDIF }
   for i := 0 to Count - 1 do
   begin
     TLocalScreen(Buffer)[i*2] := CharBuffer[i];
@@ -517,8 +531,13 @@ procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Inte
     OutRes: LongInt;
   begin
     WritePos.x := x-1; WritePos.y := y-1;
+{$IFDEF FPC }
     FillConsoleOutputCharacter(OutHandle, Chr, Count, WritePos, @OutRes);
     FillConsoleOutputAttribute(OutHandle, TextAttr, Count, WritePos, @OutRes)
+{$ELSE }
+    FillConsoleOutputCharacter(OutHandle, Chr, Count, WritePos, OutRes);
+    FillConsoleOutputAttribute(OutHandle, TextAttr, Count, WritePos, OutRes)
+{$ENDIF }
   end;
 {$ELSE }
   var
@@ -542,7 +561,11 @@ begin
     Left := l-1; Right := r-1;
     Top := o-1; Bottom := u-1;
   end;
-  ReadConsoleOutput(OutHandle, PChar_Info(@Buffer), BSize, Coord, @SourceRect);
+{$IFDEF FPC }
+   ReadConsoleOutput(OutHandle, PChar_Info(@Buffer), BSize, Coord, @SourceRect);
+{$ELSE }
+  ReadConsoleOutput(OutHandle, @Buffer, BSize, Coord, SourceRect);
+{$ENDIF }
 {$ELSE }
 begin
 {$ENDIF }
@@ -561,7 +584,11 @@ begin
     Left := l-1; Right := r-1;
     Top := o-1; Bottom := u-1;
   end;
+{$IFDEF FPC }
   WriteConsoleOutput(OutHandle, Char_Info(Buffer), BSize, Coord, @DestRect);
+{$ELSE }
+  WriteConsoleOutput(OutHandle, @Buffer, BSize, Coord, DestRect);
+{$ENDIF }
 {$ELSE }
 begin
 {$ENDIF }
@@ -633,8 +660,8 @@ begin
     la:=lastattr;
     attrtxt(attr1);
     wrt((r+l+1)div 2-length(txt)div 2-2,o,' ');
-    attrtxt(attr2); write(' ',txt,' ');
-    attrtxt(attr1); write(' ');
+    attrtxt(attr2); Wrt2(' ' + txt + ' ');
+    attrtxt(attr1); Wrt2(' ');
     attrtxt(la);
     mon;
     end;
@@ -653,8 +680,8 @@ begin
   qrahmen(li,re,ob,un,1,iif(forcecolor,lastattr,normattr),false);
   if txt<>'' then
   begin
-    wrt((re+li+1)div 2 - length(txt) div 2 - 2,ob,' ');
-    invtxt; write(' ',txt,' '); normtxt; write(' ');
+    wrt((re+li+1) div 2 - length(txt) div 2 - 2,ob,' ');
+    invtxt; Wrt2(' '+ txt + ' '); normtxt; Wrt2(' ');
   end;
   mon;
 end;
@@ -667,7 +694,7 @@ begin
   qrahmen(li,re,ob,un,2,iif(forcecolor,lastattr,normattr),false);
   if txt<>'' then begin
     wrt((re+li+1)div 2-length(txt)div 2-2,ob,' ');
-    invtxt; write(' ',txt,' '); normtxt; write(' ');
+    invtxt; Wrt2(' '+ txt + ' '); normtxt; Wrt2(' ');
     end;
   mon;
 end;
@@ -680,7 +707,7 @@ begin
   qrahmen(li,re,ob,un,3,iif(forcecolor,lastattr,normattr),false);
   if txt<>'' then begin
     wrt((re+li+1)div 2-length(txt)div 2-2,ob,' ');
-    invtxt; write(' ',txt,' '); normtxt; write(' ');
+    invtxt; Wrt2(' '+ txt + ' '); normtxt; Wrt2(' ');
     end;
   mon;
 end;
@@ -1070,6 +1097,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.17  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.16  2000/04/02 11:18:23  ml
   Ver32 SDISP war ohne const - jetzt wieder kompilierbar
 

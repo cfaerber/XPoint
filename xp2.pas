@@ -287,7 +287,7 @@ var i  : integer;
     if isl('pa:') then ParPass:=mid(s,5) else
     if isl('pw:') then ParPasswd:=mid(paramstr(i),5) else
     if isl('z:')  then SetZeilen(ival(mid(s,4))) else
-    
+
     { Achtung! Folgende Reihenfolge muss bleiben! robo }
     if _is('w0')   then ParWintime:=0 else
     if _is('os2a') then begin ParWintime:=1; ParOS2:=1; end else
@@ -298,7 +298,7 @@ var i  : integer;
     if _is('w1')   then ParWintime:=1 else
     if _is('w2')   then ParWintime:=2 else
     { Reihenfolge bis hier }
-    
+
     if _is('ss')   then ParSsaver:=true else
   { if isl('gd:') then SetGebdat(mid(s,5)) else }
     if isl('av:') then ParAV:=mid(s,5) else
@@ -374,7 +374,7 @@ begin
   ListDebug:=ParDebug;
   if (left(ParAutost,4)<='0001') and (right(ParAutost,4)>='2359') then
     ParAutost:='';
-end;                 
+end;
 
 
 
@@ -464,8 +464,8 @@ var lf : string[12];
     sr : searchrec;
     t  : text;
     s  : string[40];
-    ca : char;     
-      
+    ca : char;
+
   procedure WrLf;
   begin
     rewrite(t);
@@ -478,16 +478,16 @@ begin
   findfirst('XP-*.RES',0,sr);
   assign(t,'XP.RES');
   reset(t);
-  if ioresult<>0 then begin                               {Wenn XP.RES nicht existiert}
-    if doserror<>0 then interr('.RES file not found');
+  if ioresult<>0 then
+  begin                                     { Wenn XP.RES nicht existiert }
     if parlanguage='' then                                {/L Parameter beruecksichtigen}
-    begin    
+    begin
       parlanguage:=sr.name[4];
       write ('<D>eutsch / <E>nglish ?  '+parlanguage);
-      repeat 
+      repeat
         ca:=upcase(readkey);                              { Und ansonsten Auswahl-Bringen }
-      until (ca='D') or (ca='E') or (ca=keycr); 
-      if (ca<>keycr) then parlanguage:=ca;                { Enter=Default }     
+      until (ca='D') or (ca='E') or (ca=keycr);
+      if (ca<>keycr) then parlanguage:=ca;                { Enter=Default }
       end;
     lf:='XP-'+parlanguage+'.RES';
     WrLf;                                                {und XP.RES erstellen }
@@ -935,7 +935,7 @@ procedure check_date;      { Test, ob Systemdatum verstellt wurde }
 const maxdays = 14;
 var dt   : DateTime;
     days : longint;
-    dow  : smallword;
+    dow  : rtlword;
     ddiff: longint;
     wdt  : byte;
     x,y  : byte;
@@ -1088,8 +1088,11 @@ end;
 
 
 end.
-{ 
+{
   $Log$
+  Revision 1.22  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.21  2000/03/16 19:25:10  mk
   - fileio.lock/unlock nach Win32 portiert
   - Bug in unlockfile behoben

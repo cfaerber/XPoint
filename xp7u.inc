@@ -362,7 +362,7 @@ end;
 
 function UUCPnetcall: Boolean;
 var
-    result  : integer;
+    res  : integer;
     f       : file;
 begin
   recs:='';
@@ -370,12 +370,12 @@ begin
   fidologfile:=TempFile('');
   if not exist('uucico.exe') then begin
     NoUUCICO;
-    result:=uu_parerr;
+    res:=uu_parerr;
     end
   else begin
     if not comn[comnr].fossil then ReleaseC;
     {$IFNDEF Ver32 }
-    result:=uucico(XFerDir+caller,ConnTicks,ende,      { --- UUCICO ---------- }
+    res:=uucico(XFerDir+caller,ConnTicks,ende,      { --- UUCICO ---------- }
                    NC^.waittime,NC^.sendtime,NC^.rectime,fidologfile);
     {$ENDIF }
     if not comn[comnr].fossil then Activate;
@@ -383,18 +383,18 @@ begin
   aufhaengen;
   DropDtr(comnr);
   ReleaseC;
-  if (result<>uu_nologin) and (result<>uu_parerr) then
+  if (res<>uu_nologin) and (res<>uu_parerr) then
     WriteUUnummer(uunum);
-  UUCPnetcall:=(result=uu_ok);
+  UUCPnetcall:=(res=uu_ok);
   cursor(curoff);
   if not exist('UUZ.EXE') then begin
     nouuz; exit;
     end;
   window(1,1,80,25);
-  if (result=uu_ok) or (result=uu_recerr) then begin
+  if (res=uu_ok) or (res=uu_recerr) then begin
     NC^.sendbuf:=spufsize;
     NC^.sendpack:=spacksize;
-    NC^.abbruch:=(result<>uu_ok);
+    NC^.abbruch:=(res<>uu_ok);
     moment;
     outmsgs:=0;
     ClearUnversandt(ppfile,box);
@@ -402,9 +402,9 @@ begin
       _era(ppfile);
     if exist(eppfile) then
       _era(eppfile);
-    if result=uu_ok then
+    if res=uu_ok then
       wrtiming('NETCALL '+boxpar^.boxname);
-    if result=uu_recerr then begin    { doppeltes Senden verhindern }
+    if res=uu_recerr then begin    { doppeltes Senden verhindern }
       assign(f,XFerDir+caller);
       rewrite(f,1);                   { Inhalt des C-Files l”schen }
       close(f);
@@ -413,7 +413,7 @@ begin
     end
   else
     NC^.abbruch:=true;
-  if ImportUUCPfromSpool(XFerDir) and (result=uu_recerr) then
+  if ImportUUCPfromSpool(XFerDir) and (res=uu_recerr) then
     erase_mask(XFerDir+'*.');         { Doppeltes Einlesen verhindern }
   SendNetzanruf(once,false);
   SendFilereqReport;    { ... falls vorhanden }
@@ -476,6 +476,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.5  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -318,7 +318,11 @@ asm
          pop    eax
          retn
 @the_end:
+{$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+{$ELSE }
+end;
+{$ENDIF }
 
 {$ELSE}
 
@@ -1639,8 +1643,11 @@ begin
 end;
 
 end.
-{ 
+{
   $Log$
+  Revision 1.11  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.10  2000/03/17 11:16:34  mk
   - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
 

@@ -64,7 +64,7 @@ begin
 end;
 
 procedure gethdat(abhzeit:integer);
-var t,m,j,dow : smallword;
+var t,m,j,dow : rtlword;
     tt        : integer;
 begin
   if abhzeit=0 then

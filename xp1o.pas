@@ -101,26 +101,26 @@ begin
       ReadFilename:=false;
       exit;
       end
-    else  
-    if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}      
+    else
+    if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
       s:=first_marked;
       y:=pos('HTTP://',ustr(s));                             {WWW URL ?}
       if y=0 then y:=pos('FTP://',ustr(s));                  {oder FTP ?}
-      if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }   
+      if y=0 then y:=pos('WWW.',ustr(s));                    {oder WWW URL ohne HTTP:? }
       if y<>0 then begin
-        s:=mid(s,y); x:=0;                                      
+        s:=mid(s,y); x:=0;
         repeat
-          inc (y);                                           {Ende der URL suchen...}   
+          inc (y);                                           {Ende der URL suchen...}
           if (s[y] <= ' ') or (s[y] > '~') or (y=length(s)+1) then x:=y-1;
-          case s[y] of '<', '>', '(', ')', '{', '}', '[', ']' : x:=y-1; end;        
-        until x<>0; 
+          case s[y] of '<', '>', '(', ')', '{', '}', '[', ']' : x:=y-1; end;
+        until x<>0;
         s:=left(s,x);
         end;
-      string2clip(s);                                       
+      string2clip(s);
       ReadFilename:=false;
       exit;
       end
-    else 
+    else
 {/JG}
       useclip:=false;
     if (trim(s)='') or ((length(s)=2) and (s[2]=':')) or (right(s,1)='\') then
@@ -146,7 +146,7 @@ var x,y : byte;
     nr  : shortint;
     t   : taste;
     f   : file;
-    w   : smallword;
+    w   : rtlword;
 begin
   assign(f,fname);
   getfattr(f,w);
@@ -191,45 +191,45 @@ var s     : string;
     useclip: boolean;
     nr    : longint;
     i     : integer;
-    
+
   procedure ex(i:shortint);
   begin
     listexit:=i;
     t:=keyesc;
   end;
 
-{JG:28.01.00}         
+{JG:28.01.00}
   procedure ShowfromLister;
-  begin   
+  begin
     showscreen(true);      {Menuepunkte die Probleme machen koennten deaktivieren:}
 
     setenable(0,1,false);  {XPOINT}
     setenable(0,2,false);  {Wartung}
     setenable(0,4,false);  {Netcall}
-    setenable(0,5,false);  {Fido} 
+    setenable(0,5,false);  {Fido}
     setenable(0,6,false);  {Edit}
     setenable(0,7,false);  {Config}
     setenable(3,8,false);  {Nachricht/Brettmannager}
-    setenable(3,9,false);  {N/Fileserver}     
-    setenable(3,11,false); {N/Direkt} 
+    setenable(3,9,false);  {N/Fileserver}
+    setenable(3,11,false); {N/Direkt}
 
     attrtxt(col.ColKeys);
     mwrt(screenwidth-9,screenlines,' Lister ! ');
     attrtxt(col.ColMenu[0]);
-    mwrt(1,1,dup(Screenwidth,' '));   
+    mwrt(1,1,dup(Screenwidth,' '));
     normtxt;
-   
+
     select(11);            {Suchergebnis zeigen}
 
     setenable(0,1,true);   {XPOINT wieder einschalten}
     setenable(0,2,true);   {Wartung}
     setenable(0,4,true);   {Netcall}
-    setenable(0,5,true);   {Fido} 
+    setenable(0,5,true);   {Fido}
     setenable(0,6,true);   {Edit}
     setenable(0,7,true);   {Config}
     setenable(3,8,true);   {Nachricht/Brettmannager}
-    setenable(3,9,true);   {N/Fileserver}     
-    setenable(3,11,true);  {N/Direkt} 
+    setenable(3,9,true);   {N/Fileserver}
+    setenable(3,11,true);  {N/Direkt}
   end;
 {/JG}
 
@@ -304,8 +304,8 @@ begin
     if upcase(c) = 'I' then msg_info;                         { 'I' fuer Lister }
 
     if upcase(c) = 'O' then                                   { 'O' fuer Lister }
-    begin   
-      ShowHeader;                                               
+    begin
+      ShowHeader;
       ex(5);
       end;
 
@@ -314,7 +314,7 @@ begin
     end;
 
   if t = keyaltm then                                       { ALT+M = Suche MessageID }
-  begin                                                     
+  begin
     if list_markanz=0 then s:=''                            {Nullstring ohne Markierung}
     else s:=mailstring(first_marked,false);
     if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
@@ -322,10 +322,10 @@ begin
     end ;
 
   if t = keyaltv then                                        { ALT+V = Suche text }
-  begin                                    
+  begin
     if list_markanz=0 then s:=''
     else s:=first_marked;
-    if Suche(getres(414),'',s) then Showfromlister;          
+    if Suche(getres(414),'',s) then Showfromlister;
     ex(5)
     end;
 
@@ -338,9 +338,9 @@ begin
     end;
 
   if t = keyaltu then                                        { Alt+U = User }
-  begin                                        
+  begin
     if list_markanz=0 then s:=dbreadstr(mbase,'Absender')
-    else s:=mailstring(first_marked,false);      
+    else s:=mailstring(first_marked,false);
     if Suche(getres(416),'Absender',s) then Showfromlister;
     ex(5)
     end;
@@ -452,29 +452,29 @@ var f1,f2 : file;
     time  : longint;
     res   : integer;
 begin
-  if (fexpand(fn1)=fexpand(fn2)) and exist(fn1) then 
+  if (fexpand(fn1)=fexpand(fn2)) and exist(fn1) then
   begin
     filecopy:=true;
     exit;
   end;
-    
+
   { 07.01.2000 oh
     Wo nichts ist, braucht auch nichts kopiert werden. Folgender Fix
     vermeidet die Fehlermeldung 'Fehler %s beim Kopieren von %s'
     beim Sysop-Poll ohne vorhandenen Ausgangspuffer:
-    07.01.2000 MK 
+    07.01.2000 MK
     byte(fn[0]) Referenzen in length(fn) ge‰ndert, Source formatiert
   }
   if not exist(fn1) then { Datei fehlt! }
     if length(fn1)>2 then { Dateiname>2 Zeichen? }
     { Datei ist Ausgangspuffer: }
-    if UStr(copy(fn1,length(fn1)-2,3))='.PP' then 
+    if UStr(copy(fn1,length(fn1)-2,3))='.PP' then
     begin
       filecopy:=false;
       exit;
     end;
   { /oh }
-    
+
   assign(f1,fn1);
   reset(f1,1);
   getftime(f1,time);
@@ -632,7 +632,11 @@ begin
         end;
       end
     else if developer then begin
+{$IFDEF VP }
+  playsound(4000, 5);
+{$ELSE }
       sound(4000); delay(5); nosound;
+{$ENDIF }
       end;
     dbSetIndex(bezbase,mi);
     end;
@@ -869,12 +873,12 @@ function XPWinShell(prog:string; parfn:pathstr; space:word;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 
   function PrepareExe:integer;    { Stack sparen }
-  { 
+  {
   RÅckgabewert: -1 Fehler
                  0 DOS-Programm
                  1 Windows-Programm
                  2 OS/2-Programm
-  }                 
+  }
   var ext     : string[3];
       exepath,
       batfile : pathstr;
@@ -897,9 +901,9 @@ function XPWinShell(prog:string; parfn:pathstr; space:word;
     os2 := (et=ET_OS2_16) or (et=ET_OS2_32);
     winnt:=win and (lstr(getenv('OS'))='windows_nt');
 
-    if win then begin        
+    if win then begin
 
-      if Delviewtmp then 
+      if Delviewtmp then
       begin
         if ustr(left(prog,5))<>'START' then prog:='start '+prog;
         end
@@ -960,6 +964,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.31  2000/04/01 07:41:38  jg
   - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
     neue Einstellung wird dann auch beim Quoten verwendet

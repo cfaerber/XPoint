@@ -26,7 +26,7 @@ UNIT montage;
 
 INTERFACE
 
-uses   typeform;
+uses   typeform, xpglobal;
 
 const  maxmonlen = 9;
 
@@ -42,9 +42,9 @@ const  maxmonlen = 9;
                 (tag: 'September';zahl: 30), (tag: 'Oktober';  zahl: 31),
                 (tag: 'November'; zahl: 30), (tag: 'Dezember'; zahl: 31));
 
-type fdate = record
+type fdate = packed record
                t,m : byte;
-               j   : word;
+               j   : smallword;
              end;
 
 var  adow  : byte;
@@ -201,6 +201,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.4  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.3  2000/02/15 20:43:36  mk
   MK: Aktualisierung auf Stand 15.02.2000
 

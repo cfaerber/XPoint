@@ -20,6 +20,7 @@ unit  resource;
 interface
 
 uses
+  xpglobal,
 {$IFDEF BP }
   ems,
 {$ENDIF }
@@ -47,29 +48,29 @@ const maxblocks = 4;
       flPreload = 1;
 
 type
-      barr   = array[0..65300] of byte;
+      barr   = packed array[0..65300] of byte;
       barrp  = ^barr;
-      rblock = record case integer of
-                 0 : (anzahl   : word;    { Anzahl Strings in diesem Block  }
-                      fileadr  : longint; { Startadresse in RES-Datei       }
-                      contsize : word;    { Gr”áe des Inhalts (Texte)       }
-                      lastnr   : word;    { letzte Res.-Nr. in diesem Block }
-                      flags    : word;    { 1 = preload                     }
-                      emshandle: word;
+      rblock = packed record case integer of
+                 0 : (anzahl   : smallword; { Anzahl Strings in diesem Block  }
+                      fileadr  : longint;   { Startadresse in RES-Datei       }
+                      contsize : smallword; { Gr”áe des Inhalts (Texte)       }
+                      lastnr   : smallword; { letzte Res.-Nr. in diesem Block }
+                      flags    : smallword; { 1 = preload                     }
+                      emshandle: smallword;
                       loaded   : boolean;
                       emspages : byte);
-                 2 : (dummy2   : word;
+                 2 : (dummy2   : smallword;
                       rptr     : barrp);
                end;
-      tindex = array[0..maxindex-1,0..1] of word;
+      tindex = packed array[0..maxindex-1,0..1] of smallword;
 
 const f      : ^file = nil;
       clnr   : word  = $ffff;    { geladener Cluster }
       oldexit: pointer = nil;
 
-var   block  : array[1..maxblocks] of rblock;
+var   block  : packed array[1..maxblocks] of rblock;
       blocks : word;
-      index  : array[1..maxblocks] of ^tindex;
+      index  : packed array[1..maxblocks] of ^tindex;
 
       clsize : word;         { Cluster-Gr”áe }
       clindex: ^tindex;      { Cluster-Index  }
@@ -386,6 +387,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

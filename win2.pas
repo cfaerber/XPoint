@@ -203,22 +203,21 @@ var   fb     : pathstr;
   var i : byte;
   begin
     moff;
-    gotoxy(li,ob); write('Ú',dup(re-li-1,'Ä'),'¿');
+    Wrt(li, ob, 'Ú'+ dup(re-li-1,'Ä') + '¿');
     if txt<>'' then begin
       gotoxy((re+li+1)div 2-length(txt)div 2-1,ob);
       if not invers and (fsb_rcolor=0) then hightxt;
-      write(' ',txt,' ');
+      Wrt2(' ' + txt + ' ');
       iit;
       end;
-    for i:=ob+1 to un-1 do begin
-      gotoxy(li,i); write('³');
-      gotoxy(re,i); write('³');
-      end;
+    for i:=ob+1 to un-1 do
+    begin
+      Wrt(li, i, '³');
+      Wrt(re, i, '³');
+    end;
     gotoxy(li,un); write('À',dup(re-li-1,'Ä'),'Ù');
-    if xtext<>'' then begin
-      gotoxy((re+li+1)div 2-length(xtext)div 2-1,un);
-      write(' ',xtext,' ');
-      end;
+    if xtext<>'' then
+      Wrt((re+li+1)div 2-length(xtext)div 2-1,un, ' ' + xtext + ' ');
     mon;
   end;
 
@@ -264,7 +263,7 @@ var   fb     : pathstr;
       gotoxy(((n-1) mod 4)*15+11,((n-1) div 4)+y+1)
     else
       gotoxy(((n-1) div 9)*15+11,(n-1) mod 9+y+1);
-    if n+add>fn then write(sp(14))
+    if n+add>fn then Wrt2(sp(14))
     else begin
       s:=f^[n+add];
       write(' ',s,sp(13-length(s)));
@@ -305,16 +304,16 @@ var   fb     : pathstr;
       moff;
       if s[1]='[' then
         case drivetype(s[2]) of
-          2 : write(forms('RAM-Disk',59));
-          3 : write(forms('Subst-Laufwerk',59));
-          4 : write(forms('device driven',59));
-          5 : write(forms('Netz-Laufwerk',59));
-          6 : write(forms('CD-ROM Laufwerk',59));
+          2 : Wrt2(forms('RAM-Disk',59));
+          3 : Wrt2(forms('Subst-Laufwerk',59));
+          4 : Wrt2(forms('device driven',59));
+          5 : Wrt2(forms('Netz-Laufwerk',59));
+          6 : Wrt2(forms('CD-ROM Laufwerk',59));
         else
-          write(sp(59));
+          Wrt2(sp(59));
         end
       else if right(s,1)='\' then
-        write(sp(59))
+        Wrt2(sp(59))
       else begin
         pa:=path;
         pathonly(pa);
@@ -741,7 +740,7 @@ var   i,j     : integer;
       hightxt;
       wrt(x1+2,y2,' '+s+' ');
       normtxt;
-      write(dup(wdt-length(s)-1,'Ä'));
+      Wrt2(dup(wdt-length(s)-1,'Ä'));
       end
     else wrt(x1+2,y2,dup(wdt+2,'Ä'));
     mon;
@@ -1078,6 +1077,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.7  2000/03/25 00:29:22  mk
   - GetDriveType und AllDrives jetzt sauber portiert
 

@@ -332,7 +332,7 @@ asm
             ja    @testslash2
             mov   bx,0
             jmp   @ufound
-  @testslash2: 
+  @testslash2:
             cmp   al,'/'               { '/' -> Umbruch, falls kein }
             jnz   @fnext               {        Trennzeichen vorausgeht }
             cmp   byte ptr [di+bx-1],' '
@@ -343,7 +343,7 @@ asm
   @fnext:
             dec   bx
             jnz   @floop
-  @ufound:     
+  @ufound:
             mov   ax,bx
             pop ds
 {$ELSE }
@@ -856,7 +856,11 @@ begin
     mfm:=filemode; filemode:=0;
     assign(t,fn); settextbuf(t,tbuf^,4096); reset(t);
     filemode:=mfm;
+{$IFDEF VP }
+    p := ptr(1);
+{$ELSE }
     p:=ptr(1,1);
+{$ENDIF }
     tail:=nil;
 {    endcr:=false; }
     srest:=false;
@@ -946,7 +950,11 @@ begin
     mfm:=filemode; filemode:=0;
     assign(t,fn); reset(t,1);
     filemode:=mfm;
+{$IFDEF VP }
+    p := ptr(1);
+{$ELSE }
     p:=ptr(1,1);
+{$ENDIF }
     tail:=nil;
     while cpos(':',fn)>0 do delete(fn,1,cpos(':',fn));
     while cpos('\',fn)>0 do delete(fn,1,cpos('\',fn));
@@ -964,7 +972,7 @@ begin
         AppP;
       end;
       s:='';
-      
+
       if eof(t) then for b_read:=1 to 3 do begin
         if b_read=1 then s:='`'
         else if b_read=2 then s:='end'
@@ -976,7 +984,7 @@ begin
           AppP;
         end;
       end;
-      
+
     end;
     close(t);
     freemem(ibuf,sizeof(tbytestream));
@@ -1233,7 +1241,7 @@ var  dl         : displp;
         s    : word;
         qn   : integer;
         pdiff: integer;
-    begin     
+    begin
       p0:=0;
       s:=ap^.size;
       while (p0<15) and (p0<s) and (ap^.cont[p0]<=' ') do inc(p0);
@@ -1372,7 +1380,7 @@ var  dl         : displp;
 
 
   {$I EDITOR.INC}
-  
+
   { 14.01.2000 robo }
   function PosCoord(pos:position; disp:byte):longint; forward;
   { /robo }
@@ -1419,7 +1427,7 @@ var  dl         : displp;
               setblockmark(1);
               setblockmark(2);
               tbm:=3;
-            end; 
+            end;
           end
           else begin
             if up then begin
@@ -1449,17 +1457,17 @@ var  dl         : displp;
                   tbm:=2;
                 end
                 else setblockmark(1);
-            end 
+            end
             ;
           end;
-        end;  
+        end;
       end;
     { /robo }
-    
+
     { 17.01.2000 robo - Block entmarkieren }
     procedure entmarkieren;
       begin
-        with e^ do 
+        with e^ do
          if not blockhidden then begin
            blockhidden:=true;
            aufbau:=true;
@@ -1481,19 +1489,19 @@ var  dl         : displp;
                                 then BlockLoeschen;
                                ZeichenEinfuegen(false);
                              end;
-        editfBS           : if e^.config.persistentblocks 
+        editfBS           : if e^.config.persistentblocks
                              then BackSpace
                              else if (blockinverse or blockhidden)
                               then BackSpace
-                              else BlockLoeschen; 
-        editfDEL          : if kb_shift 
+                              else BlockLoeschen;
+        editfDEL          : if kb_shift
                              then BlockClpKopie(true)
                              else if e^.config.persistentblocks
                               then DELchar
                               else if (blockinverse or blockhidden)
                                then DELchar
-                               else BlockLoeschen; 
-        { /robo }                    
+                               else BlockLoeschen;
+        { /robo }
         { 01.02.2000 robo - Blockoperationen }
         editfNewline      : if e^.config.persistentblocks
                              then NewLine
@@ -1527,7 +1535,7 @@ var  dl         : displp;
                                 then BlockLoeschen;
                                Paragraph;
                              end;
-        { /robo }                    
+        { /robo }
         editfRot13        : BlockRot13;
         editfChangeCase   : CaseWechseln;
         editfPrint        : BlockDrucken;
@@ -1557,7 +1565,7 @@ var  dl         : displp;
                               SeiteUnten;
                               if kb_shift then shift_markieren(true,false);
                             end;
-        { /robo }                    
+        { /robo }
         editfScrollUp     : Scroll_Up;
         editfScrollDown   : Scroll_Down;
         { 17.01.2000 robo - Block markieren }
@@ -1566,25 +1574,25 @@ var  dl         : displp;
                               else if not e^.config.persistentblocks then entmarkieren;
                               if ZeileOben then;
                               if kb_shift then shift_markieren(true,true);
-                            end;  
+                            end;
         editfDown         : begin
                               if kb_shift then shift_markieren(false,false)
                               else if not e^.config.persistentblocks then entmarkieren;
                               if ZeileUnten then;
                               if kb_shift then shift_markieren(true,false);
-                            end;  
+                            end;
         editfLeft         : begin
                               if kb_shift then shift_markieren(false,true)
                               else if not e^.config.persistentblocks then entmarkieren;
                               if ZeichenLinks then;
                               if kb_shift then shift_markieren(true,true);
-                            end;  
+                            end;
         editfRight        : begin
                               if kb_shift then shift_markieren(false,false)
                               else if not e^.config.persistentblocks then entmarkieren;
                               CondZeichenRechts;
                               if kb_shift then shift_markieren(true,false);
-                            end;  
+                            end;
         editfPageTop      : begin
                               if kb_shift then shift_markieren(false,true)
                               else if not e^.config.persistentblocks then entmarkieren;
@@ -1621,7 +1629,7 @@ var  dl         : displp;
                               WortRechts;
                               if kb_shift then shift_markieren(true,false);
                             end;
-        { /robo }                    
+        { /robo }
 
         editfLastpos      : GotoPos(lastpos,0);
         editfMark1        : SetMarker(1);
@@ -1643,10 +1651,10 @@ var  dl         : displp;
 
         { 17.01.2000 robo - shift-ins: Block einfuegen - Zweitbelegung
                             ctrl-ins: Block kopieren - Zweitbelegung   }
-        editfChangeInsert : begin 
-                              if kb_shift 
+        editfChangeInsert : begin
+                              if kb_shift
                                then if e^.config.persistentblocks
-                                then BlockClpEinfuegen 
+                                then BlockClpEinfuegen
                                 else begin
                                   if not (blockinverse or blockhidden)
                                    then BlockLoeschen;
@@ -1654,8 +1662,8 @@ var  dl         : displp;
                                   BlockEinAus;
                                 end
                                 else e^.insertmode:=not e^.insertmode;
-                            end;  
-        { /robo }                    
+                            end;
+        { /robo }
         editfChangeIndent : e^.Config.AutoIndent:=not e^.Config.AutoIndent;
         editfAbsatzmarke  : SetAbsatzmarke;
         editfWrapOn       : UmbruchEin;
@@ -1676,7 +1684,7 @@ var  dl         : displp;
         editfReadBlock    : BlockEinlesen;
         { 17.01.2000 robo }
         editfReadUUeBlock : BlockUUeEinlesen;
-        { /robo }                    
+        { /robo }
         editfWriteBlock   : BlockSpeichern;
         editfCCopyBlock   : BlockClpKopie(false);
         editfCutBlock     : BlockClpKopie(true);
@@ -2001,6 +2009,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/04/04 10:33:55  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.18  2000/03/24 15:41:01  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 

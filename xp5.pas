@@ -58,7 +58,7 @@ const rx = 42;
 var   nt,n,mnt,
       xjj,xmm,xtt : integer;
       z           : taste;
-      y,m,d,w     : smallword;
+      y,m,d,w     : rtlword;
       lm,lj       : word;
       jj,mm,tt    : word;
 
@@ -1038,6 +1038,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.16  2000/03/25 09:03:56  mk
   - xdelay jetzt komplett entfernt
 

@@ -1301,7 +1301,7 @@ end;
 procedure TestUnregtime(x,y:byte; var stufe1:boolean);
 var timestamp  : word;
     first,last : word;
-    j,m,d,dow  : smallword;
+    j,m,d,dow  : rtlword;
     diff       : integer;
 begin
   stufe1:=false;
@@ -1566,6 +1566,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.6  2000/02/19 11:40:09  mk
   Code aufgeraeumt und z.T. portiert
 

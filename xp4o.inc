@@ -146,7 +146,7 @@ var x,y,wdt: byte;
     bi     : shortint;
 
   procedure getdatum;
-  var t,m,j,dow : smallword;
+  var t,m,j,dow : rtlword;
   begin
     getdate(j,m,t,dow);
     dat.t:=t; dat.m:=m; dat.j:=j;
@@ -706,6 +706,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.6  2000/03/14 15:15:39  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben

@@ -30,11 +30,13 @@ UNIT inout;
 INTERFACE
 
 uses
-  xpglobal,
+{$IFDEF Win32 }
+  windows,
+{$ENDIF  }
 {$ifdef vp }
   vpsyslow,
 {$endif}
-  dos, crt, keys, typeform, mouse, xp0;
+  dos, crt, keys, typeform, mouse, xp0, xpglobal;
 
 const  lastkey   : taste = '';
 
@@ -83,7 +85,6 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
                     tproc   : testproc;
                     edproc  : editproc;
                   end;
-
 
 const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        rdedch     : taste    = '';        { ReadEdit Vorgabe f. 1. Zeichen }
@@ -268,9 +269,6 @@ IMPLEMENTATION
 
 
 uses
-{$IFDEF Win32 }
-  windows,
-{$ENDIF  }
   maus2, winxp;
 
 const  maxsave     = 50;  { max. fÅr savecursor }
@@ -1795,6 +1793,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22  2000/04/04 10:33:56  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.21  2000/03/24 20:25:50  rb
   ASM-Routinen gesÑubert, Register fÅr VP + FPC angegeben, Portierung FPC <-> VP
 

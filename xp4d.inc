@@ -64,7 +64,7 @@ var
     mnt     : longint;
     netztyp : byte;
     _brett  : string[5];
-    t,m,j,d : smallword;
+    t,m,j,d : rtlword;
     tempd: integer;
     fileatt : boolean;
     dflags  : string[20];
@@ -160,7 +160,7 @@ begin  { __ Suchmarke }
                      (dbReadInt(ubase,'codierer')=9),'P',' ');
             vert:=(uflags and 4<>0);
             dbReadN(ubase,ub_haltezeit,hzeit);
-            
+
             if vert then begin
               { Verteiler }
               s := vert_name(s);
@@ -170,10 +170,10 @@ begin  { __ Suchmarke }
               { Flags }
               taus[pos('F',UsrFeldTausch)] := abc+pw+dadr; { Laenge 4 }
             end;
-              
+
             markflag[y]:=iif(UBmarked(dbRecno(ubase)),1,0);
             brettform(s,0,true);
-            
+
             kuerzen := false;
             if dispext then begin
             { Anzeige/Spezial }
@@ -186,11 +186,11 @@ begin  { __ Suchmarke }
               else
                 { Haltezeit bei Usern }
                 taus[pos('H',UsrFeldTausch)] := '  '+hz(hzeit);
-                
+
               { BOX }
               taus[pos('B',UsrFeldTausch)] := forms(pbox,9);
             end;
-            
+
             { Verteilername bzw. Adresse }
             taus[pos('A',UsrFeldTausch)]
               := Forms(s,
@@ -199,7 +199,7 @@ begin  { __ Suchmarke }
                     74+9-max(39,length(komm))-iif(kuerzen,8,0)
                    )
               );
-                
+
             { Kommentar }
             taus[pos('K',UsrFeldTausch)]
               := Forms(komm,
@@ -208,13 +208,13 @@ begin  { __ Suchmarke }
                     74-max(35,length(s))-iif(kuerzen,8+9,0)
                    )
               );
-              
+
             { Felder zusammenkopieren }
             dispbuf[y]^:=taus[1];
             for tausc := 2 to UsrFelderMax do
               dispbuf[y]^:=dispbuf[y]^+iifs(length(taus[tausc])>0,' ','')+taus[tausc];
             dispbuf[y]^:=forms(dispbuf[y]^,80);
-            
+
           end;
   10..12: begin { NACHRICHTENLISTE }
             for tausc := 1 to MsgFelderMax do taus[tausc]:='';
@@ -261,7 +261,7 @@ begin  { __ Suchmarke }
               dbReadN(mbase,mb_EmpfDatum,edat)
             else
               edat:=ixdat('6912310000');
-            { Datum anzeigen }  
+            { Datum anzeigen }
             if showmsgdatum then begin
               s2:=fdat(longdat(dat));
               getdate(j,m,t,d);
@@ -274,7 +274,7 @@ begin  { __ Suchmarke }
               else
                 sdat:=left(s2,5);
               ulen:=25; blen:=36;
-            { kein Datum anzeigen }  
+            { kein Datum anzeigen }
             end else begin
               sdat:=''; ulen:=27; blen:=40;
             end;
@@ -324,12 +324,12 @@ begin  { __ Suchmarke }
               markflag[y]:=iif(msgmarked,1,0);
             dflags:=iifc(markflag[y]<>0,suchch,' ')+ge[gelesen]+hf[hflags]+
                     uv[unvers]+wv[wvl]+typ;
-                    
+
             if fidoqwk and (dispmode=10) and
                dispfto and (_brett[1]='A') then begin
               if cpos('@',s)>0 then s[0]:=chr(cpos('@',s)-1);
               dbReadN(mbase,mb_name,s0);
-              
+
               { Flags }
               taus[pos('F',MsgFeldTausch)] := dflags;
               { Groesse }
@@ -342,11 +342,11 @@ begin  { __ Suchmarke }
               taus[pos('E',MsgFeldTausch)] := forms(s0,19);
               { Betreff }
               taus[pos('B',MsgFeldTausch)] := forms(s1,iif(showmsgdatum,22-1,28));
-                
+
               userflag[y]:=(HighlightName=ustr(s0)) or (mnt and $1000<>0);
-              
+
             end else begin
-            
+
               { Kommentarbaum }
               if dispmode=12 then begin
                 s:=' '+BaumBlatt(ulen+blen,bezpos,s,s1);
@@ -362,8 +362,8 @@ begin  { __ Suchmarke }
                 taus[pos('A',MsgFeldTausch)] := forms(s,ulen-1-iif(showmsgdatum,0,1));
                 { Betreff }
                 taus[pos('B',MsgFeldTausch)] := forms(s1,blen-1);
-              end;  
-              
+              end;
+
               if fidoqwk and (_brett[1]='A') and
                  (HighlightName=ustr(dbReadStr(mbase,'name'))) then
                 userflag[y]:=true
@@ -373,7 +373,7 @@ begin  { __ Suchmarke }
                 else
                   userflag[y]:=(mnt and $1000<>0);
             end;
-            
+
             if (dispmode<>12) then begin
               { Felder zusammenkopieren }
               dispbuf[y]^ := taus[1];

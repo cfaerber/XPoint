@@ -148,7 +148,7 @@ end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-procedure permutate(var s, codeofs; n:longint); assembler;
+procedure permutate(var s; codeofs: longint; n:longint); assembler;
 asm
              mov     esi, codeofs
              mov     edi, offset buf
@@ -253,7 +253,7 @@ asm
              mov     cl,6
              shl     ebx,cl
              add     ebx,eax
-             mov     dl, Sn[ebx]
+             mov     dl, byte ptr Sn[ebx]
              mov     edi,s2
              pop     ebx
              push    ebx
@@ -459,7 +459,7 @@ var i        : integer;
 begin
   make_stream(sts(key),ks);
   permutate(ks,ofs(PC1),56);
- FastMove(ks[1],k1,28);
+  FastMove(ks[1],k1,28);
   FastMove(ks[29],k2,28);
   for i:=1 to 16 do begin
     sleft(k1,i);
@@ -563,6 +563,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.6  2000/03/24 15:41:02  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 

@@ -67,7 +67,9 @@ begin
   writeln(t);
   writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
   writeln(t);
-  close(t);
+{$IFNDEF VP }
+  close(t); { !? }
+{$ENDIF }
 end;
 
 
@@ -271,6 +273,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.9  2000/03/24 08:35:30  mk
   - Compilerfaehigkeit unter FPC wieder hergestellt
 

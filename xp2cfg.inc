@@ -299,8 +299,10 @@ var i    : integer;
     rp   : ^boolean;
 begin
   checkbreak:=false;
+{$IFNDEF VP }
   getcbreak(orgcbreak);
   setcbreak(false);
+{$ENDIF }
   OrgVideomode:=GetVideoMode;
   oldexit:=exitproc;
   exitproc:=@newexit;
@@ -676,7 +678,7 @@ begin
   vesa_dpms:=false;
   termbios:=false;
   tonsignal:=false;
-  
+
   MsgFeldTausch:=MsgFeldDef; { Flags/Groesse/Datum/Abs/Empf/Betreff }
   UsrFeldTausch:=UsrFeldDef; { Flags/Haltezeit/Box/AdresseVerteiler/Kommentar }
 
@@ -880,7 +882,7 @@ begin
   writeln(t,'MaggiVerkettung=',jnf(MaggiVerkettung));
   writeheaderlines;
   { 01/2000 oh }
-  for i:=1 to 2 do  
+  for i:=1 to 2 do
     writeln(t,'HeaderCustom',i,'=',mheadercustom[i]);
   { /oh }
   writeln(t,'TimeZone=',timezone);
@@ -1527,7 +1529,7 @@ begin
     p:=0;
     for i := 1 to length(UsrFeldDef) do if (pos(copy(UsrFeldDef,i,1),UsrFeldTausch)>0) then inc(p);
     if (p<>UsrFelderMax) then UsrFeldTausch:=UsrFeldDef;
-    
+
     {$IFDEF Ver32 }
       ScreenLines := 25; { !! Keine Žnderungsm”glichkeit bis jetzt }
     {$ENDIF }
@@ -1541,7 +1543,7 @@ begin
     { if getenv(reverse('BPX'))<>lstr(hex(936,3)) then quit:=true; }
     if left(QuoteChar,1)='"' then delfirst(quotechar);
     if right(QuoteChar,1)='"' then dellast(quotechar);
-    otherqcback:=otherquotechars; 
+    otherqcback:=otherquotechars;
     checker[13]:=ExtraktTyp+1;
     if ustr(userauf)='ALLE' then UserAufnahme:=0
     else if ustr(userauf)='Z-NETZ' then UserAufnahme:=1
@@ -1630,6 +1632,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2000/04/04 10:33:57  mk
+  - Compilierbar mit Virtual Pascal 2.0
+
   Revision 1.24  2000/04/02 11:33:54  oh
   - Feldtausch-Routine abgesichert, OLH dazu ueberarbeitet
 
