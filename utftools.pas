@@ -60,12 +60,6 @@ type
     function Decode(const Source: UTF8String): String; override;
   end;
 
-{$IFDEF Linux }
-{$I charsets/aliases.inc }
-{$ELSE }
-{$I charsets\aliases.inc }
-{$ENDIF }
-
 function IsKnownCharset(Charset: String): Boolean;
 var
   i: TMimeCharsets;
@@ -228,6 +222,9 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.15  2002/01/04 22:28:12  cl
+// - removed unneccessary include of charset\aliases.inc
+//
 // Revision 1.14  2002/01/03 20:53:54  cl
 // - added ISO-8859-16
 //
