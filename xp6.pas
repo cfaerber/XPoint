@@ -317,10 +317,8 @@ end;
 
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
-//var                                          { Format: 1105001824 }
-// d:datetime;
 begin
-  CompileTime := FormatDateTime('ddmmyyhhnn', FileDateToDateTime(FileAge(ownpath+'xp.ovr')));
+  CompileTime := FormatDateTime('ddmmyyhhnn', FileDateToDateTime(FileAge(ParamStr(0))));
 end;
 {$ENDIF}
 
@@ -2103,6 +2101,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.104  2001/03/27 12:27:44  mk
+  - ops, fixed last commit
+
   Revision 1.103  2001/03/27 08:25:43  mk
   - snapshot datum aus der xp.ovr ermitteln
 
