@@ -246,7 +246,7 @@ procedure EditBetreff; forward;
 
 function EditKeyFunc(var t:taste):boolean;
 begin
-  if (edbetreff<>nil) and (t=keyaltb) then EditBetreff;
+  if (edbetreff<>'') and (t=keyaltb) then EditBetreff;
   if (@EditXKeyFunc<>nil) and EditXKeyFunc(t) then;
   if t=keyf6 then Makroliste(6)
   else XMakro(t,32);
@@ -310,19 +310,15 @@ end;
 
 function EditGetBetreff:string;
 begin
-  if edbetreff=nil then
-    EditGetbetreff:=''
-  else begin
-    EditGetbetreff:=edbetreff;
-    edbetreff:=nil;
-    end;
+  EditGetbetreff:=edbetreff;
+  edbetreff:='';
 end;
 
 procedure EditBetreff;
 var x,y : byte;
     brk : boolean;
 begin
-  if edbetreff=nil then exit;
+  if edbetreff='' then exit;
   dialog(min(edbmaxlen+7+length(getres(2507)),70),3,'',x,y);
   maddstring(3,2,getres(2507),edbetreff,min(edbmaxlen,48),edbmaxlen,'');
   msetvfunc(xp6.umlauttest); mhnr(88);
@@ -479,6 +475,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/13 17:15:16  mk
+  - noch einige ^String-spezifische Probleme beseitigt
+
   Revision 1.19  2000/07/13 10:23:46  mk
   - Zeiger auf Strings entfernt
 

@@ -234,7 +234,6 @@ var brk     : boolean;
       if (copy(e[i],37,6)='CRASHS') or (copy(e[i],37,8)='REQUESTS') then begin
         crash:=(copy(e[i],37,6)='CRASHS');
         ss:=left(e[i],36);
-        freemem(e[i],filewidth+1);
         if i<anzahl then Move(e[i+1],e[i],(anzahl-i)*4);
         dec(anzahl);
         assign(t,ReqDat);
@@ -643,6 +642,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/07/13 17:15:15  mk
+  - noch einige ^String-spezifische Probleme beseitigt
+
   Revision 1.7  2000/07/13 10:23:45  mk
   - Zeiger auf Strings entfernt
 

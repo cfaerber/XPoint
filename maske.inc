@@ -577,10 +577,11 @@ var ax,p,myp  : integer;
         test3(cont);
         replace:=false;
         showfield;
-        if hpline<>nil then begin
+        if hpline<>'' then
+        begin
           attrtxt(col.ColHelpTxt);
           wrt(hpx,hpy,sp(hpl));
-          end;
+        end;
         if (fnix<>0) and (selliste<>nil) then
           fillfnhelp;
         normtxt;
@@ -736,7 +737,6 @@ begin   { readmask }
   mzl:=mauszul; mzr:=mauszur;
   mauszul:=true; mauszur:=true;
   insert_mode:=true;
-  new(s);
   helpsave:=help_page;
 
   with amaskp^,amaskp^.stat do begin
@@ -806,8 +806,7 @@ begin   { readmask }
           showfield;
           newfld:=false;
           if hpx<>0 then begin           { Hilfszeile anzeigen }
-            if hpline=nil then s:=''
-            else s:=hpline;
+            s:=hpline;
             if hcenter then s:=center(s,hpl)
             else s:=forms(s,hpl);
             attrtxt(col.ColHelpTxt);
@@ -1021,7 +1020,7 @@ begin   { readmask }
             if xtest1(s) then cont:=s;
             end
           else begin
-            if allowed=nil then valchar:=(pos(t,allchar)>0)
+            if allowed='' then valchar:=(pos(t,allchar)>0)
             else valchar:=(pos(t,allowed)>0);
             if valchar then begin
               if (mask='') and (insert_mode or (p+ax>length(s))) then begin
@@ -1068,11 +1067,13 @@ begin   { readmask }
       returnfields;
     editing:=false;
     end;
-  dispose(s);
   help_page:=helpsave;
 end;   { readmask }
 {
   $Log$
+  Revision 1.21  2000/07/13 17:15:15  mk
+  - noch einige ^String-spezifische Probleme beseitigt
+
   Revision 1.20  2000/07/13 10:23:44  mk
   - Zeiger auf Strings entfernt
 

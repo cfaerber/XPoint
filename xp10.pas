@@ -358,9 +358,8 @@ begin
           else
         else begin
           inc(anzahl);
-          getmem(e[anzahl],filewidth+1);
           e[anzahl]:=left(s,filewidth);
-          end;
+        end;
       end;
     close(t);
     end;
@@ -663,7 +662,7 @@ var brk      : boolean;
   procedure sort_e;
   var i,j : integer;
       xch : boolean;
-      p   : pointer;
+      p   : String;
   begin
     j:=anzahl-1;
     repeat
@@ -1555,7 +1554,6 @@ begin
           width:=74;
           buttons:=getres(1011);   { ' ^Neu , ^L”schen , ^Edit , ^Aktiv , ^Sichern , ^OK ' }
           okb:=6; edb:=3;
-          new(boxsel1); new(boxsel2);
           getboxsel;
           pushhp(510);
         end;
@@ -1756,11 +1754,7 @@ begin
   pophp;
   closebox;
   case typ of
-    1 : begin
-          releaseliste;
-          dispose(boxsel1);
-          dispose(boxsel2);
-        end;
+    1 : releaseliste;
     2 : begin
           releaseliste;
           {for ii:=keymacros downto 1 do
@@ -2029,6 +2023,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/07/13 17:15:15  mk
+  - noch einige ^String-spezifische Probleme beseitigt
+
   Revision 1.19  2000/07/13 10:23:46  mk
   - Zeiger auf Strings entfernt
 

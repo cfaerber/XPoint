@@ -82,7 +82,6 @@ var s  : string;
 begin
   ni.found:=false;
   if (nfile<1) or (nfile>NL_anz) then exit;
-  new(s);
   new(nodelf);
   assign(nodelf^,FidoDir+NLfilename(nfile));
   resetfm(nodelf^,fmRead);
@@ -104,7 +103,6 @@ begin
     close(nodelf^);
     end;
   dispose(nodelf);
-  dispose(s);
 end;
 
 
@@ -911,6 +909,9 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 end;
 {
   $Log$
+  Revision 1.13  2000/07/13 17:15:16  mk
+  - noch einige ^String-spezifische Probleme beseitigt
+
   Revision 1.12  2000/07/13 10:23:47  mk
   - Zeiger auf Strings entfernt
 
