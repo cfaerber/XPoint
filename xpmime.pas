@@ -320,6 +320,7 @@ var   hdp      : headerp;
       ctype:='';
       subtype:='';
       subboundary:='';
+      aCharset:='';
     end;
 
     procedure GetParam;   { Content-Type-Parameter parsen }
@@ -628,10 +629,10 @@ var   input,t : text;
 
   procedure CharsetToIBM(const charset:string; var s:string);
   begin
-     if charset='iso-8859-1' then Iso1ToIBM(s[1],length(s))
+     if left(charset,9)='iso-8859-' then Iso1ToIBM(s[1],length(s))
      else if charset='utf-8' then UTF82IBM(s)
      else if charset='utf-7' then UTF72IBM(s)
-     else Iso1ToIBM(s[1],length(s));
+     else if charset='' then Iso1ToIBM(s[1],length(s));  { Outlook-Fix! }
   end;
 
 begin
@@ -659,8 +660,9 @@ begin
         else
           softbreak:=false;
 
-        if Code in [mCodeNone, mcodeQP, mcode8Bit] then
-          CharsetToIBM(charset, s);
+        if code in [mcodeNone, mcodeQP, mcode8Bit] then
+          if (fname='') and (typ='text') and (subtyp<>'html') then
+            CharsetToIBM(charset,s);
 
         if softbreak then
           SetLength(s, Length(s)-1);
@@ -690,6 +692,8 @@ begin
       begin
         readln(input,s);
         s := DecodeBase64(s);
+        if (fname='') and (typ='text') and (subtyp<>'html') then
+          CharsetToIBM(charset,s);
         if s <> '' then blockwrite(f,s[1],length(s));
       end;
 
@@ -722,6 +726,34 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.24  2002/03/08 23:14:50  my
+  JG:- Fix: Textteile einer MIME-Multipart-Nachricht, die gleichzeitig
+       base64- und UTF-codiert sind, werden jetzt in den IBM-Zeichensatz
+       konvertiert (und daher korrekt angezeigt).
+
+  JG+RB+MY:- Zeichensatzkonvertierung bei der Anzeige von MIME-Multipart-
+             Nachrichten Åberarbeitet und korrigiert. Eine Konvertierung
+             in den IBM-Zeichensatz findet jetzt nur noch dann statt, wenn
+             es sich bei dem jeweiligen Nachrichtenteil
+             - um einen Content-Type 'text/*', und
+             - *nicht* um den Content-Type 'text/html', und
+             - *nicht* um einen Dateianhang, und
+             - um einen der ISO-8859-ZeichensÑtze oder einen anderen von
+               XP unterstÅtzten Zeichensatz handelt, oder wenn der
+               Nachrichtenteil keine Zeichensatzdeklaration enthÑlt
+               (letzteres ist notwendig wegen diverser kaputter Outlook-
+               Versionen, die keinen Charset-Header erzeugen).
+             Nicht mehr blind konvertiert werden daher u.a. Nachrichten-
+             teile, deren Zeichensatz XP unbekannt ist, sowie HTML- und
+             Datei-AnhÑnge. Bei der Auswahl "gesamte Nachricht" bzw. bei
+             <Ctrl-Enter> findet ebenfalls keine Konvertierung (mehr)
+             statt.
+
+  JG:- Fix MIME-Multipart-Nachrichten: Bei Nachrichtenteilen vom Typ
+       "text/plain" ohne Zeichensatzdeklaration war es vom Zufall
+       abhÑngig, ob eine Zeichensatzkonvertierung stattfindet oder nicht
+       (Charset-Variable war nicht initialisiert).
+
   Revision 1.12.2.23  2001/11/20 23:25:22  my
   MY:- Lizenz-Header aktualisiert
 
@@ -792,9 +824,10 @@ end.
   - ein (nicht dringend noetiges) Freeres hinzugefuegt
 
   Revision 1.12.2.3  2000/07/27 16:16:09  mk
-  - Bugfix f¸r den Bugfix f¸r einen Bugfix, der ausgeklammert wurde,
+  - Bugfix fÅr den Bugfix fÅr einen Bugfix, der ausgeklammert wurde,
     um einen anderen Bug zu fixen, der entstand, weil man einen Bug der
-    durch den Urspr¸nglichen Bugfix entstand, an der falschen Stelle gefixt hatte
+    durch den ursprÅnglichen Bugfix entstand, an der falschen Stelle
+    gefixt hatte.
 
   Revision 1.12.2.2  2000/07/27 14:56:52  jg
    - Mime-Extrakt - Makepartlist: INC(N) am EOF sorgt dafuer, dass die
