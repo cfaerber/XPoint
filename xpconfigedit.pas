@@ -2057,6 +2057,7 @@ begin
   finally
     BoxList.Free;
   end;
+  s := s1;
 end;
 
 
@@ -2331,6 +2332,9 @@ end;
 
 {
   $Log$
+  Revision 1.45.2.12  2003/10/03 11:34:24  mk
+  - fixed addServersTest
+
   Revision 1.45.2.11  2003/09/21 19:38:01  mk
   - fixed Bug #809656: 3.8.12. Multiserverbox keine zusätzlichen Serverboxen per F2
 
