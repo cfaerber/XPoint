@@ -23,7 +23,7 @@
       btxt : string[15];
       fido : boolean;
       s    : string[20];
-      yy   : byte;
+      b,yy : byte;
   label restart;
   begin
   restart: 
@@ -123,13 +123,20 @@
       end;
     end;
 
-    if not brk and (nt=nt_uucp) then begin
-      if (email<>'') and (cpos('@',email)=0)
-      then begin
-         hinweis(Getres2(10900,8));
-         enddialog;
-         goto restart;
-         end;
+    if not brk and (nt=nt_uucp) then
+    begin
+      if (email<>'') then
+      begin
+        b:=cpos('@',email);
+        if (b<=1) or (cpos('@',mid(email,b+1))<>0)
+          or (cpos('.',mid(email,b+1))=0)
+          or (email<>mailstring(email,false))
+        then begin
+          fehler(Getres2(10900,8));
+          enddialog;
+          goto restart;
+          end;
+        end;
       if (user='') then
         if (email='') then begin
           hinweis(getres2(10900,40)); enddialog; goto restart;
@@ -240,15 +247,6 @@
     freeres;
     readmask(brk);
     enddialog;
-
-    if not brk and (email<>'')
-    then begin
-      b:=cpos('@',email);
-      if b=0 then begin
-        hinweis(Getres2(10900,8));
-        goto restart;
-        end;
-      end; 
   end;
 
   procedure NewBox;
@@ -808,6 +806,7 @@
         mappsel(false,getres2(920,101));
         mhnr(30115);
       maddstring(3,5,getres2(920,107),PPPMailInEnv,35,160,'');    { 'Envelope-Adresse' }
+      msetvfunc(Multi_Mailstring);
       maddstring(3,6,getres2(920,108),PPPMailInUser,35,160,'');   { 'Benutzername' }
       maddstring(3,7,getres2(920,109),PPPMailInPass,18,75,'');    { 'Paáwort     ' }
       maddstring(43,7,getres2(920,110),PPPMailInPort,7,50,'0123456789 ');  { 'Port' }
@@ -816,6 +815,7 @@
       maddstring(3,11,getres2(920,106),PPPMailOutSrvr,35,160,'');  { 'Servername  ' }
         mappsel(false,getres2(920,103));
       maddstring(3,12,getres2(920,107),PPPMailOutEnv,35,160,'');   { 'Envelope-Adresse' }
+      msetvfunc(Multi_Mailstring);
       maddstring(3,13,getres2(920,108),PPPMailOutUser,35,160,'');  { 'Benutzername' }
       maddstring(3,14,getres2(920,109),PPPMailOutPass,18,75,'');   { 'Paáwort     ' }
       maddstring(43,14,getres2(920,110),PPPMailOutPort,7,50,'0123456789 '); { 'Port' }
@@ -1801,6 +1801,13 @@
 
 {
   $Log$
+  Revision 1.10.2.36  2001/07/23 16:52:48  my
+  JG+MY:- RFC/Client: implemented check for valid (multiple) eMail addresses
+          under Edit/Servers/Edit/Mail/News_Servers/Envelope_address (In+Out)
+  JG+MY:- RFC/Client: removed unnecessary mask test in _EditPPP
+  JG+MY:- RFC/UUCP: improved check for valid eMail address under
+          Edit/Servers/Edit/Names/eMail_address
+
   Revision 1.10.2.35  2001/07/11 01:48:57  my
   JG:- Fix: write server name to .BFG after rename of server
   JG:- Display net type "RFC" for RFC/UUCP and RFC/Client
