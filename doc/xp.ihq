@@ -1400,9 +1400,12 @@ Folgende Funktionen stehen zur Verfgung:
 
    <<U>>     wechselt in das PM-Fach des Absenders der
          gew„hlten Nachricht (rettet dem Genitiv...).
+         Eine etwaige Vertreteradresse wird berck-
+         sichtigt.
 
 <<<Ctrl-U> >>editiert den User, der die gew„hlte Nach-
-         richt verfaát hat.
+         richt verfaát hat. Eine etwaige Vertreter-
+         adresse wird *nicht* bercksichtigt.
 
 <<<Ctrl-T> >>editiert das Paáwort des Users, der die ge-
          w„hlte Nachricht verfaát hat.
@@ -1871,16 +1874,14 @@ oder <<<Alt-G> >> ([Glossary]-Funktion).@64
 
 Zwischenablage-Funktionen:
 
-*  kopiert markierten Block in die Zwischenablage
--  verschiebt markierten Block in die Zwischenablage
-+  fgt Zwischenablage an Cursorposition ein
-
 <<<Ctrl-Ins> >>   kopiert markierten Block in die
-              Zwischenablage
-<<<Shift-Ins> >>  fgt Zwischenablage an Cursorposition
-              ein
+oder <<*>>        Zwischenablage
+
 <<<Shift-Del> >>  verschiebt markierten Block in die
-              Zwischenablage
+oder <<->>        Zwischenablage
+
+<<<Shift-Ins> >>  fgt Zwischenablage an Cursorposition
+oder <<+>>        ein
 
 Diese Zwischenablage arbeitet unabh„ngig von den b-
 rigen Blockoperationen. Falls XP unter einem Be-
