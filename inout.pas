@@ -702,8 +702,18 @@ begin
 end;
 
 Procedure testbrk(var brk:boolean);
+var 
+  c: Char;
 begin
   brk := false;
+  if Keypressed then
+  begin
+    c := ReadKey;
+    if c = #27 then 
+      brk := true 
+    else // clear keyboard buffer if special key pressed
+      if c = #0 then ReadKey;
+  end;
 end;
 
 
@@ -1666,6 +1676,9 @@ end;
 
 {
   $Log$
+  Revision 1.81  2001/09/26 23:19:15  mk
+  - reimplemented testbrk
+
   Revision 1.80  2001/09/18 20:29:19  cl
   - fixed scrolling with pressed mouse button
 
