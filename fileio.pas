@@ -60,9 +60,8 @@ Procedure MakeBak(n,newext:string);             { sik anlegen             }
 procedure MakeFile(fn:pathstr);                 { Leerdatei erzeugen      }
 procedure mklongdir(path:pathstr; var res:integer);  { mehrere Verz. anl. }
 function  textfilesize(var t:text):longint;     { Grî·e v. offener Textdatei }
-{$IFDEF BP }
 function  diskfree(drive:byte):longint;         { 2-GB-Problem umgehen    }
-{$ENDIF }
+function  disksize(drive:byte):longint;
 function  exetype(fn:pathstr):TExeType;
 
 procedure fm_ro;                                { Filemode ReadOnly       }
@@ -570,6 +569,15 @@ begin
       end;
     ShareDa:=(ax<>1);
     end;
+  { Weiterer Installcheck fÅr Share, um Probleme mit einem Plain
+    DR-DOS zu umgehen }
+  with regs do
+  begin
+    ax:=$1000;
+    intr($2f, regs);
+    writeln(shareda);
+    if al <> $ff then ShareDa := false;
+  end;
 end;
 {$ENDIF}
 
@@ -625,9 +633,8 @@ end;
 { - bei 2..4 GB liefern diskfree und disksize negative Werte }
 { - bei bestimmten Cluster/Sektorgrî·en-Kombinationen        }
 {   liefern diskfree und disksize falsche Werte              }
-{ Unter FPC gibt es eine gleichlautende Procedure in der Unit DOS }
-{$IFDEF BP }
-function diskfree(drive:byte):longint;
+
+function diskspace(drive:byte; size:boolean):longint;
 var l,ll : longint;
     regs : registers;
 begin
@@ -637,7 +644,10 @@ begin
   if regs.ax=$ffff then
     l:=0
   else begin
-    l:=longint(regs.ax)*regs.bx;   { Secs/Cluster * Free Clusters }
+    if size then
+      l:=longint(regs.ax)*regs.dx    { Secs/Cluster * Clusters/Disk }
+    else
+      l:=longint(regs.ax)*regs.bx;   { Secs/Cluster * Free Clusters }
     if regs.cx>=512 then
       ll:=(l div 2)*(regs.cx div 512)
     else
@@ -645,9 +655,21 @@ begin
     if ll>=2097152 then l:=maxlongint
     else l:=l*regs.cx;
     end;
-  diskfree:=l;
+  diskspace:=l;
 end;
-{$ENDIF }
+
+
+function diskfree(drive:byte):longint;
+begin
+  diskfree:=diskspace(drive,false);
+end;
+
+
+function disksize(drive:byte):longint;
+begin
+  disksize:=diskspace(drive,true);
+end;
+
 
 function exetype(fn:pathstr):TExeType;
 var f       : file;
@@ -696,8 +718,8 @@ begin
 end.
 {
   $Log$
-  Revision 1.8  2000/03/04 14:53:49  mk
-  Zeichenausgabe geaendert und Winxp portiert
+  Revision 1.7.2.1  2000/03/26 09:41:59  mk
+  - erweiterte Share-Erkennung
 
   Revision 1.7  2000/03/03 20:26:40  rb
   Aufruf externer MIME-Viewer (Win, OS/2) wieder geÑndert
