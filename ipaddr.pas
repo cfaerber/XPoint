@@ -37,7 +37,7 @@ uses
   dossock,
 {$ELSE }
   {$IFDEF OS2 }
-    os2sock,
+    pmwsock,
   {$ELSE }
   {$IFDEF fpc}
     sockets,
@@ -243,6 +243,9 @@ end;
 
 {
   $Log$
+  Revision 1.15.2.1  2003/09/01 16:33:30  mk
+  - use pmwsock instead of os2sock
+
   Revision 1.15  2002/03/23 15:12:51  mk
   - removed compiler warnings
 
