@@ -160,9 +160,6 @@ begin
     if _deutsch then stop('ZurÅck zu '+xp_xp+' mit EXIT.')
     else stop('Type EXIT to return to '+xp_xp+'.');
 {$endif}
-  ShellPath:=GetCurrentDir;
-  if (Shellpath+DirSepa<>progpath) then
-    SetCurrentDir(progpath);
 
   logo;
 
@@ -179,6 +176,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2002/01/30 22:28:58  mk
+  - corrected dir handling (progpath is not availble at call time in xpx.pas)
+
   Revision 1.48  2001/10/01 19:32:00  ma
   - compiles again (DOS32)
 

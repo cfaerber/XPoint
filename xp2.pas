@@ -349,6 +349,9 @@ begin
   HomeDir := LibDir;
   DocDir  := LibDir;
   TestCD;
+  ShellPath:=GetCurrentDir;
+  if (Shellpath+DirSepa<>progpath) then
+    SetCurrentDir(progpath);
 end; { initdirs }
 {$ENDIF}
 
@@ -1125,6 +1128,9 @@ finalization
 //!!  FreeMem(marked);
 {
   $Log$
+  Revision 1.134  2002/01/30 22:28:58  mk
+  - corrected dir handling (progpath is not availble at call time in xpx.pas)
+
   Revision 1.133  2002/01/30 17:18:13  mk
   - do not create fkeys record dynamically, because the record containts
     ansistrings and FPC has problems with array->pointer of record with
