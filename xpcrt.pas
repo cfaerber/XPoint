@@ -50,6 +50,9 @@ implementation
 uses
   Debug, Windows, SysUtils;
 
+//function SetConsoleCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
+//function SetConsoleOutputCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
+
 const
   TextRecNameLength = 256;
   TextRecBufSize    = 256;
@@ -275,9 +278,14 @@ begin
   end;
 end;
 
-{$IFNDEF FPC }
 initialization
+{$IFNDEF FPC }
   StdInputHandle := GetStdHandle(STD_INPUT_HANDLE);
 {$ENDIF }
+  if Longint(Windows.GetVersion)>=0 then // WinNT
+  begin
+    SetConsoleOutputCP(437);
+    SetConsoleCP(437);
+  end;
 end.
 
