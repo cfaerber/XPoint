@@ -836,6 +836,13 @@ begin                  { function Netcall }
     exit;
     end;
 
+  {$ifdef DOS32}
+  if netztyp IN [nt_POP3,nt_NNTP] then begin
+    tfehler('TCP/IP netcalls are not yet supported in DOS32 version.',60);
+    exit;
+    end;
+  {$endif}
+
   if crash then begin
     tfehler('Fido crash netcalls are currently not supported.',60);
     exit;
@@ -1202,6 +1209,9 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/04/15 19:31:22  ma
+  - added error message for DOS32 TCP/IP netcalls
+
   Revision 1.13  2001/04/06 21:06:39  ml
   - nntpsend now working
 
