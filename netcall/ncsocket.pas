@@ -150,9 +150,8 @@ implementation
 uses
 {$ifdef NCRT}
   xpcurses,
-{$else}
-  keys,
 {$endif}
+  keys,
   debug,typeform;
 
 { TSocketNetcall }
@@ -435,6 +434,9 @@ end;
 
 {
   $Log$
+  Revision 1.38  2002/12/29 11:23:35  mk
+  - added unit keys for NCRT, too
+
   Revision 1.37  2002/12/28 20:11:08  dodi
   - start keyboard input redesign
 
