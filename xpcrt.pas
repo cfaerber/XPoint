@@ -37,9 +37,7 @@ function readkey: char;
 var
   ShiftKeyState: boolean;
   CtrlKeyState: boolean;
-  {$IFNDEF FPC }
   StdInputHandle: THandle;
-  {$ENDIF }
 
 implementation
 
@@ -284,9 +282,7 @@ end;
 procedure do_initialization;
 var mode:DWORD;
 begin
-{$IFNDEF FPC }
   StdInputHandle := GetStdHandle(STD_INPUT_HANDLE);
-{$ENDIF }
   if Longint(Windows.GetVersion)>=0 then // WinNT
   begin
     SetConsoleCP(437);
@@ -306,6 +302,9 @@ initialization
 
 {
   $Log$
+  Revision 1.16  2001/09/26 23:20:46  mk
+  - get StdHandle in FPC too
+
   Revision 1.15  2001/09/21 16:16:48  mk
   - fixed some memory leaks (thanks to BoundsChecker)
 
