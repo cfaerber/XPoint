@@ -653,7 +653,7 @@ begin
 {$ELSE}
   Shell(LeftStr(UpArc,p-1)+Dest+fn+mid(UpArc,p+7),500,3);
 {$ENDIF}
-   
+
   assign(f1,Dest+fn);
 
   if existf(f1) then                    { Datei wurde nicht gepackt }
@@ -2924,6 +2924,8 @@ begin
     begin
       RawNews := true;
       ConvertNewsfile(spath + sr.name, news);
+      if ClearSourceFiles then DeleteFile(spath+sr.name) else
+        RenameFile(spath+sr.name,spath+sr.name+'.BAK');
     end
     else
     if LeftStr(sr.name, 2) = 'X-' then
@@ -3852,6 +3854,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2001/04/05 13:25:46  ml
+  - NNTP is working now!
+
   Revision 1.42  2001/03/28 12:59:06  ml
   - Shellcommandfix under linux
 

@@ -89,7 +89,7 @@ type
 
     { Liste holen (withDescr = Description, wenn moeglich }
     function List(aList: TStringList; withDescr: boolean): boolean;
-    
+
     { Holen einer Gruppenbeschreibung }
     function GroupDescription(group: string): string;
 
@@ -98,10 +98,10 @@ type
 
     { Message vom server holen }
     function GetMessage(msgNr: Integer; Message: TStringList): Integer; virtual;
-    
+
     { Message vom server holen }
     function PostMessage(Message: TStringList): Integer; virtual;
-    
+
     { next 3 only available after selecting Group }
     { first Message of this group hold by server }
     property FirstMessage: Integer read FirstNr;
@@ -138,7 +138,7 @@ resourcestring
   res_list2             = 'Kann nicht mit %s kommunizieren!';
   res_list3             = '%s gibt die Liste nicht frei!';
   res_list4             = '%d gelesen';
-  res_list5		= 'Suche Beschreibung fuer %s...';
+  res_list5             = 'Suche Beschreibung fuer %s...';
 
   res_group1            = 'setze Gruppe %s';
   res_group2            = 'Gruppe %s gesetzt';
@@ -255,19 +255,19 @@ begin
     Output(mcInfo,res_list5,[group]);
     SWriteln('MODE READER');
     SReadln(s);
-    { if not (ParseResult(s) in [200..299]) then begin }	{ !! FPC-Bug # 1135 }
-    code := ParseResult(s);					{ Workaround }
-    if (code<200) or (code>299) then begin			{ Workaround }
+    { if not (ParseResult(s) in [200..299]) then begin }        { !! FPC-Bug # 1135 }
+    code := ParseResult(s);                                     { Workaround }
+    if (code<200) or (code>299) then begin                      { Workaround }
       Output(mcError,res_list2,[Host.Name]);
       exit;
     end;
-    
+
     { Get Description }
     SWriteln('LIST NEWSGROUPS '+group);
     SReadln(s);
-    { if not (ParseResult(s) in [200..299]) then begin }	{ !! FPC-Bug # 1135 }
-    code := ParseResult(s);					{ Workaround }
-    if (code<200) or (code>299) then begin			{ Workaround }
+    { if not (ParseResult(s) in [200..299]) then begin }        { !! FPC-Bug # 1135 }
+    code := ParseResult(s);                                     { Workaround }
+    if (code<200) or (code>299) then begin                      { Workaround }
       Output(mcError,res_list3,[Host.Name]);
       exit;
     end;
@@ -293,10 +293,10 @@ end;
 
 function TNNTP.List(aList: TStringList; withDescr: boolean): boolean;
 const
-  counter	: integer	= 0;	{ Fuer die Anzeige }
+  counter       : integer       = 0;    { Fuer die Anzeige }
 var
-  s		: string;		{ group }
-  code, i 	: integer;		{ NNTP-Result, Hilfsvar. }
+  s             : string;               { group }
+  code, i       : integer;              { NNTP-Result, Hilfsvar. }
 begin
   Result := false;
   aList.Clear;
@@ -304,15 +304,15 @@ begin
   if Connected then
   begin
     Output(mcInfo,res_list1,[0]);
-    SWriteln('MODE READER');				{ Modus setzen }
+    SWriteln('MODE READER');                            { Modus setzen }
     SReadln(s);
     code:= ParseResult(s);
-    if (code<200) or (code>299) then begin		{ Fehler? }
-      Output(mcError,res_list2,[Host.Name]);		{ -> Ja, Ende }
+    if (code<200) or (code>299) then begin              { Fehler? }
+      Output(mcError,res_list2,[Host.Name]);            { -> Ja, Ende }
       exit;
     end;
 
-    SWriteln('LIST');					{ Liste anfordern }
+    SWriteln('LIST');                                   { Liste anfordern }
     SReadln(s);
     code:= ParseResult(s);
     if (code<200) or (code>299) then begin
@@ -321,27 +321,27 @@ begin
     end;
 
     repeat
-      SReadln(s); Inc(counter);				{ Zeile lesen }
-      if (counter mod 25)=0 then			{ User beruhigen }
+      SReadln(s); Inc(counter);                         { Zeile lesen }
+      if (counter mod 25)=0 then                        { User beruhigen }
         Output(mcVerbose,res_list4, [counter]);
       code:= ParseResult(s);
       case code of
-        -1 : begin					{ Gruppe }
-	       s:= Trim(s);
-	       i:= pos(#32,s); 				{ Leerzeichen/ }
-	       if i=0 then				{ Tabulator suchen }
-	         i:= pos(#9,s);
-	       if i>0 then				{ Gefunden ? }
-	         SetLength(s,i-1);			{ -> Abschneiden }
-	       if s<>'' then
-	         aList.Add(s);
-	     end;
-        0  : result:= true;				{ Listenende }
-      else						{ Fehler }
+        -1 : begin                                      { Gruppe }
+               s:= Trim(s);
+               i:= pos(#32,s);                          { Leerzeichen/ }
+               if i=0 then                              { Tabulator suchen }
+                 i:= pos(#9,s);
+               if i>0 then                              { Gefunden ? }
+                 SetLength(s,i-1);                      { -> Abschneiden }
+               if s<>'' then
+                 aList.Add(s);
+             end;
+        0  : result:= true;                             { Listenende }
+      else                                              { Fehler }
         Output(mcError,res_list3,[Host.Name]);
         Result:= false;
       end; { case }
-    until code<>-1;					{ Bis zum Ende lesen }
+    until code<>-1;                                     { Bis zum Ende lesen }
     Output(mcInfo,res_list4, [aList.Count]);
 
     { Dieses Unterroutine ist noch sehr ineffizient.
@@ -349,17 +349,17 @@ begin
       aufzubauen und gleichzeitig die Gruppenbeschreibung zu
       holen. Da ich es in XP aber nicht brauche, lasse ich
       es erstmal so }
-    if withDescr then 					{ Beschreibungen }
+    if withDescr then                                   { Beschreibungen }
       for i:= 0 to aList.Count-1 do begin
-        if (i mod 25)=0 then				{ User beruhigen }
-	  Output(mcVerbose,res_list4, [i]);
+        if (i mod 25)=0 then                            { User beruhigen }
+          Output(mcVerbose,res_list4, [i]);
         s:= GroupDescription(aList[i]);
-	if s<>'' then
-	  aList[i]:= aList[i]+' '+s;
+        if s<>'' then
+          aList[i]:= aList[i]+' '+s;
       end; { for i... }
     Output(mcInfo,res_list4, [aList.Count]);
 
-    aList.Sort;						{ Sortieren }
+    aList.Sort;                                         { Sortieren }
   end;
 end;
 
@@ -444,7 +444,11 @@ begin
 
     SReadln(s);
     repeat
-      Message.Add(s);
+      if (s <> '') and (s[1] = '.') then
+        Message.Add(Copy(s, 2, MaxInt))
+      else
+        Message.Add(s);
+
       SReadln(s);
     until s = '.';
 
@@ -474,14 +478,14 @@ begin
     Error := ParseResult(s);
     case Error of
       nntp_PostPleaseSend : begin
-	 for I := 0 to Message.Count - 1 do
-	    SWriteln(Message[I]);
-	 SWriteln(nntpMsg_EndSign);
+         for I := 0 to Message.Count - 1 do
+            SWriteln(Message[I]);
+         SWriteln(nntpMsg_EndSign);
       end
       else begin
-	 Output(mcInfo,res_post3, [Error]);
-	 Result := Error;
-	 exit;
+         Output(mcInfo,res_post3, [Error]);
+         Result := Error;
+         exit;
       end;
     end;
 
@@ -499,6 +503,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2001/04/05 13:25:47  ml
+  - NNTP is working now!
+
   Revision 1.16  2001/03/21 19:17:09  ma
   - using new netcall routines now
   - renamed IPC to Progr.Output

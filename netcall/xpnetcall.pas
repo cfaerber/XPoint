@@ -95,7 +95,7 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 implementation  {---------------------------------------------------}
 
 uses direct,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
-     xpfido,xpncfido,xpnczconnect,xpncpop3,xpmakeheader,ncmodem;
+     xpfido,xpncfido,xpnczconnect,xpncpop3,xpncnntp, xpmakeheader,ncmodem;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
@@ -841,7 +841,7 @@ begin                  { function Netcall }
   domain := dbReadStr(d,'domain');
   dbClose(d);
 
-  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_UUCP])then begin
+  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_NNTP, nt_UUCP])then begin
     tfehler('Netcalls to this server type are currently not supported.',60);
     exit;
     end;
@@ -980,6 +980,12 @@ begin                  { function Netcall }
           GetPOP3Mails(BoxName,Boxpar,Domain,IncomingFiles);
           SendSMTPMails(BoxName,bfile,BoxPar,PPFile);
         end; {case ltPOP3}
+
+        ltNNTP: begin
+          Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
+          GetNNTPMails(BoxName,Boxpar,IncomingFiles);
+//          SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
+        end;
 
         else
           Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(LoginTyp),DLError);
@@ -1206,6 +1212,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/04/05 13:25:47  ml
+  - NNTP is working now!
+
   Revision 1.10  2001/03/24 23:43:08  cl
   - fixes for DOS32
 

@@ -34,7 +34,7 @@ uses
   SysUtils;
 
 function GetNNTPList(box: string; bp: BoxPtr): boolean;
-function GetNNTPMails(box: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
+function GetNNTPMails(box: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
 function SendNNTPMails(box,boxfile: string; bp: BoxPtr; PPFile: String): boolean;
 
 implementation  { ------------------------------------------------- }
@@ -52,6 +52,8 @@ uses
   xpnetcall,
   Maus2,                        { MWrt }
   xp1,                          { dialoge }
+  database,
+  datadef,
   xp1input;                     { JN }
 
 function GetAllGroups(box: string; bp: BoxPtr): boolean;
@@ -231,35 +233,39 @@ begin
 end;
 
 
-function GetNNTPMails(box: string; bp: BoxPtr; Domain: String; IncomingFiles: TStringList): boolean;
-
-const RFCFile= 'NNTPTEMP';
+function GetNNTPMails(box: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
 
   procedure ProcessIncomingFiles(IncomingFiles: TStringList);
-  var iFile: Integer; uu: TUUZ;
+  var
+    iFile: Integer;
+    uu: TUUZ;
   begin
     uu := TUUZ.Create;
-    for iFile:=0 to IncomingFiles.Count-1 do begin
+    for iFile:=0 to IncomingFiles.Count-1 do
+    begin
       uu.source := IncomingFiles[iFile];
-      uu.dest := RFCFile;
-      uu.OwnSite := boxpar^.pointname+domain;
+      uu.dest := ChangeFileExt(IncomingFiles[iFile], '.z');
+      IncomingFiles[iFile] := uu.dest;
+      uu.OwnSite := boxpar^.pointname;
       uu.ClearSourceFiles := true;
       uu.utoz;
-      end;
+    end;
     uu.free;
-    iFile:=IncomingFiles.Count;
-    IncomingFiles.Clear;
-    if iFile>0 then IncomingFiles.Add(RFCFile);
-  end;
+   end;
 
 var
   NNTP           : TNNTP;                { Socket }
   ProgressOutputXY: TProgressOutputXY;  { ProgressOutputXY }
+  d: DB;
   x,y           : byte;                 { Fenster-Offset }
   f             : text;                 { Zum Speichern }
-  i             : integer;              { -----"------- }
+  p, i          : integer;              { -----"------- }
   List          : TStringList;
+  RCList        : TStringList;          { .rc-File }
+  ArticleIndex, RCIndex: Integer;
+  RCFilename    : String;
   aFile         : string;
+  Group: String;
 begin
   { ProgressOutputXY erstellen }
   ProgressOutputXY:= TProgressOutputXY.Create;
@@ -282,30 +288,63 @@ begin
   MWrt(x+15,y+2,getres2(30010,8));              { 'Verbinden...' }
   MWrt(x+15,y+4,getres2(30010,9));              { 'unbekannt' }
   MWrt(x+15,y+6,bp^.NNTP_ip);
+
+  dbOpen(d,BoxenFile,1);
+  dbSeek(d,boiName,UpperCase(box));
+  if dbFound then
+    RCFilename := ChangeFileExt(dbReadStr(d,'dateiname'), '.rc');
+
   { ProgressOutputXY einrichten }
   ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
   { Verbinden }
   try
     result:= true;
     List := TStringList.Create;
+    RCList := TStringList.Create;
+    RCList.LoadFromFile(RCFilename);
     NNTP.Connect;
     { Name und IP anzeigen }
     MWrt(x+15,y+6,NNTP.Host.Name+' ['+NNTP.Host.AsString+']');
     MWrt(x+15,y+8,FormS(NNTP.Server,50));
-    MWrt(x+15,y+2,'Statistik holen');
-{    NNTP.Stat;
 
-    MWrt(x+15,y+2, IntToStr(NNTP.MailCount) + ' Mails in ' + IntToStr(NNTP.MailSize) + ' Bytes');
-
-    for i := 1 to NNTP.MailCount do
-}
+    for RCIndex := 0 to RCList.Count - 1 do
     begin
-      MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(i) + '             ');
-      List.Clear;
-//      NNTP.Retr(i, List);
-      aFile:=OwnPath + XFerDir + IntToStr(i) + '.mail';
-      List.SaveToFile(aFile);
-      IncomingFiles.Add(aFile);
+      Group := RCLIst[RCIndex];
+      // skip Lines special lines in .rc
+      if (Group <> '') and (Group[1] in ['$', '#', '!']) then Continue;
+
+      p := Pos(' ', Group);
+      if p > 0  then
+      begin
+        ArticleIndex := StrToIntDef(Copy(Group, p + 1, MaxInt), 0);
+        Group := Copy(Group, p-1, MaxInt);
+      end else
+       ArticleIndex := 0;
+
+      NNTP.SelectGroup(Group);
+
+      if ArticleIndex < 0 then ArticleIndex := NNTP.LastMessage + ArticleIndex;
+      if ArticleIndex < NNTP.FirstMessage then ArticleIndex := NNTP.FirstMessage;
+
+      while ArticleIndex < NNTP.LastMessage do
+      begin
+        Inc(ArticleIndex);
+        MWrt(x+15,y+2,'Empfange Nachricht ' + IntToStr(ArticleIndex) + '             ');
+
+        NNTP.GetMessage(ArticleIndex, List);
+        if List.Count > 10000 then
+        begin
+          aFile:=OwnPath + XFerDir;
+          for i := 1 to Length(Group) do
+            if Group[i] in ['a'..'z', 'A'..'Z'] then
+              aFile := aFile + Group[i];
+          aFile := aFile  + IntToStr(ArticleIndex) + '.news';
+          List.SaveToFile(aFile);
+          IncomingFiles.Add(aFile);
+          List.Clear;
+        end;
+      end;
+      RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex);
     end;
 
     NNTP.Disconnect;
@@ -313,6 +352,8 @@ begin
     trfehler(831,31);
     result:= false;
   end;
+  RCList.SaveToFile(RCFilename);
+  RCList.Free;
   List.Free;
   NNTP.Free;
   ProcessIncomingFiles(IncomingFiles);
@@ -323,6 +364,9 @@ end.
 
 {
         $Log$
+        Revision 1.3  2001/04/05 13:25:47  ml
+        - NNTP is working now!
+
         Revision 1.2  2001/04/05 12:16:35  ml
         - nntp-routinen prep fuer netcall
 
