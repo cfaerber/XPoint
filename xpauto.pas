@@ -79,7 +79,7 @@ begin
     dbRead(auto,'lastdate',lastdate);
     dbRead(auto,'lastfdate',lastfd);
     lastmid := dbReadStr(auto,'lastmsgid');
-  end;
+  end;                    
 end;
 
 procedure AutoWrite(var ar:AutoRec);
@@ -143,16 +143,15 @@ var mmask     : array[1..12] of boolean;
   end;
 
   function amodi:boolean;
-  var sr : tsearchrec;
-      fn : string;
+  var
+    fn : string;
   begin
     fn:=ar.datei;
     adddir(fn,SendPath);
-    if findfirst(fn,faAnyFile,sr)<>0 then
-      amodi:=false
+    if not FileExists(fn) then
+      Result := false
     else
-      amodi:=sr.time<>ar.lastfd;
-    FindClose(sr);
+      amodi:=FileAge(fn)<>ar.lastfd;
   end;
 
 begin
@@ -210,7 +209,6 @@ var tmp  : boolean;
     leer : string;
     dat  : longint;
     tt   : longint;
-    fh   : longint;     // File-Handle
     b    : byte;
     muvs : boolean;
     sData: TSendUUData;
@@ -261,10 +259,8 @@ begin
         dat:=ixdat(zdate);
         dbWrite(auto,'lastdate',dat);
         dbWriteStr(auto,'lastmsgid',sData.msgid);
-        fh:= FileOpen(datei,fmOpenRead);
-        tt:= FileGetDate(fh);
-        FileClose(fh);
-        dbWrite(auto,'lastfdate',tt);
+        tt := FileAge(Datei);
+        dbWrite(auto,'lastfdate', tt);
         if dat>=datum1 then begin
           datum1:=0;
           dbWrite(auto,'datum1',datum1);
@@ -330,7 +326,7 @@ var sr    : tsearchrec;
     mgel  : boolean;       { Save fÅr ParGelesen }
     fnstart: string;      { Name der Start.bat }
 
-  function find(ext:string):boolean;
+  function find(const ext:string):boolean;
   begin
     if first then
       rc:= findfirst(AutoxDir+'*'+FileUpperCase(ext),faAnyFile,sr)
@@ -672,6 +668,9 @@ end;
 
 {
   $Log$
+  Revision 1.48.2.9  2003/08/23 20:04:46  mk
+  - always use FileAge to get filedate, possilbe solves autosend problems
+
   Revision 1.48.2.8  2003/04/16 20:41:25  mk
   - fixed some (possilbe) bugs in autoexec and SendMsg
   - use Ansistrings to copy part of message in new buffer
