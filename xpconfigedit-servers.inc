@@ -458,6 +458,7 @@
         dbWriteStr(d,'email',email);
         dbWriteStr(d,'boxdomain',bdom);
         dbWriteStr(d,'fidoname',fido);
+        dbWriteStr(d,'replyto',replyto);
         if (name='99:99/99') or (name='99:99/98') then begin  { Fido-Crashbox }
           b:=2;   { kein /Netcall/Alle }
           dbWrite(d,'script',b);
@@ -2370,6 +2371,9 @@
 
 {
   $Log$
+  Revision 1.61  2002/08/09 23:09:25  cl
+  - Fixed [ 587622 ] 3.9: Fehler bei Box anlegen
+
   Revision 1.60  2002/07/31 19:26:21  ma
   - user=>email db field code synchronized with v3.8
     (does not need re-entering email address when upgrading from old
