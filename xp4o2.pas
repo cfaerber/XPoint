@@ -450,9 +450,12 @@ var hdp    : headerp;
       else begin
         mid:=dbLongStr(nullid); nullid:=0;
         end;
-      dbSeek(bezbase,beiRef,LeftStr(mid,4));
-      for i:=0 to 3 do
-        ida[i]:=mid[4-i];
+      if Length(mid) >=4 then
+      begin
+        dbSeek(bezbase,beiRef,LeftStr(mid,4));
+        for i:=0 to 3 do
+          ida[i]:=mid[4-i];
+        end;
     end;
 
     function _last:boolean;
@@ -887,6 +890,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/10/23 20:09:18  mo
+  -auf vorhandene msg-ID prüfen
+
   Revision 1.22  2000/10/17 10:05:51  mk
   - Left->LeftStr, Right->RightStr
 
