@@ -257,7 +257,9 @@ end;
 function  ReadBreak: boolean; //check for break (esc) pressed
 begin
   Result := False;
-  if KeyPressed then begin
+  // to not process #27 in macro at this point
+  if not ((forwardkeys <> '') and (forwardkeys[1] = #27)) and keypressed then
+  begin
     case ReadKey of
     #0:   ReadKey;
     #27:  Result := True;
@@ -472,6 +474,9 @@ initialization
 
 {
   $Log$
+  Revision 1.54  2003/04/02 17:11:33  mk
+  - do not process #27 in testbrk while using macros
+
   Revision 1.53  2002/12/28 20:23:38  mk
   - added inout to allow comiling with fpc
 
