@@ -595,6 +595,7 @@ type   textp  = ^text;
                   pop3_id   : string;      { POP3: User-ID, falls noetig }
                   pop3_pwd  : string;      { POP3: Passwort, falls noetig }
                   pop3_clear: boolean;     { POP3: Nachrichten loeschen }
+                  pop3_APOP : boolean;     { POP3: APOP (encrypted passwd) verwenden }
                   smtp_ip   : string;      { SMTP: IP oder Domain }
                   smtp_id   : string;      { SMTP: User-ID, falls noetig }
                   smtp_pwd  : string;      { SMTP: Password, falls noetig }
@@ -1121,6 +1122,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.124  2001/04/16 15:55:54  ml
+  - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
+
   Revision 1.123  2001/04/03 13:25:40  ma
   - cleaned up fido aka handling
 

@@ -2041,6 +2041,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    Login name~
 3    Password  ~
 4    Delete messages on Server
+5    encrypt passwords (APOP)
 -
 + 952
 # SMTP
@@ -3691,6 +3692,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.6  2001/04/16 15:55:54  ml
+# - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
+#
 # Revision 1.5  2001/04/15 17:08:20  mf
 # 530.1 - 530.30 changed.
 #

@@ -755,7 +755,7 @@
   procedure EditPOP3(var brk:boolean);
   var x,y   : byte;
   begin
-    dialog(ival(getres2(951,0)),9,'POP3-Einstellungen',x,y);
+    dialog(ival(getres2(951,0)),10,'POP3-Einstellungen',x,y);
     with boxpar^ do
     begin
       maddstring(3,2,GetRes2(951,1),pop3_ip,25,255,            { 'Server    ~' }
@@ -763,6 +763,7 @@
       maddstring(3,4,GetRes2(951,2), pop3_id,25,255,'');        { 'Loginname ~' }
       maddstring(3,6,GetRes2(951,3), pop3_pwd,25,255,'');      { 'Passwort  ~' }
       maddbool(3,8, GetRes2(951,4), pop3_clear); { 'Abgeholte Mails loeschen' }
+      maddbool(3,9, GetRes2(951,5), pop3_APOP); { 'APOP benutzen' }
       freeres;
       readmask(brk);
       enddialog;
@@ -1744,6 +1745,9 @@
 
 {
   $Log$
+  Revision 1.45  2001/04/16 15:55:54  ml
+  - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
+
   Revision 1.44  2001/04/03 13:25:40  ma
   - cleaned up fido aka handling
 

@@ -169,6 +169,7 @@ begin
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_pop3init,[BoxName]),True);
   { Host und ... }
   POP:= TPOP3.CreateWithHost(bp^.pop3_ip);
+  Pop.UseAPOP := BoxPar^.Pop3_APOP;
   { POWindow erstellen }
   POP.ProgressOutput:= POWindow;
   { ggf. Zugangsdaten uebernehmen }
@@ -210,6 +211,9 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/04/16 15:55:54  ml
+  - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
+
   Revision 1.10  2001/04/16 14:28:25  ma
   - using ProgrOutputWindow now
 

@@ -45,6 +45,7 @@ type
 
     FServer             : string;               { Server-Software }
     FTimestamp          : string;               { Timestamp for APOP }
+    FUseAPOP            : Boolean;
     FUser, FPassword    : string;               { Identifikation }
     FMailCount, FMailSize: Integer;
 
@@ -55,6 +56,7 @@ type
     property Server: string read FServer;
     property User: string read FUser write FUser;
     property Password: string read FPassword write FPassword;
+    property UseAPOP: Boolean read FUseAPOP write FUseAPOP;
     property MailCount: Integer read FMailCount;
     property MailSize: Integer read FMailSize;
 
@@ -107,6 +109,8 @@ constructor TPOP3.Create;
 begin
   inherited Create;
   FPort:= DefaultPOP3Port;
+  FTimeStamp := '';
+  FUseAPOP := True;
   FUser:='';
   FPassword:='';
   FServer:= '';
@@ -135,8 +139,8 @@ begin
       exit;
     end;
 
-    case FTimestamp='' of
-      true: begin // no APOP login possible
+    case FUseAPOP of
+      false: begin // no APOP login possible
          Output(mcInfo,res_loginplaintext,[0]);
          SWritelnFmt('USER %s', [FUser]);
          SReadLn(s);
@@ -160,7 +164,7 @@ begin
          Result := true;
          end;
 
-      false: begin // use APOP
+      true: begin // use APOP
          Output(mcInfo,res_apoplogin,[0]);
          SWritelnFmt('APOP %s %s', [FUser,LowerCase(MD5_Digest(FTimestamp+FPassword))]);
          SReadLn(s);
@@ -310,6 +314,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2001/04/16 15:55:54  ml
+  - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
+
   Revision 1.9  2001/04/16 14:28:25  ma
   - using ProgrOutputWindow now
 

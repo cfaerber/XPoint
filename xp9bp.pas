@@ -185,6 +185,7 @@ begin
     pop3_id := '';                      { POP3: User-ID, falls noetig }
     pop3_pwd  := '';                    { POP3: Passwort, falls noetig }
     pop3_clear := true;                 { POP3: Nachrichten loeschen }
+    pop3_APOP := true;                  { POP3: APOP benutzen }
 
     SMTP_ip := 'smtp';                  { SMTP: IP oder Domain }
     SMTP_id := '';                      { SMTP: User-ID, falls noetig }
@@ -340,6 +341,7 @@ begin
             gets(s,su,'POP3-ID', pop3_id,255) or
             gets(s,su,'POP3-Password', pop3_pwd, 255) or
             getx(su,  'POP3Clear', pop3_clear) or
+            getx(su,  'POP3APOP', pop3_APOP) or
             gets(s,su,'SMTP-IP', smtp_ip, 255) or
             gets(s,su,'SMTP-ID', smtp_id, 255) or
             gets(s,su,'SMTP-Password', smtp_pwd, 255) or
@@ -487,6 +489,7 @@ begin
     if pop3_id <>''  then writeln(t,'POP3-ID=',pop3_id);
     if pop3_pwd<>''  then writeln(t,'POP3-Password=',pop3_pwd);
     if not pop3_clear then writeln(t,'POP3Clear=N');
+    if not pop3_APOP then writeln(t,'POP3APOP=N');
 
     if smtp_ip <>''  then writeln(t,'SMTP-IP=',smtp_ip);
     if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
@@ -607,6 +610,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2001/04/16 15:55:54  ml
+  - APOP (encrypted POP3-Authentification) - switch in Pop3-Boxconfig
+
   Revision 1.33  2001/04/05 14:12:03  ml
   - fixed typo
 
