@@ -1438,13 +1438,14 @@ begin
 end;
 
 function SMatch(const s1,s2:string):integer;          { Anzahl der uebereinst. Bytes  }
-var p,ml : integer;
+var
+  ml: Integer;
 begin
-  p:=0;
+  Result :=1;
   ml := min(length(s1),length(s2));
-  while (p<ml) and (s1[p]=s2[p]) do
-    inc(p);
-  SMatch:=p;
+  while (Result < ml) and (s1[Result] = s2[Result]) do
+    inc(Result);
+  Dec(Result);
 end;
 
 
@@ -1702,6 +1703,9 @@ end;
 
 {
   $Log$
+  Revision 1.107.2.7  2003/05/01 10:20:56  mk
+  - fixed range check error in SMatch
+
   Revision 1.107.2.6  2003/01/24 20:19:19  mk
   - fixed FPC compile problem
 
