@@ -148,7 +148,7 @@ begin
         while (y<=length(s)) and (s[y] in urlchars) do inc(y); { Ende der URL suchen... }
         s:=left(s,y-1);
       end;
-      if (pos('@',s)>0) and (isat) then        { Wenn es keine @-Adresse (Strato z.B.) ist }
+      if (cpos('@',s)>0) and (isat) then       { Wenn es keine @-Adresse (Strato z.B.) ist }
       begin
         s:=mid(s,2);
         s:='http://www.' + s;
@@ -1043,6 +1043,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.29  2002/04/25 01:59:51  my
+  MY:- pos => cpos
+
   Revision 1.40.2.28  2002/04/20 15:46:23  my
   OG+MY:- Beim Kopieren eines URL aus dem Lister ins Clipboard mittels
           <F2>-Auswahl "Clipboard (URL)" wird jetzt aus einer Mail-Adresse
