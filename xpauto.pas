@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus KÑmmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -11,9 +12,7 @@
 { Nachrichten-Autoversandt; Autoexec }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpauto;
 
@@ -363,7 +362,7 @@ var sr    : searchrec;
         trfehler1(2204,sr.name,tfs)   { 'Kann %s nicht einlesen - ungÅltige Pollbox' }
       else begin
         ReadBoxpar(0,box);
-        shell(MaggiBin+' -sz -b'+box+' -h'+boxpar^.MagicBrett+' '+
+        shell(MaggiBin+' -sz' +iifs(OldXPComp, ' -312', '')+' -b'+box+' -h'+boxpar^.MagicBrett+' '+
               AutoxDir+sr.name+' MPUFFER',300,3);
         if errorlevel<>0 then
           trfehler1(2205,sr.name,tfs)   { '%s: Fehler bei Nachrichtenkonvertierung' }
@@ -387,7 +386,7 @@ var sr    : searchrec;
       trfehler(2207,tfs)     { 'Keine gÅltige Fido-Stammbox gewÑhlt' }
     else begin
       ReadBoxpar(0,DefFidoBox);
-      shell(ZFidoBin+' -fz -h'+BoxPar^.MagicBrett+' '+AutoxDir+'*.pkt '+
+      shell(ZFidoBin+' -fz'+iifs(OldXPComp, ' -312', '')+' -h'+BoxPar^.MagicBrett+' '+AutoxDir+'*.pkt '+
             'FPUFFER -w:'+strs(screenlines),300,3);
       if errorlevel<>0 then
         trfehler(2208,tfs)   { 'Fehler bei Fido-Paketkonvertierung' }
@@ -678,6 +677,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.4  2000/10/19 19:03:28  mk
+  - Parameter -312 weitergeben
+
   Revision 1.13.2.3  2000/10/10 13:04:55  mk
   RB:- Supersedes in Autoversand
 
