@@ -19,7 +19,7 @@ interne Betas bleiben unerw„hnt.
                                /   \
    (16 Bit only)  OpenXP 3.30.1     OpenXP 3.70.1 (32 Bit only)
                         |                 |
-                  OpenXP 3.30.x     OpenXP 3.70.2 (folgt im Okt./Nov.)
+                  OpenXP 3.30.6     OpenXP 3.70.3 (folgt im Nov.)
 
 3.12d Original von Peter Mandrella
      Letzte vom Autor selbst freigegebene Version vom Dezember 1999
@@ -45,7 +45,7 @@ Es gibt momentan 4 Entwicklungslinien:
 3.30.x, DOS 16 Bit, XP2 Team, www.xp2.de
      DOS 16-Bit Version BETA-Version, siehe Homepage
 
-3.70.x, 32 Bit Version fr DOS, Windows, Linux und OS/2
+3.70.x, 32 Bit Version fr DOS, Windows, Linux, FreeBSD und OS/2
      Portierte Version von OpenXP 3.30.x, enth„lt soweit m”glich alle
      Features von OpenXP 3.30.x. Momentan noch im Betatest mit
      eingeschr„nkter Stabilit„t. Aktuellste Entwicklung als Snapshot
@@ -123,7 +123,7 @@ OpenXP 3.20 Release -> OpenXP 3.30.x Beta
 - Schutzmaánahmen fr externe Viewer, siehe Config/Optionen/Viewer
 - Verteilerlisten in vielen Dialogen erlaubt
 - Unz„hlige Limits (z.B. fr Subjekt, Mailerstring) in XP und UUZ
-  beseitigt
+  beseitigt, Nachrichtenzeilen l„nger als 255 Zeichen mehr gekrzt
 - Eine gr”áere Anzahl ungelesen-Bugs beseitigt
 - Config/Anzeige/Farben...Nachrichten: Priorit„tsfarbe kann
   konfiguriert werden
@@ -148,7 +148,7 @@ OpenXP 3.20 Release -> OpenXP 3.30.x Beta
 - Zus„tzliche Tags $RNAME2, $(RNAME2)
 - Untersttzung von langen Dateinamen unter Windows 9x und 2000
 - Merklich schnellere Datenbankroutinen (Index-Cache)
-- Verbesserte Untersttzung der 28, 30, 33 und 36 Zeilen-Modi
+- Die 28, 30, 33 und 36 Zeilen-Modi funktionieren jetzt immer
 - Untersttzung des Parameters -mailto
 - Englische Hilfe und Resouren-Datei verbessert und aktualisiert
 - Deutsche Hilfe und Resourcen: nochmals umfangreiche
@@ -162,7 +162,13 @@ OpenXP 3.20 Release -> OpenXP 3.30.x Beta
   schaltet die zus„tzliche Anzeige der Bretter mit ungelesenen
   Nachrichten Ein/Aus
 - Im PM-Bretter CTRL+B = CTRL+P, dadurch keine l„stige
-  Meldung mehr: "Schreiben im Brett nicht m”glich".
+  Meldung mehr: "Schreiben im Brett nicht m”glich"
+- Ersetzt-Nachrichten in Autoversand m”glich
+- UTF-8 codierte Nachrichten k”nnen decodiert werden
+- Limits im Kommentarbaum deutlich verringert,
+  mit Ctrl-Cursor links/rechts wird der Baum verschoben
+- Beim Archivieren werden weniger Headerzeilen gel”scht
+
 
 OpenXP 3.30.x Beta -> OpenXP 3.70.x Beta
 
@@ -177,4 +183,8 @@ OpenXP 3.30.x Beta -> OpenXP 3.70.x Beta
 - Erste Arbeiten an den neuen Boxentypen RFC/NNTP und RFC/POP3
 - UUZ kann mehere Mails in einem Puffer konvertieren (z.B. IMAP-Folder)
 - UUZ: Option -X, wenn angegeben, werden alle X-Header bernommen
+- Untersttzung von UTF-8, ISO-8859-1 bis 15, Microsoft
+  Codepages 866, 1251, 1252 und 1255 Zeichens„tzen
+- Limits im Kommentarbaum fast komplett entfernt (bis 512 Ebenen statt 30)
+- LDA/Expires-Header werden untersttzt
 
