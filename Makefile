@@ -418,7 +418,7 @@ RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
 	qpriv.xps quark.scr quoteto.xps uucp.scr z-netz.scr \
-	glossary.cfg
+	glossary.cfg xpmailto.reg
 
 ifeq ($(OS),win32)
 RST = ipaddr ncnntp ncpop3 ncsmtp
@@ -2543,7 +2543,7 @@ else
 dist:
 	-$(RM) $(DISTFILE).rar
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar file_id.diz Makefile icons.res *.inc *.pas *.rq *.bat
-	$(RAR) $(RARFLAGS) $(DISTFILE).rar beispiel$(SEP)*.scr beispiel$(SEP)*.xps beispiel$(SEP)*.cfg
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar beispiel$(SEP)*.cfg beispiel$(SEP)*.reg beispiel$(SEP)*.scr beispiel$(SEP)*.xps
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar charsets$(SEP)*.inc
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar doc$(SEP)Makefile doc$(SEP)*.txt doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.sgm doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar linux$(SEP)*.inc
@@ -2575,6 +2575,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.27  2000/10/24 11:13:04  fe
+# xpmailto.reg eingetragen.
+#
 # Revision 1.26  2000/10/23 17:15:39  fe
 # FreeBSD-Anpassungen
 #
