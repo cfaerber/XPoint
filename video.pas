@@ -25,32 +25,38 @@ unit video;
 interface
 
 uses
-  xpglobal, dos, dosx;
+{$ifdef Linux}
+  xpglobal;
+{$else}
+  xpglobal,
+  dos, 
+  dosx;
+{$endif}
 
 const DPMS_On       = 0;    { Monitor an }
       DPMS_Standby  = 1;    { Stromsparstufe 1 }
       DPMS_Suspend  = 2;    { Stromsparstufe 2 }
       DPMS_Off      = 4;    { Monitor aus }
 
-{$IFNDEF NCRT }
       vrows  : word = 80;                  { Anzahl Bildspalten  }
       vrows2 : word = 160;                 { Bytes / Zeile       }
       vlines : word = 25;                  { Anzahl Bildzeilen   }
-{$ENDIF }
+
 var  vbase  : word;                        { Screen-Base-Adresse }
 
 procedure SetBackIntensity;                { heller Hintergrund setzen }
-
-{$IFNDEF NCRT }
+function  GetScreenCols: byte;
 function  GetScreenLines:byte;
 procedure SetScreenLines(lines:byte);      { Bildschirmzeilen setzen }
-{$ENDIF }
 
 { ================= Implementation-Teil ==================  }
 
 implementation
 
-{$IFNDEF NCRT }
+{$ifdef Linux}
+  {$i linux/video.inc}
+{$else}
+
 uses
 {$IFDEF Win32 }
   xpwin32,
@@ -59,7 +65,6 @@ uses
   os2base,
 {$ENDIF }
    fileio;
-{$ENDIF }
 
 {- BIOS-Routinen ----------------------------------------------}
 
@@ -83,8 +88,6 @@ begin
 end;
 
 
-{$IFNDEF NCRT }
-
 function getscreenlines:byte;
 begin
 {$IFDEF Win32 }
@@ -95,6 +98,16 @@ begin
 {$ENDIF } { Win32 }
 end;
 
+function getscreencols:byte;
+begin
+{$IFDEF Win32 }
+    vrows := SysGetScreenCols;
+    vrows2:= vrows*2;
+    GetScreenCols := vrows;
+{$ELSE }
+    GetScreenCols := 80;
+{$ENDIF } { Win32 }
+end;
 { Diese Funktion setzt die Anzahl der Bildschirmzeilen. }
 
 procedure SetScreenLines(lines:byte);
@@ -102,11 +115,15 @@ begin
   vlines:=lines;
 end;
 
-{$ENDIF } { NCRT }
+{$endif} { Linux }
 
 end.
 {
   $Log$
+  Revision 1.25  2000/06/30 11:39:27  hd
+  - Linux-Teile extrahiert
+  - Neue Funktion: GetScreenCols: Bildschirmbreite
+
   Revision 1.24  2000/06/29 13:00:50  mk
   - 16 Bit Teile entfernt
   - OS/2 Version läuft wieder
