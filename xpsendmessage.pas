@@ -92,6 +92,9 @@ function DoSend(pm:boolean; datei:string; is_temp,is_file:boolean;
                 empfaddr,betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData: TSendUUData;
                 signat:string; sendFlags:word):boolean;
+
+                
+                
 procedure send_file(pm,binary:boolean);
 function SendPMmessage(betreff,fn:string; is_temp:boolean; var box:string):boolean;
 
@@ -986,8 +989,8 @@ fromstart:
     pushhp(68);
     spezial:=false;
     repeat
-      if pm then intern:=false
-      else intern:=(grnr=IntGruppe);
+//      if pm then intern:=false
+//      else intern:=(grnr=IntGruppe);
       ShowFlags;
       if spezial then begin
         spezial:=false;
@@ -1445,6 +1448,9 @@ finalization
 
 {
   $Log$
+  Revision 1.62  2002/08/09 22:17:39  cl
+  - Fixed #588187 3.9: keine UseNet Postings
+
   Revision 1.61  2002/07/28 11:31:46  cl
   - BUGFIX: [ 587626 ] 3.9: EBs verschandeln Subject
   - BUGFIX: [ 587388 ] 3.9: EBs gehen nicht immer

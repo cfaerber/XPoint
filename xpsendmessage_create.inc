@@ -385,7 +385,7 @@ var Count: Integer;
     { --- 3. Schritt: Nachricht in Datenbank ablegen ------------------ }
 
     // 3a) Bretter/User suchen, evt. anlegen oder löschen
-    if Intern then
+    if Intern and (Length(empfaddr)>1) then
     begin
       dbSeek(bbase,biBrett,UpperCase(empfaddr));
       if not dbFound then
@@ -777,6 +777,9 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.5  2002/08/09 22:17:39  cl
+// - Fixed #588187 3.9: keine UseNet Postings
+//
 // Revision 1.4  2002/05/26 12:26:11  ma
 // - using "email" db field instead of "user" db field for email now
 //   email may be longer than 30 chars now
