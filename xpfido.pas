@@ -2536,9 +2536,11 @@ procedure SetRequest(const adr,files:string);   { '' -> Request loeschen }
 var t1,t2   : text;
     s       : string;
     crash   : boolean;
+    TempFileName: String;
 begin
   crash:=false;
-  assign(t2,TempFile(''));
+  TempFileName := TempFile('');
+  assign(t2, TempFileName);
   rewrite(t2);
   if FileExists(ReqDat) then begin
     assign(t1,ReqDat);
@@ -2569,7 +2571,9 @@ begin
     writeln(t2);
     end;
   close(t2);
-  rename(t2,ReqDat);
+  // do not use rename(t2,ReqDat) as of problems under linux
+  CopyFile(TempFileName, ReqDat);
+  SafeDeleteFile(TempFilename);
 end;
 
 
@@ -3183,6 +3187,9 @@ end;
 
 {
   $Log$
+  Revision 1.79  2003/08/23 19:14:21  mk
+  - fixed #670787: Requestdatei nicht verschiebbar
+
   Revision 1.78  2003/02/13 14:41:58  cl
   - implemented correct display of UTF8 in the lister
   - implemented Unicode line breaking in the lister
