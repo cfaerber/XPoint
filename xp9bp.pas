@@ -333,7 +333,7 @@ var t : text;
   end;
 
 begin
-  assign(t,OwnPath+dateiname+BfgExt);
+  assign(t,UStr(OwnPath+dateiname+BfgExt));
   rewrite(t);
   if ioresult<>0 then
   begin
@@ -547,6 +547,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.6  2001/01/19 00:00:00  mk
+  - verschiedene Aenderungen fuer PPP-Modus
+
   Revision 1.10.2.5  2001/01/10 17:39:07  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

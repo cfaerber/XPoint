@@ -760,12 +760,12 @@
         { DefaultBox:=name;   ?????
           SaveConfig2; }
           if dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
-            renbox('.pp');
+            renbox('.PP');
             renbox(BfgExt);
-            renbox('.fl');
-            renbox('.bl');
-            renbox('.fbl');
-            renbox('.inf');
+            renbox('.FL');
+            renbox('.BL');
+            renbox('.FBL');
+            renbox('.INF');
             end;
           end;
         end;
@@ -1369,6 +1369,9 @@
 
 {
   $Log$
+  Revision 1.10.2.12  2001/01/18 23:59:59  mk
+  - verschiedene Aenderungen fuer PPP-Modus
+
   Revision 1.10.2.11  2001/01/16 08:13:05  mk
   - Grosschreibung von Dateinamen
 

@@ -54,6 +54,7 @@ type  addpktrec    = record
 
 var Netcall_connect : boolean;
     _maus,_fido     : boolean;
+    TempPPPMode: boolean;
 
 
 implementation  {---------------------------------------------------}
@@ -163,7 +164,6 @@ var bfile      : string[14];
     isdn       : boolean;
     orgfossil  : boolean;
     jperror    : boolean;
-    TempPPPMode: boolean;
 
 label abbruch,ende0;
 
@@ -1544,6 +1544,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.7  2001/01/18 23:59:58  mk
+  - verschiedene Aenderungen fuer PPP-Modus
+
   Revision 1.16.2.6  2001/01/10 17:39:05  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

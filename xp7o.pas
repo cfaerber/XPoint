@@ -127,6 +127,8 @@ var f      : file;
     zconnect: boolean;
     i      : integer;
     ldummy : longint;
+    CCFile: Text;
+    InMsgID: String;
 
   procedure ClrUVS;
   var pbox : string[20];
@@ -136,6 +138,7 @@ var f      : file;
       HaveIDFile: boolean;
       MsgIDFound : boolean;
       Outmsgid   : string[MidLen];
+      CCs: Byte;
   begin
     HaveIDFile := Exist('UNVERS.ID');
     if HaveIDFile then
@@ -179,18 +182,35 @@ var f      : file;
           if _mbrett = _brett then
           begin
             dbReadN(mbase,mb_unversandt,uvs);
+            InMsgID := dbReadStr(mbase,'msgid');
             if (uvs and 1=1) and EQ_betreff(hdp^.betreff) and
-               (FormMsgid(hdp^.msgid)=dbReadStr(mbase,'msgid')) then
+               (FormMsgid(hdp^.msgid)=InMsgId) then
             begin
               MsgIDFound := false;
+              CCs := 0;
               { Check, ob MsgID in unversandten Nachrichten enthalten ist }
               if HaveIDFile then
               begin
                 Reset(IDFile); { von vorn starten }
                 repeat
                   Readln(IDFile, OutMsgid);
-                  if FormMsgid(OutMsgid) = dbReadStr(mbase,'msgid') then
+                  if FormMsgid(OutMsgid) = InMsgID then
+                  begin
                     MsgIDFound:=true;
+                    if (hdp^.empfanz>1) then
+                    begin
+                      Append(CCFile);
+                      Writeln(CCFile, OutMsgid);
+                      Close(CCFile);
+                      Reset(CCFile);
+                      repeat
+                        readln(CCFile, OutMsgid);
+                        if FormMsgid(OutMsgid)=InMsgId then
+                          inc(CCs);
+                      until eof(CCFile) or (CCs > 1);
+                      Close(CCFile);
+                    end;
+                  end;
                 until eof(IDFile) or MsgIDFound;
               end;
               if not MsgIDFound then
@@ -198,6 +218,7 @@ var f      : file;
                 uvs:=uvs and $fe;
                 dbWriteN(mbase, mb_unversandt, uvs);
               end else
+              if CCs <= 1 then
               begin
                 if not ((hdp^.typ='B') and (maxbinsave>0) and
                   (hdp^.groesse > maxbinsave*1024)) then
@@ -206,6 +227,7 @@ var f      : file;
                     extract_msg(2,'','UNVERS.PP',true,1)
                   else
                     extract_msg(2,'','UNVERS.PP',false,1);
+                  Dec(OutMsgs);
                 end else
                 begin
                   { String noch in die Resource Åbernehmen }
@@ -230,6 +252,8 @@ var f      : file;
 begin
   assign(f,puffer);
   if not existf(f) then exit;
+  Assign(CCFile, 'UNVERS.ID2');
+  ReWrite(CCFile); Close(CCFile); { Anlegen fÅr Append }
   new(hdp);
   zconnect:=ntZConnect(ntBoxNetztyp(box));
   reset(f,1);
@@ -251,6 +275,7 @@ begin
     inc(adr,hdp^.groesse+hds);
     end;
   close(f);
+  Erase(CCFile);
   dbSetIndex(mbase,mi);
   dispose(hdp);
   inc(outemsgs,TestPuffer(left(puffer,cpos('.',puffer))+'.EPP',false,ldummy));
@@ -299,9 +324,9 @@ begin
   rewrite(t);
   with NC^ do begin
     writeln(t);
-    txt:=getres2(700,iif(sysopmode,3,4));   { 'Netztransfer' / 'Netzanruf' }
+    txt:=getres2(700,iif(sysopmode and not TempPPPMode,3,4));   { 'Netztransfer' / 'Netzanruf' }
     write(t,txt,getres2(700,5),fdat(datum),getres2(700,6),ftime(datum),  { ' vom ' / ' um ' }
-            getres2(700,iif(sysopmode,7,8)),boxpar^.boxname);  { ' zur ' / ' bei ' }
+            getres2(700,iif(sysopmode and not TempPPPMode,7,8)),boxpar^.boxname);  { ' zur ' / ' bei ' }
     if NC^.telefon='' then NC^.telefon:=boxpar^.telefon;
     if sysopmode or (NC^.telefon='') then writeln(t)
     else writeln(t,', ',NC^.telefon);
@@ -312,11 +337,12 @@ begin
     writeln(t);
     bytes:=getres(13);
     cps:=getres2(700,28);
-    if sysopmode then begin
+    if sysopmode and not TempPPPMode then
+    begin
       abbruch:=false;
       writeln(t,getreps2(700,9,strsn(sendbuf,7)));   { 'Ausgangspuffer: %s Bytes' }
       writeln(t,getreps2(700,10,strsn(recbuf,7)));   { 'Eingangspuffer: %s Bytes' }
-      end
+    end
     else begin
       if not (_fido or _turbo or _uucp) then
         abbruch:=(recbuf+recpack=0);
@@ -811,6 +837,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.13  2001/01/18 23:59:59  mk
+  - verschiedene Aenderungen fuer PPP-Modus
+
   Revision 1.13.2.12  2001/01/10 17:39:06  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

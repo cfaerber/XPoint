@@ -455,7 +455,9 @@ var
     p: byte;
     Found: boolean;
     c : char;
+    Error: Boolean;
   begin
+    Error := false;
     with BoxPar^ do
     begin
       Assign(IDFile, 'UNVERS.ID');
@@ -481,6 +483,7 @@ var
         begin
           p := pos('<', s);
           Writeln(IDFile, Copy(s, p+1, Length(s)-p-1));
+          Error := true;
         end;
         Findnext(sr);
       end;
@@ -488,6 +491,7 @@ var
       Close(IDFile);
       if IOResult = 0 then ;
     end;
+    if Error then trFehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
   end;
 
 begin
@@ -514,7 +518,7 @@ begin
       EmptyDir(PPPSpool, '*.OUT');
     end;
 
-    NC^.sendbuf:=_filesize(ppfile);
+    NC^.Sendbuf := _filesize(ppfile);
     if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
     begin
       outmsgs:=testpuffer(ppfile,false,dummy);
@@ -522,6 +526,7 @@ begin
       cursor(curoff);
 
       ZtoRFC(false,ppfile,iifs(TempPPPMode, PPPSpool, SysopOut));
+      NC^.Sendbuf:= filesum(PPPSpool+'*.OUT');
     end;
 
     if TempPPPMode then
@@ -538,7 +543,11 @@ begin
       WriteUUnummer(uunum);
       Moment;
       RemoveEPP;
-      if TempPPPMode then GetUnversandMessages;
+      if TempPPPMode then
+      begin
+        OutMsgs := 0;
+        GetUnversandMessages;
+      end;
       ClearUnversandt(ppfile,box);
       _era(ppfile);
       if exist(eppfile) then _era(eppfile);
@@ -557,13 +566,14 @@ begin
     begin
       if exist(PPPSpool+'*.MSG') then
       begin
+        NC^.Recbuf := filesum(PPPSpool+'*.MSG');
+        if (NC^.RecBuf + NC^.SendBuf) > 0 then wrtiming('NETCALL ' + boxname);
         shell(UUZBin+' -uz -w:'+strs(screenlines)+
           ' '+PPPSpool+'*.MSG '+dpuffer+' '+boxpar^.pointname+domain,600,3);
         if nDelPuffer and (errorlevel=0) and
           (testpuffer(dpuffer,false,dummy)>=0) then
             EmptyDir(PPPSpool, '*.MSG'); { entpackte Dateien l”schen }
 
-        NC^.recbuf := filesum(PPPSpool+'*.MSG');
         CallFilter(true,dpuffer);
       end;
       if _filesize(dpuffer)>0 then
@@ -579,6 +589,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.6  2001/01/18 23:59:59  mk
+  - verschiedene Aenderungen fuer PPP-Modus
+
   Revision 1.13.2.5  2001/01/10 17:39:06  mk
   - PPP-Modus, unversandt, Ruecklaeufer ersetzen, VGA-Palette, UUZ und Bugfixes
 

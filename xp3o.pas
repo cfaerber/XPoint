@@ -1382,7 +1382,7 @@ begin
   else begin
     ww:=false;
     reset(t1);
-    assign(t2,'timing.$$$');
+    assign(t2,'TIMING.$$$');
     rewrite(t2);
     while not eof(t1) do begin
       readln(t1,s1);
@@ -1507,6 +1507,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.21.2.8  2001/01/18 23:59:58  mk
+  - verschiedene Aenderungen fuer PPP-Modus
+
   Revision 1.21.2.7  2000/12/30 12:44:39  mk
   - fixed crash in seluser
 
