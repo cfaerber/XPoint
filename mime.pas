@@ -31,6 +31,7 @@ unit mime;
 uses
   Classes,
   xpglobal,
+  xpstreams,
   unicode;
 
 { ---------------------- Enum types & Constants ---------------------- }
@@ -162,8 +163,11 @@ type
 
 { ------------------------ Content Encodings ------------------------- }
 
-function MimeCreateEncoder(encoding:TMIMEEncoding; OutputStream:TStream; IsText: Boolean):TStream;
-function MimeCreateDecoder(encoding:TMIMEEncoding; InputStream: TStream):TStream;
+type TMimeTransferEncoderStream = class(TCodecStream) {abstract} end;
+     TMimeTransferDecoderStream = class(TCodecStream) {abstract} end;
+
+function MimeCreateEncoder(encoding:TMIMEEncoding; IsText: Boolean):TMimeTransferEncoderStream;
+function MimeCreateDecoder(encoding:TMIMEEncoding                 ):TMimeTransferDecoderStream;
 
 function DecodeBase64(const s: String):String;
 function DecodeQuotedPrintable(const s:string):string;
@@ -186,33 +190,23 @@ const
     'ISO-8859-13', 'ISO-8859-14', 'ISO-8859-15', 'UTF-7', 'US-ASCII', 'x-unknown');
 
 type
-  TCharsetCOCEC_AbstractBaseClass = class(TStream)
+  TCharsetCodecStream = class(TCodecStream)
   protected
-    OtherStream: TStream;
     Encoder: TUTF8Encoder;
     Decoder: TUTF8Decoder;
   public
-    constructor Create(AnOtherStream: TStream;SourceCharset,DestCharset:String);
+    constructor Create(SourceCharset,DestCharset:String); overload;
+    constructor Create(SourceCharset,DestCharset:TMimeCharsets); overload;
+    constructor Create(SourceCharset:TMimeCharsets;DestCharset:String); overload;
+    constructor Create(SourceCharset:String;DestCharset:TMimeCharsets); overload;
     destructor Destroy; override;
   end;
 
-  TCharsetEncodingStream = class(TCharsetCOCEC_AbstractBaseClass)
-  protected
-    BytesWritten: LongInt;
-  public
-    function Read(var Buffer; Count: Longint): Longint; override;
+  TCharsetEncoderStream = class(TCharsetCodecStream)
+    function Read(var Buffer; Count: Longint): Longint; override; // only raises exception
     function Write(const Buffer; Count: Longint): Longint; override;
     function Seek(Offset: Longint; Origin: System.Word): Longint; override;
   end;
-
-//        TCharsetDecodingStream = class(TCharsetCOCEC_AbstractBaseClass)
-//        protected
-//          BytesRead  : Longint;
-//        public
-//          function Read(var Buffer; Count: Longint): Longint; override;
-//          function Write(const Buffer; Count: Longint): Longint; override;
-//          function Seek(Offset: Longint; Origin: Word): Longint; override;
-//        end;
 
 function MimeCharsetCanonicalName(Name:string):string;
 
@@ -230,29 +224,28 @@ function RFC2047_Encode(ss: string; csFrom: TMIMECharsets;MaxFirstLen,MaxLen:Int
 { -------------------------- EOL Conversion -------------------------- }
 
 type
-  TMimeSingleChartoCRLFStream = class(TStream)
+  TMimeEolCodecStream = class(TCodecStream)
+  end;
+
+  TMimeSingleCharToCRLFStream = class(TMimeEolCodecStream)
   protected
-    OtherStream : TStream;
-    BytesWritten: Longint;
     cc:char;
   public
-    constructor Create(AnOtherStream: TStream;EOLChar:Char);
-    function Read(var Buffer; Count: Longint): Longint; override;
+    constructor Create(EOLChar:Char);
     function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
   end;
 
   TMimeCRtoCRLFStream = class(TMimeSingleChartoCRLFStream)
   public
-    constructor Create(AnOtherStream: TStream);
+    constructor Create; overload;
   end;
 
   TMimeLFtoCRLFStream = class(TMimeSingleChartoCRLFStream)
   public
-    constructor Create(AnOtherStream: TStream);
+    constructor Create; overload;
   end;
 
-function MimeCreateEOLConverter(Eol:TMimeEol; OutputStream:TStream):TStream;
+function MimeCreateEOLConverter(Eol:TMimeEol):TCoDecStream;
 
 { ------------------------} implementation { ------------------------- }
 
@@ -671,60 +664,21 @@ end;
 
 { ------------------------ Content Encodings ------------------------- }
 
-type
-  TMimeDummyCodec = class(TStream)
-  protected
-    OtherStream : TStream;
-  public
-    constructor Create(AnOtherStream: TStream);
-    function Read(var Buffer; Count: Longint): Longint; override;
-    function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: System.Word): Longint; override;
-  end;
-
-  TMimeDummyDecoder = class(TMimeDummyCodec)
-  public
-    function Write(const Buffer; Count: Longint): Longint; override;
-  end;
-
-  TMimeDummyEncoder = class(TMimeDummyCodec)
-  public
-    function Read(var Buffer; Count: Longint): Longint; override;
-  end;
-
-constructor TMimeDummyCodec.Create(AnOtherStream: TStream);
-begin OtherStream := AnOtherStream; end;
-
-function TMimeDummyCodec.Read(var Buffer; Count:Longint):Longint;
-begin Result:=OtherStream.Read(Buffer,Count); end;
-
-function TMimeDummyCodec.Write(const Buffer; Count:Longint):Longint;
-begin Result:=OtherStream.Write(Buffer,Count); end;
-
-function TMimeDummyCodec.Seek(Offset: Longint; Origin: System.Word):Longint;
-begin Result:=OtherStream.Seek(Offset,Origin); end;
-
-function TMimeDummyDecoder.Write(const Buffer; Count: Longint): Longint;
-begin raise EStreamError.Create('Invalid stream operation'); end;
-
-function TMimeDummyEncoder.Read(var Buffer; Count: Longint): Longint;
-begin raise EStreamError.Create('Invalid stream operation'); end;
-
-function MimeCreateEncoder(encoding:TMIMEEncoding; OutputStream:TStream; IsText: Boolean):TStream;
+function MimeCreateEncoder(encoding:TMIMEEncoding; IsText: Boolean):TMimeTransferEncoderStream;
 begin
   case encoding of
-    MimeEncodingBase64:          Result:=TBase64EncodingStream.Create(OutputStream);
-    MimeEncodingQuotedPrintable: Result:=TQuotedPrintableEncodingStream.Create(OutputStream,IsText);
-    else Result:=TMimeDummyEncoder(OutputStream);
+    MimeEncodingBase64:          Result:=TBase64EncoderStream.Create;
+    MimeEncodingQuotedPrintable: Result:=TQuotedPrintableEncoderStream.Create(IsText);
+    else Result:=nil;
   end;
 end;
 
-function MimeCreateDecoder(encoding:TMIMEEncoding; InputStream: TStream):TStream;
+function MimeCreateDecoder(encoding:TMIMEEncoding):TMimeTransferDecoderStream;
 begin
   case encoding of
-    MimeEncodingBase64:          Result:=TBase64DecodingStream.Create(InputStream);
-    MimeEncodingQuotedPrintable: Result:=TQuotedPrintableDecodingStream.Create(InputStream);
-    else Result:=TMimeDummyDecoder(InputStream);
+    MimeEncodingBase64:          Result:=TBase64DecoderStream.Create;
+    MimeEncodingQuotedPrintable: Result:=TQuotedPrintableDecoderStream.Create;
+    else Result:=nil;
   end;
 end;
 
@@ -831,78 +785,57 @@ end;
 
 { ----------------------------- Charsets ----------------------------- }
 
-constructor TCharsetCOCEC_AbstractBaseClass.Create(AnOtherStream: TStream;SourceCharset,DestCharset:String);
+constructor TCharsetCodecStream.Create(SourceCharset,DestCharset:TMimeCharsets);
 begin
   inherited Create;
-  OtherStream := AnOtherStream;
-  Encoder := CreateUTF8Encoder(MimeGetCharsetFromName(SourceCharset));
-  Decoder := CreateUTF8Decoder(MimeGetCharsetFromName(DestCharset));
+  Encoder := CreateUTF8Encoder(SourceCharset);
+  Decoder := CreateUTF8Decoder(DestCharset);
 end;
 
-destructor TCharsetCOCEC_AbstractBaseClass.Destroy;
+
+constructor TCharsetCodecStream.Create(SourceCharset,DestCharset:String);
+begin
+  Create(MimeGetCharsetFromName(SourceCharset),
+    MimeGetCharsetFromName(DestCharset) );
+end;
+
+constructor TCharsetCodecStream.Create(SourceCharset:TMimeCharsets;DestCharset:String);
+begin Create(SourceCharset, MimeGetCharsetFromName(DestCharset)); end;
+
+constructor TCharsetCodecStream.Create(SourceCharset:String;DestCharset:TMimeCharsets);
+begin Create(MimeGetCharsetFromName(SourceCharset), DestCharset); end;
+
+destructor TCharsetCodecStream.Destroy;
 begin
   Encoder.Free;
   Decoder.Free;
-  inherited Destroy;
+  inherited;
 end;
 
-function TCharsetEncodingStream.Read(var Buffer; Count: Longint): Longint;
-begin
-  raise EStreamError.Create('Invalid stream operation');
-end;
+{$WARNINGS OFF}{$HINTS OFF}
+function TCharsetEncoderStream.Read(var Buffer; Count: Longint): Longint;
+begin raise EReadError.Create('Stream does not support reading.'); end;
+{$WARNINGS ON}{$HINTS ON}
 
-function TCharsetEncodingStream.Write(const Buffer; Count: Longint): Longint;
+function TCharsetEncoderStream.Write(const Buffer; Count: Longint): Longint;
 var buf:string;
 begin
   SetLength(buf,Count);
   Move(Buffer,buf[1],count);
   buf := Decoder.Decode(PUTF8Char(Encoder.Encode(buf)));
-  OtherStream.Write(buf[1],Length(buf));
-  inc(BytesWritten,Count);
+  OtherStream.WriteBuffer(buf[1],Length(buf));
+  inc(FPosition,Count);
   Result := Count;
 end;
 
-function TCharsetEncodingStream.Seek(Offset: Longint; Origin: System.Word): Longint;
+function TCharsetEncoderStream.Seek(Offset: Longint; Origin: System.Word): Longint;
 begin
-  Result := BytesWritten;
-  if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
-     or ((Origin = soFromBeginning) and (Offset = Result))) then
-    raise EStreamError.Create('Invalid stream operation');
+  Result := FPosition;
+  if not (
+    ((Origin in [soFromCurrent,soFromEnd]) and (Offset = 0)) or
+    ((Origin = soFromBeginning) and (Offset = Result)) ) then
+    raise EStreamError.Create('Stream does not support seeking.');
 end;
-
-//      constructor TCharsetDecodingStream.Create(AInputStream: TStream);
-//      begin
-//        inherited Create;
-//        InputStream := AInputStream;
-//        InputEOF    := false;
-//        Reset;
-//      end;
-//
-//      procedure TCharsetDecodingStream.Reset;
-//      begin
-//      end;
-//
-//      function TCharsetDecodingStream.Read(var Buffer; Count: Longint): Longint;
-//      begin
-//
-//      end;
-//
-//      function TCharsetDecodingStream.Write(const Buffer; Count: Longint): Longint;
-//      begin
-//        raise EStreamError.Create('Invalid stream operation');
-//      end;
-//
-//      function TCharsetDecodingStream.Seek(Offset: Longint; Origin: Word): Longint;
-//      var
-//        ipos: LongInt;
-//        endbytes: array[0..1] of Char;
-//      begin
-//        if ((Origin = soFromCurrent)   and (Offset = 0)) or
-//           ((Origin = soFromBeginning) and (Offset = BytesRead)) then
-//          Result := BytesRead
-//        else
-//          raise EStreamError.Create('Invalid stream operation');
-//      end;
 
 {$IFDEF Kylix}
 {$I charsets/aliases.inc}
@@ -1076,14 +1009,16 @@ outer:
 
       t:=e+2; while ss[t]<>'?' do  { end marker position }
       begin
-        if (t<=length(ss)-2) and(not(ss[t] in ['?',' ',#8,#10,#13])) then
+        if (t<=length(ss)-2) and(not(ss[t] in ['?',#8,#10,#13])) then
           t:=t+1
         else
         begin if length(ss)<t then break; //** fix!
           if ss[t]='?' then
             p:=t-1    { maybe a new start }
-          else
+          else begin
             p:=t+1;   { go ahead with next char }
+            t:=t+1;
+          end;
           continue;   { don't decode anything   }
         end;
       end; // while
@@ -1203,21 +1138,10 @@ end;
 
 { -------------------------- EOL Conversion -------------------------- }
 
-constructor TMimeSingleChartoCRLFStream.Create(AnOtherStream: TStream;eolchar:char);
+constructor TMimeSingleChartoCRLFStream.Create(eolchar:char);
 begin
-  OtherStream := AnOtherStream;
+  inherited Create;
   cc:=eolchar;
-end;
-
-function TMimeSingleChartoCRLFStream.Read(var Buffer; Count:Longint):Longint;
-begin raise EStreamError.Create('Invalid stream operation'); end;
-
-function TMimeSingleChartoCRLFStream.Seek(Offset: Longint; Origin: System.Word):Longint;
-begin
-  Result := BytesWritten;
-  if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
-     or ((Origin = soFromBeginning) and (Offset = Result))) then
-    raise EStreamError.Create('Invalid stream operation');
 end;
 
 function TMimeSingleChartoCRLFStream.Write(const Buffer; Count: Longint): Longint;
@@ -1227,7 +1151,7 @@ const crlf: array[0..1] of char = (#13,#10);
   procedure WriteTo(pos:Longint);
   begin
     if start>pos then exit;
-    Inc(BytesWritten,OtherStream.Write((PChar(@Buffer)+Start)^,pos-start+1));
+    Inc(FPosition,OtherStream.Write((PChar(@Buffer)+Start)^,pos-start+1));
     start := pos+1;
   end;
 
@@ -1240,46 +1164,47 @@ begin
       if cc=crlf[0] then
       begin
         WriteTo(pos);
-        inc(BytesWritten,OtherStream.Write(crlf[1],1));
+        inc(FPosition,OtherStream.Write(crlf[1],1)-1);
       end else
       if cc=crlf[1] then
       begin
         WriteTo(pos-1);
-        inc(BytesWritten,OtherStream.Write(crlf[0],1));
+        inc(FPosition,OtherStream.Write(crlf[0],1)-1);
       end else
       begin
         WriteTo(pos-1);
         inc(start);
-        inc(BytesWritten,OtherStream.Write(crlf[0],2));
+        inc(FPosition,OtherStream.Write(crlf[0],2)-1);
       end;
     end;
 
   WriteTo(Count-1);
-
-  Result:=Start;
 end;
 
-constructor TMimeCRtoCRLFStream.Create(AnOtherStream: TStream);
-begin
-  inherited Create(AnOtherStream,#13);
-end;
+constructor TMimeCRtoCRLFStream.Create;
+begin inherited Create(#13); end;
 
-constructor TMimeLFtoCRLFStream.Create(AnOtherStream: TStream);
-begin
-  inherited Create(AnOtherStream,#10);
-end;
+constructor TMimeLFtoCRLFStream.Create;
+begin inherited Create(#10); end;
 
-function MimeCreateEOLConverter(Eol:TMimeEol; OutputStream:TStream):TStream;
+function MimeCreateEOLConverter(Eol:TMimeEol):TCodecStream;
 begin
   case EOL of
-    MimeEOLCR: Result:=TMimeCRtoCRLFStream.Create(OutputStream);
-    MimeEOLLF: Result:=TMimeLFtoCRLFStream.Create(OutputStream);
-    else Result:=TMimeDummyEncoder(OutputStream);
+    MimeEOLCR: Result:=TMimeCRtoCRLFStream.Create;
+    MimeEOLLF: Result:=TMimeLFtoCRLFStream.Create;
+    else Result := TNullCodecStream.Create;
   end;
 end;
 
 //
 // $Log$
+// Revision 1.6  2001/09/09 17:37:19  cl
+// - moved common code between alle en-/decoding streams to a base class
+// - all en-/decoding streams can now destruct the other stream
+// - much more elegant way to connect en-/decoding streams to each other
+//
+// -  fixed hang in RFC2047_Decode if encoded-word contained on of [' ',#8,#10,#13]
+//
 // Revision 1.5  2001/09/09 10:23:20  ml
 // - Kylix compatibility stage III
 // - compilable in linux
@@ -1298,4 +1223,4 @@ end;
 // - Moved MIME functions/types/consts to mime.pas
 //
 
-{ ------------------------------} end. { ------------------------------}
+{ ----------------------------------------------------------------} end.
