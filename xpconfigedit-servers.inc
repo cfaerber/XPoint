@@ -129,7 +129,7 @@
     dialog(ival(getres2(912,0)),11,name,x,y);
     blen:=ntBoxnameLen(nt);
     maddstring(3,2,getres2(912,2),name,blen,blen, '"!'+range('#','?')+range('A',#126)+'Ž™š'); { 'Boxname' }
-      msetvfunc(xp9_testbox);
+      gf_fido:=false; msetvfunc(xp9_testbox);
       mhnr(190);
     maddstring(3,4,getres2(912,6),komm,30,30,'');    { 'Kommentar ' }
       mhnr(192);
@@ -1989,6 +1989,10 @@
 
 {
   $Log$
+  Revision 1.6  2001/07/22 13:46:40  ma
+  - fixed: NNTP/POP3 box name was automatically altered if previously
+    editing a Fido box
+
   Revision 1.5  2001/07/21 18:06:54  mk
   - modified duplicate help topics
 
