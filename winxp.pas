@@ -28,11 +28,26 @@ interface
 
 uses
   sysutils,
-  {$IFDEF Win32 } windows, {$ENDIF }
-  {$IFDEF DOS32} crt, {for GotoXY} {$ENDIF}
-  {$IFDEF unix} xplinux,xpcurses, {$ENDIF }
-  {$IFDEF VP } vpsyslow, {$ENDIF }
-  osdepend, keys,inout,maus2,typeform, xpglobal;
+  {$IFDEF Win32 }
+    windows, 
+  {$ENDIF }
+  {$IFDEF DOS32} 
+    crt, {for GotoXY} 
+  {$ENDIF}
+  {$IFDEF unix} 
+    xplinux,
+    xpcurses, 
+  {$ENDIF }
+  {$IFDEF VP } 
+    vpsyslow, 
+  {$ENDIF }
+  OsDepend, 
+  keys,
+  inout,
+  maus2,
+  typeform,
+  xpglobal, 
+  mime;
 
 const
 {$IFDEF NCRT }
@@ -165,13 +180,34 @@ var
 {$ENDIF }
 {$ENDIF }
 
+{ 
+  Charset conversion: We define two charsets: 
+  - the charset the console is really in
+  - the charset used by output APIs
+}
+procedure SetConsoleOutputCharset(NewCharset:TMimeCharsets);
+function  GetConsoleOutputCharset:TMimeCharsets;
+
+procedure SetLogicalOutputCharset(NewCharset:TMimeCharsets);
+function  GetLogicalOutputCharset:TMimeCharsets;
+
+{$IFDEF Win32}
+function IsWindowsNT: boolean;
+{$ENDIF}
+
 procedure InitWinXPUnit;
 
 { ========================= Implementation-Teil =========================  }
 
 implementation
 
-uses xp0;
+uses 
+  xp0,
+{$IFDEF FPC }
+  Objects, (* For PWordArray *)
+{$ENDIF}  
+  unicode,
+  utftools;
 
 const rchar : array[1..3,1..6] of char =
               ('⁄ƒø≥¿Ÿ','…Õª∫»º','’Õ∏≥‘æ');
@@ -278,6 +314,15 @@ end;
 type TCoord= record x,y: integer end;
 {$ENDIF}
 
+{$IFDEF Win32}
+function Win32_Wrt(WritePos:TCoord; s:string): Integer; forward;
+{$DEFINE CS_IMPLEMENTATION}
+{$ENDIF}
+
+{$IFNDEF CS_IMPLEMENTATION}
+function Wrt_Convert(const s: string):string; forward;
+{$ENDIF}
+
 {$IFNDEF NCRT }
 {$R-,Q-}
 procedure Wrt(const x,y: Integer; const s:string);
@@ -289,8 +334,8 @@ var
 {$ENDIF }
 begin
   {$IFDEF Win32 }
-    WritePos.X := x-1; WritePos.Y := y-1;  Len := Length(s);
-    WriteConsoleOutputCharacter(OutHandle, @s[1], Len, WritePos, OutRes);
+    WritePos.X := x-1; WritePos.Y := y-1;
+    Len := Win32_Wrt(WritePos,s);
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
     WhereX := x + len; WhereY := y;
     WritePos.X := WhereX - 1; 
@@ -310,8 +355,8 @@ var
 {$ENDIF }
 begin
   {$IFDEF Win32 }
-    WritePos.X := WhereX-1; WritePos.Y := WhereY-1; Len := Length(s);
-    WriteConsoleOutputCharacter(OutHandle, @s[1], Len, WritePos, OutRes);
+    WritePos.X := WhereX-1; WritePos.Y := WhereY-1; 
+    Len := Win32_Wrt(WritePos,s);
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
     WhereX := WhereX + Len; 
     WritePos.X := WhereX;
@@ -331,22 +376,27 @@ var
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: DWord;
     Len: Integer;
+  {$ELSE}
+   {$IFDEF DOS32 }
+    i, Count: Integer;
+    s2: String;
+   {$ENDIF }
   {$ENDIF }
-  i, Count: Integer;
 begin
   {$IFDEF Win32 }
     { Kompletten String an einem StÅck auf die Console ausgeben }
-    WritePos.X := x-1; WritePos.Y := y-1;  Len := Length(s);
-    WriteConsoleOutputCharacter(OutHandle, @s[1], Len, WritePos, OutRes);
+    WritePos.X := x-1; WritePos.Y := y-1;  
+    Len := Win32_Wrt(WritePos,s);
     FillConsoleOutputAttribute(OutHandle, Textattr, Len, WritePos, OutRes);
   {$ELSE }
     {$IFDEF DOS32 }
+      s2 := Wrt_Convert(s);
       Count := ((X-1)+(y-1)*screenwidth)*2;
-      for i := 0 to Length(s)-1 do
-        memw[$B800:Count+i*2]:=(textattr shl 8) or byte(s[i+1]);
+      for i := 0 to Length(s2)-1 do
+        memw[$B800:Count+i*2]:=(textattr shl 8) or byte(s2[i+1]);
     {$ELSE }
       GotoXY(x, y);
-      Write(s);
+      Write(OutputConvert(s));
     {$ENDIF }
   {$ENDIF Win32 }
 
@@ -373,7 +423,7 @@ begin
     OutRes: ULong;                            { Auf Konsole ausgeben....}
   begin
     WritePos.X := x-1; WritePos.Y := y-1;
-    WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, OutRes);
+    Num := Win32_Wrt(WritePos,Copy(charbuf,1,num));
     WriteConsoleOutputAttribute(OutHandle, @attrbuf[2], num, WritePos, OutRes);  end;
 {$ELSE }
   procedure consolewrite(x,y:word; num: Integer);  { Num = Chars in xp0.charpuf (String) }
@@ -455,12 +505,18 @@ procedure SDisp(const x,y:word; const s:string);
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
     OutRes: ULong;
+    i,Len: Integer;
+    a: PWordArray;
   begin
     { Kompletten String an einem StÅck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
-    WriteConsoleOutputCharacter(OutHandle, @s[1], Length(s), WritePos, OutRes);
-    { !! Hier mÅsste noch die Textfarbe verÑndert werden,
-      nicht aber der Texthintergrund }
+    Len := Win32_Wrt(WritePos,s);
+    GetMem(a,SizeOf(WORD)*Len);
+    ReadConsoleOutputAttribute(OutHandle, a, Len, WritePos, OutRes);
+    for i := 0 to Len-1 do
+      a^[i] := (a^[i] and $FFF0) or (TextAttr and $F);
+    WriteConsoleOutputAttribute(OutHandle, @a, Len, WritePos, OutRes);
+    FreeMem(a);
 {$ELSE Win32 }
   begin
     FWrt(x, y, s);
@@ -1016,6 +1072,278 @@ begin
     end;
 end;
 
+//
+// Win32: can switch charsets on Windows NT/2k/XP, not on 95/98/ME
+//
+{$IFDEF Win32}
+{$DEFINE CS_IMPLEMENTATION}
+var IsUnicode: Boolean;
+    OutputCP,TrueOutputCP: Integer;
+    OutputCharset: TMIMECharsets;
+
+var SourceToUTF8: TUTF8Encoder;
+    UTF8ToDest:  TUTF8Decoder;    
+var ConvertersOK: Boolean;    
+
+function GetCPfromCharset(cs:TMimeCharsets):Integer;
+begin
+  case cs of
+    csUTF8:       result := 65001;
+    csCP437:      result := 437;
+    csCP866:      result := 866;
+    csCP1251:     result := 1251;
+    csCP1252:     result := 1252;
+    csCP1255:     result := 1255;
+    csISO8859_1:  result := 28591;
+    csISO8859_2:  result := 28592;
+    csISO8859_3:  result := 28593;
+    csISO8859_4:  result := 28594;
+    csISO8859_5:  result := 28595;
+    csISO8859_6:  result := 28596;
+    csISO8859_7:  result := 28597;
+    csISO8859_8:  result := 28598;
+    csUTF7:       result := 65000;
+    csASCII:      result := 437;
+    else          result := 0;
+  end;
+end;
+
+function GetCharsetfromCP(cp:Integer):TMimeCharsets;
+begin
+  case cp of
+    65001: result := csUTF8;
+    437:   result := csCP437;
+    866:   result := csCP866;
+    1251:  result := csCP1251;
+    1252:  result := csCP1252;
+    1255:  result := csCP1255;
+    28591: result := csISO8859_1;
+    28592: result := csISO8859_2;
+    28593: result := csISO8859_3;
+    28594: result := csISO8859_4;
+    28595: result := csISO8859_5;
+    28596: result := csISO8859_6;
+    28597: result := csISO8859_7;
+    28598: result := csISO8859_8;
+    28599: result := csISO8859_9;
+    28605: result := csISO8859_15;
+    65000: result := csUTF7;
+    else   result := csUNKNOWN;
+  end;
+end;
+
+procedure MakeConverters;
+var TrueOutputCharset: TMIMECharsets;
+begin
+  if ConvertersOK then exit; 
+  ConvertersOK := true;
+
+  SourceToUTF8.Free;  SourceToUTF8:=nil;
+  UTF8ToDest.Free;    UTF8ToDest:=nil;
+
+{ 
+  NB: The Unicode functions only work on NT/2k/XP, not on 95/98/ME.
+  That's not a big problem as only NT/2k/XP allow switching charsets
+  for the console (i.e. 95/98/ME _always_ uses the OEM codepage).
+}
+  if IsUnicode then 
+  begin
+    OutputCP := GetCPfromCharset(OutputCharset);
+    if (OutputCP = 0) or not IsValidCodePage(OutputCP) then
+    begin
+      OutputCP := 65001 {UTF-8};
+      TrueOutputCP := 65001;
+      SourceToUTF8:= CreateUTF8Encoder(OutputCharset);
+    end;
+  end else
+  begin
+    TrueOutputCharset := GetCharsetfromCP(TrueOutputCP);
+    if (TrueOutputCharset = OutputCharset) or
+       (csUNKNOWN in [TrueOutputCharset,OutputCharset]) then exit;
+    if OutputCharset<>csUTF8 then
+      SourceToUTF8:= CreateUTF8Encoder(OutputCharset);
+    UTF8ToDest  := CreateUTF8Decoder(GetCharsetfromCP(TrueOutputCP));
+  end;  
+
+end;
+
+function Win32_Wrt(WritePos:TCoord; s:string): Integer;
+var
+  OutRes: ULong;
+  s2: String;
+  dwFlags: DWORD;
+  
+begin
+  if Length(s)<=0 then begin result := 0; exit; end;
+  MakeConverters;
+{ 
+  NB: The Unicode functions only work on NT/2k/XP, not on 95/98/ME.
+  That's not a big problem as only NT/2k/XP allow switching charsets
+  for the console (i.e. 95/98/ME _always_ uses the OEM codepage).
+}
+
+  if Assigned(SourceToUTF8) then s := SourceToUTF8.Encode(s);
+  if Assigned(UTF8ToDest)   then s := UTF8ToDest.Decode(s);
+  
+  if IsUnicode then
+  begin
+    if(OutputCP = 50220) or
+      (OutputCP = 50221) or
+      (OutputCP = 50222) or
+      (OutputCP = 50225) or
+      (OutputCP = 50227) or
+      (OutputCP = 50229) or
+      (OutputCP = 52936) or
+      (OutputCP = 54936) or
+      ((OutputCP >= 57002) and (OutputCP <= 57011)) or
+      (OutputCP = 65000) or
+      (OutputCP = 65001) then 
+      dwFlags := 0 
+    else
+      dwFlags := MB_PRECOMPOSED + MB_USEGLYPHCHARS;
+  
+    OutRes := MultiByteToWideChar(OutputCP,dwFlags,@(s[1]),
+      Length(s),nil,0);
+    SetLength(s2,OutRes*2);
+    OutRes := MultiByteToWideChar(OutputCP,dwFlags,@(s[1]),
+      Length(s),@(s2[1]),Length(s2) div 2);
+    WriteConsoleOutputCharacterW(OutHandle, @(s2[1]), OutRes, WritePos, OutRes);
+  end else 
+  begin
+    WriteConsoleOutputCharacterA(OutHandle, @(s[1]), Length(s), WritePos, OutRes);
+  end;
+
+  Result := OutRes;
+end;
+
+procedure SetConsoleOutputCharset(NewCharset:TMimeCharsets);
+var NewCP: IntegeR;
+begin
+  if not IsWindowsNT then exit;
+
+  NewCP := GetCPfromCharset(NewCharset);
+  IsUnicode := (NewCP = 65000) or (NewCP = 65001) or (NewCP = 1200);
+  if IsUnicode then NewCP := 1252;
+  SetConsoleOutputCP(NewCP);
+  TrueOutputCP := GetConsoleOutputCP;
+  convertersOK := false;
+end;
+
+function  GetConsoleOutputCharset:TMimeCharsets;
+begin
+  result := GetCharsetfromCP(TrueOutputCP);
+end;
+
+procedure SetLogicalOutputCharset(NewCharset:TMimeCharsets);
+begin
+  OutputCharset := NewCharset;
+  convertersOK := false;
+end;
+
+function  GetLogicalOutputCharset:TMimeCharsets;
+begin
+  result := OutputCharset;
+end;
+
+procedure InitCharsetSystem;
+begin       
+  if IsWindowsNT then 
+  begin 
+    SetConsoleCP(437);
+    SetConsoleOutputCP(437);
+  end;
+
+  IsUnicode := false;
+  TrueOutputCP := GetConsoleOutputCP;
+  OutputCharset := csCP437;
+  ConvertersOK := false;  
+end;
+
+procedure ExitCharsetSystem;
+begin
+  SourceToUTF8.Free;
+  UTF8ToDest.Free;
+end;
+
+function IsWindowsNT: Boolean;
+begin
+  result := Longint(Windows.GetVersion)>=0;
+end;
+{$ENDIF}
+
+//
+// Default implementation: Internal conversion, assume IBMPC (CP437)
+//
+{$IFNDEF CS_IMPLEMENTATION}
+var OutputCharset: TMimeCharsets;
+    TrueOutputCharset: TMimeCharsets;
+
+var SourceToUTF8: TUTF8Encoder;
+    UTF8ToDest:  TUTF8Decoder;    
+var ConvertersOK: Boolean;    
+
+procedure MakeConverters;
+begin
+  if ConvertersOK then exit;
+  ConvertersOK := true;
+
+  SourceToUTF8.Free;  SourceToUTF8:=nil;
+  UTF8ToDest.Free;    UTF8ToDest:=nil;
+
+  if OutputCharset=TrueOutputCharset then exit;
+
+  if OutputCharset<>csUTF8 then
+    SourceToUTF8:= CreateUTF8Encoder(OutputCharset);
+
+  if TrueOutputCharset<>csUTF8 then
+    UTF8ToDest  := CreateUTF8Decoder(TrueOutputCharset);
+end;
+
+function  GetConsoleOutputCharset:TMimeCharsets;
+begin
+  result:=TrueOutputCharset;
+end;
+
+function  GetLogicalOutputCharset:TMimeCharsets;
+begin
+  result:=OutputCharset;
+end;
+    
+procedure SetLogicalOutputCharset(NewCharset:TMimeCharsets);
+begin
+  TrueOutputCharset:=NewCharset;
+  ConvertersOK := false;
+end;
+
+procedure SetConsoleOutputCharset(NewCharset:TMimeCharsets);
+begin
+  OutputCharset := NewCharset;
+  ConvertersOK := false;
+end;
+
+function Wrt_Convert(const s: string):string; 
+begin
+  MakeConverters;
+  result := s;
+  if Assigned(SourceToUTF8) then result := SourceToUTF8.Encode(result);
+  if Assigned(UTF8ToDest)   then result := UTF8ToDest.Decode(result);
+end;
+
+procedure InitCharsetSystem;
+begin
+  OutputCharset:=csCP437;
+  TrueOutputCharset:=csCP437;
+  SourceToUTF8:=nil;
+  UTF8ToDest:=nil;
+  ConvertersOK := false;
+end;
+
+procedure ExitCharsetSystem;
+begin
+  SourceToUTF8.Free;
+  UTF8ToDest.Free;
+end;
+{$ENDIF}
 
 var
   SavedExitProc: pointer;
@@ -1026,6 +1354,7 @@ begin
   {$IFDEF Localscreen }
   FreeMem(LocalScreen);
   {$ENDIF }
+  ExitCharsetSystem;
 end;
 
 procedure InitWinXPUnit;
@@ -1053,12 +1382,17 @@ begin
   { Consolenhandle holen }
   OutHandle := GetStdHandle(STD_OUTPUT_HANDLE);
 {$ENDIF }
+  InitCharsetSystem;
+
   SavedExitProc:= ExitProc;
   ExitProc:= @ExitWinXPUnit;
 end;
 
 {
   $Log$
+  Revision 1.71  2002/01/01 19:34:37  cl
+  - Basic support for console charset switching + initial Win32 implementation
+
   Revision 1.70  2001/12/30 19:22:05  cl
   - Linux FPC compile fix (prototype for wshadow did not match NCRT implementation).
 

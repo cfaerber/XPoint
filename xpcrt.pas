@@ -283,11 +283,6 @@ procedure do_initialization;
 var mode:DWORD;
 begin
   StdInputHandle := GetStdHandle(STD_INPUT_HANDLE);
-  if Longint(Windows.GetVersion)>=0 then // WinNT
-  begin
-    SetConsoleCP(437);
-    SetConsoleOutputCP(437);
-  end;
 
   mouse.maus:=GetSystemMetrics(SM_MOUSEPRESENT)<>0;
 
@@ -302,6 +297,9 @@ initialization
 
 {
   $Log$
+  Revision 1.18  2002/01/01 19:34:38  cl
+  - Basic support for console charset switching + initial Win32 implementation
+
   Revision 1.17  2001/10/17 04:05:34  mk
   - removed Range Check Error
 

@@ -401,7 +401,7 @@ begin
       begin
         Index := Ord(Source[p+1]) and $3f;
         if Assigned(L1Table^[Index]) then
-          Result := Result + L1Table^[Index]^[Ord(Source[p+3]) and $3f]
+          Result := Result + L1Table^[Index]^[Ord(Source[p+2]) and $3f]
         else
           Result := Result + '?';
       end else
@@ -456,6 +456,9 @@ end;
 
 {
   $Log$
+  Revision 1.10  2002/01/01 19:34:37  cl
+  - Basic support for console charset switching + initial Win32 implementation
+
   Revision 1.9  2001/12/30 18:05:46  cl
   - changed TUTF8Decoder.Decode(const Source: PUTF8Char) to
             TUTF8Decoder.Decode(const Source: UTF8String)
