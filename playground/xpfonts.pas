@@ -324,9 +324,9 @@ end;
 end.
 {
   $Log$
-  Revision 1.1.1.2  2001/10/20 11:52:47  mw
+  Revision 1.1.1.3  2001/10/20 13:37:12  mw
 
-  - Playground fÅr Openxp/16
+  - Readme.txt added
 
   Revision 1.1.1.1  2001/10/20 11:48:34  mw
 
