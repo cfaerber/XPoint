@@ -509,6 +509,10 @@ begin
     if t=keyaf4 then quit:=true;
     if not dead then begin
       i:=1;
+      case t[1] of 
+        #132: t[1] := #142; // Bildschirm ä in Tastatur ä umwandeln
+        // ö und ü noch hinzufügen
+      end;
       while (i<=n) and (ma^[i].hkey<>UpperCase(t)) do inc(i);
       if (i<=n) and (ma^[i].enabled) then begin
         p:=i; t:=keycr;
@@ -606,6 +610,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2001/09/26 00:18:43  mk
+  - support of a umlaut as menu shortkey
+
   Revision 1.32  2001/09/07 13:54:18  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
