@@ -199,20 +199,19 @@ begin
       end;
     close(t);
     end;
-  DebugLog('xpncfido','SendNetzanruf',4);
   SendNetzanruf(boxpar^.RedialMax>1,crash);
 end;
 
 
-function isPacket(name:string):boolean;
+function isCompressedPacket(name:string):boolean;
 var p : byte;
 begin
   p:=cpos('.',name);
   if (p=0) or (name='.') or (name='..') then
-    isPacket:=false
+    isCompressedPacket:=false
   else
-    IsPacket:=(pos(copy(name,p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
-              (boxpar^.ExtPFiles or (pos(copy(name,p+3,1),'0123456789')>0));
+    isCompressedPacket:=(pos(copy(name,p+1,2)+'.','MO.TU.WE.TH.FR.SA.SU.')>0) and
+                        (boxpar^.ExtPFiles or (pos(copy(name,p+3,1),'0123456789')>0));
 end;
 
 
@@ -234,27 +233,35 @@ begin
     p:=pos('$DOWNFILE',UpperCase(downarcer));       { immer > 0 ! }
 
     { using wildcard does not require case sensitive }
+    Debug.DebugLog('xpncfido','looking for compressed packets: "'+ImportDir+WildCard+'"',DLInform);
     dir:= TDirectory.Create(ImportDir+WildCard,faAnyFile-faDirectory,false);
     for i:= 0 to dir.Count-1 do begin
-      Debug.DebugLog('xpncfido','processing file: "'+dir.name[i]+'"',DLDebug);
-      if isPacket(dir.name[i]) then begin
-        Debug.DebugLog('xpncfido','is packet',DLDebug);
+      Debug.DebugLog('xpncfido','processing file: "'+dir.LongName[i]+'"',DLDebug);
+      if isCompressedPacket(dir.name[i]) then begin
+        Debug.DebugLog('xpncfido','is compressed packet',DLDebug);
         MWrt(x+2,y+2,GetRepS2(30003,2,dir.Name[i]));
         ImportDir:=ExpandFilename(ImportDir);
+        Debug.DebugLog('xpncfido','chdir to "'+OwnPath+XFerDir+'"',DLDebug);
         SetCurrentDir(OwnPath+XFerDir);
-        shell(LeftStr(downarcer,p-1)+dir.LongName[i]+mid(downarcer,p+9),500,1);
-        { ^^ setzt Verzeichnis zurÅck! }
-        if errorlevel<>0 then
-          MoveToBad(OwnPath+ImportDir+dir.name[i])
-        else
-          _era(dir.LongName[i]);                        //arcmailpaket lîschen
-        end;
+        shell(LeftStr(downarcer,p-1)+dir.Name[i]+mid(downarcer,p+9),500,1);
+        // shell chdirs back to program directory automatically
+        if errorlevel<>0 then begin
+          Debug.DebugLog('xpncfido','error calling downarcer',DLError);
+          MoveToBad(OwnPath+ImportDir+dir.name[i]);
+          end
+        else begin
+          Debug.DebugLog('xpncfido','decompressed ok, deleting archive',DLDebug);
+          _era(dir.LongName[i]);
+          end;
+        end
+      else Debug.DebugLog('xpncfido','is no compressed packet',DLDebug);
     end;
     dir.Free;
     closebox;
 
     { Read only files }
-    dir:= TDirectory.Create(OwnPath+XFerDir+'*.PKT',(faAnyFile-faDirectory),true);
+    Debug.DebugLog('xpncfido','looking for packets: "'+OwnPath+XFerDir+'*.PKT"',DLInform);
+    dir:=TDirectory.Create(OwnPath+XFerDir+'*.PKT',faAnyFile-faDirectory,true);
     if not(dir.isEmpty) then begin
       msgbox(70,10,GetRes2(30003,10),x,y);
       for i:=0 to dir.Count-1 do begin
@@ -278,7 +285,7 @@ begin
           Debug.DebugLog('xpncfido','packet corrupted: "'+dir.LongName[i]+'"',DLError);
           trfehler(719,30);   { 'fehlerhaftes Fido-Paket' }
           end
-        else if nDelPuffer then begin         //pkts nach call Lîschen? xpoint.cfg -> pufferloeschen=
+        else if nDelPuffer then begin         // pkts nach call Loeschen? xpoint.cfg -> pufferloeschen
           Debug.DebugLog('xpncfido','deleting PKT: "'+dir.LongName[i]+'"',DLDebug);
           _era(dir.LongName[i]);
           end;
@@ -966,6 +973,10 @@ end.
 
 {
   $Log$
+  Revision 1.3  2001/01/05 18:38:29  ma
+  - fixed shell call (that decompresses incoming packets)
+  - debug logs changed a bit
+
   Revision 1.2  2001/01/04 21:21:10  ma
   - added/refined debug logs
 
