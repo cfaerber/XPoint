@@ -115,9 +115,10 @@ type
     function Connect: boolean; virtual;
     procedure DisConnect; virtual;
 
-    { Beide Routinen sind blocking }
+    { Folgende Routinen sind blocking }
     procedure SWriteln(s: String);
     procedure SReadln(var s: String);
+    procedure SWritelnFmt(s: string; args: array of const);
   end;
 
 implementation
@@ -311,6 +312,12 @@ begin
   WriteBuffer(s[1], Length(s));
 end;
 
+procedure TSocketNetcall.SWritelnFmt(s: string; args: array of const);
+begin
+  s := Format(s, args) + #13#10;
+  WriteBuffer(s[1], Length(s));
+end;
+
 procedure TSocketNetcall.SReadln(var s: String);
 var
   c: Char;
@@ -330,6 +337,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/08/01 21:53:52  mk
+  - WriteFmt in NcSockets verschoben und in SWritelnFmt umbenannt
+
   Revision 1.9  2000/08/01 18:07:52  mk
   - Crash nach Liste holen beseitigt
 

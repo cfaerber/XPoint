@@ -69,10 +69,6 @@ type
 
     { Liste holen (withDescr = Description, wenn moeglich }
     function List(aList: TStringList; withDescr: boolean): boolean;
-
-    { In den Stream schreiben }
-    procedure WriteFmt(fmt: string; args: array of const);
-
   end;
 
 implementation
@@ -117,12 +113,6 @@ begin
   FServer:= '';
 end;
 
-procedure TNNTP.WriteFmt(fmt: string; args: array of const);
-begin
-  if Connected then
-    SWriteln(Format(fmt, args));
-end;
-
 function TNNTP.Login: boolean;
 var
   s: string;
@@ -131,7 +121,7 @@ begin
     if (User='') or (Password='') then
       Error:= 480
     else begin
-      WriteFmt('AUTHINFO USER %s PASS %s', [User, Password]);
+      SWritelnFmt('AUTHINFO USER %s PASS %s', [User, Password]);
       SReadLn(s);
       Error:= ParseResult(s);
     end;
@@ -256,8 +246,8 @@ end;
 end.
 {
         $Log$
-        Revision 1.5  2000/08/01 21:45:09  mk
-        - Unit Sockets entfernt
+        Revision 1.6  2000/08/01 21:53:52  mk
+        - WriteFmt in NcSockets verschoben und in SWritelnFmt umbenannt
 
         Revision 1.4  2000/08/01 18:06:18  mk
         - WriteFMT in SWriteln geaendert
