@@ -645,6 +645,8 @@ begin
   dbReadN(ubase,ub_codierer,typ);
   if typ=9 then
     cod:='PGP'
+  else if (typ=8) and ntMIME(netztyp) then
+    cod:='PGP/MIME'
   else if not ntBinary(netztyp) and (typ<3) then
     cod:='pmc-1'
   else
@@ -658,10 +660,12 @@ begin
   wcy:=y+3;
   maddstring(3,2,getres2(2706,1),pw,52,250,''); mhnr(480);   { 'Paáwort ' }
   mnotrim;
-  maddstring(3,4,getres2(2706,2),cod,5,5,'');   { 'Codier-Verfahren   ' }
+  maddstring(3,4,getres2(2706,2),cod,8,8,'');   { 'Codier-Verfahren   ' }
   if ntBinary(netztyp) then
     mappsel(true,'QPCùDES');
   mappsel(true,'PGP');
+  if ntMIME(netztyp) then
+    mappsel(true,'PGP/MIME');
   for i:=1 to maxpmc do
     mappsel(true,'pmc-'+strs(i));
   mset1func(writecode);
@@ -678,6 +682,7 @@ begin
     dbWriteXStr(ubase,'passwort',iif(pw='',0,length(pw)+1),pw);
     if UpperCase(cod)='QPC' then typ:=1
     else if UpperCase(cod)='DES' then typ:=2
+    else if UpperCase(cod)='PGP/MIME' then typ:=8
     else if UpperCase(cod)='PGP' then typ:=9
     else typ:=2+ival(RightStr(cod,1));
     dbWriteN(ubase,ub_codierer,typ);
@@ -1644,7 +1649,7 @@ begin
   forcebox:=box;
   sdata:=allocsenduudatamem;
   sdata^.empfrealname:=real;
-  if DoSend(pm,fn,empf,betr,true,false,true,false,true,sdata,headf,sigf,0)
+  if DoSend(pm,fn,true,false,empf,betr,true,false,true,false,true,sdata,sigf,0)
   then;
   freesenduudatamem(sdata);
   pgdown:=false;
@@ -2436,6 +2441,10 @@ end;
 
 {
   $Log$
+  Revision 1.78  2001/09/08 14:31:02  cl
+  - adaptions/fixes for MIME support
+  - adaptions/fixes for PGP/MIME support
+
   Revision 1.77  2001/09/07 13:54:20  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
