@@ -67,7 +67,7 @@ function ntDomainReply(nt:byte):boolean;      { Replys auf eig. Nachr. erkennbar
 function ntZDatum(nt:byte):boolean;           { langes Datumsformat   }
 function ntDomainType(nt:byte):byte;          { Domain fÅr Absender + MsgID }
 function ntAutoZer(nt:byte):boolean;          { .ZER-Pflicht          }
-function ntAutoDomain(box:string; ownbox:boolean):string;   { .Domain }
+function ntAutoDomain(const box:string; ownbox:boolean):string;   { .Domain }
 function ntServerDomain(box:string):string;   { Domain des Servers    }
 function ntDefaultDomain(nt:byte):string;     { Domain fÅr neue Boxen }
 function ntGrossUser(nt:byte):boolean;        { User-Gro·schreibung   }
@@ -335,14 +335,15 @@ begin
   ntAutoZer:=(nt<=1);
 end;
 
-function ntAutoDomain(box:string; ownbox:boolean):string;
+function ntAutoDomain(const box:string; ownbox:boolean):string;
 var d  : DB;
-    nt : shortint;
+    nt : Byte;
 begin
   ntAutoDomain:='';
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
-  if dbFound then begin
+  if dbFound then
+  begin
     dbRead(d,'netztyp',nt);
     if ntAutoZer(nt) then
       ntAutoDomain:='.ZER'
@@ -748,6 +749,10 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.43.2.8  2003/09/21 19:37:16  mk
+  - added const parameter for ntAutoDomain
+  - nt is now Byte instead of ShortInt
+
   Revision 1.43.2.7  2003/08/28 23:12:40  mk
   - fixed typo
 
