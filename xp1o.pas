@@ -23,11 +23,12 @@ uses
   crt, dos,dosx,typeform,keys,fileio,inout,maus2,lister,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc, lfn;
 
-const ListKommentar : boolean = false;   { beenden mit links/rechts }
-      ListQuoteMsg  : string = '';
-      ListXHighlight: boolean = true;    { fÅr F-Umschaltung }
-      ListShowSeek  : boolean = false;
-      ListWrapToggle: boolean = false;   { fÅr Wortumbruch-Umschaltung }
+const ListKommentar     : boolean = false;   { beenden mit links/rechts }
+      ListQuoteMsg      : string = '';
+      ListXHighlight    : boolean = true;    { fÅr F-Umschaltung }
+      ListShowSeek      : boolean = false;
+      ListWrapToggle    : boolean = false;   { fÅr Wortumbruch-Umschaltung }
+      no_ListWrapToggle : boolean = false;   { Wortumbruch-Umschaltung verhindern }
 
 var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
      listkey  : taste;
@@ -348,7 +349,7 @@ begin
 
   if upcase(c)='E' then ListShowSeek:=not Listshowseek;
 
-  if c = ^W then                                              { '^W' = Umbruch togglen }
+  if (c=^W) and not no_ListWrapToggle then                    { '^W' = Umbruch togglen }
   begin
     listwrap:=not listwrap;
     ListWrapToggle:=true;
@@ -1030,6 +1031,13 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.26  2002/03/08 22:57:44  my
+  MY:- Fix: Umschaltung des Wortumbruchs im Lister mit <Ctrl-W>
+       funktioniert jetzt auch in der Anzeige des Nachrichtenkopfs ("o"),
+       in Nachrichten mit KOM-Header und bei der Anzeige von Dateien in
+       Archiven. Funktion bei der Anzeige des Archivinhalts deaktiviert
+       (weil dort vîllig ÅberflÅssig und nur hinderlich).
+
   Revision 1.40.2.25  2001/12/04 23:01:02  my
   MY:- Fix fÅr Wortumbruch-Toggle (<Ctrl-W>) im Lister (beim AusfÅhren
        konnte es vorkommen, da· XP die Nachricht beantworten wollte,
