@@ -21,13 +21,19 @@
 # Fuer das Erstellen eines Quellcodearchiv wird die
 # Archivierungssoftware rar <http://www.rarsoft.com/> gebraucht.
 #
+# Zum Uebersetzen des Handbuchs werden OpenJade, sed, w3m, tidy,
+# die DocBook DTD und die modular Stylesheets benoetigt.
+
 # Unten muessen einige Variablen gesetzt werden.
 
-# make             uebersetzt das ganze Programm
-# make install     installiert das Programm
-# make uninstall   deinstalliert das Programm
-# make clean       raeumt das Verzeichnis auf
-# make dist        erstellt Quellcodearchiv
+# make                   uebersetzt das ganze Programm
+# make install           installiert das Programm
+# make uninstall         deinstalliert das Programm
+# make clean             raeumt das Verzeichnis auf
+# make distclean         raeumt das Verzeichnis auf
+# make mostlyclean       raeumt das Verzeichnis auf
+# make maintainer-clean  raeumt das Verzeichnis auf inkl. Plaintext-Handbuch
+# make dist              erstellt Quellcodearchiv
 
 
 # Das Betriebssystem, fuer das OpenXP uebersetzt werden soll.
@@ -67,6 +73,29 @@
 # (KANN gesetzt werden.)
 #
 #DEBUG = no
+
+# Soll das Handbuch aus DocBook gebaut werden?
+# (KANN gesetzt werden.)
+#
+#MAKEHB = 
+
+# Verzeichnis, in dem die DTD von DocBook 4.1 (SGML) liegt.
+# <http://www.oasis-open.org/docbook/sgml/4.1/docbk41.zip>
+# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+#
+#DBDIR = 
+
+# Verzeichnis, in dem die DSSSL-Dateien von OpenJade liegen.
+# <http://www.netfolder.com/DSSSL/>
+# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+#
+#JADEDIR = C:\Programme\OpenJade-1.3\dsssl
+
+# Verzeichnis, in dem die Modular DSSSL-Stylesheets liegen.
+# <http://nwalsh.com/docbook/dsssl/>
+# (MUSS gesetzt werden, falls MAKEHB gesetzt ist.)
+#
+#MODDIR = 
 
 # Verzeichnis, in dem notwendige Dateien liegen, die nicht Bestandteil
 # des Quellcode sind
@@ -152,7 +181,7 @@ RC = ./rc
 RAR = rar
 
 CONTRIBBIN =
-CONTRIBDATA = fido.pc xpicons.dll
+CONTRIBDATA = fido.pc
 
 endif
 
@@ -245,6 +274,10 @@ export CPU
 export prefix
 export COMPILER
 export DEBUG
+export MAKEHB
+export DBDIR
+export JADEDIR
+export MODDIR
 export contribdir
 export RM
 
@@ -255,17 +288,17 @@ export RM
 BIN = maggi ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
 COMPBIN = $(BIN) docform ihs rc
 UNITS = archive clip crc database databaso datadef datadef1 dbase \
-	debug dosx eddef editor encoder exxec feiertag fileio help \
-	inout ipaddr ipcclass keys lister maske maus2 modem montage \
-	mouse ncnntp ncpop3 ncsmtp ncsocket ncurses netcall printerx \
-	regexpr resource stack timer typeform uart uuz win2 winxp xp0 \
-	xp1 xp10 xp1help xp1input xp1o xp1o2 xp2 xp2c xp2db xp2f xp3 \
-	xp3ex xp3o xp3o2 xp4 xp4e xp4o xp4o2 xp4o3 xp5 xp6 xp6l xp6o \
-	xp7 xp7f xp7l xp7o xp8 xp9 xp9bp xp_des xp_iti xp_pgp xp_uue \
-	xpauto xpcc xpcfg xpcurses xpdatum xpdiff xpdos32 xpe xpeasy \
-	xpf2 xpfido xpfidonl xpftnadr xpglobal xpimpexp xpipc xpkeys \
-	xplinux xpmaus xpmime xpnntp xpnodes xpnt xpos2 xpreg xpstat \
-	xpterm xpuu xpview xpwin32 xpx zmodem
+	debug dosx eddef editor encoder exxec feiertag fileio gpltools \
+	help inout ipaddr ipcclass keys lister maske maus2 modem \
+	montage mouse ncnntp ncpop3 ncsmtp ncsocket ncurses netcall \
+	printerx regexpr resource stack timer typeform uart uuz win2 \
+	winxp xp0 xp1 xp10 xp1help xp1input xp1o xp1o2 xp2 xp2c xp2db \
+	xp2f xp3 xp3ex xp3o xp3o2 xp4 xp4e xp4o xp4o2 xp4o3 xp5 xp6 \
+	xp6l xp6o xp7 xp7f xp7l xp7o xp8 xp9 xp9bp xp_des xp_iti \
+	xp_pgp xp_uue xpauto xpcc xpcfg xpcurses xpdatum xpdiff \
+	xpdos32 xpe xpeasy xpf2 xpfido xpfidonl xpftnadr xpglobal \
+	xpimpexp xpipc xpkeys xplinux xpmaus xpmime xpnntp xpnodes \
+	xpnt xpos2 xpreg xpstat xpterm xpuu xpview xpwin32 xpx zmodem
 RES = xp-d xp-e xpfm-d xpfm-e xpuu-d xpuu-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
@@ -606,6 +639,9 @@ fileio$(UNITEXT): fileio.pas fileio.inc typeform$(UNITEXT) \
 
 endif
 
+gpltools$(UNITEXT): gpltools.pas xpdefine.inc
+	$(PC) $(PFLAGS) $<
+
 ifeq ($(OS),linux)
 
 help$(UNITEXT): help.pas fileio$(UNITEXT) inout$(UNITEXT) \
@@ -664,17 +700,18 @@ endif
 
 ifeq ($(OS),linux)
 
-lister$(UNITEXT): lister.pas fileio$(UNITEXT) inout$(UNITEXT) \
-	keys$(UNITEXT) maus2$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xpcurses$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT)
+lister$(UNITEXT): lister.pas fileio$(UNITEXT) gpltools$(UNITEXT) \
+	inout$(UNITEXT) keys$(UNITEXT) maus2$(UNITEXT) \
+	typeform$(UNITEXT) winxp$(UNITEXT) xpcurses$(UNITEXT) \
+	xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 else
 
-lister$(UNITEXT): lister.pas fileio$(UNITEXT) inout$(UNITEXT) \
-	keys$(UNITEXT) maus2$(UNITEXT) typeform$(UNITEXT) \
-	winxp$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
+lister$(UNITEXT): lister.pas fileio$(UNITEXT) gpltools$(UNITEXT) \
+	inout$(UNITEXT) keys$(UNITEXT) maus2$(UNITEXT) \
+	typeform$(UNITEXT) winxp$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -2251,13 +2288,15 @@ endif
 
 # Aufraeumen
 
-clean: $(patsubst %,clean_%,$(COMPBINFILES)) \
+clean: localclean
+	$(MAKE) -C ObjCOM clean
+	$(MAKE) -C doc clean
+
+localclean: $(patsubst %,clean_%,$(COMPBINFILES)) \
 	$(patsubst %,clean_%,$(UNITS)) \
 	$(patsubst %,clean_%,$(RESFILES)) \
 	$(patsubst %,clean_%,$(RSTFILES))
 	-$(RM) $(DISTFILE)
-	$(MAKE) -C ObjCOM clean
-	$(MAKE) -C doc clean
 
 $(patsubst %,clean_%,$(COMPBINFILES)): clean_%$(EXEEXT):
 	-$(RM) $*$(EXEEXT)
@@ -2275,6 +2314,18 @@ $(patsubst %,clean_%,$(RESFILES)): clean_%:
 $(patsubst %,clean_%,$(RSTFILES)): clean_%:
 	-$(RM) $*
 
+distclean: localclean
+	$(MAKE) -C ObjCOM distclean
+	$(MAKE) -C doc distclean
+
+mostlyclean: localclean
+	$(MAKE) -C ObjCOM mostlyclean
+	$(MAKE) -C doc mostlyclean
+
+maintainer-clean: localclean
+	$(MAKE) -C ObjCOM maintainer-clean
+	$(MAKE) -C doc maintainer-clean
+
 # Erstellen eines Quellcodearchivs
 
 # Etwas umstaendlich wegen der maximalen Zeilenlaenge von COMMAND.COM.
@@ -2287,13 +2338,18 @@ dist:
 	beispiel$(SEP)*.xps
 	$(RAR) $(RARFLAGS) $(DISTFILE) doc$(SEP)Makefile doc$(SEP)*.txt \
 	doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.xml \
-	doc$(SEP)xpoint.dsl doc$(SEP)dbform doc$(SEP)readme.lnx
+	doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat doc$(SEP)dbform \
+	doc$(SEP)readme.lnx
 	$(RAR) $(RARFLAGS) $(DISTFILE) linux$(SEP)*.inc
 	$(RAR) $(RARFLAGS) $(DISTFILE) ObjCOM$(SEP)Makefile \
 	ObjCOM$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.txt
 
 #
 # $Log$
+# Revision 1.16  2000/10/08 18:15:12  fe
+# Uebersetzung des Handbuchs ergaenzt.
+# Neue Unit gpltools ergaenzt.
+#
 # Revision 1.15  2000/10/05 22:06:18  fe
 # Unterstuetzung fuer Windows-RessourceStringTables ergaenzt.
 #
