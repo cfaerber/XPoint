@@ -3295,10 +3295,76 @@ real name in brackets on the end, e.g.:
       <<user>>\@<<domain>>.<<tld (Forename Surname)>>
 @
 30106
-Enter your 'Fully Qualified Domain Name' here.
+Enter here your 'Fully Qualified Domain Name', which
+you will find on the right of the "<<\@>>". This will be
+used by the Message_ID (MID). Your messages will then
+have the Message-ID <<random number>>\@<<FQDN>>.
 
-(ToDo: comprehensive explanation, client specific,
-\@30106).
+If you have your own domain name, then enter that.
+
+For those who don't have their own domain name, it
+would be sensible for them to put their eMail address
+and replace the "<<\@>>" with a full stop ("<<.>>"). By
+pressing the <<<F2> >>key, XP will automatically enter a
+suitable FQDN for you. For T-Online users, a specific
+FQDN will be generated which T-Online provides as a
+valid and approved FQDN.
+("<<<eMail alias>.dialin.t-online.de>>").
+
+Underscores "<<_>>" are not permitted in FQDNs and are
+automatically changed by XP into hyphens.
+
+It is possible that some news providers may make
+available a specific FQDN, in which case, you must
+enter that here instead of your eMail address.
+Otherwise, the providers may insert some approved
+value of their own into the Message-ID of your news
+article (further details available from your ISP) and
+this would inevitably cause problems with XP's
+internal message linking.
+
+If you leave this field empty, your messages will be
+given the Message-ID <<random number>>\@<<domain>>.<<TLD>>,
+e.g. "82AWL5iACHB\@openxp16.de" (<<TLD>>=<<T>>op<<L>>evel<<D>>omain,
+".de", ".com", ".net", ".org", etc.). Naturally, this
+will cause problems in the coloured display linking
+of replies to messages in XP, as the right-hand part
+of the Message-ID (on the right of the "<<\@>>") is no
+longer unique and XP would display all messages whose
+right-hand part of the Message-ID is "openxp16.de" as
+belonging to that FQDN.
+
+Therefore, you should *not* leave this field empty
+and you would be well advised to register your own
+exclusive name with the news server in order to
+ensure the uniqueness of your FQDN. The uniqueness of
+the FQDN is relevant only for internal XP use of
+public messages (articles/postings = AMs). Non-unique
+FQDNs like "t-online.de" do conform to the RFC
+requirements for uniqueness because they are fully
+qualified and because those requirements apply to the
+whole Message-ID.
+
+<<Advice:>> Whatever method you choose to configure
+an FQDN in CrossPoint, it will all be to no avail if
+you connect to a news server which, regardless of
+your Message-IDs, puts in its own. In this case, you
+are going to have the following problems:
+
+þ Replies to your articles won't show up in colour.
+
+þ The [replacing of the local copy of a message]@8051
+  (Edit/Server/Edit/Misc) with their return copy will
+  not work.
+
+þ There will be no reply chain to your locally
+  originated articles, only to the return copy
+  of your own articles.
+
+There are no solutions to this except: a) change to
+another news server, or b) construct a complicated
+import filter (not everyone's cup of tea and, in
+comparison with a), not worth the effort).
 @
 30107
 Enter the <<relative>> path to the directory where the
@@ -5135,7 +5201,7 @@ future reference.
         see who else the message has been sent to.
 
 The BCC flag can be manually enabled/disabled in the
-send-window by pressing <Ctrl+K>.
+send-window by pressing <Ctrl-K>.
 
 Please note: In ZConnect, this function is provided
 by the Host software and so this feature is not
@@ -5152,7 +5218,7 @@ text.
 
 @
 254
-<<[ ]>> ->  Upon replying to a privat or public message
+<<[ ]>> ->  Upon replying to a private or public message
         with P, <Ctrl-P> or <Shift-P> or upon archi-
         ving it with <Alt-P>, CrossPoint will ask if
         the user shall be created in case he doesn't
@@ -5178,10 +5244,10 @@ under /Config/Options/Miscellaneous.
 @
 256
 The possibility to "crosspost" a message into
-different groups is sometimes abused, to spread
-advertisements. To counter this, CrossPoint can
-delete these copies when there are more recipients
-than specified here.
+different groups is sometimes abused, in order to 
+spread advertisements. To counter this, CrossPoint 
+can delete these copies when there are more 
+recipients than specified here.
 
 Hint: If a message is crossposted into more than ten
 groups, it is not worth reading.
@@ -5221,10 +5287,10 @@ separated by a space:
 Ident letter+country code-dialling code-number[Q]
 
 eg.
-   V+49-1234-56789     (Voice-Number)
+   V+49-1234-56789     (Voice number)
    V+49-1234-56789Q    (Voice with answering machine)
-   F+49-1234-56789     (Fax-Number)
-   B+49-1234-56789     (Mailbox Number)
+   F+49-1234-56789     (Fax number)
+   B+49-1234-56789     (BBS/Mailer number)
 
 For combined functions, you can put more than one
 ident-letter thus:
@@ -5258,18 +5324,18 @@ message reader to display other user's Homepages.
        will only be written to private messages.
 
 <<[ ]>> -> Your address, phone and Homepage details
-       will be written to private <<AND public>> 
+       will be written to private <<AND public>>
        messages.
 
 @
 260
-The directory where CrossPoint should put the
-temporary files which it uses.
+The directory where CrossPoint should put its 
+temporary files.
 
 CrossPoint uses many temporary files; when writing
 messages in the editor, when displaying messages in
-the message reader, and so on. These are all 
-immediately erased after use but must be somewhere 
+the message reader, and so on. These are all
+immediately erased after use but must be somewhere
 while in use.
 
 It is a good idea to use a RAM Disk for this if you
@@ -5285,7 +5351,7 @@ directory as the one the program files are in.
 
 @
 261
-The extract-directory is where CrossPoint puts the
+The extract directory is where CrossPoint puts the
 files which are extracted with /Message/[Extract].@10302
 However, at each extract, the file name is requested,
 and another directory can be specified.
@@ -5305,11 +5371,11 @@ put log files. The following files are affected:
 
    XPOINT.LOG     Log for telephone charges.
    ERRORS.LOG     Errors log (no, really?)
-   BRETTER.LOG    logs Newsgroups which CrossPoint
+   BRETTER.LOG    Logs Newsgroups which CrossPoint
                   automatically adds
-   USER.LOG       logs Users which CrossPoint
+   USER.LOG       Logs Users which CrossPoint
                   automatically adds
-   DUPES.LOG      the results of /Re-Org/Dupekill
+   DUPES.LOG      The results of /Re-Org/Dupekill
    XPFIDO.LOG     Happenings for Fido-Netcalls
 
 It is also the default directory for log files for
@@ -9279,38 +9345,38 @@ the search criteria) lies between 2000 and 5000.
 10302
 <<Message / Extract
 
-Messages (or files) can be extracted from the data
-bank and written to a file that you can name.
+Messages (or files) can be extracted from the message
+base and written to a file of your choice.
 @
 10303
-<<Message / Outgoing
-This finds and marks outgoing messages, so you can
+<<Message / Unsent
+This finds and marks unsent messages, so you can
 review them, edit them, abort them or whatever.
-Useful for checking everything you have written,
+Useful for checking everything you have written
 before starting a netcall.
 @
 10304
 <<Message / All
 
-Under this menu are various actions which you can
-carry out on all messages on display. This can be
-messages in a newsgroup, or marked messages that you
-are currently displaying.
+Under this menu, various actions will be found which 
+can be performed on all messages on display. This can 
+be messages in a newsgroup or marked messages that
+are currently being displaying.
 @
 10305
 <<Message / Change
 This is for editing messages that are NOT waiting to
 be sent.
 
-For editing the text of outgoing messages waiting to
-be sent, use [/Message/Outgoing/Edit]@10401
+To edit the text of unsent messages, use:
+[/Message/Unsent/Edit]@10401
 @
 10306
 <<Message / Action
 
 This menu contains various options for sending a
-message, already in the message base, either to
-another person or to another newsgroup. See the
+message which is already in the message base, either 
+to another person or to another newsgroup. See the
 online help for the individual menu items.
 
 @
@@ -9363,9 +9429,10 @@ working with the encoding program, PGP.
 10311
 <<Message / Direct
 
-For real men. You can enter an address to send a
-message to direct into the window, without looking it
-up.
+For real men! :-)
+
+You can enter an address directly into the window 
+without looking it up.
 
 3 entries are necessary;
 
@@ -9373,7 +9440,7 @@ up.
 <<Server:>>    The Server over which the message
            should be despatched. (This only appears
            when you have more than 1 server)
-           The first letter(s) of the box-name are
+           The first letter(s) of the Server name are
            sufficient.
 
 <<Addressee>>  The name of the recipient. CrossPoint
@@ -9391,13 +9458,12 @@ You can enter one of the pre-defined [short-names]@11605
 as defined under /Edit/Short names instead of the
 complete address.
 
-<<Fido:>>  In Fido you can enter a part of the
-address and select the correct completion from the
-node-list.
+<<Fido:>>  In Fido you can enter a part of the address 
+and select the correct completion from the nodelist.
 @
 10401
-<<Message / Outgoing / Edit
-If you have an outgoing message currently selected,
+<<Message / Unsent / Edit
+If you have an unsent message currently selected,
 either normally or in the newsgroup or user window,
 you can edit its text with this menu item, and ONLY
 this menu item.
@@ -9405,44 +9471,44 @@ this menu item.
 Remember to save it completely after re-editing and
 confirm in the send window with <Enter> that it
 should be sent (assuming that is what you want).
- <Esc> aborts, AND DOES NOT SEND THE MESSAGE.
+<Esc> aborts, AND DOES NOT SEND THE MESSAGE.
 @
 10402
-<<Message / Outgoing / Change Send
+<<Message / Unsent / Change
 
-This lands you direct in the send window for an
-outgoing message, so you can change things there, not
-in the text.
-You can change the subject, server and coding.
+This lands you directly in the send window for an
+unsent message, so you can change things there, not
+in the text. You can change the subject, server and 
+coding.
 @
 10403
-<<Message/ Outgoing / Abort
+<<Message/ Unsent / Delete
 
-If you decide not to send a message which is
-"outgoing", ie. waiting to be sent, you can stop it,
-abort the send, with this menu entry. The message is
-still there, but will not be sent.
+If you decide not to send a message which is "unsent"
+ie. waiting to be sent, you can delete it with this 
+menu option. The message is still there but will not
+be sent.
 
 If you change you mind again, you can reactivate it
-with [/Message/Forward/Repost].@12110
+with [/Message/Action/Repost].@12110
 @
 10404
-<<Message / Outgoing / Statistic
+<<Message / Unsent / Statistics
 
 Gives you a summary of the number of messages waiting
 to be sent (ie. in the send packet *.PP)
 @
 10405
-<<Message / Outgoing / View
+<<Message / Unsent / Show
 
-Shows you in newsgroup format the list of outgoing
+Shows you, in newsgroup format, the list of unsent
 messages (ie. those waiting to be dispatched).
 
-They can be read like any other message.
+They can be read just like any other messages.
 
-CrossPoint does this operation by marking all
-outgoing messages waiting to be sent, then displaying
-them [/Messages/Search/Marked].@10506
+CrossPoint performs this operation by marking all
+unsent messages and then displays them 
+[/Messages/Search/Marked].@10506
 @
 10501
 <<Message / Search / Text
@@ -10681,15 +10747,15 @@ about it, darling :-).
 ^^10605
 @
 11901
-<<Message / News manager / Subscribe
+<<Message / News/Echo manager / Subscribe
 
 Order newsgroups you wish to receive.
 
 Presents you with a list of Servers and then a list
 of newsgroups available from that Server (assuming
-that you have [ordered a list] of the newsgroups@11903
-under /Message/News manager/Get List and [read it in]@11906
-under /Message/News manager/import list.
+you have [ordered a list] of the newsgroups under@11903
+/Message/News/Echo manager/Get List and [read it in]@11906
+under /Message/News/Echo manager/import list.
 
 (If no list is available, you will get an error
 message to this effect)
@@ -10700,20 +10766,20 @@ send a message to the Server ordering the newsgroups
 you wish to subscribe to.
 @
 11902
-<<Message / News manager / Unsubscribe
+<<Message / News/Echo manager / Unsubscribe
 
 Under this hideous unenglish (;-) expression one
 understands cancelling newsgroups that one no longer
 wishes to receive.
 
-Will first ask you if you want to cancel the
-currently selected newsgroup. If not, you can elect
-to see a list and it presents you with a list servers
-and then a list of the newsgroups in that server
-(assuming that you have [ordered a list] of the@11903
-newsgroups under /Message/News manager/Get List
-and [read it in]@11906
-under /Message/News manager/import list.
+First asks you if you want to cancel the currently 
+selected newsgroup. If not, you can elect to see a 
+list and it presents you with a list servers and then 
+a list of the newsgroups in that server (assuming you 
+have [ordered a list] of the newsgroups@11903
+under /Message/News/Echo manager/Get List and 
+[read it in] under /Message/News/Echo manager/import@11906
+list.
 
 (If no list is available, you will get an error
 message to this effect)
@@ -10725,7 +10791,7 @@ newsgroups you wish to unsubscribe.
 
 @
 11903
-<<Message / News manager / Get List
+<<Message / News/Echo manager / Get List
 
 Offers you a list of servers to select which one you
 want to get the list from, then sends the appropriate
@@ -10735,7 +10801,7 @@ newsgroups.
 The result will usually come with the next netcall
 @
 11904
-<<Message / News manager / Misc.
+<<Message / News/Echo manager / Misc.
 
 <<MausNetz:>>
 
@@ -10793,7 +10859,7 @@ the commands listed here.
 
 @
 11906
-<<Message / News manager / Import list
+<<Message / News/Echo manager / Import list
 
 Reads-in a message as a newsgroup list. The message
 must be a proper newsgroup list. Select it as the
@@ -10810,7 +10876,7 @@ renamed to XXX.BAK. (XXX = as above)
 
 @
 11907
-<<Message / News manager / Read File
+<<Message / News/Echo manager / Read File
 
 Normally, you read in a newsgroup list from a message
 [Message/News manager/import list] sent to you by the@11906
@@ -10825,7 +10891,7 @@ directly, press <Enter> to select from a directory
 listing.
 @
 11908
-<<Message / News manager / Maus-Infos  (nur MausNet)
+<<Message / News/Echo manager / Maus-Infos  (nur MausNet)
 
 At what intervals should changed info texts be
 ordered from Maus servers. Only changed texts will be
