@@ -173,7 +173,7 @@ begin
   x2:= GetScreenCols-2;
   y1:= GetScreenLines-7;
   y2:= GetScreenLines-2;
-  rahmen1(x1,x2,y1,y2,'');
+  rahmen1(x1,x2-1,y1,y2-1,'');
   wrt(x1+2,y1,' CrossPoint-MenÅeditor ');
   clwin(x1+1,x2-2,y1+1,y2-2);
   forcecolor:=false;
@@ -751,6 +751,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18  2000/05/06 17:14:22  hd
+  - Rahmen angepasst
+
   Revision 1.17  2000/05/06 15:57:04  hd
   - Diverse Anpassungen fuer Linux
   - DBLog schreibt jetzt auch in syslog
