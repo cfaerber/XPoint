@@ -365,7 +365,7 @@ begin
   maddbool(3,16 + j,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
   maddbool(3,17 + j,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
   maddint (3,19 + j,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
-  maddtext(9+length(getres2(252,24)),20 + j,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
+  maddtext(9+length(getres2(252,24)),19 + j,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
   maddbool(3,20 + j,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
   freeres;
   readmask(brk);
@@ -1444,6 +1444,9 @@ end;
 
 {
   $Log$
+  Revision 1.98  2001/08/11 08:43:53  mk
+  - fixed my previous commit: label was not correct placed
+
   Revision 1.97  2001/08/11 08:41:40  mk
   - fixed RTA changes in Config/Optionen/Nachrichten
 
