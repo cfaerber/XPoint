@@ -2001,6 +2001,7 @@ var p,i   : integer; { 28.01.2000 robo - byte -> integer }
 
   function GetMsgid:string;
   begin
+    s0 := Trim(s0);
     RFCRemoveComment(s0);
     if firstchar(s0)='<' then delfirst(s0);
     if lastchar(s0)='>' then dellast(s0);
@@ -3602,6 +3603,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8.2.12  2000/11/27 21:39:13  mk
+  RB:- Trim in GetMsgId hinzugefuegt
+
   Revision 1.8.2.11  2000/09/21 16:17:37  mk
   RB:- QP Decode fuer verschiedene Header
 
