@@ -9517,6 +9517,13 @@ subject to your ["View"] conditions.@50
 Sets them all as having been read.
 @
 11406
+<<Message / All / Unread
+
+This operates on all messages <<being displayed>>, i.e.
+subject to your ["View"] conditions.@50
+Sets them all as having been unread.
+@
+11407
 <<Message / All / Kill
 
 This operates on all messages <<being displayed>>, i.e.
@@ -9527,7 +9534,7 @@ opposed to setting them to delete for the next [Re-Org].@10701
 Messages in the display on hold or "outgoing" (shown
 by a "!") are not "killed".
 @
-11407
+11408
 <<Message / All / Print
 
 This operates on all messages <<being displayed>>, i.e.
