@@ -112,7 +112,6 @@ function Lastchar(const s:string):char;            { letztes Zeichen eines Str. 
 function Lead(s:string):string;              { Anf.-u. Enden abschneiden  }
 function Left(const s: string; Count: integer): string;
 function Right(const s: string; Count: integer): string;
-function Long(const l:longint):longint;            { Type-Cast nach Longint       }
 function LoCase(const c:char):char;                { LowerCase                    }
 function Log(const b,r:real):real;           { allg. Logarithmus            }
 function Log2(const r:real):real;            { Logarithmus zur Basis 2      }
@@ -161,7 +160,9 @@ function Time:DateTimeSt;                    { dt. Zeitstring               }
 function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe gro·         }
 function TopAllStr(s:string):string;         { alle ersten Buchstaben gro·  }
+{$ifndef FPC}
 function UpCase(const c:char):char;                { int. UpCase                  }
+{$endif}
 function UStrHuge(const s:HugeString):HugeString;  { UpperString                  }
 { Lo/Upcase-String fÅr Files, abhÑngig von UnixFS }
 function FileUpperCase(const s:string):string;
@@ -549,6 +550,7 @@ end;
 {$IFDEF NOASM }
 {$IFNDEF Windows }
 
+{$ifndef FPC}
 function UpCase(const c:char):char;
 begin
   case c of
@@ -565,6 +567,7 @@ begin
     UpCase:=c;
   end;
 end;
+{$ENDIF}
 
 function LoCase(const c:char):char;
 begin
@@ -585,6 +588,7 @@ end;
 
 {$ELSE}
 
+{$ifndef FPC}
 function UpCase(const c:char):char;
 begin
   case c of
@@ -594,6 +598,7 @@ begin
     UpCase:=c;
   end;
 end;
+{$endif}
 
 function LoCase(const c:char):char;
 begin
@@ -611,6 +616,7 @@ end;
 
 {$ifdef ver32}
 
+{$ifndef FPC}
 function Upcase(const c:char): char; {&uses ebx} assembler;
 const
   LookUp: array[0..158] of Char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~' +
@@ -631,9 +637,6 @@ asm
 @noupcase:
     mov al,bl
 @Upcase_end:
-{$ifdef FPC }
-end ['EAX', 'EBX'];
-{$else}
 end;
 {$endif}
 
@@ -681,6 +684,7 @@ end;
 
 {$else}
 
+{$ifndef FPC}
 function Upcase(const c:char): char; assembler;
 asm
     mov   bl, c
@@ -708,6 +712,7 @@ asm
 
 @Upcase_end:
 end;
+{$endif}
 
 function Locase(const c:char):char; assembler;
 asm
@@ -745,11 +750,16 @@ asm
 {$ENDIF}
 
 @Locase_end:
+{$ifdef FPC }
+end ['EAX', 'EBX'];
+{$else}
 end;
+{$endif}
 
 {$endif}
 
 {$ENDIF}
+
 
 
 function FileUpperCase(const s:string):string;
@@ -999,24 +1009,6 @@ begin
   else PosN:=pos(s1,mid(s2,n))+n-1;
 end;
 
-
-function long(const l:longint):longint;
-begin
-  long:=l;
-end;
-
-{
-function shortpath(path:TFilename; n:byte):TFilename;
-var ds : TFilename;
-    ns : TFilename;
-    es : TFilename;
-begin
-  fsplit(path,ds,ns,es);
-  ds:=left(ds,n-length(ns+es));
-  dellast(ds);
-  shortpath:=ds+DirSepa+ns+es;
-end;
-}
 
 function center(const s:string; n:byte):string;
 begin
@@ -1560,6 +1552,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/07/04 17:11:17  hd
+  - Funktion Long entfernt
+
   Revision 1.49  2000/07/04 16:42:45  hd
   - Funktion even entfernt
 
