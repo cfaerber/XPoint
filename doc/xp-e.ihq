@@ -3790,10 +3790,12 @@ itself as the point programme used:
 
 <<never>>   well, never :-(
 
-Note: this setting is only allowed for the [registered]@6
-version of CrossPoint.
-In Fido XP always advertises its presence, in MausNet
-you can switch it off for PMs.
+Note: the "PM" and "never" settings may only be
+changed in the registered version of CrossPoint.
+In MausNet, you can switch it off for PMs only,
+and for FidoNet you find a special setting under
+[Config/Options/Nets].@8104
+
 @
 248
 <<[x]>>     Messages aborted (with <Esc>) at the
@@ -6750,6 +6752,13 @@ on MagicNET technology. But if you want to try your
 luck now, set this switch ON.
 
 Otherwise leave it OFF.
+@
+8104
+<<[x]>> ->  Echomail tear lines will show the version of
+        CrossPoint/OpenXP.
+
+<<[ ]>> ->  CrossPoint creates an empty tear line (---).
+
 @
 800
 This is the telephone charges list. You can enter up

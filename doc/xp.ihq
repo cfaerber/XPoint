@@ -5013,8 +5013,8 @@ Point mit seinem Namen unterschreibt:
 Die Einstellung fr private Nachrichten gilt nur fr
 registrierte CrossPoint-Versionen. Die Einstellung
 fr ”ffentliche Nachrichten gilt nicht frs MausNet,
-im FidoNet hingegen wird immer eine leere "Tearline"
-(---) erzeugt.
+fr FidoNet finden Sie eine gesonderte Einstellung
+unter [/Config/Optionen/Netze].@8104
 
 @
 249
@@ -8343,6 +8343,14 @@ den.
        z.B. PGPOS2 fr die aktuelle Version des
        Programms PGP fr OS/2 oder FILES fr die
        Fileliste einer Box.
+@
+8104
+<<[x]>> -> Bei Echomails wird die CrossPoint/OpenXP-
+       Version in die Tearline geschrieben.
+
+<<[ ]>> -> Bei Echomails wird eine leere Tearline (---)
+       erzeugt.
+
 @
 800
 Dies ist die Gebhrenzonen-Liste. Sie k”nnen hier bis
