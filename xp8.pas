@@ -454,8 +454,9 @@ end;
 { Im Lister muss ein durch Read_RC_File erzeugtes BL-File sein.            }
 
 function MakeRC(bestellen: boolean; const box: string; List: TLister):boolean;
-var t1,t2         : text;
-    f1            : file of char;
+var fRCFile       : text;
+    fNewRCFile    : text;
+    fBLFile       : file of char;
     rcfile,blfile : string;
     line          : string;
     Line2         : string;
@@ -477,14 +478,14 @@ begin
     rfehler(807);
     exit;
     end;
-  Assign(t1,rcfile);
+  Assign(fRCFile,rcfile);
   if not (FileExists(rcfile)) then
   begin
-    Rewrite(t1);                           { T1 = RC-FILE (Text)         }
-    Close(t1);
-    end;                                   { F1 = BL-FILE (File of Char) }
-  Assign(f1,blfile);
-  Reset(f1);
+    Rewrite(fRCFile);
+    Close(fRCFile);
+    end;
+  Assign(fBLFile,blfile);
+  Reset(fBLFile);
 
   if bestellen then                        { Neue Bretter an RC-File anhaengen }
   begin
@@ -500,56 +501,60 @@ begin
       MakeRc:=false;
       goto MakeRCEnd;
       end;
-    Append(t1);
+    Append(fRCFile);
     line := List.FirstMarked;                  { Im Lister sind markierte neue Bretter...}
     articles:=' -'+Articles;
     while line<>#0 do
     begin
-      if line[1]='*' then List.UnMarkLine  { Bereits bestellte Bretter entmarkieren }
+      if line[1]='*' then List.UnMarkLine      { Bereits bestellte Bretter entmarkieren }
       else begin
-        writeln(t1, TrimRight(copy(Line,3,78)),Articles);    { ansonsten an .RC anhaengen }
-        fileofs:=ival(mid(line,80));
-        seek(f1,fileofs);                  { Offset ins BL-File wurde von READ_BL_FILE }
-        write(f1,c);                       { an die Listerzeile angehaengt. Jetzt wird }
-        end;                               { an den Zeilenanfang ein "*" geschrieben,  }
-      line := List.NextMarked;             { der ab jetzt das Bestellt-Flag darstellt  }
+        writeln(fRCFile, TrimRight(copy(Line,3,78)),Articles);    { ansonsten an .RC anhaengen }
+        if ntBoxNetztyp(box)=nt_Client then begin
+          fileofs:=ival(mid(line,80));         { Offset ins BL-File wurde von READ_BL_FILE }
+          seek(fBLFile,fileofs);               { an die Listerzeile angehaengt. Jetzt wird }
+          write(fBLFile,c);                    { an den Zeilenanfang ein "*" geschrieben,  }
+          end;                                 { der ab jetzt das Bestellt-Flag darstellt  }
+        end;
+      line := List.NextMarked;
       end;
-    Close(t1);
-    close(f1);
+    Close(fRCFile);
+    close(fBLFile);
     end
 
   else begin                               { Bestellte Bretter aus RC entfernen }
     line:= List.FirstLine;
     c:=' ';
     MakeRc:=false;
-    Assign(t2,TempFile(''));
-    ReWrite(t2);                           { T2 = Temp-File: RC-Kopie (text) }
-    reset(t1);
-    while not eof(t1) do
+    Assign(fNewRCFile,TempFile(''));
+    ReWrite(fNewRCFile);
+    reset(fRCFile);
+    while not eof(fRCFile) do
     begin
-      readln(t1,line2);                    { Zeile aus RC lesen }
+      readln(fRCFile,line2);                   { Zeile aus RC lesen }
       brk:=true;
       line := List.FirstMarked;                { Im Lister sind Bretter zum  }
-      while line<>#0 do                    { Abbestellen markiert...     }
+      while line<>#0 do                        { Abbestellen markiert...     }
       begin
-        fileofs:=ival(mid(line,80));       { Offset aus READ_BL_FILE (s.o.) }
         line:= TrimRight(copy(Line,3,78));
         if line=LeftStr(line2,cposx(' ',line2)-1)
         then begin
-          seek(f1,fileofs);                { Abzubestellendes Brett gefunden... }
-          write(f1,c);                     { im BL-File "Bestellt"-'*' loeschen }
-          List.UnMarkLine;                 { abbestelltes Brett demarkieren     }
-          brk:=false;                      { und nicht in RC-Kopie uebernehmen  }
+          if ntBoxNetztyp(box)=nt_Client then begin
+            fileofs:=ival(mid(line,80));       { Offset aus READ_BL_FILE (s.o.) }
+            seek(fBLFile,fileofs);             { Abzubestellendes Brett gefunden... }
+            write(fBLFile,c);                  { im BL-File "Bestellt"-'*' loeschen }
+            end;
+          List.UnMarkLine;                     { abbestelltes Brett demarkieren     }
+          brk:=false;                          { und nicht in RC-Kopie uebernehmen  }
           end;
         line:= List.NextMarked;
         end;
-      if brk then writeln(t2,line2);       { Nicht abbestellte Zeilen kopieren  }
+      if brk then writeln(fNewRCFile,line2);   { Nicht abbestellte Zeilen kopieren  }
       end;
-    close(f1);
-    Close(t1);
-    Close(t2);
-    Erase(t1);
-    Rename(t2,rcfile);                     { RC-File loeschen, TEMP-Kopie -> RC }
+    close(fBLFile);
+    Close(fRCFile);
+    Close(fNewRCFile);
+    Erase(fRCFile);
+    Rename(fNewRCFile,rcfile);
     end;
 
 makercend:
@@ -642,52 +647,50 @@ begin
   closebox;
 end;
 
-
-{ RFC/Client: Bretter anhand eines Files abbestellen (Brettfenster) }
-
 procedure MapsKeys(list:TLister;var t:taste); forward;
 
-procedure File_abbestellen(const box,f:string);
-var t1: Text;
-    s1,s2: string;
-    brk   : boolean;
+{ RFC/Client: Bretter anhand eines Files abbestellen (Brettfenster) }
+procedure File_abbestellen(const box,GroupsToUnsubscribeFilename:string);
+var fGroupsToUnsubscribe: Text;
+    sBLFileName,s1,s2: string;
+    brk: boolean;
     List: TLister;
     p: Cardinal;
 begin
-  s1:=Get_BL_Name(box);
-  if not fileExists(s1) then
+  sBLFileName:=Get_BL_Name(box);
+  if not fileExists(sBLFileName) then
   begin
     rfehler(807);
     exit;
     end;
   List := TLister.CreateWithOptions(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
   list.OnKeyPressed := Mapskeys;
-  read_BL_File(s1,true, List);             { Bestellt-Liste in Lister laden }
+  read_BL_File(sBLFileName,true, List);    { Bestellt-Liste in Lister laden }
   pushkey(^A);                             { Ctrl+A = Alles markieren  }
   pushkey(keyesc);                         { Esc    = Lister verlassen }
   List.Show;                               { Dummy-Lister starten      }
 
-  assign(t1,f);
+  assign(fGroupsToUnsubscribe,GroupsToUnsubscribeFilename);
   s1:= List.FirstMarked;                   { Liste der bestellten Bretter     }
   while s1<>#0 do                          { Mit Abbestell-File vergleichen   }
   begin
     brk:=true;
-    reset(t1);
-    while not eof(t1) do
+    reset(fGroupsToUnsubscribe);
+    while not eof(fGroupsToUnsubscribe) do
     begin
-      readln(t1,s2);
+      readln(fGroupsToUnsubscribe,s2);
       s1 := Trim(copy(s1,3,78));
       p := cPos(' ', s1);
       if p > 0 then s1 := copy(s1, 1, p-1);
       if s2= s1 then
-        brk:=false;                   { Bretter, die abzubestellen sind }
+        brk:=false;                        { Bretter, die abzubestellen sind }
       end;
-    close(t1);
+    close(fGroupsToUnsubscribe);
     if brk then
       List.UnMarkLine;                     { werden NICHT entmarkiert        }
     s1:= List.NextMarked;
   end;
-  makeRC(false,box, List);                 { (Noch) markierte Bretter abbestellen }
+  makeRC(false,box,List);                  { (Noch) markierte Bretter abbestellen }
   aufbau:=true;
 end;
 
@@ -781,7 +784,7 @@ begin
 end;
 
 Procedure  ClientBL_Del(const box:string);
-var 
+var
   Filename: string;
 begin
   Filename := get_BL_Name(Box);
@@ -2152,6 +2155,9 @@ end;
 
 {
   $Log$
+  Revision 1.73  2002/07/18 16:11:55  ma
+  - fixed: NNTP .bl got corrupted when unsubscribing from a group
+
   Revision 1.72  2002/05/20 07:47:56  mk
   - fixed backup extension: now ExtBak and EditorExtBak
 
