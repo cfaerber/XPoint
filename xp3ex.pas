@@ -11,9 +11,6 @@
 { Nachricht extrahieren }
 
 {$I XPDEFINE.INC }
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
 
 unit xp3ex;
 
@@ -105,7 +102,7 @@ begin
     rps(s,'$MUSER',left(name,p-1));
     rps(s,'$TUSER',TopAllStr(left(name,p-1)));
     if UpperCase(right(name,4))='.ZER' then
-      delete(name, length(name)-4, 4); { dec(byte(name[0]),4);} 
+      delete(name, length(name)-4, 4); { dec(byte(name[0]),4);}
     rps(s,'$BOX',mid(name,p+1));
     end
   else begin
@@ -583,11 +580,11 @@ var size   : longint;
             if p<=QuoteBreak div 2 then p:=QuoteBreak;
             stmp:=mid(s,p+iif(s[p]<=' ',1,0))+iifs(endspace,' ','');
             TruncStr(s,p-1);
-	    { Change hd 2000-07-03 RTrim entfernt }
-	    { TrimRight entfernt mehr als nur Space, also bitte pruefen!!! }
-	    s:= TrimRight(s);
+            { Change hd 2000-07-03 RTrim entfernt }
+            { TrimRight entfernt mehr als nur Space, also bitte pruefen!!! }
+            s:= TrimRight(s);
             { while s[length(s)]=' ' do dec(byte(s[0]));}   { rtrim(s) }
-	    { /Change }
+            { /Change }
             if not eoln(t) and (length(stmp)+length(LastQC)<QuoteBreak) then begin
               read(t,reads);      { Rest der Zeile nachladen }
               endspace:=(reads[length(reads)]=' ') or eoln(t);
@@ -779,9 +776,10 @@ begin
                        else
                          s:=s+', ';
                        s:=s+hdp^.empfaenger;
-                       end;
-                     wrs(s);
                      end;
+                     if hdp^.fido_to<>'' then s:=s+' ('+hdp^.fido_to+')';
+                     wrs(s);
+                   end;
                  end;
 
     hdf_KOP   :  if Assigned(hdp^.kopien) then begin
@@ -1057,6 +1055,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/06 21:29:12  mk
+  JG: - Bei FIDO-Nachrichten mit mehreren Brettempfaengern wird der FIDO-Empfaenger jetzt in Klammern mit angezeigt
+
   Revision 1.22  2000/07/05 13:55:01  hd
   - AnsiString
 
