@@ -2079,24 +2079,26 @@ end;
 
 
 procedure ukonv(var s:string);         
+var s2 : string;
   procedure conv(c1,c2:char);
   var p : byte;
      c3 : char;
    begin
     repeat
-      p:=cpos(c1,s);
+      p:=cpos(c1,s2);
       if p>0 then begin
-        s[p]:=c2;
+        s2[p]:=c2;
         if (c2<>'e') and (c2<>'E') then   {bei 'Ç' nur ein Zeichen ersetzen} 
         begin           
           if c2='s' then c3:=c2        {Ansonsten: ae,ue,oe,ss}
           else c3:='e';
-          insert(c3,s,p+1);
+          insert(c3,s2,p+1);
           end;
         end; 
     until p=0;
   end;
 begin
+  s2:=s;
   conv('Ñ','a');
   conv('î','o');
   conv('Å','u');
@@ -2105,7 +2107,8 @@ begin
   conv('ô','O');
   conv('ö','U');
   conv('ê','E');
-  conv('Ç','e'); 
+  conv('Ç','e');
+  s:=left(s2,length(s));   { Bugfix... Umlautstring darf maximal Orignalstringlaenge haben } 
 end;
 
 
@@ -2154,6 +2157,10 @@ end;
 end.
 { 
   $Log$
+  Revision 1.13  2000/02/29 12:59:16  jg
+  - Bugfix: Umlautkonvertierung beachtet jetzt Originalstringlaenge
+    (Wurde akut bei Spezialsuche-Betreff)
+
   Revision 1.12  2000/02/28 18:12:50  jg
   -Bugfix: mehrere gleiche Umlaute in einem String konvertieren
 

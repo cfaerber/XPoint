@@ -266,7 +266,7 @@ label ende,happyend;
             ReadHeader(hdp^,hds,false);
             end;
         if umlaut then begin                    {JG: Umlaute anpassen}
-         { ukonv(betr2); }  { JG:29.02.00 BUGFIX Zeile Loest DB-Index Ueberlauf aus !!! }
+          ukonv(betr2);
           ukonv(realn); 
           ukonv(hdp^.fido_to);
           end;
@@ -2153,6 +2153,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/02/29 12:59:16  jg
+  - Bugfix: Umlautkonvertierung beachtet jetzt Originalstringlaenge
+    (Wurde akut bei Spezialsuche-Betreff)
+
   Revision 1.15  2000/02/29 10:46:28  jg
   -Bugfix Spezialsuche - Betreff
 
