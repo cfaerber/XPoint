@@ -1085,7 +1085,7 @@ label again;
                    rfehler1(832,s1)     { 'Newsgroup ist schon bestellt' }
                  else
                  begin
-                   RCList.Add(s1);
+                   RCList.Add(s1+' -100');
                    List.Lines[List.Lines.IndexOf(s)] := Trim(s) + ' *';
                  end;
                end;
@@ -1699,6 +1699,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2001/04/21 17:39:25  ma
+  - only the newest 100 articles are read from newly subscribed NGs
+    (this is meant as a temporarily workaround only)
+
   Revision 1.39  2001/04/07 10:06:42  mk
   - fixed disconnect of newsgroups
 
