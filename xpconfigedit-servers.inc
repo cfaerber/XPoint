@@ -109,7 +109,7 @@
       bDomainNt:=0;
     if nt=nt_uucp then               { RFC/UUCP eMail-Adresse vereinfacht }
     begin
-      maddstring(3,yy,getres2(912,12),email,30,80,''); mhnr(30001);
+      maddstring(3,yy,getres2(912,12),email,30,AdrLen,''); mhnr(30001);
       inc(yy,2);
       end;
     if fqdom then
@@ -169,8 +169,8 @@
     maddstring(3,6,getres2(912,8),realname,30,40,'A '+without(range('!','~'),' @<>/')); { 'Realname' }
       msetvfunc(notempty);
       mhnr(194);
-    maddstring(3,8,getres2(912,12),user,30,30,grosschar(ntGrossUser(nt))+
-               'A'+without(allchar,'() '));
+    maddstring(3,8,getres2(912,12),user,30,AdrLen,grosschar(ntGrossUser(nt))+
+               'A'+without(allchar,'() '));  { 'eMail-Adr.' }
       msetvfunc(notempty);
       mhnr(40002);
 
@@ -230,7 +230,7 @@
 
     maddstring(36,2,getres2(920,82),komm,17,30,'');         { 'Kommentar' }
 
-    maddstring(3,4,getres2(920,83),email,46,80,'');         { 'eMail-Adresse' }
+    maddstring(3,4,getres2(920,83),email,46,AdrLen,'');         { 'eMail-Adresse' }
     msetvfunc(xp9_setclientFQDN);
 
     maddstring(3,6,getres2(920,84),realname,46,40,'');      { 'Realname' }
@@ -2120,6 +2120,9 @@
 
 {
   $Log$
+  Revision 1.32  2001/09/29 09:43:12  mk
+  - fixed INetNameRead: 80 instead of 30 chars are allowed in eMail Addr
+
   Revision 1.31  2001/09/26 22:41:03  mk
   - fixed freeze while Edit/Boxen/Netztyp aendern
 
