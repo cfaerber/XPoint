@@ -711,26 +711,24 @@ end;
 procedure test_pfade;
 var   res  : integer;
 
-  procedure TestDir(d:string);
+  procedure TestDir(d: string; substOwn: Boolean);
+  var
+    onlypath: String; { Path without \ }
   begin
-    if not IsPath(ownpath+d) then
-      if not CreateDir(ownpath+LeftStr(d,length(d)-1)) then
-        interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
+    onlypath := LeftStr(d,length(d)-1);
+    if substOwn then
+      onlypath := ownpath + onlypath;
+    if not IsPath(onlypath) then
+      if not CreateDir(onlypath) then
+        interr(reps(getres(203),onlypath)+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
   end;
-
-(*  procedure TestDir2(d:string);
-  begin
-    if not IsPath(d) then
-      if not CreateDir(LeftStr(d,length(d)-1)) then
-        interr(reps(getres(203),LeftStr(d,length(d)-1))+#7);   { 'Fehler: Kann %s-Verzeichnis nicht anlegen!' }
-  end; *)
 
 begin
   EditLogpath:='';
-(*  TestDir2(logpath);
-  TestDir2(temppath);
-  TestDir2(extractpath);
-  TestDir2(sendpath); *)
+  TestDir(logpath, false);
+  TestDir(temppath, false);
+  TestDir(extractpath, false);
+  TestDir(sendpath, false);
   if logpath='' then logpath:=ownpath
   else
     if not IsPath(logpath) then begin
@@ -760,18 +758,18 @@ begin
       EditSendpath := sendpath;
     end;
   editname:=sendpath+WildCard;
-  TestDir(XFerDir);
-  TestDir(JanusDir);
-  TestDir(FidoDir);
-  TestDir(AutoxDir);
-  TestDir(BadDir);
+  TestDir(XFerDir, True);
+  TestDir(JanusDir, True);
+  TestDir(FidoDir, True);
+  TestDir(AutoxDir, True);
+  TestDir(BadDir, True);
   if not IsPath(filepath) then begin
     MkLongdir(filepath,res);
     if res<>0 then begin
       filepath:=OwnPath+InfileDir;
-      TestDir(InfileDir);
-      end;
+      TestDir(InfileDir, True);
     end;
+  end;
 end;
 
 
@@ -1202,6 +1200,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.95  2000/12/23 08:26:52  ml
+  - calls now Testpath for some more dirs if started the first time
+
   Revision 1.94  2000/12/06 11:19:09  mk
   - TestPfad2 entfernt
 
