@@ -285,7 +285,6 @@ begin
   randomize;
   iomaus:=ParMaus;
   mausfx:=8;
-  UseMulti2:=ParWintime<2;
   fchar:='ú';
   fsb_shadow:=true;
   fsb_info:=true;
@@ -1705,6 +1704,9 @@ begin
 
 {
   $Log$
+  Revision 1.144.2.6  2003/04/12 08:05:53  mk
+  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
+
   Revision 1.144.2.5  2003/04/02 15:45:35  mk
   - allow "keine" as "User-Aufnahme" setting again
 

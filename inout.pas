@@ -435,23 +435,21 @@ var
   h, m, s, s100: SmallWord;
 begin
 {$IFNDEF Unix }
-  if UseMulti2 then begin
-    if m2t then
-    begin
-      DecodeTime(now, h, m, s, s100);
-      __st[1]:=chr(h div 10+48);
-      __st[2]:=chr(h mod 10+48);
-      __st[4]:=chr(m div 10+48);
-      __st[5]:=chr(m mod 10+48);
-      if length(__st)>5 then begin
-        __st[7]:=chr(s div 10+48);
-        __st[8]:=chr(s mod 10+48);
-        end
-      else
-        if timeflash then __st[3]:=iifc(odd(s),':',' ');
-      disphard(timex+ScreenWidth-80,timey,' '+__st+' ');
-      end;
-    end;
+  if m2t then
+  begin
+    DecodeTime(now, h, m, s, s100);
+    __st[1]:=chr(h div 10+48);
+    __st[2]:=chr(h mod 10+48);
+    __st[4]:=chr(m div 10+48);
+    __st[5]:=chr(m mod 10+48);
+    if length(__st)>5 then begin
+      __st[7]:=chr(s div 10+48);
+      __st[8]:=chr(s mod 10+48);
+      end
+    else
+      if timeflash then __st[3]:=iifc(odd(s),':',' ');
+    disphard(timex+ScreenWidth-80,timey,' '+__st+' ');
+  end;
 {$ENDIF }
 end;
 
@@ -1669,6 +1667,9 @@ end;
 
 {
   $Log$
+  Revision 1.89.2.5  2003/04/12 08:05:51  mk
+  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
+
   Revision 1.89.2.4  2003/04/02 17:11:20  mk
   - do not process #27 in testbrk while using macros
 

@@ -71,12 +71,8 @@ again:
   if keypressed {and (forwardkeys='')} then begin
     forward:=(forwardkeys<>'');
     c:=lastcur;
-    if ParWintime>1 then begin
-      waitkey:=readkey;
-      if waitkey=#0 then waitkey:=waitkey+readkey;
-      end
-    else
-      get(waitkey,lastcur);
+    waitkey:=readkey;
+    if waitkey=#0 then waitkey:=waitkey+readkey; //      get(waitkey,lastcur);
     cursor(c);
     if (waitkey>=mausfirstkey) and (waitkey<=mauslastkey) and
        (waitkey<>mausunleft) and (waitkey<>mausunright) then
@@ -217,6 +213,9 @@ end;
 
 {
   $Log$
+  Revision 1.22.2.2  2003/04/12 08:05:53  mk
+  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
+
   Revision 1.22.2.1  2002/07/21 20:14:35  ma
   - changed copyright from 2001 to 2002
 

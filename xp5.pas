@@ -551,11 +551,8 @@ var
 
     t:=ticker;
     while (n>0) and not endss do begin
-      if ParWintime=1 then begin
-        while t=ticker do mdelay(0); { mdelay(50) geht nicht wg. multi2 }
-        if t<ticker then inc(t) else t:=ticker;
-      end
-      else SysDelay(50);
+      while t=ticker do mdelay(0); { mdelay(50) geht nicht wg. multi2 }
+      if t<ticker then inc(t) else t:=ticker;
       dec(n);
     end;
   end;
@@ -971,6 +968,9 @@ end;
 
 {
   $Log$
+  Revision 1.64.2.3  2003/04/12 08:05:53  mk
+  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
+
   Revision 1.64.2.2  2002/09/09 09:02:43  mk
   - added const parameters
 
