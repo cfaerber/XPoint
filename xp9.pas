@@ -599,6 +599,12 @@ end;
 { Typ :  1=Boxen, 2=Gruppen, 3=Systeme, 4=Kurznamen, 5=MIME-Typen }
 { edit:  true=editieren, false=nur ausw„hlen                      }
 
+{ Prozedurvariable, s wird nicht ben”tigt }
+function SetSmtp(var s:string):boolean;
+begin
+  SetFieldEnable(16,(getfield(15)=_jn_[2]) and (s=_jn_[1]));
+end;
+
 function UniSel(typ:byte; edit:boolean; default:string):string;
 const maxgl   = 40;
       dsellen = 20;
@@ -1778,6 +1784,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.13  2000/12/20 18:09:22  mk
+  - Schalter fuer PPP-Option von UUZ
+
   Revision 1.19.2.12  2000/12/03 14:06:57  mk
   - Serverdom mit Punkt
 

@@ -178,6 +178,7 @@ begin
       else if pos('freeze',lstr(uparcer))>0 then opt:=opt+'-fSMTP '
       else if pos('gzip',lstr(uparcer))>0 then opt:=opt+'-zSMTP '
       else opt:=opt+'-cSMTP ';
+    if UUSmtp and SmtpPPP then opt := opt+'-ppp ';
     if NewsMIME then opt:=opt+'-MIME ';
     if MIMEqp then opt:=opt+'-qp ';
     if RFC1522 then opt:=opt+'-1522 ';
@@ -463,6 +464,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.3  2000/12/20 18:09:21  mk
+  - Schalter fuer PPP-Option von UUZ
+
   Revision 1.13.2.2  2000/12/12 11:30:30  mk
   - FindClose hinzugefuegt
 

@@ -557,6 +557,7 @@ type   textp  = ^text;
                   UUprotos  : string[10];  { UUCP: m”gl. Protokolle    }
                   SizeNego  : boolean;     { UUCP: size negotiation    }
                   UUsmtp    : boolean;     { UUCP: SMTP                }
+                  SmtpPPP   : Boolean;     { UUCP: SMTP eine Datei pro Mail }
                   eFilter   : string[60];  { Eingangsfilter            }
                   aFilter   : string[60];  { Ausgangsfilter            }
                   SysopNetcall : boolean;  { Netzanruf-Bericht im S.M. }
@@ -1153,6 +1154,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.22  2000/12/20 18:09:21  mk
+  - Schalter fuer PPP-Option von UUZ
+
   Revision 1.54.2.21  2000/12/19 21:24:04  mk
   - Binaernachrichten als Attachments auch fuer ZConnect
 

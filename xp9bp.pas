@@ -145,6 +145,7 @@ begin
     VarPacketSize:=true; ForcePacketSize:=false;
     SizeNego:=true;
     UUsmtp:=false;
+    SmtpPPp := false;
     UUprotos:='Ggz';
     efilter:='';
     afilter:='';
@@ -276,6 +277,7 @@ begin
             getx(su,  'UU-ForcePacketSize',forcepacketsize) or
             getx(su,  'UU-SizeNegotiation',sizenego) or
             getx(su,  'UU-SMTP',UUsmtp) or
+            getx(su,  'UU-SMTP-OneFilePerMsg', SmtpPPP) or
             gets(s,su,'UU-Protocols',uuprotos,10) or
             gets(s,su,'Eingangsfilter',eFilter,60) or
             gets(s,su,'Ausgangsfilter',aFilter,60) or
@@ -408,6 +410,7 @@ begin
     writeln(t,'UU-ForcePacketSize=',jnf(forcepacketsize));
     writeln(t,'UU-SizeNegotiation=',jnf(sizenego));
     if uusmtp then writeln(t,'UU-SMTP=',jnf(uusmtp));
+    if SmtpPPP then writeln(t, 'UU-SMTP-OneFilePerMsg=', Jnf(SmtpPPP));
     if uuprotos<>'' then writeln(t,'UU-protocols=',uuprotos);
     if maxfsize>0 then writeln(t,'MaxFileSize=',maxfsize);
     writeln(t,'BrettmanagerTyp=',BMtyp);
@@ -528,6 +531,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10.2.3  2000/12/20 18:09:22  mk
+  - Schalter fuer PPP-Option von UUZ
+
   Revision 1.10.2.2  2000/11/10 05:26:07  mk
   - - fixed Bug #116657: crash with servername >15 chars
 

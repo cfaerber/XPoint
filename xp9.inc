@@ -344,6 +344,7 @@
   end;
 
   procedure EditPointdaten(nt:byte; var brk:boolean);
+
   var x,y,br : byte;
       pname  : string[25];
       add    : shortint;
@@ -374,7 +375,7 @@
                      xx:=56; yy:=18;
                      fnode:=(flags and 4<>0);
                    end;
-      nt_UUCP    : yy:=18;
+      nt_UUCP    : yy:=19;
       nt_pronet  : xx:=55;
       nt_ZConnect: yy:=12;
     end;
@@ -507,6 +508,9 @@
             maddbool(3,15,getres2(920,60),ForcePacketsize);   { 'Ausgangspaketgr”áe vorgeben' }
             maddbool(3,16,getres2(920,35),SizeNego);          { 'Dateigr”áe bertragen' }
             maddbool(3,17,getres2(920,36),uusmtp); mhnr(8017);  { 'SMTP' }
+            mset1func(SetSmtp);
+            maddbool(3,18,getres2(920,57), SmtpPPP);
+            if not UUSmtp then mdisable;
             Ug:=cpos('g',uuprotos)>0; U_G:=cpos('G',uuprotos)>0;
             Ue:=cpos('e',uuprotos)>0; Uz:=cpos('z',uuprotos)>0;
             Uf:=cpos('f',uuprotos)>0;
@@ -1336,6 +1340,9 @@
 
 {
   $Log$
+  Revision 1.10.2.6  2000/12/20 18:09:22  mk
+  - Schalter fuer PPP-Option von UUZ
+
   Revision 1.10.2.5  2000/12/19 18:58:35  mk
   - Pointname unter UUCP jetzt auch kleingeschrieben erlaubt
 
