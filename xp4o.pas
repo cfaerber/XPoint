@@ -349,9 +349,11 @@ label ende,happyend;
 
 {Suche}
 begin
-  if suchopt[1]='*' then begin                {Erste Suche seit Programmstart ?}
-    if getres(1)='XP-E.HLP' then 
-      suchopt:='i' else suchopt:='i„'; end;   {Dann Suchoptionen auf Deutsch/Englisch anpassen }
+  if (suchopt[1]='*') and (getres(1)='XP.HLP') then    {Erste Suche seit Programmstart ?}
+    suchopt:='i„'                                  
+  else                                    {Dann Suchoptionen fuer Deutsch/Englisch anpassen }
+    suchopt:='i';
+
 
   if srec=nil then begin
     new(srec);
@@ -2146,6 +2148,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/02/18 15:54:52  jg
+  Suchoptionen-Laenderabfrage verbessert
+
   Revision 1.8  2000/02/18 09:13:27  mk
   JG: * Volltextsuche jettz Sprachabhaengig gestaltet
       * XP3.ASM in XP3.PAS aufgenommen
