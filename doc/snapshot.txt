@@ -4,9 +4,9 @@
 ³                                                       ³
 ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
 
-Die nachfolgend aufgelisteten Features, Funktionen, Fixes und nderungen  
-sind erst seit kurzer Zeit in OpenXP enthalten - bitte intensiv testen.  
-Es handelt sich zum gr”áten Teil um Features, die Jochen Gehring im  
+Die nachfolgend aufgelisteten Features, Funktionen, Fixes und nderungen
+sind erst seit kurzer Zeit in OpenXP enthalten - bitte intensiv testen.
+Es handelt sich zum gr”áten Teil um Features, die Jochen Gehring im
 Laufe der letzten 1 1/2 Jahre entwickelt hat.
 
 Bitte auch testen, ob die brigen XP-Funktionen weiterhin problemlos
@@ -16,7 +16,7 @@ Der Einbau weiterer Features, die ich zun„chst zurckgestellt habe, ist
 geplant. Je nach verfgbarer Zeit reiche ich diese bei Gelegenheit nach.
 
 Bugreports, Kommentare und Vorschl„ge fr diese Version bitte in die
-OpenXP-Mailingliste, nach de.comm.software.crosspoint, CROSSPOINT.GER  
+OpenXP-Mailingliste, nach de.comm.software.crosspoint, CROSSPOINT.GER
 oder CROSSPOINT.EXPERT.GER, oder an mich per Mail.
 
 Michael Heydekamp    <my@openxp.de>
@@ -27,7 +27,7 @@ Michael Heydekamp    <my@openxp.de>
 OpenXP-Mailingliste: <dev@openxp.de> (fr Nicht-Abonnenten)
 
 
-Dsseldorf, den 23.09.2001 (letzter Update)
+Dsseldorf, den 16.10.2001 (letzter Update)
 
 
 ------------------------------------------------------------------------
@@ -175,8 +175,8 @@ Brett-šbersicht
   Bretter): Es k”nnen jetzt alle Bretter in Punktschreibweise
   dargestellt werden, der einleitende "/" wird entfernt, bei PM-Brettern
   wird der erste "/" durch "@" ersetzt.
-  XP0.PAS, XP4.PAS, XP4W.INC, XP4D.INC, XP2C.PAS, XP2CFG.INC,
-      XP6.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
+  XP0.PAS, XP4.PAS, XP4W.INC, XP4D.INC, XP2C.PAS, XP2CFG.INC, XP6.PAS,
+  XP-D.RQ, XP-E.RQ, XP.IHQ
 
 - Brett-(markier)-Suche ("U") analog zu User-Markiersuche implementiert.
   XP4.PAS, XP4O.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ
@@ -190,8 +190,8 @@ Nachrichten-Lesefenster
 -----------------------
 
 - Sortierung der Nachrichten jetzt umkehrbar (neue oben, alte unten)
-  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP4.PAS, XP-D.RQ, XP-E.RQ, XP.IHQ,
-      XP-E.IHQ
+  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP4.PAS, XP-D.RQ, XP-E.RQ,
+  XP.IHQ, XP-E.IHQ
 
 - Feldtausch ge„ndert/verbessert: Jedes Feld kann weggelassen werden,
   bei Weglassen groáer Felder werden die brigen Felder verbreitert.
@@ -244,8 +244,8 @@ User-šbersicht
 - Feldtausch ge„ndert/verbessert: Default jetzt FHBGAK, jedes Feld kann
   weggelassen werden, bei Weglassen groáer Felder werden die brigen
   Felder verbreitert. /Config/Anzeige/Hilfen bersichtlicher gestaltet.
-  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP4D.INC, XP-D.RQ, XP-E.RQ, XP.IHQ,
-      XP-E.IHQ
+  XP0.PAS, XP2C.PAS, XP2CFG.INC, XP4D.INC, XP-D.RQ, XP-E.RQ,
+  XP.IHQ, XP-E.IHQ
 
 
 
@@ -282,8 +282,8 @@ Allgemeine Bedienung und Sonstiges
 
 - Zusatzmen faát jetzt bis zu 20 Eintr„ge (bei 25 Bildschirmzeilen
   stehen nur die ersten 19 zur Verfgung).
-  XP0.PAS, XP1.PAS, XP1MENU.INC, XP2.PAS, XP2CFG.INC, XP2F.PAS,
-      XP4.INC, XP.IHQ
+  XP0.PAS, XP1.PAS, XP1MENU.INC, XP2.PAS, XP2CFG.INC, XP2F.PAS, XP4.INC,
+  XP.IHQ
 
 - Neuer Menpunkt "?" (Hilfe) im Hauptmen mit Untermens fr ntzliche
   und/oder in der Hilfe ansonsten nur schwer auffindbare Informationen.
@@ -382,11 +382,16 @@ Allgemeine Bedienung und Sonstiges
   stehenlassen zu k”nnen).
   XP10.INC, XP.IHQ
 
-- Neue Funktion "Netcall/Spezial", die einen Netcall fr die Boxen
-  in der Reihenfolge ausfhrt, wie sie in der Datei NETCALL.DAT auf-
-  gefhrt sind (Feature wird noch ausgebaut).
-  XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ,
-  XP.HLP, XP-E.HLP
+- Neue Funktion "/Netcall/Spezial", die einen Netcall fr eine beliebige
+  Anzahl von Boxen in beliebiger Reihenfolge ausfhrt. Es sind 20
+  verschiedene Eintr„ge m”glich, die unter "Netcall/Spezial-Liste"
+  konfiguriert werden (die Daten werden in NETCALL.DAT gespeichert).
+  Funktion ist auch ber neuen Kommandozeilenparameter "/nsp:1..20"
+  erreichbar, der einen /Netcall/Spezial fr den als Parameter
+  bergebenen Eintrag aus NETCALL.DAT ausfhrt ("/nsp:3" fhrt einen
+  Netcall fr die in Eintrag #3 enthaltenen Boxen durch).
+  XP0.PAS, XP2.PAS, XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, MASKE.PAS,
+  MASKE.INC, XP-D.RQ, XP-E.RQ, XP.HLP, XP-E.HLP
 
 
 
