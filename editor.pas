@@ -679,12 +679,16 @@ end;
 
 function LoadBlock(fn:string; sbreaks:boolean; umbruch,rrand:byte):absatzp;
 var mfm   : byte;
-    s     : string;
+    s, s2 : string;
     t     : text;
     p     : absatzp;
     tail  : absatzp;
     sbrk  : boolean;
     root  : absatzp;
+    endlf : boolean;          { LF am Zeilenende }
+    endcr : boolean;          { CR am Dateiende }
+    srest : boolean;
+    pp    : byte;
 
   procedure AppP;
   begin
@@ -716,29 +720,62 @@ begin
     p := Pointer(1);
 {$ENDIF }
     tail:=nil;
-    while (not eof(t)) and assigned(p) do
+    srest:=false;
+    endcr:=false; 
+    while (srest or not eof(t)) and assigned(p) do
     begin
+      s2 := '';
       sbrk:=false;
-      Readln(t,s);
-      if (length(s)>40) and sbreaks and
-         (LastChar(s)=' ') and (not eof(t)) then begin
-        DeleteLastChar(s);
-        sbrk:=true;
+      endlf:=false;
+      while (srest and (length(s2)=0) or not (eoln(t) or endlf)) do
+      begin
+        if not srest then
+          read(t,s)
+        else
+          srest:=false;
+        pp:=cpos(#10, s);
+        if pp>0 then
+        begin
+          endlf:=(pp=length(s));
+          s2 := s2 + Copy(s, 1, pp-1);
+          Delete(s, 1, pp);
+          srest:=true;
+        end else
+        begin
+          if (length(s)>40) and sbreaks and eoln(t) and (s[length(s)]=' ')
+             and not eof(t) then
+          begin
+            SetLength(s, Length(s)-1);
+            sbrk:=true;
+            readln(t);
+          end;
+          s2 := s2 + s;
+        end;
+      end;
+      if eoln(t) and not srest then begin
+        endcr:=not eof(t);
+        readln(t);
       end;
 
-      p:=AllocAbsatz(length(s));
+      p:=AllocAbsatz(length(s2));
       if assigned(p) then begin
         p^.umbruch:=(rrand>0) and
                     ((umbruch=2) or
                      ((umbruch=1) and ((length(s)<=rrand) or sbrk)));
         if length(s)>0 then
-          Move(s[1],p^.cont,length(s));
+          Move(s2[1],p^.cont,length(s2));
         AppP;
       end;
     end;
-    close(t);
+    Close(t);
+    if endcr then
+    begin
+      p:=AllocAbsatz(0);
+      p^.umbruch:=(umbruch<>0);
+      AppP;
+    end; 
     if ioresult<>0 then error(3);
-    end;
+  End;
   LoadBlock:=root;
 end;
 
@@ -1802,6 +1839,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.82.2.3  2003/04/12 14:33:28  mk
+  - fixed LoadBlock: Umbruch is handled correctly again
+
   Revision 1.82.2.2  2002/07/21 20:14:32  ma
   - changed copyright from 2001 to 2002
 
