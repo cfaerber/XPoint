@@ -445,10 +445,10 @@ var   fb     : pathstr;
       else if inside then t:=''
         else if down then t:=keydown     { Rechte Taste gedrueckt gehalten: scrollen }
                      else t:=keyup;
-      end;    
+      end;
 
       if not mausscroll and (t=mausunright) then t:=keyesc;
-     
+
     p:=min(p,fn);
    end;
 
@@ -742,6 +742,9 @@ begin
         paths[i]:=path;
         end;
       t:=#0#0;
+      for i := 1 to fn do
+        Freemem(f^[i], length(f^[i]^)+1);
+      fn := 0;                            { zur Sicherheit }
       end;
   until (t=keyesc) or (t=keycr);
   maus_popinside;
@@ -1157,6 +1160,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.14  2002/04/07 20:35:20  sv
+  - Speicherleck in fsbox bei Laufwerks-/Verzeichniswechsel beseitigt
+
   Revision 1.16.2.13  2001/09/16 20:39:33  my
   JG+MY:- Datei-Auswahlbox zeigt Scroll-Möglichkeit durch Hinweispfeile an
 
