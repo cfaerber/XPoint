@@ -138,6 +138,8 @@ XP-E.IHQ        Quelltext der englischen Online-Hilfe
 
 DBFORM          Beschreibung der Datenbankfelder
 
+XPCURSES.PAS    XP-spezifisches Interface zur Ansteuerung der Curses-Lib.
+                (wird nur unter Unix-Derivaten benoetigt)
 
 Die Quelltexte PMCONV.PAS, CAPI.ASM, XP_DES.ASM sind im derzeitigen
 Zustand nicht compilier- bzw. assemblierbar. Da sich an diesen
