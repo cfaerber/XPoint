@@ -465,7 +465,8 @@ begin
         SetLength(Result, ((i div DefaultLength) + 1) * DefaultLength);
     end;
   except
-    if result='' then raise;
+    Result := '';
+    raise;
     exit;
   end;
   SetLength(Result,i-2);
