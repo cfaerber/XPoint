@@ -26,7 +26,7 @@ unit xpnczconnect;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
+  {$IFDEF NCRT}xpcurses,{$ELSE} xpcrt,{$ENDIF }
   sysutils,ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,
   maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes, osdepend;
 
@@ -250,6 +250,11 @@ end.
 
 {
   $Log$
+  Revision 1.7  2001/08/10 19:13:01  mk
+  - removed use of crt unit completly
+  - added xpcrt: contains crt compatible Win32 keyboard handling
+  - changed crt to xpcrt in uses
+
   Revision 1.6  2001/08/03 11:44:10  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

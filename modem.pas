@@ -25,7 +25,7 @@ unit Modem;
 interface
 
 uses
- {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF}
+ {$IFDEF NCRT}xpcurses,{$ELSE} xpcrt,{$ENDIF}
  Sysutils,ObjCOM,Typeform,Timer,Debug;
 
 const TimeoutModemInit   : Integer= 60; {fuer Dialup, in Sekunden}
@@ -300,6 +300,11 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/08/10 19:13:00  mk
+  - removed use of crt unit completly
+  - added xpcrt: contains crt compatible Win32 keyboard handling
+  - changed crt to xpcrt in uses
+
   Revision 1.13  2001/08/03 11:44:09  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

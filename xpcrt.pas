@@ -1,6 +1,34 @@
-unit crt;
+{   $Id$
+
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    Keyboard handling - based on Freepascal RTL
+}
+
+
+{$I XPDEFINE.INC }
+
+unit xpcrt;
 
 interface
+
+uses 
+  XPGlobal;
 
 function keypressed: boolean;
 function readkey: char;
@@ -34,10 +62,13 @@ type
   End;
 
 var
-   ScanCode : char;
-   SpecialKey : boolean;
-   DoingNumChars: Boolean;
-   DoingNumCode: Byte;
+  ScanCode : char;
+  SpecialKey : boolean;
+  DoingNumChars: Boolean;
+  DoingNumCode: Byte;
+  {$IFDEF Delphi }
+  StdInputHandle: THandle;
+  {$ENDIF }
 
 
 Function RemapScanCode (ScanCode: byte; CtrlKeyState: byte; keycode:longint): byte;
@@ -136,10 +167,10 @@ begin
     KeyPressed := TRUE
   else
    begin
-     GetNumberOfConsoleInputEvents(GetStdHandle(STD_INPUT_HANDLE),nevents);
+     GetNumberOfConsoleInputEvents(StdInputHandle,nevents);
      while nevents>0 do
        begin                            
-          ReadConsoleInputA(GetStdHandle(STD_INPUT_HANDLE),buf,1,nread);
+          ReadConsoleInputA(StdInputHandle,buf,1,nread);
           if buf.EventType = KEY_EVENT then
             if buf.Event.KeyEvent.bKeyDown then
               begin
@@ -194,7 +225,7 @@ begin
           { if we got a key then we can exit }
           if Result then
             exit;
-          GetNumberOfConsoleInputEvents(GetStdHandle(STD_INPUT_HANDLE),nevents);
+          GetNumberOfConsoleInputEvents(StdInputHandle,nevents);
        end;
    end;
 end;
@@ -216,5 +247,9 @@ begin
   end;
 end;
 
+{$IFDEF Delphi }
+initialization
+  StdInputHandle := GetStdHandle(STD_INPUT_HANDLE);
+{$ENDIF }
 end.
 

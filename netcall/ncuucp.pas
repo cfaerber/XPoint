@@ -64,7 +64,7 @@ type
 uses typeform, zmodem, progressoutput, resource, sysutils, debug,
 xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math, ipaddr,
 {$IFDEF NCRT}xpcurses{$ELSE}{$IFDEF Win32}xpwin32{$ELSE}
-{$IFDEF OS2}xpos2{$ELSE}xpdos32{$ENDIF}{$ENDIF},crt{$ENDIF};
+{$IFDEF OS2}xpos2{$ELSE}xpdos32{$ENDIF}{$ENDIF},xpcrt{$ENDIF};
 
 { - - Planned class hierarchy: - - - - - - - - - - - - - - - - - - - - - - - - }
 {                                                                              }
@@ -1121,6 +1121,11 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/08/10 19:13:01  mk
+  - removed use of crt unit completly
+  - added xpcrt: contains crt compatible Win32 keyboard handling
+  - changed crt to xpcrt in uses
+
   Revision 1.12  2001/08/04 14:23:43  cl
   - Show IP address:port in progress window
 

@@ -170,7 +170,7 @@ function CountPhonenumbers(Phonenumbers: string): integer;
 implementation
 
 uses
-  {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF}
+  {$IFDEF NCRT} xpcurses,{$ELSE} xpcrt, {$ENDIF}
   xpglobal,sysutils,typeform,debug,xpprogressoutputwindow, fileio;
 
 function GetNextPhonenumber(var Phonenumbers: string): string;
@@ -519,6 +519,11 @@ end.
 
 {
   $Log$
+  Revision 1.5  2001/08/10 19:13:01  mk
+  - removed use of crt unit completly
+  - added xpcrt: contains crt compatible Win32 keyboard handling
+  - changed crt to xpcrt in uses
+
   Revision 1.4  2001/08/03 11:44:10  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

@@ -166,9 +166,9 @@ uses
   xpnetcall in 'netcall\xpnetcall.pas',
   ncfido in 'netcall\ncfido.pas',
   dos in 'delphi\dos.pas',
-  crt in 'delphi\crt.pas',
   ObjCOM in 'objcom\objcom.pas',
-  Ringbuff in 'ObjCOM\ringbuff.pas';
+  Ringbuff in 'ObjCOM\ringbuff.pas',
+  xpcrt in 'xpcrt.pas';
 
 {$R *.RES}
 function StartInternalTools: Boolean;

@@ -128,7 +128,7 @@ var
 implementation
 
 uses
-  {$IFDEF Unix} xpcurses,{$ELSE}crt,{$ENDIF}
+  {$IFDEF Unix} xpcurses,{$ELSE} xpcrt,{$ENDIF}
   SysUtils, Debug, CRC;
 
 var TimerObj: tTimer;
@@ -2731,6 +2731,11 @@ end.
 
 {
   $Log$
+  Revision 1.20  2001/08/10 19:13:01  mk
+  - removed use of crt unit completly
+  - added xpcrt: contains crt compatible Win32 keyboard handling
+  - changed crt to xpcrt in uses
+
   Revision 1.19  2001/08/03 11:44:10  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 

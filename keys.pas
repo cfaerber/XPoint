@@ -31,7 +31,7 @@ uses
 {$ifdef NCRT}
   xpcurses,
 {$else}
-  crt,
+  xpcrt,
 {$endif}
 {$IFDEF DOS32 }
   go32,
@@ -197,7 +197,7 @@ end;
 {$IFNDEF NCRT }
 function keypressed:boolean;
 begin
-  keypressed:=(forwardkeys<>'') or crt.keypressed;
+  keypressed:=(forwardkeys<>'') or xpcrt.keypressed;
 end;
 
 function readkey:char;
@@ -206,7 +206,7 @@ begin
     readkey:=forwardkeys[1];
     forwardkeys:=Mid(forwardkeys,2);
   end else
-    readkey:=crt.readkey;
+    readkey:=xpcrt.readkey;
   if (Result = #9) and (GetAsyncKeyState(VK_SHIFT) < 0) then
   begin
     ReadKey := #0;
@@ -372,6 +372,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/08/10 19:13:00  mk
+  - removed use of crt unit completly
+  - added xpcrt: contains crt compatible Win32 keyboard handling
+  - changed crt to xpcrt in uses
+
   Revision 1.40  2001/08/10 17:41:26  mk
   - added support for Shift-Tab in Win NT/2000/XP
 
