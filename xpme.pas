@@ -19,7 +19,6 @@ uses
   winxp,
 {$IFDEF NCRT }
   xpcurses,
-  xp0, { Fuer ScreenLines und ScreenWidth }
 {$ELSE } 
   crt,
 {$ENDIF }
@@ -143,7 +142,11 @@ end;
 
 
 procedure showscreen;
-var i : integer;
+var 
+  i: integer;
+{$IFDEF NCRT }
+  x1, x2, y1, y2: integer;
+{$ENDIF }
 begin
   shadowcol:=0;
   cursor(curoff);
@@ -153,10 +156,10 @@ begin
   setbackintensity(true);
   attrtxt(col.colmenu[0]);
   {$IFDEF NCRT } { <- Evntl. neuer Token: VarScrSize ? }
-  wrt2(sp(ScreenWidth));
+  wrt2(sp(GetScreenLines));
   attrtxt(col.colback);
-  for i:=1 to ScreenLines do
-    wrt(1,i,dup(ScreenWidth, #177));
+  for i:=1 to GetScreenLines do
+    wrt(1,i,dup(GetScreenCols, #177));
   {$ELSE }
   wrt2(sp(80));
   attrtxt(col.colback);
@@ -165,6 +168,24 @@ begin
   {$ENDIF }
   attrtxt(col.colutility);
   forcecolor:=true;
+  {$IFDEF NCRT }
+  x1:= GetScreenCols-42;
+  x2:= GetScreenCols-2;
+  y1:= GetScreenLines-7;
+  y2:= GetScreenLines-2;
+  rahmen1(x1,x2,y1,y2,'');
+  wrt(x1+2,y1,' CrossPoint-Meneditor ');
+  clwin(x1+1,x2-1,y1+1,y2-1);
+  forcecolor:=false;
+  attrtxt(col.colutihigh);
+  wrt(x1+4,y1+2,#27#24#25#26);
+  wrt(x1+4,y1+3,'+ -');
+  wrt(x1+4,y1+4,'Esc');
+  attrtxt(col.colutility);
+  wrt(x1+9,y1+2,'Men(punkt) w„hlen');
+  wrt(x1+9,y1+3,'Men(punkt) (de)aktivieren');
+  wrt(x1+9,y1+42,'Ende');
+  {$ELSE }
   rahmen1(38,78,18,23,'');
   wshadow(39,79,19,24);
   wrt(40,18,' CrossPoint-Meneditor ');
@@ -178,6 +199,7 @@ begin
   wrt(50,20,'Men(punkt) w„hlen');
   wrt(50,21,'Men(punkt) (de)aktivieren');
   wrt(50,22,'Ende');
+  {$ENDIF }
 end;
 
 
@@ -451,6 +473,9 @@ var ma    : map;
       DelHidden(ma^[p].mpnr);
       display;
       modi:=true;
+      {$IFDEF Linux }
+      XPInfoLog('Entry '''+ma^[p].mstr+''' enabled');
+      {$ENDIF }
       end;
   end;
 
@@ -462,6 +487,9 @@ var ma    : map;
       AddHidden(ma^[p].mpnr);
       display;
       modi:=true;
+      {$IFDEF Linux }
+      XPInfoLog('Entry '''+ma^[p].mstr+''' disabled');
+      {$ENDIF }
       end;
   end;
 
@@ -714,10 +742,21 @@ begin
   attrtxt(7);
   clrscr;
   wrlogo;
-  if saved then writeln('Žnderungen wurden gesichert.'#10);
+  if saved then begin
+    writeln('Žnderungen wurden gesichert.'#10);
+    {$IFDEF Linux }
+    XPNoticeLog('Changes saved');
+    {$ENDIF }
+  end;
 end.
 {
   $Log$
+  Revision 1.16  2000/05/06 11:25:13  hd
+  - Kleinere Aenderungen fuer Linux:
+    - Hintergrund nutzt gesamten Screen (nicht nur 80x25)
+    - Textfenster unten rechts, je nach Groesse des Screen
+    - Simple Log-Ausgabe nach syslog
+
   Revision 1.15  2000/05/02 14:38:35  hd
   Laeuft jetzt unter Linux. String-Konvertierung wird in XPCURSES.PAS
   vorgenommen, so dass alle StrDosToLinux-Aufrufe entfernt wurden.
