@@ -493,7 +493,7 @@ var fn     : pathstr;
       t     : taste;
       s     : string[10];
   begin
-    if (viewer.ext='') and (viewer.prog<>'') then
+    if (viewer.ext='') and (viewer.prog<>'') and (viewer.prog <> '*intern*') then
     begin
       s:=ustr('.' + GetFileExt(mpdata.fname)+'.');
       if ((pos(s,viewer_save)=0) or (pos(s,viewer_danger)>0))
@@ -761,12 +761,13 @@ begin
       if (mp=0) then mimetyp:='text/plain'; { CTRL+ENTER & CTRL+H : Lister erzwingen }
 
       mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+      GetDefaultViewer(mimetyp, Viewer);
       GetExtViewer(mpdata.fname,viewer);     { Dateiendung hat bei Viewerauswahl }
       if viewer.prog='' then                 { Vorrang vor dem Mimetyp }
         GetMimeViewer(mimetyp,viewer);
                                                        {Einteilige nicht text/plain Message }
-      if (mp=1) and (mimetyp <>'') and (mimetyp<>'text/plain')
-         and (left(mimetyp,9)<>'multipart') then
+      if ((mp=1) or (mp=2)) and (mimetyp <>'') and (mimetyp<>'text/plain')
+        and (left(mimetyp,9)<>'multipart') then
       begin
         multipart:=false;
         pushhp(94);
@@ -1549,6 +1550,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25.2.12  2000/11/01 10:51:45  mk
+  - verschiedene MIME-Viewer fixes
+
   Revision 1.25.2.11  2000/10/24 13:55:05  mk
   - MIME-fixes
 
