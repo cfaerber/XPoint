@@ -451,7 +451,7 @@ end;
 {$ENDIF }
 
 {$IFDEF Ver32 }
-procedure SDisp(x,y:word; const s:string);
+procedure SDisp(const x,y:word; const s:string);
 {$IFDEF Win32 }
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
@@ -1070,6 +1070,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.16  2000/04/02 11:18:23  ml
+  Ver32 SDISP war ohne const - jetzt wieder kompilierbar
+
   Revision 1.15  2000/03/25 20:22:20  mk
   - kleinere Anpassungen fuer Linux
 
