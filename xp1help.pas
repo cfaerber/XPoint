@@ -55,28 +55,29 @@ procedure showkeys(nr:integer);
 const kss : byte = 2;
 
   procedure ks(s:string);
-  var p : byte;
+  var
+    p: Integer;
+    x, y: Integer;
   begin
+    x := WhereX; y := WhereY;
     p:=cPos('^',s);
     delete(s,p,1);
     inc(shortkeys);
     if shortkeys>maxskeys then
       interr('Shortkey Overflow');
     with shortkey[shortkeys] do begin
-      keypos:=wherex;
+      keypos:= x;
       keylen:=length(s);
       keyspot:=p;
       key:=LoCase(s[p]);
       end;
     attrtxt(col.colkeys);
-    Wrt2(LeftStr(s,p-1));
-    attrtxt(col.colkeyshigh);
-    Wrt2(s[p]);
-    attrtxt(col.colkeys);
     if kss = 2 then
-      Wrt2(copy(s,p+1,30) + '  ')
+      Wrt(x, y, s + '  ')
     else
-      Wrt2(copy(s,p+1,30) + ' ')
+      Wrt(x, y, s + ' ');
+    attrtxt(col.colkeyshigh);
+    FWrt(x+p-1, y, s[p]);
   end;
 
   procedure AddSK(pos,len,spot: integer; _key:taste);
@@ -411,6 +412,9 @@ end;
 
 {
   $Log$
+  Revision 1.28  2001/12/18 13:06:09  mk
+  - little draw speedup for button bar
+
   Revision 1.27  2001/09/10 15:58:02  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
