@@ -456,7 +456,7 @@ var   hdp      : THeader;
           ddatum:=filedate;
           charset := MimeGetCharsetFromName(CharsetName);
           offset := startpos;
-          length := endpos-startpos;
+          length := endpos-startpos -2; // last two byte are not part of the content
 //        startline:=_start;
           lines:=n-_start;
           part:= PartsList.Count - 1;
@@ -885,6 +885,11 @@ finalization
 
 {
   $Log$
+  Revision 1.62  2002/07/23 13:27:44  mk
+  - fixed Bug #476655 kein nachträgliches Edit bei attachment
+    at the end of every mime part, the last #0d0a is not part
+    of the content and will be stripped off
+
   Revision 1.61  2002/06/29 13:54:00  mk
   - removed unused variables
   - initialize some uninitialized variables before use

@@ -17,7 +17,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
-
+{$O-}
 Function CanEdit:Boolean;
 begin
   result:=ntMIME(netztyp) or
@@ -59,12 +59,14 @@ var s: TStream;
       h,n: string;
       i: Integer;
       finished:boolean;
+      SavedT: String;
   begin
     pa := nil;
     d  := nil;
     finished:=false;
 
     try
+      SavedT := '';
       repeat
         t := GetLine;
         t2:= Trim(t);
@@ -74,11 +76,21 @@ var s: TStream;
            ( (t2 = '--' + c.Boundary) or             // and this is the
              (t2 = '--' + c.Boundary + '--') ) ) then  // real test
         begin
+          if assigned(d) and (SavedT <> '') then
+            d.Write(SavedT[1],Length(SavedT));
+          if assigned(pa)and (SavedT <> '') then
+            pa.Analyzed.Write(Savedt[1],Length(Savedt));
+          SavedT := t;
+        end else
+        begin
+          // handle last not saved T
+          // the last two bytes are not part of the mime content
           if assigned(d) then
-            d.Write(t[1],Length(t));
+            d.Write(SavedT[1],Length(SavedT)-2);
           if assigned(pa) then
-            pa.Analyzed.Write(t[1],Length(t));
-        end else begin
+            pa.Analyzed.Write(Savedt[1],Length(Savedt)-2);
+          SavedT := '';
+
           // -- 1: Write Current Part to File ----------------------------
 
           if assigned(pa) then
@@ -308,6 +320,11 @@ end;
 
 //
 // $Log$
+// Revision 1.12  2002/07/23 13:27:44  mk
+// - fixed Bug #476655 kein nachträgliches Edit bei attachment
+//   at the end of every mime part, the last #0d0a is not part
+//   of the content and will be stripped off
+//
 // Revision 1.11  2002/06/12 08:40:55  mk
 // - fix for resizeing output stream
 //
