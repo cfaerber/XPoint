@@ -677,6 +677,8 @@ var
     x,y    : integer;
     brk    : boolean;
     t      : text;
+    c: Char;
+    a: SmallWord;
     useclip: boolean;
 label ende;
 begin
@@ -699,9 +701,16 @@ begin
     else rewrite(t);
     for y:=1 to screenlines do begin
       for x:=1 to ScreenWidth do
-        write(t,copychr(x,y));
-      writeln(t);
+      begin
+        GetScreenChar(x, y, c, a);
+        // Hide Chars with same foreground and background attribute
+        if (a and $0f) <> ((a and $70) shr 4) then
+          write(t, c)
+        else
+          write(t, ' ');
       end;
+      writeln(t);
+    end;
     message('OK.');
     close(t);
     if UseClip then WriteClipfile(fn)
@@ -924,6 +933,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/10/20 11:33:35  mk
+  - Fix for Bug #116155, Bildschirmauszug fehlerhaft
+
   Revision 1.38  2000/10/17 20:32:34  mk
   - Speicheranzeige etwas verbessert
 
