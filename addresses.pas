@@ -31,6 +31,7 @@ type
     function GetZCAddress: string; virtual; abstract;
     function GetXPAddress: string; virtual; abstract;
     function GetRFCAddress: string; virtual; abstract;
+    function GetAddrSpec: string; virtual;
 
   protected
     constructor _internal_Create;
@@ -39,7 +40,6 @@ type
     class function Create(const addr: string): TAddress; overload;
     class function Create(CopyFrom: TAddress): TAddress; overload;
   
-    class function CreateXP(pm:boolean;const addr,real: string): TAddress;       
     class function CreateZC(const addr: string): TAddress;
     class function CreateRFC(const addr: string): TAddresS;
 
@@ -47,6 +47,7 @@ type
     property ZCAddress: string read GetZCAddress;
     property XPAddress: string read GetXPAddress;
     property RFCAddress: string read GetRFCAddress;
+    property AddrSpec: string read GetAddrSpec;
   end;
 
   TVerteiler = class(TAddress)
@@ -79,14 +80,12 @@ type
 
     constructor _CreateZC(const addr: string);
     constructor _CreateRFC(const addr: string);
-    constructor _CreateXP(const addr: string);
   public
     class function Create(const addr: string): TNewsgroupAddress; overload;
     class function Create(CopyFrom: TNewsgroupAddress): TNewsgroupAddress; overload;
 
     class function CreateZC(const addr: string): TNewsgroupAddress;
     class function CreateRFC(const addr: string): TNewsgroupAddress;
-    class function CreateXP(const addr: string): TNewsgroupAddress;
   end;
 
   TEmailAddress = class(TAddress)
@@ -124,7 +123,7 @@ type
     function GetXPAddress: string; override;
     function GetRFCAddress: string; override;
 
-    function GetAddrSpec: string;
+    function GetAddrSpec: string; override;
     procedure SetAddrSpec(const NewValue: string);
 
     function GetUsername: string; override;
@@ -228,25 +227,6 @@ begin
     result := nil
 end;
   
-class function TAddress.CreateXP(pm:boolean;const addr,real: string): TAddress;
-begin
-  if (FirstChar(addr)=#4) and (LastChar(addr)='V') and 
-     (addr[Length(addr)-1]='@') and
-     (addr[Length(addr)-2]=']') and 
-     (addr[2]='[') then
-    result := TVerteiler.Create(Copy(addr,3,Length(addr)-5))
-  else
-
-  if pm then
-    result := TEmailAddress.Create(addr,real)
-  else
-  
-  if FirstChar(addr) in ['A','$'] then
-    result := TNewsgroupAddress.CreateZC(Mid(addr,2))
-  else
-    result := TNewsgroupAddress.CreateZC(addr)
-end;
-
 class function TAddress.CreateZC(const addr: string): TAddress;
 begin
   if(FirstChar(addr)='[')and(LastChar(addr)=']') then
@@ -267,6 +247,11 @@ begin
     
   else
     result := TNewsgroupAddress.CreateRFC(addr);
+end;
+
+function TAddress.GetAddrSpec: string;
+begin
+  result := GetZCAddress;
 end;
 
 // -- TVerteiler -------------------------------------------------------
@@ -384,16 +369,6 @@ begin
   inherited _internal_Create;
   FZC := '';
   FRFC:= addr;
-end;
-
-class function TNewsgroupAddress.CreateXP(const addr: string): TNewsgroupAddress;
-begin result := TNewsgroupAddress._CreateXP(addr); end;
-
-constructor TNewsgroupAddress._CreateXP(const addr: string);
-begin
-  inherited _internal_Create;
-  assert(FirstChar(addr)='A');
-  FZC := Mid(addr,2);
 end;
 
 // -- TEmailAddress ----------------------------------------------------
@@ -808,6 +783,12 @@ end;
 
 //    
 // $Log$
+// Revision 1.8  2003/01/07 00:20:05  cl
+// - added new address list item types: atMailCopies/atMailFollowupto
+// - added AddrSpec property to non-TDomainEmailAddress classes
+// - made DisplayString property writeable.
+// - some optimizations
+//
 // Revision 1.7  2002/12/12 11:11:45  mk
 // - added missing SysUtils unit (needed for LeftStr with FPC)
 //

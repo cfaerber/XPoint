@@ -45,7 +45,7 @@ type
     
     atFollowupTo,
     atReplyTo,
-    atMailCopiesTo );
+    atMailFollowupTo  );
 
   TAddressListTypeSet = set of TAddressListType;
   const AddressListTypeAll: TAddressListTypeSet = [Low(TAddressListType)..High(TAddressListType)]; type
@@ -79,18 +79,19 @@ type
     
     procedure SetAddress(NewValue: TAddress);
     
-    function GetZCAddress: string;  procedure SetZCAddress(NewValue: string);
-    function GetXPAddress: string;
-    function GetRFCAddress: string; procedure SetRFCAddress(NewValue: string);
+    function GetZCAddress: string;  procedure SetZCAddress(const NewValue: string);
+    function GetXPAddress: string;  procedure SetXPAddress(const NewValue: string);
+    function GetRFCAddress: string; procedure SetRFCAddress(const NewValue: string);
+    function GetAddrSpec: string;
 
     function GetPM: boolean;
     function GetEmpty: boolean;
     function GetVerteiler: boolean;
     function GetDisplayString: string;
+    procedure SetDisplayString(const NewAddr: String);
 
   public
     constructor Create; overload;
-    constructor CreateXP(pm:boolean;const addr,rname:string); overload;
 
   public
     procedure Assign(otherList: TAddressListItem); virtual;
@@ -98,8 +99,9 @@ type
     property Address: TAddress  read FAddress write SetAddress;
 
     property ZCAddress: string read GetZCAddress write SetZCAddress;
-    property XPAddress: string read GetXPAddress;
+    property XPAddress: string read GetXPAddress write SetXPAddress;
     property RFCAddress: string read GetRFCAddress write SetRFCAddress;
+    property AddrSpec:  string read GetAddrSpec;
 
     property BoxName:  string  read FBoxName   write FBoxName;
     property Group:    Integer read FGroup     write FGroup;
@@ -112,7 +114,7 @@ type
 
     property Charsets: TStringList read FCharsets;
 
-    property DisplayString: string read GetDisplayString;
+    property DisplayString: string read GetDisplayString write SetDisplayString;
     property AddressType: TAddressListType read FAddrType write FAddrType;
 
     property OriginalType: TAddressListType read FOrigType write FOrigType;
@@ -157,12 +159,10 @@ type
     procedure InsertList(Index: Integer;Source: TAddressList);
 
     procedure AddStrings(Source: TStrings); virtual;
+    procedure AddToStrings(Dest: TStrings); virtual;
 
     function AddNew: TAddressListItem;
     function InsertNew(Index: Integer): TAddressListItem;
-
-    function AddNewXP(pm:boolean;const addr,real:string): TAddressListItem;
-    function InsertNewXP(Index: Integer; pm:boolean;const addr,real:string): TAddressListItem;
 
     function findZC(const addr: string): Integer;
     
@@ -199,14 +199,6 @@ uses
 constructor TAddressListItem.Create;
 begin
   Inherited Create;
-  FGroup := -1;
-  FAddrType := atTo;
-  FCharsets := TStringList.Create;
-end;
-
-constructor TAddressListItem.CreateXP(pm:boolean;const addr,rname:string);
-begin
-  FAddress := TAddress.CreateXP(pm,addr,rname);
   FGroup := -1;
   FAddrType := atTo;
   FCharsets := TStringList.Create;
@@ -256,7 +248,7 @@ begin
     result := FAddress.ZCAddress;
 end;
 
-procedure TAddressListItem.SetZCAddress(NewValue: string);
+procedure TAddressListItem.SetZCAddress(const NewValue: string);
 begin
   FAddress.Free;
   if NewValue='' then
@@ -273,6 +265,21 @@ begin
     result := FAddress.XPAddress;
 end;
 
+procedure TAddressListItem.SetXPAddress(const NewValue: string);
+begin
+  FAddress.Free;
+  if Length(NewValue)<2 then 
+    FAddress := nil
+  else
+    if NewValue[1] in ['$','A'] then
+      FAddress := TNewsgroupAddress.Create(Mid(NewValue,2))
+    else
+    if NewValue[1] in ['1','U'] then
+      FAddress := TEMailAddress.Create(Mid(NewValue,2))
+    else
+      FAddress := nil;
+end;
+
 function TAddressListItem.GetRFCAddress: string;
 begin
   if not assigned(FAddress) then
@@ -281,13 +288,21 @@ begin
     result := FAddress.RFCAddress;
 end;
 
-procedure TAddressListItem.SetRFCAddress(NewValue: string);
+procedure TAddressListItem.SetRFCAddress(const NewValue: string);
 begin
   FAddress.Free;
   if NewValue='' then
     FAddress := nil
   else
     FAddress := Taddress.CreateRFC(NewValue);
+end;
+
+function TAddressListItem.GetAddrSpec: string;
+begin
+  if not assigned(FAddress) then
+    result := ''
+  else 
+    result := FAddress.AddrSpec;
 end;
 
 function TAddressListItem.GetPM: boolean;
@@ -316,7 +331,26 @@ begin
   else
     result := iifs(NewUser and (BoxName<>''),'+'+BoxName+': ','')+FAddress.ZCAddress;
 end;
- 
+
+procedure TAddressListItem.SetDisplayString(const NewAddr: String); 
+var TrimmedAddress: String;
+begin
+  TrimmedAddress := Trim(RFCRemoveComments(NewAddr));
+
+  FAddress.Free;
+  if TrimmedAddress='' then 
+    FAddress := nil
+  else
+  begin
+    if(FirstChar(TrimmedAddress)='[')and(LastChar(TrimmedAddress)=']')then
+      FAddress := TVerteiler.Create(Copy(TrimmedAddress,2,Length(TrimmedAddress)-2))
+    else if CPos('@',TrimmedAddress)>0 then
+      FAddress := TEMailAddress.Create(NewAddr)
+    else
+      FAddress := TNewsgroupAddress.Create(TrimmedAddress);
+  end;
+end;
+
 { ------------------------- > TAddressList < ------------------------- }
 
 constructor TAddressList.Create;
@@ -422,6 +456,15 @@ begin
     AddNew.ZCAddress := Source[i];
 end;
 
+procedure TAddressList.AddToStrings(Dest: TStrings);
+var i: Integer;
+begin
+  Dest.Capacity := Dest.Count + Self.Count;
+  for i:=0 to Self.Count-1 do
+    Dest.Add(Self[i].ZCAddress);
+end;
+
+
 function TAddressList.AddNew: TAddressListItem;
 var Index: Integer;
 begin
@@ -433,21 +476,6 @@ end;
 function TAddressList.InsertNew(Index: Integer): TAddressListItem;
 begin
   FObjects.Insert(Index,TAddressListItem.Create);
-  result := GetAddress(Index);
-  Result.AddressType := atTo;
-end;
-
-function TAddressList.AddNewXP(pm:boolean;const addr,real:string): TAddressListItem;
-var Index: Integer;
-begin
-  Index := FObjects.Add(TAddressListItem.CreateXP(pm,addr,real));
-  result := GetAddress(Index);
-  Result.AddressType := atTo;
-end;
-
-function TAddressList.InsertNewXP(Index: Integer; pm:boolean;const addr,real:string): TAddressListItem;
-begin
-  FObjects.Insert(Index,TAddressListItem.CreateXP(pm,addr,real));
   result := GetAddress(Index);
   Result.AddressType := atTo;
 end;
@@ -806,6 +834,12 @@ end;
 
 //    
 // $Log$
+// Revision 1.12  2003/01/07 00:20:05  cl
+// - added new address list item types: atMailCopies/atMailFollowupto
+// - added AddrSpec property to non-TDomainEmailAddress classes
+// - made DisplayString property writeable.
+// - some optimizations
+//
 // Revision 1.11  2002/12/14 07:31:26  dodi
 // - using new types
 //
