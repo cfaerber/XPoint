@@ -117,7 +117,7 @@ begin
       path:=fsearch('PGP.EXE',getenv('PATH'));
   end;
   if path='' then
-    trfehler(3001,30)    { 'PGP fehlt oder ist nicht per Pfad erreichbar.' }
+    trfehler(217,30)    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
   else begin
     shellkey:=PGP_WaitKey;
     if PGPVersion=PGP2 then
@@ -783,6 +783,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6.2.10  2000/07/09 13:37:00  mk
+  - Fehlermeldung wenn PGP nicht gefunden korrigiert
+
   Revision 1.6.2.9  2000/05/18 22:33:59  mk
   - PGP Fix fuer zweimal t (1.19)
 
