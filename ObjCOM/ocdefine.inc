@@ -52,7 +52,7 @@
     {$Q+,R+,S+,W+,Optimize-}
   {$ENDIF }
   {$IFDEF FPC }
-    {$Q+,R+,S+}
+    {$Q+,R-,S+}
     {$C+}                 { Assertion support }
   {$ENDIF }
 {$ENDIF }
@@ -79,6 +79,10 @@
 
 {
   $Log$
+  Revision 1.3  2000/12/14 16:29:19  hd
+  - Workaround: no range check under FPC
+    - please, never, FPC is buggy.
+
   Revision 1.2  2000/10/28 09:40:28  ma
   - introduced credits.txt
 
