@@ -41,6 +41,7 @@ implementation  { ------------------------------------------------- }
 
 uses
   NCNNTP,
+  NCSocket,
   progressoutput,
   xpprogressoutputwindow,
   resource,
@@ -64,6 +65,7 @@ uses
   res_setnewsgroup      = 'Newsgroup %s (%d von %d)';
   res_getposting        = 'Hole Artikel %d von %d';
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
+  res_userbreak         = 'Abbruch durch User';
 
 function GetAllGroups(BoxName: string; bp: BoxPtr): boolean;
 var
@@ -111,13 +113,19 @@ begin
       result:= true;
     end else
       result:= false;
-    NNTP.DisConnect;
-    List.Free;
   except
-    POWindow.WriteFmt(mcError,res_noconnect,[0]);
-    result:= true;
+    on E: EUserBreakError do begin
+      POWindow.WriteFmt(mcError, res_userbreak, [0]);
+      result:= false;
+      end
+    else begin
+      POWindow.WriteFmt(mcError,res_noconnect,[0]);
+      result:= false;
+    end;
   end;
+  NNTP.Disconnect;
   NNTP.Free;
+  List.Free;
 end;
 
 function GetNewGroups(BoxName: string; bp: BoxPtr): boolean;
@@ -195,14 +203,18 @@ begin
     result:= true;
     List.LoadFromFile(RFCFileDummy);
     NNTP.Connect;
-
     NNTP.PostPlainRFCMessages(List);
-
-    NNTP.Disconnect;
   except
-    POWindow.WriteFmt(mcError,res_noconnect,[0]);
-    result:= false;
+    on E: EUserBreakError do begin
+      POWindow.WriteFmt(mcError, res_userbreak, [0]);
+      result:= false;
+      end
+    else begin
+      POWindow.WriteFmt(mcError,res_noconnect,[0]);
+      result:= false;
+    end;
   end;
+  NNTP.Disconnect;
 
   List.Free;
   NNTP.Free;
@@ -333,12 +345,17 @@ begin
       end;
       if List.Count > 0 then SaveNews;
     end;
-
-    NNTP.Disconnect;
   except
-    POWindow.WriteFmt(mcError,res_noconnect,[0]);
-    result:= false;
+    on E: EUserBreakError do begin
+      POWindow.WriteFmt(mcError, res_userbreak, [0]);
+      result:= false;
+      end
+    else begin
+      POWindow.WriteFmt(mcError,res_noconnect,[0]);
+      result:= true;
+    end;
   end;
+  NNTP.Disconnect;
 
   RCList.SaveToFile(RCFilename);
   RCList.Free;
@@ -350,6 +367,9 @@ end;
 
 {
         $Log$
+        Revision 1.27  2001/09/19 11:20:09  ma
+        - implemented simple user break handling code
+
         Revision 1.26  2001/09/07 13:54:27  mk
         - added SaveDeleteFile
         - moved most file extensios to constant values in XP0

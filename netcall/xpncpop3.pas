@@ -58,6 +58,7 @@ uses
   res_mailstat          = '%d (%d neue) Mails in %d Bytes';
   res_getmail           = 'Hole Mail Nr. %d';
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
+  res_userbreak         = 'Abbruch durch User';
 
   res_strange           = 'Interner Fehler'; // just in case...
 
@@ -116,29 +117,27 @@ begin
   List := TStringList.Create;
   try
     List.LoadFromFile(RFCFile);
-
     SMTP.Connect(SMTP.GetFQDomain(List));
-
     SMTP.PostPlainRFCMails(List, bp^.UserName);
-
-    SMTP.Disconnect;
   except
     on E: ESMTP do begin
       POWindow.WriteFmt(mcError, E.Message, [0]);
-      SMTP.Disconnect;
+      result:= false;
+      end;
+    on E: EUserBreakError do begin
+      POWindow.WriteFmt(mcError, res_userbreak, [0]);
       result:= false;
       end;
     on E: ESocketNetcall do begin
       POWindow.WriteFmt(mcError, res_noconnect, [0]);
-      SMTP.Disconnect;
       result:= false;
       end
     else begin
       POWindow.WriteFmt(mcError, res_strange, [0]);
-      SMTP.Disconnect;
       result:= false;
       end;
   end;
+  SMTP.Disconnect;
 
   List.Free;
   SMTP.Free;
@@ -231,26 +230,26 @@ begin
       // if List.Count > 10000 then
       SaveMail;
     end;
-
 //    SaveMail;
-    POP.Disconnect;
   except
     on E: EPOP3 do begin
       POWindow.WriteFmt(mcError, E.Message, [0]);
-      POP.Disconnect;
+      result:= false;
+      end;
+    on E: EUserBreakError do begin
+      POWindow.WriteFmt(mcError, res_userbreak, [0]);
       result:= false;
       end;
     on E: ESocketNetcall do begin
       POWindow.WriteFmt(mcError, res_noconnect, [0]);
-      POP.Disconnect;
       result:= false;
       end
     else begin
       POWindow.WriteFmt(mcError, res_strange, [0]);
-      POP.Disconnect;
       result:= false;
       end;
   end;
+  POP.Disconnect;
 
   if POP.UIDLs.Count>0 then
     POP.UIDLs.SaveToFile(UIDLFileName)
@@ -272,6 +271,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2001/09/19 11:20:09  ma
+  - implemented simple user break handling code
+
   Revision 1.22  2001/09/07 13:54:27  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

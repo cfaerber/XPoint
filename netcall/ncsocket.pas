@@ -32,6 +32,11 @@ uses
   xpglobal,             { Nur wegen der Typendefinition }
   NetCall,              { TNetcall }
   IPAddr,               { TIP }
+{$ifdef NCRT}
+  xpcurses,
+{$else}
+  keys,
+{$endif}
 {$IFDEF Win32 }
   winsock,
 {$ELSE }
@@ -57,6 +62,7 @@ type
   ESNInvalidPort                = class(ESocketNetcall);   { Ungueltiger Port }
   ESocketError                  = class(ESocketNetcall);   { WSAGetLastError }
   ETimeOutError                 = class(ESocketNetcall);   { Timeout }
+  EUserBreakError               = class(ESocketNetcall);   { User break }
 
 const
   MaxSocketBuffer = 32767;
@@ -405,6 +411,11 @@ begin
   s := '';
   Time := Now + FTimeOut; // Zu diesem Zeitpunkt mssen wir abbrechen
   repeat
+    if KeyPressed then
+      case ReadKey of
+        #27: raise EUserBreakError.Create('User break');
+        #0: ReadKey;
+      end;
     while FInPos >= FInCount do
     begin
       ReadBuffer;
@@ -424,6 +435,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2001/09/19 11:20:09  ma
+  - implemented simple user break handling code
+
   Revision 1.27  2001/09/16 17:56:01  ma
   - adjusted debug levels
 
