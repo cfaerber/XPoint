@@ -670,6 +670,16 @@ var x,y      : Integer;
     end;
   end;
 
+  procedure checkbox(var box :string);
+  var d :DB;
+  begin
+    dbOpen(d,BoxenFile,1);
+    dbSeek(d,boiName,UpperCase(box));
+    if dbFound then
+      Box := dbReadStr(d,'boxname');  { -> korrekte Schreibweise des Systemnamens }
+    dbClose(d);
+  end;
+
 var
   OwnMessageReplaced: Boolean;
   s: String;
@@ -949,6 +959,7 @@ begin
               dbAppend(ubase);
               name:=copy(FirstEmpfaenger,2,79);
               pb:=pollbox_str(zconnect,true);
+              checkbox(pb);
               if cpos('@',name)=0 then name:=LeftStr(name+'@'+pb+'.ZER',79);
               dbWriteNStr(ubase,ub_username,name);
               dbWriteNStr(ubase,ub_pollbox,pb);
@@ -1236,6 +1247,10 @@ end;
 
 {
   $Log$
+  Revision 1.84  2002/05/01 17:25:18  mk
+  SV: - Bei automatisch neu angelegten Usern/Brettern wird die Schreibweise
+    der Serverbox ueberprueft
+
   Revision 1.83  2002/03/23 15:12:51  mk
   - removed compiler warnings
 
