@@ -56,7 +56,7 @@ begin
   setenable(Weiter,10,true);
   if (dispmode=10) and not empty then begin
     _brett:= dbReadNStr(mbase,mb_brett);
-    if _brett[1]='U' then setenable(Weiter,10,false);    { PM-Archiv }
+    if FirstChar(_brett)='U' then setenable(Weiter,10,false);    { PM-Archiv }
     dbReadN(mbase,mb_unversandt,unversandt);
     dbReadN(mbase,mb_typ,mtyp);
     if unversandt and 1=0 then begin
@@ -815,6 +815,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.43  2002/07/29 07:17:19  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.42  2002/07/26 08:19:24  mk
   - MarkedList is now a dynamically created list, instead of a fixed array,
     removes limit of 5000 selected messages

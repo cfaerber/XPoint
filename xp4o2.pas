@@ -442,7 +442,7 @@ var hdp    : theader;
           if recount(newbetr)=0 then;
           if LeftStr(newbetr,35)<>LeftStr(betr,35) then
             inc(flags,kflBetr);
-          if (_brett[1]='U') or (_brett[1]='1') then
+          if (FirstChar(_brett)='U') or (FirstChar(_brett)='1') then
             inc(flags,kflPM)
           else if _brett<>brett then
             inc(flags,kflBrett);
@@ -927,6 +927,9 @@ end;
 
 {
   $Log$
+  Revision 1.58  2002/07/29 07:17:20  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.57  2002/07/26 08:19:25  mk
   - MarkedList is now a dynamically created list, instead of a fixed array,
     removes limit of 5000 selected messages

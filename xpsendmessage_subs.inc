@@ -1147,7 +1147,7 @@ var box :string;
 begin
   box := '';
   brett := dbReadNStr(mbase, mb_brett);
-  if brett[1] = '1' then         { Brett }
+  if FirstChar(brett) = '1' then         { Brett }
   begin
     dbSeek (bbase, biIntNr, copy (brett, 2, 4));
     if dbBOF (bbase) or dbEOF (bbase) then box := ''
@@ -1159,6 +1159,9 @@ end;
 
 {
   $Log$
+  Revision 1.28  2002/07/29 07:17:21  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.27  2002/07/28 11:31:46  cl
   - BUGFIX: [ 587626 ] 3.9: EBs verschandeln Subject
   - BUGFIX: [ 587388 ] 3.9: EBs gehen nicht immer

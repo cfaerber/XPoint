@@ -1045,7 +1045,7 @@
             readln(t,s);
             s:=trim(s);
             if (s='') or (s[1]='#') or (s[1]=';') then continue; { Kommentar }
-            if s[1] = '[' then break;                         { neue Section }
+            if FirstChar(s) = '[' then break;                         { neue Section }
             ServersList[i]:=s;
             inc(i);
           end;
@@ -2371,6 +2371,9 @@
 
 {
   $Log$
+  Revision 1.59  2002/07/29 07:17:21  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.58  2002/07/25 20:43:56  ma
   - updated copyright notices
 

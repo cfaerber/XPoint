@@ -195,7 +195,7 @@ begin
         if p>0 then begin
           val(LeftStr(s,p-1),l,res);
           delete(s,1,p);
-          while (s<>'') and (s[1]=' ') do DeleteFirstChar(s);
+          while (FirstChar(s)=' ') do DeleteFirstChar(s);
           if (res=0) and (l>=0) and (l<$100) then begin
             inc(n); ca[n]:=l and msk;
             end;
@@ -413,6 +413,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2002/07/29 07:17:21  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.14  2002/07/25 20:43:57  ma
   - updated copyright notices
 

@@ -89,7 +89,7 @@ begin
       if not user then 
       begin
         brett := dbReadNStr(bbase,bb_brettname);
-        brettc:=brett[1];
+        brettc:= FirstChar(brett);
       end else
         brett := dbReadNStr(ubase,ub_username);
       _brett:=mbrettd(brettc,d);
@@ -716,6 +716,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.52  2002/07/29 07:17:19  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.51  2002/07/26 08:19:24  mk
   - MarkedList is now a dynamically created list, instead of a fixed array,
     removes limit of 5000 selected messages

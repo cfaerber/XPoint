@@ -623,7 +623,7 @@ var fn     : string;
     dbReadN(mbase,mb_unversandt,flags);
     if (b=0) or ((nt=nt_Maus) and (flags and 32<>0)) then begin
       brett:= dbReadNStr(mbase,mb_brett);       { ^^ Maus-zurueckgestellt }
-      if (nt=nt_Maus) and MausLeseBest and ((brett[1]='1') or (brett[1]='U'))
+      if (nt=nt_Maus) and MausLeseBest and ((FirstChar(brett)='1') or (FirstChar(brett)='U'))
       then
         if briefsent then begin
           flags:=flags and (not 32);
@@ -1787,6 +1787,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.105  2002/07/29 07:17:20  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.104  2002/07/26 08:19:26  mk
   - MarkedList is now a dynamically created list, instead of a fixed array,
     removes limit of 5000 selected messages

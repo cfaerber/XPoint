@@ -2517,7 +2517,7 @@ var d     : DB;
   begin
     _brett := dbReadStr(d,'brett');
     write(log,fdat(longdat(dbReadInt(d,'origdatum'))),' ');
-    if _brett[1]='U' then
+    if FirstChar(_brett)='U' then
       write(log,forms(dbReadStr(d,'absender'),32))
     else begin
       dbSeek(bbase,biIntnr,copy(_brett,2,4));
@@ -3036,6 +3036,9 @@ end;
 
 {
   $Log$
+  Revision 1.144  2002/07/29 07:17:20  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.143  2002/07/26 08:19:25  mk
   - MarkedList is now a dynamically created list, instead of a fixed array,
     removes limit of 5000 selected messages

@@ -77,7 +77,7 @@ again:
           mpnr:=0;
           enabled:=true;
           end;
-        if (length(s)>0) and (s[1]='!') then begin      { MenÅ nicht verlassen? }
+        if FirstChar(s)='!' then begin      { MenÅ nicht verlassen? }
           keep:=true;
           delete(s,1,1);
           end
@@ -624,6 +624,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.43  2002/07/29 07:17:19  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.42  2002/07/25 20:43:53  ma
   - updated copyright notices
 

@@ -1261,7 +1261,7 @@ begin
     while LastChar(s)='0' do
       DeleteLastChar(s);
     if LastChar(s)='.' then DeleteLastChar(s);
-    while (s<>'') and (s[1]=' ') do
+    while FirstChar(s) =' ' do
       DeleteFirstChar(s);
     bd(x,y,'',s,9,2,brk);
     val(trim(s),r,res);
@@ -1667,6 +1667,9 @@ end;
 
 {
   $Log$
+  Revision 1.93  2002/07/29 07:17:19  mk
+  - fixed AnsiString[1] to FirstChar(AnsiString)
+
   Revision 1.92  2002/07/25 20:43:52  ma
   - updated copyright notices
 
