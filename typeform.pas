@@ -77,6 +77,8 @@ function Bin(l:longint; n:integer):string;      { Bin-Zahl mit n Stellen       }
 function Blankpos(var s:string):integer;        { Position von ' ' oder #9     }
 function BlankposX(var s:string): integer;       { length(s)+1, falls bp=0      }
 function Center(const s:string; n:integer):string;    { String auf n Zchn. zentrieren}
+procedure CopyStream(InStream,OutStream:TStream);
+procedure CopyStreamMult(InStream:TStream;OutStreams:array of TStream);
 function CountChar(const c: char; const s: string): integer; { zaehlt c in s }
 function CPos(c:char; const s:string):integer;    { schnelles POS fuer CHARs      }
 function CPosX(c:char; const s:string):integer;   { pos=0 -> pos:=length(s)+1    }
@@ -103,6 +105,7 @@ function iifb(b,b1,b2:boolean):boolean;         { IIF Boolean               }
 function iifc(b:boolean; c1,c2:char):char;      { IIF Char                  }
 function iifr(b:boolean; r1,r2:real):real;      { IIF Real                  }
 function iifs(b:boolean; const s1,s2:string):string;  { IIF String                }
+function IsNaN(d:double):boolean;
 function IntQSum(const l:longint):longint;         { Quersumme                    }
 function isnum(const s:string):boolean;            { s besteht aus [0..9]         }
 function IVal(const s:string):longint;             { Value Integer                }
@@ -114,13 +117,14 @@ function LoCase(const c:char):char;                { LowerCase                  
 function Max(const a,b:longint):longint;          { Maximum Integer              }
 function MaxR(const a,b:real):real;                { Maximum Real                 }
 function MaxS(const a,b:string):string;            { Maximum String               }
-function Mid(const s:string; const n:integer):string;       { Rest des Strings ab Pos. n   }
+function Mid(const s:string; const n:integer):string;       { Rest des Strings ab Pos.    }
 function Min(a,b:longint):longint;              { Minimum Integer              }
 function MinMax(const x,min,max:longint):longint;  { x -> [min,max]               }
 function MinMaxR(const x,min,max:real):real;       { x -> [min,max]               }
 function MinR(const a,b:real):real;                { Minimum Real                 }
 function MinS(const a,b:string):string;            { Minimum String               }
-function MultiPos(s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
+function MultiPos (s1,s2:string):boolean;     { pos(s1[i],s2)>0              }
+function NaN:Double;
 function OctVal(s:string):longint;           { Oktalstring -> Logint        }
 function PosN(const s1,s2:string; n:integer):integer;    { POS ab Stelle n              }
 function PosX(const s1,s2:string):integer;            { length(s)+1, falls pos=0     }
@@ -818,6 +822,17 @@ begin
   else iifs:=s2;
 end;
 
+function IsNaN(d:double):boolean;
+begin
+  result:=((Ord((PChar(@d)+6)^) and $F0)=$F0)
+      and ((Ord((PChar(@d)+7)^) and $7F)=$7F)
+end;
+
+function NaN:Double;
+const NaNBits: array[0..7] of byte=($FF,$FF,$FF,$FF,$FF,$FF,$FF,$7F);
+begin
+  Move(NaNBits,Result,8);
+end;
 
 procedure delfirst(var s:string);
 begin
@@ -931,7 +946,7 @@ begin
   while not mp and (i<=length(s1)) do begin
     mp:=(cpos(s1[i],s2)>0);
     inc(i);
-    end;
+  end;
   MultiPos:=mp;
 end;
 
@@ -1144,7 +1159,6 @@ begin
   if p=0 then PosX:=length(s2)+1
   else PosX:=p;
 end;
-
 
 function SMatch(const s1,s2:string):integer;          { Anzahl der uebereinst. Bytes  }
 var p,ml : integer;
@@ -1400,6 +1414,30 @@ begin
   end;
 end;
 
+procedure CopyStream(InStream,OutStream:TStream);
+var b: array [1..8192] of char;
+    n: longint;
+begin
+  repeat
+    n := InStream.Read(b,sizeof(b));
+    if n<= 0 then break;
+    OutStream.WriteBuffer(b,n);
+  until false;
+end;
+
+procedure CopyStreamMult(InStream:TStream;OutStreams:array of TStream);
+var b: array [1..8192] of char;
+    n: longint;
+    i: integer;
+begin
+  repeat
+    n := InStream.Read(b,sizeof(b));
+    if n<= 0 then break;
+    for i:=Low(OutStreams) to High(OutStreams) do
+      OutStreams[i].WriteBuffer(b,n);
+  until false;
+end;
+
 { functions to convert from/to MSB and LSB }
 
 Function Swap16(X : Word) : Word; {$IFNDEF Delphi} inline; {$ENDIF }
@@ -1450,6 +1488,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.95  2001/08/12 19:59:17  cl
+  - rename xp6*.* => xpsendmessage*.*
+  - NaN/IsNaN added
+  - CopyStream[Mult] added
+
   Revision 1.94  2001/08/11 23:06:28  mk
   - changed Pos() to cPos() when possible
 
