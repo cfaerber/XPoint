@@ -1009,9 +1009,8 @@ again:
                    sendfilename:=hdp.datei;
                    sendfiledate:=hdp.ddatum;
                    end;
-                 { suboptimal }
-                 if ((typ in [1..3,7]) and (not pm)) then
-                   sData.followup.add (am_replyto);
+                 if ((typ in [1..3,7]) and (not pm)) and (am_replyto <> '') then
+                   sData.followup.add(am_replyto);
                  if typ in [1,4,7] then sData.quotestr:=hdp.quotestring;
                  if typ=7 then sData.orghdp:=hdp;
                  if typ in [1,2,7] then
@@ -1364,6 +1363,9 @@ end;
 
 {
   $Log$
+  Revision 1.21.2.10  2003/08/26 00:33:45  mk
+  - fixed empty followup in weiterleit()
+
   Revision 1.21.2.9  2003/05/01 19:15:28  mk
   - fixed incorrect flags in ArchivAMToPM when archiving messages
 
