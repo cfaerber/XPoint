@@ -915,6 +915,7 @@ begin
     else
       modiuser:=true;
     end;
+  aufbau:=true; 
 end;
 
 
@@ -2302,6 +2303,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.17  2000/04/27 07:23:34  jg
+  - Bugfixes Adressbuchgruppen:
+    Beim Editieren eines einzelnen Users wurde die Anzeige nicht aktualisiert
+    Schnellsuchfunktion (. oder /) funktionierte nicht.
+
   Revision 1.16  2000/04/24 13:19:25  jg
   - Bugfix: User-Passwort aendern ueberschrieb Adressbuchgruppe
 

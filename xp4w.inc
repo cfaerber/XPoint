@@ -1146,10 +1146,12 @@ begin
       end
     end
   else begin
-    if (dispmode=1) or (dispmode=3) then
-      dbSeek(ubase,uiAdrbuch,#1+ustr(newsuch))
-    else
-      dbSeek(ubase,uiName,ustr(newsuch));
+
+(*   if (dispmode=1) or (dispmode=3) then      { JG: 27.04.00 War doppelt gemoppelt, }
+      dbSeek(ubase,uiAdrbuch,#1+ustr(newsuch)) { unten wird nochmal auf Adrbuch=0 getestet }
+    else                                       { Und so funkioniert die "/" schnellsuche wieder}
+*)
+    dbSeek(ubase,uiName,ustr(newsuch));
     if not dbEOF(ubase) then begin
       dbReadN(ubase,ub_username,s);
       dbReadN(ubase,ub_adrbuch,adrb);
