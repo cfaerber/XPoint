@@ -211,7 +211,7 @@ var x,y,wdt: Integer;
     if hzahl or (hzeit=0) then
       haltedat:=0
     else
-      haltedat:=ixdat(FormatDateTime('yymmdd', Dat-hzeit) + '0000');
+      haltedat:=ixdat(FormatDateTime('yymmdd', Dat-hzeit+1) + '0000');
     nzahl:=1;
 
     hdp := THeader.Create;
@@ -711,6 +711,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.47.2.4  2003/04/13 17:36:10  mk
+  - purge old mail one day faster than before (same as OpenXP 3.40)
+
   Revision 1.47.2.3  2002/07/29 19:53:16  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
