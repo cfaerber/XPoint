@@ -24,19 +24,22 @@ function Win32GetScreenLines: Integer;
 implementation
 
 uses
-  windows, winxp;
+  typeform, windows, winxp;
 
 function Win32GetScreenLines: Integer;
 var
   csbi: TConsoleScreenBufferInfo;
 begin
   GetConsoleScreenbufferInfo(OutHandle, csbi);
-  Win32GetScreenLines := csbi.srwindow.bottom+1;
+  Win32GetScreenLines := Max(csbi.srwindow.bottom+1, 25);
 end;
 
 end.
 {
   $Log$
+  Revision 1.3  2000/05/14 22:06:30  mk
+  - Zeilenzahl mindestens 25
+
   Revision 1.2  2000/04/13 12:48:42  mk
   - Anpassungen an Virtual Pascal
   - Fehler bei FindFirst behoben
