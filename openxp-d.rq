@@ -2706,6 +2706,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 
 6    Betreff:~
 7    Brett-An:
+
+100  Unbekannten Benutzer anlegen
 -
 
 # --- UUCICO ----------------------------------------------------------
@@ -4019,6 +4021,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.61  2002/06/23 15:03:06  cl
+# - Adapted Nachricht/Direkt to new address handling.
+#
 # Revision 1.60  2002/05/30 13:44:01  mk
 # - fixed 252,29
 #

@@ -29,7 +29,7 @@ interface
 uses
   sysutils,
   typeform,fileio,inout,datadef,database,montage,resource, xpheader,
-  xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal,classes,fidoglob;
+  xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal,classes,fidoglob,addresses;
 
 const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
@@ -56,8 +56,9 @@ procedure Cut_QPC_DES(var betr:string);
 function  ReCount(var betr:string):integer;
 procedure ReplyText(var betr:string; rehochn:boolean);
 
-procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
-                         var realname:string);
+procedure BriefSchablone(pm:boolean;const schab,fn:string;const empf:string;
+                         const realname:string); overload;
+procedure BriefSchablone(Addr: TAddress; const ein, aus: string); overload;                         
 procedure ReadHeader(var hd:theader; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
 procedure QPC(decode:boolean; var data; size: Integer; passwd:pointer;
               var passpos:smallword);
@@ -917,8 +918,8 @@ begin
 end;
 
 
-procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
-                         var realname:string);
+procedure BriefSchablone(pm:boolean;const schab,fn:string;const empf:string;
+                         const realname:string);
 var t1,t2 : text;
     s     : string;
 begin
@@ -936,6 +937,15 @@ begin
     end;
 end;
 
+procedure BriefSchablone(Addr: TAddress; const ein, aus: string);
+begin
+  if addr is TDomainEmailAddress then
+    BriefSchablone(true,ein,aus,addr.ZCAddress,
+      TDomainEmailAddress(addr).RealName)
+  else
+    BriefSchablone(addr is TEmailAddress,ein,aus,
+      TEmailAddress(addr).ZCAddress,'');
+end;
 
 function isbox(const box:string):boolean;
 var d : DB;
@@ -1195,6 +1205,9 @@ end;
 
 {
   $Log$
+  Revision 1.82  2002/06/23 15:03:06  cl
+  - Adapted Nachricht/Direkt to new address handling.
+
   Revision 1.81  2002/04/14 22:22:13  cl
   - added Addr2DB (converts ZConnect Address to DB address)
 

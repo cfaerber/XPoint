@@ -773,7 +773,7 @@ var Index: integer;
       Adr     := NeuUserGruppe;
       Flags   := 1 + iif(newuseribm,0,8);
 
-      EditUser('####',user,adresse,komm,pollbox,halten,adr,flags,true,brk);
+      EditUser(GetRes2(2203,100),user,adresse,komm,pollbox,halten,adr,flags,true,brk);
 
       if brk then
         result := false
@@ -865,7 +865,6 @@ var Index: integer;
     end;
 
     List[Index].NewUser := false;
-
   NoDB:
   
   BoxAgain:
@@ -917,6 +916,12 @@ var Index: integer;
     begin
       sData.MergeCharsets(List[Index].Netztyp,List[Index].Charsets);
       sData.MergeMsgType(List[Index].Netztyp,true);
+
+      if (Index<=0) then
+      begin
+        sdata.HeadFile := HeaderPriv;
+        sdata.SigFile  := PrivSignat;
+      end;
     end;   
         
     Inc(Index);
@@ -1007,6 +1012,12 @@ var Index: integer;
     if dbFound then
     begin
       u := dbReadByte(d,'flags');
+
+      if (Index<=0) and assigned(sData) then
+      begin
+        sdata.HeadFile := dbReadStr(d,'kopf')+extXps;
+        sdata.SigFile  := dbReadStr(d,'signatur')+extXps;
+      end;
       
     end else
     begin
@@ -1061,6 +1072,9 @@ end;
 
 //
 // $Log$
+// Revision 1.5  2002/06/23 15:03:07  cl
+// - Adapted Nachricht/Direkt to new address handling.
+//
 // Revision 1.4  2002/06/23 13:49:37  cl
 // - more intelligent cursor placement
 // - preserve real name when creating new users

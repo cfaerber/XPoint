@@ -91,7 +91,7 @@ var
 function DoSend(pm:boolean; datei:string; is_temp,is_file:boolean;
                 empfaddr,betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData: TSendUUData;
-                const signat:string; sendFlags:word):boolean;
+                signat:string; sendFlags:word):boolean;
 procedure send_file(pm,binary:boolean);
 function SendPMmessage(betreff,fn:string; is_temp:boolean; var box:string):boolean;
 
@@ -302,7 +302,7 @@ end;
 function DoSend(pm:boolean; datei:string; is_temp,is_file:boolean;
                 empfaddr,betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData: TSendUUData;
-                const signat:string; sendFlags:word):boolean;
+                signat:string; sendFlags:word):boolean;
 
 var f,f2     : file;
     edis     : byte;
@@ -389,8 +389,14 @@ var f,f2     : file;
     flLoesch : boolean;
 //  sdnope   : boolean;     { sData = nil }
     orgftime : longint;
-    sigfile  : string;
-    sigtemp  : boolean;
+//  sigfile  : string;
+//  sigtemp  : boolean;
+
+    sigfile  : string;      { Signatur                             }
+    sigtmp   : boolean;     { Signatur: Bearbeitet (eine Signatur ausgesucht) }
+    siglast  : string;      { Signatur: Letzte Quelldatei          }
+    sigok    : boolean;
+
     flPGPkey : boolean;     { eigenen Key mitschicken }
     flPGPsig : boolean;     { Nachricht signieren }
     flPGPreq : boolean;     { Key-Request }
@@ -836,6 +842,24 @@ begin
   end;
 end;
 
+procedure EditRecipients;
+begin
+  EditEmpfaengerList(GetRes2(611,19),true,
+        sData.EmpfList,
+        nil,
+        false,
+        false,
+        betreff,
+        [],[],sData);
+
+  if not intern then
+  begin
+    CheckEmpfaengerList(sData.EmpfList, false, false, sData);
+    MakeSignature;
+  end;    
+end;
+
+
 {$I xpsendmessage_create.inc}
 
 begin      //-------- of DoSend ---------
@@ -846,6 +870,11 @@ begin      //-------- of DoSend ---------
   flOhnesig:=false; flLoesch:=false;
   dbshown := false;
 
+  sigfile  := '';
+  sigtmp   := false;
+  siglast  := '';
+  sigok    := false;
+  
   s1:=nil;{s2:=nil;}s3:=nil;s4:=nil;s5:=nil;
   
  try 
@@ -857,6 +886,31 @@ begin      //-------- of DoSend ---------
   if not assigned(sData) then sData := TSendUUData.Create;
   
   netztyp:=sData.onetztyp;
+
+ try // xexit1;
+  if not pm and betreffbox and (empfaddr<>'') and (FirstChar(empfaddr)<>'A') then
+  begin
+    rfehler(606);   { 'Schreiben in dieses Brett nicht moeglich!' }
+    SendEmpfList.Clear; { clear list of CC recipients }
+    exit;
+  end;
+
+  if empfaddr<>'' then sData.EmpfList.AddNewXP(pm,empfaddr,'');
+  intern := LeftStr(empfaddr,3)='$/'#$AF;
+
+  if not intern then
+    CheckEmpfaengerList(sData.EmpfList, false, false, sData);
+
+  if not sData.EmpfList.Count>0 then 
+    exit;
+
+  if (not intern) and (datei='') then
+  begin
+    datei := TempS(2000);
+    BriefSchablone(sData.EmpfList[0].Address,HeaderPriv,datei);
+  end;
+
+  MakeSignature;
 
   if sendFlags and sendQuote<>0 then
   begin
@@ -885,16 +939,6 @@ begin      //-------- of DoSend ---------
     OrigBox:='';
   end;
 
- try // xexit1;
-  if not pm and betreffbox and (empfaddr<>'') and (FirstChar(empfaddr)<>'A') then
-  begin
-    rfehler(606);   { 'Schreiben in dieses Brett nicht moeglich!' }
-    SendEmpfList.Clear; { clear list of CC recipients }
-    exit;
-  end;
-
-  MakeSignature(signat,sigfile,sigtemp);
-
   hdp := THeader.Create;
 
   SendDefault:=1;
@@ -904,9 +948,6 @@ begin      //-------- of DoSend ---------
   flPGPreq:=(sendflags and SendPGPreq<>0);
   flNokop:=(sendflags and SendNokop<>0) or DefaultNokop;
 
-  if empfaddr<>'' then sData.EmpfList.AddNewXP(pm,empfaddr,'');
-  intern := LeftStr(empfaddr,3)='$/'#$AF;
-  
   fo:='';
   
  try //xexit
@@ -920,9 +961,6 @@ fromstart:
   ch:=' ';             {          Ansonsten steht hier die zu benutzende Box   }
 
   { -- Empfaenger -- }
-
-  if not intern then
-    CheckEmpfaengerList(sData.EmpfList, false, false, sData);
 
 // betreff:=LeftStr(betreff,betrlen);
 
@@ -1020,15 +1058,8 @@ fromstart:
 
         if { (n=5) or } (t='/') then    { Empfaenger aendern? }
         begin
-          EditEmpfaengerList(GetRes2(611,19),true,
-                sData.EmpfList,
-                nil,
-                false,
-                false,
-                betreff,
-                [],[],sData);
+          EditRecipients;
           DisplaySendbox;              
-
           goto fromstart;
         end
         else
@@ -1212,13 +1243,7 @@ fromstart:
               end;
 
       else  if n<0 then begin 
-              EditEmpfaengerList(GetRes2(611,19),true,
-                sData.EmpfList,
-                nil,
-                false,
-                false,
-                betreff,
-                [],[],sData);
+              EditRecipients;
               DisplaySendbox;              
             end;
       end;
@@ -1289,7 +1314,7 @@ fromstart:
   freeres;
 //dispose(cc); dispose(ccm);
   Hdp.Free;
-  if sigtemp then _era(sigfile);
+  if sigtmp then _era(sigfile);
  end;
  
  finally //xexit1
@@ -1427,6 +1452,9 @@ finalization
 
 {
   $Log$
+  Revision 1.56  2002/06/23 15:03:06  cl
+  - Adapted Nachricht/Direkt to new address handling.
+
   Revision 1.55  2002/06/15 08:55:34  mk
   - fixed range check error: betreflen is now integer instead of byte
 

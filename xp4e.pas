@@ -33,9 +33,7 @@ uses
   sysutils,typeform,fileio,inout,keys,maske,datadef,database,winxp, xpheader,
   win2,maus2,resource,xpglobal,xp0,xp1,xp1input,xp3,fidoglob;
 
-
 var   testmailstring_nt : byte; { Netztyp fuer Testmailstring }
-
 
 function  newuser:boolean;
 function  modiuser(msgbrett:boolean):boolean;
@@ -108,7 +106,9 @@ procedure AddNewBrett(const Brettname, Kommentar, Pollbox: String; Haltezeit: In
 
 implementation  { --------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido,xp5;
+uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido,xp5,
+        xpsendmessage_addr_edit
+        ;
 
 var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       wcy         : byte;       { fÅr writecode() }
@@ -1677,7 +1677,11 @@ var brk  : boolean;
     d    : DB;
     grnr : longint;
 begin
-  empf:=''; betr:='';
+(*
+  empf:=''; 
+*) 
+  betr:='';
+(*  
   ReadDirect(getres(2719),empf,betr,box,false,brk);   { 'private Nachricht' }
   if brk then exit;
   fn:=TempS(2000);
@@ -1702,18 +1706,21 @@ begin
     BriefSchablone(false,headf,fn,empf,real);
     headf:='';
     end;
+*)    
   if autocpgd then pgdown:=true;
   forcebox:=box;
   sdata:= TSendUUData.Create;
-// sdata.empfrealname:=real;
-//  with sData.EmpfList.AddNew do begin
-//    Address := empf;
-//    RealName := real;
-//  ed;
+
+  EditEmpfaengerList(GetRes(2719),true,sData.EmpfList,nil,
+    true,true,betr,
+    [ncZConnect,ncFTN,ncRFC,ncMaus],
+    [ncZConnect,ncFTN,ncRFC,ncMaus],
+    sData);
+  
   with sData do begin
-    sData.Empf1Address := empf;
-    sData.Empf1RealName := real;
-    DoSend(pm,fn,true,false,'',betr,true,false,true,false,true,sdata,sigf,0);
+//  sData.Empf1Address := empf;
+//  sData.Empf1RealName := real;
+    DoSend(pm,'',true,false,'',betr,true,false,true,false,true,sdata,'',0);
   end;
   sData.Free;
   pgdown:=false;
@@ -2509,6 +2516,9 @@ end;
 
 {
   $Log$
+  Revision 1.93  2002/06/23 15:03:06  cl
+  - Adapted Nachricht/Direkt to new address handling.
+
   Revision 1.92  2002/06/12 09:14:51  mk
   - removed some length limits including AdressLength (for RFC nets only)
 

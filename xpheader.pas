@@ -184,6 +184,9 @@ type
 
     can_crash: boolean;     { FTN Crash mails allowed (what did you think?!) }
 
+    headfile : string;
+    sigfile  : string;
+
     Boxen    : TStringList;
     
     has_zc   : boolean;     { ZConnect-Empfänger vorhanden        }
@@ -1040,6 +1043,9 @@ end;
 
 {
   $Log$
+  Revision 1.31  2002/06/23 15:03:06  cl
+  - Adapted Nachricht/Direkt to new address handling.
+
   Revision 1.30  2002/05/20 21:53:17  cl
   - Newsgroup property is converted to/from RFC format
 

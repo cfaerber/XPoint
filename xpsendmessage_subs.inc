@@ -23,15 +23,17 @@
 
 { Signatur-Shuffler / Signatur-Makro-Ersetzer }
 
-procedure MakeSignature(const signat:String;var sigfile:string; var sigtemp:boolean);
-const
+procedure MakeSignature;
+
+ procedure MakeSignature2(const signat:String;var sigfile:string; var sigtemp:boolean);
+ const
   sigsep = '-*-';
-var
+ var
   t,t2    : text;
   s       : string;
   num,n   : word;
   Buf: array[0..4095] of Char;
-begin
+ begin
   sigtemp:=false;
   if _filesize(signat)=0 then
     sigfile:=''
@@ -72,6 +74,30 @@ begin
     close(t);
     close(t2);
     end;
+ end;
+
+var sigsrc: string;
+
+begin
+  if signat<>'' then 
+  begin
+    sigsrc := signat;
+  end else
+  begin
+    if siglast <> sData.SigFile then
+    begin
+      sigok := false;
+      siglast := sData.SigFile;
+      if sigtmp then
+        _era(sigfile);      
+    end;
+    sigsrc := siglast;
+  end;
+
+  if not sigok then
+  begin
+    MakeSignature2(sigsrc,sigfile,sigtmp);
+  end;  
 end;
 
 function getsize:boolean;
@@ -1121,6 +1147,9 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/06/23 15:03:07  cl
+  - Adapted Nachricht/Direkt to new address handling.
+
   Revision 1.22  2002/06/12 09:14:53  mk
   - removed some length limits including AdressLength (for RFC nets only)
 
