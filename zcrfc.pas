@@ -108,6 +108,10 @@ type
     function NextUunumber: word;
     procedure ZtoU;
     procedure UtoZ;
+    uncompress : string;
+    unfreeze : string;
+    ungzip : string;
+    unbzip : string;
   end;
 
 procedure StartCommandlineUUZ;
@@ -3683,6 +3687,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2001/03/25 11:30:28  cl
+  - uncompressors are now properties of TUUZ
+
   Revision 1.37  2001/03/13 19:24:58  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
