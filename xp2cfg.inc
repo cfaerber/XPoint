@@ -626,7 +626,7 @@ begin
   ss_passwort:=false;
   NewsMIME:=true;
   MIMEqp:=false;
-  RFC1522:=true; {alt: false}
+  RFC1522:=true;
   NoArchive:=false; {!MH:} { auf 'false' gesetzt, SV }
   FidoDelEmpty:=false;
   KeepVia:=false;
@@ -655,7 +655,7 @@ begin
   shellwaitkey:=false;
   brettkomm:=true;
   adrpmonly:=false;
-  newuseribm:=false;
+  newuseribm:=true;
   _usersortbox:=false;
   NeuUserGruppe:=1;
   multipartbin:=true;
@@ -1701,6 +1701,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.86  2000/09/18 07:58:57  mw
+  Voreinstellungen aktualisiert:
+  - NewuserIBM ist jetzt eingeschaltet.
+
   Revision 1.85  2000/08/26 08:47:43  mk
   JG:- Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
 
