@@ -187,7 +187,7 @@ type
 //  procedure WriteRFC(stream:TStream);
 
 //  procedure ReadZ38(stream:TStream);
-//  procedure ReadZConnect(stream:TStream);
+    procedure ReadZConnect(stream:TStream);
 //  procedure ReadRFC(stream:TStream);
 
     property FirstEmpfaenger: String read GetFirstEmpfaenger write SetFistEmpfaenger;
@@ -636,6 +636,11 @@ begin
     WriteZ38(stream);
 end;
 
+procedure THeader.ReadZConnect(stream:TStream);
+begin
+  xpmakeheader.makeheader(self,stream);
+end;
+
 function THeader.GetFirstEmpfaenger: String;
 begin
   if Empfaenger.Count > 0 then
@@ -884,6 +889,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2003/08/26 22:33:05  cl
+  - added interface for THeader to read from TSTream objects
+
   Revision 1.39  2003/08/24 23:33:27  cl
   - Sendefenster: Priorität setzen (RFC), Keine Signatur (ohneSig),
     Nachricht löschen (nach Versand), Empfangsbestätigungen,

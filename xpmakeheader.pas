@@ -31,13 +31,16 @@ uses
   xpglobal, classes, xpheader;
 
 procedure makeheader(ZConnect:boolean; var f:file; NrOfFirstRecipient: integer;
-                     var size:longint; var hd:Theader; var ok:boolean;
-                     PM2AMconv:boolean; ConvBrettEmpf: Boolean);
+                     var size:longint; hd:Theader; var ok:boolean;
+                     PM2AMconv:boolean; ConvBrettEmpf: Boolean); overload;
+
+procedure makeheader(outHeader: THeader; inStream: TStream); overload;
 
 implementation
 
 uses
-  xpdatum, xpnt, Xp0, SysUtils, Typeform, mime, xpmime, debug, rfc2822;
+  xpdatum, xpnt, Xp0, SysUtils, Typeform, mime, xpmime, debug, rfc2822,
+  xpstreams;
 
 { Achtung! hd.empfaenger entaelt u.U. eine /TO:-Kennung }
 
@@ -50,8 +53,9 @@ type
 
 var line : string;
 
-procedure makeheader(ZConnect:boolean; var f:file; NrOfFirstRecipient:integer;
-                     var size:longint; var hd:Theader; var ok:boolean;
+procedure _makeheader(ZConnect:boolean; var fx:file; inStream:TStream;
+                     NrOfFirstRecipient:integer;
+                     var size:longint; hd:Theader; var ok:boolean;
                      PM2AMconv:boolean; ConvBrettEmpf: Boolean);
 var i,res : integer;
     o: integer; { Offset im Lesepuffer }
@@ -63,8 +67,9 @@ var i,res : integer;
     buf     : PCharArray;
     bufanz  : Integer;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
+    eof_ins : boolean;
 
-  procedure getline(var s:string);
+  procedure _getline(var s:string);
   var l,p:integer;
   label again;
   begin
@@ -72,12 +77,12 @@ var i,res : integer;
    
   again:
     if o>=BufAnz then
-      if eof(f) then begin
+      if eof(fx) then begin
         ok := false;
         exit;
       end else
       begin
-        blockread(f,buf^,bufsize,bufanz);
+        blockread(fx,buf^,bufsize,bufanz);
 //      Inc(size,o);
         o:=0;
       end;
@@ -101,6 +106,19 @@ var i,res : integer;
     end;
   
     goto again;
+  end;
+
+  procedure getline(var s:string);
+  begin
+    if assigned(inStream) then
+      try
+        s := readln_s(inStream)
+      except
+        ok := false;
+        s := '';
+      end
+    else
+      _getline(s);
   end;
 
   procedure LRead(var s:string);
@@ -526,7 +544,7 @@ begin
           end;
         end
         else    { line='' }
-          if not ok and eof(f) then
+          if not ok and ((not assigned(inStream)) and eof(fx)) then
             ok:=(groesse=0);          { letzte Msg hat Laenge 0 }
       until (line='') or not ok;
       { "DISKUSSION-IN: foo@bar.example.org" <-> "Followup-To: poster" }
@@ -561,8 +579,27 @@ begin
   if res<>0 then ok:=false;
 end;
 
+procedure makeheader(ZConnect:boolean; var f:file; NrOfFirstRecipient: integer;
+                     var size:longint; hd:Theader; var ok:boolean;
+                     PM2AMconv:boolean; ConvBrettEmpf: Boolean);
+begin
+  _makeheader(ZConnect, f, nil, NrOfFirstRecipient, size, hd, ok,
+    PM2AMconv, ConvBrettEmpf);
+end;
+
+procedure makeheader(outHeader: THeader; inStream: TStream); overload;
+var dummy1: file;
+    dummy2: longint;
+        ok: boolean;
+begin
+  _makeheader(true, dummy1, inStream, 0, dummy2, outHeader, ok, false, false);
+end;
+
 {
   $Log$
+  Revision 1.39  2003/08/26 22:33:05  cl
+  - added interface for THeader to read from TSTream objects
+
   Revision 1.38  2003/08/25 22:45:04  mk
   - fixed #589632: 3.8: Anzeige selbstdefinierte Kopfzeilen
 
