@@ -327,37 +327,37 @@ var i        : integer;
     OutgoingFiles,ConvertedFiles: TStringList;
     Fidomailer: TFidomailer;
 
-  procedure InitFidomailer(OwnBoxName: string);
+  procedure ProcessFileAttachments(const puffer:string);
 
-    procedure WriteAttach(const puffer:string);
-
-    var hd  : THeader;
-        hds : longint;
-        adr : longint;
-        f   : file;
-        ok  : boolean;
-    begin
-      if _filesize(puffer)>0 then begin
-        hd:=THeader.Create;
-        assign(f,puffer);
-        reset(f,1);
-        adr:=0; ok:=true;
-        while ok and (adr<filesize(f)) do begin
-          seek(f,adr);
-          MakeHeader(true,f,0,0,hds,hd,ok,false,true);
-          if (hd.attrib and attrFile<>0) then
-            if not FileExists(hd.betreff) then begin
-              tfehler(hd.betreff+' fehlt!',15);
-            end else begin
-              OutgoingFiles.Add(FileUpperCase(hd.betreff));
-              inc(fileatts);
-            end;
-          inc(adr,hds+hd.groesse);
+  var hd  : THeader;
+      hds : longint;
+      adr : longint;
+      f   : file;
+      ok  : boolean;
+  begin
+    if _filesize(puffer)>0 then begin
+      hd:=THeader.Create;
+      assign(f,puffer);
+      reset(f,1);
+      adr:=0; ok:=true;
+      while ok and (adr<filesize(f)) do begin
+        seek(f,adr);
+        MakeHeader(true,f,0,0,hds,hd,ok,false,true);
+        if (hd.attrib and attrFile<>0) then
+          if not FileExists(hd.betreff) then
+            tfehler(hd.betreff+' fehlt!',15)
+          else begin
+            OutgoingFiles.Add(FileUpperCase(hd.betreff));
+            inc(fileatts);
           end;
-        close(f);
-        Hd.Free;
-      end;
+        inc(adr,hds+hd.groesse);
+        end;
+      close(f);
+      Hd.Free;
     end;
+  end;
+
+  procedure InitFidomailer(OwnBoxName: string);
 
   begin   { InitFidomailer }
     Fidomailer.AKAs:= AKAs;
@@ -583,6 +583,9 @@ begin { FidoNetcall }
         end
       else
         OutgoingFiles.AddStrings(ConvertedFiles);
+
+    for i:=0 to AKABoxes.PPFile.Count-1 do
+      ProcessFileAttachments(AKABoxes.PPFile[i]);
     Debug.DebugLog('xpncfido','Outgoing files: '+StringListToString(OutgoingFiles),DLInform);
 
     if Crash then begin
@@ -881,6 +884,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2001/06/05 21:24:26  ma
+  - fixed: file attachments were not sent
+
   Revision 1.12  2001/06/05 16:44:49  ma
   - Fido crash netcalls should be working again
   - cleaned up a bit
