@@ -614,6 +614,14 @@ var mySize: Longint;
 begin
   mySize := TRopeNodeP(FRootNode)^.Size;
 
+  if NewSize <= 0 then
+  begin
+    if TRopeNodeP(FRootNode)^.NodeType<>rntEmpty then
+    begin
+      release_node(TRopeNodeP(FRootNode));
+      FRootNode := alloc_node;
+    end;
+  end else
   if NewSize < mySize then
   begin
     FRootNode := alloc_substr_node(
@@ -638,6 +646,9 @@ end;
 end.
 
 // $Log$
+// Revision 1.4  2003/01/27 18:44:52  cl
+// - implemented SetSize(0)
+//
 // Revision 1.3  2003/01/13 23:53:11  mk
 // - added xpdefine.inc
 // <CVS: ----------------------------------------------------------------------
