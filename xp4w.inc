@@ -459,13 +459,16 @@ begin
 end;
 
 
-{ art: 0=normal, 1=Rot13, 2=HexDump }
-{ mp:  0=kein Multipart, 1=Auto, 2=Multipart }
-
 { Viewer-PrioritÑt:    1. Viewer fÅr passenden MIME-Typ }
 {                      2. interner Archiv-Viewer        }
 {                      3. externer Viewer fÅr */*       }
 {                      4. Lister                        }
+
+// ReadMessageType: rtNormal, rtRot13, rtHexDump
+// ForceMultiPart:
+// mpNone: always show complete message, even if Multipart
+// mpAuto: be smart ;-)
+// mpMulti: always show selection, even message is mutlipart/alternative
 
 procedure read_msg(ReadMessageType: TReadMessageType; ForceMultiPartType: TMultiPartType);
 var fn     : string;
@@ -727,6 +730,7 @@ begin
   mpselect:=true;
   poppush:=true;
   MimeViewer := TMessageViewer.Create;
+  mpart_nr := 1;
 
   repeat                { +/- - Schleife }
     ende:=true;
@@ -765,7 +769,7 @@ begin
 
       // has message a comment?
       if (typ='B') and (ReadMessageType <> rmHexDump) and (dbReadInt(mbase,'netztyp') and $8000<>0) and
-         ReadJN(getres(433),false) then
+         ReadJN(getres(433),true) then  // 'Kommentar anzeigen'
       begin // show this comment
         ExtractKom(fn);
         listfile(fn,'Kommentar',true,false,0);
@@ -780,6 +784,11 @@ begin
         MultiPartType := mpMulti
       else
         if (MimeType <> '') and (MimeType <> 'text/plain') then MultiPartType := mpSingle;
+
+      if ForceMultiPartType = mpNone then MultiPartType := mpNone;
+
+
+      mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
 
       // Singlepart Mime Message
       case MultiPartType of
@@ -807,7 +816,7 @@ begin
           if mpselect and pushed and poppush then begin
             holen(pt); sichern(pt);
             end;
-          SelectMultiPart(mpselect,mpart_nr, MultiPartType = mpMulti,mpdata,brk);
+          SelectMultiPart(mpselect,mpart_nr, ForceMultiPartType = mpMulti,mpdata,brk);
           pophp;
           if brk then goto nextmsg;
           mpart_nr:=mpdata.part;
@@ -827,29 +836,28 @@ begin
       if mpdata.code=mcodeBase64 then
         typ:='B';
 
-(*     if (typ='B') and (art<>2) and (dbReadInt(mbase,'unversandt') and 2=0)
-         and (viewer.prog='') then
+      if (typ='B') and (ForceMultiPartType <> mpMulti) and (dbReadInt(mbase,'unversandt') and 2=0)
+         and MimeViewer.IsInternal then
       begin                        { keine BinÑr-Versandmeldung }
         fn2:=TempS(_filesize(fn)+5000);
         CopyMsg;
-        GetExtViewer(GetMsgFilename,viewer);
-        if viewer.prog='' then
-          TestGifLbmEtc(fn2,true,viewer);   { fuer Z3.8, MaggiPoll etc. }
-        if viewer.prog='' then begin
+        (* !! GetExtViewer(GetMsgFilename,viewer);
+        if MimeViewer.IsInternal  then
+          TestGifLbmEtc(fn2,true,viewer);   { fuer Z3.8, MaggiPoll etc. } *)
+        if MimeViewer.IsInternal then
+        begin
           arc:=ArcType(fn2);
           if ArcRestricted(arc) then arc:=0;
-          end;
-        end
+        end;
+      end
       else begin
         fn2:='';
         arc:=0;
-        end; *)
+        end;
     end; // not FileAttach
 
 
-(*    !! Test auf Ctrl-H und oder Ctrl-Enter
-
-    mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+(*    mpdata.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
     MimeViewer.GetFromExtension(mpdata.fname);     { Dateiendung hat bei Viewerauswahl }
     if MimeViewer.IsInternal then           { Vorrang vor dem Mimetyp }
       MimeViewer.GetFromMimeType(mimetyp);
@@ -1001,7 +1009,7 @@ begin
         end
       else
         case lres of
-          0 : (* if lastmpsel and multipart and (mpdata.parts>1) and
+          0 : if lastmpsel and (MultiPartType = mpMulti) and (mpdata.parts>1) and
                  not mpdata.alternative
               then begin
                 SetGelesen;
@@ -1010,7 +1018,7 @@ begin
                 mpselect:=true;
                 ende:=false;
                 end
-              else *) begin
+              else begin
                 SetGelesen;
               nextmsg:
                 SetKK;
@@ -1554,6 +1562,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.57  2000/11/19 00:05:34  mk
+  - new MIME Viewer part 1 and a half
+
   Revision 1.56  2000/11/18 21:42:18  mk
   - implemented new Viewer handling class TMessageViewer
 
