@@ -127,8 +127,8 @@ first installation but if you wish to use it after
 that, you must register the programme.
 
 You will find details of how to register in the file
-<<REG_ENG.TXT>> included in the English Language
-package.
+<<REG_ENG.TXT>> included in the English distribution
+archive.
 @
 10
 (Stichwortverzeichnis - fehlt noch)
@@ -7846,8 +7846,8 @@ define different headers for each newsgroup-group
 with /Edit/Group/Edit/Template but you have to give
 them different names using [/Edit/Templates/Misc].@10814
 
-You can use the [macros] $TAG $TAG2 (day) $DATUM $DATE@11650
-(date) and $UHRZEIT(time)
+You can use the [macros] $DAY $DAY2 $DATUM $DATE@11650
+and $TIME
 
 See also:  [internal Editor]@54
 @
@@ -7860,11 +7860,11 @@ with /Edit/Group/Edit/Template but you have to give
 them different names using [/Edit/Templates/Misc].@10814
 The following [macros] may be used:@11650
 
-$DATUM, $DATE, $UHRZEIT, $TAG, $TAG2, $USER, $MUSER,
+$DATUM, $DATE, $TIME, $DAY, $DAY2, $USER, $MUSER,
 $TUSER, $PSEUDO, $VPSEUDO,
 
 In Nets where Realnames are used (e.g. FidoNet),
-you can also use $VORNAME.
+you can also use $FIRSTNAME.
 
 See also:  [internal Editor]@54
 @
@@ -8546,11 +8546,13 @@ The following macros can be used in templates
 (except signatures), and will be replaced at the time
 of writing by the valid text.
 
+<<*>> Denotes NEW macros in OpenXP v3.20
+
   $DATUM     -  the current date
   $DATE      -  the current date in American format
-  $UHRZEIT   -  the current time
-  $TAG       -  the day of the week
-  $TAG2      -  the short form for day of the week
+<<*>> $TIME      -  the current time
+<<*>> $DAY       -  the day of the week
+<<*>> $DAY2      -  the short form for day of the week
 
 The following macros may NOT be used in templates for
 messages for <<newsgroups>>.
@@ -8574,7 +8576,7 @@ messages for <<newsgroups>>.
   $VPSEUDO   -  the same as $PSEUDO, but $VORNAME
                 (first name) will be used instead of
                 $TUSER.
-  $VORNAME   -  the first name of the user - works
+<<*>> $FIRSTNAME -  the first name of the user - works
                 only in nets that use real names and
                 not pseudos.
   $FIDOEMPF  -  the addressee in a FIDO area message.
