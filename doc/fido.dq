@@ -42,8 +42,7 @@
 
 
 Inhalt
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
-
+====================================================================
 
 I    Grundlagen
 
@@ -92,7 +91,7 @@ Anhang
 
 
 I   Grundlagen
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 
 Eigentlich war CrossPoint einmal als reine Z-Netz-Pointsoftware konzipiert,
@@ -102,20 +101,23 @@ verschiedener Netze, und der Fido-Teil nimmt dabei den gr”áten Raum ein.
 Zu verdanken ist dies vor allem Burkard Schoof, der mich ununterbrochen mit
 neuen Ideen und Anmerkungen zur Fido-Implementation versorgt hat.
 
+>>|
 Das FidoNet ist das „lteste und gr”áte aller Mailboxnetze und kann daher auch
 mit den meisten Besonderheiten aufwarten. Wegen der groáen Anzahl spezieller
 Fido-Features habe ich mich dazu entschlossen, alle ausschlieálich das FidoNet
-betreffenden Dinge in diesem Text zusammenzufassen. Er soll und kann nicht die
-Gesamtdokumentation XPOINT.TXT ersetzen, sondern dient nur als Erg„nzung und
+betreffenden Dinge in diesem Text zusammenzufassen. Er soll und kann
+nicht das Handbuch ersetzen, sondern dient nur als Erg„nzung und
 als Schnelleinstiegshilfe fr Fido. Zum Verst„ndnis des CrossPoint-Konzeptes
-sollten Sie zumindest die Grundlagenkapitel von XPOINT.TXT lesen.
+sollten Sie zumindest die Grundlagenkapitel des Handbuchs lesen.
+<<|
 
+>>|
 Fr den Fido-Teil von CrossPoint gelten die gleichen Shareware-Lizenzbedingungen
 wie fr das restliche Programm. Genaueres hierzu finden Sie in LIZENZ.TXT. 
-Ebenso wie fr XPOINT.TXT gilt auch fr diesen Text,
+Ebenso wie fr das Handbuch gilt auch fr diesen Text,
 daá Auszge daraus mit Quellenangabe in Mailboxnetzen ver”ffentlicht werden
 drfen.
-
+<<|
 
 So, kommen wir nun endlich zur Hauptsache - zum Einsatz von CrossPoint im
 FidoNet. Wenn Sie bereits Erfahrung mit anderer Fido-Pointsoftware und fundierte
@@ -126,7 +128,7 @@ als bekannt voraussetzen werde.
 
 >>|
 Bei Problemen erreichen Sie das Team in den bekannten Support-Echos (s.
-XPOINT.TXT, Kapitel 1.1).
+Handbuch, Kapitel 1.3).
 <<|
 
 Peter Mandrella,
@@ -142,7 +144,7 @@ fr ihre wertvolle Mitarbeit.
 
 
 1.1  FidoNet - Aufbau und Adressierung
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 >>|
 Fido ist ein internationales Mailboxnetz aus z.Zt. ca. 20.000 Systemen,
@@ -171,13 +173,15 @@ des Users und aus Zone, Netz, Node und evtl. Pointnummer zusammen. Beispiel:
 
              Christian Faulhammer @ 2:2452/125.16
 
+>>|
 Diese Adresse bedeutet, daá ich mich in Europa befinde, und daá ich meine
 Daten von Node Nr. 125 - dem Last Outpost in Herzogenrath - des Netzes 2452 beziehe.
 Wie Sie sehen, taucht die Region nicht innerhalb der Adresse auf, sondern ist
 Teil der Netznummer. Die 16 schlieálich ist meine Pointnummer innerhalb der Box.
 Bei Usern, die kein Point sind, sondern ihr Daten "online" abholen, entf„llt
 die Pointnummer (n„heres zum Unterschied zwischen Online-Usern und Points finden
-Sie in XPOINT.TXT, Kap. 1.4).
+Sie im Handbuch, Kap. 1.9).
+<<|
 
 
 ş 4D oder 2D?
@@ -224,7 +228,7 @@ wieder zusammengewachsen.
 
 
 1.2  Point im FidoNet
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~
 
 Um als Point-User am FidoNet teilzunehmen, ben”tigen Sie zun„chst einen Server,
 im FidoNet als BOSSNODE bezeichnet. Der Boss, d.h. der Sysop des Bossnodes,
@@ -267,7 +271,7 @@ Sie dazu innerhalb von CrossPoint eingeben mssen, ist die Nummer des FakeNets.
 
 
 1.3  Die Nodelist(e)
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~
 
 Die wichtigsten Unterschiede des Fido-Netzes gegenber anderen Netzen h„ngen
 mit der FidoNet-Nodeliste (engl. nodelist) zusammen. Dies ist eine - ziemlich
@@ -346,18 +350,20 @@ n„heres dazu in Kap. 3.1.
 
 
 II   Installation und Bedienung
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 
+>>|
 Dieser Abschnitt enth„lt Informationen, die speziell die Installation und
 Nutzung von CrossPoint im FidoNet betreffen. Ausfhrlichere Informationen zu
-Installation und Benutzung finden Sie in XPOINT.TXT.
+Installation und Benutzung finden Sie im Handbuch.
+<<|
 
 
 
 
 2.1  Installation und Konfiguration
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Zum Einsatz von CrossPoint im FidoNet ben”tigen Sie drei Dinge:
 
@@ -365,12 +371,14 @@ Zum Einsatz von CrossPoint im FidoNet ben”tigen Sie drei Dinge:
 ş  einen Entpacker, z.B. PKUNZIP
 ş  einen ARC-Entpacker, z.B. PKXARC
 
+>>|
 Packer und Entpacker k”nnen auch in einem Programm enthalten sein, z.B. LHA
 oder ARJ. Welchen Packer Sie verwenden, mssen Sie mit Ihrem Sysop absprechen.
 Darber hinaus werden *keine* weiteren Programme ben”tigt - kein sogenannter
-"Fossil-Treiber" (vgl. auch Anhang F von XPOINT.TXT), kein "Tosser" oder
+"Fossil-Treiber" (vgl. auch Anhang F des Handbuchs), kein "Tosser" oder
 "Scanner" und auch kein NodeDiff-Bearbeiter. Alle diese Dinge sind bereits im
 CrossPoint-Paket enthalten.
+<<|
 
 Wenn Sie CrossPoint zum ersten Mal starten, fragt es drei Eingaben ab:
 
@@ -436,15 +444,17 @@ unter der Nodenummer 89 schreiben, dann lautet Ihre Adresse 12:345/89.
 
 
 2.2  Netzanruf
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~
 
+>>|
 Wenn alle Daten korrekt eingegeben sind, k”nnen Sie Netzanrufe bei Ihrem
 Bossnode durchfhren. Verwenden Sie dazu den Menpunkt /Netcall/Einzeln. Wenn
 der Netzanruf nicht funktioniert, lesen Sie bitte zun„chst in Kapitel 3.1
-von XPOINT.TXT nach; dort sind die h„ufigsten, allgemeinen Fehlerursachen
+des Handbuchs nach; dort sind die h„ufigsten, allgemeinen Fehlerursachen
 beschrieben. Evtl. kann auch die Datei XPFIDO.LOG Aufschluá geben, in der der
 Fido-Mailer (Netcall-Modul) von CrossPoint ein genaues Protokoll des Anrufs
 aufzeichnet.
+<<|
 
 Nach erscheinen von CrossPoint Version 2.0 hat sich herausgestellt, daá es im
 FidoNet wesentlich mehr m”gliche Fehlerursachen gibt als in allen anderen
@@ -496,17 +506,19 @@ Anwahl m”glich.
 
 --9 Problem: Der Fido-Mailer meldet einen "EMSI_NAK"-Fehler.
 
+>>|
 --9 Ursache: Bei der šbertragung Ihrer Daten (Pointnumer, Paáwort etc.) zur
 Mailbox, oder bei der šbertragung der Mailboxdaten zu Ihnen, sind Fehler
 aufgetreten. M”glicherweise sind einzelne Zeichen an der seriellen Schnittstelle
-verloren gegangen (s. XPOINT.TXT, Anhang F). XP wird versuchen, die šbertragung
+verloren gegangen (s. Handbuch, Anhang F). XP wird versuchen, die šbertragung
 zu wiederholen.
+<<|
 
 
 
 
 2.3  Bestellen und Verwalten von Areas (Brettern, Echos)
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Um ”ffentliche Fido-Nachrichten lesen und schreiben zu k”nnen, mssen Sie
 zun„chst die betreffenden Echos (=Bretter) bei Ihrem Bossnode bestellen. Zu
@@ -555,14 +567,18 @@ geschickt, und beim zweiten Anruf sollten Sie eine Brettliste erhalten, die
 in einem PM-Brett unter Ihrem Namen abgelegt wird. Diese Brettliste mssen Sie
 anschlieáend ausw„hlen und mit /Nachricht/Brettmanager/Liste_einlesen aktivieren.
 
+>>|
 Sp„ter sollten Sie in regelm„áigen Abst„nden eine neue Liste anfordern, um
 immer den aktuellen Brettbestand der Box zu kennen. Dies l„át sich auch ber
-die AutoVersand-Funktion automatisieren (s. XPOINT.TXT, Kap. 5.10).
+die AutoVersand-Funktion automatisieren (s. Handbuch, Kap. 5.10).
+<<|
 
 
 ş Bestellen/Abbestellen und Verwalten von Brettern
 
-s. XPOINT.TXT, Kap. 3.2
+>>|
+s. Handbuch, Kap. 3.2
+<<|
 
 
 ş Probleme mit d'Bridge
@@ -614,12 +630,14 @@ erh„ltlich sind.
 
 
 2.4  Brettgruppen: Umlaute, Origins und Echo-AKAs
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In Kapitel 4.1 von XPOINT.TXT ist die Verwendung von Brettgruppen beschrieben.
+>>|
+In Kapitel 4.1 des Handbuchs ist die Verwendung von Brettgruppen beschrieben.
 šber diese Brettgruppen werden verschiedene Dinge eingestellt, die fr die
 Verwendung von XP im FidoNet mehr oder weniger wichtig sind, insbesondere die
 Umlautwandlung, Origin-Zeilen und Echo-AKA-Adressen.
+<<|
 
 Brettgruppen werden unter /Edit/Gruppen verwaltet. Sie sollten zumindest eine
 Gruppe fr das FidoNet anlegen und je nach Bedarf weitere Gruppen hinzufgen.
@@ -686,7 +704,7 @@ angeben - oder umgekehrt.
 
 ş Re^n
 
-Im Z-Netz ist es blich, bei mehrfachen Replies auf eine Nachricht dem Betreff
+Im MagicNET ist es blich, bei mehrfachen Replies auf eine Nachricht dem Betreff
 ein Re^2, Re^3 etc. voranzustellen. Im FidoNet dagegen ist dies unerwnscht.
 Sie mssen daher in der Fido-Gruppe die Einstellung im Feld "Replies" auf
 "nein" setzen. Falls Sie CrossPoint nur im FidoNet verwenden, sollten Sie auch
@@ -706,7 +724,7 @@ untersttzt werden muá.
 
 
 2.5  Schreiben und Pollen unter verschiedenen AKAs
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In Kapitel 1.1 wurde bereits kurz erl„utert, was AKA-Adressen im Zusammenhang
 mit verschiedenen Fido-kompatiblen Netzen bedeuten. Im Folgenden soll nun
@@ -803,7 +821,7 @@ einzeln „ndern.
 
 
 2.6  Versenden und Empfangen von Dateien
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Im Gegensatz zum Z-Netz ist es im FidoNet nicht m”glich, Bin„rdaten in einer
 normalen Nachricht zu transportieren; der Text von Fido-Nachrichten darf nur
@@ -917,16 +935,18 @@ Dateiinhalt angezeigt.
 
 
 2.7  Adressierung von Internet-Gateways
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+>>|
 Zwischen dem FidoNet und dem Usenet/Internet bestehen zahlreiche Verbindungen
-ber Gateways. Wie in Kapitel 1.3 von XPOINT.TXT beschrieben ist, werden
+ber Gateways. Wie in Kapitel 1.8 des Handbuchs beschrieben ist, werden
 die Useradressen der Nachrichten beim šbergang am Gateway in ein fr das
 jeweilige Netz vertr„gliches Format umgewandelt. Bei Gateways zwischen
 FidoNet und Internet/Usenet (also Netzen mit sogenannter "Domainadressierung")
 besteht allerdings das Problem, daá die erzeugte Adresse zu lang ist, um sie
 in einem Fido-Nachrichtenkopf unterbringen zu k”nnen. Daher wird sie an den
 Beginn des Nachrichtentextes gesetzt.
+<<|
 
 Lautet die Adresse des Absenders
 
@@ -963,7 +983,7 @@ vor dem Netzanruf automatisch die korrekte Gateway-Rckadressierung mit einer
 
 
 2.8  Sysop-Mode (Diskpoll)
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Der Sysop-Mode von CrossPoint dient dazu, ein- und ausgehende Nachrichten
 nicht per Modem, sondern auf der Festplatte zu bertragen. Er ist vor allem
@@ -1000,7 +1020,7 @@ optional Node- statt Pointnummer).
 
 
 III   Nodelisten
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 
 Die meisten Besonderheiten des Fido-Netzes gegenber anderen Netzen ergeben
@@ -1011,7 +1031,7 @@ Node- und Pointlisten in CrossPoint einbinden und was Sie damit anfangen k”nnen.
 
 
 3.1  Verwalten von Node- und Pointlisten
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 CrossPoint kennt grunds„tzlich zwei Zust„nde im Bezug auf Nodelisten: "Keine
 Node/Pointliste aktiviert" oder "eine oder mehrere Nodeliste und/oder Pointliste
@@ -1100,12 +1120,14 @@ einbinden" bei /Fido/Optionen aktiviert haben, sucht XP nach jedem Fido-Netzanru
 im Unterverzeichnis FILES nach neuen, eingegangenen Update-Dateien und bindet
 sie ein.
 
+>>|
 --2 - automatisch per Timing-Liste: Falls Ihnen das Einbinden und Neuindizieren
 nach dem Netzanruf zu lange dauert, und Ihr Rechner eh nachts mit dem Abarbeiten
-einer Timing-Liste (s. XPOINT.TXT, Kap. 5.3) besch„ftigt ist, empfiehlt sich
+einer Timing-Liste (s. Handbuch, Kap. 5.3) besch„ftigt ist, empfiehlt sich
 die Update-Bearbeitung durch durch die Timing-Liste. Verwenden Sie dazu den
 Timing-Befehl "NODEDIFFS", und deaktivieren Sie den oben erw„hnten Schalter
 "Updates automatisch einbinden".
+<<|
 
 --2 - manuell ber den Menpunkt /Fido/Nodelisten/Update_einbinden
 
@@ -1189,7 +1211,7 @@ NodeDiff-f„hig).
 
 
 3.2  Crash Mails
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~
 
 Was eine Crash Mail - kurz: "Crash" - ist, wissen Sie ja bereits (wenn nicht:
 bl„ttern Sie zurck zu Kapitel 1.3). Das Versenden von Crashs mit CrossPoint
@@ -1248,7 +1270,7 @@ bei der betreffenden Box Crashs durchfhren kann. Die Paáw”rter werden unter
 
 
 3.3  File Requests
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~
 
 Das Bestellen von Dateien erfolgt mit /Fido/Request. Dazu mssen Sie als
 erstes die Nodeadresse der Box angeben, bei der Sie die Dateien "requesten"
@@ -1295,14 +1317,16 @@ dadurch auch die Request-Anforderung gel”scht.
 
 ş zurckgestellte File Requests
 
+>>|
 CrossPoint berprft nach Beendigung eines File Requests, ob die gewnschten
 Dateien angekommen sind. Wenn eine oder mehrere Dateien fehlen, bleibt die
 Request-Anforderung bestehen und kann - wie oben beschrieben - ber /Fido/Crash
 erneut gestartet, bearbeitet oder gel”scht werden. Solche zurckgestellten
 File Requests sind bei /Fido/Crash mit einem kleinen "r" markiert. Sie werden
-bei automatischen Requests ber den Timinglisten-Befehl CRASHS (s. XPOINT.TXT,
+bei automatischen Requests ber den Timinglisten-Befehl CRASHS (s. Handbuch,
 Kap. 5.3) ignoriert, sodaá bei unbeaufsichtigten Betrieb nicht immer wieder
 die gleiche Datei angefordert wird.
+<<|
 
 Achtung: Wenn Sie Dateien ber Magics bestellen, kann XP nach dem
 Anruf nicht berprfen, ob die gewnschten Dateien tats„chlich angekommen sind,
@@ -1371,14 +1395,16 @@ ACHTUNG! File Requests ber das Netz sind *nicht* m”glich - Requests, die nicht
 an Ihren Bossnode gerichtet sind, *mssen* daher per Crash abgeschickt werden;
 andernfalls wird CrossPoint sie vor dem Absenden gnadenlos vernichten.
 
+>>|
 Das interessante an Request-Mails ist die Tatsache, daá Sie sie als ganz
-normale AutoVersand-Nachrichten (s. XPOINT.TXT, Kap. 5.10) verschicken lassen
+normale AutoVersand-Nachrichten (s. Handbuch, Kap. 5.10) verschicken lassen
 k”nnen; vergessen Sie dabei nicht den Server "*CRASH*" fr Requests, die nicht
 an Ihren Bossnode gehen (siehe nachfolgendes Kapitel: "Crash Mails per
 Autoversamd"). Fr die šbergabe von Paáw”rtern gilt das gleiche wie fr "normale"
 Requests: H„ngen Sie das Paáwort, getrennt durch einen "/", unmittelbar an den
 Dateinamen an. Die Anzahl der Request-Nachrichten w„hrend eines Netcalls ist
 beliebig; die Kombination von Mail-Request und manuellem Request ist m”glich.
+<<|
 
 Beispiel: Sie m”chten einmal im Monat bei 1:1/20 die aktuelle Liste der
 FTSC-Spezifikationen (technische Fido-Standards) bestellen. Legen Sie dazu
@@ -1424,7 +1450,7 @@ nun einfach per /Fido/Nodeliste/Aktivieren einlesen.
 
 
 3.4  Telefongebhren-Z„hler fr Crashs und Requests
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Damit CrossPoint auch fr Crash- und Request-Anrufe die korrekten Telefongebhren
 berechnen kann, muá das Programm die fr Ihr Ortsnetz gltigen Gebhrenzonen
@@ -1449,15 +1475,17 @@ um die Tarifzone korrekt ermitteln zu k”nnen.
 
 
 3.5  Crash/Request per Timing-Liste und AutoVersand
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+>>|
 Wie bereits beschrieben, werden Crash- und Request-Anforderungen von XP gespeichert
 und k”nnen mit /Fido/Crash einzeln gestartet werden. Vergiát man aber, die
 Anrufe auszufhren, bleiben die Anforderungen liegen - das ist vor allem dann
 „rgerlich, wenn man eine eilige Nachrichten als Crash absenden wollte. Auáerdem
 ist es recht unpraktisch, jeden Anruf einzeln starten zu mssen. Daher gibt es
-eigene Timinglisten-Befehle (n„heres zu Timing-Listen: s. XPOINT.TXT, Kap. 5.3),
+eigene Timinglisten-Befehle (n„heres zu Timing-Listen: s. Handbuch, Kap. 5.3),
 um alle noch ausstehenden Crash Mails oder File Requests abzusenden.
+<<|
 
 
 ş CRASHS und REQUESTS
@@ -1495,10 +1523,12 @@ Nodeadresse noch das Schlsselwort "ZEIT" anh„ngen, also z.B.
 
 ş Crash Mails per AutoVersand
 
+>>|
 Crash Mails lassen sich nicht nur automatisch verschicken, sondern auch automatisch
 erzeugen. Legen Sie dazu einfach eine AutoVersand-Nachricht an und tragen Sie
-als Serverbox "*CRASH*" ein. N„heres zu AutoVersand-Nachrichten ist in XPOINT.TXT,
+als Serverbox "*CRASH*" ein. N„heres zu AutoVersand-Nachrichten ist im Handbuch,
 Kap. 5.10 beschrieben.
+<<|
 
 Auf „hnlichem Wege k”nnen Sie auch File Requests bei beliebigen Boxen automatisch
 erzeugen lassen; eine genauere Beschreibung finden Sie im vorausgehenden Kapitel.
@@ -1506,7 +1536,7 @@ erzeugen lassen; eine genauere Beschreibung finden Sie im vorausgehenden Kapitel
 
 
 IV   Technische Dokumentation
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 
 Dieser Abschnitt wendet sich an technisch versiertere CrossPoint-Anwender, die
@@ -1518,11 +1548,13 @@ sollten Sie sich die sogenannten FTS- und FSC-Texte (FidoNet Technical Standards
 / FidoNet Standard Committee) besorgen. CrossPoint bercksichtigt z.Zt. die
 folgenden Standards:
 ::Und?
+>>|
     FTS-0001:  das grundlegende Fido-Nachrichtenformat (PKT-Dateien)
     FTS-0004:  der Aufbau von Echomail
-    FTS-0005:  Aufbau von Nodelist und NodeDiffs
     FTS-0006:  das YooHoo-Verbindungsprotokoll; WaZOO Filerequests
     FTS-0009:  Message- und Reply-IDs
+    FTS-5000:  Aufbau von Nodelist und NodeDiffs
+    FTS-5001:  ISDN Nodelist Flags
     FSC-0015:  FOSSIL-Treiber
     FSC-0039:  das erweiterte Fido-Nachrichtenformat (PKT-Header)
     FSC-0046:  die ^aPID-Zeile
@@ -1530,6 +1562,7 @@ folgenden Standards:
     FSC-0054:  die ^aCHARSET-Zeile
     FSC-0056:  das EMSI-Verbindungsprotokoll
     FSC-0057:  Areafix-Befehle
+<<|
 
 Die FTSC-Productcode-Nummer (vom FidoNet Technical Standards Committee vergebene
 Produktnummer) von CrossPoint ist E9h.
@@ -1538,7 +1571,7 @@ Produktnummer) von CrossPoint ist E9h.
 
 
 4.1  Der Nodelisten-Bearbeiter NDIFF
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Node- und Pointdiff-Dateien fr in CrossPoint eingebundene Listen sollten
 ber den Menpunkt /Fido/Nodelisten/Update_einbinden aktiviert werden, weil
@@ -1567,7 +1600,7 @@ NodeDiff-f„hig.
 
 
 4.2  Der Nachrichten-Konvertierer ZFIDO
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Beim Einlesen von Fido-Paketen nach Netcalls oder mit /XPoint/Import/Fremdformat
 konvertiert XP diese mit ZFIDO.EXE zun„chst ins ZCONNECT(R)-Format. Umgekehrt
@@ -1604,7 +1637,7 @@ der Option "-p:" angeben.
 
 
 4.3  Das Anruf-Logfile XPFIDO.LOG
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Der Fido-Mailer (Netcall-Modul) verzeichnet alle Aktivit„ten exakt in einem
 Logfile namens XPFIDO.LOG. Das Logfile wird in dem unter /Config/Pfade/Logfile-Verzeichnis
@@ -1632,7 +1665,7 @@ untersttzt werden. Eine genaue Beschreibung der Codes finden Sie in FSC-0056.
 
 
 4.4  Der Fido-Mailer XP-FM
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Das Programm XP-FM.EXE beinhaltet den Mailer, d.h. das Fido-Netcall-Modul,
 von CrossPoint. XP-FM ist so ausgelegt, daá es als universeller Mailer fr
@@ -1683,8 +1716,10 @@ Folgende Angaben sind optional:
                   fault: D). Es muá ein passendes Sprachmodul mit
                   Namen XPFM-l.RES vorhanden sein, wobei "l" fr das
                   Sprachkennzeichen steht, z.B. XPFM-D.RES.
+>>|
     Colors        Farben fr Text, šbertragungsdaten und Systemname;
-                  Format wie in XPOINT.COL (s. XPOINT.TXT, Kap. 7.2)
+                  Format wie in XPOINT.COL (s. Handbuch, Kap. 7.2)
+<<|
     LogFile       Name des Logfiles, an das Logdaten angeh„ngt wer-
                   den sollen
     LogNew        Name des Logfiles, das berschrieben werden soll
@@ -1744,7 +1779,7 @@ Dateien zwischen ca. 250 und 300 KB.
 
 
 4.5   Der Yuppie-Konvertierer YUP2PKT
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 YUP2PKT konvertiert vollst„ndige Nachrichtendatenbank des Pointprogramms
 "Yuppie!" ins Standard-PKT-Format, sodaá sie z.B. in CrossPoint ber den
@@ -1770,26 +1805,26 @@ YUP2PKT ist hiermit als Public Domain freigegeben.
 
 
 Anhang
-ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+====================================================================
 
 
 
 A.  Dateien im CrossPoint/Fido-Paket
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  XP-FM.EXE      Fido-Mailer
-  XPFM-D.RES     deutsche Sprachdatei fr Fido-Mailer
-  ZFIDO.EXE      ZCONNECT <-> Fido-PKT - Konvertierer
-  NDIFF.EXE      NodeDiff-Bearbeiter
-  FIDO.TXT       Fido-Dokumentation
-  FIDO.PC        Productcode-Liste fr Mailer
-  YUP2PKT.EXE    Yuppie->PKT-Konvertierer fr /X/Import/Yuppie
+  xp-fm.exe      Fido-Mailer
+  xpfm-d.res     deutsche Sprachdatei fr Fido-Mailer
+  zfido.exe      ZCONNECT <-> Fido-PKT - Konvertierer
+  ndiff.exe      NodeDiff-Bearbeiter
+  fido.txt       Fido-Dokumentation
+  fido.pc        Productcode-Liste fr Mailer
+  yup2pkt.exe    Yuppie->PKT-Konvertierer fr /X/Import/Yuppie
 
 
 
 
 B.  XP-ToolNET
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~
 
 ::Existiert es noch, Anfrage l„uft
 Das XP-ToolNet besteht aus mehreren File Echos, ber die CrossPoint-Tools
@@ -1803,7 +1838,7 @@ N„he suchen, wenden Sie sich bitte an:
 
 
 C.  Glossar
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~
 
 Der folgende Text beschreibt die am h„ufigsten im FidoNet verwendeten
 Abkrzungen und Begriffe. Er stammt von Andy Kreuzer @ 2:2480/60, zus„tzliche
@@ -1819,7 +1854,7 @@ Untersttzung zum Fido-Netz allgemein finden Sie im Echo FIDOGUIDE.GER.
 
 *C
 --
-abgekuerzte Schreibweise fuer die diversen Coordinators des FidoNet. NC
+abgekrzte Schreibweise fr die diversen Coordinators des FidoNet. NC
 (NetworkCoordinator), RC (RegionCoordinator), ZC (ZoneCoordinator), IC
 (InternationalCoordinator). Ihre Aufgaben und Befugnisse sind in der Policy
 definiert.
@@ -1827,23 +1862,23 @@ definiert.
 
 *EC
 ---
-abgekuerzte Schreibweise fuer die diversen EchomailCoordinators. NEC, REC,
+abgekrzte Schreibweise fr die diversen EchomailCoordinators. NEC, REC,
 ZEC. Aufgaben und Befugnisse sind in der Echopolicy geregelt.
 
 
 3d / 4d Adresse
 ---------------
-eine normale Adresse besteht aus mindestens 3 Teilen. Naemlich Zone:Network/Node.
+eine normale Adresse besteht aus mindestens 3 Teilen. N„mlich Zone:Network/Node.
 Sofern noch eine Pointnummer dazukommt, spricht man von 4d (4-dimensionaler)
-Adressierung. Der Ueberwiegende Teil der heute verwendeten Software beherrscht
+Adressierung. Der šberwiegende Teil der heute verwendeten Software beherrscht
 4d-Adressierung.
 
 
 Adresse
 -------
 eine Adresse setzt sich zusammen aus Zone, Network, Node und ggf. Point.
-Meistens kann man anhand des Network auch auf die Region schliessen, dies
-muss aber nicht immer der Fall sein. Beispiel fuer eine Adresse:
+Meistens kann man anhand des Network auch auf die Region schlieáen, dies
+muss aber nicht immer der Fall sein. Beispiel fr eine Adresse:
 2:2480/60.0
 |  |   | |
 |  |   | +----- Point (0 = Boss)
@@ -1855,29 +1890,29 @@ Zu beachten ist die Form mit ' :  /  . '
 
 AKA
 ---
-Abkuerzung fuer 'also known as' (auch bekannt als). Damit werden normalerweise
+Abkrzung fr 'also known as' (auch bekannt als). Damit werden normalerweise
 weitere Adressen eines Systems bezeichnet.
 
 
 Backbone
 --------
-(Rueckgrat); Das System, auf dem - innerhalb eines bestimmten Bereiches - die
-Echomail zentral zusammenlaeuft. Also praktisch der 'Hauptechomailserver'.
+(Rckgrat); Das System, auf dem - innerhalb eines bestimmten Bereiches - die
+Echomail zentral zusammenl„uft. Also praktisch der 'Hauptechomailserver'.
 
 
 BackBoneRing (BBR)
 ------------------
-Aehnlich dem Backbone, nur dass bei dieser Topologie die Echo- mail auf
-mehreren Hauptsystemen zusammenlaeuft, und zwischen diesen ausgetauscht wird.
+hnlich dem Backbone, nur dass bei dieser Topologie die Echo- mail auf
+mehreren Hauptsystemen zusammenl„uft, und zwischen diesen ausgetauscht wird.
 Also eine Art 'Zusammenschluss mehrerer kleiner Backbones'.
 
 
 Bombing Run
 -----------
-Geroutete Carbon Copies an eine Vielzahl von Empfaengern oder direkte Netmail'bombardements'
+Geroutete Carbon Copies an eine Vielzahl von Empf„ngern oder direkte Netmail'bombardements'
 von einem Node an einen anderen. Bombing Runs werden in der Regel als excessively
-annoying behaviour empfunden, und koennen fuer den absendenden Node zum Ausschluss
-aus dem Fidonet fuehren.
+annoying behaviour empfunden, und k”nnen fr den absendenden Node zum Ausschluss
+aus dem Fidonet fhren.
 
 
 Boss (BossSystem)
@@ -1887,19 +1922,19 @@ ein Boss ist ein Node mit Points.
 
 BTW
 ---
-(engl.) by the way - uebrigens
+(engl.) by the way - brigens
 
 
 Bouncen
 -------
-Zuruecksenden von gerouteter Netmail an den Absender wegen Unzustellbarkeit.
+Zurcksenden von gerouteter Netmail an den Absender wegen Unzustellbarkeit.
 
 
 Carbon Copy (CC:)
 -----------------
-Automatisches Verteilen einer Netmail an mehrere Empfaenger. Damit muss eine
-Netmail, die an verschiedene Empfaenger gehen soll, nur einmal geschrieben
-werden und jeder Empfaenger erhaelt ein genaues Duplikat des Originals.
+Automatisches Verteilen einer Netmail an mehrere Empf„nger. Damit muss eine
+Netmail, die an verschiedene Empf„nger gehen soll, nur einmal geschrieben
+werden und jeder Empf„nger erh„lt ein genaues Duplikat des Originals.
 (carbon copy = Durchschlag).
 
 
@@ -1913,7 +1948,7 @@ Crashmail auch nur indirekt in Zusammenhang.)
 Complaint (formal c., official c.)
 ----------------------------------
 offizielle Beschwerde gegen einen anderen Node, wenn dieser gegen die Policy
-verstossen hat, bzw. wenn sein Benehmen als 'excessively annoying' empfunden
+verstoáen hat, bzw. wenn sein Benehmen als 'excessively annoying' empfunden
 wurde.
 
 
@@ -1927,8 +1962,8 @@ Nachteil: teuer.
 Crossposting (X-posting, XC:)
 -----------------------------
 Automatisches Verteilen einer Nachricht in mehreren Areas. Sollte nur sehr
-sparsam verwendet werden, da unnoetige XC:'s in der Regel Unmut bei den
-Empfaengern hervorrufen.
+sparsam verwendet werden, da unn”tige XC:'s in der Regel Unmut bei den
+Empf„ngern hervorrufen.
 
 
 Downlink
@@ -1945,38 +1980,38 @@ Nachrichten, die aufgrund eines technischen Fehlers mehrfach verteilt werden.
 
 Echomail
 --------
-sind oeffentliche Nachrichten, die in sog. Echomail-Areas ausgetauscht werden
-und fuer jeden Bezieher dieser Area lesbar sind.
+sind ”ffentliche Nachrichten, die in sog. Echomail-Areas ausgetauscht werden
+und fr jeden Bezieher dieser Area lesbar sind.
 
 
 Echopolicy (Echopol, EP1)
 -------------------------
 die Echopolicy (derzeit aktuell v.1) regelt alles, was mit Echomail zu tun
-hat. Sie ergaenzt die Worldpolicy.
+hat. Sie erg„nzt die Worldpolicy.
 
 
 EMSI
 ----
 Electronic Mail Standard Identification. Ein Verfahren, mit dem Mailer
 untereinander die Informationen austauschen, die zum Aufbau einer Session
-noetig sind.
+n”tig sind.
 
 
 Excessively annoying behaviour (EAB, XAB)
 ----------------------------------------
-uebermaessig stoerendes Benehmen anderen Nodes gegenueber. Kann zum Ausschluss
-aus dem FidoNet fuehren.
+berm„áig st”rendes Benehmen anderen Nodes gegenber. Kann zum Ausschluss
+aus dem FidoNet fhren.
 
 
 Excommunication
 ---------------
-Ausschluss eines Nodes aus dem FidoNet aufgrund eines Verstosses gegen die
+Ausschluss eines Nodes aus dem FidoNet aufgrund eines Verstoáes gegen die
 Policy.
 
 
 Fakenet
 -------
-ein Fakenet ist eine nach Fido-Struktur aufgebaute Adresse, die ein Boss fuer
+ein Fakenet ist eine nach Fido-Struktur aufgebaute Adresse, die ein Boss fr
 seine Points verwendet, sofern die verwendete Software keine 4d-Adressierung
 beherrscht.
 
@@ -1984,16 +2019,16 @@ beherrscht.
 FAQ
 ---
 frequently asked questions. Fragen, die immer wieder gestellt werden, werden
-mit den Antworten in einem Text zusammengefasst. Dieser wird dann regelmaessig
-veroeffentlicht.
+mit den Antworten in einem Text zusammengefasst. Dieser wird dann regelm„áig
+ver”ffentlicht.
 
 
 Fido-ABC
 --------
-Infos ueber's FidoNet (nicht nur) fuer Einsteiger. Ist als FIDO-ABC.ARJ bei
+Infos ber's FidoNet (nicht nur) fr Einsteiger. Ist als FIDO-ABC.ARJ bei
 >>|
 vielen Systemen per Download/FileRequest oder auf Anfrage auch in FIDOGUIDE.GER
-erhaeltlich.
+erh„ltlich.
 <<|
 
 
@@ -2001,17 +2036,17 @@ FidoNet
 -------
 ein Zusammenschluss von derzeit etwa 20.000 Nodes, die untereinander meist in
 hierarchischer Topologie Netmail und Echomail austauschen und dadurch weltweit
-Kontakte und Informationsaustausch zwischen Usern ermoeglichen. Die Zahl der
-ueber FidoNet erreichbaren User ist nicht einmal annaeherungsweise schaetzbar,
-da die meisten Nodes Mailboxen betreiben, deren Useranzahl hoechst unterschiedlich
-ist, und da es ungezaehlte Gateways in sehr viele andere Netze gibt.
+Kontakte und Informationsaustausch zwischen Usern erm”glichen. Die Zahl der
+ber FidoNet erreichbaren User ist nicht einmal ann„herungsweise sch„tzbar,
+da die meisten Nodes Mailboxen betreiben, deren Useranzahl h”chst unterschiedlich
+ist, und da es ungez„hlte Gateways in sehr viele andere Netze gibt.
 
 
 FidoNews / Fnews
 ----------------
-Die 'Fido-Zeitung' (in englischer Sprache). Erscheint woechentlich und
-beinhaltet Beitraege zu allen moeglichen Themen. Die Themen sind nicht
-zwangslaeufig auf Fido beschraenkt. Einfach mal reinschauen.
+Die 'Fido-Zeitung' (in englischer Sprache). Erscheint w”chentlich und
+beinhaltet Beitr„ge zu allen m”glichen Themen. Die Themen sind nicht
+zwangsl„ufig auf Fido beschr„nkt. Einfach mal reinschauen.
 
 
 Fileecho
@@ -2025,11 +2060,11 @@ Groupmail angelehnt).
 
 Flame
 -----
-Nachricht mit beleidigendem Inhalt. Koennen, wenn sie in einer Echomail-Area
-geschrieben werden, zum Ausschluss aus der Area fuehren. Sollten auch in
+Nachricht mit beleidigendem Inhalt. K”nnen, wenn sie in einer Echomail-Area
+geschrieben werden, zum Ausschluss aus der Area fhren. Sollten auch in
 Netmail vermieden werden. (einfachstes Hausmittel zur Vermeidung: langsam
-bis Hundertausend zaehlen, wenn die Wut danach noch nicht verraucht ist,
-erstmal drueber schlafen.)
+bis Hundertausend z„hlen, wenn die Wut danach noch nicht verraucht ist,
+erstmal drber schlafen.)
 
 
 Footer
@@ -2039,8 +2074,8 @@ siehe Signature.
 
 FOSSIL
 ------
-Fido/Opus/SEAdog Standard Interface Layer; Low-Level Treiber fuer die serielle
-Schnittstelle. Wird von nahezu allen (DOS-)Mailern benoetigt. Gaengige Fossils:
+Fido/Opus/SEAdog Standard Interface Layer; Low-Level Treiber fr die serielle
+Schnittstelle. Wird von nahezu allen (DOS-)Mailern ben”tigt. G„ngige Fossils:
 X00.SYS und BNU.COM
 >>|
 Aber auch ein Begriff fr ein Programm, das einer Software (z.B. CrossPoint)
@@ -2050,7 +2085,7 @@ die ISDN-Karte als Modem vorspielt. Beliebt und bekannt ist vor allem cFos.
 
 FSC
 ---
-Vorschlaege fuer technische Verfahrensweisen. Vorstufe zum FTS. Kann von jedem
+Vorschl„ge fr technische Verfahrensweisen. Vorstufe zum FTS. Kann von jedem
 erstellt werden. Werden auch oft schon verwendet, bevor ein FSC zum FTS
 gemacht wird, da es sich dabei meist um einen sehr langwierigen Prozess
 handelt. Stellt allerdings keine 'Normung' wie die FTS dar.
@@ -2070,63 +2105,63 @@ von FidoNet-Software. Verabschiedet FTS' und nimmt FSC's entgegen.
 
 Gateway
 -------
-Uebergang von einem Netz in ein Anderes (z.B. FidoNet <-> MausNet).
+šbergang von einem Netz in ein Anderes (z.B. FidoNet <-> MausNet).
 
 
 Groupmail
 ---------
 ein Konzept der Echomailverteilung, bei dem die einzelnen Nachrichten zuerst
-an einen Moderator geschickt werden, der sie dann selektiert und ausgewaehlte
-Nachrichten in die Area einspeist. Die Einfuehrung von Groupmail ist im
-FidoNet bisher aus verschiedenen Gruenden bereits mehrmals gescheitert.
+an einen Moderator geschickt werden, der sie dann selektiert und ausgew„hlte
+Nachrichten in die Area einspeist. Die Einfhrung von Groupmail ist im
+FidoNet bisher aus verschiedenen Grnden bereits mehrmals gescheitert.
 
 
 Hatch / hatchen
 --------------
-Bezeichnung fuer das Einspeisen einer Datei in ein Fileecho.
+Bezeichnung fr das Einspeisen einer Datei in ein Fileecho.
 
 
 Host
 ----
-die oberste Ebene in einem Network. Nimmt Netmail fuer das Network an und
+die oberste Ebene in einem Network. Nimmt Netmail fr das Network an und
 leitet sie an die entsprechenden Hubs weiter.
 
 
 Hub
 ---
-ein Hub ist die naechste Ebene in der Struktur des FidoNet. An einen Hub sind
-mehrere Nodes angeschlossen, er uebernimmt fuer die angeschlossenen Nodes die
+ein Hub ist die n„chste Ebene in der Struktur des FidoNet. An einen Hub sind
+mehrere Nodes angeschlossen, er bernimmt fr die angeschlossenen Nodes die
 Aufgaben eines Netmail-Verteilers.
 
 
 I-GATE (I/O-Gate)
 ----------------
-Regional Inbound Gateway; zentrale Stelle fuer den Austausch von Netmail mit
-anderen Regions. Netmail fuer andere Regions wird also ans eigene I-GATE
-geroutet von dort an die I-GATES der verschiedenen Regions uebertragen. Die
-Benutzung von IGATES ist natuerlich optional.
+Regional Inbound Gateway; zentrale Stelle fr den Austausch von Netmail mit
+anderen Regions. Netmail fr andere Regions wird also ans eigene I-GATE
+geroutet von dort an die I-GATES der verschiedenen Regions bertragen. Die
+Benutzung von IGATES ist natrlich optional.
 
 
 IMHO
 ----
-Abkuerzung fuer 'in my humble opinion' (meiner bescheidenen meinung nach)
+Abkrzung fr 'in my humble opinion' (meiner bescheidenen meinung nach)
 oder auch 'in my honest opinion' (meiner ehrlichen meinung nach).
 
 
 Kludgelines (Kludges)
 ----------------------
-optionale Steuer-/Verarbeitungsanweisungen im Messagetext, die noetig wurden,
-um neue Moeglichkeiten nutzen zu koennen, die im urspruenglichen Format einer
-Message nicht beruecksichtigt waren. (z.B. FMPT, TOPT, CHRS, ...)
+optionale Steuer-/Verarbeitungsanweisungen im Messagetext, die n”tig wurden,
+um neue M”glichkeiten nutzen zu k”nnen, die im ursprnglichen Format einer
+Message nicht bercksichtigt waren. (z.B. FMPT, TOPT, CHRS, ...)
 
 
 Magicnames (Magic)
 ------------------
 ein Magicname ist ein einfach zu merkender Name, der bei einem Request
-verwendet werden kann um ein bestimmtes File anzufordern. Die gaengigsten
-Magics sind 'FILES' und 'NEW' oder 'NEWFILES'. Mit 'FILES' erhaelt man bei
+verwendet werden kann um ein bestimmtes File anzufordern. Die g„ngigsten
+Magics sind 'FILES' und 'NEW' oder 'NEWFILES'. Mit 'FILES' erh„lt man bei
 den meisten Systemen eine Liste aller requestbaren Dateien, 'NEWFILES' bringt
-normalerweise eine Liste aller neuen Dateien, die beim Zielsystem verfuegbar
+normalerweise eine Liste aller neuen Dateien, die beim Zielsystem verfgbar
 sind. Die Magics werden vom jeweiligen Sysop vergeben und sind (bis auf obige
 Ausnahmen, die einen Quasi-Standard darstellen) sehr unterschiedlich. Allerdings
 ist kein Sysop verpflichtet, Magics einzurichten.
@@ -2134,9 +2169,9 @@ ist kein Sysop verpflichtet, Magics einzurichten.
 
 Mailer
 ------
-ein Mailer ist ein Programm, das es dem Benutzer ermoeglicht, mit anderen
+ein Mailer ist ein Programm, das es dem Benutzer erm”glicht, mit anderen
 Mailern automatisch Verbindung aufzunehmen und Nachrichten und/oder Files
-auszutauschen. Gaengige Mailer sind zur Zeit: Binkley Term, FrontDoor,
+auszutauschen. G„ngige Mailer sind zur Zeit: Binkley Term, FrontDoor,
 Xenia, T-Mail.
 
 
@@ -2157,23 +2192,23 @@ deshalb zwecklos.
 Moderator
 ---------
 achtet darauf, dass in 'seiner' Echomail-Area die Rules eingehalten werden.
-Bei Verstoessen kann er den Ausschluss des betreffenden Nodes von der Area
+Bei Verst”áen kann er den Ausschluss des betreffenden Nodes von der Area
 veranlassen.
 
 
 Netmail (Matrix)
 ----------------
-Netmails sind nicht-oeffentliche Nachrichten die von einem User an einen
+Netmails sind nicht-”ffentliche Nachrichten die von einem User an einen
 anderen gerichtet sind. Sie sind nicht privat, da jeder Node, der die Netmail
 routet, sie theoretisch lesen kann.
 
 
 Network (Net)
 -------------
-ein Network ist ein Zusammenschluss von Nodes. Gemaess Policy sollte ein
+ein Network ist ein Zusammenschluss von Nodes. Gem„ss Policy sollte ein
 Network einen bestimmten geographischen Bereich abdecken. Jedes Network
 besteht aus einem Host, Hubs je nach Bedarf, und einer unterschiedlichen
-Anzahl von Nodes. In Deutschland gibt es derzeit (Maerz 2000) etwa 30 Networks.
+Anzahl von Nodes. In Deutschland gibt es derzeit (M„rz 2000) etwa 30 Networks.
 
 
 Node
@@ -2187,10 +2222,10 @@ Teilnehmer.
 Nodelist
 --------
 die Nodelist ist das 'Telefonbuch' des FidoNet. In ihr sind die Telefonnummern
-und FidoNet-Adressen aller Nodes weltweit aufgefuehrt. Die Nodelist (oder ein
-Auszug daraus) wird vom Mailern benoetigt, um mit anderen Systemen Kontakt
-aufnehmen zu koennen.
-Nodelisteintraege:
+und FidoNet-Adressen aller Nodes weltweit aufgefhrt. Die Nodelist (oder ein
+Auszug daraus) wird vom Mailern ben”tigt, um mit anderen Systemen Kontakt
+aufnehmen zu k”nnen.
+Nodelisteintr„ge:
 Okt. 86 ~ 1.200
 Aug. 89 ~ 6.100
 Mar. 90 ~ 7.000
@@ -2208,11 +2243,11 @@ Mar. 2000 ~20.000
 
 Offline Reader (QWK-Reader)
 --------------
-sind Programme, die es einem Onlineuser ermoeglichen, sich Messages aus den
-verfuegbaren Areas online zu komprimieren und anschliessend zu uebertragen,
+sind Programme, die es einem Onlineuser erm”glichen, sich Messages aus den
+verfgbaren Areas online zu komprimieren und anschliessend zu bertragen,
 sowie von ihm geschriebene Messages an die Box zu schicken.
-Vorteil: Installations eines Points ist nicht noetig.
-Nachteil: laengere Onlinezeit, Messages sind evtl. unvollstaendig
+Vorteil: Installations eines Points ist nicht n”tig.
+Nachteil: l„ngere Onlinezeit, Messages sind evtl. unvollst„ndig
 
 
 Off Topic (ot)
@@ -2232,7 +2267,7 @@ Point
 ein Point ist ein User, der sich seine Nachrichten mit Hilfe eines Mailers von
 seinem Boss abholt und sie zuhause in Ruhe liest und beantwortet. Die Bezeichnung
 'Point' kommt von der Art der Adressierung. Er bekommt eine eigene Pointnummer,
-die, getrennt durch einen Punkt, an die Adresse des Boss gehaengt wird.
+die, getrennt durch einen Punkt, an die Adresse des Boss geh„ngt wird.
 
 
 Poll (pollen)
@@ -2261,43 +2296,43 @@ ist eine Antwort auf eine Nachricht. (Echo- oder Netmail-Reply)
 Request (Freq, Filerequest)
 ---------------------------
 ein Filerequest ist ein Download mit Hilfe eines Mailers. Der Filerequest
-ermoeglicht es, ein File bei einem anderen System downzuloaden, ohne sich in
-die Box einloggen zu muessen. Das Zielsystem muss dazu allerdings Requests
+erm”glicht es, ein File bei einem anderen System downzuloaden, ohne sich in
+die Box einloggen zu mssen. Das Zielsystem muss dazu allerdings Requests
 erlauben, was nicht bei allen Systemen der Fall ist.
 
 
 ROTFL (ROFL)
 ------------
-Abk. fuer 'rolling on the floor, laughing' (Sich vor Lachen auf dem Bodem
-waelzen). Gibt's in den verschiedensten Abwandlungen, bis hin zu 'ROTFBMHOTWALMAO'
-und aehnlichem.
+Abk. fr 'rolling on the floor, laughing' (Sich vor Lachen auf dem Bodem
+w„lzen). Gibt's in den verschiedensten Abwandlungen, bis hin zu 'ROTFBMHOTWALMAO'
+und „hnlichem.
 
 
 Routen
 ------
-nennt man das Versenden von Netmail, wenn sie nicht direkt zum Empfaenger
-geschickt wird, sondern ueber Zwischenstationen geht. Vorteil des Routens: es
-kostet den Absender weniger als Crashmail. Nachteil: es dauert laenger,
-Netmail kann verloren gehen, andere Sysops koennen die Netmail lesen.
+nennt man das Versenden von Netmail, wenn sie nicht direkt zum Empf„nger
+geschickt wird, sondern ber Zwischenstationen geht. Vorteil des Routens: es
+kostet den Absender weniger als Crashmail. Nachteil: es dauert l„nger,
+Netmail kann verloren gehen, andere Sysops k”nnen die Netmail lesen.
 
 
 RTFM
 ----
-Abkuerzung fuer 'read the fucking manual'. Eine nicht unbedingt boese gemeinte
+Abkrzung fr 'read the fucking manual'. Eine nicht unbedingt b”se gemeinte
 Aufforderung, im Handbuch nachzulesen.
 
 
 Rules
 -----
-die Regeln, die fuer fast alle Echomail-Areas existieren und an die sich jeder
+die Regeln, die fr fast alle Echomail-Areas existieren und an die sich jeder
 zu halten hat, der in einer Area schreiben will. Sie werden vom jeweiligen
 Moderator aufgestellt.
 
 
 Smiley
 ------
-gebraeuchliche Mittel zur Verdeutlichung von Ironie, Sarkasmus, Enttaeuschung,
-usw. Die gebraeuchlichsten: :-) und :-( (Zum Lesen den Kopf um 90 Grad nach
+gebr„uchliche Mittel zur Verdeutlichung von Ironie, Sarkasmus, Entt„uschung,
+usw. Die gebr„uchlichsten: :-) und :-( (Zum Lesen den Kopf um 90 Grad nach
 links neigen). Existieren in den verschiedensten Variationen.
 
 
@@ -2306,18 +2341,18 @@ Signature
 aus den uucp-Netzen stammende 'Unterschrift' unter den eigenen Nachrichten,
 oft mehrere Zeilen lang. Signatures sind im FidoNet nicht gern gesehen (in
 manchen Areas sogar explizit verboten), da hier die Originline die Aufgabe der
-Signature erfuellt.
+Signature erfllt.
 
 
 Thread
 ------
-Bezeichnung fuer eine Reihe von Msgs zu einem bestimmten Thema.
+Bezeichnung fr eine Reihe von Msgs zu einem bestimmten Thema.
 
 
 Tossen
 ------
 Einsortieren von neuen Messages in die Messagebase. Wird vom Mailprocessor
-durchgefuehrt.
+durchgefhrt.
 
 
 Uplink
@@ -2334,12 +2369,12 @@ ZC's und dem IC.
 
 ZMH (Zone Mailing Hour)
 -----------------------
-ist die Zeit, in der jeder Fido-Node fuer Anrufe anderer Nodes offenstehen
-muss. Waehrend dieser Zeit duerfen keine User in der Box zugelassen werden.
+ist die Zeit, in der jeder Fido-Node fr Anrufe anderer Nodes offenstehen
+muss. W„hrend dieser Zeit drfen keine User in der Box zugelassen werden.
 Ausserdem darf kein Filerequest und kein Echomailaustausch stattfinden. Die
-ZMH ist exklusiv fuer den Austausch von Netmail reserviert. Sie dauert in
-Europa von 2:30 - 3:30 GMT (entspricht 3:30 - 4:30 Mitteleuropaeischer Zeit,
-bzw. 4:30 - 5:30 Mitteleuropaeischer Sommerzeit)
+ZMH ist exklusiv fr den Austausch von Netmail reserviert. Sie dauert in
+Europa von 2:30 - 3:30 GMT (entspricht 3:30 - 4:30 Mitteleurop„ischer Zeit,
+bzw. 4:30 - 5:30 Mitteleurop„ischer Sommerzeit)
 
 
 Zone
@@ -2352,20 +2387,20 @@ Zone 4: Lateinamerika
 Zone 5: Afrika
 Zone 6: Asien
  
-Eine Adresse mit einer groesseren Zonennummer gehoert nicht zum FidoNet,
-sondern zu einem der unzaehligen Netze, die auf Fido-Technik basieren.
+Eine Adresse mit einer gr”sseren Zonennummer geh”rt nicht zum FidoNet,
+sondern zu einem der unz„hligen Netze, die auf Fido-Technik basieren.
 
 
 Zonegate
 --------
-ein Zonegate ist die zentrale Stelle, die fuer eine Zone den Netmailaustausch
-mit anderen Zonen (ueber deren Zonegate) erledigt.
+ein Zonegate ist die zentrale Stelle, die fr eine Zone den Netmailaustausch
+mit anderen Zonen (ber deren Zonegate) erledigt.
 
 
 
 
 D.  Bekannte Probleme
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~
 
 Es ist praktisch unm”glich, ein Programm in der Gr”áenordnung von CrossPoint
 zu schreiben, das in jeder Beziehung perfekt und fehlerfrei ist. Probleme,
@@ -2453,7 +2488,7 @@ Gesamt-Onlinezeit mehr angezeigt.
 
 
 E.  CrossPoint/Fido-Versionsgeschichte
-ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 v2.0  (03.11.92)
 o  erste offiziell freigegebene Fido-Version

@@ -73,8 +73,8 @@ III  Arbeiten mit UUCP
 
 IV   Technische Dokumentation
 
-     4.1   RFC-Daten, Packer und der Nachrichten-Konvertierer UUZ
-     4.2   Der XP-UUCICO
+     4.1   RFC-Daten, Packer und der Nachrichten-Konvertierer uuz
+     4.2   Der XP-uucico
      4.3   Dateilisten-Konvertierprogramme
      4.4   Definition eigener RFC-Headerzeilen
 
@@ -122,7 +122,7 @@ grî·tmîgliche Konsistenz zu erreichen, verwendet CrossPoint innerhalb des
 Programms weitgehend einheitliche Begriffe, z.B. "Point" statt "leaf-site",
 "Brett" statt "Newsgroup" und "PM" statt "Mail". Bei allen Verfechtern einer
 klaren Usenet-Terminologie mîchte ich mich schonmal im voraus dafÅr entschuldigen.
-Innerhalb von UUCP.TXT habe ich mich bemÅht, die "korrekten" Bezeichnungen zu
+Innerhalb von uucp.txt habe ich mich bemÅht, die "korrekten" Bezeichnungen zu
 verwenden.
 <<|
 
@@ -496,12 +496,6 @@ schwieriger gestalten als die Suche nach einer Z-Netz- oder Fido-Mailbox -
 Ballungsgebiet wohnen, werden Sie meist in die Regional- oder Fernzone
 ausweichen mÅssen.
 
->>|
-UUCP sind in der heutigen Zeit eher rar gesÑt und sicher findet man solch
-einen Zugang nur bei den Mitgliedern des IN e.V., Infos gibt es unter 
-http://www.individual.net
-<<|
-
 
 ˛ Postmeister und Wurzeln
 
@@ -716,8 +710,8 @@ beschrieben.
 <<|
 
 >>|
---3 o  Kopieren Sie das mitgelieferte Standard-Script UUCP.SCR z.B. in
-MYUUCP.SCR und passen sie MYUUCP.SCR entsprechend
+--3 o  Kopieren Sie das mitgelieferte Standard-Script uucp.scr z.B. in
+myuucp.scr und passen sie myuucp.scr entsprechend
 an. Beachten Sie, da· das Login genau dann beendet ist, wenn vom Server der
 Text "^Pshere" gesendet wurde.
 <<|
@@ -734,12 +728,12 @@ funktioniert hat, z.B. weil der Entpacker fehlte, dann kînnen Sie dies mit
 den folgenden Schritten von Hand vornehmen:
 
 o  Verlassen Sie CrossPoint.
-o  Geben Sie "UUZ -uz spool\x* upuffer" ein.
+o  Geben Sie "uuz -uz spool\x* upuffer" ein.
 o  Starten Sie CrossPoint.
 o  Lesen Sie die Datei UPUFFER mit /XPoint/Import/Puffer ein.
 
 Beachten Sie, da· die nicht eingelesenen Nachrichten nur bis zum nÑchsten
-Netzanruf im Verzeichnis SPOOL liegenbleiben. Sie mÅssen sie also unbedingt
+Netzanruf im Verzeichnis spool liegenbleiben. Sie mÅssen sie also unbedingt
 einlesen oder zumindest in ein anderes Verzeichnis kopieren, bevor Sie den
 nÑchsten Netzanruf durchfÅhren.
 
@@ -842,7 +836,7 @@ Sie *alle* Newsgroups einer bestimmten Hierarchie bestellen mîchten, so genÅgt
 es, den Hierarchienamen anzugeben - z.B. "de" fÅr alle Newsgroups in
 der "de.*"-Newshierarchie, oder
 "comp.sys.next" fÅr alle NeXT-Newsgroups. Verwenden Sie /Nachricht/Brettmanager/Sonstiges/setsys,
-um die manuell geÑnderte .BBL-Datei absenden zu lassen.
+um die manuell geÑnderte .bbl-Datei absenden zu lassen.
 <<|
 
 Mit /Nachricht/Brettmanager/Sontiges/../help erhalten Sie eine Anleitung zur
@@ -1128,26 +1122,12 @@ total 22
 -r--r--r--   1 uucp     uucp         4214 Apr 24 21:11 vms.ch
 
 Sieht die Liste genau so aus, dann mÅssen Sie bei /Edit/Systeme im Feld
-"Konvertierer" das Programm UUCP-FL1.EXE aus der F2-Liste wÑhlen. Wenn Sie
+"Konvertierer" das Programm uucp-fl1.exe aus der F2-Liste wÑhlen. Wenn Sie
 die Liste anschlie·end einlesen lassen, konvertiert XP sie in sein eigenes
 Format.
 
 
-(2) ein weiteres, gelegentlich verwendetes Format
-
-#CREATED        04-Aug-1993 13:00
-#
-DR-X          0 24-Jan-1993 19:15 /
-DRWX          0 04-Aug-1993 11:32 /incoming
-FRW-     431297 21-Jul-1993 05:56 /incoming/ack3d.zip
-FRW-     104631 30-Jun-1993 16:03 /incoming/APEDEMO.LZH
-FRW-       1625 30-Jun-1993 16:03 /incoming/APEDEMO.TXT
-
-Sieht die Liste so aus, dann mÅssen Sie als Konvertierer das Programm UUCP-FL2.EXE
-wÑhlen.
-
-
-(3) Die Liste sieht irgendwie ganz anders aus.
+(2) Die Liste sieht irgendwie ganz anders aus.
 
 Falls Sie programmieren kînnen oder einen
 Programmierer verfÅgbar haben, dann schreiben Sie ein kleines Programm (oder
@@ -1236,21 +1216,21 @@ Auspacken erhÑlt die Datei dann wieder den korrekten Datumseintrag.
 
 >>|
 U.U. mîchten Sie Dateien nicht manuell, sondern durch ein externes Programm
-versenden lassen. Mit Hilfe des AUTOEXEC-Verzeichnisses (s.
+versenden lassen. Mit Hilfe des autoexec-Verzeichnisses (s.
 CrossPoint-Handbuch, Kap. 7.6) ist dies denkbar einfach:
 <<|
 
-Nehmen wir an, Sie mîchten die Datei D:\SCAN\SCANV106.ZIP so uploaden lassen,
+Nehmen wir an, Sie mîchten die Datei D:\scan\scanv106.zip so uploaden lassen,
 da· sie beim Server shlink.hanse.de im Verzeichnis ~/incoming abgelegt wird.
 Dazu mÅssen Sie eine Datei mit beliebigem Namen und der Erweiterung ".MSG"
-im AUTOEXEC-Unterverzeichnis erzeugen lassen, die folgenden Inhalt hat (die
+im autoexec-Unterverzeichnis erzeugen lassen, die folgenden Inhalt hat (die
 Pfeile dienen nur zur Abgrenzung):
 
 -->
 Empfaenger: UUCP-Fileserver@shlink.hanse.de
 Betreff:    egal; wird durch den Dateinamen ersetzt
 Server:     shlink
-Datei:      D:\SCAN\SCANV106.ZIP
+Datei:      D:\scan\scanv106.zip
 
 ~/incoming/scanv106.zip
 <--
@@ -1259,7 +1239,7 @@ Achten Sie auf korrekte Schreibweise von "UUCP-Fileserver"!
 
 Wenn Sie die .MSG-Datei Åber ein Programm erzeugen lassen, das Åber /Config/Tasten
 eingebunden ist, sollten Sie fÅr dieses Programm den Autoexec-Schalter setzen,
-damit unmittelbar nach der RÅckkehr zu XP das AUTOEXEC-Verzeichnis abgearbeitet
+damit unmittelbar nach der RÅckkehr zu XP das autoexec-Verzeichnis abgearbeitet
 wird.
 
 
@@ -1486,17 +1466,17 @@ ersten Zeichen. Sind alle vier Zeichen kleingeschrieben - was meistens der
 Fall ist - steht hier eine "0".
 
 
-˛ Der Nachrichtenkonvertierer UUZ
+˛ Der Nachrichtenkonvertierer uuz
 
 Alle eingehenden X- und D-Dateien werden vom uucico im SPOOL-Unterverzeichnis
 abgelegt. Als nÑchstes entpackt XP alle gepackten News- und SMTP-Batches, und
 konvertiert das Ganze anschlie·end mit UUZ in einen ZCONNECT-Puffer:
 
-  UUZ.EXE -uz SPOOL\X*. PUFFER ownsite.domain
+  uuz.exe -uz spool\X*. puffer ownsite.domain
 
 (fÅr ownsite wird Ihr Systemname eingesetzt). Wie Sie sehen, gibt XP als
-Quelldateien nur die X-Dateien an. UUZ liest dann aus den X-Dateien die
-Namen der passenden D-Dateien aus. UUZ *kann* die D-Dateien auch direkt
+Quelldateien nur die X-Dateien an. uuz liest dann aus den X-Dateien die
+Namen der passenden D-Dateien aus. uuz *kann* die D-Dateien auch direkt
 verarbeiten, allerdings wÅrden dabei eventuell vorhandene UUCP-Envelope-EmpfÑnger
 verlorengehen.
 
@@ -1510,12 +1490,12 @@ Compress von PC-Tools o.Ñ. wiederfinden.
 
 
 
-4.2   Der XP-UUCICO
+4.2   Der XP-uucico
 ~~~~~~~~~~~~~~~~~~~
 
 >>|
 Der wichtigste Teil des XP-UUCP-Moduls neben dem Nachrichtenkonver-tierer
-UUZ ist UUCICO.EXE. Es handelt sich dabei um einen von Grund auf neuentwickelten
+uuz ist uucico.exe. Es handelt sich dabei um einen von Grund auf neuentwickelten
 uucico mit folgenden Leistungsmerkmalen:
 <<|
 
@@ -1528,7 +1508,7 @@ o  wahlweise FOSSIL- oder direkter Schnittstellenzugriff
 o  UnterstÅtzung von IRQ 1-15
 
 >>|
-UUCICO.EXE unterstÅtzt folgende, heutzutage als nahezu
+uucico.exe unterstÅtzt folgende, heutzutage als nahezu
 selbstverstÑndlich angesehene Leistungsmerkmale *nicht*:
 
 o  Protokoll i (bidirektionale öbertragung)
@@ -1537,14 +1517,14 @@ o  Poll Åber IP
 
 Die Aufrufsyntax ist
 
-    UUCICO <Config-Datei> <UUCP-Command-Datei>
+    uucico <Config-Datei> <UUCP-Command-Datei>
 
-Der UUCICO mu· *nach* dem Login und nach dem Erkennen des Strings ^PShere
+Der uucico mu· *nach* dem Login und nach dem Erkennen des Strings ^PShere
 gestartet werden; nach dem Programmende mu· die Verbindung getrennt werden.
 Bei der UUCP-Command-Datei handelt es sich um eine Datei im Åblichen UUCP-Format,
 allerdings mit CR/LF-Zeilentrennungen - so, wie sie von UUZ erzeugt wird.
 
-Die Config-Datei wird von XP unter dem Namen UUCICO.CFG im XP-Verzeichnis
+Die Config-Datei wird von XP unter dem Namen uucico.cfg im XP-Verzeichnis
 abgelegt, aber es darf auch eine beliebige andere Datei in einem anderen
 Verzeichnis sein. Wie alle XP-Config-Dateien, besteht sie aus einer Liste von
 Bezeichner/Wert-Paaren, die jeweils mit einem Gleichheitszeichen getrennt sind.
@@ -1564,8 +1544,8 @@ Folgende Angaben sind optional:
   TriggerLevel    FIFO-Triggerlevel (nicht bei FOSSIL)
   Language        Sprachkennung, Default D: es mu· eine passende
                   Sprachdatei vorhanden sein, z.B. Sprachkennung D
-                  -> XPUU-D.RES
-  Debug           Y/N, Default N: Debug-Mode aktivieren (wie XP/d)
+                  -> xpuu-d.res
+  Debug           Y/N, Default N: Debug-Mode aktivieren (wie xp/d)
   DebugWindow     Koordinatinaten des Fensters, in dem im Debug-Mode
                   die Ausgabe erfolgen soll (X1 X2 Y1 Y2, Default 0)
   Colors          Default $70 $7F $7E (Farbe) /$07 $0F $0F (mono):
@@ -1580,10 +1560,10 @@ Folgende Angaben sind optional:
   SizeNegotiation Y/N, Default N: Taylor UUCP size negotiation.
                   Setzt voraus, da· auch in der UUCP-C-Datei ent-
                   sprechende Informationen enthalten sind.
-  FilereqPath     Default FILES\: Pfad fÅr eingehende nicht-Nach-
+  FilereqPath     Default files\: Pfad fÅr eingehende nicht-Nach-
                   richten-Pakete
   C-File          Name der UUCP-C-Datei; wenn angegeben, kann der
-                  zweite Parameter beim UUCICO-Aufruf entfallen
+                  zweite Parameter beim uucico-Aufruf entfallen
   UUlogfile       Logfile-Name
   FOSSIL          Y/N, Default N: FOSSIL-Treiber verwenden, falls
                   vorhanden
@@ -1591,7 +1571,7 @@ Folgende Angaben sind optional:
   IgnoreCTS       Y/N, Default N: CTS-Signal ignorieren
 
 Die Namen der zu sendenden Nachrichtenpakete und sonstigen Dateien mÅssen
-sich in der C-Datei befinden; die Nachrichtenpakete mÅssen alle im SPOOL-Unterverzeichnis
+sich in der C-Datei befinden; die Nachrichtenpakete mÅssen alle im spool-Unterverzeichnis
 abgelegt sein. IgnoreCD und IgnoreCTS sollten nur in AusnahmefÑllen verwendet
 werden; von der Verwendung bei Modemverbindungen ist grundsÑtzlich abzuraten.
 
@@ -1600,7 +1580,7 @@ eine entsprechend hîhere Nummer, falls Palete mit .001 oder den folgenden
 Zahlen bereits vorhanden sind.
 
 
-UUCICO.EXE ist hiermit als Freeware freigeben. Ich kann aber nicht garantieren,
+uucico.exe ist hiermit als Freeware freigeben. Ich kann aber nicht garantieren,
 da· er mit irgendeinem anderen Programm in irgendeiner Weise so zusammenarbeiten
 wird, wie Sie sich es wÅnschen.
 
@@ -1669,12 +1649,6 @@ Zeilen ist Åbrigens beliebig; bei mehr als 80 Zeichen kann innerhalb des
 XP-Listers nach rechts und links geblÑttert werden.
 
 
->>|
-Als Ausgangsbasis fÅr eigene Listenkonvertierer kînnen Sie die Turbo-Pascal-Quelltexte
-von UUCP-FL*.PAS verwenden, die im XP-Paket enthalten sind.
-<<|
-
-
 
 
 4.4   Definition eigener RFC-Headerzeilen
@@ -1691,12 +1665,12 @@ auf Korrektheit ÅberprÅfen. Es ist daher mîglich, da· fehlerhafte Nachrichten
 erzeugt werden.
 
 Wenn Sie eigene RFC-Headerzeilen in privaten Nachrichten erzeugen mîchten,
-legen Sie dazu im XP-Verzeichnis eine Datei mit dem Namen MAIL.RFC an, die
-die gewÅnschten Zeilen enthÑlt. Der Nachrichtenkonvertierer UUZ kopiert den
+legen Sie dazu im XP-Verzeichnis eine Datei mit dem Namen mail.rfc an, die
+die gewÅnschten Zeilen enthÑlt. Der Nachrichtenkonvertierer uuz kopiert den
 Inhalt dieser Datei dann in den Header aller ausgehenden Nachrichten.
 Eventuelle Leerzeilen werden ignoriert. FÅr îffentliche Nachrichten erreichen
-Sie das gleiche mit der Datei NEWS.RFC. Zeilen, die in allen Nachrichten
-eingefÅgt werden sollen, mÅssen in MAIL.RFC und NEWS.RFC stehen.
+Sie das gleiche mit der Datei news.rfc. Zeilen, die in allen Nachrichten
+eingefÅgt werden sollen, mÅssen in mail.rfc und news.rfc stehen.
 
 
 
@@ -1719,8 +1693,7 @@ gzip.exe       GNU ZIP - Packer/Entpacker
 copying        Copyright-Informationen zu gzip
 tar.exe        Unix-kompatibles Archivprogramm
 uucp.scr       Standard-UUCP-Loginscript
-uucp-fl*.exe   UUCP-Dateilisten-Konvertierer
-uucp-fl*.pas   Quelltexte der Dateilisten-Konvertierer
+uucp-fl1.exe   UUCP-Dateilisten-Konvertierer
 <<|
 
 
