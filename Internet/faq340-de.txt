@@ -1,4 +1,9 @@
 FAQ zu OpenXP 3.40
 
-Wie gehe ich mit den Usergruppen im Adreßbuch um?&nsbp;&nbsp;<small>2001-01-28</small>
-...ist in der Onlinehilfe beim Eintrag zur Funktion "R" erläutert :-).
+Wie gehe ich mit den User-Gruppen im Adreßbuch um?&nbsp;&nbsp;<small>2001-02-07</small>
+...ist in der Onlinehilfe erläutert: Hilfe in der User-Übersicht (Text zu Tasten "A" und "R") sowie User-Übersicht/Spezialmodus/User editieren/F1 im Feld "Adreßbuchgruppe".
+
+XP friert beim Beenden ein, wenn es in einer DOS-Box unter Windows benutzt wird.&nbsp;&nbsp;<small>2001-02-06</small>
+Der Grund für dieses Verhalten ist noch nicht geklärt; das Problem tritt anscheinend bei allen 16-Bit-XP-Versionen und bestimmten Rechnerkonfigurationen auf.
+Lösung: XP mit einer Batchdatei aufrufen, nach Beenden "mode com1 9600" und "echo atz &gt; com1" ausführen lassen.
+Auch das Erhöhen der FILES-Anzahl in der config.sys (auf z.B. 80) kann helfen.

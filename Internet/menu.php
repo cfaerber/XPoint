@@ -7,7 +7,7 @@ $indexname = "index.php4";
 
 $Menu = array(
 	0 => array("de"	=> "Hauptseite",	// German Title
-		"en" 	=> "Mail",	// English
+		"en" 	=> "Main",	// English
 		"url"   => $indexname . "?file=main-" . $language . ".html",
 		"sub"	=> false),		// sub menu?
 	1 => array("de"	=> "Newsarchiv",

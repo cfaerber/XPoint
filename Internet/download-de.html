@@ -1,5 +1,21 @@
 <? ShowDownloadTable("download.txt"); ?>
 
+<h3>32 Bit Snapshot<br /><small>3.70 "alpha"
+
+<?	$fh = ftp_connect('ftp.openxp.de');
+	if ($fh) {
+		if (ftp_login($fh,"anonymous","webmaster@openxp.de")) {
+			$timestamp = ftp_mdtm($fh, "openxp/snapshot/oxp32win.rar");
+			if($timestamp>0) echo("(" . date("Y-m-d",$timestamp) . ")");
+		};
+		ftp_quit($fh);
+	};
+?>
+
+</small></h3>
+...im <a href="ftp://ftp.openxp.de/openxp/snapshot">Snapshot</a>-Verzeichnis des ftp-Servers (siehe auch _index.txt dort), beinahe täglich aktualisiert.
+<br />Vorsicht: <i>Benutzung auf eigene Gefahr!</i>- Weiteres siehe FAQ/Allgemein.
+
 <hr noshade="noshade" size="1" />
 
 <p>Die Updates bestehen aus den Onlinehilfedateien und Executables, den Komplettversionen liegt au&szlig;erdem die Dokumentation bei.

@@ -25,9 +25,3 @@ DOS 16 bit update
 /openxp/oxp340s.rar
 Quelltexte
 Source code
-
-*32 Bit Beta Version<br /><small>3.70.3&szlig;</small>
-32 Bit beta version<br /><small>3.70.3&szlig;</small>
-/openxp/beta/oxp370_s.rar
-Quelltexte
-Source code
