@@ -75,7 +75,7 @@ function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
 procedure AddNewUser(const UserName, PollBox: string);
 function  EQ_betreff(var betr:string):boolean;
 function  grQuoteMsk:string;
-function  isbox(box:string):boolean;
+function  isbox(const box:string):boolean;
 procedure ReplaceVertreterbox(var box:string; pm:boolean);
 
 procedure wrkilled;
@@ -904,7 +904,7 @@ begin
 end;
 
 
-function isbox(box:string):boolean;
+function isbox(const box:string):boolean;
 var d : DB;
 begin
   dbOpen(d,BoxenFile,1);
@@ -1145,6 +1145,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.54  2001/01/04 16:54:21  mk
+  - const-Parameter in isbox() verwenden
+
   Revision 1.53  2001/01/02 10:05:24  mk
   - implemented Header.References
 
