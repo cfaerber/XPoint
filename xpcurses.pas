@@ -256,7 +256,6 @@ implementation
 
 uses
   strings,
-  video,
   inout,
   typeform;
 
@@ -1217,8 +1216,6 @@ begin
      win.PrevWin:= nil;
      getmaxyx(stdscr,MaxRows,MaxCols);
      win.Cols:= MaxCols; win.Rows:= MaxRows;
-     vrows:= MaxCols; vrows2:= MaxCols * 2;
-     vlines:= MaxRows;
      WindMax:= ((MaxRows-1) shl 8) + (MaxCols-1);
      LastWindMin:= 0;
      LastWindMax:= WindMAx;
@@ -1288,6 +1285,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/08/01 16:40:49  ml
+  - nicht benoetigte video.pas entfernt
+
   Revision 1.21  2000/07/03 08:53:21  hd
   - ncurses.pas enthaelt eine Funktion Move, weshalb hier nicht "Move(...)"
     sondern "System.Move(...)" fuer Speicherbewegungen benutzt werden muss.
