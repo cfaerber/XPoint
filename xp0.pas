@@ -93,7 +93,6 @@ const
        uuserver    = 'UUCP-Fileserver';
 
 {$IFDEF UnixFS }
-       BaseDir     = '.openxp/';     { Basisverzeichnis }
        ValidDirCh  = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.=-_#!/()[]{},~';
 {$ELSE}
        ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=*?';
@@ -1167,6 +1166,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.92  2000/10/09 22:14:45  ml
+  - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
+
   Revision 1.91  2000/10/08 11:12:13  mk
   - Verschiedene Dateinamen gross geschrieben
 

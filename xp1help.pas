@@ -294,7 +294,7 @@ var
       mh   : boolean;
 begin
   if not inithlp then
-    if not inithelp(OwnPath+helpfile,1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
+    if not inithelp(LibDir+helpfile,1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
     begin
       rfehler1(1,helpfile);   { Die Hilfsdatei XP.HLP fehlt }
       if ioresult<>0 then;
@@ -404,6 +404,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/10/09 22:14:45  ml
+  - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
+
   Revision 1.12  2000/08/04 17:45:31  mk
   - Hilfe erscheint jetzt auch bei mehr als 80 Spalten richtig
 

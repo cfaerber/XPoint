@@ -28,7 +28,13 @@ uses
 {$ENDIF }
   dos,dosx,typeform,fileio,mouse,inout,xp0,crc,sysutils;
 
+function _deutsch:boolean;
+procedure stop(txt:string);
+
 implementation
+
+uses
+  xp2;
 
 const starting : boolean = true;
 
@@ -140,52 +146,13 @@ initialization
   ShellPath:=dospath(0);
   if (Shellpath+DirSepa<>progpath) then
     SetCurrentDir(progpath);
+
   mausunit_init;
+
   logo;
 
-{$IFDEF UnixFS }
-  OwnPath:=GetEnv(ResolvePathName(envXPHome));          { XPHOME=~/.openxp }
-  if (OwnPath='') then begin
-    OwnPath:=GetEnv('HOME');            { HOME= }
-    if (OwnPath='') then begin
-      if _deutsch then
-        stop('Benoetige die Environmentvariable "HOME"!')
-      else
-        stop('Need the environment variable "HOME"!');
-    end;
-    if (right(OwnPath,1)<>DirSepa) then                 { $HOME/openxp/ }
-      OwnPath:= OwnPath+DirSepa+BaseDir
-    else
-      OwnPath:= OwnPath+BaseDir;
-  end else begin
-    if (right(OwnPath,1)<>DirSepa) then
-      OwnPath:= OwnPath+DirSepa;
-  end;
-  if not (IsPath(OwnPath)) then                         { Existent? }
-    if not (MakeDir(OwnPath, A_USERX)) then begin       { -> Nein, erzeugen }
-      if _deutsch then
-        stop('Kann "'+OwnPath+'" nicht anlegen!')
-      else
-        stop('Can''t create "'+OwnPath+'".');
-    end;
-  if not (TestAccess(OwnPath, taUserRWX)) then begin    { Ich will alle Rechte :-/ }
-    if _deutsch then
-      stop('Das Programm muss Lese-, Schreib- und Suchberechtigung auf "'+OwnPath+'" haben.')
-    else
-      stop('I need read, write and search rights on "'+OwnPath+'".');
-  end;
-  SetCurrentDir(OwnPath);
-{$ELSE }
-  OwnPath:=progpath;
-  if ownpath='' then getdir(0,ownpath);
-  if right(ownpath,1)<>'\' then
-    ownpath:=ownpath+'\';
-  if cpos(':',ownpath)=0 then begin
-    if left(ownpath,1)<>'\' then ownpath:='\'+ownpath;
-    ownpath:=getdrive+':'+ownpath;
-    end;
-  OwnPath := UpperCase(ownpath);
-{$ENDIF }
+  initdirs;
+
   TestCD;
   starting:=false;
 finalization
@@ -200,6 +167,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.28  2000/10/09 22:14:45  ml
+  - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
+
   Revision 1.27  2000/09/08 16:12:07  hd
   - Init-Reihenfolge
 

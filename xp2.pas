@@ -50,6 +50,7 @@ procedure setaltfkeys;
 procedure defaultcolors;
 procedure readcolors;
 procedure setcolors;
+procedure initdirs;
 procedure readpar;
 procedure GetResdata;
 procedure FreeResdata;
@@ -88,7 +89,11 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 
 implementation  {-----------------------------------------------------}
 
- uses xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,xpreg;
+uses xp1o,xpe,xp3,xp9bp,xp9,xpnt,xpfido,xpkeys,
+{$IFDEF UnixFS}
+  xpx,
+{$ENDIF}
+  xpreg;
 
 var   zaehlx,zaehly : byte;
 
@@ -192,6 +197,105 @@ begin
   halt;
 end;
 
+
+{ initialize global Dirvars defined in xpglobals.pas }
+{$IFDEF UnixFS}
+procedure initdirs;
+
+  function DirAvailableCheck(CheckDirname: String): Boolean;
+  begin
+    Result :=  FileExists(CheckDirName);
+  end; { DirAvailableCheck }
+
+  procedure GetHomePath;
+  begin
+    HomeDir := GetEnv(ResolvePathName(envXPHome));          { XPHOME=~/.openxp }
+    if (length(HomeDir) > 0) then exit; 
+    HomeDir := GetEnv('HOME');                              { HOME= }
+    if (length(HomeDir) > 0) then exit; 
+    HomeDir := '~';
+    if (length(HomeDir) > 0) then exit;
+  end; { GetHomePath }
+  
+  procedure AddSepa(var APath: String);
+  begin
+    if (right(APath,1)<>DirSepa) then                 { Path + / }
+      APath:= APath+DirSepa
+  end;
+
+  procedure GetOwnPath;
+  begin
+    OwnPath := HomeDir;
+    AddSepa(OwnPath);
+    OwnPath:= OwnPath + BaseDir;
+    AddSepa(OwnPath);
+  end; { GetOwnPath }
+
+  procedure createOpenXPHomedir;
+  begin
+    if not (MakeDir(OwnPath, A_USERX)) then
+    begin       { -> Nein, erzeugen }
+      if _deutsch then
+        stop('Kann "'+OwnPath+'" nicht anlegen!')
+      else
+        stop('Can''t create "'+OwnPath+'".');
+    end;
+    if not (TestAccess(OwnPath, taUserRWX)) then
+    begin    { Ich will alle Rechte :-/ }
+      if _deutsch then
+        stop('Das Programm muss Lese-, Schreib- und Suchberechtigung auf "' +
+	     OwnPath+'" haben.')
+      else
+        stop('I need read, write and search rights on "'+OwnPath+'".');
+    end;
+  end;
+
+  procedure GetLibDir;
+  begin
+    LibDir := '/usr/lib/' + XPDirName;                    { Lib/Res-Verzeichnis }
+    if not DirAvailableCheck(LibDir) then
+    begin
+      LibDir := '/usr/local/lib/' + XPDirName;
+      if not DirAvailableCheck(LibDir) then
+      begin
+        if _deutsch then
+          stop('Das Programm ist nicht korrekt installiert - LibDir: "' +
+	       LibDir + '" nicht vorhanden.')
+        else
+          stop('The programm is not installed correctly - LibDir: "' +
+               LibDir + '" not available.');
+      end;
+    end;
+    AddSepa(LibDir);
+  end;
+
+begin {initdirs}
+  GetLibDir;
+  GetHomePath;                                { HomeDir := UserHome }
+  GetOwnPath;                                 { OwnPath := OwnPath + BaseDir }
+
+  if not (IsPath(OwnPath)) then               { Existent? }
+    createOpenXPHomedir;
+   
+  SetCurrentDir(OwnPath);
+end; { initdirs }
+{$ELSE}
+procedure initdirs;
+begin
+  OwnPath:=progpath;
+  if ownpath=''            then getdir(0,ownpath);
+  if right(ownpath,1)<>'\' then ownpath:=ownpath+'\';
+  if cpos(':',ownpath)=0   then
+  begin
+    if left(ownpath,1)<>'\' then
+      ownpath:='\'+ownpath;
+    ownpath:=getdrive+':'+ownpath;
+  end;
+  OwnPath := UpperCase(ownpath);
+  LibDir  := progpath;
+  HomeDir := LibDir;
+end; { initdirs }
+{$ENDIF}
 
 procedure readpar;
 var i  : integer;
@@ -495,9 +599,6 @@ var lf : string;
     t  : text;
     s  : string;
     ca : char;
-{$IFDEF UnixFS }
-    CurDirBackup: String;
-{$ENDIF UnixFS }
 
   procedure WrLf;
   begin
@@ -507,14 +608,10 @@ var lf : string;
   end;
 
 begin { loadresource }
-{$IFDEF UnixFS }                            { Ressourcen im Programmverzeichnis suchen }
-  CurDirBackup := GetCurrentDir;
-  SetCurrentDir(ExtractFilePath(Paramstr(0)));
-{$ENDIF UnixFS }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
-  findfirst('xp-*.res', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
-  assign(t,'xp.res');
+  findfirst(LibDir + 'xp-*.res', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
+  assign(t,OwnPath + 'xp.res');
   reset(t);
   if ioresult<>0 then
   begin                                     { Wenn XP.RES nicht existiert }
@@ -527,14 +624,14 @@ begin { loadresource }
       until (ca='d') or (ca='e') or (ca=keycr);
       if (ca<>keycr) then parlanguage:=ca;                { Enter=Default }
       end;
-    lf:='xp-'+parlanguage+'.res';
+    lf:=LibDir + 'xp-'+parlanguage+'.res';
     WrLf;                                                {und XP.RES erstellen }
     end
   else begin
     readln(t,lf);
     close(t);
     if (ParLanguage<>'') then begin
-      lf2:='xp-'+ParLanguage+'.res';
+      lf2:=LibDir + 'xp-'+ParLanguage+'.res';
       if not exist(lf2) then writeln('language file '+ParLanguage+' not found')
       else if (UpperCase(lf)<>lf2) then begin
         lf:=lf2;
@@ -564,14 +661,11 @@ begin { loadresource }
   close(t);
   OpenResource(lf,ResMinmem);
   if getres(6)<>LangVersion then begin
-    if exist('xp.res') then _era('xp.res');
+    if exist(OwnPath + 'xp.res') then _era(OwnPath + 'xp.res');
     interr(iifs(deutsch,'falsche Version von ','wrong version of ')+lf);
     end;
   GetResdata;
   if ParHelp then HelpScreen;
-{$IFDEF UnixFS }
-  SetCurrentDir(CurDirBackup);
-{$ENDIF UnixFS }
 end;
 
 
@@ -1111,6 +1205,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.71  2000/10/09 22:14:45  ml
+  - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
+
   Revision 1.70  2000/10/01 15:50:23  mk
   - AnsiString-Fixes
 

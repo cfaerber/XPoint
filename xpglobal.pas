@@ -111,6 +111,16 @@ const
   _MPMask  = ':\';
 {$ENDIF }
 
+var
+{ Verzeichnisvariablen - auﬂer in linux alle auf Curdir gesetzt }
+{ Initialisiert vom Hauptprogramm                               }
+  HomeDir,                     { User-Verzeichnis mit Datenbank }
+  LibDir: String;                { Libraries und Ressourcen       }
+
+const   
+  XPDirName = 'openxp';        { Default LibDirname of openxp   }
+  BaseDir   = '.' + XPDirName;
+
 const
   MaxLenFilename = 255;
   MaxLenPathname = 255;
@@ -135,6 +145,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.39  2000/10/09 22:14:45  ml
+  - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
+
   Revision 1.38  2000/10/07 17:46:02  mk
   - Versionsnummer auf 3.70.3 geaendert
 
