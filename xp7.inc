@@ -111,7 +111,6 @@ begin
     begin
       if TempPPPMode then
       begin
-        WriteBox(bfile,BoxPar);
         if (PPPClientPath = '') then
           BoxParOK := getres2(706,7)    { 'Client-Verzeichnis fehlt   ' }
         else if not ChkPPPClientPath then
@@ -1524,6 +1523,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.11  2001/07/17 13:23:36  my
+  - fixed previous commit: <server>.bfg is now written *before*
+    'destdir' is set (UUZ did not use the updated value for
+    outgoing messages)
+
   Revision 1.24.2.10  2001/07/14 18:06:06  my
   - Upon netcall of an RFC/Client server, <Server>.BFG will be written.
     This is to make sure that the entry "Client-Spool=" always has the

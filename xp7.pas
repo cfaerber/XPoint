@@ -439,6 +439,11 @@ begin                  { of Netcall }
   alias:=(dbReadInt(d,'script') and 4<>0);
   dbClose(d);
   ReadBox(netztyp,bfile,BoxPar);               { Pollbox-Parameter einlesen }
+  if boxpar^.pppMode then
+  begin
+    WriteBox(bfile,BoxPar);         { "Client-Spool=" aktualisieren !! }
+    ReadBox(netztyp,bfile,BoxPar);  { Pollbox-Parameter neu einlesen }
+  end;
   isdn:=(boxpar^.bport>4);
   if relogin then
     if isdn then begin
@@ -1558,6 +1563,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.15  2001/07/17 13:23:36  my
+  - fixed previous commit: <server>.bfg is now written *before*
+    'destdir' is set (UUZ did not use the updated value for
+    outgoing messages)
+
   Revision 1.16.2.14  2001/06/27 15:36:14  my
   - move external client netcall log to 'ClientPath+XPCLIENT.LOG'
 
