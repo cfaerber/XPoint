@@ -274,7 +274,7 @@ uses
   crc,
   mime_base64,
   mime_qp,
-  UTFTools,
+  utftools,
   typeform;
 
 { -------------------- Content & Disposition Types ------------------- }
@@ -1251,6 +1251,9 @@ end;
 
 //
 // $Log$
+// Revision 1.18  2002/03/22 18:22:12  ml
+// - kylix 2 compilable
+//
 // Revision 1.17  2002/02/25 17:49:16  mk
 // - faster DecodeBase64
 //
