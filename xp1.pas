@@ -101,7 +101,9 @@ var printlines : longint;
 
 
 procedure showstack;                  { Stack/Heap-Anzeige im Debug-Mode }
+{$IFNDEF NCRT }
 procedure sound(hz:word);
+{$ENDIF }
 procedure XpIdle;
 function  plevelstr:string;           { Patchlevel }
 
@@ -1012,6 +1014,7 @@ begin
   halt(1);
 end;
 
+{$IFNDEF NCRT }
 procedure sound(hz:word);
 begin
 {$IFNDEF VP }
@@ -1019,6 +1022,7 @@ begin
     crt.sound(hz);
 {$ENDIF }
 end;
+{$ENDIF } { NCRT }
 
 
 procedure blindon(total:boolean);
@@ -2347,6 +2351,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.35  2000/05/03 12:45:27  hd
+  - sound() unter Linux ausgeklammert
+
   Revision 1.34  2000/05/02 20:11:16  mk
   - ncrt vergessen
 
