@@ -63,12 +63,12 @@ begin
   freeres;
 end;
 
-function zeit:string;
-var h,m,s,s100:rtlword;
-begin
-  gettime(h,m,s,s100);
-  zeit:=formi(h,2)+':'+formi(m,2)+':'+formi(s,2);
-end;
+//function zeit:string;
+//var h,m,s,s100:rtlword;
+//begin
+//  decodetime(h,m,s,s100);
+//  zeit:=formi(h,2)+':'+formi(m,2)+':'+formi(s,2);
+//end;
 
 function restzeit:string;
 begin
@@ -968,18 +968,6 @@ begin
     end;
 end;
 
-procedure EmptySpool(filemask:string);
-var sr : searchrec;
-begin
-  findfirst(XFerDir+filemask,ffAnyFile,sr);
-  while doserror=0 do begin
-    _era(XFerDir+sr.name);
-    findnext(sr);
-  end;
-  FindClose(sr);
-end;
-
-
 procedure FidoSysopTransfer;
 var dummy : longint;
     i     : integer;
@@ -996,23 +984,12 @@ var dummy : longint;
   var
     sr   : TSearchRec;
   begin
-    if sysutils.findfirst(BoxPar^.sysopinp+WildCard,ffAnyFile, sr)=0 then repeat
+    if findfirst(BoxPar^.sysopinp+WildCard,ffAnyFile, sr)=0 then repeat
       if pos('.PKT',UpperCase(sr.name))>0 then
         if filecopy(BoxPar^.sysopinp+sr.name,XFerDir+sr.name) then
-          _era(BoxPar^.sysopinp+sr.name);
-    until sysutils.findnext(sr)<>0;
-    sysutils.findclose(sr);
-  end;
-
-  procedure EmptySysin;
-  var sr : searchrec;
-  begin
-    findfirst(BoxPar^.sysopinp+'*.*',ffAnyFile,sr);
-    while doserror=0 do begin
-      _era(BoxPar^.sysopinp+sr.name);
-      findnext(sr);
-    end;
-    FindClose(sr);
+          DeleteFile(BoxPar^.sysopinp+sr.name);
+    until findnext(sr)<>0;
+    findclose(sr);
   end;
 
   procedure CopyFileAttaches(ppfile:string);
@@ -1103,10 +1080,11 @@ begin { FidoSysopTransfer }
       end;
 
     if FileExists(SysopInp+WildCard) then begin             { -- Eingangspaket -- }
-      EmptySpool(WildCard);
+      erase_mask(xp0.XFerDir+WildCard);
       CopyPKTs;
       if FidoImport(SysopInp,box,addpkts^.anzahl>0) then
-        EmptySysin;
+        erase_mask(BoxPar^.sysopinp+WildCard);
+        //EmptySysin;
       {window(1,1,80,25);}
       end;
     if DoDiffs(FilePath+'*.*',true)=0 then;
@@ -1116,7 +1094,8 @@ end;
 
 
 procedure QWKSysopTransfer;
-var sr     : searchrec;
+var sr     : tsearchrec;
+    rc     : integer;
 {    sysdir : string; }
     dummy  : longint;
 {    qwkext : string[3]; }
@@ -1126,31 +1105,6 @@ var sr     : searchrec;
     source : string;
     f      : boolean;
     ex     : string[3];   { REP-Extension }
-
-  function totalsize(files:dirstr):longint;
-  var sr  : searchrec;
-      sum : longint;
-  begin
-    sum:=0;
-    findfirst(files,ffAnyFile,sr);
-    while doserror=0 do begin
-      inc(sum,sr.size);
-      findnext(sr);
-    end;
-    FindClose(sr);
-    totalsize:=sum;
-  end;
-
-  procedure EraFiles(files:dirstr);
-  var sr : searchrec;
-  begin
-    findfirst(files,ffAnyFile,sr);
-    while doserror=0 do begin
-      _era(ExtractFilePath(files)+sr.name);
-      findnext(sr);
-    end;
-    FindClose(sr);
-  end;
 
   procedure ZQWKfehler;
   begin
@@ -1185,29 +1139,27 @@ begin
       exit;
       end;
 
-    if FileExists(SysopInp) then begin                { 1. Import }
-      NC^.recpack:=totalsize(SysopInp);
+    if not isEmptyDir(SysopInp) then begin                { 1. Import }
+      NC^.recpack:=DirectorySize(SysopInp);
 {      SysDir:=GetFileDir(SysopInp); }
-      EraFiles(XFerDir+'*.ZER');
+      erase_mask(XFerDir+'*.ZER');
       shell('ZQWK.EXE -qz -c'+bfile+' -b'+boxname+' -h'+MagicBrett+
             ' -i'+SysopInp+' -o'+XferDir+' -a'+iifs(DelQwk,' -del',''),
             600,3);
 {      qwkext:=GetFileext(sysopinp); }
       if errorlevel<>100 then
         ZQWKfehler;
-      if FileExists(XferDir+'*.ZER') then begin
-        findfirst(XferDir+'*.ZER',ffAnyFile,sr);
-        while doserror=0 do begin
-          inc(NC^.recbuf,sr.size);
-          CallFilter(true,XFerDir+sr.name);
-          if PufferEinlesen(XFerDir+sr.name,box,false,false,true,pe_Bad) then begin
-            _era(XFerDir+sr.name);    { Eingabepuffer l”schen }
-            { _era(sysdir+LeftStr(sr.name,cpos('.',sr.name))+qwkext); } { QWK-Paket l”schen }
-            end;
-          findnext(sr);
+      rc:= findfirst(XferDir+'*.ZER',faAnyFile,sr);
+      while rc=0 do begin
+        inc(NC^.recbuf,sr.size);
+        CallFilter(true,XFerDir+sr.name);
+        if PufferEinlesen(XFerDir+sr.name,box,false,false,true,pe_Bad) then begin
+          DeleteFile(XFerDir+sr.name);    { Eingabepuffer l”schen }
+          { _era(sysdir+LeftStr(sr.name,cpos('.',sr.name))+qwkext); } { QWK-Paket l”schen }
         end;
-        FindClose(sr);
-      end;
+        rc:= findnext(sr);
+      end; // while
+      FindClose(sr);
     end;
     freeres;
 
@@ -1432,6 +1384,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.43  2000/11/16 22:35:30  hd
+  - DOS Unit entfernt
+
   Revision 1.42  2000/11/15 23:00:42  mk
   - updated for sysutils and removed dos a little bit
 

@@ -109,6 +109,7 @@ procedure resetfm(var f:file; fm:byte);         { mit spez. Filemode oeffn.}
 
 procedure adddir(var fn:string; dir:string);
 function  DirectorySize(const dir: string): longint;
+function  FileMaskSize(const mask: string): longint;
 function  GetBareFileName(const p:string):string;
 function  GetEnv(const name: string): string;
 function  ioerror(i:integer; otxt:string):string; { Fehler-Texte            }
@@ -616,13 +617,14 @@ begin
 {$endif}
 end;
 
-function DirectorySize(const dir: string): longint;
+{ Dir muﬂ WildCards enthalten }
+function FileMaskSize(const mask: string): longint;
 var
   sr: tsearchrec;
   rc: integer;
 begin
   result:= 0;
-  rc:= sysutils.findfirst(AddDirSepa(dir)+WildCard,faAnyFile,sr);
+  rc:= sysutils.findfirst(mask,faAnyFile,sr);
   while rc=0 do begin
     inc(result,sr.size);
     rc:= findnext(sr);
@@ -630,9 +632,17 @@ begin
   FindClose(sr);
 end;
 
+function DirectorySize(const dir: string): longint;
+begin
+  result:= FileMaskSize(AddDirSepa(dir)+WildCard);
+end;
+
 end.
 {
   $Log$
+  Revision 1.80  2000/11/16 22:35:29  hd
+  - DOS Unit entfernt
+
   Revision 1.79  2000/11/16 22:04:09  hd
   - DirectorySize: Diese Funktion liefert die Summe der Bytes, die die
     einzelnen Dateien haben. Derivate dieser Funktion finden sich mehrfach

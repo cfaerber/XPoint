@@ -31,9 +31,9 @@ uses
   linux,
   xplinux,
 {$ENDIF}
-      dos,xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
-      datadef,database,maus2,maske,clip,resource,
-      xp0,xp1,xp1input,xp1o,xp1o2;
+  xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,
+  datadef,database,maus2,maske,clip,resource,
+  xp0,xp1,xp1input,xp1o,xp1o2;
 
 procedure kalender;
 procedure memstat;
@@ -66,7 +66,7 @@ const rx = 42;
 var   nt,n,mnt,
       xjj,xmm,xtt : integer;
       z           : taste;
-      y,m,d,w     : rtlword;
+      y,m,d       : rtlword;
       lm,lj       : word;
       jj,mm,tt    : word;
       di          : string;
@@ -209,7 +209,7 @@ begin
   if cal_active then exit;
   cal_active:=true;
   pushhp(65);
-  getdate(y,m,d,w);
+  decodedate(now,y,m,d);
   jj:=y; mm:=m; tt:=1;
   utilbox(rx,rx+31,ry,ry+11,'');
   ReadFeier;
@@ -341,18 +341,17 @@ begin
 end;
 
 function xpspace(dir:string):longint;
-var sr  : searchrec;
-    sum : longint;
+var sr  : tsearchrec;
+    rc  : integer;
 begin
   mon;
-  sum:=0;
-  dos.findfirst(dir+WildCard,ffAnyFile,sr);
-  while doserror=0 do begin
-    inc(sum,sr.size);
-    dos.findnext(sr);
+  result:=0;
+  rc:= findfirst(AddDirSepa(dir)+WildCard,faAnyFile,sr);
+  while rc=0 do begin
+    inc(result,sr.size);
+    rc:= findnext(sr);
   end;
   FindClose(sr);
-  xpspace:=sum;
   moff;
 end;
 
@@ -941,6 +940,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/11/16 22:35:30  hd
+  - DOS Unit entfernt
+
   Revision 1.42  2000/11/14 15:51:32  mk
   - replaced Exist() with FileExists()
 

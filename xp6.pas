@@ -24,9 +24,9 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-     dos,typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
-     winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe,
-     xpglobal, Classes;
+  typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
+  winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe,
+  xpglobal, Classes;
 
 const sendIntern = 1;     { force Intern              }
       sendShow   = 2;     { ausfÅhrliche Sendeanzeige }
@@ -322,8 +322,8 @@ end;
 
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
-var                                          { Format: 1105001824 }
- d:datetime;
+//var                                          { Format: 1105001824 }
+// d:datetime;
 begin
   CompileTime := FormatDateTime('ddmmyyhhmm', FileDateToDateTime(FileAge(ownpath+'xp.exe')));
 end;
@@ -2067,12 +2067,8 @@ begin
         (LeftStr(extractfilename(fn),3)='ZPR')) and not developer then
       fehler('Bitte Åberlassen Sie das Versenden dieses Programms dem Programmautor!')
     else begin
-{$ifdef UnixFS}
-      if cpos(DirSepa,fn)=0 then fn:=sendpath+fn else
-{$else}
-      if not multipos('\:',fn) then fn:=sendpath+fn else
-{$endif}
-      fn:=FExpand(fn);
+      if not multipos(_MPMask,fn) then fn:=sendpath+fn else
+      fn:=ExpandFileName(fn);
       if not FileExists(fn) then rfehler(616)    { 'Datei nicht vorhanden' }
       else if not FileOK then fehler(getres(102)) { Fehler beim Dateizugriff }
       else
@@ -2130,6 +2126,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.74  2000/11/16 22:35:30  hd
+  - DOS Unit entfernt
+
   Revision 1.73  2000/11/15 23:00:42  mk
   - updated for sysutils and removed dos a little bit
 

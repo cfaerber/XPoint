@@ -15,7 +15,7 @@ unit xp4o3;
 
 interface
 
-uses dos,typeform,fileio,datadef,database,inout,keys,resource,
+uses typeform,fileio,datadef,database,inout,keys,resource,
      sysutils,xp0,xp1,xp1input, xpglobal;
 
 function  __getfilename(nr,nn:byte):string;
@@ -308,6 +308,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/11/16 22:35:30  hd
+  - DOS Unit entfernt
+
   Revision 1.17  2000/11/15 23:00:42  mk
   - updated for sysutils and removed dos a little bit
 

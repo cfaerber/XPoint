@@ -21,7 +21,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,dos,typeform,fileio,inout,keys,datadef,database,maske,
+  sysutils,typeform,fileio,inout,keys,datadef,database,maske,
   crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
   xp2c,xp_des,xpe;
 
@@ -50,7 +50,8 @@ var
     dat      : string;
     groesse  : longint;
     tmp      : string;
-    sr       : searchrec;
+    sr       : tsearchrec;
+    rc       : integer;
     found    : boolean;
     f        : file;
     hdp0,hdp : headerp;
@@ -235,10 +236,10 @@ begin
   crash:=(dbReadInt(mbase,'unversandt') and 16<>0);
   empfnr:=(dbReadInt(mbase,'netztyp') shr 24);
 
-  dos.findfirst(ownpath+iifs(crash,'*.cp','*.pp'),ffAnyFile,sr);
+  rc:= findfirst(ownpath+iifs(crash,'*.cp','*.pp'),faAnyFile,sr);
   found:=false;
   rmessage(640);             { 'Puffer Åberarbeiten...' }
-  while (doserror=0) and not found do begin
+  while (rc=0) and not found do begin
     if crash then zconnect:=true
     else begin
       box:=file_box(nil,LeftStr(sr.name,length(sr.name)-3));
@@ -269,7 +270,7 @@ begin
       end;
   nextpp:
     if found then ShrinkPuffer
-    else dos.findnext(sr);
+    else rc:= findnext(sr);
     fs:=filesize(f);
     close(f);
     if found and (fs=0) then begin
@@ -1283,6 +1284,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2000/11/16 22:35:30  hd
+  - DOS Unit entfernt
+
   Revision 1.42  2000/11/14 15:51:32  mk
   - replaced Exist() with FileExists()
 

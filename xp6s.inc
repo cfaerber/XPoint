@@ -365,7 +365,7 @@ end;   { x+33 -> x+40                       37 -> 39          34 -> 36 }
 function MessageID:string;
 const rev = 'B';   { Revision des MsgID-Algorithmus }
 var inr     : longint;
-    t,m,j,d : rtlword;
+    t,m,j   : rtlword;
     h,mm,s,ss: rtlword;
     dat     : word;
     count   : word;
@@ -393,8 +393,8 @@ begin
     MessageID:=''
   else begin
     b64:='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$abcdefghijklmnopqrstuvwxyz-';
-    getdate(j,m,t,d);
-    gettime(h,mm,s,ss);
+    decodedate(now,j,m,t);
+    decodetime(now,h,mm,s,ss);
     dat:=(t-1)+(m-1)*32+(j mod 165)*32*12;
     dbRead(mbase,'INT_NR',inr);
     case msgidtyp of
@@ -729,12 +729,11 @@ var brk      : boolean;
     x,y      : byte;
     mind     : fdate;
     dd,mm,yy : rtlword;
-    dow      : rtlword;
 begin
   if AutoActive then    { dÅrfte nicht vorkommen }
     DateSend:=false
   else begin
-    getdate(yy,mm,dd,dow);
+    decodedate(now,yy,mm,dd);
     mind.t:=dd; mind.m:=mm; mind.j:=yy;
     incd(mind);
     senddate:=formi(mind.t,2)+'.'+formi(mind.m,2)+'.'+formi(mind.j mod 100,2);
@@ -1141,6 +1140,9 @@ begin                                                  { 'Sende-PrioritÑt' }
 end;
 {
   $Log$
+  Revision 1.36  2000/11/16 22:35:30  hd
+  - DOS Unit entfernt
+
   Revision 1.35  2000/11/14 15:51:33  mk
   - replaced Exist() with FileExists()
 

@@ -60,7 +60,7 @@ var Netcall_connect : boolean;
 
 implementation  {---------------------------------------------------}
 
-uses dos,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,
+uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,
      xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
@@ -833,7 +833,7 @@ begin                  { of Netcall }
         if not once then write(wahlcnt:2,'. ');
         write(getres2(703,iif(net,2,3)),box);  { 'Netza' / 'Anruf bei ' }
         if numcount>1 then write(' #',numpos);
-        write(getres2(703,4),zeit);    { ' um ' }
+        write(getres2(703,4),FormatDateTime('hh:mm:ss',Now));  { ' um ' }
         mon;
 
         begin                              { Hayes-Anwahl }
@@ -1001,7 +1001,7 @@ begin                  { of Netcall }
             flushin; recs:=''; lrec:='';
             end;
           if (netztyp=nt_ZCONNECT) and janusplus and (trim(downloader)='') then
-            EmptySpool('*.*');
+            erase_mask(xp0.XFerDir+'*.*');
           ReleaseC;
           LogExternal(uploader);
           shell(uploader,500,1);                               { Upload }
@@ -1034,7 +1034,7 @@ begin                  { of Netcall }
           CallerToTemp;
           if (trim(downloader)<>'') and (errorlevel=0) then begin
             if JanusP then
-              EmptySpool('*.*');
+              erase_mask(xp0.XFerDir+WildCard);
             if logintyp=ltMaus then begin
               Activate;
               moff;
@@ -1050,7 +1050,7 @@ begin                  { of Netcall }
             if not timeout(true) then begin
               ticks:=ticker;
               if pronet then begin
-                EmptySpool('*.*');
+                erase_mask(xp0.XFerDir+WildCard);
                 chdir(XFerDir_);
                 if not multipos(':/',downloader) then
                   downloader:=OwnPath+downloader;
@@ -1124,7 +1124,7 @@ begin                  { of Netcall }
                 ReleaseC;
                 if ltMultiPuffer(logintyp) then begin    { JANUS/GS-PKT-Puffer }
                   if not JanusP then begin
-                    EmptySpool('*.*');
+                    erase_mask(xp0.XFerDir+WildCard);
                     ChDir(XFerDir_);
                     RepStr(downarcer,called,OwnPath+called);
                     end
@@ -1539,6 +1539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.44  2000/11/16 22:35:30  hd
+  - DOS Unit entfernt
+
   Revision 1.43  2000/11/14 22:19:15  hd
   - Fido-Modul: Anpassungen an Linux
 

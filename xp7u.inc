@@ -87,7 +87,8 @@ end;
 { Puffer in RFC-Files konvertieren }
 
 procedure ZtoRFC(cleardir:boolean; source,destdir:string);
-var sr    : searchrec;
+var sr    : tsearchrec;
+    rc    : integer;
     f1,f2 : ^file;
     s     : shortstring;
     p     : byte;
@@ -99,17 +100,6 @@ var sr    : searchrec;
     f     : boolean;
     uu: TUUZ;
 
- procedure DelAll(fn:string);
- var sr: searchrec;
- begin
-    findfirst(DestDir+fn,AnyFile-Directory,sr);
-    while doserror=0 do begin
-      DeleteFile(DestDir+sr.name);
-      findnext(sr);
-    end;
-    FindClose(sr);
-  end;
-
   procedure NoCompSmtp(w:word);       { rcsmtp -> csmtp }
   var f1,f2 : file;
       s     : string[40];
@@ -119,8 +109,8 @@ var sr    : searchrec;
   begin
     if w=$ffff then w:=0
     else inc(w);
-    assign(f1,DestDir+'X-'+hex(w,4)+'.OUT');
-    if existf(f1) then begin
+    if FileExists(DestDir+'X-'+hex(w,4)+'.OUT') then begin
+      assign(f1,DestDir+'X-'+hex(w,4)+'.OUT');
       reset(f1,1);
       adr:=0;
       assign(f2,DestDir+'smtp.tmp');
@@ -145,24 +135,10 @@ var sr    : searchrec;
       end;
   end;
 
-  function filesum(fmask:string):longint;
-  var sum : longint;
-      sr  : searchrec;
-  begin
-    sum:=0;
-    findfirst(fmask,ffAnyFile,sr);
-    while doserror=0 do begin
-      inc(sum,sr.size);
-      findnext(sr);
-    end;
-    FindClose(sr);
-    filesum:=sum;
-  end;
-
 begin
   if cleardir then begin                { Spool rÑumen }
-    DelAll('*.');
-    DelAll('*.OUT');
+    erase_mask(DestDir+'*.');
+    erase_mask(DestDir+'*.OUT');
   end;
   spacksize:=0;
   spufsize:=0;
@@ -195,7 +171,7 @@ begin
     end;
   if errorlevel<>0 then exit;
   if (BoxPar^.uparcer='') or (Netztyp in [nt_NNTP, nt_POP3, nt_IMAP]) then begin             { Mail/News nicht packen }
-    spufsize:=filesum(DestDir+'D*.OUT');
+    spufsize:=FileMaskSize(DestDir+'D*.OUT');
     spacksize:=spufsize;
     end
   else begin                                   { Mail/News packen }
@@ -209,8 +185,8 @@ begin
     else if gzip then cunb:='#! gunbatch'#10
     else if bzip then cunb:='#! bunbatch'#10
     else cunb:='#! cunbatch'#10;
-    findfirst(DestDir+'D*.OUT',ffAnyFile,sr);
-    while doserror=0 do begin
+    rc:= findfirst(DestDir+'D*.OUT',faAnyFile,sr);
+    while rc=0 do begin
       inc(spufsize,sr.size);
       assign(f1^,DestDir+sr.name);
       reset(f1^,1);
@@ -245,7 +221,7 @@ begin
             NoCompSmtp(hexval(copy(sr.name,3,4)));
         end;
       inc(spacksize,_filesize(DestDir+sr.name));
-      findnext(sr);
+      rc:= findnext(sr);
     end;
     FindClose(sr);
     dispose(f1); dispose(f2);
@@ -256,8 +232,9 @@ end;
 
 { RFC-Daten aus SPOOL\ konvertieren und einlesen }
 
-function ImportUUCPfromSpool(XFerDir:string):boolean;
-var sr      : searchrec;
+function ImportUUCPfromSpool(const XFerDir:string):boolean;
+var sr      : tsearchrec;
+    rc      : integer;
     f1,f2   : ^file;
     s       : string[80];
     rr      : word;
@@ -287,14 +264,14 @@ var sr      : searchrec;
 
 begin
   ImportUUCPfromSpool:=false;
-  findfirst(XFerDir+'D*.',ffAnyFile,sr);   { Datenfiles - ohne Extension }
-  if doserror=0 then begin
+  rc:= findfirst(XFerDir+'D*.',faAnyFile,sr);   { Datenfiles - ohne Extension }
+  if rc=0 then begin
     twin;
     clrscr;
     uncompy:=2;
     cursor(curoff);
     new(f1); new(f2);
-    while doserror=0 do begin
+    while rc=0 do begin
       inc(NC^.recpack,sr.size);
       assign(f1^,XFerDir+sr.name);
       reset(f1^,1);
@@ -322,7 +299,7 @@ begin
           end;
         end;
       inc(NC^.recbuf,_filesize(XFerDir+sr.name));
-      findnext(sr);
+      rc:= findnext(sr);
     end;
     FindClose(sr);
     dispose(f1); dispose(f2);
@@ -334,24 +311,24 @@ begin
     uu.utoz;
     uu.free;
 
-    findfirst(XFerDir+'*.0??',ffAnyFile,sr);
-    while doserror=0 do begin       { abgebrochene UUCP-Files -> BAD }
+    rc:= findfirst(XFerDir+'*.0??',faAnyFile,sr);
+    while rc=0 do begin       { abgebrochene UUCP-Files -> BAD }
       MoveToBad(XFerDir+sr.name);
-      findnext(sr);
+      rc:= findnext(sr);
     end;
     FindClose(sr);
-    findfirst(XFerDir+'D*',ffAnyFile,sr);   { Åbriggebliebene D-Files sicherstellen }
-    while doserror=0 do begin
-      if sr.attr and dos.Archive<>0 then
+    rc:= findfirst(XFerDir+'D*',faAnyFile,sr);   { Åbriggebliebene D-Files sicherstellen }
+    while rc=0 do begin
+      if sr.attr and faArchive<>0 then
         MoveToBad(XFerDir+sr.name);
-      findnext(sr);
+      rc:= findnext(sr);
     end;
     FindClose(sr);
-    EmptySpool('D*.OUT');        { ausgehende Pakete lîschen }
-    EmptySpool('X*.OUT');        { C-File mu· stehenbleiben! }
+    erase_mask(xp0.XFerDir+'D*.OUT');        { ausgehende Pakete lîschen }
+    erase_mask(xp0.XFerDir+'X*.OUT');        { C-File mu· stehenbleiben! }
     if nDelPuffer and (errorlevel=0) and (testpuffer(dpuffer,false,dummy)>=0)
     then
-      EmptySpool('*.*');         { entpackte Dateien lîschen }
+      erase_mask(xp0.XFerDir+WildCard);         { entpackte Dateien lîschen }
     CallFilter(true,dpuffer);
     if _filesize(dpuffer)>0 then
       if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then begin
@@ -426,19 +403,6 @@ end;
 
 procedure UUCPSysopTransfer;
 var dummy : longint;
-
-  procedure EmptySysin;
-  var sr : searchrec;
-  begin
-    if not IsPath(BoxPar^.SysopInp) then exit;
-    findfirst(BoxPar^.sysopinp+WildCard,ffAnyFile,sr);
-    while doserror=0 do begin
-      _era(BoxPar^.sysopinp+sr.name);
-      findnext(sr);
-    end;
-    FindClose(sr);
-  end;
-
 begin
   inmsgs:=0; outmsgs:=0; outemsgs:=0;
   with boxpar^ do begin
@@ -470,12 +434,15 @@ begin
 
     if FileExists(SysopInp+WildCard) then                   { -- Eingangspaket -- }
       if ImportUUCPfromSpool(SysopInp) then
-        EmptySysin;
+        erase_mask(BoxPar^.sysopinp+WildCard);
     Netcall_connect:=true;
     end;
 end;
 {
   $Log$
+  Revision 1.25  2000/11/16 22:35:30  hd
+  - DOS Unit entfernt
+
   Revision 1.24  2000/11/14 15:51:34  mk
   - replaced Exist() with FileExists()
 
