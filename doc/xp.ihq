@@ -3825,15 +3825,28 @@ und beim automatischen Anlegen neuer User.
        werden automatisch auf "Halten" gesetzt, werden
        also bei der Reorganisation nicht gel”scht
        (sog. 'EGO-Archiv'). 
-       Selbstgeschriebene `private` Nachrichten k”nnen
-       im jeweiligen Userbrett, durch aktivieren der
-       Haltezeit "0" auf halten gesetzt werden.
 
 <<[ ]>> -> Selbstgeschriebene `”ffentliche` Nachrichten
        werden behandelt wie alle anderen Nachrichten
        auch.
 @
 244
+<<[x]>> -> Selbstgeschriebene `private` Nachrichten
+       werden automatisch auf "Halten" gesetzt, werden
+       also bei der Reorganisation nicht gel”scht
+       (sog. 'EGO-Archiv'). 
+
+       Sollen nur Nachrichten aufbewahrt werden,
+       die an bestimmte User geschrieben wurden,
+       ist es sinnvoll, diesen Schalter deaktiviert
+       zu lassen, und stattdessen die Haltezeit
+       des jeweiligen Userbrett auf "0" zu setzen.
+
+<<[ ]>> -> Selbstgeschriebene `private` Nachrichten
+       werden nach Ablauf der UserBrett-Haltezeit
+       bei der Reorganisation gel”scht.
+@
+245
 šblicherweise wird jede von Ihnen verschickte Nach-
 richt mit exaktem Datum und Uhrzeit versehen. Gegen
 dieses Verfahren bestehen allerdings datenschutz-
@@ -3844,7 +3857,7 @@ k”nnte.
 Wenn Sie hier <<[x]>> einstellen, versieht XP alle
 ausgehenden Nachrichten mit der Uhrzeit 00:00.
 @
-245
+246
 Bezge auf vorhandene Nachrichten werden von XPoint
 durch ein vorangestelltes "Re:" im Betreff gekenn-
 zeichnet. Um lange "Re:"-Ketten bei Mehrfachbezgen
@@ -3864,7 +3877,7 @@ Usenet und bei ZCONNECT wird immer ein einfaches
 "Re:" vorangestellt.
 
 @
-246
+247
 <<ZCONNECT, UUCP/RFC:
 
 Hier sollte immer Ihre korrekte Zeitzone eingetragen
@@ -3885,7 +3898,7 @@ Falls der 00:00-Schalter aktiviert ist, ist diese
 Einstellung ohne Bedeutung.
 
 @
-247
+248
 Hier wird festgelegt, bei welchen Nachrichten Cross-
 Point mit seinem Namen unterschreibt:
 
@@ -3903,7 +3916,7 @@ fr ”ffentliche Nachrichten gilt nicht fr MausNet
 und FidoNet.
 
 @
-248
+249
 <<[x]>> -> Nicht abgeschickte Nachrichten (<Esc> im Sen-
        defenster) werden im Brett /¯Unversandt ge-
        parkt und k”nnen dann mit /Nachricht/Weiter-
@@ -3919,7 +3932,7 @@ nicht mit unversandten Nachrichten verwechseln, die
 mit einem "!" markiert sind und zum Netcall-Versand
 bereitliegen.
 @
-249
+250
 <<[x]>> -> CrossPoint sendet beim Erhalt einer Nachricht,
        deren Betreff mit "\##" beginnt, automatisch
        eine Empfangsbest„tigung zurck. Das Gleiche
@@ -3932,12 +3945,12 @@ bereitliegen.
 Der Empfang einer Nachricht kann auch manuell mit
 [/Nachricht/Weiterleiten/Best„tigung] best„tigt werden.@12106
 @
-250
+251
 <<[x]>> -> Nach dem Beantworten jeder PM erfolgt eine
        Abfrage, ob die Nachricht archiviert werden
        soll.
 @
-251
+252
 <<ZCONNECT / RFC:
 
 Wenn Sie hier <<[x]>> einstellen, versieht XP standard-
@@ -3966,7 +3979,7 @@ denn, Sie schreiben sie ausdrcklich in den Nach-
 richtentext.
 
 @
-252
+253
 <<ZCONNECT / RFC:
 
 Manche Autoren tragen Antwort-an in den Header ihrer
@@ -3985,7 +3998,7 @@ zeile vorhanden ist.
 Ist der Schalter deaktiviert, wird grunds„tzlich die
 Antwort-an Adresse benutzt, wenn vorhanden.
 @
-253
+254
 <<ZCONNECT / RFC:
 
 <<[X]>> -> Ihre ”ffentlichen Nachrichten werden mit dem
@@ -3998,7 +4011,7 @@ keine Garantie dafr, dass Ihre Nachrichten nicht
 doch gespeichert werden. "Das Usenet vergisst
 nicht!"
 @
-254
+255
 <<ZCONNECT / RFC:
 
 <<[ ]>> -> Cancel- und Ersetzt-Nachrichten werden immer
@@ -4017,7 +4030,7 @@ nicht!"
 Ohne Grund sollte dieser Schalter nicht aktiviert
 werden.
 @
-255
+256
 Die M”glichkeit, Nachrichten per "Crossposting" in
 mehrere Bretter gleichzeitig zu schicken, wird gele-
 gentlich miábraucht, um Werbung oder hnliches m”g-
@@ -4028,7 +4041,7 @@ baren Anzahl von Empf„ngern automatisch.
 Faustregel: Wenn eine Nachricht mehr als 10 Brett-
 Empf„nger hat, ist sie nicht lesenswert.
 @
-256
+257
 Ist dieser Schalter aktiviert, werden auch Mails
 (PMs) mit mehr als der eingestellten Zahl an im
 Header vermerkten Empf„ngern gel”scht.

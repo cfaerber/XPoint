@@ -949,6 +949,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ScrollLock   : boolean;       { umschaltbarer Scroll-Mode }
        GrossWandeln : boolean;       { Adressen in Groáschreibung wandeln }
        HaltOwn      : boolean;
+       HaltOwnPM    : boolean;
        DispUsername : boolean;
        SaveUVS      : boolean;       { AutoPark }
        EmpfBest     : boolean;       { autom. Empfangsbest„tigungen }
@@ -1177,6 +1178,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.6  2000/08/26 07:56:17  jg
+  - Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
+
   Revision 1.54.2.5  2000/08/03 09:52:43  mk
   - Subjektlaenge auf 250 Zeichen angepasst
 

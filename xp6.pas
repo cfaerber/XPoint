@@ -1855,7 +1855,7 @@ fromstart:
       if sendFlags and sendHalt<>0 then b:=1
       else if flLoesch then b:=2
       else if not (HaltOwn and (sendbox or _verteiler))
-        or pm then b:=0;                { Eigene Nachrichten Halten gilt nicht fuer Mails }
+        or (pm and not HaltOwnPM) then b:=0; { Eigene Nachrichten Halten gilt nicht fuer Mails }
       dbWriteN(mbase,mb_halteflags,b);
       if intern then b:=0
       else b:=1;
@@ -2193,6 +2193,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.7  2000/08/26 07:56:18  jg
+  - Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
+
   Revision 1.39.2.6  2000/08/22 14:02:33  mk
   - SendenDefault in Shortint geaendert
 

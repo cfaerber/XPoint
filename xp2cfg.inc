@@ -592,6 +592,7 @@ begin
   scrolllock:=false;
   grosswandeln:=true;
   haltown:=false;
+  haltownpm:=false; 
   dispusername:=false;
   SaveUVS:=false;
   EmpfBest:=true;
@@ -859,6 +860,7 @@ begin
   writeln(t,'HayesBefehle=',jnf(hayescomm));
   writeln(t,'GrossWandeln=',jnf(grosswandeln));
   writeln(t,'EigeneMsgsHalten=',jnf(haltown));
+  writeln(t,'EigenePMsHalten=',jnf(haltownPM));
   writeln(t,'ShowUsername=',jnf(dispusername));
   writeln(t,'SaveUnversandt=',jnf(SaveUVS));
   writeln(t,'EmpfangsBestaetigung=',jnf(empfbest));
@@ -1417,6 +1419,7 @@ begin
           getx(su,  'HayesBefehle',hayescomm) or
           getx(su,  'GrossWandeln',grosswandeln) or
           getx(su,  'EigeneMsgsHalten',haltown) or
+          getx(su,  'EigenePMsHalten',haltownPM) or
           getx(su,  'ShowUsername',dispusername) or
           getx(su,  'SaveUnversandt',SaveUVS) or
           getx(su,  'EmpfangsBestaetigung',EmpfBest) or
@@ -1689,6 +1692,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.62.2.4  2000/08/26 07:56:18  jg
+  - Config/Optionen/Nachrichten... "Eigene PMs halten" eingebaut
+
   Revision 1.62.2.3  2000/07/22 13:16:05  jg
   - Bugfix: Viewer-Beschraenkungen,
     an Config-Strings wurden u.U zuviele Punkte angehaengt.
