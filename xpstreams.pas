@@ -66,7 +66,9 @@ type TConnectableStream = class (TStream)
     FOtherStream: TStream;
     FDestroyOtherStream: boolean;
     FOtherStreamStartPos: Longint;
-    procedure Connect(AnOtherStream:TStream);
+    
+  protected
+    procedure Connect(AnOtherStream:TStream); virtual;
 
   public
     constructor Create; overload;
@@ -102,12 +104,11 @@ type TCoDecStream = class(TConnectableStream)
 
 { ---------------------- Cut part of an stream ----------------------- }
 
-  TPartialStream = class(TStream)
+  TPartialStream = class(TConnectableStream)
   private
-    FStream: TStream;
     FStart,FEnd: Longint;
   public
-    constructor Create(AnOtherStream: TStream;AStart,AnEnd: Longint);
+    constructor Create(AStart,AnEnd: Longint);
     function Read(var Buffer; Count: Longint): Longint; override;
     function Write(const Buffer; Count: Longint): Longint; override;
     function Seek(Offset: Longint; Origin: System.Word): Longint; override;
@@ -256,33 +257,32 @@ begin
   DeleteFile(FFileName);
 end;
 
-constructor TPartialStream.Create(AnOtherStream: TStream;AStart,AnEnd: Longint);
+constructor TPartialStream.Create(AStart,AnEnd: Longint);
 begin
-  FStream:=AnOtherStream;
   FStart:=AStart;
   FEnd:=AnEnd;
 end;
 
 function TPartialStream.Read(var Buffer; Count: Longint): Longint;
 begin
-  if (FStream.Position + Count) > FEnd then
-    Count := FEnd - FStream.Position;
+  if (OtherStream.Position + Count) > FEnd then
+    Count := FEnd - OtherStream.Position;
 
   if Count<=0 then 
     result := 0
   else
-    result := FStream.Read(Buffer,Count);
+    result := OtherStream.Read(Buffer,Count);
 end;
 
 function TPartialStream.Write(const Buffer; Count: Longint): Longint;
 begin
-  if (FStream.Position + Count) > FEnd then
+  if (OtherStream.Position + Count) > FEnd then
     raise EStreamError.Create('too much data');
 
   if Count<=0 then 
     result := 0
   else
-    result := FStream.Write(Buffer,Count);
+    result := OtherStream.Write(Buffer,Count);
 end;
 
 function TPartialStream.Seek(Offset: Longint; Origin: System.Word): Longint;
@@ -290,18 +290,18 @@ begin
   case Origin of
   soFromBeginning: Offset := Offset+FStart;
   soFromCurrent:   if Offset=0 then begin
-                     Result := FStream.Position-FStart;
+                     Result := OtherStream.Position-FStart;
                      exit;
                    end else
-                     Offset := Offset+FStream.Position;
+                     Offset := Offset+OtherStream.Position;
   soFromEnd:       Offset := Offset+FEnd;
   else raise EStreamError.Create('Illegal stream operation');
   end;
 
   if Offset < FStart then Offset:=FStart else
-  if Offset > FEnd then Offset:=FEnd;
+  if Offset > FEnd   then Offset:=FEnd;
 
-  result := FStream.Seek(Offset,soFromBeginning) - FStart;
+  result := OtherStream.Seek(Offset,soFromBeginning) - FStart;
 end;
 
 { ---------------- Streams that can own other streams ---------------- }
@@ -472,7 +472,7 @@ begin
 end;
 
 procedure CopyStream(InStream,OutStream:TStream);
-var b: array [1..8192] of char;
+var b: array [1..32768] of char;
     n: longint;
 begin
   while InStream is TNullCodecStream do
