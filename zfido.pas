@@ -62,7 +62,7 @@ type  FidoAdr  = record
                    ispoint    : boolean;
                  end;
 
-      zheader  = record                         { ZConnect - Header }
+      zheader  = packed record                         { ZConnect - Header }
                    netztyp    : byte;
                    empfaenger : string;         { Brett / User / TO:User }
                    betreff    : string;
@@ -123,7 +123,7 @@ type  FidoAdr  = record
                    fill2      : longint;        { -> = 0 }
                  end;
 
-      mheader  = record
+      mheader  = packed record
                    mPktVer    : smallword;
                    origNode   : smallword;
                    destNode   : smallword;
@@ -1680,8 +1680,8 @@ begin
 end.
 {
   $Log$
-  Revision 1.36  2000/10/03 17:45:22  mo
-  - noch ein aligned bug beseitigt
+  Revision 1.37  2000/10/03 18:06:52  mo
+  - jetzt klappt's auch wieder mit den exportieren
 
   Revision 1.34  2000/09/25 17:58:31  mk
   - Window ausgeklammert, da in 32 Bit Version nicht erlaubt
