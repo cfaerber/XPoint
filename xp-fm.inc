@@ -1,4 +1,4 @@
-ÿ{ --------------------------------------------------------------- }
+{ --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
@@ -1056,6 +1056,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/03/21 19:17:49  mk
+  - OOps, mal wieder ein #255 zu viel
+
   Revision 1.7  2000/03/21 18:59:12  mk
   - Bug in CRC-Berechnung behoben
 
