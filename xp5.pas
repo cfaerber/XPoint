@@ -789,7 +789,13 @@ begin
     else rewrite(t);
     for y:=1 to screenlines do begin
       for x:=1 to 80 do
-        write(t,copychr(x,y));
+        { Test auf unsichtbare Zeichen (wenn Vorder- und Hintergrund
+          gleich sind) }
+        if (mem[base:(2*x-1) + 2*zpz*(y-1)] and $0f) <>
+          ((mem[base:(2*x-1) + 2*zpz*(y-1)] and $70) shr 4) then
+          write(t,copychr(x,y))
+        else
+          write(t, ' ');
       writeln(t);
       end;
     message('OK.');
@@ -1014,6 +1020,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.3  2000/10/20 11:23:30  mk
+  - Fix for Bug #116155, Bildschirmauszug fehlerhaft
+
   Revision 1.9.2.2  2000/03/25 21:47:47  mk
   - Statistik/Systeme: Nummer auf 4 Stellen angepasst
   - Funktion zur DOSEmu-Erkennung gefixt
