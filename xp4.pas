@@ -213,9 +213,7 @@ label selende;
       PmArchiv(einzel);
       if _brett[1]='1' then begin
         dbGo(mbase,disprec[1]);
-{        don't know whats this for :-(
-         if you comment this out, Alt-p in reply trees points does an esc afterwards }
-         if LeftStr(dbReadStr(mbase,'brett'),1)<>'1' then
+         if (DispMode<>12) and (LeftStr(dbReadStr(mbase,'brett'),1)<>'1') then
           disprec[1]:=0;
         end
       else
@@ -2132,6 +2130,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2000/12/11 09:41:34  mk
+  - fixed Bug #117177: Alt-P in reply tree
+
   Revision 1.71  2000/12/08 01:10:08  mk
   MH:- Usersuche bei Auswahl ueber F2 moeglich
 
