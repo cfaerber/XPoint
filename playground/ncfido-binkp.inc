@@ -24,7 +24,7 @@
 { OpenXP fido netcall BinkP protocol implementation include file }
 
 {$IFDEF VP}
-const fsFromEnd= 2; fsFromCurrent= 1;
+const fsFromEnd= 2; fsFromCurrent= 1; fsFromBeginning= 0;
 {$ENDIF}
 
 type
@@ -90,8 +90,9 @@ var reads,readthistime,avail: longint;
 begin
   result:=false; if IsOutgoing then exit;
   if FDataSize=0 then begin // FDataSize not yet read
-    if FCommObj^.CharCount>=2 then
-      FCommObj^.ReadBlock(FDataSize,2,reads);
+    if FCommObj^.CharCount>=2 then begin
+      FCommObj^.ReadBlock(FDataSize,2,reads); FDataSize:=Swap(FDataSize);
+      end;
     end else begin // FDataSize already read
     result:=DataRead>=(FDataSize and $7fff);
     if not result then begin
@@ -102,7 +103,10 @@ begin
         FCommObj^.ReadBlock(Data[DataRead+1],readthistime,readthistime);
         dec(reads,readthistime); inc(DataRead,readthistime);
         end;
-      end;
+      end else if FDataSize>$7fff then
+        Debug.DebugLog('ncfido','got binkp command frame '+Strs(Data[1])+' '+SCommandPar,DLDebug)
+      else
+        Debug.DebugLog('ncfido','got binkp data frame, size '+Strs(FDataSize),DLDebug)
     end;
 end;
 
@@ -128,16 +132,21 @@ begin
 end;
 
 procedure tBinkpFrame.Send;
-var i,written: longint;
+var i,written: longint; FrameSize: smallword;
 begin
   if IsOutgoing then begin
-    FCommObj^.SendBlock(FDataSize,2,written);
+    FrameSize:=Swap(FDataSize);
+    FCommObj^.SendBlock(FrameSize,2,written);
     i:=0;
     while i<(FDataSize and $7fff)do begin
       written:=FDataSize-i; if written>1024 then written:=1024;
       FCommObj^.SendBlock(Data[i+1],written,written);
       inc(i,written);
       end;
+    if FDataSize<=$7fff then
+      Debug.DebugLog('ncfido','sent binkp data frame, size '+Strs(Swap(FDataSize)),DLDebug)
+    else
+      Debug.DebugLog('ncfido','sent binkp command frame '+Strs(Data[1])+' '+SCommandPar+', size '+strs(FDataSize and $7fff),DLDebug);
     end;
 end;
 
@@ -147,16 +156,20 @@ end;
 function TFidomailer.BinkPSessionSetup: byte;
 type tState= (ConnInit,WaitConn,SendPasswd,WaitAddr,AuthRemote,IfSecure,WaitOk,Done);
 var
-  State: tState;
+  State,LastState: tState;
   BpF: tBinkpFrame;
 
 begin
-  State:=WaitConn; BpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+  State:=WaitConn; LastState:=WaitConn; BpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
   repeat
+    if LastState<>State then begin
+      Debug.DebugLog('ncfido','binkp session setup state '+Strs(Ord(State)),DLDebug);
+      LastState:=State;
+      end;
     case State of
       WaitConn: begin
         BpF.SendCommandFrame(M_NUL,'SYS OpenXP test system');
-        BpF.SendCommandFrame(M_ADR,ownaddr+'@fidonet');
+        BpF.SendCommandFrame(M_ADR,' '+ownaddr+'@fidonet');
         State:=SendPasswd;
         end;
       SendPasswd: begin
@@ -206,8 +219,8 @@ type
   tTxState= (TxGNF,TxTryR,TxReads,TxWLA,TxDone);
   tResult= (OK,Continue,Failure);
 var
-  State: tState; RxState: tRxState; TxState: tTxState;
-  InBpF,OutBpF: tBinkpFrame; TheQueue: TList;
+  State,LastState: tState; RxState,LastRxState: tRxState; TxState,LastTxState: tTxState;
+  InBpF,OutBpF: tBinkpFrame; TheQueue: TList; PendingFiles: TStringList;
   RxFilename: string; RxFileHandle,RxResult: Longint; RxSize,RxTime,RxOffset: Cardinal;
   TxFilename: string; TxFileHandle,TxResult: Longint; TxSize,TxTime,TxOffset: Cardinal;
 
@@ -219,6 +232,10 @@ var
   var s: string; RxFilePos: Cardinal;
   begin
     result:=OK;
+    if LastRxState<>RxState then begin
+      Debug.DebugLog('ncfido','binkp rxstate '+Strs(Ord(RxState)),DLDebug);
+      LastRxState:=RxState;
+      end;
     case RxState of
       RxWaitF: begin
         if not InBpF.IsReady then exit;
@@ -267,7 +284,7 @@ var
         case InBpF.FrameType of
           M_DATA: begin
             RxState:=RxWriteD;
-            RxResult:=FileWrite(RxFileHandle,InBpF.Data[1],InBpF.DataSize);
+            RxResult:=FileWrite(RxFileHandle,InBpF.Data[2],InBpF.DataSize-1);
             result:=Continue
             end;
           M_ERR: begin RxState:=RxDone; result:=Failure; exit; end;
@@ -287,6 +304,8 @@ var
           RxState:=RxWaitF; //** set file time
           FileClose(RxFileHandle);
           OutBpF.SendCommandFrame(M_GOT,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
+          WriteIPC(mcInfo,'File %s received',[RxFilename]);
+          IncomingFiles.Add(RxFilename);
           end;
         if RxFilePos<RxSize then RxState:=RxReceD;
         end;
@@ -306,7 +325,7 @@ var
   end;
 
   procedure ProcessTheQueue;
-  var QBpF: tBinkpFrame;
+  var QBpF: tBinkpFrame; s: String; iPending: Integer;
   begin
     QBpF:=TheQueue[TheQueue.Count-1];
     case QBpF.FrameType of
@@ -314,10 +333,27 @@ var
         //** implement
         end;
       M_GOT: begin
-        //** implement
+        s:=QBpF.CommandPar; s:=GetPar(s);
+        if s=TxFilename then begin
+          FileClose(TxFileHandle);
+          WriteIPC(mcError,'Remote refused file %s',[TxFilename]);
+          TxState:=TxGNF;
+          end else
+          if PendingFiles.Find(s,iPending)then begin
+            PendingFiles.Delete(iPending);
+            if OutgoingFiles.Count>0 then OutgoingFiles.Delete(0);
+            //** clean up file list handling
+            WriteIPC(mcInfo,'File %s sent',[s]);
+            end;
         end;
       M_SKIP: begin
-        //** implement
+        s:=QBpF.CommandPar; s:=GetPar(s);
+        if s=TxFilename then begin
+          FileClose(TxFileHandle);
+          WriteIPC(mcInfo,'Remote will accept file %s later',[TxFilename]);
+          TxState:=TxGNF;
+          end;
+        //** add: M_SKIP file not currently transmitting
         end;
       end;
     QBpF.Destroy;
@@ -325,9 +361,14 @@ var
   end;
 
   function BpTransmit: tResult;
+  const BufferSize= 8192;
   var s: string;
   begin
     result:=OK;
+    if LastTxState<>TxState then begin
+      Debug.DebugLog('ncfido','binkp txstate '+Strs(Ord(TxState)),DLDebug);
+      LastTxState:=TxState;
+      end;
     case TxState of
       TxGNF: begin
         if OutgoingFiles.Count<=0 then begin // no more files to send
@@ -339,6 +380,7 @@ var
           TxFileHandle:=FileOpen(TxFilename,fmOpenRead);
           if TxFileHandle>0 then begin // opened ok
             TxSize:=FileSeek(TxFileHandle,0,fsFromEnd);
+            FileSeek(TxFileHandle,0,fsFromBeginning);
             TxTime:=FileGetDate(TxFileHandle);
             OutBpF.SendCommandFrame(M_FILE,TxFilename+' '+IntToStr(TxSize)+' '+IntToStr(TxTime)+' 0');
             TxState:=TxTryR; result:=Continue;
@@ -355,12 +397,13 @@ var
           TxState:=TxReadS;
         end;
       TxReadS: begin
-        TxResult:=FileRead(TxFileHandle,OutBpF.Data[1],32767);
+        TxResult:=FileRead(TxFileHandle,OutBpF.Data[1],BufferSize);
         if TxResult<0 then begin TxState:=TxDone; result:=Failure; exit end;
         OutBpF.SetupDataFrame(TxResult); OutBpF.Send;
-        if TxResult<32767 then begin // file end reached
+        if TxResult<BufferSize then begin // file end reached
           FileClose(TxFileHandle);
           TxState:=TxGNF;
+          PendingFiles.Add(TxFilename);
           end else begin // still data to read
           TxState:=TxTryR;
           end;
@@ -377,13 +420,20 @@ var
   end;
 
 begin
-  State:=WaitConn;
-  InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); TheQueue:=TList.Create;
+  State:=WaitConn; LastState:=WaitConn;
+  InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
+  TheQueue:=TList.Create; PendingFiles:=TStringList.Create;
   repeat
+    if LastState<>State then begin
+      Debug.DebugLog('ncfido','binkp state '+Strs(Ord(State)),DLDebug);
+      LastState:=State;
+      end;
     case State of
       WaitConn: begin
         WriteIPC(mcInfo,'Initiating file transfer',[0]);
-        RxState:=RxWaitF; TxState:=TxGNF; State:=Switch; //** set timer
+        RxState:=RxWaitF; TxState:=TxGNF;
+        LastRxState:=RxWaitF; LastTxState:=TxGNF;
+        State:=Switch; //** set timer
         InBpF.ReadFromStream(False);
         end;
       Switch: begin
@@ -391,8 +441,10 @@ begin
           WriteIPC(mcInfo,'File transfer complete',[0]);
           result:=0; State:=Done;
           end;
-        if FCommObj^.CharAvail then State:=Receive;
-        if FCommObj^.ReadyToSend(1024) then State:=Transmit;
+        if FCommObj^.CharAvail then
+          State:=Receive
+        else if FCommObj^.ReadyToSend(1024) then
+          State:=Transmit;
         //** if timeout...
         end;
       Receive: begin
@@ -411,12 +463,16 @@ begin
         end;
     end;
   until State=Done;
-  InBpF.Destroy; OutBpF.Destroy; TheQueue.Destroy;
+  InBpF.Destroy; OutBpF.Destroy; TheQueue.Destroy; PendingFiles.Destroy;
 end;
 
 
 {
   $Log$
+  Revision 1.4  2001/02/17 21:44:37  ma
+  - BinkP protocol provisionally activated by "SetTime" ;-)
+  - remote seems not to recognize binkp frames sent yet
+
   Revision 1.3  2001/02/12 23:43:25  ma
   - some fixes
 

@@ -208,6 +208,13 @@ var iTimer: Integer; Ende: Boolean;
 begin
   result:=el_noconn; DebugBadge:='ncfido';
   if not Connect then exit;
+
+  if SetTime then begin //** BinkP mailer
+    if BinkPSessionSetup=0 then
+      if BinkPFileTransfer=0 then result:=el_ok;
+    exit;
+    end;
+
   TimerObj.Init; Log(lcCalling,'calling '+txt);
   for iTimer:=0 to qTimers-1 do Timers[iTimer].Init;
   SplitFido(OwnAddr,FA,2);
@@ -240,6 +247,10 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/02/17 21:44:37  ma
+  - BinkP protocol provisionally activated by "SetTime" ;-)
+  - remote seems not to recognize binkp frames sent yet
+
   Revision 1.13  2001/02/11 16:30:36  ma
   - added sysop call
   - some changes with class constructors
