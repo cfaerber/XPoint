@@ -26,7 +26,7 @@ const
   xp_display  : string[10] = ' OpenXP/16';
   xp_client   : string[10] = 'CrossPoint';
   xp_origin   : string[26] = '--- CrossPoint [OpenXP/16]';
-  x_copyright = '(c) 2002';
+  x_copyright = '(c) 2002-2003';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
@@ -85,6 +85,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.29.2.21  2003/01/10 14:01:35  mw
+
+  MW: - Wir haben jetzt 2003
+
   Revision 1.29.2.20  2002/03/09 21:50:13  my
   MY:- Versionsstrings korrigiert/geÑndert:
        - Snapshot-Versionsstrings werden jetzt nach dem Muster
