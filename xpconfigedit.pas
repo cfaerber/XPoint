@@ -93,11 +93,11 @@ const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
 
 {$IFNDEF DOS32}
-      SupportedNetTypes: array[0..5] of byte =
-        (nt_Client, nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect);
+      SupportedNetTypes: array[0..4] of byte =
+        ({nt_Client,} nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ELSE}
-      SupportedNetTypes: array[0..3] of byte =
-        (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect);
+      SupportedNetTypes: array[0..2] of byte =
+        ({nt_Client,} nt_UUCP, nt_Fido, nt_ZConnect);
 {$ENDIF}
 
 var   UpArcnr   : integer;    { fÅr EditPointdaten }
@@ -1615,6 +1615,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2001/09/27 23:44:53  ma
+  - disabled client mode
+
   Revision 1.23  2001/09/10 15:58:03  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings
