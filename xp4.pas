@@ -704,6 +704,7 @@ var t,lastt: taste;
       gfound  : boolean;
       mqfirst : longint;
       mpdata  : multi_part;
+      OrgQuote: Integer;
 
   label ende;
 
@@ -839,11 +840,14 @@ var t,lastt: taste;
       pm:=not ReadJNesc(getres(431),false,brk);   { 'Der Absender wÅnscht eine PM-Antwort - trotzdem îffentlich antworten' }
       if brk then exit;
       end;
-    mquote:=(quote=1); mqfirst:=0;
+    OrgQuote := Quote;
     if quote=2 then
-      if markanz=0 then quote:=1
-      else if not multiquote(brk) and brk then exit;
+      if markanz=0 then
+        quote:=1
+      else
+        if not multiquote(brk) and brk then exit;
       {  dbGo(mbase,marked^[0]); }
+    mquote:=(quote=1); mqfirst:=0;
     betr:='';
     rt0:='';
     realname:='';
@@ -1060,7 +1064,7 @@ var t,lastt: taste;
       { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
         Multipart-Daten vorhanden, wir faken uns also welche, damit
         die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
-      if (qmpdata = nil) and (Quote < 2) and (mimetyp <> 'text/plain') then
+      if (qmpdata = nil) and (OrgQuote = 1) and (mimetyp <> 'text/plain') then
       begin
         pushhp(94);
         fillchar(mpdata,sizeof(qmpdata),0);
@@ -2101,6 +2105,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/10/26 08:54:27  mk
+  - MIME-Fixes (merged from 3.30
+
   Revision 1.50  2000/10/26 08:46:37  mk
   - MIME-Auswahldialog nur bei Replys
 
