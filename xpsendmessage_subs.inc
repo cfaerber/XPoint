@@ -23,7 +23,7 @@
 
 { Signatur-Shuffler / Signatur-Makro-Ersetzer }
 
-procedure MakeSignature(var signat, sigfile:string; var sigtemp:boolean);
+procedure MakeSignature(const signat:String;var sigfile:string; var sigtemp:boolean);
 const
   sigsep = '-*-';
 var
@@ -76,15 +76,18 @@ begin
 end;
 
 function getsize:boolean;
+var i:integer;
 begin
-  fs:=_filesize(datei);
-  if (fs=0) and not ntMsg0(netztyp) then begin   { Test auf leere Msg }
+  fs:=0; for i:=0 to parts.count-1 do
+    inc(fs,TSendAttach_Part(parts[i]).FileSize);
+
+  if ((parts.Count<=0) or
+     ((parts.Count=1) and (TSendAttach_Part(parts[0]).FileSize=0)))
+  and not ntMsg0(netztyp) then begin
     rfehler(602);   { 'leere Nachricht - nicht abgeschickt' }
     getsize:=false;
     end
   else begin
-    if (fs=0) and not FileExists(datei) then
-      MakeFile(datei);
     getsize:=true;
     end;
 end;
@@ -208,14 +211,6 @@ procedure calc_hdsize;
 var f : file;
 begin
   addsize:=0;
-  if header<>'' then begin           { Kopf-File testen }
-    assign(f,header);
-    reset(f,1);
-    if ioresult=0 then begin
-      inc(addsize,filesize(f)); close(f); end
-    else
-      header:='';
-    end;
   if not flOhnesig and (sigfile<>'') then
     inc(addsize,_filesize(sigfile));
   inc(addsize,length(fido_origin(true)));
@@ -234,6 +229,8 @@ begin
   wrt(x+51,y+6,sp(22));
   gotoxy(x+51,y+6);
   if docode=0 then
+  begin
+    if Parts.Count=1 then
     case cancode of
       -1 : Wrt2(getreps2(601,1,'Rot13'));       { '%s m”glich' }
        0 : Wrt2(getres2(601,iif(pm,2,3)));      { 'kein Paáwort' / 'nicht m”glich' }
@@ -241,8 +238,12 @@ begin
            else Wrt2(getreps2(601,1,'QPC'));    { 'QPC m”glich' }
        2 : Wrt2(getreps2(601,1,'DES'));         { 'DES m”glich' }
        3..2+maxpmc : Wrt2(getreps2(601,1,pmcode(cancode)));
+       8 : Wrt2(getreps2(601,1,'PGP/MIME'));    { 'PGP/MIME moeglich' }
        9 : Wrt2(getreps2(601,1,'PGP'));         { 'PGP m”glich' }
-    end
+    end else
+    if (cancode in [8,9]) and ntMIME(netztyp) then
+      Wrt2(getreps2(601,1,'PGP/MIME'))          { 'PGP/MIME moeglich' }
+  end
   else begin
     attrtxt(col.coldiahigh);
     case docode of
@@ -251,11 +252,31 @@ begin
        1 : Wrt2('QPC');
        2 : Wrt2('DES');
        3..2+maxpmc: Wrt2(pmcode(docode));
+       8 : Wrt2('PGP/MIME');
        9 : Wrt2('PGP');
     end;
   end;
   mon;
   freeres;
+end;
+
+procedure KorrCode;
+begin
+  if docode=0 then exit;
+
+  if parts.count<>1 then
+  begin
+    if ntMIME(netztyp) and (docode=9) then
+      docode:=8         // switch PGP to PGP/MIME
+    else
+      docode:=0;        // switch off encoding
+    showcode;
+  end else // parts.count=1
+    if (cancode=9) and (docode=8) then
+    begin
+      docode:=9;        // switch PGP/MIME to PGP
+      showcode;
+    end;
 end;
 
 procedure showcc;
@@ -351,28 +372,16 @@ var inr     : longint;
     count   : word;
     rand    : word;
     csum    : word;
-    b64     : array[0..63] of char;
     _domain : string[80];
     msgidtyp: byte;
     local_part : string[20];
-
-  function b30(l:longint):string;   { 30bit -> 5char }
-  const bc : string[5] = '     ';
-  var i : byte;
-  begin
-    for i:=5 downto 1 do begin
-      bc[i]:=b64[l and 63];
-      l:=l shr 6;
-      end;
-    b30:=bc;
-  end;
 
 begin
   msgidtyp:=ntMessageID(netztyp);
   if nomids or (msgidtyp=0) then
     MessageID:=''
   else begin
-    b64:='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$abcdefghijklmnopqrstuvwxyz-';
+//  b64:='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$abcdefghijklmnopqrstuvwxyz-';
     decodedate(now,j,m,t);
     decodetime(now,h,mm,s,ss);
     dat:=(t-1)+(m-1)*32+(j mod 165)*32*12;
@@ -419,11 +428,21 @@ begin
     end;
 end;
 
-
 procedure wrs(s:string);
 begin
   s:=s+#13#10;
   blockwrite(f2,s[1],length(s));
+end;
+
+procedure write_s(st:TStream;s:string);
+begin
+  st.WriteBuffer(s[1],length(s));
+end;
+
+procedure writeln_s(st:TStream;s:string);
+begin
+  s:=s+#13#10;
+  st.WriteBuffer(s[1],length(s));
 end;
 
 { Datei aus f (geschlossen) an f2 (offen) anh„ngen }
@@ -457,48 +476,6 @@ begin
   freemem(p,siz);
 end;
 
-procedure encode_file(des:boolean; var f1,f2:file);
-var p    : pointer;
-    rr   : word;
-    show : boolean;
-    x,y: Integer;
-    ofs  : longint;
-    total: longint;
-    _pwd : ^string; { Notwendig, da QPC in Assembler :-((( }
-begin
-  getmem(p,8000);
-  seek(f1,0);
-  total:=filesize(f1);
-  show:=des and (total>2000);
-  if show then begin
-    message(getres(605));    { 'DES-Codierung...     %' }
-    x:=wherex-5; y:=wherey;
-    end
-  else
-    x:=0;
-  ofs:=0;
-  while not eof(f1) do begin
-    blockread(f1,p^,8000,rr);
-    if des then
-      DES_code(false,p^,ofs,total,rr,x,y)
-    else begin
-      { Wenn die Prozedur QPC nicht mehr in Assembler geschrieben ist,
-        dann koennte koennte dieser Workaround entfallen }
-{$ifdef FPC}
-  {$hint Kommentar lesen und Assembler in XP3::QPC entfernen :-) }
-{$endif}
-      getmem(_pwd,length(passwd)+1);
-      _pwd^:= passwd;
-      QPC(false,p^,rr,_pwd,passpos);
-      freemem(_pwd,length(passwd)+1);
-    end;
-    blockwrite(f2,p^,rr);
-    inc(ofs,rr);
-    end;
-  if show then closebox;
-  freemem(p,8000);
-end;
-
 procedure SetCryptFlag;
 var flag : byte;
 begin
@@ -507,89 +484,156 @@ begin
   dbWriteN(mbase,mb_unversandt,flag);
 end;
 
-procedure pmCryptFile(var hd: THeader; var fn:string);
-var s   : string;
-    hdp : THeader;
-    hds : longint;
-    ok  : boolean;
-    oemp: string[AdrLen];
-    bin : boolean;
-
-  procedure AddZer(var s:string);
-  var  p,p2: byte;
-  begin
-    p:=cpos('@',s);
-    p2:=cPos('.',mid(s,p+1));
-    if p2>0 then s:=LeftStr(s,p+p2)+'ZER';
-  end;
-
-  function IsBinary(var f:file):boolean;   { true -> Datei enth„lt }
-  const bufs  = 2048;                      {         Steuerzeichen }
-  var   isbin : boolean;
-        buf   : charrp;
-        rr    : word;
-  begin
-    isbin:=false;
-    getmem(buf,bufs);
-    while not isbin and not eof(f) do begin
-      blockread(f,buf,bufs,rr);
-      if rr>0 then
-        isbin:=testbin(buf,rr);
-      end;
-    seek(f,0);
-    freemem(buf,bufs);
-    IsBinary:=isbin;
-  end;
+procedure EncryptMessage(des:Boolean;var data:TStream);
+var d2: TMemoryStream;
+  _pwd: string[255];
+   x,y: Integer;
+   pos: smallword;
+  show: boolean;
 
 begin
-  assign(f2,temppath+cryptedfile);
-  if existf(f2) then erase(f2);
-  assign(f2,temppath+uncryptedfile); rewrite(f2,1);
-  assign(f,fn);
-  fm_ro; reset(f,1); fm_rw;
-  hdp := THeader.Create;
-  makeheader(ntZConnect(hd.netztyp),f,0,hds,hdp,ok,false, true);
-  oemp:=hdp.empfaenger;
-  if hdp.netztyp=nt_ZConnect then with hdp do begin
-    AddZer(absender);
-    AddZer(empfaenger);
-    end;
-  hdp.netztyp:=nt_Netcall;
-  WriteHeader(hdp,f2);
-  seek(f,hds);
-  fmove(f,f2);
-  close(f); close(f2);
+  show:=des and (data.size>2000);
+  if show then begin
+    message(getres(605));    { 'DES-Codierung...     %' }
+    x:=wherex-5; y:=wherey;
+    end
+  else
+    x:=0;
+  pos:=0;
+
+  if data is TMemoryStream then
+    d2:=TMemoryStream(data)             // use as is
+  else begin
+    d2:=TMemoryStream.Create;           // make a copy in memory
+    try d2.Size:=data.Size except end;
+    data.Seek(0,soFromBeginning);
+    CopyStream(data,d2);
+    data.Free;
+    data:=d2;
+  end;
+
+  if DES then
+  begin
+    DES_PW(passwd);
+    DES_code(false,PChar(d2.Memory)^,0,d2.Size,d2.Size,x,y)
+  end else
+  begin
+    _pwd:=passwd;
+    QPC(false,PChar(d2.Memory)^,d2.Size,@_pwd,pos);
+  end;
+
+  if show then closebox;
+
+  SetCryptFlag;
+  hdp.betreff:=LeftStr(iifs(des,DES_ID,QPC_ID)+hdp.betreff,BetreffLen);
+  hdp.archive:=false;
+  hdp.empfaenger:=iifs(pm,empfaenger,mid(empfaenger,2));
+
+  b:=cpos('@',hdp.absender);
+
+  if not ntZConnect(netztyp) then begin
+    if nobox and (b>0) then
+      TruncStr(hdp.absender,b-1);
+     b:=cpos('@',hdp.empfaenger);
+     if (b>0) and (UpperCase(mid(hdp.empfaenger,b+1))=box+'.ZER') then
+     hdp.empfaenger:=LeftStr(hdp.empfaenger,b-1);
+   end;
+
+   if not des then
+     hdp.attrib:=hdp.attrib or AttrQPC;
+
+   hdp.crypt.komlen:=hdp.komlen; hdp.komlen:=0;      { KOM anpassen   }
+   hdp.crypt.typ:=hdp.typ;
+   hdp.crypt.charset:=hdp.charset;
+   hdp.crypt.method:=iifs(DES,'DES/XPOINT','QPC'); // OpenXP supports none of the ZConnect DES-Methods :-(
+   hdp.charset:='';
+   hdp.x_charset:='';
+   hdp.typ:='B';
+
+   hdp.MIME.ctype:='application/octet-stream';  // There's no MIME content
+   hdp.MIME.encoding:=MimeEncodingBase64;       // type (did I mention that
+                                                // we maintain this encoding
+                                                // schemes for backward com-
+                                                // patibility only?!)
+   hdp.groesse:=data.size;
+end;
+
+procedure pmEncryptMessage(var data:TStream);
+var fi,fo:string;
+    fs:TStream;
+    s:string;
+    oldtyp:byte;
+    anal:TMimeAnalyzer;
+begin
+  if pmcrypt[docode-2].binary and not ntBinary(netztyp) then begin
+    rfehler(609);     { In diesem Netz sind keine Bin„rnachrichten m”glich. }
+    exit;
+  end;
+
+  fi:=temppath+uncryptedfile;
+  fo:=temppath+cryptedfile;
+
+  if FileExists(fo) then _era(fo);
+
+  fs := TFileStream.Create(fi,fmCreate);
+  hdp.WriteZ38(fs);
+  CopyStream(data,fs);
+  fs.Free;
+
+  anal:=TMimeAnalyzer.Create;
+
   s:=pmcrypt[docode-2].encode;
   rps(s,'$KEY',passwd);
-  rps(s,'$INFILE',temppath+uncryptedfile);
-  rps(s,'$OUTFILE',temppath+cryptedfile);
-  rps(s,'$USER',oemp);
-  Hdp.Free;
+  rps(s,'$INFILE',fi);
+  rps(s,'$OUTFILE',fo);
+  rps(s,'$USER',hdp.empfaenger);
   shell(s,500,3);                     { Nachricht codieren }
-  SaveDeleteFile(temppath+uncryptedfile);
-  assign(f,temppath+cryptedfile);
-  if not existf(f) then
+
+  if not FileExists(fo) then
     rfehler(603)    { 'Datei wurde nicht codiert!' }
-  else begin
-    reset(f,1);
-    bin:=pmcrypt[docode-2].binary or IsBinary(f);
-    if bin and not ntBinary(netztyp) then
-      rfehler(609)     { In diesem Netz sind keine Bin„rnachrichten m”glich. }
-    else begin
-      assign(f2,fn);
-      rewrite(f2,1);
-      hd.groesse:=filesize(f);
-      hd.betreff:=PMC_ID+' by XP ('+pmcrypt[docode-2].name+') '+
-                  hex(dbReadInt(mbase,'groesse'),6);
-      hd.typ:=iifc(bin,'B','T');
-      inc(hd.attrib,AttrPmcrypt);
-      WriteHeader(hd,f2);
-      fmove(f,f2);
-      close(f2);
+  else
+  begin
+    fs:=TTemporaryFileStream.Create(fo,fmOpenRead);
+    if not pmcrypt[docode-2].binary then anal:=TMimeAnalyzer.Create else anal:=nil;
+    CopyStream(fs,anal);
+
+    if(pmcrypt[docode-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))
+      and not ntBinary(netztyp) then
+    begin
+      fs.Free;
+      rfehler(609);     { In diesem Netz sind keine Bin„rnachrichten m”glich. }
+    end else
+    begin
       SetCryptFlag;
+
+      hdp.betreff:=PMC_ID+' by XP ('+pmcrypt[docode-2].name+') '+
+        hex(hdp.groesse,6);
+      hdp.crypt.method:='PMCRYPT2';
+      hdp.crypt.komlen:=hdp.komlen; hdp.komlen:=0;      { KOM anpassen   }
+      hdp.crypt.typ:=hdp.typ;
+      hdp.crypt.charset:=hdp.charset;
+
+      if(pmcrypt[docode-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))then
+      begin
+        hdp.typ:='B';
+        hdp.mime.encoding:=MimeEncodingBase64;
+      end else
+      begin
+        hdp.typ:='T';
+        hdp.mime.encoding:=MimeEncodingQuotedPrintable;
       end;
-    close(f); erase(f);
+      hdp.mime.ctype:='application/octet-stream';
+
+      hdp.attrib:=hdp.attrib or AttrPmcrypt;
+
+      data.Free;
+      data:=fs;
+      anal.Free;
     end;
+  end;
+
+  if FileExists(fi) then
+    _era(fi);
 end;
 
 function fileserver(var adresse:string):boolean;
@@ -1123,6 +1167,12 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/09/08 14:42:09  cl
+  - added Multipart-MIME support
+  - added PGP/MIME support
+  - adaptions/fixes for MIME support
+  - adaptions/fixes for PGP/MIME support
+
   Revision 1.6  2001/09/07 13:54:25  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

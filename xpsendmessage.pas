@@ -1,21 +1,21 @@
-{   $Id$
+{ $Id$
 
-    Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+  Copyright (C) 1991-2001 Peter Mandrella
+  Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
 { Nachrichten versenden, weiterleiten, unversandt-bearbeiten }
@@ -30,12 +30,11 @@ uses
   sysutils,
   typeform,fileio,inout,keys,datadef,database,maske,crc,lister, osdepend,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
-  xpglobal,
+  xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze,
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
 Classes,fidoglob;
-
 
 const sendIntern = 1;     { force Intern              }
       sendShow   = 2;     { ausfuehrliche Sendeanzeige }
@@ -50,6 +49,7 @@ const sendIntern = 1;     { force Intern              }
       SendPGPsig = 1024;  { Nachricht signieren       }
       SendNokop  = 2048;  { STAT: NOKOP               }
       SendIQuote = 4096;  { indirekter Quote          }
+      SendMPart  = 8192;  { Multipart zerlegen        }
 
       pgdown    : boolean = false;
       _sendmaps : boolean = false;
@@ -88,11 +88,12 @@ var
       msgMarkEmpf: byte;   { fuer sendMark }
 
 
-function DoSend(pm:boolean; var datei:string; empfaenger,betreff:string;
+function DoSend(pm:boolean; datei:string; is_temp,is_file:boolean;
+                empfaenger,betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData:SendUUptr;
-                var header,signat:string; sendFlags:word):boolean;
+                const signat:string; sendFlags:word):boolean;
 procedure send_file(pm,binary:boolean);
-function  SendPMmessage(betreff,fn:string; var box:string):boolean;
+function SendPMmessage(betreff,fn:string; is_temp:boolean; var box:string):boolean;
 
 function umlauttest(var s:string):boolean;
 function test_senddate(var s:string):boolean;
@@ -106,7 +107,7 @@ function pgpo_keytest(var s:string):boolean;
 implementation  { --------------------------------------------------- }
 
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4e,xpconfigedit,xp9bp,xpcc,xpnt,xpfido, xpmakeheader,
-     xp_pgp,xpsendmessage_internal;
+     xp_pgp,xpsendmessage_internal,mime,mime_analyze,rfc2822,xpdatum,StringTools,xpstreams,utftools;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
 asm
@@ -321,6 +322,8 @@ end;
 
 { --- Datei verschicken ---------------------------------------------------- }
 { Datei:  Pfadname der Datei. Wenn nicht vorhanden, wird eine leere angelegt }
+{ is_temp: Datei löschen                                                     }
+{ is_file: Es ist ein Datei-Attachment                                       }
 { empfaenger: der Empfaenger (User oder x/Brett)                             }
 { Edit :   Nachricht zunaechst Editieren und dann erst senden                }
 { Binary:  Binaerdatei                                                       }
@@ -328,9 +331,10 @@ end;
 { datei, header und signat sind nur aus Stack-Platz-Gruenden VARs!           }
 { header wird veraendert!!                                                   }
 
-function DoSend(pm:boolean; var datei:string; empfaenger,betreff:string;
+function DoSend(pm:boolean; datei:string; is_temp,is_file:boolean;
+                empfaenger,betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData:SendUUptr;
-                var header,signat:string; sendFlags:word):boolean;
+                const signat:string; sendFlags:word):boolean;
 
 var f,f2     : file;
     edis     : byte;
@@ -428,9 +432,19 @@ var f,f2     : file;
     fo       : string;
     flags    : longint;
 
+    parts    : TList;       { Nachrichten-Teile }
+    partsex  : Boolean;	    { bereits extrahiert? }
+    pa       : TSendAttach_Part;
+
+    s        : String;
+    s1,s2,s3,s4,s5 : TStream;
+    Boundary : String;
+    i        : Integer;
+
   label xexit,xexit1,xexit2,fromstart,ReadAgain;
 
 {$I xpsendmessage_subs.inc}
+{$I xpsendmessage_subs_mime.inc}
 
   function uucpbrett(s:string; edis:byte):string;
   var i : integer;
@@ -444,11 +458,57 @@ var f,f2     : file;
       end;
   end;
 
+  procedure AddMessagePart(datei:string;temp,is_orig:boolean);
+  var pa     : TSendAttach_Part;
+  begin
+    pa := TSendAttach_Part.Create;
+
+    pa.FileName    := datei;
+    pa.IsTemp	   := temp;
+    pa.IsFile      := false;
+
+    if is_orig and assigned(sData^.OrgHdp) then
+    begin
+      pa.FileCharset := sData^.OrgHdp.Charset;
+      pa.FileEOL     := MimeEolCRLF;
+      pa.ContentDisposition.AsString := iifs(sData^.OrgHdp.Mime.Disposition<>'',sData^.OrgHdp.Mime.Disposition,'inline');
+      pa.ContentDescription := sData^.OrgHdp.Mime.Description;
+      pa.ContentType.AsString := iifs(sData^.OrgHdp.Mime.CType<>'',sData^.OrgHdp.Mime.CType,'text/plain');
+      pa.ContentEncoding := sData^.OrgHdp.Mime.Encoding;
+    end else
+    begin
+      pa.FileCharset := 'IBM437';
+      pa.FileEOL     := MimeEolCRLF;
+      pa.ContentDisposition.DispoType := MimeDispositionInline;
+      pa.ContentEncoding := MimeEncoding7Bit;
+      pa.ContentType.AsString := 'text/plain';
+    end;
+
+    SendAttach_Analyze(pa,not is_orig,iifs(flOhneSig,'',sigfile),docode,flPGPSig);
+
+    parts.Insert(0,pa);
+  end;
+
+  procedure AddFilePart(datei:string;temp:boolean);
+  var pa     : TSendAttach_Part;
+  begin
+    pa := TSendAttach_Part.Create;
+
+    pa.FileName    := datei;
+    pa.IsTemp	   := temp;
+    pa.IsFile      := true;
+
+    SendAttach_Analyze(pa,true,'',docode,flPGPSig);
+
+    parts.Insert(0,pa);
+  end;
 
   procedure EditNachricht(pushpgdn:boolean);
   var p      : byte;
-     edpush : boolean;
+      edpush : boolean;
   begin
+    MIMEDecompose;
+
     edpush:=not editvollbild and ((exteditor=1) or (VarEditor='') or (VarEditor[1]='*'));
     if edpush then begin
       attrtxt(col.coledithead);
@@ -469,9 +529,12 @@ var f,f2     : file;
       end;
     if pushpgdn then pushkey(keycpgd);
     if exteditor<3 then EditSetBetreff(betreff,betrlen);
-    editfile(datei,true,
-           (sendFlags and SendReedit<>0) or (filetime(datei)<>orgftime),
-           iif(editvollbild,0,2),umlaute=1);
+
+    if (parts.count<=0) or not TSendAttach_Part(parts[0]).IsMessage then
+      addMessagePart(TempS($FFFF),true,false);
+
+    SendAttach_EditText(TSendAttach_Part(parts[0]),true,umlaute=1,iifs(flOhneSig,'',SigFile),docode,flPGPSig);
+
     if exteditor<3 then betreff:=EditGetbetreff;
     if edpush then begin
       moff; wpop; mon;
@@ -483,12 +546,11 @@ var f,f2     : file;
     otherquotechars:=otherqcback; {evtl. mit 'Q' im Lister umgeschaltene Quotechars reseten }
   end;
 
-
   procedure TestXpostings(all:boolean);  { Crossposting-Informationen zusammenstellen }
   var i,first : integer;
 
     procedure GetInf(n:integer; var adr:string);
-    var 
+    var
       p : Integer;
       size: Integer;
       temp :string[90];
@@ -861,6 +923,9 @@ begin      //-------- of DoSend ---------
   _verteiler:=false;
   flOhnesig:=false; flLoesch:=false;
   assign(f,datei);
+  parts := TList.Create;
+  partsex := false;
+  s1:=nil;s2:=nil;s3:=nil;s4:=nil;s5:=nil;
 
   sdNope:=(sdata=nil);
   if sdNope then sdata:=allocsenduudatamem;
@@ -872,12 +937,23 @@ begin      //-------- of DoSend ---------
                 datei,false,1);
     sdata^.quotestr:=qchar;
     get_xref;
+    partsex:=true;
+    AddMessagePart(datei,true,true);
+  end else
+  if sendFlags and sendMPart<>0 then
+  begin
+    PartsEx := not FileExists(datei);
+      // don't extract multipart parts if file does not exist anyway...
   end else
   begin
-    if not FileExists(datei) then
-    begin       { leere Datei anlegen }
-      rewrite(f); close(f);
+    if FileExists(datei) then
+    begin
+      if not is_file then
+        AddMessagePart(datei,is_temp,true)
+      else
+        AddFilePart(datei,is_temp);
     end;
+    partsex:=true;
     OrigBox:='';
   end;
 
@@ -913,6 +989,8 @@ fromstart:
   fidoname:='';        { forcebox ''-um Box entsprechend Empfaenger zu waehlen }
   ch:=' ';             {          Ansonsten steht hier die zu benutzende Box   }
 
+  { -- Empfaenger -- }
+
   if pm then begin
     fidoto:='';
     dbSeek(ubase,uiName,UpperCase(empfaenger));
@@ -945,7 +1023,7 @@ fromstart:
           Box := dbReadStrN(ubase,ub_pollbox);   { leider doppelt noetig :-/ }
           _brett:=mbrettd('U',ubase);
           dbReadN(ubase,ub_codierer,cancode);
-          if (cancode<>9) and (dbXsize(ubase,'passwort')=0) then
+          if (not cancode in [8,9]) and (dbXsize(ubase,'passwort')=0) then
             cancode:=0
           else begin
             if cancode<>0 then
@@ -992,7 +1070,7 @@ fromstart:
                 box:=OrigBox;
               end
             else
-              if _brett[1]='U' then 
+              if _brett[1]='U' then
                 box:=DefaultBox
               else begin
                 dbSeek(bbase,biIntnr,copy(_brett,2,4));
@@ -1052,6 +1130,8 @@ fromstart:
     edis:=2;
     if not binary then cancode:=-1;  { Rot13 moeglich }
   end;   { of not pm }
+
+  { -- Boxdaten -- }
 
   dbOpen(d,BoxenFile,1);           { Pollbox + MAPS-Name ueberpruefen }
   if box<>'' then begin            { nicht intern.. }
@@ -1260,7 +1340,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
           goto ReadAgain;
           end;
 
-        if (n=5) or (t='/') then    { Empfaenger aendern? }
+        if { (n=5) or } (t='/') then    { Empfaenger aendern? }
         begin
           Changeempf;
           betreffbox:=false; edit:=false; sendbox:=true;
@@ -1270,7 +1350,13 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
           closebox;
           goto fromstart;
           end
-        else if n>5 then dec(n); { Ansonsten eins zurueckzaehlen fuer alte Keys}
+        else
+        case n of     { Ansonsten eins zurueckzaehlen fuer alte Keys }
+          1..4: ;               { Ja, Nein, Intern, Spezial     }
+          5..7: ;               { Betreff, Box, Code            }
+          8:    n:=23;          { Anhänge                       }
+          9:    ;               { Text                          }
+        end;
 
         if n<0 then begin
           p:=pos(UpCase(t[1]),getres2(611,30));   { PDEH™RMLG }
@@ -1348,13 +1434,20 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                   end;
                 n:=1;
               end;
-        7   : if cancode<>0 then begin          { Codierung aendern }
-                if docode=0 then docode:=cancode
-                else docode:=0;
+        7   : if cancode<>0 then
+              begin                                { Codierung aendern }
+                if docode<>0 then
+                  docode:=0
+                else
+                if parts.Count=1 then
+                  docode:=cancode
+                else if (cancode in [8,9]) and ntMIME(netztyp)
+                then
+                  docode:=8;                       // use PGP/MIME instead of PGP for multiparts
                 showcode;
                 n:=1;
               end;
-        8   : if not binary and (sendflags and sendWAB=0) then begin
+        9   : if not binary and (sendflags and sendWAB=0) then begin
                 editnachricht(false);              { zurueck zum Editor }
                 if not getsize then begin
                   closebox; goto xexit; end;    { -> Nachrichtengroesse 0 }
@@ -1382,6 +1475,14 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                 end;
        14   : begin
                 flOhnesig:=not flOhnesig;
+
+                // If the user explicitly says that s/he wants a signature
+                // then create a part that can hold it.
+
+                if (not flOhneSig) and ( (Parts.Count<1) or
+                    not TSendAttach_Part(Parts[0]).IsMessage ) then
+                  AddMessagePart(TempS($FFFF),true,false);
+
                 calc_hdsize;
                 showsize;
               end;
@@ -1417,7 +1518,18 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
                if not(netztyp in netsRFC)then rfehler(622);
                 getprio;
                showflags;
-              end
+              end;
+       23   : begin
+                MIMEDecompose;
+                SendAttach(Parts,Umlaute=1,iifs(flOhneSig,'',sigfile),netztyp,
+                  iif(docode in [8,9],cancode,docode),flPGPSig);
+
+                // if the user deleted the message part, switch off signatures
+                if (Parts.Count<1) or not TSendAttach_Part(Parts[0]).IsMessage then
+                  flOhneSig := true;
+
+                KorrCode;
+              end;
 
       else    if n<0 then begin
                 n:=abs(n);
@@ -1502,13 +1614,19 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       end
       else
       begin
-        { neues Brett anlegen }
+        dbAppend(bbase);                        { neues Brett anlegen }
+        dbWriteNStr(bbase,bb_brettname,empfaenger);
         wbox:=iifs(empfaenger[1]='$','',box);
         intern:=intern or (wbox='');
-        AddNewBrett(Empfaenger, '', wbox, StdHaltezeit, Grnr,  iif(netztyp in netsRFC,16,0));
+        dbWriteNStr(bbase,bb_pollbox,wbox);
+        halten:=stdhaltezeit;
+        dbWriteN(bbase,bb_haltezeit,halten);
+        dbWriteN(bbase,bb_gruppe,grnr);
+        b:=iif(netztyp in netsRFC,16,0);
+        dbWriteN(bbase,bb_flags,b);
         SetBrettindex;
         _brett:=mbrettd(empfaenger[1],bbase);
-      end
+        end
     else
       if pm then begin
         dbSeek(ubase,uiName,UpperCase(empfaenger));
@@ -1524,52 +1642,146 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       _pmReply:=pm;
       end;
 
-    { --- 1. Schritt: Nachrichten-Inhalt erzeugen ---------------------- }
+    { --- 1. Schritt: Body erzeugen ----------------------------------- }
 
     betreff:=LeftStr(betreff,betrlen);
-    if binary then
-      fn:=datei
-    else
-      fn:=TempS(system.round((_filesize(datei)+addsize+2000)*1.5));
-    assign(f2,datei);
-    iso:=not binary and ntOptISO(netztyp) and zc_iso and (grnr<>IntGruppe);
-    if not binary then begin
-      assign(f2,fn);
-      rewrite(f2,1);
-      if header<>'' then begin           { Header }
-        assign(f,header);
-        AppendFile(docode,0,iso);
-        end;
-      assign(f,datei);                   { Text }
-      AppendFile(docode,0,iso);
-      if not flOhnesig and (sigfile<>'') then begin       { Signatur }
-        assign(f,sigfile);
-        AppendFile(docode,0,iso);
-        end;
-      fo:=fido_origin(false);
-      if fo<>'' then
-        wrs(fo);
-      close(f2);
-      end;
-
-    { --- 2. Schritt: Nachricht in mbase/MPUFFER ablegen --------------- }
-
-    bin_msg:=binary and (maxbinsave>0) and (fs>maxbinsave*1024);
-    if not bin_msg then
-      assign(f,fn)
-    else begin
-      assign(f2,TempPath+'binmsg');
-      rewrite(f2,1);
-      wrs('');
-      wrs(getres2(612,2));   { 'Binaerdatei verschickt' }
-      wrs('');
-      wrs(getreps2(612,3,UpperCase(datei)));   { 'Dateiname: %s' }
-      wrs(getreps2(612,4,strs(fs)));      { 'Groesse    : %s Bytes' }
-      close(f2);
-      assign(f,TempPath+'binmsg');
-      end;
     Hdp.Clear;
+
     hdp.netztyp:=netztyp;
+    if ntMIME(netztyp) then
+      hdp.MIME.mversion := '1.0';
+
+    if (hdp.typ='M') or not ((not docode in [0,8]) or (flPGPSig and
+       (((not PGP_MIME) and (cancode<>8)) or (cancode=9)) )) then
+      for i:=0 to parts.Count-1 do
+        with TSendAttach_Part(parts[i]) do
+          case ContentEncoding of
+            MimeEncoding8Bit: ContentEncoding:=MimeEncodingQuotedPrintable;
+            MimeEncodingBinary: ContentEncoding:=MimeEncodingBase64;
+            MimeEncoding7Bit: ContentEncoding:=Analyzed.PreferredEncoding;
+          end;
+
+    if (not partsex) and assigned(sdata^.orghdp) then
+    begin
+      // just pass-through
+      s1 := TFileStream.Create(datei,fmOpenRead);
+
+      hdp.typ           := sdata^.orghdp.typ;
+      hdp.mime.ctype    := sdata^.orghdp.mime.ctype;
+      hdp.mime.encoding := sdata^.orghdp.mime.encoding;
+      hdp.mime.disposition := sdata^.orghdp.mime.disposition;
+      hdp.mime.cid      := sdata^.orghdp.mime.cid;
+      hdp.charset       := sdata^.orghdp.charset;
+      hdp.x_charset     := sdata^.orghdp.x_charset;
+    end
+    else case parts.count of
+      0: begin
+           if ntMIME(netztyp) then
+           begin
+             hdp.typ := 'M'; // pass-through
+             hdp.mime.ctype := 'text/plain';
+             hdp.mime.encoding := MimeEncoding7Bit;
+           end else
+             hdp.typ := 'T';
+           s1 := TMemoryStream.Create;
+         end;
+      1: with TSendAttach_Part(parts[0]) do begin
+           if ntMIME(netztyp) and not ntConv(netztyp) then
+             hdp.typ := 'M' else // ZConnect with MIME
+           if(TSendAttach_Part(parts[0]).FileEOL=MimeEOLNone) or
+             (TSendAttach_Part(parts[0]).Analyzed.IsBinary) then
+             hdp.typ := 'B'  // UUZ will encode
+           else
+             hdp.typ := 'T'; // UUZ will encode
+
+           if ntMIME(netztyp) then
+           begin
+             hdp.mime.ctype    := TSendAttach_Part(parts[0]).ContentType.AsString;
+             hdp.mime.encoding := TSendAttach_Part(parts[0]).ContentEncoding;
+             hdp.mime.disposition := TSendAttach_Part(parts[0]).ContentDisposition.AsString;
+             hdp.mime.description := TSendAttach_Part(parts[0]).ContentDescription;
+           end; // ntMIME
+
+           if hdp.typ <> 'M' then
+           begin
+             hdp.datei := TSendAttach_Part(parts[0]).FileName;
+             hdp.summary := TSendAttach_Part(parts[0]).ContentDescription;
+             if ntMime(netztyp) and not IsNAN(FileModify) then
+               hdp.ddatum := DateTimeToZCDateTime(TSendAttach_Part(parts[0]).FileModify);
+           end;
+
+           if ContentType.NeedCharset then
+           begin
+             FileCharset:=MimeCharsetCanonicalName(FileCharset);
+             ContentCharset:=MimeCharsetCanonicalName(ContentCharset);
+           end;
+
+           // Determine whether we can use the file unchanged:
+
+           if (FileEOL in [MimeEOLLF,MIMEEOLCR]) or
+              ((IsMessage) and not flOhnesig and (sigfile<>'')) or
+              ((hdp.typ='M') and (
+                 (ContentEncoding in [MimeEncodingBase64,MimeEncodingQuotedPrintable]) or
+                 (ContentType.NeedCharset and (ContentCharset<>FileCharset)) )) or
+              ((hdp.typ<>'M') and (
+                 (ContentType.NeedCharset and not MIMESaveCharsetAsCP437(FileCharset)) )) then
+           begin
+             s1 := TMemoryStream.Create;
+             MIMEWriteContent(s1,TSendAttach_Part(parts[0]),hdp.typ='M',
+               iifs((IsMessage) and not flOhnesig and (sigfile<>''),sigfile,''));
+             if ContentType.NeedCharset then begin
+               if hdp.typ='M' then
+                 hdp.charset:=MimeCharsetToZC(ContentCharset)
+               else begin
+                 hdp.charset:=MimeCharsetToZC(FileCharset);
+                 hdp.x_charset:=ContentCharset;
+               end;
+             end;
+           end else
+           begin
+             s1 := TFileStream.Create(FileName,fmOpenRead);
+             if ContentType.NeedCharset then begin
+               hdp.charset:=MimeCharsetToZC(FileCharset);
+               hdp.x_charset:=ContentCharset;
+             end;
+           end;
+         end; // with
+      else
+      begin
+        Boundary:=MimeCreateMultipartBoundary(username); // does not contain chars that must be quoted
+        hdp.boundary:=boundary;
+        hdp.typ:='M';
+        hdp.MIME.ctype := 'multipart/mixed; boundary='+Boundary;
+        hdp.MIME.encoding := MimeEncoding7Bit;
+
+        s1 := TMemoryStream.Create;
+
+        for i:=0 to parts.Count-1 do
+        begin
+          with TSendAttach_Part(parts[i]) do
+          begin
+            if ContentType.NeedCharset then
+            begin
+              FileCharset:=MimeCharsetCanonicalName(FileCharset);
+              ContentCharset:=MimeCharsetCanonicalName(ContentCharset);
+            end;
+            writeln_s(s1,'--'+boundary);
+            MIMEWriteContentWithHeaders( s1,TSendAttach_Part(parts[i]),
+              iifs((i=0) and (IsMessage) and
+                not flOhnesig and (sigfile<>''),SigFile,'') );
+            writeln_s(s1,'');
+            if (hdp.mime.Encoding=MimeEncoding7bit) and (ContentEncoding=MimeEncoding8bit) then
+              hdp.mime.Encoding:=MimeEncoding8bit else
+            if (hdp.mime.Encoding in [MimeEncoding7bit,MimeEncoding8bit]) and (ContentEncoding=MimeEncodingBinary) then
+              hdp.mime.Encoding:=MimeEncodingBinary;
+          end; // with
+        end; // for
+        writeln_s(s1,'--'+boundary+'--');
+      end;
+    end;
+
+    { --- 2. Schritt: Headerdaten erzeugen ---------------------------- }
+
     if ntZConnect(netztyp) then begin
       if pm then
         hdp.empfaenger:=empfaenger            { PM }
@@ -1659,7 +1871,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         hdp.org_xref:=_orgref;
 
     hdp.replypath:=_replypath;
-    hdp.typ:=iifs(binary,'B','T');
+//  hdp.typ:=iifs(binary,'B','T');
     if (netztyp<>nt_Fido) or pm then
       hdp.programm:=LeftStr(xp_xp,iif(cpos('/',xp_xp)<>0,cpos('/',xp_xp)-1,length(xp_xp)))
                      +'/'+trim(verstr)
@@ -1700,14 +1912,14 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
           end;
         end;
       end;
-    if FileAttach then inc(hdp.attrib,attrFile);
+//    if FileAttach then inc(hdp.attrib,attrFile);
     if netztyp=nt_Maus then
       if flQTo then inc(hdp.attrib,AttrQuoteTo);
     if ntPmReply(netztyp) then
       if _pmReply then inc(hdp.attrib,AttrPmReply);
     if ControlMsg then inc(hdp.attrib,AttrControl);
-    if (binary and (netztyp in netsRFC) and multipartbin) or
-       (binary and (netztyp=nt_Maus) and mausmpbin) then
+    if ((hdp.typ='B') and (netztyp in netsRFC) and multipartbin) or
+       ((hdp.typ='B') and (netztyp=nt_Maus) and mausmpbin) then
       inc(hdp.attrib,AttrMPbin);
     if flPGPkey then
       inc(hdp.pgpflags,fPGP_haskey);
@@ -1720,13 +1932,13 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       end;
     hdp.prio:=msgprio;
     hdp.nokop:=flNokop;
-    if umlaute=0 then
-      if netztyp=nt_Fido then
-        hdp.x_charset:='IBMPC 2'   { s. FSC-0054, grmpf }
-      else if netztyp in netsRFC then
-        if FileContainsUmlaut then hdp.x_charset:='ISO-8859-1';
-    if iso then
-      hdp.charset:='ISO1';
+//    if umlaute=0 then
+//      if netztyp=nt_Fido then
+//        hdp.x_charset:='IBMPC 2'   { s. FSC-0054, grmpf }
+//      else if netztyp in netsRFC then
+//        if FileContainsUmlaut then hdp.x_charset:='ISO-8859-1';
+//    if iso then
+//      hdp.charset:='ISO1';
     if assigned(sData^.orghdp) then
       with sData^.orghdp do begin
         { hdp.zdatum:=zdatum; hdp.orgdate:=true;  !! Unversandt/* !! }
@@ -1743,21 +1955,22 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       msgCPanz:=ccm^[0].cpanz;
     msgCPpos:=0;
 
-    fm_ro;
-    reset(f,1);
-    fm_rw;
-    hdp.groesse:=filesize(f);
-    fn2:=TempS(hdp.groesse+4000);
-    assign(f2,fn2);
-    rewrite(f2,1);
     for ii:=1 to msgCPanz-1 do
       EmpfList.Add(cc^[ii]);
     hdp.References.Assign(sData^.References);
-    WriteHeader(hdp,f2);
-{    hdsize:=filepos(f2); }
-    fmove(f,f2);
-    close(f);
-    close(f2);
+
+    hdp.groesse:=s1.Size;
+    s1.Seek(0,soFromBeginning);
+
+    fn2:=TempS(s1.Size+4000);
+    s2 := TFileStream.Create(fn2,fmCreate);
+
+    hdp.WriteToStream(s2);      // Header erzeugen
+    CopyStream(s1,s2);  // Body anhängen
+
+    s2.Free; s2:=nil;
+
+    { --- 3. Schritt: Nachricht in Datenbank ablegen ------------------ }
 
     repeat                                   { einzelne Crosspostings in }
       if ntZConnect(netztyp) then begin      { mbase ablegen             }
@@ -1781,6 +1994,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       dbWriteNStr(mbase,mb_brett,_brett);
       dbWriteNStr(mbase,mb_betreff,hdp.betreff);
       dbWriteNStr(mbase,mb_absender,hdp.absender);
+      dbWriteNStr(mbase,mb_mimetyp,LowerCase(LeftStr(hdp.mime.ctype,CPosX(';',hdp.mime.ctype)-1)));
       l:=ixdat(hdp.datum);
       dbWriteN(mbase,mb_origdatum,l);
       dbWriteN(mbase,mb_empfdatum,sendedat);
@@ -1799,7 +2013,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       dbWriteN(mbase,mb_halteflags,b);
       if intern then b:=0
       else b:=1;
-      if bin_msg then inc(b,2);                  { 2 = Binaer-Meldung }
+//      if bin_msg then inc(b,2);                  { 2 = Binaer-Meldung }
       if flCrash and MayCrash then inc(b,16);    { !! Crash-Flag }
       dbWriteN(mbase,mb_unversandt,b);
 
@@ -1856,7 +2070,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         inc(msgCPpos);
       if msgCPpos<msgCPanz then begin
         repeat
-          if ccm^[msgCPpos].ccpm then 
+          if ccm^[msgCPpos].ccpm then
           begin
             dbSeek(ubase,uiName,UpperCase(cc^[msgCPpos]));
             if dbFound then
@@ -1881,103 +2095,87 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       SendFlags:=SendFlags and not SendHalt;
     until msgCPpos>=msgCPanz;
 
-  { if not pm then dbFlushClose(bbase); }
-
-
-    { --- 3. Schritt: Nachricht in PP ---------------------------------- }
+    { --- 3. Schritt: Nachricht ggf. fuer Pollpaket kodieren --------- }
 
     if not intern then begin
-      if (docode=1) or (docode=2) then begin
-        SetCryptFlag;
-        assign(f,fn);
-        fm_ro;
-        reset(f,1);
-        fm_rw;
-        fn2:=TempS(filesize(f)+2000);
-        assign(f2,fn2);
-        rewrite(f2,1);
-        passpos:=1;
-        case docode of
-          1 : encode_file(false,f,f2);
-          2 : begin
-                DES_PW(passwd);
-                encode_file(true,f,f2);
-              end;
-        end; { case }
-        close(f); close(f2);
-        assign(f,fn2);
-        end { if docode }
-      else
-        assign(f,fn);
+      s1.Seek(0,soFromBeginning);
 
-      fm_ro;
-      reset(f,1);
-      fm_rw;
-      fn3:=TempS(filesize(f)+4000);
-      assign(f2,fn3);
-      rewrite(f2,1);
-      hdp.archive:=false;
-      hdp.empfaenger:=iifs(pm,empfaenger,mid(empfaenger,2));
-      b:=cpos('@',hdp.absender);
-      if not ntZConnect(netztyp) then begin
-        if nobox and (b>0) then
-          TruncStr(hdp.absender,b-1);
-        b:=cpos('@',hdp.empfaenger);
-        if (b>0) and (UpperCase(mid(hdp.empfaenger,b+1))=box+'.ZER') then
-          hdp.empfaenger:=LeftStr(hdp.empfaenger,b-1);
+      if (hdp.typ<>'M') and ((not docode in [0,8]) or (flPGPSig and
+        (((not PGP_MIME) and (cancode<>8)) or (cancode=9)) )) then
+      begin
+        case docode of
+          1: EncryptMessage(false,s1); // QPC
+          2: EncryptMessage(true, s1); // DES
+          3..5: pmEncryptMessage(s1);  // PMC-1..3
+          8,9: XP_PGP.PGP_EncodeStream(s1,hdp,passwd,true,flPGPSig,fo);
+          else if flPGPSig then XP_PGP.PGP_EncodeStream(s1,hdp,'',false,true,fo);
         end;
-      case docode of
-        1 : begin
-              hdp.betreff:=LeftStr(QPC_ID+hdp.betreff,BetreffLen);
-              inc(hdp.attrib,AttrQPC);
-            end;
-        2 : hdp.betreff:=LeftStr(DES_ID+hdp.betreff,BetreffLen);
+        end else
+      begin
+        if (typ<>'M') and (flPGPSig or (docode in [8,9])) then
+        begin
+          // encode the single part NOW for MIME
+          assert(parts.count=1);
+
+          s1.Free; s1:=TMemoryStream.Create;
+          with TSendAttach_Part(parts[0]) do
+            MIMEWriteContent(s1,TSendAttach_Part(parts[0]),true,
+              iifs((IsMessage) and not flOhnesig and (sigfile<>''),sigfile,''));
+          hdp.typ:='M';
+        end;
+
+        if flPGPSig then
+          XP_PGP.PGP_MimeSignStream(s1,hdp);
+
+        if (docode in [8,9]) then
+          XP_PGP.PGP_MimeEncodeStream(s1,hdp,passwd);
+
+        begin
+          // encrypt as multipart/encrypted
+        end;
       end;
-      hdp.typ:=iifs(newbin,'B','T');
-      hdp.groesse:=filesize(f);
+
+    { --- 4. Schritt: Nachricht ins Pollpaket schreiben -------------- }
+
       for ii:=1 to msgCPanz-1 do
         Empflist.Add(cc^[ii]);
-      WriteHeader(hdp,f2);
-      fmove(f,f2);
-      close(f); close(f2);
-      if (docode=1) or (docode=2) then
-        _era(fn2);
-      if pmc_code then pmCryptFile(hdp,fn3) else
-      if (docode=9) or flPGPsig then begin
-        for ii:=1 to msgCPanz-1 do
-          Empflist.Add(cc^[ii]);
-        xp_pgp.PGP_EncodeFile(f,hdp,fn3,passwd,docode=9,flPGPsig,fo);
-        EmpfList.Clear;
-        end;
 
       if not flCrash or not MayCrash then
-        assign(f2,boxfile+extBoxfile)           { ..und ab damit ins Pollpaket }
+        fn2 := boxfile+ExtBoxfile
       else begin
-        assign(f2,CrashFile(hdp.empfaenger));
+        fn2 := CrashFile(hdp.empfaenger);
         SetCrashInfo;
-        end;
-      reset(f2,1);
-      if ioresult<>0 then rewrite(f2,1)
-      else seek(f2,filesize(f2));
-      assign(f,fn3);
-      fm_ro;
-      reset(f,1);
-      fm_rw;
-      fmove(f,f2);
-      close(f); close(f2);
-      _era(fn3);
+      end;
+
+      if FileExists(fn2) {grrr} then begin
+        s2 := TFileStream.Create(fn2,fmOpenReadWrite);
+        s2.Seek(0,soFromEnd);
+      end else
+        s2 := TFileStream.Create(fn2,fmCreate);
+
+      hdp.groesse := s1.Size;
+      hdp.WriteToStream(s2);
+      EmpfList.Clear;
+
+      s1.Seek(0,soFromBeginning);
+      CopyStream(s1,s2);
+      s2.Free; s2:=nil;
 
       if uvs_active and (aktdispmode=11) and (cc_count=0) and
          (msgCPanz<=1) then
         MsgAddmark;
 
-      closebox;
-      if not noCrash and flCrash and MayCrash and FidoAdrOK(false) and
+    end; // not intern
+
+    s1.Free; s1:=nil;
+    closebox;    { "Nachricht abschicken/speichern" }
+
+    if not intern and
+      not noCrash and flCrash and MayCrash and FidoAdrOK(false) and
          ReadJN(getres(615),true) then    { 'Crash sofort absenden' }
         AutoCrash:=CrashAdr;  { Empfaenger, evtl. ohne Point }
-      end
-    else
-      closebox;    { "Nachricht abschicken/speichern" }
+
+  { --- CCs ----------------------------------------------------------- }
 
     if msgCPanz>1 then begin    { cc-Epfaenger bis auf einen ueberspringen }
       Move(cc^[msgCPanz],cc^[1],(maxcc-msgCPanz+1)*sizeof(cc^[1]));
@@ -1985,7 +2183,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
       dec(cc_anz,msgCPanz-1); inc(cc_count,msgCPanz-1);
       end;
 
-    if not binary then _era(fn);
+//  if not binary then _era(fn);
   end;   { not verteiler }
 
   if cc_anz>0 then begin           { weitere CC-Empfaenger bearbeiten }
@@ -2001,10 +2199,12 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     goto fromstart;
     end;
 
-  if FidoBin and EditAttach then begin
-    SaveDeleteFile(datei);
-    datei:=betreff;
-    end;
+  { --- Aufräumarbeiten zum Schluss ----------------------------------- }
+
+//  if FidoBin and FileExists(datei) and EditAttach then begin
+//    _era(datei);
+//    datei:=betreff;
+//  end;
 
   aufbau:=true; xaufbau:=true;
   { es muss jetzt der korrekte Satz in mbase aktuell sein! }
@@ -2032,6 +2232,10 @@ xexit2:
   ControlMsg:=false;
   NewbrettGr:=0;
   oldmsgpos:=0; oldmsgsize:=0;
+
+  for ii:=0 to parts.count-1 do
+    TObject(parts[ii]).Free;
+  parts.Free;
 end; {------ of DoSend -------}
 
 
@@ -2088,15 +2292,14 @@ begin
       hf:='';
       sendfilename:=UpperCase(ExtractFilename(fn));
       sendfiledate:=zcfiletime(fn);
-      if DoSend(pm,fn,empf,betr,false,binary,true,true,false,sData,hf,hf,0) then;
+      if DoSend(pm,fn,useclip,true,empf,betr,false,binary,true,true,false,sData,hf,0) then;
       freesenduudatamem(sData);
       end;
-    if useclip then _era(fn);
     end;
 end;
 
 
-function SendPMmessage(betreff,fn:string; var box:string):boolean;
+function SendPMmessage(betreff,fn:string; is_temp:boolean; var box:string):boolean;
 var d    : DB;
     empf : string;
     s    : string;
@@ -2111,8 +2314,8 @@ begin
   if empf<>'' then begin
     InternBox:=box; forcebox:=box;
     s:='';
-    if DoSend(false,fn,empf,betreff,
-              false,false,false,false,false,nil,s,s,sendIntern+sendShow)
+    if DoSend(false,fn,is_temp,false,empf,betreff,
+              false,false,false,false,false,nil,s,sendIntern+sendShow)
     then begin
       l:=dbReadInt(mbase,'unversandt') or 64;    { interne Nachricht }
       dbWriteN(mbase,mb_unversandt,l);     { -> keine Mausstatus-Abfrage }
@@ -2130,13 +2333,11 @@ end.
 
 {
   $Log$
-  Revision 1.6  2001/09/07 13:54:25  mk
-  - added SaveDeleteFile
-  - moved most file extensios to constant values in XP0
-  - added/changed some FileUpperCase
-
-  Revision 1.5  2001/09/07 09:17:56  mk
-  - added AddNewBrett procedure
+  Revision 1.7  2001/09/08 14:42:09  cl
+  - added Multipart-MIME support
+  - added PGP/MIME support
+  - adaptions/fixes for MIME support
+  - adaptions/fixes for PGP/MIME support
 
   Revision 1.4  2001/08/29 19:50:47  ma
   - changes in net type handling (2)
