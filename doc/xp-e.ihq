@@ -78,45 +78,96 @@ in CrossPoint:
 5
 <<CrossPoint - Support
 
-The current version (by Peter Mandrella) and
-information about CrossPoint may be found on the
-InterNet at:
+CrossPoint users get extensive support whenever they
+might be facing problems and/or having questions. It
+doesn't make a difference if you're a registered user
+already (see [Licence Conditions]), or if you're still@6
+testing CrossPoint. If you're facing a problem that
+can't be solved with the online help, please feel
+free to use one of the following channels:
 
-        http://www.crosspoint.de
 
-The newest version and information relating to
-CrossPoint development by the OpenXP Project may be
-found at:
+þ  Post your question to one of the following support
+   forums:
 
-        http://www.openxp.de
+   Z-Netz (*) /DE/COMM/SOFTWARE/CROSSPOINT  (Usenet)
+              /Z-NETZ/ALT/SUPPORT/XPOINT/ALLGEMEINES
+              (both German support forums)
+   FidoNet    XPOINT (International support echo)
+              CROSSPOINT.GER,  CROSSPOINT.EXPERT.GER
+              (both German support echos)
+   MausNet    Maus.Tausch.CrossPoint (German)
+   Usenet     de.comm.software.crosspoint (German)
 
-The official German FidoNet support site is Max
-Raabe's Klystron BBS:
+   Please note that you're welcome if you're posting
+   to even the German forums in English.
 
-        +49-261-9524095
-        +49-261-9524094 (ISDN)
+  (*) Z-Netz: It is recommended to primarily post to
+              to the Usenet newsgroup, as you will
+              hardly find any active CrossPoint users
+              in the Z-Netz 'board'.
 
-        FidoNet: 2:2454/97
+   Almost all participants of these forums are expe-
+   rienced XP users; thus you will a solution for
+   almost every problem there. Should your Serverbox
+   not run the respective forum, please contact your
+   SysOp. He can order it for you.
 
-There is NO official English support site but help
-and support may be obtained from the following
-sources:
 
-        FidoNet: XPOINT
-                 (International FidoNet support echo)
+þ  <<Bug reports>> should be directed as follows
+   (in descending priority):
 
-        Usenet:  de.comm.software.crosspoint
-                 (German support newsgroup)
-                 (Although the dominant language is
-                 German, English *is* allowed)
+   Internet   eMail to: <<dev\@openxp.de>>
+              Here you can directly contact the deve-
+              lopers of the OpenXP team through their
+              mailing list - to which you also can
+              subscribe yourself, if you wish (see
+              <<http://www.openxp.de/>>).
 
-All bug reports should be posted in the German
-support newsgroup. If you do not have internet
-access, bug reports may be posted in the FidoNet
-echo, together with a note to the moderator
-requesting that the bug report be forwarded into
-the German support newsgroup. The moderator is a
-very obliging chappie :-)
+   WWW        The OpenXP bug list at SourceForge:
+              <<https://sourceforge.net/projects/openxp>>
+              This is the starting page of OpenXP at
+              SourceForge. From there you go via the
+              links "<<Bugs>>" and then "<<Submit a Bug>>
+              directly to the input of your bug report.
+              Under "<<Details>>", please leave a mea-
+              ningful and replicable description of
+              the bug as well as your name and eMail
+              address.
+
+   Usenet     Article in: <<de.comm.software.crosspoint>>
+
+   Fido       Echomail in: <<XPDEV.GER>>
+              Via this (unofficial) FidoNet echo you
+              can (via a gate) also post to the
+              OpenXP mailing list: all FidoNet echo-
+              mails which carry a subject starting
+              with "[OpenXP]" are gated to the list.
+              Vice versa, all eMails from the list
+              are gated to this echo.  Please ask
+              your SysOp to get this echo for you.
+              Alternatively, please contact Christian
+              von Busse (<<2:240/2188>>) who is running
+              the gate.
+
+
+<<When you are posting problems and/or questions, you
+<<should ALWAYS indicate your CrossPoint version, if
+<<you have a crash, please ALWAYS give the precise
+<<message you saw when XP crashed.
+
+
+þ  There are also some interesting homepages about
+   CrossPoint in the Internet:
+
+<<         http://www.openxp.de/
+         (official homepage of the OpenXP Project;
+         there you will find also some interesting
+         links to further pages about CrossPoint in
+         the World Wide Web).
+
+<<         http://www.crosspoint.de/
+         (official homepage of Peter Mandrella)
 
 @
 6
