@@ -61,7 +61,7 @@ procedure prest;   { Path-Liste wiederherstellen       }
 implementation
 
 uses
-  xp1,FileIO,xpovl,mouse;
+  xp1,FileIO,resource,xpovl,mouse;
 
 const maxpath  = 2000;
       pdrive   : char = ' ';
@@ -134,8 +134,8 @@ begin
 
   if lnum=0 then
     if errdisp then begin
-      wpull(25,55,10,14,'Fehler',handle);
-      mwrt(28,12,'Datei existiert nicht');
+      wpull(25,55,10,14,getres2(2800,13),handle);  { 'Fehler' }
+      mwrt(28,12,getres2(2800,10));                { 'Datei existiert nicht' }
       delay(1500);
       wrest(handle);
       brk:=true;
@@ -156,6 +156,7 @@ begin
     wrest(handle);
     end;
   dispose(pntl);
+  freeres;
 end;
 
 
@@ -206,7 +207,8 @@ var   fb     : pathstr;
     AddFnItem:=false;
     if maxavail<length(s) then
     begin
-      hinweis('Speichermangel! maxavail = '+strs(maxavail));
+      hinweis(getreps2(2800,14,strs(maxavail)));  { 'Speichermangel! Max. verfÅgbar: %s' }
+      freeres;
       exit;
     end;
     AddFnItem:=true;
@@ -349,11 +351,12 @@ var   fb     : pathstr;
       moff;
       if s[1]='[' then
         case drivetype(s[2]) of
-          2 : Wrt2(forms('RAM-Disk',59));
-          3 : Wrt2(forms('Subst-Laufwerk',59));
-          4 : Wrt2(forms('device driven',59));
-          5 : Wrt2(forms('Netz-Laufwerk',59));
-          6 : Wrt2(forms('CD-ROM Laufwerk',59));
+          1 : Wrt2(forms(getres2(2800,1),59));  { 'Festplatte/Diskette' }
+          2 : Wrt2(forms(getres2(2800,2),59));  { 'RAM-Disk'            }
+          3 : Wrt2(forms(getres2(2800,3),59));  { 'Subst-Laufwerk'      }
+          4 : Wrt2(forms(getres2(2800,4),59));  { 'GerÑtetreiber'       }
+          5 : Wrt2(forms(getres2(2800,5),59));  { 'Netz-Laufwerk'       }
+          6 : Wrt2(forms(getres2(2800,6),59));  { 'CD-ROM-Laufwerk'     }
         else
           Wrt2(sp(59));
         end
@@ -383,6 +386,7 @@ var   fb     : pathstr;
       end;
       mon;
     end;
+    freeres;
     if wcursor then gotoxy(xx-14,yy);
   end;
 
@@ -544,7 +548,7 @@ begin
       end;
       Findclose(sr);
     end;
-    if fn=maxf then xtext:='zu viele Dateien'
+    if fn=maxf then xtext:=getres2(2800,8)  { 'zu viele Dateien' }
     else xtext:='';
 
     if not wpushed then begin
@@ -573,7 +577,7 @@ begin
       fb:='';
       iit;
       clfswin;
-      mwrt(11,y+1,'keine Dateien');
+      mwrt(11,y+1,getres2(2800,9));         { 'keine Dateien' }
       get(t,curoff);
       chgdrive:=xdir and (t>=^A) and (t<=^Z) and
                 (cpos(chr(ord(t[1])+64),drives)>0);
@@ -726,35 +730,32 @@ begin
           end;
         if (t[1]>' ') then binseek(UpCase(t[1]));
         if add<>ma then disp:=true;
-        if (t=keycr) and (not kb_ctrl) and (f^[p+add]^[1]='[') then
-        begin
-          t:=chr(ord(f^[p+add]^[2])-64);
-          chgdrive:=xdir and (t>=^A) and (t<=^Z) and
-                    (cpos(chr(ord(t[1])+64),drives)>0);
-        end else
-        begin
-          chgdrive:=xdir and (t>=^A) and (t<=^Z) and kb_ctrl and
-                    (cpos(chr(ord(t[1])+64),drives)>0);
-          if chgdrive then    { Balken auf [LW:] positionieren }
-          begin
-            i:=1;
-            while (i<=fn) and (f^[i]^<>'['+chr(ord(t[1])+64)+':]') do inc(i);
-            if (i<=fn) and (i<>p+add) then begin
-              while i-add<1 do dec(add,iif(vert,9,4));
-              while i-add>36 do inc(add,iif(vert,9,4));
-              p:=i-add;
-              display;
-              disp_p;
+        if (t=keycr) and (f^[p+add]^[1]='[') then
+          t:=chr(ord(f^[p+add]^[2])-64)+'+';
+        chgdrive:=false;
+        if xdir and (t[1]>=^A) and (t[1]<=^Z) and (kb_ctrl or (t<>keycr))
+        then
+          if (cpos(chr(ord(t[1])+64),drives)>0) then chgdrive:=true
+            else errsound;
+        if chgdrive then begin    { Balken auf [LW:] positionieren }
+          i:=1;
+          while (i<=fn) and (f^[i]^<>'['+chr(ord(t[1])+64)+':]') do inc(i);
+          if (i<=fn) and (i<>p+add) then begin
+            while i-add<1 do dec(add,iif(vert,9,4));
+            while i-add>36 do inc(add,iif(vert,9,4));
+            p:=i-add;
+            display;
+            disp_p;
             end;
           end;
-        end;
+        if (t=keycr) and kb_ctrl then t:='';
       until (t=keyesc) or (t=keycr) or chgdrive;
-    end;
+      end;
     if ((fn>0) and (t=keycr) and (right(f^[p+add]^,1)=DirSepa)) or chgdrive then
     begin
       for i:=1 to pathn do begin
         fsplit(paths[i]^,dir,name,ext);
-        if (t=keycr) and not chgdrive then     { Pfadwechsel }
+        if t=keycr then                   { Pfadwechsel }
           if f^[p+add]^='..'+DirSepa then begin
             delete(dir,length(dir),1);
             while (dir<>'') and (dir[length(dir)]<>DirSepa) do
@@ -789,6 +790,7 @@ begin
     Dispose(paths[i]);
   dispose(f);
   fsbox:=fb;
+  freeres;
 end;
 
 function pname(p:word):pathstr;
@@ -957,12 +959,12 @@ begin
   if pa=nil then path:='*mem*'
   else begin
     econt:=[]; memerr:=false;
-    if fenster then wpush(x1,x2,y1,y2,'Laufwerk '+drive);
+    if fenster then wpush(x1,x2,y1,y2,getreps2(2800,7,drive));  { 'Laufwerk %s' }
     gl:=y2-y1-1; wdt:=x2-x1-4; xp:=1;
     if pdrive<>drive then begin
       pn:=0;
       dsfiles:=0; dsb:=0;
-      pmsg('einen Moment bitte ...');
+      pmsg(getres2(2800,11));   { 'einen Moment bitte ...' }
       papp(' \');
       psearch(drive+':\',1);
       i:=ioresult;
@@ -1025,7 +1027,7 @@ begin
               if p=gl then inc(a)
               else inc(p);
         if modify and (t=keyins) then begin
-          pmsg('Name:'+sp(13));
+          pmsg(getres2(2800,12)+sp(13));  { 'Name:' }
           vn:='';
           bd(x1+9,y2,'',vn,12,1,brk);
           if not brk then begin
@@ -1035,9 +1037,9 @@ begin
             mkdir(drive+':'+path+vn);
             if inoutres<>0 then begin
               if ioresult=3 then
-                pmsg('ungÅltiger Name - Taste')
+                pmsg(getres2(2800,15))    { 'ungÅltiger Name - Taste drÅcken' }
               else
-                pmsg('Anlegen nicht mîglich - Taste');
+                pmsg(getres2(2800,16));   { 'Anlegen nicht mîglich - Taste drÅcken' }
               errproc;
               get(t2,curoff);
               end
@@ -1075,7 +1077,7 @@ begin
           delete(path,length(path),1);
           rmdir(drive+':'+path);
           if ioresult<>0 then begin
-            pmsg('Lîschen nicht mîglich - Taste');
+            pmsg(getres2(2800,17));       { 'Lîschen nicht mîglich - Taste drÅcken' }
             errproc;
             get(t2,curoff);
             end
@@ -1131,6 +1133,7 @@ begin
   if pdrive<'C' then pdrive:=' ';
   if memavail<20000 then pdel;
   if fenster then wpop;
+  freeres;
 end;
 
 
@@ -1191,11 +1194,20 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.20  2002/04/28 16:01:19  my
+  JG[+MY]:- Letzten Commit optimiert und Tonsignal bei Auswahl eines nicht
+            existierenden Laufwerks mit <Ctrl>-[LW] eingebaut.
+
+  MY:- SÑmtliche Textausgaben des Datei-Auswahlfensters ("zu viele
+       Dateien", "Netz-Laufwerk" usw.) vom Sourcecode in deutsche und
+       englische Ressource verlagert.
+
   Revision 1.16.2.19  2002/04/26 22:45:47  my
-  MY:- Fix: Ein Laufwerkswechsel auf Laufwerk M: mit <Ctrl-M>
+  MY:- Fix: Ein Laufwerkswechsel auf Laufwerk [M:] mit <Ctrl-M>
        funktionierte nicht, weil XP dies als <Enter> interpretierte und
        die entsprechende Aktion (Verzeichniswechsel, Datei îffnen)
-       ausfÅhrte.
+       ausfÅhrte. Ein <Enter> auf Laufwerk [M:] fÅhrte zu der (falschen)
+       Fehlermeldung "UngÅltiger Pfad- oder Dateiname!".
 
   Revision 1.16.2.18  2002/04/13 15:58:48  my
   MY[+SV]:- Sortierung in der Dateiauswahl-Box geÑndert: Erst
@@ -1218,9 +1230,9 @@ end.
   - Speicherleck in fsbox bei Laufwerks-/Verzeichniswechsel beseitigt
 
   Revision 1.16.2.13  2001/09/16 20:39:33  my
-  JG+MY:- Datei-Auswahlbox zeigt Scroll-Mˆglichkeit durch Hinweispfeile an
+  JG+MY:- Datei-Auswahlbox zeigt Scroll-Mîglichkeit durch Hinweispfeile an
 
-  JG+MY:- Scrolling in Datei-Auswahlbox jetzt auch mit Maus mˆglich
+  JG+MY:- Scrolling in Datei-Auswahlbox jetzt auch mit Maus mîglich
 
   MY:- Copyright-/Lizenz-Header aktualisiert
 
@@ -1252,7 +1264,9 @@ end.
   - LFN fixes
 
   Revision 1.16.2.3  2000/08/28 23:15:01  mk
-  - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext usw. LFN-faehig zu machen; das muss bei den anderen Units noch nachgeholt werden
+  - Unit LFN als letze Unit in Uses eingetragen, um FindFirst/FindNext
+    usw. LFN-faehig zu machen; das muss bei den anderen Units noch
+    nachgeholt werden
 
   Revision 1.16.2.2  2000/08/22 09:29:32  mk
   - UStrHuge entfernt
