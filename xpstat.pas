@@ -707,15 +707,15 @@ begin
         ReadBoxPar(0,defaultbox);
         maxgeb:=int((maxgeb+ewpz-0.01)/ewpz)*ewpz;        
         while round(maxgeb,2)>0 do begin
-          write(t,forms(strsrn(maxgeb,2,2),6),'³ ');
+          write(t,forms(strsrn(maxgeb,2,2),6),forms(waehrung,length(waehrung)+1),'³ ');
           for j:=1 to tage do
             if round(kosten[i,j],2)>=round(maxgeb,2) then write(t,' ±')
             else write(t,'  ');
           writeln(t);
           maxgeb:=round(maxgeb-ewpz,2);
           end;
-        writeln(t,'ÄÄÄÄÄÄÅÄ'+dup(tage*2,'Ä'));
-        write(t,'      ³ ');
+        writeln(t,'ÄÄÄÄÄÄ'+dup(length(waehrung)+1,'Ä')+'ÅÄ'+dup(tage*2,'Ä'));
+        write(t,'      '+dup(length(waehrung)+1,' ')+'³ ');
         for j:=1 to tage div 2 do
           write(t,j*2:4);
         writeln(t);
@@ -1259,8 +1259,11 @@ end;
 end.
 {
   $Log$
-  Revision 1.14.2.6  2003/01/12 07:42:33  mw
+  Revision 1.14.2.7  2003/01/12 09:10:15  mw
+  MW: Noch eine kleine Erg„nzung zum Gebhrenupdate:
+      - Jetzt auch W„hrung im Balkendiagramm der Gebhrenstatistik
 
+  Revision 1.14.2.6  2003/01/12 07:42:33  mw
   MW: Kleine Erg„nzungen zum groáen Gebhrenupdate :
       - Neuinstallierte Crosspoints verwenden jetzt
         das neue Gebuehrenmodell als Voreinstellung.
