@@ -985,6 +985,9 @@ markiert.
 <Ctrl Q><B> : Cursor an Blockanfang bewegen
 <Ctrl Q><K> : Cursor an Blockende bewegen
 
+<Ctrl+Enter>: Textbaustein-KÅrzel auswerten
+              ([Glossary]-Funktion)@64
+ 
 Tasten auf dem Ziffernblock:
 
 *  kopiert markierten Block in die Zwischenablage
@@ -1110,6 +1113,69 @@ durch halten der rechten Maustaste.
   Zeilen werden die Quotezeichen mit berÅcksichtigt.
   Siehe auch ['Block reformatieren'] (<Ctrl B>).@61
 
+@
+64
+<<Glossary>>
+--------
+
+Mit dieser Funktion kînnen Sie oft benîtigte
+Textbausteine aus einem Menue wÑhlen, bzw.
+direkt als KÅrzel im Editor eingeben.
+
+BerÅhrt der Cursor beim drÅcken von Ctrl+Enter
+eine Zeichenkette, wird diese als KÅrzel angesehen
+und ersetzt. Wird kein entsprechender Textbaustein
+gefunden, (oder der Cursor berÅhrt nichts),
+Erscheint ein Popupmenue, aus dem ein Textbaustein
+gewÑhlt werden kann.
+
+Um diese Funktion zu konfigurieren, muss eine Datei
+namens GLOSSARY.CFG im XP-Verzeichnis angelegt werden.
+In dieser Datei werden dann die Textbausteine
+nach folgenden Regeln konfiguriert:
+
+Am Anfang einer Zeile kennzeichnet eine in >..<
+eingeschlossene Zeichenkette ein KÅrzel,
+(Gross/Kleinschreibung ist dabei egal).
+Alle folgenden Zeilen gehîren dann zum Entsprechenden
+Textbaustein, bis wieder eine Zeile gefunden wird,
+die mit ">" beginnt. Diese Ende-Kennung kann das
+nÑchste KÅrzel sein, oder nur das Ende des Blocks
+kennzeichnen (damit zur öbersicht Leerzeilen
+eingefÅgt werden kînnen)
+
+Beispieldatei:
+
+___________________________
+
+>mfg<
+Mit Freundlichen GrÅssen
+
+>
+
+>--<
+
+-_-_-_- [Schnipp ] _-_-_-_-_
+
+>xp<
+Crosspoint
+>oxp<
+OpenXP
+>
+
+>pm<
+Peter Mandrella
+>
+
+>sig<
+
+Dies ist eine tolle
+ Signatur!
+>
+___________________________
+
+Am besten Sie experimentieren einfach etwas
+mit den Mîglichkeiten dieses Features.
 @
 8063
   Geben Sie hier die Spalte ein, in der der Text
