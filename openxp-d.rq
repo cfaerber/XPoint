@@ -547,7 +547,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 25   Empf„ngern l”schen
 26   alle Kopien als Blindkopien verschicken
 27   bei Mail ebenso
-29   User bei PM-Antwort automatisch anlegen
+29   News nicht archivieren lassen
 30   Cancel- und Ersetzt-Nachrichten ignorieren
 31   Eigene PMs halten
 39   Empf„nger-Auswahlliste: ~
@@ -4019,6 +4019,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.60  2002/05/30 13:44:01  mk
+# - fixed 252,29
+#
 # Revision 1.59  2002/05/07 15:27:38  ma
 # - implemented SMTP AUTH PLAIN and LOGIN
 #
