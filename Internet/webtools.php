@@ -184,8 +184,8 @@ function ShowNews($newsfile,$genindex) {
 	    $headline=fgets($pnfile,200);
 	    echo("\n<li><a href=\"#art".$iarticle."\">".$headline."</a></li>");
 	    do {
-	      $headline=fgets($pnfile,1000);
-	    } while((trim($headline)!="")and(!feof($pnfile)));
+	      $headline=trim(fgets($pnfile,1000));
+	    } while(($headline!="")and(!feof($pnfile))and($headline!="+"));
 	  }
 	  echo("\n</ul>\n<hr noshade=\"noshade\" size=\"1\" />");
 	  rewind($pnfile);
@@ -200,8 +200,9 @@ function ShowNews($newsfile,$genindex) {
 	  echo("\n<h3><a name=\"art".$iarticle."\">".$headline."</a></h3>\n");
 	  do {
 	    $headline=fgets($pnfile,1000);
-	    if($headline!="") echo($headline);
-	  } while((trim($headline)!="")and(!feof($pnfile)));
+	    $headline=trim($headline);
+	    if(($headline!="")and($headline!="+")) echo($headline."\n");
+	  } while(($headline!="")and(!feof($pnfile))and($headline!="+"));
 	}
 	fclose($pnfile);
 }
@@ -210,14 +211,18 @@ function ShowNews($newsfile,$genindex) {
 function InsertLatestNews($newsfile) {
 	$pnfile = fopen($newsfile,"r");
 	if ($pnfile==false) return 0;
-	fgets($pnfile,200); fgets($pnfile,10); // skip headline
-	echo("\n<big>".fgets($pnfile,200)."</big>\n<br /><small>");
+	fgets($pnfile,200); fgets($pnfile,10); // skip headline + space
+	echo("\n<h3>".trim(fgets($pnfile,200))."</h3>\n<p>");
 	do {
-	  $news=fgets($pnfile,1000);
-	  echo($news);
-	} while((trim($news)!="")and(!feof($pnfile)));
+	  $news=trim(fgets($pnfile,1000));
+	  if ($news=="+") {
+	    echo("</p>\n<h3>".trim(fgets($pnfile,200))."</h3>\n<p>");
+	  } else { 
+  	    echo($news)."\n";
+	  }
+	} while(($news!="")and(!feof($pnfile)));
 	fclose($pnfile);
-	echo("</small>\n");
+	echo("</p>\n");
 }
 
 // show download table

@@ -1,5 +1,10 @@
 Latest news on www.openxp.com...
 
+2001-03-29: UUCP
+UUCP support has been added to the 32 bit version. This version also supports
+UUCP-over-TCP/IP, including UUCP-t.
+[<a href="index.php4?file=news/20010329-uucp.html">Screenshot</a>]
++
 2001-03-24: OpenXP 3.70 finally GPL'd!
 As announced, OpenXP 3.70 is available under GPL from now on. This means that it does not have to be registered at all now
 and in future.
