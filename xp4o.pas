@@ -83,8 +83,7 @@ procedure seek_cutspace(var s:string);
 implementation  {-----------------------------------------------------}
 
 uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
-     xp_pgp,
-     viewer,
+     xp_pgp,debug,viewer,
 {$IFDEF Kylix}
      xplinux,
 {$ENDIF}
@@ -1450,6 +1449,8 @@ var _brett   : string;
 begin
   if uvs_active then exit;
   crashs:=false;
+  // temporary debug log
+  Debug.DebugLog('xp4o','Searching for '+GetCurrentDir+'/*'+extBoxFile,dlDebug);
   rc:= findfirst('*'+extBoxFile,faArchive,sr);
   if rc<>0 then
   begin
@@ -2514,6 +2515,9 @@ end;
 
 {
   $Log$
+  Revision 1.122  2001/11/11 00:47:14  ma
+  - added temporary debug log
+
   Revision 1.121  2001/10/24 08:18:05  mk
   - fixed two range check errors
 
