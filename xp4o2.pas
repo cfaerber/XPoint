@@ -579,8 +579,8 @@ begin
   dbSetIndex(bezbase,beiRef);
   fillchar(xlines,sizeof(KommLines),0);
   RecurBez(0,dbRecno(mbase),xlines,true,betr,brett);
-
-  TReplyTreeItem(ReplyTree[0]^).flags:=TReplyTreeItem(ReplyTree[0]^).flags or kflBetr;
+  if ReplyTree.Count > 0 then
+    TReplyTreeItem(ReplyTree[0]^).flags:=TReplyTreeItem(ReplyTree[0]^).flags or kflBetr;
   dbSetIndex(bezbase,mi);
   Hdp.Free;
   closebox;
@@ -918,6 +918,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/12/28 14:16:08  mk
+  - added check for count >0 in bezbaum
+
   Revision 1.30  2000/12/04 10:04:33  mk
   - enabled language switching again
 
