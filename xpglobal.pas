@@ -1,6 +1,5 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
 { (c) 2000-2001 OpenXP-Team                                       }
 { (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
@@ -91,6 +90,9 @@ end.
 
 {
   $Log$
+  Revision 1.29.2.25  2003/04/13 21:13:28  my
+  MY:- PM aus Copyright entfernt
+
   Revision 1.29.2.24  2003/04/13 21:06:13  my
   MY:- 'xmsstr' wieder entfernt (=> 'ovrstr' in xp0.pas).
 
