@@ -82,6 +82,7 @@ begin
     _era(sr.name);
     findnext(sr);
   end;
+  Findclose(sr);
 end;
 
 procedure ReadDefaultViewers;

@@ -255,6 +255,7 @@ begin
     findnext(sr);
     ex:=(doserror=0);
   end;
+  findclose(sr);
   exist:=ex;
 end;
 
@@ -503,6 +504,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.3  2000/12/12 11:30:31  mk
+  - FindClose hinzugefuegt
+
   Revision 1.7.2.2  2000/08/28 23:35:56  mk
   - LFN in uses hinzugefuegt
 

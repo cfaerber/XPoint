@@ -377,6 +377,7 @@ begin
     ReadParfile;
     findnext(sr);
   end;
+  FindClose(sr);
   for i:=1 to paramcount do begin      { Command-Line-Parameter }
     s:=paramstr(i);
     ParAuswerten;
@@ -390,9 +391,7 @@ begin
       writeln('Fehler: kann '+AutoxDir+sr.name+' nicht l”schen!');
     findnext(sr);
   end;
-  {$IFDEF Ver32 }
   FindClose(sr);
-  {$ENDIF}
   if VideoType<2 then ParFontfile:='';
   if (ParFontfile<>'') and (ParFontfile[1]<>'*') then
     ParFontfile:=FExpand(ParFontfile);
@@ -550,9 +549,7 @@ begin { loadresource }
   else
     languageopt:=false;
 
-  {$IFDEF Ver32 }
   FindClose(sr);
-  {$ENDIF}
   if not exist(lf) then
     interr(lf+' not found');
   ParLanguage:=copy(lf,4,cpos('.',lf)-4);
@@ -1105,6 +1102,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.14  2000/12/12 11:30:27  mk
+  - FindClose hinzugefuegt
+
   Revision 1.45.2.13  2000/12/09 16:41:07  mk
   - Sprachumschaltung aktiviert
 

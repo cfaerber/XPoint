@@ -338,6 +338,7 @@ begin
     inc(sum,sr.size);
     findnext(sr);
   end;
+  FindClose(sr);
   xpspace:=sum;
   moff;
 end;
@@ -995,6 +996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.5  2000/12/12 11:30:29  mk
+  - FindClose hinzugefuegt
+
   Revision 1.27.2.4  2000/10/20 11:25:06  mk
   - Fix for Bug #116155, Bildschirmauszug fehlerhaft
 

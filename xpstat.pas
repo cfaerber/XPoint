@@ -765,6 +765,7 @@ begin
       end;
     findnext(sr);
   end;
+  findclose(sr);
   findfirst('*.epp',ffAnyFile,sr);
   while (doserror=0) and (ppanz<screenlines-10) do begin      { .EPP-Files }
     if sr.size>0 then begin
@@ -779,9 +780,7 @@ begin
       end;
     findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
   more:=(ppanz>screenlines-11);
   if more then dec(ppanz);
   for i:=1 to ppanz-1 do                       { Bubble-Sort Boxen }
@@ -827,6 +826,7 @@ begin
       inc(sumbytes,sr.size+attsize);
       findnext(sr);
     end;
+    findclose(sr);
     mwrt(x+3,yy,forms(getres2(2611,3),16)+strsn(summsgs,7)+strsrnp(sumbytes,15,0));  { 'Crashmails' }
     inc(yy);
     end;
@@ -1259,6 +1259,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14.2.2  2000/12/12 11:30:32  mk
+  - FindClose hinzugefuegt
+
   Revision 1.14.2.1  2000/08/28 23:35:56  mk
   - LFN in uses hinzugefuegt
 

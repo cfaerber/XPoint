@@ -146,9 +146,7 @@ var mmask     : array[1..12] of boolean;
       amodi:=false
     else
       amodi:=sr.time<>ar.lastfd;
-{$IFDEF Ver32}
     FindClose(sr);
-{$ENDIF}
   end;
 
 begin
@@ -329,6 +327,7 @@ var sr    : searchrec;
     else findnext(sr);
     first:=(doserror<>0);
     find:=not first;
+    if first then findclose(sr);
   end;
 
   function NamePollbox:string;
@@ -677,6 +676,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.5  2000/12/12 11:30:30  mk
+  - FindClose hinzugefuegt
+
   Revision 1.13.2.4  2000/10/19 19:03:28  mk
   - Parameter -312 weitergeben
 

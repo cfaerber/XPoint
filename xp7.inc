@@ -977,9 +977,7 @@ begin
     _era(XFerDir+sr.name);
     findnext(sr);
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
 end;
 
 
@@ -1004,9 +1002,7 @@ var dummy : longint;
         _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
   end;
 
   procedure EmptySysin;
@@ -1017,9 +1013,7 @@ var dummy : longint;
       _era(BoxPar^.sysopinp+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
   end;
 
   procedure CopyFileAttaches(ppfile:pathstr);
@@ -1144,9 +1138,7 @@ var sr     : searchrec;
       inc(sum,sr.size);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
     totalsize:=sum;
   end;
 
@@ -1158,9 +1150,7 @@ var sr     : searchrec;
       _era(GetFiledir(files)+sr.name);
       findnext(sr);
     end;
-    {$IFDEF Ver32}
     FindClose(sr);
-    {$ENDIF}
   end;
 
   procedure ZQWKfehler;
@@ -1217,9 +1207,7 @@ begin
             end;
           findnext(sr);
         end;
-        {$IFDEF Ver32}
         FindClose(sr);
-        {$ENDIF}
       end;
     end;
     freeres;
@@ -1445,6 +1433,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.3  2000/12/12 11:30:29  mk
+  - FindClose hinzugefuegt
+
   Revision 1.24.2.2  2000/10/08 11:11:18  mk
   - Verschiedene Dateinamen gross geschrieben
 

@@ -278,9 +278,7 @@ begin
       if crash then DelCrashInf(hdp^.empfaenger);
       end;
   end;
-  {$IFDEF Ver32}
   FindClose(sr);
-  {$ENDIF}
   closebox;
   if not found then begin
     rfehler(622);     { 'Nachricht nicht (mehr) im Pollpaket vorhanden !?' }
@@ -1276,6 +1274,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.11  2000/12/12 11:30:29  mk
+  - FindClose hinzugefuegt
+
   Revision 1.20.2.10  2000/11/30 14:10:36  mk
   - fixed NewUserIBM when adding new uesers
 

@@ -112,7 +112,8 @@ begin
     p:=pos(';',sla);
     end;
 
-  for i:=1 to slan do begin
+  for i:=1 to slan do
+  begin
     findfirst(slas[i],archive,sr);
     while doserror=0 do begin
       if lnum<500 then begin
@@ -134,8 +135,9 @@ begin
           end;
         end;
       findnext(sr);
-      end;
     end;
+    Findclose(sr);
+  end;
 
   if lnum=0 then
     if errdisp then begin
@@ -341,6 +343,7 @@ var   fb     : pathstr;
         pathonly(pa);
         if right(pa,1)<>DirSepa then pa:=pa+DirSepa;
         findfirst(pa+s,ffanyfile,sr);
+        Findclose(sr);
         if doserror<>0 then
           Wrt2(sp(59))
         else
@@ -460,21 +463,25 @@ begin
             end;
           end;
         findnext(sr);
-        end;
+      end;
+      Findclose(sr);
       if (fn<maxf) and not doppelpunkt and (length(dir)>3) then
         AddFnItem(#255+'..');
       for i:=1 to length(drives) do
         if fn<maxf then
           AddFnItem(#254'['+drives[i]+':]');
       end;
-    for x:=1 to pathn do begin
+    for x:=1 to pathn do
+    begin
       findfirst(paths[x],readonly+archive,sr);
-      while (doserror=0) and (fn<maxf) do begin
+      while (doserror=0) and (fn<maxf) do
+      begin
         if sr.name<>'.' then
           AddFnItem(sr.name);
         findnext(sr);
-        end;
       end;
+      Findclose(sr);
+    end;
     if fn=maxf then xtext:='zu viele Dateien'
     else xtext:='';
 
@@ -841,6 +848,7 @@ var   i,j     : integer;
             inc(dsb,size);
             end;
         until (doserror<>0) or (((attr and directory)<>0) and (name[1]<>'.'));
+      Findclose(sr);
       de:=doserror;
       if de=0 then econt:=econt+[succ(ebene)]
       else econt:=econt-[succ(ebene)];
@@ -1109,6 +1117,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.7  2000/12/12 11:30:27  mk
+  - FindClose hinzugefuegt
+
   Revision 1.16.2.6  2000/12/01 09:55:21  mk
   - LFN Directory in der Dateiauswahl anzeigen
 

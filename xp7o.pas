@@ -688,9 +688,7 @@ begin
         end;
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
     FindClose(sr);
-    {$ENDIF}
     close(f1);
   end;
   cursor(curoff);
@@ -711,9 +709,7 @@ begin
     inc(packetsize,sr.size);
     findnext(sr);
   end;
-  {$IFDEF virtualpascal}
   FindClose(sr);
-  {$ENDIF}
 end;
 
 
@@ -731,9 +727,7 @@ begin
       last:=sr.name;
       findnext(sr);
     end;
-    {$IFDEF virtualpascal}
     FindClose(sr);
-    {$ENDIF}
     arc:=ArcType(XferDir+last);
     if (arc>0) and not ArchiveOk(XferDir+last) then
       MoveToBad(XferDir+last);
@@ -779,6 +773,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.8  2000/12/12 11:30:30  mk
+  - FindClose hinzugefuegt
+
   Revision 1.13.2.7  2000/11/20 19:42:15  mk
   - Automatische Datumsbezuege wieder wie immer (schaltbar)
 

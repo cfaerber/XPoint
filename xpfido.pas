@@ -1232,6 +1232,7 @@ begin
     if (s<>'') and (s[1]<>'#') and (s[1]<>';') and (p>0) then begin
       fn:=mid(s,p+1);
       findfirst(FidoDir+fn,ffAnyFile,sr);
+      findclose(sr);
       if (doserror=0) and (sr.size>0) then begin
         node:=left(s,p-1);
         GetNodeinfo(node,ni,1);
@@ -2259,6 +2260,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.2  2000/12/12 11:30:31  mk
+  - FindClose hinzugefuegt
+
   Revision 1.15.2.1  2000/08/20 10:41:23  mk
   MO:- erster Nodelistenindex ist jetzt kleiner
 

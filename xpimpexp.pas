@@ -610,6 +610,7 @@ var ypath : pathstr;
       inc(sum,sr.size);
       findnext(sr);
     end;
+    findclose(sr);
     YupMailsize:=sum;
   end;
 
@@ -703,6 +704,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15.2.3  2000/12/12 11:30:31  mk
+  - FindClose hinzugefuegt
+
   Revision 1.15.2.2  2000/11/06 00:43:37  mk
   - fixed Bug #116657: Crash bei Servernamen >15 Zeichen
 

@@ -237,6 +237,7 @@ begin
         end;
       findnext(sr);
     end;
+    findclose(sr);
     if clrflag then ttwin;
 
     if exist(XFerDir+'*.PKT') then begin
@@ -260,6 +261,7 @@ begin
           _era(XFerDir+sr.name);
           findnext(sr);
         end;
+        findclose(sr);
       end;
       NC^.recbuf:=_filesize(fpuffer);
       CallFilter(true,fpuffer);
@@ -602,6 +604,7 @@ begin
       _era(XFerDir+sr.name);
     findnext(sr);
   end;
+  findclose(sr);
 
   ttwin;
   FidoNetcall:=EL_noconn;
@@ -928,6 +931,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.2  2000/12/12 11:30:30  mk
+  - FindClose hinzugefuegt
+
   Revision 1.13.2.1  2000/08/28 23:35:56  mk
   - LFN in uses hinzugefuegt
 

@@ -898,6 +898,7 @@ begin
       end;
     findnext(sr);
   end;
+  Findclose(sr);
   delfirst(s);
   if s='' then
     fehler('No language files found !?')
@@ -924,6 +925,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.7  2000/12/12 11:30:28  mk
+  - FindClose hinzugefuegt
+
   Revision 1.11.2.6  2000/12/09 16:41:07  mk
   - Sprachumschaltung aktiviert
 

@@ -2047,6 +2047,7 @@ begin
   attrtxt(col.colmbox);
   mwrt(x+11,y+2,fitpath(fn,56));
   findfirst(fn,ffAnyFile,sr);
+  FindClose(sr);
   moff;
   if doserror<>0 then
     wrt(x+11,y+3,getres2(2729,5))   { '- Datei fehlt -' }
@@ -2415,6 +2416,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.11  2000/12/12 11:30:28  mk
+  - FindClose hinzugefuegt
+
   Revision 1.25.2.10  2000/11/06 00:43:36  mk
   - fixed Bug #116657: Crash bei Servernamen >15 Zeichen
 

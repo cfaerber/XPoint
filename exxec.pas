@@ -287,6 +287,7 @@ var regs  : registers;
   begin
     FindFirst(s,ffAnyfile,sr);
     exist:=doserror=0;
+    FindClose(sr);
   end;
 
 begin
@@ -419,6 +420,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.3  2000/12/12 11:30:26  mk
+  - FindClose hinzugefuegt
+
   Revision 1.20.2.2  2000/08/28 23:35:53  mk
   - LFN in uses hinzugefuegt
 

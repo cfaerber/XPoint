@@ -2720,7 +2720,8 @@ begin
       end;
       end;
     findnext(sr);
-    end;
+  end;
+  findclose(sr);
   if n>0 then writeln;
   writeln('Mails:',mails:6);
   writeln('News :',news:6);
@@ -3430,6 +3431,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.21  2000/12/12 11:30:26  mk
+  - FindClose hinzugefuegt
+
   Revision 1.35.2.20  2000/12/04 08:57:54  mk
   - Test, ob Zieldatei schon existiert
 

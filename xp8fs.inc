@@ -257,6 +257,7 @@ begin
   else begin
     if not multipos('*?',s) then begin
       findfirst(s,ffAnyFile,sr);
+      findclose(sr);
       if (s[length(s)]<>'\') and (doserror<>0) then begin
         rfehler(823);               { 'Datei nicht gefunden.' }
         UUsendTestSourcefile:=false;
@@ -545,6 +546,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6.2.3  2000/12/12 11:30:30  mk
+  - FindClose hinzugefuegt
+
   Revision 1.6.2.2  2000/11/22 18:53:35  mk
   - Probleme mit Fileservern und langen Dateinamen behoben
 

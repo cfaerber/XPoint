@@ -479,6 +479,7 @@ begin
     error('UngÅltige Ausgabedatei: '+outfile);
   findfirst('BAD',Directory,sr);
   baddir:=(doserror=0) and (sr.attr and Directory<>0);
+  findclose(sr);
 end;
 
 procedure splitfido(adr:string; var frec:fidoadr);
@@ -1783,6 +1784,7 @@ begin
     fst:=false;
     findnext(sr);
   end;
+  findclose(sr);
 end;
 
 
@@ -1809,6 +1811,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.7  2000/12/12 11:30:32  mk
+  - FindClose hinzugefuegt
+
   Revision 1.21.2.6  2000/12/11 09:59:29  mk
   - PID auf CrossPoint/OpenXP geaendert
 

@@ -168,6 +168,7 @@ begin
     FindNext(sr);
     ex:=(doserror=0);
   end;
+  FindClose(sr);
   exist:=ex;
 end;
 
@@ -229,12 +230,15 @@ begin
         IsPath:=true
       else
         IsPath:=validfilename(name+'1$2$3.xx');
+      findclose(sr);
     end
-    else begin
+    else
+    begin
       if name[length(name)]='\' then
         dellast(name);
       findfirst(name,Directory,sr);
       IsPath:=(doserror=0) and (sr.attr and directory<>0);
+      findclose(sr);
     end;
   end;
 end;
@@ -277,6 +281,7 @@ begin
     era(getfiledir(s)+sr.name);
     findnext(sr);
   end;
+  FindClose(sr);
 end;
 
 { path: Pfad mit '\' bzw. '/' am Ende! }
@@ -288,6 +293,7 @@ var sr : searchrec;
 begin
   { Auf keinen Fall das XP-Verzeichnis l”schen! }
   Findfirst(path+'xp.ovr',anyfile-VolumeID,sr);
+  FindClose(sr);
   er:=doserror;
   { xp.ovr gefunden, dann wahrscheinlich im XP-Verzeichnis! }
   if (er=0) then exit;
@@ -309,6 +315,7 @@ begin
         end;
     findnext(sr);
   end;
+  FindClose(sr);
   if cpos(DirSepa,path)<length(path) then begin
     dellast(path);
     rmdir(path);
@@ -450,6 +457,7 @@ begin
     _filesize:=0
   else
     _filesize:=sr.size;
+  FindClose(sr);
 end;
 
 procedure MakeFile(const fn:pathstr);
@@ -471,6 +479,7 @@ begin
     filetime:=sr.time
   else
     filetime:=0;
+  FindClose(sr);
 end;
 
 procedure setfiletime(const fn:pathstr; newtime:longint);  { Dateidatum setzen }
@@ -716,6 +725,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.41.2.7  2000/12/12 11:30:26  mk
+  - FindClose hinzugefuegt
+
   Revision 1.41.2.6  2000/11/18 22:11:26  mk
   - einige Dirname, extname, pathname in string geaendert
 

@@ -1436,7 +1436,8 @@ begin
   if doserror<>0 then begin
     findfirst('*.cp',dos.Archive,sr);
     crashs:=true;
-    end;
+  end;
+  Findclose(sr);
   markanz:=0;
   moment;
   new(hdp);
@@ -1513,9 +1514,7 @@ begin
       crashs:=true;
     end;
   end;
-  {$IFDEF Ver32 }
   FindClose(sr);
-  {$ENDIF}
   dispose(hdp);
   closebox;
   if markanz=0 then
@@ -2448,6 +2447,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.14  2000/12/12 11:30:28  mk
+  - FindClose hinzugefuegt
+
   Revision 1.47.2.13  2000/12/01 09:55:37  mk
   - fix fuer letzten Commit
 

@@ -169,6 +169,7 @@ begin
                 _era(FilePath+'TICK\'+sr.name);
                 findnext(sr);
               end;
+              findclose(sr);
             end;
           end;   { of TIC-File vorhanden }
         end;   { at>0 }
@@ -184,6 +185,7 @@ ende:
       _era(FilePath+sr.name);
     findnext(sr);
   end;
+  findclose(sr);
 
   close(f);
   if _filesize(tmp)>0 then
