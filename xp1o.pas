@@ -328,31 +328,35 @@ begin
     (t=keyaltb) or (t=keyaltu)) then Hinweis(Getres(136))
   else
   begin
+    Nr:=dbrecno(mbase);
+
     if t = keyaltm then                                       { ALT+M = Suche MessageID }
     begin
       s:=mailstring(getline,false);
       if Suche(getres(437),'MsgID',s) then ShowfromLister;    { gefundene Nachr. zeigen }
-      end;
+    end;
 
     if t = keyaltv then                                        { ALT+V = Suche text }
     begin
       s:=getline;
       if Suche(getres(414),'',s) then Showfromlister;
-      end;
+    end;
 
     if t = keyaltb then                                        { Alt+B = Betreff }
     begin
       s:=getline;
       if s='' then s:=dbreadstr(mbase,'Betreff');
       if Suche(getres(415),'Betreff',s) then Showfromlister;
-      end;
+    end;
 
     if t = keyaltu then                                        { Alt+U = User }
     begin
       s:=mailstring(getline,false);
       if s='' then s:=dbreadstr(mbase,'Absender');
       if Suche(getres(416),'Absender',s) then Showfromlister;
-      end;
+    end;
+
+    dbgo(mbase,nr);
   end;
 
   if listmakros=16 then   { Archiv-Viewer }
@@ -975,6 +979,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19.2.11  2001/12/03 17:44:10  my
+  JG+MY:- DB-Crash nach nicht erfolgreicher Betreff- oder User-Suche aus
+          Lister heraus behoben (<Alt-B> oder <Alt-U>)
+
   Revision 1.19.2.10  2001/08/29 21:42:22  my
   JG:- Fix: Showing message header with 'O' in message reader after
        <Ctrl-PgUp/PgDn> could overwrite the screen position the selection
