@@ -32,22 +32,22 @@ procedure AutoTiming(tnr:integer; callall,crashall:boolean);
 var brk     : boolean;
     tl      : array[1..maxentries] of TRP;
     anz,i   : integer;
-    ldate   : datetimest;
+    ldate   : string;
     x,y,gl  : byte;
     anzeige : boolean;
     ende    : boolean;
-    endtime : datetimest;
+    endtime : string;
 
-    startdat: string[DateLen];
+    startdat: string;
     netcalls: boolean;
-    lastbusy: array[1..MaxCom] of datetimest;
+    lastbusy: array[1..MaxCom] of string;
     _anz    : integer;
-    lsec    : string[2];
+    lsec    : string;
 
   { testen, ob tr.action am tag dat zwischen von und bis }
   { ausgefÅhrt wurde.                                    }
 
-  function intime(dat,von,bis:datetimest; var tr:TimeRec):boolean;
+  function intime(dat,von,bis:string; var tr:TimeRec):boolean;
   var t   : text;
       s   : string;
       p   : byte;
@@ -79,9 +79,9 @@ var brk     : boolean;
       dat,tim : datetimest;
       t       : TRP;
       p       : byte;
-      s       : string[127];
-      usebox  : string[BoxNameLen];
-      lastbox : string[BoxNameLen];
+      s       : string;
+      usebox  : string;
+      lastbox : string;
 
     function tf(s:string):string;
     begin
@@ -167,13 +167,13 @@ var brk     : boolean;
 
   procedure MakeAllListe(var brk:boolean; auto:boolean);
   var d   : DB;
-      fn  : pathstr;
+      fn  : string;
       t   : text;
-      ti  : string[5];
+      ti  : string;
       all : string;
       x,y : byte;
       p   : byte;
-      box : string[BoxNameLen];
+      box : string;
   begin
     all:='';
     dbOpen(d,BoxenFile,1);
@@ -221,9 +221,9 @@ var brk     : boolean;
   procedure ResolveCrashs;   { s. auch XP7F.GetCrashbox! }
   var i   : integer;
       t   : text;
-      ss  : string[36];
-      sc  : string[60];
-      adr : string[25];
+      ss  : string;
+      sc  : string;
+      adr : string;
       ni  : NodeInfo;
       c,f : boolean;
       crash: boolean;
@@ -274,7 +274,7 @@ var brk     : boolean;
   end;
 
   procedure MakeCrashListe;
-  var fn   : pathstr;
+  var fn   : string;
       t,t2 : text;
       s    : string[30];
   begin
@@ -303,9 +303,9 @@ var brk     : boolean;
 
 
   procedure show_active;
-  const ltc : string[2] = '';
+  const ltc : string = '';
   var i      : integer;
-      tc     : string[2];
+      tc     : string;
   begin
     tc:=iifs(ticker mod 26<13,' '#4,#4' ');
     if tc<>ltc then begin
@@ -346,7 +346,7 @@ var brk     : boolean;
   procedure disprest;
   const lt : longint = 999;
   var t : longint;
-      s : datetimest;
+      s : string;
   begin
     t:=TimeDiff(endtime,time);
     if t<>lt then begin
@@ -393,7 +393,7 @@ var brk     : boolean;
       t      : TRP;
       p      : scrptr;
       rwait  : integer;
-      nt     : datetimest;
+      nt     : string;
   begin
     ok:=true;
     with tl[1]^ do
@@ -591,7 +591,7 @@ var x,y  : byte;
     brk  : boolean;
     anz  : integer;
     t    : text;
-    s,s2 : string[50];
+    s,s2 : string;
     ta   : tap;
 begin
   if _filesize(keydeffile)>0 then begin
@@ -644,6 +644,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/07/05 17:58:26  hd
+  - Ansistring
+
   Revision 1.5  2000/07/04 12:04:19  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

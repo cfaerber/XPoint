@@ -68,7 +68,7 @@ procedure LoadPhonezones;
 var pa    : phoneap;
     t     : text;
     s     : string;
-    ss    : string[20];
+    ss    : string;
     i     : integer;
     ppos  : integer;
     p     : byte;
@@ -318,6 +318,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.7  2000/07/05 17:58:26  hd
+  - Ansistring
+
   Revision 1.6  2000/07/04 12:04:19  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt

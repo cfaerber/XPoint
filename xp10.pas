@@ -58,7 +58,7 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
       KeymacWidth = 250;
       GebWidth    = 80;
       comms       = 11;
-      comstr      : array[1..comms] of string[10] =
+      comstr      : array[1..comms] of string =
                     ('NETCALL','REORG','PACK','EXEC','QUIT','QUIT_ONCE','AUTOEXEC',
                      'CRASHS','REQUESTS','END','NODEDIFFS');
 
@@ -76,13 +76,22 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
       maxtables= 10;   { max. Tabellen (Wochentage+Feiertage) }
       maxwotage= 10;   { max. Tagesbereiche }
 
-      wofeiertag: array[1..maxwotage] of string[2] =
+      wofeiertag: array[1..maxwotage] of string =
                   ('Mo','Di','Mi','Do','Fr','Sa','So','F1','F2','F3');
       pagepos   : byte = 1;
       gpagepos  : byte = 1;
 
 type  TimeRec   = record
                     active    : boolean;
+{$ifdef hasHugeString}
+                    von,bis   : string;  { Uhrzeit }
+                    vond,bisd : string;  { Datum   }
+                    wotag     : array[1..7] of boolean;
+                    action    : string;
+                    comm      : byte;       { 1=NC, 2=Reorg, 3=Pack, 5=Exec }
+                                            { 5=Quit, 6=Quit_Once }
+                    box       : string;
+{$else}
                     von,bis   : string[5];  { Uhrzeit }
                     vond,bisd : string[6];  { Datum   }
                     wotag     : array[1..7] of boolean;
@@ -90,6 +99,7 @@ type  TimeRec   = record
                     comm      : byte;       { 1=NC, 2=Reorg, 3=Pack, 5=Exec }
                                             { 5=Quit, 6=Quit_Once }
                     box       : string[BoxNameLen];
+{$endif}
                     crash     : boolean;
                     crashtime : boolean;    { Crash - TimeSync }
                     qerrlevel : byte;
@@ -100,16 +110,16 @@ type  TimeRec   = record
                   end;
       TRP       = ^TimeRec;
 
-      tasten = array[mincode..codes] of string[11];
+      tasten = array[mincode..codes] of string;
       tap    = ^tasten;
 
-      phone1   = string[15];
+      phone1   = string;
       phonearr = array[1..maxphone] of phone1;
       phoneap  = ^phonearr;
       phonea2  = array[0..maxzones] of record
                    anz    : integer;
                    ph     : phoneap;
-                   komment: string[19];
+                   komment: string;
                  end;
       wt_array = array[1..maxwotage] of boolean;
       tarifrec = record
@@ -121,7 +131,7 @@ type  TimeRec   = record
                    wochentag   : wt_array;
                    zeitbereiche: integer;
                    zeitbereich : array[1..maxzeitbereiche] of record
-                                   von,bis : string[5];
+                                   von,bis : string;
                                    tarif   : array[1..maxzones] of tarifrec;
                                  end; end;
       tarifap  = ^tarifarr;
@@ -129,7 +139,7 @@ type  TimeRec   = record
 const anzahl    : integer = 0;        { Reentrance - s. GetPhoneGebData! }
 var   e         : array[1..maxentries] of ^string;
       filewidth : integer;
-      _bunla    : string[mtypes];     { 'BUNLAET' }
+      _bunla    : string{[mtypes]};     { 'BUNLAET' }
 
       phones    : ^phonea2;
       tarif     : tarifap;
@@ -331,7 +341,7 @@ end;
 
 { typ: 1=Timing; 2=Makros, 3=GebÅhrenzonen, 4=Nachrichtenkopf, 5=Nodelisten }
 
-procedure loadfile(typ:byte; fn:pathstr);
+procedure loadfile(typ:byte; fn:string);
 var t : text;
     s : string;
 begin
@@ -356,7 +366,7 @@ begin
     end;
 end;
 
-procedure savefile(typ:byte; fn:pathstr);
+procedure savefile(typ:byte; fn:string);
 var t : text;
     i : integer;
 begin
@@ -445,8 +455,8 @@ end;
 
 function testaction(var s:string):boolean;
 var p   : byte;
-    box : string[BoxNameLen];
-    x   : string[20];
+    box : string;
+    x   : string;
     d   : DB;
     ni  : nodeinfo;
   function IsCommand(von,bis:byte):boolean;
@@ -526,7 +536,7 @@ var brk      : boolean;
     t        : taste;
     nr,bp    : shortint;
     gl,width : byte;
-    buttons  : string[60];
+    buttons  : string;
     okb,edb  : shortint;
     p,n      : shortint;
     a,ii     : integer;
@@ -546,9 +556,9 @@ var brk      : boolean;
   end;
 
   function daytxt(nr:integer):string;    { Tarife: 'Mo-Fr' etc. }
-  var s   : string[40];
+  var s   : string;
       i,j : integer;
-      tage: string[2*maxwotage];
+      tage: string;
   begin
     s:='';
     tage:=getres2(1022,2);   { 'MoDiMiDoFrSaSoF1F2F3' }
@@ -576,10 +586,10 @@ var brk      : boolean;
   procedure display;
   var i,j: shortint;
       tr     : timerec;
-      tt     : string[12];
-      komm   : string[25];
-      bunla  : string[mtypes-1];
-      s      : string[80];
+      tt     : string;
+      komm   : string;
+      bunla  : string;
+      s      : string;
   begin
     moff;
     for i:=1 to gl do begin
@@ -604,7 +614,7 @@ var brk      : boolean;
                   '^' : tt:='<Ctrl '+tt[2]+'>     ';
                 end;
                 komm:=mid(e[i+a]^,226);
-                bunla[0]:=chr(mtypes-1);
+                Setlength(bunla, mtypes-1); {bunla[0]:=chr(mtypes-1);}
                 for j:=2 to mtypes do
                   bunla[j-1]:=iifc(e[i+a]^[14+j]=' ',' ',_bunla[j]);
                 write(' ',tt,bunla,' ',forms(mid(e[i+a]^,26),51-length(komm)),
@@ -673,11 +683,11 @@ var brk      : boolean;
 
   procedure ReadTiming(edit:boolean; var s:string; var brk:boolean);
   var tr  : TimeRec;
-      wot : string[22];
+      wot : string;
       i   : byte;
       x,y : byte;
       all : boolean;
-      wtage:array[1..7] of string[12];
+      wtage:array[1..7] of string;
   begin
     for i:=1 to 7 do
       wtage[i]:=copy(_wotag_,i*2-1,2);
@@ -725,7 +735,7 @@ var brk      : boolean;
   end;
 
   procedure NewTiming;
-  var s   : string[TimingWidth];
+  var s   : string;
       brk : boolean;
   begin
     s:='+   :     :   01.01. 31.12. ˛˛˛˛˛˛˛ ';
@@ -748,7 +758,7 @@ var brk      : boolean;
   end;
 
   procedure EditTiming;
-  var s   : string[TimingWidth];
+  var s   : string;
       brk : boolean;
   begin
     s:=e[a+p]^;
@@ -821,13 +831,13 @@ var brk      : boolean;
   procedure ReadMacro(var s:string; var brk:boolean);
   var i,nr,a : integer;
       x,y    : byte;
-      mt     : string[9];
+      mt     : string;
       t1     : taste;
       ta     : tap;
-      tt     : string[15];
-      ms     : string[220];
+      tt     : string;
+      ms     : string;
       ok     : boolean;
-      komm   : string[25];
+      komm   : string;
   begin
     dialog(58,9,getres2(1006,1),x,y);    { 'Tastatur-Makro anlegen' }
     if copy(s,16,3)='***' then mt:=mtyp(1)
@@ -890,15 +900,15 @@ var brk      : boolean;
         if kb_shift and (t1=keybs) then begin
           if (ms<>'') then begin
             if right(ms,1)='>' then begin
-              dec(byte(ms[0]),2);   { 2 wg. '>', '<' und '^' }
+              setlength(ms, length(ms)-2);{dec(byte(ms[0]),2);}  { 2 wg. '>', '<' und '^' }
               while (ms<>'') and (right(ms,1)<>'<') do
-                dec(byte(ms[0]),1);
-              dec(byte(ms[0]),1);
+                SetLEngth(ms, length(ms)-1); {dec(byte(ms[0]),1);}
+              setlength(ms, length(ms)-1); {dec(byte(ms[0]),1);}
               end
             else if (length(ms)>=2) and (ms[length(ms)-1]='^') then
-              dec(byte(ms[0]),2)
+              SetLength(ms, length(ms)-2) {dec(byte(ms[0]),2)}
             else
-              dec(byte(ms[0]),1);
+              SetLength(ms, length(ms)-1); {dec(byte(ms[0]),1);}
             a:=max(0,min(a,length(ms)-40));
             end;
           end
@@ -928,7 +938,7 @@ var brk      : boolean;
   end;
 
   procedure NewMacro;
-  var s   : string[KeymacWidth];
+  var s   : string;
       brk : boolean;
   begin
     s:=sp(15)+'***';
@@ -941,8 +951,8 @@ var brk      : boolean;
 
   procedure EditMacro;
   var x,y  : byte;
-      s    : string[KeymacWidth];
-      komm : string[25];
+      s    : string;
+      komm : string;
       brk  : boolean;
   begin
     s:=trim(copy(e[a+p]^,26,200));
@@ -964,7 +974,7 @@ var brk      : boolean;
 
   procedure MacroKey;
   var x,y    : byte;
-      tt,ttt : string[15];
+      tt,ttt : string;
       ta     : tap;
   begin
     tt:=left(e[a+p]^,15);
@@ -1151,13 +1161,13 @@ var brk      : boolean;
 
   procedure EditTarif(nr,page:integer; var brk:boolean);
   const etlen = 14;
-  type  tet1  = array[1..5,1..maxzones] of string[etlen];
+  type  tet1  = array[1..5,1..maxzones] of string;
   var   x,y   : byte;
         tt    : tet1;
         add   : integer;
         i,j : integer;
         sort  : array[1..maxzones] of byte;
-        s     : string[80];
+        s     : string;
   begin
     add:=(page-1)*4;
     with tarif^[nr] do begin
@@ -1350,7 +1360,7 @@ var brk      : boolean;
   end;
 
   procedure DelHeaderLine;
-  var s : string[40];
+  var s : string;
   begin
     if anzahl=1 then
       rfehler(1008)         { 'Es mu· mindestens eine Zeile vorhanden sein.' }
@@ -1387,7 +1397,7 @@ var brk      : boolean;
   end;
 
   procedure TextEditNodelist(n:integer);
-  var fn : pathstr;
+  var fn : string;
       ft : longint;
   begin
     fn:=FidoDir+NLfilename(n);
@@ -1877,7 +1887,7 @@ var i       : integer;
   procedure GetDow;     { Wochentag bzw. Feiertagskategorie ermitteln }
   var datum : fdate;
       t     : text;
-      s     : string[20];
+      s     : string;
   begin
     dow:=0;
     assign(t,FeierDat);
@@ -1958,7 +1968,7 @@ begin
   manz:=anzahl;
   LoadPhonezones;
   if tables>0 then
-    Einheitenpreis := tarif^[1].zeitbereich[1].tarif[1].pfennig / 100
+    Einheitenpreis := tarif^[1].zeitbereich[1].tarif[1].pfennig / 100.0
   else
     Einheitenpreis := 0.12;
   FreePhonezones;
@@ -1977,7 +1987,7 @@ end;
 
 
 procedure gtest1;
-var nr : string[20];
+var nr : string;
 begin
   attrtxt(7);
   inout.cursor(curon);
@@ -2025,6 +2035,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/07/05 17:58:26  hd
+  - Ansistring
+
   Revision 1.14  2000/07/04 12:04:19  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
