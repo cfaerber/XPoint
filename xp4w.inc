@@ -1456,9 +1456,10 @@ var dat    : longint;
   end;
 
   procedure mw2;
-  var s:string;
+  var   s       : string[81]; 
+        helprec : longint;
   begin
-    if U_read then begin                   { Brett-Ungelesen-Flag ueberpruefen }
+    if U_read then begin                   { Brett-Ungelesen-Flag ÅberprÅfen }
       dbSeek(mbase,miGelesen,_brett+#0);
       if not dbEOF(mbase) then begin
         flags:=iif(dbReadInt(mbase,'gelesen')=1,0,2) +
@@ -1469,29 +1470,41 @@ var dat    : longint;
           end;
         end;
       end;
-      if not brettall and wrongline { BrettModus "A" und Brett passt nicht mehr }
-      then begin                    { dann Cursor nicht weiterschalten }
-        s:=' ';  { Dummy: s<>'' und s<>'$/T'... }
-        p2:=p;
-        repeat
-          inc(p);
-          GoP;
-          if not dbBOF(bbase) then s := dbReadNStr(bbase,bb_brettname);
-        until dbBOF(bbase) or (leftStr(s,3)<>'$/T');   {keine Trennzeile anspringen }
-        if (readmode>0) then dec(p);
-        if dbBOF(bbase) then
-        begin
-          p:=p2;
-          GoP;
+
+   if (readmode=0) or (not brettall and wrongline)  { zum Lesemodus passende Bretter zeigen }
+   then begin                      { und Brett passt nicht mehr: kein weiterschalten}
+      s:=' ';
+      p2:=p; 
+      helprec:=disprec[1];
+
+      if p2>gl then begin
+        disprec[1]:=dbrecno(bbase);
+        p2:=1;
+        aufbau:=true;
         end;
-        if p>=gl then begin
-          disprec[1]:=dbrecno(bbase);
-          p:=1;
-          aufbau:=true;
-          end;
+     
+      GoPos(p2);
+      repeat 
+        inc(p2);
+        dbnext(bbase); 
+        if not (dbBOF(bbase) or dbEOF(bbase)) then s := dbReadNStr(bbase,bb_brettname);
+      until dbBOF(bbase) or dbEOF(bbase) or (LeftStr(s,3)<>'$/T'); {keine Trennzeile anspringen }
+
+      if (dbBOF(bbase) or dbEOF(bbase))
+      then begin
+        disprec[1]:=helprec;
+        dbgo(bbase,helprec);
         end
-      else
-      if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
+      else if p2>gl then begin
+        disprec[1]:=dbrecno(bbase);
+        p:=1;
+        GoP;
+        aufbau:=true;
+        end
+      else p:=p2;
+      end
+    else
+    if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
       p2:=p;
       if not dispext and (readmode>0) and not alle and brettweiter then
       begin
@@ -1694,6 +1707,9 @@ begin
   closebox;
 {
   $Log$
+  Revision 1.95  2002/03/05 19:03:54  mk
+  - new procedure mw2; from 3.40 (see <xpbm57119.7670972@michael.heydekamp.dialin.t-online.de>)
+
   Revision 1.94  2002/03/03 15:53:32  cl
   - MPData now contains byte offset, not line counts (better performance)
 
