@@ -971,7 +971,13 @@ begin
       if fido then
         writeln(t,'---');
       close(t);
-      SendMaps('DEL',box,fn);
+      if not (uucp and boxpar^.ClientMode) then SendMaps('DEL',box,fn)
+      else begin
+        rewrite(t);
+        writeln(t,newsgroup(brett));
+        close(t);
+        File_Abbestellen(box,fn);
+        end;
       end
     else begin   { mehrere markierte Bretter }
       dbOpen(d,OwnPath+BoxenFile,1);
@@ -1022,7 +1028,8 @@ begin
           if fido then
             writeln(t,'---');
           close(t);
-          SendMaps('DEL',box,fn);
+          if not (uucp and boxpar^.ClientMode) then SendMaps('DEL',box,fn)
+            else File_Abbestellen(box,fn);
           topen:=false;
           end;
         dbSkip(d,1);
@@ -2095,6 +2102,9 @@ end;
 
 {
   $Log$
+  Revision 1.59  2001/09/10 10:16:00  mk
+  - added client-mode handling for mapsdelbrett
+
   Revision 1.58  2001/09/08 16:29:36  mk
   - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
   - some AnsiString fixes
