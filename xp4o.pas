@@ -209,7 +209,7 @@ label ende;
 }
   procedure check_seekmode;
   var
-  m,n,i   : byte;
+  m,n,i   : Integer;
   quotes  : boolean;
 
 {$IFDEF Debug}                      { Zum Debuggen der Suchstringerkennung}
@@ -260,7 +260,7 @@ label ende;
       n:=0;
       seek:=trim(sst);                                 { Leerzeichen vorne und hinten, }
       i:=length(seek);
-      while (seek[i]='"') and (i <> 0) do dec(i);      { Und Ausrufezeichen hinten abschneiden }
+      while (i <> 0) and (seek[i]='"') do dec(i);      { Und Ausrufezeichen hinten abschneiden }
       truncstr(seek,i);
       if seek<>'' then begin
         i:=1;
@@ -318,7 +318,7 @@ label ende;
   end;
 
 
-  function InText(var key:string):boolean;
+  function InText(const key:string):boolean;
   var size : longint;
       ofs  : longint;
       wsize: Integer;
@@ -581,7 +581,7 @@ label ende;
   end;
 
 
-  procedure TestBrett(_brett:string);
+  procedure TestBrett(const _brett:string);
   begin
     dbSeek(mbase,miBrett,_brett);
     while not dbEof(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and not brk do
@@ -592,8 +592,8 @@ label ende;
       end;
   end;
 
-  function userform(s:string):string;
-  var p : byte;
+  function userform(const s:string):string;
+  var p : Integer;
   begin
     p:=cpos('@',s);
     if p=0 then userform:=s
@@ -2514,6 +2514,9 @@ end;
 
 {
   $Log$
+  Revision 1.121  2001/10/24 08:18:05  mk
+  - fixed two range check errors
+
   Revision 1.120  2001/10/20 17:26:41  mk
   - changed some Word to Integer
     Word = Integer will be removed from xpglobal in a while
