@@ -1,4 +1,4 @@
-(* $Id$ *)
+(* $Id: aliases.pl,v 1.3 2001/09/10 18:48:18 cl Exp )
 (* generated from IANA charset list -- do not edit *)
 
 function MimeCharsetCanonicalName(Name: String): String;
