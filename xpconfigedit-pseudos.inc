@@ -29,7 +29,7 @@
     maddstring(3,4,getres2(905,4),lang,35,79,iifs(ntZonly and not smallnames,'>',''));   { 'Brett/User ' }
     mappcustomsel(Auto_Empfsel,false);
     mset3proc(ps_setempf);
-    maddstring(3,6,getres2(905,5),pollbox,BoxRealLen,BoxNameLen,'>');   { 'Server     ' }
+    maddstring(3,6,getres2(905,5),pollbox,BoxRealLen,BoxNameLen,'');   { 'Server     ' }
     mappcustomsel(BoxSelProc,false);
     freeres;
     readmask(brk);
@@ -89,6 +89,9 @@
 
 {
   $Log$
+  Revision 1.2.2.2  2002/07/21 20:21:08  ma
+  - cosmetics (box name can now be written in any case)
+
   Revision 1.2.2.1  2002/07/21 20:14:38  ma
   - changed copyright from 2001 to 2002
 

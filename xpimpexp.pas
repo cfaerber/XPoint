@@ -290,7 +290,7 @@ begin
       dialog(45,8,'',x,y);                     { Pollbox einlesen }
       maddtext(3,2,getres2(2421,1),0);         { 'Pufferdatei' }
       maddtext(4+length(getres2(2421,1)),2,fitpath(fn,28),col.coldiahigh);    { 'Ursprungsbox ' }
-      MaddString(3,4,getres2(2421,2),box,BoxRealLen,BoxNameLen,'>'); mhnr(760);
+      MaddString(3,4,getres2(2421,2),box,BoxRealLen,BoxNameLen,''); mhnr(760);
       mappcustomsel(BoxSelproc,false);
       msetvfunc(imptestpollbox); impnt:=nt;
       red:=false; eb:=false;
@@ -539,7 +539,7 @@ begin
     maddtext(3,3,'eingelesen werden sollen, und den Namen Ihres',0);
     maddtext(3,4,'MauTau-Verzeichnisses an:',0);
     mtpath:=''; box:='';
-    maddstring(3,6,'Box   ',box,boxnamelen,boxnamelen,'>');
+    maddstring(3,6,'Box   ',box,boxnamelen,boxnamelen,'');
     mappcustomsel(boxselproc,false);
     msetvfunc(imptestpollbox);
     maddstring(3,8,'Verz. ',mtpath,35,75,'');
@@ -663,6 +663,9 @@ end;
 
 {
   $Log$
+  Revision 1.47.2.2  2002/07/21 20:21:08  ma
+  - cosmetics (box name can now be written in any case)
+
   Revision 1.47.2.1  2002/07/21 20:14:40  ma
   - changed copyright from 2001 to 2002
 

@@ -1640,11 +1640,11 @@
       maddstring(20,7+add,getres2(924,10),aFilter,25,60,''); mhnr(8050); { 'Ausgang' }
       maddtext(3,9+add,getres2(924,16),col.coldiahigh);   { 'Vertretersystem' }
       DomainNt:=nt;
-      maddstring(20,9+add,getres2(924,17),av,20,20,'>'); mhnr(8032);  { 'fuer AMs' }
+      maddstring(20,9+add,getres2(924,17),av,20,boxnamelen,''); mhnr(8032);  { 'fuer AMs' }
       amvfield:=fieldpos;
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
-      maddstring(20,10+add,getres2(924,18),pv,20,20,'>'); mhnr(8033);  { 'fuer PMs' }
+      maddstring(20,10+add,getres2(924,18),pv,20,boxnamelen,''); mhnr(8033);  { 'fuer PMs' }
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
       maddtext(3,12+add,getres2(924,11),col.coldiahigh);    { 'Sonstiges' }
@@ -1700,11 +1700,11 @@
       maddstring(20,6+add,getres2(924,10),aFilter,25,60,''); mhnr(8050); { 'Ausgang' }
       maddtext(3,8+add,getres2(924,16),col.coldiahigh);   { 'Vertretersystem' }
       DomainNt:=nt;
-      maddstring(20,8+add,getres2(924,17),av,20,20,'>'); mhnr(8032);  { 'fuer AMs' }
+      maddstring(20,8+add,getres2(924,17),av,20,boxnamelen,''); mhnr(8032);  { 'fuer AMs' }
       amvfield:=fieldpos;
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
-      maddstring(20,9+add,getres2(924,18),pv,20,20,'>'); mhnr(8033);  { 'fuer PMs' }
+      maddstring(20,9+add,getres2(924,18),pv,20,boxnamelen,''); mhnr(8033);  { 'fuer PMs' }
       mappcustomsel(boxselproc,false);
       msetvfunc(testvertreterbox);
       maddtext(3,11+add,getres2(924,11),col.coldiahigh);    { 'Sonstiges' }
@@ -2371,6 +2371,9 @@
 
 {
   $Log$
+  Revision 1.48.2.7  2002/07/21 20:21:08  ma
+  - cosmetics (box name can now be written in any case)
+
   Revision 1.48.2.6  2002/07/21 20:14:38  ma
   - changed copyright from 2001 to 2002
 

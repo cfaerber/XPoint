@@ -341,7 +341,7 @@ begin
   if LeftStr(user,4)<>#0+'$/T' then
   begin
     dialog(57,13,txt,x,y);
-    maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxNameLen,'>'); mhnr(423);
+    maddstring(3,2,getres2(2701,1),pollbox,BoxRealLen,BoxNameLen,''); mhnr(423);
     pb_field:=fieldpos;                     { 'Server   ' }
     mappcustomsel(BoxSelProc,false);
     mset0proc(pb_wrntyp);
@@ -490,7 +490,7 @@ begin
   maddstring(3,2,getres2(2703,1),name,40,40,without(allchar,'@')); mhnr(610);
   msetvfunc(test_verteiler);                     { 'Name     ' }
   maddstring(3,4,getres2(2703,2),komm,30,30,''); mhnr(422);  { 'Kommentar' }
-  maddstring(3,6,getres2(2703,3),pollbox,BoxRealLen,BoxNameLen,'>'); mhnr(612);
+  maddstring(3,6,getres2(2703,3),pollbox,BoxRealLen,BoxNameLen,''); mhnr(612);
   mappcustomsel(BoxSelProc,false);               { 'Server   ' }
   msetvfunc(vtestpollbox);
   maddint(35,6,getres2(2701,11),adr,2,2,1,99); mhnr(8069);       { 'Adressbuchgruppe' }
@@ -1233,7 +1233,7 @@ begin
           mhnr(iif(user,422,401));
         end;
     2 : begin
-          maddstring(3,2,getres2(2715,6),s,BoxRealLen,BoxNameLen,'>');  { 'Server   ' }
+          maddstring(3,2,getres2(2715,6),s,BoxRealLen,BoxNameLen,'');  { 'Server   ' }
           mappcustomsel(BoxSelProc,false);
           ntyp_y:=0;
           brettfld:=-1; userfld:=-1; adrfieldpos:=-1;
@@ -1625,7 +1625,7 @@ begin
   empfx:=x+2; empfy:=y+1+pba;
   rdforcebox:=false;
   if pb then begin
-    maddstring(3,2,getres2(2718,1),box,BoxRealLen,BoxNameLen,'>');
+    maddstring(3,2,getres2(2718,1),box,BoxRealLen,BoxNameLen,'');
     mappcustomsel(BoxSelproc,false);     { 'Server    ' }
     mset0proc(dnotepollbox);
     msetvfunc(dtestpollbox);
@@ -2397,10 +2397,10 @@ begin
   oldbox:=''; newbox:='';
   user:=true; bretter:=true; localuser:=true;
   autov:=true; pseudos:=true;
-  maddstring(3,2,getres2(2734,2),oldbox,BoxRealLen,BoxNameLen,'>'); mhnr(780);
+  maddstring(3,2,getres2(2734,2),oldbox,BoxRealLen,BoxNameLen,''); mhnr(780);
   mappcustomsel(BoxSelProc,false);                { 'alte Serverbox ' }
   msetvfunc(notempty);
-  maddstring(3,3,getres2(2734,3),newbox,BoxRealLen,BoxNameLen,'>');
+  maddstring(3,3,getres2(2734,3),newbox,BoxRealLen,BoxNameLen,'');
   mappcustomsel(BoxSelProc,false);                { 'neue Serverbox ' }
   msetvfunc(vtestpollbox);
   maddbool(3,5,getres2(2734,4),bretter);          { 'Bretter bearbeiten' }
@@ -2494,6 +2494,9 @@ end;
 
 {
   $Log$
+  Revision 1.88.2.4  2002/07/21 20:21:07  ma
+  - cosmetics (box name can now be written in any case)
+
   Revision 1.88.2.3  2002/07/21 20:14:37  ma
   - changed copyright from 2001 to 2002
 
