@@ -441,7 +441,7 @@ end;
 
 procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
                    ed_ukonv:boolean);
-var p   : byte;
+var
     bak : string[3];
     ms  : boolean;
 begin
@@ -465,12 +465,11 @@ begin
       end;
     bak:='BAK';
     end;
-  if bak<>'' then begin
-    p:=pos('.',name);
-    if p=0 then name:=name+'.'+bak
-    else name:=left(name,p)+bak;
+  if bak<>'' then
+  begin
+    name := GetBareFilename(name) + '.' + bak;
     if exist(name) then _era(name);      { .BAK l”schen }
-    end;
+  end;
 end;
 
 
@@ -512,6 +511,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.24.2.6  2001/07/30 08:24:45  mk
+  - fixed handling of bak files in EditFile
+
   Revision 1.24.2.5  2001/02/24 14:37:53  mk
   - letzetn Checkin rueckgaengig gemacht
 
