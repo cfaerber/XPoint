@@ -38,6 +38,7 @@ unit MD5;
 interface
   uses SysUtils,XPGlobal,Typeform;
 
+  function CRAM_MD5(Key,Text: string): string;
   function MD5_Digest(sPlainText: string): string;
 
 implementation
@@ -163,7 +164,12 @@ implementation
     Result := Result and $FFFFFFFF;
   end;
 
-  function MD5_Digest(sPlainText: string): string;
+  function DW2Hex(v: DWord): string;
+  begin
+    Result:=char(v and 255)+char(v shr 8 and 255)+char(v shr 16 and 255)+char(v shr 24 and 255);
+  end;
+
+  function MD5_Plain(sPlainText: string): string;
   var
     nMessageByteLen: Integer;  { Length of the padded plaintext }
 
@@ -350,10 +356,7 @@ implementation
       end;
     end;
 
-    Result := Hex(a,2) + Hex(a shr 8,2) + Hex(a shr 16,2) + Hex(a shr 24,2) +
-              Hex(b,2) + Hex(b shr 8,2) + Hex(b shr 16,2) + Hex(b shr 24,2) +
-              Hex(c,2) + Hex(c shr 8,2) + Hex(c shr 16,2) + Hex(c shr 24,2) +
-              Hex(d,2) + Hex(d shr 8,2) + Hex(d shr 16,2) + Hex(d shr 24,2);
+    Result:=DW2Hex(a)+DW2Hex(b)+DW2Hex(c)+DW2Hex(d);
 
     { Clean buffer }
     for i := 0 to nMessageByteLen - 1 do
@@ -363,11 +366,33 @@ implementation
 
   end;
 
+  function MD5_Digest(sPlainText: string): string;
+  var i: integer;
+  begin
+    sPlainText := MD5_Plain(sPlainText);
+    for i:=1 to length(sPlainText)do
+      Result:=Result+Hex(ord(sPlainText[i]),2);
+  end;
+
+  function CRAM_MD5(Key,Text: string): string;
+    function pad(s: string; v: byte): string;
+    var i: integer;
+    begin
+      while length(s)<64 do s:=s+#0;
+      for i:=1 to length(s)do s[i]:=char(ord(s[i])xor v);
+      pad:=s;
+    end;
+  begin
+    result:=md5_digest(pad(key,$5c)+md5_plain(pad(key,$36)+text));
+  end;
 
 end.
 
 {
   $Log$
+  Revision 1.3  2001/05/19 15:54:03  ma
+  - added CRAM-MD5 support
+
   Revision 1.2  2001/04/16 15:33:10  ma
   - disabled range checking with VP
 
