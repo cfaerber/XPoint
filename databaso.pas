@@ -64,7 +64,7 @@ procedure makefeld(var lfeld:dbFeldTyp; var fld:dbfeld);
 begin
   fillchar(fld,sizeof(fld),0);
   with lfeld,fld do begin
-    name:=FileUpperCase(fname);
+    name:=UpperCase(fname);
     feldtyp:=ftyp;
     case ftyp of
       1,2,5 : feldsize:=fsize;
@@ -444,6 +444,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2001/06/18 17:58:10  ma
+  - fixed: Improper case for new field names
+
   Revision 1.14  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
