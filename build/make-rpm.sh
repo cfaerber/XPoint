@@ -9,7 +9,7 @@ buildnr=$OPENXP_BUILD
 version="$mainversion"."$subversion"-"$buildnr"
 #scriptdir=/home/boettger/openxp/script/
 versiondir=/home/boettger/openxp/"$mainversion"/
-sourcedir=$versiondir'openxp/'
+sourcedir="$versiondir"'openxp/'
 scriptdir="$sourcedir"'build/
 cd "$sourcedir"
 #
