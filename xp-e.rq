@@ -1927,6 +1927,16 @@ K (c) '2000 OpenXP Team, www.openxp.de
 3    ,^Sysop Mode
 #
 4    ,^Transfer
++ 928
+1    UUCP Configuration
+2    Reply-to address
+3    Area Manager    ~
+4    Type    ~
+5    Name    ~
+6    Password~
+7    Complete domain
+8    Sysfile subject~
+9    Sender = user@server.domain
 + 929
 1    There is still a data packet for this box (%s.PP)
 2    - type of net cannot be changed. Please send or delete
