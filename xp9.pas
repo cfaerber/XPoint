@@ -249,6 +249,8 @@ var ok   : boolean;
 begin
   PPPClientTest:=true;
   fn:=trim(s);
+  if Pos('start /wait', lstr(fn)) = 1 then fn := Copy(fn, 13, MaxInt);
+  if Pos('start /w', lstr(fn)) = 1 then fn := Copy(fn, 10, MaxInt);
   if cpos(' ',fn)>0 then fn:=left(fn,cpos(' ',fn)-1);
   if (fn<>'') then
   begin
@@ -256,9 +258,8 @@ begin
     ok := dir = '';
     s1 := GetField(23);
     if Pos('.\', s1) = 1 then s1 := Mid(s1, 3);
-    if ustr(s1) =  ustr(Dir) then Ok := true;
+    { if ustr(s1) =  ustr(Dir) then Ok := true; }
     if Dir = '$CLPATH+' then ok := true;
-    if Pos('start /w', lstr(s)) = 1 then exit;
     if not ok then
     begin
       rfehler1(936, UStr(fn)); { 'Dieser Eintrag darf keinen Pfad enthalten!' }
@@ -1882,6 +1883,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.19.2.23  2001/05/01 23:47:58  mk
+  - Pfad-Check mal wieder verbessert
+
   Revision 1.19.2.22  2001/04/28 15:47:36  sv
   - Reply-To-All :-) (Reply to sender and *all* recipients of a message
                      simultaneously, except to own and marked addresses.
