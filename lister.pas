@@ -374,9 +374,12 @@ begin
 end;
 
 procedure closelist;
+var
+  p: Pointer;
 begin
   alist^.Lines.Free;
-  FreeMem(Lrp(Listers[Listers.Count - 1]));
+  p := Lrp(Listers[Listers.Count - 1]);
+  FreeMem(p);
   Listers.Delete(Listers.Count - 1);
   alist := Listers[Listers.Count - 1];
 end;
@@ -1256,6 +1259,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/12/22 10:09:04  mk
+  - compatiblity update for fpc
+
   Revision 1.39  2000/12/22 10:04:33  mk
   - nearly complete rewrite
 
