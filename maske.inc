@@ -546,7 +546,7 @@ var ax,p,myp  : integer;
           if variable<>nil then begin
             if (typ>=2) and (typ<=6) then l:=ival(cont);
             case typ of
-              1,8,9 : Move(cont,variable^,length(cont)+1);
+              1,8,9 : AnsiString(variable^):= cont; {Move(cont,variable^,length(cont)+1);}
               2,3   : Move(l,variable^,1);
               4,5   : Move(l,variable^,2);
               6     : Move(l,variable^,4);
@@ -1072,6 +1072,10 @@ begin   { readmask }
 end;   { readmask }
 {
   $Log$
+  Revision 1.23  2000/07/21 13:14:09  hd
+  - Fix: Strings in der Maske
+  - Fix: Einige Datenbankzugriffe wegen AnsiString
+
   Revision 1.22  2000/07/19 13:42:48  hd
   - new/dispose durch get-/freemem ersetzt
 

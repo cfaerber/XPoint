@@ -680,12 +680,12 @@ var d     : DB;
   var   s : string;
   begin
     dbAppend(d);
-    dbWrite(d,'name',name);
+    dbWriteStr(d,'name',name);
     dbWrite(d,'haltezeit',halten);
     dbWrite(d,'msglimit',limit);
     dbWrite(d,'flags',b);
-    s:='header';   dbWrite(d,'kopf',s);
-    s:='signatur'; dbWrite(d,'signatur',s);
+    s:='header';   dbWriteStr(d,'kopf',s);
+    s:='signatur'; dbWriteStr(d,'signatur',s);
     dbRead(d,'INT_NR',grnr);
   end;
 
@@ -728,7 +728,6 @@ end;
 
 procedure test_systeme;
 var d : DB;
-    s : string;
 begin
 {$IFDEF Debug }
   dbLog('-- Systeme ÅberprÅfen');
@@ -736,8 +735,7 @@ begin
   dbOpen(d,SystemFile,1);
   if dbRecCount(d)=0 then begin
     dbAppend(d);
-    s:='SYSTEM';
-    dbWrite(d,'name',s);
+    dbWriteStr(d,'name','SYSTEM');
     end;
 { if abgelaufen2 then
     fillchar(registriert,sizeof(registriert)+1,0); }
@@ -1071,6 +1069,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.61  2000/07/21 13:14:09  hd
+  - Fix: Strings in der Maske
+  - Fix: Einige Datenbankzugriffe wegen AnsiString
+
   Revision 1.60  2000/07/20 18:11:55  mk
   - unbekannte Konfigurationszeilen werden in einer TStringList gespeichert
 

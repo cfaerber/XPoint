@@ -1759,7 +1759,6 @@ end;
 procedure get_first_box(d:DB);
 var x,y  : byte;
     brk  : boolean;
-{$ifdef hasHugeString}
     name : string;
     dname: string;
     user : string;
@@ -1767,15 +1766,6 @@ var x,y  : byte;
     dom  : string;
     fqdom: string;  {16.01.00 HS}
     ntyp : string;
-{$else}
-    name : string[20];
-    dname: string[8];
-    user : string[30];
-    maps : string[30];
-    dom  : string[60];
-    fqdom: string[60];  {16.01.00 HS}
-    ntyp : string[20];
-{$endif}
     nt   : byte;
     i    : integer;
 begin
@@ -1809,21 +1799,22 @@ begin
   DefaultBoxPar(nt,boxpar);      { neue Box mit Default-Werten anlegen }
   dbAppend(d);
   dbWrite(d,'netztyp',nt);
-  dbWrite(d,'boxname',name);
-  dbWrite(d,'username',user);
+  dbWriteStr(d,'boxname',name);
+  dbWriteStr(d,'username',user);
   dname:=getdname(nt,name);
-  dbWrite(d,'dateiname',dname);
+  dbWriteStr(d,'dateiname',dname);
   maps:=DefaultMaps(nt);
-  dbWrite(d,'NameOMaps',maps);
+  dbWriteStr(d,'NameOMaps',maps);
   dom:=ntDefaultDomain(nt);
-  dbWrite(d,'Domain',dom);
-  fqdom:=''; dbWrite(d,'FQDN',fqdom);  {17.01.00 HS}
+  dbWriteStr(d,'Domain',dom);
+  fqdom:=''; 
+  dbWriteStr(d,'FQDN',fqdom);  {17.01.00 HS}
   case nt of
     nt_Maus   : boxpar^.pointname:=name;
     nt_Pronet : boxpar^.pointname:='01';
     else        boxpar^.pointname:='';
   end;
-  dbWrite(d,'Pointname',boxpar^.pointname);
+  dbWriteStr(d,'Pointname',boxpar^.pointname);
   dbFlushClose(d);
   boxpar^.boxname:=name;
   boxpar^.username:=user;
@@ -1844,6 +1835,10 @@ begin
 end.
 {
   $Log$
+  Revision 1.28  2000/07/21 13:14:09  hd
+  - Fix: Strings in der Maske
+  - Fix: Einige Datenbankzugriffe wegen AnsiString
+
   Revision 1.27  2000/07/15 18:29:55  ml
   - Ansistring + NilStringzugriffBug
 

@@ -24,6 +24,7 @@ uses
   crt,
 {$ENDIF }
   sysutils,
+  typinfo,
   typeform,keys,inout,maus2,winxp,montage, clip; {JG:+CLIP}
 
 const digits : string{[12]} = '-0123456789 ';
@@ -238,7 +239,8 @@ type
                    disnodisp   : boolean;
                    txt         : string;   { Feld-Text }
                    typ         : byte;     { Feldtyp }
-                   variable    : pointer;  { Adresse der Variablen }
+                   variable    : variant;  { Adresse der Variablen }
+                   {variable    : pointer;}  { Adresse der Variablen }
                    xx,yy,len   : byte;     { Position, Anzeigel„nge }
                    yy0,xx2     : byte;     { Position des Inhalts }
                    maxlen      : byte;     { maximale L„nge des Inhalts }
@@ -1269,6 +1271,10 @@ end.
 
 {
   $Log$
+  Revision 1.18  2000/07/21 13:14:09  hd
+  - Fix: Strings in der Maske
+  - Fix: Einige Datenbankzugriffe wegen AnsiString
+
   Revision 1.17  2000/07/20 16:49:56  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 
