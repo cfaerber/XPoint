@@ -28,6 +28,12 @@ uses
 {$else}
   crt,
 {$endif}
+{$IFDEF DOS32 }
+  go32,
+{$ENDIF }
+{$IFDEF VP }
+  vpsyslow,
+{$ENDIF }
   typeform;
 
 type   taste   = string[2];
@@ -130,7 +136,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
 type   func_test = procedure(var t:taste);
 var    func_proc : func_test;
 
-       forwardkeys  : string;        { Auszuf”rende Tastendr…ke            }       
+       forwardkeys  : string;        { Auszuf”rende Tastendr…ke            }
        lastscancode : byte;
 
 
@@ -162,12 +168,12 @@ uses
 {$ENDIF }
 
 const
-{$IFDEF BP }
   lshift = 2;
   rshift = 1;
   ctrl   = 4;
   alt    = 8;
 
+{$IFDEF BP }
   enhKBsupport: boolean = false;
 {$ENDIF }
 
@@ -365,49 +371,49 @@ begin
 {$ENDIF }
 end;
 
-{$IFDEF BP }
+{$IFNDEF Win32 }
 function kbstat: byte;     { lokal }
 begin
-  kbstat:=mem[Seg0040:$17];
+  {$IFDEF BP }
+    kbstat:=mem[Seg0040:$17];
+  {$ELSE }
+    {$IFDEF VP }
+      kbstat := SysTVGetShiftState;
+    {$ELSE }
+      {$IFDEF DOS32 }
+        kbstat:=mem[$40:$17];
+      {$ELSE }
+        kbstat := 0; { !! }
+      {$ENDIF }
+    {$ENDIF }
+  {$ENDIF }
 end;
 {$ENDIF }
 
 function kb_shift:boolean;          { Shift gedr…kt }
 begin
-{$IFDEF BP }
-  kb_shift:=kbstat and (lshift+rshift)<>0;
+{$IFDEF Win32 }
+  kb_shift := GetAsyncKeyState(VK_SHIFT) SHL 15 <> 0;
 {$ELSE }
-  {$IFDEF Win32 }
-    kb_shift := GetAsyncKeyState(VK_SHIFT) SHL 15 <> 0;
-  {$ELSE }
-    kb_shift := false; { !! }
-  {$ENDIF }
+  kb_shift := kbstat and (lshift+rshift)<>0;
 {$ENDIF }
 end;
 
 function kb_ctrl:boolean;           { Ctrl gedr…kt  }
 begin
-{$IFDEF BP }
-  kb_ctrl:=kbstat and ctrl<>0;
+{$IFDEF Win32 }
+  kb_ctrl := GetAsyncKeyState(VK_CONTROL) SHL 15 <> 0;
 {$ELSE }
-  {$IFDEF Win32 }
-    kb_ctrl := GetAsyncKeyState(VK_CONTROL) SHL 15 <> 0;
-  {$ELSE }
-    kb_ctrl := false; { !! }
-  {$ENDIF }
+  kb_ctrl := kbstat and ctrl<>0;
 {$ENDIF }
 end;
 
 function kb_alt:boolean;            { Alt gedr…kt   }
 begin
-{$IFDEF BP }
-  kb_alt:=kbstat and alt<>0;
+{$IFDEF Win32 }
+  kb_alt := GetAsyncKeyState(VK_MENU) SHL 15 <> 0;
 {$ELSE }
-  {$IFDEF Win32 }
-    kb_alt := GetAsyncKeyState(VK_MENU) SHL 15 <> 0;
-  {$ELSE }
-    kb_alt := false; { !! }
-  {$ENDIF }
+  kb_alt := kbstat and alt<>0;
 {$ENDIF }
 end;
 
@@ -442,6 +448,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21  2000/06/04 22:02:02  mk
+  - Shift-Keys in DOS32 und OS/2 Version implementiert
+
   Revision 1.20  2000/05/02 11:49:34  hd
   Anpassung an Curses (Linux)
 
