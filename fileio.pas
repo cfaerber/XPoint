@@ -87,14 +87,14 @@ function  AddDirSepa(const p: string): string;
 function  existf(var f):boolean;
 
 { Searches for file in current directory, program's directory and path.
-  Path is ignored if specified but not correct. Characters after a space
+  Path has to be correct if specified. Characters after a space
   in fn are ignored. Reports empty string if file not found. }
 function  FindFile(fn: string): string;
 
 { Searches for file in current directory, program's directory and path.
   Characters after a space in fn are ignored. File MAY be specified
-  without extension; returned name WILL contain extension. Path is
-  ignored if specified but not correct. Returns empty string if not found. }
+  without extension; returned name WILL contain extension. Path has to
+  be correct if specified. Returns empty string if not found. }
 function  FindExecutable(fn: string): string;
 
 { Searches for file in current directory, program's directory and path
@@ -371,26 +371,25 @@ function FindFile(fn: string): string;
 begin
   result:='';
   fn:=trim(fn);
+  // strip parameters
   fn:=Copy(fn,1,iif(Pos(' ',fn)<>0,Pos(' ',fn)-1,Length(fn)));
 
   if ExtractFilePath(fn)<>'' then
-    if FileExists(fn)then begin
-      result:=fn; exit
-      end
-    else // path not correct, get rid of it
-      fn:=ExtractFileName(fn);
-
-  // fn is without path now
-
-  result:=FileSearch(fn,'.'+PathSepa+
-                        ExtractFilePath(ParamStr(0))+PathSepa+
-                        GetEnv('PATH'));
+    if FileExists(fn)then
+      result:=fn
+    else // path not correct
+      exit
+  else
+    result:=FileSearch(fn,'.'+PathSepa+
+                          ExtractFilePath(ParamStr(0))+PathSepa+
+                          GetEnv('PATH'));
   {$ifndef UnixFS} result:=UpperCase(result); {$endif}
 end;
 
 function FindExecutable(fn: string): string;
 begin
   fn:=trim(fn);
+  // strip parameters
   fn:=Copy(fn,1,iif(Pos(' ',fn)<>0,Pos(' ',fn)-1,Length(fn)));
   {$ifndef UnixFS}
   if UpperCase(fn)='COPY' then
@@ -407,18 +406,8 @@ begin
 end;
 
 function ExecutableExists(fn: string): boolean;
-var found: string;
 begin
-  found:=FindExecutable(fn);
-  // caution: FindExecutable ignores specified path if it's not correct,
-  // therefore...
-  if ExtractFilePath(fn)<>'' then
-    {$ifdef UnixFS}
-    result:=fn=found
-    {$else}
-    result:=UpperCase(fn)=UpperCase(found)
-    {$endif}
-  else result:=found<>'';
+  result:=FindExecutable(fn)<>'';
 end;
 
 function ValidFileName(const name:string):boolean;
@@ -652,6 +641,10 @@ end.
 
 {
   $Log$
+  Revision 1.88  2001/01/14 10:58:04  ma
+  - fixed FindFile/FindExecutable/ExecutableExists
+  - paths have to be correct if specified in these functions now
+
   Revision 1.87  2001/01/06 16:58:26  ma
   - well. VP doesn't like exit(X).
 
