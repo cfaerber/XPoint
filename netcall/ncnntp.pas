@@ -4,12 +4,12 @@
    under the terms of the GNU General Public License as published by the
    Free Software Foundation; either version 2, or (at your option) any
    later version.
-  
+
    The software is distributed in the hope that it will be useful, but
    WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this software; see the file gpl.txt. If not, write to the
    Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -28,30 +28,30 @@ unit NCNNTP;
 interface
 
 uses
-  xpglobal,		{ Nur wegen der Typendefinition }
-  IPCClass,		{ TIPC }
-  NetCall,		{ TNetcall }
-  NCSocket,		{ TSoketNetcall }
-  Sockets,		{ Socket-Interface }
-  Classes,		{ TStringList }
+  xpglobal,             { Nur wegen der Typendefinition }
+  IPCClass,             { TIPC }
+  NetCall,              { TNetcall }
+  NCSocket,             { TSoketNetcall }
+  Sockets,              { Socket-Interface }
+  Classes,              { TStringList }
   sysutils;
 
 type
-  ENNTP 		= class(ESocketNetcall);	{ Allgemein (und Vorfahr) }
+  ENNTP                 = class(ESocketNetcall);        { Allgemein (und Vorfahr) }
 
 type
   TNNTP = class(TSocketNetcall)
-  
+
   protected
 
-    FServer		: string;		{ Server-Software }
+    FServer             : string;               { Server-Software }
 
   public
 
-    Error		: integer;		{ Letzter Fehlercode }
-    
-    User, Password	: string;		{ Identifikation }
-  
+    Error               : integer;              { Letzter Fehlercode }
+
+    User, Password      : string;               { Identifikation }
+
     constructor Create;
     constructor CreateWithHost(s: string);
 
@@ -59,41 +59,45 @@ type
 
     { Verbindung herstellen }
     function Connect: boolean; override;
-    
+
     { Abmelden }
     procedure DisConnect; override;
-    
+
     { Anmelden (wird von Connect aufgerufen) }
     function  Login: boolean;
-    
+
     { -------- NNTP-Zugriffe }
-    
+
     { Liste holen (withDescr = Description, wenn moeglich }
     function List(aList: TStringList; withDescr: boolean): boolean;
-    
+
     { In den Stream schreiben }
     procedure WriteFmt(fmt: string; args: array of const);
-    
+
   end;
 
 implementation
 
 const
-  DefaultNNTPPort		= 119;
-  CrLf				= #13#10;
+  DefaultNNTPPort               = 119;
+  CrLf                          = #13#10;
 
+{$IFDEF VP }
+const
+{$ELSE }
 resourcestring
-  res_connect1		= 'Versuche %s zu erreichen...';
-  res_connect2		= 'Unerreichbar: %s';
-  res_connect3		= 'Anmeldung fehlgeschlagen: %s';
-  res_connect4		= 'Verbunden';
+{$ENDIF }
+  res_connect1          = 'Versuche %s zu erreichen...';
+  res_connect2          = 'Unerreichbar: %s';
+  res_connect3          = 'Anmeldung fehlgeschlagen: %s';
+  res_connect4          = 'Verbunden';
 
-  res_disconnect	= 'Trenne Verbindung...';
+  res_disconnect        = 'Trenne Verbindung...';
 
-  res_list1		= 'Setze Lese-Modus...';
-  res_list2		= 'Kann nicht mit %s kommunizieren!';
-  res_list3		= '%s gibt die Liste nicht frei!';
-  res_list4		= '%d gelesen';
+  res_list1             = 'Setze Lese-Modus...';
+  res_list2             = 'Kann nicht mit %s kommunizieren!';
+  res_list3             = '%s gibt die Liste nicht frei!';
+  res_list4             = '%d gelesen';
 
 constructor TNNTP.Create;
 begin
@@ -115,13 +119,9 @@ begin
 end;
 
 procedure TNNTP.WriteFmt(fmt: string; args: array of const);
-var
-  s: string;
 begin
-  if Connected then begin
-    s:= Format(fmt, args);
-    write(tout, s, CrLf);
-  end;
+  if Connected then
+    SWriteln(Format(fmt, args));
 end;
 
 function TNNTP.Login: boolean;
@@ -133,10 +133,10 @@ begin
       Error:= 480
     else begin
       WriteFmt('AUTHINFO USER %s PASS %s', [User, Password]);
-      ReadLn(tin,s);
+      SReadLn(s);
       Error:= ParseResult(s);
     end;
-  end else 
+  end else
     Error:= 500;
   Result:= Error=480;
 end;
@@ -145,15 +145,16 @@ function TNNTP.Connect: boolean;
 var
   s   : string;
   code: integer;
-begin 
+begin
   WriteIPC(mcInfo,res_connect1, [Host.Name]);
   if not inherited Connect then begin
     result:= false;
     exit;
   end;
   { Ready ermitteln }
-  while not eof(tin) do begin
-    readln(tin,s);
+  while not timeout do
+  begin
+    Sreadln(s);
     code:= ParseResult(s);
     if code<>-1 then
       break;
@@ -184,9 +185,10 @@ var
   s: string;
 begin
   WriteIPC(mcInfo,res_disconnect,[0]);
-  if Connected then begin
+  if Connected then
+  begin
     WriteFmt('QUIT',[0]);
-    readln(tin,s);
+    SReadln(s);
     Error:=ParseResult(s);
   end;
   inherited DisConnect;
@@ -194,32 +196,36 @@ end;
 
 function TNNTP.List(aList: TStringList; withDescr: boolean): boolean;
 var
-  s	: string;
-  code	: integer;
-  p	: integer;
-  i	: integer;
+  s     : string;
+  code  : integer;
+  p     : integer;
+  i     : integer;
 begin
   aList.Clear;
   aList.Duplicates:= dupIgnore;
-  if Connected then begin
+  if Connected then
+  begin
     WriteIPC(mcInfo,res_list1,[0]);
-    WriteFmt('MODE READER', [0]);
-    readln(tin,s);
+    SWriteln('MODE READER');
+    s := '';
+    while s= '' do SReadln(s);
     if ParseResult(s)<>200 then begin
       WriteIPC(mcError,res_list2,[Host.Name]);
       Result:= false;
       exit;
     end;
-    WriteFmt('LIST NEWSGROUPS',[0]);
-    readln(tin,s);
+    SWriteln('LIST NEWSGROUPS');
+    SReadln(s);
     if ParseResult(s)<>215 then begin
       WriteIPC(mcError,res_list3,[Host.Name]);
       Result:= false;
       exit;
     end;
+
     i:=0;
-    while not eof(tin) do begin
-      readln(tin,s);
+    while not timeout do
+    begin
+      SReadln(s);
       code:= ParseResult(s);
       if code=0 then break
       else if code<>-1 then begin
@@ -232,8 +238,8 @@ begin
       s:= Trim(s);
       if not withDescr then begin
         p:= pos(' ',s);
-	if p=0 then p:= pos(#9,s);
-	if p<>0 then s:= Copy(s,1,p-1);
+        if p=0 then p:= pos(#9,s);
+        if p<>0 then s:= Copy(s,1,p-1);
       end;
       aList.Add(s);
 {$ifdef FPC}
@@ -249,8 +255,11 @@ end;
 
 end.
 {
-	$Log$
-	Revision 1.1  2000/07/25 18:02:18  hd
-	- NNTP-Unterstuetzung (Anfang)
+        $Log$
+        Revision 1.2  2000/08/01 11:08:01  mk
+        - auf neues TNetCallSocket umgestellt
+
+        Revision 1.1  2000/07/25 18:02:18  hd
+        - NNTP-Unterstuetzung (Anfang)
 
 }

@@ -97,7 +97,11 @@ uses
   WinSock;
 {$endif}
 
+{$IFDEF VP }
+const
+{$ELSE }
 resourcestring
+{$ENDIF }
   res_IPRangeError         = 'Index value %d must be in 1-4!';
   res_IPAddrTypeError      = 'Unknown address typ: %d, expected %d!';
   res_IPNoIPv4Error        = 'This is not an IPv4 address!';
@@ -218,6 +222,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2000/08/01 11:08:01  mk
+  - auf neues TNetCallSocket umgestellt
+
   Revision 1.5  2000/07/25 09:12:11  hd
   - GName
 
