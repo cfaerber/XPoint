@@ -91,6 +91,7 @@ implementation
 uses
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF DOS32} xpdos32, {$ENDIF}
+  debug,
   stringtools, xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o,xp_uue;
 
 
@@ -618,6 +619,9 @@ end;
 
 procedure AddNewBezug(MsgPos, MsgId, Ref, Datum: Integer);
 begin
+  Debug.DebugLog('xp1o',Format(
+    'adding reference: msg no. %d (id=%4x, refid=%4x, date=%d)',
+    [MsgPos,MsgId,Ref,Datum]),dlDebug);
   dbAppend(bezbase);
   dbWriteN(bezbase,bezb_msgpos, MsgPos);
   dbWriteN(bezbase,bezb_msgid, MsgId);
@@ -1065,6 +1069,10 @@ end;
 
 {
   $Log$
+  Revision 1.110.2.3  2003/01/24 14:24:11  cl
+  - fixed problems during ``bezugsverkettung''
+    (should also fix ``Cannot delete ...\SPOOL\1.z'').
+
   Revision 1.110.2.2  2002/07/21 20:14:35  ma
   - changed copyright from 2001 to 2002
 
