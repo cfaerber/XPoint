@@ -1057,7 +1057,6 @@
   end;
 
   Procedure Rename_box(old_dname,dname:string);
-  var newdir: String;
 
     procedure renbox(const path,ext:string);
     var f : file;
@@ -1075,17 +1074,17 @@
     renbox(ownpath, extBfg);
     renbox(ownpath, extFl);
     renbox(ownpath, extBl);
+    renbox(ownpath, extRc);
+    renbox(ownpath, extUdl);
     renbox(ownpath, extFl);
     renbox(ownpath, extInf);
     renbox(ownpath, extCfg);
-    renbox(ownpath, extUdl);
     renbox(boxpar^.ClientPath, extBl);
     renbox(boxpar^.ClientPath, extGr);
     renbox(boxpar^.ClientPath, extRc);
     renbox(boxpar^.ClientPath, extCfg);
     renbox(boxpar^.ClientPath, extBfg);
     ChDir(XFerDir_);
-    GetDir(0, NewDir);
     RenameFile(old_dname, dname);
     ChDir(Copy(OwnPath, 1, Length(OwnPath)-1));
   end;
@@ -1177,7 +1176,7 @@
       end;
   end;
 
-  // Edit Namen fuer alle Internet-Boxtypen ausser UUCP
+  // Edit Namen fuer alle RFC-Boxtypen ausser UUCP
   procedure EditInetName(var brk:boolean);
   var name,user,komm  : string;
       dname,old_dname : string;
@@ -1233,14 +1232,8 @@
           { evtl. User&Bretter ueberarbeiten }
         { DefaultBox:=name;   ?????
           SaveConfig2; }
-          if dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
-            renbox(extBoxFile);
-            renbox(extBfg);
-            renbox(extFl);
-            renbox(extBl);
-            renbox(extFbl);
-            renbox(extInf);
-            end;
+          if dname<>old_dname then  { kann bei Fido evtl. gleich sein! }
+            Rename_box(old_dname,dname);
           end;
         end;
       if not brk then begin
@@ -2104,6 +2097,9 @@
 
 {
   $Log$
+  Revision 1.36  2001/10/13 11:29:21  ma
+  - fixed: renaming server did not rename rc file
+
   Revision 1.35  2001/10/11 11:18:39  ma
   - changed server file name creation strategy
 
