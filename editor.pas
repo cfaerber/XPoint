@@ -529,7 +529,7 @@ begin
     config.rechter_rand:=74;
     config.AutoIndent:=true;
     { 01/2000 oh }
-    config.PersistentBlocks:=false;
+    config.PersistentBlocks:=true;
     { /oh }
     { 10.02.2000 robo }
     config.QuoteReflow:=true;
@@ -1996,6 +1996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/03/20 11:27:44  mk
+  - Persistene Bloecke im Editor sind jetzt default
+
   Revision 1.14  2000/03/17 21:22:10  rb
   vActAbs entfernt, erster Teil von 'Bl”cke reformatieren' (<Ctrl K><F>)
 
