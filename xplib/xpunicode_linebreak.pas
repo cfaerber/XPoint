@@ -116,7 +116,10 @@ type TUnicodeLineBreaker = class
     { Constructs a @link(TUnicodeLineBreaker). }
     constructor Create;
 
-    { Sets the breaker to UTF-8 mode. }
+    { Destroys the @link(TUnicodeLineBreaker). }
+    destructor Destroy; override;
+
+    { Sets the breaker to UTF-8 mode. (This is the default.) }
     procedure SetUTF8;
     { Sets the breaker to SBCS mode. }
     procedure SetCodePage(const CodePage: T8BitTable);
@@ -137,6 +140,10 @@ type TUnicodeLineBreaker = class
     { Reads text from a @link(TStream). No implicit line breaks will 
       be added. }
     procedure AddData(data:TStream); overload;
+
+    { Adds a line break if the input data processed so far did not
+      end with one. }
+    procedure FlushData;
 
   public
     { Object that reveices the output of the line breaker. 
@@ -255,6 +262,14 @@ begin
 
   TabWidth := 8;
   MaxWidth := MAXINT;  
+
+  FCodePage:= nil;
+end;
+
+{ Destroys the @link(TUnicodeLineBreaker). }
+destructor TUnicodeLineBreaker.Destroy;
+begin
+  FlushData;
 end;
 
 procedure TUnicodeLineBreaker.FSetSinkObj(AnObject: TObject);
@@ -289,6 +304,12 @@ end;
 procedure TUnicodeLineBreaker.AddData(data:TStream);
 begin
   FAddData(data,'');
+end;
+
+procedure TUnicodeLineBreaker.FlushData;
+begin
+  if Length(Line)>0 then
+    FAddData(nil,#10);
 end;
 
 procedure TUnicodeLineBreaker.FAddData(stream_data:TStream;const string_data:string);
@@ -388,6 +409,7 @@ var
       begin
         mk_room;
         Buffer := Buffer + string_data;
+        sd_used := true;
       end;
     end;  
   end;
@@ -605,6 +627,10 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2003/04/27 22:24:33  cl
+// - TUnicodeLineBreaker.FlushData added
+// - TUnicodeLineBreaker.Destroy calls FlushData
+//
 // Revision 1.3  2003/03/16 18:55:27  cl
 // - started PasDoc documentation
 //
