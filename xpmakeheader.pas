@@ -344,6 +344,8 @@ var i,res : integer;
       end;
   end;
 
+var DummyInt: Integer;
+
 begin
   ok:=true;
   hd.Clear;
@@ -429,7 +431,9 @@ begin
             if id = 'LEN'    then val(line,groesse,res) else
             if id = 'KOM'    then val(line,komlen,res) else
             if id = 'KOP'    then GetKop else
-            if id = 'BEZ'    then begin if Line<>'' then References.Add(Line)end else
+            if id = 'BEZ'    then begin
+                                    if (Line<>'')and(not References.Find(Line,DummyInt)) then
+                                      References.Add(Line)end else
             if id = 'MAILER' then programm := line else
             if id = 'ORG'    then organisation := line else
             if id = 'OEM'    then GetName(oem,dummy) else
@@ -569,6 +573,10 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/04/18 10:31:12  ma
+  - this should prevent doubled references in every case BUT there
+    seems to be an error in TStrglist.Find :-(
+
   Revision 1.5  2001/04/17 00:20:36  ma
   - fixed: "BEZ:" was read as one reference ""
 
