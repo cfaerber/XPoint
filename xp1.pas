@@ -740,7 +740,8 @@ asm
 @tacopy2:   mov ax,word ptr dispbuf[di+4]
             mov word ptr dispbuf[di],ax
             add di,2
-            loop @tacopy2
+            dec cx
+            jns @tacopy2
 
 @addspace:  mov byte ptr dispbuf[di],' '          { 2 Leerzeichen anh„ngen }
             mov byte ptr dispbuf[di+2],' '
@@ -2284,6 +2285,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.48.2.28  2001/10/30 11:15:02  mk
+  - JG: fixed Listdisplay, see <8Bj$$d0DkpB@ralle.post.rwth-aachen.de>
+
   Revision 1.48.2.27  2001/10/26 17:40:02  my
   MY+JG+RB:- Automatische Zeitzonenumstellung (Optionen 'manuell',
              'Datum', 'TZ-Var.', 'TZ/Datum). Details siehe Hilfe.
