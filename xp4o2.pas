@@ -833,7 +833,7 @@ end;
 Prozedur zum Sprachwechsel aus Configmenue ausgeklammert wegen Bug:
 
 wenn XP mit Englischen Resourcen geladen wurde
-(ob aus xp.res oder per Parameter /l:e ist egal)
+(ob aus XP.RES oder per Parameter /l:e ist egal)
 gibt es bei der ausfuehrung von "Freemain" einen RTE 204.
 ist kein EMS vorhanden gibt es unter Win98 einen GPF.
 Beim Start mit deutschen Resourcen funktioniert Die Routine
@@ -942,6 +942,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.5  2000/12/05 13:09:42  mk
+  - einige Datei/Verzeichnisnamen gross geschrieben
+
   Revision 1.11.2.4  2000/11/11 09:59:42  mk
   - Kommentarbaum mit 97 Ebenen und 3640 Nachrichten
   - Verschieben des Kommentarbaums mit ctrl-cursor links/rechts moeglich

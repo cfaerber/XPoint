@@ -512,7 +512,7 @@ begin { loadresource }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
   findfirst('xp-*.res', ffAnyFile, sr);         { Hier duerfte es keine Probleme geben }
-  assign(t,'xp.res');
+  assign(t,'XP.RES');
   reset(t);
   if ioresult<>0 then
   begin                                     { Wenn XP.RES nicht existiert }
@@ -563,7 +563,7 @@ begin { loadresource }
   close(t);
   OpenResource(lf,ResMinmem);
   if getres(6)<>LangVersion then begin
-    if exist('xp.res') then _era('xp.res');
+    if exist('XP.RES') then _era('XP.RES');
     interr(iifs(deutsch,'falsche Version von ','wrong version of ')+lf);
     end;
   GetResdata;
@@ -1095,6 +1095,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45.2.10  2000/12/05 13:09:42  mk
+  - einige Datei/Verzeichnisnamen gross geschrieben
+
   Revision 1.45.2.9  2000/10/18 08:49:40  mk
   - Switch -312 fuer XP Kompatibilitaetsmodus (F-TO -> X-XP-FTO)
 

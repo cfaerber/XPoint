@@ -88,7 +88,7 @@ var t  : text;
     s  : string;
     i  : integer;
 begin
-  if not exist('xp.res') and not exist('xp-d.res') then begin
+  if not exist('XP.RES') and not exist('xp-d.res') then begin
     wrlogo;
     writeln('Fehler: ''xp-d.res'' nicht gefunden.'#7);
     writeln;
@@ -97,7 +97,7 @@ begin
     writeln;
     halt;
     end;
-  assign(t,'xp.res');
+  assign(t,'XP.RES');
   if existf(t) then begin
     reset(t);
     readln(t,s);
@@ -754,6 +754,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.2  2000/12/05 13:09:42  mk
+  - einige Datei/Verzeichnisnamen gross geschrieben
+
   Revision 1.20.2.1  2000/07/02 10:43:00  mk
   - pformstr entfernt
 

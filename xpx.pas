@@ -152,7 +152,7 @@ var t : text;
     s : string;
 begin
   filemode:=0;
-  assign(t,'xp.res');
+  assign(t,'XP.RES');
   reset(t);
   readln(t,s);
   close(t);
@@ -308,6 +308,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.18.2.5  2000/12/05 13:09:42  mk
+  - einige Datei/Verzeichnisnamen gross geschrieben
+
   Revision 1.18.2.4  2000/11/26 10:18:18  mk
   RB:- MCB-Test jetzt mit Groesse der Datei
 

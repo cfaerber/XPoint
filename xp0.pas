@@ -102,16 +102,16 @@ const  {$IFDEF DPMI}
 
        ValidDirCh  = '>ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\()[]{}!"$%&_-.:,;#~;=*?';
 
-       PufferFile  = 'puffer';        { Z-Netz-Puffer }
-       XFerDir_    = 'spool';         { eingehende Mailbatches }
+       PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
+       XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
        XFerDir     = XFerDir_+DirSepa;
        JanusDir_   = XFerDir+'janus';
        JanusDir    = JanusDir_+DirSepa;
-       FidoDir_    = 'fido';
+       FidoDir_    = 'FIDO';
        FidoDir     = FidoDir_+DirSepa;{ Nodelists }
        InfileDir   = 'files'+DirSepa; { Default: Filerequests }
-       AutoxDir    = 'autoexec'+DirSepa;    { AutoStart-Daten }
-       BadDir      = 'bad'+DirSepa;
+       AutoxDir    = 'AUTOEXEC'+DirSepa;    { AutoStart-Daten }
+       BadDir      = 'BAD'+DirSepa;
 
        HeaderFile  = 'HEADER.XPS';     { Schablonen-Dateien }
        HeaderPriv  = 'PRIVHEAD.XPS';
@@ -1154,6 +1154,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.17  2000/12/05 13:09:41  mk
+  - einige Datei/Verzeichnisnamen gross geschrieben
+
   Revision 1.54.2.16  2000/11/20 19:42:14  mk
   - Automatische Datumsbezuege wieder wie immer (schaltbar)
 
