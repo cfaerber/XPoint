@@ -2027,9 +2027,12 @@ begin
 end;
 
 procedure Glossary_ed(var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
+const locked:boolean=false;
 begin
-  if ustr(t)='E' then begin
+  if (ustr(t)='E') and not locked then begin
+    locked:=true;
     EditFile('glossary.cfg',false,false,0,false);
+    locked:=false;
     t:=keyesc;
     pushkey(keyctcr); 
     end; 
@@ -2038,6 +2041,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25.2.4  2000/07/25 18:39:56  jg
+  - Glossary: GLOSSARY.CFG-"E"ditor darf nicht rekursiv aufgerufen werden
+
   Revision 1.25.2.3  2000/07/25 18:12:37  jg
   - Glossary: "E" im Glossary-Popup erlaubt es die GLOSSARY.CFG zu Editieren
 
