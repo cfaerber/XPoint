@@ -265,7 +265,7 @@ end;
 function ReadKey: char;
 begin
   while not KeyPressed do
-    WaitForMultipleObjects(1,{$IFNDEF FPC}@{$ENDIF}StdInputHandle,true,INFINITE);
+    WaitForMultipleObjects(1,@StdInputHandle,true,INFINITE);
 
   if SpecialKey then begin
     Result := #0;
@@ -297,6 +297,9 @@ initialization
 
 {
   $Log$
+  Revision 1.19  2002/01/28 20:38:46  mk
+  - compile fix for newest FPC Snapshot (1.0.5, 1.0.6 is comming)
+
   Revision 1.18  2002/01/01 19:34:38  cl
   - Basic support for console charset switching + initial Win32 implementation
 
