@@ -3219,11 +3219,11 @@ newsgroups only to be displayed for selection.
 
 @
 218
-<<[x]>>     Messages sent to [Archive] will be set to@12110
-        "delete" to avoid storing them twice.
+<<[x]>>     [Archived] messages will be marked for@12110
+        deletion, to avoid storing them twice.
 
 
-<<[ ]>>     Message will be left as it is.
+<<[ ]>>     Messages will NOT be marked for deletion.
 
 @
 8070
@@ -3249,19 +3249,20 @@ newsgroups only to be displayed for selection.
 
 @
 219
-<<[x]>>     New newsgroups which are automatically
-        entered because a message for them appears,
-        will be put at the end of the newsgroup list
-        in the window.
+<<[x]>>     New message areas which are automatically
+        created will be placed at the end of the
+        message area list.
 
-<<[ ]>>     They will be entered alphabetically into
+<<[ ]>>     New message areas which are automatically
+        created will be placed alphabetically into
         the appropriate place in the list. This is
-        the standard setting.
+        the default setting.
 
-At the end is best though, otherwise you just don't
-notice new groups if they get one message that you
-don't happen to notice when it is new. You get into
-the habit of always looking at the end for new NGs
+At the end may be best though, otherwise you may not
+notice newly created areas. You could get into the
+habit of always looking at the end of the list for
+new message areas. However, at the end of the day,
+this is merely a matter of personal preference.
 @
 220
 <<[x]>>     Incoming PMs are put in a NG with your
@@ -6243,15 +6244,15 @@ Enter the Node Number or the name of the Sysop or
 Point that CrossPoint should dial.
 @
 750
-Enter the Number or of the Node or Point (in the form
-Zone:Net/Node.[Point] )about which you want to look
-up information. Alternatively you can reference the
-name of the sysop or point. If you leave off the Zone
-and even the net, CrossPoint assumes these from your
-main Fido box.
+Enter the Node/Point number of the Node or Point,
+in the form "Zone:Net/Node.<Point>", for whom you
+wish to look up information. Alternatively, you can
+enter the name of the SysOp or Point. If you leave
+out the Zone and even the Net, CrossPoint assumes
+these from your main Fido Server.
 
 The line "Flags" contains various information about
-the node and its modem type.
+the Node and its modem type.
 
 The most important are:
 
