@@ -866,7 +866,7 @@ begin
       n:=dbGetFeldNr(d,'quotemsk');
       if n>0 then begin
         qm:= dbReadNStr(d,n);
-        if trim(qm)<>'' then grQuoteMsk:=trim(qm)+'.xps';
+        if trim(qm)<>'' then grQuoteMsk:=trim(qm)+extXps;
         end;
       end;
     dbClose(d);
@@ -1133,6 +1133,11 @@ finalization
   EmpfList.Free;
 {
   $Log$
+  Revision 1.66  2001/09/07 13:54:19  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.65  2001/09/07 10:56:00  mk
   - added GetServerFilename
 

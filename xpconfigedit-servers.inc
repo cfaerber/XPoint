@@ -458,25 +458,25 @@
         write(#7);
         dname:= dbReadStr(d,'boxname');
         end;
-      pp:=_filesize(ownpath+dname+BoxFileExt)>0;
+      pp:=_filesize(ownpath+dname+extBoxFile)>0;
       if ReadJN(iifs(pp,getres(916),'')+getreps(917,name),not pp)   { 'Polldaten vorhanden!! ' / '%s wirklich loeschen' }
       then begin
         dec(ntused[dbReadInt(d,'netztyp')]);
         dbDelete(d);
         dbFlushClose(d);
-        if FileExists(ownpath+dname+bfgext) then     { .BFG loeschen }
-          _era(ownpath+dname+bfgext);
-        if FileExists(ownpath+dname+'.bl') then      { Brettliste loeschen }
-          _era(ownpath+dname+'.bl');
-        if FileExists(ownpath+dname+'.fl') then      { Fileliste loeschen }
-          _era(ownpath+dname+'.fl');
-        if FileExists(ownpath+dname+'.fbl') then     { Fileare-Liste loeschen }
-          _era(ownpath+dname+'.fbl');
-        if FileExists(ownpath+dname+'.inf') then     { Maus-Infofileliste loeschen }
-          _era(ownpath+dname+'.inf');
-        if FileExists(ownpath+dname+'.udl') then     { erase UIDL list }
-          _era(ownpath+dname+'.udl');
-        if pp then _era(OwnPath+dname+BoxFileExt);   { Pollpaket loeschen }
+        if FileExists(ownpath + dname + extBfg) then     { .BFG loeschen }
+          _era(ownpath + dname + extBfg);
+        if FileExists(ownpath + dname + extBl) then      { Brettliste loeschen }
+          _era(ownpath + dname + extBl);
+        if FileExists(ownpath + dname + extFl) then      { Fileliste loeschen }
+          _era(ownpath + dname + extFl);
+        if FileExists(ownpath + dname + extFbl) then     { Fileare-Liste loeschen }
+          _era(ownpath + dname + extFbl);
+        if FileExists(ownpath + dname + extInf) then     { Maus-Infofileliste loeschen }
+          _era(ownpath + dname + extInf);
+        if FileExists(ownpath + dname + extUdl) then     { erase UIDL list }
+          _era(ownpath + dname + extUdl);
+        if pp then _era(OwnPath+dname+ extBoxFile);   { Pollpaket loeschen }
         if p=1 then dbGoTop(d)
         else dbGo(d,drec[1]);
         if name=DefFidoBox then begin
@@ -1084,19 +1084,19 @@
     end;
 
   begin
-    renbox(ownpath,'.pp');
-    renbox(ownpath,BfgExt);
-    renbox(ownpath,'.fl');
-    renbox(ownpath,'.bl');
-    renbox(ownpath,'.fbl');
-    renbox(ownpath,'.inf');
-    renbox(ownpath,'.cfg');
-    renbox(ownpath,'.udl');
-    renbox(boxpar^.ClientPath,'.bl');
-    renbox(boxpar^.ClientPath,'.gr');
-    renbox(boxpar^.ClientPath,'.rc');
-    renbox(boxpar^.ClientPath,'.cfg');
-    renbox(boxpar^.ClientPath,BfgExt);
+    renbox(ownpath, extBoxFile);
+    renbox(ownpath, extBfg);
+    renbox(ownpath, extFl);
+    renbox(ownpath, extBl);
+    renbox(ownpath, extFl);
+    renbox(ownpath, extInf);
+    renbox(ownpath, extCfg);
+    renbox(ownpath, extUdl);
+    renbox(boxpar^.ClientPath, extBl);
+    renbox(boxpar^.ClientPath, extGr);
+    renbox(boxpar^.ClientPath, extRc);
+    renbox(boxpar^.ClientPath, extCfg);
+    renbox(boxpar^.ClientPath, extBfg);
     ChDir(XFerDir_);
     GetDir(0, NewDir);
     RenameFile(old_dname, dname);
@@ -1200,15 +1200,15 @@
       nt              : byte;
       newbox,newibox  : boolean;
 
-    procedure renbox(ext:string);
+    procedure renbox(const ext:string);
     var f : file;
     begin
       assign(f,ownpath+old_dname+ext);
-      if existf(f) then begin
-        if FileExists(ownpath+dname+ext) then
-          _era(ownpath+dname+ext);
+      if existf(f) then 
+      begin
+        SaveDeleteFile(ownpath+dname+ext);
         rename(f,ownpath+dname+ext);
-        end;
+      end;
     end;
 
   begin
@@ -1249,12 +1249,12 @@
         { DefaultBox:=name;   ?????
           SaveConfig2; }
           if dname<>old_dname then begin  { kann bei Fido evtl. gleich sein! }
-            renbox(BoxFileExt);
-            renbox(BfgExt);
-            renbox('.fl');
-            renbox('.bl');
-            renbox('.fbl');
-            renbox('.inf');
+            renbox(extBoxFile);
+            renbox(extBfg);
+            renbox(extFl);
+            renbox(extBl);
+            renbox(extFbl);
+            renbox(extInf);
             end;
           end;
         end;
@@ -1499,7 +1499,7 @@
   begin
     with boxpar^ do begin
       dbRead(d,'netztyp',nt);
-      pp_da:=FileExists(dbReadStr(d,'dateiname')+BoxFileExt);
+      pp_da:=FileExists(dbReadStr(d,'dateiname')+extBoxFile);
       _nname:=false; _alias:=false; _mids:=false; _brett:=false;
       _atp:=false; _repto:=false; _light:=false; _brettm:=false;
       width:=34;
@@ -1605,7 +1605,7 @@
       nli : boolean;
   begin
     dbGo(d,drec[p]);
-    pp_da:=FileExists(dbReadStr(d,'dateiname')+BoxFileExt);
+    pp_da:=FileExists(dbReadStr(d,'dateiname')+extBoxFile);
     with boxpar^ do begin
       maps:= dbReadStr(d,'nameomaps');
       dialog(ival(getres2(926,0)),13,getres2(926,1),x,y);  { 'Fido-Einstellungen' }
@@ -1819,7 +1819,7 @@
     var t : text;
         s : string;
     begin
-      assign(t,dateiname+'.bl');
+      assign(t,dateiname+extBl);
       if existf(t) then begin
         reset(t);
         while not eof(t) do begin
@@ -1834,7 +1834,7 @@
     end;
 
   begin
-    eqfg:=FileExists(dateiname+QfgExt) and FileExists('zqwk.exe');
+    eqfg:=FileExists(dateiname+extQfg) and FileExists('zqwk.exe');
     if eqfg then begin
       ReadQfg(dateiname,qfg);
       ReadNmta;
@@ -2005,7 +2005,7 @@
 
   begin
     dbGo(d,drec[p]);
-    if FileExists(dbReadStr(d,'dateiname')+BoxFileExt) then begin
+    if FileExists(dbReadStr(d,'dateiname')+extBoxFile) then begin
       msgbox(60,9,_fehler_,x,y);
       mwrt(x+3,y+2,getreps2(929,1,    { 'Es sind Polldaten fuer diese Box vorhanden (%s.PP)' }
                    FileUpperCase(dbReadStr(d,'dateiname'))));
@@ -2049,6 +2049,11 @@
 
 {
   $Log$
+  Revision 1.24  2001/09/07 13:54:23  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.23  2001/09/06 22:01:14  mk
   - client mode updates
 

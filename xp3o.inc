@@ -486,7 +486,7 @@ var x,y      : Integer;
     rps(s,'$INFILE',temppath+cryptedfile);
     rps(s,'$OUTFILE',uncfile);
     rps(s,'$USER',hdp.absender);
-    if FileExists(uncfile) then _era(uncfile);
+    SaveDeleteFile(uncfile);
     savecursor;
     sichern(sp);
     shell(s,600,3);                     { Nachricht decodieren }
@@ -1212,14 +1212,13 @@ begin
   name:= ExtractFilename(fn);
   if (ext<>'') then
     Delete(name, length(name)-length(ext),length(ext));
-  if UpperCase(ext)='.OUT' then exit;   { UUCP: ausgehende Nachrichten }
+  if FileUpperCase(ext)='.OUT' then exit;   { UUCP: ausgehende Nachrichten }
   if ext='' then
     ext:='.001'
   else
     while FileExists(BadDir+name+ext) and (ext<>'.999') do
       ext:='.'+formi(ival(mid(ext,2))+1,3);
-  if FileExists(BadDir+name+ext) then
-    _era(BadDir+name+ext);
+  SaveDeleteFile(BadDir+name+ext);
   if not FileExists(BadDir+name+ext) then begin
     assign(f,fn);
     rename(f,BadDir+name+ext);
@@ -1229,6 +1228,11 @@ end;
 
 {
   $Log$
+  Revision 1.67  2001/09/07 13:54:19  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.66  2001/09/07 09:17:55  mk
   - added AddNewBrett procedure
 

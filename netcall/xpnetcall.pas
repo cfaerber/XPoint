@@ -323,7 +323,7 @@ begin
   Erase(CCFile);
   dbSetIndex(mbase,mi);
   Hdp.Free;
-  inc(outemsgs,TestPuffer(LeftStr(puffer,cpos('.',puffer))+EBoxFileExt,false,ldummy));
+  inc(outemsgs,TestPuffer(LeftStr(puffer,cpos('.',puffer))+extEBoxFile,false,ldummy));
 end;
 
 
@@ -584,7 +584,7 @@ begin
 end;
 
 procedure AssignUniqueDownloadName(var f:file;var s:string;path:string);
-var pold,name,ext,eext,i: string;
+var pold,name,ext,i: string;
     j,mlen: integer;
 begin
 {$IFDEF VP}
@@ -779,7 +779,7 @@ function BoxParOk: string;
           else
             ok:=(FileSearch(fn+'.exe',ownpath)<>'') or
               (FileSearch(fn+'.com',ownpath)<>'') or
-              (FileSearch(fn+'.bat',ownpath)<>'');
+              (FileSearch(fn+ extBatch,ownpath)<>'');
           if not ok then ChkPPPClient:=false;
           end;
         end;
@@ -909,12 +909,12 @@ end;
       closebox;
       _era(ppfile);
       end;
-    if FileExists(eppfile) then _era(eppfile);
+    SaveDeleteFile(eppfile);
   end;
 
   { Append all files in list to first file in list }
   function MergeFiles(List: TStringList): boolean;
-  var i: integer; aFile,bFile: file;
+  var aFile,bFile: file;
   begin
     result:=false;
     if List.Count<=0 then exit;
@@ -958,8 +958,8 @@ begin                  { function Netcall }
     exit;
     end;
   bfile := dbReadStr(d,'dateiname');
-  ppfile:=bfile+BoxFileExt;
-  eppfile:=bfile+EBoxFileExt;
+  ppfile:=bfile+extBoxFile;
+  eppfile:=bfile+extEBoxFile;
   dbRead(d,'netztyp',netztyp);
 
   Debug.DebugLog('xpnetcall','got net type: '+ntName(netztyp),DLInform);
@@ -993,10 +993,10 @@ begin                  { function Netcall }
   _fido:=(netztyp=nt_Fido);
   _uucp:=(netztyp=nt_UUCP);
   if _maus then begin
-    if FileExists(mauslogfile) then _era(mauslogfile);
-    if FileExists(mauspmlog) then _era(mauspmlog);
-    if FileExists(mausstlog) then _era(mausstlog);
-    end;
+    SaveDeleteFile(mauslogfile);
+    SaveDeleteFile(mauspmlog);
+    SaveDeleteFile(mausstlog);
+  end;
 
   Debug.DebugLog('xpnetcall','testing buffers',DLInform);
   if FileExists(ppfile) and (testpuffer(ppfile,false,ldummy)<0) then begin
@@ -1132,14 +1132,14 @@ begin                  { function Netcall }
 
 //**      RemoveEPP;
     if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
-    if FileExists(NetcallLogfile)then _era(NetcallLogfile);
+    SaveDeleteFile(NetcallLogfile);
     end; {if PerformDial}
 
   Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+StringListToString(IncomingFiles),DLDebug);
   if (IncomingFiles.Count>0)and MergeFiles(IncomingFiles)then begin
     CallFilter(true,IncomingFiles[0]);
     if PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad)then
-      if FileExists(IncomingFiles[0])then _era(IncomingFiles[0]);
+      SaveDeleteFile(IncomingFiles[0]);
     end;
   xp3o.ForceRecipient:= '';
   IncomingFiles.Destroy;
@@ -1351,10 +1351,14 @@ begin
   ParGelesen:=false;
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.33  2001/09/07 13:54:28  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.32  2001/09/07 10:56:02  mk
   - added GetServerFilename
 
@@ -1413,3 +1417,5 @@ end.
   - executing incoming filter
   - not many test runs have been made, please check.
 }
+end.
+

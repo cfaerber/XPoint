@@ -195,8 +195,7 @@ var flp : dbFLP;
       fsize:=4; fnlen:=10;
       end;
     dbAppendField(BrettFile,fld);
-    if FileExists(BrettFile+dbIxExt) then
-      _era(BrettFile+dbIxExt);
+    SaveDeleteFile(BrettFile+dbIxExt);
     AlphaBrettindex;
   end;
 
@@ -419,11 +418,7 @@ var flp : dbFLP;
   var fld : dbFeldTyp;
       b   : byte;
   begin
-{$IFDEF UnixFS }
-    if diskfree(0)<_filesize(BrettFile+'.db1') then
-{$ELSE }
-    if diskfree(0)<_filesize(BrettFile+'.DB1') then
-{$ENDIF }
+    if diskfree(0)<_filesize(BrettFile+ dbExt) then
       interr('Zu wenig Plattenplatz zum Konvertieren der Bretterdatei.');
     with fld do begin
       fname:='adresse'; ftyp:=dbTypeString;
@@ -451,11 +446,7 @@ var flp : dbFLP;
       nt    : byte;
       name  : string[25];
   begin
-{$IFDEF UnixFS }
-    if diskfree(0)<_filesize(MsgFile+'.db1')*1.2 then
-{$ELSE }
-    if diskfree(0)<_filesize(MsgFile+'.DB1')*1.2 then
-{$ENDIF }
+    if diskfree(0)<_filesize(MsgFile+ dbExt)*1.2 then
       interr('Zu wenig Plattenplatz zum Konvertieren von MSGS.DB1!');
     with fld do begin
       fname:='name'; ftyp:=dbTypeString;
@@ -947,15 +938,15 @@ begin
       writeln(t,getres2(243,i));
     close(t);
   end;
-
-
-
-
 end;
 
-end.
 {
   $Log$
+  Revision 1.36  2001/09/07 13:54:19  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.35  2001/08/27 09:13:42  ma
   - changes in net type handling (1)
 
@@ -1059,3 +1050,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

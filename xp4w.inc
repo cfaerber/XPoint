@@ -946,8 +946,8 @@ begin
 
     if not FileAttach then
     begin
-      if fn2<>'' then _era(fn2);    { Temp-Dateien l”schen }
-      if FileExists(fn) then _era(fn);
+      SaveDeleteFile(fn2);    { Temp-Dateien l”schen }
+      SaveDeleteFile(fn);
     end;
     lastmpsel:=mpselect;
     mpselect:=false;
@@ -971,7 +971,7 @@ begin
       spop(disprec);
       dbGo(mbase,rec);
       if ListQuoteMsg<>'' then begin
-        if FileExists(ListQuoteMsg) then _era(ListQuoteMsg);
+        SaveDeleteFile(ListQuoteMsg);
         ListQuoteMsg:='';
         end;
       keydisp:=skeydisp;
@@ -1613,6 +1613,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.79  2001/09/07 13:54:21  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.78  2001/08/29 22:58:17  mk
   JG:- Fix: Showing message header with 'O' in message reader after
        <Ctrl-PgUp/PgDn> could overwrite the screen position the selection

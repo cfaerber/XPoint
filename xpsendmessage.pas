@@ -1951,7 +1951,7 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
         end;
 
       if not flCrash or not MayCrash then
-        assign(f2,boxfile+BoxfileExt)           { ..und ab damit ins Pollpaket }
+        assign(f2,boxfile+extBoxfile)           { ..und ab damit ins Pollpaket }
       else begin
         assign(f2,CrashFile(hdp.empfaenger));
         SetCrashInfo;
@@ -2001,8 +2001,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     goto fromstart;
     end;
 
-  if FidoBin and FileExists(datei) and EditAttach then begin
-    _era(datei);
+  if FidoBin and EditAttach then begin
+    SaveDeleteFile(datei);
     datei:=betreff;
     end;
 
@@ -2130,6 +2130,11 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/09/07 13:54:25  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.5  2001/09/07 09:17:56  mk
   - added AddNewBrett procedure
 

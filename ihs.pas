@@ -25,7 +25,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  dos,
+  xp0, dos,
   typeform,fileio, xpglobal,sysutils;
 
 const maxpages = 4096;
@@ -390,7 +390,7 @@ begin
     end
   end;
 
-  FName := FileUpperCase(OutPath + ChangeFileExt(FName, '.hlp'));
+  FName := FileUpperCase(OutPath + ChangeFileExt(FName, extHlp);
   Writeln('Destination File: ', FName);
   assign(f,fname);
   rewrite(f,1);
@@ -428,6 +428,11 @@ end.
 
 {
   $Log$
+  Revision 1.26  2001/09/07 13:54:17  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.25  2001/08/11 23:06:26  mk
   - changed Pos() to cPos() when possible
 

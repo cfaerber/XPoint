@@ -149,7 +149,7 @@ function  copyfile(srcfn, destfn:string):boolean;
 procedure erase_mask(const s: string);
 
 { Move file to backup file with extension newext. Report true on success }
-function MakeBak(n,newext:string): boolean;
+function MakeBak(const n,newext:string): boolean;
 
 { Create empty file, return true on success }
 function MakeFile(const fn: string): Boolean;
@@ -430,7 +430,7 @@ begin
   if ExtractFileExt(fn)='' then begin
     result:=FindFile(fn+'.exe');
     if result='' then result:=FindFile(fn+'.com');
-    if result='' then result:=FindFile(fn+'.bat');
+    if result='' then result:=FindFile(fn + extBatch);
     end
   else result:=FindFile(fn);
   {$else}
@@ -502,12 +502,12 @@ begin
   sysutils.FindClose(sr);
 end;
 
-function MakeBak(n,newext:string): boolean;
+function MakeBak(const n,newext:string): boolean;
 var bakname : string;
 begin
   result:=false;
   if not FileExists(n) then exit;
-  BakName := ChangeFileExt(n, '.' + NewExt);
+  BakName := ChangeFileExt(n, '.' + FileUpperCase(NewExt));
   if FileExists(BakName) then
   begin
     if FileSetAttr(BakName,faArchive)=-1 then exit;
@@ -668,6 +668,11 @@ end.
 
 {
   $Log$
+  Revision 1.102  2001/09/07 13:54:17  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.101  2001/08/28 13:01:39  mk
   - removed RenameDir
   - renamed RenameDir to RenameFile

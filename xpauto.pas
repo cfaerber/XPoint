@@ -275,15 +275,15 @@ begin
           end;
         if (flags and 2<>0) and (datum1=0) and (datum2=0) and (tage+wotage=0)
         then begin
-          if (RightStr(FileUpperCase(datei),4)=FileUpperCase('.msg')) and FileExists(datei) then
-            _era(datei);
+          if (RightStr(FileUpperCase(datei),4)=FileUpperCase('.msg')) then
+            SaveDeleteFile(datei);
           dbDelete(auto);
           aufbau:=true;
           end;
         end;
       SaveUVS:=muvs;
-      if tmp and FileExists(datei) then
-        _era(datei);
+      if tmp then
+        SaveDeleteFile(datei);
       freesenduudatamem(sdata)
       end;
     end;
@@ -602,10 +602,10 @@ begin
         // delfile;
         end;
     if startbatch then begin
-      fnstart:=AutoxDir+FileUpperCase('start'+BatchExt);        { START.BAT }
+      fnstart:=AutoxDir+FileUpperCase('start' + extBatch);        { START.BAT }
       if FileExists(fnstart) then
         shell(fnstart,500,1);
-      fnstart:=AutoxDir+FileUpperCase('start1'+BatchExt);       { START1.BAT, l”schen }
+      fnstart:=AutoxDir+FileUpperCase('start1' + extBatch);       { START1.BAT, l”schen }
       if FileExists(fnstart) then begin
         shell(fnstart,500,1);
         DeleteFile(fnstart);
@@ -623,14 +623,15 @@ begin
 {$IFDEF Debug }
   dbLog('-- AutoStop');
 {$ENDIF }
-  fnstop:= AutoxDir+FileUpperCase('stop'+BatchExt);     { STOP.BAT }
+  fnstop:= AutoxDir+FileUpperCase('stop' + extBatch);     { STOP.BAT }
   if FileExists(fnstop) then
     shell(fnstop,500,1);
-  fnstop:= AutoxDir+FileUpperCase('stop1'+BatchExt);    { STOP1.BAT, l”schen }
-  if FileExists(fnstop) then begin
+  fnstop:= AutoxDir+FileUpperCase('stop1' + extBatch);    { STOP1.BAT, l”schen }
+  if FileExists(fnstop) then 
+  begin
     shell(fnstop,500,1);
     _era(fnstop);
-    end;
+  end;
 end;
 
 
@@ -675,6 +676,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/09/07 13:54:23  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.40  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

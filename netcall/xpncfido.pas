@@ -173,7 +173,7 @@ begin { ProcessAKABoxes }
           tempboxpar.boxname:=boxpar^.boxname;
           end
         else
-          bfile:=bfile+BoxFileExt;
+          bfile:=bfile+extBoxFile;
         writeln(t,'Bretter=',aBoxName,' ',tempboxpar.magicbrett);
         if FileExists(bfile)and
            (tempboxpar.notsempty or(_filesize(bfile)>10)) then begin
@@ -308,7 +308,7 @@ begin
       closebox;
     end else begin
       Debug.DebugLog('xpncfido','no files to process',DLInform);
-      if FileExists(fpuffer) then _era(fpuffer);
+      SaveDeleteFile(fpuffer);
     end;
   end; { with }
   freeres;
@@ -880,10 +880,14 @@ begin
 end;
 
 
-end.
 
 {
   $Log$
+  Revision 1.18  2001/09/07 13:54:27  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.17  2001/09/06 19:31:21  mk
   - removed some hints und warnings
 
@@ -942,3 +946,5 @@ end.
   Revision 1.51  2000/12/28 17:47:41  mo
   -entferne alte *.pkt aus dem spool vor dem neueinlesen  -anti dupes
 }
+end.
+

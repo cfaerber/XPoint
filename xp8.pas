@@ -275,7 +275,7 @@ var
     end;
 
   begin
-    sysfile:=GetServerFilename(box, '.bbl');
+    sysfile:=GetServerFilename(box, extBbl);
     root:=nil;
     if FileExists(sysfile) then begin         { alte .BBL-Datei einlesen }
       assign(t,sysfile);
@@ -439,13 +439,13 @@ end;
 
 function Get_BL_Name(const box:string):string;
 var
-  s1 : string;
+  s1: string;
 begin
   ReadBox(0,box,boxpar);
-  s1:=FileUpperCase(GetServerFilename(box, ''));
-  if not FileExists(s1+'.BL')                               { Brettliste im XP-Verzeichnis }
-    then s1:=Boxpar^.ClientPath+s1;
-  Get_BL_Name:=FileUpperCase(s1+iifs(FileExists(s1+'.BL'),'.BL','.GR'));   { oder .BL/.GR im Client-Verz. }
+  s1:= GetServerFilename(box, '');
+  if not FileExists(s1+extBl) then                     { Brettliste im XP-Verzeichnis }
+    s1 := Boxpar^.ClientPath+s1;
+  Get_BL_Name:=FileUpperCase(s1+iifs(FileExists(s1+extBl),extBl, extGr));   { oder .BL/.GR im Client-Verz. }
 end;
 
 { RFC/Client: RC-File anhand der im Lister markierten Bretter manipulieren }
@@ -468,7 +468,7 @@ begin
   moment;
   MakeRc:=true;
   ReadBox(0,box,boxpar);
-  rcfile:=FileUpperCase(BoxPar^.ClientPath) + GetServerFilename(box, '.rc');
+  rcfile:=FileUpperCase(BoxPar^.ClientPath) + GetServerFilename(box, extRc);
   blfile:=Get_BL_Name(box);
   if not FileExists(blfile) then
   begin
@@ -692,7 +692,7 @@ var t1    : text;
 begin
 
   ReadBox(0,box,boxpar);
-  s1:=FileUpperCase(BoxPar^.ClientPath) + GetServerFilename(box, '.rc');
+  s1:=FileUpperCase(BoxPar^.ClientPath) + GetServerFilename(box, extRc);
   Assign(t1,s1);       { BOX.RC }
   if not (FileExists(s1)) then
   begin
@@ -769,12 +769,12 @@ begin
   Closebox;
 end;
 
-Procedure ClientBL_Del(box:string);
-var s1: string;
+Procedure  ClientBL_Del(const box:string);
+var 
+  Filename: string;
 begin
-  s1:=get_BL_Name(Box);
-  truncstr(s1,60);
-  if ReadJN(getreps2(810,93, UpperCase(s1)),false) then _era(s1);  { '%s wirklich lîschen' }
+  Filename := get_BL_Name(Box);
+  if ReadJN(getreps2(810,93, LeftStr(Filename, 60)),false) then _era(Filename);  { '%s wirklich lîschen' }
 end;
 
 
@@ -815,7 +815,7 @@ var t     : text;
       s : string;
   begin
     mm:=0;
-    assign(t,bfile+'.bl');
+    assign(t,bfile+extBl);
     reset(t);
     if ioresult=0 then begin
       message(getreps(801,UpperCase(box)));   { 'Brettliste fÅr %s laden...' }
@@ -881,7 +881,7 @@ var t     : text;
       s : string[80];
   begin
     brett:=UpperCase(mid(brett,length(boxpar^.magicbrett)+2));
-    assign(t,bfile+'.bl');
+    assign(t,bfile+extBl);
     qwkbrett:='';
     if existf(t) then begin
       reset(t);
@@ -1057,7 +1057,7 @@ begin
     ReadMaflist:=false;
     end
   else begin
-    assign(t2,FileUpperCase(bfile+'.bl')); rewrite(t2);
+    assign(t2,FileUpperCase(bfile+extBl)); rewrite(t2);
     repeat
       if zok then begin
         ss:=trim(LeftStr(s,40));
@@ -1079,7 +1079,7 @@ var t1,t2 : text;
 begin
   assign(t1,fn); reset(t1);
   s:='';
-  assign(t2,FileUpperCase(bfile+'.bl')); rewrite(t2);
+  assign(t2,FileUpperCase(bfile+extBl)); rewrite(t2);
   repeat
     readln(t1,s);
     if (s[1]=';') or (s[32]<>'/') then
@@ -1158,10 +1158,10 @@ begin
       trfehler(805,60)    { 'UngÅltige Absenderangabe' }
     else begin
       message(getreps(806,UpperCase(box)));   { 'Brettliste fÅr %s wird eingelesen ...' }
-      makebak(bfile+'.bl',FileUpperCase('bak'));
+      makebak(bfile+extBl,'bak');
       fn:=TempS(dbReadInt(mbase,'msgsize'));
       extract_msg(xTractMsg,'',fn,false,0);
-      ExpandTabs(fn,FileUpperCase(bfile+'.bl'));
+      ExpandTabs(fn,FileUpperCase(bfile+extBl));
       _era(fn);
       wkey(1,false);
       closebox;
@@ -1204,7 +1204,7 @@ begin
   else if promaf then
     ReadPromafList(fn,bfile)
   else begin
-    ExpandTabs(fn,FileUpperCase(bfile+'.bl'));
+    ExpandTabs(fn,FileUpperCase(bfile+extBl));
     closebox;
     end;
   if useclip or ReadJN(getreps(817,fn),false) then    { '%s lîschen' }
@@ -1422,9 +1422,9 @@ label again;
     Moment;
     RCList := TStringList.Create;
     if Art = 0 then
-      RCFilename := FileUppercase(fn + '.rc')
+      RCFilename := FileUppercase(fn + extRc)
     else
-      RCFilename := FileUppercase(fn + '.bl');
+      RCFilename := FileUppercase(fn + extBl);
     try
       if FileExists(RCFilename) then
       begin
@@ -1468,9 +1468,9 @@ label again;
       RCList.Sort;
       RCList.SaveToFile(RCFilename);
       if art = 0 then
-        List.Lines.SaveToFile(FileUppercase(fn + '.bl'))
+        List.Lines.SaveToFile(FileUppercase(fn + extBl))
       else
-        List.Lines.SaveToFile(FileUppercase(fn + '.rc'));
+        List.Lines.SaveToFile(FileUppercase(fn + extRc));
     finally
       RCList.Free;
     end;
@@ -1518,11 +1518,11 @@ begin
   if fn='' then
     rfehler(806)      { 'BOXEN.IX1 ist defekt - bitte lîschen!' }
   else begin
-    if (art=1) and FileExists(fn+'.bbl') and changesys then
-      lfile:=fn+'.bbl' else
-    if (art=1) and nntp and FileExists(fn+'.rc') then
-      lfile:=fn+'.rc'
-    else lfile:=fn+'.bl';
+    if (art=1) and FileExists(fn +  extBbl) and changesys then
+      lfile:=fn+ extBbl else
+    if (art=1) and nntp and FileExists(fn+ extRc) then
+      lfile:=fn+extRc
+    else lfile:=fn+extBl;
     lfile := FileUpperCase(lfile);
     if not FileExists(lfile) then
       rfehler(807)    { 'Keine Brettliste fÅr diese Box vorhanden!' }
@@ -2018,7 +2018,7 @@ begin
           end
         else
           SendMaps(comm,box,fn);
-      if FileExists(fn) then _era(fn);
+      SaveDeleteFile(fn);
       end;
     end;
   if maus then
@@ -2066,7 +2066,7 @@ begin
       readln(t,s);
     s:=trim(s); p:=cpos(':',s);
     if not eof(t) and (p>0) then begin
-      assign(t2, GetServerFilename(boxpar^.boxname, '.bbl'));
+      assign(t2, GetServerFilename(boxpar^.boxname, extBbl));
       rewrite(t2);
       delete(s,1,p);
       while RightStr(s,1)='\' do begin
@@ -2094,6 +2094,11 @@ end;
 
 {
   $Log$
+  Revision 1.56  2001/09/07 13:54:22  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.55  2001/09/07 10:56:01  mk
   - added GetServerFilename
 

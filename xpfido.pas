@@ -1781,8 +1781,7 @@ begin
     closearchive(ar);
     if (ar.name='') and fehlfunc(getres2(2117,5)) then goto ende;  { 'Fehler in Archivdatei' }
     if not FileTest(true,ar.orgsize,FidoPath,ar.name) then     goto ende;
-    if FileExists(FidoPath+ar.name) then
-      _era(FidoPath+ar.name);
+    SaveDeleteFile(FidoPath+ar.name);
     if not UniExtract(fn,FidoPath,ar.name) then                goto ende;
     fi:=ar.name;
     copied:=true;
@@ -1808,8 +1807,7 @@ begin
     p:=cpos('.',fi);
     if p=0 then fi2:=fi+'.FL'
     else fi2:=LeftStr(fi,p)+'FL';
-    if FileExists(FidoPath+fi2) then
-      _era(FidoPath+fi2);
+    SaveDeleteFile(FidoPath+fi2);
     if not RenameFile(FidoPath+fi,FidoPath+fi2) and
        fehlfunc(getres2(2117,8)) then   { 'Fehler beim Umbenennen' }
       goto ende;
@@ -1861,8 +1859,7 @@ begin
           if not comment then inc(nn);
           end
         else
-          if FileExists(FidoDir+mid(s,p+1)) then
-            _era(FidoDir+mid(s,p+1));
+          SaveDeleteFile(FidoDir+mid(s,p+1));
         end;
       close(t1); close(t2);
       erase(t1);
@@ -2250,6 +2247,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2001/09/07 13:54:24  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.55  2001/08/11 23:06:37  mk
   - changed Pos() to cPos() when possible
 

@@ -176,24 +176,6 @@ begin
 end;
 
 
-Procedure MakeBak(n,newext:string);
-var bakname : string;
-    f       : file;
-begin
-  assign(f,n);
-  if cpos('.',n)=0 then bakname:=n+'.'+newext
-  else bakname:=copy(n,1,pos('.',n))+newext;
-  assign(f,bakname);
-  {$I-}
-    setfattr(f,archive);
-    erase(f);
-  {$I+}
-  assign(f,n);
-  setfattr(f,archive);
-  rename(f,bakname);
-end;
-
-
 function ZC_puffer(fn:pathstr):boolean;
 var t : text;
     s : string;
@@ -238,6 +220,11 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2001/09/07 13:54:17  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.8  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

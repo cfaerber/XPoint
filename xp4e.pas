@@ -1634,8 +1634,8 @@ begin
     dbReadN(bbase,bb_gruppe,grnr);
     dbOpen(d,GruppenFile,1);
     dbSeek(d,giIntnr,dbLongStr(grnr));
-    headf:=dbReadStr(d,'kopf')+'.xps';
-    sigf:=dbReadStr(d,'signatur')+'.xps';
+    headf:=dbReadStr(d,'kopf')+extXps;
+    sigf:=dbReadStr(d,'signatur')+extXps;
     dbclose(d);
     BriefSchablone(false,headf,fn,empf,real);
     headf:='';
@@ -2436,6 +2436,11 @@ end;
 
 {
   $Log$
+  Revision 1.77  2001/09/07 13:54:20  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.76  2001/09/07 10:56:00  mk
   - added GetServerFilename
 

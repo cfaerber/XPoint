@@ -783,7 +783,7 @@ begin
   else
     dName := dbReadStr(d,'Dateiname');
   Debug.DebugLog('XP2','Default system: '+tmpS+', file: '+dname,DLDebug);
-  if not FileExists(OwnPath+dname+BfgExt) then begin
+  if not FileExists(OwnPath+dname+extBfg) then begin
     DefaultBoxPar(nt_Netcall,boxpar);
     WriteBox(dname,boxpar);
   end;
@@ -1079,6 +1079,11 @@ end;
 
 {
   $Log$
+  Revision 1.119  2001/09/07 13:54:19  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.118  2001/09/06 18:50:22  mk
   - removed XPEasy-Define
   - removed unused variable n from zusatz_menu

@@ -803,8 +803,8 @@ begin
   yy:=y+4;
   dbOpen(d,BoxenFile,1);
   for i:=1 to ppanz do begin
-    msgs:=testpuffer(pp_epp[i].name+BoxFileExt,false,attsize);
-    emsgs:=testpuffer(pp_epp[i].name+EBoxFileExt,false,eattsize);
+    msgs:=testpuffer(pp_epp[i].name+extBoxFile,false,attsize);
+    emsgs:=testpuffer(pp_epp[i].name+extEBoxFile,false,eattsize);
     moff;
     wrt(x+3,yy,forms(file_box(d,pp_epp[i].name),11));
     if (msgs<0) or (emsgs<0) then
@@ -1257,6 +1257,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2001/09/07 13:54:25  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.42  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

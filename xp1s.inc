@@ -77,7 +77,7 @@ procedure shell(const prog:string; space:word; cls:shortint);
     if not callviacli then begin
       command:=FindExecutable(command);
       if (command='') // file not found, assume it is built-in in cli
-         or(UpperCase(ExtractFileExt(command))='.BAT') // batch files have to be run via cli
+         or(UpperCase(ExtractFileExt(command))= extBatch) // batch files have to be run via cli
          or(ExtractFileExt(command)='') // FindExecutable WILL find "copy" as built-in in cli
         then begin
         callviacli:=true; command:=commandsave;
@@ -458,10 +458,7 @@ begin
     bak:='BAK';
     end;
   if bak<>'' then
-  begin
-    name:=ChangeFileExt(name, '.'+bak);
-    if FileExists(name) then _era(name); { .BAK löschen }
-  end;
+    SaveDeleteFile(ChangeFileExt(Name, '.'+bak)); { .BAK löschen }
 end;
 
 
@@ -502,6 +499,11 @@ begin
     end;
 {
   $Log$
+  Revision 1.62  2001/09/07 13:54:19  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.61  2001/08/28 08:16:03  mk
   - added some const parameters
 

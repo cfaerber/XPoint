@@ -234,7 +234,9 @@ procedure ExitPrinter;
 
 function  TempFree:Int64;                 { Platz auf Temp-Laufwerk }
 function  TempS(bytes:longint):string;
-procedure _era(const fn:string);
+procedure _era(const Filename: String);
+// Deletes a file only if exists, uses _era to report errors
+procedure SaveDeleteFile(const Filename: String);
 procedure _chdir(p:string);
 function  testmem(size:longint; wait:boolean):boolean;
 
@@ -967,12 +969,9 @@ end;
 
 procedure delete_tempfiles;
 begin
-  if FileExists(TempPath+swapfilename) then
-    _era(TempPath+swapfilename);
-  if FileExists(TempPath+MsgTempFile) then
-    _era(TempPath+MsgTempFile);
-  if FileExists(TempPath+'header.hdr') then
-    _era(TempPath+'header.hdr');
+  SaveDeleteFile(TempPath+swapfilename);
+  SaveDeleteFile(TempPath+MsgTempFile);
+  SaveDeleteFile(TempPath+'header.hdr');
 end;
 
 
@@ -1840,10 +1839,16 @@ begin
 end;
 
 
-procedure _era(const fn:string);
+procedure _era(const Filename:string);
 begin
-  if not sysutils.DeleteFile(fn) then
-    trfehler1(4,'"'+FileUpperCase(fn)+'"',30);   { 'Kann "'+FileUpperCase(fn)+'" nicht l”schen!?' }
+  if not sysutils.DeleteFile(Filename) then
+    trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht l”schen!?' }
+end;
+
+procedure SaveDeleteFile(const Filename: String);
+begin
+  if FileExists(Filename) then
+    _era(Filename);
 end;
 
 procedure _chdir(p:string);
@@ -2046,6 +2051,11 @@ end;
 
 {
   $Log$
+  Revision 1.118  2001/09/07 13:54:17  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.117  2001/08/28 08:16:03  mk
   - added some const parameters
 

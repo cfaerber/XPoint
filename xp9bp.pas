@@ -254,7 +254,7 @@ var t      : text;
   end;
 
 begin
-  assign(t,dateiname+BfgExt);
+  assign(t,dateiname+extBfg);
   DefaultBoxPar(nt,bp);
   if existf(t) then begin
     reset(t);
@@ -436,7 +436,7 @@ var t : text;
   end;
 
 begin
-  assign(t,FileUpperCase(OwnPath+dateiname+BfgExt));
+  assign(t,FileUpperCase(OwnPath+dateiname+extBfg));
   rewrite(t);
   if ioresult<>0 then begin
     rfehler(902);     { 'ungueltiger Boxname!' }
@@ -606,7 +606,7 @@ var t  : text;
 begin
   fillchar(qrec,sizeof(qrec),0);
   qrec.midtyp:=2;   { Default }
-  assign(t,dateiname+QfgExt);
+  assign(t,dateiname+extQfg);
   if existf(t) then with qrec do begin
     reset(t);
     s:='';
@@ -636,7 +636,7 @@ var t1,t2 : text;
     s,ss  : string;
     id    : string[10];
 begin
-  assign(t1,dateiname+QfgExt);
+  assign(t1,dateiname+extQfg);
   if existf(t1) then with qrec do begin
     reset(t1);
     assign(t2,'qwktemp.$$$');
@@ -676,7 +676,7 @@ begin
     close(t1);
     close(t2);
     erase(t1);
-    rename(t2,dateiname+QfgExt);
+    rename(t2,dateiname+extQfg);
     end;
 end;
 
@@ -690,6 +690,11 @@ end;
 
 {
   $Log$
+  Revision 1.50  2001/09/07 13:54:23  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.49  2001/09/07 10:56:01  mk
   - added GetServerFilename
 

@@ -144,8 +144,8 @@ begin
   SMTP.Free;
   if result then begin
     ClearUnversandt(PPFile,BoxName);
-    if FileExists(PPFile)then _era(PPFile);
-    if FileExists(RFCFile)then _era(RFCFile);
+    SaveDeleteFile(PPFile);
+    SaveDeleteFile(RFCFile);
   end;
 end;
 
@@ -202,7 +202,7 @@ begin
   end;
 
   { Get last retrieved UIDLs from file }
-  UIDLFileName:=FileUpperCase(OwnPath+GetServerFilename(Boxname, '.udl'));
+  UIDLFileName:=FileUpperCase(OwnPath+GetServerFilename(Boxname, extUdl));
   if FileExists(UIDLFileName)then
     POP.UIDLs.LoadFromFile(UIDLFileName);
 
@@ -272,6 +272,11 @@ end;
 
 {
   $Log$
+  Revision 1.22  2001/09/07 13:54:27  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.21  2001/09/07 10:56:02  mk
   - added GetServerFilename
 

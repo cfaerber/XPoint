@@ -973,7 +973,7 @@ var d     : DB;
 begin
   assign(f1,fn);
   reset(f1,1);
-  assign(f2, GetServerFilename(Box, BoxFileExt));
+  assign(f2, GetServerFilename(Box, extBoxfile));
   if existf(f2) then begin
     reset(f2,1);
     seek(f2,filesize(f2));
@@ -1518,6 +1518,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2001/09/07 13:54:20  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.69  2001/09/07 10:56:00  mk
   - added GetServerFilename
 

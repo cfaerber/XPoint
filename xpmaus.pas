@@ -444,7 +444,7 @@ begin
     assign(t,box+'.ITG');
     settextbuf(t,buf^,bufs);
     reset(t);
-    assign(t2,box+'.BL');
+    assign(t2,box+extBl);
     rewrite(t2);
     while not eof(t) do begin
       sg:=''; sb:=''; sfl:='';
@@ -546,7 +546,7 @@ var  box    : string[BoxNameLen];
       s   : string;
       p,i : integer;
   begin
-    assign(t,box+'.inf');
+    assign(t,box + extInf);
     if existf(t) then begin            { .INF-File einlesen }
       reset(t);
       while not eof(t) do begin
@@ -579,7 +579,7 @@ var  box    : string[BoxNameLen];
   var i : integer;
       t : text;
   begin
-    assign(t,box+'.inf');
+    assign(t,box+ extInf);
     rewrite(t);
     for i:=1 to infos do with info^[i] do
       writeln(t,id,' ',intervall,' ',lastdate,' ',crc);
@@ -722,7 +722,7 @@ var   info   : ^ia;
 
   begin
     infos:=0;
-    assign(t1,box+'.inf');
+    assign(t1,box+ extInf);
     reset(t1);
     if ioresult=0 then begin
       while not eof(t1) and (infos<MaxMausInfos) do begin
@@ -793,7 +793,7 @@ var   info   : ^ia;
   var t : text;
       i : integer;
   begin
-    assign(t,box+'.inf');
+    assign(t,box + extInf);
     rewrite(t);
     for i:=1 to infos do
       with info^[i] do
@@ -816,9 +816,13 @@ begin
 end;
 
 
-end.
 {
   $Log$
+  Revision 1.31  2001/09/07 13:54:24  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.30  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 
@@ -858,7 +862,7 @@ end.
   - removed illegal character
 
   Revision 1.18  2000/11/02 15:33:28  fe
-  Added forgotten }
+  Added forgotten closing bracket
 
   Revision 1.17  2000/10/26 12:06:34  mk
   - AllocHeaderMem/FreeHeaderMem Umstellung
@@ -904,3 +908,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

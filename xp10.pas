@@ -1466,8 +1466,7 @@ var
                 1,brk) of
       1 : del_it;
       3 : begin
-            if FileExists(FidoDir+NodeList.GetFilename(strIdx)) then
-              _era(FidoDir+NodeList.GetFilename(strIdx));
+            SaveDeleteFile(FidoDir+NodeList.GetFilename(strIdx));
             del_it;
           end;
     end;
@@ -2068,6 +2067,11 @@ finalization
 end.
 {
   $Log$
+  Revision 1.60  2001/09/07 13:54:18  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.59  2001/09/07 10:55:59  mk
   - added GetServerFilename
 

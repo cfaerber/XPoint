@@ -1275,7 +1275,7 @@ var t       : text;
   begin
     tf:=TempFile(TempPath);
     fsplit(tf,dir,name,ext);
-    SwapFileName:=name+SwapExt;
+    SwapFileName:=name+extSwap;
   end;
 
   function getRTAAdressen :boolean;
@@ -1693,6 +1693,11 @@ end;
 
 {
   $Log$
+  Revision 1.122  2001/09/07 13:54:19  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.121  2001/08/28 08:04:02  mk
   - removed GetX-Workaround in Val for FPC
   - added const-parameters to scomp and GetX

@@ -767,7 +767,7 @@ var t,lastt: taste;
       SikMsg := FileUpperCase(SikMsg);
       assign(f,fn);
       if existf(f) then begin
-        if FileExists(TempPath+sikmsg) then _era(TempPath+sikmsg);
+        SaveDeleteFile(TempPath+sikmsg);
         rename(f,TempPath+sikmsg);
         if ioresult<>0 then;     { falls LASTMSG Read-Only war.. }
         end;
@@ -1039,11 +1039,11 @@ var t,lastt: taste;
         re_n:=rehochn {true}; kein_re:=false;
         end
       else begin
-        headf:=dbReadStr(d,'kopf')+'.xps';
-        sigf:=dbReadStr(d,'signatur')+'.xps';
+        headf:=dbReadStr(d,'kopf')+ extXps;
+        sigf:=dbReadStr(d,'signatur')+ extXps;
         force_quotemsk:= dbReadStr(d,'quotemsk');
         if force_quotemsk<>'' then
-          force_quotemsk:=force_quotemsk+'.xps';
+          force_quotemsk:=force_quotemsk+ extXps;
         getren;
         end;
       if quote=0 then BriefSchablone(pm,headf,fn,empf,realname);
@@ -1217,7 +1217,7 @@ var t,lastt: taste;
     pgdown:=false;
   ende:
     force_quotemsk:='';
-    if FileExists(fn) then _era(fn);
+    SaveDeleteFile(fn);
     setall;
     SendEmpfList.Clear;
     freesenduudatamem(sdata);
@@ -2244,6 +2244,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.104  2001/09/07 13:54:20  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.103  2001/09/06 18:52:02  mk
   - formatted source
 

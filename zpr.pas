@@ -47,7 +47,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils, typeform, xpconfigedit, xpglobal;
+  sysutils, fileio, typeform, xpconfigedit, xpglobal;
 
 const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -371,22 +371,6 @@ begin
       end;
     end;
 end;
-
-Procedure MakeBak(n,newext:string);
-var bakname : string;
-    f       : file;
-begin
-  assign(f,n);
-  filemode:=ReadFilemode;
-  reset(f,1); if ioresult<>0 then exit;
-  close(f);
-  bakname:=ChangeFileExt(n, newext);
-  assign(f,bakname);
-  FileSetAttr(bakname, faArchive);  { evtl. altes BAK l”schen }
-  erase(f);
-  RenameFile(n, bakname);
-end;
-
 
 procedure checkpar;
 begin
@@ -1295,9 +1279,13 @@ begin
   end; *)
 end;
 
-end.
 {
   $Log$
+  Revision 1.39  2001/09/07 13:54:26  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.38  2001/09/07 02:07:44  mk
   - use IsMailAddress when possilbe, removed duplicate code
 
@@ -1423,3 +1411,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

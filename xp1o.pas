@@ -56,6 +56,8 @@ function  UniExtract(_from,_to,dateien:string):boolean;
 function  g_code(s:string):string;
 procedure SeekLeftBox(var d:DB; var box:string);
 procedure KorrBoxname(var box:string);
+// get Boxfilename from Boxname, add Extension
+// Result is already FileUpperCase
 function GetServerFilename(const boxname: String; Extension: String): String;
 
 procedure AddBezug(var hd:Theader; dateadd:byte);
@@ -504,7 +506,7 @@ begin
   if not FileExists(fn1) then { Datei fehlt! }
     if length(fn1)>2 then { Dateiname>2 Zeichen? }
     { Datei ist Ausgangspuffer: }
-    if UpperCase(copy(fn1,length(fn1)-2,3))='.PP' then
+    if FileUpperCase(copy(fn1,length(fn1)-2,3))= extBoxfile then
     begin
       filecopy:=false;
       exit;
@@ -970,7 +972,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
         end
       else begin
         if UpperCase(LeftStr(prog,6))='START ' then prog:=mid(prog,7);
-        batfile:=TempExtFile(temppath,'wrun','.bat');
+        batfile:=TempExtFile(temppath,'wrun', extBatch);
         assign(t,batfile);
         rewrite(t);
         writeln(t,'@echo off');
@@ -1022,6 +1024,11 @@ end;
 
 {
   $Log$
+  Revision 1.94  2001/09/07 13:54:18  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.93  2001/09/07 10:55:59  mk
   - added GetServerFilename
 

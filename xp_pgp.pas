@@ -221,7 +221,7 @@ begin
   if UsePGP and (PGP_UserID<>'') then begin
     secring:=filesearch('PUBRING.PGP',getenv('PGPPATH'));
     if (secring<>'') and (filetime(secring)>filetime(PGPkeyfile)) then begin
-      if FileExists(PGPkeyfile) then _era(PGPkeyfile);
+      SaveDeleteFile(PGPkeyfile);
       if PGPVersion=PGP2 then
         RunPGP('-kx +armor=off '+IDform(PGP_UserID)+' '+PGPkeyfile)
       else if PGPVersion=GPG then
@@ -300,7 +300,7 @@ begin
             false,false,false,false,true,nil,
             hd,hd,SendPGPkey) then
     LogPGP(getreps2(3002,1,empfaenger));   { 'sende Public Key an %s' }
-  if FileExists(tmp) then _era(tmp);
+  SaveDeleteFile(tmp);
   freeres;
 end;
 
@@ -380,7 +380,7 @@ begin
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-e -a '+t+' '+_source+' '+IDform(RemoteUserID));
-      if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
+      SaveDeleteFile(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
 
@@ -398,8 +398,8 @@ begin
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-s -a '+t+' '+_source+' '+IDform(RemoteUserID)+OwnUserID);
-      if FileExists(getbarefilename(tmp)) then _era(getbarefilename(tmp));         { Temporaerdatei loeschen }
-      if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
+      SaveDeleteFile(getbarefilename(tmp));         { Temporaerdatei loeschen }
+      SaveDeleteFile(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
 
@@ -417,7 +417,7 @@ begin
       copyfile(filename(source),_source);
       { Ausgabedateiname ist _source'.asc' }
       RunPGP('-e -s -a '+t+' '+_source+' '+IDform(RemoteUserID)+OwnUserID);
-      if FileExists(tmp) then _era(tmp);         { xxxx wieder loeschen }
+      SaveDeleteFile(tmp);         { xxxx wieder loeschen }
       tmp:=_source+'.asc';
     end;
   end;
@@ -439,7 +439,7 @@ begin
     fmove(f2,f);                          { ... und codierte Datei dranhaengen }
     close(f2);
     close(f);
-    if FileExists(tmp) then _era(tmp);         { Temporaerdatei loeschen }
+    SaveDeleteFile(tmp);         { Temporaerdatei loeschen }
     if encode then begin
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                            { 'c'-Kennzeichnung }
@@ -511,7 +511,7 @@ begin
     if DoSend(true,tmp,user,getres2(3001,2),  { 'PGP-Keyanforderung' }
               false,false,false,false,true,nil,
               hd,hd,SendPGPreq) then;
-    if FileExists(tmp) then _era(tmp);
+    SaveDeleteFile(tmp);
     end;
   freeres;
 end;
@@ -592,8 +592,8 @@ begin
 
   if sigtest then begin
     PGP_WaitKey:=false;
-    if FileExists(tmp) then _era(tmp);
-    if FileExists(_source) then _era(_source);
+    SaveDeleteFile(tmp);
+    SaveDeleteFile(_source);
   end;
 
   if not FileExists(tmp2) then begin
@@ -644,7 +644,7 @@ begin
       fmove(f2,f);
       close(f2);
       close(f);
-      if FileExists(tmp2) then _era(tmp2);
+      SaveDeleteFile(tmp2);
       Xwrite(tmp);
       wrkilled;
       dbWriteN(mbase,mb_typ,hdp.typ[1]);
@@ -657,8 +657,8 @@ begin
     end;
   end;
   { Aufraeumen: }
-  if FileExists(tmp) then _era(tmp);
-  if FileExists(tmp) then _era(tmp2);
+  SaveDeleteFile(tmp);
+  SaveDeleteFile(tmp2);
 end;
 
 
@@ -759,7 +759,7 @@ begin
     tmp2:=TempS(dbReadInt(mbase,'msgsize'));
     extract_msg(xTractPuf,'',tmp2,false,0);
     PGP_DecodeKey(tmp2,tmp);
-    if FileExists(tmp2) then _era(tmp2);
+    SaveDeleteFile(tmp2);
     end;
   if not FileExists(tmp) then
     rfehler(3005)         { 'Fehler beim Auslesen des PGP-Keys' }
@@ -776,7 +776,7 @@ begin
       RunPGP('-ka '+tmp);
 
     PGP_WaitKey:=mk;
-    if FileExists(tmp) then _era(tmp);
+    SaveDeleteFile(tmp);
   end;
   Hdp.Free;
 end;
@@ -826,7 +826,7 @@ begin
     extract_msg(xTractPuf,'',tmp,false,0);
     savekey:=TempS(hds);
     PGP_DecodeKey(tmp,savekey);
-    if FileExists(tmp) then _era(tmp);
+    SaveDeleteFile(tmp);
   end;
   Hdp.Free;
 end;
@@ -834,15 +834,21 @@ end;
 
 procedure PGP_EndSavekey;
 begin
-  if (savekey<>'') and FileExists(savekey) then
-    _era(savekey);
-  savekey:='';
+  if Savekey <> '' then
+  begin
+    SaveDeleteFile(savekey);
+    Savekey:='';
+  end;
 end;
 
 
-end.
 {
   $Log$
+  Revision 1.43  2001/09/07 13:54:23  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.42  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 
@@ -968,3 +974,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

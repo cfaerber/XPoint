@@ -87,7 +87,7 @@ label
 begin
   GetFilescanBox(box);
   if box='' then exit;
-  fl:=GetServerFilename(box, '.fbl');
+  fl:=GetServerFilename(box, extFbl);
   if not FileExists(fl) then begin
     rfehler1(853,box); exit;
     end;
@@ -239,8 +239,8 @@ begin
       dbNext(d);
       end;
     dbClose(d);
-    if FileExists(fn) then _era(fn);
-    end;
+    SaveDeleteFile(fn);
+  end;
 end;
 
 
@@ -257,7 +257,7 @@ begin
       rfehler1(851,box)    { '%s ist kein eingetragener Fido-Server!' }
     else begin
       message(getreps(850,box));       { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
-      extract_msg(xTractMsg,'',GetServerFilename(box, '.fbl'),false,0);
+      extract_msg(xTractMsg,'',GetServerFilename(box, extFbl),false,0);
       mdelay(500);
       closebox;
       end;
@@ -273,7 +273,6 @@ var
     bfile   : string;
     fn      : string;
     useclip : boolean;
-    d       : DB;
 begin
   box:=UniSel(1,false,DefaultBox);
   if box='' then exit;   { brk }
@@ -287,8 +286,8 @@ begin
   bfile := GetServerFilename(Box, '');
   ReadBox(0,bfile,boxpar);
   message(getreps(806,UpperCase(box)));   { 'Fileecho-Liste fÅr %s wird eingelesen ...' }
-  if filecopy(fn,FileUpperCase(bfile+'.fbl')) then;
-  closebox;
+  Filecopy(fn, bfile + extFbl);
+  Closebox;
   if useclip or ReadJN(getreps(817,fn),false) then   { '%s lîschen' }
     _era(fn);
 end;
@@ -346,6 +345,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2001/09/07 13:54:22  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.16  2001/09/07 10:56:01  mk
   - added GetServerFilename
 

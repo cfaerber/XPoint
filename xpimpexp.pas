@@ -307,7 +307,7 @@ begin
       s:='PUFFER';
       case iif(impnt<>nt_QWK,nt,impnt) of
         nt_Magic : shell(MaggiBin+' -mz -n'+boxpar^.MagicNET+' '+fn+' PUFFER '+
-                         box+'.BL',300,3);
+                         box+extBl,300,3);
         nt_Quick,
         nt_GS    : shell(MaggiBin+' -qz '+fn+' PUFFER',300,3);
         nt_Maus  : begin
@@ -663,9 +663,13 @@ begin
   freeres;
 end;
 
-end.
 {
   $Log$
+  Revision 1.42  2001/09/07 13:54:24  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.41  2001/09/07 10:56:02  mk
   - added GetServerFilename
 
@@ -799,3 +803,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

@@ -1445,7 +1445,7 @@ var _brett   : string;
 begin
   if uvs_active then exit;
   crashs:=false;
-  rc:= findfirst('*'+BoxFileExt,faArchive,sr);
+  rc:= findfirst('*'+extBoxFile,faArchive,sr);
   if rc<>0 then
   begin
     FindClose(sr);
@@ -1828,8 +1828,7 @@ begin
             decomp:=TempPath+datei;  { Stack sparen ... }
             if ViewArchive(decomp,newarc)<>0 then; *)
         end;
-        if FileExists(temppath+datei) then
-          _era(temppath+datei);
+        SaveDeleteFile(temppath+datei);
         end;
       { GoDir(OwnPath); }
       end;
@@ -2049,8 +2048,7 @@ begin
   fmove(f1,f2);
   close(f1);
   close(f2);
-  if FileExists(DupeFile+dbIxExt) then
-    _era(DupeFile+dbIxExt);
+  SaveDeleteFile(DupeFile+dbIxExt);
   closebox;
   dbOpen(d,DupeFile,1);   { indizieren }
   n:=1; ll:=0;
@@ -2444,6 +2442,11 @@ end;
 
 {
   $Log$
+  Revision 1.110  2001/09/07 13:54:21  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.109  2001/09/06 19:31:20  mk
   - removed some hints und warnings
 

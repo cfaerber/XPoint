@@ -143,7 +143,7 @@ begin
     getdname:=formi(fa.net mod 10000,4)+formi(fa.node mod 10000,4);
     end
   else
-    if validfilename(LeftStr(boxname,8)+BfgExt) then
+    if validfilename(LeftStr(boxname,8)+extBfg) then
       getdname:=FileUpperCase(LeftStr(boxname,8))
     else
       getdname:=FileUpperCase('box-0001');
@@ -154,7 +154,7 @@ procedure SelSchab(var cr:CustomRec);
 var ps, dir, name, ext: String;
 begin
   selcol;
-  ps:=fsbox(screenlines div 2 - 5,'*.xps','',cr.s+'.xps',false,false,false);
+  ps:=fsbox(screenlines div 2 - 5,'*' + extXps,'',cr.s+extXps,false,false,false);
   fsplit(ps,dir,name,ext);
   cr.brk:=(name='');
   if not cr.brk then cr.s:=name;
@@ -707,10 +707,10 @@ var d         : DB;
             dbRead(d,'msglimit',limit);
             dbRead(d,'int_nr',grnr);
             dbRead(d,'umlaute',umlaut);
-            hd:=iifc(UpperCase(dbReadStr(d,'kopf')+'.XPS')<>UpperCase(headerfile),'K',' ');
+            hd:=iifc(UpperCase(dbReadStr(d,'kopf')+ extXps)<>UpperCase(headerfile),'K',' ');
             qm:=dbReadStr(d,'quotemsk');
-            qt:=iifc((qm<>'') and (UpperCase(qm+'.XPS')<>UpperCase(quotemsk)),'Q',' ');
-            sig:=iifc(UpperCase(dbReadStr(d,'signatur')+'.XPS')<>UpperCase(signatfile),'S',' ');
+            qt:=iifc((qm<>'') and (UpperCase(qm+extXps)<>UpperCase(quotemsk)),'Q',' ');
+            sig:=iifc(UpperCase(dbReadStr(d,'signatur')+ extXps)<>UpperCase(signatfile),'S',' ');
             s:=strsn(grnr,5)+' '+hd+qt+sig+' '+forms(s1,28)+' '+
                forms(umtyp[umlaut],6)+
                iifs(limit>0,strsrnp(limit,12,0),sp(11)+' ì')+' ';
@@ -1486,7 +1486,7 @@ begin
       else
         ok:=(FileSearch(fn+'.exe',ownpath)<>'') or
           (FileSearch(fn+'.com',ownpath)<>'') or
-          (FileSearch(fn+'.bat',ownpath)<>'');
+          (FileSearch(fn+ extBatch,ownpath)<>'');
       if not ok then rfehler1(907, UpperCase(fn));    { 'Achtung: Das Programm "%s" ist nicht vorhanden!' }
     end;
   end else
@@ -1615,6 +1615,11 @@ end;
 
 {
   $Log$
+  Revision 1.21  2001/09/07 13:54:23  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.20  2001/09/07 02:07:44  mk
   - use IsMailAddress when possilbe, removed duplicate code
 

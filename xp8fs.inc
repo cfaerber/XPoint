@@ -43,6 +43,7 @@ begin
     MangleBoxName := s
   else
     MangleBoxName := LeftStr(s, 4) + Hex(CRC32Str(UpperCase(s)), 4);
+  Result := FileUpperCase(Result);
 end;
 
 
@@ -156,10 +157,10 @@ begin
     WriteFST(fstype);
     end;
   KorrBoxName(box); { Groá- und Kleinschreibung korrigieren }
-  makebak(MangleBoxName(box)+'.fl',FileUpperCase('bak'));
+  makebak(MangleBoxName(box)+ extFl, 'bak');
   case fstype of
     0 : begin      { SendZMsg }
-          assign(t2,FileUpperCase(MangleBoxName(box)+'.fl'));
+          assign(t2,MangleBoxName(box)+ extFl);
           rewrite(t2);
           readln(t1,s);
           repeat
@@ -188,7 +189,7 @@ begin
         end;
 
     1 : begin      { iMLS-Fileserver }
-          assign(t2,FileUpperCase(MangleBoxName(box)+'.fl'));
+          assign(t2, MangleBoxName(box)+extFl);
           rewrite(t2);
           writeln(t2,s2);
           writeln(t2,s);
@@ -200,7 +201,7 @@ begin
 
     2 : begin      { NCB-Mail-Fileserver }
           close(t1); reset(t1);
-          assign(t2,FileUpperCase(MangleBoxName(box)+'.fl'));
+          assign(t2, MangleBoxName(box)+ extFl);
           rewrite(t2);
           while not eof(t1) do begin
             readln(t1,s); writeln(t2,s);
@@ -216,7 +217,7 @@ begin
             rfehler(825)    { 'Ungltiger Konvertierer-Eintrag: $OUTFILE fehlt' }
           else begin
             exchange(convert,'$INFILE',fn);
-            exchange(convert,'$OUTFILE',FileUpperCase(MangleBoxName(box)+'.fl'));
+            exchange(convert,'$OUTFILE', MangleBoxName(box)+ extFl);
             shell(convert,300,3);
             if errorlevel=1 then rfehler(821);
             end;
@@ -315,7 +316,7 @@ var d     : DB;
   begin
     showkeys(10);
     List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
-    List.ReadFromFile(MangleBoxName(fs)+'.fl',0);
+    List.ReadFromFile(MangleBoxName(fs)+ extFl,0);
     List.OnTestMark := testmark;
   again:
     brk := List.Show;
@@ -459,7 +460,7 @@ begin
     dbRead(d,'flags',w);
     dbRead(d,'fs-typ',fstyp);
     dbClose(d);
-    enterfiles:=not FileExists(MangleBoxName(fs)+'.fl');
+    enterfiles:=not FileExists(MangleBoxName(fs)+extFl);
     if w and 1=0 then
       rfehler(815)      { 'Das gew„hlte System ist kein Fileserver!' }
     else if (request>0) and (fstyp<>3) and enterfiles then
@@ -558,6 +559,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2001/09/07 13:54:22  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.24  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

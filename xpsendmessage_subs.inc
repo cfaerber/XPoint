@@ -566,8 +566,7 @@ begin
   rps(s,'$USER',oemp);
   Hdp.Free;
   shell(s,500,3);                     { Nachricht codieren }
-  if FileExists(temppath+uncryptedfile) then
-    _era(temppath+uncryptedfile);
+  SaveDeleteFile(temppath+uncryptedfile);
   assign(f,temppath+cryptedfile);
   if not existf(f) then
     rfehler(603)    { 'Datei wurde nicht codiert!' }
@@ -1124,6 +1123,11 @@ end;
 
 {
   $Log$
+  Revision 1.6  2001/09/07 13:54:25  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.5  2001/09/07 09:16:49  mk
   - fixed AnsiString-Handling for getBrettUserPollBox
 

@@ -421,7 +421,7 @@ var diffdir  : string;
         log(getreps2(2130,5,extractfilename(ufile)));  { 'Zu wenig Plattenplatz zum Kopieren von %s' }
         end
       else begin
-        if FileExists(newlist) then _era(newlist);
+        SaveDeleteFile(newlist);
         log(ufile+' -> '+newlist);
         if filecopy(ufile,newlist) then
           CopyUpdateFile:=true
@@ -453,7 +453,7 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
       ExpandFilePath(uarchive);
       unarcflag:=false;                           { Update-Archiv auspacken }
       if (uarchive<>'') and passend(uarchive) then begin
-        if FileExists(diffdir+ufile) then _era(diffdir+ufile);
+        SaveDeleteFile(diffdir+ufile);
         log(getreps2(2130,1,uarchive));      { 'entpacke %s' }
         unarcflag:=UniExtract(uarchive,diffdir,ufile);
         if not unarcflag then
@@ -484,8 +484,8 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
         end;
       if done then begin
         if auto and fDelUpdate then begin    { evtl. Update-Files l”schen }
-          if FileExists(uarchive) then _era(uarchive);
-          if FileExists(ufile) then _era(ufile);
+          SaveDeleteFile(uarchive);
+          SaveDeleteFile(ufile);
           end;
         reindex:=true;
         end;
@@ -520,9 +520,13 @@ begin
       end;
 end;
 
-end.
 {
   $Log$
+  Revision 1.37  2001/09/07 13:54:24  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.36  2001/07/31 16:18:41  mk
   - removed some unused variables
   - changed some LongInt to DWord
@@ -634,3 +638,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

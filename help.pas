@@ -31,7 +31,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
+  xp0, typeform,keys,fileio,inout,winxp,mouse,maus2,printerx;
 
 const maxpages = 1200;
       maxqvw   = 350;
@@ -168,7 +168,7 @@ function inithelp(name:string; xh,yh:byte;
 var ixadr : longint;
     fm      : byte;
 begin
-  if cPos('.',ExtractFileName(name))=0 then name:=name+FileUpperCase('.hlp');
+  if cPos('.',ExtractFileName(name))=0 then name:=name + extHelp;
   assign(f,name);
   fm:=filemode; filemode:=0;
   reset(f,1);
@@ -765,9 +765,13 @@ begin
   _pexit:=pexit;
 end;
 
-end.
 {
   $Log$
+  Revision 1.37  2001/09/07 13:54:17  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.36  2001/08/11 23:06:26  mk
   - changed Pos() to cPos() when possible
 
@@ -775,7 +779,7 @@ end.
   - removed crt unit as much as possible
 
   Revision 1.34  2001/07/11 20:03:19  mk
-  SV:- All ASCII characters can be displayed in the online help now {xxx}
+  SV:- All ASCII characters can be displayed in the online help now xxx
 
   Revision 1.33  2001/05/02 19:57:34  mk
   - check for \axxx implemented (merge from 3.40)
@@ -873,3 +877,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

@@ -98,7 +98,7 @@ begin
     { Nun die Liste holen }
     List:= TStringList.Create;
     List.Duplicates:= dupIgnore;
-    bfile := GetServerFilename(BoxName, '.bl');
+    bfile := GetServerFilename(BoxName, extBl);
     if (bFile <> '') and NNTP.List(List,false) then 
     begin
       { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
@@ -208,13 +208,13 @@ begin
   NNTP.Free;
   if result then begin
     ClearUnversandt(PPFile,BoxName);
-    if FileExists(PPFile)then _era(PPFile);
-    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+    SaveDeleteFile(PPFile);
+    SaveDeleteFile(RFCFileDummy);
     RFCFileDummy := RFCFile + 'X-0002.OUT';
-    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+    SaveDeleteFile(RFCFileDummy);
     end;
   RFCFileDummy := RFCFile + 'C-0000.OUT';
-  if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+  SaveDeleteFile(RFCFileDummy);
 end;
 
 function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
@@ -278,7 +278,7 @@ begin
     NNTP.Password:= bp^.NNTP_pwd;
   end;
 
-  RCFilename:=GetServerFilename(BoxName, '.rc');
+  RCFilename:=GetServerFilename(BoxName, extRc);
 
   { Verbinden }
   try
@@ -350,6 +350,11 @@ end;
 
 {
         $Log$
+        Revision 1.26  2001/09/07 13:54:27  mk
+        - added SaveDeleteFile
+        - moved most file extensios to constant values in XP0
+        - added/changed some FileUpperCase
+
         Revision 1.25  2001/09/07 10:56:02  mk
         - added GetServerFilename
 

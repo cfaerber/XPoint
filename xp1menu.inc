@@ -247,20 +247,20 @@ procedure miscschab;
 var s       : string;
     useclip : boolean;
 begin
-  s:= FileUpperCase('*.xps');
+  s:= '*' + extXps;
   useclip:=false;
   if readfilename(getres(103),s,false,useclip) then
   begin  { Schablone bearbeiten }
     if ExtractFileExt(s) = '' then
-      s := ChangeFileExt(s, FileUpperCase('.xps'));
+      s := ChangeFileExt(s, extXps);
 
-      if FileUpperCase(ExtractFileExt(s)) <>  FileUpperCase('.xps') then
-      begin
-        rfehler(2);    { Dateierweiterung muá .XPS sein! }
-        exit;
-      end;
-    EditFile(s,false,false,0,false);
+    if FileUpperCase(ExtractFileExt(s)) <> extXps then
+    begin
+      rfehler(2);    { Dateierweiterung muá .XPS sein! }
+      exit;
     end;
+    EditFile(s,false,false,0,false);
+  end;
 end;
 
 
@@ -606,6 +606,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.32  2001/09/07 13:54:18  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.31  2001/08/11 23:06:29  mk
   - changed Pos() to cPos() when possible
 

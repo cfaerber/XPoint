@@ -665,7 +665,7 @@ label ende,again;
              ((dbReadInt(d,'flags') and 6=0) and rehochn);
       kein_re:=(dbReadInt(d,'flags') and 6=6);
       sigfile:= dbReadStr(d,'signatur');
-      if sigfile<>'' then sigfile:=sigfile+'.xps'
+      if sigfile<>'' then sigfile:=sigfile+extXps
       else sigfile:='none.$$$';
       end;
     dbClose(d);
@@ -1113,7 +1113,7 @@ again:
   if nextwl>-1 then begin
     inc(nextwl);
     if nextwl<markanz then begin
-      if FileExists(fn) then _era(fn);
+      SaveDeleteFile(fn);
       dbGo(mbase,marked^[nextwl].recno);
       goto again;    { naechste Nachricht wl/arch. }
       end;
@@ -1126,7 +1126,7 @@ ende:
   SendEmpfList.Clear;
   hdp.Free;
   archivweiterleiten:=false;
-  if FileExists(fn) then _era(fn);
+  SaveDeleteFile(fn);
 end;
 
 
@@ -1313,6 +1313,11 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/09/07 13:54:25  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.3  2001/09/06 19:31:20  mk
   - removed some hints und warnings
 

@@ -130,12 +130,23 @@ const
        EB_Msk      = 'empfbest.xps';
        CancelMsk   = 'cancel.xps';
 
-       BfgExt      = '.bfg';           { Boxen-Config-File }
-       QfgExt      = '.qfg';           { QWK-Config-File   }
-       SwapExt     = '.swp';
-       BatchExt    = '.sh';
-       BoxfileExt  = '.pp';
-       EBoxFileExt = '.epp';
+       extBfg      = '.bfg';           { Boxen-Config-File }
+       extQfq      = '.qfg';           { QWK-Config-File   }
+       extSwap     = '.swp';
+       extBatch    = '.sh';
+       extBoxfile  = '.pp';
+       extEBoxfile = '.epp';
+       extFbl      = '.fbl';
+       extBl       = '.bl';
+       extRc       = '.rc';
+       extFl       = '.fl';
+       extGr       = '.gr';
+       extInf      = '.inf';
+       extUdl      = '.udl';
+       extCfg      = '.cfg';
+       extBbl      = '.bbl';
+       extHelp     = '.hlp';
+       extXps      = '.xps';
 {$ELSE}
        PufferFile  = 'PUFFER';        { Z-Netz-Puffer }
        XFerDir_    = 'SPOOL';         { eingehende Mailbatches }
@@ -158,12 +169,23 @@ const
        EB_Msk      = 'EMPFBEST.XPS';
        CancelMsk   = 'CANCEL.XPS';
 
-       BfgExt      = '.BFG';           { Boxen-Config-File }
-       QfgExt      = '.QFG';           { QWK-Config-File   }
-       SwapExt     = '.SWP';
-       BatchExt    = '.BAT';
-       BoxFileExt  = '.PP';
-       EBoxFileExt = '.EPP';
+       extBfg      = '.BFG';           { Boxen-Config-File }
+       extQfg      = '.QFG';           { QWK-Config-File   }
+       extSwap     = '.SWP';
+       extBatch    = '.BAT';
+       extBoxfile  = '.PP';
+       extEBoxFile = '.EPP';
+       extFbl      = '.FBL';
+       extBl       = '.BL';
+       extRc       = '.RC';
+       extFl       = '.FL';
+       extGr       = '.GR';
+       extInf      = '.INF';
+       extUdl      = '.UDL';
+       extCfg      = '.CFG';
+       extBbl      = '.BBL';
+       extHelp     = '.HLP';
+       extXps      = '.XPS';
 {$ENDIF }
 
 {$IFDEF UnixFS }
@@ -1172,6 +1194,11 @@ implementation
 
 {
   $Log$
+  Revision 1.137  2001/09/07 13:54:17  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
   Revision 1.136  2001/08/23 11:15:01  mk
   - RTA: fixed some bugs (only 32 bit releated) and converted all records
     to classes and use TList/TStringList for storage management instead of
