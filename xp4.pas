@@ -1112,6 +1112,7 @@ var t,lastt: taste;
 {*}   savePos := p;
 {*} end;
 
+    if pm and not CC_testempf(empf) then goto ende;
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
               iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
     then begin
@@ -1903,7 +1904,7 @@ begin      { --- select --- }
                    end;
                  if dispmode=10 then begin
                    if c=k2_A then all_mode;                         { 'A' }
-                   if t=keyaltl then reset_lesemode;                { ALT+L }
+                   if t=keyaltL then reset_lesemode;                { @L }
                    end;
                end;
         20   : begin                        { Autoversand-Liste }
@@ -2163,6 +2164,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.40  2001/07/08 21:31:48  my
+  JG:- Fix: creation of unknown user now always shows dialogue
+       (prevents wrong assigning of standard server)
+
   Revision 1.26.2.39  2001/07/01 15:43:34  my
   SV:- moved RTA code to new unit xp4rta.pas
 
