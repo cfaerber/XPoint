@@ -67,6 +67,10 @@ Ich kann gerne auch eine fertig compilierte Version der RTL bereit-
 stellen, sofern Borland dies erlaubt. Wer daran interessiert ist, mîge
 bei Borland eine entsprechende Erlaubnis einholen.
 
+Zum Compilieren der Datei XP_NTVDM.DLL (wird nur fÅr Zusatzfunktionen
+unter Windows NT/2000/XP benîtigt) wird zusÑtzlich ein Win32-PASCAL-
+Compiler wie Free Pascal oder VPascal benîtigt.
+
 2. Compilieren der einzelnen Module
 -----------------------------------
 
@@ -77,3 +81,4 @@ bzw. formatiert:
      XP.HLP        ihs xp.ihq
      *.RES         rc <Dateiname.rq>
      *.TXT         df.bat    (Quelldateien: *.dq)
+     XP_NTVDM.DLL  ppc386.exe xp_ntvdm.pas (oder anderer Win32-Compiler)
