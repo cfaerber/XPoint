@@ -809,7 +809,8 @@ begin
   handle:=i;
   with pullw[i] do begin
     free:=false;
-    l:=x1; r:=x2; o:=y1; u:=y2;
+    l:=x1; r:=x2;
+    o:=y1; u:=iif(y2+shad>screenlines,screenlines-shad,y2);
     ashad:=shad;
     wi:=(r-l+1+shad)*2;
     moff;
@@ -1521,6 +1522,9 @@ end;
 
 {
   $Log$
+  Revision 1.84.2.1  2002/07/13 12:20:50  ma
+  - fix wpull: window was not saved if y+shad>screenlines
+
   Revision 1.84  2002/03/02 18:23:51  cl
   - Correct charset handling for DOS32
 
