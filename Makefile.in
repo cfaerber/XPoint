@@ -42,9 +42,11 @@ mandir		= @mandir@
 
 # --- flags -----------------------------------------------------------
 
+UNIT_DIRS = xplib ObjCOM netcall linux
+
 PPC	= @PPC@
-PPC_FLAGS	= @PPCFLAGS@ -Funetcall -FuObjCOM -Fulinux -dAUTOCONF
-PPC_LOCAL_FLAGS = -Funetcall -FuObjCOM -Fulinux
+PPC_FLAGS	= @PPCFLAGS@ $(patsubst %,-Fu"./%",$(UNIT_DIRS)) -dAUTOCONF
+PPC_LOCAL_FLAGS = @PPCFLAGS@ $(patsubst %,-Fu"./%",$(UNIT_DIRS))
 
 # --- files -----------------------------------------------------------
 EXEEXT 	= @EXEEXT@
@@ -62,13 +64,21 @@ HELP_FILES=$(patsubst doc/openxp-%.ihq,openxp-%.hlp,$(wildcard doc/openxp-*.ihq)
 # --- abstract targets ------------------------------------------------
 all: bin res
 
-bin: $(OPENXP) 
+bin: $(OPENXP)
+
+bin-win32: openxp-win32.exe
+
+bin-os2: openxp-os2.exe
+
+bin-dos32: openxp-dos.exe
 
 res: $(RESSOURCE_FILES) $(HELP_FILES)
 
 # --- cleaning --------------------------------------------------------
 mostlyclean:
 	rm -f $(OPENXP) openxp-*.res *.dcu *.ppu *.o
+	-for d in $(UNIT_DIRS) ; do rm -f $$d/*.dcu $$d/*.ppu $$d/*.o ; done
+	rm -f strip-stamp
 
 clean: mostlyclean
 	rm -f $(RC) $(IHS)
@@ -80,20 +90,42 @@ maintainer-clean: distclean
 	rm -f configure
 
 # --- install/uninstall -----------------------------------------------
-install:
-	install -D $(OPENXP) $(bindir)/$(OPENXP)
-	install -d $(datadir)/openxp/
-	install $(RESSOURCE_FILES) $(HELP_FILES) $(datadir)/openxp/
+install: bin res
+	install -D --mode=755 $(OPENXP) $(bindir)/$(OPENXP)
+	install -d -D $(datadir)/openxp/
+	install --mode=644 $(RESSOURCE_FILES) $(HELP_FILES) $(datadir)/openxp/
+
+strip: strip-stamp
+strip-stamp: bin
+	strip --strip-unneeded -R .note -R .comment $(OPENXP)
+	touch strip-stamp
 
 install-strip:
-uninstall:
+	$(MAKE) strip
+	$(MAKE) install
+
+# uninstall:
 
 # --- main programme --------------------------------------------------
-openxp$(EXEEXT): openxp.pas $(UNITS) config.h
+
+OPENXP_DEP=openxp.pas $(UNITS) config.inc
+
+openxp$(EXEEXT): $(OPENXP_DEP)
+	$(PPC) $(PPC_FLAGS) $<
+
+openxp-win32.exe: $(OPENXP_DEP)
+	$(PPC) -TWin32 $(PPC_FLAGS) $<
+
+openxp-os2.exe: $(OPENXP_DEP)
+	$(PPC) -TOS2 $(PPC_FLAGS) $<
+
+openxp-dos.exe: $(OPENXP_DEP)
+	$(PPC) -TGo32v2 $(PPC_FLAGS) $<
+
+config.inc: config.h
 	( sed -ne "s/^#\(.*\)/{\$$\1}/p" config.h &&	\
 	  echo "const conf_prefix = '$(prefix)';" &&	\
 	  echo "const conf_datadir = '$(datadir)';" ) 	> config.inc
-	$(PPC) $(PPC_FLAGS) $<
 
 # --- ressources ------------------------------------------------------
 openxp-%.res: openxp-%.rq $(RC)
@@ -110,6 +142,39 @@ ihs$(EXEEXT): ihs.pas $(UNITS) $(INCLUDES)
 openxp-%.hlp: doc/openxp-%.ihq $(IHS)
 	$(IHS) $<
 	cp doc/openxp-$*.hlp $@
+
+# --- documentation ---------------------------------------------------	
+
+DOC_SRC = doc/xpoint.sgm doc/xpoint.dsl doc/xpoint.cat
+DOC_HTML= doc/xpoint/book1.html
+DOC_PDF = doc/xpoint.pdf
+
+doc: $(DOC_HTML) $(DOC_PDF)
+
+$(DOC_HTML) : $(DOC_SRC)
+	( cd doc; sgmltools --backend=html -s xpoint.dsl xpoint.sgm )
+
+$(DOC_PDF) : $(DOC_SRC)
+	( cd doc; sgmltools --backend=pdf -s xpoint.dsl xpoint.sgm )
+
+# --- Debian packages -------------------------------------------------	
+
+include debian/Makefile.version
+
+debian/Makefile.version : debian/Makefile.PL \
+ debian/control debian/changelog.in \
+ xpglobal.pas xpdefine.inc
+	(cd debian; make)
+
+debian: debian-is-a-directory
+
+debian-is-a-directory: debian/changelog
+	(cd debian ; rm Makefile.version changelog ; make)
+	if [ `pwd|xargs basename` != openxp-$(DEB_UPSTREAM_VERSION) ]; then \
+	  ( ln -nfs `pwd|xargs basename` \
+	   ../openxp-$(DEB_UPSTREAM_VERSION) ) ; \
+	fi
+	cd ../openxp-$(DEB_UPSTREAM_VERSION) && dpkg-buildpackage -rfakeroot
 
 # --- files list ------------------------------------------------------
 
@@ -140,14 +205,36 @@ ${srcdir}/Makefile: Makefile.in configure
 
 autoconf: ${srcdir}/configure
 
-${srcdir}/configure: configure.in $(wildcard aclocal.m4)
+${srcdir}/configure: configure.ac $(wildcard aclocal.m4)
 	cd ${srcdir} && autoconf
 
 # ---------------------------------------------------------------------
 #
 # $Log$
-# Revision 1.2.2.2  2003/01/13 16:17:57  cl
-# - Makefile update
+# Revision 1.2.2.3  2003/09/06 15:22:09  cl
+# - added Debian build scripts
+#
+# Revision 1.15  2003/09/04 12:52:53  cl
+# - fixed make debian
+#
+# Revision 1.14  2003/09/02 17:39:55  cl
+# - fixed recreation of debian/changelog on ``make debian''
+#
+# Revision 1.13  2003/09/02 17:30:33  cl
+# - some minor changes
+#
+# Revision 1.12  2003/08/17 17:54:44  cl
+# - added ``make debian''
+# - fixed genration of documentation
+#
+# Revision 1.11  2003/05/15 11:07:43  cl
+# - fixed configure.in => configure.ac
+#
+# Revision 1.10  2003/02/21 19:32:13  cl
+# - Moved configure.in to configure.ac
+#
+# Revision 1.8  2003/01/13 23:34:25  cl
+# - autoconf update
 #
 # Revision 1.7  2003/01/13 16:17:32  cl
 # - Makfile update

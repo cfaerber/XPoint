@@ -1,0 +1,63 @@
+Source: openxp
+Section: mail
+Priority: extra
+Maintainer: Claus Färber <cl@openxp.de>
+Standards-Version: 3.6.0
+Build-Depends: fp-compiler (>= 1.0.6), fp-units-fcl, libncurses-dev
+Build-Depends-Indep: sgmltools-lite, jadetex
+
+Package: openxp
+Architecture: i386
+Depends: ${openxp:Depends}
+Suggests: xpfilter, openxp-tools-ftn, openxp-tools-uucp, openxp-tools-zconnect
+Recommends: openxp-doc
+Description: Text-based mail and news reader, also supports Fido, ZC
+ OpenXP is a text-based messaging user agent. Features include:
+  * POP3, SMTP and NNTP support.
+  * UUCP support (internal UUCICO, dialup or TCP/IP).
+  * FidoNet support (including BinkP, dialup or TCP/IP).
+  * ZConnect support (dialup or TCP/IP).
+  * Threading across multiple mail accounts and newsgroups.
+  * MIME support.
+  * PGP/GnuPG support.
+ OpenXP is a descendant from CrossPoint (XP) by Peter Mandrella.
+ .
+ Homepage: http://www.openxp.de
+
+Package: openxp-doc
+Architecture: all
+Description: OpenXP manual
+ This package contains the documentation for OpenXP in HTML format.
+ Currently only available in German.
+ .
+ Homepage: http://www.openxp.de
+
+Package: openxp-tools-ftn
+Architecture: all
+Depends: openxp, nomarch (>= 1.3)
+Recommends: unzip, arj | unarj
+Suggests: unrar, lha, unzoo | zoo
+Description: Tools for use with OpenXP's Fidonet support (meta-package)
+ This is a meta-package which depends on or suggests tools that
+ are required or recommended for OpenXP's Fidonet (FTN) support.
+ .
+ You may also want to install some non-free packages like "lha"
+ and "unarj" to extract archives of this type.
+
+Package: openxp-tools-zconnect
+Architecture: all
+Depends: openxp
+Recommends: unzip, arj | unarj
+Suggests: unrar
+Description: Tools for use with OpenXP's ZConnect support (meta-package)
+ This is a meta-package which depends on or suggests tools that
+ are required or recommended for OpenXP's ZConnect support.
+
+Package: openxp-tools-uucp
+Architecture: all
+Depends: openxp
+Recommends: gzip
+Suggests: bzip2, compress
+Description: Tools for use with OpenXP's UUCP support (meta-package)
+ This is a meta-package which depends on or suggests tools that
+ are required or recommended for OpenXP's UUCP support.

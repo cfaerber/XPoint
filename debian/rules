@@ -1,0 +1,180 @@
+#!/usr/bin/make -f
+# $Id$
+#
+# OpenXP Debian rules file
+# Copyright (C) 2003 OpenXP <http://www.openxp.de>
+# Copyright (C) 2003 Claus Faerber <cl@openxp.de>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+# --- include helper files --------------------------------------------
+
+define checkdir
+	test -f debian/rules
+endef
+
+define checkroot
+	$(checkdir)
+	test root = "`whoami`"
+endef
+
+# --- build* targets --------------------------------------------------
+
+build: build-arch build-indep
+
+build-arch: build-arch-stamp
+build-arch-stamp:
+	$(checkdir)
+	./configure --prefix=/usr
+	$(MAKE)
+	touch build-arch-stamp
+
+build-indep: build-indep-stamp
+build-indep-stamp:
+	$(checkdir)
+	./configure --prefix=/usr
+	$(MAKE) doc/xpoint/book1.html
+	touch build-indep-stamp
+
+Makefile: Makefile.in
+	autoconf
+
+# --- binary* targets -------------------------------------------------
+
+binary: binary-arch binary-indep
+
+binary-arch: openxp
+
+binary-indep: openxp-doc openxp-tools
+
+# -- individual packages ----------------------------------------------
+
+openxp: build-arch-stamp
+	$(checkroot)
+	-rm -rf debian/tmp/openxp
+
+	install -d -D debian/tmp/openxp/usr/bin/
+	install -d -D debian/tmp/openxp/usr/share/openxp/
+	$(MAKE) strip
+	$(MAKE) install prefix=`pwd`/debian/tmp/openxp/usr
+
+	install -D --mode=644 debian/README    	debian/tmp/openxp/usr/share/doc/openxp/README.Debian
+	install -D --mode=644 debian/copyright 	debian/tmp/openxp/usr/share/doc/openxp/copyright
+	install -D --mode=644 doc/authors.txt	debian/tmp/openxp/usr/share/doc/openxp/AUTHORS
+
+	install -D --mode=644 debian/changelog 	debian/tmp/openxp/usr/share/doc/openxp/changelog.Debian
+	gzip -9					debian/tmp/openxp/usr/share/doc/openxp/changelog.Debian
+	
+	install -D --mode=644 debian/openxp.1  	debian/tmp/openxp/usr/share/man/man1/openxp.1
+	gzip -9                     		debian/tmp/openxp/usr/share/man/man1/openxp.1
+
+	install --mode=644 -D debian/bts	 debian/tmp/openxp/usr/share/bug/openxp/control
+	install --mode=644 -D debian/openxp.menu debian/tmp/openxp/usr/lib/menu/openxp
+
+	install -D --mode=755 debian/openxp.postinst debian/tmp/openxp/DEBIAN/postinst
+	install -D --mode=755 debian/openxp.postrm   debian/tmp/openxp/DEBIAN/prerm
+
+	install -d -D debian/tmp/openxp/DEBIAN/
+	find debian/tmp/openxp/ | grep /bin/ | xargs dpkg-shlibdeps -popenxp
+	dpkg-gencontrol -isp -popenxp -Pdebian/tmp/openxp/
+
+	chown -R root.root debian/tmp/openxp
+	chmod -R go=rX debian/tmp/openxp
+
+	( cd debian/tmp/openxp; find * -type f ! -regex '^DEBIAN/.*' -print0 | xargs -r0 md5sum > DEBIAN/md5sums )
+	dpkg --build debian/tmp/openxp ..
+
+openxp-doc:
+	$(checkroot)
+
+	-rm -rf debian/tmp/openxp-doc
+
+	install -d -D debian/tmp/openxp-doc/usr/share/doc/openxp-doc/
+	cp -a doc/xpoint debian/tmp/openxp-doc/usr/share/doc/openxp-doc/html-de
+
+	install --mode=644 -D debian/copyright	debian/tmp/openxp-doc/usr/share/doc/openxp-doc/copyright
+	install --mode=644 -D debian/changelog	debian/tmp/openxp-doc/usr/share/doc/openxp-doc/changelog.Debian
+	gzip -9                                	debian/tmp/openxp-doc/usr/share/doc/openxp-doc/changelog.Debian
+	install --mode=644 -D debian/bts	debian/tmp/openxp-doc/usr/share/bug/openxp-doc/control
+
+	install -d -D debian/tmp/openxp-doc/DEBIAN/
+	dpkg-gencontrol -isp -popenxp-doc -Pdebian/tmp/openxp-doc/
+
+	install -D --mode=644 debian/openxp-de.doc-base	 debian/tmp/openxp-doc/usr/share/doc-base/openxp-de
+	install -D --mode=755 debian/openxp-doc.postinst debian/tmp/openxp-doc/DEBIAN/postinst
+	install -D --mode=755 debian/openxp-doc.prerm    debian/tmp/openxp-doc/DEBIAN/prerm
+
+	chmod -R go=rX debian/tmp/openxp-doc
+	chown -R root.root debian/tmp/openxp-doc
+
+	( cd debian/tmp/openxp-doc; find * -type f ! -regex '^DEBIAN/.*' -print0 | xargs -r0 md5sum > DEBIAN/md5sums )
+	dpkg --build debian/tmp/openxp-doc ..
+
+openxp-tools: openxp-tools-ftn openxp-tools-zconnect openxp-tools-uucp
+
+openxp-tools-%:
+	$(checkroot)
+
+	-rm -rf debian/tmp/$@
+
+	install -d -D debian/tmp/$@/usr/share/doc
+	ln -sn 'openxp' debian/tmp/$@/usr/share/doc/$@
+	
+	install -d -D debian/tmp/$@/usr/share/bug
+	ln -sn 'openxp' debian/tmp/$@/usr/share/bug/$@
+	
+	install -d -D debian/tmp/$@/DEBIAN/
+	dpkg-gencontrol -isp -p$@ -Pdebian/tmp/$@/
+
+	chown -R root.root debian/tmp/$@
+	chmod -R go=rX debian/tmp/$@
+
+	dpkg --build debian/tmp/$@ ..
+
+# --- clean target ----------------------------------------------------
+
+clean:
+	$(checkroot)
+	-rm -f build-arch-stamp
+	-rm -f build-indep-stamp
+	-rm -rf debian/tmp/
+	-rm -f debian/substvars
+	-rm -f debian/files
+	-$(MAKE) distclean
+
+# ---------------------------------------------------------------------
+
+.PHONY: binary binary-arch binary-indep clean checkroot
+
+# ---------------------------------------------------------------------
+#
+#  $Log$
+#  Revision 1.4.2.1  2003/09/06 15:22:09  cl
+#  - added Debian build scripts
+#
+#  Revision 1.4  2003/08/17 17:52:17  cl
+#  - added control files for bug tracking system
+#  - added menu configuration
+#  - added md5sums
+#  - added alterative rules file which uses debhelper
+#  - fixed generation of changelog for snapshots
+#
+#  Revision 1.3  2003/08/17 11:16:22  cl
+#  - update w/o debhelper
+#
+#  Revision 1.2  2003/08/05 23:31:28  cl
+#  - Update for Debian package build data
+#
+# ---------------------------------------------------------------------
