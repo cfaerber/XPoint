@@ -417,23 +417,26 @@ var i        : integer;
       Debug.DebugLog('xpncfido','match('+wfn+','+fn+')',dlDebug);
       p:=cpos('.',fn);
       if p=0 then
-        result:=false
+        match:=false
       else
       begin
-        result:=true;
+        match:=true;
         fsplit(wfn,dir,name,ext);
-        p:=cpos('*',name);
-        if p>0 then name:=LeftStr(name,p-1)+typeform.dup(9-p,'?');
-        p:=cpos('*',ext);
-        if p>0 then ext:=LeftStr(ext,p-1)+typeform.dup(5-p,'?');
-        wfn:=dir+name+ext;
+        i:=cpos('*',name);
+        if i>0 then name:=LeftStr(name,i-1)+dup(9-i,'?');
+        i:=cpos('*',ext);
+        if i>0 then ext:=LeftStr(ext,i-1)+dup(5-i,'?');
+        wfn:=name+ext;
         fn:=forms(LeftStr(fn,p-1),8)+forms(mid(fn,p),4);
         p:=cpos('.',wfn);
         if p>0 then wfn:=forms(LeftStr(wfn,p-1),8)+forms(mid(wfn,p),4);
         p := Min(Length(fn), Length(wfn)); // check this!
         for i:=1 to p do
           if (wfn[i]<>'?') and (UpCase(fn[i])<>UpCase(wfn[i])) then
-            result:=false;
+          begin
+            match:=false;
+            break;
+          end;
       end;
       Debug.DebugLog('xpncfido',iifs(result,'files match','files do not match'),dlDebug);
     end;
@@ -901,6 +904,9 @@ end;
 
 {
   $Log$
+  Revision 1.32.2.4  2003/11/22 16:59:58  mk
+  - fixed 649342: Fido-Requests werden nicth geloescht
+
   Revision 1.32.2.3  2002/08/03 16:31:45  mk
   - fixed unsendt-handling in client-mode
 
