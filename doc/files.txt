@@ -103,9 +103,9 @@ encoder.pas	???
 exxec.pas	externe Programme aufrufen; Swapping
 feiertag.pas	Feiertage ermitteln
 file_id.diz	???
-fileio.inc	???
+fileio.inc	Low-Level-Funktionen
 fileio.pas	Dateien, Pfade, Laufwerke
-gpltools.pas	???
+gpltools.pas	Tools ausserhalb der SLizenz
 help.pas	Online-Hilfe: *.HLP auslesen und anzeigen
 icons.res	Icons fuer OpenXP im Windows-Format
 ihs.pas	Quelltext zu IHS.EXE (Helpfile-Compiler)
@@ -113,8 +113,8 @@ inout.pas	Diverse Funktionen fuer Tastatureingabe und Bildschirmausgabe
 ipaddr.pas	Klasse TIP zur Verwaltung einer IP-Adresse (GPL)
 ipcclass.pas	Klasse TIPC (Inter Process Communication) (GPL)
 keys.pas	Tastatureingabe
-linux/fileio.inc	???
-linux/fileioh1.inc	???
+linux/fileio.inc	Linux-Functionen (Low Level)
+linux/fileioh1.inc	Interface Linux-Functionen (Low Level)
 lister.pas	Lister
 maggi.pas	Multiformat-Konvertierer (MAGGI.EXE)
 maske.inc	Dialoge / Eingabemasken
@@ -123,11 +123,11 @@ maus2.pas	Auswertung von Mauseingaben
 modem.pas	Modemroutinen
 montage.pas	Datumsfunktionen
 mouse.pas	Auswertung von Maus-Interrupts (INT 33)
-ncnntp.pas	???
-ncpop3.pas	???
-ncsmtp.pas	???
-ncsocket.pas	???
-ncurses.pas	???
+ncnntp.pas	NNTP
+ncpop3.pas	POP3
+ncsmtp.pas	SMTP
+ncsocket.pas	Basisroutinen der Sockets
+ncurses.pas	Interface zur Curses-Lib (im wesentlichen Unix)
 ndiff.pas	Nodelist-Differ (NDIFF.EXE)
 netcall.pas	Abstrakte Klasse TNetcall (GPL)
 pmconv.pas	PM-Puffer-Konvertierer (PMCONV.EXE)
@@ -173,8 +173,8 @@ xp2f.pas	Fressen, Ficken, Fernsehen
 xp3.pas	diverse Funktionen fuer Pointdatenverwaltung
 xp3ex.pas	Nachrichten extrahieren
 xp3o.inc	Puffer einlesen
-xp3o.pas	diverse Funktionen fuer Nachrichtenverwaltung 
-xp3o2.pas	diverse Funktionen fuer Nachrichtenverwaltung 
+xp3o.pas	diverse Funktionen fuer Nachrichtenverwaltung
+xp3o2.pas	diverse Funktionen fuer Nachrichtenverwaltung
 xp4.inc	Hauptmenueabfrage
 xp4.pas	Tastaturabfragen,N/B/U-Fenster
 xp4d.inc	Zeilenanzeigeroutine fuer N/B/U-Fenster
@@ -226,7 +226,7 @@ xpftnadr.pas	???
 xpglobal.pas	???
 xpheader.inc	???
 xpimpexp.pas	Import/Export-Funktionen
-xpipc.pas	???
+xpipc.pas	Interface zwischen IPC.PAS und OpenXP
 xpkeys.pas	Funktionstasten und Makros
 xplinux.pas	XP-spezifisches Interface unter Linux
 xpmakehd.inc	ZCONNECT- und Z3.8-Header parsen
@@ -234,7 +234,7 @@ xpmaus.pas	MausTausch-Funktionen
 xpme.pas	Menueeditor (XPME.EXE)
 xpmecol.inc	Menueeditor (XPME.EXE)
 xpmime.pas	nur XP 3.2: MIME-Viewer-Funktionen
-xpnntp.pas	???
+xpnntp.pas	Interface zwischen NCNNTP.PAS und OpenXP
 xpnodes.pas	Unit fuer Zugriff auf den XP-Nodelistenindex
 xpnt.pas	Netztypen
 xpos2.pas	???

@@ -1,48 +1,86 @@
 
 	Hinweise fuer die Benutzung von OpenXP unter Linux
 	----------------------------------------------------------------------
-	
+
 	ACHTUNG: OpenXP ist als Linux-Portierung zur Zeit eher
 	         als Alpha- denn als Beta-Version zu verstehen.
 		 Wer aber die hier aufgefuehrten Hinweise beachtet,
 		 kann gerne die Tools ausprobieren.
+
+	Status	Die Entwicklungsstadien der einzelnen Programme und Tools
+		sind sehr unterschiedlich. Die nachfolgende Uebersicht
+		kann helfen, den Status zu erkennen. Sollte ein Tool
+		hier nicht aufgefuehrt sein, so gehen Sie bitte davon aus,
+		dass sich noch kein Programmierer darum gekuemmert hat. :-/
+		Non-Function-Development heisst, es hat sich schon mal
+		jemand angesehen (intensiver), aber es geht noch nichts
+		(und nichts heisst wirklich nichts).
+
+		Beta-Status
+		-----------
+
+		RC		- Resource-Compiler fuer OpenXP
+		UUZ		- ZConnect-RFC-Konverter
+		XPME		- Menueeditor
+		ZFido		- ZConnect-Fido-Konverter
+
+		Alpha-Status
+		------------
+
+		IHS		- Dummes Hilfesystem
+		XP		- OpenXP-Hauptprogramm
+
+		Non-Function-Development
+		------------------------
+
+		XP-ME		- Fido-Mailer fuer OpenXP
+		ZM		- ZModem: wird wohl nichts: sz/gz installieren
 
 	Install	Voraussetzung: FreePascal Compiler ab 1.00 (am besten den
 		aktuellen Snapshot von www.freepascal.org). Dann wie folgt
 		die Sources kompilieren:
 
 		su root
+		# Da der Compiler noch einen Bug hat, vorruebergehendend:
+		ppc386 xp8
 		make xp
 		make install
 		exit
-		
+
 		Sie koennen auf 'su root' verzichten, wenn Sie als User das
 		Recht haben, in /usr/bin Links und in /usr/local Verzeichnisse
 		anzulegen.
-		
+
 		Dann diese Datei bis zum Ende lesen!
-	
+
 	Alle	Die Ausgabe auf dem Bildschrim verlangt zur Zeit
 		einen ISO-8859-1-konfomren Zeichensatz.
-		
+
 		Es kann zwar eine Bildschirmaufloesung von mehr
 		als 80x25 verwendet werden, aber es kann zur Zeit
 		nicht garantiert werden, dass diese auch genutzt
 		wird.
-		
+
 		Unter X darf die Groesse der Konsole nach dem
 		Programmstart nicht mehr geaendert werden.
-		
+
 		Fehler, wie "Kann xxx nicht finden" sind wahrscheinlich auf
 		die Tatsache zurueckzufueren, dass Linux bei Dateinamen
 		zwischen Gross- und Kleinschreibung unterscheidet. Da
 		OpenXP seine DOS-Vergangenheit nicht leugnen kann, sollte
 		man zunaechst versuchen, den Namen in Grossschreibung zu
 		wandeln (gilt nicht fuer die Tools wie ZFido etc.).
+		Wenn ein solches Problem auftritt, dann sollte es auch
+		an die Entwickler gemeldet werden. Nach Moeglichkeit nicht
+		mit dem Text "Da geht was nicht", sondern mit einer
+		moeglichst genauen Beschreibung, was wann und am besten
+		auch noch warum nicht funktioniert hat. Je detailierter
+		die Meldung, desto groesser die Chance, dass innerhalb
+		kurzer Zeit das Problem beseitigt ist.
 
 	XP	OpenXP ist im absoluten Alpha-Stadium! Jede Verwendung
 		kann nur auf eigene Gefahr und mit der Wahrscheinlichkeit
-		von Fehlern erfolgen. Sie mussen sich bewusst sein, dass
+		von Fehlern erfolgen. Sie muessen sich bewusst sein, dass
 		die vorliegende Portierung nicht abgeschlossen ist, und
 		auch vielfach keine Ruecksicht auf Linux-Besonderheiten
 		nimmt.
@@ -53,28 +91,31 @@
 		symbolischen Link auf die Daten legen. Angenommen, Ihre
 		XP-Installation befindet sich im Verzeichnis '/pub/usera/xp',
 		dann erstellen Sie den Link mit folgendem Befehl:
-		
+
 		ln -s /pub/usera/xp ~/.openxp
-		
+
 		Wenn Sie es nicht moegen, dass OpenXP Ihnen den Pfad
 		vorschreibt, so setzen Sie bei Ihren Einstellungen
 		die Environment-Variable 'XPHOME' mit einem absoluten
 		Pfad. Beispiel:
-		
+
 		XPHOME=~/.xp
-		
+
 		Wenn Sie dieses dauerhaft machen moechten, so geben Sie
-		
+
 		echo "export XPHOME=~/.xp">>~/.profile
-		
-		ein. Sie koennen die Datei natuerlich auch mit einem 
-		Editor bearbeiten.
+
+		ein. Sie koennen die Datei natuerlich auch mit einem
+		Editor bearbeiten (gilt fuer eine SuSE-Distribution).
 
 	XPME	Bis auf die dargestellten Schwierigkeiten bei der
 	        Ausgabe von Schriftzeichen bei Konsolen/Fonts, die
 		nicht ISO-8859-1-kompatibel sind, sollte das Tool
 		funktionieren.
-		
+
+	ZFido   ZFido ist vollstaendig einsatzfaehig und sollte keine
+		Probleme mehr hervorrufen.
+
 	----------------------------------------------------------------------
 	$RCSfile$
 	$Revision$
