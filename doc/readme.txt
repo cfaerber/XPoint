@@ -15,7 +15,7 @@
      Die Version 3.40 enth„lt etliche neue Features im Vergleich zur
      Version 3.20, aber ebenfalls unz„hlige Bugfixes und interne
      Žnderungen, so daá diese Version schon mit dem hier vorliegenden
-     RC1 (Release Candidate 1) als extrem stabil einzustufen ist.
+     RC2 (Release Candidate 2) als extrem stabil einzustufen ist.
 
      Die Žnderungen im Detail k”nnen der Datei VERSION.TXT entnommen
      werden.
