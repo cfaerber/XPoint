@@ -302,8 +302,8 @@ end;
 
 begin
   writeln;
-  writeln('OpenXP Ressource Compiler ',verstr,betastr,' for',pformstr);
-  writeln('Copyright by ',author_name,' <',author_mail,'> ',x_copyright);
+  writeln('OpenXP Res-Compiler ', verstr, pformstr, betastr, ' ', x_copyright,
+    ' by ', author_name, ' <', author_mail, '>');
   writeln;
   infile:=paramstr(1);
 
@@ -325,11 +325,14 @@ begin
   end;
 end.
 {
-	$Log$
-	Revision 1.12  2000/07/06 12:03:21  hd
-	- Auf AnsiString umgestellt
-	- Unit CRT entfernt
-	- Fix: rc c:\xp\src.370\xp-d.rq fuehrte zu xp-d.rq.res
-	- Version geaendert (OpenXP)
+        $Log$
+        Revision 1.13  2000/08/05 23:36:55  mk
+        - Copyright-Meldung angepasst
+
+        Revision 1.12  2000/07/06 12:03:21  hd
+        - Auf AnsiString umgestellt
+        - Unit CRT entfernt
+        - Fix: rc c:\xp\src.370\xp-d.rq fuehrte zu xp-d.rq.res
+        - Version geaendert (OpenXP)
 
 }
