@@ -88,6 +88,7 @@ procedure dbWriteN(dbp:DB; feldnr:integer; var data);
 function  dbReadStr(dbp:DB; const feld:dbFeldStr):string;
 function  dbReadStrN(dbp:DB; feldnr:integer):string;
 function  dbReadInt(dbp:DB; const feld:dbFeldStr):longint;
+function  dbReadIntN(dbp:DB; feldnr:integer):longint;
 
 function  dbXsize  (dbp:DB; const feld:dbFeldStr):longint;
 procedure dbReadX  (dbp:DB; const feld:dbFeldStr; var size:smallword; var data);
@@ -1382,6 +1383,14 @@ begin
   dbReadInt:=l;
 end;
 
+function dbReadIntN(dbp:DB; feldnr:integer):longint;
+var l : longint;
+begin
+  l:=0;
+  dbReadN(dbp,feldnr,l);   { 1/2/4 Bytes }
+  dbReadIntN:=l;
+end;
+
 
 { 'data' in Feld mit Nr. 'feldnr' schreiben }
 
@@ -1726,6 +1735,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.22.2.10  2001/08/12 11:07:17  mk
+  - added dbReadIntN
+
   Revision 1.22.2.9  2001/08/12 09:05:17  mk
   - added dbReadStrN function
 
