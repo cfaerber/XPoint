@@ -20,6 +20,7 @@ K English
 114 Illegal temporary file name
 115 ZM.EXE not found
 116 Error: CTS low
+117 Could not initialize comport
 
 # ----- Dialing
 
@@ -30,6 +31,7 @@ K English
 164 Hanging up
 165 Waiting for next call ...
 166 Calling %s
+167 Could not hang up modem
 
 # ----- bad carrier signal (number of lines is variable):
 

@@ -20,6 +20,7 @@ K Deutsch
 114 ungltige Tempor„rdatei
 115 ZM.EXE fehlt
 116 kein CTS-Signal
+117 Fehler bei Portinitialisierung
 
 # ----- Anwahl
 
@@ -30,6 +31,7 @@ K Deutsch
 164 Modem auflegen
 165 warte auf n„chsten Anruf ...
 166 Anruf bei %s
+167 Modem evtl. nicht aufgelegt?!
 
 # ----- fehlerhaftes Carrier-Signal (Zeilenanzahl variabel):
 
