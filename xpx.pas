@@ -245,6 +245,13 @@ begin
   filemode:=2;
 end;
 
+function xpswapspace:word;
+var regs:registers;
+begin
+  intr($12,regs);
+  xpswapspace:=(regs.ax - prefixseg div 64 - 42 - memavail div 1024)
+end;
+
 procedure logo;
 var t : text;
 begin
@@ -308,14 +315,14 @@ begin
     { Size_OVR enthaelt die Groesse des OVR-Files }
     ovrmemsize:=0;
     { Erstmal Variable initialisieren }
-    if ((EmsTest) and (not noovrbuf) and ((EmsAvail*16)>(Size_OVR+700))) then
+    if ((EmsTest) and (not noovrbuf) and ((EmsAvail*16)>(Size_OVR+xpswapspace+700))) then
     begin
       OvrInitEMS;
       xmsovrbuf:=false;
       emsovrbuf:=true;
       ovrstr:=' (EMS)';
     end
-    else if ((XmsTest) and (not noovrbuf) and (XmsAvail>(Size_OVR+700))) then
+    else if ((XmsTest) and (not noovrbuf) and (XmsAvail>(Size_OVR+xpswapspace+700))) then
     begin
       OvrInitXMS;
       xmsovrbuf:=true;
@@ -349,6 +356,12 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.29  2003/04/18 10:47:51  mw
+  MW: - Neue Funktion xpswapspace in xpx.pas eingebaut
+
+      - Neue Grenze fÅr das Anlegen des Overlaycache:
+        Size_OVR+xpswapspace+700KB
+
   Revision 1.18.2.28  2003/04/16 13:48:20  mw
   MW: - Neue Berechnungsmethode fÅr XMS-Belegung durch Openxp/16
         (In overxms.asm wird die Grî·e des XMS-Blocks gesichert).
