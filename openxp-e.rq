@@ -1689,7 +1689,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 2    ~^Replace , ^Append~
 -
 727  Phone fee zone:~
-
+728  Temporary MAGGI and UUZ configuration file
 
 # --- XP8 -------------------------------------------------------------
 
@@ -3727,6 +3727,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 7   Illegal signature!
 -
 
++ 29900
+1
+2 N
+-
 
 # --- Settings --------------------------------------------------------
 
@@ -4010,6 +4014,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.58  2003/01/29 15:40:34  mf
+# - Added: 728, 29900.1, 29900.2
+#
 # Revision 1.57  2003/01/03 18:53:36  mf
 # Fixed long-standing bug in /Config/Display/Colors/Reader (201.16)
 #
