@@ -183,9 +183,9 @@ export DEBUG
 export contribdir
 export RM
 
-# maggi und pmconv uebersetzen nicht
+# maggi uebersetzt nicht
 #BIN = maggi ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
-BIN = ndiff uucp-fl1 uuzext xp-fm xpme yup2pkt zfido zpr xp
+BIN = ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
 COMPBIN = $(BIN) docform ihs rc
 RES = xp-d xp-e xpfm-d xpfm-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
@@ -1351,7 +1351,7 @@ $(patsubst %,install_%,$(RESFILES)): install_%: %
 	$(INSTALL_DATA) $* $(datadir)
 
 $(patsubst %,install_%,$(EXAMPLES)): install_%:
-	$(INSTALL_DATA) $(SEP)beispiel$(SEP)$* $(exampledir)
+	$(INSTALL_DATA) beispiel$(SEP)$* $(exampledir)
 
 install_exampledir:
 	-$(INSTALLDIR) $(exampledir)
@@ -1421,6 +1421,9 @@ dist:
 
 #
 # $Log$
+# Revision 1.8  2000/09/30 14:49:22  fe
+# pmconv.pas jetzt uebersetzbar.
+#
 # Revision 1.7  2000/09/28 14:21:02  fe
 # Ueberpruefung der Variablen eingebaut.
 # kleinere Korrekturen
