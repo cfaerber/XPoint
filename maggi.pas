@@ -104,7 +104,7 @@ type  charr       = array[0..65530] of char;
                  datum      : string[11];    { Netcall-Format }
                  ddatum     : string[14];
                  zdatum     : string[22];    { ZConnect-Format; nur auslesen }
-                 pfad       : string;        { Netcall-Format }
+                 pfad       : HugeString;    { Netcall-Format }
                  msgid,ref  : string[120];   { ohne <> }
                  typ        : string[1];     { T / B }
                  crypttyp   : string[1];
@@ -1824,6 +1824,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/05/07 19:25:16  mk
+  - Anpassung an Pfad als HugeString
+
   Revision 1.11  2000/05/03 07:33:56  mk
   - unbenutze Variablen/Units rausgeworfen
 
