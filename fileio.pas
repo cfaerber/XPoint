@@ -471,7 +471,7 @@ var
   sr : TSearchrec;
 begin
   if SysUtils.FindFirst(s, faAnyfile, sr) = 0 then repeat
-    sysutils.DeleteFile(ExtractFileDir(s) + DirSepa +sr.name);
+    sysutils.DeleteFile(AddDirSepa(ExtractFilePath(s))+sr.name);
   until SysUtils.FindNext(sr) <> 0;
   sysutils.FindClose(sr);
 end;
@@ -648,6 +648,9 @@ end.
 
 {
   $Log$
+  Revision 1.93  2001/03/13 00:29:30  cl
+  - fixed erase_mask
+
   Revision 1.92  2001/03/02 22:07:20  cl
   - VPascal: define fsFromXXX constants for FileSeek
 
