@@ -81,7 +81,7 @@ var
        COLOR_WHITE = 7;
 
 Type
-    tacs_map = array [char] of chtype;
+    tacs_map = packed array [char] of chtype;
     pacs_map = ^tacs_map;
 
 Var
@@ -1763,6 +1763,9 @@ end;
 
 {
   $Log$
+  Revision 1.7  2001/10/17 10:06:54  ml
+  - use packed records
+
   Revision 1.6  2001/10/15 09:39:10  ml
   - copyright
 
