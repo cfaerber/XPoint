@@ -1461,7 +1461,7 @@ begin
     if not IsPath(s) then
       if ReadJN(getres(900),true) then   { 'Verzeichnis ist nicht vorhanden. Neu anlegen' }
       begin
-        if CreateMultipleDirectories(s) = '' then
+        if not CreateDir(ExcludeTrailingPathDelimiter(s)) then
         begin
           PPPClientPathTest:=false;
           rfehler(906)           { 'Verzeichnis kann nicht angelegt werden!' }
@@ -1888,11 +1888,11 @@ label Start;
   end;
 
 begin  { --- of EditAddServersList --- }
-  showErrors:=true;
+  showErrors:=true;                    
   if own_Name <> '' then maxbox:=80;
   s1:=trim(cr.s);
   if (s1='') and (own_Name<>'') then      { Sind Boxen im Eingabefeld? }
-  begin                        { Wenn nicht, auf passende Boxen prÅfen }
+  begin                        { Wenn nicht, auf passende Boxen pr¸fen }
     dbOpen(d,BoxenFile,1);
     while not dbEOF(d) do
     begin
@@ -1905,7 +1905,7 @@ begin  { --- of EditAddServersList --- }
       dbNext(d);
     end;
     dbClose(d);                          { keine passende Box gefunden }
-    rfehler(953); { 'Keine (weiteren) hinzuzufÅgenden Serverboxen vorhanden!' }
+    rfehler(953); { 'Keine (weiteren) hinzuzuf¸genden Serverboxen vorhanden!' }
     exit;
   end;
   Start:
@@ -2514,6 +2514,9 @@ end;
 
 {
   $Log$
+  Revision 1.45.2.6  2003/08/25 17:44:21  mk
+  - fixed directory create in Edit/Client
+
   Revision 1.45.2.5  2002/11/01 13:35:28  ma
   - reimplemented Janus+ switch, should solve problems with non-standard
     servers
