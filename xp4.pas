@@ -1636,6 +1636,7 @@ begin      { --- select --- }
         1,2  : begin                        { Userliste }
                  if t=keyf6 then Makroliste(2);
                  if c=^Y then Trennzeilensuche;
+                 if c=k0_cG then _mark_group;      { ^G }
                  if c=k1_O then begin              {'O'}
                    usersortbox:=not usersortbox;
                    setall; aufbau:=true;
@@ -2040,6 +2041,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/07/26 22:58:33  mk
+  -  Userfenster: Strg+G markiert gesamte Adressbuchgruppe
+
   Revision 1.37  2000/07/23 10:01:01  mk
   - memavail wo moeglich rausgenommen
 
