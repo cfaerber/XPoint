@@ -779,9 +779,9 @@ begin
     if UseClip then WriteClipfile(fn)
     else mdelay(500);
     closebox;
-    end;
-  pophp;
+  end;
 ende:
+  pophp;
   ss_active:=false;
 end;
 
@@ -996,6 +996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27.2.7  2000/12/18 09:19:57  mk
+  - fehlendes pophp ergaenzt
+
   Revision 1.27.2.6  2000/12/17 00:14:46  mk
   - optische Korrekturen an der Speicherstatistik
 
