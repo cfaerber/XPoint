@@ -90,8 +90,8 @@ const
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
           FelderMax = 6;             { groesste der beiden Feldanzahlen }
 
-       xp_xp       : string = 'OpenXP/32';
-       xp_origin   : string = '--- OpenXP/32';
+       xp_xp       : string = 'OpenXP';
+       xp_origin   : string = '--- OpenXP';
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
@@ -1024,7 +1024,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        MausPSA      : boolean;       { Stati anfordern }
        ShowRealnames: boolean;       { Realnames anzeigen, falls vorhanden }
        ss_passwort  : boolean;       { Startpasswort nach Screensaver }
-       NewsMIME     : boolean;       { MIME auch in News verwenden }
        MIMEqp       : boolean;       { quoted-printable }
        RFC1522      : boolean;       { RFC-1522-Header erzeugen }
        NoArchive    : boolean;       { NoArchive-Headerz. erzeugen } {!MMH}
@@ -1234,6 +1233,10 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.14  2003/08/11 22:09:51  mk
+  - removed Edit/netze/verschiedens/mime in news
+  - changed OpenXP/32 to OpenXP
+
   Revision 1.158.2.13  2003/06/14 09:26:56  mk
   -attrbuf starts now with 1 again, this fixes last committ
 
