@@ -7077,10 +7077,66 @@ diese Empf„nger-Auswahlliste erscheinen soll.
 
 <<Hinweis>>: Unabh„ngig davon, welche der obigen Optionen
 Sie w„hlen - die Auswahlliste wird immer angezeigt,
-wenn ein Weiterleit-Absender (<<WAB>>) vorhanden ist.
+wenn ein Original-Absender (<<OAB>>) oder ein Weiterleit-
+Absender (<<WAB>>) vorhanden ist.
 
-<<nie>>              Nie eben (auch nicht bei Weiterleit-
-                 Absendern).
+<<nie>>              Nie eben (auch nicht bei Original-
+                 oder Weiterleit-Absendern).
+
+<<benutzerdefiniert>>  Diese Einstellung k”nnen Sie zwar
+                 nicht mit <<<F2> >>ausw„hlen, aber
+                 dennoch nutzen, indem Sie eine be-
+                 liebige Kombination der folgenden
+                 Werte addieren und manuell in der
+                 Datei <<XPOINT.CFG>> hinter dem Bezeich-
+                 ner "<<RTA-Mode=>>" eintragen:
+
+RTA-Mode=0   =>  Entspricht der Einstellung <<nie>>.
+RTA-Mode=1   =>  Dann, wenn Original- (OAB) oder Wei-
+                 leit-Absender (WAB) vorhanden ist.
+RTA-Mode=2   =>  Dann, wenn "Antwort-an"-Header
+                 (Reply-To) vorhanden ist.
+RTA-Mode=4   =>  Dann, wenn Adressen in einem der
+                 Header EMP (Empf„nger), OEM (Origi-
+                 nal-Empf„nger) oder KOP (Kopienemp-
+                 f„nger) vorhanden sind, die nicht
+                 eigene sind.
+RTA-Mode=8   =>  Dann, wenn Adressen in einem der
+                 Header EMP (Empf„nger), OEM (Origi-
+                 nal-Empf„nger) oder KOP (Kopienemp-
+                 f„nger) vorhanden sind, die nicht
+                 eigene sind und gleichzeitig der Ab-
+                 sender (ABS) ebenfalls keine eigene
+                 Adresse ist.
+RTA-Mode=64  =>  Entspricht der Einstellung <<immer>>;
+                 die Auswahlm”glichkeit "alle" wird
+                 in der Empf„nger-Auswahlliste nicht
+                 angeboten.
+
+Bei einem "RTA-Mode" von 3 oder kleiner werden keine
+Adressen aus OEM- und KOP-Headern angezeigt.
+
+
+Beispiele:
+----------
+
+Die Einstellung "<<Kopienempf. + Antwort-an>>" ist also
+eine Kombination aus den RTA-Modi 1, 2, 4 und 8,
+demzufolge steht bei Auswahl dieser Einstellung in
+XPOINT.CFG dann der Wert "<<RTA-Mode=15>>".
+
+Wenn Sie von diesem Wert die Zahl 1 abziehen und dort
+"<<RTA-Mode=14>>" eintragen, wrde die Empf„nger-Auswahl-
+liste dann nicht mehr erscheinen, wenn ein OAB- oder
+WAB-Header vorhanden ist (und es auch sonst keinen
+Grund gibt, warum sie erscheinen sollte).
+
+Es sind alle Kombinationen m”glich, aber nicht alle
+Kombinationen ergeben Sinn: 64 + 1 ist z.B. sinnlos,
+64 + 8 kann aber durchaus Sinn ergeben.
+
+
+Siehe auch: [Weitere spezielle Einstellungen]@3002
 
 @
 1040
@@ -12490,13 +12546,13 @@ folgenden Funktionen zur Verfgung:
       wie "Absender Username\@Boxname.Serverdomain"
       bei /Edit/Boxen/Edit/<Netztyp> bercksichtigt.
 
-   b) Wenn eine Reply-To-Adresse ('Antwort-an') in
+   b) Wenn eine Reply-To-Adresse ("Antwort-an") in
       der Auswahlliste vorhanden ist, wird diese
       *statt* der als "Absender" aufgefhrten Adresse
       in die Sendeliste bernommen.
 
-   c) Ein Weiterleit-Absender ('WAB') wird nie in die
-      Sendeliste bernommen.
+   c) Ein Original- (OAB) oder Weiterleit-Absender
+      (WAB) wird nie in die Sendeliste bernommen.
 
    Alle Adressen, die bei Auswahl der Funktion
    "<<alle>> (...)" unter Anwendung dieser Regeln in
@@ -12508,6 +12564,8 @@ folgenden Funktionen zur Verfgung:
    wenn nach Anwendung der obigen Filterregeln ber-
    haupt noch weitere 'reply-f„hige' Adressen vor-
    handen sind.
+
+Siehe auch: [Spezielle Einstellungen]@3002
 
 
 <<2.>> Sie w„hlen "<<markierte>>". Diese Funktion tut ohne
@@ -12623,6 +12681,48 @@ richt befindet.
     Dialog in Klammern angezeigt), kann die Auswahl
     <<Nein>> zu einer recht l„stigen Angelegenheit
     werden. :-)
+
+@
+3002
+Es gibt drei spezielle Einstellungen zu Reply-To-All,
+die nicht in CrossPoint selbst konfiguriert werden
+k”nnen, sondern bei Bedarf manuell in der Datei
+<<XPOINT.CFG>> vorgenommen werden mssen. Bitte nehmen
+Sie die folgenden Eintragungen bei Bedarf in der
+Datei XPOINT.CFG am Ende des Bereiches "## allgemeine
+Einstellungen" vor:
+
+<<RTA-OwnAddresses=>>    Hier k”nnen Sie beliebige mit
+                     Leerzeichen getrennte Adressen
+                     eingeben, die von der Reply-To-
+                     All-Routine dann ebenfalls als
+                     eigene Adressen erkannt werden,
+                     obwohl sie sich *nicht* aus der
+                     Konfiguration einer Ihrer RFC-
+                     oder ZConnect-Boxen als eigene
+                     Adresse ergeben.
+
+<<RTA-NoOwnAddresses=>>  Hier k”nnen Sie beliebige mit
+                     Leerzeichen getrennte Adressen
+                     eingeben, die von der Reply-To-
+                     All-Routine *nicht* als eigene
+                     Adressen erkannt werden, obwohl
+                     sie sich aus der Konfiguration
+                     Ihrer RFC- und ZConnect-Boxen
+                     als eigene Adresse ergeben.
+
+<<RTA-NoOwnAddresses>> hat Vorrang vor <<RTA-OwnAddresses>>.
+Bitte achten Sie auf genaue Schreibweise der Bezeich-
+ner und der Adressen!
+
+<<RTA-Standard=>>        Hier k”nnen Sie festlegen, ob
+                     der Auswahlbalken in der Empf„n-
+                     ger-Auswahlliste standardm„áig
+                     auf "alle" (Wert <<J>>) oder auf
+                     der ersten angezeigten Adresse
+                     (Wert <<N>>) stehen soll. Ist der
+                     Eintrag nicht vorhanden, wird
+                     "<<RTA-Standard=J>>" angenommen.
 
 @
 7000
