@@ -931,7 +931,12 @@ begin // Show
 
       if t = keypgdn then
       begin
-        FirstLine := Min(FirstLine + DispLines, Max(Lines.Count - DispLines, 0));
+        if stat.allpgdn then
+        begin
+          if Lines.Count-DispLines > FirstLine then
+            FirstLine := Min(FirstLine + DispLines, Max(Lines.Count, 0));
+        end else
+          FirstLine := Min(FirstLine + DispLines, Max(Lines.Count - DispLines, 0));
         FSelLine := Min(FSelLine + DispLines, Max(Lines.Count - 1, 0));
       end;
 
@@ -1134,6 +1139,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.69.2.2  2003/05/01 10:53:45  mk
+  - restored correct page down handling, when stat.allpgdn = true
+
   Revision 1.69.2.1  2002/08/01 17:21:08  mk
   - fixed TLister.NextMarked: AV when Lines.Count = 0 and MarkPos = 1
 
