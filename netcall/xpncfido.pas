@@ -664,8 +664,6 @@ begin { FidoNetcall }
     // ignore exceptions
     end;
 
-  AkaBoxes.BoxName.SaveToFile('c:\a\1');
-  AkaBoxes.reqfile.SaveToFile('c:\a\2');
   // let's clean up
   DeleteFile(UpArcFilename);
   for i:=0 to AKABoxes.ReqFile.Count-1 do
@@ -898,6 +896,9 @@ end;
 
 {
   $Log$
+  Revision 1.31  2002/04/07 17:03:04  mk
+  - removed debugging code from last checkin
+
   Revision 1.30  2002/04/07 17:00:43  mk
   - try to fix bug #499966: fido requests are not killed
 
