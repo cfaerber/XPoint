@@ -132,7 +132,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 20   Start call
 # Fileserver
 21   order
-22 S^uche
+22 See^k
 
 + 22
 # Keys in Newsgroup window:
@@ -970,7 +970,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 425  messages since %s
 426  ~Select archive newsgroup:
 427  ~Select destination
-428  ~Select recipient
+428  ~Select user
 429  Record no:~
 430  Show file contents
 431  The Sender wants a mail reply - do you really want to post it
@@ -3412,6 +3412,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.111  2000/12/08 17:22:07  my
+# - translated resource 20,22 into English ("Seek")
+# - changed "select recipient" to "select user" (resource 428)
+#
 # Revision 1.110  2000/12/08 01:10:07  mk
 # MH:- Usersuche bei Auswahl ueber F2 moeglich
 #
