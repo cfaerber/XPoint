@@ -1445,9 +1445,10 @@ label again;
         for i:=1 to length(s) do
           if s[i]='/' then s[i]:='\'
           else if s[i]='\' then s[i]:='/';
-      if uucp then
+      if uucp or nntp then
         for i:=1 to length(s) do
-          if s[i]='.' then s[i]:='/';
+          if s[i]='.' then s[i]:='/'
+          else if NNTP and (s[i]='*') then s[i] := ' ';
       if maf then makebrett(trim(LeftStr(s,40)),n,box,netztyp,true) else
       if promaf then makebrett(trim(mid(s,32)),n,box,netztyp,true) else
       if maus then begin
@@ -1679,8 +1680,12 @@ begin
           if not ReadJN(ask,true) then
             goto again;
           if art in [0,1,3,4] then begin
-            if NNTP then
-              HandleNNTP
+            if NNTP then 
+            begin
+              HandleNNTP;
+              if art in [0,1] then
+                BretterAnlegen;
+            end
             else begin
               fn:=TempS(10000);
               assign(t,fn);
@@ -1713,10 +1718,6 @@ begin
                     end;
                   4 : sendmaps(iifs(BoxPar^.AreaBetreff,'-r',''),box,fn);
                 end;
-              if NNTP and (art in [0,1]) then
-                if MakeRC(art=0,box, List) then
-                  BretterAnlegen2;
-
               erase(t);
             end;
           end else begin
@@ -3114,6 +3115,10 @@ end;
 
 {
   $Log$
+  Revision 1.85  2003/02/07 16:11:01  cl
+  - BUGFIX: BretterAnlegen was not called for NNTP
+  - BUGFIX: correct handling of TAB character in Group lists
+
   Revision 1.84  2003/01/13 22:05:19  cl
   - send window rewrite - Fido adaptions
   - new address handling - Fido adaptions and cleanups

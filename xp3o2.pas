@@ -148,7 +148,7 @@ end;
 procedure makebrett(s:string; var n:longint; const box:string; netztyp:eNetz;
                     order_ende:boolean);
 var komm  : string;
-    p     : byte;
+    p     : integer;
 begin
   s:=trim(s);
   if s[2]=' ' then s:=trim(copy(s,3,80));
@@ -157,9 +157,8 @@ begin
     if s[1]<>'/' then s:='/'+s;
     s:='A'+s;
     komm:='';
-    p:=cpos(' ',s);
-    if p=0 then p:=cpos(#9,s);  { TAB }
-    if p>0 then begin
+    p:=Min(cposx(' ',s),cposx(#9,s)); { TAB }
+    if p in [1..Length(s)] then begin
       komm:=LeftStr(trim(Mid(s,p)),30);
       s:=LeftStr(s,p-1);
       if komm='No' then komm:='';
@@ -207,6 +206,10 @@ end;
 
 {
   $Log$
+  Revision 1.58  2003/02/07 16:11:01  cl
+  - BUGFIX: BretterAnlegen was not called for NNTP
+  - BUGFIX: correct handling of TAB character in Group lists
+
   Revision 1.57  2002/12/14 07:31:32  dodi
   - using new types
 
