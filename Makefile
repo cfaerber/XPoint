@@ -8,35 +8,40 @@
 #
 # DOS/32: <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/mak3791b.zip>
 
-# Fuer dieses Makefile muessen ein aktuelles GNU make (s.o.), der Free
-# Pascal Compiler <http://www.freepascal.org/> und die GNU fileutils
-# <http://www.gnu.org/software/fileutils/> (DOS/32:
-# <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/fil316b.zip>)
+# Damit Sie dieses Makefile benutzen koennen, muessen ein aktuelles GNU
+# make (s.o.), der Free Pascal Compiler <http://www.freepascal.org/> und
+# die GNU fileutils <http://www.gnu.org/software/fileutils/> (DOS/32:
+# <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/fil316b.zip>) auf
+# ihrem System installiert sein.
+#
+# Wenn Sie mit Hilfe dieses Makefiles OpenXP installieren wollen,
+# benoetigen Sie ausserdem ein Archiv mit verschiedenen Dateien, die
+# nicht im OpenXP-Quellcode enthalten sind:
+# <ftp://ftp.openxp.de/openxp/snapshot/oxpcontr.rar>
+#
+# Wenn Sie ein Quellcodearchiv erstellen wollen, muss die
+# Archivierungssoftware rar <http://www.rarsoft.com/> auf ihrem System
 # installiert sein.
 #
-# Zum Installieren von OpenXP wird ausserdem ein Archiv mit
-# verschiedenen Dateien, die nicht im OpenXP-Quellcode enthalten sind,
-# benoetigt: <ftp://ftp.openxp.de/openxp/snapshot/oxpcontr.rar>
-#
-# Fuer das Erstellen eines Quellcodearchiv muss die
-# Archivierungssoftware rar <http://www.rarsoft.com/> installiert sein.
-#
-# Zum Uebersetzen des Handbuchs werden OpenJade
-# <http://www.netfolder.com/DSSSL/>, sed
+# Wenn Sie aus dem DocBook-Quellcode des Handbuchs die verschiedenen
+# Darstellungsformate (Plaintext, HTML etc.) erstellen wollen, muessen
+# OpenJade <http://www.netfolder.com/DSSSL/>, sed
 # <http://www.gnu.org/software/sed/> (DOS/32:
 # <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/sed302b.zip>), w3m
 # <http://ei5nazha.yz.yamagata-u.ac.jp/~aito/w3m/eng/>, tidy
 # <http://www.w3c.org/People/Ragget/tidy/>, die DocBook DTD
-# <http://nwalsh.com/docbook/dsssl/db157.zip>, die ISO 8879 Entities
+# <http://www.oasis-open.org/docbook/sgml/4.1/docbk41.zip>, die ISO 8879
+# Entities
 # <http://fallout.camputview.indiana.edu/ports/distfiles/isoENTS.zip>
 # und die Modular Stylesheets
-# <http://nwalsh.com/docbook/dsssl/db157.zip> benoetigt.
+# <http://nwalsh.com/docbook/dsssl/db157.zip> auf ihrem System
+# installiert sein.
 #
-# Zur Uebersetzung der Dokumentation in die Formate DVI, PS und PDF
-# werden darueberhinaus ein TeX-Paket und jadetex
-# <http://www.tug.org/applications/jadetex/> benoetigt.
+# Wenn Sie die Darstellungsformate DVI, PS und PDF der Dokumentation
+# erstellen wollen, benoetigen Sie darueberhinaus ein aktuelles
+# TeX-Paket und jadetex <http://www.tug.org/applications/jadetex/>.
 #
-# Unten muessen einige Variablen gesetzt werden.
+# Unten muessen Sie einige Variablen setzen.
 
 # make                   uebersetzt das ganze Programm
 # make install           installiert das Programm
@@ -46,7 +51,7 @@
 # make fulldoc           erstellt Dokumentation in allen moegl. Formaten
 # make dist              erstellt Quellcodearchiv
 # make docdist           erstellt Quellcodearchiv der Dokumentation
-
+# make TAGS              erstellt TAGS-Datei fuer Emacs-Editor
 
 # Das Betriebssystem, fuer das OpenXP uebersetzt werden soll.
 # (MUSS gesetzt werden.)
@@ -2289,6 +2294,9 @@ install: install_bindir $(patsubst %,install_%,$(BINFILES)) \
 	$(MAKE) -C doc install
 endif
 
+installdirs: install_bindir install_datadir install_exampledir
+	$(MAKE) -C doc installdirs
+
 install_bindir:
 	-$(INSTALLDIR) $(bindir)
 
@@ -2362,6 +2370,7 @@ localclean: $(patsubst %,clean_%,$(COMPBINFILES)) \
 	$(patsubst %,clean_%,$(RSTFILES))
 	-$(RM) $(DISTFILE).rar
 	-$(RM) $(DOCDISTFILE).rar
+	-$(RM) TAGS
 
 $(patsubst %,clean_%,$(COMPBINFILES)): clean_%$(EXEEXT):
 	-$(RM) $*$(EXEEXT)
@@ -2401,18 +2410,12 @@ dist:
 else
 dist:
 	-$(RM) $(DISTFILE).rar
-	$(RAR) $(RARFLAGS) $(DISTFILE).rar file_id.diz Makefile \
-	icons.res *.inc *.pas *.rq *.bat
-	$(RAR) $(RARFLAGS) $(DISTFILE).rar beispiel$(SEP)*.scr \
-	beispiel$(SEP)*.xps
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar file_id.diz Makefile icons.res *.inc *.pas *.rq *.bat
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar beispiel$(SEP)*.scr beispiel$(SEP)*.xps
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar charsets$(SEP)*.inc
-	$(RAR) $(RARFLAGS) $(DISTFILE).rar doc$(SEP)Makefile \
-	doc$(SEP)*.txt doc$(SEP)*.dq doc$(SEP)*.ihq \
-	doc$(SEP)xpoint.sgm doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat \
-	doc$(SEP)dbform doc$(SEP)readme.lnx
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar doc$(SEP)Makefile doc$(SEP)*.txt doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.sgm doc$(SEP)xpoint.dsl doc$(SEP)xpoint.cat doc$(SEP)dbform doc$(SEP)readme.lnx
 	$(RAR) $(RARFLAGS) $(DISTFILE).rar linux$(SEP)*.inc
-	$(RAR) $(RARFLAGS) $(DISTFILE).rar ObjCOM$(SEP)Makefile \
-	ObjCOM$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.txt
+	$(RAR) $(RARFLAGS) $(DISTFILE).rar ObjCOM$(SEP)Makefile ObjCOM$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.txt
 endif
 
 ifeq (,$(DOCDISTFILE))
@@ -2421,14 +2424,28 @@ docdist:
 else
 docdist: fulldoc
 	-$(RM) $(DOCDISTFILE).rar
-	$(RAR) $(RARFLAGS) $(DOCDISTFILE).rar doc$(SEP)*.txt \
-	doc$(SEP)xpoint.sgm doc$(SEP)xpoint.htm doc$(SEP)xpoint.rtf \
-	doc$(SEP)xpoint.tex doc$(SEP)xpoint.dvi doc$(SEP)xpoint.ps \
-	doc$(SEP)xpoint.pdf
+	$(RAR) $(RARFLAGS) $(DOCDISTFILE).rar doc$(SEP)*.txt doc$(SEP)xpoint.sgm doc$(SEP)xpoint.htm doc$(SEP)xpoint.rtf doc$(SEP)xpoint.tex doc$(SEP)xpoint.dvi doc$(SEP)xpoint.ps doc$(SEP)xpoint.pdf
 endif
+
+TAGS:
+	etags -l pascal *.inc *.pas charsets$(SEP)*.inc linux$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.inc
+
+install-strip: install
+
+info:
+
+dvi:
+	$(MAKE) -C doc dvi
+
+check: all
+
+installcheck: install
 
 #
 # $Log$
+# Revision 1.19  2000/10/10 20:00:39  fe
+# Restliche GNU-Targets ergaenzt.
+#
 # Revision 1.18  2000/10/10 17:47:34  fe
 # Neue Dateien inkl. Abhaengigkeitsaenderungen ergaenzt.
 # Ergaenzungen fuer Dokumentation.

@@ -246,6 +246,8 @@ install: install_datadir $(patsubst %,install_%,$(HELPFILES)) \
 	$(patsubst %,install_%,$(CONTRIBDOC))
 endif
 
+installdirs: install_datadir install_docdir
+
 install_datadir:
 	-$(INSTALLDIR) $(datadir)
 
@@ -299,8 +301,13 @@ mostlyclean: clean
 maintainer-clean: clean
 	-$(RM) xpoint.txt
 
+dvi: xpoint.dvi
+
 #
 # $Log$
+# Revision 1.9  2000/10/10 20:01:46  fe
+# Restliche GNU-Targets ergaenzt.
+#
 # Revision 1.8  2000/10/10 17:46:37  fe
 # Handbuch-Formate TeX, RTF, DVI, PS und PDF ergaenzt.
 #
