@@ -734,7 +734,7 @@ begin
              and not eof(t)
           then
           begin
-            DelLast(s);
+            DeleteLastChar(s);
             sbrk:=true;
             readln(t);
           end;
@@ -1771,6 +1771,10 @@ finalization
 
 {
   $Log$
+  Revision 1.63  2001/09/08 16:29:28  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.62  2001/09/08 09:51:31  mk
   - quote reflow reimplmented
 

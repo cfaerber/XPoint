@@ -924,7 +924,7 @@ begin
                    else
                      fnkn:=ord(a[2])-73;
                    if fndef[fnkn]<>'' then begin
-                     if RightStr(fndef[fnkn],1)=';' then
+                     if LastChar(fndef[fnkn])=';' then
                        inss:=LeftStr(fndef[fnkn],length(fndef[fnkn])-1)
                      else
                        inss:=fndef[fnkn];
@@ -934,7 +934,7 @@ begin
                        s:=LeftStr(LeftStr(s,p)+
                                inss+mid(s,succ(p)+length(inss)),ml);
                      p:=min(p+length(inss),length(s));
-                     if RightStr(fndef[fnkn],1)=';' then
+                     if LastChar(fndef[fnkn])=';' then
                        a:=keycr;
                      end;
                  end else
@@ -1245,10 +1245,10 @@ begin
   repeat
     s:=strsr(r,5);
     while LastChar(s)='0' do
-      dellast(s);
-    if LastChar(s)='.' then dellast(s);
+      DeleteLastChar(s);
+    if LastChar(s)='.' then DeleteLastChar(s);
     while (s<>'') and (s[1]=' ') do
-      delfirst(s);
+      DeleteFirstChar(s);
     bd(x,y,'',s,9,2,brk);
     val(trim(s),r,res);
   until res=0;
@@ -1657,6 +1657,10 @@ end;
 
 {
   $Log$
+  Revision 1.75  2001/09/08 16:29:28  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.74  2001/09/07 23:24:53  ml
   - Kylix compatibility stage II
 

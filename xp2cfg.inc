@@ -116,7 +116,7 @@ begin
         if p>0 then begin
           val(LeftStr(s,p-1),l,res);
           delete(s,1,p);
-          while (s<>'') and (s[1]=' ') do delfirst(s);
+          TrimLeft(s);
           if (res=0) and (l>=0) and (l<$100) then begin
             inc(n); ca[n]:=l and msk;
             end;
@@ -1185,7 +1185,7 @@ var t       : text;
               if p0>0 then begin
                 ntyp:=min(3,ival(LeftStr(ss,p0-1)));
                 ss:=UpperCase(copy(ss,p0+1,30));
-                bname:=LeftStr(ss,1)='J';
+                bname:=FirstChar(ss)='J';
                 warten:=copy(ss,2,1)='J';
                 listout:=copy(ss,3,1)='J';
                 vollbild:=copy(ss,4,1)<>'N';
@@ -1559,7 +1559,7 @@ begin
     if lastchar(viewer_Lister)<>'.' then viewer_lister:=Viewer_Lister+'.';
 
     for i:=1 to 2 do
-      if (length(mheadercustom[i])>0) and (mheadercustom[i][length(mheadercustom[i])]=':') then
+      if (length(mheadercustom[i])>0) and (LastChar(mheadercustom[i])=':') then
         delete(mheadercustom[i],length(mheadercustom[i]),1);
 
     MsgFeldTausch:=UpperCase(MsgFeldTausch);
@@ -1592,8 +1592,8 @@ begin
     ScreenWidth := MinMax(ConfigScreenWidth, 80, Cols);
 
     { if getenv(reverse('BPX'))<>LowerCase(hex(936,3)) then quit:=true; }
-    if LeftStr(QuoteChar,1)='"' then delfirst(quotechar);
-    if RightStr(QuoteChar,1)='"' then dellast(quotechar);
+    TrimFirstChar(QuoteChar, '"');
+    TrimLastChar(QuoteChar, '"');
     otherqcback:=otherquotechars;
     usersortbox:=_usersortbox;
     checker[13]:=ExtraktTyp+1;
@@ -1606,7 +1606,7 @@ begin
     if aaa<>'' then
     begin
       UpString(aaa);
-      AAmsg:=LeftStr(aaa,1)='J';
+      AAmsg:=FirstChar(aaa)='J';
       AAbrett:=copy(aaa,2,1)='J';
       AAuser:=copy(aaa,3,1)='J';
       end;
@@ -1695,10 +1695,13 @@ begin
   setaltfkeys;
   masksetmausarrows(true);
   SetSwapfilename;
-end;
 
 {
   $Log$
+  Revision 1.125  2001/09/08 16:29:32  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.124  2001/09/08 14:26:11  cl
   - added PGP_MIME configuration option
   - added ZC_MIME configuration option
@@ -1794,3 +1797,5 @@ end;
   Revision 1.98  2000/12/25 14:02:41  mk
   - converted Lister to class TLister
 }
+end;
+

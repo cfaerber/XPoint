@@ -577,10 +577,12 @@ begin
     WriteZ38(stream);
 end;
 
-end.
-
 {
   $Log$
+  Revision 1.14  2001/09/08 16:29:39  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.13  2001/09/08 14:37:13  cl
   - cleaned up MIME-related fields in THeader
   - THeader can now write itsself to streams
@@ -652,3 +654,4 @@ end.
   - Newexit in Initialization/Finalization umgewandelt
 
 }
+end.

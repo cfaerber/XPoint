@@ -900,7 +900,7 @@ begin
     Result := Findnext(sr);
   end;
   FindClose(sr);
-  delfirst(s);
+  DeleteFirstChar(s);
   if s='' then
     fehler('No language files found !?')
   else begin
@@ -926,6 +926,10 @@ end;
 
 {
   $Log$
+  Revision 1.46  2001/09/08 16:29:35  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.45  2001/08/12 11:50:40  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

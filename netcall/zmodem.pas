@@ -129,7 +129,7 @@ implementation
 
 uses
   {$IFDEF Unix} xpcurses, xplinux,{$ELSE} xpcrt,{$ENDIF}
-  SysUtils, Debug, CRC;
+  SysUtils, Debug, CRC, fileio;
 
 var TimerObj: tTimer;
 
@@ -1960,10 +1960,7 @@ begin
   TransferCheck := '';
   TransferMessage := '';
 
-  if (path <> '') and (path[Length(path)] <> DirSepa) then
-    zrxpath := path + DirSepa
-  else
-    zrxpath := path;
+  zrxpath := IncludeTrailingPathDelimiter(Path);
 
   rxtimeout := 10 * 18;
   tryzhdrtype := ZRINIT;
@@ -2731,10 +2728,13 @@ end;
 begin
   TimerObj.Init; LogTimer.Init;  FileAddition:=RecoverFile;
   LoggedBytesAreOutgoing := TRUE; LogChars := '';
-end.
 
 {
   $Log$
+  Revision 1.23  2001/09/08 16:29:46  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.22  2001/09/07 23:24:57  ml
   - Kylix compatibility stage II
 
@@ -2777,3 +2777,5 @@ end.
   Revision 1.11  2000/12/25 17:43:52  mk
   - fixed time calculation
 }
+end.
+

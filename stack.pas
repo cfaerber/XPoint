@@ -92,9 +92,12 @@ begin
 end;
 
 
-end.
 {
   $Log$
+  Revision 1.10  2001/09/08 16:29:30  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.9  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
@@ -123,3 +126,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

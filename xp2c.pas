@@ -772,8 +772,7 @@ begin
     if dispusername<>du then showusername;
 
     for i:=1 to 2 do
-      if LastChar(mheadercustom[i])=':' then
-        DelLast(mheadercustom[i]);
+      TrimLastChar(mheadercustom[i], ':');
 
     GlobalModified;
   end;
@@ -1415,8 +1414,8 @@ procedure ViewerOptions;
 var x,y : Integer;
     brk : boolean;
 begin
-  if RightStr(viewer_save,1)='.' then viewer_save:=LeftStr(viewer_save,length(viewer_save)-1);
-  if RightStr(viewer_lister,1)='.' then viewer_lister:=LeftStr(viewer_lister,length(viewer_lister)-1);
+  TrimLastChar(viewer_save, '.');
+  TrimLastChar(viewer_lister, '.');
 
   dialog(ival(getres2(273,0)),18,getres2(273,1),x,y);  { 'Viewer-Einstellungen' }
   maddtext(3,2,getres2(273,6),col.coldiahigh);     { Allgemeines}
@@ -1447,6 +1446,10 @@ end;
 
 {
   $Log$
+  Revision 1.103  2001/09/08 16:29:32  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.102  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 

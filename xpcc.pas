@@ -61,7 +61,7 @@ var ccused   : array[1..maxcc] of boolean;
 
 function is_vname(var s:string):boolean;
 begin
-  is_vname:=(LeftStr(s,1)='[') and (RightStr(s,1)=']');
+  is_vname:=(FirstChar(s)='[') and (LastChar(s)=']');
 end;
 
 procedure set_cce;
@@ -130,7 +130,7 @@ begin
             exit;
             end
           else
-            if LeftStr(s,1)<>'/' then
+            if FirstChar(s)<>'/' then 
               s:='/'+s;
           end;
         dbClose(d);
@@ -163,14 +163,14 @@ begin
         cc_testempf:=true;
         if p=0 then s:=mid(dbReadStrN(bbase,bb_brettname),2)
         else s := dbReadNStr(ubase,ub_username);
-        if LeftStr(s,1)=vert_char
+        if FirstChar(s)=vert_char
           then s:=copy(s,2,length(s)-3);
         end
       else
         if (p>0) and not testmailstring(s) then
         begin
           cc_testempf:=false;
-          if LeftStr(s,1)=vert_char
+          if FirstChar(s)=vert_char
             then s:=copy(s,2,length(s)-3);
           exit;
           end
@@ -407,6 +407,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2001/09/08 16:29:38  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.28  2001/08/12 11:50:43  mk
   - replaced dbRead/dbWrite with dbReadN/dbWriteN
 

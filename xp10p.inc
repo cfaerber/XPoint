@@ -149,7 +149,7 @@ begin
     while not eof(t) do begin
       repeat                         { Kopf Åberlesen }
         readln(t,s);
-        if LeftStr(s,1)<>'#' then p:=cpos('=',s)
+        if FirstChar(s)<>'#' then p:=cpos('=',s)
         else p:=0;
       until eof(t) or (p>0);
       while p>0 do begin             { einmaligen Datenblock einlesen }
@@ -245,7 +245,7 @@ begin
         readln(t,s)
       until (firstchar(s)='[') or eof(t);
       if firstchar(s)='[' then begin
-        delfirst(s); dellast(s);
+        DeleteFirstChar(s); DeleteLastChar(s);
         inc(tables);
         with tarif^[tables] do begin
           while s<>'' do begin   { '[Mo,Di,Mi,...] parsen }
@@ -330,6 +330,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2001/09/08 16:29:31  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.14  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

@@ -221,7 +221,7 @@ var brk     : boolean;
           if dbFound then
             writeln(t,'+ '+ti+' 23:59 01.01. 31.12. þþþþþþþ NETCALL ',box);
           delete(all,1,p);
-          while LeftStr(all,1)=' ' do delete(all,1,1);
+          while FirstChar(all)=' ' do DeleteFirstChar(all);
           p:=cpos(' ',all);
           end;
         close(t);
@@ -613,9 +613,9 @@ begin
     s:=''; anz:=0;
     while not eof(t) do begin
       readln(t,s2);
-      if (LeftStr(s2,1)='!') and (s<>'') then
+      if (FirstChar(s2)='!') and (s<>'') then
         s:=forms(s,13)+mid(s2,2);
-      if (s2<>'') and (LeftStr(s2,1)<>'!') then begin
+      if (s2<>'') and (FirstChar(s2)<>'!') then begin
         if s<>'' then begin
           List.AddLine(' '+s); s:=''; inc(anz);
           end;
@@ -656,6 +656,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.17  2001/09/08 16:29:30  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.16  2001/07/23 16:05:17  mk
   - added some const parameters
   - changed most screen coordinates from byte to integer (saves some kb code)

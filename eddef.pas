@@ -179,9 +179,12 @@ type   EdColrec = record
 
 implementation
 
-end.
 {
   $Log$
+  Revision 1.14  2001/09/08 16:29:28  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.13  2001/09/08 09:51:31  mk
   - quote reflow reimplmented
 
@@ -215,3 +218,5 @@ end.
   MK: * ein paar Loginfos hinzugefuegt
 
 }
+end.
+

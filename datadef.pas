@@ -100,9 +100,12 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
 
 implementation
 
-end.
 {
   $Log$
+  Revision 1.7  2001/09/08 16:29:28  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.6  2001/03/13 19:24:55  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
@@ -117,3 +120,5 @@ end.
   MK: * ein paar Loginfos hinzugefuegt
 
 }
+end.
+

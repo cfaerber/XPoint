@@ -259,7 +259,7 @@ begin
         rfehler1(482,copy(e,2,40));     { '%s: Schreibzugriff gesperrt!' }
         ok:=false;
         end
-      else  delfirst(e);
+      else DeleteFirstChar(e);
       end;
     if ok and ((pm and (n<maxcc)) or (not pm and (n<MaxXposts))) then begin
 
@@ -315,6 +315,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2001/09/08 16:29:35  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.29  2001/08/12 20:01:40  cl
   - rename xp6*.* => xpsendmessage*.*
 

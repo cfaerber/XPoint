@@ -151,15 +151,16 @@ function Time:DateTimeSt;                    { dt. Zeitstring               }
 function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe gross         }
 function TopAllStr(s:string):string;         { alle ersten Buchstaben gross  }
+procedure TrimFirstChar(var s: String; c: Char);   { Spezielles Zeichen am Anfang des String entfernen }
+procedure TrimLastChar(var s: String; c: Char);   { Spezielles Zeichen am Anfang des String entfernen }
 {$ifndef FPC}
 function UpCase(const c:char):char;                { int. UpCase                  }
 {$endif}
 { Lo/Upcase-String fuer Files, abhaengig von UnixFS }
 function FileUpperCase(const s:string):string;
 function Without(const s1,s2:string):string;       { Strings "subtrahieren"       }
-
-Procedure delfirst(var s:string);            { ersten Buchstaben loeschen    }
-Procedure dellast(var s:string);             { letzten Buchstaben loeschen   }
+Procedure DeleteFirstChar(var s:string);            { ersten Buchstaben loeschen    }
+Procedure DeleteLastChar(var s:string);            { letzten Buchstaben loeschen   }
 Procedure incr(var r1:real; r2:real);        { r1:=r1+r2                    }
 Procedure LoString(var s:string);            { LowerString                  }
 Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
@@ -833,12 +834,12 @@ begin
   Move(NaNBits,Result,8);
 end;
 
-procedure delfirst(var s:string);
+procedure DeleteFirstChar(var s:string);
 begin
-  delete(s,1,1);
+  Delete(s,1,1);
 end;
 
-procedure dellast(var s:string);
+procedure DeleteLastChar(var s:string);
 begin
   if s<>'' then SetLength(s, Length(s)-1);
 end;
@@ -916,6 +917,16 @@ begin
 end;
 
 {$ENDIF}
+
+procedure TrimFirstChar(var s: String; c: Char);
+begin
+  if (s <> '') and (s[1] = c) then Delete(s, 1, 1);
+end;
+
+procedure TrimLastChar(var s: String; c: Char);   
+begin
+  if (s <> '') and (s[Length(s)] = c) then SetLength(s, Length(s)-1);
+end;
 
 
 function fitpath(path:TFilename; n:integer):TFilename;
@@ -1095,7 +1106,7 @@ var l   : longint;
 begin
   s:=trim(s);
   sgn:=(firstchar(s)='-');
-  if sgn then delfirst(s);
+  if sgn then DeleteFirstChar(s);
   l:=0;
   for n:=1 to length(s) do
     l:=(l shl 3) + ord(s[n]) - $30;
@@ -1402,12 +1413,15 @@ begin
   result:='';
   for i:=0 to SL.Count-1 do
     result:=result+SL[i]+' ';
-  DelLast(result);
+  DeleteLastChar(result);
 end;
 
-end.
 {
   $Log$
+  Revision 1.99  2001/09/08 16:29:30  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.98  2001/09/08 14:20:00  cl
   - Moved MIME functions to mime.pas
   - Moved Stream functions to xpstreams.pas
@@ -1508,3 +1522,5 @@ end.
   Revision 1.70  2000/10/17 10:05:43  mk
   - Left->LeftStr, Right->RightStr
 }
+end.
+

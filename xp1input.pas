@@ -127,7 +127,7 @@ var p,n,p1,i : Integer;
 
 begin
   spenter:=(firstchar(buttons)='*');
-  if spenter then delfirst(buttons);
+  if spenter then DeleteFirstChar(buttons);
   Buttons := Buttons + ',';
   n:=0;
   repeat
@@ -328,8 +328,7 @@ var width,height : Integer;
   end;
 
 begin
-  SetLength(auswahl, Length(auswahl)+1); {inc(byte(auswahl[0]));}
-  auswahl[length(auswahl)]:=',';
+  auswahl := auswahl + ',';
   n:=0; ml:=0;
   poutside:=false;
   repeat
@@ -417,10 +416,12 @@ begin
       if d[i]=' ' then d[i]:='0';
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.22  2001/09/08 16:29:31  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.21  2001/08/11 23:06:29  mk
   - changed Pos() to cPos() when possible
 
@@ -492,3 +493,5 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
+end.
+

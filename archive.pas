@@ -937,10 +937,12 @@ begin
       end;
 end;
 
-
-end.
 {
   $Log$
+  Revision 1.28  2001/09/08 16:29:27  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.27  2001/09/06 18:45:53  mk
   - fixed uninitialized variable
 
@@ -1017,3 +1019,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

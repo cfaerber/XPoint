@@ -348,9 +348,12 @@ begin
   ExitProc:= @ExitResourceUnit;
 end;
 
-end.
 {
   $Log$
+  Revision 1.24  2001/09/08 16:29:30  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.23  2001/07/30 08:54:07  ma
   - fixed: Resources could be closed twice leading to runtime error
 
@@ -415,3 +418,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

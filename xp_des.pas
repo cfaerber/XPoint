@@ -418,9 +418,12 @@ begin
     ba(data)[i]:=ba(data)[i] xor $6d;  { den Rest XORen... }
 end;
 
-end.
 {
   $Log$
+  Revision 1.16  2001/09/08 16:29:37  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.15  2001/07/31 13:10:34  mk
   - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
 
@@ -431,39 +434,6 @@ end.
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
 
-  Revision 1.12  2000/07/02 15:13:51  mk
-  - Anpassungen an neue FPC-Version
-
-  Revision 1.11  2000/07/02 14:24:53  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.10  2000/06/22 19:53:31  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.9  2000/05/02 19:14:02  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.8  2000/04/04 21:01:24  mk
-  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.7  2000/04/04 10:33:57  mk
-  - Compilierbar mit Virtual Pascal 2.0
-
-  Revision 1.6  2000/03/24 15:41:02  mk
-  - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
-
-  Revision 1.5  2000/03/17 11:16:34  mk
-  - Benutzte Register in 32 Bit ASM-Routinen angegeben, Bugfixes
-
-  Revision 1.4  2000/03/14 15:15:41  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.3  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
 }
+end.
+

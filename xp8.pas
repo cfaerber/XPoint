@@ -828,12 +828,12 @@ var t     : text;
           else
             map^[mm].code:=trim(copy(s,41,6));
           s:=trim(LeftStr(s,40));
-          if LeftStr(s,1)<>'/' then s:='/'+s;
+          if FirstChar(s)<>'/' then s:='/'+s;
           while cpos(' ',s)>0 do s[cpos(' ',s)]:='_';
           map^[mm].name:=UpperCase(s);
           end
         else   { ProNet }
-          if LeftStr(s,1)<>';' then begin
+          if FirstChar(s)<>';' then begin
             inc(mm);
             map^[mm].code:=LeftStr(s,4);
             map^[mm].name:=trim(mid(s,32));
@@ -901,7 +901,7 @@ begin
     else
       GetDel(getreps(803,strs(bmarkanz)))   { '%s markierte Bretter abbestellen' }
   else
-    if LeftStr(brett,1)<>'A' then
+    if FirstChar(brett)<>'A' then
       nr:=3
     else
       GetDel(getreps(804,copy(brett,2,40)));   { '%s abbestellen' }
@@ -1282,8 +1282,8 @@ label again;
       s:=trim(mid(s,3)); p:=cpos(' ',s); end;
     if p=0 then p:=cpos(#9,s);
     if p>0 then s:=LeftStr(s,p-1);
-    if (s<>'') and (s[1]='+') then delfirst(s);
-    if (s<>'') and (s[1]='*') then delfirst(s);
+    TrimFirstChar(s, '+');
+    TrimFirstChar(s, '*');
     p:=pos('....',s);         { direkt angeh„ngten Kommentar abschneiden }
     if p>0 then truncstr(s,p-1);
     fidobrett:=s;
@@ -1304,7 +1304,7 @@ label again;
       p:=13;
       while (p<length(s)) and (s[p]<>' ') do inc(p);
       gr:=trim(copy(s,3,p-2));
-      if LeftStr(gr,1)='?' then delfirst(gr);    { geheime Gruppe }
+      TrimFirstChar(gr, '?'); { geheime Gruppe }
       if (length(gr)=11) and (gr[10]=' ') then
         gr:=trim(LeftStr(gr,length(gr)-1));
       writeln(t,gr);
@@ -1366,7 +1366,7 @@ label again;
       if promaf then makebrett(trim(mid(s,32)),n,box,netztyp,true) else
       if maus then begin
         s:=trim(mid(s,3));
-        if LeftStr(s,1)='?' then delfirst(s);  { geheime Gruppen }
+        TrimFirstChar(s, '?'); { geheime Gruppen }
         makebrett(boxpar^.MagicBrett+s,n,box,netztyp,true);
         end else
       if fido then
@@ -1743,7 +1743,7 @@ var brk     : boolean;
     if brk then
       comm:=''
     else
-      comm:='GU'+user+RightStr(comm,1)+gruppe;
+      comm:='GU'+user+LastChar(comm)+gruppe;
   end;
 
   function MausCRC(comm:string):boolean;
@@ -2069,8 +2069,9 @@ begin
       assign(t2, GetServerFilename(boxpar^.boxname, extBbl));
       rewrite(t2);
       delete(s,1,p);
-      while RightStr(s,1)='\' do begin
-        dellast(s);
+      while LastChar(s)='\' do 
+      begin
+        DeleteLastChar(s);
         WriteStr;
         readln(t,s);
         s:=trim(s);
@@ -2094,6 +2095,10 @@ end;
 
 {
   $Log$
+  Revision 1.58  2001/09/08 16:29:36  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.57  2001/09/08 14:32:56  cl
   - adaptions/fixes for MIME support
 

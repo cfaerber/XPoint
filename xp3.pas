@@ -937,7 +937,7 @@ end;
 
 procedure brettslash(var s:string);
 begin
-  if LeftStr(s,1)<>'/' then s:='/'+s;
+  if FirstChar(s)<>'/' then s:='/'+s;
 end;
 
 
@@ -952,7 +952,7 @@ end;
 function QuoteSchab(pm:boolean):string;
 begin
   if pm then
-    if LeftStr(dbReadStrN(mbase,mb_brett),1)='A' then
+    if FirstChar(dbReadStrN(mbase,mb_brett))='A' then
       QuoteSchab:=QuotePriv
     else
       QuoteSchab:=QuotePMpriv
@@ -963,7 +963,7 @@ end;
 
 function vert_name(s:string):string;
 begin
-  if LeftStr(s,1)<>vert_char then
+  if FirstChar(s)<>vert_char then
     vert_name:=s
   else begin
     if cpos('@',s)>0 then truncstr(s,cpos('@',s)-1);
@@ -973,7 +973,7 @@ end;
 
 function vert_long(s:string):string;
 begin
-  if (LeftStr(s,1)='[') and (RightStr(s,1)=']') then
+  if (FirstChar(s)='[') and (LastChar(s)=']') then
     vert_long:=vert_char+s+'@V'
   else
     vert_long:=s;
@@ -1133,6 +1133,10 @@ finalization
   EmpfList.Free;
 {
   $Log$
+  Revision 1.67  2001/09/08 16:29:32  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.66  2001/09/07 13:54:19  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

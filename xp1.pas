@@ -1864,9 +1864,9 @@ end;
 procedure _chdir(p:string);
 begin
   p:=trim(p);
-  if p<>'' then begin
-    if (length(p)>1) and (RightStr(p,1)=DirSepa) then
-      dellast(p);
+  if p<>'' then 
+  begin
+    TrimLastChar(p, DirSepa);
     chdir(p);
     if ioresult<>0 then
       trfehler1(5,UpperCase(p),30);   { ungÅltiges Verzeichnis: }
@@ -1997,7 +1997,7 @@ begin
     wrt(x,y,s);
     Wrt2(dup(maxlen-length(s), iifc(dot,'.',' ')) + dup(maxlen-length(s),#8));
     get(t,curon);
-    if (t=keybs) and (s<>'') then dellast(s)
+    if (t=keybs) and (s<>'') then DeleteLastChar(s)
     else if (t>=' ') and (length(s)<maxlen) then s:=s+t;
   until (t=keycr) or (t=keyesc) or (t=^X);
   brk:=(t<>keycr);
@@ -2061,6 +2061,10 @@ end;
 
 {
   $Log$
+  Revision 1.121  2001/09/08 16:29:30  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.120  2001/09/08 14:25:29  cl
   - added TempExtS (needed to create Temporary files for old PGP versions)
 

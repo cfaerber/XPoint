@@ -106,9 +106,7 @@ begin
     closemask;
     closebox;
     if brk then exit;
-    if (RightStr(fn,1)<>'\') and (RightStr(fn,1)<>':') then
-      fn:=fn+'\';
-    fn:=fn+'userbase.dat';
+    fn:=IncludeTrailingPathDelimiter(fn)+'userbase.dat';
     if not FileExists(fn) then begin
       fehler('UngÅltiges Verzeichnis oder keine USERBASE.DAT vorhanden!');
       exit;
@@ -646,8 +644,8 @@ begin
       readmask(brk);
       enddialog;
       if not brk then begin
-        if LeftStr(bretth,1)<>'/' then bretth:='/'+bretth;
-        if RightStr(bretth,1)<>'/' then bretth:=bretth+'/';
+        if FirstChar(bretth)<>'/' then bretth:='/'+bretth;
+        if LastChar(bretth)<>'/' then bretth:=bretth+'/';
         shell(ZQWKBin+' -qz -b'+{DefFidoBox}'blafasel'+' -h'+bretth+' '+fn,500,4);
         fn:=ChangeFileExt(fn, '.ZER');
         if not FileExists(fn) then
@@ -665,6 +663,10 @@ end;
 
 {
   $Log$
+  Revision 1.43  2001/09/08 16:29:40  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.42  2001/09/07 13:54:24  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

@@ -386,10 +386,13 @@ implementation
     result:=md5_digest(pad(key,$5c)+md5_plain(pad(key,$36)+text));
   end;
 
-end.
 
 {
   $Log$
+  Revision 1.5  2001/09/08 16:29:29  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.4  2001/09/07 23:24:53  ml
   - Kylix compatibility stage II
 
@@ -404,3 +407,4 @@ end.
     (http://www.planet-express.com/sven/technical/dev/CryptLIB/default.html)
 
 }
+end.

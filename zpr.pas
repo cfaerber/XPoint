@@ -312,7 +312,7 @@ begin
   for i:=2 to paramcount do
   begin
     s:=trim(paramstr(i));
-    if length(LeftStr(s,1)) > 0 then
+    if s <> '' then // was  if length(left(s,1)) > 0 then !?!?
     begin
       if FirstChar(s) in paramchars then
       begin
@@ -887,12 +887,12 @@ var i,j  : integer;
       p:=blankpos(cont);
       nr:=LeftStr(cont,p-1);
       cont:=trimleft(mid(cont,p+1));
-      while (nr<>'') and (nr[1] in ['V','F','B','P']) do delfirst(nr);
-      if nr[1]<>'+' then
+      while FirstChar(nr) in ['V','F','B','P'] do DeleteFirstChar(nr);
+      if FirstChar(nr)<>'+' then
         tok:=false
       else begin
-        delfirst(nr);
-        if RightStr(nr,1)='Q' then dellast(nr);
+        DeleteFirstChar(nr);
+        TrimLastChar(nr, 'Q');
         tok:=true;
         for j:=1 to length(nr) do
           if not (nr[j] in ['0'..'9','-']) then
@@ -1073,7 +1073,7 @@ begin
           hdf_EMP, hdf_OEM,
           hdf_DISK             : if cpos('@',cont)>0 then AdrCheck(xpnt<>0)
                                  else BrettCheck(xpnt<>0);
-          hdf_KOP              : if LeftStr(cont,1)='/' then BrettCheck(false)
+          hdf_KOP              : if FirstChar(cont)='/' then BrettCheck(false)
                                  else AdrCheck(false);
           hdf_EDA, hdf_DDA,
           hdf_OEDA             : DateCheck;
@@ -1281,6 +1281,10 @@ end;
 
 {
   $Log$
+  Revision 1.41  2001/09/08 16:29:43  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.40  2001/09/07 17:27:24  mk
   - Kylix compatiblity update
 

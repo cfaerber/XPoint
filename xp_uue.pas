@@ -544,9 +544,12 @@ begin
   freemem(inbuf,ibufsize);
 end;
 
-end.
 {
   $Log$
+  Revision 1.29  2001/09/08 16:29:37  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.28  2001/08/10 20:58:00  mk
   - removed some hints and warnings
   - fixed some minior bugs
@@ -633,3 +636,5 @@ end.
   MK: * ein paar Loginfos hinzugefuegt
 
 }
+end.
+

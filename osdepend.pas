@@ -51,9 +51,12 @@ implementation
 {$ifdef Unix}  {$i osdlinux.inc} {$endif}
 {$ifdef Win32} {$i osdwin32.inc} {$endif}
 
-end.
 {
         $Log$
+        Revision 1.5  2001/09/08 16:29:30  mk
+        - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+        - some AnsiString fixes
+
         Revision 1.4  2001/09/07 23:24:53  ml
         - Kylix compatibility stage II
 
@@ -66,3 +69,5 @@ end.
         Revision 1.1  2000/11/20 11:58:16  hd
         - Init: Empty unit for os specefic code
 }
+end.
+

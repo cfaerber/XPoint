@@ -187,9 +187,12 @@ begin
   sommer:=((m>3) and (m<9)) or ((m=3) and (t>=21)) or ((m=9) and (t<=23));
 end;
 
-end.
 {
   $Log$
+  Revision 1.9  2001/09/08 16:29:30  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.8  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
@@ -210,3 +213,5 @@ end.
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end.
+

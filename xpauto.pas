@@ -514,7 +514,7 @@ var sr    : tsearchrec;
     if pm then
       empf:=trim(LeftStr(empf,p-1))+'@'+trim(mid(empf,p+1))
     else
-      if LeftStr(empf,1)<>'/' then empf:='/'+empf;
+      if FirstChar(empf)<>'/' then empf:='/'+empf;
     EditAttach:=false;
     if DoSend(pm,datei,temp or delfile,false,iifs(pm,'','A')+empf,betr,
               false,attach or not temp,false,false,temp,nil,s,sendShow) then begin
@@ -676,6 +676,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.43  2001/09/08 16:29:37  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.42  2001/09/08 14:34:33  cl
   - adaptions/fixes for MIME support
 

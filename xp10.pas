@@ -704,8 +704,8 @@ var
       else begin
         for i:=1 to 7 do
           if wotag[i] then wot:=wot+','+wtage[i];
-        if LeftStr(wot,1)=',' then delete(wot,1,1);
-        end;
+        TrimFirstChar(wot, ',');
+      end;
 
       // Umkopieren wegen AnsiStrings
       aVon := Von; aBis := bis; aVonD := VonD; aBisD := BisD; aAction := Action;
@@ -921,17 +921,17 @@ var
         if ESCPressed and (t1=keybs) then begin
           // Delete last macro key
           if (MacroString<>'') then begin
-            if RightStr(MacroString,1)='>' then
+            if LastChar(MacroString)='>' then
             begin
               setlength(MacroString, length(MacroString)-2); { 2 wg. '>', '<' und '^' }
-              while (MacroString<>'') and (RightStr(MacroString,1)<>'<') do
-                Dellast(MacroString);
-              Dellast(MacroString)
+              while LastChar(MacroString)<>'<' do
+                DeleteLastChar(MacroString);
+              DeleteLastChar(MacroString)
             end
             else if (length(MacroString)>=2) and (MacroString[length(MacroString)-1]='^') then
               SetLength(MacroString, length(MacroString)-2)
             else
-              DelLast(MacroString);
+              DeleteLastChar(MacroString);
             a:=max(0,min(a,length(MacroString)-40));
             end;
           end
@@ -1214,8 +1214,8 @@ var
             tt[i,j]:=''
           else begin
             tt[i,j]:=strs(pfennig)+'/'+strsr(sekunden,3);
-            while lastchar(tt[i,j])='0' do dellast(tt[i,j]);
-            if lastchar(tt[i,j])='.' then dellast(tt[i,j]);
+            while lastchar(tt[i,j])='0' do DeleteLastChar(tt[i,j]);
+            if lastchar(tt[i,j])='.' then DeleteLastChar(tt[i,j]);
             if anwahl>0 then tt[i,j]:=tt[i,j]+'/'+strs(anwahl);
             end;
       s:=daytxt(nr);
@@ -1541,8 +1541,8 @@ var
       dbNext(d);
       end;
     dbClose(d);
-    delfirst(boxsel1);
-    delfirst(boxsel2);
+    DeleteFirstChar(boxsel1);
+    DeleteFirstChar(boxsel2);
   end;
 
   procedure readbutt;
@@ -2067,6 +2067,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.61  2001/09/08 16:29:31  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.60  2001/09/07 13:54:18  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

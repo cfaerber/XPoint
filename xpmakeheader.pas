@@ -261,7 +261,7 @@ var i,res : integer;
     p:=cpos('<',s);
     if (p>0) and (lastchar(s)='>') then begin
       delete(s,1,p);
-      dellast(s);
+      DeleteLastChar(s);
       if cpos('@',s)>0 then hd.pgp_uid:=s;
       end;
   end;
@@ -278,8 +278,8 @@ var i,res : integer;
   begin
     with hd do begin
       QuoteString := Line;
-      if FirstChar(quotestring)='"' then delfirst(quotestring);
-      if LastChar(quotestring)='"' then dellast(quotestring);
+      if FirstChar(quotestring)='"' then DeleteFirstChar(quotestring);
+      if LastChar(quotestring)='"' then DeleteLastChar(quotestring);
       end;
   end;
 
@@ -362,7 +362,7 @@ begin
         getline(line);
         if length(line)>2 then
         begin
-          if line[1]<' ' then delfirst(line);    { gegen LF's o.ae. }
+          if line[1]<' ' then DeleteFirstChar(line);    { gegen LF's o.ae. }
           p:=cpos(':',line);
           if p<2 then ok:=false // Die ID muss mindestens ein Zeichen sein
           else begin
@@ -380,8 +380,6 @@ begin
               inc(i);
             delete(line,1,i);
             line:= TrimRight(line);
-            { while line[length(line)]=' ' do }   { rtrim }
-            {  dec(byte(line[0])); }
 
             { Auskommentiert, damit die CustomHeaders mit U-* tun }
             if LeftStr(id,2)='U-' then                      { RFC }
@@ -586,6 +584,10 @@ end.
 
 {
   $Log$
+  Revision 1.14  2001/09/08 16:29:40  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.13  2001/09/08 14:37:48  cl
   - cleaned up MIME-related fields in THeader
 

@@ -1002,7 +1002,7 @@
       maddtext(length(getres2(921,11))+39,9+add,getres2(921,12),0);  { 'bd' }
       freeres;
       readmask(brk);
-      if not brk then bport:=ival(RightStr(schnitte,1));
+      if not brk then bport:=ival(LastChar(schnitte));
       enddialog;
       end;
     end;
@@ -2059,6 +2059,10 @@
 
 {
   $Log$
+  Revision 1.26  2001/09/08 16:29:38  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.25  2001/09/07 21:58:27  mk
   - fixed Edit/Boxen/Edit for new net types POP3, SMTP and NNTP
 

@@ -227,10 +227,13 @@ initialization
 finalization
   CloseLogfile;
 
-end.
 
 {
   $Log$
+  Revision 1.20  2001/09/08 16:29:28  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.19  2001/09/07 23:24:53  ml
   - Kylix compatibility stage II
 
@@ -299,3 +302,5 @@ end.
   - wird erstmal nur fuer den neuen XP-FM benoetigt
 
 }
+end.
+

@@ -409,10 +409,12 @@ begin
 end;
 
 
-end.
-
 {
   $Log$
+  Revision 1.26  2001/09/08 16:29:31  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.25  2001/08/11 23:06:28  mk
   - changed Pos() to cPos() when possible
 
@@ -446,3 +448,5 @@ end.
   Revision 1.16  2000/11/11 19:26:48  ml
   - changed libdirs for rpm
 }
+end.
+

@@ -365,7 +365,7 @@ var s      : string;
 begin
   d1:=disprec[1];             { Muss gesichert werden, da Zielfenster }
   GoP;
-  if LeftStr(dbReadStrN(mbase,mb_brett),1)='U' then
+  if FirstChar(dbReadStrN(mbase,mb_brett))='U' then
     fehler('In diesem Brett nicht m”glich.')
   else begin
     hdp := THeader.Create;
@@ -1171,7 +1171,7 @@ begin
     else
       s:='  -  '+getreps(425,fdat(longdat(readdate)));  { 'Nachrichten seit dem %s' }
     end;
-    if UserSlash or (LeftStr(dispspec,1)>='A') or (copy(dispspec,2,1)<>'/') then
+    if UserSlash or (FirstChar(dispspec)>='A') or (copy(dispspec,2,1)<>'/') then
       b:=2
     else b:=3;
     mwrt(1,4,' '+forms(copy(dispspec,b,80)+s,79+ScreenWidth-80));        {hier war der cursorbalken bug}
@@ -1230,7 +1230,7 @@ begin
   if ch=keybs then
     if newsuch='' then begin
       errsound; exit; end
-    else dellast(newsuch)
+    else DeleteLastChar(newsuch)
   else
     if length(newsuch)=maxsuch then begin
       errsound; exit; end
@@ -1242,7 +1242,7 @@ begin
     dbSeek(bbase,biBrett,'A'+UpperCase(newsuch));
     if not dbEOF(bbase) then begin
       s:= dbReadNStr(bbase,bb_brettname);
-      delfirst(s);
+      DeleteFirstChar(s);
       if UpperCase(LeftStr(s,length(newsuch)))<>UpperCase(newsuch) then
         errsound
       else if ch<>'/' then
@@ -1320,7 +1320,7 @@ var wvdat : longint;
     flags : byte;
 begin
   GoP;
-{   if LeftStr(dbReadStrN(mbase,mb_brett),1)='U' then
+{   if FirstChar(dbReadStrN(mbase,mb_brett))='U' then
     fehler('Wiedervorlage hier nicht m”glich!') }
   dbReadN(mbase,mb_unversandt,flags);
   if flags and 8 = 0 then begin
@@ -1335,7 +1335,7 @@ begin
     end;
   flags:=flags xor 8;
   dbWriteN(mbase,mb_unversandt,flags);
-  if LeftStr(dbReadStrN(mbase,mb_brett),1)<>'U' then
+  if FirstChar(dbReadStrN(mbase,mb_brett))<>'U' then
     RereadBrettdatum(dbReadStrN(mbase,mb_brett));
   aufbau:=true;
   if (dispmode<>11) and (dispmode<>12) and (p=1) then
@@ -1610,9 +1610,12 @@ begin
   message(getres(429)+strs(dbRecno(dispdat)));   { 'Satznummer: ' }
   wait(curoff);
   closebox;
-end;
 {
   $Log$
+  Revision 1.81  2001/09/08 16:29:36  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.80  2001/09/08 14:32:00  cl
   - Moved MIME functions/types/consts to mime.pas
   - More uniform naming of MIME functions/types/consts
@@ -1805,3 +1808,5 @@ end;
   - Datei enthaelt jetzt Loginfos
 
 }
+end;
+

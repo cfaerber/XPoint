@@ -673,7 +673,7 @@ var ax,p,myp  : integer;
       else
         fnkn:=ord(t[2])-73;
       if fndef[fnkn]<>'' then
-        if RightStr(fndef[fnkn],1)=';' then
+        if LastChar(fndef[fnkn])=';' then
           keyboard(LeftStr(fndef[fnkn],length(fndef[fnkn])-1)+#13)
         else
           keyboard(fndef[fnkn]);
@@ -1116,9 +1116,12 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
     editing:=false;
     end;
   help_page:=helpsave;
-end;   { readHmask }
 {
   $Log$
+  Revision 1.37  2001/09/08 16:29:29  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.36  2001/08/11 23:06:27  mk
   - changed Pos() to cPos() when possible
 
@@ -1241,3 +1244,5 @@ end;   { readHmask }
   MK: Aktualisierung auf Stand 15.02.2000
 
 }
+end;   { readHmask }
+

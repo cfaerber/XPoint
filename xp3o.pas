@@ -160,8 +160,8 @@ procedure auto_empfsel(var cr:CustomRec);        { Abfrage Brett/User dann Auswa
 var user : boolean;
 begin
   with cr do begin
-    user:=multipos('@',s) or (LeftStr(s,1)='[');
-    if not user and (LeftStr(s,1)<>'/') then begin
+    user:=multipos('@',s) or (FirstChar(s)='[');
+    if not user and (FirstChar(s)<>'/') then begin
       user:=(ReadIt(length(getres2(2721,2))+8,getres2(2721,1),getres2(2721,2),auto_empfsel_default,brk)=2);
       freeres;                        { 'Empfaenger:' / ' ^Brett , ^User ' }
       end
@@ -299,7 +299,7 @@ var _mBrett : string[5];
     d1,d2   : longint;
     mi      : word;
 begin
-  if LeftStr(_brett,1)='U' then exit;
+  if FirstChar(_brett)='U' then exit;
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,miBrett);
   dbSeek(bbase,biIntnr,copy(_brett,2,4));
@@ -336,7 +336,7 @@ var _mBrett : string[5];
     flags   : byte;
     bug,mug : boolean;
 begin
-  if LeftStr(_brett,1)='U' then exit;
+  if FirstChar(_brett)='U' then exit;
   mi:=dbGetIndex(mbase);
   dbSetIndex(mbase,miGelesen);
   dbSeek(bbase,biIntnr,copy(_brett,2,4));
@@ -408,8 +408,9 @@ begin
   closebox;
   if not brk then begin
     newempf:=newbrett;
-    if LeftStr(dbReadStrN(bbase,bb_brettname),1)='1' then begin
-      delfirst(newempf);
+    if FirstChar(dbReadStrN(bbase,bb_brettname))='1' then 
+    begin
+      DeleteFirstChar(newempf);
       if cPos('/',newempf)>0 then   { Boxname im PM-Brett }
         newempf[cPos('/',newempf)]:='@'
       else
@@ -948,7 +949,7 @@ begin
     hdp := THeader.Create;
     ReadHeader(hdp,hds,true);
     with hdp do
-      if RightStr(name,1)<>'@' then
+      if LastChar(name)<>'@' then
         empfaenger:=name
       else                               { PM-Brett }
         empfaenger:=name+mid(empfaenger,cpos('@',empfaenger)+1);
@@ -1525,9 +1526,12 @@ begin
 end;
 
 
-end.
 {
   $Log$
+  Revision 1.73  2001/09/08 16:29:33  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.72  2001/09/08 14:28:47  cl
   - adaptions/fixes for MIME support
 
@@ -1614,149 +1618,6 @@ end.
   Revision 1.47  2001/01/02 10:05:24  mk
   - implemented Header.References
 
-  Revision 1.46  2000/12/30 12:44:56  mk
-  - fixed crash in seluser
-
-  Revision 1.45  2000/12/03 12:38:21  mk
-  - Header-Record is no an Object
-
-  Revision 1.44  2000/11/24 19:01:27  fe
-  Made a bit less suboptimal.
-
-  Revision 1.43  2000/11/18 00:04:44  fe
-  Made compileable again.  (Often a suboptimal way...)
-
-  Revision 1.42  2000/11/16 20:53:50  hd
-  - DOS Unit entfernt
-
-  Revision 1.41  2000/11/14 15:51:29  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.40  2000/11/12 11:34:05  mk
-  - removed some limits in Reply Tree
-  - implementet moving the tree with cursor keys (RB)
-  - optimized display of the tree
-
-  Revision 1.39  2000/11/02 09:47:23  mk
-  - AnsiString Fix
-
-  Revision 1.38  2000/10/22 21:58:58  mk
-  - case of .pp and .epp is now UnixFS dependent
-
-  Revision 1.37  2000/10/17 10:05:49  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.36  2000/10/15 08:50:06  mk
-  - misc fixes
-
-  Revision 1.35  2000/10/10 13:58:58  mk
-  RB:- Ersetzt-Nachrichten in Autoversand
-
-  Revision 1.34  2000/10/01 15:50:23  mk
-  - AnsiString-Fixes
-
-  Revision 1.33  2000/09/25 18:55:13  mk
-  - Tastaturbuffer bei Datumsbezuege anpassen wird nicht mehr geloescht
-
-  Revision 1.32  2000/08/05 17:32:12  mk
-  JG: - Bugfix: Fix fuer Internal Error bei Nachricht/Extrakt/Brett
-      sabotierte Nachricht/Extrakt/Nachricht
-
-  Revision 1.31  2000/08/03 14:31:03  mk
-  - internal Error bei EType behoben
-
-  Revision 1.30  2000/07/29 22:09:27  mk
-  JG: - Brett-Gelesen-Bug bei Nachricht/Alle behoben
-
-  Revision 1.29  2000/07/27 10:13:01  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.28  2000/07/21 20:56:24  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.27  2000/07/21 13:23:45  mk
-  - Umstellung auf TStringList
-
-  Revision 1.26  2000/07/09 08:35:15  mk
-  - AnsiStrings Updates
-
-  Revision 1.25  2000/07/05 15:46:47  hd
-  - AnsiString
-
-  Revision 1.24  2000/07/04 12:04:22  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.23  2000/07/03 13:31:40  hd
-  - SysUtils eingefuegt
-  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
-
-  Revision 1.22  2000/06/23 15:59:19  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.21  2000/06/19 20:19:56  ma
-  - von CRC16/XPCRC32 auf Unit CRC umgestellt
-
-  Revision 1.20  2000/06/10 20:15:11  sv
-  - Bei ZConnect/RFC koennen jetzt Ersetzt-/Supersedes-Nachrichten
-    versendet werden (mit Nachricht/Weiterleiten/Ersetzen)
-  - ZConnectler koennen jetzt auch canceln :-)
-  - Fix beim Canceln von Crosspostings
-
-  Revision 1.19  2000/06/03 09:19:50  mk
-  - Hart kodierten String in Resource 344 uebernommen
-
-  Revision 1.18  2000/06/01 16:03:05  mk
-  - Verschiedene Aufraeumarbeiten
-
-  Revision 1.17  2000/05/06 17:48:02  mk
-  - Fix fuer msgall, wenn keine Nachricht im Brett ist
-
-  Revision 1.16  2000/05/06 17:29:22  mk
-  - DOS DPMI32 Portierung
-
-  Revision 1.15  2000/05/02 19:14:00  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.14  2000/05/01 17:26:33  jg
-  - Verteiler als Empfaenger bei Nachricht/Direkt;  Nachricht/Weiterleiten
-    Und Sendefenster-Empfaengeraendern erlaubt
-
-  Revision 1.13  2000/04/18 16:17:33  jg
-  - Schoenheitsfix: Empfaengeraendern beim Senden mit Lister im Hintergrund
-  - Neue Selectroutine scr_auto_select (Sichert Screen und stellt Hauptmenue dar)
-  - Ein paar erledigte Sachen aus !Todo.tst geloescht.
-
-  Revision 1.12  2000/04/16 13:49:44  jg
-  - Bugfix: Adressbuchgruppe beim Userverknuepfen
-
-  Revision 1.11  2000/04/13 13:54:45  mk
-  - 32 Bit: Fehlerhafte Prozentanzeigen behoben
-  - 32 Bit VP: Shift-Tab funktioniert jetzt
-
-  Revision 1.10  2000/04/04 21:01:23  mk
-  - Bugfixes fuer VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.9  2000/03/14 15:15:39  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.8  2000/03/04 14:53:50  mk
-  Zeichenausgabe geaendert und Winxp portiert
-
-  Revision 1.7  2000/02/21 22:48:01  mk
-  MK: * Code weiter gesaeubert
-
-  Revision 1.6  2000/02/20 11:06:33  mk
-  Loginfos hinzugeueft, Todo-Liste geaendert
-
 }
+end.
+

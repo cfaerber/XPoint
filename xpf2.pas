@@ -125,7 +125,7 @@ label ende;
       end;
     close(t2);
     with hdp do begin
-      dellast(pfad);
+      DeleteLastChar(pfad);
       if (empfaenger<>'') and (betreff<>'') and FileExists(betreff) then begin
         netztyp:=nt_Fido;
         inc(attrib,AttrFile);

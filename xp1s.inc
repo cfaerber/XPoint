@@ -450,8 +450,8 @@ begin
     if nachricht then pushhp(54);
     TED(name,reedit,keeplines,ed_ukonv);
     if nachricht then pophp;
-    if nachricht and (LeftStr(VarEditor,1)='*') then begin
-      delfirst(VarEditor);
+    if nachricht and (FirstChar(VarEditor)='*') then begin
+      DeleteFirstChar(VarEditor);
       shell(repfile(VarEditor,name),0,3);
       insert('*',VarEditor,1);
       end;
@@ -499,6 +499,10 @@ begin
     end;
 {
   $Log$
+  Revision 1.63  2001/09/08 16:29:32  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.62  2001/09/07 13:54:19  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

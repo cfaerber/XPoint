@@ -313,7 +313,7 @@ begin
        marked or (dbReadInt(bbase,'gruppe')<>LocGruppe) then begin
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,forms(mid(dbReadStrN(bbase,bb_brettname),2),40));
-      _brett:=LeftStr(dbReadStrN(bbase,bb_brettname),1)+
+      _brett:=FirstChar(dbReadStrN(bbase,bb_brettname))+
               dbLongStr(dbReadInt(bbase,'int_nr'));
       dbSeek(mbase,miBrett,_brett);
       while not brk and
@@ -513,7 +513,7 @@ begin
     if nr>0 then begin
       attrtxt(col.colmboxhigh);
       mwrt(x+3,y+2,forms(mid(dbReadStrN(bbase,bb_brettname),2),40));
-      _brett:=LeftStr(dbReadStrN(bbase,bb_brettname),1)+
+      _brett:=FirstChar(dbReadStrN(bbase,bb_brettname))+
               dbLongStr(dbReadInt(bbase,'int_nr'));
       dbSeek(mbase,miBrett,_brett);
       while not brk and
@@ -1258,6 +1258,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2001/09/08 16:29:41  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.44  2001/09/08 14:43:49  cl
   - adaptions/fixes for MIME support
   - adaptions/fixes for PGP/MIME support

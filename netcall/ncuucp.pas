@@ -394,9 +394,9 @@ var n,i : integer;                            { --- uucp - Init-Handshake }
     repeat
       if CommObj.CharAvail then recs:=recs+CommObj.GetChar;
       TestBreak;
-    until ((recs<>'') and (recs[length(recs)] in [#0,#4,#10,#13]));
+    until ((recs<>'') and (LastChar(recs) in [#0,#4,#10,#13]));
 
-    if LeftStr(recs,1)=^P then delete(recs,1,1);
+    TrimFirstChar(recs, ^P);
     if recs='' then GetUUStr:='' else GetUUStr:=LeftStr(recs,length(recs)-1);
   end;
 
@@ -454,7 +454,7 @@ begin
     if s[1]='P' then break;
   end;
 
-  if LeftStr(s,1)<>'P' then
+  if FirstChar(s)<>'P' then
     raise EUUCProtocol.Create('got '''+s+''' - aborting');
 
   delete(s,1,1);
@@ -904,7 +904,7 @@ begin
         'S': begin Do_SE(false); end;
         'E': begin Do_SE(true);  end;
         'H': begin Do_H; result:=true; exit; end;
-        else begin SendCommand(LeftStr(c.cmd,1)+'N'); end;
+        else begin SendCommand(FirstChar(c.cmd)+'N'); end;
       end;
     except
       on e:EUUCProtFile do begin
@@ -936,12 +936,12 @@ begin
     Netcall.TestBreak;
 
     s:=GetCommand;
-    if (s<>'') and (LeftStr(s,1)<>c) then
+    if FirstChar(s)<>c then
       Netcall.Log(lcError,'unexpected command: '+s);
     dec(n);
     if n<= 0 then
       raise EUUCProtocol.Create('unexpected command - retry count reached');
-  until (LeftStr(s,1)=c);
+  until (FirstChar(s)=c);
   RepeatGetcommand:=s;
 end;
 
@@ -1120,6 +1120,10 @@ end.
 
 {
   $Log$
+  Revision 1.16  2001/09/08 16:29:45  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.15  2001/09/07 23:24:57  ml
   - Kylix compatibility stage II
 

@@ -187,7 +187,7 @@ var f      : file;
     with hdp do begin
       pbox:='!?!';
       if (cpos('@',empfaenger)=0) and
-         ((netztyp<>nt_Netcall) or (LeftStr(empfaenger,1)='/'))
+         ((netztyp<>nt_Netcall) or (FirstChar(empfaenger)='/'))
       then begin
         dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
         if not dbFound then begin
@@ -737,10 +737,10 @@ function BoxParOk: string;
       if (fn<>'') then
       begin
         if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
-        if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
+        if LastChar(fn) = '\' then DeleteLastChar(fn);
         ok := (cPos(':', fn) = 0) and (cPos('\', fn) = 0) and (cPos('.', fn) < 2)
           and (Length(fn) > 0) and (fn[length(fn)] <> '.');
-        if (not ok) or (not IsPath(s)) or (RightStr(s,1)<>DirSepa) then
+        if (not ok) or (not IsPath(s)) or (LastChar(s)<>DirSepa) then
           ChkPPPClientPath := false;
         end;
       end;
@@ -1332,7 +1332,7 @@ begin
       PackAll(parxpack);
   if ParAV<>'' then begin
     if not multipos('\:',parav) then begin
-      if RightStr(shellpath,1)<>'\' then ParAV:='\'+ParAV;
+      if LastChar(shellpath)<>'\' then ParAV:='\'+ParAV;
       ParAV:=ShellPath+ParAV;
       end;
     if not FileExists(ParAV) then
@@ -1354,6 +1354,10 @@ end;
 
 {
   $Log$
+  Revision 1.35  2001/09/08 16:29:46  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.34  2001/09/08 15:02:36  cl
   - adaptions/fixes for MIME support
 

@@ -261,7 +261,8 @@ begin
     with bp^ do
       while not eof(t) do begin
         readln(t,s);
-        if (s<>'') and (LeftStr(s,1)<>'#') then begin
+        if (s<>'') and (FirstChar(s)<>'#') then 
+        begin
           su:=UpperCase(s);
           p:=cpos('=',s);
           if (p=0) or not (
@@ -690,6 +691,10 @@ end;
 
 {
   $Log$
+  Revision 1.51  2001/09/08 16:29:37  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.50  2001/09/07 13:54:23  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

@@ -442,7 +442,7 @@ var i        : integer;
     files:=''; GetReqFiles(fa,files);
     if files<>'' then
       if keeprequests then begin
-        if LeftStr(files,1)='>' then delfirst(files);
+        TrimFirstChar(Files, '>');
         nfiles:='';
         while files<>'' do begin
           fname:=GetToken(files,' ');  { n„chster Dateiname ... }
@@ -756,7 +756,7 @@ begin
   moff; write(sp(72-wherex)); mon;
   if UpCase(s[3])='R' then begin
     ss:=''; GetReqFiles(trim(copy(s,6,18)),ss);
-    if LeftStr(ss,1)='>' then delfirst(ss);
+    TrimFirstChar(ss, '>');
     mwrt(rdispx,rdispy+1,forms(ss,61));
     end
   else
@@ -883,6 +883,10 @@ end;
 
 {
   $Log$
+  Revision 1.19  2001/09/08 16:29:45  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.18  2001/09/07 13:54:27  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

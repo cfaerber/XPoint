@@ -195,10 +195,13 @@ begin
 {$endif}
 {$ENDIF }
 {$ENDIF }
-end.
 
 {
   $Log$
+  Revision 1.56  2001/09/08 16:29:39  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.55  2001/08/02 22:47:57  mk
   - added Cardinal for VP
 
@@ -227,3 +230,5 @@ end.
   Revision 1.48  2000/11/18 18:38:21  hd
   - Grundstruktur des Loggings eingebaut
 }
+end.
+

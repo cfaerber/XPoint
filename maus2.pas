@@ -115,7 +115,7 @@ var
       if forwardkeys[length(forwardkeys)-1]=#0 then
         SetLength(forwardkeys, Length(forwardkeys)-2)
       else
-        DelLast(forwardkeys);
+        DeleteLastChar(forwardkeys);
       forwardkeys := forwardkeys + #0 + Char(b);
       {$ifdef NCRT}
         if not usemulti2 and not keypressed then begin
@@ -341,9 +341,12 @@ begin
     end;
 end;
 
-end.
 {
   $Log$
+  Revision 1.29  2001/09/08 16:29:29  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.28  2001/08/10 20:57:56  mk
   - removed some hints and warnings
   - fixed some minior bugs
@@ -437,3 +440,5 @@ end.
   Code aufgeraeumt und z.T. portiert
 
 }
+end.
+

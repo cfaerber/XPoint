@@ -575,7 +575,7 @@ label ende,again;
     rewrite(tf,1);
     hdp.empfaenger:=Typeform.Mid(empf,2);
     if hdp.msgid<>'' then
-      hdp.msgid:=RightStr(hdp.msgid,1)+LeftStr(hdp.msgid,length(hdp.msgid)-1);
+      hdp.msgid:=LastChar(hdp.msgid)+LeftStr(hdp.msgid,length(hdp.msgid)-1);
     assign(f,fn);           { ^^ Rekursion vermeiden }
     reset(f,1);
     hdp.groesse:=filesize(f);
@@ -727,8 +727,8 @@ begin
       exit;
       end else
     if mbNetztyp=nt_Maus then begin
-      if (LeftStr(dbReadStrN(mbase,mb_brett),1)<>'1') and
-         (LeftStr(dbReadStrN(mbase,mb_brett),1)<>'U') then
+      if (FirstChar(dbReadStrN(mbase,mb_brett))<>'1') and
+         (FirstChar(dbReadStrN(mbase,mb_brett))<>'U') then
         rfehler(628)     { 'Im MausNet nur bei PMs moeglich.' }
       else
         MausWeiterleiten;
@@ -912,7 +912,7 @@ again:
                      ebrett:=empf[1]+dbLongStr(dbReadInt(bbase,'int_nr'));
                      end;
                    if typ=3 then begin
-                     if LeftStr(ebrett,1)='A' then
+                     if FirstChar(ebrett)='A' then
                        get_re_n(dbReadInt(bbase,'gruppe'))
                      else begin
                        re_n:=rehochn; kein_re:=false;
@@ -1203,7 +1203,7 @@ begin
   rewrite(tf,1);
   hdp.empfaenger:=hdp.absender;
   if hdp.msgid<>'' then
-    hdp.msgid:=RightStr(hdp.msgid,1)+LeftStr(hdp.msgid,length(hdp.msgid)-1);
+    hdp.msgid:=LastChar(hdp.msgid)+LeftStr(hdp.msgid,length(hdp.msgid)-1);
   assign(f,fn);           { ^^ Rekursion vermeiden }
   reset(f,1);
   hdp.groesse:=filesize(f);
@@ -1274,7 +1274,7 @@ var i   : integer;
     rec : longint;
 begin
   brk:=false;
-  fpm:=(LeftStr(dbReadStrN(mbase,mb_brett),1)='1');
+  fpm:=(FirstChar(dbReadStrN(mbase,mb_brett))='1');
   rec:=dbRecno(mbase);
   if not fpm then begin               { 'Nachricht von %s archivieren' }
     pushhp(1500);
@@ -1307,7 +1307,7 @@ begin
         write(i:4);
         mon;
         dbGo(mbase,marked^[i].recno);
-        if LeftStr(dbReadStrN(mbase,mb_brett),1)='1' then begin
+        if FirstChar(dbReadStrN(mbase,mb_brett))='1' then begin
           MsgUnmark;
           Weiterleit(6,false)
           end;
@@ -1322,6 +1322,10 @@ end.
 
 {
   $Log$
+  Revision 1.6  2001/09/08 16:29:40  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.5  2001/09/08 14:43:07  cl
   - adaptions/fixes for MIME support
   - adaptions/fixes for PGP/MIME support

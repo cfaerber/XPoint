@@ -333,7 +333,7 @@ var   hdp      : THeader;
     begin
       parname:=LowerCase(GetToken(s,'='));
       parvalue:='';
-      if firstchar(s)='"' then delfirst(s);
+      if firstchar(s)='"' then DeleteFirstChar(s);
       p:=1;
       while (p<=length(s)) and (s[p]<>';') do begin
         if s[p]='\' then
@@ -341,7 +341,7 @@ var   hdp      : THeader;
         inc(p);
         end;
       parvalue:=trim(LeftStr(s,p-1));
-      if lastchar(parvalue)='"' then dellast(parvalue);
+      if lastchar(parvalue)='"' then DeleteLastChar(parvalue);
       s:=trim(mid(s,p+1));
     end;
 
@@ -489,8 +489,8 @@ var   hdp      : THeader;
             if (hdline='content-disposition') and (filename = '') then
             begin
               parname:=LowerCase(GetToken(s,'='));
-              if firstchar(s)='"' then delfirst(s);
-              if lastchar(s)='"' then dellast(s);
+              if firstchar(s)='"' then DeleteFirstChar(s);
+              if lastchar(s)='"' then DeleteLastChar(s);
               if (pos('name', parname) >0) then filename:=s;
             end;
         until endhd or eof(t);
@@ -729,6 +729,10 @@ end.
 
 {
   $Log$
+  Revision 1.49  2001/09/08 16:29:40  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.48  2001/09/08 14:39:34  cl
   - Moved MIME functions/types/consts to mime.pas
   - More uniform naming of MIME functions/types/consts

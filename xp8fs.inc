@@ -236,8 +236,8 @@ var fstyp : byte;   { 0=SendZMsg, 1=iMLS }
 function testmark(var s:string; block:boolean):boolean;
 begin
   if (s<>'') and
-     (((fstyp=0) and (LeftStr(s,1)<>'%') and (copy(s,2,1)=' ')) or
-      ((fstyp=1) and (LeftStr(s,5)<>'Name-') and (LeftStr(s,1)<>' ')) or
+     (((fstyp=0) and (FirstChar(s)<>'%') and (copy(s,2,1)=' ')) or
+      ((fstyp=1) and (LeftStr(s,5)<>'Name-') and (FirstChar(s)<>' ')) or
       ((fstyp=2) and (s<>'') and (s[1]>' ') and (s[1]<'°')) or
       ((fstyp=3) and (trim(s)<>''))) then
     testmark:=true
@@ -343,7 +343,8 @@ var d     : DB;
     else begin
       dbGo(ubase,selpos);
       adr:= dbReadNStr(ubase,ub_username);
-      if LeftStr(adr,1)=vert_char then begin
+      if FirstChar(adr)=vert_char then 
+      begin
         rfehler(814);    { 'Verteiler sind hier nicht erlaubt.' }
         brk:=true;
         end
@@ -429,14 +430,14 @@ var d     : DB;
     if s=#0 then s:=''
     else begin
       s:=trim(mid(s,11));
-      if s[1]='"' then delfirst(s);
+      TrimFirstChar(s, '"');
       p:=blankpos(s);
       if p>0 then truncstr(s,p-1);
-      if LastChar(s)='"' then dellast(s);
+      if LastChar(s)='"' then DeleteLastChar(s);
       s:=trim(s);
       if s<>'' then begin
         if (LastChar(s)=':') and (cpos('/',s)>0) then
-          dellast(s);
+          DeleteLastChar(s);
         if not (LastChar(s) in [':','/']) then
           s:=s+'/';
         end;
@@ -559,6 +560,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.27  2001/09/08 16:29:36  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.26  2001/09/08 14:32:56  cl
   - adaptions/fixes for MIME support
 

@@ -1141,8 +1141,8 @@ var
   p: integer;
 begin
   if s = '' then exit;
-  if FirstChar(s) = '"' then DelFirst(s);
-  if LastChar(s) = '"' then DelLast(s);
+  TrimFirstChar(s, '"');
+  TrimLastChar(s, '"');
   p := 1;
   while (p < length(s)) do
   begin
@@ -1583,7 +1583,7 @@ var
     List.Clear;
     line:=trim(rfcremovecomments(line));
     if line<>'' then begin
-      if rightstr(line,1)<>',' then line:=line+',';
+      if LastChar(line)<>',' then line:=line+',';
       while cpos(',',line)>0 do begin
         p:=cpos(',',line);
         List.add(forumn_rfc2zc(leftstr(line,p-1)));
@@ -1720,8 +1720,8 @@ var
   function GetMsgid: string;
   begin
     s0:=RFCRemoveComments(Trim(s0));
-    if firstchar(s0) = '<' then delfirst(s0);
-    if lastchar(s0) = '>' then dellast(s0);
+    if firstchar(s0) = '<' then deletefirstchar(s0);
+    if lastchar(s0) = '>' then deletelastchar(s0);
     GetMsgid := s0;
   end;
 
@@ -1796,7 +1796,7 @@ var
         key := trim(mid(s0, p + length(key)));
         p := blankpos(key);
         if p > 0 then SetLength(key, p - 1);
-        if key[length(key)] = ';' then dellast(key);
+        if LastChar(key) = ';' then DeleteLastChar(key);
         GetRec := key;
       end
       else
@@ -2188,7 +2188,7 @@ begin
       begin
         if cpos('<',hd.envemp)=1 then delete (hd.envemp,1,1);
         if (cpos('>',hd.envemp)=length(hd.envemp))
-          and (length(hd.envemp)>0) then dellast(hd.envemp);
+          and (length(hd.envemp)>0) then DeleteLastChar(hd.envemp);
         mailuser:= SetMailuser(hd.envemp);
       end;
 
@@ -2219,7 +2219,7 @@ begin
               break
             else
               if LeftStr(s,6)='>From ' then
-                DelFirst(s);
+                DeleteFirstChar(s);
         LastLineWasBlank:=(s=''); DecodeLine;
         if not(binaer or multi) then
         begin
@@ -2342,7 +2342,7 @@ begin
         if not smtpende then
         begin
           if FirstChar(s) = '.' then { SMTP-'.' entfernen }
-            delfirst(s);
+            DeleteFirstChar(s);
           DecodeLine;             { haengt CR/LF an, falls kein Base64 }
           inc(hd.groesse, length(s));
         end;
@@ -2357,7 +2357,7 @@ begin
         if not smtpende then
         begin
           if FirstChar(s) = '.' then { SMTP-'.' entfernen }
-            delfirst(s);
+            DeleteFirstChar(s);
           DecodeLine;           { haengt CR/LF an, falls kein Base64 }
           if not(not binaer or multi) then
           begin
@@ -2462,7 +2462,7 @@ begin
           if s='.' then
             hd.lines:=0
           else
-            if FirstChar(s)='.' then DelFirst(s)
+            if FirstChar(s)='.' then DeleteFirstChar(s)
           end
         else // standard format
           Dec(hd.lines);
@@ -2805,7 +2805,7 @@ var
   var
     p: integer;
   begin
-    if FirstChar(s) = '/' then delfirst(s);
+    if FirstChar(s) = '/' then DeleteFirstChar(s);
     repeat
       p := cpos('/', s);
       if p > 0 then s[p] := '.';
@@ -3718,6 +3718,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2001/09/08 16:29:41  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.71  2001/09/08 14:51:36  cl
   - Conversion to RFC uses encoding and charset suggested by OpenXP (or user)
   - Conversion to RFC now supports ZConnect-MIME (TYP: MIME)
@@ -3841,3 +3845,4 @@ end.
   Revision 1.41  2001/03/26 23:18:17  cl
   - fix for news batch decompression
 }
+end.

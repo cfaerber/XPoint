@@ -664,10 +664,13 @@ begin
   result:= FileMaskSize(AddDirSepa(dir)+WildCard);
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.104  2001/09/08 16:29:28  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.103  2001/09/07 17:27:24  mk
   - Kylix compatiblity update
 
@@ -731,26 +734,6 @@ end.
   - using SysUtil functions instead of System functions
   - new functions: FindFile, FindExecutable
   - renamed mklongdir to CreateMultipleDirectories and changed function
-
-  Revision 1.85  2000/11/19 22:29:36  hd
-  - fix: missing uses-statement
-
-  Revision 1.84  2000/11/19 17:51:56  ma
-  - GetEnv works again under Win32. Proper replacement of
-    Dos.GetEnv will be used at request if Dos is *really*
-    that bad.
-  - renamed existBin to ExecutableExists
-
-  Revision 1.83  2000/11/18 21:15:56  mk
-  - removed GetCBreak, SetCBreak - this routines are not necessary anymore
-
-  Revision 1.82  2000/11/18 16:11:57  hd
-  - Grml, on ist kein gültiger BEzeichner
-
-  Revision 1.81  2000/11/18 16:09:56  hd
-  - Get-/SetCBreak
-    - Diese Routinen muessen fuer andere OS als Linux implementiert werden!!
-
-  Revision 1.80  2000/11/16 22:35:29  hd
-  - DOS Unit entfernt
 }
+end.
+

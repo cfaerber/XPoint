@@ -306,7 +306,7 @@ var   fb     : string;
         end
       else
 {$ENDIF }
-      if RightStr(s,1)=DirSepa then
+      if LastChar(s)=DirSepa then
         Wrt2(' ' + Forms(ConvertFilename(s), 74))
       else begin
         if (findfirst(AddDirSepa(ExtractFilePath(path))+s,faanyfile,sr)<>0) then
@@ -658,14 +658,14 @@ begin
           end;
       until (t=keyesc) or (t=keycr) or chgdrive;
       end;
-    if ((f.count>0) and (t=keycr) and (RightStr(f[CposY+add],1)=DirSepa)) or chgdrive then
+    if ((f.count>0) and (t=keycr) and (LastChar(f[CposY+add])=DirSepa)) or chgdrive then
     begin
       for i:=1 to pathn do begin
         fsplit(paths[i],dir,name,ext);
         if t=keycr then                   { Pfadwechsel }
           if f[CposY+add]='..'+DirSepa then begin
             delete(dir,length(dir),1);
-            while (dir<>'') and (dir[length(dir)]<>DirSepa) do
+            while LastChar(dir)<>DirSepa do
               delete(dir,length(dir),1);
             if dir<>'' then path:=dir+name+ext;
             end
@@ -674,9 +674,8 @@ begin
         else
         begin                        { Laufwerkswechsel }
           GetDir(Ord(t[1]), Path);
-          if RightStr(path,1)<>DirSepa then path:=path+DirSepa;
-          path:=path+name+ext;
-          end;
+          path:=IncludeTrailingPathDelimiter(Path)+name+ext;
+        end;
         paths[i]:=path;
         end;
       t:=#0#0;
@@ -1103,6 +1102,10 @@ end;
 
 {
   $Log$
+  Revision 1.44  2001/09/08 16:29:30  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.43  2001/09/06 19:31:19  mk
   - removed some hints und warnings
 

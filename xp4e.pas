@@ -436,14 +436,14 @@ end;
 function test_verteiler(var s:string):boolean;
 begin
   s:=trim(s);
-  if LeftStr(s,1)<>'[' then s:='['+s;
-  if RightStr(s,1)<>']' then s:=s+']';
+  if FirstChar(s)<>'[' then s:='['+s;
+  if LastChar(s)<>']' then s:=s+']';
   if length(s)<3 then begin
     errsound;
     test_verteiler:=false;
     end
   else begin
-    s:=LeftStr(s,min(39,length(s)-1))+RightStr(s,1);
+    s:=LeftStr(s,min(39,length(s)-1))+LastChar(s);
     test_verteiler:=true;
     end;
 end;
@@ -591,7 +591,7 @@ var hdp      : Theader;
 
 begin
   GetMsgBrettUser:=true;
-  if MarkUnversandt and (LeftStr(dbReadStrN(mbase,mb_brett),1)='U') then begin
+  if MarkUnversandt and (FirstChar(dbReadStrN(mbase,mb_brett))='U') then begin
     hdp:= THeader.Create;
     readheader(hdp,hds,true);
     suchname:=hdp.empfaenger;
@@ -684,7 +684,7 @@ begin
     else if UpperCase(cod)='DES' then typ:=2
     else if UpperCase(cod)='PGP/MIME' then typ:=8
     else if UpperCase(cod)='PGP' then typ:=9
-    else typ:=2+ival(RightStr(cod,1));
+    else typ:=2+ival(LastChar(cod));
     dbWriteN(ubase,ub_codierer,typ);
     if pw<>'' then begin
       dbReadN(ubase,ub_adrbuch,adrb);
@@ -719,7 +719,7 @@ end;
 
 procedure setbrett(var s:string);
 begin
-  if LeftStr(s,1)<>'/' then
+  if FirstChar(s)<>'/' then
     if (pb_netztyp<>nt_Fido) or (cpos('/',s)>0) then
       s:=LeftStr('/'+s,79)
     else begin
@@ -764,11 +764,11 @@ begin
   if not dbFound then dbGoTop(d);   { sollte nicht vorkommen! }
   grname:= dbReadStr(d,'name');
   dbClose(d);
-  askloc:=not edit or (LeftStr(brett,1)<>'$');
+  askloc:=not edit or (FirstChar(brett)<>'$');
   trenn:=(LeftStr(brett,3)='$/T');
   filter:=(flags and 4=0);
   pb_netztyp:=ntBoxNetztyp(box);
-  isfido:=(pb_netztyp=nt_Fido) and (LeftStr(brett,1)<>'$');
+  isfido:=(pb_netztyp=nt_Fido) and (FirstChar(brett)<>'$');
   dialog(57,iif(askloc or ParXX,iif(isfido,13,11),iif(trenn,5,iif(isfido,9,7))),
          getres2(2708,iif(edit,3,4)),x,y);   { 'Brett bearbeiten' / 'neues Brett anlegen' }
   userfld:=-1;
@@ -881,7 +881,7 @@ end;
 procedure mbsetvertreter(var s:string);
 begin
   if trim(s)<>'' then
-    if (cpos('@',s)=0) and (LeftStr(s,1)<>'/') then
+    if (cpos('@',s)=0) and (FirstChar(s)<>'/') then
       s:='/'+s;
 end;
 
@@ -906,7 +906,7 @@ var x,y,wdt  : Integer;
     b        : byte;
 begin
   modibrett2:=false;
-  if LeftStr(dbReadStrN(bbase,bb_brettname),1)<'A' then begin
+  if FirstChar(dbReadStrN(bbase,bb_brettname))<'A' then begin
     rfehler(2712);
     exit;
     end;
@@ -1099,7 +1099,7 @@ begin
     dbWriteN(bbase,bb_gruppe,gruppe);
     if (origin+oldorig)<>'' then
       dbWriteNStr(bbase,bb_adresse,origin);
-    if LeftStr(brett,1)='/' then brett:='A'+brett;
+    if FirstChar(brett)='/' then brett:='A'+brett;
     modin:=UpperCase(brett)<>UpperCase(dbReadStrN(bbase,bb_brettname));
     if modin then begin
       rec:=dbRecno(bbase);
@@ -1284,7 +1284,7 @@ begin
               end
             else begin
               brett:= dbReadNStr(bbase,bb_brettname);
-              if LeftStr(brett,1)='A' then
+              if FirstChar(brett)='A' then
                 dbWriteN(bbase,bb_gruppe,grnr_found)
               else
                 rfehler1(2707,copy(brett,2,26));   { '%s ist internes Brett - Gruppe nicht „nderbar!' }
@@ -1404,7 +1404,7 @@ begin
   oldpb:=pbox;
   verteiler:=false;
   newbrett:=false;
-  brett:=(LeftStr(s,1)='/') and (cpos('@',s)=0);
+  brett:=(FirstChar(s)='/') and (cpos('@',s)=0);
   if trim(s)='' then
     exit
   else if brett and _pmonly then begin
@@ -1413,9 +1413,9 @@ begin
     end
   else
     if brett then begin
-      if LeftStr(s,1)<>'/' then s:='/'+s;
+      if FirstChar(s)<>'/' then s:='/'+s;
       end
-    else if (LeftStr(s,1)='[') and (RightStr(s,1)=']') then verteiler:=true
+    else if (FirstChar(s)='[') and (LastChar(s)=']') then verteiler:=true
     else begin
       if UpperCase(s)='SYSOP' then
         s:=ShrinkEmpf(s,pbox+ntAutoDomain(pbox,true))
@@ -1444,7 +1444,7 @@ begin
             s:= dbReadNStr(ubase,ub_username)
           else
             if cpos('@',s)=length(s) then begin
-              dellast(s);
+              DeleteLastChar(s);
               s:=ShrinkEmpf(s,pbox+ntAutoDomain(pbox,true));
               end;
           end;
@@ -1602,7 +1602,7 @@ begin
   enddialog;
   if (empf='') or (not brk and (betr='') and not ReadJN(getres(618),false))
     then brk:=true;                     { 'Nachricht ohne Betreff absenden' }
-  if (LeftStr(empf,1)='[') and (RightStr(empf,1)=']') then
+  if (FirstChar(empf)='[') and (LastChar(empf)=']') then
     empf:=vert_char+empf+'@V';     { Verteilernamen anpassen }
 end;
 
@@ -1716,10 +1716,7 @@ begin
   if dir='' then dir:= AddDirSepa(SendPath);
 {$ifndef UnixFS}
   { Laufwerksbuchstaben hinzufuegen }
-  if cpos(':',dir)=0 then begin
-    if LeftStr(dir,1)<>DirSepa then dir:=DirSepa+dir;
-    dir:=LeftStr(GetCurrentDir,2)+dir;
-  end;
+  dir := AddDirSepa(dir);
 {$endif}
   ps:=fsbox(screenlines div 2 - 5,dir+WildCard,'',ExtractFileName(cr.s),true,false,false);
   cr.brk:=(ps='');
@@ -1731,7 +1728,7 @@ function auto_testempf(var s:string):boolean;
 var p : byte;
 begin
   p:=cpos('@',s);
-  if (s<>'') and (p=0) and (LeftStr(s,1)<>'/') and (LeftStr(s,1)<>'[') then
+  if (s<>'') and (p=0) and (FirstChar(s)<>'/') and (FirstChar(s)<>'[') then
     s:='/'+s
   else
     if p>0 then s:=trim(LeftStr(s,p-1))+'@'+trim(mid(s,p+1));
@@ -1750,7 +1747,7 @@ begin
     for i:=1 to 7 do
       if wotage and (1 shl (i-1))<>0 then
         wot:=wot+copy(_wotag_,2*i-1,2)+',';
-    if wot<>'' then dellast(wot);
+    if wot<>'' then DeleteLastChar(wot);
     wostring:=wot;
     end;
 end;
@@ -1795,7 +1792,7 @@ begin
   for i:=1 to 31 do
     if l and (1 shl (i-1))<>0 then
       s:=s+strs(i)+',';
-  if s<>'' then dellast(s);
+  if s<>'' then DeleteLastChar(s);
   tagstring:=s;
 end;
 
@@ -1830,7 +1827,7 @@ begin
     for i:=1 to 12 do
       if w and (1 shl (i-1))<>0 then
         s:=s+strs(i)+',';
-    if s<>'' then dellast(s);
+    if s<>'' then DeleteLastChar(s);
     monstring:=s;
     end;
 end;
@@ -2441,6 +2438,10 @@ end;
 
 {
   $Log$
+  Revision 1.79  2001/09/08 16:29:34  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.78  2001/09/08 14:31:02  cl
   - adaptions/fixes for MIME support
   - adaptions/fixes for PGP/MIME support

@@ -110,7 +110,7 @@ var i : integer;
 begin
   if (length(s)=1) and (lastkey<>keybs) then begin
     for i:=4 downto 0 do
-      if upcase(s[1])=UpperCase(LeftStr(getres2(442,i),1)) then
+      if upcase(FirstChar(s))=UpperCase(FirstChar(getres2(442,i))) then
         s:=getres2(442,i);
     freeres;
     if length(s)>1 then _keyboard(keyend);
@@ -1479,7 +1479,7 @@ begin
       else with hdp do begin
         _brett:='';
         if (cpos('@',empfaenger)=0) and
-           ((netztyp<>nt_Netcall) or (LeftStr(empfaenger,1)='/'))
+           ((netztyp<>nt_Netcall) or (FirstChar(empfaenger)='/'))
         then begin
           dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
           if not dbFound then rfehler(426)   { 'Nachricht ist nicht mehr in der Datenbank vorhanden!' }
@@ -1682,7 +1682,7 @@ begin
                     getres2(459,iif(ntZConnect(netztyp),24,25))+netz+')',x,y);
     moff;
     for i:=1 to anz do begin
-      if LeftStr(xxs[i],1)=' ' then p:=0
+      if FirstChar(xxs[i])=' ' then p:=0
       else p:=cpos(':',xxs[i]);
       if p>0 then begin
         attrtxt(col.colmboxhigh);
@@ -1872,8 +1872,7 @@ begin
     enddialog;
     if brk then exit;
     UpString(dp);
-    if (dp<>'') and (RightStr(dp,1)<>':') and (RightStr(dp,1)<>'\') then
-      dp:=dp+'\';
+    dp := IncludeTrailingPathDelimiter(dp);
     if not validfilename(dp+'test.$$1') then
       rfehler(433)   { 'ungueltiges Verzeichnis' }
     else begin
@@ -2320,9 +2319,9 @@ begin
         { Auf den Dateinamen muss ein Trennzeichen folgen }
         if (Length(s)>0) then if not (s[1] in [#32,'"','<','>','¯','®',')',']','}',',',';',':','_','*']) then continue;
 
-        if (mark and (t[Length(t)] in ['_','*'])) then Dellast(t);
+        if (mark and (LastChar(t) in ['_','*'])) then DeleteLastChar(t);
 
-        while (length(t)>0) and (t[Length(t)] in ['.','!','?','/']) do Dellast(t);
+        while LastChar(t) in ['.','!','?','/'] do DeleteLastChar(t);
         if (Length(t)<2) then continue;
         k:=0;
         for ic:=1 to Length(t) do if t[ic]='.' then inc(k);
@@ -2433,7 +2432,7 @@ begin
       _brett := dbReadStrN(mbase,mb_brett);
       DelBezug;
       dbDelete(mbase);
-      if LeftStr(_brett,1)<>'U' then RereadBrettdatum(_brett);
+      if FirstChar(_brett)<>'U' then RereadBrettdatum(_brett);
       _killit:=true;
       aufbau:=true; xaufbau:=true;
       setbrettgelesen(_brett);
@@ -2442,6 +2441,10 @@ end;
 
 {
   $Log$
+  Revision 1.112  2001/09/08 16:29:34  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.111  2001/09/08 14:31:31  cl
   - cleaned up MIME-related fields in THeader
   - adaptions/fixes for MIME support

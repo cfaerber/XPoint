@@ -1064,9 +1064,12 @@ initialization
       colstatus := $F;
     end;
 finalization
-end.
 {
   $Log$
+  Revision 1.55  2001/09/08 16:29:29  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.54  2001/07/31 16:18:39  mk
   - removed some unused variables
   - changed some LongInt to DWord
@@ -1118,3 +1121,5 @@ end.
   - nearly complete rewrite
 
 }
+end.
+

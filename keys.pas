@@ -375,9 +375,12 @@ begin
   ExitProc:= @ExitKeysUnit;
 end;
 
-end.
 {
   $Log$
+  Revision 1.45  2001/09/08 16:29:28  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.44  2001/09/03 16:09:34  ml
 
   - fixed Grey-Keyboard-Editcontrol-feature kills 'J' and 'N' keys - bug
@@ -425,88 +428,6 @@ end.
   Revision 1.31  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
-
-  Revision 1.30  2000/11/19 18:22:52  hd
-  - Replaced initlization by InitxxxUnit to get control over init processes
-
-  Revision 1.29  2000/10/15 15:20:17  mk
-  JG:- Editor Funktion Glossary implementiert
-
-  Revision 1.28  2000/08/05 10:06:58  mk
-  - Ansistring Verbesserungen
-
-  Revision 1.27  2000/07/21 21:17:43  mk
-  - hasHugeStrings entfernt, weil nicht mehr noetig
-
-  Revision 1.26  2000/07/05 09:50:12  hd
-  - AnsiString-Anpassung
-
-  Revision 1.25  2000/06/24 14:10:26  mk
-  - 32 Bit Teile entfernt
-
-  Revision 1.24  2000/06/24 13:36:12  hd
-  - Laesst sich jetzt auch wieder unter Linux compilieren (IFDEF DOS32)
-
-  Revision 1.23  2000/06/23 15:59:11  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.22  2000/06/22 19:53:26  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.21  2000/06/04 22:02:02  mk
-  - Shift-Keys in DOS32 und OS/2 Version implementiert
-
-  Revision 1.20  2000/05/02 11:49:34  hd
-  Anpassung an Curses (Linux)
-
-  Revision 1.19  2000/04/29 16:45:06  mk
-  - Verschiedene kleinere Aufraeumarbeiten
-
-  Revision 1.18  2000/04/29 16:18:58  hd
-  Linux-Anpassung
-
-  Revision 1.16  2000/04/13 13:54:45  mk
-  - 32 Bit: Fehlerhafte Prozentanzeigen behoben
-  - 32 Bit VP: Shift-Tab funktioniert jetzt
-
-  Revision 1.15  2000/04/06 09:04:17  mk
-  MW: - Datumseingabe in Kalender
-
-  Revision 1.14  2000/03/22 19:43:01  rb
-  <Ctrl Del>: Wort rechts l”schen
-
-  Revision 1.13  2000/03/16 10:14:24  mk
-  - Ver32: Tickerabfrage optimiert
-  - Ver32: Buffergroessen für Ein-/Ausgabe vergroessert
-  - Ver32: Keypressed-Routine laeuft nach der letzen Änderung wieder
-
-  Revision 1.12  2000/03/16 00:46:31  rb
-  keys.keypressed auf enhanced keyboard support umgestellt/erweitert
-
-  Revision 1.11  2000/03/15 00:21:52  mk
-  - Bug in kbstat beseitigt
-
-  Revision 1.10  2000/03/14 15:15:36  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.9  2000/03/09 23:39:32  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.8  2000/03/04 14:53:49  mk
-  Zeichenausgabe geaendert und Winxp portiert
-
-  Revision 1.7  2000/02/29 19:44:38  rb
-  Tastaturabfrage ge„ndert, Ctrl-Ins etc. wird jetzt auch erkannt
-
-  Revision 1.6  2000/02/21 22:48:01  mk
-  MK: * Code weiter gesaeubert
-
-  Revision 1.5  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
 }
+end.
+

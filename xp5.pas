@@ -820,7 +820,7 @@ begin
     if t=keyesc then brk:=true
     else if (t=keybs) or (t=keyleft) then
       if s='' then errsound
-      else dellast(s)
+      else DeleteLastChar(s)
     else if (t=^Y) or (t=keyhome) then
       s:=''
     else if t>=' ' then
@@ -950,6 +950,10 @@ end;
 
 {
   $Log$
+  Revision 1.58  2001/09/08 16:29:36  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.57  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 

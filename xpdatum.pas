@@ -256,9 +256,12 @@ begin
     FormI(tzm,2);
 end;
 
-end.
 {
   $Log$
+  Revision 1.19  2001/09/08 16:29:38  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.18  2001/09/08 14:36:26  cl
   - added DecodeTimeZone (please check if it works with Linux)
   - added DateTimeToRFCDateTime
@@ -323,3 +326,5 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
+end.
+

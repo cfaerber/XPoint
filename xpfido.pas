@@ -1063,7 +1063,7 @@ begin
     FormFidoPhone:=telefon
   else if LeftStr(telefon,length(vorwahl))=vorwahl then begin
     delete(telefon,1,length(vorwahl));
-    if LeftStr(telefon,1)='-' then delfirst(telefon);
+    TrimFirstChar(telefon, '-');
     FormFidoPhone:=telefon;
     end
   else begin
@@ -1338,7 +1338,7 @@ begin
       if flags and nfVFC<>0 then modem:=modem+' / V.Fast Class';
       if flags and nfV34<>0 then modem:=modem+' / V.34';
 
-      if LeftStr(modem,1)=' ' then delete(modem,1,3);
+      if FirstChar(modem)=' ' then delete(modem,1,3);
       if modem='' then modem:=strs(baud);
       maddtext(12,4,modem,col.coldiahigh); }
 
@@ -1379,7 +1379,7 @@ var files : string;
 begin
   files:='';
   GetReqFiles(MakeFidoAdr(fa,true),files);
-  if LeftStr(files,1)='>' then delfirst(files);
+  TrimFirstChar(files, '>');
   ff:=FidoFilename(fa)+'.REQ';
   if files<>'' then begin
     assign(t,ff);
@@ -1423,7 +1423,7 @@ begin
       if s=adr then
         repeat
           readln(t,s);
-          if LeftStr(s,1)='>' then delfirst(s);
+          TrimFirstChar(s, '>');
           if s<>CrashID then files:=files+' '+s;
         until s=''
       else
@@ -1520,7 +1520,7 @@ begin
   if brk then exit;
   node:=MakeFidoAdr(fa,true);
   getReqFiles(node,files);
-  if LeftStr(files,1)='>' then delfirst(files);
+  TrimFirstChar(files, '>');
   atonce:=false;
   maddstring(3,7,getres2(2112,1),files,50,254,'>'); mhnr(735);  { 'Dateien ' }
   freqlst:=GetFilelist(fa);
@@ -1759,8 +1759,8 @@ begin
         if FindFidoAddress(fn,fa) then
           node:=MakeFidoAdr(fa,false)
         else
-          if ival(LeftStr(fi,1))>0 then
-            node:=LeftStr(fi,1)+':'+strs(ival(copy(fi,2,3)))+'/'+strs(ival(copy(fi,5,4)))
+          if ival(FirstChar(fi))>0 then
+            node:=FirstChar(fi)+':'+strs(ival(copy(fi,2,3)))+'/'+strs(ival(copy(fi,5,4)))
           else
             node:='';
       end;
@@ -2082,7 +2082,7 @@ begin       { FidoSeekfile:string;************************ }
   end;
   oldseek:=fidolastseek;                { icase+letzten Suchstring  }
   fidolastseek:=mid(fidolastseek,3);    { icase extrahieren }
-  iCase:=(LeftStr(oldseek,1)='J');         { icase     }
+  iCase:=(FirstChar(oldseek)='J');         { icase     }
   wCase:=(copy(oldseek,2,1)='J');       { Wcase     }
   {Anzeige initilisieren }
   dialog(57,6,getres2(2120,3),x,y);     { 'Dateien suchen' }
@@ -2254,6 +2254,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.58  2001/09/08 16:29:39  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.57  2001/09/07 23:24:55  ml
   - Kylix compatibility stage II
 

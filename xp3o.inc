@@ -252,8 +252,8 @@ var x,y      : Integer;
   begin
     if cancel and ((pos(reverse('nolybab!'),hdp.pfad)>0) or
                    (pos(reverse('lebabr!'),hdp.pfad)>0)) then exit;
-    if LeftStr(id,1)='<' then delfirst(id);
-    if RightStr(id,1)='>' then dellast(id);
+    TrimFirstChar(id, '<');
+    TrimLastChar(id, '>');
     if cpos('@',id)=0 then exit;
     crc:=MsgidIndex(id);
     hdp2 := THeader.Create;
@@ -826,7 +826,7 @@ begin
           tobrett:=archive or (copy(empfaenger,1,TO_len)=TO_ID);
           atp:=cPos('@',empfaenger);
           if sendbuf then begin   { pollbox <> '' !  }
-            if (LeftStr(empfaenger,1)<>'/') and (cpos('@',empfaenger)=0) then
+            if (FirstChar(Empfaenger)<>'/') and (cpos('@',empfaenger)=0) then
               empfaenger:=empfaenger+'@'+pollbox+'.ZER';
             if cpos('@',empfaenger)>0 then
               if tobrett then
@@ -890,14 +890,14 @@ begin
               dbReadN(ubase,ub_userflags,uflags);
               aufnehmen:=odd(uflags);
               end;
-          if LeftStr(empfaenger,1)<>'U' then begin
+          if FirstChar(empfaenger)<>'U' then begin
             dbSeek(bbase,biBrett,UpperCase(empfaenger));
             if not dbFound then begin
               if (empfanz>1) or (attrib and AttrControl<>0) then
                 aufnehmen:=false
               else if aufnehmen then begin          { neues Brett anlegen }
 
-                if LeftStr(empfaenger,1)<>'A' then grnr:=IntGruppe
+                if FirstChar(empfaenger)<>'A' then grnr:=IntGruppe
                 else begin
                   seekbr:=empfaenger;
                   p0:=posn('/',seekbr,3);
@@ -912,7 +912,7 @@ begin
                   else dbReadN(bbase,bb_gruppe,grnr);
                   if grnr=IntGruppe then grnr:=NetzGruppe;
                   end;
-                if LeftStr(empfaenger,1)='1' then
+                if FirstChar(empfaenger)='1' then
                   haltezeit:=0
                 else 
                 begin
@@ -937,7 +937,7 @@ begin
               _brett:=mbrettd(empfaenger[1],bbase);
             end;
           { hier kein adrok: TO-User werden immer aufgenommen! }
-          if LeftStr(empfaenger,1)='U' then begin
+          if FirstChar(empfaenger)='U' then begin
             dbSeek(ubase,uiName,UpperCase(copy(empfaenger,2,80))); {Adreábuch-Eintrag}
             if not dbFound then begin
               dbAppend(ubase);
@@ -965,12 +965,12 @@ begin
           OwnMessageReplaced:= HandleReplaceOwn;
 
           IsGelesen:=ParGelesen or sendbuf or
-                     ((netztyp=nt_Maus) and (LeftStr(pm_bstat,1)='G')) or
+                     ((netztyp=nt_Maus) and (FirstChar(pm_bstat)='G')) or
                      (filterattr and fattrGelesen<>0) or
                      (pflags and pe_gelesen<>0) or (ReplaceOwnHoldFlag < 255);
 
           if aufnehmen then begin
-            if LeftStr(empfaenger,1)<>'U' then begin
+            if FirstChar(empfaenger)<>'U' then begin
               dbReadN(bbase,bb_flags,flags);
               if not IsGelesen and (flags and 2 = 0) then
               begin
@@ -1228,6 +1228,10 @@ end;
 
 {
   $Log$
+  Revision 1.69  2001/09/08 16:29:33  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.68  2001/09/08 14:27:29  cl
   - cleaned up MIME-related fields in THeader
 

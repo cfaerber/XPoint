@@ -216,13 +216,13 @@ label selende;
   var _brett : string;
   begin
     _brett:= dbReadNStr(mbase,mb_brett);
-    if (length(_brett)=0) or ((_brett[1]<>'1') and (_brett[1]<>'A')) then
+    if (length(_brett)=0) or ((FirstChar(_brett)<>'1') and (FirstChar(_brett)<>'A')) then
       rfehler(403)     { 'PM-Archiv in diesem Brett nicht moeglich' }
     else begin
       PmArchiv(einzel);
       if _brett[1]='1' then begin
         dbGo(mbase,disprec[1]);
-         if (DispMode<>12) and (LeftStr(dbReadStrN(mbase,mb_brett),1)<>'1') then
+         if (DispMode<>12) and (FirstChar(dbReadStrN(mbase,mb_brett))<>'1') then
           disprec[1]:=0;
         end
       else
@@ -950,7 +950,7 @@ var t,lastt: taste;
 
         else begin  { dispmode >= 10 }
           _empf:= dbReadStrN(mbase,mb_brett);
-          if LeftStr(_empf,1)='U' then begin
+          if FirstChar(_empf)='U' then begin
             rfehler(405);   { 'Nachricht bitte als PM schicken' }
             exit;
             end
@@ -1198,7 +1198,7 @@ var t,lastt: taste;
 {*}     saveDispRec := nil;  { Auf keinen Fall entfernen! }
         if mqfirst<>0 then dbGo(mbase,mqfirst)
         else GoP;
-        if not dbEof (mbase) and not dbBOF (mbase) and (leftStr(dbReadStrN(mbase, mb_brett),1)='1') and
+        if not dbEof (mbase) and not dbBOF (mbase) and (FirstChar(dbReadStrN(mbase, mb_brett))='1') and
            ReadJN(getres(407),true) then     { 'Nachricht archivieren' }
           pm_archiv(true);
         end;
@@ -2241,9 +2241,12 @@ begin
 end;
 
 
-end.
 {
   $Log$
+  Revision 1.106  2001/09/08 16:29:33  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.105  2001/09/08 14:30:08  cl
   - adaptions/fixes for MIME support
 
@@ -2354,242 +2357,6 @@ end.
   Revision 1.78  2001/01/14 10:13:34  mk
   - MakeHeader() integreated in new unit
 
-  Revision 1.77  2001/01/04 16:10:45  ma
-  - adjusted unit names in "uses" statement
-
-  Revision 1.76  2000/12/25 14:02:42  mk
-  - converted Lister to class TLister
-
-  Revision 1.75  2000/12/19 19:48:13  mk
-  - groesse bei Fillchar(mpdata) korrigiert
-
-  Revision 1.74  2000/12/19 19:06:17  mk
-  - Crash bei Strg-Q auf Mail behoben (Bug von FE)
-
-  Revision 1.73  2000/12/18 09:22:59  mk
-  - fehlendes pophp ergaenzt
-
-  Revision 1.72  2000/12/11 09:41:34  mk
-  - fixed Bug #117177: Alt-P in reply tree
-
-  Revision 1.71  2000/12/08 01:10:08  mk
-  MH:- Usersuche bei Auswahl ueber F2 moeglich
-
-  Revision 1.70  2000/12/06 21:34:18  mk
-  - removed false fix for Bug #117117
-
-  Revision 1.69  2000/12/03 12:38:22  mk
-  - Header-Record is no an Object
-
-  Revision 1.68  2000/11/25 18:28:31  fe
-  Fixed some bugs.
-
-  Revision 1.67  2000/11/24 19:01:27  fe
-  Made a bit less suboptimal.
-
-  Revision 1.66  2000/11/24 09:40:11  mk
-  - fixed Franks suboptimal changes :(
-
-  Revision 1.65  2000/11/23 22:33:22  fe
-  Fixed some ugly bugs with followup and replyto.
-
-  Revision 1.64  2000/11/18 21:42:17  mk
-  - implemented new Viewer handling class TMessageViewer
-
-  Revision 1.63  2000/11/18 00:04:44  fe
-  Made compileable again.  (Often a suboptimal way...)
-
-  Revision 1.62  2000/11/16 21:31:05  hd
-  - DOS Unit entfernt
-
-  Revision 1.61  2000/11/15 23:00:40  mk
-  - updated for sysutils and removed dos a little bit
-
-  Revision 1.60  2000/11/15 12:24:21  mk
-  - fixed bug with Alt-P in reply trees
-
-  Revision 1.59  2000/11/14 15:51:30  mk
-  - replaced Exist() with FileExists()
-
-  Revision 1.58  2000/11/12 11:34:05  mk
-  - removed some limits in Reply Tree
-  - implementet moving the tree with cursor keys (RB)
-  - optimized display of the tree
-
-  Revision 1.57  2000/11/08 17:56:15  mk
-  - fixed Bug #119897: Ctrl E in Displaymode 11
-
-  Revision 1.56  2000/11/01 10:45:23  mk
-  - Ctrl-H wieder ohne MIME-Auswahl
-
-  Revision 1.55  2000/10/26 16:23:07  mk
-  - Fixed Bug #116156: falsche Quoteschablone bei Mehrfachquotes
-
-  Revision 1.54  2000/10/26 12:06:33  mk
-  - AllocHeaderMem/FreeHeaderMem Umstellung
-
-  Revision 1.53  2000/10/26 10:34:51  mk
-  - <Ctrl-H> bringt jetzt auch MIME-Auswahldialog, wenn noetig
-
-  Revision 1.52  2000/10/26 10:26:26  mk
-  - Crash bei _brief_senden behoben
-
-  Revision 1.51  2000/10/26 08:54:27  mk
-  - MIME-Fixes (merged from 3.30
-
-  Revision 1.50  2000/10/26 08:46:37  mk
-  - MIME-Auswahldialog nur bei Replys
-
-  Revision 1.49  2000/10/24 13:42:51  mk
-  - MIME-fixes (merged from 3.30 branch)
-
-  Revision 1.48  2000/10/20 14:54:02  hd
-  - dosx entfernt
-
-  Revision 1.47  2000/10/17 10:05:50  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.46  2000/10/10 05:10:12  mk
-  JG:- weitere Fixes fuer Menuepunkte im Kommentarbaum
-
-  Revision 1.45  2000/08/25 22:33:59  mk
-  JG:- In PM-Brettern ist "P" gleichwertig zu "B"
-    falls die beantwortete Nachricht keinen Reply-To Header enthaelt.
-
-  Revision 1.44  2000/08/12 18:32:57  mk
-  JG: - Ungelesen-Workarround Setbrettgelesen funktioniert jetzt auch
-    Wenn Msgbase keine Nachricht mehr fuer dieses mehr Brett enthaelt.
-
-  Revision 1.43  2000/08/08 13:18:15  mk
-  - s[Length(s)] durch Lastchar ersetzt
-
-  Revision 1.42  2000/08/05 17:28:24  mk
-  JG: - bei Single-Part Mime Mails kommt jetzt ebenfalls ein Auswahlmenue
-
-  Revision 1.41  2000/08/02 10:06:58  mk
-  JG:- "U" (ins Userfenster Umschalten) funktioniert jetzt auch
-    wenn die Markiert-Liste angezeigt wird.
-
-  Revision 1.40  2000/08/01 10:34:11  mk
-  JG: - Ungelesen-Workarround "Setbrettgelesen"
-        jetzt auch beim Verlassen der Nachrichtenliste.
-
-  Revision 1.39  2000/07/27 10:13:02  mk
-  - Video.pas Unit entfernt, da nicht mehr noetig
-  - alle Referenzen auf redundante ScreenLines-Variablen in screenLines geaendert
-  - an einigen Stellen die hart kodierte Bildschirmbreite in ScreenWidth geaendert
-  - Dialog zur Auswahl der Zeilen/Spalten erstellt
-
-  Revision 1.38  2000/07/26 22:58:33  mk
-  -  Userfenster: Strg+G markiert gesamte Adressbuchgruppe
-
-  Revision 1.37  2000/07/23 10:01:01  mk
-  - memavail wo moeglich rausgenommen
-
-  Revision 1.36  2000/07/21 13:23:46  mk
-  - Umstellung auf TStringList
-
-  Revision 1.35  2000/07/12 11:49:30  ml
-  - workaround fuer Ansistring
-
-  Revision 1.34  2000/07/10 14:41:59  hd
-  - Ansistring
-
-  Revision 1.33  2000/07/09 15:35:50  hd
-  - AnsiString-Update
-
-  Revision 1.32  2000/07/09 11:55:31  hd
-  - AnsiString
-
-  Revision 1.31  2000/07/09 08:35:16  mk
-  - AnsiStrings Updates
-
-  Revision 1.30  2000/07/06 08:58:45  hd
-  - AnsiString
-
-  Revision 1.29  2000/07/04 12:04:23  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.28  2000/06/24 14:10:28  mk
-  - 32 Bit Teile entfernt
-
-  Revision 1.27  2000/06/23 15:59:20  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.26  2000/06/12 15:07:49  hd
-  - DispStr angepasst
-
-  Revision 1.25  2000/06/05 16:16:22  mk
-  - 32 Bit MaxAvail-Probleme beseitigt
-
-  Revision 1.24  2000/06/04 09:25:42  jg
-  - Ungelesen-Brettmarkierung unterstuetzt jetzt "Sichern" unter C/O/B
-
-  Revision 1.23  2000/06/03 19:30:25  jg
-  - Ungelesen Anzeige fuer Bretter wird in XPOINT.CFG gespeichert
-
-  Revision 1.22  2000/06/03 08:39:55  jg
-  - Nachrichtenfenster "U" zeigt ungelesene Nachrichten
-
-  Revision 1.21  2000/05/30 17:19:31  jg
-  - Fixes fuers umschalten mit "A" zwischen Adressbuch und allen Usern
-
-  Revision 1.20  2000/05/14 07:22:52  jg
-  - User-Schnellsuche Cursorposition anhand Feldtauscheinstellung bestimmen
-  - Feldtausch-Config: Defaultauswahl mit F2
-
-  Revision 1.19  2000/05/06 17:29:22  mk
-  - DOS DPMI32 Portierung
-
-  Revision 1.18  2000/05/02 19:14:00  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.17  2000/04/28 18:23:11  jg
-  - Neue Prozedur XP4.SetBrettGelesen nomen est omen...
-  - Fix: Brett-Ungelesen Flag bei Alt+P im Email-Brett
-
-  Revision 1.16  2000/04/28 14:52:52  jg
-  - Einzeln konfigurierbare Farben fuer Prioritaeten 1,2,4 und 5
-    Bits 3-5 im Mbase-Eintrag "Flags" werden hierfuer benutzt !
-
-  Revision 1.15  2000/04/20 04:18:55  jg
-  - Lesemodus aendern jetzt auch im Nachrichtenfenster
-
-  Revision 1.14  2000/04/16 16:12:50  jg
-  - Userfenster Positionsmerker von String auf Longint umgewandelt
-    um Probleme mit Namen der Trennzeilen zu vermeiden
-
-  Revision 1.13  2000/04/16 13:26:42  jg
-  - Diverse kleine Schoenheitsmakel an Userfenster Trennzeilen beseitigt
-
-  Revision 1.12  2000/04/16 08:39:59  jg
-  - Usertrennzeilen nicht mehr Wegreorganisierbar
-  - CTRL+Y springt in Brett- und User- und Weiterleit-/Auswahl-Fenstern
-    zur naechsten Trennzeile.
-  - Ein par Sourcefiles in Files.txt beschrieben.
-
-  Revision 1.11  2000/04/15 21:22:46  jg
-  - Trennzeilen fuer Userfenster eingebaut (STRG+T im Spezialmenue)
-  - STRG+P im UserSpezialmenue (Position) verschiebt wie P im Brett-SpezialMenue
-    einen oder mehrere Markierte User in eine andere Adressbuchgruppe.
-
-  Revision 1.10  2000/04/13 20:18:03  jg
-  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
-  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
-  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
-
-  Revision 1.9  2000/04/13 12:48:36  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
 }
+end.
+

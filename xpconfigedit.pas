@@ -252,8 +252,8 @@ begin
     testmbretter:=false;
     end
   else begin
-    if RightStr(s,1)<>'/' then s:=s+'/';
-    if LeftStr(s,1)<>'/' then s:='/'+s;
+    if LastChar(s)<>'/' then s:=s+'/';
+    if FirstChar(s)<>'/' then s:='/'+s;
     testmbretter:=true;
     end;
 end;
@@ -418,13 +418,13 @@ procedure SetDomain(var s:string);
 begin
   if trim(s)<>'' then
     if DomainNt=nt_Fido then
-      while (LeftStr(s,1)='.') or (LeftStr(s,2)='@') do
-        delfirst(s)
+      while (FirstChar(s)='.') or (FirstChar(s)='@') do
+        DeleteFirstChar(s)
     else begin
-      if s[1]<>'.' then
+      if FirstChar(s)<>'.' then
          s:='.'+s;
       if (bDomainNt<>0) and (getfield(fieldpos+1)='') then
-        setfield(fieldpos+1,s);
+        setfield(fieldpos+1,s);                                                   
       end;
 end;
 
@@ -432,8 +432,8 @@ procedure SetDomain2(var s:string);
 begin
   if trim(s)<>'' then
     if DomainNt=nt_Fido then
-      while (LeftStr(s,1)='.') or (LeftStr(s,2)='@') do
-        delfirst(s)
+      while (FirstChar(s)='.') or (FirstChar(s)='@') do
+        DeleteFirstChar(s)
     else begin
       if s[1]<>'.' then
          s:='.'+s;
@@ -1422,9 +1422,9 @@ begin
   begin
     s := AddDirSepa(s);
     if Copy(fn, 1, 2) = '.\' then fn := Copy(fn, 3, Length(fn));
-    if fn[length(fn)] = '\' then fn := Copy(fn, 1, length(fn)-1);
+    if LastChar(fn) = '\' then DeleteLastChar(fn);
     ok := (cPos(':', fn) = 0) and (cPos('\', fn) = 0) and (cPos('.', fn) < 2)
-      and (Length(fn) > 0) and (fn[length(fn)] <> '.');
+      and (Length(fn) > 0) and (LastChar(fn) <> '.');
     if not ok then
     begin
       msgbox(62,6,_fehler_,x,y);
@@ -1615,6 +1615,10 @@ end;
 
 {
   $Log$
+  Revision 1.22  2001/09/08 16:29:38  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.21  2001/09/07 13:54:23  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0

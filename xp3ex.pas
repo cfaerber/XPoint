@@ -216,7 +216,7 @@ var size   : longint;
   begin
     if size>0 then begin
       if (dtyp>=1) then begin
-        if LeftStr(_brett,1)<>'U' then
+        if FirstChar(_brett)<>'U' then
           dbSeek(ubase,uiName,UpperCase(hdp.absender))
         else
           dbSeek(ubase,uiName,UpperCase(hdp.empfaenger));   { Nachricht in PM-Brett }
@@ -585,7 +585,7 @@ var size   : longint;
           q:=1;
           while s[q]<>'>' do inc(q);
           insert('>',s,q); inc(p);
-          if qchar[length(qchar)]=' ' then begin    { BLA>Fasel -> BLA> Fasel }
+          if LastChar(qchar)=' ' then begin    { BLA>Fasel -> BLA> Fasel }
             while (q<=length(s)) and (s[q]='>') do inc(q);
             if (q<=length(s)) and (s[q]<>' ') then begin
               insert(' ',s,q); inc(p);
@@ -671,7 +671,7 @@ var size   : longint;
             'B' : vs:=vs+', '+getres2(361,53);  { 'Mailbox' }
             'P' : vs:=vs+', '+getres2(361,54);  { 'City-Ruf' }
           end;
-          delfirst(tn);
+          DeleteFirstChar(tn);
           end;
         if lastchar(tn)='Q' then
           insert(' ',tn,length(tn));
@@ -748,7 +748,7 @@ begin
             'A'  : rps(s,'$AREA',mid(wempf,p+1));
             else   rps(s,'$AREA',getres2(361,48));       { 'private Mail' }
           end;
-          if wempf[1]='/' then delfirst(wempf);
+          if wempf[1]='/' then DeleteFirstChar(wempf);
           while cpos('/',wempf)>0 do wempf[cpos('/',wempf)]:='.';
           rps(s,'$NEWSGROUP',wempf);
           rpsuser(s,absender,realname);
@@ -768,7 +768,7 @@ begin
           rps(s,'$ERHALTEN',fdat(longdat(edat)));
           rps(s,'$MSGID',msgid);
           rpsdate(s);
-          if lastchar(s)=' ' then dellast(s);
+          if lastchar(s)=' ' then DeleteLastChar(s);
           end;
         wrslong(s);
         end;
@@ -1102,6 +1102,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.78  2001/09/08 16:29:33  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.77  2001/08/27 09:13:42  ma
   - changes in net type handling (1)
 

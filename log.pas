@@ -214,38 +214,20 @@ begin
   inherited Log(l, '['+FModulName + '] ' + s);
 end;
 
-end.
 {
-        $Log$
-        Revision 1.9  2001/09/07 23:24:53  ml
-        - Kylix compatibility stage II
+  $Log$
+  Revision 1.10  2001/09/08 16:29:29  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
 
-        Revision 1.8  2001/07/31 16:18:39  mk
-        - removed some unused variables
-        - changed some LongInt to DWord
-        - removed other hints and warnings
+  Revision 1.9  2001/09/07 23:24:53  ml
+  - Kylix compatibility stage II
 
-        Revision 1.7  2001/03/22 18:25:09  ma
-        - FmtDateTime: "mm" means "month", *not* "minute".
-
-        Revision 1.6  2000/11/19 18:00:37  ma
-        - newline removed, my fault.
-
-        Revision 1.5  2000/11/19 17:52:13  ma
-        - added newline declaration missing (Win32)
-
-        Revision 1.4  2000/11/19 16:56:47  hd
-        - Little Change
-        - TLogModul: Adds a modul name to the log string
-
-        Revision 1.3  2000/11/18 23:32:40  mk
-        - modified format-parameter  to  for Virtual Pascal compatibility
-
-        Revision 1.2  2000/11/18 18:38:21  hd
-        - Grundstruktur des Loggings eingebaut
-
-        Revision 1.1  2000/11/18 17:55:43  hd
-        - Neue Klasse: TLog
-          - Soll das Logging uebernehmen
+  Revision 1.8  2001/07/31 16:18:39  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
 
 }
+end.
+

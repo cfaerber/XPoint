@@ -49,11 +49,12 @@ begin
     + EncodeTime(StrToIntDef(copy(s,9,2),0), StrToIntDef(copy(s,11,2),0), StrToIntDef(copy(s,13,2),0), 0);
 end;
 
-
-
-end.
 {
   $Log$
+  Revision 1.5  2001/09/08 16:29:30  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.4  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 
@@ -82,3 +83,5 @@ end.
   - POP3 bis auf das holen der Nachricht fertig
 
 }
+end.
+

@@ -311,15 +311,15 @@ end; { initdirs }
 procedure initdirs;
 begin
   OwnPath:=progpath;
-  if ownpath=''            then getdir(0,ownpath);
-  if RightStr(ownpath,1)<>'\' then ownpath:=ownpath+'\';
+  if ownpath='' then getdir(0,ownpath);
+  OwnPath := IncludeTrailingPathDelimiter(OwnPath);
   if cpos(':',ownpath)=0   then
   begin
-    if LeftStr(ownpath,1)<>'\' then
+    if FirstChar(ownpath)<>'\' then
       ownpath:='\'+ownpath;
     ownpath:=LeftStr(GetCurrentDir, 2) +ownpath;
   end;
-  OwnPath := UpperCase(ownpath);
+  OwnPath := FileUpperCase(ownpath);
   LibDir  := progpath;
   HomeDir := LibDir;
   DocDir  := LibDir;
@@ -1088,6 +1088,10 @@ end;
 
 {
   $Log$
+  Revision 1.121  2001/09/08 16:29:32  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.120  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 

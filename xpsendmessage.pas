@@ -835,8 +835,9 @@ var f,f2     : file;
     closemask;
     attrtxt(col.coldiahigh);
     mwrt(x+13,y+2,' '+forms(adresse,53)+'   ');
-    if (adresse<>'') and (cc_testempf(adresse)) then begin
-      if (adresse[1]='[') and (adresse[length(adresse)]=']')
+    if (adresse<>'') and (cc_testempf(adresse)) then 
+    begin
+      if (FirstChar(adresse)='[') and (LastChar(adresse)=']')
         then adresse:=vert_char+adresse+'@V'                 { Verteiler: Namen anpassen }
       else if not kb_s then
       begin
@@ -874,13 +875,13 @@ var f,f2     : file;
     wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
     wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
     wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
-    showcode; { 05.02.2000 MH: 38 > 42 } { unbedenklich }
+    showcode; 
     attrtxt(col.coldialog);
     wrt(x+43,y+8,mid(getres2(611,16),2));    { 'opien:' }
-    showcc; { 05.02.2000 MH: x+39 -> x+43 } { unbedenklich }
+    showcc; 
     attrtxt(col.coldiahigh);
-    kopkey:=LeftStr(getres2(611,16),1);
-    wrt(x+42,y+8,kopkey);  { 05.02.2000 MH: 38 > 42 } { 'K' } { unbedenklich }
+    kopkey:=FirstChar(getres2(611,16));
+    wrt(x+42,y+8,kopkey); 
     if empfaenger[1]=vert_char then
       wrt(x+14,y+2-fadd,vert_name(copy(empfaenger,edis,52)))
     else
@@ -957,7 +958,7 @@ begin      //-------- of DoSend ---------
     OrigBox:='';
   end;
 
-  if not pm and betreffbox and (LeftStr(empfaenger,1)<>'A') then
+  if not pm and betreffbox and (FirstChar(empfaenger)<>'A') then
   begin
     rfehler(606);   { 'Schreiben in dieses Brett nicht moeglich!' }
     SendEmpfList.Clear; { clear list of CC recipients }
@@ -2329,15 +2330,26 @@ initialization
   SendEmpfList := TStringList.Create;
 finalization
   SendEmpfList.Free;
-end.
 
 {
   $Log$
+  Revision 1.8  2001/09/08 16:29:40  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.7  2001/09/08 14:42:09  cl
   - added Multipart-MIME support
   - added PGP/MIME support
   - adaptions/fixes for MIME support
   - adaptions/fixes for PGP/MIME support
+
+  Revision 1.6  2001/09/07 13:54:25  mk
+  - added SaveDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
+  Revision 1.5  2001/09/07 09:17:56  mk
+  - added AddNewBrett procedure
 
   Revision 1.4  2001/08/29 19:50:47  ma
   - changes in net type handling (2)
@@ -2409,3 +2421,5 @@ end.
   - changed program id:
     "OpenXP/32 vVERSION (PLATFORM)"
 }
+end.
+

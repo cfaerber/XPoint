@@ -334,9 +334,12 @@ end;
 {$ENDIF }
 {$endif}
 
-end.
 {
   $Log$
+  Revision 1.35  2001/09/08 16:29:27  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.34  2001/09/07 23:24:53  ml
   - Kylix compatibility stage II
 
@@ -438,3 +441,5 @@ end.
   MK: * ein paar Loginfos hinzugefuegt
 
 }
+end.
+

@@ -163,7 +163,7 @@ begin
 {$IFNDEF UnixFS }
        ((length(s)=2) and (s[2]=':')) or
 {$ENDIF }
-       (RightStr(s,1)=DirSepa) then
+       (LastChar(s)=DirSepa) then
       s:=s+WildCard
     else if IsPath(s) then
       s:=s+DirSepa+WildCard;
@@ -732,7 +732,7 @@ end;
 
 procedure SeekLeftBox(var d:DB; var box:string);
 begin
-  if ((length(box)<=2) and (LeftStr(box,1)=LeftStr(DefFidoBox,1))) then
+  if ((length(box)<=2) and (FirstChar(box)=FirstChar(DefFidoBox))) then
     box:=DefFidoBox;
   dbSeek(d,boiName,UpperCase(box));
   if not dbFound and (box<>'') and not dbEOF(d) and
@@ -785,7 +785,7 @@ var tele,tnr : string;
     errmsg   : boolean;
 begin
   errmsg:=(firstchar(s)<>'ù');
-  if not errmsg then delfirst(s);
+  if not errmsg then DeleteFirstChar(s);
   repeat
     p:=pos('+49-0',s);
     if p>0 then delete(s,p+4,1);   { 0 aus +49-0 wegschneiden }
@@ -802,7 +802,7 @@ begin
       endc:=['0'..'9'];
       if cPos('V',tnr)>0 then include(endc,'Q');
       while firstchar(tnr) in ['V','F','B','P'] do
-        delfirst(tnr);
+        DeleteFirstChar(tnr);
       if (firstchar(tnr)<>'+') or not (lastchar(tnr) in endc) then
         ok:=false;
       if cPos('+',mid(tnr,2))>0 then
@@ -1026,6 +1026,10 @@ end;
 
 {
   $Log$
+  Revision 1.96  2001/09/08 16:29:31  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.95  2001/09/07 23:24:54  ml
   - Kylix compatibility stage II
 

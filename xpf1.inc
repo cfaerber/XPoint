@@ -60,7 +60,7 @@ var s  : string;
         telefon:=getstr;
         baud:=minmax(ival(getstr),110,65535);
         fflags:=s;
-        dellast(fflags);    { Komma entfernen }
+        DeleteLastChar(fflags);    { Komma entfernen }
         repeat
           x:=getstr;
           if x='V32B' then flags:=flags or nfV32b else
@@ -901,6 +901,10 @@ NewStart:                  { nach Break im AltN-Screen hier einspringen }
 
 {
   $Log$
+  Revision 1.37  2001/09/08 16:29:39  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.36  2001/08/28 08:16:03  mk
   - added some const parameters
 

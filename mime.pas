@@ -789,7 +789,7 @@ var p, b: Integer;
 begin
     result := TrimRight(s);
     softbrk := (lastchar(result) = '=');     { quoted-printable: soft line break }
-    if softbrk then dellast(result);
+    if softbrk then DeleteLastChar(result);
 
     if rfc2047 then                     { RFC 2047: decode '_' to ' ' }
       for p:=1 to length(result) do
@@ -1276,6 +1276,10 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2001/09/08 16:29:30  mk
+// - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+// - some AnsiString fixes
+//
 // Revision 1.1  2001/09/08 15:03:18  cl
 // - Moved MIME functions/types/consts to mime.pas
 //

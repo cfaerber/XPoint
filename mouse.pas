@@ -294,9 +294,12 @@ begin
   ExitProc:= @ExitMouseUnit;
 end;
 
-end.
 {
   $Log$
+  Revision 1.24  2001/09/08 16:29:30  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.23  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
@@ -304,65 +307,6 @@ end.
   Revision 1.22  2000/12/27 19:49:17  mk
   - disabled mousesupport completly
 
-  Revision 1.21  2000/11/19 18:22:52  hd
-  - Replaced initlization by InitxxxUnit to get control over init processes
-
-  Revision 1.20  2000/10/25 17:32:12  fe
-  Abhaengigkeitsprobleme (hoffentlich) beseitigt.
-
-  Revision 1.19  2000/10/24 17:37:24  fe
-  Zirkulaere Abhaengigkeiten beseitigt.
-
-  Revision 1.18  2000/08/03 21:27:08  mk
-  - Variablengroessen angepasst (xp_maus_an)
-
-  Revision 1.17  2000/07/09 09:09:54  mk
-  - Newexit in Initialization/Finalization umgewandelt
-
-  Revision 1.16  2000/06/29 13:00:49  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.15  2000/06/23 15:59:13  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.14  2000/06/22 19:53:27  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.13  2000/06/01 16:03:04  mk
-  - Verschiedene Aufraeumarbeiten
-
-  Revision 1.12  2000/05/17 15:22:11  ml
-  MausInterupt-Emulation funktioniert jetzt in W32
-
-  Revision 1.11  2000/05/17 15:06:59  ml
-  MausInterupt-Emulation in 32Bit (Virtual Pascal)
-
-  Revision 1.10  2000/04/24 14:35:09  mk
-  - Mausroutinen aufgeraeumt und teils portiert
-
-  Revision 1.9  2000/04/15 18:19:49  mk
-  - Getmaus sicherer gemacht (2)
-
-  Revision 1.8  2000/04/15 18:07:50  mk
-  - Getmaus sicherer gemacht
-
-  Revision 1.7  2000/04/06 20:55:52  rb
-  Bugfixes; ich wills schliesslich keinen Murks hinterlassen
-
-  Revision 1.6  2000/03/14 15:15:36  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.5  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
 }
+end.
+

@@ -187,7 +187,7 @@ var t      : text;
 
   procedure AddLabel;
   begin
-    dellast(s0);
+    DeleteLastChar(s0);
     LoString(s0);
     if SeekLabel<>0 then
       serror(2,s0)                 { 'Sprungmarke "%s" existiert bereits' }
@@ -661,10 +661,13 @@ begin     { of RunScript }
   ReleaseScript;
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.6  2001/09/08 16:29:45  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.5  2001/08/03 11:44:10  cl
   - changed TCommObj = object to TCommStream = class(TStream)
 
@@ -679,3 +682,5 @@ end.
   - renamed IPC to Progr.Output
 
 }
+end.
+

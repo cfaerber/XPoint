@@ -88,9 +88,12 @@ procedure encode_UU(var bytestream:tbytestream;len:word;
     encoded:=char(len+32)+encoded;
   end;
 
-end.
 {
   $Log$
+  Revision 1.7  2001/09/08 16:29:28  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.6  2001/05/27 14:23:34  ma
   - cleaned up a bit
 
@@ -105,3 +108,5 @@ end.
   MK: * ein paar Loginfos hinzugefuegt
 
 }
+end.
+

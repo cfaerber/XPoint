@@ -126,7 +126,7 @@ begin
           case firstchar(s) of
             ':' : info^[infos].text:=mid(s,2);
             'F' : begin
-                    delfirst(s);
+                    DeleteFirstChar(s);
                     while s<>'' do begin
                       case firstchar(s) of
                         'C' : info^[infos].crcflag:=(s[2]='+');

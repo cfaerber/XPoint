@@ -120,8 +120,9 @@ begin
     path:=PGPBAT
   else begin
     path:=getenv('PGPPATH');
-    if path<>'' then begin
-      if lastchar(path)='\' then dellast(path);
+    if path<>'' then 
+    begin
+      TrimLastChar(path, '\');
       path:=filesearch(PGPEXE,path);
     end;
     if path='' then
@@ -158,7 +159,7 @@ begin
   {$endif}
   path:=getenv('PGPPATH');
   if path<>'' then begin
-    if lastchar(path)='\' then dellast(path);
+    TrimLastChar(path, '\');
     path:=filesearch(exe,path);
   end;
   if path='' then
@@ -201,7 +202,7 @@ begin
   else begin
     path:=getenv('PGPPATH');
     if path<>'' then begin
-      if lastchar(path)='\' then dellast(path);
+      TrimLastChar(path, '\');
       path:=filesearch(PGPEXE,path);
     end;
     if path='' then
@@ -1087,6 +1088,10 @@ end;
 
 {
   $Log$
+  Revision 1.46  2001/09/08 16:29:37  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.45  2001/09/08 14:33:51  cl
   - added PGP/MIME support
   - adaptions/fixes for MIME support

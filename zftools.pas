@@ -1285,9 +1285,9 @@ label abbr;
     if p>10 then begin
       s:=trim(mid(s,p+1));
       while (s<>'') and ((s[1]<'0') or (s[1]>'9')) do
-        delfirst(s);
+        DeleteFirstChar(s);
       while (s<>'') and ((LastChar(s)<'0') or (LastChar(s)>'9')) do
-        DelLast(s);
+        DeleteLastChar(s);
       splitfido(s,origin);
       end;
   end;
@@ -1306,7 +1306,7 @@ label abbr;
       delete(s,1,p);
       p:=cpos(' ',s);
       if p>0 then s:=LeftStr(s,p-1);
-      if s[length(s)]=',' then dellast(s);
+      if LastChar(s)=',' then DeleteLastChar(s);
       p:=pos('@fidonet',LowerCase(s));
       if p>0 then s:=LeftStr(s,p-1);
       getvia:=s;
@@ -1362,7 +1362,7 @@ label abbr;
     p:=cPos('<',s);
     if p>0 then begin
       s:=mid(s,p+1);      { User Name <...> -> Realname und <> wegschneiden }
-      dellast(s);
+      DeleteLastChar(s);
       end;
     p:=pos(' (',s);
     if p>0 then truncstr(s,p-1);    { (Realname) wegschneiden }
@@ -1490,7 +1490,7 @@ begin
                 end
               else else
             if tt.kenn=kChrs then
-              if LeftStr(s,1)=':' then
+              if FirstChar(s)=':' then
                 hd.x_charset:=FidoCharsetToMime(trim(mid(s,2)))
               else else
             if tt.kenn=kXPCt then
@@ -1588,7 +1588,7 @@ begin
           end;
         end;
       hd.pfad:=trim(hd.pfad);
-      if lastchar(hd.pfad)='!' then dellast(hd.pfad);
+      if lastchar(hd.pfad)='!' then DeleteLastChar(hd.pfad);
       adr:=madr;
 
       with origin do
@@ -1803,6 +1803,10 @@ end;
 end.
 {
         $Log$
+        Revision 1.24  2001/09/08 16:29:42  mk
+        - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+        - some AnsiString fixes
+
         Revision 1.23  2001/09/08 14:53:19  cl
         - adaptions/fixes for MIME support
 

@@ -763,7 +763,7 @@ procedure Maddbool(x,y:integer; text:string; var b:boolean);
 begin
   if amaskp^.stat.checkbutts then begin
     text:=trimright(text);
-    if RightStr(text,1)='?' then dellast(text);
+    TrimLastChar(text, '?');
     end;
   setall(text,x,y,not amaskp^.stat.checkbutts);
   with lastfld^ do begin
@@ -1287,10 +1287,13 @@ begin
     system.fillchar(uda,sizeof(uda),0);
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.31  2001/09/08 16:29:29  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.30  2001/09/08 14:15:50  cl
   - fix for procedure MDisabledNodisplay;
 
@@ -1378,3 +1381,5 @@ end.
   - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
 
 }
+end.
+

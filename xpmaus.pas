@@ -119,28 +119,28 @@ begin
   n:=0;
   anew:='';
   while not eof(t) do begin
-    if LeftStr(anew,1)='#' then begin
+    if FirstChar(anew)='#' then begin
       s:=anew; anew:='';
       end
     else begin
       repeat
         readln(t,s);
-        if fehlerflag and (LeftStr(s,1)='?') then
+        if fehlerflag and (FirstChar(s)='?') then
           writeln(t2,'Fehler   : ',mid(s,2));
-      until eof(t) or (LeftStr(s,1)<>'?');
+      until eof(t) or (FirstChar(s)<>'?');
       if fehlerflag then begin
         writeln(t2);
         fehlerflag:=false;
         end;
       s:=trim(s);
       end;
-    if (LeftStr(s,1)='#') and ((art=1) or (length(s)=11)) and not eof(t)
+    if (FirstChar(s)='#') and ((art=1) or (length(s)=11)) and not eof(t)
     then begin
       anew:='!';
-      while not eof(t) and (LeftStr(anew,1)='!') do   { Kommentare ueberlesen }
+      while not eof(t) and (FirstChar(anew)='!') do   { Kommentare ueberlesen }
         readln(t,anew);
       anew:=trim(anew);   { dies ist entweder eine ID oder ein Status }
-      if ((art<>2) and (LeftStr(anew,1)='=')) or ((art=2) and (LeftStr(anew,1)='?'))
+      if ((art<>2) and (FirstChar(anew)='=')) or ((art=2) and (FirstChar(anew)='?'))
       then begin
         delete(s,1,1);
         delete(anew,1,1);
@@ -751,7 +751,7 @@ var   info   : ^ia;
     reset(t);
     while not eof(t) do begin
       readln(t,s);
-      if LeftStr(s,1)='$' then begin
+      if FirstChar(s)='$' then begin
         p1:=cpos('=',s);
         p2:=cpos(' ',s);
         if (p1>4) and (p2>p1+1) then begin   { CRC vorhanden }
@@ -819,6 +819,10 @@ end;
 
 {
   $Log$
+  Revision 1.33  2001/09/08 16:29:40  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.32  2001/09/08 14:38:29  cl
   - adaptions/fixes for MIME support
 

@@ -65,7 +65,7 @@ end;
 function echoname(s:string):string;
 begin
   s:=trim(s);
-  while (s<>'') and (s[1]<'0') do delfirst(s);
+  while FirstChar(s)<'0' do DeleteFirstChar(s);
   if blankpos(s)>0 then truncstr(s,blankpos(s)-1);
   echoname:=s;
 end;
@@ -160,8 +160,10 @@ begin
     dbSeek(bbase,biIntnr,mid(_brett,2));
     if dbFound and (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))=nt_Fido) then begin
       echo:= dbReadNStr(bbase,bb_brettname);
-      if (echo<>'') and (echo[1]='A') then delfirst(echo)
-      else echo:='';
+      if FirstChar(echo) ='A' then 
+        DeleteFirstChar(echo)
+      else 
+        echo:='';
       end;
     end
   else if (aktdispmode=-1) or (aktdispmode=0) then
@@ -179,7 +181,7 @@ begin
         if (ntBoxNetztyp(dbReadStrN(bbase,bb_pollbox))<>nt_Fido) or (FirstChar(echo)<>'A') then 
           echo:=''
         else 
-          delfirst(echo);
+          DeleteFirstChar(echo);
       end;
     end;
   if brk then begin
@@ -219,7 +221,7 @@ begin
         for i:=0 to bmarkanz-1 do begin
           dbGo(bbase,bmarked^[i]);
           echo:= dbReadNStr(bbase,bb_brettname);
-          delfirst(echo);
+          DeleteFirstChar(echo);
           if (UpperCase(dbReadStrN(bbase,bb_pollbox))=box) and
              (LeftStr(UpperCase(echo),length(boxpar^.magicbrett))=UpperCase(boxpar^.magicbrett))
              and (pos('/files/',LowerCase(echo))>0)
@@ -345,6 +347,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.19  2001/09/08 16:29:36  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
   Revision 1.18  2001/09/08 14:32:15  cl
   - adaptions/fixes for MIME support
 
