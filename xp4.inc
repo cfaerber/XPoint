@@ -441,7 +441,7 @@ begin
      36 : case m1 of           { Export }
             1 : ExportUB(true);
             2 : ExportUB(false);
-            3 : MsgAll(7,aktdispmode,rdmode);
+            3 : MsgAll(8,aktdispmode,rdmode);
             4 : ScreenShot;
           end;
 
@@ -782,6 +782,10 @@ end;
 
 {
   $Log$
+  Revision 1.14.2.12  2002/06/03 16:43:30  my
+  MY:- Fix: Die MenÅfunktion XPoint/Export/Brettinhalt rief stattdessen
+       Nachricht/Alle/Entfernen auf. :-(
+
   Revision 1.14.2.11  2002/04/21 13:54:34  my
   MY:- Neuer MenÅpunkt ?/S/MIME-Multipart-AnhÑnge
 
