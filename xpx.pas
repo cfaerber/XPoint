@@ -62,7 +62,11 @@ end;
 procedure logo;
 var t : text;
 begin
+{$IFDEF NCRT }
+  AssignCrt(t);
+{$ELSE }
   assign(t,'');
+{$ENDIF }
   rewrite(t);
   writeln(t);
   write(t,xp_xp);
@@ -287,6 +291,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.14  2000/05/06 15:53:51  hd
+  - AssignCRT statt Assign in logo
+
   Revision 1.13  2000/05/03 20:38:21  hd
   Unix-Anpassung
 
