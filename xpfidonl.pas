@@ -251,7 +251,7 @@ var
     begin
       if FileDateToDateTime(FileAge(NodeListCfg))> now then
       begin
-        fh := FileOpen(NodeListCfg, fmOpenReadWrite {$IFDEF WIn32 } OR fmShareExclusive {$ENDIF });
+        fh := FileOpen(NodeListCfg, fmOpenReadWrite);
         FileSetDate(fh, DateTimeToFileDate(now));
         FileClose(fh);
       end;
@@ -741,6 +741,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/11/18 21:41:26  mk
+  - compile fix
+
   Revision 1.24  2000/11/18 16:55:36  hd
   - Unit DOS entfernt
 
