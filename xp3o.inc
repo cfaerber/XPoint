@@ -880,7 +880,7 @@ begin
               if (empfanz>1) or (attrib and AttrControl<>0) then
                 aufnehmen:=false
               else if aufnehmen then begin          { neues Brett anlegen }
-                mwrt(1,wherey,forms(copy(empfaenger,2,27),27));
+                mwrt(2+x,wherey+y,forms(copy(empfaenger,2,27),27));
                 if left(empfaenger,1)<>'A' then grnr:=IntGruppe
                 else begin
                   seekbr:=empfaenger;
@@ -1237,6 +1237,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.17  2001/12/26 19:02:10  mk
+  - Darstellungsfehler wegen neuer MWrt-Routine beseitigt
+
   Revision 1.21.2.16  2001/12/20 15:22:13  my
   MY+MK:- Umstellung "RFC/Client" auf neue Netztypnummer 41 und in der
           Folge umfangreiche Code-Anpassungen. Alte RFC/Client-Boxen
