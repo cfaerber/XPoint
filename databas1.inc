@@ -21,26 +21,24 @@ end;
 
 { Cache-Seiten allokieren }
 
-procedure dbSetindexcache(pages:word; _ems:boolean);
+(* Routine wird von Peter nicht benutzt }
+procedure dbSetindexcache(pages:word);
 begin
   if pages>maxcache then error('Zu viele Cache-Seiten');
   cacheanz:=pages;
-{$IFDEF BP } { MK 12/99 }
   if _ems and emstest and (emsavail>=4) then begin
     EmsAlloc(4,dbEMShandle);
     cache:=ptr(emsbase,0);
     setemscache;
     end
   else
-{$ENDIF}
   begin
     getmem(cache,pages*sizeof(cachepage));
-{$IFDEF BP }
     dbEMShandle:=0;
-{$ENDIF }
     end;
   fillchar(cache^,pages*sizeof(cachepage),0);
 end;
+*)
 
 procedure dbReleasecache;
 begin
@@ -182,8 +180,12 @@ begin
       getmem(rbuf,irsize);
       filepos:=offs;
       cache_read(db_p,irsize,offs,rbuf^);
+{$IFDEF BP }
+      { Hier muá noch was getan werden, denn so klappt das unter
+        32 Bit einfach nicht... }
       if wp^>nk then
         error('fehlerhafte Indexseite in '+fname+dbIxExt);
+{$ENDIF }
       expand_node(rbuf,np);
       freemem(rbuf,irsize);
       end;
@@ -264,6 +266,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/03/06 08:51:03  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.5  2000/02/19 11:40:06  mk
   Code aufgeraeumt und z.T. portiert
 

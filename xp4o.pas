@@ -178,7 +178,7 @@ var x,y   : byte;
     seek              : string[suchlen];    
     found             : boolean;   
  
-label ende,happyend;
+label ende;
 
 
 { Check_Seekmode:
@@ -197,7 +197,7 @@ label ende,happyend;
   quotes  : boolean;
                                        
 {$IFDEF DebugSuche}                   { Zum Debuggen der Suchstringerkennung} 
-  Procedure Show_Seekstrings;        
+  Procedure Show_Seekstrings;
   var n,x,y:byte;
    begin
     if spez then x:=23 else x:=19;
@@ -2417,6 +2417,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.21  2000/03/04 18:34:18  jg
   - Externe Viewer: zum Ansehen von Fileattaches wird keine Temp-Kopie
     mehr erstellt, und nicht mehr gewartet, da kein Loeschen noetig ist

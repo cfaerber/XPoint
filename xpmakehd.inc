@@ -162,19 +162,22 @@ var i,res : integer;
   {$endif}
 
   procedure GetKop;
-    procedure AddKop(var node:empfnodep);
-    begin
-      if Assigned(node) then begin
-        new(node);
-        LRead(node^.empf,AdrLen);
-        node^.next:=nil;
-        end
-      else
-        AddKop(node^.next);
-    end;
+  var
+    Node: EmpfNodeP;
   begin
     if ReadKoplist then
-      AddKop(hd.kopien);
+    begin
+      { Wir mÅssen einen neuen EmpfÑnger anlegen }
+      New(Node);
+
+      if Assigned(Hd.Kopien) then
+        Hd.Kopien^.Next := Node
+      else { Wir sind der erste Knoten }
+        HD.Kopien := Node;
+
+      Node^.Next := nil;
+      LRead(Node^.Empf,AdrLen);
+    end;
   end;
 
   procedure GetTyp(var typ,charset:string);

@@ -16,6 +16,8 @@ unit datadef;
 
 interface
 
+uses xpglobal;
+
 const   dbEMShandle   : word = 0;
         dbInterrProc  : pointer = nil;
 
@@ -51,23 +53,23 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
         dbFeldStr   = string[dbFeldNameLen];
         dbFileName  = string[80];
 
-        dbFeldTyp   = record                    { Felder s.u. (dbfeld)      }
+        dbFeldTyp   = packed record             { Felder s.u. (dbfeld)      }
                         fname     : dbFeldStr;  { Name aus A..Z,_           }
                         ftyp      : byte;       { 1..6                      }
-                        fsize     : word;       { phys. Feldgr”áe bei 1,2,5 }
+                        fsize     : smallword;  { phys. Feldgr”áe bei 1,2,5 }
                         fnlen,fnk : byte;       { nur bei Typ 2,3           }
-                        fofs      : word;       { intern: Offset im record  }
+                        fofs      : smallword;  { intern: Offset im record  }
                         indexed   : boolean;    { intern: indiziertes Feld  }
                       end;
 
-        dbFeldListe = record
-                        felder : word;
+        dbFeldListe = packed record
+                        felder : smallword;
                         feld   : array[0..1000] of dbFeldTyp;  { 0=INT_NR }
                       end;
         dbFLP       = ^dbFeldListe;
 
         dbIndexFunc = function(dpb:DB):string;
-        dbIndexCRec = record
+        dbIndexCRec = packed record
                         command  : byte;        { ->  }
                         indexnr  : byte;        { <-> }
                         df       : dbFileName;  { ->  }
@@ -85,6 +87,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.4  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.3  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

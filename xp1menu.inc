@@ -177,7 +177,7 @@ begin
   n:=0;
   LoString(mnu);
   while lstr(left(menu[n]^,length(mnu)))<>mnu do inc(n);
-  p:=pos(','+lstr(hex(n,2)+hex(nr,1)),lstr(menu[n]^))+1;
+  p:=pos(','+lstr(typeform.hex(n,2)+typeform.hex(nr,1)),lstr(menu[n]^))+1;
 end;
 
 
@@ -568,6 +568,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.5  2000/02/21 22:48:01  mk
   MK: * Code weiter gesaeubert
 

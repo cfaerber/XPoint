@@ -100,7 +100,7 @@ var   nt,n,mnt,
     IsFeierdattag:=(i<=feieranz);
   end;
 
-  procedure disp_kal(termin:boolean);
+  procedure disp_kal;
   var i,j, le: integer;
       fd : fdate;
   begin
@@ -236,7 +236,7 @@ begin
         else n:=28;
         if ((jj and 3=0) and (jj<=1582)) and (mm=2) then n:=29; {Ergänzung durch MW 01/2000}
       mnt:=nt;
-      disp_kal(false);                 { Kalender anzeigen }
+      disp_kal;                         { Kalender anzeigen }
       lm:=mm; lj:=jj;
       end;
 
@@ -287,6 +287,8 @@ begin
 end;
 
 
+{$IFDEF BP }
+
 function xpspace(dir:dirstr):longint;
 var sr  : searchrec;
     sum : longint;
@@ -308,16 +310,13 @@ end;
 function dfree:longint;
 begin
   mon;
-{$IFNDEF ver32}
   dfree:=dos.diskfree(0);
-{$ENDIF}
   moff;
 end;
 
 procedure writever(os2,win,lnx:boolean; x,y:byte);
 begin
   gotoxy(x,y);
-{$IFDEF BP }
   if os2 then write(lo(dosversion)div 10:2,'.',hi(dosversion))
   else if lnx then write(DOSEmuVersion)
   else begin
@@ -327,9 +326,7 @@ begin
       write(hi(winversion):2,'.',formi(lo(winversion),2));
       end;
     end;
-{$ENDIF }
 end;
-
 
 {$IFDEF DPMI}
 
@@ -337,9 +334,7 @@ procedure memstat;
 const rnr = 500;
 var
     x,y  : byte;
-{$IFDEF BP }
     ems  : longint;
-{$ENDIF }
     os2  : boolean;
     win  : boolean;
     lnx  : boolean;
@@ -364,18 +359,15 @@ begin
 {  gotoxy(x+19,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB'); - XP-Speicher }
   gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
   gotoxy(x+32,y+4);
-{$IFNDEF Ver32 }
-  if dos.disksize(0)>0 then write(dos.disksize(0) / $100000:6:1,' MB')
+  if dos.disksize(0)>0 then
+    write((dos.disksize(0) / $100000):6:1,' MB')
   else write(getres2(rnr,11));    { 'ber 2 GB' }
-{$ENDIF }
   gotoxy(x+32,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
                           xpspace(XferDir)) / $100000:6:1,' MB');
   gotoxy(x+32,y+6);
-{$IFDEF BP }
   free:=dfree;
   if free>=0 then write((free / $100000):6:1,' MB')
   else write(getres2(rnr,11));    { 'ber 2 GB' }
-{$ENDIF }
   WriteVer(os2,win,lnx,x+22,y+8);
   wrt(x+30,y+iif(win,9,8),right('     '+getres2(rnr,10),7)+'...');
   mon;
@@ -393,7 +385,6 @@ type so = record
           end;
 var regs : registers;
     x,y  : byte;
-
     ems  : longint;
     os2  : boolean;
     win  : boolean;
@@ -411,22 +402,17 @@ begin
   wrt(x+4,y+6,getres2(rnr,4));   { frei }
   wrt(x+4,y+7,getres2(rnr,6));   { verfgbar }
   os2:=lo(dosversion)>=10;
-{$IFDEF BP }
   lnx:=DOSEmuVersion <> '';
-{$ENDIF }
   wrt(x+4,y+9,iifs(os2,'OS/2',iifs(lnx,'Dosemu','DOS'))+getres2(rnr,7));   { -Version }
   if win then
     wrt(x+4,y+10,'Windows'+getres2(rnr,7));
   attrtxt(col.colmbox);
   intr($12,regs);
   gotoxy(x+19,y+4); write(regs.ax:4,' KB');
-{$IFNDEF ver32}
   gotoxy(x+19,y+5); write((so(heapptr).s-prefixseg) div 64:4,' KB');
   gotoxy(x+19,y+6); write(memavail div 1024:4,' KB');
   gotoxy(x+19,y+7); write(regs.ax - prefixseg div 64 - 42:4,' KB');
-{$ENDIF}
   { (ovrheaporg+3) div 64:4, ' KB'); }
-{$IFDEF BP }
   if emstest then
   begin
     gotoxy(x+31,y+4);
@@ -445,12 +431,9 @@ begin
     gotoxy(x+44,y+5); write(0:5,' KB');
     gotoxy(x+44,y+6); write(xmsavail:5,' KB');
     end;
-{$ENDIF }
   gotoxy(x+57,y+4);
-{$IFNDEF ver32}
   if dos.disksize(0)>0 then write(dos.disksize(0) / $100000:6:1,' MB')
   else write(getres2(rnr,11));    { 'ber 2 GB' }
-{$ENDIF }
   gotoxy(x+57,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
                           xpspace(XferDir)) / $100000:6:1,' MB');
   free:=dfree;
@@ -465,6 +448,43 @@ begin
   closebox;
 end;
 
+{$ENDIF DPMI }
+
+{$ELSE BP }
+
+procedure memstat;
+const rnr = 500;
+var
+    x,y  : byte;
+begin
+  { Das hier ist nur provisorisch. Hier muá noch das ganze angepasst
+    werden }
+  msgbox(45,11, getres2(rnr,1),x,y);
+  attrtxt(col.colmboxhigh);
+  moff;
+  wrt(x+21,y+2,'RAM         '+right('     '+getres2(rnr,8)+' '+left(ownpath,2),8));
+  wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
+  wrt(x+4,y+5,xp_xp);             { CrossPoint }
+  wrt(x+4,y+6,getres2(rnr,4));    { frei }
+{$IFDEF Win32 }
+  wrt(x+4,y+8,'Win/32' + getres2(rnr,7));
+{$ENDIF }
+{$IFDEF Dos32 }
+  wrt(x+4,y+8,'Dos/32' + getres2(rnr,7));
+{$ENDIF }
+  attrtxt(col.colmbox);
+  gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
+  gotoxy(x+32,y+4);
+  if dos.disksize(0)>0 then
+    write((dos.disksize(0)):6,' MB');
+  gotoxy(x+32,y+6);
+  wrt(x+30,y+9,right('     '+getres2(rnr,10),7)+'...');
+  mon;
+  freeres;
+  wait(curon);
+  closebox;
+end;
+
 {$ENDIF}
 
 
@@ -472,7 +492,6 @@ end;
 
 procedure fragstat;
 var x,y         : byte;
-    brk         : boolean;
     i           : integer;
     fsize,anz,
     gsize,n,sum : longint;
@@ -508,7 +527,9 @@ const maxstars = 40;
       scactive : boolean = false;
 
 var c       : char;
+{$IFDEF BP }
     kstat   : word;
+{$ENDIF }
     mattr   : byte;
     p       : pointer;
     star    : array[1..maxstars] of record
@@ -534,15 +555,17 @@ var c       : char;
 
   function endss:boolean;
   begin
-{$IFNDEF ver32}
-    if ((keypressed or (kstat<memw[$40:$17])) and (et or not ss_passwort or scpassword))
+    if ((keypressed
+{$IFDEF BP }
+    or (kstat<memw[$40:$17])
+{$ENDIF }
+    ) and (et or not ss_passwort or scpassword))
        or (time>=endtime) then begin
       endflag:=true;
       endss:=true;
       end
     else
       endss:=false;
-{$ENDIF}
   end;
 
   procedure sdelay(n:word);
@@ -1010,6 +1033,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.10  2000/03/04 15:54:43  mk
   Funktion zur DOSEmu-Erkennung gefixt
 

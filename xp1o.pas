@@ -875,8 +875,7 @@ end;
 { Bei Windows-Programmen wird direkt Åber START gestartet.  }
 { Bei OS/2-Programmen wird OS2RUN.CMD erzeugt/gestartet.    }
 
-{$IFNDEF Delphi5}
-function XPWinShell(prog:string; parfn:pathstr; space:word; 
+function XPWinShell(prog:string; parfn:pathstr; space:word;
                     cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
 var w1,w2: word;
@@ -933,7 +932,7 @@ var w1,w2: word;
         if winnt then
           prog:='cmd /c start cmd /c '+batfile
           else prog:='start command /c '+batfile
-        end; 
+        end;
       PrepareExe:=1;
     end
     else if os2 then begin
@@ -952,7 +951,7 @@ var w1,w2: word;
       close(t);
       prog:=batfile;
       PrepareExe:=2;
-    end;  
+    end;
   end;
 
 begin
@@ -961,16 +960,20 @@ begin
      0 : begin                      { DOS-Programm aufrufen }
            shell(prog,space,cls);
            XPWinShell:=false;
-         end;  
+         end;
      1 : shell(prog,space,0);       { Windows-Programm aufrufen }
+  {$IFDEF BP }
      2 : Start_OS2(ownpath+prog,'','XP-View OS/2'); { OS/2-Programm aufrufen }
-  end;  
+  {$ENDIF }
+  end;
 end;
-{$ENDIF}
 
 end.
 {
   $Log$
+  Revision 1.24  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.23  2000/03/04 18:34:18  jg
   - Externe Viewer: zum Ansehen von Fileattaches wird keine Temp-Kopie
     mehr erstellt, und nicht mehr gewartet, da kein Loeschen noetig ist

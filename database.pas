@@ -33,7 +33,8 @@ procedure dbICproc(var icr:dbIndexCRec);                  { Default-ICP }
 procedure dbAllocateFL(var flp:dbFLP; feldanz:word);
 procedure dbReleaseFL(var flp:dbFLP);
 function  dbIOerror:integer;
-procedure dbSetindexcache(pages:word; _ems:boolean);     { 1..61 }
+(* Routine wird nicht benutzt
+procedure dbSetindexcache(pages:word);     { 1..61 } *)
 procedure dbReleasecache;
 procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 
@@ -132,9 +133,9 @@ asm
          cld
          lodsw                         { Anzahl SchlÅssel im Node }
          stosw                         { Anzahl speichern }
-{;        cmp   ax,4         }           { Fehlerhafte Anzahl?? }
-{;        jbe   noerr }
-{;        mov   ax,4  }
+{        cmp   ax,4  }                 { Fehlerhafte Anzahl?? }
+{        jbe   noerr }
+{        mov   ax,4  }
 @noerr:  mov   cx,4                    { Ref+Data von key[0] Åbertragen }
          rep   movsw
          mov   cx,ax
@@ -149,29 +150,31 @@ asm
          jnz   @exlp
 @nokeys: pop ds
 {$ELSE }
+         push  edi
          mov   edi, nodep
          mov   esi, rbuf
-         mov   edx, 0
+         xor   edx, edx
          mov   dl, [edi+2]             { Keysize }
-         add   edx,9                    { plus LÑngenbyte plus Ref/Data }
-         mov   ebx,136                  { (264) sizeof(inodekey); }
+         add   edx,9                   { plus LÑngenbyte plus Ref/Data }
+         mov   ebx,136                 { (264) sizeof(inodekey); }
          sub   ebx,edx
          add   edi,14
          cld
+         xor   eax, eax
          lodsw                         { Anzahl SchlÅssel im Node }
          stosw                         { Anzahl speichern }
-@noerr:  mov   ecx,4                   { Ref+Data von key[0] Åbertragen }
-         rep   movsw
-         mov   cx,ax
+@noerr:  mov   ecx,2                   { Ref+Data von key[0] Åbertragen }
+         rep   movsd
+         mov   ecx,eax
          jcxz  @nokeys
-         add   edi,12                  { (256) key[0].keystr Åberspringen }
+         add   edi,128                 { (256) key[0].keystr Åberspringen }
          mov   eax, ecx
 @exlp:   mov   ecx, edx
          rep   movsb                   { Ref, Data und Key Åbertragen }
          add   edi, ebx
          dec   eax
          jnz   @exlp
-@nokeys:
+@nokeys: pop   edi
 {$ENDIF }
 end;
 
@@ -195,13 +198,14 @@ asm
          jnz   @nextc
          cmp   es:[di+7],ax
          jz    @cfound
-@nextc:   add   di,1080                 { sizeof(cachepage) }
+@nextc:  add   di,1080                 { sizeof(cachepage) }
          inc   cx
          cmp   cx,cacheanz
          jb    @sc_lp
 @cfound:  les   di,i
          mov   es:[di],cx
 {$ELSE }
+         push  edi
          xor   ecx,ecx
          mov   edi, cache
          mov   ebx, dbp
@@ -217,11 +221,12 @@ asm
          inc   ecx
          cmp   ecx,cacheanz
          jb    @sc_lp
-@cfound: mov   i,ecx
+@cfound:  mov   i,ecx
+         pop   edi
 {$ENDIF }
 end;
 
-procedure seek_cache2(var _sp:integer16); assembler;
+procedure seek_cache2(var _sp:integer); assembler;
 asm
 {$IFDEF BP }
          les   di,cache
@@ -250,22 +255,24 @@ asm
 @nofree:  les   di,_sp
          mov   es:[di],bx
 {$ELSE }
+         push  edi
          mov   edi, cache
-         mov   eax, $0000ffff          { s := maxlongint }
-         mov   edx, eax
-         mov   ebx, 0                  { sp:=0 }
-         mov   ecx, 0                  { i:=0 }
+         xor   eax, eax                { EAX = 0 }
+         mov   ebx, eax                { EBX = 0, sp := 0 }
+         mov   ecx, eax                { ECX = 0, i := 0 }
+         dec   ax                      { EAX = 0000FFFF, s := maxlongint }
+         mov   edx, eax                { EDX = 0000FFFF }
 
 @clp:    cmp   byte ptr [edi],0        { not used ? }
          jz    @sc2ok
-         cmp   [edi+11],edx            { cache^[i].lasttick < s ? }
+         cmp   [edi+11], dx            { cache^[i].lasttick < s ? }
          ja    @nexti
          jb    @smaller
-         cmp   [edi+9],eax
+         cmp   [edi+9], ax
          jae   @nexti
-@smaller: mov   ax, [edi+9]            { s:=cache^[i].lasttick }
-         mov    dx, [edi+11]
-         mov    ebx,ecx                   { sp:=i; }
+@smaller: mov  ax, [edi+9]            { s:=cache^[i].lasttick }
+         mov   dx, [edi+11]
+         mov   ebx,ecx                   { sp:=i; }
 @nexti:  add   edi,1080
          inc   ecx
          cmp   ecx,cacheanz
@@ -273,8 +280,8 @@ asm
          jmp   @nofree
 
 @sc2ok:   mov   ebx,ecx                   { sp:=i }
-@nofree:  les   edi,_sp
-          mov   [edi],bx
+@nofree:  mov  _sp,ebx
+          pop  edi
 {$ENDIF }
 end;
 
@@ -1702,6 +1709,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.7  2000/03/04 14:53:49  mk
   Zeichenausgabe geaendert und Winxp portiert
 

@@ -164,6 +164,7 @@ begin
   TempOpen;
 end;
 
+{$IFDEF BP }
 Function Dos32CreateEventSem(Name:PChar; Var Handle:LongInt; Attr:Word;
 			      State:Byte):Word; Assembler;
  Asm
@@ -306,6 +307,7 @@ Begin
   r:=Dos32CloseEventSem(SemHandle);
   FreeMem(Semaphore,64);
 End;
+{$ENDIF }
 
 function listcolor(var s:string; line:longint):byte; {$IFNDEF Ver32 } far; {$ENDIF }
 var p,p0,ml : byte;
@@ -540,6 +542,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.11  2000/03/06 05:14:15  jg
   Schînheitsfix fÅr Lister : Uhr bei riesigen Nachrichten rechtzeitig abschalten
 

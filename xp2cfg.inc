@@ -236,12 +236,9 @@ end;
 
 
 procedure setcolors;
-    {$IFNDEF WIN32}
 var c  : maske.colrec;
     lc : ListCol;
-  {$ENDIF}
 begin
-    {$IFNDEF WIN32}
   sethelpcol(col.colhelp,col.colhelphigh,col.colhelpqvw,col.colhelpslqvw);
   with c do begin    { Masken-Farben }
     colback:=col.coldialog; colfeldname:=col.coldialog;
@@ -264,7 +261,6 @@ begin
     end;
   setlistcol(lc);
   fsb_rcolor:=col.colselrahmen;
-  {$ENDIF}
 end;
 
 
@@ -293,11 +289,9 @@ procedure initvar;
 var i    : integer;
     rp   : ^boolean;
 begin
-  {$IFNDEF WIN32}
   checkbreak:=false;
   getcbreak(orgcbreak);
   setcbreak(false);
-  {$ENDIF}
   OrgVideomode:=GetVideoMode;
   oldexit:=exitproc;
   exitproc:=@newexit;
@@ -1091,18 +1085,14 @@ var t       : text;
       su:=copy(su,6,80);
       dec(p,5);
       ports:='';
-    {$IFNDEF WIN32}
       bs:=MInit^;
       es:=MExit^;
       ds:=MDial^;
-  {$ENDIF}
       getcommpar := getx(su,'fossil',fossil) or
                     gets(s,su,'Port',ports,4) or
                     getb(su,'IRQ',Cirq) or
-    {$IFNDEF WIN32}
                     gets(s,su,'Init',bs,200) or
                     gets(s,su,'Exit',es,200) or
-  {$ENDIF}
                     gets(s,su,'Dial',ds,100) or
                     getb(su,'Warten',warten) or
                     getx(su,'IgnoreCD',igcd) or
@@ -1114,7 +1104,6 @@ var t       : text;
                     getx(su,'Waehlsperre',postsperre) or
                     AddComnr;
       if ports<>'' then Cport:=hexval(ports);
-    {$IFNDEF WIN32}
       if bs<>MInit^ then begin
         freemem(MInit,length(MInit^)+1);
         getmem(MInit,length(bs)+1);
@@ -1125,7 +1114,6 @@ var t       : text;
         getmem(MExit,length(es)+1);
         MExit^:=es;
         end;
-  {$ENDIF}
       if ds<>MDial^ then begin
         freemem(MDial,length(MDial^)+1);
         getmem(MDial,length(ds)+1);
@@ -1539,11 +1527,9 @@ begin
       end;
     FidoTo:=brettalle;
     if auswahlcursor then begin
-    {$IFNDEF WIN32}
       SetListCursor(curon);
       SetWinSelCursor(curon);
       MaskSelcursor(curon);
-  {$ENDIF}
       end;
     if mheader='' then SetDefaultHeader
     else SetHeader(mheader);
@@ -1554,7 +1540,7 @@ begin
     SetDefaultHeader;
     SaveConfig;
     end;
-    {$IFNDEF WIN32}
+  {$IFDEF BP }
   ListUseXms:=SwapToXms;
   {$ENDIF}
   trennkomm:=minmax(trennkomm,1,3);
@@ -1603,6 +1589,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.16  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.15  2000/03/04 15:54:43  mk
   Funktion zur DOSEmu-Erkennung gefixt
 

@@ -329,37 +329,43 @@ end;
 
 Procedure Cursor(t:curtype);
 begin
+{$IFDEF BP }
   case t of
     curnorm : curlen(ca,ce);
     curoff  : curlen(ca+$20,ce);
     cureinf : curlen(max(ca-4,1),ce);
   end;
+{$ELSE }
+  {$IFDEF FPC }
+    case t of
+      curnorm : CursorOn;
+      curoff  : CursorOff;
+      cureinf : CursorBig;
+    end;
+  {$ENDIF }
+{$ENDIF }
   lastcur:=t;
 end;
 
 
-
+Procedure GetCur(var a,e,x,y:byte);
+begin
 {$IFDEF BP }
-
-Procedure GetCur(var a,e,x,y:byte);
-
-var regs : registers;
-
-begin
-  with regs do begin
-    ah:=3; bh:=0;
-    intr($10,regs);
-    a:=ch and $7f; e:=cl and $7f;
-    end;
-  x:=wherex; y:=wherey;
-end;
-        
-{$ELSE}
-
-Procedure GetCur(var a,e,x,y:byte);
-begin
-end;
+  asm
+        mov ah, 3
+        mov bh, 0
+        int $10
+        and ch, $7f
+        les di, a
+        mov es:[di], ch
+        and cl, $7f
+        les di, e
+        mov es:[di], cl
+  end;
 {$ENDIF }
+  x :=wherex; y:=wherey;
+end;
+
 
 Procedure SaveCursor;
 
@@ -1732,8 +1738,8 @@ begin
 end.
 {
   $Log$
-  Revision 1.10  2000/03/05 08:45:33  jg
-  Fix: Cursor bei BP Version
+  Revision 1.11  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
 
   Revision 1.9  2000/03/04 22:41:37  mk
   LocalScreen fuer xpme komplett implementiert

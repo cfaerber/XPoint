@@ -180,8 +180,10 @@ function  ioerror(i:integer; otxt:atext):atext;
 
 procedure shell(prog:string; space:word; cls:shortint);  { externer Aufruf }
 
+{$IFDEF BP }
 Procedure Start_OS2(Programm,Parameter,Title:String);
 Procedure OS2_WaitForEnd(_Semaphore:String);
+{$ENDIF }
 
 function  listfile(name,header:string; savescr,listmsg:boolean;
                    cols:shortint):shortint; { Lister }
@@ -591,8 +593,8 @@ begin
   setscreensize(newmode);
   lines(screenlines,1);
   clrscr;
-  if (videotype>1) and not ParMono then setbackintensity(true);
 {$IFDEF BP }
+  if (videotype>1) and not ParMono then setbackintensity(true);
   SetXPborder;
 {$ENDIF }
   with col do begin
@@ -1607,6 +1609,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.11  2000/03/02 21:19:51  jg
   - Uhr beim verlassen des Nachrichtenheaders eleganter deaktiviert
 

@@ -17,7 +17,7 @@ unit datadef1;
 
 interface
 
-uses dos, typeform,datadef;
+uses dos, typeform,datadef, xpglobal;
 
 const   db_magic  = 'DB1'^Z;
         eb_magic  = 'EB1'^Z;
@@ -37,45 +37,45 @@ type    proctype  = procedure;
         barr      = array[0..32767] of byte;
         barrp     = ^barr;
 
-        dbheader  = record
+        dbheader  = packed record
                       magic     : magictype;
                       recs      : longint;   { Anzahl phys. DatensÑtze      }
                       nextinr   : longint;   { nÑchste INT_NR               }
                       firstfree : longint;   { Nr. des ersten freien Satzes }
-                      userflags : array[1..8] of word;
-                      felder    : word;      { Anzahl Datenfelder           }
-                      recsize   : word;      { phys. Record-Grî·e           }
-                      hdsize    : word;      { Header-Grî·e in Bytes        }
+                      userflags : array[1..8] of smallword;
+                      felder    : smallword; { Anzahl Datenfelder           }
+                      recsize   : smallword; { phys. Record-Grî·e           }
+                      hdsize    : smallword; { Header-Grî·e in Bytes        }
                       reccount  : longint;   { Anzahl DatensÑtze            }
                       fill      : array[1..22] of byte;
                     end;
 
-        dbfeld    = record               { Feld, physikalisch }
+        dbfeld    = packed record          { Feld, physikalisch }
                       name      : dbFeldStr;
                       fill1     : array[1..5] of byte;
-                      feldsize  : word;  { physikalisch in Bytes }
+                      feldsize  : smallword;  { physikalisch in Bytes }
                       feldtyp   : byte;
                       nlen,nk   : byte;  { fÅr numerische Werte/Formatierung }
                       fill2     : array[1..11] of byte;
                     end;
 
-        ixheader  = record
+        ixheader  = packed record
                       magic     : magictype;
-                      indizes   : word;
+                      indizes   : smallword;
                       ixversion : byte;
                       fillbyte  : byte;
-                      userflags : array[1..4] of word;
-                      hdsize    : word;
+                      userflags : array[1..4] of smallword;
+                      hdsize    : smallword;
                       fill      : array[1..14] of byte;
                     end;
 
-        ixfeld    = record                  { physikalischer Header-Eintrag }
+        ixfeld    = packed record           { physikalischer Header-Eintrag }
                       feldanz   : byte;     { Anzahl der indizierten Felder }
                       fill1     : byte;     { +$80 -> Index-Funktion        }
-                      ifeldnr   : array[1..maxifelder] of word; { +$8000 -> UStr! }
+                      ifeldnr   : array[1..maxifelder] of smallword; { +$8000 -> UStr! }
                       nn        : byte;     { SchlÅssel pro Knoten }
                       keysize   : byte;     { SchlÅssellÑnge o. LÑngenbyte }
-                      irecsize  : word;     { Knotengrî·e          }
+                      irecsize  : smallword;{ Knotengrî·e          }
                       firstfree : longint;  { Datei-Offset         }
                       rootrec   : longint;
                       ifunc     : dbIndexFunc;  { intern: Index-Funktion }
@@ -87,15 +87,15 @@ type    proctype  = procedure;
         { Achtung! Bei énderungen an inodekey/indexnode auch    }
         { entsprechend in DATABASE.ASM und allocnode() Ñndern!! }
 
-        inodekey  = record
+        inodekey  = packed record
                       data    : longint;     { die zugehîrige Satznr.   }
                       ref     : longint;     { Zeiger auf nÑchsten Node }
                       keystr  : string[127]; { der SchlÅssel            }
                     end;
-        indexnode = record                  { logischer Index-Knoten   }
-                      memsize  : word;      { Grîsse, fÅr FreeMem      }
+        indexnode = packed record           { logischer Index-Knoten   }
+                      memsize  : smallword; { Grîsse, fÅr FreeMem      }
                       ksize,nk : byte;      { SchlÅsselgrîsse/Anzahl   }
-                      irsize   : word;      { Index-Recordgrîsse, "    }
+                      irsize   : smallword; { Index-Recordgrîsse, "    }
                       db_p     : DB;        { zugehîrige DB, "         }
                       filepos  : longint;
                       anzahl   : integer;   { Anzahl eingetragener SchlÅssel }
@@ -105,7 +105,7 @@ type    proctype  = procedure;
 
         { Achtung!! énderungen an cachepage auch in DATABASE.ASM Ñndern!! }
 
-        cachepage = record
+        cachepage = packed record
                       used     : boolean;
                       dbp      : DB;
                       ofs      : longint;
@@ -116,10 +116,10 @@ type    proctype  = procedure;
         icachep   = ^icache;
 
 
-        dbdheader = record
+        dbdheader = packed record
                       magic     : magictype;
-                      hdsize    : word;
-                      userflags : array[1..5] of word;
+                      hdsize    : smallword;
+                      userflags : array[1..5] of smallword;
                       fill1     : array[1..16] of byte;
                       freelist  : array[0..dbdMaxSize] of longint;
                       fill2     : array[1..16] of byte;
@@ -142,11 +142,11 @@ type    proctype  = procedure;
                       newrec    : boolean;
                       dEOF,dBOF : boolean;
                       recno     : longint;      { akt. Datensatz, ab 1 }
-                      actindex  : word;
-                      lastindex : word;         { wird bei dbSeek gesetzt }
+                      actindex  : smallword;
+                      lastindex : smallword;    { wird bei dbSeek gesetzt }
                       tiefe     : byte;         { .. zum schrittweisen }
                       vpos      : array[1..20] of longint;   { Bewegen }
-                      vx        : array[1..20] of shortint;
+                      vx        : array[1..20] of integer8;
                       tempclosed: boolean;
                     end;
         dp        = ^dbrec;
@@ -221,6 +221,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.4  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.3  2000/02/17 16:14:19  mk
   MK: * ein paar Loginfos hinzugefuegt
 

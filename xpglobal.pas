@@ -98,9 +98,20 @@ type
 
 implementation
 
+begin
+  {$IFDEF Debug }
+    {$IFDEF FPC }
+       Writeln('Compiled at ',{$I %TIME%}, ' on ', {$I %DATE%},
+        ' by ', {$I %USER%}, ' with Compiler ', {$I %FPCVERSION%},
+        ' for ', {$I %FPCTARGET%});
+    {$ENDIF }
+  {$ENDIF }
 end.
 {
   $Log$
+  Revision 1.9  2000/03/06 08:51:04  mk
+  - OpenXP/32 ist jetzt Realitaet
+
   Revision 1.8  2000/03/04 11:53:20  mk
   Version auf 3.21.022 beta geaendert und Debug eingeschaltet
 
