@@ -1,7 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
+{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -9,11 +9,11 @@
 { --------------------------------------------------------------- }
 { $Id$ }
 
-{ beliebig groáen Netcall- oder ZConnect-Header auswerten }
+{ beliebig grossen Netcall- oder ZConnect-Header auswerten }
 { wird in XP3, MAGGI und XPCHECK included                 }
 
 
-{ Achtung! hd.empfaenger ent„lt u.U. eine /TO:-Kennung }
+{ Achtung! hd.empfaenger entaelt u.U. eine /TO:-Kennung }
 
 var line : string;
 
@@ -368,9 +368,9 @@ begin
         getline(line);
         if length(line)>2 then
         begin
-          if line[1]<' ' then delfirst(line);    { gegen LF's o.„. }
+          if line[1]<' ' then delfirst(line);    { gegen LF's o.ae. }
           p:=cpos(':',line);
-          if p<2 then ok:=false // Die ID muá mindestens ein Zeichen sein
+          if p<2 then ok:=false // Die ID muss mindestens ein Zeichen sein
           else begin
             id:=LeftStr(line,p-1);
             {$ifdef ulines}
@@ -461,10 +461,15 @@ begin
             if id = 'TELEFON' then telefon := Line  else
             if id = 'HOMEPAGE' then homepage := Line  else
 {            if id = 'X_C'    then xpmail:=true else }
-            if id = 'F-TO'   then fido_to := Line  else
             if id = 'VER'    then GetName(vertreter,dummy) else
             if id = 'CONTROL' then control := Line  else
             if id = 'ERSETZT' then ersetzt := Line else
+            if id = 'F-TO' then fido_to := line else
+            {$ifdef ulines}
+            if leftstr(id,2) = 'F-' then
+              fline.add(rightstr(id,length(id)-2)+': '+line) else
+	    {$endif}
+
 
             if FirstChar(id)='X' then begin               { XP }
               if id = 'X-CHARSET' then LRead(x_charset) else
@@ -512,7 +517,7 @@ begin
 
             if id = 'ABR' then LRead(realname) else { ZConnect 1.9 }
             if id = 'BIN' then typ:='B' else
-            if id = 'MAL' then LRead(programm);
+            if id = 'MAL' then LRead(programm) else
 
             { Customizable Headerlines }
             if id = UpperCase(mheadercustom[1]) then Cust1 := line
@@ -521,9 +526,10 @@ begin
 
             {$ifdef ulines}
             else
-              // unbearbeitete X-Lines fr UUZ merken
+              // unbearbeitete X-Lines fuer UUZ merken
               if Copy(id, 1, 2) = 'X-' then
-                XLine.Add(mid(id0,3)+': '+line);
+                XLine.Add(mid(id0,3)+': '+line) else
+              zline.add(id+': '+line);
             {$else }
             ;
             {$endif}
@@ -533,7 +539,7 @@ begin
           end
         else    { line='' }
           if not ok and eof(f) then
-            ok:=(groesse=0);          { letzte Msg hat L„nge 0 }
+            ok:=(groesse=0);          { letzte Msg hat Laenge 0 }
       until (line='') or not ok;
       if ok and (attrib and attrQPC<>0) and (UpperCase(LeftStr(betreff,4))<>'QPC:') then
         betreff:='QPC:'+betreff;
@@ -562,6 +568,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.37  2000/11/05 19:03:58  fe
+  Added some Gatebau 97 stuff.
+
   Revision 1.36  2000/10/17 10:05:59  mk
   - Left->LeftStr, Right->RightStr
 

@@ -196,6 +196,8 @@ var
   empflist: TStringList;
   uline: TStringList;
   xline: TStringList;                    // X-Zeilen, die 'uebrig' sind
+  zline: TStringList;                   { unbekannte ZC-Zeilen }
+  fline: TStringList;                   { unbekannte FTN-Zeilen }
   TempS: ShortString;
 
 const
@@ -217,7 +219,7 @@ begin
     Followup.Free;
   end;
 
-  ULine.Clear; XLine.Clear; Mail.Clear;
+  ULine.Clear; XLine.Clear; zline.clear; fline.clear; Mail.Clear;
   Fillchar(hd, sizeof(hd), 0);
 
   with hd do
@@ -339,6 +341,8 @@ begin
 
   ULine := TStringlist.Create;
   XLine := TStringList.Create;
+  zline := tstringlist.create;
+  fline := tstringlist.create;
   qprchar := [^L, '=', #127..#255];
   getmem(outbuf, bufsize);
 
@@ -358,7 +362,7 @@ destructor TUUZ.Destroy;
 begin
   AddHd.Free;
   EmpfList.Free;
-  ULine.Free; XLine.Free;
+  ULine.Free; XLine.Free; zline.free; fline.free;
   Mail.Free;
   freemem(outbuf, bufsize);
 end;
@@ -3154,6 +3158,20 @@ begin
       wrs(f, uuz.s);
     end;
 
+    for i := 0 to zline.count - 1 do
+    begin
+      uuz.s := 'X-ZC-'+ibmtoiso(zline[i]);
+      rfc1522form;
+      wrs(f, uuz.s);
+    end;
+
+    for i := 0 to fline.count - 1 do
+    begin
+      uuz.s := 'X-FTN-'+ibmtoiso(fline[i]);
+      rfc1522form;
+      wrs(f, uuz.s);
+    end;
+
     if not mail then
       wrs(f, 'Lines: ' + strs(lines + iif(attrib and AttrMPbin <> 0, 16, 0)));
     for i := 0 to AddHd.Count - 1 do
@@ -3541,6 +3559,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2000/11/05 19:03:58  fe
+  Added some Gatebau 97 stuff.
+
   Revision 1.71  2000/11/04 22:04:53  fe
   Added a few little things for Gatebau 97 and grandson-of-1036.
 
