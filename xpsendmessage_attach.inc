@@ -19,14 +19,6 @@
 
 { Nachrichten versenden: Attachments                                   }
 
-{$I xpdefine.inc}
-
-unit xpsendmessage_attach;
-{ ---------------------------} interface { --------------------------- }
-
-uses
-  classes,mime,mime_analyze,sysutils;
-
 type
   TSendAttach_Part = class
   private
@@ -75,27 +67,7 @@ type
     destructor Destroy; override;
   end;
 
-procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;
-  Netztyp:Byte;cancode:byte;pgpsig:boolean);
-procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;const Signature:string;
-  Netztyp,docode:Byte;pgpsig:boolean);
   
-{ ------------------------} implementation { ------------------------- }
-
-uses
-{$IFDEF unix}
-  xpcurses,
-{$ENDIF}
-{$IFDEF Win32}
-  windows,
-{$ENDIF}
-{$IFDEF Delphi}
-  DateUtils,
-{$ENDIF}
-  fileio, inout, keys, lister, maske, maus2, resource, typeform,
-  utftools, winxp, xp0, xp1, xp1input, xp1o, xp2c, xp4e, xpdatum, xpe,
-  xpglobal, xpnt, xpsendmessage_attach_analyze, xpstreams;
-
 constructor TSendAttach_Part.Create;
 begin
   IsTemp        := False;
@@ -247,7 +219,7 @@ end;
 
 { --- SendAttach main procedure -------------------------------------- }
 
-procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:Byte;cancode:byte;pgpsig:boolean);
+procedure TSendUUData.SendAttach(parts:TList);
 
   function docode:byte;
   begin
@@ -367,7 +339,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:
  
            pa.ContentType.AsString := 'text/plain';
   
-           SendAttach_EditText(pa,false,Umlaute,iifs(parts.count<=0,Signature,''),netztyp,docode,pgpsig);
+           SendAttach_EditText(pa,false,Umlaute,iifs(parts.count<=0,Sigfile,''),netztyp,docode,pgpsig);
          end;
        else begin pa.Free; exit; end;
      end;
@@ -686,7 +658,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;const Signature:string;Netztyp:
       1: SendAttach_EditText(pa,(n=0) and
            (pa.FileNameO='') and
            (pa.ContentDisposition.DispoType=mimedispositioninline) and
-           (UpperCase(pa.ContentType.Verb)='TEXT/PLAIN'),Umlaute,iifs(n=0,Signature,''),Netztyp,docode,pgpsig);
+           (UpperCase(pa.ContentType.Verb)='TEXT/PLAIN'),Umlaute,iifs(n=0,sigfile,''),Netztyp,docode,pgpsig);
       2: SendAttach_EditMeta(pa);
       3: SendAttach_EditType(pa);
       4: (* debug *);
@@ -948,7 +920,7 @@ begin
   closebox;
 end;
 
-procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;const Signature: string;netztyp,docode:Byte;pgpsig:boolean);
+procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;Sigfile:String;netztyp,docode:Byte;pgpsig:boolean);
 var FileName: String;
     OldTime : Longint;
     NewTime : Longint;
@@ -1038,10 +1010,7 @@ begin
     SafeDeleteFile(ChangeFileExt(FileName, '.' + ExtBak)); { .BAK löschen }
 //  EditFile(FileName,IsNachricht,true,
 //    iif(editvollbild,0,2),Umlaute);
-  end;
-
-  if not FileExists(FileName) then
-    TFileStream.Create(FileName,fmCreate).Free;
+  end;  
 
   NewTime := FileAge(FileName);
     
@@ -1109,7 +1078,7 @@ begin
   end;
 
   if (NewTime<>OldTime) or (pa.Analyzed.Size<=0) then
-    SendAttach_Analyze(pa,false,Signature,netztyp,docode,pgpsig);
+    SendAttach_Analyze(pa,false,Sigfile,netztyp,docode,pgpsig);
 end;
 
 

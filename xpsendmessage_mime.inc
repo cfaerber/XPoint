@@ -18,19 +18,40 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
+{$IFNDEF IN_TSENDUUDATA}
 Function CanEdit:Boolean;
 begin
-  result:=ntMIME(netztyp) or
-     (parts.count=0) or TSendAttach_Part(parts[0]).IsMessage;
+  result:= true or // ntMIME(netztyp) or
+     (sdata.parts.count=0) or TSendAttach_Part(sdata.parts[0]).IsMessage;
 end;
+{$ENDIF}
 
+{$IFDEF IN_TSENDUUDATA}
+class function TSendUUData.MIMESaveCharsetAsCP437(const s:string):Boolean;
+{$ELSE}
 function MIMESaveCharsetAsCP437(const s:string):Boolean;
+{$ENDIF}
 begin
   // These charsets are saved as-is in our local database
   result := (s='') or (s='US-ASCII') or (s='IBM437');
 end;
 
+{$IFDEF IN_TSENDUUDATA}
+procedure TSendUUData.ClearParts;
+var ii:integer;
+begin
+  for ii:=0 to Parts.count-1 do
+    TObject(Parts[ii]).Free;
+  Parts.Clear;
+  PartsEx := false;
+  PartFile := '';
+  PartFTmp := false;
+end;
+
+procedure TSendUUData.MIMEDecompose;
+{$ELSE}
 procedure MIMEDecompose;
+{$ENDIF}
 var s: TStream;
     c: TMimeContentType;
 
@@ -173,14 +194,15 @@ var s: TStream;
   end;
 
 begin
+  if (PartFile='') then PartsEx := true;
   if partsex then exit; // Already done
 
   try
-    s := TFileStream.Create(datei,fmOpenRead);
+    s := TFileStream.Create(PartFile,fmOpenRead);
     try
-      c := TMimeContentType.Create(sData.OrgHdp.Mime.Ctype);
+      c := TMimeContentType.Create(OrgHdp.Mime.Ctype);
       try
-        with sData.OrgHdp do
+        with OrgHdp do
         begin
           if Boundary<>'' then c.Boundary := Boundary;
           if Charset <>'' then c.Charset  := ZCCharsetToMIME(Charset);
@@ -197,7 +219,7 @@ begin
   partsex := true;
 end;
 
-procedure MIMEWriteContent(s1:TStream;pa:TSendAttach_Part;DoEncode:Boolean;Sigfile:String;FidoOrigin:String);
+procedure TSendUUData.MIMEWriteContent(s1:TStream;pa:TSendAttach_Part;DoEncode:Boolean;const Signature,FidoOrigin:string);
 var ins,outs:TStream;
 begin
   // The stream passed must not be destroyed!
@@ -249,7 +271,7 @@ begin
 
   ins.Free;
 
-  if ((SigFile<>'') and FileExists(SigFile)) or (FidoOrigin<>'') then
+  if (SigData<>'') or (FidoOrigin<>'') then
   begin
     if outs is TMimeEolCodecStream then
       UnconnectStream(outs);
@@ -260,15 +282,8 @@ begin
     if DoEncode or not MIMESaveCharsetAsCP437(pa.FileCharset) then
       ConnectStream(outs,TCharsetEncoderStream.Create('IBM437',pa.ContentCharset));
 
-    if ((SigFile<>'') and FileExists(SigFile)) then
-    begin
-      ins := TFileStream.Create(sigfile,fmOpenRead);
-      try
-        CopyStream(ins,outs);
-      except
-      end;
-      ins.Free;
-    end;
+    if SigData<>'' then
+      writeln_s(outs,Signature);
 
     if FidoOrigin<>'' then
       writeln_s(outs,FidoOrigin);
@@ -280,46 +295,31 @@ begin
  end;
 end;
 
-procedure MIMEWriteContentWithHeaders(s:TStream;pa:TSendAttach_Part;Sigfile:String);
+procedure TSendUUData.MIMEWriteContentWithHeaders(s:TStream;pa:TSendAttach_Part;const Signature:string);
 begin
   with pa do
   begin
     if (not ContentType.NeedCharset) or
        (MimeCharsetCanonicalName(ContentCharset)='US-ASCII') then ContentCharset := '';
 
-    writeln_s(s1,'Content-Type: ' + ContentType.AsFoldedString(76-14,76,#13#10,true));
-    writeln_s(s1,'Content-Transfer-Encoding: ' + MimeEncodingNames[ContentEncoding]);
+    writeln_s(s,'Content-Type: ' + ContentType.AsFoldedString(76-14,76,#13#10,true));
+    writeln_s(s,'Content-Transfer-Encoding: ' + MimeEncodingNames[ContentEncoding]);
 
     if (FileNameO<>'') or (not IsNAN(FileAccess)) or (not IsNan(FileModify)) or
        (not IsNAN(FileCreate)) or (ContentDisposition.DispoType<>MimeDispositionInline) then
-      writeln_s(s1,'Content-Disposition: ' + ContentDisposition.AsFoldedString(76-21,76,#13#10,true));
+      writeln_s(s,'Content-Disposition: ' + ContentDisposition.AsFoldedString(76-21,76,#13#10,true));
     if ContentDescription <> '' then
-      writeln_s(s1,'Content-Description: ' + ContentDescription);
-    writeln_s(s1,'');
+      writeln_s(s,'Content-Description: ' + ContentDescription);
+    writeln_s(s,'');
   end;
-  MIMEWriteContent(s,pa,true,sigfile,'');
+  MIMEWriteContent(s,pa,true,Signature,'');
 end;
-
-{$IFDEF 0}
-procedure UUEncodeWriteContent(s1:TStream;pa:TSendAttach_Part;DoEncode:Boolean;Sigfile:String;FidoOrigin:String);
-var ins,outs:TStream;
-begin
-  // The stream passed must not be destroyed!
-  outs := TNullCodecStream.Create;
-  try
-
-
-
-
-  finally
-    assert(pointer(outs)<>pointer(s1));
-    outs.Free; // will not destroy s1!
-  end;
-end;
-{$ENDIF}
 
 //
 // $Log$
+// Revision 1.1  2002/11/14 21:06:13  cl
+// - DoSend/send window rewrite -- part I
+//
 // Revision 1.14  2002/07/26 08:17:48  mk
 // - removed $O-
 //

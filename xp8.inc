@@ -22,12 +22,23 @@
 
 procedure SendFilescan(var fn:string);
 var leer : string;
+    sdata: TSendUUData;
 begin
   leer:='';
-  forcebox:=boxpar^.boxname;
+  sData.forcebox:=boxpar^.boxname;
+
+  sData := TSendUUData.Create;
+  sData.AddText(fn,false);
+  sData.Subject := boxpar^.FilescanPW;
+  sData.EmpfList.AddNew.ZCAddress := BoxPar^.filescanner+'@'+boxpar^.boxname;
+  sData.CreateMessages;
+  sData.Free;
+
+(*  
   if DoSend(true,fn,false,false,BoxPar^.filescanner+'@'+boxpar^.boxname,
             boxpar^.FilescanPW,false,false,false,false,false,
             nil,leer,0) then;
+*)            
 end;
 
 
@@ -347,6 +358,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.26  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.25  2002/07/25 20:43:55  ma
   - updated copyright notices
 

@@ -65,7 +65,7 @@ function fileechocolfunc(const s:string; line:longint):byte;
 
 implementation  { ------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xpsendmessage,xpsendmessage_unsent,
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xpsendmessage,xpsendmessage_resend,
 {$IFDEF Sockets }
   xpncnntp,
 {$ENDIF }
@@ -138,6 +138,7 @@ var
     hf : string;
     mt : byte;
     nt : byte;
+ sdata : TSendUUData;
 
   procedure AreaBef;
   var t1,t2 : text;
@@ -201,7 +202,7 @@ var
       end;
     if maf then bef:='BRETTER'
     else if not promaf then bef:='<Maus-Command>'
-    else forceabs:='SYSOP';
+//  else forceabs:='SYSOP';
   end;
 
   procedure ChangeSys;
@@ -382,6 +383,9 @@ var
   end;
 
 begin
+  sdata := TSendUUData.Create;
+ try
+
   mt:=mapstype(box);
   nt:=ntBoxNetztyp(box);
   case mt of
@@ -402,7 +406,7 @@ begin
     8 : MafNude(false,true);   { ProNet }
     9 : begin
           mapsname:='SYSTEM';
-          ControlMsg:=true;
+          sData.flControlMsg:=true;
         end;
    10 : begin
           mapsname:='ZQWK';
@@ -415,11 +419,21 @@ begin
    15 : ; { NNTP }
   end;
   hf:='';
-  _sendmaps:=true;
-  forcebox:=box;
+//  _sendmaps:=true;
+(*  
   if DoSend(true,datei,false,false,mapsname+'@'+box+ntServerDomain(box),bef,
             false,false,false,false,false,nil,hf,0) then;
-  _sendmaps:=false;
+*)
+  sData.EmpfList.AddNew.ZCAddress := mapsname+'@'+box+ntServerdomain(box);
+  sData.ForceBox:=box;
+  sData.Subject := bef;
+  sData.AddText(datei,false);
+  sData.CreateMessages;
+ finally
+  sData.Free;
+ end;
+            
+//_sendmaps:=false;
 end;
 
 
@@ -2177,6 +2191,9 @@ end;
 
 {
   $Log$
+  Revision 1.78  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.77  2002/09/09 09:06:35  mk
   - added const parameters
 

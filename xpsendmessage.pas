@@ -30,51 +30,53 @@ uses
   sysutils,
   typeform,fileio,inout,keys,datadef,database,maske,crc,lister, osdepend,
   winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
-  xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze, xpmime,
+  xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze,xpmime,
+  addresslist,xpnt,
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
 Classes,fidoglob;
 
-const sendIntern = 1;     { force Intern              }
-      sendShow   = 2;     { ausfuehrliche Sendeanzeige }
-      sendDelay  = 4;     { 0,5 s Warten              }
-      sendQuote  = 8;     { akt. Nachricht quoten     }
-      SendWAB    = 16;    { ABS->WAB, OAB->ABS        }
-      SendReedit = 32;    { TED: Softbreaks umwandeln }
-      SendHalt   = 64;    { Nachricht auf 'halten'    }
-      SendMark   = 128;   { Nachricht markieren       }
-      SendPGPkey = 256;   { PGP-Key-Header erzeugen   }
-      SendPGPreq = 512;   { PGP-Key anfordern         }
-      SendPGPsig = 1024;  { Nachricht signieren       }
-      SendNokop  = 2048;  { STAT: NOKOP               }
-      SendIQuote = 4096;  { indirekter Quote          }
-      SendMPart  = 8192;  { Multipart zerlegen        }
+//      const sendIntern = 1;     { force Intern              }
+//            sendShow   = 2;     { ausfuehrliche Sendeanzeige }
+//            sendDelay  = 4;     { 0,5 s Warten              }
+//      //    sendQuote  = 8;     { akt. Nachricht quoten     }
+//            SendWAB    = 16;    { ABS->WAB, OAB->ABS        }
+//            SendReedit = 32;    { TED: Softbreaks umwandeln }
+//            SendHalt   = 64;    { Nachricht auf 'halten'    }
+//            SendMark   = 128;   { Nachricht markieren       }
+//            SendPGPkey = 256;   { PGP-Key-Header erzeugen   }
+//            SendPGPreq = 512;   { PGP-Key anfordern         }
+//            SendPGPsig = 1024;  { Nachricht signieren       }
+//            SendNokop  = 2048;  { STAT: NOKOP               }
+//      //    SendIQuote = 4096;  { indirekter Quote          }
+//      //    SendMPart  = 8192;  { Multipart zerlegen        }
 
-      pgdown    : boolean = false;
-      _sendmaps : boolean = false;
-      forcebox  : string = '';
-      forceabs  : string = '';       { 'SYSOP' fuer ProNet-System }
-      _bezug    : string = '';
-      _orgref   : string = '';
-      _replypath: string = '';        { Box, ueber die die Bezugsnachr. kam }
-      sendfilename   : string = '';
-      sendfiledate   : string = '';
-      force_quotemsk : string = '';
-      CrosspostBox   : string = '';
-      _beznet   : shortint = -1;         { Netztyp der Bezugsnachricht }
-      _pmReply  : boolean = false;
-      IsEbest   : boolean = false;
+const
+//      pgdown    : boolean = false;
+//    _sendmaps : boolean = false;
+//    forcebox  : string = '';
+//    forceabs  : string = '';       { 'SYSOP' fuer ProNet-System }
+//    _bezug    : string = '';
+//    _orgref   : string = '';
+//    _replypath: string = '';        { Box, ueber die die Bezugsnachr. kam }
+//    sendfilename   : string = '';
+//    sendfiledate   : string = '';
+//    force_quotemsk : string = '';
+//    CrosspostBox   : string = '';
+//    _beznet   : shortint = -1;         { Netztyp der Bezugsnachricht }
+//    _pmReply  : boolean = false;
+//    IsEbest   : boolean = false;
       NoCrash   : boolean = false;
-      FileAttach: boolean = false;
-      EditAttach: boolean = true;
-      msgprio   : byte    = 0;           { ZConnect-Prio }
-      rfcprio   : byte    = 0;           { RFC-Priority  }   { 6.2.2000 MH: } { unbedenklich }
-      ControlMsg: boolean = false;
+//    FileAttach: boolean = false;
+//    EditAttach: boolean = true;
+//    msgprio   : byte    = 0;           { ZConnect-Prio }
+//    rfcprio   : byte    = 0;           { RFC-Priority  }   { 6.2.2000 MH: } { unbedenklich }
+//    ControlMsg: boolean = false;
       newbrettgr: longint = 0;           { Gruppe fuer neues Brett }
-      flCrash   : boolean = false;
-      flQTo     : boolean = false;       { Maus: Wildwestverkettung }
-      flNokop   : boolean = false;
+//    flCrash   : boolean = false;
+//    flQTo     : boolean = false;       { Maus: Wildwestverkettung }
+//    flNokop   : boolean = false;
 
       OldMsgSize: longint = 0;{ s. XP3.XWrite }
       OldMsgPos : longint = 0;
@@ -87,17 +89,274 @@ var
       InternBox : string;  { Boxname bei /Netzanruf }
       msgMarkEmpf: byte;   { fuer sendMark }
 
+type
+{ ------------------------- } TSendUUData { -------------------------- }
+  = class
 
-function DoSend(pm:boolean; datei:string; is_temp,is_file:boolean;
-                empfaddr,betreff:string;
+  private
+    FHas     : array [TNetClass,boolean] of boolean;
+    FCharsets: array [TNetClass] of TSTringList;
+    
+    function GetHasPM: boolean;
+    function GetHasAM: boolean;
+    function GetHasNetz(nc: TNetClass): boolean;
+    function GetHasNetzPM(nc: TNetClass; pm: Boolean): boolean;
+
+  private
+    FSigData:       string;     { Fertige Signatur                     }
+    FSigDataOK:     boolean;    { FSigData ist fertig                  }
+    FSigTemplate:   string;     { Vorlage für Signatur (Dateiname)     }
+
+    FHeadData:      string;     { Fertige Signatur                     }
+    FHeadDataOK:    boolean;    { FSigData ist fertig                  }
+    FHeadTemplate:  string;     { Vorlage für Signatur (Dateiname)     }
+
+    FRealname    : string;      { Roles: Realname                      }
+    FMail        : string;      { Roles: E-Mail-Adresse                }
+    FReplyTo     : string;      { Roles: Antwort-An                    }
+    FFQDN        : string;      { Roles: FQDN                          }
+
+//  FQuoteBrett  : string;      { Brett, aus dem zitiert wurde für Va-
+//                                riablen in Signatur/Kopf }
+
+    FUserDataOK:     boolean;        { false: FSigTemplate neu suchen   }
+    FUserDataForced: boolean;        { true: FSigTemplate nicht ändern  }
+
+    FForceBox    : string;
+
+    procedure MakeUserdata;
+    
+    function GetSigTemplate: string;
+    procedure SetSigTemplate(NewTmplFile: string);
+    function GetSigData: string;
+
+    function GetHeadTemplate: string;
+    procedure SetHeadTemplate(NewTmplFile: string);
+    function GetHeadData: string;
+
+    function GetReplyTo: string;
+    procedure SetReplyTo(const NewValue: string);
+    function GetSenderRealname: string;
+    procedure SetSenderRealname(const NewValue: string);
+    function GetSenderMail: string;
+    procedure SetSenderMail(const NewValue: string);
+    function GetFQDN: string;
+    procedure SetFQDN(const NewValue: string);
+
+    function GetAutoUserData:boolean;
+    procedure SetAutoUserData(x: boolean);
+
+    function GetDefaultBox: string;
+    procedure SetForceBox(const NewBox: string);
+
+  public
+    property Has_AM: boolean read GetHasAM;
+    property Has_PM: boolean read GetHasPM;
+
+    property Has_Netz[nc: TNetClass]: Boolean read GetHasNetz;
+    property Has[nc:TNetClass; pm: Boolean]: Boolean read GetHasNetzPM;
+
+    property HeadTemplate: string read GetHeadTemplate write SetHeadTemplate;
+    property HeadData: string read GetHeadData;
+    property SigTemplate: string read GetSigTemplate write SetSigTemplate;
+    property SigData: string read GetSigData;
+
+    property ReplyTo: string read GetReplyTo write SetReplyTo;
+    property SenderRealname: string read GetSenderRealname write SetSenderRealname;
+    property SenderMail: string read GetSenderMail write SetSenderMail;
+    property FQDN: string read GetFQDN write SetFQDN;
+
+    property AutoUserData: boolean read GetAutoUserData write SetAutoUserData;
+
+    property DefaultBox: string read GetDefaultBox;
+    property ForceBox: string read FForceBox write SetForceBox;
+
+  public 
+    EmpfList   : TAddressList; // includes Newsgroups
+    
+    can_crash: boolean;     { FTN Crash mails allowed (what did you think?!) }
+    Boxen    : TStringList;
+
+    maxsize  : longint;     { ab hier muss gesplittet werden      }
+    attachMode: TAttachMode;{ erlaubter Attachment-Modus          }
+
+  private
+    procedure AddURI_(const URI: string; WithBody: Boolean);
+
+  public
+    procedure AddURI (const URI: string);                    
+    procedure AddURIWithBody(const URI: string);                    
+
+  private
+  { -- Whether to save that charset as-is in the local database ------ }
+    class function MIMESaveCharsetAsCP437(const s:string): Boolean;
+
+  { -- MIME Functions ------------------------------------------------ }
+    procedure MIMEWriteContent(s1:TStream;pa:TSendAttach_Part;DoEncode:Boolean;const Signature,FidoOrigin:string);
+    procedure MIMEWriteContentWithHeaders(s:TStream;pa:TSendAttach_Part;const Signature: string);
+
+  { == Variables from DoSend ========================================= }
+  public
+    Subject  : string;
+    
+  public
+    DoCode   : integer;
+    CanCode  : integer;
+
+  { -- Boxdaten ------------------------------------------------------ }
+//  username : string;      { eigener Username                         }
+//  aliaspt  : boolean;     { Alias-Point (USER@BOX)              }
+    
+  { -- Flags --------------------------------------------------------- }
+    flOhneSig     : boolean; { Keine Signatur anhängen                 }
+
+    flIntern      : boolean; { force Intern                            }
+    flShow        : boolean; { ausfuehrliche Sendeanzeige              }
+    flDelay       : boolean; { 0,5 s Warten                            }
+    flReedit      : boolean; { TED: Softbreaks umwandeln               }
+
+    flWAB         : boolean; { ABS->WAB, OAB->ABS                      }
+    
+    flPGPSig      : boolean; { PGP: Signatur erzeugen                  }
+    flPGPKey      : boolean; { PGP: eigenen Key mitschicken            }
+    flPGPReq      : boolean; { PGP: Key-Request                        }
+    
+    flControlMsg  : boolean; { ist Kontrollnachricht                   }
+    flEB          : boolean; { ist Empfangsbestaetigung                }
+//  flNokop       : boolean; { keine Kopien                            }
+    flPMReply     : boolean; { keine öffentlichen Antworten            }
+    
+    flCrash       : boolean; { Fido: Crash-Nachricht                   }
+    flCrashAtOnce : boolean; { Fido: keine Rückfrage, sofort versenden }
+    flFileAttach  : boolean; { Fido: Datei mitsenden                   }
+    
+    flQTo         : boolean; { ist Followup in andere Gruppe           }
+                             { auch: Maus: Wildwestverkettung          }
+
+    flUngelesen   : boolean; { Nachricht auf 'ungelesen'               }
+    flHalt        : boolean; { Nachricht auf 'halten'                  }
+    flMark        : boolean; { Nachricht markieren                     }
+    flLoesch      : boolean; { Nachricht auf 'gelöscht'                }
+
+    SentOK        : boolean; { Nachricht erfolgreich versendet         }
+
+    procedure AddText(const fn:string; temp:boolean);
+    procedure AddFile(const fn:string; temp:boolean; const ctype:string);
+
+    procedure SetMessageContent(const fn:string; temp:boolean; orig_hdp: THeader);
+
+  public
+    function EditBetreff(dlg_title: string): boolean;
+    procedure EditText;
+    procedure EditAttach;
+    function SendWindow(dlg_title: string): boolean;
+    procedure CreateMessages;           { create & send messages }
+
+    function DoIt(dlg_title: string;EditBetreff, EditText, SendWindow: Boolean): Boolean;
+    
+  private
+    FSignature: String;
+
+  public
+    property Signature: string read FSignature write FSignature;    
+
+  { -- Multipart support --------------------------------------------- }
+  public
+    Parts    : TList;       { Nachrichten-Teile }
+    
+    PartsEx  : Boolean;	    { Nachrichten-Teile aus Originaldatei extrahiert? }
+    PartFile : String;      { Originaldatei }
+    PartFTmp : Boolean;     { Originaldatei temporär? }
+
+  { -- Primary Address ----------------------------------------------- }
+    
+  private
+    function GetEmpf1Address:  string; procedure SetEmpf1Address (NewValue: string);
+    function GetEmpf1RealName: string; procedure SetEmpf1RealName(NewValue: string);
+
+  public
+    property Empf1Address  : string read GetEmpf1Address  write SetEmpf1Address;
+    property Empf1RealName : string read GetEmpf1RealName write SetEmpf1RealName;
+
+  public  
+    followup   : TStringlist;
+    References : TStringList;
+    keywords   : string;
+    summary    : string;
+    distribute : string;
+    oab, wab: string;
+    OEM: TStringList;
+    oar,war    : string;
+    onetztyp   : byte;
+    orghdp     : THeader;
+    orgbox     : string;
+
+    org_mid    : string;        { X-XP-ORGMID }
+    org_ref    : string;        { X-XP-ORGREF }
+
+    ReplyGroup : string;        { Maus-QuoteTo }
+    Replypath  : string;        { X-XP-MRP }
+
+    FidoTo     : string;
+
+    msgprio   : byte    ;           { ZConnect-Prio }
+    rfcprio   : byte    ;           { RFC-Priority  }
+
+    sendfilename   : string;
+    sendfiledate   : string;
+    
+    quotestr   : string;
+    UV_edit    : boolean;        { <Esc> -> "J" }
+    msgid,
+    ersetzt    : string;
+    msgidtyp   : byte;    
+
+    RTAHasSetVertreter: Boolean;
+    boundary   : string;
+    constructor Create;
+    destructor Destroy; override;
+    procedure Clear;
+   
+  public
+    procedure MergeCharsets(nt:byte;NewCharsets:TStringList);    
+    procedure MergeMsgType(nt:byte;pm:boolean);
+
+  private
+    function EditEmpfaengerList(
+      const DialogueTitle: String;          // Dialog-Titel
+      EditRecipients:   Boolean;            // Empfänger bearbeiten
+      EditSubject:      Boolean;            // Betreff bearbeiten
+      ShowSubject:      Boolean;            // Betreff überhaupt anzeigen
+      PMAllowedNets:    TNetClassSet;       // Erlaubte Netztypen für PMs
+      AMAllowedNets:    TNetClassSet        // Erlaubte Netztypen für AMs
+    ):boolean;
+
+    procedure ComposeEditableList;          // helper function
+    procedure UnComposeEditableList;        // helper function
+
+    procedure CheckEmpfaengerList(
+      List:             TAddressList;       // Addresse to check
+      Prompt:           Boolean;            // Ask user for new addresses
+      AutoAdd:          Boolean             // Add addresses to DB
+    );
+
+    procedure ClearParts;
+
+    procedure AddFilePart(datei:string;temp:boolean);
+    procedure EditNachricht(pushpgdn:boolean);
+    procedure MIMEDecompose;
+    procedure AddMessagePart(datei:string;temp,is_orig:boolean);
+  end;
+
+{ -------------------------------------------------------------------- }  
+
+(*
+function DoSend(pm:boolean; __datei:string; is_temp,is_file:boolean;
+                __empfaddr,__betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData: TSendUUData;
-                signat:string; sendFlags:word):boolean;
-
+                signat:string; __sendFlags:word):boolean;
+*)
                 
-                
-procedure send_file(pm,binary:boolean);
-function SendPMmessage(betreff,fn:string; is_temp:boolean; var box:string):boolean;
-
 function umlauttest(var s:string):boolean;
 function test_senddate(var s:string):boolean;
 procedure firstslash(var s:string);
@@ -110,7 +369,8 @@ implementation  { --------------------------------------------------- }
 
 uses mime, mime_analyze, rfc2822, StringTools, utftools, xp_pgp, xp1o, xp3,
   xp3ex, xp3o, xp3o2, xp4e, xp9bp, xpcc, xpconfigedit, xpfido, xpmakeheader,
-  xpnt, xpsendmessage_internal, xpstreams, addresses, addresslist, xpsendmessage_addr_edit;
+  xpsendmessage_internal, xpstreams, addresses, 
+  xpserver;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
 asm
@@ -212,7 +472,6 @@ begin
   end;
 end;
 
-
 function umlauttest(var s:string):boolean;
 var i : integer;
 {    p : byte; }
@@ -301,11 +560,134 @@ end;
 { sendwin: vor dem Senden Sende-Fenster abfragen                             }
 { datei, header und signat sind nur aus Stack-Platz-Gruenden VARs!           }
 { header wird veraendert!!                                                   }
-
-function DoSend(pm:boolean; datei:string; is_temp,is_file:boolean;
-                empfaddr,betreff:string;
+(*
+function DoSend(pm:boolean; __datei:string; is_temp,is_file:boolean;
+                __empfaddr,__betreff:string;
                 edit,binary,sendbox,betreffbox,XpID:boolean; sData: TSendUUData;
-                signat:string; sendFlags:word):boolean;
+                signat:string; __sendFlags:word):boolean;
+var sDataNew: boolean;
+                
+begin
+  try
+    sDataNew := not assigned(sData);
+    if sDataNew then sData := TSendUUData.Create;
+    
+    if not pm and betreffbox and (__empfaddr<>'') and (FirstChar(__empfaddr)<>'A') then begin
+      rfehler(606);   { 'Schreiben in dieses Brett nicht moeglich!' }
+      exit;
+    end;
+
+    if __empfaddr<>'' then sData.EmpfList.AddNewXP(pm,__empfaddr,'');
+    sData.flIntern := LeftStr(__empfaddr,3)='$/'#$AF;
+
+    sData.Subject := __betreff;
+    sData.Signature := Signat;
+//  sData.sendFlags := __sendFlags;
+
+    sData.flIntern := (__SendFlags and sendIntern)<>0;
+    sData.flShow   := (__SendFlags and sendShow  )<>0;
+    sData.flDelay  := (__SendFlags and sendDelay )<>0;
+//  sData.flQuote  := (__SendFlags and sendQuote )<>0;
+    sData.flWAB    := (__SendFlags and sendWAB   )<>0;
+    sData.flReedit := (__SendFlags and sendReedit)<>0;
+    sData.flHalt   := (__SendFlags and sendHalt  )<>0;
+    sData.flMark   := (__SendFlags and sendMark  )<>0;
+    sData.flPGPkey := (__SendFlags and sendPGPkey)<>0;
+    sData.flPGPreq := (__SendFlags and sendPGPreq)<>0;
+    sData.flPGPsig := (__SendFlags and sendPGPsig)<>0;
+    sData.flNokop  := (__SendFlags and sendNokop )<>0;
+//  sData.flIQuote := (__SendFlags and sendIQuote)<>0;
+//  sData.flMPart  := (__SendFlags and sendMPart )<>0;
+
+  finally
+    if sDataNew then sData.Free;
+  end;
+end;
+*)
+
+{----------------------------------------------------------------------}
+{-- TSendUUData: Send Window ------------------------------------------}
+{----------------------------------------------------------------------}
+
+function TSendUUData.DoIt(dlg_title: string;EditBetreff, EditText, SendWindow: Boolean): Boolean;
+begin
+  result := true;
+
+  if EditBetreff and result then
+    result := Self.EditBetreff(dlg_title);
+  result := result and (EmpfList.Count>0);
+
+  if EditText and result then 
+    self.EditText;
+
+  if SendWindow and result then 
+    result := result and self.SendWindow(dlg_title);
+
+  if result and not SentOK then
+    CreateMessages;
+
+  result := result and SentOK;
+end;
+
+function TSendUUData.EditBetreff(dlg_title: string): boolean;
+begin
+  if dlg_title='' then dlg_title := GetRes2(610,10);
+
+  result := EditEmpfaengerList(dlg_title,true,true,true,
+    [ncZConnect,ncFTN,ncRFC,ncMaus],
+    [ncZConnect,ncFTN,ncRFC,ncMaus] );
+  CheckEmpfaengerList(EmpfList,false,false);
+end;
+
+procedure TSendUUData.EditText;
+begin
+  EditNachricht(true);
+end;
+
+procedure TSendUUData.EditAttach;
+begin
+  MIMEDecompose;
+  SendAttach(Parts,Umlaute=1,SigData,nt_UUCP,
+    iif(docode in [8,9],cancode,docode),flPGPSig);
+
+  // if the user deleted the message part, switch off signatures
+  if (Parts.Count<1) or not TSendAttach_Part(Parts[0]).IsMessage then
+    flOhneSig := true;
+end;
+
+{----------------------------------------------------------------------}
+{-- TSendUUData: Message creation -------------------------------------}
+{----------------------------------------------------------------------}
+
+procedure TSendUUData.AddText(const fn:string; temp:boolean);
+begin
+  AddMessagePart(fn,temp,false);
+end;
+
+procedure TSendUUData.AddFile(const fn:string; temp:boolean; const ctype:string);
+begin
+  MimeDecompose;
+  AddMessagePart(fn,temp,true);
+end;
+
+procedure TSendUUData.SetMessageContent(const fn:string; temp:boolean; orig_hdp: THeader);
+begin
+  ClearParts;
+  orgHdp.Free;
+  orgHdp := orig_hdp;
+
+  if UpperCase(LeftStr(OrgHdp.MIME.CType,10)) = 'MULTIPART/' then
+  begin
+    PartFile := fn;
+    PartFTmp := temp;
+    PartsEx := not FileExists(fn);
+  end else
+  begin
+    AddMessagePart(fn,temp,true);
+  end;
+end;
+
+{$IFDEF __undefined__}
 
 var f,f2     : file;
     edis     : byte;
@@ -325,7 +707,6 @@ var f,f2     : file;
     _brett   : string;
     mapsname : string;
     senddate : string;  { mit 'D' zeitversetzt absenden       }
-    shortmid : string;
     realname : string;
     domain   : string;
     fqdn     : string;  { 16.01.00: HS}
@@ -346,24 +727,22 @@ var f,f2     : file;
     b        : byte;
     si0      : integer;
     hdp      : THeader;
-    hdptyp   : char;
 
     size     : integer;
     empfneu  : boolean;
-    cancode  : Byte;        { 0=kein PW, 1=QPC, 2=DES, 9=PGP, 10=Rot13 }
-    docode   : Byte;        { gewaehlte Codierung                 }
-    pmc_code : boolean;
+//  cancode  : Byte;        { 0=kein PW, 1=QPC, 2=DES, 9=PGP, 10=Rot13 }
+//  docode   : Byte;        { gewaehlte Codierung                 }
+//  pmc_code : boolean;
     senden   : shortint;    { 0=Nein, 1=Ja, 2=Intern              }
     halten   : integer16;   { Haltezeit fuer neuen User           }
-    sendedat : longint;     { Empfangsdatum                       }
     passwd   : string;      { Passwort des empfangenden Users     }
     passpos  : smallword;   { PW-Position fuer QPC                }
     newbin   : boolean;     { Typ nach Codierung                  }
     SDNope   : boolean;
     dbshown  : boolean;
-    intern,                 { interne Nachricht                   }
+//    intern,                 { interne Nachricht                   }
    
-    lokalPM  : boolean;     { lokale PM                           }
+//    lokalPM  : boolean;     { lokale PM                           }
 
     grnr     : longint;     { Brettgruppen-Nr.                    }
     addsize  : longint;     { Header + Signatur                   }
@@ -373,8 +752,7 @@ var f,f2     : file;
     SendDefault : shortint;
     verteiler: boolean;
     _verteiler: boolean;    { bleibt true bei allen Einzelnachrichten }
-    netztyp  : byte;        { Netztyp                             }
-    aliaspt  : boolean;     { Alias-Point (USER@BOX)              }
+//  netztyp  : byte;        { Netztyp                             }
     nomids   : boolean;     { keine Message-ID's erzeugen         }
     nobox    : boolean;     { Absender-Name im PP ohne Boxname    }
     echomail : boolean;
@@ -388,8 +766,8 @@ var f,f2     : file;
     bboxwid  : byte;
 
     spezial  : boolean;
-    flOhnesig: boolean;
-    flLoesch : boolean;
+//  flOhnesig: boolean;
+//  flLoesch : boolean;
 //  sdnope   : boolean;     { sData = nil }
     orgftime : longint;
 //  sigfile  : string;
@@ -400,22 +778,15 @@ var f,f2     : file;
     siglast  : string;      { Signatur: Letzte Quelldatei          }
     sigok    : boolean;
 
-    flPGPkey : boolean;     { eigenen Key mitschicken }
-    flPGPsig : boolean;     { Nachricht signieren }
-    flPGPreq : boolean;     { Key-Request }
 
-    msgCPanz : shortint;    { EMP's in aktueller Msg. }
-    msgCPpos : shortint;    { gerade bearbeiteter EMP }
+//  msgCPanz : shortint;    { EMP's in aktueller Msg. }
+//  msgCPpos : shortint;    { gerade bearbeiteter EMP }
     ii       : integer;
     m1adr    : longint;     { Pufferadresse der ersten Kopie }
     m1msgsize: longint;     { Gesamtgroesse der ersten Kopie }
     showempfs: shortint;    { fuer Betreffbox }
     fo       : string;
-    flags    : longint;
 
-
-    parts    : TList;       { Nachrichten-Teile }
-    partsex  : Boolean;	    { bereits extrahiert? }
     pa       : TSendAttach_Part;
 
     s        : String;
@@ -428,7 +799,7 @@ var f,f2     : file;
 
 {$I xpsendmessage_subs.inc}
 {$I xpsendmessage_subs_mime.inc}
-
+(*
   function RFCBrett(s:string; edis:byte):string;
   var i : integer;
   begin
@@ -440,128 +811,7 @@ var f,f2     : file;
       RFCBrett:=s;
     end;
   end;
-
-  procedure AddMessagePart(datei:string;temp,is_orig:boolean);
-  var pa     : TSendAttach_Part;
-  begin
-    pa := TSendAttach_Part.Create;
-
-    pa.FileName    := datei;
-    pa.IsTemp	   := temp;
-    pa.IsFile      := false;
-
-    if is_orig and assigned(sData.OrgHdp) then
-    begin
-      pa.FileCharset := sData.OrgHdp.Charset;
-      pa.FileEOL     := MimeEolCRLF;
-      pa.ContentDisposition.AsString := iifs(sData.OrgHdp.Mime.Disposition<>'',sData.OrgHdp.Mime.Disposition,'inline');
-      pa.ContentDescription := sData.OrgHdp.Mime.Description;
-      pa.ContentType.AsString := iifs(sData.OrgHdp.Mime.CType<>'',sData.OrgHdp.Mime.CType,'text/plain');
-      pa.ContentEncoding := sData.OrgHdp.Mime.Encoding;
-    end else
-    begin
-      pa.FileCharset := 'IBM437';
-      pa.FileEOL     := MimeEolCRLF;
-      pa.ContentDisposition.DispoType := MimeDispositionInline;
-      pa.ContentEncoding := MimeEncoding7Bit;
-      pa.ContentType.AsString := 'text/plain';
-    end;
-
-    SendAttach_Analyze(pa,not is_orig,iifs(flOhneSig,'',sigfile),netztyp,docode,flPGPSig);
-
-    parts.Insert(0,pa);
-  end;
-
-  procedure AddFilePart(datei:string;temp:boolean);
-  var pa     : TSendAttach_Part;
-  begin
-    pa := TSendAttach_Part.Create;
-
-    pa.FileName    := datei;
-    pa.IsTemp	   := temp;
-    pa.IsFile      := true;
-
-    SendAttach_Analyze(pa,true,'',netztyp,docode,flPGPSig);
-
-    parts.Insert(0,pa);
-  end;
-
-  procedure EditNachricht(pushpgdn:boolean);
-  var p      : byte;
-      s0,
-      s1,
-      s2,
-      s3,
-      s4     : string;
-      edpush : boolean;
-  begin
-    MIMEDecompose;
-
-    edpush:=not editvollbild and ((exteditor=1) or (VarEditor='') or (VarEditor[1]='*'));
-    if edpush then begin
-      attrtxt(col.coledithead);
-      moff;
-      // Wegen der Fensterbehandlung wpush auf den gesamten Bereich anwenden
-      wpush(1,ScreenWidth,1,ScreenLines,'-');          { 'Nachricht an  ' / 'Nachricht in  ' }
-      p:=cpos('@',sData.Empf1Address);
-
-      if(FirstChar(sData.Empf1Address)=#4)or(p>0)then
-        s0:=GetRes2(611,40)  { 'Nachricht an ' }
-      else
-        s0:=GetRes2(611,41); { 'Nachricht in ' }
-
-      if(FirstChar(sData.Empf1Address)=#4)then
-        s1:=vert_name(sData.Empf1Address)
-      else 
-        s1:=iifs(sData.Empf1RealName<>'',sData.Empf1RealName,sData.Empf1Address);
-
-        s2:=GetRes2(611,45); { '...' }
-
-      if (sData.EmpfList.Count)>=2 then
-        s3:=GetRes2(611,44)  { 'u. a.' }
-      else
-        s3:='';
-
-      if fidoto<>'' then
-        s4:=GetRes2(611,43)  { ' an ' } + fidoto
-      else
-        s4:='';
-
-      if Length(s0)+Length(s1)+Length(s3)+Length(s4)>screenwidth-1 then
-      begin
-        SetLength(s4,max(10,screenwidth-1-Length(s0)-Length(s1)-Length(s3)-Length(s2)));
-        s4 := s4 + s2;
-      end;
-
-      if Length(s0)+Length(s1)+Length(s3)+Length(s4)>screenwidth-1 then
-      begin
-        SetLength(s1,screenwidth-1-Length(s0)-Length(s4)-Length(s3)-Length(s2));
-        s1 := s1 + s2;
-      end;
-
-      Wrt(1,1,FormS(' '+s0+s1+s3+s4,screenwidth));
-      Wrt(1,2,' '+forms(getres2(611,42)+betreff,79 + screenwidth-80));   { 'Betreff:      ' }
-      mon;
-      
-    end;
-    if pushpgdn then pushkey(keycpgd);
-    if (exteditor<3) or (VarEditor='') or (VarEditor[1]='*') then EditSetBetreff(betreff,betrlen);
-
-    if (parts.count<=0) or not TSendAttach_Part(parts[0]).IsMessage then
-      addMessagePart(TempS($FFFF),true,false);
-
-    SendAttach_EditText(TSendAttach_Part(parts[0]),true,umlaute=1,iifs(flOhneSig,'',SigFile),netztyp,docode,flPGPSig);
-
-    if (exteditor<3) or (VarEditor='') or (VarEditor[1]='*') then betreff:=EditGetbetreff;
-    if edpush then begin
-      moff; wpop; mon;
-      end;
-    if pushpgdn and keypressed then begin
-      get(t,curoff);
-      if t<>keycpgd then _keyboard(t);
-     end;
-    otherquotechars:=otherqcback; {evtl. mit 'Q' im Lister umgeschaltene Quotechars reseten }
-  end;
+*)
 
   procedure DisplaySendbox;
   var
@@ -747,7 +997,7 @@ var f,f2     : file;
 //  for i:=0 to sData.CCList  .Count-1 do writeln(f,'EMPF: ',sData.  CCList[i].ZCAddress);
 //  for i:=0 to sData.BCCList .Count-1 do writeln(f,'EMPF: ',sData. BCCList[i].ZCAddress);
     writeln(f,'FIDOTO: ',fidoto);
-    writeln(f,'BETREFF: ',betreff);
+    writeln(f,'BETREFF: ',sdata.Subject);
     close(f);
   end;
 
@@ -763,9 +1013,9 @@ var        ii : integer;
        bcccnt : integer;
 
 begin
-  if sendFlags and sendQuote<>0 then typ:=typ+getres2(611,4) else   { ' (Quote)' }
+  if sData.flQuote then typ:=typ+getres2(611,4) else   { ' (Quote)' }
   if binary then typ:=typ+getres2(611,5);   { ' (Bin„r)' }
-  fidoam:=ntEditBrettempf(netztyp) and not pm;
+  fidoam:=ntEditBrettempf(nt_uucp) and not pm;
   bboxwid:=60;
 
   EmpfCnt := SData.EmpfList.Count;
@@ -805,8 +1055,8 @@ begin
 *)   
   mon;
   openmask(x+2,x+bboxwid+10,y+showempfs+4,y+showempfs+iif(fidoam,6,4),false);
-  oldbetr:=betreff;
-  maddstring(1,1,getres2(611,7),betreff,bboxwid,MAXINT,'');   { 'Betreff   ' }
+  oldbetr:=sdata.Subject;
+  maddstring(1,1,getres2(611,7),sdata.Subject,bboxwid,MAXINT,'');   { 'Betreff   ' }
   msetvfunc(umlauttest); mhnr(86);
   if fidoam then begin
     maddstring(1,3,getres2(611,8),fidoto,35,35,'');  { 'An        ' }
@@ -815,28 +1065,28 @@ begin
   readmask(brk);
   closemask;
   closebox;
-  betreff:=trim(betreff);
+  sdata.Subject:=trim(sdata.Subject);
   if brk then exit;                  { --> Abbruch bei Betreffmaske }
-  if betreff='' then begin
+  if sdata.Subject='' then begin
     brk:=true;
     if not pm then rfehler(635);  { 'Nachricht muá einen Betreff haben' }
     if (pm and not ReadJNesc(getres(618),false,brk)) or   { 'Nachricht ohne Betreff absenden' }
        not pm then exit;
     brk:=false;
   end;
-  if (_bezug<>'') and ntKomkette(netztyp) and
-                  (uppercase(betreff)<>uppercase(oldbetr)) then begin
+  if (_bezug<>'') and // ntKomkette(netztyp) and
+                  (uppercase(sdata.Subject)<>uppercase(oldbetr)) then begin
     pushhp(1501);
-    if not ReadJNesc(getres(617),(leftstr(betreff,5)=leftstr(oldbetr,5)) 
-       or ((cpos('(',oldbetr)=0) and (cpos('(',betreff)>0)),brk) then
+    if not ReadJNesc(getres(617),(leftstr(sdata.Subject,5)=leftstr(oldbetr,5)) 
+       or ((cpos('(',oldbetr)=0) and (cpos('(',sdata.Subject)>0)),brk) then
           { 'Betreff ge„ndert - Verkettung beibehalten' }
     begin
       _bezug:='';
       _orgref:='';
       sData.References.Clear;
     end else 
-      if RFCAppendOldSubject and (netztyp in netsRFC) then
-        betreff:=betreff+' ('+getres(619)+': '+oldbetr+')';
+      if RFCAppendOldSubject (* and (netztyp in netsRFC) *) then
+        sdata.Subject:=sdata.Subject+' ('+getres(619)+': '+oldbetr+')';
     pophp;
     if brk then exit;
   end;
@@ -849,10 +1099,10 @@ begin
         nil,
         false,
         false,
-        betreff,
+        sdata.Subject,
         [],[],sData);
 
-  if not intern then
+  if not sData.flIntern then
   begin
     CheckEmpfaengerList(sData.EmpfList, false, false, sData);
     MakeSignature;
@@ -862,12 +1112,28 @@ end;
 
 {$I xpsendmessage_create.inc}
 
+{ --- Datei verschicken ---------------------------------------------------- }
+{ Datei:  Pfadname der Datei. Wenn nicht vorhanden, wird eine leere angelegt }
+{ is_temp: Datei löschen                                                     }
+{ is_file: Es ist ein Datei-Attachment                                       }
+{ empfaenger: der Empfaenger (User oder x/Brett)                             }
+{ Edit :   Nachricht zunaechst Editieren und dann erst senden                }
+{ Binary:  Binaerdatei                                                       }
+{ sendwin: vor dem Senden Sende-Fenster abfragen                             }
+{ datei, header und signat sind nur aus Stack-Platz-Gruenden VARs!           }
+{ header wird veraendert!!                                                   
+
+function DoSend(pm:boolean; __datei:string; is_temp,is_file:boolean;
+                __empfaddr,__betreff:string;
+                edit,binary,sendbox,betreffbox,XpID:boolean; sData: TSendUUData;
+                signat:string; __sendFlags:word):boolean;
+}
+
 begin      //-------- of DoSend ---------
  try
   DoSend:=false;
   parken:=false;
   _verteiler:=false;
-  flOhnesig:=false; flLoesch:=false;
   dbshown := false;
 
   sigfile  := '';
@@ -878,64 +1144,65 @@ begin      //-------- of DoSend ---------
   s1:=nil;{s2:=nil;}s3:=nil;s4:=nil;s5:=nil;
   
  try 
-  assign(f,datei);
-  parts := TList.Create;
-  partsex := false;
+// assign(f,sdata.datei);
 
   SDNope := not assigned(SData);
   if not assigned(sData) then sData := TSendUUData.Create;
   
-  netztyp:=sData.onetztyp;
+//sdata.netztyp:=sData.onetztyp;
+
+  sdata.datei := __datei;
+  sdata.SendFlags := __sendFlags;
 
  try // xexit1;
-  if not pm and betreffbox and (empfaddr<>'') and (FirstChar(empfaddr)<>'A') then
+  if not pm and betreffbox and (__empfaddr<>'') and (FirstChar(__empfaddr)<>'A') then
   begin
     rfehler(606);   { 'Schreiben in dieses Brett nicht moeglich!' }
     SendEmpfList.Clear; { clear list of CC recipients }
     exit;
   end;
 
-  if empfaddr<>'' then sData.EmpfList.AddNewXP(pm,empfaddr,'');
-  intern := LeftStr(empfaddr,3)='$/'#$AF;
+  if __empfaddr<>'' then sData.EmpfList.AddNewXP(pm,__empfaddr,'');
+  sData.flIntern := LeftStr(__empfaddr,3)='$/'#$AF;
 
-  if not intern then
+  if not sData.flIntern then
     CheckEmpfaengerList(sData.EmpfList, false, false, sData);
 
   if sData.EmpfList.Count<=0 then 
     exit;
 
-  if (not intern) and (datei='') then
+  if (not   sData.flIntern) and (sdata.datei='') then
   begin
-    datei := TempS(2000);
-    BriefSchablone(sData.EmpfList[0].Address,HeaderPriv,datei);
+    sdata.datei := TempS(2000);
+    BriefSchablone(sData.EmpfList[0].Address,HeaderPriv,sdata.datei);
   end;
 
   MakeSignature;
 
-  if sendFlags and sendQuote<>0 then
+  if sdata.flQuote then
   begin
     ExtractSetMimePart(qMimePart);
     extract_msg(3,iifs(force_quotemsk<>'',force_quotemsk,QuoteSchab(pm)),
-                datei,false,1);
+                sdata.datei,false,1);
     sData.quotestr:=qchar;
     get_xref;
-    partsex:=true;
-    AddMessagePart(datei,true,true);
+    sdata.partsex:=true;
+    sdata.AddMessagePart(sdata.datei,true,true);
   end else
-  if sendFlags and sendMPart<>0 then
+  if sdata.flMPart then
   begin
-    PartsEx := not FileExists(datei);
+    sdata.PartsEx := not FileExists(sdata.datei);
       // don't extract multipart parts if file does not exist anyway...
   end else
   begin
-    if FileExists(datei) then
+    if FileExists(sdata.datei) then
     begin
       if not is_file then
-        AddMessagePart(datei,is_temp,true)
+        sdata.AddMessagePart(sdata.datei,is_temp,true)
       else
-        { if netztyp=nt_Fido then } AddFilePart(datei,is_temp);
+        { if netztyp=nt_Fido then } sdata.AddFilePart(sdata.datei,is_temp);
     end;
-    partsex:=true;
+    sdata.partsex:=true;
     OrigBox:='';
   end;
 
@@ -943,10 +1210,10 @@ begin      //-------- of DoSend ---------
 
   SendDefault:=1;
   verteiler:=false;
-  flPGPkey:=(sendflags and SendPGPkey<>0);
-  flPGPsig:=(sendflags and SendPGPsig<>0) or PGP_signall;
-  flPGPreq:=(sendflags and SendPGPreq<>0);
-  flNokop:=(sendflags and SendNokop<>0) or DefaultNokop;
+ with sdata do  flPGPkey:=(sendflags and SendPGPkey<>0);
+ with sdata do  flPGPsig:=(sendflags and SendPGPsig<>0) or PGP_signall;
+ with sdata do  flPGPreq:=(sendflags and SendPGPreq<>0);
+  flNokop:=(sdata.sendflags and SendNokop<>0) or DefaultNokop;
 
   fo:='';
   
@@ -956,7 +1223,7 @@ fromstart:
 
   passwd:='';          { Betreffbox true = Betreff nochmal eintippen           }
   empfneu:=false;      { Edit       true = Editor Starten                      }
-  docode:=0;           { Sendbox    true = Sendefenster zeigen                 }
+  sdata.docode:=0;           { Sendbox    true = Sendefenster zeigen                 }
   fidoname:='';        { forcebox ''-um Box entsprechend Empfaenger zu waehlen }
   ch:=' ';             {          Ansonsten steht hier die zu benutzende Box   }
 
@@ -969,19 +1236,19 @@ fromstart:
     if brk then exit;
   end;
 
-  orgftime:=filetime(datei);
+  orgftime:=filetime(sdata.datei);
   if edit then begin
     WriteHeaderHdr;
-    EditNachricht(pgdown);              //Editor aufrufen
+    sdata.EditNachricht(pgdown);              //Editor aufrufen
   end;
   if not getsize then exit;        { --> Nachrichten-Groesse 0 }
   calc_hdsize;
 
-  echomail:=ntEditBrettempf(netztyp) and not pm;
+//  echomail:=ntEditBrettempf(Server.netztyp) and not pm;
 
   if sendbox then
   repeat
-    echomail:=ntEditBrettempf(netztyp) and not pm;
+//    echomail:=ntEditBrettempf(netztyp) and not pm;
     fadd:=iif(echomail,2,0);
     DisplaySendbox;                         { SendBox aufbauen }
     senden:=-1;
@@ -1001,22 +1268,24 @@ fromstart:
       n:=1;
       ShowLine(spezial);
       if spezial then begin
-        case netztyp of    { '^Parken,^Datum, ^EB ,o^hneSig,l^oeschen,' }
+
+        case nt_UUCP of    { '^Parken,^Datum, ^EB ,o^hneSig,l^oeschen,' }
           nt_Fido     : sendbutt:=getres2(611,20);  { 'C^rash,P^GP'     }
           nt_Maus     : sendbutt:=getres2(611,21);  { '^MausNet,^Lokal' }
           nt_ZConnect : sendbutt:=getres2(611,22);  { 'P^rio,P^GP'      }
         else
-            if netztyp in netsRFC then
+            if nt_UUCP in netsRFC then
               sendbutt:=getres2(611,23)   { 'Z^usatz,P^GP'    }
             else
               sendbutt:=getres2(611,24);  { '^Zurueck'        }
         end;
+        
         repeat
           t:='*';
           n:=readbutton(x+3,y+11,1,sendbutt,
                         abs(n),true,t);
         until (n>=0) or ((t<>mausmoved) and (t<>mauslmoved));
-        case netztyp of
+        case nt_UUCP of
           nt_Fido : if n=7 then n:=11        { PGP         }
                     else if n=8 then n:=0;   { MH: Zurueck }
           nt_Maus : if n=8 then n:=0         { Zurueck     }
@@ -1026,7 +1295,7 @@ fromstart:
                     else if n=8 then n:=11   { PGP         }
                     else if n=9 then n:=0;   { MH: Zurueck }
           else
-            if netztyp in netsRFC then begin
+            if nt_UUCP in netsRFC then begin
               if n=6 then n:=12        { MH: RFC-Prio}
                 else if n=7 then n:=10 { Zusatz      }
                 else if n=8 then n:=11 { MH: PGP-Sig }
@@ -1045,7 +1314,7 @@ fromstart:
         repeat
           t:='*';
           n:=readbutton(x+3,y+11,1,getres2(611,28)+
-               iifs((not CanEdit) or (sendflags and sendWAB<>0),'',getres2(611,29)),
+               iifs((not CanEdit) or (sdata.sendflags and sendWAB<>0),'',getres2(611,29)),
                         abs(n),true,t);
            { ' ^Ja ,^Nein,^Intern,^Spezial,ù2^Betreff,B^ox,^Code' ',^Text' }
         until (n>=0) or ((t<>mausmoved) and (t<>mauslmoved));
@@ -1074,15 +1343,15 @@ fromstart:
           p:=pos(UpCase(t[1]),getres2(611,30));   { PDEH™RMLG }
           case p of
             1..5 : n:=p+10;
-            6    : if netztyp=nt_Fido then n:=16 else
-                   if netztyp=nt_ZConnect then n:=19 else
-                   if netztyp in netsRFC then n:=22;
-            7    : if netztyp=nt_Maus then n:=17;
-            8    : if netztyp=nt_Maus then n:=18;
-            9    : if netztyp in (netsRFC + [nt_ZConnect]) then n:=20;
-            10   : if netztyp in (netsRFC + [nt_ZConnect,nt_Fido,nt_Maus]) then
+            6    : if nt_UUCP=nt_Fido then n:=16 else
+                   if nt_UUCP=nt_ZConnect then n:=19 else
+                   if nt_UUCP in netsRFC then n:=22;
+            7    : if nt_UUCP=nt_Maus then n:=17;
+            8    : if nt_UUCP=nt_Maus then n:=18;
+            9    : if nt_UUCP in (netsRFC + [nt_ZConnect]) then n:=20;
+            10   : if nt_UUCP in (netsRFC + [nt_ZConnect,nt_Fido,nt_Maus]) then
                      n:=21;  { PGP }
-            else   if ntBCC(netztyp) and (t=^K) then
+            else   if ntBCC(nt_UUCP) and (t=^K) then
                      flNokop:=not flNokop;
           end;
           end;
@@ -1102,21 +1371,21 @@ fromstart:
                 rfehler(610)   { 'Betreff kann nicht geaendert werden' }
               else begin
                 { neuer Betreff }
-                readstring(x+13,y+4,'',betreff,min(betrlen,52),60,'',brk);
-                betreff:=trim(betreff);
-                if umlauttest(betreff) then;
+                readstring(x+13,y+4,'',sdata.Subject,min(betrlen,52),60,'',brk);
+                sdata.Subject:=trim(sdata.Subject);
+                if umlauttest(sdata.Subject) then;
                 showbetreff;
 //              n:=1;
               end;
               
-        6   : if intern then
+        6   : if   sData.flIntern then
                 rfehler(611)   { 'nicht moeglich - interne Nachricht' }
 //            else if IncompatibleNTs then
 //              rfehler(629)   { 'nicht moeglich - unterschiedliche Netztypen' }
               else begin                        { neue Pollbox }
                 newbox:=UniSel(1,false,box);
                 if newbox<>'' then
-                  if not pm and (cc_anz=0) and ntBrettebene(netztyp) and
+                  if not pm and (cc_anz=0) and ntBrettebene(nt_UUCP) and
                      ntBrettebene(ntBoxNetztyp(newbox)) and
                      not stricmp(BoxBrettebene(box),BoxBrettebene(newbox)) then
                     rfehler(637)   { 'Serveraenderung nicht moeglich - abweichende Brettebene!' }
@@ -1125,43 +1394,43 @@ fromstart:
                     dbSeek(d,boiName,UpperCase(newbox));
                     if binary and not ntBinary(dbReadInt(d,'netztyp')) then
                       rfehler(609)  { 'In diesem Netz sind leider keine Binaernachrichten moeglich :-(' }
-                     else if (((not pm) and (netztyp<>dbReadInt(d,'netztyp'))) or
-                     not ntAdrCompatible(netztyp,dbReadInt(d,'netztyp'))) then
+                     else if (((not pm) and (nt_UUCP<>dbReadInt(d,'netztyp'))) or
+                     not ntAdrCompatible(nt_UUCP,dbReadInt(d,'netztyp'))) then
                      rfehler(629)   { 'nicht m”glich - unterschiedliche Netztypen' }
                  else begin
 //                    KorrPhantomServers(box,newbox,dbReadInt(d,'netztyp'));
                       box:=newbox;
-                      oldnt:=netztyp;
+                      oldnt:=nt_UUCP;
                       sData.replyto := '';
-                      LoadBoxData(d);
-                      if (netztyp=nt_Fido)<>(oldnt=nt_Fido) then
+//                      LoadBoxData(d);
+                      if (nt_UUCP=nt_Fido)<>(oldnt=nt_Fido) then
                         senden:=5;
                       if pm then SetLocalPM;
                       showsize;
                       if cc_anz>0 then forcebox:=box;
                       showbox;
-                      if netztyp<>nt_Fido then
+                      if nt_UUCP<>nt_Fido then
                         flCrash:=false;
                       end;
                   dbClose(d);
                   end;
 //              n:=1;
               end;
-        7   : if cancode<>0 then
+        7   : with sdata do if cancode<>0 then
               begin                                { Codierung aendern }
                 if docode<>0 then
                   docode:=0
                 else
-                if parts.Count=1 then
+                if     sdata.parts.Count=1 then
                   docode:=cancode
-                else if (cancode in [8,9]) and ntMIME(netztyp)
+                else if (cancode in [8,9]) and ntMIME(nt_UUCP)
                 then
                   docode:=8;                       // use PGP/MIME instead of PGP for multiparts
                 showcode;
 //              n:=1;
               end;
-        9   : if not binary and (sendflags and sendWAB=0) then begin
-                editnachricht(false);              { zurueck zum Editor }
+        9   : if not binary and (sdata.sendflags and sendWAB=0) then begin
+                sdata.editnachricht(false);              { zurueck zum Editor }
                 if not getsize then begin
                   closebox; exit; end;    { -> Nachrichtengroesse 0 }
                 showbetreff;
@@ -1182,20 +1451,20 @@ fromstart:
                 rfehler(614)   { 'Empfangsbestaetigung nur bei PMs moeglich' }
               else
                 flEB:=not flEB;
-       14   : begin
+       14   : with sdata do begin
                 flOhnesig:=not flOhnesig;
 
                 // If the user explicitly says that s/he wants a signature
                 // then create a part that can hold it.
 
-                if (not flOhneSig) and ( (Parts.Count<1) or
-                    not TSendAttach_Part(Parts[0]).IsMessage ) then
+                if (not flOhneSig) and ( (    sdata.Parts.Count<1) or
+                    not TSendAttach_Part(    sdata.Parts[0]).IsMessage ) then
                   AddMessagePart(TempS($FFFF),true,false);
 
                 calc_hdsize;
                 showsize;
               end;
-       15   : flLoesch:=not flLoesch;
+       15   : with sdata do flLoesch:=not flLoesch;
        16   : if sData.can_crash then
                 flCrash:=not flCrash
               else
@@ -1222,18 +1491,18 @@ fromstart:
        20   : EditSdata;
        21   : SendPgpOptions;
        22   : begin                    { RFC-Priority }
-               if not(netztyp in netsRFC)then rfehler(622);
+               if not(nt_UUCP in netsRFC)then rfehler(622);
                 getprio;
                showflags;
               end;
        23   : begin
                 MIMEDecompose;
-                SendAttach(Parts,Umlaute=1,iifs(flOhneSig,'',sigfile),netztyp,
-                  iif(docode in [8,9],cancode,docode),flPGPSig);
+                SendAttach(    sdata.Parts,Umlaute=1,iifs(sdata.flOhneSig,'',sigfile),nt_UUCP,
+                  iif(sdata.docode in [8,9],sdata.cancode,sdata.docode),sdata.flPGPSig);
 
                 // if the user deleted the message part, switch off signatures
-                if (Parts.Count<1) or not TSendAttach_Part(Parts[0]).IsMessage then
-                  flOhneSig := true;
+                if (    sdata.Parts.Count<1) or not TSendAttach_Part(    sdata.Parts[0]).IsMessage then
+                  sdata.flOhneSig := true;
 
                 KorrCode;
               end;
@@ -1249,17 +1518,17 @@ fromstart:
 
     case senden of
       0 : exit;              { Abbruch }
-      2 : intern:=true;            { nicht in Puffer + kein unversandt }
+      2 :   sData.flIntern:=true;            { nicht in Puffer + kein unversandt }
       3 : begin                    { Nachricht nach />>Unversandt }
             ParkMsg;               { ## Originalempfaenger einfuegen }
             pm:=false;
             Internbox:={default}box;
             sData.EmpfList.Clear;
-            empfaddr:=UnvBrett;
-            intern:=true;
+            sData.EmpfList.AddNewXP(false,UnvBrett,'');
+              sData.flIntern:=true;
             parken:=true;
             betreffbox:=false; edit:=false; sendbox:=false;
-            sendFlags:=sendFlags or sendIntern;
+            sdata.flIntern := true;
             cc_anz:=0;
             flcrash:=false;   { !! }
             goto fromstart;
@@ -1269,25 +1538,24 @@ fromstart:
             exit;
           end;
     end;
-    if sendFlags and sendIntern<>0 then intern:=true;
 
-  until (senden<>5) and ((netztyp<>nt_Pronet) or SizeOk) and
-        ((senden<>1) or intern or (grnr=LocGruppe) or pm or (fs+addsize<1024)
+  until (senden<>5) and ((nt_UUCP<>nt_Pronet) or SizeOk) and
+        ((senden<>1) or   sData.flIntern or (grnr=LocGruppe) or pm or (fs+addsize<1024)
          or (fs+addsize>50000) or binary or QuoteOK)
   else begin
-    senden:=SendDefault;    { not sendbox }
-    case senden of
-      2 : intern:=true;
+    senden:=;    { not sendbox }
+    case senden of  SendDefault
+      2 :   sData.flIntern:=true;
     end;
     end;
 
   if pm then fidoto:=''
   else
-    case netztyp of
+    case nt_UUCP of
       nt_Fido,
       nt_QWK      : fidoto:=fidoto;
     else
-      if netztyp in (netsRFC + [nt_Magic, nt_Pronet, nt_ZConnect]) then begin
+      if nt_UUCP in (netsRFC + [nt_Magic, nt_Pronet, nt_ZConnect]) then begin
         if (fidoto=brettalle) or (blankpos(fidoto)=0) then
           fidoto:='';
       end else fidoto:='';
@@ -1336,9 +1604,9 @@ fromstart:
  end;
 
  finally
-  for ii:=0 to parts.count-1 do
-    TObject(parts[ii]).Free;
-  parts.Free;
+  for ii:=0 to     sdata.parts.count-1 do
+    TObject(    sdata.parts[ii]).Free;
+      sdata.parts.Free;
  end;
 
  except 
@@ -1352,94 +1620,409 @@ fromstart:
  end;
 
 end; {------ of DoSend -------}
+{$ENDIF}
 
+{ -------------------------------------------------------------------- }
+{ -- TSendUUData ----------------------------------------------------- }
+{ -------------------------------------------------------------------- }
 
-procedure send_file(pm,binary:boolean);
-const xp_support = 'A/T-NETZ/SUPPORT/XPOINT';
-var
-    empf,repto : string;
-    betr,dummy : string;
-    hf         : string;
-    reptoanz   : integer;
-    fn         : string;
-    useclip    : boolean;
-    sData      : TSendUUData;
+{ TSendUUData is a class that represents a message being sent. It      }
+{ replaces the DoSend procedure.                                       }
 
-  function FileOK:boolean;
-  var f : file;
+constructor TSendUUData.Create;
+var n: TNetClass;
+begin
+  EmpfList := TAddressList.Create;
+  Followup := TStringlist.Create;
+  References := TStringList.Create;
+  OEM := TStringList.Create;
+
+  parts := TList.Create;
+
+  Boxen        := TStringList.Create;
+  Boxen.Sorted     := true;
+  Boxen.Duplicates := dupIgnore;
+
+  for n := Low(n) to high(n) do 
+    FCharsets[n] := TStringList.Create;
+
+  Clear;
+end;
+
+destructor TSendUUData.Destroy;
+var n: TNetClass;
+begin
+  EmpfList.Free;
+  FollowUp.Free;
+  REferences.Free;
+  OEM.Free;
+
+  Boxen.Free;
+
+  ClearParts;
+  Parts.Free;
+    
+  for n := Low(n) to high(n) do 
+    FCharsets[n].Free;
+
+  inherited;
+end;
+
+procedure TSendUUData.Clear;
+var n: TNetClass;
+    b: boolean;
+begin
+  EmpfList.Clear;
+
+  for n := Low(n) to high(n) do 
   begin
-    fileok:=true;
-    assign(f,fn);
-    reset(f);
-    if ioresult>0 then fileok:=false
-    else close(f);
+    FCharsets[n].Clear;
+    for b := low(b) to high(b) do
+      FHas[n,b] := false;
   end;
 
+  can_crash:= false;
+
+  Boxen    .Clear;
+    
+  maxsize   := MAXINT;
+  attachMode:= attachMIME;
+
+  ClearParts;
+  partsex := false;
+ 
+  Replyto := '';
+  followup.Clear;
+  References.Clear;
+  keywords := '';
+  summary := '';
+  distribute := '';
+  ReplyGroup := '';     { Maus-QuoteTo }
+  oab := '';
+  wab := '';
+  OEM.Clear;
+  oar := '';
+  war := '';
+  onetztyp := 0;
+  orghdp := nil;
+  quotestr := '';
+  UV_edit:= false; { <Esc> -> "J" }
+//empfrealname := '';
+  msgid := '';
+  ersetzt := '';
+  SenderRealname := '';
+  SenderMail := '';
+  FQDN := ''; { overriding standards in DoSend if set }
+  RTAHasSetVertreter := false;
+  boundary := '';
+
+  SentOK   := false;
+  
+  flIntern := false;
+  flShow   := false;
+  flDelay  := false;
+//flQuote  := false;
+  flWAB    := false;
+  flReedit := false;
+  flHalt   := false;
+  flMark   := false;
+  flPGPkey := false;
+  flPGPreq := false;
+  flPGPsig := false;
+//flNokop  := false;
+//flIQuote := false;
+//flMPart  := false;
+
+  flControlMsg := false;
+  flUngelesen := false;
+
+  flOhneSig := true;
+
+  FUserDataForced := false;
+end;
+
+{ -------------------------------------------------------------------- }
+
+function TSendUUData.GetEmpf1Address:  string; 
 begin
-  betr:='';
-  case aktdispmode of
-   -1..0 : empf := dbReadNStr(bbase,bb_brettname); { B^inaer / Text^File an Brett }
-    1..4 : empf := dbReadNStr(ubase,ub_username);  { B^inaer / Text^File an User }
-  10..19 : begin
-             empf := dbReadNStr(mbase,mb_absender);  { ^I/^F an Absender der Msg }
-             betr := dbReadNStr(mbase,mb_betreff);
-             ReplyText(betr,false);
-           end;
+  if EmpfList.Count<=0 then
+    result := ''
+  else
+  if EmpfList[0].Address is TEmailAddress then
+    result := EmpfList[0].XPAddress
+  else
+    result := EmpfList[0].ZCAddress;
+end;
+
+procedure TSendUUData.SetEmpf1Address (NewValue: string);
+begin
+  if EmpfList.Count<=0 then
+    EmpfList.AddNew.ZCAddress := NewValue
+  else
+  if EmpfList[0].Address is TDomainEmailAddress then
+    TDomainEmailAddress(EmpfList[0].Address).AddrSpec := NewValue
+  else
+    EmpfList[0].ZCAddress := NewValue;
+end;
+
+function TSendUUData.GetEmpf1RealName: string; 
+begin
+  if (EmpfList.Count>0) and (EmpfList[0].Address is TDomainEmailAddress) then
+    result := (EmpfList[0].Address as TDomainEMailAddress).Realname
+  else 
+    result := '';
+end;
+
+procedure TSendUUData.SetEmpf1RealName(NewValue: string);
+begin
+  if (EmpfList.Count>0) and (EmpfList[0].Address is TDomainEmailAddresS) then
+    (EmpfList[0].Address as TDomainEMailAddress).Realname := NewValue;
+end;
+
+(*
+function TSendUUData.GetSendFlags: word;
+begin
+  Result := 0;
+  if flIntern then Result := Result or sendIntern;
+  if flShow   then Result := Result or sendShow  ;
+  if flDelay  then Result := Result or sendDelay ;
+//if flQuote  then Result := Result or sendQuote ;
+  if flWAB    then Result := Result or sendWAB   ;
+  if flReedit then Result := Result or sendReedit;
+  if flHalt   then Result := Result or sendHalt  ;
+  if flMark   then Result := Result or sendMark  ;
+  if flPGPkey then Result := Result or sendPGPkey;
+  if flPGPreq then Result := Result or sendPGPreq;
+  if flPGPsig then Result := Result or sendPGPsig;
+  if flNokop  then Result := Result or sendNokop ;
+//if flIQuote then Result := Result or sendIQuote;
+//if flMPart  then Result := Result or sendMPart ;
+end; 
+*)
+
+(*
+procedure TSendUUData.SetSendFlags(flags:word);
+begin
+  flIntern := (flags and sendIntern)<>0;
+  flShow   := (flags and sendShow  )<>0;
+  flDelay  := (flags and sendDelay )<>0;
+//flQuote  := (flags and sendQuote )<>0;
+  flWAB    := (flags and sendWAB   )<>0;
+  flReedit := (flags and sendReedit)<>0;
+  flHalt   := (flags and sendHalt  )<>0;
+  flMark   := (flags and sendMark  )<>0;
+  flPGPkey := (flags and sendPGPkey)<>0;
+  flPGPreq := (flags and sendPGPreq)<>0;
+  flPGPsig := (flags and sendPGPsig)<>0;
+  flNokop  := (flags and sendNokop )<>0;
+//flIQuote := (flags and sendIQuote)<>0;
+//flMPart  := (flags and sendMPart )<>0;
+end;
+*)
+
+procedure TSendUUData.MergeCharsets(nt:byte;NewCharsets:TStringList);
+var i,i2: integer;
+    n: TStringList;
+    List: TStringList;    
+
+  procedure Normalise(List:TStringList);
+  var i: integer;
+  begin
+    for i:=List.Count-1 downto 0 do
+      List[i] := MimeCharsetCanonicalName(List[i]);
   end;
-  fn:=sendpath+Wildcard;
-  useclip:=true;
-  if readfilename(getres(iif(binary,613,614)),fn,true,useclip)   { 'Binaerdatei' / 'Textdatei' versenden }
-  then begin
-    if not multipos(_MPMask,fn) then fn:=sendpath+fn else
-    fn:=ExpandFileName(fn);
-    if not FileExists(fn) then rfehler(616)    { 'Datei nicht vorhanden' }
-    else if not FileOK then fehler(getres(102)) { Fehler beim Dateizugriff }
+    
+begin
+  List := FCharsets[ntClass(nt)];
+
+  if List.Count<=0 then
+  begin
+    List.Assign(NewCharsets);
+    Normalise(List);
+  end else
+  begin
+    N := TStringList.Create;
+   try
+    N.Assign(NewCharsets);
+    Normalise(N);
+    N.Sorted := true;
+
+    for i:= List.Count-1 downto 0 do
+      if not N.Find(List[i],i2) then
+        List.Delete(i);
+   finally
+    N.Free;
+   end; 
+  end;
+
+  if List.Count<=0 then
+    List.Add('US-ASCII');
+end;
+
+procedure TSendUUData.MergeMsgType(nt:byte;pm:boolean);
+begin
+  FHas[ntClass(nt),pm] := true;
+  FHas[ncNone,pm] := true;
+end;
+
+{ -------------------------------------------------------------------- }
+
+{ Note: This define is temporary until we have migrated all            }
+{ subprocedures/subfunctions of DoSend to TUUSendData                  }
+                                                                                 
+{$DEFINE IN_TSENDUUDATA}
+{$INCLUDE xpsendmessage_mime.inc}
+{$INCLUDE xpsendmessage_subs.inc}
+{$INCLUDE xpsendmessage_window.inc}  
+{$INCLUDE xpsendmessage_create.inc}
+{$INCLUDE xpsendmessage_uri.inc}
+
+procedure TSendUUData.AddMessagePart(datei:string;temp,is_orig:boolean);
+var pa     : TSendAttach_Part;
+begin
+  pa := TSendAttach_Part.Create;
+
+  pa.FileName    := datei;
+  pa.IsTemp	 := temp;
+  pa.IsFile      := false;
+
+  if is_orig and assigned(OrgHdp) then
+  begin
+    pa.FileCharset := OrgHdp.Charset;
+    pa.FileEOL     := MimeEolCRLF;
+    pa.ContentDisposition.AsString := iifs(OrgHdp.Mime.Disposition<>'',OrgHdp.Mime.Disposition,'inline');
+    pa.ContentDescription := OrgHdp.Mime.Description;
+    pa.ContentType.AsString := iifs(OrgHdp.Mime.CType<>'',OrgHdp.Mime.CType,'text/plain');
+    pa.ContentEncoding := OrgHdp.Mime.Encoding;
+  end else
+  begin
+    pa.FileCharset := 'IBM437';
+    pa.FileEOL     := MimeEolCRLF;
+    pa.ContentDisposition.DispoType := MimeDispositionInline;
+    pa.ContentEncoding := MimeEncoding7Bit;
+    pa.ContentType.AsString := 'text/plain';
+  end;
+
+  SendAttach_Analyze(pa,not is_orig,SigData,nt_uucp,docode,flPGPSig);
+
+  parts.Insert(0,pa);
+end;
+
+procedure TSendUUData.AddFilePart(datei:string;temp:boolean);
+var pa     : TSendAttach_Part;
+begin
+  pa := TSendAttach_Part.Create;
+
+  pa.FileName    := datei;
+  pa.IsTemp	   := temp;
+  pa.IsFile      := true;
+
+  SendAttach_Analyze(pa,true,'',nt_uucp,docode,flPGPSig);
+
+  parts.Insert(0,pa);
+end;
+
+procedure TSendUUData.EditNachricht(pushpgdn:boolean);
+var p      : byte;
+    s0,
+    s1,
+    s2,
+    s3,
+    s4     : string;
+    edpush : boolean;
+    t      : Taste;
+    str    : TStream;
+begin
+  MIMEDecompose;
+  edpush:=not editvollbild and ((exteditor=1) or (VarEditor='') or (VarEditor[1]='*'));
+  
+  if edpush then 
+  begin
+    attrtxt(col.coledithead);
+    moff;
+    // Wegen der Fensterbehandlung wpush auf den gesamten Bereich anwenden
+    wpush(1,ScreenWidth,1,ScreenLines,'-');          { 'Nachricht an  ' / 'Nachricht in  ' }
+    p:=cpos('@',Empf1Address);
+
+    if(FirstChar(Empf1Address)=#4)or(p>0)then
+      s0:=GetRes2(611,40)  { 'Nachricht an ' }
     else
+      s0:=GetRes2(611,41); { 'Nachricht in ' }
+      
+    if(FirstChar(Empf1Address)=#4)then
+      s1:=vert_name(Empf1Address)
+    else 
+      s1:=iifs(Empf1RealName<>'',Empf1RealName,Empf1Address);
+
+    s2:=GetRes2(611,45); { '...' }
+
+    if (EmpfList.Count)>=2 then
+      s3:=GetRes2(611,44)  { 'u. a.' }
+    else
+      s3:='';
+
+    if fidoto<>'' then
+      s4:=GetRes2(611,43)  { ' an ' } + fidoto
+    else
+      s4:='';
+
+    if Length(s0)+Length(s1)+Length(s3)+Length(s4)>screenwidth-1 then
     begin
-      {fsplit(fn,dir,name,ext);}
-      if betr='' then betr:=ExtractFileName(fn)
-      else betr:=LeftStr(ExtractFilename(fn)+' ('+betr,39)+')';
-      sdata:= TSendUUData.Create;
-      if aktdispmode in [10..19] then begin
-        get_bezug(pm,repto,reptoanz,dummy,Pointer(sData),false);
-        if repto<>'' then empf:=repto;
-        end;
-      hf:='';
-      sendfilename:=UpperCase(ExtractFilename(fn));
-      sendfiledate:=zcfiletime(fn);
-      if DoSend(pm,fn,useclip,true,empf,betr,false,binary,true,true,false,sData,hf,0) then;
-      sData.Free;
-      end;
+      SetLength(s4,max(10,screenwidth-1-Length(s0)-Length(s1)-Length(s3)-Length(s2)));
+      s4 := s4 + s2;
     end;
-end;
 
-
-function SendPMmessage(betreff,fn:string; is_temp:boolean; var box:string):boolean;
-var d    : DB;
-    empf : string;
-    s    : string;
-    l    : longint;
-begin
-  SendPMmessage:=false;
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  if dbFound then empf:='1/'+dbReadStr(d,'username')+iifs(userboxname,'/'+box,'')
-  else empf:='';
-  dbClose(d);
-  if empf<>'' then begin
-    InternBox:=box; forcebox:=box;
-    s:='';
-    if DoSend(false,fn,is_temp,false,empf,betreff,
-              false,false,false,false,false,nil,s,sendIntern+sendShow)
-    then begin
-      l:=dbReadInt(mbase,'unversandt') or 64;    { interne Nachricht }
-      dbWriteN(mbase,mb_unversandt,l);     { -> keine Mausstatus-Abfrage }
-      SetUngelesen;
-      SendPMmessage:=true;
-      end;
+    if Length(s0)+Length(s1)+Length(s3)+Length(s4)>screenwidth-1 then
+    begin
+      SetLength(s1,screenwidth-1-Length(s0)-Length(s4)-Length(s3)-Length(s2));
+      s1 := s1 + s2;
     end;
-end;
 
+    Wrt(1,1,FormS(' '+s0+s1+s3+s4,screenwidth));
+    Wrt(1,2,' '+forms(getres2(611,42)+Subject,79 + screenwidth-80));   { 'Betreff:      ' }
+    mon;
+      
+  end;
+  if pushpgdn then pushkey(keycpgd);
+  if exteditor<3 then EditSetBetreff(Subject,80);
+
+  if (parts.count<=0) or not TSendAttach_Part(parts[0]).IsMessage then
+  begin
+    s0 := TempS($FFFF);
+    str := TFileStream.Create(s0,fmCreate);
+    writeln_s(str,HeadData); str.Free;    
+    addMessagePart(s0,true,false);
+  end;
+
+  SendAttach_EditText(TSendAttach_Part(parts[0]),true,umlaute=1,SigData,nt_uucp,docode,flPGPSig);
+
+  if exteditor<3 then Subject:=EditGetbetreff;
+  if edpush then begin
+    moff; wpop; mon;
+    end;
+  if pushpgdn and keypressed then begin
+    get(t,curoff);
+    if t<>keycpgd then _keyboard(t);
+   end;
+  otherquotechars:=otherqcback; {evtl. mit 'Q' im Lister umgeschaltene Quotechars reseten }
+end;
+  
+{ -------------------------------------------------------------------- }
+
+function TSendUUData.GetHasPM: boolean;
+begin result := FHas[ncNone,true]; end;
+
+function TSendUUData.GetHasAM: boolean;
+begin result := FHas[ncNone,false]; end;
+
+function TSendUUData.GetHasNetz(nc: TNetClass): boolean;
+begin result := FHas[nc,false] or FHas[nc,true]; end;
+
+function TSendUUData.GetHasNetzPM(nc: TNetClass; pm: Boolean): boolean;
+begin result := FHas[nc,pm]; end;
+
+{ -------------------------------------------------------------------- }
+                                                                        
 initialization
   SendEmpfList := TStringList.Create;
   qMimePart := nil;
@@ -1448,6 +2031,9 @@ finalization
 
 {
   $Log$
+  Revision 1.65  2002/11/14 21:06:13  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.64  2002/08/28 18:48:54  mk
   JG:- fixed: Alt-B in editor sometimes doesn't work
     see <8Vf7E22S6pB.3.219@jochen.gehring.dialin.t-online.de>

@@ -63,6 +63,7 @@ type   TAddressType = (
 	 addrFido );    // user@1:2/3.4
 
 type   TNetClass = (
+         ncNone,
          ncZConnect,
          ncFTN,
          ncRFC,
@@ -85,6 +86,7 @@ function ntName(nt:byte):string;              { s. auch XP4O.MsgInfo() }
 function mbNetztyp:byte;
 function ntZonly:boolean;                     { nur Z-Netz/alt }
 function ntXPctl(nt:byte):boolean;            { XP-Control-Messages }
+function ntClass(nt:byte): TNetClass;         { Netz-Uebertyp }
 
 function ntBinary(nt:byte):boolean;           { Bin„rmails erlaubt    }
 function ntBinaryBox(box:string):boolean;     { dito                  }
@@ -258,6 +260,22 @@ begin
   ntZCablage:=(ablg>9);
 end;
 
+function ntClass(nt:byte): TNetClass;         { Netz-Uebertyp }
+begin
+  case nt of
+    nt_Netcall: Result := ncZConnect;
+    nt_ZConnect:Result := ncZConnect;
+    nt_Maus:    Result := ncMaus;
+    nt_Fido,
+    nt_QWK:     Result := ncFTN;
+    nt_UUCP,
+    nt_Client,
+    nt_NNTP,
+    nt_POP3,
+    nt_IMAP:    Result := ncRFC;
+    else        Result := ncNone;
+  end;
+end;
 
 function ntBoxNetztyp(box:string):byte;
 var d  : DB;
@@ -349,16 +367,16 @@ end;
 function ntDomainType(nt:byte):byte;
 begin
   case nt of
-    0,1      : ntDomainType:=0;   { @BOX.ZER [@POINT.ZER] }
-    2        : ntDomainType:=5;   { @BOX.domain [@POINT.domain] }
-    3        : ntDomainType:=1;   { @POINT oder @BOX }
-    4        : ntDomainType:=7;   { @BOX;POINT }
-    10,11    : ntDomainType:=2;   { @POINT }
-    20,31,90 : ntDomainType:=3;   { @BOX }
-    30       : ntDomainType:=4;   { @Net:Zone/Node.Point = @Box.Point }
-    40       : ntDomainType:=6;   { @point.domain }
+    nt_Netcall, 1 {???}     : ntDomainType:=0;   { @BOX.ZER [@POINT.ZER] }
+    nt_ZConnect             : ntDomainType:=5;   { @BOX.domain [@POINT.domain] }
+    nt_Magic                : ntDomainType:=1;   { @POINT oder @BOX }
+    nt_Pronet               : ntDomainType:=7;   { @BOX;POINT }
+    nt_Quick, nt_GS         : ntDomainType:=2;   { @POINT }
+    nt_Maus, nt_QWK, 90     : ntDomainType:=3;   { @BOX }
+    nt_Fido                 : ntDomainType:=4;   { @Net:Zone/Node.Point = @Box.Point }
+    nt_UUCP                 : ntDomainType:=6;   { @point.domain }
   else // (POP3, NNTP, IMAP, Client)
-               ntDomainType:=8;   { eMail-Adresse ('email') }
+    ntDomainType:=8;   { eMail-Adresse ('email') }
   end;
 end;
 
@@ -775,6 +793,9 @@ begin
   fillchar(ntused,sizeof(ntused),0);
 {
   $Log$
+  Revision 1.50  2002/11/14 21:06:13  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.49  2002/07/28 11:31:46  cl
   - BUGFIX: [ 587626 ] 3.9: EBs verschandeln Subject
   - BUGFIX: [ 587388 ] 3.9: EBs gehen nicht immer

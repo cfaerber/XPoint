@@ -67,8 +67,9 @@ implementation  {----------------------------------------------------}
 
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xpsendmessage,xpnetcall,xp8,
       xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
-      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_unsent,xpmime,lister, viewer,
-      xpmakeheader, replytoall, mime,debug;
+      xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_resend,xpmime,lister, viewer,
+      xpmakeheader, replytoall, mime,debug, 
+      addresses, addresslist, classes, xpsendmessage_rta, xpstreams;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
@@ -606,7 +607,7 @@ var t,lastt: taste;
         20  : dbGoTop(dispdat);
     end;
     if dbBOF(dispdat) or dbEOF(dispdat) or wrongline then disprec[1]:=0
-    else disprec[1]:=dbRecNo(dispdat);
+    else  disprec[1]:=dbRecNo(dispdat);
     aufbau:=true;
   end;
 
@@ -700,7 +701,416 @@ var t,lastt: taste;
 
   { --- Nachrichten verschicken -------------------------- }
 
+{$IFNDEF __undefined}
+  { quote: 0=nein, 1=ja, 2=evtl. MultiQuote, 3=Indirekt, 4=Indirekt-Multi
+           10=Textdatei, 11=Binärdatei }
 
+  procedure brief_senden(reply,pm,xposting:boolean; quote:byte);
+  var sData  : TSendUUData;
+      OrgHDP : THeader;
+      hds    : Longint;
+      brk    : boolean;
+      s,t    : string;
+      i,j    : integer;
+      flags  : byte;
+      grp    : longint;
+      d      : DB;
+      QuoteMask  : string;
+      QuoteString: string;
+      QuoteOld : string;
+      gflags : byte;
+      rta    : boolean;
+      news   : boolean;
+      fn     : string;
+      stream : TStream;
+      useclip: boolean;
+      MimePart  : TMimePart;
+
+    procedure AddAddress(const addr,realname: string; typ: TAddressListType);
+    begin
+      if addr='' then exit;
+      with sData.EmpfList.AddNew do begin
+        ZCAddress := Addr;
+        AddressType := Typ;
+        if (realname<>'') and (Address is TDomainEmailAddress) then 
+          TDomainEmailAddress(Address).Realname := realname;
+      end;
+    end;
+
+    procedure AddAddressList(const addr: string; typ: TAddressListType); overload;
+    var s,i: integer;
+    begin
+      if addr='' then exit;
+      s := sData.EmpfList.Count;
+      RFCReadAddressList(addr,sData.EmpfList,nil);
+      for i := s+1 to sData.EmpfList.Count-1 do
+        sData.EmpfList[i].AddressType := typ;
+    end;
+
+    procedure AddAddressList(sl: TStringList; pm_typ, am_typ: TAddressListType); overload;
+    var i: integer;
+    begin
+      if sl.Count<=0 then exit;
+      for i := 0 to sl.Count-1 do
+        with sData.EmpfList.AddNew do begin
+          ZCAddress := sl[i];
+          if CPos('@',sl[i])>0 then AddressType := pm_typ 
+          else                      AddressType := am_typ;
+        end;
+    end;
+    
+    procedure AddURIAddresses(const uris: string);
+    var p,q: integer;
+    begin
+      q := 0; p:=1;
+      while p<Length(uris) do 
+      begin
+        q := CPosFrom('>',uris,p);
+        if q=0 then exit;
+        sData.AddURI(Copy(uris,p+1,q-p-1));
+        p := q+1;
+      end;
+    end;
+
+    procedure SetGroupData(pm,other: boolean);
+    begin
+      dbOpen(d,GruppenFile,1);
+      try
+        dbSeek(d,giIntnr,dbLongStr(dbReadIntN(bbase,bb_gruppe)));
+        sData.SenderRealname := dbReadStr(d,iifs(pm,'pmrealname','amrealname'));
+        sData.SenderMail     := dbReadStr(d,iifs(pm,'pmmail','ammail'));
+        sData.replyto        := dbReadStr(d,iifs(pm,'pmreplyto','amreplyto'));
+        sData.fqdn           := dbReadStr(d,iifs(pm,'pmfqdn','amfqdn'));
+
+        sData.HeadTemplate   := dbReadStr(d,iifs(pm,'pmkopf','kopf'));
+        sData.SigTemplate    := dbReadStr(d,iifs(pm,'pmsignatur','signatur'));
+
+        if quote<>0 then begin              
+          QuoteMask            := dbReadStr(d,iifs(pm,'pmquotemsk','quotemsk'));
+          QuoteString          := dbReadStr(d,'quotechar');
+          if QuoteMask <> '' then QuoteMask := QuoteMask + ExtXps;          
+        end;
+              
+        dbRead (d,'flags',gflags);
+      finally
+        dbClose(d);
+      end;
+    end;
+
+  { quote: 0=nein, 1=ja, 2=evtl. MultiQuote, 3=Indirekt, 4=Indirekt-Multi 
+           10=Textdatei, 11=Binärdatei
+  procedure brief_senden(reply,pm,xposting:boolean; quote:byte); }
+  begin
+    sData := nil;
+    OrgHDP:= nil;
+
+    QuoteMask  := '';
+    QuoteString:= '';
+
+    gflags := 0;
+    rta := false;
+    news := false;
+    
+    try
+      GoP;
+      sData := TSendUUData.Create;
+
+      // -- Reply or Followup ------------------------------------------
+      if reply then
+      begin
+        assert(dispmode in [10..12]);
+        assert(quote in [0..4,10..11]);
+      
+        OrgHdp := THeader.Create;
+        sData.OrgHdp := OrgHdp;
+        ReadHeader(OrgHdp,hds,false);
+
+        // -- Fehler abfangen ------------------------------------------
+        if (mbNetztyp = nt_Maus) and ((dbReadInt(mbase,'unversandt') and 1)<>0) then begin
+          rfehler(404);   { 'bei unversandten Maus-Nachrichten nicht erlaubt!' }
+          exit;
+        end else 
+        if ((dbReadInt(mbase,'unversandt') and 128)<>0) then begin
+          rfehler(443);  { 'Nachricht wurde duch Absender "gecancelt" - antworten nicht moeglich.' }
+          exit;
+        end else 
+        if not pm and (dbReadInt(mbase,'netztyp')and $400<>0) then begin
+          pm:=not ReadJNesc(getres(431),false,brk);   { 'Der Absender wuenscht eine PM-Antwort - trotzdem oeffentlich antworten' }
+          if brk then exit;
+        end;
+
+        // -- Kopf und Signatur ----------------------------------------
+            { 10=Nachrichten in DispBrett (auch To-Brett!)
+              11=markierte Nachrichten
+              12=Kommentarbaum                           }
+        if (quote<>0) or (dispmode in [10,12]) then
+        begin
+          if not (dispmode in [10,12]) then begin
+            s := dbReadStrN(mbase,mb_brett);
+            dbSeek(bbase,biIntnr,copy(s,2,4));
+          end;
+          s := dbReadStrN(bbase,bb_brettname);
+
+          if(FirstChar(s)='A') then 
+          begin
+            SetGroupData(pm,false);
+            news := true;
+          end;
+        end else
+        begin
+          for i:= 1 to OrgHdp.Empfaenger.Count-1 do 
+            if CPos('@',OrgHdp.Empfaenger[i])=0 then begin
+              news := true; break;
+            end;
+        end;
+
+        // == Adressen hinzufügen ======================================
+
+        // -- Mailinglisten --------------------------------------------
+        if (not pm) and (OrgHdp.ListID<>'') and (OrgHdp.ListPost<>'') then
+        begin
+          if Uppercase(OrgHdp.ListPost) = 'NO' then begin
+            rfehler(452);   { '51 An diese Mailing-Liste k\x94nnen keine Nachrichten gesandt werden.' }
+            exit;
+          end;
+          AddURIAddresses(OrgHdp.ListPost);          
+        end;
+        
+        // -- Private Antwort ------------------------------------------
+        if pm then begin
+          if OrgHdp.ReplyTo <> '' then begin
+            AddAddress(orghdp.ReplyTo,'',atTo);
+            AddAddress(orghdp.Absender,orghdp.Realname,atUnused); end
+          else
+            AddAddress(orghdp.Absender,orghdp.Realname,atTo);
+
+          AddAddressList(orghdp.UTo,atUnused);
+          AddAddressList(orghdp.CC,atUnused);
+          AddAddressList(orghdp.BCC,atUnused);
+
+          AddAddressList(orghdp.Empfaenger,atUnused,atUnused);
+          AddAddressList(orghdp.Kopien,atUnused,atUnused);
+          
+          AddAddressList(orghdp.Oem,atUnused,atUnused);
+          AddAddress(orghdp.Oab,orghdp.oar,atUnused);
+          AddAddress(orghdp.Wab,orghdp.war,atUnused);
+            
+          rta := true;
+        end else
+        if sData.EmpfList.Count<=0 then begin
+        // -- Oeffentliche Antwort auf Brettnachricht ------------------
+        if news then
+        begin
+          if OrgHdp.Followup.Count>0 then begin
+            AddAddressList(orghdp.Followup,atCC,atNewsgroup);
+            AddAddressList(orghdp.Empfaenger,atUnused,atUnused);
+            AddAddressList(orghdp.Kopien,atUnused,atUnused);
+          end else
+          begin
+            AddAddressList(orghdp.Empfaenger,atUnused,atNewsgroup);
+            AddAddressList(orghdp.Kopien,atUnused,atNewsgroup);
+          end;
+          rta := false;
+        end
+        // -- Oeffentliche Antwort auf private Nachricht ---------------
+        else
+        begin
+          if OrgHdp.ReplyTo <> '' then begin
+            AddAddress(orghdp.ReplyTo,'',atTo);
+            AddAddress(orghdp.Absender,orghdp.Realname,atUnused); end
+          else
+            AddAddress(orghdp.Absender,orghdp.Realname,atTo);
+
+          AddAddressList(orghdp.UTo,atCC);
+          AddAddressList(orghdp.CC,atCC);
+          AddAddressList(orghdp.BCC,atCC);
+
+          AddAddressList(orghdp.Empfaenger,atUnused,atCC);
+          AddAddressList(orghdp.Kopien,atUnused,atCC);
+          
+          AddAddressList(orghdp.Oem,atUnused,atCC);
+          AddAddress(orghdp.Oab,orghdp.oar,atCC);
+          AddAddress(orghdp.Wab,orghdp.war,atCC);
+
+          rta := true;
+        end;
+        end;
+
+        // -- Ggf. Adressen wählen -------------------------------------
+
+        if rta and (sData.EmpfList.Count>1) then 
+          SelectAddresses(sData.EmpfList,false);
+
+        // -- Betreff setzen -------------------------------------------
+
+        sData.Subject := orghdp.Betreff;
+        Cut_QPC_DES(sData.Subject);
+
+        { gflags and 6: 0=Default, 2=Re^n, 4=Re:, 6=nix }
+        case ntClass(orghdp.netztyp) of
+          ncMaus:   ReCount(sData.Subject);
+          ncRFC:    ReplyText(sData.Subject,false);
+          else case gflags and 6 of 
+            6: ReCount(orghdp.Betreff);   { Re's abschneiden } 
+            2: ReplyText(sData.Subject,true);
+            4: ReplyText(sData.Subject,true);
+            0: ReplyText(sData.Subject,ReHochN);           
+          end;
+        end;
+        
+        if orghdp.netztyp<>nt_maus then
+          if gflags and 6=6 then ReCount(orghdp.Betreff)   { Re's abschneiden }
+          else ReplyText(orghdp.Betreff,(gflags and 6=0) or 
+                                       ((gflags and 6=2) and ReHochN))
+        else
+          Cut_QPC_DES(orghdp.Betreff);
+
+        // -- Diverses -------------------------------------------------
+
+        sData.keywords:=orghdp.keywords;
+        sData.distribute:=orghdp.distribution;
+
+        if (quote in [3,4]) then sData.fidoto := orghdp.Fido_to
+        else                     sData.fidoto := orghdp.Realname;        
+
+        sData.References.Assign(orghdp.References);
+        sData.References.Add(orghdp.msgid);
+        sData.Org_Ref := orghdp.org_msgid;
+
+        // -- Gequotete Nachricht hinzufügen ---------------------------
+
+        if (quote in [1..9]) then
+        begin
+          fn := TempS(64000);
+
+          if QuoteMask='' then
+            QuoteMask := iifs(news,iifs(pm,QuotePriv,QuoteMsk),QuotePMPriv);
+
+          if QuoteString<>'' then begin 
+            QuoteOld := xp0.QuoteChar;
+            xp0.QuoteChar := QuoteString; end;
+
+          // -- Kopf schreiben -----------------------------------------
+          stream := TFileStream.Create(fn,fmCreate);
+          write_s(stream,sData.HeadData); stream.Free;
+
+          // -- Mehrfache Quotes ---------------------------------------
+          if quote in [3,4] then
+            if (Marked.Count>0)
+              and ReadJNesc(getreps(404,strs(Marked.Count)),true,brk)   { '%s markierte Nachrichten zitieren' }
+              and not brk then
+            begin
+              Marked.Sort;
+
+              for i:=0 to Marked.Count - 1 do
+              begin
+                dbGo(mbase,marked[i].recno);
+                extract_msg(xTractQuote,QuoteMask,fn,true,1);
+              end;
+              if not markaktiv then Marked.UnSort;
+              GoP;
+            end else 
+              dec(quote,2);
+        
+          if (quote in [1,2]) then
+          begin 
+
+            { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
+              Multipart-Daten vorhanden, wir faken uns also welche, damit
+              die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
+            if (qMimePart = nil) and (Orghdp.mime.ctype <> 'text/plain') then
+            begin
+              pushhp(94);
+              try
+                MimePart := TMimePart.Create;
+                MimePart.fname := fn;
+                SelectMultiPart(true,1,false,MimePart,brk);
+
+                // is MIME-Typ not text/plain and quote then ask
+                // if quoting binary mails is desired
+                if not ((MimePart.typ='text') and (MimePart.subtyp='plain'))
+                  and (MimePart.typ <> '') and (quote=1) and
+                  not ReadJN(getres(406),true)   { 'Das ist eine Binaernachricht! Moechten Sie die wirklich quoten' }
+                  then exit;
+
+                qMimePart := TMimePart.Create;
+                qMimePart.Assign(MimePart);
+              finally
+                pophp;
+              end;
+              if brk then exit;
+            end;
+
+            if assigned(qMimePart) then
+              ExtractSetMimePart(qMimePart);
+          
+            if (orghdp.typ='B') and not IS_QPC(OrgHdp.betreff) and not IS_DES(OrgHdp.betreff) and
+              not ReadJN(getres(406),true) then exit;  { 'Das ist eine Binaernachricht! Moechten Sie die wirklich quoten' }
+            extract_msg(xTractQuote,QuoteMask,fn,true,1);
+          end;
+
+          if QuoteString<>'' then xp0.QuoteChar := QuoteOld;
+
+          sData.AddText(fn,true);          
+          sData.AutoUserData := false;
+        end;
+
+      end else 
+
+      // -- No Reply or Fup --------------------------------------------
+      begin
+        assert(dispmode in [0,1,2]);  // Brett-/Userliste
+        assert(quote in [0,10..11]);              // keine Quotes
+      
+        if dispmode in [1,2,3,4] then
+          sData.EmpfList.AddNew.ZCAddress := dbReadStr(dispdat,'username')
+        else begin
+          s := dbReadNStr(bbase,bb_brettname);
+          dbReadN(bbase,bb_flags,flags);
+
+          if (FirstChar(s)='$') or (FirstChar(s)='1') then begin
+            rfehler(606);    { 'Schreiben in dieses Brett nicht moeglich!' }
+            exit;
+          end else 
+          if (FirstChar(s)='A') and (flags and 8<>0) and ((flags and 32<>0) or (Trim(dbReadNStr(bbase,bb_adresse))='')) then begin
+            rfehler(450);    { 'Schreibzugriff auf dieses Brett ist gesperrt' }
+            exit;
+          end;
+
+          SetGroupData(false,false);
+          sData.EmpfList.AddNew.ZCaddress := Mid(s,2);
+        end;
+      end;
+
+      // -- Datei hinzufügen -----------------------------------------
+
+      if (quote in [10..11]) then
+      begin
+        useclip := true;
+        if not readfilename(Getres(iif(quote=11,613,614)),fn,true,useclip) then   { 'Binaerdatei' / 'Textdatei' versenden }
+          exit;
+        if not multipos(_MPMask,fn) then fn:=sendpath+fn else
+        fn:=ExpandFileName(fn);
+        if not FileExists(fn) then begin rfehler(616); exit; end;  { 'Datei nicht vorhanden' }
+    
+        if sData.Subject='' then sData.Subject:=ExtractFileName(fn)
+        else sData.Subject:=LeftStr(ExtractFilename(fn)+' ('+sData.Subject,39)+')';
+        sData.AddFile(fn,false,'');        
+      
+        sData.DoIt(Getres(iif(quote=11,613,614)),false,false,true);        
+      end else
+      begin
+        sData.flOhneSig := false;          
+        sData.DoIt('',true,true,true);        
+      end;
+
+    finally
+      sData.Free;
+      OrgHDP.Free;
+    end;
+  end;  
+
+{$ELSE}
   { quote: 0=nein, 1=ja, 2=evtl. MultiQuote }
 
   procedure brief_senden(reply,pm,xposting:boolean; quote:byte);
@@ -1199,9 +1609,22 @@ var t,lastt: taste;
 
     sData.EmpfList.AddNewXP(pm,Empf,RealNm2);
 
-    if DoSend(pm,fn,true,false,'',betr,true,false,true,true,true,sData,sigf,
-              iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
-    then
+    if mquote then
+    begin
+      // TODO: Add quoted text
+    end;
+
+    sData.AddText(fn,true);
+
+    sData.Subject := betr;
+    sData.Signature := sigf;
+    
+    
+(*
+    if DoSend(pm,fn,true,false,'',betr,true,false,true,true,true,sData,sigf, 0)
+//            iif(mquote,sendQuote,0)+iif(indirectquote,sendIQuote,0))
+*)
+    if sData.DoIt(GetRes2(610,12),true,true,true) then
     begin
       if AutoArchiv and reply then
       begin
@@ -1239,6 +1662,7 @@ var t,lastt: taste;
     qMimePart.Free;
     qMimePart := nil;
   end;
+{$ENDIF}
 
   procedure _brief_senden(c:char);
   var
@@ -1249,6 +1673,7 @@ var t,lastt: taste;
     // Nur ausfuehren, wenn wirklich einer der benoetigten Tasten }
     if not (c in [k2_b, k2_cb, k2_SB, k2_p, k2_cP, k2_SP, k2_cQ]) then exit;
 
+  (*
     GoP;
     mbrett := dbReadNStr(mbase,mb_brett);
     if (FirstChar(mbrett)='1') or (FirstChar(mbrett)='U')then
@@ -1263,24 +1688,23 @@ var t,lastt: taste;
         end;
       Hdp.Free;
     end;
+  *)
     if c=k2_b  then brief_senden(true,false,false,0) else
     if c=k2_cb then brief_senden(true,false,false,1) else
     if c=k2_SB then brief_senden(true,false,false,2) else
     if c=k2_p  then brief_senden(true,true,false,0) else
     if c=k2_cP then brief_senden(true,true,false,1) else
     if c=k2_SP then brief_senden(true,true,false,2) else
-    if c=k2_cQ then begin
-      IndirectQuote:=true;
-      brief_senden(true,false,false,1);
-      IndirectQuote:=false;
-      end;
+    if c=k2_cQ then brief_senden(true,false,false,3); // else
+//  if c=k2_sQ then brief_senden(true,false,false,3);
   end;
 
   procedure datei_senden(pm,binary:boolean);
   begin
-    GoP;
-    xpsendmessage.send_file(pm,binary);
-    setall;
+    brief_senden(dispmode>=10,pm,false,iif(binary,11,10));
+    
+//  xpsendmessage.send_file(pm,binary);
+//  setall;
   end;
 
   procedure Bezugsbaum;
@@ -1773,6 +2197,7 @@ begin      { --- select --- }
       setall;
       end
 
+      
     else begin
       case dispmode of
        -1    : if not empty then begin               { Weiterleiten an Brett }
@@ -2324,6 +2749,9 @@ end;
 
 {
   $Log$
+  Revision 1.130  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.129  2002/09/09 09:06:35  mk
   - added const parameters
 

@@ -6719,18 +6719,27 @@ wird immer ein einfaches "Re:" vorangestellt.
 206
 Dies sind die (Datei-)Namen der
 
-þ Briefkopf-Schablone (<<Kopf>>, Default: HEADER)
-þ Quote-Schablone (<<Quote>>, Default: QBRETT) und
-þ Signatur (Default: SIGNATUR),
+þ Briefkopf-Schablone (<<Kopf>>, Default: HEADER bzw.
+  <<PrivKopf>>, Default: PRIVHEAD)
+þ Quote-Schablone (<<Quote>>, Default: QUOTE bzw.
+  <<PrivQuote>>, Default: QPRIV)
+þ QuoteTo-Schablone (<<QuoteTo>>, Default: QUOTETO)
+þ Signatur (<<Signatur>>, Default: SIGNATUR bzw.
+  <<PrivSig>>, Default:: PRIVSIG)
 
-die beim Schreiben in Bretter dieser Gruppe verwendet
-werden. Alle Schablonen-Dateinamen enden mit .XPS;
-diese Erweiterung ist jedoch NICHT mit anzugeben.
+die beim Schreiben in Bretter dieser Gruppe bzw. bei 
+privaten Antworten auf Nachrichten in Brettern 
+dieser Gruppe verwendet werden (QuoteTo, wenn es
+sich um eine zitierte Nachricht aus einem anderen 
+Brett handelt).
 
-Falls ein Feld leerbleibt, entf„llt die entsprechende
-Schablone. Ausnahme ist die Quote-Schablone, bei der
-dann die Standard-Schablone QBRETT.XPS verwendet
-wird.
+Die Erweiterung der Dateien ist immer .XPS; diese ist 
+<<nicht>> mit anzugeben.
+
+Falls ein Feld leerbleibt, entf„llt die entsprechen-
+de Schablone. Ausnahme sind die Quote-Schablone, bei 
+denen dann die Standard-Schablone QBRETT.XPS, 
+QUOTETO.XPS bwz. QPRIV.XPS verwendet wird.
 
 Die Standard-Schablonen k”nnen mit /Edit/Schablonen
 /Kopf, -/BrettQuote und -/Signatur bearbeitet werden.

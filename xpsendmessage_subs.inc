@@ -18,91 +18,306 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ Unterroutinen fr XP6.PAS }
+{ Unterroutinen fr TSendUUData }
 
+{-- Signatur-Shuffler / Signatur-Makro-Ersetzer -----------------------}
 
-{ Signatur-Shuffler / Signatur-Makro-Ersetzer }
+//  FSigTemplate:   string;         { Signatur: Vorlagendatei          }
+//  FSigData:       TMemoryStream;  { Signatur: Fertige Signatur       }
+//
+//  FSigTmplOK:     boolean;        { false: FSigTemplate neu suchen   }
+//  FSigTmplForced: boolean;        { true: FSigTemplate nicht ändern  }
 
-procedure MakeSignature;
+procedure TSendUUData.MakeUserData;
+var i: integer;
+    a: TAddressListType;
+begin
+  if (not FUserDataForced) and (not FUserDataOK) then
+  begin
+    CheckEmpfaengerList(EmpfList,false,false);
+  
+    for i := 0 to EmpfList.Count-1 do
+    begin
+      a := atUnused;
+      if (EmpfList[i].AddressType in [
+            atNewsgroup,
+            atTo,
+            atCC,
+            atBCC]) and 
+         (EmpfList[i].AddressType > a) and
+         not EmpfList[i].Empty then 
+      begin
+        a := EmpfList[i].AddressType;
+        
+        SetHeadTemplate(EmpfList[i].Kopf);
+        SetSigTemplate (EmpfList[i].Signatur);
 
- procedure MakeSignature2(const signat:String;var sigfile:string; var sigtemp:boolean);
- const
-  sigsep = '-*-';
- var
-  t,t2    : text;
-  s       : string;
-  num,n   : word;
-  Buf: array[0..4095] of Char;
- begin
-  sigtemp:=false;
-  if _filesize(signat)=0 then
-    sigfile:=''
-  else begin
-    assign(t,signat);
-    SetTextBuf(t, buf);
+	FRealname := EmpfList[i].Realname;
+	FMail     := EmpfList[i].Mail;
+	FReplyTo  := EmpfList[i].ReplyTo;
+        FFQDN     := EmpfList[i].FQDN;
+        
+        if a=atBCC then break;
+      end;
+    end;
+    FUserDataOK := true;
+
+    FUserDataForced := false;
+  end;
+end;
+
+function TSendUUData.GetAutoUserData:boolean;
+begin
+  result := not FUserDataForced;
+end;
+
+procedure TSendUUData.SetAutoUserData(x: boolean);
+begin
+  if x then FUserDataOK := false else if not FUserDataOK then MakeUserData;
+  FUserDataForced := not x;
+end;
+
+// -- Schablonen -------------------------------------------------------
+
+procedure TSendUUData.SetSigTemplate(NewTmplFile: string);
+begin
+  FUserDataForced := true;
+  if (NewTmplFile<>'') and (Cpos('.',NewTmplFile)<=0) then NewTmplFile := NewTmplFile + ExtXps;
+  
+  if FSigTemplate <> NewTmplFile then begin
+    FSigData := '';
+    FSigDataOK := false;
+  end;
+
+  FSigTemplate := NewTmplFile;
+end;
+
+procedure TSendUUData.SetHeadTemplate(NewTmplFile: string);
+begin
+  FUserDataForced := true;
+  if (NewTmplFile<>'') and (Cpos('.',NewTmplFile)<=0) then NewTmplFile := NewTmplFile + ExtXps;
+
+  if FHeadTemplate <> NewTmplFile then begin
+    FHeadData := '';
+    FHeadDataOK := false;
+  end;
+
+  FHeadTemplate := NewTmplFile;
+end;
+
+function TSendUUData.GetSigTemplate: string;
+begin
+  MakeUserData;
+  result := FSigTemplate;
+end;
+
+function TSendUUData.GetHeadTemplate: string;
+begin
+  MakeUserData;
+  result := FHeadTemplate;
+end;
+
+function TSendUUData.GetSigData: string;
+var TmplFile: string;
+    t,t2    : text;
+    s       : string;
+    num,n   : word;
+    Buf: array[0..4095] of Char;
+const 
+    sigsep = '-*-';
+
+begin
+  if flOhneSig then begin
+    result := ''; exit;
+  end;
+
+  TmplFile := SigTemplate;
+
+  if  (not FSigDataOK) and (TmplFile<>'') and FileExists(TmplFile) then 
+  begin
+    assign(t,TmplFile);
+    SetTextBuf(t,buf);
     reset(t);
     readln(t,s);
-    if s=sigsep then begin
+    
+    if s=sigsep then 
+    begin
       num:=0;
-      while not eof(t) do begin
+      while not eof(t) do 
+      begin
         readln(t,s);
         if s=sigsep then inc(num);
-        end;
+      end;
       n:=random(num)+1;    { zuf„llige Signatur ausw„hlen }
-      end
+    end
     else
       n:=0;
     close(t);
     reset(t);
-    while n>0 do begin     { ausgew„hlte Signatur suchen }
+    
+    while n>0 do 
+    begin     { ausgew„hlte Signatur suchen }
       repeat
         readln(t,s);
       until s=sigsep;
       dec(n);
-      end;
-    sigfile:=TempS(2048);
-    sigtemp:=true;
-    assign(t2,sigfile);
-    rewrite(t2);
+    end;
+
+    FSigData := '';
+
     s:='';
-    while not eof(t) and (s<>sigsep) do begin
-      readln(t,s);
-      if pm then rpsuser(s,sData.Empf1Address,sData.Empf1RealName);
-      rpsdate(s);
-      if s<>sigsep then write(t2,s+#13#10);
-      end;
-    close(t);
-    close(t2);
-    end;
- end;
-
-var sigsrc: string;
-
-begin
-  if (sendFlags and SendReEdit)<>0 then
-    exit
-  else
-  if (signat<>'')and((sendFlags and Sendreedit)=0) then 
-  begin
-    sigsrc := signat;
-  end else
-  begin
-    if siglast <> sData.SigFile then
+    while not eof(t) and (s<>sigsep) do 
     begin
-      sigok := false;
-      siglast := sData.SigFile;
-      if sigtmp then
-        _era(sigfile);      
+      readln(t,s);
+      if (EmpfList.Count>0) and EmpfList[0].PM then rpsuser(s,Empf1Address,Empf1RealName);
+      rpsdate(s);
+      if s<>sigsep then FSigData := FSigData+s+#13#10;
     end;
-    sigsrc := siglast;
+    close(t);
+
+    while (Length(FSigData)>=1) and (FSigData[Length(FSigData)] in [#13,#10]) do 
+      SetLength(FSigData,Length(FSigData)-1);
+
+    FSigDataOK := true;
   end;
 
-  if not sigok then
-  begin
-    MakeSignature2(sigsrc,sigfile,sigtmp);
-  end;  
+  Result := FSigData;
 end;
 
+function TSendUUData.GetHeadData: string;
+var TmplFile: string;
+    t,t2    : text;
+    s       : string;
+    num,n   : word;
+    Buf: array[0..4095] of Char;
+const 
+    sigsep = '-*-';
+
+begin
+  TmplFile := HeadTemplate;
+
+  if  (not FHeadDataOK) and (TmplFile<>'') and FileExists(TmplFile) then 
+  begin
+    assign(t,TmplFile);
+    SetTextBuf(t,buf);
+    reset(t);
+(*    
+    readln(t,s);
+    
+    if s=sigsep then 
+    begin
+      num:=0;
+      while not eof(t) do 
+      begin
+        readln(t,s);
+        if s=sigsep then inc(num);
+      end;
+      n:=random(num)+1;    { zuf„llige Signatur ausw„hlen }
+    end
+    else
+      n:=0;
+    close(t);
+    reset(t);
+    
+    while n>0 do 
+    begin     { ausgew„hlte Signatur suchen }
+      repeat
+        readln(t,s);
+      until s=sigsep;
+      dec(n);
+    end;
+
+    FHeadData := '';
+
+    s:='';
+*)
+    while not eof(t) (* and (s<>sigsep) *) do 
+    begin
+      readln(t,s);
+(*    if (EmpfList.Count>0) and EmpfList[0].PM then rpsuser(s,Empf1Address,Empf1RealName); *)
+
+      rpsdate(s);
+(*    if s<>sigsep then *) 
+        FHEadData := FHeadData+s+#13#10;
+    end;
+    close(t);
+
+    FHeadDataOK := true;
+  end;
+
+  Result := FHeadData;
+end;
+
+{-- La la la --------------------------------------------------------- }
+
+function TSendUUData.GetReplyTo: string;
+begin
+  MakeUserData;
+  result := FReplyTo;
+end;
+
+procedure TSendUUData.SetReplyTo(const NewValue: string);
+begin
+  FUserDataForced := true;
+  FReplyTo := NewValue;
+end;
+
+function TSendUUData.GetSenderRealname: string;
+begin
+  MakeUserData;
+  result := FRealname;
+end;
+
+procedure TSendUUData.SetSenderRealname(const NewValue: string);
+begin
+  FUserDataForced := true;
+  FRealname := NewValue;
+end;
+
+function TSendUUData.GetSenderMail: string;
+begin
+  MakeUserData;
+  result := FMail;
+end;
+
+procedure TSendUUData.SetSenderMail(const NewValue: string);
+begin
+  FUserDataForced := true;
+  FMail := NewValue;
+end;
+
+function TSendUUData.GetFQDN: string;
+begin
+  MakeUserData;
+  result := FFQDN;
+end;
+
+procedure TSendUUData.SetFQDN(const NewValue: string);
+begin
+  FUserDataForced := true;
+  FFQDN := NewValue;
+end;
+
+{-- Find Default Box ------------------------------------------------- }
+
+function TSendUUData.GetDefaultBox: string;
+begin
+  if OrgBox<>''                                 then result := OrgBox else
+  if Assigned(OrgHdp) and (OrgHdp.Real_Box<>'') then result := OrgHdp.Real_Box else
+  result := xp0.DefaultBox;
+end;
+
+procedure TSendUUData.SetForceBox(const NewBox: string);
+var i: integer;
+begin
+  FForceBox := NewBox;
+  for i := 0 to EmpfList.Count-1 do
+    EmpfList[i].Boxname := NewBox;
+end;
+
+////////////////////////////////////////////////////////////////////////
+
+{$IFDEF __undefined__}
 function getsize:boolean;
 var i:integer;
 begin
@@ -111,15 +326,16 @@ begin
 
   fs:=0; 
 
-  if not partsex then
-    fs := _filesize(datei)
+  if not sdata.partsex then
+    fs := _filesize(sdata.datei)
   else
-    for i:=0 to parts.count-1 do
-      inc(fs,TSendAttach_Part(parts[i]).FileSize);
+    for i:=0 to sdata.parts.count-1 do
+      inc(fs,TSendAttach_Part(sdata.parts[i]).FileSize);
 
-  if ((parts.Count<=0) or
-     ((parts.Count=1) and (TSendAttach_Part(parts[0]).FileSize=0)))
-  and not ntMsg0(netztyp) then begin
+  if ((sdata.parts.Count<=0) or
+     ((sdata.parts.Count=1) and (TSendAttach_Part(sdata.parts[0]).FileSize=0)))
+(*  and not ntMsg0(netztyp) *)
+then begin
     rfehler(602);   { 'leere Nachricht - nicht abgeschickt' }
     getsize:=false;
     end
@@ -131,7 +347,7 @@ end;
 procedure showbetreff;
 begin
   attrtxt(col.coldiahigh);
-  mwrt(x+13,y+4,' '+forms(betreff,52)+' ');
+  mwrt(x+13,y+4,' '+forms(sdata.Subject,52)+' ');
 end;
 
 
@@ -198,24 +414,24 @@ begin
   attrtxt(col.coldialog);
   Wrt2(getres(13));    { ' Bytes' }
   ms:=sdata.maxsize;
-  if binary and ntBinEncode(netztyp) then  { aut. uu-Codierung }
+  if binary (* and ntBinEncode(netztyp) *) then  { aut. uu-Codierung }
     ms:=system.round((ms-400)/1.415);
   oversize:=iif((sdata.maxsize>0) and (fs+addsize>ms),fs+addsize-ms,0);
   if oversize>0 then Wrt2('!');
   mon;
 end;
-
+(*
 function FidoAbsAdr:string;
 begin
   if AltAdr<>'' then
     FidoAbsAdr:=AltAdr
   else
-    if aliaspt then
+    if sdata.aliaspt then
       FidoAbsAdr:=LeftStr(box,cpos('/',box))+pointname
     else
       FidoAbsAdr:=box+'.'+pointname;
 end;
-
+*)
 function orishuffle(fn:string):string;
 var t     : text;
     s     : string;
@@ -245,10 +461,11 @@ begin
     end;
 end;
 
+(*
 function fido_origin:string;
 var s : string;
 begin
-  if netztyp<>nt_fido then
+  if not sdata.has_ftn then
     fido_origin:=''
   else begin
     if not pm then
@@ -266,16 +483,17 @@ begin
     fido_origin:=s;
     end;
 end;
+*)
 
 procedure calc_hdsize;
 
 begin
   addsize:=0;
 
-  if not flOhnesig and (sigfile<>'') then
+  if not sdata.flOhnesig and (sigfile<>'') then
     inc(addsize,_filesize(sigfile));
     
-  inc(addsize,length(fido_origin));
+//  inc(addsize,length(fido_origin));
 { if flMnet then inc(addsize,length(MausNet)+2);
   if flMloc then inc(addsize,length(MausLoc)+2); }
 end;
@@ -290,29 +508,29 @@ begin
   moff; (* 05.02.2000 MH: x+45 -> x+51 *) { unbedenklich }
   wrt(x+51,y+6,sp(22));
   gotoxy(x+51,y+6);
-  if docode=0 then
+  if sdata.docode=0 then
   begin
-    if Parts.Count=1 then
-    case cancode of
+    if sdata.Parts.Count=1 then
+    case sdata.cancode of
        0 : Wrt2(getres2(601,iif(pm,2,3)));      { 'kein Paáwort' / 'nicht m”glich' }
        1 : if binary then Wrt2(getres2(601,4))  { 'evtl. QPC m”glich' }
            else Wrt2(getreps2(601,1,'QPC'));    { 'QPC m”glich' }
        2 : Wrt2(getreps2(601,1,'DES'));         { 'DES m”glich' }
-       3..2+maxpmc : Wrt2(getreps2(601,1,pmcode(cancode)));
+       3..2+maxpmc : Wrt2(getreps2(601,1,pmcode(sdata.cancode)));
        8 : Wrt2(getreps2(601,1,'PGP/MIME'));    { 'PGP/MIME moeglich' }
        9 : Wrt2(getreps2(601,1,'PGP'));         { 'PGP m”glich' }
       10 : Wrt2(getreps2(601,1,'Rot13'));       { '%s m”glich' }
     end else
-    if (cancode in [8,9]) and ntMIME(netztyp) then
+    if (sdata.cancode in [8,9]) (* and ntMIME(netztyp) *) then
       Wrt2(getreps2(601,1,'PGP/MIME'))          { 'PGP/MIME moeglich' }
   end
   else begin
     attrtxt(col.coldiahigh);
-    case docode of
+    case sdata.docode of
        0 : Wrt2(getres2(601,3));
        1 : Wrt2('QPC');
        2 : Wrt2('DES');
-       3..2+maxpmc: Wrt2(pmcode(docode));
+       3..2+maxpmc: Wrt2(pmcode(sdata.docode));
        8 : Wrt2('PGP/MIME');
        9 : Wrt2('PGP');
       10 : Wrt2('Rot13');
@@ -324,9 +542,9 @@ end;
 
 procedure KorrCode;
 begin
-  if docode=0 then exit;
-
-  if parts.count<>1 then
+  if sdata.docode=0 then exit;
+(*
+  if sdata.parts.count<>1 then
   begin
     if ntMIME(netztyp) and (docode=9) then
       docode:=8         // switch PGP to PGP/MIME
@@ -339,6 +557,7 @@ begin
       docode:=9;        // switch PGP/MIME to PGP
       showcode;
     end;
+  *)
 end;
 
 procedure ShowLine(spezial:boolean);
@@ -369,9 +588,9 @@ var flags : string[80];
 begin
   if flCrash then Flags:='Crash '
   else flags:='';
-  if flohnesig then flags:=flags+getres2(604,1);    { 'ohneSig '  }
+  if sdata.flohnesig then flags:=flags+getres2(604,1);    { 'ohneSig '  }
   if flEB then flags:=flags+getres2(604,2);         { 'EmpfBest ' }
-  if flLoesch then flags:=flags+getres2(604,3);     { 'l”schen '  }
+  if sdata.flLoesch then flags:=flags+getres2(604,3);     { 'l”schen '  }
   if flMnet then flags:=flags+getres2(604,4);       { '(MausNet) ' }
   if flMloc then flags:=flags+getres2(604,5);       { '(lokal) ' }
   if flNokop and (pmcc_anz>0) then
@@ -390,18 +609,19 @@ begin
      5 : Flags := Flags + GetRes2(604, 18);    { 'Niedrigste '}
   end;
 
-  if flPGPkey then flags:=flags+getres2(604,10);   { 'PGP-Key ' }
+ with sdata do if flPGPkey then flags:=flags+getres2(604,10);   { 'PGP-Key ' }
 
-  if flPGPsig then begin
+ (*
+ with sdata do if flPGPsig then begin
     if((docode=8) or ((docode=0) and (cancode=8)) or
-      ((docode=0) and (cancode=9) and (Parts.Count<>1))) and ntMIME(netztyp) then
+      ((docode=0) and (cancode=9) and (sdata.Parts.Count<>1))) and ntMIME(netztyp) then
       flags:=flags+getres2(604,19)    { 'PGP/MIME-Sig ' }
     else
       flags:=flags+getres2(604,11);   { 'PGP-Sig ' }
   end;
+*)
 
-
-  if flPGPreq then flags:=flags+getres2(604,12);   { 'PGP-Req ' }
+ with sdata do if flPGPreq then flags:=flags+getres2(604,12);   { 'PGP-Req ' }
   attrtxt(col.coldiarahmen);
   if trim(flags)='' then
     mwrt(x+35,y2,dup(41,'Ä'))
@@ -422,8 +642,9 @@ end;   { x+33 -> x+40                       37 -> 39          34 -> 36 }
 
 { Es wird dei INT_NR des aktuellen Datensatzes der mbase verwendet }
 
+{$IFDEF __undefined}
 function MessageID(msgidtyp:integer):string;
-const rev = 'B';   { Revision des MsgID-Algorithmus }
+const rev = 'C';   { Revision des MsgID-Algorithmus }
 var inr     : longint;
     t,m,j   : smallword;
     h,mm,s,ss: smallword;
@@ -458,39 +679,40 @@ begin
       count:=word(inr and $ffff);
       rand:=random($1000);
       csum:=crc16strXP(username);
+      (*
       case netztyp of
-        {17.01.00 HS: Message-IDs mit dem FQDN erstellen, falls eingetragen}
         nt_ZConnect : if fqdn='' then _domain:=rev+'@'+LowerCase(pointname+'.'+box)+domain
                         else _domain:=rev+'@'+fqdn;
-        nt_Magic    : if aliaspt then _domain:=pointname+rev+'@'+LowerCase(box)+domain
-                      else _domain:=rev+'@'+LowerCase(pointname)+domain;
-        nt_Quick,
-        nt_GS       : _domain:=rev+'@'+pointname;
         nt_UUCP     : if fqdn='' then _domain:=rev+'@'+pointname+domain
                         else _domain:=rev+'@'+fqdn;
       else
         if netztyp in netsRFC then
-          if fqdn='' then
-            _domain:=rev+'@'+Mid(username,cPos('@',username)+1)
+      *) 
+          if fqdn='' then 
+          begin
+            if pointname<>'' then
+            begin
+              if box<>'' then
+                _domain := rev+'@'+LowerCase(pointname+'.'+box)+domain
+              else
+                _domain := rev+'@'+pointname+domain
+            end 
+            else
+              _domain:=rev+'@'+Mid(username,cPos('@',username)+1)
+          end
           else
-            _domain:=rev+'@'+fqdn
+            _domain:=rev+'@'+fqdn;
+      (*            
         else
           _domain:='@'+box;
       end;
+      *)
       local_part:=b30(longint(dat) shl 14+count shr 2)+
                   b30(longint(count and 3) shl 28+longint(rand) shl 16 +csum);
       MessageID:=local_part+_domain;
       end;
     end;  { Case }
     end;
-end;
-
-procedure SetCryptFlag;
-var flag : byte;
-begin
-  dbReadN(mbase,mb_unversandt,flag);
-  flag:=flag or 4;
-  dbWriteN(mbase,mb_unversandt,flag);
 end;
 
 procedure EncryptMessage(des:Boolean;var data:TStream);
@@ -546,14 +768,6 @@ begin
 
   b:=cpos('@',hdp.absender);
 
-  if not ntZConnect(netztyp) then begin
-    if nobox and (b>0) then
-      TruncStr(hdp.absender,b-1);
-     b:=cpos('@',hdp.FirstEmpfaenger);
-     if (b>0) and (UpperCase(mid(hdp.FirstEmpfaenger,b+1))=box+'.ZER') then
-     hdp.Empfaenger[0]:=LeftStr(hdp.FirstEmpfaenger,b-1);
-   end;
-
    if not des then
      hdp.attrib:=hdp.attrib or AttrQPC;
 
@@ -579,10 +793,12 @@ var fi,fo:string;
     s:string;
     anal:TMimeAnalyzer;
 begin
+(*
   if pmcrypt[docode-2].binary and not ntBinary(netztyp) then begin
     rfehler(609);     { In diesem Netz sind keine Bin„rnachrichten m”glich. }
     exit;
   end;
+*)
 
   fi:=temppath+uncryptedfile;
   fo:=temppath+cryptedfile;
@@ -594,7 +810,7 @@ begin
   CopyStream(data,fs);
   fs.Free;
 
-  s:=pmcrypt[docode-2].encode;
+  s:=pmcrypt[sdata.docode-2].encode;
   rps(s,'$KEY',passwd);
   rps(s,'$INFILE',fi);
   rps(s,'$OUTFILE',fo);
@@ -606,26 +822,27 @@ begin
   else
   begin
     fs:=TTemporaryFileStream.Create(fo,fmOpenRead);
-    if not pmcrypt[docode-2].binary then anal:=TMimeAnalyzer.Create else anal:=nil;
+    if not pmcrypt[sdata.docode-2].binary then anal:=TMimeAnalyzer.Create else anal:=nil;
     CopyStream(fs,anal);
-
+(*
     if(pmcrypt[docode-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))
       and not ntBinary(netztyp) then
     begin
       fs.Free;
       rfehler(609);     { In diesem Netz sind keine Bin„rnachrichten m”glich. }
     end else
+*)    
     begin
       SetCryptFlag;
 
-      hdp.betreff:=PMC_ID+' by XP ('+pmcrypt[docode-2].name+') '+
+      hdp.betreff:=PMC_ID+' by XP ('+pmcrypt[sdata.docode-2].name+') '+
         hex(hdp.groesse,6);
       hdp.crypt.method:='PMCRYPT2';
       hdp.crypt.komlen:=hdp.komlen; hdp.komlen:=0;      { KOM anpassen   }
       hdp.crypt.typ:=hdp.typ;
       hdp.crypt.charset:=hdp.charset;
 
-      if(pmcrypt[docode-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))then
+      if(pmcrypt[sdata.docode-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))then
       begin
         hdp.typ:='B';
         hdp.mime.encoding:=MimeEncodingBase64;
@@ -647,6 +864,8 @@ begin
   if FileExists(fi) then
     _era(fi);
 end;
+{$ENDIF}
+
 
 function fileserver(var adresse:string):boolean;
 var d      : DB;
@@ -677,7 +896,7 @@ var t     : text;
     p     : byte;
 begin
   QuoteOK:=true;
-  assign(t,datei);
+  assign(t,sdata.datei);
   settextbuf(t,buf);
   if not existf(t) or (trim(QChar)='') then exit;
   fm_ro; reset(t); fm_rw;
@@ -717,7 +936,7 @@ var t     : text;
     lines : longint;
 begin
   SizeOK:=true;
-  assign(t,datei);
+  assign(t,sdata.datei);
   settextbuf(t,buf);
   if not existf(t) then exit;
   fm_ro; reset(t); fm_rw;
@@ -742,7 +961,7 @@ var f : file;
     blockwrite(f,s[1],length(s));
   end;
 begin
-  if FileExists(datei) then begin
+  if FileExists(sdata.datei) then begin
     assign(f,TempS(_filesize(fn)+200));
     rewrite(f,1);
 
@@ -757,12 +976,12 @@ begin
       end;
       
     wrs('');
-    assign(f2,datei);
+    assign(f2,sdata.datei);
     reset(f2,1);
     fmove(f2,f);
     close(f2); close(f);
     erase(f2);
-    rename(f,datei);
+    rename(f,sdata.datei);
     if ioresult<>0 then begin
       rewrite(f2,1); reset(f,1);
       fmove(f,f2);
@@ -806,11 +1025,11 @@ begin
   repeat
     fn:=SendPath+strs(random(10000))+'.MSG';
   until not FileExists(fn);
-  if filecopy(datei,fn) then;
+  if filecopy(sdata.datei,fn) then;
   dbOpen(auto,AutoFile,1);
   dbAppend(auto);
   dbWriteStr(auto,'dateiname',fn);
-  dbWriteStr(auto,'betreff',betreff);
+  dbWriteStr(auto,'betreff',sdata.Subject);
   empf:=sData.Empf1Address;
   dbWriteStr(auto,'empfaenger',empf);
   typ:=iifc(binary,'B','T');
@@ -826,33 +1045,6 @@ begin
   closebox;
 end;
 
-procedure get_xref;
-var hdp : THeader;
-    hds : longint;
-    p   : byte;
-begin
-  hdp := THeader.Create;
-  ReadHeader(hdp,hds,false);
-  with hdp do begin
-    _bezug:=msgid;
-    _orgref:=org_msgid;
-    _beznet:=netztyp;
-    if netztyp=nt_Maus then
-      _ReplyPath:=pfad;
-    if cpos('#',absender)>0 then
-      fidoto:=realname
-    else begin
-      p:=cpos('@',absender);
-      if p=0 then p:=length(absender)+1;
-      if netztyp<>nt_ZCONNECT then
-        fidoto:=LeftStr(absender,min(35,p-1));
-      end;
-    if (sendflags and SendIQuote<>0) and (hdp.fido_to<>'') then
-      fidoto:=hdp.fido_to;
-    origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),pfad);
-    end;
-  Hdp.Free;
-end;
 
 procedure get_origbox;
 var hdp : THeader;
@@ -864,42 +1056,15 @@ begin
   Hdp.Free;
 end;
 
-procedure LoadBoxData(d:DB);
-var flags : byte;
-begin
-  EMail := ComputeUserAddress(d);
-  if forceabs='' then
-    UserName := dbReadStr(d,'username')
-  else
-    username:=forceabs;
-  PointName := dbReadStr(d,'pointname');
-  BoxFile := dbReadStr(d,'dateiname');
-  Mapsname := dbReadStr(d,'nameomaps');
-  dbRead(d,'netztyp',netztyp);
-  // sData may be initialized by role feature, don't overwrite!
-  Realname := iifs(sData.SenderRealname='',dbReadStr(d,'realname'),sData.SenderRealname);
-  dbRead(d,'script',flags);
-  if fidoname='' then
-    FidoName := dbReadStr(d,'fidoname');
-  aliaspt:=(flags and 4<>0);
-  nomids:=(flags and 8<>0);
-  nobox:=(flags and 16<>0);
-  Domain := dbReadStr(d,'domain');
-  FQDN := iifs(sData.FQDN='',dbReadStr(d,'fqdn'),sData.FQDN);
-  sData.replyto := iifs(sData.replyto='',dbReadStr(d,'ReplyTo'),sData.replyto);
-  betrlen:=ntBetreffLen(netztyp);
-  if (netztyp in netsRFC) and (umlaute=2) then
-    umlaute:=0;
-end;
-
 procedure SetLocalPM;
 var l : byte;
 begin
   { !! TODO: Geringstes Limit aller Addressen herausfinden }
 
-  lokalPM:=(RightStr(sData.Empf1Address,length(box)+4)=box+'.ZER') or
-           stricmp(RightStr(sData.Empf1Address,length(box)+length(domain)),box+domain) or
-           stricmp(RightStr(sData.Empf1Address,length(box)),box);
+//  lokalPM:=(RightStr(sData.Empf1Address,length(box)+4)=box+'.ZER') or
+//           stricmp(RightStr(sData.Empf1Address,length(box)+length(domain)),box+domain) or
+//           stricmp(RightStr(sData.Empf1Address,length(box)),box);
+(*
   case netztyp of
     nt_Netcall,nt_ZCONNECT : l:=1;
     nt_Fido                : l:=2;
@@ -913,7 +1078,8 @@ begin
       sdata.maxsize:=0; exit;      { nt_Pronet (s. SizeOK) }
       end;
   end;
-  sdata.maxsize:=pmlimits[l,iif(lokalPM,2,1)];
+*)  
+  sdata.maxsize:=pmlimits[l,iif(false (* lokalPM *),2,1)];
 end;
 
 function steuerzeichen(var s:string):boolean;
@@ -983,16 +1149,6 @@ begin
 end;
 *)
 
-procedure SetCrashInfo;
-var fa : FidoAdr;
-    ni : NodeInfo;
-begin
-  GetNodeinfo(hdp.FirstEmpfaenger,ni,2);
-  splitfido(hdp.FirstEmpfaenger,fa,DefaultZone);
-  fa.ispoint:=ni.ispoint;
-  SetCrash(makeFidoAdr(fa,true),true);
-end;
-
 function CrashAdr:string;
 var fa : FidoAdr;
     ni : NodeInfo;
@@ -1004,17 +1160,6 @@ begin
   CrashAdr:=MakeFidoAdr(fa,true);
 end;
 
-procedure SendMbox;
-var s   : string[30];
-begin
-  s:=getres2(610,iif(intern,1,iif(parken,2,3)));  { 'Nachricht ' 'speichern' / 'parken' / 'abschicken' }
-  if sendFlags and sendShow=0 then
-    message(s+'...')
-  else
-    message(getres2(610,iif(intern,4,5))+   { 'Speichere Nachricht in ' / 'Sende Nachricht an ' }
-            LeftStr(sData.Empf1Address,50)+' ');
-end;
-
 procedure EditSdata;
 var x,y : Integer;
     brk : boolean;
@@ -1022,6 +1167,7 @@ var x,y : Integer;
     sml : string[1];
     tmpFollowUp: string;
 begin
+(*
   if netztyp=nt_ZConnect then
     y:=iif(pm,5,9)
   else if netztyp in netsRFC then
@@ -1069,22 +1215,19 @@ begin
     else
       if tmpFollowUp <> '' then FollowUp.Add(tmpFollowUp);
   enddialog;
-end;
-
-function MayCrash:boolean;
-begin
-  MayCrash:=(netztyp=nt_Fido) and pm;
+*)  
 end;
 
 procedure SendPGPOptions;
 var brk : boolean;
     x,y: Integer;
 begin
-  if not UsePGP then
+ with sdata do if not UsePGP then
     rfehler(633)    { 'Aktivieren Sie zuerst PGP unter /Config/Extern/PGP!' }
   else
-    if netztyp<>nt_ZConnect then
-      flPGPsig:=not flPGPsig
+    if not has_zc then
+       flPGPsig:=not flPGPsig
+       
     else begin
       dialog(ival(getres2(645,0)),5,getres2(645,1),x,y); { 'PGP-Optionen' }
       maddbool(3,2,getres2(645,2),flPGPsig);             { 'Nachricht signieren' }
@@ -1157,8 +1300,13 @@ begin
   getBrettUserPollBox := box;
 end;
 
+{$ENDIF}
+
 {
   $Log$
+  Revision 1.30  2002/11/14 21:06:13  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.29  2002/07/31 19:26:21  ma
   - user=>email db field code synchronized with v3.8
     (does not need re-entering email address when upgrading from old

@@ -365,19 +365,40 @@ var d     : DB;
 
   procedure fscomm(comm:string);
   var domain : string;
+      sdata  : TSendUUData;
   begin
     if isbox(fs) then domain:=ntServerDomain(fs)
     else domain:='.ZER';
+
+    sData := TSendUUData.Create;
+    sData.AddText(fn,false);
+    sData.EmpfList.AddNew.ZCAddress := fname+'@'+fs+domain;
+    sData.Subject := comm;
+    sData.CreateMessages;
+    sData.Free;
+(*    
     if DoSend(true,fn,false,false,fname+'@'+fs+domain,comm,
               false,false,false,false,false,nil,hd,0) then;
+*)              
   end;
 
   procedure uucomm(comm:string);
+  var sdata: TSendUUData;
   begin
-    forcebox:=fs;
+
+    sData := TSendUUData.Create;
+    sData.AddText(fn,false);
+    sData.forcebox:=fs;
+
     GetServerName(fs);      { korrekte Schreibweise ermitteln }
+    sData.EmpfList.AddNew.ZCAddress := fname+'@'+fs+ntServerDomain(fs);
+    sData.Subject := comm;
+    sData.CreateMessages;
+    sData.Free;
+(*    
     if DoSend(true,fn,false,false,fname+'@'+fs+ntServerDomain(fs),comm,
               false,false,false,false,false,nil,hd,0) then;
+*)              
   end;
 
   procedure UUsendfile;
@@ -385,6 +406,7 @@ var d     : DB;
       brk    : boolean;
       source,
       dest   : string;
+      sdata  : TSendUUData;
   begin
     dialog(ival(getres2(818,0)),5,getres2(818,1),x,y);
     source:=WildCard; dest:='';
@@ -397,11 +419,21 @@ var d     : DB;
       rewrite(t);
       writeln(t,dest);
       close(t);
-      xpsendmessage.EditAttach:=false; xpsendmessage.noCrash:=true;
+//    xpsendmessage.EditAttach:=false; 
+xpsendmessage.noCrash:=true;
       GetServerName(fs);      { korrekte Schreibweise ermitteln }
+
+      sData := TSendUUData.Create;
+      sData.AddText(fn,false);
+      sData.EmpfList.AddNew.ZCAddress := fname+'@'+fs+ntServerDomain(fs);
+      sData.Subject := expandfilename(source);
+      sData.CreateMessages;
+      sData.Free;
+(*      
       if DoSend(true,fn,false,false,fname+'@'+fs+ntServerDomain(fs),
                 expandfilename(source),
                 false,true,false,false,false,nil,hd,0) then;
+*)                
       end;
   end;
 
@@ -556,6 +588,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.36  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.35  2002/07/29 07:17:21  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 

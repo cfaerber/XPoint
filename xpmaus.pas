@@ -45,7 +45,7 @@ procedure MausGetInfs(box, logfile:string);
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xpnt,xpsendmessage,xpsendmessage_unsent,xpconfigedit, winxp;
+uses xp1o,xp3,xp3o2,xpnt,xpsendmessage,xpsendmessage_resend,xpconfigedit, winxp;
 
 
 { art=0 : Zurueckgelieferte Maus-MessageIDs aus Logfile in  }
@@ -265,15 +265,19 @@ begin
     s:='';
     if n>0 then
       if art=2 then begin
+(*      
         if SendPMmessage('MausTausch-Fehlerbericht',tfn,true,box) then;
+*)
         end
       else begin
         InternBox:=box;
         empf:='$/¯Mausstatus';
+(*        
         if DoSend(false,tfn,true,false,empf,'PM-Status vom '+date,
                 false,false,false,false,false,nil,s,sendIntern+sendShow) then
           SetUngelesen;
-        end;
+*)        
+      end;
 //    _era(tfn);
     end;
   Hdp.Free;
@@ -416,9 +420,11 @@ begin
         close(t);
         leer:='';
         rec:=dbRecno(mbase);
+(*        
         if DoSend(true,fn,true,false,'MAUS@'+hdp.pfad,'<Maus-Direct-Command>',
                   false,false,false,false,false,nil,leer,0) then;
         dbGo(mbase,rec);
+*)
 //      erase(t);
         end;
       spop(m2t);
@@ -685,9 +691,11 @@ begin
     close(t1); close(t2);
     if _filesize(fn)>0 then begin
       leer:='';
-      forcebox:=box;
+//    forcebox:=box;
+(*      
       if DoSend(true,fn,true,false,'MAUS@'+box,'<Maus-Direct-Command>',
                 false,false,false,false,false,nil,leer,0) then;
+*)      
       end
     else
       _era(fn);
@@ -819,6 +827,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2002/11/14 21:06:13  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.39  2002/07/25 20:43:57  ma
   - updated copyright notices
 

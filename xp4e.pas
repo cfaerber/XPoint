@@ -106,9 +106,7 @@ procedure AddNewBrett(const Brettname, Kommentar, Pollbox: String; Haltezeit: In
 
 implementation  { --------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido,xp5,
-        xpsendmessage_addr_edit
-        ;
+uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido,xp5;
 
 var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       wcy         : byte;       { fr writecode() }
@@ -1664,67 +1662,21 @@ begin
 end;
 
 procedure msgdirect; // Nachricht/Direkt
-var brk  : boolean;
-    empf : string;
-    betr : string;
-    real : string;
-    box  : string;
-    headf: string;
-    sigf : string;
-    fn   : string;
-    sdata: TSendUUData;
-    pm   : boolean;
-    d    : DB;
-    grnr : longint;
+var sData: TSendUUData;
 begin
-(*
-  empf:=''; 
-*) 
-  betr:='';
-(*  
-  ReadDirect(getres(2719),empf,betr,box,false,brk);   { 'private Nachricht' }
-  if brk then exit;
-  fn:=TempS(2000);
-  dbGo(mbase,0);    { -> Kennung fr dosend(), daá kein Brett-Reply }
-  real:='';
-  pm:=(cPos('@',empf)>0);
-  if pm then
-  begin                                            {User}
-    BriefSchablone(true,HeaderPriv,fn,empf,real);
-    headf:='';
-    sigf:=PrivSignat;
-    end
-  else begin                                       {Brett}
-    empf:='A'+empf;
-    dbSeek(bbase,biBrett,UpperCase(empf));
-    dbReadN(bbase,bb_gruppe,grnr);
-    dbOpen(d,GruppenFile,1);
-    dbSeek(d,giIntnr,dbLongStr(grnr));
-    headf:=dbReadStr(d,'kopf')+extXps;
-    sigf:=dbReadStr(d,'signatur')+extXps;
-    dbclose(d);
-    BriefSchablone(false,headf,fn,empf,real);
-    headf:='';
-    end;
-*)    
-  if autocpgd then pgdown:=true;
-  forcebox:=box;
+ try  
   sdata:= TSendUUData.Create;
+ try
+  sData.flOhneSig := false;
 
-  EditEmpfaengerList(GetRes(2719),true,sData.EmpfList,nil,
-    true,true,betr,
-    [ncZConnect,ncFTN,ncRFC,ncMaus],
-    [ncZConnect,ncFTN,ncRFC,ncMaus],
-    sData);
-  
-  with sData do begin
-//  sData.Empf1Address := empf;
-//  sData.Empf1RealName := real;
-    DoSend(pm,'',true,false,'',betr,true,false,true,false,true,sdata,'',0);
-  end;
+  sData.DoIt(GetRes2(610,11),true,true,true);
+ finally
   sData.Free;
-  pgdown:=false;
-  SafeDeleteFile(fn);
+ end;
+ except
+  on e:Exception do
+    tfehler(E.Message,30);
+ end;
 end;
 
 
@@ -2516,6 +2468,9 @@ end;
 
 {
   $Log$
+  Revision 1.99  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.98  2002/07/25 20:43:54  ma
   - updated copyright notices
 

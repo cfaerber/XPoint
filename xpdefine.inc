@@ -121,6 +121,7 @@
   {$IMAGEBASE $00400000}
 {$ENDIF }
 
+{$DEFINE i386}
 {$IFDEF i386}
   {$DEFINE LittleEndian} 
 {$ELSE}
@@ -252,6 +253,9 @@
 
 {
   $Log$
+  Revision 1.82  2002/11/14 21:06:13  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.81  2002/10/27 22:48:57  mk
   - added i386 define when compiling with FPC
 

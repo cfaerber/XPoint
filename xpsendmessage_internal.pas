@@ -57,10 +57,11 @@ var umlaute  : byte;        { 0=IBM; 1=ASCII; (2=ISO) }
 
 implementation
 
-
-
 {
   $Log$
+  Revision 1.6  2002/11/14 21:06:13  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.5  2002/07/25 20:43:57  ma
   - updated copyright notices
 

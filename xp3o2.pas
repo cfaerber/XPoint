@@ -34,9 +34,11 @@ procedure SetBrettindex;
 procedure SetBrettindexEnde;
 procedure makebrett(s:string; var n:longint; const box:string; netztyp:byte;
                     order_ende:boolean);
+(*                    
 procedure get_bezug(pm:boolean; var repto:string; var reptoanz:integer;
                     var betreff:string; sdata: TSendUUData;
                     indirectquote:boolean);
+*)
 procedure SetUngelesen;
 function  UserNetztyp(adr:string):byte;
 
@@ -180,7 +182,7 @@ begin
   end;
 end;
 
-
+(*
 procedure get_bezug(pm:boolean; var repto:string; var reptoanz:integer;
                     var betreff:string; sdata: TSendUUData;
                     indirectquote:boolean);
@@ -241,7 +243,7 @@ begin
     end;
   hd.Free;
 end;
-
+*)
 
 procedure SetUngelesen;     { akt. Nachricht auf 'ungelesen' }
 var rec : longint;
@@ -268,6 +270,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.54  2002/07/25 20:43:54  ma
   - updated copyright notices
 

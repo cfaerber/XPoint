@@ -406,18 +406,19 @@ var x,y      : Integer;
       begin
         GetSysfile;
         end;
-
+(*
       if UsePGP and (FirstChar(FirstEmpfaenger)='1') { PM } and
          (pgpflags and fPGP_request<>0) and ebest then begin
         if pollbox<>'' then
           xpsendmessage.forcebox:=pollbox
         else
           xpsendmessage.forcebox:=pfadbox(true,pfad);
-        xpsendmessage._bezug:=msgid;
-        xpsendmessage._beznet:=netztyp;
+        sData.References.Add(msgid);
+//      xpsendmessage._beznet:=netztyp;
         PGP_SendKey(iifs(pgp_uid='',absender,pgp_uid));
-        xpsendmessage.forcebox:='';
+//      xpsendmessage.forcebox:='';
         end;
+*)
 
       if isSupersedesMsg and (not ignoreSupCancel) then begin
         writeln(cmessagefile,'supersedes');
@@ -1293,6 +1294,9 @@ end;
 
 {
   $Log$
+  Revision 1.98  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.97  2002/08/12 12:13:27  ma
   - fix: filtered crosspostings caused creation of "/Nix" area
 

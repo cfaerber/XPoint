@@ -84,7 +84,7 @@ procedure scr_auto_empfsel(var cr:CustomRec); { Brett/User fuer Vollbildroutinen
 
 implementation  {-----------------------------------------------------}
 
-uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xpsendmessage,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,classes,
+uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xpsendmessage,xpsendmessage_rta,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,classes,
 {$IFDEF Kylix}
   xplinux,
 {$ENDIF}  
@@ -1006,7 +1006,10 @@ var tmp  : string;
     s    : string;
     auto : boolean;
     tl,p : byte;
+    sdata: TSendUUData;
 begin
+  sData := TSendUUData.Create;
+
   auto:=(box<>'');
   if not auto then begin
     _br := dbReadNStr(mbase,mb_brett);
@@ -1067,13 +1070,13 @@ begin
   if IS_DES(betr) then delete(betr,1,length(DES_ID));
   if LeftStr(betr,length(empfbkennung))=empfbkennung then
     delete(betr,1,length(empfbkennung));
-  forcebox:=box;
-  _bezug:=hdp.msgid;
-  _orgref:=hdp.org_msgid;
-  _beznet:=hdp.netztyp;
+  sData.forcebox:=box;
+  sData.References.Add(hdp.msgid);
+  sData.org_ref:=hdp.org_msgid;
+//_beznet:=hdp.netztyp;
   if hdp.netztyp=nt_Maus then
-    _replypath:=hdp.pfad;
-  if FirstChar(_br)='A' then _pmReply:=true;
+    sData.replypath:=hdp.pfad;
+  if FirstChar(_br)='A' then sData.flpmReply:=true;
   empf:=hdp.empfbestto;
   { suboptimal }
   if empf='' then empf:=hdp.replyto;
@@ -1083,11 +1086,20 @@ begin
     empf:=hdp.absender;
   Hdp.Free;
   if cpos('@',empf)>0 then begin
-    IsEbest:=true{auto};
+    sData.flEB:=true{auto};
+
+    sData.AddText(tmp,true);
+    sData.EmpfList.AddNew.ZCAddress := empf;
+    sData.Subject := 'E:'+iifs(betr<>'',' '+betr,'');
+    sData.flShow := true;
+    sData.CreateMessages;
+(*    
     if DoSend(true,tmp,true,false,empf,LeftStr('E:'+iifs(betr<>'',' '+betr,''),BetreffLen),
               false,false,false,false,false,nil,leer,sendShow) then;
+*)              
     end;
 //  _era(tmp);
+  sData.Free;
   freeres;
 end;
 
@@ -1118,6 +1130,9 @@ var
     fn     : string;
     t      : text;
     flags  : longint;
+    sdata  : TSendUUData;
+    i      : integer;
+    
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(439);     { 'Unversandte Nachricht mit "Nachricht/Unversandt/Loeschen" loeschen!' }
@@ -1150,58 +1165,81 @@ begin
   if adr='' then exit;
 
   hdp := THeader.Create;
+  try
   ReadHeadEmpf:=1;
   ReadHeader(hdp,hds,true);
   dbReadN(mbase,mb_flags,flags);
-  if (((UpperCase(adr)<>UpperCase(dbReadStrN(mbase,mb_absender))) and
-      not stricmp(adr,hdp.wab)) or (hds<=1)) and (flags and 256 = 0) then begin
-    if hds>1 then
-      rfehler(312);     { 'Diese Nachricht stammt nicht von Ihnen!' }
-    Hdp.Free;
+
+  if hds<=1 then exit;  // Oops
+  
+  if not( IsOwnAddress(hdp.absender) or 
+     IsOwnAddress(hdp.oab) or 
+     IsOwnAddress(hdp.wab) ) then
+  begin
+    rfehler(312);     { 'Diese Nachricht stammt nicht von Ihnen!' }
     exit;
   end;
 
   leer:='';
   if hds>1 then
-    case mbNetztyp of
-      nt_UUCP, nt_Client: begin
-                    _bezug:=hdp.msgid;
-                    _beznet:=hdp.netztyp;
-                    ControlMsg:=true;
-                    dat:=CancelMsk;
-                    empf:=hdp.FirstEmpfaenger;
-                    SendEmpfList.Assign(hdp.Empfaenger);
-                    hdp.Empfaenger.Clear;
-                    if DoSend(false,dat,false,false,'A'+empf,'cancel <'+_bezug+
-                              '>',false,false,false,false,true,nil,leer,
-                              sendShow) then;
-                  end;
-      nt_Maus   : begin
+    case ntClass(mbNetztyp) of
+      ncMaus:     begin
                     fn:=TempS(1024);
                     assign(t,fn);
                     rewrite(t);
                     writeln(t,'#',hdp.msgid);
                     writeln(t,'BX');
                     close(t);
+
+                    sData := TSendUUData.Create;
+                    sData.AddText(fn,true);
+                    sData.Subject := '<Maus-Direct-Command>';
+                    sData.EmpfList.AddNew.ZCAddress := 'MAUS@'+box;
+                    sData.flShow := true;
+
+                    sData.CreateMessages;
+                    sData.Free;
+(*                    
                     if DoSend(true,fn,true,false,'MAUS@'+box,'<Maus-Direct-Command>',
                               false,false,false,false,false,nil,leer,
                               sendShow) then;
+*)                              
 //                    _era(fn);
                   end;
-      nt_ZConnect:begin
-                    ControlMsg:=true;
-                    _bezug:=hdp.msgid;
-                    _beznet:=hdp.netztyp;
-                    dat:=CancelMsk;
-                    empf:=hdp.FirstEmpfaenger;
-                    SendEmpfList.Assign(hdp.Empfaenger);
-                    hdp.Empfaenger.Clear;
+      ncRFC, ncZConnect: 
+                  begin
+                    sData := TSendUUData.Create;
+                    sData.AddText(CancelMsk,false);
+                    
+                    sData.flControlMsg := true;                    
+                    sData.flShow := true;
+
+                    sData.SenderMail := hdp.absender;
+                    sData.SenderRealname := hdp.realname;
+
+                    for i:= 0 to hdp.Empfaenger.Count-1 do
+                      if CPos('@',hdp.Empfaenger[i]) = 0 then
+                        sData.EmpfList.AddNew.ZCAddress := hdp.Empfaenger[i];
+                    for i:= 0 to hdp.Kopien.Count-1 do
+                      if CPos('@',hdp.Kopien[i]) = 0 then
+                        sData.EmpfList.AddNew.ZCAddress := hdp.Kopien[i];
+
+                    if assigned(hdp.References) then sData.References.Assign(hdp.References);
+                    sData.References.Add(hdp.msgid);
+                    sData.Subject := 'cancel <'+hdp.msgid+'>';
+
+                    sData.CreateMessages;
+                    sData.Free;
+(*                    
                     if DoSend(false,dat,false,false,'A'+empf,'cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,
                               sendShow) then;
+*)                              
                   end;
     end;
-  hdp.Free;
+  finally
+    hdp.Free;
+  end;
 end;
 
 procedure ErsetzeMessage;
@@ -1216,7 +1254,6 @@ var
     flags  : longint;
     fn     : string;
     sData  : TSendUUData;
-    sFlags : Word;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(447);     { 'Unversandte Nachrichten koennen nicht ersetzt werden.' }
@@ -1263,22 +1300,30 @@ begin
   fn:=TempS(8196);
   extract_msg(0,'',fn,false,0);
   leer:='';
-  _bezug:=hdp.GetLastReference;
-  _beznet:=hdp.netztyp;
-  _betreff:=hdp.betreff;
   sdata:= TSendUUData.Create;
+
+  sData.References.Assign(hdp.References);
+//beznet:=hdp.netztyp;
+  sData.subject:=hdp.betreff;
   sData.ersetzt:=hdp.msgid;
 
   sData.EmpfList.AddStrings(hdp.Empfaenger);
   hdp.Empfaenger.Clear;
 
-  sFlags:=0;
+(*  
   sData.orghdp:=hdp;
   if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
-    sFlags:=sFlags or SendMPart;
-
+    sData.flMPart := true;
+*)
+  sData.SetMessageContent(fn,false,hdp);
+(*
   DoSend(false,fn,false,false,'',_betreff,
     true,false,true,false,true,sData,leer, sFlags);
+*)
+  sData.AddText(fn,false);
+  sData.Subject := _betreff;
+  sData.DoIt(GetRes2(610,109),false,true,true);
+    
   Hdp.Free;
   sData.Free;
 end;
@@ -1508,6 +1553,9 @@ end;
 
 {
   $Log$
+  Revision 1.96  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.95  2002/08/10 15:49:26  cl
   - fix for FPC 1.0.4
 

@@ -26,9 +26,9 @@ unit xpsendmessage_attach_analyze;
 { ---------------------------} interface { --------------------------- }
 
 uses
-  mime, mime_analyze, xpsendmessage_attach;
+  mime, mime_analyze, xpsendmessage_attach, classes;
 
-procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;SigFile:String;netztyp:Byte;docode:Byte;pgpsig:boolean);
+procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:Byte;docode:Byte;pgpsig:boolean);
 function  GuessContentTypeFromFileName(FileName:String):String;
 
 { ------------------------} implementation { ------------------------- }
@@ -36,7 +36,7 @@ function  GuessContentTypeFromFileName(FileName:String):String;
 uses
   {$IFDEF unix} xpcurses, {$ENDIF}
   {$IFDEF Win32} windows, {$ENDIF}
-  classes, database, inout, keys, lister, typeform, xp0, xpglobal, xpnt,
+  database, inout, keys, lister, typeform, xp0, xpglobal, xpnt,
   sysutils, xpstreams;
 
 function GuessContentTypeFromFileName(FileName:String):String;
@@ -88,7 +88,7 @@ begin
 {$ENDIF}
 end;
 
-procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;SigFile:String;netztyp:Byte;docode:Byte;pgpsig:boolean);
+procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;const Signature:string;netztyp:Byte;docode:Byte;pgpsig:boolean);
 var data: TStream;
     GuessedType: String;
 begin
@@ -120,15 +120,8 @@ begin
 
   // --- 3. Signature ------------------------------------------------
 
-  if (SigFile<>'') and FileExists(SigFile) then
-  begin
-    data := TFileStream.Create(SigFile,fmOpenRead);
-    try
-      CopyStream(data,pa.Analyzed); // drop signature right behind
-    finally
-      data.Free;
-    end;
-  end;
+  if Signature<>'' then
+    writeln_s(pa.Analyzed,Signature);
 
   if pa.IsFile then
   { change all parameters to the values determined through our         }

@@ -1454,7 +1454,53 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3    Nachricht abschicken
 4    Speichere Nachricht in~
 5    Sende Nachricht an~
+
+10   Nachricht versenden
+11   Nachricht erstellen
+12   \x99ffentliche Nachricht
+
+20   ~^Ja~
+21   ^Nein
+22   ^Intern
+
+25   ^Text
+26   ^Anhang
+
+30   Gruppe:
+31   An:
+32   CC:
+33   BCC:
+
+35   Antw.-An:
+36   Disk.-In:
+37   Disk.-An:
+
+40   Autor:
+41   Sender:
+
+50   ^Betreff:   ~
+51   Brett-^An:  ~
+
+55   B^ox:       ~
+56   (verschiedene)
+
+101  Nachricht weiterleiten (Kopie)
+102  Nachricht weiterleiten (EditTo)
+103  Nachricht weiterleiten (QuoteTo)
+104  Nachricht erneut versenden
+105  Nachricht archivieren
+106  Nachricht archivieren (Benutzer)
+107  Original weiterleiten (Bounce)
+
+109  Nachricht ersetzen (Supersede)
+
+110  Nachricht weiterleiten (Maus)
+
+120  Autoversand von Nachricht
+
+200  Unbekannten Benutzer anlegen
 -
+
 + 611
 1    private Nachricht
 2    interne Nachricht
@@ -1930,12 +1976,24 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 9    Kopf   ~
 10   Quote  ~
 11   Signatur
+12   QuoteTo~
+13   Brettantworten:
+
 15   Vorgabe
 16   Re^n:
 17   Re:
 18   nein
 20   Replies~
 21   ^Allgemein,^RFC,^Fido
+
+30   Quote-Zeichen~
+
+55   PM-Antworten:   
+
+50   PrivKopf~
+51   PrivQuote
+52   PrivSig ~
+
 + 902
 1    Fido-Einstellungen
 2    Origin~
@@ -2702,19 +2760,6 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 3    neu anlegen
 -
 
-+2203
-1    Gruppe
-2    An:
-3    CC:
-4    BCC:
-5    Nicht
-
-6    Betreff:~
-7    Brett-An:
-
-100  Unbekannten Benutzer anlegen
--
-
 # --- UUCICO ----------------------------------------------------------
 
 +2300
@@ -3324,6 +3369,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 47 Unversandte Nachrichten k”nnen nicht ersetzt werden.
 
 50 Der Schreibzugriff auf dieses Brett ist gesperrt.
+51 An diese Mailing-Liste k\x94nnen keine Nachrichten gesandt werden.
 # XP4O3
 80 %s: Crossposting ist hier nicht erlaubt.
 81 Crosspostings sind nur innerhalb eines Servers m”glich!
@@ -4027,6 +4073,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.67  2002/11/14 21:06:12  cl
+# - DoSend/send window rewrite -- part I
+#
 # Revision 1.66  2002/08/01 17:51:10  mk
 # - fixed
 #   589620: 3.8: NNTP:Bestellung einer bestellten NG

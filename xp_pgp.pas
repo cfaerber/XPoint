@@ -314,7 +314,7 @@ begin
   writeln(t);
   close(t);
   hd:='';
-(*
+
   sData := TSendUUData.Create;
   sData.EmpfList.AddNew.ZCAddress := empfaenger;
   sData.Subject := getres2(3000,1); { 'Antwort auf PGP-Key-Anforderung' }
@@ -323,11 +323,11 @@ begin
 
   sData.CreateMessages;
   sData.Free;
-*)  
+(*
   if DoSend(true,tmp,true,false,empfaenger,getres2(3000,1),  { 'Antwort auf PGP-Key-Anforderung' }
             false,false,false,false,true,nil,
             hd,SendPGPkey) then
-            
+*)            
     LogPGP(getreps2(3002,1,empfaenger));   { 'sende Public Key an %s' }
 //  if FileExists(tmp) then _era(tmp);
   freeres;
@@ -831,7 +831,7 @@ begin
     writeln(t);
     close(t);
     hd:='';
-(*
+
     sData := TSendUUData.Create;
     try
       sData.AddText(tmp,true);
@@ -842,11 +842,11 @@ begin
     finally
       sData.Free;
     end;
-*)  
+(*
     if DoSend(true,tmp,true,false,user,getres2(3001,2),  { 'PGP-Keyanforderung' }
               false,false,false,false,true,nil,
               hd,SendPGPreq) then;
-              
+*)
 //  SafeDeleteFile(tmp);
     end;
   freeres;
@@ -1196,6 +1196,9 @@ end;
 
 {
   $Log$
+  Revision 1.72  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.71  2002/09/15 00:24:20  cl
   - fixed last commit: too much changes were committed
 

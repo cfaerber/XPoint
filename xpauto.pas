@@ -241,21 +241,32 @@ begin
       leer:='';
       if UpperCase(box)='*CRASH*' then begin
         box:='';
-        xpsendmessage.flCrash:=true;
-        xpsendmessage.NoCrash:=true;    { keine RÅckfrage 'sofort versenden' }
+        sData.flCrash:=true;
+        sData.flCrashAtOnce:=true;    { keine RÅckfrage 'sofort versenden' }
         end;
-      forcebox:=box;
+      sData.forcebox:=box;
       if not tmp then begin
-        sendfilename:=ExtractFileName(datei); {GetFileName(datei);}
-        sendfiledate:=ZCfiletime(datei);
+        sData.sendfilename:=ExtractFileName(datei); {GetFileName(datei);}
+        sData.sendfiledate:=ZCfiletime(datei);
         end;
-      if forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
-      EditAttach:=false;
+      if sData.forcebox='' then dbGo(mbase,0);   { keine Antwort auf Brettmsg }
+//    sData.EditAttach:=false;
       muvs:=SaveUVS; SaveUVS:=false;
       sdata:= TSendUUData.Create;
       if (flags and 8<>0) then sData.Ersetzt := dbReadStr(auto,'lastmsgid');
+(*      
       if DoSend(pm,datei,tmp,false,empf,betreff,false,typ='B',sendbox,false,false,
                 sData,leer,sendShow) then begin
+*)
+      sData.EmpfList.AddNewXP(pm,empf,'');
+      sData.Subject := betreff;
+      sData.flShow := true;
+      if typ='B' then
+        sData.AddFile(datei,tmp,'')
+      else
+        sData.AddText(datei,tmp);
+
+      if sData.DoIt(GetRes2(610,120),false,false,sendbox) then begin
         b:=0;
         dbWriteN(mbase,mb_gelesen,b);
         dat:=ixdat(zdate);
@@ -418,6 +429,7 @@ var sr    : tsearchrec;
       pm    : boolean;
       attach: boolean;   { Fido-FileAttach }
       nt    : byte;
+      sData : TSendUUData;
 
     procedure axerr(nr:word; txt:string);
     begin
@@ -425,7 +437,11 @@ var sr    : tsearchrec;
       freeres;
     end;
 
+    
   begin
+    sData := nil;
+   try
+  
     SendMsg:=false;
     empf:=''; betr:='';
     box:=''; datei:='';
@@ -482,7 +498,7 @@ var sr    : tsearchrec;
     if attach then begin
       betr:=datei;
       datei:='';
-      EditAttach:=false;    { ab hier kein EXIT mehr! }
+//    EditAttach:=false;    { ab hier kein EXIT mehr! }
       end;
 
     if datei='' then begin
@@ -499,13 +515,13 @@ var sr    : tsearchrec;
       end
     else begin
       temp:=false;
-      SendFilename:=ExtractFilePath(datei); {getfilename(datei);}
-      SendFiledate:=zcfiletime(datei);
+      sData.SendFilename:=ExtractFilePath(datei); {getfilename(datei);}
+      sData.SendFiledate:=zcfiletime(datei);
       end;
     close(t1);
     freemem(buf,bs);
     s:='';
-    forcebox:=box;
+    sData.forcebox:=box;
     empf:=vert_long(empf);
     p:=cpos('@',empf);
     pm:=(p>0);
@@ -513,13 +529,25 @@ var sr    : tsearchrec;
       empf:=trim(LeftStr(empf,p-1))+'@'+trim(mid(empf,p+1))
     else
       if FirstChar(empf)<>'/' then empf:='/'+empf;
-    EditAttach:=false;
+//  EditAttach:=false;
+(*    
     if DoSend(pm,datei,temp or delfile,false,iifs(pm,'','A')+empf,betr,
               false,attach or not temp,false,false,temp,nil,s,sendShow) then begin
-//      if temp or (delfile and (datei<>'')) then
-//        DeleteFile(datei);
-      SendMsg:=true;
-      end;
+*)
+
+    if attach or not temp then 
+      sData.AddFile(datei,temp or delfile,'')
+    else
+      sData.AddText(datei,temp or delfile);
+
+    sData.EmpfList.AddNewXP(pm,iifs(pm,'','A')+empf,'');
+    sData.Subject := betr;
+    sData.flShow := true;
+
+    result := sData.DoIt('',false,false,false);
+   finally
+    sData.Free;
+   end;    
   end;
 
   function SendPuffer:boolean;
@@ -669,6 +697,9 @@ end;
 
 {
   $Log$
+  Revision 1.58  2002/11/14 21:06:13  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.57  2002/07/27 08:42:14  mk
   - fixed typo
 

@@ -260,8 +260,8 @@ begin
           end
         else
           cc_testempf:=false;
-        if xpsendmessage.forcebox <> '' then
-          checkAdressNTIsValid
+//        if xpsendmessage.forcebox <> '' then
+//          checkAdressNTIsValid
       end;
   freeres;
 end;
@@ -470,6 +470,9 @@ end;
 
 {
   $Log$
+  Revision 1.37  2002/11/14 21:06:13  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.36  2002/07/25 20:43:56  ma
   - updated copyright notices
 

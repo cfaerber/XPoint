@@ -325,15 +325,28 @@ end;}
 
 
 procedure SendNetzanruf(const logfile: string);
-var betreff,hd: string;
+var sdata: TSendUUData;
 begin
   if not FileExists(logfile)then exit;
-  betreff:=getres2(700,4)+getres2(700,8)+ { 'Netzanruf' + ' bei ' }
-           boxpar^.boxname;
-  hd:='';
+
+(*
   if DoSend(false,logfile,false,false,netbrett,betreff,
             false,false,false,false,false,nil,hd,sendIntern+sendShow) then
-    SetUngelesen;
+*)
+
+  sdata := TSendUUData.Create;
+  try
+    sData.Subject := getres2(700,4)+getres2(700,8)+ { 'Netzanruf' + ' bei ' }
+           boxpar^.boxname;
+    sData.AddText(logfile,false);    
+    sData.flIntern := true;
+    sData.EmpfList.AddNew.ZCAddress := NetBrett;
+    sData.flShow := true;
+    sData.flUngelesen := true;
+    sData.CreateMessages;
+  finally
+    sdata.Free;
+  end;    
 end;
 (* var t,log         : text;
     fn            : string;
@@ -1034,7 +1047,7 @@ begin                  { function Netcall }
     if (not fileexists(ppfile))and(not FidoCrash) then makepuf(ppfile,false);
     inmsgs:=0; outmsgs:=0; outemsgs:=0;
     cursor(curoff);
-    inc(wahlcnt);
+    inc(wahlcnt);                       
     case netztyp of
       nt_Fido: begin
         Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
@@ -1164,7 +1177,7 @@ begin                  { function Netcall }
   cursor(curoff);
   Holen(ScreenPtr);
   aufbau:=true;
-  if Netcall_connect and not FidoCrash then begin
+  if Result and Netcall_connect and not FidoCrash then begin
     WrTiming('NETCALL '+BoxName);
     AponetNews;
     end;
@@ -1373,6 +1386,9 @@ end;
 
 {
   $Log$
+  Revision 1.62  2002/11/14 21:06:15  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.61  2002/08/12 12:14:21  ma
   - fix: SMTP Envelope from was not set correctly (causing some servers
     to refuse mails)

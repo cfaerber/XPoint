@@ -302,13 +302,15 @@ begin
   begin
     empf:=iifs(pm,'','A')+SendEmpflist[0];
     SendEmpfList.Delete(0);
-    xpsendmessage.forcebox:='';
   end else
     SendEmpfList.Clear;
 end;
 
 {
   $Log$
+  Revision 1.40  2002/11/14 21:06:12  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.39  2002/07/25 20:43:55  ma
   - updated copyright notices
 

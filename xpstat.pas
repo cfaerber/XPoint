@@ -82,15 +82,32 @@ end;
 
 procedure showstat(var fn:string; bez:string);
 var hd  : string;
+    sdata:TSendUUData;
 begin
   signal;
   hd:=''; InternBox:=DefaultBox;
   if StatBrett then
+  begin
+    sData := TSendUUData.create;
+    try
+      sData.AddText(fn,true);
+      sData.EmpfList.AddNew.ZCaddress := xp0.StatBrett;
+      sData.Subject := bez+getres(2600)+fdat(zdate)+    { 'statistik vom ' }
+              ', '+LeftStr(time,5);
+      sData.flUngelesen := true;
+      sData.flIntern := true;
+      sData.CreateMessages;
+    finally
+      sData.Free;
+    end;
+(*    
     if DoSend(false,fn,true,false,xp0.StatBrett,bez+getres(2600)+fdat(zdate)+    { 'statistik vom ' }
               ', '+LeftStr(time,5),
               false,false,false,false,false,nil,hd,sendIntern) then
       SetUngelesen
     else
+*)      
+  end
   else begin
     if ListFile(fn,bez+getres(2601),true,false,false,0)<>0 then;   { 'statistik' }
     _era(fn);
@@ -1264,6 +1281,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/11/14 21:06:13  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.51  2002/07/25 20:43:57  ma
   - updated copyright notices
 

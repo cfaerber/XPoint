@@ -1,6 +1,6 @@
 {  $Id$
 
-   OpenXP/32: DoSend - Message Creation
+   OpenXP/32: TSendUUData - Message Creation
    
    (C) Copyright 1991-2001 Peter Mandrella
    (C) Copyright 2001-2002 by OpenXP/32 team <http://www.openxp.de>
@@ -22,51 +22,313 @@
 
 // Local procedure in xpsendmessage.DoSend
 
+{$IFDEF IN_TSENDUUDATA}
+procedure TSendUUData.CreateMessages;
+var hdp:    THeader;
+{$ELSE}
 procedure CreateMessages;
-var Count: Integer;
-    MidType: byte;
+{$ENDIF}
+var Count:  Integer;
+    MidType:byte;
+var FidoOriginSav: string;
 
-  procedure CreateSingleMessage(
-    Box    : String;
-    Netztyp: Byte;
+  procedure CreateSingleMessageEncrypted(
+//  Box    : String;
+//  Netztyp: Byte;
+    Server : TXPServer;
     EMP,KOP: TStringList;
-    PM,BCC : Boolean );
+    PM,BCC : Boolean;
+    Encrypt: Integer;
+    const EncrPwd: string );
+
+    {-- CreateSingleMessage ------------------------------------------ }
+
+    {-- CreateSingleMessage: Fido ------------------------------------ }
+
+    function FidoOrigin: string;
+    var fn,s1: String;
+        t    : text;
+        buf  : array[0..511] of byte;
+        num  : integer;
+    begin
+      Result := '';
+      if not Server.IsFTN then exit;
+      if pm then exit;
+
+      if FidoOriginSav<>'' then begin
+        result := FidoOriginSav;     
+        exit;
+      end;
+
+      if XP_Tearline then
+        Result := #13#10+xp_origin + ' ' + verstr + betastr
+      else
+        Result := #13#10+'---';
+
+      if LeftStr(LowerCase(Server.FidoName),8)='shuffle:' then
+      begin
+        fn := trim(mid(Server.FidoName,9));
+        assign(t,fn);
+        if not existf(t) then 
+          s1 := getreps(621,fn)    { 'Origin-Datei fehlt: %s' }
+        else
+        begin
+          settextbuf(t,buf);
+          reset(t);
+          try
+            num := 0;
+            while not eof(t) do   { Origins zÑhlen }
+            begin    
+              readln(t,s1);
+              if s1 <>'' then inc(num);
+            end;
+          finally
+            close(t);
+          end;
+            reset(t);
+          try
+            Num := random(num)+1;
+            while not eof(t) and (Num>0) do 
+            begin
+              readln(t,s1);
+              if s1<>'' then dec(num);
+            end;
+            s1 := LeftStr(s1,54);
+          finally
+            close(t);
+          end;
+        end;
+      end else
+        s1 := Server.FidoName;
+
+      Result := Result + #13#10' * Origin: '+s1+' ('+Server.FidoAbsAddr+')';
+      FidoOriginSav := Result;
+    end;
+
+    function MayCrash:boolean;
+    begin 
+      Result := PM and Server.IsFTN;
+    end;
+
+    procedure SetCrashInfo;
+    var fa : FidoAdr;
+        ni : NodeInfo;
+    begin
+      GetNodeinfo(hdp.FirstEmpfaenger,ni,2);
+      splitfido(hdp.FirstEmpfaenger,fa,DefaultZone);
+      fa.ispoint:=ni.ispoint;
+      SetCrash(makeFidoAdr(fa,true),true);
+    end;
+
+    {-- CreateSingleMessage: Encryption ------------------------------ }
+
+    procedure SetCryptFlag;
+    var flag: byte;
+    begin
+      dbReadN(mbase,mb_unversandt,flag);
+      flag:=flag or 4;
+      dbWriteN(mbase,mb_unversandt,flag);
+    end;
+
+    procedure EncryptMessage(des:Boolean;var data:TStream);
+    var d2: TMemoryStream;
+      _pwd: string[255];
+     b,x,y: Integer;
+       pos: smallword;
+      show: boolean;
+    
+    begin
+      show:=des and (data.size>2000);
+      if show then begin
+        message(getres(605));    { 'DES-Codierung...     %' }
+        x:=wherex-5; y:=wherey;
+        end
+      else begin
+        x:=0;
+        y:=0;
+      end;
+    
+      pos:=0;
+    
+      if data is TMemoryStream then
+        d2:=TMemoryStream(data)             // use as is
+      else begin
+        d2:=TMemoryStream.Create;           // make a copy in memory
+        try d2.Size:=data.Size except end;
+        data.Seek(0,soFromBeginning);
+        CopyStream(data,d2);
+        data.Free;
+        data:=d2;
+      end;
+    
+      if DES then
+      begin
+        DES_PW(EncrPwd);
+        DES_code(false,PChar(d2.Memory)^,0,d2.Size,d2.Size,x,y)
+      end else
+      begin
+        _pwd:=EncrPwd;
+        QPC(false,PChar(d2.Memory)^,d2.Size,@_pwd,pos);
+      end;
+    
+      if show then closebox;
+    
+      SetCryptFlag;
+      hdp.betreff:=LeftStr(iifs(des,DES_ID,QPC_ID)+hdp.betreff,BetreffLen);
+      hdp.archive:=false;
+    
+       if not des then
+         hdp.attrib:=hdp.attrib or AttrQPC;
+    
+       hdp.crypt.komlen:=hdp.komlen; hdp.komlen:=0;      { KOM anpassen   }
+       hdp.crypt.typ:=hdp.typ;
+       hdp.crypt.charset:=hdp.charset;
+       hdp.crypt.method:=iifs(DES,'DES/XPOINT','QPC'); // OpenXP supports none of the ZConnect DES-Methods :-(
+       hdp.charset:='';
+       hdp.x_charset:='';
+       hdp.typ:='B';
+    
+       hdp.MIME.ctype:='application/octet-stream';  // There's no MIME content
+       hdp.MIME.encoding:=MimeEncodingBase64;       // type (did I mention that
+                                                    // we maintain this encoding
+                                                    // schemes for backward com-
+                                                    // patibility only?!)
+       hdp.groesse:=data.size;
+    end;
+    
+    procedure pmEncryptMessage(var data:TStream);
+    var fi,fo:string;
+        fs:TStream;
+       e,s:string;
+      anal:TMimeAnalyzer;
+    begin
+      if pmcrypt[docode-2].binary and not ntBinary(server.netztyp) then 
+      begin
+        rfehler(609);     { In diesem Netz sind keine BinÑrnachrichten mîglich. }
+        exit;
+      end;
+
+      if EMP.Count>0 then e := EMP[0] else exit;
+      
+      fi:=temppath+uncryptedfile;
+      fo:=temppath+cryptedfile;
+
+      if FileExists(fo) then _era(fo);
+
+      fs := nil;
+      try
+        fs := TFileStream.Create(fi,fmCreate);
+        hdp.WriteZ38(fs);
+        CopyStream(data,fs);
+      finally
+        fs.Free;
+      end;
+
+      s:=pmcrypt[docode-2].encode;
+      rps(s,'$KEY',EncrPwd);
+      rps(s,'$INFILE',fi);
+      rps(s,'$OUTFILE',fo);
+      rps(s,'$USER',EMP[0]);
+      shell(s,500,3);                     { Nachricht codieren }
+
+      if not FileExists(fo) then
+        rfehler(603)    { 'Datei wurde nicht codiert!' }
+      else
+      begin
+        fs:=TTemporaryFileStream.Create(fo,fmOpenRead);
+        if not pmcrypt[docode-2].binary then anal:=TMimeAnalyzer.Create else anal:=nil;
+        CopyStream(fs,anal);
+        
+        if(pmcrypt[docode-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))
+          and not ntBinary(Server.Netztyp) then
+        begin
+          fs.Free;
+          rfehler(609);     { In diesem Netz sind keine BinÑrnachrichten mîglich. }
+        end else
+        begin
+          SetCryptFlag;
+
+          hdp.betreff:=PMC_ID+' by XP ('+pmcrypt[docode-2].name+') '+
+            hex(hdp.groesse,6);
+          hdp.crypt.method:='PMCRYPT2';
+          hdp.crypt.komlen:=hdp.komlen; hdp.komlen:=0;      { KOM anpassen   }
+          hdp.crypt.typ:=hdp.typ;
+          hdp.crypt.charset:=hdp.charset;
+
+          if(pmcrypt[docode-2].binary or (anal.IsBinary or (not anal.EOLAllowed[MimeEOLCRLF])))then
+          begin
+            hdp.typ:='B';
+            hdp.mime.encoding:=MimeEncodingBase64;
+          end else
+          begin
+            hdp.typ:='T';
+            hdp.mime.encoding:=MimeEncodingQuotedPrintable;
+          end;
+          hdp.mime.ctype:='application/octet-stream';
+
+          hdp.attrib:=hdp.attrib or AttrPmcrypt;
+
+          data.Free;
+          data:=fs;
+          anal.Free;
+        end;
+      end;
+
+      if FileExists(fi) then
+        _era(fi);
+    end;
+
+    {-- CreateSingleMessage ------------------------------------------ }    
    
   var
-    I,J    : integer;
+    I    : integer;
     L      : Longint;
     Ablage : integer;
-    Tmp    : TAddressList;
+    sendedat: longint;
 
     MPSize : Longint;
     MPAdr  : Longint;
 
     NewMidType : byte;
-    s      : string;
+    fn2      : string;
+    s1,s2:   TStream;
+    hdptyp   : char;
+    b: byte;
+
+    shortmid : string;
+    flags    : longint;
 
   begin
     { --- 0. Schritt: Ein paar vorarbeiten ---------------------------- }
-  
+
+{$IFDEF IN_TSENDUUDATA}
+    Hdp := THeader.Create;
+{$ELSE}
     Hdp.Clear;
-    Hdp.Netztyp:=Netztyp;
+{$ENDIF}    
+    Hdp.Netztyp := Server.Netztyp;          
 
     { --- 1. Schritt: Body erzeugen ----------------------------------- }
 
-    if ntMIME(netztyp) then
+    if ntMIME(Server.netztyp) then
       hdp.MIME.mversion := '1.0';
 
-    if (not partsex) and assigned(sData.orghdp) then
+{$IFNDEF IN_TSENDUUDATA}
+    with sData do begin
+{$ENDIF}
+
+    if (not partsex) and assigned(orghdp) then
     begin
       // just pass-through
-      s1 := TFileStream.Create(datei,fmOpenRead);
+      s1 := TFileStream.Create(PartFile,fmOpenRead);
 
-      hdp.typ           := sData.orghdp.typ;
-      hdp.mime.ctype    := sData.orghdp.mime.ctype;
-      hdp.mime.encoding := sData.orghdp.mime.encoding;
-      hdp.mime.disposition := sData.orghdp.mime.disposition;
-      hdp.mime.cid      := sData.orghdp.mime.cid;
-      hdp.charset       := sData.orghdp.charset;
-      hdp.x_charset     := sData.orghdp.x_charset;
+      hdp.typ           := orghdp.typ;
+      hdp.mime.ctype    := orghdp.mime.ctype;
+      hdp.mime.encoding := orghdp.mime.encoding;
+      hdp.mime.disposition := orghdp.mime.disposition;
+      hdp.mime.cid      := orghdp.mime.cid;
+      hdp.charset       := orghdp.charset;
+      hdp.x_charset     := orghdp.x_charset;
     end
     else case parts.count of
       0: assert(false);
@@ -79,7 +341,7 @@ var Count: Integer;
            else
              hdp.typ := 'T'; // UUZ will encode
 
-           if ntMIME(netztyp) then
+           if ntMIME(Server.netztyp) then
            begin
              hdp.mime.ctype    := TSendAttach_Part(parts[0]).ContentType.AsString;
              hdp.mime.encoding := TSendAttach_Part(parts[0]).ContentEncoding;
@@ -89,7 +351,7 @@ var Count: Integer;
 
            hdp.datei := TSendAttach_Part(parts[0]).FileNameO;
            hdp.summary := TSendAttach_Part(parts[0]).ContentDescription;
-           if ntMime(netztyp) and not IsNAN(FileModify) then
+           if ntMime(Server.netztyp) and not IsNAN(FileModify) then
              hdp.ddatum := DateTimeToZCDateTime(TSendAttach_Part(parts[0]).FileModify);
 
            if ContentType.NeedCharset then
@@ -99,14 +361,13 @@ var Count: Integer;
            end;
 
            // Determine whether we can use the file unchanged:
-           if (netztyp=nt_Fido) or (FileEOL in [MimeEOLLF,MIMEEOLCR]) or
-              ((IsMessage) and not flOhnesig and (sigfile<>'')) or
+           if (Server.netztyp=nt_Fido) or (FileEOL in [MimeEOLLF,MIMEEOLCR]) or
+              ((IsMessage) and not flOhnesig and (SigData<>'')) or
               (ContentType.NeedCharset and not MIMESaveCharsetAsCP437(FileCharset)) then
            begin
              s1 := TMemoryStream.Create;
              MIMEWriteContent(s1,TSendAttach_Part(parts[0]),hdp.typ='M',
-               iifs((IsMessage) and not flOhnesig and (sigfile<>''),sigfile,''),
-               fido_origin);
+               SigData,FidoOrigin);
              if ContentType.NeedCharset then begin
                hdp.charset:=MimeCharsetToZC(FileCharset);
                hdp.x_charset:=ContentCharset;
@@ -123,7 +384,7 @@ var Count: Integer;
          end; // with
       else
       begin
-        Boundary:=MimeCreateMultipartBoundary(username); // does not contain chars that must be quoted
+        Boundary:=MimeCreateMultipartBoundary(Server.username); // does not contain chars that must be quoted
         hdp.boundary:=boundary;
         hdp.typ:='M';
         hdp.MIME.ctype := 'multipart/mixed; boundary="'+Boundary+'"';
@@ -150,8 +411,7 @@ var Count: Integer;
             end;
             writeln_s(s1,'--'+boundary);
             MIMEWriteContentWithHeaders( s1,TSendAttach_Part(parts[i]),
-              iifs((i=0) and (IsMessage) and
-                not flOhnesig and (sigfile<>''),SigFile,''));
+              iifs((i=0) and (IsMessage) and not flOhnesig,SigData,''));
             writeln_s(s1,'');
             if (hdp.mime.Encoding=MimeEncoding7bit) and (ContentEncoding=MimeEncoding8bit) then
               hdp.mime.Encoding:=MimeEncoding8bit else
@@ -165,105 +425,104 @@ var Count: Integer;
 
     { --- 2. Schritt: Headerdaten erzeugen ---------------------------- }
 
+(*    
     if intern then
     begin
       hdp.Empfaenger.Add(Mid(empfaddr,2));    
       hdp.archive := false;
     end else
+*)
     begin
       hdp.Empfaenger.Assign(EMP);
       hdp.Kopien    .Assign(KOP);
 
-      hdp.UTo := RFCWriteAddressList(sData.EmpfList,nil,[atTo]);
-      hdp.CC  := RFCWriteAddressList(sData.EmpfList,nil,[atCC]);
-      hdp.BCC := RFCWriteAddressList(sData.EmpfList,nil,[atBCC]);
+      hdp.UTo := RFCWriteAddressList(EmpfList,nil,[atTo]);
+      hdp.CC  := RFCWriteAddressList(EmpfList,nil,[atCC]);
+      hdp.BCC := RFCWriteAddressList(EmpfList,nil,[atBCC]);
 
       hdp.archive := PM;
     end;
 
-    hdp.betreff:=betreff;
-    
-    case ntDomainType(netztyp) of    { s. auch XP3O.CancelMessage! }
-      0 : hdp.absender:=username+'@'+iifs(aliaspt,pointname,box)+'.ZER';
+    hdp.betreff:=Subject;
+
+    case ntDomainType(Server.netztyp) of    { s. auch XP3O.CancelMessage! }
+      0 : hdp.absender:=Server.username+'@'+iifs(Server.AliasPoint,Server.pointname,Server.Name)+'.ZER';
       1 : begin
-            hdp.absender:=username+'@'+iifs(aliaspt,box,pointname);
-            if not aliaspt then hdp.real_box:=box;
+            hdp.absender:=Server.username+'@'+iifs(Server.AliasPoint,Server.Name,Server.pointname);
+            if not Server.AliasPoint then hdp.real_box:=Server.Name;
           end;
-      2 : hdp.absender:=username+'@'+pointname;
-      3 : hdp.absender:=username+'@'+box;
-      4 : hdp.absender:=username+'@'+FidoAbsAdr;
+      2 : hdp.absender:=Server.username+'@'+Server.pointname;
+      3 : hdp.absender:=Server.username+'@'+Server.Name;
+      4 : hdp.absender:=Server.username+'@'+Server.FidoAbsAddr;
       5 : begin
-            hdp.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
-            hdp.real_box:=box;  { Test: 'X-XP-BOX' auch bei ZConnect }
+            hdp.absender:=Server.username+'@'+iifs(Server.AliasPoint,Server.pointname,Server.Name)+Server.domain;
+            hdp.real_box:=Server.Name;  { Test: 'X-XP-BOX' auch bei ZConnect }
           end;
       6 : begin
-            hdp.absender:=iifs(sData.SenderMail='',
-                               username+'@'+iifs(aliaspt,box+ntServerDomain(box),pointname+domain),
-                               sData.SenderMail);
-            hdp.real_box:=box;
+            hdp.absender:=iifs(SenderMail='',
+                               Server.username+'@'+iifs(Server.AliasPoint,Server.Name+ntServerDomain(Server.Name),Server.pointname+Server.domain),
+                               SenderMail);
+            hdp.real_box:=Server.Name;
           end;
       7 : begin
-            hdp.absender:=username+'@'+box+';'+pointname;
-            hdp.real_box:=box;
+            hdp.absender:=Server.username+'@'+Server.Name+';'+Server.pointname;
+            hdp.real_box:=Server.Name;
           end;
       8 : begin
-            hdp.absender:=iifs(sData.SenderMail='',email,sData.SenderMail);
-            hdp.real_box:=box;
+            hdp.absender:=iifs(SenderMail='',Server.email,SenderMail);
+            hdp.real_box:=Server.Name;
           end;
     end;
-    hdp.realname:=realname;
-    if (sendFlags and sendWAB<>0) and ntAdrCompatible(sData.onetztyp,netztyp)
+    hdp.realname:=iifs(SenderRealname='',Server.Realname,SenderRealname);
+    
+    if flWAB and ntAdrCompatible(onetztyp,Server.netztyp)
     then begin
       hdp.wab:=hdp.absender; hdp.war:=hdp.realname;
-      hdp.absender:=sData.oab; hdp.realname:=sData.oar;
-      { sData.oab:=''; }
+      hdp.absender:=oab; hdp.realname:=oar;
+      { oab:=''; }
       end;
 
-    if netztyp=nt_Magic then
-      hdp.hd_point:=pointname;
-    hdp.replyto := sData.Replyto;
-    if (not pm) and (sData.followup.count>0) then
-      hdp.followup.assign(sData.followup);
-    hdp.Keywords:=sData.keywords;
-    hdp.Summary:=sData.summary;
-    if  ntAdrCompatible(sData.onetztyp,netztyp)
+    if Server.netztyp=nt_Magic then
+      hdp.hd_point:=Server.pointname;
+    hdp.replyto := iifs(Replyto<>'',Replyto,Server.Replyto);
+    if (not pm) and (followup.count>0) then
+      hdp.followup.assign(followup);
+    hdp.Keywords:=keywords;
+    hdp.Summary:=summary;
+    if  ntAdrCompatible(onetztyp,Server.netztyp)
     then begin
-      if sendFlags and sendWAB=0 then begin
-        hdp.oab:=sData.oab; hdp.oar:=sData.oar;
+      if not flWAB then begin
+        hdp.oab:=oab; hdp.oar:=oar;
         end;
-      hdp.oem.Assign(sData.oem);
+      hdp.oem.Assign(oem);
       end;
-      hdp.ReplyGroup:=sData.ReplyGroup;
+      hdp.ReplyGroup:=ReplyGroup;
     if not pm then
-      hdp.distribution:=sData.distribute;
-    hdp.quotestring:=sData.quotestr;
+      hdp.distribution:=distribute;
+    hdp.quotestring:=quotestr;
     sendedat:=ixdat(zdate);
     hdp.datum:=iifs(ReplaceEtime,LeftStr(zdate,6)+'0000',zdate);
-    case netztyp of
-      nt_Magic  : hdp.pfad:=box;
-      nt_Quick,
-      nt_GS     : hdp.pfad:=pointname;
-      nt_Pronet : hdp.pfad:=box {+';'+pointname};
-      nt_UUCP   : hdp.pfad:=iifs(aliaspt,username,pointname+domain+'!'+username);
+
+    if Server.Netztyp = nt_UUCP then
+      hdp.pfad := iifs(Server.AliasPoint,Server.username,Server.pointname+Server.domain+'!'+Server.username)
     else
-      hdp.pfad:='';
-    end;
+      hdp.pfad := '';
 
 
   // == Message-ID erzeugen ============================================
-    NewMidType := ntMessageID(netztyp);
+    NewMidType := ntMessageID(Server.Netztyp);
 
   // -- Falls noch keine generiert wurde => jetzt machen ---------------
     
-    if sData.MsgID = '' then
+    if MsgID = '' then
     begin
       MidType := NewMidType;
-      sData.MsgID := MessageID(MidType);
+      MsgID := Server.CreateMessageID(dbReadInt(mbase,'INT_NR'));
     end;
 
   // -- Kompatible IDs weiterverwenden ---------------------------------
     if(MidType=NewMidType)or((MidType in [midRFC,midZConnect])and(NewMidType in [midRFC,midZConnect])) then
-      hdp.msgid := sData.msgid
+      hdp.msgid := msgid
     else
     
   // -- Message-ID ggf. umwandeln --------------------------------------
@@ -272,11 +531,11 @@ var Count: Integer;
       if (NewMidType=midFido) and (MidType in [midRFC,midZConnect]) then
       begin
         if pm then
-          hdp.msgid := '<' + sData.MsgID + '> ' + 
-            LowerCase(Hex(CRC32Str('<'+sData.MsgID+'>'),8))
+          hdp.msgid := '<' + MsgID + '> ' + 
+            LowerCase(Hex(CRC32Str('<'+MsgID+'>'),8))
         else
-          hdp.msgid := '<' + sData.MsgID + '> ' + 
-            LowerCase(Hex(CRC32Str('<'+sData.MsgID+'>'+
+          hdp.msgid := '<' + MsgID + '> ' + 
+            LowerCase(Hex(CRC32Str('<'+MsgID+'>'+
               UpperCase(Mid(hdp.FirstEmpfaenger,1+RightPos('/',hdp.FirstEmpfaenger)))),8));
       end else
 
@@ -284,42 +543,41 @@ var Count: Integer;
 
       begin
         MidType := NewMidType;
-        sData.MsgID := MessageID(MidType);
-        hdp.msgid := sData.msgid
+        MsgID := Server.CreateMessageID(dbReadInt(mbase,'INT_NR'));
+        hdp.msgid := msgid
       end;
 
-    if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
-      if sData.References.IndexOf(_bezug)=-1 then
-        sData.References.Add(_bezug);
-
-    if (_beznet>=0) then  // bugfix fÅr VP
-      if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
-        hdp.org_xref:=_orgref;
-
-    hdp.replypath:=_replypath;
+    if (References.Count>0)and assigned(orghdp) then
+      hdp.replypath:=orghdp.replypath;
+    
 //  hdp.typ:=iifs(binary,'B','T');
     hdp.programm:=xp_xp+' '+trim(verstr)+' '+trim(pformstr)+' '+trim(betastr)
                   {$IFDEF Snapshot} + ' @ ' + compiletime {$ENDIF};
     hdp.organisation:=orga;
-    if sData.ersetzt<>''then hdp.ersetzt:=sData.ersetzt;
-    if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
+    if ersetzt<>''then hdp.ersetzt:=ersetzt;
+    if (pm and ntPMTeleData(Server.netztyp)) or (not pm and ntAMTeleData(Server.netztyp))
     then begin
       hdp.postanschrift:=postadresse;
       hdp.telefon:=telefonnr;
       hdp.homepage:=wwwHomepage;
       end
-    else if (netztyp in netsRFC) and not adrpmonly then
+    else if (Server.netztyp in netsRFC) and not adrpmonly then
       hdp.homepage:=wwwHomepage;
     hdp.priority:=rfcprio;      { 6.2.2000 MH: X-Priority: } { unbedenklich }
     hdp.xnoarchive:=noarchive;  {!MH: X-NoArchive: Yes }     { unbedenklich }
     hdp.datei:=sendfilename;
     hdp.ddatum:=sendfiledate;
-    if FidoTo<>'' then
-      hdp.fido_to:=fidoto
+
+    if not has[ncFTN,false] then
+      hdp.fido_to := ''
     else
-      if not pm and (netztyp in netsFTN) then hdp.fido_to:=brettalle;
+      if FidoTo<>'' then
+        hdp.fido_to:=fidoto
+      else
+        if not pm and (Server.netztyp in netsFTN) then hdp.fido_to:=brettalle;
+
     hdp.attrib:=iif(pm and flEB,attrReqEB,0);
-    if IsEbest then with hdp do
+    if flEB then with hdp do
     begin
       attrib := attrib and (not attrReqEB) + attrIsEB;
       if netztyp in netsRFC { !!and BoxPar.EB_Daemon }then
@@ -334,21 +592,21 @@ var Count: Integer;
           end;
         end;
       end;
-    if FileAttach then { Fido file attachment }
+    if flFileAttach then { Fido file attachment }
       inc(hdp.attrib,attrFile);
-    if netztyp=nt_Maus then
+    if Server.netztyp=nt_Maus then
       if flQTo then inc(hdp.attrib,AttrQuoteTo);
-    if ntPmReply(netztyp) then
-      if _pmReply then inc(hdp.attrib,AttrPmReply);
-    if ControlMsg then inc(hdp.attrib,AttrControl);
-    if ((hdp.typ='B') and (netztyp in netsRFC) and multipartbin) or
-       ((hdp.typ='B') and (netztyp=nt_Maus) and mausmpbin) then
+    if ntPmReply(Server.netztyp) then
+      if flpmReply then inc(hdp.attrib,AttrPmReply);
+    if flControlMsg then inc(hdp.attrib,AttrControl);
+    if ((hdp.typ='B') and (Server.netztyp in netsRFC) and multipartbin) or
+       ((hdp.typ='B') and (Server.netztyp = nt_Maus) and mausmpbin) then
       inc(hdp.attrib,AttrMPbin);
     if flPGPkey then
       inc(hdp.pgpflags,fPGP_haskey);
     if flPGPreq then
       inc(hdp.pgpflags,fPGP_request);
-    if UsePGP and not flPGPkey and ntPGP(netztyp) then begin
+    if UsePGP and not flPGPkey and ntPGP(Server.netztyp) then begin
       if not FileExists(PGPkeyfile) then UpdateKeyfile;
       if FileExists(PGPkeyfile) then
         inc(hdp.pgpflags,fPGP_avail);
@@ -362,16 +620,16 @@ var Count: Integer;
 //        if FileContainsUmlaut then hdp.x_charset:='ISO-8859-1';
 //    if iso then
 //      hdp.charset:='ISO1';
-    if assigned(sData.orghdp) then
-      with sData.orghdp do begin
+    if assigned(orghdp) then
+      with orghdp do begin
         { hdp.zdatum:=zdatum; hdp.orgdate:=true;  !! Unversandt/* !! }
         hdp.organisation:=organisation;
         hdp.ReplyTo := ReplyTo;
         hdp.datei:=datei; hdp.ddatum:=ddatum;
         end;
-    if _sendmaps then
-      hdp.replyto := '';
-    hdp.References.Assign(sData.References);
+//  if _sendmaps then
+//    hdp.replyto := '';
+    hdp.References.Assign(References);
 
     hdp.groesse:=s1.Size;
     s1.Seek(0,soFromBeginning);
@@ -387,11 +645,11 @@ var Count: Integer;
     { --- 3. Schritt: Nachricht in Datenbank ablegen ------------------ }
 
     // 3a) Bretter/User suchen, evt. anlegen oder lˆschen
-    if Intern and (Length(empfaddr)>1) then
+    if flIntern and (EMP.Count>=1) and (Length(EMP[0])>1) then
     begin
-      dbSeek(bbase,biBrett,UpperCase(empfaddr));
+      dbSeek(bbase,biBrett,UpperCase(EMP[0]));
       if not dbFound then
-        AddNewBrett(empfaddr,'','',StdHalteZeit,IntGruppe,0);
+        AddNewBrett(EMP[0],'','',StdHalteZeit,IntGruppe,0);
       EMP.Add(mbrettd('$',BBase));
       dbWriteN(bbase,bb_ldatum,sendedat);    { Brettdatum neu setzen }
     end else
@@ -403,7 +661,7 @@ var Count: Integer;
       
           dbSeek(ubase,uiName,UpperCase(Emp[i]));
           if not dbFound then             { kein bekannter B. Nutzer => anlegen }
-            AddNewUser(Emp[i],Box);
+            AddNewUser(Emp[i],Server.Name);
           EMP[i] := mbrettd('U',ubase);
           if dbreadint(ubase,'adrbuch')=0 then { Empfaenger ins Adressbuch aufnehmen }
             dbWriteN(ubase,ub_adrbuch,NeuUserGruppe);
@@ -434,7 +692,7 @@ var Count: Integer;
       if Count<>0 then
         dbAppend(mbase);      { Neuer Eintrag (hier wg. Message-ID      }
       Inc(Count);
-      Ablage := iif(ntZConnect(netztyp),10,0);
+      Ablage := iif(ntZConnect(Server.netztyp),10,0);
       dbWriteN(mbase,mb_ablage,Ablage);
 
       if i=0 then begin 
@@ -450,16 +708,16 @@ var Count: Integer;
 
       dbWriteNStr(mbase,mb_brett,EMP[i]);
 
-      L := netztyp;
+      L := Server.netztyp;
       if hdp.GetLastReference <> '' then inc(l,$100); // rÅckwÑrts-verkettet
-      if FileAttach then inc(l,$200);
+      if flFileAttach then inc(l,$200);
       if hdp.pm_reply then inc(l,$400);
       if (hdp.wab<>'') or (hdp.oem.Count > 0) then inc(l,$800);
       if (hdp.typ='T')and(hdp.charset='ISO1')then inc(l,$2000);
       if flPGPsig then inc(l,$4000);
       if Emp.Count>1 then begin
         inc(l,longint(Min(255,EMP.Count)) shl 16);
-        inc(l,longint(Succ(i mod 128))    shl 24);        { Empfaengernummer }
+        inc(l,longint(Succ(i) mod 128)    shl 24);        { Empfaengernummer }
       end;
       dbWriteN(mbase,mb_netztyp,l);
       
@@ -474,29 +732,29 @@ var Count: Integer;
       dbWriteN(mbase,mb_groesse,hdp.groesse);
       hdptyp := hdp.typChar;
       dbWriteN(mbase,mb_typ,hdptyp);
-      if ntEditBrettempf(netztyp) then
+      if ntEditBrettempf(Server.netztyp) then
         dbWriteNStr(mbase,mb_name,hdp.fido_to)
-      else if ntRealname(netztyp) then
+      else if ntRealname(Server.netztyp) then
         dbWriteNStr(mbase,mb_name,hdp.realname);
 
       b:=1;
       dbWriteN(mbase,mb_gelesen,b);
-      if sendFlags and sendHalt<>0 then b:=1
-      else if Intern then b:=0
+      if flHalt then b:=1
+      else if flIntern then b:=0
       else if flLoesch then b:=2
       else if (HaltOwn and (not pm)) or (HaltOwnPM and pm) then b:=1
       else b:=0;
       dbWriteN(mbase,mb_halteflags,b);
-      if intern then b:=0
+      if flintern then b:=0
       else b:=1;
-      if flCrash and MayCrash then inc(b,16);    { !! Crash-Flag }
+      if flCrash and (Server.Netztyp in netsFTN) then inc(b,16);    { !! Crash-Flag }
       dbWriteN(mbase,mb_unversandt,b);
 
       dbreadN(mbase,mb_flags,flags);                 { Farb - Flags setzen... }
       flags := flags or 256; // this mail is from yourself, needed for replaceown
 
       flags:=flags and not 56;
-      if netztyp=nt_Zconnect then                    { Zconnect-Prioritaet: }
+      if Server.netztyp=nt_Zconnect then                    { Zconnect-Prioritaet: }
         if msgprio=10 then flags:=flags or 16        { Direkt = Hoch }
         else if msgprio=20 then flags:=flags or 8;   { Eilmail = Hoechste }
 
@@ -509,16 +767,18 @@ var Count: Integer;
 
       dbwriteN(mbase,mb_flags,flags);
 
-      if (sendFlags and sendMark<>0) and (msgCPpos+1=msgMarkEmpf) then
+      if flMark and (i=0) then // and (msgCPpos+1=msgMarkEmpf) then
         msgaddmark;
       AddBezug(hdp,iif(Emp.Count<=1,0,iif(i=0,1,2)));
       
       dbFlushClose(mbase);
+
+      if flUngelesen then SetUngelesen;
     end;
 
     { --- 3. Schritt: Nachricht ggf. fuer Pollpaket kodieren --------- }
 
-    if not intern then begin
+    if not flintern then begin
       s1.Seek(0,soFromBeginning);
 
       if (hdp.typ<>'M') and 
@@ -529,8 +789,8 @@ var Count: Integer;
           1: EncryptMessage(false,s1); // QPC
           2: EncryptMessage(true, s1); // DES
           3..5: pmEncryptMessage(s1);  // PMC-1..3
-          8,9: XP_PGP.PGP_EncodeStream(s1,hdp,passwd,true,flPGPSig,fo);
-          else if flPGPSig then XP_PGP.PGP_EncodeStream(s1,hdp,'',false,true,fo);
+          8,9: XP_PGP.PGP_EncodeStream(s1,hdp,EncrPwd,true,flPGPSig,FidoOrigin);
+          else if flPGPSig then XP_PGP.PGP_EncodeStream(s1,hdp,'',false,true,FidoOrigin);
         end;
         end else
       begin
@@ -542,8 +802,8 @@ var Count: Integer;
           s1.Free; s1:=TMemoryStream.Create;
           with TSendAttach_Part(parts[0]) do
             MIMEWriteContent(s1,TSendAttach_Part(parts[0]),true,
-              iifs((IsMessage) and not flOhnesig and (sigfile<>''),sigfile,''),
-              fido_origin);
+              iifs((IsMessage),sigData,''),
+              FidoOrigin);
           hdp.typ:='M';
         end;
 
@@ -551,7 +811,7 @@ var Count: Integer;
           XP_PGP.PGP_MimeSignStream(s1,hdp);
 
         if (docode in [8,9]) then
-          XP_PGP.PGP_MimeEncodeStream(s1,hdp,passwd);
+          XP_PGP.PGP_MimeEncodeStream(s1,hdp,EncrPwd);
       end;
 
     { --- 4. Schritt: Nachricht ins Pollpaket schreiben -------------- }
@@ -560,7 +820,7 @@ var Count: Integer;
         hdp.Empfaenger.Add(cc^[ii]); }
 
       if not flCrash or not MayCrash then
-        fn2 := boxfile+ExtBoxfile
+        fn2 := Server.FileName+ExtBoxfile
       else begin
         fn2 := CrashFile(hdp.FirstEmpfaenger);
         SetCrashInfo;
@@ -585,62 +845,64 @@ var Count: Integer;
     end; // not intern
 
     s1.Free; s1:=nil;
+
+{$IFNDEF IN_TSENDUUDATA}
+   end // with sData do begin
+{$ENDIF}
   end;
+
+  procedure CreateSingleMessage(
+    Server : TXPServer;
+    EMP,KOP: TStringList;
+    PM,BCC : Boolean );
+  begin
+    CreateSingleMessageEncrypted(Server,EMP,KOP,PM,BCC,0,'');
+  end;
+
 
   procedure CreateBoxMessages(const Box:string;PM:Boolean);
   var EMP,BCC,KOP: TSTringList;
-      Netztyp: Byte;
       i:integer;
-      d: DB;
+      server: TXPServer;
   begin
+    FidoOriginSav := '';
+  
     EMP := nil;
     BCC := nil;
     KOP := nil;
+    Server := nil;
    try
     EMP := TStringList.Create;
     BCC := TStringList.Create;
     KOP := TStringList.Create;
-
-    Netztyp := 0;
+    Server := TXPServer.CreateByName(Box);
 
   // -- Adressen f¸r diese Box suchen ----------------------------------
-    for i:=0 to sData.EmpfList.Count-1 do
-     if sData.EmpfList[i].AddressType in [atNewsgroup,atTo] then
-      if (sData.EmpfList[i].PM = PM) and (sData.EmpfList[i].BoxName=Box) then begin
-        if Netztyp=0 then Netztyp := sData.EmpfList[i].Netztyp;
-        EMP.Add(sData.EmpfList[i].ZcAddress);
-      end else
-        KOP.Add(sData.EmpfList[i].ZcAddress);
+    for i:=0 to EmpfList.Count-1 do
+     if EmpfList[i].AddressType in [atNewsgroup,atTo] then
+      if (EmpfList[i].PM = PM) and (UpperCase(EmpfList[i].BoxName)=Box) then 
+        EMP.Add(EmpfList[i].ZcAddress)
+      else
+        KOP.Add(EmpfList[i].ZcAddress);
       
-    for i:=0 to sData.EmpfList.Count-1 do
-     if sData.EmpfList[i].AddressType in [atcc] then
-      if (sData.EmpfList[i].PM = PM) and (sData.EmpfList[i].BoxName=Box) then begin
-        if Netztyp=0 then Netztyp := sData.EmpfList[i].Netztyp;
-        EMP.Add(sData.EmpfList[i].ZcAddress);
-      end else
-        KOP.Add(sData.EmpfList[i].ZcAddress);
+    for i:=0 to EmpfList.Count-1 do
+     if EmpfList[i].AddressType in [atcc] then
+      if (EmpfList[i].PM = PM) and (UpperCase(EmpfList[i].BoxName)=Box) then 
+        EMP.Add(EmpfList[i].ZcAddress)
+      else
+        KOP.Add(EmpfList[i].ZcAddress);
 
-    for i:=0 to sData.EmpfList.Count-1 do
-     if sData.EmpfList[i].AddressType in [atbcc] then
-      if (sData.EmpfList[i].PM = PM) and (sData.EmpfList[i].BoxName=Box) then begin
-        if Netztyp=0 then Netztyp := sData.EmpfList[i].Netztyp;
-        BCC.Add(sData.EmpfList[i].ZcAddress);
-      end;
+    for i:=0 to EmpfList.Count-1 do
+     if EmpfList[i].AddressType in [atbcc] then
+      if (EmpfList[i].PM = PM) and (UpperCase(EmpfList[i].BoxName)=Box) then
+        BCC.Add(EmpfList[i].ZcAddress);
 
     if (EMP.Count=0) and (BCC.Count=0) then
       exit; // nothing to do for this box!
-
-     dbOpen(d,BoxenFile,1);
-     try
-       dbSeek(d,boiName,Uppercase(Box));
-       LoadBoxData(d);
-     finally
-       dbClose(d);
-     end;
    
   // -- Je nach Boxtyp unterschiedliche Behandlung ---------------------
 
-    if netztyp in netsRFC then begin
+    if Server.Netztyp in netsRFC then begin
 
     // RFC: benˆtigt keine spezielle Behandlung von BCCs und Kopien.
     
@@ -649,39 +911,39 @@ var Count: Integer;
     // BCC-Flag gesetzt, wenn BCCs vorhanden sind.
     
       EMP.AddStrings(BCC);
-      CreateSingleMessage(Box,Netztyp,EMP,KOP,PM,BCC.Count>0);
-    end else begin
+      CreateSingleMessage(Server,EMP,KOP,PM,BCC.Count>0);
+    end else 
+    begin
 
     // Andere Netztypen:
 
       // Keine BCCs: Einfach Nachricht erzeugen       
     
       if BCC.Count<=0 then begin
-        CreateSingleMessage(Box,Netztyp,EMP,KOP,PM,false);
+        CreateSingleMessage(Server,EMP,KOP,PM,false);
       end else 
 
       // BCCs vorhanden: je nachdem, ob das Netz selbst BCCs unterst¸tzt
       
-      if ntBCC(netztyp) then begin
+      if ntBCC(Server.netztyp) then begin
 
         // BCCs werden unterst¸tzt: Jeweils eine Nachricht mit den 
         // normalen Empf‰ngern (ohne BCC-Flag) und eine mit den BCC-
         // Empf‰ngern (mit BCC-Flag) erzeugen
       
-        CreateSingleMessage(Box,Netztyp,EMP,KOP,PM,false);
+        CreateSingleMessage(Server,EMP,KOP,PM,false);
         
         KOP.AddStrings(EMP);
         EMP.Clear;
         EMP.AddStrings(BCC);
-        CreateSingleMessage(Box,Netztyp,EMP,KOP,PM,true);
+        CreateSingleMessage(Server,EMP,KOP,PM,true);
         
       end else
       begin
-
         // BCCs werden nicht unterst¸tzt: Eine Nachricht mit den normalen
         // Empf‰ngern erzeugen und jeweils eine f¸r jeden BCC-Empf‰nger
       
-        CreateSingleMessage(Box,Netztyp,EMP,KOP,PM,false);
+        CreateSingleMessage(Server,EMP,KOP,PM,false);
 
         KOP.AddStrings(EMP);
         
@@ -689,38 +951,39 @@ var Count: Integer;
         begin
           EMP.Clear;
           EMP.Add(BCC[i]);
-          CreateSingleMessage(Box,Netztyp,EMP,KOP,PM,true);
+          CreateSingleMessage(Server,EMP,KOP,PM,true);
         end;
         
       end;
     end;
 
    finally
+    Server.Free;
+
     EMP.Free;
     KOP.Free;
     BCC.Free;
    end;
+
   end;
 
   procedure CreateInternalMessage(const Box: string);
-  var       d: db;
-      EMP,KOP: TStringList;
+  var EMP,KOP: TStringList;
+       Server: TXPServer;
   begin
+    FidoOriginSav := '';
+  
     EMP := nil;
     KOP := nil;
+    Server := nil;
     try
       EMP := TStringList.Create;
       KOP := TStringList.Create;
-    
-      dbOpen(d,BoxenFile,1);
-      try
-        dbSeek(d,boiName,Uppercase(Box));
-        LoadBoxData(d);
-      finally
-        dbClose(d);
-      end;
-      CreateSingleMessage(Box,netztyp,EMP,KOP,false,false);
+      EMP.Add(iifs(EmpfList.Count>0,EmpfList[0].ZCAddress,'$/'#$AF'Nix'));
+      Server := TXPServer.CreatebyName(DefaultBox);
+      CreateSingleMessage(Server,EMP,KOP,false,false);
     finally
+      Server.Free;
       EMP.Free;
       KOP.Free;
     end;    
@@ -731,13 +994,13 @@ var Count: Integer;
       l2,r2: integer;
   begin
     if r<=l then exit;
-    p := ntMessageID(Ord(FirstChar(sData.Boxen[(l+r)div 2])));
+    p := ntMessageID(Ord(FirstChar(Boxen[(l+r)div 2])));
     l2 := l;
     r2 := r;
     while l2<r2 do begin
-      while (ntMessageID(Ord(FirstChar(sData.Boxen[l2])))<= p) and (l2<r) do inc(l2);
-      while (ntMessageID(Ord(FirstChar(sData.Boxen[r2]))) > p) and (r2>l) do dec(r2);
-      if l2<r2 then sData.Boxen.Exchange(l2,r2);
+      while (ntMessageID(Ord(FirstChar(Boxen[l2])))<= p) and (l2<r) do inc(l2);
+      while (ntMessageID(Ord(FirstChar(Boxen[r2]))) > p) and (r2>l) do dec(r2);
+      if l2<r2 then Boxen.Exchange(l2,r2);
     end;
     BoxSort(l,r2-1);
     BoxSort(l2,r);
@@ -745,16 +1008,21 @@ var Count: Integer;
 
 var i : integer;
 begin
-  if sData.Boxen.Count<0 then exit;
+  if SentOK then exit;
+  CheckEmpfaengerList(EmpfList,false,false);
+  if Boxen.Count<0 then exit;
 
-  SendMbox;
+  if flShow then begin
+    message(getres2(610,iif(flIntern,4,5))+   { 'Speichere Nachricht in ' / 'Sende Nachricht an ' }
+            LeftStr(Empf1Address,50)+' ');
+  end;
 
 // Wir m¸ssen schon hier einen Eintrag f¸r unsere Nachricht machen,
 // damit wir schon eine Message-ID erzeugen kˆnnen
   dbAppend(mbase);            { neue mbase.INT_NR fuer MessageID }
   Count := 0;
 
-  if intern then 
+  if flIntern then 
   begin
     CreateInternalMessage(DefaultBox);
   end else
@@ -765,20 +1033,23 @@ begin
   // FTN erh‰lt ggf. die MSGID nach Gatebau-MSGID.DOC.
   // Maus muss nach hinten, damit wir ggf. eine Fremd-ID mittransportieren
   // kˆnnen.
-    BoxSort(0,sData.Boxen.Count-1);
+    BoxSort(0,Boxen.Count-1);
     MidType := midNone;
 
-    for i:=0 to sData.Boxen.Count-1 do begin
-      if sData.has_pm then CreateBoxMessages(Mid(sData.Boxen[i],2),true);
-      if sData.has_am then CreateBoxMessages(Mid(sData.Boxen[i],2),false);
+    for i:=0 to Boxen.Count-1 do begin
+      if Has_PM then CreateBoxMessages(UpperCase(Mid(Boxen[i],2)),true);
+      if Has_AM then CreateBoxMessages(UpperCase(Mid(Boxen[i],2)),false);
     end;
   end;
 
-  closebox;
+  if flShow then closebox;
 end;
                                                       
 //
 // $Log$
+// Revision 1.7  2002/11/14 21:06:13  cl
+// - DoSend/send window rewrite -- part I
+//
 // Revision 1.6  2002/08/09 22:47:09  cl
 // - Fixed [ 587379 ] 3.9: Netzanrufbericht ohne Subject
 //

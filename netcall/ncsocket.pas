@@ -376,7 +376,7 @@ begin
   Inc(FOutBytesCount, Count);
   if Count < 0 then
     RaiseSocketError;
-end;
+end;                                            
 
 procedure TSocketNetcall.RaiseSocketError;
 begin
@@ -437,6 +437,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2002/11/14 21:06:15  cl
+  - DoSend/send window rewrite -- part I
+
   Revision 1.34  2002/04/14 12:51:55  mk
   - use CloseSocket only with Win32
 
