@@ -3363,6 +3363,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.66  2002/03/29 16:37:31  my
+  MY:- Text des letzten Commits vervollstÑndigt.
+
   Revision 1.35.2.65  2002/03/29 16:22:01  my
   MY:- Ausgehende MIME-Multipart-Nachrichten werden jetzt auch dann keiner
        Zeichensatzkonvertierung unterzogen, wenn der Header "CHARSET: ISO1"
@@ -3375,6 +3378,11 @@ end.
   MY:- Ein- wie ausgehende Nachrichten werden dann als MIME-Multipart-
        Nachrichten betrachtet, wenn sie einen entsprechenden Content-Type-
        Header *oder* den Header "TYP: MIME" (oder beides) tragen.
+
+  MY:- Fix: Bei ausgehenden RFC-Nachrichten werden Headerzeilen jetzt
+       *immer* vom IBM- in den ISO1-Zeichensatz konvertiert (vorher
+       geschah dies nur, wenn der Header "CHARSET: ISO1" nicht vorhanden
+       war).
 
   Revision 1.35.2.64  2002/03/29 15:29:50  my
   MY:- Support des Headers "U-Delivered-To" fÅr eingehende SMTP-Mails
