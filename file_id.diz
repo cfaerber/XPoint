@@ -27,19 +27,19 @@ OpenXP-Team, http://www.openxp.de/
 ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
 º  OpenXP/16 v3.40 RC3            (Update)  º
 ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
-º  Entwickler-Snapshot vom 31.03.2002       º
+º  Entwickler-Snapshot vom 21.04.2002       º
 ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
 º Neuer  Snapshot  von  OpenXP/16 v3.40 RC3 º
-º mit  wiederum  zahlreichen und  teilweise º
-º wichtigen Bugfixes  sowie einigen kleinen º
-º aber praktischen Features.  Gr”áere Fixes º
-º im  Bereich  Zeichensatzkonvertierung und º
-º Decodierung,  im  Archiv-Viewer,  bei der º
-º Behandlung von MIME-Multipart-Nachrichten º
-º sowie bei den Brett-/User-Suchfunktionen. º
-º Neues  Makro  $ASK  zur Parameterbergabe º
-º an externe Programme, der UUZ untersttzt º
-º jetzt den Header "U-Delivered-To".        º
+º mit  weiteren  zahlreichen und  wichtigen º
+º Bugfixes und dem  lange ersehnten Feature º
+º "MIME-Versand":  OpenXP/16 kann jetzt mit º
+º dem   MIME-Standard  konforme  Multipart- º
+º Nachrichten  mit  Datei- und Textanh„ngen º
+º erstellen,  bearbeiten  und  weiterleiten º
+º (RFC/ZConnect). Des weiteren werden jetzt º
+º alle derzeit  bei der  IANA registrierten º
+º Alias-Namen fr die  von XP untersttzten º
+º Zeichens„tze korrekt behandelt.           º
 º ----------------------------------------- º
 º Ein Update auf diesen Snapshot wird allen º
 º XP-Usern   dringend  empfohlen,  speziell º
@@ -50,25 +50,25 @@ OpenXP-Team, http://www.openxp.de/
 º wendig,  wenn ein  Umstieg von CrossPoint º
 º v3.1x auf OpenXP/16 durchgefhrt wird!    º
 º ----------------------------------------- º
-º                    (c) 2002 by OpenXP/16  º
+º (c) 2002 by OpenXP/16     www.openxp16.de º
 ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
 
 ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
-º  OpenXP/16 v3.40 RC3       Komplettpaket  º
+º  OpenXP/16 v3.40 RC3     (Komplettpaket)  º
 ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
-º  Entwickler-Snapshot vom 31.03.2002       º
+º  Entwickler-Snapshot vom 21.04.2002       º
 ÇÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¶
 º Neuer  Snapshot  von  OpenXP/16 v3.40 RC3 º
-º mit  wiederum  zahlreichen und  teilweise º
-º wichtigen Bugfixes  sowie einigen kleinen º
-º aber praktischen Features.  Gr”áere Fixes º
-º im  Bereich  Zeichensatzkonvertierung und º
-º Decodierung,  im  Archiv-Viewer,  bei der º
-º Behandlung von MIME-Multipart-Nachrichten º
-º sowie bei den Brett-/User-Suchfunktionen. º
-º Neues  Makro  $ASK  zur Parameterbergabe º
-º an externe Programme, der UUZ untersttzt º
-º jetzt den Header "U-Delivered-To".        º
+º mit  weiteren  zahlreichen und  wichtigen º
+º Bugfixes und dem  lange ersehnten Feature º
+º "MIME-Versand":  OpenXP/16 kann jetzt mit º
+º dem   MIME-Standard  konforme  Multipart- º
+º Nachrichten  mit  Datei- und Textanh„ngen º
+º erstellen,  bearbeiten  und  weiterleiten º
+º (RFC/ZConnect). Des weiteren werden jetzt º
+º alle derzeit  bei der  IANA registrierten º
+º Alias-Namen fr die  von XP untersttzten º
+º Zeichens„tze korrekt behandelt.           º
 º ----------------------------------------- º
 º Ein Update auf diesen Snapshot wird allen º
 º XP-Usern   dringend  empfohlen,  speziell º
@@ -79,5 +79,5 @@ OpenXP-Team, http://www.openxp.de/
 º wendig,  wenn ein  Umstieg von CrossPoint º
 º v3.1x auf OpenXP/16 durchgefhrt wird!    º
 º ----------------------------------------- º
-º                    (c) 2002 by OpenXP/16  º
+º (c) 2002 by OpenXP/16     www.openxp16.de º
 ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
