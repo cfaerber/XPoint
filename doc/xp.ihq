@@ -683,6 +683,9 @@ Der Lister wird mit <Esc> verlassen.
 <<F>>   schaltet farbliche *Hervorhebungen* ein/aus
     (s. [/Config/ExternLister]).@237
 
+<<Q>>   schaltet um, ob "|" und ":" als Quote-Zeichen
+    interpretiert werden oder nicht.     
+
 <<Ctrl R>> schaltet die Rot13-Codierung ein/aus.
 
 Mit <<p>>, <<Ctrl P>>, <<b>>, <<Ctrl B>> und <<Ctrl Q>> kînnen Sie wie
@@ -3413,7 +3416,8 @@ hier eingestellt werden, da· diese zwei Zeichen auch
 wie Quote-Zeichen behandelt werden sollen.
 
 Diese Einstellung gilt sowohl fÅr den Lister als auch
-den Editor.
+den Editor. Sie lÑ·t sich im Lister jederzeit 
+mit der Taste "Q" umschalten.
 @
 224
 So viele Megabytes Festplattenplatz benîtigt Cross-

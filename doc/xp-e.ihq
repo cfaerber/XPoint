@@ -555,6 +555,9 @@ You can also use <space> instead of PgDn
  <<C>>      toggles coloured <<bold>> Text on/off.
         (see [/Config/External/Lister])@237
 
+ <<Q>>      toggles whether "|" and ":" are used as
+        quote-signs or not.  
+
 With <<P>>, <<Ctrl-P>>, <<B>> and <<Ctrl-B>> you can
        answer directly to messages from inside the
        lister.
@@ -3139,6 +3142,31 @@ know what you are doing.
 Problems through the hard disk suddenly being full
 in the middle of data handling always lead to
 unrecoverable loss of data.
+@
+222
+<<Fido, QWK, RFC/UUCP:
+
+<<[x]>> -> Automatically enable german "Umlaute" 
+       for new users
+ 
+<<[ ]>> -> "Umlaute" are disabled until you
+       enable them in the User-Overview. 
+@
+223
+Sometimes the Chars "|" and ":" are used as Quote-
+Chars. If you enable this option, Crosspoint uses
+this Chars like the Quote-Sign ">" And displays
+the quoted Text in the appropriate color
+ 
+This setting is used in editor and lister.
+You can toggle it in the Lister by pressing "Q"
+@
+224
+If the free space on the Harddisk with Crosspoint
+is less than than this setting, Crossppoint displays
+a warning-window at startup.
+
+Minimum of this Setting is 1MB
 @
 230
 CrossPoint does have its own built in lister, (for

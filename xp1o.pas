@@ -308,6 +308,9 @@ begin
       ShowHeader;                                               
       ex(5);
       end;
+
+    if upcase(c) = 'Q' then                                   {'Q' Quotechars |: aktivieren}
+      otherquotechars:=not otherquotechars;
     end;
 
   if t = keyaltm then                                       { ALT+M = Suche MessageID }
@@ -901,6 +904,7 @@ function XPWinShell(prog:string; parfn:pathstr; space:word;
         if ustr(left(prog,5))<>'START' then prog:='start '+prog;
         end
       else begin
+        if ustr(left(prog,6))='START ' then prog:=mid(prog,7);
         batfile:=TempExtFile(temppath,'wrun','.bat');
         assign(t,batfile);
         rewrite(t);
@@ -956,6 +960,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/04/01 07:41:38  jg
+  - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
+    neue Einstellung wird dann auch beim Quoten verwendet
+  - Hilfe aktualisiert, und Englische Hilfe fuer
+    Config/Optionen/Allgemeines auf Stand gebracht.
+
+  - Externe-Viewer (Windows): "START" als Allroundviewer
+    funktioniert jetzt auch mit der Loeschbatch-Variante
+  - Text fuer MIME-Auswahl in englische Resource eingebaut
+
   Revision 1.30  2000/03/25 11:46:10  jg
   - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
   - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr

@@ -372,6 +372,8 @@ begin
     end;
   exthdlines:=0;
   llh:=false;
+  if listexit<>4                         { Wenn nicht Editor gestartet wird... }
+    then otherquotechars:=otherqcback;   { Status der Quotechars '|' und ':' reseten } 
   listfile:=listexit;
 end;
 
@@ -472,6 +474,16 @@ begin
 end;
 {
   $Log$
+  Revision 1.18  2000/04/01 07:41:38  jg
+  - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
+    neue Einstellung wird dann auch beim Quoten verwendet
+  - Hilfe aktualisiert, und Englische Hilfe fuer
+    Config/Optionen/Allgemeines auf Stand gebracht.
+
+  - Externe-Viewer (Windows): "START" als Allroundviewer
+    funktioniert jetzt auch mit der Loeschbatch-Variante
+  - Text fuer MIME-Auswahl in englische Resource eingebaut
+
   Revision 1.17  2000/03/25 11:46:10  jg
   - Lister: Uhr wird jetzt auch bei freiem Nachrichtenkopf eingeblendet
   - Config/Optionen/Lister: Schalter ListUhr zum (de)aktivieren der Uhr

@@ -597,6 +597,7 @@ begin
     get(t,curoff);
     if t<>keycpgd then _keyboard(t);
     end;
+  otherquotechars:=otherqcback; {evtl. mit 'Q' im Lister umgeschaltene Quotechars reseten }
 end;
 
 
@@ -2161,6 +2162,16 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/04/01 07:41:38  jg
+  - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
+    neue Einstellung wird dann auch beim Quoten verwendet
+  - Hilfe aktualisiert, und Englische Hilfe fuer
+    Config/Optionen/Allgemeines auf Stand gebracht.
+
+  - Externe-Viewer (Windows): "START" als Allroundviewer
+    funktioniert jetzt auch mit der Loeschbatch-Variante
+  - Text fuer MIME-Auswahl in englische Resource eingebaut
+
   Revision 1.12  2000/03/24 15:41:02  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
 

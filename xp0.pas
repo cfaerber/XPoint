@@ -761,7 +761,8 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
        OtherQuoteChars : boolean = false; { andere Quotezeichen neben > aktivieren }
-       
+       Otherqcback : Boolean = false;     { Backup von Otherqqotechars zum Umschalten}
+
        PGP2 = '2.6.x';
        PGP5 = '5.x';
        PGP6 = '6.5.x';
@@ -1091,6 +1092,16 @@ implementation
 end.
 {
   $Log$
+  Revision 1.18  2000/04/01 07:41:38  jg
+  - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
+    neue Einstellung wird dann auch beim Quoten verwendet
+  - Hilfe aktualisiert, und Englische Hilfe fuer
+    Config/Optionen/Allgemeines auf Stand gebracht.
+
+  - Externe-Viewer (Windows): "START" als Allroundviewer
+    funktioniert jetzt auch mit der Loeschbatch-Variante
+  - Text fuer MIME-Auswahl in englische Resource eingebaut
+
   Revision 1.17  2000/04/01 02:21:47  oh
   - Userliste: Felder jetzt sortierbar: Config/Anzeige/Hilfen, dasselbe fuer die MsgListe vorbereitet
 

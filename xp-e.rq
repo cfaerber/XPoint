@@ -2310,6 +2310,22 @@ K (c) '93-96 Peter Mandrella
 107  Error when writing to output file
 -
 
+# XPMIME
++ 2440
+1    Intro   
+2    Extro    
+3    Text
+4    Graphics
+5    Video
+6    Sound
+7    File
+9    Message-Part 컴컴컴컴컴� Lines 컴컴컴컴컴� Filename
+10   whole message    
+-
+2441 extrakt messagepart
+2442 decoding Binary ...
+
+
 # --- XPE -------------------------------------------------------------
 
 + 2500

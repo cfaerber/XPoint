@@ -784,6 +784,7 @@ begin
   writeln(t,'Quote=','"',quotechar,'"');
   { 01/2000 oh }
   writeln(t,'OtherQuoteChars=',jnf(otherquotechars));
+  otherqcback:=otherquotechars;
   { /oh }
   writeln(t,'ScreenLines=',iif(ParZeilen>0,cfgscrlines,screenlines));
   writeln(t,'ScreenSaver=',scrsaver);
@@ -1529,6 +1530,7 @@ begin
     { if getenv(reverse('BPX'))<>lstr(hex(936,3)) then quit:=true; }
     if left(QuoteChar,1)='"' then delfirst(quotechar);
     if right(QuoteChar,1)='"' then dellast(quotechar);
+    otherqcback:=otherquotechars; 
     checker[13]:=ExtraktTyp+1;
     if ustr(userauf)='ALLE' then UserAufnahme:=0
     else if ustr(userauf)='Z-NETZ' then UserAufnahme:=1
@@ -1617,6 +1619,16 @@ begin
 end;
 {
   $Log$
+  Revision 1.23  2000/04/01 07:41:38  jg
+  - "Q" im Lister schaltet otherquotechars (benutzen von | und :) um.
+    neue Einstellung wird dann auch beim Quoten verwendet
+  - Hilfe aktualisiert, und Englische Hilfe fuer
+    Config/Optionen/Allgemeines auf Stand gebracht.
+
+  - Externe-Viewer (Windows): "START" als Allroundviewer
+    funktioniert jetzt auch mit der Loeschbatch-Variante
+  - Text fuer MIME-Auswahl in englische Resource eingebaut
+
   Revision 1.22  2000/04/01 02:21:47  oh
   - Userliste: Felder jetzt sortierbar: Config/Anzeige/Hilfen, dasselbe fuer die MsgListe vorbereitet
 
