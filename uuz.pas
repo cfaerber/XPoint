@@ -2233,8 +2233,9 @@ begin
   hd.netztyp:=nt_RFC;
   repeat             { Envelope einlesen }
     ReadString(true);
-    p:=cpos(' ',s); if p=0 then p:=cpos(#9,s);
-    if p=0 then p:=length(s)+1;
+    p:=cpos(' ',s);
+    if p=0 then p:=cpos(#9,s);
+    if (p<=1) then p:=length(s)+1;
     c:=s[1];
     for i:=1 to p-1 do
       s[i]:=LoCase(s[i]);
@@ -3465,6 +3466,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.56  2001/11/11 15:47:35  mk
+  - range check error beseitigt
+
   Revision 1.35.2.55  2001/11/04 22:01:50  mk
   RB:- UTF-7 Support (dif from Andreas D. Bauer)
 
