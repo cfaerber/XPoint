@@ -1033,7 +1033,7 @@ var T:Double;
 begin
   T:=(GetTicks/100.0);
   result:=StrS(file_pos)+' bytes';
-  if T>file_start then
+  if (T-file_start)>=.001 then
   result:=result+', '+StrS(System.Round(file_pos/(T-file_start)))+' bytes/s';
   if file_errors>0 then
   result:=result+', '+StrS(file_errors)+' errors';
@@ -1072,8 +1072,8 @@ begin
   T:=(GetTicks/100.0); Dialog.WriteFmt(mcInfo,'',[0]);
   Dialog.WrtData(15,5,StrS(File_Pos           ),10,true);
   Dialog.WrtData(28,7,StrS(File_Pos+Total_Size),10,true);
-  if File_Start <T then Dialog.WrtData(46,5,StrS(Min(99999,System.Round((File_Pos           )/(T-File_Start )))),7,true);
-  if Total_Start<T then Dialog.WrtData(46,7,StrS(Min(99999,System.Round((File_Pos+Total_Size)/(T-Total_Start)))),7,true);
+  if (T-File_Start )>=.001 then Dialog.WrtData(46,5,StrS(Min(99999,System.Round((File_Pos           )/(T-File_Start )))),7,true);
+  if (T-Total_Start)>=.001 then Dialog.WrtData(46,7,StrS(Min(99999,System.Round((File_Pos+Total_Size)/(T-Total_Start)))),7,true);
   if (file_type=1) and b then Dialog.WrtData(15,4,PacketType(buf,addsize),46,false);
 end;
 
@@ -1122,6 +1122,10 @@ end;
 
 {
   $Log$
+  Revision 1.23  2002/03/05 12:14:30  cl
+  - BUGFIX: 'Invalid floating point operation' during UUCP call
+    see <mid:8KH+O9zppfB@mike.franken.de>
+
   Revision 1.22  2002/02/21 13:52:35  mk
   - removed 21 hints and 28 warnings
 
