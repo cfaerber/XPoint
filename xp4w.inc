@@ -325,12 +325,12 @@ begin
   else begin
     new(hdp);
     ReadHeader(hdp^,hds,false);
-    s:='';
+{    s:='';
     if hdp^.PmReplyTo<>'' then begin
       dbSeek(ubase,uiName,ustr(hdp^.PmReplyTo));
       if dbFound then s:=hdp^.PmReplyTo;
     end;
-    if s='' then
+    if s='' then }
       dbReadN(mbase,mb_absender,s);   { auch auf mbase arbeitet.     }
     dispose(hdp);
     dbSeek(ubase,uiName,ustr(s));
@@ -1445,6 +1445,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.3.2.10  2000/11/20 09:53:07  mk
+  - fixed Bug #116162: U in Nachrichtenuebersicht
+
   Revision 1.3.2.9  2000/11/11 10:18:02  mk
   - DBEOF Crash behoben
 
