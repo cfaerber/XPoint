@@ -382,10 +382,9 @@ var
       moff;
       attrtxt(col.colstatus);
       gotoxy(l, o);
-//      Write(' SelLine: ', SelLine: 3, ' xa: ', xa: 3, ' FirstLine: ',
-//      FirstLine: 3, ' lines.count: ', lines.count: 5, ' SelCount: ', SelCount: 3, DispLines: 3);
+      // display 0  0 if file is empty
+      Wrt2(Format('%5d%6d', [Min(FirstLine + 1, Lines.Count), Lines.Count]));
 
-      Wrt2(Format('%5d%6d', [FirstLine+1, Lines.Count-1]));
       if xa=1 then
         Wrt2('        ')
       else
@@ -1099,6 +1098,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.88  2003/08/26 01:30:22  mk
+  - improved display of actual line in lister (showstat)
+
   Revision 1.87  2003/08/21 18:41:25  cl
   - some fixes for last commits
 
