@@ -4052,11 +4052,10 @@ sollten Sie m”glichst darauf achten, daá ein ">" im
 Quotezeichen vorhanden ist, weil dies vielen Program-
 men zum Erkennen von Quote-Zeilen dient.
 
-Durch Angabe eines "%" im Quotestring werden auch
-Leerzeilen vom Quotezeichen angefhrt (ansonsten
-bleiben sie einfach leer). Dieses Feature wird
-demn„chst an passenderer Stelle konfigurierbar
-sein.
+Durch zus„tzliche Angabe eines "<<%>>" an beliebiger
+Stelle im Quotezeichen-String wird auch Leerzeilen
+ein Quotezeichen vorangestellt (ansonsten bleiben
+sie Leerzeilen).
 
 @
 211
