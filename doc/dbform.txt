@@ -165,6 +165,18 @@ GRUPPEN:  Brettgruppendatei
 17. PMReplyTo   String(80)
 18. PMFQDN      String(60)
 
+19. QuoteChar   String(5)        ab OpenXP/32 3.9.4: Quote-Zeichen
+
+20. QuoteToMsk  String(8)        ab OpenXP/32 3.9.4: Quote-Schablone
+				 f³r Nachrichten an neue GABEL;
+				 Extension .XPS
+21. PMKopf      String(8)        ab OpenXP/32 3.9.4: Kopf-Schablone
+				 f³r private Nachrichten; Extension .XPS
+22. PMSignatur  String(8)	 ab OpenXP/32 3.9.4: Signatur-Schablone
+				 f³r private Nachrichten; Extension .XPS
+23. PMQuoteMsk  String(8)        ab OpenXP/32 3.9.4: Quote-Schablone
+				 f³r private Nachrichten; Extension .XPS
+
 Indizes:
 
  1. +Name                giName
