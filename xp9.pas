@@ -1212,7 +1212,8 @@ restart:
   if lstr(ntyp)=lstr(ntName(41)) then begin
     ntyp:=ntName(40);
     pppm:=true;
-    end;
+    end
+  else if lstr(ntyp)=lstr(ntName(42)) then ntyp := ntName(40);
   for i:=0 to enetztypen-1 do
     if lstr(ntyp)=lstr(ntName(ntnr[i])) then
       nt:=ntnr[i];
@@ -1289,6 +1290,9 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.32  2001/08/06 15:32:30  mk
+  JG:- fix fuer Sonderbehandung UUCP_C und UUCP_U
+
   Revision 1.19.2.31  2001/08/05 11:45:36  my
   - added new unit XPOVL.PAS ('uses')
 

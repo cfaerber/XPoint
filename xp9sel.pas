@@ -730,7 +730,7 @@ var uucp : boolean;
 begin
   setfieldtext(fieldpos+1,getres2(912,iif(lstr(s)=lstr(ntName(41)),13,2)));
   gf_fido:=(lstr(s)=lstr(ntName(nt_Fido)));
-  uucp:=(lstr(s)=lstr(ntName(nt_UUCP))) OR (lstr(s)=lstr(ntName(41)));
+  uucp:=(lstr(s)=lstr(ntName(nt_UUCP_U))) OR (lstr(s)=lstr(ntName(nt_UUCP_C)));
   if (lstr(s)=lstr(ntName(nt_Maus))) or gf_fido or uucp then
     set_chml(userfield,'')
   else
@@ -830,6 +830,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.15  2001/08/06 15:32:31  mk
+  JG:- fix fuer Sonderbehandung UUCP_C und UUCP_U
+
   Revision 1.1.2.14  2001/08/05 11:45:36  my
   - added new unit XPOVL.PAS ('uses')
 
