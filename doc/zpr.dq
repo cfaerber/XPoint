@@ -3,15 +3,11 @@ ZPR  -  ZCONNECT-Pufferreparierer v1.09
 ---------------------------------------
 
 
-ZPR ist Freeware. Sie d?rfen dieses Programm beliebig einsetzen und weiterverbreiten,
+ZPR ist Freeware. Sie dÅrfen dieses Programm beliebig einsetzen und weiterverbreiten,
 unter der Voraussetzung, da· es (a) nicht modifiziert wird und (b) die
 Weitergabe unentgeltlich erfolgt. Ich kann weder garantieren, da· ZPR korrekt
-arbeitet oder irgendeinen bestimmten Zweck erf?llt, noch ?bernehme ich die
-Verantwortung f?r evtl. durch den Einsatz von ZPR verursachte SchÑden.
-
-Die jeweils neueste Version von ZPR finden Sie in der CrossPoint-Supportbox,
-02672-910152 (Modem) oder 02672-910156 (ISDN), Login GAST, und im Internet
-unter http://ttrip.worms.fh-rpl.de/xp/bin.
+arbeitet oder irgendeinen bestimmten Zweck erfÅllt, noch Åbernehme ich die
+Verantwortung fÅr evtl. durch den Einsatz von ZPR verursachte SchÑden.
 
 
 (c) 1994-96 Peter Mandrella, pm@daisy.de
@@ -23,14 +19,14 @@ ZCONNECT ist ein eingetragenes Warenzeichen der ZERBERUS GmbH.
 Was ist ZPR?
 ~~~~~~~~~~~~
 
-ZPR ist ein Test- und Reparaturprogramm f?r ZCONNECT-Nachrichten-Pufferdateien,
-das speziell f?r Points entwickelt wurde. ZPR ist dazu geeignet, um
+ZPR ist ein Test- und Reparaturprogramm fÅr ZCONNECT-Nachrichten-Pufferdateien,
+das speziell fÅr Points entwickelt wurde. ZPR ist dazu geeignet, um
 
 --3 o  defekte Pufferdateien formal so zu reparieren, da· sie von Pointprogrammen
 verarbeitet werden kînnen.
 
 --3 o  Puffer auf bestimmte Fehler in Nachrichtenheadern wie z.B. falsche
-Datumsangaben, falsche Message-IDs etc. hin zu ?berpr?fen.
+Datumsangaben, falsche Message-IDs etc. hin zu ÅberprÅfen.
 
 
 ZPR ist NICHT dazu geeignet, um
@@ -43,13 +39,12 @@ besitzen. Beim BeschÑdigen von Puffern gehen Informationen verloren, die durch
 einen Pufferreparierer nicht wiederhergestellt werden kînnen.
 
 --3 o  die ZCONNECT-KonformitÑt einer Software durch Testen der erzeugten
-Puffer zu ?berpr?fen.
+Puffer zu ÅberprÅfen.
 
 
-F?r das VerstÑndnis des folgenden Textes ist die Kenntnis des ZCONNECT-Nachrichtenformates
-nîtig. Eine Beschreibung von ZCONNECT erhalten Sie z.B. in der CrossPoint-Supportbox,
-06241-592184, Login GAST, oder im Buchhandel unter der ISBN 3-9802182-3-6
-(Verlag Art d'Ameublement).
+FÅr das VerstÑndnis des folgenden Textes ist die Kenntnis des ZCONNECT-Nachrichtenformates
+nîtig. Eine Beschreibung von ZCONNECT erhalten Sie z.B. im Buchhandel unter der 
+ISBN 3-9802182-3-6 (Verlag Art d'Ameublement).
 
 
 
@@ -59,9 +54,12 @@ Anwendung
 ZPR [-fhlrwz] [-dDatei] <Quelldatei> [Zieldatei]
 
 Die Dateinamen kînnen Laufwerks- und Pfadangaben enthalten. Wenn keine
-Zieldatei angegeben wird, ?berschreibt ZPR beim Reparieren (Parameter -r)
-die Quelldatei mit dem korrigierten Puffer. Die Schalter kînnen in beliebiger
-Reihenfolge an beliebiger Stelle stehen; mehrere Schalter d?rfen zusammengefa·t
+Zieldatei angegeben wird, Åberschreibt ZPR beim Reparieren (Parameter -r)
+>>|
+die Quelldatei mit dem korrigierten Puffer, legt aber eine Sicherungskopie 
+mit der Endung BAK an. Die Schalter kînnen in beliebiger Reihenfolge an 
+<<|
+beliebiger Stelle stehen; mehrere Schalter dÅrfen zusammengefa·t
 werden. Z.B.:
 
     ZPR -r PUFFER
@@ -77,16 +75,16 @@ umittelbar auf '-d' folgenden Namen. Die Nachrichten werden unverÑndert kopiert.
 --4 -f  Protokolliert alle Fehler und Warnungen, die auch am Bildschirm angezeigt
 werden, in der Datei ZPR.LOG.
 
---4 -h  Strenge Headerzeilen-öberpr?fung. Der Inhalt von Adre·- und Datumszeilen,
+--4 -h  Strenge Headerzeilen-öberprÅfung. Der Inhalt von Adre·- und Datumszeilen,
 Message-IDs, Dateinamen und Telefonnummern wird auf ZCONNECT-KonformitÑt
 getestet.
-
+    
 -l  Defekte Nachrichten werden nicht repariert, sondern entfernt.
 
 --4 -r  Repariert den Puffer (ansonsten wird er nur getestet). Bei Angabe eines
 Zieldateinamens wird Schalter -r automatisch gesetzt.
 
---4 -w  Warnungen unterdr?cken. Warnungen werden bei Steuerzeichen in Headerzeilen
+--4 -w  Warnungen unterdrÅcken. Warnungen werden bei Steuerzeichen in Headerzeilen
 und bei Fehlern in Adre·-, Datums und Message-ID-Zeilen angezeigt, falls der
 Schalter "-h" nicht angegeben ist.
 
@@ -94,21 +92,21 @@ Schalter "-h" nicht angegeben ist.
 Headerzeilen an.
 
 
-ZPR gibt folgende Errorlevel zur?ck:
+ZPR gibt folgende Errorlevel zurÅck:
 
-  0 = ?berpr?fter Puffer ist fehlerfrei
+  0 = ÅberprÅfter Puffer ist fehlerfrei
   1 = Puffer ist fehlerhaft
-  2 = Parameter-Fehler oder öberpr?fung abgebrochen
+  2 = Parameter-Fehler oder öberprÅfung abgebrochen
 
 
 
 Beispiele
 ~~~~~~~~~
 
---23ZPR <Datei>            ?berpr?ft eine Datei auf formale Korrektheit, d.h.
+--23ZPR <Datei>            ÅberprÅft eine Datei auf formale Korrektheit, d.h.
 ob sie von einem Pointprogramm verarbeitet werden kann.
 
---23ZPR -h <Datei>         ?berpr?ft eine Datei detailliert auf Abweichungen vom
+--23ZPR -h <Datei>         ÅberprÅft eine Datei detailliert auf Abweichungen vom
 ZCONNECT-Standard. Wenn keine Fehler/Warnungen angezeigt werden, bedeuet das
 allerdings nicht, da· die Datei 100%ig ZCONNECT-konform ist.
 
@@ -123,17 +121,17 @@ Nachrichten in die Fehlerdatei
 Headerzeilen
 ~~~~~~~~~~~~
 
-Bei Fehlermeldungen benennt ZPR die fehlerhaften Zeilen durch ihre ZCONNECT-K?rzel.
-Dies sind im Einzelnen (alle mit * gekennzeichneten Zeilen d?rfen mehrfach
+Bei Fehlermeldungen benennt ZPR die fehlerhaften Zeilen durch ihre ZCONNECT-KÅrzel.
+Dies sind im Einzelnen (alle mit * gekennzeichneten Zeilen dÅrfen mehrfach
 vorhanden sein):
 
   ABS               Absender
-* ANTWORT-AN        Antwortadresse f?r PMs
+* ANTWORT-AN        Antwortadresse fÅr PMs
   BET               Betreff
 * BEZ               Message-ID(s) der Bezugsnachricht(en)
   CRYPT             Codierverfahren
   DDA               Dateidatum
-* DISKUSSION-IN     Antwortbrett f?r îffentliche Nachrichten
+* DISKUSSION-IN     Antwortbrett fÅr îffentliche Nachrichten
 * EB                EmpfangsbestÑtigungsanforderung
   EDA               Erstellungsdatum
 * EMP               EmpfÑnger
@@ -152,23 +150,23 @@ vorhanden sein):
 * VER               Vertreteradresse
   WAB               Weiterleit-Absender
 
-Alle hier nicht aufgef?hrten Headerzeilen werden von ZPR ignoriert und bei
-Schalter -r unverÑndert in die reparierte Datei ?bernommen.
+Alle hier nicht aufgefÅhrten Headerzeilen werden von ZPR ignoriert und bei
+Schalter -r unverÑndert in die reparierte Datei Åbernommen.
 
 ABS, BEZ, EDA, EMP, LEN, MID und ROT sind Pflichtzeilen. Am Vorhandensein
-dieser sieben Zeilen erkennt ZPR einen g?ltigen Header.
+dieser sieben Zeilen erkennt ZPR einen gÅltigen Header.
 
 
 
 Tests
 ~~~~~
 
-ZPR f?hrt die folgenden Test und Reparaturen durch:
+ZPR fÅhrt die folgenden Test und Reparaturen durch:
 
---3 o  öberpr?fung der NachrichtenlÑngen, d.h. formale Korrektheit des
+--3 o  öberprÅfung der NachrichtenlÑngen, d.h. formale Korrektheit des
 Puffers. Ggf. Anpassen von LEN an die tatsÑchliche NachrichtenlÑnge.
 
---3 o  Test auf korrekte Zeilentrennungen - alle Headerzeilen m?ssen mit
+--3 o  Test auf korrekte Zeilentrennungen - alle Headerzeilen mÅssen mit
 CR+LF getrennt sein. Ggf. ErgÑnzen von LF oder CR.
 
 --3 o  Test der Headernamen auf syntaktische Korrektheit. Ggf. Entfernen
@@ -179,9 +177,9 @@ sind. Ggf. Entfernen aller unerlaubten Kopien.
 
 --3 o  Test auf Vorkommen von Headern, die nur in PMs oder in AMs (Brettnachrichten)
 erlaubt sind, im jeweils anderen Nachrichtentyp. Ggf. Entfernen nicht erlaubter
-Header. [Ich wei·, ZCONNECT beinhaltet diesbez?glich keine exakten Vorschriften.
+Header. [Ich wei·, ZCONNECT beinhaltet diesbezÅglich keine exakten Vorschriften.
 Aber da· EB in einer AM oder DISKUSSION-IN in einer PM ein Fehler ist, sollte
-offensichtlich sein]. Diese Tests gelten nicht f?r kombinierte AM/PMs.
+offensichtlich sein]. Diese Tests gelten nicht fÅr kombinierte AM/PMs.
 
 --3 o  Test auf Steuerzeichen innerhalb von Headerzeilen, d.h. Zeichen mit
 ASCII-Wert kleiner 32 mit Ausnahme von TAB (#9). Ggf. Entfernnen nicht
@@ -216,26 +214,34 @@ Versionsgeschichte
                   zeile beseitigt
 20.10.93   0.93   grî·erer Fehler bei LÑngenkorrektur beseitigt;
                   Tippfehler korrigiert..
-05.11.93   1.0    noch ein paar Bugs bei der Suche nach g?ltigen
+05.11.93   1.0    noch ein paar Bugs bei der Suche nach gÅltigen
                   Headern beseitigt
-28.11.93   1.01   Syntax?berpr?fung der LEN-Zeile hinzugef?gt
-                  Adre·?berpr?fung funktioniert jetzt auch bei von
+28.11.93   1.01   SyntaxÅberprÅfung der LEN-Zeile hinzugefÅgt
+                  Adre·ÅberprÅfung funktioniert jetzt auch bei von
                   XP konvertierten RFC-Puffern
-                  Syntax?berpr?fung von BEZ entfernt
+                  SyntaxÅberprÅfung von BEZ entfernt
 15.12.93   1.02   zu viele Leerzeichen vor Realname werden erkannt
 04.02.94   1.03   Fehler bei Headersuche (RTE 201) beseitigt
 05.12.94   1.04   Leerzeichen vor Headerzeilen werden entfernt
-                  Ung?ltige Headernamen werden erkannt
+                  UngÅltige Headernamen werden erkannt
                   Fehler bei HeaderlÑngenkorrektur behoben
                   lange Headerzeilen werden beim Reparieren nicht
-                  mehr gek?rzt
-15.01.95   1.05   Syntax?berpr?fung von EMP, OEM und DISKUSSION-IN
-                  hinzugef?gt
+                  mehr gekÅrzt
+15.01.95   1.05   SyntaxÅberprÅfung von EMP, OEM und DISKUSSION-IN
+                  hinzugefÅgt
                   OS/2-Version
-05.06.95   1.06   weniger strenge öberpr?fung von Brettnamen
+05.06.95   1.06   weniger strenge öberprÅfung von Brettnamen
 07.06.95   1.07   Fehler bei Puffern > 20,5 MB behoben
 19.06.95   1.08   Fehler bei mehrfachem LEN behoben
-                  öberpr?fung von TELEFON an ZCONNECT 3.1 angepa·t
-                  öberpr?fung von KOM, KOP und VER hinzugef?gt
+                  öberprÅfung von TELEFON an ZCONNECT 3.1 angepa·t
+                  öberprÅfung von KOM, KOP und VER hinzugefÅgt
 16.07.96   1.09   Header, die mit einem Doppelpunkt beginnen, werden
                   als fehlerhaft erkannt
+>>|
+3.2
+!  kleinere Bugs entfernt
+!  Anzeigefehler mit gro·en Puffern behoben
+*  keine externe Entwicklung mehr, sondern fester Bestandteil des
+   OpenXP-Projekts, deswegen Versionsnummer angepasst.
+
+<<|
