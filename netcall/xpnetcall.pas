@@ -1338,7 +1338,12 @@ begin
   if ParSendbuf<>'' then
     AutoSend(ParSendbuf);
   if ParNetcall<>'' then
-    if ParNetcall='*' then
+    if ParNSpecial then
+      if ival(ParNetcall) in [1..20] then
+        AutoTiming(-1,true,false,true,ival(ParNetcall))    { Netcall/Spezial }
+      else
+        trfehler1(749,ParNetcall,60) { '/nsp: UngÅltige Zeilenangabe fÅr NETCALL.DAT: %s' }
+    else if ParNetcall='*' then
       AutoTiming(-1,true,false,false,1)      { Netcall/Alle }
     else if not isbox(ParNetcall) then
       trfehler1(717,ParNetcall,60)   { '/n: Unbekannte Serverbox: %s' }
@@ -1386,6 +1391,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2002/04/03 22:57:43  mk
+  - fixed handling of /nsp:xx
+
   Revision 1.50  2002/03/23 09:50:13  mk
   - restored SafeMakeBak
 
