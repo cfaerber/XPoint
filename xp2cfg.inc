@@ -88,7 +88,7 @@ begin
   dbLog('-- '+colcfgfile+' einlesen');
 {$ENDIF }
   assign(t,colcfgfile);
-  if not existf(t) then exit;
+  if not FileExists(colcfgfile) then exit;
   msk:=$ff;
   settextbuf(t,buf);
   reset(t);
@@ -1297,7 +1297,8 @@ begin
   SetDefault;
   aaa:=''; mheader:='';
   assign(t,ownpath+CfgFile);
-  if existf(t) then begin
+  if FileExists(OwnPath+CfgFile) then
+  begin
     settextbuf(t,buf);
     reset(t);
     { Zwischenspeichern, da Integer16 nicht als var-Parameter funktioniert }
@@ -1617,14 +1618,16 @@ begin
   trennkomm:=minmax(trennkomm,1,3);
 
   assign(t,ownpath+Cfg2File);         { Config2 einlesen }
-  if existf(t) then begin
+  if FileExists(OwnPath + Cfg2File) then
+  begin
     settextbuf(t,buf);
     reset(t);
     while not eof(t) do begin
       readln(t,s);
       s:=trim(s);
       su:=UpperCase(s);
-      if (s<>'') and (s[1]<>'#') then begin
+      if (s <> '') and (s[1] <>'#') then
+      begin
         p:=pos('=',s);
         if (p=0) or not (
           gets(s,su,'defaultbox',defaultbox,20) or
@@ -1644,7 +1647,7 @@ begin
         end;
       end;
     close(t);
-    end
+  end
   else begin
     SaveConfig;
     SaveConfig2;
@@ -1681,6 +1684,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.102  2001/01/14 10:31:08  mk
+  - changed existf to FileExists
+
   Revision 1.101  2000/12/31 14:49:04  mk
   - Tearlineschalter in Config/Optionen/Netze
 
