@@ -48,7 +48,7 @@ type  diskstat = record
 procedure setwinselcursor(cur:curtype);
 procedure fslct(x,y1,y2:byte; txt:string; sla:string; errdisp:boolean;
                 var fi:string; var brk:boolean);
-function  fsbox(y:byte; path,pathx:pathstr; vorgabe:s20; xdir,invers,
+function  fsbox(y:byte; path,pathx:pathstr; vorgabe:string; xdir,invers,
                 vert:boolean):pathstr;
 procedure pslct(x1,x2,y1,y2:byte; drive:char; fenster,pvorg,modify:boolean;
                 crproc:xproc; sproc:stproc; errproc:perrproc;
@@ -172,14 +172,14 @@ end;
   invers  : inverse Anzeige
   vert    : vertikale Anzeige }
 
-function fsbox(y:byte; path,pathx:pathstr; vorgabe:s20; xdir,invers,vert:boolean):pathstr;
+function fsbox(y:byte; path,pathx:pathstr; vorgabe:string; xdir,invers,vert:boolean):pathstr;
 
 const
-  maxf   = 750;
+  maxf   = 2048;
   maxs   = 5;
 type
-  fnst   = string[80];
-      ft     = array[1..maxf+36] of fnst;
+  fnst   = string;
+      ft     = array[1..maxf+36] of ^fnst;
       txst   = string[70];
 var   fb     : pathstr;
       f      : ^ft;
@@ -202,6 +202,13 @@ var   fb     : pathstr;
       na,ia  : byte;
       drives : string[80];
       doppelpunkt : boolean;  { bei Novell liefert FF/FN kein ".." ... }
+
+  procedure AddFnItem(s: String);
+  begin
+    Inc(fn);
+    GetMem(f^[fn], Length(s)+1);
+    FastMove(s, f^[fn]^, Length(s)+1);
+  end;
 
   procedure iit;
   begin
@@ -233,20 +240,21 @@ var   fb     : pathstr;
   function fname(n:integer):pathstr;
   begin
     fsplit(path,dir,name,ext);
-    fname:=dir+f^[n];
+    fname:=dir+f^[n]^;
   end;
 
   procedure qsort;
 
     procedure sort(l,r:integer);
     var i,j : integer;
-        x,w : fnst;
+        x: fnst;
+        w: pointer;
     begin
       i:=l; j:=r;
-      x := UStr(f^[(l+r) div 2]);
+      x := UStr(f^[(l+r) div 2]^);
       repeat
-        while UStr(f^[i]) < x do inc(i);
-        while UStr(f^[j]) > x do dec(j);
+        while UStr(f^[i]^) < x do inc(i);
+        while UStr(f^[j]^) > x do dec(j);
         if i<=j then
         begin
           w:=f^[i]; f^[i]:=f^[j]; f^[j]:=w;
@@ -268,7 +276,7 @@ var   fb     : pathstr;
   end;
 
   procedure dispfile(n:integer);
-  var s : string[30];
+  var s : string;
   begin
     moff;
     if not vert then
@@ -278,7 +286,7 @@ var   fb     : pathstr;
     if n+add>fn then
       Wrt2(sp(14))
     else begin
-      s:=f^[n+add];
+      s:=f^[n+add]^;
       Wrt2(' ' + forms(s, 12) + ' ');
     end;
     mon;
@@ -312,7 +320,7 @@ var   fb     : pathstr;
     xx:=wherex; yy:=wherey;   { fÅr Cursor-Anzeige }
     iit;
     if fsb_info then begin
-      s:=f^[add+p];
+      s:=f^[add+p]^;
       gotoxy(12,y+height-1);
       moff;
 {$IFNDEF UnixFS }
@@ -363,12 +371,12 @@ var   fb     : pathstr;
   var i : integer;
   begin
     i:=p+add+1;
-    while (i<=fn) and (f^[i][1]<>ab) do inc(i);
+    while (i<=fn) and (f^[i]^[1]<>ab) do inc(i);
     if i>fn then begin
       i:=1;
-      while (i<=p+add) and (f^[i][1]<>ab) do inc(i);
+      while (i<=p+add) and (f^[i]^[1]<>ab) do inc(i);
       end;
-    if f^[i][1]=ab then begin
+    if f^[i]^[1]=ab then begin
       if not vert then begin
         while i-add<1 do add:=max(0,add-4);
         while i-add>36 do inc(add,4);
@@ -404,6 +412,8 @@ var   fb     : pathstr;
      p:=min(p,fn);
    end;
 
+var
+  s: String;
 begin
   new(f);
   if f=nil then begin
@@ -450,31 +460,24 @@ begin
       findfirst(dir+WildCard,directory+archive,sr);
       while (doserror=0) and (fn<maxf) do begin
         if (sr.name<>'.') and ((sr.attr and directory)<>0) then begin
-          inc(fn);
-          f^[fn]:=#253+sr.name;
-          if f^[fn][2]='.' then begin
-            f^[fn][1]:=#255; doppelpunkt:=true;
+          AddFnItem(#253+sr.name);
+          if f^[fn]^[2]='.' then begin
+            f^[fn]^[1]:=#255; doppelpunkt:=true;
             end;
           end;
         findnext(sr);
         end;
-      if (fn<maxf) and not doppelpunkt and (length(dir)>3) then begin
-        inc(fn);
-        f^[fn]:=#255+'..';
-        end;
+      if (fn<maxf) and not doppelpunkt and (length(dir)>3) then
+        AddFnItem(#255+'..');
       for i:=1 to length(drives) do
-        if fn<maxf then begin
-          inc(fn);
-          f^[fn]:=#254'['+drives[i]+':]';
-          end;
+        if fn<maxf then
+          AddFnItem(#254'['+drives[i]+':]');
       end;
     for x:=1 to pathn do begin
       findfirst(paths[x],readonly+archive,sr);
       while (doserror=0) and (fn<maxf) do begin
-        if sr.name<>'.' then begin
-          inc(fn);
-          f^[fn]:=sr.name;
-          end;
+        if sr.name<>'.' then
+          AddFnItem(sr.name);
         findnext(sr);
         end;
       end;
@@ -515,14 +518,19 @@ begin
     else begin
       qsort;
       for i:=1 to fn do
-        if f^[i][1]>=#253 then begin
-          delete(f^[i],1,1);
-          if f^[i,1]<>'[' then
-            f^[i]:=f^[i]+DirSepa;
-          end;
+        if f^[i]^[1]>=#253 then
+        begin
+          s := f^[i]^;
+          delete(s,1,1);
+          if s[1]<>'[' then
+            s:=s+DirSepa;
+          Freemem(f^[i], length(f^[i]^)+1);
+          GetMem(f^[i], Length(s)+1);
+          FastMove(s, f^[i]^, Length(s)+1);
+        end;
 
       p:=1; add:=0;
-      while (p<=fn) and (f^[p]<>vorgabe) do inc(p);
+      while (p<=fn) and (FUstr(f^[p]^)<>vorgabe) do inc(p);
       if p>fn then p:=1
       else add:=max(p-36,add);
       p:=p-add;
@@ -655,13 +663,13 @@ begin
           end;
         if (t[1]>' ') then binseek(UpCase(t[1]));
         if add<>ma then disp:=true;
-        if (t=keycr) and (f^[p+add,1]='[') then
-          t:=chr(ord(f^[p+add,2])-64);
+        if (t=keycr) and (f^[p+add]^[1]='[') then
+          t:=chr(ord(f^[p+add]^[2])-64);
         chgdrive:=xdir and (t>=^A) and (t<=^Z) and (t<>keycr) and
                   (cpos(chr(ord(t[1])+64),drives)>0);
         if chgdrive then begin    { Balken auf [LW:] positionieren }
           i:=1;
-          while (i<=fn) and (f^[i]<>'['+chr(ord(t[1])+64)+':]') do inc(i);
+          while (i<=fn) and (f^[i]^<>'['+chr(ord(t[1])+64)+':]') do inc(i);
           if (i<=fn) and (i<>p+add) then begin
             while i-add<1 do dec(add,iif(vert,9,4));
             while i-add>36 do inc(add,iif(vert,9,4));
@@ -672,19 +680,19 @@ begin
           end;
       until (t=keyesc) or (t=keycr) or chgdrive;
       end;
-    if ((fn>0) and (t=keycr) and (right(f^[p+add],1)=DirSepa)) or chgdrive then
+    if ((fn>0) and (t=keycr) and (right(f^[p+add]^,1)=DirSepa)) or chgdrive then
     begin
       for i:=1 to pathn do begin
         fsplit(paths[i],dir,name,ext);
         if t=keycr then                   { Pfadwechsel }
-          if f^[p+add]='..'+DirSepa then begin
+          if f^[p+add]^='..'+DirSepa then begin
             delete(dir,length(dir),1);
             while (dir<>'') and (dir[length(dir)]<>DirSepa) do
               delete(dir,length(dir),1);
             if dir<>'' then path:=dir+name+ext;
             end
           else
-            path:=dir+f^[p+add]+name+ext
+            path:=dir+f^[p+add]^+name+ext
         else begin                        { Laufwerkswechsel }
           path:=dospath(ord(t[1]));
           if right(path,1)<>DirSepa then path:=path+DirSepa;
@@ -702,6 +710,8 @@ begin
     end;
   if t=keycr then fb:=fname(p+add)
   else fb:='';
+  for i := 1 to fn do
+    Freemem(f^[i], length(f^[i]^)+1);
   dispose(f);
   fsbox:=fb;
 end;
@@ -1105,6 +1115,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16.2.5  2000/11/26 10:19:23  mk
+  - FSBox braucht weniger Speicher
+
   Revision 1.16.2.4  2000/10/15 09:28:06  mk
   - LFN fixes
 
