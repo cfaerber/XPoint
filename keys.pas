@@ -305,9 +305,11 @@ end;
 {$ENDIF }
 
 function kb_shift:boolean;          { Shift gedrÅckt }
+var
+  I:Integer;
 begin
 {$IFDEF Win32 }
-  kb_shift := GetAsyncKeyState(VK_SHIFT) SHL 15 <> 0;
+  kb_shift := GetAsyncKeyState(VK_SHIFT) < 0;
 {$ELSE }
   {$IFDEF DOS32}
   kb_shift := kbstat and (lshift+rshift)<>0;
@@ -320,7 +322,7 @@ end;
 function kb_ctrl:boolean;           { Ctrl gedrÅckt  }
 begin
 {$IFDEF Win32 }
-  kb_ctrl := GetAsyncKeyState(VK_CONTROL) SHL 15 <> 0;
+  kb_ctrl := GetAsyncKeyState(VK_CONTROL) < 0;
 {$ELSE }
   {$IFDEF DOS32}
   kb_ctrl := kbstat and ctrl<>0;
@@ -333,7 +335,7 @@ end;
 function kb_alt:boolean;            { Alt gedrÅckt   }
 begin
 {$IFDEF Win32 }
-  kb_alt := GetAsyncKeyState(VK_MENU) SHL 15 <> 0;
+  kb_alt := GetAsyncKeyState(VK_MENU) < 0;
 {$ELSE }
   {$IFDEF DOS32}
   kb_alt := kbstat and alt<>0;
@@ -345,7 +347,7 @@ end;
 
 var
   SavedExitProc: pointer;
-  
+
 procedure ExitKeysUnit;
 begin
   ExitProc:= SavedExitProc;
@@ -362,6 +364,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2001/07/23 09:23:11  ml
+  - Shift-Handling fixed in Win32
+
   Revision 1.31  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
