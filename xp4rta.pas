@@ -553,7 +553,6 @@ var RTAEmpfList :RTAEmpfaengerP;
 
   procedure checkVertreterAdressen (var list :RTAEmpfaengerP);
   var lauf :RTAEmpfaengerP;
-      s    :str90;
   begin
     lauf := list;
     while assigned (lauf) do
@@ -796,7 +795,6 @@ var RTAEmpfList :RTAEmpfaengerP;
     procedure adressenHinzufuegen;
 
       procedure add (const s :str90; const typ :byte; const RTAEmpf, vertreter, userUnbekannt :boolean);
-      var s1 :string;
       begin
         app_l (iifs (RTAEmpf and RTAEmpfaengerVorhanden, leadingChar, ' ') + getres2 (476, typ) +
           iifs (not vertreter and not userUnbekannt, '  ', iifs (vertreter xor userUnbekannt, ' ', '')) +
@@ -1063,6 +1061,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.5  2001/08/11 10:15:46  mk
+  - removed unused variables and comments
+
   Revision 1.1.2.4  2001/08/02 17:44:33  my
   - now using function is_mailaddress from xp9sel.pas instead of adrOkay
   - removed function adrOkay

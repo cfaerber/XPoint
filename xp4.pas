@@ -1037,9 +1037,7 @@ var t,lastt: taste;
             end;
           end;
         if (rt<>'') and ((rt<>empf) or (rtanz>1)) then begin
-          { 03.02.2000 robo }
           if not adresseAusgewaehlt or (cpos('@',empf)=0) then empf:=rt;  { Reply-To }
-          { /robo }
           if not pm then begin
             if rtanz>1 then
               AddMultipleFollowups;
@@ -2186,6 +2184,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.44  2001/08/11 10:15:45  mk
+  - removed unused variables and comments
+
   Revision 1.26.2.43  2001/08/05 11:45:34  my
   - added new unit XPOVL.PAS ('uses')
 
