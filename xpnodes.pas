@@ -14,7 +14,8 @@ unit xpnodes;
 
 interface
 
-uses  {$IFDEF virtualpascal}sysutils,{$endif} dos;
+uses
+  typeform, sysutils, dos;
 
 
 const PointNurNode = 0;      { Nur den Nodeteil der Adresse berÅcksichti-  }
@@ -148,96 +149,6 @@ var   Nodelist    : NL_ap;          { benutzerdefinierte Node/Pointlisten }
       NX_adrnetx  : longint;
       bereiche    : word;
       berliste    : ^bereichlst;
-
-
-{ --- TYPEFORM ------------------------------------------------------- }
-
-function cpos(c:char; s:string):byte;
-begin
-  cpos:=pos(c,s);
-end;
-
-Function trim(s:string):string;
-begin
-  while (s[length(s)]=' ') or (s[length(s)]=#9) do     { terminiert, da s[0]<>' ' fÅr s='' }
-    dec(byte(s[0]));
-  while (s<>'') and ((s[1]=' ') or (s[1]=#9)) do
-    delete(s,1,1);
-  trim:=s;
-end;
-
-Function Left(s:string; n:byte):string;
-begin
-  if n<length(s) then s[0]:=chr(n);
-  left:=s;
-end;
-
-Function MinMax(x,min,max:longint):longint;
-begin
-  if x<min then MinMax:=min
-  else if x>max then MinMax:=max
-  else MinMax:=x;
-end;
-
-
-Function IVal(s:string):longint;
-var l   : longint;
-    res : integer;
-begin
-  val(trim(s),l,res);
-  IVal:=l;
-end;
-
-Function Mid(s:string; n:byte):string;
-begin
-  mid:=copy(s,n,255);
-end;
-
-Procedure UpString(var s:string);
-var i : integer;
-begin
-  for i:=1 to length(s) do
-    s[i]:=UpCase(s[i]);
-end;
-
-procedure dellast(var s:string);
-begin
-  if s<>'' then dec(byte(s[0]));
-end;
-
-Function FormI(i:longint; n:Byte):string;
-var st:string;
-begin
-  Str(i,st);
-  while length(st)<n do
-    st:='0'+st;
-  formi:=st;
-end;
-
-function LoCase(c:char):char;
-begin
-  if (c>='A') and (c<='Z') then
-    LoCase:=chr(ord(c) or $20)
-  else
-    LoCase:=c;
-end;
-
-function lstr(s:string):string;
-var i : integer;
-begin
-  for i:=1 to length(s) do
-    s[i]:=LoCase(s[i]);
-  lstr:=s;
-end;
-
-function ustr(s:string):string;
-var i : integer;
-begin
-  for i:=1 to length(s) do
-    s[i]:=UpCase(s[i]);
-  ustr:=s;
-end;
-
 
 { ------------------------------------------------------------------- }
 
@@ -592,6 +503,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/07/04 10:21:36  mk
+  - doppelte Routinen rausgenommen
+
   Revision 1.8  2000/06/22 19:53:32  mk
   - 16 Bit Teile ausgebaut
 

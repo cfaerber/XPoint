@@ -21,7 +21,7 @@ unit archive;
 interface
 
 uses
-  xpglobal, dos, typeform, montage;
+  xpglobal, sysutils, dos, typeform, montage;
 
 const  ArcTypes   = 12;
        ArcUnknown = 0;
@@ -240,27 +240,6 @@ type archd = record
 var  dwcnum : longint;    { Anzahl DirEintrÑge }
      dwcsize: word;       { Grî·e der EintrÑge }
 
-
-function min(a,b:longint):longint;
-begin
-  if a<b then min:=a
-  else min:=b;
-end;
-
-Function trim(s:string):string;
-begin
-  while (s[length(s)]=' ') or (s[length(s)]=#9) do     { terminiert, da s[0]<>' ' fÅr s='' }
-    dec(byte(s[0]));
-  while (s<>'') and ((s[1]=' ') or (s[1]=#9)) do
-    delete(s,1,1);
-  trim:=s;
-end;
-
-function iif(b:boolean; l1,l2:longint):longint;
-begin
-  if b then iif:=l1
-  else iif:=l2;
-end;
 
 function monthlen(j,m:word):word;
 begin
@@ -1017,6 +996,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/07/04 10:21:36  mk
+  - doppelte Routinen rausgenommen
+
   Revision 1.12  2000/07/02 14:24:43  mk
   - FastMove entfernt, da in FPC/VP RTL besser implementiert
 
