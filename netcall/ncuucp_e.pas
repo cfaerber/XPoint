@@ -40,6 +40,7 @@ implementation
 
 uses
   typeform, inout, debug, sysutils,
+  {$IFDEF Unix}xpcurses, {$ENDIF}
   xpglobal;
 
 procedure TUUCProtocolE.SendCommand(s:string);
@@ -132,6 +133,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2002/12/26 18:44:17  mk
+  - fixed fpc compile problem
+
   Revision 1.3  2002/12/14 22:43:40  dodi
   - fixed some hints and warnings
 
