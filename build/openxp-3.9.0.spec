@@ -3,13 +3,13 @@
 # 11.11.2000   some more changes to get more running
 # 15.10.2001   fix for symlinks-kill
 # 21.04.2002   adapted by Christian Boettger <chritain.boettger@web.de>
-Summary: openxp - The Open-Source Project (from Crosspoint by Peter Mandrella)
+Summary: openxp - The Open-Source OpenXP Project (from Crosspoint by Peter Mandrella)
 Name: openxp
 %define version 3.9.0
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
 #%define ppcopts -gl -XX -FU. -FuObjCOM -Funetcall -Fl.
-%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fl. -Ci -Co -Cr
+%define ppcopts -gl -FU. -FuObjCOM -Funetcall -Fuxplib -Fl. -Ci -Co -Cr
 #%define helpdir /home/boettger/openxp/openxp/contrib
 ##%define filelist /home/boettger/openxp/openxptools/filelist.lst
 %define filelist /tmp/filelist.lst
@@ -17,7 +17,7 @@ Name: openxp
 Version: %{version}
 Release: 1
 Group: Applications/Mail
-Copyright: (C) 2000 by OpenXP-Team
+Copyright: (C) 2000 by OpenXP-Team under GPL
 Source: /usr/src/packages/SOURCES/openxp-%{version}.tar.gz
 BuildRoot: /tmp/openxp-root
 # Following are optional fields
@@ -63,11 +63,13 @@ mkdir -p $RPM_BUILD_ROOT%{Prefix}
 mkdir $RPM_BUILD_ROOT%{Prefix}/bin
 mkdir $RPM_BUILD_ROOT%{Prefix}/lib
 mkdir $RPM_BUILD_ROOT%{Prefix}/doc
+mkdir $RPM_BUILD_ROOT%{Prefix}/examples
 
 mkdir -p %{Prefix}
 mkdir -p %{Prefix}/bin
 mkdir -p %{Prefix}/lib
 mkdir -p %{Prefix}/doc
+mkdir -p %{Prefix}/examples
 
 # copy bins
 cp openxp $RPM_BUILD_ROOT%{Prefix}/bin
@@ -89,6 +91,11 @@ cp doc/* %{Prefix}/doc
 #cp doc/*.hlp $RPM_BUILD_ROOT%{Prefix}/doc
 cp file_id.diz $RPM_BUILD_ROOT%{Prefix}/doc
 cp file_id.diz %{Prefix}/doc
+
+# copy example files
+rm -rf beispiel/CVS
+cp beispiel/* $RPM_BUILD_ROOT%{Prefix}/examples
+cp beispiel/* %{Prefix}/examples
 
 pushd .
 cd $RPM_BUILD_ROOT

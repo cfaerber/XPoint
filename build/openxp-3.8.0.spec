@@ -8,7 +8,8 @@ Name: openxp
 %define version 3.8.0
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG -CX -XX -Or
 #%define ppcopts -gl -FuObjCOM -Funetcall -dDEBUG
-%define ppcopts -CX -XX -FU. -FuObjCOM -Funetcall -Fl.
+%define ppcopts -gl -CX -XX -FU. -FuObjCOM -Funetcall -Fl.
+%define toolsppcopts -gl -FU. -FuObjCOM -Funetcall -Fl.
 #%define helpdir /home/boettger/openxp/openxp/contrib
 ##%define filelist /home/boettger/openxp/openxptools/filelist.lst
 %define filelist /tmp/filelist.lst
@@ -16,7 +17,7 @@ Name: openxp
 Version: %{version}
 Release: 1
 Group: Applications/Mail
-Copyright: (C) 2000 by OpenXP-Team
+Copyright: (C) 2000 by OpenXP-Team under GPL
 Source: /usr/src/packages/SOURCES/openxp-%{version}.tar.gz
 BuildRoot: /tmp/openxp-root
 # Following are optional fields
@@ -43,8 +44,8 @@ OpenXP/32 - the mail- and newsreader for fido, uucp, rfc, zconnect and other net
 #patch < /home/leo/openxptools/xp4.pas.diff
 #ppc386 %{ppcopts} openxp
 ppc386 -B %{ppcopts} openxp
-ppc386 %{ppcopts} rc
-ppc386 %{ppcopts} ihs
+ppc386 %{toolsppcopts} rc
+ppc386 %{toolsppcopts} ihs
 ./rc openxp-d.rq
 ./rc openxp-e.rq
 ./ihs doc/openxp-d
@@ -62,10 +63,12 @@ mkdir -p $RPM_BUILD_ROOT%{Prefix}
 mkdir $RPM_BUILD_ROOT%{Prefix}/bin
 mkdir $RPM_BUILD_ROOT%{Prefix}/lib
 mkdir $RPM_BUILD_ROOT%{Prefix}/doc
+mkdir $RPM_BUILD_ROOT%{Prefix}/examples
 mkdir -p %{Prefix}
 mkdir -p %{Prefix}/bin
 mkdir -p %{Prefix}/lib
 mkdir -p %{Prefix}/doc
+mkdir -p %{Prefix}/examples
 
 # copy bins
 cp openxp $RPM_BUILD_ROOT%{Prefix}/bin
@@ -87,6 +90,12 @@ cp doc/* %{Prefix}/doc
 #cp doc/*.hlp $RPM_BUILD_ROOT%{Prefix}/doc
 cp file_id.diz $RPM_BUILD_ROOT%{Prefix}/doc
 cp file_id.diz %{Prefix}/doc
+
+# copy example files
+rm -rf beispiel/CVS
+cp beispiel/* $RPM_BUILD_ROOT%{Prefix}/examples
+cp beispiel/* %{Prefix}/examples
+
 
 pushd .
 cd $RPM_BUILD_ROOT
