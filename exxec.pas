@@ -33,6 +33,7 @@ uses
 {$IFDEF Win32 }
   windows,
   xpwin32,
+  dos,
 {$ENDIF }
 {$IFDEF DOS32 }
   xpdos32,
@@ -83,12 +84,12 @@ begin
     dpath:=getenv('comspec');
   end;
   Debug.TempCloseLog(False);
-{$IFDEF DOS32 }
+{$IFNDEF Unix }
   SwapVectors;
   DosError :=0;
 {$ENDIF }
   SysExec(dpath, para);
-{$IFDEF DOS32 }
+{$IFNDEF Unix }
   TempError:=DosError; if TempError=0 then Result:=DosExitCode else Result:=-TempError;
   SwapVectors;
   DosError :=0;          { Wird nicht sauber belegt, also von Hand machen }
@@ -100,6 +101,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.34  2000/11/19 17:51:32  ma
+  - Bugfix, error level is now returned properly in Win32
+    again.
+
   Revision 1.33  2000/11/18 21:10:00  mk
   - added SysExec
 
