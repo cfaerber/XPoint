@@ -532,6 +532,13 @@ K (c) '2000 OpenXP Team, www.openxp.de
 29   don't archive news
 30   ignore cancels/supersedes
 31   Hold own PMs
+39   User selection list:    ~
+40   always
+41   Carbon Copies + Reply-To
+42   Carbon Copies
+43   Reply-To
+44   never
+45   user defined
 #
 100  68
 101  Address options
@@ -3773,6 +3780,9 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.26  2001/08/11 08:41:39  mk
+# - fixed RTA changes in Config/Optionen/Nachrichten
+#
 # Revision 1.25  2001/07/31 18:05:38  mk
 # - implemented is_emailaddress in NameRead
 # - RFC/Client: implemented "External Settings" under

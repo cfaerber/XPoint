@@ -277,6 +277,7 @@ begin
   settimezone:=true;
 end;
 
+// Config/Optionen/Nachrichten
 procedure msgoptions;
 var x,y : Integer;
     brk : boolean;
@@ -323,13 +324,15 @@ begin
     for i := 0 to 4 do
       RTAStrings[i] := getres2 (252, 40 + i); { 'immer', 'Kop... + RT', 'Antw...', 'RT', 'nie' }
   j := iif (UUCP_ZConnectUsed, 1, 0);
-  dialog(57,21,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
+
+  dialog(57,21 + j,getres2(252,5),x,y);   { 'Nachrichten-Optionen' }
   maddint(3,2,getres2(252,6),maxbinsave,6,5,0,99999);   { 'max. Speichergrî·e fÅr BinÑrnachrichten: ' }
   maddtext(length(getres2(252,6))+12,2,getres2(252,7),col.coldialog); mhnr(240);   { 'KB' }
   maddint(3,4,getres2(252,11),stdhaltezeit,4,4,0,9999);     { 'Standard-Bretthaltezeit:     ' }
   maddtext(length(getres2(252,11))+11,4,getres2(252,12),col.coldialog);   { 'Tage' }
   maddint(3,5,getres2(252,13),stduhaltezeit,4,4,0,9999);    { 'Standard-Userhaltezeit:      ' }
   maddtext(length(getres2(252,13))+11,5,getres2(252,12),col.coldialog);    { 'Tage' }
+
   if UUCP_ZConnectUsed then
   begin
     RTAErg := getRTAMode;
@@ -340,29 +343,30 @@ begin
       mappsel (true, getres2 (252, 50));         { 'benutzerdefiniert' }
     mhnr (258);
   end;
-  maddbool(3,7,getres2(252,14),haltown);        { 'Eigene Nachrichten halten' }
-  maddbool(3,8,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
-  maddbool(3,9,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
+
+  maddbool(3,7 + j,getres2(252,14),haltown);        { 'Eigene Nachrichten halten' }
+  maddbool(3,8 + j,getres2(252,31),haltownPM);        { 'Eigene PMs halten' }
+  maddbool(3,9 + j,getres2(252,15),ReplaceEtime);   { 'Erstellungszeit 00:00' }
 
 {$IFNDEF Unix }
   mset1func(SetTimezone);
 {$ENDIF }
-  maddbool(3,10,getres2(252,16),rehochn); mhnr(246);        { 'Re^n verwenden' }
+  maddbool(3,10 + j,getres2(252,16),rehochn); mhnr(246);        { 'Re^n verwenden' }
 {$IFNDEF Unix}
-  maddstring(36,8,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
+  maddstring(36,8 + j,getres2(252,23),TimeZone,7,7,'>SW+-0123456789:');  { 'Zeitzone  ' }
   mappsel(false,'W+1˘S+2'); tzfeld:=fieldpos;
   msetvfunc(testtimezone);
   if replaceetime then mdisable;
 {$ENDIF }
-  maddbool(3,12,getres2(252,17),SaveUVS); mhnr(248);   { 'unversandte Nachrichten nach /ØUnversandt' }
-  maddbool(3,13,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
-  maddbool(3,14,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
-  maddbool(3,15,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
-  maddbool(3,17,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
-  maddbool(3,18,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
-  maddint (3,20,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
-  maddtext(9+length(getres2(252,24)),20,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
-  maddbool(3,21,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
+  maddbool(3,12 + j,getres2(252,17),SaveUVS); mhnr(248);   { 'unversandte Nachrichten nach /ØUnversandt' }
+  maddbool(3,13 + j,getres2(252,18),EmpfBest);  { 'autom. EmpfangsbestÑtigungen versenden' }
+  maddbool(3,14 + j,getres2(252,19),AutoArchiv);   { 'automatische PM-Archivierung' }
+  maddbool(3,15 + j,getres2(252,26),DefaultNokop);           { 'ZCONNECT: NOKOP' }
+  maddbool(3,16 + j,getres2(252,29),NoArchive);    { 'News nicht archivieren lassen' }
+  maddbool(3,17 + j,getres2(252,30),ignoreSupCancel); { 'Cancels/Supersedes ignorieren' }
+  maddint (3,19 + j,getres2(252,24),maxcrosspost,mtByte,2,3,99);  { 'Crosspostings mit Åber ' }
+  maddtext(9+length(getres2(252,24)),20 + j,getres2(252,25),0);  { 'EmpfÑngern lîschen' }
+  maddbool(3,20 + j,getres2(252,27),maildelxpost);           { 'bei Mail ebenso' }
   freeres;
   readmask(brk);
   if not brk and mmodified then
@@ -1437,10 +1441,12 @@ begin
   viewer_lister:=Viewer_Lister+'.';
 end;
 
-end.
 
 {
   $Log$
+  Revision 1.97  2001/08/11 08:41:40  mk
+  - fixed RTA changes in Config/Optionen/Nachrichten
+
   Revision 1.96  2001/08/04 19:40:49  mk
   - Autodatumsbezuege removed
 
@@ -1524,3 +1530,5 @@ end.
   Revision 1.71  2000/12/03 22:23:08  mk
   - Improved Printing Support
 }
+end.
+
