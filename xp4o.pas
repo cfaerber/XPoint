@@ -176,6 +176,8 @@ var x,y   : byte;
     suchanz           : byte;
     seek              : string[suchlen];
     found             : boolean;
+    markedback        : marklistp;
+    markanzback       : integer;
 
 label ende;
 
@@ -782,7 +784,11 @@ begin
       getmem(p,psize);
       brk:=false;
 
-      if aktdispmode=11 then begin                       {-- Suche markiert (Weiter suchen) --}
+      if aktdispmode=11 then
+      begin                       {-- Suche markiert (Weiter suchen) --}
+        getmem(markedback,maxmark * sizeof(markrec));
+        for i:=0 to markanz do markedback^[i]:=marked^[i];
+        markanzback:=markanz;
         i:=0;
         while i<markanz do begin
           dbGo(mbase,marked^[i].recno);
@@ -791,7 +797,15 @@ begin
           if MsgMarked then inc(i);
           end;
         aufbau:=true;
-        end
+
+        if (markanz=0) and (markanzback<>0) then
+        begin
+          hinweis(getres2(441,18));   { 'keine passenden Nachrichten gefunden' }
+          markanz:=markanzback;
+          for i:=0 to markanz do marked^[i]:=markedback^[i];
+        end;
+        if markanzback<>0 then freemem(markedback,maxmark * sizeof(markrec));
+      end
 
       else if bereich<3 then begin                       {-- Suche: Alle/Netz/User --}
         mi:=dbGetIndex(mbase);
@@ -2399,6 +2413,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/07/05 16:10:29  mk
+  JG: - Weitersuchen bei Markierten Nachrichten: bei fehlgeschlagener Suche bleibt die alte Markierung erhalten
+
   Revision 1.50  2000/07/04 12:04:24  hd
   - UStr durch UpperCase ersetzt
   - LStr durch LowerCase ersetzt
