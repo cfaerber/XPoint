@@ -42,6 +42,7 @@ uses
 { Functions }
 
 procedure SysDelay(MS: Longint);
+procedure SysBeep(Freq, Dur: Integer);
 
 implementation
 
@@ -53,6 +54,9 @@ implementation
 
 {
         $Log$
+        Revision 1.6  2001/12/09 14:36:40  mk
+        - implemented SysBeep and error sounds
+
         Revision 1.5  2001/09/08 16:29:30  mk
         - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
         - some AnsiString fixes

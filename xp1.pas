@@ -51,7 +51,7 @@ uses
 {$ENDIF }
   typeform,montage,keys,fileio,inout,winxp,win2,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
-  resource,xp0,crc,xpglobal,classes,debug,xpheader;
+  resource,xp0,crc,xpglobal,classes,debug,xpheader, osdepend;
 
 const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
 
@@ -92,9 +92,6 @@ var printlines : longint;
     anzhidden  : integer;             { Anzahl der unsichtbaren MenÅpkte. }
 
 
-{$IFNDEF NCRT }
-procedure sound(hz:word);
-{$ENDIF }
 procedure XpIdle;
 
 procedure showscreen(newmode:boolean);
@@ -792,15 +789,6 @@ begin
   halt(1);
 end;
 
-{$IFNDEF NCRT }
-procedure sound(hz:word);
-begin
-//  if not ParQuiet then
-//    crt.sound(hz);
-end;
-{$ENDIF } { NCRT }
-
-
 procedure blindon(total:boolean);
 var mf : boolean;
     mt : byte;
@@ -1252,17 +1240,12 @@ procedure errsound;
 begin
   if not ParQuiet or soundflash then
   begin
-(* noch zu portieren !!
-    sound(1000);
-    delay(25);
-    sound(780);
-    delay(25);
-    nosound;
+    SysBeep(1000, 25);
+    SysBeep(780, 25);
     if soundflash then
     begin
       mdelay(60);
     end;
-*)
   end;
 end;
 
@@ -1276,14 +1259,10 @@ procedure signal;              { s. Config/Anzeige/Hilfen }
 begin
   if not ParQuiet and tonsignal then
   begin
-{    mdelay(60);
-    sound(1205);
     mdelay(60);
-    sound(1000);
-    mdelay(60);
-    sound(800);
-    mdelay(60);
-    nosound; }
+    SysBeep(1205, 60);
+    SysBeep(1000, 60);
+    SysBeep(800, 60);
   end;
 end;
 
@@ -2076,6 +2055,9 @@ end;
 
 {
   $Log$
+  Revision 1.132  2001/12/09 14:36:40  mk
+  - implemented SysBeep and error sounds
+
   Revision 1.131  2001/10/30 11:14:40  mk
   - JG: fixed Listdisplay, see <8Bj$$d0DkpB@ralle.post.rwth-aachen.de>
 

@@ -33,7 +33,7 @@ uses
 {$ENDIF }
   sysutils,
   typinfo, xp0,
-  typeform,keys,inout,maus2,winxp,montage, clip;
+  typeform,keys,inout,maus2,winxp,montage, clip, osdepend;
 
 const digits : string{[12]} = '-0123456789 ';
       allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
@@ -327,10 +327,8 @@ begin
 end;
 
 procedure mbeep;
-begin
-{!!  sound(600);
-  SysDelay(20);
-  nosound; }
+begin            
+  SysBeep(600, 20);
 end;
 
 {$IFDEF FPC }
@@ -1293,6 +1291,9 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.36  2001/12/09 14:36:40  mk
+  - implemented SysBeep and error sounds
+
   Revision 1.35  2001/10/17 14:00:24  mk
   - fixed range check error in maddstring
   - added some const parameters

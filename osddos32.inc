@@ -37,8 +37,18 @@ begin
   Delay(MS);
 end;
 
+procedure SysBeep(Freq, Dur: Integer);
+begin 
+  Sound(Freq);
+  SysDelay(Dur);
+  NoSound;
+end;
+
 {
         $Log$
+        Revision 1.3  2001/12/09 14:36:40  mk
+        - implemented SysBeep and error sounds
+
         Revision 1.2  2001/08/04 20:19:13  mk
         - added some dos compatibility functions
 

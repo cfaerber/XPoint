@@ -32,8 +32,19 @@
 
 { implementation of the interface }
 
+procedure SysDelay(MS: Longint);
+begin
+end;
+
+procedure SysBeep(Freq, Dur: Integer);
+begin 
+end;
+
 {
         $Log$
+        Revision 1.2  2001/12/09 14:36:40  mk
+        - implemented SysBeep and error sounds
+
         Revision 1.1  2000/11/20 11:58:16  hd
         - Init: Empty unit for os specefic code
 

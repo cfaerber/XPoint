@@ -37,8 +37,16 @@ begin
   Sleep(ms);
 end;
 
+procedure SysBeep(Freq, Dur: Integer);
+begin 
+  Windows.Beep(Freq, Dur);
+end;
+
 {
         $Log$
+        Revision 1.3  2001/12/09 14:36:40  mk
+        - implemented SysBeep and error sounds
+
         Revision 1.2  2001/07/28 12:04:09  mk
         - removed crt unit as much as possible
 
