@@ -158,6 +158,7 @@ uses
   ncuucp in 'netcall\ncuucp.pas',
   Netcall in 'netcall\netcall.pas',
   xpmodemscripts in 'netcall\xpmodemscripts.pas',
+  xpncclient in 'netcall\xpncclient.pas',
   xpncfido in 'netcall\xpncfido.pas',
   xpncnntp in 'netcall\xpncnntp.pas',
   xpncpop3 in 'netcall\xpncpop3.pas',

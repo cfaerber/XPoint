@@ -89,7 +89,8 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 implementation  {---------------------------------------------------}
 
 uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp9bp,xpconfigedit,xp10,xpheader,
-     xpfido,xpncfido,xpnczconnect,xpncpop3,xpncnntp, xpmakeheader,ncmodem;
+     xpfido,xpncfido,xpnczconnect,xpncpop3,xpncnntp,xpncclient,
+     xpmakeheader,ncmodem;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
@@ -1106,6 +1107,20 @@ begin                  { function Netcall }
         SendNetzanruf(NetcallLogFile);
         end; {case nt_UUCP}
 
+      nt_Client: begin
+        Debug.DebugLog('xpnetcall','netcall: client',DLInform);
+        case ClientNetcall(BoxName,BFile,Boxpar,ppfile,NetcallLogfile,IncomingFiles) of
+          EL_ok     : begin Netcall_connect:=true; result:=true; end;
+          EL_noconn : begin Netcall_connect:=false; end;
+          EL_recerr,
+          EL_senderr,
+          EL_nologin: begin Netcall_connect:=true; inc(connects); end;
+          EL_break  : begin  result:=false; end;
+        else begin result:=true end;
+          end; {case}
+        SendNetzanruf(NetcallLogFile);
+        end; {case nt_Client}
+
       nt_POP3: begin
         Debug.DebugLog('xpnetcall','netcall: POP3',DLInform);
         if Boxpar^.SMTPAfterPop then
@@ -1357,6 +1372,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2001/12/04 10:34:22  mk
+  - made client mode compilable
+
   Revision 1.39  2001/11/24 20:29:26  mk
   - removed Boxpar.Clientmode-parameter, ClientMode is now nettype 41
 

@@ -30,28 +30,30 @@ interface
 
 uses xp0,classes;
 
-function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles: TStringList): boolean;
+function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles: TStringList): ShortInt;
 
 implementation  { ------------------------------------------------- }
 
-uses fileio,xp1,dos;
+uses fileio,xp1, xp3o, typeform, sysutils;
 
-function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles: TStringList): boolean;
+function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles: TStringList): ShortInt;
 var
   dummy : longint;
   s: String;
   Error: Boolean;
+  Outmsgs, Outemsgs: Integer;
 
   procedure EmptyDir(const Dir, Mask: String);
   var
-    sr : searchrec;
+    sr : TSearchRec;
+    rs: Integer;
   begin
     if not IsPath(Dir) then exit;
-    findfirst(Dir+Mask,ffAnyFile,sr);
-    while doserror=0 do
+    rs := findfirst(Dir+Mask,ffAnyFile,sr);
+    while rs=0 do
     begin
       _era(Dir+sr.name);
-      findnext(sr);
+      rs := findnext(sr);
     end;
     FindClose(sr);
   end;
@@ -62,20 +64,21 @@ var
     MsgFile: file;
     IDFile: text;
     s: String;
-    sr: SearchRec;
+    sr: TSearchRec;
     p: byte;
     Found: boolean;
     c : char;
+    rs: Integer;
   begin
     Error := false;
     with BoxPar^ do
     begin
       Assign(IDFile, 'UNSENT.ID');
       ReWrite(IDFile);
-      FindFirst(PPPSpool+'*.OUT', ffAnyFile, sr);
-      while doserror=0 do
+      rs := FindFirst(ClientSpool+'*.OUT', ffAnyFile, sr);
+      while rs=0 do
       begin
-        Assign(MsgFile, PPPSpool+sr.name);
+        Assign(MsgFile, ClientSpool+sr.name);
         Reset(MsgFile, 1);
         Found := false;
         while (not eof(MsgFile)) and (not Found) do
@@ -95,24 +98,24 @@ var
           Writeln(IDFile, Copy(s, p+1, Length(s)-p-1));
           Error := true;
         end;
-        Findnext(sr);
+        RS := Findnext(sr);
       end;
       FindClose(sr);
       Close(IDFile);
-      if IOResult = 0 then ;
     end;
   end;
 
   procedure RenameFiles;
   var
-    sr  : searchrec;
+    sr  : Tsearchrec;
     f: File;
+    rs: Integer;
   begin
-    findfirst(BoxPar^.PPPSpool + '*.MSG',ffAnyFile,sr);
-    while doserror=0 do
+    RS := findfirst(BoxPar^.ClientSpool + '*.MSG',ffAnyFile,sr);
+    while RS =0 do
     begin
-      _rename(BoxPar^.PPPSpool + sr.name, BoxPar^.PPPSpool + GetBareFileName(sr.name) + '.IN');
-      findnext(sr);
+      RenameFile(BoxPar^.ClientSpool + sr.name, BoxPar^.ClientSpool + GetBareFileName(sr.name) + '.IN');
+      RS := findnext(sr);
     end;
     FindClose(sr);
   end;
@@ -120,42 +123,40 @@ var
   var res: integer;
 
 begin
-  inmsgs:=0; outmsgs:=0; outemsgs:=0; result:=false;
+  outmsgs:=0; outemsgs:=0; result:=0;
   with boxpar^ do
   begin
-    CreateDir(PPPSpool);
-    if IOResult = 0 then ;
-    if not IsPath(PPPSpool) then begin
+    CreateDir(ClientSpool);
+    if not IsPath(ClientSpool) then begin
       trfehler(728,44);   { 'ungültiges Spoolverzeichnis' }
       exit;
     end;
-    EmptyDir(PPPSpool, '*.IN');
-    EmptyDir(PPPSpool, '*.OUT');
+    EmptyDir(ClientSpool, '*.IN');
+    EmptyDir(ClientSpool, '*.OUT');
 
 //    NC^.Sendbuf := _filesize(ppfile);
     if _filesize(ppfile)>0 then                     { -- Ausgabepaket -- }
     begin
       outmsgs:=testpuffer(ppfile,false,dummy);
-      twin;
-      cursor(curoff);
 
-      ZtoRFC(false,ppfile,iifs(TempPPPMode, PPPSpool, SysopOut));
+      // !=!=
+      //  ZtoRFC(false,ppfile,iifs(TempPPPMode, ClientSpool, SysopOut));
     end;
 
-//    NC^.Sendbuf:= filesum(PPPSpool+'*.OUT');
-    s := PPPClient;
+//    NC^.Sendbuf:= filesum(ClientSpool+'*.OUT');
+{!!    s := ClientExec;
     exchange(s, '$CONFIG', bfile);
     exchange(s, '$CLPATH+', PPPClientpath);
     exchange(s, '$CLPATH', PPPClientpath);
     exchange(s, '$CLPATH', PPPClientpath);
-    exchange(s, '$CLSPOOL', PPPSpool);
-    attrtxt(col.colkeys);
+    exchange(s, '$CLSPOOL', ClientSpool); 
+    attrtxt(col.colkeys);                 }
 //    if XPdisplayed then
 //        FWrt(64, Screenlines, xp_client);   { '       CrossPoint' }
     shell(s,600,3);
     showscreen(false);
 
-    if filesum(PPPSpool+'*.OUT')>0 then                     { -- Ausgabepaket -- }
+(*    if filesum(ClientSpool+'*.OUT')>0 then                     { -- Ausgabepaket -- }
     begin
       WriteUUnummer(uunum);
       Moment;
@@ -167,33 +168,35 @@ begin
        if filecopy('UNSENT.PP', ownpath+ppfile) then
          _era('UNSENT.PP');
       _era('UNSENT.ID');
-      EmptyDir(PPPSpool, '*.OUT'); { nicht verschickte N. löschen }
+      EmptyDir(ClientSpool, '*.OUT'); { nicht verschickte N. löschen }
       if Error then trfehler(745, 30); { 'Es konnten nicht alle Nachrichten versandt werden!' }
       Closebox;
     end;
 
-    if exist(PPPSpool+'*.MSG') then
+    if exist(ClientSpool+'*.MSG') then
     begin
-//      NC^.Recbuf := filesum(PPPSpool+'*.MSG');
+//      NC^.Recbuf := filesum(ClientSpool+'*.MSG');
 //      if (NC^.RecBuf + NC^.SendBuf) > 0 then
         wrtiming('NETCALL ' + boxname);
-      shell(UUZBin+' -uz -w:'+strs(screenlines)+' '+PPPSpool+'*.MSG '+OwnPath + dpuffer,600,3);
+      shell(UUZBin+' -uz -w:'+strs(screenlines)+' '+ClientSpool+'*.MSG '+OwnPath + dpuffer,600,3);
       if nDelPuffer and (errorlevel=0) and
         (testpuffer(dpuffer,false,dummy)>=0) then
-          EmptyDir(PPPSpool, '*.MSG'); { entpackte Dateien löschen }
+          EmptyDir(ClientSpool, '*.MSG'); { entpackte Dateien löschen }
     end;
-
+ 
     if _filesize(dpuffer)>0 then
-      IncomingFiles.Add(dpuffer);
+      IncomingFiles.Add(dpuffer); *)
 
-    result:=true;
-  end;
+  end; 
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.1  2001/12/04 10:34:22  mk
+  - made client mode compilable
+
   Revision 1.2  2001/12/01 01:56:25  ma
   ...
 
