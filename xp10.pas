@@ -97,10 +97,10 @@ const maxentries  = 100;   { s. auch XP0.maxkeys }
 
       wofeiertag: array[1..maxwotage] of string =
                   ('Mo','Di','Mi','Do','Fr','Sa','So','F1','F2','F3');
-      pagepos   : byte = 1;
+var   pagepos   : byte = 1;
       gpagepos  : byte = 1;
 
-      NetcallSpecialDat = 'NETCALL.DAT';  { Textdatei fuer /Netcall/Spezial }
+const NetcallSpecialDat = 'NETCALL.DAT';  { Textdatei fuer /Netcall/Spezial }
       NetcallSpecialMax = 20;
 
 type  TimeRec   = record
@@ -148,8 +148,8 @@ type  TimeRec   = record
                                  end; end;
       tarifap  = ^tarifarr;
 
-const anzahl    : integer = 0;        { Reentrance - s. GetPhoneGebData! }
-var   e         : TStringList;
+var   anzahl    : integer = 0;        { Reentrance - s. GetPhoneGebData! }
+      e         : TStringList;
       filewidth : integer;
       _bunla    : string{[mtypes]};     { 'BUNLAET' }
 
@@ -2521,6 +2521,10 @@ end;
 {                  tnr=1 -> nur Crashs/Requests aus CRASH.TMP           }
 
 
+var
+  ltc : string = '';
+  lt : longint = 999;
+
 procedure AutoTiming(tnr:integer; callall,crashall,special:boolean; datLine:byte);
 var brk     : boolean;
     tl      : array[1..maxentries] of TRP;
@@ -2879,7 +2883,6 @@ var brk     : boolean;
 
 
   procedure show_active;
-  const ltc : string = '';
   var i      : integer;
       tc     : string;
   begin
@@ -2920,7 +2923,6 @@ var brk     : boolean;
   end;
 
   procedure disprest;
-  const lt : longint = 999;
   var t : longint;
       s : string;
   begin
@@ -3239,6 +3241,9 @@ finalization
   e.free;
 {
   $Log$
+  Revision 1.76  2002/12/12 11:58:42  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.75  2002/12/07 04:41:48  dodi
   remove merged include files
 

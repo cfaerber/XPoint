@@ -107,10 +107,12 @@ begin
 end;
 
 
+//static or local in ICP()?
+var   ICP_x: Integer = 0;
+      ICP_y: Integer = 0;
+      ICP_lastper : byte = 101;
+
 procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
-const x: Integer = 0;
-      y: Integer = 0;
-      lastper : byte = 101;
 begin
   with ICR do
     case command of
@@ -178,37 +180,37 @@ begin
                      else interr('icIndex: falsche Datei: '+df);
 
       icOpenWindow:  begin
-                       msgbox(26,4,'',x,y);
-                       mwrt(x+2,y+1,getreps(126,df));
-                       mwrt(x+2,y+2,getres(127));  { 'bitte warten...     %' }
+                       msgbox(26,4,'',ICP_x,ICP_y);
+                       mwrt(ICP_x+2,ICP_y+1,getreps(126,df));
+                       mwrt(ICP_x+2,ICP_y+2,getres(127));  { 'bitte warten...     %' }
                        attrtxt(col.colmboxhigh);
                      end;
       icShowIx,
       icShowConvert,
       icShowPack,
-      icShowKillX:   if percent<>lastper then begin
-                       lastper:=percent;
-                       MWrt(x+18,y+2, Format('%3d', [icr.percent]));
+      icShowKillX:   if percent<>ICP_lastper then begin
+                       ICP_lastper:=percent;
+                       MWrt(ICP_x+18,ICP_y+2, Format('%3d', [icr.percent]));
                        multi2;
                      end;
 
       icCloseWindow: begin
                        CloseBox;
-                       lastper:=101;
+                       ICP_lastper:=101;
                      end;
 
       icOpenPWindow: begin
-                       msgbox(25,4,'',x,y);
-                       mwrt(x+2,y+1,getreps(128,df));
-                       mwrt(x+2,y+2,getres(127));
+                       msgbox(25,4,'',ICP_x,ICP_y);
+                       mwrt(ICP_x+2,ICP_y+1,getreps(128,df));
+                       mwrt(ICP_x+2,ICP_y+2,getres(127));
                        attrtxt(col.colmboxhigh);
                      end;
 
       icOpenCWindow,
       icOpenKwindow: begin
-                       msgbox(31,4,'',x,y);
-                       mwrt(x+2,y+1,getreps(129,df));
-                       mwrt(x+2,y+2,getres(127));
+                       msgbox(31,4,'',ICP_x,ICP_y);
+                       mwrt(ICP_x+2,ICP_y+1,getreps(129,df));
+                       mwrt(ICP_x+2,ICP_y+2,getres(127));
                        attrtxt(col.colmboxhigh);
                      end;
 
@@ -218,6 +220,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2002/12/12 11:58:43  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.24  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

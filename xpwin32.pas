@@ -144,9 +144,10 @@ begin
 end;
 
 { 0=nix, 1=Disk, 2=RAM, 3=Subst, 4=Device, 5=Netz, 6=CD-ROM }
-function SysGetDriveType(drive:char):byte;
-const
+var
   DriveStr: String = '?:\'+#0;
+
+function SysGetDriveType(drive:char):byte;
 begin
   DriveStr[1] := Drive;
   case GetDriveType(@DriveStr[1]) of
@@ -244,6 +245,9 @@ finalization
 
 {
   $Log$
+  Revision 1.27  2002/12/12 11:58:53  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.26  2002/02/21 13:52:34  mk
   - removed 21 hints and 28 warnings
 

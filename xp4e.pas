@@ -1176,8 +1176,9 @@ begin
 end;
 
 
+var   nn : shortint = 1;
+
 procedure _multiedit(user:boolean);
-const nn : shortint = 1;
 var n,w    : shortint;
     x,y    : Integer;
     brk    : boolean;
@@ -1204,9 +1205,8 @@ begin
   else dispdat:=bbase;
   pushhp(iif(user,429,409));
   n:=MiniSel(34,10+(screenlines-25)div 2,'',getres2(2715,iif(user,1,2)),nn);
-  if n<>0 then nn:=abs(n);
+  if n<>0 then nn:=abs(n);  //else nn := 1?
   { ^Kommentar,^Serverbox,^Haltezeit,Umlaute,^Filter,^Gruppe^,^Prioritaet,^Empfangsbest.,^Vertreteradr.,^Loeschen }
-  if n<>0 then nn:=abs(n);
   pophp;
   case n of
     1,9 : w:=49;    { Kommentar }
@@ -2473,6 +2473,9 @@ end;
 
 {
   $Log$
+  Revision 1.101  2002/12/12 11:58:46  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.100  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

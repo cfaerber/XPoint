@@ -694,10 +694,12 @@ begin
 end;
 
 
+var
+  menup : array[0..20] of shortint = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+
 function readmenu(nr:byte):shortint;
 const x     = 1;
       y     = 3;
-      menup : array[0..20] of shortint = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
 var ma     : map;
     i,n,ml : integer;
     t      : taste;
@@ -1167,6 +1169,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2002/12/12 11:58:44  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.34  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

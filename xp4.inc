@@ -21,6 +21,7 @@
 { CrossPoint - HauptmenÅ }
 
 { variable MenÅpunkte setzen }
+
 procedure enabledisable;
 const Nachricht = 3;     { /Nachricht }
       Unvers    = 4;     { Nachricht / Unversandt }
@@ -154,7 +155,7 @@ begin
     lines(fnkeylines);
     // Setzt auch die Zeilenzahl neu
     showscreen(false);
-    XPhilite:=0;
+    //XPhilite:=0;
     showlastkeys;
     aufbau:=true;
     GlobalModified;
@@ -162,8 +163,6 @@ begin
 end;
 
 procedure menuopt(t:taste);
-const
-  lastmenusel : integer = 0;
 var m,m1     : integer;
     nix      : string;
     adr      : string;
@@ -548,10 +547,7 @@ begin
   until leaveconfig or not menurestart or (t=keyf4);
 end;
 
-
 procedure Maus_Auswertung(ya:shortint; var t:taste);
-const lasty  : integer = 0;
-      shortp : shortint = 0;
 var i, x,y : integer;
     n   : shortint;
 
@@ -815,6 +811,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.44  2002/12/12 11:58:45  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.43  2002/07/29 07:17:19  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 

@@ -75,7 +75,7 @@ const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
 type
   PathStr = string;          { Full file path string }
 
-const ParLogfile  : boolean = false;    { -l Logfile anlegen                }
+var   ParLogfile  : boolean = false;    { -l Logfile anlegen                }
       ParKillmsg  : boolean = false;    { -l defekte Nachrichten l”schen    }
       ParRep      : boolean = false;    { -r Puffer reparieren              }
       ParExact    : boolean = false;    { -h strenge Headerzeilen-šberprf. }
@@ -92,7 +92,7 @@ const ParLogfile  : boolean = false;    { -l Logfile anlegen                }
       { Liste aller Headerzeilen, die in irgendeiner Form berprft werden. }
       { Alle brigen Zeilen werden nicht interpretiert.                     }
 
-      headerindex : array[1..knownheaders] of
+const headerindex : array[1..knownheaders] of
                       record
                         name  : string[15];
                         multi : boolean;   { Zeile darf mehrfach vorkommen }
@@ -123,7 +123,7 @@ const ParLogfile  : boolean = false;    { -l Logfile anlegen                }
          (name: 'KOP';           multi: true;    ampm: 3),
          (name: 'VER';           multi: true;    ampm: 3));
 
-      hdf_ABS     = 1;    hdf_EB   = 8;      hdf_OAB     = 15;
+const hdf_ABS     = 1;    hdf_EB   = 8;      hdf_OAB     = 15;
       hdf_ANTWORT = 2;    hdf_EDA  = 9;      hdf_PRIO    = 16;
       hdf_BET     = 3;    hdf_EMP  = 10;     hdf_ROT     = 17;
     {  hdf_BEZ     = 4;}    hdf_FILE = 11;     hdf_TELEFON = 18;
@@ -623,8 +623,9 @@ begin
 end;
 
 
+var   proz : byte = 101;
+
 procedure wrproz(adr:longint);
-const proz : byte = 101;
 var p2 : byte;
 begin
   if prozent and (fsize>0) then
@@ -1274,6 +1275,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/12/12 11:58:54  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.51  2002/07/25 20:43:58  ma
   - updated copyright notices
 

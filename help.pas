@@ -71,7 +71,7 @@ uses
   //fileio,mouse,
 
 const maxpst  = 20;
-      init    : boolean = false;
+var   init    : boolean = false;
       loaded  : boolean = false;
       colinit : boolean = false;
       _a      : integer = 0;
@@ -785,6 +785,9 @@ finalization
 
 {
   $Log$
+  Revision 1.50  2002/12/12 11:58:39  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.49  2002/12/06 14:27:26  dodi
   - updated uses, comments and todos
 

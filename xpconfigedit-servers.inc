@@ -522,12 +522,13 @@
   end;
 
   procedure SetDefaultBox;
-  const nn : shortint = 1;
+  var nn : shortint;  // = 1; static or dynamic initialization?
   var name : string;
       n    : shortint;
   begin
     dbGo(d,drec[p]);
     pushhp(78);
+    nn := 1;  //required?
     n:=MiniSel(x+10,min(y+p+1,screenlines-4),'',getres(918),nn);  { '^Stammbox,^Fido-Stammbox' }
     pophp;
     if n<>0 then nn:=abs(n);
@@ -2123,7 +2124,7 @@
 
   procedure EditBox;
   const 
-    edb_pos : shortint = 1;
+    //edb_pos : shortint = 1;
     Clientpos  : array[1..7] of Byte = (1,4,5,1,1,6,7);
     lastclient : boolean = false;
   var n   : shortint;
@@ -2374,6 +2375,9 @@
 
 {
   $Log$
+  Revision 1.64  2002/12/12 11:58:49  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.63  2002/12/06 14:27:29  dodi
   - updated uses, comments and todos
 

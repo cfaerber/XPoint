@@ -36,7 +36,7 @@ const pe_ForcePfadbox = 1;     { Flags fuer PufferEinlesen }
       { Force a certain recipient. Used by PufferEinlesen and with POP3 }
       { servers in order to prevent creation of numerous message areas. }
       { Use "1/[name]" for mail areas, "A/[name]" for public areas. }
-      ForceRecipient  : string = '';
+var   ForceRecipient  : string = '';
 
       auto_empfsel_default : byte = 1;         {Flags fuer Autoempfsel in XPCC.PAS}
       autoe_showscr        : boolean = false;
@@ -1557,6 +1557,9 @@ end;
 
 {
   $Log$
+  Revision 1.98  2002/12/12 11:58:45  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.97  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

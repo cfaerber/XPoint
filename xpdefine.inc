@@ -224,6 +224,8 @@
   {$ENDIF}
 {$ENDIF}
 
+{$WRITEABLECONST OFF} { use var instead of const }
+
 { --- Erklaerungen der selbst gesetzen Defines --- }
 
 {
@@ -260,6 +262,9 @@
 
 {
   $Log$
+  Revision 1.85  2002/12/12 11:58:50  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.84  2002/12/04 16:57:01  dodi
   - updated uses, comments and todos
 

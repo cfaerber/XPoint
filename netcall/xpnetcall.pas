@@ -35,8 +35,6 @@ uses
   xp1input,xp2c,xp3o2,xpsendmessage,xpdiff,xpncuucp,zftools,fidoglob,
   classes,archive,xp3ex,xpterminal;
 
-const CrashGettime : boolean = false;  { wird nicht automatisch zurueckgesetzt }
-
 function  netcall(PerformDial: boolean; BoxName: string; DialOnlyOnce,Relogin,FidoCrash: boolean): boolean;
 procedure netcall_at(zeit:datetimest; BoxName:string);
 procedure EinzelNetcall(BoxName:string);
@@ -70,7 +68,9 @@ const esec        = 30;    { Sekunden warten bei Fehler }
       IdleTimeout = 5;
       nlfile      = 'netlog.tmp';
 
-      forcepoll   : boolean = false;   { Ausschluázeiten ignorieren }
+var
+  forcepoll    : boolean = false;   { Ausschluázeiten ignorieren }
+  CrashGettime : boolean = false;  { wird nicht automatisch zurueckgesetzt }
 
 var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
      ConnTicks : longint;
@@ -1386,6 +1386,9 @@ end;
 
 {
   $Log$
+  Revision 1.63  2002/12/12 11:58:56  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.62  2002/11/14 21:06:15  cl
   - DoSend/send window rewrite -- part I
 

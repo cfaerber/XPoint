@@ -71,7 +71,7 @@ type
                end;
       tindex = packed array[0..maxindex-1,0..1] of smallword;
 
-const
+var
       clnr   : word  = $ffff;    { geladener Cluster }
       ResourceOpen : Boolean = false;
 
@@ -351,6 +351,9 @@ end;
 
 {
   $Log$
+  Revision 1.29  2002/12/12 11:58:41  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.28  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

@@ -29,14 +29,16 @@ uses
   classes,
   xpglobal, keys;
 
-const
+var
   ListHelpStr: string[8] = 'Hilfe'; //todo: international
   Listunvers: byte = 0;
   Listhalten: byte = 0;
   Listflags: longint = 0;
-  ListerBufferCount = 16383;            { Laenge des Eingangspuffers }
 
 const
+  ListerBufferCount = 16383;            { Laenge des Eingangspuffers }
+
+var
   mcursor: boolean = false;             { Auswahlcursor fuer Blinde }
 
 type
@@ -139,6 +141,8 @@ type
   public
     col: listcol;
     stat: liststat;
+    suchstr:  string; //persistent?
+    suchcase: boolean; { true -> Case-sensitiv }
 
     constructor Create;
     constructor CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
@@ -423,9 +427,6 @@ begin
 end;
 
 function TLister.Show: Boolean;
-const
-  suchstr: string = '';
-  suchcase: boolean = false;            { true -> Case-sensitiv }
 var
   DispLines: Integer; // Screenlines to Display (List.Height - Statusline)
   y: integer;
@@ -1147,6 +1148,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.73  2002/12/12 11:58:40  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.72  2002/12/04 16:56:58  dodi
   - updated uses, comments and todos
 

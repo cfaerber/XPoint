@@ -41,7 +41,7 @@ const xTractMsg   = 0;
 
       xTractUTF8  = $100;
 
-      ExtCliptearline : boolean = true;
+var   ExtCliptearline : boolean = true;
       ExtChgtearline  : boolean = false;
 
 procedure rps(var s:string; s1,s2:string);
@@ -1232,6 +1232,9 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.99  2002/12/12 11:58:45  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.98  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

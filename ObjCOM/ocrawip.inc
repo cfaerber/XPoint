@@ -7,8 +7,8 @@ Const WriteTimeout   = 20000;                             { Wait max. 20 secs }
       ReadTimeOut    = 20000;                   { General event, 20 secs max }
 
 {$IFDEF WIN32}
-WSAInits: Integer= 0;
 var
+WSAInits: Integer= 0;
 WSAData:  tWSAData;
 {$ENDIF}
 
@@ -613,6 +613,9 @@ end;
 
 {
   $Log$
+  Revision 1.16  2002/12/12 11:58:56  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.15  2001/10/23 07:12:07  cl
   - changed last fix to better solution
 

@@ -51,7 +51,7 @@ uses
   {$IFDEF DOS32} xpdos32, {$ENDIF}
   log,xp2;
 
-const starting : boolean = true;
+var   starting : boolean = true;
 
 procedure stop(txt:string);
 begin
@@ -175,6 +175,9 @@ end;
 
 {
   $Log$
+  Revision 1.52  2002/12/12 11:58:53  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.51  2002/07/25 20:43:57  ma
   - updated copyright notices
 

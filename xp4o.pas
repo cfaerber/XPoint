@@ -55,7 +55,7 @@ Const
     historyFile = 'SEEK.TXT';
     libraryFile = 'SEEKLIB.TXT';
     optionsFile = 'OPTIONS.TXT';
-    Suchergebnis : boolean = false;
+var Suchergebnis : boolean = false;
 
 procedure msg_info;          { interpretierten Header anzeigen }
 procedure ShowHeader;        { Original-Header anzeigen        }
@@ -129,7 +129,7 @@ type arcbuf = record
                 arcname   : string;
               end;
 
-const arcbufp : byte = 0;
+var   arcbufp : byte = 0;
       suchopt : string = '*';  { Flag fuer erste Suche seit Programmstart }
 
     history : array[0..histmax] of String[Suchlen]=
@@ -238,7 +238,6 @@ end;
 
 { Suchfeld:  '' (Volltext), '*' (Umiversal), 'Betreff', 'Absender', 'MsgID' }
 
-function Suche(anztxt,suchfeld,autosuche:string):boolean;
 type  suchrec    = record
                      betr,user,txt : string;
                      fidoempf,mid  : string;
@@ -253,12 +252,13 @@ type  suchrec    = record
                      typ           : string;
                    end;
 
-const srec       : ^suchrec = nil;
+var   srec       : ^suchrec = nil;
       opthist : array[0..opthmax] of String[8]=('','','','','');
       history0   : string='';
       history1   : string='';
       history2   : string='';
 
+function Suche(anztxt,suchfeld,autosuche:string):boolean;
 var x,y   : Integer;
     brk   : boolean;
     n,nf  : longint;
@@ -3431,7 +3431,7 @@ end;
 { Ausgabe true -> UserMode umschalten }
 
 function UserMarkSuche(allmode:boolean):boolean;
-const suchst  : string = '';
+var   suchst  : string;
 var   x,y     : Integer;
       brk     : boolean;
       nn,n,nf : longint;
@@ -3739,6 +3739,9 @@ end;
 
 {
   $Log$
+  Revision 1.150  2002/12/12 11:58:46  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.149  2002/12/09 14:37:21  dodi
   - merged include files, updated comments
 

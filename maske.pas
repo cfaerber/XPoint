@@ -31,9 +31,9 @@ uses
   keys,inout;
 
 const digits : string = '-0123456789 ';
-      MaskSeekMenu : Byte = 0;
+var   MaskSeekMenu : Byte = 0;
       //todo: make set of char = [' '..#$7E, #$80..#$FE];
-      allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
+const allchar = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXY'+
                 'Z[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡‰‹‘’“”•–'+
                 '—™› ΅Ά£¤¥¦§¨©ª«¬­®―ΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώ';
       hexchar = '<0123456789abcdef';
@@ -45,7 +45,7 @@ const digits : string = '-0123456789 ';
       mtWord     = 5;
       mtLongint  = 6;
 
-      exit_mask    : boolean = false; { = true, sobald Maske verlassen wird   }
+var   exit_mask    : boolean = false; { = true, sobald Maske verlassen wird   }
       cDel_pressed : boolean = false; { = true, wenn <Ctrl-Del> erkannt wird  }
                                                { und delete_on_cDel true ist  }
 
@@ -209,7 +209,7 @@ uses
 const maxmask   = 10;                { max. gleichzeitig offene Masken }
       maxfields = 140;               { max. Felder pro Maske           }
 
-      insert_mode : boolean = true;
+var   insert_mode : boolean = true;
       help_page   : Integer = 0;        { Helpnr des Eingabefeldes }
       yesno       : string[2] = 'JN';
 
@@ -1405,6 +1405,9 @@ finalization
   FreeMem(Mask[0]);
 {
   $Log$
+  Revision 1.44  2002/12/12 11:58:40  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.43  2002/12/04 16:56:59  dodi
   - updated uses, comments and todos
 

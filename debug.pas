@@ -39,6 +39,7 @@ const         {Loglevels proposed are}
   DLDebug = 4;
   DLTrace = 5;
 
+var
   DLDefault: Integer = {$IFDEF Debug} DLDebug {$ELSE} DLWarning {$ENDIF};
 
   { Maximum number of messages to keep in LastLogMessages list }
@@ -96,7 +97,7 @@ uses
   TypeForm,
   xpglobal; //not really
 
-const
+var
   Logging: Boolean = False;
 
 var
@@ -310,6 +311,9 @@ finalization
 
 {
   $Log$
+  Revision 1.34  2002/12/12 11:58:39  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.33  2002/12/06 14:27:26  dodi
   - updated uses, comments and todos
 

@@ -39,7 +39,7 @@ const XPrequest = 'File Request';
       midlen    = 120;
       maxvia    = 100;
 
-      infile    : string = '';       { kann Wildcard enthalten }
+var   infile    : string = '';       { kann Wildcard enthalten }
       outfile   : string = '';
       fromadr   : string = '';
       toadr     : string = '';
@@ -55,7 +55,7 @@ const XPrequest = 'File Request';
       BadDir    : boolean = false;   { BAD\ vorhanden }
       KeepVia   : boolean = false;
 
-      ReadFirst = 2500;
+const ReadFirst = 2500;
       attrCrash = $0002;
       attrFile  = $0010;
       attrReqEB = $1000;            { EB anfordern }
@@ -1804,6 +1804,9 @@ end;
 end.
 {
         $Log$
+        Revision 1.33  2002/12/12 11:58:53  dodi
+        - set $WRITEABLECONT OFF
+
         Revision 1.32  2002/09/26 12:53:36  ma
         - fixed outgoing charset declaration (CHRS)
 

@@ -32,7 +32,7 @@ uses
   lister, xpheader,
   datadef;  //DB
 
-const ListKommentar : boolean = false;   { beenden mit links/rechts }
+var   ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg  : string = '';
       ListXHighlight: boolean = true;    { fuer F-Umschaltung }
       ListShowSeek  : boolean = false;
@@ -1067,6 +1067,9 @@ end;
 
 {
   $Log$
+  Revision 1.115  2002/12/12 11:58:43  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.114  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

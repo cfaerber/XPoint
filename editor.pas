@@ -35,6 +35,7 @@ const
       EdTempFile      = 'TED.TMP';  //todo: filenames
       EdConfigFile    = 'EDITOR.CFG';
       EdGlossaryFile  = 'GLOSSARY.CFG';
+var
       EdSelcursor     : boolean = false; { Auswahllistencursor }
       OtherQuoteChars : boolean = false; { Andere Quotezeichen neben > }
       EditResetoldpos : boolean = false;
@@ -45,7 +46,7 @@ type
       EdToken = Byte;
       EdTProc = function(var t:taste):boolean;   { true = beenden }
 
-const
+var
       laststartline    : longint=0;      { fuer Z-Anzeige }
       lastscx          : integer=1;
       lastscy          : integer=1;      { Bildschirm (Cursor) }
@@ -104,7 +105,7 @@ const maxgl     = 60;
       maxtokens = 128;
       maxabslen = 16363;
 
-      screenwidth : byte = 80;
+var   screenwidth : byte = 80;
       message   : string[40] = '';
       ecbopen   : integer = 0;       { Semaphor fuer Anzahl der offenen ECB's }
 
@@ -981,8 +982,16 @@ begin
 end;
 
 
+var
+  dispnoshow : boolean = false;
+  lastop     : byte    = 0;         { 1=suchen, 2=suchen/ersetzen }
+
+  txt   : string = '';
+  repby : string = '';
+  igcase: boolean = true;
+  lastp : byte = 1;
+
 function EdEdit(ed:ECB):EdToken;
-const dispnoshow : boolean = false;
 type displist   = array[1..maxgl] of record
                                        absatz : absatzp;
                                        offset : integer;  { innerhalb des Abs. }
@@ -2138,7 +2147,7 @@ var  dl         : displp;
             ap2:=ap^.next;
             blockabsinsert(ap,apnew,maxint,maxint);
             blockabsinsert(ap2,apnew,0,ap^.size+addspaces);
-            if assigned(ap^.prev) then 
+            if assigned(ap^.prev) then
             begin
               apnew^.prev:=ap^.prev;
               ap^.prev^.next:=apnew;
@@ -3115,11 +3124,6 @@ var  dl         : displp;
   { ---------------------------------------------- Suchfunktionen }
 
   procedure Suchen(again,ersetzen:boolean);
-  const
-        txt   : string = '';
-        repby : string = '';
-        igcase: boolean = true;
-        lastop: byte    = 0;         { 1=suchen, 2=suchen/ersetzen }
   var
         stxt  : string;
         spos  : integer;
@@ -3215,7 +3219,6 @@ var  dl         : displp;
   { -------------------------------------------------------- Menue }
 
   function LocalMenu:integer;
-  const lastp : byte = 1;
   var mx,my,ml,i,p : byte;
       highp        : array[1..editmenumps] of byte;
       t            : taste;
@@ -3979,13 +3982,14 @@ begin
     end;
 end;
 
-procedure Glossary_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
-const 
+var
   locked:boolean=false;
+
+procedure Glossary_ed(LSelf: TLister; var t:taste); {Lister-Tastenabfrage fuer Glossary-Funktion }
 var
   en:boolean;
 begin
-  if (UpperCase(t)='E') and not locked then 
+  if (UpperCase(t)='E') and not locked then
   begin
     locked:=true;
     en:=EditNachricht;
@@ -4005,6 +4009,9 @@ finalization
   if Assigned(Language) then Dispose(Language);
 {
   $Log$
+  Revision 1.87  2002/12/12 11:58:39  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.86  2002/12/07 04:41:48  dodi
   remove merged include files
 

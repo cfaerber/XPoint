@@ -95,7 +95,7 @@ uses
 {$ENDIF}
   xp1o,xp2,xp4o2,xp9bp,xpnt,
   typeform,fileio,inout,winxp,win2,keys,maske,
-  mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
+  mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,xp_pgp,
   mime,utftools, 
   xpglobal;
 
@@ -1550,6 +1550,9 @@ end;
 
 {
   $Log$
+  Revision 1.135  2002/12/12 11:58:44  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.134  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

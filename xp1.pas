@@ -45,7 +45,7 @@ uses
 
 const maxhidden  = 500;                 { max. versteckte Menuepunkte }
 
-      DisableDOS : boolean = false;
+var   DisableDOS : boolean = false;
       shellkey   : boolean = false;
       ListMakros : byte    = 0;         { Flag fuer XPKEYS.XMakro     }
       Errorlevel : word    = 0;
@@ -289,7 +289,7 @@ const isotab1   : array[$c0..$ff] of byte =
 
       maxwinst  = 20;
 
-      closed    : boolean = false;
+var   closed    : boolean = false;
       opendb    : boolean = false;
       mainmenu  : map = nil;            { Hauptmenue }
       menulast  : byte = 0;             { Hoehe des Menu-Stacks }
@@ -1606,7 +1606,7 @@ begin
     result:=prog+' '+name;
 end;
 
-const trackpath : boolean = false;
+var   trackpath : boolean = false;
 
 { call of external program. errorlevel returned in gloval var errorlevel.
   errorlevel is negative if call was not performed (program not found).
@@ -1622,8 +1622,8 @@ procedure shell(const prog:string; space:word; cls:shortint);
     negative errorlevel if program not found }
   function Xec(command:string; const prompt:string):Integer;
 
-  {$ifdef UnixFS}
-  {$ifdef Unix}
+{$ifdef UnixFS}
+{$ifdef Unix}
   begin
     Debug.TempCloseLog(False);
     Debug.DebugLog('xp1s','saving terminal state', DLInform);
@@ -1641,10 +1641,10 @@ procedure shell(const prog:string; space:word; cls:shortint);
     Debug.DebugLog('xp1s','called program "'+command+'": result '+
                    strs(Result),iif(Result=0,DLInform,DLError));
   end;
-  {$else}
+{$else}
   {$error Please implement this function for your OS}
-  {$endif}
-  {$else} // OS is Dos, Win or OS2
+{$endif}
+{$else} // OS is Dos, Win or OS2
   var
     pp    : byte;
     parameters,commandsave : string;
@@ -3124,23 +3124,25 @@ begin
   else write(s);
 end;
 
+
+var
+  cm_lines : byte = 1;
+
 procedure cm_wln;
-const lines : byte = 1;
 {var   dummy : char; }
 begin
   if cm then begin
     writeln;
-    inc(lines);
-    if lines=screenlines then begin
+    inc(cm_lines);
+    if cm_lines=screenlines then begin
       if moremode then begin
         cm_w('<more>');
 {        dummy:=}cm_key;
         cm_w(#13+'      '+#13);
-        end;
-      lines:=1;
       end;
-    end
-  else
+      cm_lines:=1;
+    end;
+  end else
     writeln;
 end;
 
@@ -3252,6 +3254,9 @@ end;
 
 {
   $Log$
+  Revision 1.166  2002/12/12 11:58:42  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.165  2002/12/07 04:41:48  dodi
   remove merged include files
 

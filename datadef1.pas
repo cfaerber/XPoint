@@ -172,7 +172,7 @@ type    proctype  = procedure;
         dp        = ^dbrec;
 
 
-const   lastioerror : integer = 0;
+var     lastioerror : integer = 0;
         mustfind    : boolean = true;
         cacheanz    : word    = 0;
         dl          : boolean = false;
@@ -248,6 +248,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2002/12/12 11:58:38  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.23  2002/12/04 16:56:56  dodi
   - updated uses, comments and todos
 

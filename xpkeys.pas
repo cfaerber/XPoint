@@ -32,7 +32,7 @@ uses
 
 type  getf_func   = function(nr,nn:byte):string;
 var   getfilename : getf_func;
-const FuncExternal: boolean = false;    { *-Funktionen gesperrt }
+      FuncExternal: boolean = false;    { *-Funktionen gesperrt }
       PreExtProc  : procedure = nil;
 
 
@@ -41,7 +41,7 @@ function  test_fkeys(var t:taste):boolean;
 procedure Xmakro(var t:taste; flags:byte);
 
 
-const k0_S  : char = 'S';      { Spezial-Mode         }
+var   k0_S  : char = 'S';      { Spezial-Mode         }
       k0_A  : char = 'A';      { Alle Bretter         }
       k0_H  : char = 'H';      { Brett hinzufÅgen     }
       k0_cH : char = ^H;       { aus Maps-Liste anlg. }
@@ -248,6 +248,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2002/12/12 11:58:50  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.26  2002/07/25 20:43:56  ma
   - updated copyright notices
 

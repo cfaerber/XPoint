@@ -32,7 +32,7 @@ uses
   typeform, //s20
   keys; //taste
 
-const  lastkey   : taste = '';
+var    lastkey   : taste = '';
 
        pm      : string[15] = 'Peter Mandrella';
 
@@ -44,7 +44,7 @@ const  lastkey   : taste = '';
        ScrollEnable:boolean = true;
 
 
-       lScrollLock = $10;    { Konstanten fuer mem[$40:$17] }
+const  lScrollLock = $10;    { Konstanten fuer mem[$40:$17] }
        lNumLock    = $20;
        lCapsLock   = $40;
 
@@ -80,7 +80,7 @@ type   CurType   = (curnorm,curoff,cureinf,curnone);
                     edproc  : editproc;
                   end;
 
-const  fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
+var    fchar      : char     = '_';       { "Leerzeichen" bei ReadEd.      }
        rdedch     : taste    = '';        { ReadEdit Vorgabe f. 1. Zeichen }
        rdedactive : boolean  = false;     { ReadEdit aktiv                 }
        m2t        : boolean  = false;     { Zeitanzeige ueber multi2        }
@@ -290,7 +290,7 @@ uses
 
 const  maxsave     = 50;  { max. fuer savecursor }
 
-      __st : string[8] = '  :  :  ';    { fuer M2T }
+var   __st : string[8] = '  :  :  ';    { fuer M2T }
       timeflash : boolean = false;
       getactive : boolean = false;
 
@@ -1445,9 +1445,11 @@ end;
 {$ENDIF }
 
 
+var
+  m1 : shortint = -1;
+
 procedure editms(n:integer; var feld; eoben:boolean; var brk:boolean);
 
-const m1 : shortint = -1;
 var i,pl   : integer;
     en,en2 : endeedtyp;
     ok     : boolean;
@@ -1674,6 +1676,9 @@ end;
 
 {
   $Log$
+  Revision 1.98  2002/12/12 11:58:39  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.97  2002/12/04 16:56:58  dodi
   - updated uses, comments and todos
 

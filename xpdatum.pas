@@ -32,7 +32,7 @@ uses
   xpglobal;
 
 {$IFNDEF unix}
-const timezone      : string = 'W+1';
+var   timezone      : string = 'W+1';
 {$ELSE }
 { Unix-Systeme haben detailierte Informationen ueber die Zeitzonen.
   Diese wird hier verwendet. Es sollte auch klappen, dass ein Zeitzonen-
@@ -268,6 +268,9 @@ end;
 
 {
   $Log$
+  Revision 1.24  2002/12/12 11:58:50  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.23  2002/12/06 14:27:29  dodi
   - updated uses, comments and todos
 

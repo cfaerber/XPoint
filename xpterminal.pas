@@ -43,13 +43,13 @@ implementation
 
 uses  xp1o,xpkeys,xp9bp,xp10, winxp;
 
-const ansimode : boolean = true;
-      ansimax  = 40;       { max. L„nge von ANSI-Codes }
-      log2     : textp   = nil;
+var   ansimode : boolean = true;
+const ansimax  = 40;       { max. L„nge von ANSI-Codes }
+var   log2     : textp   = nil;
 
       ShellReleased : boolean = false;
 
-      coltab : array[0..7] of byte = (0,red,green,brown,blue,magenta,cyan,7);
+const coltab : array[0..7] of byte = (0,red,green,brown,blue,magenta,cyan,7);
 
       ANSI_curup     = #27'[A';
       ANSI_curdown   = #27'[B';
@@ -190,10 +190,12 @@ begin
 end;
 
 
-procedure add_ansi(c:char);
-const maxpar = 20;
+var
       amx    : byte = 1;
       amy    : byte = 1;
+
+procedure add_ansi(c:char);
+const maxpar = 20;
 
 var parcount : byte;
     ansipar  : array[1..maxpar] of integer;
@@ -747,6 +749,9 @@ end.
 
 {
   $Log$
+  Revision 1.13  2002/12/12 11:58:53  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.12  2001/10/10 20:56:44  mk
   - misc fixes for screenwidth <> 80
 

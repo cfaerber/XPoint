@@ -567,7 +567,7 @@ var
       end;
   end;  
 
-const SendWindowInitGlobals_Done: boolean = false;  
+var   SendWindowInitGlobals_Done: boolean = false;  
 
 procedure SendWindowInitGlobals(sd: TSendUUData);
 begin
@@ -1247,6 +1247,9 @@ end;
 
 //
 // $Log$
+// Revision 1.2  2002/12/12 11:58:52  dodi
+// - set $WRITEABLECONT OFF
+//
 // Revision 1.1  2002/11/14 21:06:13  cl
 // - DoSend/send window rewrite -- part I
 //

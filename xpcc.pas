@@ -32,7 +32,7 @@ uses
   xpglobal;
 
 const maxcc = 50;
-      ccte_nobrett : boolean = false;
+var   ccte_nobrett : boolean = false;
       cc_NT :byte = 0;
       _UserAutoCreate : boolean = false;  { User ohne Rueckfrage anlegen }
 
@@ -64,7 +64,7 @@ uses
   xp1,xp1input, xp3,xp3o2,xp3o,xp4e,xpnt, xpsendmessage_internal, winxp;
 
 const CCtemp = 'verteil.$$$';
-      hinweisGegeben :boolean = true;
+var   hinweisGegeben :boolean = true;
 
 var ccused   : array[1..maxcc] of boolean;
 
@@ -473,6 +473,9 @@ end;
 
 {
   $Log$
+  Revision 1.39  2002/12/12 11:58:49  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.38  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

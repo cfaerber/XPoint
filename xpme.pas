@@ -59,7 +59,7 @@ const menus      = 99;
       colcfgfile = 'xpoint.col';  //todo: filename!
       meversion  = 1;     { Versionsnummer Menuedatenformat }
 
-      menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+var   menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                            1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                            1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                            1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -476,7 +476,7 @@ type  mprec     = record
                   end;
       menuarray = array[1..22] of mprec;
       map       = ^menuarray;
-const mainmenu  : map = nil;
+var   mainmenu  : map = nil;
 
 var   menu      : array[0..menus] of string;
       menulevel : byte;
@@ -808,8 +808,9 @@ end;
 {            -1: Untermenue nach links verlassen            }
 {            -2: Untermenue nach rechts verlassen           }
 
+var   EnableUpper : boolean = true;
+
 function getmenu(nr:byte; enterkey:taste; x,y:byte):integer;
-const EnableUpper : boolean = true;
 var ma    : map;
     n,i   : integer;
     t     : taste;
@@ -1156,6 +1157,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2002/12/12 11:58:51  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.41  2002/12/09 14:37:22  dodi
   - merged include files, updated comments
 

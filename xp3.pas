@@ -31,7 +31,7 @@ uses
   datadef,xpheader,fidoglob,addresses,
   xpglobal;
 
-const XreadF_error : boolean  = false;
+var   XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
       ReadHeadEmpf : shortint = 0;
 
@@ -109,9 +109,8 @@ uses
   typeform,fileio,database,resource,
   xp0,xp1,xp3o, xp3ex, xpnt, xpmakeheader, debug;
 
-const
-  GlobalAblageOpen : Boolean = false;
 var
+  GlobalAblageOpen : Boolean = false;
   GlobalPuffer: file;
   GlobalLastPuffer: Byte;
 
@@ -1172,6 +1171,9 @@ end;
 
 {
   $Log$
+  Revision 1.88  2002/12/12 11:58:44  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.87  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

@@ -30,7 +30,7 @@ interface
 uses
   inout,typeform;
 
-const fsb_shadow : boolean = false;   { fsbox: Schatten                 }
+var   fsb_shadow : boolean = false;   { fsbox: Schatten                 }
       fsb_info   : boolean = false;   { fsbox: Dategroesse/Datum anzeigen }
       fsb_rcolor : byte    = 0;       { fsbox: eigene Rahmenfarbe       }
 
@@ -87,9 +87,9 @@ uses
   xpglobal;
 
 const maxpath  = 2000;
-      pdrive   : char = ' ';
-      mdrive   : char = ' ';
       markchar = #16;
+var   pdrive   : char = ' ';
+      mdrive   : char = ' ';
       oldpn    : integer = 0;
       wcursor  : boolean = false;
 type  parr     = array[1..maxpath] of String;
@@ -790,12 +790,12 @@ begin
 end;
 
 
+var   dsfiles : longint = 0;
+      dsb     : longint = 0;
+
 procedure pslct(x1,x2,y1,y2: Integer; drive:char; fenster,pvorg,modify:boolean;
                 crproc:xproc; sproc:stproc; errproc:perrproc;
                 var path:string; mark:boolean; var brk:boolean);
-
-const dsfiles : longint = 0;
-      dsb     : longint = 0;
 
 var   i,j     : integer;
       IORes   : Integer;
@@ -1155,6 +1155,9 @@ end;
 
 {
   $Log$
+  Revision 1.56  2002/12/12 11:58:41  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.55  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

@@ -33,9 +33,10 @@ uses
   sysutils,
   typeform, fileio, xpglobal;
 
-const
+var
   shrink: boolean = false;
   regs: integer = 0;
+const
   maxregs = 50;
 
 type
@@ -338,6 +339,9 @@ end;
 
 {
   $Log$
+  Revision 1.21  2002/12/12 11:58:41  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.20  2002/12/07 04:41:48  dodi
   remove merged include files
 

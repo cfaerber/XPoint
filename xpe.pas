@@ -69,7 +69,9 @@ uses
   xp0,xp1,xp1o,xp1help,xp1input, xp10, xpkeys,xpsendmessage,
   xpglobal;
 
-const
+const EditFusszeile = false;  //might become $DEFINE
+
+var
       doautosave: boolean = false;
       inited        : boolean = false;
 
@@ -277,8 +279,6 @@ end;
 
 procedure TED(const fn:string; reedit:boolean; keeplines:byte;
               ukonv,nachricht,senden:boolean);
-const inited : boolean = false;
-      EditFusszeile = false;
 var   ed     : ECB;
       p      : scrptr;
       mb     : byte;
@@ -507,6 +507,9 @@ end;
 
 {
   $Log$
+  Revision 1.40  2002/12/12 11:58:50  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.39  2002/12/06 14:27:29  dodi
   - updated uses, comments and todos
 

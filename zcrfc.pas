@@ -185,8 +185,11 @@ const
 
   bufsize = 65535;
   readEmpfList = true;
+
+var
   xpboundary: string = '-';
 
+const
   UUserver = 'UUCP-Fileserver';
   tspecials = '()<>@,;:\"/[]?=';        { RFC822-Special Chars    }
   tspecials2 = tspecials + ' ';         { RFC1341-Special Chars   }
@@ -3754,6 +3757,9 @@ end;
 
 {
   $Log$
+  Revision 1.122  2002/12/12 11:58:53  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.121  2002/12/09 14:37:22  dodi
   - merged include files, updated comments
 

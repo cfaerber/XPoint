@@ -33,7 +33,7 @@ uses
 
 const
     maxboxen = 127;         { max. Groesse des Arrays 'boxlist' }
-     own_Nt    : byte = 255;
+var  own_Nt    : byte = 255;
         { Netztyp f. "Zusaetzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
       own_Name  : string = '';
         { Boxname f. "Zusaetzliche Server" (RFC/Client) bzw. "AKAs/Pakete mitsenden" (Fido) }
@@ -660,6 +660,11 @@ end;
 { Typ :  1=Boxen, 2=Gruppen, 3=Systeme, 4=Kurznamen, 5=MIME-Typen }
 { edit:  true=editieren, false=nur auswaehlen                      }
 
+
+var //static or dynamic initialization?
+    edb_pos : shortint = 1;
+    lastclient : boolean = false;
+
 function UniSel(typ:byte; edit:boolean; default:string):string;
 const maxgl   = 100;
       dsellen = 20;
@@ -1089,7 +1094,7 @@ var d         : DB;
 
 
   procedure EditGruppe;
-  const edb_pos : shortint = 1;
+  //const edb_pos : shortint = 1; - static or dynamic initialization?
   var n   : shortint;
       nts : string;
   begin
@@ -2641,8 +2646,8 @@ var   p,nt,i,j,
       d          : DB;
       boxlist    : array[1..maxboxen] of string;
       dupelist   : array[1..maxboxen] of byte;       { Array fuer Dupes }
-const maxboxlen  : byte = 255;
-      maxbfglen = 160;
+      maxboxlen  : byte;  // = 255;
+const maxbfglen = 160;
 
   { Die hier mehrfach vorkommende Pruefung "if own_Name <> '' then..."  }
   { dient zur Feststellung, ob wir in einem Box-Config-Dialog (z.B.    }
@@ -2670,8 +2675,12 @@ begin
   addServersTest:=true;
   s1:=trim(s);
   if s1='' then exit;
-  if own_Name = '' then maxboxlen:=249  { wegen mappsel-String-Addition  }
-  else maxbox:=80;                      { (lfd. Nr.) in 'EditNetcallDat' }
+  if own_Name = '' then
+    maxboxlen:=249  { wegen mappsel-String-Addition  }
+  else begin
+    maxboxlen := 255;
+    maxbox:=80;                      { (lfd. Nr.) in 'EditNetcallDat' }
+  end;
   for i:=1 to maxbox do boxlist[i] := '';
   box_anz:=0; bfglen:=0; boxlen:=0;
   repeat
@@ -3119,6 +3128,9 @@ end;
 
 {
   $Log$
+  Revision 1.55  2002/12/12 11:58:49  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.54  2002/12/09 14:49:01  dodi
   remove merged include files
 

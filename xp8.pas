@@ -72,7 +72,7 @@ uses
   xpsendmessage,xpsendmessage_resend,xpconfigedit,xpnt, crc,
   xpglobal;
 
-const mapsbox : string = '';
+var mapsbox : string = '';
 
 var mapsname : string;
     mapsnt   : byte;
@@ -3100,6 +3100,9 @@ end;
 
 {
   $Log$
+  Revision 1.81  2002/12/12 11:58:48  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.80  2002/12/07 04:41:48  dodi
   remove merged include files
 

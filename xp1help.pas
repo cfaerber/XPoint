@@ -29,11 +29,12 @@ interface
 uses
   xpglobal; //todo: word -> Integer?
 
-const inithlp : boolean = false;
-      maxhelpst = 20;
+const maxhelpst = 20;
+var   inithlp : boolean = false;
       helpstp : shortint = 1;
 
 var   helpst  : array[1..maxhelpst] of word;
+      XPdisplayed: boolean = false;   { 'CrossPoint' rechts unten angezeigt }
 
 procedure showkeys(nr:integer);
 procedure showlastkeys;
@@ -55,9 +56,10 @@ uses
 
 var lastkeys : integer;
 
+//static or local in showkeys?
+var   kss : byte = 2;
 
 procedure showkeys(nr:integer);
-const kss : byte = 2;
 
   procedure ks(s:string);
   var
@@ -417,6 +419,9 @@ end;
 
 {
   $Log$
+  Revision 1.36  2002/12/12 11:58:43  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.35  2002/12/08 12:34:06  mk
   - added SysUtils (for FPC)
 

@@ -30,7 +30,7 @@ uses   montage;
 
 const  feiertage  = 9;
 
-       feiertg    : array[1..feiertage,1..2] of byte =
+var    feiertg    : array[1..feiertage,1..2] of byte =
                     ((1,1),   { Neujahr                   }
                     (0,0),    { Karfreitag                }
                     (0,0),    { Ostermontag               }
@@ -52,7 +52,7 @@ IMPLEMENTATION
 uses
   xpglobal; //not really
   
-const jahr : word = 0;
+var   jahr : smallword = 0; //type compatible with montage.fdate
 
 
 { Osteralgorithmus von Michael Heydekamp }
@@ -145,6 +145,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2002/12/12 11:58:39  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.11  2002/12/06 14:27:26  dodi
   - updated uses, comments and todos
 

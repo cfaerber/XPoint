@@ -91,7 +91,7 @@ uses
   {$IFDEF XPEasy} xpeasy, {$ENDIF }
   xpcfg,typeform,fileio,inout,winxp,mouse,datadef,database,osdepend,
   maske,help,lister,win2,maus2,clip,resource,montage,debug,fidoglob,
-  xp0,xp1,xp1o2,xp1input,xp1help,xpe,xp3,xp5,xp9bp,xp10,xpdatum,
+  xp0,xp1,xp1o2,xp1input,xp1help,xpe,xp3,xp5,xp9bp,xp10,xpdatum,xp_pgp,
   xpconfigedit,xpnt,xpfido,xpkeys,mime,utftools,markedlist;
 
 var   zaehlx,zaehly : byte;
@@ -2644,8 +2644,10 @@ begin
 end;
 
 
+var
+  lastdz : integer = -1;
+
 procedure ShowDateZaehler;
-const lastdz : integer = -1;
 begin
   if zaehler[1]<>lastdz then begin
     savecursor;
@@ -2769,6 +2771,9 @@ finalization
   Marked.Free;
 {
   $Log$
+  Revision 1.151  2002/12/12 11:58:44  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.150  2002/12/10 10:03:23  dodi
   - updated uses
 

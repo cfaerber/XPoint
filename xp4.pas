@@ -44,7 +44,7 @@ procedure select(dispmode:shortint);
 procedure mainwindow;
 procedure SetBrettGelesen(const brett:string);
 
-const
+var  
   markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
 
 implementation  {----------------------------------------------------}
@@ -75,13 +75,18 @@ uses
   xpglobal;
 
 const suchch    = #254;
-      komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
+var   komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
       closeflag : boolean = false; { TClose -> Dateien schliessen     }
       nobrettweiter : boolean = false; { Brettweiterschalter temporaer komplett ausschalten}
 
       IndirectQuote : boolean = false;  { Fido/QWK: indirekter Quote }
       ubpos         : longint = 0;      { aktuelle UserBase-Position }
-      DispStrSize       = 255;
+const DispStrSize       = 255;
+
+var
+  lastmenusel : integer = 0;
+  lasty  : integer = 0;
+  shortp : shortint = 0;
 
 type
   TReadMessageType = (rmNormal, rmRot13, rmHexDump);
@@ -173,10 +178,10 @@ end;
 
 { ----- Hauptmenue ---------------------------------------------------- }
 
-procedure select(dispmode:shortint);
-
-const autokey : taste = '';
+var   autokey : taste = '';
       AdrbTop : byte = 1; {Anzeige der Adressbuchgruppe 0 Ein/Aus}
+
+procedure select(dispmode:shortint);
 
 var gl      : shortint;
     rdmode  : byte;        { Readmode fuer das aktuelle Brett }
@@ -2752,6 +2757,9 @@ end;
 
 {
   $Log$
+  Revision 1.133  2002/12/12 11:58:46  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.132  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

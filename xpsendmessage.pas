@@ -52,7 +52,7 @@ Classes,fidoglob;
 //      //    SendIQuote = 4096;  { indirekter Quote          }
 //      //    SendMPart  = 8192;  { Multipart zerlegen        }
 
-const
+var
 //      pgdown    : boolean = false;
 //    _sendmaps : boolean = false;
 //    forcebox  : string = '';
@@ -2031,6 +2031,9 @@ finalization
 
 {
   $Log$
+  Revision 1.66  2002/12/12 11:58:51  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.65  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 

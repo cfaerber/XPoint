@@ -25,7 +25,8 @@ unit xpsendmessage_attach;
 { ---------------------------} interface { --------------------------- }
 
 uses
-  classes,mime,mime_analyze,sysutils;
+  sysutils,classes,
+  mime,mime_analyze;
 
 type
   TSendAttach_Part = class
@@ -94,7 +95,8 @@ uses
 {$ENDIF}
   fileio, inout, keys, lister, maske, maus2, resource, typeform,
   utftools, winxp, xp0, xp1, xp1input, xp1o, xp2c, xp4e, xpdatum, xpe,
-  xpglobal, xpnt, xpsendmessage_attach_analyze, xpstreams;
+  xpnt, xpsendmessage_attach_analyze, xpstreams, xp_pgp,
+  xpglobal;
 
 constructor TSendAttach_Part.Create;
 begin

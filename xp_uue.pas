@@ -246,11 +246,11 @@ begin
   reset(f1,1); ibufp:=1; ibufend:=0; EOFinput:=false;
 end;
 
+var   x : Integer = 0;
+      y : Integer = 0;
 
 procedure uudecIt(var f1:file; outfile:string; wait:boolean;
                   filenr,filetotal:integer; overwrite:boolean);
-const x : Integer = 0;
-      y : Integer = 0;
 
 var ende : boolean;
     size : longint;
@@ -551,6 +551,9 @@ end;
 
 {
   $Log$
+  Revision 1.35  2002/12/12 11:58:49  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.34  2002/07/26 08:19:26  mk
   - MarkedList is now a dynamically created list, instead of a fixed array,
     removes limit of 5000 selected messages

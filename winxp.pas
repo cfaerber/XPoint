@@ -46,7 +46,7 @@ const
 {$ENDIF }
       maxpush = 20;
 
-      shadowcol: byte = 8;
+var   shadowcol: byte = 8;
 
 {$IFNDEF NCRT}
 const
@@ -231,7 +231,7 @@ const rchar : array[1..3,1..6] of char =
 {$else }
       LSSize = $1fff;
 {$endif }
-      shad  : byte = 0;  { Zusatz-Fensterbreite/hoehe }
+var   shad  : byte = 0;  { Zusatz-Fensterbreite/hoehe }
 
 type  { Achtung: hier muss der komplette Bildschirm mit Attributen reinpassen }
   memarr     = array[0..$1fff] of byte;
@@ -1525,6 +1525,9 @@ end;
 
 {
   $Log$
+  Revision 1.90  2002/12/12 11:58:41  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.89  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

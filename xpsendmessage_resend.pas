@@ -45,7 +45,7 @@ implementation  { ----------------------------------------------------- }
 uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido, xpmakeheader,
      xpsendmessage,xpsendmessage_internal,addresslist;
 
-const
+var  
   mauswlbox : string = '';
 
 procedure Unversandt(edit,modi:boolean);
@@ -1422,6 +1422,9 @@ end;
 
 {
   $Log$
+  Revision 1.2  2002/12/12 11:58:52  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.1  2002/11/14 21:06:13  cl
   - DoSend/send window rewrite -- part I
 

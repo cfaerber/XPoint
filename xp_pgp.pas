@@ -35,6 +35,13 @@ uses
 {$ENDIF}
   xp0,xp1,xpstreams,Classes;
 
+const  PGP2 = '2.6.x';
+       PGP5 = '5.x';
+       PGP6 = '6.5.x';
+       GPG  = 'GnuPG';
+
+var    PGPVersion : string = PGP2;
+
 procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
 procedure RunPGP(par:string);                { PGP 2.6.x bzw. 6.5.x aufrufen  }
 procedure RunPGP5(exe:string;par:string);    { PGP 5.x aufrufen               }
@@ -71,8 +78,9 @@ uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$ENDIF}
   xpcc,xpnt,mime,mime_base64;
 
-const
+var
   savekey : string = '';
+const
   flag_PGPSigOk = $01;
   flag_PGPSigErr = $02;
 
@@ -1196,6 +1204,9 @@ end;
 
 {
   $Log$
+  Revision 1.73  2002/12/12 11:58:48  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.72  2002/11/14 21:06:12  cl
   - DoSend/send window rewrite -- part I
 

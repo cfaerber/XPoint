@@ -28,9 +28,9 @@ interface
 
 uses xpglobal;
 
-const   dbEMShandle   : word = 0;
+var     //dbEMShandle   : word = 0;
         dbInterrProc  : pointer = nil;
-
+const
 {$IFDEF UnixFS }
         dbExt         = '.db1';
         dbIxExt       = '.ix1';
@@ -103,6 +103,9 @@ implementation
 
 {
   $Log$
+  Revision 1.12  2002/12/12 11:58:38  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.11  2002/12/04 16:56:56  dodi
   - updated uses, comments and todos
 

@@ -109,8 +109,10 @@ begin
 end;
 
 
+var
+  sm_pos : byte = 1;        { Position im Spezial-Menue }
+
 procedure Smenu(var t:taste);
-const sm_pos : byte = 1;        { Position im Spezial-Menue }
 var   n,x,y  : shortint;
       s      : string;
 begin
@@ -312,6 +314,9 @@ end;
 
 {
   $Log$
+  Revision 1.42  2002/12/12 11:58:47  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.41  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

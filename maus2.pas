@@ -50,7 +50,7 @@ const mausleft    = #0#240;       { links gedrueckt  }
       mausfirstkey = mausleft;
       mauslastkey  = mauswheeldn;
 
-      maus_cursor  : boolean = false;
+var   maus_cursor  : boolean = false;
       maus_tasten  : boolean = false;
       maus_wheel   : boolean = false; { false: Cursortasten, true: Mauswheelup/dn }
 
@@ -97,7 +97,7 @@ uses
 
 const  maxinside = 25;
 
-       koo_da : boolean = false;   { Koordinaten abholbereit }
+var    koo_da : boolean = false;   { Koordinaten abholbereit }
        lx     : word    = 255;     { letzte Maus-Textcursor-Positionen }
        ly     : word    = 255;
        dbcl   : byte    = mausdbl_norm;
@@ -133,14 +133,15 @@ begin
   result := nn and (inout.AutoUp or inout.AutoDown);
 end;
 
+var
+  was_inside:boolean=false;
+
 {$IFDEF Win32}
 function  maus_set_keys(const Event: MOUSE_EVENT_RECORD;var ScanCode:Char;var SpecialKey:boolean):boolean;
 var keyout: boolean;
     i: integer;
     xx,yy: Integer;
     wdist: Integer16;
-const
-    was_inside:boolean=false;
 
   procedure put(NewKey:taste);
 //    procedure make_room;
@@ -238,8 +239,6 @@ function  maus_set_keys(const Event: MEVENT;var Buttons:Cardinal):taste;
 var rr: taste;
     xx,yy: Integer;
     bs:mmask_t;
-const
-    was_inside:boolean=false;
 
   procedure put(NewKey:taste);
   begin
@@ -326,7 +325,6 @@ end;
 procedure mint(intsource,tasten,x,y,mx,my:word);
 
 const tick       : longint = 0;
-      was_inside : boolean = false;
 var
     xx,yy  : integer;
 
@@ -560,6 +558,9 @@ end;
 
 {
   $Log$
+  Revision 1.51  2002/12/12 11:58:40  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.50  2002/12/08 18:05:23  mk
   - fixed Word/Integer-problem for linux
 

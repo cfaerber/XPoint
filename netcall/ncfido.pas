@@ -143,8 +143,9 @@ begin
   Move(s[1],buf,min(ml,length(s)));
 end;
 
-const tage : array[1..12] of byte = (31,28,31,30,31,30,31,31,30,31,30,31);
-      tagsec = 86400;  { 24*60*60 }
+//todo: share with other units!
+var   tage : array[1..12] of byte = (31,28,31,30,31,30,31,31,30,31,30,31);
+const tagsec = 86400;  { 24*60*60 }
 
 procedure setfeb(y:word);
 begin
@@ -242,6 +243,9 @@ end;
 
 {
   $Log$
+  Revision 1.12  2002/12/12 11:58:56  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.11  2002/12/06 14:27:31  dodi
   - updated uses, comments and todos
 

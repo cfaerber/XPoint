@@ -43,7 +43,7 @@ type  stp = ^ste;
               last   : stp;
             end;
 
-const tail : stp = nil;
+var   tail : stp = nil;
 
 
 {$IFDEF Debug }
@@ -94,6 +94,9 @@ end;
 
 {
   $Log$
+  Revision 1.14  2002/12/12 11:58:41  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.13  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

@@ -198,7 +198,7 @@ type  noderec = packed record
 
 type  bereichlst = array[1..maxber] of berrec;
 
-const nodelistopen : boolean = false;
+var   nodelistopen : boolean = false;
 
 var   NX_adrnetx   : longint;
       bereiche     : word;
@@ -1458,8 +1458,10 @@ ende:
 end;
 
 
+//static - rename?
+var   active : boolean = false;
+
 procedure NodelistSeek;
-const active : boolean = false;
 var x,y,b: Integer;
     brk  : boolean;
     ni   : ^NodeInfo;
@@ -1582,11 +1584,6 @@ begin
 end;
 
 
-procedure NodelistBrowser;
-
-const orflags  = 10;
-      andflags = 5;
-
 type NodeBrec = record
                   nodeadr : string;
                   sysop   : string;
@@ -1599,7 +1596,12 @@ type NodeBrec = record
                 end;
      NodeBRP  = ^NodeBrec;
 
-const NB_data : NodeBRP = nil;
+var   NB_data : NodeBRP = nil;
+
+procedure NodelistBrowser;
+
+const orflags  = 10;
+      andflags = 5;
       bufsize = 2048;
 
 type
@@ -2766,14 +2768,16 @@ end;
 
 
 
-{ File Suche in Fido Requstlisten mit bis zu fuenf Suchbegriffen  }
+{ File Suche in Fido Requestlisten mit bis zu fuenf Suchbegriffen  }
+var
+    iCase : boolean = true;                 { Gross-Kleinschreibung  }
+    wCase : boolean = true;                 { Suche nur ganze Worte }
+
 function FidoSeekfile:string;
   const
     seekfile         = 'fileseek.dat';
     maxbuf           = 20;
     SearchStr_maxIdx = 4;
-    iCase : boolean = true;                 { Gross-Kleinschreibung  }
-    wCase : boolean = true;                 { Suche nur ganze Worte }
     _sep             = '/&';                { der Seperator 2-Beyte }
 
   var
@@ -3133,6 +3137,9 @@ end;
 
 {
   $Log$
+  Revision 1.72  2002/12/12 11:58:50  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.71  2002/12/09 14:37:21  dodi
   - merged include files, updated comments
 

@@ -29,11 +29,12 @@ interface
 
 uses xpglobal;
 
-const prodcode : byte = $e9;
+var   prodcode : byte = $e9;
       version: smallword  = $0314;   { 3.20 }
-      prodcodef= 'fido.pc';
+const prodcodef= 'fido.pc';
 
-      EL_ok     = 0;                    { XP-FM:                    }
+//todo: enums?      
+const EL_ok     = 0;                    { XP-FM:                    }
       EL_recerr = 1;                    { ERRORLEVEL: Empf.-Fehler  }
       EL_senderr= 2;                    {             Sende-Fehler  }
       EL_noconn = 3;                    { keine Verbindung          }
@@ -54,6 +55,9 @@ implementation
 
 {
   $Log$
+  Revision 1.12  2002/12/12 11:58:50  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.11  2002/12/06 14:27:29  dodi
   - updated uses, comments and todos
 

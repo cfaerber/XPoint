@@ -89,9 +89,9 @@ const
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
           FelderMax = 6;             { groesste der beiden Feldanzahlen }
 
-       xp_xp       : string = 'OpenXP/32';
+var    xp_xp       : string = 'OpenXP/32';
        xp_origin   : string = '--- OpenXP/32';
-       QPC_ID      = 'QPC:';
+const  QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
        XPMC_ID     = '*Xcrypted*';
@@ -741,7 +741,7 @@ type   textp  = ^text;
                     end;
 
 
-const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+var    menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1,1,1,1);
        menable : array[0..menus] of word = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -784,9 +784,6 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        automessaging: boolean = false; { Nachrichten werden nicht-manuell }
        lockopen   : boolean = false;   { LOCKFILE geoeffnet }
 
-       XPhilite   : byte    = 20;
-       XPdisplayed: boolean = false;   { 'CrossPoint' rechts unten angezeigt }
-
        ParHelp    : boolean = false;   { Hilfsseite             }
        ParDebug   : boolean = false;   { Debugging-Mode         }
        ParDebFlags: byte    = 0;       { 1 = Shell-Commands     }
@@ -811,21 +808,21 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParGelesen : boolean = false;   { ip-eingelesene Nachrichten auf }
        ParTiming  : byte    = 0;       {    'gelesen' setzen    }
        ParExit    : boolean = false;   { Programm beenden       }
-       ParSetuser : string  = '';   { Username setzen        }
+       ParSetuser : string  = '';      { Username setzen        }
        ParSendbuf : string  = '';      { Puffer automatisch versenden }
        ParKey     : char    = ' ';     { autom. Tastendruck     }
        ParEmpfbest: boolean = false;   { Zusatzschalter fuer /IPx }
-       ParPass    : string  = '';   { * -> ausgeben; Hex -> setzen }
-       ParPasswd  : string  = '';   { Passwort }
-       ParZeilen  : byte = 0;          { Bildzeilen }
+       ParPass    : string  = '';      { * -> ausgeben; Hex -> setzen }
+       ParPasswd  : string  = '';      { Passwort }
+       ParZeilen  : byte    = 0;       { Bildzeilen }
        ParWintime : byte    = 1;       { Unter 32 Bit immer Default einschalten }
        ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
-       ParAutost  : string  = '';   { /autostart: }
+       ParAutost  : string  = '';      { /autostart: }
        ParGebdat  : string  = 'gebuehr.dat';  { Gebuehrenzonenliste }
        ParGebdat2 : string  = 'tarife.dat';   { 2. Teil der " }
        ParAV      : string  = '';      { Archiv-Viewer }
-       ParLanguage: string  = '';    { /l: Sprache }
+       ParLanguage: string  = '';      { /l: Sprache }
        ParNomem   : boolean = false;   { Speichertest uebergehen }
        ParNoSmart : boolean = false;   { kein Schreibcache-Flush }
        ParLCD     : boolean = false;   { keine Int10/CharGen-Zugriffe }
@@ -856,21 +853,15 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 
        QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
        OtherQuoteChars : boolean = false; { andere Quotezeichen neben > aktivieren }
-       Otherqcback : Boolean = false;     { Backup von Otherqqotechars zum Umschalten}
+       Otherqcback : Boolean = false;     { Backup von Otherquotechars zum Umschalten}
        ListWrapBack : boolean = true;     { Backup von ListWrap zum Umschalten }
 
-       PGP2 = '2.6.x';
-       PGP5 = '5.x';
-       PGP6 = '6.5.x';
-       GPG  = 'GnuPG';
-       PGPVersion : string = PGP2;
+var    mheadercustom : array[1..2] of string = ('','');
 
-       mheadercustom : array[1..2] of string = ('','');
-
-       MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
+const  MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
        UsrFeldDef = 'FHGBAK'; { Standardreihenfolge: Feldtausch Userliste }
 
-       showungelesen : boolean = true;   { Bretter mit ungel. Nachrichten auch markieren }
+var    showungelesen : boolean = true;   { Bretter mit ungel. Nachrichten auch markieren }
 
        ignoreSupCancel : boolean = False; { Supersedes/Ersetzt und Cancels ignorieren }
        UserAutoCreate  : boolean = false; { Unbekannte User beim Beantworten und }
@@ -1213,7 +1204,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
   BadConfigLinesList: TStringList;
 
 const
-  XPLogName             = 'openxp.log';
+  XPLogName             = 'openxp.log'; //todo: filename
 
 var
   XPLog                 : TLog;         { Logging }
@@ -1222,6 +1213,9 @@ implementation
 
 {
   $Log$
+  Revision 1.170  2002/12/12 11:58:41  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.169  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 

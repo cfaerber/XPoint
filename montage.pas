@@ -29,7 +29,7 @@ uses
   typeform,
   xpglobal; //todo: word
 
-const
+var //Februar hat variable Zahl von Tagen
        monat : Array[1..12] of record
                                  tag : String[9];
                                  zahl: Byte;
@@ -200,6 +200,9 @@ end;
 
 {
   $Log$
+  Revision 1.15  2002/12/12 11:58:41  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.14  2002/12/04 16:57:00  dodi
   - updated uses, comments and todos
 

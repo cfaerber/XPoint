@@ -104,14 +104,15 @@ begin
 end;
 
 
+//static in kalender()
+var   cal_active : boolean = false;
+
 procedure kalender;
 
 const rx = 42;
       ry = 8;
 
-
-      cal_active : boolean = false;
-      maxfeier   = 50;
+const maxfeier   = 50;
 
 var   nt,n,mnt,
       xjj,xmm,xtt : integer;
@@ -511,10 +512,11 @@ end;
 
 { Screen Saver }
 
+var   scactive : boolean = false;
+
 procedure TimedScsaver(const endtime:string);
 
 const maxstars = 40;
-      scactive : boolean = false;
 
 var
     p       : scrptr;
@@ -569,7 +571,6 @@ var
   end;
 
   procedure showstars;
-  const xx : boolean = true;
   var ss : boolean;
       i  : integer;
   begin
@@ -593,7 +594,6 @@ var
             if random>0.3 then
               if color then textcolor(3)
               else textcolor(7);
-            if state=0 then xx:=true;
             end;
         end
         else if not ss then begin
@@ -715,8 +715,9 @@ begin
 end;
 
 
+var ss_active : boolean = false;
+
 procedure ScreenShot;
-const ss_active : boolean = false;
 var
     fn,ffn : string;
     app    : boolean;
@@ -916,8 +917,10 @@ begin
   freeres;
 end;
 
+
+var pw_active : boolean = false;
+
 function Password:boolean;
-const pw_active : boolean = false;
 var   p,p2      : longint;
 begin
   password := false; { zur Sicherheit !! MK 12/99 }
@@ -979,6 +982,9 @@ end;
 
 {
   $Log$
+  Revision 1.69  2002/12/12 11:58:48  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.68  2002/12/06 14:27:28  dodi
   - updated uses, comments and todos
 

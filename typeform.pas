@@ -1691,15 +1691,15 @@ begin
 end;
 
 function b30(l:longint):string;   { 30bit -> 5char }
-const bc : string[5] = '-----';
+const //bc : string[5] = '-----';
       b64: array[0..63] of char = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ$abcdefghijklmnopqrstuvwxyz+';
 var i : byte;
 begin
+  SetLength(Result, 5);
   for i:=5 downto 1 do begin
-    bc[i]:=b64[l and 63]; //todo: use correct Base64EncodingTable
+    Result[i]:=b64[l and 63]; //todo: use correct Base64EncodingTable
     l:=l shr 6;
-    end;
-  b30:=bc;
+  end;
 end;
 
 { ROT13 Kodierung }
@@ -1865,6 +1865,9 @@ end;
 
 {
   $Log$
+  Revision 1.123  2002/12/12 11:58:41  dodi
+  - set $WRITEABLECONT OFF
+
   Revision 1.122  2002/12/06 14:27:27  dodi
   - updated uses, comments and todos
 
