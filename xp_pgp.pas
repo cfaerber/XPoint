@@ -59,6 +59,7 @@ procedure PGP_RemoveID;
 procedure PGP_BeginSavekey;      { Key aus ZCONNECT-Header temporaer sichern }
 procedure PGP_EndSavekey;
 
+procedure PGP_SelectKey(var keyid:string; hint:string; secret:boolean);
 
 implementation  { --------------------------------------------------- }
 
@@ -342,7 +343,7 @@ begin
     RemoteUserID:='';                           { Empfaenger ist Brett }
 
   if PGPVersion=GPG then
-    t:=iifs(hd.typ='T','a','')
+    t:=iifs(hd.typ='T','a ',' --armor')
   else if PGPVersion=PGP2 then
     t:=iifs(hd.typ='T','t',' +textmode=off')
   else
@@ -1145,9 +1146,24 @@ begin
   end;
 end;
 
+{ Schlüssel auswählen
+  keyid:  Derzeitig Keyid, neue wird dort abgelegt.
+  hint:   E-Mail-Adresse, wird falls keyid='' benutzt.
+  secret: Geheimen Schlüssel auswählen (sonst: öffentlichen)
+}
+procedure PGP_SelectKey(var keyid:string; hint:string; secret:boolean);
+begin
+
+
+
+
+end;
 
 {
   $Log$
+  Revision 1.54  2001/09/19 18:05:08  cl
+  - implemented option "PGP/MIME" in "Config/Extern/PGP"
+
   Revision 1.53  2001/09/11 14:23:15  cl
   - PGP/MIME application/signed: micalg is now read directly from signature
     file created by PGP.

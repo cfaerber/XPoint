@@ -1395,34 +1395,55 @@ function setpgpdialog(var s:string):boolean;
 begin
   result:=True;
   SetFieldEnable(GPGEncodingOptionsField,s=GPG);
+  SetFieldNoDisp(GPGEncodingOptionsField,s<>GPG);
 end;
 
 procedure PGP_Options;
 var x,y : Integer;
     brk : boolean;
     sall: boolean;
+  function yi:integer;begin result:=y;inc(y);end;
 begin
   sall:=(UpperCase(GetRes2(29900,2))<>'N');
-  dialog(ival(getres2(271,0)),iif(sall,16,15),getres2(271,1),x,y);  { 'PGP-Einstellungen' }
+  dialog(ival(getres2(271,0)),iif(sall,19,18),getres2(271,1),x,y);  { 'PGP-Einstellungen' }
+  y:=2;
 
-  maddstring(3,2,getres2(271,2),PGPVersion,5,5,'');   { 'PGP-Version' }
+  maddstring(3,yi,getres2(271,2),PGPVersion,5,5,'');   { 'PGP-Version' }
     mset1func(setpgpdialog);
   mappsel(false,PGP2+'˘'+PGP5+'˘'+PGP6+'˘'+GPG);
     mhnr(1010);
-  maddbool(3,4,getres2(271,3),UsePGP);                { 'PGP-UnterstÅtzung' }
+  inc(y);
+  
+  maddbool(3,yi,getres2(271,3),UsePGP);                { 'PGP-UnterstÅtzung' }
+  inc(y);
+  
 //    mset1func(testpgpexe);
-  maddbool(3,5,getres2(271,4),PGPbatchmode);          { 'PGP-RÅckfragen Åbergehen' }
-  maddbool(3,6,getres2(271,5),PGP_WaitKey);           { 'Warten auf Tastendruck nach PGP-Aufruf' }
-  maddbool(3,7,getres2(271,6),PGP_log);               { 'Logfile fÅr automatische Aktionen' }
-  maddbool(3,9,getres2(271,7),PGP_AutoPM);            { 'Keys aus PMs automatisch einlesen' }
-  maddbool(3,10,getres2(271,8),PGP_AutoAM);           { 'Keys aus AMs automatisch einlesen' }
-  if sall then
-    maddbool(3,11,getres2(271,9),PGP_signall);        { 'alle Nachrichten signieren' }
-  maddstring(3,iif(sall,13,12),getres2(271,10),PGP_UserID,35,80,'');   { 'User-ID' }
+  maddbool(3,yi,getres2(271,4),PGPbatchmode);          { 'PGP-RÅckfragen Åbergehen' }
+  maddbool(3,yi,getres2(271,5),PGP_WaitKey);           { 'Warten auf Tastendruck nach PGP-Aufruf' }
+  maddbool(3,yi,getres2(271,6),PGP_log);               { 'Logfile fÅr automatische Aktionen' }
+  inc(y);
+  
+  maddbool(3,yi,getres2(271,7),PGP_AutoPM);            { 'Keys aus PMs automatisch einlesen' }
+  maddbool(3,yi,getres2(271,8),PGP_AutoAM);           { 'Keys aus AMs automatisch einlesen' }
+  inc(y);
+    
+  if sall then begin
+    maddbool(3,yi,getres2(271,9),PGP_signall);        { 'alle Nachrichten signieren' }
+    inc(y);
+  end;
+
+  maddbool(3,yi,getres2(271,14),PGP_MIME);                { 'PGP/MIME verwenden' }
+  mhnr(1024);
+  inc(y);  
+
+  maddstring(3,yi,getres2(271,10),PGP_UserID,35,80,'');   { 'User-ID' }
     mhnr(1018);
-  maddstring(3,iif(sall,15,14),getres2(271,11),PGP_GPGEncodingOptions,31,120,''); { 'GPG-Optionen' }
+  inc(y);
+  
+  maddstring(3,yi,getres2(271,11),PGP_GPGEncodingOptions,31,120,''); { 'GPG-Optionen' }
   mappsel(false,'--rfc1991 --cipher-algo idea˘--compress-algo 1 --cipher-algo cast5');
   GPGEncodingOptionsField:= fieldpos;
+  inc(y);
 
 (*  maddbool(3,12,getres2(271,12),PGP_UUCP);          { 'PGP auch fÅr RFC/UUCP verwenden' }
     mset1func(testxpgp);
@@ -1485,6 +1506,9 @@ end;
 
 {
   $Log$
+  Revision 1.107  2001/09/19 18:05:08  cl
+  - implemented option "PGP/MIME" in "Config/Extern/PGP"
+
   Revision 1.106  2001/09/19 16:17:40  cl
   - implemented option "MIME verwenden" for ZConnect
   - resorted "Config/Optionen/Netze/Verschiedenes..."

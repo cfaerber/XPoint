@@ -795,6 +795,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 11   GPG-Optionen
 12   PGP auch fÅr RFC/UUCP verwenden
 13   PGP auch fÅr Fido verwenden
+14   PGP/MIME verwenden
 + 272
 # 06.02.2000 MH: RFC: X-Priority: 1, 2, 3, 4, 5
 0    30
@@ -3883,6 +3884,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.40  2001/09/19 18:05:08  cl
+# - implemented option "PGP/MIME" in "Config/Extern/PGP"
+#
 # Revision 1.39  2001/09/19 16:17:40  cl
 # - implemented option "MIME verwenden" for ZConnect
 # - resorted "Config/Optionen/Netze/Verschiedenes..."

@@ -8429,7 +8429,8 @@ dem gew„hlten User vereinbart haben:
       <<HINWEIS:>> Wenn Sie fr einen Benutzer PGP oder
       PGP/MIME einstellen, gilt diese Einstellung auch
       fr Signaturen, unabh„ngig davon, was sie unter
-      Config/Extern/PGP eingestellt haben.
+      [Config/Extern/PGP] eingestellt haben.@1024
+      Mehr zu den Signatuarten [dort].@1024
 
 <<pmCrypt>>  (pmc-1 bis pmc-3): Ein von Christian Mock
       entwickeltes Verfahren zum Einbinden beliebiger
@@ -12242,7 +12243,36 @@ und tatkr„ftige Mithilfe an:
 <<Kai Raven>> unterh„lt eine sehr informative Webseite
 zum Thema PGP:
 <<http://home.nexgo.de/kraven/pgp/pgpindex.html>>
+@
+1024
+Mit dieser Einstellung geben Sie an, wie PGP-
+signierte Nachrichten versandt werden sollen:
 
+<<[x]>> -> In MIME-kompatiblen Netzen wird fr PGP-Signa-
+       turen der multipart/signed-Standard (RFC 2015,
+       3156) verwendet, der von allen neueren PGP-
+       kompatiblen Mail- und Newsprogrammen unter-
+       sttzt werden sollte. Mit „lteren Programmen
+       sind die Nachrichten ohne Probleme lesbar.
+       (Empfohlene Einstellung.)
+     
+<<[ ]>> -> <<Textnachrichen:>> Es werden sogenannte
+       PGP-Klartext-Signaturen verwendet: Der
+       Nachrichtentext wird hierbei um zus„tzliche
+       Informationen erg„nzt, bleibt aber ansonsten
+       lesbar. Zum šberprfen der Signatur muss nur
+       die komplette Nachricht an PGP/GnuPG bergeben
+       werden.
+       <<Bin„rnachrichten:>> Es wird ein sogenannter
+       "PGP-Panzer" (PGP Armor) verwendet: Die Datei
+       sowie die Signatur werden hierbei mit Base64
+       kodiert. Zum Lesen der Nachricht ist zwingend
+       PGP notwendig.
+
+Diese Einstellung gilt nicht fr Benutzer, die unter
+<<Passwort>> als Kodierung PGP oder PGP/MIME eingetragen
+haben; fr diese wird das dort verwendete Format
+verwendet, auch wenn die Nachricht nur signiert wird.
 @
 1500
 W„hlen Sie <<Ja>>, um eine Kopie der gew„hlten Nach-
