@@ -849,9 +849,12 @@ var hdp : THeader;
     hds : longint;
 begin
   Hdp := THeader.Create;
-  ReadHeader(hdp,hds,false);
-  origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),hdp.pfad);
-  Hdp.Free;
+  try
+    ReadHeader(hdp,hds,false);
+    origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),hdp.pfad);
+  finally
+    Hdp.Free;
+  end;
 end;
 
 procedure LoadBoxData(var d: DB);
@@ -1160,6 +1163,9 @@ end;
 
 {
   $Log$
+  Revision 1.17.2.13  2003/09/21 16:07:17  mk
+  - added try finally block in get_origbox
+
   Revision 1.17.2.12  2003/08/24 21:35:35  mk
   - simplified and corrected FileMode Handling (now uses OS dependend
     constants instead of hard coded values, this may prevent problems
