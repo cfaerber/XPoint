@@ -454,19 +454,11 @@ end;
 procedure testfiles;
 begin
   if not exist(source) then error('Quelldatei fehlt');
-  if exist(dest) then error('Zieldatei schon vorhanden');
   if u2z and not validfilename(dest) then
     error('ungÅltige Zieldatei: '+dest);
   if not u2z then begin
-{$IFDEF UnixFS}
-    if (right(dest,1)<>DirSepa) then
-      dest:=ResolvePathname(dest+DirSepa)
-    else
-      dest:=ResolvePathname(dest);
-{$ELSE}
     if (right(dest,1)<>':') and (right(dest,1)<>'\') then
       dest:=dest+'\';
-{$ENDIF}
     if not IsPath(dest) then
       error('ungÅltiges Zielverzeichnis: '+dest);
     end;
@@ -2690,7 +2682,12 @@ var sr    : searchrec;
 
 begin
   assign(f2,dest);
-  rewrite(f2,1);
+  if exist(dest) then
+  begin
+    reset(f2,1);
+    seek(f2,filesize(f2));
+  end else
+    rewrite(f2,1);
   outbufpos:=0;
   spath:=GetFileDir(source);
   n:=0;
@@ -3459,6 +3456,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.24  2000/12/31 11:34:58  mk
+  - nicht auf Zieldatei testen, sondern anhaengen
+
   Revision 1.35.2.23  2000/12/22 20:32:16  mk
   - fix fuer -ppp
 
