@@ -684,7 +684,8 @@ begin
     ZtoZCdatum(datum,zdatum);
     wrs('EDA: '+zdatum);
     wrs('LEN: '+strs(groesse));
-    if typ='B'      then wrs('TYP: BIN');
+    if typ='B'      then wrs('TYP: BIN') else
+    if typ='M'      then wrs('TYP: MIME');
     if datei<>''    then wrs('FILE: '  +datei);
     if ref<>''      then wrs('BEZ: '   +ref);
     if programm<>'' then wrs('MAILER: '+programm);
@@ -1811,6 +1812,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.21.2.10  2001/09/11 12:07:32  cl
+  - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
+
   Revision 1.21.2.9  2001/08/11 22:18:06  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

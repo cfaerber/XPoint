@@ -1097,7 +1097,7 @@ var fn   : pathstr;
     l    : longint;
 begin
   dbReadN(mbase,mb_typ,typ);
-  if typ='B' then begin
+  if typ in ['B','M'] then begin
     rfehler(423);   { 'Bei Bin„rdateien nicht m”glich' }
     exit;
     end;
@@ -1150,7 +1150,7 @@ var ablg   : byte;
     typ    : char;
 begin
   dbReadN(mbase,mb_typ,typ);
-  if typ='B' then begin
+  if typ in ['B','M'] then begin
     rfehler(423);   { 'Bei Bin„rdateien nicht m”glich' }
     exit;
     end;
@@ -1198,13 +1198,20 @@ begin
   else begin
     dbReadN(mbase,mb_typ,c);
     dbReadN(mbase,mb_flags,flags);
-    if c='T' then
-      if flags and 4=0 then c:='B'  { Text -> Bin  }
-      else flags:=flags and not 4   { Mime -> Text }
-    else begin
-      flags:=flags or 4;            { Bin -> Mime }
+
+    if (c='M') or ((flags and 4)<>0) then
+    begin                           { MIME -> Text }
       c:='T';
-      end;
+      flags:=flags and not 4;
+    end else
+    if c='T' then
+      c:='B'                        { Text -> Bin  }
+    else 
+    begin			    { Bin -> MIME  }
+      flags:=flags or 4;            
+      c:='M';
+    end;
+
     dbWriteN(mbase,mb_flags,flags);
     dbWriteN(mbase,mb_typ,c);
     aufbau:=true;
@@ -2448,6 +2455,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.28  2001/09/11 12:07:32  cl
+  - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
+
   Revision 1.47.2.27  2001/08/12 11:20:33  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed

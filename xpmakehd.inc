@@ -213,6 +213,7 @@ var i,res : integer;
   procedure GetTyp(var typ,charset:string);
   begin
     if line<>'' then begin
+      if (Ustr(line)='MIME') then typ:='M' else
       if (UStr(line)<>'TRANSPARENT') then typ:='B';
       if (typ<>'T') and (typ<>'') then charset:='';
       end;
@@ -620,6 +621,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15.2.6  2001/09/11 12:07:32  cl
+  - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
+
   Revision 1.15.2.5  2001/07/01 15:44:33  my
   SV: - fixed Crash if WAB header was longer than 80 characters
 

@@ -84,6 +84,7 @@ end;
 
 function codecode(encoding:string):mpcode;
 begin
+  encoding:=lstr(encoding);
   if encoding='base64' then codecode:=mcodeBase64
   else if encoding='quoted-printable' then codecode:=mcodeQP
   else if encoding='8bit' then codecode := mcode8Bit
@@ -416,15 +417,15 @@ var   hdp      : headerp;
         inc(anzahl);
         with mf^[anzahl] do begin
           level:=bptr+last;
-          typ:=ctype;
-          subtyp:=subtype;
+          typ:=LStr(ctype);
+          subtyp:=LStr(subtype);
           code:=codecode(_encoding);
           fname:=filename;
           ddatum:=filedate;
           startline:=_start;
           lines:=n-startline;
           part:=anzahl;
-          charset := aCharset;
+          charset := LStr(aCharset);
         end;
       end;
       last:=0;
@@ -718,6 +719,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.17  2001/09/11 12:07:32  cl
+  - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
+
   Revision 1.12.2.16  2001/08/11 22:18:06  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 

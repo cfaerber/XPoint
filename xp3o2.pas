@@ -159,7 +159,8 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         PmReplyTo:=left(PmReplyTo,p1-1)+' '+trim(mid(PmReplyTo,p1+1));
       if (PmReplyTo<>'') and (left(PmReplyTo,length(absender))<>absender)
                        then wrs('Antwort-an: '+PmReplyTo);
-      if typ='B'       then wrs('TYP: BIN');
+      if typ='B'       then wrs('TYP: BIN') else
+      if typ='M'       then wrs('TYP: MIME');
       if datei<>''     then wrs('FILE: ' +lstr(datei));
       if ddatum<>''    then wrs('DDA: '  +ddatum+'W+0');
       if error<>''     then wrs('ERR: '  +error);
@@ -198,7 +199,8 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
         if pgpflags and fPGP_sigok<>0    then wrs('X-XP-PGP: SigOk');
         if pgpflags and fPGP_sigerr<>0   then wrs('X-XP-PGP: SigError');
         { ToDo: fPGP_comprom }
-        if crypttyp='B' then wrs('Crypt-Content-TYP: BIN');
+        if crypttyp='B' then wrs('Crypt-Content-TYP: BIN') else
+	if crypttyp='M' then wrs('Crypt-Content-TYP: MIME'); 
         if ccharset<>'' then wrs('Crypt-Content-Charset: '+ccharset);
         if ckomlen>0    then wrs('Crypt-Content-KOM: '+strs(ckomlen));
         end;
@@ -466,6 +468,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.11  2001/09/11 12:07:31  cl
+  - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
+
   Revision 1.9.2.10  2001/08/12 11:20:31  mk
   - use constant fieldnr instead of fieldstr in dbRead* and dbWrite*,
     save about 5kb RAM and improve speed

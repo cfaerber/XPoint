@@ -241,7 +241,8 @@ var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       addhd         : array[1..maxaddhds] of string;
       addhdmail     : array[1..maxaddhds] of boolean;
       addhds        : integer;
-      convibm: boolean;
+      convibm       : boolean;
+      mpart         : boolean;
 
 const
       { Wird zum Einlesen der Customizable Headerlines benîtigt }
@@ -821,7 +822,8 @@ begin
       wrs('Antwort-an: '+PmReplyTo);
     for i:=1 to followups do
       wrs('Diskussion-in: '+followup[i]);
-    if typ='B'        then wrs('TYP: BIN');
+    if typ='B'        then wrs('TYP: BIN') else
+    if typ='M'        then wrs('TYP: MIME');
     if datei<>''      then wrs('File: '  +datei);
     if ddatum<>''     then wrs('DDA: '   +ddatum);
     if ref<>''        then wrs('BEZ: '   +ref);
@@ -1145,14 +1147,19 @@ end;
 procedure MimeAuswerten;
 var ismime : boolean;
     binary : boolean;
+    mpart  : boolean;
 begin
   with hd.mime do begin
-    ismime:=(mversion<>'');
+    (* ignore presence of MIME-Version due to roboustness principle *)
+    ismime:=true;
     qprint:=ismime and (encoding=encQP);
     b64:=ismime and (encoding=encBase64);
     binary:=ismime and (not (ctype in [tText,tMultipart,tMessage]) or
                         ((encoding=encBinary) and (ctype<>tText)));
-    hd.typ:=iifc(binary,'B','T');
+    (* set typ='M' for pass-through message types *)
+    mpart :=ismime and ctype=[tMultipart,tMessage];
+    hd.typ:=iifc(mpart,'M',iifc(binary,'B','T'));
+    charset:=LStr(charset);    
     if (ctype=tText) and (charset<>'') and (charset<>'us-ascii') and
        (charset<>'iso-8859-1') and (charset<>'utf-8') then
       hd.error:='Unsupported character set: '+charset;
@@ -1338,7 +1345,7 @@ begin
 { /robo }
 
       charset:=iifs(x_charset='','us-ascii',x_charset);
-      if convibm = false then charset:='iso-8859-1';
+      if not (convibm or mpart) then charset:='iso-8859-1';
       end
     else if attrib and AttrMPbin <> 0 then begin
       ctype:=tMultipart;
@@ -2265,7 +2272,8 @@ begin
     writeln(' from ',hd.wab);
     s[1]:=c;
     ReadRFCheader(true,s);
-    binaer:=(hd.typ='B');
+    (* no decoding for MIME multipart messages *)
+    binaer:=(hd.typ in ['B','M']);
 
     if (mailuser='') and (hd.envemp<>'') then begin
       if cpos('<',hd.envemp)=1 then delete (hd.envemp,1,1);
@@ -2392,7 +2400,7 @@ begin
       until nofrom;
       mempf:=SetMailUser(hd.empfaenger);
       ReadRFCheader(true,s);
-      binaer:=(hd.typ='B');
+      binaer:=(hd.typ in ['B','M']);
       if (mempf<>'') and (mempf<>hd.xempf[1]) then
       begin
         hd.xoem:=hd.xempf;
@@ -2534,7 +2542,7 @@ begin
           hd.netztyp:=nt_RFC;
           ReadString(true);
           ReadRFCheader(false,s);
-          binaer:=(hd.typ='B');
+          binaer:=(hd.typ=['B','M']);
           seek(f1,fp); ReadBuf; bufpos:=bp;
           repeat                           { Header Åberlesen }
             ReadString(true);
@@ -2867,7 +2875,8 @@ var dat    : string[30];
 begin
   with hd do
   begin
-    convibm := lstr(hd.charset) <> 'iso1';
+    convibm := (lstr(hd.charset) <> 'iso1');
+    mpart   := hd.typ='M';
     dat:=ZtoRFCdate(datum,zdatum);
     if mail then begin
       if wab='' then s:=absender          { Envelope erzeugen }
@@ -3287,10 +3296,13 @@ begin
       close(f1);
       error('fehlerhafter Eingabepuffer!');
     end;
-    binmail:=(hd.typ<>'T');
+    binmail:=not hd.typ in ['T','M'];
+    mpart  :=hd.typ='M';
     if cpos('@',hd.empfaenger)=0 then      { AM }
       if binmail and not NewsMIME then
         writeln(#13'BinÑrnachricht <',hd.msgid,'> wird nicht konvertiert')
+      else if mpart and not NewsMIME then
+        writeln(#13'MIME-Nachricht <',hd.msgid,'> wird nicht konvertiert')
       else begin   { AM }
         inc(n); write(#13'News: ',n);
         if client then CreateNewFile;
@@ -3320,8 +3332,8 @@ begin
           while fpos+bufpos<gs do begin
             ReadString(true);
             if fpos+bufpos>gs then ShortS;
-            if convibm then IBM2ISO;
-            if NewsMIME then MakeQuotedPrintable;
+            if convibm and (not mpart) then IBM2ISO;
+            if NewsMIME and (not mpart) then MakeQuotedPrintable;
             wrbuf(f);
           end;
         flushoutbuf(f);
@@ -3356,7 +3368,8 @@ begin
     repeat
       seek(f1,adr);
       makeheader(true,f1,copycount,0,hds,hd,ok,false);
-      binmail:=(hd.typ='B');
+      binmail:=not hd.typ in ['T','M'];
+      mpart  :=hd.typ='M';
       if cpos('@',hd.empfaenger)>0 then
         if ustr(left(hd.empfaenger,length(server)))=server then begin
           if not client then WrFileserver;
@@ -3383,8 +3396,8 @@ begin
               ReadString(true);
               if fpos+bufpos>gs then ShortS;
               if SMTP and (s<>'') and (s[1]='.') then s:='.'+s;
-              if convibm then IBM2ISO;
-              MakeQuotedPrintable;
+              if convibm and (not mpart) then IBM2ISO;
+              if not mpart then MakeQuotedPrintable;
               wrbuf(f2);
             end;
           flushoutbuf(f2);
@@ -3446,6 +3459,9 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.52  2001/09/11 12:07:31  cl
+  - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
+
   Revision 1.35.2.51  2001/09/09 03:01:04  mk
   - fixed crash in uuz with bad reference lines
 

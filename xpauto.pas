@@ -25,7 +25,7 @@ uses
 type  AutoRec = record                     { AutoVersand-Nachricht }
                   datei   : string;
                   betreff : string[40];
-                  typ     : char;                { 'B' / 'T'       }
+                  typ     : char;                { 'B' / 'T' / 'M' }
                   empf    : string[AdrLen];      { Brett oder User }
                   box     : string[BoxNameLen];  { optional        }
                   wotage  : byte;                { Bit 0=Mo        }
@@ -677,6 +677,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.13.2.10  2001/09/11 12:07:32  cl
+  - small fixes/adaptions for MIME support (esp. 3.70 compatibility).
+
   Revision 1.13.2.9  2001/08/11 22:18:04  mk
   - changed Pos() to cPos() when possible, saves 1814 Bytes ;)
 
