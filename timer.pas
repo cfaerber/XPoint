@@ -6,7 +6,7 @@ unit Timer;
 
 interface
 
-{$IFDEF VP }
+{$IFDEF VirtualPascal }
 uses
   use32;
 {$ENDIF }
@@ -45,7 +45,7 @@ begin {$IFDEF Win32}Sleep(Round(Milliseconds)){$else}Delay(Round(Milliseconds)){
 
 FUNCTION GetTicks: LongInt;
 var
-{$IFDEF VP }
+{$IFDEF VirtualPascal }
   H,M,S,S100: Word;
 {$ELSE }
   H,M,S,S100: Integer;
@@ -122,6 +122,9 @@ end.
 
 {
   $Log$
+  Revision 1.9  2000/10/15 17:17:08  mk
+  - fix for Virtual Pascal compatibility
+
   Revision 1.8  2000/10/02 03:16:41  mk
   - made ObjCOM Virtual Pascal compatible
 
