@@ -1293,6 +1293,7 @@ begin                  { of Netcall }
           uu.source := 'spool'+DirSepa+'*.mail';
           uu.dest := dpuffer;
           uu.OwnSite := boxpar^.pointname+domain;
+          uu.ClearSourceFiles := true;
           uu.utoz;
           uu.free;
           PufferEinlesen(dpuffer,box,false,false,true,pe_Bad);
@@ -1527,6 +1528,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.54  2000/12/26 22:34:39  mk
+  - removed random writes to screen
+
   Revision 1.53  2000/12/26 19:51:27  ml
   - pop3 works now in linux
 

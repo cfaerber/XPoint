@@ -89,6 +89,7 @@ type
     fSMTP: boolean ;               { frozen SMTP      }
     bSMTP: boolean ;               { BZIP2'ed SMTP    }
     ParSize: boolean ;             { Size negotiation }
+    ClearSourceFiles: boolean; // clear source files after converting
     constructor create;
     destructor Destroy; override;
     procedure testfiles;
@@ -346,7 +347,7 @@ var
         s := trim(s);
         if s <> '' then
           if cpos(':', s) < 3 then
-            writeln('Warning: Illegal Line in ' + fn + ': "' + s + '"'#7)
+             // writeln('Warning: Illegal Line in ' + fn + ': "' + s + '"'#7)
           else
             AddHd.AddObject(s, Pointer(longint(mail)));
       end;
@@ -374,6 +375,7 @@ begin
   FileUser:= 'root';
   OwnSite:= '';             { fuer Empfaengeradresse von Mails }
   shrinkheader:= false;        { uz: r-Schalter }
+  ClearSourceFiles := false;
   nomailer:= false;
   uunumber:= 0;
   source := '';
@@ -2253,7 +2255,7 @@ var
   binaer: boolean;
   pfrec: ^filerec;
 begin
-  write('mail: ', fn);
+  // write('mail: ', fn);
   inc(mails);
   OpenFile(fn);
   while bufpos < bufanz do
@@ -2321,7 +2323,7 @@ begin
     until ((p > 0) and (s[p - 1] = ':')) or (bufpos = bufanz);
     if bufpos < bufanz then
     begin
-      writeln(' from ', hd.wab);
+      // writeln(' from ', hd.wab);
       s[1] := c;
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
@@ -2354,7 +2356,7 @@ begin
       WriteHeader;
     end
     else
-      writeln;
+      ; // writeln;
 
     // Die komplette Mail nach dem Header schreiben jetzt rausschieben
     for i := 0 to Mail.Count - 1 do
@@ -2395,7 +2397,7 @@ var
 
 begin
   n := 0;
-  write('mail: ', fn);
+  // write('mail: ', fn);
   if compressed then
   begin
     assign(f, fn);
@@ -2410,28 +2412,28 @@ begin
       case s[2] of
         #$9D:
           begin
-            write(' - uncompressing SMTP mail...');
+            // write(' - uncompressing SMTP mail...');
             SysExec(uncompress + fn, '');
           end;
         #$9F:
           begin
-            write(' - unfreezing SMTP mail...');
+            // write(' - unfreezing SMTP mail...');
             SysExec(unfreeze + fn, '');
           end;
         #$8B:
           begin
-            write(' - unzipping SMTP mail ...');
+            // write(' - unzipping SMTP mail ...');
             SysExec(ungzip + fn, '');
           end;
         #$5A:
           begin
-            write(' - unbzip2`ing SMTP mail ...');
+            // write(' - unbzip2`ing SMTP mail ...');
             SysExec(unbzip + fn, '');
           end;
       end;
     end;
   end;
-  write(sp(7));
+  // write(sp(7));
   OpenFile(fn);
   repeat
     ClearHeader;
@@ -2467,7 +2469,7 @@ begin
           end;
         end;
       inc(n); inc(mails);
-      write(#8#8#8#8#8, n: 5);
+      // write(#8#8#8#8#8, n: 5);
       repeat                            { UUCP-Envelope ueberlesen }
         ReadString;
         nofrom := (LowerCase(LeftStr(s, 5)) <> 'from ') and (LowerCase(LeftStr(s, 5))
@@ -2521,7 +2523,7 @@ begin
   pfrec:= @f1;
   FileSetAttr(pfrec^.name, 0);
   //setfattr(f1, 0);                      { Archivbit abschalten }
-  writeln(' - ok');
+  // writeln(' - ok');
 end;
 
 function unbatch(s: string): boolean;
@@ -2549,7 +2551,7 @@ var
 label
   ende;
 begin
-  write('news: ', fn);
+  // write('news: ', fn);
   OpenFile(fn);
   ReadString;
   while unbatch(s) do
@@ -2591,33 +2593,33 @@ begin
     close(f2);
     if freeze then
     begin
-      write(' - unfreezing news...');
+      // write(' - unfreezing news...');
       SysExec(unfreeze + newfn, '');
     end
     else
       if gzip then
     begin
-      write(' - unzipping news...');
+      // write(' - unzipping news...');
       SysExec(ungzip + newfn, '');
     end
     else
       if bzip then
     begin
-      write(' - unbzip2`ing news...');
+      // write(' - unbzip2`ing news...');
       SysExec(unbzip + newfn, '');
     end
     else
     begin
-      write(' - uncompressing news...');
+      // write(' - uncompressing news...');
       SysExec(uncompress + newfn, '');
     end;
     reset(f2, 1); seek(f2, filesize(f2));
     if FileExists(newfn) then
     begin
-      writeln(' - Fehler beim Entpacken');
+(*    !!writeln(' - Fehler beim Entpacken');
       writeln(uncompress + newfn); halt;
       assign(f, newfn); erase(f);
-      exit;
+      exit; *)
     end;
     OpenFile(fn);
     ReadString;
@@ -2626,12 +2628,12 @@ begin
   if (LeftStr(s, 2) = '#!') or RawNews then
     if (LeftStr(s, 8) <> '#! rnews') and not RawNews then
     begin
-      writeln(' - unbekanntes Batchformat');
+      // writeln(' - unbekanntes Batchformat');
       goto ende;
     end
     else
     begin
-      write(sp(7));
+      // write(sp(7));
       repeat
         if not RawNews then
         while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and
@@ -2642,7 +2644,7 @@ begin
           p := pos('#! rnews', s);
           if p > 1 then delete(s, 1, p - 1);
           inc(n);
-          write(#8#8#8#8#8, n: 5);
+          // write(#8#8#8#8#8, n: 5);
           inc(news);
           size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
           fp := fpos; bp := bufpos;
@@ -2673,14 +2675,14 @@ begin
             wrfs(Mail[i]);
         end;
       until (bufpos >= bufanz) or (s = '');
-      writeln(' - ok');
+      // writeln(' - ok');
     end;
   ende:
   close(f1);
   pfrec:= @f1;
   FileSetAttr(pfrec^.name, 0);
   //setfattr(f1, 0);                      { Archivbit abschalten }
-  if n = 0 then writeln;
+//  if n = 0 then writeln;
 end;
 
 procedure TUUZ.UtoZ;
@@ -2838,12 +2840,13 @@ begin
         dec(n);
       end;
     end;
+    if ClearSourceFiles then DeleteFile(sr.name);
     sres := findnext(sr);
   end;
   findclose(sr);
-  if n > 0 then writeln;
+(*  if n > 0 then writeln;
   writeln('Mails:', mails: 6);
-  writeln('News :', news: 6);
+  writeln('News :', news: 6); *)
   flushoutbuf;
   close(f2);
 end;
@@ -3435,7 +3438,7 @@ var
       fromfile := hd.betreff;
       if not FileExists(fromfile) then
       begin
-        writeln(' warning: ', fromfile, ' not found!');
+        // writeln(' warning: ', fromfile, ' not found!');
         exit;
       end;
       tfiles := 0;
@@ -3523,10 +3526,10 @@ begin
     binmail := (hd.typ <> 'T');
     if cpos('@', hd.empfaenger) = 0 then { AM }
       if binmail and not NewsMIME then
-        writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
+        // writeln(#13'Bin„rnachricht <', hd.msgid, '> wird nicht konvertiert')
       else
       begin                             { AM }
-        inc(n); write(#13'News: ', n);
+        inc(n); // write(#13'News: ', n);
         seek(f1, adr + hds);
         if binmail then
           hd.lines := (hd.groesse + 53) div 54 { Anzahl Base64-Zeilen }
@@ -3594,7 +3597,7 @@ begin
           WrFileserver
         else
         begin
-          inc(n); write(#13'Mails: ', n);
+          inc(n); // write(#13'Mails: ', n);
           if not SMTP then
             CreateNewfile;
           if binmail then
@@ -3636,9 +3639,9 @@ begin
     until copycount > hd.empfanz;
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
-  if n > 0 then writeln;
-  if files > 0 then
-    writeln('Files: ', files);
+  //  if n > 0 then writeln;
+  // if files > 0 then
+  //  writeln('Files: ', files);
   if SMTP then
   begin
     wrs(f2, 'QUIT');
@@ -3655,6 +3658,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/12/26 22:34:39  mk
+  - removed random writes to screen
+
   Revision 1.15  2000/12/26 22:05:37  mk
   - fixed some more bugs introduced by Frank Ellert
 
