@@ -926,7 +926,12 @@ begin
   begin
     s0 := TempS($FFFF);
     str := TFileStream.Create(s0,fmCreate);
-    writeln_s(str,HeadData); str.Free;    
+    try
+      if HeadData <> '' then
+        writeln_s(str,HeadData);
+    finally
+      str.Free;
+    end;
     addMessagePart(s0,true,false);
   end;
 
@@ -1018,6 +1023,10 @@ finalization
 
 {
   $Log$
+  Revision 1.80  2003/09/14 14:35:37  mk
+  - fixed 803141: Editor in der 3.9.7
+    write header only, if there is one, this prevents additional CRLF
+
   Revision 1.79  2003/09/07 14:49:42  cl
   - send window: postpone message
     CLOESES task #76797: "Sendefenster: Parken"
