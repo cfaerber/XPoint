@@ -1267,8 +1267,14 @@ end;
 {$endif} { Linix }
 
 function testexecutable(var s:string):boolean;
+var
+  TempS: String;
 begin
-  result:=ExecutableExists(s);
+  if Pos(' ', s) > 0 then
+    TempS := Copy(s, 1, Pos(' ', s)-1) // remove params if necessary
+  else
+    TempS := s;
+  result:=ExecutableExists(Temps);
   if not result then rfehler(206);
 end;
 
@@ -1374,6 +1380,9 @@ end.
 
 {
   $Log$
+  Revision 1.80  2001/01/14 10:43:26  mk
+  - strip params before test in textexecutable
+
   Revision 1.79  2001/01/06 16:58:26  ma
   - well. VP doesn't like exit(X).
 
