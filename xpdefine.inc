@@ -89,9 +89,14 @@
   {$DEFINE LocalScreen } { DOS 32 Bit braucht einen Localscreen }
 {$ENDIF }
 
+{$IFDEF Win32 }
+  {$DEFINE Sockets }     { Sockets vorhanden }
+{$ENDIF }
+
 {$IFDEF Linux }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
   {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
+  {$DEFINE Sockets }     { Sockets vorhanden }
 {$ENDIF }
 
 {$IFDEF FreeBSD }
@@ -128,6 +133,9 @@
 
 {
   $Log$
+  Revision 1.49  2000/08/01 16:34:14  mk
+  - Define Sockets wegen DOS32 wieder eingefuert :/
+
   Revision 1.48  2000/08/01 11:07:13  mk
   - Define Sockets wieder entfernt
 

@@ -59,7 +59,10 @@ function fileechocolfunc(var s:string; line:longint):byte;
 implementation  { ------------------------------------------------- }
 
 uses xp1o,xp3,xp3o2,xp3ex,xp4,xp6,xp6o,
-  xpnntp,xp9bp,xp9,xpnt;
+{$IFDEF Sockets }
+  xpnntp,
+{$ENDIF }
+  xp9bp,xp9,xpnt;
 
 const mapsbox : string = '';
 
@@ -1600,6 +1603,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/08/01 16:34:13  mk
+  - Define Sockets wegen DOS32 wieder eingefuert :/
+
   Revision 1.24  2000/08/01 11:07:13  mk
   - Define Sockets wieder entfernt
 
