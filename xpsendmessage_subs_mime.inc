@@ -230,8 +230,9 @@ begin
     ConnectStream(outs,MimeCreateEolConverter(pa.FileEOL));
 
 
-  // presize the output stream to improve speed (reduces memory allocations)
-  TNullCodecStream(outs).OtherStream.Size := Ins.Size;
+  // presize the output stream (in case of a memory stream) to improve speed (reduces memory allocations)
+  if TNullCodecStream(outs).OtherStream is TMemoryStream then
+    TNullCodecStream(outs).OtherStream.Size := Ins.Size;
   CopyStream(ins,outs);
 
   ins.Free;
@@ -307,6 +308,9 @@ end;
 
 //
 // $Log$
+// Revision 1.10  2002/06/11 07:19:58  mk
+// - resize stream only if TMemoryStream
+//
 // Revision 1.9  2002/06/10 08:07:42  mk
 // - improved memory preallocation for outstream (see last fix)
 //
