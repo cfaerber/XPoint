@@ -502,15 +502,18 @@ var i : integer;
 begin                         { SelectMultiPart }
   brk:=false;
   fillchar(mpdata,sizeof(mpdata),0);
-
   new(hdp);
   ReadHeader(hdp^,hds,true);
   new(mf);
   MakePartlist;
-  if not forceselect and (hdp^.mimetyp='multipart/alternative')
-     and (mf^[1].typ='text') and (mf^[1].subtyp='plain') then begin
+  if not forceselect and (anzahl=3) and (mf^[2].typ='text')
+     and (mf^[1].typ='text') and (mf^[1].subtyp='plain')
+     and (((hdp^.mimetyp='multipart/alternative')      { Text+HTML Messis }
+            and (mf^[2].subtyp='html'))
+         or (mf^[2].subtyp='x-vcard'))                 { oder Text mit VCard }
+  then begin
     index:=1;
-    select:=false;
+    select:=false;                         { Standardmaessig Nur Text zeigen }
     alter:=true;
     end
   else
@@ -567,7 +570,7 @@ var   input,t : text;
       tmp     : pathstr;
       f       : file;
       buf     : pointer;
-      i       : longint; { MK 01/00 Integer->LongInt, wegen groáen MIME-Mails }
+      i       : longint; { Integer->LongInt, wegen groáen MIME-Mails }
       s       : string;
       softbreak: boolean;
 
@@ -679,7 +682,7 @@ begin
       else
         rewrite(f,1);
 
-      if lines>500 then { MK 01.02.2000 Auf 500 Zeilen angepasst }
+      if lines>500 then { Auf 500 Zeilen angepasst }
         rmessage(2442);    { 'decodiere Bin„rdatei ...' }
 
       for i:=1 to lines do
@@ -717,6 +720,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/06/29 20:53:09  mk
+  JG: - Mime-Auswahl erscheint nur noch, wenn wirklich noetig und sinnvoll
+
   Revision 1.13  2000/06/22 19:53:32  mk
   - 16 Bit Teile ausgebaut
 
