@@ -84,7 +84,7 @@ const kss : byte = 2;
 
   procedure ende(s1,s2:string);
   begin
-    Wrt2(sp(79-length(s1)-length(s2)-wherex));
+    Wrt2(sp(ScreenWidth-length(s1)-length(s2)-wherex-1));
     attrtxt(col.colkeyshigh);
     Wrt2(s1);
     attrtxt(col.colkeys);
@@ -94,7 +94,7 @@ const kss : byte = 2;
   procedure ksesc;
   begin
     ende('Esc','');
-    AddSK(76,3,-3,keyesc);
+    AddSK(ScreenWidth-4,3,-3,keyesc);
   end;
 
   procedure plusminus;
@@ -146,18 +146,21 @@ const kss : byte = 2;
   end;
 
   procedure kstr(nr:word);
-  var s : string[80];
+  var s : string;
       p : byte;
   begin
     s:=getres2(20,nr)+' ';
     repeat
       p:=cpos(' ',s);
-      if s[1]='~' then begin      { Ctrl-Zeichen }
+      if FirstChar(s)='~' then begin      { Ctrl-Zeichen }
         hitxt('^');
         s[1]:='^';
         ks(LeftStr(s,p-1));
         with shortkey[shortkeys] do begin
-          key:=chr(ord(upcase(s[2]))-64);
+          if length(s)>=2 then
+            key:=chr(ord(upcase(s[2]))-64)
+          else
+            key:=#0;
           dec(keypos);
           inc(keylen);
           keyspot:=-keyspot-1;
@@ -376,9 +379,9 @@ begin
   makros:=getres(101);
   moff;
   gotoxy(1,screenlines);
-  if fks<70-length(hilfe) then wf('F1-'+hilfe);
-  if fks<57-length(hilfe)-length(makros) then wf('F6-'+makros);
-  if fks<62-length(hilfe) then wf('F9-DOS');
+  if fks<ScreenWidth-10-length(hilfe) then wf('F1-'+hilfe);
+  if fks<ScreenWidth-23-length(hilfe)-length(makros) then wf('F6-'+makros);
+  if fks<ScreenWidth-18-length(hilfe) then wf('F9-DOS');
   inc(windmax,$100);
   if editor then
     wf('F10-'+getres(133))
@@ -405,6 +408,9 @@ end.
 
 {
   $Log$
+  Revision 1.19  2001/01/11 11:38:56  ma
+  - some other screen adjustment fixes
+
   Revision 1.18  2001/01/09 20:31:04  ma
   - ' Tab / Quit' now justified correctly in all screen modes
   - shortened CVS logs
