@@ -1490,7 +1490,11 @@ again:
   pushhp(iif(wait,1550,1551));
   n:=ReadButton(x+3,sely,2,'*'+sels,n,true,z);
   pophp;
+{$IFDEF UnixFS }
+  s:='doc/' + getres2(520,40);   { Muss noch an die Grundstruktur angepasst werden }
+{$ELSE }
   s:='DOC\' + getres2(520,40);   { 'LIZENZ.DOC' }
+{$ENDIF }
   case n of
     1 : begin
           if not exist(s) then           { 'LIZENZ.DOC' }
@@ -1572,6 +1576,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/05/07 18:16:04  hd
+  Kleine Linux-Anpassungen
+
   Revision 1.8  2000/05/02 19:14:03  hd
   xpcurses statt crt in den Units
 

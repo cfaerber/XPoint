@@ -42,7 +42,11 @@ function  cc_testempf(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt, winxp;
+uses xp3,xp3o2,xp3o,xp4e,xpnt, 
+{$IFDEF NCRT }
+  xpcurses,
+{$ENDIF }
+  winxp;
 
 const CCtemp = 'verteil.$$$';
 
@@ -385,6 +389,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/05/07 18:16:04  hd
+  Kleine Linux-Anpassungen
+
   Revision 1.13  2000/05/05 18:08:50  jg
   - Sendefenster: Verteiler im "Kopien an" Dialog erlaubt
   - Empfaenger aendern Loescht alte "Kopien an" Eintraege
