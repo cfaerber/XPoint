@@ -256,6 +256,8 @@ begin
       SetMausEmu;
       end;
     nachweiter:=AAmsg; brettweiter:=AAbrett; userweiter:=AAuser;
+    attrtxt(col.colmenu[0]);
+    mwrt(71,1,' ');  { Anzeige Nachrichtenweiterschalter löschen }
     GlobalModified;
     end;
   enddialog;
@@ -1547,6 +1549,10 @@ end;
 
 {
   $Log$
+  Revision 1.128  2002/05/01 17:10:35  mk
+  MY:-  Bei Best„tigung des Config-Men?s C/O/B wird die
+        Anzeige entfernt, da dann wieder die Men?optionen gelten.
+
   Revision 1.127  2002/04/06 13:52:35  mk
   - fixed SetTimezone
     (fixes crash while changing 'Erstellungszeit' in Config/Optionen/Nachrichten
