@@ -89,7 +89,7 @@ var printlines : longint;
                                       { == Nachrichten-Lister             }
     rbx,rby    : Integer;             { Cursorposition fr ReadButton     }
     hidden     : ^ahidden;            { Liste der unsichtbaren Menpkte.  }
-    anzhidden  : integer;             { Anzahl der unsichtbaren Menpkte. }
+    anzhidden  : SmallInt;            { Anzahl der unsichtbaren Menpkte. }
 
 
 procedure XpIdle;
@@ -2093,6 +2093,9 @@ end;
 
 {
   $Log$
+  Revision 1.144  2002/04/06 19:15:41  mk
+  - fixed reading of xpmenu.dat from xpme
+
   Revision 1.143  2002/03/25 22:03:08  mk
   MY:- Anzeige der Stammbox-Adresse unterhalb der Menleiste korrigiert
        und berarbeitet (bei aktivierter Option "C/A/D/Stammbox-Adresse

@@ -150,7 +150,7 @@ end;
 
 procedure readmenudat;   { Liste der unsichtbaren MenÅpunkte einlesen }
 var f       : file;
-    version : integer;
+    version : SmallInt;
     i,j,w   : integer;
 begin
   anzhidden:=0;
@@ -1099,6 +1099,9 @@ finalization
   if Assigned(Marked) then FreeMem(marked);
 {
   $Log$
+  Revision 1.141  2002/04/06 19:15:41  mk
+  - fixed reading of xpmenu.dat from xpme
+
   Revision 1.140  2002/03/25 20:49:12  mk
   - keydeffile (keydefs.cfg and keys-e.cfg) is now lowercase
 
