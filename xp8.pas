@@ -205,18 +205,13 @@ var
   type bnodep = ^bnode;
        bnode  = record
                   l,r : bnodep;
-                  c   : ^string;
+                  c   : string;
                   del : boolean;
                 end;
   var t       : text;
       root    : bnodep;
-{$ifdef hasHugeString}
       sysfile : string;
       _brett  : string;
-{$else}
-      sysfile : string[12];
-      _brett  : string[5];
-{$endif}
       s       : string;
       syspos  : byte;
       first   : boolean;
@@ -224,22 +219,22 @@ var
 
     procedure SetBrett(add:boolean; var bn:bnodep);
 
-      procedure setbretts;
-      begin bn^.c^:=s; end;
+      {procedure setbretts;
+      begin bn^.c:=s; end;}
 
       function smaller:boolean;
-      begin smaller:=(s<bn^.c^); end;
+      begin smaller:=(s<bn^.c); end;
 
       function found:boolean;
-      begin found:=(s=bn^.c^); end;
+      begin found:=(s=bn^.c); end;
 
     begin
       if bn=nil then
         if add then begin   { ADD - Brett hinzufgen }
           new(bn);
           bn^.l:=nil; bn^.r:=nil; bn^.del:=false;
-          getmem(bn^.c,length(s)+1);
-          setbretts;
+          bn^.c:=s;
+          {setbretts;}
           end
         else                { DEL - Brett nicht vorhanden }
       else
@@ -256,14 +251,14 @@ var
       if bn<>nil then begin
         syswrite(bn^.l);
         if not bn^.del then
-          if syspos=0 then writeln(t,bn^.c^)
+          if syspos=0 then writeln(t,bn^.c)
           else begin
             if not first then write(t,',')
             else first:=false;
-            if syspos+length(bn^.c^)>77 then begin
+            if syspos+length(bn^.c)>77 then begin
               writeln(t,'\'); syspos:=1; end;
-            write(t,bn^.c^);
-            inc(syspos,length(bn^.c^)+1);
+            write(t,bn^.c);
+            inc(syspos,length(bn^.c)+1);
             end;
         syswrite(bn^.r);
         end;
@@ -274,7 +269,6 @@ var
       if bn<>nil then begin
         freelist(bn^.l);
         freelist(bn^.r);
-        freemem(bn^.c,length(bn^.c^)+1);
         dispose(bn);
         end;
     end;
@@ -1650,6 +1644,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/06 12:14:25  hd
+  - AnsiString
+
   Revision 1.15  2000/07/05 15:12:15  hd
   - AnsiString
 
