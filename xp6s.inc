@@ -15,19 +15,21 @@
 { Signatur-Shuffler / Signatur-Makro-Ersetzer }
 
 procedure MakeSignature(var signat, sigfile:string; var sigtemp:boolean);
-const sigsep = '-*-';
-var t,t2    : text;
-    s       : string;
-    buf     : string;
-    num,n   : word;
+const
+  sigsep = '-*-';
+var
+  t,t2    : text;
+  s       : string;
+  num,n   : word;
+  Buf: array[0..4095] of Char;
 begin
   sigtemp:=false;
   if _filesize(signat)=0 then
     sigfile:=''
   else begin
     assign(t,signat);
-    settextbuf(t,buf);
     reset(t);
+    SetTextBuf(t, buf);
     readln(t,s);
     if s=sigsep then begin
       num:=0;
@@ -1142,6 +1144,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.29  2000/08/05 17:13:20  mk
+  - Crash nach B behoben, Dank an Michael Koppel
+
   Revision 1.28  2000/07/22 10:10:25  hd
   - Ein paar vergessene (Ansistring, hasHugeString, dbRead etc.)
 
