@@ -1140,7 +1140,11 @@ var d         : DB;
       dbReadN(d,mimeb_extension,ext);
       dbReadN(d,mimeb_programm,prog);
     end;
-    if typ = '*/*' then exit;
+    if typ = '*/*' then
+    begin
+      RFehler(935); { 'Standardeintrag kann nicht editiert werden' }
+      exit;
+    end;
     readmimetyp(not IsNew,typ,ext,prog,brk);
     if not brk then
     begin
@@ -1731,6 +1735,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.9  2000/11/26 09:59:09  mk
+  - Meldung: Standardeintrag kann nicht editiert werden hinzugefuegt
+
   Revision 1.9.2.8  2000/11/17 12:16:18  mk
   - Probleme beim aktualisieren der Defautviewer behoben
 
