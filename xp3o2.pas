@@ -112,8 +112,9 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
 
 {      if gb and (cpos('@',AmReplyTo)=0) then
         UpString(AmReplyTo);}
-      for i:=0 to followup.count-1 do
-        wrs('DISKUSSION-IN: '+followup[i]);
+      if followup.count>0 then
+        for i:=0 to followup.count-1 do
+          wrs('DISKUSSION-IN: '+followup[i]);
       if oem<>'' then wrs('OEM: '+oem);
       wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
       if oab<>'' then wrs('OAB: '+oab+iifs(oar='','',' ('+oar+')'));
@@ -133,8 +134,9 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
 {      p1:=cpos(' ',PmReplyTo);
       if p1>0 then }  { evtl. ueberfluessige Leerzeichen entfernen }
 {        PmReplyTo:=LeftStr(PmReplyTo,p1-1)+' '+trim(mid(PmReplyTo,p1+1));}
-      for i:=0 to replyto.count-1 do
-        wrs('ANTWORT-AN: '+replyto[i]);
+      if replyto.count>0 then
+        for i:=0 to replyto.count-1 do
+          wrs('ANTWORT-AN: '+replyto[i]);
 {      if (PmReplyTo<>'') and (LeftStr(PmReplyTo,length(absender))<>absender)
                        then wrs('Antwort-an: '+PmReplyTo);}
       if typ='B'       then wrs('TYP: BIN');
@@ -452,6 +454,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/11/23 22:33:22  fe
+  Fixed some ugly bugs with followup and replyto.
+
   Revision 1.26  2000/11/19 22:26:44  mk
   - fixed crash in followup[0] with empty stringlist
 

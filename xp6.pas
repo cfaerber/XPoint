@@ -1624,8 +1624,9 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
 
     if netztyp=nt_Magic then
       hdp^.hd_point:=pointname;
-    hdp^.replyto.add(sData^.PmReplyTo);
-    if not pm then
+    if sData^.PmReplyTo<>'' then
+      hdp^.replyto.add(sData^.PmReplyTo);
+    if (not pm) and (sData^.AmReplyTo<>'') then
       hdp^.followup.add(sData^.AmReplyTo);
     hdp^.Keywords:=sData^.keywords;
     hdp^.Summary:=sData^.summary;
@@ -1692,7 +1693,8 @@ ReadJNesc(getres(617),(LeftStr(betreff,5)=LeftStr(oldbetr,5)) or   { 'Betreff ge
     if IsEbest then with hdp^ do begin
       attrib := attrib and (not attrReqEB) + attrIsEB;
       if netztyp=nt_UUCP then begin
-        if followup.count=0 then replyto.add(absender);
+        if (followup.count=0) and (absender<>'') then
+	  replyto.add(absender);
         absender:='MAILER-DAEMON'+mid(absender,cpos('@',absender));
         if (realname<>'') and (length(realname)<=31) then begin
           realname:=realname+'''';
@@ -2133,6 +2135,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.77  2000/11/23 22:33:22  fe
+  Fixed some ugly bugs with followup and replyto.
+
   Revision 1.76  2000/11/19 11:13:42  mk
   - fixed Bug #112083: Vertreteradressen blieben bei Boxwechsel erhalten
 

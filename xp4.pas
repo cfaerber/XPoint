@@ -786,18 +786,20 @@ var t,lastt: taste;
     procedure AddMultipleFollowups;
     var hdp : headerp;
         hds : longint;
-        i   : integer;
+        i : integer;
     begin
       hdp := AllocHeaderMem;
-      for i:=2 to rtanz do with hdp^ do begin
+{      for i:=2 to rtanz do with hdp^ do begin
         ReadHeadDisk:=i;
-        ReadHeader(hdp^,hds,false);
+        ReadHeader(hdp^,hds,false);}
 	{ suboptimal }
-        if followup.count>0 then begin
-          dbSeek(bbase,biBrett,'A'+UpperCase(followup[0]));
-          EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[0]);
+      with hdp^ do
+	if followup.count>0 then
+	  for i:=0 to followup.count-1 do begin
+            dbSeek(bbase,biBrett,'A'+UpperCase(followup[i]));
+            EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
           end;
-        end;
+{      end;}
       SendEmpfList.Assign(EmpfList); EmpfList.Clear;
     end;
 
@@ -2132,6 +2134,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.65  2000/11/23 22:33:22  fe
+  Fixed some ugly bugs with followup and replyto.
+
   Revision 1.64  2000/11/18 21:42:17  mk
   - implemented new Viewer handling class TMessageViewer
 

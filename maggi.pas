@@ -1581,10 +1581,12 @@ begin
           wrs('MID: '+msgid);
           if organisation<>'' then wrs('ORG: '+organisation);
           if ref<>'' then wrs('BEZ: '+ref);
-          for i:=0 to replyto.count-1 do
-            wrs('ANTWORT-AN: '+replyto[i]);
-          for i:=0 to followup.count-1 do
-            wrs('DISKUSSION-IN: '+followup[i]);
+          if replyto.count>0 then
+	    for i:=0 to replyto.count-1 do
+              wrs('ANTWORT-AN: '+replyto[i]);
+          if followup.count>0 then
+	    for i:=0 to followup.count-1 do
+              wrs('DISKUSSION-IN: '+followup[i]);
           if programm<>''  then wrs('Mailer: '+programm);
           if gate<>''      then wrs('Gate: '+gate);
           if distribution<>'' then wrs('U-Distribution: '+distribution);
@@ -1646,6 +1648,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.30  2000/11/23 22:33:22  fe
+  Fixed some ugly bugs with followup and replyto.
+
   Revision 1.29  2000/11/18 00:04:44  fe
   Made compileable again.  (Often a suboptimal way...)
 

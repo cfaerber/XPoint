@@ -646,8 +646,9 @@ begin
 {   if (PmReplyTo <> '') and (PmReplyTo <> absender) then
       wrs('ANTWORT-AN: ' + PmReplyTo); }
 
-    for i:=0 to replyto.count-1 do
-      wrs('ANTWORT-AN: '+replyto[i]);
+    if replyto.count>0 then
+      for i:=0 to replyto.count-1 do
+        wrs('ANTWORT-AN: '+replyto[i]);
     if pm_reply then begin
       wrs('STAT: PM-REPLY');  { nur temporaer zwecks Kompatibilitaet }
       if mailcopies.count>0 then
@@ -658,7 +659,8 @@ begin
             for i:=0 to replyto.count-1 do
               wrs('DISKUSSION-IN: '+replyto[i])
           else
-            wrs('DISKUSSION-IN: '+absender)
+	    if absender<>'' then
+              wrs('DISKUSSION-IN: '+absender)
         end else
           for i:=0 to mailcopies.count-1 do
             wrs('DISKUSSION-IN: '+mailcopies[i])
@@ -666,16 +668,19 @@ begin
         for i:=0 to replyto.count-1 do
           wrs('DISKUSSION-IN: '+replyto[i])
       else
-        wrs('DISKUSSION-IN: '+absender)
+        if absender<>'' then
+          wrs('DISKUSSION-IN: '+absender)
     end else begin
-      for i:=0 to followup.count-1 do
-        wrs('DISKUSSION-IN: '+followup[i]);
+      if followup.count>0 then
+        for i:=0 to followup.count-1 do
+          wrs('DISKUSSION-IN: '+followup[i]);
       if (mailcopies.count=1) and ((lowercase(mailcopies[0])='nobody')
         or (lowercase(mailcopies[0])='never')) then
         wrs('U-Mail-Copies-To: '+mailcopies[0])
       else begin
-        for i:=0 to mailcopies.count-1 do
-          wrs('DISKUSSION-IN: '+mailcopies[i]);
+        if mailcopies.count>0 then
+          for i:=0 to mailcopies.count-1 do
+            wrs('DISKUSSION-IN: '+mailcopies[i]);
         if (mailcopies.count>0) and (followup.count=0) then
           for i:=0 to xempf.count-1 do
             wrs('DISKUSSION-IN: '+xempf[i])
@@ -3687,6 +3692,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/11/23 22:33:23  fe
+  Fixed some ugly bugs with followup and replyto.
+
   Revision 1.8  2000/11/19 00:48:56  fe
   Made In-Reply-To parsing a bit more liberal.
 
