@@ -636,11 +636,13 @@ var x,y      : byte;
       end;
   end;
 
-  procedure HandleReplaceOwn;
+  { returns true if own message is going to be replaced }
+  function HandleReplaceOwn: boolean;
   var
     MsgPos: Integer;
   begin
     { Nach RÅcklÑufern suchen }
+    result:= false;
     if BoxPar^.ReplaceOwn and Aufnehmen then
     begin
       dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(Hdp.msgid)));
@@ -657,12 +659,14 @@ var x,y      : byte;
             wrkilled; { Ablage auf jeden Fall reorganisieren }
             DelBezug;
             dbDelete(mbase);
+            result:= true;
           end;
         end;
       end;
     end;
   end;
 
+var OwnMessageReplaced: Boolean;
 
 begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
@@ -957,7 +961,7 @@ begin
             _brett:=mbrettd('U',ubase);
             end;
 
-          HandleReplaceOwn;
+          OwnMessageReplaced:= HandleReplaceOwn;
 
           IsGelesen:=ParGelesen or sendbuf or
                      ((netztyp=nt_Maus) and (LeftStr(pm_bstat,1)='G')) or
@@ -1043,6 +1047,9 @@ begin
             else mbflags:=0;
 
             mbflags:=mbflags or iif(boundary<>'',4,0);
+            { this message replaces an old own message; mark it as an own }
+            { message again. Necessary for cancels. }
+            if OwnMessageReplaced then mbflags:= mbflags or 256;
             dbWriteN(mbase,mb_flags,mbflags);
             wrll(dbRecno(mbase));     { fÅr Bezugsverkettung merken }
             l:=ixdat(datum) and $fffffff0;
@@ -1221,6 +1228,11 @@ end;
 
 {
   $Log$
+  Revision 1.53  2001/06/04 22:01:41  ma
+  - messages replaced by ReplaceOwn feature are flagged as own again.
+    This flag is used for deciding whether cancelling is valid
+    even if "from" field has been changed by Role feature.
+
   Revision 1.52  2001/06/04 16:32:23  mk
   - fixed possible crash (empfaenger[2])
 

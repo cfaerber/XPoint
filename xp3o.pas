@@ -1102,6 +1102,7 @@ var
     d      : DB;
     fn     : string;
     t      : text;
+    flags  : longint;
 begin
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(439);     { 'Unversandte Nachricht mit "Nachricht/Unversandt/Loeschen" loeschen!' }
@@ -1151,8 +1152,9 @@ begin
   ReadEmpfList:=true;
   ReadHeadEmpf:=1;
   ReadHeader(hdp,hds,true);
-  if ((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
-      not stricmp(adr,hdp.wab)) or (hds<=1) then begin
+  dbReadN(mbase,mb_flags,flags);
+  if (((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
+      not stricmp(adr,hdp.wab)) or (hds<=1)) and (flags and 256 = 0) then begin
     if hds>1 then
       rfehler(312);     { 'Diese Nachricht stammt nicht von Ihnen!' }
     Hdp.Free;
@@ -1513,6 +1515,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.56  2001/06/04 22:01:41  ma
+  - messages replaced by ReplaceOwn feature are flagged as own again.
+    This flag is used for deciding whether cancelling is valid
+    even if "from" field has been changed by Role feature.
+
   Revision 1.55  2001/06/04 17:36:49  ma
   - renamed old xp9 source files
 
