@@ -2217,6 +2217,7 @@ xexit2:
   ControlMsg:=false;
   NewbrettGr:=0;
   oldmsgpos:=0; oldmsgsize:=0;
+  sendEmpfList.Clear;
 
 //  Dispose(cc); Dispose(ccm);
   for ii:=0 to parts.count-1 do
@@ -2318,6 +2319,10 @@ finalization
 
 {
   $Log$
+  Revision 1.23  2001/10/12 18:55:27  cl
+  - BUGFIX: new messages were also sent to copy recipients of preceding
+    message (#470141)
+
   Revision 1.22  2001/10/07 17:12:30  cl
   - added charset recoding for external editors
     and corresponding config option
