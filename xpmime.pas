@@ -655,8 +655,8 @@ begin
 
   with mpdata do
   begin
-    // if Charset is unkown, assume ISO 8859-1 is used
-    if Charset = csUnknown then CHarset := csISO8859_1;
+    // if Charset is unkown, assume Windows-1252 is used
+    if Charset = csUnknown then CHarset := csCP1252;
     for i:=1 to startline-1 do
       readln(input);
 
@@ -674,7 +674,8 @@ begin
         else
           softbreak:=false;
 
-        if code in [MimeEncodingBinary, MimeEncoding7Bit, MimeEncoding8Bit] then
+//        if code in [MimeEncodingBinary, MimeEncoding7Bit, MimeEncoding8Bit] then
+        if MimeContentTypeNeedCharset(typ+'/'+subtyp) then
         begin
           // convert s to Unicode (UTF-8)
           if Charset <> csUTF8 then
@@ -791,6 +792,9 @@ finalization
 
 {
   $Log$
+  Revision 1.56  2001/12/26 09:27:52  cl
+  - BUGFIX: charset decoded for MIME multipart messages
+
   Revision 1.55  2001/12/09 21:28:06  mk
   - fixed index problem with PartsList (now beginning at 0 instead of 1)
 
