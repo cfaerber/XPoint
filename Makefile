@@ -99,13 +99,12 @@ SEP = $(subst ,,\)
 RM ?= rm
 RMDIR ?= rmdir
 INSTALLDIR ?= mkdir
-INSTALLBIN ?= xcopy
-INSTALLDAT ?= xcopy
+INSTALL_PROGRAM ?= xcopy
+INSTALL_DATA ?= xcopy
 RC = rc
 RAR ?= rar
 
-CONTRIBBIN = compress.exe freeze.exe gzip.exe tar.exe uucico.exe \
-	zconfig.exe zm.exe
+CONTRIBBIN = compress.exe freeze.exe gzip.exe tar.exe uucico.exe
 CONTRIBDATA = fido.pc xpicons.dll xpuu-d.res
 
 endif
@@ -114,6 +113,7 @@ ifeq ($(OS),linux)
 
 prefix ?= /usr/local/xp
 bindir = $(prefix)
+linkdir ?= /usr/bin
 datadir = $(prefix)
 exampledir = $(prefix)/beispiel
 
@@ -122,8 +122,8 @@ SEP = /
 RM ?= rm
 RMDIR ?= rmdir
 INSTALLDIR ?= install -m 755 -d
-INSTALLBIN ?= install -b -V t -s -p -m 755
-INSTALLDAT ?= install -b -V existing -p -m 644
+INSTALL_PROGRAM ?= install -b -V t -s -p -m 755
+INSTALL_DATA ?= install -b -V existing -p -m 644
 LN ?= ln -s
 RC = ./rc
 RAR = rar
@@ -171,17 +171,16 @@ BIN = ndiff uucp-fl1 uuzext xp-fm xpme yup2pkt zfido \
 	zpr xp
 COMPBIN = $(BIN) docform ihs rc
 RES = xp-d xp-e xpfm-d xpfm-e
-
-CONTRIBEXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
+EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
 	oz-netz.scr pcsysop.scr privhead.xps qbrett.xps qpmpriv.xps \
 	qpriv.xps quark.scr quoteto.xps uucp.scr z-netz.scr
-CONTRIB = $(CONTRIBBIN) $(CONTRIBEXAMPLES) $(CONTRIBDATA)
 
 BINFILES = $(patsubst %,%$(EXE_EXT),$(BIN))
 COMPBINFILES = $(patsubst %,%$(EXE_EXT),$(COMPBIN))
 INSTALLBINFILES = $(BINFILES) $(CONTRIBBIN)
 RESFILES = $(patsubst %,%.res,$(RES))
 DATAFILES = $(RESFILES) $(CONTRIBDATA)
+CONTRIB = $(CONTRIBBIN) $(CONTRIBDATA)
 
 PFLAGS += $(PF_$(OS))
 PFLAGS += $(PF_$(CPU))
@@ -252,17 +251,6 @@ xp$(EXE_EXT): xp.pas archive.o clip.o crc.o database.o databaso.o datadef.o \
 	$(PC) $(PFLAGS) $<
 endif
 
-#ifeq ($(OS),linux)
-#xp-fm$(EXE_EXT): xp-fm.pas crc.o debug.o fileio.o inout.o modem.o \
-#	montage.o objcom.o resource.o timer.o typeform.o winxp.o \
-#	xp-fm.inc xpcurses.o xpdefine.inc xpdiff.o xpglobal.o zmodem.o
-#	$(PC) $(PFLAGS) $<
-#else
-#xp-fm$(EXE_EXT): xp-fm.pas crc.o debug.o fileio.o inout.o modem.o \
-#	montage.o objcom.o resource.o timer.o typeform.o winxp.o \
-#	xp-fm.inc xpdefine.inc xpdiff.o xpglobal.o zmodem.o
-#	$(PC) $(PFLAGS) $<
-#endif
 ifeq ($(OS),linux)
 xp-fm$(EXE_EXT): xp-fm.pas crc.o debug.o fileio.o inout.o modem.o \
 	montage.o resource.o timer.o typeform.o winxp.o \
@@ -410,13 +398,8 @@ inout.o: inout.pas keys.o maus2.o mouse.o typeform.o winxp.o xp0.o \
 	$(PC) $(PFLAGS) $<
 endif
 
-ifneq ($(OS),dos32)
 ipaddr.o: ipaddr.pas xpdefine.inc xpglobal.o
 	$(PC) $(PFLAGS) $<
-else
-ipaddr.o:
-#
-endif
 
 ipcclass.o: ipcclass.pas xpdefine.inc xpglobal.o
 	$(PC) $(PFLAGS) $<
@@ -459,8 +442,6 @@ maus2.o: maus2.pas inout.o keys.o mouse.o typeform.o winxp.o \
 	$(PC) $(PFLAGS) $<
 endif
 
-#modem.o: modem.pas debug.o objcom.o timer.o typeform.o xpdefine.inc
-#	$(PC) $(PFLAGS) $<
 modem.o: modem.pas debug.o timer.o typeform.o xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
@@ -1301,12 +1282,10 @@ xpx.o: xpx.pas crc.o dosx.o fileio.o inout.o mouse.o typeform.o xp0.o \
 	$(PC) $(PFLAGS) $<
 endif
 
-#zmodem.o: zmodem.pas crc.o debug.o objcom.o timer.o
-#	$(PC) $(PFLAGS) $<
 zmodem.o: zmodem.pas crc.o debug.o timer.o
 	$(PC) $(PFLAGS) $<
 
-# Resourcen-Dateien
+# Sprachmodule
 
 $(RESFILES): %.res: %.rq
 	$(RC) $<
@@ -1320,7 +1299,8 @@ documentation:
 
 install: install_bindir $(patsubst %,install_%,$(BINFILES)) \
 	install_datadir $(patsubst %,install_%,$(RESFILES)) \
-	install_exampledir $(patsubst %,install_%,$(CONTRIB))
+	install_exampledir $(patsubst %,install_%,$(EXAMPLES)) \
+	$(patsubst %,install_%,$(CONTRIB))
 	$(MAKE) -C doc install
 
 install_bindir:
@@ -1330,30 +1310,30 @@ install_bindir:
 
 ifeq ($(OS),linux)
 $(patsubst %,install_%,$(BINFILES)): install_%: %
-	$(INSTALLBIN) $* $(bindir)
-	$(LN) $(bindir)$(SEP)$* /usr/bin/$*
+	$(INSTALL_PROGRAM) $* $(bindir)
+	$(LN) $(bindir)$(SEP)$* $(linkdir)$(SEP)$*
 else
 $(patsubst %,install_%,$(BINFILES)): install_%: %
-	$(INSTALLBIN) $* $(bindir)
+	$(INSTALL_PROGRAM) $* $(bindir)
 endif
 
 install_datadir:
 	-$(INSTALLDIR) $(datadir)
 
 $(patsubst %,install_%,$(RESFILES)): install_%: %
-	$(INSTALLDAT) $* $(datadir)
+	$(INSTALL_DATA) $* $(datadir)
 
-$(patsubst %,install_%,$(CONTRIBBIN)): install_%:
-	$(INSTALLDAT) $(contribdir)$(SEP)$(OS)$(SEP)$* $(bindir)
-
-$(patsubst %,install_%,$(CONTRIBEXAMPLES)): install_%:
-	$(INSTALLDAT) $(contribdir)$(SEP)beispiel$(SEP)$* $(exampledir)
+$(patsubst %,install_%,$(EXAMPLES)): install_%:
+	$(INSTALL_DATA) $(SEP)beispiel$(SEP)$* $(exampledir)
 
 install_exampledir:
 	-$(INSTALLDIR) $(exampledir)
 
+$(patsubst %,install_%,$(CONTRIBBIN)): install_%:
+	$(INSTALL_DATA) $(contribdir)$(SEP)$(OS)$(SEP)$* $(bindir)
+
 $(patsubst %,install_%,$(CONTRIBDATA)): install_%:
-	$(INSTALLDAT) $(contribdir)$(SEP)data$(SEP)$* $(datadir)
+	$(INSTALL_DATA) $(contribdir)$(SEP)data$(SEP)$* $(datadir)
 
 # Deinstallation
 
@@ -1412,6 +1392,10 @@ dist:
 
 #
 # $Log$
+# Revision 1.6  2000/09/27 21:21:08  fe
+# Login-Scripts und Beispielschablonen sind jetzt im Repository.
+# zm.exe und zconfig.exe werden nicht mehr installiert.
+#
 # Revision 1.5  2000/09/27 12:20:37  fe
 # kleinere Fehlerkorrekturen
 #
