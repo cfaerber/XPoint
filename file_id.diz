@@ -1,4 +1,8 @@
-CrossPoint Version 3.70
-Sourcen des OpenXP-Projektes
-fÅr alle Entwickler
-OpenXP-Team, http://www.openxp.de
+OpenXP/32 v3.7.4 BETA - Source Code -
+Multiplatform and multiprotocol mail/news
+software featuring POP3/SMTP, NNTP, UUCP,
+Fido and ZConnect protocols and running in
+text mode. Compilable for DOS32, Win32 and
+Linux with Free Pascal compiler or Borland
+Delphi. Documentation and interface available
+in German and English. Released under GPL.
