@@ -24,13 +24,7 @@ unit archive;
 interface
 
 uses
-  xpglobal,
-{$IFNDEF Linux }
-  crt,
-{$ENDIF }
-  dos,
-  typeform,
-  montage;
+  xpglobal, dos, typeform, montage;
 
 const  ArcTypes   = 12;
        ArcUnknown = 0;
@@ -1030,6 +1024,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/05/02 17:48:07  mk
+  - Unit crt komplett rausgenommen, da unnoetig
+
   Revision 1.9  2000/05/02 17:17:21  hd
   uses crt fuer Linux entfernt, da unnoetig.
 
