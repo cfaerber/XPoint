@@ -107,6 +107,9 @@ procedure dbWriteUserflag(dbp:DB; nr:byte; value:word);
 function  dbReadNStr(dbp:DB; feldnr: integer): string;
 function  dbReadXStr(dbp: DB; feld: dbFeldStr; var size: smallword): string;
 
+procedure dbWriteNStr(dbp:DB; feldnr:integer; s: string);
+procedure dbWriteStr(dbp:DB; feld:dbFeldStr; s: string);
+
 {--------------------------------------------- interne Routinen --------}
 
 procedure OpenIndex(dbp:DB);   { intern }
@@ -1233,6 +1236,15 @@ begin
     end;
 end;
 
+procedure dbWriteNStr(dbp:DB; feldnr:integer; s: string);
+var
+  s0: shortstring;
+begin
+  if length(s)>255 then s0:= copy(s,1,255)
+  else s0:= s;
+  dbWriteN(dbp,feldnr,s0);
+end;
+
 { 'data' in Feld mit Name 'feld' schreiben }
 
 procedure dbWrite(dbp:DB; feld:dbFeldStr; var data);
@@ -1242,6 +1254,13 @@ begin
   dbWriteN(dbp,nr,data);
 end;
 
+procedure dbWriteStr(dbp:DB; feld:dbFeldStr; s: string);
+var
+  nr: integer;
+begin
+  nr:= GetFeldNr2(dbp,feld);
+  dbWriteNStr(dbp,nr,s);
+end;
 
 { Gr”sse eines externen Feldes abfragen }
 
@@ -1550,6 +1569,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.32  2000/07/11 12:08:53  hd
+  - neu: dbWriteStr, dbWriteNStr fuer Schreiben von Strings
+
   Revision 1.31  2000/07/09 16:26:19  hd
   - neu: dbReadXStr
 
