@@ -1,1 +1,1 @@
-dcc32 -uobjcom;netcall;delphi openxp
+dcc32 -uobjcom;netcall;delphi;xplib -B openxp
