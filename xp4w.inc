@@ -1362,6 +1362,8 @@ var dat    : longint;
           end;
         end;
       end;
+    if not brettall and wrongline  { BrettModus "A" und Brett passt nicht mehr }
+      then nobrettweiter:=true;    { dann Cursor nicht weiterschalten }
     if not (nobrettweiter or kb_ctrl or kb_Shift) and weiter and Forth then begin
       p2:=p;
       if not dispext and (readmode>0) and not alle and brettweiter then
@@ -1566,6 +1568,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.65  2001/01/10 11:16:46  mk
+  JG:- fix for mail/news mode A (MK)
+
   Revision 1.64  2000/12/29 10:49:27  mk
   MO:- fix for last commit
 
