@@ -466,7 +466,7 @@ begin
      36 : case m1 of           { Export }
             1 : ExportUB(true);
             2 : ExportUB(false);
-            3 : MsgAll(7,aktdispmode,rdmode);
+            3 : MsgAll(8,aktdispmode,rdmode); // Export/Brettinhalt
             4 : ScreenShot;
           end;
 
@@ -807,6 +807,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.39.2.3  2003/03/28 23:34:46  mk
+  - fixed Bug #683675: x/e/t löscht Brettinhalt
+
   Revision 1.39.2.2  2002/07/29 19:53:15  mk
   - fixed AnsiString[1] to FirstChar(AnsiString)
 
