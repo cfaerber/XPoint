@@ -861,6 +861,7 @@ aus einer Befehlsbersicht.
        [Markierungen]@59
        [L”schen]@60
        [Sonstiges]@61
+       [Men]@62
 
 
 Die wichtigsten Editor-Funktionen:
@@ -868,7 +869,7 @@ Die wichtigsten Editor-Funktionen:
     <F2>        Text speichern
     <Esc>       Editor verlassen
     <Shift F2>  Text speichern und Editor verlassen
-    <F10>       Men
+    <F10>       [Men]@62
 
 @
 55
@@ -883,7 +884,7 @@ links nach rechts werden angezeigt:
   - Dateiname
 @
 56
-<F1>        : Online-Hilfe
+<F1>        : [Online-Hilfe]@54
 <F2>        : Text speichern
 <F3>        : Absatzumbruch ausschalten
 <F4>        : Absatzumbruch einschalten
@@ -892,7 +893,7 @@ links nach rechts werden angezeigt:
 <F7>        : Blockanfang setzen
 <F8>        : Blockende setzen
 <F9>        : DOS-Shell
-<F10>       : Men
+<F10>       : [Men]@62
 
 <Shift F2>  : Text speichern und Editor verlassen
 <Shift F3>  : Absatzumbruch im ganzen Text abschalten
@@ -1003,6 +1004,51 @@ lange der Hauptspeicher ausreicht, und k”nnen mit
              kein Block markiert, wird beginnend vom
              Absatz, auf dem der Cursor steht, bis
              zur n„chsten Leerzeile neu formatiert.
+
+@
+62
+Das Men erreichen Sie ber die Taste <F10> oder
+durch halten der rechten Maustaste.
+
+            ÚÄ Block ÄÄÄÄÄÄÄÄÄÄ¿
+            ³ Kopieren       <<*>> ³
+            ³ Ausschneiden   <<->> ³
+            ³ Einfgen       <<+>> ³
+            ³ Laden        <<^KR>> ³
+            ³ Laden UUE    <<^KU>> ³
+            ³ Speichern    <<^KW>> ³
+            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+            ³ Umbruch aus   <<F3>> ³
+            ³ Umbruch ein   <<F4>> ³
+            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+            ³ [Optionen]     <<^OR>> ³@63
+            ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+@
+63
+<<rechter Rand>>
+  Spalte, in der der Text automatisch umgebrochen
+  wird.
+
+<<Absatzendezeichen>>
+  Zeichen, mit dem das Absatzende markiert wird.
+
+<<[x] autom. einrcken>>
+  Auch als Auto-Indent bekannt. Beim Drcken von
+  <Return> wird die nachfolgende Zeile automatisch
+  um die gleiche Anzahl von Leerzeichen eingerckt,
+  wie die vorhergehende.
+
+<<[x] persistente Bl”cke>>
+  Markierte Bl”cke werden durch Tastendruck nicht
+  entmarkiert oder berschrieben. Sinnvoll, wenn
+  man die Wordstartasten fr Blockoperationen ver-
+  wenden m”chte.
+
+<<[x] Quote-Reflow>>
+  Beim Umbrechen oder Zusammenfgen von gequoteten
+  Zeilen werden die Quotezeichen mit bercksichtigt.
+  Siehe auch ['Block reformatieren'] (<Ctrl B>).@61
 
 @
 65

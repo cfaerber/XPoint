@@ -725,13 +725,14 @@ overview.
        [Marking Text]@59
        [Deleting]@60
        [Other]@61
+       [Menu]@62
 
 The important Editor Functions:
 
     <F2>        Save Text
     <Esc>       Exit Editor
     <Shift F2>  Save Text and Exit Editor
-    <F10>       Menu
+    <F10>       [Menu]@62
 @
 55
 
@@ -745,7 +746,7 @@ From left to right:
   - File Name
 @
 56
-<F1>        : On-line-Help
+<F1>        : [On-line-Help]@54
 <F2>        : Save Text
 <F3>        : disable line wrap (current para)
 <F4>        : enable line wrap  (current para)
@@ -754,7 +755,7 @@ From left to right:
 <F7>        : Set Block start
 <F8>        : Set Block end
 <F9>        : DOS-Shell
-<F10>       : Menu
+<F10>       : [Menu]@62
 
 <Shift F2>  : Save Text and Exit Editor
 <Shift F3>  : Disable Line Wrap for whole text
@@ -856,6 +857,50 @@ They can be <<recalled with Ctrl-U>>
         marked, the text from the paragraph where
         the cursor is to the next empty line is
         reformatted.
+
+@
+62
+Press <F10> or hold down the right mouse key to get
+the menu.
+
+            ÚÄ Block ÄÄÄÄÄÄÄÄÄÄ¿
+            ³ Copy           <<*>> ³
+            ³ Cut            <<->> ³
+            ³ Insert         <<+>> ³
+            ³ Read         <<^KR>> ³
+            ³ Read UUE     <<^KU>> ³
+            ³ Write        <<^KW>> ³
+            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+            ³ Wrap off      <<F3>> ³
+            ³ Wrap on       <<F4>> ³
+            ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+            ³ [Options]      <<^OR>> ³@63
+            ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+@
+63
+<<Right margin>>
+  Column where the text is automatically wrapped
+  into the next line.
+
+<<Paragraph end marker>>
+  Character which marks the end of a paragraph.
+
+<<[x] Auto indent>>
+  When <Return> is pressed, the begin of the next
+  line is automatically filled with the same amount 
+  of spaces as the former line.
+
+<<[x] Persistent blocks>>
+  Marked blocks will not be unmarked or overwritten
+  when a key is pressed. This is useful when the
+  Wordstar keys are used for block operations.
+
+<<[x] Quote-Reflow>>
+  Quote characters are taken into consideration
+  when a linefeed is put into a quoted line or
+  two quoted lines are connected to one.
+  See also ['reformat block'] (<Ctrl B>).@61
 
 @
 65
