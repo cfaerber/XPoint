@@ -21,6 +21,7 @@
 
 {$I xpdefine.inc }
 
+
 unit xp1;
 
 interface
@@ -366,6 +367,7 @@ end ['EAX', 'EBX', 'ECX', 'EDI'];
 {$ELSE }
 end;
 {$ENDIF }
+
 
 { Hervorhebungsregeln fuer * und _ im Lister: }
 { 1 = vor  Startzeichen erlaubt }
@@ -768,7 +770,8 @@ asm
 @taende:    pop eax
             mov ecx,edx
             popa
-            ret // do not remove (problems with fpc)!
+            ret
+            // this is end of internal function testattr
 {-------------------------}
 @ende:
 {$IFDEF FPC }
@@ -2096,6 +2099,9 @@ end;
 
 {
   $Log$
+  Revision 1.156  2002/06/15 14:28:40  mk
+  - O- with delphi, avoid crashes with various functions
+
   Revision 1.155  2002/05/07 09:14:04  mk
   - last checkin fixed for fpc
 
