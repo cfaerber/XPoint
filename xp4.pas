@@ -835,7 +835,7 @@ var t,lastt: taste;
       if pm then begin
         { 04.02.2000 robo }
 (*        if dbReadInt(mbase,'netztyp') and $800=0 then begin  { kein WAB/OEM } *)
-        if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM } 
+        if (dbReadInt(mbase,'netztyp') and $800=0)   { kein WAB/OEM }
         and not askreplyto
         then begin
         { /robo }
@@ -1027,28 +1027,31 @@ var t,lastt: taste;
       end;
     sdata^.empfrealname:=realname;
 
-    dbReadN(mbase,mb_mimetyp,mimetyp);
-
-    { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
-      Multipart-Daten vorhanden, wir faken uns also welche, damit
-      die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
-    if (qmpdata = nil) and (Quote < 2) and (mimetyp <> 'text/plain') then
+    if reply then
     begin
-      pushhp(94);
-      fillchar(mpdata,sizeof(qmpdata),0);
-      mpdata.fname := fn;
-      SelectMultiPart(true,1,false,mpdata,brk);
+      dbReadN(mbase,mb_mimetyp,mimetyp);
 
-      { is MIME-Typ not text/plain and quote then ask
-       if quoting binary mails is desired }
-      if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
-        and (mpdata.typ <> '') and (quote=1) and
-        not ReadJN(getres(406),true)   { 'Das ist eine Bin„rnachricht! M”chten Sie die wirklich quoten' }
-        then goto ende;
+      { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
+        Multipart-Daten vorhanden, wir faken uns also welche, damit
+        die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
+      if (qmpdata = nil) and (Quote < 2) and (mimetyp <> 'text/plain') then
+      begin
+        pushhp(94);
+        fillchar(mpdata,sizeof(qmpdata),0);
+        mpdata.fname := fn;
+        SelectMultiPart(true,1,false,mpdata,brk);
 
-      qmpdata := @mpdata;
-      pophp;
-      if brk then goto ende;
+        { is MIME-Typ not text/plain and quote then ask
+         if quoting binary mails is desired }
+        if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
+          and (mpdata.typ <> '') and (quote=1) and
+          not ReadJN(getres(406),true)   { 'Das ist eine Bin„rnachricht! M”chten Sie die wirklich quoten' }
+          then goto ende;
+
+        qmpdata := @mpdata;
+        pophp;
+        if brk then goto ende;
+      end;
     end;
 
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
@@ -1663,7 +1666,7 @@ begin      { --- select --- }
                      if isverteiler then edverteiler
                      else usermsg_window;
                    if (c=k1_R) and keinverteiler then change_adressbuch;
-                   if (c=k1_P) and keinverteiler then edit_password(false);  
+                   if (c=k1_P) and keinverteiler then edit_password(false);
                    if c=' ' then _mark_;                         { 'P' }
                    if c=k1_cE then _unmark_;                    { ^E }
                    if (t=keyaltu) and keinverteiler then usersuche(true);
