@@ -25,7 +25,7 @@ unit ncfido;
 
 interface
 
-uses ncmodem,timer;
+uses ncmodem,timer,fidoglob,xpglobal;
 
 type
   hellor = record
@@ -53,7 +53,7 @@ type
   TFidomailer = class(TModemNetcall)
   protected
     hello: record h: hellor; crc: word end;
-    aresult: integer;
+    aresult: integer; fa: FidoAdr;
 
     procedure InitHelloPacket;
     function ProductName(pc:word):string;
@@ -65,6 +65,8 @@ type
     function EMSIHandshake:byte;    { 0=Abbruch, 1=Again, 2=ok->WaZOO }
     procedure fmS;          { FTS-001 / FTS-007 }
     procedure WaZOOsession;
+    procedure log(LogChar: Char; const s: String);
+    procedure logcarrier;
 
   public
     FilesToSend: String;
@@ -96,7 +98,8 @@ type
 
 implementation
 
-uses zmodem,ipcclass,resource,sysutils,typeform,debug,montage,crc;
+uses
+  zmodem,ipcclass,resource,sysutils,typeform,debug,montage,crc,xpdiff;
 
 const {Y_DietIfna = $0001;}   { Capability Flags }
       Zed_Zipper = $0004;
@@ -107,6 +110,7 @@ const {Y_DietIfna = $0001;}   { Capability Flags }
       MyCap      = Zed_Zipper + Zed_Zapper;
 
       qTimers     = 5;
+      ErrChar     = '*';
 
 var   ZedZap,LogSending  : boolean;
       ZModemTimer: tTimer; {Wird zum Ausrechnen der ZModem-Restzeit genutzt}
@@ -274,6 +278,16 @@ end;
 
 {-------------- TFidomailer methods -------------------------}
 
+procedure TFidomailer.log(LogChar: Char; const s: String);
+begin
+  DebugLog('ncfido',LogChar+' '+s,DLInform);
+end;
+
+procedure TFidomailer.logcarrier;
+begin
+  log('*','carrier lost');
+end;
+
 procedure TFidomailer.InitHelloPacket;
 begin
   fillchar(hello,sizeof(hello),0);
@@ -300,23 +314,22 @@ var t : text;
     s : string;
     p : byte;
 begin
+  if not FileExists(ProdCodeF)then exit;
   assign(t,ProdCodeF);   { FIDO.PC }
-  if existf(t) then begin
-    reset(t);
-    s:=''; p:=1;
-    while not eof(t) and (hexval(LeftStr(s,p-1))<>pc) do begin
-      readln(t,s); p:=max(1,pos(',',s));
-    end;
-    if hexval(LeftStr(s,p-1))=pc then begin
-      delete(s,1,p);
-      p:=cpos(',',s);
-      if p>0 then
-        ProductName:=LeftStr(s,p-1)
-      else
-        Productname:='unknown';
-    end;
-    close(t);
+  reset(t);
+  s:=''; p:=1;
+  while not eof(t) and (hexval(LeftStr(s,p-1))<>pc) do begin
+    readln(t,s); p:=max(1,pos(',',s));
   end;
+  if hexval(LeftStr(s,p-1))=pc then begin
+    delete(s,1,p);
+    p:=cpos(',',s);
+    if p>0 then
+      ProductName:=LeftStr(s,p-1)
+    else
+      Productname:='unknown';
+  end;
+  close(t);
 end;
 
 const ACK        = #$06;     { s. FTS-006, S. 10 }
@@ -353,7 +366,7 @@ var NAKcount : byte;
 
     function TE: Boolean;
     begin
-      if debugmode then log('d',ems_req);
+      DebugLog('ncfido','TE '+ems_req,DLDebug);
       while (ems_req<>'') and (ems_req[1]<>'*') do
         delete(ems_req,1,1);
       if length(ems_req)<7 then
@@ -395,7 +408,7 @@ begin
               if not FCommObj^.Carrier then
                 LogCarrier
               else
-                log(ErrChar,'login timeout');
+                DebugLog('ncfido','login timeout',DLError);
               state:=99;
               aresult:=EL_nologin;
             end;
@@ -420,7 +433,7 @@ begin
               if not FCommObj^.Carrier then
                 LogCarrier
               else
-                log(ErrChar,'login timeout');
+                DebugLog('ncfido','login timeout',DLError);
               aresult:=EL_nologin;
               state:=99;
             end else begin
@@ -490,7 +503,7 @@ begin
   repeat
     inc(RetryCount);
     FCommObj^.SendChar(#$1f);                 { $1f senden }
-    for i:=0 to sizeof(hellor)-1 do FCommObj^.SendChar(HelloPkt[i]); { Hello senden }
+    for i:=0 to sizeof(hellor)-1 do FCommObj^.SendChar(pCharArray(@hello)^[i]); { Hello senden }
     FCommObj^.PurgeInBuffer;
     crc:=CRC16Block(hello,sizeof(hellor));
     FCommObj^.SendChar(char(hi(crc)));        { CRC senden }
@@ -502,7 +515,7 @@ begin
     until Timers[ti_Hello].Timeout or (c=ACK) or (c='?') or (c=ENQ);
     if c='?' then begin
       FidomailerObj.WriteIPC(mcError,getres2(30004,20)+' #%i',[retrycount]);   { 'Hello-Sendefehler' }
-      log(ErrChar,'yoohoo hello send error');
+      DebugLog('ncfido','yoohoo hello send error',DLError);
     end;
     SleepTime(200);
   until Timers[ti_Hello].Timeout or (c=ACK) or (RetryCount=10);
@@ -572,7 +585,7 @@ begin
               state:=99;
             if FCommObj^.CharAvail then begin
               b:=Ord(FCommObj^.GetChar);
-              hellopkt[offset]:=chr(b);
+              pCharArray(@hello)^[offset]:=chr(b);
               inc(offset);
               state:=7;
             end else
@@ -595,7 +608,7 @@ begin
             inc(errors);
             if errors<10 then begin
               FCommObj^.SendChar('?');
-              FidomailerObj.WriteIPC(mcError,getres2(30004,21)+' #%i',errors);   { 'Hello-Empfangsfehler' }
+              FidomailerObj.WriteIPC(mcError,getres2(30004,21)+' #%i',[errors]);   { 'Hello-Empfangsfehler' }
               state:=2;
             end else
               state:=99;
@@ -645,7 +658,7 @@ begin
       1 : case fmSH of            { Send Hello }
             0 : begin
                   fmYS:=0; state:=99;
-                  log(ErrChar,'Error sending hello packet');
+                  DebugLog('ncfido','Error sending hello packet',DLError);
                 end;
             1 : state:=99;
             2 : begin
@@ -658,7 +671,7 @@ begin
               if not FCommObj^.Carrier then
                 LogCarrier
               else
-                log(ErrChar,'yoohoo hello timeout');
+                DebugLog('ncfido','yoohoo hello timeout',DLError);
               fmYS:=0;
               state:=99;
             end;
@@ -673,7 +686,7 @@ begin
               fmYS:=2;
               LogHelloData;
             end else begin
-              log(ErrChar,'Error receiving hello packet');
+              DebugLog('ncfido','Error receiving hello packet',DLError);
               if not FCommObj^.Carrier then
                 fmYS:=0;
             end;
@@ -738,6 +751,8 @@ var OtherData: String;
     end;
     Convert2SevenBit:=s;
   end;
+
+const baud= 38400;
 
 var EMSIString,ED,EMSIData,EMSIData2,adr,hex4  : string;
     count     : byte;
@@ -829,9 +844,9 @@ begin
     ED:=ExtractEMSIData(EMSIString);   { password }
     if trim(ED)<>'' then
       if (UpperCase(ED)=UpperCase(password)) then
-        log(' ','Password ok')
+        DebugLog('ncfido','Password ok',DLInform)
       else
-        log('#','Password error ('+ED+')');
+        DebugLog('ncfido','Password error ('+ED+')',DLError);
     ExtractEMSIData(EMSIString);   { link codes }
     ED:=ExtractEMSIData(EMSIString);   { compatibility codes }
     log('~','Compatibility: '+ED);
@@ -854,7 +869,6 @@ begin
       inc(trx,l-sec70);        { Zeit des EMSI-Handshakes dazurechnen }
       sec70:=l;
       if settime then begin
-        timediff:=trx-sec70;
         log('+','correcting time by '+iifs(trx>=sec70,'+','')+
             strs(trx-sec70)+' seconds');
         FidomailerObj.WriteIPC(mcInfo,getres2(30004,25),[0]);    { 'korrigiere Uhrzeit' }
@@ -879,7 +893,6 @@ var FileToSend : String;
 
 begin
   log('+','starting mail transfer');
-  mailing:=true;
   if hello.h.capabilities and MyCap=0 then begin
     FidomailerObj.WriteIPC(mcInfo,getres2(30004,27),[0]);    { 'keine Uebertragung m"glich :-(' }
     log(ErrChar,'no common transfer protocol');
@@ -915,7 +928,7 @@ begin
     FidomailerObj.WriteIPC(mcInfo,getres2(30004,14),[0]);            { 'Uebertragung abgebrochen' }
     DebugLog('XPFM','ZModemSend error: "'+ZModem.TransferMessage+'"',DLError);
     if not FCommObj^.Carrier then begin
-      FidomailerObj.WriteIPC(mcError,nocarrier,[0]);            { 'CARRIER futsch :-( ' }
+      FidomailerObj.WriteIPC(mcError,'carrier lost',[0]);            { 'CARRIER futsch :-( ' }
       log(ErrChar,'carrier lost');
     end else
       log(ErrChar,'transfer aborted');
@@ -944,6 +957,7 @@ function TFidomailer.PerformNetcall: Integer;
 var iTimer: Integer; Ende: Boolean;
 begin
   InitHelloPacket;
+  SplitFido(OwnAddr,FA,2);
   for iTimer:=0 to qTimers-1 do Timers[iTimer].Init;
   repeat
     FidomailerObj.WriteIPC(mcInfo,'*%i',[System.Round(TimerObj.ElapsedSec)]);
@@ -971,6 +985,9 @@ end.
 
 {
   $Log$
+  Revision 1.4  2001/01/28 21:43:47  ma
+  - compiles!
+
   Revision 1.3  2001/01/28 00:15:51  ma
   - created TFidomailer class, not compiling yet
 
