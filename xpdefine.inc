@@ -10,7 +10,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{.$DEFINE Debug }
+{$DEFINE Debug }
 
 { Wenn gesetzt, werden in die TPU/TPP Debug Informationen gespeichert
   und es kann eine ausfÅhrliche Map-Datei erstellt werden. éndert den
@@ -136,7 +136,7 @@
 {$IFDEF Linux }
   {$DEFINE UnixFS }      { Unix-FS wird verwendet }
   {$DEFINE NCRT }        { XPCURSES statt CRT verwenden }
-  {$UNDEF CAPI }	 { Nichts dergleichen }
+  {$UNDEF CAPI }         { Nichts dergleichen }
 {$ENDIF }
 
 {$IFDEF FreeBSD }
@@ -164,7 +164,7 @@
 
   NCRT
 
-  Baut auf der Curses-Lib auf. Dient als Interface zur Konsole bei z.B. 
+  Baut auf der Curses-Lib auf. Dient als Interface zur Konsole bei z.B.
   Linux. Ob es mit Curses-Versionen unter Windows oder OS/2 laeuft, bliebe
   zu testen. Die Units sind bei FreePascal unter Packages.
 
@@ -173,6 +173,9 @@
 
 {
   $Log$
+  Revision 1.29  2000/05/14 09:19:22  mk
+  - Debuginfos eingeschaltet und Beta 25 eingetragen
+
   Revision 1.28  2000/05/11 18:21:53  jg
   - Compiledatum im Mailer-String von Snapshotversionen ($IFDEF Snapshot)
 

@@ -13,7 +13,7 @@ interface
 {$I XPDEFINE.INC }
 
 const
-  verstr      = 'v3.21.024';  { Versionnr. - steht nur an dieser Stelle }
+  verstr      = 'v3.21.025';  { Versionnr. - steht nur an dieser Stelle }
   betastr     = ' beta';      { '' oder ' beta' }
 
 {$IFDEF VER32 }
@@ -148,6 +148,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.27  2000/05/14 09:19:22  mk
+  - Debuginfos eingeschaltet und Beta 25 eingetragen
+
   Revision 1.26  2000/05/13 09:31:35  mk
   - Debugstringausgabe unter FPC
 
