@@ -2027,7 +2027,7 @@ fromstart:
         end;
 
       if not flCrash or not MayCrash then
-        assign(f2^,boxfile+'.pp')           { ..und ab damit ins Pollpaket }
+        assign(f2^,boxfile+'.PP')           { ..und ab damit ins Pollpaket }
       else begin
         assign(f2^,CrashFile(hdp^.empfaenger));
         SetCrashInfo;
@@ -2217,6 +2217,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.16  2000/10/22 21:50:02  mk
+  - .PP gross geschrieben
+
   Revision 1.39.2.15  2000/10/16 10:19:10  mk
   - Fixes fuer LFN
 
