@@ -944,6 +944,7 @@ procedure CfgColors;
 var i     : integer;
     n,m,l : shortint;
 begin
+  wpushs(1,ScreenWidth,1,ScreenLines,'-'); { Ganzen Screen sichern, ohne Rahmen }
   m2t:=false;
   attrtxt(7);
   moff;
@@ -1180,12 +1181,16 @@ begin
   showscreen(false);
   aufbau:=true;
   menurestart:=(n=0);
+  wpop;           
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.12  2000/05/19 19:48:54  mk
+  - C/A/F baut jetzt den Bildschirm wieder korrekt auf
+
   Revision 1.11  2000/05/06 17:29:21  mk
   - DOS DPMI32 Portierung
 
