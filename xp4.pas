@@ -1268,6 +1268,16 @@ var t,lastt: taste;
       end;
   end;
 
+  procedure reset_lesemode;
+  begin    
+    set_lesemode;    
+    rdmode:=readmode;
+    setall;
+    gostart; 
+    show_info;
+    aufbau:=true;         
+  end;
+
   procedure wrm(nr:word);
   begin
     mwrt(2,5+ya,getres(nr));
@@ -1569,7 +1579,7 @@ begin      { --- select --- }
                  else begin
                    if c=k0_A then              { 'A' }
                      ChangeBrettall;
-                   if c=k0_Le then set_lesemode;       { 'L'esemode }
+                   if (c=k0_Le) or (t=keyaltl) then set_lesemode;       { 'L'esemode }
                    if not empty and (markflag[p]<>2) then begin
                      if t[1]=k0_B  then brief_senden(false,false,false,0); { 'b' }
                      if t[1]=k0_SB then brief_senden(false,false,true,0);  { 'B' }
@@ -1745,6 +1755,7 @@ begin      { --- select --- }
                    end;
                  if dispmode=10 then begin
                    if c=k2_A then all_mode;                         { 'A' }
+                   if t=keyaltl then reset_lesemode;                { ALT+L }
                    end;
                end;
         20   : begin                        { Autoversand-Liste }
@@ -2002,6 +2013,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.15  2000/04/20 04:18:55  jg
+  - Lesemodus aendern jetzt auch im Nachrichtenfenster
+
   Revision 1.14  2000/04/16 16:12:50  jg
   - Userfenster Positionsmerker von String auf Longint umgewandelt
     um Probleme mit Namen der Trennzeilen zu vermeiden
