@@ -150,6 +150,7 @@ uses
   dos in 'delphi\dos.pas',
   objcom in 'ObjCOM\objcom.pas',
   Ringbuff in 'ObjCOM\ringbuff.pas',
+  xprope in 'xplib\xprope.pas',
 {$ELSE}
   ZModem in 'netcall/zmodem.pas',
   ncgeneric in 'netcall/ncgeneric.pas',
@@ -176,6 +177,7 @@ uses
   objcom in 'ObjCOM/objcom.pas',
   Ringbuff in 'ObjCOM/ringbuff.pas',
   ncursix in 'ncursix.pas',
+  xprope in 'xplib/xprope.pas'
 {$ENDIF}
 	xpserver in 'xpserver.pas',
   xpsendmessage_rta in 'xpsendmessage_rta.pas',
