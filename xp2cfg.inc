@@ -581,7 +581,7 @@ begin
   {Keine Xp-Zeile unter AMs und PMs setzen.
   Die Sharewareeinschr‰nkung das das unregistrierte
   Xp unter PMs immer die XP-Zeile setzt bleibt davon
-  unber¸hrt. Dies wird an anderer Stelle gepr¸ft und
+  unberÅhrt. Dies wird an anderer Stelle geprÅft und
   gesetzt.   MW 04/2000}
   UserSlash:=true;
 {$IFDEF UnixFS }
@@ -716,7 +716,7 @@ begin
   NewsMIME:=true;
   MIMEqp:=false;
   RFC1522:=true; {alt: false}
-  NoArchive:=true; {!MH:}
+  NoArchive:=false; {!MH:} { auf 'false' gesetzt, SV }
   FidoDelEmpty:=false;
   KeepVia:=false;
   pmlimits[1,1]:=10000; pmlimits[1,2]:=0;     { Z-Netz     }
@@ -1812,6 +1812,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.61  2000/06/10 20:16:06  sv
+  - C/O/N/"News nicht archivieren lassen" per default ausgeschaltet
+
   Revision 1.60  2000/06/04 16:57:25  sv
   - Unterstuetzung von Ersetzt-/Supersedes-Nachrichten implementiert
     (RFC/ZConnect)
