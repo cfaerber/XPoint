@@ -81,10 +81,15 @@ procedure XPRewrite(var F: text; cm: TCreateMode);
 {$ENDIF }
 procedure XPRewrite(var F: file; cm: TCreateMode);
 
+{ DOS-Routinen }
+procedure FSplit(const path: string; var dir, name, ext: string);
+function  GetFTime(var F; var time: longint): boolean;
+procedure PackTime(const when: TSystemTime; var fdt: longint);
+procedure UnpackTime(const fdt: longint; var res: TSystemTime);
+
 function  AddDirSepa(const p: string): string;      { Verz.-Trenner anhaengen }
 Function  existf(var f):boolean;                { Datei vorhanden ?       }
 function  existBin(const fn: string): boolean;       { Datei vorhanden (PATH)  }
-procedure FSplit(const path: string; var dir, name, ext: string);
 Function  ValidFileName(const name:string):boolean;  { gÅltiger Dateiname ?    }
 function  isEmptyDir(const path: string): boolean;
 function  IsPath(const Fname:string):boolean;         { Pfad vorhanden ?        }
@@ -198,6 +203,33 @@ begin
     SetAccessMode(fn, cm);
   end; { if }
   System.Rewrite(F);
+end;
+
+procedure PackTime(const when: TSystemTime; var fdt: longint);
+begin
+  fdt:= DateTimeToFileDate(SystemTimeToDateTime(when));
+end;
+
+procedure UnpackTime(const fdt: longint; var res: TSystemTime);
+begin
+  DateTimeToSystemTime(FileDateToDateTime(fdt),res);
+end;
+
+function GetFTime(var F; var time: longint): boolean;
+var
+  ff : ^filerec;
+  fh : longint;
+begin
+  ff:= @f;
+  fh:= FileOpen(ff^.name, fmOpenRead);
+  if fh<0 then begin
+    time:= 0;
+    result:= false;
+  end else begin
+    time:= FileGetDate(fh);
+    result:= true;
+    FileClose(fh);
+  end;
 end;
 
 { Liefert True zur¸ck, falls ein Verzeichnis leer ist }
@@ -601,6 +633,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.72  2000/11/15 20:30:58  hd
+  - GetFTime
+  - PackTime
+  - UnpackTime
+
   Revision 1.71  2000/11/15 17:59:30  hd
   - Fix: BackSlash unter UnixFS gibt es nicht
 
