@@ -183,6 +183,9 @@ begin
     DisConnect;
   FConnected:= false;
   Host.Clear;
+{$IFDEF Win32}
+  WSACleanUp;
+{$ENDIF}
   inherited destroy;
 end;
 
@@ -232,7 +235,7 @@ begin
   FAddr.Addr:= Host.Raw;
   { Verbinden }
   FHandle:= Socket(AF_INET, SOCK_STREAM, 0);
-  if not {$IFDEF DOS32}DOSSock.{$ELSE}Sockets.{$ENDIF} 
+  if not {$IFDEF DOS32}DOSSock.{$ELSE}Sockets.{$ENDIF}
     Connect(FHandle, FAddr, SizeOf(TSockAddr)) then
 {$ENDIF}
   begin
@@ -382,6 +385,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2001/01/03 18:01:56  mk
+  - added WSACleanup in destroy
+
   Revision 1.17  2000/12/28 14:45:00  mk
   CL:- first things for UUCP over IP
 
