@@ -563,7 +563,7 @@ var flp : dbFLP;
         end;
       dbNext(mbase);
       end;
-    wrn;
+    if (nn<>0) then wrn; { Division / 0 (hd) }
     BrettdatumSetzen(false);
     dbSetIndex(mbase,1);
     dbGoTop(mbase);
@@ -896,6 +896,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12  2000/05/06 17:50:06  hd
+  - Div-0-Fehler entfernt
+
   Revision 1.11  2000/05/04 16:13:36  jg
   - Konvertierung des Userfenster Trennzeilenformat jetzt Automatisch
     Funktion nur Sinnvoll fuer Umstieg von Beta 23 auf Beta 24+ ....
