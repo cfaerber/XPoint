@@ -3029,7 +3029,9 @@ procedure _era(const Filename:string);
 begin
   if (FileName <> '')  and not sysutils.DeleteFile(Filename) then
   begin
-    Debug.DebugLog('xp1','_era('''+Filename+'''): '+SysErrorMessage(GetLastError),dlError);
+    {$IFDEF WIn32 }
+      Debug.DebugLog('xp1','_era('''+Filename+'''): '+SysErrorMessage(GetLastError),dlError);
+    {$ENDIF }
     trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht loeschen!?' }
   end;
 end;
@@ -3038,7 +3040,9 @@ procedure SafeDeleteFile(const Filename: String);
 begin
   if (FileName <> '') and FileExists(Filename) and not Sysutils.DeleteFile(Filename) then
   begin
-    Debug.DebugLog('xp1','SafeDeleteFile('''+Filename+'''): '+SysErrorMessage(GetLastError),dlError);
+    {$IFDEF WIn32 }
+      Debug.DebugLog('xp1','SafeDeleteFile('''+Filename+'''): '+SysErrorMessage(GetLastError),dlError);
+    {$ENDIF }
     trfehler1(4,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht loeschen!?' }
   end;
 end;
@@ -3047,7 +3051,9 @@ procedure SafeMakeBak(const Filename, NewExt: string);
 begin
   if not MakeBak(Filename,NewExt) then
   begin
-    Debug.DebugLog('xp1','SafeMakeBak('''+Filename+''','''+NewExt+'''): '+SysErrorMessage(GetLastError),dlError);;
+    {$IFDEF WIn32 }
+      Debug.DebugLog('xp1','SafeMakeBak('''+Filename+''','''+NewExt+'''): '+SysErrorMessage(GetLastError),dlError);;
+    {$ENDIF }
     trfehler1(24,'"'+Filename+'"',30);   { 'Kann "'+(fn)+'" nicht umbenennen.' }
   end;
 end;
@@ -3281,6 +3287,9 @@ end;
 
 {
   $Log$
+  Revision 1.177  2003/01/25 14:24:27  mk
+  - GetLastError only for Win32
+
   Revision 1.176  2003/01/24 12:44:54  mk
   - added windows to uses
 
