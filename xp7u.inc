@@ -556,7 +556,8 @@ begin
       exchange(s, '$CLPATH', PPPClientpath);
       exchange(s, '$CLSPOOL', PPPSpool);
       attrtxt(col.colkeys);
-      FWrt(64, Screenlines, xp_client);   { '       CrossPoint' }
+      if XPdisplayed then
+        FWrt(64, Screenlines, xp_client);   { '       CrossPoint' }
       shell(s,600,3);
 {      XPWinshell(OwnPath + s,'', 600,3, false); }
 {      dispfunctionkeys(false); }
@@ -621,6 +622,11 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.21  2001/08/26 16:04:50  my
+  - String "CrossPoint" instead of "CrossPoint/OpenXP" is displayed upon
+    RFC/Client netcalls only then if "CrossPoint/OpenXP" was displayed
+    there before (and not removed anyway due to function keys display).
+
   Revision 1.13.2.20  2001/08/11 22:43:56  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 
