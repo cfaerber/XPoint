@@ -391,8 +391,10 @@ label ende;
       realn : string[40];
       such  : string[81];
           j : byte;
+          d : Longint;
+          b : byte;
       found_not : boolean;
-
+           
 {   Volltextcheck:
 
     Seekstart und Seeklen sind Zeiger auf Anfang und Ende der Teilsuchstrings
@@ -427,7 +429,8 @@ label ende;
       end;
 
 {--Spezialsuche--}
-    if spez then with srec^ do
+    if spez then
+    with srec^ do begin
       if DateFit and SizeFit and TypeFit and StatOk then begin
         dbReadN(mbase,mb_betreff,betr2);
         if (betr<>'') and (length(betr2)=40) then begin
@@ -459,56 +462,52 @@ label ende;
           UpString(realn);
           UpString(hdp^.fido_to);
           end;
-        if txt<>'' then volltextcheck;             { verknuepfte Volltextsuche (SST!) }
         if ((betr='') or (pos(betr,betr2)>0) xor nbetr) and
            ((user='') or ((pos(user,user2)>0) or (pos(user,realn)>0)) xor nuser) and
-           ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0) xor nfidoempf) and
-           ((txt='') or found) then begin
-          MsgAddmark;
-          inc(nf);
-          end;
-        end
-      else
-
-
+           ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0) xor nfidoempf) then
+          begin
+            if txt<>'' then volltextcheck;          { verknuepfte Volltextsuche (SST!) }
+            if (txt='') or found then 
+            begin
+              MsgAddmark;
+              inc(nf);
+              end;
+            end;
+        end; 
+      end
+      
 {--Normale Suche--}
-    else if suchfeld<>'' then begin
-      dbRead(mbase,suchfeld,such);
-      if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
-        ReadHeader(hdp^,hds,false);
-        if length(hdp^.betreff)>40 then
-          such:=hdp^.betreff;
-        end;
-       if suchfeld='MsgID' then begin
-        ReadHeader(hdp^,hds,false);
-        such:=hdp^.msgid;
-        end;
-      if umlaut then UkonvStr(such,high(such));
 
-      j:=0;
-      repeat
-        seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
-        found:=((igcase and (pos(seek,UStr(such))>0)) or
-         (not igcase and (pos(seek,such)>0)));
-        found_not:=found and seeknot[j];
-        if suchand and not found and seeknot[j] then found:=true;
-        inc(j);
-      until (j=suchanz) or (suchand xor found) or found_not;
-      if found_not then found:=false;
+    else begin
 
-      if Found then Begin
-        MsgAddmark;
-        inc(nf);
-        end
-      else
-      if (suchfeld='Absender') and (not found_not) and not ntEditBrettEmpf(mbnetztyp) then
-      begin
-        dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}
+(*      if check4date and (readmode >0) then
+      begin                                            {Suchen im akt. Lesemodus }
+        if readmode=1 then begin
+          dbReadN(mbase,mb_gelesen,b);
+          if b>0 then exit;
+          end
+        else if aktdispmode <> 10 then begin
+          dbReadN(mbase,mb_empfdatum,d);
+          if smdl(d,readdate) then exit;
+          end;
+        end; *)
+                                                      {Headereintragsuche}
+      if suchfeld<>'' then begin
+        dbRead(mbase,suchfeld,such);
+        if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
+          ReadHeader(hdp^,hds,false);
+          if length(hdp^.betreff)>40 then
+            such:=hdp^.betreff;
+          end;
+         if suchfeld='MsgID' then begin
+          ReadHeader(hdp^,hds,false);
+          such:=hdp^.msgid;
+          end;
         if umlaut then UkonvStr(such,high(such));
 
         j:=0;
         repeat
-          seek:=left(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }
+          seek:=left(mid(sst,seekstart[j]),seeklen[j]);      { Erklaerung siehe Volltextcheck }
           found:=((igcase and (pos(seek,UStr(such))>0)) or
            (not igcase and (pos(seek,such)>0)));
           found_not:=found and seeknot[j];
@@ -521,18 +520,39 @@ label ende;
           MsgAddmark;
           inc(nf);
           end
-        end;
-      end
+        else
+        if (suchfeld='Absender') and (not found_not) and not ntEditBrettEmpf(mbnetztyp) then
+        begin
+          dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}
+          if umlaut then UkonvStr(such,high(such));
 
-    else begin                           {Volltextsuche}
-      volltextcheck;
-      if found then Begin
-        MsgAddmark;
-        inc(nf);
+          j:=0;
+          repeat
+            seek:=left(mid(sst,seekstart[j]),seeklen[j]);     { Erklaerung siehe Volltextcheck }
+            found:=((igcase and (pos(seek,UStr(such))>0)) or
+             (not igcase and (pos(seek,such)>0)));
+            found_not:=found and seeknot[j];
+            if suchand and not found and seeknot[j] then found:=true;
+            inc(j);
+          until (j=suchanz) or (suchand xor found) or found_not;
+          if found_not then found:=false;
+
+          if Found then Begin
+            MsgAddmark;
+            inc(nf);
+            end
+          end;
+        end
+
+      else begin                           {Volltextsuche}
+        volltextcheck;
+        if found then Begin
+          MsgAddmark;
+          inc(nf);
+          end;
         end;
       end;
   end;
-
 
   procedure TestBrett(_brett:string);
   begin
@@ -2430,6 +2450,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47.2.17  2000/12/25 14:32:32  mk
+  JG:- bugs bei der Suche behoben
+
   Revision 1.47.2.16  2000/12/15 21:23:46  mk
   - Findclose-Fix
 
