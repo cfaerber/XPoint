@@ -394,8 +394,8 @@ end;
 procedure BezBaum(var betr:string);
 var hdp    : theader;
     hds    : longint;
-    bez    : longint;
-    mi,n   : shortint;
+    bez,n  : longint;
+    mi     : shortint;
     brett  : string;
     nullid : longint;
     xlines : kommLines;
@@ -918,6 +918,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.32  2001/01/03 08:02:28  mo
+  -type der Laufvariable n für max Anzahle der eingelesenen Verkettungen -> longint
+
   Revision 1.31  2000/12/28 14:16:08  mk
   - added check for count >0 in bezbaum
 
