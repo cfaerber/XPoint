@@ -110,24 +110,15 @@ end;
 
 procedure bezuege_suchen(var brk:boolean);
 var
-{$ifdef hasHugeString}
     _brett,
     _mbrett : string;
     bezug   : string;
     betreff : string;
     user    : string;   { Bezugs-User }
     ref     : string;   { Bezugs-MesssageID }
-{$else}
-    _brett,
-    _mbrett : string[5];
-    bezug   : string[BetreffLen];
-    betreff : string[BetreffLen];
-    user    : string[AdrLen];   { Bezugs-User }
-    ref     : string[midlen];   { Bezugs-MesssageID }
-{$endif}
     recnt   : integer;
     ml      : byte;
-    hdp     : ^header;
+    hdp     : headerp;
     hds     : longint;
     bezg    : longint;
 
@@ -202,7 +193,7 @@ var
 
 begin
   markanz:=0;
-  new(hdp);
+  hdp:= AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   ref:=hdp^.ref;
   if (ref<>'') and (ntKomkette(hdp^.netztyp)) then begin
@@ -213,7 +204,7 @@ begin
       end;
     end;
   if markanz>0 then begin
-    dispose(hdp); exit; end
+    FreeHeaderMem(hdp); exit; end
   else begin
     if (ref='') and (hdp^.typ='T') then
       get_username
@@ -221,22 +212,22 @@ begin
       user:='';
     ref:=FormMsgid(ref);
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 
   if user=dbReadStr(mbase,'absender') then user:='';
                                         { das war die eigene Adresse ... }
-  dbReadN(mbase,mb_brett,_brett);
-  dbReadN(mbase,mb_betreff,bezug);
+  _brett:= dbReadNStr(mbase,mb_brett);
+  bezug:= dbReadNStr(mbase,mb_betreff);
   recnt:=ReCount(bezug);   { <- Seiteneffekt: schneidet Re's weg! }
-  UpString(bezug);
+  bezug:= UpperCase(bezug);
   dbSkip(mbase,-1);
   if dbBOF(mbase) then exit;
   moment;
   repeat
     testbrk(brk);
-    dbReadN(mbase,mb_brett,_mbrett);
+    _mbrett:= dbReadNStr(mbase,mb_brett);
     if _brett=_mbrett then begin
-      dbReadN(mbase,mb_betreff,betreff);
+      betreff:= dbReadNStr(mbase,mb_betreff);
       if (recnt=0) or (ReCount(betreff)=recnt-1) or (ref<>'') then begin
                       { |- Seiteneffekt! }
         ml:=min(length(betreff),length(bezug));
@@ -322,7 +313,7 @@ begin
   dbSetIndex(mbase,0);
   dbSetIndex(bezbase,beiMsgID);
   dbGoTop(mbase);
-  new(hd);
+  hd:= AllocHeaderMem;
   while not dbEOF(mbase) do begin
     inc(n); wrn;
     if (dbReadStr(mbase,'msgid')<>'') and ntKomkette(mbNetztyp) then begin
@@ -342,7 +333,7 @@ begin
       end;
     dbNext(mbase);
     end;
-  dispose(hd);
+  FreeHeaderMem(hd);
   attrtxt(col.colmbox);
   mwrt(xx-2,y+2,getres(473));      { ' fertig.' }
   dbSetIndex(mbase,1);
@@ -373,7 +364,7 @@ var nn,n : longint;
   end;
 
 begin
-  new(hd);
+  hd:= AllocHeaderMem;
   dbSetIndex(mbase,0);
   dbGoTop(mbase);
   n:=0; nn:=dbRecCount(mbase);
@@ -393,7 +384,7 @@ begin
   inc(n); wrn;
   closebox;
   dbSetIndex(mbase,1);
-  dispose(hd);
+  FreeHeaderMem(hd);
   dbFlushClose(mbase);
   BezugNeuaufbau;
 end;
@@ -424,23 +415,23 @@ var hdp    : headerp;
       i,j    : integer;
       more   : boolean;
       mmore  : boolean;
-      newbetr: ^string;
+      newbetr: string;
       _brett : string;
       r      : brec;
       mid    : longint;
 
     procedure wr;
     begin
-      dbReadN(mbase,mb_betreff,newbetr^);
-      dbReadN(mbase,mb_brett,_brett);
+      newbetr:= dbReadNStr(mbase,mb_betreff);
+      _brett:= dbReadNStr(mbase,mb_brett);
       if nullid=0 then begin
         with kombaum^[komanz] do begin
           MsgPos:=dbRecno(mbase);
           lines:=spuren;
           _ebene:=ebene;
           flags:=iif(last,kflLast,0);
-          if recount(newbetr^)=0 then;
-          if left(newbetr^,35)<>left(betr,35) then
+          if recount(newbetr)=0 then;
+          if left(newbetr,35)<>left(betr,35) then
             inc(flags,kflBetr);
           if (_brett[1]='U') or (_brett[1]='1') then
             inc(flags,kflPM)
@@ -456,7 +447,7 @@ var hdp    : headerp;
         i   : shortint;
     begin
       if nullid=0 then
-        dbReadN(mbase,mb_msgid,mid)
+        mid:= dbReadNStr(mbase,mb_msgid)
       else begin
         mid:=dbLongStr(nullid); nullid:=0;
         end;
@@ -509,7 +500,7 @@ var hdp    : headerp;
     if (ebene<emax) and (komanz<realmaxkom) and
        (rec<>0) and not dbDeleted(mbase,rec) then begin
       if ebene>maxebene then inc(maxebene);
-      getmem(newbetr,BetreffLen+1);
+      {getmem(newbetr,BetreffLen+1);}
       new(ba);
       if nullid=0 then
         dbGo(mbase,rec);
@@ -535,12 +526,12 @@ var hdp    : headerp;
           for i:=1 to anz do begin
             mmore:=more or (i<anz);
             RecurBez(ebene+1,ba^[i].pos,spuren+iif(mmore,1 shl longint(ebene),0),
-                     not mmore,newbetr^,_brett);
+                     not mmore,newbetr,_brett);
             end;
           if more then dbGo(bezbase,rec);
         until not more;
       dispose(ba);
-      freemem(newbetr,BetreffLen+1);
+      {freemem(newbetr,BetreffLen+1);}
       end;
   end;
 
@@ -549,7 +540,7 @@ begin
   rmessage(475);    { 'Kommentarbaum einlesen...' }
   if kombaum<>nil then
     freemem(kombaum,komanz*sizeof(komrec));
-  new(hdp);
+  hdp:= AllocHEaderMEm;
   realmaxkom:=min(maxkomm,(memavail-10000) div 2 div sizeof(komrec));
   getmem(kombaum,realmaxkom*sizeof(komrec));
   n:=0;
@@ -566,7 +557,7 @@ begin
       end;
     inc(n);
   until (n=emax) or (bez=0);
-  dbReadN(mbase,mb_brett,brett);
+  brett:= dbReadNStr(mbase,mb_brett);
   komanz:=0; maxebene:=0;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
@@ -577,7 +568,7 @@ begin
   Move(kombaum^,kb2^,komanz*sizeof(komrec));
   freemem(kombaum,realmaxkom*sizeof(komrec));
   kombaum:=kb2;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   closebox;
   if maxebene<10 then komwidth:=3
   else if maxebene<23 then komwidth:=2
@@ -597,7 +588,7 @@ var hdp      : headerp;
     mi       : shortint;
     vor      : boolean;
 begin
-  new(hdp);
+  hdp:= AllocHeaderMem;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
   BezSeek:=false;
@@ -634,7 +625,7 @@ begin
       end;
     end;
   dbSetIndex(bezbase,mi);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 function BezSeekBezug:boolean;
@@ -642,7 +633,7 @@ var hdp : headerp;
     hds : longint;
     rec : longint;
 begin
-  new(hdp);
+  hdp:= AllocHeaderMem;
   BezSeekBezug:=false;
   ReadHeader(hdp^,hds,true);
   if hds>1 then begin
@@ -652,11 +643,11 @@ begin
       BezSeekBezug:=true;
       end;
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 function BezSeekKommentar:boolean;
-var mid      : string[4];
+var mid      : string;
     mi       : shortint;
     ref,rec  : longint;
     dat,dat2 : longint;
@@ -696,7 +687,7 @@ begin
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
   rec:=dbRecno(mbase);
-  new(hdp);
+  hdp:= AllocHeaderMem;
   ReadHeader(hdp^,hds,true);
   _left:=false; _right:=false; up:=false; down:=false;
   if hds>1 then begin
@@ -726,7 +717,7 @@ begin
     end;
   dbSetIndex(bezbase,mi);
   dbGo(mbase,rec);
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -897,6 +888,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.18  2000/07/10 15:09:37  hd
+  - Ansistring
+
   Revision 1.17  2000/07/09 08:35:17  mk
   - AnsiStrings Updates
 
