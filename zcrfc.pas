@@ -53,7 +53,7 @@ uses xpglobal,
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils,classes,typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams;
+  osdepend, sysutils,classes,typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams;
 
 type
   TCompression = (
@@ -3564,6 +3564,12 @@ begin
     ' by ', author_name, ' <', author_mail, '>');
   writeln;
   Randomize;
+
+  if AutomaticTimeZone then
+    XpTimeZone := GetTimeZone
+  else
+    XpTimeZone := iifs(ival(copy(date,4,2)) in [4..9],'S+2','W+1');
+
   UUZc := TUUZ.Create;
   with uuzc do
   try
@@ -3710,6 +3716,9 @@ end;
 
 {
   $Log$
+  Revision 1.97.2.30  2003/10/01 10:10:56  mk
+  - added initialization of XPTimzeone for command line uuz
+
   Revision 1.97.2.29  2003/09/09 16:03:08  mk
   - use lowercase mail.rfc and news.rfc for Unix, uppercase for Dos+Win
 
