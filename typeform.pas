@@ -169,9 +169,7 @@ function Time:DateTimeSt;                    { dt. Zeitstring               }
 function TimeDiff(t1,t2:DateTimeSt):longint; { Abstand in Sekunden          }
 function TopStr(const s:string):string;            { erste Buchstabe groá         }
 function TopAllStr(s:string):string;         { alle ersten Buchstaben groá  }
-{$ifndef hasTrim}
 function Trim(s:string):string;              { Linke u. rechte ' ' abschn.  }
-{$endif}
 function UpCase(const c:char):char;                { int. UpCase                  }
 function UStr(const s:String):String;              { UpperString                  }
 function UStrHuge(const s:HugeString):HugeString;  { UpperString                  }
@@ -190,9 +188,6 @@ Procedure iswap(var l1,l2:longint);           { l1 und l2 vertauschen        }
 Procedure LoString(var s:string);            { LowerString                  }
 Procedure release;                           { system.release abfangen      }
 Procedure RepStr(var s:string; s1,s2:string); { s1 einmal durch s2 ersetzen }
-{$ifndef hasSetLength}
-procedure SetLength(var s: string; l: integer); { Stringlaenge manipulieren}
-{$endif}
 Procedure SetParity(var b:byte; even:boolean);  { Bit 7 auf Parit„t setzen  }
 Procedure SetSysDate(const d:DateTimeSt);          { Datum nach dt. String setzen }
 Procedure SetSysTime(const t:DateTimeSt);          { Zeit nach dt. String setzen  }
@@ -218,12 +213,6 @@ type psplit = record              { Fr Pointer-Type-Cast }
                 o,s : smallword;
               end;
 
-{$ifndef hasSetLength}
-procedure SetLength(var s: string; l: integer;
-begin
-  s[0]:= chr(l);
-end;
-{$endif}
 
 function CountChar(const c: char; const s: string): integer;
 const
@@ -806,9 +795,9 @@ end;
 
 function UStr(const s: AnsiString): AnsiString;
 var i,l : integer;
-    r : string;			{ Result bzw. UStr klappt nicht bei allen Compilern }
+    r : string;                 { Result bzw. UStr klappt nicht bei allen Compilern }
 begin
-  l:= length(s);		{ Nicht zweimal zaehlen }
+  l:= length(s);                { Nicht zweimal zaehlen }
   SetLength(r, l);
   for i:=1 to l do
     r[i]:=UpCase(s[i]);
@@ -2054,6 +2043,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/07/03 15:11:01  mk
+  - unnötige Defines entfernt
+  - sysutils war zweimal in xp6o.pas enthalten
+
   Revision 1.41  2000/07/03 09:59:39  hd
   - Neue Definitionen:
     - hasSetLength -> RTL-Funktion SetLength vorhanden

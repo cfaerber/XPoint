@@ -74,8 +74,6 @@
   {$ASMMODE Intel }
   {$GOTO ON }
   {$UNDEF NeedReg }
-  {$DEFINE hasSetLength}	{ SetLength vorhanden }
-  {$DEFINE hasTrim}		{ Trim vorhanden }
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -134,6 +132,10 @@
 
 {
   $Log$
+  Revision 1.36  2000/07/03 15:11:01  mk
+  - unnötige Defines entfernt
+  - sysutils war zweimal in xp6o.pas enthalten
+
   Revision 1.35  2000/07/03 09:59:40  hd
   - Neue Definitionen:
     - hasSetLength -> RTL-Funktion SetLength vorhanden

@@ -15,7 +15,6 @@ unit xp6o;
 interface
 
 uses
-  {$IFDEF virtualpascal}sysutils,{$endif}
   xpglobal,
 {$IFDEF NCRT }
   xpcurses,
@@ -1249,6 +1248,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/07/03 15:11:01  mk
+  - unnötige Defines entfernt
+  - sysutils war zweimal in xp6o.pas enthalten
+
   Revision 1.22  2000/07/03 13:31:41  hd
   - SysUtils eingefuegt
   - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
