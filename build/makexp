@@ -25,9 +25,10 @@ cd "$sourcedir"
 case "$mainversion" in
     3.8)
        echo "Version $mainversion "
-       #fpcopts='-Ci -Co -Cr -Ct -CX -XX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       fpcgen='-Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       fpcopts="$OXP_OPTS"' '"$fpcgen"
        # for snapshots
-       fpcopts='-gl -Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
+       #fpcopts='-gl -Ci -Co -Cr -Ct -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        # for releases
        # fpcopts='-Ci -Co -Cr -Ct -XX -CX -Fu'"$sourcedir"'ObjCOM -Fu'"$sourcedir"'netcall -FU'"$versiondir"'output -Fl'"$versiondir"'output'
        # cross compiling
@@ -45,6 +46,7 @@ case "$mainversion" in
        exit 1;
        ;;
 esac
+exit 1
 ##fpc -B -Ci -Co -Cr -Ct -O2 -Op2 openxp
 ##ppc386 -B -Ci -Co -Cr -Ct -OG3p3r openxp
 echo "Compiling version $version with option $fpcopts"

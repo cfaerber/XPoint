@@ -17,7 +17,7 @@
 # os2		OS/2
 # win32		Windows
 #
-#OS = 
+OS = linux 
 
 # Ihre CPU (386, 486, 586, 686)
 # (KANN gesetzt werden.)
@@ -461,6 +461,9 @@ dvi: xpoint.dvi
 
 #
 # $Log$
+# Revision 1.18.2.1  2003/10/19 06:55:10  cb
+# - cb: now using OXP_OPTS from get_*.pl in makexp
+#
 # Revision 1.18  2000/11/26 16:17:06  fe
 # Added support for two recode alternatives.  (iconv and tcs)
 #
