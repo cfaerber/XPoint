@@ -10,9 +10,7 @@
 {$I XPDEFINE.INC }
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ELSE }
+{$IFNDEF NCRT }
   crt,
 {$ENDIF }
   dos,typeform,fileio, xpglobal;
