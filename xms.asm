@@ -4,7 +4,6 @@
 ; (c) 2003      OpenXP/16
 ;
 ; CrossPoint ist eine eingetragene Marke von Peter Mandrella.
-; OpenXP ist eine eingetragene Marke von Markus Kaemmerer.
 ;
 ; Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der
 ; Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.
@@ -91,69 +90,39 @@ XmsTotal   endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;;;;;;; (version from JM) ;;;;;;;;
-;; function XmsAvail:word; external;
-;XmsAvail  proc     far
-;          mov      ax,0
-;          cmp      xmsok,1
-;          jne      e2                ; exit
-;          mov      dx,0
-;          push     dx
-;          mov      cx,163            ; 163*100=16300 (16 Mb = 16384 Kb)
-;e21:      pop      dx                ; repeat
-;          add      dx,100              ; progression 100 Kb
-;          push     dx
-;          mov      ah,9                ; xmsallocate
-;          call     dword ptr xmscall   ; handle in dx
-;          call     errcheck
-;          cmp      ax,1                ; 2. errcheck
-;          je       e22                 ; ok
-;          cmp      bl,0a0h             ; all xms reserved
-;          je       e23                 ; break
-;          jmp      ec22                ; break
-;e22:      mov      ah,10               ; xmsfree (handle in dx)
-;          call     dword ptr xmscall
-;          call     errcheck
-;          cmp      ax,1                ; 2. errcheck
-;          jne      ec22                ; break
-;          dec      cx                  ; 0 = exit
-;          jne      e21               ; until max. ca. 16 Mb
-;          jmp      e23
-;ec22:     pop      dx
-;          mov      dx,0
-;          mov      ax,0              ; set available XMS = 0
-;          jmp      e2                ; exit
-;e23:      pop      dx
-;          sub      dx,100
-;          mov      ax,dx
-;e2:       ret
-;XmsAvail  endp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;;;; ((modified) version from JG) ;;;;;;;;
+;;;;;;;;; (JM (JG-) version) ;;;;;;;;;;;;;;
 ; function XmsAvail:word; external;
 
 XmsAvail  proc     far
           mov      ax,0
           cmp      xmsok,1
           jnz      e2
-          mov      ah,8
+          mov      ah,8               ; xmsvail (orig,)
           call     dword ptr xmscall
-          mov      di,dx
-          mov      si,ax
-          mov      ah,9
+          mov      di,dx              ; dx=total free XMS
+          mov      si,ax              ; ax=biggest free EMB
+          cmp      dx,16384
+          ja       e20                ; total free >16 Mb
+          jmp      e21
+e20:      mov      ah,9               ; xmsalloc
           call     dword ptr xmscall
           cmp      ax,1
-          je       e20                ; ok
-          mov      di,16384           ; 16 Mb
+          je       e22                ; total free ok
+e21:      mov      di,16384           ; 16 Mb
           mov      dx,di
-          mov      ah,9
+          mov      ah,9               ; xmsalloc
           call     dword ptr xmscall
           cmp      ax,1
+          je       e22                ; 16 Mb ok
+          mov      di,15215           ; ca. 15 Mb
+          mov      dx,di
+          mov      ah,9               ; xmsalloc
+          call     dword ptr xmscall
+          cmp      ax,1
+          je       e22                ; ca. 15 Mb ok
           mov      ax,si
-          jne      e2
-e20:      mov      ah,0ah
+          jmp      e2
+e22:      mov      ah,0ah             ; xmsfree
           call     dword ptr xmscall
           mov      ax,di
 e2:       ret
@@ -302,3 +271,28 @@ XmsWrite  endp
 ;       verfÅgbar freier Block an XPoint zurÅckgegeben.
 ;   - Erst wenn das nicht klappt, wird der ursprÅnglich grî·te, freie
 ;     Block an XPoint gemeldet.
+
+; JM (JG-) 04.05.03
+; - xmsavail auf die Besonderheiten bei Windows 200/NT angepasst.
+;
+;   Tests ergaben, dass WindowsXP und die beiden Windows2000/NT
+;   nicht mehr als 16 Mb XMS-Speicheranforderung fÅr 16-Bit-Programme
+;   erfÅllen. Zudem weisen Windows 2000/NT eine weitere EinschrÑnkung
+;   gegenÅber Win9x auf, wonach durch die "erfolgreich" vollzogene
+;   Anforderung von etwa 15 Mb XMS-Speicher, der XMS-Treiber den fÅr
+;   die NTVDM.DLL benîtigten eigenen Speicher bei der Reservierung
+;   ebenfalls wegegeben hat, mit der Folge des Absturzes der NTVDM.DLL.
+;
+;   Da Windows 2000/NT nach den vorliegenden Beobachtungen aber bei
+;   einer Anforderung von genau 16384 Kb, keinen XMS-Speicher mehr
+;   reservieren kînnen und eine normale Fehlermeldung generieren,
+;   wurde die Staffelung fÅr die testweise Belegung geÑndert:
+;
+;   - zuerst wird der max. freie XMS und grî·te EMB-Block ermittelt
+;   - liegt der max. freie Wert XMS-Speicher Åber 16 MB, dann versucht
+;     xmsavail ihn testweise zu reservieren
+;     - klappt das nicht, dann werden 16348 Kb versucht
+;     - klappt auch das nicht, werden 15215 Kb versucht
+;   - sollten auch die 15215 Kb nicht reservierbar sein, wird der
+;     in der ersten Abfrage ermittelt grî·te, freie Block gemeldet
+
