@@ -1,0 +1,101 @@
+#/bin/bash
+echo "Starting $0 $*"
+# must be started in main source dir for desired version
+cd build
+eval $(./get_build_nr.pl)
+mainversion=$OPENXP_MAINVER
+subversion=$OPENXP_SUBVER
+buildnr=$OPENXP_BUILD
+#
+#mainversion=$1
+#subversion=0
+#buildnr=1
+# example: version = 3.8.12-1
+# mainversion has to be 3.8 in this example
+# subversion has to be 12 in this example
+# buildnr has to be 1 in this example
+version="$mainversion"."$subversion"-"$buildnr"
+#scriptdir=/home/boettger/openxp/script/
+versiondir=/home/boettger/openxp/"$mainversion"/
+sourcedir="$versiondir"'openxp/'
+scriptdir="$sourcedir"'build/'
+#subversion="$1".0
+cd "$sourcedir"
+#
+echo $scriptdir
+echo $versiondir
+echo $sourcedir
+echo -----
+echo $mainversion
+echo $subversion
+echo $buildnr
+echo $version
+pwd
+#sleep 5
+#exit 1
+# baue Beta 
+echo "Build version $version in $sourcedir"
+case "$mainversion" in
+   3.8)
+      echo "Updating CVS for $version "
+      cvs up -d -P -r branch_3_7_8
+      ;;
+   3.9)
+      echo "Updating CVS for $version "
+      cvs up -d -P -A
+      ;;
+    *)
+        echo "Usage: $0 {3.8|3.9}"
+        exit 1
+        ;;
+esac
+find .  -name "*.ppu" -o -name "*.o"  -o -name "*.oo2" -o -name "*.ppo" -o -name "*.rst" -o -name "openxp" -o -name "openxp*.exe" -o -name "openxp-*bsd" | xargs -t rm
+rm "$versiondir"output/* "$versiondir"kylixout/*
+rm compile*.log compile*.err 
+"$scriptdir"makexp $mainversion 
+datum=`date`
+subject="OXP v"$version": Fatal compiler errors fpc/Linux "$datum"."
+subjectkylix="OXP v"$version": Fatal compiler errors Kylix3 "$datum"."
+subjectdos="OXP v"$version": DOS Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectwin="OXP v"$version": Win32 Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectdos="OXP v"$version": DOS Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectos2="OXP v"$version": OS/2 Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectfreebsd="OXP v"$version": FreeBSD Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+subjectnetbsd="OXP v"$version": NetBSD Crosscomp.: Fatal compiler errors fpc/Linux "$datum"."
+test -f ../kylixout/openxp || echo "buildxp: Ooops, Kylix had (fatal) errors"
+#test -f ../kylixout/openxp || elm -s "$subjectkylix" openxp-cvs@lists.sourceforge.net < compile-kylix-error-"$version".log
+test -f "openxp" || echo "buildxp: Ooops, no openxp Linux binary" 
+test -f "openxp" || elm -s "$subject" openxp-cvs@lists.sourceforge.net < compile-fpc-error-"$version".log
+### Crosscompiler
+test -f "openxp-dos.exe" || echo "buildxp: Ooops, no openxp DOS binary" 
+#test -f "openxp-dos.exe" || elm -s "$subjectdos" openxp-cvs@lists.sourceforge.net < fpc-dos-"$version".log
+test -f "openxp-win.exe" || echo "buildxp: Ooops, no openxp Win32 binary" 
+#test -f "openxp-win.exe" || elm -s "$subjectwin" openxp-cvs@lists.sourceforge.net < fpc-win-"$version".log
+test -f "openxp-os2.exe" || echo "buildxp: Ooops, no openxp OS/2 binary" 
+#test -f "openxp-os2.exe" || elm -s "$subjectos2" openxp-cvs@lists.sourceforge.net < fpc-os2-"$version".log
+test -f "openxp-netbsd" || echo "buildxp: Ooops, no openxp NetBSD binary" 
+#test -f "openxp-netbsd" || elm -s "$subjectnetbsd" openxp-cvs@lists.sourceforge.net < fpc-netbsd-"$version".log
+test -f "openxp-freebsd" || echo "buildxp: Ooops, no openxp FreeBSD binary" 
+#test -f "openxp-freebsd" || elm -s "$subjectfreebsd" openxp-cvs@lists.sourceforge.net < fpc-freebsd-"$version".log
+###
+test -f "openxp" || chown -R boettger.users /home/boettger/openxp/*
+test -f "openxp" || exit
+./rc openxp-d.rq
+./rc openxp-e.rq
+./ihs doc/openxp-d.ihq
+./ihs doc/openxp-e.ihq
+cp -a "$versiondir"kylixout/openxp openxp-kylix
+cp -a openxp openxp-$version
+cp -a openxp-d.res openxp-d.res-$version
+cp -a openxp-e.res openxp-e.res-$version
+cp -a doc/openxp-d.hlp doc/openxp-d.hlp-$version
+cp -a doc/openxp-e.hlp doc/openxp-e.hlp-$version
+cp -a openxp-kylix openxp-kylix-$version
+tar cvjf "$versiondir"openxp-"$version"-linux.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp doc/oxp_en.txt
+test -f openxp-freebsd && tar cvjf "$versiondir"openxp-"$version"-freebsd.tar.bz2 openxp-freebsd openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+test -f openxp-netbsd && tar cvjf "$versiondir"openxp-"$version"-netbsd.tar.bz2 openxp-netbsd openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+test -f openxp-os2.exe && zip -9-r "$versiondir"openxp-"$version"-os2.zip openxp-os2.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+test -f openxp-dos.exe && zip -9-r "$versiondir"openxp-"$version"-dos.zip openxp-dos.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+test -f openxp-win.exe &&  zip -9 -r "$versiondir"openxp-"$version"-win32.zip openxp-win.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
+#
+echo "Finished $0"

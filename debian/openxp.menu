@@ -1,0 +1,3 @@
+?package(openxp):needs="text" section="Apps/Net" hints="Mail"\
+  title="OpenXP"\
+  command="/usr/bin/openxp"

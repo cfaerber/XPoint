@@ -1,0 +1,113 @@
+
+	Hinweise fuer die Benutzung von OpenXP unter Linux       v3.8.x-beta
+	--------------------------------------------------------------------
+
+	ACHTUNG: OpenXP ist als Linux-Portierung zur Zeit eher
+	         als Alpha- denn als Beta-Version zu verstehen.
+		 Wer aber die hier aufgefuehrten Hinweise beachtet,
+		 kann gerne die Tools ausprobieren.
+
+	Status	Die Entwicklungsstadien der einzelnen Programme und Tools
+		sind sehr unterschiedlich. Die nachfolgende Uebersicht
+		kann helfen, den Status zu erkennen. Sollte ein Tool
+		hier nicht aufgefuehrt sein, so gehen Sie bitte davon aus,
+		dass sich noch kein Programmierer darum gekuemmert hat. :-/
+		Non-Function-Development heisst, es hat sich schon mal
+		jemand angesehen (intensiver), aber es geht noch nichts
+		(und nichts heisst wirklich nichts).
+
+		Beta-Status
+		-----------
+
+		IHS		- Dummes Hilfesystem
+		RC		- Resource-Compiler fuer OpenXP
+		UUZ		- ZConnect-RFC-Konverter
+		XPME		- Menueeditor
+		XP		- OpenXP-Hauptprogramm
+
+	Install	Voraussetzung: FreePascal Compiler ab 1.0.10 (am besten den
+		aktuellen Snapshot von www.freepascal.org). Dann wie folgt
+		die Sources kompilieren:
+
+		su root
+		# Da der Compiler noch einen Bug hat, vorruebergehendend:
+		ppc386 xp
+		make OS=linux install
+		exit
+
+		Sie koennen auf 'su root' verzichten, wenn Sie als User das
+		Recht haben, in /usr/bin Links und in /usr/local Verzeichnisse
+		anzulegen.
+
+		BACKUP!!!! Machen Sie eine KOMPLETTE Datensicherung.
+
+		Dann diese Datei bis zum Ende lesen!
+
+	Alle	Die Ausgabe auf dem Bildschrim verlangt zur Zeit
+		einen ISO-8859-1-konfomren Zeichensatz.
+
+		Die Tastaturunterstuetzung ist nicht vollstaendig. 
+
+		Die Farben funktionieren z.T. im Standard nicht so, wie man es gerne
+		moechte: Config/Anzeige/Farben loest das Problem.
+
+		Unter X darf die Groesse der Konsole nach dem
+		Programmstart nicht mehr geaendert werden.
+
+		Fehler, wie "Kann xxx nicht finden" sind wahrscheinlich auf
+		die Tatsache zurueckzufueren, dass Linux bei Dateinamen
+		zwischen Gross- und Kleinschreibung unterscheidet. Da
+		OpenXP seine DOS-Vergangenheit nicht leugnen kann, sollte
+		man zunaechst versuchen, den Namen in Grossschreibung zu
+		wandeln (gilt nicht fuer die Tools wie ZFido etc.).
+		Wenn ein solches Problem auftritt, dann sollte es auch
+		an die Entwickler gemeldet werden. Nach Moeglichkeit nicht
+		mit dem Text "Da geht was nicht", sondern mit einer
+		moeglichst genauen Beschreibung, was wann und am besten
+		auch noch warum nicht funktioniert hat. Je detailierter
+		die Meldung, desto groesser die Chance, dass innerhalb
+		kurzer Zeit das Problem beseitigt ist.
+
+	XP	OpenXP ist im absoluten Alpha-Stadium! Jede Verwendung
+		kann nur auf eigene Gefahr und mit der Wahrscheinlichkeit
+		von Fehlern erfolgen. Sie muessen sich bewusst sein, dass
+		die vorliegende Portierung nicht abgeschlossen ist, und
+		auch vielfach keine Ruecksicht auf Linux-Besonderheiten
+		nimmt.
+
+		Die Linux-Version legt die Datenbanken und anderen Dateien
+		im Verzeichnis '$HOME/.openxp/' an. Wenn Sie bestehende
+		Daten verwenden moechten, so muessen Sie zunaechst einen
+		symbolischen Link auf die Daten legen. Angenommen, Ihre
+		XP-Installation befindet sich im Verzeichnis '/pub/usera/xp',
+		dann erstellen Sie den Link mit folgendem Befehl:
+
+		ln -s /pub/usera/xp ~/.openxp
+
+		Wenn Sie es nicht moegen, dass OpenXP Ihnen den Pfad
+		vorschreibt, so setzen Sie bei Ihren Einstellungen
+		die Environment-Variable 'XPHOME' mit einem absoluten
+		Pfad. Beispiel:
+
+		XPHOME=~/.xp
+
+		Wenn Sie dieses dauerhaft machen moechten, so geben Sie
+
+		echo "export XPHOME=~/.xp">>~/.profile
+
+		ein. Sie koennen die Datei natuerlich auch mit einem
+		Editor bearbeiten (gilt fuer eine SuSE-Distribution).
+
+	XPME	Bis auf die dargestellten Schwierigkeiten bei der
+	        Ausgabe von Schriftzeichen bei Konsolen/Fonts, die
+		nicht ISO-8859-1-kompatibel sind, sollte das Tool
+		funktionieren.
+
+	ZFido   ZFido ist vollstaendig in XP integriert.
+
+
+	----------------------------------------------------------------------
+	$RCSfile: linux.txt,v $
+	$Revision: 1.4.2.1 $
+	$Date: 2003/09/21 21:05:47 $
+	End of File

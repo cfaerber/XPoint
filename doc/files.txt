@@ -1,0 +1,254 @@
+# files in OpenXP directory
+#
+# $Id: files.txt,v 1.27 2001/10/20 10:13:02 mk Exp $
+#
+Makefile	Makefile for GNU make
+ObjCOM/Makefile	Makefile for GNU make
+ObjCOM/developer.txt	names of developers
+ObjCOM/example.pas	???
+ObjCOM/license.txt	???
+ObjCOM/objcom.pas	???
+ObjCOM/ocdeffpc.inc	???
+ObjCOM/ocdefine.inc	???
+ObjCOM/ocfdos.inc	???
+ObjCOM/ocfdosh.inc	???
+ObjCOM/ocsdos.inc	???
+ObjCOM/ocsdosh.inc	???
+ObjCOM/ocslin.inc	???
+ObjCOM/ocslinh.inc	???
+ObjCOM/ocsos2.inc	???
+ObjCOM/ocsos2h.inc	???
+ObjCOM/ocswin.inc	???
+ObjCOM/ocswinh.inc	???
+ObjCOM/octhread.pas	???
+ObjCOM/octwin.inc	???
+ObjCOM/octwinh.inc	???
+ObjCOM/ringbuff.pas	???
+ObjCOM/serial.pas	???
+ObjCOM/todo.txt		todo list
+archive.pas		read directory from archives (ZIP, ARJ, etc.)
+beispiel/glossary.cfg	example for Glossary function (Editor)
+beispiel/gsbox.scr	login script for GSMail
+beispiel/madness.scr	login script for Madness boxes
+beispiel/magic.scr	login script for MagicNET
+beispiel/maus.scr	login script for MAUS boxes
+beispiel/o-magic.scr	login script for MagicNET (Online)
+beispiel/oz-netz.scr	login script for Z-Netz (Online)
+beispiel/pcsysop.scr	login script for NetLand und PCNet
+beispiel/privhead.xps	template for not quoted mails
+beispiel/qbrett.xps	template for quoted, public news 
+beispiel/qpmpriv.xps	template for quoted mails
+beispiel/qpriv.xps	template for quoted public news send as mails 
+beispiel/quark.scr	login script for QUARK boxes
+beispiel/quoteto.xps	template for /Message/Action/Quote (/Nachr./Weiterl./QuoteTo)
+beispiel/uucp.scr	login script for UUCP
+beispiel/xpmailto.reg	???
+beispiel/z-netz.scr	login script for Z-Netz
+build.bat		DOS batch command file for compiling OpenXP
+charsets/8859_1.inc	???
+charsets/8859_10.inc	???
+charsets/8859_13.inc	???
+charsets/8859_14.inc	???
+charsets/8859_15.inc	???
+charsets/8859_2.inc	???
+charsets/8859_3.inc	???
+charsets/8859_4.inc	???
+charsets/8859_5.inc	???
+charsets/8859_6.inc	???
+charsets/8859_7.inc	???
+charsets/8859_8.inc	???
+charsets/8859_9.inc	???
+charsets/cp1251.inc	???
+charsets/cp1252.inc	???
+charsets/cp1255.inc	???
+charsets/cp437.inc	???
+charsets/cp866.inc	???
+clip.pas		interface to 16-Bit-Windows-Clipboard via INT 2F
+crc.pas			CRC16/32 routines
+databas1.inc		database functions for *.DB1/*.IX1/*.EB1
+databas2.inc		database functions for *.DB1/*.IX1/*.EB1
+database.inc		database functions for *.DB1/*.IX1/*.EB1
+database.pas		database functions for *.DB1/*.IX1/*.EB1
+databaso.pas		database functions for *.DB1/*.IX1/*.EB1
+datadef.pas		database functions for *.DB1/*.IX1/*.EB1
+datadef1.pas		database functions for *.DB1/*.IX1/*.EB1
+dbase.pas		read dBASE files (for YUP2PKT)
+debug.pas		Debug-Unit. control log messages via environment 
+doc/Makefile		Makefile for GNU make
+doc/authors.txt		names and E-Mail addresses of the authors of OpenXP
+doc/dbform.txt		description of database fields
+doc/devtodo.txt		todo list 
+doc/fido.dq		Fido dokumentation as source code
+doc/files.txt		file list of OpenXP source code (this file)
+doc/gpl.txt		GNU General Public License
+doc/linux.txt		hints for usage under Linux
+doc/make.txt		intructions for compiling OpenXP
+doc/planung.txt		strategic planning for following/new  OpenXP versions
+doc/readme.txt		important notes 
+doc/slizenz.txt		license for OpenXP source code
+doc/tools.txt		table of external XP tools
+doc/update.txt		notes on OpenXP updates
+doc/uucp.dq		UUCP documentation as source code
+doc/versions.txt	versions FAQ for CrossPoint and OpenXP
+doc/xp-e.ihq		source code of English Online help
+doc/xp.ihq		source code of German Online help
+doc/xpoint.cat		catalogue file for the manual
+doc/xpoint.dsl		style sheet for the manual 
+doc/xpoint.sgm		manual in DocBook format
+docform.pas		source code of DOCFORM.EXE
+eddef.pas		Editor
+editor.inc		Editor
+editor.pas		Editor
+encoder.pas		???
+exxec.pas		call external programs; swapping
+feiertag.pas		calculate/compute public holidays
+file_id.diz		???
+fileio.inc		low level funktions
+fileio.pas		files, paths, drives 
+gpltools.pas		tools not under SLizenz (license)
+help.pas		Online help: read and display *.HLP 
+icons.res		Icons for OpenXP in Windows format
+ihs.pas			source code of IHS.EXE (Helpfile-Compiler)
+inout.pas		misc funktions for keyboard input and screen display
+ipaddr.pas		class TIP for handling an IP address (GPL)
+ipcclass.pas		class TIPC (Inter Process Communication) (GPL)
+keys.pas		keyboard input 
+linux/fileio.inc	Linux functions (low level)
+linux/fileioh1.inc	Interface Linux functions (low level)
+lister.pas		Lister
+maggi.pas		Multiformat converter (MAGGI.EXE)
+maske.inc		Dialogue / user input masks
+maske.pas		Dialogue / user input masks
+maus2.pas		processing of mouse input
+modem.pas		modem routines
+montage.pas		date functions 
+mouse.pas		processing of mouse interrupts (INT 33)
+ncnntp.pas		NNTP
+ncpop3.pas		POP3
+ncsmtp.pas		SMTP
+ncsocket.pas		base routines for sockets
+ncurses.pas		interface to Curses lib (mostly Unix)
+ndiff.pas		Nodelist-Differ (NDIFF.EXE)
+netcall.pas		abstract class TNetcall (GPL)
+pmconv.pas		PM buffer (Puffer) converter (PMCONV.EXE)
+printerx.pas		printing 
+rc.pas			source code of RC.EXE (resource compiler)
+regexpr.pas		???
+resource.pas		string resources: read *.RES 
+stack.pas		a primitive stack
+timer.pas		timer routines
+typeform.pas		type conversions, string formating etc.
+uart.pas		In/Out via serial ports or FOSSIL
+unicode.pas		???
+utftools.pas		???
+uucico.pas		UUCP file transfer program
+uucp-fl1.pas		example for UUCP File list converter
+uucp-g.inc		???
+uuz.pas			UUCP/RFC converter
+uuzext.pas		external UUCP/RFC converter
+win2.pas		selection menue
+winxp.pas		???
+xp-d.rq			German language module for XP
+xp-e.rq			English language module for XP
+xp-fm.inc		Fido mailer (XP-FM.EXE)
+xp-fm.pas		Fido mailer (XP-FM.EXE)
+xp.pas			CrossPoint main program, Real-Mode version
+xp0.pas			global definitions and declarations
+xp1.pas			unsortet misc
+xp10.inc		timing lists, keyboard macros, charge units etc.
+xp10.pas		timing lists, keyboard macros, charge units etc.
+xp10p.inc		timing lists, keyboard macros, charge units etc.
+xp1cm.inc		unnecessary remains of old times 
+xp1help.pas		call the Online help
+xp1input.pas		misc input routines
+xp1menu.inc		menue funktions
+xp1o.pas		misc: Lister: get keyboard input
+xp1o2.pas		misc
+xp1s.inc		call external programs
+xp2.pas			initialisations at program start time
+xp2c.pas		change configuration /XPoint/Config
+xp2cfg.inc		load configuration 
+xp2db.pas		initialisations at program start time
+xp2f.pas		eat, fuck, watch tv
+xp3.pas			misc functions for handling point data 
+xp3ex.pas		extract messages
+xp3o.inc		read XP buffers (Puffer)
+xp3o.pas		misc functions for handling messages
+xp3o2.pas		misc functions for handling messages
+xp4.inc			read main menue input
+xp4.pas			keyboard input N/B/U window (german version)
+xp4d.inc		point to line for N/B/U window
+xp4e.pas		edit function for for N/B/U window
+xp4o.inc		reorganisation
+xp4o.pas		search functions, dupe kill
+xp4o2.pas		compact database, thread view
+xp4o3.pas		misc help functions for XP4
+xp4w.inc		select and call Lister or external viewer
+xp5.pas			calendar, screen saver, password etc
+xp6.pas			main procedure to send messages 
+xp6l.pas		send messages (... write in DB and buffer (Puffer))
+xp6o.pas		send messages (... write in DB and buffer (Puffer))
+xp6s.inc		send messages (... write in DB and buffer (Puffer))
+xp7.inc			netcall funktions
+xp7.pas			netcall functions
+xp7f.pas		netcall functions
+xp7l.pas		netcall functions
+xp7o.pas		netcall functions
+xp7u.inc		netcall functions
+xp8.inc			Newsgroup/Echo manager functions
+xp8.pas			Newsgroup/Echo manager functions
+xp8fs.inc		Newsgroup/Echo manager functions
+xp9.inc			(nearly) all functions in Edit menue
+xp9.pas			(nearly) all functions in Edit menue
+xp9bp.pas		(nearly) all functions in Edit menue
+xp_des.pas		DES encryption
+xp_iti.pas		process MausTausch-ITI file 
+xp_pgp.pas		PGP interface
+xp_uue.pas		UUDecode
+xpauto.pas		AutoSend, Autoexec directory
+xpcc.pas		CarbonCopy / User Group
+xpcfg.pas		3rd Cfg file
+xpcurses.pas		XP specific interface for using the Curses lib
+			(needed only under Unix-like systems)
+xpdatum.pas		date conversions
+xpdefine.inc		???
+xpdiff.pas		definitions for XP, XP-FM and ZFIDO
+xpdos32.pas		???
+xpe.pas			call the internal Editor
+xpeasy.pas		simple startup configuration
+xpf1.inc		Fido functions
+xpf2.pas		Fido functions
+xpfido.pas		Fido functions
+xpfidonl.pas		Fido node list functions
+xpfiles.inc		file name conversions for UUZ
+xpfm-d.rq		German language module for Fido mailer
+xpfm-e.rq		English language module for Fido mailer
+xpftnadr.pas		???
+xpglobal.pas		???
+xpheader.inc		???
+xpimpexp.pas		Import/Export functions
+xpipc.pas		interface between IPC.PAS and OpenXP
+xpkeys.pas		Function keys and macros
+xplinux.pas		XP specific interface under Linux
+xpmakehd.inc		parse ZCONNECT- and Z3.8 header
+xpmaus.pas		MausTausch functions
+xpme.pas		menue editor (XPME.EXE)
+xpmecol.inc		menue editor (XPME.EXE)
+xpmime.pas		XP 3.2 only: MIME viewer functions
+xpnntp.pas		interface between NCNNTP.PAS and OpenXP
+xpnodes.pas		Unit for access to the XP Node list index
+xpnt.pas		network types
+xpos2.pas		???
+xpreg.pas		/XPoint/Register
+xpstat.pas		/XPoint/Statistics
+xpterm.pas		/XPoint/Terminal
+xpuu-d.rq		German language module for UUCICO
+xpuu-e.rq		English language module for UUCICO
+xpuu.pas		call UUCICO 
+xpview.pas		binary file viewer
+xpwin32.pas		???
+xpx.pas			first Unit: start-up functions
+yup2pkt.pas		???
+zfido.pas		FTSC converter (ZFIDO.EXE)
+zmodem.pas		ZModem-Unit
+zpr.pas			ZCONNECT buffer (Puffer) repair tool (ZPR.EXE)

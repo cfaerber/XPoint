@@ -1,0 +1,1079 @@
+{   $Id: xp2db.pas,v 1.41.2.2 2003/01/11 22:33:12 mk Exp $
+
+    Copyright (C) 1991-2001 Peter Mandrella
+    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+}
+
+{ === Datenbank ==================================================== }
+
+{$I xpdefine.inc}
+
+unit xp2db;
+
+interface
+
+uses
+{$IFDEF Unix }
+{$IFDEF Kylix }
+  xplinux,
+{$ENDIF }
+  xpcurses,
+{$ENDIF }
+      typeform,fileio,inout,keys,datadef,database,databaso,
+      sysutils,resource,maus2,xpglobal, datadef1,
+      xp0,xp1,xp1o,xp1o2,xp1input,xp3,xp3o,xp5,xp9bp,xpnt;
+
+procedure InitDatabase;
+
+implementation  { --------------------------------------------------- }
+
+uses xpheader, xp4o2, winxp;
+
+
+procedure GetFieldNumbers;
+begin
+  bb_brettname  := dbGetFeldNr(bbase,'brettname');
+  bb_kommentar  := dbGetFeldNr(bbase,'kommentar');
+  bb_ldatum     := dbGetFeldNr(bbase,'ldatum');
+  bb_flags      := dbGetFeldNr(bbase,'flags');
+  bb_pollbox    := dbGetFeldNr(bbase,'pollbox');
+  bb_haltezeit  := dbGetFeldNr(bbase,'haltezeit');
+  bb_gruppe     := dbGetFeldNr(bbase,'gruppe');
+  bb_index      := dbGetFeldNr(bbase,'index');
+  bb_adresse    := dbGetFeldNr(bbase,'adresse');
+
+  ub_username   := dbGetFeldNr(ubase,'username');
+  ub_adresse    := dbGetFeldNr(ubase,'adresse');
+  ub_kommentar  := dbGetFeldNr(ubase,'kommentar');
+  ub_adrbuch    := dbGetFeldNr(ubase,'adrbuch');
+  ub_pollbox    := dbGetFeldNr(ubase,'pollbox');
+  ub_haltezeit  := dbGetFeldNr(ubase,'haltezeit');
+  ub_userflags  := dbGetFeldNr(ubase,'userflags');
+  ub_codierer   := dbGetFeldNr(ubase,'codierer');
+
+  mb_brett      := dbGetFeldNr(mbase,'brett');
+  mb_absender   := dbGetFeldNr(mbase,'absender');
+  mb_betreff    := dbGetFeldNr(mbase,'betreff');
+  mb_origdatum  := dbGetFeldNr(mbase,'origdatum');
+  mb_empfdatum  := dbGetFeldNr(mbase,'empfdatum');
+  mb_groesse    := dbGetFeldNr(mbase,'groesse');
+  mb_typ        := dbGetFeldNr(mbase,'typ');
+  mb_halteflags := dbGetFeldNr(mbase,'halteflags');
+  mb_gelesen    := dbGetFeldNr(mbase,'gelesen');
+  mb_unversandt := dbGetFeldNr(mbase,'unversandt');
+  mb_ablage     := dbGetFeldNr(mbase,'ablage');
+  mb_adresse    := dbGetFeldNr(mbase,'adresse');
+  mb_msgsize    := dbGetFeldNr(mbase,'msgsize');
+  mb_wvdatum    := dbGetFeldNr(mbase,'wvdatum');
+  mb_msgid      := dbGetFeldNr(mbase,'msgid');
+  mb_netztyp    := dbGetFeldNr(mbase,'netztyp');
+  mb_name       := dbGetFeldNr(mbase,'name');
+  mb_flags      := dbGetFeldNr(mbase,'flags');
+  mb_mimetyp    := dbGetFeldNr(mbase,'mimetyp');
+
+  bezb_msgpos   := dbGetFeldNr(bezbase,'msgpos');
+  bezb_msgid    := dbGetFeldNr(bezbase,'msgid');
+  bezb_ref      := dbGetFeldNr(bezbase,'ref');
+  bezb_datum    := dbGetFeldNr(bezbase,'datum');
+
+  mimeb_typ     := dbGetFeldNr(mimebase,'typ');
+  mimeb_extension:=dbGetFeldNr(mimebase,'extension');
+  mimeb_programm:= dbGetFeldNr(mimebase,'programm');
+end;
+
+
+procedure initdatabase;
+var flp : dbFLP;
+    fnr : word;
+    i   : integer;
+    t   : text;
+    dd  : DB;
+
+
+  procedure initflp(nr:word);
+  begin
+    dbAllocateFL(flp,nr);
+    fnr:=0;
+  end;
+
+  procedure AppS(name:dbFeldStr; len:byte);
+  begin
+    inc(fnr);
+    with flp^.feld[fnr] do begin
+      fname:=UpperCase(name);
+      ftyp:=dbTypeString;
+      fsize:=len;
+      end;
+  end;
+
+  { Typ mit fester LÑnge anlegen }
+
+  procedure AppX(name:dbFeldStr; typ,size,len:byte);
+  begin
+    inc(fnr);
+    with flp^.feld[fnr] do begin
+      fname:=UpperCase(name);
+      ftyp:=typ;
+      fsize:=size;
+      fnlen:=len;
+      end;
+  end;
+
+  { Feld 'MsgID' in Nachrichtendatei einfÅgen (ab 1.01) }
+  procedure NewFieldMessageID;
+  var fld : dbFeldTyp;
+      hdp : Theader;
+      hds : longint;
+      x,y : Integer;
+      n,nn: longint;
+      idnr: integer;
+
+    procedure wrn;
+    begin
+      gotoxy(x+46,y+2);
+      attrtxt(col.colmboxhigh);
+      write(n*100 div nn:3);
+    end;
+
+  begin
+    if diskfree(0)<_filesize(MsgFile+dbExt)*1.5 then
+      interr(getres(210));  { 'zu wenig Fesplattenspeicher!' }
+    with fld do begin
+      fname:='msgid'; ftyp:=dbTypeString;
+      fsize:=19;
+      end;
+    dbAppendField(MsgFile,fld);
+    dbOpen(mbase,MsgFile,0);
+    n:=0; nn:=dbRecCount(mbase);
+    if nn>0 then begin
+      msgbox(54,5,'',x,y);
+      mwrt(x+3,y+2,'Und jetzt noch die MessageIDs einlesen ...     %');
+      idnr:=dbGetFeldNr(mbase,'msgid');
+      hdp := THeader.Create;
+      while not dbEOF(mbase) do begin
+        inc(n); wrn;
+        ReadHeader(hdp,hds,false);
+        if hds>1 then
+          dbWriteNStr(mbase,idnr,hdp.msgid);
+        dbNext(mbase);
+        end;
+      Hdp.Free;
+      inc(n); wrn;
+      closebox;
+      end;
+    dbClose(mbase);
+  end;
+
+  { Feld 'Netztyp' in Boxendatei einfÅgen (ab 1.12) }
+  procedure NewFieldNetztyp;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='netztyp'; ftyp:=dbTypeInt;
+      fsize:=1; fnlen:=3;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'index' in Brettdatei  einfÅgen (ab 1.2) }
+  procedure NewFieldIndex;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='index'; ftyp:=dbTypeInt;
+      fsize:=4; fnlen:=10;
+      end;
+    dbAppendField(BrettFile,fld);
+    SafeDeleteFile(BrettFile+dbIxExt);
+    AlphaBrettindex;
+  end;
+
+  { Feld 'Realname' in Boxendatei einfÅgen }
+  procedure NewFieldRealname;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='Realname'; ftyp:=dbTypeString;
+      fsize:=40;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'Pointname' in Boxendatei einfÅgen }
+  procedure NewFieldPointname;
+  var fld : dbFeldTyp;
+      d   : DB;
+      fn  : string[12];
+  begin
+    with fld do begin
+      fname:='Pointname'; ftyp:=dbTypeString;
+      fsize:=25;
+      end;
+    dbAppendField(BoxenFile,fld);
+    dbOpen(d,BoxenFile,0);
+    while not dbEOF(d) do begin
+      fn := dbReadStr(d,'dateiname');
+      ReadBox(0,fn,BoxPar);
+      dbWriteStr(d,'pointname',BoxPar^.pointname);
+      dbNext(d);
+      end;
+    dbClose(d);
+  end;
+
+  { Feld 'Domain' in Boxendatei einfÅgen }
+  procedure NewFieldDomain;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='Domain'; ftyp:=dbTypeString;
+      fsize:=60;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'Email' in Boxendatei einfÅgen }
+  procedure NewFieldemail;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='Email'; ftyp:=dbTypeString;
+      fsize:=80;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'FQDN' in Boxendatei einfÅgen }  { fÅr Message-IDs}
+  procedure NewFieldFQDN;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='FQDN'; ftyp:=dbTypeString;
+      fsize:=60;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'Fidoname' in Boxendatei einfÅgen }
+  procedure NewFieldFidoname;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='Fidoname'; ftyp:=dbTypeString;
+      fsize:=40;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'ReplyTo' in Boxendatei einfÅgen }
+  procedure NewFieldReplyto;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='ReplyTo'; ftyp:=dbTypeString;
+      fsize:=80;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'AVertreter/PVertreter' in Boxendatei einfÅgen }
+  procedure AddBoxVertreter(c:char);
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:=c+'Vertreter'; ftyp:=dbTypeString;
+      fsize:=20;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'Boxdomain' in Boxendatei einfÅgen }
+  procedure NewFieldBoxdomain;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='Boxdomain'; ftyp:=dbTypeString;
+      fsize:=60;
+      end;
+    dbAppendField(BoxenFile,fld);
+  end;
+
+  { Feld 'Netztyp' in Nachrichtendatei einfÅgen (ab 1.9) }
+  procedure NewFieldMsgNetztyp;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='netztyp'; ftyp:=dbTypeInt;
+      fsize:=4; fnlen:=10;
+      end;
+    dbAppendField(MsgFile,fld);
+  end;
+
+(*  procedure kk;
+  var hdp : headerp;
+      hds : longint;
+      mnt : longint;
+      nn  : longint;
+  begin
+    dbSetIndex(mbase,0);
+    dbGoTop(mbase);
+    nn:=0;
+    hdp := AllocHeaderMem;
+    while not dbEOF(mbase) do begin
+      ReadHeader(hdp,hds,false);
+      mnt:=hdp.netztyp;
+      if hdp.ref<>'' then inc(mnt,$100);
+      dbWrite(mbase,'netztyp',mnt);
+      inc(nn); write(#13,nn);
+      dbNext(mbase);
+      end;
+    FreeHeaderMem;
+    dbSetIndex(mbase,1);
+    dbGoTop(mbase);
+  end; *)
+
+  { Feld 'Origin' in Gruppendatei einfÅgen (ab 1.92) }
+  procedure NewFieldOrigin;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='origin'; ftyp:=dbTypeString;
+      fsize:=50;
+      end;
+    dbAppendField(GruppenFile,fld);
+  end;
+
+  { Feld 'Adresse' in Gruppendatei einfÅgen (ab 1.92) }
+  procedure NewFieldAdresse;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='adresse'; ftyp:=dbTypeString;
+      fsize:=50;
+      end;
+    dbAppendField(GruppenFile,fld);
+  end;
+
+  { Add role fields to group db (since OpenXP/32 2001-06) }
+  procedure NewFieldsForRoles;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='amrealname'; ftyp:=dbTypeString; fsize:=40;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='ammail'; ftyp:=dbTypeString; fsize:=80;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='amreplyto'; ftyp:=dbTypeString; fsize:=80;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='amfqdn'; ftyp:=dbTypeString; fsize:=60;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='pmrealname'; ftyp:=dbTypeString; fsize:=40;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='pmmail'; ftyp:=dbTypeString; fsize:=80;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='pmreplyto'; ftyp:=dbTypeString; fsize:=80;
+      end;
+    dbAppendField(GruppenFile,fld);
+    with fld do begin
+      fname:='pmfqdn'; ftyp:=dbTypeString; fsize:=60;
+      end;
+    dbAppendField(GruppenFile,fld);
+  end;
+
+  { Feld 'ZBVx' in Systemdatei einfÅgen (ab 2.15) }
+  procedure NewFieldZBV(n:char);
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='ZBV'+n; ftyp:=dbTypeString;
+      fsize:=60;
+      end;
+    dbAppendField(SystemFile,fld);
+  end;
+
+  { Feld 'Adresse' in Brettdatei einfÅgen (ab 2.11) }
+  procedure NewFieldBrettadresse;
+  var fld : dbFeldTyp;
+      b   : byte;
+  begin
+    if diskfree(0)<_filesize(BrettFile+ dbExt) then
+      interr('Zu wenig Plattenplatz zum Konvertieren der Bretterdatei.');
+    with fld do begin
+      fname:='adresse'; ftyp:=dbTypeString;
+      fsize:=80;
+      end;
+    dbAppendField(BrettFile,fld);
+    moment;
+    dbOpen(bbase,BrettFile,0);    { Flags-Feld korrigieren }
+    while not dbEOF(bbase) do begin
+      dbReadN(bbase,bb_flags,b);
+      b:=b and 7;
+      dbWriteN(bbase,bb_flags,b);
+      dbNext(bbase);
+      end;
+    dbClose(bbase);
+    closebox;
+  end;
+
+  { Feld 'Name' in Nachrichtendatei einfÅgen (ab 2.1) }
+  procedure NewFieldMsgname;
+  var fld   : dbFeldTyp;
+      hdp   : Theader;
+      hds,n : longint;
+      x,y   : Integer;
+      nt    : byte;
+      name  : string[25];
+  begin
+    if diskfree(0)<_filesize(MsgFile+ dbExt)*1.2 then
+      interr('Zu wenig Plattenplatz zum Konvertieren von MSGS.DB1!');
+    with fld do begin
+      fname:='name'; ftyp:=dbTypeString;
+      fsize:=25;
+      end;
+    dbAppendField(MsgFile,fld);
+
+    hdp := THeader.Create;                        { Realnames / BrettempfÑnger einlesen }
+    msgbox(40,3,'',x,y);
+    wrt(x+3,y+1,'Nachrichten Åberarbeiten...');
+    attrtxt(col.colmboxhigh);
+    n:=0;
+    dbOpen(mbase,MsgFile,0);
+    while not dbEOF(mbase) do begin
+      inc(n);
+      if n mod 10=0 then begin
+        gotoxy(x+31,y+1);
+        moff; write(n:6); mon;
+        end;
+      nt:=dbReadInt(mbase,'netztyp') and $ff;
+      if nt in (netsRFC + [nt_Fido,nt_Magic,nt_ZConnect])
+      then begin
+        ReadHeader(hdp,hds,false);
+        if nt=nt_Fido then name:=hdp.fido_to
+        else name:=hdp.realname;
+        if name<>'' then
+          dbWriteStr(mbase,'name',name);
+        end;
+      dbNext(mbase);
+      end;
+    dbClose(mbase);
+    closebox;
+    Hdp.Free;
+  end;
+
+  { Feld 'Flags' in Nachrichtendatei einfÅgen (ab 3.1) }
+  procedure NewFieldMsgFlags;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='flags'; ftyp:=dbTypeInt;
+      fsize:=4; fnlen:=10;
+      end;
+    dbAppendField(MsgFile,fld);
+  end;
+
+  { Feld 'MIMEtyp' in Nachrichtendatei einfÅgen (ab 3.2) }
+  procedure NewFieldMsgMimetyp;
+  var fld   : dbFeldTyp;
+      hdp   : THeader;
+      n,hds : longint;
+      x,y   : Integer;
+      flags : longint;
+  begin
+    xp32welcome;
+    with fld do begin
+      fname:='mimetyp'; ftyp:=dbTypeString;
+      fsize:=30;
+      end;
+    dbAppendField(MsgFile,fld);
+
+    hdp := THeader.Create;                        { MIME-Typen einlesen }
+    msgbox(46,3,'',x,y);
+    wrt(x+3,y+1,'MIME-Nachrichtentypen einlesen ...     %');
+    attrtxt(col.colmboxhigh);
+    n:=0;
+    dbOpen(mbase,MsgFile,0);
+    while not dbEOF(mbase) do begin
+      inc(n);
+      if n mod 50=0 then begin
+        gotoxy(x+38,y+1);
+        moff; write(n*100 div dbRecCount(mbase):3); mon;
+        end;
+      ReadHeader(hdp,hds,false);
+      if hdp.mime.ctype<>'' then
+        dbWriteStr(mbase,'mimetyp',hdp.mime.ctype);
+      if hdp.boundary<>'' then begin
+        dbReadN(mbase,mb_flags,flags);
+        flags:=flags or 4;
+        dbWriteN(mbase,mb_flags,flags);
+        end;
+      dbNext(mbase);
+      end;
+    dbClose(mbase);
+    closebox;
+    Hdp.Free;
+  end;
+
+  procedure UserEbError;
+  var x,y  : Integer;
+      nr,i : shortint;
+      anz  : shortint;
+      t    : taste;
+  begin
+    anz:=res2anz(211)-2;
+    msgbox(57,anz+5,getres2(211,0),x,y);
+    moff;
+    for i:=2 to anz+1 do
+      wrt(x+3,y+i,getres2(211,i));
+   { 'Die Datei USER.EB1 fehlt! Diese Datei enthÑlt alle'
+     'User-Pa·worteinstellungen und Vertreteradressen.' ... }
+    mon;
+    t:='';
+    nr:=readbutton(x+3,y+anz+3,2,getres2(211,1),1,true,t);  { ' ^verlassen , ^neu anlegen ' }
+    closebox;
+    attrtxt(7); gotoxy(1,5);
+    if nr<>2 then interr(getres(212));  { 'Programmabbruch.' }
+    dbKillXbase(UserFile);
+    freeres;
+  end;
+
+  { Feld 'LastMsgID' in Autoversand einfÅgen (ab 3.3) }
+  procedure NewFieldLastMsgID;
+  var fld : dbFeldTyp;
+  begin
+    with fld do begin
+      fname:='LastMsgID'; ftyp:=dbTypeString;
+      fsize:=120;
+      end;
+    dbAppendField(AutoFile,fld);
+  end;
+
+  { Wiedervorlage-Datum 31.12.1999 durch 31.12.2027 ersetzen }
+  procedure FixWiedervorlage;
+  var x,y  : Integer;
+      n,nn : longint;
+      flags: byte;
+      edat : longint;
+
+    procedure wrn;
+    begin
+      gotoxy(x+52,y+2);
+      attrtxt(col.colmboxhigh);
+      write(n*100 div nn:3);
+    end;
+
+  begin
+    msgbox(60,5,'',x,y);
+    wrt(x+3,y+2,'Wiedervorlage-Markierungen werden korrigiert ...     %');
+    attrtxt(col.colmboxhigh);
+    dbSetIndex(mbase,0);
+    dbGoTop(mbase);
+    n:=0; nn:=dbRecCount(mbase);
+    while not dbEOF(mbase) do begin
+      inc(n);
+      if n mod 10=0 then wrn;
+      dbReadN(mbase,mb_Unversandt,flags);
+      if ((flags and 8) <> 0) then begin
+        edat:=IxDat('2712310000');
+        dbWriteN(mbase,mb_EmpfDatum,edat);
+        end;
+      dbNext(mbase);
+      end;
+    if (nn<>0) then wrn; { Division / 0 (hd) }
+    BrettdatumSetzen(false);
+    dbSetIndex(mbase,1);
+    dbGoTop(mbase);
+    mdelay(500);
+    closebox;
+  end;
+
+  procedure InitMimeDB;
+  var i : integer;
+
+    procedure app(typ,ext,prog:string);
+    var s : string;
+    begin
+      dbAppend(mimebase);
+      lostring(ext);
+      if typ='' then
+        if ext='jpg' then typ:='image/jpeg'
+        else if ext='tif' then typ:='image/tiff'
+        else if ext='ps' then typ:='/postscript'
+        else if ext='rtf' then typ:='/rtf'
+        else if ext='pdf' then typ:='/pdf'
+        else if ext='zip' then typ:='/zip'
+        else if ext='doc' then typ:='/msword'
+        else if ext='xls' then typ:='/vnd.ms-excel'
+        else if ext='mpg' then typ:='video/mpeg';
+      s:=typ; dbWriteStr(mimebase,'typ',s);
+      s:=ext; dbWriteStr(mimebase,'extension',s);
+      s:=prog; dbWriteStr(mimebase,'programm',s);
+    end;
+
+  begin
+    dbOpen(mimebase,MimetFile,1);
+    app('*/*','','');
+    if viewers[1].prog<>'' then app('image/gif','gif',viewers[1].prog);
+    if viewers[2].prog<>'' then app('','iff',viewers[2].prog);
+    if viewers[3].prog<>'' then app('','pcx',viewers[3].prog);
+    for i:=4 to maxviewers do
+      if (viewers[i].ext<>'') and (viewers[i].prog<>'') then
+        app('',viewers[i].ext,viewers[i].prog);
+    dbClose(mimebase);
+  end;
+
+begin
+  dbInterrProc:=@xp1.xp_DB_Error;
+{$IFDEF Debug }
+  dbLog('-- Datenbank initialisieren');
+{$ENDIF }
+  dbSetICP(ICP);
+  dbSetIndexVersion(3);
+  dbSetIndexCache(MaxCache);
+
+  if not FileExists(MsgFile+dbext) then
+  begin   { XPOINT: Nachrichtendatei }
+    initflp(19);
+    AppS('Brett',5);
+    AppS('Betreff',40);
+    AppS('Absender',80);
+    AppX('OrigDatum',dbTypeInt,4,10);
+    AppX('EmpfDatum',dbTypeInt,4,10);
+    AppX('Groesse',dbTypeInt,4,8);
+    AppX('Typ',dbTypeInt,1,1);
+    AppX('HalteFlags',dbTypeInt,1,1);
+    AppX('gelesen',dbTypeInt,1,1);
+    AppX('unversandt',dbTypeInt,1,1);
+    AppX('Ablage',dbTypeInt,1,2);
+    AppX('Adresse',dbTypeInt,4,10);
+    AppX('MsgSize',dbTypeInt,4,10);
+    AppX('WVdatum',dbTypeInt,4,10);
+    AppS('MsgID',19);
+    AppX('Netztyp',dbTypeInt,4,10);
+    AppS('Name',25);
+    AppX('Flags',dbTypeInt,4,10);
+    AppS('Mimetyp',30);
+    dbCreate(MsgFile,flp);
+    dbReleaseFL(flp);
+    dbOpen(mbase,MsgFile,0);
+    dbWriteUserflag(mbase,4,4);
+    dbClose(mbase);
+    end
+  else begin
+    if not dbHasField(msgFile,'netztyp') then
+      NewFieldMsgNetztyp;
+    if not dbHasField(msgFile,'msgid') then
+      NewFieldMessageID;
+    if not dbHasField(msgFile,'name') then
+      NewFieldMsgname;
+    if not dbHasField(msgFile,'flags') then
+      NewFieldMsgFlags;
+    if not dbHasField(msgFile,'mimetyp') then
+      NewFieldMsgMimetyp;
+    end;
+
+  if not FileExists(BrettFile+dbExt) then begin       { BRETTER: Brettdatei }
+    initflp(9);
+    AppS('Brettname',81);
+    AppS('Kommentar',30);
+    AppS('Pollbox',BoxNameLen);
+    AppX('Haltezeit',dbTypeInt,2,4);
+    AppX('Flags',dbTypeInt,1,3);
+    AppX('LDatum',dbTypeInt,4,10);
+    AppX('Gruppe',dbTypeInt,4,10);
+    AppX('Index',dbTypeInt,4,10);
+    AppS('Adresse',81);
+    dbCreate(BrettFile,flp);
+    dbReleaseFL(flp);
+    end
+  else begin
+    if not dbHasField(BrettFile,'index') then
+      NewFieldIndex;
+    if dbGetIndexVersion(BrettFile+dbIxExt)<2 then
+      _era(BrettFile+dbIxExt);
+    if not dbHasField(BrettFile,'adresse') then
+      NewFieldBrettadresse;
+    end;
+
+  if not FileExists(UserFile+dbExt) then begin        { USER: Userdatei }
+    initflp(9);
+    AppS('Username',80);
+    AppX('Adresse',dbUntypedExt,0,0);
+    AppS('Kommentar',30);
+    AppS('Pollbox',BoxNameLen);
+    AppX('Haltezeit',dbTypeInt,2,4);
+    AppX('AdrBuch',dbTypeInt,1,1);
+    AppX('Passwort',dbUntypedExt,0,0);
+    AppX('UserFlags',dbTypeInt,1,3);
+    AppX('Codierer',dbTypeInt,1,3);
+    dbCreate(UserFile,flp);
+    dbReleaseFL(flp);
+    end
+  else begin
+    if dbGetIndexVersion(UserFile+dbIxExt)<3 then
+      _era(UserFile+dbIxExt);
+    if not FileExists(UserFile+dbExtExt) then
+      UserEbError;
+    end;
+
+  if not FileExists(BoxenFile+dbExt) then begin       { BOXEN: Pollbox-Liste }
+    initflp(17);
+    AppS('Boxname',20);
+    AppS('Username',30);
+    AppS('Kommentar',30);
+    AppS('Dateiname',8);
+    AppX('Script',dbTypeInt,1,1);
+    AppS('NameOMaps',20);
+    AppX('Netztyp',dbTypeInt,1,3);
+    AppS('Realname',40);
+    AppS('Pointname',25);
+    AppS('Domain',60);
+    AppS('FQDN',60);
+    AppS('EMail',80);
+    AppS('Fidoname',40);
+    AppS('ReplyTo',80);
+    AppS('AVertreter',20);
+    AppS('PVertreter',20);
+    AppS('Boxdomain',60);
+    dbCreate(BoxenFile,flp);
+    dbReleaseFL(flp);
+    end
+  else begin
+    if not dbHasField(BoxenFile,'Netztyp') then
+      NewFieldNetztyp;
+    if not dbHasField(BoxenFile,'Realname') then
+      NewFieldRealname;
+    if not dbHasField(BoxenFile,'Pointname') then
+      NewFieldPointname;
+    if not dbHasField(BoxenFile,'Domain') then
+      NewFieldDomain;
+    if not dbHasField(BoxenFile,'FQDN') then  { fÅr Message-IDs }
+      NewFieldFQDN;
+    if not dbHasField(BoxenFile,'Email') then { fÅr schnelle EMail-Adresse }
+      NewFieldEmail;
+    if not dbHasField(BoxenFile,'Fidoname') then
+      NewFieldFidoname;
+    if not dbHasField(BoxenFile,'ReplyTo') then
+      NewFieldReplyTo;
+    if not dbHasField(BoxenFile,'PVertreter') then begin
+      if not dbHasField(BoxenFile,'AVertreter') then
+        AddBoxVertreter('A');
+      AddBoxVertreter('P');
+      end;
+    if not dbHasField(BoxenFile,'Boxdomain') then
+      NewFieldBoxdomain;
+    if dbGetIndexVersion(BoxenFile+dbIxExt)<2 then
+      _era(BoxenFile+dbIxExt);
+    end;
+
+  if not FileExists(GruppenFile+dbExt) then begin     { GRUPPEN: Brettgruppen }
+    initflp(18);
+    AppS('name',30);
+    AppX('haltezeit',dbTypeInt,2,4);
+    AppX('MsgLimit',dbTypeInt,4,10);
+    AppX('Flags',dbTypeInt,1,3);
+    AppX('Umlaute',dbTypeInt,1,3);
+    AppS('kopf',8);
+    AppS('signatur',8);
+    AppS('quotemsk',8);
+    AppS('origin',50);
+    AppS('adresse',50);
+    AppS('amrealname',40); AppS('ammail',80);
+    AppS('amreplyto',80);  AppS('amfqdn',60);
+    AppS('pmrealname',40); AppS('pmmail',80);
+    AppS('pmreplyto',80);  AppS('pmfqdn',60);
+    dbCreate(GruppenFile,flp);
+    dbReleaseFL(flp);
+    end
+  else begin
+    if not dbHasField(GruppenFile,'Origin') then
+      NewFieldOrigin;
+    if not dbHasField(GruppenFile,'Adresse') then
+      NewFieldAdresse;
+    if not dbHasField(GruppenFile,'amrealname') then
+      NewFieldsForRoles;
+    end;
+
+  if not FileExists(SystemFile+dbExt) then begin      { SYSTEME: Fileserver u.a. }
+    initflp(8);
+    AppS('name',20);
+    AppS('kommentar',30);
+    AppX('Flags',dbTypeInt,2,5);
+    AppS('FS-Name',20);
+    AppS('FS-Passwd',20);
+    AppX('FS-Typ',dbTypeInt,1,2);
+    AppS('ZBV1',60);
+    AppS('ZBV2',60);
+    dbCreate(SystemFile,flp);
+    dbReleaseFL(flp);
+    end
+  else
+    if not dbHasField(SystemFile,'ZBV2') then begin
+      if not dbHasField(SystemFile,'ZBV1') then
+        NewFieldZBV('1');
+      NewFieldZBV('2');
+      end;
+
+  if not FileExists(AutoFile+dbExt) then begin        { AUTOMSG: autom. Versand }
+    initflp(14);
+    AppS('Dateiname',80);
+    AppS('Betreff',40);
+    AppX('Typ',dbTypeInt,1,1);
+    AppS('Empfaenger',80);
+    AppS('Pollbox',20);
+    AppX('Wochentage',dbTypeInt,1,3);
+    AppX('Tage',dbTypeInt,4,10);
+    AppX('Monate',dbTypeInt,2,5);
+    AppX('Datum1',dbTypeInt,4,10);
+    AppX('Datum2',dbTypeInt,4,10);
+    AppX('Flags',dbTypeInt,2,5);
+    AppX('LastDate',dbTypeInt,4,10);
+    AppX('LastFdate',dbTypeInt,4,10);
+    AppS('LastMsgID',120);
+    dbCreate(AutoFile,flp);
+    dbReleaseFL(flp);
+  end
+  else begin
+    if not dbHasField(AutoFile,'LastMsgID') then
+      NewFieldLastMsgID;
+  end;
+
+  if not FileExists(PseudoFile+dbExt) then begin      { PSEUDOS: EmpfÑnger-KÅrzel }
+    initflp(4);
+    AppS('Kurzname',15);
+    AppS('Langname',80);
+    AppS('Pollbox',20);
+    AppX('Flags',dbTypeInt,2,5);
+    dbCreate(PseudoFile,flp);
+    dbReleaseFL(flp);
+    end;
+
+  if not FileExists(BezugFile+dbExt) then begin       { BEZUEGE: Kommentarbaum }
+    initflp(4);
+    AppX('MsgPos',dbTypeInt,4,10);
+    AppX('MsgID',dbTypeInt,4,10);
+    AppX('Ref',dbTypeInt,4,10);
+    AppX('Datum',dbTypeInt,4,10);
+    dbCreate(BezugFile,flp);
+    dbReleaseFL(flp);
+    end;
+
+  if not FileExists(MimetFile+dbExt) then begin      { MIMETYPE: Nachrichtentypen }
+    initflp(3);
+    AppS('Typ',30);
+    AppS('Extension',5);
+    AppS('Programm',ViewprogLen);
+    dbCreate(MimetFile,flp);
+    dbReleaseFL(flp);
+    InitMimeDB;
+    end;
+
+  dbOpen(dd,AutoFile,1);
+  dbClose(dd);
+  OpenDatabases;
+  GetFieldNumbers;
+
+  if dbReadUserflag(mbase,8)=0 then InitPWsystem;
+  if dbReadUserflag(mbase,4) < 4 then
+  begin
+    if dbReadUserflag(mbase,4) < 3 then
+      FixWiedervorlage;
+    if dbReccount(mbase)>0 then
+      BezugReadmids;
+    dbWriteUserflag(mbase,4,4);
+  end;
+
+  if not FileExists(OwnPath+NewDateFile) then
+    write_lastcall(ZDate);
+
+  getablsizes;
+
+  if not FileExists(WeiterMsk) then
+  begin
+    assign(t,WeiterMsk);
+    rewrite(t);
+    writeln(t,getres2(223,1));  { '## Nachricht vom $ERSTELLT weitergeleitet' }
+    writeln(t,getres2(223,2));  { '## Ursprung : $BRETT' }
+    writeln(t,getres2(223,3));  { '## Ersteller: $USER' }
+    freeres;
+    writeln(t);
+    close(t);
+  end;
+
+  if FileExists(QuotePriv) and not FileExists(QuotePMpriv) then
+    if filecopy(QuotePriv,QuotePMpriv) then;
+  if not FileExists(CancelMsk) then
+  begin
+    assign(t,CancelMsk);
+    rewrite(t);
+    writeln(t,'Message was cancelled.');
+    close(t);
+  end;
+
+  if (_filesize(FeierDat)=0) and IsRes(243) then begin
+    assign(t,FeierDat);
+    rewrite(t);
+    for i:=1 to res2anz(243) do
+      writeln(t,getres2(243,i));
+    close(t);
+  end;
+end;
+
+{
+  $Log: xp2db.pas,v $
+  Revision 1.41.2.2  2003/01/11 22:33:12  mk
+  - made FreeBSD version ready
+
+  Revision 1.41.2.1  2002/07/21 20:14:36  ma
+  - changed copyright from 2001 to 2002
+
+  Revision 1.41  2002/01/30 22:36:04  mk
+  - made viewers and unpackers static
+
+  Revision 1.40  2001/12/26 01:35:31  cl
+  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
+
+  Revision 1.39  2001/10/15 09:04:22  ml
+  - compilable with Kylix ;-)
+
+  Revision 1.38  2001/09/10 15:58:02  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
+  Revision 1.37  2001/09/08 14:26:50  cl
+  - cleaned up MIME-related fields in THeader
+
+  Revision 1.36  2001/09/07 13:54:19  mk
+  - added SafeDeleteFile
+  - moved most file extensios to constant values in XP0
+  - added/changed some FileUpperCase
+
+  Revision 1.35  2001/08/27 09:13:42  ma
+  - changes in net type handling (1)
+
+  Revision 1.34  2001/08/12 11:50:36  mk
+  - replaced dbRead/dbWrite with dbReadN/dbWriteN
+
+  Revision 1.33  2001/07/29 12:56:05  ma
+  - fixed initfld parameters
+
+  Revision 1.32  2001/07/28 12:04:11  mk
+  - removed crt unit as much as possible
+
+  Revision 1.31  2001/07/23 16:05:18  mk
+  - added some const parameters
+  - changed most screen coordinates from byte to integer (saves some kb code)
+
+  Revision 1.30  2001/07/22 21:43:47  mk
+  - added new database field eMail
+
+  Revision 1.29  2001/06/04 17:31:37  ma
+  - implemented role feature
+
+  Revision 1.28  2001/03/14 20:46:03  mk
+  - removed registration routines
+
+  Revision 1.27  2001/03/13 19:24:56  ma
+  - added GPL headers, PLEASE CHECK!
+  - removed unnecessary comments
+
+  Revision 1.26  2001/02/28 14:25:45  mk
+  - removed some tainted comments
+
+  Revision 1.25  2001/02/19 15:27:19  cl
+  - marked/modified non-GPL code by RB and MH
+
+  Revision 1.24  2000/12/03 12:38:21  mk
+  - Header-Record is no an Object
+
+  Revision 1.23  2000/11/16 20:53:50  hd
+  - DOS Unit entfernt
+
+  Revision 1.22  2000/11/14 15:51:28  mk
+  - replaced Exist() with FileExists()
+
+  Revision 1.21  2000/11/13 08:57:59  mk
+  - NeedReg partitally implemented
+
+  Revision 1.20  2000/10/10 13:58:58  mk
+  RB:- Ersetzt-Nachrichten in Autoversand
+
+  Revision 1.19  2000/08/25 22:40:31  mk
+  - Datenbank Indexcache freigeschaltet
+
+  Revision 1.18  2000/07/22 14:05:26  hd
+  - Anpassung von dbRead, dbReadN, dbReadX, dbWrite, dbWriteN, dbWriteX
+    (sollte es jetzt gewesen sein)
+
+  Revision 1.17  2000/07/21 20:56:23  mk
+  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
+
+  Revision 1.16  2000/07/21 17:39:52  mk
+  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+
+  Revision 1.15  2000/07/09 08:35:14  mk
+  - AnsiStrings Updates
+
+  Revision 1.14  2000/07/04 12:04:22  hd
+  - UStr durch UpperCase ersetzt
+  - LStr durch LowerCase ersetzt
+  - FUStr durch FileUpperCase ersetzt
+  - Sysutils hier und da nachgetragen
+
+  Revision 1.13  2000/06/23 15:59:18  mk
+  - 16 Bit Teile entfernt
+
+  Revision 1.12  2000/05/06 17:50:06  hd
+  - Div-0-Fehler entfernt
+
+  Revision 1.11  2000/05/04 16:13:36  jg
+  - Konvertierung des Userfenster Trennzeilenformat jetzt Automatisch
+    Funktion nur Sinnvoll fuer Umstieg von Beta 23 auf Beta 24+ ....
+
+  Revision 1.10  2000/05/04 10:32:58  mk
+  - unbenutzer TurboBox Code entfernt
+
+  Revision 1.9  2000/05/03 20:36:54  hd
+  - Anpassungen an UnixFS
+
+  Revision 1.8  2000/05/02 19:14:00  hd
+  xpcurses statt crt in den Units
+
+  Revision 1.7  2000/04/13 20:18:03  jg
+  - Userfenster koennen jetzt nach Servername geordnet werden (`O`)
+  - Entsprechender Menuepunkt fuer Config/Optionen/Allgemeines
+  - User.Ix1: neue Indizes uiBoxName + uiBoxAdrbuch. Indexversion jetzt 3!
+
+  Revision 1.6  2000/03/04 14:53:50  mk
+  Zeichenausgabe geaendert und Winxp portiert
+
+  Revision 1.5  2000/02/19 11:40:08  mk
+  Code aufgeraeumt und z.T. portiert
+
+}
+end.
+
