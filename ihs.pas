@@ -390,7 +390,7 @@ begin
     end
   end;
 
-  FName := FileUpperCase(OutPath + ChangeFileExt(FName, extHlp);
+  FName := FileUpperCase(OutPath + ChangeFileExt(FName, extHelp));
   Writeln('Destination File: ', FName);
   assign(f,fname);
   rewrite(f,1);
@@ -428,6 +428,9 @@ end.
 
 {
   $Log$
+  Revision 1.27  2001/09/07 23:38:32  ml
+  - extHlp -> extHelp  (wrong spelled constant-name)
+
   Revision 1.26  2001/09/07 13:54:17  mk
   - added SaveDeleteFile
   - moved most file extensios to constant values in XP0
