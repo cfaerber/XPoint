@@ -309,7 +309,7 @@ begin
   procedure consolewrite(x,y:word; num:dword);  { 80  Chars in xp0.charpuf (String) }
   var                                           { Attribute in xp0.attrbuf (Array of smallword)}
     WritePos: TCoord;                           { generiert in XP1.MakeListdisplay }
-    OutRes: LongInt;                            { Auf Konsole ausgeben....}
+    OutRes: ULong;                            { Auf Konsole ausgeben....}
   begin
     WritePos.X := x-1; WritePos.Y := y-1;
     WriteConsoleOutputCharacter(OutHandle, @charbuf[1], num, WritePos, OutRes);
@@ -341,7 +341,7 @@ procedure SDisp(const x,y:word; const s:string);
 {$IFDEF Win32 }
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
-    OutRes: LongInt;
+    OutRes: ULong;
   begin
     { Kompletten String an einem StÅck auf die Console ausgeben }
     WritePos.X := x-1; WritePos.Y := y-1;
@@ -358,7 +358,7 @@ procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
 {$IFDEF Win32 }
 var
   ReadPos: TCoord;                       { Upper-left cell to Read from }
-  OutRes: LongInt;
+  OutRes: ULong;
   aChr: Char;
   aAttr: SmallWord;
 begin
@@ -383,7 +383,7 @@ procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Inte
 {$IFDEF Win32 }
   var
     WritePos: TCoord;                       { Upper-left cell to write from }
-    OutRes: LongInt;
+    OutRes: ULong;
   begin
     WritePos.x := x-1; WritePos.y := y-1;
     FillConsoleOutputCharacter(OutHandle, Chr, Count, WritePos, OutRes);
@@ -934,6 +934,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2001/04/22 21:34:38  mk
+  - FPC compatibility fix
+
   Revision 1.54  2001/03/13 19:24:56  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments
