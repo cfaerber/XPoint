@@ -57,7 +57,7 @@ type
 
   TUTF8Decoder = class
   public
-    function Decode(const Source: PUTF8Char): String; virtual; abstract;
+    function Decode(const Source: UTF8String): String; virtual; abstract;
   end;
 
 
@@ -74,9 +74,9 @@ type
 
   TAnsiUTF8Decoder = class(TUTF8Decoder)
   public
-    function Decode(const Source: PUTF8Char): String; override;
+    function Decode(const Source: UTF8String): String; override;
   end;
-
+  
 // -------------------------------------------------------------------
 //   US-ASCII
 //     This is a special case, too, because we have to replace all
@@ -85,7 +85,7 @@ type
 
   TAsciiUTF8Decoder = class(TUTF8Decoder)
   public
-    function Decode(const Source: PUTF8Char): String; override;
+    function Decode(const Source: UTF8String): String; override;
   end;
 
 // -------------------------------------------------------------------
@@ -113,7 +113,7 @@ type
     FL3RevTable: array[0..127] of Char;
   public
     constructor Create(const ATable: T8BitTable);
-    function Decode(const Source: PUTF8Char): String; override;
+    function Decode(const Source: UTF8String): String; override;
   end;
 
 
@@ -251,22 +251,22 @@ begin
     Result := Result + UnicodeToUTF8(UCChar(Ord(Source[i])));
 end;
 
-function TAnsiUTF8Decoder.Decode(const Source: PUTF8Char): String;
+function TAnsiUTF8Decoder.Decode(const Source: UTF8String): String;
 var
-  p: PUTF8Char;
+  p: Integer;
 begin
   SetLength(Result, 0);
-  p := Source;
-  while p[0] <> #0 do
+  p := 1;
+  while p<=Length(Source) do
   begin
-    if ShortInt(Ord(p[0])) > 0 then     // = "if Ord(p[0]) < $80 then"
+    if ShortInt(Ord(Source[p+0])) >= 0 then     // = "if Ord(Source[p+0]) < $80 then"
     begin
-      Result := Result + p[0];
+      Result := Result + Source[p+0];
       Inc(p);
-    end else if Ord(p[0]) < $e0 then
+    end else if Ord(Source[p+0]) < $e0 then
     begin
-      if p[0] <= #$c3 then
-        Result := Result + Chr((Ord(p[1]) and $3f) or (Ord(p[0]) shl 6))
+      if Source[p+0] <= #$c3 then
+        Result := Result + Chr((Ord(Source[p+1]) and $3f) or (Ord(Source[p+0]) shl 6))
       else
         Result := Result + '?';
       Inc(p, 2);
@@ -280,15 +280,15 @@ begin
   end;
 end;
 
-function TAsciiUTF8Decoder.Decode(const Source: PUTF8Char): String;
+function TAsciiUTF8Decoder.Decode(const Source: UTF8String): String;
 var
-  p: PUTF8Char;
+  p: integer;
 begin
   SetLength(Result, 0);
-  p := Source;
-  while p[0] <> #0 do
-    case p[0] of
-      #0..#127: begin Result := Result + p[0]; Inc(p); end;
+  p := 1;
+  while p<=Length(Source) do
+    case Source[p] of
+      #0..#127: begin Result := Result + Source[p+0]; Inc(p); end;
       #$80..#$BF: Inc(p); // ignore second..n-th byte of UTF-8 sequences
       #$C0..#$FF: begin Result := Result + '?'; Inc(p); end;
     end;
@@ -368,40 +368,40 @@ end;
     FL3RevTable: array[0..127] of Char;
 end;}
 
-function T8BitUTF8Decoder.Decode(const Source: PUTF8Char): String;
+function T8BitUTF8Decoder.Decode(const Source: UTF8String): String;
 var
-  p: PUTF8Char;
+  p: Integer;
   Index: Integer;
   L1Table: PL2RevTable;
 begin
   SetLength(Result, 0);
-  p := Source;
-  while p[0] <> #0 do
+  p := 1;
+  while p<=Length(Source) do
   begin
-    if ShortInt(Ord(p[0])) > 0 then     // = "if Ord(p[0]) < $80 then"
+    if ShortInt(Ord(Source[p+0])) > 0 then     // = "if Ord(Source[p+0]) < $80 then"
     begin
       // 1-byte encoding
-      Result := Result + FL3RevTable[Ord(p[0])];
+      Result := Result + FL3RevTable[Ord(Source[p+0])];
       Inc(p);
-    end else if Ord(p[0]) < $e0 then
+    end else if Ord(Source[p+0]) < $e0 then
     begin
       // 2-byte encoding
-      Index := Ord(p[0]) and $1f;
+      Index := Ord(Source[p+0]) and $1f;
       if Assigned(FL2RevTable[Index]) then
-        Result := Result + FL2RevTable[Index]^[Ord(p[1]) and $3f]
+        Result := Result + FL2RevTable[Index]^[Ord(Source[p+1]) and $3f]
       else
         Result := Result + '?';
       Inc(p, 2);
     end else
     begin
       // 3-byte encoding
-      Index := Ord(p[0]) and $0f;
+      Index := Ord(Source[p+0]) and $0f;
       L1Table := FL1RevTable[Index];
       if Assigned(L1Table) then
       begin
-        Index := Ord(p[1]) and $3f;
+        Index := Ord(Source[p+1]) and $3f;
         if Assigned(L1Table^[Index]) then
-          Result := Result + L1Table^[Index]^[Ord(p[3]) and $3f]
+          Result := Result + L1Table^[Index]^[Ord(Source[p+3]) and $3f]
         else
           Result := Result + '?';
       end else
@@ -456,6 +456,10 @@ end;
 
 {
   $Log$
+  Revision 1.9  2001/12/30 18:05:46  cl
+  - changed TUTF8Decoder.Decode(const Source: PUTF8Char) to
+            TUTF8Decoder.Decode(const Source: UTF8String)
+
   Revision 1.8  2001/09/10 15:58:01  ml
   - Kylix-compatibility (xpdefines written small)
   - removed div. hints and warnings

@@ -57,7 +57,7 @@ type
 
   TUTF8NullDecoder = class(TUTF8Decoder)
   public
-    function Decode(const Source: PUTF8Char): String; override;
+    function Decode(const Source: UTF8String): String; override;
   end;
 
 {$IFDEF Linux }
@@ -164,7 +164,7 @@ begin
   result:=source;
 end;
 
-function TUTF8NullDecoder.Decode(const Source: PUTF8Char): String;
+function TUTF8NullDecoder.Decode(const Source: UTF8String): String;
 begin
   result:=UTF8String(source);
 end;
@@ -261,6 +261,10 @@ finalization   do_finalization;
 end.
 
 // $Log$
+// Revision 1.11  2001/12/30 18:05:46  cl
+// - changed TUTF8Decoder.Decode(const Source: PUTF8Char) to
+//           TUTF8Decoder.Decode(const Source: UTF8String)
+//
 // Revision 1.10  2001/10/01 19:30:09  ma
 // - compiles again (DOS32)
 //
