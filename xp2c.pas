@@ -873,10 +873,7 @@ var brk  : boolean;
 begin
   with COMn[nr] do begin
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
-    if Cport<$1000 then
-      pstr:=LowerCase(hex(Cport,3))
-    else
-      pstr:=LowerCase(hex(Cport,4));
+    if Cport<$1000 then pstr:=LowerCase(hex(Cport,3))else pstr:=LowerCase(hex(Cport,4));
     if not fossildetect then fossil:=false;
     maddbool  (3,2,getres2(261,13),fossil); mhnr(960);  { 'FOSSIL-Treiber verwenden' }
     oldfossil:=iifc(fossil,_jn_[1],_jn_[2]);
@@ -893,7 +890,8 @@ begin
     maddstring(3,8,getres2(261,15),MDial,32,100,'');    { 'W„hlbefehl ' }
     mappsel(false,'ATDTùATDPùATDT0WùATDP0W');
     maddstring(3,9,getres2(261,19),MCommInit,32,100,'');    { 'Comminit   ' }
-    mappsel(false,'Serial Port:'+strs(Cport)+' Speed:115200ùSerial IO:3f8 IRQ:4 Speed:115200ùFossil Port:'+strs(nr)+' Speed:115200');
+    mappsel(false,'Serial Port:'+strs(nr)+' Speed:115200ùSerial IO:'+pstr+' IRQ:'+strs(Cirq)+
+                  ' Speed:115200ùFossil Port:'+strs(nr)+' Speed:115200');
     maddbool (3,11,getres2(261,16),postsperre); { 'postkompatible W„hlpause' }
     maddbool (3,12,getres2(261,8),IgCD);             { 'CD ignorieren' }
     maddbool (3,13,getres2(261,9),IgCTS);            { 'CTS ignorieren' }
@@ -1494,6 +1492,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.51  2000/08/14 18:08:42  ma
+  - CommInit-F2-Vorgaben debuggt und verbessert
+
   Revision 1.50  2000/08/07 09:23:23  mk
   - Bug in PathConfig behoben
 
