@@ -1923,8 +1923,9 @@
       nt_QWK:      begin
                      pushhp(131);
                      nts:=
-//                       +getres2(927,8)        { ^Gebuehren, }
-                         +getres2(927,9)        { ^Namen, }
+//                             +getres2(927,8)        { ^Gebuehren, }
+//                       +
+                          getres2(927,9)        { ^Namen, }
                          +getres2(927,29)       { ^QWK, }
                          +getres2(927,10)       { ^Diverse }
                          +getres2(927,4);       { ,^Transfer }
@@ -2120,6 +2121,9 @@
 
 {
   $Log$
+  Revision 1.29  2001/09/14 11:46:05  cl
+  - Delphi compile fixes
+
   Revision 1.28  2001/09/13 13:30:50  ma
   - reverted to cleaner code
   - added client mode configuration
