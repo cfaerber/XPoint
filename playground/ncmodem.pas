@@ -26,7 +26,7 @@ unit NCModem;
 interface
 
 uses
-  xpglobal,netcall,sysutils;
+  xpglobal,netcall,sysutils,timer;
 
 type
   { This is the base class for all netcall types using dialup techniques.
@@ -36,30 +36,35 @@ type
   TModemNetcall = class(TNetcall)
 
   protected
-    fCommObj: tpCommObj;
+    FCommObj: tpCommObj;
+    FTimerObj: tTimerObj;
+    FConnected,FActive,FDialupRequired: Boolean;
+    FErrorMsg: String;
 
   public
     { True if comm channel initialized }
-    property Active: Boolean read FConnected write SActive;
+    property Active: Boolean read FActive write SActive;
     { True if connected to peer }
     property Connected: Boolean read FConnected;
     { True if dialing is required in order to connect. Not necessary
       for IP connections or online calls. }
-    property DoDialup: Boolean read FDoDialup;
+    property DialupRequired: Boolean read FDialupRequired write FDialupRequired;
     { Sets/reads timeout (activates on idleing of peer) }
     property Timeout: Real read FGetTimeout write FSetTimeout;
 
     property ErrorMsg: string read FErrorMsg;
 
     constructor Create;
-    constructor CreateWithCommInit(s: String);
-    { Create with ready-to-go CommObj which has to be opened already.
-      Intended for online calls. }
+    { Create with CommObj. Intended for online calls. Active and
+      Connected return true after call. }
     constructor CreateWithCommObj(p: tpCommObj);
     destructor Destroy; override;
 
-    { Opens comm channel and dials (if necessary) }
+    { Initializes comm channel, s is ObjCOM CommInit string }
+    function Activate(s: String): Boolean;
+    { Connects (= dials if necessary) }
     function Connect: boolean; virtual;
+    { Disconnects (= hangs up if necessary) }
     procedure Disconnect; virtual;
   end;
 
@@ -98,6 +103,13 @@ end;
 constructor TModemNetcall.Create;
 begin
   inherited Create;
+  FConnected:=False; FActive:=False; FDoDialup:=False;
+end;
+
+constructor TModemNetcall.CreateWithCommObj(p: tpCommObj);
+begin
+  Create;
+  FCommObj:=p; FActive:=True; FConnected:=True;
 end;
 
 destructor TModemNetcall.Destroy;
@@ -105,14 +117,7 @@ begin
   inherited destroy;
 end;
 
-function TModemNetcall.Connect: boolean;
-begin
-end;
-
-procedure TModemNetcall.Disconnect;
-begin
-end;
-
+(*
 procedure ProcessIncoming(idle:boolean);
 {Zeichen vom Modem abholen, in ReceivedUpToNow aufbewahren, ggf. Zeile ausgeben, in
  ModemAnswer ablegen und WaitForAnswer auf False setzen}
@@ -136,30 +141,11 @@ function SendMultCommand(s:string): String;
 function Hangup: Boolean;
 {Legt Modem auf; gibt True zurueck, falls Modem danach tatsaechlich wieder auf
  AT-Befehle reagiert.}
-
-function DialUp(Phonenumbers,ModemInit,ModemDial: string;
-                MaxDials,TimeoutConnectionEstablish,RedialWait: integer):boolean;
-{Waehlt Telefonnummern in Phonenumbers an (nacheinander falls besetzt, durch Leer-
- zeichen getrennt). Zu passender Zeit wird jeweils DisplayProc aufgerufen; es kann
- sich aus den Variablen unten bedienen. Gibt True bei erfolgreicher Verbindung zu-
- rueck.}
-
-type tStateDialup= (SDInitialize,SDSendDial,SDWaitForConnect,SDWaitForNextCall,SDModemAnswer,SDConnect,SDNoConnect,SDUserBreak);
-
-var
-  DUDState: tStateDialup; {hieran entscheidet sich fuer DisplayProc, was aus den folgenden Variablen relevant ist}
-                                      {SDInitialize}
-  DUDNumber: String; DUDTry: Integer; {SDSendDial}
-  DUDTimer: Real;                     {SDWaitForConnect: Restzeit (Sek)}
-                                      {SDModemAnswer: in Variable ModemAnswer (bei Ring und Connect)}
-  DUDBaud: Longint;                   {SDConnect}
-                                      {SDNoConnect}
-                                      {SDWaitForNextCall: Restzeit in DUDTimer}
-                                      {SDUserBreak}
+*)
 
 implementation
 
-procedure ProcessIncoming(idle:boolean);
+procedure TModemNetcall.ProcessIncoming(idle:boolean);
 var c : char;
 begin
   if CommObj^.CharAvail then begin
@@ -167,14 +153,14 @@ begin
     if (c=#13) or (c=#10) then begin
       if WaitForAnswer and(ReceivedUpToNow<>'') then begin
         ModemAnswer:=ReceivedUpToNow; ReceivedUpToNow:='';
-        DebugLog('Modem','Modem answer: "'+ModemAnswer+'"',DLDebug);
+        DebugLog('ncmodem','Modem answer: "'+ModemAnswer+'"',DLDebug);
         WaitForAnswer:=false;
       end;
     end else if c<>#0 then ReceivedUpToNow:=ReceivedUpToNow+c;
   end else if idle then SleepTime(10);
 end;
 
-procedure ProcessKeypresses(AcceptSpace:boolean);
+procedure TModemNetcall.ProcessKeypresses(AcceptSpace:boolean);
 var c : char;
 begin
   if keypressed then begin
@@ -182,7 +168,7 @@ begin
     case c of
       #27 : begin
               TimerObj.SetTimeout(0); WaitForAnswer:=False; ReceivedUpToNow:='';
-              DebugLog('Modem','User break',DLInform); GotUserBreak:=true;
+              DebugLog('ncmodem','User break',DLInform); GotUserBreak:=true;
             end;
       '+' : TimerObj.SetTimeout(TimerObj.SecsToTimeout+1);
       '-' : if TimerObj.SecsToTimeout>1 then TimerObj.SetTimeout(TimerObj.SecsToTimeout-1);
@@ -191,34 +177,34 @@ begin
   end;
 end;
 
-function SendCommand(s:string): String;
+function TModemNetcall.SendCommand(s:string): String;
 var p : byte; EchoTimer: tTimer;
 begin
-  DebugLog('Modem','SendCommand: "'+s+'"',DLDebug);
+  DebugLog('ncmodem','SendCommand: "'+s+'"',DLDebug);
   CommObj^.PurgeInBuffer; s:=trim(s);
   if s<>'' then begin {Nicht-leerer Modembefehl; Tilde im Befehl bedeutet ca. 1 Sec Pause}
     repeat
       p:=cpos('~',s);
       if p>0 then begin
-        if not CommObj^.SendString(LeftStr(s,p-1),True)then DebugLog('Modem','Sending failed, received "'+LeftStr(s,p-1)+'"',DLWarning);
+        if not CommObj^.SendString(LeftStr(s,p-1),True)then DebugLog('ncmodem','Sending failed, received "'+LeftStr(s,p-1)+'"',DLWarning);
         delete(s,1,p); SleepTime(1000);
       end;
     until p=0;
-    if not CommObj^.SendString(s+#13,True)then DebugLog('Modem','Sending failed, received "'+CommObj^.ErrorStr+'"',DLWarning);
+    if not CommObj^.SendString(s+#13,True)then DebugLog('ncmodem','Sending failed, received "'+CommObj^.ErrorStr+'"',DLWarning);
     EchoTimer.Init; EchoTimer.SetTimeout(TimeoutModemAnswer); ReceivedUpToNow:=''; WaitForAnswer:=True;
     repeat
       ProcessIncoming(true); ProcessKeypresses(false);
     until EchoTimer.Timeout or (not WaitForAnswer); {Warte auf Antwort}
     if EchoTimer.Timeout then ModemAnswer:='';
     SleepTime(200); EchoTimer.Done;
-    SendCommand:=ModemAnswer; DebugLog('Modem','SendCommand: Got modem answer "'+ModemAnswer+'"',DLDebug);
+    SendCommand:=ModemAnswer; DebugLog('ncmodem','SendCommand: Got modem answer "'+ModemAnswer+'"',DLDebug);
   end;
 end;
 
-function SendMultCommand(s:string): String;
+function TModemNetcall.SendMultCommand(s:string): String;
 var p : byte; cmd: String;
 begin
-  DebugLog('Modem','SendMultCommand: "'+s+'"',DLDebug);
+  DebugLog('ncmodem','SendMultCommand: "'+s+'"',DLDebug);
   while (length(trim(s))>1) and not TimerObj.Timeout do begin
     p:=pos('\\',s);
     if p=0 then p:=length(s)+1;
@@ -229,20 +215,7 @@ begin
   end;
 end;
 
-function DialUp(Phonenumbers,ModemInit,ModemDial: string;
-                MaxDials,TimeoutConnectionEstablish,RedialWait: integer):boolean;
-
-  function NumberRotate(var Phonenumbers: string):string;
-  var p : byte;
-  begin
-    p:=cpos(' ',Phonenumbers);
-    if p=0 then
-      NumberRotate:=Phonenumbers
-    else begin
-      NumberRotate:=LeftStr(Phonenumbers,p-1);
-      Phonenumbers:=trim(mid(Phonenumbers,p))+' '+LeftStr(Phonenumbers,p-1);
-    end;
-  end;
+function TModemNetcall.Connect: Boolean;
 
   function Bauddetect(ConnectString: String): Longint;
   var p: byte; b: longint;
@@ -256,6 +229,8 @@ function DialUp(Phonenumbers,ModemInit,ModemDial: string;
     if(b<300)or(115200 mod b<>0)then Bauddetect:=0 else Bauddetect:=b;
   end;
 
+type tStateDialup= (SDInitialize,SDSendDial,SDWaitForConnect,SDWaitForNextCall,SDModemAnswer,SDConnect,SDNoConnect,SDUserBreak);
+
 var
   StateDialup: tStateDialup;
   iDial: Integer; Connected: Boolean;
@@ -263,14 +238,14 @@ var
 
 begin
   GotUserBreak := false;
-  DebugLog('Modem','Dialup: Numbers "'+Phonenumbers+'", Init "'+ModemInit+'", Dial "'+ModemDial+'", MaxDials '+
+  DebugLog('ncmodem','Dialup: Numbers "'+Phonenumbers+'", Init "'+ModemInit+'", Dial "'+ModemDial+'", MaxDials '+
                    Strs(MaxDials)+', ConnectionTimeout '+Strs(TimeoutConnectionEstablish)+', RedialWait '+Strs(RedialWait),DLInform);
   StateDialup:=SDInitialize; iDial:=0; DialUp:=False;
 
   while StateDialup<=SDWaitForNextCall do begin {alles nach SDWaitForNextCall wird nur fuer DisplayProc benutzt}
     case StateDialup of
       SDInitialize: begin
-                      DebugLog('Modem','Dialup initialize',DLDebug);
+                      DebugLog('ncmodem','Dialup initialize',DLDebug);
                       DUDState:=StateDialup; DisplayProc; {Ausgabe: 'Modem initialisieren' }
                       TimerObj.SetTimeout(TimeoutModemInit);
                       if ModemInit='' then begin
@@ -283,7 +258,7 @@ begin
                       end;
                     end;
       SDSendDial: begin
-                    DebugLog('Modem','Dialup send dial command',DLDebug);
+                    DebugLog('ncmodem','Dialup send dial command',DLDebug);
                     inc(iDial); CurrentPhonenumber:=NumberRotate(Phonenumbers);
                     DUDState:=StateDialup; DUDNumber:=CurrentPhonenumber; DUDTry:=iDial;
                     DisplayProc;
@@ -293,7 +268,7 @@ begin
                     StateDialup:=SDWaitForConnect;
                   end;
       SDWaitForConnect: begin
-                          DebugLog('Modem','Dialup wait for connect',DLDebug);
+                          DebugLog('ncmodem','Dialup wait for connect',DLDebug);
                           TimerObj.SetTimeout(TimeoutConnectionEstablish);
                           repeat
                             ProcessIncoming(true); ProcessKeypresses(false);
@@ -325,7 +300,7 @@ begin
                           end;
               end;
       SDWaitForNextCall: begin
-                           DebugLog('Modem','Dialup wait for next call',DLDebug);
+                           DebugLog('ncmodem','Dialup wait for next call',DLDebug);
                            TimerObj.SetTimeout(RedialWait);
                            DUDState:=StateDialup; {Ausgabe: 'warte auf naechsten Anruf ...'}
                            if iDial<MaxDials then begin
@@ -342,10 +317,10 @@ begin
 end;
 
 
-function Hangup: Boolean;
+procedure TModemNetcall.Disconnect;
 var i : integer;
 begin
-  DebugLog('Modem','Hangup',DLInform);
+  DebugLog('ncmodem','Hangup',DLInform);
   CommObj^.PurgeInBuffer; CommObj^.SetDTR(False);
   SleepTime(500); for i:=1 to 6 do if(not CommObj^.IgnoreCD)and CommObj^.Carrier then SleepTime(500);
   CommObj^.SetDTR(True); SleepTime(500);
@@ -358,16 +333,16 @@ begin
     CommObj^.SendString('AT H0'#13,True);
     SleepTime(1000);
   end;
-  if CommObj^.ReadyToSend(3)then
-    result:= CommObj^.SendString('AT'+#13,True)
-  else
-    result:= false;
+  if CommObj^.ReadyToSend(3)then CommObj^.SendString('AT'+#13,True);
 end;
 
 end.
 
 {
   $Log$
+  Revision 1.3  2001/01/23 11:46:11  ma
+  - a little cleanup done
+
   Revision 1.2  2001/01/10 16:31:26  ma
   - added phone number functions
   - todo: add class communication methods (perhaps in netcall class already)
