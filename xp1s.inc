@@ -260,7 +260,7 @@ begin
       pdiff:=p-p0;
 
       if (s <> '') and (p<=length(s)) and (s[p]='>') or
-         (OtherQuoteChars and (s[p] in QuoteCharSet)) then
+         (OtherQuoteChars and (p<=length(s)) and (s[p] in QuoteCharSet)) then
       begin
         inc(qn);
         p0:=p;
@@ -493,6 +493,9 @@ begin
     end;
 {
   $Log$
+  Revision 1.67  2001/10/17 20:55:21  cl
+  - Fixed range check error
+
   Revision 1.66  2001/10/10 20:38:52  mk
   - removed (unnecessary) ScreenWidth from Lister option VSC
   - use correct scrollbar position with more than 80 screen columns
