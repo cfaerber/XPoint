@@ -152,7 +152,7 @@ end;
 
 procedure dbAllocateFL(var flp:dbFLP; feldanz:word);
 begin
-  getmem(flp,2+sizeof(dbFeldTyp)*(feldanz+1));   { +1 wg. INT_NR }
+  getmem(flp,sizeof(smallword)+sizeof(dbFeldTyp)*(feldanz+1));   { +1 wg. INT_NR }
   flp^.felder:=feldanz;
 end;
 
@@ -163,7 +163,7 @@ procedure dbReleaseFL(var flp:dbFLP);
 begin
   if flp <> nil then
   begin
-    freemem(flp,2+sizeof(dbFeldTyp)*(flp^.felder+1));
+    freemem(flp,sizeof(smallword)+sizeof(dbFeldTyp)*(flp^.felder+1));
     flp := nil;
   end;
 end;
@@ -1166,12 +1166,10 @@ function dbGetFeldNr(dbp:DB; feldname:dbFeldStr):integer;   { -1=unbekannt }
 begin
   with dp(dbp)^.feldp^ do
   begin
-    Result :=0;
+    Result :=felder;
     feldname:= UpperCase(feldname); { UpString(feldname);}
-    while (feldname<>feld[Result].fname) and (Result <=felder)  do
-      inc(Result);
-    if Result >felder then
-      Result :=-1;
+    while (feldname<>feld[Result].fname) and (Result >=0)  do
+      dec(Result);
   end;
 end;
 
@@ -1620,6 +1618,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.4  2002/09/30 12:09:19  cl
+  - BUGFIX <8Wv6b4jJcDB@3247.org>: off-by-one error
+
   Revision 1.52.2.3  2002/09/09 08:29:14  mk
   - some performance improvements
 
