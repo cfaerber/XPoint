@@ -114,7 +114,7 @@ openxp-doc:
 
 	install -D --mode=644 debian/openxp-de.doc-base	 debian/tmp/openxp-doc/usr/share/doc-base/openxp-de
 	install -D --mode=755 debian/openxp-doc.postinst debian/tmp/openxp-doc/DEBIAN/postinst
-	install -D --mode=755 debian/openxp-doc.prerm    debian/tmp/openxp-doc/DEBIAN/prerm
+	install -D --mode=755 debian/openxp-doc.postrm    debian/tmp/openxp-doc/DEBIAN/postrm
 
 	chmod -R go=rX debian/tmp/openxp-doc
 	chown -R root.root debian/tmp/openxp-doc
@@ -161,6 +161,9 @@ clean:
 # ---------------------------------------------------------------------
 #
 #  $Log$
+#  Revision 1.4.2.2  2003/10/25 17:26:27  cl
+#  - minor fixes made during Debian packaging of 3.8.13
+#
 #  Revision 1.4.2.1  2003/09/06 15:22:09  cl
 #  - added Debian build scripts
 #

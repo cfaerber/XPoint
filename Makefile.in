@@ -46,7 +46,7 @@ UNIT_DIRS = xplib ObjCOM netcall linux
 
 PPC	= @PPC@
 PPC_FLAGS	= @PPCFLAGS@ $(patsubst %,-Fu"./%",$(UNIT_DIRS)) -dAUTOCONF
-PPC_LOCAL_FLAGS = @PPCFLAGS@ $(patsubst %,-Fu"./%",$(UNIT_DIRS))
+PPC_LOCAL_FLAGS = $(PPC_FLAGS)
 
 # --- files -----------------------------------------------------------
 EXEEXT 	= @EXEEXT@
@@ -77,6 +77,7 @@ res: $(RESSOURCE_FILES) $(HELP_FILES)
 # --- cleaning --------------------------------------------------------
 mostlyclean:
 	rm -f $(OPENXP) openxp-*.res *.dcu *.ppu *.o
+	rm -f doc/openxp-*.hlp openxp-*.hlp fpc*.txt *.rst
 	-for d in $(UNIT_DIRS) ; do rm -f $$d/*.dcu $$d/*.ppu $$d/*.o ; done
 	rm -f strip-stamp
 
@@ -157,25 +158,6 @@ $(DOC_HTML) : $(DOC_SRC)
 $(DOC_PDF) : $(DOC_SRC)
 	( cd doc; sgmltools --backend=pdf -s xpoint.dsl xpoint.sgm )
 
-# --- Debian packages -------------------------------------------------	
-
-include debian/Makefile.version
-
-debian/Makefile.version : debian/Makefile.PL \
- debian/control debian/changelog.in \
- xpglobal.pas xpdefine.inc
-	(cd debian; make)
-
-debian: debian-is-a-directory
-
-debian-is-a-directory: debian/changelog
-	(cd debian ; rm Makefile.version changelog ; make)
-	if [ `pwd|xargs basename` != openxp-$(DEB_UPSTREAM_VERSION) ]; then \
-	  ( ln -nfs `pwd|xargs basename` \
-	   ../openxp-$(DEB_UPSTREAM_VERSION) ) ; \
-	fi
-	cd ../openxp-$(DEB_UPSTREAM_VERSION) && dpkg-buildpackage -rfakeroot
-
 # --- files list ------------------------------------------------------
 
 MANIFEST.snap:
@@ -211,6 +193,9 @@ ${srcdir}/configure: configure.ac $(wildcard aclocal.m4)
 # ---------------------------------------------------------------------
 #
 # $Log$
+# Revision 1.2.2.5  2003/10/25 17:26:26  cl
+# - minor fixes made during Debian packaging of 3.8.13
+#
 # Revision 1.2.2.4  2003/10/08 20:54:11  cl
 # - fixed autoconf for stable branch
 #
