@@ -280,7 +280,7 @@ end;
     s := OldTraceFunc(addr);
     Result := s;
     if Logging then
-      Writeln(LogFile, s);
+      DebugLog('fatal',s,dlError);
     BackTraceStrFunc:=Store;
   end;
 {$ENDIF }
@@ -304,6 +304,9 @@ finalization
 
 {
   $Log$
+  Revision 1.27  2002/02/09 18:05:43  ma
+  - fixed: exception trace was not written to ERROR.TXT (please check)
+
   Revision 1.26  2002/02/03 12:44:14  mk
   - stack trace for fpc
 
