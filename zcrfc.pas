@@ -90,7 +90,6 @@ type
     ppp: boolean;                // internel PPP Mode
     client: boolean;             // Client-Mode
     SMTP: boolean;
-    NNTPSpoolFormat: Boolean;    { if true, message boundaries are marked by a '.' line }
     NoCharsetRecode: boolean;
 
     { only used in non-cmdline mode }
@@ -224,7 +223,6 @@ var
   // Speichert zusaetzliche Headertypen, Object-Pointer speichert Boolean
   // true wenn mail, false wenn keine Mail
   addhd: TStringList;
-  RawNews: Boolean;
   // Enthaelt die eigentliche Nachricht
   Mail: TStringList;
   TempS: ShortString;
@@ -307,7 +305,6 @@ begin
   ParECmd := false;
   SMTP:= false;
   NoMIME:= false;              { -noMIME }
-  NNTPSpoolFormat:= false;
   NoCharsetRecode:= true;
   MailUser:= 'mail';        { fuer U-Zeile im X-File }
   NewsUser:= 'news';
@@ -2352,32 +2349,25 @@ begin
   OpenFile(fn);
   ReadString;
 
-  if (not RawNews) and (LeftStr(s, 2) = '#!') then
-    if LeftStr(s, 8) <> '#! rnews' then
-    begin
-      if CommandLine then  writeln(' - unbekanntes Batchformat');
-      goto ende;
-    end;
+  if LeftStr(s, 8) <> '#! rnews' then
+  begin
+    if CommandLine then  writeln(' - unbekanntes Batchformat');
+    goto ende;
+  end;
 
   if CommandLine then write(sp(7));
   repeat
     Size := 0;
-    if not RawNews then
+    while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and (bufpos < bufanz) do
+      ReadString;
+    // RFC so 1036
+    // batch-header  = "#! rnews " article-size eol
+    p := pos('#! rnews ', s);
+    if p = 1 then
     begin
-      while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and (bufpos < bufanz) do
-        ReadString;
-      // RFC so 1036
-      // batch-header  = "#! rnews " article-size eol
-      p := pos('#! rnews ', s);
-      if p = 1 then
-      begin
-        delete(s, 1, p - 1);
-        size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
-      end;
-    end else
-      // first line for ReadRFCHeader is already read if first message (see OpenFile)
-      // if not on first message, read next line
-      if n>0 then ReadString;
+      delete(s, 1, p - 1);
+      size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
+    end;
 
     if bufpos < bufanz then
     begin
@@ -2404,29 +2394,16 @@ begin
         dec(size, length(s) + MinMax(eol, 0, 1));
       until (s = '') or (bufpos >= bufanz);
 
-      if hd.Lines = 0 then
-        hd.Lines := MaxInt; // wir wissen nicht, wieviele Zeilen es sind, also bis zum Ende lesen
-
-      while ((Size > 0) or (hd.Lines > 0)) and (bufpos < bufanz) do
+      while (Size > 0) and (bufpos < bufanz) do
       begin                         { Groesse des Textes berechnen }
         ReadString;
-        if NNTPSpoolFormat then begin
-          if s='.' then
-            hd.lines:=0
-          else
-            if FirstChar(s)='.' then DeleteFirstChar(s)
-          end
-        else // standard format
-          Dec(hd.lines);
         dec(Size, length(s) + MinMax(Eol, 0, 1));
         DecodeLine;
         if recode then
           s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
 
-        if not(NNTPSpoolFormat and(hd.lines=0))then begin // skip last '.' if NNTP spool format
-          Mail.Add(s);
-          inc(hd.groesse, length(s));
-          end;
+         Mail.Add(s);
+         inc(hd.groesse, length(s));
       end;
       WriteHeader;                  { ZC-Header inkl. Groessenangabe erzeugen }
       for i := 0 to Mail.Count - 1 do
@@ -2557,7 +2534,7 @@ begin
   outbufpos := 0;
   Mails := 0; News := 0;
   spath := ExtractFilePath(source);
-  n := 0; RawNews := false;
+  n := 0;
   sres := findfirst(source, faAnyFile, sr);
   while sres = 0 do
   begin
@@ -2572,9 +2549,8 @@ begin
       DeleteFiles.Add(spath+sr.name);
     end
     else
-    if (ExtractFileExt(sr.name) = '.news') or (NNTPSpoolFormat) then
+    if (ExtractFileExt(sr.name) = '.news') then
     begin
-      RawNews := true;
       ConvertNewsfile(spath + sr.name, news);
       DeleteFiles.Add(spath+sr.name);
     end
@@ -3777,6 +3753,11 @@ end;
 
 {
   $Log$
+  Revision 1.145  2003/10/05 12:37:42  mk
+  - removed RawFormat and NNTPSpoolFormat from ZCRFC
+  - internal NNTP uses rnews format now
+  - removed use of lines header
+
   Revision 1.144  2003/10/01 10:09:56  mk
   - added initialization of XPTimzeone for command line uuz
 

@@ -436,7 +436,7 @@ end;
 
 function TNNTP.GetMessage(Article, ArticleCount: Integer; Message: TStringList; HeaderOnly: Boolean): Integer;
 var
-  i, Error,iLine: Integer;
+  i, Error,iLine, iSize: Integer;
   s: String;
   Timer: TTimer;
 begin
@@ -464,7 +464,7 @@ begin
         Continue;
       end;
 
-      iLine:=0;
+      iLine:=0; iSize := 0;
       repeat
         SReadln(s);
         inc(iLine);
@@ -473,9 +473,15 @@ begin
           Output(mcVerbose,iifs(HeaderOnly, res_msg2, res_msg1), [Article, iLine]);
           Timer.SetTimeout(1);
         end;
+        if s = '.' then
+          Break;
+        if FirstChar(s)='.' then
+          DeleteFirstChar(s);
         Message.Add(s);
-      until s = '.';
-      
+        Inc(iSize, Length(s)+1); // add only one char for #1310 (see rfc so1036)
+      until false;
+      Message.Insert(Message.Count-iLine+1, '#! rnews ' + IntToStr(iSize));
+
       if HeaderOnly then
       begin
         Message.Insert(Message.Count-1, 'X-XP-MODE: HdrOnly'); // empty line to break up headers
@@ -490,7 +496,7 @@ end;
 
 function TNNTP.GetMessageByID(const MsgID: String; Message: TStringList): Integer;
 var
-  Error,iLine: Integer;
+  Error, iSize: Integer;
   s: String;
   Timer: TTimer;
 begin
@@ -507,17 +513,23 @@ begin
       exit;
     end;
 
-    Timer.Init; Timer.SetTimeout(5); iLine:=0;
+    Timer.Init; Timer.SetTimeout(5);
+    iSize := 0;
     repeat
       SReadln(s);
-      inc(iLine);
       if Timer.Timeout then
       begin
-        Output(mcVerbose, res_msg4, [MsgID, iLine]);
+        Output(mcVerbose, res_msg4, [MsgID, Message.Count]);
         Timer.SetTimeout(1);
-        end;
+      end;
+      if s = '.' then
+        Break;
+      if FirstChar(s)='.' then
+        DeleteFirstChar(s);
       Message.Add(s);
-    until s = '.';
+      Inc(iSize, Length(s)+1); // add only one char for #1310 (see rfc so1036)
+    until false;
+    Message.Insert(0, '#! rnews ' + IntToStr(iSize));
     Timer.Done;
     Result := 0;
   end;
@@ -599,6 +611,11 @@ end;
 
 {
   $Log$
+  Revision 1.45  2003/10/05 12:37:43  mk
+  - removed RawFormat and NNTPSpoolFormat from ZCRFC
+  - internal NNTP uses rnews format now
+  - removed use of lines header
+
   Revision 1.44  2003/09/03 00:47:07  mk
   - reduced latenz time for NNTP, this speeds up NNTP to factor
 
