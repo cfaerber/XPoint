@@ -74,6 +74,9 @@ var
     madr     : longint;         { Adresse in Ablage }
     crc      : string[4];
     nt       : longint;
+  abs  : string[AdrLen];
+      bbox : string[BoxNameLen+10];
+      p    : byte;
 
 label ende,nextpp;
 
@@ -236,6 +239,7 @@ begin
   crash:=(dbReadInt(mbase,'unversandt') and 16<>0);
   empfnr:=(dbReadInt(mbase,'netztyp') shr 24);
 
+  box := '';
   findfirst(ownpath+iifs(crash,'*.cp','*.pp'),ffAnyFile,sr);
   found:=false;
   rmessage(640);             { 'Puffer Åberarbeiten...' }
@@ -284,7 +288,24 @@ begin
     rfehler(622);     { 'Nachricht nicht (mehr) im Pollpaket vorhanden !?' }
     ReadHeadEmpf:=empfnr;
     ReadHeader(hdp^,hds,true);
+  end;
+  if Box = '' then
+  begin
+    if hdp^.real_box<>'' then
+      box :=hdp^.real_box   { BOX aus RFC- oder Maggi-Header }
+    else
+    begin
+      dbReadN(mbase,mb_absender,abs);
+      p:=cpos('@',abs);
+      if p>0 then
+      begin
+        bbox:=mid(abs,p+1);      { Box aus Absendername }
+        p:=pos('.',bbox);
+        if p>0 then bbox:=left(bbox,p-1);
+        if isbox(bbox) then box:=bbox;
+      end;
     end;
+  end;
 
   dbReadN(mbase,mb_halteflags,orghalt);
   SetDelNoUV;                  { Nachricht auf 'lîschen' und !UV }
@@ -1274,6 +1295,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20.2.12  2000/12/18 00:14:53  mk
+  - bei Unversand Boxnamen auch ermitteln, wenn Pollpaket nicht vorhanden
+
   Revision 1.20.2.11  2000/12/12 11:30:29  mk
   - FindClose hinzugefuegt
 
