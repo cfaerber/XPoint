@@ -172,43 +172,44 @@ begin
   DeleteFile(RFCFileDummy);
   ZtoRFC(bp,PPFile,RFCFile);
   result:= true;
-  if FileExists(RFCFileDummy) then
-  begin
-    { ProgressOutput erstellen }
-    POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_postnewsinit,[BoxName]),True);
-    { Host und ... }
-    NNTP:= TNNTP.CreateWithHost(bp^.NNTP_ip);
-    { IPC erstellen }
-    NNTP.ProgressOutput:= POWindow;
-    { ggf. Zugangsdaten uebernehmen }
-    if (bp^.NNTP_id<>'') and (bp^.NNTP_pwd<>'') then begin
-      NNTP.User:= bp^.NNTP_id;
-      NNTP.Password:= bp^.NNTP_pwd;
-    end;
-    { Verbinden }
-    try
-      result:= true;
-      List := TStringList.Create;
-      List.LoadFromFile(RFCFileDummy);
-      NNTP.Connect;
+  if not FileExists(RFCFileDummy) then exit;
 
-      NNTP.PostPlainRFCMessages(List);
-
-      NNTP.Disconnect;
-    except
-      POWindow.WriteFmt(mcError,res_noconnect,[0]);
-      result:= false;
-    end;
-    List.Free;
-    NNTP.Free;
-    if result then begin
-      ClearUnversandt(PPFile,BoxName);
-      if FileExists(PPFile)then _era(PPFile);
-      if FileExists(RFCFileDummy)then _era(RFCFileDummy);
-      RFCFileDummy := RFCFile + 'X-0002.OUT';
-      if FileExists(RFCFileDummy)then _era(RFCFileDummy);
-      end;
+  { ProgressOutput erstellen }
+  POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_postnewsinit,[BoxName]),True);
+  { Host und ... }
+  NNTP:= TNNTP.CreateWithHost(bp^.NNTP_ip);
+  { IPC erstellen }
+  NNTP.ProgressOutput:= POWindow;
+  { ggf. Zugangsdaten uebernehmen }
+  if (bp^.NNTP_id<>'') and (bp^.NNTP_pwd<>'') then begin
+    NNTP.User:= bp^.NNTP_id;
+    NNTP.Password:= bp^.NNTP_pwd;
   end;
+
+  { Verbinden }
+  try
+    result:= true;
+    List := TStringList.Create;
+    List.LoadFromFile(RFCFileDummy);
+    NNTP.Connect;
+
+    NNTP.PostPlainRFCMessages(List);
+
+    NNTP.Disconnect;
+  except
+    POWindow.WriteFmt(mcError,res_noconnect,[0]);
+    result:= false;
+  end;
+
+  List.Free;
+  NNTP.Free;
+  if result then begin
+    ClearUnversandt(PPFile,BoxName);
+    if FileExists(PPFile)then _era(PPFile);
+    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+    RFCFileDummy := RFCFile + 'X-0002.OUT';
+    if FileExists(RFCFileDummy)then _era(RFCFileDummy);
+    end;
   RFCFileDummy := RFCFile + 'C-0000.OUT';
   if FileExists(RFCFileDummy)then _era(RFCFileDummy);
 end;
@@ -216,8 +217,10 @@ end;
 function GetNNTPMails(BoxName: string; bp: BoxPtr; IncomingFiles: TStringList): boolean;
 var
   List          : TStringList;
-  Group: String;
-  ArticleIndex, RCIndex: Integer;
+  Group         : String;
+  ArticleIndex,
+  RCIndex       : Integer;
+  RCList        : TStringList;          { .rc-File }
 
   procedure ProcessIncomingFiles(IncomingFiles: TStringList);
   var
@@ -251,16 +254,17 @@ var
      List.SaveToFile(aFile);
      IncomingFiles.Add(aFile);
      List.Clear;
+     RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex);
    end;
 
 var
   NNTP          : TNNTP;                { Socket }
   POWindow      : TProgressOutputWindow;{ ProgressOutput }
   p, i          : integer;              { -----"------- }
-  RCList        : TStringList;          { .rc-File }
   RCFilename    : String;
   FillStr       : String;
   oArticle      : integer;
+
 begin
   { POWindow erstellen }
   POWindow:= TProgressOutputWindow.CreateWithSize(60,10,Format(res_getnewsinit,[BoxName]),True);
@@ -327,15 +331,15 @@ begin
         if List.Count > 10000 then
           SaveNews;
       end;
-      RCList[RCIndex] := Group + ' ' + IntToStr(ArticleIndex);
+      if List.Count > 0 then SaveNews;
     end;
 
-    SaveNews;
     NNTP.Disconnect;
   except
     POWindow.WriteFmt(mcError,res_noconnect,[0]);
     result:= false;
   end;
+
   RCList.SaveToFile(RCFilename);
   RCList.Free;
   List.Free;
@@ -347,6 +351,10 @@ end.
 
 {
         $Log$
+        Revision 1.22  2001/06/04 16:59:36  ma
+        - improved lost connection handling
+        - cosmetics
+
         Revision 1.21  2001/05/20 12:22:55  ma
         - moved some functions to proper units
 
