@@ -184,7 +184,7 @@ begin
         goto Ende;
       end;
 {$IFDEF Beta } { MK 25.01.2000 Betameldung anzeigen, /nb schaltet diese ab }
-      if not ParNoBeta then
+      if not ParNoBeta and (ParTiming = 0) then
       begin
         BetaMessage;
         if quit then
@@ -224,6 +224,9 @@ ende:
 end.
 {
   $Log$
+  Revision 1.47  2000/12/30 16:06:46  mk
+  - bei Parameter /t:x keinen Betahinweis zeigen
+
   Revision 1.46  2000/12/27 12:42:55  mk
   - uuz can now started with xp uuz
 
