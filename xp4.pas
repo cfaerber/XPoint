@@ -680,6 +680,7 @@ var t,lastt: taste;
       gfound  : boolean;
       mqfirst : longint;
       mpdata  : multi_part;
+      OrgQuote: integer;
 
   label ende;
 
@@ -812,11 +813,14 @@ var t,lastt: taste;
       pm:=not ReadJNesc(getres(431),false,brk);   { 'Der Absender wÅnscht eine PM-Antwort - trotzdem îffentlich antworten' }
       if brk then exit;
       end;
-    mquote:=(quote=1); mqfirst:=0;
+    OrgQuote := Quote;
     if quote=2 then
-      if markanz=0 then quote:=1
-      else if not multiquote(brk) and brk then exit;
+      if markanz=0 then
+        quote:=1
+      else
+        if not multiquote(brk) and brk then exit;
       {  dbGo(mbase,marked^[0]); }
+    mquote:=(quote=1); mqfirst:=0;
     betr:='';
     rt0:='';
     realname:='';
@@ -1313,7 +1317,7 @@ var t,lastt: taste;
 begin      { --- select --- }
   if dispmode=11 then
     if markaktiv then begin
-{      rfehler(414);   { 'markier-Anzeige ist bereits aktiv' }
+{      rfehler(414);}   { 'markier-Anzeige ist bereits aktiv' }
       aufbau:=true;
       exit;
       end
@@ -2008,4 +2012,9 @@ end;
 
 
 end.
+{
+  $Log$
+  Revision 1.6.2.7  2000/10/26 08:52:53  mk
+  - MIME-Fixes (merged from 3.30
 
+}
