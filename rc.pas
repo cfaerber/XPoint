@@ -5,14 +5,14 @@
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 { --------------------------------------------------------------- }
 { Ressourcen-Compiler }
+
 { $Id$ }
 
 {$I XPDEFINE.INC }
 
+{$R-}
+
 uses
-{$IFNDEF NCRT }
-  crt,
-{$ENDIF }
   sysutils,
   dos,typeform,fileio, xpglobal;
 
@@ -35,17 +35,16 @@ type  rblock = record
                  collect: smallword; { die folgenden n Strings geh”ren }
                end;                  { zu dieser Resource              }
 
-type  stringp= ^string;
-      barr   = array[0..65300] of byte;
+type  barr   = array[0..65300] of byte;
       barrp  = ^barr;
 
-var   infile : pathstr;
+var   infile : string;
       t      : text;
       f      : file;
       block  : array[1..maxblk] of rblock;
       blocks : byte;
       res    : array[1..maxres] of restype;
-      rptr   : array[1..maxres] of stringp;
+      rptr   : array[1..maxres] of string;
       buf1,
       buf2   : barrp;
       bufp1,
@@ -68,7 +67,7 @@ end;
 
 
 procedure InitVar;
-var outpath,dir : dirstr;
+var outpath,dir : pathstr;
     name : namestr;
     ext : extstr;
 
@@ -81,25 +80,11 @@ begin
   infile:=name;
 
   outpath:='';
-  if (paramcount=2) then begin
-    outpath:=paramstr(2);
-    if outpath<>'' then begin
-{$IFDEF UnixFS }
-      if outpath[length(outpath)]<>'/' then
-        outpath:=outpath+'/';
-{$ELSE }
-      if outpath[length(outpath)]<>'\' then
-        outpath:=outpath+'\';
-{$ENDIF }
-    end
-  end;
+  if (paramcount=2) then
+    outpath:=AddDirSepa(paramstr(2));
   if (outpath='') then outpath:=dir;
 
-{$IFDEF UnixFS }
-  assign(f,outpath+infile+'.res');
-{$ELSE }
-  assign(f,outpath+infile+'.RES');
-{$ENDIF }
+  assign(f,outpath+infile+FileUpperCase('.res'));
   rewrite(f,1);
   open:=true;
   getmem(buf1,16384);
@@ -169,7 +154,7 @@ var collnr : word;
   var i   : integer16;
       chg : boolean;
       r   : restype;
-      p   : pointer;
+      p   : string; {pointer;}
   begin
     repeat
       chg:=false;
@@ -217,7 +202,7 @@ begin
                   last:=nr;
                   res[anzahl].nummer:=nr;
                   res[anzahl].collect:=0;
-                  rptr[anzahl]:=nil;
+                  rptr[anzahl]:='';
                   wrnr;
                   inc(block[blocks].contsize,2);  { 2 Bytes f. Anzahl der }
                 end;                              { Teilstrings           }
@@ -249,8 +234,8 @@ begin
                        i:=length(s);
                        while (i>=1) and (s[i]='~') do begin
                          s[i]:=' '; dec(i); end;
-                       getmem(rptr[anzahl],length(s)+1);
-                       rptr[anzahl]^:=s;
+                       {getmem(rptr[anzahl],length(s)+1);}
+                       rptr[anzahl]:=s;
                        inc(block[blocks].contsize,length(s));
                      end;
         end;
@@ -266,7 +251,7 @@ begin
         wrbuf1(w,2);
         wrbuf1(bufp2,2);
         if res[i].collect=0 then
-          wrbuf2(rptr[i]^[1],length(rptr[i]^))
+          wrbuf2(rptr[i][1],length(rptr[i]))
         else begin
           wrbuf2(res[i].collect,2);
           SortCollect(i+1,res[i].collect);
@@ -275,11 +260,11 @@ begin
           for j:=1 to res[i].collect do begin
             wrbuf2(res[i+j].nummer,2);
             wrbuf2(w,2);
-            inc(w,length(rptr[i+j]^));
+            inc(w,length(rptr[i+j]));
             end;
           for j:=1 to res[i].collect do begin
             inc(i);
-            wrbuf2(rptr[i]^[1],length(rptr[i]^));
+            wrbuf2(rptr[i][1],length(rptr[i]));
             end;
           end;
         inc(i);
@@ -287,8 +272,8 @@ begin
       blockwrite(f,buf1^,bufp1);
       blockwrite(f,buf2^,bufp2);
       for i:=anzahl downto 1 do
-        if rptr[i]<>nil then
-          freemem(rptr[i],length(rptr[i]^)+1);
+        if rptr[i]<>'' then
+          rptr[i]:=''; {freemem(rptr[i],length(rptr[i])+1);}
       end;  { anzahl>0 }
     writeln;
   until eof(t);
@@ -317,7 +302,8 @@ end;
 
 begin
   writeln;
-  writeln('Ressource Compiler v1.01   PM 12/92, 06/93');
+  writeln('OpenXP Ressource Compiler ',verstr,betastr,' for',pformstr);
+  writeln('Copyright by ',author_name,' <',author_mail,'> ',x_copyright);
   writeln;
   infile:=paramstr(1);
 
@@ -326,16 +312,10 @@ begin
   end else
     writeln('Source File: ',infile);
   writeln;
+  infile:= FileUpperCase(infile);
   if trim(infile)<>'' then begin
-{$IFNDEF UnixFS }
-    UpString(infile);
-{$ENDIF }
-    if cpos('.',infile)=0 then
-{$IFDEF UnixFS}
-      infile:=infile+'.rq';
-{$ELSE }
-      infile:=infile+'.RQ';
-{$ENDIF }
+    if RightPos('.',infile)=0 then
+      infile:=infile+FileUpperCase('.rq');
     if not exist(infile) then
       fehler('"'+infile+'" not found.');
     InitVar;
@@ -344,3 +324,12 @@ begin
     WriteBlocks;
   end;
 end.
+{
+	$Log$
+	Revision 1.12  2000/07/06 12:03:21  hd
+	- Auf AnsiString umgestellt
+	- Unit CRT entfernt
+	- Fix: rc c:\xp\src.370\xp-d.rq fuehrte zu xp-d.rq.res
+	- Version geaendert (OpenXP)
+
+}
