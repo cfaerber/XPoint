@@ -318,6 +318,9 @@ begin
   while not dbEOF(mbase) do begin
     inc(n); wrn;
     if (dbReadStr(mbase,'msgid')<>'') and ntKomkette(mbNetztyp) then begin
+      hd.msgId:='';
+      hd.ref:='';
+      hd.empfanz:=0;
       ReadHeader(hd,hds,false);
       if hds>1 then
         if hd.empfanz=1 then
@@ -562,6 +565,7 @@ begin
   n:=0;
   nullid:=0;
   repeat
+    hdp.ref:='';
     ReadHeader(hdp,hds,false);
     if (hds=1) or (hdp.ref='') then bez:=0
     else begin
@@ -918,6 +922,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2001/01/03 13:07:51  mo
+  -bug in der Bezugsverkettung gefixt
+
   Revision 1.32  2001/01/03 08:02:28  mo
   -type der Laufvariable n für max Anzahle der eingelesenen Verkettungen -> longint
 
