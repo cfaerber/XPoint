@@ -32,33 +32,3 @@ Description: Documentation for OpenXP
  Documentation for OpenXP, a text-based messaging user agent.
  .
  Homepage: http://www.openxp.de
-
-Package: openxp-tools-ftn
-Architecture: all
-Depends: openxp, nomarch (>= 1.3)
-Recommends: unzip, arj | unarj
-Suggests: unrar, lha, unzoo | zoo
-Description: Tools for use with OpenXP's Fidonet support (meta-package)
- This is a meta-package which depends on or suggests tools that
- are required or recommended for OpenXP's Fidonet (FTN) support.
- .
- You may also want to install some non-free packages like "lha"
- and "unarj" to extract archives of this type. 
-
-Package: openxp-tools-zconnect
-Architecture: all
-Depends: openxp
-Recommends: unzip, arj | unarj
-Suggests: unrar
-Description: Tools for use with OpenXP's ZConnect support (meta-package)
- This is a meta-package which depends on or suggests tools that
- are required or recommended for OpenXP's ZConnect support.
-
-Package: openxp-tools-uucp
-Architecture: all
-Depends: openxp
-Recommends: gzip
-Suggests: bzip2, compress
-Description: Tools for use with OpenXP's UUCP support (meta-package)
- This is a meta-package which depends on or suggests tools that
- are required or recommended for OpenXP's UUCP support.
