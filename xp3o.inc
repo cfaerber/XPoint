@@ -242,14 +242,14 @@ var x,y      : Integer;
 
     function okay:boolean;
     begin
-      okay:=false;
       if sender<>'' then
-        okay:=((hdp2.absender=sender) or (hdp2.cust1=sender)) and (hdp2.msgid=id)
+        result:=((hdp2.absender=sender) or (hdp2.cust1=sender)) and (hdp2.msgid=id)
       else
-        okay:=(hdp2.absender=abs) or (hdp2.cust1=abs) and (hdp2.msgid=id);
+        result:=(hdp2.absender=abs) or (hdp2.cust1=abs) and (hdp2.msgid=id);
     end;
 
   begin
+    mrec:=0;
     TrimFirstChar(id, '<');
     TrimLastChar(id, '>');
     if cpos('@',id)=0 then exit;
@@ -551,7 +551,7 @@ var x,y      : Integer;
   end;
 
   procedure Bezugsverkettung;
-  var n,nbez : longint;
+  var n      : longint;
       c1,c2  : longint;
       ll     : record
                  l   : longint;
@@ -566,7 +566,7 @@ var x,y      : Integer;
     mon;
     reset(f,1);
     fs:=filesize(f);
-    adr:=0; n:=0; nbez:=0;
+    adr:=0; n:=0;
     dbStopHU(bezbase);
     seek(pfile,0);
     repeat
@@ -584,7 +584,6 @@ var x,y      : Integer;
         blockread(pfile,ll,8);
         if (ll.l<>0) and ntKomkette(hdp.netztyp) and (hdp.msgid<>'') then
         begin
-          inc(nbez);
           c1:=MsgidIndex(hdp.msgid);
           if hdp.References.Count = 0 then
             c2:=0
@@ -836,7 +835,7 @@ begin
                 Firstempfaenger:='U'+mid(Firstempfaenger,iif(archive,1,length(TO_ID)+1))
               else begin
                 Firstempfaenger:='U'+Firstempfaenger;
-                tobrett:=true;
+                //tobrett:=true;
                 end
             else
               FirstEmpfaenger:='A'+Firstempfaenger;
@@ -1133,6 +1132,7 @@ begin
     dbFlush(mbase);
     close(f);
     inc(ablsize[ablage],fs);
+    Debug.DebugLog('xp3o','db flushed',DLInform);
 
     FlushLL;
     if zconnect then
@@ -1144,6 +1144,7 @@ begin
     if not ignoreSupCancel then
       bearbeite_cancels_supersedes;
     erase(cmessagefile);
+    Debug.DebugLog('xp3o','ctrl msgs done',DLInform);
 
     if not replace_ed then write_lastcall(dat);
     FlushClose;
@@ -1153,6 +1154,7 @@ begin
 
 (*    Wrt(x+2,y+7,getres(320)); { 'DatumsbezÅge werden Åberarbeitet...     %' }
     GotoXY(WhereX-5, WhereY);
+    Debug.DebugLog('xp3o','set area date',DLInform);
     BrettDatumSetzen(true);
     GotoXY(WhereX-2, WhereY);
     moff; Wrt2(getres(321)); mon;  { ' fertig.' } *)
@@ -1236,6 +1238,10 @@ end;
 
 {
   $Log$
+  Revision 1.83.2.2  2002/05/21 15:20:12  ma
+  - added more debug logs
+  - fixed hints and warnings
+
   Revision 1.83.2.1  2002/05/06 17:58:52  mk
   - use correct file name case (.bak, .out) with linux
 
