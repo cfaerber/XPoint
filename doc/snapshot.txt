@@ -383,7 +383,7 @@ Allgemeine Bedienung und Sonstiges
   XP10.INC, XP.IHQ
 
 - Neue Funktion "Netcall/Spezial", die einen Netcall fÅr die Boxen
-  in der Reihenfolge ausfÅhrt, wie sie in der Datei NETCALL.LST auf-
+  in der Reihenfolge ausfÅhrt, wie sie in der Datei NETCALL.DAT auf-
   gefÅhrt sind (Feature wird noch ausgebaut).
   XP4.INC, XP7.PAS, XP10.PAS, XP10.INC, XP-D.RQ, XP-E.RQ,
   XP.HLP, XP-E.HLP
