@@ -3077,12 +3077,8 @@ begin
 end;
 
 procedure set_checkdate;
-var
-  Handle: Integer;
 begin
-  Handle := FileOpen(NewDateFile, fmOpenReadWrite);
-  FileSetDate(Handle, DateTimeToFileDate(Now));
-  FileClose(Handle);
+  FileSetDate(NewDateFile, DateTimeToFileDate(Now));
 end;
 
 
@@ -3262,6 +3258,9 @@ end;
 
 {
   $Log$
+  Revision 1.173  2003/01/07 11:18:26  mk
+  - use cross platform FileSetDate
+
   Revision 1.172  2003/01/07 00:24:44  cl
   - added openboxat to allow non-centered boxes
 
