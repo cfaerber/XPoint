@@ -114,6 +114,7 @@ begin
     SMTP.Password:= bp^.smtp_pwd;
     SMTP.SecureLoginMandatory := bp^.smtp_secureloginmandatory;
   end;
+  SMTP.Port := Bp^.Smtp_Port;
 
   List := TStringList.Create;
   try
@@ -202,6 +203,7 @@ begin
     POP.User:= bp^.pop3_id;
     POP.Password:= bp^.pop3_pwd;
   end;
+  POP.Port := Bp^.POP3_Port;
 
   { Get last retrieved UIDLs from file }
   UIDLFileName:=FileUpperCase(OwnPath+GetServerFilename(Boxname, extUdl));
@@ -278,6 +280,9 @@ end;
                       
 {
   $Log$
+  Revision 1.32.2.4  2003/04/03 13:33:46  mk
+  - POP3 and SMTP-Port is now configurable in *.bfg
+
   Revision 1.32.2.3  2002/08/12 12:07:17  ma
   - fix: SMTP Envelope from was not set correctly (causing some servers
     to refuse mails)

@@ -84,7 +84,7 @@ implementation
 uses typeform, encoder, md5, mime;
 
 const
-  DefaultSMTPPort       = 25;
+  DefaultSMTPPort = 25;
   SMTPFROMSIGN    = 'MAIL FROM:';
   SMTPTOSIGN      = 'RCPT TO:';
   SMTPDATASIGN    = 'DATA';
@@ -344,6 +344,9 @@ end;
 
 {
   $Log$
+  Revision 1.18.2.3  2003/04/03 13:33:46  mk
+  - POP3 and SMTP-Port is now configurable in *.bfg
+
   Revision 1.18.2.2  2002/07/27 09:12:11  mk
   - fixed bug #575458 SMTP: Kopienempfõnger gehen nicht
     more than one RCPT TO: was not correctly handled

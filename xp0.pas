@@ -628,9 +628,11 @@ type   textp  = ^text;
                   pop3_APOP : boolean;     { POP3: APOP (encrypted passwd) verwenden }
                   pop3_OnlyNew : boolean;  { POP3: nur neue Mails holen }
                   pop3_ForceOneArea : boolean; { POP3: put all messages into *one* group }
+                  pop3_port : Integer;     { POP3: Port, default: 110 }
                   smtp_ip   : string;      { SMTP: IP oder Domain }
                   smtp_id   : string;      { SMTP: User-ID, falls noetig }
                   smtp_pwd  : string;      { SMTP: Password, falls noetig }
+                  smtp_port : Integer;     { SMTP: Port, default: 25 }
                   smtp_secureloginmandatory: boolean;
                   SmtpAfterPOP: Boolean;   { SMTP: Vorher POP3 Login noetig }
                   LastCall  : TDateTime;   { Letzter Call }
@@ -1232,6 +1234,9 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.9  2003/04/03 13:33:45  mk
+  - POP3 and SMTP-Port is now configurable in *.bfg
+
   Revision 1.158.2.8  2002/07/31 19:30:35  ma
   - new feature: kill/prevent dupes when sorting in messages
     (in fact a replaceown variant)
