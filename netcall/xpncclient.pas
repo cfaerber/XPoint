@@ -34,7 +34,8 @@ function ClientNetcall(BoxName, BoxFileName: string; boxpar: BoxPtr; DeleteSpool
 
 implementation  { ------------------------------------------------- }
 
-uses fileio,xp1, xp3o, typeform, sysutils, zcrfc, xpnetcall, xpnt, xpconfigedit, xp9bp, xpdiff;
+uses fileio,xp1, xp3o, typeform, sysutils, zcrfc, xpnetcall, xpnt, xpconfigedit,
+  xp9bp, xpdiff, debug;
 
 function ClientNetcall(BoxName, BoxFileName: string; boxpar: BoxPtr; DeleteSpoolFiles: TStringList): ShortInt;
 var
@@ -149,13 +150,17 @@ begin
   Result := EL_ok;
   Dat := ZDate; // Save time from first Netcall so 'Neues' will display
                 // new messages from all Systems, not only the last one
+
   IDList := TStringList.Create;
   try
     ServerList := Trim(BoxFileName + ' ' + BoxPar^.ClientAddServers);
+    Debug.DebugLog('xpncclient','Start Client Netcall, Servers: ' + ServerList, DLTrace);
 
     for i := 1 to WordCount(ServerList) do
     begin
       LoadBox(ExtractWord(i, ServerList));
+      Debug.DebugLog('xpncclient', Format('Load Box for System: %s, CurrentBoxname: %s, PPFile: %s',
+        [ExtractWord(i, ServerList), CurrentBoxName, ppfile]), DLTrace);
       with boxpar^ do
       begin
         if not IsPath(ClientSpool) then
@@ -170,6 +175,7 @@ begin
 
         if _FileSize(ppfile) > 0 then                     { -- Ausgabepaket -- }
         begin
+          Debug.DebugLog('xpncclient','Call ZtoRFC for ClientSpool ' + ClientSpool, DLTrace);
           TestPuffer(ppfile, false, dummy);
           ZtoRFC(PPFile, ClientSpool, IDList);
         end;
@@ -251,6 +257,9 @@ end;
 
 {
   $Log$
+  Revision 1.2.2.9  2003/09/10 16:51:03  mk
+  - added extensive debug infos for client netcall
+
   Revision 1.2.2.8  2003/09/07 19:09:13  mk
   - added missing netcall log for client systems
 
