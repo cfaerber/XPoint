@@ -696,6 +696,8 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 15   Show recipients of echomail messages (FidoNet)
 16   New messages on top
 + 260
+# window width /Config/Display/Misc
+0 41
 1    Screen-saver (sec.) ~
 2    Scroll out
 3    Password at startup?
@@ -3162,6 +3164,8 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 36 has to be deleted (see Message/Message_Area_Manager/
 37 Others/Delete).
 38 Sort of newsgroup list was not successful!
+39 Subscribe Newsgroups
+40 Number of articles
 # XP8.INC
 50 No file scan message selected!
 51 %s is no Fido server!

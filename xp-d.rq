@@ -706,6 +706,8 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 15   Empf„nger von Fido-Brettnachrichten anzeigen
 16   Neue Nachrichten oben
 + 260
+# Fensterbreite /Config/Anzeige/Diverses
+0 37
 1    Screen-Saver (Sek.) ~
 2    weich ausblenden
 3    Startpaáwort abfragen
@@ -3211,6 +3213,8 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 36 Newsgroup-Liste gel”scht werden (siehe /Nachricht/Brett-
 37 manager/Sonstiges/L”schen).
 38 Sortierung der Newsgroup-Liste ist fehlgeschlagen!
+39 Newsgroups bestellen
+40 Anzahl der Artikel
 # XP8.INC
 50 Keine Filescan-Nachricht gew„hlt!
 51 %s ist kein eingetragener Fido-Server!
