@@ -1,6 +1,5 @@
 FAQ zu OpenXP 3.70
 
-
 Warum ist die Win32-Version bei mir so langsam?&nbsp;&nbsp;<small>2001-03-20</small>
 Die Unterstützung von Konsolenprogrammen ist unter Win95/98/ME
 sehr schlecht (bekanntes Problem, nachzulesen auch z.B. in der <a href="http://www.vim.org/html/os_win32.html#win32-problems">FAQ zu Vim</a>).
@@ -14,7 +13,7 @@ Strichen auf dem Monitor äußert, aber das wird jeder mit einem großen Monitor ke
 <br />Also: <i>Fenstermodus nehmen, Zeilen-/Spaltenanzahl hochsetzen, das Fenster passend verschieben</i> - voilà, man hat ein
 übersichtliches, schnelles OpenXP :-).
 
-Was ist bei dem neuen Fido/ZConnect-Netcall zu beachten?&nbsp;&nbsp;<small>2001-03-20</small>
+Was ist beim neuen Fido/ZConnect-Netcall zu beachten?&nbsp;&nbsp;<small>2001-03-20</small>
 <big>Fido:</big>
 <ul>
 <li>Bei Edit/Boxen/Edit/Point darf unter "AKAs" die eigene Adresse <b>nicht</b> mehr eingetragen werden.</li>
@@ -24,7 +23,7 @@ Was ist bei dem neuen Fido/ZConnect-Netcall zu beachten?&nbsp;&nbsp;<small>2001-
 </ul>
 <big>ZConnect:</big>
 <ul>
-<li>Es <b>muß</b> unter Edit/Boxen/Edit/Diverses ein Skript zum Einloggen eingetragen sein. Für JanusPlus-Boxen kann man dort zcjp.scr benutzen.</li>
+<li>Es <b>muß</b> unter Edit/Boxen/Edit/Diverses ein Skript zum Einloggen eingetragen sein (siehe Unterverzeichnis "beispiel" bzw. das Archiv "beispiel.exe").</li>
 </ul>
 <big>Allgemein:</big>
 <ul>
@@ -62,4 +61,4 @@ jetzt einen "CommInit"-String an (Config/Modem...).
 Die Beispiele, die man per F2 bekommt, sollten klarmachen,
 wie man damit umgeht. Die alten Einstellungen gelten
 nur für externe Programme wie PPP-Clients etc.; Fossil
-wird nur unter DOS unterstützt, Telnet nur unter Win32.
+wird nur unter DOS unterstützt, RawIP/Telnet nur unter Win32.

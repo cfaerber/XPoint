@@ -1,5 +1,13 @@
 Die letzten News von www.openxp.de...
 
+24. März 2001: OpenXP 3.70 jetzt GPL!
+Wie angekündigt steht OpenXP 3.70 jetzt unter der GPL. D.h. insbesondere, daß jegliche Registrierungsgebühr entfällt. An dieser
+Stelle nochmals Dank an alle, die diese Sache möglich gemacht haben, allen voran natürlich Peter Mandrella.
+<br />Außerdem sind die Netcalls neu implementiert worden. Der Fidomailer unterstützt jetzt direkt BinkP (nur Win32-Version).
+ZConnect wird auch wieder unterstützt. Die Integration von UUCP folgt bald.
+<br />Leider ist es immer noch zu früh für eine neue Beta. Wer möchte kann sich aber einen Snapshot besorgen (Backup nicht vergessen!)
+und testen; die Hinweise unter FAQ/3.70 bitte lesen.
+
 26. Februar 2001: OpenXP32/GPL wird langsam Realität
 <a href="index.php4?file=news/20010226.html">Weiteres dazu...</a>
 

@@ -110,10 +110,10 @@ Verbesserter Netcall-Support<br /><small>Netcall-over-IP/nativer Schnittstellenz
 Improved netcall support<br /><small>Netcall over IP/native serial port support</small>
 -
 -
-o
+x
 
 BinkP-Protokoll (Fido over IP)
 BinkP protocol (Fido over IP)
 -
 -
-o
+x

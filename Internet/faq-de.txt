@@ -21,8 +21,31 @@ Was ist beim Wechsel zwischen XP2 und OpenXP zu beachten?&nbsp;&nbsp;<small>2001
 Zur Sicherheit sollte man sich eine Kopie der Konfigurationsdateien
 (*.cfg, *.bfg) anlegen. Die Datenbanken sind kompatibel.
 
-Ich habe UKAW/UKA_PPP installiert, seitdem bekomme ich wieder eine Registrierungsaufforderung.&nbsp;&nbsp;<small>2001-01-17</small>
-Vermutlich ist nur ein Registrierungsschlüssel für ZConnect/Fido vorhanden. Entweder einen Key <a href="http://www.crosspoint.de">nachbestellen</a> oder auf eine freie OpenXP-Version warten.
+Wie kriege ich (Open)XP mit ISDN/USB-Modems/WinModems zum Laufen?&nbsp;&nbsp;<small>2001-03-25</small>
+Es gibt mehrere Möglichkeiten für Programme, auf serielle Geräte zuzugreifen:
+<ol>
+<li>Hardware
+<br /><small>Wird bei DOS-Programmen gemacht: Man muß IO-Port bzw. IRQ angeben. Zugriff ist nur auf <i>real vorhandene</i> Standard-ComPorts möglich).</small></li>
+<li>Fossil
+<br /><small>Fossil ist ein standardisiertes Interface für den Zugriff auf serielle Schnittstellen. Es wird normalerweise benutzt, um DOS-Programmen per Fossil-Treiber den Zugriff auf (auch nicht-standardisierte) serielle Geräte zu ermöglichen.</small></li>
+<li>Win32-API
+<br /><small>Der Weg für Win32-Programme. Hinter einem Win32-ComPort kann sich alles mögliche verbergen (reale ComPorts, emulierte Ports einer ISDN-Karte etc.). Der Port wird von einem Gerätetreiber zur Verfügung gestellt.</small></li>
+<li>CAPI
+<br /><small>CAPI ist ein Interface für ISDN-Karten. Es gibt die Versionen 1.1 und 2.0 (die Version 2.0 ist <i>nicht</i> abwärtskompatibel zur Version 1.1, die meisten CAPIs sind aber Dual-CAPIs und stellen beide Interfaces zur Verfügung). Achtung: Manche ISDN-Windows-Treiber stellen das CAPI nur Windows-Programmen zur Verfügung.</li>
+</ol>
+(Open)XP (DOS) kann auf Hardware (1) und Fossil (2) zugreifen, OpenXP 3.70 (Win32) auf Win32-ComPorts (3).
+<br />USB- und WinModems stellen normalerweise nur einen Win32-ComPort (3) zur Verfügung.
+<br />ISDN-Karten stellen mindestens CAPI (4) zur Verfügung, meistens noch einen Win32-ComPort (3).
+<p>Es gibt diverse Umsetzsoftware (Download siehe "Links"):
+<br />WinFossil/NTFoss: 3 -&gt; 2
+<br />TurboCom (Win9x/ME): 3 -&gt; 1
+<br />cFos/DOS: 4 -&gt; 2
+<br />cFos/Win: 4 -&gt; 3</p>
+<p><i>Was sagt uns das?</i>
+<br />Für ein DOS-XP braucht man entweder WinFossil/NTFoss <i>oder</i> TurboCom. Benutzt man ISDN, und die Treiber stellen keinen Win32-ComPort zur Verfügung, braucht man cFos/Win und WinFossil/NTFoss <i>oder</i> cFos/DOS.
+<br />Für OpenXP 3.70 (Win32) braucht man normalerweise keine Zusatzsoftware. Benutzt man ISDN, und die Treiber stellen keinen Win32-ComPort zur Verfügung, wird cFos/Win benötigt.
+</p>
+<p>Unter Linux entfällt diese Problematik komplett, da OpenXP (Linux) direkt auf die /dev/tty-Geräte zugreifen kann.</p>
 
 Was ist der Unterschied zwischen Betaversion, Snapshot und Release Candidate (RC)?&nbsp;&nbsp;<small>2001-01-19</small>
 Eine Betaversion ist eine einigermaßen benutzbare Version eines Programms, das sich noch in der Entwicklung befindet. Ein Snapshot ist die aktuellste Entwicklerversion und kann sehr instabil sein oder auch Schaden anrichten (!). Ein Release Candidate ist eine Programmversion, die - wie der Name schon sagt :-) - als Kandidat für eine stabile Anwenderversion gehandelt wird.
@@ -32,19 +55,14 @@ Eine Betaversion ist eine einigermaßen benutzbare Version eines Programms, das s
 Kann ich meinen Account bei (insert your provider here ;-) mit OpenXP abfragen?&nbsp;&nbsp;<small>2001-01-17</small>
 Dazu wird ein Client für XP benötigt. Siehe "Links". In OpenXP 3.70 werden Mail und News integriert.
 
+Ich habe UKAW/UKA_PPP installiert, seitdem bekomme ich wieder eine Registrierungsaufforderung.&nbsp;&nbsp;<small>2001-01-17</small>
+Vermutlich ist nur ein Registrierungsschlüssel für ZConnect/Fido vorhanden. Entweder einen Key <a href="http://www.crosspoint.de">nachbestellen</a> oder auf eine freie OpenXP-Version warten.
+
 Warum gibt es zwei Entwickler-Teams?&nbsp;&nbsp;<small>2001-01-16</small>
 Es gab Anfang 2000 starke Differenzen im OpenXP-Team. Sie haben dazu geführt, da&szlig; das XP2-Projekt (siehe "Links") gegründet wurde, welches etwas andere Ziele als das OpenXP-Projekt verfolgt.
 
 Wo finde ich eine Version, die noch auf einem 286er läuft?&nbsp;&nbsp;<small>2001-01-18</small>
-Im Moment ist die letzte auf einem 286er lauffähige Version OpenXP 3.20 (siehe <a href="ftp://ftp.openxp.de/openxp">FTP-Server</a>). Von OpenXP 3.40 wird es auch eine 286er-Version geben, sobald eine Release verfügbar ist.
-
-Wie kriege ich (Open)XP mit ISDN zum Laufen?&nbsp;&nbsp;<small>2001-01-28</small>
-ISDN-Karten stellen CAPI zur Verfügung, manchmal auch eine Win-Comport-Emulation. Bietet der Treiber nur CAPI, muß man für OpenXP/DOS einen CAPI-nach-Fossil-Konverter wie cFos/DOS (siehe "Links") installieren. cFos/Win geht auch, allerdings hat man dann wiederum nur einen Win-Comport, auf den OpenXP/DOS nicht zugreifen kann; man muß also zusätzlich noch einen Win-Comport-nach-Fossil-Konverter wie z.B. WinFossil (wieder siehe "Links") installieren.
-<br />Bei OpenXP/Win32 entfallen diese umständlichen Basteleien, da es direkt auf die Win-Comports zugreifen kann. Im Idealfall (der ISDN-Treiber bringt eine Comport-Emulation mit) braucht man also überhaupt keine Zusatzsoftware.
-<br />Unter Linux wird eine ISDN-Karte über /dev/ttyIx sowieso immer exakt wie ein Modem angesprochen, auch hier entfällt also die ganze Problematik.
-
-Ich habe ein USB-Modem und weiß nicht, was ich als IRQ und Portadresse in XP eintragen soll.&nbsp;&nbsp;<small>2001-03-07</small>
-Der Treiber des USB-Modems stellt - genau wie die Treiber einer ISDN-Karte - einen Win-Comport zur Verfügung. Also gibt es die gleichen Möglichkeiten: WinFossil installieren und XP per Fossil auf das Modem zugreifen lassen oder OpenXP/Win32 benutzen, das direkt auf den Win-Comport zugreifen kann.
+Im Moment ist die letzte auf einem 286er lauffähige Version OpenXP 3.20 (siehe <a href="ftp://ftp.openxp.de/openxp">FTP-Server</a>). Von OpenXP 3.40 wird es auch eine 286er-Version geben, sobald eine Release verfügbar ist. Ansonsten kann auch auf Nachfrage eine aktuelle Version bereitgestellt werden.
 
 Kann ich OpenXP mit ADSL nutzen?&nbsp;&nbsp;<small>2001-01-16</small>
 Ja. ;-)
