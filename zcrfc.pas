@@ -2910,7 +2910,7 @@ begin
     end
     else
       Wrs(f, 'Newsgroups: ' + Newsgroupsline(hd.Empfaenger));
-    Empfaenger.Clear;
+//  Empfaenger.Clear;
 
     wrs(f, 'Message-ID: <' + msgid + '>');
 
@@ -3151,14 +3151,23 @@ type rcommand = (rmail,rsmtp,rnews);
     nr: string;
     fs: longint;
     ct: TCompression;
+    i: integer;
+    empfs: TStringList;
+    
   begin
-    if t in [rsmtp,rnews] then
-      Compress(fn+'.OUT',t=rnews,ct);
 
     case t of
-      rsmtp: command := rsmtp_command[ct];
-      rmail: command := 'rmail '+hd.Firstempfaenger;
-      else   command := 'rnews';
+      rsmtp: begin
+               Compress(fn+'.OUT',false,ct);
+               command := rsmtp_command[ct];
+             end;
+      rmail: begin
+               command := 'rmail '+hd.empfaenger[copycount];
+             end;
+      else   begin
+               Compress(fn+'.OUT',true,ct);
+               command := 'rnews';
+             end;
     end;
 
     name := FirstChar(fn)+'.'+LeftStr(_from,7)+iifc(t in [rmail,rsmtp],'C','d')+RightStr(fn, 4);
@@ -3409,13 +3418,13 @@ begin
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
   if SMTP then CreateNewfile;
   repeat
-    copycount := 1;
+    copycount := 0;
     repeat
       seek(f1, adr);
       ClearHeader;
       makeheader(true, f1, copycount, hds, hd, ok, false, false);
-      if cpos('@', hd.FirstEmpfaenger) > 0 then
-        if UpperCase(LeftStr(hd.FirstEmpfaenger, length(server))) = server then
+      if cpos('@', hd.Empfaenger[copycount]) > 0 then
+        if UpperCase(LeftStr(hd.Empfaenger[copycount], length(server))) = server then
           WrFileserver
         else
         begin   
@@ -3445,10 +3454,9 @@ begin
             QueueCompressfile(rmail);
           end;
         end;
-      if SMTP then
-        copycount := hd.Empfaenger.Count;
-      inc(copycount);
-    until copycount > hd.Empfaenger.Count;
+      if not SMTP then
+        inc(copycount);
+    until SMTP or (copycount >= hd.Empfaenger.Count);
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
   if CommandLine then
@@ -3646,6 +3654,9 @@ end;
 
 {
   $Log$
+  Revision 1.90  2002/02/11 11:26:58  cl
+  - fixed address handling for unbatched mail (rmail)
+
   Revision 1.89  2002/01/13 15:15:55  mk
   - new "empfaenger"-handling
 
