@@ -28,11 +28,15 @@ unit xpncclient;
 
 interface
 
-function SendNNTPMails(BoxName,boxfile: string; boxpar: BoxPtr; PPFile: String; IncomingFiles: TStringList): boolean;
+uses xp0,classes;
+
+function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles: TStringList): boolean;
 
 implementation  { ------------------------------------------------- }
 
-function SendNNTPMails(BoxName,boxfile: string; boxpar: BoxPtr; PPFile: String; IncomingFiles: TStringList): boolean;
+uses fileio,xp1,dos;
+
+function ClientNetcall(BoxName,boxfile: string; boxpar: BoxPtr; PPFile, Logfile: String; IncomingFiles: TStringList): boolean;
 var
   dummy : longint;
   s: String;
@@ -116,10 +120,10 @@ var
   var res: integer;
 
 begin
-  inmsgs:=0; outmsgs:=0; outemsgs:=0;
+  inmsgs:=0; outmsgs:=0; outemsgs:=0; result:=false;
   with boxpar^ do
   begin
-    MkLongDir(PPPSpool, res);
+    CreateDir(PPPSpool);
     if IOResult = 0 then ;
     if not IsPath(PPPSpool) then begin
       trfehler(728,44);   { 'ungültiges Spoolverzeichnis' }
@@ -128,8 +132,8 @@ begin
     EmptyDir(PPPSpool, '*.IN');
     EmptyDir(PPPSpool, '*.OUT');
 
-    NC^.Sendbuf := _filesize(ppfile);
-    if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
+//    NC^.Sendbuf := _filesize(ppfile);
+    if _filesize(ppfile)>0 then                     { -- Ausgabepaket -- }
     begin
       outmsgs:=testpuffer(ppfile,false,dummy);
       twin;
@@ -138,7 +142,7 @@ begin
       ZtoRFC(false,ppfile,iifs(TempPPPMode, PPPSpool, SysopOut));
     end;
 
-    NC^.Sendbuf:= filesum(PPPSpool+'*.OUT');
+//    NC^.Sendbuf:= filesum(PPPSpool+'*.OUT');
     s := PPPClient;
     exchange(s, '$CONFIG', bfile);
     exchange(s, '$CLPATH+', PPPClientpath);
@@ -151,9 +155,8 @@ begin
     shell(s,600,3);
     showscreen(false);
 
-    if NC^.sendbuf>0 then                     { -- Ausgabepaket -- }
+    if filesum(PPPSpool+'*.OUT')>0 then                     { -- Ausgabepaket -- }
     begin
-      window(1,1,80,25);
       WriteUUnummer(uunum);
       Moment;
       OutMsgs := 0;
@@ -171,25 +174,19 @@ begin
 
     if exist(PPPSpool+'*.MSG') then
     begin
-      NC^.Recbuf := filesum(PPPSpool+'*.MSG');
-      if (NC^.RecBuf + NC^.SendBuf) > 0 then wrtiming('NETCALL ' + boxname);
-      shell(UUZBin+' -uz -w:'+strs(screenlines)+
-        ' '+PPPSpool+'*.MSG '+OwnPath + dpuffer,600,3);
+//      NC^.Recbuf := filesum(PPPSpool+'*.MSG');
+//      if (NC^.RecBuf + NC^.SendBuf) > 0 then
+        wrtiming('NETCALL ' + boxname);
+      shell(UUZBin+' -uz -w:'+strs(screenlines)+' '+PPPSpool+'*.MSG '+OwnPath + dpuffer,600,3);
       if nDelPuffer and (errorlevel=0) and
         (testpuffer(dpuffer,false,dummy)>=0) then
           EmptyDir(PPPSpool, '*.MSG'); { entpackte Dateien löschen }
     end;
 
     if _filesize(dpuffer)>0 then
-    begin
-      if PufferEinlesen(dpuffer,box,false,false,true,pe_Bad) then
-      begin
-        _era(dpuffer);
-        RenameFiles;
-      end;
-    end;
+      IncomingFiles.Add(dpuffer);
 
-    Netcall_connect:=true;
+    result:=true;
   end;
 end;
 
@@ -197,6 +194,9 @@ end.
 
 {
   $Log$
+  Revision 1.2  2001/12/01 01:56:25  ma
+  ...
+
   Revision 1.1  2001/10/27 12:56:27  ma
   - starting porting of RFC/Client
 
