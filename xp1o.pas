@@ -91,11 +91,12 @@ function ReadFilename(txt:atext; var s:pathstr; subs:boolean;
 var x,y : byte;
     brk : boolean;
     fn  : string[20];
+    s2  : pathstr;
 begin
   fn:=getres(106);
   dialog(45+length(fn),3,txt,x,y);
   if not clipboard then useclip:=false;
-  maddstring(3,2,fn,s,37,78,'');   { Dateiname: }
+  maddstring(3,2,fn,s,37,MaxLenPathname,'');   { Dateiname: }
   if useclip then begin
 {JG:10.02.00}
     mappsel(false,'Windows-Clipboard');
@@ -106,6 +107,7 @@ begin
   readmask(brk);
   enddialog;
   if not brk then begin
+    s2:= s; { Original-Schreibweise merken }
     UpString(s);
     if useclip and (s='WINDOWS-CLIPBOARD') then begin
       s:=TempS(65535);
@@ -137,12 +139,18 @@ begin
       ReadFilename:=false;
       exit;
       end
-    else
+    else begin
+      s:= s2; { Schreibweise zurueckholen }
       useclip:=false;
-    if (trim(s)='') or ((length(s)=2) and (s[2]=':')) or (right(s,1)='\') then
-      s:=s+'*.*'
+    end;
+    if (trim(s)='') or
+{$IFNDEF UnixFS }
+       ((length(s)=2) and (s[2]=':')) or 
+{$ENDIF }
+       (right(s,1)=DirSepa) then
+      s:=s+WildCard
     else if IsPath(s) then
-      s:=s+'\*.*';
+      s:=s+DirSepa+WildCard;
     file_box(s,subs);
     if (s<>'') and (IsDevice(s) or not ValidFilename(s)) then begin
       rfehler(3);   { UngÅltiger Pfad- oder Dateiname! }
@@ -982,6 +990,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/05/09 13:13:41  hd
+  - UnixFS: ReadFilename angepasst
+
   Revision 1.37  2000/05/02 19:13:59  hd
   xpcurses statt crt in den Units
 
