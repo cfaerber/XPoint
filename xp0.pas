@@ -759,8 +759,12 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParPass    : string[10] = '';   { * -> ausgeben; Hex -> setzen }
        ParPasswd  : string[10] = '';   { Paáwort }
        ParZeilen  : byte = 0;          { Bildzeilen }
+{$IFDEF BP }
        ParWintime : byte    = 0;       { Rechenleistungs-Freigabe:
                                          0=aus, 1=Timeslice, 2=konservativ }
+{$ELSE }
+       ParWintime : byte    = 1;       { Unter 32 Bit immer Default einschalten }
+{$ENDIF }
        ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
        ParAutost  : string[12] = '';   { /autostart: }
@@ -1151,6 +1155,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.45  2000/05/12 20:33:21  mk
+  - ParWinTime default 1 in 32 Bit
+
   Revision 1.44  2000/05/12 13:33:52  hd
   - weiter CFG-Datei
 
