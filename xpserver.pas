@@ -291,7 +291,10 @@ begin
     nt_Maus, nt_QWK, nt_90  : result := username+'@'+Name;
     nt_Fido                 : result := username+'@'+FidoAbsAddr;
     nt_ZConnect             : result := username+'@'+iifs(AliasPoint,pointname,Name)+domain;
-    nt_UUCP                 : result := username+'@'+iifs(AliasPoint,Name+Boxdomain,pointname+domain);
+    nt_UUCP                 : if eMail <> '' then                    
+                                Result := eMail
+                              else
+                                result := username+'@'+iifs(AliasPoint,Name+Boxdomain,pointname+domain);
     nt_Pronet               : result := username+'@'+Name+';'+pointname;
     else                      result := email;
   end;
@@ -402,6 +405,9 @@ end;
 { -------------------------------------------------------------------- }
 
 // $Log$
+// Revision 1.7  2003/03/30 23:09:15  mk
+// - fixed GetAbsAddr with uucp: use eMail as Result, when avialable
+//
 // Revision 1.6  2003/01/28 10:42:25  cl
 // - Added statistical SPAM filter
 //
