@@ -179,7 +179,7 @@ begin
       exit;
     end;
   end;
-  envpath:= getenv('PATH');
+  envpath:= dos.getenv('PATH');
   j:= CountChar(PathSepaChar,envpath);
   for i:= 1 to j do begin
     k:= CPos(PathSepaChar, envpath);
@@ -964,6 +964,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.40  2000/06/17 13:14:02  hd
+  - Laesst sich jetzt auch wieder unter Linux compilieren :-)
+
   Revision 1.39  2000/06/16 19:56:24  mk
   - jetzt geht es auch unter nicht Linux wieder zu compilieren, bitte die Aenderungen pruefen!
 
