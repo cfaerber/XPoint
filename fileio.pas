@@ -202,7 +202,7 @@ function  alldrives: string;
 
 implementation  { ------------------------------------------------------- }
 
-//uses xp0;
+uses debug;
 
 {$ifdef unix}
 const
@@ -518,24 +518,37 @@ begin
 end;
 
 function MakeBak(const n,newext:string): boolean;
+
+  {$IFDEF FPC }
+  function booltostr(b: boolean; x: boolean): string;
+  begin
+    if b then
+      result := 'true'
+    else
+      result := 'false';
+  end;
+  {$ENDIF }
+  
 var
   bakname : string;
 begin
   result:=false;
+  Debug.DebugLog('fileio','try to rename file ' + n + ' file exists: ' + BoolToStr(FileExists(n), true), DLInform);
   if not FileExists(n) then exit;
   BakName := ChangeFileExt(n, '.' + FileUpperCase(NewExt));
+  Debug.DebugLog('fileio','new bakname is ' + bakname + ' file exists: ' + BoolToStr(FileExists(bakname), true), DLInform);
   if FileExists(BakName) then
   begin
     {$IFNDEF UnixFS }
-    if FileSetAttr(BakName,faArchive)=-1 then exit;
+    if FileSetAttr(BakName,faArchive) <> 0 then exit;
     {$ENDIF }
     if not SysUtils.DeleteFile(Bakname)then exit;
   end;
   {$IFNDEF UnixFS }
-  if FileSetAttr(n, faArchive)=-1 then exit;
+  if FileSetAttr(n, faArchive) <> 0 then exit;
   {$ENDIF }
-  if not RenameFile(n, bakname)then exit;
-  result:=true;
+  Result := not RenameFile(n, bakname);
+  Debug.DebugLog('fileio','result of rename is ' + BoolToStr(result, true), DLInform);
 end;
 
 function CreateMultipleDirectories(path:string): String;
@@ -709,6 +722,9 @@ end;
 
 {
   $Log$
+  Revision 1.112  2002/03/20 14:44:23  mk
+  - added debug infos for makebak
+
   Revision 1.111  2002/02/21 13:52:30  mk
   - removed 21 hints and 28 warnings
 
