@@ -1,6 +1,7 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000 OpenXP Team & Markus K„mmerer, http://www.openxp.de    }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
 { Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
@@ -73,7 +74,7 @@ function  ArchiveOk(fn:arcpath):boolean;
 implementation   { ------------------------------------------------- }
 
 
-type archd = record
+type archd = packed record
                id       : byte;   { $1a }
                method   : byte;
                name     : array[0..12] of char;
@@ -84,7 +85,7 @@ type archd = record
                orgsize  : longint;
              end;
 
-     lzhhd = record
+     lzhhd = packed record
                hdsize   : byte;
                checksum : byte;
                method   : array[0..4] of char;
@@ -97,7 +98,7 @@ type archd = record
                path     : shortstring;
              end;
 
-     ziphd = record
+     ziphd = packed record
                id       : longint;   { $04034b50 }
                extver   : smallword;
                flags    : smallword;
@@ -112,7 +113,7 @@ type archd = record
                path     : shortstring;
              end;
 
-     zoorec  = record
+     zoorec  = packed record
                  id       : longint;        { $fdc4a7dc }
                  dtype    : byte;  { ?? }
                  method   : byte;
@@ -131,7 +132,7 @@ type archd = record
                  name     : shortstring;
                end;
 
-     arjrec  = record
+     arjrec  = packed record
                  HeaderID : smallword;    { $ea60 }
                  hdsize   : smallword;    { ab hdsize1 }
                  hdsize1  : byte;
@@ -153,7 +154,7 @@ type archd = record
                  name     : shortstring;   { evtl. 4 Bytes Ext-FilePos }
                end;
 
-     dwchd   = record
+     dwchd   = packed record
                  hdsize   : smallword;
                  recsize  : smallword;
                  unknown  : array[1..16] of byte;
@@ -161,7 +162,7 @@ type archd = record
                  id       : array[0..2] of char;
                end;
 
-     dwcrec  = record
+     dwcrec  = packed record
                  name     : string[12];
                  orgsize  : longint;
                  secsf70  : longint;
@@ -171,7 +172,7 @@ type archd = record
                  unknown  : array[1..3] of byte;
                end;
 
-     hyperhd = record
+     hyperhd = packed record
                  id       : byte;     { #26 }
                  method   : array[1..2] of char;   { HP oder ST }
                  version  : byte;
@@ -184,7 +185,7 @@ type archd = record
                  name     : shortstring;
               end;
 
-     sqzrec = record
+     sqzrec = packed record
                 case hdtype : byte of   { 0=Ende, 1=Comment, 2=PW, 18..=File }
                   1 : (ComSize  : smallword;     { Comment }
                        ComComp  : smallword;
@@ -202,7 +203,7 @@ type archd = record
                        name     : shortstring);
               end;
 
-     tarrec = record
+     tarrec = packed record
                 name    : array[0..99] of char;
                 mode    : array[0..7] of char;
                 uid,gid : array[0..7] of char;
@@ -218,7 +219,7 @@ type archd = record
                 devmnr  : array[0..7] of char;
               end;
 
-     rarhd  = record
+     rarhd  = packed record
                 crc       : smallword;
                 hdtype    : byte;
                 flags     : smallword;
@@ -849,13 +850,14 @@ begin
                     inc(adr,512+((compsize+511)div 512)*512);
                     end;
         ArcRAR  : begin
-                    while not eof(f) and (RAR.hdtype<>$74) do begin
+                    while not eof(f) and (RAR.hdtype<>$74) do
+                    begin
                       inc(adr,RAR.hdsize);
                       if RAR.flags and $8000<>0 then inc(adr,RAR.compsize);
                       seek(f,adr);
                       if not eof(f) then
                         blockread(f,buffer,sizeof(buffer),rr);
-                      end;
+                    end;
                     if eof(f) then ende:=true
                     else begin
                       if RAR.namelen>255 then RAR.namelen:=255;
@@ -986,6 +988,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/09/28 03:06:07  mk
+  - Bugfixes
+
   Revision 1.19  2000/08/09 13:22:12  mk
   - noch ein paar weitere word->smallword Anpassungen
 
