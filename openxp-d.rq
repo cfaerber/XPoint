@@ -292,7 +292,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # XP /? - Zeilenzahl ist variabel
 1    Aufruf:    XP [/Opt1 /Opt2 ...]
 2
-3    Optionen:  /j       kein dummer Spruch bei Programmende
+3    Optionen:
+4    ~          /j       kein dummer Spruch bei Programmende
 5    ~          /LCD     verhindert Anzeigeprobleme auf einigen Laptops
 6    ~          /q       keine Tonsignale (quiet)
 7    ~          /rp      Åbergeht bei DOS-Shell Test auf residente Programme
@@ -3652,6 +3653,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.7  2001/04/17 07:41:06  ml
+# - /? - fix for linux
+# -    - german resfix for 202.4
+#
 # Revision 1.6  2001/04/16 18:04:59  ma
 # - fixed typo
 #

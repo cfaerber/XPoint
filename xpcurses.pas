@@ -206,6 +206,7 @@ var
   mwr,mwu: byte;
 
 procedure InitXPCurses;
+procedure DoneXPCurses;
 
 procedure AssignCrt(var F: Text);
 procedure ClrEol;
@@ -1294,7 +1295,6 @@ begin
   Result := csCP437;
 end;
 
-
 { Unit-Interna --------------------------------------------------------- }
 
 { exit procedure to ensure curses is closed up cleanly }
@@ -1466,9 +1466,22 @@ begin
   ExitProc:= @EndXPCurses;
 end;
 
+procedure DoneXPCurses;
+begin
+{$IFDEF Debug}
+  WriteLn(__F,FormatDateTime('hh:nn:ss',Now),' DoneXPCurses');
+{$ENDIF }
+  { Noch ein SubWindow vorhanden= }
+  EndXPCurses;
+end;
+   
 end.
 {
   $Log$
+  Revision 1.41  2001/04/17 07:41:06  ml
+  - /? - fix for linux
+  -    - german resfix for 202.4
+
   Revision 1.40  2001/04/13 20:22:49  ml
   - fix of accessviolation in unhandled keys
 
@@ -1512,92 +1525,5 @@ end.
 
   Revision 1.27  2000/09/10 15:11:52  hd
   - Fix: Farbe unter Linux
-
-  Revision 1.26  2000/09/10 13:21:20  hd
-  - Propi.-Log-Features
-  - Darstellung temporaer nur schwarz/weiss
-  - Zugriff ohne vorherigen Init verhindert
-
-  Revision 1.25  2000/09/10 11:25:10  hd
-  - Escape-Delay verkuerzt
-
-  Revision 1.24  2000/09/09 15:40:45  hd
-  - Fix: MakeWindow-Exception
-
-  Revision 1.23  2000/08/05 12:40:54  hd
-  - Erweiterte Fehlerausgabe in MakeWindow
-
-  Revision 1.22  2000/08/01 16:40:49  ml
-  - nicht benoetigte video.pas entfernt
-
-  Revision 1.21  2000/07/03 08:53:21  hd
-  - ncurses.pas enthaelt eine Funktion Move, weshalb hier nicht "Move(...)"
-    sondern "System.Move(...)" fuer Speicherbewegungen benutzt werden muss.
-
-  Revision 1.20  2000/07/02 14:24:53  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.19  2000/06/30 11:38:36  hd
-  - XPWIN32-Plagiat
-  - Aenderung der eingebundenen Units
-  - Unnoetige Funktionen geloescht
-
-  Revision 1.18  2000/06/23 15:59:25  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.17  2000/05/14 17:22:51  hd
-  - Linux: Manuelle Init. der XPCurses
-
-  Revision 1.16  2000/05/14 15:04:52  hd
-  - Anpassungen Linux
-
-  Revision 1.15  2000/05/14 09:54:58  hd
-  - 3. Cfg-Datei
-
-  Revision 1.14  2000/05/13 09:42:26  hd
-  xpglobal wird benoetigt (Typen)
-
-  Revision 1.13  2000/05/10 10:31:54  hd
-  - Fix: CrtWrite vergass die Farbe
-
-  Revision 1.12  2000/05/08 13:17:11  hd
-  - HorizLine: Stellt eine horizontale Linie dar
-
-  Revision 1.11  2000/05/07 18:17:36  hd
-  - Wrt, Wrt2, FWrt und qrahmen sind jetzt Bestandteil von XPCURSES.PAS
-  - Kleiner Fix im Window-Handling
-
-  Revision 1.10  2000/05/07 15:19:49  hd
-  Interne Linux-Aenderungen
-
-  Revision 1.9  2000/05/07 10:42:37  hd
-  - Fix: refresh nach gotoxy
-
-  Revision 1.8  2000/05/06 15:57:04  hd
-  - Diverse Anpassungen fuer Linux
-  - DBLog schreibt jetzt auch in syslog
-  - Window-Funktion implementiert
-  - ScreenLines/ScreenWidth werden beim Start gesetzt
-  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
-  - Keine CAPI bei Linux
-
-  Revision 1.7  2000/05/03 20:37:26  hd
-  - Neue Funktion: StringOutXYBaseWin: Schreibt Fensterunabhaengig
-    (keine Aenderung des Cursors)
-
-  Revision 1.6  2000/05/02 15:48:40  hd
-  Cursor unter Linux an-/ausschalten
-
-  Revision 1.5  2000/05/02 14:22:05  hd
-  Zeichenkonvertierung eingebaut
-
-  Revision 1.4  2000/05/02 11:49:34  hd
-  Anpassung an Curses (Linux)
-
-  Revision 1.2  2000/05/01 17:14:51  hd
-  - Grundlegenste Funktionen uebernommen und angepasst
-
-  Revision 1.1  2000/05/01 09:53:13  hd
-  Curses-Steuerung
 
 }

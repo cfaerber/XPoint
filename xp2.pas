@@ -168,18 +168,24 @@ var n,i     : integer;
     t       : taste;
     sclines : byte;
 begin
+{$IFNDEF Linux}
   DosOutput;
+{$ENDIF}   
   iomaus:=false;
   n:=res2anz(202);
   writeln;
   sclines:=Screenlines;
   for i:=1 to n do begin
     writeln(getres2(202,i));
-    if (i+5) mod (sclines-1)=0 then
+    if (i+5) mod (sclines-3)=0 then
       if not Sysoutputredirected then begin
         write(getres(12));
         get(t,curon);
+{$IFNDEF Linux}
         write(#13,sp(30),#13);
+{$ELSE}
+	 XPCurses.Clrscr;
+{$ENDIF}   
         end;
     end;
   CloseResource;
@@ -1081,6 +1087,10 @@ end.
 
 {
   $Log$
+  Revision 1.108  2001/04/17 07:41:06  ml
+  - /? - fix for linux
+  -    - german resfix for 202.4
+
   Revision 1.107  2001/04/05 16:28:44  ml
   - ressourcefile in linux
 
