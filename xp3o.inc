@@ -68,6 +68,7 @@ const
 
 var x,y      : Integer;
     f,pfile  : file;
+    fm: Byte;
     llbuf    : array[1..maxll] of longint;
     llanz    : integer;
     padr,size: longint;
@@ -701,8 +702,11 @@ begin
   else
     msgbox(47,11,getres(333),x,y);
   attrtxt(col.colmbox);
+  fm := FileMode;
   assign(f,puffer);
+  FileMode := fmOpenRead + fmShareDenyWrite;
   reset(f,1);
+  FileMode := fm;
   fs:=filesize(f);
   if fs<16 then begin
     close(f);
@@ -1272,6 +1276,9 @@ end;
 
 {
   $Log$
+  Revision 1.92  2002/07/22 17:05:28  mk
+  - fixed Bug #496988: OXP-Linux: Dateirechte bei Pufferimport
+
   Revision 1.91  2002/07/21 11:51:01  ma
   - new feature: kill/prevent dupes when sorting in messages
     (in fact a replaceown variant)
