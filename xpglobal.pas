@@ -84,6 +84,7 @@ type
     integer =    longint;
     word =       longint; { = signed }
     dword =      longint; { = signed }
+    longword=    longint;
     rtlword =    longint;     { 32 Bit bei VP }
     variant =    pointer; // Naja....
   {$ENDIF }
@@ -117,7 +118,7 @@ var
   HomeDir,                     { User-Verzeichnis mit Datenbank }
   LibDir: String;                { Libraries und Ressourcen       }
 
-const   
+const
   XPDirName = 'openxp';        { Default LibDirname of openxp   }
   BaseDir   = '.' + XPDirName;
 
@@ -145,6 +146,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.40  2000/10/10 21:58:57  mk
+  - LongWord fuer VirtualPascal hinzugefuegt
+
   Revision 1.39  2000/10/09 22:14:45  ml
   - Pfadaenderungen in linux als Vorarbeit fuer linuxkonformes rpm
 
