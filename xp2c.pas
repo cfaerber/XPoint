@@ -696,12 +696,14 @@ end;
 
 function ngdispChanged(var s:string):boolean;
 begin
+  Result := True;
   if s=_jn_[1] then exit;
   setfield(4,s);
 end;
 
 function ngdispaChanged(var s:string):boolean;
 begin
+  Result := True;
   if s=_jn_[2] then exit;
   setfield(3,s);
 end;
@@ -1547,6 +1549,10 @@ end;
 
 {
   $Log$
+  Revision 1.127.2.3  2002/07/22 17:56:53  mk
+  - fixed result values for ngdispChanged and ngdispaChanged,
+    fixeing problems selecting in config/anzeige/bretter
+
   Revision 1.127.2.2  2002/07/21 20:14:35  ma
   - changed copyright from 2001 to 2002
 
