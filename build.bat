@@ -17,11 +17,11 @@ goto Fehler
 :ok
 %comp% -ddevelop %arg% -Fu.\objcom -Fu.\netcall -Fi.\charsets openxp
 if errorlevel 1 goto Fehler
-%comp% ndiff
+%comp% -Fu.\objcom -Fu.\netcall -Fi.\charsets ndiff
 if errorlevel 1 goto Fehler
-%comp% rc
+%comp% -Fu.\objcom -Fu.\netcall -Fi.\charsets rc
 if errorlevel 1 goto Fehler
-%comp% ihs
+%comp% -Fu.\objcom -Fu.\netcall -Fi.\charsets ihs
 if errorlevel 1 goto Fehler
 rc openxp-d.rq
 if errorlevel 1 goto Fehler
