@@ -5193,9 +5193,6 @@ Siehe auch: [Netztyp RFC/Client - Allgemeines]@30100
 ----------- [Netztyp RFC/Client - Netcall-Ablauf]@30200
             [Netztyp RFC/Client - Brettmanager]@30201
 
-(Diese Funktion ist noch nicht implementiert, aber
-man kann schon mal lesen, was es werden soll.)  :-)
-
 Wenn Sie bei einem Netcall dieser Serverbox Nachrich-
 ten weiterer in OpenXP eingerichteter Server mit-
 senden und/oder empfangen wollen, tragen Sie hier
