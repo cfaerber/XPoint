@@ -1427,6 +1427,7 @@
     dbGo(d,drec[p]);
     dbRead(d,'netztyp',nt);
     name:= dbReadStr(d,'boxname');
+    dname:= dbReadStr(d,'dateiname');
     email:= ComputeUserAddress(d);
     replyto:= dbReadStr(d,'replyto');
     komm:= dbReadStr(d,'kommentar');
@@ -2370,6 +2371,9 @@
 
 {
   $Log$
+  Revision 1.48.2.10  2002/07/31 18:48:07  ma
+  - fix last commit, line got lost
+
   Revision 1.48.2.9  2002/07/31 18:40:40  ma
   - using "email" db field instead of "user" db field for email address now
     email may be longer than 30 chars now
