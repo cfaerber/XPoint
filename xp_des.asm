@@ -125,7 +125,7 @@ Xslp:        lodsb
 Xs           endp
 
 
-proc         sbyte6           ; es:si = Adr., bx = Nr.
+sbyte6	     proc             ; es:si = Adr., bx = Nr.
              mov     cx,600h
              mov     dl,0
 sb6lp:       mov     al,es:[si+bx]
