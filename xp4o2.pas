@@ -871,7 +871,7 @@ var s  : string;
 
 begin
   s:='';
-  Result := FindFirst('openxp-*.res', faAnyFile,sr);
+  Result := FindFirst(LibDir + 'openxp-*.res', faAnyFile,sr);
   sn:=0;
   while Result = 0 do
   begin
@@ -928,6 +928,9 @@ end;
 
 {
   $Log$
+  Revision 1.53  2002/05/19 11:21:56  mk
+  - fixed language switchin in linux
+
   Revision 1.52  2002/02/13 18:19:53  mk
   - improvements for THeader and ClrUVS
 
