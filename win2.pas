@@ -176,9 +176,8 @@ const
   maxf   = 8192;
   maxs   = 5;
 type
-  fnst   = AnsiString;
-      ft     = array[1..maxf+36] of fnst;
-      txst   = string[70];
+  ft     = array[1..maxf+36] of string;
+  txst   = string[70];
 var   fb     : pathstr;
       f      : ^ft;
       sr     : searchrec;
@@ -238,7 +237,7 @@ var   fb     : pathstr;
 
     procedure sort(l,r:integer);
     var i,j : integer;
-        x,w : fnst;
+        x,w : String;
     begin
       i:=l; j:=r;
       x := Uppercase(f^[(l+r) div 2]);
@@ -362,7 +361,7 @@ var   fb     : pathstr;
       i:=1;
       while (i<=p+add) and (f^[i][1]<>ab) do inc(i);
       end;
-    if f^[i][1]=ab then begin
+    if (f^[i] <> '') and (f^[i][1]=ab) then begin
       if not vert then begin
         while i-add<1 do add:=max(0,add-4);
         while i-add>36 do inc(add,4);
@@ -1099,6 +1098,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.23  2000/08/04 09:05:03  mk
+  - Bugfix fuer Zugriff auf Leerstring
+
   Revision 1.22  2000/07/21 21:17:44  mk
   - hasHugeStrings entfernt, weil nicht mehr noetig
 
