@@ -1025,7 +1025,7 @@ var d         : DB;
     maddstring(3,4,getres2(905,4),lang,35,79,iifs(ntZonly and not smallnames,'>',''));   { 'Brett/User ' }
     mappcustomsel(Auto_Empfsel,false);
     mset3proc(ps_setempf);
-    maddstring(3,6,getres2(905,5),pollbox,BoxRealLen,BoxRealLen,'>');   { 'Server     ' }
+    maddstring(3,6,getres2(905,5),pollbox,BoxRealLen,BoxNameLen,'>');   { 'Server     ' }
     mappcustomsel(BoxSelProc,false);
     freeres;
     readmask(brk);
@@ -1739,6 +1739,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.9.2.6  2000/11/06 00:42:04  mk
+  - fixed Bug #116657: Crash bei Servernamen >15 Zeichen
+
   Revision 1.9.2.5  2000/11/01 10:22:54  mk
   - Edit/Viewer: Eintrag */* wird jetzt auch gespeichert
 

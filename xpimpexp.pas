@@ -289,7 +289,7 @@ begin
       dialog(45,8,'',x,y);                     { Pollbox einlesen }
       maddtext(3,2,getres2(2421,1),0);         { 'Pufferdatei' }
       maddtext(4+length(getres2(2421,1)),2,fitpath(fn,28),col.coldiahigh);    { 'Ursprungsbox ' }
-      MaddString(3,4,getres2(2421,2),box,BoxRealLen,BoxRealLen,'>'); mhnr(760);
+      MaddString(3,4,getres2(2421,2),box,BoxRealLen,BoxNameLen,'>'); mhnr(760);
       mappcustomsel(BoxSelproc,false);
       msetvfunc(imptestpollbox); impnt:=nt;
       red:=false; eb:=false;
@@ -698,6 +698,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.5.2.2  2000/11/06 00:42:05  mk
+  - fixed Bug #116657: Crash bei Servernamen >15 Zeichen
+
   Revision 1.5.2.1  2000/03/30 14:06:12  mk
   - unnötigen Debugcode entfernt
 
