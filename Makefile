@@ -421,7 +421,9 @@ ifneq (,$(findstring $(OS),dos32 win32))
 EXAMPLES += xpmailto.reg
 endif
 
+ifeq ($(COMPILER),fpc)
 RST = ipaddr ncnntp ncpop3 ncsmtp
+endif
 
 BINFILES = $(patsubst %,%$(EXEEXT),$(BIN))
 COMPBINFILES = $(patsubst %,%$(EXEEXT),$(COMPBIN))
@@ -598,6 +600,15 @@ xp-fm$(EXEEXT): xp-fm.pas crc$(UNITEXT) debug$(UNITEXT) \
 
 endif
 
+ifeq ($(OS),dos32)
+
+xpme$(EXEEXT): xpme.pas fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
+	typeform$(UNITEXT) winxp$(UNITEXT) xpdefine.inc \
+	xpdos32$(UNITEXT) xpglobal$(UNITEXT) xpmecol.inc
+	$(PC) $(PFLAGS) $<
+
+endif
 ifneq (,$(findstring $(OS),freebsd linux))
 
 xpme$(EXEEXT): xpme.pas fileio$(UNITEXT) inout$(UNITEXT) \
@@ -606,12 +617,22 @@ xpme$(EXEEXT): xpme.pas fileio$(UNITEXT) inout$(UNITEXT) \
 	xpdefine.inc xpglobal$(UNITEXT) xplinux$(UNITEXT) xpmecol.inc
 	$(PC) $(PFLAGS) $<
 
-else
+endif
+ifeq ($(OS),os2)
 
 xpme$(EXEEXT): xpme.pas fileio$(UNITEXT) inout$(UNITEXT) \
 	keys$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
 	typeform$(UNITEXT) winxp$(UNITEXT) xpdefine.inc \
-	xpglobal$(UNITEXT) xpmecol.inc
+	xpglobal$(UNITEXT) xpmecol.inc xpos2$(UNITEXT)
+	$(PC) $(PFLAGS) $<
+
+endif
+ifeq ($(OS),win32)
+
+xpme$(EXEEXT): xpme.pas fileio$(UNITEXT) inout$(UNITEXT) \
+	keys$(UNITEXT) maus2$(UNITEXT) resource$(UNITEXT) \
+	typeform$(UNITEXT) winxp$(UNITEXT) xpdefine.inc \
+	xpglobal$(UNITEXT) xpmecol.inc xpwin32$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 endif
@@ -2365,7 +2386,7 @@ xpx$(UNITEXT): xpx.pas crc$(UNITEXT) dosx$(UNITEXT) fileio$(UNITEXT) \
 endif
 
 zmodem$(UNITEXT): zmodem.pas crc$(UNITEXT) debug$(UNITEXT) \
-	objcomunit timer$(UNITEXT) xpdefine.inc
+	objcomunit timer$(UNITEXT) xpdefine.inc xpglobal$(UNITEXT)
 	$(PC) $(PFLAGS) $<
 
 # ObjCOM-Unit
@@ -2442,15 +2463,15 @@ endif
 
 ifeq ($(OS),linux)
 ifeq ($(SETLINKS),yes)
-$(patsubst %,install_%,$(RSTFILES)): install_%: %
+$(patsubst %,install_%,$(RSTFILES)): install_%:
 	$(INSTALL_DATA) $* $(datadir)
 	$(LN) $(datadir)$(SEP)$* $(datalinkdir)$(SEP)$*
 else
-$(patsubst %,install_%,$(RSTFILES)): install_%: %
+$(patsubst %,install_%,$(RSTFILES)): install_%:
 	$(INSTALL_DATA) $* $(datadir)
 endif
 else
-$(patsubst %,install_%,$(RSTFILES)): install_%: %
+$(patsubst %,install_%,$(RSTFILES)): install_%:
 	$(INSTALL_DATA) $* $(datadir)
 endif
 
@@ -2604,6 +2625,10 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.35  2000/10/29 16:19:26  fe
+# Abhaengigkeiten angepasst.
+# Korrekturen
+#
 # Revision 1.34  2000/10/29 13:31:40  fe
 # Abhaengigkeiten aktualisiert bzw. korrigiert.
 #
