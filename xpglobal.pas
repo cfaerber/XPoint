@@ -31,8 +31,8 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  verstr      = 'v3.8.7pl9';  { Versionnr. - steht nur an dieser Stelle }
-  betastr     = ' beta';      { ' ' oder ' beta' }
+  verstr      = 'v3.8.8';       { Versionnr. - steht nur an dieser Stelle }
+  betastr     = ' beta';        { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
   pformstr    = ' (Win32)';     { 32 Bit Windows mit FPC oder VP }
@@ -192,6 +192,9 @@ begin
 
 {
   $Log$
+  Revision 1.63.2.22  2003/01/22 21:42:27  mk
+  - Version 3.8.8
+
   Revision 1.63.2.21  2003/01/19 11:29:21  mk
   - added NetBSD to pformstr
 
