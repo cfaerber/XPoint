@@ -493,7 +493,7 @@ begin
     writeln(t,'POP3-IP=',pop3_ip);
     if pop3_id <>''  then writeln(t,'POP3-ID=',pop3_id);
     if pop3_pwd<>''  then writeln(t,'POP3-Password=',pop3_pwd);
-    writeln(t,'POP3Clear=N',jnf(pop3_clear));
+    writeln(t,'POP3Clear=',jnf(pop3_clear));
     writeln(t,'POP3APOP=',jnf(pop3_APOP));
     writeln(t,'POP3OnlyNew=',jnf(pop3_OnlyNew));
 
@@ -616,6 +616,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.41  2001/05/31 11:32:35  ma
+  - fixed typo
+
   Revision 1.40  2001/05/27 14:24:17  ma
   - fixed: SMTP-after-POP setting was not saved correctly
 
