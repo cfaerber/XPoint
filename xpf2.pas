@@ -33,7 +33,7 @@ procedure TestTICfiles(var logfile:string);   { TIC-Files verarbeiten }
 
 implementation   { -------------------------------------------------- }
 
-uses xpnt,xp3o2;
+uses xpheader, xpnt,xp3o2;
 
 (*
 function UNIX2Zdate(secs:longint):string;
@@ -91,19 +91,19 @@ label ende;
 
   function ProcessTICfile(fn:string):boolean;
   var t2  : text;
-      hdp : headerp;
+      hdp : Theader;
       s   : string;
       feld: string;
       p   : byte;
   begin
     ProcessTICfile:=false;
-    hdp := AllocHeaderMem;
+    hdp := THeader.Create;
     assign(t2,fn);
     reset(t2);
     while not eof(t2) do begin
       readln(t2,s);
       p:=blankpos(s);
-      if p>0 then with hdp^,boxpar^ do begin
+      if p>0 then with hdp,boxpar^ do begin
         feld:=LowerCase(LeftStr(s,p-1));
         s:=trim(mid(s,p));
         if feld='area' then empfaenger:=MagicBrett+'FILES/'+s else
@@ -116,7 +116,7 @@ label ende;
         end;
       end;
     close(t2);
-    with hdp^ do begin
+    with hdp do begin
       dellast(pfad);
       if (empfaenger<>'') and (betreff<>'') and FileExists(betreff) then begin
         netztyp:=nt_Fido;
@@ -127,11 +127,11 @@ label ende;
         inc(count);
         msgid:=datum+'.'+strs(count)+'.Tick@'+boxpar^.boxname;
         fido_to:=summary;
-        WriteHeader(hdp^,f,nil);
+        WriteHeader(hdp,f,nil);
         ProcessTICfile:=true;
         end;
       end;
-    FreeHeaderMem(hdp);
+    Hdp.Free;
   end;
 
 begin

@@ -1,15 +1,36 @@
-{ --------------------------------------------------------------- }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000 OpenXP Team & Markus Kaemmerer, http://www.openxp.de   }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
-{                                                                 }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.   }
-{ --------------------------------------------------------------- }
-{ $Id$ }
+{  $Id$
+
+   This is free software; you can redistribute it and/or modify it
+   under the terms of the Lesser GNU General Public License (LGPL) as
+   published by the Free Software Foundation; either version 2,
+   or (at your option) any later version.
+
+   The software is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See LGPL
+   for more details.
+
+   You should have received a copy of the LGPL along with this
+   software; see the file lgpl.txt. If not, write to the
+   Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   Created on December, 03th 2000 by Markus Kaemmerer <mk@happyarts.de>
+
+   This software is part of the OpenXP project (www.openxp.de).
+   Copyright (c) 2000 by the OpenXP Team.
+
+}
+{$i xpdefine.inc}
+
+{ Contains class THeader }
 
 { Headerdefinitionen, die auch von den Tools genutzt werden }
+
+unit xpheader;
+
+interface
+
+uses Classes;
 
 type
   mimedata = record
@@ -22,7 +43,8 @@ type
     boundary: string;                   { multipart: boundary=...   }
   end;
 
-  header = record
+  THeader = class
+  public
     netztyp: byte;                      { --- intern ----------------- }
     archive: boolean;                   { archivierte PM               }
     attrib: word;                       { Attribut-Bits                }
@@ -51,9 +73,8 @@ type
     postanschrift: string;
     telefon: string;
     homepage: string;
-{    PmReplyTo: string; }                 { Antwort-An    }
-{    AmReplyTo: string; }                 { Diskussion-In }
-{    amrepanz: integer; }                 { Anzahl Diskussion-in's }
+    replyto: tstringlist;               { Antwort-An    }
+    followup: tstringlist;              { Diskussion-In }
     komlen: longint;                    { --- ZCONNECT --- Kommentar-Laenge }
     ckomlen: longint;                   { Crypt-Content-KOM }
     datei: string;                      { Dateiname                  }
@@ -96,22 +117,21 @@ type
     xline: TStringList;                    // X-Zeilen, die 'uebrig' sind
     zline: TStringList;
     fline: TStringList;
-
-    // UUZ
     addref: TStringList;  // Referenzen
     mimereltyp: string;
     xempf: TStringList;
-    xoem: TStringList;
-    replyto: tstringlist;
-    followup: tstringlist;
     mailcopies: tstringlist;
+    xoem: TStringList;
     MIME: mimedata;
     gateway: string;
     sender: string;
     lines: longint;                     { "Lines:" }
     envemp: string;
+
+    constructor Create;
+    destructor Destroy; override;
+    procedure Clear;
   end;
-  headerp = ^header;
 
   SendUUdata = record
                      followup   : tstringlist;
@@ -123,7 +143,7 @@ type
                      oab,oem,wab: string;
                      oar,war    : string;
                      onetztyp   : byte;
-                     orghdp     : headerp;
+                     orghdp     : THeader;
                      quotestr   : string;
                      UV_edit    : boolean;        { <Esc> -> "J" }
                      empfrealname : string;
@@ -132,8 +152,136 @@ type
                    end;
       SendUUptr   = ^SendUUdata;
 
+implementation
+
+constructor THeader.Create;
+begin
+  inherited Create;
+  Kopien := TStringList.Create;
+  ULine := TStringList.Create;
+  XLIne := TStringList.Create;
+  fLine := TStringList.Create;
+  zLIne := TStringList.Create;
+  ReplyTo := TStringList.Create;
+  Followup := TStringList.Create;
+  MailCopies := TStringList.Create;
+  AddRef := TStringList.Create;
+  XEmpf := TStringList.Create;
+  XOEM := TStringList.Create;
+  Clear;
+end;
+
+procedure THeader.Clear;
+begin
+  netztyp := 0;
+  archive := false;
+  attrib := 0;
+  filterattr := 0;
+  empfaenger := '';
+  Kopien.Clear;
+  empfanz := 0;
+  Followupz := 0;
+  betreff := '';
+  absender := '';
+  datum := '';
+  zdatum := '';
+  orgdate := false;
+  pfad := '';
+  msgid := '';
+  ref:= '';                 { ohne <>                      }
+  ersetzt:= '';                    { ohne <>                      }
+  refanz := 0;                   { Anzahl BEZ-Zeilen            }
+  typ:= '';                        { T / B                        }
+  crypttyp:= '';                   { '' / T / B                   }
+  charset:= '';
+  ccharset:= '';                   { crypt-content-charset }
+  groesse := 0;
+  realname:= '';
+  programm:= '';                   { Mailer-Name }
+  organisation:= '';
+  postanschrift:= '';
+  telefon:= '';
+  homepage:= '';
+  replyto.clear;;               { Antwort-An    }
+  followup.clear;;              { Diskussion-In }
+  komlen := 0;
+  ckomlen := 0;
+  datei:= '';                      { Dateiname                  }
+  ddatum:= '';                     { Dateidatum, jjjjmmtthhmmss }
+  prio := 0;
+  error:= '';                      { ERR-Header              }
+  oem := '';
+  oab:= '';
+  wab:= '';
+  oar:= '';
+  war:= '';                   { Realnames }
+  real_box:= ''; { --- Maggi --- falls Adresse = User@Point }
+  hd_point:= '';                   { eigener Pointname }
+  pm_bstat:= '';                   { --- Maus --- Bearbeitungs-Status }
+  org_msgid:= '';
+  org_xref:= '';
+  ReplyPath:= '';
+  ReplyGroup:= '';                 { Kommentar-zu-Gruppe          }
+  fido_to:= '';                    { --- Fido ------------------- }
+  x_charset:= '';                  { --- RFC -------------------- }
+  keywords:= '';
+  summary:= '';
+  expiredate:= '';                 { Expires / LDA }
+  priority := 0;
+  distribution:= '';
+  pm_reply := false;
+  quotestring:= '';
+  empfbestto:= '';
+  pgpflags := 0;
+  pgp_uid:= '';                    { alternative Adresse          }
+  vertreter:= '';
+  XPointCtl := 0;
+  nokop:= false;
+  mimever:= '';                    { MIME }
+  mimect:= '';
+  boundary:= '';                   { MIME-Multipart-Boundary      }
+  gate:= '';
+  mimetyp:= '';
+  xnoarchive:= false;;
+  Cust1 := '';
+  Cust2:= '';
+  control:= '';
+  uline.clear;;
+  xline.clear;;                    // X-Zeilen, die 'uebrig' sind
+  zline.clear;;
+  fline.clear;;
+  addref.clear;;  // Referenzen
+  mimereltyp:= '';
+  xempf.clear;;
+  mailcopies.clear;;
+  xoem.clear;;
+  gateway:= '';
+  sender:= '';
+  lines := 0;
+  envemp:= '';
+end;
+
+destructor THeader.Destroy;
+begin
+  Kopien.Free;
+  ULine.Free;
+  XLine.Free;
+  fLine.Free;
+  zLine.Free;
+  ReplyTo.Free;
+  Followup.Free;
+  Mailcopies.free;
+  inherited destroy;
+end;
+
+
+end.
+
 {
   $Log$
+  Revision 1.1  2000/12/03 12:38:26  mk
+  - Header-Record is no an Object
+
   Revision 1.9  2000/11/25 10:31:48  mk
   - some fixes for new SendUUData
 

@@ -59,7 +59,7 @@ var Netcall_connect : boolean;
 
 implementation  {---------------------------------------------------}
 
-uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,
+uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp8,xp9bp,xp9,xp10,xpheader,
      xpfido,xpfidonl,xpmaus,xp7l,xp7o,xp7f;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
@@ -1525,6 +1525,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.47  2000/12/03 12:38:25  mk
+  - Header-Record is no an Object
+
   Revision 1.46  2000/11/30 14:27:42  mk
   - Removed Unit UART
 

@@ -28,7 +28,7 @@ uses
 {$ifdef Unix}
   ZFTools,      { ZFido-Unit }
 {$endif}
-  winxp,typeform,inout,fileio,datadef,database,resource,maus2,
+  winxp,typeform,inout,fileio,datadef,database,resource,maus2, xpheader,
       archive,xp0,xp1,xp7,xp_iti,debug;
 
 procedure ttwin;
@@ -131,7 +131,7 @@ end;
 procedure ClearUnversandt(puffer,box:string);
 var f      : file;
     adr,fs : longint;
-    hdp    : headerp;
+    hdp    : THeader;
     hds    : longint;
     ok     : boolean;
     _brett : string[5];
@@ -146,14 +146,14 @@ var f      : file;
       uvl  : boolean;
       uvs  : byte;
   begin
-    with hdp^ do begin
+    with hdp do begin
       pbox:='!?!';
       if (cpos('@',empfaenger)=0) and
          ((netztyp<>nt_Netcall) or (LeftStr(empfaenger,1)='/'))
       then begin
         dbSeek(bbase,biBrett,'A'+UpperCase(empfaenger));
         if not dbFound then begin
-          if hdp^.empfanz=1 then
+          if hdp.empfanz=1 then
             trfehler(701,esec);   { 'Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!' }
           end
         else begin
@@ -180,8 +180,8 @@ var f      : file;
             _MBrett := dbReadNStr(mbase,mb_brett);
             if _mbrett=_brett then begin
               dbReadN(mbase,mb_unversandt,uvs);
-              if (uvs and 1=1) and EQ_betreff(hdp^.betreff) and
-                 (FormMsgid(hdp^.msgid)=dbReadStr(mbase,'msgid'))
+              if (uvs and 1=1) and EQ_betreff(hdp.betreff) and
+                 (FormMsgid(hdp.msgid)=dbReadStr(mbase,'msgid'))
               then begin
                 uvs:=uvs and $fe;
                 dbWriteN(mbase,mb_unversandt,uvs);
@@ -199,7 +199,7 @@ var f      : file;
 begin
   assign(f,puffer);
   if not existf(f) then exit;
-  hdp := AllocHeaderMem;
+  hdp := THeader.Create;
   zconnect:=ntZConnect(ntBoxNetztyp(box));
   reset(f,1);
   adr:=0;
@@ -209,19 +209,19 @@ begin
   while adr<fs-3 do begin   { wegen CR/LF-Puffer... }
     inc(outmsgs);
     seek(f,adr);
-    makeheader(zconnect,f,0,0,hds,hdp^,ok,false);    { MUSS ok sein! }
-    if hdp^.empfanz=1 then
+    makeheader(zconnect,f,0,0,hds,hdp,ok,false);    { MUSS ok sein! }
+    if hdp.empfanz=1 then
       ClrUVS
-    else for i:=1 to hdp^.empfanz do begin
+    else for i:=1 to hdp.empfanz do begin
       seek(f,adr);
-      makeheader(zconnect,f,i,0,hds,hdp^,ok,false);
+      makeheader(zconnect,f,i,0,hds,hdp,ok,false);
       ClrUVS;
       end;
-    inc(adr,hdp^.groesse+hds);
+    inc(adr,hdp.groesse+hds);
     end;
   close(f);
   dbSetIndex(mbase,mi);
-  FreeHeaderMem(hdp);
+  Hdp.Free;
   inc(outemsgs,TestPuffer(LeftStr(puffer,cpos('.',puffer))+EBoxFileExt,false,ldummy));
 end;
 
@@ -813,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.42  2000/12/03 12:38:26  mk
+  - Header-Record is no an Object
+
   Revision 1.41  2000/11/30 14:27:42  mk
   - Removed Unit UART
 

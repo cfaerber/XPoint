@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,typeform,fileio,inout,keys,maske,datadef,database,winxp,
+  sysutils,typeform,fileio,inout,keys,maske,datadef,database,winxp, xpheader,
   win2,maus2,resource,xpglobal,xp0,xp1,xp1input,xp3;
 
 
@@ -559,7 +559,7 @@ end;
 
 
 function GetMsgBrettUser:boolean;
-var hdp      : headerp;
+var hdp      : Theader;
     hds      : longint;
     suchname : string;
 
@@ -580,10 +580,10 @@ var hdp      : headerp;
 begin
   GetMsgBrettUser:=true;
   if MarkUnversandt and (LeftStr(dbReadStr(mbase,'brett'),1)='U') then begin
-    hdp:= AllocHeaderMem;
-    readheader(hdp^,hds,true);
-    suchname:=hdp^.empfaenger;
-    FreeHeaderMem(hdp);
+    hdp:= THeader.Create;
+    readheader(hdp,hds,true);
+    suchname:=hdp.empfaenger;
+    Hdp.Free;
     if LeftStr(suchname,length(TO_ID))=TO_ID then
       suchname:=mid(suchname,length(TO_ID)+1);
     end
@@ -2423,6 +2423,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.53  2000/12/03 12:38:22  mk
+  - Header-Record is no an Object
+
   Revision 1.52  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 

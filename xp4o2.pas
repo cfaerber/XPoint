@@ -50,7 +50,7 @@ procedure ClearReplyTree;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3ex;
+uses xpheader, xp1o,xp3,xp3o,xp3ex;
 
 procedure packit(xpack:boolean; fname:string);
 var d  : DB;
@@ -116,7 +116,7 @@ var
     ref     : string;   { Bezugs-MesssageID }
     recnt   : integer;
     ml      : byte;
-    hdp     : headerp;
+    hdp     : theader;
     hds     : longint;
     bezg    : longint;
 
@@ -138,7 +138,7 @@ var
     s:='*';
     while (n<8) and not eof(t) do begin     { Header berlesen }
       readln(t,s);
-      if not ntZConnect(hdp^.netztyp) then inc(n)
+      if not ntZConnect(hdp.netztyp) then inc(n)
       else if s='' then n:=8;
       end;
     user:=''; ref:=''; n:=1;
@@ -185,32 +185,35 @@ var
     close(t);
     erase(t);
     if (ref<>'') or (length(user)<4) then user:='';
-    if (user<>'') and (pos('.',user)=0) and ntAutoZer(hdp^.netztyp) then
+    if (user<>'') and (pos('.',user)=0) and ntAutoZer(hdp.netztyp) then
       user:=user+'.ZER';
   end;
 
 begin
   markanz:=0;
-  hdp:= AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
-  ref:=hdp^.ref;
-  if (ref<>'') and (ntKomkette(hdp^.netztyp)) then begin
+  hdp:= THeader.Create;
+  ReadHeader(hdp,hds,false);
+  ref:=hdp.ref;
+  if (ref<>'') and (ntKomkette(hdp.netztyp)) then begin
     bezg:=GetBezug(ref);
     if bezg<>0 then begin
       dbGo(mbase,bezg);
       MsgAddmark;
       end;
     end;
-  if markanz>0 then begin
-    FreeHeaderMem(hdp); exit; end
+  if markanz>0 then
+  begin
+    Hdp.Free;
+    exit;
+  end
   else begin
-    if (ref='') and (hdp^.typ='T') then
+    if (ref='') and (hdp.typ='T') then
       get_username
     else
       user:='';
     ref:=FormMsgid(ref);
     end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 
   if user=dbReadStr(mbase,'absender') then user:='';
                                         { das war die eigene Adresse ... }
@@ -246,7 +249,7 @@ end;
 procedure BezugNeuaufbau;
 var nn,n : longint;
     x,y  : byte;
-    hd   : Headerp;
+    hd   : theader;
     hds  : longint;
     lp   : byte;
     xx   : byte;
@@ -275,7 +278,7 @@ var nn,n : longint;
   var mcrc,dat : longint;
       nr       : byte;
   begin
-    mcrc:=MsgidIndex(hd^.msgid);
+    mcrc:=MsgidIndex(hd.msgid);
     dbSeek(bezbase,beiMsgID,dbLongStr(mcrc));
     if not dbFound then
       BezNr:=1
@@ -311,14 +314,14 @@ begin
   dbSetIndex(mbase,0);
   dbSetIndex(bezbase,beiMsgID);
   dbGoTop(mbase);
-  hd:= AllocHeaderMem;
+  hd:= THeader.Create;
   while not dbEOF(mbase) do begin
     inc(n); wrn;
     if (dbReadStr(mbase,'msgid')<>'') and ntKomkette(mbNetztyp) then begin
-      ReadHeader(hd^,hds,false);
+      ReadHeader(hd,hds,false);
       if hds>1 then
-        if hd^.empfanz=1 then
-          AddBezug(hd^,0)
+        if hd.empfanz=1 then
+          AddBezug(hd,0)
         else begin
           rec:=dbRecno(mbase);
           empfnr:=dbReadInt(mbase,'netztyp') shr 24;
@@ -326,12 +329,12 @@ begin
           dbReadN(mbase,mb_adresse,mpos);
           nr:=BezNr;
           dbGo(mbase,rec);
-          AddBezug(hd^,nr);
+          AddBezug(hd,nr);
           end;
       end;
     dbNext(mbase);
     end;
-  FreeHeaderMem(hd);
+  Hd.Free;
   attrtxt(col.colmbox);
   mwrt(xx-2,y+2,getres(473));      { ' fertig.' }
   dbSetIndex(mbase,1);
@@ -346,7 +349,7 @@ procedure BezugReadmids;
 var nn,n : longint;
     x,y  : byte;
     idnr : integer;
-    hd   : Headerp;
+    hd   : theader;
     hds  : longint;
     mid  : string;
     xx   : byte;
@@ -362,7 +365,7 @@ var nn,n : longint;
   end;
 
 begin
-  hd:= AllocHeaderMem;
+  hd:= THeader.Create;
   dbSetIndex(mbase,0);
   dbGoTop(mbase);
   n:=0; nn:=dbRecCount(mbase);
@@ -372,9 +375,9 @@ begin
   idnr:=dbGetFeldNr(mbase,'msgid');
   while not dbEOF(mbase) do begin
     inc(n); wrn;
-    ReadHeader(hd^,hds,false);
+    ReadHeader(hd,hds,false);
     if hds>1 then begin
-      mid:=FormMsgid(hd^.msgid);
+      mid:=FormMsgid(hd.msgid);
       dbWriteNStr(mbase,idnr,mid);
       end;
     dbNext(mbase);
@@ -382,14 +385,14 @@ begin
   inc(n); wrn;
   closebox;
   dbSetIndex(mbase,1);
-  FreeHeaderMem(hd);
+  Hd.Free;
   dbFlushClose(mbase);
   BezugNeuaufbau;
 end;
 
 
 procedure BezBaum(var betr:string);
-var hdp    : headerp;
+var hdp    : theader;
     hds    : longint;
     bez    : longint;
     mi,n   : shortint;
@@ -555,18 +558,18 @@ begin
   if ReCount(betr)=0 then;
   rmessage(475);    { 'Kommentarbaum einlesen...' }
   ClearReplyTree;
-  hdp:= AllocHeaderMem;
+  hdp:= THeader.Create;
   n:=0;
   nullid:=0;
   repeat
-    ReadHeader(hdp^,hds,false);
-    if (hds=1) or (hdp^.ref='') then bez:=0
+    ReadHeader(hdp,hds,false);
+    if (hds=1) or (hdp.ref='') then bez:=0
     else begin
-      bez:=GetBezug(hdp^.ref);
+      bez:=GetBezug(hdp.ref);
       if bez<>0 then
         dbGo(mbase,bez)
       else
-        nullid:=MsgidIndex(hdp^.ref);
+        nullid:=MsgidIndex(hdp.ref);
       end;
     inc(n);
   until (n= MaxKommLevels) or (bez=0);
@@ -579,7 +582,7 @@ begin
 
   TReplyTreeItem(ReplyTree[0]^).flags:=TReplyTreeItem(ReplyTree[0]^).flags or kflBetr;
   dbSetIndex(bezbase,mi);
-  FreeHeaderMem(hdp);
+  Hdp.Free;
   closebox;
   if maxebene<10 then komwidth:=3
   else if maxebene<23 then komwidth:=2
@@ -590,7 +593,7 @@ end;
 { n„chste/letzte Nachricht mit gleichem Bezug suchen }
 
 function BezSeek(back:boolean):boolean;
-var hdp      : headerp;
+var hdp      : theader;
     hds      : longint;
     ref,dat  : longint;
     rec,vdat : longint;
@@ -599,13 +602,13 @@ var hdp      : headerp;
     mi       : shortint;
     vor      : boolean;
 begin
-  hdp:= AllocHeaderMem;
+  hdp:= THeader.Create;
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
   BezSeek:=false;
-  ReadHeader(hdp^,hds,true);
-  if (hds>1) and (hdp^.ref<>'') then begin
-    ref:=MsgidIndex(hdp^.ref);
+  ReadHeader(hdp,hds,true);
+  if (hds>1) and (hdp.ref<>'') then begin
+    ref:=MsgidIndex(hdp.ref);
     dbSeek(bezbase,beiRef,dbLongStr(ref));
     if dbFound then begin
       vor:=true;
@@ -636,25 +639,25 @@ begin
       end;
     end;
   dbSetIndex(bezbase,mi);
-  FreeHeaderMem(hdp);
+  hdp.Free;
 end;
 
 function BezSeekBezug:boolean;
-var hdp : headerp;
+var hdp : theader;
     hds : longint;
     rec : longint;
 begin
-  hdp:= AllocHeaderMem;
+  hdp:= THeader.Create;
   BezSeekBezug:=false;
-  ReadHeader(hdp^,hds,true);
+  ReadHeader(hdp,hds,true);
   if hds>1 then begin
-    rec:=getBezug(hdp^.ref);
+    rec:=getBezug(hdp.ref);
     if rec<>0 then begin
       dbGo(mbase,rec);
       BezSeekBezug:=true;
       end;
     end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 function BezSeekKommentar:boolean;
@@ -688,7 +691,7 @@ begin
 end;
 
 procedure GetKomflags(var _left,_right,up,down:boolean);
-var hdp      : headerp;
+var hdp      : theader;
     hds      : longint;
     rec,dat  : longint;
     ref,dat0 : longint;
@@ -698,15 +701,15 @@ begin
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
   rec:=dbRecno(mbase);
-  hdp:= AllocHeaderMem;
-  ReadHeader(hdp^,hds,true);
+  hdp:= THeader.Create;
+  ReadHeader(hdp,hds,true);
   _left:=false; _right:=false; up:=false; down:=false;
   if hds>1 then begin
-    up:=(hdp^.ref<>'');
+    up:=(hdp.ref<>'');
     dbSeek(bezbase,beiRef,LeftStr(dbReadStr(mbase,'msgid'),4));
     down:=dbFound;
-    if hdp^.ref<>'' then begin
-      ref:=MsgidIndex(hdp^.ref);
+    if hdp.ref<>'' then begin
+      ref:=MsgidIndex(hdp.ref);
       dbSeek(bezbase,beiRef,dbLongStr(ref));
       if dbFound then begin
         vor:=true;
@@ -728,7 +731,7 @@ begin
     end;
   dbSetIndex(bezbase,mi);
   dbGo(mbase,rec);
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 
@@ -927,6 +930,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.29  2000/12/03 12:38:23  mk
+  - Header-Record is no an Object
+
   Revision 1.28  2000/11/16 21:31:06  hd
   - DOS Unit entfernt
 

@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,fileio,inout,datadef,database,montage,resource,
+  typeform,fileio,inout,datadef,database,montage,resource, xpheader,
   xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal, classes;
 
 const XreadF_error : boolean  = false;
@@ -64,9 +64,9 @@ procedure AddToReflist(ref:string);
 procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
                          var realname:string);
 procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr: integer;
-                     var size:longint; var hd:header; var ok:boolean;
+                     var size:longint; var hd:Theader; var ok:boolean;
                      PM2AMconv:boolean);
-procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
+procedure ReadHeader(var hd:theader; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
               var passpos:smallword);
 procedure Iso1ToIBM(var data; size:word);
@@ -85,7 +85,7 @@ procedure wrkilled;
 procedure brettslash(var s:string);
 procedure getablsizes;
 function  QuoteSchab(pm:boolean):string;
-procedure ClearPGPflags(hdp:headerp);
+procedure ClearPGPflags(hdp:theader);
 
 procedure splitfido(adr:string; var frec:fidoadr; defaultzone:word);
 function  MakeFidoAdr(var frec:fidoadr; usepoint:boolean):string;
@@ -382,7 +382,7 @@ end;
 { in dieser Prozedur kein ReadN/WriteN verwenden, wegen }
 { XP2.NewFieldMessageID !                               }
 
-procedure ReadHeader(var hd:header; var hds:longint; hderr:boolean);
+procedure ReadHeader(var hd:theader; var hds:longint; hderr:boolean);
 var ok     : boolean;
     puffer : file;
     ablg   : byte;
@@ -457,7 +457,7 @@ var p        : pointer;
     adr      : longint;
     berr     : string[40];
     iso      : boolean;
-    hdp      : headerp;
+    hdp      : theader;
     hds      : longint;
     minus    : longint;
 
@@ -476,11 +476,11 @@ begin
   dbReadN(mbase,mb_adresse,adr);
   minus:=0;
   if dbReadInt(mbase,'netztyp') and $8000<>0 then begin  { KOM vorhanden }
-    hdp := AllocHeaderMem;
-    ReadHeader(hdp^,hds,false);
-    if (hdp^.komlen>0) and (ofs=hds+hdp^.komlen) then
-      minus:=hdp^.komlen;
-    FreeHeaderMem(hdp);
+    hdp := THeader.Create;
+    ReadHeader(hdp,hds,false);
+    if (hdp.komlen>0) and (ofs=hds+hdp.komlen) then
+      minus:=hdp.komlen;
+    Hdp.Free;
     end;
   if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(puffer) then begin
     berr:=buferr(ablage);
@@ -1188,9 +1188,9 @@ begin
 end;
 
 
-procedure ClearPGPflags(hdp:headerp);
+procedure ClearPGPflags(hdp:theader);
 begin
-  hdp^.pgpflags:=hdp^.pgpflags and (not fPGP_haskey);
+  hdp.pgpflags:=hdp.pgpflags and (not fPGP_haskey);
 end;
 
 
@@ -1218,6 +1218,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.50  2000/12/03 12:38:21  mk
+  - Header-Record is no an Object
+
   Revision 1.49  2000/11/30 14:38:09  mk
   - fixed NewUserIBM when adding new uesers
 

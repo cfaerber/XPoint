@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2,
+  sysutils,datadef,database,typeform,fileio,inout,keys,maske,montage,maus2, xpheader,
       resource,printerx,xp0,xp1,xp1o2,xp1input,crc,xpdatum,xpglobal;
 
 const pe_ForcePfadbox = 1;     { Flags fuer PufferEinlesen }
@@ -568,7 +568,7 @@ var fname   : string;
     ok      : boolean;
     append  : boolean;
     brk     : boolean;
-    hdp     : headerp;
+    hdp     : THeader;
     hds     : longint;
     useclip : boolean;
 
@@ -605,11 +605,11 @@ begin
     rfehler(303)   { 'Kein Kommentarbaum aktiv!' }
   else begin
     if (art=2) and dbeof(mbase) then dbgotop(mbase);  { verhindert internal Error wegen EOF }
-    hdp := AllocHeaderMem;
+    hdp := THeader.Create;
     if art<>1 then fname:=''
     else begin
-      ReadHeader(hdp^,hds,true);
-      if (hdp^.datei='') or (hds=-1) then begin
+      ReadHeader(hdp,hds,true);
+      if (hdp.datei='') or (hds=-1) then begin
         Betreff := dbReadStr(mbase,'Betreff');
         if LeftStr(betreff,length(EmpfBKennung))=EmpfBkennung then
           delete(betreff,1,length(EmpfBKennung));
@@ -618,7 +618,7 @@ begin
         else fname:=copy(betreff,1,pos(' ',betreff)-1);
         end
       else
-        fname:=hdp^.datei;
+        fname:=hdp.datei;
       i:=1;                            { ungueltige Zeichen entfernen }
       UpString(fname);
       while i<=length(fname) do
@@ -669,7 +669,7 @@ begin
           case art of
             1 : begin
                   readit;
-                  if hdp^.ddatum<>'' then SetZCftime(fname,hdp^.ddatum);
+                  if hdp.ddatum<>'' then SetZCftime(fname,hdp.ddatum);
                 end;
             2 : begin
                   if (AktDispmode>=10) and (AktDispmode<=19) then begin
@@ -727,7 +727,7 @@ begin
         if useclip then WriteClipfile(fname);
         end;
     freeres;
-    FreeHeaderMem(hdp);
+    Hdp.Free;
   end;
 end;
 
@@ -920,15 +920,15 @@ procedure NeuerEmpfaenger(name:string);
 var f1    : file;
     size  : longint;
     fn    : string;
-    hdp   : headerp;
+    hdp   : THeader;
     hds   : longint;
 begin
   dbReadN(mbase,mb_msgsize,size);
   if size>0 then begin      { muesste eigentlich immer TRUE sein }
     PGP_BeginSavekey;
-    hdp := AllocHeaderMem;
-    ReadHeader(hdp^,hds,true);
-    with hdp^ do
+    hdp := THeader.Create;
+    ReadHeader(hdp,hds,true);
+    with hdp do
       if RightStr(name,1)<>'@' then
         empfaenger:=name
       else                               { PM-Brett }
@@ -937,12 +937,12 @@ begin
     assign(f1,fn);
     rewrite(f1,1);
     { ClearPGPflags(hdp); }
-    WriteHeader(hdp^,f1,reflist);
+    WriteHeader(hdp,f1,reflist);
     XReadF(hds,f1);
     close(f1);
     XWrite(fn);
     _era(fn);
-    FreeHeaderMem(hdp);
+    Hdp.Free;
     PGP_EndSavekey;
     end;
 end;
@@ -985,7 +985,7 @@ var tmp  : string;
     _br  : string;
     empf : string;
     st   : string;
-    hdp  : headerp;
+    hdp  : THeader;
     hds  : longint;
     s    : string;
     auto : boolean;
@@ -1012,14 +1012,14 @@ begin
     if dbFound then
       writeln(t,getres2(337,4),mid(dbReadStr(bbase,'brettname'),2));  { 'Brett:      ' }
     end;
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
-  writeln(t,getres2(337,5),'<',hdp^.msgid,'>');  { 'Message-ID: ' }
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,false);
+  writeln(t,getres2(337,5),'<',hdp.msgid,'>');  { 'Message-ID: ' }
   orgd:=longdat(dbReadInt(mbase,'origdatum'));
   writeln(t,getres2(337,6),fdat(orgd),', ',ftime(orgd));   { 'Datum:      ' }
   writeln(t,reps(getres2(337,7),strs(dbReadInt(mbase,'groesse'))));  { 'Groesse:    %s Bytes' }
   st:=getres2(337,8); tl:=length(st);            { 'Pfad:       ' }
-  s:=hdp^.pfad;
+  s:=hdp.pfad;
   repeat
     if length(s)<79-tl then p:=length(s)
     else begin
@@ -1045,7 +1045,7 @@ begin
     end;
   close(t);
   leer:='';
-  betr:=hdp^.betreff;
+  betr:=hdp.betreff;
   if LeftStr(betr,length(empfbkennung))=empfbkennung then
     delete(betr,1,length(empfbkennung));
   if IS_QPC(betr) then delete(betr,1,length(QPC_ID));
@@ -1053,20 +1053,20 @@ begin
   if LeftStr(betr,length(empfbkennung))=empfbkennung then
     delete(betr,1,length(empfbkennung));
   forcebox:=box;
-  _bezug:=hdp^.msgid;
-  _orgref:=hdp^.org_msgid;
-  _beznet:=hdp^.netztyp;
-  if hdp^.netztyp=nt_Maus then
-    _replypath:=hdp^.pfad;
+  _bezug:=hdp.msgid;
+  _orgref:=hdp.org_msgid;
+  _beznet:=hdp.netztyp;
+  if hdp.netztyp=nt_Maus then
+    _replypath:=hdp.pfad;
   if FirstChar(_br)='A' then _pmReply:=true;
-  empf:=hdp^.empfbestto;
+  empf:=hdp.empfbestto;
   { suboptimal }
-  if (empf='') and (hdp^.replyto.count>0) then empf:=hdp^.replyto[0];
-  if empf='' then empf:=hdp^.wab;
+  if (empf='') and (hdp.replyto.count>0) then empf:=hdp.replyto[0];
+  if empf='' then empf:=hdp.wab;
   if (empf='') or (cpos('@',empf)=0) or (pos('.',mid(empf,cpos('@',empf)))=0)
   then
-    empf:=hdp^.absender;
-  FreeHeaderMem(hdp);
+    empf:=hdp.absender;
+  Hdp.Free;
   if cpos('@',empf)>0 then begin
     IsEbest:=true{auto};
     if DoSend(true,tmp,empf,LeftStr('E:'+iifs(betr<>'',' '+betr,''),BetreffLen),
@@ -1085,7 +1085,7 @@ var
     box    : string;
     adr    : string;
     empf   : string;
-    hdp    : headerp;
+    hdp    : Theader;
     hds    : longint;
     d      : DB;
     fn     : string;
@@ -1110,10 +1110,10 @@ begin
     Box := dbReadNStr(bbase,bb_pollbox);
     end
   else begin
-    hdp := AllocHeaderMem;
-    ReadHeader(hdp^,hds,true);
-    dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));
-    FreeHeaderMem(hdp);
+    hdp := THeader.Create;
+    ReadHeader(hdp,hds,true);
+    dbSeek(ubase,uiName,UpperCase(hdp.empfaenger));
+    hdp.Free;
     if not dbFound then exit;
     Box := dbReadNStr(ubase,ub_pollbox);
     end;
@@ -1131,15 +1131,15 @@ begin
   dbClose(d);
   if adr='' then exit;
 
-  hdp := AllocHeaderMem;
+  hdp := THeader.Create;
   ReadEmpfList:=true;
   ReadHeadEmpf:=1;
-  ReadHeader(hdp^,hds,true);
+  ReadHeader(hdp,hds,true);
   if ((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
-      not stricmp(adr,hdp^.wab)) or (hds<=1) then begin
+      not stricmp(adr,hdp.wab)) or (hds<=1) then begin
     if hds>1 then
       rfehler(312);     { 'Diese Nachricht stammt nicht von Ihnen!' }
-    FreeHeaderMem(hdp);
+    Hdp.Free;
     exit;
   end;
 
@@ -1147,11 +1147,11 @@ begin
   if hds>1 then
     case mbNetztyp of
       nt_UUCP   : begin
-                    _bezug:=hdp^.msgid;
-                    _beznet:=hdp^.netztyp;
+                    _bezug:=hdp.msgid;
+                    _beznet:=hdp.netztyp;
                     ControlMsg:=true;
                     dat:=CancelMsk;
-                    empf:=hdp^.empfaenger;
+                    empf:=hdp.empfaenger;
                     SendEmpfList.Assign(EmpfList);
                     EmpfList.Clear;
                     if DoSend(false,dat,'A'+empf,'cancel <'+_bezug+
@@ -1162,7 +1162,7 @@ begin
                     fn:=TempS(1024);
                     assign(t,fn);
                     rewrite(t);
-                    writeln(t,'#',hdp^.msgid);
+                    writeln(t,'#',hdp.msgid);
                     writeln(t,'BX');
                     close(t);
                     if DoSend(true,fn,'MAUS@'+box,'<Maus-Direct-Command>',
@@ -1172,10 +1172,10 @@ begin
                   end;
       nt_ZConnect:begin
                     ControlMsg:=true;
-                    _bezug:=hdp^.msgid;
-                    _beznet:=hdp^.netztyp;
+                    _bezug:=hdp.msgid;
+                    _beznet:=hdp.netztyp;
                     dat:=CancelMsk;
-                    empf:=hdp^.empfaenger;
+                    empf:=hdp.empfaenger;
                     SendEmpfList.Assign(EmpfList);
                     EmpfList.Clear;
                     if DoSend(false,dat,'A'+empf,'cancel <'+_bezug+
@@ -1183,7 +1183,7 @@ begin
                               sendShow) then;
                   end;
     end;
-  FreeHeaderMem(hdp);
+  hdp.Free;
 end;
 
 procedure ErsetzeMessage;
@@ -1194,7 +1194,7 @@ var
     adr    : string;
     leer   : string;
     empf   : string;
-    hdp    : headerp;
+    hdp    : Theader;
     hds    : longint;
     d      : DB;
     fn     : string;
@@ -1219,10 +1219,10 @@ begin
     box := dbReadNStr(bbase,bb_pollbox);
     end
   else begin
-    hdp := AllocHeaderMem;
-    ReadHeader(hdp^,hds,true);
-    dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));
-    FreeHeaderMem(hdp);
+    hdp := THeader.Create;
+    ReadHeader(hdp,hds,true);
+    dbSeek(ubase,uiName,UpperCase(hdp.empfaenger));
+    Hdp.Free;
     if not dbFound then exit;
     box := dbReadNStr(ubase,ub_pollbox);
   end;
@@ -1242,33 +1242,33 @@ begin
   dbClose(d);
   if adr='' then exit;
 
-  hdp := AllocHeaderMem;
+  hdp := THeader.Create;
   ReadEmpfList:=true;
   ReadHeadEmpf:=1;
-  ReadHeader(hdp^,hds,true);
+  ReadHeader(hdp,hds,true);
   if ((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
-      not stricmp(adr,hdp^.wab)) or (hds<=1) then begin
+      not stricmp(adr,hdp.wab)) or (hds<=1) then begin
     if hds>1 then
       rfehler(319);     { 'Diese Nachricht stammt nicht von Ihnen!' }
-    FreeHeaderMem(hdp);
+    Hdp.Free;
     exit;
   end;
 
   fn:=TempS(8196);
   extract_msg(0,'',fn,false,0);
   leer:='';
-  _bezug:=hdp^.ref;
-  _beznet:=hdp^.netztyp;
-  _betreff:=hdp^.betreff;
+  _bezug:=hdp.ref;
+  _beznet:=hdp.netztyp;
+  _betreff:=hdp.betreff;
   sdata:=allocsenduudatamem;
-  sData^.ersetzt:=hdp^.msgid;
-  empf:=hdp^.empfaenger;
+  sData^.ersetzt:=hdp.msgid;
+  empf:=hdp.empfaenger;
   SendEmpfList.Assign(EmpfList);
   EmpfList.Clear;
   if DoSend(false,fn,'A'+empf,_betreff,
             true,false,true,false,true,sData,leer,leer,
             0) then;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
   freesenduudatamem(sData)
 end;
 
@@ -1311,10 +1311,10 @@ var ok       : boolean;
     MsgCount,
     fs,adr   : longint;
     hds      : longint;
-    hdp      : headerp;
+    hdp      : THeader;
     zconnect : boolean;
 begin
-  hdp := AllocHeaderMem;
+  hdp := THeader.Create;
   fattaches:=0;
   if not FileExists(fn) then
     testpuffer:=0
@@ -1339,10 +1339,10 @@ begin
         if show then begin
           moff; write(MsgCount:6,#8#8#8#8#8#8); mon; end;
         seek(f,adr);
-        makeheader(zconnect,f,0,0,hds,hdp^,ok,true);
-        if hdp^.attrib and attrFile<>0 then
-          inc(fattaches,_filesize(hdp^.betreff));
-        inc(adr,hds+hdp^.groesse);
+        makeheader(zconnect,f,0,0,hds,hdp,ok,true);
+        if hdp.attrib and attrFile<>0 then
+          inc(fattaches,_filesize(hdp.betreff));
+        inc(adr,hds+hdp.groesse);
       until not ok or (adr>=fs);
     close(f);
     if show then begin
@@ -1352,7 +1352,7 @@ begin
     if ok and (adr=fs) then testpuffer:=msgcount
     else testpuffer:=-1;
     end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 
@@ -1497,6 +1497,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.45  2000/12/03 12:38:21  mk
+  - Header-Record is no an Object
+
   Revision 1.44  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 

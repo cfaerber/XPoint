@@ -22,7 +22,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske,
+  sysutils,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske, xpheader,
   xp0,xp1,xp1input,crc,xp_iti, xpglobal;
 
 
@@ -50,7 +50,7 @@ var t,t2 : text;
     fn, tfn, s, anew, old, msgid, empf : string;
     stop : boolean;
     l    : longint;
-    hdp  : headerp;
+    hdp  : Theader;
     hds  : longint;
     f    : file;
     mi   : shortint;
@@ -65,7 +65,7 @@ var t,t2 : text;
   var p : byte;
   begin
     p:=cpos('@',s);
-    if (p=0) or ((hdp^.netztyp<>nt_Maus) and (hdp^.netztyp<>nt_Fido)) then
+    if (p=0) or ((hdp.netztyp<>nt_Maus) and (hdp.netztyp<>nt_Fido)) then
       mausname:=s
     else
       mausname:=trim(LeftStr(s,p-1))+' @ '+trim(mid(s,p+1));
@@ -160,31 +160,31 @@ begin
             if dbDeleted(mbase,l) then stop:=true
             else begin
               dbGo(mbase,l);
-              ReadHeader(hdp^,hds,false);
-              if hdp^.msgid<>s then begin
+              ReadHeader(hdp,hds,false);
+              if hdp.msgid<>s then begin
                 dbNext(bezbase);
                 stop:=dbEOF(bezbase) or
                       (dbReadInt(bezbase,'msgid')<>MsgidIndex(s));
                 end;
               end;
-          until stop or (hdp^.msgid=s);
+          until stop or (hdp.msgid=s);
 
-          if not stop and ((art<>1) or ((hdp^.pm_bstat<>anew) and (anew[1]<>'N')))
+          if not stop and ((art<>1) or ((hdp.pm_bstat<>anew) and (anew[1]<>'N')))
           then begin
             inc(n);                         { gefunden / Status geaendert }
             attrtxt(col.colmboxhigh);
             mwrt(x,y,strsn(n,3));
             if art<2 then begin
               if art=0 then begin
-                hdp^.msgid:=anew;
-                hdp^.pm_bstat:='';
+                hdp.msgid:=anew;
+                hdp.pm_bstat:='';
                 end
               else
-                hdp^.pm_bstat:=anew;
-              fn:=TempS(hdp^.groesse+hds+5000);
+                hdp.pm_bstat:=anew;
+              fn:=TempS(hdp.groesse+hds+5000);
               assign(f,fn);
               rewrite(f,1);          { neue Nachricht erzeugen }
-              WriteHeader(hdp^,f,nil);
+              WriteHeader(hdp,f,nil);
               XreadF(hds,f);
               close(f);
               Xwrite(fn);            { .. und in die Ablage einlesen }
@@ -193,7 +193,7 @@ begin
 
             case art of
               0 : begin
-                    msgid:=FormMsgid(hdp^.msgid);
+                    msgid:=FormMsgid(hdp.msgid);
                     dbWriteNStr(mbase,mb_msgid,msgid);   { neue MsgID in die Datenbank }
                     l:=MsgidIndex(anew);
                     dbWriteN(bezbase,bezb_msgid,l);   { neue MsgID in die BezBase }
@@ -203,7 +203,7 @@ begin
                         dbWriteN(bezbase,bezb_ref,l);
                     until not dbFound;
                   end;
-              1 : with hdp^ do begin
+              1 : with hdp do begin
                     if cpos('@',empfaenger)>0 then
                       empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
                     write(t2,copy(datum,5,2),'.',copy(datum,3,2),'.',LeftStr(datum,2),
@@ -221,7 +221,7 @@ begin
                     else    writeln(t2,pm_bstat[1],' - ???');
                     end;
                   end;
-              2 : with hdp^ do begin
+              2 : with hdp do begin
                     writeln(t2,'Empf„nger: ',mausname(empfaenger));
                     writeln(t2,'Betreff  : ',betreff);
                     writeln(t2,'Datum    : ',fdat(datum),' ',ftime(datum));
@@ -270,7 +270,7 @@ begin
         end;
     _era(tfn);
     end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 
@@ -359,7 +359,7 @@ function MausBestPM:boolean;     { gelesene Maus-PM bestaetigen }
 var t   : text;
     fn  : string;
     leer: string;
-    hdp : headerp;
+    hdp : Theader;
     hds : longint;
     nr  : shortint;
     x,y : byte;
@@ -373,9 +373,9 @@ begin
     exit;
     end;
   MausBestPM:=false;
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
-  if hdp^.pfad='' then           { Pfad='' -> eigene Nachricht }
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,false);
+  if hdp.pfad='' then           { Pfad='' -> eigene Nachricht }
     MausBestPM:=true
   else begin
     msgbox(54,7,'',x,y);
@@ -404,13 +404,13 @@ begin
         fn:=TempS(1024);
         assign(t,fn);
         rewrite(t);
-        writeln(t,'#',hdp^.msgid);
+        writeln(t,'#',hdp.msgid);
         if nr=1 then writeln(t,'BG')
         else writeln(t,'BZ');
         close(t);
         leer:='';
         rec:=dbRecno(mbase);
-        if DoSend(true,fn,'MAUS@'+hdp^.pfad,'<Maus-Direct-Command>',
+        if DoSend(true,fn,'MAUS@'+hdp.pfad,'<Maus-Direct-Command>',
                   false,false,false,false,false,nil,leer,leer,0) then;
         dbGo(mbase,rec);
         erase(t);
@@ -418,7 +418,7 @@ begin
       spop(m2t);
       end;
     end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 
@@ -813,6 +813,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.22  2000/12/03 12:38:26  mk
+  - Header-Record is no an Object
+
   Revision 1.21  2000/11/18 15:46:05  hd
   - Unit DOS entfernt
 

@@ -382,8 +382,6 @@ const
        hdf_control = 34;
 
 
-{$I XPHEADER.INC }
-
 type   textp  = ^text;
        ColArr = array[0..3] of byte;
        ColQArr= array[1..9] of byte;
@@ -1181,6 +1179,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.105  2000/12/03 12:38:20  mk
+  - Header-Record is no an Object
+
   Revision 1.104  2000/11/30 14:27:41  mk
   - Removed Unit UART
 

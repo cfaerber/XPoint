@@ -35,7 +35,7 @@ function uudecfile(infile,outpath:string; wait:boolean):boolean;
 
 implementation
 
-uses xp3,xp3ex;
+uses xpheader, xp3,xp3ex;
 
 const obufsize = 12288; { Auf 32 Byte Gr”áen angepasst }
       ibufsize = 16384;
@@ -359,7 +359,7 @@ var tmp,fn   : string;
     i        : integer;
     ok       : boolean;
     msize    : longint;
-    hdp      : headerp;
+    hdp      : Theader;
     hds      : longint;
     o        : boolean;
     Filenr   : byte;
@@ -435,19 +435,19 @@ begin
   if decmark then begin
     mlanz:=markanz;
     moment;
-    hdp := AllocHeaderMem;
+    hdp := THeader.Create;
     sortmark;
     for i:=1 to mlanz do begin              { Liste der Nachrichten nach }
       marklist[i].recno:=marked^[i-1].recno;  { Datum sortieren            }
       dbGo(mbase,marklist[i].recno);
-      ReadHeader(hdp^,hds,ok);              { Sekunden dazuaddieren      }
-      marklist[i].sortfld[fldDatum]:=(ixdat(hdp^.datum) and $ffffff) shl 7 +
-                                     ival(copy(hdp^.zdatum,13,2));
+      ReadHeader(hdp,hds,ok);              { Sekunden dazuaddieren      }
+      marklist[i].sortfld[fldDatum]:=(ixdat(hdp.datum) and $ffffff) shl 7 +
+                                     ival(copy(hdp.zdatum,13,2));
       marklist[i].sortfld[fldIntnr]:=dbReadInt(mbase,'int_nr');
       marklist[i].sortfld[fldSection]:=0;
       end;
     unsortmark;
-    FreeHeaderMem(hdp);
+    Hdp.Free;
     GetMsize;
     ReadSections;
     if ok then SortFor(fldSection);
@@ -539,6 +539,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/12/03 12:38:26  mk
+  - Header-Record is no an Object
+
   Revision 1.23  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 

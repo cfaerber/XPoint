@@ -328,7 +328,7 @@ var s      : string;
     mhd    : longint;
     halten : integer16;
     size   : integer;
-    hdp    : headerp;
+    hdp    : THeader;
     hds    : longint;
 
   procedure makeuser;
@@ -350,17 +350,17 @@ begin
   if LeftStr(dbReadStr(mbase,'brett'),1)='U' then
     fehler('In diesem Brett nicht m”glich.')
   else begin
-    hdp := AllocHeaderMem;
-    ReadHeader(hdp^,hds,false);
+    hdp := THeader.Create;
+    ReadHeader(hdp,hds,false);
 (*    s:='';
     { suboptimal }
-    if hdp^.replyto.count>0 then begin
-      dbSeek(ubase,uiName,UpperCase(hdp^.replyto[0]));
-      if dbFound then s:=hdp^.replyto[0];
+    if hdp.replyto.count>0 then begin
+      dbSeek(ubase,uiName,UpperCase(hdp.replyto[0]));
+      if dbFound then s:=hdp.replyto[0];
     end;
     if s='' then *)
       s:= dbReadNStr(mbase,mb_absender);   { auch auf mbase arbeitet.     }
-    FreeHeaderMem(hdp);
+    Hdp.Free;
     dbSeek(ubase,uiName,UpperCase(s));
     if not dbFound then
       rfehler(444)  { 'User nicht erfaát' }
@@ -691,30 +691,29 @@ var fn     : string;
   end;
 
   procedure ExtractKom(fn:string);
-  var hdp : headerp;
+  var hdp : THeader;
       hds : longint;
       f   : file;
   begin
-    hdp := AllocHeaderMem;
-    ReadHeader(hdp^,hds,true);
+    hdp := THeader.Create;
+    ReadHeader(hdp,hds,true);
     assign(f,fn);
     rewrite(f,1);
     XreadIsoDecode:=true;
     Xreadf(hds,f);
-    seek(f,hdp^.komlen);
-    if hdp^.komlen>0 then truncate(f);
+    seek(f,hdp.komlen);
+    if hdp.komlen>0 then truncate(f);
     close(f);
-    FreeHeaderMem(hdp);
   end;
 
   function GetMsgFilename:string;
-  var hdp : headerp;
+  var hdp : THeader;
       hds : longint;
   begin
-    hdp:= AllocHeaderMem;
-    ReadHeader(hdp^,hds,false);
-    GetMsgFilename:=hdp^.datei;
-    FreeHeaderMem(hdp);
+    hdp:= THeader.Create;
+    ReadHeader(hdp,hds,false);
+    GetMsgFilename:=hdp.datei;
+    hdp.free;
   end;
 
 label ende0,nextmsg;
@@ -1562,6 +1561,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.59  2000/12/03 12:38:24  mk
+  - Header-Record is no an Object
+
   Revision 1.58  2000/11/20 09:53:29  mk
   - fixed Bug #116162: U in Nachrichtenuebersicht
 
@@ -1595,7 +1597,7 @@ end;
   - misc MIME-Viewer fixes
 
   Revision 1.48  2000/10/26 12:06:33  mk
-  - AllocHeaderMem/FreeHeaderMem Umstellung
+  - THeader.Create/FreeHeaderMem Umstellung
 
   Revision 1.47  2000/10/24 13:42:51  mk
   - MIME-fixes (merged from 3.30 branch)
@@ -1632,7 +1634,7 @@ end;
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
   Revision 1.36  2000/07/21 17:39:54  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+  - Umstellung auf THeader.Create/FreeHeaderMem
 
   Revision 1.35  2000/07/18 14:30:28  hd
   - Fix: Ansistring

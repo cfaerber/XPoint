@@ -16,10 +16,10 @@ unit xp3o2;
 
 interface
 
-uses sysutils,classes, typeform,datadef,database,resource,xp0,xp6,
+uses sysutils,classes, typeform,datadef,database,resource,xp0,xp6, xpheader,
   xpglobal,xp1;
 
-procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
+procedure WriteHeader(var hd:theader; var f:file; reflist:refnodep);
 procedure SetBrettindex;
 procedure SetBrettindexEnde;
 procedure makebrett(s:string; var n:longint; box:string; netztyp:byte;
@@ -36,7 +36,7 @@ implementation  { ---------------------------------------------------- }
 uses xp3,xp3o,xpnt,xpdatum,xp_pgp;
 
 
-procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
+procedure WriteHeader(var hd:theader; var f:file; reflist:refnodep);
 
   procedure wrs(s:string);
   begin
@@ -365,32 +365,33 @@ end;
 procedure get_bezug(pm:boolean; var repto:string; var reptoanz:integer;
                     var betreff:string; sdata:SendUUptr;
                     indirectquote:boolean);
-var hdp : headerp;
+var hd : THeader;
     hds : longint;
     p   : integer;
 begin
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
-  betreff:=hdp^.betreff;
+  hd := THeader.Create;
+  ReadHeader(hd,hds,false);
+  betreff:=hd.betreff;
   if betreff='' then betreff:=getres(343);    { '<kein Betreff>' }
-  with hdp^ do begin
+  with hd do
+  begin
     xp6._bezug:=msgid;
     xp6._orgref:=org_msgid;
     xp6._beznet:=netztyp;
     xp6._pmReply:=pm and (cpos('@',empfaenger)=0);
     if netztyp=nt_Maus then begin
       xp6._ReplyPath:=pfad;
-      if cpos('@',hdp^.empfaenger)=0 then
+      if cpos('@',hd.empfaenger)=0 then
         sData^.ReplyGroup:=empfaenger;
       end;
     p:=cpos('@',absender);
     if p=0 then p:=length(absender)+1;
     if netztyp in [nt_ZConnect,nt_UUCP,nt_NNTP] then
-      if hdp^.fido_to<>'' then xp0.fidoto:=realname
+      if hd.fido_to<>'' then xp0.fidoto:=realname
       else xp0.fidoto:=''
     else begin
-      if indirectquote and (hdp^.fido_to<>'') then
-        xp0.fidoto:=hdp^.fido_to
+      if indirectquote and (hd.fido_to<>'') then
+        xp0.fidoto:=hd.fido_to
       else
         xp0.fidoto:=LeftStr(absender,minmax(p-1,0,35));
       if (netztyp=nt_Fido) and (cpos('#',xp0.fidoto)>0) then
@@ -403,9 +404,9 @@ begin
       { suboptimal }
       if replyto.count>0
         then
-	  repto:=replyto[0]
-	else
-	  repto:='';
+          repto:=replyto[0]
+        else
+          repto:='';
       reptoanz:=0;
     end
     { suboptimal }
@@ -419,14 +420,14 @@ begin
            reptoanz:=followup.count;
          end;
     if not pm then begin
-      AddToReflist(hdp^.ref);
+      AddToReflist(hd.ref);
       _ref6list:=reflist;
       reflist:=nil;
       end;
     sData^.keywords:=keywords;
     sData^.distribute:=distribution;
     end;
-  FreeHeaderMem(hdp);
+  hd.Free;
 end;
 
 
@@ -455,6 +456,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/12/03 12:38:22  mk
+  - Header-Record is no an Object
+
   Revision 1.30  2000/11/25 18:28:31  fe
   Fixed some bugs.
 

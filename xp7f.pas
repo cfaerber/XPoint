@@ -46,7 +46,7 @@ procedure ShowRQ(s:string);
 
 implementation   { -------------------------------------------------- }
 
-uses xp3,xp3o;
+uses xpheader, xp3,xp3o;
 
 
 procedure SaveArcname(var box,name:string);
@@ -331,34 +331,34 @@ label fn_ende,fn_ende0;
   var i : integer;
 
     procedure WriteAttach(var t:text; puffer:string);
-    var hd  : headerp;
+    var hd  : THeader;
         hds : longint;
         adr : longint;
         f   : file;
         ok  : boolean;
     begin
       if _filesize(puffer)>0 then begin
-        hd:=allocheadermem;
+        hd:=THeader.Create;
         assign(f,puffer);
         reset(f,1);
         adr:=0; ok:=true;
         while ok and (adr<filesize(f)) do begin
           seek(f,adr);
-          MakeHeader(true,f,0,0,hds,hd^,ok,false);
-          if (hd^.attrib and attrFile<>0) then
-            if not FileExists(hd^.betreff) then begin
+          MakeHeader(true,f,0,0,hds,hd,ok,false);
+          if (hd.attrib and attrFile<>0) then
+            if not FileExists(hd.betreff) then begin
               window(1,1,screenwidth,screenlines);
-              tfehler(hd^.betreff+' fehlt!',15);
+              tfehler(hd.betreff+' fehlt!',15);
               twin;
               end
             else begin
-              writeln(t,'Send=',hd^.betreff);
+              writeln(t,'Send=',hd.betreff);
               inc(fileatts);
               end;
-          inc(adr,hds+hd^.groesse);
+          inc(adr,hds+hd.groesse);
           end;
         close(f);
-        freeheadermem(hd);
+        Hd.Free;
         end;
     end;
 
@@ -747,7 +747,7 @@ end;
 var rdispx,rdispy : byte;
 
 procedure ShowRQ(s:string);
-var hdp   : headerp;
+var hdp   : THeader;
     hds   : longint;
     f     : file;
     sh,ok : boolean;
@@ -760,16 +760,16 @@ begin
   gotoxy(rdispx,rdispy);
   attrtxt(col.colselbox);
   if s[2]='C' then begin                { Crash-Empf„ngerliste anzeigen }
-    hdp := AllocHeaderMem;
+    hdp := THeader.Create;
     assign(f,CrashFile(copy(s,6,18)));
     reset(f,1);
-    if ioresult=0 then with hdp^ do begin
+    if ioresult=0 then with hdp do begin
       sh:=true; adr:=0;
       lastempf:=''; count:=1; n:=0;
       moff;
       while not eof(f) and sh do begin
         inc(n);
-        MakeHeader(true,f,0,0,hds,hdp^,ok,false);
+        MakeHeader(true,f,0,0,hds,hdp,ok,false);
         empfaenger:=LeftStr(empfaenger,cpos('@',empfaenger)-1);
         if empfaenger=lastempf then
           inc(count)
@@ -784,16 +784,16 @@ begin
           else
             lastempf:='';
           end;
-        inc(adr,hds+hdp^.groesse);
+        inc(adr,hds+hdp.groesse);
         seek(f,adr);
         end;
       close(f);
-      if n=1 then write(' (',LeftStr(hdp^.betreff,69-wherex),')');
+      if n=1 then write(' (',LeftStr(hdp.betreff,69-wherex),')');
       if count>1 then write(' (',count,')');
       if not sh then write(', ...');
       mon;
       end;
-    FreeHeaderMem(hdp);
+    Hdp.Free;
     end;
   moff; write(sp(72-wherex)); mon;
   if UpCase(s[3])='R' then begin
@@ -952,6 +952,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40  2000/12/03 12:38:25  mk
+  - Header-Record is no an Object
+
   Revision 1.39  2000/11/30 14:27:42  mk
   - Removed Unit UART
 

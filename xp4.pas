@@ -58,7 +58,7 @@ const
 implementation  {----------------------------------------------------}
 
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,xp8,
-      xpe,xp9,xp10,xpauto,xpstat,xpterm,xp_uue,xpcc,xpnt,xpfido,xp4o2,
+      xpe,xp9,xp10,xpauto,xpstat,xpterm,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime,lister, viewer;
 
 const suchch    = #254;
@@ -708,7 +708,7 @@ var t,lastt: taste;
       gesperrt: boolean;
       sdata   : SendUUptr;
       flags   : byte;
-      hdp     : headerp;
+      hdp     : Theader;
       hds     : longint;
       qtflag  : boolean;   { QuoteTo durch autom. Umleitung }
       pmrflag : boolean;   { Maus-PM-Reply auf am durch autom. Umleitung }
@@ -784,19 +784,19 @@ var t,lastt: taste;
     { Diskussion-In's 2 bis Ende nach SendEmpfList^ einlesen }
 
     procedure AddMultipleFollowups;
-    var hdp : headerp;
+    var hdp : Theader;
         hds : longint;
         i : integer;
     begin
-      hdp := AllocHeaderMem;
-      readheader(hdp^,hds,false);
-      with hdp^ do
+      hdp := THeader.Create;
+      readheader(hdp,hds,false);
+      with hdp do
         for i:=0 to followup.count-1 do begin
           dbSeek(bbase,biBrett,'A'+UpperCase(followup[i]));
           EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+followup[i]);
         end;
       SendEmpfList.Assign(EmpfList); EmpfList.Clear;
-      freeheadermem(hdp)
+      Hdp.Free;
     end;
 
     { empf-Brett ist nicht vorhanden -> in SendEmpfList nachsehen, ob }
@@ -1023,9 +1023,9 @@ var t,lastt: taste;
             ReadHeadEmpf:=dbReadInt(mbase,'netztyp') shr 24;
             if ReadHeadEmpf<>0 then begin
               ReadEmpfList:=true;          { Crossposting-Empfaenger einlesen }
-              hdp := AllocHeaderMem;
-              ReadHeader(hdp^,hds,false);
-              FreeHeaderMem(hdp);
+              hdp := THeader.Create;
+              ReadHeader(hdp,hds,false);
+              Hdp.Free;
               SendEmpfList.Assign(EmpfList); EmpfList.Clear;
               SetNobrettServers;
               end;
@@ -1121,7 +1121,7 @@ var t,lastt: taste;
   end;
 
   procedure _brief_senden(c:char);
-  var hdp : headerp;
+  var hdp : Theader;
       hds : longint;
   begin
     // Nur ausfuehren, wenn wirklich einer der benoetigten Tasten }
@@ -1129,17 +1129,17 @@ var t,lastt: taste;
 
     if (LeftStr(dispspec,1)='1') then
     begin                           { Bei PM-Brett und Msg ohne Replyto }
-      hdp := AllocHeaderMem;        { automatisch "P" statt "B" benutzen }
-      ReadHeader(hdp^,hds,false);
+      hdp := THeader.Create;        { automatisch "P" statt "B" benutzen }
+      ReadHeader(hdp,hds,false);
       { suboptimal }
-      if (hdp^.replyto.count>0) or ((hdp^.empfanz=1) and
-        (hdp^.empfaenger=hdp^.replyto[0])) then
+      if (hdp.replyto.count>0) or ((hdp.empfanz=1) and
+        (hdp.empfaenger=hdp.replyto[0])) then
       begin
         if c=k2_b  then c:=k2_p;
         if c=k2_cb then c:=k2_cp;
         if c=k2_SB then c:=k2_SP;
         end;
-      FreeHeaderMem(hdp);
+      Hdp.Free;
     end;
     if c=k2_b  then brief_senden(true,false,false,0) else
     if c=k2_cb then brief_senden(true,false,false,1) else
@@ -2129,6 +2129,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.69  2000/12/03 12:38:22  mk
+  - Header-Record is no an Object
+
   Revision 1.68  2000/11/25 18:28:31  fe
   Fixed some bugs.
 

@@ -28,7 +28,7 @@ procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 
 implementation  { --------------------------------------------------- }
 
-uses xp3,xp3ex,xp4,xp6,xpnt,xpkeys,xpcc;
+uses xpheader, xp3,xp3ex,xp4,xp6,xpnt,xpkeys,xpcc;
 
 
 function __getfilename(nr,nn:byte):string;
@@ -139,13 +139,13 @@ end;
 
 function readmsg_getfilename:string;
 var fn  : string;
-    hdp : headerp;
+    hdp : THeader;
     hds : longint;
 begin
-  hdp:= AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
-  fn:=hdp^.betreff;
-  FreeHeaderMem(hdp);
+  hdp:= THeader.Create;
+  ReadHeader(hdp,hds,false);
+  fn:=hdp.betreff;
+  hdp.Free;
   if not multipos(_MPMask,fn) then fn:=FilePath+fn;
   readmsg_getfilename:=fn;
 end;
@@ -153,7 +153,7 @@ end;
 
 function GetWABreplyEmpfaenger(var realname:string):string;
 const maxadr = 10;
-var hdp : headerp;
+var hdp : THeader;
     hds : longint;
     abs : string;
     s   : string;
@@ -176,35 +176,35 @@ var hdp : headerp;
    end;
 
 begin
-  hdp:= AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
+  hdp:= THeader.Create;
+  ReadHeader(hdp,hds,false);
   { suboptimal }
-  if (hdp^.replyto.count>0) and not askreplyto then
-    abs:=hdp^.replyto[0]
+  if (hdp.replyto.count>0) and not askreplyto then
+    abs:=hdp.replyto[0]
   else begin
-    wabok:=(pos('.',mid(hdp^.wab,cpos('@',hdp^.wab)))<>0);
-    if (hds=1) or ((hdp^.wab='') and (hdp^.oem='') and (hdp^.replyto.count=0)) or
-                  ((hdp^.wab='') and (hdp^.oem=hdp^.vertreter) and (hdp^.replyto.count=0)) or
-                  (not wabok and (hdp^.oem='') and (hdp^.replyto.count=0))
+    wabok:=(pos('.',mid(hdp.wab,cpos('@',hdp.wab)))<>0);
+    if (hds=1) or ((hdp.wab='') and (hdp.oem='') and (hdp.replyto.count=0)) or
+                  ((hdp.wab='') and (hdp.oem=hdp.vertreter) and (hdp.replyto.count=0)) or
+                  (not wabok and (hdp.oem='') and (hdp.replyto.count=0))
     then begin
       abs:= dbReadNStr(mbase,mb_absender);
-      realname:=hdp^.realname;
+      realname:=hdp.realname;
       end
     else begin
       anz:=0;
       { 03.02.2000 robo }
       { suboptimal }
-      if hdp^.replyto.count>0 then
-        appadr(hdp^.replyto[0],7);                   {'Reply-To-Empfaenger :' }
+      if hdp.replyto.count>0 then
+        appadr(hdp.replyto[0],7);                   {'Reply-To-Empfaenger :' }
       { /robo }
-      if hdp^.wab<>'' then appadr(hdp^.absender,1)   { 'Original-Absender  :' }
-      else appadr(hdp^.absender,5);                  { 'Absender           :' }
+      if hdp.wab<>'' then appadr(hdp.absender,1)   { 'Original-Absender  :' }
+      else appadr(hdp.absender,5);                  { 'Absender           :' }
       if wabok then
-        appadr(hdp^.wab,2);                          { 'Weiterleit-Absender:' }
-      if hdp^.oem<>'' then
-        appadr(hdp^.oem,3);                          { 'Original-Empfaenger :' }
+        appadr(hdp.wab,2);                          { 'Weiterleit-Absender:' }
+      if hdp.oem<>'' then
+        appadr(hdp.oem,3);                          { 'Original-Empfaenger :' }
     (*
-      dbSeek(ubase,uiName,UpperCase(hdp^.absender));
+      dbSeek(ubase,uiName,UpperCase(hdp.absender));
       if dbFound and (dbXsize(ubase,'adresse')>0) then begin
         size:=0;
         s:= dbReadXStr(ubase,'adresse',size);
@@ -222,7 +222,7 @@ begin
         abs:='';
       end;
     end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
   GetWABreplyEmpfaenger:=abs;
 end;
 
@@ -310,6 +310,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.20  2000/12/03 12:38:23  mk
+  - Header-Record is no an Object
+
   Revision 1.19  2000/11/18 00:04:44  fe
   Made compileable again.  (Often a suboptimal way...)
 

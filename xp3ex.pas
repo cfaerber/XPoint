@@ -23,7 +23,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  typeform,fileio,inout,database,resource,stack,
+  typeform,fileio,inout,database,resource,stack, xpheader,
   xp0,xp1,xpglobal, classes;
 
 const xTractMsg   = 0;
@@ -149,7 +149,7 @@ procedure extract_msg(art:byte; schablone:string; name:string;
                       append:boolean; decode:shortint);
 var size   : longint;
     f,decf : file;
-    hdp    : headerp;
+    hdp    : THeader;
     hds    : longint;
     edat   : longint;
     tmp    : string;
@@ -210,9 +210,9 @@ var size   : longint;
     if size>0 then begin
       if (dtyp>=1) then begin
         if LeftStr(_brett,1)<>'U' then
-          dbSeek(ubase,uiName,UpperCase(hdp^.absender))
+          dbSeek(ubase,uiName,UpperCase(hdp.absender))
         else
-          dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));   { Nachricht in PM-Brett }
+          dbSeek(ubase,uiName,UpperCase(hdp.empfaenger));   { Nachricht in PM-Brett }
         if not dbFound or (dbXsize(ubase,'passwort')=0) then begin
           rfehler(308);   { 'Nachricht ist codiert, aber Passwort fehlt!' }
           exit;
@@ -252,7 +252,7 @@ var size   : longint;
           1 : QPC(true,p^,rr,@pw,passpos);
           2 : DES_code(true,p^,_off,total,rr,x,y);
         end;
-        if (dtyp<>0) and (hdp^.charset='iso1') then
+        if (dtyp<>0) and (hdp.charset='iso1') then
           Iso1ToIBM(p^,rr);
         seek(decf,fp);
         blockwrite(decf,p^,rr);
@@ -308,7 +308,7 @@ var size   : longint;
 
     { 31.01.2000 robo }
     p:=cpos('&',qchar);
-    p2:=cpos('#',hdp^.absender);
+    p2:=cpos('#',hdp.absender);
     if p>0 then qchar[p]:='$';
 
 {    if netztyp=nt_UUCP then begin }
@@ -326,7 +326,7 @@ var size   : longint;
       p:=pos('$',qchar);
       empty:=true;
       end;
-    if p>0 then with hdp^ do
+    if p>0 then with hdp do
       if UpperCase(LeftStr(absender,8))='ZU_LANG_' then
         delete(qchar,p,1)
       else begin
@@ -353,7 +353,7 @@ var size   : longint;
   var p : byte;
   begin
     p:=cpos('@',s);
-    if (p=0) or ((hdp^.netztyp<>nt_Maus) and (hdp^.netztyp<>nt_Fido)) then
+    if (p=0) or ((hdp.netztyp<>nt_Maus) and (hdp.netztyp<>nt_Fido)) then
       mausname:=s
     else
       mausname:=trim(LeftStr(s,p-1))+' @ '+trim(mid(s,p+1));
@@ -432,7 +432,7 @@ var size   : longint;
 
   function ddat:string;
   begin
-    with hdp^ do
+    with hdp do
       if ddatum='' then
         ddat:=''
       else
@@ -443,7 +443,7 @@ var size   : longint;
   procedure GetStatus;
   begin
     mstatus:='';
-    with hdp^ do begin
+    with hdp do begin
       if attrib and attrCrash<>0 then mstatus:=mstatus+', Crash';
       if attrib and attrFile<>0  then mstatus:=mstatus+', File-Attach';
       if attrib and attrReqEB<>0 then mstatus:=mstatus+getres2(363,1);  { ' EB-Anforderung' }
@@ -459,7 +459,7 @@ var size   : longint;
   begin
     mstatus:='';
     dbReadN(mbase,mb_flags,flags);
-    with hdp^ do begin
+    with hdp do begin
       if pgpflags and fPGP_avail<>0  then mstatus:=mstatus+getres2(363,4); { 'PGP-Key vorhanden' }
       if pgpflags and fPGP_haskey<>0 then mstatus:=mstatus+getres2(363,5); { 'Nachricht enthaelt PGP-Key' }
       if pgpflags and fPGP_request<>0 then mstatus:=mstatus+getres2(363,6); { 'PGP-Keyanforderung' }
@@ -684,7 +684,7 @@ var size   : longint;
   procedure TestSoftware;
   begin
     if not mailerflag then
-      if not registriert.r2 and ntForceMailer(hdp^.netztyp)
+      if not registriert.r2 and ntForceMailer(hdp.netztyp)
          and (dbReadInt(mbase,'ablage')=10) then begin
         wrs(gr(20)+xp_xp+' '+verstr+' '+gr(60));   { '(unregistriert)' }
         mailerflag:=true;
@@ -709,13 +709,13 @@ begin
     Xread(name,append)
   else begin
     ReadHeadEmpf:=1; ReadKoplist:=true;
-    hdp := AllocHeaderMem;
-    ReadHeader(hdp^,hds,true);
+    hdp := THeader.Create;
+    ReadHeader(hdp,hds,true);
     assign(f,name);
     if hds=1 then begin
       rewrite(f,1);
       close(f);
-      FreeHeaderMem(hdp);
+      Hdp.Free;
       ExtCliptearline:=true;
       ExtChgtearline:=false;
       exit;
@@ -735,7 +735,7 @@ begin
     if (schablone<>'') and (FileExists(schablone)) then begin
       assign(t,ownpath+schablone);
       reset(t);
-      while not eof(t) do with hdp^ do begin
+      while not eof(t) do with hdp do begin
         readln(t,s);
         wempf:=empfaenger;
         if cpos('¯',wempf)>0 then begin
@@ -796,87 +796,89 @@ begin
                  end;
 
     hdf_EMP   :  begin
-                   if hdp^.fido_to<>'' then s:=' ('+hdp^.fido_to+')'
+                   if hdp.fido_to<>'' then s:=' ('+hdp.fido_to+')'
                    else s:='';
-                   if hdp^.empfanz=1 then
-                     if cpos('@',hdp^.empfaenger)>0 then
-                       wrs(gr(2)+mausname(hdp^.empfaenger)+s)   { 'Empfaenger : ' }
+                   if hdp.empfanz=1 then
+                     if cpos('@',hdp.empfaenger)>0 then
+                       wrs(gr(2)+mausname(hdp.empfaenger)+s)   { 'Empfaenger : ' }
                      else
-                       wrs(gr(2)+hdp^.empfaenger+s)
+                       wrs(gr(2)+hdp.empfaenger+s)
                    else begin
-                     s:=gr(2)+hdp^.empfaenger;     { 'Empfaenger : ' }
-                     for i:=2 to hdp^.empfanz do begin
+                     s:=gr(2)+hdp.empfaenger;     { 'Empfaenger : ' }
+                     for i:=2 to hdp.empfanz do begin
                        ReadHeadEmpf:=i;
-                       TempKopien.Assign(Hdp^.Kopien);
-                       ReadHeader(hdp^,hds,false);
-                       Hdp^.Kopien.Assign(TempKopien);
-                       if length(s)+length(hdp^.empfaenger)>iif(listscroller,76,77)
+                       TempKopien.Clear;
+                       TempKopien.AddStrings(hdp.Kopien);
+                       ReadHeader(hdp,hds,false);
+                       Hdp.Kopien.Clear;
+                       Hdp.Kopien.AddStrings(TempKopien);
+                       if length(s)+length(hdp.empfaenger)>iif(listscroller,76,77)
                        then begin
                          wrs(s); s:=gr(2{15});
                          end
                        else
                          s:=s+', ';
-                       s:=s+hdp^.empfaenger;
+                       s:=s+hdp.empfaenger;
                      end;
-                     if hdp^.fido_to<>'' then s:=s+' ('+hdp^.fido_to+')';
+                     if hdp.fido_to<>'' then s:=s+' ('+hdp.fido_to+')';
                      wrs(s);
                    end;
                  end;
 
-    hdf_KOP   : if Hdp^.Kopien.Count > 0 then
+    hdf_KOP   : if hdp.Kopien.Count > 0 then
                 begin
-                  s := getres2(361,28)+hdp^.Kopien[0];    { 'Kopien an  : ' }
-                  for i := 1 to Hdp^.Kopien.Count - 1 do
+                  s := getres2(361,28)+hdp.Kopien[0];    { 'Kopien an  : ' }
+                  for i := 1 to hdp.Kopien.Count - 1 do
                   begin
-                    if length(s)+length(Hdp^.Kopien[i])>iif(listscroller,76,77) then
+                    if length(s)+length(hdp.Kopien[i])>iif(listscroller,76,77) then
                     begin
                       wrs(s); s:=getres2(361,28);
                     end else
                       s := s + ', ';
-                    s := s+ Hdp^.Kopien[i];
+                    s := s+ hdp.Kopien[i];
                   end;
                   Wrs(s);
                 end;
 
-    hdf_DISK  :  for i:=0 to hdp^.followup.count-1 do
-                   wrs(gr(3)+hdp^.followup[i]);           { 'Antwort in : ' }
+    hdf_DISK  :  for i:=0 to hdp.followup.count-1 do
+                   wrs(gr(3)+hdp.followup[i]);           { 'Antwort in : ' }
 
     hdf_ABS   :  begin
-                   if ((hdp^.netztyp=nt_fido) or (hdp^.netztyp=nt_QWK)) and
-                      (hdp^.realname='') and
-                      (length(hdp^.absender)<54) and NodeOpen and
-                      (pos(':',hdp^.absender)>0) then begin
+                   if ((hdp.netztyp=nt_fido) or (hdp.netztyp=nt_QWK)) and
+                      (hdp.realname='') and
+                      (length(hdp.absender)<54) and NodeOpen and
+                      (pos(':',hdp.absender)>0) then begin
                                   { sieht nach einer Fido-Adresse aus ... }
-                     GetNodeinfo(hdp^.absender,ni,0);
+                     GetNodeinfo(hdp.absender,ni,0);
                      if ni.found then begin
-                       hdp^.realname:=LeftStr(ni.boxname,60-length(hdp^.absender));
-                       if length(hdp^.absender)+length(hdp^.realname)+length(ni.standort)<60
+                       hdp.realname:=LeftStr(ni.boxname,60-length(hdp.absender));
+                       if length(hdp.absender)+length(hdp.realname)+length(ni.standort)<60
                        then
-                         hdp^.realname:=hdp^.realname+', '+ni.standort;
+                         hdp.realname:=hdp.realname+', '+ni.standort;
                        end;
                      end;
-                   wrs(gr(6)+mausname(hdp^.absender)+      { 'Absender   : ' }
-                       iifs(hdp^.realname<>'','  ('+hdp^.realname+')',''));
+                   wrs(gr(6)+mausname(hdp.absender)+      { 'Absender   : ' }
+                       iifs(hdp.realname<>'','  ('+hdp.realname+')',''));
                  end;
 
-    hdf_OEM    : if (hdp^.oem<>'') and (LeftStr(hdp^.oem,length(hdp^.empfaenger))
-                     <>hdp^.empfaenger) then
-                   wrs(gr(16)+hdp^.oem);         { 'Org.-Empf. : ' }
-    hdf_OAB    : if hdp^.oab<>'' then            { 'Org.-Abs.  : ' }
-                   wrs(gr(18)+hdp^.oab+iifs(hdp^.oar<>'','  ('+hdp^.oar+')',''));
-    hdf_WAB    : if hdp^.wab<>'' then            { 'Weiterleit.: ' }
-                   wrs(gr(17)+hdp^.wab+iifs(hdp^.war<>'','  ('+hdp^.war+')',''));
-    hdf_ANTW  :  for i:=0 to hdp^.replyto.count-1 do
-                   wrs(gr(27)+hdp^.replyto[i]);           { 'Antwort an : ' }
+    hdf_OEM    : if (hdp.oem<>'') and (LeftStr(hdp.oem,length(hdp.empfaenger))
+                     <>hdp.empfaenger) then
+                   wrs(gr(16)+hdp.oem);         { 'Org.-Empf. : ' }
+    hdf_OAB    : if hdp.oab<>'' then            { 'Org.-Abs.  : ' }
+                   wrs(gr(18)+hdp.oab+iifs(hdp.oar<>'','  ('+hdp.oar+')',''));
+    hdf_WAB    : if hdp.wab<>'' then            { 'Weiterleit.: ' }
+                   wrs(gr(17)+hdp.wab+iifs(hdp.war<>'','  ('+hdp.war+')',''));
+    hdf_ANTW  :  for i:=0 to hdp.replyto.count-1 do
+                   wrs(gr(27)+hdp.replyto[i]);           { 'Antwort an : ' }
 
-    hdf_BET    : wrs(gr(5)+LeftStr(hdp^.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
-    hdf_ZUSF   : if hdp^.summary<>'' then        { 'Zus.fassung: ' }
-                   wrs(gr(23)+hdp^.summary);
-    hdf_STW    : if hdp^.keywords<>'' then       { 'Stichworte : ' }
-                   wrs(gr(22)+hdp^.keywords);
+    hdf_BET    : wrs(gr(5)+LeftStr(hdp.betreff,78-length(getres2(361,5))));  { 'Betreff    : ' }
+    hdf_ZUSF   : if hdp.summary<>'' then        { 'Zus.fassung: ' }
+                   wrs(gr(23)+hdp.summary);
+    hdf_STW    : if hdp.keywords<>'' then       { 'Stichworte : ' }
+                   wrs(gr(22)+hdp.keywords);
 
-    hdf_ROT    : if hdp^.pfad<>'' then begin
-                   s:=hdp^.pfad;
+    hdf_ROT    : if hdp.pfad<>'' then begin
+                   s:=hdp.pfad;
                    hs:=gr(7);                    { 'Pfad       : ' }
                    while s<>'' do begin
                      p:=length(s);
@@ -893,39 +895,39 @@ begin
                      end;
                    end;
 
-    hdf_MID    : if hdp^.msgid<>'' then
-                   wrs(gr(8)+hdp^.msgid);        { 'Message-ID : ' }
-    hdf_BEZ    : if hdp^.ref<>'' then            { 'Bezugs-ID  : ' }
-                   wrs(gr(19)+hdp^.ref+iifs(hdp^.refanz=0,'',', ...'));
+    hdf_MID    : if hdp.msgid<>'' then
+                   wrs(gr(8)+hdp.msgid);        { 'Message-ID : ' }
+    hdf_BEZ    : if hdp.ref<>'' then            { 'Bezugs-ID  : ' }
+                   wrs(gr(19)+hdp.ref+iifs(hdp.refanz=0,'',', ...'));
 
-    hdf_EDA    : wrs(gr(9)+copy(zdow(hdp^.datum),1,2)+' '+fdat(hdp^.datum)+', '+  { 'Datum      : ' }
-                     ftime(hdp^.datum)+iifs(hdp^.datum<>longdat(edat),'  ('+
+    hdf_EDA    : wrs(gr(9)+copy(zdow(hdp.datum),1,2)+' '+fdat(hdp.datum)+', '+  { 'Datum      : ' }
+                     ftime(hdp.datum)+iifs(hdp.datum<>longdat(edat),'  ('+
                         gr(10)+fdat(longdat(edat))+')',''));   { 'erhalten: ' }
 
     hdf_LEN    : begin
                    sizepos:=filesize(f);
-                   wrs(reps(gr(11),strs(hdp^.groesse)));  { 'Groesse    : %s Bytes' }
+                   wrs(reps(gr(11),strs(hdp.groesse)));  { 'Groesse    : %s Bytes' }
                  end;
 
-    hdf_MAILER : if hdp^.programm<>'' then begin
-                   wrs(gr(20)+hdp^.programm);    { 'Software   : ' }
+    hdf_MAILER : if hdp.programm<>'' then begin
+                   wrs(gr(20)+hdp.programm);    { 'Software   : ' }
                    mailerflag:=true;
                    end;
 
-    hdf_ORG    : if hdp^.organisation<>'' then
-                   wrs(gr(24)+hdp^.organisation);   { 'Organisat. : ' }
-    hdf_POST   : if hdp^.postanschrift<>'' then
-                   wrs(gr(25)+hdp^.postanschrift);  { 'Postadresse: ' }
-    hdf_TEL    : if hdp^.telefon<>'' then
-                   wrs(gr(26)+telestring(hdp^.telefon));  { 'Telefon    : ' }
+    hdf_ORG    : if hdp.organisation<>'' then
+                   wrs(gr(24)+hdp.organisation);   { 'Organisat. : ' }
+    hdf_POST   : if hdp.postanschrift<>'' then
+                   wrs(gr(25)+hdp.postanschrift);  { 'Postadresse: ' }
+    hdf_TEL    : if hdp.telefon<>'' then
+                   wrs(gr(26)+telestring(hdp.telefon));  { 'Telefon    : ' }
 
     hdf_FILE   : if multipart and (mpdata.fname<>'') then
                    wrs(gr(12)+mpdata.fname)    { 'Dateiname  : ' }
-                 else if hdp^.datei<>'' then
-                   wrs(gr(12)+hdp^.datei+ddat);
+                 else if hdp.datei<>'' then
+                   wrs(gr(12)+hdp.datei+ddat);
 
-    hdf_MSTAT  : if (hdp^.pm_bstat<>'') and (hdp^.pm_bstat[1]<>'N') then
-                   wrs(gr(13)+mausstat(hdp^.pm_bstat));     { 'PM-Status  : ' }
+    hdf_MSTAT  : if (hdp.pm_bstat<>'') and (hdp.pm_bstat[1]<>'N') then
+                   wrs(gr(13)+mausstat(hdp.pm_bstat));     { 'PM-Status  : ' }
     hdf_STAT   : begin
                    GetStatus;
                    if mstatus<>'' then wrs(gr(21)+mstatus);  { 'Status:    : ' }
@@ -935,33 +937,33 @@ begin
                    if mstatus<>'' then wrs(gr(29)+mstatus);  { 'PGP-Status : ' }
                  end;
 
-    hdf_ERR    : if hdp^.error<>'' then
-                   wrs(gr(14)+hdp^.error);                  { 'Fehler!    : ' }
+    hdf_ERR    : if hdp.error<>'' then
+                   wrs(gr(14)+hdp.error);                  { 'Fehler!    : ' }
 
-    hdf_DIST   : if hdp^.distribution<>'' then
-                   wrs(gr(31)+hdp^.distribution);           { 'Distribut. : ' }
+    hdf_DIST   : if hdp.distribution<>'' then
+                   wrs(gr(31)+hdp.distribution);           { 'Distribut. : ' }
 
-    hdf_Homepage: if hdp^.homepage<>'' then
-                    wrs(gr(32)+hdp^.homepage);              { 'Homepage   : ' }
+    hdf_Homepage: if hdp.homepage<>'' then
+                    wrs(gr(32)+hdp.homepage);              { 'Homepage   : ' }
 
     hdf_Part    : if multipart and (mpdata.part>0) then
                     wrs(gr(33)+strs(mpdata.part)+           { 'Teil       : ' }
                         gr(34)+strs(mpdata.parts));         { ' von ' }
 
     { 01/2000 oh}
-    hdf_Cust1   : if mheadercustom[1]<>'' then if hdp^.Cust1<>'' then begin
-                    wrs(ohfill(mheadercustom[1],11)+': '+hdp^.Cust1);
+    hdf_Cust1   : if mheadercustom[1]<>'' then if hdp.Cust1<>'' then begin
+                    wrs(ohfill(mheadercustom[1],11)+': '+hdp.Cust1);
                   end;
-    hdf_Cust2   : if mheadercustom[2]<>'' then if hdp^.Cust2<>'' then begin
-                    wrs(ohfill(mheadercustom[2],11)+': '+hdp^.Cust2);
+    hdf_Cust2   : if mheadercustom[2]<>'' then if hdp.Cust2<>'' then begin
+                    wrs(ohfill(mheadercustom[2],11)+': '+hdp.Cust2);
                   end;
     { /oh }
 
   { Prioritaet im Listenkopf anzeigen:                                    }
   { Rueckgabewert hinter dem PriorityFlag extrahieren und zuordnen        }
 
-  hdf_Priority: if hdp^.Priority <> 0 then
-       case hdp^.Priority of
+  hdf_Priority: if hdp.Priority <> 0 then
+       case hdp.Priority of
          { Wert aus Header uebernehmen                                     }
          1: wrs(gr(35) + GetRes2(272, 1));     { 'Prioritaet  : Hoechste'  }
          2: wrs(gr(35) + GetRes2(272, 2));     { 'Prioritaet  : Hoch'      }
@@ -969,8 +971,8 @@ begin
          4: wrs(gr(35) + GetRes2(272, 4));     { 'Prioritaet  : Niedrig'   }
          5: wrs(gr(35) + GetRes2(272, 5));     { 'Prioritaet  : Niedrigste'}
        end
-       else if hdp^.Prio>0 then                                 { und fuer Zconnect ....  }
-         if hdp^.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }
+       else if hdp.Prio>0 then                                 { und fuer Zconnect ....  }
+         if hdp.Prio<=10 then wrs(gr(35) + GetRes2(604, 6))    { Direktmail }
                           else wrs(gr(35) + GetRes2(604, 8));   { Eilmail }
 
   { /Prioritaet im Listenkopf anzeigen                                     }
@@ -1002,16 +1004,16 @@ begin
         end
       else begin
         XReadIsoDecode:=true;
-        XreadF(hds+iif(hdp^.typ='B',hdp^.komlen,0),f);
+        XreadF(hds+iif(hdp.typ='B',hdp.komlen,0),f);
         end;
       if decode<>0 then begin
         Move(f,decf,sizeof(f));
         case decode of
          -1 : do_decode(-1,filesize(f)-size);      { Rot13 }
-          1 : if IS_QPC(hdp^.betreff) then
+          1 : if IS_QPC(hdp.betreff) then
                 do_decode(1,filesize(f)-size)
               else
-                if IS_DES(hdp^.betreff) then
+                if IS_DES(hdp.betreff) then
                   do_decode(2,filesize(f)-size);
         end;
         end;
@@ -1029,10 +1031,10 @@ begin
           reset(decf,1);
           case decode of
            -1 : do_decode(-1,hds);
-            1 : if IS_QPC(hdp^.betreff) then
+            1 : if IS_QPC(hdp.betreff) then
                   do_decode(1,hds)
                 else
-                  if IS_DES(hdp^.betreff) then
+                  if IS_DES(hdp.betreff) then
                     do_decode(2,hds);
           end;
           close(decf);
@@ -1040,7 +1042,7 @@ begin
         end;
 
       if art=xTractQuote then begin                { Quote }
-        SetQC(hdp^.netztyp);
+        SetQC(hdp.netztyp);
         assign(t,tmp);
         reset(t);
         if not multipart or (ListQuoteMsg<>'') then  { ZC-Header 'ueberlesen' }
@@ -1062,11 +1064,11 @@ begin
         erase(decf);
         end;
       end;
-    if (hdp^.netztyp=nt_Fido) and (art=xTractMsg)
+    if (hdp.netztyp=nt_Fido) and (art=xTractMsg)
       then if ExtCliptearline then Clip_Tearline
                               else if ExtChgTearline then Chg_Tearline;
     close(f);
-    FreeHeaderMem(hdp);
+    Hdp.Free;
   end;
   freeres;
   ExtCliptearline:=true;
@@ -1077,6 +1079,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.55  2000/12/03 12:38:21  mk
+  - Header-Record is no an Object
+
   Revision 1.54  2000/11/25 18:28:31  fe
   Fixed some bugs.
 

@@ -17,7 +17,7 @@ unit xpauto;
 interface
 
 uses
-  sysutils,montage,typeform,fileio,inout,datadef,database,resource,
+  sysutils,montage,typeform,fileio,inout,datadef,database,resource, xpheader,
   xp0,xp1,xpglobal;
 
 type  AutoRec = record                     { AutoVersand-Nachricht }
@@ -671,6 +671,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.30  2000/12/03 12:38:26  mk
+  - Header-Record is no an Object
+
   Revision 1.29  2000/11/24 19:01:27  fe
   Made a bit less suboptimal.
 

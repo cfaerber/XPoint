@@ -67,7 +67,7 @@ var x,y      : byte;
     abadd    : byte;
     p        : charrp;
     adr,fs,l : longint;
-    hdp      : headerp;
+    hdp      : THeader;
     i        : integer;
     hdsize   : longint;
     rr       : word;
@@ -134,8 +134,8 @@ var x,y      : byte;
         mon;
       end;
       seek(f,adr);
-      makeheader(zconnect,f,0,0,hdsize,hdp^,ok,true);
-      inc(adr,hdsize+hdp^.groesse);
+      makeheader(zconnect,f,0,0,hdsize,hdp,ok,true);
+      inc(adr,hdsize+hdp.groesse);
     until not ok or (adr>=fs-3);     { Der Puffer kann maximal 3 zus„tzliche }
     if (MsgCount>0) then begin
       moff;
@@ -153,9 +153,9 @@ var x,y      : byte;
   begin
     dbWriteN(mbase,mb_ablage,ablage);
     dbWriteN(mbase,mb_adresse,padr);
-    size:=hdp^.groesse+hdsize;
+    size:=hdp.groesse+hdsize;
     dbWriteN(mbase,mb_msgsize,size);
-    blockwrite(pfile,p^,min(readfirst,hdsize+hdp^.groesse));
+    blockwrite(pfile,p^,min(readfirst,hdsize+hdp.groesse));
     dec(size,readfirst);
     if size>0 then begin
       repeat
@@ -164,7 +164,7 @@ var x,y      : byte;
         dec(size,rr);
       until size=0;
     end;
-    inc(padr,hdp^.groesse+hdsize);
+    inc(padr,hdp.groesse+hdsize);
   end;
 }
 
@@ -176,10 +176,10 @@ var x,y      : byte;
       pollbox_str:=pmvertreter
     else if not forcepfadbox and (pollbox<>'') then
       pollbox_str:=pollbox
-    else if trim(hdp^.pfad)='' then
+    else if trim(hdp.pfad)='' then
       pollbox_str:=DefaultBox
     else
-      pollbox_str:=pfadbox(zconnect,hdp^.pfad);
+      pollbox_str:=pfadbox(zconnect,hdp.pfad);
   end;
 
   function adrok(var s:string):boolean;
@@ -191,17 +191,17 @@ var x,y      : byte;
 
   function isl(s:string):boolean;
   begin
-    isl:=LeftStr(hdp^.betreff,length(s))=s;
+    isl:=LeftStr(hdp.betreff,length(s))=s;
   end;
 
   function LeftAbsender(s:string):boolean;
   begin
-    LeftAbsender:=(LeftStr(LowerCase(hdp^.absender),length(s)+1+length(pollbox))=LowerCase(s+'@'+pollbox));
+    LeftAbsender:=(LeftStr(LowerCase(hdp.absender),length(s)+1+length(pollbox))=LowerCase(s+'@'+pollbox));
   end;
 
   procedure bearbeiteMsg(var id,abs,sender:string; cancel:boolean);
   var crc  : longint;
-      hdp2 : headerp;
+      hdp2 : THeader;
       hds  : longint;
       rec  : longint;
       mrec : longint;
@@ -231,35 +231,35 @@ var x,y      : byte;
     begin
       okay:=false;
       if sender<>'' then
-        okay:=((hdp2^.absender=sender) or (hdp2^.cust1=sender)) and (hdp2^.msgid=id)
+        okay:=((hdp2.absender=sender) or (hdp2.cust1=sender)) and (hdp2.msgid=id)
       else
-        okay:=(hdp2^.absender=abs) or (hdp2^.cust1=abs) and (hdp2^.msgid=id);
+        okay:=(hdp2.absender=abs) or (hdp2.cust1=abs) and (hdp2.msgid=id);
     end;
 
   begin
-    if cancel and ((pos(reverse('nolybab!'),hdp^.pfad)>0) or
-                   (pos(reverse('lebabr!'),hdp^.pfad)>0)) then exit;
+    if cancel and ((pos(reverse('nolybab!'),hdp.pfad)>0) or
+                   (pos(reverse('lebabr!'),hdp.pfad)>0)) then exit;
     if LeftStr(id,1)='<' then delfirst(id);
     if RightStr(id,1)='>' then dellast(id);
     if cpos('@',id)=0 then exit;
     crc:=MsgidIndex(id);
-    hdp2 := AllocHeaderMem;
+    hdp2 := THeader.Create;
     if cancel then mrec:=dbRecno(mbase); { Position der Cancel-Mail merken }
     dbSeek(bezbase,beiMsgId,dbLongStr(crc));
     if dbFound then
       while (not dbEOF(bezbase)) and (dbReadInt(bezbase,'msgid')=crc) do begin
         repeat;
-          hdp2^.msgid:='';
+          hdp2.msgid:='';
           rec:=dbReadInt(bezbase,'MsgPos');
           if not dbDeleted(mbase,rec) then begin   { sicher ist sicher.. }
             dbGo(mbase,rec);
-            Readheader(hdp2^,hds,false);
+            Readheader(hdp2,hds,false);
           end;
           dbNext(bezbase);
-        until (hdp2^.msgid=id) or dbEOF(bezbase) or (dbReadInt(bezbase,'msgid')<>crc);
+        until (hdp2.msgid=id) or dbEOF(bezbase) or (dbReadInt(bezbase,'msgid')<>crc);
         if okay then DelMsg; { zu l”schende/zu ersetzende Nachricht l”schen }
       end;
-    FreeHeaderMem(hdp2);
+    Hdp2.Free;
     if cancel then begin
       dbGo(mbase,mrec);
       DelMsg;   { Cancel-Nachricht auf 'gelesen' / 'l”schen' }
@@ -304,29 +304,29 @@ var x,y      : byte;
 
   function IsCancelMsg:boolean;
   begin
-    with hdp^ do
+    with hdp do
       IsCancelMsg:=(attrib and attrControl<>0) and
                    (LowerCase(LeftStr(control,7))='cancel ');
   end;
 
   function isSupersedesMsg:boolean;
   begin
-    isSupersedesMsg:=(hdp^.ersetzt<>'');
+    isSupersedesMsg:=(hdp.ersetzt<>'');
   end;
 
   function IsSupportCfg:boolean;
 
     function NameOk:boolean;
     begin
-      NameOk:=stricmp(hdp^.realname,inout.pm) or
-              (pos(LowerCase(inout.pm),LowerCase(hdp^.absender))>0);
+      NameOk:=stricmp(hdp.realname,inout.pm) or
+              (pos(LowerCase(inout.pm),LowerCase(hdp.absender))>0);
     end;
 
     function XPctlOk:boolean;
     var sum : longint;
         i   : integer;
     begin
-      with hdp^ do begin
+      with hdp do begin
         sum:=0;
         for i:=1 to length(datum) do
           inc(sum,ord(datum[i])*7);
@@ -337,7 +337,7 @@ var x,y      : byte;
     end;
 
   begin
-    with hdp^ do
+    with hdp do
       IsSupportCfg:=
         (ntXPctl(netztyp) and NameOk and XPctlOk) or
         ((netztyp=nt_Maus) and (absender=inout.pm+'@LU') and
@@ -349,7 +349,7 @@ var x,y      : byte;
       fstype : byte;
   begin
     automessaging:=true;
-    with hdp^ do begin
+    with hdp do begin
       if aufnehmen and
         ( ((LeftStr(UpperCase(betreff),7)='BRETTER') or
            (pos('your list',LowerCase(betreff))>0))
@@ -440,7 +440,7 @@ var x,y      : byte;
       tmp      : string;
       uncfile  : string;
       uvs      : byte;
-      hdp2     : headerp;
+      hdp2     : THeader;
       hds2     : longint;
       ok       : boolean;
       orgsize  : longint;
@@ -448,15 +448,15 @@ var x,y      : byte;
       sp       : scrptr;
   begin
     size:=0;
-    dbSeek(ubase,uiName,UpperCase(hdp^.absender));
+    dbSeek(ubase,uiName,UpperCase(hdp.absender));
     uflags := 0;
     if not dbFound then exit;
     passwd:= dbReadXStr(ubase,'passwort',size);
     dbRead(ubase,'codierer',codierer);
     if (passwd='') or (codierer<3) or (codierer>2+maxpmc) or
       (TempFree<2*dbReadInt(mbase,'msgsize')) then exit;
-    hdp2 := AllocHeaderMem;
-    ReadHeader(hdp2^,hds2,true);
+    hdp2 := THeader.Create;
+    ReadHeader(hdp2,hds2,true);
     assign(f,temppath+cryptedfile);
     rewrite(f,1);
     XreadF(dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse'),f);
@@ -466,7 +466,7 @@ var x,y      : byte;
     rps(s,'$KEY',passwd);
     rps(s,'$INFILE',temppath+cryptedfile);
     rps(s,'$OUTFILE',uncfile);
-    rps(s,'$USER',hdp^.absender);
+    rps(s,'$USER',hdp.absender);
     if FileExists(uncfile) then _era(uncfile);
     savecursor;
     sichern(sp);
@@ -477,21 +477,21 @@ var x,y      : byte;
     else begin
       assign(f,uncfile);
       reset(f,1);
-      makeheader(false,f,0,0,hds2,hdp2^,ok,false);
+      makeheader(false,f,0,0,hds2,hdp2,ok,false);
       close(f);
       if not ok then
         trfehler(306,5)       { 'Fehler beim Decodieren' }
       else begin
         reset(f,1);   { uncfile }
-        hdp^.betreff:=hdp2^.betreff;
-        hdp^.typ:=hdp2^.typ;
-        orgsize:=hdp^.groesse;     hdp^.groesse:=filesize(f)-hds2;  { = hdp2^.groesse }
-        orgempf:=hdp^.empfaenger;  hdp^.empfaenger:=hdp2^.empfaenger;
-        tmp:=TempS(hdp^.groesse+2048);
+        hdp.betreff:=hdp2.betreff;
+        hdp.typ:=hdp2.typ;
+        orgsize:=hdp.groesse;     hdp.groesse:=filesize(f)-hds2;  { = hdp2^.groesse }
+        orgempf:=hdp.empfaenger;  hdp.empfaenger:=hdp2.empfaenger;
+        tmp:=TempS(hdp.groesse+2048);
         assign(f2,tmp);
         rewrite(f2,1);
         ClearPGPflags(hdp);
-        WriteHeader(hdp^,f2,reflist);    { neuer Header }
+        WriteHeader(hdp,f2,reflist);    { neuer Header }
         seek(f,hds2);
         fmove(f,f2);                     { + decodierter Text }
         close(f); close(f2);
@@ -499,34 +499,34 @@ var x,y      : byte;
         Xwrite(tmp);
         wrkilled;
         _era(tmp);
-        dbWriteNStr(mbase,mb_betreff,hdp2^.betreff);
-        dbWriteN(mbase,mb_typ,hdp2^.typ[1]);
-        dbWriteN(mbase,mb_groesse,hdp^.groesse);
+        dbWriteNStr(mbase,mb_betreff,hdp2.betreff);
+        dbWriteN(mbase,mb_typ,hdp2.typ[1]);
+        dbWriteN(mbase,mb_groesse,hdp.groesse);
         dbReadN(mbase,mb_unversandt,uvs);
         uvs:=uvs or 4;                        { "c"-Flag }
         dbWriteN(mbase,mb_unversandt,uvs);
-        hdp^.groesse:=orgsize;
-        hdp^.empfaenger:=orgempf;
+        hdp.groesse:=orgsize;
+        hdp.empfaenger:=orgempf;
         end;
       end;
     holen(sp);
     restcursor;
-    FreeHeaderMem(hdp2);
+    Hdp2.Free;
   end;
 
   procedure DecPGP;
   var s : string[AdrLen];
       sp: scrptr;
   begin
-    s:=hdp^.empfaenger;
-    hdp^.empfaenger:=orgempf;
+    s:=hdp.empfaenger;
+    hdp.empfaenger:=orgempf;
     savecursor;
     sichern(sp);
-    LogPGP(getreps2(3002,2,hdp^.absender));  { 'decodiere Nachricht von %s' }
+    LogPGP(getreps2(3002,2,hdp.absender));  { 'decodiere Nachricht von %s' }
     PGP_DecodeMessage(hdp,false);
     holen(sp);
     restcursor;
-    hdp^.empfaenger:=s;
+    hdp.empfaenger:=s;
   end;
 
   procedure Bezugsverkettung;
@@ -553,21 +553,21 @@ var x,y      : byte;
       inc(n);
       repeat
         seek(f,adr);
-        makeheader(zconnect,f,empfnr,0,hdsize,hdp^,ok,true);
+        makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true);
         { 20.01.2000 robo - Schalter maildelxpost beachten }
-{        if hdp^.empfanz>maxcrosspost then begin }
-        if (hdp^.empfanz>maxcrosspost)
-        and ((cpos('@',hdp^.empfaenger)=0) or maildelxpost) then begin
+{        if hdp.empfanz>maxcrosspost then begin }
+        if (hdp.empfanz>maxcrosspost)
+        and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
         { /robo }
-          empfnr:=hdp^.empfanz+1;                { Crossposting-Filter }
+          empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
           continue;
           end;
         blockread(pfile,ll,8);
-        if (ll.l<>0) and ntKomkette(hdp^.netztyp) and (hdp^.msgid<>'') then begin
+        if (ll.l<>0) and ntKomkette(hdp.netztyp) and (hdp.msgid<>'') then begin
           inc(nbez);
-          c1:=MsgidIndex(hdp^.msgid);
-          if hdp^.ref='' then c2:=0
-          else c2:=MsgidIndex(hdp^.ref);
+          c1:=MsgidIndex(hdp.msgid);
+          if hdp.ref='' then c2:=0
+          else c2:=MsgidIndex(hdp.ref);
           dbAppend(bezbase);
           dbWriteN(bezbase,bezb_msgpos,ll.l);
           dbWriteN(bezbase,bezb_msgid,c1);
@@ -575,13 +575,13 @@ var x,y      : byte;
           dbWriteN(bezbase,bezb_datum,ll.dat);
           end;
         inc(empfnr);
-      until empfnr>hdp^.empfanz;
+      until empfnr>hdp.empfanz;
       if ((n mod 5)=0) then begin
         moff;
         FWrt(x+3+length(mstr),y+5,StrS(n*100 div msgcount)+'%');
         mon;
       end;
-      inc(adr,hdp^.groesse+hdsize);
+      inc(adr,hdp.groesse+hdsize);
     until adr>=fs-3;     { 3 Byte Toleranz }
     dbRestartHU(bezbase);
     dbFlush(bezbase);
@@ -651,7 +651,7 @@ begin
   check:=(fs*1.3<diskfree(0));
 
   getmem(p,bufsize);
-  hdp := AllocHeaderMem;
+  hdp := THeader.Create;
   if check and puffer_ok then begin
     abadd:=iif(zconnect,10,0);
     l:=ablsize[1+abadd]; ablage:=1+abadd;   { 0/10 = PM-Ablage }
@@ -745,27 +745,27 @@ begin
       msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert }
       repeat       { Cross-Postings bearbeiten }
         seek(f,adr);
-        makeheader(zconnect,f,empfnr,0,hdsize,hdp^,ok,true);
-        orgempf:=hdp^.empfaenger;
+        makeheader(zconnect,f,empfnr,0,hdsize,hdp,ok,true);
+        orgempf:=hdp.empfaenger;
         { 20.01.2000 robo - Schalter maildelxpost beachten }
-{        if hdp^.empfanz>maxcrosspost then begin }
-        if (hdp^.empfanz>maxcrosspost)
-        and ((cpos('@',hdp^.empfaenger)=0) or maildelxpost) then begin
+{        if hdp.empfanz>maxcrosspost then begin }
+        if (hdp.empfanz>maxcrosspost)
+        and ((cpos('@',hdp.empfaenger)=0) or maildelxpost) then begin
         { /robo }
-          empfnr:=hdp^.empfanz+1;                { Crossposting-Filter }
+          empfnr:=hdp.empfanz+1;                { Crossposting-Filter }
           continue;
           end;
         if junk then begin
-          hdp^.empfanz:=1;
+          hdp.empfanz:=1;
           { KH 01/00 Unterscheidung von der Pseudo-Newsgroup junk }
-          hdp^.empfaenger:='/¯Nix'
+          hdp.empfaenger:='/¯Nix'
           end;
         if grosswandeln and not zconnect then begin
-          UpString(hdp^.absender);
-          UpString(hdp^.empfaenger);
+          UpString(hdp.absender);
+          UpString(hdp.empfaenger);
           end;
         pm:=false;
-        with hdp^ do begin
+        with hdp do begin
           if replace_ed then dat:=datum;
           _datum:=ixdat(dat);
           if replace_ed and smdl(today,_datum) then begin
@@ -944,7 +944,7 @@ begin
               IsOwnDomain(ref)) or
               (filterattr and fattrHilite<>0) {or}
               { Nachricht mit Priority High und Highest hevorheben }
-              {(hdp^.Priority in [1..2])}
+              {(hdp.Priority in [1..2])}
             then
               inc(mnt,$1000);        { Antwort auf eigene Nachricht }
             if charset='iso1' then inc(mnt,$2000);
@@ -986,13 +986,13 @@ begin
             if uflags and $E0 <> 0 then
              mbflags:=longint((uflags and $E0) shr 2)
                                                    { Prioritaeten in anderer Farbe.... }
-            else if hdp^.Priority=5 then mbflags:=32          { Niedrigste }
-            else if hdp^.Priority=4 then mbflags:=16+8   { Niedrig    }
-            else if hdp^.Priority=2 then mbflags:=16     { Hoch       }
-            else if hdp^.Priority=1 then mbflags:=8      { hoechste   }
+            else if hdp.Priority=5 then mbflags:=32          { Niedrigste }
+            else if hdp.Priority=4 then mbflags:=16+8   { Niedrig    }
+            else if hdp.Priority=2 then mbflags:=16     { Hoch       }
+            else if hdp.Priority=1 then mbflags:=8      { hoechste   }
 
-            else if zconnect and (hdp^.Prio>0) then      { und fuer Zconnect ....  }
-              if hdp^.Prio<=10 then mbflags:=16          { hoch     }
+            else if zconnect and (hdp.Prio>0) then      { und fuer Zconnect ....  }
+              if hdp.Prio<=10 then mbflags:=16          { hoch     }
               else mbflags:=8                            { hoechste }
             else mbflags:=0;
 
@@ -1029,30 +1029,30 @@ begin
             end;
 
           inc(empfnr);
-          end;           { with hdp^ }
+          end;           { with hdp }
         if msgsent then
           TestControlMessage;
 
-        if (hdp^.empfanz>1) and (empfnr>hdp^.empfanz) and not msgsent and
+        if (hdp.empfanz>1) and (empfnr>hdp.empfanz) and not msgsent and
            not IsCancelMsg then begin
           { Nachricht nach /Junk }
           junk:=true;
           empfnr:=1;            { kein passendes Brett fr Crossposting }
           FlushLL;
           seek(pfile,filesize(pfile)-8);
-        { seek(pfile,filesize(pfile)-8*hdp^.empfanz); }
-        { seek(pfile,filesize(pfile)-4*max(0,2*hdp^.empfanz-llanz));
-          llanz:=max(0,llanz-2*hdp^.empfanz); }
+        { seek(pfile,filesize(pfile)-8*hdp.empfanz); }
+        { seek(pfile,filesize(pfile)-4*max(0,2*hdp.empfanz-llanz));
+          llanz:=max(0,llanz-2*hdp.empfanz); }
           end;
     (*  else
           if junk then begin
             FlushLL;
             seek(pfile,sizeof(pfile));   { 0/0-Eintr„ge fr nicht einsor- }
             end;                         { tierte Xpostings berspringen  } *)
-      until empfnr>hdp^.empfanz;
+      until empfnr>hdp.empfanz;
 
-      inc(adr,hdp^.groesse+hdsize);
-      inc(padr,hdp^.groesse+hdsize);
+      inc(adr,hdp.groesse+hdsize);
+      inc(padr,hdp.groesse+hdsize);
       inc(inmsgs);
       if ((inmsgs mod 3) = 0) then begin        { User beruhigen }
         moff;
@@ -1125,7 +1125,7 @@ begin
     closebox;
     end;
 
-  FreeHeaderMem(hdp);
+  Hdp.Free;
   freeres;
   freemem(p,bufsize);
   closebox;
@@ -1164,6 +1164,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.39  2000/12/03 12:38:21  mk
+  - Header-Record is no an Object
+
   Revision 1.38  2000/11/30 16:59:38  hd
   - Fix: illegal character
 
@@ -1197,7 +1200,7 @@ end;
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
   Revision 1.28  2000/07/21 17:39:53  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+  - Umstellung auf THeader.Create/FreeHeaderMem
 
   Revision 1.27  2000/07/20 16:49:58  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt

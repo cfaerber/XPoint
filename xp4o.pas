@@ -75,7 +75,7 @@ procedure seek_cutspace(var s:string);
 
 implementation  {-----------------------------------------------------}
 
-uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview,
+uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader,
      xp_pgp, viewer;
 
 const max_arc = 3;   { maximale verschachtelte Archivdateien }
@@ -151,7 +151,7 @@ var x,y   : byte;
     i     : integer;
     brett : string;
     me,uu : boolean;
-    hdp   : headerp;
+    hdp   : Theader;
     hds   : longint;
     bretter : string;
 
@@ -438,9 +438,9 @@ label ende;
       if DateFit and SizeFit and TypeFit and StatOk then begin
         Betr2 := dbReadNStr(mbase,mb_betreff);
         if (betr<>'') and (length(betr2)=40) then begin
-          ReadHeader(hdp^,hds,false);
-          if length(hdp^.betreff)>40 then
-            betr2:=hdp^.betreff;
+          ReadHeader(hdp,hds,false);
+          if length(hdp.betreff)>40 then
+            betr2:=hdp.betreff;
           end;
         user2 := dbReadNStr(mbase,mb_absender);
         if not ntEditBrettEmpf(mbnetztyp) then begin   { <> Fido, QWK }
@@ -450,26 +450,26 @@ label ende;
           realn:=#0;
         if fidoempf<>'' then
           if not ntBrettEmpf(mbnetztyp) then
-            hdp^.fido_to:=''
+            hdp.fido_to:=''
           else begin
-            ReadHeader(hdp^,hds,false);
+            ReadHeader(hdp,hds,false);
             end;
         if umlaut then begin                    {JG: Umlaute anpassen}
           UkonvStr(betr2,Length(betr2));
           UkonvStr(user2,Length(user2));
           UkonvStr(realn,Length(realn));
-          UkonvStr(hdp^.fido_to,Length(hdp^.fido_to));
+          UkonvStr(hdp.fido_to,Length(hdp.fido_to));
           end;
         if igcase then begin                    {JG: Ignore Case}
           UpString(betr2);
           UpString(user2);
           UpString(realn);
-          UpString(hdp^.fido_to);
+          UpString(hdp.fido_to);
           end;
         if txt<>'' then volltextcheck;             { verknuepfte Volltextsuche (SST!) }
         if ((betr='') or (pos(betr,betr2)>0) xor nbetr) and
            ((user='') or ((pos(user,user2)>0) or (pos(user,realn)>0)) xor nuser) and
-           ((fidoempf='') or (pos(fidoempf,hdp^.fido_to)>0) xor nfidoempf) and
+           ((fidoempf='') or (pos(fidoempf,hdp.fido_to)>0) xor nfidoempf) and
            ((txt='') or found) then begin
           MsgAddmark;
           inc(nf);
@@ -483,13 +483,13 @@ label ende;
     else if suchfeld<>'' then begin
       such:= dbReadStr(mbase,suchfeld);
       if stricmp(suchfeld,'betreff') and (length(such)=40) then begin
-        ReadHeader(hdp^,hds,false);
-        if length(hdp^.betreff)>40 then
-          such:=hdp^.betreff;
+        ReadHeader(hdp,hds,false);
+        if length(hdp.betreff)>40 then
+          such:=hdp.betreff;
         end;
        if suchfeld='MsgID' then begin
-        ReadHeader(hdp^,hds,false);
-        such:=hdp^.msgid;
+        ReadHeader(hdp,hds,false);
+        such:=hdp.msgid;
         end;
       if umlaut then UkonvStr(such,Length(such));
 
@@ -782,7 +782,7 @@ begin
       mwrt(x+3,y+iif(spez,11+add,4),getres2(441,16)); { 'Suche:         passend:' }
       if aktdispmode<>11 then markanz:=0;
       n:=0; nf:=0;
-      hdp := AllocHeaderMem;
+      hdp := THeader.Create;
       attrtxt(col.coldiahigh);
       psize:=65536;
       getmem(p,psize);
@@ -875,7 +875,7 @@ begin
 
       freemem(p,psize);
       CloseBox;
-      FreeHeaderMem(hdp);
+      Hdp.Free;
       end;
 
 {--Suche beendet--}
@@ -1024,18 +1024,18 @@ end;
 
 procedure ModiBetreff;
 var brk  : boolean;
-    hdp  : headerp;
+    hdp  : THeader;
     hds  : longint;
     x,y  : byte;
     fn   : string;
     f    : file;
 begin
   if testuvs(getres(453)) then exit;   { 'Aendern' }
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,true);
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,true);
   if hds>1 then begin
     diabox(63,5,'',x,y);
-    readstring(x+3,y+2,getres(454),hdp^.betreff,40,BetreffLen,'',brk);  { 'neuer Betreff:' }
+    readstring(x+3,y+2,getres(454),hdp.betreff,40,BetreffLen,'',brk);  { 'neuer Betreff:' }
     closebox;
     if not brk then begin
       PGP_BeginSavekey;
@@ -1043,21 +1043,21 @@ begin
       assign(f,fn);
       rewrite(f,1);
       { ClearPGPflags(hdp); }
-      hdp^.orgdate:=true;
-      WriteHeader(hdp^,f,reflist);
+      hdp.orgdate:=true;
+      WriteHeader(hdp,f,reflist);
       XreadF(hds,f);   { den Nachrichtentext anhaengen ... }
       close(f);
       Xwrite(fn);
       erase(f);
       wrkilled;
-      TruncStr(hdp^.betreff,40);
-      dbWriteNStr(mbase,mb_betreff,hdp^.betreff);
+      TruncStr(hdp.betreff,40);
+      dbWriteNStr(mbase,mb_betreff,hdp.betreff);
       PGP_EndSavekey;
       aufbau:=true;
       xaufbau:=true;
       end;
     end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 
@@ -1075,7 +1075,7 @@ procedure ModiText;
 var fn   : string;
     fn2  : string;
     f,f2 : file;
-    hdp  : headerp;
+    hdp  : Theader;
     hds  : longint;
     typ  : char;
     l    : longint;
@@ -1086,8 +1086,8 @@ begin
     exit;
     end;
   if testuvs(getres(455)) then exit;   { 'Edit' }
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,true);           { Heder einlesen }
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,true);           { Heder einlesen }
   if hds>1 then begin
     PGP_BeginSavekey;
     fn:=TempS(dbReadInt(mbase,'msgsize'));
@@ -1100,12 +1100,12 @@ begin
     fn2:=TempS(_filesize(fn)+2000);
     assign(f2,fn2);
     rewrite(f2,1);
-    hdp^.groesse:=_filesize(fn);
-    dbWriteN(mbase,mb_groesse,hdp^.groesse);
-    hdp^.charset:='';
+    hdp.groesse:=_filesize(fn);
+    dbWriteN(mbase,mb_groesse,hdp.groesse);
+    hdp.charset:='';
     { ClearPGPflags(hdp); }
-    hdp^.orgdate:=true;
-    WriteHeader(hdp^,f2,reflist);   { ..Header in neues Tempfile.. }
+    hdp.orgdate:=true;
+    WriteHeader(hdp,f2,reflist);   { ..Header in neues Tempfile.. }
     reset(f,1);
     fmove(f,f2);                  { ..den Text dranhaengen.. }
     close(f); erase(f);
@@ -1119,7 +1119,7 @@ begin
     PGP_EndSavekey;
     aufbau:=true;                 { wg. geaenderter Groesse }
     end;
-   FreeHeaderMem(hdp);
+   Hdp.Free;
 end;
 
 
@@ -1391,7 +1391,7 @@ var _brett   : string;
     sr       : tsearchrec;
     rc       : integer;
     f        : file;
-    hdp      : headerp;
+    hdp      : Theader;
     hds      : longint;
     ok       : boolean;
     adr,fsize: longint;
@@ -1415,7 +1415,7 @@ begin
   end;
   markanz:=0;
   moment;
-  hdp := AllocHeaderMem;
+  hdp := THeader.Create;
   while rc=0 do begin
     if crashs then begin
       box:=strs(hexval(LeftStr(sr.name,4)))+'/'+strs(hexval(copy(sr.name,5,4)));
@@ -1434,10 +1434,10 @@ begin
     ok:=true;
     while ok and (adr<fsize) do begin
       seek(f,adr);
-      makeheader(zconnect,f,1,0,hds,hdp^,ok,false);
+      makeheader(zconnect,f,1,0,hds,hdp,ok,false);
       if not ok then
         rfehler1(427,box)   { 'fehlerhaftes Pollpaket:  %s' }
-      else with hdp^ do begin
+      else with hdp do begin
         _brett:='';
         if (cpos('@',empfaenger)=0) and
            ((netztyp<>nt_Netcall) or (LeftStr(empfaenger,1)='/'))
@@ -1492,7 +1492,7 @@ begin
     end;
   end;
   FindClose(sr);
-  FreeHeaderMem(hdp);
+  Hdp.Free;
   closebox;
   if markanz=0 then
     hinweis(getres(458))   { 'Keine unversandten Nachrichten vorhanden!' }
@@ -1507,7 +1507,7 @@ end;
 
 
 procedure msg_info;     { Zerberus-Header anzeigen }
-var hdp   : headerp;
+var hdp   : Theader;
     hds   : longint;
     i     : integer;
     x,y  : byte;
@@ -1529,7 +1529,7 @@ var hdp   : headerp;
 
   function ddat:string;
   begin
-    with hdp^ do
+    with hdp do
       if ddatum='' then
         ddat:=''
       else
@@ -1543,10 +1543,10 @@ var hdp   : headerp;
       x,y : byte;
   begin
     ml:=length(getres2(459,30))+8;
-    with hdp^ do begin
+    with hdp do begin
       for i:=1 to empfanz do begin
         ReadHeadEmpf:=i;
-        ReadHeader(hdp^,hds,false);
+        ReadHeader(hdp,hds,false);
         ml:=max(ml,length(empfaenger)+6);
         end;
       ml:=min(ml,72);
@@ -1554,7 +1554,7 @@ var hdp   : headerp;
       msgbox(ml,i+4,getres2(459,30),x,y);   { 'Empfaengerliste' }
       for j:=1 to i do begin
         ReadHeadEmpf:=j;
-        ReadHeader(hdp^,hds,false);
+        ReadHeader(hdp,hds,false);
         mwrt(x+3,y+1+j,LeftStr(empfaenger,72));
         end;
       wait(curoff);
@@ -1582,7 +1582,7 @@ var hdp   : headerp;
     end;
   begin
     ml:=length(getres2(459,31))+8;
-    with hdp^ do begin
+    with hdp do begin
       p:=reflist;
       while p<>nil do begin
         ml:=max(ml,length(p^.ref)+6);
@@ -1614,10 +1614,10 @@ var hdp   : headerp;
   end;
 
 begin
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,true);
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,true);
   anz:=0;
-  with hdp^ do begin
+  with hdp do begin
     apps(3,empfaenger);
     if fido_to<>'' then apps(4,fido_to);
     apps(5,betreff);
@@ -1703,19 +1703,19 @@ begin
     end;
   closebox;
   freeres;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 
 procedure ShowHeader;            { Header direkt so anzeigen wie er im PUFFER steht }
 var fn  : string;
     f   : file;
-    hdp : headerp;
+    hdp : Theader;
     hds : longint;
     lm  : Byte;                  { Makrozwischenspeicher... }
 begin
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,true);
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,true);
   if hds>1 then begin
     fn:=TempS(dbReadInt(mbase,'msgsize')+1000);
     assign(f,fn);
@@ -1730,7 +1730,7 @@ begin
     listmakros:=lm;                                   { wieder alte Makros benutzen   }
     _era(fn);
     end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 
@@ -2419,6 +2419,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.82  2000/12/03 12:38:23  mk
+  - Header-Record is no an Object
+
   Revision 1.81  2000/11/20 20:44:05  mk
   - Suchlaenge auf 73 reduziert
 
@@ -2444,7 +2447,7 @@ end.
   - Fixed Bug #112798: Lange Dateinamen in Archiven
 
   Revision 1.73  2000/10/26 12:06:33  mk
-  - AllocHeaderMem/FreeHeaderMem Umstellung
+  - THeader.Create/FreeHeaderMem Umstellung
 
   Revision 1.72  2000/10/22 21:58:59  mk
   - case of .pp and .epp is now UnixFS dependent

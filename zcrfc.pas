@@ -101,7 +101,7 @@ type
 implementation
 
 uses
-  unicode, UTFTools;
+  xpheader, unicode, UTFTools;
 
 {$I charsets\cp437.inc }
 {$I charsets\cp866.inc }
@@ -181,15 +181,13 @@ const
 type
   mimeproc = procedure(var s: string);
 
-{$I XPHEADER.INC }
-
   charr = array[0..65530] of char;
   charrp = ^charr;
 
 var
   buffer: array[0..bufsize] of char;    { Kopierpuffer }
   bufpos, bufanz: integer;              { Leseposition / Anzahl Zeichen }
-  hd: header;
+  hd: Theader;
   outbuf: charrp;
   outbufpos: word;
   s: string;
@@ -216,38 +214,8 @@ const
 // Frischen Header erzeugen
 procedure ClearHeader;
 begin
-  with hd do
-  if Assigned(AddRef) then
-  begin
-    AddRef.Free;
-    XEmpf.Free;
-    XOEM.Free;
-    replyto.free;
-    followup.free;
-    mailcopies.free;
-    ULine.Free;
-    XLine.Free;
-    ZLine.Free;
-    FLine.Free;
-  end;
-
+  hd.Clear;
   Mail.Clear;
-  Fillchar(hd, sizeof(hd), 0);
-
-  with hd do
-  begin
-    Netztyp := nt_RFC;
-    AddRef := TStringList.Create;
-    XEmpf := TStringList.Create;
-    XOEM := TStringList.Create;
-    replyto := tstringlist.create;
-    followup := tstringlist.create;
-    mailcopies := tstringlist.create;
-    ULine := TStringlist.Create;
-    XLine := TStringList.Create;
-    ZLine := TStringlist.Create;
-    FLine := TStringList.Create;
-  end;
 end;
 
 function UTF8ToIBM(s: String): String;
@@ -382,7 +350,7 @@ begin
   EmpfList := TStringList.Create;
   Mail := TStringList.Create;
 
-  Fillchar(hd, sizeof(hd), 0);
+  hd := THeader.Create;
   ClearHeader;
 
   rh('NEWS.RFC', false);
@@ -394,6 +362,7 @@ begin
   AddHd.Free;
   EmpfList.Free;
   Mail.Free;
+  Hd.Free;
   freemem(outbuf, bufsize);
 end;
 
@@ -1813,9 +1782,9 @@ var
     GetMsgid := s0;
   end;
 
-  procedure GetReferences(line: string;var hd: header);
+  procedure GetReferences(line: string;var hd: theader);
 
-    procedure GetRef(line: string;var hd: header);
+    procedure GetRef(line: string;var hd: theader);
     var
       p: integer;
     begin
@@ -1848,7 +1817,7 @@ var
   end;
 
   { liest eine In-Reply-To-Zeile }
-  procedure GetInReplyto(line: string;var hd: header;
+  procedure GetInReplyto(line: string;var hd: theader;
     var uline: tstringlist);
   var
     p,q: integer;
@@ -3692,6 +3661,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/12/03 12:38:27  mk
+  - Header-Record is no an Object
+
   Revision 1.10  2000/11/27 21:41:54  mk
   RB:- Trim in GetMsgId hinzugefuegt
 

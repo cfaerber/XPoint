@@ -24,7 +24,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,typeform,keys,fileio,inout,maus2,lister,
+  sysutils,typeform,keys,fileio,inout,maus2,lister, xpheader,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
@@ -50,7 +50,7 @@ procedure SeekLeftBox(var d:DB; var box:string);
 procedure KorrBoxname(var box:string);
 function  BoxFilename(var box:string):string;
 
-procedure AddBezug(var hd:header; dateadd:byte);
+procedure AddBezug(var hd:Theader; dateadd:byte);
 procedure DelBezug;
 function  GetBezug(var ref:string):longint;
 function  KK:boolean;
@@ -563,7 +563,7 @@ begin
 end;
 
 
-procedure AddBezug(var hd:header; dateadd:byte);
+procedure AddBezug(var hd:Theader; dateadd:byte);
 var c1,c2 : longint;
     satz  : longint;
     datum : longint;
@@ -1002,6 +1002,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.73  2000/12/03 12:38:20  mk
+  - Header-Record is no an Object
+
   Revision 1.72  2000/11/16 12:35:47  mk
   - Unit Stringtools added
 

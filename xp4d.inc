@@ -58,7 +58,7 @@ var
     grnr    : longint;
     uflags  : byte;
     markc   : char;
-    hd      : header;
+    hd      : Theader;
     hds     : longint;
     pp      : byte;
     wvl     : byte;
@@ -343,8 +343,10 @@ begin  { __ Suchmarke }
               ulen:=27;
               blen:=40;
             end;
-            if (dispmode=11) and MarkUnversandt then begin      {11=markierte Nachrichten}
+            if (dispmode=11) and MarkUnversandt then
+            begin      {11=markierte Nachrichten}
               inc(ulen,5); dec(blen,5);
+              hd := THeader.Create;
               readheader(hd,hds,true);
               if hd.wab<>'' then s:=hd.wab;
               pp:=cpos('@',s);
@@ -356,6 +358,7 @@ begin  { __ Suchmarke }
                 s:=forms(mid(hd.empfaenger,length(TO_ID)+1),ulen-length(s)-1)+' '+s
               else
                 s:=forms(hd.empfaenger,ulen-length(s)-1)+' '+s;
+              Hd.Free;
             end;
             _brett:= dbReadNStr(mbase,mb_brett);
             pp:=iif(netztyp=nt_Maus,35,iif(fidoqwk,35,0));
@@ -599,6 +602,9 @@ end;
 
 {
   $Log$
+  Revision 1.43  2000/12/03 12:38:22  mk
+  - Header-Record is no an Object
+
   Revision 1.42  2000/11/17 00:15:47  mk
   - Virtual Pascal compatibility updates
 

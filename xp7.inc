@@ -934,30 +934,30 @@ var dummy : longint;
   end;
 
   procedure CopyFileAttaches(ppfile:string);
-  var hd  : headerp;
+  var hd  : THeader;
       hds : longint;
       adr : longint;
       f   : file;
       ok  : boolean;
   begin
     if _filesize(ppfile)>0 then begin
-      hd:=allocheadermem;
+      hd:=THeader.Create;
       assign(f,ppfile);
       reset(f,1);
       adr:=0; ok:=true;
       while ok and (adr<filesize(f)) do begin
         seek(f,adr);
-        MakeHeader(true,f,0,0,hds,hd^,ok,false);
-        if (hd^.attrib and attrFile<>0) then
-          if not FileExists(hd^.betreff) then
-            trfehler1(725,hd^.betreff,15)   { '%s fehlt!' }
+        MakeHeader(true,f,0,0,hds,hd,ok,false);
+        if (hd.attrib and attrFile<>0) then
+          if not FileExists(hd.betreff) then
+            trfehler1(725,hd.betreff,15)   { '%s fehlt!' }
           else
-            if not filecopy(hd^.betreff,boxpar^.SysopOut+extractFileName(hd^.betreff)) then
-              trfehler1(726,hd^.betreff,15);  { 'Fehler beim Kopieren von %s' }
-        inc(adr,hds+hd^.groesse);
+            if not filecopy(hd.betreff,boxpar^.SysopOut+extractFileName(hd.betreff)) then
+              trfehler1(726,hd.betreff,15);  { 'Fehler beim Kopieren von %s' }
+        inc(adr,hds+hd.groesse);
         end;
       close(f);
-      freeheadermem(hd);
+      Hd.Free;
       end;
   end;
 
@@ -1325,6 +1325,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.49  2000/12/03 12:38:25  mk
+  - Header-Record is no an Object
+
   Revision 1.48  2000/11/30 14:27:42  mk
   - Removed Unit UART
 

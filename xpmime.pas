@@ -17,7 +17,7 @@ unit xpmime;
 
 interface
 
-uses  xpglobal,sysutils,typeform,montage,fileio,keys,lister,database,resource,
+uses  xpglobal,sysutils,typeform,montage,fileio,keys,lister,database,resource,xpheader,
       xp0,xp1,xpkeys,utftools;
 
 
@@ -251,7 +251,7 @@ end;
 
 procedure SelectMultiPart(select:boolean; index:integer; forceselect:boolean;
                           var mpdata:multi_part; var brk:boolean);
-var   hdp      : headerp;
+var   hdp      : THeader;
       hds      : longint;
       anzahl   : integer;     { Anzahl der Nachrichtenteile }
       anzahl0  : integer;     { Anzahl Nachrichtenteile ohne Gesamtnachricht }
@@ -358,7 +358,7 @@ var   hdp      : headerp;
     anzahl:=0;
     stackwarn:=false;
 
-    if hdp^.boundary='' then begin     { Boundary erraten ... }
+    if hdp.boundary='' then begin     { Boundary erraten ... }
       n:=0; s:=''; bound:='';
       while not eof(t) and (n<100) and
          ((LowerCase(LeftStr(s,13))<>'content-type:') or (LeftStr(bound,2)<>'--')) do begin
@@ -367,13 +367,13 @@ var   hdp      : headerp;
         inc(n);
         end;
       if bound='' then goto ende;
-      hdp^.boundary:=mid(bound,3);
+      hdp.boundary:=mid(bound,3);
       close(t);
       reset(t);
       end;
 
     bptr:=0;
-    push('--' + hdp^.boundary);
+    push('--' + hdp.boundary);
     n:=0;     { Zeilennummer }
     vorspann:=true;
     reset_var;
@@ -535,12 +535,12 @@ var i : integer;
 begin                         { SelectMultiPart }
   brk:=false;
   fillchar(mpdata,sizeof(mpdata),0);
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,true);
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,true);
   MakePartlist;
   if not forceselect and (anzahl=3) and (mf[2].typ='text')
      and (mf[1].typ='text') and (mf[1].subtyp='plain')
-     and (((hdp^.mimetyp='multipart/alternative')      { Text+HTML Messis }
+     and (((hdp.mimetyp='multipart/alternative')      { Text+HTML Messis }
             and (mf[2].subtyp='html'))
          or (mf[2].subtyp='x-vcard'))                 { oder Text mit VCard }
   then begin
@@ -585,9 +585,8 @@ begin                         { SelectMultiPart }
         end;
       closelist;
       closebox;
-      end;
-
-  FreeHeaderMem(hdp);
+    end;
+  Hdp.Free;
 end;
 
 
@@ -764,6 +763,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.38  2000/12/03 12:38:26  mk
+  - Header-Record is no an Object
+
   Revision 1.37  2000/11/18 23:31:41  mk
   - MIME-Erkennung wegen schrottiger Microsoft Outlook Software angepasst
 

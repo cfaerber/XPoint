@@ -171,7 +171,7 @@ var x,y,wdt: byte;
       uvs,b   : byte;
       ablage  : byte;
       defekt  : boolean;
-      hdp     : headerp;
+      hdp     : THeader;
       hds     : longint;
       nzahl   : longint;
       typ     : char;
@@ -204,7 +204,7 @@ var x,y,wdt: byte;
       haltedat:=ixdat(FormatDateTime('yymmdd', Dat-hzeit) + '0000');
     nzahl:=1;
 
-    hdp := AllocHeaderMem;
+    hdp := THeader.Create;
     repeat
       testbrk(brk);
       if brk then
@@ -230,8 +230,8 @@ var x,y,wdt: byte;
             b:=0;
             dbWriteN(mbase,mb_gelesen,b);
             end;
-          ReadHeader(hdp^,hds,false);
-          defekt:=(hds=1) or (hds<>msize-groesse) or (groesse<>hdp^.groesse);
+          ReadHeader(hdp,hds,false);
+          defekt:=(hds=1) or (hds<>msize-groesse) or (groesse<>hdp.groesse);
           end;
         if defekt then begin
           hflags:=2;        { Nachricht defekt }
@@ -259,7 +259,7 @@ var x,y,wdt: byte;
         if n mod 10=0 then display;
         end;
     until brk or (_mbrett<>_brett) or dbEOF(mbase) or dbBOF(mbase);
-    FreeHeaderMem(hdp);
+    Hdp.Free;
   end;
 
 var
@@ -409,7 +409,7 @@ var x,y,yy  : byte;
 
     function MsgOK:boolean;  { Test, ob Xgepostete Msg schon verschoben wurde }
     var fs  : longint;
-        hdp : headerp;
+        hdp : THeader;
         hds : longint;
         ok  : boolean;
         enr : shortint;
@@ -421,11 +421,11 @@ var x,y,yy  : byte;
       else begin
         seek(f2,adr);
         enr:=dbReadInt(mbase,'netztyp') shr 24;
-        hdp := AllocHeaderMem;
-        MakeHeader(true,f2,enr,0,hds,hdp^,ok,true);
-        MsgOK:=ok and (size=hds+hdp^.groesse) and (hdp^.empfanz>=min(2,enr))
-                  and (dbReadInt(mbase,'groesse')=hdp^.groesse);
-        FreeHeaderMem(hdp);
+        hdp := THeader.Create;
+        MakeHeader(true,f2,enr,0,hds,hdp,ok,true);
+        MsgOK:=ok and (size=hds+hdp.groesse) and (hdp.empfanz>=min(2,enr))
+                  and (dbReadInt(mbase,'groesse')=hdp.groesse);
+        Hdp.Free;
         seek(f2,fs);
         end;
     end;
@@ -694,6 +694,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.29  2000/12/03 12:38:22  mk
+  - Header-Record is no an Object
+
   Revision 1.28  2000/11/20 10:49:59  mk
   - now computing date with tdatetime
 
@@ -719,7 +722,7 @@ end;
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
   Revision 1.20  2000/07/21 17:39:53  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+  - Umstellung auf THeader.Create/FreeHeaderMem
 
   Revision 1.19  2000/07/15 20:02:59  mk
   - AnsiString updates, noch nicht komplett

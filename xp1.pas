@@ -36,7 +36,7 @@ uses
 {$ENDIF }
   typeform,montage,keys,fileio,inout,winxp,win2,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
-  resource,xp0,crc,xpglobal, classes,debug;
+  resource,xp0,crc,xpglobal, classes,debug, xpheader;
 
 const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
 
@@ -128,10 +128,6 @@ procedure hlp(nr:word);             { setzt helpst[helpstp] }
 procedure pushhp(nr:word);
 procedure pophp;
 procedure freehelp;
-
-function  AllocHeaderMem: headerp;
-procedure ClearHeader(hdp: headerp);
-procedure FreeHeaderMem(var hdp: headerp);
 
 function  allocsenduudatamem: senduuptr;
 procedure clearsenduudata(sdata: senduuptr);
@@ -2023,51 +2019,6 @@ begin
   cursor(curon);
 end;
 
-function AllocHeaderMem: headerp;
-const
-  hdp: headerp = nil;
-begin
-  getmem(hdp, sizeof(header));
-  if hdp=nil then
-    trfehler(6,30);  { 'zu wenig freier Speicher' }
-  ClearHeader(hdp);
-  AllocHeaderMem:= hdp;
-end;
-
-procedure ClearHeader(hdp: headerp);
-begin
-  FillChar(hdp^, SizeOf(header), 0);
-  with hdp^ do
-  begin
-    Kopien := TStringList.Create;
-    ULine := TStringList.Create;
-    XLIne := TStringList.Create;
-    fLine := TStringList.Create;
-    zLIne := TStringList.Create;
-    ReplyTo := TStringList.Create;
-    Followup := TStringList.Create;
-    MailCopies := TStringList.Create;
-  end;
-end;
-
-procedure FreeHeaderMem(var hdp: headerp);
-begin
-  if hdp<>nil then
-  with Hdp^ do
-  begin
-    Kopien.Free;
-    ULine.Free;
-    XLine.Free;
-    fLine.Free;
-    zLine.Free;
-    ReplyTo.Free;
-    Followup.Free;
-    Mailcopies.free;
-  end;
-  freemem(hdp);
-  hdp:= nil;
-end;
-
 function allocsenduudatamem: senduuptr;
 const
   sdata: senduuptr = nil;
@@ -2120,6 +2071,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.95  2000/12/03 12:38:20  mk
+  - Header-Record is no an Object
+
   Revision 1.94  2000/11/25 10:31:47  mk
   - some fixes for new SendUUData
 

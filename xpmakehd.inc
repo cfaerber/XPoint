@@ -18,7 +18,7 @@
 var line : string;
 
 procedure makeheader(ZConnect:boolean; var f:file; empfnr,disknr:integer;
-                     var size:longint; var hd:header; var ok:boolean;
+                     var size:longint; var hd:Theader; var ok:boolean;
                      PM2AMconv:boolean);
 var i,res : integer;
     o: word; { Offset im Lesepuffer }
@@ -288,7 +288,7 @@ var i,res : integer;
       Charset := LowerCase(Line)
   end;
 
-  procedure ParseContentType(var hd:header);
+  procedure ParseContentType(var hd:Theader);
   var p       : integer;
       parname,
       parval  : string;
@@ -351,11 +351,7 @@ begin
   {$ifdef allrefs}
     DisposeReflist(reflist);
   {$endif}
-  {$ifdef uuzmime }
-  ClearHeader;
-  {$else }
-  ClearHeader(@hd);
-  {$endif }
+  hd.Clear;
   bufsize := 2048;
   getmem(buf,bufsize);
   size:=0; Readbuf;
@@ -410,12 +406,12 @@ begin
             end else
 
             { suboptimal, eigentlich sollten alle Mail-Copies-To-
-	      Zeilen eingelesen werden, damit es auch hinter
-	      Gateways, die MCT nicht umwandeln, funktioniert     }
+              Zeilen eingelesen werden, damit es auch hinter
+              Gateways, die MCT nicht umwandeln, funktioniert     }
             if (id='U-MAIL-COPIES-TO') and ((lowercase(line)='nobody')
-	      or (lowercase(line)='never')) then
-	      mailcopies.add(line)
-	    else
+              or (lowercase(line)='never')) then
+              mailcopies.add(line)
+            else
 
             { Mime-Version wegschmeissen - wird neu erzeugt}
             if id = 'U-MIME-VERSION' then else
@@ -464,11 +460,11 @@ begin
             if id = 'ANTWORT-AN' then replyto.add(line) else
 {            if id = 'DISKUSSION-IN' then GetFollowup else }
             if id = 'DISKUSSION-IN' then begin
-	      if cpos('@',line) = 0 then
-	          followup.add(line)
-	        else
-	          mailcopies.add(line)
-	    end else
+              if cpos('@',line) = 0 then
+                  followup.add(line)
+                else
+                  mailcopies.add(line)
+            end else
             if id = 'STICHWORT' then GetStichwort else
             if id = 'ZUSAMMENFASSUNG' then Summary  := Line  else
             if id = 'QUOTE-STRING' then GetQStr else
@@ -484,7 +480,7 @@ begin
             {$ifdef ulines}
             if leftstr(id,2) = 'F-' then
               fline.add(rightstr(id,length(id)-2)+': '+line) else
-	    {$endif}
+            {$endif}
 
 
             if FirstChar(id)='X' then begin               { XP }
@@ -589,6 +585,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.40  2000/12/03 12:38:26  mk
+  - Header-Record is no an Object
+
   Revision 1.39  2000/11/17 19:35:45  fe
   Followup-To support updated to ZC 3.1.
   Mail-Copies-To support added.
@@ -628,7 +627,7 @@ end;
   - UUZ geht jetzt endlich wieder komplett :-)
 
   Revision 1.26  2000/07/21 17:39:57  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+  - Umstellung auf THeader.Create/FreeHeaderMem
 
   Revision 1.25  2000/07/21 13:23:48  mk
   - Umstellung auf TStringList

@@ -525,9 +525,9 @@ begin
   dbWriteN(mbase,mb_unversandt,flag);
 end;
 
-procedure pmCryptFile(var hd:xp0.header; var fn:string);
+procedure pmCryptFile(var hd: THeader; var fn:string);
 var s   : string;
-    hdp : headerp;
+    hdp : THeader;
     hds : longint;
     ok  : boolean;
     oemp: string[AdrLen];
@@ -565,15 +565,15 @@ begin
   assign(f2,temppath+uncryptedfile); rewrite(f2,1);
   assign(f,fn);
   fm_ro; reset(f,1); fm_rw;
-  hdp := AllocHeaderMem;
-  makeheader(ntZConnect(hd.netztyp),f,0,0,hds,hdp^,ok,false);
-  oemp:=hdp^.empfaenger;
-  if hdp^.netztyp=nt_ZConnect then with hdp^ do begin
+  hdp := THeader.Create;
+  makeheader(ntZConnect(hd.netztyp),f,0,0,hds,hdp,ok,false);
+  oemp:=hdp.empfaenger;
+  if hdp.netztyp=nt_ZConnect then with hdp do begin
     AddZer(absender);
     AddZer(empfaenger);
     end;
-  hdp^.netztyp:=nt_Netcall;
-  WriteHeader(hdp^,f2,nil);
+  hdp.netztyp:=nt_Netcall;
+  WriteHeader(hdp,f2,nil);
   seek(f,hds);
   fmove(f,f2);
   close(f); close(f2);
@@ -582,7 +582,7 @@ begin
   rps(s,'$INFILE',temppath+uncryptedfile);
   rps(s,'$OUTFILE',temppath+cryptedfile);
   rps(s,'$USER',oemp);
-  FreeHeaderMem(hdp);
+  Hdp.Free;
   shell(s,500,3);                     { Nachricht codieren }
   if FileExists(temppath+uncryptedfile) then
     _era(temppath+uncryptedfile);
@@ -780,13 +780,13 @@ begin
 end;
 
 procedure get_xref;
-var hdp : headerp;
+var hdp : THeader;
     hds : longint;
     p   : byte;
 begin
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
-  with hdp^ do begin
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,false);
+  with hdp do begin
     _bezug:=msgid;
     _orgref:=org_msgid;
     _beznet:=netztyp;
@@ -800,21 +800,21 @@ begin
       if netztyp<>nt_ZCONNECT then
         fidoto:=LeftStr(absender,min(35,p-1));
       end;
-    if (sendflags and SendIQuote<>0) and (hdp^.fido_to<>'') then
-      fidoto:=hdp^.fido_to;
+    if (sendflags and SendIQuote<>0) and (hdp.fido_to<>'') then
+      fidoto:=hdp.fido_to;
     origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),pfad);
     end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 procedure get_origbox;
-var hdp : headerp;
+var hdp : THeader;
     hds : longint;
 begin
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
-  origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),hdp^.pfad);
-  FreeHeaderMem(hdp);
+  Hdp := THeader.Create;
+  ReadHeader(hdp,hds,false);
+  origbox:=pfadbox(ntZConnect(dbReadInt(mbase,'netztyp') and $ff),hdp.pfad);
+  Hdp.Free;
 end;
 
 procedure LoadBoxData;
@@ -966,8 +966,8 @@ procedure SetCrashInfo;
 var fa : FidoAdr;
     ni : NodeInfo;
 begin
-  GetNodeinfo(hdp^.empfaenger,ni,2);
-  splitfido(hdp^.empfaenger,fa,DefaultZone);
+  GetNodeinfo(hdp.empfaenger,ni,2);
+  splitfido(hdp.empfaenger,fa,DefaultZone);
   fa.ispoint:=ni.ispoint;
   SetCrash(makeFidoAdr(fa,true),true);
 end;
@@ -976,8 +976,8 @@ function CrashAdr:string;
 var fa : FidoAdr;
     ni : NodeInfo;
 begin
-  GetNodeinfo(hdp^.empfaenger,ni,2);
-  splitfido(hdp^.empfaenger,fa,DefaultZone);
+  GetNodeinfo(hdp.empfaenger,ni,2);
+  splitfido(hdp.empfaenger,fa,DefaultZone);
   fa.ispoint:=ni.ispoint;
   ShrinkPointToNode(fa,ni);
   CrashAdr:=MakeFidoAdr(fa,true);
@@ -1108,7 +1108,7 @@ procedure SetXpointCtl;
 var sum : longint;
     i   : integer;
 begin
-  with hdp^ do
+  with hdp do
     if FileExists(LeftStr(datum,6)+'.345') and stricmp(datei,SupportCfg) then begin
       sum:=0;
       for i:=1 to length(datum) do
@@ -1157,6 +1157,9 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.41  2000/12/03 12:38:25  mk
+  - Header-Record is no an Object
+
   Revision 1.40  2000/11/25 18:28:31  fe
   Fixed some bugs.
 
@@ -1179,7 +1182,7 @@ end;
   - Tearline gekuertz
 
   Revision 1.33  2000/10/26 12:06:34  mk
-  - AllocHeaderMem/FreeHeaderMem Umstellung
+  - THeader.Create/FreeHeaderMem Umstellung
 
   Revision 1.32  2000/10/17 10:05:53  mk
   - Left->LeftStr, Right->RightStr
@@ -1203,7 +1206,7 @@ end;
   - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
 
   Revision 1.25  2000/07/21 17:39:56  mk
-  - Umstellung auf AllocHeaderMem/FreeHeaderMem
+  - Umstellung auf THeader.Create/FreeHeaderMem
 
   Revision 1.24  2000/07/20 16:49:59  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt

@@ -18,7 +18,7 @@ unit  xp_pgp;
 interface
 
 uses
-  sysutils,xpglobal,typeform,fileio,resource,database,maske,
+  sysutils,xpglobal,typeform,fileio,resource,database,maske, xpheader,
   xp0,xp1;
 
 procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
@@ -27,12 +27,12 @@ procedure RunPGP5(exe:string;par:string);    { PGP 5.x aufrufen               }
 procedure UpdateKeyfile;
 procedure WritePGPkey_header(var f:file);    { PGP-PUBLIC-KEY: ... erzeugen   }
 procedure PGP_SendKey(empfaenger:string);    { Antwort auf Key-Request senden }
-procedure PGP_EncodeFile(var source:file; var hd:xp0.header;
+procedure PGP_EncodeFile(var source:file; var hd: Theader;
                          fn,UserID:string; encode,sign:boolean;
                          var fido_origin:string);
 
 procedure PGP_RequestKey;
-procedure PGP_DecodeMessage(hdp:headerp; sigtest:boolean);
+procedure PGP_DecodeMessage(hdp:Theader; sigtest:boolean);
 procedure PGP_DecodeMsg(sigtest:boolean);  { dec. und/oder Signatur testen }
 procedure PGP_DecodeKey(source,dest:string);
 procedure PGP_ImportKey(auto:boolean);
@@ -262,7 +262,7 @@ end;
 { Bei Fido-Nachrichten Origin abschneiden und nach Codierung }
 { / Signierung wieder anhaengen.                             }
 
-procedure PGP_EncodeFile(var source:file; var hd: xp0.header;
+procedure PGP_EncodeFile(var source:file; var hd: theader;
                          fn,UserID:string; encode,sign:boolean;
                          var fido_origin:string);
 var tmp  : string;
@@ -482,7 +482,7 @@ begin
 end;
 
 
-procedure PGP_DecodeMessage(hdp:headerp; sigtest:boolean);
+procedure PGP_DecodeMessage(hdp:theader; sigtest:boolean);
 var tmp,tmp2 : string;
     _source  : string;
     f,f2     : file;
@@ -552,24 +552,24 @@ begin
   end else begin
     if not SigTest then begin
       PGP_BeginSavekey;
-      orgsize:=hdp^.groesse;
-      hdp^.groesse:=_filesize(tmp2);
-      hdp^.komlen:=hdp^.ckomlen; hdp^.ckomlen:=0;
-      hdp^.typ:=iifc(IsBinaryFile(tmp2),'B','T'); hdp^.crypttyp:='';
-      hdp^.pgpflags:=hdp^.pgpflags and (not (fPGP_encoded+fPGP_signed+fPGP_clearsig));
-      if hdp^.ccharset<>'' then begin
-        hdp^.charset:=UpperCase(hdp^.ccharset);
-        hdp^.ccharset:='';
+      orgsize:=hdp.groesse;
+      hdp.groesse:=_filesize(tmp2);
+      hdp.komlen:=hdp.ckomlen; hdp.ckomlen:=0;
+      hdp.typ:=iifc(IsBinaryFile(tmp2),'B','T'); hdp.crypttyp:='';
+      hdp.pgpflags:=hdp.pgpflags and (not (fPGP_encoded+fPGP_signed+fPGP_clearsig));
+      if hdp.ccharset<>'' then begin
+        hdp.charset:=UpperCase(hdp.ccharset);
+        hdp.ccharset:='';
       end;
     end;
     { Signaturtest oder Fehler: }
     if sigtest or (errorlevel=18) then begin
       { Fehler: }
       if errorlevel<>0 then begin
-        hdp^.pgpflags := hdp^.pgpflags or fPGP_sigerr;
+        hdp.pgpflags := hdp.pgpflags or fPGP_sigerr;
         WrSigflag(flag_PGPSigErr);
       end else begin
-        hdp^.pgpflags := hdp^.pgpflags or fPGP_sigok;
+        hdp.pgpflags := hdp.pgpflags or fPGP_sigok;
         WrSigflag(flag_PGPSigOk);
       end
     end;
@@ -580,7 +580,7 @@ begin
       dbWriteN(mbase,mb_netztyp,l);
     end else begin
       rewrite(f,1);          { alte Datei ueberschreiben }
-      WriteHeader(hdp^,f,reflist);
+      WriteHeader(hdp,f,reflist);
       assign(f2,tmp2);
       reset(f2,1);
       fmove(f2,f);
@@ -589,12 +589,12 @@ begin
       if FileExists(tmp2) then _era(tmp2);
       Xwrite(tmp);
       wrkilled;
-      dbWriteN(mbase,mb_typ,hdp^.typ[1]);
-      dbWriteN(mbase,mb_groesse,hdp^.groesse);
+      dbWriteN(mbase,mb_typ,hdp.typ[1]);
+      dbWriteN(mbase,mb_groesse,hdp.groesse);
       dbReadN(mbase,mb_unversandt,b);
       b:=b or 4;                          { "c"-Flag }
       dbWriteN(mbase,mb_unversandt,b);
-      hdp^.groesse:=orgsize;
+      hdp.groesse:=orgsize;
       PGP_EndSavekey;
     end;
   end;
@@ -605,13 +605,13 @@ end;
 
 
 procedure PGP_DecodeMsg(sigtest:boolean);
-var hdp : headerp;
+var hdp : Theader;
     hds : longint;
 begin
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,true);
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,true);
   PGP_DecodeMessage(hdp,sigtest);
-  FreeHeaderMem(hdp);
+  Hdp.Free;
   aufbau:=true;
 end;
 
@@ -687,15 +687,15 @@ end;
 
 
 procedure PGP_ImportKey(auto:boolean);
-var hdp      : headerp;
+var hdp      : THeader;
     hds      : longint;
     tmp,tmp2 : string;
     mk       : boolean;
 begin
   tmp:=TempS(dbReadInt(mbase,'msgsize'));
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,true);
-  if hdp^.pgpflags and fPGP_haskey = 0 then
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,true);
+  if hdp.pgpflags and fPGP_haskey = 0 then
     extract_msg(xTractMsg,'',tmp,false,0)
   else begin
     tmp2:=TempS(dbReadInt(mbase,'msgsize'));
@@ -707,7 +707,7 @@ begin
     rfehler(3005)         { 'Fehler beim Auslesen des PGP-Keys' }
   else begin
     if auto then          { 'lese Key aus Nachricht %s von %s ein' }
-      LogPGP(reps(getreps2(3002,3,'<'+hdp^.msgid+'>'),hdp^.absender));
+      LogPGP(reps(getreps2(3002,3,'<'+hdp.msgid+'>'),hdp.absender));
     mk:=PGP_WaitKey;
     if not auto then PGP_WaitKey:=true;
     if PGPVersion<>PGP5 then
@@ -718,7 +718,7 @@ begin
     PGP_WaitKey:=mk;
     if FileExists(tmp) then _era(tmp);
   end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 
@@ -751,20 +751,20 @@ end;
 
 
 procedure PGP_BeginSavekey;      { Key aus ZCONNECT-Header temporaer sichern }
-var hdp : headerp;
+var hdp : theader;
     hds : longint;
     tmp : string;
 begin
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
-  if hdp^.pgpflags and fPGP_haskey<>0 then begin
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,false);
+  if hdp.pgpflags and fPGP_haskey<>0 then begin
     tmp:=TempS(dbReadInt(mbase,'msgsize'));
     extract_msg(xTractPuf,'',tmp,false,0);
     savekey:=TempS(hds);
     PGP_DecodeKey(tmp,savekey);
     if FileExists(tmp) then _era(tmp);
   end;
-  FreeHeaderMem(hdp);
+  Hdp.Free;
 end;
 
 
@@ -779,6 +779,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.33  2000/12/03 12:38:26  mk
+  - Header-Record is no an Object
+
   Revision 1.32  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 

@@ -31,7 +31,7 @@ procedure InitDatabase;
 
 implementation  { --------------------------------------------------- }
 
-uses xp4o2, winxp;
+uses xpheader, xp4o2, winxp;
 
 
 procedure GetFieldNumbers;
@@ -126,7 +126,7 @@ var flp : dbFLP;
   { Feld 'MsgID' in Nachrichtendatei einfÅgen (ab 1.01) }
   procedure NewFieldMessageID;
   var fld : dbFeldTyp;
-      hdp : headerp;
+      hdp : Theader;
       hds : longint;
       x,y : byte;
       n,nn: longint;
@@ -153,15 +153,15 @@ var flp : dbFLP;
       msgbox(54,5,'',x,y);
       mwrt(x+3,y+2,'Und jetzt noch die MessageIDs einlesen ...     %');
       idnr:=dbGetFeldNr(mbase,'msgid');
-      hdp := AllocHeaderMem;
+      hdp := THeader.Create;
       while not dbEOF(mbase) do begin
         inc(n); wrn;
-        ReadHeader(hdp^,hds,false);
+        ReadHeader(hdp,hds,false);
         if hds>1 then
-          dbWriteNStr(mbase,idnr,hdp^.msgid);
+          dbWriteNStr(mbase,idnr,hdp.msgid);
         dbNext(mbase);
         end;
-      FreeHeaderMem(hdp);
+      Hdp.Free;
       inc(n); wrn;
       closebox;
       end;
@@ -313,9 +313,9 @@ var flp : dbFLP;
     nn:=0;
     hdp := AllocHeaderMem;
     while not dbEOF(mbase) do begin
-      ReadHeader(hdp^,hds,false);
-      mnt:=hdp^.netztyp;
-      if hdp^.ref<>'' then inc(mnt,$100);
+      ReadHeader(hdp,hds,false);
+      mnt:=hdp.netztyp;
+      if hdp.ref<>'' then inc(mnt,$100);
       dbWrite(mbase,'netztyp',mnt);
       inc(nn); write(#13,nn);
       dbNext(mbase);
@@ -389,7 +389,7 @@ var flp : dbFLP;
   { Feld 'Name' in Nachrichtendatei einfÅgen (ab 2.1) }
   procedure NewFieldMsgname;
   var fld   : dbFeldTyp;
-      hdp   : headerp;
+      hdp   : Theader;
       hds,n : longint;
       x,y   : byte;
       nt    : byte;
@@ -407,7 +407,7 @@ var flp : dbFLP;
       end;
     dbAppendField(MsgFile,fld);
 
-    hdp := AllocHeadermem;                        { Realnames / BrettempfÑnger einlesen }
+    hdp := THeader.Create;                        { Realnames / BrettempfÑnger einlesen }
     msgbox(40,3,'',x,y);
     wrt(x+3,y+1,'Nachrichten Åberarbeiten...');
     attrtxt(col.colmboxhigh);
@@ -422,9 +422,9 @@ var flp : dbFLP;
       nt:=dbReadInt(mbase,'netztyp') and $ff;
       if (nt=nt_Fido) or (nt=nt_Magic) or (nt=nt_ZConnect) or (nt=nt_UUCP)
       then begin
-        ReadHeader(hdp^,hds,false);
-        if nt=nt_Fido then name:=hdp^.fido_to
-        else name:=hdp^.realname;
+        ReadHeader(hdp,hds,false);
+        if nt=nt_Fido then name:=hdp.fido_to
+        else name:=hdp.realname;
         if name<>'' then
           dbWriteStr(mbase,'name',name);
         end;
@@ -432,7 +432,7 @@ var flp : dbFLP;
       end;
     dbClose(mbase);
     closebox;
-    FreeHeaderMem(hdp);
+    Hdp.Free;
   end;
 
   { Feld 'Flags' in Nachrichtendatei einfÅgen (ab 3.1) }
@@ -449,7 +449,7 @@ var flp : dbFLP;
   { Feld 'MIMEtyp' in Nachrichtendatei einfÅgen (ab 3.2) }
   procedure NewFieldMsgMimetyp;
   var fld   : dbFeldTyp;
-      hdp   : headerp;
+      hdp   : THeader;
       n,hds : longint;
       x,y   : byte;
       flags : longint;
@@ -461,7 +461,7 @@ var flp : dbFLP;
       end;
     dbAppendField(MsgFile,fld);
 
-    hdp := AllocHeaderMem;                        { MIME-Typen einlesen }
+    hdp := THeader.Create;                        { MIME-Typen einlesen }
     msgbox(46,3,'',x,y);
     wrt(x+3,y+1,'MIME-Nachrichtentypen einlesen ...     %');
     attrtxt(col.colmboxhigh);
@@ -473,10 +473,10 @@ var flp : dbFLP;
         gotoxy(x+38,y+1);
         moff; write(n*100 div dbRecCount(mbase):3); mon;
         end;
-      ReadHeader(hdp^,hds,false);
-      if hdp^.mimetyp<>'' then
-        dbWriteStr(mbase,'mimetyp',hdp^.mimetyp);
-      if hdp^.boundary<>'' then begin
+      ReadHeader(hdp,hds,false);
+      if hdp.mimetyp<>'' then
+        dbWriteStr(mbase,'mimetyp',hdp.mimetyp);
+      if hdp.boundary<>'' then begin
         dbRead(mbase,'flags',flags);
         flags:=flags or 4;
         dbWrite(mbase,'flags',flags);
@@ -485,7 +485,7 @@ var flp : dbFLP;
       end;
     dbClose(mbase);
     closebox;
-    FreeHeaderMem(hdp);
+    Hdp.Free;
   end;
 
   procedure UserEbError;
@@ -903,6 +903,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.24  2000/12/03 12:38:21  mk
+  - Header-Record is no an Object
+
   Revision 1.23  2000/11/16 20:53:50  hd
   - DOS Unit entfernt
 

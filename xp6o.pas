@@ -21,7 +21,7 @@ uses
 {$ELSE }
   crt,
 {$ENDIF }
-  sysutils,typeform,fileio,inout,keys,datadef,database,maske,
+  sysutils,typeform,fileio,inout,keys,datadef,database,maske, xpheader,
   crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
   xp2c,xp_des,xpe;
 
@@ -54,7 +54,7 @@ var
     rc       : integer;
     found    : boolean;
     f        : file;
-    hdp0,hdp : headerp;
+    hdp0,hdp : THeader;
     rr       : word;
     hds      : longint;
     ok       : boolean;
@@ -86,7 +86,7 @@ label ende,nextpp;
       p     : pointer;
       ps    : word;
   begin
-    rd:=adr+hdp^.groesse+hds;
+    rd:=adr+hdp.groesse+hds;
     wr:=adr;
     size:=fsize-rd;
     seek(f,adr);    { falls size=0 ist... }
@@ -135,8 +135,8 @@ label ende,nextpp;
   function EQ_empf:boolean;
   var ml : byte;
   begin
-    ml:=min(length(hdp0^.empfaenger),length(hdp^.empfaenger));
-    EQ_empf:=LeftStr(hdp0^.empfaenger,ml)=LeftStr(hdp^.empfaenger,ml);
+    ml:=min(length(hdp0.empfaenger),length(hdp.empfaenger));
+    EQ_empf:=LeftStr(hdp0.empfaenger,ml)=LeftStr(hdp.empfaenger,ml);
   end;
 
   procedure set_forcebox;
@@ -144,8 +144,8 @@ label ende,nextpp;
       bbox : string;
       p    : byte;
   begin
-    if hdp^.real_box<>'' then
-      forcebox:=hdp^.real_box   { BOX aus RFC- oder Maggi-Header }
+    if hdp.real_box<>'' then
+      forcebox:=hdp.real_box   { BOX aus RFC- oder Maggi-Header }
     else if not crash then
       forcebox:=box             { Box entsprechend PP-Dateiname }
     else begin
@@ -219,17 +219,17 @@ begin
     exit;
     end;
   rec:=dbRecno(mbase);
-  hdp := AllocHeaderMem;
-  hdp0 := AllocHeaderMem;
-  ReadHeader(hdp0^,hds,true);
+  hdp := THeader.Create;
+  hdp0 := THeader.Create;
+  ReadHeader(hdp0,hds,true);
 
-  if (hdp0^.wab<>'') and edit and modi then begin
+  if (hdp0.wab<>'') and edit and modi then begin
     rfehler(638); { 'Als 'Original' weitergeleitete Nachrichen duerfen nicht geaendert werden!' }
     goto ende;
   end;
 
   _brett := dbReadNStr(mbase,mb_brett);
-  betr:=hdp0^.betreff;
+  betr:=hdp0.betreff;
   dbReadN(mbase,mb_origdatum,_date);
   dat:=longdat(_date);
   dbReadN(mbase,mb_groesse,groesse);
@@ -251,22 +251,22 @@ begin
     fsize:=filesize(f);
     while not found and (adr<fsize) do begin
       seek(f,adr);
-      makeheader(zconnect,f,empfnr,0,hds,hdp^,ok,false);
+      makeheader(zconnect,f,empfnr,0,hds,hdp,ok,false);
       if not ok then begin
         rfehler1(621,sr.name);    { 'fehlerhaftes Pollpaket:  %s' }
         goto nextpp;   { zum naechsten Puffer weiterspringen }
         end;
-      found:=EQ_betreff(hdp^.betreff) and (dat=hdp^.datum) and EQ_empf
-             and (FormMsgid(hdp^.msgid)=dbReadStr(mbase,'msgid'));
+      found:=EQ_betreff(hdp.betreff) and (dat=hdp.datum) and EQ_empf
+             and (FormMsgid(hdp.msgid)=dbReadStr(mbase,'msgid'));
       dbReadN(mbase,mb_netztyp,nt);
    (* Groessenueberpruefung nicht mehr notwendig, wegen MsgID-Ueberpruefung
       if (uvs and 4=0) and (nt and $4000=0) then   { 4=pmc, $4000 = PGP }
         if uvs and 2=0 then                        { 2 = Binaermeldung }
-          found:=found and (groesse=hdp^.groesse)
+          found:=found and (groesse=hdp.groesse)
         else
-          found:=found and (uvsXgroesse=hdp^.groesse); *)
+          found:=found and (uvsXgroesse=hdp.groesse); *)
       if not found then
-        adr:=adr+hdp^.groesse+hds;
+        adr:=adr+hdp.groesse+hds;
       end;
   nextpp:
     if found then ShrinkPuffer
@@ -275,7 +275,7 @@ begin
     close(f);
     if found and (fs=0) then begin
       erase(f);
-      if crash then DelCrashInf(hdp^.empfaenger);
+      if crash then DelCrashInf(hdp.empfaenger);
       end;
   end;
   FindClose(sr);
@@ -283,7 +283,7 @@ begin
   if not found then begin
     rfehler(622);     { 'Nachricht nicht (mehr) im Pollpaket vorhanden !?' }
     ReadHeadEmpf:=empfnr;
-    ReadHeader(hdp^,hds,true);
+    ReadHeader(hdp,hds,true);
     end;
 
   dbReadN(mbase,mb_halteflags,orghalt);
@@ -312,76 +312,76 @@ begin
     hds:=dbReadInt(mbase,'msgsize')-dbReadInt(mbase,'groesse');
     XReadIsoDecode:=true;
     XreadF(hds,f);
-    pm:=cpos('@',hdp^.empfaenger)>0;
-    if not pm and (hdp0^.netztyp=nt_Fido) then
+    pm:=cpos('@',hdp.empfaenger)>0;
+    if not pm and (hdp0.netztyp=nt_Fido) then
       Clip_Tearline;
     close(f);
     headerf:='';
-    if not pm then hdp^.empfaenger:=_brett[1]+hdp^.empfaenger
+    if not pm then hdp.empfaenger:=_brett[1]+hdp.empfaenger
     else
-      if pos('@',hdp^.empfaenger)=0 then
-        hdp^.empfaenger:=hdp^.empfaenger+'@'+box+'.ZER';
+      if pos('@',hdp.empfaenger)=0 then
+        hdp.empfaenger:=hdp.empfaenger+'@'+box+'.ZER';
     dbReadN(mbase,mb_typ,typ);
     set_forcebox;
-    xp6._bezug:=hdp0^.ref;
-    xp6._orgref:=hdp0^.org_xref;
-    xp6._beznet:=hdp0^.netztyp;
+    xp6._bezug:=hdp0.ref;
+    xp6._orgref:=hdp0.org_xref;
+    xp6._beznet:=hdp0.netztyp;
     xp6._ref6list:=reflist;
     reflist:=nil;
-    xp6._replyPath:=hdp0^.replypath;
-    xp6._pmReply:=(hdp^.attrib and attrPmReply<>0);
-    xp6.flQTo:=(hdp^.attrib and attrQuoteTo<>0);
-    xp0.fidoto:=hdp0^.fido_to;
+    xp6._replyPath:=hdp0.replypath;
+    xp6._pmReply:=(hdp.attrib and attrPmReply<>0);
+    xp6.flQTo:=(hdp.attrib and attrQuoteTo<>0);
+    xp0.fidoto:=hdp0.fido_to;
     xp6.flCrash:=crash;
-    xp6l.flEB:=(hdp0^.attrib and attrReqEB<>0);
+    xp6l.flEB:=(hdp0.attrib and attrReqEB<>0);
     { xp6.NoCrash:=true; }
-    xp6.FileAttach:=(hdp0^.attrib and attrFile<>0);
-    xp6.msgprio:=hdp0^.prio;
-    xp6.rfcprio:=hdp0^.priority;
-    xp6.ControlMsg:=(hdp^.attrib and attrControl<>0);
-    sendfilename:=hdp0^.datei;
-    sendfiledate:=hdp0^.ddatum;
+    xp6.FileAttach:=(hdp0.attrib and attrFile<>0);
+    xp6.msgprio:=hdp0.prio;
+    xp6.rfcprio:=hdp0.priority;
+    xp6.ControlMsg:=(hdp.attrib and attrControl<>0);
+    sendfilename:=hdp0.datei;
+    sendfiledate:=hdp0.ddatum;
     sendflags:=0;
     sdata:=allocsenduudatamem;
     with sData^ do
     begin
-      followup.assign(hdp^.followup);
-      replyto.assign(hdp^.replyto);
-      Keywords:=hdp^.Keywords;
-      Summary:=hdp^.Summary;
-      Distribute:=hdp^.Distribution;
-      ReplyGroup:=hdp^.ReplyGroup;
-      if hdp^.wab<>'' then begin
-        oab:=hdp^.absender; oar:=hdp^.realname;
+      followup.assign(hdp.followup);
+      replyto.assign(hdp.replyto);
+      Keywords:=hdp.Keywords;
+      Summary:=hdp.Summary;
+      Distribute:=hdp.Distribution;
+      ReplyGroup:=hdp.ReplyGroup;
+      if hdp.wab<>'' then begin
+        oab:=hdp.absender; oar:=hdp.realname;
         inc(sendflags,sendWAB);
         end
       else begin
-        oab:=hdp^.oab; oar:=hdp^.oar;
+        oab:=hdp.oab; oar:=hdp.oar;
         end;
-      oem:=hdp^.oem;
-      onetztyp:=hdp^.netztyp;
-      quotestr:=hdp^.quotestring;
+      oem:=hdp.oem;
+      onetztyp:=hdp.netztyp;
+      quotestr:=hdp.quotestring;
       UV_edit:=true;
       end;
     dbReadN(mbase,mb_msgsize,oldmsgsize);
     dbReadN(mbase,mb_adresse,oldmsgpos);
-    empf:=hdp^.empfaenger;
+    empf:=hdp.empfaenger;
     if empfnr>0 then begin
       ReadHeadEmpf:=empfnr; ReadEmpflist:=true;
-      ReadHeader(hdp^,hds,true);
+      ReadHeader(hdp,hds,true);
       sendempflist.Assign(Xp3.empflist);
       xp3.empflist.Clear;
       CrosspostBox:=box;
       end;
-    if hdp^.pgpflags and fPGP_haskey<>0 then
+    if hdp.pgpflags and fPGP_haskey<>0 then
       inc(SendFlags,SendPGPkey);
-    if hdp^.pgpflags and fPGP_request<>0 then
+    if hdp.pgpflags and fPGP_request<>0 then
       inc(SendFlags,SendPGPreq);
-    if (hdp^.pgpflags and (fPGP_clearsig+fPGP_signed)<>0) or
+    if (hdp.pgpflags and (fPGP_clearsig+fPGP_signed)<>0) or
        (dbReadInt(mbase,'netztyp') and $4000<>0) then
       inc(SendFlags,SendPGPsig);
     if msgMarked then msgMarkEmpf:=max(1,empfnr);
-    if hdp^.nokop then inc(SendFlags,SendNokop);
+    if hdp.nokop then inc(SendFlags,SendNokop);
     if DoSend(pm,tmp,empf,betr,modi,typ='B',true,false,false,
               sData,headerf,headerf,sendflags+Sendreedit+
               iif(orghalt=1,sendHalt,0)+iif(msgmarked,sendMark,0)) then begin
@@ -408,8 +408,8 @@ begin
   xaufbau:=true;
 ende:
   FlushClose;
-  FreeHeaderMem(hdp);
-  FreeHeaderMem(hdp0);
+  Hdp.Free;
+  Hdp0.Free;
   aufbau:=true;
 end;
 
@@ -462,7 +462,7 @@ var
     x,y,p  : byte;
     ta     : taste;
     n      : integer;
-    hdp    : headerp;
+    hdp    : Theader;
     hds    : longint;
     fl,b   : byte;
     rec    : longint;
@@ -503,9 +503,9 @@ label ende,again;
       wrs(getreps2(641,1,fdat(zdate)));   { '## Nachricht am %s archiviert' }
       _brett := dbReadNStr(mbase,mb_brett);
       if (_brett[1]<>'U') or (typ=5) then
-        wrs(getres2(641,2)+iifs(pmarchiv,': /',' : ')+hdp^.empfaenger);   { '## Ursprung' }
+        wrs(getres2(641,2)+iifs(pmarchiv,': /',' : ')+hdp.empfaenger);   { '## Ursprung' }
       if not pmarchiv and (typ<>5) then
-        wrs(getres2(641,3)+hdp^.absender);   { '## Ersteller: ' }
+        wrs(getres2(641,3)+hdp.absender);   { '## Ersteller: ' }
       freeres;
       end;
   end;
@@ -558,42 +558,42 @@ label ende,again;
     tmp:=TempS(_filesize(fn)+2000);
     assign(tf,tmp);
     rewrite(tf,1);
-    hdp^.empfaenger:=Typeform.Mid(empf,2);
-    if hdp^.msgid<>'' then
-      hdp^.msgid:=RightStr(hdp^.msgid,1)+LeftStr(hdp^.msgid,length(hdp^.msgid)-1);
+    hdp.empfaenger:=Typeform.Mid(empf,2);
+    if hdp.msgid<>'' then
+      hdp.msgid:=RightStr(hdp.msgid,1)+LeftStr(hdp.msgid,length(hdp.msgid)-1);
     assign(f,fn);           { ^^ Rekursion vermeiden }
     reset(f,1);
-    hdp^.groesse:=filesize(f);
-    hdp^.betreff:=betr;
-    hdp^.orgdate:=true;
-    Writeheader(hdp^,tf,reflist);
+    hdp.groesse:=filesize(f);
+    hdp.betreff:=betr;
+    hdp.orgdate:=true;
+    Writeheader(hdp,tf,reflist);
     fmove(f,tf);
     dbAppend(mbase);
-    mnt:=hdp^.netztyp;
-    if (hdp^.wab<>'') or (hdp^.oem<>'') then inc(mnt,$800);
+    mnt:=hdp.netztyp;
+    if (hdp.wab<>'') or (hdp.oem<>'') then inc(mnt,$800);
     dbWriteN(mbase,mb_netztyp,mnt);
     dbWriteNStr(mbase,mb_brett,ebrett);
     dbWriteNStr(mbase,mb_betreff,betr);
-    dbWriteNStr(mbase,mb_absender,hdp^.absender);
+    dbWriteNStr(mbase,mb_absender,hdp.absender);
     dbWriteN(mbase,mb_flags,flags);
-    dat:=IxDat(hdp^.datum); dbWriteN(mbase,mb_origdatum,dat);
+    dat:=IxDat(hdp.datum); dbWriteN(mbase,mb_origdatum,dat);
     dbWriteN(mbase,mb_empfdatum,edat);
-    mid:=FormMsgid(hdp^.msgid);
+    mid:=FormMsgid(hdp.msgid);
     dbWriteNStr(mbase,mb_msgid,mid);
     l:=filesize(f);       dbWriteN(mbase,mb_groesse,l);
-    hdp^.typ:=iifc(binaermail,'B','T');   { Typ korrigieren }
-    b:=ord(hdp^.typ[1]);    dbWriteN(mbase,mb_typ,b);
+    hdp.typ:=iifc(binaermail,'B','T');   { Typ korrigieren }
+    b:=ord(hdp.typ[1]);    dbWriteN(mbase,mb_typ,b);
     close(f);
-    dbWriteN(mbase,mb_typ,hdp^.typ[1]);
-    if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp^.fido_to)
-    else                  dbWriteNStr(mbase,mb_name,hdp^.realname);
+    dbWriteN(mbase,mb_typ,hdp.typ[1]);
+    if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp.fido_to)
+    else                  dbWriteNStr(mbase,mb_name,hdp.realname);
     b:=1;             dbWriteN(mbase,mb_gelesen,b);
     b:=random(9)+iif(abl<10,1,11);
                       dbWriteN(mbase,mb_ablage,b);
     l:=filesize(tf);  dbWriteN(mbase,mb_msgsize,l);
     close(tf);
     Xwrite(tmp);
-    AddBezug(hdp^,0);
+    AddBezug(hdp,0);
     erase(tf);
     RereadBrettdatum(ebrett);
 
@@ -608,7 +608,7 @@ label ende,again;
       fn   : string;
       leer : string;
       komm : string;
-      hdp  : headerp;
+      hdp  : THeader;
       hds  : longint;
       t    : text;
   begin
@@ -618,8 +618,9 @@ label ende,again;
     mappcustomsel(xp3o.seluser,false);
     msetvfunc(testmausempf);
     maddstring(3,4,'Kommentar ',komm,43,255,'');
-    hdp := AllocHeaderMem; ReadHeader(hdp^,hds,false);
-    mauswlbox:=pfadbox(true,hdp^.pfad);
+    hdp := THeader.Create;
+    ReadHeader(hdp,hds,false);
+    mauswlbox:=pfadbox(true,hdp.pfad);
     readmask(brk);
     enddialog;
     if not brk then begin
@@ -627,9 +628,9 @@ label ende,again;
       assign(t,fn); rewrite(t);
       write(t,'#');
       if odd(dbReadInt(mbase,'unversandt')) then
-        writeln(t,LeftStr(hdp^.msgid,cpos('@',hdp^.msgid)-1))
+        writeln(t,LeftStr(hdp.msgid,cpos('@',hdp.msgid)-1))
       else
-        writeln(t,hdp^.msgid);
+        writeln(t,hdp.msgid);
       writeln(t,'BW');
       writeln(t,'K',empf);
       if komm<>'' then writeln(t,'>',komm);
@@ -640,7 +641,7 @@ label ende,again;
                 sendbox,false,false,nil,leer,leer,0) then;
       _era(fn);
       end;
-    FreeHeaderMem(hdp);
+    Hdp.Free;
   end;
 
   procedure get_re_n(grnr:longint);
@@ -744,14 +745,14 @@ begin
     end;
 
   oempf:=getres(600);          { 'Originalempfaenger' }
-  hdp := AllocHeaderMem;
+  hdp := THeader.Create;
 
 again:
   dbReadN(mbase,mb_typ,ntyp);
   _brett := dbReadNStr(mbase,mb_brett);
   if (typ=4) and (dbReadInt(mbase,'unversandt') and 2<>0) then begin
     rfehler(620);    { 'Nicht moeglich - bitte Nachricht erneut versenden.' }
-    FreeHeaderMem(hdp);
+    Hdp.Free;
     exit;   { Erneut: Binaer-Versandmeldung }
     end;
   fn:=TempS(dbReadInt(mbase,'msgsize')+2000);
@@ -763,11 +764,11 @@ again:
     ReadEmpfList := true;
     ReadKopList := true;
   end;
-  ReadHeader(hdp^,hds,true);
+  ReadHeader(hdp,hds,true);
   if typ in [5,6] then
-    Empflist.Assign(Hdp^.kopien);
+    Empflist.Assign(Hdp.kopien);
   if hds=1 then goto ende;
-  betr:=hdp^.betreff;
+  betr:=hdp.betreff;
   binaermail:=(ntyp='B');
   if LeftStr(betr,length(QPC_ID))=QPC_ID then begin
     betr:=copy(betr,length(QPC_ID)+1,BetreffLen);
@@ -804,26 +805,26 @@ again:
               else Name := dbReadNStr(mbase,mb_absender);
               end;
             write_archiv(true);
-            if ntZConnect(hdp^.netztyp) then begin
-              hdp^.empfaenger:=name;
-              hdp^.archive:=true;
+            if ntZConnect(hdp.netztyp) then begin
+              hdp.empfaenger:=name;
+              hdp.archive:=true;
               end
             else
-              hdp^.empfaenger:=TO_ID+name;
-            hdp^.betreff:=betr;
+              hdp.empfaenger:=TO_ID+name;
+            hdp.betreff:=betr;
             if binaermail or not archivtext then
-              newsize:=hdp^.groesse
+              newsize:=hdp.groesse
             else begin
-              newsize:=hdp^.groesse+2;  { Leerzeile }
+              newsize:=hdp.groesse+2;  { Leerzeile }
               for i:=1 to asnum do
                 inc(newsize,length(aas[i])+2);
               end;
-            hdp^.groesse:=newsize;
-            hdp^.attrib:=hdp^.attrib and (not attrQPC);
-            hdp^.charset:='';
-            hdp^.orgdate:=true;
+            hdp.groesse:=newsize;
+            hdp.attrib:=hdp.attrib and (not attrQPC);
+            hdp.charset:='';
+            hdp.orgdate:=true;
             rewrite(f,1);
-            WriteHeader(hdp^,f,reflist);
+            WriteHeader(hdp,f,reflist);
             close(f);
             if not binaermail then begin
               append(t);
@@ -898,10 +899,10 @@ again:
                      else begin
                        re_n:=rehochn; kein_re:=false;
                        end;
-                     if hdp^.netztyp=nt_UUCP then begin
+                     if hdp.netztyp=nt_UUCP then begin
                        re_n:=false; kein_re:=false;
                        end;
-                     if (hdp^.netztyp<>nt_Maus) and not kein_re then
+                     if (hdp.netztyp<>nt_Maus) and not kein_re then
                        ReplyText(betr,re_n);
                      end;
                    end   { if SelWeiter }
@@ -916,7 +917,7 @@ again:
                    end;
                  end;
 
-               if (typ in [1,5]) and pm and (hdp^.typ='B') and
+               if (typ in [1,5]) and pm and (hdp.typ='B') and
                  not ntBinary(UserNetztyp(empf))
                then begin
                  rfehler(636);  { 'Binaernachrichten sind in diesem Netz nicht moeglich.' }
@@ -931,39 +932,39 @@ again:
                  sdata:=allocsenduudatamem;
                  if typ=3 then begin
                    binaermail:=false;
-                   if (hdp^.netztyp=nt_Maus) and (_brett[1]='A') then
-                     sData^.ReplyGroup:=hdp^.empfaenger;
-                   fidoto:=LeftStr(hdp^.absender,35);
+                   if (hdp.netztyp=nt_Maus) and (_brett[1]='A') then
+                     sData^.ReplyGroup:=hdp.empfaenger;
+                   fidoto:=LeftStr(hdp.absender,35);
                    p:=cpos('@',fidoto);
                    if p>0 then fidoto:=LeftStr(fidoto,p-1);
-                   _bezug:=hdp^.msgid;
-                   _orgref:=hdp^.org_msgid;
-                   _beznet:=hdp^.netztyp;
-                   AddToReflist(hdp^.ref);
+                   _bezug:=hdp.msgid;
+                   _orgref:=hdp.org_msgid;
+                   _beznet:=hdp.netztyp;
+                   AddToReflist(hdp.ref);
                    _ref6list:=reflist;
                    reflist:=nil;
                    flQto:=true;
                    end;
                  if typ in [1,7] then begin
-                   sData^.summary:=hdp^.summary;
-                   sData^.keywords:=hdp^.keywords;
-                   if hdp^.oem<>'' then sData^.oem:=hdp^.oem
-                   else sData^.oem:=hdp^.empfaenger;
-                   sData^.onetztyp:=hdp^.netztyp;
-                   sendfilename:=hdp^.datei;
-                   sendfiledate:=hdp^.ddatum;
+                   sData^.summary:=hdp.summary;
+                   sData^.keywords:=hdp.keywords;
+                   if hdp.oem<>'' then sData^.oem:=hdp.oem
+                   else sData^.oem:=hdp.empfaenger;
+                   sData^.onetztyp:=hdp.netztyp;
+                   sendfilename:=hdp.datei;
+                   sendfiledate:=hdp.ddatum;
                    end;
                  { suboptimal }
                  if ((typ in [1..3,7]) and (not pm)) then
                    sData^.followup.add (am_replyto);
-                 if typ in [1,4,7] then sdata^.quotestr:=hdp^.quotestring;
+                 if typ in [1,4,7] then sdata^.quotestr:=hdp.quotestring;
                  if typ=7 then begin
-                   sData^.oab:=hdp^.absender;
-                   sData^.oar:=hdp^.realname;
+                   sData^.oab:=hdp.absender;
+                   sData^.oar:=hdp.realname;
                    sData^.orghdp:=hdp;
                    end;
                  if typ in [1,2,7] then
-                   xp6.FileAttach:=(hdp^.attrib and attrFile<>0);
+                   xp6.FileAttach:=(hdp.attrib and attrFile<>0);
                  if nextwl>=0 then begin
                    ua:=uvs_active; uvs_active:=false;
                    end;
@@ -998,7 +999,7 @@ again:
                    end
                  else begin
                    pm:=(_brett[1]='U');
-                   empf:=iifs(_brett[1]='U','',_brett[1])+hdp^.empfaenger;
+                   empf:=iifs(_brett[1]='U','',_brett[1])+hdp.empfaenger;
                    end;
                  end
                else begin
@@ -1011,39 +1012,39 @@ again:
                  pm:=cpos('@',empf)>0;
                  if not pm then empf:='A'+empf;
                  end;
-               _bezug:=hdp^.ref;
-               _orgref:=hdp^.org_xref;
-               _beznet:=hdp^.netztyp;
+               _bezug:=hdp.ref;
+               _orgref:=hdp.org_xref;
+               _beznet:=hdp.netztyp;
                _ref6list:=reflist;
                reflist:=nil;
-               fidoto:=hdp^.fido_to;
-               flQTo:=true;   { (hdp^.attrib and attrQuoteTo<>0); }
-               flEB:=(hdp^.attrib and attrReqEB<>0);
-               xp6.FileAttach:=(hdp^.attrib and attrFile<>0);
-               sendfilename:=hdp^.datei;
-               sendfiledate:=hdp^.ddatum;
-               xp6._replyPath:=hdp^.replypath;
-               xp6._pmReply:=(hdp^.attrib and attrPmReply<>0);
-               xp6.ControlMsg:=(hdp^.attrib and attrControl<>0);
+               fidoto:=hdp.fido_to;
+               flQTo:=true;   { (hdp.attrib and attrQuoteTo<>0); }
+               flEB:=(hdp.attrib and attrReqEB<>0);
+               xp6.FileAttach:=(hdp.attrib and attrFile<>0);
+               sendfilename:=hdp.datei;
+               sendfiledate:=hdp.ddatum;
+               xp6._replyPath:=hdp.replypath;
+               xp6._pmReply:=(hdp.attrib and attrPmReply<>0);
+               xp6.ControlMsg:=(hdp.attrib and attrControl<>0);
                sdata:=allocsenduudatamem;
                with sData^ do begin
-                 followup.assign(hdp^.followup);
-                 replyto.assign(hdp^.replyto);
-                 Keywords:=hdp^.Keywords;
-                 Summary:=hdp^.Summary;
-                 Distribute:=hdp^.Distribution;
-                 ReplyGroup:=hdp^.ReplyGroup;
-                 oab:=hdp^.oab;
-                 oem:=hdp^.oem;
-                 wab:=hdp^.wab;
-                 onetztyp:=hdp^.netztyp;
-                 quotestr:=hdp^.quotestring;
-                 ersetzt:=hdp^.ersetzt;
+                 followup.assign(hdp.followup);
+                 replyto.assign(hdp.replyto);
+                 Keywords:=hdp.Keywords;
+                 Summary:=hdp.Summary;
+                 Distribute:=hdp.Distribution;
+                 ReplyGroup:=hdp.ReplyGroup;
+                 oab:=hdp.oab;
+                 oem:=hdp.oem;
+                 wab:=hdp.wab;
+                 onetztyp:=hdp.netztyp;
+                 quotestr:=hdp.quotestring;
+                 ersetzt:=hdp.ersetzt;
                  end;
                sendflags:=SendReedit;
                if dbReadInt(mbase,'netztyp') and $4000<>0 then
                  inc(SendFlags,SendPGPsig);
-               if DoSend(pm,fn,empf,betr,false,hdp^.typ='B',sendbox,
+               if DoSend(pm,fn,empf,betr,false,hdp.typ='B',sendbox,
                          false,false,sData,leer,leer,sendflags) and unpark then SetDel;
                freesenduudatamem(sdata);
              end;
@@ -1052,7 +1053,7 @@ again:
                if not dbFound then begin   { User noch nicht vorhanden }
                  dbAppend(ubase);
                  dbWriteNStr(ubase,ub_username,name);
-                 pollbox:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
+                 pollbox:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
                  if not IsBox(pollbox) then begin
                    dbSeek(bbase,biIntnr,copy(_brett,2,4));
                    pollbox := dbReadNStr(bbase,bb_pollbox);
@@ -1110,7 +1111,7 @@ again:
 ende:
   freeres;
   SendEmpfList.Clear;
-  FreeHeaderMem(hdp);
+  hdp.Free;
   archivweiterleiten:=false;
   if FileExists(fn) then _era(fn);
 end;
@@ -1131,7 +1132,7 @@ var
     b      : byte;
     mnt    : longint;
     abl    : byte;
-    hdp    : headerp;
+    hdp    : THeader;
     hds    : longint;
 begin
   dbReadN(mbase,mb_ablage,abl);
@@ -1141,68 +1142,68 @@ begin
     dbReadN(mbase,mb_empfdatum,edat);
   dbReadN(mbase,mb_typ,ntyp);
   fn:=TempS(dbReadInt(mbase,'msgsize')+2048);
-  hdp := AllocHeaderMem;
-  ReadHeader(hdp^,hds,false);
+  hdp := THeader.Create;
+  ReadHeader(hdp,hds,false);
   if archivtext and (ntyp<>'B') then begin
     assign(t,fn);
     rewrite(t);
     writeln(t,getreps2(641,1,date));
-    writeln(t,getres2(641,2),': ',hdp^.empfaenger);
+    writeln(t,getres2(641,2),': ',hdp.empfaenger);
     writeln(t);
     close(t);
     end;
   extract_msg(0,'',fn,true,1);
   if not FileExists(fn) then exit;      { Nachricht nicht extrahiert !? }
 
-  dbSeek(ubase,uiName,UpperCase(hdp^.absender));
+  dbSeek(ubase,uiName,UpperCase(hdp.absender));
   if not dbFound then begin                        { Userbrett neu anlegen }
     dbSeek(bbase,biIntNr,typeform.mid(dbReadStr(mbase,'brett'),2));
     if dbFound then Box := dbReadNStr(bbase,bb_pollbox)
-    else box:=pfadbox(ntZConnect(hdp^.netztyp),hdp^.pfad);
-    makeuser(hdp^.absender,box);
+    else box:=pfadbox(ntZConnect(hdp.netztyp),hdp.pfad);
+    makeuser(hdp.absender,box);
     end;
   tmp:=TempS(_filesize(fn)+2000);
   assign(tf,tmp);
   rewrite(tf,1);
-  hdp^.empfaenger:=hdp^.absender;
-  if hdp^.msgid<>'' then
-    hdp^.msgid:=RightStr(hdp^.msgid,1)+LeftStr(hdp^.msgid,length(hdp^.msgid)-1);
+  hdp.empfaenger:=hdp.absender;
+  if hdp.msgid<>'' then
+    hdp.msgid:=RightStr(hdp.msgid,1)+LeftStr(hdp.msgid,length(hdp.msgid)-1);
   assign(f,fn);           { ^^ Rekursion vermeiden }
   reset(f,1);
-  hdp^.groesse:=filesize(f);
-  hdp^.orgdate:=true;
-  Writeheader(hdp^,tf,reflist);
+  hdp.groesse:=filesize(f);
+  hdp.orgdate:=true;
+  Writeheader(hdp,tf,reflist);
   fmove(f,tf);
   dbAppend(mbase);
-  mnt:=hdp^.netztyp;
-  if hdp^.ref<>'' then inc(mnt,$100);
-  if (hdp^.wab<>'') or (hdp^.oem<>'') then inc(mnt,$800);
+  mnt:=hdp.netztyp;
+  if hdp.ref<>'' then inc(mnt,$100);
+  if (hdp.wab<>'') or (hdp.oem<>'') then inc(mnt,$800);
   dbWriteN(mbase,mb_netztyp,mnt);
   ebrett:=mbrettd('U',ubase);
   dbWriteNStr(mbase,mb_brett,ebrett);
-  dbWriteNStr(mbase,mb_betreff,hdp^.betreff);
-  dbWriteNStr(mbase,mb_absender,hdp^.absender);
-  dat:=IxDat(hdp^.datum); dbWriteN(mbase,mb_origdatum,dat);
+  dbWriteNStr(mbase,mb_betreff,hdp.betreff);
+  dbWriteNStr(mbase,mb_absender,hdp.absender);
+  dat:=IxDat(hdp.datum); dbWriteN(mbase,mb_origdatum,dat);
   dbWriteN(mbase,mb_empfdatum,edat);
-  mid:=FormMsgid(hdp^.msgid);
+  mid:=FormMsgid(hdp.msgid);
   dbWriteNStr(mbase,mb_msgid,mid);
   l:=filesize(f);       dbWriteN(mbase,mb_groesse,l);
-  hdp^.typ:=ntyp;
-  b:=ord(hdp^.typ[1]);    dbWriteN(mbase,mb_typ,b);
+  hdp.typ:=ntyp;
+  b:=ord(hdp.typ[1]);    dbWriteN(mbase,mb_typ,b);
   close(f);
   erase(f);
-  dbWriteN(mbase,mb_typ,hdp^.typ[1]);
-  if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp^.fido_to)
-  else                  dbWriteNStr(mbase,mb_name,hdp^.realname);
+  dbWriteN(mbase,mb_typ,hdp.typ[1]);
+  if mnt=nt_Fido then   dbWriteNStr(mbase,mb_name,hdp.fido_to)
+  else                  dbWriteNStr(mbase,mb_name,hdp.realname);
   b:=1;             dbWriteN(mbase,mb_gelesen,b);
   b:=random(9)+iif(abl<10,1,11);
                     dbWriteN(mbase,mb_ablage,b);
   l:=filesize(tf);  dbWriteN(mbase,mb_msgsize,l);
   close(tf);
   Xwrite(tmp);
-  AddBezug(hdp^,0);
+  AddBezug(hdp,0);
   erase(tf);
-  FreeHeaderMem(hdp);
+  hdp.Free;
 end;
 
 
@@ -1284,6 +1285,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.49  2000/12/03 12:38:24  mk
+  - Header-Record is no an Object
+
   Revision 1.48  2000/11/30 14:38:10  mk
   - fixed NewUserIBM when adding new uesers
 
