@@ -1522,7 +1522,7 @@ var x,y,wdt: Integer;
     if hzahl or (hzeit=0) then
       haltedat:=0
     else
-      haltedat:=ixdat(FormatDateTime('yymmdd', Dat-hzeit) + '0000');
+      haltedat:=ixdat(FormatDateTime('yymmdd', Dat-hzeit+1) + '0000');
     nzahl:=1;
 
     brk := false;
@@ -3805,6 +3805,9 @@ end;
 
 {
   $Log$
+  Revision 1.156  2003/04/13 17:36:42  mk
+  - purge old mail one day faster than before (same as OpenXP 3.40)
+
   Revision 1.155  2003/01/28 10:42:25  cl
   - Added statistical SPAM filter
 
