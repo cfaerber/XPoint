@@ -25,17 +25,19 @@ uses
   crt,
 {$ENDIF }
   dos,typeform,fileio,inout,datadef,database,montage,resource,
-  xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal;
+  xp0,xp1,xp1input,xp_des,xp_pgp,xpdatum,xpglobal, classes;
 
 const XreadF_error : boolean  = false;
       XReadIsoDecode : boolean = false;
       ReadHeadEmpf : shortint = 0;
       ReadHeadDisk : shortint = 0;           { Diskussion-In }
       reflist      : refnodep = nil;         { Reference-Liste, rÅckwÑrts! }
-      empflist     : empfnodep= nil;         { EmpfÑngerliste }
       ReadEmpflist : boolean  = false;
       ReadKopList  : boolean  = false;
       NoPM2AMconv  : boolean  = false;
+
+var
+  EmpfList: TStringList;                     { EmpfÑngerliste }
 
 
 function  msgmarked:boolean;                 { Nachricht markiert? }
@@ -58,8 +60,6 @@ function  ReCount(var betr:string):integer;
 procedure ReplyText(var betr:string; rehochn:boolean);
 procedure DisposeReflist(var list:refnodep);
 procedure AddToReflist(ref:string);
-procedure AddToEmpflist(empf:string);
-procedure DisposeEmpflist(var list:empfnodep);
 
 procedure BriefSchablone(pm:boolean; schab,fn:string; empf:string;
                          var realname:string);
@@ -371,27 +371,6 @@ begin
     reflist:=p;
     end;
 end;
-
-procedure AddToEmpflist(empf:string);
-var p : empfnodep;
-begin
-  p:=@empflist;
-  while p^.next<>nil do p:=p^.next;
-  new(p^.next);
-  p^.next^.next:=nil;
-  p^.next^.empf:=empf;
-end;
-
-procedure DisposeEmpflist(var list:empfnodep);
-var p : empfnodep;
-begin
-  while list<>nil do begin
-    p:=list^.next;
-    dispose(list);
-    list:=p;
-    end;
-end;
-
 
 {$define allrefs}
 {$define convbrettempf}
@@ -885,7 +864,7 @@ begin
 end;
 
 
-{ EQ-betreff = left(betreff)='*crypted*' and hexval(right(betreff))=orgGroesse
+{ EQ-betreff = left(betreff)='*crypted*' and hexval(right(betreff))=orgGroesse }
 {        oder  (betr = dbread(mbase,betreff)) oder                         }
 
 function EQ_betreff(var betr:string):boolean;
@@ -1233,10 +1212,16 @@ begin
     compmimetyp:=LowerCase(typ);
 end;
 
-
+initialization
+  EmpfList := TStringList.Create;
+finalization
+  EmpfList.Free;
 end.
 {
   $Log$
+  Revision 1.37  2000/07/21 13:23:45  mk
+  - Umstellung auf TStringList
+
   Revision 1.36  2000/07/20 17:03:21  mk
   - HugeString -> String
 

@@ -413,8 +413,8 @@ begin
     if empfnr>0 then begin
       ReadHeadEmpf:=empfnr; ReadEmpflist:=true;
       ReadHeader(hdp^,hds,true);
-      sendempflist:=xp3.empflist;
-      xp3.empflist:=nil;
+      sendempflist.Assign(Xp3.empflist);
+      xp3.empflist.Clear;
       CrosspostBox:=box;
       end;
     if hdp^.pgpflags and fPGP_haskey<>0 then
@@ -761,10 +761,11 @@ label ende,again;
   begin
     repeat
       readln(t,s);
-      if IsOempf(s) then begin
-        AddToEmpflist(trim(mid(s,length(oempf)+1)));
+      if IsOempf(s) then
+      begin
+        EmpfList.Add(trim(mid(s,length(oempf)+1)));
         inc(add_oe_cc,length(s)+2);
-        end;
+      end;
     until not IsOempf(s) or eof(t);
     if eof(t) then leerz:=''
     else leerz:=s;
@@ -1018,8 +1019,8 @@ again:
                  readln(t,empf);
                  if IsOempf(empf) and not eof(t) then begin
                    GetOEmpflist;
-                   SendEmpflist:=xp3.empflist;
-                   xp3.empflist:=nil;
+                   SendEmpflist.Assign(xp3.empflist);
+                   xp3.empflist.Clear;
                    end;
                  end;
                close(t);
@@ -1144,7 +1145,7 @@ again:
   if typ<>6 then FlushClose;
 ende:
   freeres;
-  disposeempflist(sendempflist);
+  SendEmpfList.Clear;
   dispose(hdp);
   archivweiterleiten:=false;
   if exist(fn) then _era(fn);
@@ -1326,6 +1327,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/07/21 13:23:47  mk
+  - Umstellung auf TStringList
+
   Revision 1.27  2000/07/20 16:49:59  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

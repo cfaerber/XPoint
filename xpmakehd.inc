@@ -94,7 +94,7 @@ var i,res : integer;
         p:=pos(' (',s); if p>0 then SetLength(s, p-1);
         end;
       if hd.empfanz+1=empfnr then hd.empfaenger:=s
-      else AddToEmpflist(s);
+      else Empflist.Add(s);
       end
     else
       if (empfnr=0) or (hd.empfanz<empfnr) then
@@ -103,9 +103,9 @@ var i,res : integer;
         if (cpos('@',s)>0) or ((Length(s) > 0) and (s[1]<>'/')) then
         begin
           p:=pos(' (',hd.empfaenger);
-          if p>0 then SetLength(hd.empfaenger, p-1); {byte(hd.empfaenger[0]):=p-1;}
-          end;
+          if p>0 then SetLength(hd.empfaenger, p-1);
         end;
+      end;
     if hd.empfanz<127 then
       inc(hd.empfanz);
   end;
@@ -129,40 +129,25 @@ var i,res : integer;
   begin
     with hd do
       if ref='' then
-        LRead(ref)
-      else begin
-
-        if addrefs<maxrefs then inc(addrefs)
-        else Move(addref[2],addref[1],(maxrefs-1)*sizeof(addref[1]));
-
-        LRead(addref[addrefs]);
-      end;
+        Ref := Line
+      else
+        AddRef.Insert(0, Line);
   end;
 
   {$else}
 
   procedure GetRef;
   begin
-    LRead(hd.ref);
+    hd.Ref := Line;
   end;
 
   {$endif}
   {$endif}
 
   procedure GetKop;
-    procedure AddKop(var node:empfnodep);
-    begin
-      if node=nil then begin
-        new(node);
-        LRead(node^.empf);
-        node^.next:=nil;
-        end
-      else
-        AddKop(node^.next);
-    end;
   begin
     if ReadKoplist then
-      AddKop(hd.kopien);
+      hd.Kopien.Add(line);
   end;
 
   procedure GetTyp(var typ,charset:string);
@@ -326,24 +311,26 @@ var i,res : integer;
   {$IFDEF ConvBrettempf}
 
   procedure CheckEmpfs;          { /Brett@Box.domain -> /Brett }
-  var p : empfnodep;
     procedure check(var s:string);
     begin
       if (cpos('@',s)>0) and (s[1]='/') then
         truncstr(s,cpos('@',s)-1);
     end;
+  var
+    i: Integer;
+    s: String;
   begin
     with hd do
-      if (netztyp=nt_ZConnect) and not archive and PM2AMconv then begin
-        check(empfaenger);
-        if empfanz>1 then begin
-          p:=empflist;
-          while p<>nil do begin
-            check(p^.empf);
-            p:=p^.next;
-            end;
-          end;
+      if (netztyp=nt_ZConnect) and not archive and PM2AMconv then
+      begin
+        Check(empfaenger);
+        for i := 0 to EmpfList.Count - 1 do
+        begin
+          s := EmpfList[i];
+          Check(s);
+          EmpfList[i] := s;
         end;
+      end;
   end;
 
   {$ENDIF}
@@ -353,7 +340,9 @@ begin
   {$ifdef allrefs}
     DisposeReflist(reflist);
   {$endif}
+  {$IFNDEF UUZREfs }
   fillchar(hd,sizeof(hd),0);
+  {$ENDIF }
   bufsize := 32768;
   getmem(buf,bufsize);
   size:=0; Readbuf;
@@ -411,12 +400,9 @@ begin
 
             {$ifdef ulines}
               begin
-                if ulines<maxulines then begin
-                  inc(ulines);
-                  uline^[ulines]:=mid(id0,3)+': '+line;
-                end;
+                ULine.Add(mid(id0,3)+': '+line);
               end
-              {$endif}
+            {$endif}
 
             else
 
@@ -556,6 +542,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.25  2000/07/21 13:23:48  mk
+  - Umstellung auf TStringList
+
   Revision 1.24  2000/07/18 14:30:28  hd
   - Fix: Ansistring
 

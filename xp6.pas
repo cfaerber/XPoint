@@ -26,7 +26,7 @@ uses
 {$ENDIF }
      dos,typeform,fileio,inout,keys,datadef,database,maske,crc,lister,
      winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe,
-     xpglobal;
+     xpglobal, Classes;
 
 const sendIntern = 1;     { force Intern              }
       sendShow   = 2;     { ausfÅhrliche Sendeanzeige }
@@ -72,7 +72,8 @@ const sendIntern = 1;     { force Intern              }
       OldMsgSize: longint = 0;{ s. XP3.XWrite }
       OldMsgPos : longint = 0;
 
-      sendempflist   : empfnodep = nil;
+var
+  SendEmpfList: TStringList;
 
 {$ifdef hasHugeString}
 type  SendUUdata = record
@@ -696,16 +697,15 @@ end;
 
 
 procedure ReadEmpflist;
-var p : empfnodep;
+var
+  i: Integer;
 begin
-  while sendempflist<>nil do begin
-    if cc_anz<maxcc then begin
+  // !! Assign mîglich, wenn beides StringListe
+  for i := 0 to SendEmpfList.Count - 1 do
+    if cc_anz<maxcc then
+    begin
       inc(cc_anz);
-      cc^[cc_anz]:=sendempflist^.empf;
-      end;
-    p:=sendempflist^.next;
-    dispose(sendempflist);
-    sendempflist:=p;
+      cc^[cc_anz]:=Sendempflist[i];
     end;
   SortCCs(cc,cc_anz);
   TestXpostings(true);
@@ -1765,7 +1765,7 @@ fromstart:
     assign(f2,fn2);
     rewrite(f2,1);
     for ii:=1 to msgCPanz-1 do
-      AddToEmpflist(cc^[ii]);
+      EmpfList.Add(cc^[ii]);
     WriteHeader(hdp^,f2,_ref6list);
 {    hdsize:=filepos(f2); }
     fmove(f,f2);
@@ -1941,7 +1941,7 @@ fromstart:
       hdp^.typ:=iifs(newbin,'B','T');
       hdp^.groesse:=filesize(f);
       for ii:=1 to msgCPanz-1 do
-        AddToEmpflist(cc^[ii]);
+        Empflist.Add(cc^[ii]);
       WriteHeader(hdp^,f2,_ref6list);
       fmove(f,f2);
       close(f); close(f2);
@@ -1950,9 +1950,9 @@ fromstart:
       if pmc_code then pmCryptFile(hdp^,fn3) else
       if (docode=9) or flPGPsig then begin
         for ii:=1 to msgCPanz-1 do
-          AddToEmpflist(cc^[ii]);
+          Empflist.Add(cc^[ii]);
         xp_pgp.PGP_EncodeFile(f,hdp^,fn3,passwd,docode=9,flPGPsig,fo);
-        DisposeEmpflist(empflist);
+        EmpfList.Clear;
         end;
 
       if not flCrash or not MayCrash then
@@ -2147,6 +2147,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/07/21 13:23:47  mk
+  - Umstellung auf TStringList
+
   Revision 1.51  2000/07/20 09:11:50  mk
   - AnsiString-Fix fuer dbReadN
 

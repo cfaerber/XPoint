@@ -11,21 +11,7 @@
 
 { Headerdefinitionen, die auch von den Tools genutzt werden }
 
-const
-  maxrefs = 100;                        { max. gespeicherte References }
-  maxemp = 1000;
-  maxulines = 300;                      { max. zus„tzliche U-Zeilen }
-  maxfollow = 100;                      { max. Followup-To-Zeilen }
-
 type
-  empflistt = array[1..maxemp] of string;
-
-  empfnodep = ^empfnode;
-  empfnode = record
-    next: empfnodep;
-    empf: string;
-  end;
-
   mimedata = record
     mversion: string;                   { MIME-Version              }
     encoding: byte;                     { Content-Transfer-Encoding }
@@ -42,8 +28,9 @@ type
     attrib: word;                       { Attribut-Bits                }
     filterattr: word;                   { Filter-Attributbits          }
     empfaenger: string; { --- allgemein --- Brett / User / TO:User }
-    kopien: empfnodep;                  { KOP: - Liste }
+    Kopien: TStringList;                { KOP: - Liste }
     empfanz: integer;                   { Anzahl EMP-Zeilen }
+    Followupz: integer;                   { Anzahl EMP-Zeilen }
     betreff: string;
     absender: string;
     datum: string;                      { Netcall-Format               }
@@ -106,15 +93,11 @@ type
     control: string;
 
     // UUZ
-    addrefs: integer;
-    addref: array[1..maxrefs] of string;
+    addref: TStringList;  // Referenzen
     mimereltyp: string;
-    ulines: byte;                       { Anzahl "U-"-Zeilen in UUZ }
-    xempf: empflistt;
-    oemanz: integer;
-    xoem: empflistt;
-    followups: integer;                 { Anzahl Followup's }
-    followup: array[1..maxfollow] of string;
+    xempf: TStringList;
+    xoem: TStringList;
+    followup: TStringList;
     MIME: mimedata;
     gateway: string;
     sender: string;
@@ -124,6 +107,9 @@ type
 
 {
   $Log$
+  Revision 1.3  2000/07/21 13:23:48  mk
+  - Umstellung auf TStringList
+
   Revision 1.2  2000/07/09 13:21:56  mk
   - UUZ nutzt jetzt xpheader.inc
 

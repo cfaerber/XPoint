@@ -28,7 +28,7 @@ uses xpglobal,
 
 
 const
-  maxgl   = 150;	{ auf 100 erhoeht (hd/2000-07-09) }
+  maxgl   = 150;        { auf 100 erhoeht (hd/2000-07-09) }
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }
@@ -744,64 +744,69 @@ var t,lastt: taste;
     end;
 
     procedure SetNobrettServers;
-    var p   : empfnodep;
-        box : string;
+    var
+      i: Integer;
+      box : string;
     begin
-      p:=sendempflist;
       box:=empfbox;
-      while p<>nil do begin
-        dbSeek(bbase,biBrett,'A'+UpperCase(p^.empf));
-        if not dbFound then p^.empf:='+'+box+':'+p^.empf;
-        p:=p^.next;
-        end;
+      for i := 0 to SendEmpfList.Count - 1 do
+      begin
+        dbSeek(bbase,biBrett,'A'+UpperCase(SendEmpfList[i]));
+        if not dbFound then
+          SendEmpfList[i] := '+' + box + ':' + SendEmpfList[i];
+      end;
     end;
 
-    { Diskussion-In's 2 bis Ende nach sendempflist^ einlesen }
+    { Diskussion-In's 2 bis Ende nach SendEmpfList^ einlesen }
 
     procedure AddMultipleFollowups;
     var hdp : headerp;
         hds : longint;
         i   : integer;
     begin
-      getmem(hdp,sizeof(header)); {new(hdp);}
+      getmem(hdp,sizeof(header));
       for i:=2 to rtanz do with hdp^ do begin
         ReadHeadDisk:=i;
         ReadHeader(hdp^,hds,false);
         if amreplyto<>'' then begin
           dbSeek(bbase,biBrett,'A'+UpperCase(amreplyto));
-          AddToEmpfList(iifs(dbFound,'','+'+empfbox+':')+amreplyto);
+          EmpfList.Add(iifs(dbFound,'','+'+empfbox+':')+amreplyto);
           end;
         end;
-      freemem(hdp, sizeof(header)); {dispose(hdp);}
-      sendempflist:=empflist; empflist:=nil;
+      Freemem(hdp);
+      SendEmpfList.Assign(EmpfList); EmpfList.Clear;
     end;
 
-    { empf-Brett ist nicht vorhanden -> in sendempflist nachsehen, ob }
+    { empf-Brett ist nicht vorhanden -> in SendEmpfList nachsehen, ob }
     { eines der Bretter vorhanden ist; ggf mit empf vertauschen       }
 
     function MF_brettda:boolean;
-    var p  : empfnodep;
-        s  : string;
-        pb : string;
+    var
+      i, j: Integer;
+      s,s2: string;
+      pb : string;
     begin
-      p:=sendempflist;
-      while (p<>nil) and (p^.empf[1]='+') do
-        p:=p^.next;
-      if p<>nil then begin     { existierendes EmpfÑngerbrett gefunden }
-        s:=empf;
-        empf:='A'+p^.empf;
-        p^.empf:='+Dummy:'+mid(s,2);
+      i := 0;
+      while (i < SendEmpfList.Count - 1) and (SendEmpfList[i][1]='+') do
+        Inc(i);
+      if i < SendEmpfList.Count then
+      begin                       { existierendes EmpfÑngerbrett gefunden }
+        s := empf;
+        empf:='A'+SendEmpfList[i];
+        SendEmpfList[i] := '+Dummy:' + Mid(s,2);
         dbSeek(bbase,biBrett,UpperCase(empf));   { mu· funktionieren! }
         pb:= dbReadNStr(bbase,bb_pollbox);
-        p:=sendempflist;          { Sever fÅr alle nicht existierenden }
-        while p<>nil do begin     { Bretter auf dieses Brett setzen    }
-          if p^.empf[1]='+' then
-            p^.empf:='+'+pb+mid(p^.empf,cpos(':',p^.empf));
-          p:=p^.next;
-          end;
+
+        { Sever fÅr alle nicht existierenden }
+        { Bretter auf dieses Brett setzen    }
+        for j := 0 to SendEmpfList.Count - 1 do
+        begin
+          s2 := SendEmpfList[j];
+          if s2[1]='+' then
+            SendEmpfList[j] := '+'+pb+mid(s2, cpos(':', s2));
+        end;
         MF_brettda:=true;
-        end
-      else
+      end else
         MF_brettda:=false;
     end;
 
@@ -990,19 +995,18 @@ var t,lastt: taste;
           if rt='' then begin
             ReadHeadEmpf:=dbReadInt(mbase,'netztyp') shr 24;
             if ReadHeadEmpf<>0 then begin
-              ReadEmpflist:=true;          { Crossposting-EmpfÑnger einlesen }
-              getmem(hdp, sizeof(header)); {new(hdp);}
+              ReadEmpfList:=true;          { Crossposting-EmpfÑnger einlesen }
+              hdp := AllocHeaderMem;
               ReadHeader(hdp^,hds,false);
-              freemem(hdp, sizeof(header)); {dispose(hdp);}
-              sendempflist:=empflist; empflist:=nil;
+              FreeHeaderMem(hdp);
+              SendEmpfList.Assign(EmpfList); EmpfList.Clear;
               SetNobrettServers;
               end;
             end;
           end;
-        if (rt<>'') and ((rt<>empf) or (rtanz>1)) then begin
-          { 03.02.2000 robo }
+        if (rt<>'') and ((rt<>empf) or (rtanz>1)) then
+        begin
           if not askreplyto or (cpos('@',empf)=0) then empf:=rt;  { Reply-To }
-          { /robo }
           if not pm then begin
             if rtanz>1 then
               AddMultipleFollowups;
@@ -1324,9 +1328,9 @@ begin      { --- select --- }
   oldrec:=disprec[1];
   empty:=false;
   if dispmode=11 then SortMark;
-  if length(dispspec) > 0 then 
+  if length(dispspec) > 0 then
     user_msgs:=(dispspec[1]='U')
-  else 
+  else
     user_msgs:=false;
   if (dispmode=10) and user_msgs then begin { User-Fenster }
     rdmode:=0;         { immer Alles anzeigen }
@@ -2039,6 +2043,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.36  2000/07/21 13:23:46  mk
+  - Umstellung auf TStringList
+
   Revision 1.35  2000/07/12 11:49:30  ml
   - workaround f¸r Ansistring
 

@@ -77,7 +77,7 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4o,xp6,xp8,xp9bp,xpnt,xp_pgp, winxp;
 
 { Customselectroutinen fuer Brett/User }
 
-{ Verwendung...
+{ Verwendung...                                                                   }
 { auto_empfsel:     XP4E.Autoedit, XP4E.Modibrettl2, XP6.EDIT_CC, XP9.ReadPseudo  }
 { selbrett:         XP3o.Bverknuepfen, XP6S.Editsdata                             }
 { seluser:          XP3o.Uverknuepfen, XP4E.Readdirect, XP4E.Edituser,            }
@@ -594,7 +594,7 @@ begin
   else if (art=4) and (aktdispmode<>12) then
     rfehler(303)   { 'Kein Kommentarbaum aktiv!' }
   else begin
-    new(hdp);
+    hdp := AllocHeaderMem;
     if art<>1 then fname:=''
     else begin
       ReadHeader(hdp^,hds,true);
@@ -716,8 +716,8 @@ begin
         if useclip then WriteClipfile(fname);
         end;
     freeres;
-    dispose(hdp);
-    end;
+    FreeHeaderMem(hdp);
+  end;
 end;
 
 
@@ -914,7 +914,7 @@ begin
   dbReadN(mbase,mb_msgsize,size);
   if size>0 then begin      { mÅ·te eigentlich immer TRUE sein }
     PGP_BeginSavekey;
-    new(hdp);
+    hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,true);
     with hdp^ do
       if right(name,1)<>'@' then
@@ -930,7 +930,7 @@ begin
     close(f1);
     XWrite(fn);
     _era(fn);
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     PGP_EndSavekey;
     end;
 end;
@@ -942,26 +942,23 @@ end;
 procedure AppPuffer(Box,fn:string);
 var d     : DB;
     bf    : string[12];
-    f1,f2 : ^file;
+    f1,f2 : file;
 begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName,UpperCase(box));
   dbRead(d,'dateiname',bf);
   dbClose(d);
-  new(f1); new(f2);
-  assign(f1^,fn);
-  reset(f1^,1);
-  assign(f2^,bf+'.PP');
-  if existf(f2^) then begin
-    reset(f2^,1);
-    seek(f2^,filesize(f2^));
+  assign(f1,fn);
+  reset(f1,1);
+  assign(f2,bf+'.PP');
+  if existf(f2) then begin
+    reset(f2,1);
+    seek(f2,filesize(f2));
     end
   else
-    rewrite(f2^,1);
-  fmove(f1^,f2^);
-  close(f1^);
-  close(f2^);
-  dispose(f2); dispose(f1);
+    rewrite(f2,1);
+  fmove(f1,f2);
+  close(f1); close(f2);
 end;
 
 
@@ -1012,7 +1009,7 @@ begin
     if dbFound then
       writeln(t,getres2(337,4),mid(dbReadStr(bbase,'brettname'),2));  { 'Brett:      ' }
     end;
-  new(hdp);
+  hdp := AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
   writeln(t,getres2(337,5),'<',hdp^.msgid,'>');  { 'Message-ID: ' }
   orgd:=longdat(dbReadInt(mbase,'origdatum'));
@@ -1065,7 +1062,7 @@ begin
   if (empf='') or (cpos('@',empf)=0) or (pos('.',mid(empf,cpos('@',empf)))=0)
   then
     empf:=hdp^.absender;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   if cpos('@',empf)>0 then begin
     IsEbest:=true{auto};
     if DoSend(true,tmp,empf,left('E:'+iifs(betr<>'',' '+betr,''),BetreffLen),
@@ -1078,21 +1075,12 @@ end;
 
 procedure CancelMessage;
 var
-{$ifdef hasHugeString}
-    _brett : string;
+    _brett : string[5];
     dat    : string;
     leer   : string;
     box    : string;
     adr    : string;
     empf   : string;
-{$else}
-    _brett : string[5];
-    dat    : string[12];
-    leer   : string[12];
-    box    : string[BoxNameLen];
-    adr    : string[adrlen];
-    empf   : string[AdrLen];
-{$endif}
     hdp    : headerp;
     hds    : longint;
     d      : DB;
@@ -1115,19 +1103,17 @@ begin
   if _brett[1]<>'U' then begin
     dbSeek(bbase,biIntnr,copy(_brett,2,4));
     if not dbFound then exit;
-    dbReadN(bbase,bb_pollbox,box);
+    Box := dbReadNStr(bbase,bb_pollbox);
     end
   else begin
-    new(hdp);
+    hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,true);
     dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     if not dbFound then exit;
-    dbReadN(ubase,ub_pollbox,box);
+    Box := dbReadNStr(ubase,ub_pollbox);
     end;
-  dbOpen(d,BoxenFile,1);
-  dbSeek(d,boiName,UpperCase(box));
-  if dbFound then
+    if dbFound then
     case mbNetztyp of
       nt_UUCP   : adr:=dbReadStr(d,'username')+'@'+dbReadStr(d,'pointname')+
                        dbReadStr(d,'domain');
@@ -1141,20 +1127,17 @@ begin
   dbClose(d);
   if adr='' then exit;
 
-  new(hdp);
-
-  ReadEmpflist:=true;
+  hdp := AllocHeaderMem;
+  ReadEmpfList:=true;
   ReadHeadEmpf:=1;
   ReadHeader(hdp^,hds,true);
   if ((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
       not stricmp(adr,hdp^.wab)) or (hds<=1) then begin
     if hds>1 then
       rfehler(312);     { 'Diese Nachricht stammt nicht von Ihnen!' }
-    disposeempflist(empflist);
-    empflist:=nil;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     exit;
-    end;
+  end;
 
   leer:='';
   if hds>1 then
@@ -1165,8 +1148,8 @@ begin
                     ControlMsg:=true;
                     dat:=CancelMsk;
                     empf:=hdp^.empfaenger;
-                    sendempflist:=empflist;
-                    empflist:=nil;
+                    SendEmpfList.Assign(EmpfList);
+                    EmpfList.Clear;
                     if DoSend(false,dat,'A'+empf,'cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,leer,
                               sendShow) then;
@@ -1189,33 +1172,24 @@ begin
                     _beznet:=hdp^.netztyp;
                     dat:=CancelMsk;
                     empf:=hdp^.empfaenger;
-                    sendempflist:=empflist;
-                    empflist:=nil;
+                    SendEmpfList.Assign(EmpfList);
+                    EmpfList.Clear;
                     if DoSend(false,dat,'A'+empf,'cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,leer,
                               sendShow) then;
                   end;
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 procedure ErsetzeMessage;
 var
-{$ifdef hasHugeString}
     _brett : string;
     _betreff : string;
     box    : string;
     adr    : string;
     leer   : string;
     empf   : string;
-{$else}
-    _brett : string[5];
-    _betreff : string[betrefflen];
-    box    : string[BoxNameLen];
-    adr    : string[adrlen];
-    leer   : string[12];
-    empf   : string[AdrLen];
-{$endif}
     hdp    : headerp;
     hds    : longint;
     d      : DB;
@@ -1242,10 +1216,10 @@ begin
     dbReadN(bbase,bb_pollbox,box);
     end
   else begin
-    new(hdp);
+    hdp := AllocHeaderMem;
     ReadHeader(hdp^,hds,true);
     dbSeek(ubase,uiName,UpperCase(hdp^.empfaenger));
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     if not dbFound then exit;
     dbReadN(ubase,ub_pollbox,box);
     end;
@@ -1265,19 +1239,17 @@ begin
   dbClose(d);
   if adr='' then exit;
 
-  new(hdp);
-  ReadEmpflist:=true;
+  hdp := AllocHeaderMem;
+  ReadEmpfList:=true;
   ReadHeadEmpf:=1;
   ReadHeader(hdp^,hds,true);
   if ((UpperCase(adr)<>UpperCase(dbReadStr(mbase,'absender'))) and
       not stricmp(adr,hdp^.wab)) or (hds<=1) then begin
     if hds>1 then
       rfehler(319);     { 'Diese Nachricht stammt nicht von Ihnen!' }
-    disposeempflist(empflist);
-    empflist:=nil;
-    dispose(hdp);
+    FreeHeaderMem(hdp);
     exit;
-    end;
+  end;
 
   fn:=TempS(8196);
   extract_msg(0,'',fn,false,0);
@@ -1289,12 +1261,12 @@ begin
   fillchar(sData^,sizeof(sData^),0);
   sData^.ersetzt:=hdp^.msgid;
   empf:=hdp^.empfaenger;
-  sendempflist:=empflist;
-  empflist:=nil;
+  SendEmpfList.Assign(EmpfList);
+  EmpfList.Clear;
   if DoSend(false,fn,'A'+empf,_betreff,
             true,false,true,false,true,sData,leer,leer,
             0) then;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
   dispose(sData);
 end;
 
@@ -1339,7 +1311,7 @@ var ok       : boolean;
     hdp      : headerp;
     zconnect : boolean;
 begin
-  new(hdp);
+  hdp := AllocHeaderMem;
   fattaches:=0;
   if not exist(fn) then
     testpuffer:=0
@@ -1377,7 +1349,7 @@ begin
     if ok and (adr=fs) then testpuffer:=msgcount
     else testpuffer:=-1;
     end;
-  dispose(hdp);
+  FreeHeaderMem(hdp);
 end;
 
 
@@ -1522,6 +1494,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.27  2000/07/21 13:23:45  mk
+  - Umstellung auf TStringList
+
   Revision 1.26  2000/07/09 08:35:15  mk
   - AnsiStrings Updates
 

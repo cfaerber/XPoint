@@ -83,23 +83,22 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       end;
   end;
 
-  function pmempfanz:integer;
-  var anz : integer;
-      p   : empfnodep;
+  function PMEmpfAnz: Integer;
+  var
+    i: Integer;
   begin
-    anz:=iif(cpos('@',hd.empfaenger)>0,1,0);
-    p:=empflist;
-    while p<>nil do begin
-      if cpos('@',p^.empf)>0 then inc(anz);
-      p:=p^.next;
-      end;
-    pmempfanz:=anz;
+    Result:=iif(cpos('@',hd.empfaenger)>0,1,0);
+    for i := 0 to EmpfList.Count - 1 do
+      if cpos('@', EmpfList[i])>0 then
+        Inc(Result);
   end;
 
   procedure WriteZheader;
-  var p  : empfnodep;
-      p1 : byte;
-      gb : boolean;
+  var
+    p1 : byte;
+    i: Integer;
+    s: String;
+    gb : boolean;
   begin
     with hd do begin
       if not orgdate then
@@ -113,14 +112,16 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if nokop and (pmempfanz>1) then
         wrs('STAT: NOKOP');
       wrs('EMP: '+empfaenger);
-      while empflist<>nil do begin
-        if gb and (cpos('@',empflist^.empf)=0) then
-          UpString(empflist^.empf);
-        wrs('EMP: '+empflist^.empf);
-        p:=empflist^.next;
-        dispose(empflist);
-        empflist:=p;
-        end;
+
+      for i := 0 to EmpfList.Count - 1 do
+      begin
+        s :=  EmpfList[i];
+        if gb and (cpos('@', s)=0) then
+          UpString(s);
+        wrs('EMP: '+ s);
+      end;
+      EmpfList.Clear;
+
       if gb and (cpos('@',AmReplyTo)=0) then
         UpString(AmReplyTo);
       if AmReplyTo<>'' then wrs('Diskussion-in: '+AmReplyTo);
@@ -445,6 +446,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/07/21 13:23:46  mk
+  - Umstellung auf TStringList
+
   Revision 1.15  2000/07/20 16:49:59  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

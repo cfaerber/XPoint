@@ -178,19 +178,15 @@ var hdp : headerp;
    end;
 
 begin
-  hdp:= AllocHeaderMem; {new(hdp);0
+  hdp:= AllocHeaderMem;
   ReadHeader(hdp^,hds,false);
-  { 03.02.2000 robo }
   if (hdp^.PmReplyTo<>'') and not askreplyto then
-  { /robo }
     abs:=hdp^.PmReplyTo
   else begin
     wabok:=(pos('.',mid(hdp^.wab,cpos('@',hdp^.wab)))<>0);
-    { 03.02.2000 robo }
     if (hds=1) or ((hdp^.wab='') and (hdp^.oem='') and (hdp^.PmReplyTo='')) or
                   ((hdp^.wab='') and (hdp^.oem=hdp^.vertreter) and (hdp^.PmReplyTo='')) or
                   (not wabok and (hdp^.oem='') and (hdp^.PmReplyTo=''))
-    { /robo }
     then begin
       abs:= dbReadNStr(mbase,mb_absender);
       realname:=hdp^.realname;
@@ -238,7 +234,6 @@ var i,n    : integer;
     d      : DB;
     ok     : boolean;
     e      : string;
-    p      : empfnodep;
 
   procedure TestServer;   { Crossposting bei diesem Server erlaubt? }
   begin
@@ -294,30 +289,34 @@ begin
         end;
     if brk then break;    { for-Schleife verlassen }
     if ok and ((pm and (n<maxcc)) or (not pm and (n<MaxXposts))) then begin
-      AddToEmpflist(e);
+      Empflist.Add(e);
       inc(n);
       end;
     end;
   dbClose(d);
-  if empflist=nil then brk:=true;
-  if not brk then begin
-    empf:=iifs(pm,'','A')+empflist^.empf;
-    p:=empflist^.next;
-{$IFDEF FPC }
-    {$hint Schutzverletzung moeglich ! }
-{$ENDIF }
-    dispose(empflist); empflist:=nil;
-    sendempflist:=p;
+
+
+  if EmpfList.Count = 0 then brk:=true;
+
+  if not brk then
+  begin
+    empf:=iifs(pm,'','A')+Empflist[0];
+    EmpfList.Delete(0);
+    // Achtung, das ist bestimmt falsch :-(
+    sendempflist.Add(EmpfList[0]);
     xp6.forcebox:=s0;
-    end
+  end
   else
-    DisposeEmpflist(empflist);
+    EmpfList.Clear;
 end;
 
 
 end.
 {
   $Log$
+  Revision 1.12  2000/07/21 13:23:46  mk
+  - Umstellung auf TStringList
+
   Revision 1.11  2000/07/11 21:39:22  mk
   - 16 Bit Teile entfernt
   - AnsiStrings Updates

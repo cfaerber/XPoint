@@ -113,7 +113,6 @@ type
 
   charr = array[0..65530] of char;
   charrp = ^charr;
-  ulinea = array[1..maxulines] of string;
 
 var
   source, dest: String;                { Quell-/Zieldateien  }
@@ -125,7 +124,7 @@ var
   hd: header;
   // Liste der Empf„nger
   empflist: TStringList;
-  uline: ^ulinea;
+  uline: TStringList;
   uunumber: word;                       { fortlaufende Hex-Paketnummer }
   _from, _to: string;                   { UUCP-Systemnamen }
   outbuf: charrp;
@@ -313,12 +312,37 @@ begin
   if exist('igate.exe') then nomailer := true;
 end;
 
+// Frischen Header erzeugen
+procedure ClearHeader;
+begin
+  with hd do
+  if Assigned(AddRef) then
+  begin
+    AddRef.Free;
+    XEmpf.Free;
+    XOEM.Free;
+    Followup.Free;
+  end;
+
+  Fillchar(hd, sizeof(hd), 0);
+
+  with hd do
+  begin
+    Netztyp := nt_RFC;
+    AddRef := TStringList.Create;
+    XEmpf := TStringList.Create;
+    XOEM := TStringList.Create;
+    Followup := TStringList.Create;
+  end;
+end;
+
 procedure initvar;
 var
   t: text;
-  s: string;
 
   procedure rh(fn: String; mail: boolean);
+  var
+    s: string;
   begin
     if exist(fn) then
     begin
@@ -341,7 +365,7 @@ var
 begin
   mails := 0; news := 0;
   uunumber := 0;
-  new(uline);
+  ULine := TStringlist.Create;
   qprchar := [^L, '=', #127..#255];
   getmem(outbuf, bufsize);
 
@@ -357,8 +381,13 @@ begin
   else
     addpath := '';
 
-  AddHd := TStringList.Create;          { zus„tzliche Headerzeilen einlesen }
+  // zus„tzliche Headerzeilen einlesen
+  AddHd := TStringList.Create;
   EmpfList := TStringList.Create;
+
+  Fillchar(hd, sizeof(hd), 0);
+  ClearHeader;
+
   rh('NEWS.RFC', false);
   rh('MAIL.RFC', true);
 end;
@@ -367,8 +396,8 @@ procedure donevar;
 begin
   AddHd.Free;
   EmpfList.Free;
+  ULine.Free;
   freemem(outbuf, bufsize);
-  dispose(uline);
 end;
 
 procedure testfiles;
@@ -412,16 +441,6 @@ end;
 
 { --- ZConnect-Header verarbeiten ----------------------------------- }
 
-procedure AddToEmpfList(empf: string);
-begin
-  EmpfList.Add(empf);
-end;
-
-procedure DisposeEmpfList(var EmpfList: TStringList);
-begin
-  EmpfList.Clear;
-end;
-
 function compmimetyp(typ: string): string;
 begin
   if left(typ, 12) = 'application/' then
@@ -448,7 +467,7 @@ begin
   outbufpos := 0;
 end;
 
-procedure wrfs(var s: string);
+procedure wrfs(s: string);
 begin
   if outbufpos + length(s) >= bufsize then
     FlushOutbuf;
@@ -485,14 +504,14 @@ var
 begin
   with hd do
   begin
-    if empfanz = 0 then wrs('EMP: /UNZUSTELLBAR');
-    for i := 1 to empfanz do
+    if XEmpf.Count = 0 then wrs('EMP: /UNZUSTELLBAR');
+    for i := 0 to XEmpf.Count - 1 do
       wrs('EMP: ' + xempf[i]);
-    for i := 1 to oemanz do
+    for i := 0 to XOEM.Count - 1 do
     begin
-      ml := min(length(xoem[i]), length(xempf[1]));
+      ml := min(length(xoem[i]), length(xempf[0]));
       if (xoem[i] <> '') and (left(LowerCase(xoem[i]), ml) <>
-        left(LowerCase(xempf[1]), ml)) then
+        left(LowerCase(xempf[0]), ml)) then
         wrs('OEM: ' + xoem[i]);
     end;
     wrs('ABS: ' + absender + iifs(realname = '', '', ' (' + realname + ')'));
@@ -504,13 +523,13 @@ begin
     wrs('LEN: ' + strs(groesse));
     if (PmReplyTo <> '') and (PmReplyTo <> absender) then
       wrs('Antwort-an: ' + PmReplyTo);
-    for i := 1 to followups do
-      wrs('Diskussion-in: ' + followup[i]);
+    for i := 0 to Followup.Count - 1 do
+      wrs('Diskussion-in: ' + Followup[i]);
     if typ = 'B' then wrs('TYP: BIN');
     if datei <> '' then wrs('File: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
     if ref <> '' then wrs('BEZ: ' + ref);
-    for i := 1 to addrefs do
+    for i := 0 to AddRef.Count -1 do
       wrs('BEZ: ' + addref[i]);
     if ersetzt <> '' then wrs('ERSETZT: ' + ersetzt);
     if error <> '' then wrs('ERR: ' + error);
@@ -538,8 +557,8 @@ begin
       if LowerCase(left(control, 7)) = 'cancel ' then wrs('STAT: CTL');
       wrs('CONTROL: ' + control);
     end;
-    for i := 1 to ulines do
-      wrs(uline^[i]);
+    for i := 0 to ULine.Count - 1 do
+      wrs(ULine[i]);
     wrs('X-XP-NTP: ' + strs(netztyp));
     attrib := attrib and not (attrReqEB + attrIsEB);
     if attrib <> 0 then wrs('X-XP-ATT: ' + hex(attrib, 4));
@@ -752,6 +771,7 @@ procedure UnQuote(var s: string);       { RFC-822-quoting entfernen }
 var
   p: integer;
 begin
+  if s = '' then exit;
   if s[1] = '"' then delete(s, 1, 1);
   if s[length(s)] = '"' then dellast(s);
   p := 1;
@@ -1353,15 +1373,6 @@ var
 
   drealn: string;
 
-  procedure AppUline(s: string);
-  begin
-    if hd.ulines < maxulines then
-    begin
-      inc(hd.ulines);
-      uline^[hd.ulines] := s;
-    end;
-  end;
-
   { Entfert RFC-Kommentare, ignoriert dabei auch quoted-strings }
 
   procedure RFCRemoveComment(var r0: string);
@@ -1467,14 +1478,16 @@ var
     sto: string;
     pk: Integer;
     _quote: boolean;
+    s: String;
   begin
     if not mail then
-      AppUline('U-To: ' + s0)
+      Uline.Add('U-To: ' + s0)
     else
     begin
       sto := trim(s0);
       if lastchar(sto) <> ',' then sto := sto + ',';
-      hd.empfanz := 0;
+      Hd.XEmpf.Clear;
+      EmpfList.Clear;
       repeat
         _quote := false;
         pk := 0;
@@ -1506,9 +1519,9 @@ var
           if (p > 0) and (p < cpos('@', s0)) then
             s0 := mid(s0, p + 1);
         end;
-        inc(hd.empfanz);
-        GetAdr(hd.xempf[hd.empfanz], drealn); { hd.xempf[1]:=s0; }
-      until (sto = '') or (hd.empfanz = maxemp);
+        GetAdr(s, drealn);
+        hd.xempf.Add(s);
+      until (sto = '');
     end;
   end;
 
@@ -1527,7 +1540,7 @@ var
           if p > 0 then s0[p] := '/';   { '.' -> '/' }
         until p = 0;
         if right(s0, 1) <> ',' then s0 := s0 + ',';
-        while (followups < maxfollow) and (cpos(',', s0) > 0) do
+        while cpos(',', s0) > 0 do
         begin
           p := cpos(',', s0);
           if LowerCase(left(s0, p - 1)) = 'poster' then
@@ -1535,8 +1548,7 @@ var
           else
             if p > 5 then
           begin
-            inc(followups);
-            followup[followups] := '/' + left(s0, p - 1);
+            Followup.Add('/' + left(s0, p - 1));
           end;
           s0 := trim(mid(s0, p + 1));
         end;
@@ -1563,16 +1575,13 @@ var
     s0 := trim(s0);
     replslash(s0);
     i := 1;
-    while (s0 <> '') and (hd.empfanz < maxemp) do
+    while s0 <> '' do
       with hd do
       begin
         p := cpos(',', s0);
         if p = 0 then p := length(s0) + 1;
         if p > 2 then
-        begin
-          inc(empfanz);
-          xempf[empfanz] := '/' + left(s0, p - 1);
-        end;
+          XEmpf.Add('/' + left(s0, p - 1));
         s0 := trim(mid(s0, p + 1));
       end;
   end;
@@ -1591,7 +1600,7 @@ var
       begin
         truncstr(s0, p - 1);
         GetAdr(a, r);
-        AppUline('KOP: ' + a + iifs(r <> '', ' (' + r + ')', ''));
+        Uline.Add('KOP: ' + a + iifs(r <> '', ' (' + r + ')', ''));
       end;
       s0 := s;
     end;
@@ -1617,13 +1626,7 @@ var
         if ref = '' then
           ref := copy(s0, 2, p - 2)
         else
-        begin
-          if addrefs < maxrefs then
-            inc(addrefs)
-          else
-            Move(addref[2], addref[1], (maxrefs - 1) * sizeof(addref[1]));
-          addref[addrefs] := copy(s0, 2, p - 2);
-        end;
+          AddRef.Insert(0, copy(s0, 2, p - 2));
         while (p <= length(s0)) and ((s0[p + 1] = ' ') or (s0[p + 1] = #9)) do
           inc(p);
         delete(s0, 1, p);
@@ -1647,17 +1650,16 @@ var
 
   procedure GetInReplyto;
   var
-    _i: integer;
+    p: integer;
   begin
-    hd.addrefs := 0;
+    Hd.AddRef.Clear;
 
     { spitze Klammern bei Bezugs-ID entfernen }
 
-    if pos('<', s0) = 1 then delete(s0, 1, 1);
-    {    if (pos('>',s0)=length(s0)) and (length(s0)>0) then dec(s0[0]); }
+    if cpos('<', s0) = 1 then delete(s0, 1, 1);
 
-    _i := pos('>', s0);
-    if _i > 0 then s0 := copy(s0, 1, _i - 1);
+    p := cpos('>', s0);
+    if p > 0 then s0 := Left(s0, p - 1);
 
     hd.ref := s0;
   end;
@@ -1683,7 +1685,7 @@ var
         GetRec := '';
     end;
   begin
-    appUline('U-' + s1);
+    Uline.Add('U-' + s1);
     { "(qmail id xxx invoked from network)" enth„lt "from " }
     RFCRemoveComment(s0);
     by := GetRec('by ');
@@ -1786,7 +1788,7 @@ var
 
   procedure GetMime(p: mimeproc);
   begin
-    AppUline('U-' + s1);
+    Uline.Add('U-' + s1);
     RFCRemoveComment(s0);
     p(s0);
   end;
@@ -1840,6 +1842,7 @@ begin
     ReadString;
     with hd do
     begin
+      s0 := s;
       p := cpos(':', s0);
       if p > 1 then
       begin
@@ -1865,7 +1868,7 @@ begin
               if zz = 'control' then
               control := s0
             else
-              AppUline('U-' + s1);
+              Uline.Add('U-' + s1);
           'd':
             if zz = 'date' then
               GetDate {argl!}
@@ -1876,7 +1879,7 @@ begin
               if zz = 'distribution' then
               GetVar(distribution, s0)
             else
-              AppUline('U-' + s1);
+              Uline.Add('U-' + s1);
           'r':
             if zz = 'references' then
               GetReferences
@@ -1890,7 +1893,7 @@ begin
               if zz = 'return-receipt-to' then
               GetAdr(EmpfBestTo, drealn)
             else
-              AppUline('U-' + s1);
+              Uline.Add('U-' + s1);
           's':
             if zz = 'subject' then
               betreff := s0
@@ -1904,7 +1907,7 @@ begin
               if zz = 'summary' then
               GetVar(summary, s0)
             else
-              AppUline('U-' + s1);
+              Uline.Add('U-' + s1);
           'x':
             if zz = 'x-gateway' then
               gateway := s0
@@ -1954,7 +1957,7 @@ begin
             else
 
               if (zz <> 'xref') and (left(zz, 4) <> 'x-xp') then
-              AppUline(s1);
+              Uline.Add(s1);
         else
           if zz = 'from' then
             GetAdr(absender, realname)
@@ -1983,7 +1986,7 @@ begin
             if zz = 'in-reply-to' then
             GetInReplyto
           else
-            if zz = 'followup-to' then
+            if zz = 'Followup-to' then
             getFollowup
           else
             if zz = 'newsreader' then
@@ -2000,12 +2003,12 @@ begin
             GetPriority
           else
             if zz <> 'lines' then
-            AppUline('U-' + s1);
+            Uline.Add('U-' + s1);
         end;                          { case }
       end;
       s0 := s;
     end;
-  until (s0 = '') and (true or (bufpos >= bufanz));
+  until (s0 = '') or (bufpos >= bufanz);
   with hd do
   begin
     if (cpos('@', absender) = 0) and (cpos('@', sender) > 0) then
@@ -2020,11 +2023,15 @@ begin
     MimeIsoDecode(keywords);
     MimeIsoDecode(organisation);
 
-    for i := 1 to hd.ulines do
-      MimeIsoDecode(uline^[i]);
+    for i := 0 to ULine.Count-1 do
+    begin
+      s := ULine[i];
+      MimeIsoDecode(s);
+      ULine[i] := s;
+    end;
 
-    if (empfanz = 1) and (followups = 1) and (xempf[1] = followup[1]) then
-      followups := 0;
+    if (XEmpf.Count = 1) and (Followup.Count = 1) and (xempf[0] = Followup[0]) then
+      Followup.Clear;
     MimeAuswerten;
   end;
 end;
@@ -2059,10 +2066,7 @@ begin
   write('mail: ', fn);
   inc(mails);
   OpenFile(fn);
-  {  ok:=true; }
-  fillchar(hd, sizeof(hd), 0);
-  envemp := '';
-  hd.netztyp := nt_RFC;
+  ClearHeader;
   repeat                                { Envelope einlesen }
     ReadString;
     p := cpos(' ', s);
@@ -2133,12 +2137,12 @@ begin
       mailuser := SetMailuser(envemp);
     end;
 
-    if (mailuser <> '') and (mailuser <> hd.xempf[1]) then
+    if (mailuser <> '') and (mailuser <> hd.xempf[0]) then
     begin
-      hd.xoem := hd.xempf;
-      hd.oemanz := hd.empfanz;          { Envelope-Empf„nger einsetzen }
-      hd.xempf[1] := mailuser;
-      hd.empfanz := 1;
+      // Envelope-Empf„nger einsetzen
+      hd.xoem.Assign(hd.xempf);
+      hd.xempf.Clear;
+      hd.xempf.Add(mailuser);
     end;
     fp := fpos; bp := bufpos;
     hd.groesse := 0;
@@ -2226,8 +2230,7 @@ begin
   write(sp(7));
   OpenFile(fn);
   repeat
-    fillchar(hd, sizeof(hd), 0);
-    hd.netztyp := nt_RFC;
+    ClearHeader;
     ende := false;
     repeat
       ReadString;
@@ -2268,13 +2271,14 @@ begin
       mempf := SetMailUser(hd.empfaenger);
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
-      if (mempf <> '') and (mempf <> hd.xempf[1]) then
+
+      if (mempf <> '') and (mempf <> hd.xempf[0]) then
       begin
-        hd.xoem := hd.xempf;
-        hd.oemanz := hd.empfanz;
-        hd.xempf[1] := mempf;
-        hd.empfanz := 1;
+        hd.xoem.Assign(hd.xempf);
+        hd.XEmpf.Clear;
+        hd.xempf.Add(mempf);
       end;
+
       fp := fpos; bp := bufpos;
       hd.groesse := 0;
       smtpende := false;
@@ -2423,9 +2427,7 @@ begin
           inc(news);
           size := minmax(ival(mid(s, 10)), 0, maxlongint);
           fp := fpos; bp := bufpos;
-          fillchar(hd, sizeof(hd), 0);
-          hd.netztyp := nt_RFC;
-          ReadString;
+          ClearHeader;
           ReadRFCheader(false, s);
           binaer := (hd.typ = 'B');
           seek(f1, fp); ReadBuf; bufpos := bp;
@@ -2649,7 +2651,6 @@ var
   first: boolean;
   i, j: integer;
   xdate: boolean;
-  ep: empfnodep;
 
   procedure wrref;
   begin
@@ -2742,7 +2743,7 @@ var
   begin
     s := 'Newsgroups: ' + formnews(hd.empfaenger);
     for i := 0 to EmpfList.Count - 1 do
-      s := ',' + formnews(EmpfList[i]);
+      s := s + ',' + formnews(EmpfList[i]);
     Wrs(f, s);
   end;
 
@@ -2832,33 +2833,29 @@ begin
     EmpfList.Clear;
 
     wrs(f, 'Message-ID: <' + msgid + '>');
+
     if ref <> '' then
       if mail and (attrib and attrPmReply = 0) then
-
-      { BEZ bei Strg-B Antworten in Mailinglisten. }
+      // BEZ bei Strg-B Antworten in Mailinglisten
       begin
-        if addrefs > 0 then ref := addref[addrefs]; { neu }
+        if AddRef.Count > 0 then Ref := AddRef[AddRef.Count-1]; { neu }
         wrs(f, 'In-Reply-To: <' + ref + '>');
       end
       else
       begin
-
-        { References einigermassen RFC-konform krzen }
-
+        // References einigermassen RFC-konform krzen
         repeat
           j := 12 + length(ref) + 2;
-          for i := 1 to addrefs do
-            j := j + length(addref[i]) + 3;
+          for i := 0 to AddRef.Count - 1 do
+            j := j + length(Addref[i]) + 3;
           if j > 980 then
-          begin
-            Move(addref[2], addref[1], (maxrefs - 1) * sizeof(addref[1]));
-            dec(addrefs);
-          end;
+            // Erste Referenz l”schen um Platz zu schaffen
+            AddRef.Delete(0);
         until j <= 980;
 
         first := true;
         s := '<' + ref + '>';
-        for i := 1 to addrefs do
+        for i := 0 to AddRef.Count -1 do
         begin
           if length(s) + length(addref[i]) > iif(first, 60, 70) then
             wrref;
@@ -2869,6 +2866,7 @@ begin
         end;
         if s <> '' then wrref;
       end;
+
     if attrib and attrControl <> 0 then
       wrs(f, 'Control: ' + betreff);
     if mail and (LowerCase(betreff) = '<none>') then
@@ -2964,13 +2962,15 @@ begin
       wrs(f, 'X-XP-Ctl: ' + strs(XPointCtl));
     if ersetzt <> '' then
       wrs(f, 'Supersedes: <' + ersetzt + '>');
-    for i := 1 to ulines do
+
+    for i := 0 to uline.Count - 1 do
     begin
-      uuz.s := uline^[i];
+      uuz.s := uline[i];
       IBM2ISO(uuz.s);
       RFC1522form;
       wrs(f, uuz.s);
     end;
+
     if not mail then
       wrs(f, 'Lines: ' + strs(lines + iif(attrib and AttrMPbin <> 0, 16, 0)));
     for i := 0 to AddHd.Count - 1 do
@@ -3210,7 +3210,7 @@ begin
   fs := filesize(f1);
   repeat
     seek(f1, adr);
-    EmpfList.Clear;
+    Clearheader;
     makeheader(true, f1, 1, 0, hds, hd, ok, false);
     if not ok then
     begin
@@ -3278,12 +3278,12 @@ begin
   close(f); erase(f);
 
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
-  EmpfList.Clear;
   if SMTP then CreateNewfile;
   repeat
     copycount := 1;
     repeat
       seek(f1, adr);
+      ClearHeader;
       makeheader(true, f1, copycount, 0, hds, hd, ok, false);
       binmail := (hd.typ = 'B');
       if cpos('@', hd.empfaenger) > 0 then
@@ -3328,9 +3328,9 @@ begin
             MakeXfile('mail');
           end;
         end;
-      if SMTP then copycount := hd.empfanz;
+      if SMTP then copycount := hd.XEmpf.Count;
       inc(copycount);
-    until copycount > hd.empfanz;
+    until copycount > hd.XEmpf.Count;
     inc(adr, hds + hd.groesse);
   until adr > fs - 10;
   if n > 0 then writeln;
@@ -3375,6 +3375,9 @@ end.
 
 {
   $Log$
+  Revision 1.46  2000/07/21 13:23:44  mk
+  - Umstellung auf TStringList
+
   Revision 1.45  2000/07/20 20:30:54  mk
   - EmpfList auf StringList umgestellt
 

@@ -29,7 +29,7 @@ uses
 {$ENDIF }
   dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
-  resource,xp0,crc,xpglobal;
+  resource,xp0,crc,xpglobal, classes;
 
 const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
 
@@ -2014,15 +2014,18 @@ begin
   getmem(hdp, sizeof(header));
   if hdp=nil then
     trfehler(6,30);
+  FillChar(hdp^, SizeOf(header), 0);
+  Hdp^.Kopien := TStringList.Create;
   AllocHeaderMem:= hdp;
 end;
 
 procedure FreeHeaderMem(var hdp: headerp);
 begin
-  if hdp<>nil then begin
-    freemem(hdp, sizeof(header));
-    hdp:= nil;
-  end;
+  if hdp<>nil then
+  with Hdp^ do
+    Kopien.Free;
+  freemem(hdp);
+  hdp:= nil;
 end;
 
 initialization
@@ -2034,6 +2037,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.68  2000/07/21 13:23:44  mk
+  - Umstellung auf TStringList
+
   Revision 1.67  2000/07/20 16:49:56  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 

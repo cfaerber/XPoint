@@ -163,7 +163,6 @@ var size   : longint;
     ni     : NodeInfo;
     hdlines: longint;
     mstatus: string[80];
-    pnt    : empfnodep;
     mailerflag : boolean;
     iso1   : boolean;    { charset: ISO1 }
     lasttrenn : boolean;
@@ -796,21 +795,20 @@ begin
                    end;
                  end;
 
-    hdf_KOP   :  if Assigned(hdp^.kopien) then begin
-                   s:=getres2(361,28)+hdp^.kopien^.empf;    { 'Kopien an  : ' }
-                   pnt:=hdp^.kopien^.next;
-                   while pnt<>nil do begin
-                     if length(s)+length(pnt^.empf)>iif(listscroller,76,77)
-                     then begin
-                       wrs(s); s:=getres2(361,28);
-                       end
-                     else
-                       s:=s+', ';
-                     s:=s+pnt^.empf;
-                     pnt:=pnt^.next;
-                     end;
-                   wrs(s);
-                   end;
+    hdf_KOP   : if Hdp^.Kopien.Count > 0 then
+                begin
+                  s := getres2(361,28)+hdp^.Kopien[0];    { 'Kopien an  : ' }
+                  for i := 1 to Hdp^.Kopien.Count - 1 do
+                  begin
+                    if length(s)+length(Hdp^.Kopien[i])>iif(listscroller,76,77) then
+                    begin
+                      wrs(s); s:=getres2(361,28);
+                    end else
+                      s := s + ', ';
+                    s := s+ Hdp^.Kopien[i];
+                  end;
+                  Wrs(s);
+                end;
 
     hdf_DISK  :  if hdp^.AmReplyTo<>'' then
                    if hdp^.amrepanz=1 then
@@ -1058,9 +1056,9 @@ begin
     if (hdp^.netztyp=nt_Fido) and (art=xTractMsg) and ExtCliptearline then
       Clip_Tearline;
     close(f);
-    DisposeEmpflist(hdp^.kopien);
+    Hdp^.Kopien.Free;
     dispose(hdp);
-    end;
+  end;
   freeres;
   ExtCliptearline:=true;
 end;
@@ -1069,6 +1067,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.31  2000/07/21 13:23:45  mk
+  - Umstellung auf TStringList
+
   Revision 1.30  2000/07/20 16:49:58  mk
   - Copy(s, x, 255) in Mid(s, x) wegen AnsiString umgewandelt
 
