@@ -113,6 +113,7 @@ begin
     SMTP.Password:= bp^.smtp_pwd;
     SMTP.SecureLoginMandatory := bp^.smtp_secureloginmandatory;
   end;
+  SMTP.Port := Bp^.Smtp_Port;
 
   List := TStringList.Create;
   try
@@ -200,6 +201,7 @@ begin
     POP.User:= bp^.pop3_id;
     POP.Password:= bp^.pop3_pwd;
   end;
+  POP.Port := Bp^.POP3_Port;
 
   { Get last retrieved UIDLs from file }
   UIDLFileName:=FileUpperCase(OwnPath+GetServerFilename(Boxname, extUdl));
@@ -277,6 +279,9 @@ end;
                       
 {
   $Log$
+  Revision 1.39  2003/04/03 13:34:06  mk
+  - POP3 and SMTP-Port is now configurable in *.bfg
+
   Revision 1.38  2003/01/25 19:17:33  mk
   - lowercase uses name ncsocket
 

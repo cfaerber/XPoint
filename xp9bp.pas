@@ -195,10 +195,12 @@ begin
     pop3_APOP := true;                  { POP3: APOP benutzen }
     pop3_OnlyNew := true;               { POP3: nur neue Mail holen }
     pop3_ForceOneArea := false;         { POP3: put all messages into *one* area }
+    pop3_port := 110;                   { POP3: Port }
 
     SMTP_ip := 'mail.domain.de';        { SMTP: IP oder Domain }
     SMTP_id := '';                      { SMTP: User-ID, falls noetig }
     SMTP_pwd  := '';                    { SMTP: Passwort, falls noetig }
+    SMTP_port := 25;                    { SMTP: Port }
     SMTP_secureloginmandatory := true;
     SmtpAfterPOP := true;               { SMTP: Vorher POP3 Login noetig }
 
@@ -401,9 +403,11 @@ begin
             getx(su,  'POP3APOP', pop3_APOP) or
             getx(su,  'POP3OnlyNew', pop3_OnlyNew) or
             getx(su,  'POP3ForceOneArea', pop3_ForceOneArea) or
+            geti(su,  'POP3-Port', pop3_port) or
             gets(s,su,'SMTP-IP', smtp_ip) or
             gets(s,su,'SMTP-ID', smtp_id) or
             gets(s,su,'SMTP-Password', smtp_pwd) or
+            geti(su,  'SMTP-Port', smtp_port) or 
             getx(su,  'SMTP-SecureLoginMandatory', smtp_secureloginmandatory) or
             getx(su,  'SmtpAfterPOP', SmtpAfterPOP) or
             getr(su,  'Letzte Verbindung',double(LastCall)) or
@@ -598,10 +602,12 @@ begin
     writeln(t,'POP3APOP=',jnf(pop3_APOP));
     writeln(t,'POP3OnlyNew=',jnf(pop3_OnlyNew));
     writeln(t,'POP3ForceOneArea=',jnf(pop3_ForceOneArea));
+    writeln(t,'POP3-Port=', pop3_port);
 
     writeln(t,'SMTP-IP=',smtp_ip);
     if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
     if smtp_pwd<>''  then writeln(t,'SMTP-Password=',smtp_pwd);
+    writeln(t,'SMTP-Port=', smtp_port);
     writeln(t,'SMTP-SecureLoginMandatory=',jnf(SMTP_secureloginmandatory));
     writeln(t,'SmtpAfterPOP=',jnf(SMTPAfterPOP));
     ///////////////////////////////////////////
@@ -749,6 +755,9 @@ end;
 
 {
   $Log$
+  Revision 1.67  2003/04/03 13:34:05  mk
+  - POP3 and SMTP-Port is now configurable in *.bfg
+
   Revision 1.66  2002/12/14 07:31:36  dodi
   - using new types
 

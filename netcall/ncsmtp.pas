@@ -84,7 +84,7 @@ uses
   typeform, mime_base64, md5, mime;
 
 const
-  DefaultSMTPPort       = 25;
+  DefaultSMTPPort = 25;
   SMTPFROMSIGN    = 'MAIL FROM:';
   SMTPTOSIGN      = 'RCPT TO:';
   SMTPDATASIGN    = 'DATA';
@@ -346,6 +346,9 @@ end;
 
 {
   $Log$
+  Revision 1.25  2003/04/03 13:34:06  mk
+  - POP3 and SMTP-Port is now configurable in *.bfg
+
   Revision 1.24  2002/12/16 14:53:12  mk
   - fixed compiler warning
 

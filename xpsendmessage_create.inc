@@ -457,7 +457,7 @@ var FidoOriginSav: string;
     hdp.archive := PM;
     hdp.betreff:=Subject;
 
-    hdp.absender := Server.AbsAddr;
+    hdp.absender := Server.AbsAdd,r;
     if not Server.AliasPoint then hdp.real_box:=Server.Name;
     hdp.realname:=iifs(SenderRealname='',Server.Realname,SenderRealname);
     
@@ -1034,6 +1034,9 @@ end;
                                                       
 //
 // $Log$
+// Revision 1.12  2003/04/03 13:34:06  mk
+// - POP3 and SMTP-Port is now configurable in *.bfg
+//
 // Revision 1.11  2003/01/13 22:48:51  cl
 // - enabled TRopeStream
 //
