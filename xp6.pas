@@ -570,6 +570,8 @@ var i,first : integer;
       if ccpm then begin
         dbSeek(ubase,uiName,ustr(adr));
         if dbFound then begin
+          if dbreadint(ubase,'adrbuch')=0 then      { CC-Empfaenger ins Adressbuch aufnehmen }
+            dbwrite(ubase,'adrbuch',NeuUserGruppe);
           dbReadN(ubase,ub_pollbox,server);
           if (dbReadInt(ubase,'userflags') and 2<>0) and
              (dbReadInt(ubase,'codierer')<>0) then
@@ -2194,6 +2196,11 @@ end;
 end.
 {
   $Log$
+  Revision 1.39.2.9  2000/09/30 14:17:26  my
+  JG:- Fix: Aufnahme von Usern ins Adreßbuch, wenn diese schon
+       in der Datenbank sind, auch bei CCs
+       (bitte noch für 3.70 nachholen)
+
   Revision 1.39.2.8  2000/09/12 12:41:59  fe
   1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
      proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO
