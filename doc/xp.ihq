@@ -921,7 +921,6 @@ markiert.
 <Ctrl K><U> : Block aus Datei lesen und UU-kodieren
 <Ctrl K><O> : Block Rot13-codieren
 <Ctrl K><S> : Schreibweise (groá/klein) wechseln
-<Ctrl K><F> : Block reformatieren
 <Ctrl Q><B> : Cursor an Blockanfang bewegen
 <Ctrl Q><K> : Cursor an Blockende bewegen
 
@@ -998,6 +997,11 @@ lange der Hauptspeicher ausreicht, und k”nnen mit
 
 <Alt B>      „ndert innerhalb des Nachrichteneditors
              den Betreff.
+
+<Ctrl B>     reformatiert den markierten Block. Ist
+             kein Block markiert, wird beginnend vom
+             Absatz, auf dem der Cursor steht, bis
+             zur n„chsten Leerzeile neu formatiert.
 
 @
 65

@@ -782,7 +782,6 @@ From left to right:
 <Ctrl K><U> : Import Block from File and UU-encode
 <Ctrl K><O> : Encode Block Rot13
 <Ctrl K><S> : Toggle letter upper/lower case
-<Ctrl K><F> : Reformat Block
 <Ctrl Q><B> : Set Cursor at Block begin
 <Ctrl Q><K> : Set Cursor at Block end
 
@@ -851,6 +850,12 @@ They can be <<recalled with Ctrl-U>>
 
 <<<Alt B> >>Changes the <<subject title>> from
         inside the editor.
+
+<<<Ctrl B> >>Reformats the marked Block. If no block is
+        marked, the text from the paragraph where
+        the cursor is to the next empty line is
+        reformatted.
+
 @
 65
 Use the cursor keys to page through years and months.

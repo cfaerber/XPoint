@@ -1864,7 +1864,11 @@ begin
           then quotec1:=GetQuote(ap)
           else quotec1:='';
         quotes:=length(quotec1);
-        if quotes>rrand div 2 then quotes:=0;
+        if quotes>rrand div 2 then begin
+          quotec1:=rtrim(quotec1);
+          quotes:=length(quotec1);
+          if quotes>rrand div 2 then quotes:=0;
+        end;  
         if config.autoindent and (quotes=0) then begin
           while (spaces<ap^.size) and (ap^.cont[spaces]=' ') do
             inc(spaces);
@@ -2263,6 +2267,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.15  2000/03/21 22:08:20  rb
+  kleiner Sch”nheitsbugfix fr 'Block reformatieren', Onlinehilfe angepasst
+
   Revision 1.14  2000/03/21 21:19:09  rb
   Bugfixes ('Block reformatieren' u. a.), 'Block reformatieren' jetzt auf <Ctrl-B>
 
