@@ -919,8 +919,6 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        LogPath      : string;
        FilePath     : string;
        FidoPath     : string;       { OwnPath+FidoDir }
-       lockfile     : file;          { gelockte Datei LOCKFILE }
-
        col          : ColRec;        { CFG-Variablen :  ------ }
        ExtraktTyp   : byte;          { 0=ohne Kopf, 1=mit, 2=Puffer, 3=Quote }
        defExtrakttyp: byte;          { .. in XPOINT.CFG        }
@@ -1239,6 +1237,9 @@ implementation
 
 {
   $Log$
+  Revision 1.158.2.20  2004/01/15 15:51:18  mk
+  - removed unused variable lockfile
+
   Revision 1.158.2.19  2003/09/11 22:28:55  mk
   - added special color for signatures
 
