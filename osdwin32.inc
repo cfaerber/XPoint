@@ -63,11 +63,16 @@ begin
     TIME_ZONE_ID_DAYLIGHT:
       Result := 'S' + HourToStr(TZ.Bias + TZ.DaylightBias);
   end;
+  DebugLog('osdwin32', Format('Got Timezone from Windows: %s (Bias: %d, DaylightBias: %d)',
+    [Result, TZ.Bias, TZ.DaylightBias]), dlDebug); 
 end;
 
 
 {
         $Log$
+        Revision 1.6  2003/09/16 23:48:54  mk
+        - added Debug log to GetTimeZone
+
         Revision 1.5  2003/08/26 04:58:14  mk
         - added automatic TimeZone dectection for Win32
 

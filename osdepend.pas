@@ -64,6 +64,9 @@ implementation
 
 //no uses here, leave it to the inluded files!
 
+uses
+  Debug;
+
 {$ifdef BSD}   {$i osdbsd.inc}   {$endif}
 {$ifdef Dos32} {$i osddos32.inc} {$endif}
 {$ifdef OS2}   {$i osdos2.inc}   {$endif}
@@ -72,6 +75,9 @@ implementation
 
 {
         $Log$
+        Revision 1.13  2003/09/16 23:48:54  mk
+        - added Debug log to GetTimeZone
+
         Revision 1.12  2003/08/27 18:58:23  mk
         - removed uses crt
 
