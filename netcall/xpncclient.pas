@@ -245,10 +245,15 @@ begin
     IDList.Free;
     Write_LastCall(Dat);
   end;
+  // load calling system, important for xpnetcall
+  LoadBox(BoxFileName);
 end;
 
 {
   $Log$
+  Revision 1.9  2003/09/07 19:09:49  mk
+  - added missing netcall log for client systems
+
   Revision 1.8  2003/09/03 00:54:57  mk
   - added multiserver netcall
 
