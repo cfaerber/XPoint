@@ -291,35 +291,21 @@ end;
 
 function ascii_charset(s:string):boolean;
 begin
-  ascii_charset:=(s='us-ascii') or (s='us') or (s='ascii') or (s='csascii')
-    or (s='iso646-us') or (s='iso-ir-6') or (s='iso_646.irv:1991')
-    or (s='ansi_x3.4-1968') or (s='ansi_x3.4-1986')
-    or (s='cp367') or (s='ibm367');
+  ascii_charset:=pos(';'+s+';',';us-ascii;ascii;csascii;ansi_x3.4-1968;'
+  + 'iso-ir-6;ansi_x3.4-1986;iso_646.irv:1991;iso646-us;us;ibm367;cp367;'
+  + 'ibm437;cp437;437;ibm850;cp850;850;')>0;
 end;
 
 function iso_charset(s:string):boolean;
 begin
-  iso_charset:=(left(s,9)='iso-8859-') or
-               (left(s,9)='iso_8859-') or
-               (left(s,9)='csiso8859') or
-               (left(s,10)='csisolatin') or
-               ((length(s)=6) and (left(s,5)='latin') and (s[6] in ['1'..'6','8'])) or
-               ((length(s)=2) and (s[1]='l') and (s[2] in ['1'..'6','8'])) or
-               ((left(s,7)='iso-ir-') and
-                (ival(mid(s,8)) in [100,101,109,110,126,127,
-                                    138,144,148,154,157,199])) or
-               (s='ibm819') or
-               (s='cp819') or
-               (s='cyrillic') or
-               (s='ecma-114') or
-               (s='asmo-708') or
-               (s='arabic') or
-               (s='elot_928') or
-               (s='ecma-118') or
-               (s='greek') or
-               (s='greek8') or
-               (s='hebrew') or
-               (s='iso-celtic');
+  iso_charset:=(pos(left(s,9),'iso-8859-;iso_8859-;csiso8859')>0)
+    or (s='latin'+lastchar(s)) or (s='csisolatin'+lastchar(s)) or
+       (s='l'+lastchar(s))
+    or ((length(s)=10) and (left(s,8)='iso-ir-1') and
+       (pos(right(s,2),'00;01;09;10;26;27;38;44;48;54;57;99')>0))
+    or (pos(';'+s+';',';ibm819;cp819;ecma-114;asmo-708;arabic;csisolatinarabic;'
+       + 'elot_928;ecma-118;iso-celtic;greek;greek8;csisolatingreek;hebrew;'
+       + 'csisolatinhebrew;cyrillic;csisolatincyrillic;latin1-2-5;')>0);
 end;
 
 procedure CharsetToIBM(charset:string; var s:string);
@@ -516,6 +502,9 @@ end.
 
 {
   $Log$
+  Revision 1.1.2.11  2002/04/20 11:35:00  my
+  JG+RB+MY:- Routinen fr IANA-Zeichensatz-Aliase erweitert und optimiert.
+
   Revision 1.1.2.10  2002/04/18 22:16:49  my
   JG+MY:- Untersttzung aller derzeit bei der IANA registrierten Alias-
           Namen fr die von XP bei eingehenden Nachrichten untersttzten
