@@ -336,6 +336,8 @@ var
       uu.Source   := source;
       uu.Dest     := dest;
 
+      uu.NoCharsetRecode := not (BoxPar^.UUZCharsetRecode);
+
 //    uu.CommandLine := true;
 
 //    uu.ClearSourceFiles := DiskPoll or nDelPuffer;
@@ -506,6 +508,11 @@ end.
 
 {
   $Log$
+  Revision 1.16  2002/01/02 15:33:52  cl
+  - UUZ can now (optionally) not recode any charsets.
+  - new box configuration option: UUZRecodeCharset
+  - extract_msg can not handle all charsets and extract in UTF8 mode.
+
   Revision 1.15  2001/12/21 21:25:18  cl
   BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
   SEE ALSO: <8FIVnDgocDB@3247.org>

@@ -180,14 +180,19 @@ var
 {$ENDIF }
 {$ENDIF }
 
-{ 
-  Charset conversion: We define two charsets: 
-  - the charset the console is really in
-  - the charset used by output APIs
+{
+  Sets and reads the charset the conole actually is in. (Note: The 
+  charset actually used may be different from the one requested)
 }
 procedure SetConsoleOutputCharset(NewCharset:TMimeCharsets);
 function  GetConsoleOutputCharset:TMimeCharsets;
 
+{ 
+  Sets and reads the charset (most) functions that operate on the 
+  console screen use.
+  If different from the actual console charset, there will be automatic
+  conversion.
+}
 procedure SetLogicalOutputCharset(NewCharset:TMimeCharsets);
 function  GetLogicalOutputCharset:TMimeCharsets;
 
@@ -1390,6 +1395,11 @@ end;
 
 {
   $Log$
+  Revision 1.72  2002/01/02 15:33:51  cl
+  - UUZ can now (optionally) not recode any charsets.
+  - new box configuration option: UUZRecodeCharset
+  - extract_msg can not handle all charsets and extract in UTF8 mode.
+
   Revision 1.71  2002/01/01 19:34:37  cl
   - Basic support for console charset switching + initial Win32 implementation
 

@@ -112,6 +112,7 @@ type
     ppp: boolean;
     SMTP: boolean;
     NNTPSpoolFormat: Boolean;    { if true, message boundaries are marked by a '.' line }
+    NoCharsetRecode: boolean;
 
     { only used in non-cmdline mode }
     uparcer_news: string;
@@ -275,6 +276,7 @@ begin
   NewsMIME:= false;
   NoMIME:= false;              { -noMIME }
   NNTPSpoolFormat:= false;
+  NoCharsetRecode:= true;
   MailUser:= 'mail';        { fuer U-Zeile im X-File }
   NewsUser:= 'news';
   FileUser:= 'root';
@@ -289,6 +291,7 @@ begin
   _from := '';
   _to := '';                   { UUCP-Systemnamen }
   eol := 0;
+
 
   {$IFDEF unix}
   downarcers[compress_compress] := 'compress -dvf $DOWNFILE';
@@ -2134,7 +2137,8 @@ begin
       inc(mails);
       binaer := (hd.typ = 'B');
       multi  := (hd.typ = 'M');
-      recode := (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
+      recode := (not NoCharsetRecode ) and 
+        (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
       hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
 
       if (mailuser='') and (hd.envemp<>'') then
@@ -2275,7 +2279,8 @@ begin
       ReadRFCheader(true, s);
       binaer := (hd.typ = 'B');
       multi  := (hd.typ = 'M');
-      recode := (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
+      recode := (not NoCharsetRecode ) and
+        (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
       hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
 
       if (mempf <> '') and (hd.xempf.count > 0) and (mempf <> hd.xempf[0]) then
@@ -2394,7 +2399,8 @@ begin
       ReadRFCheader(false, s);
       binaer := (hd.typ = 'B');
       multi  := (hd.typ = 'M');
-      recode := (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
+      recode := (not NoCharsetRecode ) and
+        (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
       hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
 
       seek(f1, fp); ReadBuf; bufpos := bp;
@@ -3658,6 +3664,11 @@ end;
 
 {
   $Log$
+  Revision 1.88  2002/01/02 15:33:52  cl
+  - UUZ can now (optionally) not recode any charsets.
+  - new box configuration option: UUZRecodeCharset
+  - extract_msg can not handle all charsets and extract in UTF8 mode.
+
   Revision 1.87  2001/12/23 23:26:00  mk
   - fixed multible EmfpList and problems with CCs (outgoing, witz uuz -smtp)
 

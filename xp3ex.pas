@@ -40,6 +40,10 @@ const xTractMsg   = 0;
       xTractQuote = 3;
       xTractDump  = 4;
 
+      xTractModeMask = $FF;
+
+      xTractUTF8  = $100;
+
       ExtCliptearline : boolean = true;
       ExtChgtearline  : boolean = false;
 
@@ -47,13 +51,13 @@ procedure rps(var s:string; s1,s2:string);
 procedure rpsuser(var s:string; name:string; var realname:string);
 procedure rpsdate(var s:string);
 procedure ExtractSetMimePart(MimePart: TMimePart);
-procedure extract_msg(art:byte; schablone:string; name:string;
+procedure extract_msg(art:Integer; schablone:string; name:string;
                       append:boolean; decode:shortint);
 
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp_des,xpnt,xpfido, xpmakeheader;
+uses xp1o,xp3,xp_des,xpnt,xpfido,xpmakeheader,mime,utftools,unicode;
 
 var  ex_MimePart : TMimePart;
 
@@ -157,7 +161,7 @@ end;
 {      4=Hex-Dump                                  }
 { decode: 0=nicht, -1=Rot13, 1=Betreff analysieren }
 
-procedure extract_msg(art:byte; schablone:string; name:string;
+procedure extract_msg(art:integer; schablone:string; name:string;
                       append:boolean; decode:shortint);
 var size   : longint;
     f,decf : file;
@@ -176,7 +180,7 @@ var size   : longint;
     ni     : NodeInfo;
     hdlines: longint;
     mstatus: string[80];
-    iso1   : boolean;    { charset: ISO1 }
+//  iso1   : boolean;    { charset: ISO1 }
     lasttrenn : boolean;
     MimePart : TMimePart;
     multipart : boolean;
@@ -185,7 +189,21 @@ var size   : longint;
     mehdl, mehds : integer;
     TempKopien: TStringList;
     QuoteEmptyLines: boolean;
+    SourceCS: TMimeCharsets;
+    
+    ExtUTF8     : boolean;
 
+    SourceToUTF8: TUTF8Encoder;
+    UTF8ToDest:  TUTF8Decoder;    
+
+    TemplateToUTF8: TUTF8Encoder;
+
+  procedure recode(var s:string);
+  begin
+    if assigned(SourceToUTF8) then s:=SourceToUTF8.Encode(s);
+    if assigned(UTF8ToDest)   then s:=UTF8ToDest.  Decode(s);
+  end;
+    
   procedure wrs(s:string);
   begin
     s:=LeftStr(s,ScreenWidth)+#13#10;
@@ -486,11 +504,11 @@ var size   : longint;
   end;
 
   procedure QuoteTtoF;
-  var reads      : string[120];
+  var reads      : string;
       stmp       : string;
       lastqc     : string[20];
       qspaces    : string[QuoteLen];
-      convstr    : shortstring;         { Workaround fuer iso_conv }
+//    convstr    : shortstring;         { Workaround fuer iso_conv }
       p,q        : integer;
       lastquote  : boolean;   { vorausgehende Zeile war gequotet }
       blanklines : longint;
@@ -540,23 +558,24 @@ var size   : longint;
     end;
 *)
 
-  begin
+  begin // QuoteTtoF
     qspaces:=sp(length(qchar)-length(trimleft(qchar)));
     stmp:='';
     lastquote:=false;
     blanklines:=0;
     while not eof(t) do begin
-      read(t,reads);                         { max. 120 Zeichen einlesen }
+      read(t,reads);
+      recode(reads);
       endspace:=(LastChar(reads)=' ') or eoln(t);
       p:=length(reads);                      { rtrim, falls kein Leer-Quote }
       while (p>0) and (reads[p]=' ') do dec(p);
       s:=LeftStr(reads,p);
       if (leftStr(s,11)=' * Origin: ') or (leftStr(s,4)='--- ') or (s='---') then s[2]:='+';
-      if not iso1 and ConvIso and (s<>'') then begin
-        convstr:= s;
-        ISO_conv(convstr[1],length(convstr));            { ISO-Konvertierung }
-        s:= convstr;
-      end;
+//    if not iso1 and ConvIso and (s<>'') then begin
+//      convstr:= s;
+//      ISO_conv(convstr[1],length(convstr));            { ISO-Konvertierung }
+//      s:= convstr;
+//    end;
       if s=#3 then begin
         FlushStmp;                           { #3 -> Leerzeile einfuegen }
         wrslong('');
@@ -633,12 +652,13 @@ var size   : longint;
             s:= TrimRight(s);
             if not eoln(t) and (length(stmp)+length(LastQC)<QuoteBreak) then begin
               read(t,reads);      { Rest der Zeile nachladen }
+              recode(reads);
               endspace:=(LastChar(reads)=' ') or eoln(t);
-              if not iso1 and ConvIso and (reads<>'') then begin
-                convstr:= reads;
-                ISO_conv(convstr[1],length(convstr));    { ISO-Konvertierung }
-                reads:= convstr;
-              end;
+//            if not iso1 and ConvIso and (reads<>'') then begin
+//              convstr:= reads;
+//              ISO_conv(convstr[1],length(convstr));    { ISO-Konvertierung }
+//              reads:= convstr;
+//            end;
               stmp:=stmp+trimright(reads)+iifs(endspace,' ','');
             end;
             if length(stmp)+length(LastQC)>=QuoteBreak then begin
@@ -698,9 +718,19 @@ var size   : longint;
     ohfill:=s;
   end;
 
-Label ExitL;
-begin
+begin // extract_msg;
   extheadersize:=0; exthdlines:=0; hdlines:=0;
+
+  SourceToUTF8:= nil;
+  UTF8ToDest  := nil;
+  TempKopien  := nil;
+  MimePart    := nil;
+
+ try
+
+  ExtUTF8 := (art and xTractUTF8)<>0;
+  art := art and xTractModeMask;
+  
   TempKopien := TStringList.Create;
   MimePart := TMimePart.Create;
   if Assigned(ex_MimePart) then 
@@ -722,7 +752,8 @@ begin
       rewrite(f,1);
       close(f);
       Hdp.Free;
-      Goto ExitL;
+//    Goto ExitL;
+      exit;
     end;
       if append then begin
       reset(f,1);
@@ -736,10 +767,26 @@ begin
     dbReadN(mbase,mb_EmpfDatum,edat);
     if smdl(IxDat('2712300000'),edat) then
       dbReadN(mbase,mb_wvdatum,edat);
-    iso1:=(dbReadInt(mbase,'netztyp') and $2000)<>0;
+//  iso1:=(dbReadInt(mbase,'netztyp') and $2000)<>0;
+    SourceCS := MimeGetCharsetFromName(ZcCharsetToMIME(hdp.charset));
+
+    if ExtUTF8 then begin
+      if not (SourceCS in [csCP437,csUTF8,csASCII,csUNKNOWN]) then
+        SourceToUTF8 := CreateUTF8Encoder(SourceCS);
+    end else begin
+      if not (SourceCS in [csCP437,csUTF8,csASCII,csUNKNOWN]) then
+      begin
+        if not (SourceCS in [csUTF8]) then
+          SourceToUTF8 := CreateUTF8Encoder(SourceCS);
+        UTF8ToDest  := CreateUTF8Decoder(csCP437);
+      end;
+    end;
+
     if (schablone<>'') and (FileExists(schablone)) then begin
       assign(t,ownpath+schablone);
       reset(t);
+      if ExtUTF8 then TemplateToUTF8 := CreateUTF8Encoder(csCP437);
+     try
       while not eof(t) do with hdp do begin
         readln(t,s);
         wempf:=empfaenger;
@@ -778,8 +825,12 @@ begin
           rpsdate(s);
           if lastchar(s)=' ' then DeleteLastChar(s);
           end;
+        if ExtUTF8 then s := TemplateToUTF8.Encode(s);
         wrslong(s);
         end;
+       finally
+        if ExtUTF8 then TemplateToUTF8.Free;
+       end;
       close(t);
       end;
 
@@ -1102,11 +1153,14 @@ begin
     Hdp.Free;
   end;
   freeres;
-ExitL:
+ finally
   ExtCliptearline:=true;
   ExtChgtearline:=false;
   TempKopien.Free;
   MimePart.Free;
+  SourceToUTF8.Free;
+  UTF8ToDest  .Free;
+ end;
 end;
 
 initialization 
@@ -1114,6 +1168,11 @@ initialization
 finalization
 {
   $Log$
+  Revision 1.86  2002/01/02 15:33:52  cl
+  - UUZ can now (optionally) not recode any charsets.
+  - new box configuration option: UUZRecodeCharset
+  - extract_msg can not handle all charsets and extract in UTF8 mode.
+
   Revision 1.85  2001/12/15 09:44:36  mk
   - added some comments
 

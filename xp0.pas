@@ -649,6 +649,8 @@ type   textp  = ^text;
                   ClientNewsUser     : string;      { Client News-User              }
                   ClientNewsPass     : string;      { Client News-Passwort          }
                   ClientNewsPort     : string;      { Client News-Port              }
+
+                  UUZCharsetRecode: boolean;
                 end;
        BoxPtr = ^BoxRec;
 
@@ -1199,6 +1201,11 @@ implementation
 
 {
   $Log$
+  Revision 1.147  2002/01/02 15:33:51  cl
+  - UUZ can now (optionally) not recode any charsets.
+  - new box configuration option: UUZRecodeCharset
+  - extract_msg can not handle all charsets and extract in UTF8 mode.
+
   Revision 1.146  2001/11/25 20:54:35  mk
   - maxmarklist now 20000 instead of 5000
 

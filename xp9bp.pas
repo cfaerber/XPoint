@@ -220,6 +220,8 @@ begin
     ClientNewsUser:= '';
     ClientNewsPass:= '';
     ClientNewsPort:= '119';
+
+    UUZCharsetRecode := true;
   end;
   nt_bpar(nt,bp^);
 end;
@@ -405,8 +407,10 @@ begin
             gets(s,su,'Client-NewsServer', ClientNewsServer) or
             gets(s,su,'Client-NewsUser', ClientNewsUser) or
             gets(s,su,'Client-NewsPassword', ClientNewsPass) or
-            gets(s,su,'Client-NewsPort', ClientNewsPort)
+            gets(s,su,'Client-NewsPort', ClientNewsPort) or
 
+            // UUZ-Parameter
+            getx(su,  'UUZ-RecodeCharset', UUZCharsetRecode)
           ) then
             debug.debuglog('xp9bp','Invalid server config line: '+s,DLWarning);
           end;
@@ -586,6 +590,8 @@ begin
     writeln(t,'Client-NewsUser=', ClientNewsUser);
     writeln(t,'Client-NewsPassword=', ClientNewsPass);
     writeln(t,'Client-NewsPort=', ClientNewsPort);
+
+    writeln(t,'UUZ-RecodeCharset=',jnf(UUZCharsetRecode));
   end;
   close(t);
 end;
@@ -688,6 +694,11 @@ end;
 
 {
   $Log$
+  Revision 1.57  2002/01/02 15:33:52  cl
+  - UUZ can now (optionally) not recode any charsets.
+  - new box configuration option: UUZRecodeCharset
+  - extract_msg can not handle all charsets and extract in UTF8 mode.
+
   Revision 1.56  2001/12/26 01:35:32  cl
   - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
 
