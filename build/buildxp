@@ -91,7 +91,7 @@ cp -a openxp-e.res openxp-e.res-$version
 cp -a doc/openxp-d.hlp doc/openxp-d.hlp-$version
 cp -a doc/openxp-e.hlp doc/openxp-e.hlp-$version
 cp -a openxp-kylix openxp-kylix-$version
-tar cvIf "$versiondir"openxp-"$version"-linux.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp 
+tar cvIf "$versiondir"openxp-"$version"-linux.tar.bz2 openxp openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp doc/oxp_en.txt
 test -f openxp-freebsd && tar cvIf "$versiondir"openxp-"$version"-freebsd.tar.bz2 openxp-freebsd openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
 test -f openxp-netbsd && tar cvIf "$versiondir"openxp-"$version"-netbsd.tar.bz2 openxp-netbsd openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
 test -f openxp-os2.exe && zip -9-r "$versiondir"openxp-"$version"-os2.zip openxp-os2.exe openxp-d.res openxp-e.res doc/openxp-d.hlp doc/openxp-e.hlp
