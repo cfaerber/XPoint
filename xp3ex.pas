@@ -173,6 +173,7 @@ var size   : longint;
     sizepos : longint;
     mpsize  : longint;
     mehdl, mehds : integer;
+    QuoteEmptyLines: boolean;
 
   procedure wrs(s:string);
   begin
@@ -315,6 +316,8 @@ var size   : longint;
       p:=cpos('@',qchar); if p>0 then delete(qchar,p,1);
       p:=cpos('$',qchar); if p>0 then delete(qchar,p,1);
     end;
+    p:=cpos('%',qchar); QuoteEmptyLines:=p>0; if QuoteEmptyLines then delete(qchar,p,1);
+    {* Schneller Hack: Konfigurierbares Quoten von Leerzeilen, sauberer machen! }
     p:=cpos('@',qchar);
     empty:=false;
     if p=0 then begin
@@ -522,7 +525,7 @@ var size   : longint;
         if blanklines>0 then
           if (p=0) { or not IniQuote } then  { n„chste Zeile war nicht gequotet }
             for i:=1 to blanklines do    { -> Leerzeilen mitquoten          }
-              wrslong(qchar)
+              if QuoteEmptyLines then wrslong(qchar)else wrslong('')
           else
             wrslong('');                 { sonst Leerzeilen nicht quoten }
         blanklines:=0;
@@ -1043,6 +1046,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.17.2.8  2000/10/01 22:08:36  my
+  MA:- schneller Leerzeilen-Quote-Hack. Bitte bei Interesse sauber
+       konfigurierbar machen.
+
   Revision 1.17.2.7  2000/08/12 11:21:17  mk
   JG:- Quotereflow Fix
 
