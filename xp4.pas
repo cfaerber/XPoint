@@ -1053,28 +1053,31 @@ var t,lastt: taste;
       end;
     sdata^.empfrealname:=realname;
 
-    mimetyp := dbReadNStr(mbase,mb_mimetyp);
-
-    { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
-      Multipart-Daten vorhanden, wir faken uns also welche, damit
-      die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
-    if (qmpdata = nil) and (Quote < 2) and (mimetyp <> 'text/plain') then
+    if reply then
     begin
-      pushhp(94);
-      fillchar(mpdata,sizeof(qmpdata),0);
-      mpdata.fname := fn;
-      SelectMultiPart(true,1,false,mpdata,brk);
+      mimetyp := dbReadNStr(mbase,mb_mimetyp);
 
-      // is MIME-Typ not text/plain and quote then ask
-      // if quoting binary mails is desired
-      if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
-        and (mpdata.typ <> '') and (quote=1) and
-        not ReadJN(getres(406),true)   { 'Das ist eine Bin„rnachricht! M”chten Sie die wirklich quoten' }
-        then goto ende;
+      { falls wir nicht aus dem Lister heraus antworten, sind keinerlei
+        Multipart-Daten vorhanden, wir faken uns also welche, damit
+        die zu beantwortende Nachricht auch wirklich sauber decodiert wird }
+      if (qmpdata = nil) and (Quote < 2) and (mimetyp <> 'text/plain') then
+      begin
+        pushhp(94);
+        fillchar(mpdata,sizeof(qmpdata),0);
+        mpdata.fname := fn;
+        SelectMultiPart(true,1,false,mpdata,brk);
 
-      qmpdata := @mpdata;
-      pophp;
-      if brk then goto ende;
+        // is MIME-Typ not text/plain and quote then ask
+        // if quoting binary mails is desired
+        if not ((mpdata.typ='text') and (mpdata.subtyp='plain'))
+          and (mpdata.typ <> '') and (quote=1) and
+          not ReadJN(getres(406),true)   { 'Das ist eine Bin„rnachricht! M”chten Sie die wirklich quoten' }
+          then goto ende;
+
+        qmpdata := @mpdata;
+        pophp;
+        if brk then goto ende;
+      end;
     end;
 
     if DoSend(pm,fn,empf,betr,true,false,true,true,true,sData,headf,sigf,
@@ -2098,6 +2101,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.50  2000/10/26 08:46:37  mk
+  - MIME-Auswahldialog nur bei Replys
+
   Revision 1.49  2000/10/24 13:42:51  mk
   - MIME-fixes (merged from 3.30 branch)
 
