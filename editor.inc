@@ -2287,8 +2287,9 @@ begin
       ml:=max(ml,length(menue[i]));
       highp[i]:=cpos('^',menue[i])+1;
       end;
-    mausmenu:=(maust and 2<>0);
-    if mausmenu then begin
+    mausmenu:=(maust and 2<>0) and mausda;
+    if mausmenu then
+    begin
       maus_gettext(xx,yy);
       mx:=min(xx,screenwidth-ml-3);
       my:=min(yy,y+h-editmenumps-3);
@@ -2414,6 +2415,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.40  2000/12/27 19:49:32  mk
+  - check for mousesupport in local menu
+
   Revision 1.39  2000/12/25 14:02:39  mk
   - converted Lister to class TLister
 
