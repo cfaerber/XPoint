@@ -424,8 +424,8 @@ var   hdp      : headerp;
           typ:=LStr(ctype);
           subtyp:=LStr(subtype);
           code:=codecode(_encoding);
-          fname:=filename;
           mimeisodecode(filename,80);
+          fname:=filename;
           ddatum:=filedate;
           startline:=_start;
           lines:=n-startline;
@@ -719,6 +719,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.26  2002/03/14 17:34:46  my
+  MY:- Das Decodieren von RFC-1522-codierten Dateinamen in Attachments
+       klappte nicht (Anweisung eine Zeile zu tief einkopiert).
+
   Revision 1.12.2.25  2002/03/13 23:05:41  my
   RB[+MY]:- Gesamte Zeichensatzdecodierung und -konvertierung entrÅmpelt,
             von Redundanzen befreit, korrigiert und erweitert:
