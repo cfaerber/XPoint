@@ -46,7 +46,6 @@ var   UpArcnr   : integer;    { fr EditPointdaten }
       amvfield  : integer;    { EditDiverses }
       downprotnr: integer;    { Edit/Point - Download-Protokoll }
 
-
 function  UniSel(typ:byte; edit:boolean; default:string):string;
 procedure get_first_box(d:DB);
 procedure SetUsername(s:string);
@@ -1224,9 +1223,9 @@ restart:
   dom:=ntDefaultDomain(nt);
   if pppm then begin
     email:=user;
-    b:=cpos('@',email);
-    if b=0 then begin
-      hinweis(Getres2(10900,8));
+    if not is_mailaddress(email) then
+    begin
+      rfehler(908);
       goto restart;
       end
     else begin
@@ -1290,6 +1289,9 @@ restart:
 end.
 {
   $Log$
+  Revision 1.19.2.30  2001/07/31 15:33:58  my
+  - implemented is_emailaddress in get_first_box
+
   Revision 1.19.2.29  2001/07/19 18:37:38  mk
   - bei Vertreterauswahl werden jetzt nicht mehr die Boxensettings
     überschrieben. Temp-Record für BoxPar in BoxSelProc eingebaut
