@@ -1090,7 +1090,7 @@ outer:
          ( (q=0) or  { we are at the beginning (i.e. there was not already an encoded-word) }
            (r>=q) )  { the last non-white-space character was not before the stop of the last encoded-word }
       then
-        sd := sd + ISOtoIBM(copy(ss,q,p-q));
+        sd := sd + RecodeCharset(copy(ss,q,p-q),csCP1252,csCP437);
 
       (* encoded-word = "=?" charset "?" encoding "?" encoded-text "?=" *)
       (*                 ^p              ^e           ^e+2          ^t  *)
@@ -1111,9 +1111,9 @@ outer:
   end; // while
 
   if (q>1) then   { there has actually something been decoded    }
-    Result := sd + RecodeCharset(mid(ss,q),csCP1251,csTo)
+    Result := sd + RecodeCharset(mid(ss,q),csCP1252,csTo)
   else
-    Result := RecodeCharset(ss,csCP1251,csTo);
+    Result := RecodeCharset(ss,csCP1252,csTo);
 end;
 
 function RFC2047_Encode(ss: string; csFrom: TMimeCharsets;MaxFirstLen,MaxLen:Integer;EOL:String):String;
@@ -1276,6 +1276,9 @@ end;
 
 //
 // $Log$
+// Revision 1.4  2001/09/08 20:57:27  cl
+// - unencoded 8bit chars in RFC header lines now treted as Windows-1252 (=Windows Quirks)
+//
 // Revision 1.3  2001/09/08 18:46:43  cl
 // - small bug/compiler warning fixes
 //
