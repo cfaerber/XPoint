@@ -66,10 +66,14 @@ const
   bufsize  = 262144; { 256kb Puffer unter 32 Bit ist ok }
   maxll    = 64;
 
+type llref = record
+   MsgPos, MsgId, MsgRef, Datum: Integer; 
+  end;
+
 var x,y      : Integer;
     f,pfile  : file;
     fm: Byte;
-    llbuf    : array[1..maxll] of longint;
+    llbuf    : array[1..maxll] of llref;
     llanz    : integer;
     padr,size: longint;
     ablage   : byte;
@@ -556,13 +560,9 @@ var x,y      : Integer;
   end;
 
   procedure Bezugsverkettung;
-  var n      : longint;     
-      c1,c2  : longint;
-      ll     : packed record
-                 l   : longint;
-                 dat : longint;
-               end;
-      empfnr : integer;
+  var ll     : llref;
+      fs,no  : integer;
+      ok     : integer;
   begin
     Debug.DebugLog('xp3o','start Bezugsverkettung 1',DLInform);
     moff;
@@ -570,52 +570,34 @@ var x,y      : Integer;
     FWrt(x+2,y+5,mstr); { 'Bezugsverkettung...' }
     FWrt(x+3+length(mstr),y+5,'0%');
     mon;
-    reset(f,1);
-    fs:=filesize(f);
-    adr:=0; n:=0;
     dbStopHU(bezbase);
+  try
     seek(pfile,0);
-    Debug.DebugLog('xp3o','start Bezugsverkettung 2',DLTrace);
-    repeat
-      empfnr:=1;
-      inc(n);
-      repeat
-        seek(f,adr);
-        makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
-        Debug.DebugLog('xp3o','Bezugsverkettung MakeHeader finished',DLTrace);
-        if (hdp.Empfaenger.Count >maxcrosspost)
-        and ((cpos('@',hdp.FirstEmpfaenger)=0) or maildelxpost) then
-        begin
-          empfnr:=hdp.Empfaenger.Count+1;                { Crossposting-Filter }
-          continue;
-        end;
-        blockread(pfile,ll, Sizeof(ll));
-        if (ll.l<>0) and ntKomkette(hdp.netztyp) and (hdp.msgid<>'') then
-        begin
-          c1:=MsgidIndex(hdp.msgid);
-          if hdp.References.Count = 0 then
-            c2:=0
-          else
-            c2:=MsgidIndex(hdp.GetLastReference);
-          AddNewBezug(ll.l, c1, c2, ll.dat);
-        end;
-        inc(empfnr);
-      until empfnr>hdp.Empfaenger.Count;
-      if ((n mod 5)=0) then begin
+    fs := filesize(pfile) div sizeof(ll);
+    no := 0;
+
+    while not eof(pfile) do begin
+      inc(no);
+      blockread(pfile,ll,sizeof(ll),ok);
+      if ok <> sizeof(llref) then exit;
+
+      xp1o.AddNewBezug(ll.MsgPos, ll.MsgId, ll.MsgRef, ll.Datum);
+
+      if ((no mod 5)=0) then begin
         moff;
-        FWrt(x+3+length(mstr),y+5,StrS(n*100 div msgcount)+'%');
+        FWrt(x+3+length(mstr),y+5,StrS(no*100 div fs)+'%');
         mon;
       end;
-      inc(adr,hdp.groesse+hdsize);
-    until adr>=fs-3;     { 3 Byte Toleranz }
-    Debug.DebugLog('xp3o','end Bezugsverkettung 1',DLTrace);
+    end;
+  finally
     dbRestartHU(bezbase);
     dbFlush(bezbase);
-    close(f);
+    Debug.DebugLog('xp3o','end Bezugsverkettung',DLTrace);
+  end;
     Wrt(x+3+length(mstr),y+5,getres2(324,7)); { 'fertig.' }
-    Debug.DebugLog('xp3o','end Bezugsverkettung 2',DLTrace);
   end;
 
+(*
   procedure wrll(l:longint);
   begin
     inc(llanz);
@@ -624,6 +606,31 @@ var x,y      : Integer;
       blockwrite(pfile,llbuf,sizeof(llbuf));
       llanz:=0;
       end;
+  end;
+*)
+
+  procedure FlushLL;
+  begin
+    if llanz>Low(llbuf) then begin
+      blockwrite(pfile,llbuf,llanz*sizeof(llref));
+      llanz:=Low(llbuf);
+      end;
+  end;
+
+  procedure AddNewBezug(MsgNr: Longint; const MsgId, RefId: string; datum: longint);
+  begin
+    if MsgId='' then exit;
+    inc(llanz);
+    llbuf[llanz].MsgPos := MsgNr;
+    llbuf[llanz].MsgId := MsgidIndex(msgid);
+    if RefId='' then
+      llbuf[llanz].MsgRef := 0
+    else
+      llbuf[llanz].MsgRef := MsgidIndex(refid);
+    llbuf[llanz].Datum := Datum;
+
+    if llanz=High(llbuf) then 
+      FlushLL;
   end;
 
   function IsOwnDomain(dom:string):boolean;
@@ -637,14 +644,6 @@ var x,y      : Integer;
       delete(dom,1,cpos('@',dom));
       IsOwnDomain := DomainList.Find(LowerCase(dom), Index);
     end;
-  end;
-
-  procedure FlushLL;
-  begin
-    if llanz>0 then begin
-      blockwrite(pfile,llbuf,llanz*4);
-      llanz:=0;
-      end;
   end;
 
   { returns true if *own* message is going to be replaced.
@@ -922,7 +921,7 @@ begin
               dbReadN(ubase,ub_userflags,uflags);
               aufnehmen:=odd(uflags); // Filter AMs (Twit filter)
               if not aufnehmen then
-                // AM is filtered, don't put it in /Junk
+                // AM is filtered, don''t put it in /Junk
                 msgsent:=true;
               end;
 
@@ -1118,11 +1117,13 @@ begin
             { message again. Necessary for cancels. }
             if OwnMessageReplaced then mbflags:= mbflags or 256;
             dbWriteN(mbase,mb_flags,mbflags);
-            wrll(dbRecno(mbase));     { fuer Bezugsverkettung merken }
-            l:=LongInt(LongWord(ixdat(datum)) and LongWord($fffffff0));
-            if Empfaenger.Count >1 then
-              inc(l,iif(msgsent,2,1));
-            wrll(l);
+
+	    if ntKomKette(hdp.netztyp) then 
+	    begin
+              l:=LongInt(LongWord(ixdat(datum)) and LongWord($fffffff0));
+              if Empfaenger.Count >1 then inc(l,iif(msgsent,2,1));
+	      AddNewBezug(dbRecno(mbase),hdp.MsgId,hdp.GetLastReference,l);
+	    end;
 
             if UsePGP and (pgpflags and fPGP_haskey<>0) and
                ((PGP_AutoAM and (firstchar(FirstEmpfaenger)='A')) or
@@ -1143,10 +1144,10 @@ begin
 
             msgsent:=true;
             end
-          else begin   { nicht aufnehmen }
+          else (* begin   { nicht aufnehmen }
             wrll(0);
             wrll(0);
-            end;
+            end; *)
 
           inc(empfnr); // iterate through recipients
           end;           { with hdp }
@@ -1303,6 +1304,16 @@ end;
 
 {
   $Log$
+  Revision 1.102  2003/01/24 19:29:05  cl
+  - merged commit from stable branch:
+
+  Revision 1.83.2.12  2003/01/24 16:37:32  cl
+  - fixed last commit
+
+  Revision 1.83.2.11  2003/01/24 14:24:11  cl
+  - fixed problems during ``bezugsverkettung''
+    (should also fix ``Cannot delete ...\SPOOL\1.z'').
+
   Revision 1.101  2002/12/21 05:37:56  dodi
   - removed questionable references to Word type
 
