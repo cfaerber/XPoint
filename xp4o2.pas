@@ -804,9 +804,12 @@ end;
 procedure ClearReplyTree;
 var
   i: Integer;
+  p: Pointer;
 begin
-  for i := 0 to ReplyTree.Count - 1 do
-    FreeMem(ReplyTree[i]);
+  for i := 0 to ReplyTree.Count - 1 do begin
+    p:= ReplyTree[i];
+    FreeMem(p);
+  end;
   ReplyTree.Clear;
 end;
 
@@ -924,6 +927,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/11/12 14:25:26  hd
+  - Workaround für FPC (ClearReplyTree)
+
   Revision 1.25  2000/11/12 11:34:06  mk
   - removed some limits in Reply Tree
   - implementet moving the tree with cursor keys (RB)
