@@ -14,17 +14,7 @@
 
 {$I XPDEFINE.INC }
 
-{$IFDEF NCRT}
-  {$UNDEF NCRT}
-{$ENDIF}
-
-{$IFDEF Delphi }
-  {$APPTYPE CONSOLE }
-{$ENDIF }
-
-{$IFDEF BP }
-  {$M 16384,$a000,655360}
-{$ENDIF }
+{$M 16384,$a000,655360}
 
 program uuz;
 
@@ -36,26 +26,13 @@ const
       realnlen    = 120;              { L„nge Realname }
       adrlen      = realnlen;
       hderrlen    = 60;
-{$IFDEF Ver32 }
-      maxemp      = 500;
-      maxulines   = 200;              { max. zus„tzliche U-Zeilen }
-      maxmore     = 50;               { max. String's pro RFC-Headerzeile }
-      maxrefs     = 50;               { max. gespeicherte References }
-      maxfollow   = 20;               { max. Followup-To-Zeilen }
-{$ELSE }
       maxemp      = 50;
       maxulines   = 60;               { max. zus„tzliche U-Zeilen }
       maxmore     = 15;               { max. String's pro RFC-Headerzeile }
       maxrefs     = 20;               { max. gespeicherte References }
       maxfollow   = 10;               { max. Followup-To-Zeilen }
-{$ENDIF }
-{$IFDEF BP }
       bufsize     = 16384;
       outbufsize  = 16384;
-{$ELSE }
-      bufsize     = 32768;
-      outbufsize  = 32768;
-{$ENDIF }
       BetreffLen  = 250;
       readempflist= true;
       postadrlen  = 80;
@@ -113,9 +90,8 @@ const
       NoMIME      : boolean = false;         { -noMIME }
       MakeQP      : boolean = false;         { -qp: MIME-quoted-printable }
       RFC1522     : boolean = false;         { Headerzeilen gem. RFC1522 codieren }
-{ 31.01.2000 robo - Envelope-Empf„nger aus Received auslesen? }
+{ Envelope-Empf„nger aus Received auslesen? }
       getrecenvemp: boolean = false;
-{ /robo }
       MailUser    : string[30] = 'mail';     { fuer U-Zeile im X-File }
       NewsUser    : string[30] = 'news';
       FileUser    : string[30] = 'root';
@@ -242,6 +218,8 @@ type  OrgStr  = string[orglen];
                   xnoarchive : boolean;
                   Cust1,Cust2: string[custheadlen];
                   control    : string[150];
+                  { Envelope-Empf„nger }
+                  envemp     : string[AdrLen];
 
                 end;
       charr   = array[0..65530] of char;
@@ -271,9 +249,6 @@ var   source,dest   : pathstr;       { Quell-/Zieldateien  }
       addhd         : array[1..maxaddhds] of string;
       addhdmail     : array[1..maxaddhds] of boolean;
       addhds        : integer;
-
-      { Envelope-Empf„nger }
-      envemp        : string [adrlen];
 
 const
       { Wird zum Einlesen der Customizable Headerlines ben”tigt }
@@ -832,6 +807,7 @@ begin
       then
         wrs('OEM: '+xoem[i]);
       end;
+    if not getrecenvemp and (envemp<>'') then wrs('U-X-Envelope-To: '+envemp);
     wrs('ABS: '+absender+iifs(realname='','',' ('+realname+')'));
     if wab<>'' then wrs('WAB: '+wab);
     wrs('BET: '+betreff);
@@ -1191,13 +1167,11 @@ begin
 end;
 
 
-procedure UnQuotePrintable;     { MIME-quoted-printable/base64 -> 8bit }
+procedure UnQuotePrintable(add_cr_lf:boolean);  { MIME-quoted-printable/base64 -> 8bit }
 var p,b     : byte;
     softbrk : boolean;
 
-  procedure AddCrlf; { CR/LF an s anh„ngen }
-{$IFDEF BP }
-  assembler;
+  procedure AddCrlf; assembler; { CR/LF an s anh„ngen }
   asm
     mov bl,byte ptr s[0]
     mov bh,0
@@ -1211,11 +1185,6 @@ var p,b     : byte;
     mov byte ptr s[bx],10
 @@1:mov byte ptr s[0],bl
   end;
-{$ELSE }
-  begin
-    s := s + #13#10;
-  end;
-{$ENDIF }
 
   procedure DecodeBase64;
   const b64tab : array[0..127] of byte =
@@ -1276,13 +1245,14 @@ begin
           end;
         while (p<length(s)) and (s[p]<>'=') do inc(p);
         end;
-    if not softbrk then
+    if (not softbrk) and (add_cr_lf) then
       AddCrlf;
     end
   else if b64 then
     DecodeBase64
   else
     AddCrlf;
+  if add_cr_lf then AddCrlf;
 end;
 
 
@@ -2023,7 +1993,7 @@ var p,i   : integer; { byte -> integer }
     by:=GetRec('by ');
     from:=GetRec('from ');
     { Envelope-Empf„nger ermitteln }
-    if envemp='' then envemp:=GetRec('for ');
+    if getrecenvemp and (hd.envemp='') then hd.envemp:=GetRec('for ');
     if (by<>'') and (lstr(by)<>lstr(right(hd.pfad,length(by)))) then begin
       if hd.pfad<>'' then hd.pfad:=hd.pfad+'!';
       hd.pfad:=hd.pfad+by;
@@ -2083,11 +2053,11 @@ var p,i   : integer; { byte -> integer }
                       for i:=1 to length(s) do
                         if s[i]='_' then s[i]:=' ';
                       qprint:=true; s:=s+'=';
-                      UnquotePrintable;
+                      UnquotePrintable(false);
                     end;
               'B' : begin
                       qprint:=false; b64:=true;
-                      UnquotePrintable;
+                      UnquotePrintable(false);
                     end;
             end;
             end;
@@ -2098,11 +2068,9 @@ var p,i   : integer; { byte -> integer }
         insert(s,ss,p1);
         end;
     until (p1=0) or (p2=0);
-{ /robo }
 
-{ 11.10.1999 robo - Fix im Zuge der Realnameverl„ngerung }
+{ Fix im Zuge der Realnameverl„ngerung }
     if length(ss)>maxlen then ss[0]:=char(maxlen);
-{ /robo }
 
     s:=ss;
     ISO2IBM;
@@ -2268,6 +2236,7 @@ begin
 
              if zz='x-priority'   then GetPriority else
              if zz='x-homepage'   then homepage := s0 else
+             if zz='x-envelope-to' then envemp := s0 else
 
              if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
         else if zz='from'         then GetAdr(absender,realname) else
@@ -2285,6 +2254,7 @@ begin
              if zz='user-agent'   then programm:=s0 else
              if zz='encrypted'    then pgpflags:=iif(ustr(s0)='PGP',fPGP_encoded,0) else
              if zz='priority'     then GetPriority else
+             if zz='envelope-to'  then envemp:=s0 else
              if zz<>'lines'       then AppUline('U-'+s1);
         end; { case }
         end;
@@ -2304,13 +2274,16 @@ begin
     MimeIsoDecode(summary,200);
     MimeIsoDecode(keywords,60);
     MimeIsoDecode(organisation,OrgLen);
+    MimeIsoDecode(postanschrift,PostAdrLen);
+    MimeIsoDecode(Telefon,TeleLen);
+    MimeIsoDecode(Homepage,HomepageLen);
 
     for i := 1 to hd.ulines do MimeIsoDecode (uline^ [i], 255);
 
     if (empfanz=1) and (followups=1) and (xempf[1]=followup[1]) then
       followups:=0;
     MimeAuswerten;
-    end;
+  end;
 end;
 
 
@@ -2347,9 +2320,6 @@ begin
   OpenFile(fn);
 {  ok:=true; }
   fillchar(hd,sizeof(hd),0);
-{ 28.01.2000 robo }
-  envemp:='';
-{ /robo }
   hd.netztyp:=nt_RFC;
   repeat             { Envelope einlesen }
     ReadString(true);
@@ -2399,14 +2369,14 @@ begin
     s[1]:=c;
     ReadRFCheader(true,s);
     binaer:=(hd.typ='B');
-{ 28.01.2000 robo }
-    if getrecenvemp and (mailuser='') and (envemp<>'') then begin
-      if cpos('<',envemp)=1 then delete (envemp,1,1);
-      if (cpos('>',envemp)=length(envemp))
-       and (length(envemp)>0) then dellast(envemp);
-      mailuser:=SetMailuser(envemp);
+
+    if (mailuser='') and (hd.envemp<>'') then begin
+      if cpos('<',hd.envemp)=1 then delete (hd.envemp,1,1);
+      if (cpos('>',hd.envemp)=length(hd.envemp))
+       and (length(hd.envemp)>0) then dellast(hd.envemp);
+      mailuser:=SetMailuser(hd.envemp);
     end;
-{ /robo }
+
     if (mailuser<>'') and (mailuser<>hd.xempf[1]) then begin
       hd.xoem:=hd.xempf;
       hd.oemanz:=hd.empfanz;        { Envelope-Empf„nger einsetzen }
@@ -2417,7 +2387,7 @@ begin
     hd.groesse:=0;
     while bufpos<bufanz do begin
       ReadString(true);
-      UnQuotePrintable;
+      UnQuotePrintable(eol>0);
       inc(hd.groesse,length(s));
       end;
     seek(f1,fp); ReadBuf; bufpos:=bp;
@@ -2427,7 +2397,7 @@ begin
     writeln;
   while bufpos<bufanz do begin
     ReadString(true);
-    UnQuotePrintable;
+    UnQuotePrintable(eol>0);
     if not binaer then ISO2IBM;
     wrfs(s);
     end;
@@ -2534,12 +2504,12 @@ begin
       hd.groesse:=0;
       smtpende:=false;
       while (bufpos<bufanz) and not smtpende do begin   { Mailgr”áe berechnen }
-        ReadString(false);
-        smtpende:=(s='.');
+        ReadString(true);
+        smtpende:=(s='.') and LastEol;
         if not smtpende then begin
-          if (s<>'') and (s[1]='.') then     { SMTP-'.' entfernen }
+          if (s<>'') and (s[1]='.') and LastEol then     { SMTP-'.' entfernen }
             delfirstHuge(s);
-          UnquotePrintable;    { h„ngt CR/LF an, falls kein Base64 }
+          UnquotePrintable(eol>0);    { h„ngt CR/LF an, falls kein Base64 }
           inc(hd.groesse,length(s));
           end;
         end;
@@ -2547,12 +2517,12 @@ begin
       WriteHeader;
       smtpende:=false;
       while (bufpos<bufanz) and not smtpende do begin
-        ReadString(false);
-        smtpende:=(s='.');
+        ReadString(true);
+        smtpende:=(s='.') and lastEol;
         if not smtpende then begin
-          if (s<>'') and (s[1]='.') then    { SMTP-'.' entfernen }
+          if (s<>'') and (s[1]='.') and LastEol then    { SMTP-'.' entfernen }
             delfirstHuge(s);
-          UnQuotePrintable;    { h„ngt CR/LF an, falls kein Base64 }
+          UnQuotePrintable(eol>0);    { h„ngt CR/LF an, falls kein Base64 }
           if not binaer then ISO2IBM;
           wrfs(s);
           end;
@@ -2675,7 +2645,7 @@ begin
             MaxSlen:=ss;
             ReadString(true);
             dec(ss,length(s)+eol);
-            UnQuotePrintable;
+            UnQuotePrintable(eol>0);
             inc(hd.groesse,length(s));
             end;
           WriteHeader;                     { ZC-Header erzeugen }
@@ -2686,7 +2656,7 @@ begin
           { if length(s)+eol>size then
               s[0]:=chr(size-eol); }
             dec(size,length(s)+eol);
-            UnQuotePrintable;
+            UnQuotePrintable(eol>0);
             if not binaer then ISO2IBM;
             wrfs(s);
             end;
@@ -3541,6 +3511,11 @@ end.
 
 {
   $Log$
+  Revision 1.35.2.10  2000/09/21 16:18:31  mk
+  RB:- (X-)-Envelope-To-Unterstützung
+     - QP Decode fuer verschiedene Header
+     - Zeilen länger als 255 Zeichen werden nicht mehr abgeschnitten
+
   Revision 1.35.2.9  2000/09/12 12:41:59  fe
   1. Kleine Anpassung an Gatebau '97: Fido-To wird nicht mehr in der
      proprietaeren X-XP-FTO-Zeile, sondern in der Standard-Zeile F-TO
