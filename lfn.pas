@@ -39,7 +39,7 @@
 
 {-Die Funktionen der Unit Dos patchen}
 {-Hook into unit Dos}
-{.$DEFINE UseDos}
+{$DEFINE UseDos}
 
 {-Die Funktionen der Unit WinDos patchen}
 {-Hook into unit WinDos}
@@ -55,7 +55,7 @@
     Siehe LFN.GER unter "Sonderfall DISKFREE/DISKSIZE".}
   {-DiskFree/DiskSize return the result as Comp, otherwise as LongInt.
     See LFN.ENG section "Special case DISKFREE/DISKSIZE".}
-{.$DEFINE DFSReturnComp}
+{$DEFINE DFSReturnComp}
 
   {-DiskFree/DiskSize liefern die Gr”áe in Kilobytes, ansonsten in Bytes
     zurck}
@@ -72,7 +72,7 @@
 
 {-Zuweisung von Dateinamen > 79 Zeichen an ASSIGN erm”glichen}
 {-Allow filenames larger than 79 chars pass to ASSIGN}
-{$DEFINE AssignLongName}
+{.$DEFINE AssignLongName}
 
 {-AssignDispose automatisch bei CLOSE aufrufen}
 {-Force CLOSE to call AssignDispose automatically}
@@ -88,11 +88,11 @@
 
 {-Automatisch die FileSharingFlags bei Dateien vom Typ TEXT setzen}
 {-Set filesharingmode's automatically on files which typ is TEXT}
-{$DEFINE UseTEXTSharingFlags}
+{.$DEFINE UseTEXTSharingFlags}
 
 {-Automatisch die FileSharingFlags bei Dateien vom Typ FILE setzen}
 {-Set filesharingmode's automatically on files which typ is FILE}
-{$DEFINE UseFILESharingFlags}
+{.$DEFINE UseFILESharingFlags}
 
 {-----------------------------------------------------------------------------
         Alle folgenden Zeilen gew„hrleisten die ordnungsgem„áe Funktion
