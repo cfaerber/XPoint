@@ -242,7 +242,7 @@ function special(nr:integer):boolean;
 var x,y : byte;
     t   : taste;
 begin
-  if cpos('$'+hex(nr,3),ustr(specials))>0 then begin
+  if pos('$'+hex(nr,3),ustr(specials))>0 then begin
     msgbox(60,6,'',x,y);
     wrt(x+3,y+2,'Dieser MenÅpunkt wird von XP automatisch aktiviert bzw.');
     wrt(x+3,y+3,'deaktiviert (s. XPME.TXT).');
@@ -754,6 +754,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.20.2.5  2001/08/12 11:44:50  mk
+  - fixed litte typo, compiles again
+
   Revision 1.20.2.4  2001/08/11 22:43:57  mk
   - changed Pos() to cPos() when possible, saves additional 1000 Bytes ;)
 
