@@ -1,6 +1,6 @@
 { ------------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.                   }
-{ (c) 1991-1999 Peter Mandrella                                       }
+{ (c) 1989-1999 Peter Mandrella                                       }
 { (c) 2002-2003 OpenXP/16, http://www.openxp16.de                     }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.         }
 {                                                                     }
@@ -345,7 +345,7 @@ var  fname    : pathstr;
 begin
   clrscr;
   writeln('Intelligent Help System Rel. '+version);
-  writeln('(c) 1991-2000 Peter Mandrella, (c) '+date+' OpenXP/16');
+  writeln('(c) 1989-1999 Peter Mandrella, (c) '+date+' OpenXP/16');
   writeln;
   write('Source File: ');
   fname:=paramstr(1);
@@ -400,6 +400,9 @@ end.
 }
 {
    $Log$
+   Revision 1.9.2.8  2003/01/26 16:07:04  my
+   MY:- Copyrights PM korrigiert
+
    Revision 1.9.2.7  2003/01/25 22:53:57  my
    MY: - Nochmal CVS-Log korrigiert (irgendwie nicht mein Tag heute...)
 

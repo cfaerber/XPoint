@@ -1,7 +1,6 @@
 { --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
-{ (c) 1991-1999 Peter Mandrella                                   }
-{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 1992-1999 Peter Mandrella                                   }
 { (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
 {                                                                 }
@@ -311,7 +310,7 @@ end;
 begin
   clrscr;
   writeln('Resource Compiler v'+version);
-  writeln('(c) 1991-2000 Peter Mandrella, (c) '+date+' OpenXP/16');
+  writeln('(c) 1992-1999 Peter Mandrella, (c) '+date+' OpenXP/16');
   writeln;
   write('Source File: ');
   infile:=paramstr(1);
@@ -327,6 +326,9 @@ end.
 
 {
   $Log$
+  Revision 1.9.2.4  2003/01/26 16:07:04  my
+  MY:- Copyrights PM korrigiert
+
   Revision 1.9.2.3  2003/01/26 00:29:13  my
   MY: - Letztes $IFNDEF entsorgt.
       - smallword => word
