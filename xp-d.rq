@@ -95,6 +95,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 21   Dezember
 # Lister
 22   Hilfe
+23   Suchen:~
+24   Suchen...
+25   *nicht gefunden*
 -
 12   Taste drÅcken ...
 13   ~Bytes
@@ -3510,6 +3513,9 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.79  2000/11/11 19:52:27  mk
+# - moved some strings into resources
+#
 # Revision 1.78  2000/11/11 10:18:41  mk
 # - DBEOF Crash behoben
 #
