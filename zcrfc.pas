@@ -173,9 +173,6 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-{$IFDEF Delphi }
-  Dos,
-{$ENDIF }
   xp0, xp1, xpnt,
   typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams,
   xpheader, UTFTools, xpmakeheader, resource, Debug, addresslist;
@@ -2042,7 +2039,7 @@ var
   i: integer;
   c: char;
   binaer,multi,recode,LastLineWasBlank,FirstLineHasBeenRead: boolean;
-  pfrec: ^filerec;
+  pfrec: ^tfilerec;
 begin
   if CommandLine then write('mail: ', fn);
   OpenFile(fn);
@@ -2194,7 +2191,7 @@ var
   binaer,multi,recode: boolean;
   nofrom: boolean;
   smtpende: boolean;
-  pfrec: ^filerec;
+  pfrec: ^tfilerec;
 
   function GetAdr: string;
   var
@@ -2330,7 +2327,7 @@ var
   fp, bp, n: longint;
   p: integer;
   binaer,multi,recode: boolean;
-  pfrec: ^filerec;
+  pfrec: ^tfilerec;
 label
   ende;
 begin
@@ -3759,6 +3756,10 @@ end;
 
 {
   $Log$
+  Revision 1.130  2003/01/25 18:21:35  mk
+  - removed DOS Unit
+  - filerec->TFileRec
+
   Revision 1.129  2003/01/13 22:14:29  cl
   - send window rewrite IIa - cleanups
 
