@@ -1,12 +1,13 @@
-{ ------------------------------------------------------------------ }
-{ Dieser Quelltext ist urheberrechtlich geschuetzt.                  }
-{ (c) 1991-1999 Peter Mandrella                                      }
-{ (c) 2000-2001 OpenXP-Team & Markus Kaemmerer, http://www.openxp.de }
-{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.        }
-{                                                                    }
-{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der    }
-{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/srclicense.html.      }
-{ ------------------------------------------------------------------ }
+{ --------------------------------------------------------------- }
+{ Dieser Quelltext ist urheberrechtlich geschuetzt.               }
+{ (c) 1991-1999 Peter Mandrella                                   }
+{ (c) 2000-2001 OpenXP-Team                                       }
+{ (c) 2002-2003 OpenXP/16, http://www.openxp16.de                 }
+{ CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
+{                                                                 }
+{ Die Nutzungsbedingungen fuer diesen Quelltext finden Sie in der }
+{ Datei SLIZENZ.TXT oder auf www.crosspoint.de/oldlicense.html.   }
+{ --------------------------------------------------------------- }
 { $Id$ }
 
 { CrossPoint - First Unit }
@@ -96,10 +97,10 @@ procedure TestOVR;
 var ft   : longint;
     c,cc : char;
 begin
-  if not exist('xp.ovr') then
+  if not exist('XP.OVR') then
     stop('Die Datei XP.OVR fehlt!');
   ft:=filetime('xp.exe');
-  if (ft<>0) and (abs(ft-filetime('xp.ovr'))>=60) then begin
+  if (ft<>0) and (abs(ft-filetime('XP.OVR'))>=60) then begin
     writeln;
     writeln('WARNUNG: Das Dateidatum von XP.OVR stimmt nicht mit dem von XP.EXE');
     writeln('         berein. XP.OVR stammt offenbar von einer anderen '+trim(xp_display)+'-');
@@ -252,7 +253,7 @@ begin
   writeln(t);
   write(t,xp_xp);
   if (xp_xp='CrossPoint') then write(t,'(R)');
-  writeln(t,' ',verstr,betastr,iifs(xmsovrbuf,xmsstr,''));
+  writeln(t,' ',verstr,betastr,ovrstr);
   writeln(t,x_copyright,' by ',author_name,' (',author_mail,')');
   writeln(t);
   if _deutsch then
@@ -293,7 +294,7 @@ begin
   xmst:=xmstotal; 
   {$IFNDEF DPMI}     { mit DPMI auch nicht }
     TestOVR;
-    OvrInit('xp.ovr'); 
+    OvrInit('XP.OVR'); 
 
     {Lightweight-Readpar}
     noovrbuf:=false; 
@@ -305,15 +306,19 @@ begin
 
     {Overlaycache anlegen in EMS oder XMS}
     { Size_OVR enthaelt die Groesse des OVR-Files }
-    if ((EmsTest) and (not noovrbuf) and ((EmsAvail*16)>(Size_OVR+700))) then begin
+    if ((EmsTest) and (not noovrbuf) and ((EmsAvail*16)>(Size_OVR+700))) then
+    begin
       OvrInitEMS;
       xmsovrbuf:=false;
       emsovrbuf:=true;
-    end 
-    else if ((XmsTest) and (not noovrbuf) and (xmsovrbuf) and (XmsAvail>(Size_OVR+700))) then begin
+      ovrstr:=' (EMS)';
+    end
+    else if ((XmsTest) and (not noovrbuf) and (XmsAvail>(Size_OVR+700))) then
+    begin
       OvrInitXMS;
       xmsovrbuf:=true;
       emsovrbuf:=false;
+      ovrstr:=' (XMS)';
     end
     else begin
       xmsovrbuf:=false;
@@ -342,6 +347,11 @@ end.
 
 {
   $Log$
+  Revision 1.18.2.27  2003/04/13 21:06:58  my
+  MY:- 'ovrstr' statt 'xmsstr' an Versionsbezeichnung anh„ngen
+  MY:- Fix: Abfrage auf 'xmsovrbuf' beim Anlegen des Overlaycache
+       im XMS entfernt (der Cache wurde nie im XMS angelegt).
+
   Revision 1.18.2.26  2003/04/13 16:06:39  mw
   MW: - Neue Variable emsovrbuf zeigt true, wenn das Overlay im EMS steckt
 
