@@ -2161,37 +2161,28 @@ end;
 
 {$IFDEF BP }
 function DOSEmuVersion: String;
+const
+  DOSEMU_MAGIC_STRING       = '$DOSEMU$';
 var
-  biosdate:string[8];
-  vseg:word;
-  minor, major: byte;
-  patchlevel: word;
+  DOSEMU_MAGIC: array[1..8] of char absolute $F000:$FFE0;
+  DOSEMU_VersionPos: array[1..4] of byte absolute $F000:$FFE8;
+  Dosemu_Dummy: String[8];
 begin
-  DOSEMuVersion:= '';
-  fastmove(ptr($f000,$fff5)^,biosdate[1],8);
-  biosdate[0]:=char(8);
-  vseg:=memw[0:$e6*4+2];
-  if (vseg=$f000) and (biosdate='02/25/93') then
-  begin
-    asm
-       xor ax,ax
-       mov vseg,ax
-       int 0e6h
-       cmp ax,0aa55h
-       jne @nodosemu
-       mov major, bh
-       mov minor, bl
-       mov patchlevel, cx
-@nodosemu:
-    end;
-    DOSEmuVersion:= StrS(major) + '.' + StrS(minor) + '.' + StrS(patchlevel);
-  end;
+  DOSEmuVersion:= '';
+  Move(DOSEMU_MAGIC, DOSEMU_DUMMY[1], sizeof(DOSEMU_DUMMY) - 1);
+  Dosemu_Dummy[0] := chr(sizeof(Dosemu_Dummy) - 1);
+  if Dosemu_Dummy = DOSEMU_MAGIC_STRING then
+    DOSEmuVersion:= StrS(DOSEMU_VersionPos[4]) + '.' +
+      StrS(DOSEMU_VersionPos[3]) + '.' + StrS(DOSEMU_VersionPos[2]);
 end;
 {$ENDIF }
 
 end.
 {
   $Log$
+  Revision 1.18  2000/03/05 12:14:51  mk
+  ML: DOSEmuVersion nutzt jetzt den offiziellen Weg
+
   Revision 1.17  2000/03/04 15:54:43  mk
   Funktion zur DOSEmu-Erkennung gefixt
 
