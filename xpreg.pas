@@ -517,7 +517,7 @@ var brk,modi : boolean;
       nt_Fido     : if left(box,2)<>'2:' then adr:=''
                     else if alias then adr:=user+' @ '+left(box,cpos('/',box))+point
                     else adr:=user+' @ '+box+'.'+point;
-      nt_UUCP     : if alias then adr:=user+'@'+box+domain
+      nt_UUCP     : if alias then adr:=user+'@'+box+ntServerDomain(box)
                     else adr:=user+'@'+point+domain;
       else          adr:='';
     end;
@@ -1574,6 +1574,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.19  2000/09/29 11:30:38  fe
+  RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
+  Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
+
   Revision 1.18  2000/07/27 13:41:51  mk
   - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
 

@@ -1598,7 +1598,8 @@ fromstart:
       4 : hdp^.absender:=username+'@'+FidoAbsAdr;
       5 : hdp^.absender:=username+'@'+iifs(aliaspt,pointname,box)+domain;
       6 : begin
-            hdp^.absender:=username+'@'+iifs(aliaspt,box,pointname)+domain;
+            hdp^.absender:=username+'@'+
+	      iifs(aliaspt,box+ntServerDomain(box),pointname+domain);
             hdp^.real_box:=box;
           end;
       7 : begin
@@ -2128,6 +2129,10 @@ finalization
 end.
 {
   $Log$
+  Revision 1.65  2000/09/29 11:30:38  fe
+  RFC/UUCP: Hostname masquerading / UUCP-Alias-Points repariert:
+  Statt "User@Server.domain" jetzt "User@Server.Serverdomain".
+
   Revision 1.64  2000/09/11 23:19:15  fe
   Fido-To-Verarbeitung unter RFC korrigiert.
 
