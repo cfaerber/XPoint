@@ -256,6 +256,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 
 # XPKEYS
 150  No files in AUTOEXEC directory
+151  $ASK Parameters:
 
 # XP1
 160  Interrupt process
@@ -2286,7 +2287,7 @@ K (c) 2002    OpenXP/16, http://www.openxp16.de
 8    invalid words at end of line
 9    ON or OFF expected
 10   ERROR or FAIL expected
-11   invalid delay parameterr (expected number > 0)
+11   invalid delay parameter (expected number > 0)
 12   numeric parameter expected
 13   Label is missing: %s
 14   invalid text macro: %s
