@@ -2,7 +2,6 @@ program openxp;
 
 {$I xpdefine.inc }
 
-{%File 'xpmecol.inc'}
 {%File 'maske.inc'}
 {%File 'osdbsd.inc'}
 {%File 'osddos32.inc'}
@@ -10,25 +9,13 @@ program openxp;
 {%File 'osdos2.inc'}
 {%File 'osdwin32.inc'}
 {%File 'xp3o.inc'}
-{%File 'xp4.inc'}
 {%File 'xp4d.inc'}
-{%File 'xp4o.inc'}
 {%File 'xp4w.inc'}
-{%File 'xpconfigedit-groups.inc'}
-{%File 'xpconfigedit-mimetypes.inc'}
-{%File 'xpconfigedit-pseudos.inc'}
 {%File 'xpconfigedit-servers.inc'}
-{%File 'xpconfigedit-systems.inc'}
 {%File 'xpdefine.inc'}
-{%File 'xpf1.inc'}
-{%File 'xpfiles.inc'}
-{%File 'netcall\ncuucp-t.inc'}
 {%File 'netcall\ncfido-emsi.inc'}
 {%File 'netcall\ncfido-wazoo.inc'}
 {%File 'netcall\ncfido-yoohoo.inc'}
-{%File 'netcall\ncuucp-e.inc'}
-{%File 'netcall\ncuucp-fz.inc'}
-{%File 'netcall\ncuucp-g.inc'}
 {%File 'netcall\ncfido-binkp.inc'}
 {%File 'ObjCOM\ocsdos.inc'}
 {%File 'xpsendmessage_subs.inc'}
@@ -154,6 +141,10 @@ uses
   xpncnntp in 'netcall\xpncnntp.pas',
   xpncpop3 in 'netcall\xpncpop3.pas',
   xpncuucp in 'netcall\xpncuucp.pas',
+  ncuucp_e in 'netcall\ncuucp_e.pas',
+  ncuucp_fz in 'netcall\ncuucp_fz.pas',
+  ncuucp_g in 'netcall\ncuucp_g.pas',
+  ncuucp_t in 'netcall\ncuucp_t.pas',
   xpnczconnect in 'netcall\xpnczconnect.pas',
   xpnetcall in 'netcall\xpnetcall.pas',
   ncfido in 'netcall\ncfido.pas',
@@ -169,6 +160,10 @@ uses
   NCSMTP in 'netcall/ncsmtp.pas',
   NCSocket in 'netcall/ncsocket.pas',
   ncuucp in 'netcall/ncuucp.pas',
+  ncuucp_e in 'netcall/ncuucp_e.pas',
+  ncuucp_fz in 'netcall/ncuucp_fz.pas',
+  ncuucp_g in 'netcall/ncuucp_g.pas',
+  ncuucp_t in 'netcall/ncuucp_t.pas',
   Netcall in 'netcall/netcall.pas',
   xpmodemscripts in 'netcall/xpmodemscripts.pas',
   xpncfido in 'netcall/xpncfido.pas',
