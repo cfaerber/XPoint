@@ -269,14 +269,21 @@ end;
   var
     s: ShortString;
     Store  : TBackTraceStrFunc;
+    t: Text;
   begin
     { reset to prevent infinite recursion if problems inside the code PM }
     Store:=BackTraceStrFunc;
     BackTraceStrFunc:=@SysBackTraceStr;
     s := OldTraceFunc(addr);
     Result := s;
-    if Logging then
-      DebugLog('fatal',s,dlError);
+    DebugLog('fatal',s,dlError);
+    if FileExists('ERROR.TXT') then
+    begin
+      Assign(t, 'ERROR.TXT');
+      Append(t);
+      Writeln(t, s);
+      Close(t);
+    end;
     BackTraceStrFunc:=Store;
   end;
 {$ENDIF }
@@ -300,6 +307,9 @@ finalization
 
 {
   $Log$
+  Revision 1.29.2.1  2002/06/20 23:36:16  mk
+  - write line information to ERROR.TXT, too
+
   Revision 1.29  2002/02/21 13:52:30  mk
   - removed 21 hints and 28 warnings
 
