@@ -957,13 +957,15 @@ begin
           if BoxPar^.ReplaceOwn and Aufnehmen then
           begin
             dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(msgid)));
-            if dbFound then
+            if dbFound and not dbDeleted(bezbase, dbRecno(bezbase)) then
             begin { RÅcklÑufer gefunden }
               msgpos := dbReadInt(bezbase,'msgpos');
               if not dbDeleted(mbase, msgpos) then
               begin
                 dbGo(mbase, msgpos);
-                dbReadN(mbase,mb_flags,flags); { Flags holen }
+                flags := 0;
+                if not dbBOF(mBase) and not dbEOF(mbase) then
+                  dbReadN(mbase,mb_flags,flags); { Flags holen }
                 if flags and 256 <> 0 then
                 begin
                   dbReadN(mbase,mb_halteflags, ReplHalteflag);
@@ -1234,6 +1236,10 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.12  2001/06/19 06:46:58  mk
+  JG:- fixed possible Crash in replace own when searching for messages without
+       a valid message id.
+
   Revision 1.21.2.11  2001/01/29 19:43:22  sv
   - cancel processing fixed (WAB-Header may authorize sender (ZConnect))
 
