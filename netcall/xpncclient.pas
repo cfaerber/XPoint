@@ -78,10 +78,11 @@ begin
   result:=0;
   with boxpar^ do
   begin
-    CreateDir(ClientSpool);
+    if not IsPath(ClientSpool) then
+      CreateDir(ClientSpool);
     if not IsPath(ClientSpool) then begin
       trfehler(728,44);   { 'ungültiges Spoolverzeichnis' }
-      exit;
+      Exit;
     end;
     Erase_Mask(ClientSpool + '*.IN');
     Erase_Mask(ClientSpool + '*.OUT');    // ExtOut verwenden
@@ -125,6 +126,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2002/07/22 10:06:27  mk
+  - do not try to create existing directories (ClientSpool)
+
   Revision 1.3  2002/05/12 20:42:49  mk
   - first version of client netcall hack
 
