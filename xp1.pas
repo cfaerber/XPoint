@@ -25,15 +25,17 @@ unit xp1;
 interface
 
 uses
-  xpglobal,
 {$IFDEF NCRT }
   xpcurses,
 {$ELSE }
   crt,
 {$ENDIF }
+{$IFDEF Win32 }
+  windows,
+{$ENDIF }
   dos,dosx,typeform,montage,keys,fileio,inout,winxp,win2,video,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
-  resource,xp0,xpcrc32;
+  resource,xp0,xpcrc32, xpglobal;
 
 const maxhidden  = 500;                 { max. versteckte MenÅpunkte }
 
@@ -276,9 +278,6 @@ implementation  {-------------------------------------------------------}
 uses
 {$IFDEF BP }
   xpfonts,
-{$ENDIF }
-{$IFDEF Win32 }
-  windows,
 {$ENDIF }
   xp1o,xp1o2,xp1help,xp1input,xp2,xpe,exxec,xpnt,strings;
 
@@ -2425,6 +2424,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.46  2000/05/17 18:45:33  mk
+  - Wieder unter allen Platformen compilierbar
+
   Revision 1.45  2000/05/17 16:11:04  ml
   Zeilenanzahl aendern nun auch in Win32
 

@@ -67,7 +67,7 @@ function  _mausy:integer;
 procedure maus_showVscroller(disp,showempty:boolean; x,y1,y2:integer;
                              total,from,gl:longint; var start,stop:integer;
                              var _unit:longint);
-procedure mint(intsource,tasten,x,y,mx,my:word); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure mint(intsource,tasten,x,y,mx,my:word); {$IFDEF BP } far; {$ENDIF }
 
 { -------------------------------------------------------------------- }
 
@@ -93,7 +93,7 @@ var    kx,ky  : integer;           { Koordinaten der letzten Aktion }
        insen  : array[1..maxinside,0..2] of boolean;
 
 
-procedure mint(intsource,tasten,x,y,mx,my:word); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure mint(intsource,tasten,x,y,mx,my:word);
 
 const tick       : longint = 0;
       was_inside : boolean = false;
@@ -351,6 +351,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/05/17 18:45:33  mk
+  - Wieder unter allen Platformen compilierbar
+
   Revision 1.13  2000/05/17 15:06:59  ml
   MausInterupt-Emulation in 32Bit (Virtual Pascal)
 

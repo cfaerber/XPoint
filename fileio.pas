@@ -302,7 +302,7 @@ begin
   while doserror=0 do begin
     with sr do
       if (name[1]<>'.') then
-        if attr and faDirectory<>0 then
+        if attr and Directory<>0 then
           erase_all(path+name+DirSepa)
         else begin
           assign(f,path+name);
@@ -867,6 +867,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.33  2000/05/17 18:45:33  mk
+  - Wieder unter allen Platformen compilierbar
+
   Revision 1.32  2000/05/17 16:11:03  ml
   Zeilenanzahl aendern nun auch in Win32
 
