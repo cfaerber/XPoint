@@ -75,7 +75,10 @@ begin
   if jahr<1900 then begin m:=23; n:=4; end else
   if jahr<2100 then begin m:=24; n:=5; end else
   if jahr<2200 then begin m:=24; n:=6; end else
-  if jahr<2300 then begin m:=25; n:=0; end;
+  begin
+    m:=25; n:=0;  // Jahr 2300
+  end;
+
   a:=jahr mod 19;
   b:=jahr mod 4;
   c:=jahr mod 7;
@@ -137,6 +140,11 @@ begin
   IsFeiertag:=(i<=feiertage);
 end;
 
+{
+  $Log$
+  Revision 1.7  2001/09/06 18:51:10  mk
+  - optimized and removed warning in InitFeiertage
 
+}
 end.
 
