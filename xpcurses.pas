@@ -1526,10 +1526,10 @@ begin
   libc.signal(SIGQUIT, @SigHandler);
   libc.signal(SIGKILL, @SigHandler);
 {$ELSE}
-//  Linux.SigNal(SIGWINCH, @SigHandler);
-//  Linux.SigNal(SIGHUP, @SigHandler);
-//  Linux.SigNal(SIGQUIT, @SigHandler);
-//  Linux.SigNal(SIGKILL, @SigHandler);
+  Linux.SigNal(SIGWINCH, @SigHandler);
+  Linux.SigNal(SIGHUP, @SigHandler);
+  Linux.SigNal(SIGQUIT, @SigHandler);
+  Linux.SigNal(SIGKILL, @SigHandler);
 {$ENDIF}
 
   { set the unit exit procedure }
@@ -1548,6 +1548,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.70  2003/01/17 13:04:44  mk
+  - FPC compile problem is fixed in FPC now,
+    code is now active again
+
   Revision 1.69  2003/01/11 22:30:47  mk
   - changed define Linux->Unix
 
