@@ -15,21 +15,22 @@ type tCharArray = Array[0..65520] of Char;
      tpCharArray = ^tCharArray;
 
      tRingbuffer = Object
-          TxtArr     : tpCharArray;
-          TxtMaxLen  : Longint;
-          TxtStartPtr: Longint;                      { Start of buffer ptr }
-          CurTxtPtr  : Longint;                 { Maximum data entered yet }
-          TmpBuf     : ^tCharArray;
+          TmpBuf     : tpCharArray;
 
-          constructor Init(TxtSize: Longint);
+          constructor Init(iBufferSize: Longint);
           destructor Done;
 
           function BufRoom: Longint;
           function BufUsed: Longint;
           function Put(var Buf; Size: Longint): Longint;
           function Get(var Buf; Size: Longint; Remove: Boolean): Longint;
-
           procedure Clear;
+
+     private
+          Buffer       : tpCharArray;
+          BufferSize   : Longint;
+          iBufferStart : Longint; {next byte to be read is here}
+          iBufferEnd   : Longint; {next byte will be put here}
      end; { tRingbuffer }
      tpRingbuffer= ^tRingbuffer;
 
@@ -37,101 +38,87 @@ type tCharArray = Array[0..65520] of Char;
  IMPLEMENTATION
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
-constructor tRingbuffer.Init(TxtSize: Longint);
+constructor tRingbuffer.Init(iBufferSize: Longint);
 begin
-  TxtMaxLen := TxtSize;
-  TxtArr := nil;
-  TmpBuf := nil;
-  CurTxtPtr := -1;
-  TxtStartPtr := 0;
+  BufferSize := iBufferSize;
+  Buffer := nil; TmpBuf := nil;
+  iBufferEnd := 0;
+  iBufferStart := 0;
 
-  Getmem(TxtArr, TxtMaxLen);
-  GetMem(TmpBuf, TxtMaxLen);
+  GetMem(Buffer, BufferSize); GetMem(TmpBuf, BufferSize);
 
-  if TxtArr <> nil then FillChar(TxtArr^, TxtMaxLen, #00);
-  if TmpBuf <> nil then FillChar(TmpBuf^, TxtMaxLen, #00);
+  if Buffer <> nil then FillChar(Buffer^, BufferSize, #00);
+  if TmpBuf <> nil then FillChar(TmpBuf^, BufferSize, #00);
 end; { constructor Init }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 destructor tRingbuffer.Done;
 begin
-  if TxtArr <> nil then FreeMem(TxtArr, TxtMaxLen);
-  if TmpBuf <> nil then FreeMem(TmpBuf, TxtMaxLen);
+  if Buffer <> nil then FreeMem(Buffer, BufferSize);
+  if TmpBuf <> nil then FreeMem(TmpBuf, BufferSize);
 end; { destructor Done }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tRingbuffer.BufRoom: Longint;
 begin
-  BufRoom := (TxtMaxLen - (CurTxtPtr + 1));
+  BufRoom:=BufferSize-BufUsed;
 end; { func. BufRoom }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tRingbuffer.BufUsed: Longint;
 begin
-  BufUsed := (CurTxtPtr + 01);
+  if iBufferEnd>=iBufferStart then
+    BufUsed := iBufferEnd-iBufferStart
+  else
+    BufUsed := iBufferEnd+(BufferSize-iBufferStart);
 end; { func. BufUsed }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tRingbuffer.Put(var Buf; Size: Longint): Longint;
-var RetSize: Longint;
+var Temp: Longint;
 begin
-  Put := 0;
-  if Size < 0 then EXIT;
-
-  if TxtStartPtr > 0 then
-   if (CurTxtPtr + TxtStartPtr) > TxtMaxLen then
-     begin
-       Move(TxtArr^[TxtStartPtr], TxtArr^[0], Succ(CurTxtPtr));
-       TxtStartPtr := 0;
-     end; { if }
-
-  if Size > BufRoom then RetSize := BufRoom
-    else RetSize := Size;
-
-  Move(Buf, TxtArr^[TxtStartPtr + BufUsed], RetSize);
-
-  Inc(CurTxtPtr, RetSize);
-  Put := RetSize;
+  if Size<0 then Halt(240);
+  if BufRoom<Size then Size:=BufRoom;
+  if(iBufferEnd+Size)>=BufferSize then begin {iBufferEnd will roll over}
+    Temp:=BufferSize-iBufferEnd;
+    Move(Buf,Buffer^[iBufferEnd],Temp);
+    Move(tCharArray(Buf)[Temp],Buffer^,Size-Temp);
+    iBufferEnd:=Size-Temp;
+  end else begin
+    Move(Buf,Buffer^[iBufferEnd],Size);
+    Inc(iBufferEnd,Size);
+  end;
+  Put:=Size;
 end; { func. Put }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 function tRingbuffer.Get(var Buf; Size: Longint; Remove: Boolean): Longint;
-var RetSize: Longint;
+var Temp: Longint;
 begin
-  Get := 0;
-  if Size < 0 then EXIT;
-
-  if Size > BufUsed then RetSize := BufUsed
-     else RetSize := Size;
-
-  Move(TxtArr^[TxtStartPtr], Buf, RetSize);
-
-  Get := RetSize;
-
-  if Remove then
-    begin
-      if RetSize = BufUsed then
-        begin
-          CurTxtPtr := -1;
-          TxtStartPtr := 0;
-        end
-          else begin
-                 Inc(TxtStartPtr, RetSize);
-                 Dec(CurTxtPtr, RetSize);
-               end; { if }
-    end; { if }
+  if Size<0 then Halt(241);
+  if BufUsed<Size then Size:=BufUsed;
+  if(iBufferStart+Size)>=BufferSize then begin {read over buffer seam}
+    Temp:=BufferSize-iBufferStart;
+    Move(Buffer^[iBufferStart],Buf,Temp);
+    Move(Buffer^,tCharArray(Buf)[Temp],Size-Temp);
+    if Remove then iBufferStart:=Size-Temp;
+  end else begin
+    Move(Buffer^[iBufferStart],Buf,Size);
+    if Remove then Inc(iBufferStart,Size);
+  end;
+  Get:=Size;
 end; { func. Get }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 procedure tRingbuffer.Clear;
 begin
-  CurTxtPtr := -1;
+  iBufferEnd:=0; iBufferStart:=0;
 end; { proc. Clear }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -140,6 +127,9 @@ end. { bufunit }
 
 {
   $Log$
+  Revision 1.5  2000/12/18 00:22:41  ma
+  - using real ring buffer strategy now
+
   Revision 1.4  2000/10/28 09:42:13  ma
   - moved tCharArray to interface part
   - introduced credits.txt
