@@ -178,11 +178,11 @@ implementation
 function iohandler:boolean;
 begin
   lastioerror:=ioresult;
-  if lastioerror<>0 then begin
-    iohandler:=false;
+  if lastioerror<>0 then
+  begin
     writeln('<DB> I/O-Fehler '+strs(lastioerror));
     halt(1);
-    end;
+  end;
   iohandler:=true;
 end;
 
@@ -219,6 +219,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.4  2001/09/06 18:36:06  mk
+  - iohandler: Zuweisen eines Funktionsergebnis vor halt(1) unnoetig
+
   Revision 1.7.2.3  2001/08/12 11:38:24  mk
   - indexcache von 50 auf 25 verkleinert
 
