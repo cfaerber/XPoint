@@ -36,7 +36,6 @@ const     cf_Text      = 1;            { Clipboard-Datenformate }
           cf_DspBitmap = $82;
 
 function  WinVersion:smallword;                 { Windows >= 3.0      }
-procedure Idle;                                 { Rechenzeit freigeben}
 
 function ClipAvailable:boolean;                 { Clipboard verfgbar }
 function ClipOpen:boolean;                      { Clipboard ”ffnen    }
@@ -55,37 +54,91 @@ procedure ClipToFile(fn:pathstr);
 
 { procedure ClipTest; }                         {JG: Ausgeklammert }
 
+{$IFDEF BP }
 function  SmartInstalled:boolean;
 function  SmartCache(drive:byte):byte;          { 0=nope, 1=read, 2=write }
 function  SmartSetCache(drive,b:byte):boolean;  { 0=nope, 1=read, 2=write }
 procedure SmartResetCache;
 procedure SmartFlushCache;
-
+{$ENDIF }
 
 implementation  { ---------------------------------------------------- }
 
 const
+{$IFDEF BP }
   Multiplex = $2f;
+{$ENDIF }
   maxfile   = 65520;
 
 type  ca  = array[0..65530] of char;
       cap = ^ca;
 
 {$IFDEF ver32}
-function WinVersion:smallword;  begin end;     { Windows-Version abfragen }
-function ClipAvailable:boolean; begin end;     { wird Clipboard untersttzt? }
-function ClipOpen:boolean;      begin end;     { Clipboard ”ffnen }
-function ClipClose:boolean;     begin end;     { Clipboard schlieáen }
-function ClipEmpty:boolean;     begin end;     { Clipboard l”schen }
-function ClipCompact(desired:longint):longint; begin end;  { Platz ermitteln }
-function ClipWrite2(format:word; size:longint; var data):boolean; begin end;
-function ClipGetDatasize(format:word):longint; begin end;
-function ClipRead(format:word; var ldata):boolean; begin end;   { Daten lesen }
+function WinVersion:smallword;
+begin
+  {Unter Win32 ist das immer richtig }
+{$IFDEF Win32 }
+  WinVersion := 3;
+{$ELSE }
+  WinVersion := 0;
+{$ENDIF }
+end;     { Windows-Version abfragen }
+
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
+function ClipAvailable:boolean;
+begin
+  ClipAvailable := false;
+end;     { wird Clipboard untersttzt? }
+
+function ClipOpen:boolean;
+begin
+  ClipOpen := false;
+end;     { Clipboard ”ffnen }
+
+function ClipClose:boolean;
+begin
+  ClipClose := true;
+end;     { Clipboard schlieáen }
+
+function ClipEmpty:boolean;
+begin
+  ClipEmpty := true;
+end;     { Clipboard l”schen }
+
+function ClipCompact(desired:longint):longint;
+begin
+  ClipCompact := 0;
+end;  { Platz ermitteln }
+
+function ClipWrite2(format:word; size:longint; var data):boolean;
+begin
+  ClipWrite2 := false;
+end;
+function ClipGetDatasize(format:word):longint;
+begin
+  ClipGetDataSize := 0;
+end;
+
+function ClipRead(format:word; var ldata):boolean;
+begin
+  ClipRead := false;
+end;   { Daten lesen }
+
 function Clip2String(maxlen,oneline:byte):string;
-begin end;  { Clipboardinhalt als String }
+begin
+  Clip2String := '';
+end;  { Clipboardinhalt als String }
+
 Procedure String2Clip(var ldata);                  { STring ins Clipboard}
-begin end;
-procedure Idle; begin end;
+begin
+end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 {$ELSE}
 
@@ -310,13 +363,7 @@ asm
               je @end               
               mov ax,1708h                        { wieder schliessen }
               int multiplex
-@end:   
-end;
-
-procedure Idle; assembler;
-asm
-             mov    ax,1680h
-             int    multiplex
+@end:
 end;
 
 {$ENDIF}
@@ -367,7 +414,7 @@ begin
   if ioresult=0 then begin
     if ClipAvailable and ClipOpen then begin
       bs:=ClipGetDatasize(cf_OemText);
-      if (bs>=maxfile) or (bs>=maxavail) then begin       { Passen wenn CLipboardinhalt }      
+      if (bs>=maxfile) or (bs>=maxavail) then begin       { Passen wenn CLipboardinhalt }
         s:='Clipboard-Inhalt ist zu umfangreich'#13#10;   { groesser als Clipfile oder  }
         blockwrite(f,s[1],length(s));                     { freier Speicher ist         }
         if clipclose then;                                { Clipboard trotzdem Schliessen }
@@ -450,7 +497,7 @@ begin
 end;
 *)
 
-
+{$IFDEF BP }
 
 { Smartdrive vorhanden? }
 
@@ -537,9 +584,19 @@ asm
   int $2f
 end;
 
+{$ENDIF }
+
 end.
 {
   $Log$
+  Revision 1.12  2000/03/14 15:15:34  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.11  2000/02/25 18:30:20  jg
   - Clip2string sauberer gemacht
   - Menues: STRG+A entfernt, STRG+V kann jetzt auch einfuegen

@@ -77,6 +77,11 @@ begin
   EdSetColors(ecol);
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
+
 function EditQuitfunc(ed:ECB):taste;   { Speichern: J/N/Esc }
 var brk : boolean;
 begin
@@ -149,6 +154,10 @@ begin
   enddialog;
   freeres;
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 procedure EditCfgFunc(var cfg:EdConfig; var brk:boolean);
 var x,y : byte;

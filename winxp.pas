@@ -63,6 +63,7 @@ procedure seldummy(var sel:slcttyp);
 procedure wpush(x1,x2,y1,y2:byte; text:string);
 procedure wpushs(x1,x2,y1,y2:byte; text:string);
 procedure wpop;
+procedure w_copyrght;
 
 { Schreiben eines Strings mit Update der Cursor-Posititon }
 { Diese Routine aktualisiert wenn nîtig den LocalScreen }
@@ -74,7 +75,10 @@ procedure Wrt2(const s:string);
   Der LocalScreen wird wenn nîtig aktualisiert }
 procedure FWrt(const x,y:word; const s:string);
 
-{$IFDEF Win32 }
+{$IFDEF Ver32 }
+{ Routinen fÅr 32 Bit Versionen, die den Zugriff auf den Bildschirm
+  managen }
+
 { Liest ein Zeichen direkt von der Konsole aus
   x und y beginnen mit 1 }
 procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
@@ -95,14 +99,14 @@ procedure GetScreenLine(const x, y: Integer; var Buffer; const Count: Integer);
   anders gemacht werden. }
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
-{$ENDIF }
+
 { FÅllt eine Bildschirmzeile mit konstantem Zeichen und Attribut
   Die Koordinaten beginnen bei 1/1.
   Die Routine ist bis jetzt unter Win32 mit API und fÅr den
   Rest mit FWrt implementiert }
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
 
-procedure w_copyrght;
+{$ENDIF }
 
 
 { ========================= Implementation-Teil =========================  }
@@ -289,7 +293,6 @@ var
   c: Char;
   Attr: SmallWord;
   save: byte;
-  s: String;
 begin
   moff;
   save := textattr;
@@ -402,12 +405,12 @@ end;
 {$ELSE }
 procedure FWrt(x,y:word; const s:string);
 var
+{$IFNDEF Win32 }
   i, Count: Integer;
-{$IFDEF Win32 }
+{$ELSE }
   WritePos: TCoord;                       { Upper-left cell to write from }
   Buffer: array[1..255] of smallword;
   OutRes: LongInt;
-  Attr: SmallWord;
 {$ENDIF }
 begin
 {$IFDEF Win32 }
@@ -441,8 +444,9 @@ begin
 end;
 {$ENDIF }
 
-{$IFDEF Win32 }
+{$IFDEF Ver32 }
 procedure GetScreenChar(const x, y: Integer; var c: Char; var Attr: SmallWord);
+{$IFDEF Win32 }
 var
   ReadPos: TCoord;                       { Upper-left cell to Read from }
   OutRes: LongInt;
@@ -453,11 +457,14 @@ begin
   ReadConsoleOutputCharacter(OutHandle, @aChr, 1, ReadPos, @OutRes);
   ReadConsoleOutputAttribute(OutHandle, @aAttr, 1, ReadPos, @OutRes);
   c := aChr; Attr := aAttr;
-end;
+{$ELSE }
+begin
+  { !!Hier LocalScreen abfragen oder direkt aus dem Bildschirm lesen }
 {$ENDIF }
+end;
 
-{$IFDEF Win32 }
 procedure GetScreenLine(x, y: Integer; var Buffer; Count: Integer);
+{$IFDEF Win32 }
 var
   ReadPos: TCoord;                       { Upper-left cell to Read from }
   OutRes: LongInt;
@@ -473,8 +480,10 @@ begin
     TLocalScreen(Buffer)[i*2] := CharBuffer[i];
     TLocalScreen(Buffer)[I*2+1] := Char(Lo(AttrBuffer[i]));
   end;
-end;
+{$ELSE }
+begin
 {$ENDIF }
+end;
 
 procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Integer);
 {$IFDEF Win32 }
@@ -495,8 +504,8 @@ procedure FillScreenLine(const x, y: Integer; const Chr: Char; const Count: Inte
   end;
 {$ENDIF }
 
-{$IFDEF Win32 }
 procedure ReadScreenRect(const l, r, o, u: Integer; var Buffer);
+{$IFDEF Win32 }
 var
   BSize, Coord: TCoord;
   SourceRect: TSmallRect;
@@ -509,9 +518,13 @@ begin
     Top := o-1; Bottom := u-1;
   end;
   ReadConsoleOutput(OutHandle, PChar_Info(@Buffer), BSize, Coord, @SourceRect);
+{$ELSE }
+begin
+{$ENDIF }
 end;
 
 procedure WriteScreenRect(const l, r, o, u: Integer; var Buffer);
+{$IFDEF Win32 }
 var
   BSize, Coord: TCoord;
   DestRect: TSmallRect;
@@ -524,12 +537,18 @@ begin
     Top := o-1; Bottom := u-1;
   end;
   WriteConsoleOutput(OutHandle, Char_Info(Buffer), BSize, Coord, @DestRect);
-end;
+{$ELSE }
+begin
 {$ENDIF }
+end;
+
+{$ENDIF Ver32 }
 
 procedure Wrt2(const s:string);
+{$IFNDEF Win32 }
 var
   i, Count: Integer;
+{$ENDIF }
 begin
 {$IFDEF Ver32 }
   {$IFDEF Win32 }
@@ -669,7 +688,9 @@ end;
 
 Procedure wpull(x1,x2,y1,y2:byte; text:string; var handle:word);
 var i : byte;
+{$IFNDEF Win32 }
   j: Integer;
+{$ENDIF }
 begin
   if (x2-x1<1) or (y2-y1<1) then begin
     writeln('WPULL error');
@@ -712,8 +733,9 @@ end;
 
 
 Procedure wrest(handle:word);
-var i : byte;
-{$IFDEF Ver32 }
+{$IFNDEF Win32 }
+var
+  i : byte;
   j, Offset: integer;
 {$ENDIF }
 begin
@@ -917,19 +939,28 @@ begin    { of wslct }
   restcursor;
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 
 procedure seldummy(var sel:slcttyp);
 begin
 end;
 
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
+
 
 procedure w_copyrght;
 var z     : taste;
     sd,st : boolean;
+{$IFDEF BP }
     buf   : array[0..159] of byte;
+{$ENDIF }
 begin
   moff;
-{$IFNDEF ver32}
+{$IFDEF BP }
   Fastmove(mem[base:(crline-1)*160],buf,160);
 {$ENDIF}
   mon;
@@ -942,7 +973,7 @@ begin
   m2d:=sd; m2t:=st;
   Disp_DT;
   moff;
-{$IFNDEF ver32}
+{$IFDEF BP }
   Fastmove(buf,mem[base:(crline-1)*160],160);
 {$ENDIF}
   mon;
@@ -1014,6 +1045,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/03/14 15:15:37  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.11  2000/03/08 22:36:33  mk
   - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
 

@@ -10,16 +10,13 @@
 
 { DES-Routinen fÅr CrossPoint }
 
-{ Diese Unit darf nicht overlayed werden; sonst hÑngen sich }
-{ die Codierroutinen (aus ungeklÑrten GrÅnden) auf!         }
-
 {$I XPDEFINE.INC }
 
 unit xp_des;
 
 interface
 
-uses crt,fileio,inout,maus2,xp0;
+uses crt,fileio,inout,maus2,xp0, xpglobal;
 
 procedure DES_PW(keystr:string);
 procedure DES_code(decode:boolean; var data; ofs,total:longint;
@@ -122,25 +119,304 @@ var x,buf : stream;    { buf = Puffer; nur fÅr Assembler-Routinen ! }
 
 {$IFDEF ver32}
 
-procedure make_stream(var s:sts; var d:stream);
-begin end;
-procedure permutate(var s:stream; codeofs:word; n:integer);
-begin end;
-procedure make_comp(s:stream; var d:sts);
-begin end;
-procedure Xs(var s1:stream; var s2:stream; n:integer);
-begin end;
-procedure F2(var s:stream; var s2:stream);
-begin end;
+procedure make_stream(var source, dest); assembler;
+asm
+             mov    esi, source
+             mov    edi, dest
+
+             mov     dh,8
+@mstl1:       mov     ch,1
+             mov     cl,0
+             mov     dl,8
+@mstl2:       mov     al,[esi]
+             and     al,ch
+             and     cl,cl
+             jz      @nodiv
+             shr     al,cl
+@nodiv:       mov     [edi],al
+             inc     edi
+             shl     ch,1
+             inc     cl
+             dec     dl
+             jnz     @mstl2
+             inc     esi
+             dec     dh
+             jnz     @mstl1
+end;
+
+procedure permutate(var s, codeofs; n:longint); assembler;
+asm
+             mov     esi, codeofs
+             mov     edi, offset buf
+             mov     ebx, s
+             dec     ebx              { Array-Offset }
+             mov     ecx,n
+             cld
+
+@perloop:    lodsb
+             seges
+             xlat
+             mov     [edi],al
+             inc     edi
+             loop    @perloop
+
+             mov     esi, offset buf
+             mov     edi, ebx
+             inc     edi
+             mov     ecx,n
+             rep     movsb
+end;
+
+procedure make_comp(var source; var dest); assembler;
+asm
+             mov     esi, source
+             mov     edi, dest
+
+             mov     dh,8
+@mkklp1:     mov     ch,0
+             mov     cl,0
+             mov     dl,8
+@mkklp2:     mov     al,[esi]
+             and     cl,cl
+             jz      @nomult
+             shl     al,cl
+@nomult:     add     ch,al
+             inc     cl
+             inc     esi
+             dec     dl
+             jnz     @mkklp2
+             mov     [edi],ch
+             inc     edi
+             dec     dh
+             jnz     @mkklp1
+end;
+
+procedure Xs(var s1, s2; n: longint); assembler;
+asm
+             mov     edi, s1
+             mov     esi, s2
+             cld
+
+             xor     ecx, ecx
+             mov     ecx, n
+@Xslp:       lodsb
+             xor     [edi], al
+             inc     edi
+             loop    @Xslp
+end;
+
+procedure F2(var s, s2); assembler;
+asm
+             mov     ecx,0
+@F2lp:       push    ecx
+             shl     ecx,1
+             mov     edx,ecx
+             shl     ecx,1
+             add     ecx,edx
+             mov     esi,s
+             mov     ebx,ecx
+
+             {SByte6 }
+             mov     ecx,600h
+             mov     dl, 0
+@sb6lp:      mov     al, [esi+ebx]
+             and     cl,cl
+             jz      @no6mult
+             shl     al,cl
+@no6mult:    add     dl,al
+             inc     cl
+             inc     bl
+             dec     ch
+             jnz     @sb6lp
+             xor     eax, eax
+             mov     al,dl
+
+             pop     ebx
+             push    ebx
+             mov     cl,6
+             shl     ebx,cl
+             add     ebx,eax
+             mov     dl, Sn[ebx]
+             mov     edi,s2
+             pop     ebx
+             push    ebx
+             shl     ebx,1
+             shl     ebx,1
+
+             { sets4 }
+
+             mov     ecx,400h
+             mov     dh,1
+@s4lp:       mov     al,dl
+             and     al,dh
+             and     cl,cl
+             jz      @no4div
+             shr     al,cl
+@no4div:     mov     [edi+ebx],al
+             inc     edi
+             shl     dh,1
+             inc     cl
+             dec     ch
+             jnz     @s4lp
+
+             pop     ecx
+             inc     ecx
+             cmp     ecx,8
+             jb      @F2lp
+end;
 
 {$ELSE }
 
-{$L xp_des.obj}
-procedure make_stream(var s:sts; var d:stream);         near; external;
-procedure permutate(var s:stream; codeofs:word; n:integer); near; external;
-procedure make_comp(s:stream; var d:sts);               near; external;
-procedure Xs(var s1:stream; var s2:stream; n:integer);  near; external;
-procedure F2(var s:stream; var s2:stream);              near; external;
+procedure make_stream(var source:sts; var dest:stream); assembler;
+asm
+             push ds
+             lds     si,source
+             les     di,dest
+
+             mov     dh,8
+@mstl1:       mov     ch,1
+             mov     cl,0
+             mov     dl,8
+@mstl2:       mov     al,[si]
+             and     al,ch
+             and     cl,cl
+             jz      @nodiv
+             shr     al,cl
+@nodiv:       mov     es:[di],al
+             inc     di
+             shl     ch,1
+             inc     cl
+             dec     dl
+             jnz     @mstl2
+             inc     si
+             dec     dh
+             jnz     @mstl1
+             pop ds
+end;
+
+procedure permutate(var stream:stream; codeofs:word; n:integer); assembler;
+asm
+             mov     si,codeofs
+             mov     di,offset buf
+             les     bx,  stream
+             dec     bx              { Array-Offset }
+             mov     cx,n
+             cld
+
+@perloop:    lodsb
+             seges
+             xlat
+             mov     [di],al
+             inc     di
+             loop    @perloop
+
+             mov     si,offset buf
+             mov     di,bx
+             inc     di
+             mov     cx,n
+             rep     movsb
+end;
+
+procedure make_comp(source:stream; var dest:sts); assembler;
+asm
+             push    ds
+             lds     si,source
+             les     di,dest
+
+             mov     dh,8
+@mkklp1:      mov     ch,0
+             mov     cl,0
+             mov     dl,8
+@mkklp2:      mov     al,[si]
+             and     cl,cl
+             jz      @nomult
+             shl     al,cl
+@nomult:     add     ch,al
+             inc     cl
+             inc     si
+             dec     dl
+             jnz     @mkklp2
+             mov     es:[di],ch
+             inc     di
+             dec     dh
+             jnz     @mkklp1
+             pop     ds
+end;
+
+procedure Xs(var s1:stream; var s2:stream; n:integer); assembler;
+asm
+             push ds
+             les     di,s1
+             lds     si,s2
+             cld
+
+             mov     cx,n
+@Xslp:        lodsb
+             xor     es:[di],al
+             inc     di
+             loop    @Xslp
+             pop ds
+end;
+
+procedure F2(var s:stream; var s2:stream); assembler;
+asm
+             mov     cx,0
+@F2lp:        push    cx
+             shl     cx,1
+             mov     dx,cx
+             shl     cx,1
+             add     cx,dx
+             les     si,s
+             mov     bx,cx
+
+             {Set6 }
+             mov     cx,600h
+             mov     dl,0
+@sb6lp:       mov     al,es:[si+bx]
+             and     cl,cl
+             jz      @no6mult
+             shl     al,cl
+@no6mult:     add     dl,al
+             inc     cl
+             inc     bl
+             dec     ch
+             jnz     @sb6lp
+             mov     al,dl
+
+
+             pop     bx
+             push    bx
+             mov     cl,6
+             shl     bx,cl
+             mov     ah,0
+             add     bx,ax
+             mov     dl, byte ptr Sn[bx]
+             les     di,s2
+             pop     bx
+             push    bx
+             shl     bx,1
+             shl     bx,1
+
+             {Set4}
+             mov     cx,400h
+             mov     dh,1
+@s4lp:        mov     al,dl
+             and     al,dh
+             and     cl,cl
+             jz      @no4div
+             shr     al,cl
+@no4div:      mov     es:[di+bx],al
+             inc     di
+             shl     dh,1
+             inc     cl
+             dec     ch
+             jnz     @s4lp
+
+             pop     cx
+             inc     cx
+             cmp     cx,8
+             jb      @F2lp
+end;
 
 {$ENDIF}
 
@@ -162,7 +438,7 @@ var i        : integer;
 begin
   make_stream(sts(key),ks);
   permutate(ks,ofs(PC1),56);
-  FastMove(ks[1],k1,28);
+ FastMove(ks[1],k1,28);
   FastMove(ks[29],k2,28);
   for i:=1 to 16 do begin
     sleft(k1,i);
@@ -175,8 +451,8 @@ end;
 
 
 procedure F(var s:stream; var k:stream);
-var i  : integer;
-    s2 : stream;
+var
+  s2 : stream;
 begin
   permutate(s,ofs(E),48);
   Xs(s,k,48);
@@ -266,6 +542,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.4  2000/03/14 15:15:41  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.3  2000/03/06 08:51:04  mk
   - OpenXP/32 ist jetzt Realitaet
 

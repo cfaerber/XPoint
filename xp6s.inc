@@ -18,7 +18,7 @@ const sigsep = '-*-';
 var t,t2    : text;
     s       : string;
     buf     : string;
-    num,n,i : word;
+    num,n   : word;
 begin
   sigtemp:=false;
   if _filesize(signat)=0 then
@@ -365,7 +365,6 @@ end;   { x+33 -> x+40                       37 -> 39          34 -> 36 }
 function MessageID:string;
 const rev = 'B';   { Revision des MsgID-Algorithmus }
 var inr     : longint;
-    i       : integer;
     t,m,j,d : smallword;
     h,mm,s,ss: smallword;
     dat     : word;
@@ -476,7 +475,6 @@ end;
 procedure encode_file(des:boolean; var f1,f2:file);
 var p    : pointer;
     rr   : smallword;
-    l    : longint;
     show : boolean;
     x,y  : byte;
     ofs  : longint;
@@ -929,7 +927,6 @@ end;
 function FidoAdrOK(testbox:boolean):boolean;
 var ni : NodeInfo;
     fa : fidoadr;
-    p  : byte;
 begin
   GetNodeinfo(empfaenger,ni,2);
   if not ni.found then begin
@@ -975,7 +972,6 @@ end;
 
 procedure SendMbox;
 var s   : string[30];
-    x,y : byte;
 begin
   s:=getres2(610,iif(intern,1,iif(parken,2,3)));  { 'Nachricht ' 'speichern' / 'parken' / 'abschicken' }
   if sendFlags and sendShow=0 then
@@ -1128,6 +1124,14 @@ begin                                                  { 'Sende-Priorit„t' }
 end;
 {
   $Log$
+  Revision 1.11  2000/03/14 15:15:40  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.10  2000/03/09 23:39:34  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

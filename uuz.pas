@@ -3067,11 +3067,13 @@ begin
     if summary<>'' then
       WrLongline('Summary: ',summary);
 
-    if not nomailer and (programm<>'') then begin
-      { programm:='XP '+mid(programm,cpos(' ',programm)+1); }
-      if mail then wrs(f,'X-Mailer: '+programm)
-      else wrs(f,'X-Newsreader: '+programm);
-      end;
+    if not nomailer and (programm<>'') then
+    begin
+      if mail then
+        wrs(f,'X-Mailer: ' + programm)
+      else
+        wrs(f,'X-Newsreader: ' + programm);
+    end;
 
     { 03.09.1999 robo - X-No-Archive Konvertierung }
     if xnoarchive then wrs(f,'X-No-Archive: yes');
@@ -3496,6 +3498,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.9  2000/03/14 15:15:37  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.8  2000/02/25 20:01:46  rb
   unben”tigte Funktion und Variable ausgeklammert
 

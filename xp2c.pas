@@ -88,11 +88,11 @@ uses xp1o,xp2,xp4o2,xp9bp;
 
 var hayes     : boolean;
     small     : boolean;
-    comadr    : string[4];
     oldfossil : char;
-    comnr     : byte;
     tzfeld    : shortint;
+{$IFDEF CAPI }
     isdnx,isdny : byte;   { x/y bei IsdnConfig }
+{$ENDIF }
 
 
 function testbrett(var s:string):boolean;
@@ -366,7 +366,6 @@ end;
 
 function smalladr(var s:string):boolean;
 var x,y : byte;
-    brk : boolean;
     t   : taste;
     ok  : boolean;
 begin
@@ -387,7 +386,6 @@ end;
 
 function testhayes(var s:string):boolean;
 var x,y : byte;
-    brk : boolean;
     t   : taste;
     ok  : boolean;
 begin
@@ -649,7 +647,6 @@ begin
 end;
 
 function dpmstest(var s:string):boolean;
-var regs : registers;
 begin
   if (s=_jn_[2]) or SetVesaDpms(DPMS_On) then
     dpmstest:=true
@@ -746,9 +743,8 @@ begin
 end;
 
 function testfifo(var s:string):boolean;
-var w : word;
 begin
-  w:=ua[1]; ua[1]:=hexval(getfield(2));
+  ua[1]:=hexval(getfield(2));
   if (s=_jn_[2]) or (ComType(1)=Uart16550A) then
     testfifo:=true
   else begin
@@ -757,6 +753,7 @@ begin
     end;
 end;
 
+{ Prozedurvariable, s wird nicht ben”tigt }
 function SetTrigger(var s:string):boolean;
 begin
   SetFieldEnable(13,(getfield(1)=_jn_[2]) and (s=_jn_[1]));
@@ -768,7 +765,6 @@ var brk  : boolean;
     pstr : string[4];
     mi,me: string[200];
     md   : string[100];
-    foscts : boolean;
 begin
   with COMn[nr] do begin
     dialog(ival(getres2(261,0)),15,getreps2(261,1,strs(nr)),x,y);    { 'Konfiguration von COM%s' }
@@ -777,7 +773,6 @@ begin
     else
       pstr:=lstr(hex(Cport,4));
     mi:=minit^; me:=mexit^; md:=mdial^;
-    comnr:=nr;
     if not fossildetect then fossil:=false;
     maddbool  (3,2,getres2(261,13),fossil); mhnr(960);  { 'FOSSIL-Treiber verwenden' }
     oldfossil:=iifc(fossil,_jn_[1],_jn_[2]);
@@ -871,7 +866,7 @@ end;
 {$ENDIF CAPI }
 
 function formpath(var s:string):boolean;
-var x,y : byte;
+var
     res : integer;
 begin
   s:=ustr(FExpand(s));

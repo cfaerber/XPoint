@@ -250,7 +250,7 @@ var tmp  : pathstr;
     b    : byte;
     nt   : longint;
     t    : string[20];
-    uid  : string[80];
+{    uid  : string[80]; !!}
 
   procedure StripOrigin;
   begin
@@ -285,12 +285,12 @@ begin
   if PGPVersion=PGP2
     then t:=iifs(hd.typ='T','t',' +textmode=off')
     else t:=iifs(hd.typ='T','t',' -t');
-    
-  if PGP_UserID<>'' then begin
+
+{  if PGP_UserID<>'' then begin
     if PGPVersion=PGP2 then uid:=' -u '+IDform(PGP_UserID)
                        else uid:=IDform(PGP_UserID)
-  end else uid:='';
-  
+  end else uid:=''; }
+
   { --- codieren --- }
   if encode and not sign then begin                     
     if PGPVersion=PGP2 then
@@ -310,7 +310,7 @@ begin
     if PGPVersion=PGP2 then
       RunPGP('-sa'+t+' '+filename(source)+' '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} )
     else
-      RunPGP5('PGPE.EXE','-s -a'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} ); 
+      RunPGP5('PGPE.EXE','-s -a'+t+' '+filename(source)+' -r '+IDform(UserID)+' -o '+tmp {+uid wird zu lang!} );
   end;
   
   if fido_origin<>'' then AddOrigin;
@@ -698,6 +698,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/03/14 15:15:41  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.7  2000/03/06 13:48:38  mk
   OH: PGP-Fixes
 

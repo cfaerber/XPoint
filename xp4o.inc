@@ -376,7 +376,6 @@ var x,y,yy  : byte;
                                      size : word;
                                    end;
     bufs    : byte;
-    i       : integer;
     break   : boolean;
     mi      : word;
     voll    : boolean;        { kein Platz fÅr eine ode mehrere Abl. }
@@ -707,6 +706,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/03/14 15:15:39  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.5  2000/03/08 22:36:33  mk
   - Bugfixes f¸r die 32 Bit-Version und neue ASM-Routinen
 

@@ -1425,7 +1425,7 @@ begin
       spop(hotkeys);
       if t=' ' then begin
         zeit:=left(time,5);
-{$IFNDEF Delphi5 }        forcepoll:=true; {$ENDIF }
+        forcepoll:=true;
         end;
       ende:=(t=keyesc) or (t=mausunright);
       end
@@ -1557,6 +1557,14 @@ end;
 end.
 { 
   $Log$
+  Revision 1.8  2000/03/14 15:15:40  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.7  2000/03/02 18:32:24  mk
   - Code ein wenig aufgeraeumt
 

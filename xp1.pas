@@ -191,7 +191,9 @@ procedure editfile(name:pathstr; nachricht,reedit:boolean; keeplines:byte;
                    ed_ukonv:boolean);
 procedure dosshell;
 procedure delete_tempfiles;
+{$IFDEF BP }
 procedure FlushSmartdrive(show:boolean);
+{$ENDIF }
 procedure set_checkdate;
 
 procedure opendatabases;
@@ -297,7 +299,6 @@ var  menulevel : byte;                  { MenÅebene }
 
 
 {$IFDEF Ver32 }
-{ Achtung: noch Fehlerhaft! }
 function  ixdat(s:string):longint; assembler;
 asm
          mov   esi,s
@@ -311,7 +312,7 @@ asm
          mov   cl,4
          shl   al,cl
          mov   dl,al
-         mov   cx,0
+         mov   ecx,0
          call  @getbyte                 { Tag }
          shr   al,1
          rcr   ch,1
@@ -330,8 +331,8 @@ asm
          shr   al,1
          rcr   cl,1
          add   ch,al
-         mov   ax, dx
-         shr   ax, 16
+         shl   edx, 16
+         mov   eax, edx
          mov   ax,cx
          jmp   @ende
 
@@ -345,7 +346,7 @@ asm
          inc   esi
          ret
 @ende:
-end;
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI'];
 
 procedure iso_conv(var buf; bufsize:word); assembler;
 asm
@@ -557,10 +558,10 @@ begin
     if maxavail<scsize+500 then interr('Speicher-öberlauf');
     getmem(p,scsize);               { Bild sichern }
     moff;
-{$IFDEF Win32 }
-    ReadScreenRect(1, screenwidth, 1, screenlines, p^);
-{$ELSE }
+{$IFDEF BP }
     FastMove(mem[base:0],p^,scsize);
+{$ELSE }
+    ReadScreenRect(1, screenwidth, 1, screenlines, p^);
 {$ENDIF }
     mon;
   end;
@@ -571,10 +572,10 @@ begin
   with sp do
   begin
     moff;
-{$IFDEF Win32 }
-    WriteScreenRect(1, screenwidth, 1, screenlines, p^);
-{$ELSE }
+{$IFDEF BP }
     FastMove(p^,mem[base:0],scsize);
+{$ELSE }
+  WriteScreenRect(1, screenwidth, 1, screenlines, p^);
 {$ENDIF }
     mon;
     disp_DT;
@@ -1076,7 +1077,6 @@ end;
 
 procedure tfehler(txt:string; sec:integer);
 var x,y : byte;
-    t   : taste;
 begin
   msgbox(length(txt)+16,5,_fehler_,x,y);
   mwrt(x+3,y+2,left(txt,screenwidth-16)+'  '#4'  '+formi(sec div 60,2)+':'+
@@ -1455,7 +1455,9 @@ begin
   if bbase<>nil then dbClose(bbase);
   if bezbase<>nil then dbClose(bezbase);
   if mimebase<>nil then dbClose(mimebase);
+{$IFDEF BP }
   FlushSmartdrive(false);
+{$ENDIF }
   opendb:=false;
 end;
 
@@ -1469,7 +1471,9 @@ begin
     dbTempClose(mimebase);
     if miscbase<>nil then
       dbTempClose(miscbase);
+{$IFDEF BP }
     FlushSmartdrive(false);
+{$ENDIF }
     closed:=true;
     end;
 end;
@@ -1653,7 +1657,7 @@ begin
   mdelay(1);
 end;
 
-
+{$IFDEF BP }
 procedure FlushSmartdrive(show:boolean);   { Schreibcache leeren }
 begin
   if not ParNoSmart and (SmartCache(ord(getdrive)-65)=2) then begin
@@ -1662,6 +1666,7 @@ begin
     if show then closebox;
     end;
 end;
+{$ENDIF }
 
 
 procedure set_checkdate;
@@ -1732,6 +1737,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.16  2000/03/14 15:15:37  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.15  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

@@ -58,21 +58,13 @@ function  testtelefon(var s:string):boolean;
 function  IsKomCode(nr:longint):boolean;
 function  IsOrgCode(nr:longint):boolean;
 
-{$IFNDEF Delphi5}
-function XPWinShell(prog:string; parfn:pathstr; space:word; 
+function XPWinShell(prog:string; parfn:pathstr; space:word;
                     cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
-{$ENDIF}
 
 implementation
 
 uses xp1,xp1o2,xp1input,xpkeys,xpnt,xp10,xp4,xp4o;       {JG:24.01.00}
-
-var mo,bo,uo : boolean;
-    mp,bp,up : longint;
-    mi,bi,ui : shortint;
-
-
 
 { Dateinamen abfragen. Wenn Esc gedrÅckt wird, ist s undefiniert! }
 
@@ -873,7 +865,6 @@ end;
 function XPWinShell(prog:string; parfn:pathstr; space:word;
                     cls:shortint; Fileattach:boolean):boolean;
 { true, wenn kein DOS-Programm aufgerufen wurde }
-var w1,w2: word;
 
   function PrepareExe:integer;    { Stack sparen }
   { 
@@ -966,6 +957,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.28  2000/03/14 15:15:38  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.27  2000/03/13 15:32:37  jg
   URL-Erkennung im Lister erkennt jetzt auch
   einen String der mit WWW. beginnt als URL an.

@@ -45,7 +45,6 @@ uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xp6,xp7,xp8,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xp6o,xpmime;
 
 const suchch    = #254;
-      glnorm    : boolean = true;  { false -> gl ist um 1 verringert }
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
       markaktiv : boolean = false; { markier-Anzeige (11) aktiv      }
       closeflag : boolean = false; { TClose -> Dateien schlie·en     }
@@ -252,10 +251,12 @@ var t,lastt: taste;
     ende   : boolean;
     ya     : shortint;    { gl-save, y-Offset fÅr die Anzeige }
     user_msgs : boolean;  { Typ 10, User-Msg-Fenster          }
-    adrb   : byte;
     suchst : string[maxsuch];
     suchen : boolean;
     savedd : DB;          { dispdat }
+{$IFDEF Ver32 }
+    TempBack: Boolean;
+{$ENDIF }
 
   procedure lcol(y,pp:shortint);
   begin
@@ -1618,7 +1619,7 @@ begin      { --- select --- }
                      if isverteiler then edverteiler
                      else usermsg_window;
                    if (c=k1_R) and keinverteiler then change_adressbuch;
-                   if (c=k1_P) and keinverteiler then edit_password(false);  
+                   if (c=k1_P) and keinverteiler then edit_password(false);
                    if c=' ' then _mark_;                         { 'P' }
                    if c=k1_cE then _unmark_;                    { ^E }
                    if (t=keyaltu) and keinverteiler then usersuche(true);
@@ -1815,7 +1816,12 @@ begin      { --- select --- }
               write_disp_line(1,0,false);
               inc(i);
               dec(komofs);
+{$IFDEF BP }
    {$B+}    until (i=gl) or not BACK;   {$B-}
+{$ELSE }
+              TempBack := BACK;
+            until (i=gl) or not TempBACK;
+{$ENDIF }
             for i:=1 to gl do
               showline(i,p);
             end;
@@ -1899,14 +1905,13 @@ end;    { select }
 
 procedure TClose; {$IFNDEF Ver32 } far; {$ENDIF }
 var f : file;
-    r : integer;
 begin
   if closeflag then begin
     TempClose;
     if aktdispmode=20 then dbFlushClose(auto);
     assign(f,TempPath+MsgTempFile);
     erase(f);
-    r:=ioresult;
+    if ioresult <> 0 then ;
     closeflag:=false;
     zaehler[1]:=30;
     end
@@ -1920,8 +1925,7 @@ end;
 
 
 procedure mainwindow;
-var t     : taste;
-    p,p0  : shortint;
+var
     i     : integer;
 begin
   dbSetIndex(bbase,biIndex);

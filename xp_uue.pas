@@ -65,18 +65,131 @@ end;
 
 
 {$IFDEF ver32}
-procedure decode;  begin end;
-procedure getstring; begin end;
+{ !! Ungetestet und unoptimiert }
+procedure decode; assembler;
+asm
+          mov esi, s              { Adresse des zu dekod. Strings }
+          mov ebx,2               { Offset innerhalb von s }
+
+          mov cl,1                { Schleifenz„hler }
+          mov ch,[esi+1]          { 1. Byte : L„ngeninformation }
+          sub ch,' '
+          and ch,3fh
+
+@mloop0:  mov edi,outbuf           { Adresse des Ausgabepuffers }
+          add edi,bufp
+
+@mainloop: 
+          cmp cl,ch               { i<=n ? }
+          jle @lp1
+          inc ln
+          mov cl,ch
+          mov ch,0
+          add word ptr bytes,cx   { inc(bytes,n) }
+          adc word ptr bytes+2,0
+          jmp @ende
+
+@lp1:     mov dx,[esi+ebx]          { 4 Bytes dekodieren }
+          sub dx,2020h
+          mov ax,[esi+ebx+2]
+          sub ax,2020h
+          add ebx,4
+          shl al,1
+          shl al,1
+          shl al,1
+          rcl dh,1
+          shl al,1
+          rcl dh,1
+          shl al,1
+          rcl dh,1
+          rcl dl,1
+          shl al,1
+          rcl dh,1
+          rcl dl,1
+          and ah,3fh
+          add al,ah
+          mov [edi],dx
+          inc edi
+          inc edi
+          mov [edi],al
+          inc edi
+
+          mov eax,bufp
+          inc cl
+          inc eax
+          cmp cl,ch
+          ja @zende
+          inc cl
+          inc eax
+          cmp cl,ch
+          ja @zende
+          inc cl
+          inc eax
+@zende:   mov bufp,eax
+          cmp eax,maxbuf
+          ja @flush
+          jmp @mainloop
+
+@flush:   push esi
+          push edi
+          push ebx
+          push ecx
+          push esi
+          push edi
+          call dword ptr flushbuf            {setzt bufp auf 0   JG:FAR }
+          pop edi
+          pop esi
+          pop ecx
+          pop ebx
+          pop edi
+          pop esi
+          jmp @mloop0
+@ende:
+end;
+
+procedure getstring; assembler;
+asm
+          mov esi,inbuf
+          mov ebx,ibufp
+          mov edi,s
+          inc edi
+          mov edx,ibufend
+          mov ah,0
+
+@getloop: cmp ebx,edx               { ibufp > ibufend ? }
+          ja  @getende
+          mov al,[esi+ebx]
+          cmp al,' '              { Zeilenende ? }
+          jb  @getok
+          mov [edi],al
+          inc edi
+          inc ebx
+          inc ah
+          cmp ah,100              { max. Stringl„nge }
+          jb  @getloop
+@getok:   mov al,2                { max. ein CR/LF berlesen }
+@getok2:  cmp ebx,edx               { ibufp > ibufend ? }
+          ja @getende
+          cmp byte ptr [esi+ebx],' '
+          jae @getende
+          inc ebx                  { Zeilenvorschbe berlesen }
+          dec al
+          jnz @getok2
+
+@getende: mov ibufp,ebx
+          mov edi, s
+          mov [edi],ah             { Stringl„nge setzen (s[0]) }
+end;
 
 
 {$ELSE}
-{ JG:08.02.00 In inline-Asm umgesetzt... & Bugfix wegen ($F-  ---->  $F+) }
+{ JG:08.02.00 In inline-Asm umgesetzt... & Bugfix wegen ($F-  ---->  $F+ }
 
 procedure decode; assembler;
 asm
           push ds
           mov ax,seg @data        { JG: Eigentlich ueberfluessig, aber sicher ist sicher}
-          mov ds,ax      
+          mov ds,ax
 
           mov si,offset s         { Adresse des zu dekod. Strings }
           mov bx,2                { Offset innerhalb von s }
@@ -542,6 +655,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.7  2000/03/14 15:15:41  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.6  2000/02/19 11:40:08  mk
   Code aufgeraeumt und z.T. portiert
 

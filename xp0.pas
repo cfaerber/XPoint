@@ -87,9 +87,15 @@ const  {$IFDEF DPMI}
        realnlen = 40;                { robo 01/00 LÑnge der Realnames }
 
        patchlevel  : string[13] = '*patchlevel*0';
+{$IFDEF Ver32 }
+       xp_xp       : string[10] = 'OpenXP';
+       xp_name     : string[30] = '## OpenXP '+verstr+betastr;  { fÅr ZConnect-Header }
+       xp_origin   : string[15] = '--- OpenXP';
+{$ELSE }
        xp_xp       : string[10] = 'CrossPoint';
        xp_name     : string[30] = '## CrossPoint '+verstr+betastr;  { fÅr ZConnect-Header }
        xp_origin   : string[15] = '--- CrossPoint';
+{$ENDIF }
        xp_short    : string[2]  = 'XP';
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
@@ -1075,6 +1081,14 @@ implementation
 end.
 {
   $Log$
+  Revision 1.13  2000/03/14 15:15:37  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.12  2000/03/07 17:45:13  jg
   - Viewer: Bei Dateien mit Leerzeichen im Namen wird
     grundsaetzlich ein .tmp File erzeugt

@@ -370,7 +370,7 @@ begin
     for i:=0 to sizeof(hellor)-1 do     { Hello senden }
       SeriellWrite(HelloPkt[i]);
     flushinput(sh);
-    crc:=CRC16(hello,sizeof(hellor));
+    crc:=_CRC16(hello,sizeof(hellor));
     SeriellWrite(char(hi(crc)));        { CRC senden }
     SeriellWrite(char(lo(crc)));
     StartTimer(ti_Hello,40);
@@ -466,7 +466,7 @@ begin
       8 : begin
             crc:=swap(hello.crc);
             hello.crc:=0;
-            if crc=Crc16(hello,sizeof(hellor)) then
+            if crc=_CRC16Ver2(hello,sizeof(hellor)) then
               state:=10
             else
               state:=9;
@@ -711,7 +711,7 @@ begin
       SendBlock(edat^,edatlen);
       if DebugMode then DebugFlush
       else flushinput(sh);
-      SendStr(hex(CRC16(edat^,edatlen),4)+#13);
+      SendStr(hex(_CRC16Ver2(edat^,edatlen),4)+#13);
       end;
     repeat
       ReadEmsiString(5,length(EMSI_ACK));        { warten auf EMSI_ACK / _NAK }
@@ -753,7 +753,7 @@ begin
       if left(s,length(EMSI_DAT))=EMSI_DAT then begin
         dl:=hexval(copy(s,length(EMSI_DAT)+1,4));    { Paketl„nge }
         FastMove(buf^[bufpos+length(EMSI_DAT)+4+dl],hex4[1],4); hex4[0]:=#4;
-        ok:=(hexval(hex4)=CRC16(buf^[bufpos+2],dl+12));
+        ok:=(hexval(hex4)=_CRC16Ver2(buf^[bufpos+2],dl+12));
         if not ok then begin
           SendStr(EMSI_NAK+#13);       { CRC-Fehler }
           WrLog(ErrChar,getres(186));  { 'fehlerhaftes EMSI-Paket erhalten' }
@@ -1056,6 +1056,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.6  2000/03/14 15:15:37  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

@@ -113,18 +113,106 @@ uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xp9,xp9bp,xpcc,xpnt,xpfido,
      xp_pgp,xp6o,xp6l;
 
 {$IFDEF Ver32 }
-{$IFDEF FPC }
-  {$HINTS OFF }
-{$ENDIF }
-procedure ukonv(typ:byte; var data; var bytes:word);
-begin end;
-function  testbin(var bdata; rr:word):boolean;
-begin end;
-function  ContainsUmlaut(var s:string):boolean;
-begin end;
-{$IFDEF FPC }
-  {$HINTS ON }
-{$ENDIF }
+
+procedure ukonv(typ:byte; var data; var bytes:word); assembler;
+asm
+         mov   edx,0
+         mov   edi,bytes
+         mov   ecx,[edi]
+         jcxz  @ende
+         mov   edi, data
+         lea   esi,[edi+1500]
+         cld
+         mov   bl,typ
+         cmp   bl,2                    { ISO? }
+         jz    @isolp
+
+@uklp:   mov   al,[esi]              { IBM -> ASCII }
+         cmp   al,'„'
+         jnz   @noae
+         mov   ax,'ea'
+         jmp   @conv
+@noae:   cmp   al,'”'
+         jnz   @nooe
+         mov   ax,'eo'
+         jmp   @conv
+@nooe:   cmp   al,''
+         jnz   @noue
+         mov   ax,'eu'
+         jmp   @conv
+@noue:   cmp   al,'Ž'
+         jnz   @no_ae
+         mov   ax,'eA'
+         jmp   @conv
+@no_ae:  cmp   al,'™'
+         jnz   @no_oe
+         mov   ax,'eO'
+         jmp   @conv
+@no_oe:  cmp   al,'š'
+         jnz   @no_ue
+         mov   ax,'eU'
+         jmp   @conv
+@no_ue:  cmp   al,'á'
+         jnz   @noconv
+         mov   ax,'ss'
+@conv:   stosw
+         inc   edx
+         cmp   edx,1500
+         jz    @ende                    { Konvertierpuffer voll :-( }
+         inc   esi
+         loop  @uklp
+         jmp   @ende
+@noconv: stosb
+         inc   esi
+         loop  @uklp
+         jmp   @ende
+
+@isolp:  mov   al,[esi]
+         inc   esi
+         stosb
+         loop  @isolp
+
+@ende:   mov   edi,bytes
+         add   [edi],edx
+end;
+
+function  testbin(var bdata; rr:word):boolean; assembler;
+asm
+         mov   ecx,rr
+         mov   esi,bdata
+         cld
+@tbloop: lodsb
+         cmp   al,9
+         jb    @is_bin                  { Bin„rzeichen 0..8 }
+         cmp   al,127
+         jae   @is_bin                  { "bin„r"zeichen 127..255 }
+         cmp   al,32
+         jae   @no_bin                  { ASCII-Zeichen 32..126 }
+         cmp   al,13
+         jbe   @no_bin                  { erlaubte Zeichen 9,10,12,13 }
+@is_bin: mov   eax,1                    { TRUE: Bin„rzeichen gefunden }
+         jmp   @tbend
+@no_bin: loop  @tbloop
+         mov   eax,ecx                  { FALSE: nix gefunden }
+@tbend:
+end;
+
+function  ContainsUmlaut(var s:string):boolean; assembler;
+asm
+         cld
+         mov   esi,s
+         lodsb
+         xor   ecx, ecx
+         mov   cl,al
+         jcxz  @cu_ende
+@cu_loop: lodsb
+         or    al,al
+         js    @cu_found
+         loop  @cu_loop
+         jmp   @cu_ende
+@cu_found: mov  ecx,1
+@cu_ende: mov   eax,ecx
+end;
 
 {$else }
 
@@ -255,7 +343,7 @@ end;
 
 function umlauttest(var s:string):boolean;
 var i : integer;
-    p : byte;
+{    p : byte; }
 begin
   umlauttest:=true;
   case umlaute of
@@ -306,7 +394,7 @@ begin
           begin
             rfehler(908);               { 'ungltige Adresse' }
             testreplyto:=false;
-            end;             
+            end;
         end 
       else begin     
         rfehler(908);                   { 'ungltige Adresse' }
@@ -374,12 +462,10 @@ var f,f2     : ^file;
     senden   : shortint;    { 0=Nein, 1=Ja, 2=Intern              }
     newbox   : string[20];  { Zwischensp. fr ge„nderte Pollbox   }
     halten   : integer;     { Haltezeit fr neuen User            }
-    adrb     : byte;        { Adreábuch-Flag fr neuen User       }
     boxfile  : string[12];
     username : string[30];  { eigener Username                    }
     pointname: string[25];
     sendedat : longint;     { Empfangsdatum                       }
-    erstdat  : longint;     { Erstellungsdatum                    }
     XP_ID    : string[40];
     XID      : string[40];  { CrossPoint-ID                       }
     passwd   : ^string;     { Paáwort des empfangenden Users      }
@@ -387,12 +473,11 @@ var f,f2     : ^file;
     newbin   : boolean;     { Typ nach Codierung                  }
     intern,                 { interne Nachricht                   }
     lokalPM  : boolean;     { lokale PM                           }
-    flags    : byte;        { Brettflags                          }
     maxsize  : longint;     { ab hier muá gesplittet werden       }
     grnr     : longint;     { Brettgruppen-Nr.                    }
     _brett   : string[5];
     addsize  : longint;     { Header + Signatur                   }
-    hdsize   : word;
+{    hdsize   : word; }
     mapsname : string[20];
     oversize : longint;     { Nachrichtenlimit berschritten      }
     parken   : boolean;     { Nachricht nach /¯Unversandt         }
@@ -504,7 +589,7 @@ end;
 
 
 procedure TestXpostings(all:boolean);  { Crossposting-Informationen zusammenstellen }
-var i,j,first : integer;
+var i,first : integer;
 
   procedure GetInf(n:integer; var adr:string);
   var p : byte;
@@ -743,7 +828,7 @@ end;
   Procedure changeempf;                         {Empfaenger der Mail aendern}
   begin                 
     pm:=cpos('@',empfaenger)>0;
-    if pm then adresse:=empfaenger  
+    if pm then adresse:=empfaenger
       else adresse:=uucpbrett(empfaenger,2);    
     if not pm and (Netztyp=nt_fido) then y:=y-2;   {Zeile fuer Fidoempf beachten}
     openmask(x+13,x+13+51+2,y+2,y+2,false);
@@ -1700,7 +1785,7 @@ fromstart:
     for ii:=1 to msgCPanz-1 do
       AddToEmpflist(cc^[ii]);
     WriteHeader(hdp^,f2^,_ref6list);
-    hdsize:=filepos(f2^);
+{    hdsize:=filepos(f2^); }
     fmove(f^,f2^);
     close(f^);
     close(f2^);
@@ -2064,6 +2149,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/03/14 15:15:40  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.9  2000/03/09 23:39:33  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

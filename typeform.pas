@@ -28,12 +28,7 @@ UNIT typeform;
 INTERFACE
 
 uses
-{$IFNDEF Delphi }
-  dos,
-{$ELSE }
-  sysutils,
-{$ENDIF }
-  xpglobal;
+  dos, xpglobal;
 
 {$IFNDEF DPMI}
   const  Seg0040 = $40;
@@ -59,9 +54,7 @@ Function CreditCardOk(s:string):boolean;     { Kreditkartennummer ÅberprÅfen }
 Function Date:DateTimeSt;                    { dt. Datumsstring             }
 Function Dup(const n:integer; const c:Char):string;      { c n-mal duplizieren          }
 Function Even(const l:longint):boolean;            { not odd()                    }
-{$IFNDEF Delphi }
 Function FileName(var f):string;                { Dateiname Assign             }
-{$ENDIF }
 Function FirstChar(const s:string):char;           { s[1]                         }
 Function fitpath(path:pathstr; n:byte):pathstr;   {+ Pfad evtl. abkÅrzen    }
 Function FormI(const i:longint; const n:Byte):string;    { i-->str.; bis n mit 0 auff.  }
@@ -166,9 +159,6 @@ Procedure TruncStr(var s:string; n:byte);    { String kÅrzen                }
 Procedure UpString(var s:string);            { UpperString                  }
 procedure FastMove(var Source, Dest; const Count : WORD);
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
-{$IFDEF Delphi }
-procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
-{$ENDIF }
 procedure UkonvStr(var s:string;len:byte);     { JG:15.02.00 Umlautkonvertierung (ae,oe...) }
 procedure Rot13(var data; size: word);         { Rot 13 Kodierung }
 {$IFDEF BP }
@@ -478,9 +468,7 @@ begin
   Val(Copy(t,1,2),st,res);
   Val(Copy(t,4,2),mi,res);
   Val(Copy(t,7,2),se,res);
-{$IFNDEF Delphi }
   settime(st,mi,se,0);
-{$ENDIF }
 end;
 
 Procedure SetSysDate(const d:DateTimeSt);
@@ -489,9 +477,7 @@ begin
   Val(Copy(d,1,2),t,res);
   Val(Copy(d,4,2),m,res);
   Val(Copy(d,7,4),j,res);
-{$IFNDEF Delphi }
   setdate(j,m,t);
-{$ENDIF }
 end;
 
 Function Dup(const n:integer; const c:Char):string;
@@ -1355,33 +1341,6 @@ begin
   RVal:=r;
 end;
 
-{$IFDEF Delphi }
-procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
-begin
-  Dir := ExtractFileDir(Path);
-  Name := ExtractFileName(Path);
-  Ext := ExtractFileExt(Path);
-end;
-{$ENDIF }
-
-{$IFDEF Windows }
-
-procedure fsplit(path:pathstr; var dir:dirstr; var name:namestr; var ext:extstr);
-var pp : array[0..79] of char;
-    dd : array[0..70] of char;
-    nn : array[0..8] of char;
-    ee : array[0..4] of char;
-begin
-  FastMove(path[1],pp,length(path)); {!! da wird evtl. zu viel kopiert }
-  pp[length(path)]:=#0;
-  filesplit(pp,dd,nn,ee);
-  dir:=StrPas(dd);
-  name:=StrPas(nn);
-  ext:=StrPas(ee);
-end;
-
-{$ENDIF }
-
 
 function progname:namestr;
 var ps : pathstr;
@@ -1457,7 +1416,6 @@ begin
 end;
 
 
-{$IFNDEF Delphi }
 Function FileName(var f):string;
 var s : pathstr;
     i : byte;
@@ -1468,7 +1426,6 @@ begin
   s[0]:=chr(i-1);
   FileName:=s;
 end;
-{$ENDIF }
 
 Function iif(b:boolean; l1,l2:longint):longint;
 begin
@@ -2080,7 +2037,7 @@ end;
 {$ENDIF }
 
 
-procedure UkonvStr(var s:string;len:byte);         
+procedure UkonvStr(var s:string;len:byte);
 var s2 : string;
   procedure conv(c1,c2:char);
   var p : byte;
@@ -2122,7 +2079,7 @@ asm
          mov   cx,size
 {$ELSE }
          mov   edi, data
-         mov   ecx,size
+         mov   ecx, size
 {$ENDIF }
          jcxz  @ende
          cld
@@ -2177,6 +2134,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.21  2000/03/14 15:15:36  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.20  2000/03/13 18:55:18  jg
   - xp4o+typeform: Ukonv in UkonvStr umbenannt
   - xp4o: Compilerschalter "History" entfernt,

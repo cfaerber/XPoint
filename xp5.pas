@@ -286,9 +286,6 @@ begin
   cal_active:=false;
 end;
 
-
-{$IFDEF BP }
-
 function xpspace(dir:dirstr):longint;
 var sr  : searchrec;
     sum : longint;
@@ -306,6 +303,8 @@ begin
   xpspace:=sum;
   moff;
 end;
+
+{$IFDEF BP }
 
 function dfree:longint;
 begin
@@ -457,8 +456,6 @@ const rnr = 500;
 var
     x,y  : byte;
 begin
-  { Das hier ist nur provisorisch. Hier muá noch das ganze angepasst
-    werden }
   msgbox(45,11, getres2(rnr,1),x,y);
   attrtxt(col.colmboxhigh);
   moff;
@@ -472,12 +469,15 @@ begin
 {$IFDEF Dos32 }
   wrt(x+4,y+8,'Dos/32' + getres2(rnr,7));
 {$ENDIF }
+{$IFDEF Linux }
+  wrt(x+4,y+8,'Linux' + getres2(rnr,7));
+{$ENDIF }
   attrtxt(col.colmbox);
   gotoxy(x+19,y+6); write(memavail div 1024:5,' KB');
-  gotoxy(x+32,y+4);
-  if dos.disksize(0)>0 then
-    write((dos.disksize(0)):6,' MB');
-  gotoxy(x+32,y+6);
+  gotoxy(x+31,y+4); write(disksize(0) div 1024 div 1024:8,' MB');
+  gotoxy(x+31,y+5); write((xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
+    xpspace(XferDir)) div 1024 div 1024:8,' MB');
+  gotoxy(x+31,y+6); write(diskfree(0) div 1024 div 1024:8,' MB');
   wrt(x+30,y+9,right('     '+getres2(rnr,10),7)+'...');
   mon;
   freeres;
@@ -1033,6 +1033,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.13  2000/03/14 15:15:40  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.12  2000/03/08 22:36:33  mk
   - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
 

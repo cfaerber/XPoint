@@ -21,7 +21,8 @@ begin
          0 : MenuHidden:=false;                      { zur Sicherheit ... }
       $069 : MenuHidden:=(SaveType=0);               { Config/Sichern }
 {$IFDEF Ver32 }
-      $095 : MenuHidden:=true;
+      $015 : MenuHidden:=true; { Terminal }
+      $095 : MenuHidden:=true; { Zeilen }
 {$ENDIF }
       $097 : MenuHidden:=not exzconfig;              { Config/Anz./Pd-Zmodem }
       $11a : MenuHidden:=not (deutsch and ParDebug); { X/Statistik/Fragmente }
@@ -571,6 +572,14 @@ begin
 end;
 {
   $Log$
+  Revision 1.8  2000/03/14 15:15:38  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.7  2000/03/09 23:39:33  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

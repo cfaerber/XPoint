@@ -141,11 +141,173 @@ const IBM2ISOtab : array[0..255] of byte =
 
 {$IFDEF ver32}
 procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
-              var passpos:smallword); begin end;
+              var passpos:smallword); assembler;
+asm
+         mov   edi,passpos
+         xor   ebx, ebx
+         mov   bx,[edi]
+         mov   edi,data
+         mov   edx,size
+         mov   esi,passwd
+         mov   ch,[esi]                 { Paáwort-L„nge }
+         mov   cl,4                     { zum Nibble-Tauschen }
+	 mov   ah,decode
+         cld
+
+@QPClp:  mov   al,[edi]                { Original-Byte holen }
+         or    ah,ah                   { decodieren ? }
+         jnz   @code1
+         rol   al,cl                   { Nibbles vertauschen }
+@code1:  xor   al,[esi+ebx]              { Byte codieren }
+         inc   bl
+         cmp   bl,ch                   { am PW-Ende angekommen? }
+         jbe   @pwok
+         mov   bl,1                    { PW-Index auf 1 zurcksetzen }
+@pwok:   or    ah,ah                   { codieren? }
+         jz    @code2
+         rol   al,cl                   { Nibbles vertauschen }
+@code2:  stosb
+         dec   edx                     { n„chstes Byte }
+         jnz   @QPClp
+
+	 mov   edi,passpos              { neuen PW-Index speichern }
+         mov   [edi],bx
+end;
+
 function TxtSeek(adr:pointer; size:word; var key:string;igcase,umlaut:boolean):
-         boolean; begin end;
-procedure Iso1ToIBM(var data; size:word); begin end;
-procedure IBMToIso1(var data; size:word); begin end;
+         boolean;assembler;
+asm
+         push bp
+         cld
+         mov   esi,adr
+         mov   ecx,size
+	 mov   dh,umlaut
+         cmp   dh,0                   { Bei Umlautsensitiver Suche zwingend ignore Case. }
+         jne   @icase
+         cmp   igcase,0               { ignore case? }
+         jz    @case
+
+@icase:  push  ecx
+         push  esi
+
+@cloop:  lodsb                        {  den kompletten Puffer in }
+         cmp   al,'„'
+         jnz   @no_ae
+         mov   al,'Ž'
+         jmp   @xl
+@no_ae:  cmp   al,'”'
+         jnz   @no_oe
+         mov   al,'™'
+         jmp   @xl
+@no_oe:  cmp   al,''
+	 jnz   @no_ue
+         mov   al,'š'
+         jmp   @xl
+
+@no_ue:  cmp   al,'‚'                 
+         je    @is_eac
+         cmp   al,''
+         jne   @no_eac
+@is_eac: mov   al,'E'
+         jmp   @xl
+
+@no_eac: cmp   al,'a'                 {  UpperCase umwandeln }
+         jb    @noc
+         cmp   al,'z'
+         ja    @noc
+         sub   al,32
+@xl:     mov   [esi-1],al
+@noc:    loop  @cloop
+         pop   esi
+	 pop   ecx
+
+
+@case:   mov   edi,key
+         sub   cl,[edi]
+         sbb   ch,0
+         jc    @nfound                 { key >= L„nge }
+         inc   ecx
+
+@sblp1:  xor   ebx,ebx                 { Suchpuffer- u. String-Offset }
+         xor   ebp,ebp
+         mov   dl,[edi]              { Key-L„nge }
+@sblp2:  mov   al,[esi+ebx]
+@acctst: cmp   al,[edi+ebp+1]
+         jnz   @testul
+@ulgood: inc   ebx                    { Hier gehts weiter nach Erfolgreichem Umlautvergleich }
+         inc   ebp
+         dec   dl
+         jz    @found
+	 jmp   @sblp2
+
+                                        {--------------}
+@testul: cmp dh,0                       { UMLAUTSUCHE }
+         je @nextb                       { Aber nur wenn erwuenscht... }
+
+         mov ah,'E'                                        
+
+         cmp al,'Ž'                     { Wenn "Ž" im Puffer ist, }                           
+         jne @@1
+         mov al,'A'
+@ultest: cmp ax,[edi+ebp+1]            { Dann auf "AE" Testen. }
+         jne @nextb
+         inc bp                         { Wenn gefunden: Zeiger im Suchbegriff }
+         dec dl                         { und Restsuchlange um ein Zeichen weiterschalten }
+         jmp @ulgood                    { und oben weitermachen. }
+
+@@1:     cmp al,'™'
+         jne @@2
+	 mov al,'O'                     { "OE"... }
+         jmp @ultest
+
+@@2:     cmp al,'š'
+         jne @@3
+         mov al,'U'                     { "UE"... }
+         jmp @ultest
+
+@@3:     cmp al,'á'
+         jne @@4
+         mov ax,'SS'                    { und "SS"... }
+         jmp @ultest
+@@4:                                    {--------------}
+
+@nextb:  inc   esi                       { Weitersuchen... }
+         loop  @sblp1
+@nfound: xor   eax,eax
+         jmp   @ende
+@found:  mov   eax,1
+@ende:   pop bp
+end;
+
+procedure Iso1ToIBM(var data; size:word); assembler;
+asm
+          mov    ecx,size
+          jcxz   @noconv1
+          mov    edi,data
+          mov    ebx,offset ISO2IBMtab - 128
+          cld
+@isolp1:  mov    al,[edi]
+          or     al,al
+          jns    @ii1
+          xlat
+@ii1:     stosb
+	  loop   @isolp1
+@noconv1:
+end;
+
+procedure IBMToIso1(var data; size:word); assembler;
+asm
+          mov    ecx,size
+          jcxz   @noconv2
+          mov    edi,data
+          mov    ebx,offset IBM2ISOtab
+          cld
+@isolp2:  mov    al,[edi]
+          xlat
+          stosb
+          loop   @isolp2
+@noconv2:
+end;
 
 {$ELSE}
 
@@ -157,12 +319,12 @@ procedure QPC(decode:boolean; var data; size:word; passwd:pointer;
 
 { decode:  TRUE -> dekodieren, FALSE -> codierem                  }
 { data:    Zeiger auf Datenblock                                  }
-{ size:    Anzahl zu codierender Bytes                            } 
+{ size:    Anzahl zu codierender Bytes                            }
 { passwd:  Zeiger auf Paáwort (Pascal-String, max. 255 Zeichen)   }
-{ passpos: aktueller Index im Paáwort; Startwert 1                } 
+{ passpos: aktueller Index im Paáwort; Startwert 1                }
 
-asm 
-         push ds 
+asm
+         push ds
          les   di,passpos
          mov   bx,es:[di]
          les   di,data
@@ -488,7 +650,6 @@ var p        : pointer;
     size     : longint;
     adr      : longint;
     berr     : string[40];
-    r        : integer;
     iso      : boolean;
     hdp      : headerp;
     hds      : longint;
@@ -545,7 +706,7 @@ begin
     end;
 ende:
   close(puffer);
-  r:=ioresult;
+  if ioresult = 0 then ;
   freemem(p,bufs);
   XReadIsoDecode:=false;
 end;
@@ -569,7 +730,6 @@ end;
 procedure XmemRead(ofs:word; var size:word; var data);
 var puffer   : file;
     ablage   : byte;
-    res      : integer;
 begin
   if ofs<dbReadInt(mbase,'msgsize') then begin
     dbReadN(mbase,mb_ablage,ablage);
@@ -577,7 +737,7 @@ begin
     reset(puffer,1);
     seek(puffer,dbReadInt(mbase,'adresse')+ofs);
     blockread(puffer,data,size,size);
-    res:=ioresult;
+    if ioresult = 0 then ;
     close(puffer);
     end
   else
@@ -953,7 +1113,6 @@ procedure BriefSchablone(pm:boolean; schab,fn:pathstr; empf:string;
                          var realname:string);
 var t1,t2 : text;
     s     : string;
-    p     : byte;
 begin
   if exist(schab) then begin
     assign(t1,schab); reset(t1);
@@ -1137,8 +1296,6 @@ end;
 
 procedure splitfido(adr:string; var frec:fidoadr; defaultzone:word);
 var p1,p2,p3 : byte;
-    res      : integer;
-    l        : longint;
 begin
   fillchar(frec,sizeof(frec),0);
   with frec do begin
@@ -1257,6 +1414,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/03/14 15:15:38  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.13  2000/03/09 23:39:33  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

@@ -97,13 +97,17 @@ IMPLEMENTATION
 
 const mausint = $33;
       intset  : boolean = false;
+{$IFDEF BP }
       stsize  : word    = 0;      { Gr”áe des Stacks }
+{$ENDIF }
 
 var   oldexit : pointer;
+{$IFDEF BP }
       mstack  : pointer;        { Stack f. Maus-Handler }
       int_call: mausintp;       { Adresse des Handlers  }
+      ssave1, ssave2: SmallWord;
+{$ENDIF }
       savem   : boolean;
-      ssave   : pointer;
 
 
 {$IFNDEF ver32}
@@ -115,18 +119,18 @@ asm
          mov   bp,seg @data            { Turbo-Datensegment setzen }
          mov   ds,bp
 
-         cmp   stsize,0                { kein eigener Stack? }
+(*         cmp   stsize,0                { kein eigener Stack? }
          jz    @nost1
-         mov   word ptr ssave,sp       { Stack sichern }
-         mov   word ptr ssave+2,ss
+         mov   ssave1,sp       { Stack sichern }
+         mov   ssave2,ss
          mov   bp,word ptr mstack+2    { Handler-Stack setzen }
          inc   bp
          mov   ss,bp
          mov   bp,word ptr mstack
-         add   bp,word ptr stsize
+         add   bp,stsize
          sub   bp,16
          and   bp,0fffeh
-         mov   sp,bp
+         mov   sp,bp *)
 
 @nost1:  push  ax
          push  bx
@@ -152,10 +156,10 @@ asm
          pop   bx
          pop   ax
 
-         cmp   stsize,0
+(*         cmp   stsize,0
          jz    @nost2
-         mov   sp,word ptr ssave       { Stack wiederherstellen }
-         mov   ss,word ptr ssave+2
+         mov   sp,ssave1       { Stack wiederherstellen }
+         mov   ss,ssave2 *)
 @nost2:  pop   bp
          pop   ds
          popf
@@ -378,6 +382,9 @@ asm
 @1:
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 
 { Interrupt-Routine setzen                        }
 { intmask: Interrupt-Maske; siehe intX-Konstanten }
@@ -416,6 +423,10 @@ end;
 procedure dummyproc(intsource,tasten,x,y,mx,my:word); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 procedure ClearMausInt;
 begin
@@ -502,6 +513,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.6  2000/03/14 15:15:36  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.5  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

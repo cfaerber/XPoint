@@ -442,6 +442,9 @@ asm
 end;
 {$ENDIF}
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 
 function list_markdummy(var p:string; block:boolean):boolean;
 begin
@@ -459,6 +462,10 @@ end;
 procedure list_dummydp(s:string);
 begin
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 procedure interr(txt:string);
 begin
@@ -1634,6 +1641,14 @@ end;
 end.
 { 
   $Log$
+  Revision 1.9  2000/03/14 15:15:36  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.8  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

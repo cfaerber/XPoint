@@ -422,13 +422,21 @@ end;
 
 { Fido: YooHoo-PW auf 8 Zeichen begrenzen }
 
-procedure fidotestpasslen;
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
+procedure fidotestpasslen(var s:string);
 begin
   if (getfield(EMSIfield)='N') and (length(getfield(4))>8) then begin
     rfehler(926);
     setfield(4,left(getfield(4),8));
     end;
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 function testvertreterbox(var s:string):boolean;
 var d  : DB;
@@ -530,6 +538,9 @@ begin
   testZCpointname:=true;  { (us=''); }
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 
 function JanusSwitch(var s:string):boolean;
 var x,y   : byte;
@@ -547,6 +558,11 @@ begin
   get(t,curon);
   closebox;
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
+
 
 
 { Typ :  1=Boxen, 2=Gruppen, 3=Systeme, 4=Kurznamen, 5=MIME-Typen }
@@ -583,11 +599,10 @@ var d         : DB;
       if nt=ntnr[i] then Netz_Typ:=ntName(ntnr[i]);
   end;
 
-  procedure displine(i,dp:integer);
+  procedure displine(i:integer);
   var s1,s2      : string[40];
       s3         : string[80];
       scrp       : byte;
-      hzeit      : integer;
       limit,grnr : longint;
       w          : word;
       hd,sig,qt  : char;
@@ -602,7 +617,7 @@ var d         : DB;
       2 : dbRead(d,'Name',s1);
     end;
     if setdefault and (ustr(s1)=ustr(default)) then begin
-      p:=i; dp:=i;
+      p:=i;
       setdefault:=false;
       end;
     case typ of
@@ -680,7 +695,7 @@ var d         : DB;
     fillchar(drec,sizeof(drec),0);
     i:=1;
     while (i<=gl) and not dbEOF(d) do begin
-      displine(i,p);
+      displine(i);
       dbSkip(d,1);
       inc(i);
       end;
@@ -894,7 +909,7 @@ var d         : DB;
     dbRead(d,'haltezeit',hzeit);
     hzeit:=max(0,min(hzeit+add,9999));
     dbWrite(d,'haltezeit',hzeit);
-    displine(p,p);
+    displine(p);
   end;
 
 
@@ -1353,7 +1368,7 @@ begin
       if dbFound then display
       else begin
         dbGo(d,drec[1]);
-        displine(1,1);
+        displine(1);
         end;
       end;
     empty:=(drec[1]=0);
@@ -1361,8 +1376,8 @@ begin
       while drec[p]=0 do dec(p);
       if p<>p0 then begin
         if drec[p0]>0 then begin
-          dbGo(d,drec[p0]); displine(p0,0); end;
-        dbGo(d,drec[p]); displine(p,p);
+          dbGo(d,drec[p0]); displine(p0); end;
+        dbGo(d,drec[p]); displine(p);
         p0:=p;
         end;
       end;
@@ -1725,6 +1740,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/03/14 15:15:41  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.10  2000/03/05 19:46:12  jg
   - Edit/Viewer: kein neuerstellen von */* mehr moeglich.
   - Externe Viewer: Gesamtlaenge von Programmname+Dateiname beruecksichtigt

@@ -1163,9 +1163,7 @@ var ok       : boolean;
     hds      : longint;
     hdp      : headerp;
     zconnect : boolean;
-    j: longint;
 begin
-  j := fattaches;
   new(hdp);
   fattaches:=0;
   if not exist(fn) then
@@ -1349,6 +1347,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.9  2000/03/14 15:15:39  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.8  2000/03/04 14:53:50  mk
   Zeichenausgabe geaendert und Winxp portiert
 

@@ -316,6 +316,10 @@ begin
   nosound;
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
 procedure mdummyp(var inhalt:string);
 begin
 end;
@@ -329,6 +333,10 @@ function qdummyf(brk,modif:boolean):boolean;
 begin
   qdummyf:=true;
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 
 {--------------------- Maske anlegen/bearbeiten ------------------}

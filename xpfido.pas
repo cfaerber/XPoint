@@ -1198,9 +1198,7 @@ var t   : text;
     p   : byte;
     node: string[20];
     ni  : nodeinfo;
-    brk : boolean;
     anz : longint;
-    fs  : longint;
     fn  : string[12];
     sr  : searchrec;
 
@@ -1269,8 +1267,7 @@ end;
 procedure GetFAddress(request:boolean; txt:string; var fa:FidoAdr;
                       var ni:NodeInfo; var brk:boolean; var x,y:byte);
 var node    : string[30];
-    modem   : string[53];
-    flags   : word;
+{    modem   : string[53]; }
     xx,yy,i : byte;
     t       : taste;
 begin
@@ -1330,7 +1327,7 @@ begin
                 col.coldiahigh);
     maddtext(12,3,ni.telefon,col.coldiahigh);
 
-    modem:='';
+    {modem:=''; }
     with ni do begin
     { if flags and nfHST<>0 then modem:='HST';
       if flags and nfHST16<>0 then modem:=modem+' / HST-16.8';
@@ -1348,7 +1345,7 @@ begin
       maddtext(12,4,modem,col.coldiahigh); }
 
 
-      { Fix: Flagzeile zu lang: gekürzt und E-Mail rausschneiden }  
+      { Fix: Flagzeile zu lang: gekürzt und E-Mail rausschneiden }
       maddtext(12, 4, copy(MailString(FFlags, True), 1, 50), col.coldiahigh);
       maddtext(12, 5, status, col.coldiahigh);
 
@@ -1415,8 +1412,8 @@ begin
 end;
 
 procedure GetReqFiles(adr:string; var files:string);
-var p     : byte;
-    _file : string[90];
+var
+
     t     : text;
     s     : string;
 begin
@@ -1510,11 +1507,9 @@ end;
 
 function FidoRequest(node,files:string):string;
 var brk   : boolean;
-    x,y,d : byte;
+    x,y   : byte;
     fa    : FidoAdr;
     ni    : NodeInfo;
-    p,p2  : byte;
-    _file : string[30];
     atonce: boolean;
     doreq : boolean;
 begin
@@ -1949,11 +1944,9 @@ function FidoSeekfile:string;
       p:=cpos(TAB,sNodInf);
       end;
   end;
+
   {teste den Suchstring auf Korrektheit}
   procedure pTestSeekStr( var fidolastseek: string );
-    var
-     _pos    :integer;
-     testStr : string;
   begin
     if ( pos(_sep,fidolastseek) = 1 ) then
     begin
@@ -2030,7 +2023,6 @@ function FidoSeekfile:string;
 
   procedure pBearbeiteFileListe;
   var
-     nn             : longint;
      apos           : integer;
      beginSafe      : boolean;
   begin
@@ -2212,7 +2204,6 @@ end;
 function FindFidoAddress(fn:pathstr; var fa:FidoAdr):boolean;
 var t    : text;
     s    : string;
-    buf  : array[1..1024] of byte;
     n    : byte;
     found: boolean;
     p,p2 : integer;
@@ -2254,6 +2245,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/03/14 15:15:42  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.10  2000/03/07 23:41:07  mk
   Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
 

@@ -435,6 +435,10 @@ begin
     end;
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
 function EddefQuitfunc(ed:ECB):taste;
 begin
   EddefQuitfunc:=AskJN(ed,1,language^.ja);
@@ -445,12 +449,28 @@ begin
   EddefOverwrite:=AskJN(ed,2,language^.ja);
 end;
 
+function EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
+begin
+  errsound;
+  EddefFindfunc:=false;
+end;
+
+function EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
+begin
+  errsound;
+  EddefReplFunc:=false;
+end;
+
 
 procedure EddefMsgproc(txt:string; error:boolean);
 begin
   message:=txt;
   errsound;
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 { 04.02.2000 robo }
 { procedure EddefFileproc(ed:ECB; var fn:pathstr; save:boolean); }
@@ -472,18 +492,6 @@ begin
     fchar:=mf;
     if brk then fn:='';
     end;
-end;
-
-function EddefFindFunc(ed:ECB; var txt:string; var igcase:boolean):boolean;
-begin
-  errsound;
-  EddefFindfunc:=false;
-end;
-
-function EddefReplFunc(ed:ECB; var txt,repby:string; var igcase:boolean):boolean;
-begin
-  errsound;
-  EddefReplFunc:=false;
 end;
 
 
@@ -691,7 +699,7 @@ begin
     dispose(delroot);
     delroot:=dnp;
     end;
-end;
+        end;
 
 procedure freeblock(var ap:absatzp); forward;
 
@@ -708,7 +716,7 @@ procedure FreeLastDelEntry;
   end;
 begin
   if assigned(DelRoot) then
-    freelast(delroot);
+      freelast(delroot);
 end;
 
 procedure FreeDellist;             { Liste gel”schter Bl”cke freigeben }
@@ -730,11 +738,19 @@ begin
   akted^.Procs.MsgProc(txt,true);
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
 function memtest(size:longint):boolean;
 
   function memfull:boolean;
   begin
+{$IFDEF BP }
     memfull:=(memavail-size-16<minfree) or (maxavail<size-8);
+{$ELSE }
+    memfull:=false;
+{$ENDIF }
   end;
 
 begin
@@ -746,10 +762,13 @@ begin
     if not memerrfl then error(1);     { 'zu wenig freier Speicher' }
     memerrfl:=true;
     memtest:=false;
-  end
-  else
+  end else
     memtest:=true;
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 function allocabsatz(size:integer):absatzp;
 var p  : absatzp;
@@ -1047,7 +1066,7 @@ var ap  : pointer;
     ofs : integer;
     nxo : integer;
     ofs0,ofse : integer;
-    cr  : boolean;
+{    cr  : boolean; }
 begin
   if overwrite then MakeBak(fn,'BAK');
   assign(f,fn);
@@ -1058,7 +1077,7 @@ begin
   ap:=pstart.absatz;
   ofs0:=pstart.offset;
   ofse:=maxint;
-  cr:=true;
+{  cr:=true; }
   while assigned(ap) do begin
     if ap=pende.absatz then ofse:=pende.offset;
     with absatzp(ap)^ do
@@ -1075,21 +1094,21 @@ begin
           blockwrite(f,cont[ofs],min(nxo,ofse)-ofs);
           if nxo<min(size,ofse) then
           begin
-            blockwrite(f,spc[1],3); cr:=true;
+            blockwrite(f,spc[1],3); { cr:=true;}
           end else
-            cr:=false;
+            {cr:=false; }
             ofs:=nxo;
           end;
         end
       else begin
         blockwrite(f,cont[ofs0],min(size,ofse)-ofs0);
-        cr:=false;
+        { cr:=false;}
         ofs0:=0;
         end;
     if ap=pende.absatz then ap:=nil
     else ap:=absatzp(ap)^.next;
     if assigned(ap) and (ofse=maxint) then begin
-      blockwrite(f,crlf[1],2); cr:=true;
+      blockwrite(f,crlf[1],2); {cr:=true; }
       end;
     end;
   if {not cr and} forcecr then
@@ -1927,6 +1946,7 @@ begin
     trennzeich:=[#0..#31,' ','!','('..'/',':'..'?','['..'^',
                  '''','"','{'..#127,#255];
     aufbau:=true; ende:=false;
+    cursor(curon);
     tk:=0;
     repeat
       memerrfl:=false;
@@ -1973,6 +1993,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.11  2000/03/14 15:15:35  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.10  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

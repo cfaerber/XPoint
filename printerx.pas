@@ -108,8 +108,9 @@ type textbuf = array[0..126] of char;
                    1 : (ostr : string[127]);
                end;
 
-var oldexit: pointer;
-
+{$IFDEF BP }
+var
+  oldexit: pointer;
 
 Procedure xlate(var s:string; var bufpos:word);
 
@@ -126,6 +127,7 @@ begin
       s[i]:=con2[p];
     end;
 end;
+{$ENDIF }
 
 function prtorgerror:boolean;
 var handle : word;
@@ -148,7 +150,7 @@ begin
   prtorgerror:=(c='A');
 end;
 
-
+{$IFDEF BP }
 function LstOutput(var f:textrec):integer;
 
 var p       : integer;
@@ -187,6 +189,7 @@ function lstignore(var f:textrec):integer;
 begin
   lstignore:=0;
 end;
+{$ENDIF }
 
 
 procedure assignlst(var f:text; d:word);
@@ -219,11 +222,6 @@ procedure wrlst(s:string);
 
 begin
   write(lst,s);
-end;
-
-
-procedure prtsc;
-begin
 end;
 
 {$IFDEF BP }
@@ -284,6 +282,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.7  2000/03/14 15:15:36  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.6  2000/03/07 23:41:07  mk
   Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
 

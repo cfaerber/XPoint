@@ -140,7 +140,6 @@ var x,y   : byte;
     p     : pointer;
     psize : word;
     spez  : boolean;
-    ya    : byte;
     sst   : string[SuchLen];   { evtl. UpString von suchstring }
     i     : integer;
     brett : string[AdrLen];
@@ -155,14 +154,14 @@ var x,y   : byte;
     _vondat,_bisdat : longint;
     minsize,maxsize : longint;
     igcase,sword    : boolean;
-    umlaut          : boolean;          {JG:15.02.00 Schalter zum Umlaute ignorieren}    
+    umlaut          : boolean;          {JG:15.02.00 Schalter zum Umlaute ignorieren}
     bereich         : shortint;
     _brett          : string[5];
     mi,add          : byte;
     bera            : array[0..4] of string[10];
     stata           : array[0..5] of string[10];
     typa            : array[0..4] of string[10];
-   
+
 
     suchand           : boolean;
     seeklen,seekstart : array[0..9] of byte; 
@@ -189,7 +188,7 @@ label ende;
   m,n,i   : byte;
   quotes  : boolean;
                                        
-{$IFDEF Debug}                      { Zum Debuggen der Suchstringerkennung} 
+{$IFDEF Debug}                      { Zum Debuggen der Suchstringerkennung}
   Procedure Show_Seekstrings;
   var n,x,y:byte;
    begin
@@ -207,7 +206,7 @@ label ende;
       wrt(x+1,y+6+n,'String'); write(n); write(': ');
       write(seekstart[n]:2); write(','); write(seeklen[n]:2);
       write(iifs(seeknot[n],' NOT ','     ')+chr($af)+left(mid(sst,seekstart[n]),seeklen[n])+chr($ae));
-      end;      
+      end;
     wrt(x+1,y+17,'Length(sst)='); write(length(sst)); write('  i='); write(i);
     if spez then with srec^do 
     begin
@@ -261,7 +260,7 @@ label ende;
           inc(n);
           end;
         if seeklen[n-1]=0 then dec(n);                 { Falls String mit > "< Endete... }
-        suchanz:=n;  
+        suchanz:=n;
         end;
      
       if suchanz=1 then suchand:=true;
@@ -279,8 +278,8 @@ label ende;
       end
 
     else begin 
-      suchand:=true; 
-      suchanz:=1; 
+      suchand:=true;
+      suchanz:=1;
       seekstart[0]:=1; 
       seeklen[0]:=length(sst);
       seeknot[0]:=false; 
@@ -363,15 +362,15 @@ label ende;
 
 
   { Leerzeichen Links und rechts loschen, Tilden links ebenfalls }
-  { boolean setzen, wenn Tilde gefunden wurde } 
+  { boolean setzen, wenn Tilde gefunden wurde }
 
   procedure Scantilde(var s:String; var suchnot:boolean);
   begin
     trim(s);
-    if s='' then suchnot:=false      
+    if s='' then suchnot:=false
      else suchnot:=s[1]='~';
     i:=1;
-    while ((s[i]='~') or (s[i]=' ')) do inc(i); 
+    while ((s[i]='~') or (s[i]=' ')) do inc(i);
     s:=mid(s,i);
   end; 
 
@@ -405,7 +404,7 @@ label ende;
         found_not:=found and seeknot[j];
         if suchand and not found and seeknot[j] then found:=true;      
         inc(j);
-      until (j=suchanz) or (suchand xor found) or found_not;      
+      until (j=suchanz) or (suchand xor found) or found_not;
     if found_not then found:=false;
     end;
 
@@ -442,8 +441,8 @@ label ende;
             end;
         if umlaut then begin                    {JG: Umlaute anpassen}
           UkonvStr(betr2,high(betr2));
-          UkonvStr(user2,high(user2));  
-          UkonvStr(realn,high(realn)); 
+          UkonvStr(user2,high(user2));
+          UkonvStr(realn,high(realn));
           UkonvStr(hdp^.fido_to,high(hdp^.fido_to));
           end;
         if igcase then begin                    {JG: Ignore Case}
@@ -496,7 +495,7 @@ label ende;
         MsgAddmark;
         inc(nf);
         end
-      else                                            
+      else
       if (suchfeld='Absender') and not ntEditBrettEmpf(mbnetztyp) then
       begin
         dbReadN(mbase,mb_name,such);             {Bei Usersuche auch Realname ansehen...}           
@@ -743,7 +742,7 @@ begin
 
     if suchfeld='MsgID' then begin                         {-- Suche: Message-ID  --}
       suche:=false;
-      if not brk then begin                  
+      if not brk then begin
         markanz:=0;  
         n:=GetBezug(suchstring);                
         if n<>0 then begin
@@ -875,12 +874,12 @@ end;
 procedure betreffsuche;
 var betr,betr2   : string;
     brett,_Brett : string[5];
-    dummy,ll     : integer;
+    ll     : integer;
 
 begin
   moment;
   dbReadN(mbase,mb_betreff,betr);
-  dummy:=ReCount(betr);  { schneidet Re's weg }
+  ReCount(betr);  { schneidet Re's weg }
   betr:=trim(betr);
   UkonvStr(betr,high(betr));
   dbReadN(mbase,mb_brett,brett);
@@ -889,7 +888,7 @@ begin
   markanz:=0;
   repeat
     dbReadN(mbase,mb_betreff,betr2);
-    dummy:=ReCount(betr2);
+    ReCount(betr2);
     betr2:=trim(betr2);
     UkonvStr(betr2,high(betr2));
     ll:=min(length(betr),length(betr2));
@@ -1470,7 +1469,7 @@ procedure msg_info;     { Zerberus-Header anzeigen }
 var hdp   : headerp;
     hds   : longint;
     i     : integer;
-    x,y,a : byte;
+    x,y  : byte;
     dat   : datetimest;
     anz   : byte;
     xxs   : array[1..20] of string[65];
@@ -1686,7 +1685,7 @@ begin
     lm:=listmakros;                                   { Aktuelle Makros merken,       }
     listmakros:=16;                                   { Archivviewermakros aktivieren }
     if ListFile(fn,getres(460),true,false,0)=0 then;  { 'Nachrichten-Header' }
-    listmakros:=lm;                                   { wieder alte Makros benutzen   }            
+    listmakros:=lm;                                   { wieder alte Makros benutzen   }
     _era(fn);
     end;
   dispose(hdp);    
@@ -1705,7 +1704,6 @@ var decomp : string[127];
     atyp   : shortint;
     spath  : pathstr;
     ats    : shortint;
-    dummy  : shortint;
     viewer : viewinfo;
 begin
   ats:=arctyp_save;
@@ -1752,7 +1750,7 @@ begin
           if (viewer.prog<>'') and (viewer.prog<>'*intern*') then
             ViewFile(TempPath+datei,viewer,false)
           else
-            dummy:=ListFile(TempPath+datei,datei,true,false,0);
+            ListFile(TempPath+datei,datei,true,false,0);
           end
         else
           if memavail<20000 then
@@ -1779,8 +1777,6 @@ end;
 
 function a_getfilename(nr,nn:byte):pathstr;
 var fn   : pathstr;
-    betr : string[betrefflen];
-    i    : integer;
     sex  : pathstr;
 begin
   fn:=trim(copy(get_selection,2,12));
@@ -1838,7 +1834,6 @@ end;
 
 function ViewArchive(var fn:pathstr; typ:shortint):shortint;
 var ar   : ArchRec;
-    n    : word;
     brk  : boolean;
     lm   : byte;
 
@@ -2034,7 +2029,9 @@ begin
   era(DupeFile+dbIxExt);
   writeln(log);
   close(log);
+{$IFDEF BP }
   FlushSmartdrive(true);
+{$ENDIF }
   dbTempOpen(mbase);
   if not autodupekill then
   begin
@@ -2175,7 +2172,6 @@ end;
 
 
 procedure do_bseek(fwd:boolean);
-var ende : boolean;
 begin
   repeat
     if fwd then dbSkip(bbase,1)
@@ -2186,34 +2182,16 @@ end;
 
 procedure FidoMsgRequest(var nnode:string);
 var files    : string;
-    i,ic,id,
-    j,k,p      : byte;
+    ic,id,
+    k,p      : byte;
     p1,s,s1,t,u : string[80];
     v        : char;
     node     : string[20];
     mark,
     Magics   : boolean;
-    dir      : dirstr;    
+    dir      : dirstr;
     name     : namestr;
     ext      : extstr;
-
-  function upperword(s:string):boolean;
-  var i : integer;
-  begin
-    upperword:=true;
-    for i:=1 to length(s) do
-      if s[i] in ['a'..'z'] then upperword:=false;
-  end;
-
-  function korrfn(s:string):string;
-  var p : byte;
-  begin
-    p:=cpos('.',s);
-    if (p>1) and (length(s)-p>3) then
-      korrfn:=left(s,p+3)
-    else
-      korrfn:=s;
-  end;
 
 begin
   nnode:='';
@@ -2398,6 +2376,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.26  2000/03/14 15:15:40  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.25  2000/03/13 18:55:18  jg
   - xp4o+typeform: Ukonv in UkonvStr umbenannt
   - xp4o: Compilerschalter "History" entfernt,

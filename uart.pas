@@ -57,11 +57,8 @@ unit uart;
 
 interface
 
-uses  xpglobal, dos, typeform, dosx, inout;
 
-{$IFNDEF DPMI}
-  const Seg0040 = $40;         { Turbo Pascal ab 5.0 / Real Mode }
-{$ENDIF}
+uses  xpglobal, dos, typeform, dosx, inout;
 
 const  coms       = 4;     { Anzahl der unterstÅtzten Schnittstellen }
        fcoms      = 50;    { Anzahl unterstÅtzter FOSSIL-Schnittstellen }
@@ -172,6 +169,17 @@ procedure MiniTerm(comn:byte; baud:longint);
 
 implementation  {-----------------------------------------------------}
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+  {$NOTES OFF }
+{$ENDIF }
+
+
+{$IFDEF Win32 }
+uses
+  Windows;
+{$ENDIF }
+
 const  FInt       = $14;   { Interrupt fÅr FOSSIL-Treiber }
 
        irq        : array[1..coms] of byte = ($04,$03,0,0);
@@ -188,11 +196,11 @@ const  FInt       = $14;   { Interrupt fÅr FOSSIL-Treiber }
        linestat   = 5;
        modemstat  = 6;
        scratch    = 7;
+       MC_DTR     = $01;       { Modem Control Register }
+       MC_RTS     = $02;
 {$ENDIF }
        MS_RI      = $40;       { Ring Indicator: Klingelsignal }
        MS_DCD     = $80;       { Data Carrier Detect           }
-       MC_DTR     = $01;       { Modem Control Register }
-       MC_RTS     = $02;
 
 type   bufft      = array[0..65534] of byte;
 
@@ -205,6 +213,9 @@ var    active     : array[1..fcoms] of boolean;
        bufi,bufo  : array[1..fcoms] of word;
        buflow     : array[1..coms] of word;
        bufhigh    : array[1..coms] of word;
+{$IFDEF Ver32 }
+       PortHandle: LongInt;
+{$ENDIF }
 
 
 procedure error(text:string);
@@ -221,40 +232,8 @@ end;
 
 {--- Interrupt-Handler -----------------------------------------------}
 
-{$IFDEF ver32} { MK 12/99 }
-procedure com1server;
-begin
-end;
+{$IFDEF BP }
 
-procedure com2server;
-begin
-end;
-
-procedure com3server;
-begin
-end;
-
-procedure com4server;
-begin
-end;
-
-procedure com1FIFOserver;
-begin
-end;
-
-procedure com2FIFOserver;
-begin
-end;
-
-procedure com3FIFOserver;
-begin
-end;
-
-procedure com4FIFOserver; 
-begin
-end;
-
-{$ELSE}
 procedure com1server; interrupt;
 begin
   buffer[1]^[bufi[1]]:=port[ua[1]];
@@ -343,12 +322,12 @@ end;
 {          16500A's - ich schÑtze, fÅr ca. 97-99%                }
 
 function ComType(no:byte):byte;     { Typ des UART-Chips ermitteln }
+{$IFDEF BP }
 var uart        : word;
     lsave,ssave : byte;
     isave,iir   : byte;
 begin
   uart:=ua[no];
-{$IFNDEF ver32}
   lsave:=port[uart+linectrl];
   port[uart+linectrl]:=lsave xor $ff;
   if port[uart+linectrl]<>lsave xor $ff then
@@ -375,6 +354,9 @@ begin
       end;
     port[uart+scratch]:=ssave;
     end;
+{$ELSE }
+begin
+  ComType := Uart16550A;
 {$ENDIF}
 end;
 
@@ -385,6 +367,7 @@ end;
 {              Angaben Åber die I/O-Puffer sind ohne Bedeutung      }
 
 function GetFossilInfo(no:word; var fi:FossilInfo):boolean;
+{$IFDEF BP }
 var regs : registers;
     dsel : word;
 begin
@@ -392,7 +375,6 @@ begin
   with regs do begin
     ax:=$1b00;
     cx:=sizeof(fi);
-{$IFNDEF ver32}
     {$IFDEF DPMI}
       dsel:=DPMIallocDOSmem(sizeof(fi) div 16 +1,es);
       FastMove(fi,mem[dsel:0],sizeof(fi));   { ** }
@@ -407,8 +389,11 @@ begin
       DPMIfreeDOSmem(dsel);
     {$ENDIF}
     GetFossilInfo:=(fi.size<>0) and (fi.version<>0);
-{$ENDIF}
     end;
+{$ELSE }
+begin
+  GetFossilInfo := false;
+{$ENDIF }
 end;
 
 function FOSSILdetect:boolean;
@@ -421,6 +406,7 @@ end;
 { cFos: GebÅhreneinheiten des laufenden oder des letzten Anrufs abfragen }
 
 function GetCfosCharges(no:word):integer;
+{$IFDEF BP }
 var regs : registers;
 begin
   GetCfosCharges:=-1;
@@ -439,6 +425,10 @@ begin
   asm
     sti;
   end;
+{$ELSE }
+begin
+  GetCfosCharges:=-1;
+{$ENDIF }
 end;
 
 
@@ -472,11 +462,11 @@ begin
 end;
 
 procedure SaveComState(no:byte; var cps:cpsrec);
+{$IFDEF BP }
 var uart : word;
 begin
   if not fossil[no] then with cps do begin
     uart:=ua[no];
-{$IFNDEF ver32}
     SaveLineControl:=port[uart+linectrl];
     SaveModemControl:=port[uart+modemctrl];
     port[uart+linectrl]:=SaveLineControl or $80;
@@ -487,16 +477,18 @@ begin
       SaveIntmask:=port[$a1] and intmask[no]
     else
       SaveIntmask:=port[$21] and intmask[no];
-{$ENDIF}
   end;
+{$ELSE }
+begin
+{$ENDIF }
 end;
 
 procedure RestComState(no:byte; cps:cpsrec);
+{$IFDEF BP }
 var uart : word;
 begin
   if not fossil[no] then with cps do begin
     uart:=ua[no];
-{$IFNDEF ver32}
     if intcom2[no] then
       port[$a1]:=port[$a1] and (not intmask[no]) or SaveIntmask
     else
@@ -507,13 +499,16 @@ begin
     port[uart+datainout+1]:=SaveDivisor shr 8;
     port[uart+linectrl]:=SaveLineControl;
     port[uart+modemctrl]:=SaveModemControl;
-{$ENDIF}
     end;
+{$ELSE }
+begin
+{$ENDIF }
 end;
 
 
 function SetUart(comno:byte; baudrate:longint; parity:paritype;
                  wlength,stops:byte; UseCTS:boolean):boolean;
+{$IFDEF BP }
 var uart : word;
     regs : registers;
 begin
@@ -542,18 +537,18 @@ begin
     else begin
       uart:=ua[comno];
       if baudrate>0 then begin
-{$IFNDEF ver32}
         port[uart+linectrl]:=$80;
         port[uart+datainout]:=lo(word(115200 div baudrate));
         port[uart+datainout+1]:=hi(word(115200 div baudrate));
-{$ENDIF}
         end;
-{$IFNDEF ver32}
       port[uart+linectrl]:= (wlength-5) or (stops-1)*4 or ord(parity)*8;
       port[uart+modemctrl]:=$0b;
       if port[uart+datainout]<>0 then;      { dummy }
-{$ENDIF}
       end;
+{$ELSE }
+begin
+  SetUart:=true;
+{$ENDIF }
 end;
 
 
@@ -587,6 +582,7 @@ end;
 
 
 procedure ActivateCom(no:byte; buffersize:word; UseFIFO:boolean);
+{$IFDEF BP }
 var p    : pointer;
     regs : registers;
 begin
@@ -611,7 +607,6 @@ begin
     buflow[no]:=bufsize[no] div 4;
     bufhigh[no]:=bufsize[no]-buflow[no];
 
-{$IFNDEF ver32}
     if UseFIFO then begin
       port[ua[no]+fifoctrl]:=0;
       if port[ua[no]+datainout]=0 then;    { SMC-Bug umgehen }
@@ -621,7 +616,6 @@ begin
         UseFIFO:=false;
         end;
       end;
-{$ENDIF}
 
     if UseFIFO then
       case no of
@@ -638,7 +632,6 @@ begin
         4 : p:=@com4server;
       end;
 
-{$IFNDEF ver32}
     getintvec(IntNr(no),savecom[no]);           { IRQ setzen }
     setintvec(IntNr(no),p);
     port[ua[no]+intenable]:=$01;                     { Int. bei Empfang }
@@ -647,8 +640,23 @@ begin
     else
       port[$21]:=port[$21] and (not intmask[no]);
     clearstatus(no);
-{$ENDIF}
     end;   { of not fossil }
+{$ELSE }
+  {$IFDEF Win32 }
+  var  { !! Evtl. in eigene Unit auslagern }
+    sCom: String;
+    dcbPort: TDCB; {device control block }
+    boolAbort: Boolean;
+    sErrMsg: String;
+  begin
+    sCom := 'COM' + Strs(no) + #0;
+    PortHandle := CreateFile(PChar(Addr(sCom[1])), GENERIC_READ or GENERIC_WRITE, 0, nil,
+      OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, LongInt(0));
+    writeln('HPort: ', PortHandle <> INVALID_HANDLE_VALUE);
+  {$ELSE }
+begin
+  {$ENDIF }
+{$ENDIF}
 end;
 
 
@@ -725,11 +733,16 @@ end;
 
 
 function received(no:byte):boolean;      { Testen, ob Daten vorhanden }
+{$IFDEF BP }
 var regs : registers;
 begin
   if fossil[no] and (bufi[no]=bufo[no]) then
     FossilFill(no);
   received:=(bufi[no]<>bufo[no]);
+{$ELSE }
+begin
+  received := true;
+{$ENDIF }
 end;
 
 
@@ -742,7 +755,7 @@ begin
     inc(bufo[no]);
     if bufo[no]=bufsize[no] then bufo[no]:=0;
     receive:=true;
-    end;
+  end;
 end;
 
 
@@ -1057,6 +1070,14 @@ end.
 
 {
   $Log$
+  Revision 1.7  2000/03/14 15:15:37  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.6  2000/02/19 11:40:07  mk
   Code aufgeraeumt und z.T. portiert
 

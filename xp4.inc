@@ -516,11 +516,13 @@ var x,y : integer;
       ofs:=155+2*keypos;
       moff;
       for x:=1 to keylen+2 do
-{$IFDEF BP }
         if (x>ks1) and (x-1<=ks2) then
+{$IFDEF BP }
           mem[base:ofs+2*x]:=c2
         else
           mem[base:ofs+2*x]:=c1;
+{$ELSE }
+ ; { Hier wird von den Menpunkten das Attribut ge„ndert }
 {$ENDIF}
       mon;
       end;
@@ -575,6 +577,14 @@ begin
 end;
 { 
   $Log$
+  Revision 1.10  2000/03/14 15:15:39  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.9  2000/03/09 23:39:33  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

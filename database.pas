@@ -118,11 +118,11 @@ implementation  {=======================================================}
 uses datadef1;
 
 { MK 06.01.00: die drei ASM-Routinen in Inline-Asm umgeschrieben }
+{$IFDEF BP }
 procedure expand_node(rbuf,nodep: pointer); assembler;
 asm
-{$IFDEF BP }
          push ds
-         les   di, nodep
+                  les   di, nodep
          lds   si, rbuf
          mov   dl,es:[di+2]            { Keysize }
          mov   dh,0
@@ -150,7 +150,8 @@ asm
          jnz   @exlp
 @nokeys: pop ds
 end;
-{$ELSE }
+(*{$ELSE } Hier mu· noch mal ÅberprÅft werden, im Moment wird es in
+  Pascal erledigt }
          mov   edi, nodep
          mov   esi, rbuf
          xor   edx, edx
@@ -175,7 +176,7 @@ end;
          dec   eax
          jnz   @exlp
 @nokeys:
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
+end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI']; *)
 {$ENDIF }
 
 procedure seek_cache(dbp:pointer; ofs:longint; var i:integer16); assembler;
@@ -1612,11 +1613,13 @@ begin
   dl:=true;
 end;
 
+{$IFDEF Debug }
 procedure dbLog(s:string);
 begin
   if dl then
     writeln(dblogfile,s);
 end;
+{$ENDIF }
 
 procedure dbCloseLog;
 begin
@@ -1708,6 +1711,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.12  2000/03/14 15:15:34  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.11  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

@@ -49,7 +49,7 @@ const CCtemp = 'verteil.$$$';
 var ccused   : array[1..maxcc] of boolean;
 
 
-procedure set_cce(from:shortint);
+procedure set_cce;
 var i,j  : shortint;
     used : boolean;
 begin
@@ -74,7 +74,7 @@ end;
 function cc_test1(var s:string):boolean;
 begin
   ccused[fieldpos]:=(trim(s)<>'');
-  set_cce(fieldpos+1);
+  set_cce;
   cc_test1:=true;
 end;
 
@@ -339,6 +339,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.10  2000/03/14 15:15:42  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.9  2000/03/09 23:39:34  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

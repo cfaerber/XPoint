@@ -51,6 +51,10 @@ implementation  { --------------------------------------------------- }
 uses
   sysutils;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
 function Xec(var prog:string; space,envspace:word; var prompt:string;
              var errorlevel:word):byte;
 
@@ -85,9 +89,20 @@ begin
     para:=environment+' /c '+prog+para;
     dpath:=getenv('comspec');
     end;
+  SwapVectors;
   Exec(dpath, para);
+  SwapVectors;
+  ErrorLevel := DOSExitCode;
+  { Wir nicht sauber belegt, also von Hand machen }
+  DosError :=0;
+  { Alle anderen Fehler k”nnen in 32 Bit nicht auftreten }
   Xec := ExecOk;
 end;
+
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
 
 {$ELSE }
 
@@ -466,6 +481,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.8  2000/03/14 15:15:35  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.7  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

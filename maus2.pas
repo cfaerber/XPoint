@@ -62,7 +62,6 @@ function  _mausy:integer;
 procedure maus_showVscroller(disp,showempty:boolean; x,y1,y2:integer;
                              total,from,gl:longint; var start,stop:integer;
                              var _unit:longint);
-procedure maus_showHscroller(x1,x2,y2:integer; total,from,width:longint);
 
 
 { -------------------------------------------------------------------- }
@@ -167,12 +166,10 @@ end;
 
 procedure maus_tasten_an;
 begin
-{$IFNDEF Ver32 }
   if not tan then
     setmausint(intMove+intLeft0+intLeft1+intRight0+intRight1,mint,2048);
   tan:=true;
   lx:=255; ly:=255;
-{$ENDIF }
 end;
 
 
@@ -309,7 +306,7 @@ begin
     start:=0; stop:=0; _unit:=0;
     end
   else begin
-    mult:=(y2-y1+1)/total;
+    mult:=(y2-y1+1) / total;
     start:=y1+trunc(from*mult);
     stop:=start+trunc(gl*mult);
     _unit:=(total+1+(y2-y1)div 2) div (y2-y1+1);
@@ -329,14 +326,17 @@ begin
     end;
 end;
 
-
-procedure maus_showHscroller(x1,x2,y2:integer; total,from,width:longint);
-begin
-end;
-
 end.
 {
   $Log$
+  Revision 1.8  2000/03/14 15:15:36  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.7  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

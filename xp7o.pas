@@ -123,7 +123,6 @@ var f      : file;
     ok     : boolean;
     _brett : string[5];
     _mbrett: string[5];
-    rr     : word;
     mi     : word;
     zconnect: boolean;
     i      : integer;
@@ -234,12 +233,9 @@ procedure SendNetzanruf(once,crash:boolean);
 var t,log         : text;
     fn            : pathstr;
     sum           : word;
-    billig,normal : word;
-    abbruch       : boolean;
     hd            : string[12];
     inwin         : boolean;
     rate          : word;
-    b,p           : byte;
     sz            : string[15];
     txt           : string[30];
     s             : string;
@@ -406,15 +402,13 @@ end;
 
 procedure ZtoFido(source,dest:pathstr; ownfidoadr:string; screen:byte;
                   addpkts:addpktpnt; alias:boolean);
-const zfcfg = 'ZFIDO.CFG';
 var d         : DB;
     akas      : string[AKAlen];
     p,i       : byte;
-    mbox,box  : string[BoxNameLen];
+    box  : string[BoxNameLen];
     orgdest   : string[12];
     bfile     : string[12];
     t         : text;
-    found     : boolean;
     bpsave    : BoxPtr;
     sout      : pathstr;
 
@@ -441,7 +435,6 @@ var d         : DB;
 begin
   sout:=Boxpar^.sysopout;
   Convert;
-  mbox:=BoxPar^.boxname;
   orgdest:=dest;
   akas:=Boxpar^.SendAKAs;
   assign(t,'ZFIDO.CFG');
@@ -746,7 +739,6 @@ procedure AponetNews;
 var ApoBrett : string[80];
     tmp      : pathstr;
     miso     : boolean;
-    lres     : shortint;
     pt       : scrptr;
 begin
   if getres2(29900,1)<>'' then begin
@@ -765,7 +757,7 @@ begin
           if dbReadInt(mbase,'netztyp') and $2000<>0   { CHARSET: ISO1 }
             then ConvIso:=false;
           sichern(pt);
-          lres:=Listfile(tmp,mid(ApoBrett,2),false,true,3);
+          Listfile(tmp,mid(ApoBrett,2),false,true,3);
           holen(pt);
           ConvIso:=miso;
           _era(tmp);

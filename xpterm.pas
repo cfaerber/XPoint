@@ -170,7 +170,6 @@ begin
 end;
 
 procedure closelog;
-var la : byte;
 begin
   rmessage(2002);    { 'Schlie·e Logfile ...' }
   close(logfile);
@@ -497,29 +496,6 @@ begin
 end;
 
 
-{ solange Daten vom Modem anzeigen, bis fÅr msec ms nichts mehr passiert }
-
-procedure WaitNoOutput(msec:word);
-var t : longint;
-    n : integer;
-begin
-  t:=ticker;
-  n := 0;  { MK 12/99 Variable n mu· initialisiert werden!! }
-  repeat
-    if received(comnr) then begin
-      t:=ticker;
-      tb;
-      n:=0;
-      end
-    else
-      if t<>ticker then begin
-        inc(n);
-        t:=ticker;
-        end;
-  until (n>msec/54.925401155);
-end;
-
-
 procedure aufhaengen;
 var n,i : byte;
 begin
@@ -585,7 +561,7 @@ end;
 
 
 procedure sendcomm(s:string);
-var p,b : byte;
+var p : byte;
 begin
   flushin;
   if not HayesComm or ISDN then exit;
@@ -716,11 +692,21 @@ begin
   end;
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
+
+{ Parameter nr, nn werden zwar nicht gebraucht, aber durch
+  Prozedurvariable sind sie nîtig }
 function TermGetfilename(nr,nn:byte):pathstr;
 begin
   rfehler(2003);    { '$FILE-Makro ist hier nicht mîglich.' }
   TermGetfilename:='';
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 
 procedure UpDown(auto,download:boolean);
@@ -989,13 +975,6 @@ const MaxLines  = 500;
       pAnsiOn   = 1;      { num. Parameter des ANSI-Befehls }
       pAnsiOff  = 2;
 
-      pPointname = 1;     { num. Ersatz fÅr String-Parameter }
-      pUsername  = 2;
-      pPassword  = 3;
-      pOPassword = 4;     { Online-Pa·wort }
-      pLogin     = 5;     { UUCP/QuickMail-Login }
-      pProtokoll = 6;     { MausTausch-Protokollkennung }
-
       cmdWaitfor = 1;    cmdWrite   = 6;     cmdFlush = 11;    cmdANSI = 16;
       cmdSend    = 2;    cmdWriteln = 7;     cmdCls   = 12;
       cmdGoto    = 3;    cmdDisplay = 8;     cmdCall  = 13;
@@ -1127,7 +1106,6 @@ var t      : text;
   end;
 
   procedure AddLabel;
-  var x : integer;
   begin
     dellast(s0);
     LoString(s0);
@@ -1415,7 +1393,6 @@ var ip   : integer;
     tn   : byte;
     stack: array[1..maxstack] of integer;
     sp   : integer;
-    jmpcmd:set of byte;
     ExecuteScriptRes: shortint;
 
   procedure RunError(nr:word);
@@ -1562,7 +1539,6 @@ begin    { of ExecuteScript }
   display:=true;
   ansimode:=true;
   sp:=0;
-  jmpcmd:=[cmdGoto,cmdCall,cmdReturn];
   if ParTrace then begin                       { Trace-Log îffnen }
     assign(trace,LogPath+'TRACE.LOG');
     if existf(trace) then append(trace)

@@ -118,7 +118,7 @@ begin
   initvar;
   testlock;
   TestAutostart;
-  if not quit then
+    if not quit then
   begin
     cursor(curoff);
     defaultcolors; SetColors;
@@ -186,7 +186,9 @@ begin
       if not AutoMode then     { in XP7 }
         mainwindow;
       AutoStop;
+{$IFDEF BP }
       FlushSmartdrive(true);
+{$ENDIF }
       closedatabases;
       exitscreen(iif(ParNojoke,0,1));
       delete_tempfiles;
@@ -202,6 +204,14 @@ ende:
 end.
 {
   $Log$
+  Revision 1.14  2000/03/14 15:15:37  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.13  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

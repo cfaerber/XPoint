@@ -206,7 +206,6 @@ var p         : byte;
     prog      : string[ViewprogLen+80];  {Maximallaenge= Programmname+' '+Pfadstring(79)} 
     orgfn,fn1,
     parfn     : pathstr;
-    f         : file; 
 begin
   fn1:='';
   orgfn:=iifs(viewer.fn<>'',GetFileDir(fn)+GetFileName(viewer.fn),'');
@@ -240,15 +239,21 @@ begin
   else prog:=left(prog,p-1)+parfn+mid(prog,p+5);
   urep(prog,'$TYPE',viewer.typ);
   urep(prog,'$EXT',viewer.ext);
-{$IFNDEF Delphi5}
   if not XPWinShell(prog,parfn,600,1,fileattach) then
-{$ENDIF }
   if not fileattach and (fn1<>'') then era(parfn);
 end;
 
 end.
 {
   $Log$
+  Revision 1.14  2000/03/14 15:15:42  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.13  2000/03/07 17:45:14  jg
   - Viewer: Bei Dateien mit Leerzeichen im Namen wird
     grundsaetzlich ein .tmp File erzeugt

@@ -81,7 +81,11 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keyesc  : taste = #27;       { sonstige Tasten }
        keybs   : taste = #8;
        keytab  : taste = #9;
+{$IFDEF Ver32 } { !! StrgTab statt ShiftTab, evtl. ein Bug in FPC }
+       keystab : taste = #0#148;
+{$ELSE }
        keystab : taste = #0#15;
+{$ENDIF }
        keycr   : taste = #13;
 
        keyctn  = #14;               { Control-Sequenzen }
@@ -114,8 +118,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
 type   func_test = procedure(var t:taste);
 var    func_proc : func_test;
 
-       forwardkeys  : string;        { AuszufÅhrende TastendrÅcke            }
-       lastscancode : byte;
+       forwardkeys  : string;        { AuszufÅhrende TastendrÅcke            }       lastscancode : byte;
 
 
 function  keypressed:boolean;
@@ -133,33 +136,42 @@ Procedure pushstr(s:string);         { String direkt in Tastaturpuffer schr. }
 procedure __get(var t:taste);        { Taste einlesen; liefert '' bei FNkey  }
 procedure _get(var t:taste);         { Taste einlesen, bis kein FNkey        }
 
+Function  kbstat:byte;     { lokal }
 function  kb_shift:boolean;          { Shift gedrÅckt }
-function  kb_lshift:boolean;         { LeftShift      }
-function  kb_rshift:boolean;         { RightShift     }
 function  kb_ctrl:boolean;           { Ctrl gedrÅckt  }
 function  kb_alt:boolean;            { Alt gedrÅckt   }
 
 
 implementation  { ---------------------------------------------------------- }
 
-{$IFNDEF DPMI}
-  const Seg0040 = $40;
-{$ENDIF}
+{$IFDEF Win32 }
+uses
+  Windows;
+{$ENDIF }
 
-const lshift = 2;
-      rshift = 1;
-      ctrl   = 4;
-      alt    = 8;
+const
+{$IFDEF BP }
+  lshift = 2;
+  rshift = 1;
+  ctrl   = 4;
+  alt    = 8;
 
-      highbyte : byte = 0;
+  enhKBsupport: boolean = false;
+{$ENDIF }
 
-      enhKBsupport: boolean = false;
+  highbyte : byte = 0;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 
 procedure func_dummy(var t:taste); {$IFNDEF Ver32 } far; {$ENDIF }
 begin
 end;
 
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 function keypressed:boolean;
 begin
@@ -181,8 +193,7 @@ begin
     else begin
     {$IFDEF BP }
       if enhKBsupport then
-      begin
-        asm
+      asm
           mov ah,10h
           int 16h
           cmp al,0
@@ -197,10 +208,9 @@ begin
         @@isnt_ekey:
           mov @result,al
           mov lastscancode,ah
-        end;
       end
-      else begin
-        asm
+      else
+      asm
           xor ah,ah
           int 16h
           cmp al,0
@@ -209,7 +219,6 @@ begin
         @@weiter:
           mov @result,al
           mov lastscancode,ah
-        end;
       end;
 {$ELSE }
       readkey:=crt.readkey;
@@ -243,6 +252,9 @@ begin
   while keypressed do readkey;
 end;
 
+{$IFDEF FPC }
+  {$HINTS OFF }
+{$ENDIF }
 
 procedure __get(var t:taste);        { Taste einlesen; liefert '' bei FNkey  }
 begin
@@ -256,7 +268,6 @@ begin
   func_proc(t);
 end;
 
-
 procedure _get(var t:taste);         { Taste einlesen, bis kein FNkey        }
 begin
   repeat
@@ -266,7 +277,6 @@ end;
 
 
 Procedure pushkeyv(var t:taste);
-{$IFDEF BP }
 const scancode : array[1..255] of byte =   { nur deutsche Tastatur! }
                  (30,48,46,32,18,33,34,14,15,28,37,38,28,49,24,25,   { ^P  }
                   16,19,31,20,22,47,17,45,44,21,1,43,27,7,53,        { ^_  }
@@ -285,6 +295,7 @@ const scancode : array[1..255] of byte =   { nur deutsche Tastatur! }
                   0,12,0,0,0,0,0,0,0,0,0,0,0,0,0,0,                  { 239 }
                   0,0,0,0,0,0,0,0,0,0,0,0,4,3,0,0);                  { 255 }
 
+{$IFDEF BP }
 var adr   : word;
 
 const start = $80;
@@ -306,8 +317,16 @@ begin
   asm
     sti
   end;
+{$ELSE }
+  { !! PrÅfen }
+  if t[1]<>#0 then t[2]:=chr(scancode[ord(t[1])]);
+  forwardkeys := forwardkeys + t[1] + t[2];
 {$ENDIF}
 end;
+
+{$IFDEF FPC }
+  {$HINTS ON }
+{$ENDIF }
 
 
 procedure pushkey(t:taste);
@@ -344,38 +363,52 @@ begin
 {$ENDIF }
 end;
 
-function kbstat:byte;
+Function kbstat:byte;     { lokal }
 begin
 {$IFDEF BP }
-  kbstat:=mem[Seg0040:$17];
+  kbstat:=mem[Seg0040:$17] and $70;
 {$ELSE }
-  kbstat := 0; { !! }
+  kbstat := 0; { !! Mu· auf den Plattformen portiert werden }
 {$ENDIF }
 end;
 
 function kb_shift:boolean;          { Shift gedrÅckt }
 begin
+{$IFDEF BP }
   kb_shift:=kbstat and (lshift+rshift)<>0;
-end;
-
-function kb_lshift:boolean;         { LeftShift      }
-begin
-  kb_lshift:=kbstat and lshift<>0;
-end;
-
-function kb_rshift:boolean;         { RightShift     }
-begin
-  kb_rshift:=kbstat and rshift<>0;
+{$ELSE }
+  {$IFDEF Win32 }
+    kb_shift := GetAsyncKeyState(VK_SHIFT) SHL 15 <> 0;
+  {$ELSE }
+    kb_shift := false; { !! }
+  {$ENDIF }
+{$ENDIF }
 end;
 
 function kb_ctrl:boolean;           { Ctrl gedrÅckt  }
 begin
+{$IFDEF BP }
   kb_ctrl:=kbstat and ctrl<>0;
+{$ELSE }
+  {$IFDEF Win32 }
+    kb_ctrl := GetAsyncKeyState(VK_CONTROL) SHL 15 <> 0;
+  {$ELSE }
+    kb_ctrl := false; { !! }
+  {$ENDIF }
+{$ENDIF }
 end;
 
 function kb_alt:boolean;            { Alt gedrÅckt   }
 begin
+{$IFDEF BP }
   kb_alt:=kbstat and alt<>0;
+{$ELSE }
+  {$IFDEF Win32 }
+    kb_alt := GetAsyncKeyState(VK_MENU) SHL 15 <> 0;
+  {$ELSE }
+    kb_alt := false; { !! }
+  {$ENDIF }
+{$ENDIF }
 end;
 
 {$IFDEF BP }
@@ -409,6 +442,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/03/14 15:15:36  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.9  2000/03/09 23:39:32  mk
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 

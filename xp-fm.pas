@@ -23,7 +23,7 @@
 
 program xp_fm;
 
-uses  crt,dos,typeform,uart,resource,fileio,xpdiff,tpzcrc,
+uses  crt,dos,typeform,uart,resource,fileio,xpdiff,crc16,
   xpglobal, montage, inout, winxp;
 
 const aresult    : byte = 0;
@@ -1009,6 +1009,14 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/03/14 15:15:37  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.9  2000/03/04 19:33:37  mk
   - Video.pas und inout.pas komplett aufgeraeumt
 

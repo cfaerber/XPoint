@@ -539,7 +539,6 @@ end;
 
 
 procedure test_pfade;
-const testfile = '1$2$3.xx';
 var   res  : integer;
 
   procedure TestDir(d:dirstr);
@@ -647,7 +646,6 @@ end;
 
 procedure test_defaultgruppen;
 var d     : DB;
-    dummy : longint;
 
   procedure AppGruppe(name:string; limit:longint; halten:integer;
                       var grnr:longint);
@@ -671,14 +669,14 @@ var d     : DB;
     dbRead(d,'INT_NR',grnr);
   end;
 
-  procedure WriteFido;
+(*  procedure WriteFido;
   var b : byte;
       s : string[8];
   begin
     b:=4;  dbWrite(d,'flags',b);     { Re^n = N }
     b:=1;  dbWrite(d,'umlaute',b);   { ASCII    }
     s:=''; dbWrite(d,'signatur',s);  { keine Sig. }
-  end;
+  end; *)
 
 begin
 {$IFDEF Debug }
@@ -723,7 +721,6 @@ end;
 procedure testdiskspace;
 var free : longint;
     x,y  : byte;
-    t    : taste;
 begin
   if ParNomem then exit;
 {$IFDEF Debug }
@@ -783,10 +780,8 @@ var t   : text;
     p   : byte;
     l1,l2,l3 : integer32;
     l   : integer32;
-    i: integer16;
     code: integer32;
     rp  : ^boolean;
-    c   : char;
 
 begin
   regstr1:=''; regstr2:=''; registriert.nr:=0;
@@ -817,9 +812,7 @@ begin
          (l=4266) or (l=4333) or         { storniert                      }
          (l=8113) or                     { Key in CCC.GER ver”ffentlicht  }
          (l=6323) or                     { Key in Cracker-Kreisen aufgetaucht }
-{$IFNDEF Debug }
          (l=101) or                      { Key im Usenet aufgetaucht }
-{$ENDIF }
          (l=0) or (l=11232) or (l=12345) or (l=23435) or (l=32164) or
          (l=33110) or (l=34521) or (l=54321) or (l=12034) then   { Hacks }
         l:=0;
@@ -1099,6 +1092,14 @@ end;
 end.
 { 
   $Log$
+  Revision 1.20  2000/03/14 15:15:38  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.19  2000/03/10 13:29:33  mk
   Fix: Registrierung wird sauber erkannt
 

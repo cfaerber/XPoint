@@ -14,6 +14,8 @@ uses xpglobal;
 
 FUNCTION UpdCrc16(cp: BYTE; crc: smallWORD): smallWORD;
 function _CRC16(var data; size:smallword):smallword;
+{ Version fÅr XP-FM.INC }
+function _CRC16Ver2(var data; size:smallword):smallword;
 function Crc16StrXP(s:string):smallword;
 function Crc16Str(s:string):smallword;
 
@@ -80,7 +82,22 @@ begin
   c16:=0;
   for i:=0 to size-1 do
     c16 := crctab[((c16 SHR 8) AND 255)] XOR (c16 SHL 8) XOR ba(data)[i];
+
   _CRC16:=c16;
+end;
+
+function _CRC16Ver2(var data; size:smallword):smallword;
+type ba = array[0..65530] of byte;
+var c16,i : smallword;
+begin
+  c16:=0;
+  for i:=0 to size-1 do
+    c16 := crctab[((c16 SHR 8) AND 255)] XOR (c16 SHL 8) XOR ba(data)[i];
+
+  c16 := crctab[((c16 SHR 8) AND 255)] XOR (c16 SHL 8);
+  c16 := crctab[((c16 SHR 8) AND 255)] XOR (c16 SHL 8);
+
+  _CRC16Ver2:=c16;
 end;
 
 function Crc16StrXP(s:string):smallword;
@@ -96,6 +113,14 @@ end;
 end.
 {
   $Log$
+  Revision 1.5  2000/03/14 15:15:34  mk
+  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
+  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
+  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
+  - XP_DES.ASM in XP_DES integriert
+  - 32 Bit Windows Portierung (misc)
+  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
+
   Revision 1.4  2000/03/07 23:41:06  mk
   Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
 
