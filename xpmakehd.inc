@@ -437,10 +437,20 @@ begin
             if id = 'U-X-MAILER'     then LRead2(Programm) else
             if id = 'U-CONTENT-TYPE' then ParseContentType(hd) else
             if id = 'U-ENCRYPTED'    then GetCrypt else
+            if id = 'U-X-HOMEPAGE'   then LRead(homepage,HomepageLen) else
 
-      { 06.01.2000 robo - Mime-Version wegschmeissen - wird neu erzeugt}
+            { X-No-Archive Konvertierung }
+            if id = 'U-X-NO-ARCHIVE' then begin
+              if LStr(line)='yes' then xnoarchive:=true;
+            end else
+
+            if id = 'U-X-PRIORITY' then begin
+              i:=ival(line);
+              if i<>0 then priority:=minmax(i,1,5)
+            end else
+
+            { Mime-Version wegschmeissen - wird neu erzeugt}
             if id = 'U-MIME-VERSION' then else
-      { /robo }
 
             {$ifdef ulines}
               begin
@@ -512,18 +522,6 @@ begin
               if id = 'X-XP-BOUNDARY' then LRead(boundary,70) else
               if id = 'X-XP-CTL' then XpointCtl:=ival(line) else
               if id = 'X-XP-ARC' then archive:=true else
-              if id = 'X-HOMEPAGE' then LRead(homepage,HomepageLen) else
-
-              { 06.09.1999 robo - X-No-Archive Konvertierung }
-              if id = 'X-NO-ARCHIVE' then begin
-                if LStr(line)='yes' then xnoarchive:=true;
-              end else
-              { /robo }
-
-              if id = 'X-PRIORITY' then begin
-                i:=ival(line);
-                if i<>0 then priority:=minmax(i,1,5)
-              end else
 
               if tc=' ' then
                 if id = 'X-XP_F'   then filterattr:=minmax(ival(line),0,65535);
@@ -599,6 +597,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.12  2000/05/10 07:47:15  mk
+  RB: X-* -> U-X-*
+
   Revision 1.11  2000/05/05 18:13:00  mk
   - einige Limits beseitigt
 

@@ -903,13 +903,13 @@ begin
     if ersetzt<>''    then wrs('ersetzt: '+ersetzt);
     if error<>''      then wrs('ERR: '   +error);
     if programm<>''   then wrs('Mailer: '+programm);
-    if xnoarchive     then wrs('X-NO-ARCHIVE: yes');
-    if priority<>0    then wrs('X-PRIORITY: '+strs(priority));
+    if xnoarchive     then wrs('U-X-NO-ARCHIVE: yes');
+    if priority<>0    then wrs('U-X-PRIORITY: '+strs(priority));
     if prio<>0        then wrs('Prio: '  +strs(prio));
     if organisation<>''  then wrs('ORG: '+organisation);
     if postanschrift<>'' then wrs('Post: '+postanschrift);
     if telefon<>''       then wrs('Telefon: '+telefon);
-    if homepage<>''      then wrs('Homepage: '+homepage);
+    if homepage<>''      then wrs('U-X-Homepage: '+homepage);
     if EmpfBestTo<>'' then wrs('EB: '    + iifs(empfbestto<>absender,empfbestto,''));
     if attrib and attrIsEB<>0  then wrs('STAT: EB');
     if pm_reply       then wrs('STAT: PM-REPLY');
@@ -2256,13 +2256,13 @@ begin
              if zz='x-zc-telefon' then telefon:=s0 else
              if zz='x-xp-ctl'     then XPointCtl:=ival(s0) else
 
-             { 03.09.1999 robo - X-No-Archive Konvertierung }
+             { X-No-Archive Konvertierung }
              if zz='x-no-archive' then begin
                if LStr(s0)='yes' then xnoarchive:=true;
              end else
-             { /robo }
 
              if zz='x-priority'   then GetPriority else
+             if zz='x-homepage'   then homepage := s0 else
 
              if (zz<>'xref') and (left(zz,4)<>'x-xp') then AppUline(s1);
         else if zz='from'         then GetAdr(absender,realname) else
@@ -3510,6 +3510,9 @@ end.
 
 {
   $Log$
+  Revision 1.27  2000/05/10 07:47:15  mk
+  RB: X-* -> U-X-*
+
   Revision 1.26  2000/05/05 18:13:00  mk
   - einige Limits beseitigt
 

@@ -157,8 +157,7 @@ procedure WriteHeader(var hd:xp0.header; var f:file; reflist:refnodep);
       if postanschrift<>''       then wrs('POST: '+postanschrift);
       if telefon<>''   then wrs('TELEFON: '+telefon);
       if homepage<>''  then wrs('U-X-Homepage: '+homepage);
-      { 06.02.2000 MH: X-Priority, X-MSMail-Priority }
-      if priority<>0   then wrs('X-Priority: '+strs(priority));
+      if priority<>0   then wrs('U-X-Priority: '+strs(priority));
       if noarchive and (pmempfanz=0) and
           (netztyp in [nt_UUCP, nt_ZConnect]) then
         wrs('U-X-No-Archive: Yes');
@@ -439,6 +438,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.8  2000/05/10 07:47:15  mk
+  RB: X-* -> U-X-*
+
   Revision 1.7  2000/04/24 08:04:21  mk
   - X-No-Archive und X-Homepage mit jetzt mit U-
 
