@@ -205,6 +205,7 @@ end;
 procedure OpenLogfile(App: Boolean; Filename: string); {Appends if App True}
 var
   Rew: Boolean;
+  OldFM: Byte;
 begin
   if Logging then Exit;
 
@@ -214,6 +215,8 @@ begin
   Rew := False;
   if Filename <> '' then
   begin
+    OldFM := FileMode;
+    FileMode := fmOpenWrite + fmShareDenyWrite;
     if Filename[1] = '*' then
     begin
       Delete(Filename, 1, 1);
@@ -221,20 +224,17 @@ begin
     end;
     Filename:=FileUpperCase(ExpandFilename(Filename));
     Logfilename:=Filename;
+    Assign(Logfile, Filename);
     if Rew and (not App) then
-    begin
-      Assign(Logfile, Filename);
-      ReWrite(Logfile);
-    end
+      ReWrite(Logfile)
     else
-    begin
-      Assign(Logfile, Filename);
       if FileExists(Filename) then
         Append(Logfile)
       else
         ReWrite(Logfile);
-    end;
-    if IOResult <> 0 then Logging := False;
+    if IOResult <> 0 then
+      Logging := False;
+    FileMode := OldFM;
   end
   else
     Logging := False;
@@ -310,6 +310,9 @@ finalization
 
 {
   $Log$
+  Revision 1.29.2.6  2003/11/24 18:56:14  mk
+  - set correct filemode for debuglog
+
   Revision 1.29.2.5  2003/09/05 18:21:41  mk
   - trim #13#10 from debug messages
 
