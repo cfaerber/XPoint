@@ -459,6 +459,8 @@ begin
   EditCfgFunc(config,brk);         { Menue aufrufen }
 
   if not brk then begin            { und Aenderungen speichern }
+    edCfg := Config;
+    EdSetConfig(edCfg);
     rewrite(t);
     with Config do begin
       writeln(t,'RechterRand=',rechter_rand);
@@ -475,6 +477,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.25  2000/11/24 15:23:56  mk
+  - Edit/Config uebernimmt Optionen jetzt immer
+
   Revision 1.24  2000/11/18 14:46:56  hd
   - Unit DOS entfernt
 
