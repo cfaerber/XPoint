@@ -211,6 +211,7 @@ RM ?= rm
 RMDIR ?= rmdir
 INSTALLDIR ?= mkdir
 INSTALL_PROGRAM ?= xcopy
+INSTALL_PROGRAM_STRIPPED ?= xcopy
 INSTALL_DATA ?= xcopy
 RC = rc
 RAR ?= rar
@@ -233,9 +234,10 @@ SEP = /
 MAKE ?= gmake
 RM ?= rm
 RMDIR ?= rmdir
-INSTALLDIR ?= install -m 755 -d
-INSTALL_PROGRAM ?= install -b -V t -s -p -m 755
-INSTALL_DATA ?= install -b -V existing -p -m 644
+INSTALLDIR ?= install -d -v -m 755
+INSTALL_PROGRAM ?= install -v -p -m 755
+INSTALL_PROGRAM_STRIPPED ?= install -v -s -p -m 755
+INSTALL_DATA ?= install -v -p -m 644
 LN ?= ln -s
 RC = ./rc
 RAR = rar
@@ -261,7 +263,8 @@ MAKE ?= make
 RM ?= rm
 RMDIR ?= rmdir
 INSTALLDIR ?= install -m 755 -d
-INSTALL_PROGRAM ?= install -b -V t -s -p -m 755
+INSTALL_PROGRAM ?= install -b -V t -p -m 755
+INSTALL_PROGRAM_STRIPPED ?= install -b -V t -s -p -m 755
 INSTALL_DATA ?= install -b -V existing -p -m 644
 LN ?= ln -s
 RC = ./rc
@@ -332,7 +335,7 @@ LIBEXT = .aw
 endif
 
 PF_dos32 = -TGO32V2
-PF_freebsd = -TFREEBSD -dUnixDevelop
+PF_freebsd = -TFREEBSD
 PF_linux = -TLINUX -dUnixDevelop
 PF_os2 = -TOS2
 PF_win32 = -TWIN32
@@ -426,7 +429,8 @@ EXAMPLES += xpmailto.reg
 endif
 
 ifeq ($(COMPILER),fpc)
-RST = ipaddr ncnntp ncpop3 ncsmtp
+RST = ipaddr ncnntp
+#RST = ipaddr ncnntp ncpop3 ncsmtp
 endif
 
 BINFILES = $(patsubst %,%$(EXEEXT),$(BIN))
@@ -2560,12 +2564,27 @@ ifeq (,$(contribdir))
 install:
 	$(error Variable "contribdir" muss gesetzt werden)
 else
-install: install_bindir $(patsubst %,install_%,$(BINFILES)) \
+install: all install_bindir $(patsubst %,install_%,$(BINFILES)) \
 	install_datadir $(patsubst %,install_%,$(RESFILES)) \
 	$(patsubst %,install_%,$(RSTFILES)) \
 	install_exampledir $(patsubst %,install_%,$(EXAMPLES)) \
 	$(patsubst %,install_%,$(CONTRIB))
 	$(INSTALL_DATA) icons.res $(datadir)
+	$(MAKE) -C doc install
+endif
+
+ifeq (,$(contribdir))
+install-strip:
+	$(error Variable "contribdir" muss gesetzt werden)
+else
+install-strip: all install_bindir \
+	$(patsubst %,install_stripped_%,$(BINFILES)) \
+	install_datadir \
+	$(patsubst %,install_%,$(RESFILES)) \
+	$(patsubst %,install_%,$(RSTFILES)) \
+	install_exampledir $(patsubst %,install_%,$(EXAMPLES)) \
+	$(patsubst %,install_%,$(CONTRIB)) $(INSTALL_DATA) icons.res \
+	$(datadir)
 	$(MAKE) -C doc install
 endif
 
@@ -2589,6 +2608,20 @@ endif
 else
 $(patsubst %,install_%,$(BINFILES)): install_%: %
 	$(INSTALL_PROGRAM) $* $(bindir)
+endif
+
+ifeq ($(OS),linux)
+ifeq ($(SETLINKS),yes)
+$(patsubst %,install_stripped_%,$(BINFILES)): install_stripped_%: %
+	$(INSTALL_PROGRAM_STRIPPED) $* $(bindir)
+	$(LN) $(bindir)$(SEP)$* $(binlinkdir)$(SEP)$*
+else
+$(patsubst %,install_stripped_%,$(BINFILES)): install_stripped_%: %
+	$(INSTALL_PROGRAM_STRIPPED) $* $(bindir)
+endif
+else
+$(patsubst %,install_stripped_%,$(BINFILES)): install_stripped_%: %
+	$(INSTALL_PROGRAM_STRIPPED) $* $(bindir)
 endif
 
 install_datadir:
@@ -2758,8 +2791,6 @@ endif
 TAGS:
 	etags -l pascal *.inc *.pas charsets$(SEP)*.inc ObjCOM$(SEP)*.pas ObjCOM$(SEP)*.inc
 
-install-strip: install
-
 info:
 
 dvi:
@@ -2771,6 +2802,9 @@ installcheck: install
 
 #
 # $Log$
+# Revision 1.50  2000/11/22 20:55:56  fe
+# Fixed install, install-strip and some other stuff.
+#
 # Revision 1.49  2000/11/20 20:45:05  fe
 # fixed
 #
