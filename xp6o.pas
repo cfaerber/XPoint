@@ -460,7 +460,7 @@ var fn     : pathstr;
     sigfile : string[12];
     _brett  : string[5];
     ebrett  : string[5];
-    empf    : string[90];
+    empf, am_replyto    : string[90];
     ntyp    : char;
     pollbox : string[BoxNameLen];
     name    : string[AdrLen];
@@ -468,6 +468,7 @@ var fn     : pathstr;
     newsize : longint;
     aas      : array[1..3] of string[120];
     asnum   : byte;
+    zg_flags: integer;
     i       : integer;
     re_n    : boolean;
     kein_re : boolean;
@@ -848,8 +849,25 @@ again:
                      ebrett:='U'+dbLongStr(dbReadInt(ubase,'int_nr'));
                      end
                    else begin
+                     Am_ReplyTo:='';
                      dbGo(bbase,selpos);
-                     dbReadN(bbase,bb_brettname,empf);
+{ Brett-Vertreter }  dbReadN(bbase,bb_adresse,empf);
+                     zg_flags:=dbReadInt(bbase,'flags');
+{ Schreibsperre   }  if zg_flags and 8<>0 then
+                     if (empf='') or ((empf<>'') and (zg_flags and 32<>0)) then begin
+                       rfehler(450);     { 'Schreibzugriff auf dieses Brett ist gesperrt' }
+                      goto ende;
+                     end;
+                     if ((empf<>'') and (zg_flags and 32=0)) then begin
+{ true=Userbrett  }    pm:=pos('@',empf)>0;
+{ Brettvertreter  }    if not pm then begin
+                         dbReadN(bbase,bb_pollbox,pollbox);
+                         if (ntBoxNetztyp(pollbox) in [nt_UUCP,nt_ZConnect]) then begin
+                           Am_ReplyTo:=empf;
+                           dbReadN(bbase,bb_brettname,empf);
+                         end else empf:='A'+empf;
+                       end;
+                     end else dbReadN(bbase,bb_brettname,empf);
                      if empf[1]<'A' then begin
                        rfehler(624);    { 'Weiterleiten in dieses Brett nicht m”glich' }
                        goto ende;
@@ -922,6 +940,7 @@ again:
                    sendfilename:=hdp^.datei;
                    sendfiledate:=hdp^.ddatum;
                    end;
+                 if ((typ in [1..3,7]) and (not pm)) then sData^.amreplyto:=am_replyto;
                  if typ in [1,4,7] then sdata^.quotestr:=hdp^.quotestring;
                  if typ=7 then sData^.orghdp:=hdp;
                  if typ in [1,2,7] then

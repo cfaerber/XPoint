@@ -1,4 +1,4 @@
-ÿ{ --------------------------------------------------------------- }
+{ --------------------------------------------------------------- }
 { Dieser Quelltext ist urheberrechtlich geschuetzt.               }
 { (c) 1991-1999 Peter Mandrella                                   }
 { CrossPoint ist eine eingetragene Marke von Peter Mandrella.     }
@@ -1607,6 +1607,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.13.2.6  2000/11/17 10:49:43  mk
+  MH:- fixed Bug #116188: Weiterleiten bei Brettern mit Vertretern und Schreibsperre wird beachtet
+
   Revision 1.13.2.5  2000/11/17 10:29:09  mk
   - defaults angepasst
 
