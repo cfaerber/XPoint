@@ -806,11 +806,612 @@ var d         : DB;
     mon;
   end;
 
-  {$I xpconfigedit-servers.inc}
-  {$I xpconfigedit-groups.inc}
-  {$I xpconfigedit-systems.inc}
-  {$I xpconfigedit-pseudos.inc}
-  {$I xpconfigedit-mimetypes.inc}
+  {$I xpconfigedit-servers.inc} //> 2000 lines
+
+  {.$I xpconfigedit-groups.inc}
+
+  procedure ReadGruppe(edit:boolean; var name:string; var hzeit:integer16;
+                       var limit:longint; var umlaut:byte; var hd,qt,sig,qt2,pmhd,pmqt,pmsig, qstring:string;
+                       var flags:byte; var brk:boolean);
+  const fname = '1234567890$_-';
+
+    function retypes(nr:byte):string;
+    begin
+      retypes:=getres2(901,15+nr);
+    end;
+
+  var x,y,i : Integer;
+      ums   : string;
+      ss    : string;
+      retyp : string;  { Re^n / Re / Default / nein }
+  begin
+    dialog(ival(getres2(901,0)),14,getres2(901,iif(edit,1,2)),x,y);    { 'Brettgruppe bearbeiten','neue Brettgruppe anlegen' }
+
+    if not odd(flags) then begin
+      maddstring(2,2,getres2(901,3),name,30,30,''); mhnr(201);   { 'Name    ' }
+      msetvfunc(notempty);
+      end
+    else begin
+      maddtext(2,2,getres2(901,4),col.coldialog);      { 'Name' }
+      maddtext(12,2,name,col.coldiahigh);
+      end;
+    maddint   (2,4,getres2(901,5),limit,6,8,0,99999999); mhnr(202);   { 'Limit   ' }
+    maddtext  (length(getres2(901,5))+14,4,getres(13),col.coldialog);
+    maddint   (2,6,getres2(901,6),hzeit,4,4,0,9999);   { 'Halten: ' }
+    maddtext  (length(getres2(901,6))+11,6,getres2(901,7),col.coldialog);   { 'Tage' }
+    ums:=umtyp[umlaut];
+    maddstring(2,7,getres2(901,8),ums,5,5,'');         { 'Sonderz.' }
+    for i:=0 to 1 do
+      mappsel(true,umtyp[i]);
+    retyp:=retypes((flags and 6) shr 1);
+    maddstring(2,8,getres2(901,20),retyp,7,7,'');      { 'Replies ' }
+    for i:=0 to 3 do
+      mappsel(true,retypes(i));
+
+    maddstring(23,8,GetRes2(901,30),qstring,4,20,range(' ',#126)); {'Quote-Zeichen'}
+    mset3proc(xp2c.testqc);
+    mnotrim; mhnr(210);
+
+    ss:=range('A','Z')+range('a','z')+fname;
+    maddtext(3,10,GetRes2(901,13),0);  { 'Brettantworten' }    
+    maddstring(2,11,getres2(901,9),hd,8,8,ss); mhnr(206);   { 'Kopf    ' }
+    mappcustomsel(SelSchab,false);
+    maddstring(2,12,getres2(901,10),qt,8,8,ss); mhnr(206);  { 'Quote   ' }
+    mappcustomsel(SelSchab,false);
+    maddstring(2,13,getres2(901,12),qt2,8,8,ss); mhnr(206); { 'QuoteTo ' }
+    mappcustomsel(SelSchab,false);
+    maddstring(2,14,getres2(901,11),sig,8,8,ss); mhnr(206); { 'Signatur' }
+    mappcustomsel(SelSchab,false);
+    
+    maddtext(24,10,GetRes2(901,55),0);  { 'PM-Antworten' }
+    maddstring(23,11,getres2(901,50),pmhd,8,8,ss); mhnr(206);  { 'Kopf    ' }
+    mappcustomsel(SelSchab,false);
+    maddstring(23,12,getres2(901,51),pmqt,8,8,ss); mhnr(206);  { 'Quote   ' }
+    mappcustomsel(SelSchab,false);
+    maddstring(23,14,getres2(901,52),pmsig,8,8,ss); mhnr(206); { 'Signatur' }
+    mappcustomsel(SelSchab,false);
+
+    readmask(brk);
+
+    if not brk then begin
+      for i:=0 to 5 do
+        if UpperCase(ums)=UpperCase(umtyp[i]) then umlaut:=i;
+      flags:=flags and (not 6);
+      LoString(retyp);
+      if retyp=LowerCase(retypes(1)) then inc(flags,2)        { re^n: }
+      else if retyp=LowerCase(retypes(2)) then inc(flags,4)   { re:   }
+      else if retyp=LowerCase(retypes(3)) then inc(flags,6);  { nein  }
+      end;
+    enddialog;
+    freeres;
+  end;
+
+  procedure NeueGruppe;
+  var name   : string;
+      hd,sig : string;
+      qt,qt2 : string;
+      pmhd   : string;                                           
+      pmqt   : string;
+      pmsig  : string;
+      qstring: string;
+      hzeit  : integer16;
+      limit  : longint;
+      umlaut : byte;
+      flags  : byte;
+      brk    : boolean;
+  begin
+    name:=''; hzeit:=stdhaltezeit; limit:=MaxNetMsgs;
+    hd:='header'; sig:='signatur'; qt:='qbrett'; qt2:='quoteto'; 
+    hd:='privhead'; pmsig:='privsig'; pmqt:='qpriv';
+    qstring := '';
+    
+    umlaut:=0;   { IBM-Umlaute, keine Konvertierung }
+    flags:=0;    { keine Standard-Gruppe; Re^n: Default }
+    readgruppe(false,name,hzeit,limit,umlaut,hd,qt,sig,qt2,pmhd,pmqt,pmsig,qstring,flags,brk);
+    if not brk then begin
+      dbSeek(d,giName,UpperCase(name));
+      if dbFound then
+        rfehler(910)   { 'Eine Gruppe mit diesem Namen existiert bereits.' }
+      else begin
+        dbAppend(d);
+        dbWriteStr(d,'Name',name);
+        dbWrite(d,'haltezeit',hzeit);
+        dbWrite(d,'MsgLimit',limit);
+        dbWrite(d,'umlaute',umlaut);
+        dbWriteStr(d,'kopf',hd);
+        dbWriteStr(d,'signatur',sig);
+        dbWriteStr(d,'quotemsk',qt);
+
+        dbWriteStr(d,'quotetomsk',qt2);
+        dbWriteStr(d,'pmkopf',pmhd);
+        dbWriteStr(d,'pmsignatur',pmsig);
+        dbWriteStr(d,'pmquotemsk',pmqt);
+
+        dbWriteStr(d,'quotechar',qstring);
+        
+        dbWrite(d,'flags',flags);
+        dbFlushClose(d);
+        dbGo(d,drec[1]);
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+        aufbau:=true;
+        end;
+      end;
+  end;
+
+  procedure EditGruppeAllgemein;
+  var name   : string;
+      hd,sig : string;
+      qt,qt2 : string;
+      pmhd   : string;
+      pmqt   : string;
+      pmsig  : string;
+      qstring: string;
+      hzeit  : integer16;
+      limit  : longint;
+      flags  : byte;
+      umlaut : byte;
+      brk    : boolean;
+  begin
+    dbGo(d,drec[p]);
+    name:= dbReadStr(d,'Name');
+    dbRead(d,'haltezeit',hzeit);
+    dbRead(d,'MsgLimit',limit);
+    dbRead(d,'flags',flags);
+    dbRead(d,'umlaute',umlaut);
+    hd:= dbReadStr(d,'kopf');
+    sig:= dbReadStr(d,'signatur');
+    qt:= dbReadStr(d,'quotemsk');
+    qt2 := dbReadStr(d,'quotetomsk');
+    pmhd := dbReadStr(d,'pmkopf');
+    pmsig := dbReadStr(d,'pmsignatur');
+    pmqt := dbReadStr(d,'pmquotemsk');
+    qstring := dbReadStr(d,'quotechar');    
+    readgruppe(true,name,hzeit,limit,umlaut,hd,qt,sig,qt2,pmhd,pmqt,pmsig,qstring,flags,brk);
+    if not brk then begin
+      dbWriteStr(d,'Name',name);
+      dbWrite(d,'haltezeit',hzeit);
+      dbWrite(d,'MsgLimit',limit);
+      dbWrite(d,'Umlaute',umlaut);
+      dbWriteStr(d,'kopf',hd);
+      dbWriteStr(d,'signatur',sig);
+      dbWriteStr(d,'quotemsk',qt);
+      dbWrite(d,'flags',flags);
+
+      dbWriteStr(d,'quotetomsk',qt2);
+      dbWriteStr(d,'pmkopf',pmhd);
+      dbWriteStr(d,'pmsignatur',pmsig);
+      dbWriteStr(d,'pmquotemsk',pmqt);
+
+      dbWriteStr(d,'quotechar',qstring);
+
+      dbFlushClose(d);
+      dbGo(d,drec[1]);
+      aufbau:=true;
+      end;
+  end;
+
+  procedure EditGruppeFido;
+  var x,y  : Integer;
+      brk  : boolean;
+      orig : string;
+      addr : string;
+  begin
+    dbGo(d,drec[p]);
+    orig:= dbReadStr(d,'origin');
+    addr:= dbReadStr(d,'adresse');
+    dialog(46,5,getres2(902,1),x,y);    { 'Fido-Einstellungen' }
+    maddstring(3,2,getres2(902,2),orig,32,48,range(' ',#126)); mhnr(690);   { 'Origin ' }
+    maddstring(3,4,getres2(902,3),addr,15,15,'');   { 'Adresse' }
+    mset3proc(setfidoadr);
+    readmask(brk);
+    enddialog;
+    if not brk then begin
+      dbWriteStr(d,'origin',orig);
+      dbWriteStr(d,'adresse',addr);
+      dbFlushClose(d);
+      end;
+  end;
+
+  procedure EditGruppeRFC;
+  var x,y  : Integer;
+      brk  : boolean;
+      AMRealname,AMMail,AMReplyTo,AMFQDN : string;
+      PMRealname,PMMail,PMReplyTo,PMFQDN : string;
+  begin
+    dbGo(d,drec[p]);
+    AMRealname:= dbReadStr(d,'amrealname');
+    AMMail:= dbReadStr(d,'ammail');
+    AMReplyTo:= dbReadStr(d,'amreplyto');
+    AMFQDN:= dbReadStr(d,'amfqdn');
+    PMRealname:= dbReadStr(d,'pmrealname');
+    PMMail:= dbReadStr(d,'pmmail');
+    PMReplyTo:= dbReadStr(d,'pmreplyto');
+    PMFQDN:= dbReadStr(d,'pmfqdn');
+    dialog(49,15,getres2(902,10),x,y);    { 'RFC-Einstellungen' }
+    maddtext(3,2,getres2(902,11),col.coldiahigh);     { 'oeffentliche Nachrichten' }
+    maddstring(3,4,getres2(902,13),AMRealname,32,40,''); mhnr(695);   { 'Realname' }
+    maddstring(3,5,getres2(902,14),AMMail,32,80,range(' ',#126));     { 'E-Mail  ' }
+    maddstring(3,6,getres2(902,15),AMReplyTo,32,80,range(' ',#126));  { 'Reply-To' }
+    maddstring(3,7,getres2(902,16),AMFQDN,32,60,range(' ',#126));     { 'FQDN    ' }
+    maddtext(3,9,getres2(902,12),col.coldiahigh);     { 'private Nachrichten' }
+    maddstring(3,11,getres2(902,13),PMRealname,32,40,''); mhnr(695);  { 'Realname' }
+    maddstring(3,12,getres2(902,14),PMMail,32,80,range(' ',#126));    { 'E-Mail  ' }
+    maddstring(3,13,getres2(902,15),PMReplyTo,32,80,range(' ',#126)); { 'Reply-To' }
+    maddstring(3,14,getres2(902,16),PMFQDN,32,60,range(' ',#126));    { 'FQDN    ' }
+    readmask(brk);
+    enddialog;
+    if not brk then begin
+      dbWriteStr(d,'amrealname',AMRealname);
+      dbWriteStr(d,'ammail',AMMail);
+      dbWriteStr(d,'amreplyto',AMReplyTo);
+      dbWriteStr(d,'amfqdn',AMFQDN);
+      dbWriteStr(d,'pmrealname',PMRealname);
+      dbWriteStr(d,'pmmail',PMMail);
+      dbWriteStr(d,'pmreplyto',PMReplyTo);
+      dbWriteStr(d,'pmfqdn',PMFQDN);
+      dbFlushClose(d);
+      end;
+  end;
+
+  procedure DelGruppe;
+  var grnr  : longint;
+      flags : byte;
+  begin
+    dbGo(d,drec[p]);
+    dbRead(d,'flags',flags);
+    if odd(flags) then
+      rfehler(911)       { 'Gruppe kann nicht geloescht werden!' }
+    else begin
+      dbRead(d,'INT_NR',grnr);
+      dbSetindex(bbase,biGruppe);
+      dbSeek(bbase,biGruppe,dbLongStr(grnr));
+      if dbFound then
+        rfehler(912)     { 'Es sind noch Bretter in dieser Gruppe vorhanden.' }
+      else begin
+        dbDelete(d);
+        dbFlushClose(d);
+        if p=1 then dbGoTop(d)
+        else dbGo(d,drec[1]);
+        aufbau:=true;
+        end;
+      end;
+  end;
+
+  procedure addhzeit(add:integer);
+  var hzeit : integer16;
+  begin
+    dbGo(d,drec[p]);
+    dbRead(d,'haltezeit',hzeit);
+    hzeit:=max(0,min(hzeit+add,9999));
+    dbWrite(d,'haltezeit',hzeit);
+    displine(p);
+  end;
+
+
+  procedure EditGruppe;
+  const edb_pos : shortint = 1;
+  var n   : shortint;
+      nts : string;
+  begin
+    pushhp(207);
+    nts:=getres2(901,21); { ' ^Allgemein,^RFC,^Fido ' }
+    n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts,edb_pos);
+    freeres;
+    if n<>0 then edb_pos:=abs(n);
+    if n>0 then
+      case n of
+        1: EditGruppeAllgemein;
+        2: EditGruppeRFC;
+        3: EditGruppeFido;
+      end;
+    pophp;
+  end;
+
+  {.$I xpconfigedit-systems.inc}
+
+  procedure ReadSystem(var name,komm,fs_name,fs_passwd,converter:string;
+                       fs_typ:byte; var brk:boolean);
+  var
+    x,y: Integer;
+  begin
+    dialog(ival(getres2(903,0)),11,getres2(903,iif(edit,1,2)),x,y);    { 'Systeme bearbeiten','neues System anlegen' }
+    maddstring(3,2,getres2(903,3),name,BoxNameLen,BoxNameLen,'>'); mhnr(461);   { 'Systemname ' }
+    mappcustomsel(BoxSelProc,false);
+    msetvfunc(testsysname);
+    maddstring(3,4,getres2(903,4),komm,30,30,'');       { 'Kommentar  ' }
+    maddstring(3,6,getres2(903,5),fs_name,20,20,'');    { 'Fileserver ' }
+    mappsel(false,'FILESERVERù'+uuserver);
+    mset3proc(setPasswdField);
+    maddstring(3,8,getres2(903,iif(fs_typ=3,7,6)),fs_passwd,20,20,'');  { 'Index-Datei' / 'Passwort    ' }
+    maddstring(3,10,getres2(903,8),converter,30,60,'>');  { 'Konvertierer' }
+    mappsel(false,'UUCP-FL1.EXE $INFILE $OUTFILEùCOPY $INFILE $OUTFILE');
+    readmask(brk);
+    freeres;
+    if not brk then
+      if UpperCase(fs_name)<>UpperCase(uuserver) then
+        UpString(fs_name)
+      else begin
+        if fs_passwd='' then fs_passwd:='index';
+        if converter='' then converter:='COPY $INFILE $OUTFILE';
+        end;
+    enddialog;
+  end;
+
+  procedure NeuesSystem;
+  var name   : string;
+      komm   : string;
+      fsuser : string;
+      fspass : string;
+      convert: string;
+      brk    : boolean;
+      w      : word;
+      b      : byte;
+  begin
+    name:=''; komm:='';
+    fsuser:=''; fspass:='';
+    convert:='';
+    readsystem(name,komm,fsuser,fspass,convert,0,brk);
+    if not brk then begin
+      dbSeek(d,siName,UpperCase(name));
+      if dbFound then
+        rfehler(913)     { 'Ein System mit diesem Namen existiert bereits.' }
+      else begin
+        dbAppend(d);
+        dbWriteStr(d,'Name',name);
+        dbWriteStr(d,'Kommentar',komm);
+        dbWriteStr(d,'fs-name',fsuser);
+        dbWriteStr(d,'fs-passwd',fspass);
+        dbWriteStr(d,'ZBV1',convert);
+        w:=iif(fsuser<>'',1,0);
+        dbWrite(d,'flags',w);
+        b:=iif(UpperCase(fsuser)=UpperCase(uuserver),3,0);
+        dbWrite(d,'fs-typ',b);
+        dbFlushClose(d);
+        dbGo(d,drec[1]);
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+        aufbau:=true;
+        end;
+      end;
+  end;
+
+  procedure EditSystem;
+  var name   : string;
+      komm   : string;
+      fsuser : string;
+      fspass : string;
+      convert: string;
+      brk    : boolean;
+      w      : word;
+      typ    : byte;
+  begin
+    dbGo(d,drec[p]);
+    name:= dbReadStr(d,'Name');
+    komm:= dbReadStr(d,'Kommentar');
+    fsuser:= dbReadStr(d,'fs-name');
+    fspass:= dbReadStr(d,'fs-passwd');
+    dbRead(d,'fs-typ',typ);
+    convert:= dbReadStr(d,'ZBV1');
+    readsystem(name,komm,fsuser,fspass,convert,typ,brk);
+    if not brk then begin
+      dbWriteStr(d,'Name',name);
+      dbWriteStr(d,'Kommentar',komm);
+      dbWriteStr(d,'fs-name',fsuser);
+      dbWriteStr(d,'fs-passwd',fspass);
+      dbWriteStr(d,'ZBV1',convert);
+      w:=iif(fsuser<>'',1,0);
+      dbWrite(d,'flags',w);
+      if UpperCase(fsuser)=UpperCase(uuserver) then typ:=3
+      else if typ=3 then typ:=0;
+      dbWrite(d,'fs-typ',typ);
+      dbFlushClose(d);
+      dbGo(d,drec[1]);
+      aufbau:=true;
+      end;
+  end;
+
+  procedure DelSystem;
+  begin
+    if dbRecCount(d)<2 then
+      rfehler(914)    { 'Es muss mindestens ein System eingetragen sein!' }
+    else begin
+      dbGo(d,drec[p]);
+      if ReadJN(getreps(904,dbReadStr(d,'name')),true) then begin   { '%s l”schen' }
+        dbDelete(d);
+        dbFlushClose(d);
+        if p=1 then dbGoTop(d)
+        else dbGo(d,drec[1]);
+        aufbau:=true;
+        end;
+      end;
+  end;
+
+  {.$I xpconfigedit-pseudos.inc}
+
+  procedure ReadPseudo(edit:boolean; var kurz,lang,pollbox:string;
+                       var brk:boolean);
+  var
+    x,y: Integer;
+  begin
+    dialog(ival(getres2(905,0)),7,getres2(905,iif(edit,1,2)),x,y);   { 'Kurzname bearbeiten' / 'Kurzname anlegen' }
+    maddstring(3,2,getres2(905,3),kurz,15,15,without(allchar,'@')); mhnr(711);   { 'Kurzname   ' }
+    msetvfunc(notempty);
+    maddstring(3,4,getres2(905,4),lang,35,79,iifs(ntZonly and not smallnames,'>',''));   { 'Brett/User ' }
+    mappcustomsel(Auto_Empfsel,false);
+    mset3proc(ps_setempf);
+    maddstring(3,6,getres2(905,5),pollbox,BoxRealLen,BoxNameLen,'');   { 'Server     ' }
+    mappcustomsel(BoxSelProc,false);
+    freeres;
+    readmask(brk);
+    enddialog;
+  end;
+
+  { Pseudo editieren und anlegen. Funktion 'NeuesPseudo' gibt es nicht
+    mehr (hd/2000-07-21) }
+  procedure EditPseudo(isNew: boolean);
+  var kurz    : string;
+      lang    : string;
+      pollbox : string;
+      brk     : boolean;
+  begin
+    if isNew then begin
+      kurz:='';
+      lang:='';
+      pollbox:='';
+    end else begin
+      dbGo(d,drec[p]);
+      kurz:= dbReadStr(d,'Kurzname');
+      lang:= dbReadStr(d,'Langname');
+      pollbox:= dbReadStr(d,'pollbox');
+    end;
+    readpseudo(true,kurz,lang,pollbox,brk);
+    if not brk then begin
+      if isNew then begin
+        dbSeek(d,piKurzname,UpperCase(kurz));
+        if dbFound then begin
+          rfehler(915);     { 'Diesen Kurznamen gibt es bereits.' }
+          exit;
+        end;
+        dbAppend(d);
+      end; { isNew }
+      dbWriteStr(d,'Kurzname',kurz);
+      dbWriteStr(d,'Langname',lang);
+      dbWriteStr(d,'pollbox',pollbox);
+      dbFlushClose(d);
+      dbGo(d,drec[1]);
+      if isNew then
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+      aufbau:=true;
+      end;
+  end;
+
+  procedure DelPseudo;
+  begin
+    dbGo(d,drec[p]);
+    if ReadJN(getreps(906,dbReadStr(d,'kurzname')),true) then begin   { '"%s" loeschen' }
+      dbDelete(d);
+      dbFlushClose(d);
+      if p=1 then dbGoTop(d)
+      else dbGo(d,drec[1]);
+      aufbau:=true;
+      end;
+  end;
+
+  {.$I xpconfigedit-mimetypes.inc}
+
+  procedure ReadMimetyp(edit:boolean; var typ,ext,prog:string;
+                        var brk:boolean);
+  var
+    x,y,add: Integer;
+  begin
+    typ:=extmimetyp(typ);
+    add:=iif(typ='*/*',0,2);
+    dialog(ival(getres2(935,0)),5+add,getres2(935,iif(edit,2,1)),x,y);  { 'Viewer aendern' / 'Viewer hinzufuegen' }
+    if typ='*/*' then begin
+      maddtext(3,2,getres2(935,3),0);                  { 'MIME-Typ         ' }
+      maddtext(3+length(getres2(935,3))+2,2,typ,col.coldiahigh);
+      end
+    else begin
+      maddstring(3,2,getres2(935,3),typ,33,40,         { 'MIME-Typ         ' }
+           '"!'+without(range('#','~'),'()<>@,;:\"[]?=')); { MK 12/99 Zeichen "/" zugelassen }
+        mhnr(821); {JG: 1051->821}
+      maddstring(3,4,getres2(935,4),ext,5,5,'<');              { 'Dateierweiterung ' }
+      mhnr(822); {JG}
+      end;
+    maddstring(3,4+add,getres2(935,5),prog,33,ViewprogLen,''); mhnr(823); {JG} { 'Viewer-Programm  ' }
+      msetvfunc(testexecutable);
+    freeres;
+    repeat
+      readmask(brk);
+      if not brk and (typ+ext='') then
+        rfehler(932);    { 'Es muss ein MIME-Typ oder eine Dateierweiterung angegeben werden!' }
+    until brk or (typ+ext<>'');
+    enddialog;
+    typ:=compmimetyp(typ);
+  end;
+
+  // procedure SortMIMETypes;  removed in Rev. 1.54
+
+  procedure EditMimetyp(isNew: boolean);
+  var typ  : string;
+      ext  : string;
+      prog : string;
+      brk  : boolean;
+      isValid: boolean;
+  begin
+    if isNew then begin
+      typ:= ''; ext:= ''; prog:= '';
+    end else begin
+      dbGo(d,drec[p]);
+      typ:= dbReadNStr(d,mimeb_typ);
+      ext:= dbReadNStr(d,mimeb_extension);
+      prog:= dbReadNStr(d,mimeb_programm);
+    end;
+    if typ = '*/*' then
+    begin
+      RFehler(935); // 'Standardeintrag kann nicht editiert werden'
+      exit;
+    end;
+    readmimetyp(not isNew,typ,ext,prog,brk);
+    if not brk then
+    begin
+      {  check for duplicate entries }
+      isValid := true;
+      if typ <> '' then
+      begin
+        dbSeek(mimebase,mtiTyp,UpperCase(typ));
+        { duplicate is valid if Edit Mode and found rec = edited rec }
+        if IsNew or (dbRecNo(d) <> drec[p]) then
+          isValid := not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+            stricmp(typ,dbReadStr(mimebase,'typ')));
+      end;
+      if Ext <> '' then
+      begin
+        dbSeek(mimebase,mtiExt,UpperCase(Ext));
+        { duplicate is valid if Edit Mode and found rec = edited rec }
+        if IsNew or (dbRecNo(d) <> drec[p]) then
+          isValid := isValid and not (not dbBOF(mimebase) and not dbEOF(mimebase) and
+            stricmp(ext,dbReadStr(mimebase,'extension')));
+      end;
+      if not IsNew and (typ = '*/*') then IsValid := true;
+
+      if isValid then
+      begin
+        if isNew then
+          dbAppend(d)
+        else
+          dbGo(d,drec[p]);
+        dbWriteNStr(d,mimeb_typ,typ);
+        dbWriteNStr(d,mimeb_extension,ext);
+        dbWriteNStr(d,mimeb_programm,prog);
+      end else
+        RFehler(934); { Doppelte MIME-Typen oder Dateierweiterungen sind nicht erlaubt! }
+      dbFlushClose(d);
+      dbGo(d,drec[1]);
+      if isNew then
+        dbSkip(d,-1);     {ein Feld zurueck, damit Neueintrag sichtbar ist}
+      aufbau:=true;
+    end;
+  end;
+
+  procedure DelMimetyp;
+  var
+    s     : string;
+  begin
+    dbGo(d,drec[p]);
+    s:=dbReadStr(d,'typ');
+    if s='*/*' then
+      rfehler(931)          { 'Standardeintrag kann nicht geloescht werden' }
+    else begin
+      if s='' then s:=dbReadStr(d,'extension');
+      if ReadJN(getreps(906,s),true) then begin   { '"%s" loeschen' }
+        dbDelete(d);
+        dbFlushClose(d);
+        if p=1 then dbGoTop(d)
+        else dbGo(d,drec[1]);
+        aufbau:=true;
+        end;
+      end;
+  end;
 
   { sonstige Funktionen }
 
@@ -1281,7 +1882,7 @@ var x,y  : Integer;
     user : string;
     maps : string;
     dom  : string;
-    fqdom: string;  
+    fqdom: string;
     email: string;
     ntyp : string;
     nt   : byte;
@@ -2518,6 +3119,9 @@ end;
 
 {
   $Log$
+  Revision 1.54  2002/12/09 14:49:01  dodi
+  remove merged include files
+
   Revision 1.53  2002/12/07 04:41:48  dodi
   remove merged include files
 
