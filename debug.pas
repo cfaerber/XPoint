@@ -30,7 +30,13 @@ PROCEDURE TempCloseLog(Reactivate: Boolean);
 
 IMPLEMENTATION
 
-USES Dos;
+uses
+{$ifdef Linux }
+  Linux,
+{$else }
+  Dos,
+{$endif }
+  SysUtils;
 
 CONST
  qLogfiles= 20;
@@ -74,19 +80,39 @@ BEGIN
 END;
 
 PROCEDURE OpenLogfile(App: Boolean); {Appends if App True}
-VAR SR: SearchRec; S: String; Rew: Boolean;
+VAR
+  SR    : TSearchRec;
+  S     : String;
+  Rew   : Boolean;
+  err   : integer;
 BEGIN
-  IF Logging THEN Exit;
-  S:=GetEnv('DEBUG'); Logging:=True; Rew:=False;
-  IF S<>'' THEN
-    BEGIN
-      IF S[1]='*' THEN BEGIN Delete(S,1,1); Rew:=True END;
-      {$I-}
-      IF Rew AND(NOT App)THEN BEGIN Assign(Logfile,S); ReWrite(Logfile)END
-        ELSE BEGIN Assign(Logfile,S); FindFirst(S,Archive,SR); IF DosError=0 THEN Append(Logfile)ELSE ReWrite(Logfile)END;
-      IF IOResult<>0 THEN Logging:=False; {$I+}
-    END
-  ELSE Logging:=False;
+  IF Logging THEN
+    Exit;
+  S:= GetEnv('DEBUG');
+  Logging:= True;
+  Rew:= False;
+  IF S<>'' THEN BEGIN
+    IF S[1]='*' THEN BEGIN
+      Delete(S,1,1);
+      Rew:=True;
+    END;
+    {$I-}
+    IF Rew AND(NOT App)THEN BEGIN
+      Assign(Logfile,S);
+      ReWrite(Logfile);
+    END ELSE BEGIN
+      Assign(Logfile,S);
+      err:= FindFirst(S,faArchive,SR);
+      IF err = 0 THEN
+        Append(Logfile)
+      ELSE
+        ReWrite(Logfile);
+      FindClose(SR);
+    END;
+    IF IOResult<>0 THEN Logging:=False;
+    {$I+}
+  END ELSE
+    Logging:=False;
 END;
 
 PROCEDURE CloseLogfile;
@@ -105,6 +131,9 @@ END.
 
 {
   $Log$
+  Revision 1.5  2000/11/08 17:38:45  hd
+  - Fix: fehlendes FindClose
+
   Revision 1.4  2000/08/17 13:36:17  mk
   - Anpassung fuer VP
 
