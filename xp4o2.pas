@@ -36,7 +36,7 @@ function  BezSeek(back:boolean):boolean;
 function  BezSeekBezug:boolean;
 function  BezSeekKommentar:boolean;
 procedure GetKomflags(var _left,_right,up,down:boolean);
-function  BaumBlatt(len:byte; bezpos:word; var s,s1:string):string;
+function  BaumBlatt(ofs,len:byte; bezpos:word; var s,s1:string):string;
 
 (* procedure SetLanguage; *)
 
@@ -392,9 +392,10 @@ var hdp    : headerp;
     nullid : longint;
     realmaxkom : word;
     kb2    : komlistp;
+    xlines : komlines;
     MemFull: boolean;
 
-  procedure RecurBez(ebene:byte; rec,spuren1,spuren2:longint; last:boolean;
+  procedure RecurBez(ebene:byte; rec: longint; spuren: komlines; last:boolean;
                      var betr,brett:string);
   const bmax  = 205;
   type  brec  = record
@@ -404,7 +405,7 @@ var hdp    : headerp;
         blist = array[1..bmax] of brec;
   var id     : longint;
       ida    : array[0..3] of char absolute id;
-      ba     : ^blist;
+      ba,ba2 : ^blist;
       anz    : longint;
       i,j    : integer;
       more   : boolean;
@@ -413,6 +414,8 @@ var hdp    : headerp;
       _brett : string[5];
       r      : brec;
       mid    : longint;
+      spnr,
+      spb    : word;
 
     procedure wr;
     var
@@ -428,8 +431,7 @@ var hdp    : headerp;
         with kombaum^[komanz] do
         begin
           MsgPos:=dbRecno(mbase);
-          lines1 := spuren1;
-          lines2 := spuren2;
+          lines:=spuren;
           _ebene:=ebene;
           flags:=iif(last,kflLast,0);
           if left(newbetr^,35)<>left(betr,35) then
@@ -507,13 +509,13 @@ var hdp    : headerp;
         Memfull := true;
         RFehler(448);
       end;
-      new(ba);
       if nullid=0 then
         dbGo(mbase,rec);
       wr;
       GetSeekID;
       if dbFound then
         repeat
+          getmem(ba,sizeof(brec)*bmax);
           anz:=0;
           while not _last and (anz<bmax) do begin
             dbReadN(bezbase,bezb_msgid,mid);
@@ -521,7 +523,11 @@ var hdp    : headerp;
               AddD0
             else
               if not AddDx then AddD0;
-            end;
+          end;
+          getmem(ba2,sizeof(brec)*anz);
+          fastmove(ba^,ba2^,sizeof(brec)*anz);
+          freemem(ba,sizeof(brec)*bmax);
+          ba:=ba2;
           more:=not _last;
           for i:=1 to anz-1 do           { Bubble-Sort nach Datum }
             for j:=anz downto i+1 do
@@ -532,20 +538,17 @@ var hdp    : headerp;
           for i:=1 to anz do
           begin
             mmore:=more or (i<anz);
-            if ebene < 32 then
-              RecurBez(ebene+1,ba^[i].pos,
-                spuren1+iif(mmore,1 shl longint(ebene),0),
-                spuren2,
-                not mmore,newbetr^,_brett)
-            else
-              RecurBez(ebene+1,ba^[i].pos,
-                spuren1,
-                spuren2+iif(mmore,1 shl longint(ebene-32),0),
-                not mmore,newbetr^,_brett);
+            xlines:=spuren;
+            if mmore and (ebene<kommemax-1) then begin
+              spnr:=ebene div 16;
+              spb:=ebene and (16-1);
+              xlines[spnr]:=xlines[spnr] or (1 shl spb);
             end;
+            RecurBez(ebene+1,ba^[i].pos,xlines,not mmore,newbetr^,_brett);
+          end;
+          freemem(ba,sizeof(brec)*anz);
           if more then dbGo(bezbase,rec);
         until not more;
-      dispose(ba);
       freemem(newbetr, length(newbetr^)+1);
     end;
   end;
@@ -582,7 +585,8 @@ begin
   mi:=dbGetIndex(bezbase);
   dbSetIndex(bezbase,beiRef);
   MemFull := false;
-  RecurBez(0,dbRecno(mbase),0,0,true,betr,brett);
+  fillchar(xlines,sizeof(komlines),0);
+  RecurBez(0,dbRecno(mbase),xlines,true,betr,brett);
   kombaum^[0].flags:=kombaum^[0].flags or kflBetr;
   FSize := Komanz * sizeof(komrec);
   if MaxAvail < (FSize+2048) then
@@ -768,11 +772,13 @@ end;
 
 { s=User, s1=Betreff }
 
-function BaumBlatt(len:byte; bezpos:word; var s,s1:string):string;
+function BaumBlatt(ofs,len:byte; bezpos:word; var s,s1:string):string;
 var ss : string[80];
     i  : longint;   { muá longint sein, damit (1 shl i) longint ist }
     p  : byte;
     bs : string[40];
+    sn,
+    sb : word;
 begin
   with kombaum^[bezpos] do begin
     if not KomShowAdr then begin
@@ -796,18 +802,24 @@ begin
       _ebene:=min(_ebene,emax);
       ss:=sp((_ebene-1)*komwidth);
       for i:=0 to _ebene-2 do
-        if i < 32 then
-        begin
-          if lines1 and (1 shl i)<>0 then
-            ss[i*komwidth+1]:='³'
-        end else
-          if lines2 and (1 shl (i-32))<>0 then
-            ss[i*komwidth+1]:='³' ;
+      begin
+        sn:=i div 16;
+        sb:=i and (16-1);
+        if lines[sn] and (1 shl sb)<>0 then
+          ss[i*komwidth+1]:='³';
+      end;
       if flags and kflLast<>0 then
         ss:=ss+left('ÀÄÄÄ',komwidth)
       else
         ss:=ss+left('ÃÄÄÄ',komwidth);
-      end;
+    end;
+    if ofs>0 then begin
+      i:=0;
+      while (i<ofs) and (i<length(ss))
+        and (pos(ss[i+1],' ³ÃÀÄ')>0) do inc(i);
+      delete (ss,1,i);
+      ss:='®'+ss;
+    end;
     if flags and (kflBetr+kflBrett)<>0 then
       BaumBlatt:=forms(ss+s, max(length(ss+s), 35)) + '  ' + bs + s1
     else
@@ -930,6 +942,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.11.2.4  2000/11/11 09:59:42  mk
+  - Kommentarbaum mit 97 Ebenen und 3640 Nachrichten
+  - Verschieben des Kommentarbaums mit ctrl-cursor links/rechts moeglich
+
   Revision 1.11.2.3  2000/11/04 22:51:30  mk
   - Memory-Protection fuer den Kommentarbaum
 

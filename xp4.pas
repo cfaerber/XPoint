@@ -160,6 +160,7 @@ var gl      : shortint;
     markpos : integer;
     bezpos  : integer;
     komofs  : integer;     { Offset vom disprec[1] im Komm-Baum (0..) }
+    baumdispofs: integer;
     lastdm  : shortint;
 
 label selende;
@@ -585,7 +586,7 @@ var t,lastt: taste;
                   dbGo(dispdat,marked^[0].recno);
               end;
         12  : begin
-                bezpos:=0; komofs:=0;
+                bezpos:=0; komofs:=0; baumdispofs := 0;
                 if komanz>0 then
                   dbGo(mbase,kombaum^[0].msgpos);
               end;
@@ -1425,7 +1426,7 @@ begin      { --- select --- }
   actgl:=gl;
 
   if dispmode=12 then begin
-    bezpos:=0; komofs:=0;
+    bezpos:=0; komofs:=0; baumdispofs := 0;
     while (bezpos<komanz) and (kombaum^[bezpos].msgpos<>dbRecno(mbase)) do begin
       inc(bezpos); inc(komofs);
       end;
@@ -1829,8 +1830,18 @@ begin      { --- select --- }
                        if c='+' then _BezSeekKommentar;
                        if t=keyleft then _BezSeek(true);
                        if t=keyrght then _BezSeek(false);
+                       if t=keyclft then
+                       begin
+                         baumdispofs:=max(0,baumdispofs-komwidth);
+                         aufbau:=true;
                        end;
-                     end
+                       if t=keycrgt then
+                       begin
+                         baumdispofs:=min(maxebene*komwidth,baumdispofs+komwidth);
+                         aufbau:=true;
+                       end;
+                     end;
+                   end
                    else begin   { 11 }
                      if c=' ' then MarkedUnmark;
                      if c=k2_EA then begin                          { 'A' }
@@ -2114,6 +2125,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.26.2.18  2000/11/11 09:59:41  mk
+  - Kommentarbaum mit 97 Ebenen und 3640 Nachrichten
+  - Verschieben des Kommentarbaums mit ctrl-cursor links/rechts moeglich
+
   Revision 1.26.2.17  2000/11/08 17:54:33  mk
   - fixed Bug #119897: Ctrl E in Displaymode 11
 

@@ -250,7 +250,9 @@ const  {$IFDEF DPMI}
        fattrGelesen  = $0004;          { Nachricht auf "gelesen"    }
        fattrHilite   = $0008;          { Nachricht hervorheben      }
 
-       maxkomm    = 4680;              { Kommentarbaum }
+       kommlmax   = 6;                             { Kommentarbaum }
+       kommemax   = kommlmax * 16 + 1;       { maximale Tiefe }
+       maxkomm    = 65520 div (6 + kommlmax * 2); { max. Nachr. }
        kflLast    = 1;
        kflBetr    = 2;
        kflPM      = 4;
@@ -630,10 +632,11 @@ type   textp  = ^text;
 
        proc   = procedure;
 
+       komlines = array[0..kommlmax-1] of word;
        komrec   = record
                     msgpos : longint;
-                    lines1,lines2: longint;
-                    _ebene : byte;
+                    lines  : komlines;
+                    _ebene : shortint;
                     flags  : byte;
                   end;
        komliste = array[0..maxkomm-1] of komrec;   { Kommentarbaum }
@@ -1150,6 +1153,10 @@ implementation
 end.
 {
   $Log$
+  Revision 1.54.2.14  2000/11/11 09:59:41  mk
+  - Kommentarbaum mit 97 Ebenen und 3640 Nachrichten
+  - Verschieben des Kommentarbaums mit ctrl-cursor links/rechts moeglich
+
   Revision 1.54.2.13  2000/11/01 10:58:02  mk
   - Autodatumsbezuege jetzt immer in Netcall
 
