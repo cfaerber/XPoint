@@ -929,7 +929,7 @@ begin                  { function Netcall }
     exit;
     end;
   bfile := dbReadStr(d,'dateiname');
-  email := dbReadStr(d,'email');
+  email := ComputeUserAddress(d);
   ppfile:=bfile+extBoxFile;
   eppfile:=bfile+extEBoxFile;
   dbRead(d,'netztyp',netztyp);
@@ -1373,6 +1373,9 @@ end;
 
 {
   $Log$
+  Revision 1.52.2.9  2002/08/12 12:10:08  ma
+  - use old db field for looking up email address if appropriate
+
   Revision 1.52.2.8  2002/08/12 12:07:17  ma
   - fix: SMTP Envelope from was not set correctly (causing some servers
     to refuse mails)
