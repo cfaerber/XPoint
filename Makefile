@@ -4,7 +4,7 @@
 #
 # $Id$
 #
-# Fuer GNU make <http://www.gnu.org/software/make/>
+# fuer GNU make <http://www.gnu.org/software/make/>
 #
 # DOS/32: <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/mak3791b.zip>
 # OS/2: <ftp://ftp-os2.cdrom.com/pub/os2/unix/gnumake.zip>
@@ -35,7 +35,12 @@
 # os2           OS/2
 # win32         Windows 95/98/NT
 #
-OS = 
+#OS = 
+
+# Ihre CPU (386, 486, 586, 686)
+# (KANN gesetzt werden.)
+#
+#CPU = 386
 
 # Ihr Pascal-Compiler, mit dem der OpenXP-Quellcode uebersetzt werden
 # soll.  (MUSS gesetzt werden.)
@@ -43,11 +48,6 @@ OS =
 # fpc           Free Pascal <http://www.freepascal.org/>
 #
 COMPILER = fpc
-
-# Ihre CPU (386, 486, 586, 686)
-# (KANN gesetzt werden.)
-#
-#CPU = 386
 
 # Verzeichnis, in dem OpenXP installiert werden soll
 # (KANN gesetzt werden.)
@@ -62,18 +62,18 @@ COMPILER = fpc
 # Soll die Debug-Version erstellt werden?
 # (KANN gesetzt werden.)
 #
-#DEBUG = yes
+#DEBUG = no
 
 # Verzeichnis, in dem notwendige Dateien liegen, die nicht Bestandteil
 # des Quellcode sind
 # (MUSS gesetzt werden.)
 #
-contribdir = 
+#contribdir = 
 
 # Name des Quellcode-Archivs
 # (MUSS gesetzt werden.)
 #
-DISTFILE = oxp370_s.rar
+#DISTFILE = oxp370_s.rar
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
@@ -83,7 +83,26 @@ DISTFILE = oxp370_s.rar
 
 SHELL = /bin/sh
 
+# Ueberpruefen, ob die Variablen richtig gesetzt sind
+
+ifeq (,$(findstring $(OS),dos32 linux os2 win32))
+$(error Variable "OS" muss auf "dos32", "linux", "os2" oder "win32" \
+gesetzt werden)
+endif
+
 CPU ?= 386
+
+ifneq ($(COMPILER),fpc)
+$(error Variable "COMPILER" muss auf "fpc" gesetzt werden)
+endif
+
+ifeq (,$(contribdir))
+$(error Variable "contribdir" muss gesetzt werden)
+endif
+
+ifeq (,$(DISTFILE))
+$(error Variable "DISTFILE" muss gesetzt werden)
+endif
 
 ifneq (,$(findstring $(OS),dos32 os2 win32))
 
@@ -165,10 +184,8 @@ export contribdir
 export RM
 
 # maggi und pmconv uebersetzen nicht
-#BIN = maggi ndiff pmconv uucp-fl1 uuzext xp-fm xpme yup2pkt zfido zpr \
-#	xp maggi pmconv
-BIN = ndiff uucp-fl1 uuzext xp-fm xpme yup2pkt zfido \
-	zpr xp
+#BIN = maggi ndiff pmconv uucp-fl1 uuzext xp xp-fm xpme yup2pkt zfido zpr
+BIN = ndiff uucp-fl1 uuzext xp-fm xpme yup2pkt zfido zpr xp
 COMPBIN = $(BIN) docform ihs rc
 RES = xp-d xp-e xpfm-d xpfm-e
 EXAMPLES = gsbox.scr madness.scr magic.scr maus.scr o-magic.scr \
@@ -346,8 +363,13 @@ dbase.o: dbase.pas typeform.o xpdefine.inc xpglobal.o
 debug.o: debug.pas xpdefine.inc xpglobal.o
 	$(PC) $(PFLAGS) $<
 
+ifeq ($(OS),linux)
 dosx.o: dosx.pas linux/dosx.inc linux/dosxh.inc xpdefine.inc xpglobal.o
 	$(PC) $(PFLAGS) $<
+else
+dosx.o: dosx.pas xpdefine.inc xpglobal.o
+	$(PC) $(PFLAGS) $<
+endif
 
 eddef.o: eddef.pas keys.o xpdefine.inc xpglobal.o
 	$(PC) $(PFLAGS) $<
@@ -373,9 +395,14 @@ exxec.o: exxec.pas debug.o fileio.o typeform.o xpdefine.inc xpglobal.o
 feiertag.o: feiertag.pas montage.o typeform.o xpdefine.inc
 	$(PC) $(PFLAGS) $<
 
+ifeq ($(OS),linux)
 fileio.o: fileio.pas fileio.inc linux/fileio.inc linux/fileioh1.inc \
 	typeform.o xp0.o xpdefine.inc xpglobal.o
 	$(PC) $(PFLAGS) $<
+else
+fileio.o: fileio.pas fileio.inc typeform.o xp0.o xpdefine.inc xpglobal.o
+	$(PC) $(PFLAGS) $<
+endif
 
 ifeq ($(OS),linux)
 help.o: help.pas fileio.o inout.o keys.o maus2.o mouse.o printerx.o \
@@ -1354,7 +1381,7 @@ $(patsubst %,uninstall_%,$(DATAFILES)): uninstall_%:
 
 ifeq ($(OS),linux)
 $(patsubst %,uninstall_%,$(INSTALLBINFILES)): uninstall_%:
-	-$(RM) /usr/bin/$*
+	-$(RM) $(linkdir)$(SEP)$*
 	-$(RM) $(bindir)$(SEP)$*
 else
 $(patsubst %,uninstall_%,$(INSTALLBINFILES)): uninstall_%:
@@ -1383,6 +1410,8 @@ dist:
 	-$(RM) $(DISTFILE)
 	$(RAR) $(RARFLAGS) $(DISTFILE) file_id.diz Makefile *.inc \
 	*.pas *.rq *.bat
+	$(RAR) $(RARFLAGS) $(DISTFILE) beispiel$(SEP)*.scr \
+	beispiel$(SEP)*.xps
 	$(RAR) $(RARFLAGS) $(DISTFILE) doc$(SEP)Makefile doc$(SEP)*.txt \
 	doc$(SEP)*.dq doc$(SEP)*.ihq doc$(SEP)xpoint.xml \
 	doc$(SEP)xpoint.dsl doc$(SEP)dbform doc$(SEP)readme.lnx 
@@ -1392,6 +1421,10 @@ dist:
 
 #
 # $Log$
+# Revision 1.7  2000/09/28 14:21:02  fe
+# Ueberpruefung der Variablen eingebaut.
+# kleinere Korrekturen
+#
 # Revision 1.6  2000/09/27 21:21:08  fe
 # Login-Scripts und Beispielschablonen sind jetzt im Repository.
 # zm.exe und zconfig.exe werden nicht mehr installiert.

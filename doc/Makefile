@@ -4,7 +4,7 @@
 #
 # $Id$
 #
-# Fuer GNU make <http://www.gnu.org/software/make/>
+# fuer GNU make <http://www.gnu.org/software/make/>
 #
 # DOS/32: <ftp://ftp.simtel.net/pub/simtelnet/gnu/djgpp/v2gnu/mak3791b.zip>
 # OS/2: <ftp://ftp-os2.cdrom.com/pub/os2/unix/gnumake.zip>
@@ -21,15 +21,15 @@
 #
 #OS = dos32
 
-# Ihr Compiler (nur fpc)
-# (MUSS gesetzt werden.)
-#
-#COMPILER = fpc
-
 # Ihre CPU (386, 486, 586, 686)
 # (KANN gesetzt werden.)
 #
 #CPU = 386
+
+# Ihr Compiler (nur fpc)
+# (MUSS gesetzt werden.)
+#
+#COMPILER = fpc
 
 # Verzeichnis, in dem OpenXP installiert werden soll
 # (KANN gesetzt werden.)
@@ -64,6 +64,23 @@
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 SHELL = /bin/sh
+
+# Ueberpruefen, ob die Variablen richtig gesetzt sind
+
+ifeq (,$(findstring $(OS),dos32 linux os2 win32))
+$(error Variable "OS" muss auf "dos32", "linux", "os2" oder "win32" \
+gesetzt werden)
+endif
+
+CPU ?= 386
+
+ifneq ($(COMPILER),fpc)
+$(error Variable "COMPILER" muss auf "fpc" gesetzt werden)
+endif
+
+ifeq (,$(contribdir))
+$(error Variable "contribdir" muss gesetzt werden)
+endif
 
 DOCFORMFLAGS ?= 72 1 N
 
@@ -163,6 +180,10 @@ $(patsubst %,clean_%,$(OLDDOCFILES)): clean_%:
 
 #
 # $Log$
+# Revision 1.3  2000/09/28 14:21:29  fe
+# Ueberpruefung der Variablen eingebaut.
+# kleinere Korrekturen
+#
 # Revision 1.2  2000/09/27 21:22:25  fe
 # Zmodem-Anleitung (zm.txt) wird nicht mehr installiert, da zm.exe und
 # zconfig.exe nicht mehr installiert werden.
