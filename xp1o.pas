@@ -32,7 +32,7 @@ var  listexit : shortint;   { 0=Esc/BS, -1=Minus, 1=Plus, 2=links, 3=rechts }
 
 function  ReadFilename(txt:atext; var s:string; subs:boolean;
                        var useclip:boolean):boolean;
-function  overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
+function  overwrite(const fname:string; replace:boolean; var brk:boolean):boolean;
 procedure listExt(var t:taste);
 procedure ExtListKeys;
 function  filecopy(fn1,fn2:string):boolean;
@@ -156,7 +156,7 @@ begin
 end;
 
 
-function overwrite(fname:string; replace:boolean; var brk:boolean):boolean;
+function overwrite(const fname:string; replace:boolean; var brk:boolean):boolean;
 var x,y : byte;
     nr  : shortint;
     t   : taste;
@@ -980,6 +980,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.40.2.15  2001/07/31 16:20:20  mk
+  - added const parameter
+
   Revision 1.40.2.14  2001/07/21 13:24:00  mk
   - added some const parameters
 
