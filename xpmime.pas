@@ -11,9 +11,7 @@
 { CrossPoint - Multipart-Nachrichten decodieren / lesen / extrahieren }
 
 {$I XPDEFINE.INC}
-{$IFDEF BP }
-  {$O+,F+}
-{$ENDIF }
+{$O+,F+}
 
 unit xpmime;
 
@@ -41,13 +39,7 @@ type  mpcode = (mcodeNone, mcodeQP, mcodeBase64);
 
 procedure SelectMultiPart(select:boolean; index:integer; forceselect:boolean;
                           var mpdata:multi_part; var brk:boolean);
-{$IFDEF Ver32 }
-  {$H+}
-{$ENDIF }
 procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
-{$IFDEF Ver32 }
-  {$H-}
-{$ENDIF }
 
 
 procedure mimedecode;    { Nachricht/Extrakt/MIME-Decode }
@@ -114,7 +106,7 @@ begin
 end;
 
 
-procedure SMP_Keys(var t:taste); {$IFNDEF Ver32 } far; {$ENDIF }
+procedure SMP_Keys(var t:taste); far;
 begin
   Xmakro(t,16);                           { Macros des Archivviewer fuer das Popup benutzen }
   if ustr(t)='X' then
@@ -378,7 +370,7 @@ var   hdp      : headerp;
           if vorspann then ctype:=getres2(2440,1)     { 'Vorspann' }
           else ctype:=getres2(2440,2);                { 'Nachspann' }
       until isbound or eof(t);
-      { MK 04.02.2000: Letzte Zeile im letzen Part wird sonst unterschlagen }
+      { Letzte Zeile im letzen Part wird sonst unterschlagen }
       { if eof(t) then inc(n); }
       vorspann:=false;
 
@@ -509,19 +501,29 @@ var i : integer;
 begin                         { SelectMultiPart }
   brk:=false;
   fillchar(mpdata,sizeof(mpdata),0);
-
   new(hdp);
   ReadHeader(hdp^,hds,true);
   new(mf);
   MakePartlist;
-  if not forceselect and (hdp^.mimetyp='multipart/alternative')
-     and (mf^[1].typ='text') and (mf^[1].subtyp='plain') then begin
+  if not forceselect and (anzahl=3) and (mf^[2].typ='text')
+     and (mf^[1].typ='text') and (mf^[1].subtyp='plain')
+     and (((hdp^.mimetyp='multipart/alternative')      { Text+HTML Messis }
+            and (mf^[2].subtyp='html'))
+         or (mf^[2].subtyp='x-vcard'))                 { oder Text mit VCard }
+  then begin
     index:=1;
-    select:=false;
+    select:=false;                         { Standardmaessig Nur Text zeigen }
     alter:=true;
     end
   else
     alter:=false;
+
+
+
+
+
+
+
 
   if (index=0) and (anzahl>anzahl0) then
     index:=anzahl
@@ -566,9 +568,6 @@ end;
 
 { Teil einer Multipart-Nachricht decodieren und extrahieren }
 
-{$IFDEF Ver32 }
-  {$H+}
-{$ENDIF }
 procedure ExtractMultiPart(var mpdata:multi_part; fn:string; append:boolean);
 const bufsize = 2048;
 
@@ -576,7 +575,7 @@ var   input,t : text;
       tmp     : pathstr;
       f       : file;
       buf     : pointer;
-      i       : longint; { MK 01/00 Integer->LongInt, wegen groáen MIME-Mails }
+      i       : longint;
       s       : string;
       softbreak: boolean;
 
@@ -726,6 +725,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.12.2.1  2000/06/29 20:53:34  mk
+  JG: - Mime-Auswahl erscheint nur noch, wenn wirklich noetig und sinnvoll
+
   Revision 1.12  2000/05/05 14:20:08  mk
   - erweiterte Filenamenerkennung bei MIME-Mails
 
