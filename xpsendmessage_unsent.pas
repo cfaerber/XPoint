@@ -1173,9 +1173,11 @@ var
     abl    : byte;
     hdp    : THeader;
     hds    : longint;
+    flags  : Integer;
 begin
   _UserAutoCreate:=UserAutoCreate;
   dbReadN(mbase,mb_ablage,abl);
+  dbReadN(mbase,mb_ablage,flags);
   if dbReadInt(mbase,'unversandt') and 8 <> 0 then   { Wiedervorlage }
     dbReadN(mbase,mb_wvdatum,edat)
   else
@@ -1229,6 +1231,7 @@ begin
   Writeheader(hdp,tf);
   fmove(f,tf);
   dbAppend(mbase);
+  dbWriteN(mbase,mb_flags,flags);
   mnt:=hdp.netztyp;
   if hdp.References.Count > 0 then inc(mnt,$100);
   if (hdp.wab<>'') or (hdp.oem.count > 0) then inc(mnt,$800);
@@ -1339,6 +1342,11 @@ end;
 
 {
   $Log$
+  Revision 1.22  2002/04/20 15:15:45  mk
+  JG:- Fix: Beim Archivieren mit <Alt-P> bleiben die Nachrichtenflags
+       (Priorität, PGP-signiert, MIME-Multipart usw.) jetzt auch dann
+       erhalten, wenn die Archivierung aus einem AM-Brett heraus erfolgt.
+
   Revision 1.21  2002/03/17 11:11:47  mk
   - oops, fixed last commit
 
