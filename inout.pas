@@ -338,22 +338,28 @@ begin
 end;
 
 
+
+{$IFDEF BP }
+
+Procedure GetCur(var a,e,x,y:byte);
+
+var regs : registers;
+
+begin
+  with regs do begin
+    ah:=3; bh:=0;
+    intr($10,regs);
+    a:=ch and $7f; e:=cl and $7f;
+    end;
+  x:=wherex; y:=wherey;
+end;
+        
+{$ELSE}
+
 Procedure GetCur(var a,e,x,y:byte);
 begin
-  asm
-{$IFDEF BP }
-        mov ah, 3
-        mov bh, 0
-        int $10
-        and ch, $7f
-        mov byte ptr a, ch
-        and cl, $7f
-        mov byte ptr e, cl
-{$ENDIF }
-  end;
-  x :=wherex; y:=wherey;
 end;
-
+{$ENDIF }
 
 Procedure SaveCursor;
 
@@ -1726,6 +1732,9 @@ begin
 end.
 {
   $Log$
+  Revision 1.10  2000/03/05 08:45:33  jg
+  Fix: Cursor bei BP Version
+
   Revision 1.9  2000/03/04 22:41:37  mk
   LocalScreen fuer xpme komplett implementiert
 
