@@ -919,7 +919,7 @@ begin
       ClearUnversandt(ppfile,box);
       closebox;
 
-      if logintyp in [ltMagic,ltQuick,ltGS,ltMaus] then erase(f1);
+      if logintyp in [ltMagic,ltQuick,ltGS,ltMaus,ltZConnect] then erase(f1);
       _era(ppfile);
       if exist(eppfile) then _era(eppfile);
       end
@@ -1442,6 +1442,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.20  2000/05/12 20:03:02  mk
+  - Temp-Dateien werden bei ZConnect jetzt auch geloescht
+
   Revision 1.19  2000/05/07 15:19:49  hd
   Interne Linux-Aenderungen
 
