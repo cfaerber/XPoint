@@ -123,11 +123,11 @@ procedure MultiStat(art:byte);
 const
   maxrec = 5000;
 
-type statrec = record
-                 name   : string[255];
+type statrec = packed record
+                 name   : string[100];
                  bytes  : longint;
                  msgs   : longint;
-                 hz     : integer;    { Haltezeit }
+                 hz     : integer16;    { Haltezeit }
                end;
      statarr = array[1..maxrec] of statrec;
 
@@ -136,7 +136,7 @@ var brk       : boolean;
     marked    : boolean;
     von,bis   : datetimest;
     vonl,bisl : longint;
-    sysmax: xpWord; { Userwahl maximale Systeme }
+    sysmax    : Integer; { Userwahl maximale Systeme }
     n,i       : integer;
     ende      : boolean;
     _brett    : string;
@@ -164,7 +164,7 @@ var brk       : boolean;
     if art=0 then begin
       p:=cpos('.',sys);
       if RightStr(sys,4)='.ZER' then
-        Delete(sys,length(sys)+1-4,4)
+        SetLength(sys, Length(sys)-4)
       else if dbNetztyp(mbase)=nt_Fido then
         if p>0 then
           SetLength(sys, p-1);
@@ -187,7 +187,7 @@ var brk       : boolean;
         exit;
         end;
       inc(l);
-      if l<=snum then Move(st^[l],st^[l+1],(snum-l)*sizeof(statrec));
+      if l<=snum then Move(st^[l],st^[l+1],(snum-l+1)*sizeof(statrec));
       with st^[l] do
       begin
         name:=sys;
@@ -226,10 +226,11 @@ var brk       : boolean;
           while (st^[j].msgs<x) or
                 ((st^[j].msgs=x) and (st^[j].bytes<y)) do dec(j);
           end;
-        if i<=j then begin
-          w:=st^[i]; st^[i]:=st^[j]; st^[j]:=w;
+        if i<=j then
+        begin
+          w:=st^[i]; st^[i]:=st^[j]; st^[j]:=w; 
           inc(i); dec(j);
-          end;
+        end;
       until i>j;
       if l<j then sort(l,j);
       if r>i then sort(i,r);
@@ -309,8 +310,7 @@ begin
     dbSeek(bbase,biBrett,'A');
     ende:=dbEOF(bbase);
   end;
-  smax:=maxrec;
-  smax:=min(sysmax, smax); { Nur bis Anzahl der gew„hlten Systeme }
+  smax:=min(sysmax, maxrec); { Nur bis Anzahl der gew„hlten Systeme }
   getmem(st,smax*sizeof(statrec));
   fillchar(st^,smax*sizeof(statrec),0);
   snum:=0;
@@ -1281,6 +1281,10 @@ end;
 
 {
   $Log$
+  Revision 1.56  2003/09/16 23:21:03  mk
+  - fixed off bye one in multistat
+  - code cleanup
+
   Revision 1.55  2003/08/28 14:13:05  mk
   - TUniSelType for UniSel instead of numeric constants
 
