@@ -494,7 +494,7 @@ enthaltenen Dateien in dieses Verzeichnis. Dies sind im Einzelnen:
      PMCONV.EXE       PM-Konvertierer; s. Anhang C
      MAGGI.EXE        Netcall-Konvertierer
      XPICONS.DLL      Icons fr MS-Windows
-     ZM.EXE           ZModem-šbertragungsprotokoll
+     ZM.EXE           Zmodem-šbertragungsprotokoll
      ZCONFIG.EXE      Konfigurationsprogramm fr ZM
 
 Wenn Sie CrossPoint bereits installiert haben und auf eine neuere Version
@@ -678,7 +678,7 @@ Anruf eingefhrt: der Netzanruf. Er unterscheidet sich von einem normalen
 Mailboxanruf zun„chst dadurch, daá Sie nicht alle Nachrichten EINZELN aufrufen
 mssen. Statt dessen faát die angerufene Box alle Nachrichten, die seit Ihrem
 letzten Anruf eingegangen sind, zu einem Paket zusammen und sendet dieses mit
-einem der blichen šbertragungsprotokolle (z.B. ZModem) zu Ihrem Rechner. Auf
+einem der blichen šbertragungsprotokolle (z.B. Zmodem) zu Ihrem Rechner. Auf
 die gleiche Weise haben Sie die M”glichkeit, eigene Nachrichten in einem
 zusammenh„ngenden Paket zur Box zu bertragen. Danach wird die Verbindung
 getrennt, und die eingegangenen Nachrichten k”nnen lokal auf Ihrem Rechner
@@ -1279,9 +1279,9 @@ sich bei einem fehlerhaften Netcall aufgeh„ngt hat.
 
 ş šbertragungs-Protokoll
 
-Es sind z.Zt. zwei Protokolle blich: ZModem und HS-Link. Die entsprechenden
+Es sind z.Zt. zwei Protokolle blich: Zmodem und HS-Link. Die entsprechenden
 Einstellungen k”nnen Sie mit <F2> ausw„hlen. Bitte beachten Sie dabei, daá
-bei ZModem ein Upload-(Sende-) UND Download-(Empfangs-)-Protokoll ben”tigt
+bei Zmodem ein Upload-(Sende-) UND Download-(Empfangs-)-Protokoll ben”tigt
 wird, w„hrend bei HS-Link NUR der Uploader anzugeben ist; das Download-Feld
 bleibt bei HS-Link frei!
 
@@ -1291,11 +1291,11 @@ Bei Verwendung des Programms "BiModem" muá in der BiModem-Konfiguration
 (Programm BICONFIG) das CrossPoint-Verzeichnis als Upload- und Download-Verzeichnis
 eingetragen sein.
 
-Am einfachsten ist es, wenn Sie einfach nur "ZModem" als Up- und Download-Protokoll
-eintragen. CrossPoint verwendet dann das mitgelieferte ZModem-Protokoll.
+Am einfachsten ist es, wenn Sie einfach nur "Zmodem" als Up- und Download-Protokoll
+eintragen. CrossPoint verwendet dann das mitgelieferte Zmodem-Protokoll.
 
 Bei MausTausch mssen Sie zus„tzlich den Kennbuchstaben - d.h. den Anfangsbuchstaben
-- des verwendeten Protokolls angeben, also z.B. "Z" fr ZModem.
+- des verwendeten Protokolls angeben, also z.B. "Z" fr Zmodem.
 
 ş Packer
 
@@ -2444,6 +2444,57 @@ nur eine einfache Antwort erzeugt. Bei privaten Mehrfach-Quotes geht die Antwort
 immer an den Absender der Nachricht, auf der gerade der Auswahlbalken steht -
 vorausgesetzt, der Balken steht auf einer der markierten Nachrichten.
 
+>>|
+ş Suchoptionen
+
+Unter dem Menpunkt Nachricht/Suchen sind einige Suchkriterien aufgelistet
+(fr Details zu den Eintr„gen F1 drcken). Normalerweise wird genau nach dem
+Text gesucht, den Sie ins entsprechende Feld eintragen, "Volltext" u.a. k”nnen
+aber ber spezielle Eingaben gesteuert werden. Einige werden im Feld 
+"Optionen" get„tigt:
+
+     i     Groá- und Kleinschreibung werden ignoriert 
+           (caseinsensitiv), alternativ ist auch "u"
+           einsetzbar
+           
+     „     umlautinsensitive Suche, d.h. auch "ae", "oe" usw
+           werden als die entsprechenden Umlaute erkannt
+
+     a     AND-Verknpfung, die dazu fhrt, daá alle (!)
+           eingegebenen Suchbegriffe gefunden werden mssen
+           
+     o     OR-Verknpfung; hier braucht nur einer (!) der
+           Suchbegriffe bereinstimmen
+
+Neben diesen Feinjustierungen haben Sie die noch M”glichkeit, im Suchfeld 
+selber das Ergebnis zu beeinfluáen. Beispielsweise k”nnen Sie eine 
+feststehende Wortfolge per G„nsefáchen ("") suchen lassen, mit dem Tilde 
+(~) schlieáen Sie einzelne W”rter oder Wortfolgen (wieder mit G„nsefáchen!) 
+aus, die absolut nicht vorkommen drfen.
+
+Beispiele:
+
+ÚÄ Volltext-Suche ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿              
+³                                                   ³              
+³  Suchbegriff   "Hallo da"                        ³              
+³                                                   ³              
+³  Optionen      ai            Bretter   Netz      ³              
+³                                                   ³              
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ              
+
+  Findet alle Nachrichten, die ein "Hallo da" oder auch 
+  "hAlLo dA", aber nicht "Hallo du da" im Text haben
+  
+ÚÄ User-Suche ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿              
+³                                                   ³              
+³  Suchbegriff   Stefan ~Savelsberg                ³              
+³                                                   ³              
+³  Optionen      ia            Bretter   Netz      ³              
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ              
+
+  Es wird nach allen Schreibern gesucht, die Stefan
+  heuáen, aber kein "Savelsberg" im Namen tragen
+<<|
 
 
 
@@ -4776,7 +4827,7 @@ Funktionen.
 Tasten innerhalb von CrossTerm:
 
 <Alt O>      Optionen einsstellen (Schnisttstelle, Modem-Init, auto-
-             matischer ZModem-Up/Download u.a.)
+             matischer Zmodem-Up/Download u.a.)
 
 <Alt L>      ”ffnet bzw. schlieát das Logfile.
 
@@ -4791,7 +4842,7 @@ Tasten innerhalb von CrossTerm:
 
 <F9>         DOS-Aufruf, wie (fast) berall in CrossPoint
 
-Falls der automatische ZModem-Up/Download abgeschaltet ist, k”nnen Sie
+Falls der automatische Zmodem-Up/Download abgeschaltet ist, k”nnen Sie
 dafr die blichen Tasten <PgUp> und <PgDn> verwenden.
 
 
@@ -5537,8 +5588,8 @@ COMx-Waehlsperre      Telekomgedenkminute
 
 Einstellungen fr /XPoint/Terminal:
 
-AutoUpload            automatischer ZModem-Upload
-AutoDownload          automatischer ZModem-Download
+AutoUpload            automatischer Zmodem-Upload
+AutoDownload          automatischer Zmodem-Download
 TermPort              Schnittstelle
 TermBaud              Baudrate
 TermStatus            Statuszeile anzeigen
@@ -5641,7 +5692,7 @@ ZerbID         Zerberus- oder MagicNET-Programm-ID
 Upload         Upload-Befehl
 Download       Download-Befehl
 ProtokollTyp   MausNet: Kennbuchstabe des Up/Downloadprotokolls
-ZMOptions      zus„tzliche ZModem-Optionen
+ZMOptions      zus„tzliche Zmodem-Optionen
 UpArc          Upload-Packer
 DownArc        Download-Packer
 UpArcExt       Dateierweiterung der gesendeten Datei
@@ -7007,7 +7058,7 @@ Folgende Dateien werden von CrossPoint verwendet und im XP-Verzeichnis abgelegt:
   KEYDEF.CFG     Tastenmakros
   PMCONV.EXE     Programm zum Konvertieren von PMs
   ZPR.EXE        ZCONNECT-Pufferreparierer
-  ZM.EXE         ZModem-šbertragungsprotokoll
+  ZM.EXE         Zmodem-šbertragungsprotokoll
   ZCONFIG.EXE    Konfigurationsprogramm fr ZM.EXE
   MAGGI.EXE      Puffer-Konvertierer fr MagicNET, MausTausch u.a.
   MPUFFER.*      die Pufferdateien, in denen Nachrichten gespeichert
@@ -7229,12 +7280,12 @@ in andere MausTausch-Frontends einlesen.
 
 ş ZM.EXE
 
-PD-ZModem ist ein ZModem-šbertragungsprotokoll. Es wird fr alle Fido-Netcalls
-verwendet und fr sonstige Netcalls, falls bei /Edit/Boxen/Edit/Points "ZModem"
+PD-Zmodem ist ein Zmodem-šbertragungsprotokoll. Es wird fr alle Fido-Netcalls
+verwendet und fr sonstige Netcalls, falls bei /Edit/Boxen/Edit/Points "Zmodem"
 als Protokoll eingetragen ist. Mit ZCONFIG.EXE k”nnen die Farben und die Sprache
-von PD-ZModem eingestellt werden.
+von PD-Zmodem eingestellt werden.
 
-Eine ausfhrliche Dokumentation zu PD-ZModem ist im PD-ZModem-Paket enthalten,
+Eine ausfhrliche Dokumentation zu PD-Zmodem ist im PD-Zmodem-Paket enthalten,
 das Sie in vielen Boxen finden.
 
 
@@ -7364,7 +7415,7 @@ Fensters abschalten. Dadurch bleibt Ihnen Zeit, die Fehlermeldung zu lesen.
 
 ş H„nger bei Datenbertragung
 
-Falls die ZModem-šbertragung gelegentlich h„ngt, bis eine Taste drckt wird,
+Falls die Zmodem-šbertragung gelegentlich h„ngt, bis eine Taste drckt wird,
 arbeitet die Leerlaufzeiterkennung von Windows zu empfindlich. In diesem Fall
 mssen Sie die Empfindlichkeit ber die entsprechende Einstellung verringern
 (ab Windows 95) oder komplett abschalten.
@@ -7439,7 +7490,7 @@ mit "compact /c mpuffer.*" die Dateikomprimierung fr die Nachrichtenpuffer
 aktivieren (typische Packrate: 1,5 : 1). Die Performance des Programms wird
 dadurch kaum beeintr„chtigt.
 
-Die meisten ZModem-Protokolle, einschlieálich PD-ZModem, funktionieren unter
+Die meisten Zmodem-Protokolle, einschlieálich PD-Zmodem, funktionieren unter
 Windows NT nicht zuverl„ssig bei h”heren Baudraten. In diesem Fall sollten Sie
 entweder GSZ verwenden, oder den FOSSIL-Treiber NTFOSS, den Sie z.B. in der
 XP-Supportbox finden. Falls NTFOSS nicht richtig funktioniert, sollten Sie
@@ -8441,12 +8492,12 @@ o  diverse Kleinigkeiten korrigiert
 +  zus„tzliche Einstellungen bei /Edit/Boxen/Edit/QWK
 +  Suche nach gelesenen Nachrichten
 +  /Config/Anzeige/Diverses: Screensaver - schwarzschalten
-+  /Config/Anzeige/PD-ZModem
++  /Config/Anzeige/PD-Zmodem
 +  MausTausch: ITI-Auswertung (zus„tzliche Infofiles)
 +  /Edit/Boxen/Edit/Ausgangsfilter
 !  Fehler beim Bl„ttern im Ungelesen-Mode behoben
    /XPoint/Terminal:
-+     PD-ZModem-Autodownload und -Autoupload
++     PD-Zmodem-Autodownload und -Autoupload
 +     Einstellungen mit Alt-O
 !  UUdecode-Fehler behoben (falsche Dateil„nge)
 *  /Nachricht/Alle/... abbrechbar
@@ -8487,7 +8538,7 @@ o  diverse Kleinigkeiten korrigiert
 3.11  (09.04.96)
 !  H„nger beim Abbruch von Programmfunktionen behoben, die ber ein
    Makro aufgerufen wurden [als Patch fr XP 3.1 verfgbar]
-!  ZModem-Up/Download im Terminal funktioniert jetzt auch ohne
+!  Zmodem-Up/Download im Terminal funktioniert jetzt auch ohne
    FOSSIL-Treiber [als Patch fr XP 3.1 verfgbar]
 !  interner Fehler im Lister behoben
 !  diverse Fehler im internen Terminal behoben
@@ -8720,7 +8771,6 @@ o  diverse Kleinigkeiten korrigiert
 !  beim ndern des Lesen-Status einer Nachricht verabschiedete sich
    CrossPoint
 +  AND/OR-Verknpfung in der Suche m”glich (s. Kapitel 3.9)
-+  FQDN auch bei RFC-Boxen m”glich
 +  Rechenzeitfreigabe verbessert
      Automatische Freigabe unter OS/2, Windows und der DOSEmu von 
       Linux
