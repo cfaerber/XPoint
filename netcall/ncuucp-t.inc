@@ -71,12 +71,12 @@ begin
   while not eof(f) do begin
     Netcall.TestBreak;
     BlockRead(f,buf.dat,1024,rd);
-    buf.len:=HostToBigEndian32(rd);
+    buf.len:=longint(HostToBigEndian32(dword(rd)));
     CommObj.SendBlock(buf,4+rd,sd);
     FileAdvance(buf.dat,rd);
   end;
 
-  buf.len:=HostToBigEndian32(0);
+  buf.len:=longint(HostToBigEndian32(0));
   CommObj.SendBlock(buf,4,sd);
 end;
 
@@ -93,7 +93,7 @@ begin
       Netcall.TestTimeout;
   
     CommObj.ReadBlock(len,4,rd);
-    len:=BigEndianToHost32(len);
+    len:=dword(BigEndianToHost32(dword(len)));
 
     if len=0 then
       exit else
@@ -124,6 +124,9 @@ end;
 
 {
   $Log$
+  Revision 1.4  2001/10/17 21:11:08  cl
+  - Range check errors fix
+
   Revision 1.3  2001/03/26 22:21:08  cl
   - minor fixes and cleanups
 
