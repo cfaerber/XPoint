@@ -1,9 +1,9 @@
 (*
-** ObjCOM tcp communication implementation header file
+** ObjCOM raw ip communication implementation header file
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-type tTelnetObj = Object(TCommObj)
+type tRawIPObj = Object(TCommObj)
         constructor Init;
         destructor Done; virtual;
 
@@ -33,13 +33,14 @@ type tTelnetObj = Object(TCommObj)
         procedure ResumeCom(OpenCom: Boolean); virtual;
         private
          SHandle: LongInt; SOpened: Boolean; InBuffer: tRingbuffer;
-         procedure ProcIncoming;
-     end; { object TTelnetObj }
+         {$IFNDEF Linux} WSAData: tWSAData; {$ENDIF}
+         procedure ProcIncoming; virtual;
+     end; { object tRawIPObj }
 
-Type tpTelnetObj = ^TTelnetObj;
+Type tpRawIPObj = ^tRawIPObj;
 
-
-{ THostEnt Object }
+{$IFDEF Linux}
+  { THostEnt Object }
   THostEnt = record
     h_Name     : pchar;   { Official name }
     h_Aliases  : ppchar;  { Null-terminated list of aliases}
@@ -49,15 +50,31 @@ Type tpTelnetObj = ^TTelnetObj;
   end;
   PHostEnt = ^THostEnt;
 
-{$ifdef unix}
-{$LINKLIB c}
-{$endif}
-
-function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
+  {$LINKLIB c}
+  function gethostbyname(Name: PChar): PHostEnt; cdecl; external;
+{$ENDIF}
 
 {
   $Log$
-  Revision 1.1  2001/01/20 17:36:26  ml
-  - linuxextension of telnet-obj
+  Revision 1.1  2001/01/28 18:04:59  ma
+  - raw ip functionality moved from oct*.inc to ocrawip*.inc
+  - compiling under Win32 as well as Unix
+
+  Revision 1.5  2001/01/03 22:31:40  ma
+  - using WinSock instead of Sockets now
+  - implemented resolving of host name
+
+  Revision 1.4  2000/10/28 09:45:50  ma
+  - introduced credits.txt
+
+  Revision 1.3  2000/09/29 23:21:43  ma
+  - Done virual
+
+  Revision 1.2  2000/09/11 23:00:13  ma
+  - provisional outgoing TCP support added
+
+  Revision 1.1  2000/06/22 17:30:02  mk
+  - initial release
+  - please keep comments in English
 
 }
