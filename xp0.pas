@@ -79,8 +79,13 @@ const
        MsgFelderMax = 6;             { max. Feldzahl in der Nachrichtenliste }
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
 
+{$ifdef hasHugeString}
+       xp_xp       : string = 'OpenXP';
+       xp_origin   : string = '--- OpenXP';
+{$else}
        xp_xp       : string[6] = 'OpenXP';
        xp_origin   : string[15] = '--- OpenXP';
+{$endif}
        QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
@@ -207,12 +212,12 @@ const
 
                                        { Namen der Exe-Dateien }
 {$IFDEF UnixFS}
-       MaggiBin         : pathstr       = 'maggi';
-       UUCICOBin        : pathstr       = 'uucico';
-       UUZBin           : pathstr       = 'uuz';
-       Yup2PktBin       : pathstr       = 'yup2pkt';
-       ZFidoBin         : pathstr       = 'zfido';
-       ZQWKBin          : pathstr       = 'zqwk';
+       MaggiBin         : string        = 'maggi';
+       UUCICOBin        : string        = 'uucico';
+       UUZBin           : string        = 'uuz';
+       Yup2PktBin       : string        = 'yup2pkt';
+       ZFidoBin         : string        = 'zfido';
+       ZQWKBin          : string        = 'zqwk';
 {$ELSE}
        MaggiBin         = 'MAGGI.EXE';
        UUCICOBin        = 'UUCICO.EXE';
@@ -396,24 +401,107 @@ type   textp  = ^text;
        { Netztypen: 0=Netcall, 1=Pointcall, 2=ZConnect, 3=MagicNET }
        {            10=QM, 11=GS, 20=Maus, 30=Fido, 40=RFC         }
 
+{$ifdef hasHugeString}
+       OrgStr      = string;
+       AdrStr      = string;
+       TeleStr     = string;
+       HomepageStr = string;
+       CustHeadStr = string;
+{$else}
        OrgStr      = string[OrgLen];
        AdrStr      = string[AdrLen];
        TeleStr     = string[TeleLen];
        HomepageStr = string[HomepageLen];
        CustHeadStr = string[CustHeadLen];
+{$endif}
        pviewer     = ^string;
 
        refnodep= ^refnode;             { Datentyp fÅr Reference-Liste }
        refnode = record
                    next  : refnodep;
+{$ifdef hasHugeString}
+		   ref   : string;
+{$else}
                    ref   : string[midlen];
+{$endif}
                  end;
        empfnodep=^empfnode;
        empfnode= record
                    next   : empfnodep;
+{$ifdef hasHugeString}
+		   empf   : string;
+{$else}
                    empf   : AdrStr;
+{$endif}
                  end;
-
+{$ifdef hasHugeString}
+       header = record
+                  netztyp    : byte;          { --- intern ----------------- }
+                  archive    : boolean;       { archivierte PM               }
+                  attrib     : word;          { Attribut-Bits                }
+                  filterattr : word;          { Filter-Attributbits          }
+                  empfaenger : string;    { --- allgemein --- Brett / User / TO:User }
+                  kopien     : empfnodep;     { KOP: - Liste }
+                  empfanz    : integer;       { Anzahl EMP-Zeilen }
+                  betreff    : string;
+                  absender   : string;
+                  datum      : string;    { Netcall-Format               }
+                  zdatum     : string;    { ZConnect-Format; nur auslesen }
+                  orgdate    : boolean;       { Ausnahme: zdatum schreiben   }
+                  pfad       : string;    { Netcall-Format               }
+                  msgid,ref  : string;{ ohne <>                      }
+                  ersetzt    : string;{ ohne <>                      }
+                  refanz     : integer;       { Anzahl BEZ-Zeilen            }
+                  typ        : string;     { T / B                        }
+                  crypttyp   : string;     { '' / T / B                   }
+                  charset    : string;
+                  ccharset   : string;     { crypt-content-charset }
+                  groesse    : longint;
+                  realname   : string;
+                  programm   : string;        { Mailer-Name }
+                  organisation : string;
+                  postanschrift: string;
+                  telefon    : string;
+                  homepage   : string;
+                  PmReplyTo  : string;        { Antwort-An    }
+                  AmReplyTo  : string;        { Diskussiom-In }
+                  amrepanz   : integer;       { Anzahl Diskussion-in's }
+                  komlen     : longint;       { --- ZCONNECT --- Kommentar-LÑnge }
+                  ckomlen    : longint;       { Crypt-Content-KOM }
+                  datei      : string;    { Dateiname                  }
+                  ddatum     : string;    { Dateidatum, jjjjmmtthhmmss }
+                  prio       : byte;          { 10=direkt, 20=Eilmail      }
+                  error      : string; { ERR-Header              }
+                  oem,oab,wab: string;
+                  oar,war    : string;    { Realnames }
+                  real_box   : string;    { --- Maggi --- falls Adresse = User@Point }
+                  hd_point   : string;    { eigener Pointname }
+                  pm_bstat   : string;    { --- Maus --- Bearbeitungs-Status }
+                  org_msgid  : string;
+                  org_xref   : string;
+                  ReplyPath  : string;
+                  ReplyGroup : string;    { Kommentar-zu-Gruppe          }
+                  fido_to    : string;    { --- Fido ------------------- }
+                  x_charset  : string;    { --- RFC -------------------- }
+                  keywords   : string;
+                  summary    : string;
+{!MH:}          priority   : byte;          { Priority: 1, 3, 5 }
+                  distribution:string;
+                  pm_reply   : boolean;       { Followup-To: poster }
+                  quotestring: string;
+                  empfbestto : string;
+                  pgpflags   : word;          { PGP-Attribut-Flags           }
+                  pgp_uid    : string;    { alternative Adresse          }
+                  vertreter  : string;
+                  XPointCtl  : longint;
+                  nokop      : boolean;
+                  boundary   : string;    { MIME-Multipart-Boundary      }
+                  mimetyp    : string;
+                  xnoarchive : boolean;
+                  Cust1,Cust2: string;
+                  control    : string;
+                end;
+{$else}
        header = record
                   netztyp    : byte;          { --- intern ----------------- }
                   archive    : boolean;       { archivierte PM               }
@@ -480,6 +568,7 @@ type   textp  = ^text;
                   Cust1,Cust2: CustHeadStr;
                   control    : string[150];
                 end;
+{$endif} { hasHugeString }
        headerp = ^header;
 
        markrec  =  record
@@ -510,6 +599,143 @@ type   textp  = ^text;
                   tlevel : byte;        { FIFO trigger level }
                 end;
 
+{$ifdef hasHugeString}
+       BoxRec = record
+                  boxname   : string;   { redundant; wird aus .. }
+                  pointname : string;
+                  username  : string;
+                  _domain   : string;   { .. BOXEN.DB1 kopiert   }
+                  _fqdn     : string;   {16.01.00 HS}
+                  passwort  : string;
+                  telefon   : string;
+                  zerbid    : string;
+                  uploader  : string;
+                  downloader: string;
+                  zmoptions : string;
+                  prototyp  : string;    { Protokoll-Typ /Maus }
+                  uparcer   : string;
+                  downarcer : string;
+                  unfreezer : string;
+                  ungzipper : string;
+                  uparcext  : string;
+                  downarcext: string;
+                  connwait  : integer;
+                  loginwait : integer;
+                  redialwait: integer;
+                  redialmax : integer;
+                  connectmax: integer;
+                  packwait  : integer;
+                  retrylogin: integer;
+                  conn_time : integer;      { Modem-Connect-Zeit }
+                  owaehlbef : string;   { wird nicht mehr verwendet! }
+                  modeminit : string;
+                  mincps    : integer;
+                  bport     : byte;
+                  params    : string;
+                  baud      : longint;
+                  gebzone   : string;
+                  SysopInp  : string;  { Eingabe-Puffer fÅr SysMode }
+                  SysopOut  : string;  { Zieldatei fÅr Sysop-Mode  }
+                  SysopStart: string;
+                  SysopEnd  : string;
+                  O_passwort: string;  { Online-Pa·wort }
+                  O_logfile : string;  { Online-Logfile }
+                  O_script  : string;  { Online-Script  }
+                  MagicNet  : string;   { Name des MagicNet's..     }
+                  MagicBrett: string;  { Bretthierarchie fÅr Magic }
+                  lightlogin: boolean;     { LightNET-Login: \ statt ^F}
+                  exclude   : array[1..excludes,1..2] of string;
+                  FPointNet : smallword;   { Fido: Pointnetz-Nr.       }
+                  f4D       : boolean;     { Fido: 4D-Adressen         }
+                  fTosScan  : boolean;     { Fido: Box benutzt TosScan }
+                  AreaPlus  : boolean;     { Fido: "+" bei AreaFix     }
+                  AreaBetreff:boolean;     { Fido: -q / -l             }
+                  AreaPW    : string;  { Fido/UUCP: Areafix-PW     }
+                  FileScanner:string;  { Fido: Filescan-Name       }
+                  FilescanPW: string;  { Fido: Filescan-Pa·wort    }
+                  EMSIenable: boolean;     { Fido: EMSI mîglich        }
+                  AKAs      : string; { Fido: lokale AKA-Liste }
+                  SendAKAs  : string; { Fido: Pakete mitsenden fÅr.. }
+                  GetTime   : boolean;     { Fido: TRX#-Zeit setzen    }
+                  SendTrx   : boolean;     { Fido: TRX# senden - undok }
+                  NotSEmpty : boolean;     { Fido: kein sendempty - "  }
+                  PacketPW  : boolean;     { Fido: Paketpa·wort senden }
+                  ExtPFiles : boolean;     { Fido: erweiterte Paketdateinamen }
+                  LocalIntl : boolean;     { Fido: ~d'Bridge-Areafix   }
+                  Brettmails: boolean;     { Turbo-Box/Maus:  Brettnachr. }
+                  LoginName : string;  { UUCP/QM: login-Username   }
+                  UUCPname  : string;   { uucico-Systemname         }
+                  MaxWinSize: byte;        { UUCP: max. Windowgrî·e    }
+                  MaxPacketSize:smallword;      { UUCP: max. Blockgrî·e     }
+                  VarPacketSize:boolean;   { UUCP: variable Blockgrî·e }
+                  ForcePacketSize:boolean; { UUCP: SendWinsize=RecvWinsize }
+                  UUprotos  : string;  { UUCP: mîgl. Protokolle    }
+                  SizeNego  : boolean;     { UUCP: size negotiation    }
+                  UUsmtp    : boolean;     { UUCP: SMTP                }
+                  eFilter   : string;  { Eingangsfilter            }
+                  aFilter   : string;  { Ausgangsfilter            }
+                  SysopNetcall : boolean;  { Netzanruf-Bericht im S.M. }
+                  SysopPack : boolean;     { Sysopnetcall-Paket packen }
+                  Script    : string;  { Netcall-Script     }
+                  chsysbetr : string;  { Changesys-Betreff  }
+                  uucp7e1   : boolean;     { gerade Parity beim Login }
+                  JanusPlus : boolean;     { Janus+             }
+                  DelQWK    : boolean;     { ZQWK-Schalter -del }
+                  BMtyp     : byte;        { UUCP: Brettmanager-Typ }
+                  BMdomain  : boolean;     { UUCP: Brettmanager braucht Domain }
+                  maxfsize  : smallword;   { UUCP: max. Empfangsdateigrî·e / KB }
+                end;
+       BoxPtr = ^BoxRec;
+
+       QfgRec = record                     { QWK-QFG-Daten }
+                  RepFile   : string;   { REP-Dateinahme ohne Ext. }
+                  Packer    : string;   { Packer-Typ (Extension)   }
+                  Door      : string;  { Name des Doorprogramms   }
+                  requests  : boolean;     { File Requests mîglich    }
+                  ebs       : boolean;     { EmpfangsbestÑtigungen "  }
+                  privecho  : string;  { PM-Echo                  }
+                  netecho   : string;  { Netmail-Echo             }
+                  emailecho : string;  { EMail-Echo (Oerx)        }
+                  nmt       : byte;        { Netmail-Typ              }
+                  midtyp    : shortint;    { Message-ID-Typ           }
+                  hdr       : boolean;     { Header im Body           }
+                  bretter   : string;  { Brettebene               }
+                end;
+
+       FidoAdr = record
+                   username   : string;  { darf aber nach FTS nicht > 36 sein (incl #0) }
+                   zone,net   : word;
+                   node,point : word;
+                   ispoint    : boolean;
+                 end;
+
+       NL_Rec  = record
+                   listfile   : string;    { Nodelisten-Datei      }
+                   number     : integer;       { akt. Nummer           }
+                   updatefile : string;    { Diff/Update-Datei     }
+                   updatearc  : string;    { gepackte Update-Datei }
+                   processor  : ^string;       { externer Bearbeiter   }
+                   DoDiff     : boolean;
+                   DelUpdate  : boolean;       { Diff lîschen }
+                   format     : byte;     { 1=NL, 2=P24, 3=PVT, 4=4D, 5=FD }
+                   zone,net,node : word;
+                   sort       : longint;       { TemporÑrfeld }
+                 end;
+       NL_array= array[1..maxNodelists] of NL_Rec;
+       NL_ap   = ^NL_array;
+
+       fkeyt  = array[1..10] of record
+                                  menue    : string;
+                                  prog     : string;
+                                  warten   : boolean;
+                                  bname    : boolean;  { $FILE aus Betreff }
+                                  ntyp     : byte;   { xp3.extract_msg.typ }
+                                  listout  : boolean;  { Ausgabe an Lister }
+                                  speicher : word;       { 50 .. 500 KByte }
+                                  vollbild : boolean;
+                                  autoexec : boolean;
+                                end;
+{$else} { hasHugeString }
        BoxRec = record
                   boxname   : string[20];   { redundant; wird aus .. }
                   pointname : string[25];
@@ -645,6 +871,7 @@ type   textp  = ^text;
                                   vollbild : boolean;
                                   autoexec : boolean;
                                 end;
+{$endif} { hasHugeString }
        fkeyp  = ^fkeyt;
 
        KeyRec = record
@@ -667,6 +894,20 @@ type   textp  = ^text;
 
        ExtHeaderType = array[1..maxheaderlines] of byte;
 
+{$ifdef hasHugeString}
+       viewert  = array[1..maxviewers] of record
+                                            ext : string;
+                                            prog: string;
+                                          end;
+       UnpackRec = record
+                     UnARC, UnLZH, UnZOO,
+                     UnZIP, UnARJ, UnPAK,
+                     UnDWC, UnHYP, UnSQZ,
+                     UnRAR                : string;
+                   end;
+
+       PathPtr   = ^string;
+{$else}
        viewert  = array[1..maxviewers] of record
                                             ext : string[3];
                                             prog: string[40];
@@ -679,7 +920,7 @@ type   textp  = ^text;
                    end;
 
        PathPtr   = ^pathstr;
-
+{$endif}
        DomainNodeP = ^domainnode;
        DomainNode = record
                       left,right : DomainNodeP;
@@ -721,7 +962,11 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        OrgVideomode:word    = 3;
        uvs_active : boolean = false;   { /N/Z/Unversandt        }
        marksorted : boolean = false;   { marked^[] sortiert     }
+{$ifdef hasHugeString}
+       fidolastseek:string  = '';      { Fido/Fileliste/Suchen  }
+{$else}
        fidolastseek:string[40] = '';   { Fido/Fileliste/Suchen  }
+{$endif}
        abgelaufen1: boolean = false;   { Betaversion ist abgelaufen }
        abgelaufen2: boolean = false;   {  " }
        cfgmodified: boolean = false;   { Einstellungen geÑndert }
@@ -742,37 +987,68 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        ParMono    : boolean = false;   { monochrome Anzeige     }
        ParNojoke  : boolean = false;   { Spruch am Ende abschalten }
        ParXX      : boolean = false;   { s. XP4E                }
+{$ifdef hasHugeString}
+       ParNetcall : string  = '';  { autom. Netcall }
+       ParNCtime  : string  = '';    { Uhrzeit f. autom. Netcall }
+{$else}
        ParNetcall : string[BoxNameLen] = '';  { autom. Netcall }
        ParNCtime  : string[5] = '';    { Uhrzeit f. autom. Netcall }
+{$endif}
        ParRelogin : boolean = false;   { Relogin-Netcall        }
        ParReorg   : boolean = false;   { autom. Reorganisation  }
        ParSpecial : boolean = false;   { Spezial-Reorg - Puffer-reparieren }
        ParPack    : boolean = false;   { autom. Packen          }
        ParXPack   : boolean = false;   { autom. Packen / nur Dateien mit LÅcken }
+{$ifdef hasHugeString}
+       ParXPfile  : string  = '';    { optional zu /xpack: Datenbankname }
+{$else}
        ParXPfile  : string[8] = '';    { optional zu /xpack: Datenbankname }
+{$endif}
        ParQuiet   : boolean = false;   { keine GerÑusche        }
        ParTestres : boolean = true;    { Test auf residente Prg. }
        ParMaus    : boolean = false;   { Pseudo-Maus            }
+{$ifdef hasHugeString}
+       ParPuffer  : string = '';      { autom. Puffer einlesen }
+{$else}
        ParPuffer  : pathstr = '';      { autom. Puffer einlesen }
+{$endif}
        ParPufED   : boolean = false;   { -> EmpfDat = ErstDat   }
        ParGelesen : boolean = false;   { ip-eingelesene Nachrichten auf }
        ParTiming  : byte    = 0;       {    'gelesen' setzen    }
        ParExit    : boolean = false;   { Programm beenden       }
+{$ifdef hasHugeString}
+       ParSetuser : string  = '';   { Username setzen        }
+       ParSendbuf : string  = '';      { Puffer automatisch versenden }
+{$else}
        ParSetuser : string[50] = '';   { Username setzen        }
        ParSendbuf : pathstr = '';      { Puffer automatisch versenden }
+{$endif}
        ParKey     : char    = ' ';     { autom. Tastendruck     }
        ParEmpfbest: boolean = false;   { Zusatzschalter fÅr /IPx }
+{$ifdef hasHugeString}
+       ParPass    : string  = '';   { * -> ausgeben; Hex -> setzen }
+       ParPasswd  : string  = '';   { Pa·wort }
+{$else}
        ParPass    : string[10] = '';   { * -> ausgeben; Hex -> setzen }
        ParPasswd  : string[10] = '';   { Pa·wort }
+{$endif}
        ParZeilen  : byte = 0;          { Bildzeilen }
        ParWintime : byte    = 1;       { Unter 32 Bit immer Default einschalten }
        ParOS2     : byte    = 0;       { Rechenleistungs-Freigabe }
        ParSsaver  : boolean = false;   { Screensaver }
+{$ifdef hasHugeString}
+       ParAutost  : string  = '';   { /autostart: }
+       ParGebdat  : string  = 'gebuehr.dat';  { GebÅhrenzonenliste }
+       ParGebdat2 : string  = 'tarife.dat';   { 2. Teil der " }
+       ParAV      : string  = '';      { Archiv-Viewer }
+       ParLanguage: string  = '';    { /l: Sprache }
+{$else}
        ParAutost  : string[12] = '';   { /autostart: }
        ParGebdat  : string[12] = 'gebuehr.dat';  { GebÅhrenzonenliste }
        ParGebdat2 : string[12] = 'tarife.dat';   { 2. Teil der " }
        ParAV      : pathstr = '';      { Archiv-Viewer }
        ParLanguage: string[4] = '';    { /l: Sprache }
+{$endif}
        ParNomem   : boolean = false;   { Speichertest Åbergehen }
        ParNoSmart : boolean = false;   { kein Schreibcache-Flush }
        ParLCD     : boolean = false;   { keine Int10/CharGen-Zugriffe }
@@ -787,9 +1063,13 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        MoreMode   : boolean = true;
        Developer  : boolean = false;
 {$IFDEF UnixFS }
-       SupportCfg : string[12] = 'support.cfg';
+       SupportCfg : string  = 'support.cfg';
 {$ELSE }
+{$ifdef hasHugeString}
+       SupportCfg : string  = 'SUPPORT.CFG';
+{$else}
        SupportCfg : string[12] = 'SUPPORT.CFG';
+{$endif}
 {$ENDIF }
        UseNewCfg  : boolean = false; { neue cfg, wird in initvar (xp2cfg) gesetzt (hd) }
 
@@ -797,6 +1077,23 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 
                          { Externe Viewer: Extension-abhaengige Sicherheitseinstellungen: }
 
+{$ifdef hasHugeString}
+       viewer_danger : string = '.EXE.COM.BAT.BTM.CMD.PIF.LNK.INF.REG.'; { Immer Abfragen }
+       viewer_save   : string = '.BMP.GIF.JPG.PCX.IFF.PDF';        { ohne Sicherheitsabfrage }
+       viewer_lister : string = '.TXT.ASC';                 { immer internen Lister benutzen }
+       viewer_scanner : string = '';            { Viewer bei Antwort=Nein }
+
+       QuoteCharSet : set of char = [':','|']; { Weitere Quotezeichen }
+       OtherQuoteChars : boolean = false; { andere Quotezeichen neben > aktivieren }
+       Otherqcback : Boolean = false;     { Backup von Otherqqotechars zum Umschalten}
+
+       PGP2 = '2.6.x';
+       PGP5 = '5.x';
+       PGP6 = '6.5.x';
+       PGPVersion : string = PGP2;
+
+       mheadercustom : array[1..2] of string = ('','');
+{$else}
        viewer_danger : string[37] = '.EXE.COM.BAT.BTM.CMD.PIF.LNK.INF.REG.'; { Immer Abfragen }
        viewer_save   : string = '.BMP.GIF.JPG.PCX.IFF.PDF';        { ohne Sicherheitsabfrage }
        viewer_lister : string = '.TXT.ASC';                 { immer internen Lister benutzen }
@@ -812,6 +1109,7 @@ const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
        PGPVersion : string[5] = PGP2;
 
        mheadercustom : array[1..2] of string[custheadlen] = ('','');
+{$endif}
 
        AutoDatumsBezuege : boolean = false;
        MsgFeldDef = 'FGDAEB'; { Standardreihenfolge: Feldtausch Nachrichtenliste }
@@ -835,6 +1133,23 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        IntGruppe,LocGruppe,NetzGruppe : longint;   { INT_NRs der Std.-Gruppen }
 
        menu         : array[0..menus] of ^string;
+{$ifdef hasHugeString}
+       SwapFileName : string;
+       helpfile     : string;     { XP.HLP     }
+       keydeffile   : string;     { KEYDEF.CFG }
+       OwnPath      : string;
+       ShellPath    : string;
+       TempPath     : string;
+       ExtractPath  : string;
+       SendPath     : string;
+       LogPath      : string;
+       FilePath     : string;
+       FidoPath     : string;       { OwnPath+FidoDir }
+       EditLogpath  : string;
+       EditTemppath : string;
+       EditExtpath  : string;
+       EditSendpath : string;
+{$else}
        SwapFileName : string[12];
        helpfile     : string[12];     { XP.HLP     }
        keydeffile   : string[12];     { KEYDEF.CFG }
@@ -846,12 +1161,12 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        LogPath      : pathstr;
        FilePath     : pathstr;
        FidoPath     : pathstr;       { OwnPath+FidoDir }
-       lockfile     : file;          { gelockte Datei LOCKFILE }
-
        EditLogpath  : pathptr;
        EditTemppath : pathptr;
        EditExtpath  : pathptr;
        EditSendpath : pathptr;
+{$endif}
+       lockfile     : file;          { gelockte Datei LOCKFILE }
 
        col          : ColRec;        { CFG-Variablen :  ------ }
        ExtraktTyp   : byte;          { 0=ohne Kopf, 1=mit, 2=Puffer, 3=Quote }
@@ -859,19 +1174,33 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        brettanzeige : byte;          { 0=gross, 1=top, 2=klein }
        ShowMsgDatum : boolean;       { Datum im Nachrichtenf.  }
        viewers      : ^viewert;
+{$ifdef hasHugeString}
+       VarEditor,
+       VarLister    : string;    { externer Editor/Lister  }
+{$else}
        VarEditor,
        VarLister    : string[40];    { externer Editor/Lister  }
+{$endif}
        ListerKB     : smallword;
        EditorKB     : smallword;
        stdhaltezeit,
        stduhaltezeit: integer16;
+{$ifdef hasHugeString}
+       QuoteChar    : string;
+{$else}
        QuoteChar    : string[QuoteLen];
+{$endif}
        QuoteBreak   : byte;          { Zeilenumbruch fÅr Quoter }
        COMn         : array[1..MaxCom] of ComRec;  { Schnitten-Paras }
        BoxPar       : BoxPtr;
+{$ifdef hasHugeString}
+       DefaultBox   : string;
+       DefFidoBox   : string;
+{$else}
        DefaultBox   : string[20];
        DefFidoBox   : string[20];
-   {}  LongNames    : boolean;       {   "       "         : >40 Zeichen }
+{$endif}
+       LongNames    : boolean;       {   "       "         : >40 Zeichen }
        ScrSaver     : smallword;
        SoftSaver    : boolean;       { Bild weich ausblenden }
        BlackSaver   : boolean;       { schwarzschalten }
@@ -884,7 +1213,11 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        HayesComm    : boolean;
        ShowLogin    : boolean;
        BreakLogin   : boolean;
+{$ifdef hasHugeString}
+       ArchivBretter: string;
+{$else}
        ArchivBretter: string[BrettLen];
+{$endif}
        ArchivLoesch : boolean;       { Msgs nach Archivierung lîschen }
        ArchivText   : boolean;       { Archivier-Vermerk erstellen}
        shell25      : boolean;       { 25-Zeilen-Mode bei DOS-Shell }
@@ -903,21 +1236,37 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ShowMsgID    : boolean;
        ShowMsgSize  : boolean;
        DruckLPT     : smallword;          { 1-5: LPT1-3, COM1-2 }
+{$ifdef hasHugeString}
+       DruckInit    : string;
+       DruckExit    : string;
+       DruckFormlen : byte;          { SeitenlÑnge; 0 = kein autom. Vorschub }
+       DruckFF      : string;
+{$else}
        DruckInit    : string[80];
        DruckExit    : string[80];
        DruckFormlen : byte;          { SeitenlÑnge; 0 = kein autom. Vorschub }
        DruckFF      : string[80];
+{$endif}
        DruckLira    : byte;
        AutoCpgd     : boolean;       { automatisches Ctrl-PgDn im Editor }
        XP_ID_PMs    : boolean;
        XP_ID_AMs    : boolean;
        UserSlash    : boolean;
+{$ifdef hasHugeString}
+       BAKext	    : string;
+{$else}
        BAKext       : string[3];
+{$endif}
        keepedname   : boolean;
        pmcrypt      : array[1..maxpmc] of
                         record
+{$ifdef hasHugeString}
+                          encode,decode : string;
+                          name          : string;
+{$else}
                           encode,decode : string[40];
                           name          : string[20];
+{$endif}
                           binary        : boolean;
                         end;
        wpz          : longint;       { DM/Zeile bei GebÅhrenstat. *1000  }
@@ -933,10 +1282,17 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        DispUsername : boolean;
        SaveUVS      : boolean;       { AutoPark }
        EmpfBest     : boolean;       { autom. EmpfangsbestÑtigungen }
+{$ifdef hasHugeString}
+       EmpfBkennung : string;    { '##' }
+       unescape     : string;   { UUCP-Adressen... }
+       ReplaceEtime : boolean;       { 00:00 Erstellungszeit }
+       trennchar    : string;     { Trennzeichen fÅr Brett-Trennzeilen }
+{$else}
        EmpfBkennung : string[10];    { '##' }
        unescape     : string[100];   { UUCP-Adressen... }
        ReplaceEtime : boolean;       { 00:00 Erstellungszeit }
        trennchar    : string[1];     { Trennzeichen fÅr Brett-Trennzeilen }
+{$endif}
        AutoArchiv   : boolean;       { automatische PM-Archivierung }
        NewBrettEnde : boolean;       { neue Bretter ans Listenende }
        _maus        : boolean;       { Mausbedienung }
@@ -983,7 +1339,11 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        maxcrosspost : byte;          { Filter fÅr Massen-Crosspostings }
        maildelxpost : boolean;       { 20.01.2000 robo - auch bei Mail? }
        KeepRequests : boolean;       { Requests zurÅckstellen }
+{$ifdef hasHugeString}
+       waehrung     : string;
+{$else}
        waehrung     : string[5];
+{$endif}
        gebnoconn    : longint;       { GebÅhren fÅr nicht zustandegek. Verb. }
        gebCfos      : boolean;       { GebÅhrenÅbernahme von cFos }
        autofeier    : boolean;       { Feiertage bei GebÅhren berÅcksichtigen }
@@ -998,12 +1358,15 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        vesa_dpms    : boolean;       { Screen-Saver-Stromsparmodus }
        termbios     : boolean;       { BIOS-Ausgabe im Terminal }
        tonsignal    : boolean;       { zusÑtzliches Tonsignal nach Reorg u.a. }
+{$ifdef hasHugeString}
+{$else}
        MsgFeldTausch   : string[MsgFelderMax]; { fÅr blinde Benutzer,
                                        die sich Ausgaben vorlesen lassen, kînnen
                                        in der Brettliste Felder vertauscht werden }
        UsrFeldTausch   : string[UsrFelderMax]; { fÅr blinde Benutzer,
                                        die sich Ausgaben vorlesen lassen, kînnen
                                        in der Userliste Felder vertauscht werden }
+{$endif}
        UsrFeldPos1  : Byte;          { Spezialmodus Position der Usernamen (FeldTausch) }
        UsrFeldPos2  : Byte;          { Normalmodus Position der Uusernamen (FeldTausch) }
        Magics       : boolean;       { Auch Magics im F3-Request erkennen j/n }
@@ -1020,13 +1383,34 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        PGPbatchmode : boolean;       { PGP-Schalter +batchmode verwenden }
        PGP_UUCP     : boolean;       { PGP fÅr RFC/UUCP }
        PGP_Fido     : boolean;       { PGP fÅr Fido }
+{$ifdef hasHugeString}
+       PGP_UserID   : string;        { Netzadresse von Key }
+{$else}
        PGP_UserID   : string[80];    { Netzadresse von Key }
+{$endif}
        PGP_AutoPM   : boolean;       { Keys aus PMs automatisch einlesen }
        PGP_AutoAM   : boolean;       { Keys aus AMs automatisch einlesen }
        PGP_waitkey  : boolean;       { 'Taste drÅcken ...' nach PGP }
        PGP_log      : boolean;       { Logfile fÅr PGP-AktivitÑten }
        PGP_signall  : boolean;       { alle Nachrichten signieren }
 
+{$ifdef hasHugeString}
+       IntVorwahl   : string;    { internationale Vorwahl }
+       NatVorwahl   : string;    { nationale Vorwahl, normalerweise 0 }
+       Vorwahl      : string;    { eigene Vorwahl }
+       AutoDiff     : boolean;       { Node/Pointdiffs automatisch einbinden }
+       ShowFidoEmpf : boolean;       { von/an/Betreff-Anzeige }
+       HighlightName: string;    { eigenen Fido-BrettempfÑnger hervorheben }
+       AutoTIC      : boolean;       { TIC-Files auswerten }
+
+       AutoUpload   : boolean;       { CrossTerm - PD-Zmodem-Autoupload }
+       AutoDownload : boolean;       { Autodownload }
+       TermCOM      : byte;          { Schnittstelle }
+       TermDevice   : string;        { Device fuer das Terminal }
+       TermBaud     : longint;       { Baudrate }
+       TermStatus   : boolean;       { Statuszeile }
+       TermInit     : string;    { Modem-Init }
+{$else}
        IntVorwahl   : string[15];    { internationale Vorwahl }
        NatVorwahl   : string[10];    { nationale Vorwahl, normalerweise 0 }
        Vorwahl      : string[15];    { eigene Vorwahl }
@@ -1042,6 +1426,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        TermBaud     : longint;       { Baudrate }
        TermStatus   : boolean;       { Statuszeile }
        TermInit     : string[40];    { Modem-Init }
+{$endif}
 
        mono         : boolean;       { monochrome Anzeige      }
        fnkeylines   : byte;          { wird durch DispFunctionKeys gesetzt }
@@ -1058,7 +1443,11 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        nachweiter,nw: boolean;       { Auto-Advace im Msg-Fenster    }
        brettweiter  : boolean;
        userweiter   : boolean;
+{$ifdef hasHugeString}
+       qchar	    : string;        { zuletzt verwendeter Quote-String }
+{$else}
        qchar        : string[20];    { zuletzt verwendeter Quote-String }
+{$endif}
        brettall     : boolean;       { false -> nur zutreffende Bretter anz. }
        cfgscrlines  : byte;          { Config-Bildzeilen (wg. /z: }
        domainlist   : DomainNodeP;   { zum Erkennen von Replys auf eigene N. }
@@ -1075,7 +1464,11 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ablsize     : array[0..ablagen-1] of longint;   { Dateigrî·en }
        AktDispmode : shortint;
        AktDisprec  : longint;
+{$ifdef hasHugeString}
+       editname    : string;         { Dateiname fÅr /Edit/Text }
+{$else}
        editname    : pathstr;        { Dateiname fÅr /Edit/Text }
+{$endif}
        keymacros   : integer;        { Anzahl geladene Tastenmakros }
        macrokey    : array[1..maxkeys] of taste;
        macroflags  : array[1..maxkeys] of byte;
@@ -1088,9 +1481,15 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
                             komreg,           { R-Kom / R-Org anzeigen }
                             orgreg:boolean;
                      end;
+{$ifdef hasHugeString}
+       regstr1     : string;      { mu· unmittelbar hinter registriert stehen! }
+       regstr2     : string;      { fÅr UUCP }
+       AutoCrash   : string;     { Crash automatisch starten; *.. -> normaler Netcall }
+{$else}
        regstr1     : string[2];      { mu· unmittelbar hinter registriert stehen! }
        regstr2     : string[2];      { fÅr UUCP }
        AutoCrash   : string[30];     { Crash automatisch starten; *.. -> normaler Netcall }
+{$endif}
        ntAllowed   : set of byte;    { zulÑssige Netztypen }
        extheadersize : integer;      { grî·e des Kopfes bei xp3.extract_msg() }
        extHdLines  : integer;        { Anzahl Kopfzeilen bei Extrakt mit Kopf }
@@ -1099,8 +1498,13 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ExtraktHeader : ExtHeaderType;
        reg_hinweis : boolean;        { Fenster bei Programmstart anzeigen }
 
+{$ifdef hasHugeString}
+       PointListn  : string;      { alte Pointlisten-Daten }
+       PointDiffn  : string;
+{$else}
        PointListn  : string[8];      { alte Pointlisten-Daten }
        PointDiffn  : string[8];
+{$endif}
        Pointlist4D : boolean;        { 4D-Liste statt Points24 }
 
        DefaultZone : word;           { Fido - eigene Zone }
@@ -1109,7 +1513,11 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        Nodelist    : NL_ap;          { Node-/Pointlisten }
        NL_anz      : byte;           { Anzahl " }
        NodeOpen    : boolean;        { Nodelist(en) vorhanden & geîffnet }
+{$ifdef hasHugeString}
+       ShrinkNodes : string;    { Nodeliste einschrÑnken }
+{$else}
        ShrinkNodes : string[100];    { Nodeliste einschrÑnken }
+{$endif}
        kludges     : boolean;        { ^A-Zeilen im Lister anzeigen }
        KomShowadr  : boolean;        { <-> BaumAdresse }
        gAKAs       : ^string;        { globale AKA-Adressliste }
@@ -1117,8 +1525,13 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        Postadresse : ^string;
        TelefonNr   : ^TeleStr;
        wwwHomepage : ^HomepageStr;
+{$ifdef hasHugeString}
+       BrettAlle   : string;     { StandardempfÑnger fÅr Brettnachrichten }
+       fidoto      : string;     { XP6: EmpfÑngername bei Brettnachr.     }
+{$else}
        BrettAlle   : string[20];     { StandardempfÑnger fÅr Brettnachrichten }
        fidoto      : string[35];     { XP6: EmpfÑngername bei Brettnachr.     }
+{$endif}
        FidoDelEmpty: boolean;        { 0-Byte-Nachrichten lîschen }
        KeepVia     : boolean;        { ZFIDO: Option -via }
 
@@ -1126,6 +1539,20 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        komanz      : word;           { Anzahl EintrÑge }
        maxebene    : shortint;
        komwidth    : shortint;       { Anzeigeabstand zwischen Ebenen }
+{$ifdef hasHugeString}
+       kombrett    : string;      { Brettcode der Ausgangsnachricht }
+
+       languageopt : boolean;        { /Config/Optionen/Sprachen }
+       _fehler_    : string;
+       _hinweis_   : string;
+       _days_      : ^string;        { 'Monatag Dienstag ... ' }
+       _daylen_    : word;
+       StatBrett,                    { /ØStatistik  }
+       UnvBrett,                     { /ØUnversandt }
+       NetBrett    : string;     { /ØNetzanruf  }
+       _wotag_     : string;     { 'MoDiMiDoFrSaSo' }
+       _jn_        : string;      { 'JN' }
+{$else}
        kombrett    : string[5];      { Brettcode der Ausgangsnachricht }
 
        languageopt : boolean;        { /Config/Optionen/Sprachen }
@@ -1138,14 +1565,14 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        NetBrett    : string[15];     { /ØNetzanruf  }
        _wotag_     : string[14];     { 'MoDiMiDoFrSaSo' }
        _jn_        : string[2];      { 'JN' }
-
+{$endif}
 
 { Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
 
 {$IFDEF NCRT}
-       charbuf     : string[254];                 { Nicht zu klein :-) }
-       attrbuf     : array [1..254] of smallword;
+       charbuf     : shortstring;                 { Nicht zu klein :-) }
+       attrbuf     : array [1..sizeof(shortstring)] of smallword;
 {$ELSE }
        charbuf     : string[82];                  {82 Zeichen   Reihenfolge nicht vertauschen!}
        attrbuf     : array [1..82] of smallword;  {82 Attribute}
@@ -1156,6 +1583,9 @@ implementation
 end.
 {
   $Log$
+  Revision 1.64  2000/07/05 10:40:12  hd
+  - String[#] weitestgehend in string gewandelt
+
   Revision 1.63  2000/07/05 09:09:28  hd
   - Anpassungen AnsiString
   - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
