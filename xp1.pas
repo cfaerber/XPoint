@@ -1084,13 +1084,6 @@ end;
 
 { --- Videomode nach Shell- bzw. externem Aufruf neusetzen ----- }
 
-procedure resetvideo;
-begin
-//  setscreenlines(screenlines);
-  setbackintensity;
-end;
-
-
 procedure exitscreen(joke:shortint);
 var i : integer;
 begin
@@ -2012,6 +2005,9 @@ finalization
 end.
 {
   $Log$
+  Revision 1.74  2000/08/01 20:14:32  mk
+  - ResetVideo entfernt
+
   Revision 1.73  2000/07/27 13:41:49  mk
   - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
 

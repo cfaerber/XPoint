@@ -28,8 +28,6 @@ begin
 end;
 
 
-procedure resetvideo; forward;
-
 { prog:  Programmname. Falls nicht per PATH erreichbar, dann wird
          ein COMMAND /C gestartet
   space: ben”tigter Speicherplatz in KByte (wenn weniger Platz ist,
@@ -140,7 +138,7 @@ begin
       shellkey:=false;
       end;
 
-    resetvideo;
+    setbackintensity;
     cursor(curoff);
     if (cls<>4) and (cls<>5) then holen(sp);
     m2t:=sm2t;
@@ -439,6 +437,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.33  2000/08/01 20:14:32  mk
+  - ResetVideo entfernt
+
   Revision 1.32  2000/07/27 13:41:49  mk
   - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
 
