@@ -1724,7 +1724,7 @@ begin
   end;
   sData.Free;
   pgdown:=false;
-  if FileExists(fn) then DeleteFile(fn);
+  SafeDeleteFile(fn);
 end;
 
 
@@ -2516,6 +2516,9 @@ end;
 
 {
   $Log$
+  Revision 1.96  2002/07/22 10:07:09  mk
+  - do not try to delete existing files
+
   Revision 1.95  2002/07/21 20:23:23  ma
   - cosmetics (box name can now be written in any case)
 
