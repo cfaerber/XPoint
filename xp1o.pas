@@ -1021,10 +1021,8 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
         if not fileattach then writeln(t,'del '+parfn);
         writeln(t,'del '+batfile);
         close(t);
-        if winnt then
-          prog:='cmd /c start cmd /c '+batfile
-          else prog:='start command /c '+batfile
-        end;
+        prog:=getenv('comspec') + ' /c start cmd /c '+batfile
+      end;
       PrepareExe:=1;
     end
     else if os2 and not delviewtmp then begin
@@ -1060,6 +1058,9 @@ end;
 
 {
   $Log$
+  Revision 1.111  2002/04/20 00:19:09  mk
+  - use environment variable comspec
+
   Revision 1.110  2002/04/06 17:07:47  mk
   - fixed some hard coded '\' to PathDelim and other functions
     should resolve misc problems with linux
