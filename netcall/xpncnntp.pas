@@ -61,7 +61,7 @@ uses
   res_postnewsinit      = '%s News senden';
   res_getnewsinit       = '%s News holen';
   res_setnewsgroup      = 'Newsgroup %s (%d von %d)';
-  res_getposting        = 'Hole Posting %d von %d';
+  res_getposting        = 'Hole Artikel %d von %d';
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
 
 function GetServerFilename(boxname: string; var bfile: string): boolean;
@@ -184,8 +184,9 @@ var
   List          : TStringList;
   RFCFileDummy  : String;
 begin
-  ZtoRFC(bp,PPFile,RFCFile);
   RFCFileDummy := RFCFile + 'D-0001.OUT';
+  DeleteFile(RFCFileDummy);
+  ZtoRFC(bp,PPFile,RFCFile);
   result:= true;
   if FileExists(RFCFileDummy) then
   begin
@@ -353,6 +354,9 @@ end.
 
 {
         $Log$
+        Revision 1.18  2001/04/21 15:45:44  ma
+        - deleting existing outgoing RFC file before conversion now
+
         Revision 1.17  2001/04/16 18:13:29  ma
         - ProgOutWin now pauses a bit on closing
           (some seconds if an error occured, one second if not)
