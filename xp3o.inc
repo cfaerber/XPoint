@@ -257,7 +257,7 @@ var x,y,fm   : byte;
           end;
           dbNext(bezbase);
         until (hdp2^.msgid=id) or dbEOF(bezbase) or (dbReadInt(bezbase,'msgid')<>crc);
-        if okay then DelMsg; { zu l”schende/zu ersetzende Nachricht l”schen }
+        if okay and (cancel or (hdp2^.msgid<>hdp2^.ersetzt)) then DelMsg; { zu l”schende/zu ersetzende Nachricht l”schen }
       end;
     dispose(hdp2);
     if cancel then
@@ -1201,6 +1201,9 @@ begin
 end;
 {
   $Log$
+  Revision 1.21.2.3  2000/10/05 17:46:34  sv
+  - Kleine Aenderung bei der Bearbeitung von Supersedes-/Ersetzt-Nachrichten
+
   Revision 1.21.2.2  2000/07/12 17:10:59  jg
   - User-Editmenue: einstellbare Prioritaetsfarbe fuer Msgs des Users
 
