@@ -29,9 +29,9 @@ interface
 
 uses
   xpglobal,             { Nur wegen der Typendefinition }
-  IPCClass,             { TIPC }
-  NetCall,              { TNetcall }
-  NCSocket,             { TSoketNetcall }
+  ProgressOutput,       { TProgressOutput }
+  Netcall,              { TNetcall }
+  NCSocket,             { TSocketNetcall }
   Classes,              { TStringList }
   sysutils;
 
@@ -199,7 +199,7 @@ begin
 
   FReadOnly := true;
 
-  WriteIPC(mcInfo,res_connect1, [Host.Name]);
+  Output(mcInfo,res_connect1, [Host.Name]);
   if not inherited Connect then
     exit;
 
@@ -209,14 +209,14 @@ begin
   { Ergebnis auswerten }
   if ParseResult(s)<>200 then
   begin
-    WriteIPC(mcError,res_connect2, [ErrorMsg]);
+    Output(mcError,res_connect2, [ErrorMsg]);
     DisConnect;
     FErrorCode := code;
     exit;
   end else
   begin
   if s <> '' then
-    WriteIPC(mcError,res_connect4, [0]);  // verbunden
+    Output(mcError,res_connect4, [0]);  // verbunden
     FServer:= Copy(s,5,length(s)-5);
     if pos('POSTING OK', UpperCase(s)) <> 0 then FReadOnly := false;
   end;
@@ -224,7 +224,7 @@ begin
   { Anmelden }
   if not Login then
   begin
-    WriteIPC(mcError,res_connect3, [ErrorMsg]);
+    Output(mcError,res_connect3, [ErrorMsg]);
     DisConnect;
     Result := false;
     exit;
@@ -234,7 +234,7 @@ end;
 
 procedure TNNTP.DisConnect;
 begin
-  WriteIPC(mcInfo,res_disconnect,[0]);
+  Output(mcInfo,res_disconnect,[0]);
   if Connected then
     SWriteln('QUIT');
   inherited DisConnect;
@@ -252,13 +252,13 @@ begin
   { Verbinden }
   if Connected then
   begin
-    WriteIPC(mcInfo,res_list5,[group]);
+    Output(mcInfo,res_list5,[group]);
     SWriteln('MODE READER');
     SReadln(s);
     { if not (ParseResult(s) in [200..299]) then begin }	{ !! FPC-Bug # 1135 }
     code := ParseResult(s);					{ Workaround }
     if (code<200) or (code>299) then begin			{ Workaround }
-      WriteIPC(mcError,res_list2,[Host.Name]);
+      Output(mcError,res_list2,[Host.Name]);
       exit;
     end;
     
@@ -268,7 +268,7 @@ begin
     { if not (ParseResult(s) in [200..299]) then begin }	{ !! FPC-Bug # 1135 }
     code := ParseResult(s);					{ Workaround }
     if (code<200) or (code>299) then begin			{ Workaround }
-      WriteIPC(mcError,res_list3,[Host.Name]);
+      Output(mcError,res_list3,[Host.Name]);
       exit;
     end;
 
@@ -279,7 +279,7 @@ begin
       if code=0 then
         break
       else if code<>-1 then begin
-        WriteIPC(mcError,res_list3,[Host.Name]);
+        Output(mcError,res_list3,[Host.Name]);
         exit;
       end;
       s:= Trim(s);
@@ -303,12 +303,12 @@ begin
   aList.Duplicates:= dupIgnore;
   if Connected then
   begin
-    WriteIPC(mcInfo,res_list1,[0]);
+    Output(mcInfo,res_list1,[0]);
     SWriteln('MODE READER');				{ Modus setzen }
     SReadln(s);
     code:= ParseResult(s);
     if (code<200) or (code>299) then begin		{ Fehler? }
-      WriteIPC(mcError,res_list2,[Host.Name]);		{ -> Ja, Ende }
+      Output(mcError,res_list2,[Host.Name]);		{ -> Ja, Ende }
       exit;
     end;
 
@@ -316,14 +316,14 @@ begin
     SReadln(s);
     code:= ParseResult(s);
     if (code<200) or (code>299) then begin
-      WriteIPC(mcError,res_list3,[Host.Name]);
+      Output(mcError,res_list3,[Host.Name]);
       exit;
     end;
 
     repeat
       SReadln(s); Inc(counter);				{ Zeile lesen }
       if (counter mod 25)=0 then			{ User beruhigen }
-        WriteIPC(mcVerbose,res_list4, [counter]);
+        Output(mcVerbose,res_list4, [counter]);
       code:= ParseResult(s);
       case code of
         -1 : begin					{ Gruppe }
@@ -338,11 +338,11 @@ begin
 	     end;
         0  : result:= true;				{ Listenende }
       else						{ Fehler }
-        WriteIPC(mcError,res_list3,[Host.Name]);
+        Output(mcError,res_list3,[Host.Name]);
         Result:= false;
       end; { case }
     until code<>-1;					{ Bis zum Ende lesen }
-    WriteIPC(mcInfo,res_list4, [aList.Count]);
+    Output(mcInfo,res_list4, [aList.Count]);
 
     { Dieses Unterroutine ist noch sehr ineffizient.
       Es waere sinnvoll, eine zweite Verbindung zum NNTP
@@ -352,12 +352,12 @@ begin
     if withDescr then 					{ Beschreibungen }
       for i:= 0 to aList.Count-1 do begin
         if (i mod 25)=0 then				{ User beruhigen }
-	  WriteIPC(mcVerbose,res_list4, [i]);
+	  Output(mcVerbose,res_list4, [i]);
         s:= GroupDescription(aList[i]);
 	if s<>'' then
 	  aList[i]:= aList[i]+' '+s;
       end; { for i... }
-    WriteIPC(mcInfo,res_list4, [aList.Count]);
+    Output(mcInfo,res_list4, [aList.Count]);
 
     aList.Sort;						{ Sortieren }
   end;
@@ -402,22 +402,22 @@ begin
   if Connected then
   begin
     // select one newsgroup
-    WriteIPC(mcInfo,res_group1, [AGroupName]);
+    Output(mcInfo,res_group1, [AGroupName]);
     SWriteln('GROUP '+ AGroupName);
     SReadln(s);
     case ParseResult(s) of
       nntpMsg_GroupnotFound : begin
-        WriteIPC(mcInfo,res_group3, [AGroupName]);
+        Output(mcInfo,res_group3, [AGroupName]);
         raise ENNTP.create(Format(res_group3, [AGroupName]));
       end;
       nntp_AuthRequired : begin
-        WriteIPC(mcInfo, res_auth, [0]);
+        Output(mcInfo, res_auth, [0]);
         raise ENNTP.create(res_auth);
       end;
     end;
     FGroupName := AGroupName;
     GetGroupInfo(s);
-    WriteIPC(mcInfo,res_group2, [AGroupName]);
+    Output(mcInfo,res_group2, [AGroupName]);
   end;
 end;
 
@@ -431,13 +431,13 @@ begin
   if Connected then
   begin
     // select one newsgroup
-    WriteIPC(mcInfo,res_msg1, [msgNr]);
+    Output(mcInfo,res_msg1, [msgNr]);
     SWriteln('ARTICLE '+ IntToStr(msgNr));
     SReadln(s);
     Error := ParseResult(s);
     if Error > 400 then
     begin
-      WriteIPC(mcInfo,res_msg3, [msgNr]);
+      Output(mcInfo,res_msg3, [msgNr]);
       Result := Error;
       exit;
     end;
@@ -449,7 +449,7 @@ begin
     until s = '.';
 
     Result := 0;
-    WriteIPC(mcInfo,res_msg2, [msgNr]);
+    Output(mcInfo,res_msg2, [msgNr]);
   end;
 end;
 
@@ -468,7 +468,7 @@ begin
   Result := nntp_NotConnected;
   if Connected then
   begin
-    WriteIPC(mcInfo,res_post1, [0]);
+    Output(mcInfo,res_post1, [0]);
     SWriteln('POST');
     SReadln(s);
     Error := ParseResult(s);
@@ -479,7 +479,7 @@ begin
 	 SWriteln(nntpMsg_EndSign);
       end
       else begin
-	 WriteIPC(mcInfo,res_post3, [Error]);
+	 Output(mcInfo,res_post3, [Error]);
 	 Result := Error;
 	 exit;
       end;
@@ -492,13 +492,17 @@ begin
     else
        Result := Error;
 
-    WriteIPC(mcInfo,res_post2, [0]);
+    Output(mcInfo,res_post2, [0]);
   end;
 end;
 
 end.
 {
   $Log$
+  Revision 1.16  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
+
   Revision 1.15  2000/12/28 00:44:52  ml
   - nntp-posting implemented
   - ReadOnly-flag for nntp-servers

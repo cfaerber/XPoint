@@ -37,12 +37,9 @@ function  GetNNTPList(box: string; bp: BoxPtr): boolean;
 implementation  { ------------------------------------------------- }
 
 uses
-  IPCClass,			{ TIPC }
-  IPAddr,			{ TIP }
-  Netcall,NCSocket,NCNNTP,	{ TNetcall, TSocketNetcall, TNNTP }
-  xpipc,			{ TXPIPC }
+  NCSocket,NCNNTP,		{ TNetcall, TSocketNetcall, TNNTP }
+  xpprogressoutputxy,	{ TProgressOutputXY }
   resource,
-  WinXP,
 {$ifdef NCRT}
   XPCurses,
 {$endif}
@@ -56,7 +53,7 @@ uses
 function GetAllGroups(box: string; bp: BoxPtr): boolean;
 var
   NNTP		: TNNTP;		{ Socket }
-  IPC		: TXPIPC;		{ IPC }
+  ProgressOutputXY: TProgressOutputXY;	{ ProgressOutput }
   List		: TStringList;		{ Die Liste }
   x,y		: byte;			{ Fenster-Offset }
   f		: text;			{ Zum Speichern }
@@ -66,15 +63,15 @@ begin
     result:= true;
     exit;
   end;
-  { IPC erstellen }
-  IPC:= TXPIPC.Create;
+  { ProgressOutputXY erstellen }
+  ProgressOutputXY:= TProgressOutputXY.Create;
   { Host und ... }
   NNTP:= TNNTP.CreateWithHost(bp^.nntp_ip);
   { ... Port uebernehmen }
   if bp^.nntp_port>0 then
     NNTP.Port:= bp^.nntp_port;
-  { IPC erstellen }
-  NNTP.IPC:= IPC;
+  { ProgressOutputXY erstellen }
+  NNTP.ProgressOutput:= ProgressOutputXY;
   { ggf. Zugangsdaten uebernehmen }
   if (bp^.nntp_id<>'') and (bp^.nntp_pwd<>'') then begin
     NNTP.User:= bp^.nntp_id;
@@ -91,8 +88,8 @@ begin
   MWrt(x+15,y+2,getres2(30010,8));		{ 'Verbinden...' }
   MWrt(x+15,y+4,getres2(30010,9));		{ 'unbekannt' }
   MWrt(x+15,y+6,bp^.nntp_ip);
-  { IPC einrichten }
-  IPC.X:= x+15; IPC.Y:= y+4; IPC.MaxLength:= 50;
+  { ProgressOutputXY einrichten }
+  ProgressOutputXY.X:= x+15; ProgressOutputXY.Y:= y+4; ProgressOutputXY.MaxLength:= 50;
   { Verbinden }
   if NNTP.Connect then begin
     { Name und IP anzeigen }
@@ -143,15 +140,11 @@ begin
 end;
 
 end.
+
 {
 	$Log$
-	Revision 1.1  2001/01/04 16:07:50  ma
-	- renamed, was xpnntp.pas
+	Revision 1.1  2001/03/21 19:17:09  ma
+	- using new netcall routines now
+	- renamed IPC to Progr.Output
 
-	Revision 1.2  2000/09/11 17:13:54  hd
-	- Kleine Arbeiten an NNTP
-	
-	Revision 1.1  2000/07/25 18:02:19  hd
-	- NNTP-Unterstuetzung (Anfang)
-	
 }

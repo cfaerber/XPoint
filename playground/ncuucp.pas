@@ -26,7 +26,7 @@ unit ncuucp;
 
 { ------------------------------ } INTERFACE { ------------------------------- }
 
-uses ncmodem,timer,fidoglob,xpglobal,classes,xpmessagewindow;
+uses ncmodem,timer,fidoglob,xpglobal,classes,xpprogressoutputwindow;
 
 type
   TUUCPNetcall = class(TModemNetcall)
@@ -60,7 +60,7 @@ type
 
 { ---------------------------- } IMPLEMENTATION { ---------------------------- }
 
-uses typeform, zmodem, ipcclass, resource, sysutils, debug, montage, crc,
+uses typeform, zmodem, progressoutput, resource, sysutils, debug, montage, crc,
 xpdiff, objcom, fileio, inout, keys, xpnetcall, netcall, math,
 {$IFDEF NCRT } xpcurses {$ELSE } xpwin32,crt {$ENDIF };
 
@@ -125,14 +125,14 @@ type TUUCProtocol = class
 
   private
     FNetcall: TUUCPNetcall;
-    FDialog:  TXPMessageWindowDialog;
+    FDialog:  TProgressOutputWindowDialog;
     FCommObj: TPCommObj;
     FTimerObj:TPTimer;
 
   protected
     property    Netcall:  TUUCPNetcall read FNetcall;
     property    CommObj:  TPCommObj    read FCommObj;
-    property    Dialog:   TXPMessageWindowDialog read FDialog;
+    property    Dialog:   TProgressOutputWindowDialog read FDialog;
     property    TimerObj: TPTimer      read FTimerObj;
 
     procedure   AssignUp  (var f:file;var fn:string;var ftype:integer); (* fn is var to be able to   *)
@@ -336,11 +336,11 @@ var pprot: TUUCProtocol;
 begin
   pprot:=nil;
 
-  if IPC is TXPMessageWindow then
+  if ProgressOutput is TProgressOutputWindow then
     if Phonenumber<>'' then
-      TXPMessageWindow(IPC).Headline:=UUname+' ('+Phonenumber+')' (*
+      TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+Phonenumber+')' (*
     else if CommObj is TRawIPObj then
-      TXPMessageWindow(IPC).Headline:=UUname+' ('+TRawIPObj(CommObj).Hostname+', '+TRawIPObj(CommObj).IPAddr+')' *);
+      TProgressOutputWindow(ProgressOutput).Headline:=UUname+' ('+TRawIPObj(CommObj).Hostname+', '+TRawIPObj(CommObj).IPAddr+')' *);
 
 try
   case InitHandshake of
@@ -360,7 +360,7 @@ try
 
 except
   on Ex:Exception do begin
-    WriteIPC(mcError,'%s',[ex.message]);
+    Output(mcError,'%s',[ex.message]);
 //  Log     (lcError,      ex.message); -- BUG: crashes?!
     result := el_nologin;
   end;
@@ -394,7 +394,7 @@ begin
   result:=#0;
   mdelay(500);
 
-  WriteIPC(mcVerbose,'UUCP Initial Handshake',[0]);
+  Output(mcVerbose,'UUCP Initial Handshake',[0]);
 
   CommObj.PurgeInBuffer;
   CommObj.SendString(^P'S'+UUName+iifs(SizeNego,' -N','')+#0,false);
@@ -416,9 +416,9 @@ begin
   SizeNego:=(s='ROKN');         { size negotiation }
   if SizeNego then begin
     log(lcInfo,'using size negotiation');
-    WriteIPC(mcInfo,'UUCP connection established w/ size negitiation',[0]);
+    Output(mcInfo,'UUCP connection established w/ size negitiation',[0]);
   end else
-    WriteIPC(mcInfo,'UUCP connection established',[0]);
+    Output(mcInfo,'UUCP connection established',[0]);
 
   for n := 1 to 5 do begin
     s:=GetUUStr; dec(n);
@@ -439,7 +439,7 @@ begin
     if cpos(uuprotos[i],s)>0 then UUProtocol:=uuprotos[i];
   CommObj.SendString(^P'U'+UUProtocol+#0,false);
   Log(lcInfo,'selected protocol'+sp(cpos(UUProtocol,s))+'^');
-  WriteIPC(mcError,'selected protocol: %s',[UUProtocol]);
+  Output(mcError,'selected protocol: %s',[UUProtocol]);
 
   result := UUProtocol;
 end;
@@ -449,7 +449,7 @@ end;
 procedure TUUCPNetcall.FinalHandshake;           { --- uucp - Handshake vor Hangup }
 var b : byte;
 begin
-  WriteIPC(mcVerbose,'UUCP Final Handshake',[0]);
+  Output(mcVerbose,'UUCP Final Handshake',[0]);
 
   if CommObj.Carrier then begin
     CommObj.SendString(^P'OOOOOO',false);
@@ -524,8 +524,8 @@ begin
   FCommObj :=Caller.CommObj;
   FTimerObj:=Caller.Timer;
 
-  if Caller.IPC is TXPMessageWindowDialog then
-    FDialog := TXPMessageWindowDialog(Caller.IPC) else
+  if Caller.ProgressOutput is TProgressOutputWindowDialog then
+    FDialog := TProgressOutputWindowDialog(Caller.ProgressOutput) else
     FDialog := Nil;
 
   Total_Start := (GetTicks/100);
@@ -623,7 +623,7 @@ var cin : text;
   try
     FileStart(c.src,true,c.size);
     Netcall.Log('+','sending '+c.src+' as '+c.dest);
-    Netcall.WriteIPC(mcVerbose,'Sending %s as %s (%d bytes)',[c.src,c.dest,c.size]);
+    Netcall.Output(mcVerbose,'Sending %s as %s (%d bytes)',[c.src,c.dest,c.size]);
 
     SendCommand(s);
 
@@ -636,7 +636,7 @@ var cin : text;
       raise EUUCProtFile.Create('Remote error '+c.src+': '+r.reasonmsg+' (#'+strs(r.reason)+')');
 
     Netcall.Log('*','sent file - '+File_Str);
-    Netcall.WriteIPC(mcInfo,'Sent %s as %s (%s)',[c.src,c.dest,file_str]);
+    Netcall.Output(mcInfo,'Sent %s as %s (%s)',[c.src,c.dest,file_str]);
   finally
     close(f);
   end;
@@ -652,7 +652,7 @@ var cin : text;
     FileStart(c.dest,false,0);
 
     Netcall.Log('+','requesting '+c.src+' as '+c.dest);
-    Netcall.WriteIPC(mcVerbose,'Requesting %s as %s',[c.src,c.dest]);
+    Netcall.Output(mcVerbose,'Requesting %s as %s',[c.src,c.dest]);
   try
     SendCommand(s);
 
@@ -661,7 +661,7 @@ var cin : text;
   try
     RepeatRecFile(f,r.restart);
     Netcall.Log('*','received file - '+file_str);
-    Netcall.WriteIPC(mcInfo,'Requested %s as %s (%s)',[c.src,c.dest,file_str]);
+    Netcall.Output(mcInfo,'Requested %s as %s (%s)',[c.src,c.dest,file_str]);
   except
     SendCommand('CN'); raise;
   end;
@@ -678,8 +678,8 @@ begin { TUUCProtocolSimple.Master:Boolean; }
   if (Netcall.CommandFile='') or (_FileSize(Netcall.CommandFile)=0) then
     exit;
 
-  Netcall.WriteIPC(mcInfo,'UUCICO running as master:',[0]);
-  Netcall.WriteIPC(mcInfo,'Command file: %s',[Netcall.CommandFile]);
+  Netcall.Output(mcInfo,'UUCICO running as master:',[0]);
+  Netcall.Output(mcInfo,'Command file: %s',[Netcall.CommandFile]);
 
   assign(cin,Netcall.CommandFile);
   reset (cin);
@@ -696,7 +696,7 @@ try
   except
     on e:EUUCProtFile do begin
       Netcall.Log(lcError,e.message);
-      Netcall.WriteIPC(mcError,'%s',[e.message]);
+      Netcall.Output(mcError,'%s',[e.message]);
     end;
   end;
     Netcall.TestBreak;
@@ -706,7 +706,7 @@ try
 except
   on e:Exception do begin
     Netcall.Log(lcError,e.message);
-    Netcall.WriteIPC(mcError,'%s',[e.message]);
+    Netcall.Output(mcError,'%s',[e.message]);
     result:=false;
   end;
 end;
@@ -756,7 +756,7 @@ var s   : string;       { unparsed incoming command }
       FileStart(s,false,c.size);
 
       Netcall.Log('+','receiving '+c.src+' as '+s);
-      Netcall.WriteIPC(mcVerbose,'Receiving %s as %s (%d bytes)',[c.src,s,c.size]);
+      Netcall.Output(mcVerbose,'Receiving %s as %s (%d bytes)',[c.src,s,c.size]);
       SendCommand('SY 0x0');
     except
       SendCommand('SN4');
@@ -767,7 +767,7 @@ var s   : string;       { unparsed incoming command }
       IOExcept(EUUCProtFile);
 
       Netcall.Log('*','received file - '+File_Str);
-      Netcall.WriteIPC(mcInfo,'Received %s as %s (%s)',[c.src,s,file_str]);
+      Netcall.Output(mcInfo,'Received %s as %s (%s)',[c.src,s,file_str]);
     except
       on E:EUUCProtFile do begin
         SendCommand('CN');
@@ -792,10 +792,10 @@ begin
   result:=true;
 
   if not BecomeSlave then
-    Netcall.WriteIPC(mcInfo,'Remote has no files to receive',[0])
+    Netcall.Output(mcInfo,'Remote has no files to receive',[0])
   else
   begin
-    Netcall.WriteIPC(mcInfo,'UUCICO running as slave.',[0]);
+    Netcall.Output(mcInfo,'UUCICO running as slave.',[0]);
   try
     while true do
     begin
@@ -813,7 +813,7 @@ begin
     except
       on e:EUUCProtFile do begin
         Netcall.Log(lcError,e.message);
-        Netcall.WriteIPC(mcError,'%s',[e.message]);
+        Netcall.Output(mcError,'%s',[e.message]);
       end;
     end; //try
     end;
@@ -821,7 +821,7 @@ begin
   except
     on e:Exception do begin
       Netcall.Log(lcError,e.message);
-      Netcall.WriteIPC(mcError,'%s',[e.message]);
+      Netcall.Output(mcError,'%s',[e.message]);
       result:=false;
     end;
   end; //try
@@ -1043,6 +1043,10 @@ end.
 
 {
   $Log$
+  Revision 1.9  2001/03/21 19:17:10  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
+
   Revision 1.8  2001/03/20 00:26:59  cl
   - fixed warning with new/dispose
 

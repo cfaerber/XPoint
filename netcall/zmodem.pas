@@ -1,80 +1,171 @@
-{ $Id$ }
+{ $Id$
+
+  Pascal ZModem unit
+  (c) 2000,2001 by OpenXP team (www.openxp.de) and M.Kiesel
+  Copywrite (c) by Stefan Graf 1990
+  Based on TPZ.PAS from Philip R. Burn's PIPTERM. }
 
 unit ZModem;
 
-(*                           ZMODEM fuer Turbo-Pascal                           *)
-(*                       Copywrite (c) by Stefan Graf 1990                     *)
-(* Als Grundlage diente der Sourcecode TPZ.PAS von Philip R. Burn's PIPTERM.   *)
-(* Die Transferroutinen erzeugen selber keinerlei Statusmeldungen. Diese ueber- *)
-(* nehmen zwei, vom Benutzter zu erstellende parameterlose PROCEDUREN, die     *)
-(* den aktuellen Status des Transfer's ausgeben.                               *)
+{$I xpdefine.inc}
 
 { ermoeglicht Loglevel 6 (= byteweises Logging), verbraucht viel Rechenzeit }
 {a$DEFINE VerbDebug}
 
-{$I xpdefine.inc}
-
 interface
 
-uses xpglobal, montage, typeform, ObjCOM;
+uses xpglobal, montage, typeform, ObjCOM, ProgressOutput, Timer, Classes;
+
+const
+  ZBUFSIZE = 8192;
+  txtimeout = 10 * 18;
+  DiskBufferSize = $7FFF;
+  zbaud= 14400;
+
+type
+  hdrtype = array[0..3] of BYTE;
+  buftype = array[0..ZBUFSIZE] of BYTE;
+
+  TZModemObj = class
+  public
+    constructor Init(vCommObj: tpCommObj; vProgressOutput: TProgressOutput);
+    destructor Done;
+
+    function Receive(path: string; FileList: TStringList): Boolean;
+    function Send(pathname: string; lastfile: Boolean): Boolean;
+
+  protected
+    FProgressOutput: TProgressOutput;
+    FCommObj: tpCommObj;
+    ElapsedSec: tTimer;
+    MakeCRC32: Boolean;
+    RecoverAllow: Boolean;
+    diskbuffer: array[0..DiskBufferSize] of CHAR;
+    bufferpos: smallword;
+    rxpos: LONGINT;                       {file position received from Z_GetHeader}
+    rxhdr: hdrtype;                       {receive header var}
+    rxtimeout,rxtype,rxframeind: integer16;
+    attn,secbuf: buftype;
+    fname: string;
+    ftime,fsize: LONGINT;
+    send32crc: BOOLEAN; (* TRUE, wenn 32-Bit-CRC benutzt werden darf *)
+    txpos,lasterrorcount: LONGINT;
+    txhdr: hdrtype;
+    lastsent: BYTE;
+    infile: file;
+    rxbuflen: integer16;
+    txbuf: buftype;
+    fheaderlen: smallword;
+
+    TransferTime, (* Startzeitpunkt der Uebertragung in Tick's           *)
+    TransferSize, (* Gr"sse des zu uebertragenden Files                 S*)
+    TransferCount, (* Anzahl der schon uebertragenen Zeichen (recover)   S*)
+    TransferBytes: LONGINT; (* aktuelle Anzahl uebertragene Zeichen (session)      *)
+
+    TransferName, (* Name des zu uebertragenen Files                    S*)
+    TransferPath, (* Pfad zum File, ggf. mit abschliessendem Backslash S*)
+    TransferCheck, (* Bezeichnung des Checksummen-Verfahrens             *)
+    TransferMessage: string; (* Meldungen der Transferroutine                      *)
+
+    TransferTotalTime, (* Voraussichtliche Uebertragungsdauer in Sek.         *)
+    TransferBlockSize, (* Gr"sse des letzen Datenblockes                     *)
+    TransferError: smallword; (* Anzahl der erkannten Uebertragungsfehler            *)
+
+    procedure startproc; procedure dispproc; procedure endproc;
+
+    function Z_OpenFile(var f: file; pathname: string): BOOLEAN;
+    function Z_MakeFile(var f: file; pathname: string): BOOLEAN;
+    procedure Z_CloseFile(var f: file);
+    function Z_SeekFile(var f: file; fpos: LONGINT): BOOLEAN;
+    function Z_WriteFile(var f: file; var buff; bytes: smallword): BOOLEAN;
+    function Z_ReadFile(var f: file; var buff; btoread: smallword; var bread: word): BOOLEAN;
+    function Z_FindFile(pathname: string; var name: string; var size, time: LONGINT): BOOLEAN;
+    function Z_ToUnixDate(fdate: LONGINT): string;
+    function Z_FromUnixDate(s: string): LONGINT;
+
+    function Z_FileCRC32(var f: file): LONGINT;
+    function Z_GetByte(tenths: integer16): integer16;
+    function Z_qk_read: integer16;
+    function Z_TimedRead: integer16;
+    procedure Z_SendByte(c: integer16);
+    procedure Z_SendCan;
+    procedure Z_PutString(var p: buftype);
+    procedure Z_PutHex(b: BYTE);
+    procedure Z_SendHexHeader(htype: BYTE; var hdr: hdrtype);
+    function Z_PullLongFromHeader(var hdr: hdrtype): LONGINT;
+    procedure Z_PutLongIntoHeader(l: LONGINT);
+    function Z_GetZDL: integer16;
+    function Z_GetHex: integer16;
+    function Z_GetHexHeader(var hdr: hdrtype): integer16;
+    function Z_GetBinaryHeader(var hdr: hdrtype): integer16;
+    function Z_GetBinaryHead32(var hdr: hdrtype): integer16;
+    function Z_GetHeader(var hdr: hdrtype): integer16;
+    function RZ_ReceiveData(var buf: buftype; blength: integer16): integer16;
+    procedure RZ_AckBibi;
+    function RZ_InitReceiver: integer16;
+    function RZ_GetHeader: integer16;
+    function RZ_SaveToDisk(var rxbytes: LONGINT): integer16;
+    function RZ_ReceiveFile: integer16;
+    function RZ_ReceiveBatch(FileList: TStringList): integer16;
+
+    procedure SZ_Z_SendByte(b: BYTE);
+    procedure SZ_SendBinaryHeader(htype: BYTE; var hdr: hdrtype);
+    procedure SZ_SendData(var buf: buftype; blength: integer16; frameend: BYTE);
+    procedure SZ_EndSend;
+    function SZ_GetReceiverInfo: integer16;
+    function SZ_SyncWithReceiver: integer16;
+    function SZ_SendFileData: integer16;
+    function SZ_SendFile: integer16;
+  end;
 
 var
-  MakeCRC32, (* TRUE, wenn 32-Bit-CRC benutzt werden darf  *)
-  RecoverAllow: BOOLEAN; (* TRUE, wenn das File-Recover zugelassen ist *)
-  startproc, endproc, dispproc: procedure; {Start-/Transfer-/Ende-Anzeige-Prozedur;
-                                            Start wird *vor* Oeffnen der Datei ausgefuehrt}
-
-(* Empfangen eines File mit dem ZMODEM-Protokoll *)
-
-procedure ZmodemReceive(vCommObj: tpCommObj;  (* ObjCOM communication object            *)
-  path: string; (* Path fuer das File                      *)
-  var fehlerflag: BOOLEAN); (* TRUE, wenn ein Fehler aufgetreten ist  *)
-
-(* Senden eines Files mit dem ZMODEM-Protokoll *)
-
-procedure ZModemSend(vCommObj: tpCommObj;  (* ObjCOM communication object            *)
-  pathname: string; (* Path und Filename                      *)
-  lastfile: Boolean;
-  var fehler: smallword); (* Bei Fehler in der Uebertragung <> 0     *)
-
-{Variablen mit Infos fuer die Ausgaberoutine}
-
-var
-  TransferTime, (* Startzeitpunkt der Uebertragung in Tick's           *)
-  TransferSize, (* Gr"sse des zu uebertragenden Files                 S*)
-  TransferCount, (* Anzahl der schon uebertragenen Zeichen (recover)   S*)
-  TransferBytes: LONGINT; (* aktuelle Anzahl uebertragene Zeichen (session)      *)
-
-  TransferName, (* Name des zu uebertragenen Files                    S*)
-  TransferPath, (* Pfad zum File, ggf. mit abschliessendem Backslash S*)
-  TransferCheck, (* Bezeichnung des Checksummen-Verfahrens             *)
-  TransferMessage: string; (* Meldungen der Transferroutine                      *)
-
-  TransferTotalTime, (* Voraussichtliche Uebertragungsdauer in Sek.         *)
-  TransferBlockSize, (* Gr"sse des letzen Datenblockes                     *)
-  TransferError: smallword; (* Anzahl der erkannten Uebertragungsfehler            *)
-  (*S: Bei Startproc gesetzt*)
-
   FileAddition: (NewFile, RecoverFile, ReplaceFile);
 
 implementation
 
 uses
-  {$IFDEF Unix}
-  xpcurses,
-  {$ELSE}
-  Crt,
-  {$ENDIF}
-  SysUtils, Timer, Debug, CRC;
+  {$IFDEF Unix} xpcurses,{$ELSE}Crt,{$ENDIF}
+  SysUtils, Debug, CRC;
 
-const
-  DiskBufferSize = $7FFF;
+var TimerObj: tTimer;
 
+procedure TZModemObj.startproc;
+begin
+  ElapsedSec.Start;
+  FProgressOutput.WriteFmt(mcInfo,TransferName,[0]);
+end;
+
+procedure TZModemObj.dispproc;
+var Remain: LongInt;
+begin
+  FProgressOutput.WriteFmt(mcVerbose,'',[0]);
+  if(ElapsedSec.ElapsedSec<=0)or(TransferBytes<=0) then
+    Remain:=1
+  else
+    Remain:=System.Round((TransferSize-TransferCount)/(TransferBytes/ElapsedSec.ElapsedSec)-ElapsedSec.ElapsedSec);
+  if Remain<0 then
+    Remain:=0;
+
+  FProgressOutput.WriteFmt(mcVerbose,'%db %d sec',[TransferBytes,Remain]);
+  if(LastErrorCount<>TransferError)then begin
+    FProgressOutput.WriteFmt(mcError,'%s',[TransferMessage]);
+    LastErrorCount:=TransferError;
+    end;
+end;
+
+procedure TZModemObj.endproc;
 var
-  diskbuffer: array[0..DiskBufferSize] of CHAR;
-  bufferpos: smallword;
+  cps   : LongInt;
+  t     : Real;
+begin
+  t:=ElapsedSec.ElapsedSec;
+  if t<=0 then t:=1; {Verhindere Division by zeros}
+  cps:=System.Round(TransferBytes/t);
+  if TransferName<>'' then
+    FProgressOutput.WriteFmt(mcInfo,'%db %d cps',[TransferBytes,cps]);
+end;
 
-function Z_OpenFile(var f: file; pathname: string): BOOLEAN;
+function TZModemObj.Z_OpenFile(var f: file; pathname: string): BOOLEAN;
 begin
   {$I-}
   Assign(f, pathname);
@@ -83,7 +174,7 @@ begin
   Z_OpenFile := (IOresult = 0);
 end; {$I+}
 
-function Z_MakeFile(var f: file; pathname: string): BOOLEAN;
+function TZModemObj.Z_MakeFile(var f: file; pathname: string): BOOLEAN;
 begin
   {$I-}
   Assign(f, pathname);
@@ -92,7 +183,7 @@ begin
   Z_MakeFile := (IOresult = 0)
 end; {$I+}
 
-procedure Z_CloseFile(var f: file);
+procedure TZModemObj.Z_CloseFile(var f: file);
 begin
   {$I-}
   if (bufferpos > 0) then
@@ -105,14 +196,14 @@ begin
     { ignore this error }
 end; {$I+}
 
-function Z_SeekFile(var f: file; fpos: LONGINT): BOOLEAN;
+function TZModemObj.Z_SeekFile(var f: file; fpos: LONGINT): BOOLEAN;
 begin
   {$I-}
   Seek(f, fpos);
   Z_SeekFile := (IOresult = 0)
 end; {$I+}
 
-function Z_WriteFile(var f: file; var buff; bytes: smallword): BOOLEAN;
+function TZModemObj.Z_WriteFile(var f: file; var buff; bytes: smallword): BOOLEAN;
 
 begin
   {$I-}
@@ -126,7 +217,7 @@ begin
   Z_WriteFile := (IOresult = 0)
 end; {$I+}
 
-function Z_ReadFile(var f: file; var buff; btoread: smallword; var bread: word):
+function TZModemObj.Z_ReadFile(var f: file; var buff; btoread: smallword; var bread: word):
   BOOLEAN;
 begin
   {$I-}
@@ -134,7 +225,7 @@ begin
   Z_ReadFile := (IOresult = 0)
 end; {$I+}
 
-function Z_FindFile(pathname: string; var name: string; var size, time:
+function TZModemObj.Z_FindFile(pathname: string; var name: string; var size, time:
   LONGINT): BOOLEAN;
 var
   sr: TSearchRec;
@@ -151,22 +242,6 @@ begin
   time:= sr.Time;
   result:= TRUE
 end;
-
-(* procedure Z_SetFTime(var f: file; time: LONGINT);
-var
-  pfrec: ^filerec;
-  fh: longint;
-begin
-  {$I-}
-  pfrec := @f;
-  fh := FileOpen(pfrec^.name, fmOpenWrite);
-  if (fh >= 0) then
-  begin
-    FileSetDate(fh, time);
-    FileClose(fh);
-  end;
-  // IF (IOresult <> 0) THEN; {null}
-end; {$I+} *)
 
 const
   C1970 = 2440588;
@@ -195,7 +270,7 @@ begin                                   {GregorianToJulianDN}
     + XYear + Century;
 end;                                    {GregorianToJulianDN}
 
-function Z_ToUnixDate(fdate: LONGINT): string;
+function TZModemObj.Z_ToUnixDate(fdate: LONGINT): string;
 var
   //dt: DateTime;
   y, m, d: smallword;
@@ -239,7 +314,7 @@ begin
 end;
 
 
-function Z_FromUnixDate(s: string): LONGINT;
+function TZModemObj.Z_FromUnixDate(s: string): LONGINT;
 const tagsec = 24*60*60;
 var
   dt: TDateTime;
@@ -267,17 +342,6 @@ begin
     EncodeTime(secs div 3600, secs mod 3600 div 60, secs mod 60, 0);
   Z_FromUnixDate := DateTimeToFileDate(dt);
 end;
-
-const
-  ZBUFSIZE = 8192;
-
-  zbaud: LONGINT = 0;
-
-  txtimeout = 10 * 18;
-
-type
-  hdrtype = array[0..3] of BYTE;
-  buftype = array[0..ZBUFSIZE] of BYTE;
 
 const
   ZPAD = 42;                            { '*' }
@@ -386,32 +450,8 @@ const
   { ZF3 }
 //  ZCACK1 = 1; {God only knows...                               }
 
-var
-  rxpos: LONGINT;                       {file position received from Z_GetHeader}
-  rxhdr: hdrtype;                       {receive header var}
-  rxtimeout,
-    rxtype,
-    rxframeind: integer16;
-  attn: buftype;
-  secbuf: buftype;
-  fname: string;
-//  fmode: integer16;
-  ftime,
-    fsize: LONGINT;
-  send32crc: BOOLEAN; (* TRUE, wenn 32-Bit-CRC benutzt werden darf *)
-//  zerrors: smallword;
-  txpos: LONGINT;
-  txhdr: hdrtype;
-
-  CommObj: tpCommObj;
-  TimerObj: tTimer;
-
-const
-  lastsent: BYTE = 0;
-
-  {$IFDEF Final}dsafd{$ENDIF}
-
 function Timecounter: LongInt;
+{$IFDEF Final}dsafd{$ENDIF}
 begin
   Timecounter := System.Round(TimerObj.ElapsedSec * 18.2)
 end;
@@ -475,7 +515,7 @@ end;
 
 (* Berechnen der CRC-Summe eines Files *)
 
-function Z_FileCRC32(var f: file): LONGINT;
+function TZModemObj.Z_FileCRC32(var f: file): LONGINT;
 
 var
   fbuf: buftype;
@@ -503,7 +543,7 @@ end;
 
 (*************************************************************************)
 
-function Z_GetByte(tenths: integer16): integer16;
+function TZModemObj.Z_GetByte(tenths: integer16): integer16;
 
 (* Reads a byte from the modem - Returns RCDO if *)
 (* no carrier, or ZTIMEOUT if nothing received   *)
@@ -514,9 +554,9 @@ var
   time: LONGINT;
 
 begin
-  if CommObj^.CharAvail then
+  if FCommObj^.CharAvail then
   begin
-    c := ORD(CommObj^.GetChar);
+    c := ORD(FCommObj^.GetChar);
     {$IFDEF VerbDebug}AddLogChar(Char(C), False); {$ENDIF}
     Z_GetByte := c;
   end                                   (* of IF THEN *)
@@ -524,15 +564,15 @@ begin
   begin
     time := TimeCounter + tenths;
     repeat
-      if not CommObj^.Carrier then
+      if not FCommObj^.Carrier then
       begin
         Z_GetByte := RCDO;              { nobody to talk to }
         Exit;
       end                               (* of IF THEN *)
       else
-        if CommObj^.CharAvail then
+        if FCommObj^.CharAvail then
       begin
-        c := ORD(CommObj^.GetChar);
+        c := ORD(FCommObj^.GetChar);
         {$IFDEF VerbDebug}AddLogChar(Char(C), False); {$ENDIF}
         Z_GetByte := c;
         Exit;
@@ -547,7 +587,7 @@ end;
 
 (*************************************************************************)
 
-function Z_qk_read: integer16;
+function TZModemObj.Z_qk_read: integer16;
 
 (* Just like Z_GetByte, but timeout value is in *)
 (* global var rxtimeout.                        *)
@@ -562,9 +602,9 @@ var
   time: LONGINT;
 
 begin
-  if CommObj^.CharAvail then
+  if FCommObj^.CharAvail then
   begin
-    c := ORD(CommObj^.GetChar);
+    c := ORD(FCommObj^.GetChar);
     {$IFDEF VerbDebug}AddLogChar(Char(C), False); {$ENDIF}
     Z_qk_read := c;
   end                                   (* of IF THEN *)
@@ -573,20 +613,20 @@ begin
     time := TimeCounter + rxtimeout;
     stop := FALSE;
     repeat
-      if CommObj^.CharAvail then
+      if FCommObj^.CharAvail then
       begin
-        ch := CommObj^.GetChar;
+        ch := FCommObj^.GetChar;
         {$IFDEF VerbDebug}AddLogChar(Char(Ch), False); {$ENDIF}
         stop := TRUE;
       end;                              (* of IF *)
-    until stop or (TimeCounter > time) or not CommObj^.Carrier;
+    until stop or (TimeCounter > time) or not FCommObj^.Carrier;
 
     if (TimeCounter > time) then
     begin
       c := ZTIMEOUT; DebugLog('zmodem', 'qk_read timeout', DLWarning)
     end
     else
-      if not CommObj^.Carrier then
+      if not FCommObj^.Carrier then
       c := RCDO
     else
       c := ORD(ch);
@@ -596,7 +636,7 @@ end;
 
 (*************************************************************************)
 
-function Z_TimedRead: integer16;
+function TZModemObj.Z_TimedRead: integer16;
 
 (* A Z_qk_read, that strips parity and *)
 (* ignores XON/XOFF characters.        *)
@@ -610,13 +650,13 @@ begin
   time := TimeCounter + rxtimeout;
   stop := FALSE;
   repeat
-    if CommObj^.CharAvail then
+    if FCommObj^.CharAvail then
     begin
-      ch := CommObj^.GetChar;
+      ch := FCommObj^.GetChar;
       {$IFDEF VerbDebug}AddLogChar(Ch, False); {$ENDIF}
       if (ch <> CHR(XON)) and (ch <> CHR(XOFF)) then stop := TRUE;
     end;                                (* of IF *)
-  until stop or (TimeCounter > time) or not CommObj^.Carrier;
+  until stop or (TimeCounter > time) or not FCommObj^.Carrier;
 
   Z_TimedRead := Ord(Ch);
   if (TimeCounter > time) then
@@ -624,7 +664,7 @@ begin
     Z_TimedRead := ZTIMEOUT; DebugLog('zmodem', 'timedread timeout', DLWarning)
   end
   else
-    if not CommObj^.Carrier then
+    if not FCommObj^.Carrier then
     Z_TimedRead := RCDO;
 end;
 
@@ -633,26 +673,26 @@ end;
 (* Senden des Zeichen in <c>.                  *)
 (* Es wird gewartet, bis das Modem bereit ist. *)
 
-procedure Z_SendByte(c: integer16);
+procedure TZModemObj.Z_SendByte(c: integer16);
 
 var
   time: LONGINT;
 
 begin
-  if not (CommObj^.ReadyToSend(1)) then
+  if not (FCommObj^.ReadyToSend(1)) then
   begin
     time := TimeCounter + txtimeout;
     repeat
-    until CommObj^.ReadyToSend(1) or (TimeCounter > time);
+    until FCommObj^.ReadyToSend(1) or (TimeCounter > time);
   end;                                  (* of IF *)
 
   {$IFDEF VerbDebug}AddLogChar(Char(c), True); {$ENDIF}
-  CommObj^.SendChar(Char(c));
+  FCommObj^.SendChar(Char(c));
 end;                                    (* of Z_SendByte *)
 
 (*************************************************************************)
 
-procedure Z_SendCan;
+procedure TZModemObj.Z_SendCan;
 
 (* Send a zmodem CANcel sequence to the other guy *)
 (* 8 CANs and 8 backspaces                        *)
@@ -661,7 +701,7 @@ var
   n: BYTE;
 
 begin
-  CommObj^.PurgeInBuffer;
+  FCommObj^.PurgeInBuffer;
   for n := 1 to 8 do
   begin
     Z_SendByte(CAN);
@@ -674,7 +714,7 @@ end;
 
 (*************************************************************************)
 
-procedure Z_PutString(var p: buftype);
+procedure TZModemObj.Z_PutString(var p: buftype);
 
 (* Outputs an ASCII-Z type string (null terminated) *)
 (* Processes meta characters 221 (send break) and   *)
@@ -700,7 +740,7 @@ end;                                    (* of Z_PutString *)
 
 (*************************************************************************)
 
-procedure Z_PutHex(b: BYTE);
+procedure TZModemObj.Z_PutHex(b: BYTE);
 
 (* Output a byte as two hex digits (in ASCII) *)
 (* Uses lower case to avoid confusion with    *)
@@ -716,7 +756,7 @@ end;
 
 (*************************************************************************)
 
-procedure Z_SendHexHeader(htype: BYTE; var hdr: hdrtype);
+procedure TZModemObj.Z_SendHexHeader(htype: BYTE; var hdr: hdrtype);
 
 (* Sends a zmodem hex type header *)
 
@@ -755,7 +795,7 @@ end;
 
 (*************************************************************************)
 
-function Z_PullLongFromHeader(var hdr: hdrtype): LONGINT;
+function TZModemObj.Z_PullLongFromHeader(var hdr: hdrtype): LONGINT;
 begin
   Z_PullLongFromHeader := Longint(hdr[ZP3]) shl 24 + Longint(hdr[ZP2]) shl 16 +
     Longint(hdr[ZP1]) shl 8 + hdr[ZP0];
@@ -763,7 +803,7 @@ end;
 
 (*************************************************************************)
 
-procedure Z_PutLongIntoHeader(l: LONGINT);
+procedure TZModemObj.Z_PutLongIntoHeader(l: LONGINT);
 begin
   txhdr[ZP0] := l and $FF; txhdr[ZP1] := (l shr 8) and $FF;
   txhdr[ZP2] := (l shr 16) and $FF; txhdr[ZP3] := (l shr 24) and $FF;
@@ -771,7 +811,7 @@ end;
 
 (*************************************************************************)
 
-function Z_GetZDL: integer16;
+function TZModemObj.Z_GetZDL: integer16;
 
 (* Gets a byte and processes for ZMODEM escaping or CANcel sequence *)
 
@@ -822,7 +862,7 @@ end;
 
 (*************************************************************************)
 
-function Z_GetHex: integer16;
+function TZModemObj.Z_GetHex: integer16;
 (* Get a byte that has been received as two ASCII hex digits *)
 var
   c, n: integer16;
@@ -859,7 +899,7 @@ end;
 
 (*************************************************************************)
 
-function Z_GetHexHeader(var hdr: hdrtype): integer16;
+function TZModemObj.Z_GetHexHeader(var hdr: hdrtype): integer16;
 
 (* Receives a zmodem hex type header *)
 
@@ -921,7 +961,7 @@ end;
 
 (*************************************************************************)
 
-function Z_GetBinaryHeader(var hdr: hdrtype): integer16;
+function TZModemObj.Z_GetBinaryHeader(var hdr: hdrtype): integer16;
 
 (* Same as above, but binary with 16 bit CRC *)
 
@@ -979,7 +1019,7 @@ end;
 
 (*************************************************************************)
 
-function Z_GetBinaryHead32(var hdr: hdrtype): integer16;
+function TZModemObj.Z_GetBinaryHead32(var hdr: hdrtype): integer16;
 (* Same as above but with 32 bit CRC *)
 var
   crc: LONGINT;
@@ -1030,7 +1070,7 @@ end;
 
 (*************************************************************************)
 
-function Z_GetHeader(var hdr: hdrtype): integer16;
+function TZModemObj.Z_GetHeader(var hdr: hdrtype): integer16;
 
 (* Use this routine to get a header - it will figure out  *)
 (* what type it is getting (hex, bin16 or bin32) and call *)
@@ -1188,7 +1228,7 @@ var
 
   (* Empfangen von Datenbloecken mit 16 o. 32-Bit-CRC *)
 
-function RZ_ReceiveData(var buf: buftype; blength: integer16): integer16;
+function TZModemObj.RZ_ReceiveData(var buf: buftype; blength: integer16): integer16;
 
 label
   crcfoo;
@@ -1298,7 +1338,7 @@ begin
       else
         begin
           TransferMessage := 'Debris';
-          CommObj^.PurgeInBuffer;
+          FCommObj^.PurgeInBuffer;
           RZ_ReceiveData := c;
         end
       end;                              (* of CASE *)
@@ -1327,7 +1367,7 @@ end;
 
 (*************************************************************************)
 
-procedure RZ_AckBibi;
+procedure TZModemObj.RZ_AckBibi;
 
 (* ACKnowledge the other ends request to terminate cleanly *)
 
@@ -1337,7 +1377,7 @@ var
 begin
   Z_PutLongIntoHeader(rxpos);
   n := 4;
-  CommObj^.PurgeInBuffer;
+  FCommObj^.PurgeInBuffer;
   repeat
     Z_SendHexHeader(ZFIN, txhdr);
     case Z_GetByte(2) of
@@ -1345,12 +1385,12 @@ begin
         RCDO: Exit;
       79:
         begin
-          CommObj^.PurgeInBuffer;
+          FCommObj^.PurgeInBuffer;
           n := 0;
         end
     else
       begin
-        CommObj^.PurgeInBuffer;
+        FCommObj^.PurgeInBuffer;
         DEC(n)
       end;
     end;                                (* of CASE *)
@@ -1359,7 +1399,7 @@ end;
 
 (*************************************************************************)
 
-function RZ_InitReceiver: integer16;
+function TZModemObj.RZ_InitReceiver: integer16;
 
 var
   c,
@@ -1377,7 +1417,7 @@ begin
 
   while (n > 0) and not (stop) do
   begin
-    if not CommObj^.Carrier then
+    if not FCommObj^.Carrier then
     begin
       TransferMessage := 'Lost carrier';
       RZ_InitReceiver := ZERROR;
@@ -1482,7 +1522,7 @@ end;
 
 (*************************************************************************)
 
-function RZ_GetHeader: integer16;
+function TZModemObj.RZ_GetHeader: integer16;
 {Get receive file info and process}
 
 var
@@ -1563,7 +1603,7 @@ begin
       begin
         filestart := tsize;
         TransferCount := tsize;
-        if @startproc <> nil then startproc;
+        startproc;
 
         if (not Z_OpenFile(outfile, TransferPath + TransferName)) then
         begin
@@ -1603,7 +1643,7 @@ begin
   begin
     filestart := 0;
     TransferCount := 0;
-    if @startproc<>nil then startproc;
+    startproc;
     if (not Z_MakeFile(outfile, TransferPath + TransferName)) then
     begin
       TransferMessage := 'Unable to create ' + TransferName;
@@ -1616,7 +1656,7 @@ end;                                    (* of RZ_GetHeader *)
 
 (*************************************************************************)
 
-function RZ_SaveToDisk(var rxbytes: LONGINT): integer16;
+function TZModemObj.RZ_SaveToDisk(var rxbytes: LONGINT): integer16;
 
 begin
   {$IFDEF Final}ModemStop(modemkanal); {$ENDIF}
@@ -1633,7 +1673,7 @@ end;
 
 (*************************************************************************)
 
-function RZ_ReceiveFile: integer16;
+function TZModemObj.RZ_ReceiveFile: integer16;
 
 label
   err, nxthdr, moredata;
@@ -1709,7 +1749,7 @@ begin
           begin
             moredata:
             AddLogMessage(TransferMessage, DLDebug);
-            if @dispproc <> nil then dispproc;
+            dispproc;
 
             c := RZ_ReceiveData(secbuf, ZBUFSIZE);
             TransferBlockSize := rxcount;
@@ -1802,21 +1842,21 @@ begin
     end;                                {case}
 
     AddLogMessage(TransferMessage, DLDebug);
-    if @dispproc <> nil then dispproc;
+    dispproc;
 
   until (not done);
 
   err:
 
   AddLogMessage(TransferMessage, DLDebug);
-  if @dispproc <> nil then dispproc;
+  dispproc;
 
   RZ_ReceiveFile := ZERROR
 end;
 
 (*************************************************************************)
 
-function RZ_ReceiveBatch: integer16;
+function TZModemObj.RZ_ReceiveBatch(Filelist: TStringList): integer16;
 
 var
   c: integer16;
@@ -1829,14 +1869,14 @@ begin
   while not (done) do
   begin
 
-    if not CommObj^.Carrier then
+    if not FCommObj^.Carrier then
     begin
       RZ_ReceiveBatch := ZERROR;
       Exit
     end;
 
     c := RZ_ReceiveFile;
-    if @endproc <> nil then endproc;
+    endproc;
 
     Z_CloseFile(outfile);
     pfrec := @outfile;
@@ -1857,6 +1897,7 @@ begin
       ZEOF,
         ZSKIP:
         begin
+          Filelist.Add(TransferPath+TransferName);
           c := RZ_InitReceiver;
           case c of
             ZFILE:
@@ -1892,30 +1933,24 @@ begin
     end;                                {case}
 
     AddLogMessage(TransferMessage, DLDebug);
-    if @dispproc <> nil then dispproc;
-
+    dispproc;
   end;                                  {while}
 end;
 
 (*************************************************************************)
 
-procedure ZmodemReceive(vCommObj: tpCommObj;  (* ObjCOM communication object            *)
-  path: string; (* Path fuer das File                      *)
-  var fehlerflag: BOOLEAN); (* TRUE, wenn ein Fehler aufgetreten ist  *)
+function TZModemObj.Receive(path: string; Filelist: TStringList): Boolean;
 
 var
   i: integer16;
 
 begin
   AddLogMessage('ZModem receiving: ' + path, DLInform);
-  CommObj := vCommObj;
   TransferCount := 0;
   TransferError := 0;
   TransferBlockSize := 0;
   TransferCheck := '';
   TransferMessage := '';
-
-  zbaud := CommObj^.GetBPSrate;
 
   if (path <> '') and (path[Length(path)] <> DirSepa) then
     zrxpath := path + DirSepa
@@ -1929,31 +1964,23 @@ begin
 
   TransferTime := TimeCounter; TransferPath := zrxpath;
 
-  if (i = ZCOMPL) or ((i = ZFILE) and (RZ_ReceiveBatch = ZOK)) then
+  if (i = ZCOMPL) or ((i = ZFILE) and (RZ_ReceiveBatch(Filelist) = ZOK)) then
   begin
-    fehlerflag := FALSE                 {* War vertauscht?!}
+    result := true
   end
   else
   begin
     Z_SendCan;
-    fehlerflag := TRUE;
+    result := false;
   end;
 
   AddLogMessage(TransferMessage, DLDebug);
-  if @dispproc <> nil then dispproc;
+  dispproc;
 end;
 
 (*######### SEND ROUTINES #####################################*)
 
-var
-  infile: file;
-  rxbuflen: integer16;
-  txbuf: buftype;
-//  blkred: integer;
-
-  fheaderlen: smallword;
-
-procedure SZ_Z_SendByte(b: BYTE);
+procedure TZModemObj.SZ_Z_SendByte(b: BYTE);
 
 begin
   if ((b and $7F) in [16, 17, 19, 24]) or (((b and $7F) = 13) and ((lastsent and
@@ -1969,7 +1996,7 @@ end;
 
 (*************************************************************************)
 
-procedure SZ_SendBinaryHeader(htype: BYTE; var hdr: hdrtype);
+procedure TZModemObj.SZ_SendBinaryHeader(htype: BYTE; var hdr: hdrtype);
 
 var
   crc: smallword;
@@ -2031,7 +2058,7 @@ end;
 
 (*************************************************************************)
 
-procedure SZ_SendData(var buf: buftype; blength: integer16; frameend: BYTE);
+procedure TZModemObj.SZ_SendData(var buf: buftype; blength: integer16; frameend: BYTE);
 
 var
   crc: smallword;
@@ -2096,7 +2123,7 @@ end;                                    (* of SZ_SendData *)
 
 (*************************************************************************)
 
-procedure SZ_EndSend;
+procedure TZModemObj.SZ_EndSend;
 
 var
   done: BOOLEAN;
@@ -2125,7 +2152,7 @@ end;
 
 (*************************************************************************)
 
-function SZ_GetReceiverInfo: integer16;
+function TZModemObj.SZ_GetReceiverInfo: integer16;
 
 var
   n,
@@ -2174,7 +2201,7 @@ end;
 
 (*************************************************************************)
 
-function SZ_SyncWithReceiver: integer16;
+function TZModemObj.SZ_SyncWithReceiver: integer16;
 
 var
   c,
@@ -2190,7 +2217,7 @@ begin
 
   repeat
     c := Z_GetHeader(rxhdr);
-    CommObj^.PurgeInBuffer;
+    FCommObj^.PurgeInBuffer;
     case c of
       ZTIMEOUT:
         begin
@@ -2246,7 +2273,7 @@ end;
 
 (*************************************************************************)
 
-function SZ_SendFileData: integer16;
+function TZModemObj.SZ_SendFileData: integer16;
 
 label
   waitack, somemore;
@@ -2287,7 +2314,7 @@ begin
     begin
       if (ch = CHR(XOFF)) or (ch = CHR(XON)) then
       begin
-        ch := CommObj^.GetChar;
+        ch := FCommObj^.GetChar;
       end
       else
         stop := TRUE;
@@ -2298,7 +2325,7 @@ begin
 
   if chflag then
     {$ENDIF}
-    if CommObj^.CharCount > 1 then // Workaround!!! wg. fehlendem GetLastChar
+    if FCommObj^.CharCount > 1 then // Workaround!!! wg. fehlendem GetLastChar
     begin
 
       WaitAck:
@@ -2336,7 +2363,7 @@ begin
         end
       end {case};
 
-      while CommObj^.CharAvail do
+      while FCommObj^.CharAvail do
       begin
         case Z_GetByte(2) of
           CAN,
@@ -2365,7 +2392,7 @@ begin
       end;
     end;                                (* of IF *)
 
-    if not CommObj^.Carrier then
+    if not FCommObj^.Carrier then
     begin
       TransferMessage := 'Carrier lost';
       SZ_SendFileData := ZERROR;
@@ -2407,11 +2434,11 @@ begin
     TransferBytes := txpos - TransferCount;
 
     AddLogMessage(TransferMessage, DLDebug);
-    if @dispproc <> nil then dispproc;
+    dispproc;
 
     if (e = ZCRCW) then goto waitack;
 
-    while CommObj^.CharAvail do
+    while FCommObj^.CharAvail do
     begin
       case Z_GetByte(2) of
         CAN,
@@ -2459,13 +2486,13 @@ begin
     end;                                {case}
 
     AddLogMessage(TransferMessage, DLDebug);
-    if @dispproc <> nil then dispproc;
+    dispproc;
   until (c <> ZACK)
 end;
 
 (*************************************************************************)
 
-function SZ_SendFile: integer16;
+function TZModemObj.SZ_SendFile: integer16;
 
 var
   c: integer16;
@@ -2488,7 +2515,7 @@ begin
       end;
     end;                                (* of IF *)
 
-    if not CommObj^.Carrier then
+    if not FCommObj^.Carrier then
     begin
       TransferMessage := 'Lost carrier';
       SZ_SendFile := ZERROR;
@@ -2541,7 +2568,7 @@ begin
               FileAddition := RecoverFile;
 
             TransferCount := rxpos;
-            if (@startproc <> nil) then startproc;
+            startproc;
             txpos := rxpos;
             SZ_SendFile := SZ_SendFileData;
             Exit;
@@ -2553,10 +2580,7 @@ end;
 
 (*************************************************************************)
 
-procedure ZmodemSend(vCommObj: tpCommObj;  (* ObjCOM communication object            *)
-  pathname: string; (* Path und Filename                      *)
-  lastfile: Boolean;
-  var fehler: smallword); (* Bei Fehler in der Uebertragung <> 0     *)
+function TZModemObj.Send(pathname: string; lastfile: Boolean): Boolean;
 
 var
   s: string;
@@ -2564,7 +2588,6 @@ var
 
 begin
   AddLogMessage('ZModem sending: ' + pathname, DLInform);
-  CommObj := vCommObj;
   TransferError := 0;
   TransferTime := 0;
   TransferCount := 0;
@@ -2576,14 +2599,12 @@ begin
   TransferMessage := '';
   FileAddition := NewFile;
 
-  zbaud := CommObj^.GetBPSRate;
-
-  if not CommObj^.Carrier then
+  if not FCommObj^.Carrier then
   begin
     TransferMessage := 'Lost carrier';
     AddLogMessage(TransferMessage, DLError);
-    if @dispproc <> nil then dispproc;
-    fehler := 103;
+    dispproc;
+    result := false;
     Exit
   end;
 
@@ -2593,13 +2614,13 @@ begin
     begin
       TransferMessage := 'Unable to find/open file';
       AddLogMessage(TransferMessage, DLError);
-      if @dispproc <> nil then dispproc;
-      fehler := 10;
+      dispproc;
+      result := false;
       Exit
     end;
 
-    TransferName := fname; TransferSize := fsize; TransferTotalTime := fsize div
-      (zbaud div 10);
+    TransferName := fname; TransferSize := fsize;
+    TransferTotalTime := fsize div (zbaud div 10);
     TransferPath := Copy(pathname, 1, Pos(fname, pathname) - 1);
 
     Str(fsize, s);
@@ -2640,7 +2661,7 @@ begin
 
   if (SZ_GetReceiverInfo = ZERROR) then
   begin
-    fehler := 102;
+    result := false;
   end                                   (* of IF THEN *)
   else
   begin
@@ -2650,7 +2671,7 @@ begin
       begin
         TransferMessage := 'Failure to open file';
         Z_SendCan;
-        fehler := 101;
+        result := false;
       end;                              (* of IF *)
     end                                 (* of IF THEN *)
     else
@@ -2666,9 +2687,9 @@ begin
       end;
 
       case n of
-        ZSKIP: fehler := 9;
-        ZOK: fehler := 0;
-        ZCAN: fehler := 8;
+        ZSKIP: result := false;
+        ZOK: result := true;
+        ZCAN: result := false;
       end;                              (* of CASE *)
 
       if (n = ZERROR) then
@@ -2682,20 +2703,34 @@ begin
   end;                                  (* of ELSE *)
 
   AddLogMessage(TransferMessage, DLDebug);
-  if @dispproc <> nil then dispproc;
-  if @endproc <> nil then endproc;
+  dispproc;
+  endproc;
 end;
 
 (*************************************************************************)
 
+constructor TZModemObj.Init(vCommObj: tpCommObj; vProgressOutput: TProgressOutput);
 begin
-  TimerObj.Init; LogTimer.Init; MakeCRC32 := TRUE; RecoverAllow := TRUE;
-  DispProc := nil; StartProc := nil; EndProc := nil;
+  MakeCRC32 := TRUE; RecoverAllow := TRUE; LastSent:=0; ElapsedSec.Init;
+  LastErrorCount:=0; FCommObj:=vCommObj; FProgressOutput:=vProgressOutput;
+end;
+
+destructor TZModemObj.Done;
+begin
+  ElapsedSec.Done;
+end;
+
+begin
+  TimerObj.Init; LogTimer.Init;  FileAddition:=RecoverFile;
   LoggedBytesAreOutgoing := TRUE; LogChars := '';
 end.
 
 {
   $Log$
+  Revision 1.16  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
+
   Revision 1.15  2001/01/04 23:15:21  ma
   - commented out unused constants
 

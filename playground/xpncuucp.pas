@@ -30,7 +30,7 @@ uses
   {$IFDEF NCRT}xpcurses,{$ELSE}crt,{$ENDIF }
   sysutils,typeform,montage,fileio,keys,maus2,inout,lister,resource,
   maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes,
-  zcrfc,ipcclass;
+  zcrfc,progressoutput;
 
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;
@@ -42,7 +42,7 @@ function UUCPNetcall(boxname: string;
 implementation
 
 uses
-  xp3,xp3o,xpmakeheader,xpmessagewindow,xpmodemscripts,
+  xp3,xp3o,xpmakeheader,xpprogressoutputwindow,xpmodemscripts,
   xpnt,xpnetcall,ncuucp,objcom;
 
 function UUCPNetcall(boxname: string;
@@ -380,8 +380,8 @@ var
     end;
 
     UUCICO:=TUUCPNetcall.
-      CreateWithCommInitAndIPC(CommInit,
-      TXPMessageWindowDialog.CreateWithSize(60,10,BoxName,True));
+      CreateWithCommInitAndProgressOutput(CommInit,
+      TProgressOutputWindowDialog.CreateWithSize(60,10,BoxName,True));
 
     if BoxPar^.conn_Mode=1 then
     begin
@@ -426,10 +426,10 @@ var
       result:=el_noconn
     else 
     begin
-      UUCICO.WriteIPC(mcInfo,'Login',[0]);
-      if RunScript(BoxPar,UUCICO.CommObj,UUCICO.IPC,false,BoxPar^.Script,false,false) = 0 then
+      UUCICO.Output(mcInfo,'Login',[0]);
+      if RunScript(BoxPar,UUCICO.CommObj,UUCICO.ProgressOutput,false,BoxPar^.Script,false,false) = 0 then
       begin
-        UUCICO.WriteIPC(mcInfo,'Starting UUCICO',[0]);
+        UUCICO.Output(mcInfo,'Starting UUCICO',[0]);
         result := UUCICO.PerformNetcall;
       end;
       UUCICO.Disconnect;
@@ -488,6 +488,10 @@ end.
 
 {
   $Log$
+  Revision 1.11  2001/03/21 19:17:10  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
+
   Revision 1.10  2001/03/20 00:26:59  cl
   - fixed warning with new/dispose
 

@@ -225,7 +225,7 @@ try
   CommObj.SendString(dup(12,#0),false);
 
  (* INITA - window size negitiation *)
-  Netcall.WriteIPC(mcVerbose,'UUCP-%s startup: INITA',[Netcall.UUprotocol]);
+  Netcall.Output(mcVerbose,'UUCP-%s startup: INITA',[Netcall.UUprotocol]);
   n:=10; repeat
   try
     SendControlPacket(cp_INITA,Recv_WinSize);
@@ -237,7 +237,7 @@ try
   until cp_type(CtlHeader)=cp_INITA;
 
  (* INITB - packet size negitiation *)
-  Netcall.WriteIPC(mcVerbose,'UUCP-%s startup: INITB',[Netcall.UUprotocol]);
+  Netcall.Output(mcVerbose,'UUCP-%s startup: INITB',[Netcall.UUprotocol]);
   n:=10; repeat
   try
     SendControlPacket(cp_INITB,Recv_BufSizeLog2);
@@ -263,7 +263,7 @@ try
     ShowPacketSize(Send_BufSize,Recv_BufSize,false);
 
  (* INITC - window size negitiation *)
-  Netcall.WriteIPC(mcVerbose,'UUCP-%s startup: INITC',[Netcall.UUprotocol]);
+  Netcall.Output(mcVerbose,'UUCP-%s startup: INITC',[Netcall.UUprotocol]);
   n:=10; repeat
   try
     SendControlPacket(cp_INITC,Recv_WinSize);
@@ -280,7 +280,7 @@ try
   if Send_WinSize=0 then { ungueltige Fenstergroesse }
     raise EUUCProtocol.Create('illegal window size 0');
 
-  Netcall.WriteIPC(mcVerbose,'UUCP-%s startup complete.',[Netcall.UUprotocol]);
+  Netcall.Output(mcVerbose,'UUCP-%s startup complete.',[Netcall.UUprotocol]);
   result:=true;
 except
   on E:Exception do begin
@@ -300,7 +300,7 @@ var i : integer;
 label close_done;
 begin
   DebugLog('uucp-g','UUCP-G: ExitProtocol',dlInform);
-  Netcall.WriteIPC(mcVerbose,'UUCP-%s shutdown',[Netcall.UUprotocol]);
+  Netcall.Output(mcVerbose,'UUCP-%s shutdown',[Netcall.UUprotocol]);
   Netcall.log('+','closing UUCP-'+Netcall.UUprotocol+' connection');
 
 try
@@ -438,7 +438,7 @@ begin
       File_Errors:=File_Errors+1;
       for i:=0 to BufAnz-1 do
       begin
-        Netcall.WriteIPC(mcVerbose,'%s - resending packet %d',[ResendS,(BufFirst+i)mod 8]);
+        Netcall.Output(mcVerbose,'%s - resending packet %d',[ResendS,(BufFirst+i)mod 8]);
         SendDataPacket((BufFirst+i) mod 8);
       end;
     end;
@@ -485,7 +485,7 @@ begin
       except
         on ENetcallTimeout do
         begin
-          Netcall.WriteIPC(mcError,'%sTimeout - sending NAK',[iifs(command,'',strs(file_pos)+': ')]);
+          Netcall.Output(mcError,'%sTimeout - sending NAK',[iifs(command,'',strs(file_pos)+': ')]);
           FileError; AckBuffer;
           dec(n);
           if not odd(n) then SendControlPacket(cp_NAK,Recv_SeqNr);   { 30s Timeout-> egenseite aufwecken }
@@ -511,7 +511,7 @@ begin
 
     Except // Handle Timeouts for data
       on ENetcallTimeout do begin
-        Netcall.WriteIPC(mcError,'%sTimeout - sent NAK',[iifs(command,'',strs(file_pos)+': ')]);
+        Netcall.Output(mcError,'%sTimeout - sent NAK',[iifs(command,'',strs(file_pos)+': ')]);
         FileError; AckBuffer;
         SendControlPacket(cp_NAK,Recv_SeqNr);
         Continue; (* restart repeat loop *)
@@ -520,7 +520,7 @@ begin
 
     if ((CtlHeader[4] shr 3) and 7)<>j then                (* Wrong sequence number *)
     begin
-      Netcall.WriteIPC(mcError,'%sout of sequence: %d',[iifs(command,'',strs(file_pos)+': '),(Ctlheader[4] shr 3)and 7]);
+      Netcall.Output(mcError,'%sout of sequence: %d',[iifs(command,'',strs(file_pos)+': '),(Ctlheader[4] shr 3)and 7]);
       FileError;
       Continue;
     end;
@@ -534,7 +534,7 @@ begin
     if ($aaaa-(CheckSum(Buffer[j]^,size) xor CtlHeader[4]) <>
         longint(CtlHeader[3])*256 + CtlHeader[2]) then
     begin
-      Netcall.WriteIPC(mcError,'%sChecksum error - sent NAK',[iifs(command,'',strs(file_pos)+': ')]);
+      Netcall.Output(mcError,'%sChecksum error - sent NAK',[iifs(command,'',strs(file_pos)+': ')]);
       FileError; 
       AckBuffer; 
       SendControlPacket(cp_NAK,Recv_SeqNr);
@@ -655,6 +655,10 @@ end;
 
 {
   $Log$
+  Revision 1.5  2001/03/21 19:17:10  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
+
   Revision 1.4  2001/03/20 00:26:59  cl
   - fixed warning with new/dispose
 

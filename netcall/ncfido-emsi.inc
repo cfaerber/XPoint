@@ -1,6 +1,9 @@
 {  $Id$
 
    OpenXP fido netcall EMSI handshake implementation include file
+   Copyright (C) 1991-2001 Peter Mandrella
+   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
    Free Software Foundation; either version 2, or (at your option) any
@@ -88,7 +91,7 @@ var EMSIString,ED,EMSIData,EMSIData2,hex4  : string;
     more      : boolean;
 
 begin
-  WriteIPC(mcInfo,'EMSI',[0]); {FCommObj^.SendString(EMSI_INQ+#13);}
+  Output(mcInfo,'EMSI',[0]); {FCommObj^.SendString(EMSI_INQ+#13);}
   log(lcInfo,'sType: EMSI');
   EMSIHandshake:=0;
                                                         { EMSI_DAT erzeugen }
@@ -123,7 +126,7 @@ begin
     more:=not Timers[ti_EMS1].Timeout and FCommObj^.CharAvail;
     if Timers[ti_EMS1].Timeout then dec(count);
     dec(scount);
-    if EMSIString=EMSI_NAK then WriteIPC(mcError,getres2(30004,23),[0]);   { 'EMSI_NAK: wiederhole EMSI-Paket' }
+    if EMSIString=EMSI_NAK then Output(mcError,getres2(30004,23),[0]);   { 'EMSI_NAK: wiederhole EMSI-Paket' }
   until ok or(count=0)or(scount=0)or not FCommObj^.Carrier;
   if not FCommObj^.Carrier then Log(lcError,'carrier lost');
   if not ok then goto ende;
@@ -149,7 +152,7 @@ begin
         ok:=(hexval(hex4)=CRC16Block(EMSIString[3],Length(EMSIString)-2)); {fuehrende Sternchen von CRC aussparen}
         if not ok then begin
           FCommObj^.SendString(EMSI_NAK+#13,False);       { CRC-Fehler }
-          WriteIPC(mcInfo,getres2(30004,24),[0]);  { 'fehlerhaftes EMSI-Paket erhalten' }
+          Output(mcInfo,getres2(30004,24),[0]);  { 'fehlerhaftes EMSI-Paket erhalten' }
         end else begin
           SleepTime(150); FCommObj^.SendString(EMSI_ACK+#13+EMSI_ACK+#13,False);    { CRC ok }
         end;
@@ -192,7 +195,7 @@ begin
       if settime then begin
         log(lcInfo,'correcting time by '+iifs(trx>=sec70,'+','')+
             strs(trx-sec70)+' seconds');
-        WriteIPC(mcInfo,getres2(30004,25),[0]);    { 'korrigiere Uhrzeit' }
+        Output(mcInfo,getres2(30004,25),[0]);    { 'korrigiere Uhrzeit' }
       end;
     end;
     EMSIHandshake:=2;
@@ -202,20 +205,8 @@ end;
 
 {
   $Log$
-  Revision 1.5  2001/02/19 14:15:15  ma
-  - proper AKA handling (primarily for BinkP)
-
-  Revision 1.4  2001/02/03 18:40:33  ma
-  - added StringLists for tracking sent/rcvd files
-  - ncfido using OO ZModem now
-
-  Revision 1.3  2001/02/02 20:59:57  ma
-  - moved log routines to ncmodem
-
-  Revision 1.2  2001/02/02 17:14:01  ma
-  - new Fidomailer polls :-)
-
-  Revision 1.1  2001/01/30 15:18:37  ma
-  - moved protocols to separate source files
+  Revision 1.1  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
 
 }

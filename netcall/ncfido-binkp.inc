@@ -166,7 +166,7 @@ var
 begin
   State:=WaitConn; LastState:=WaitConn; BpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
   Timer.Init; Timer.SetTimeout(60);
-  WriteIPC(mcVerbose,'Authenticating...',[0]);
+  Output(mcVerbose,'Authenticating...',[0]);
   repeat
     if LastState<>State then begin
       Debug.DebugLog('ncfido','binkp session setup state '+Strs(Ord(State)),DLDebug);
@@ -193,8 +193,8 @@ begin
           case BpF.FrameType of
             M_ADR: State:=AuthRemote;
 //** see if answering side presented the address we've called
-            M_BSY: begin WriteIPC(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
-            M_ERR: begin WriteIPC(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
+            M_BSY: begin Output(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
+            M_ERR: begin Output(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
             M_NUL: Log(lcInfo,BpF.CommandPar);
             end;
           if State=WaitAddr then BpF.ReadFromStream(False);
@@ -207,7 +207,7 @@ begin
       IfSecure: begin
         if Password='-' then begin
           result:=0; State:=Done;
-          WriteIPC(mcInfo,'Authentication successful',[0]);
+          Output(mcInfo,'Authentication successful',[0]);
         end else begin
           BpF.ReadFromStream(False);
           State:=WaitOk;
@@ -216,19 +216,19 @@ begin
       WaitOk: begin
         if BpF.IsReady then begin
           case BpF.FrameType of
-            M_OK: begin WriteIPC(mcInfo,'Authentication successful',[0]); result:=0; State:=Done; end;
-            M_BSY: begin WriteIPC(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
-            M_ERR: begin WriteIPC(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
+            M_OK: begin Output(mcInfo,'Authentication successful',[0]); result:=0; State:=Done; end;
+            M_BSY: begin Output(mcError,'Remote is busy',[0]); result:=1; State:=Done; end;
+            M_ERR: begin Output(mcError,'Remote refuses connection',[0]); result:=2; State:=Done; end;
             M_NUL: Log(lcInfo,BpF.CommandPar);
             end;
           if State<>Done then BpF.ReadFromStream(False);
           end;
         end;
       end;
-    WriteIPC(mcVerbose,'',[0]);
+    Output(mcVerbose,'',[0]);
   until(State=Done)or KeyPressed or Timer.Timeout;
-  if Timer.Timeout then begin WriteIPC(mcError,'Timeout',[0]); Log(lcError,'timeout'); result:=2; end;
-  if Keypressed then begin WriteIPC(mcError,'User break',[0]); Log(lcError,'user break'); result:=2; end;
+  if Timer.Timeout then begin Output(mcError,'Timeout',[0]); Log(lcError,'timeout'); result:=2; end;
+  if Keypressed then begin Output(mcError,'User break',[0]); Log(lcError,'user break'); result:=2; end;
   while KeyPressed do ReadKey;
   BpF.Destroy; Timer.Done;
 end;
@@ -256,7 +256,7 @@ var
   function BpReceive: tResult;
   var s: string; RxFilePos: Cardinal;
   begin
-    result:=OK; Debug.DebugLog('ncfido','Rx machine',DLDebug);
+    result:=OK;
     if LastRxState<>RxState then begin
       Debug.DebugLog('ncfido','binkp rxstate '+sRxState[RxState],DLDebug);
       LastRxState:=RxState;
@@ -266,12 +266,12 @@ var
         if not InBpF.IsReady then exit;
         case InBpF.FrameType of
           M_DATA: ; // ignore
-          M_ERR: begin WriteIPC(mcError,'Remote reported error',[0]); RxState:=RxDone; result:=Failure; exit; end;
+          M_ERR: begin Output(mcError,'Remote reported error',[0]); RxState:=RxDone; result:=Failure; exit; end;
           M_GET,M_GOT,M_SKIP: begin
             TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
             end;
           M_NUL: Log(lcInfo,InBpF.CommandPar);
-          M_EOB: begin WriteIPC(mcInfo,'Finished receiving files',[0]); RxState:=RxDone; end; //** protocol violation
+          M_EOB: begin Output(mcInfo,'Finished receiving files',[0]); RxState:=RxDone; end; //** protocol violation
           M_FILE: begin
             s:=InBpF.CommandPar; RxFilename:=GetPar(s); RxSize:=StrToIntDef(GetPar(s),0);
             RxTime:=StrToIntDef(GetPar(s),0); RxOffset:=StrToIntDef(GetPar(s),0);
@@ -281,7 +281,7 @@ var
         InBpF.ReadFromStream(False);
         end;
       RxAccF: begin
-        WriteIPC(mcVerbose,'receiving %s',[RxFilename]);
+        Output(mcVerbose,'receiving %s',[RxFilename]);
         if FileExists(IncomingDir+RxFilename)then begin // file exists
           RxFileHandle:=FileOpen(IncomingDir+RxFilename,fmOpenReadWrite);
           if RxFileHandle>0 then begin // opened ok
@@ -324,13 +324,13 @@ var
       RxWriteD: begin
         if RxResult<0 then begin RxState:=RxDone; result:=failure; exit; end;
         RxFilePos:=FileSeek(RxFileHandle,0,fsFromCurrent);
-        WriteIPC(mcVerbose,'receiving %s %.0f%%',[RxFilename,100.0*RxFilePos/RxSize]);
+        Output(mcVerbose,'receiving %s %.0f%%',[RxFilename,100.0*RxFilePos/RxSize]);
         if RxFilePos>RxSize then begin RxState:=RxDone; result:=Failure; exit; end;
         if RxFilePos=RxSize then begin
           RxState:=RxWaitF; //** set file time
           FileClose(RxFileHandle);
           OutBpF.SendCommandFrame(M_GOT,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
-          WriteIPC(mcInfo,'%s received',[RxFilename]);
+          Output(mcInfo,'%s received',[RxFilename]);
           IncomingFiles.Add(IncomingDir+RxFilename);
           LogRxFile(IncomingDir+RxFilename);
           end;
@@ -363,21 +363,21 @@ var
         s:=QBpF.CommandPar; s:=GetPar(s);
         if s=TxFilename then begin
           FileClose(TxFileHandle);
-          WriteIPC(mcError,'Remote refused file %s',[TxFilename]);
+          Output(mcError,'Remote refused file %s',[TxFilename]);
           TxState:=TxGNF;
           end else
           if PendingFiles.Find(s,iPending)then begin
             LogTxFile(PendingFilesWithPath[iPending]);
             PendingFiles.Delete(iPending);
             PendingFilesWithPath.Delete(iPending);
-            WriteIPC(mcInfo,'sent %s',[s]);
+            Output(mcInfo,'sent %s',[s]);
             end;
         end;
       M_SKIP: begin
         s:=QBpF.CommandPar; s:=GetPar(s);
         if s=TxFilename then begin
           FileClose(TxFileHandle);
-          WriteIPC(mcInfo,'Remote will accept file %s later',[TxFilename]);
+          Output(mcInfo,'Remote will accept file %s later',[TxFilename]);
           TxState:=TxGNF;
           end;
         //** add: M_SKIP file not currently transmitting
@@ -403,7 +403,7 @@ var
           end else begin                     // still files to send
           TxFilename:=ExtractFilename(OutgoingFiles[0]);
           TxFilenameWithPath:=OutgoingFiles[0];
-          WriteIPC(mcInfo,'Sending %s',[TxFilename]);
+          Output(mcInfo,'Sending %s',[TxFilename]);
           TxFileHandle:=FileOpen(OutgoingFiles[0],fmOpenRead);
           OutgoingFiles.Delete(0);
           if TxFileHandle>0 then begin       // opened ok
@@ -464,7 +464,7 @@ begin
   repeat
     case State of
       WaitConn: begin
-        WriteIPC(mcInfo,'Initiating file transfer',[0]);
+        Output(mcInfo,'Initiating file transfer',[0]);
         RxState:=RxWaitF; TxState:=TxGNF;
         LastRxState:=RxWaitF; LastTxState:=TxGNF;
         State:=Switch; //** set timer
@@ -472,7 +472,7 @@ begin
         end;
       Switch: begin
         if (RxState=RxDone)and(TxState=TxDone)then begin
-          WriteIPC(mcInfo,'File transfer complete',[0]);
+          Output(mcInfo,'File transfer complete',[0]);
           result:=0; State:=Done;
           end else if FCommObj^.CharAvail then
             State:=Receive
@@ -498,9 +498,9 @@ begin
     if (KeyPressed and(ReadKey=#27))or
        (not CommObj^.Carrier)then begin
       if not CommObj^.Carrier then
-        WriteIPC(mcError,'Connection lost',[0])
+        Output(mcError,'Connection lost',[0])
       else
-        WriteIPC(mcError,'User break',[0]);
+        Output(mcError,'User break',[0]);
       result:=BreakTransfer;
       end;
   until State=Done;
@@ -510,48 +510,8 @@ end;
 
 {
   $Log$
-  Revision 1.12  2001/03/20 12:07:08  ma
-  - various fixes and improvements
-
-  Revision 1.11  2001/03/03 16:21:32  ma
-  - removed unused variables/procedures
-
-  Revision 1.10  2001/03/03 00:25:47  ma
-  - small fixes
-
-  Revision 1.9  2001/02/23 16:09:13  ma
-  - fixed session end detection bugs
-
-  Revision 1.8  2001/02/23 13:51:05  ma
-  - implemented transferred file logging
-  - implemented empty send batch (Fido)
-  - implemented basic netcall logging
-
-  Revision 1.7  2001/02/19 14:15:15  ma
-  - proper AKA handling (primarily for BinkP)
-
-  Revision 1.6  2001/02/19 12:18:28  ma
-  - simplified ncmodem usage
-  - some small improvements
-
-  Revision 1.5  2001/02/18 16:20:06  ma
-  - BinkP's working! :-) - had to cope with some errors in BinkP protocol
-    specification...
-
-  Revision 1.4  2001/02/17 21:44:37  ma
-  - BinkP protocol provisionally activated by "SetTime" ;-)
-  - remote seems not to recognize binkp frames sent yet
-
-  Revision 1.3  2001/02/12 23:43:25  ma
-  - some fixes
-
-  Revision 1.2  2001/02/11 16:30:36  ma
-  - added sysop call
-  - some changes with class constructors
-
-  Revision 1.1  2001/02/11 01:01:10  ma
-  - ncmodem does not dial now if no phone number specified
-    (removed PerformDial property)
-  - added BinkP protocol: Compiles, but not functional yet
+  Revision 1.1  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
 
 }

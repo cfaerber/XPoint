@@ -1,7 +1,8 @@
 {  $Id$
 
    OpenXP modem netcall base class
-   Copyright (C) 2001 OpenXP team (www.openxp.de) and M.Kiesel
+   Copyright (C) 1991-2001 Peter Mandrella
+   Copyright (C) 2000-2001 OpenXP team (www.openxp.de) and M.Kiesel
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@ unit NCModem;
 interface
 
 uses
-  netcall,timer,objcom,ipcclass;
+  netcall,timer,objcom,progressoutput;
 
 const
   { Log chars used in canonical log file. }
@@ -132,15 +133,15 @@ type
     property GotUserBreak: Boolean read FGotUserBreak;
     property ErrorMsg: string read FErrorMsg;
 
-    { Create with CommInit string and IPC class }
-    constructor CreateWithCommInitAndIPC(const aCommInit: string; aIPC: TIPC);
+    { Create with CommInit string and ProgressOutput class }
+    constructor CreateWithCommInitAndProgressOutput(const aCommInit: string; aProgressOutput: TProgressOutput);
     { Create with CommObj. Intended for online calls. Active and
       Connected return true after call. }
-    constructor CreateWithCommObjAndIPC(p: tpCommObj; aIPC: TIPC);
+    constructor CreateWithCommObjAndProgressOutput(p: tpCommObj; aProgressOutput: TProgressOutput);
     { Disconnects if phonenumbers not empty.
       Disposes CommObj.
       Closes log file.
-      Disposes IPC. }
+      Disposes ProgressOutput. }
     destructor Destroy; override;
 
     { Connects (= initializes comm channel and dials if necessary) }
@@ -170,7 +171,7 @@ implementation
 
 uses
   {$IFDEF NCRT} xpcurses,{$ELSE}crt,{$ENDIF}
-  xpglobal,sysutils,typeform,debug,xpmessagewindow;
+  xpglobal,sysutils,typeform,debug,xpprogressoutputwindow;
 
 {$IFDEF VP}
 const fsFromEnd= 2; fsFromCurrent= 1; fsFromBeginning= 0;
@@ -200,10 +201,10 @@ begin
   result:=n;
 end;
 
-constructor TModemNetcall.CreateWithCommInitAndIPC(const aCommInit: string; aIPC: TIPC);
+constructor TModemNetcall.CreateWithCommInitAndProgressOutput(const aCommInit: string; aProgressOutput: TProgressOutput);
 begin
   inherited Create;
-  FConnected:=False; FActive:=False; FErrorMsg:=''; IPC:=aIPC; FCommInit:=aCommInit;
+  FConnected:=False; FActive:=False; FErrorMsg:=''; ProgressOutput:=aProgressOutput; FCommInit:=aCommInit;
   WaitForAnswer:=False; FGotUserBreak:=False; ReceivedUpToNow:=''; ModemAnswer:='';
   Phonenumbers:=''; CommandInit:='ATZ'; CommandDial:='ATD'; MaxDialAttempts:=3;
   TimeoutConnectionEstablish:=90; TimeoutModemInit:=10; RedialWaitTime:=40;
@@ -211,9 +212,9 @@ begin
   FTimerObj:=new(TPTimer,Init);
 end;
 
-constructor TModemNetcall.CreateWithCommObjAndIPC(p: tpCommObj; aIPC: TIPC);
+constructor TModemNetcall.CreateWithCommObjAndProgressOutput(p: tpCommObj; aProgressOutput: TProgressOutput);
 begin
-  CreateWithCommInitAndIPC('',aIPC);
+  CreateWithCommInitAndProgressOutput('',aProgressOutput);
   FCommObj:=p; FActive:=True; FConnected:=True;
 end;
 
@@ -245,7 +246,7 @@ begin
   if not FActive then FActive:=CommInit(FCommInit,FCommObj);
   if not FActive then begin
     FErrorMsg:=ObjCOM.ErrorStr;
-    WriteIPC(mcError,'%s',[FErrorMsg]);
+    Output(mcError,'%s',[FErrorMsg]);
     Log(lcError,FErrorMsg);
     end;
   result:=FActive;
@@ -347,7 +348,7 @@ var
 
 begin
   if not FActive then begin
-    WriteIPC(mcVerbose,'Opening comm channel',[0]);
+    Output(mcVerbose,'Opening comm channel',[0]);
     result:=Activate;
     if not result then begin SleepTime(2000); exit end;
     end;
@@ -363,7 +364,7 @@ begin
   while StateDialup<=SDWaitForNextCall do begin
     case StateDialup of
       SDInitialize: begin
-                      WriteIPC(mcInfo,'Init modem',[0]);
+                      Output(mcInfo,'Init modem',[0]);
                       FTimerObj.SetTimeout(TimeoutModemInit);
                       if CommandInit='' then begin
                         FCommObj^.SendString(#13,False); SleepTime(150);
@@ -376,7 +377,7 @@ begin
                     end;
       SDSendDial: begin
                     inc(iDial); FPhonenumber:=GetNextPhonenumber(Phonenumbers);
-                    WriteIPC(mcInfo,'Dial %s try %d',[FPhonenumber,iDial]);
+                    Output(mcInfo,'Dial %s try %d',[FPhonenumber,iDial]);
                     CurrentPhonenumber:=FPhonenumber;
                     while cpos('-',CurrentPhonenumber)>0 do delete(CurrentPhonenumber,cpos('-',CurrentPhonenumber),1);
                     SendMultCommand(CommandDial+CurrentPhonenumber,1); {Gegenstelle anwaehlen}
@@ -384,23 +385,23 @@ begin
                   end;
       SDWaitForConnect: begin
                           FTimerObj.SetTimeout(TimeoutConnectionEstablish);
-                          TXPMessageWindow(IPC).TimerDisplay:=mwTimeout;
-                          TXPMessageWindow(IPC).TimerToUse:=@FTimerObj;
+                          TProgressOutputWindow(ProgressOutput).TimerDisplay:=mwTimeout;
+                          TProgressOutputWindow(ProgressOutput).TimerToUse:=FTimerObj;
                           repeat
                             ProcessIncoming; ProcessKeypresses(false);
-                            WriteIPC(mcVerbose,'',[0]);
+                            Output(mcVerbose,'',[0]);
                           until FTimerObj.Timeout or(not WaitForAnswer);
-                          TXPMessageWindow(IPC).TimerDisplay:=mwElapsedTime;
-                          TXPMessageWindow(IPC).TimerToUse:=@TXPMessageWindow(IPC).Timer;
+                          TProgressOutputWindow(ProgressOutput).TimerDisplay:=mwElapsedTime;
+                          TProgressOutputWindow(ProgressOutput).TimerToUse:=@TProgressOutputWindow(ProgressOutput).Timer;
                           result:=False;
                           if not FTimerObj.Timeout then begin
                             {Kein Timeout, kein Userbreak: Vermutlich Connect oder Busy.}
-                            WriteIPC(mcInfo,'%s',[ModemAnswer]);
+                            Output(mcInfo,'%s',[ModemAnswer]);
                             SleepTime(200);
                             if LeftStr(ModemAnswer,7)='CARRIER' then ModemAnswer:='CONNECT'+mid(ModemAnswer,8);
                             if LeftStr(ModemAnswer,7)='CONNECT' then begin
                               {Connect!}
-                              TXPMessageWindow(IPC).Timer.Start;
+                              TProgressOutputWindow(ProgressOutput).Timer.Start;
                               StateDialup:=SDConnect; result:=True;
                               FConnectString:=ModemAnswer; FConnected:=True;
                               FLineSpeed:=Bauddetect(FConnectString);
@@ -410,7 +411,7 @@ begin
                             end
                           end;
                           if not result then begin {Timeout, Userbreak, Busy oder aehnliches}
-                            WriteIPC(mcInfo,'No connect',[0]);
+                            Output(mcInfo,'No connect',[0]);
                             FPhonenumber:='';
                             FCommObj^.SendString(#13,False); SleepTime(1000); {ggf. noch auflegen}
                             StateDialup:=SDWaitForNextCall;
@@ -418,26 +419,26 @@ begin
               end;
       SDWaitForNextCall: begin
                            FTimerObj.SetTimeout(RedialWaitTime);
-                           WriteIPC(mcInfo,'Wait for next dial attempt',[0]);
+                           Output(mcInfo,'Wait for next dial attempt',[0]);
                            if iDial<MaxDialAttempts then begin
-                             TXPMessageWindow(IPC).TimerDisplay:=mwTimeout;
-                             TXPMessageWindow(IPC).TimerToUse:=@FTimerObj;
+                             TProgressOutputWindow(ProgressOutput).TimerDisplay:=mwTimeout;
+                             TProgressOutputWindow(ProgressOutput).TimerToUse:=FTimerObj;
                              repeat
-                               WriteIPC(mcVerbose,'',[0]);
+                               Output(mcVerbose,'',[0]);
                                ProcessIncoming; ProcessKeypresses(true);
                                if Pos('RING',ModemAnswer)<>0 then begin
-                                 WriteIPC(mcInfo,'Ring detected',[0]);
+                                 Output(mcInfo,'Ring detected',[0]);
                                  WaitForAnswer:=True; FTimerObj.SetTimeout(RedialWaitTime);
                                end;
                              until FTimerObj.Timeout;
-                             TXPMessageWindow(IPC).TimerDisplay:=mwElapsedTime;
-                             TXPMessageWindow(IPC).TimerToUse:=@TXPMessageWindow(IPC).Timer;
+                             TProgressOutputWindow(ProgressOutput).TimerDisplay:=mwElapsedTime;
+                             TProgressOutputWindow(ProgressOutput).TimerToUse:=@TProgressOutputWindow(ProgressOutput).Timer;
                              StateDialup:=SDInitialize;
                            end else StateDialup:=SDNoConnect;
                          end;
     end;
     ProcessKeypresses(true);
-    if FGotUserBreak then begin WriteIPC(mcInfo,'Got user break',[0]); exit end;
+    if FGotUserBreak then begin Output(mcInfo,'Got user break',[0]); exit end;
   end;
 end;
 
@@ -473,7 +474,7 @@ var i : integer;
 begin
   if FConnected then Log(lcConnect,'hangup');
   if FPhonenumber<>'' then begin
-    WriteIPC(mcInfo,'Hanging up',[0]);
+    Output(mcInfo,'Hanging up',[0]);
     DebugLog('ncmodem','Hangup',DLInform);
     FCommObj^.PurgeInBuffer; FCommObj^.SetDTR(False);
     SleepTime(500); for i:=1 to 6 do if(not FCommObj^.IgnoreCD)and FCommObj^.Carrier then SleepTime(500);
@@ -502,7 +503,7 @@ begin
     begin
       FGotUserBreak:=true;
       Log(lcExit,'User break.');
-      WriteIPC(mcInfo,'User break - aborting...',[0]);
+      Output(mcInfo,'User break - aborting...',[0]);
     end;
 
   if FGotUserBreak then
@@ -520,82 +521,8 @@ end.
 
 {
   $Log$
-  Revision 1.22  2001/03/20 00:26:59  cl
-  - fixed warning with new/dispose
-
-  Revision 1.21  2001/03/19 12:22:26  cl
-  - property Timer:TPTimer ...;
-  - procedure TModemNetcall.TestTimer;
-
-  Revision 1.20  2001/03/03 00:25:48  ma
-  - small fixes
-
-  Revision 1.19  2001/02/26 12:47:33  cl
-  - oops; reverting accidentally committed modifications
-
-  Revision 1.17  2001/02/23 13:57:14  ma
-  - fixed small time logging bug
-
-  Revision 1.16  2001/02/23 13:51:05  ma
-  - implemented transferred file logging
-  - implemented empty send batch (Fido)
-  - implemented basic netcall logging
-
-  Revision 1.15  2001/02/19 12:18:28  ma
-  - simplified ncmodem usage
-  - some small improvements
-
-  Revision 1.14  2001/02/18 16:20:06  ma
-  - BinkP's working! :-) - had to cope with some errors in BinkP protocol
-    specification...
-
-  Revision 1.13  2001/02/17 21:44:37  ma
-  - BinkP protocol provisionally activated by "SetTime" ;-)
-  - remote seems not to recognize binkp frames sent yet
-
-  Revision 1.12  2001/02/12 23:43:25  ma
-  - some fixes
-
-  Revision 1.11  2001/02/11 16:30:35  ma
-  - added sysop call
-  - some changes with class constructors
-
-  Revision 1.10  2001/02/11 01:01:10  ma
-  - ncmodem does not dial now if no phone number specified
-    (removed PerformDial property)
-  - added BinkP protocol: Compiles, but not functional yet
-
-  Revision 1.9  2001/02/09 17:31:07  ma
-  - added timer to xpmessagewindow
-  - did some work on AKA handling in xpncfido
-
-  Revision 1.8  2001/02/06 20:17:50  ma
-  - added error handling
-  - cleaning up files properly now
-
-  Revision 1.7  2001/02/03 18:40:33  ma
-  - added StringLists for tracking sent/rcvd files
-  - ncfido using OO ZModem now
-
-  Revision 1.6  2001/02/02 20:59:57  ma
-  - moved log routines to ncmodem
-
-  Revision 1.5  2001/02/02 17:14:01  ma
-  - new Fidomailer polls :-)
-
-  Revision 1.4  2001/01/28 00:13:58  ma
-  - compiles!- untested though.
-
-  Revision 1.3  2001/01/23 11:46:11  ma
-  - a little cleanup done
-
-  Revision 1.2  2001/01/10 16:31:26  ma
-  - added phone number functions
-  - todo: add class communication methods (perhaps in netcall class already)
-    because standardized transfer logging should make things *by far* easier
-    than they were
-
-  Revision 1.1  2001/01/07 01:15:40  ma
-  - perhaps playground concept proves useful
+  Revision 1.1  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
 
 }

@@ -23,18 +23,18 @@
 
 {$I XPDEFINE.INC}
 
-unit xpipc;
+unit xpprogressoutputxy;
 
 interface
 
 uses
   XPGlobal,
-  IPCClass,
+  ProgressOutput,
   SysUtils;
 
 
 type
-  TXPIPC = class(TIPC)
+  TProgressOutputXY = class(TProgressOutput)
   
   public
 
@@ -52,19 +52,18 @@ implementation  { ------------------------------------------------- }
 
 uses
   TypeForm,
-  WinXP,
 {$ifdef NCRT}
   XPCurses,
 {$endif}
   Maus2,
   XP0;  
 
-constructor TXPIPC.Create;
+constructor TProgressOutputXY.Create;
 begin
   x:= 0; y:= 0; maxlength:= 0;
 end;
 
-procedure TXPIPC.WriteFmt(mc: TMsgClass; fmt: string; args: array of const);
+procedure TProgressOutputXY.WriteFmt(mc: TMsgClass; fmt: string; args: array of const);
 begin
   if (x<>0) and (y<>0) and (maxlength<>0) then begin
     MWrt(x,y,Sp(maxlength));
@@ -73,9 +72,13 @@ begin
 end;
 
 end.
+
 {
 	$Log$
+	Revision 1.1  2001/03/21 19:17:08  ma
+	- using new netcall routines now
+	- renamed IPC to Progr.Output
+
 	Revision 1.1  2000/07/25 18:02:19  hd
 	- NNTP-Unterstuetzung (Anfang)
-
 }

@@ -1776,8 +1776,8 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # Maus Password
 1    Password~
 # Fido
-2    Point number
-3    Point net  ~
+2    Point nr.
+3    Point net
 # Turbobox-PW
 4    Password
 # Pronet
@@ -1792,10 +1792,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 # QM
 14   Login ~
 # Fido
-15   Passwd.
+15   Password
 # UUCP
 16   Login   ~
-17   Password
+17   Password~
 18   UUCP name
 #
 70   Mode    ~
@@ -1804,6 +1804,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 73   Phone  ~
 74   Host   ~
 75   Port
+76   Telnet
 #
 20   Upload protocol  ~
 21   Download protocol~
@@ -1842,15 +1843,15 @@ K (c) '2000 OpenXP Team, www.openxp.de
 43   UpPack extension ~
 44   Janus Plus
 # Fido
-45   AKA's~
+45   AKAs (incoming)  ~
 46   4D addresses
 47   TosScan
 48   Set system clock
 49   Packet password
 50   Use node address
-51   Send empty packet
+51   Send dummy packet
 52   Ext. packet names
-53   Send packets for ~
+53   Servers (outgoing)
 # Turbo
 55   Get news
 56   Serial no
@@ -3672,6 +3673,10 @@ K (c) '2000 OpenXP Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.128  2001/03/21 19:17:07  ma
+# - using new netcall routines now
+# - renamed IPC to Progr.Output
+#
 # Revision 1.127  2001/03/19 12:20:53  cl
 # - more UUCICO ressources (UUCP-gGv)
 #

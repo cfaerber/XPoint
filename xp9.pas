@@ -58,7 +58,7 @@ procedure ps_setempf(var s:string);
 function  notempty2(var s:string):boolean;
 function  testreplyto(var s:string):boolean;
 procedure uucp_getloginname(var s:string);
-function  uucp_setmode(var s:string):boolean;
+function  Conn_setmode(var s:string):boolean;
 function  uucp_setprot(var s:string):boolean;
 function  uucp_setsznego(var s:string):boolean;
 function  testuucp(brk,modif:boolean):boolean;
@@ -98,14 +98,14 @@ var   UpArcnr   : integer;    { fÅr EditPointdaten }
       gf_fido   : boolean;
       loginfld  : integer;    { UUCP: login                     }
 
-      UUCP_ModeFld:integer;   { UUCP: field of mode selector    }
+      Conn_ModeFld:integer;   { UUCP/Fido: field of mode selector    }
 
-      UUCP_TelFld:integer;    { UUCP: field for phone numbers   }
-      UUCP_IPFld: integer;    { UUCP: field for ip no./hostname }
-      UUCP_PortFld:integer;   { UUCP: field for ip port         }
+      Conn_TelFld:integer;    { UUCP/Fido: field for phone numbers   }
+      Conn_IPFld: integer;    { UUCP/Fido: field for ip no./hostname }
+      Conn_PortFld:integer;   { UUCP/Fido: field for ip port         }
 
       UUp1,UUpl : integer;    { UUCP: first and last protocol   }
-      
+
       UUCP_peFld: integer;    { UUCP: field of UUCP-e protocol  }
       UUCP_ptFld: integer;    { UUCP: field of UUCP-t protocol  }
       UUCP_p_GFld:integer;    { UUCP: field of UUCP-G protocol  }
@@ -330,20 +330,22 @@ begin
     setfield(loginfld,s);
 end;
 
-function uucp_setmode(var s:string):boolean;
+function Conn_setmode(var s:string):boolean;
   var modem: boolean;
 begin
   modem:=(s=getres2(920,71));
-  setfieldenable(uucp_telfld,     modem);
-  setfieldenable(uucp_ipfld,  not modem);
-  setfieldenable(uucp_portfld,not modem);
-  setfieldnodisp(uucp_telfld, not modem);
-  setfieldnodisp(uucp_ipfld,      modem);
-  setfieldnodisp(uucp_portfld,    modem);
+  setfieldenable(Conn_telfld,     modem);
+  setfieldenable(Conn_ipfld,  not modem);
+  setfieldenable(Conn_portfld,not modem);
+  setfieldnodisp(Conn_telfld, not modem);
+  setfieldnodisp(Conn_ipfld,      modem);
+  setfieldnodisp(Conn_portfld,    modem);
 
-  setfieldenable(uucp_pefld,  not modem);
-  setfieldenable(uucp_ptfld,  not modem);
-  uucp_setmode:=true;
+  if uucp_pefld<>0 then begin
+    setfieldenable(uucp_pefld,  not modem);
+    setfieldenable(uucp_ptfld,  not modem);
+    end;
+  Conn_setmode:=true;
 end;
 
 function uucp_setprot(var s:string):boolean;
@@ -355,7 +357,7 @@ begin
   setfieldenable(uucp_gvarfld, has_g);
   setfieldenable(uucp_gforfld, has_g);
   result:=true;
-end; 
+end;
 
 function uucp_setsznego(var s:string):boolean;
 begin
@@ -383,17 +385,17 @@ function testuucp(brk,modif:boolean):boolean;
 var i  : integer;
   modem: boolean;
 begin
-  if brk or (not modif) then 
+  if brk or (not modif) then
   begin
     result:=true;
     exit;
   end;
 
-  modem:=(getfield(uucp_modefld)=getres2(920,71));
+  modem:=(getfield(Conn_modefld)=getres2(920,71));
 
   for i:=uup1 to uupl do
     if not (modem and (i in[uucp_pefld,uucp_ptfld])) then
-      if getfield(i)=_jn_[1] then 
+      if getfield(i)=_jn_[1] then
       begin
         result:=true;
         exit;
@@ -455,10 +457,10 @@ end;
 
 procedure scripterrors(var s:string);
 begin
-//  if (s<>'') and Fileexists(s) and (RunScript(nil,nil,nil,true,s,false,false)<>0) then begin
+  if (s<>'') and Fileexists(s) and (RunScript(nil,nil,nil,true,s,false,false)<>0) then begin
     rfehler(925);    { 'Syntaxfehler in Script' }
-//    if listfile(LogPath+ScErrlog,scerrlog,true,false,0)=0 then;
-//    end;
+    if listfile(LogPath+ScErrlog,scerrlog,true,false,0)=0 then;
+    end;
 end;
 
 { Fileserver: Feldbezeichnung Ñndern }
@@ -1799,6 +1801,10 @@ end.
 
 {
   $Log$
+  Revision 1.59  2001/03/21 19:17:07  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
+
   Revision 1.58  2001/03/13 19:24:57  ma
   - added GPL headers, PLEASE CHECK!
   - removed unnecessary comments

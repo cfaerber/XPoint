@@ -375,10 +375,10 @@
   end;
 
   procedure EditPointdaten(nt:byte; var brk:boolean);
-  var x,y,br : byte;
+  var x,y,FieldW : byte;
       pname  : string;
       lhapar : string;
-      add    : shortint;
+      YOffset    : shortint;
       fido   : boolean;
       uucp   : boolean;
       _conn_mode: string;
@@ -401,15 +401,15 @@
     uucp:=(nt=nt_UUCP);
     pronet:=(nt=nt_Pronet);
     zc:=(nt=nt_ZConnect);
-    xx:=66; yy:=11;
+    xx:=66; yy:=11; YOffset:=0;
     case nt of
       nt_Fido    : begin
-                     xx:=56; yy:=18;
+                     yy:=17;
                      fnode:=(flags and 4<>0);
                    end;
       nt_UUCP    : yy:=20;
       nt_pronet  : xx:=55;
-      nt_ZConnect: yy:=12;
+      nt_ZConnect: yy:=9;
     end;
     dialog(xx,yy,kompname,x,y);
     with boxpar^ do
@@ -418,45 +418,27 @@
       case nt of
         nt_Maus : begin
                     pname:= dbReadStr(d,'boxname');
-                    maddstring(3,2,getres2(920,1),passwort,20,20,''); mhnr(141);
-                  end;                                       { 'Passwort  ' }
+                    maddstring(3,2,getres2(920,1),passwort,20,20,''); mhnr(141);  { 'Passwort  ' }
+                  end;
         nt_Fido : begin
                     pnr:=ival(pname);
-                    maddint(3,2,getres2(920,2),pnr,5,5,0,32767); mhnr(151);  { 'Pointnummer' }
-                    maddint(3,3,getres2(920,3),fPointNet,5,5,0,32767);  { 'Pointnetz  ' }
-                  end;
-        nt_Pronet:begin
-                    maddstring(3,2,getres2(920,5),telefon,20,60,''); mhnr(142);
-                    malltrim;                             { 'Telefon ' }
-                    maddstring(3,3,getres2(920,6),passwort,20,20,'>'); mhnr(141); { 'Passwort ' }
-                    maddstring(39,2,getres2(920,7),pname,2,2,'0123456789');  { 'Pointnr.  ' }
-                      mhnr(8005);
+                    maddint(3,2,getres2(920,2),pnr,6,6,0,32767); mhnr(151);  { 'Pointnr.' }
+                    maddstring(23,2,getres2(920,15),passwort,12,18,'');  { 'Passwort' }
+                    maddint(48,2,getres2(920,3),fPointNet,5,5,0,32767);  { 'Pointnetz  ' }
+                    mset3proc(fidotestpasslen);
+                    Dec(YOffset,1);
                   end;
         nt_UUCP : begin
                     maddstring(3,2,getres2(920,16),loginname,15,20,'');    { 'Login  ' }
                       mhnr(8016);
                     loginfld:=fieldpos;
-                    maddstring(3,3,getres2(920,11),passwort,15,20,'');     { 'Password' }
+                    maddstring(3,3,getres2(920,17),passwort,15,20,'');     { 'Password' }
+                      mhnr(141);
                     maddstring(33,2,getres2(920,18),pname,20,25,'');
                       mhnr(140);                                           { 'UUCP-Name' }
                     mset3proc(uucp_getloginname);
-
-                    _conn_mode:=iifs((conn_mode=conn_mode_modem),getres2(920,71),
-                                iifs((conn_mode=conn_mode_tcpip),getres2(920,72),getres2(920,76)));
-                    maddstring(3,5,getres2(920,70),_conn_mode,6,6,'');     { 'Modus   ' }
-                    mappsel(true,getres2(920,71)+'ù'+getres2(920,72)+'ù'+getres2(920,76));
-                    mset1func(uucp_setmode);
-                    uucp_modefld:=fieldpos;
-
-                    maddstring(23,5,getres2(920,73),telefon,31,60,'');     { 'Telefon ' }
-                      uucp_telfld:=fieldpos;
-                    maddstring(23,5,getres2(920,74),conn_ip,18,60,'');     { 'Hostname' }
-                      uucp_ipfld:=fieldpos;
-                    maddint   (53,5,getres2(920,75),conn_port,5,5,1,65535);{ 'Port' }
-                    mappsel(false,'540');
-                      uucp_portfld:=fieldpos;
                   end;
-      else        begin
+      else        begin // ZConnect
                     maddstring(3,2,getres2(920,10),pname,20,25,'>');
                       mhnr(140);                             { 'Pointname' }
                     if nt=nt_ZConnect then
@@ -466,66 +448,60 @@
                   end;                                       { 'Passwort  ' }
       end; { case }
 
-      if not pronet and not uucp then begin
-        maddstring(iif(fido,27,38),2,getres2(920,12),telefon,
-                   iif(fido,18,17),60,'');                   { 'Telefon'  }
-        mhnr(142);
-        malltrim;
+      uucp_pefld:=0; // needed by conn_setmode
+      case nt of
+        nt_Fido,nt_UUCP: begin
+                    _conn_mode:=iifs((conn_mode=conn_mode_modem),getres2(920,71),
+                                iifs((conn_mode=conn_mode_tcpip),getres2(920,72),getres2(920,76)));
+                    maddstring(3,5+YOffset,getres2(920,70),_conn_mode,6,6,'');     { 'Modus   ' }
+                      mhnr(8006);
+                    {$IFDEF DOS32}
+                    mappsel(true,getres2(920,71));
+                    {$ELSE}
+                    mappsel(true,getres2(920,71)+'ù'+getres2(920,72)+'ù'+getres2(920,76));
+                    {$ENDIF}
+                    mset1func(Conn_setmode);
+                    Conn_modefld:=fieldpos;
+
+                    maddstring(23,5+YOffset,getres2(920,73),telefon,31,60,'');     { 'Telefon ' }
+                      Conn_telfld:=fieldpos;
+                      mhnr(142);
+                    maddstring(23,5+YOffset,getres2(920,74),conn_ip,18,60,'');     { 'Hostname' }
+                      Conn_ipfld:=fieldpos;
+                      mhnr(8008);
+                    maddint   (53,5+YOffset,getres2(920,75),conn_port,5,5,1,65535);{ 'Port' }
+                    mappsel(false,iifs(nt=nt_UUCP,'540','24554'));
+                      Conn_portfld:=fieldpos;
+                  end;
+        nt_ZConnect: begin
+                    maddstring(iif(fido,27,38),2,getres2(920,12),telefon,
+                               iif(fido,18,17),60,'');                   { 'Telefon'  }
+                    mhnr(142);
+                    malltrim;
+                    maddstring(iif(pronet,39,38),3,getres2(920,13)+iifs(pronet,' ',''),zerbid,4,4,'>');
+                    msetvfunc(zidtest); mhnr(143);                         { 'Ser.Nr.' }
+                  end;
+        end;
+
+      if nt=nt_Maus then Inc(YOffset,1);
+
+      case nt of
+        nt_Fido,nt_UUCP: begin
+          FieldW:=41;
+          lhapar:=' -m';
+          end;
+      else begin
+          if nt=nt_Maus then begin
+            maddstring(3,6,getres2(920,22),prototyp,1,1,'>'); mhnr(150);
+            mappsel(false,'ZùM');                     { 'Protokoll-Kennung ' }
+            end; { nt_Maus }
+          Dec(YOffset,2);
+          lhapar:='';
+          FieldW:=41;
+          end;
       end;
 
-      if nt in [nt_Netcall,nt_ZConnect,nt_Magic,nt_Pronet] then
-      begin
-        maddstring(iif(pronet,39,38),3,getres2(920,13)+iifs(pronet,' ',''),zerbid,4,4,'>');
-        msetvfunc(zidtest); mhnr(143);                         { 'Ser.Nr.' }
-      end;
-
-      if nt in [nt_Quick,nt_GS] then begin
-        if loginname='' then loginname:='NET410';
-        maddstring(38,3,getres2(920,14),loginname,17,20,'');   { 'Login  ' }
-        mappsel(false,'NET410ùNETCALL');
-        mhnr(8006);
-      end;
-
-      if fido then
-      begin
-        maddstring(27,3,getres2(920,15),passwort,18,18,''); mhnr(153);
-        mset3proc(fidotestpasslen);                            { 'Passwort' }
-      end;
-
-      add:=iif(nt=nt_Maus,0,1);
-
-      if fido or uucp then
-      begin
-        add:=iif(uucp,0,-2);
-        lhapar:=' -m';
-        br:=iif(uucp,41,31);
-      end else { not fido, not uucp }
-      begin
-        br:=iif(pronet,30,41);
-        maddstring(3,4+add,getres2(920,20),uploader,br,100,''); mhnr(144);
-          mappsel(false,'Zmodemùgsz.exe portx $ADDRESS,$IRQ sz $UPFILEù'+
-                        'hslink.exe -P$PORT -U$DOWNPATH $UPFILEùbimodem /L $PORT /U $UPFILE /I $LOGFILE');
-          msetvfunc(testexecutable);                      { 'Upload-Protokoll  ' }
-        maddstring(3,5+add,getres2(920,21),downloader,br,100,'');
-          if pronet then
-            mappsel(false,'Zmodemùdsz.exe port $PORT rzùgsz.exe portx $ADDRESS,$IRQ rz')
-          else
-            mappsel(false,'Zmodemùgsz.exe portx $ADDRESS,$IRQ rz $DOWNFILE');
-          if zc then
-            mappsel(false,'gsz.exe portx $ADDRESS,$IRQ rz $DOWNPATH');
-          msetvfunc(testexecutable);                      { 'Download-Protokoll' }
-          downprotnr:=fieldpos;
-        if prototyp='' then
-          prototyp:='Z';
-        if nt=nt_Maus then begin
-          maddstring(3,6,getres2(920,22),prototyp,1,1,'>'); mhnr(150);
-          mappsel(false,'ZùM');                     { 'Protokoll-Kennung ' }
-        end; { nt_Maus }
-        add:=1;
-        lhapar:='';
-      end; { not fido, not uucp }
-
-      maddstring(3,7+add,getres2(920,23),uparcer,br,60,''); mhnr(146);
+      maddstring(3,7+YOffset,getres2(920,23),uparcer,FieldW,60,''); mhnr(146);
 
       if uucp then begin                        { 'Upload-Packer     ' }
          mappsel(false,'compress -vf -b12 $PUFFERùcompress -vf -b16$PUFFERùfreeze -vif $PUFFERùgzip -vf $PUFFERùbzip2 -vf $PUFFER');
@@ -537,7 +513,7 @@
       msetvfunc(testexecutable);
       mset3proc(set_uparcext);
 
-      maddstring(3,8+add,getres2(920,iif(uucp,25,24)),downarcer,br,60,'');
+      maddstring(3,8+YOffset,getres2(920,iif(uucp,25,24)),downarcer,FieldW,60,'');
 
       if uucp then                              { 'Download-Entpacker' }
         mappsel(false,'compress -vdf $DOWNFILEùgzip -vdf $DOWNFILE')
@@ -550,32 +526,32 @@
 
       if fido then
       begin
-        maddstring(3,7,getres2(920,28),ZMOptions,br,60,''); mhnr(8042);  { 'Zmodem-Optionen' }
-        maddstring(3,9,getres2(920,45),AKAs,43,AKAlen,''); mhnr(154);  { 'AKA''s ' }
-        maddstring(3,11,getres2(920,53),SendAKAs,31,AKAlen,'');   { 'Pakete mitsenden ' }
+        maddstring(3,9,getres2(920,45),AKAs,41,AKAlen,''); mhnr(154);  { 'AKAs (Eingang)' }
+        maddstring(3,10,getres2(920,53),SendAKAs,41,AKAlen,'');   { 'Boxen (Ausgang)' }
         msetvfunc(TestAKAservers);
-        maddbool(3,13,getres2(920,46),f4d);         { '4D-Adressen' }
-        maddbool(3,14,getres2(920,47),ftosscan);    { 'TosScan o.ae.' }
-        maddbool(29,13,'EMSI',EMSIenable);
-          mset3proc(fidotestpasslen); EMSIfield:=fieldpos;
-        maddbool(29,14,getres2(920,48),gettime);    { 'Uhrzeit setzen' }
-        maddbool(3,16,getres2(920,49),PacketPW); mhnr(8000);  { 'Paketpasswort' }
-        maddbool(3,17,getres2(920,50),fnode);       { 'Node statt Point' }
-        maddbool(29,16,getres2(920,51),NotSEmpty);  { 'leeres Paket senden' }
-        maddbool(29,17,getres2(920,52),ExtPFiles);  { 'erw. Paketdateinamen' }
+        maddbool(3,12,getres2(920,46),f4d);         { '4D-Adressen' }
+        maddbool(3,13,getres2(920,47),ftosscan);    { 'TosScan o.ae.' }
+        maddbool(29,12,'EMSI',EMSIenable);
+          emsifield:=fieldpos;
+        maddbool(29,13,getres2(920,48),gettime);    { 'Uhrzeit setzen' }
+        maddbool(3,15,getres2(920,49),PacketPW); mhnr(8000);  { 'Paketpasswort' }
+        maddbool(3,16,getres2(920,50),fnode);       { 'Node statt Point' }
+        maddbool(29,15,getres2(920,51),NotSEmpty);  { 'leeres Paket senden' }
+        maddbool(29,16,getres2(920,52),ExtPFiles);  { 'erw. Paketdateinamen' }
           mhnr(8003);
         UpArcNr:=0; DownArcNr:=0;
+        Conn_setmode  (_conn_mode);
       end else
 
       if uucp then
       begin
-        maddstring(3,9+add,getres2(920,26),unfreezer,br,40,'');  { 'Freeze-Entpacker' }
+        maddstring(3,9+YOffset,getres2(920,26),unfreezer,FieldW,40,'');  { 'Freeze-Entpacker' }
         mappsel(false,'freeze -vdif $DOWNFILE');
         msetvfunc(testexecutable);
-        maddstring(3,10+add,getres2(920,27),ungzipper,br,40,''); { 'gzip-Entpacker' }
+        maddstring(3,10+YOffset,getres2(920,27),ungzipper,FieldW,40,''); { 'gzip-Entpacker' }
         mappsel(false,'gzip -vdf $DOWNFILE');
         msetvfunc(testexecutable);
-        maddstring(3,11+add,getres2(920,57),unbzipper,br,40,''); { 'bzip2-Entpacker' }
+        maddstring(3,11+YOffset,getres2(920,57),unbzipper,FieldW,40,''); { 'bzip2-Entpacker' }
         mappsel(false,'bzip2 -vdf $DOWNFILE');
           mhnr(8026);
         msetvfunc(testexecutable);
@@ -640,27 +616,25 @@
         mhnr(8024);
         uparcnr:=0; downarcnr:=0;
 
-        uucp_setmode  (_conn_mode);
+        Conn_setmode  (_conn_mode);
 
         masksetqfunc(testuucp);
       end else
 
       if zc then
       begin
-        maddbool(3,10+add,getres2(920,44),JanusPlus);    { 'Janus+' }
-        mset1func(JanusSwitch);
-        mhnr(8018);
-        maddstring(33,10+add,getres2(920,43),uparcext,3,3,'>');
+        maddstring(3,10+YOffset,getres2(920,43),uparcext,3,3,'>');
+        mhnr(148);
       end                                         { 'Packer-Extension    ' }
 
       else { not fido, not uucp, not zc }
       begin
-        maddstring(3,10+add,getres2(920,40),uparcext,3,3,'>');
+        maddstring(3,10+YOffset,getres2(920,40),uparcext,3,3,'>');
           mappsel(false,'ZIPùLZHùARJùRAR');     { 'Packer-Extension  ' }
           UpArcNr:=fieldpos;
           mset3proc(TestArcext);    { TXT im MausNet verhindern }
           mhnr(148);
-        maddstring(iif(pronet,35,33),iif(zc,11,10)+add,getres2(920,
+        maddstring(iif(pronet,35,33),iif(zc,11,10)+YOffset,getres2(920,
                    iif(pronet,41,42)),downarcext,3,3,'>');
           mappsel(false,'ZIPùLZHùARJùRAR');     { 'Entpacker-Extension' }
           DownArcNr:=fieldpos;
@@ -675,14 +649,13 @@
 
     if not brk then
     begin
-      dbWriteStr(d,'pointname',pname);
-      boxpar^.pointname:=pname;
-
       if ntOnePW(nt) then
         boxpar^.o_passwort:=boxpar^.passwort;
 
       if fido then with boxpar^ do
       begin
+        conn_mode:=iif(_conn_mode=getres2(920,71),conn_mode_modem,
+                   iif(_conn_mode=getres2(920,72),conn_mode_tcpip,conn_mode_telnet));
         flags:=flags and (not 4) + iif(fnode,4,0);
         dbWrite(d,'script',flags);
         pname:=strs(pnr);
@@ -705,6 +678,9 @@
         if Uz then uuprotos:=uuprotos+'z';
         if Uf then uuprotos:=uuprotos+'f';
       end;
+
+      dbWriteStr(d,'pointname',pname);
+      boxpar^.pointname:=pname;
     end; { not brk }
     enddialog;
   end;
@@ -714,7 +690,7 @@
       schnitte : string;
       fido     : boolean;
   begin
-    if((nt=nt_UUCP) and (boxpar^.conn_mode<>conn_mode_modem)) then
+    if((nt in [nt_UUCP,nt_Fido]) and (boxpar^.conn_mode<>conn_mode_modem)) then
       rfehler(936)
     else
   begin
@@ -1767,6 +1743,10 @@
 
 {
   $Log$
+  Revision 1.43  2001/03/21 19:17:07  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
+
   Revision 1.42  2001/03/14 20:46:05  mk
   - removed registration routines
 

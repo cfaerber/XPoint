@@ -83,6 +83,7 @@ type
     SendEmpty: Boolean;
     TXT: String;
     UseEMSI: Boolean;
+    UseBinkP: Boolean;
     SetTime: Boolean;
     SendTrx: Boolean;
     MinCPS: Longint;
@@ -95,7 +96,7 @@ implementation
 
 uses
   {$IFDEF Unix} xpcurses,{$ELSE}Crt,{$ENDIF}
-  zmodem,ipcclass,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom;
+  zmodem,progressoutput,resource,sysutils,typeform,debug,montage,crc,xpdiff,objcom;
 
 const {Y_DietIfna = $0001;}   { Capability Flags }
       Zed_Zipper = $0004;
@@ -206,7 +207,7 @@ begin
   if not Connect then exit;
   TimerObj.Init;
 
-  if SetTime then begin //** BinkP mailer
+  if UseBinkP then begin // BinkP mailer
     if BinkPSessionSetup=0 then
       if BinkPFileTransfer=0 then aresult:=el_ok;
     end else begin // standard mailer
@@ -242,7 +243,8 @@ end.
 
 {
   $Log$
-  Revision 1.1  2001/03/13 19:11:06  ma
-  - preparations for netcall source subdirectory
+  Revision 1.2  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
 
 }

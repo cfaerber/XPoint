@@ -29,9 +29,9 @@ interface
 
 uses
   xpglobal,             { Nur wegen der Typendefinition }
-  IPCClass,             { TIPC }
-  NetCall,              { TNetcall }
-  NCSocket,             { TSoketNetcall }
+  ProgressOutput,       { TProgressOutput }
+  Netcall,              { TNetcall }
+  NCSocket,             { TSocketNetcall }
   Classes,              { TStringList }
   sysutils;
 
@@ -126,7 +126,7 @@ begin
     // Authorisierung bei POP3 immer nîtig
     if (FUser='') or (FPassword='') then
     begin
-      WriteIPC(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+      Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
       DisConnect;
       exit;
     end;
@@ -136,7 +136,7 @@ begin
 
     if ParseError(s) then // RÅckmeldung auswerten
     begin
-      WriteIPC(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+      Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
       DisConnect;
       exit;
     end;
@@ -146,7 +146,7 @@ begin
 
     if ParseError(s) then // RÅckmeldung auswerten
     begin
-      WriteIPC(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+      Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
       DisConnect;
       exit;
     end;
@@ -161,7 +161,7 @@ var
 begin
   Result := false;
 
-  WriteIPC(mcInfo,res_connect1, [Host.Name]);
+  Output(mcInfo,res_connect1, [Host.Name]);
   if not inherited Connect then
     exit;
 
@@ -171,19 +171,19 @@ begin
 
   if ParseError(s) then // RÅckmeldung auswerten
   begin
-    WriteIPC(mcError,res_connect2, [ErrorMsg]); // Unerreichbar
+    Output(mcError,res_connect2, [ErrorMsg]); // Unerreichbar
     DisConnect;
     exit;
   end else
   begin
-    WriteIPC(mcError,res_connect4, [0]); // Verbunden
+    Output(mcError,res_connect4, [0]); // Verbunden
     FServer:= Copy(s,5,length(s)-5);
   end;
 
   { Anmelden }
   if not Login then
   begin
-    WriteIPC(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
+    Output(mcError,res_connect3, [ErrorMsg]); // Anmeldung fehlgeschlagen
     DisConnect;
     exit;
   end;
@@ -194,7 +194,7 @@ procedure TPOP3.DisConnect;
 var
   s: string;
 begin
-  WriteIPC(mcInfo,res_disconnect,[0]);
+  Output(mcInfo,res_disconnect,[0]);
   if Connected then
     SWriteln('QUIT');
   inherited DisConnect;
@@ -290,6 +290,10 @@ end;
 end.
 {
   $Log$
+  Revision 1.6  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
+
   Revision 1.5  2000/12/26 22:34:16  mk
   - do not add last point to list
 

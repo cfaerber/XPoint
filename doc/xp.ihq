@@ -3017,47 +3017,53 @@ Ihre Pointnummer, die Ihnen vom Sysop zugeteilt
 wurde.
 @
 152
-Falls die Box keine 4D-Adressierung unterstÅtzt,
-mÅssen Sie hier die PointNetz- ("FakeNet"-) Nummer
-eintragen. Diese Nummer erfahren Sie von Ihrem
-Sysop. Ansonsten ist dieses Eingabefeld ohne Bedeu-
-tung.
-@
-153
 Das Pointpa·wort ("Session-Pa·wort"), das Sie mit
 Ihrem Sysop vereinbart haben.
 @
+153
+FÅr den Sonderfall, da· die Box keine 4D-Adres-
+sierung unterstÅtzt, mÅssen Sie hier die PointNetz-
+("FakeNet"-) Nummer eintragen. Diese Nummer er-
+fahren Sie von Ihrem Sysop.
+
+Normalerweise ist dieses Eingabefeld ohne Bedeutung.
+@
 154
 Hier kînnen Sie eine Liste von AKAs (Alternativ-
-Adressen) angeben, die CrossPoint beim Netcall
-*zusÑtzlich* zur eigentlichen Serveradresse mit-
-sendet, vorausgesetzt, die Box unterstÅtzt das [EMSI]-@157
-Protokoll. Die einzelnen Adressen mÅssen mit Leer-
-zeichen getrennt werden. Achten Sie auf korrekte
-Schreibweise! Bei Verwendung von 4D-Adressierung
-*mu·* Ihre Pointnummer in den AKAs enthalten sein!
+Adressen) angeben, deren Mail OpenXP beim Netcall
+<<zusÑtzlich>> zur eigentlichen Adresse mitsendet.
+Die einzelnen Adressen mÅssen durch Leerzeichen
+getrennt werden. Normalerweise (bei Verwendung
+von 4D-Adressierung) <<mu·>> Ihre Pointnummer in
+den einzelnen AKAs enthalten sein.
 
 Sinn dieser AKAs ist es insbesondere, mit einem
-Anruf Nachrichten aus verschiedenen Fido-kompatiblen
-Netzen abzuholen. NÑheres zu AKAs finden Sie in
-FIDO.TXT.
+einzigen Anruf gleichzeitig Nachrichten aus ver-
+schiedenen Fido-kompatiblen Netzen abzuholen.
+
+NÑheres zu AKAs finden Sie in FIDO.TXT.
 @
 155
-Hier kînnen Sie eine Liste von Fido-Serverboxen an-
-geben, deren Nachrichten beim Anruf mitgeschickt
-werden sollen. Dies wird dann benîtigt, wenn Sie
-mit einem Anruf Nachrichten fÅr verschiedene Fido-
-kompatible Netze absenden mîchten. NÑheres hierzu
-finden Sie in FIDO.TXT.
+Hier kînnen Sie eine durch Leerzeichen getrennte
+Liste von Fido-Serverboxen angeben (bzw. deren
+Adressen, also insbesondere <<ohne>> angehÑngte
+Pointnummer oder Ñhnliches), deren Nachrichten
+beim Anruf <<zusÑtzlich>> mitgeschickt werden
+sollen.
+Dies wird dann benîtigt, wenn Sie mit einem Anruf
+gleichzeitig Nachrichten fÅr mehrere verschiedene
+Fido-kompatible Netze absenden mîchten.
+
+NÑheres hierzu finden Sie in FIDO.TXT.
 @
 156
-4D-Adressierung ist ein neuer Standard, der inzwi-
-schen von fast allen Fido-Boxprogrammen unterstÅtzt
-wird. Fragen Sie im Zweifelsfall Ihren Sysop, ob Sie
-4D-Adressierung verwenden kînnen.
+4D-Adressierung ist ein Standard, der von praktisch
+allen Fido-Boxprogrammen unterstÅtzt wird.
 
-Falls "Node statt Point" eingeschaltet ist, sollten
-Sie diesen Schalter auf jeden Fall aktivieren.
+Im Normalfall sollte dieser Schalter aktiviert
+bleiben.
+Das gilt insbesondere, falls Sie "Node statt Point"
+verwenden.
 @
 157
 Einige "Tosser"-Programme in Fido-Boxen, insbesondere
@@ -3086,26 +3092,29 @@ Mailer XP-FM immer den XP-eigenen Code (E9h).
 
 @
 158
-Der Fido-Mailer von CrossPoint unterstÅtzt die beiden
-Verbindungsprotokolle YooHoo und EMSI. Normalerweise
-wird CrossPoint automatisch EMSI verwenden, das bes-
-sere der beiden Protokolle, sofern es von der Gegen-
-seite unterstÅtzt wird.
+Der Fido-Mailer von CrossPoint unterstÅtzt bei Modem-
+betrieb die beiden Verbindungsprotokolle YooHoo und
+EMSI. Normalerweise wird CrossPoint automatisch EMSI
+verwenden, das bessere der beiden Protokolle, sofern
+es von der Gegenseite unterstÅtzt wird.
 
 Im Normalfall sollte der EMSI-Schalter immer einge-
 schaltet bleiben. Falls es aber beim EMSI-Netcall zu
 Problemen kommen sollte, kînnen Sie CrossPoint durch
 Abschalten von EMSI dazu zwingen, YooHoo zu verwen-
-den. Bei Fido-Netcall-Problemen kînnen Sie evtl. die
+den.
+
+Bei Fido-Netcall-Problemen kînnen Sie evtl. die
 Fehlerursache im Fido-Logfile XPFIDO.LOG erkennen.
 @
 159
 Viele Fido-Mailboxen besitzen eine "DCF77"-Uhr, die
 immer automatisch auf die korrekte Uhrzeit einge-
-stellt wird. Da bei EMSI-Verbindungen oft die Uhrzeit
-mitgesendet wird, kînnen Sie dies nutzen, um beim
-Fido-Netcall automatisch Ihre Systemuhr stellen zu
-lassen; die Genauigkeit liegt bei +/- 1-2 Sekunden.
+stellt wird. Da bei EMSI und BinkP-Verbindungen
+oft die Uhrzeit mitgesendet wird, kînnen Sie dies
+nutzen, um beim Fido-Netcall automatisch Ihre
+Systemuhr stellen zu lassen; die Genauigkeit liegt
+bei +/- 1-2 Sekunden.
 
 Wenn Sie mit automatischen Netcalls Åber Timinglisten
 arbeiten, kînnen Sie CrossPoint auch z.B. einmal pro
@@ -3122,56 +3131,16 @@ sonsten nicht im Fido-Netz einsetzen!
 @
 8041
 Diese Nummer erhalten Sie von Ihrem Sysop.
-@
-8042
-<<Nur fÅr erfahrene Anwender:
-
-Hier kînnen Sie zusÑtzliche Optionen fÅr das ZModem-
-Protokoll des Mailers angeben. Normalerweise sollte
-dieses Feld freibleiben - der Fido-Mailer sorgt
-dafÅr, da· die richtigen ZModem-Optionen verwendet
-werden.
-
-Optionen, die in einzelnen FÑllen sinnvoll sein
-kînnten:
-
-<<-r>>   Crash Recovery abschalten. Dies ist empfehlens-
-     wert, wenn Sie die Nachrichtenpakete fÅr ver-
-     schiedene AKAs unter dem gleichen Dateinamen
-     erhalten.
-
-<<-ti>>  Legt die "Timeout-Dauer" fest, d.h. die Sekunden
-     InaktivitÑt, nach denen die öbertragung abge-
-     brochen wird. XP arbeitet bei Fido-Netcalls
-     normalerweise mit 300 Sekunden Timeout (-ti300).
-     Bei File Requests kann es u.U. notwendig sein,
-     die Zeit zu erhîhen, wenn die angerufene Box
-     sehr viel Zeit zum Bearbeiten der Requests
-     benîtigt.
-
-<<-88>>  Bewirkt, da· XP beim Senden gleich mit einer
-     Blockgrî·e von 8 KB beginnt. Dies ist sinnvoll,
-     wenn die öbertragung immer 100%ig fehlerfrei
-     verlÑuft.
-
-Die einzelnen Optionen mÅssen mit Leerzeichen ge-
-trennt werden. Eine vollstÑndige Liste finden Sie in
-ZM-GER.DOC im getrennt erhÑltlichen PD-ZModem-Paket.
-
-WICHTIG: Die meisten der von PD-ZModem unterstÅtzten
-Optionen sollten oder dÅrfen an dieser Stelle <<nicht>>
-verwendet werden, weil der Fido-Mailer sonst nicht
-mehr korrekt arbeiten wÅrde. Dies gilt insbesondere
-fÅr die Optionen -ld, -lz, -oX, -p, -ts und -q.
 
 @
 8000
 Bei einigen (sehr wenigen) Fido-Boxen ist es nîtig,
 da· das Pointpa·wort ("Session-Pa·wort") zusÑtzlich
 innerhalb jedes Nachrichtenpaketes mitgesendet wird.
-Dazu kînnen Sie diesen Schalter aktivieren. Ob das
-Paketpa·wort benîtigt wird, erfahren Sie im Zweifels-
-fall von Ihrem Sysop.
+Dazu kînnen Sie diesen Schalter aktivieren.
+
+Ob das Paketpa·wort benîtigt wird, erfahren Sie im
+Zweifelsfall von Ihrem Sysop.
 @
 8001
 Falls Sie in einem Fido-kompatiblen Netz Point sind,
@@ -3181,27 +3150,26 @@ aktivieren und die Nodenummer im Feld "Pointnummer"
 eintragen.
 
 Wenn die angerufene Box z.B. die Adresse 12:345/67
-hat, und Sie unter der Nodenummer 89 schreiben, dann
+hat und Sie unter der Nodenummer 89 schreiben, dann
 lautet Ihre Adresse 12:345/89.
 @
 8002
-Bei einigen Fido-Boxen tritt das Problem auf, da·
-die Box Ihnen nur dann Nachrichten sendet, wenn Sie
-selbst Nachrichten versenden. Schicken Sie nichts,
-kommt auch nichts von der Box an.
+Bei einigen wenigen Fido-Boxen tritt das Problem
+auf, da· die Box Ihnen nur dann Nachrichten sendet,
+wenn Sie selbst Nachrichten versenden. Schicken Sie
+nichts, kommt auch nichts von der Box an.
+Durch diesen Schalter wird ein leeres Dummypaket
+abgesendet.
 
-Dieses Problem sollte ab CrossPoint Version 3.1
-behoben sein. Sollte es dennoch wider Erwarten auf-
-treten, kînnen Sie es durch Aktivieren dieses Schal-
-ters beheben.
+Diese Funktion wird im Normalfall nicht benîtigt.
 @
 8003
 Normalerweise haben eingehende, gepackte Fido-Nach-
 richtenpakete als Dateierweiterung den englischen
 Namen von Wochentagen plus eine Ziffer, also z.B.
 .MO1 oder .TU2. Leider halten sich nicht alle Boxen
-an diesen Standard - einige verschicken seit neue-
-stem auch Pakete mit Buchstaben als letztem Zeichen.
+an diesen Standard - einige wenige verschicken auch
+Pakete mit Buchstaben als letztem Zeichen.
 
 Falls Sie bei einer solchen Box pollen (der Sysop
 kann Ihnen genauere Auskunft darÅber geben), mÅssen
@@ -3212,12 +3180,11 @@ empfangene Dateien mit Erweiterungen wie z.B. .MOD
 NICHT im FileRequest-Verzeichnis, sondern im SPOOL-
 Unterverzeichnis abgelegt werden (dort werden alle
 Mailpakete zwischengespeichert).
-
 @
-8005
+8004
 Geben Sie hier Ihre zweistellige Pointnummer ein.
 @
-8006
+8005
 Dies ist der Name, mit dem beim Login das Netcall-
 Modul der Box gestartet wird. FÅr QuickMail-Boxen
 sollte hier immer <<NET410>> stehen, fÅr GS-Mailbox
@@ -3226,6 +3193,28 @@ je nach Version <<NET410>> oder <<NETCALL>>.
 Einige QuickMail-Boxen bieten zusÑtzliche Features
 an, die Åber andere Loginnamen ausgelîst werden.
 NÑheres dazu erfahren Sie bei Ihrem Sysop.
+@
+8006
+Hier kînnen Sie wÑhlen, ob die Verbindung Åber ein
+Modem (WÑhlverbindung), TCP/IP (Internet) oder
+Telnet aufgebaut wird. Telnet ist ein besonderes
+Protokoll, da· im Normalfall an dieser Stelle
+nicht benutzt werden sollte.
+
+Bei einer Fido-Box und TCP/IP wird automatisch das
+BinkP-Protokoll verwendet.
+@
+8008
+Geben Sie hier den Namen des Servers an.
+GÅltig sind sowohl ausgeschriebene Namen
+("server.dyndns.org") als auch IP-Adressen
+("152.55.62.152").
+@
+8009
+Geben Sie hier den zu benutzenden Port des
+Servers an.
+UUCP-Server bieten meist Port 540 an,
+BinkP-Fido-Server Port 24554.
 @
 8010
 Nur bei <<UUCP-g>> und <<UUCP-G>>.

@@ -24,16 +24,16 @@
 { OpenXP message window class; used by some netcall classes.
   Displays a window in which for example progress messages may
   be displayed. }
-unit XPMessageWindow;
+unit XPProgressOutputWindow;
 
 interface
 
-uses IPCClass,Classes,SysUtils,Timer;
+uses ProgressOutput,Classes,SysUtils,Timer;
 
 type
   tpTimer= ^tTimer;
 
-  TXPMessageWindow = class(TIPC)
+  TProgressOutputWindow = class(TProgressOutput)
 
   protected
     FVisible,LastMsgUnimportant: Boolean;
@@ -66,7 +66,7 @@ type
     procedure Resize(Width,Height:integer); virtual;
   end;
 
-  TXPMessageWindowDialog = class(TXPMessageWindow)
+  TProgressOutputWindowDialog = class(TProgressOutputWindow)
   protected
     FPosY2:   Byte;
 //  procedure SVisible(nVisible: Boolean);      override;
@@ -88,9 +88,9 @@ implementation  { ------------------------------------------------- }
 
 uses
   {$IFDEF Unix} xpcurses,{$ELSE}crt,{$ENDIF}
-  typeform,winxp,xp0,xp1,debug;
+  typeform,winxp,xp0,xp1;
 
-constructor TXPMessageWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
+constructor TProgressOutputWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
 begin
   Timer.Init; TimerToUse:=@Timer;
   FWidth:=iw; FHeight:=ih;
@@ -100,7 +100,7 @@ begin
   FVisible:=False; IsVisible:=Visible;
 end;
 
-procedure TXPMessageWindow.SVisible(nVisible: Boolean);
+procedure TProgressOutputWindow.SVisible(nVisible: Boolean);
 begin
   if nVisible<>FVisible then begin
     FVisible:=nVisible;
@@ -113,7 +113,7 @@ begin
   end;
 end;
 
-procedure TXPMessageWindow.Display(RefreshContent: Boolean);
+procedure TProgressOutputWindow.Display(RefreshContent: Boolean);
 var iLine: Integer; s: string;
 begin
   if not IsVisible then exit;
@@ -140,13 +140,12 @@ begin
 end;
 
 { fmt='': only update timer }
-procedure TXPMessageWindow.WriteFmt(mc: TMsgClass; fmt: string; args: array of const);
+procedure TProgressOutputWindow.WriteFmt(mc: TMsgClass; fmt: string; args: array of const);
 var s: String;
 begin
   s:=Format(fmt,args);
 
   if fmt<>'' then begin
-    Debug.DebugLog('xpmewi','Display: '+s,DLDebug);
     // if last message was "not important", it may be overwritten
     if LastMsgUnimportant then
       FLines.Delete(FLines.Count-1)
@@ -158,7 +157,7 @@ begin
   Display(fmt<>'');
 end;
 
-procedure TXPMessageWindow.SHeadline(strHeadline:string);
+procedure TProgressOutputWindow.SHeadline(strHeadline:string);
 begin
 //  Start bei: FPosX+3
 //  Stop bei:  FPosX+2+FWidth-9 -1
@@ -172,8 +171,7 @@ begin
   FHeadline:=strHeadLine;
 end;
 
-procedure TXPMessageWindow.Resize(Width,Height:Integer);
-var i,j:Integer;
+procedure TProgressOutputWindow.Resize(Width,Height:Integer);
 begin
   IsVisible:=false; (* hide window *)
   FWidth:=Width;
@@ -181,7 +179,7 @@ begin
   IsVisible:=true;  (* will display window *)
 end;
 
-destructor TXPMessageWindow.Destroy;
+destructor TProgressOutputWindow.Destroy;
 begin
   IsVisible:=false;
   FLines.Free;
@@ -190,21 +188,21 @@ end;
 
 {-----------------------------------------------------------------------------}
 
-constructor TXPMessageWindowDialog.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
+constructor TProgressOutputWindowDialog.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
 begin
   FPosY2:=0;
   inherited CreateWithSize(iw,ih,headline,visible);
 end;
 
 
-procedure TXPMessageWindowDialog.Resize(Width,Height:integer);
+procedure TProgressOutputWindowDialog.Resize(Width,Height:integer);
 begin
   FPosY2:=0;
   inherited Resize(Width,Height);
 end;
 
-procedure TXPMessageWindowDialog.ResizeSplit(Width:Integer;Heights:Array of Integer);
-var i,j:Integer;
+procedure TProgressOutputWindowDialog.ResizeSplit(Width:Integer;Heights:Array of Integer);
+var i:Integer;
 begin
   IsVisible:=false;  (* hide window *)
 
@@ -226,7 +224,7 @@ begin
   Display(true);
 end;
 
-procedure TXPMessageWindowDialog.Display(RefreshContent: Boolean);
+procedure TProgressOutputWindowDialog.Display(RefreshContent: Boolean);
 var ILine: Integer;
     SPos:  Integer;
 begin
@@ -249,13 +247,13 @@ begin
     end;
 end;
 
-procedure TXPMessageWindowDialog.WrtText(x,y:integer;txt:string);
+procedure TProgressOutputWindowDialog.WrtText(x,y:integer;txt:string);
 begin
   if not IsVisible then exit;
   FWrt(FPosX+x,FPosY+y,txt);
 end;
 
-procedure TXPMessageWindowDialog.WrtData(x,y:integer;txt:string;len:integer;ralign:boolean);
+procedure TProgressOutputWindowDialog.WrtData(x,y:integer;txt:string;len:integer;ralign:boolean);
 begin
   if not IsVisible then exit;
   if Length(txt)>(len-2) then txt:=LeftStr(txt,len-2);
@@ -272,39 +270,8 @@ end.
 
 {
   $Log$
-  Revision 1.9  2001/03/20 12:07:08  ma
-  - various fixes and improvements
-
-  Revision 1.8  2001/03/16 23:01:27  cl
-  - fixed bug w/ field size in TXPMessageWindowDialog.WrtData
-
-  Revision 1.7  2001/03/16 17:17:04  cl
-  - TXPMessageWindow can be resized
-  - TXPMessageWindow's title can be changed
-  - TXPMessageWindowDialog:
-    - can be split into several regions
-    - allows writes at arbitrary positions
-
-  Revision 1.6  2001/02/19 12:18:28  ma
-  - simplified ncmodem usage
-  - some small improvements
-
-  Revision 1.5  2001/02/18 16:20:06  ma
-  - BinkP's working! :-) - had to cope with some errors in BinkP protocol
-    specification...
-
-  Revision 1.4  2001/02/09 17:31:07  ma
-  - added timer to xpmessagewindow
-  - did some work on AKA handling in xpncfido
-
-  Revision 1.3  2001/02/02 20:59:57  ma
-  - moved log routines to ncmodem
-
-  Revision 1.2  2001/02/02 17:14:01  ma
-  - new Fidomailer polls :-)
-
-  Revision 1.1  2001/01/19 21:19:09  ma
-  - will be used in (xp)ncfido, (xp)ncuucp...
-  - compiles, but untested yet
+  Revision 1.1  2001/03/21 19:17:08  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
 
 }

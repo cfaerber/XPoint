@@ -19,11 +19,11 @@
    This software is part of the OpenXP project (www.openxp.de).
 }
 
-{ Abstrakte Klasse TICP }
+{ Abstrakte Klasse TProgressOutput }
 
 {$I XPDEFINE.INC}
 
-unit IPCClass;
+unit ProgressOutput;
 
 interface
 
@@ -35,16 +35,16 @@ type				{ Ausgabeklassen }
   TMsgClass = (	mcDefault,	{ Default (eigentlich ueberfluessig }
                 mcDebug,	{ Debug-Meldungen }
 		mcVerbose,	{ Auch unwichtige Meldungen }
-		mcInfo,		{ Normale Info-MEldungen }
+		mcInfo,	{ Normale Info-MEldungen }
 		mcError,	{ Fehler, die eine Reaktion erwarten }
 		mcFatal,	{ Fatale Fehler }
 		mcPanic );	{ Besser das Programm beenden! }
 
 type
-  EIPC	 		= class(Exception);	{ Allgemein (und Vorfahr) }
+  EProgressOutput 		= class(Exception);	{ Allgemein (und Vorfahr) }
 
 type
-  TIPC = class
+  TProgressOutput = class
   
   public
 
@@ -57,9 +57,13 @@ implementation
 
 
 end.
+
 {
 	$Log$
+	Revision 1.1  2001/03/21 19:17:07  ma
+	- using new netcall routines now
+	- renamed IPC to Progr.Output
+
 	Revision 1.1  2000/07/25 12:52:24  hd
 	- Init
-
 }

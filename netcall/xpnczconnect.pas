@@ -41,7 +41,7 @@ function ZConnectNetcall(box: string;
 implementation   { -------------------------------------------------- }
 
 uses
-  xp3,xp3o,xpmakeheader,xpmessagewindow,xpmodemscripts,
+  xp3,xp3o,xpmakeheader,xpprogressoutputwindow,xpmodemscripts,
   xpnt,xpnetcall,ncgeneric,objcom;
 
 
@@ -166,13 +166,13 @@ begin { ZConnectNetcall }
   case Diskpoll of
     false: begin  // use mailer to transfer files
       GenericMailer:=TGenericMailer.
-                     CreateWithCommInitAndIPC(ComN[boxpar^.bport].MCommInit,
-                     TXPMessageWindow.CreateWithSize(50,10,'ZConnect mailer',True));
+                     CreateWithCommInitAndProgressOutput(ComN[boxpar^.bport].MCommInit,
+                     TProgressOutputWindow.CreateWithSize(50,10,'ZConnect mailer',True));
       InitMailer;
       Proceed:=GenericMailer.Connect;
       if Proceed then begin
         result:=el_nologin;
-        Proceed:=RunScript(BoxPar,GenericMailer.CommObj,GenericMailer.IPC,false,boxpar^.script,false,false)=0;
+        Proceed:=RunScript(BoxPar,GenericMailer.CommObj,GenericMailer.ProgressOutput,false,boxpar^.script,false,false)=0;
         end;
 //** Transmit serial number
       if Proceed then begin
@@ -219,35 +219,8 @@ end.
 
 {
   $Log$
-  Revision 1.8  2001/03/20 12:07:08  ma
-  - various fixes and improvements
-
-  Revision 1.7  2001/03/03 16:21:32  ma
-  - removed unused variables/procedures
-
-  Revision 1.6  2001/02/19 12:18:29  ma
-  - simplified ncmodem usage
-  - some small improvements
-
-  Revision 1.5  2001/02/11 16:30:36  ma
-  - added sysop call
-  - some changes with class constructors
-
-  Revision 1.4  2001/02/11 01:01:10  ma
-  - ncmodem does not dial now if no phone number specified
-    (removed PerformDial property)
-  - added BinkP protocol: Compiles, but not functional yet
-
-  Revision 1.3  2001/02/06 20:17:50  ma
-  - added error handling
-  - cleaning up files properly now
-
-  Revision 1.2  2001/02/06 11:45:06  ma
-  - xpnetcall doing even less: file name handling has to be done in
-    specialized netcall units from now on
-
-  Revision 1.1  2001/02/05 22:33:56  ma
-  - added ZConnect netcall (experimental status ;-)
-  - modemscripts working again
+  Revision 1.1  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
 
 }

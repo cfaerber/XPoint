@@ -1961,33 +1961,37 @@ used for MausTausch. The standard ones are:
        <<M>>  =  MPt (used to be "Puma")
 @
 151
-Your Point number, as given to you by your Boss.
+Your Point number as given to you by your Boss.
 @
 152
-If the Server does not support 4D Addressing, you
-have to enter here a "Point Net" (so called "Fake
-Net") number. You get this from your Boss. If in
-doubt, ask! Otherwise, don't use this field.
+Your [Point password] ("Session password"), which you@4008
+agreed with your Boss.
 @
 153
-Your [Point Password] ("Session-Password"), which you@4008
-agreed with your Boss.
+If the server does not support 4D addressing, you
+have to enter here a "Point Net" (so called "Fake
+Net") number. You get this from your Boss. If in
+doubt, ask!
+
+In general you don't have to use this field.
 @
 154
 Here you can enter a list of "AKA" [("Also Known As")]@4009
 which CrossPoint sends <<in addition>> to the main
-Server address during a netcall (assuming the Server
-supports the [EMSI] (a FIDO specific) transfer@158
-protocol.) The individual addresses must be separated
-by a <space>. Make sure you enter them correctly!
-If you use 4D Addressing, your own Point Number
-must be included in the AKA list!
+server address during a netcall.
+
+If you use 4D addressing you have to specify the
+full address (<<with>> trailing point number).
+
+The individual addresses must be separated by a
+<space>. Make sure you enter them correctly.
 @
 155
-You can enter a list of FIDO Servers here, messages
-for which will be all be sent in the same Netcall.
-This is needed to send messages into the various
-[FIDO compatible nets.]@4009
+You can enter a space separated list of FIDO servers
+here. All messages for these servers will be sent
+<<additionally>> to the messages for the main server
+in the same netcall.
+
 See also FIDO.DOC.
 @
 156
@@ -2023,9 +2027,9 @@ for its own internal XP-FM Mailer (E9h).
 @
 158
 The FIDO Mailer in CrossPoint supports both connect
-protocols YooHoo and EMSI. XP will always try to use
-EMSI, the better of the two, if the other side
-supports it.
+protocols YooHoo and EMSI when using modem connections.
+XP will always try to use EMSI, the better of the two,
+if the other side supports it.
 
 Normally you should leave the EMSI switch ON.
 But if you should get problems with EMSI netcalls,
@@ -2059,38 +2063,8 @@ otherwise!
 This number is allocated to you by your Boss.
 
 @
-8042
-<<Only for advanced Users:>>
-
-Here, you can define the ZModem protocol options for
-the Fido-Mailer. Normally, this field will be empty
-and the Fido-Mailer will operate with the correct
-parameters.
-
-Possible options:
-
-<<-r>>   Crash Recovery.
-
-<<-ti>>  Timeout Duration .....
-
-     The number of "inactive" seconds the protocol
-     will wait before timing out. By default, it
-     will wait 300 seconds (-t300) before timing
-     out. This may need to be increased for File
-     Requests, as some Mailers need to search
-     through large filebases and therefore, need
-     more time.
-
-<<-88>>  Start sending in 8K blocks immediately.
-     This is desirable with an error-free
-     connection.
-
-A complete list of options will be found in
-ZM-GER.DOC in the PD-ZModem archive.
-
-@
 8000
-A (very) few Fido boxes require the point password,
+Very few Fido boxes require the point password
 to be sent additionally inside the poll packet you
 send (as a so-called "session password"). Activating
 this switch will cause that to happen.
@@ -2101,10 +2075,10 @@ Your Sysop will tell you if it is necessary or not.
 In some of the [Fido compatible nets] points use a@4009
 [node address] instead of a point address. If this@4010
 is the case, you must set this switch, and put the
-*node number* in the space for the point number.
+<<node number>> in the space for the point number.
 If your server has the number 12:345/67, and you have
 been allocated the node number 89, then your address
-is 12:345/89. Your *node* number is 89.
+is 12:345/89. Your <<node>> number is 89.
 @
 8002
 Some Fido servers give problems, in that they only
@@ -2115,7 +2089,7 @@ life's great mysteries, but this switch gets round
 it, whatever the cause. It causes a packet to be
 sent with effectively nothing in it.
 
-In *rare* cases that can cause problems of its own,
+In <<rare>> cases that can cause problems of its own,
 when the box software doesn't know what to do with
 an empty packet, but that, dear reader, is another
 story...
@@ -2147,13 +2121,23 @@ worked on)
 Enter your two digit Point number here.
 @
 8006
-This is the name used during the Log On to start the
-netcall module in the box. Here should nearly always
-<<NET410>> be entered.
+Specify type of connection here. You may choose
+a modem (dialup), TCP/IP (Internet) or Telnet
+connection. Using Telnet should be necessary in
+rare cases only.
 
-Some QuickMail boxes (a German net) offer extra
-features which can be called up using other names
-here. Ask your Sysop about this.
+When using TCP/IP with a FidoNet server the
+mailer will use BinkP automatically.
+@
+8008
+Enter the name of the server here. You may
+either use full names ("server.dyndns.org")
+or IP addresses ("152.55.62.152").
+@
+8009
+Specify the server IP port to be used here.
+For UUCP servers you should usually enter "540",
+for BinkP FidoNet servers use port "24554".
 @
 8010
 <<UUCP-g>> and <<UUCP-G>> protocols only.

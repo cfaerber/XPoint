@@ -1,6 +1,9 @@
 {  $Id$
 
    OpenXP YooHoo handshake implementation include file
+   Copyright (C) 1991-2001 Peter Mandrella
+   Copyright (C) 2000-2001 OpenXP team (www.openxp.de)
+
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
    Free Software Foundation; either version 2, or (at your option) any
@@ -239,7 +242,7 @@ begin
       if not FCommObj^.Carrier then Timers[ti_Hello].SetTimeout(0);
     until Timers[ti_Hello].Timeout or (c=ACK) or (c='?') or (c=ENQ);
     if c='?' then begin
-      WriteIPC(mcError,getres2(30004,20)+' #%d',[retrycount]);   { 'Hello-Sendefehler' }
+      Output(mcError,getres2(30004,20)+' #%d',[retrycount]);   { 'Hello-Sendefehler' }
       DebugLog('ncfido','yoohoo hello send error',DLError);
     end;
     SleepTime(200);
@@ -328,7 +331,7 @@ begin
             inc(errors);
             if errors<10 then begin
               FCommObj^.SendChar('?');
-              WriteIPC(mcError,getres2(30004,21)+' #%d',[errors]);   { 'Hello-Empfangsfehler' }
+              Output(mcError,getres2(30004,21)+' #%d',[errors]);   { 'Hello-Empfangsfehler' }
               state:=2;
             end else
               state:=99;
@@ -336,7 +339,7 @@ begin
      10 : begin
             FCommObj^.PurgeInBuffer;
             FCommObj^.SendChar(ACK);
-            WriteIPC(mcInfo,getres2(30004,22),[0]);    { 'Handshake OK' }
+            Output(mcInfo,getres2(30004,22),[0]);    { 'Handshake OK' }
             fmRH:=true;
             { if DebugMode then WriteHello; }
             state:=99;
@@ -370,7 +373,7 @@ end;
 function TFidomailer.fmYS(state:byte):byte;     { WaZOO: 0=Abbruch, 1=Again, 2=ok }
 var c : char;
 begin
-  WriteIPC(mcInfo,'YooHoo',[0]);
+  Output(mcInfo,'YooHoo',[0]);
   log(lcInfo,'sType: FTS-0006 (YooHoo)');
   fmYS:=1;
   repeat
@@ -418,23 +421,15 @@ end;
 
 procedure TFidomailer.fmS;          { FTS-001 / FTS-007 }
 begin
-  WriteIPC(mcInfo,'FTS-0001 / '+getres2(30004,26),[0]);    { 'nicht implementiert' }
+  Output(mcInfo,'FTS-0001 / '+getres2(30004,26),[0]);    { 'nicht implementiert' }
   log(lcInfo,'sType: FTS-0001');
   SleepTime(2000);
 end;
 
 {
   $Log$
-  Revision 1.4  2001/02/19 14:15:15  ma
-  - proper AKA handling (primarily for BinkP)
-
-  Revision 1.3  2001/02/02 20:59:57  ma
-  - moved log routines to ncmodem
-
-  Revision 1.2  2001/02/02 17:14:01  ma
-  - new Fidomailer polls :-)
-
-  Revision 1.1  2001/01/30 15:18:37  ma
-  - moved protocols to separate source files
+  Revision 1.1  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
 
 }

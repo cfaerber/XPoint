@@ -1813,26 +1813,26 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # Maus-Pa·wort
 1    Pa·wort ~
 # Fido
-2    Pointnummer
-3    Pointnetz ~
+2    Pointnr.~
+3    Pointnetz
 # Turbobox-PW
 4    Pa·wort
 # Pronet
 5    Telefon~
 6    Pa·wort~
-7    Pointnr. ~
+7    Pointnr.  ~
 #
-10   Pointname
-11   Passwort~
+10   Pointname~
+11   Pa·wort  ~
 12   Telefon
 13   Ser.Nr.
 # QM
 14   Login ~
 # Fido
-15   Pa·wort
+15   Pa·wort~
 # UUCP
 16   Login   ~
-17   Passwort
+17   Pa·wort ~
 18   UUCP-Name
 #
 70   Modus   ~
@@ -1878,18 +1878,18 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 # andere Netze:
 42   Entpacker-Extension ~
 # ZConnect:
-43   Packer-Extension    ~
+43   Packer-Extension ~
 44   Janus Plus
 # Fido
-45   AKAs ~
+45   AKAs (Eingang)   ~
 46   4D-Adressen
 47   TosScan o.Ñ.
 48   Uhrzeit setzen
 49   Paketpa·wort
 50   Node statt Point
-51   leeres Paket senden
-52   erw.Paketdateinamen
-53   Pakete mitsenden ~
+51   Dummypaket senden
+52   erw. Paketdateinamen
+53   Boxen (Ausgang)  ~
 # Turbo + Maus(55)
 55   Brettnachrichten anfordern
 56   Seriennr.~
@@ -2071,7 +2071,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 1    Server    ~
 2    Port      ~
 3    Loginname ~
-4    Passwort  ~
+4    Pa·wort   ~
 -
 
 + 951
@@ -2079,7 +2079,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 0    45
 1    Server    ~
 2    Loginname ~
-3    Passwort  ~
+3    Pa·wort   ~
 4    Abgeholte Mails auf Server lîschen
 -
 + 952
@@ -2087,7 +2087,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 0    45
 1    Server    ~
 2    Loginname ~
-3    Passwort  ~
+3    Pa·wort   ~
 4    Vor SMTP einen POP3 Login ausfÅhren
 
 -
@@ -3651,6 +3651,10 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 -
 
 # $Log$
+# Revision 1.103  2001/03/21 19:17:07  ma
+# - using new netcall routines now
+# - renamed IPC to Progr.Output
+#
 # Revision 1.102  2001/03/19 12:20:53  cl
 # - more UUCICO ressources (UUCP-gGv)
 #

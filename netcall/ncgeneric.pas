@@ -1,6 +1,8 @@
 {  $Id$
 
    OpenXP generic mailer unit
+   Copyright (C) 2001 OpenXP team (www.openxp.de) and M.Kiesel
+
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
    Free Software Foundation; either version 2, or (at your option) any
@@ -46,7 +48,7 @@ var
   ZModemObj: TZModemObj;
   iFile: Integer;
 begin
-  ZModemObj:=TZModemObj.Init(FCommObj,IPC);
+  ZModemObj:=TZModemObj.Init(FCommObj,ProgressOutput);
   if OutgoingFiles.Count<=0 then
     result:=ZModemObj.Send('',True)
   else begin
@@ -66,7 +68,7 @@ var
   ZModemObj: TZModemObj;
   i: Integer;
 begin
-  ZModemObj:=TZModemObj.Init(FCommObj,IPC);
+  ZModemObj:=TZModemObj.Init(FCommObj,ProgressOutput);
   result:=ZModemObj.Receive(IncomingDir,IncomingFiles);
   for i:=0 to IncomingFiles.Count-1 do
     LogRxFile(IncomingFiles[i]);
@@ -78,21 +80,8 @@ end.
 
 {
   $Log$
-  Revision 1.4  2001/02/23 13:51:05  ma
-  - implemented transferred file logging
-  - implemented empty send batch (Fido)
-  - implemented basic netcall logging
-
-  Revision 1.3  2001/02/11 16:30:36  ma
-  - added sysop call
-  - some changes with class constructors
-
-  Revision 1.2  2001/02/06 20:17:50  ma
-  - added error handling
-  - cleaning up files properly now
-
-  Revision 1.1  2001/02/05 22:33:56  ma
-  - added ZConnect netcall (experimental status ;-)
-  - modemscripts working again
+  Revision 1.1  2001/03/21 19:17:09  ma
+  - using new netcall routines now
+  - renamed IPC to Progr.Output
 
 }

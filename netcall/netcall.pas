@@ -23,17 +23,20 @@
 
 {$I XPDEFINE.INC}
 
-unit NetCall;
+unit Netcall;
 
 interface
 
 uses
   xpglobal,		{ Nur wegen der Typendefinition }
-  IPCClass,		{ TIPC }
+  progressoutput,	{ TProgressOutput }
   sysutils;
 
 type
   ENetcall 		= class(Exception);	{ Allgemein (und Vorfahr) }
+  ENetcallHangup        = class(ENetcall);
+  ENetcallBreak         = class(ENetcall);
+  ENetcallTimeout       = class (ENetcall);
 
 type
   TNetcall = class
@@ -42,42 +45,63 @@ type
     
   public
 
-    IPC		: TIPC;
+    ProgressOutput		: TProgressOutput;
 
     constructor Create;
 
     destructor Destroy; override;
     
-    procedure WriteIPC(mc: TMsgClass; fmt: string; args: array of const); virtual;
+    procedure Output(mc: TMsgClass; fmt: string; args: array of const); virtual;
   
   end;
 
 implementation
 
+uses debug;
+
 constructor TNetcall.Create;
 begin
   inherited Create;
-  IPC:= nil;
+  ProgressOutput:= nil;
 end;
 
-procedure TNetcall.WriteIPC(mc: TMsgClass; fmt: string; args: array of const);
+procedure TNetcall.Output(mc: TMsgClass; fmt: string; args: array of const);
+var s:string;
 begin
-  if IPC<>nil then
-    IPC.WriteFmt(mc,fmt,args);
+  if ProgressOutput<>nil then
+    ProgressOutput.WriteFmt(mc,fmt,args);
+
+  case mc of
+    mcDefault:  s:='mcDefault';
+    mcDebug:    s:='mcDebug';
+    mcVerbose:  s:='mcVerbose';
+    mcInfo:     s:='mcInfo';
+    mcError:    s:='mcError';
+    mcFatal:    s:='mcFatal';
+    mcPanic:    s:='mcPanic';
+  end;
+
+  if fmt<>'' then DebugLog('netcall','Output '+s+': '+Format(fmt,args),dlInform);
 end;
+
 
 destructor TNetcall.Destroy;
 begin
-  if IPC<>nil then
-    IPC.Free;
+  if ProgressOutput<>nil then
+    ProgressOutput.Free;
 end;
 
 end.
+
 {
 	$Log$
+	Revision 1.3  2001/03/21 19:17:09  ma
+	- using new netcall routines now
+	- renamed IPC to Progr.Output
+
 	Revision 1.2  2000/07/25 18:02:18  hd
 	- NNTP-Unterstuetzung (Anfang)
-
+	
 	Revision 1.1  2000/07/25 12:52:24  hd
 	- Init
 	
