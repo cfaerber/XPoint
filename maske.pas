@@ -618,33 +618,32 @@ begin
     else begin
       inc(felder);
       new(newfld);
-{      new(fld[felder]);}
-       fld[felder] := newfld;
+      fld[felder] := newfld;
       lastfld:=fld[felder];
-      fillchar(lastfld^,sizeof(feldrec),0);
-      {:  autoup:=false; autodown:=false; topcase:=false;
-          disnodisp:=false;
-          convcolon:=false;
-          hpline:=nil; selliste:=nil;
-          hlpnr:=0;
-          slx:=0; sly:=0; sll:=0;
-          mask:='';
-          nk:=0;
-          pempty:=false;
-          variable:=nil;
-          custom:=nil; nonedit:=false;
-          allowed:=nil; owncol:=false;
-          @userdisp:=nil;
-          arrowspace:=false;
-          mausarrows:=false;
-          counter:=0;
-          checkbutt:=false;          :}
-
-      with lastfld^ do begin
+      with lastfld^ do
+      begin
+        autoup:=false; autodown:=false; topcase:=false;
+        _min := 0; _max := 0; _rmin := 0; _rmax := 0;
+        disnodisp:=false; hassel := false;
+        convcolon:=false;
+        hpline:=''; selliste:=nil;
+        slx:=0; sly:=0; sll:=0;
+        mask:=''; cont := '';
+        nk:=0; helpnr := 0; selhelpnr := 0;
+        maxlen := 0;
+        pempty:=false;
+        variable:=nil;
+        custom:=nil; nonedit:=false;
+        allowed:= ''; owncol:=false;
+        counter:=0; noslpos := false;
+        checkbutt:=false;
         enabled:=true;
         if text='' then addblank:=false;
         txt:=text+iifs(addblank,' ','');
-        yy0:=y;
+        typ := 0;
+        variable := nil;
+        len := 0;
+        yy0:=y; ownattr := 0;
         maxyy0:=max(maxyy0,yy0);
         xx:=li+x-1; yy:=ob+y-1;
         xx2:=xx+length(text);
@@ -1237,27 +1236,36 @@ begin
   masks:=0; amask:=0;
   new(mask[0]);
   amaskp:=mask[0];
-  with mask[0]^ do begin
-    fillchar(stat,sizeof(stat),0);
-    {: rahmentyp:=0;
-       keeponesc:=false; autoselbox:=false;
-       hpx:=0; hpy:=0; hpl:=0;
-       fnix:=0; fniy:=0; fnkeyinfo:=nil;  :}
-    with stat do begin
-      selboxkey:=keyf2;
-      fillchar:=' ';
-      DefaultColor(col);
-      wrapmode:=dont_wrap;
-      autojump:=5;
-      quitfn:=qdummyf;
-      fautohigh:=true;
-      end;
-    fillchar(uda,sizeof(uda),0);
-    end;
+  with mask[0]^.Stat do
+  begin
+    rahmentyp:=0;
+    rl := 0; rr := 0; ro := 0; ru := 0;
+    hcenter := false;
+    keeponesc:=false; autoselbox:=false;
+    hpx:=0; hpy:=0; hpl:=0;
+    fnix:=0; fniy:=0; fnkeyinfo:='';
+    fnkeyfill := #0; // !!?
+    selboxkey:=keyf2;
+    fillchar:=' ';
+    DefaultColor(col);
+    wrapmode:=dont_wrap;
+    autojump:=5;
+    arrowspace := false;
+    mausarrows := false;
+    selcursor := false;
+    dontclear := false; checkbutts := false;
+    quitfn:=qdummyf;
+    fautohigh:=true;
+  end;
+  with Mask[0]^do
+    system.fillchar(uda,sizeof(uda),0);
 end.
 
 {
   $Log$
+  Revision 1.15  2000/07/17 13:30:00  mk
+  - AnsiString Updates
+
   Revision 1.14  2000/07/15 18:29:55  ml
   - Ansistring + NilStringzugriffBug
 

@@ -96,12 +96,10 @@ begin
   if not clipboard then useclip:=false;
   maddstring(3,2,fn,s,37,MaxLenPathname,'');   { Dateiname: }
   if useclip then begin
-{JG:10.02.00}
     mappsel(false,'Windows-Clipboard');
     mappsel(false,'Win-Clipboard (URL)');
     mappsel(false,'Win-Clipboard (MAIL)');
     end;
-{/JG}
   readmask(brk);
   enddialog;
   if not brk then begin
@@ -122,7 +120,7 @@ begin
     if useclip and (s='WIN-CLIPBOARD (URL)') then begin      { Markierten Text als URL}
       s:=getline;
       y:=pos('HTTP://',UpperCase(s));                             {WWW URL ?}
-      if y=0 then y:=pos('HTTPS://',ustr(s));                {HTTPS URL ?}
+      if y=0 then y:=pos('HTTPS://',UpperCase(s));                {HTTPS URL ?}
       if y=0 then y:=pos('FTP://',UpperCase(s));                  {oder FTP ?}
       if y=0 then y:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
       if y<>0 then begin
@@ -221,7 +219,6 @@ var s     : string;
     t:=keyesc;
   end;
 
-{JG:28.01.00}
   procedure ShowfromLister;
   begin
     showscreen(true);      {Menuepunkte die Probleme machen koennten deaktivieren:}
@@ -255,7 +252,6 @@ var s     : string;
     setenable(3,11,true);  {N/Direkt}
     ex(5);
   end;
-{/JG}
 
 begin
   if listmakros<>0 then begin
@@ -485,12 +481,9 @@ begin
     exit;
   end;
 
-  { 07.01.2000 oh
-    Wo nichts ist, braucht auch nichts kopiert werden. Folgender Fix
+  { Wo nichts ist, braucht auch nichts kopiert werden. Folgender Fix
     vermeidet die Fehlermeldung 'Fehler %s beim Kopieren von %s'
     beim Sysop-Poll ohne vorhandenen Ausgangspuffer:
-    07.01.2000 MK
-    byte(fn[0]) Referenzen in length(fn) geändert, Source formatiert
   }
   if not exist(fn1) then { Datei fehlt! }
     if length(fn1)>2 then { Dateiname>2 Zeichen? }
@@ -500,7 +493,6 @@ begin
       filecopy:=false;
       exit;
     end;
-  { /oh }
 
   assign(f1,fn1);
   reset(f1,1);
@@ -750,7 +742,7 @@ begin
     end;
 end;
 
-{ MK 01/00 fn jetzt kein var-Parameter mehr }
+{ fn jetzt kein var-Parameter mehr }
 procedure SetZCftime(fn:string; var ddatum:string);
 var dt : datetime;
     l  : longint;
@@ -989,6 +981,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.52  2000/07/17 13:30:00  mk
+  - AnsiString Updates
+
   Revision 1.51  2000/07/16 22:49:23  mk
   - https bei URL-Erkennung hinzugefuegt
 
