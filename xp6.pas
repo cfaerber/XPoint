@@ -806,6 +806,10 @@ begin  { 05.02.2000 MH: 70 -> 78 f. ZurÅck }
   showbox;
   showsize;
   mon;
+  senden:=-1;
+  n:=1;                                { SendBox-Abfrage }
+  pushhp(68);
+  spezial:=false;
 end;
 
 
@@ -1150,10 +1154,6 @@ fromstart:
     echomail:=ntEditBrettempf(netztyp) and not pm;
     fadd:=iif(echomail,2,0);
     DisplaySendbox;                         { SendBox aufbauen }
-    senden:=-1;
-    n:=1;                                { SendBox-Abfrage }
-    pushhp(68);
-    spezial:=false;
     repeat
       if pm then intern:=false
       else intern:=(grnr=IntGruppe);
@@ -2062,6 +2062,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.7.2.6  2000/09/18 01:35:06  mk
+  - Umbau wegen Prozedurrumpf zu gross wenn NO386 gesetzt
+
   Revision 1.7.2.5  2000/06/05 16:41:52  mk
   - Zugriff auf uninitialisiertes sdata verhindert
 
