@@ -569,15 +569,19 @@ var c       : char;
   end;
 
   procedure sdelay(n:word);
+  var t:longint;
   begin
     n:=n div system.round(screenlines/2.5);
-    if ParWintime=1 then n:=n div 5;
+    n:=n div 5; { weil das innere delay wg. ticker von 10 ms auf 50 ms ge„ndert wurde }
+    t:=ticker;
     while (n>0) and not endss do begin
-      if ParWintime=1
-        then mdelay(10)
-        else delay(10);
+      if ParWintime=1 then begin
+        while t=ticker do mdelay(0); { mdelay(50) geht nicht wg. multi2 }
+        if t<ticker then inc(t) else t:=ticker;
+      end
+      else delay(50);
       dec(n);
-      end;
+    end;
   end;
 
   procedure scrollout;
@@ -1033,6 +1037,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.14  2000/03/14 22:33:36  rb
+  Sternhimmel-Screensaver mit Zeitscheibenfreigabe arbeitet jetzt korrekt
+
   Revision 1.13  2000/03/14 15:15:40  mk
   - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
   - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
