@@ -55,7 +55,7 @@ begin
   repeat
     p:=pos(s1,UpperCase(s));
     if p>0 then
-      s:=Left(s,p-1)+Trim(s2)+mid(s, p + length(s1));
+      s:=Left(s,p-1)+s2+mid(s, p + length(s1));
   until p=0;
 end;
 
@@ -1058,6 +1058,9 @@ end;
 end.
 {
   $Log$
+  Revision 1.39  2000/07/30 07:58:52  mk
+  - Trim aus RPS() entfernt
+
   Revision 1.38  2000/07/27 13:41:50  mk
   - weitere Anpassungen um Spaltenzahlen groesser 80 zu nutzen
 
