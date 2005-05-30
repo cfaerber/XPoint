@@ -2,7 +2,7 @@
 # 07.11.2000   some changes to get it running
 # 11.11.2000   some more changes to get more running
 # 15.10.2001   fix for symlinks-kill
-# 21.04.2002   adapted by Christian Boettger <chritain.boettger@web.de>
+# 21.04.2002   adapted by Christian Boettger <christain.boettger@web.de>
 Summary: openxp - The Open-Source OpenXP Project (from Crosspoint by Peter Mandrella)
 Name: openxp
 %define version %version%
