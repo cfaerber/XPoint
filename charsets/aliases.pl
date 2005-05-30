@@ -1,5 +1,5 @@
-#!perl 
-# $Id: aliases.pl,v 1.4 2002/03/25 18:42:24 cl Exp $
+#!perl
+# $Id$
 #
 # aliases.pl - Converts IANA charset list to PASCAL aliases.inc
 # (C) 2001 Claus Färber <claus@faerber.muc.de>
@@ -33,7 +33,7 @@ $UserAgent->request($Request,sub {
   unless ($started){
     print STDERR "Retrieving data...\n";
     open STDOUT,">aliases.inc";
-    print "(* \$Id: aliases.pl,v 1.4 2002/03/25 18:42:24 cl Exp $ *)\n";
+    print "(* \$Id\$ *)\n";
     print "(* generated from IANA charset list -- do not edit *)\n\n";
     print "function MimeCharsetCanonicalName(Name: String): String;\nbegin\n";
     print "  Name:=UpperCase(Name);";
@@ -43,8 +43,8 @@ $UserAgent->request($Request,sub {
   $data.=shift;
   while($data=~s/^([^\r\n]*)\r?\n//s) {
     $_=$1;
-  
-    if (/^Name: *([^ ]*)/) 
+
+    if (/^Name: *([^ ]*)/)
     {
       printf STDERR $name.(($#alias>0)?(" (".($#alias)." aliases)\n"):"\n");
       print "\n";
