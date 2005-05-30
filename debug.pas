@@ -281,7 +281,7 @@ end;
     { reset to prevent infinite recursion if problems inside the code PM }
     Store:=BackTraceStrFunc;
     BackTraceStrFunc:=@SysBackTraceStr;
-    s := OldTraceFunc(addr);
+(*!!    s := OldTraceFunc(addr); *)
     Result := s;
     DebugLog('fatal',s,dlError);
     if FileExists('ERROR.TXT') then //todo: filename
@@ -303,8 +303,8 @@ initialization
   OpenLogfile(False, GetEnv('DEBUG'));
   FindBadge('DEFAULT');
   {$IFDEF FPC }
-    OldTraceFunc := BackTraceStrFunc;
-    BackTraceStrFunc := @NewBackTraceStr;
+(*   !! OldTraceFunc := BackTraceStrFunc;
+    BackTraceStrFunc := @NewBackTraceStr; *)
   {$ENDIF }
 finalization
   CloseLogfile;

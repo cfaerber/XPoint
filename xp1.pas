@@ -1339,13 +1339,13 @@ var ma    : map;
       end;
   end;
 
-  function nomp(p:byte):boolean;
+  function nomp(p: Integer):boolean;
   begin
     nomp:=(ma^[p].mstr='-') or ((nr=0) and not ma^[p].enabled);
   end;
 
-  function nr0pos(mx:byte):byte;
-  var i : byte;
+  function nr0pos(mx: Integer): Integer;
+  var i : Integer;
   begin
     i:=1;
     while (i<main_n) and (mx>mainrange[i,1]) do inc(i);
@@ -1745,7 +1745,7 @@ procedure shell(const prog:string; space:xpWord; cls:shortint);
 {$endif}
 {$else} // OS is Dos, Win or OS2
   var
-    pp    : byte;
+    pp    : Integer;
     parameters,commandsave : string;
     callviacli : boolean; // "call via command line interpreter" (usually via COMMAND /C)
   begin
@@ -3158,13 +3158,7 @@ end;
 
 function testmem(size:longint; wait:boolean):boolean;
 begin
-  if memavail<=size+16 then begin
-    if wait then trfehler(6,30)  { 'zu wenig freier Speicher' }
-    else rfehler(6);
-    testmem:=false;
-    end
-  else
-    testmem:=true;
+  testmem:=true;
 end;
 
 

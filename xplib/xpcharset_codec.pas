@@ -1,5 +1,5 @@
 {
-    $Id: xpcharset_codec.pas,v 1.1 2003/09/29 20:47:18 cl Exp $
+    $Id$
 
     Free Pascal Unicode support
     Copyright (C) 2000  by Sebastian Guenther, sg@freepascal.org
@@ -15,9 +15,6 @@
 unit xpcharset_codec;
 
 {$I xpdefine.inc }
-{$IFDEF FPC }
-  {$MODE objfpc}
-{$ENDIF }
 
 //todo: redesign into classes of general string types
 

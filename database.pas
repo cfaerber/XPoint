@@ -682,46 +682,12 @@ begin
   freemem(np,np^.memsize);
 end;
 
-procedure expand_node(rbuf,nodep: pointer); assembler; {&uses ebx, esi, edi}
-asm
-         mov   edi, nodep
-         mov   esi, rbuf
-         xor   edx, edx
-         mov   dl, [edi+2]             { Keysize }
-         add   edx,9                   { plus Laengenbyte plus Ref/Data }
-         mov   ebx,136                 { (264) sizeof(inodekey); }
-         sub   ebx,edx
-         add   edi,14
-         xor   eax, eax
-         cld
-         lodsw                         { Anzahl Schluessel im Node }
-         stosw                         { Anzahl speichern }
-@noerr:  mov   ecx,2                   { Ref+Data von key[0] uebertragen }
-         rep   movsd
-         mov   ecx,eax
-         jecxz @nokeys
-         add   edi,128                 { (256) key[0].keystr ueberspringen }
-         mov   eax, ecx
-@exlp:   mov   ecx, edx
-         rep   movsb                   { Ref, Data und Key uebertragen }
-         add   edi, ebx
-         dec   eax
-         jnz   @exlp
-@nokeys:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-
 { Index-Knoten einlesen }
 
 procedure ReadNode(offs:longint; var np:inodep);
 var rbuf : barrp;
-{$IFDEF Delphi }
     wp   : ^smallword absolute rbuf;
     i,o: integer;
-{$ENDIF }
 begin
   with np^,dp(db_p)^ do
   begin
@@ -733,19 +699,15 @@ begin
 //      if wp^>nk then
 //        error('fehlerhafte Indexseite in '+fname+dbIxExt);
 
-{$IFNDEF Delphi }
-      expand_node(rbuf, np);
-{$ELSE }
       anzahl:=wp^;
       Move(rbuf^[2],key[0].data,8);
       o:=10;
       for i:=1 to anzahl do begin
         Move(rbuf^[o],key[i],9+ksize);
         inc(o,9+ksize);
-       end;
-{$ENDIF }
+      end;
       freemem(rbuf,irsize);
-     end;
+   end;
 end;
 
 

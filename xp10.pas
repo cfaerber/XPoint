@@ -642,22 +642,19 @@ begin
                 if eof(t) then s:=''
                 else readln(t,s);
                 end;
-{$IFNDEF Delphi}  //todo: why ever check for available memory???
-            if memavail<sizeof(pa^)+anz*sizeof(phone1) then
-              anz:=0;
-{$ENDIF}
-            if anz>0 then begin
+            if anz>0 then
+            begin
               getmem(ph,anz*sizeof(phone1));
               Move(pa^,ph^,anz*sizeof(phone1));
-              end;
             end;
           end;
         end;
       end;
+    end;
     close(t);
     freemem(pa);
     loadt:=FileExists(ParGebdat2);
-    end
+  end
 
   else begin   { not FileExists(GebuehrDat) }
     AddP('Fernzone',0);

@@ -129,7 +129,6 @@ type
     integer32 =  longint;
     unsigned16 = system.word;
     DWord =      Longword;  { = unsigned 32 bit }
-    variant =    pointer; // Naja...
   {$endif}
     smallword =  unsigned16;  //todo: drop and use unsigned16 wherever required
 

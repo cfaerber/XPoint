@@ -715,16 +715,7 @@ begin
     mfm:=filemode; filemode:= fmOpenRead + fmShareDenyWrite;
     assign(t,fn); reset(t);
     filemode:=mfm;
-{$IFDEF FPC }
-  {$IFDEF VER1_1 }
-    p:= pointer(1);
-  {$ELSE}
-    p:=ptr(1,1);
-  {$ENDIF }
-{$ENDIF }
-{$IFDEF Delphi }
     p := Pointer(1);
-{$ENDIF }
     tail:=nil;
     endcr:=false; 
     IOExcept(Exception);
@@ -805,17 +796,7 @@ begin
     mfm:=filemode; filemode:= fmOpenRead + fmShareDenyWrite;
     assign(t,fn);  reset(t,1);
     filemode:=mfm;
-{$IFDEF VP }
-    p := ptr(1);
-{$ELSE }
-{$IFDEF FPC }
-{$IFDEF VER1_1 }
     p:=pointer(1);
-{$ELSE }
-    p:=ptr(1,1);
-{$ENDIF }
-{$ENDIF }
-{$ENDIF }
     tail:=nil;
     fn := ExtractFileName(fn);
     s:='begin 644 '+fn;

@@ -116,19 +116,12 @@ begin
     FileRead(FH, index[i]^,block[i].anzahl*4);
     if block[i].flags and flPreload<>0 then
     begin
-      if memavail-block[i].contsize>preloadmem then
-      begin
-        getmem(block[i].rptr,block[i].contsize);
-        block[i].loaded:=true;
-      end;
-      if block[i].loaded then
-        FileRead(FH,block[i].rptr^,block[i].contsize)   { preload }
-      else
-        inc(block[i].fileadr,block[i].anzahl*4);
-      end;
+      getmem(block[i].rptr,block[i].contsize);
+      block[i].loaded:=true;
+      FileRead(FH,block[i].rptr^,block[i].contsize)   { preload }
     end;
+  end;
 end;
-
 
 procedure CloseResource;
 var i : integer;
@@ -316,7 +309,7 @@ end;
 
 
 function reps(const s1,s2:string):string;
-var p : byte;
+var p : Integer;
 begin
   p:=pos('%s',s1);
   if p>0 then reps:=LeftStr(s1,p-1)+s2+mid(s1,p+2)

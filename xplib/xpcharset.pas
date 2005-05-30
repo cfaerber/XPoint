@@ -1,4 +1,4 @@
-{ $Id: xpcharset.pas,v 1.3 2003/10/06 16:01:36 mk Exp $
+{ $Id$
 
   Copyright (C) 2003 OpenXP/32 Team <www.openxp.de> 
   see CVS log below for authors
@@ -26,7 +26,6 @@
 unit xpcharset;
 
 {$IFDEF FPC}
-  {$MODE Delphi}
   {$IFNDEF ver1_0}
     {$DEFINE SEEK64}
   {$ELSE}

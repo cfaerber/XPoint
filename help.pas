@@ -42,7 +42,7 @@ const
       HHeadNotHigh   = false;
 
 procedure sethelpcol(col,colhi,colqvw,colselqvw:byte);
-function  inithelp(name:string; xh,yh:byte;
+function  inithelp(name:string; xh,yh: Integer;
                    invers,blocksatz,headline:boolean):boolean;
 procedure sethelppos(_x,_y,height: Unsigned16);
 procedure help_printable(printchar:taste; pinit,pexit:string);
@@ -170,7 +170,7 @@ begin
 end;
 
 
-function inithelp(name:string; xh,yh:byte;
+function inithelp(name:string; xh,yh: Integer;
                   invers,blocksatz,headline:boolean):boolean;
 
 var ixadr : longint;

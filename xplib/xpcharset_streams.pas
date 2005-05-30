@@ -1,4 +1,4 @@
-{ $Id: xpcharset_streams.pas,v 1.1 2003/09/29 20:47:18 cl Exp $
+{ $Id$
 
   Copyright (C) 2003 OpenXP/32 Team <www.openxp.de> 
   see CVS log below for authors
@@ -48,7 +48,6 @@
 unit xpcharset_streams;
 
 {$IFDEF FPC}
-  {$MODE Delphi}
   {$IFNDEF ver1_0}
     {$DEFINE SEEK64}
   {$ELSE}

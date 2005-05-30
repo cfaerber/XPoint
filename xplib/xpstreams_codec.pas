@@ -1,5 +1,5 @@
 {
-  $Id: xpstreams_codec.pas,v 1.1 2003/08/26 22:46:31 cl Exp $
+  $Id$
 
   XPLib TStream Utilities - Base Class for CODEC Streams
 
@@ -23,7 +23,7 @@
 {$I xpdefine.inc }
 
 {** Base Class for CODEC Streams
-  @cvs($Date: 2003/08/26 22:46:31 $) }
+  @cvs($Date$) }
 unit xpstreams_codec;
 
 { ---------------------------} interface { --------------------------- }
@@ -33,7 +33,6 @@ uses
   xpstreams;
 
 {$IFDEF FPC}
-  {$MODE Delphi}
   {$IFNDEF ver1_0}
     {$DEFINE SEEK64}
   {$ELSE}

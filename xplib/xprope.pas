@@ -1,4 +1,4 @@
-{ $Id: xprope.pas,v 1.7 2003/08/23 23:02:38 mk Exp $
+{ $Id$
 
   Copyright (C) 2003 OpenXP/32 Team <www.openxp.de> 
   see CVS log below for authors
@@ -49,16 +49,6 @@
   class. }
 unit xprope;
 
-{$IFDEF FPC}
-  {$MODE Delphi}
-  {$IFNDEF ver1_0}
-    {$DEFINE SEEK64}
-  {$ELSE}
-    {$UNDEF SEEK64}
-  {$ENDIF}
-{$ELSE}
-  {$DEFINE SEEK64}
-{$ENDIF}
 
 { ---------------------------} interface { --------------------------- }
 
@@ -80,14 +70,14 @@ type
   TRopeStream = class(TStream)
   private
     FRootNode: pointer;
-    FPosition: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF};
+    FPosition: Int64;
 
   protected 
     { Balances the tree. }  
     procedure Optimise;
 
     { Sets size of the stream. Same as @link(TStream.SetSize). }
-    procedure SetSize({$IFNDEF FPC}const{$ENDIF} NewSize: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}); override;
+    procedure SetSize(const NewSize: Int64); override;
   
   public
     { Creates a new, empty instance. }
@@ -106,7 +96,7 @@ type
     function Write(const Buffer; Count: Longint): Longint; override;
     { Changes/returns the current position within the stream. 
       Same as @link(TStream.Seek). }
-    function Seek({$IFNDEF FPC}const{$ENDIF} Offset: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; Origin: {$IFDEF FPC}Word{$ELSE}TSeekOrigin{$ENDIF}): {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; override;
+    function Seek(const Offset: Int64; Origin: TSeekOrigin): Int64; override;
 
     { Copies the data from another @link(TRopeStream). The actual data 
       will not be copied until it is changed in one stream (copy on 
@@ -130,17 +120,17 @@ type
   TRopeNodeP = ^TRopeNode;  
   TRopeNode  = packed record
     ReferenceCount: Integer;
-    Size:       {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF};
+    Size:       Int64;
     Depth:      Integer;
     case NodeType: TRopeNodeType of
       rntLeaf: ( 
-        MaxSize: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF};
+        MaxSize: Int64;
         Data: PChar; );
       rntConcat: ( 
         Left, Right: TRopeNodeP; );
       rntSubstring: ( 
         Source: TRopeNodeP; 
-        StartPos: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; );
+        StartPos: Int64; );
       rntFill: (
         FillValue: Byte; );
   end;
@@ -159,7 +149,7 @@ begin
   result^.Depth    := 0;
 end;
 
-function alloc_fill_node(Size: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; FillValue: Byte): TRopeNodeP;
+function alloc_fill_node(Size: Int64; FillValue: Byte): TRopeNodeP;
 begin
   result := alloc_node;
   result^.NodeType := rntFill;
@@ -177,7 +167,7 @@ begin
   result^.Depth := Max(Left^.Depth,Right^.Depth);
 end;
 
-function alloc_substr_node(Source: TRopeNodeP; StartPos: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}): TRopeNodeP; overload;
+function alloc_substr_node(Source: TRopeNodeP; StartPos: Int64): TRopeNodeP; overload;
 begin
   result := alloc_node;
   result^.NodeType := rntSubstring;
@@ -187,7 +177,7 @@ begin
   result^.Depth := Source^.Depth +1;
 end;
 
-function alloc_substr_node(Source: TRopeNodeP; StartPos, Count: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}): TRopeNodeP; overload;
+function alloc_substr_node(Source: TRopeNodeP; StartPos, Count: Int64): TRopeNodeP; overload;
 begin
   result := alloc_substr_node(Source,StartPos);
   result^.Size := Min(result^.Size,Count);
@@ -648,7 +638,7 @@ begin
   Inc(FPosition, Result)
 end;
 
-function TRopeStream.Seek({$IFNDEF FPC}const{$ENDIF} Offset: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF}; Origin: {$IFDEF FPC}Word{$ELSE}TSeekOrigin{$ENDIF}): {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF};
+function TRopeStream.Seek(const Offset: Int64; Origin: TSeekOrigin): Int64;
 var mySize: Longint;
 begin
   mySize := TRopeNodeP(FRootNode)^.Size;
@@ -668,7 +658,7 @@ begin
   FPosition := Result;
 end;
 
-procedure TRopeStream.SetSize({$IFNDEF FPC}const{$ENDIF} NewSize: {$IFDEF SEEK64}Int64{$ELSE}Longint{$ENDIF});
+procedure TRopeStream.SetSize(const NewSize: Int64);
 var mySize: Longint;
 begin
   mySize := TRopeNodeP(FRootNode)^.Size;

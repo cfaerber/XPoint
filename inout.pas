@@ -164,7 +164,7 @@ Procedure multi2;                               { vorgeg. Backgr.-Prozess }
 Procedure initscs;                              { Screen-Saver init       }
 
 {$IFNDEF NCRT }
-Procedure window(l,o,r,u:byte);              { Statt CRT.WINDOW         }
+Procedure window(l,o,r,u: Integer);              { Statt CRT.WINDOW         }
 {$ENDIF }
 Procedure Cursor(t:curtype);                 { Cursorschalter setzen    }
 Procedure GetCur(var a,e,x,y:integer);       { Cursorbereich abfragen   }
@@ -183,7 +183,7 @@ Procedure JN(VAR c:Char; default:Char);      { J/N-Abfrage (Esc = Def.) }
 Procedure JNEsc(VAR c:Char; default:Char; var brk:boolean);
                                              { J/N-Abfrage mit Esc      }
 {$IFNDEF NCRT }
-Procedure DispHard(x,y:byte; s:string);      { String ohne beruecksicht. }
+Procedure DispHard(x,y: Integer; s:string);      { String ohne beruecksicht. }
                                              { des akt. Windows ausgeb. }
 {$ENDIF }
 Function  CopyChr(x,y:byte):char;            { Bildschirm-Inhalt ermitt.}
@@ -197,7 +197,7 @@ function  ticker:longint;                    { mem[Seg0040:$6c]         }
       art : Edittyp (edit-read, -edit, -break, -tabelle)
       enderded : EndeEdTyp (s.o.)                           }
 
-Procedure ReadEdit(x,y: Byte; txt: atext; var s:string; ml:Byte;
+Procedure ReadEdit(x,y: Integer; txt: atext; var s:string; ml:Byte;
                    li:string; var px : byte; art:edittype;
                    var enderded:endeedtyp);
 
@@ -338,7 +338,7 @@ begin
 end;
 
 {$IFNDEF NCRT }
-Procedure window(l,o,r,u:byte);
+Procedure window(l,o,r,u:Integer);
 begin
   mwl:=l; mwr:=r;
   mwo:=o; mwu:=u;
@@ -755,7 +755,7 @@ begin
 end;
 
 {$IFNDEF NCRT }
-Procedure disphard(x,y:byte; s:string);
+Procedure disphard(x,y: Integer; s:string);
 var
     TempAttr: xpWord;
 begin
@@ -802,7 +802,7 @@ end;
 
 { li = '>>...' : automatische Grossschreibung }
 
-Procedure ReadEdit(x,y: Byte; txt: atext; VAR s:string; ml:Byte;
+Procedure ReadEdit(x,y: Integer; txt: atext; VAR s:string; ml:Byte;
                    li:string; VAR px : byte; art:edittype;
                    VAR enderded:endeedtyp);
 

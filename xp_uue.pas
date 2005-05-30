@@ -177,7 +177,7 @@ asm
           jmp @mainloop
 
 @flush:   pushad
-          call dword ptr flushbuf            {setzt bufp auf 0   JG:FAR }
+          call flushbuf            {setzt bufp auf 0   JG:FAR }
           popad
           jmp @mloop0
 @ende:

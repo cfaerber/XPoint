@@ -294,7 +294,8 @@ begin
 end;
 
 function  TNodeList.GetFileName(n:integer):string;
-var p : byte;
+var
+  p: Integer;
 begin
   if n>=Count then
     result:=''

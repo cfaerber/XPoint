@@ -97,8 +97,8 @@ procedure rahmen2d(li,re,ob,m,un: Integer; const txt:string); { Doppelrahmen º z
 procedure explode(l,r,o,u,typ,attr1,attr2: Integer; msec:xpWord; const txt:string);
 procedure wshadow(li,re,ob,un: Integer);                { 8-Schatten }
 
-procedure setrahmen(n:shortint);                 { Rahmenart fuer wpull+ setzen }
-function  getrahmen:shortint;
+procedure setrahmen(n:Integer);                 { Rahmenart fuer wpull+ setzen }
+function  getrahmen: Integer;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
 Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: TxpHandle);
 procedure wrest(handle: TxpHandle);
@@ -776,12 +776,12 @@ begin
   mwrt(li,m,'Ì'+dup(re-li-1,'Í')+'¹');
 end;
 
-procedure setrahmen(n:shortint);
+procedure setrahmen(n:Integer);
 begin
   rahmen:=n;
 end;
 
-function getrahmen:shortint;
+function getrahmen: integer;
 begin
   getrahmen:=rahmen;
 end;
