@@ -127,7 +127,7 @@ type
       edp      = ^EdData;
       EdData   = record                       { je aktivem Editorobjekt }
                    lastakted  : edp;
-                   x,y,w,h,gl : byte;         { --- Startup }
+                   x,y,w,h,gl : Integer;         { --- Startup }
                    edfile     : string;
                    showfile   : string[40];
                    savesoftbreak : boolean;      { beim Speichern }
@@ -1276,7 +1276,7 @@ function AbsDelete(const ap:absatzp; from,len:integer; delentry,bkorr:boolean):a
 
 procedure TruncAbs(aptr:absatzp);
 var
-  p: smallword;
+  p: integer;
 begin
   with aptr^ do
   begin
@@ -1317,7 +1317,7 @@ begin
       end;
 end;
 
-procedure bskorr(n:byte; newdisp:byte);
+procedure bskorr(n:byte; newdisp: Integer);
 var blp : byte;
 begin
   with e^ do begin
@@ -2325,7 +2325,7 @@ var ap     : absatzp;
     wp     : integer;
     spaces : integer;
     apnew  : absatzp;
-    p      : byte;
+    p      : Integer;
 begin
   with e^ do begin
     p:=cpos(t[1],u1);
@@ -2947,11 +2947,12 @@ begin
             ap:=CutBlock; Freeblock(ap); end;
           end;
         end
-      else begin
+      else
+      begin
         FreeBlock(Clipboard);
         if cut then Clipboard:=CutBlock
         else Clipboard:=CopyBlock;
-        end;
+      end;
 end;
 
 
