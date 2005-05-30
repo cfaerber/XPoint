@@ -1,4 +1,4 @@
-(* $Id: aliases.pl,v 1.3 2001/09/10 18:48:18 cl Exp )
+(* $Id$ *)
 (* generated from IANA charset list -- do not edit *)
 
 function MimeCharsetCanonicalName(Name: String): String;
@@ -8,7 +8,7 @@ begin
 (* ===================================================================        *)
 (* CHARACTER SETS                                                             *)
 
-(* (last updated 2001 August 23)                                              *)
+(* (last updated 28 January 2005)                                             *)
 
 (* These are the official names for character sets that may be used in        *)
 (* the Internet and may be referred to in Internet documentation.  These      *)
@@ -31,7 +31,7 @@ begin
 (* This region is intended for standards that do not have subset              *)
 (* implementations. The second region (1000-1999) is for the Unicode and      *)
 (* ISO/IEC 10646 coded character sets together with a specification of a      *)
-(* (set of) sub-repetoires that may occur.  The third region (>1999) is       *)
+(* (set of) sub-repertoires that may occur.  The third region (>1999) is      *)
 (* intended for vendor specific coded character sets.                         *)
 
 (*         Assigned MIB enum Numbers                                          *)
@@ -42,15 +42,19 @@ begin
 (*         2000-2999       Vendor                                             *)
 
 (* The aliases that start with "cs" have been added for use with the          *)
-(* Printer MIB (see RFC 1759) and contain the standard numbers along with     *)
-(* suggestive names in order to facilitate applications that want to          *)
-(* display the names in user interfaces.  The "cs" stands for character       *)
-(* set and is provided for applications that need a lower case first          *)
-(* letter but want to use mixed case thereafter that cannot contain any       *)
-(* special characters, such as underbar ("_") and dash ("-").  If the         *)
-(* character set is from an ISO standard, its cs alias is the ISO             *)
+(* IANA-CHARSET-MIB as originally defined in RFC3808, and as currently        *)
+(* maintained by IANA at http://www/iana.org/assignments/ianacharset-mib.     *)
+(* Note that the ianacharset-mib needs to be kept in sync with this           *)
+(* registry.  These aliases that start with "cs" contain the standard         *)
+(* numbers along with suggestive names in order to facilitate applications    *)
+(* that want to display the names in user interfaces.  The "cs" stands        *)
+(* for character set and is provided for applications that need a lower       *)
+(* case first letter but want to use mixed case thereafter that cannot        *)
+(* contain any special characters, such as underbar ("_") and dash ("-").     *)
+
+(* If the character set is from an ISO standard, its cs alias is the ISO      *)
 (* standard number or name.  If the character set is not from an ISO          *)
-(* standard, but is registered with ISO (ECMA is the current ISO              *)
+(* standard, but is registered with ISO (IPSJ/ITSCJ is the current ISO        *)
 (* Registration Authority), the ISO Registry number is specified as           *)
 (* ISOnnn followed by letters suggestive of the name or standards number      *)
 (* of the code set.  When a national or international standard is             *)
@@ -838,14 +842,17 @@ begin
   if name='L4'                      then result :='ISO-8859-4'            else
   if name='CSISOLATIN4'             then result :='ISO-8859-4'            else
 
-(* Name: ECMA-cyrillic                                      [RFC1345,KXS2]    *)
+(* Name: ECMA-cyrillic                                                        *)
 (* MIBenum: 77                                                                *)
-(* Source: ECMA registry                                                      *)
+(* Source: ISO registry (formerly ECMA registry)                              *)
+(*          http://www.itscj.ipsj.jp/ISO-IR/111.pdf                           *)
 (* Alias: iso-ir-111                                                          *)
+(* Alias: KOI8-E                                                              *)
 (* Alias: csISO111ECMACyrillic                                                *)
 
   if name='ECMA-CYRILLIC'           then result :='ECMA-cyrillic'         else
   if name='ISO-IR-111'              then result :='ECMA-cyrillic'         else
+  if name='KOI8-E'                  then result :='ECMA-cyrillic'         else
   if name='CSISO111ECMACYRILLIC'    then result :='ECMA-cyrillic'         else
 
 (* Name: CSA_Z243.4-1985-1                                  [RFC1345,KXS2]    *)
@@ -1997,7 +2004,7 @@ begin
 
 (* Name: IBM00858                                                             *)
 (* MIBenum: 2089                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM00858)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM00858)    [Mahdi] *)
 (* Alias: CCSID00858                                                          *)
 (* Alias: CP00858                                                             *)
 (* Alias: PC-Multilingual-850+euro                                            *)
@@ -2009,7 +2016,7 @@ begin
 
 (* Name: IBM00924                                                             *)
 (* MIBenum: 2090                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM00924)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM00924)    [Mahdi] *)
 (* Alias: CCSID00924                                                          *)
 (* Alias: CP00924                                                             *)
 (* Alias: ebcdic-Latin9--euro                                                 *)
@@ -2021,7 +2028,7 @@ begin
 
 (* Name: IBM01140                                                             *)
 (* MIBenum: 2091                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01140)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01140)    [Mahdi] *)
 (* Alias: CCSID01140                                                          *)
 (* Alias: CP01140                                                             *)
 (* Alias: ebcdic-us-37+euro                                                   *)
@@ -2033,7 +2040,7 @@ begin
 
 (* Name: IBM01141                                                             *)
 (* MIBenum: 2092                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01141)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01141)    [Mahdi] *)
 (* Alias: CCSID01141                                                          *)
 (* Alias: CP01141                                                             *)
 (* Alias: ebcdic-de-273+euro                                                  *)
@@ -2045,7 +2052,7 @@ begin
 
 (* Name: IBM01142                                                             *)
 (* MIBenum: 2093                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01142)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01142)    [Mahdi] *)
 (* Alias: CCSID01142                                                          *)
 (* Alias: CP01142                                                             *)
 (* Alias: ebcdic-dk-277+euro                                                  *)
@@ -2059,7 +2066,7 @@ begin
 
 (* Name: IBM01143                                                             *)
 (* MIBenum: 2094                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01143)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01143)    [Mahdi] *)
 (* Alias: CCSID01143                                                          *)
 (* Alias: CP01143                                                             *)
 (* Alias: ebcdic-fi-278+euro                                                  *)
@@ -2073,7 +2080,7 @@ begin
 
 (* Name: IBM01144                                                             *)
 (* MIBenum: 2095                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01144)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01144)    [Mahdi] *)
 (* Alias: CCSID01144                                                          *)
 (* Alias: CP01144                                                             *)
 (* Alias: ebcdic-it-280+euro                                                  *)
@@ -2085,7 +2092,7 @@ begin
 
 (* Name: IBM01145                                                             *)
 (* MIBenum: 2096                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01145)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01145)    [Mahdi] *)
 (* Alias: CCSID01145                                                          *)
 (* Alias: CP01145                                                             *)
 (* Alias: ebcdic-es-284+euro                                                  *)
@@ -2097,7 +2104,7 @@ begin
 
 (* Name: IBM01146                                                             *)
 (* MIBenum: 2097                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01146)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01146)    [Mahdi] *)
 (* Alias: CCSID01146                                                          *)
 (* Alias: CP01146                                                             *)
 (* Alias: ebcdic-gb-285+euro                                                  *)
@@ -2109,7 +2116,7 @@ begin
 
 (* Name: IBM01147                                                             *)
 (* MIBenum: 2098                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01147)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01147)    [Mahdi] *)
 (* Alias: CCSID01147                                                          *)
 (* Alias: CP01147                                                             *)
 (* Alias: ebcdic-fr-297+euro                                                  *)
@@ -2121,7 +2128,7 @@ begin
 
 (* Name: IBM01148                                                             *)
 (* MIBenum: 2099                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01148)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01148)    [Mahdi] *)
 (* Alias: CCSID01148                                                          *)
 (* Alias: CP01148                                                             *)
 (* Alias: ebcdic-international-500+euro                                       *)
@@ -2133,7 +2140,7 @@ begin
 
 (* Name: IBM01149                                                             *)
 (* MIBenum: 2100                                                              *)
-(* Source: IBM See (.../assignments/character-set-info/IBM01149)    [Mahdi]   *)
+(* Source: IBM See (http://www.iana.org/assignments/charset-reg/IBM01149)    [Mahdi] *)
 (* Alias: CCSID01149                                                          *)
 (* Alias: CP01149                                                             *)
 (* Alias: ebcdic-is-871+euro                                                  *)
@@ -2143,12 +2150,56 @@ begin
   if name='CP01149'                 then result :='IBM01149'              else
   if name='EBCDIC-IS-871+EURO'      then result :='IBM01149'              else
 
-(* Name: Big5-HKSCS                                                           *)
+(* Name: Big5-HKSCS                                                  [Yick]   *)
 (* MIBenum: 2101                                                              *)
-(* Source:   See (.../assignments/character-set-info/Big5-HKSCS)     [Yick]   *)
+(* Source:   See (http://www.iana.org/assignments/charset-reg/Big5-HKSCS)     *)
 (* Alias: None                                                                *)
 
   if name='BIG5-HKSCS'              then result :='Big5-HKSCS'            else
+
+(* Name: IBM1047                                                [Robrigado]   *)
+(* MIBenum: 2102                                                              *)
+(* Source: IBM1047 (EBCDIC Latin 1/Open Systems)                              *)
+(* http://www-1.ibm.com/servers/eserver/iseries/software/globalization/pdf/cp01047z.pdf *)
+(* Alias: IBM-1047                                                            *)
+
+  if name='IBM1047'                 then result :='IBM1047'               else
+  if name='IBM-1047'                then result :='IBM1047'               else
+
+(* Name: PTCP154                                                    [Uskov]   *)
+(* MIBenum: 2103                                                              *)
+(* Source: See (http://www.iana.org/assignments/charset-reg/PTCP154)          *)
+(* Alias: csPTCP154                                                           *)
+(* Alias: PT154                                                               *)
+(* Alias: CP154                                                               *)
+(* Alias: Cyrillic-Asian                                                      *)
+
+  if name='PTCP154'                 then result :='PTCP154'               else
+  if name='CSPTCP154'               then result :='PTCP154'               else
+  if name='PT154'                   then result :='PTCP154'               else
+  if name='CP154'                   then result :='PTCP154'               else
+  if name='CYRILLIC-ASIAN'          then result :='PTCP154'               else
+
+(* Name:  Amiga-1251                                                          *)
+(* MIBenum:  2104                                                             *)
+(* Source:  See (http://www.amiga.ultranet.ru/Amiga-1251.html)                *)
+(* Alias:  Ami1251                                                            *)
+(* Alias:  Amiga1251                                                          *)
+(* Alias:  Ami-1251                                                           *)
+(* (Aliases are provided for historical reasons and should not be used)       *)
+(*                                                               [Malyshev]   *)
+
+  if name='AMIGA-1251'              then result :='Amiga-1251'            else
+  if name='AMI1251'                 then result :='Amiga-1251'            else
+  if name='AMIGA1251'               then result :='Amiga-1251'            else
+  if name='AMI-1251'                then result :='Amiga-1251'            else
+
+(* Name:  KOI7-switched                                                       *)
+(* MIBenum:  2105                                                             *)
+(* Source:  See <http://www.iana.org/assignments/charset-reg/KOI7-switched>   *)
+(* Aliases:  None                                                             *)
+
+  if name='KOI7-SWITCHED'           then result :='KOI7-switched'         else
 
 (* Name: UNICODE-1-1                                              [RFC1641]   *)
 (* MIBenum: 1010                                                              *)
@@ -2160,7 +2211,7 @@ begin
 
 (* Name: SCSU                                                                 *)
 (* MIBenum: 1011                                                              *)
-(* Source: SCSU See (.../assignments/character-set-info/SCSU)     [Scherer]   *)
+(* Source: SCSU See (http://www.iana.org/assignments/charset-reg/SCSU)     [Scherer] *)
 (* Alias: None                                                                *)
 
   if name='SCSU'                    then result :='SCSU'                  else
@@ -2193,6 +2244,43 @@ begin
 
   if name='UTF-16'                  then result :='UTF-16'                else
 
+(* Name: CESU-8                                                    [Phipps]   *)
+(* MIBenum: 1016                                                              *)
+(* Source: <http://www.unicode.org/unicode/reports/tr26>                      *)
+(* Alias: csCESU-8                                                            *)
+
+  if name='CESU-8'                  then result :='CESU-8'                else
+  if name='CSCESU-8'                then result :='CESU-8'                else
+
+(* Name: UTF-32                                                     [Davis]   *)
+(* MIBenum: 1017                                                              *)
+(* Source: <http://www.unicode.org/unicode/reports/tr19/>                     *)
+(* Alias: None                                                                *)
+
+  if name='UTF-32'                  then result :='UTF-32'                else
+
+(* Name: UTF-32BE                                                   [Davis]   *)
+(* MIBenum: 1018                                                              *)
+(* Source: <http://www.unicode.org/unicode/reports/tr19/>                     *)
+(* Alias: None                                                                *)
+
+  if name='UTF-32BE'                then result :='UTF-32BE'              else
+
+(* Name: UTF-32LE                                                   [Davis]   *)
+(* MIBenum: 1019                                                              *)
+(* Source: <http://www.unicode.org/unicode/reports/tr19/>                     *)
+(* Alias: None                                                                *)
+
+  if name='UTF-32LE'                then result :='UTF-32LE'              else
+
+(* Name: BOCU-1                                                   [Scherer]   *)
+(* MIBenum: 1020                                                              *)
+(* Source: http://www.unicode.org/notes/tn6/                                  *)
+(* Alias: csBOCU-1                                                            *)
+
+  if name='BOCU-1'                  then result :='BOCU-1'                else
+  if name='CSBOCU-1'                then result :='BOCU-1'                else
+
 (* Name: UNICODE-1-1-UTF-7                                        [RFC1642]   *)
 (* MIBenum: 103                                                               *)
 (* Source: RFC 1642                                                           *)
@@ -2201,23 +2289,23 @@ begin
   if name='UNICODE-1-1-UTF-7'       then result :='UNICODE-1-1-UTF-7'     else
   if name='CSUNICODE11UTF7'         then result :='UNICODE-1-1-UTF-7'     else
 
-(* Name: UTF-8                                                    [RFC2279]   *)
+(* Name: UTF-8                                                    [RFC3629]   *)
 (* MIBenum: 106                                                               *)
-(* Source: RFC 2279                                                           *)
+(* Source: RFC 3629                                                           *)
 (* Alias: None                                                                *)
 
   if name='UTF-8'                   then result :='UTF-8'                 else
 
 (* Name: ISO-8859-13                                                          *)
 (* MIBenum: 109                                                               *)
-(* Source: ISO See (...assignments/character-set-info/iso-8859-13)[Tumasonis]  *)
+(* Source: ISO See (http://www.iana.org/assignments/charset-reg/iso-8859-13)[Tumasonis]  *)
 (* Alias: None                                                                *)
 
   if name='ISO-8859-13'             then result :='ISO-8859-13'           else
 
 (* Name: ISO-8859-14                                                          *)
 (* MIBenum: 110                                                               *)
-(* Source: ISO See (...assignments/character-set-info/iso-8859-14) [Simonsen] *)
+(* Source: ISO See (http://www.iana.org/assignments/charset-reg/iso-8859-14) [Simonsen] *)
 (* Alias: iso-ir-199                                                          *)
 (* Alias: ISO_8859-14:1998                                                    *)
 (* Alias: ISO_8859-14                                                         *)
@@ -2236,17 +2324,74 @@ begin
 (* Name: ISO-8859-15                                                          *)
 (* MIBenum: 111                                                               *)
 (* Source: ISO                                                                *)
+(*         Please see: <http://www.iana.org/assignments/charset-reg/ISO-8859-15> *)
 (* Alias: ISO_8859-15                                                         *)
+(* Alias: Latin-9                                                             *)
 
   if name='ISO-8859-15'             then result :='ISO-8859-15'           else
   if name='ISO_8859-15'             then result :='ISO-8859-15'           else
+  if name='LATIN-9'                 then result :='ISO-8859-15'           else
 
 (* Name: ISO-8859-16                                                          *)
 (* MIBenum: 112                                                               *)
 (* Source: ISO                                                                *)
-(* Alias:                                                                     *)
+(* Alias: iso-ir-226                                                          *)
+(* Alias: ISO_8859-16:2001                                                    *)
+(* Alias: ISO_8859-16                                                         *)
+(* Alias: latin10                                                             *)
+(* Alias: l10                                                                 *)
 
   if name='ISO-8859-16'             then result :='ISO-8859-16'           else
+  if name='ISO-IR-226'              then result :='ISO-8859-16'           else
+  if name='ISO_8859-16:2001'        then result :='ISO-8859-16'           else
+  if name='ISO_8859-16'             then result :='ISO-8859-16'           else
+  if name='LATIN10'                 then result :='ISO-8859-16'           else
+  if name='L10'                     then result :='ISO-8859-16'           else
+
+(* Name: GBK                                                                  *)
+(* MIBenum: 113                                                               *)
+(* Source: Chinese IT Standardization Technical Committee                     *)
+(*         Please see: <http://www.iana.org/assignments/charset-reg/GBK>      *)
+(* Alias: CP936                                                               *)
+(* Alias: MS936                                                               *)
+(* Alias: windows-936                                                         *)
+
+  if name='GBK'                     then result :='GBK'                   else
+  if name='CP936'                   then result :='GBK'                   else
+  if name='MS936'                   then result :='GBK'                   else
+  if name='WINDOWS-936'             then result :='GBK'                   else
+
+(* Name: GB18030                                                              *)
+(* MIBenum: 114                                                               *)
+(* Source: Chinese IT Standardization Technical Committee                     *)
+(*         Please see: <http://www.iana.org/assignments/charset-reg/GB18030>  *)
+(* Alias: None                                                                *)
+
+  if name='GB18030'                 then result :='GB18030'               else
+
+(* Name:  OSD_EBCDIC_DF04_15                                                  *)
+(* MIBenum:  115                                                              *)
+(* Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding                *)
+(*          Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-15> *)
+(* Alias:   None                                                              *)
+
+  if name='OSD_EBCDIC_DF04_15'      then result :='OSD_EBCDIC_DF04_15'    else
+
+(* Name:  OSD_EBCDIC_DF03_IRV                                                 *)
+(* MIBenum:  116                                                              *)
+(* Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding                *)
+(*          Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF03-IRV> *)
+(* Alias:  None                                                               *)
+
+  if name='OSD_EBCDIC_DF03_IRV'     then result :='OSD_EBCDIC_DF03_IRV'   else
+
+(* Name:  OSD_EBCDIC_DF04_1                                                   *)
+(* MIBenum:  117                                                              *)
+(* Source:  Fujitsu-Siemens standard mainframe EBCDIC encoding                *)
+(*          Please see: <http://www.iana.org/assignments/charset-reg/OSD-EBCDIC-DF04-1> *)
+(* Alias:  None                                                               *)
+
+  if name='OSD_EBCDIC_DF04_1'       then result :='OSD_EBCDIC_DF04_1'     else
 
 (* Name: JIS_Encoding                                                         *)
 (* MIBenum: 16                                                                *)
@@ -2348,10 +2493,10 @@ begin
 (* Name: ISO-Unicode-IBM-1268                                                 *)
 (* MIBenum: 1006                                                              *)
 (* Source: IBM Latin-4 Extended Presentation Set, GCSGID: 1268                *)
-(* Alias: csUnidoceIBM1268                                                    *)
+(* Alias: csUnicodeIBM1268                                                    *)
 
   if name='ISO-UNICODE-IBM-1268'    then result :='ISO-Unicode-IBM-1268'  else
-  if name='CSUNIDOCEIBM1268'        then result :='ISO-Unicode-IBM-1268'  else
+  if name='CSUNICODEIBM1268'        then result :='ISO-Unicode-IBM-1268'  else
 
 (* Name: ISO-Unicode-IBM-1276                                                 *)
 (* MIBenum: 1007                                                              *)
@@ -2586,63 +2731,63 @@ begin
 
 (* Name: windows-1250                                                         *)
 (* MIBenum: 2250                                                              *)
-(* Source: Microsoft  (see ../character-set-info/windows-1250) [Lazhintseva]  *)
+(* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1250) [Lazhintseva] *)
 (* Alias: None                                                                *)
 
   if name='WINDOWS-1250'            then result :='windows-1250'          else
 
 (* Name: windows-1251                                                         *)
 (* MIBenum: 2251                                                              *)
-(* Source: Microsoft  (see ../character-set-info/windows-1251) [Lazhintseva]  *)
+(* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1251) [Lazhintseva] *)
 (* Alias: None                                                                *)
 
   if name='WINDOWS-1251'            then result :='windows-1251'          else
 
 (* Name: windows-1252                                                         *)
 (* MIBenum: 2252                                                              *)
-(* Source: Microsoft  (see ../character-set-info/windows-1252)       [Wendt]  *)
+(* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1252)       [Wendt] *)
 (* Alias: None                                                                *)
 
   if name='WINDOWS-1252'            then result :='windows-1252'          else
 
 (* Name: windows-1253                                                         *)
 (* MIBenum: 2253                                                              *)
-(* Source: Microsoft  (see ../character-set-info/windows-1253) [Lazhintseva]  *)
+(* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1253) [Lazhintseva] *)
 (* Alias: None                                                                *)
 
   if name='WINDOWS-1253'            then result :='windows-1253'          else
 
 (* Name: windows-1254                                                         *)
 (* MIBenum: 2254                                                              *)
-(* Source: Microsoft  (see ../character-set-info/windows-1254) [Lazhintseva]  *)
+(* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1254) [Lazhintseva] *)
 (* Alias: None                                                                *)
 
   if name='WINDOWS-1254'            then result :='windows-1254'          else
 
 (* Name: windows-1255                                                         *)
 (* MIBenum: 2255                                                              *)
-(* Source: Microsoft  (see ../character-set-info/windows-1255) [Lazhintseva]  *)
+(* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1255) [Lazhintseva] *)
 (* Alias: None                                                                *)
 
   if name='WINDOWS-1255'            then result :='windows-1255'          else
 
 (* Name: windows-1256                                                         *)
 (* MIBenum: 2256                                                              *)
-(* Source: Microsoft  (see ../character-set-info/windows-1256) [Lazhintseva]  *)
+(* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1256) [Lazhintseva] *)
 (* Alias: None                                                                *)
 
   if name='WINDOWS-1256'            then result :='windows-1256'          else
 
 (* Name: windows-1257                                                         *)
 (* MIBenum: 2257                                                              *)
-(* Source: Microsoft  (see ../character-set-info/windows-1257) [Lazhintseva]  *)
+(* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1257) [Lazhintseva] *)
 (* Alias: None                                                                *)
 
   if name='WINDOWS-1257'            then result :='windows-1257'          else
 
 (* Name: windows-1258                                                         *)
 (* MIBenum: 2258                                                              *)
-(* Source: Microsoft  (see ../character-set-info/windows-1258) [Lazhintseva]  *)
+(* Source: Microsoft  (http://www.iana.org/assignments/charset-reg/windows-1258) [Lazhintseva] *)
 (* Alias: None                                                                *)
 
   if name='WINDOWS-1258'            then result :='windows-1258'          else
@@ -2662,6 +2807,7 @@ begin
 end;
 
 (* REFERENCES                                                                 *)
+(* ----------                                                                 *)
 
 (* [RFC1345]  Simonsen, K., "Character Mnemonics & Character Sets",           *)
 (*            RFC 1345, Rationel Almen Planlaegning, Rationel Almen           *)
@@ -2709,6 +2855,10 @@ end;
 (*            Manual, second edition, Addison-Wesley Publishing Company,      *)
 (*            Inc., 1990.                                                     *)
 
+(* [ECMA Registry]  ISO-IR: International Register of Escape Sequences        *)
+(*            http://www.itscj.ipsj.or.jp/ISO-IE/  Note: The current          *)
+(*            registration authority is IPSJ/ITSCJ, Japan.                    *)
+
 (* [HP-PCL5]  Hewlett-Packard Company, "HP PCL 5 Comparison Guide",           *)
 (*            (P/N 5021-0329) pp B-13, 1996.                                  *)
 
@@ -2735,32 +2885,46 @@ end;
 (* [RFC2781]  Hoffman, P., Yergeau, F., "UTF-16, an encoding of ISO 10646",   *)
 (*            RFC 2781, February 2000.                                        *)
 
+(* [RFC3629]  Yergeau, F., "UTF-8, a transformation format of ISO 10646",     *)
+(*            RFC3629, November 2003.                                         *)
 
 (* PEOPLE                                                                     *)
+(* ------                                                                     *)
 
 (* [KXS2] Keld Simonsen <Keld.Simonsen@dkuug.dk>                              *)
 
 (* [Choi] Woohyong Choi <whchoi@cosmos.kaist.ac.kr>                           *)
 
+(* [Davis] Mark Davis, <mark@unicode.org>, April 2002.                        *)
+
 (* [Lazhintseva] Katya Lazhintseva, <katyal@MICROSOFT.com>, May 1996.         *)
 
 (* [Mahdi] Tamer Mahdi, <tamer@ca.ibm.com>, August 2000.                      *)
 
-(* [Murai] Jun Murai <jun@wide.ad.jp>                                         *)
+(* [Malyshev] Michael Malyshev, <michael_malyshev@mail.ru>, January 2004      *)
 
-(* [Ohta] Masataka Ohta, <mohta@cc.titech.ac.jp>, July 1995.                  *)
+(* [Murai] Jun Murai <jun@wide.ad.jp>                                         *)
 
 (* [Nussbacher] Hank Nussbacher, <hank@vm.tau.ac.il>                          *)
 
-(* [Pond] Rick Pond, <rickpond@vnet.ibm.com> March 1997.                      *)
+(* [Ohta] Masataka Ohta, <mohta@cc.titech.ac.jp>, July 1995.                  *)
 
-(* [Scherer] Markus Scherer, <markus.scherer@jtcsv.com>, August 2000.         *)
+(* [Phipps] Toby Phipps, <tphipps@peoplesoft.com>, March 2002.                *)
+
+(* [Pond] Rick Pond, <rickpond@vnet.ibm.com>, March 1997.                     *)
+
+(* [Robrigado] Reuel Robrigado, <reuelr@ca.ibm.com>, September 2002.          *)
+
+(* [Scherer] Markus Scherer, <markus.scherer@jtcsv.com>, August 2000,         *)
+(*           September 2002.                                                  *)
 
 (* [Simonsen] Keld Simonsen, <Keld.Simonsen@rap.dk>, August 2000.             *)
 
 (* [Tantsetthi] Trin Tantsetthi, <trin@mozart.inet.co.th>, September 1998.    *)
 
 (* [Tumasonis] Vladas Tumasonis, <vladas.tumasonis@maf.vu.lt>, August 2000.   *)
+
+(* [Uskov] Alexander Uskov, <auskov@idc.kz>, September 2002.                  *)
 
 (* [Wendt] Chris Wendt, <christw@microsoft.com>, December 1999.               *)
 
