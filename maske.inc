@@ -328,7 +328,7 @@ var ax,p,myp  : integer;
       longest: Integer;
       i,p,sa : integer;
       t      : taste;
-      na,x   : byte;
+      na,x   : Integer;
       insmaus: boolean;   { Taste wurde 'inside' gedrckt }
 
     procedure display;

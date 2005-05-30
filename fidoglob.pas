@@ -145,7 +145,7 @@ procedure TNodeList.LoadConfigFromFile;       { NODELST.CFG laden }
 var t     : text;
     s     : string;
     ss    : string[20];
-    p     : byte;
+    p     : Integer;
     fa    : fidoadr;
     NlItem: TNodeListItem;
 begin
@@ -225,7 +225,8 @@ begin
 end;
 
 function  TNodeList.GetFileName(n:integer):string;
-var p : byte;
+var
+  p: Integer;
 begin
   if n>=Count then
     result:=''

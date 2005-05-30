@@ -47,7 +47,7 @@ type
 
   public
     FileName    : String;       (* Name of file                 *)
-    FileSize    : Longint;      (* Size of file                 *)
+    FileSize    : Int64;        (* Size of file                 *)
     IsTemp      : Boolean;      (* Created temporarily          *)
     IsFile      : Boolean;      (* Was created from file        *)
     IsExtract   : Boolean;      (* Was extracted from message   *)
@@ -271,31 +271,12 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;can
     function WinFileTimeToDateTime(var utc:TFILETIME):TDateTime;
     var local: Windows.TFileTime;
         wsyst: Windows.TSystemTime;
-      {$IFDEF FPC}
-        systm: SysUtils.TSystemTime;
-      {$ENDIF}
     begin
       if (utc.dwLowDateTime or utc.dwHighDateTime)<>0 then
       begin
         Windows.FileTimeToLocalFileTime(utc,local);
         Windows.FileTimeToSystemTime(local,wsyst);
-      {$IFDEF FPC}
-        systm.year        := wsyst.wYear;
-        systm.month       := wsyst.wMonth;
-        systm.day         := wsyst.wDay;
-        systm.hour        := wsyst.wHour;
-        systm.minute      := wsyst.wMinute;
-        systm.second      := wsyst.wSecond;
-        systm.millisecond := wsyst.wMilliSeconds;
-        Result:=SystemTimeToDateTime(systm);
-      {$ELSE}
-       {$IFDEF VirtualPascal}
-        Result:=EncodeDate(wsyst.wYear,wsyst.wMonth,wsyst.wDay)
-          + EncodeTime(wsyst.wHour,wsyst.wMinute,wsyst.wSecond,wsyst.wMilliseconds);
-       {$ELSE}
         Result:=SystemTimeToDateTime(wsyst);
-       {$ENDIF}
-      {$ENDIF}
       end else
         Result:=NaN;
     end;

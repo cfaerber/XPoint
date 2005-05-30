@@ -58,8 +58,8 @@ procedure maus_tasten_aus;
 procedure maus_gettext(var x,y:integer);
 procedure maus_setdblspeed(b:byte);    { Doppelklick-Ticks                 }
 
-procedure maus_pushinside(l,r,o,u:byte);
-procedure maus_setinside(l,r,o,u:byte);
+procedure maus_pushinside(l,r,o,u: Integer);
+procedure maus_setinside(l,r,o,u: Integer);
 procedure maus_noinside;
 procedure maus_popinside;
 
@@ -475,7 +475,7 @@ end;
 { Wenn die Maus aus dem Fenster (l,r,o,u) "herausgezogen" wird, }
 { erzeugt INOUT.Get automatisch KeyUp/KeyDown-Tastendrcke      }
 
-procedure maus_setinside(l,r,o,u:byte);
+procedure maus_setinside(l,r,o,u: Integer);
 begin
   inside[istack,0]:=l;
   inside[istack,1]:=r;
@@ -483,7 +483,7 @@ begin
   inside[istack,3]:=u;
 end;
 
-procedure maus_pushinside(l,r,o,u:byte);
+procedure maus_pushinside(l,r,o,u: Integer);
 begin
   if istack=maxinside then
     raise Exception.Create('maus2'#0'Mouse stack overflow')

@@ -634,7 +634,7 @@ begin
 end;
 
 
-procedure setall(const text:string; x,y:byte; addblank:boolean);
+procedure setall(const text:string; x,y: Integer; addblank:boolean);
 var
    newfld : feldp;
 begin

@@ -603,7 +603,7 @@ var
   procedure suchen(rep: boolean);
   var
     found, brk: boolean;
-    pp: byte;
+    pp: Integer;
     sw: byte;
     nftxt: atext;
     mi: byte;

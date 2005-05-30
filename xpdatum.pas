@@ -107,7 +107,7 @@ end;
 procedure ZtoZCdatum(var datum,zdatum:string);
 var addh : shortint;
     dat  : s20;
-    p    : byte;
+    p    : Integer;
 begin
   dat:=datum;
   p:=cpos(':', XpTimezone);

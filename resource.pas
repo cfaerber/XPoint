@@ -312,7 +312,7 @@ end;
 
 
 function reps(const s1,s2:string):string;
-var p : byte;
+var p : Integer;
 begin
   p:=pos('%s',s1);
   if p>0 then reps:=LeftStr(s1,p-1)+s2+mid(s1,p+2)
