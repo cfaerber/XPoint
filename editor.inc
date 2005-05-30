@@ -52,7 +52,7 @@ function AbsDelete(const ap:absatzp; from,len:integer; delentry,bkorr:boolean):a
 
 procedure TruncAbs(aptr:absatzp);
 var
-  p: smallword;
+  p: integer;
 begin
   with aptr^ do
   begin
@@ -93,7 +93,7 @@ begin
       end;
 end;
 
-procedure bskorr(n:byte; newdisp:byte);
+procedure bskorr(n:byte; newdisp: Integer);
 var blp : byte;
 begin
   with e^ do begin
@@ -1098,7 +1098,7 @@ var ap     : absatzp;
     wp     : integer;
     spaces : integer;
     apnew  : absatzp;
-    p      : byte;
+    p      : Integer;
 begin
   with e^ do begin
     p:=cpos(t[1],u1);
@@ -1720,11 +1720,12 @@ begin
             ap:=CutBlock; Freeblock(ap); end;
           end;
         end
-      else begin
+      else
+      begin
         FreeBlock(Clipboard);
         if cut then Clipboard:=CutBlock
         else Clipboard:=CopyBlock;
-        end;
+      end;
 end;
 
 
@@ -2091,7 +2092,7 @@ const
       txt   : string = '';
       repby : string = '';
       igcase: boolean = true;
-      lastop: byte    = 0;         { 1=suchen, 2=suchen/ersetzen }
+      lastop: Integer  = 0;         { 1=suchen, 2=suchen/ersetzen }
 var
       stxt  : string;
       spos  : integer;
@@ -2186,9 +2187,9 @@ end;
 
 { -------------------------------------------------------- MenÅ }
 
-function LocalMenu:integer;
+function LocalMenu:Byte;
 const lastp : byte = 1;
-var mx,my,ml,i,p : byte;
+var mx,my,ml,i,p : integer;
     highp        : array[1..editmenumps] of byte;
     t            : taste;
     xx,yy,oldp   : integer;

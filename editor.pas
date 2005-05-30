@@ -1,4 +1,3 @@
-
 {   $Id$
 
     OpenXP editor unit
@@ -110,7 +109,7 @@ type
       absatzp  = ^absatzt;
       absatzt  = packed record
                    next,prev  : absatzp;
-                   size,msize : smallword;       { msize = allokierte Gr”áe }
+                   size,msize : Integer16;       { msize = allokierte Gr”áe }
                    umbruch    : boolean;
                    fill       : array[1..3] of byte;
                    cont       : charr;
@@ -122,7 +121,7 @@ type
       edp      = ^EdData;
       EdData   = record                       { je aktivem Editorobjekt }
                    lastakted  : edp;
-                   x,y,w,h,gl : byte;         { --- Startup }
+                   x,y,w,h,gl : Integer;         { --- Startup }
                    edfile     : string;
                    showfile   : string[40];
                    savesoftbreak : boolean;      { beim Speichern }
