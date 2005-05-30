@@ -1919,12 +1919,12 @@ end;
 
 function testmem(size:longint; wait:boolean):boolean;
 begin
-  if memavail<=size+16 then begin
+(*  if memavail<=size+16 then begin
     if wait then trfehler(6,30)  { 'zu wenig freier Speicher' }
     else rfehler(6);
     testmem:=false;
     end
-  else
+  else *)
     testmem:=true;
 end;
 

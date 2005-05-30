@@ -95,7 +95,6 @@ type
     dword =      longint; { = signed }
     longword=    longint;
     rtlword =    longint;     { 32 Bit bei VP }
-    variant =    pointer; // Naja...
     Int64 =      longint; // Ohje...
     Cardinal =   longint;
   {$ENDIF }
@@ -117,7 +116,6 @@ type
     smallword =  {$IFNDEF VER160}system.{$ENDIF}word;
     Word =       Integer; // !!
     DWord =      Longword;  { = unsigned 32 bit }
-    variant =    pointer; // Naja...
   {$endif}
 
 const

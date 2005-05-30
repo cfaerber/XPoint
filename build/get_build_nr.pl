@@ -3,9 +3,9 @@
 # use with eval $(get_build_nr.pl)
 # get version number from xpglobal.pas and version.inc and build .spec-file
 
-  $MAINVER = "unkown";
-  $SUBVER = "unkown";
-  $BUILD = "unkown";
+  $MAINVER = "unknown";
+  $SUBVER = "unknown";
+  $BUILD = "unknown";
   $RELEASE = "1";
 
 

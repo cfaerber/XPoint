@@ -115,11 +115,8 @@ begin
     FileRead(FH, index[i]^,block[i].anzahl*4);
     if block[i].flags and flPreload<>0 then
     begin
-      if memavail-block[i].contsize>preloadmem then
-      begin
-        getmem(block[i].rptr,block[i].contsize);
-        block[i].loaded:=true;
-      end;
+      getmem(block[i].rptr,block[i].contsize);
+      block[i].loaded:=true;
       if block[i].loaded then
         FileRead(FH,block[i].rptr^,block[i].contsize)   { preload }
       else

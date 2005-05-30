@@ -60,7 +60,7 @@ type
         procedure _ReadBlock(var Block; BlockLen: Longint; var Reads: Longint); virtual;
         function  _CharCount: Integer; virtual;
       private
-        SHandle: LongInt; 
+        SHandle: DWord; 
 	SOpened: Boolean;
 	SBuffer: packed array[1..8192] of char;
 	SBufBeg,SBufEnd: Longint;

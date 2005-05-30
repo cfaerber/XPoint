@@ -15,9 +15,6 @@
 unit unicode;
 
 {$I xpdefine.inc }
-{$IFDEF FPC }
-  {$MODE objfpc}
-{$ENDIF }
 
 interface
 

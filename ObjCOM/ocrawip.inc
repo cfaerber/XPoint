@@ -247,7 +247,7 @@ begin
   begin
     {$IFDEF WIN32}WinSock.{$ELSE}{$IFDEF fpc}{$IFDEF OS2}pmwsock.{$ELSE}sockets.{$ENDIF}{$ENDIF}{$ENDIF}ShutDown(SHandle,2);
     {$IFDEF WIN32}WinSock.CloseSocket(SHandle);{$ENDIF}
-    SHandle := INVALID_SOCKET;
+    SHandle := DWord(INVALID_SOCKET);
   end;
   SOpened:=False;
 end; { func. TRawIPStream.CloseCom }

@@ -20,8 +20,6 @@
 
 {$I xpdefine.inc }
 
-{$ifdef FPC} {$mode objfpc} {$endif}
-
 { File I/O and file name processing functions }
 unit fileio;
 
@@ -242,7 +240,7 @@ begin
   System.Rewrite(F,l);
 end;
 
-procedure XPRewrite(var F: text; cm: TCreateMode);
+procedure XPRewrite(var F: text; cm: TCreateMode); overload;
 var
   fn : string;
 begin
@@ -257,7 +255,7 @@ begin
 end;
 {$ENDIF }
 
-procedure XPRewrite(var F: file; cm: TCreateMode);
+procedure XPRewrite(var F: file; cm: TCreateMode); overload;
 var
   fn : string;
 begin

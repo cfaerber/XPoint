@@ -277,8 +277,8 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;can
     begin
       if (utc.dwLowDateTime or utc.dwHighDateTime)<>0 then
       begin
-        Windows.FileTimeToLocalFileTime(utc,{$IFDEF FPC}@{$ENDIF}local);
-        Windows.FileTimeToSystemTime(local,{$IFDEF FPC}@{$ENDIF}wsyst);
+        Windows.FileTimeToLocalFileTime(utc,local);
+        Windows.FileTimeToSystemTime(local,wsyst);
       {$IFDEF FPC}
         systm.year        := wsyst.wYear;
         systm.month       := wsyst.wMonth;

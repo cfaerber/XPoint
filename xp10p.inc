@@ -183,15 +183,13 @@ begin
                     end;
                   s:=trimleft(mid(s,p+1));
                   end;
-                if eof(t) then s:=''
-                else readln(t,s);
-                end;
-            if memavail<sizeof(pa^)+anz*sizeof(phone1) then
-              anz:=0;
-            if anz>0 then begin
+                if eof(t) then
+                  s:=''
+                else
+                  readln(t,s);
+              end;
               getmem(ph,anz*sizeof(phone1));
               Move(pa^,ph^,anz*sizeof(phone1));
-              end;
             end;
           end;
         end;
