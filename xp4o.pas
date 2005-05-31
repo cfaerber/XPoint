@@ -2397,7 +2397,7 @@ begin
   else begin
     getfilename:=a_getfilename;
     fk:=forwardkeys; forwardkeys:='';
-    if test_fkeys(t) then;
+    test_fkeys(t);
     keyboard(fk);
     xp1o.listext(LSelf, t);
     end;

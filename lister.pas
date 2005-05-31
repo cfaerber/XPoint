@@ -192,7 +192,7 @@ var
 implementation { ------------------------------------------------ }
 
 uses
-  gpltools,xp0,mime,utftools,unicode;
+  gpltools,xp0,mime,utftools,unicode,xpkeys;
 
 // Zerlegen des Buffers in einzelne Zeilen
 
@@ -879,6 +879,7 @@ begin // Show
     end
     else
       get(t, curoff);
+    test_fkeys(t);
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;
 
