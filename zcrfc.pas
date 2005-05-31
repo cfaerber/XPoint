@@ -155,7 +155,7 @@ uses
   sysutils,
   {$IFDEF unix}
   {$IFDEF fpc}
-  linux,
+  linux,oldlinux,
   {$ENDIF }
   XPLinux,
   {$ENDIF }

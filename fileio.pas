@@ -31,7 +31,7 @@ uses
 {$IFDEF Kylix}
   libc,
 {$ELSE}
-  Linux,
+  Linux,oldlinux,
 {$ENDIF }
   xplinux,
 {$else }

@@ -82,7 +82,7 @@ uses
   xplinux,
   xpcurses,
   {$IFDEF fpc}
-  linux,
+  linux,oldlinux,
   {$ENDIF}
   {$ENDIF}
   {$IFDEF Win32} xpwin32, {$ENDIF }

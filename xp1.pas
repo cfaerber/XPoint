@@ -1732,7 +1732,7 @@ procedure shell(const prog:string; space:xpWord; cls:shortint);
 
     Result:=libc.system(PChar(command));
 {$ELSE}
-    Result:=linux.shell(command);
+    Result:=oldlinux.shell(command);
 {$ENDIF}
     Debug.DebugLog('xp1s','reload terminal state', DLInform);
     refresh();                 { restore save modes, repaint screen }

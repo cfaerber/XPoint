@@ -54,7 +54,7 @@ implementation  { ---------------------------------------------------- }
 uses
 {$IFDEF unix}
 {$IFDEF fpc}
-  linux,
+  linux,oldlinux,
 {$ENDIF }
 {$ENDIF }
   montage,

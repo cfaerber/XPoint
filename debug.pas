@@ -89,7 +89,7 @@ uses
   {$IFDEF Kylix}
   libc,
   {$ELSE} {fpc}
-  Linux,
+  Linux,dos,
   {$ENDIF }
   {$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}

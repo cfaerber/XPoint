@@ -85,7 +85,7 @@ uses
   {$IFDEF NCRT}
   xpcurses,
   {$IFDEF fpc}
-  linux,
+  linux,oldlinux,
   {$ENDIF}
   {$ENDIF }
   {$ifdef Win32} xpwin32, {$endif}

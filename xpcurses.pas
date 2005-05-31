@@ -29,7 +29,7 @@ interface
 uses
 //  xpglobal,
 {$IFDEF FPC }
-  linux,
+  linux,oldlinux,
 {$ENDIF }
 {$IFDEF Kylix}
   libc,
@@ -392,9 +392,10 @@ uses
 {$endif}
   debug,
   keys,
-  mouse,
+  mouse,baseUnix,termio,
   xp0,                  { ScreenLines }
   xp1,                  { CloseDatabases }
+
   typeform;             { ISOTab }
 
 
@@ -423,29 +424,6 @@ var
    It is the internal format of a variable of type "Text" as defined and
    described in the Borland Pascal docs.
  ==========================================================================}
-const
-  TextRecNameLength = 256;
-  TextRecBufSize    = 256;
-type
-  TextBuf = array[0..TextRecBufSize-1] of char;
-  TextRec = Packed Record
-    Handle,
-    Mode,
-    bufsize,
-    _private,
-    bufpos,
-    bufend    : longint;
-    bufptr    : ^textbuf;
-    openfunc,
-    inoutfunc,
-    flushfunc,
-    closefunc : pointer;
-    UserData  : array[1..16] of byte;
-    name      : array[0..textrecnamelength-1] of char;
-    buffer    : textbuf;
-  End;
-{==========================================================================}
-
 procedure Scroll(w: TWinDesc; mode: boolean);
 begin
   scrollok(w.wHnd,bool(mode));
@@ -696,7 +674,7 @@ begin
   if not __isInit then InitXPCurses;
   ActWin.IsEcho:= b;
   if (b) then
-    echo
+    ncurses.echo
   else
     noecho;
 end;
@@ -902,7 +880,7 @@ again:
     Result:= TranslateSpecialChar(chr(ord(l)));
 
   Debug.DebugLog('xpcurses',Format('ReadKey: %d',[Integer(Result)]),dlTrace);
-  if (b) then echo;
+  if (b) then ncurses.echo;
 end;
 
 {=========================================================================
@@ -1533,7 +1511,7 @@ begin
   assigncrt(Output);
   Rewrite(Output);
   TextRec(Output).Handle:=StdOutputHandle;
-  { Redirect the standard input }
+    { Redirect the standard input }
   assigncrt(Input);
   Reset(Input);
   TextRec(Input).Handle:=StdInputHandle;
