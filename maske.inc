@@ -585,23 +585,9 @@ var ax,p,myp  : integer;
     with amaskp^ do
       for i:=1 to felder do
         with fld[i]^ do
-          if variable<>null then begin
+          if variable<>nil then begin
             if (typ>=2) and (typ<=6) then l:=ival(cont);
             case typ of
-              1,8,9 : variable := cont;
-              2,3   : variable := byte(l);
-              4,5   : variable := smallint(l);
-              6     : variable := longint(l);
-              7     : begin
-                        r:=rval(cont);
-                        variable := r;
-                      end;
-              10    : begin
-                        b:=(cont=yesno[1]);
-                        variable := b;
-                      end;
-            end;
-(*            case typ of
               1,8,9 : AnsiString(variable^):= cont; {Move(cont,variable^,length(cont)+1);}
               2,3   : Move(l,variable^,1);
               4,5   : Move(l,variable^,2);
@@ -614,8 +600,8 @@ var ax,p,myp  : integer;
                         b:=(cont=yesno[1]);
                         Move(b,variable^,1);
                       end;
-            end; *)
-          end;
+            end;
+    end;
   end;
 
   procedure fillfnhelp;

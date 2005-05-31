@@ -258,7 +258,7 @@ type
                    disnodisp   : boolean;
                    txt         : string;   { Feld-Text }
                    typ         : byte;     { Feldtyp }
-                   variable    : variant;  { Adresse der Variablen }
+                   variable    : Pointer;     { Adresse der Variablen }
                    xx,yy, len  : Integer;     { Position, Anzeigel„nge }
                    yy0,xx2     : Integer;     { Position des Inhalts }
                    maxlen      : Integer;     { maximale L„nge des Inhalts }
@@ -659,7 +659,7 @@ begin
         nk:=0; helpnr := 0; selhelpnr := 0;
         maxlen := 0;
         pempty:=false;
-        variable := null;
+        variable := nil;
         custom:=nil; nonedit:=false;
         allowed:= ''; owncol:=false;
         counter:=0; noslpos := false;
@@ -704,7 +704,7 @@ begin
   with lastfld^ do 
   begin
     typ:=1;
-    variable:=s;          
+    variable:=@s;          
     len:=displ; maxlen:=maxl;
     if maxlen=1 then autohigh:=false;
     repeat
@@ -732,7 +732,7 @@ begin
   setall(text,x,y,true);
   with lastfld^ do begin
     typ:=ityp;
-    variable:=variant(int);
+    variable:=@int;
     len:=displ{+1}; maxlen:=displ;
     case ityp of
       2 : l:=shortint(int);
@@ -760,7 +760,7 @@ begin
   setall(text,x,y,true);
   with lastfld^ do begin
     typ:=7;
-    variable:=r;
+    variable:=@r;
     len:=displ{+1}; maxlen:=displ;
     _rmin:=rmin; _rmax:=rmax;
   { r:=minr(maxr(r,rmin),rmax); }
@@ -789,7 +789,7 @@ begin
       xx:=xx2+7;
       end;
     typ:=10;
-    variable:=b;
+    variable:=@b;
     len:=1; maxlen:=1;
     cont:=iifc(b,yesno[1],yesno[2]);
     autoup:=true;
