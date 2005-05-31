@@ -202,7 +202,7 @@ uses
   xpcharset_maps,
   typeform,
   inout, maus2, winxp, resource,
-  xp0,mime;
+  xp0,mime,xpkeys;
 
 { TLister }
 
@@ -827,6 +827,7 @@ begin // Show
     end
     else
       get(t, curoff);
+    test_fkeys(t);
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;
 
