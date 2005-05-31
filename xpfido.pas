@@ -126,7 +126,7 @@ uses  xpnt,xp2,xp3,xp4e,
   xplinux,
 {$ELSE}
 {$IFDEF Linux}
-  linux, // for stat & fsstat
+  linux,oldlinux, // for stat & fsstat
 {$ENDIF}
 {$ENDIF}
 xpfidonl;

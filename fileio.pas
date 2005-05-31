@@ -30,7 +30,7 @@ uses sysutils,
 {$IFDEF Kylix}
   libc,
 {$ELSE}
-  Linux,
+  Linux,oldlinux,
 {$ENDIF }
   xplinux,xpglobal,typeform;
 {$else }

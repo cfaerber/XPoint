@@ -30,7 +30,7 @@ uses xpcurses,
   {$IFDEF Kylix }
     libc
   {$ELSE }
-    linux
+    linux,oldlinux
   {$ENDIF }
   ;
 

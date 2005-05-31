@@ -34,7 +34,7 @@ uses
   xplinux,
   libc,
 {$ELSE}
-  linux,
+  linux,oldlinux,
 {$ENDIF}  
 {$ENDIF }
   sysutils,typeform,keys,fileio,inout,maus2,lister, xpheader,

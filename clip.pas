@@ -59,7 +59,7 @@ implementation  { ---------------------------------------------------- }
 uses
   xp0,fileio
   {$IFDEF unix}
-    {$IFDEF fpc} ,linux
+    {$IFDEF fpc} ,linux,oldlinux
     {$ELSE} ,libc {$ENDIF}
     ,xplinux
   {$ELSE}

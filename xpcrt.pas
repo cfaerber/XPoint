@@ -55,29 +55,6 @@ uses
 //function SetConsoleCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
 //function SetConsoleOutputCP(cp:Windows.UINT):Windows.Bool; external 'kernel32.dll';
 
-const
-  TextRecNameLength = 256;
-  TextRecBufSize    = 256;
-
-type
-  TextBuf = array[0..TextRecBufSize-1] of char;
-  TextRec = Packed Record
-    Handle,
-    Mode,
-    bufsize,
-    _private,
-    bufpos,
-    bufend    : longint;
-    bufptr    : ^textbuf;
-    openfunc,
-    inoutfunc,
-    flushfunc,
-    closefunc : pointer;
-    UserData  : array[1..16] of byte;
-    name      : array[0..textrecnamelength-1] of char;
-    buffer    : textbuf;
-  End;
-
 var
   ScanCode : char;
   SpecialKey : boolean;

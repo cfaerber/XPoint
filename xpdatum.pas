@@ -29,7 +29,7 @@ interface
 uses
 {$IFDEF unix}
 {$IFDEF fpc}
-  linux,
+  linux,oldlinux,
 {$ENDIF }
 {$ENDIF }
   sysutils,

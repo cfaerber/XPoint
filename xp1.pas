@@ -36,7 +36,7 @@ uses
   libc,
   xplinux,
 {$ELSE}
-  linux,
+  linux,oldlinux,
 {$ENDIF}  
 {$ENDIF }
 {$IFDEF Win32 }

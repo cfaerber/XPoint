@@ -26,10 +26,6 @@ unit xplinux;
   {$FATAL Die Unit XPLINUX kann nur unter Linux compiliert werden }
 {$ENDIF }
 
-{$IFDEF FPC }
-  {$mode objfpc}
-{$ENDIF }
-
 interface
 
 {$IFDEF FPC }
@@ -40,7 +36,7 @@ interface
 
 uses
   {$IFDEF fpc }
-  linux,
+  linux,  oldlinux,
   {$ELSE }
   Libc,
   {$ENDIF }
@@ -474,7 +470,7 @@ begin
 {$IFDEF Kylix}
   result:= libc.System(PChar(AddDirSepa(path)+CmdLine));
 {$ELSE}
-  result:= Linux.Shell(AddDirSepa(path)+CmdLine);
+  result:= oldLinux.Shell(AddDirSepa(path)+CmdLine);
 {$ENDIF}
 end;             
 

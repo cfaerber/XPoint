@@ -37,7 +37,7 @@ uses xpglobal,
   xpnt,
   {$IFDEF unix}
   {$IFDEF fpc}
-  linux,
+  linux,oldlinux,
   {$ENDIF }
   XPLinux,
   {$ENDIF }
