@@ -85,36 +85,26 @@ type
 
   }
 
-  {$ifdef virtualpascal }
-    { Virtual Pascal, 32 Bit }
-    integer8 =   shortint;
-    integer16 =  smallint;
-    integer32 =  longint;
-    integer =    longint;
-    word =       longint; { = signed }
-    dword =      longint; { = signed }
-    longword=    longint;
-    rtlword =    longint;     { 32 Bit bei VP }
-    Int64 =      longint; // Ohje...
-    Cardinal =   longint;
-  {$ENDIF }
   {$IFDEF FPC }
     { FreePascal, 32 Bit }
     integer8 =   shortint;
     integer16 =  system.smallint;
     integer32 =  longint;
-    { Unter FPC ist ein Integer standardm„áig 16 Bit groá }
-    Word =       Integer; // !!
-    integer =    longint;
+    integer64 =  Int64;
     smallword =  system.word;
+    { Unter FPC ist ein Integer standardmaessig 16 Bit gross }
+    integer =    longint;
+    Word =       System.Word;
+    DWord =      Longword;
   {$endif}
   {$IFDEF Delphi }
     { Delphi, 32 Bit }
     integer8 =   shortint;
     integer16 =  {$IFNDEF VER160}system.{$ENDIF}smallint;
     integer32 =  longint;
+    integer64 =  Int64;
     smallword =  {$IFNDEF VER160}system.{$ENDIF}word;
-    Word =       Integer; // !!
+    Word =       System.Word; 
     DWord =      Longword;  { = unsigned 32 bit }
   {$endif}
 

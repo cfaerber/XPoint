@@ -106,7 +106,7 @@ procedure wshadow(li,re,ob,un: Integer);                { 8-Schatten }
 procedure setrahmen(n: Integer);                { Rahmenart fÅr wpull+ setzen }
 function  getrahmen:shortint;
 procedure sort_list(pa:pointer; anz:integer);    { Liste nach 'el' sortieren }
-procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: Integer);
+procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: Word);
 procedure wrest(handle: Integer);
 procedure wslct(anz:integer; ta:pntslcta; handle,pos:word; abs1:boolean;
                 var n:word; var brk:boolean);
@@ -775,7 +775,7 @@ begin
 end;
 
 
-Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: Integer);
+Procedure wpull(x1,x2,y1,y2: Integer; const text:string; var handle: Word);
 {$IFDEF NCRT }
 var
   i: Integer;

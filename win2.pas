@@ -102,7 +102,7 @@ var  pntl  : pntslcta;
      sr    : tsearchrec;
      rc    : integer;
      lnum,n,
-     handle : Integer;
+     handle : Word;
      p      : Integer;
      s      : string[20];
      slas   : array[1..maxs] of string;

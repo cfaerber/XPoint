@@ -308,7 +308,7 @@ end;
 procedure fmove(size:longint);
 const bs = 32768;
 var p  : pointer;
-    rr : word;
+    rr : Integer;
 begin
   getmem(p,bs);
   repeat
@@ -871,7 +871,7 @@ var hd     : THeader;
     hds    : longint;
     ok     : boolean;
     adr    : longint;
-    rr     : word;
+    rr     : Integer;
     fs     : longint;
     nn     : longint;
     p1,p2  : byte;
@@ -1351,7 +1351,7 @@ var t1,log     : text;
 
   procedure UUdecode;
   var buf  : charrp;
-      bufs : word;
+      bufs : Integer;
       bufp : word;
       i    : integer;
       n,p  : byte;

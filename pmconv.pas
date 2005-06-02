@@ -79,7 +79,7 @@ end;
 
 procedure checkit;
 var p      : charrp;
-    ps     : word;
+    ps     : Integer;
     fs,adr : longint;
     hd     : Theader;
     hds    : longint;
@@ -87,7 +87,7 @@ var p      : charrp;
     n      : longint;
 
   procedure copymsg;
-  var rr   : word;
+  var rr   : Integer;
       size : longint;
   begin
     if (LeftStr(hd.Firstempfaenger,1)<>'/') and
