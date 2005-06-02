@@ -31,6 +31,11 @@
   {$ENDIF }
 {$ENDIF }
 
+{$IFDEF VER170 }          { Delphi 2005/9.0  }
+  {$DEFINE Delphi }
+{$ENDIF }
+
+
 {$IFNDEF VirtualPascal }
   {$IFNDEF FPC }
      {$IFNDEF Delphi }
