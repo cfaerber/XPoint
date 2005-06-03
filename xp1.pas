@@ -185,7 +185,7 @@ function  aFile(nr:byte):string;
 
 function  mbrett(typ:char; intnr:longint):string; { Xpoint.Db1/Bretter erz. }
 function  mbrettd(typ:char; dbp:DB):string;       { Int_Nr auslesen }
-function  ixdat(s:shortstring):longint;           { Z-Date -> Long  }
+function  ixdat(const s:string):longint;           { Z-Date -> Long  }
 function  longdat(l:longint):string;              { Long -> Z-Date  }
 function  ixdispdat(const dat:shortstring):longint;      { Datum -> Long   }
 function  smdl(d1,d2:longint):boolean;            { Datum1 < Datum2 }
@@ -310,29 +310,33 @@ var  menulevel : byte;                  { Menueebene }
      mst       : boolean;
 
 
-function  ixdat(s:shortstring):longint; assembler;  {&uses ebx, esi}
-asm
-         mov   esi,s
-         inc   esi                      { Laenge ist z.Zt. immer 10 }
-         call  @getbyte                 { Jahr }
-         cmp   al,70
-         jae   @neunzehn
-         add   al,100
-@neunzehn:mov   dh,al
-         call  @getbyte                 { Monat }
-         mov   cl,4
-         shl   al,cl
-         mov   dl,al
+function ixdat(const s: string): longint;       // 0506032053 -> 1768018768
+var
+  a1, a2, a3, a4, a5: byte;
+  r: Integer;
+begin
+  a1 := (Ord(s[1])-48) * 10 + (Ord(s[2])-48);
+  if a1 < 70 then a1 := a1 + 100;
+  a2 := (Ord(s[3])-48) * 10 + (Ord(s[4])-48);
+  a3 := (Ord(s[5])-48) * 10 + (Ord(s[6])-48);
+  a4 := (Ord(s[7])-48) * 10 + (Ord(s[8])-48);
+  a5 := (Ord(s[9])-48) * 10 + (Ord(s[10])-48);
+  asm
+         mov   dh, a1                   { Jahr }
+         mov   al, a2                   { Monat }
+         mov   cl, 4
+         shl   al, cl
+         mov   dl, al
          mov   ecx,0
-         call  @getbyte                 { Tag }
+         mov   al, a3                   { Tag }
          shr   al,1
          rcr   ch,1
          add   dl,al
-         call  @getbyte                 { Stunde }
+         mov   al, a4                   { Stunde }
          shl   al,1
          shl   al,1
          add   ch,al
-         call  @getbyte                 { Minute }
+         mov   al, a5                   { Minute }
          shr   al,1
          rcr   cl,1
          shr   al,1
@@ -345,23 +349,10 @@ asm
          shl   edx, 16
          mov   eax, edx
          mov   ax,cx
-         jmp   @ende
-
-@getbyte:mov   al, [esi]
-         inc   esi
-         sub   al,'0'
-         mov   ah,10
-         mul   ah
-         add   al, [esi]
-         sub   al,'0'
-         inc   esi
-         ret
-@ende:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI'];
-{$ELSE }
+         mov    r, eax
+  end;
+  result := r;
 end;
-{$ENDIF }
 
 procedure iso_conv(var buf; bufsize: Integer); assembler;  {&uses ebx, edi}
 {$IFDEF ANALYSE}
