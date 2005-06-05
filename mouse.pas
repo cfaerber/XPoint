@@ -26,7 +26,7 @@ interface
 
 uses
   {$IFDEF Win32} windows,xpcrt, {$ENDIF}
-  {$IFDEF NCRT} {$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$ENDIF}
+  {$IFDEF NCRT} {$ifdef Kylix}ncursix,{$else}ncurses,nmousex,{$endif} {$ENDIF}
   xpglobal,
   debug,
   sysutils,
@@ -88,7 +88,7 @@ uses xpcurses,maus2;
 {$IFDEF Kylix}
 var MouseEvent: NCursix.MEVENT;
 {$ELSE}
-var MouseEvent: NCurses.MEVENT;
+var MouseEvent: NMouseX.MEVENT;
 {$ENDIF}
     MouseButtons: Cardinal;
 {$ENDIF}
@@ -220,7 +220,7 @@ begin
 {$IFDEF Kylix}
   if (ncursix.GetMouse(MouseEvent)<>0 {OK}) then
 {$ELSE}
-  if (NCurses.GetMouse(MouseEvent)<>0 {OK}) then
+  if (NMouseX.GetMouse(MouseEvent)<>0 {OK}) then
 {$ENDIF}
   begin
     Debug.DebugLog('maus2', 'no valid mouse event', DLTrace);

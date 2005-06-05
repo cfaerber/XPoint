@@ -36,6 +36,7 @@ uses
   ncursix,
 {$ELSE}
   ncurses,
+  nmousex,
 {$ENDIF}
 {$IFDEF Unix}
   mime,
@@ -1333,7 +1334,7 @@ begin
 		 ScreenLines := SysGetScreenLines;
 		 ScreenWidth := SysGetScreenCols;
 	      end;
-    SIGHUP, SIGQUIT, SIGKILL : 
+    SIGHUP, SIGQUIT, SIGKILL :
     begin
        clrscr;
        closedatabases;
@@ -1416,7 +1417,7 @@ begin
     LastWindMax:= WindMax;
     win.x:= 0; win.y:= 0;
     win.isRel:= false;
-    
+
     NCursesRegisterKeys;
 
 (*
@@ -1448,7 +1449,7 @@ begin
 {$IFDEF Kylix}
     m:=NCursix.MouseMask(
 {$ELSE}
-    m:=NCurses.MouseMask(
+    m:=NMouseX.MouseMask(
 {$ENDIF}
       ALL_MOUSE_EVENTS       or
       REPORT_MOUSE_POSITION,nil);

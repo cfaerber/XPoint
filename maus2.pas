@@ -27,7 +27,7 @@ unit  maus2;
 interface
 
 uses
-  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$endif}
+  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,nmousex,{$endif} {$endif}
   {$IFDEF Win32} Windows,xpcrt, {$ENDIF}
   typeform,mouse,keys,xpglobal,debug;
 
