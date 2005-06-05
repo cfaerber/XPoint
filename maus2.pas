@@ -233,7 +233,7 @@ end;
 {$IFDEF NCRT}
 function  maus_set_keys(const Event: MEVENT;var Buttons:Cardinal):taste;
 var rr: taste;
-    xx,yy: word;
+    xx,yy: LONGINT;
     bs:mmask_t;
 const
     was_inside:boolean=false;

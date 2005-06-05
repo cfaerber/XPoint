@@ -97,6 +97,9 @@
   {$C-,H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
+  {$IFDEF Linux }
+    {$DEFINE NOASM }
+  {$ENDIF }
 {$ENDIF }
 
 {$IFDEF Delphi }
@@ -107,7 +110,7 @@
   {$ENDIF }
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
-  {$DEFINE i386}                 
+  {$DEFINE i386}
   {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
@@ -197,7 +200,7 @@
 
 {$DEFINE i386}
 {$IFDEF i386}
-  {$DEFINE LittleEndian} 
+  {$DEFINE LittleEndian}
 {$ELSE}
   !! Only i386 platform supported
 {$ENDIF}
