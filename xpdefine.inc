@@ -90,6 +90,7 @@
   {$ENDIF }
   {$MODE Delphi }
   {$ASMMODE Intel }
+  {$DEFINE NOASM }        // there are ASM problems with FPC 2.0
   {$GOTO ON }
   {$INLINE ON }
   {$PACKRECORDS 8 }       { Default: 2 }
@@ -98,7 +99,6 @@
   {$DEFINE Int64 }
   {$DEFINE i386 }
   {$IFDEF Linux }
-    {$DEFINE NOASM }
   {$ENDIF }
 {$ENDIF }
 
