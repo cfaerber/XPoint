@@ -121,6 +121,7 @@
   {$ENDIF }
   {$MODE Delphi }
   {$ASMMODE Intel }
+  {$DEFINE NOASM }
   {$GOTO ON }
   {$INLINE ON }
   {$PACKRECORDS 8 }       { Default: 2, use 8 like Delphi }
