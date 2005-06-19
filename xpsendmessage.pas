@@ -2123,7 +2123,7 @@ fromstart:
 //      hdp.charset:='ISO1';
     if assigned(sData.orghdp) and (not sdata.editingUnsentMessage) then
       with sData.orghdp do begin
-        hdp.zdatum:=zdatum; hdp.orgdate:=true;
+        { hdp.zdatum:=zdatum; hdp.orgdate:=true;}
         hdp.organisation:=organisation;
         hdp.ReplyTo := ReplyTo;
         hdp.datei:=datei; hdp.ddatum:=ddatum;
