@@ -44,9 +44,6 @@ uses
 const
   bufsize = 65535;
 
-type
-  TCharArray = array[0..bufsize] of char;
-  PCharArray = ^TCharArray;
 
 var line : string;
 
@@ -54,7 +51,7 @@ procedure makeheader(ZConnect:boolean; var f:file; NrOfFirstRecipient:integer;
                      var size:longint; var hd:Theader; var ok:boolean;
                      PM2AMconv:boolean; ConvBrettEmpf: Boolean);
 var i,res : integer;
-    o: word; { Offset im Lesepuffer }
+    o: Integer; { Offset im Lesepuffer }
     s       : string;
     dummy   : string;
     id      : string;
@@ -110,7 +107,8 @@ var i,res : integer;
       if l-o > 0 then
         Move(Buf^[o], s[1], l-o);
       o := l-1;
-      IncO; IncO;
+      IncO;
+      IncO;
     end;
     if ok and (buf^[o]=#10) then IncO;
   end;
@@ -430,7 +428,7 @@ begin
             if id = 'FILE'   then datei := line else
             if id = 'DDA'    then ddatum := line else
             if id = 'TYP'    then GetTyp(hd.typ,hd.charset) else
-            if id = 'PRIO'   then prio:=minmax(ival(line),0,20) else
+            if id = 'PRIO'   then prio:=byte(minmax(ival(line),0,20)) else
             if id = 'EB'     then begin
                                     GetName(empfbestto,dummy);
                                     attrib:=attrib or attrReqEB;
