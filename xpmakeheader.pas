@@ -47,9 +47,6 @@ uses
 const
   bufsize = 4096;
 
-type
-  TCharArray = array[0..bufsize] of char;
-  PCharArray = ^TCharArray;
 
 var line : string;
 
@@ -433,7 +430,7 @@ begin
             if id = 'FILE'   then datei := line else
             if id = 'DDA'    then ddatum := line else
             if id = 'TYP'    then GetTyp(hd.typ,hd.charset) else
-            if id = 'PRIO'   then prio:=minmax(ival(line),0,20) else
+            if id = 'PRIO'   then prio:=byte(minmax(ival(line),0,20)) else
             if id = 'EB'     then begin
                                     GetName(empfbestto,dummy);
                                     attrib:=attrib or attrReqEB;
