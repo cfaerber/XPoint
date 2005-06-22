@@ -51,6 +51,7 @@ function SysOutputRedirected: boolean;
 // successful. Return negative value if an error occurred (program not found).
 function SysExec(const Path, CmdLine: String): Integer;
 Function GetEnv(envvar: string): string; { from FPC RTL }
+function RTLexec(const path, comline : string; var DosExitCode: Integer; wait: boolean): Integer;
 
 implementation
 
@@ -166,7 +167,7 @@ begin
   Result := false;
 end;
 
-function RTLexec(const path, comline : string; var DosExitCode: Integer): Integer;
+function RTLexec(const path, comline : string; var DosExitCode: Integer; wait: boolean): Integer;
 var
   SI: TStartupInfo;
   PI: TProcessInformation;
@@ -198,7 +199,7 @@ begin
   { concatenate both pathnames }
   Move(Appparam[0],CommandLine[length(Pathlocal)],strlen(Appparam)+1);
   if not CreateProcess(nil, PChar(@CommandLine),
-           Nil, Nil, false,$20, Nil, Nil, SI, PI) then
+           Nil, Nil, false,$20 + iif(wait, 0, $10) , Nil, Nil, SI, PI) then
   begin
     Result := GetLastError;
     exit;
@@ -206,10 +207,11 @@ begin
     Result := 0;
   Proc:=PI.hProcess;
   CloseHandle(PI.hThread);
-  if WaitForSingleObject(Proc, dword(Infinite)) <> $ffffffff then
-    GetExitCodeProcess(Proc,l)
-  else
-    l := DWord(-1);
+  if wait then
+    if WaitForSingleObject(Proc, dword(Infinite)) <> $ffffffff then
+      GetExitCodeProcess(Proc,l)
+    else
+      l := DWord(-1);
   CloseHandle(Proc);
   DosExitCode := l and $FFFF;
 end;
@@ -219,7 +221,7 @@ var
   TempError: Integer;
   DosExitCode: Integer;
 begin
-  TempError := RTLExec(Path, CmdLine, DosExitCode);
+  TempError := RTLExec(Path, CmdLine, DosExitCode, true);
   if TempError=0 then Result:=DosExitCode else Result:=-TempError;
 end;
 

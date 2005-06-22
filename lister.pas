@@ -192,7 +192,10 @@ var
 implementation { ------------------------------------------------ }
 
 uses
-  gpltools,xp0,mime,utftools,unicode,xpkeys;
+{$IFDEF WIn32 }
+  xpwin32,
+{$ENDIF }
+  gpltools,xp0,mime,utftools,unicode,xpkeys,xp1, clip;
 
 // Zerlegen des Buffers in einzelne Zeilen
 
@@ -797,6 +800,8 @@ var
     end;
   end;
 
+var
+ exitcode: integer;
 begin // Show
   startpos := minmax(startpos, 0, Lines.Count - 1);
   DispLines := Height - iif(stat.statline, 1, 0);
@@ -879,7 +884,14 @@ begin // Show
     end
     else
       get(t, curoff);
-    test_fkeys(t);
+    {$IFDEF Win32 }
+    if t = #0#137 then                                                        
+      if fileexists('lister.cmd') then
+      begin
+      
+         RtlExec('lister.cmd', clip2string, exitcode, false);
+      end;
+    {$ENDIF }
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;
 
