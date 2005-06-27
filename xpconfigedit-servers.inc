@@ -236,12 +236,12 @@
     maddtext(3,11,getres2(920,89),col.coldiahigh);          { 'Client' }
     maddstring(3,12,getres2(920,90),ClientClientPath,41,
       MaxLenPathname,ValidDirCh);                           { 'Client-Verzeichnis' }
-      mappsel(false,'UKAD\ùUKAW\ùUKAX\ùUKA_Client\ùXPNEWS\');
+      mappsel(false,'UKAD\ùUKAW\ùUKAX\ùUKA_Client\ùXPNEWS\ùXPNEWS2\');
       msetvfunc(PPPClientpathTest);
     maddstring(3,13,getres2(920,91),ClientClient,41,
       MaxLenPathname,'');                                   { Client-Aufruf }
       mappsel(false,'UKAW.BAT $CONFIGùUKAW.BAT /M $CLPATH $CONFIGùUKAD.BAT /M $CLPATH $CONFIGùUKAX.BAT /M $CLPATH $CONFIGù' +
-       'UKA_PPP.BAT /M $CLPATH $CONFIGùstart /w $CLPATH+XPNEWS.EXE $CONFIGù$CLPATH+XPNEWS.EXE $CONFIG');
+       'UKA_PPP.BAT /M $CLPATH $CONFIGùstart /w $CLPATH+XPNEWS.EXE $CONFIGù$CLPATH+XPNEWS.EXE $CONFIGù$CLPATH+XPNEWS2.EXE $CONFIG');
       msetvfunc(PPPClienttest);
     serverNames:=BfgToBox(ClientAddServers);
     maddstring(3,14,getres2(920,92),serverNames,41,255,     { 'Zusätzliche Server' }
