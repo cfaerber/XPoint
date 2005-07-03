@@ -69,7 +69,7 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xpsendmessage,xpsendmessage_unsent,
 {$IFDEF Sockets }
   xpncnntp,
 {$ENDIF }
-  xp9bp,xpconfigedit,xpnt, crc, classes;
+  xp9bp,xpconfigedit,xpnt, crc, classes, debug;
 
 const mapsbox : string = '';
 
@@ -1543,8 +1543,8 @@ label again;
                    if Index <> -1 then RCList[Index] := s1;
                  end;
             end;
-          except
-            // !! Fehlermeldung
+          except on e: Exception do
+            Debug.DebugLogException(e);
           end;
 
           s := List.NextMarked;

@@ -886,11 +886,8 @@ begin // Show
       get(t, curoff);
     {$IFDEF Win32 }
     if t = #0#137 then                                                        
-      if fileexists('lister.cmd') then
-      begin
-      
-         RtlExec('lister.cmd', clip2string, exitcode, false);
-      end;
+      if fileexists('lister.bat') then
+        shell('lister.bat + ' + clip2string,0,3);
     {$ENDIF }
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;

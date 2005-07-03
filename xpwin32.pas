@@ -199,7 +199,7 @@ begin
   { concatenate both pathnames }
   Move(Appparam[0],CommandLine[length(Pathlocal)],strlen(Appparam)+1);
   if not CreateProcess(nil, PChar(@CommandLine),
-           Nil, Nil, false,$20 + iif(wait, 0, $10) , Nil, Nil, SI, PI) then
+           Nil, Nil, false,$20, Nil, Nil, SI, PI) then
   begin
     Result := GetLastError;
     exit;

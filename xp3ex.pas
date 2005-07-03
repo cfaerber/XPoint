@@ -58,7 +58,7 @@ procedure extract_msg(art:Integer; schablone:string; name:string;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp_des,xpnt,xpfido,xpmakeheader,mime,utftools,unicode,xpstreams;
+uses xp1o,xp3,xp_des,xpnt,xpfido,xpmakeheader,mime,utftools,unicode,xpstreams, debug;
 
 var  ex_MimePart : TMimePart;
 
@@ -1223,9 +1223,13 @@ begin // extract_msg;
   UTF8ToDest  .Free;
   TemplateToUTF8.Free;
  end;
-
  except on e:exception do
-  fehler(e.Message);
+ begin
+   Debug.DebugLogException(e);
+{$IFDEF Snapshot }
+   raise;
+{$ENDIF }
+ end;
  end;
 
 end;
