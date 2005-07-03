@@ -15,9 +15,9 @@
   }
   close(InFile);
 
-  open(InFile, "../version.inc");
+  open(InFile, "version.sfn");
   while (<InFile>) {
-    if (/version_build.*=.*\'.*\s(.*)\s.*\'/ig ) { $BUILD = $1;  }
+    if (/Revision (.*)\./ig ) { $BUILD = $1;  }
   }
   close(InFile);
 

@@ -1,1 +1,0 @@
-dcc32 -uobjcom;netcall;delphi openxp
