@@ -754,7 +754,11 @@ begin
         fie.Free;
       end;
     except
-      s:='';
+      on e: Exception do
+      begin
+        DebugLog('xp_pgp','MimeSignStream exception ' + s + ' ' + e.Message,dlWarning);
+        s:='';
+      end;
     end;
     fis.Seek(0,soFromBeginning);
 

@@ -94,7 +94,7 @@ uses
 {$ENDIF}
   fileio, inout, keys, lister, maske, maus2, resource, typeform,
   utftools, winxp, xp0, xp1, xp1input, xp1o, xp2c, xp4e, xpdatum, xpe,
-  xpglobal, xpnt, xpsendmessage_attach_analyze, xpstreams;
+  xpglobal, xpnt, xpsendmessage_attach_analyze, xpstreams, debug;
 
 constructor TSendAttach_Part.Create;
 begin
@@ -908,7 +908,13 @@ begin
       end;
     end;
   except
-    on E:Exception do Fehler(E.Message);
+    on E:Exception do
+    begin
+      Debug.DebugLogException(e);
+      {$IFDEF Snapshot }
+      raise;
+      {$ENDIF }
+    end;
   end;
 
 //    if q<=parts.count-gl then q:=parts.count-gl+1;
