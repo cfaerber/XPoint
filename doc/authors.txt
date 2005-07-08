@@ -84,7 +84,7 @@ Markus Kaemmerer        mk@openxp.de (Misc. programming and backup admin on Sour
 Matthias Leonhardt      ml@openxp.de (Linux support)
 Helge Kreutzmann	kreutzm@itp.uni-hannover.de (part of build system for Debian)
 Christian Boettger      cb@openxp.de (build scripts for Linux, RPM .specs)
-Steve Tell             	st@openxp.de (Bugfixing)
+Stefan 'Steve' Tell    	st@openxp.de (Bugfixing)
 
 
 
@@ -98,4 +98,4 @@ Michael Koppel          mo@openxp.de (Misc. programming)
 Malte Kiesel            ma@openxp.de (Fido mailer, netcall routines, ObjCOM)
 
 
-$Id: authors.txt,v 1.5 2003/09/13 17:13:16 st Exp $
+$Id$
