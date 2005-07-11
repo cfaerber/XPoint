@@ -93,7 +93,11 @@ procedure shell(const prog:string; space:word; cls:shortint);
         callviacli:=true; command:=commandsave;
       end;
     end;
-    if trim(command)='' then begin result:=-100; exit end;
+    if trim(command)='' then
+    begin
+      result:=-100;
+      exit
+    end;
     if callviacli then begin
       parameters:=' /c '+command+' '+parameters;
       command:=getenv('comspec');

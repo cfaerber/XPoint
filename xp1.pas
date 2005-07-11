@@ -59,7 +59,7 @@ const maxhidden  = 500;                 { max. versteckte Menpunkte }
       DisableDOS : boolean = false;
       shellkey   : boolean = false;
       ListMakros : byte    = 0;         { Flag fr XPKEYS.XMakro     }
-      Errorlevel : word    = 0;
+      Errorlevel : integer = 0;
       miscbase   : DB      = nil;       { wird bei Shell geschlossen }
       menurestart: boolean = false;     { fr Config-Men            }
 
