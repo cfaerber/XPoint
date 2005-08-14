@@ -395,7 +395,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;can
   
       FileCharset       : string;
       FileEol           : string;
-  
+
   begin
     PGPSign:=pgpsig and not PGP_MIME;
     PGPEncr:=(docode=9);
@@ -641,7 +641,7 @@ procedure SendAttach(parts:TList;Umlaute:Boolean;SigFile:String;Netztyp:Byte;can
 
   begin
     pa:=Parts[n];
-  
+
     t:=(Uppercase(pa.ContentType.MainType)='TEXT') or
        (Uppercase(pa.ContentType.MainType)='MESSAGE');
   
@@ -821,10 +821,11 @@ begin
   mwrt(x,y+gl+1,'Ã'+dup(width,'Ä')+'´');
   t:='!';    { Buttons nur anzeigen }
   bp := 1;   { select first button }
-  readbutt;
 
   p:=0; p0:=p;
   q:=0; q0:=-1;
+
+  readbutt;
 
 //  done:=false;
 
