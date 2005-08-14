@@ -158,8 +158,8 @@ begin
   end;
 
   {$IFDEF WIN32}
-  SHandle:=WinSock.Socket(AF_INET,SOCK_STREAM,0);
-  if WinSock.WSAGetLastError <> 0 then
+    SHandle:=WinSock.Socket(AF_INET,SOCK_STREAM,0);
+    if WinSock.WSAGetLastError <> 0 then
   {$ELSE}
   {$IFDEF fpc}
   {$IFDEF OS2 }
@@ -170,12 +170,12 @@ begin
     if sockets.SocketError <> 0 then
   {$ENDIF }
   {$ELSE}
-  SHandle:=Socket(AF_INET,SOCK_STREAM,0);
-  if SHandle = - 1 then
+    SHandle:=Socket(AF_INET,SOCK_STREAM,0);
+    if SHandle = - 1 then
   {$ENDIF}
   {$ENDIF}
   begin
-    SetErrorStr('Error obtaining socket');
+    SetErrorStr('Error obtaining socket, SHandle: ' + IntToStr(SHandle));
     exit;
   end;
 
