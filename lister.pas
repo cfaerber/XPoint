@@ -827,7 +827,7 @@ begin // Show
     end
     else
       get(t, curoff);
-    test_fkeys(t);
+
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;
 

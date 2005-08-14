@@ -1552,8 +1552,8 @@ label again;
                    if Index <> -1 then RCList[Index] := s1;
                  end;
             end;
-          except
-            // !! Fehlermeldung
+          except on e: Exception do
+            Debug.DebugLogException(e);
           end;
 
           s := List.NextMarked;

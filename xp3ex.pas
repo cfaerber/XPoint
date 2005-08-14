@@ -1228,9 +1228,13 @@ begin // extract_msg;
   UTF8ToDest  .Free;
   TemplateToUTF8.Free;
  end;
-
  except on e:exception do
-  fehler(e.Message);
+ begin
+   Debug.DebugLogException(e);
+{$IFDEF Snapshot }
+   raise;
+{$ENDIF }
+ end;
  end;
 
 end;
