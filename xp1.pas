@@ -303,6 +303,9 @@ var
   a1, a2, a3, a4, a5: byte;
   r: Integer;
 begin
+  if Length(s) < 10 then
+    result := 0
+  else begin
   a1 := (Ord(s[1])-48) * 10 + (Ord(s[2])-48);
   if a1 < 70 then a1 := a1 + 100;
   a2 := (Ord(s[3])-48) * 10 + (Ord(s[4])-48);
@@ -338,6 +341,7 @@ begin
          mov   eax, edx
          mov   ax,cx
          mov    r, eax
+  end;
   end;
   result := r;
 end;
