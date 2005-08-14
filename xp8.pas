@@ -70,7 +70,7 @@ uses
   maske,maus2,resource,win2,xp_iti,fidoglob,xpconst,
   xp0,xp1,xp1o2,xp1help,xp1input,xp1o,xp3,xp3o2,xp3ex,xp4,xp9bp,
   xpsendmessage,xpsendmessage_resend,xpconfigedit,xpnt, crc,
-  addresses,
+  addresses, debug,
   xpglobal;
 
 var mapsbox : string = '';

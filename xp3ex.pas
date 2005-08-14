@@ -63,7 +63,7 @@ uses
   xpstreams_pascal,
   database,resource,xpheader, winxp,
   xp0,xp1,xp1o,xp3,xp_des,xpnt,xpfido,mime,xpstreams,
-  xpcharset,xpcharset_codec,xpcharset_streams,xpunicode;
+  xpcharset,xpcharset_codec,xpcharset_streams,xpunicode, debug;
 
 var  ex_MimePart : TMimePart;
 
