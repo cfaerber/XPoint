@@ -814,12 +814,13 @@ begin
   mwrt(x,y+gl+1,'Ã'+dup(width,'Ä')+'´');
   t:='!';    { Buttons nur anzeigen }
   bp := 1;   { select first button }
-  readbutt;
 
   p:=0; p0:=p;
   q:=0; q0:=-1;
 
-//  done:=false;
+  readbutt;
+
+  //  done:=false;
 
   repeat
     if p<0 then p:=0 else
