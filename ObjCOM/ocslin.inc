@@ -29,9 +29,9 @@ begin
   LOpen:=False;
   InitFailed:=True;
 {$IFDEF Kylix}
-  SHandle:= Integer(fdOpen(Integer(ComPort), 'r'));
+  SHandle:= Integer(fpOpen(Integer(ComPort), 'r'));
 {$ELSE}
-  SHandle:= fdOpen(ComPort, OPEN_RDWR or OPEN_EXCL or OPEN_NONBLOCK);
+  SHandle:= fpOpen(ComPort, OPEN_RDWR or OPEN_EXCL or OPEN_NONBLOCK);
 {$ENDIF}
   if SHandle < 0 then begin
     DebugLog('ObjCOM','Can''t open '+ComPort,1);
@@ -70,14 +70,14 @@ var
   Buf: Array[1..8192]of Char;
   R  : Longint;
 begin
-  fd_zero(fds);
-  fd_set(SHandle,fds);
-  If Select(SHandle+1,@fds,nil,nil,0) > 0
+  fpFD_zero(fds);
+  fpFD_set(SHandle,fds);
+  If fpSelect(SHandle+1,@fds,nil,nil,0) > 0
   Then Begin
 {$IFDEF Kylix}
     R:=recv(SHandle,Buf,8192, 0);
 {$ELSE}
-    R:=fdRead(SHandle,Buf,8192);
+    R:=fpRead(SHandle,Buf,8192);
 {$ENDIF}
     If r > 0 Then InBuffer.Put(Buf,R);
   End;
@@ -148,7 +148,7 @@ begin
 {$IFDEF Kylix}
   fdatasync(SHandle);
 {$ELSE}
-  fdFlush(SHandle);
+  fsync(SHandle);
 {$ENDIF}
   tcSetAttr(SHandle, TCSANOW, tios);
   result:= true;
@@ -165,8 +165,8 @@ begin
   fdatasync(SHandle);
   fClose(PIOFile(SHandle));
 {$ELSE}
-  fdFlush(SHandle);
-  fdClose(SHandle);
+  fsync(SHandle);
+  fpClose(SHandle);
 {$ENDIF}
   SHandle:=0;
 end; { func. TSerialStream.CloseCom }
@@ -178,7 +178,7 @@ begin
 {$IFDEF Kylix}
   Result:= (send(SHandle,C,sizeof(char), 0)=sizeof(char));
 {$ELSE}
-  Result:= (fdWrite(SHandle,C,sizeof(char))=sizeof(char));
+  Result:= (fpWrite(SHandle,C,sizeof(char))=sizeof(char));
 {$ENDIF}
 end; { proc. TSerialStream.SendChar }
 
@@ -198,7 +198,7 @@ begin
 {$IFDEF Kylix}
   Written:= send(SHandle,Block,BlockLen, 0);
 {$ELSE}
-  Written:= fdWrite(SHandle,Block,BlockLen);
+  Written:= fpWrite(SHandle,Block,BlockLen);
 {$ENDIF}
   if Written<0 then                             { 0 indicates an error }
     Written:= 0;
@@ -237,7 +237,7 @@ function TSerialStream.Carrier: Boolean;
 var
   State: longint;
 begin
-  ioctl(SHandle, TIOCMGET, @State);
+  fpioctl(SHandle, TIOCMGET, @State);
   Carrier:= (State and TIOCM_CD)<>0;
 end; { func. TSerialStream.Carrier }
 
@@ -259,9 +259,9 @@ const
   DTR: longint = TIOCM_DTR;
 begin
   if State then
-    ioctl(SHandle, TIOCMBIS, @DTR)
+    fpioctl(SHandle, TIOCMBIS, @DTR)
   else
-    ioctl(SHandle, TIOCMBIC, @DTR);
+    fpioctl(SHandle, TIOCMBIC, @DTR);
 end; { proc. TSerialStream.SetDtr }
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
@@ -325,7 +325,7 @@ function TSerialStream.ReadyToSend(BlockLen: Longint): Boolean;
 var
   State: longint;
 begin
-  ioctl(SHandle, TIOCMGET, @State);
+  fpioctl(SHandle, TIOCMGET, @State);
   result:= (State and TIOCM_DSR)<>0;
 end; { func. ReadyToSend }
 

@@ -361,28 +361,20 @@ end; { func. TRawIPStream.CharAvail }
 function TRawIPStream._CharCount: Integer;
 var   SSet:  TFDSet;
 const NilTm: TTimeVal =
-  {$IFDEF WinSockets}
-  (tv_sec:0;tv_usec:0)
-  {$ELSE}
-  {$IFDEF fpc}
-  (sec:0;usec:0)
-  {$ELSE}
-  (tv_sec:0;tv_usec:0)
-  {$ENDIF}
-  {$ENDIF};
+  (tv_sec:0;tv_usec:0);
 begin
 {$IFNDEF VP} { - VPascal has crippled Winsock - }
-  FD_ZERO(SSet); FD_SET (SHandle,SSet);
+  fpFD_ZERO(SSet); fpFD_SET (SHandle,SSet);
 {$ELSE}
   SSet.fd_count:=1;SSet.fd_array[0]:=Shandle;
 {$ENDIF}
 
   {$IFNDEF Kylix}   {TODO1: !!!!!!!Kylix-support}
-  case {$IFDEF Win32}WinSock.{$ENDIF}select(256,@SSet,nil,nil,@NilTm) of
+  case {$IFDEF Win32}WinSock.{$ENDIF}fpselect(256,@SSet,nil,nil,@NilTm) of
     0:            begin Result:=0; end;
     SOCKET_ERROR: begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end;
   else            if {$IFDEF WinSockets}ioctlsocket(SHandle,FIONREAD,{$IFDEF FPC}@{$ENDIF}{$IFDEF VP}@{$ENDIF}Result)<>0
-                     {$ELSE}not ioctl(SHandle,FIONREAD,@Result){$ENDIF} then
+                     {$ELSE}not (fpioctl(SHandle,FIONREAD,@Result) = 0){$ENDIF} then
                     begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end
                   else if Result=0 then SOpened:=false; (* select said readable *)
   end;
