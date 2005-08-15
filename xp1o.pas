@@ -34,7 +34,11 @@ uses
   xplinux,
   libc,
 {$ELSE}
-  linux,oldlinux,
+  {$IFDEF freebsd}
+    unix,
+  {$ELSE}
+    linux,oldlinux,
+  {$ENDIF}        
 {$ENDIF}  
 {$ENDIF }
   sysutils,typeform,keys,fileio,inout,maus2,lister, xpheader,

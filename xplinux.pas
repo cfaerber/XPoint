@@ -36,7 +36,7 @@ interface
 
 uses
   {$IFDEF fpc }
-  linux,  oldlinux,
+  unix,baseunix,
   {$ELSE }
   Libc,
   {$ENDIF }

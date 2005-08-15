@@ -86,7 +86,7 @@ uses
   {$IFDEF Kylix}
   libc,
   {$ELSE} {fpc}
-  Linux,dos,
+  unix,dos,
   {$ENDIF }
   {$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}

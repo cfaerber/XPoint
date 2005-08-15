@@ -34,7 +34,11 @@ uses
   {$endif}
 {$IFDEF unix}
 {$IFDEF fpc}
+{$IFDEF freebsd}
+  unix,
+{$ELSE}
   linux,
+{$ENDIF}  
 {$ENDIF}  
   xplinux,
   xpcurses,

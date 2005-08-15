@@ -36,7 +36,11 @@ uses
   libc,
   xplinux,
 {$ELSE}
+{$IFDEF freebsd}
+  unix,
+{$ELSE}
   linux,oldlinux,
+{$ENDIF}    
 {$ENDIF}  
 {$ENDIF }
 {$IFDEF Win32 }

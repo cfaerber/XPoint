@@ -30,7 +30,11 @@ uses
   sysutils,xpglobal,typeform,fileio,resource,database,maske, xpheader,
 {$IFDEF unix}
 {$IFDEF fpc}
-  linux,oldlinux,
+  {$IFDEF freebsd}
+    unix,
+  {$ELSE}
+    linux,oldlinux,
+  {$ENDIF}
 {$ENDIF}  
 {$ENDIF}
   xp0,xp1,xpstreams,Classes;

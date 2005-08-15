@@ -30,7 +30,11 @@ uses
   {$IFDEF NCRT}
   xpcurses,
   {$IFDEF fpc}
-  linux,oldlinux,
+    {$IFDEF freebsd}
+      unix,
+    {$ELSE}
+      linux,oldlinux,
+    {$ENDIF}    
   {$ENDIF}
   {$ENDIF }
   sysutils,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,

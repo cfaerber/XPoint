@@ -59,18 +59,17 @@ implementation  { ---------------------------------------------------- }
 uses
   xp0,fileio
   {$IFDEF unix}
-    {$IFDEF fpc} ,linux,oldlinux
-    {$ELSE} ,libc {$ENDIF}
-    ,xplinux
+      {$IFDEF fpc}{$IFDEF freebsd} ,unix,baseunix {$ELSE} ,linux {$ENDIF}
+      {$ELSE} ,libc {$ENDIF}
+      ,xplinux
   {$ELSE}
     {$IFDEF Win32 } ,windows {$ENDIF }
   {$endif};
-
 {$ifdef UseClipFile }
 function ClipFilename: TFilename;
 begin
   {$IFDEF unix}
-    ClipFilename:= TempPath+'.openxp.clipboard.'+IntToStr(GetUid);
+    ClipFilename:= TempPath+'.openxp.clipboard.'+IntToStr(fpGeteUid);
   {$ELSE }
     ClipFilename:= TempPath+'CLIPBRD.TEMP';
   {$ENDIF }

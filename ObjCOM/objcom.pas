@@ -19,7 +19,8 @@ uses ringbuff,classes,osdepend
      {$IFDEF DOS32},Ports,DOS{$ENDIF}
      {$IFDEF Win32},Windows,WinSock{$ENDIF}
      {$IFDEF Unix}
-       {$IFDEF fpc},Linux,sockets,oldlinux{$ENDIF}
+       {$IFDEF fpc}
+         {$IFDEF freebsd},unix,baseunix,termio,sockets{$ELSE},Linux,sockets,oldlinux{$ENDIF}{$ENDIF}
        {$IFDEF Kylix},libc,KernelIoctl{$ENDIF}
      {$ENDIF}
      {$IFDEF OS2},OCThread,pmwsock

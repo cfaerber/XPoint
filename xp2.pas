@@ -31,7 +31,11 @@ uses
   xplinux,
   xpcurses,
   {$IFDEF fpc}
-  linux,oldlinux,
+    {$IFDEF freebsd}
+      unix,
+    {$ELSE}
+      linux,oldlinux,
+    {$ENDIF}  
   {$ENDIF}
   {$ENDIF}
   {$IFDEF Win32} xpwin32, {$ENDIF }
