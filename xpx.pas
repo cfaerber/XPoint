@@ -31,7 +31,11 @@ uses
 {$IFDEF unix}
   xplinux,
 {$IFDEF fpc}
-  linux,
+  {$IFDEF freebsd}
+    unix,
+  {$ELSE}
+    linux,
+  {$ENDIF}    
 {$ENDIF }
 {$ENDIF }
 {$IFDEF NCRT }

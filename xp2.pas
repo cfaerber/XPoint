@@ -32,7 +32,7 @@ uses
   xpcurses,
   {$IFDEF fpc}
     {$IFDEF freebsd}
-      unix,
+      unix,baseunix,
     {$ELSE}
       linux,oldlinux,
     {$ENDIF}  
@@ -250,9 +250,9 @@ procedure initdirs;
 
   procedure GetHomePath;
   begin
-    HomeDir := AddDirSepa(ResolvePathName(GetEnv(envXPHome))); { XPHOME=~/.openxp }
+    HomeDir := AddDirSepa(ResolvePathName(fpGetEnv(envXPHome))); { XPHOME=~/.openxp }
     if (length(HomeDir) > 0) then exit;
-    HomeDir := AddDirSepa(GetEnv('HOME'));                     { HOME= }
+    HomeDir := AddDirSepa(fpGetEnv('HOME'));                     { HOME= }
     if (length(HomeDir) > 0) then exit;
     HomeDir := './';
   end; { GetHomePath }
@@ -445,7 +445,7 @@ var i  : integer;
   procedure SetDebugLoglevels(s: String);
   var i,j,Level,Res: Integer; Badge: String;
   begin
-    if(s<>'')and(GetEnv('DEBUG')='')then
+    if(s<>'')and(fpGetEnv('DEBUG')='')then
       Debug.OpenLogfile(False,'debuglog.txt');
     while s<>'' do begin
       i:=cPos('=',s);

@@ -36,7 +36,9 @@ interface
 
 uses
   {$IFDEF fpc }
+  {$IFDEF unix }
   unix,baseunix,
+  {$ENDIF }
   {$ELSE }
   Libc,
   {$ENDIF }
@@ -264,7 +266,7 @@ begin
 {$IFDEF Kylix}
     MakeDir:= chmod(PChar(p), a) = 0;
 {$ELSE}
-    MakeDir:= chmod(p, a);
+    MakeDir:= fpchmod(PChar(p), a) = 0;
 {$ENDIF}
 end;
 
@@ -278,28 +280,38 @@ var
 begin
   TestAccess := false;
 {$IFDEF FPC }
-  if not (fstat(p, info)) then
+  if (fpstat(p, info) <> 0 ) then
 {$ELSE }
-  if stat(PChar(p), info) <> 0 then
+  if fstat(PChar(p), info) <> 0 then
 {$ENDIF }
     TestAccess:= false
   else with info do begin
     case ta of
-{$IFDEF FPC }
+
+{ Kommentiert im Rahmen der Umstellung FreePascal >=2.0 / FreeBSD/i386
+ $IFDEF FPC 
       taUserR:   TestAccess:= (mode and STAT_IRUSR) <> 0;
       taUserW:   TestAccess:= (mode and STAT_IWUSR) <> 0;
       taUserRW:  TestAccess:= (mode and (STAT_IRUSR or STAT_IWUSR)) <> 0;
       taUserRWX: TestAccess:= (mode and STAT_IRWXU) <> 0;
       taUserX:   TestAccess:= (mode and STAT_IXUSR) <> 0;
       taUserRX:  TestAccess:= (mode and (STAT_IRUSR or STAT_IXUSR)) <> 0;
-{$ELSE }
+ $ELSE 
       taUserR:   TestAccess:= (st_mode and S_IRUSR) <> 0;
       taUserW:   TestAccess:= (st_mode and S_IWUSR) <> 0;
       taUserRW:  TestAccess:= (st_mode and (S_IRUSR or S_IWUSR)) <> 0;
       taUserRWX: TestAccess:= (st_mode and S_IRWXU) <> 0;
       taUserX:   TestAccess:= (st_mode and S_IXUSR) <> 0;
       taUserRX:  TestAccess:= (st_mode and (S_IRUSR or S_IXUSR)) <> 0;
-{$ENDIF }
+ $ENDIF 
+ }
+ 
+      taUserR:   TestAccess:= (st_mode and S_IRUSR) <> 0;
+      taUserW:   TestAccess:= (st_mode and S_IWUSR) <> 0;
+      taUserRW:  TestAccess:= (st_mode and (S_IRUSR or S_IWUSR)) <> 0;
+      {      taUserRWX: TestAccess:= (st_mode and S_IRWXU) <> 0; }
+      taUserX:   TestAccess:= (st_mode and S_IXUSR) <> 0;
+      taUserRX:  TestAccess:= (st_mode and (S_IRUSR or S_IXUSR)) <> 0;
     end;
   end;
 end;
@@ -317,19 +329,19 @@ begin
   end;
 {$ELSE}
   case ta of
-    taUserR:   chmod(p, STAT_IRUSR);
-    taUserW:   chmod(p, STAT_IWUSR);
-    taUserRW:  chmod(p, STAT_IRUSR or STAT_IWUSR);
-    taUserRWX: chmod(p, STAT_IRWXU);
-    taUserX:   chmod(p, STAT_IXUSR);
-    taUserRX:  chmod(p, STAT_IRUSR or STAT_IXUSR);
+    taUserR:   fpchmod(PChar(p), STAT_IRUSR);
+    taUserW:   fpchmod(PChar(p), STAT_IWUSR);
+    taUserRW:  fpchmod(PChar(p), STAT_IRUSR or STAT_IWUSR);
+    taUserRWX: fpchmod(PChar(p), STAT_IRWXU);
+    taUserX:   fpchmod(PChar(p), STAT_IXUSR);
+    taUserRX:  fpchmod(PChar(p), STAT_IRUSR or STAT_IXUSR);
   end;
 {$ENDIF}
 end;
 
 function ResolvePathName(const p: string): string;
 begin
-  Result := iifs(FirstChar(p) ='~', getenv(envHome)+mid(p, 2), p);
+  Result := iifs(FirstChar(p) ='~', fpgetenv(envHome)+mid(p, 2), p);
 {$ifdef UseSysLog}
   if (Result <>'') then
     XPDebugLog('Resolved: "'+p+'" -> "' + Result + '"');
@@ -470,7 +482,7 @@ begin
 {$IFDEF Kylix}
   result:= libc.System(PChar(AddDirSepa(path)+CmdLine));
 {$ELSE}
-  result:= oldLinux.Shell(AddDirSepa(path)+CmdLine);
+  result:= unix.Shell(AddDirSepa(path)+CmdLine);
 {$ENDIF}
 end;             
 

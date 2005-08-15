@@ -31,7 +31,7 @@ uses
 {$IFDEF unix}
 {$IFDEF fpc}
   {$IFDEF freebsd}
-    unix,
+    unix,baseunix,
   {$ELSE}
     linux,oldlinux,
   {$ENDIF}
@@ -127,14 +127,14 @@ begin
   if FileExists(PGPBAT) then
     path:=PGPBAT
   else begin
-    path:=getenv('PGPPATH');
+    path:=fpgetenv('PGPPATH');
     if path<>'' then 
     begin
       Path := ExcludeTrailingPathDelimiter(Path);
       path:=filesearch(PGPEXE,path);
     end;
     if path='' then
-      path:=filesearch(PGPEXE,getenv('PATH'));
+      path:=filesearch(PGPEXE,fpgetenv('PATH'));
   end;
   if path='' then
     trfehler(217,30)    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
@@ -155,7 +155,7 @@ var path : string;
     {$ifdef unix}
     dir, name, ext:
     {$IFDEF fpc}
-    shortstring;
+    ansistring;
     {$ELSE}
     string;
     {$endif}
@@ -165,20 +165,20 @@ begin
   fsplit(exe,dir,name,ext);
   exe:=LowerCase(name); { aus PGPK.EXE wird pgpk etc ...}
   {$endif}
-  path:=getenv('PGPPATH');
+  path:=fpgetenv('PGPPATH');
   if path<>'' then
   begin
     Path := ExcludeTrailingPathDelimiter(Path);
     path:=filesearch(exe,path);
   end;
   if path='' then
-    path:=filesearch(exe,getenv('PATH'));
+    path:=filesearch(exe,fpgetenv('PATH'));
   if path='' then
     trfehler1(3001,exe,30)   { '%s fehlt oder ist nicht per Pfad erreichbar.' }
   else begin
     shellkey:=PGP_WaitKey;
     if PGPBatchmode then begin
-      pass:=GetEnv('PASSPHRASE');
+      pass:=fpGetEnv('PASSPHRASE');
       if pass<>'' then pass:='"'+pass+'"';
       case UpCase(exe[4]) of
         'E' : batch := ' -z '+pass+' ';
@@ -209,13 +209,13 @@ begin
   if FileExists(PGPBAT) then
     path:=PGPBAT
   else begin
-    path:=getenv('PGPPATH');
+    path:=fpgetenv('PGPPATH');
     if path<>'' then begin
       Path := ExcludeTrailingPathDelimiter(Path);
       path:=filesearch(PGPEXE,path);
     end;
     if path='' then
-      path:=filesearch(PGPEXE,getenv('PATH'));
+      path:=filesearch(PGPEXE,fpgetenv('PATH'));
   end;
   if path='' then
     trfehler(217,30)    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
@@ -242,7 +242,7 @@ procedure UpdateKeyfile;
 var secring : string;
 begin
   if UsePGP and (PGP_UserID<>'') then begin
-    secring:=filesearch('PUBRING.PGP',getenv('PGPPATH'));
+    secring:=filesearch('PUBRING.PGP',fpgetenv('PGPPATH'));
     if (secring<>'') and (filetime(secring)>filetime(PGPkeyfile)) then begin
       SafeDeleteFile(PGPkeyfile);
       if PGPVersion=PGP2 then
@@ -911,7 +911,7 @@ begin
   if PGPVersion=PGP2 then begin
     { Passphrase nicht bei Signaturtest }
     if not sigtest then begin
-      pass:=GetEnv('PASSPHRASE');
+      pass:=fpGetEnv('PASSPHRASE');
       if pass<>'' then pass:='"'+pass+'"';
     end;
     { Passphrase nur bei PGP 2.x uebergeben... }

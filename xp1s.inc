@@ -57,7 +57,7 @@ procedure shell(const prog:string; space:word; cls:shortint);
 
     Result:=libc.system(PChar(command));
 {$ELSE}
-    Result:=oldlinux.shell(command);
+    Result:=unix.shell(command);
 {$ENDIF}
     Debug.DebugLog('xp1s','reload terminal state', DLInform);
     refresh();                 { restore save modes, repaint screen }
@@ -100,7 +100,7 @@ procedure shell(const prog:string; space:word; cls:shortint);
     end;
     if callviacli then begin
       parameters:=' /c '+command+' '+parameters;
-      command:=getenv('comspec');
+      command:=fpgetenv('comspec');
     end;
 
     Debug.TempCloseLog(False);
@@ -517,9 +517,9 @@ begin
     if ioresult<>0 then SetCurrentDir(ownpath);
     trackpath:=true;
     {$IFDEF Unix }
-      shell(getenv('SHELL'),0, 2);
+      shell(fpgetenv('SHELL'),0, 2);
     {$ELSE }
-      shell(getenv('COMSPEC')+environment,640,2);
+      shell(fpgetenv('COMSPEC')+environment,640,2);
     {$ENDIF }
     trackpath:=false;
     end;

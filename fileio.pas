@@ -218,7 +218,7 @@ begin
 {$IFDEF Kylix}
   result:= chmod(PChar(fn), fm) <> 0;
 {$ELSE}
-  result:= chmod(fn, fm);
+  result:= fpchmod(PChar(fn), fm) <> 0;
 {$ENDIF}
 end;
 {$else}
@@ -402,7 +402,7 @@ begin
   else
     result:=FileSearch(fn,'.'+PathSepa+
                           ExtractFilePath(ParamStr(0))+PathSepa+
-                          GetEnv('PATH'));
+                          fpGetEnv('PATH'));
   {$ifndef UnixFS} result:=UpperCase(result); {$endif}
 end;
 

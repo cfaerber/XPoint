@@ -37,7 +37,7 @@ uses
   xplinux,
 {$ELSE}
 {$IFDEF freebsd}
-  unix,
+  unix,baseunix,
 {$ELSE}
   linux,oldlinux,
 {$ENDIF}    

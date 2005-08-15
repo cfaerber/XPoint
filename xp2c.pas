@@ -31,7 +31,7 @@ uses
   xpcurses,
   {$IFDEF fpc}
     {$IFDEF freebsd}
-      unix,
+      unix,baseunix,
     {$ELSE}
       linux,oldlinux,
     {$ENDIF}    
@@ -1451,8 +1451,8 @@ end;
 function testpgpexe(var s:string):boolean;
 begin
   testpgpexe:=True;
-  if (s=_jn_[1]) and (filesearch('PGP.EXE',getenv('PGPPATH'))='') and
-                     (filesearch('PGP.EXE',getenv('PATH'))='') then begin
+  if (s=_jn_[1]) and (filesearch('PGP.EXE',fpgetenv('PGPPATH'))='') and
+                     (filesearch('PGP.EXE',fpgetenv('PATH'))='') then begin
     rfehler(217);    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
     s:=_jn_[2];
     end;

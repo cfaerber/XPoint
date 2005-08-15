@@ -903,7 +903,7 @@ begin
 {$IFDEF Kylix}
   F.BufEnd:=__Read(F.Handle, PChar(F.BufPtr), F.BufSize);
 {$ELSE}
-  F.BufEnd:=fdRead(F.Handle, F.BufPtr^, F.BufSize);
+  F.BufEnd:=fpRead(F.Handle, F.BufPtr^, F.BufSize);
 {$ENDIF}
 { fix #13 only's -> #10 to overcome terminal setting }
   for i:=1 to F.BufEnd do begin
@@ -1515,10 +1515,10 @@ begin
   libc.signal(SIGQUIT, @SigHandler);
   libc.signal(SIGKILL, @SigHandler);
 {$ELSE}
-  oldLinux.SigNal(SIGWINCH, SigHandler);
-  oldLinux.SigNal(SIGHUP, SigHandler);
-  oldLinux.SigNal(SIGQUIT, SigHandler);
-  oldLinux.SigNal(SIGKILL, SigHandler);
+  fpsignal(SIGWINCH, SigHandler);
+  fpsignal(SIGHUP, SigHandler);
+  fpsignal(SIGQUIT, SigHandler);
+  fpsignal(SIGKILL, SigHandler);
 {$ENDIF}
 
   { set the unit exit procedure }
