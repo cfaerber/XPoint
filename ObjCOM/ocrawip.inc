@@ -360,7 +360,7 @@ var   SSet:  TFDSet;
 const NilTm: TTimeVal =
   (tv_sec:0;tv_usec:0);
 begin
-  SSet.fd_count:=1;SSet.fd_array[0]:=Shandle;
+  FD_ZERO(SSet); FD_SET (SHandle,SSet);
 
   case {$IFDEF Win32}WinSock.select{$ELSE}fpselect{$ENDIF}(256,@SSet,nil,nil,@NilTm) of
     0:            begin Result:=0; end;
