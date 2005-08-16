@@ -27,7 +27,7 @@
 { OS speceific uses }
 
 uses 
-  linux,oldlinux
+  unix;
 
 { local declaritions }
 

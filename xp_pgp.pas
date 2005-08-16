@@ -27,7 +27,7 @@ unit  xp_pgp;
 interface
 
 uses
-  sysutils,xpglobal,typeform,fileio,resource,database,maske, xpheader, osdepend,
+  sysutils,xpglobal,typeform,fileio,resource,database,maske,xpheader,osdepend,
 {$IFDEF unix}
   unix,baseunix,
 {$ENDIF}
@@ -121,14 +121,14 @@ begin
   if FileExists(PGPBAT) then
     path:=PGPBAT
   else begin
-    path:=getenv('PGPPATH');
+    path:=GetEnv('PGPPATH');
     if path<>'' then 
     begin
       Path := ExcludeTrailingPathDelimiter(Path);
       path:=filesearch(PGPEXE,path);
     end;
     if path='' then
-      path:=filesearch(PGPEXE,getenv('PATH'));
+      path:=filesearch(PGPEXE,GetEnv('PATH'));
   end;
   if path='' then
     trfehler(217,30)    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
@@ -159,14 +159,14 @@ begin
   fsplit(exe,dir,name,ext);
   exe:=LowerCase(name); { aus PGPK.EXE wird pgpk etc ...}
   {$endif}
-  path:=getenv('PGPPATH');
+  path:=GetEnv('PGPPATH');
   if path<>'' then
   begin
     Path := ExcludeTrailingPathDelimiter(Path);
     path:=filesearch(exe,path);
   end;
   if path='' then
-    path:=filesearch(exe,getenv('PATH'));
+    path:=filesearch(exe,GetEnv('PATH'));
   if path='' then
     trfehler1(3001,exe,30)   { '%s fehlt oder ist nicht per Pfad erreichbar.' }
   else begin
@@ -203,13 +203,13 @@ begin
   if FileExists(PGPBAT) then
     path:=PGPBAT
   else begin
-    path:=getenv('PGPPATH');
+    path:=GetEnv('PGPPATH');
     if path<>'' then begin
       Path := ExcludeTrailingPathDelimiter(Path);
       path:=filesearch(PGPEXE,path);
     end;
     if path='' then
-      path:=filesearch(PGPEXE,getenv('PATH'));
+      path:=filesearch(PGPEXE,GetEnv('PATH'));
   end;
   if path='' then
     trfehler(217,30)    { 'PGP ist nicht vorhanden oder nicht per Pfad erreichbar.' }
@@ -236,7 +236,7 @@ procedure UpdateKeyfile;
 var secring : string;
 begin
   if UsePGP and (PGP_UserID<>'') then begin
-    secring:=filesearch('PUBRING.PGP',getenv('PGPPATH'));
+    secring:=filesearch('PUBRING.PGP',GetEnv('PGPPATH'));
     if (secring<>'') and (filetime(secring)>filetime(PGPkeyfile)) then begin
       SafeDeleteFile(PGPkeyfile);
       if PGPVersion=PGP2 then
