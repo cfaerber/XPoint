@@ -68,7 +68,7 @@ implementation
 {$ifdef BSD}   {$i osdbsd.inc}   {$endif}
 {$ifdef Dos32} {$i osddos32.inc} {$endif}
 {$ifdef OS2}   {$i osdos2.inc}   {$endif}
-{$ifdef Linux} {$i osdlinux.inc} {$endif}
+{$ifdef unix}  {$i osdlinux.inc} {$endif}
 {$ifdef Win32} {$i osdwin32.inc} {$endif}
 
 {
