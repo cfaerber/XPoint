@@ -100,7 +100,7 @@ begin
   GetTimeZone:= s;
 end;
 
-procedure Get(envvar: string): string;
+procedure GetEnv(envvar: string): string;
 begin
   result := fpGetEnv(envvar);
 end;
