@@ -100,7 +100,7 @@ procedure shell(const prog:string; space:word; cls:shortint);
     end;
     if callviacli then begin
       parameters:=' /c '+command+' '+parameters;
-      command:=fpgetenv('comspec');
+      command:=getenv('comspec');
     end;
 
     Debug.TempCloseLog(False);
@@ -519,7 +519,7 @@ begin
     {$IFDEF Unix }
       shell(fpgetenv('SHELL'),0, 2);
     {$ELSE }
-      shell(fpgetenv('COMSPEC')+environment,640,2);
+      shell(getenv('COMSPEC')+environment,640,2);
     {$ENDIF }
     trackpath:=false;
     end;

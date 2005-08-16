@@ -34,12 +34,10 @@ uses
   xplinux,
   libc,
 {$ELSE}
-  {$IFDEF freebsd}
+  {$IFDEF Unix}
     unix,baseunix,
-  {$ELSE}
-    linux,oldlinux,
-  {$ENDIF}        
-{$ENDIF}  
+  {$ENDIF}
+{$ENDIF}
 {$ENDIF }
   sysutils,typeform,keys,fileio,inout,maus2,lister, xpheader,
   printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
@@ -1011,7 +1009,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
     PrepareExe:=0;
     exepath:=LeftStr(prog,blankposx(prog)-1);
     if ExtractFileExt(exepath)='' then exepath:=exepath+'.exe';
-    exepath:=filesearch(exepath,fpgetenv('PATH'));
+    exepath:=filesearch(exepath,getenv('PATH'));
     if not stricmp(RightStr(exepath,4),'.exe') then
       et:=ET_Unknown
     else
@@ -1023,7 +1021,7 @@ type  TExeType = (ET_Unknown, ET_DOS, ET_Win16, ET_Win32,
   {$ELSE }
     os2 := false;
   {$ENDIF }
-    winnt:=win and (LowerCase(fpgetenv('OS'))='windows_nt');
+    winnt:=win and (LowerCase(getenv('OS'))='windows_nt');
 
     if win then begin
 

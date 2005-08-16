@@ -100,6 +100,12 @@ begin
   GetTimeZone:= s;
 end;
 
+procedure Get(envvar: string): string;
+begin
+  result := fpGetEnv(envvar);
+end;
+
+
 {
         $Log: osdlinux.inc,v $
         Revision 1.4.2.3  2003/08/30 03:25:54  mk

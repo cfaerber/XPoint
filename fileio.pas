@@ -36,7 +36,7 @@ uses sysutils,unix,baseunix,
 {$ENDIF }
   xplinux,xpglobal,typeform;
 {$else }
-uses sysutils,xpglobal,typeform
+uses sysutils,xpglobal,typeform, osdepend
   {$ifdef Win32} ,xpwin32, windows {$endif}
   {$ifdef Dos32} ,xpdos32 {$endif}
   {$ifdef Os2}   ,xpos2 {$endif}
@@ -402,7 +402,7 @@ begin
   else
     result:=FileSearch(fn,'.'+PathSepa+
                           ExtractFilePath(ParamStr(0))+PathSepa+
-                          fpGetEnv('PATH'));
+                          GetEnv('PATH'));
   {$ifndef UnixFS} result:=UpperCase(result); {$endif}
 end;
 

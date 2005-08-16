@@ -445,7 +445,7 @@ var i  : integer;
   procedure SetDebugLoglevels(s: String);
   var i,j,Level,Res: Integer; Badge: String;
   begin
-    if(s<>'')and(fpGetEnv('DEBUG')='')then
+    if(s<>'')and(GetEnv('DEBUG')='')then
       Debug.OpenLogfile(False,'debuglog.txt');
     while s<>'' do begin
       i:=cPos('=',s);

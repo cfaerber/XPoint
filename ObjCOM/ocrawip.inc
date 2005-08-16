@@ -161,18 +161,15 @@ begin
     SHandle:=WinSock.Socket(AF_INET,SOCK_STREAM,0);
     if WinSock.WSAGetLastError <> 0 then
   {$ELSE}
-  {$IFDEF fpc}
-  {$IFDEF OS2 }
-    SHandle:=pmwsock.Socket(AF_INET,SOCK_STREAM,0);
-    if pmwsock.WSAGetLastError <> 0 then
-  {$ELSE }
-    SHandle:=sockets.Socket(AF_INET,SOCK_STREAM,0);
-    if sockets.SocketError <> 0 then
-  {$ENDIF }
-  {$ELSE}
-    SHandle:=Socket(AF_INET,SOCK_STREAM,0);
-    if SHandle = - 1 then
-  {$ENDIF}
+    {$IFDEF FPC }
+      {$IFDEF OS2 }
+        SHandle:=pmwsock.Socket(AF_INET,SOCK_STREAM,0);
+        if pmwsock.WSAGetLastError <> 0 then
+      {$ELSE }
+        SHandle:=sockets.Socket(AF_INET,SOCK_STREAM,0);
+        if SHandle = - 1 then
+      {$ENDIF }
+    {$ENDIF}
   {$ENDIF}
   begin
     SetErrorStr('Error obtaining socket, SHandle: ' + IntToStr(SHandle));
@@ -363,14 +360,9 @@ var   SSet:  TFDSet;
 const NilTm: TTimeVal =
   (tv_sec:0;tv_usec:0);
 begin
-{$IFNDEF VP} { - VPascal has crippled Winsock - }
-  fpFD_ZERO(SSet); fpFD_SET (SHandle,SSet);
-{$ELSE}
   SSet.fd_count:=1;SSet.fd_array[0]:=Shandle;
-{$ENDIF}
 
-  {$IFNDEF Kylix}   {TODO1: !!!!!!!Kylix-support}
-  case {$IFDEF Win32}WinSock.{$ENDIF}fpselect(256,@SSet,nil,nil,@NilTm) of
+  case {$IFDEF Win32}WinSock.select{$ELSE}fpselect{$ENDIF}(256,@SSet,nil,nil,@NilTm) of
     0:            begin Result:=0; end;
     SOCKET_ERROR: begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end;
   else            if {$IFDEF WinSockets}ioctlsocket(SHandle,FIONREAD,{$IFDEF FPC}@{$ENDIF}{$IFDEF VP}@{$ENDIF}Result)<>0
@@ -378,7 +370,6 @@ begin
                     begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end
                   else if Result=0 then SOpened:=false; (* select said readable *)
   end;
-  {$ENDIF}
   if Result > 0 then
     DebugLog('ObjCOM','_CharCount: '+IntToStr(result)+' bytes',dlTrace);
 end; { func. TTelnetObj.CharAvail }
