@@ -161,6 +161,9 @@ var
 
 implementation
 
+
+uses
+  SysUtils;
 begin
 {$IFDEF Beta }
 {$IFDEF FPC }
@@ -170,8 +173,7 @@ begin
 {$endif}
 {$ENDIF }
 {$ENDIF }
-  verstr := Copy(version_Build, Pos(' ', version_build)+1, 50);
-  verstr := mainver + '.' + Copy(verstr, 1, Pos(' ', verstr)-1);
+  verstr := mainver + '.' + IntToStr(version_build);
 
 {
   $Log: xpglobal.pas,v $

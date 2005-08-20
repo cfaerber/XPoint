@@ -21,6 +21,10 @@
   }
   close(InFile);
 
+  open(OutFile, ">\.\.\\version.inc");
+  print OutFile "version_build = ".$BUILD.";";
+  close(OutFile);
+
   open(InFile, "../xpdefine.inc");
   while (<InFile>) {
     if (/\{\$DEFINE Snapshot\}/ig ) { $RELEASE = "0" }
