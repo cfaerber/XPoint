@@ -87,10 +87,6 @@ type
                             taUserRX,
                             taUserRWX
                           );
-{$IFDEF VP }
-  Stat = TStat;
-{$ENDIF }
-
 
 function SysExec(const Path, CmdLine: String): Integer;
 
@@ -229,31 +225,8 @@ var
   LogString: array[0..1024] of char;
 {$endif}
 
-{ Interface-Routinen fÅr Virtual Pascal -------------------------------- }
-
-{$IFDEF VP }
-function Chmod(path:pathstr;Newmode:longint):Boolean;
-var
-  AStr: AnsiString;
-begin
-  Astr := Path;
-  ChMod := LnxChMod(PCHar(AStr), NewMode) = 0;
-end;
-
-function GetPid: LongInt;
-begin
-  GetPid := LnxGetPid;
-end;
-{$ENDIF }
-
 
 { Verzeichnis-Routinen ------------------------------------------------- }
-{$IFDEF VP }
-function StrP(s: String): AnsiString;
-begin
-  StrP := s;
-end;
-{$ENDIF }
 
 function MakeDir(p: string; a: longint): boolean;
 begin

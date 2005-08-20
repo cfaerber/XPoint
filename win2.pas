@@ -532,11 +532,7 @@ begin
                 (cpos(chr(ord(t[1])+64),drives)>0);
     end
     else begin
-  {$IFDEF VP }
-      F.CustomSort(OwnStringListCompare);
-  {$ELSE }
       F.Sort;
-  {$ENDIF }
       for i:=0 to F.Count - 1 do
         if f[i][1]>=#125 then
         begin

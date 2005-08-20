@@ -112,11 +112,7 @@ uses
 {$ENDIF }
   ;
 
-{$IFDEF VP }
-const
-{$ELSE }
 resourcestring
-{$ENDIF }
   res_IPRangeError         = 'Index value %d must be in 1-4!';
   res_IPAddrTypeError      = 'Unknown address typ: %d, expected %d!';
   res_IPNoIPv4Error        = 'This is not an IPv4 address!';

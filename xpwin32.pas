@@ -59,9 +59,6 @@ function RasHangup: Boolean;
 implementation
 
 uses
-  {$IFDEF VP}
-  vputils,
-  {$ENDIF }
   Typeform, SysUtils, windows, winxp;
 
 const

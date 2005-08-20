@@ -465,7 +465,6 @@ begin
     wrt(x+31,y+4,format('%8d MB',[disksize(0) div 1024 div 1024]));
     wrt(x+31,y+6,format('%8d MB',[diskfree(0) div 1024 div 1024]));
    {$ENDIF}
-{$ENDIF }
    wrt(x+31,y+5,format('%8d MB',[(xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
                                  xpspace(XferDir)) div 1024 div 1024]));
 {$IFDEF Unix}
