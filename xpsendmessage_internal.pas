@@ -58,25 +58,5 @@ var umlaute  : byte;        { 0=IBM; 1=ASCII; (2=ISO) }
 implementation
 
 
-
-{
-  $Log: xpsendmessage_internal.pas,v $
-  Revision 1.4.2.1  2002/07/21 20:14:41  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.4  2002/02/21 13:52:34  mk
-  - removed 21 hints and 28 warnings
-
-  Revision 1.3  2001/09/10 15:58:04  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.2  2001/08/29 19:50:47  ma
-  - changes in net type handling (2)
-  - shortened CVS logs
-
-  Revision 1.1  2001/08/12 20:01:40  cl
-  - rename xp6*.* => xpsendmessage*.*
-}
 end.
 
