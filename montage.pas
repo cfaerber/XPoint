@@ -196,44 +196,4 @@ begin
      then sommer:=true else sommer:=false;
 end;
 
-{
-  $Log: montage.pas,v $
-  Revision 1.12.2.1  2002/07/21 20:14:33  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.12  2002/01/14 11:40:56  cl
-  - after-merge compile fixes
-
-  Revision 1.11  2002/01/13 15:07:23  mk
-  - Big 3.40 Update Part I
-
-  Revision 1.10  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.9  2001/09/08 16:29:30  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.8  2001/03/13 19:24:56  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.7  2000/10/17 10:13:23  mk
-  - Unit Sysutils hinzugefuegt
-
-  Revision 1.6  2000/10/17 10:05:42  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.5  2000/04/30 15:54:21  mk
-  - unbenutze globale Variable adow entfernt
-
-  Revision 1.4  2000/04/04 10:33:56  mk
-  - Compilierbar mit Virtual Pascal 2.0
-
-  Revision 1.3  2000/02/15 20:43:36  mk
-  MK: Aktualisierung auf Stand 15.02.2000
-
-}
 end.
-

@@ -77,8 +77,3 @@ type
 implementation
 
 end.
-{
-  $Log$
-  Revision 1.1  2005/06/05 23:49:27  leo
-  + got code from old patched ncurses.pas
-}

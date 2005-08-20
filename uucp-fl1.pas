@@ -149,21 +149,3 @@ begin
   close(t2);
   writeln;
 end.
-{
-  $Log: uucp-fl1.pas,v $
-  Revision 1.5  2000/11/20 19:09:55  fe
-  Added forgotten xpglobal unit.
-
-  Revision 1.4  2000/09/12 19:37:19  fe
-  Ansistring-Anpassungen und unter FPC zum Laufen gebracht.
-
-  Revision 1.3  2000/09/09 22:31:55  fe
-  sysutils ergaenzt
-
-  Revision 1.2  2000/08/08 13:18:14  mk
-  - s[Length(s)] durch Lastchar ersetzt
-
-  Revision 1.1  2000/05/11 14:25:02  mk
-  - Utility hinzugefuegt
-
-}

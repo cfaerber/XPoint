@@ -502,37 +502,3 @@ begin
     end;
   freenode(bf);
 end;
-{
-  $Log: database.inc,v $
-  Revision 1.8.2.2  2002/09/09 08:29:15  mk
-  - some performance improvements
-
-  Revision 1.8.2.1  2002/07/21 20:14:31  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.8  2001/03/13 19:24:55  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.7  2000/07/12 14:43:43  mk
-  - einige ^AnsiString in einen normalen String umgewandelt
-  - AnsiString-Fixes fuer die Datenbank
-
-  Revision 1.6  2000/07/05 09:09:28  hd
-  - Anpassungen AnsiString
-  - Neue Definition: hasHugeString. Ist zur Zeit bei einigen Records
-    erforderlich, sollte aber nach vollstaendiger Umstellung entfernt werden
-
-  Revision 1.5  2000/07/04 12:04:14  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.4  2000/07/02 14:24:45  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.3  2000/02/19 11:40:06  mk
-  Code aufgeraeumt und z.T. portiert
-
-}

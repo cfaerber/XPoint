@@ -69,26 +69,3 @@ begin
   DebugLog('osdwin32', Format('Got Timezone from Windows: %s (Bias: %d, DaylightBias: %d)',
     [Result, TZ.Bias, TZ.DaylightBias]), dlDebug); 
 end;
-
-
-{
-        $Log: osdwin32.inc,v $
-        Revision 1.3.2.3  2003/09/17 00:17:49  mk
-        - moved uses debug to correct place
-
-        Revision 1.3.2.2  2003/09/16 23:47:28  mk
-        - added Debug log to GetTimeZone
-
-        Revision 1.3.2.1  2003/08/26 04:51:02  mk
-        - added automatic TimeZone dectection for Win32
-
-        Revision 1.3  2001/12/09 14:36:40  mk
-        - implemented SysBeep and error sounds
-
-        Revision 1.2  2001/07/28 12:04:09  mk
-        - removed crt unit as much as possible
-
-        Revision 1.1  2000/11/20 11:58:16  hd
-        - Init: Empty unit for os specefic code
-
-}

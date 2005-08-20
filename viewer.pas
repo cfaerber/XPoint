@@ -156,21 +156,4 @@ begin
   if not fileattach and (fn1<>'') then DeleteFile(parfn);
 end;
 
-{
-  $Log: viewer.pas,v $
-  Revision 1.4  2001/10/11 09:00:40  mk
-  - external viewer files now with correct file extension
-
-  Revision 1.3  2001/10/10 22:04:09  mk
-  - enabled use of external mime viewers again
-
-  Revision 1.2  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.1  2000/11/18 21:42:17  mk
-  - implemented new Viewer handling class TMessageViewer
-
-}
 end.
-

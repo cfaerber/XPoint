@@ -48,19 +48,3 @@ function GetTimeZone: String;
 begin
   Result := '';
 end;
-
-{
-        $Log: osddos32.inc,v $
-        Revision 1.3.2.1  2003/08/26 04:51:02  mk
-        - added automatic TimeZone dectection for Win32
-
-        Revision 1.3  2001/12/09 14:36:40  mk
-        - implemented SysBeep and error sounds
-
-        Revision 1.2  2001/08/04 20:19:13  mk
-        - added some dos compatibility functions
-
-        Revision 1.1  2000/11/20 11:58:16  hd
-        - Init: Empty unit for os specefic code
-
-}

@@ -414,34 +414,4 @@ implementation
     result:=md5_digest(pad(key,$5c)+md5_plain(pad(key,$36)+text));
   end;
 
-
-{
-  $Log: md5.pas,v $
-  Revision 1.7.2.1  2002/05/12 17:19:52  ma
-  - bugfix: keys > 64 bytes should be hashed
-
-  Revision 1.7  2001/10/21 11:02:34  ma
-  - disabled range checking (due to FPC crashes)
-
-  Revision 1.6  2001/10/19 21:30:32  mk
-  - Q- for all compilers
-
-  Revision 1.5  2001/09/08 16:29:29  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.4  2001/09/07 23:24:53  ml
-  - Kylix compatibility stage II
-
-  Revision 1.3  2001/05/19 15:54:03  ma
-  - added CRAM-MD5 support
-
-  Revision 1.2  2001/04/16 15:33:10  ma
-  - disabled range checking with VP
-
-  Revision 1.1  2001/04/15 13:01:05  ma
-  - this is a modified part of Sven Knispel's GPL'd CryptLIB
-    (http://www.planet-express.com/sven/technical/dev/CryptLIB/default.html)
-
-}
 end.

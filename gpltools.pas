@@ -53,25 +53,4 @@ begin
   end;
 end;
 
-{
-  $Log: gpltools.pas,v $
-  Revision 1.5  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.4  2001/09/08 16:29:28  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.3  2001/09/07 23:24:53  ml
-  - Kylix compatibility stage II
-
-  Revision 1.2  2000/12/22 10:02:38  mk
-  - DecodeRot13String is now a function
-
-  Revision 1.1  2000/10/08 12:53:35  mk
-  - Rot13 fuer Strings portiert
-
-}
 end.
-

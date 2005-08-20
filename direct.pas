@@ -310,38 +310,4 @@ begin
   result:= VEntries.Count;
 end;
 
-{
-        $Log: direct.pas,v $
-        Revision 1.6.2.2  2004/01/18 15:21:09  mk
-        - added uses xpglobal
-
-        Revision 1.6.2.1  2004/01/18 15:07:07  mk
-        - use WildCard instead of * or *.*
-
-        Revision 1.6  2002/02/21 13:52:30  mk
-        - removed 21 hints and 28 warnings
-
-        Revision 1.5  2001/09/07 23:24:53  ml
-        - Kylix compatibility stage II
-
-        Revision 1.4  2001/02/08 19:59:52  ma
-        - fixed: was operating on parent directory if no path was given in file mask
-
-        Revision 1.3  2000/12/07 18:40:07  hd
-        - new function: isEmpty
-        - fix: logical error in mask searching
-        - fix: ignore case works proper now
-
-        Revision 1.2  2000/11/30 19:38:39  hd
-        - Fix: mask incomplete
-
-        Revision 1.1  2000/11/29 15:15:31  hd
-        - Class: TDirectory
-          - Read all filenames into a list and give access by an integer
-          - Can ignore case of the filenames on Unix based systems to
-            search easy for files eg. *.pkt
-          - Still not finished but works
-
-}
 end.
-

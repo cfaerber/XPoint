@@ -782,38 +782,4 @@ initialization
 finalization
   ReleaseHelp;
 
-{
-  $Log: help.pas,v $
-  Revision 1.45.2.4  2003/09/13 17:40:33  mk
-  - fixed #804967: Crash beim Aufruf der Hilfe
-
-  Revision 1.45.2.3  2003/08/24 21:35:33  mk
-  - simplified and corrected FileMode Handling (now uses OS dependend
-    constants instead of hard coded values, this may prevent problems
-    with linux and other OS)
-
-  Revision 1.45.2.2  2002/07/21 20:14:32  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.45.2.1  2002/05/26 12:34:16  ma
-  - increased max help page size
-
-  Revision 1.45  2002/04/08 23:02:47  mk
-  - changed some AddDirSepa in IncludeTrailingPathDelimiter
-
-  Revision 1.44  2002/03/20 23:44:35  ma
-  - number of page is displayed now if help page missing
-
-  Revision 1.43  2002/01/13 15:07:22  mk
-  - Big 3.40 Update Part I
-
-  Revision 1.42  2001/10/20 17:26:39  mk
-  - changed some Word to Integer
-    Word = Integer will be removed from xpglobal in a while
-
-  Revision 1.41  2001/10/11 15:27:01  mk
-  - implemented direct screen writes for DOS32, no more LocalScreen
-}
-
 end.
-

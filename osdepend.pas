@@ -71,41 +71,5 @@ implementation
 {$ifdef BSD}   {$i osdbsd.inc}   {$endif}
 {$ifdef Win32} {$i osdwin32.inc} {$endif}
 
-{
-        $Log: osdepend.pas,v $
-        Revision 1.6.2.5  2003/09/17 00:17:49  mk
-        - moved uses debug to correct place
-
-        Revision 1.6.2.4  2003/09/16 23:47:28  mk
-        - added Debug log to GetTimeZone
-
-        Revision 1.6.2.3  2003/08/26 05:36:57  mk
-        - added AutomaticTimeZone const and removed $IFDEFs
-
-        Revision 1.6.2.2  2003/08/26 04:51:02  mk
-        - added automatic TimeZone dectection for Win32
-
-        Revision 1.6.2.1  2003/01/01 16:18:37  mk
-        - changes to made FreeBSD version compilable
-
-        Revision 1.6  2001/12/09 14:36:40  mk
-        - implemented SysBeep and error sounds
-
-        Revision 1.5  2001/09/08 16:29:30  mk
-        - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-        - some AnsiString fixes
-
-        Revision 1.4  2001/09/07 23:24:53  ml
-        - Kylix compatibility stage II
-
-        Revision 1.3  2001/08/04 20:19:13  mk
-        - added some dos compatibility functions
-
-        Revision 1.2  2001/07/28 12:04:09  mk
-        - removed crt unit as much as possible
-
-        Revision 1.1  2000/11/20 11:58:16  hd
-        - Init: Empty unit for os specefic code
-}
 end.
 

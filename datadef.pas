@@ -100,32 +100,4 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
 
 implementation
 
-{
-  $Log: datadef.pas,v $
-  Revision 1.8.2.1  2002/07/21 20:14:31  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.8  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.7  2001/09/08 16:29:28  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.6  2001/03/13 19:24:55  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.5  2000/05/02 19:13:58  hd
-  xpcurses statt crt in den Units
-
-  Revision 1.4  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-  Revision 1.3  2000/02/17 16:14:19  mk
-  MK: * ein paar Loginfos hinzugefuegt
-
-}
 end.
-

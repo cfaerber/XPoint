@@ -251,32 +251,4 @@ begin
   Inc(FPosition,Result);
 end;
 
-//
-// $Log: mime_qp.pas,v $
-// Revision 1.7  2001/12/30 19:56:48  cl
-// - Kylix 2 compile fixes
-//
-// Revision 1.6  2001/09/17 16:16:14  cl
-// - SetSize is now correctly marked as override
-//
-// Revision 1.5  2001/09/10 15:58:01  ml
-// - Kylix-compatibility (xpdefines written small)
-// - removed div. hints and warnings
-//
-// Revision 1.4  2001/09/09 17:40:47  cl
-// - moved common code between alle en-/decoding streams to a base class
-// - all en-/decoding streams can now destruct the other stream
-// - much more elegant way to connect en-/decoding streams to each other
-//
-// Revision 1.3  2001/09/09 10:23:20  ml
-// - Kylix compatibility stage III
-// - compilable in linux
-//
-// Revision 1.2  2001/09/08 18:46:43  cl
-// - small bug/compiler warning fixes
-//
-// Revision 1.1  2001/09/08 15:06:14  cl
-// - Moved MIME functions/types/consts to mime*.pas
-//
-
-{ ------------------------------} end. 
+end. 

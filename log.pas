@@ -220,23 +220,4 @@ begin
   inherited Log(l, '['+FModulName + '] ' + s);
 end;
 
-{
-  $Log: log.pas,v $
-  Revision 1.11  2001/09/16 19:58:31  ma
-  - disabled for these logging routines are not used now
-
-  Revision 1.10  2001/09/08 16:29:29  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.9  2001/09/07 23:24:53  ml
-  - Kylix compatibility stage II
-
-  Revision 1.8  2001/07/31 16:18:39  mk
-  - removed some unused variables
-  - changed some LongInt to DWord
-  - removed other hints and warnings
-
-}
 end.
-

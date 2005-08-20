@@ -93,29 +93,3 @@ begin
   end;
   GetTimeZone:= s;
 end;
-
-{
-        $Log: osdlinux.inc,v $
-        Revision 1.4.2.3  2003/08/30 03:25:54  mk
-        - use libc instead of linux for Kylix
-
-        Revision 1.4.2.2  2003/08/26 17:36:00  mk
-        - added linux to uses
-
-        Revision 1.4.2.1  2003/08/26 04:51:02  mk
-        - added automatic TimeZone dectection for Win32
-
-        Revision 1.4  2001/12/09 15:57:36  ml
-        - os-dependend beep not yet implemented in linux
-
-        Revision 1.3  2001/10/27 16:14:14  ma
-        - fixed SysDelay
-          (fixed modem netcall malfunctions)
-
-        Revision 1.2  2001/08/03 21:40:42  ml
-        - compilable with fpc (linux)
-
-        Revision 1.1  2000/11/20 11:58:16  hd
-        - Init: Empty unit for os specefic code
-
-}

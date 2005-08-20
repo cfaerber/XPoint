@@ -218,44 +218,4 @@ begin
   CRC32block := CRC_Reg;
 end;
 
-{
-  $Log: crc.pas,v $
-  Revision 1.9.2.1  2002/04/22 10:02:44  mk
-  - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
-
-  Revision 1.9  2001/10/20 17:26:38  mk
-  - changed some Word to Integer
-    Word = Integer will be removed from xpglobal in a while
-
-  Revision 1.8  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.7  2001/09/07 23:24:53  ml
-  - Kylix compatibility stage II
-
-  Revision 1.6  2001/07/31 16:18:38  mk
-  - removed some unused variables
-  - changed some LongInt to DWord
-  - removed other hints and warnings
-
-  Revision 1.5  2000/08/01 09:25:30  mk
-  - AnsiString in CRC16StrXP beseitigt
-
-  Revision 1.4  2000/06/23 15:59:09  mk
-  - 16 Bit Teile entfernt
-
-  Revision 1.3  2000/06/22 19:53:24  mk
-  - 16 Bit Teile ausgebaut
-
-  Revision 1.2  2000/06/19 23:14:47  mk
-  - CRCFile rausgenommen, verschiedenes
-
-  Revision 1.1  2000/06/19 20:14:04  ma
-  - Zusammenfuehrung von CRC16 und XPCRC32
-  - neue Routine UpdCRC32 fuer ZModem
-  - Umbenennung CRC32 aus XPCRC32 in CRC32Str
-
-}
 end.
-

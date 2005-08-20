@@ -267,43 +267,4 @@ begin
   Result := R;
 end;
 
-//
-// $Log: mime_base64.pas,v $
-// Revision 1.11  2003/11/15 14:32:41  cl
-// - Fixed Base64 encoding for file sizes mod 3 <> 0
-//
-// Revision 1.10  2003/08/28 00:39:41  mk
-// - lowercase uses "typeform" for Kylix
-//
-// Revision 1.9  2002/12/14 09:25:17  dodi
-// - removed gpltools and encoder units
-//
-// Revision 1.8  2002/12/06 14:27:26  dodi
-// - updated uses, comments and todos
-//
-// Revision 1.7  2002/12/04 16:57:00  dodi
-// - updated uses, comments and todos
-//
-// Revision 1.6  2002/02/28 21:26:09  cl
-// - fixed Base64 decoder
-//
-// Revision 1.5  2001/09/11 14:22:15  cl
-// - BUGFIX: Reading small amounts of data with TBase64DecoderStream.Read
-//
-// Revision 1.4  2001/09/10 15:58:01  ml
-// - Kylix-compatibility (xpdefines written small)
-// - removed div. hints and warnings
-//
-// Revision 1.3  2001/09/09 17:40:47  cl
-// - moved common code between alle en-/decoding streams to a base class
-// - all en-/decoding streams can now destruct the other stream
-// - much more elegant way to connect en-/decoding streams to each other
-//
-// Revision 1.2  2001/09/08 18:46:43  cl
-// - small bug/compiler warning fixes
-//
-// Revision 1.1  2001/09/08 15:06:14  cl
-// - Moved MIME functions/types/consts to mime*.pas
-//
-
-{ ------------------------------} end.
+ end.

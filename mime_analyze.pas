@@ -555,35 +555,4 @@ begin
   result :=(_8bitchars=0) and (not IsBinary);
 end;
 
-//
-// $Log: mime_analyze.pas,v $
-// Revision 1.8  2001/10/19 00:57:52  mk
-// - R- for possible false report of FPC in one line
-//
-// Revision 1.7  2001/09/10 17:25:17  cl
-// - BUGFIX: CR EOL was detected as LF and vice versa.
-//
-// Revision 1.6  2001/09/10 15:58:01  ml
-// - Kylix-compatibility (xpdefines written small)
-// - removed div. hints and warnings
-//
-// Revision 1.5  2001/09/09 20:30:59  cl
-// - corrected property TMimeAnalyzer.EncodingSafeForSigned
-//
-// Revision 1.4  2001/09/09 17:40:47  cl
-// - moved common code between alle en-/decoding streams to a base class
-// - all en-/decoding streams can now destruct the other stream
-// - much more elegant way to connect en-/decoding streams to each other
-//
-// Revision 1.3  2001/09/08 21:58:09  cl
-// - BUGFIX: Paragraph character (IBM437 #21) now does not trigger binary flag
-// - BUGFIX: Paragraph character recoded correctly
-//
-// Revision 1.2  2001/09/08 18:46:43  cl
-// - small bug/compiler warning fixes
-//
-// Revision 1.1  2001/09/08 15:03:18  cl
-// - Moved MIME functions/types/consts to mime.pas
-//
-
-{ ----------------------------- } end.
+end.

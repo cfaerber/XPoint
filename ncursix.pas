@@ -1761,33 +1761,4 @@ begin
   ACS_STERLING:=acs_map['}'];
 end;
 
-{
-  $Log: ncursix.pas,v $
-  Revision 1.7.2.1  2002/07/21 20:14:33  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.7  2001/10/17 10:06:54  ml
-  - use packed records
-
-  Revision 1.6  2001/10/15 09:39:10  ml
-  - copyright
-
-  Revision 1.5  2001/10/15 09:32:42  ml
-  - now using packed records
-
-  Revision 1.4  2001/10/15 09:04:22  ml
-  - compilable with Kylix ;-)
-
-  Revision 1.3  2001/09/27 21:22:25  ml
-  - Kylix compatibility stage IV
-
-  Revision 1.2  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.1  2001/09/07 23:30:30  ml
-  - translated ncurses.pas for Kylix
-
-}
 end.
-

@@ -110,30 +110,3 @@ begin
 end;
 
 end.
-
-//
-// $Log: charmaps.pas,v $
-// Revision 1.6.2.1  2002/07/21 20:14:31  ma
-// - changed copyright from 2001 to 2002
-//
-// Revision 1.6  2002/02/22 18:29:59  cl
-// - added windows-1250
-//
-// Revision 1.5  2002/01/12 14:13:17  cl
-// - Kylix 2 compile fix
-//
-// Revision 1.4  2002/01/04 23:24:24  cl
-// - added MS-DOS Codepage 857 (Multilingual Latin 5)
-//
-// Revision 1.3  2002/01/04 22:34:32  cl
-// - added IBM codepages 850 and 858
-// - moved Get8BitTable to unit charmaps
-//
-// Revision 1.2  2002/01/03 20:53:54  cl
-// - added ISO-8859-16
-//
-// Revision 1.1  2002/01/03 18:59:12  cl
-// - moved character set maps to own units (allows including them from several
-//   other units without duplication)
-// - added TWindowsUTF8Encoder/TWindowsUTF8Decoder for Windows-1252 codepage
-//

@@ -88,32 +88,4 @@ procedure encode_UU(var bytestream:tbytestream;len:word;
     encoded:=char(len+32)+encoded;
   end;
 
-{
-  $Log: encoder.pas,v $
-  Revision 1.8.2.1  2002/07/21 20:14:32  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.8  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.7  2001/09/08 16:29:28  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.6  2001/05/27 14:23:34  ma
-  - cleaned up a bit
-
-  Revision 1.5  2001/03/13 19:24:55  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.4  2000/04/04 21:01:20  mk
-  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
-
-  Revision 1.3  2000/02/17 16:14:19  mk
-  MK: * ein paar Loginfos hinzugefuegt
-
-}
 end.
-

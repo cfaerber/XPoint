@@ -92,46 +92,4 @@ begin
 end;
 
 
-{
-  $Log: stack.pas,v $
-  Revision 1.11.2.1  2002/07/21 20:14:34  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.11  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.10  2001/09/08 16:29:30  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.9  2001/03/13 19:24:56  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.8  2000/08/19 09:41:36  mk
-  - Code aufgeraeumt
-
-  Revision 1.7  2000/07/02 14:24:49  mk
-  - FastMove entfernt, da in FPC/VP RTL besser implementiert
-
-  Revision 1.6  2000/06/29 13:00:49  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.5  2000/04/30 16:07:09  mk
-  - xpglobal in den Interface-Teil vorgezogen
-
-  Revision 1.4  2000/04/30 15:55:46  mk
-  - Debugcode nur noch bei $DEF Debug
-
-  Revision 1.3  2000/02/19 11:40:07  mk
-  Code aufgeraeumt und z.T. portiert
-
-}
 end.
-
