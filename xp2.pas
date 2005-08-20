@@ -311,7 +311,7 @@ procedure initdirs;
         stop('Das Programm ist nicht korrekt installiert - LibDir: "' +
              LibDir + '" nicht vorhanden.')
       else
-        stop('The programm is not installed correctly - LibDir: "' +
+        stop('The program is not installed correctly - LibDir: "' +
              LibDir + '" not available.');
     end;
 
