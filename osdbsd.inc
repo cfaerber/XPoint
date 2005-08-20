@@ -26,7 +26,7 @@
 
 { OS speceific uses }
 
-uses 
+uses
   unix;
 
 { local declaritions }
@@ -49,12 +49,6 @@ function GetTimeZone: String;
 begin
   Result := '';
 end;
-
-procedure GetEnv(envvar: string): string;
-begin
-  result := fpGetEnv(envvar);
-end;
-
 
 {
         $Log: osdbsd.inc,v $

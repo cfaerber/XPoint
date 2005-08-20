@@ -360,7 +360,7 @@ var   SSet:  TFDSet;
 const NilTm: TTimeVal =
   (tv_sec:0;tv_usec:0);
 begin
-{$IFDEF FPC }
+{$IFDEF Unix }
   fpFD_ZERO(SSet); fpFD_SET (SHandle,SSet);
 {$ELSE }
   FD_ZERO(SSet); FD_SET (SHandle,SSet);
