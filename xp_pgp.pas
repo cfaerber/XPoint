@@ -29,7 +29,7 @@ interface
 uses
   sysutils,xpglobal,typeform,fileio,resource,database,maske,xpheader,osdepend,
 {$IFDEF unix}
-  unix,baseunix,xpunix,
+  xpunix,
 {$ENDIF}
   xp0,xp1,xpstreams,Classes;
 

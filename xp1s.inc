@@ -517,7 +517,7 @@ begin
     if ioresult<>0 then SetCurrentDir(ownpath);
     trackpath:=true;
     {$IFDEF Unix }
-      shell(fpgetenv('SHELL'),0, 2);
+      shell(getenv('SHELL'),0, 2);
     {$ELSE }
       shell(getenv('COMSPEC')+environment,640,2);
     {$ENDIF }

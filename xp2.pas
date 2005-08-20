@@ -32,7 +32,7 @@ uses
   xpcurses,
   {$IFDEF fpc}
     {$IFDEF freebsd}
-      unix,baseunix,xpunix,
+      xpunix,
     {$ELSE}
       linux,oldlinux,
     {$ENDIF}  
@@ -250,9 +250,9 @@ procedure initdirs;
 
   procedure GetHomePath;
   begin
-    HomeDir := AddDirSepa(ResolvePathName(fpGetEnv(envXPHome))); { XPHOME=~/.openxp }
+    HomeDir := AddDirSepa(ResolvePathName(GetEnv(envXPHome))); { XPHOME=~/.openxp }
     if (length(HomeDir) > 0) then exit;
-    HomeDir := AddDirSepa(fpGetEnv('HOME'));                     { HOME= }
+    HomeDir := AddDirSepa(GetEnv('HOME'));                     { HOME= }
     if (length(HomeDir) > 0) then exit;
     HomeDir := './';
   end; { GetHomePath }
