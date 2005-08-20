@@ -15,7 +15,7 @@
   }
   close(InFile);
 
-  open(InFile, "version.sfn");
+  open(InFile, "version.svn");
   while (<InFile>) {
     if (/Revision (.*)\./ig ) { $BUILD = $1;  }
   }

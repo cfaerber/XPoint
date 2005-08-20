@@ -1,7 +1,7 @@
 @echo off
 
 echo Versionsnummer aktualisieren
-svn up >version.sfn
+svn up >version.svn
 cd ..
 
 echo Exportiere Sourcen
