@@ -31,7 +31,7 @@ uses
   xpcurses,
   {$IFDEF fpc}
     {$IFDEF freebsd}
-      unix,baseunix,
+      unix,baseunix,xpunix,
     {$ELSE}
       linux,oldlinux,
     {$ENDIF}    

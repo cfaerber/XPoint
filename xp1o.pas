@@ -35,7 +35,7 @@ uses
   libc,
 {$ELSE}
   {$IFDEF Unix}
-    unix,baseunix,
+    unix,baseunix,xpunix,
   {$ENDIF}
 {$ENDIF}
 {$ENDIF }

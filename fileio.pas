@@ -26,7 +26,7 @@ unit fileio;
 interface
 
 {$ifdef unix}
-uses sysutils,unix,baseunix,
+uses sysutils,unix,baseunix,xpunix,
 {$IFDEF Kylix}
   libc,
 {$ELSE}
