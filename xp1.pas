@@ -32,16 +32,7 @@ uses
   xpcurses,
 {$ENDIF }
 {$IFDEF Unix }
-{$IFDEF Kylix}
-  libc,
-  xplinux,
-{$ELSE}
-{$IFDEF freebsd}
   unix,xpunix,
-{$ELSE}
-  linux,oldlinux,
-{$ENDIF}    
-{$ENDIF}  
 {$ENDIF }
 {$IFDEF Win32 }
   windows,

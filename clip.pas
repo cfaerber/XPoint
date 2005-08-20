@@ -69,7 +69,7 @@ uses
 function ClipFilename: TFilename;
 begin
   {$IFDEF unix}
-    ClipFilename:= TempPath+'.openxp.clipboard.'+IntToStr(fpGeteUid);
+    ClipFilename:= TempPath+'.openxp.clipboard.'+IntToStr(fpGetUid);
   {$ELSE }
     ClipFilename:= TempPath+'CLIPBRD.TEMP';
   {$ENDIF }
