@@ -203,23 +203,4 @@ begin
   inherited Destroy;
 end;
 
-{
-$Log: xpconfig.pas,v $
-Revision 1.4  2002/02/21 13:52:33  mk
-- removed 21 hints and 28 warnings
-
-Revision 1.3  2001/10/15 09:04:22  ml
-- compilable with Kylix ;-)
-
-Revision 1.2  2001/09/10 15:58:03  ml
-- Kylix-compatibility (xpdefines written small)
-- removed div. hints and warnings
-
-Revision 1.1  2000/12/28 16:00:44  hd
-- Init
-  - will replace the used configuration. please be carefull by changing
-    the actuall configuration methods.
-
-}
 end.
-

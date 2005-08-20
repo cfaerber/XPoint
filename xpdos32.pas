@@ -722,34 +722,3 @@ initialization
 finalization
   SetCBreak(CheckBreak);
 end.
-
-{
-  $Log: xpdos32.pas,v $
-  Revision 1.15.2.1  2003/10/26 17:09:02  mk
-  - fixed not working GetEnv
-
-  Revision 1.15  2001/10/01 19:32:00  ma
-  - compiles again (DOS32)
-
-  Revision 1.14  2001/09/10 15:58:03  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.13  2001/08/04 20:19:13  mk
-  - added some dos compatibility functions
-
-  Revision 1.12  2001/01/05 18:36:05  ma
-  - fixed SysExec
-
-  Revision 1.11  2000/11/18 21:33:07  mk
-  - disabled Ctrl-Break
-
-  Revision 1.10  2000/11/18 21:10:00  mk
-  - added SysExec
-
-  Revision 1.9  2000/10/26 07:20:22  mk
-  - Grafikmodus mit 8 Zeilen/Zeichen wird jetzt direkt ueber das BIOS gesetzt
-
-  Revision 1.8  2000/10/19 20:52:23  mk
-  - removed Unit dosx.pas
-}

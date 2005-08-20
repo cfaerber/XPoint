@@ -52,35 +52,4 @@ const prodcode : byte = $e9;
 
 implementation
 
-{
-  $Log: xpdiff.pas,v $
-  Revision 1.9.2.1  2002/07/21 20:14:39  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.9  2002/02/21 13:52:33  mk
-  - removed 21 hints and 28 warnings
-
-  Revision 1.8  2001/09/10 15:58:03  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.7  2001/03/13 19:24:58  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.6  2000/05/22 16:13:04  hd
-  - Dateiname in Kleinschreibung
-
-  Revision 1.5  2000/04/13 12:48:40  mk
-  - Anpassungen an Virtual Pascal
-  - Fehler bei FindFirst behoben
-  - Bugfixes bei 32 Bit Assembler-Routinen
-  - Einige unkritische Memory Leaks beseitigt
-  - Einge Write-Routinen durch Wrt/Wrt2 ersetzt
-  - fehlende CVS Keywords in einigen Units hinzugefuegt
-  - ZPR auf VP portiert
-  - Winxp.ConsoleWrite provisorisch auf DOS/Linux portiert
-  - Automatische Anpassung der Zeilenzahl an Consolengroesse in Win32
-
-}
 end.

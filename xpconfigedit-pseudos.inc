@@ -86,20 +86,3 @@
       aufbau:=true;
       end;
   end;
-
-{
-  $Log: xpconfigedit-pseudos.inc,v $
-  Revision 1.2.2.2  2002/07/21 20:21:08  ma
-  - cosmetics (box name can now be written in any case)
-
-  Revision 1.2.2.1  2002/07/21 20:14:38  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.2  2001/07/23 16:05:23  mk
-  - added some const parameters
-  - changed most screen coordinates from byte to integer (saves some kb code)
-
-  Revision 1.1  2001/06/04 17:41:12  ma
-  - renamed, was xp9
-
-}

@@ -418,29 +418,4 @@ begin
     ba(data)[i]:=ba(data)[i] xor $6d;  { den Rest XORen... }
 end;
 
-{
-  $Log: xp_des.pas,v $
-  Revision 1.17.2.1  2002/07/21 20:14:38  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.17  2001/09/10 15:58:03  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.16  2001/09/08 16:29:37  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.15  2001/07/31 13:10:34  mk
-  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
-
-  Revision 1.14  2001/07/28 12:04:14  mk
-  - removed crt unit as much as possible
-
-  Revision 1.13  2001/03/13 19:24:57  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-}
 end.
-

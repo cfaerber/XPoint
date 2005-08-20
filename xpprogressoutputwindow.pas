@@ -274,42 +274,4 @@ begin
   TextAttr:=col.colmailer;
 end;
 
-{-----------------------------------------------------------------------------}
-
-{
-  $Log: xpprogressoutputwindow.pas,v $
-  Revision 1.9  2002/02/21 13:52:34  mk
-  - removed 21 hints and 28 warnings
-
-  Revision 1.8  2001/10/11 15:27:02  mk
-  - implemented direct screen writes for DOS32, no more LocalScreen
-
-  Revision 1.7  2001/09/10 15:58:04  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.6  2001/09/07 23:24:55  ml
-  - Kylix compatibility stage II
-
-  Revision 1.5  2001/07/28 12:04:16  mk
-  - removed crt unit as much as possible
-
-  Revision 1.4  2001/07/23 16:05:24  mk
-  - added some const parameters
-  - changed most screen coordinates from byte to integer (saves some kb code)
-
-  Revision 1.3  2001/04/16 18:13:28  ma
-  - ProgOutWin now pauses a bit on closing
-    (some seconds if an error occured, one second if not)
-  - removed other delays
-
-  Revision 1.2  2001/04/16 13:50:45  ma
-  - last msg will never be overwritten if new message is error msg
-
-  Revision 1.1  2001/03/21 19:17:08  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-}
 end.
-

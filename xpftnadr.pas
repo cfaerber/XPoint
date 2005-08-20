@@ -236,27 +236,4 @@ begin { --- SAsString --- }
   end;
 end;
 
-{
-  $Log: xpftnadr.pas,v $
-  Revision 1.5  2002/02/21 13:52:34  mk
-  - removed 21 hints and 28 warnings
-
-  Revision 1.4  2001/10/15 09:04:22  ml
-  - compilable with Kylix ;-)
-
-  Revision 1.3  2001/09/10 15:58:03  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.2  2001/08/11 23:06:37  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.1  2000/07/21 15:41:45  hd
-  - Init
-
-    TFTNAdr stellt eine (noch) rudimentaere Klasse zur Bearbeitung von
-    FTN-Adressen zur Verfuegung. Sie soll den Record 'FidoAdr' abloesen.
-
-}
 end.
-
