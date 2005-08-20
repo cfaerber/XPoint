@@ -27,7 +27,7 @@ unit xp0;
 interface
 
 uses
-  typeform,keys,xpglobal,log,classes,sysutils,fidoglob;
+  keys,xpglobal,log,classes,sysutils,fidoglob;
 
 
 { Die folgenden drei Konstanten muessen Sie ergaenzen, bevor Sie     }

@@ -26,7 +26,7 @@ interface
 
 uses
   {$IFDEF Win32} windows,xpcrt, {$ENDIF}
-  {$IFDEF NCRT} {$ifdef Kylix}ncursix,{$else}ncurses,nmousex,{$endif} {$ENDIF}
+  {$IFDEF NCRT} nmousex,{$endif}
   xpglobal,
   debug,
   sysutils,
@@ -84,7 +84,7 @@ uses maus2, winxp;
 var LastEvent: MOUSE_EVENT_RECORD;
 {$ELSE}
 {$IFDEF NCRT}
-uses xpcurses,maus2;
+uses maus2;
 {$IFDEF Kylix}
 var MouseEvent: NCursix.MEVENT;
 {$ELSE}

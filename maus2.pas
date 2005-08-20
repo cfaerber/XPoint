@@ -27,9 +27,9 @@ unit  maus2;
 interface
 
 uses
-  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,nmousex,{$endif} {$endif}
+  {$ifdef NCRT} xpcurses,nmousex,{$endif}
   {$IFDEF Win32} Windows,xpcrt, {$ENDIF}
-  typeform,mouse,keys,xpglobal,debug;
+  mouse,keys,xpglobal,debug;
 
 const mausleft    = #0#240;       { links gedrÅckt  }
       mausunleft  = #0#241;       { .. losgelassen  }

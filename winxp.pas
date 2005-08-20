@@ -38,7 +38,6 @@ uses
     crt, {for GotoXY} 
   {$ENDIF}
   {$IFDEF unix} 
-    xplinux,
     xpcurses, 
   {$ENDIF }
   osdepend,
