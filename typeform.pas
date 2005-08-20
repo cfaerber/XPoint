@@ -1100,9 +1100,6 @@ end;
 function Hex(const l:integer; const n:integer):string;
 begin
   Hex:= IntToHex(l, n);
-  {$IFDEF VP }
-    Hex := RightStr(Result, n);
-  {$ENDIF }
 end;
 
 function HexVal(const s:string):longint;

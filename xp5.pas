@@ -441,11 +441,6 @@ begin
   wrt(x+4,y+12,GetShortVersion);
 {$ENDIF }
   attrtxt(col.colmbox);
-{$IFDEF VP }
-  wrt(x+19,y+5,format('%5d KB',[memused div 1024]));
-  wrt(x+31,y+4,format('%8d MB',[SysDiskSizeLong(0) div 1024 div 1024]));
-  wrt(x+31,y+6,format('%8d MB',[SysDiskFreeLong(0) div 1024 div 1024]));
-{$ELSE }
   {$IFDEF Linux}
     wrt(x+19,y+4,format('%5d MB',[info.totalram div 1024 div 1024]));
     wrt(x+19,y+6,format('%5d MB',[info.freeram div 1024 div 1024]));
@@ -462,7 +457,6 @@ begin
     wrt(x+31,y+4,format('%8d MB',[disksize(0) div 1024 div 1024]));
     wrt(x+31,y+6,format('%8d MB',[diskfree(0) div 1024 div 1024]));
    {$ENDIF}
-{$ENDIF }
    wrt(x+31,y+5,format('%8d MB',[(xpspace('')+xpspace(FidoDir)+xpspace(InfileDir)+
                                  xpspace(XferDir)) div 1024 div 1024]));
 {$IFDEF Linux}

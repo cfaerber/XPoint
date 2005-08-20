@@ -187,13 +187,6 @@ end;
   vert    : vertikale Anzeige }
 
 
-{$IFDEF VP }
-function OwnStringListCompare(List: TStringList; Index1, Index2: Integer): Integer;
-begin
-  Result := CompareText(List[Index1], List[Index2]);
-end;
-{$ENDIF }
-
 function fsbox(y: Integer; path,pathx:string; vorgabe:s20; xdir,invers,vert:boolean):string;
 
 const
@@ -530,11 +523,7 @@ begin
                 (cpos(chr(ord(t[1])+64),drives)>0);
     end
     else begin
-  {$IFDEF VP }
-      F.CustomSort(OwnStringListCompare);
-  {$ELSE }
       F.Sort;
-  {$ENDIF }
       for i:=0 to F.Count - 1 do
         if f[i][1]>=#125 then
         begin

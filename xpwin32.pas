@@ -56,9 +56,6 @@ function RTLexec(const path, comline : string; var DosExitCode: Integer; wait: b
 implementation
 
 uses
-  {$IFDEF VP}
-  vputils,
-  {$ENDIF }
   Typeform, SysUtils, windows, winxp;
 
 function SysGetScreenLines: Integer;

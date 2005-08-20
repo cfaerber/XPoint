@@ -239,16 +239,11 @@ end;
 
 procedure errsound;
 begin
-{$IFDEF VP }
-  PlaySound(1000,25);
-  PlaySound(780,25);
-{$ELSE }
   sound(1000);
   delay(25);
   sound(780);
   delay(25);
   nosound;
-{$ENDIF }
 end;
 
 
@@ -275,13 +270,9 @@ end;
 
 procedure click;
 begin
-{$IFDEF VP }
-  PlaySound(4000,10);
-{$ELSE }
   sound(4000);
   delay(10);
   nosound;
-{$ENDIF }
 end;
 
 

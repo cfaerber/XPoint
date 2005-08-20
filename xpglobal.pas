@@ -153,19 +153,6 @@ type
   PByteArray = ^TByteArray;
   TByteArray = array[0..MaxInt div 2] of Byte;
 
-
-{$IFDEF VP }
-type
-  FileRec = record
-    Handle:   Longint;                  // File handle
-    Mode:     Longint;                  // Current file mode
-    RecSize:  Longint;                  // I/O operation record size
-    Private:  array [1..28] of Byte;    // Reserved
-    UserData: array [1..32] of Byte;    // User data area
-    Name:     array [0..259] of Char;   // File name (ASCIIZ)
-  end;
-{$ENDIF }
-
 const
   {$I version.inc }
 

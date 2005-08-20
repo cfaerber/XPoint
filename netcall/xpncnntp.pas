@@ -1,4 +1,4 @@
-{  $Id: xpncnntp.pas,v 1.39.2.16 2004/07/20 21:52:28 mk Exp $
+{  $Id$
 
    OpenXP NNTP netcall unit
    This is free software; you can redistribute it and/or modify it
@@ -58,7 +58,7 @@ uses
   datadef,
   xp1input;                     { JN }
 
-{$IFDEF VP}const{$ELSE}resourcestring{$ENDIF}
+resourcestring
   res_getgrouplistinit  = '%s Newsgroupliste holen';
   res_postnewsinit      = '%s News senden';
   res_getnewsinit       = '%s News holen';

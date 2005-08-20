@@ -1,4 +1,4 @@
-{  $Id: ncpop3.pas,v 1.18.2.4 2004/07/26 17:21:36 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -111,11 +111,7 @@ uses md5,typeform;
 const
   DefaultPOP3Port       = 110;
 
-{$IFDEF VP }
-const
-{$ELSE }
 resourcestring
-{$ENDIF }
   res_connect1          = 'Versuche %s zu erreichen...';
   res_connect2          = 'Unerreichbar: %s';
   res_connect3          = 'Anmeldung fehlgeschlagen: %s';

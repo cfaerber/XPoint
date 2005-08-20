@@ -1,4 +1,4 @@
-{  $Id: xpncpop3.pas,v 1.32.2.8 2004/07/20 21:52:28 mk Exp $
+{  $Id$
 
    OpenXP POP3 netcall unit
    This is free software; you can redistribute it and/or modify it
@@ -52,7 +52,7 @@ uses
   zcrfc,
   xp3o;                         { ForceRecipient }
 
-{$IFDEF VP}const{$ELSE}resourcestring{$ENDIF}
+resourcestring
   res_smtpinit          = '%s Mails verschicken';
   res_pop3init          = '%s Mails holen';
   res_mailstat          = '%d (%d neue) Mails in %d Bytes';

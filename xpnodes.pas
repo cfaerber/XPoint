@@ -72,11 +72,7 @@ const MaxNodelists = 100;
       maxber    = 300;
       maxnodes  = 3000;    { max Nodes / Net }
       maxpoints = 700;     { max Points / Node }
-{$IFDEF VP }
-      nodekenn  = 'IDX'^Z;
-{$ELSE }
       nodekenn: Shortstring  = 'IDX'^Z;
-{$ENDIF }
 
       nodeopen  : boolean = false;
       xpdir     : string[80] = '';

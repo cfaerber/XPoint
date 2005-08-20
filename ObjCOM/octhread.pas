@@ -13,15 +13,14 @@ unit OCThread;
 
 {$IFDEF OS2}
   uses
-  {$IFDEF VP }
-    OS2Base;
-  {$ELSE }
     doscalls,
     OS2def,
     pmwin;
-  {$ENDIF }
 {$ENDIF}
-{$IFDEF WIN32}uses windows;{$ENDIF}
+{$IFDEF WIN32}
+  uses
+    windows;
+{$ENDIF}
 
 {$IFDEF OS2}
   Type THandle = Longint;

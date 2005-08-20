@@ -34,9 +34,6 @@ uses
   xpos2,
   doscalls,
 {$ENDIF }
-{$ifdef vp }
-  vpsyslow,
-{$endif}
 {$ifdef NCRT }
   xpcurses,
 {$endif }

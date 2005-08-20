@@ -369,7 +369,7 @@ begin
   case {$IFDEF Win32}WinSock.select{$ELSE}fpselect{$ENDIF}(256,@SSet,nil,nil,@NilTm) of
     0:            begin Result:=0; end;
     SOCKET_ERROR: begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end;
-  else            if {$IFDEF WinSockets}ioctlsocket(SHandle,FIONREAD,{$IFDEF FPC}@{$ENDIF}{$IFDEF VP}@{$ENDIF}Result)<>0
+  else            if {$IFDEF WinSockets}ioctlsocket(SHandle,FIONREAD,{$IFDEF FPC}@{$ENDIF}Result)<>0
                      {$ELSE}not (fpioctl(SHandle,FIONREAD,@Result) = 0){$ENDIF} then
                     begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end
                   else if Result=0 then SOpened:=false; (* select said readable *)
