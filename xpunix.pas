@@ -34,7 +34,7 @@ Function GetEnv(envvar: string): string;
 implementation
 
 uses
-  unix;
+  baseunix;
 
 Function GetEnv(envvar: string): string;
 begin
