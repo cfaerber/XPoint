@@ -119,7 +119,7 @@ procedure NodeSelProc(var cr:customrec);
 implementation
 
 uses  xpnt,xp2,xp3,xp4e,
-{$IFDEF Unix}
+{$IFDEF Linux}
   oldlinux, // for stat & fsstat
 {$ENDIF}
 xpfidonl;
