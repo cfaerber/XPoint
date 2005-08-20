@@ -963,50 +963,5 @@ begin
   closebox;
 end;
 
-
-{
-  $Log: xp5.pas,v $
-  Revision 1.64.2.3  2003/04/12 08:05:53  mk
-  - removed ParWinTime, ParOs2, Usemulti2 and command line options /w and /os2
-
-  Revision 1.64.2.2  2002/09/09 09:02:43  mk
-  - added const parameters
-
-  Revision 1.64.2.1  2002/07/21 20:14:37  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.64  2002/02/21 13:52:33  mk
-  - removed 21 hints and 28 warnings
-
-  Revision 1.63  2002/01/16 23:48:17  cl
-  - after merge fixes
-
-  Revision 1.62  2002/01/13 15:07:31  mk
-  - Big 3.40 Update Part I
-
-  Revision 1.61  2001/09/18 13:57:45  ma
-  - small mouse cursor related fixes
-
-  Revision 1.60  2001/09/16 19:53:58  ma
-  - fixed calendar and statistics display problems (please check)
-
-  Revision 1.59  2001/09/10 15:58:03  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.58  2001/09/08 16:29:36  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.57  2001/09/07 23:24:54  ml
-  - Kylix compatibility stage II
-
-  Revision 1.56  2001/09/06 18:48:12  mk
-  - fixed use of mattr in TimedScsaver
-
-  Revision 1.55  2001/08/10 20:57:59  mk
-  - removed some hints and warnings
-  - fixed some minior bugs
-}
 end.
 
