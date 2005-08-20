@@ -26,13 +26,7 @@
 
 { OS speceific uses }
 
-uses xpcurses, 
-  {$IFDEF Kylix }
-    libc
-  {$ELSE }
-    linux,oldlinux
-  {$ENDIF }
-  ;
+uses xpcurses,unix;
 
 { local declaritions }
 

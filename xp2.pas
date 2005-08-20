@@ -28,15 +28,7 @@ interface
 
 uses
   {$IFDEF unix}
-  xplinux,
-  xpcurses,
-  {$IFDEF fpc}
-    {$IFDEF freebsd}
-      xpunix,
-    {$ELSE}
-      linux,oldlinux,
-    {$ENDIF}  
-  {$ENDIF}
+  xplinux,xpcurses,xpunix,
   {$ENDIF}
   {$IFDEF Win32} xpwin32, {$ENDIF }
   {$IFDEF DOS32} xpdos32, {$ENDIF }

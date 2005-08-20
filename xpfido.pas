@@ -29,9 +29,6 @@ interface
 uses  xpglobal,
 {$IFDEF NCRT }
   xpcurses,
-{$IFDEF Kylix}
-  libc,
-{$ENDIF}
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,winxp,maus2,
   maske,lister, archive,stack,montage,resource,datadef,database,
@@ -122,12 +119,8 @@ procedure NodeSelProc(var cr:customrec);
 implementation
 
 uses  xpnt,xp2,xp3,xp4e,
-{$IFDEF Kylix}
-  xplinux,
-{$ELSE}
-{$IFDEF Linux}
-  linux,oldlinux, // for stat & fsstat
-{$ENDIF}
+{$IFDEF Unix}
+  oldlinux, // for stat & fsstat
 {$ENDIF}
 xpfidonl;
 

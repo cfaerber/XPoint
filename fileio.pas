@@ -27,14 +27,7 @@ interface
 
 {$ifdef unix}
 uses sysutils,unix,baseunix,xpunix,
-{$IFDEF Kylix}
-  libc,
-{$ELSE}
-{$IFDEF linux}
-  Linux,oldlinux,
-{$ENDIF }
-{$ENDIF }
-  xplinux,xpglobal,typeform;
+     xplinux,xpglobal,typeform;
 {$else }
 uses sysutils,xpglobal,typeform, osdepend
   {$ifdef Win32} ,xpwin32, windows {$endif}

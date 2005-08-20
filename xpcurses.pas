@@ -28,11 +28,7 @@ interface
 uses
 //  xpglobal,
 {$IFDEF FPC }
-{$IFDEF freebsd}
   unix,
-{$ELSE}
-  linux,oldlinux,
-{$ENDIF }  
 {$ENDIF }
   utftools,
 {$IFDEF Kylix}

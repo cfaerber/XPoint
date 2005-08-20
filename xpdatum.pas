@@ -28,13 +28,7 @@ interface
 
 uses
 {$IFDEF unix}
-{$IFDEF fpc}
-  {$IFDEF freebsd}
-    unix,
-  {$ELSE}
-    linux,oldlinux,
-  {$ENDIF}
-{$ENDIF }
+  unix,
 {$ENDIF }
   sysutils,
   typeform,

@@ -36,14 +36,7 @@ uses xpglobal,
   xp1,
   xpnt,
   {$IFDEF unix}
-  {$IFDEF fpc}
-    {$IFDEF freebsd}
-      unix,
-    {$ELSE}
-      linux,oldlinux,
-    {$ENDIF}  
-  {$ENDIF }
-  XPLinux,
+    unix,XPLinux,
   {$ENDIF }
   {$IFDEF NCRT }
   xpcurses,                             { Fuer die Sonderzeichen an der Console }
