@@ -28,19 +28,11 @@ interface
 
 uses
   xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$IFDEF Kylix}
-  xplinux,
-  libc,
-{$ELSE}
   {$IFDEF Unix}
     xpunix,
   {$ENDIF}
-{$ENDIF}
-{$ENDIF }
-  sysutils,typeform,keys,fileio,inout,maus2,lister, xpheader,
-  printerx,datadef,database,maske,archive,resource,clip,xp0,crc;
+  sysutils,typeform,keys,fileio,inout,maus2,lister,xpheader,
+  printerx,datadef,database,maske,archive,resource,clip,xp0;
 
 const ListKommentar : boolean = false;   { beenden mit links/rechts }
       ListQuoteMsg  : string = '';

@@ -33,7 +33,6 @@ uses
   sysutils,
   typeform,
   montage,
-  osdepend,
   xpglobal;
 
 var

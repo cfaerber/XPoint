@@ -32,7 +32,7 @@ uses
   {$ENDIF }
   typeform,
   sysutils, classes,
-  fileio, inout, maus2, keys, winxp, resource;
+  inout,maus2,keys,winxp,resource;
 
 const
   ListHelpStr: string[8] = 'Hilfe';
@@ -195,7 +195,7 @@ uses
 {$IFDEF WIn32 }
   xpwin32,
 {$ENDIF }
-  gpltools,xp0,mime,utftools,unicode,xpkeys,xp1, clip;
+  gpltools,xp0,mime,utftools,xpkeys;
 
 // Zerlegen des Buffers in einzelne Zeilen
 

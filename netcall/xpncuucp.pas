@@ -1,4 +1,4 @@
-{  $Id: xpncuucp.pas,v 1.17.2.5 2003/08/11 22:28:26 mk Exp $
+{  $Id$
 
    OpenXP UUCP netcall routines
    (C) 2001 OpenXP team (www.openxp.de) and Claus F"arber
@@ -27,10 +27,8 @@ unit xpncuucp;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ENDIF }
-  sysutils,typeform,montage,fileio,keys,maus2,inout,lister,resource,
-  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes,
-  zcrfc,progressoutput;
+  sysutils,typeform,fileio,keys,inout,lister,resource,maske,xpglobal,
+  debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes,zcrfc,progressoutput;
 
 function UUCPNetcall(boxname: string;
                      boxpar: boxptr;

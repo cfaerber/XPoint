@@ -32,9 +32,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  typeform,fileio,inout,keys,winxp,montage,
-  datadef,database,maus2,maske,clip,resource,printerx,
-  xp0,xp1,xp1o,xp1o2,xp1input,xpnt,xpglobal;
+  typeform,inout,keys,maus2,maske,resource,xp0,xp1,xp1input,xpnt,xpglobal;
 
 procedure OpenXPInfo;
 procedure BetaMessage;

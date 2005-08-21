@@ -41,9 +41,6 @@ implementation  { ------------------------------------------------- }
 uses
   Netcall,NCSocket,ncsmtp,ncpop3,
   progressoutput,xpprogressoutputwindow,
-{$ifdef NCRT}
-  XPCurses,
-{$endif}
   typeform,
   InOut,
   xp1,                          { dialoge }

@@ -30,7 +30,7 @@ interface
 uses
   xpglobal,             { Nur wegen der Typendefinition }
   ProgressOutput,       { TProgressOutput }
-  Netcall,              { TNetcall }
+  Netcall,              { TNetcall, wirklich noetig? - stv - }
   NCSocket,             { TSocketNetcall }
   Classes,              { TStringList }
   sysutils;

@@ -29,7 +29,7 @@ interface
 
 uses
   xpglobal,
-  sysutils, osdepend,
+  sysutils,
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}

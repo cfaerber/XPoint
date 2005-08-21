@@ -34,10 +34,10 @@ uses
   {$IFDEF DOS32} xpdos32, {$ENDIF }
   {$IFDEF OS2} xpos2, {$ENDIF }
   {$IFDEF XPEasy} xpeasy, {$ENDIF }
-  sysutils,xpcfg,typeform,fileio,keys,inout,winxp,mouse,datadef,database,
-  databaso,maske,help,printerx,lister,win2,maus2,crc,clip,resource,montage,
-  xpglobal,debug,xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,fidoglob,
-  classes, osdepend;
+  sysutils,xpcfg,typeform,fileio,keys,inout,mouse,datadef,database,
+  maske,help,lister,win2,maus2,clip,resource,montage,xpglobal,debug,
+  xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,fidoglob,classes,
+  osdepend;
 
 var
   XPFirstStart: Boolean;
@@ -85,7 +85,7 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 implementation  {-----------------------------------------------------}
 
 uses
- xp1o,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,xpreg,mime,utftools
+ xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,mime,utftools
 {$IFDEF Kylix}
   ,libc
 {$ENDIF}  

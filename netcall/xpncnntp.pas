@@ -45,17 +45,12 @@ uses
   progressoutput,
   xpprogressoutputwindow,
   resource,
-{$ifdef NCRT}
-  XPCurses,
-{$endif}
   InOut,
   zcrfc,
   typeform,
   xpnetcall,
   xp1,                          { dialoge }
   xp1o,
-  database,
-  datadef,
   xp1input;                     { JN }
 
 resourcestring

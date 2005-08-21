@@ -27,7 +27,7 @@ unit  xp_pgp;
 interface
 
 uses
-  sysutils,xpglobal,typeform,fileio,resource,database,maske,xpheader,osdepend,
+  sysutils,xpglobal,typeform,fileio,resource,database,maske,xpheader,
 {$IFDEF unix}
   xpunix,
 {$ENDIF}

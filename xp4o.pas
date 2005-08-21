@@ -33,8 +33,8 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  typeform,fileio,inout,keys,montage,maske,datadef,database,
-  lister,archive,maus2,winxp,printerx,resource,xpglobal, osdepend,
+  typeform,fileio,inout,keys,maske,datadef,database,
+  lister,archive,maus2,winxp,printerx,resource,xpglobal,osdepend,
   xp0,xp1,xp1o2,xp1help,xp1input;
 
 
@@ -111,11 +111,8 @@ Procedure Brettmarksuche;
 
 implementation  {-----------------------------------------------------}
 
-uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpview, xpheader, xpmakeheader,
-     xp_pgp,debug,viewer, xpconfigedit, classes, xp9bp, mime, 
-{$IFDEF Kylix}
-     xplinux,
-{$ENDIF}
+uses xpkeys,xpnt,xp1o,xp4,xp3,xp3o,xp3o2,xp3ex,xpfido,xpmaus,xpheader,
+     xpmakeheader,xp_pgp,debug,viewer,xpconfigedit,classes,xp9bp,mime, 
      regexpr;
 
 type arcbuf = record

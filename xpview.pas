@@ -25,7 +25,7 @@ unit xpview;
 interface
 
 uses
-  sysutils, viewer, XPGlobal;
+  sysutils,XPGlobal;
 
 (*
 procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo); *)
@@ -33,7 +33,7 @@ procedure TestGifLbmEtc(fn:string; betreffname:boolean; var viewer:viewinfo); *)
 implementation
 
 uses
-  database, xp0, xp1, xp1o, typeform, fileio;
+  xp0;
 
 (*
 { Bin„rdatei auf GIF- und ILBM-Signatur testen;  }

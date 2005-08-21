@@ -27,11 +27,8 @@ unit xpe;
 interface
 
 uses
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,fileio,inout,keys,winxp,maus2,resource,maske, sysutils,
-  eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp5,xp10;
+  typeform,fileio,inout,keys,maus2,resource,maske,sysutils,
+  eddef,editor,xpglobal, xp0,xp1o,xp1help,xp1input,xpkeys,xp10;
 
 
 const EditXkeyfunc : EdTProc = nil;

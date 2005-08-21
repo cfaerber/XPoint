@@ -47,7 +47,7 @@ uses
 {$ENDIF }
   typeform,montage,keys,fileio,inout,winxp,win2,
   datadef,database,mouse,maus2,help,maske,lister,printerx,clip,
-  resource,xp0,crc,xpglobal,classes,debug,xpheader, osdepend;
+  resource,xp0,crc,xpglobal,classes,debug,osdepend;
 
 const maxhidden  = 500;                 { max. versteckte Menpunkte }
 
@@ -263,7 +263,6 @@ uses
 {$ENDIF }
   mime,
   utftools,
-  unicode,
   direct;
 
 { Diese Tabelle konvertiert NUR ™š„”á !    }

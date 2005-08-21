@@ -83,18 +83,15 @@ procedure SendAttach_EditText(pa:TSendAttach_Part;IsNachricht,Umlaute:Boolean;Si
 { ------------------------} implementation { ------------------------- }
 
 uses
-{$IFDEF unix}
-  xpcurses,
-{$ENDIF}
 {$IFDEF Win32}
   windows,
 {$ENDIF}
 {$IFDEF Delphi}
   DateUtils,
 {$ENDIF}
-  fileio, inout, keys, lister, maske, maus2, resource, typeform,
-  utftools, winxp, xp0, xp1, xp1input, xp1o, xp2c, xp4e, xpdatum, xpe,
-  xpglobal, xpnt, xpsendmessage_attach_analyze, xpstreams, debug;
+  fileio,inout,keys,maske,maus2,resource,typeform,utftools,winxp,
+  xp0,xp1,xp1input,xp1o,xp2c,xp4e,xpdatum,xpe,xpglobal,xpnt, 
+  xpsendmessage_attach_analyze,xpstreams,debug;
 
 constructor TSendAttach_Part.Create;
 begin

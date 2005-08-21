@@ -33,8 +33,8 @@ uses
     xpunix,
   {$ENDIF}
   {$ENDIF }
-  sysutils,typeform,fileio,inout,winxp,win2,keys,maske,datadef,database,
-  printerx,mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
+  sysutils,typeform,fileio,inout,win2,keys,maske,mouse,
+  maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
   utftools, mime,
   xpglobal;
 
@@ -99,7 +99,7 @@ uses
 {$IFDEF Kylix}
   libc,
 {$ENDIF}  
-  xp1o,xp2,xp3, xp4o2,xp9bp,xpnt, osdepend, classes;
+  xp1o,xp2,xp4o2,xpnt,osdepend,classes;
 
 const
   MaxProtocols = 2;

@@ -27,7 +27,7 @@ interface
 
 uses
   sysutils,ZFTools,typeform,fileio,keys,maus2,inout,resource,maske,
-  xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes,osdepend;
+  xpglobal,debug,xp0,xpdiff,xp1,classes,osdepend;
 
 
 function ZConnectNetcall(box: string;
@@ -40,7 +40,7 @@ function ZConnectNetcall(box: string;
 implementation   { -------------------------------------------------- }
 
 uses
-  xp3,xp3o,xpmakeheader,xpprogressoutputwindow,xpmodemscripts,
+  xp3o,xpmakeheader,xpprogressoutputwindow,xpmodemscripts,
   xpnt,xpnetcall,ncgeneric,objcom,timer,ncmodem,progressoutput;
 
 

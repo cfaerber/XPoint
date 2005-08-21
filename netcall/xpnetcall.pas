@@ -1,4 +1,4 @@
-{  $Id: xpnetcall.pas,v 1.52.2.15 2003/09/07 19:09:13 mk Exp $
+{  $Id$
 
    OpenXP netcall unit
    Copyright (C) 2001 OpenXP team (www.openxp.de) and M.Kiesel
@@ -30,10 +30,9 @@ interface
 
 uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
-  sysutils,xpglobal,typeform,datadef,database,fileio,inout,keys,winxp,
-  maske,maus2,montage,lister,zcrfc,debug,resource,stack,xp0,xp1,xp1help,
-  xp1input,xp2c,xp3o2,xpsendmessage,xpdiff,xpncuucp,zftools,fidoglob,
-  classes,archive,xp3ex,xpterminal;
+  sysutils,xpglobal,typeform,datadef,database,fileio,inout,keys,
+  maske,maus2,zcrfc,debug,resource,stack,xp0,xp1,xp1help,xp3o2,
+  xpsendmessage,xpdiff,xpncuucp,zftools,classes,xp3ex,xpterminal;
 
 const CrashGettime : boolean = false;  { wird nicht automatisch zurueckgesetzt }
 

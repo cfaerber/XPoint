@@ -1,4 +1,4 @@
-{  $Id: ncuucp.pas,v 1.24.2.5 2003/08/25 06:43:52 mk Exp $
+{  $Id$
 
    OpenXP UUCP netcall class
    Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Claus F"aerber
@@ -26,7 +26,7 @@ unit ncuucp;
 
 { ------------------------------ } INTERFACE { ------------------------------- }
 
-uses ncmodem,timer,fidoglob,xpglobal,classes,xpprogressoutputwindow,xp1;
+uses ncmodem,timer,xpglobal,classes,xpprogressoutputwindow,xp1;
 
 type
   TUUCPNetcall = class(TModemNetcall)
