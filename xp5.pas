@@ -44,7 +44,7 @@ uses
   xpcurses,
 {$ENDIF}
   xpglobal,typeform,fileio,inout,keys,winxp,montage,feiertag,datadef,database,
-  maus2,maske,clip,resource,xp0,xp1,xp1input,xp1o,xp1o2,fidoglob, OSDepend;
+  maus2,maske,resource,xp0,xp1,xp1input,xp1o,xp1o2,fidoglob;
 
 procedure kalender;
 procedure memstat;

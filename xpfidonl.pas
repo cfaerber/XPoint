@@ -27,7 +27,7 @@ unit xpfidonl;
 interface
 
 uses  classes,sysutils,typeform,montage,fileio,maske,resource,archive,
-      xp0,xp1,xp1o,xp3,xpglobal,fidoglob;
+      xp0,xp1,xp1o,xpglobal,fidoglob;
 
 
 procedure InitNodelist;

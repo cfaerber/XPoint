@@ -30,8 +30,8 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  typeform,keys,fileio,inout,maus2,datadef,database, sysutils,
-  stack,resource, xp0;
+  keys,inout,maus2,datadef,sysutils,
+  resource, xp0;
 
 procedure wkey(sec:word; count:boolean);
 function  DruckWiederholen:boolean;
@@ -40,7 +40,7 @@ procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
 
 implementation  { --------------------------------------------------- }
 
-uses xp1,xp1input, winxp;
+uses xp1,xp1input;
 
 
 procedure wkey(sec:word; count:boolean);

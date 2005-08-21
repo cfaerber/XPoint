@@ -93,7 +93,7 @@ implementation  { ------------------------------------------------- }
 
 uses
   {$IFDEF Unix} xpcurses,{$ENDIF}
-  typeform,winxp,xp0,xp1,inout;
+  typeform,xp0,xp1,inout;
 
 constructor TProgressOutputWindow.CreateWithSize(iw,ih: Integer; Headline: String; Visible: Boolean);
 begin

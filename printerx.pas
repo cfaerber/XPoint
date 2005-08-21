@@ -30,10 +30,7 @@ interface
 
 uses
   xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  winxp,keys,typeform,inout,maus2;
+  keys,typeform,inout;
 
 const drlength = 20;
       dnlength = 30;

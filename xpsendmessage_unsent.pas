@@ -29,9 +29,8 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  sysutils,typeform,fileio,inout,keys,datadef,database,maske, xpheader,
-  crc,lister,winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,
-  xpcc, xp2c,xp_des,xpe,fidoglob;
+  sysutils,typeform,fileio,inout,keys,datadef,database,maske,xpheader,
+  maus2,resource,xp0,xp1,xp1input,xpcc,fidoglob;
 
 procedure Unversandt(edit,modi:boolean);
 procedure Weiterleit(typ:byte; sendbox:boolean);

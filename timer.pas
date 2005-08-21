@@ -50,7 +50,7 @@ procedure WaitTime (Milliseconds: Real); {Busy loop}
 implementation
 
 uses
-  SysUtils, OSDepend, debug, xpglobal;
+  SysUtils,debug,xpglobal;
 
 const
   SecsPerDay = 60 * 60 * 24;

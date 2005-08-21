@@ -28,9 +28,10 @@ interface
 
 uses
   sysutils,
-  typeform,fileio,inout,keys,datadef,database,maske,crc,lister, osdepend,
-  winxp,montage,stack,maus2,resource,xp0,xp1,xp1input,xp2c,xp_des,xpe, xpheader,
-  xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze, xpmime,xpdatum,
+  typeform,fileio,inout,keys,datadef,database,maske,crc,winxp,
+  montage,maus2,resource,xp0,xp1,xp1input,xp_des,xpe, xpheader,
+  xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze,
+  xpmime,xpdatum,
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}

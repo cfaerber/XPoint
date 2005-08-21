@@ -26,8 +26,8 @@ unit xp3o2;
 
 interface
 
-uses sysutils,classes, typeform,datadef,database,resource,xp0,xpsendmessage,xpheader,
-  xpglobal,xp1;
+uses sysutils,classes,typeform,database,resource,xp0,xpsendmessage,
+     xpheader,xpglobal;
 
 procedure WriteHeader(var hd:theader; var f:file);
 procedure SetBrettindex;
@@ -43,7 +43,7 @@ function  UserNetztyp(adr:string):byte;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o,xp4, xp4e, xpnt,xpdatum,xp_pgp, xpmakeheader, mime;
+uses xp3,xp3o,xp4,xp4e,xpnt,xpmakeheader,mime;
 
 procedure WriteHeader(var hd:theader; var f:file);
 var s:TMemoryStream;

@@ -31,9 +31,9 @@ uses xpglobal,
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
-typeform,fileio,inout,winxp,keys,maske,datadef,database,
-  resource,xp0,xpnt,xp1,xp1input,xp2,xp3,xp4,xp4e,xpsendmessage, maus2,lister, sysutils,
-  classes, xpHeader, xpconfigedit, xpmakeheader;
+typeform,inout,keys,maske,datadef,database,resource,xp0,xpnt,
+  xp1,xp1input,xp2,xp3,xp4e,xpsendmessage, maus2,lister,sysutils,
+  classes,xpHeader,xpconfigedit,xpmakeheader;
 
 procedure askRTA(const XPStart :boolean);
 procedure DoReplyToAll (var brk, adresseAusgewaehlt :boolean; var empf, realname :string; var dispdat :DB);

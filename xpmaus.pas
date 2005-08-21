@@ -30,8 +30,8 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  sysutils,typeform,fileio,keys,inout,maus2,datadef,database,stack,maske, xpheader,
-  xp0,xp1,xp1input,crc,xp_iti, xpglobal;
+  sysutils,typeform,fileio,keys,inout,maus2,database,stack,maske,xpheader,
+  xp0,xp1,xp1input,xp_iti,xpglobal;
 
 
 procedure MausLogFiles(art:byte; delfile:boolean; var box:string);
@@ -45,7 +45,7 @@ procedure MausGetInfs(box, logfile:string);
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xpnt,xpsendmessage,xpsendmessage_unsent,xpconfigedit, winxp;
+uses xp1o,xp3,xp3o2,xpnt,xpsendmessage,xpsendmessage_unsent,xpconfigedit;
 
 
 { art=0 : Zurueckgelieferte Maus-MessageIDs aus Logfile in  }

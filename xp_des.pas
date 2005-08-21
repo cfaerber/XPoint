@@ -31,7 +31,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  winxp, fileio,inout,maus2,xp0, xpglobal;
+  inout,maus2,xp0, xpglobal;
 
 procedure DES_PW(keystr:string);
 procedure DES_code(decode:boolean; var data; ofs,total:longint;

@@ -30,7 +30,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  sysutils,typeform,fileio,inout,keys,maske,datadef,database,winxp, xpheader,
+  sysutils,typeform,fileio,inout,keys,maske,datadef,database,xpheader,
   win2,maus2,resource,xpglobal,xp0,xp1,xp1input,xp3,fidoglob;
 
 

@@ -26,8 +26,7 @@ unit rfc2822;
 
 uses
   Classes,
-  utftools,
-  unicode;
+  utftools;
 
 { ---------------------- RFC 2822 Header Parsing --------------------- }
 

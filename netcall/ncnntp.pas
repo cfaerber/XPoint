@@ -30,7 +30,7 @@ interface
 uses
   xpglobal,             { Nur wegen der Typendefinition }
   ProgressOutput,       { TProgressOutput }
-  netcall,              { TNetcall }
+  netcall,		{ TNetcall, to remove? - stv - }
   ncsocket,             { TSocketNetcall }
   Classes,              { TStringList }
   sysutils;

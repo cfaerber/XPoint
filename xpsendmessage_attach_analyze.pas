@@ -26,7 +26,7 @@ unit xpsendmessage_attach_analyze;
 { ---------------------------} interface { --------------------------- }
 
 uses
-  mime, mime_analyze, xpsendmessage_attach;
+  mime,xpsendmessage_attach;
 
 procedure SendAttach_Analyze(pa:TSendAttach_Part;NewFile:Boolean;SigFile:String;netztyp:Byte;docode:Byte;pgpsig:boolean);
 function  GuessContentTypeFromFileName(FileName:String):String;
@@ -34,10 +34,9 @@ function  GuessContentTypeFromFileName(FileName:String):String;
 { ------------------------} implementation { ------------------------- }
 
 uses
-  {$IFDEF unix} xpcurses, {$ENDIF}
   {$IFDEF Win32} windows, {$ENDIF}
-  classes, database, inout, keys, lister, typeform, xp0, xpglobal, xpnt,
-  sysutils, xpstreams;
+  classes,database,inout,keys,typeform,xp0,xpglobal,xpnt,
+  sysutils,xpstreams;
 
 function GuessContentTypeFromFileName(FileName:String):String;
 var ext: string;

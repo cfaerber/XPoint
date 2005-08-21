@@ -26,8 +26,7 @@ unit xp9bp;
 
 interface
 
-uses typeform,fileio,datadef,database,
-     sysutils,xp0,xp1,xp2,xpnt, xpglobal;
+uses typeform,fileio,sysutils,xp0,xp1,xp2,xpnt,xpglobal;
 
 const bm_changesys = 1;
       bm_GUP       = 2;

@@ -27,14 +27,14 @@ unit help;
 interface
 
 uses
-  xpglobal, osdepend, sysutils,
+  xpglobal,sysutils,
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
 {$IFDEF Dos32 }
   crt,
 {$ENDIF }
-  xp0, typeform,keys,fileio,inout,winxp,mouse,maus2,printerx,debug;
+  xp0, typeform,keys,inout,mouse,maus2,printerx,debug;
 
 const maxpages = 2000;
       maxqvw   = 400;

@@ -31,7 +31,7 @@ uses  xpglobal,
   xpcurses,
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,winxp,maus2,
-  maske,lister, archive,stack,montage,resource,datadef,database,
+  maske,lister,archive,stack,resource,datadef,database,
   xp0,xp1,xp1o,xp1input,fidoglob;
 
 const nfComp   = $0001;

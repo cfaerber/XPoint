@@ -27,7 +27,7 @@ unit xpcc;
 interface
 
 uses  sysutils,typeform,fileio,inout,maske,datadef,database,stack,resource,
-      xp0,xp1,xp1input, xpglobal;
+      xp0,xp1,xp1input,xpglobal;
 
 const maxcc = 126;
       ccte_nobrett : boolean = false;
@@ -53,11 +53,11 @@ function  cc_testempf(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt, xpsendmessage_internal,xpsendmessage,
+uses xp3,xp3o2,xp3o,xp4e,xpnt,xpsendmessage_internal,
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  winxp;
+xpsendmessage;
 
 const CCtemp = 'verteil.$$$';
       hinweisGegeben :boolean = true;

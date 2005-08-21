@@ -26,7 +26,7 @@ UNIT feiertag;
 
 INTERFACE
 
-uses   typeform,montage;
+uses   montage;
 
 const  feiertage  = 9;
 

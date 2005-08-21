@@ -1,4 +1,4 @@
-{  $Id: xpnczconnect.pas,v 1.11.2.6 2003/05/10 21:25:34 ma Exp $
+{  $Id$
 
    OpenXP ZConnect netcall unit
    Copyright (C) 2001 OpenXP team (www.openxp.de) and M.Kiesel
@@ -26,8 +26,8 @@ unit xpnczconnect;
 interface
 
 uses
-  sysutils,ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,
-  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes, osdepend;
+  sysutils,ZFTools,typeform,fileio,keys,maus2,inout,resource,maske,
+  xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpf2,fidoglob,classes,osdepend;
 
 
 function ZConnectNetcall(box: string;

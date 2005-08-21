@@ -1,4 +1,4 @@
-{  $Id: ncmodem.pas,v 1.11.2.4 2003/05/11 10:48:55 ma Exp $
+{  $Id$
 
    OpenXP modem netcall base class
    Copyright (C) 1991-2001 Peter Mandrella
@@ -174,7 +174,7 @@ function CountPhonenumbers(Phonenumbers: string): integer;
 implementation
 
 uses
-  fileio,keys,xpglobal,sysutils,typeform,debug,xpprogressoutputwindow,osdepend;
+  keys,xpglobal,sysutils,typeform,debug,xpprogressoutputwindow,osdepend;
 
 function GetNextPhonenumber(var Phonenumbers: string): string;
 var p : byte;

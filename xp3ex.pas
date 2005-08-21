@@ -31,7 +31,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  typeform,fileio,inout,database,resource,stack, xpheader, winxp,
+  typeform,inout,database,resource,xpheader,
   xp0,xp1,xpglobal, classes, xpmime;
 
 const xTractMsg   = 0;

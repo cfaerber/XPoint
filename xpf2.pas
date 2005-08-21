@@ -29,11 +29,7 @@ interface
 uses
   sysutils,
   xpglobal,
-{$IFDEF NCRT }
-  xpcurses,
-{$ENDIF }
-  typeform,fileio,archive,montage,
-  xp0,xp1,xp1o,xp3,xp3o;
+  typeform,fileio,archive,xp0,xp1,xp1o,xp3o;
 
 
 procedure TestTICfiles(var logfile:string);   { TIC-Files verarbeiten }

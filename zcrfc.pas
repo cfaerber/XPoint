@@ -36,10 +36,10 @@ uses xpglobal,
   xp1,
   xpnt,
   {$IFDEF unix}
-    unix,XPLinux,
+    unix,
   {$ENDIF }
   {$IFDEF NCRT }
-  xpcurses,                             { Fuer die Sonderzeichen an der Console }
+  xpcurses,        { Fuer die Sonderzeichen an der Console, wirklich noetig? - stv - }
   {$ENDIF }
 {$IFDEF Win32 }
   xpwin32,
@@ -51,7 +51,8 @@ uses xpglobal,
   xpos2,
 {$ENDIF }
   xpx,
-  osdepend, sysutils,classes,typeform,fileio,xpdatum,montage,mime,rfc2822,xpstreams;
+  osdepend,sysutils,classes,typeform,fileio,xpdatum,montage,
+  mime,rfc2822,xpstreams;
 
 type
   TCompression = (

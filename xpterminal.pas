@@ -28,8 +28,8 @@ interface
 uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
   maske,
-  sysutils,typeform,fileio,inout,keys,datadef,database,maus2,
-  resource,xpglobal,xp0,xp1,xp1o2,xp1input,objcom,Debug,OSDepend;
+  sysutils,typeform,fileio,inout,keys,maus2,resource,xpglobal,
+  xp0,xp1,xp1o2,xp1input,objcom,debug,osdepend;
 
 procedure termscr;
 procedure telnet;
@@ -41,7 +41,7 @@ function  TermGetfilename(nr,nn:byte):string;
 
 implementation
 
-uses  xp1o,xpkeys,xp9bp,xp10, winxp;
+uses  xp1o,xpkeys,xp9bp,xp10;
 
 const ansimode : boolean = true;
       ansimax  = 40;       { max. L„nge von ANSI-Codes }

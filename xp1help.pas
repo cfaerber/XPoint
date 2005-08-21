@@ -28,7 +28,7 @@ interface
 
 uses
   {$IFDEF NCRT} xpcurses,{$ENDIF}
-  typeform,fileio,inout,keys,resource,maus2,help,winxp,printerx,sysutils,
+  typeform,inout,keys,resource,maus2,help,winxp,printerx,sysutils,
   maske,xp0,xpglobal;
 
 const inithlp : boolean = false;

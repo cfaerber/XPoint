@@ -30,7 +30,7 @@ uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
   sysutils,typeform,fileio,inout,keys,winxp,win2,maske,datadef,database,
   maus2,mouse,resource,xpglobal,
-  xp0,xp1,xp1o,xp1o2,xp1input,xp2c,fidoglob;
+  xp0,xp1,xp1o,xp1input,xp2c,fidoglob;
 
 const
      maxboxen = 127;         { max. Gr”áe des Arrays 'boxlist' }
@@ -113,7 +113,6 @@ function  BoxToBfg(var s:string):string;
 implementation  {---------------------------------------------------}
 
 uses
-  {$IFDEF unix}xplinux,{$ENDIF}
   xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts, replytoall, lister, classes;
 
 const umtyp : array[0..5] of string[5] =

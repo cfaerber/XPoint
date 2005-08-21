@@ -27,8 +27,8 @@ unit xpmime;
 
 interface
 
-uses  xpglobal,sysutils,typeform,montage,fileio,keys,lister,database,resource,xpheader,
-      xp0,xp1,xpkeys,utftools,Mime;
+uses  xpglobal,sysutils,typeform,montage,keys,lister,database,
+      resource,xpheader,xp0,xp1,xpkeys,utftools,Mime;
 
 
 type  TMimePart = class { Teil einer Multipart-Nachricht }
@@ -67,9 +67,6 @@ implementation  { --------------------------------------------------- }
 uses
   {$IFDEF Win32 }
   xpwin32,
-  {$ENDIF }
-  {$IFDEF unix}
-  xpcurses,
   {$ENDIF }
   {$IFDEF DOS32 }
   xpdos32,

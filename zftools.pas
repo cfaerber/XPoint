@@ -31,7 +31,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  typeform,fileio,xpdiff,xpdatum,xpglobal,winxp,debug;
+  typeform,fileio,xpdiff,xpdatum,xpglobal,debug;
 
 const XPrequest = 'File Request';
       maxbretth = 20;

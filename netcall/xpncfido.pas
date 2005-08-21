@@ -1,4 +1,4 @@
-{  $Id: xpncfido.pas,v 1.32.2.6 2004/01/18 15:07:09 mk Exp $
+{  $Id$
 
    OpenXP fido netcall unit
    Copyright (C) 1991-2001 Peter Mandrella
@@ -27,9 +27,8 @@ unit xpncfido;
 interface
 
 uses
-  {$IFDEF NCRT}xpcurses,{$ENDIF }
   sysutils,ZFTools,typeform,montage,fileio,keys,maus2,inout,lister,resource,
-  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpfido,xpf2,xpfidonl, winxp,
+  maske,xpglobal,debug,xp0,xpdiff,xp1,xp1input,xpfido,xpf2,xpfidonl,
   fidoglob,classes;
 
 
@@ -900,136 +899,4 @@ begin
   getCrashBox:=adr;
 end;
 
-
-
-{
-  $Log: xpncfido.pas,v $
-  Revision 1.32.2.6  2004/01/18 15:07:09  mk
-  - use WildCard instead of * or *.*
-
-  Revision 1.32.2.5  2003/11/23 13:44:41  mk
-  - call Match() only with bare Filename, not with full path,
-    this prevents false match results
-
-  Revision 1.32.2.4  2003/11/22 16:59:58  mk
-  - fixed 649342: Fido-Requests werden nicth geloescht
-
-  Revision 1.32.2.3  2002/08/03 16:31:45  mk
-  - fixed unsendt-handling in client-mode
-
-  Revision 1.32.2.2  2002/07/21 20:14:47  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.32.2.1  2002/06/07 16:25:15  ma
-  - added debug logs (f'reqs)
-
-  Revision 1.32  2002/04/14 12:00:55  mk
-  - use SafeDeleteFile
-
-  Revision 1.31  2002/04/07 17:03:04  mk
-  - removed debugging code from last checkin
-
-  Revision 1.30  2002/04/07 17:00:43  mk
-  - try to fix bug #499966: fido requests are not killed
-
-  Revision 1.29  2002/01/13 15:15:56  mk
-  - new "empfaenger"-handling
-
-  Revision 1.28  2001/12/26 01:35:33  cl
-  - renamed SaveDeleteFile --> SafeDeleteFile (cf. an English dictionary)
-
-  Revision 1.27  2001/11/17 13:35:12  mk
-  - fixed range check error in match()
-
-  Revision 1.26  2001/10/30 09:54:24  ma
-  - fixed requested file processing once again
-
-  Revision 1.25  2001/10/21 13:09:06  ml
-  - removed some more warnings (only 130 yet...)
-
-  Revision 1.24  2001/10/17 01:04:05  ma
-  - fixed: Outgoing archive name computed wrong with Delphi
-
-  Revision 1.23  2001/10/15 13:12:25  mk
-  /bin/bash: ?: command not found
-  /bin/bash: q: command not found
-
-  Revision 1.22  2001/10/14 21:22:40  ma
-  - fixed: Request result processing
-
-  Revision 1.21  2001/09/26 23:34:21  mk
-  - fixed FPC compile error with newest snapshot:
-    Error: Self can only be an explicit parameter in message handlers or class methods
-
-  Revision 1.20  2001/09/16 19:52:13  ma
-  - fixed Fido/Crash dialog display problems
-
-  Revision 1.19  2001/09/08 16:29:45  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.18  2001/09/07 13:54:27  mk
-  - added SaveDeleteFile
-  - moved most file extensios to constant values in XP0
-  - added/changed some FileUpperCase
-
-  Revision 1.17  2001/09/06 19:31:21  mk
-  - removed some hints und warnings
-
-  Revision 1.16  2001/08/11 23:06:44  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.15  2001/07/28 12:04:19  mk
-  - removed crt unit as much as possible
-
-  Revision 1.14  2001/07/23 16:05:26  mk
-  - added some const parameters
-  - changed most screen coordinates from byte to integer (saves some kb code)
-
-  Revision 1.13  2001/06/05 21:24:26  ma
-  - fixed: file attachments were not sent
-
-  Revision 1.12  2001/06/05 16:44:49  ma
-  - Fido crash netcalls should be working again
-  - cleaned up a bit
-
-  Revision 1.11  2001/05/08 17:43:04  ma
-  - added support for uncompressed outgoing diskpoll packets
-
-  Revision 1.10  2001/04/21 12:59:11  ma
-  - fixed: both sysop start and end program had to be specified
-  - sysop in is blindly processed now
-
-  Revision 1.9  2001/04/19 23:27:51  ma
-  - fixed: compressed packets were not recognized if '.' in path
-
-  Revision 1.8  2001/04/03 13:25:41  ma
-  - cleaned up fido aka handling
-
-  Revision 1.7  2001/03/21 19:17:09  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-  Revision 1.4  2001/01/06 18:21:49  ma
-  - tried to make *both* fidonetcall and sysopcall work
-
-  Revision 1.3  2001/01/05 18:38:29  ma
-  - fixed shell call (that decompresses incoming packets)
-  - debug logs changed a bit
-
-  Revision 1.2  2001/01/04 21:21:10  ma
-  - added/refined debug logs
-
-  Revision 1.1  2001/01/04 16:02:12  ma
-  - renamed, was xp7f.pas
-  - todo: simplify and merge with xpfm.inc
-
-  Revision 1.52  2001/01/01 16:18:17  mo
-  -Sysoppoll: arcmail wird wieder entpackt,
-  -aus dem Indir werden nur noch die pkts und die arc gelöscht
-
-  Revision 1.51  2000/12/28 17:47:41  mo
-  -entferne alte *.pkt aus dem spool vor dem neueinlesen  -anti dupes
-}
 end.
-

@@ -1,4 +1,4 @@
-{ $Id: zmodem.pas,v 1.28.2.3 2003/09/22 21:26:02 mk Exp $
+{ $Id$
 
   Pascal ZModem unit
   (c) 2000,2001 by OpenXP team (www.openxp.de) and M.Kiesel
@@ -126,7 +126,7 @@ var
 implementation
 
 uses
-  {$IFDEF Unix} xpcurses, xplinux, {$ENDIF}
+  {$IFDEF Unix} xpcurses, {$ENDIF}
   {$IFDEF Win32} xpcrt, {$ENDIF}
   {$IFDEF DOS32} crt, {$ENDIF}
   {$IFDEF OS2} crt, {$ENDIF}

@@ -29,17 +29,7 @@ interface
 uses
   xpglobal,
 {$IFDEF unix}
-  xplinux,
-{$IFDEF fpc}
-  {$IFDEF freebsd}
     unix,
-  {$ELSE}
-    linux,
-  {$ENDIF}    
-{$ENDIF }
-{$ENDIF }
-{$IFDEF NCRT }
-  xpcurses,
 {$ENDIF }
   typeform,fileio,mouse,inout,xp0,crc,sysutils;
 

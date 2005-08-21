@@ -27,7 +27,6 @@ interface
 
 uses
   xpglobal,             { Nur wegen der Typendefinition }
-  typeform,
   sysutils;
 
 // converts TDateTime to ZConnect Date and Time String

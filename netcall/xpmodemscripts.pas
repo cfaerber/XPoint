@@ -1,5 +1,5 @@
 
-{  $Id: xpmodemscripts.pas,v 1.8.2.1 2002/07/21 20:14:47 ma Exp $
+{  $Id$
 
    OpenXP modem script unit
    Copyright (C) 1991-2001 Peter Mandrella
@@ -29,8 +29,8 @@ interface
 
 uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
-  sysutils,typeform,fileio,inout,keys,datadef,database,maus2, winxp,
-  resource,xpglobal,xp0,xp1,xp1o2,xp1input,ObjCOM,progressoutput;
+  sysutils,typeform,inout,keys,maus2,resource,xpglobal,xp0,xp1,
+  ObjCOM,progressoutput;
 
 function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgressOutput;
                    DryRun:boolean; scriptfile:string;

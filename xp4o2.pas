@@ -31,8 +31,8 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  typeform,fileio,inout,keys,datadef,database,databaso,maus2, classes, osdepend, winxp,
-  resource,help,xpglobal,xp0,xp1,xp1input,xpnt,crc;
+  typeform,inout,keys,datadef,database,databaso,maus2,classes,
+  resource,help,xpglobal,xp0,xp1,xp1input,xpnt;
 
 { Deklaration des Kommentarbaums in XP0 }
 
