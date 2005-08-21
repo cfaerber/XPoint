@@ -1,6 +1,6 @@
 {****************************************************************************
 
-    $Id: pmwsock.pas,v 1.1.2.1 2003/08/25 06:42:18 mk Exp $
+    $Id$
 
     This file is part of the Free Pascal run time library.
     Copyrigth (c) 2003 by Yuri Prokushev (prokushev@freemail.ru)
@@ -1053,17 +1053,3 @@ begin
 end;
 
 end.
-
-{
-$Log: pmwsock.pas,v $
-Revision 1.1.2.1  2003/08/25 06:42:18  mk
-- added RAW IP Support for OS/2
-
-Revision 1.2  2003/08/15 10:53:43  yuri
-+ Winsock unit added
-* PMWSock unit updated (to be less or more compitilbe with win32 winsock)
-
-Revision 1.1  2003/04/04 12:02:21  yuri
-+ Initial import
-
-}

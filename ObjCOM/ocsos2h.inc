@@ -34,21 +34,3 @@ type TSerialStream = Class(TCommStream)
         procedure ResumeCom(OpenCom: Boolean); override;
         procedure SetFlow(SoftTX, SoftRX, Hard: Boolean); override;
      end; { object TSerialStream }
-
-
-{
-  $Log: ocsos2h.inc,v $
-  Revision 1.3.2.1  2003/08/25 06:42:18  mk
-  - added RAW IP Support for OS/2
-
-  Revision 1.3  2001/08/03 11:44:09  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.2  2000/10/28 09:40:28  ma
-  - introduced credits.txt
-
-  Revision 1.1  2000/06/22 17:30:01  mk
-  - initial release
-  - please keep comments in English
-
-}

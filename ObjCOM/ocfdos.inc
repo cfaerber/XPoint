@@ -496,23 +496,3 @@ function FossilDetect: Boolean;
 begin
   FossilDetect:=True; {* asd}
 end;
-
-{
-  $Log: ocfdos.inc,v $
-  Revision 1.5  2001/08/03 11:44:09  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.4  2000/10/28 09:40:28  ma
-  - introduced credits.txt
-
-  Revision 1.3  2000/09/29 23:18:10  ma
-  - added fake FossilDetect function
-
-  Revision 1.2  2000/06/25 00:31:09  ma
-  - added CharCount method
-
-  Revision 1.1  2000/06/22 17:30:01  mk
-  - initial release
-  - please keep comments in English
-
-}

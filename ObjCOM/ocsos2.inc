@@ -667,29 +667,3 @@ begin
               RetLength);                                      { Data length } *)
 
 end; { proc. SetFlow }
-
-{
-  $Log: ocsos2.inc,v $
-  Revision 1.6.2.1  2003/08/25 06:42:18  mk
-  - added RAW IP Support for OS/2
-
-  Revision 1.6  2001/08/03 11:44:09  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.5  2001/05/16 01:59:15  mk
-  - fixed os/2 compatibility with FPC very quick and dirty
-
-  Revision 1.4  2001/03/02 15:45:54  ma
-  - main buffer of ring buffer obj is private now
-
-  Revision 1.3  2000/10/28 09:40:28  ma
-  - introduced credits.txt
-
-  Revision 1.2  2000/10/15 14:56:59  ma
-  - OS/2 port compiles again (VP)
-
-  Revision 1.1  2000/06/22 17:30:01  mk
-  - initial release
-  - please keep comments in English
-
-}

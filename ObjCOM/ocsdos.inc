@@ -410,35 +410,3 @@ begin
     end;
   SerialStreams.Destroy;
 end;
-
-{
-  $Log: ocsdos.inc,v $
-  Revision 1.7  2001/10/01 19:44:26  ma
-  - compiles again
-  - not working yet (see lock_data)
-
-  Revision 1.6  2001/08/03 11:44:09  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.5  2000/10/28 10:08:19  ma
-  - Bugfixes
-
-  Revision 1.4  2000/10/28 09:37:12  ma
-  - moved ComData structure to TSerialStream
-  - TSerialStream objects are now organized in a linear list
-  - added HOpen function
-  - introduced credits.txt
-
-  Revision 1.3  2000/09/29 23:20:02  ma
-  - cleaned up compiler directives
-  - spell checking ;-)
-  - fixed IRQ handler release routine
-
-  Revision 1.2  2000/09/11 23:00:58  ma
-  - FIFO and HighIRQ support added
-
-  Revision 1.1  2000/06/22 17:30:01  mk
-  - initial release
-  - please keep comments in English
-
-}

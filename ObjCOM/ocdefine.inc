@@ -176,22 +176,3 @@
   {$DEFINE TCP }
   {$UNDEF Linux }
 {$ENDIF }
-
-{
-  $Log: ocdefine.inc,v $
-  Revision 1.7.2.8  2003/08/25 06:42:17  mk
-  - added RAW IP Support for OS/2
-
-  Revision 1.7.2.7  2003/01/25 14:33:21  mk
-  - J+ (Writable Const) on for Kylix
-
-  Revision 1.7.2.6  2003/01/23 10:03:30  mk
-  - changes for Kylix and Linux
-
-  Revision 1.7.2.5  2003/01/11 13:10:24  mk
-  - J+ for ObjCOM
-
-  Revision 1.7.2.4  2003/01/09 22:22:44  mk
-  - updated to version 1.11 from HEAD-Branch
-
-}

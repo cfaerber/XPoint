@@ -38,29 +38,3 @@ type TSerialStream = class(TCommStream)
          fds : Tfdset;
          procedure ProcIncoming;
      end; { object TSerialStream }
-
-{
-  $Log: ocslinh.inc,v $
-  Revision 1.7  2001/09/07 23:24:56  ml
-  - Kylix compatibility stage II
-
-  Revision 1.6  2001/08/03 21:40:43  ml
-  - compilable with fpc (linux)
-
-  Revision 1.5  2001/08/03 11:44:09  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.4  2000/10/28 09:40:28  ma
-  - introduced credits.txt
-
-  Revision 1.3  2000/10/18 12:21:33  hd
-  - Unter Linux wieder compilierbar
-
-  Revision 1.2  2000/10/15 14:54:41  ma
-  - Ken J. Wright: Linux port now working
-
-  Revision 1.1  2000/09/29 23:23:03  ma
-  - initial release, currently NOT working (since CharAvail blocks)
-  - please keep comments in English
-
-}

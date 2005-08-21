@@ -2,7 +2,7 @@
 # OpenXP ObjCOM Makefile
 # <http://www.openxp.de/>
 #
-# $Id: Makefile,v 1.14 2000/11/22 20:58:22 fe Exp $
+# $Id$
 #
 # fuer GNU make <http://www.gnu.org/software/make/>
 #
@@ -283,51 +283,3 @@ distclean: clean
 mostlyclean: clean
 
 maintainer-clean: clean
-
-#
-# $Log: Makefile,v $
-# Revision 1.14  2000/11/22 20:58:22  fe
-# Fixed.
-#
-# Revision 1.13  2000/11/14 18:45:20  fe
-# Dependecies fixed.
-#
-# Revision 1.12  2000/10/23 17:16:53  fe
-# FreeBSD-Anpassungen
-#
-# Revision 1.11  2000/10/20 16:12:25  fe
-# Fehler in den Abhaengigkeiten korrigiert.
-#
-# Revision 1.10  2000/10/19 18:16:09  fe
-# Fuer FPC SmartLinking und RangeChecking ausgestellt.
-# Anpassungen der FPC-Linux-Aufrufparameter.
-# SHELL-Variable wird nur noch bei Linux gesetzt.  (wegen Cygwin make)
-#
-# Revision 1.9  2000/10/16 11:54:20  fe
-# serial.pas ergaenzt.
-#
-# Revision 1.8  2000/10/12 20:44:46  fe
-# Pfade geaendert, v.a. fuer Linux (/opt/openxp/).
-#
-# Revision 1.7  2000/10/11 21:50:46  fe
-# Korrekturen fuer Virtual Pascal.
-#
-# Revision 1.6  2000/10/08 18:06:06  fe
-# Targets distclean, mostlyclean und maintainer-clean ergaenzt.
-#
-# Revision 1.5  2000/10/05 19:56:45  fe
-# Korrekturen, v.a. fuer FPC/Win32.
-#
-# Revision 1.4  2000/09/30 16:54:17  fe
-# Abhaengigkeiten angepasst.
-#
-# Revision 1.3  2000/09/28 14:22:08  fe
-# Ueberpruefung der Variablen eingebaut.
-# kleinere Korrekturen
-#
-# Revision 1.2  2000/09/27 21:22:49  fe
-# kleinere Korrekturen
-#
-# Revision 1.1  2000/09/26 14:01:57  fe
-# Makefile fuer GNU make
-#

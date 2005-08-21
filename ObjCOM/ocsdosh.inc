@@ -55,28 +55,3 @@ const
   qComports= 4;
   ComportResources: array[1..qComports]of tComportResource=
    ((IOBase: $3f8; IRQ: 4),(IOBase: $2f8; IRQ: 3),(IOBase: $3e8; IRQ: 4),(IOBase: $2e8; IRQ: 3));
-
-{
-  $Log: ocsdosh.inc,v $
-  Revision 1.5  2001/10/01 19:45:07  ma
-  - compiles again (DOS32)
-
-  Revision 1.4  2001/08/03 11:44:09  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.3  2000/10/28 09:37:12  ma
-  - moved ComData structure to tSerialObj
-  - tSerialObj objects are now organized in a linear list
-  - added HOpen function
-  - introduced credits.txt
-
-  Revision 1.2  2000/09/11 23:00:58  ma
-  - FIFO and HighIRQ support added
-
-  Revision 1.1  2000/06/22 17:30:01  mk
-  - initial release
-  - please keep comments in English
-
-}
-
-

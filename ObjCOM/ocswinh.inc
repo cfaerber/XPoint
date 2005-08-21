@@ -56,22 +56,3 @@ type TSerialStream = Class(TCommStream)
         procedure ProcIncoming; virtual;
         procedure InitDelayTimes;
      end; { object TSerialStream }
-
-{
-  $Log: ocswinh.inc,v $
-  Revision 1.4  2001/08/03 11:44:09  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.3  2000/11/17 19:48:23  ma
-  - no more threads, working again
-
-  Revision 1.2  2000/10/28 09:41:47  ma
-  - currently NOT working
-  - merged changes from Maarten's EleCOM 1.2
-  - introduced credits.txt
-
-  Revision 1.1  2000/06/22 17:30:02  mk
-  - initial release
-  - please keep comments in English
-
-}

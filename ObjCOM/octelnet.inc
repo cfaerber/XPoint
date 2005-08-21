@@ -254,29 +254,3 @@ begin
 end;
 
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
-{
-  $Log: octelnet.inc,v $
-  Revision 1.6  2001/09/07 23:24:56  ml
-  - Kylix compatibility stage II
-
-  Revision 1.5  2001/08/03 11:44:09  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.4  2001/05/10 20:56:25  ma
-  - adjusted debug levels
-
-  Revision 1.3  2001/05/09 22:10:08  cl
-  - moved new TCP/IP implementation from playground to main directory
-
-  Revision 1.2  2001/02/03 16:31:23  ma
-  - reverted back mostly to rev 1.1
-  - compilable again with Linux
-  - fixed some bugs
-  - added some non-critical enhancements by CL
-    (connection error handling, OutFree detection)
-
-  Revision 1.1  2001/01/28 18:06:38  ma
-  - added a bit real telnet functionality
-  - renamed former connection type "telnet" to "rawip"
-
-}

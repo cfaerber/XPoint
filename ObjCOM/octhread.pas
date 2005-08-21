@@ -386,38 +386,3 @@ end; { proc. ExitThread }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 end.
-
-{
-  $Log: octhread.pas,v $
-  Revision 1.10  2001/05/16 01:59:15  mk
-  - fixed os/2 compatibility with FPC very quick and dirty
-
-  Revision 1.9  2001/01/18 10:22:15  mk
-  - more FPC and OS2 compatibility
-
-  Revision 1.8  2001/01/04 10:59:50  mk
-  - some changes for FPC and OS/2 compatibility
-
-  Revision 1.7  2001/01/01 20:21:41  mk
-  - added FPC OS2 Units to uses
-
-  Revision 1.6  2000/10/28 09:45:50  ma
-  - introduced credits.txt
-
-  Revision 1.5  2000/10/16 12:19:06  mk
-  - added ocdefine.inc
-
-  Revision 1.4  2000/10/15 14:56:59  ma
-  - OS/2 port compiles again (VP)
-
-  Revision 1.3  2000/10/02 03:16:41  mk
-  - made ObjCOM Virtual Pascal compatible
-
-  Revision 1.2  2000/09/11 22:58:37  ma
-  - Kosmetik
-
-  Revision 1.1  2000/06/22 17:30:02  mk
-  - initial release
-  - please keep comments in English
-
-}

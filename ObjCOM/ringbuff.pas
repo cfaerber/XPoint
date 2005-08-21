@@ -124,27 +124,3 @@ end; { proc. Clear }
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 end. { bufunit }
-
-{
-  $Log: ringbuff.pas,v $
-  Revision 1.6  2001/09/07 23:24:56  ml
-  - Kylix compatibility stage II
-
-  Revision 1.5  2000/12/18 00:22:41  ma
-  - using real ring buffer strategy now
-
-  Revision 1.4  2000/10/28 09:42:13  ma
-  - moved tCharArray to interface part
-  - introduced credits.txt
-
-  Revision 1.3  2000/10/16 12:19:06  mk
-  - added ocdefine.inc
-
-  Revision 1.2  2000/10/02 03:16:41  mk
-  - made ObjCOM Virtual Pascal compatible
-
-  Revision 1.1  2000/06/22 17:30:02  mk
-  - initial release
-  - please keep comments in English
-
-}

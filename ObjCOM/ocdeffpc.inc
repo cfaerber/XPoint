@@ -32,14 +32,3 @@ type DCB = record
   function WaitForMultipleObjects(nCount:DWORD; lpHandles:Pointer; bWaitAll:WINBOOL; dwMilliseconds:DWORD):DWORD; external 'kernel32' name 'WaitForMultipleObjects';
 
 {$ENDIF}
-
-{
-  $Log: ocdeffpc.inc,v $
-  Revision 1.2  2000/10/28 09:40:28  ma
-  - introduced credits.txt
-
-  Revision 1.1  2000/06/22 17:30:01  mk
-  - initial release
-  - please keep comments in English
-
-}
