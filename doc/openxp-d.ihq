@@ -1385,13 +1385,13 @@ Folgende Funktionen stehen zur Verfgung:
          richten, dann werden diese markiert.
 
    <<M>>   Komplette Nachricht zu einer Headeronly-Nachricht
-       anfordern oder Anforderung rückgängig machen.
+       anfordern oder Anforderung rckgängig machen.
        Der Nachrichtenkopf wird durch die vollständige Nachricht
        ersetzt. Der Status dieser Nachrichten wird
        mit einem 'R' oder 'H' gekennzeichnet.
 
        (Diese Funktion steht nur dem RFC/Client und RFC/NNTP
-       zur Verfügung)
+       zur Verfgung)
 
    <<B>>     Schreiben einer Brettantwort auf die
          gew„hlte Nachricht. Es wird die unter
@@ -12184,7 +12184,7 @@ die h”chste Sicherheit und ist insbesondere auch
 berhaupt fr DOS verfgbar.
 
 Als Alternative gibt es noch <<GnuPG>> (Windows und
-Linux). Dieses Programm unterstzt bereits die
+Linux). Dieses Programm untersttzt bereits die
 Kodierung nach dem OpenPGP-Standard (RFC 2440/3156).
 Leider muss wegen der Patentlage die fr PGP-2.x-
 Kompatibilit„t notwendige IDEA-Untersttzung separat
@@ -12683,7 +12683,7 @@ Aussagen zum Thema PGP (Stand Juni 2001):
    - Wird der Schalter <<--openpgp>> verwendet,
      entsprechen die PGP/MIME-Signaturen RFC 3156.
 
-   - GnuPG ist (noch) nicht für DOS verfügbar.
+   - GnuPG ist (noch) nicht fr DOS verfgbar.
 
    Mehr Informationen zu GnuPG finden Sie unter
    <<http://www.gnupg.de/>>.
