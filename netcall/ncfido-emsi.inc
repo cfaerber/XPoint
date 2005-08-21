@@ -1,4 +1,4 @@
-{  $Id: ncfido-emsi.inc,v 1.4.2.1 2002/07/21 20:14:47 ma Exp $
+{  $Id$
 
    OpenXP fido netcall EMSI handshake implementation include file
    Copyright (C) 1991-2001 Peter Mandrella
@@ -202,23 +202,3 @@ begin
   end else if not FCommObj.Carrier then Log(lcError,'carrier lost');
 ende:
 end;
-
-{
-  $Log: ncfido-emsi.inc,v $
-  Revision 1.4.2.1  2002/07/21 20:14:47  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.4  2001/10/01 19:35:02  ma
-  - compiles again (DOS32)
-
-  Revision 1.3  2001/08/11 23:06:43  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.2  2001/08/03 11:44:10  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.1  2001/03/21 19:17:09  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-}

@@ -1,4 +1,4 @@
-{  $Id: ncfido-binkp.inc,v 1.11.2.7 2003/11/23 11:53:39 mk Exp $
+{  $Id$
 
    OpenXP fido netcall BinkP protocol implementation include file
 
@@ -596,71 +596,3 @@ begin
 
   InBpF.Destroy; OutBpF.Destroy; TheQueue.Destroy; PendingFiles.Destroy; PendingFilesWithPath.Destroy;
 end;
-
-
-{
-  $Log: ncfido-binkp.inc,v $
-  Revision 1.11.2.7  2003/11/23 11:53:39  mk
-  - fixed BpTramsmit: FileGetDate doesn't seem to work correctly within Linux
-    use FileAge now instead
-
-  Revision 1.11.2.6  2003/11/22 21:20:43  mk
-  - more debug information added
-
-  Revision 1.11.2.5  2003/11/22 17:27:22  mk
-  - added temp debug log to datetime functions
-
-  Revision 1.11.2.4  2003/09/12 17:36:51  ma
-  - better error messages (wrong password...)
-  - log exceptions
-
-  Revision 1.11.2.3  2003/05/10 20:58:35  ma
-  - fixed: Files were sent with wrong timestamp
-
-  Revision 1.11.2.2  2002/07/21 19:10:50  ma
-  - fixed Argus again (difference in "trim" behaviour: Delphi treats #0 as
-    whitespace, FPC does not)
-
-  Revision 1.11.2.1  2002/07/07 10:25:14  ma
-  - fixed null terminated string handling (Argus)
-  - fixed handling of zero byte files
-
-  Revision 1.11  2001/10/21 10:35:13  ma
-  - fixed some range check errors
-  - disabled file download resuming (specification seems incorrect)
-  - files are closed on abort now
-
-  Revision 1.10  2001/10/01 19:32:51  ma
-  - abort only on ESC, not other keys
-
-  Revision 1.9  2001/09/17 11:06:34  ma
-  - fix: mailer reported "connection lost" if no incoming mail
-
-  Revision 1.8  2001/09/16 10:48:00  ma
-  - added multiple batch mode
-  - improved debug logs
-
-  Revision 1.7  2001/08/11 23:06:43  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.6  2001/08/03 11:44:10  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.5  2001/07/28 12:04:19  mk
-  - removed crt unit as much as possible
-
-  Revision 1.4  2001/05/19 16:20:25  ma
-  - implemented secure BinkP CRAM-MD5 authentication
-
-  Revision 1.3  2001/05/09 19:37:53  ma
-  - connection termination recognition changed again
-
-  Revision 1.2  2001/04/18 11:02:13  ma
-  - using StrgList.IndexOf instead of Find, Find only works on sorted
-    Strglists.
-
-  Revision 1.1  2001/03/21 19:17:09  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-}

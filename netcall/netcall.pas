@@ -1,4 +1,4 @@
-{  $Id: netcall.pas,v 1.6 2001/10/15 13:12:25 mk Exp $
+{  $Id$
 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -92,29 +92,3 @@ begin
 end;
 
 end.
-
-{
-	$Log: netcall.pas,v $
-	Revision 1.6  2001/10/15 13:12:25  mk
-	/bin/bash: ?: command not found
-	/bin/bash: q: command not found
-	
-	Revision 1.5  2001/09/07 23:24:57  ml
-	- Kylix compatibility stage II
-	
-	Revision 1.4  2001/04/16 18:13:28  ma
-	- ProgOutWin now pauses a bit on closing
-	  (some seconds if an error occured, one second if not)
-	- removed other delays
-	
-	Revision 1.3  2001/03/21 19:17:09  ma
-	- using new netcall routines now
-	- renamed IPC to Progr.Output
-	
-	Revision 1.2  2000/07/25 18:02:18  hd
-	- NNTP-Unterstuetzung (Anfang)
-	
-	Revision 1.1  2000/07/25 12:52:24  hd
-	- Init
-	
-}

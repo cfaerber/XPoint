@@ -1,4 +1,4 @@
-{  $Id: ncuucp-fz.inc,v 1.1.2.1 2002/07/21 20:14:47 ma Exp $
+{  $Id$
 
    OpenXP UUCP netcall 'f'/'z' protocol include file
    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
@@ -269,20 +269,3 @@ procedure TUUCProtocolFZ.ExitProtocol;
 begin
   if fprot then mdelay(1000);
 end;
-
-{
-  $Log: ncuucp-fz.inc,v $
-  Revision 1.1.2.1  2002/07/21 20:14:47  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.1  2001/03/25 18:44:04  cl
-  - moved ncuucp-fz.inc from playground to main
-  - enabled UUCP-f/z in ncuucp.pas
-  - cleanups, removed some unnecessary variables
-  - some minor fixes
-
-  Revision 1.1  2001/01/19 18:00:00  ma
-  - added TUUCPNetcall sources (from uucico)
-
-  ----- moved to playground
-}

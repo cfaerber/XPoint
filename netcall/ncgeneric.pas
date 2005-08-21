@@ -1,4 +1,4 @@
-{  $Id: ncgeneric.pas,v 1.3 2002/02/21 13:52:35 mk Exp $
+{  $Id$
 
    OpenXP generic mailer unit
    Copyright (C) 2001 OpenXP team (www.openxp.de) and M.Kiesel
@@ -75,20 +75,4 @@ begin
   ZModemObj.Done;
 end;
 
-
-{
-  $Log: ncgeneric.pas,v $
-  Revision 1.3  2002/02/21 13:52:35  mk
-  - removed 21 hints and 28 warnings
-
-  Revision 1.2  2001/10/15 13:12:25  mk
-  /bin/bash: ?: command not found
-  /bin/bash: q: command not found
-
-  Revision 1.1  2001/03/21 19:17:09  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-}
 end.
-

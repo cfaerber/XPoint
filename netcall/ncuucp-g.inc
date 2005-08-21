@@ -1,4 +1,4 @@
-{  $Id: ncuucp-g.inc,v 1.10.2.1 2002/07/21 20:14:47 ma Exp $
+{  $Id$
 
    OpenXP UUCICO 'g'/'G'/'v' protocols
    Copyright (C) 1991-1999 Peter Mandrella (www.crosspoint.de)
@@ -655,47 +655,3 @@ begin
   DebugLog('uucp-g',Format('Receiving File',[0]),dlInform);
   Receive(f,s,false);
 end;
-
-
-{
-  $Log: ncuucp-g.inc,v $
-  Revision 1.10.2.1  2002/07/21 20:14:47  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.10  2002/03/05 19:14:44  cl
-  - optimized UUCP-g flow control
-
-  Revision 1.9  2002/03/05 13:14:50  mk
-  - fixed range check error (<xpbm3327500@dirk.deimeke.net>)
-
-  Revision 1.8  2001/10/20 17:26:46  mk
-  - changed some Word to Integer
-    Word = Integer will be removed from xpglobal in a while
-
-  Revision 1.7  2001/09/08 18:46:44  cl
-  - small bug/compiler warning fixes
-
-  Revision 1.6  2001/04/12 06:34:06  mk
-  - FPC Bug is fixed now, removed workaround
-
-  Revision 1.5  2001/04/09 14:50:39  mk
-  - quick and dirty temp. workaround for fpc compiler problem
-
-  Revision 1.4  2001/03/26 22:51:04  cl
-  - proper shutdown with some protocols (ignore errors due to hangup)
-  - range check fix for VPascal
-
-  Revision 1.3  2001/03/26 22:21:08  cl
-  - minor fixes and cleanups
-
-  Revision 1.2  2001/03/25 18:44:04  cl
-  - moved ncuucp-fz.inc from playground to main
-  - enabled UUCP-f/z in ncuucp.pas
-  - cleanups, removed some unnecessary variables
-  - some minor fixes
-
-  Revision 1.1  2001/03/24 22:55:29  cl
-  - moved from playground to main
-
-  --- import from playground
-}

@@ -1,4 +1,4 @@
-{  $Id: xpncclient.pas,v 1.2.2.11 2004/07/20 21:54:04 mk Exp $
+{  $Id$
 
    OpenXP RFC/Client netcall unit
    Copyright (C) 1991-2001 Peter Mandrella
@@ -263,55 +263,4 @@ begin
   LoadBox(BoxFileName);
 end;
 
-{
-  $Log: xpncclient.pas,v $
-  Revision 1.2.2.11  2004/07/20 21:54:04  mk
-  - for client, too
-
-  Revision 1.2.2.10  2003/09/18 18:27:28  mk
-  - update NEUES.DAT only if something was received in the netcall
-
-  Revision 1.2.2.9  2003/09/10 16:51:03  mk
-  - added extensive debug infos for client netcall
-
-  Revision 1.2.2.8  2003/09/07 19:09:13  mk
-  - added missing netcall log for client systems
-
-  Revision 1.2.2.7  2003/09/03 00:43:40  mk
-  - added multiserver client netcall
-
-  Revision 1.2.2.6  2003/08/11 22:28:26  mk
-  - removed Edit/netze/verschiedens/mime in news
-
-  Revision 1.2.2.5  2002/08/03 16:31:45  mk
-  - fixed unsendt-handling in client-mode
-
-  Revision 1.2.2.4  2002/07/26 08:13:48  mk
-  - do not try to create existing directories (ClientSpool)
-
-  Revision 1.2.2.3  2002/07/21 20:14:47  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.2.2.2  2002/05/19 13:08:13  mk
-  - backported client netcall
-
-  Revision 1.3  2002/05/12 20:42:49  mk
-  - first version of client netcall hack
-
-  Revision 1.2.2.1  2002/05/06 17:58:53  mk
-  - use correct file name case (.bak, .out) with linux
-
-  Revision 1.2  2002/02/21 13:52:35  mk
-  - removed 21 hints and 28 warnings
-
-  Revision 1.1  2001/12/04 10:34:22  mk
-  - made client mode compilable
-
-  Revision 1.2  2001/12/01 01:56:25  ma
-  ...
-
-  Revision 1.1  2001/10/27 12:56:27  ma
-  - starting porting of RFC/Client
-
-}
 end.

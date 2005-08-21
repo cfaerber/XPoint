@@ -1,4 +1,4 @@
-{  $Id: ncfido.pas,v 1.9.2.1 2002/07/21 20:14:47 ma Exp $
+{  $Id$
 
    OpenXP fido netcall unit
    Copyright (C) 1991-2001 Peter Mandrella
@@ -237,41 +237,4 @@ begin
   result:=aresult;
 end;
 
-{
-  $Log: ncfido.pas,v $
-  Revision 1.9.2.1  2002/07/21 20:14:47  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.9  2002/02/21 13:52:35  mk
-  - removed 21 hints and 28 warnings
-
-  Revision 1.8  2001/10/15 13:12:25  mk
-  /bin/bash: ?: command not found
-  /bin/bash: q: command not found
-
-  Revision 1.7  2001/10/01 19:35:02  ma
-  - compiles again (DOS32)
-
-  Revision 1.6  2001/08/10 19:13:01  mk
-  - removed use of crt unit completly
-  - added xpcrt: contains crt compatible Win32 keyboard handling
-  - changed crt to xpcrt in uses
-
-  Revision 1.5  2001/07/28 12:04:19  mk
-  - removed crt unit as much as possible
-
-  Revision 1.4  2001/05/19 16:20:25  ma
-  - implemented secure BinkP CRAM-MD5 authentication
-
-  Revision 1.3  2001/04/16 18:13:28  ma
-  - ProgOutWin now pauses a bit on closing
-    (some seconds if an error occured, one second if not)
-  - removed other delays
-
-  Revision 1.2  2001/03/21 19:17:09  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-}
 end.
-

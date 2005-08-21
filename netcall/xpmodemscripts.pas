@@ -661,36 +661,4 @@ begin     { of RunScript }
   ReleaseScript;
 end;
 
-
-{
-  $Log: xpmodemscripts.pas,v $
-  Revision 1.8.2.1  2002/07/21 20:14:47  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.8  2001/12/30 19:56:49  cl
-  - Kylix 2 compile fixes
-
-  Revision 1.7  2001/10/15 13:12:25  mk
-  /bin/bash: ?: command not found
-  /bin/bash: q: command not found
-
-  Revision 1.6  2001/09/08 16:29:45  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.5  2001/08/03 11:44:10  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.4  2001/07/28 12:04:19  mk
-  - removed crt unit as much as possible
-
-  Revision 1.3  2001/04/22 16:45:01  ma
-  - added debug logs
-
-  Revision 1.2  2001/03/21 19:17:09  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-}
 end.
-

@@ -1,4 +1,4 @@
-{  $Id: ncuucp-t.inc,v 1.4.2.1 2002/07/21 20:14:47 ma Exp $
+{  $Id$
 
    OpenXP UUCP netcall 't' protocol include file
    Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Claus Färber
@@ -121,26 +121,3 @@ begin
 
   until false;
 end;
-
-{
-  $Log: ncuucp-t.inc,v $
-  Revision 1.4.2.1  2002/07/21 20:14:47  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.4  2001/10/17 21:11:08  cl
-  - Range check errors fix
-
-  Revision 1.3  2001/03/26 22:21:08  cl
-  - minor fixes and cleanups
-
-  Revision 1.2  2001/03/25 18:44:04  cl
-  - moved ncuucp-fz.inc from playground to main
-  - enabled UUCP-f/z in ncuucp.pas
-  - cleanups, removed some unnecessary variables
-  - some minor fixes
-
-  Revision 1.1  2001/03/24 22:55:29  cl
-  - moved from playground to main
-
-  --- import from playground
-}

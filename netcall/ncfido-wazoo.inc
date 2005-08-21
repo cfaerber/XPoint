@@ -1,4 +1,4 @@
-{  $Id: ncfido-wazoo.inc,v 1.3.2.1 2002/07/21 20:14:47 ma Exp $
+{  $Id$
 
    OpenXP WaZOO file transfer implementation include file
    Copyright (C) 1991-2001 Peter Mandrella
@@ -74,22 +74,3 @@ begin
   end;
   ZModemObj.Done;
 end;
-
-{
-  $Log: ncfido-wazoo.inc,v $
-  Revision 1.3.2.1  2002/07/21 20:14:47  ma
-  - changed copyright from 2001 to 2002
-
-  Revision 1.3  2001/08/03 11:44:10  cl
-  - changed TCommObj = object to TCommStream = class(TStream)
-
-  Revision 1.2  2001/04/16 18:13:28  ma
-  - ProgOutWin now pauses a bit on closing
-    (some seconds if an error occured, one second if not)
-  - removed other delays
-
-  Revision 1.1  2001/03/21 19:17:09  ma
-  - using new netcall routines now
-  - renamed IPC to Progr.Output
-
-}
