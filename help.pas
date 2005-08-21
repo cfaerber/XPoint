@@ -532,7 +532,7 @@ var lp      : word;
   begin
     nr:=qvp;
     repeat
-      inc(nr,add);
+      nr := nr + add;
       if nr<1 then nr:=qvws;
       if nr>qvws then nr:=1;
     until ((qvw^[nr].y<>qvw^[qvp].y) and (qvw^[nr].x=qvw^[qvp].x)) or (nr=qvp);
