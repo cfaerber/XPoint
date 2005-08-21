@@ -57,7 +57,7 @@ procedure SetLanguage;
 
 implementation  { ---------------------------------------------------- }
 
-uses xpheader, xp1o,xp2, xp3,xp3o,xp3ex, xp10;
+uses winxp, xpheader, xp1o,xp2, xp3,xp3o,xp3ex, xp10;
 
 procedure packit(xpack:boolean; fname:string);
 var d  : DB;

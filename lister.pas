@@ -195,7 +195,7 @@ uses
 {$IFDEF WIn32 }
   xpwin32,
 {$ENDIF }
-  gpltools,xp0,mime,utftools,xpkeys;
+  gpltools,xp0,xp1,clip,mime,utftools,xpkeys;
 
 // Zerlegen des Buffers in einzelne Zeilen
 

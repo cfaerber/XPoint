@@ -40,7 +40,7 @@ procedure ICP(var ICR:dbIndexCRec);      { Index-Kontrollprozedur }
 
 implementation  { --------------------------------------------------- }
 
-uses xp1,xp1input;
+uses xp1,xp1input, winxp;
 
 
 procedure wkey(sec:word; count:boolean);

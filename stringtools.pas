@@ -37,6 +37,8 @@ function ZCDateTimeToDateTime(const s: String): TDateTime;
 
 implementation
 
+uses typeform;
+
 function DateTimeToZCDateTime(DateTime: TDateTime): String;
 begin
   Result := FormatDateTime('yymmddhhnnss', DateTime);

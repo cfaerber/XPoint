@@ -104,7 +104,7 @@ procedure AddNewBrett(const Brettname, Kommentar, Pollbox: String; Haltezeit: In
 
 implementation  { --------------------------------------------------- }
 
-uses  xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido,xp5;
+uses  winxp,xp1o,xp1o2,xp2,xp3o,xp3o2,xpnt,xp4,xpsendmessage,xp9bp,xpconfigedit,xpcc,xpauto,xpfido,xp5;
 
 var   adp         : string;     { War ^atext (atext = s80, also shortstring) }
       wcy         : byte;       { fÅr writecode() }

@@ -99,7 +99,7 @@ uses
 {$IFDEF Kylix}
   libc,
 {$ENDIF}  
-  xp1o,xp2,xp4o2,xpnt,osdepend,classes;
+  winxp, xp1o,xp2,xp4o2,xp9bp,xpnt,osdepend,classes;
 
 const
   MaxProtocols = 2;

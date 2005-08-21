@@ -86,7 +86,7 @@ var  comnr     : byte;     { COM-Nummer; wg. Geschwindigkeit im Datensegment }
 
 implementation  {---------------------------------------------------}
 
-uses xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp9bp,xpconfigedit,xp10,xpheader,
+uses winxp,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp9bp,xpconfigedit,xp10,xpheader,
      xpfido,xpncfido,xpnczconnect,xpncpop3,xpncnntp,xpncclient,
      xpmakeheader,ncmodem;
 

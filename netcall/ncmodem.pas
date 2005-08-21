@@ -174,7 +174,7 @@ function CountPhonenumbers(Phonenumbers: string): integer;
 implementation
 
 uses
-  keys,xpglobal,sysutils,typeform,debug,xpprogressoutputwindow,osdepend;
+  fileio, keys,xpglobal,sysutils,typeform,debug,xpprogressoutputwindow,osdepend;
 
 function GetNextPhonenumber(var Phonenumbers: string): string;
 var p : byte;

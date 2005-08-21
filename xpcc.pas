@@ -53,7 +53,7 @@ function  cc_testempf(var s:string):boolean;
 
 implementation  { ---------------------------------------------------- }
 
-uses xp3,xp3o2,xp3o,xp4e,xpnt,xpsendmessage_internal,
+uses winxp, xp3,xp3o2,xp3o,xp4e,xpnt,xpsendmessage_internal,
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }

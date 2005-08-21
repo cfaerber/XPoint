@@ -40,6 +40,9 @@ procedure ShowAboutDialog;
 
 implementation
 
+uses
+  Winxp;
+
 procedure OpenXPInfo;
 var x,y,i : Integer;
     s     : string;

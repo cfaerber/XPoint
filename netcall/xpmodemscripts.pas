@@ -39,7 +39,7 @@ function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgre
 
 implementation
 
-uses  timer,debug;
+uses  timer,debug, winxp;
 
 function RunScript(BoxPar: BoxPtr; CommObj: TCommStream; ProgressOutput: TProgressOutput;
                    DryRun:boolean; scriptfile:string;

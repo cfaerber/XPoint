@@ -29,7 +29,7 @@ uses
   {$IFDEF NCRT}xpcurses,{$ENDIF}
   maske,
   sysutils,typeform,fileio,inout,keys,maus2,resource,xpglobal,
-  xp0,xp1,xp1o2,xp1input,objcom,debug,osdepend;
+  xp0,xp1,xp1o2,xp1input,objcom,debug,osdepend, winxp;
 
 procedure termscr;
 procedure telnet;

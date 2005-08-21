@@ -45,7 +45,7 @@ procedure MausGetInfs(box, logfile:string);
 
 implementation  { ---------------------------------------------------- }
 
-uses xp1o,xp3,xp3o2,xpnt,xpsendmessage,xpsendmessage_unsent,xpconfigedit;
+uses winxp,xp1o,xp3,xp3o2,xpnt,xpsendmessage,xpsendmessage_unsent,xpconfigedit;
 
 
 { art=0 : Zurueckgelieferte Maus-MessageIDs aus Logfile in  }

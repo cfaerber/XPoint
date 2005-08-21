@@ -535,7 +535,7 @@ var t,lastt: taste;
       10  : begin   { Nachrichten }
               dispdat:=mbase;
               showkeys(iif(user_msgs,-5,5));
-              dbsetindex(dispdat,iif(rdmode=1,miGelesen,miBrett));
+              dbsetindex(dispdat,iif(rdmode=rmUngelesen,miGelesen,miBrett));
             end;
       11  : begin    { markierte Nachrichten }
               dispdat:=mbase;
@@ -589,7 +589,7 @@ var t,lastt: taste;
 
         10  : case rdmode of
                 0 : dbSeek(dispdat,miBrett,_dispspec);
-                1 : dbSeek(dispdat,miGelesen,_dispspec+#0);
+                rmUngelesen : dbSeek(dispdat,miGelesen,_dispspec+#0);
               else
                 dbSeek(dispdat,miBrett,_dispspec+dbLongStr(readdate));
               end;
@@ -639,7 +639,7 @@ var t,lastt: taste;
               end;
       1..4  : dbGoEnd(dispdat);
       10    : begin
-                if rdmode=1 then  { ungelesen }
+                if rdmode=rmUngelesen then
                   dbSeek(dispdat,miGelesen,_dispspec+#1)
                 else
                   dbSeek(dispdat,miBrett,_dispspec+#255);
@@ -1440,9 +1440,11 @@ var t,lastt: taste;
   procedure test_ug;
   var p : byte;
   begin
-    if (disprec[1]>0) then begin
+    if (disprec[1]>0) then
+    begin
       dbGo(mbase,disprec[1]);
-      if dbReadInt(mbase,'gelesen')<>0 then begin
+      if dbReadInt(mbase,'gelesen')<>0 then
+      begin
         p:=2;
         while ((p<maxgl) and (disprec[p]<>0) and ((length(dispbuf[p])>0) and (dispbuf[p][2]<>'>')))
               or dbDeleted(dispdat,disprec[p]) do inc(p);
@@ -1739,7 +1741,7 @@ begin      { --- select --- }
         end
       else
         GoStart;
-    if aufbau and (dispmode=10) and (rdmode=1) then
+    if aufbau and (dispmode=10) and (rdmode= rmUngelesen) then
       test_ug;
     empty:=(disprec[1]=0);
     if not empty then begin

@@ -90,7 +90,7 @@ uses
      {$ifndef NCRT} winxp, {$endif}
      inout,
      xp0,
-     SysUtils;
+     SysUtils, typeform;
 
 const  maxinside = 25;
 

@@ -39,6 +39,9 @@ procedure DES_code(decode:boolean; var data; ofs,total:longint;
 
 implementation  {--------------------------------------------}
 
+uses
+  winxp;
+
 type stream = array[1..64] of byte;
      sts    = array[1..8] of byte;
      keytyp = array[1..8] of byte;

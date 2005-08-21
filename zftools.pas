@@ -202,6 +202,7 @@ uses
   inout,
   maus2,
   mime,
+  winxp,
   xp0,
   xp1;
 

@@ -41,7 +41,7 @@ function testmausempf(var s:string):boolean;
 
 implementation  { ----------------------------------------------------- }
 
-uses xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido, xpmakeheader,
+uses winxp, xp1o,xp3,xp3o,xp3o2,xp3ex,xp4,xp4e,xpnt,xpfido, xpmakeheader,
      xpsendmessage,xpsendmessage_internal;
 
 const

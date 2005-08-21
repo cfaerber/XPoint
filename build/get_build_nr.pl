@@ -20,6 +20,7 @@
     if (/Revision (.*)\./ig ) { $BUILD = $1;  }
   }
   close(InFile);
+  unlink 'version.svn';
 
   open(OutFile, ">\.\./version.inc");
   print OutFile "version_build = ".$BUILD.";\n";

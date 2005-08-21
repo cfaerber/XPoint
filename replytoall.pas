@@ -40,6 +40,9 @@ procedure DoReplyToAll (var brk, adresseAusgewaehlt :boolean; var empf, realname
 
 implementation
 
+uses
+  Winxp;
+  
 type
   TRTAEmpfaenger = class
   protected
