@@ -61,9 +61,11 @@ procedure releasehelp;
 
 IMPLEMENTATION
 
+uses winxp
 {$ifdef unix}
-uses XPLinux;
+,XPLinux
 {$endif}
+  ;
 
 const maxpst  = 20;
       init    : boolean = false;
@@ -528,7 +530,7 @@ var lp      : word;
     noother:=not other;
   end;
 
-  procedure searchsame(add:shortint; var nr:word);
+  procedure searchsame(add:shortint; var nr: integer);
   begin
     nr:=qvp;
     repeat
@@ -539,7 +541,7 @@ var lp      : word;
     if nr=qvp then nr:=0;
   end;
 
-  procedure searchother(add:shortint; var nr:word);
+  procedure searchother(add:shortint; var nr: integer);
   begin
     nr:=qvp;
     repeat
@@ -549,7 +551,7 @@ var lp      : word;
     until qvw^[nr].y<>qvw^[qvp].y;
   end;
 
-  procedure searchlowdist(var nr:word);
+  procedure searchlowdist(var nr:integer);
   var y,i : word;
       d   : word;
   begin
@@ -563,7 +565,7 @@ var lp      : word;
   end;
 
   procedure goup;
-  var nr : word;
+  var nr : integer;
   begin
     if noother then goleft
     else begin
@@ -575,7 +577,7 @@ var lp      : word;
   end;
 
   procedure godown;
-  var nr : word;
+  var nr : integer;
   begin
     if noother then goright
     else begin
