@@ -1463,7 +1463,7 @@ var  dl         : displp;
         editfMenu         : InterpreteToken(LocalMenu);
         editfSetup        : Einstellungen;
         editfSaveSetup    : EinstellungenSichern;
-        editfSave         : if EdSave(ed) then;
+        editfSave         : if EdSave(ed) then Quit;
         editfSaveQuit     : SpeichernEnde;
         editfBreak        : Quit;
         editfGlossary     : Glossary;
