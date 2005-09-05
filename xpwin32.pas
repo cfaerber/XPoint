@@ -91,6 +91,7 @@ begin
   R.Right := Cols - 1;
   R.Bottom := Lines - 1;
   SetConsoleWindowInfo(OutHandle, True, R);
+  SetLastError(0);
   Size.X := Cols;
   Size.Y := Lines;
   SetConsoleScreenBufferSize(OutHandle, Size);
