@@ -155,6 +155,7 @@ begin
       GlobalUnlock(MemHandle);
       // Insert data into clipboard
       SetClipboardData(cf_OEMText, MemHandle);
+      // do not call GlobalFree as indicated in documentation for SetClipboardData
       GlobalFree(MemHandle);
     end;
   end;
