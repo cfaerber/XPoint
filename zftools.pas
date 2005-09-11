@@ -871,8 +871,8 @@ var f1,f2   : file;
         wrs(^A'FLAGS '+xflags);
       if XPointCtl<>0 then
         wrs(^A'XPCTL: '+strs(XPointCtl));
-      if charset<>'' then
-        wrs(^A'CHRS: '+MimeCharsetToFido(charset));
+      if x_charset<>'' then
+         wrs(^A'CHRS: '+MimeCharsetToFido(x_charset));
       if uuadr<>'' then begin
         wrs('To: '+uuadr);
         wrs('');
