@@ -275,7 +275,9 @@ var x,y      : Integer;
           end;
           dbNext(bezbase);
         until (hdp2.msgid=id) or dbEOF(bezbase) or (dbReadIntN(bezbase,bezb_msgid)<>crc);
-        if okay then DelMsg; { zu l”schende/zu ersetzende Nachricht l”schen }
+        { HJT 10.09.05, die ausloesende ERSETZT-Nachricht nicht auf loeschen setzen }
+        { if okay then DelMsg; } { zu l”schende/zu ersetzende Nachricht l”schen }
+        if okay and (cancel or (hdp2.msgid <> hdp2.ersetzt)) then DelMsg; { zu l”schende/zu ersetzende Nachricht l”schen }
       end;
     Hdp2.Free;
     if cancel then begin
