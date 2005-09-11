@@ -250,7 +250,10 @@ var x,y      : Integer;
     function okay:boolean;
     begin
       if sender<>'' then
-        result:=((hdp2.absender=sender) or (hdp2.cust1=sender)) and (hdp2.msgid=id)
+        { 11.09.05 HJT: UUZ versorgt jetzt aus 'Sender' den WAB }
+        { damit muessen wir hier auch gegen den WAB pruefen     }
+        { result:=((hdp2.absender=sender) or (hdp2.cust1=sender)) and (hdp2.msgid=id) }
+        result:=((hdp2.absender=sender) or (hdp2.wab=sender)) and (hdp2.msgid=id)
       else
         result:=(hdp2.absender=abs) or (hdp2.cust1=abs) and (hdp2.msgid=id);
     end;
