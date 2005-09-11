@@ -163,9 +163,10 @@ begin
           end;
   end;
   {$ifdef Win32}
-  // todo: adjust screen size with Win9x/ME only, not with WinNT/2000
-  SysSetScreenSize(25,80);
-  Window(1,1,80,25);
+  if not SysIsNT then begin  { HJT 10.09.05 }
+    SysSetScreenSize(25,80);
+    Window(1,1,80,25);
+  end;
   {$endif}
   if (cls=2) or (cls=-1) then
   begin

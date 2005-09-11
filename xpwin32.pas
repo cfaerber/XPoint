@@ -52,6 +52,9 @@ function SysOutputRedirected: boolean;
 function SysExec(const Path, CmdLine: String): Integer;
 Function GetEnv(envvar: string): string; { from FPC RTL }
 function RTLexec(const path, comline : string; var DosExitCode: Integer; wait: boolean): Integer;
+{ HJT 10.09.2005 }
+// are we running under NT/Win2K/XP?
+function SysIsNT:boolean;
 
 implementation
 
@@ -246,6 +249,22 @@ begin
      end;
    FreeEnvironmentStrings(p);
 end;
+
+{ HJT 10.09.05 start }
+{ are we running under NT/Win2K/XP? }
+function SysIsNT : boolean;
+var
+  sinfo : TOSVERSIONINFO;
+begin
+  SysIsNT:=false;
+  sInfo.dwOSVersionInfoSize:=sizeof(sInfo);
+  if GetVersionEx(sInfo) then begin
+    if sInfo.dwPlatformId = VER_PLATFORM_WIN32_NT then begin
+      SysIsNT:=True;
+    end;
+  end;
+end;
+{ HJT 10.09.05 end }
 
 initialization
   // disable program termination at ctrl-c
