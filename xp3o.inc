@@ -879,6 +879,7 @@ begin
           truncstr(absender,eAdrLen);  { dbSeek laeuft sonst ins Leere }
           dbSeek(ubase,uiName,UpperCase(absender));
           // do not add users with names longer 80 char, our database is not large enough
+          uflags:=0; { HJT 18.09.05 sonst wird eine zufaellige Prio in flags(MSGS.DB1) eingetragen }
           if not dbFound then
           begin          { neuen User anlegen }
             if adrok(absender) then
