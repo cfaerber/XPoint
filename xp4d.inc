@@ -567,9 +567,6 @@ begin
 end;
 
 
-{$IFNDEF FPC }
-  {$B+}
-{$ENDIF }
 procedure display(p:shortint);
 var i,j : integer;
     mi  : shortint;
@@ -581,7 +578,7 @@ begin
   repeat
     write_disp_line(i,p,true);
     inc(i);
-  until (i>gl) or not Forth;
+  until (i > gl) or not Forth;  // !!! Achtung: Seiteneffekt von Forth
   dbSetIndex(mbase,mi);
   if i<=gl then begin
     if dispmode<10 then attrtxt(col.colbretter)
@@ -593,9 +590,6 @@ begin
   if dispmode=12 then xaufbau:=false;
   mdisplay:=false;
 end;
-{$IFNDEF FPC }
-  {$B-}
-{$ENDIF }
 
 procedure redisplay(p:shortint);
 var i,bp : integer;
