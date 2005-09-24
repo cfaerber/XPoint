@@ -601,6 +601,7 @@ var x,y      : Integer;
   procedure AddNewBezug(MsgNr: Longint; const MsgId, RefId: string; datum: longint);
   var
     RefItem: PRefItem;
+    zwiref: string; { HJT 14.09.05 }
   begin
     if MsgId='' then exit;
     New(RefItem);
@@ -608,8 +609,17 @@ var x,y      : Integer;
     RefItem^.MsgId := MsgidIndex(msgid);
     if RefId='' then
       RefItem^.MsgRef := 0
-    else
-      RefItem^.MsgRef := MsgidIndex(refid);
+      { HJT 14.09.05: Bezug normalisieren start }
+    { else }
+      { RefItem^.MsgRef := MsgidIndex(refid); }
+     else begin
+       zwiref:=NormalizeBezug(refid);
+       if length(zwiref) = 0 then
+         RefItem^.MsgRef := 0
+       else
+         RefItem^.MsgRef:=MsgidIndex(zwiref);
+      end;
+      { HJT 14.09.05: end }
     RefItem^.Datum := Datum;
     RefList.Add(RefItem);
   end;

@@ -67,6 +67,8 @@ procedure AddBezug(var hd:Theader; dateadd:byte);
 procedure DelBezug;
 function  GetBezug(const ref:string):longint;
 procedure AddNewBezug(MsgPos, MsgId, Ref, Datum: Integer);
+{ HJT 11.00.05: Reference Normalisieren }
+function  NormalizeBezug(const ref:string):string;
 function  KK:boolean;
 function  HasRef:boolean;
 function  ZCfiletime(const fn:string):string;   { ZC-Dateidatum }
@@ -674,13 +676,23 @@ var c1,c2 : longint;
     satz  : longint;
     datum : longint;
     empfnr: byte;
+    zwiref: string; { HJT 11.09.05 }
 begin
   if ntKomkette(hd.netztyp) and (hd.msgid<>'') then begin
     c1:=MsgidIndex(hd.msgid);
     if hd.References.Count = 0 then
       c2:=0
-    else
-      c2:=MsgidIndex(hd.GetLastReference);
+      { HJT 11.09.05: Bezug normalisieren      }
+      { insbesondere spitze Klammern entfernen }
+      { c2:=MsgidIndex(hd.GetLastReference);   }
+    { else }
+    else begin
+      zwiref:=NormalizeBezug(hd.GetLastReference);
+      if Length(zwiref) = 0 then
+        c2:=0
+      else
+        c2:=MsgidIndex(zwiref);
+    end;
     { s. auch XP3O.Bezugsverkettung }
     satz:=dbRecno(mbase);
     dbReadN(mbase,mb_origdatum,datum);
@@ -763,7 +775,9 @@ end;
 function GetBezug(const ref:string):longint;
 var pos : longint;
 begin
-  dbSeek(bezbase,beiMsgid,dbLongStr(MsgidIndex(ref)));
+  { HJT 11.05.05 Bezug normalisieren }
+  { dbSeek(bezbase,beiMsgid,dbLongStr(MsgidIndex(ref))); }
+  dbSeek(bezbase,beiMsgid,dbLongStr(MsgidIndex(NormalizeBezug(ref))));
   if dbFound then begin
     pos:=dbReadIntN(bezbase,bezb_msgpos);
     dbGo(mbase,pos);
@@ -774,6 +788,31 @@ begin
     end
   else
     GetBezug:=0;
+end;
+
+{ HJT 11.00.05: Reference Normalisieren                      }
+{ zZ. werden lediglich eventuell vorhandene spitze Klammern  }
+{ entfernt. ToDo: eventuell vorhandene Kommentare wie in:    }
+{                                                            }
+{ BEZ: <8Oxpqa5nJ0B@vandusen.franken.de> _                   }
+{      (jnpeters at vandusen.franken.de's _                  }
+{      message of "16 May 2002 19:46:00 +0200")              }
+{                                                            }
+{ ebenfalls entfernen.                                       }
+{                                                            }
+{ Notwendig ist das Normalisieren der References, da         }
+{ ansonsten die Kommentarverknuepfung bei bestimmten (Alt-)  }
+{ Nachrichten nicht klappt.  Diese Nachrichten wurden mit    }
+{ References, eingebettet in spitzen Klammern, bis Mitte     }
+{ 2002 erzeugt.  Diese Normalisierung ist also nur fuer Alt- }
+{ bestaende notwendig.  Aber wir XPler haengen ja an unseren }
+{ Nachrichten...                                             }
+
+function NormalizeBezug(const ref:string):string;
+begin
+    Result:=ref;
+    if FirstChar(Result) ='<' then DeleteFirstChar(Result);  
+    if LastChar(Result)  ='>' then DeleteLastChar(Result);
 end;
 
 

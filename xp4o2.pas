@@ -577,8 +577,12 @@ begin
       bez:=GetBezug(hdp.GetLastReference);
       if bez<>0 then
         dbGo(mbase,bez)
-      else
-        nullid:=MsgidIndex(hdp.GetLastReference);
+      else begin
+        { HJT 15.08.2005 start Bezug Normalisieren }
+        { nullid:=MsgidIndex(hdp.GetLastReference); }
+        nullid:=MsgidIndex(NormalizeBezug(hdp.GetLastReference));
+        end;
+        { HJT 15.08.2005 end }
       end;
     inc(n);
   until (n= MaxKommLevels) or (bez=0);
