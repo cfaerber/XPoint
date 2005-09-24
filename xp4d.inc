@@ -127,6 +127,35 @@ var
     taus[cpos(c,UsrFeldTausch)] := s;
   end;
 
+  { 23.09.2005 HJT: ehemalige eingebettete Assemblerzeilen }
+  { auf Pascal umgeschrieben.                              }
+  { Hintergrund: moeglicherweise erzeugt FP2 fehlerhaften  }
+  { code bei hoeheren Optimierungsstufen.                  }
+  { Konkreter Anlass: in der Nachrichtenuebersicht wurden  }
+  { Nachrichten beim erstmaligen rueckwaertsblaettern mit  }
+  { der falschen Farbe (Prio) dargestellt.                 }
+  { Dessweiteren wurden beim Bewegen des Scrollbalkens     }
+  { ueber eine rot-hinterlegte Nachricht anschliessend     }
+  { die Nachricht wieder 'normal', also nicht rot, ange-   }
+  { zeigt. Das Auslagern der Assemblezeilen scheint das    }
+  { Problem auch bei den hoeheren Optimierungsstufen zu    }
+  { beheben                                                }
+  
+  function getmsgprio(const flag:byte):byte;
+  var
+    helpbyte: byte;
+  begin
+      { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
+      { 000=normal   -> 0     100=niedrigste -> 5       }
+      { 001=hoechste -> 2     101=    ?      -> 6       }
+      { 010=hoch     -> 3     110=    ?      -> 7       }
+      { 011=niedrig  -> 4     111=    ?      -> 8       }
+
+    helpbyte:=(flags DIV 8) and 7;
+    if helpbyte > 0 then inc(helpbyte);
+    result:=helpbyte;
+  end;
+  
 begin  { __ Suchmarke }
   over80:= ScreenWidth-80;                                      { Bildschirm > Spalten }
   case aktdispmode of
@@ -477,16 +506,19 @@ begin  { __ Suchmarke }
               end
               else msgtausch('B',forms(s1,blen-1+h3+
                 iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
+            
+            { HJT 23.09.2005 durch Pascal ersetzt wg. Optimierer, siehe getmsgprio   }
+            { asm                } { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
+            {     mov al,flags   } { 000=normal   -> 0     100=niedrigste -> 5       }
+            {     shr al,3       } { 001=hoechste -> 2     101=    ?      -> 6       }
+            {     and al,7       } { 010=hoch     -> 3     110=    ?      -> 7       }
+            {     je @1          } { 011=niedrig  -> 4     111=    ?      -> 8       }
+            {     inc al         }
+            { @1: mov helpbyte,al    }
+            { end;                   }
+            { userflag[y]:=helpbyte; }
 
-              asm                  { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
-                  mov al,flags     { 000=normal   -> 0     100=niedrigste -> 5       }
-                  shr al,3         { 001=hoechste -> 2     101=    ?      -> 6       }
-                  and al,7         { 010=hoch     -> 3     110=    ?      -> 7       }
-                  je @1            { 011=niedrig  -> 4     111=    ?      -> 8       }
-                  inc al
-              @1: mov helpbyte,al
-              end;
-              userflag[y]:=helpbyte;
+              userflag[y]:=getmsgprio(flags);
 
               if (fidoqwk and (FirstChar(_brett)='A') and
                   (HighlightName=UpperCase(dbReadStr(mbase,'name'))))
