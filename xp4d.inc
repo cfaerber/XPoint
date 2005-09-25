@@ -141,17 +141,21 @@ var
   { Problem auch bei den hoeheren Optimierungsstufen zu    }
   { beheben                                                }
   
-  function getmsgprio(const flag:byte):byte;
+  function getprio(const flag:byte; msgs:boolean):byte;
   var
     helpbyte: byte;
   begin
-      { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
-      { 000=normal   -> 0     100=niedrigste -> 5       }
-      { 001=hoechste -> 2     101=    ?      -> 6       }
-      { 010=hoch     -> 3     110=    ?      -> 7       }
-      { 011=niedrig  -> 4     111=    ?      -> 8       }
+      { codieren Prioritaet... Farbflag setzen:   }
+      { Nachrichten: Bit 3-5                      }
+      { User       : Bit 5-7                      }
+      { 000=normal   -> 0     100=niedrigste -> 5 }
+      { 001=hoechste -> 2     101=    ?      -> 6 }
+      { 010=hoch     -> 3     110=    ?      -> 7 }
+      { 011=niedrig  -> 4     111=    ?      -> 8 }
 
-    helpbyte:=(flags DIV 8) and 7;
+    if msgs then helpbyte:=flag DIV  8  { Nachrichten }
+    else         helpbyte:=flag DIV 32; { User        }
+    helpbyte:=helpbyte and 7;
     if helpbyte > 0 then inc(helpbyte);
     result:=helpbyte;
   end;
@@ -313,15 +317,9 @@ begin  { __ Suchmarke }
             end;
             dispbuf[y]:=forms(dispbuf[y], ScreenWidth);            { Sicherheitshalber nochmal krzen }
 
-            asm                  { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
-                mov al,uflags    { 000=normal   -> 0     100=niedrigste -> 5       }
-                shr al,5         { 001=hoechste -> 2     101=    ?      -> 6       }
-                and al,7         { 010=hoch     -> 3     110=    ?      -> 7       }
-                je @1            { 011=niedrig  -> 4     111=    ?      -> 8       }
-                inc al
-            @1: mov helpbyte,al
-            end;
-            userflag[y]:=helpbyte;
+            { HJT 23.09.2005 asm durch Pascal ersetzt wg. Optimierer, siehe getprio }
+            userflag[y]:=getprio(uflags, false);
+
           end;
         end;
   10..12: begin { NACHRICHTENLISTE }
@@ -507,18 +505,8 @@ begin  { __ Suchmarke }
               else msgtausch('B',forms(s1,blen-1+h3+
                 iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
             
-            { HJT 23.09.2005 durch Pascal ersetzt wg. Optimierer, siehe getmsgprio   }
-            { asm                } { Bit 3-5 codieren Prioritaet... Farbflag setzen: }
-            {     mov al,flags   } { 000=normal   -> 0     100=niedrigste -> 5       }
-            {     shr al,3       } { 001=hoechste -> 2     101=    ?      -> 6       }
-            {     and al,7       } { 010=hoch     -> 3     110=    ?      -> 7       }
-            {     je @1          } { 011=niedrig  -> 4     111=    ?      -> 8       }
-            {     inc al         }
-            { @1: mov helpbyte,al    }
-            { end;                   }
-            { userflag[y]:=helpbyte; }
-
-              userflag[y]:=getmsgprio(flags);
+              { HJT 23.09.2005 asm durch Pascal ersetzt wg. Optimierer, siehe getprio }
+              userflag[y]:=getprio(flags, true);
 
               if (fidoqwk and (FirstChar(_brett)='A') and
                   (HighlightName=UpperCase(dbReadStr(mbase,'name'))))
