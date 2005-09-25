@@ -300,12 +300,14 @@ begin
   if Length(s) < 10 then
     result := 0
   else begin
-  a1 := (Ord(s[1])-48) * 10 + (Ord(s[2])-48);
+  { HJT: 25.09.2005 bei ungueltigen Datumsstrings Overflow verhindern }
+  { Quick and Dirty Hack ( and $00FF)                                 }
+  a1 := ((Ord(s[1])-48) * 10 + (Ord(s[2])-48)) and $00FF;
   if a1 < 70 then a1 := a1 + 100;
-  a2 := (Ord(s[3])-48) * 10 + (Ord(s[4])-48);
-  a3 := (Ord(s[5])-48) * 10 + (Ord(s[6])-48);
-  a4 := (Ord(s[7])-48) * 10 + (Ord(s[8])-48);
-  a5 := (Ord(s[9])-48) * 10 + (Ord(s[10])-48);
+  a2 := ((Ord(s[3])-48) * 10 + (Ord(s[4])-48)) and $00FF;
+  a3 := ((Ord(s[5])-48) * 10 + (Ord(s[6])-48)) and $00FF;
+  a4 := ((Ord(s[7])-48) * 10 + (Ord(s[8])-48)) and $00FF;
+  a5 := ((Ord(s[9])-48) * 10 + (Ord(s[10])-48) and $00FF);
   asm
          mov   dh, a1                   { Jahr }
          mov   al, a2                   { Monat }
