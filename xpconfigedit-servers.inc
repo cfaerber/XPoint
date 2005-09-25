@@ -575,7 +575,7 @@
       _conn_mode: string;
       pronet : boolean;
       zc     : boolean;
-      pnr    : word;     { Fido - Pointnummer }
+      pnr    : integer;     { Fido - Pointnummer }
       xx,yy  : byte;
       Ug,U_G : boolean;  { UUCP-g, UUCP-G }
       Ue,Uz  : boolean;  { UUCP-e, UUCP-z }
@@ -661,7 +661,7 @@
                     maddstring(23,5+YOffset,getres2(920,74),conn_ip,18,60,'');     { 'Hostname' }
                       Conn_ipfld:=fieldpos;
                       mhnr(8008);
-                    maddint   (53,5+YOffset,getres2(920,75),conn_port,5,5,1,65535);{ 'Port' }
+                    maddint   (53,5+YOffset,getres2(920,75),conn_port,6,5,1,65535);{ 'Port' }
                     mappsel(false,iifs(nt=nt_UUCP,'540','24554'));
                       Conn_portfld:=fieldpos;
                   end;
