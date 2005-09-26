@@ -184,37 +184,33 @@ var     ICP       : dbIndexCProc;     { Index-Kontrollprozedur     }
 
 
 function  iohandler:boolean;
-procedure error(txt:string);
+procedure error(const txt:string);
 procedure writeinf(dbp:DB);
 procedure writehd(dpb:DB);
 
 
 implementation
 
-uses Debug;
+uses Debug, SysUtils;
 
 function iohandler:boolean;
 begin
   lastioerror:=ioresult;
   if lastioerror<>0 then 
-  begin
-    writeln('<DB> I/O-Fehler '+strs(lastioerror));
-    halt(1);
-  end;
+    raise Exception.Create('<DB> I/O-Fehler '+strs(lastioerror));
   iohandler:=true;
 end;
 
 
 { interner Fehler }
 
-procedure error(txt:string);
+procedure error(const txt:string);
 begin
   writeln;
   writeln('<DB> interner Fehler: ',txt);
-  Debug.DebugLog('datadef1','DB Error: '+txt,dlError);
   if dbInterrProc<>nil then
     proctype(dbInterrProc);
-  halt(1);
+  raise Exception.Create('DB Error: ' + txt);
 end;
 
 
