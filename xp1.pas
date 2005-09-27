@@ -2087,7 +2087,11 @@ end;
 {$IFDEF Snapshot}
 function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
 begin
-  CompileTime := FormatDateTime('yyyymmddhhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
+  {$IFNDEF DOS32 }
+    CompileTime := FormatDateTime('yyyymmddhhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
+  {$ELSE }
+    CompileTime := 'unknown.'
+  {$ENDIF }
   {$IFDEF Delphi }
     + 'd'
   {$ENDIF }

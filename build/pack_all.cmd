@@ -17,9 +17,9 @@ echo Options: %OXP_OPTS%
 
 cd \source\openxpb
 
-rem echo Compilere mit FreePascal fuer DOS 32
-rem del c:\xpexe\units\*.* /Q
-rem ppc386 -B %OXP_OPTS% -Xs -XX -FE\xpexe\dos   -FU\xpexe\units -FuObjCOM;netcall -FuDOS32 -Tgo32v2 openxp.pas
+echo Compilere mit FreePascal fuer DOS 32
+del c:\xpexe\units\*.* /Q
+\fpc\2.0.0\bin\go32v2\ppc386 -B %OXP_OPTS% -Xs -XX -FE\xpexe\dos -FU\xpexe\units -FuObjCOM;netcall -FuDOS32 -Tgo32v2 openxp.pas >!compdos.bak
 
 echo Compilere mit FreePascal fuer Win32
 
@@ -46,7 +46,7 @@ copy xpd_370d\openxp-?.res xpd_370w
 echo Packe Sourcen
 cd \source\openxpb
 copy \svn\openxpb\build\file_id.source file_id.diz
-rar a \a\openxp-%OXP_VER%.src.rar -r -s -ts- -x!com*.bak -m5 >\temp\pack
+rar a \a\openxp-%OXP_VER%.src.rar -cl -r -s -ts- -mc16:128t+ -x!com*.bak -m5 >\temp\pack
 
 echo Packe Windows 32 Bit
 cd ..\xpd_370w
@@ -54,17 +54,17 @@ copy \xpexe\win32\openxp.exe openxp.exe
 copy \svn\openxpb\build\file_id.win file_id.diz
 rar a -cl -r -s -ts- -m5 \a\openxp-%OXP_VER%.win.rar >\temp\pack
 
-rem echo Packe DOS 32 Bit
-rem cd ..\xpd_370d
-rem copy \xpexe\dos\*.exe
-rem copy \svn\openxpb\build\file_id.dos file_id.diz
-rem rar a -cl -r -s -ts- -m5 \a\openxp-%OXP_VER%.dos.rar >\temp\pack
+echo Packe DOS 32 Bit
+cd ..\xpd_370d
+copy \xpexe\dos\openxp.exe openxp.exe
+copy \svn\openxpb\build\file_id.dos file_id.diz
+rar a -cl -r -s -ts- -m5 \a\openxp-%OXP_VER%.dos.rar >\temp\pack
 
 echo Lösche alte Dateien
 del c:\xpexe\units\*.* /Q
-del c:\xpexe\dos\*.* /Q
+rem del c:\xpexe\dos\*.* /Q
 del c:\xpexe\win32\*.* /Q
-del \source\xpd_370d\openxp*.exe
+rem del \source\xpd_370d\openxp*.exe
 del \source\xpd_370w\openxp*.exe
 cd \svn\openxpb\build
 del file_id.dos file_id.win file_id.source version.sfn openxp-*.spec
