@@ -8,7 +8,7 @@ echo Exportiere Sourcen
 rmdir \source\openxpb /s /Q
 svn export \svn\openxpb c:\source\openxpb
 
-echo Erstelel Versions-Informationen
+echo Erstelle Versions-Informationen
 cd \svn\openxpb\build
 \perl\bin\perl get_build_nr.pl >\temp\variables.cmd
 call \temp\variables.cmd

@@ -34,10 +34,10 @@
   close(InFile);
 
   if ($RELEASE eq "1") {
-    $OPTS = "-gl -CX -OG3p3r";
+    $OPTS = "-gl -CX -O3p3";
   } else
   {
-    $OPTS = "-gl -OG3p3";
+    $OPTS = "-gl -gc -O3p3";
   }
 
 
