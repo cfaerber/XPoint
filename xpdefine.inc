@@ -128,6 +128,10 @@
   {$IMAGEBASE $00400000}
 {$ENDIF }
 
+{$IFDEF CLR}
+  {$DEFINE NOASM }        // No ASM within CLR
+{$ENDIF }
+
 {$IFDEF DebugInfo }
   {$IFDEF Delphi }
     {$D+}                 { Debug-Informationen }

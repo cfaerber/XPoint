@@ -52,6 +52,9 @@ const
   {$IFDEF Dos32 }
   pformstr    = ' (DOS32)';     { 32 Bit DOS mit FPC oder VP }
   {$ENDIF}
+  {$IFDEF CLR }
+  pformstr    = ' (.NET)';      { .NET CLR }
+  {$ENDIF }
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
@@ -100,13 +103,17 @@ type
   {$IFDEF Delphi }
     { Delphi, 32 Bit }
     integer8 =   shortint;
-    integer16 =  {$IFNDEF VER160}system.{$ENDIF}smallint;
+    integer16 =  {$IFNDEF VER170}system.{$ENDIF}smallint;
     integer32 =  longint;
     integer64 =  Int64;
     smallword =  {$IFNDEF VER160}system.{$ENDIF}word;
-    Word =       System.Word; 
+    {$IFNDEF CLR }
+    Word =       System.Word;
+    {$ENDIF }
     DWord =      Longword;  { = unsigned 32 bit }
   {$endif}
+  {$IFDEF CLR }
+  {$ENDIF }
 
 const
 {$IFDEF UnixFS }
