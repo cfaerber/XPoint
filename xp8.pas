@@ -616,7 +616,7 @@ var t1,t2    : text;
   end;
 
 begin
-  moment;
+  moment;      
   assign(t1,s);
   reset(t1);
   tname:=TempFile('');
@@ -1507,6 +1507,8 @@ label again;
         RCList.Capacity := _FileSize(RCFilename) div 25;
         RCList.LoadFromFile(RCFilename);
       end;
+
+      Debug.DebugLog('xp8','Using RC file:'+ RCFilename + 'with filesize' + IntToStr(_FileSize(RCFilename)), DLDebug);
 
       Unmarklist := TStringlist.Create;
       try
