@@ -51,7 +51,7 @@ function SysOutputRedirected: boolean;
 // successful. Return negative value if an error occurred (program not found).
 function SysExec(const Path, CmdLine: String): Integer;
 Function GetEnv(envvar: string): string; { from FPC RTL }
-function RTLexec(const path, comline : string; var DosExitCode: Integer; wait: boolean): Integer;
+function RTLexec(path, comline : string; var DosExitCode: Integer; wait: boolean): Integer;
 { HJT 10.09.2005 }
 // are we running under NT/Win2K/XP?
 function SysIsNT:boolean;
@@ -168,12 +168,12 @@ begin
   Result := false;
 end;
 
-function RTLexec(const path, comline : string; var DosExitCode: Integer; wait: boolean): Integer;
+function RTLexec(path, comline : string; var DosExitCode: Integer; wait: boolean): Integer;
 var
   SI: TStartupInfo;
   PI: TProcessInformation;
-  Proc : THandle;
-  l    : DWORD;
+  Proc : Longint;
+  l    : dword;
   CommandLine : array[0..511] of char;
   AppParam : array[0..255] of char;
   pathlocal : string;
@@ -195,26 +195,25 @@ begin
   AppParam[0]:=' ';
   AppParam[1]:=' ';
   if ComLine <> '' then  // when ComLine is empty, ComLine[1] gives AV
+  begin
+    // strip comlines longer than 253 chars 
+    ComLine := LeftStr(comline, min(253, length(comline)));
     Move(ComLine[1],AppParam[2],length(Comline));
+  end;
   AppParam[Length(ComLine)+2]:=#0;
   { concatenate both pathnames }
   Move(Appparam[0],CommandLine[length(Pathlocal)],strlen(Appparam)+1);
   if not CreateProcess(nil, PChar(@CommandLine),
            Nil, Nil, false,$20, Nil, Nil, SI, PI) then
-  begin
-    Result := GetLastError;
-    exit;
-  end else
-    Result := 0;
+   begin
+     result := GetLastError;
+     exit;
+   end;
   Proc:=PI.hProcess;
   CloseHandle(PI.hThread);
-  if wait then
-    if WaitForSingleObject(Proc, dword(Infinite)) <> $ffffffff then
-      GetExitCodeProcess(Proc,l)
-    else
-      l := DWord(-1);
-  CloseHandle(Proc);
-  DosExitCode := l and $FFFF;
+  if WaitForSingleObject(Proc, dword($ffffffff)) <> $ffffffff then
+    GetExitCodeProcess(Proc,l);
+   CloseHandle(Proc);
 end;
 
 function SysExec(const Path, CmdLine: String): Integer;
