@@ -172,7 +172,7 @@ function RTLexec(path, comline : string; var DosExitCode: Integer; wait: boolean
 var
   SI: TStartupInfo;
   PI: TProcessInformation;
-  Proc : Longint;
+  Proc : THandle;
   l    : dword;
   CommandLine : array[0..511] of char;
   AppParam : array[0..255] of char;
@@ -196,7 +196,7 @@ begin
   AppParam[1]:=' ';
   if ComLine <> '' then  // when ComLine is empty, ComLine[1] gives AV
   begin
-    // strip comlines longer than 253 chars 
+    // strip comlines longer than 253 chars
     ComLine := LeftStr(comline, min(253, length(comline)));
     Move(ComLine[1],AppParam[2],length(Comline));
   end;
@@ -205,15 +205,20 @@ begin
   Move(Appparam[0],CommandLine[length(Pathlocal)],strlen(Appparam)+1);
   if not CreateProcess(nil, PChar(@CommandLine),
            Nil, Nil, false,$20, Nil, Nil, SI, PI) then
-   begin
-     result := GetLastError;
-     exit;
-   end;
+  begin
+    Result := GetLastError;
+    exit;
+  end else
+    Result := 0;
   Proc:=PI.hProcess;
   CloseHandle(PI.hThread);
-  if WaitForSingleObject(Proc, dword($ffffffff)) <> $ffffffff then
-    GetExitCodeProcess(Proc,l);
-   CloseHandle(Proc);
+  if wait then
+    if WaitForSingleObject(Proc, dword(Infinite)) <> $ffffffff then
+      GetExitCodeProcess(Proc,l)
+    else
+      l := DWord(-1);
+  CloseHandle(Proc);
+  DosExitCode := l and $FFFF;
 end;
 
 function SysExec(const Path, CmdLine: String): Integer;
