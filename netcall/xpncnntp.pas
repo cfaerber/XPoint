@@ -102,11 +102,10 @@ begin
       if not NNTP.Connect then raise Exception.Create('');
       List.Duplicates:= dupIgnore;                    
       bfile := GetServerFilename(BoxName, extBl);
-      try
-        FromDate := FileDateToDateTime(FileAge(bfile));
-      except
+      if FileExists(bfile) then
+        FromDate := FileDateToDateTime(FileAge(bfile))
+      else
         FromDate := NaN;
-      end;
       if (bFile <> '') and NNTP.List(List,false, OnlyNew, FromDate) then
       begin
         { List.SaveToFile funktioniert nicht, da XP ein CR/LF bei der bl-Datei will
