@@ -74,6 +74,7 @@ procedure shell(const prog:string; space:word; cls:shortint);
     parameters,commandsave : string;
     callviacli : boolean; // "call via command line interpreter" (usually via COMMAND /C)
   begin
+    Debug.DebugLog('xp1s','Xec, command:<'+command+'>, prompt:>'+prompt+'>', DLInform); { HJT 01.10.2005 }
     pp:=cPos(' ',command);
     if pp=0 then parameters:=''
     else begin
@@ -138,11 +139,14 @@ var
   sp       : scrptr;
 
 begin
+  Debug.DebugLog('xp1s','shell, prog:<'+prog+'>, cls:<'+IntToStr(cls)+'>', DLInform); { HJT 01.10.2005 }
+  Debug.DebugLog('xp1s','shell, screenlines:'+IntToStr(screenlines)+',ScreenWidth:'+IntToStr(ScreenWidth), DLInform); { HJT 01.10.2005 }
   if (ParDebFlags and 1<>0) or ShellShowpar then
     ShowPar;
   getmaus(maussave);
   xp_maus_aus;
   if (cls<>4) and (cls<>5) then begin
+    Debug.DebugLog('xp1s','shell, calling sichern(sp)', DLInform); { HJT 01.10.2005 }
     sichern(sp);
     savecursor;
     end;
@@ -158,15 +162,18 @@ begin
               m2t:=false;
             end;
     3   : begin
+            Debug.DebugLog('xp1s','shell, calling clwin(1,ScreenWidth,4,screenlines-2)', DLInform); { HJT 01.10.2005 }
             clwin(1,ScreenWidth,4,screenlines-2);
             gotoxy(1,5);
           end;
   end;
   {$ifdef Win32}
-//  if not SysIsNT then begin  { HJT 10.09.05 }
+  if not SysIsNT then begin  { HJT 10.09.05 }
+    Debug.DebugLog('xp1s','shell, calling SysSetScreenSize(25,80)', DLInform); { HJT 01.10.2005 }
     SysSetScreenSize(25,80);
+    Debug.DebugLog('xp1s','shell, calling Window(1,1,80,25)', DLInform); { HJT 01.10.2005 }
     Window(1,1,80,25);
-//  end;
+  end;
   {$endif}
   if (cls=2) or (cls=-1) then
   begin
@@ -176,8 +183,12 @@ begin
   end;
   cursor(curon);
 
+  Debug.DebugLog('xp1s','shell, calling Xec('+prog+'>', DLInform); { HJT 01.10.2005 }
+  
   Errorlevel := Xec(prog,'[XP]');
 
+  Debug.DebugLog('xp1s','shell, Xec returns Errowlevel:'+IntToStr(Errorlevel), DLInform); { HJT 01.10.2005 }
+  
   if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then
   begin
     if deutsch and (random<0.02) then write('Pressen Sie einen Schlssel ...')
@@ -192,7 +203,17 @@ begin
   end;
 
   SysSetBackintensity;
+  Debug.DebugLog('xp1s','shell, calling SetScreenSize, ScreenLines:'
+                        + IntToStr(ScreenLines)
+                        + ', ScreenWidth:'+IntToStr(ScreenWidth), 
+                        DLInform); { HJT 01.10.2005 }
   SetScreenSize;
+
+  Debug.DebugLog('xp1s','shell, after calling SetScreenSize, ScreenLines:'
+                        + IntToStr(ScreenLines)
+                        + ', ScreenWidth:'+IntToStr(ScreenWidth), 
+                        DLInform); { HJT 01.10.2005 }
+
   cursor(curoff);
   if (cls<>4) and (cls<>5) then holen(sp);
   m2t:=sm2t;
