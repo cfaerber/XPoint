@@ -36,7 +36,7 @@ const FuncExternal: boolean = false;    { *-Funktionen gesperrt }
       PreExtProc  : procedure = nil;
 
 
-procedure prog_call(nr,nn:byte);
+procedure prog_call(nr,nn: integer);
 function  test_fkeys(var t:taste):boolean;
 procedure Xmakro(var t:taste; flags:byte);
 
@@ -132,14 +132,14 @@ const k0_S  : char = 'S';      { Spezial-Mode         }
 
 implementation  { -------------------------------------------------- }
 
-uses xp4o,xpnetcall,xpconfigedit,xpauto, clip;
+uses xp4o,xpnetcall,xpconfigedit,xpauto, clip, maske;
 
 
 { Funktionstaste in Hauptfenster oder ArcViewer }
 
-procedure prog_call(nr,nn:byte);
-var s      : string;
-    p0, p1 : byte;
+procedure prog_call(nr,nn: integer);
+var s,s1   : string;
+    p0, p1, x, y: integer;
     fn,fn2 : string;
     brk    : boolean;
     auto   : boolean;
@@ -192,6 +192,25 @@ begin
       p1 := Pos('$CLIP', UpperCase(s));
       if p1 > 0 then
         s:= LeftStr(s, p1-1) + Clip2String + Mid(s, p1+5);
+
+      p1 := pos('$ASK', UpperCase(s));
+      if p1>0 then
+      begin
+        x:=15; y:=11; s1:='';
+        pushhp(449);
+        dialog(length(getres(151))+47,3,'"'+
+          iifs(s> LeftStr(s,length(getres(151))+47-6),
+              LeftStr(s,length(getres(151))+47-9)+'...',s)+'"',x,y);
+        maddstring(3,2,getres(151),s1,40,
+          127-(p1-1+max(length(mid(s,p1+4)),0)),'');
+        readmask(brk);
+        enddialog;
+        pophp;
+        if brk then
+          exit
+        else
+          s:= LeftStr(s,p1-1)+trim(s1+mid(s,p1+4));
+      end;
 
       if @preextproc<>nil then begin
         preextproc;

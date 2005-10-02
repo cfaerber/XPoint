@@ -5705,6 +5705,15 @@ can select this "Tools" menu option, and SHEZ will be
 started, showing you the details of the file you had
 selected.
 
+If you use <<$ASK>> here, a dialogue will pop up upon
+pressing the function key, where you can enter one or
+more parameters. These will be passed to the executed
+program. This way you can for instance create a macro
+that copies an URL from the message reader to the
+clipboard, exits the lister, "presses" the function
+key, pastes the URL to the dialogue and thus executes
+Internet Explorer with this URL. :-)
+
 <<Internal XP Functions>> are started by putting a
 "*" first, then the XP command.
 For example *list errors.log will show you the

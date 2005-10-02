@@ -8520,6 +8520,17 @@ Funktionstaste bzw. den Menpunkt w„hlen - dann
 schreibt OpenXP die gew„hlte Nachricht in eine Datei
 und bergibt den Namen der Datei an SHEZ.
 
+Wenn Sie hier <<$ASK>> angeben, erscheint beim Drcken
+der Funktionstaste ein Eingabedialog, in dem Sie
+einen oder mehrere Parameter angeben k”nnen. Diese
+werden dann bei der Ausfhrung an das Programm
+bergeben. So k”nnen Sie z.B. ein Makro schreiben,
+das einen URL im Nachrichten-Lister ins Clipboard
+legt, den Lister verl„át, die hier definierte Funk-
+tionstaste "drckt", den URL in den Eingabedialog
+kopiert und so den Internet Explorer mit dem ber-
+gebenen URL startet. :-)
+
 <<interne Funktionen>> beginnen immer mit einem "*"; sie
 sind *nicht* innerhalb von CrossTerm verfgbar:
 
