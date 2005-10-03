@@ -221,6 +221,7 @@
 
 {$IFDEF Unix }
   {$DEFINE NCRT }
+  {$DEFINE LOCALSCREEN }   // needed for Screenshots
 {$ENDIF }
 
 { --- 2. File System and other system features ----------------------- }
