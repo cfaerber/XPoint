@@ -242,10 +242,6 @@ procedure cm_wln;
 procedure cm_rl(var s:string; maxlen:byte; dot:boolean; var brk:boolean);
 function  cm_key:char;
 
-{$IFDEF Snapshot}
-function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
-{$ENDIF}
-
 function  ComputeUserAddress(d: DB):string;
 
 procedure InitXP1Unit;
@@ -2083,27 +2079,6 @@ begin
       result :=username + ' @ ' + boxname;
   end;
 end;
-
-{$IFDEF Snapshot}
-function compiletime:string;      { Erstelldatum von XP.EXE als String uebergeben }
-begin
-  {$IFNDEF DOS32 }
-    CompileTime := FormatDateTime('yyyymmddhhnn', FileDateToDateTime(FileAge(OpenXPEXEPath)))
-  {$ELSE }
-    CompileTime := 'unknown.'
-  {$ENDIF }
-  {$IFDEF Delphi }
-    + 'd'
-  {$ENDIF }
-  {$IFDEF Kylix }
-    + 'k'
-  {$ENDIF }
-  {$IFDEF FPC }
-    + 'f'
-  {$ENDIF}
-  ;
-end;
-{$ENDIF}
 
 var
   SavedExitProc: pointer;

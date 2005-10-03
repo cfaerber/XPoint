@@ -152,7 +152,7 @@ begin
   wrt(x+15+addxInf,y+3,'//\\' );
   wrt(x+3+addxVer,y+5,ver);
   {$IFDEF Snapshot}
-    wrt(x+2+addxVer,y+6,'Snapshot: '+compiletime);
+    wrt(x+3+addxVer,y+6,'Snapshot');
   {$ENDIF}
   attrtxt(col.colmbox);
   wrt(x+9+addxInf,y+2,'Open');

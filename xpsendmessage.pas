@@ -2059,7 +2059,7 @@ fromstart:
 
     hdp.replypath:=_replypath;
 //  hdp.typ:=iifs(binary,'B','T');
-    hdp.programm:=xp_xp+'/'+verstr + {$IFDEF Snapshot} '-' + compiletime + {$ENDIF} pformstr;
+    hdp.programm:=xp_xp+'/'+verstr + pformstr;
     hdp.organisation:=orga;
     if sData.ersetzt<>''then hdp.ersetzt:=sData.ersetzt;
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
