@@ -46,7 +46,7 @@ uses
 {$IFDEF Kylix}
   xplinux,
 {$ENDIF}   
-  xpfido, ndiff;
+  xpfido, ndiff, debug;
 
 
 { --- Nodelisten-Konfiguration laden/speichern ---------------------- }
@@ -442,6 +442,7 @@ var diffdir  : string;
   end;
 
 begin   //function  DoDiffs(files:string; auto:boolean):byte;
+  Debug.DebugLog('xpfidonl', 'Starting DoDiffs in ' + files, dlInform);
   DoDiffs:=1;
   reindex:=false;
   logopen:=false;
@@ -461,7 +462,10 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
       ufile:=ReplNr(fupdatefile,nextnr);
       ExpandFilePath(uarchive);
       unarcflag:=false;                           { Update-Archiv auspacken }
-      if (uarchive<>'') and passend(uarchive) then begin
+      Debug.DebugLog('xpfidonl', 'NextNumber' + IntToStr(nextnr) + ' uarchive: ' + uarchive + ' ufile: ' + ufile, dlDebug);
+      if (uarchive<>'') and passend(uarchive) then
+      begin
+        Debug.DebugLog('xpfidonl', 'Using ' + uarchive, dlDebug);
         SafeDeleteFile(diffdir+ufile);
         log(getreps2(2130,1,ufile + ' from ' + uarchive));      { 'entpacke %s' }
         unarcflag:=UniExtract(uarchive,diffdir,ufile);
@@ -470,8 +474,11 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
         diffnames:=WildCard;
         end;
       ExpandFilePath(ufile);
-      if FileExists(ufile) and passend(ufile) then begin
-        if fprocessor<>'' then ExecProcessor(fprocessor);
+      if FileExists(ufile) and passend(ufile) then
+      begin
+        if fprocessor<>'' then
+          ExecProcessor(fprocessor);
+        Debug.DebugLog('xpfidonl', 'Using ' + ufile, dlDebug);
         if fDoDiff and UDiff then begin       { Update diffen }
           number:=nextnr;
           NodeList.SaveConfigToFile;
