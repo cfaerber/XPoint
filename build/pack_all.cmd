@@ -58,7 +58,7 @@ echo Packe DOS 32 Bit
 cd ..\xpd_370d
 copy \xpexe\dos\openxp.exe openxp.exe
 copy \svn\openxpb\build\file_id.dos file_id.diz
-rar a -cl -r -ts- \a\openxp-%OXP_VER%.dos.rar >\temp\pack
+rar a -cl -r -m5 -s -md512 -ts- \a\openxp-%OXP_VER%.dos.rar >\temp\pack
 
 echo Lösche alte Dateien
 del c:\xpexe\units\*.* /Q

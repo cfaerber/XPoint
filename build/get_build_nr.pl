@@ -25,7 +25,6 @@
   open(OutFile, ">\.\./version.inc");
   print OutFile "version_build = ".$BUILD.";\n";
   close(OutFile);
-  printf("version.inc written\n");
 
   open(InFile, "../xpdefine.inc");
   while (<InFile>) {
