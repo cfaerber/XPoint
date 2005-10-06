@@ -50,32 +50,35 @@ type
 
 type
   TSQLiteErrorCode = (
-    SQLITE_OK          = 0,    { Successful result }
-    SQLITE_ERROR       = 1,    { SQL error or missing database }
-    SQLITE_INTERNAL    = 2,    { An internal logic error in SQLite }
-    SQLITE_PERM        = 3,    { Access permission denied }
-    SQLITE_ABORT       = 4,    { Callback routine requested an abort }
-    SQLITE_BUSY        = 5,    { The database file is locked }
-    SQLITE_LOCKED      = 6,    { A table in the database is locked }
-    SQLITE_NOMEM       = 7,    { A malloc() failed }
-    SQLITE_READONLY    = 8,    { Attempt to write a readonly database }
-    SQLITE_INTERRUPT   = 9,    { Operation terminated by sqlite_interrupt() }
-    SQLITE_IOERR      = 10,    { Some kind of disk I/O error occurred }
-    SQLITE_CORRUPT    = 11,    { The database disk image is malformed }
-    SQLITE_NOTFOUND   = 12,    { (Internal Only) Table or record not found }
-    SQLITE_FULL       = 13,    { Insertion failed because database is full }
-    SQLITE_CANTOPEN   = 14,    { Unable to open the database file }
-    SQLITE_PROTOCOL   = 15,    { Database lock protocol error }
-    SQLITE_EMPTY      = 16,    { (Internal Only) Database table is empty }
-    SQLITE_SCHEMA     = 17,    { The database schema changed }
-    SQLITE_TOOBIG     = 18,    { Too much data for one row of a table }
-    SQLITE_CONSTRAINT = 19,    { Abort due to contraint violation }
-    SQLITE_MISMATCH   = 20,    { Data type mismatch }
-    SQLITE_MISUSE     = 21,    { Library used incorrectly }
-    SQLITE_NOLFS      = 22,    { Uses OS features not supported on host }
-    SQLITE_AUTH       = 23,    { Authorization denied }
-    SQLITE_ROW        = 100,   { sqlite_step() has another row ready }
-    SQLITE_DONE       = 101    { sqlite_step() has finished executing }
+  SQLITE_OK = 0, // Successful result
+  SQLITE_ERROR = 1, // SQL error or missing database
+  SQLITE_INTERNAL = 2, // An internal logic error in SQLite
+  SQLITE_PERM = 3, // Access permission denied
+  SQLITE_ABORT = 4, // Callback routine requested an abort
+  SQLITE_BUSY = 5, // The database file is locked
+  SQLITE_LOCKED = 6, // A table in the database is locked
+  SQLITE_NOMEM = 7, // A malloc() failed
+  SQLITE_READONLY = 8, // Attempt to write a readonly database
+  SQLITE_INTERRUPT = 9, // Operation terminated by sqlite3_interrupt()
+  SQLITE_IOERR = 10, // Some kind of disk I/O error occurred
+  SQLITE_CORRUPT = 11, // The database disk image is malformed
+  SQLITE_NOTFOUND = 12, // (Internal Only) Table or record not found
+  SQLITE_FULL = 13, // Insertion failed because database is full
+  SQLITE_CANTOPEN = 14, // Unable to open the database file
+  SQLITE_PROTOCOL = 15, // Database lock protocol error
+  SQLITE_EMPTY = 16, // Database is empty
+  SQLITE_SCHEMA = 17, // The database schema changed
+  SQLITE_TOOBIG = 18, // Too much data for one row of a table
+  SQLITE_CONSTRAINT = 19, // Abort due to contraint violation
+  SQLITE_MISMATCH = 20, // Data type mismatch
+  SQLITE_MISUSE = 21, // Library used incorrectly
+  SQLITE_NOLFS = 22, // Uses OS features not supported on host
+  SQLITE_AUTH = 23, // Authorization denied
+  SQLITE_FORMAT = 24, // Auxiliary database format error
+  SQLITE_RANGE = 25, // 2nd parameter to sqlite3_bind out of range
+  SQLITE_NOTADB = 26, // File opened that is not a database file
+  SQLITE_ROW = 100, // sqlite3_step() has another row ready
+  SQLITE_DONE = 101  // sqlite3_step() has finished executing
   );
 
 type
@@ -143,7 +146,7 @@ type
     function QueryStartEx(const SQLQuery: string; Args: array of const): TSQLiteQuery; overload;
     function QueryNext: boolean;
     procedure QueryEnd;
-  public  
+  public
     property QueryResult: TSQLiteRow read GetQueryResult;
 
     // Helper Functions
@@ -160,22 +163,20 @@ implementation
 uses
   Math;
 
-function sqlite_open(filename: PChar; mode: integer; var errmsg: PChar): Pointer
-  cdecl; external 'sqlite.dll';
-procedure sqlite_close(sqlite: Pointer); cdecl; external 'sqlite.dll';
-type SQLiteCallback = function (columns: integer; results, names: TSQLite_PAPChar): integer;
-function sqlite_exec(sqlite: Pointer; sql: PChar; callback: SQLiteCallback;
-  callback_argument: pointer; var errmsg: PChar): integer; cdecl; external 'sqlite.dll';
-procedure sqlite_freemem(p: PChar); cdecl; external 'sqlite.dll';
+type
+  TSQLiteDB = Pointer;
+  TSQLiteResult = ^PChar;
+  TSQLiteStmt = Pointer;
 
-function sqlite_compile(db: pointer; zSQL: PChar; var zTail: PChar;
-  var pVm: pointer; var pzErrmsg: PChar): integer;
-  cdecl; external 'sqlite.dll';
-function sqlite_step(pVm: pointer; var N: integer;
-  var pazValue, pazColName: TSQLite_PAPChar): integer;
-  cdecl; external 'sqlite.dll';
-function sqlite_finalize(pVM: pointer; var pzErrMsg: PChar): integer;
-  cdecl; external 'sqlite.dll';
+
+function SQLite3_Open(dbname: PChar; var db: TSqliteDB): integer; cdecl; external 'sqlite3.dll' name 'sqlite3_open';
+function SQLite3_Close(db: TSQLiteDB): integer; cdecl; external 'sqlite3.dll' name 'sqlite3_close';
+function SQLite3_Exec(db: TSQLiteDB; SQLStatement: PChar; CallbackPtr: Pointer; Sender: TObject; var ErrMsg: PChar): integer; cdecl; external 'sqlite3.dll' name 'sqlite3_exec';
+procedure SQlite3_Free(P: PChar); cdecl; external 'sqlite3.dll' name 'sqlite3_free';
+function SQLite3_Prepare(db: TSQLiteDB; SQLStatement: PChar; nBytes: integer; var hStmt: TSqliteStmt; var pzTail: PChar): integer; cdecl; external 'sqlite3.dll' name 'sqlite3_prepare';
+function Sqlite3_Step(hStmt: TSqliteStmt): integer; cdecl; external 'sqlite3.dll' name 'sqlite3_step';
+function SQLite3_Finalize(hStmt: TSqliteStmt): integer; cdecl; external 'sqlite3.dll' name 'sqlite3_finalize';
+
 
 constructor ESQLite.Create(ErrorCode: TSQLiteErrorCode);
 begin
@@ -237,7 +238,7 @@ begin
       raise ESQLite.Create(TSQLiteErrorCode(ErrorCode),ErrorMessage);
     finally
       if assigned(ErrorMessage) then
-        sqlite_freemem(ErrorMessage);
+        sqlite3_free(ErrorMessage);
     end;
 end;
 
@@ -248,22 +249,17 @@ end;
 
 constructor TSQLite.CreateWithDBName(const DBName: string);
 var
-  PMessage: PChar;
+  ErrorCode: Integer;
 begin
-  FSQLiteDB := sqlite_open(PChar(DBName),0,PMessage);
+  ErrorCode := sqlite3_open( PChar(DBName), FSQLiteDB);
   if not assigned(FSQLiteDB) then
-    try
-      raise Exception.Create(PMessage);
-    finally
-      if assigned(PMessage) then
-        sqlite_freemem(PMessage);
-    end;
+    raise ESQLite.Create(TSQLiteErrorCode(ErrorCode));
 end;
 
 destructor TSQLite.Destroy;
 begin
   QueryEnd;
-  sqlite_close(FSQLiteDB);
+  sqlite3_close(FSQLiteDB);
   inherited Destroy;
 end;
 
@@ -301,15 +297,16 @@ var
   PMessage: PChar;
 begin
   QueryEnd;
-  sqlite_except(sqlite_exec(FSQLiteDB,PChar(SQLQuery),nil,nil,PMessage),PMessage);
+  sqlite_except(sqlite3_exec(FSQLiteDB,PChar(SQLQuery),nil,nil,PMessage),PMessage);
 end;
 
-procedure TSQLite.Execute(const SQLQuery: string);   !!
+procedure TSQLIte.Execute(const SQLQuery: string; Args: array of const);
 var
   PMessage: PChar;
 begin
   QueryEnd;
-  sqlite_except(sqlite_exec(FSQLiteDB,PChar(SQLQuery),nil,nil,PMessage),PMessage);
+  //!!!!
+  sqlite_except(sqlite3_exec(FSQLiteDB,PChar(SQLQuery),nil,nil,PMessage),PMessage);
 end;
 
 procedure TSQLite.QueryStart(const SQLQuery: string);
@@ -383,7 +380,7 @@ procedure TSQLite.RollbackTransaction; begin Execute('ROLLBACK;'); end;
 function TSQLite.HasTable(const TableName: String): Boolean;
 var q: TSQLiteQuery;
 begin
-  q := TSQLiteQuery.Create(self,'SELECT 1 FROM sqlite_master WHERE '+
+   q := TSQLiteQuery.Create(self,'SELECT 1 FROM sqlite_master WHERE '+
       'type=''table'' AND name='+Quote(TableName)+';');
   try
     result := q.Next;
@@ -434,19 +431,14 @@ constructor TSQLiteQuery.Create(SQLite: TSQLite; Query: String);
 var pErrorMessage: PChar;
 begin
   sqlite_except(
-    sqlite_compile(SQLite.FSQLiteDB,PChar(Query),
-      zTail,pVM,pErrorMessage),
-    pErrorMessage
-  );
+    sqlite3_prepare(SQLite.FSQLiteDB,PChar(Query), -1, pVM, zTail));
 end;
 
 destructor TSQLiteQuery.Destroy;
 var pErrorMessage: PChar;
 begin
   sqlite_except(
-    sqlite_finalize(pVM,pErrorMessage),
-    pErrorMessage
-  );
+    sqlite3_finalize(pVM));
 end;
 
 function TSQLiteQuery.Next: boolean;
@@ -454,7 +446,7 @@ var pErrorMessage: PChar;
     ErrorCode: TSQLiteErrorCode;
 begin
   // !! sleep handling im busy fall einbauen
-  ErrorCode := TSQLiteErrorCode(sqlite_step(pVM,N,pazValue,pazColName));
+  ErrorCode := TSQLiteErrorCode(sqlite3_step(pVM));
   case ErrorCode of
     SQLITE_ROW: result := true;
     SQLITE_DONE: result := false;
