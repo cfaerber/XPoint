@@ -246,7 +246,17 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-procedure Remove0(var data; size: LongWord); assembler; {&uses edi}
+procedure Remove0(var data; size: LongWord);
+{$IFDEF NOASM }
+var
+  i: Integer;
+begin
+  for i := 0 to Size -1 do
+    if TByteArray(data)[i] = 32 then
+      TByteArray(data)[i] := 0;
+end;
+{$ELSE }
+  assembler; {&uses edi}
 asm
         mov    edi,data
         mov    ecx,size
@@ -262,6 +272,7 @@ asm
 end ['EAX', 'ECX', 'EDI'];
 {$ELSE }
 end;
+{$ENDIF }
 {$ENDIF }
 
 procedure ISO2IBM(var data; size: LongWord); assembler; {&uses ebx, esi}
