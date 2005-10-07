@@ -89,7 +89,9 @@
     {$UNDEF DPMI }
   {$ENDIF }
   {$MODE Delphi }
-  {$ASMMODE Intel }
+  {$IFNDEF x86_64 }
+    {$ASMMODE Intel }
+  {$ENDIF }
   {$DEFINE NOASM }        // there are ASM problems with FPC 2.0
   {$GOTO ON }
   {$INLINE ON }
@@ -98,8 +100,6 @@
   {$C-,H+,I-,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
-  {$IFDEF Linux }
-  {$ENDIF }
 {$ENDIF }
 
 {$IFDEF Delphi }
@@ -108,17 +108,6 @@
   {$ELSE }
     {$APPTYPE CONSOLE }
   {$ENDIF }
-  {$DEFINE Ver32 }
-  {$DEFINE Int64 }
-  {$DEFINE i386}
-  {$A+,B-,C-,D-,E-,F-,G-,H+,I-,J+,K-,L-,M-,N+,O-,P+,Q-,R-,S-,T-,U-,V+,W-,X+,Y-,Z1}
-  {$MINSTACKSIZE $00004000}
-  {$MAXSTACKSIZE $00100000}
-  {$IMAGEBASE $00400000}
-{$ENDIF }
-
-{$IFDEF Kylix }
-  {$APPTYPE CONSOLE }
   {$DEFINE Ver32 }
   {$DEFINE Int64 }
   {$DEFINE i386}
