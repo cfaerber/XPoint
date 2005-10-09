@@ -1116,7 +1116,10 @@ var
     fn     : string;
     t      : text;
     flags  : longint;
+    emp    : string; { HJT 08.10.2005 }
 begin
+  Debug.DebugLog('xp3o','---- CancelMessage, Start', DLDebug);
+  
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(439);     { 'Unversandte Nachricht mit "Nachricht/Unversandt/Loeschen" loeschen!' }
     exit;
@@ -1162,14 +1165,36 @@ begin
   leer:='';
   if hds>1 then
     case mbNetztyp of
-      nt_UUCP, nt_Client: begin
+      nt_NNTP,      { HJT 09.10.2005 }
+      nt_UUCP, 
+      nt_Client:    begin
                     _bezug:=hdp.msgid;
                     _beznet:=hdp.netztyp;
                     ControlMsg:=true;
                     dat:=CancelMsk;
+                    Debug.DebugLog('xp3o','CancelMessage, nt_NNTP, nt_UUCP, '
+                                       +'nt_Client, hdp.Empfaenger.Count:'
+                                       +IntToStr(hdp.Empfaenger.Count), DLDebug);
+                    { HJT 09.10.2005 }
+                    // den ersten Empfaenger fuer DoSend merken und dann 
+                    // aus der Liste Loeschen
+                    emp:='';
+                    if hdp.Empfaenger.Count > 0 then begin
+                       emp:=hdp.Empfaenger[0];
+                       hdp.Empfaenger.Delete(0); 
+                    end;
+
                     SendEmpfList.Assign(hdp.Empfaenger);
                     hdp.Empfaenger.Clear;
-                    if DoSend(false,dat,false,false,'A','cancel <'+_bezug+
+                    Debug.DebugLog('xp3o','CancelMessage, nt_NNTP, nt_UUCP, '
+                                          +'nt_Client, calling '
+                                          +'DoSend with A'+emp, DLDebug);
+                    { HJT 09.10.2005 }
+                    { if DoSend(false,dat,false,false,'A','cancel <'+_bezug+
+                                  '>',false,false,false,false,true,nil,leer,
+                                 sendShow) then;
+                    }
+                    if DoSend(false,dat,false,false,'A'+emp,'cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,
                               sendShow) then;
                   end;
@@ -1192,6 +1217,8 @@ begin
                     dat:=CancelMsk;
                     SendEmpfList.Assign(hdp.Empfaenger);
                     hdp.Empfaenger.Clear;
+                    Debug.DebugLog('xp3o','CancelMessage, nt_ZConnect, '
+                                         +'calling DoSend with A', DLDebug);
                     if DoSend(false,dat,false,false,'A','cancel <'+_bezug+
                               '>',false,false,false,false,true,nil,leer,
                               sendShow) then;
@@ -1273,6 +1300,9 @@ begin
   sData.orghdp:=hdp;
   if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
     sFlags:=sFlags or SendMPart;
+
+{ HJT 07.10.2005 }
+Debug.DebugLog('xp3o','ErsetzeMessage, calling DoSend with A+empf:'+'A'+empf, DLDebug);
 
   DoSend(false,fn,false,false,'A'+empf,_betreff,
     true,false,true,false,true,sData,leer, sFlags);
