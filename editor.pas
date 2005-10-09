@@ -1247,11 +1247,6 @@ var  dl         : displp;
             end;
     end;
 
-    procedure SpeichernEnde;
-    begin
-      if EdSave(ed) then Quit;
-    end;
-
     procedure ShiftMarkStart;
     var 
       MarkPos: Position;
@@ -1463,8 +1458,8 @@ var  dl         : displp;
         editfMenu         : InterpreteToken(LocalMenu);
         editfSetup        : Einstellungen;
         editfSaveSetup    : EinstellungenSichern;
-        editfSave         : if EdSave(ed) then Quit;
-        editfSaveQuit     : SpeichernEnde;
+        editfSave         : EdSave(ed);
+        editfSaveQuit     : if EdSave(ed) then Quit;
         editfBreak        : Quit;
         editfGlossary     : Glossary;
       end;
