@@ -655,43 +655,39 @@ procedure MapsKeys(list:TLister;var t:taste); forward;
 { RFC/Client: Bretter anhand eines Files abbestellen (Brettfenster) }
 procedure File_abbestellen(const box,GroupsToUnsubscribeFilename:string);
 var fGroupsToUnsubscribe: Text;
-    sBLFileName,s1,s2: string;
-    brk: boolean;
-    List: TLister;
-    p: Cardinal;
+    sBLFileName,s1,s2, rcfile: string;
+    rc: TStringList;
+    i: Integer;
 begin
   sBLFileName:=Get_BL_Name(box);
   if not fileExists(sBLFileName) then
   begin
     rfehler(807);
     exit;
-    end;
-  List := TLister.CreateWithOptions(1,80,4,4,-1,'/M/SB/S/');        { Dummy-Lister }
-  list.OnKeyPressed := Mapskeys;
-  read_BL_File(sBLFileName,true, List);    { Bestellt-Liste in Lister laden }
-  pushkey(^A);                             { Ctrl+A = Alles markieren  }
-  pushkey(keyesc);                         { Esc    = Lister verlassen }
-  List.Show;                               { Dummy-Lister starten      }
-
-  assign(fGroupsToUnsubscribe,GroupsToUnsubscribeFilename);
-  s1:= List.FirstMarked;                   { Liste der bestellten Bretter     }
-  while s1<>#0 do                          { Mit Abbestell-File vergleichen   }
-  begin
-    brk:=true;
+  end;
+  rc := TStringlist.Create;
+  try
+    rcfile:= ChangeFileExt(sBLFilename, extRc);
+    rc.LoadFromFile(rcfile);
+    assign(fGroupsToUnsubscribe,GroupsToUnsubscribeFilename);
     reset(fGroupsToUnsubscribe);
-    while not eof(fGroupsToUnsubscribe) and brk do
+    while not eof(fGroupsToUnsubscribe) do
     begin
       readln(fGroupsToUnsubscribe,s2);
-      if trim(s2)=trim(copy(s1,3,78)) then
-        brk:=false;                        { Bretter, die abzubestellen sind }
+      for i := 0 to rc.Count -1 do
+      begin
+        s1 :=LeftStr(rc[i],cposx(' ',rc[i])-1);
+        if LeftStr(rc[i],cposx(' ',rc[i])-1) = s2 then
+        begin
+          rc.Delete(i);
+          break;
+        end;
       end;
-    close(fGroupsToUnsubscribe);
-    if brk then
-      List.UnMarkLine;                     { werden NICHT entmarkiert        }
-    s1:= List.NextMarked;
+    end;
+    rc.SaveToFile(rcfile);
+  finally
+    rc.Free;
   end;
-  makeRC(false,box,List);                  { (Noch) markierte Bretter abbestellen }
-  aufbau:=true;
 end;
 
 
@@ -929,7 +925,7 @@ begin
         rfehler(802);   { 'Dieses Brett hat keine Serverbox!' }
         exit; end;
       if not IsBox(box) then begin
-        rfehler1(803,box);   { 'Unbekannte Serverbox: %s' }
+         rfehler1(803,box);   { 'Unbekannte Serverbox: %s' }
         exit; end;
       if not BoxHasMaps(box) then exit;
       end;
