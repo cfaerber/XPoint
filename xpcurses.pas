@@ -404,6 +404,9 @@ var
    LastWindMin,                         { Manipulationen abfangen }
    LastWindMax: word;
 
+var
+  LocalScreen: ^TLocalScreen;
+
 {==========================================================================
    This code chunk is from the FPC source tree in rtl/inc/textrec.inc.
    It is the internal format of a variable of type "Text" as defined and
@@ -1073,7 +1076,7 @@ end;
 { Schreiben an aktueller Cursorposition, Update des Cursors }
 procedure Wrt2(const s: string );
 var
-  i: integer;
+  i, count: integer;
 begin
   if not __isInit then InitXPCurses;
   { Aenderung bein Textattribut bearbeiten }
@@ -1086,13 +1089,25 @@ begin
     waddch(ActWin.wHnd, CvtToISOConsole(s[i]));
   { Erst jetzt Fenster aktualisieren }
   wrefresh(ActWin.wHnd);
+
+
+  if s <> '' then
+  begin
+    Count := ((x-1)+(y-1)*ScreenWidth)*2;
+    FillChar(LocalScreen^[Count], Length(s)*2, TextAttr);
+    for i := 1 to Length(s) do
+    begin
+      LocalScreen^[Count] := s[i];
+      Inc(Count, 2);
+    end;
+   end;
 end;
 
 { Schreiben an X/Y, Cursor wird nicht veraendert }
 procedure FWrt(const x, y: word; const s: string);
 var
   x0, y0: integer;
-  i: integer;
+  i, count: integer;
 begin
   if not __isInit then InitXPCurses;
   WhereXY(x0,y0);
@@ -1109,6 +1124,17 @@ begin
     waddch(ActWin.wHnd, CvtToISOConsole(s[i]));
   { GotoXY macht auch den refresh }
   GotoXY(x0, y0);
+
+  if s <> '' then
+  begin
+    Count := ((x-1)+(y-1)*ScreenWidth)*2;
+    FillChar(LocalScreen^[Count], Length(s)*2, TextAttr);
+    for i := 1 to Length(s) do
+    begin
+      LocalScreen^[Count] := s[i];
+      Inc(Count, 2);
+    end;
+  end;
 end;
 
 { Window loeschen }
@@ -1501,6 +1527,8 @@ begin
   TextRec(Input).Handle:=StdInputHandle;
 {$ENDIF}
 
+  GetMem(LocalScreen, SizeOf(LocalScreen^));
+
   ScreenLines :=  SysGetScreenLines;
 
   ESCDELAY:= 100;               { 100 ms }
@@ -1525,6 +1553,7 @@ end;
 
 procedure DoneXPCurses;
 begin
+  FreeMem(LocalScreen);
   { Noch ein SubWindow vorhanden= }
   EndXPCurses;
 end;
