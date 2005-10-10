@@ -213,7 +213,8 @@ type
 implementation
 
 uses
-  SysUtils,Typeform,xp0,xpnt,xpdatum,xp_pgp,xpmakeheader,xpstreams;
+  SysUtils,Typeform,xp0,xpnt,xpdatum,xp_pgp,xpmakeheader,xpstreams,
+  debug { HJT 09.10.2005 };
 
 constructor THeader.Create;
 begin
@@ -437,6 +438,8 @@ procedure THeader.WriteZConnect(stream:TStream);
 
       for i := 0 to References.Count - 1 do
         writeln_s(stream,'BEZ: '+ References[i]);
+      
+      Debug.DebugLog('xpheader','THeader.WriteZConnect, ersetzt:'+ersetzt, DLDebug);
 
       if ersetzt<>'' then writeln_s(stream,'ERSETZT: '+ersetzt);
 
@@ -471,7 +474,7 @@ procedure THeader.WriteZConnect(stream:TStream);
       charset:=MimeCharsetToZC(charset);
       if (charset<>'') and (charset<>'US-ASCII') and (charset<>'IBM437') then writeln_s(stream,'CHARSET: '+charset);
       
-      if postanschrift<>''       then writeln_s(stream,'POST: '+postanschrift);
+      if postanschrift<>''       then writeln_s(stream,'POST: '+postanschrift);      
       if telefon<>''   then writeln_s(stream,'TELEFON: '+telefon);
       if homepage<>''  then writeln_s(stream,'U-X-Homepage: '+homepage);
       if priority<>0   then writeln_s(stream,'U-X-Priority: '+strs(priority));
@@ -481,8 +484,10 @@ procedure THeader.WriteZConnect(stream:TStream);
       if keywords<>''  then WriteStichworte(keywords);
       if summary<>''   then writeln_s(stream,'Zusammenfassung: '+summary);
       if distribution<>'' then writeln_s(stream,'U-Distribution: '+distribution);
-      if ersetzt<>''   then writeln_s(stream,'ERSETZT: '+ersetzt);
 
+      { HJT 09.10.2005 'ERSETZT' wurde bereits oben geschrieben
+      if ersetzt<>''   then writeln_s(stream,'ERSETZT: '+ersetzt); 
+      }
       if pgpflags<>0 then begin
         if pgpflags and fPGP_avail<>0    then writeln_s(stream,'PGP-Key-Avail:');
         if pgpflags and fPGP_signed<>0   then writeln_s(stream,'SIGNED: PGP');

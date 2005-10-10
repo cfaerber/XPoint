@@ -1242,11 +1242,13 @@ var
     sData  : TSendUUData;
     sFlags : Word;
 begin
+  Debug.DebugLog('xp3o','---- ErsetzeMessage, Start', DLDebug);
   if odd(dbReadInt(mbase,'unversandt')) then begin
     rfehler(447);     { 'Unversandte Nachrichten koennen nicht ersetzt werden.' }
     exit;
     end;
   _Brett := dbReadNStr(mbase,mb_brett);
+  Debug.DebugLog('xp3o','ErsetzeMessage, _Brett:'+_Brett, DLDebug);
   if (FirstChar(_brett)<>'A') then begin
     rfehler(317);     { 'Nur bei oeffentlichen Nachrichten moeglich!' }
     exit;
@@ -1259,6 +1261,7 @@ begin
     dbSeek(bbase,biIntnr,copy(_brett,2,4));
     if not dbFound then exit;
     box := dbReadNStr(bbase,bb_pollbox);
+    Debug.DebugLog('xp3o','ErsetzeMessage,  FirstChar(_brett)<>U, box:'+box, DLDebug);
     end
   else begin
     hdp := THeader.Create;
@@ -1267,10 +1270,13 @@ begin
     Hdp.Free;
     if not dbFound then exit;
     box := dbReadNStr(ubase,ub_pollbox);
+    Debug.DebugLog('xp3o','ErsetzeMessage,  FirstChar(_brett)==U, box:'+box, DLDebug);
   end;
 
   adr:=getBoxAdresse(box);
   if adr='' then exit;
+
+  Debug.DebugLog('xp3o','ErsetzeMessage,  adr:'+adr, DLDebug);
 
   hdp := THeader.Create;
   ReadHeadEmpf:=1;
@@ -1293,6 +1299,18 @@ begin
   sdata:= TSendUUData.Create;
   sData.ersetzt:=hdp.msgid;
   empf:=hdp.FirstEmpfaenger;
+
+  Debug.DebugLog('xp3o','ErsetzeMessage, FirstEmpfaenger:'+empf, DLDebug);
+  Debug.DebugLog('xp3o','ErsetzeMessage, _bezug:'+_bezug, DLDebug);
+  Debug.DebugLog('xp3o','ErsetzeMessage, _betreff:'+_betreff, DLDebug);
+  Debug.DebugLog('xp3o','ErsetzeMessage, sData.ersetzt:'+sData.ersetzt, DLDebug);
+
+  { HJT 09.10.2005 den ersten Empfaenger aus der Liste Loeschen, er 
+    wird direkt an DoSend uebergeben }
+  if hdp.Empfaenger.Count > 0 then begin
+    hdp.Empfaenger.Delete(0); 
+  end;
+  
   SendEmpfList.Assign(hdp.Empfaenger);
   hdp.Empfaenger.Clear;
 
@@ -1300,10 +1318,8 @@ begin
   sData.orghdp:=hdp;
   if (hdp.boundary<>'') and (LowerCase(LeftStr(hdp.mime.ctype,10))='multipart/') then
     sFlags:=sFlags or SendMPart;
-
-{ HJT 07.10.2005 }
-Debug.DebugLog('xp3o','ErsetzeMessage, calling DoSend with A+empf:'+'A'+empf, DLDebug);
-
+  Debug.DebugLog('xp3o','ErsetzeMessage, calling DoSend with A+empf:'
+                       +'A'+empf, DLDebug);
   DoSend(false,fn,false,false,'A'+empf,_betreff,
     true,false,true,false,true,sData,leer, sFlags);
   Hdp.Free;

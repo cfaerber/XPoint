@@ -32,6 +32,7 @@ uses
   montage,maus2,resource,xp0,xp1,xp1input,xp_des,xpe, xpheader,
   xpglobal,xpsendmessage_attach,xpsendmessage_attach_analyze,
   xpmime,xpdatum,
+  debug, { HJT 07.10.2005 }
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
@@ -773,6 +774,8 @@ end;
   var
     i: Integer;
   begin
+    Debug.DebugLog('xpsendmessage','ReadEmpflist, SendEmpfList.Count:'+IntToStr(SendEmpfList.Count), DLDebug);
+
     // !! Assign moeglich, wenn beides StringListe
     for i := 0 to SendEmpfList.Count - 1 do
       if cc_anz<maxcc then
@@ -788,6 +791,8 @@ end;
   procedure RemovePhantomServers;   { .. werden jetzt nicht mehr gebraucht }
   var i : integer;
   begin
+    Debug.DebugLog('xpsendmessage','RemovePhantomServers, cc_anz:'+IntToStr(cc_anz), DLDebug);
+
     for i:=1 to cc_anz do
       if ccm^[i].nobrett then
         delete(cc^[i],1,cpos(':',cc^[i]));
@@ -818,6 +823,8 @@ end;
   var i    : integer;
       modi : boolean;
   begin
+   Debug.DebugLog('xpsendmessage','KorrPhantomServers, oldbox:'+oldbox+', newbox:'+newbox, DLDebug);
+
     modi:=false;
     for i:=0 to cc_anz do
       if ccm^[i].nobrett and (ccm^[i].server=UpperCase(oldbox)) then begin
@@ -836,6 +843,8 @@ end;
   var kb_s: boolean;
       oldNT:byte;
   begin
+    Debug.DebugLog('xpsendmessage','changeempf', DLDebug);
+
     oldNT := netztyp;
     _UserAutoCreate:=false;
     kb_s:=kb_shift;
@@ -950,6 +959,8 @@ end;
   procedure WriteHeaderHdr;
   var f:text;
   begin
+    Debug.DebugLog('xpsendmessage','WriteHeaderHdr, header.hdr', DLDebug);
+
     assign(f,temppath+FileUpperCase('header.hdr'));
     rewrite(f);
     writeln(f,'TYP: ',typ);
@@ -1058,6 +1069,8 @@ end;
 
 procedure checkForceBox;
 begin
+  Debug.DebugLog('xpsendmessage','checkForceBox, forcebox:'+forcebox, DLDebug);
+
   if (forcebox <> '') and firststart then
   begin
     testXPostings (true, false);
@@ -1097,6 +1110,9 @@ begin
 end;
 
 begin      //-------- of DoSend ---------
+  Debug.DebugLog('xpsendmessage','----- DoSend, begin, empfaenger:'+empfaenger+',datei:'+datei, DLDebug);
+  Debug.DebugLog('xpsendmessage','----- DoSend, begin, sendFlags:'+IntToStr(sendFlags), DLDebug);
+
   firststart := true;
   DoSend:=false;
   parken:=false;
@@ -1114,6 +1130,8 @@ begin      //-------- of DoSend ---------
 
   if sendFlags and sendQuote<>0 then
   begin
+    Debug.DebugLog('xpsendmessage','DoSend, calling ExtractSetMimePart', DLDebug);
+
     ExtractSetMimePart(qMimePart);
     extract_msg(3,iifs(force_quotemsk<>'',force_quotemsk,QuoteSchab(pm)),
                 datei,false,1);
@@ -1124,12 +1142,16 @@ begin      //-------- of DoSend ---------
   end else
   if sendFlags and sendMPart<>0 then
   begin
+    Debug.DebugLog('xpsendmessage','DoSend, sendFlags and sendMPart<>0 == True', DLDebug);
+
     PartsEx := not FileExists(datei);
       // don't extract multipart parts if file does not exist anyway...
   end else
   begin
     if FileExists(datei) then
     begin
+      Debug.DebugLog('xpsendmessage','DoSend, FileExists(datei) == True', DLDebug);
+
       if not is_file then
         AddMessagePart(datei,is_temp,true)
       else
@@ -1164,6 +1186,7 @@ begin      //-------- of DoSend ---------
 
 { Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }
 fromstart:
+  Debug.DebugLog('xpsendmessage','DoSend, fromstart---', DLDebug);  
 
   passwd:='';          { Betreffbox true = Betreff nochmal eintippen           }
   empfneu:=false;      { Edit       true = Editor Starten                      }
@@ -1174,6 +1197,8 @@ fromstart:
   { -- Empfaenger -- }
 
   if pm then begin
+    Debug.DebugLog('xpsendmessage','DoSend, pm == True', DLDebug);
+
     fidoto:='';
     dbSeek(ubase,uiName,UpperCase(empfaenger));
     if dbFound then begin                                 {Empfaenger Bekannt}
@@ -1273,6 +1298,8 @@ fromstart:
     end
 
   else begin   { not pm }
+    Debug.DebugLog('xpsendmessage','DoSend, pm == False', DLDebug);
+
     ch:='';
     verteiler:=false;
     dbSeek(bbase,biBrett,UpperCase(empfaenger));
@@ -1755,6 +1782,11 @@ fromstart:
 
   RemovePhantomServers;
 
+  if not verteiler then
+    Debug.DebugLog('xpsendmessage','DoSend, verteiler == False', DLDebug)
+  else
+    Debug.DebugLog('xpsendmessage','DoSend, verteiler == True', DLDebug);
+
   if not verteiler then begin
     newbin:=binary or (docode=1) or (docode=2);
     pmc_code:=(docode>=3) and (docode<=2+maxpmc);
@@ -1762,13 +1794,23 @@ fromstart:
     DoSend:=true;
 
     if empfneu then
+      Debug.DebugLog('xpsendmessage','DoSend, empfneu == True', DLDebug)
+    else
+      Debug.DebugLog('xpsendmessage','DoSend, empfneu == False', DLDebug);
+    Debug.DebugLog('xpsendmessage','DoSend, Empfaenger:'+Empfaenger, DLDebug);
+
+    if empfneu then
       if pm then
       begin
+        Debug.DebugLog('xpsendmessage','DoSend, AddNewUser, Empfaenger:'+Empfaenger, DLDebug);
+
         AddNewUser(Empfaenger, Box);
         _brett:=mbrettd('U',ubase);
       end
       else
       begin
+        Debug.DebugLog('xpsendmessage','DoSend, neues Brett anlegen, Empfaenger:'+Empfaenger, DLDebug);
+
         dbAppend(bbase);                        { neues Brett anlegen }
         dbWriteNStr(bbase,bb_brettname,empfaenger);
         wbox:=iifs(empfaenger[1]='$','',box);
@@ -1798,6 +1840,8 @@ fromstart:
       end;
 
     { --- 1. Schritt: Body erzeugen ----------------------------------- }
+
+    Debug.DebugLog('xpsendmessage','DoSend, Body erzeugen', DLDebug);
 
     betreff:=LeftStr(betreff,betrlen);
     Hdp.Clear;
@@ -1954,6 +1998,7 @@ fromstart:
 
     { --- 2. Schritt: Headerdaten erzeugen ---------------------------- }
 
+    Debug.DebugLog('xpsendmessage','DoSend, Headerdaten erzeugen', DLDebug);
     if ntZConnect(netztyp) then begin
       if pm then
         hdp.FirstEmpfaenger := empfaenger         { PM }
@@ -2049,9 +2094,23 @@ fromstart:
     hdp.msgid:=MessageID;
     sData.msgid:=hdp.msgid;
 
+    Debug.DebugLog('xpsendmessage','DoSend, sData.msgid:'+sData.msgid, DLDebug);
+    Debug.DebugLog('xpsendmessage','DoSend, _beznet:'+IntToStr(_beznet), DLDebug);
+    
     if (_beznet>=0) and ntMIDCompatible(_beznet,netztyp) then
-      if sData.References.IndexOf(_bezug)=-1 then
+      if _bezug = '' then { HJT 09.10.2005  }
+        Debug.DebugLog('xpsendmessage','DoSend, _bezug ist leer, '
+                       +'kein sData.References.Add(_bezug)', DLDebug)
+      else
+      if sData.References.IndexOf(_bezug)=-1 then begin
+        Debug.DebugLog('xpsendmessage','DoSend, _bezug:'+_bezug, DLDebug);
+        Debug.DebugLog('xpsendmessage','DoSend, sData.References.Add:'+_bezug, DLDebug);
+        
         sData.References.Add(_bezug);
+        
+        Debug.DebugLog('xpsendmessage','DoSend, '+
+               'sData.References.Count:'+IntToStr(sData.References.Count), DLDebug);
+        end;
 
     if (_beznet>=0) then  // bugfix fÅr VP
       if ntOrigID(netztyp) and ntMIDCompatible(_Beznet,netztyp) then
@@ -2061,7 +2120,9 @@ fromstart:
 //  hdp.typ:=iifs(binary,'B','T');
     hdp.programm:=xp_xp+'/'+verstr + pformstr;
     hdp.organisation:=orga;
+    
     if sData.ersetzt<>''then hdp.ersetzt:=sData.ersetzt;
+    Debug.DebugLog('xpsendmessage','DoSend, hdp.ersetzt:'+hdp.ersetzt, DLDebug);
     if (pm and ntPMTeleData(netztyp)) or (not pm and ntAMTeleData(netztyp))
     then begin
       hdp.postanschrift:=postadresse;
@@ -2132,11 +2193,16 @@ fromstart:
     if _sendmaps then
       hdp.replyto := '';
     SetXpointCtl;
+
+    Debug.DebugLog('xpsendmessage','DoSend, cc_anz: '+IntToStr(cc_anz), DLDebug);
+    
     if cc_anz=0 then     { Anzahl der Crossposting-EMPS ermitteln }
       msgCPanz:=0
     else
       msgCPanz:=ccm^[0].cpanz;
     msgCPpos:=0;
+
+    Debug.DebugLog('xpsendmessage','DoSend, msgCPanz: '+IntToStr(msgCPanz), DLDebug);
 
     for ii:=1 to msgCPanz-1 do
       hdp.Empfaenger.Add(cc^[ii]);
@@ -2154,12 +2220,16 @@ fromstart:
     s2.Free; {s2:=nil;}
 
     { --- 3. Schritt: Nachricht in Datenbank ablegen ------------------ }
+    Debug.DebugLog('xpsendmessage','DoSend, Nachricht in Datenbank ablegen', DLDebug);
 
     repeat                                   { einzelne Crosspostings in }
       if ntZConnect(netztyp) then begin      { mbase ablegen             }
         b:=10;
         dbWriteN(mbase,mb_ablage,b);
         end;                                 { ansonsten bleibt's bei 0 }
+
+      Debug.DebugLog('xpsendmessage','DoSend, Nachricht in Datenbank ablegen, repeat', DLDebug);
+
       l:=netztyp;
       if hdp.GetLastReference <> '' then inc(l,$100); // rÅckwÑrts-verkettet
       if FileAttach then inc(l,$200);
@@ -2283,6 +2353,11 @@ fromstart:
 
     { --- 3. Schritt: Nachricht ggf. fuer Pollpaket kodieren --------- }
 
+    if intern then
+      Debug.DebugLog('xpsendmessage','DoSend, Nachricht ggf. fuer Pollpaket kodieren, intern == True', DLDebug)
+    else
+      Debug.DebugLog('xpsendmessage','DoSend, Nachricht ggf. fuer Pollpaket kodieren, intern == False', DLDebug);
+
     if not intern then begin
       s1.Seek(0,soFromBeginning);
 
@@ -2320,6 +2395,8 @@ fromstart:
       end;
 
     { --- 4. Schritt: Nachricht ins Pollpaket schreiben -------------- }
+
+      Debug.DebugLog('xpsendmessage','DoSend, Nachricht ins Pollpaket schreiben', DLDebug);
 
 {      for ii:=1 to msgCPanz-1 do
         hdp.Empfaenger.Add(cc^[ii]); }
@@ -2361,6 +2438,8 @@ fromstart:
 
   { --- CCs ----------------------------------------------------------- }
 
+    Debug.DebugLog('xpsendmessage','DoSend, CCs, msgCPanz:'+IntToStr(msgCPanz), DLDebug);
+
     if msgCPanz>1 then begin    { cc-Epfaenger bis auf einen ueberspringen }
       Move(cc^[msgCPanz],cc^[1],(maxcc-msgCPanz+1)*sizeof(cc^[1]));
       Move(ccm^[msgCPanz-1],ccm^[0],(maxcc-msgCPanz+2)*sizeof(ccm^[1]));
@@ -2371,6 +2450,8 @@ fromstart:
   end;   { not verteiler }
 
   if cc_anz>0 then begin           { weitere CC-Empfaenger bearbeiten }
+    Debug.DebugLog('xpsendmessage','DoSend, weitere CC-Empfaenger bearbeiten, cc_anz:'+IntToStr(cc_anz), DLDebug);
+
     empfaenger:=cc^[1];
     Move(cc^[2],cc^[1],(maxcc-1)*sizeof(cc^[1]));
     Move(ccm^[1],ccm^[0],maxcc*sizeof(ccm^[1]));
@@ -2384,6 +2465,8 @@ fromstart:
     end;
 
   { --- Aufr‰umarbeiten zum Schluss ----------------------------------- }
+
+    Debug.DebugLog('xpsendmessage','DoSend, Aufraeumarbeiten zum Schluss', DLDebug);
 
 //  if FidoBin and FileExists(datei) and EditAttach then begin
 //    _era(datei);
@@ -2422,6 +2505,9 @@ xexit2:
   for ii:=0 to parts.count-1 do
     TObject(parts[ii]).Free;
   parts.Free;
+
+  Debug.DebugLog('xpsendmessage','DoSend, end of DoSend', DLDebug);
+  
 end; {------ of DoSend -------}
 
 
