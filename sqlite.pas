@@ -35,6 +35,7 @@
   (X11 License)
 }
 
+{$I XPDEFINE.INC }
 unit SQLite;
 
 interface
