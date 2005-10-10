@@ -27,7 +27,7 @@ unit xp0;
 interface
 
 uses
-  keys,xpglobal,log,classes,sysutils,fidoglob;
+  keys,xpglobal,log,classes,sysutils,fidoglob,sqlite;
 
 
 { Die folgenden drei Konstanten muessen Sie ergaenzen, bevor Sie     }
@@ -399,6 +399,17 @@ const
        hdf_ersetzt = 33;
        hdf_control = 34;
 
+ {$ifdef NCRT }
+      { LSSize - Gibt die maximale Groesse des LocalScreen-Buffers
+        an. (Zeilen * Spalten * (sizeof(Char) + sizeof(Attribut))) }
+      CharSize =        1;              { Groesse eines Zeichens }
+      AttrSize =        1;              { Groesse eines Attributs }
+      LSSize =          $7fff;          { Sollte fuer 160 x 100 reichen }
+{$else }
+      LSSize = $1fff;
+{$endif }
+
+
 type   textp  = ^text;
        ColArr = array[0..3] of byte;
        ColQArr= array[1..9] of byte;
@@ -759,6 +770,10 @@ type   textp  = ^text;
                       domain     : string;
                     end;
 
+      { Speicher den kompletten Bildschirm lokal zwischen, damit beim Auslesen
+        des Fensterinhaltes nicht auf API-Funktionen zurÅckgegriffen werden mu·.
+        Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
+      TLocalScreen = array[0..LSSize] of char;
 
 const  menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -1220,7 +1235,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
 
        RTAOwnAddresses, RTANoOwnAddresses : string;
 
-{ Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
+       { Globale Variable enthalten eine Listerzeile mit text in charbuf und word-Attribuen }
 { in attrbuf. beschrieben werden sie in xp1.MakeListDisplay, gelesen in Winxp.consolewrite }
 
   charbuf     : shortstring;                 { Nicht zu klein :-) }
@@ -1235,6 +1250,11 @@ const
 
 var
   XPLog                 : TLog;         { Logging }
+
+{$IFDEF LocalScreen }
+var
+  LocalScreen: ^TLocalScreen;
+{$ENDIF }
 
 implementation
 

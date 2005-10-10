@@ -218,29 +218,10 @@ uses
 
 const rchar : array[1..3,1..6] of char =
               ('⁄ƒø≥¿Ÿ','…Õª∫»º','’Õ∏≥‘æ');
-{$ifdef NCRT }
-      { LSSize - Gibt die maximale Groesse des LocalScreen-Buffers
-        an. (Zeilen * Spalten * (sizeof(Char) + sizeof(Attribut))) }
-      CharSize =        1;              { Groesse eines Zeichens }
-      AttrSize =        1;              { Groesse eines Attributs }
-      LSSize =          $7fff;          { Sollte fuer 160 x 100 reichen }
-{$else }
-      LSSize = $1fff;
-{$endif }
       shad  : byte = 0;  { Zusatz-Fensterbreite/hîhe }
 
 type  { Achtung: hier mu· der komplette Bildschirm mit Attributen reinpassen }
   memarr     = array[0..$1fff] of byte;
-
-  { Speicher den kompletten Bildschirm lokal zwischen, damit beim Auslesen
-    des Fensterinhaltes nicht auf API-Funktionen zurÅckgegriffen werden mu·.
-    Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
-  TLocalScreen = array[0..LSSize] of char;
-
-{$IFDEF LocalScreen }
-var
-  LocalScreen: ^TLocalScreen;
-{$ENDIF }
 
 var pullw   : array[1..maxpull] of record
                                      l,r,o,u,wi : integer;
@@ -553,6 +534,9 @@ begin
     {$IFDEF LocalScreen }
       c := Char(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2]);
       Attr := SmallWord(Byte(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2+1]));
+    {$ELSE }
+      c := ' ';
+      attr := 0;
     {$ENDIF }
     {$IFDEF DOS32 }
       w :=  MemW[$B800:((x-1)+(y-1)*ScreenWidth)*2];
