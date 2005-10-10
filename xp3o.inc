@@ -132,6 +132,7 @@ var x,y      : Integer;
     MsgIdsRead: TStringList;
     dummy    : integer;
     cust_header : custheadstr;
+    BrettKommentar : string;
 
   function puffer_ok:boolean;
   var ok : boolean; lastsubj,lastmid: string;
@@ -677,7 +678,13 @@ var
   s: String;
   nt: Byte;
   RefItem: PRefItem;
-begin
+  f_str: TPASCALFileStream;     // current message buffer as a TStream (nil until first use)
+  data:  TPartialStream;        // temporary: current message
+  spam:  TSpamicityCalculator;  // spamicity calculator (nil until first use)
+  spam_ok: boolean;             // whether spamicity has been calculated for current message
+  is_spam: boolean;             // whether current message is spam
+  is_ham:  boolean;
+ begin
   Debug.DebugLog('xp3o','sorting in messages',DLInform);
   inmsgs:=0; ReplaceOwnHoldFlag:=255; puffereinlesen:=false;
   MsgIdsRead:=TStringlist.Create; MsgIdsRead.Sorted:=true;
@@ -801,16 +808,25 @@ begin
     cust_header:=mheadercustom[1];
     mheadercustom[1]:='U-Sender';  { 'U-Sender'-Header erkennen }
 
+    f_str := nil;
+    spam := nil;
+
     repeat
       empfnr:=1;
       junk:=false;
       msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert }
-      repeat       { Cross-Postings bearbeiten }
+
+      spam_ok := false;
+      is_spam := false;
+      is_ham  := false;
+
+       repeat       { Cross-Postings bearbeiten }
         seek(f,adr);
         hdp.clear;
         makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
         orgempf:=hdp.FirstEmpfaenger;
         Debug.DebugLog('xp3o.inc','recipient "'+orgempf+'", subject "'+hdp.betreff+'", msgid "'+hdp.msgid+'"',DLDebug);
+        BrettKommentar := '';
 
         { Schalter maildelxpost beachten }
         if (hdp.Empfaenger.Count > maxcrosspost)
@@ -818,6 +834,36 @@ begin
           empfnr:=hdp.Empfaenger.Count +1;                { Crossposting-Filter }
           continue;
           end;
+
+        if (CPos('@', hdp.FirstEmpfaenger) > 0) and (not spam_ok) then
+//      if not spam_ok then
+        begin
+          if not assigned(spam) then
+            spam := TSpamicityCalculator.Create;
+          if not assigned(f_str) then
+            f_str := TPASCALFileStream.Create(f);
+
+          data := TPartialStream.Create(adr,adr+hdsize+hdp.groesse);
+          data.OtherStream := f_str;          // use message buffer
+          data.DestroyOtherStream := false;   // but don't kill it
+          data.Seek(0,soFromBeginning);
+          spam.CalculateMessageSpamicity(data);
+          data.Free;
+          
+          is_spam := spam.IsSpam;
+          is_ham  := spam.IsHam;
+          spam_ok := true;
+
+          if is_spam then
+          begin
+            hdp.Empfaenger.Clear;
+            hdp.Empfaenger.Add('/¯Spam'); // Unterscheidung von der Pseudo-Newsgroup junk
+            BrettKommentar := 'SPAM, SPAM, wonderful SPAM!' // nicht uebersetzen (Zitat aus Monty Phyton).
+          end;
+        end;
+
+
+
         if junk then
         begin
           hdp.Empfaenger.Clear;
@@ -880,7 +926,7 @@ begin
                   pm:=true;
                   end;
 
-          if ForceRecipient<>'' then Firstempfaenger:= ForceRecipient;
+          if (ForceRecipient<>'') and (not is_spam)  then Firstempfaenger:= ForceRecipient;
 
           multi2; initscs;
 
@@ -951,7 +997,7 @@ begin
                   else dbRead(d,'haltezeit',haltezeit);
                   dbClose(d);
                 end;
-                AddNewBrett(FirstEmpfaenger,  '', pollbox_str(zconnect,false),
+                AddNewBrett(FirstEmpfaenger, BrettKommentar, pollbox_str(zconnect,false),
                   Haltezeit, Grnr, iif(netztyp in netsRFC,16,0));
                 if newbrettende then
                   SetBrettindexEnde
@@ -1103,6 +1149,12 @@ begin
             { this message replaces an old own message; mark it as an own }
             { message again. Necessary for cancels. }
             if OwnMessageReplaced then mbflags:= mbflags or 256;
+
+            { this message could not be identified as SPAM or HAM, set
+              ``potentially SPAM'' flag }
+            if (not is_spam)and(not is_ham)and spam_ok  then
+              mbflags:= mbflags or 64;
+              
             dbWriteN(mbase,mb_flags,mbflags);
 
             if ntKomKette(hdp.netztyp) then 
@@ -1165,7 +1217,7 @@ begin
             end;                         { tierte Xpostings berspringen  } *)
 
       until (empfnr>hdp.Empfaenger.Count)or(forcerecipient<>'');
-      
+
       Debug.DebugLog('xp3o','ok, next message',DLDebug);
       if BoxPar^.ReplaceDupes then
         MsgIdsRead.Add(hdp.msgid);
@@ -1179,6 +1231,8 @@ begin
       end;
     until adr>=fs-3;     { 3 Byte Toleranz }
     MsgIdsRead.Destroy;
+    f_str.Free;
+    Spam.Free;
 
     Debug.DebugLog('xp3o','index built',DLInform);
     moff;

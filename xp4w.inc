@@ -1408,6 +1408,211 @@ begin
     end;
 end;
 
+procedure register_spam(Spam:boolean);
+var flags: longint;
+  NewStatus, OldStatus: TSpamStatus;
+        s: TStream;
+  spambrt: boolean;
+       uv: Byte;
+  saverec: Longint;
+  savemsg: Longint;
+  savebez: Longint;
+
+       hd: Theader;
+   hdsize: Longint;
+   ablage: Byte;
+     madr: Longint;
+      crc: string;
+   bezrec: Longint;
+     _dat: Longint;
+   _brett: string;
+        i: integer;
+
+  procedure delete_copies;
+  begin
+    // Alle Kopien der gleichen Nachricht löschen
+    //
+    dbReadN(mbase,mb_ablage,ablage);
+    dbReadN(mbase,mb_adresse,madr);
+    crc:=LeftStr(dbReadStrN(mbase,mb_msgid),4);
+    dbSeek(bezbase,beiMsgID,crc);
+    while not dbEOF(bezbase) and (dbLongStr(dbReadIntN(bezbase,bezb_msgid))=crc) do 
+    begin
+      BezRec := dbReadIntN(bezbase,bezb_msgpos);
+      if BezRec<>SaveMsg then 
+      begin
+        dbGo(mbase,BezRec);
+        if (dbReadIntN(mbase,mb_ablage)=ablage) and (dbReadIntN(mbase,mb_adresse)=madr) then
+        begin
+          DelBezug;
+          dbDelete(mbase);
+        end;
+      end else
+      begin
+        _dat := dbReadIntN(bezbase,bezb_datum);
+        _dat := _dat and not $F;
+        dbWriteN(bezbase,bezb_datum,_dat);        
+      end;
+      dbNext(bezbase);
+    end;
+  end;
+
+label
+  BrettAgain;
+     
+begin
+  SpamBrt := false;
+
+  GoP;
+  dbReadN(mbase,mb_flags,flags);
+  if FirstChar(dbReadStrN(mbase,mb_brett))<>'1' then 
+  begin
+    if dbReadStrN(bbase,bb_brettname) <> '$/¯Spam' then
+      exit;
+    SpamBrt := true;
+  end;
+
+  dbReadN(mbase,mb_unversandt,uv);
+  if uv and 1<>0 then begin
+    ErrSound;
+    exit;
+  end;
+
+  if (flags and (1024+512) = 1024) then // war HAM
+    OldStatus := stHam
+  else
+  if (flags and (1024+512) =(1024+512)) then // war SPAM
+    OldStatus := stSpam
+  else
+    OldStatus := stUnknown;
+
+  if (OldStatus = stSpam) and SpamBrt and Spam then
+  begin
+    GoDown;
+    exit;
+  end;
+
+  if Spam then
+  begin
+    if OldStatus = stSpam then
+      NewStatus := stUnknown
+    else
+      NewStatus := stSpam;
+  end else
+  begin
+    if OldStatus = stHam then
+      NewStatus := stUnknown
+    else
+      NewStatus := stHam;
+  end;
+
+  flags := flags and not (1024+512);
+  flags := flags or iif(NewStatus=stSpam,(1024+512),iif(NewStatus=stHam,1024,0));
+  dbWriteN(mbase,mb_flags,flags);
+(*
+  if NewStatus=stSpam then
+  begin
+    dbReadN(mbase,mb_halteflags,halt);
+    if halt=0 then begin 
+      halt:=2;
+      dbWriteN(mbase,mb_halteflags,halt);
+    end;
+  end;
+*)
+  s := TRopeStream.Create;
+  try
+    XReadS(0,s);
+    s.Seek(0,soFromBeginning);
+    register_message_as_spam(s,NewStatus,OldStatus);
+  finally
+    s.Free;
+  end;
+
+  try 
+    if spambrt <> (NewStatus=stSpam) then  
+    begin
+      SaveRec := dbRecNo(bbase);
+      SaveMsg := dbRecNo(mbase);
+      SaveBez := dbRecNo(bezbase);
+      try
+        if spambrt then
+        begin
+          // Nachricht ins normale Brett verschieben
+          // 
+          // Hinweis: Wir bearbeiten nur den ersten Empfänger; da PMs
+          // normalerweise nicht als Crossposting ankommen, sollte das 
+          // kein Problem darstellen...
+          // Dafür sparen wir es uns, neue Bezüge und neue DB-Einträge zu
+          // erstellen.
+          //
+          delete_copies;
+
+          hd := THeader.Create;
+          try
+            ReadHeader(hd,hdsize, false{hderr});
+            _brett := UpperCase(hd.FirstEmpfaenger);
+            i := CPos('@',_brett);
+            if i<=0 then
+              if (Length(_brett) >= 2) and (_brett[1]='/') and (_brett[2]='¯') then
+                _brett := '$'+_brett
+              else
+                _brett := 'A'+_brett
+            else
+              if UserBoxName then
+                _brett := '1/'+LeftStr(_brett,i-1)+'/'+Mid(_brett,i+1)
+              else
+                _brett := '1/'+LeftStr(_brett,i-1);
+            TruncStr(_brett,eBrettLen+1);  { dbSeek laeuft sonst ins Leere }
+
+            dbSeek(bbase,biBrett,_brett);
+            if not dbFound then
+            begin
+              // Wenn das Brett nicht existiert, wuerden wir bei AMs ein
+              // kaputtes Brett erzeugen (wg. Pollbox und Vertretern); 
+              // da sowieso nur PMs im SPAM-Brett sein sollten, verschieben
+              // wir beim AMs mit fehlendem Brett einfach nichts.
+              //
+              if _brett[1] = 'A' then exit;
+              AddNewBrett(_brett,'','',StdHalteZeit,iif(_brett[1]='1',IntGruppe,NetzGruppe),0);
+            end;
+
+            _brett := mbrettd(FirstChar(_brett),bbase);
+            dbWriteNStr(mbase,mb_brett,_brett);
+          finally
+            hd.Free;
+          end;
+        end else
+        begin
+          // Nachricht ins Brett ``/>>Spam'' verschieben
+          //
+          dbSeek(bbase,biBrett,'$/¯SPAM');
+          if not dbFound then
+            { Kommentar nicht uebersetzen, Zitat aus Monty Phyton }
+            AddNewBrett('$/¯Spam','SPAM, SPAM, wonderful SPAM!','',StdHalteZeit,IntGruppe,0);
+          _brett := '$'+dbLongStr(dbReadInt(bbase,'int_nr'));
+          dbWriteNStr(mbase,mb_brett,_brett);
+          delete_copies;
+        end;
+
+        RereadBrettdatum(_brett);
+        setbrettgelesen(_brett);
+   
+        aufbau:=true; xaufbau:=true;
+        if p=1 then DispRec[1]:=0;   { nicht := DispRec[2] !! }
+      finally
+        dbGo(bbase,SaveRec);
+        dbGo(mbase,SaveMsg);
+        dbGo(bezbase,SaveBez);
+      end;
+    end;
+  finally
+    if not aufbau then begin
+      reread_line;
+      GoDown;
+    end;
+  end;
+end;
+
 
 procedure wiedervorlage;
 var wvdat : longint;

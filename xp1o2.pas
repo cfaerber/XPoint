@@ -121,6 +121,7 @@ begin
                      else if df=PseudoFile then indexnr:=1
                      else if df=BezugFile then indexnr:=2
                      else if df=MimetFile then indexnr:=2
+                     else if df=SpamfltFile then indexnr := 1
                      else interr('icIndexNum: falsche Datei: '+df);
 
       icIndex:       if df=MsgFile then
@@ -169,6 +170,10 @@ begin
                        case indexnr of
                          mtiTyp     : indexstr:='+TYP/+EXTENSION';
                          mtiExt     : indexstr:='+EXTENSION';
+                       end
+                     else if df=SpamfltFile then
+                       case indexnr of
+                         spamiWord  : indexstr:='+WORD';
                        end
                      else interr('icIndex: falsche Datei: '+df);
 

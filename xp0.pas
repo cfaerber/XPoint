@@ -211,6 +211,7 @@ const
        AutoFile    = 'automsg';
        PseudoFile  = 'pseudos';
        BezugFile   = 'bezuege';
+       SpamfltFile = 'spamflt';
        MimetFile   = 'mimetyp';
        CfgFile     = 'xpoint.cfg';     { verschiedene Dateien }
        Cfg2File    = 'xpoint2.cfg';
@@ -258,6 +259,7 @@ const
        AutoFile    = 'AUTOMSG';
        PseudoFile  = 'PSEUDOS';
        BezugFile   = 'BEZUEGE';
+       SpamfltFile = 'SPAMFLT';
        MimetFile   = 'MIMETYP';
        CfgFile     = 'XPOINT.CFG';     { verschiedene Dateien }
        Cfg2File    = 'XPOINT2.CFG';
@@ -337,6 +339,7 @@ const
        beiRef      = 2;                {          Ref                       }
        mtiTyp      = 1;                { MimeType: +TYP                     }
        mtiExt      = 2;                {           +EXTENSION               }
+       spamiWord   = 1;                { SpamFlt: +WORD                     }
 
        rmUngelesen = 1;                { ReadMode: Lesen/Ungelesen  }
        rmNeues     = 2;                { ReadMode: Lesen/Neues      }

@@ -404,8 +404,6 @@ var
    LastWindMin,                         { Manipulationen abfangen }
    LastWindMax: word;
 
-var
-  LocalScreen: ^TLocalScreen;
 
 {==========================================================================
    This code chunk is from the FPC source tree in rtl/inc/textrec.inc.
@@ -1076,10 +1074,12 @@ end;
 { Schreiben an aktueller Cursorposition, Update des Cursors }
 procedure Wrt2(const s: string );
 var
-  i, count: integer;
+  i, count,x,y: integer;
 begin
   if not __isInit then InitXPCurses;
-  { Aenderung bein Textattribut bearbeiten }
+  WhereXY(x, y);
+
+ { Aenderung bein Textattribut bearbeiten }
   if (TextAttr<>LastTextAttr) then
     SetTextAttr(TextAttr);
   { Da waddstr auch nur waddch benutzt, duerfte es von der

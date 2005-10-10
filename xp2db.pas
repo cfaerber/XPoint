@@ -892,6 +892,16 @@ begin
     InitMimeDB;
     end;
 
+  if not FileExists(SpamFltfile+dbExt) then begin      { MIMETYPE: Nachrichtentypen }
+    initflp(4);
+    AppS('Word',7);
+    AppX('GoodCnt',dbTypeInt,4,10);
+    AppX('BadCnt',dbTypeInt,4,10);
+    AppX('Datum',dbTypeInt,4,10);
+    dbCreate(SpamFltFile,flp);
+    dbReleaseFL(flp);
+    end;
+
   dbOpen(dd,AutoFile,1);
   dbClose(dd);
   OpenDatabases;
@@ -933,6 +943,7 @@ begin
     writeln(t,'Message was cancelled.');
     close(t);
   end;
+
 
   if (_filesize(FeierDat)=0) and IsRes(243) then begin
     assign(t,FeierDat);
