@@ -38,11 +38,16 @@ MSGS:  Nachrichtendatei
                                           2=PGP-Signatur fehlerhaft
                                           4=Multipart-MIME Nachricht (ab 3.2)
                                           8+16+32=Priority (ab 3.21)
-                                           000=normal / 001=hoechste / 010=hoch               
+                                           000=normal / 001=hoechste / 010=hoch
                                            011=niedrig / 100=niedrigste
- 					  64=HeaderOnly, 128=HDO-Request (ab 4/2003)
-                                          256 = Eigene Nachricht (für Replaceown)
+															 					  64=HeaderOnly, 128=HDO-Request (ab 4/2003)
 
+                           			 XP/2:    64=HeaderOnly, 128=HDO-Request
+                                 ab 3.30: 256 = Eigene Nachricht (fuer Replaceown)
+																 ab OpenXP/32 3.8.6.7030: 512+1024=SPAM-Status:
+																 				   00=nichts / 01=potentiell SPAM /
+																					 10=manuell als HAM markiert /
+																					 11=manuell als SPAM markiert
 19. Mimetyp     String(30)       ab 3.2:  Multipart-Mime Typ der Nachricht
 
 Indizes:

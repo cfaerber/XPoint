@@ -1160,6 +1160,38 @@ K (c) '2000 OpenXP Team, www.openxp.de
 29   Press any key~
 30   Crossposting list
 31   Reference list
+
+40   Brett-Nr. :
+41   Betreff   :
+42   Absender  :
+43   OrigDatum :
+44   EmpfDatum :
+45   Gr”áe     :
+46   Typ       :
+47   HalteFlags:
+48   gelesen   :
+49   unversandt:
+50   Ablage    :
+51   Adresse   :
+52   MsgSize   :
+53   WVdatum   :
+54   MsgID     :
+55   Netztyp   :
+56   ~ Flags   :
+57   Name      :
+58   Flags     :
+59   Mimetyp   :
+
+64   ~(intern)
+65   ~(PM)
+66   ~(Netz)
+67   ~(User)
+
+70   SPAM
+71   SPAM-Status
+
+72   SPAM-Wahrscheinlichkeit:%5.1f%%
+73   %-7s:   %4d : %-4d  %5.1f%%
 -
 460  Message header
 461  %s already exists. Overwrite

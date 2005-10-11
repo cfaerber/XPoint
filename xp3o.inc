@@ -91,6 +91,7 @@ var x,y      : Integer;
     mapsname : string;
     seekbr   : string;
     msgid2   : string;    { gekrzte MsgID (FormMsgid) fr mbase }
+    msgid3   : string;    { generierte MsgID fuer Nachrichten ohne }
     amvertreter,
     pmvertreter : string;
     sysbetreff  : string;  { Betreff von Changesys/getsys }
@@ -188,6 +189,27 @@ var x,y      : Integer;
     inc(padr,hdp.groesse+hdsize);
   end;
 }
+
+  function dummyid(inr: integer): string;
+  var t,m,j   : smallword;
+      h,mm,s,ss: smallword;
+      dat     : integer;
+      count   : integer;
+      rand    : integer;
+      csum    : integer;
+  begin
+    decodedate(now,j,m,t);
+    decodetime(now,h,mm,s,ss);
+    dat:=(t-1)+(m-1)*32+(j mod 165)*32*12;
+
+    count:=Integer(inr and $ffff);
+    rand:=random($1000);
+    csum:=crc16strXP(hdp.Absender);
+
+    Result := FormMsgID(b30(crc32Str(hdp.FirstEmpfaenger))+
+      b30(longint(dat) shl 14+count shr 2)+
+      b30(longint(count and 3) shl 28+longint(rand) shl 16 +csum));
+  end;
 
   function pollbox_str(zconnect,user:boolean):string;
   begin
@@ -814,18 +836,22 @@ var
     repeat
       empfnr:=1;
       junk:=false;
-      msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert }
+      msgsent:=false;       { true -> Nachricht wurde in mind. einem Brett gespeichert
+                                      oder soll weggeworfen werden
+                              false -> Nachricht muss in />>Junk gespeichert werden }
 
       spam_ok := false;
       is_spam := false;
       is_ham  := false;
 
-       repeat       { Cross-Postings bearbeiten }
+      msgid3  := '';
+
+      repeat       { Cross-Postings bearbeiten }
         seek(f,adr);
+        Debug.DebugLog('xp3o','recipient "'+orgempf+'", subject "'+hdp.betreff+'", msgid "'+hdp.msgid+'"',DLDebug);
         hdp.clear;
         makeheader(zconnect,f,empfnr,hdsize,hdp,ok,true, true);
         orgempf:=hdp.FirstEmpfaenger;
-        Debug.DebugLog('xp3o.inc','recipient "'+orgempf+'", subject "'+hdp.betreff+'", msgid "'+hdp.msgid+'"',DLDebug);
         BrettKommentar := '';
 
         { Schalter maildelxpost beachten }
@@ -1041,7 +1067,7 @@ var
             _brett:=mbrettd('U',ubase);
             end;
 
-          if(Aufnehmen and(BoxPar^.ReplaceOwn or BoxPar^.ReplaceDupes))then begin
+          if(Aufnehmen and(BoxPar^.ReplaceOwn or BoxPar^.ReplaceDupes))and(hdp.MsgId<>'')then begin
             OwnMessageReplaced:= KillSameMsgId;
             if BoxPar^.ReplaceDupes and MsgIdsRead.Find(msgid,dummy)then begin
               // this msg already showed up in this buffer
@@ -1106,7 +1132,15 @@ var
             dbWriteN(mbase,mb_adresse,padr);
             size:=groesse+hdsize;
             dbWriteN(mbase,mb_msgsize,size);
-            msgid2:=FormMsgid(msgid);
+
+            if msgid<>'' then
+              msgid2:=FormMsgid(msgid)
+            else begin
+              if msgid3 = '' then
+                msgid3 := dummyid(dbRecno(mbase));
+              msgid2 := msgid3;
+            end;
+
             dbWriteNStr(mbase,mb_msgid,msgid2);
             if ntEditBrettempf(netztyp) then   { Fido, QWK }
               dbWriteNStr(mbase,mb_name,fido_to)
