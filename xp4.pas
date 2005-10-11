@@ -18,7 +18,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ CrossPoint - Hauptmodul }
+{ CrossPoint - Hauptmodul }                       
 
 {$I xpdefine.inc }
 
@@ -993,12 +993,13 @@ var t,lastt: taste;
                 rfehler(450);    { 'Schreibzugriff auf dieses Brett ist gesperrt' }
                 exit;
                 end
-              else if not ntFollowup(netztyp) then begin
+              else if not ntFollowup(netztyp) then
+              begin
                 if (cpos('@',rt0)>0) and not pm then pmrflag:=true;
-                { pm:=cpos('@',rt0)>0;
-                if pm then} empf:=rt0;
+                pm:=cpos('@',rt0)>0;
+                {if pm then} empf:=rt0;
                 qtflag:=true;
-                end;
+              end;
             end;
           end;
         end;

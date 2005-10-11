@@ -1161,12 +1161,14 @@ begin      //-------- of DoSend ---------
     OrigBox:='';
   end;
 
+  (* Was soll diese Abfrage bewirkenﬂ In Empf‰nger steht die eMail des Empf‰ngers, die darf auch mit "A" beginnen ;-) 
   if not pm and betreffbox and (FirstChar(empfaenger)<>'A') then
   begin
     rfehler(606);   { 'Schreiben in dieses Brett nicht moeglich!' }
     SendEmpfList.Clear; { clear list of CC recipients }
     goto xexit1;
   end;
+  *)
 
   hdp := THeader.Create;
 
