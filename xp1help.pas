@@ -29,7 +29,7 @@ interface
 uses
   {$IFDEF NCRT} xpcurses,{$ENDIF}
   typeform,inout,keys,resource,maus2,help,winxp,printerx,sysutils,
-  maske,xp0,xpglobal;
+  maske,xp0,xpglobal,debug;
 
 const inithlp : boolean = false;
       maxhelpst = 20;
