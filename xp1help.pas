@@ -307,6 +307,7 @@ begin
                     1,1,HInvers,HKeinBlocksatz,HHeadNotHigh) then
     begin
       rfehler1(1,helpfile);   { Die Hilfsdatei XP.HLP fehlt }
+      Debug.DebugLog('xp1help','Internal error: Die Datei '+DocDir+helpfile+' fehlt',DLError);
       if ioresult<>0 then;
       end
     else
