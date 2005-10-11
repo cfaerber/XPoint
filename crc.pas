@@ -290,7 +290,7 @@ const
 *************************************************************************)
 
 
-const Tab64lo : array[0..255] of longint = (
+const Tab64lo : array[0..255] of Cardinal = (
     $00000000,    $A9EA3693,    $53D46D26,    $FA3E5BB5,
     $0E42ECDF,    $A7A8DA4C,    $5D9681F9,    $F47CB76A,
     $1C85D9BE,    $B56FEF2D,    $4F51B498,    $E6BB820B,
@@ -356,7 +356,7 @@ const Tab64lo : array[0..255] of longint = (
     $3AF9026D,    $931334FE,    $692D6F4B,    $C0C759D8,
     $34BBEEB2,    $9D51D821,    $676F8394,    $CE85B507);
 
-const Tab64hi : array[0..255] of longint = (
+const Tab64hi : array[0..255] of Cardinal = (
     $00000000,    $42F0E1EB,    $85E1C3D7,    $C711223C,
     $49336645,    $0BC387AE,    $CCD2A592,    $8E224479,
     $9266CC8A,    $D0962D61,    $17870F5D,    $5577EEB6,
