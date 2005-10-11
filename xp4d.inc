@@ -479,7 +479,10 @@ begin  { __ Suchmarke }
             else
               markflag[y]:=iif(msgmarked,1,0);
             dflags:=iifc(markflag[y]<>0,suchch,' ')+ge[gelesen]+hf[hflags]+
-                    uv[unvers]+wv[wvl]+typ;
+                    iifc(unvers<>0,uv[unvers],
+                      iifc(flags and 1024<>0,iifc(flags and 512<>0,'S','H'),
+                                             iifc(flags and 512<>0,'s',' ')))
+                      +wv[wvl]+typ;
 
             if fidoqwk and (dispmode=10) and
                dispfto and (FirstChar(_brett)='A') then
