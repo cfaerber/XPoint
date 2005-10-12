@@ -42,6 +42,8 @@ interface
 
 uses classes, sysutils, variants;
 
+{$IFDEF SQLITE }
+
 type
   TSQLite_PPChar = ^PChar;
   TSQLite_PPointer = ^pointer;
@@ -159,10 +161,14 @@ type
     function HasTable(const TableName: String): Boolean;
   end;
 
+{$ENDIF }
+
 implementation
 
 uses
   Math;
+
+{$IFDEF SQLITE }
 
 type
   TSQLiteDB = Pointer;
@@ -454,6 +460,8 @@ begin
     else sqlite_except(Ord(ErrorCode));
   end
 end;
+
+{$ENDIF }
 
 end.
 (*    vtBoolean,

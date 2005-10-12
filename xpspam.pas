@@ -33,8 +33,6 @@
 
 {$I xpdefine.inc}
 
-{.DEFINE HAS_SQLITE}
-
 unit xpspam;
 
 interface
@@ -43,7 +41,7 @@ uses
   xpheader,
   datadef,
   classes,
-{$IFDEF HAS_SQLITE}
+{$IFDEF SQLITE}
   sqlite,
 {$ENDIF}  
   xpglobal;
@@ -70,7 +68,7 @@ type
 
   TSpamicityCalculator = class
   private
-  {$IFDEF HAS_SQLITE}
+  {$IFDEF SQLITE}
     db: TSQLite;
   {$ELSE}
     d: DB;
@@ -129,7 +127,7 @@ uses
 {$ENDIF}
   database;
 
-{$IFDEF HAS_SQLITE}
+{$IFDEF SQLITE}
 var
   cache_db: TSQLite = nil;
 {$ELSE}
@@ -347,7 +345,7 @@ var
   Words:   TWordList;
   Word:    string;
   Count:   integer;
-  {$IFDEF HAS_SQLITE}
+  {$IFDEF SQLITE}
   db:      TSQLite;
   {$ELSE}
   GoodFld,BadFld,WordFld,DatFld: integer;
@@ -358,7 +356,7 @@ var
   Dat, DatOld: integer;
 begin
   if OldSpamStatus=SpamStatus then exit;
-  {$IFDEF HAS_SQLITE}
+  {$IFDEF SQLITE}
   if assigned(cache_db) then
   begin
     db := cache_db;
@@ -403,7 +401,7 @@ begin
       Word := Words.CurrentKey;
       Count := Min(Words[Word], MaxInt div 2);
 
-      {$IFDEF HAS_SQLITE}
+      {$IFDEF SQLITE}
       db.QueryStart('SELECT GoodCnt,BadCnt,Datum FROM wordlist WHERE '+
         'Word='+db.Quote(Word));
       if db.QueryNext then
@@ -424,7 +422,7 @@ begin
       begin
         GoodCount := 0; GoodOld := -1;
         BadCount := 0;  BadOld  := -1;
-        {$IFNDEF HAS_SQLITE}
+        {$IFNDEF SQLITE}
         dbAppend(d);
         dbWriteNStr(d,WordFld,word);
         {$ENDIF}
@@ -446,13 +444,13 @@ begin
       if GoodCount > MaxInt div 2 then GoodCount := MaxInt div 2;
       if BadCount  > MaxInt div 2 then BadCount  := MaxInt div 2;
 
-      {$IFNDEF HAS_SQLITE}
+      {$IFNDEF SQLITE}
       DatOld := dbReadIntN(d,DatFld);
       {$ENDIF}
       Dat := Trunc(Double(Now) * 24); // date + hours only
       if (DatOld < Dat)and(DatOld<>0) then Dat := (DatOld + Dat +1) div 2;
 
-      {$IFDEF HAS_SQLITE}
+      {$IFDEF SQLITE}
       db.Execute('INSERT OR REPLACE INTO wordlist (Word,GoodCnt,BadCnt,Datum) VALUES ('+
         db.Quote(Word)+','+
         db.Quote(GoodCount)+','+
@@ -469,7 +467,7 @@ begin
     Words.Free;
   end;
   finally
-    {$IFDEF HAS_SQLITE}
+    {$IFDEF SQLITE}
       if not assigned(cache_db) then
         cache_db := db
       else begin
@@ -488,13 +486,13 @@ end;
 type PTSpamStats = ^TSpamStats;
 
 function calc_spam_stats_dowork(
-  {$IFDEF HAS_SQLITE}
+  {$IFDEF SQLITE}
     db: TSQLite;
   {$ELSE}
     d: DB;
   {$ENDIF}
   Content: TStream;
-  {$IFNDEF HAS_SQLITE}
+  {$IFNDEF SQLITE}
   GoodFld,BadFld: integer;
   {$ENDIF}
   var ROBX:    Double;
@@ -559,7 +557,7 @@ var token:   string;
 
   begin
 
-  {$IFDEF HAS_SQLITE}
+  {$IFDEF SQLITE}
     db.QueryStart('SELECT GoodCnt,BadCnt,Datum FROM wordlist WHERE '+
       'Word='+db.Quote(token));
     if db.QueryNext then
@@ -725,11 +723,11 @@ end;
 *)
 
 procedure TSpamicityCalculator.OpenDatabase;
-{$IFDEF HAS_SQLITE}
+{$IFDEF SQLITE}
 var dbTest: TSQLite;
 {$ENDIF}
 begin
-  {$IFDEF HAS_SQLITE}
+  {$IFDEF SQLITE}
   if assigned(db) then exit;
 
   if assigned(cache_db) then
@@ -786,7 +784,7 @@ begin
     end;
 
   except
-  {$IFDEF HAS_SQLITE}
+  {$IFDEF SQLITE}
     FreeAndNil(db);
   {$ELSE}
     dbClose(d);
@@ -800,7 +798,7 @@ procedure TSpamicityCalculator.CloseDatabase;
 var i: Integer;
 begin
   try
-  {$IFDEF HAS_SQLITE}
+  {$IFDEF SQLITE}
     if not assigned(db) then exit;
 
 //  db.Execute('INSERT OR REPLACE INTO params (robx,robx_cnt) VALUES ('+
@@ -818,7 +816,7 @@ begin
     dbWriteN(d,BadFld, ROBX_CNT);
   {$ENDIF}
   finally
-    {$IFDEF HAS_SQLITE}
+    {$IFDEF SQLITE}
       db.CommitTransaction;
       if not assigned(cache_db) then
       begin
@@ -839,7 +837,7 @@ end;
 
 constructor TSpamicityCalculator.Create;
 begin
-  {$IFDEF HAS_SQLITE}
+  {$IFDEF SQLITE}
   db := nil;
   {$ELSE}
   d := nil;
@@ -857,9 +855,9 @@ begin
   clear_spam_stats(FStats);
 
   Result := calc_spam_stats_dowork(
-    {$IFDEF HAS_SQLITE}db{$ELSE}d{$ENDIF},
+    {$IFDEF SQLITE}db{$ELSE}d{$ENDIF},
     Content,
-    {$IFNDEF HAS_SQLITE}GoodFld,BadFld,{$ENDIF}
+    {$IFNDEF SQLITE}GoodFld,BadFld,{$ENDIF}
     ROBX,ROBX_CNT,@FStats);
 end;
 
@@ -892,7 +890,7 @@ end;
 initialization
 
 finalization
-{$IFDEF HAS_SQLITE}
+{$IFDEF SQLITE}
   if assigned(cache_db) then
   begin
     cache_db.CommitTransaction;
