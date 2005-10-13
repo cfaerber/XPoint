@@ -252,8 +252,8 @@ var
   i: Integer;
 begin
   for i := 0 to Size -1 do
-    if TByteArray(data)[i] = 32 then
-      TByteArray(data)[i] := 0;
+    if TByteArray(data)[i] = 0 then
+      TByteArray(data)[i] := 32;
 end;
 {$ELSE }
   assembler; {&uses edi}
