@@ -201,6 +201,8 @@ type
   TCharArray = array[0..bufsize] of char;
   PCharArray = ^TCharArray;
 
+  UUZException = class (SysUtils.Exception);
+
 var
   buffer: array[0..bufsize] of char;    { Kopierpuffer }
   bufpos, bufanz: integer;              { Leseposition / Anzahl Zeichen }
@@ -339,10 +341,10 @@ var
   switch: string;
 begin
   if (LowerCase(paramstr(2)) <> '-uz') and (LowerCase(paramstr(2)) <> '-zu')
-    then raise Exception.Create('Falsche Parameterzahl');
+    then raise UUZException.Create('Falsche Parameterzahl');
   if LowerCase(paramstr(2)) = '-uz' then
   begin
-    if paramcount < 4 then raise Exception.Create('Falsche Parameterzahl');
+    if paramcount < 4 then raise UUZException.Create('Falsche Parameterzahl');
     u2z := true;
     source := ''; dest := ''; OwnSite := '';
     for i := 3 to paramcount do
@@ -378,7 +380,8 @@ begin
   else
   begin
     u2z := false;
-    if paramcount < 6 then raise Exception.Create('Falsche Parameterzahl');
+    if paramcount < 6 then
+      raise UUZException.Create('Falsche Parameterzahl');
     source := ''; dest := ''; _from := ''; _to := '';
     for i := 3 to paramcount do
       if LeftStr(paramstr(i), 1) = '-' then
@@ -488,14 +491,15 @@ procedure tuuz.testfiles;
   end;
 
 begin
-  if not Exist(Source) then raise Exception.Create('Quelldatei fehlt');
+  if not Exist(Source) then
+    raise UUZException.Create('Quelldatei fehlt');
   if u2z and not validfilename(dest) then
-    raise Exception.Create('ungltige Zieldatei: ' + dest);
+    raise UUZException.Create('ungltige Zieldatei: ' + dest);
   if not u2z and not ppp then
   begin
     Dest := IncludeTrailingPathDelimiter(Dest);
     if not IsPath(dest) then
-      raise Exception.Create('ungltiges Zielverzeichnis: ' + dest);
+      raise UUZException.Create('ungltiges Zielverzeichnis: ' + dest);
   end;
 end;
 
@@ -717,7 +721,7 @@ again:
   if not FileExists(Dest+FN) then
   begin
     RenameFile(NewFN,Dest+FN);
-    raise Exception.Create(Format(GetRes2(10700,50),[Dest+FN]))
+    raise UUZException.Create(Format(GetRes2(10700,50),[Dest+FN]))
   end;
 
   if batch then goto again;
@@ -2244,7 +2248,7 @@ begin
   if CommandLine then write('mail: ', fn);
   DeCompress(fn,false);
   if not fileexists(fn) then
-    raise Exception.Create(Format('Puffer fehlt: %s',[fn]));
+    raise UUZException.Create(Format('Puffer fehlt: %s',[fn]));
   if CommandLine then write(sp(7));
 
   OpenFile(fn);
@@ -2370,7 +2374,7 @@ begin
   DeCompress(fn,true);
   if not fileexists(fn) then
   begin
-    raise Exception.Create(Format(GetRes2(10700,15),[fn]));
+    raise UUZException.Create(Format(GetRes2(10700,15),[fn]));
     exit;
   end;
 
@@ -2593,7 +2597,7 @@ begin
         ReadXFile;                        { X.-file interpretieren }
         LoString(typ);
         if not FileExists(spath + dfile) then
-          raise Exception.Create(Format('Puffer fehlt: %s',[spath+dfile]))
+          raise UUZException.Create(Format('Puffer fehlt: %s',[spath+dfile]))
         else begin
           inc(n);
           if (typ = 'rnews') or (typ = 'crnews') or
@@ -2610,7 +2614,7 @@ begin
             (typ = 'rbsmtp') or (typ = 'brsmtp') then
             ConvertSmtpFile(spath + dfile, mails)
           else
-            raise Exception.Create(Format(GetRes2(10700,10),[typ,sr.name]));
+            raise UUZException.Create(Format(GetRes2(10700,10),[typ,sr.name]));
 
           DeleteFiles.Add(spath+sr.name);
           DeleteFiles.Add(spath+dfile);
@@ -2622,14 +2626,14 @@ begin
           0, 1, 2: ConvertNewsfile(spath + sr.name, news);
           3: ConvertSmtpFile(spath + sr.name, mails);
           4: ConvertMailfile(spath + sr.name, '', mails);
-        else raise Exception.Create(Format(GetRes2(10700,45),[sr.name]));
+        else raise UUZException.Create(Format(GetRes2(10700,45),[sr.name]));
         end;
         inc(n);
 
         DeleteFiles.Add(spath+sr.name);
     end;
     except
-      on Ex:Exception do
+      on Ex: UUZException do
       begin
         if CommandLine then
           writeln(ex.message)
