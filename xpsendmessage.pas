@@ -334,6 +334,7 @@ var f,f2     : file;
     kopkey   : string;   { (K)opien }
     fidokey  : string;   { (A)n     }
     empfkey  : string;   { E(m)pfaenger }
+    betrkey  : string;   { (B)etreff }
     pgpkey   : string;
     oldbetr  : string;
     d        : DB;
@@ -906,26 +907,32 @@ end;
     diabox(78,13+fadd,typ,x,y);
     moff;
 
-    ToStr := GetRes2(611,10);
+    ToStr := GetRes2(611,10); { 'E^mpfaenger' }
     ToPos := CPos('^',ToStr);
-    empfkey := copy(ToStr, ToPos+1, 1);
+    empfkey := copy(ToStr, ToPos+1, 1); { 'E(m)pfaenger' }
     Delete(ToStr, ToPos, 1);
     
-    wrt(x+3,y+2,ToStr+ch);   { 'Empfaenger ' }
+    wrt(x+3,y+2,ToStr+ch); { 'E^mpfaenger' }
     attrtxt(col.coldiahigh);
-    wrt(x+3+ToPos-1,y+2,empfkey);
+    wrt(x+3+ToPos-1,y+2,empfkey); { 'E(m)pfaenger' }
     attrtxt(col.coldialog);
-
+    
     ToStr := getres2(611,11); { '^An' }
     ToPos := cpos('^', ToStr);
-    fidokey := copy(ToStr, ToPos+1, 1); { (A)n }
+    fidokey := copy(ToStr, ToPos+1, 1); { '(A)n' }
     Delete(ToStr, ToPos, 1);
 
     if echomail then begin
       wrt(x+3,y+4, ToStr);    { 'An' }
       inc(y,2);
       end;
-    wrt(x+3,y+4,getres2(611,12));      { 'Betreff' }
+
+    wrt(x+4,y+4,mid(getres2(611,12),2));   { 'etreff' }
+    attrtxt(col.coldiahigh);    
+    betrkey := FirstChar(getres2(611,12)); { '(B)etreff' }
+    wrt(x+3,y+4,betrkey);
+    attrtxt(col.coldialog);
+    
     wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
     wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
     wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
