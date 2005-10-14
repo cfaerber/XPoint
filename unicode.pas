@@ -430,7 +430,7 @@ begin
     begin
       // 2-byte encoding
       Index := Ord(Source[p+0]) and $1f;
-      if Assigned(FL2RevTable[Index]) then
+      if Assigned(FL2RevTable[Index]) and ((p+1) <= Length(source)) then
         Result[i] := FL2RevTable[Index]^[Ord(Source[p+1]) and $3f]
       else
         Result[i] := '?';
@@ -441,10 +441,10 @@ begin
       // 3-byte encoding
       Index := Ord(Source[p+0]) and $0f;
       L1Table := FL1RevTable[Index];
-      if Assigned(L1Table) then
+      if Assigned(L1Table) and ((p+1) <= Length(source)) then
       begin
         Index := Ord(Source[p+1]) and $3f;
-        if Assigned(L1Table^[Index]) then
+        if Assigned(L1Table^[Index]) and ((p+2) <= Length(source)) then
           Result[i] := L1Table^[Index]^[Ord(Source[p+2]) and $3f]
         else
           Result[i] := '?';
