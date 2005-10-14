@@ -6,6 +6,7 @@
   $MAINVER = "unknown";
   $SUBVER = "unknown";
   $BUILD = "unknown";
+  $ARCH = "unknown";
   $RELEASE = "1";
 
 
@@ -24,6 +25,9 @@
 
   open(OutFile, ">\.\./version.inc");
   print OutFile "version_build = ".$BUILD.";\n";
+  $ARCH = `uname -p`;
+  $ARCH =~ tr/\n//d;
+  print OutFile "arch = '$ARCH';\n";
   close(OutFile);
 
   open(InFile, "../xpdefine.inc");
