@@ -47,19 +47,11 @@ implementation
 uses sysutils, classes, xpheader, xpmakeheader,
   typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
 
-const nt_ZConnect  = 2;
-      nt_UUCP      = 40;
-      readempflist = false;
-      readkoplist  = false;
-
-      maxbrett  = 2000;
+const maxbrett  = 2000;
       attrMPbin   = $0040;            { Multipart-Binary           }
       attrReqEB   = $1000;            { EB anfordern               }
-      attrIsEB    = $2000;            { EB                         }
       AttrPmReply = $0100;            { PM-Reply auf AM (Maus)     }
       AttrQuoteTo = $0400;            { QuoteTo (Maus)             }
-      AttrQPC     = $0001;            { QPC-codiert                }
-      AttrControl = $0020;            { Cancel-Nachricht }
 
 
 type  charr       = array[0..65530] of char;
