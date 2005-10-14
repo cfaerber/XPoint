@@ -25,7 +25,7 @@
 
   open(OutFile, ">\.\./version.inc");
   print OutFile "version_build = ".$BUILD.";\n";
-  $ARCH = `uname -p`;
+  $ARCH = `uname -m`;
   $ARCH =~ tr/\n//d;
   print OutFile "arch = '$ARCH';\n";
   close(OutFile);
