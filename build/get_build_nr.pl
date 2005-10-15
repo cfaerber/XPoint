@@ -40,7 +40,7 @@
     $OPTS = "-gl -CX -O3p3";
   } else
   {
-    $OPTS = "-gl -O1";
+    $OPTS = "-CX -O3p3";
   }
 
 

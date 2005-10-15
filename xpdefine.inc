@@ -24,7 +24,7 @@
 { Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefÅhrt
   (Rangecheck) usw. }
 
-{$DEFINE Debug }
+{.$DEFINE Debug }
 
 { Unter Virtual Pascal werden Informationen Åber die Zeilennummern
   gespeichert, vergrî·ert die EXE-Datei etwas.
@@ -32,7 +32,7 @@
   Under FPC use -gl. Prints a backtrace with unit-name and linenumber info.
 }
 
-{$DEFINE DebugInfo }
+{.$DEFINE DebugInfo }
 
 { Ist definiert, wenn Beta-Informationen anzeigt werden sollen }
 {.$DEFINE Beta }
