@@ -449,11 +449,13 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
   diffdir:=ExtractFilePath(files);
   diffnames:=ExtractFilename(files);
 
+  Debug.DebugLog('xpfidonl', 'Nodelist.Count = ' + IntToStr(Nodelist.Count), dlDebug);
   for i:=0 to NodeList.Count - 1 do
   with TNodeListItem(Nodelist.Items[i]) do
   begin
     ucount:=5;
     nextnr:=number;
+    Debug.DebugLog('xpfidonl', 'Starte NodeDiff-Routine, repeat-Schleife', dlDebug);
     repeat
       done:=false;
       nextnr:=NextNumber(nextnr);
@@ -472,34 +474,36 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
         if not unarcflag then
           log(getres2(2130,2));              { 'Fehler beim Entpacken' }
         diffnames:=WildCard;
-        end;
+      end;
       ExpandFilePath(ufile);
       if FileExists(ufile) and passend(ufile) then
       begin
         if fprocessor<>'' then
           ExecProcessor(fprocessor);
         Debug.DebugLog('xpfidonl', 'Using ' + ufile, dlDebug);
-        if fDoDiff and UDiff then begin       { Update diffen }
+        if fDoDiff and UDiff then       { Update diffen } 
+	begin
           number:=nextnr;
           NodeList.SaveConfigToFile;
           done:=true;
           if listfile='NODELIST.###' then
             ShrinkNodelist(false);
-          end;
+        end;
         if not fDoDiff and CopyUpdateFile then
         begin    { Update kopieren }
-          if pos('##',listfile)>0 then begin
-            _era(FidoDir+NodeList.GetFilename(i));      { alte Liste l”schen }
-            number:=nextnr;
+          if pos('##',listfile)>0 then 
+	  begin
+            _era(FidoDir+NodeList.GetFilename(i));      { alte Liste loeschen }
+	    number:=nextnr;
             NodeList.SaveConfigToFile;
-            end;
-          done:=true;
           end;
+          done:=true;
+        end;
         if TmpDoDiff then DoDiffs := 2; { MK 01/00 Workaround TMT }
         if unarcflag then _era(ufile);
         end;
       if done then begin
-        if auto and fDelUpdate then begin    { evtl. Update-Files l”schen }
+        if auto and fDelUpdate then begin    { evtl. Update-Files loeschen }
           SafeDeleteFile(uarchive);
           SafeDeleteFile(ufile);
           end;
@@ -508,6 +512,7 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
       if done then DoDiffs:=0;
       dec(ucount);
     until (pos('##',listfile)=0) or (not done and (fdodiff or (ucount=0)));
+    Debug.DebugLog('xpfidonl', 'NodeDiff-Routine (repeat-Schleife) erfolgreich beendet', dlDebug);
     end;
 
   freeres;
