@@ -3,9 +3,9 @@
 # use with eval $(get_build_nr.pl)
 # get version number from xpglobal.pas and version.inc and build .spec-file
 
-  $MAINVER = "unkown";
-  $SUBVER = "unkown";
-  $BUILD = "unkown";
+  $MAINVER = "unknown";
+  $SUBVER = "unknown";
+  $BUILD = "unknown";
   $RELEASE = "1";
 
 
@@ -15,11 +15,17 @@
   }
   close(InFile);
 
-  open(InFile, "../version.inc");
+  open(InFile, "version.svn");
   while (<InFile>) {
-    if (/version_build.*=.*\'.*\s(.*)\s.*\'/ig ) { $BUILD = $1;  }
+    if (/Revision (.*)\./ig ) { $BUILD = $1;  }
   }
   close(InFile);
+  unlink 'version.svn';
+
+  open(OutFile, ">\.\./version.inc");
+  print OutFile "version_build = ".$BUILD.";\n";
+  close(OutFile);
+  printf("version.inc written\n");
 
   open(InFile, "../xpdefine.inc");
   while (<InFile>) {
@@ -101,4 +107,3 @@ if ($^O eq "MSWin32") {
 
   close(InFile);
   close(OutFile);
-

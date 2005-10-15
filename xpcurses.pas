@@ -419,6 +419,9 @@ var
    LastWindMin,                         { Manipulationen abfangen }
    LastWindMax: word;
 
+var
+  LocalScreen: ^TLocalScreen;
+
 {==========================================================================
    This code chunk is from the FPC source tree in rtl/inc/textrec.inc.
    It is the internal format of a variable of type "Text" as defined and
@@ -909,7 +912,7 @@ end;
 
 function CrtRead(var F: TextRec): integer;
 var
-  i: integer;
+  i, count: integer;
 begin
   if not __isInit then InitXPCurses;
 {$IFDEF Kylix}
@@ -1516,6 +1519,8 @@ begin
   Reset(Input);
   TextRec(Input).Handle:=StdInputHandle;
 {$ENDIF}
+
+  GetMem(LocalScreen, SizeOf(LocalScreen^));
 
   ScreenLines :=  SysGetScreenLines;
 

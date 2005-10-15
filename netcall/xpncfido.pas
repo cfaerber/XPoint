@@ -1,4 +1,4 @@
-{  $Id: xpncfido.pas,v 1.46 2004/01/18 15:06:14 mk Exp $
+{  $Id$
 
    OpenXP fido netcall unit
    Copyright (C) 1991-2001 Peter Mandrella
@@ -237,7 +237,7 @@ procedure ProcessIncomingFiles(FilesToProcess: TStringList;
   end;
 
 const fpuffer = 'FPUFFER';
-var x,y: Integer;
+var x,y,i: Integer;
     res,iFile: integer;
     AtLeastOneConvertedOK: Boolean;
     aFile,ShellProg: String;
@@ -247,9 +247,11 @@ begin
     msgbox(40,5,GetRepS2(30003,1,boxname),x,y);     { 'Pakete suchen (%s)' }
     Debug.DebugLog('xpncfido','Decompressiong packets: '+StringListToString(FilesToProcess),DLDebug);
     NewFiles:=TStringList.Create; iFile:=0;
-    while iFile<=(FilesToProcess.Count-1) do begin
+    while iFile<=(FilesToProcess.Count-1) do
+    begin
       aFile:=FilesToProcess[iFile];
-      if isCompressedFidoPacket(aFile) then begin
+      if isCompressedFidoPacket(aFile) then
+      begin
         Debug.DebugLog('xpncfido',aFile+' is compressed packet',DLDebug);
         MWrt(x+2,y+2,GetRepS2(30003,2,ExtractFileName(aFile)));
 
@@ -272,8 +274,16 @@ begin
         FilesToProcess.Delete(iFile);
         end
       else begin
-        if Pos('.PKT',UpperCase(aFile))=0 then begin
+        if Pos('.PKT',UpperCase(aFile))=0 then
+        begin
           Debug.DebugLog('xpncfido',aFile+' is a requested file',DLDebug);
+          if FileExists(RequestedFilesDir+ExtractFileName(aFile)) then
+          begin
+            i := 1;
+            while FileExists(RequestedFilesDir+ExtractFileName(aFile)+ '.' + IntToStr(i))
+              do Inc(i);
+            aFile := aFile + '.' + IntToStr(i);
+          end;
           RenameFile(aFile,RequestedFilesDir+ExtractFileName(aFile));
           IncomingRequestedFiles.Add(aFile);
           FilesToProcess.Delete(iFile);

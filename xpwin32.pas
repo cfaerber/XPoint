@@ -59,7 +59,7 @@ function RasHangup: Boolean;
 implementation
 
 uses
-  Typeform, SysUtils, windows, winxp;
+  Typeform, SysUtils, windows, winxp, debug;
 
 const
   RasMaxEntries     = 64;                                                {!!.06}
@@ -173,24 +173,130 @@ begin
   Cols := 160;
 end;
 
+{ ******************************************************************* }
+{ HJT 01.10.2005, Uebernommen aus einem MSDN-Sample. Das Sample ist   }
+{ allerdings fehlerhaft.                                              }
+{                                                                     }
+{ Korrigiertes Verfahren:                                             }
+{ Zunaechst wird der Screenbuffer auf das Maximum von gewuenschter    }
+{ Window-Groesse und aktueller Screenbuffer-Size gebracht,            }
+{ anschliessend die Windowsgroesse auf die gewuenschte Groesse        }
+{ gesetzt, und zum Schluss der Screenbuffer auf die Groesse des       }
+{ Windows gebracht                                                    }
+{ ******************************************************************* }
+{ Aus dem Sample:                                                     }
+{ COMMENTS: Note that care must be taken to resize the correct item   }
+{           first; you cannot have a console buffer that is smaller   }
+{           than the console window.                                  }
+{ ******************************************************************* }
+
 procedure SysSetScreenSize(const Lines, Cols: Integer);
 var
-  Size: TCoord;
-  R: TSmallRect;
+  bSuccess      : boolean;
+  maxsize       : TCoord;
+  csbi          : TConsoleScreenBufferInfo;
+  newWindowRect : TSmallRect; // hold the new console size
+  coordScreen   : TCoord;
 begin
-  R.Left := 0;
-  R.Top := 0;
-  R.Right := Cols - 1;
-  R.Bottom := Lines - 1;
-  SetConsoleWindowInfo(OutHandle, True, R);
-  Size.X := Cols;
-  Size.Y := Lines;
-  SetConsoleScreenBufferSize(OutHandle, Size);
-  R.Left := 0;
-  R.Top := 0;
-  R.Right := Cols - 1;
-  R.Bottom := Lines - 1;
-  SetConsoleWindowInfo(OutHandle, True, R);
+  Debug.DebugLog('xpwin32','---- SysSetScreenSize, '
+                 +' Cols:'+IntToStr(Cols)
+                 + ', Lines: ' + IntToStr(Lines),
+                 DLInform);
+
+  bSuccess := GetConsoleScreenBufferInfo(OutHandle, csbi);
+
+  if not bSuccess then begin
+      Debug.DebugLog('xpwin32','GetConsoleScreenBufferInfo failed, '
+                     + 'GetLastError: ' + IntToStr(GetLastError), DLInform);
+    end
+  else begin
+    Debug.DebugLog('xpwin32','GetConsoleScreenBufferInfo '
+                   + ', scrb x: ' + IntToStr(csbi.dwSize.x)
+                   + ', scrb y: ' + IntToStr(csbi.dwSize.y)
+                   + ', MaxWinS x: ' + IntToStr(csbi.dwMaximumWindowSize.x)
+                   + ', MaxWinS y:' + IntToStr(csbi.dwMaximumWindowSize.y),
+                   DLInform);
+  end;
+
+  maxsize:=GetLargestConsoleWindowSize(OutHandle);
+
+  if (maxsize.x = 0) or (maxsize.y = 0) then begin
+    Debug.DebugLog('xpwin32','GetLargestConsoleWindowSize failed, '
+                   + 'GetLastError: ' + IntToStr(GetLastError), DLInform);
+    maxsize.x:=80; maxsize.y:=25;
+    end
+  else begin
+    Debug.DebugLog('xpwin32','GetLargestConsoleWindowSize x: '
+                   + IntToStr(maxsize.x)
+                   + ', y: ' + IntToStr(maxsize.y),
+                   DLInform);
+  end;
+
+  { Screenbuffer auf Maximum von gewuenschter Groesse }
+  { und aktueller Screenbuffer-Groesse bringen        }
+  if csbi.dwSize.x > Cols then coordScreen.x:=csbi.dwSize.x
+  else                         coordScreen.x:=Cols;
+  if csbi.dwSize.y > Lines then coordScreen.y:=csbi.dwSize.y
+  else                          coordScreen.y:=Lines;
+  if maxsize.x < coordScreen.x then coordScreen.x:=maxsize.x; { pedantic }
+  if maxsize.y < coordScreen.y then coordScreen.y:=maxsize.y;
+
+  if (coordScreen.x > csbi.dwSize.x) or (coordScreen.y > csbi.dwSize.y) then begin
+    bSuccess := SetConsoleScreenBufferSize(OutHandle, coordScreen);
+    if not bSuccess then begin
+      Debug.DebugLog('xpwin32','initial SetConsoleScreenBufferSize failed, '
+                     + 'GetLastError: ' + IntToStr(GetLastError), DLInform);
+      Debug.DebugLog('xpwin32','   coordScreen.x: ' + IntToStr(coordScreen.x)
+                     + ', coordScreen.y: ' + IntToStr(coordScreen.y),
+                     DLInform);
+      end
+    else begin
+      Debug.DebugLog('xpwin32','SetConsoleScreenBufferSize Okay', DLInform);
+      end;
+    end
+  else begin
+    Debug.DebugLog('xpwin32','no initial SetConsoleScreenBufferSize needed', DLInform);
+    end;
+
+  { Window auf gewuenschte Groesse bringen }
+  newWindowRect.left   := 0;
+  newWindowRect.top    := 0;
+  newWindowRect.bottom := Lines - 1;
+  newWindowRect.right  := Cols - 1;
+
+  bSuccess := SetConsoleWindowInfo(OutHandle, True, newWindowRect);
+  if not bSuccess then begin
+    Debug.DebugLog('xpwin32','SetConsoleWindowInfo failed, '
+                   + 'GetLastError: ' + IntToStr(GetLastError), DLInform);
+    Debug.DebugLog('xpwin32','   newWindowRect.Bottom:'
+                   + IntToStr(newWindowRect.Bottom)
+                   + ', newWindowRect.right:' + IntToStr(newWindowRect.right),
+                   DLInform);
+    end
+  else begin
+    Debug.DebugLog('xpwin32','SetConsoleWindowInfo Okay', DLInform);
+  end;
+
+  { Screenbuffer auf die Groesse des Window bringen }
+  if (coordScreen.x <> (newWindowRect.right + 1)) or
+     (coordScreen.y <> (newWindowRect.bottom + 1)) then begin
+    coordScreen.x := newWindowRect.right + 1;
+    coordScreen.y := newWindowRect.bottom + 1;
+    bSuccess := SetConsoleScreenBufferSize(OutHandle, coordScreen);
+    if not bSuccess then begin
+      Debug.DebugLog('xpwin32','SetConsoleScreenBufferSize failed, '
+                     + 'GetLastError: ' + IntToStr(GetLastError), DLInform);
+      Debug.DebugLog('xpwin32','   coordScreen.x: ' + IntToStr(coordScreen.x)
+                     + ', coordScreen.y: ' + IntToStr(coordScreen.y),
+                     DLInform);
+      end
+    else begin
+      Debug.DebugLog('xpwin32','second SetConsoleScreenBufferSize Okay', DLInform);
+      end;
+    end
+  else begin
+    Debug.DebugLog('xpwin32','second SetConsoleScreenBufferSize not needed', DLInform);
+    end;
 end;
 
 procedure SysSetBackIntensity;

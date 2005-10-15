@@ -41,6 +41,8 @@ Please note that the dates are not exact.
        3.8.0   3.9.0            |
 2003     |       |              |
       3.8.11   3.9.7     FreeXP 3.40 RC3
+2004     |       |              
+2004  3.9.16   3.9.8
 
 Ehemalige Versionen
 Version history
@@ -122,6 +124,7 @@ Allgemein
 - Die Tools wie UUZ sind im Programm integriert (aber auch einzeln
   aufrufbar) und besitzen nahezu keine internen Limits mehr
 - Roles: eigene E-Mail-Adresse über Brettgruppen anpassbar
+- Integrierter, lernender SPAM-Filter
 
 
 Anzeige
@@ -161,7 +164,6 @@ Allgemein
 ---------
 - Interner Client für IMAP4 (Win32+Linux)
 - Automatisches Wählen mit dem DFUE-Netzwerk unter Win32
-- Integrierter, lernender SPAM-Filter
 - komplett neues, verbessertes Adresshandling sowie neues
   Sendefenster (korrektes CC/BCC usw.)
 - Korrekte Anzeige von Unicode (UTF8) kodieren Nachrichten im Lister

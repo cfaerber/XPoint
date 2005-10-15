@@ -312,6 +312,17 @@ const NetcallAlleFlag = 'NETCALL.ALL';  { N/A-Semaphore fuer Batchauswertung bei
        hdf_ersetzt = 33;
        hdf_control = 34;
 
+ {$ifdef NCRT }
+      { LSSize - Gibt die maximale Groesse des LocalScreen-Buffers
+        an. (Zeilen * Spalten * (sizeof(Char) + sizeof(Attribut))) }
+      CharSize =        1;              { Groesse eines Zeichens }
+      AttrSize =        1;              { Groesse eines Attributs }
+      LSSize =          $7fff;          { Sollte fuer 160 x 100 reichen }
+{$else }
+      LSSize = $1fff;
+{$endif }
+
+
 type   textp  = ^text;
        ColArr = array[0..3] of byte;
        ColQArr= array[1..9] of byte;
@@ -673,6 +684,10 @@ type   textp  = ^text;
                       domain     : string;
                     end;
 
+      { Speicher den kompletten Bildschirm lokal zwischen, damit beim Auslesen
+        des Fensterinhaltes nicht auf API-Funktionen zurÅckgegriffen werden mu·.
+        Jede énderung am Bildschirm _mu·_ gleichzeitig hier gemacht werden }
+      TLocalScreen = array[0..LSSize] of char;
 
 var    menupos : array[0..menus] of byte = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
                                             1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -1134,6 +1149,11 @@ const
 
 var
   XPLog                 : TLog;         { Logging }
+
+{$IFDEF LocalScreen }
+var
+  LocalScreen: ^TLocalScreen;
+{$ENDIF }
 
 implementation
 

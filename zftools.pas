@@ -246,23 +246,14 @@ end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 end;
 {$ENDIF }
 
-procedure Remove0(var data; size: LongWord); assembler; {&uses edi}
-asm
-        mov    edi,data
-        mov    ecx,size
-        jecxz  @rende
-        mov    al,0
-        cld
-@rlp:   repnz  scasb
-        jecxz  @rende
-        mov    byte ptr [edi-1],' '    { #0 -> ' ' }
-        jmp    @rlp
-@rende:
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'EDI'];
-{$ELSE }
+procedure Remove0(var data; size: LongWord);
+var
+  i: Integer;
+begin
+  for i := 0 to Size -1 do
+    if TByteArray(data)[i] = 0 then
+      TByteArray(data)[i] := 32;
 end;
-{$ENDIF }
 
 procedure ISO2IBM(var data; size: LongWord); assembler; {&uses ebx, esi}
 {$IFDEF ANALYSE}

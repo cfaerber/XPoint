@@ -566,6 +566,9 @@ begin
     {$IFDEF LocalScreen }
       c := Char(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2]);
       Attr := SmallWord(Byte(LocalScreen^[((x-1)+(y-1)*ScreenWidth)*2+1]));
+    {$ELSE }
+      c := ' ';
+      attr := 0;
     {$ENDIF }
     {$IFDEF DOS32 }
       w :=  MemW[$B800:((x-1)+(y-1)*ScreenWidth)*2];

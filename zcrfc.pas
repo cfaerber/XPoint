@@ -211,6 +211,8 @@ type
   TCharArray = array[0..bufsize] of char;
   PCharArray = ^TCharArray;
 
+  UUZException = class (SysUtils.Exception);
+
 var
   buffer: array[0..bufsize] of char;    { Kopierpuffer }
   bufpos, bufanz: integer;              { Leseposition / Anzahl Zeichen }
@@ -377,10 +379,10 @@ var
   switch: string;
 begin
   if (LowerCase(paramstr(2)) <> '-uz') and (LowerCase(paramstr(2)) <> '-zu')
-    then raise Exception.Create('Falsche Parameterzahl');
+    then raise UUZException.Create('Falsche Parameterzahl');
   if LowerCase(paramstr(2)) = '-uz' then
   begin
-    if paramcount < 4 then raise Exception.Create('Falsche Parameterzahl');
+    if paramcount < 4 then raise UUZException.Create('Falsche Parameterzahl');
     u2z := true;
     source := ''; dest := ''; OwnSite := '';
     for i := 3 to paramcount do
@@ -416,7 +418,8 @@ begin
   else
   begin
     u2z := false;
-    if paramcount < 6 then raise Exception.Create('Falsche Parameterzahl');
+    if paramcount < 6 then
+      raise UUZException.Create('Falsche Parameterzahl');
     source := ''; dest := ''; _from := ''; _to := '';
     for i := 3 to paramcount do
       if LeftStr(paramstr(i), 1) = '-' then
@@ -742,7 +745,7 @@ again:
   if not FileExists(Dest+FN) then
   begin
     RenameFile(NewFN,Dest+FN);
-    raise Exception.Create(Format(GetRes2(10700,50),[Dest+FN]))
+    raise UUZException.Create(Format(GetRes2(10700,50),[Dest+FN]))
   end;
 
   if batch then goto again;

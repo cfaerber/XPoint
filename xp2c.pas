@@ -97,7 +97,7 @@ uses
   xp1o,xp2,xp4o2,xp9bp,xpnt,
   typeform,fileio,inout,winxp,win2,keys,maske,
   mouse,maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,xp_pgp,
-  mime,osdepend, classes,
+  mime,osdepend, classes, debug,
   xpcharset,
   xpglobal;
 
@@ -1123,6 +1123,7 @@ var x,y : Integer;
     allc: string;
     printcap, PrinterList: TStringList;
 begin
+  Debug.DebugLog('xp2c', 'DruckConfig gestartet ',dlDebug);
   PrinterList := TStringList.Create;
   try
     {$IFDEF Unix }
@@ -1132,7 +1133,8 @@ begin
         for i := 0 to printcap.Count - 1 do
           if FirstChar(printcap[i]) <> '#' then
           begin
-            s := LeftStr(printcap[i], Pos('|', printcap[i]+'|')-2);
+            s := LeftStr(printcap[i], Pos('|', printcap[i]+'|')-1);
+	    Debug.DebugLog('xp2c', 's aus /etc/printcap = '+s,dlDebug);
             if s <> '' then
               PrinterList.Add(s);
           end;
@@ -1140,11 +1142,13 @@ begin
         printcap.Free;
       end;
       lpt := PrinterName;
+      Debug.DebugLog('xp2c', 'lpt = '+lpt,dlDebug);
     {$ELSE }
       for i := 1 to 4 do
         PrinterList.Add('LPT' + IntToStr(i));
       if DruckLPT > 0 then
         lpt:=PrinterList[DruckLPT-1];
+	Debug.DebugLog('xp2c', 'lpt = '+lpt,dlDebug);
     {$ENDIF }
 
     dialog(ival(getres2(264,0)),11,getres2(264,1),x,y);   { 'Drucker-Optionen' }
@@ -1170,6 +1174,7 @@ begin
     begin
       {$IFDEF Unix }
         PrinterName := lpt;
+	Debug.DebugLog('xp2c', 'PrinterName = '+PrinterName,dlDebug);
       {$ELSE }
         PrinterList.Find(lpt, DruckLPT);
         Inc(DruckLPT); // be compatible with old versions

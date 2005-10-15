@@ -494,7 +494,7 @@ begin  { __ Suchmarke }
                   inc al
               @1: mov helpbyte,al
               end;
-*)              
+*)
               userflag[y]:=(flags and (8+16+32)) + iif(flags and (8+16+32)<>0,1,0);
 
               if (fidoqwk and (FirstChar(_brett)='A') and

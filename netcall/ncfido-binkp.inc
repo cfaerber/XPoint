@@ -1,4 +1,4 @@
-{  $Id: ncfido-binkp.inc,v 1.20 2004/01/25 19:38:34 cl Exp $
+{  $Id$
 
    OpenXP fido netcall BinkP protocol implementation include file
 
@@ -341,17 +341,21 @@ var
         end;
       RxAccF: begin
         Output(mcVerbose,'Receiving %s',[RxFilename]);
-        if {FileExists(IncomingDir+RxFilename)}false then begin // file exists
-          RxFileHandle:=FileOpen(IncomingDir+RxFilename,fmOpenReadWrite);
-          if RxFileHandle>0 then begin // opened ok
+        if FileExists(IncomingDir+RxFilename) then
+        begin // file exists
+(*          RxFileHandle:=FileOpen(IncomingDir+RxFilename,fmOpenReadWrite);
+          if RxFileHandle>0 then
+          begin // opened ok
             RxOffset:=FileSeek(RxFileHandle,0,fsFromEnd);
             OutBpF.SendCommandFrame(M_GET,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime)+' '+IntToStr(RxOffset));
             RxState:=RxReceD;
-            end else begin // open failed
+            end else *)
+          begin // open failed
             OutBpF.SendCommandFrame(M_SKIP,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
             RxState:=RxWaitF;
-            end;
-          end else begin // file does not exist
+          end;
+        end else
+        begin // file does not exist
           RxFileHandle:=FileCreate(IncomingDir+RxFilename);
           if RxFileHandle>0 then begin // opened ok
             RxOffset:=0;

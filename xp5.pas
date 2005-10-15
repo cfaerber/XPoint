@@ -477,6 +477,7 @@ begin
   xp1.wait(curon);
   closebox;
  {$endif}
+{$endif}
 end;
 
 { USER.EB1 - Fragmentstatistik, nur deutsche Version (todo...) }

@@ -609,8 +609,10 @@ var i, x,y : integer;
 
   { Funktionstastenhandling fuer letzte Bildschirmzeile }
 
-  function getfkeyfromscreen(x,y,mode:byte):byte; assembler;
-  asm
+  function getfkeyfromscreen(x,y,mode:byte):byte;
+  begin
+     result := 0;
+  end;
 (*!!!         push ds
          mov ds,vbase
          xor bx,bx
@@ -646,7 +648,7 @@ var i, x,y : integer;
    @getpos:                       { Modus 3 : Anfangsposition }
          cmp bl,0
          jnl @@2
-         mov bx,0
+         mov bx,0                                   8
    @@2:  shr bx,1
          mov al,bl
          jmp @end
@@ -705,7 +707,6 @@ var i, x,y : integer;
          mov ah,0
    @end: pop ds
 *)
-  end;
 
 begin
   maus_gettext(x,y);
