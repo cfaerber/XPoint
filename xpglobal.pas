@@ -31,8 +31,8 @@ interface
 // verstr+pformstr+betastr is readable
 
 const
-  mainver     = '3.8.16';       { Versionnr. - steht nur an dieser Stelle }
-  betastr     = ' beta';        { ' ' oder ' beta' }
+  mainver     = '4.0';       { Versionnr. - steht nur an dieser Stelle }
+  betastr     = ' RC1';        { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
   pformstr    = ' (Win32)';     { 32 Bit Windows mit FPC oder VP }

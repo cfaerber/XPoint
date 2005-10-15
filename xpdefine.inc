@@ -35,7 +35,7 @@
 {$DEFINE DebugInfo }
 
 { Ist definiert, wenn Beta-Informationen anzeigt werden sollen }
-{$DEFINE Beta }
+{.$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
 {$DEFINE Snapshot}

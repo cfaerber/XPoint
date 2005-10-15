@@ -431,7 +431,9 @@ var i  : integer;
         keyboard(copy(s3,9,k-9));
         end;
       end;
-    ParNoBeta := true;
+    {$IFDEF Beta }
+      ParNoBeta := true;
+    {$ENDIF }
   end;
 
   procedure SetDebugLoglevels(s: String);
