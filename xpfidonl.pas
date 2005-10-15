@@ -446,9 +446,12 @@ begin   //function  DoDiffs(files:string; auto:boolean):byte;
   DoDiffs:=1;
   reindex:=false;
   logopen:=false;
+  Debug.DebugLog('xpfidonl', 'diffDir is ExtractFilePath(files)', dlDebug);
   diffdir:=ExtractFilePath(files);
+  Debug.DebugLog('xpfidonl', 'diffnames are ExtractFilename(files)', dlDebug);
   diffnames:=ExtractFilename(files);
-
+  Debug.DebugLog('xpfidonl', 'diffDir and diffnames done', dlDebug); 
+    
   Debug.DebugLog('xpfidonl', 'Nodelist.Count = ' + IntToStr(Nodelist.Count), dlDebug);
   for i:=0 to NodeList.Count - 1 do
   with TNodeListItem(Nodelist.Items[i]) do
