@@ -233,7 +233,7 @@ ende:
  except
   on E:Exception do begin
     Debug.DebugLogException(E);
-    Debug.LastLogMessages.Insert(0,'Last debug logs recorded before crash with ' + verstr + betastr {$IFDEF Snapshot} + 'Snapshot' {$ENDIF});
+    Debug.LastLogMessages.Insert(0,'Last debug logs recorded before crash with ' + verstr + betastr {$IFDEF Snapshot} + ' Snapshot' {$ENDIF});
     Debug.LastLogMessages.Insert(1,'If failure is reproduceable, email this file to dev@openxp.de.');
     Debug.LastLogMessages.Insert(2,'Be sure to delete all passwords that may be contained herein before.');
     Debug.LastLogMessages.Insert(3,'----------------------------------------------------------------------');
