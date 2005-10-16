@@ -1254,7 +1254,7 @@ var  dl         : displp;
       with e^ do
         if kb_shift then 
         begin
-          GetPosition(MarkPos);
+          MarkPos := GetPosition;
           MarkPos.offset:=min(MarkPos.offset,MarkPos.absatz^.size);
           if ((PosCoord(MarkPos,2)<>PosCoord(block[1].pos,block[1].disp))
             and (PosCoord(MarkPos,2)<>PosCoord(block[2].pos,block[2].disp)))
@@ -1279,7 +1279,7 @@ var  dl         : displp;
       if not kb_shift then Exit;
       with e^ do 
       begin
-        GetPosition(MarkPos);
+        MarkPos := GetPosition;
         MarkPos.Offset:=min(MarkPos.offset,MarkPos.absatz^.size);
         if MoveCursorAbove then 
         begin
@@ -1315,7 +1315,8 @@ var  dl         : displp;
 
   begin
     with e^ do begin
-      if (tk>=1) and (tk<=29) then GetPosition(lastpos);
+      if (tk>=1) and (tk<=29) then
+        LastPos := GetPosition;
 
       if tk in [editfBOL, editfEOL, editfPgUp, editfPgDn, editfUp, editfDown, 
         editfLeft, editfRight, editfPageTop, editfPageBottom, editfTop, 
@@ -1670,7 +1671,7 @@ var  dl         : displp;
             SetBlockMark(1);
             SetBlockMark(2);
             display;
-            mbm:=3;     { beide }
+            mbm:=3;     { beide }                                           
             repeat                { Blockmarkierschleife }
               repeat
                 gotoxy(x+scx-1,y+scy);
@@ -1685,7 +1686,7 @@ var  dl         : displp;
                     KorrScy;
                     Setscx(nx);
                     up:=(ny<yy) or ((ny=yy) and (nx<xx));
-                    GetPosition(apos);
+                    apos := GetPosition;
                     if up then
                       case mbm of
                         1,3 : begin SetBlockmark(1); mbm:=1; end;
