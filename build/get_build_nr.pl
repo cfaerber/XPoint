@@ -23,7 +23,7 @@
   close(InFile);
   unlink 'version.svn';
 
-  open(OutFile, ">\.\./version.inc");
+  open(OutFile, ">version.inc");
   print OutFile "version_build = ".$BUILD.";\n";
   $ARCH = `uname -m`;
   $ARCH =~ tr/\n//d;

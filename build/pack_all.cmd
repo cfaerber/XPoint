@@ -12,6 +12,8 @@ echo Erstelle Versions-Informationen
 cd \svn\openxp_4.00\build
 \perl\bin\perl get_build_nr.pl >\temp\variables.cmd
 call \temp\variables.cmd
+copy \svn\openxp_4.00\build\version.inc \source\openxp_4.00
+del version.inc
 echo Version: %OXP_VER%
 echo Options: %OXP_OPTS%
 
