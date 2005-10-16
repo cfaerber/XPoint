@@ -991,8 +991,10 @@ begin
           wpa := ConcatBlock(ap, addspaces);
           Modified:=true;
         end else
+	begin
           Debug.Debuglog('editor.inc','Error, size+next.size+addspaces<=maxabslen',dlDebug);
           error(2)    { 'Absatz zu groá' }
+	end  
       end;
     MoveWorkpos(wp,wpa);
     aufbau:=true;
@@ -1129,6 +1131,7 @@ begin
         MoveWorkpos(wp+1,nil);
         end
       else
+      begin
           Debug.Debuglog('editor.inc','Debug for #1327796, No. 2 ',dlDebug);       
           Debug.Debuglog('editor.inc','ap^.size: '+IntToStr (ap^.size),dlDebug);   
           Debug.Debuglog('editor.inc','spaces: '+IntToStr (spaces),dlDebug);       
@@ -1151,6 +1154,7 @@ begin
             FreeAbsatz(ap);
             MoveWorkpos(wp+1,nil);
           end;
+      end;  
       if not fast then
         KorrBlockScrolled(false);
     end;
