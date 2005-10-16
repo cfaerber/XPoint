@@ -33,7 +33,7 @@ uses
 {$IFDEF unix}
   xpcurses,
 {$ENDIF}
-  keys,clip,mouse,eddef, encoder, Lister;
+  keys,clip,mouse,eddef, encoder, Lister, debug;
 
 
 const

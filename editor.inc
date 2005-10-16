@@ -976,6 +976,11 @@ begin
         if (addspaces=0) and (ap^.size>0) and (ap^.next^.size>0)
           then if not (ap^.cont[ap^.size-1] in ['-','/'])
                   and (ap^.next^.cont[0]<>' ') then addspaces:=1;
+        Debug.Debuglog('editor.inc','Entering debugging for #1327796',dlDebug);    
+        Debug.Debuglog('editor.inc','ap^.size: '+IntToStr (ap^.size),dlDebug);     
+        Debug.Debuglog('editor.inc','ap^.next.size: '+IntToStr (ap^.next.size),dlDebug);
+        Debug.Debuglog('editor.inc','addspaces: '+IntToStr (addspaces),dlDebug);   
+        Debug.Debuglog('editor.inc','maxabslen: '+IntToStr (maxabslen),dlDebug);		  
         if ap^.size + ap^.next^.size + addspaces <= maxabslen then
         begin   { Abs„tze zusammenh„ngen }
           { Quote-Reflow }
@@ -987,6 +992,7 @@ begin
           wpa := ConcatBlock(ap, addspaces);
           Modified:=true;
         end else
+          Debug.Debuglog('editor.inc','Error, size+next.size+addspaces<=maxabslen',dlDebug);
           error(2)    { 'Absatz zu groá' }
       end;
     MoveWorkpos(wp,wpa);
@@ -1124,8 +1130,15 @@ begin
         MoveWorkpos(wp+1,nil);
         end
       else
+          Debug.Debuglog('editor.inc','Debug for #1327796, No. 2 ',dlDebug);       
+          Debug.Debuglog('editor.inc','ap^.size: '+IntToStr (ap^.size),dlDebug);   
+          Debug.Debuglog('editor.inc','spaces: '+IntToStr (spaces),dlDebug);       
+          Debug.Debuglog('editor.inc','maxabslen: '+IntToStr (maxabslen),dlDebug); 
           if ap^.size+spaces>=maxabslen then
+	  begin
+	    Debug.Debuglog('editor.inc','ap^.size+spaces>=maxabslen, Error',dlDebug);
             error(2)       { 'Absatz zu groá' }
+	  end	    
           else begin
             apnew:=AllocAbsatz(ap^.size+spaces+1);
             copyflags(ap,apnew);
@@ -1333,8 +1346,13 @@ begin
   wp:=workpos;
   if blk^.next=nil then begin        { Absatzausschnitt einfgen }
     ss:=ap^.size+blk^.size+spaces;
+    Debug.Debuglog('editor.inc','ss: '+IntToStr (ss),dlDebug);                     
+    Debug.Debuglog('editor.inc','maxabslen: '+IntToStr (maxabslen),dlDebug);
     if ss>maxabslen then
+    begin
+      Debug.Debuglog('editor.inc','ss>maxabslen, Error',dlDebug);
       error(2)     { 'Absatz zu groá }
+    end  
     else if assigned(blk)
     then begin
       ap2:=AllocAbsatz(ss);
@@ -1360,6 +1378,7 @@ begin
       apn:=apn^.next;
     if (ap^.size+blk^.size>maxabslen) or
        (apn^.size+ap^.size>maxabslen) then begin
+      Debug.Debuglog('editor.inc','ap^.size+blk^.size>maxabslen, Error'+IntToStr(ap^.size)+'+'+IntToStr(blk^.size)+'>'+IntToStr(maxabslen),dlDebug);
       error(2);     { 'Absatz zu groá }
       FreeBlock(blk);
     end
@@ -1963,6 +1982,7 @@ begin
             ap := ap^.next;
         end else
         begin
+	  Debug.Debuglog('editor.inc','Error No. 4 ',dlDebug);
           Error(2); // 'Absatz zu gross'
           break;
         end;
