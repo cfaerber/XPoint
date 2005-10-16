@@ -39,13 +39,12 @@ begin
   ActAbs:=dl^[e^.scy].absatz;
 end;
 
-function GetPosition: Position ;
+procedure GetPosition(var p:position);
 begin
-  with e^ do
-  begin
-    Result.absatz:=dl^[scy].absatz;
-    Result.offset:=dl^[scy].offset+xoffset+scx-1;
-  end;
+  with e^ do begin
+    p.absatz:=dl^[scy].absatz;
+    p.offset:=dl^[scy].offset+xoffset+scx-1;
+    end;
 end;
 
 function AbsDelete(const ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp;
@@ -483,7 +482,7 @@ begin
   NoDisplay;
   with e^ do 
   begin
-    p0 := GetPosition;
+    GetPosition(p0);
     i:=1;
     while (i<=gl) and (dl^[i].absatz<>p.absatz) do inc(i);
     if i<=gl then begin       { Absatz ist noch auf Bildschirm }
@@ -578,7 +577,7 @@ end;
 
 procedure SetMarker(n:byte);
 begin
-  e^.block[n+2].pos := GetPosition;
+  GetPosition(e^.block[n+2].pos);
 end;
 
 procedure GotoMarker(n:byte);
@@ -956,7 +955,7 @@ end;
 
 procedure DELchar;              { DEL - Zeichen l”schen }
 var ap: absatzp;
-    wp  : Integer;
+    wp  : word;
     addspaces    : integer;
     wpa          : absatzp;
     QuoteChars1: string;
@@ -1036,7 +1035,7 @@ begin
 end;
 
 procedure WortLinksLoeschen;    { Wort links l”schen }
-var wp,wpnew: Integer;
+var wp,wpnew: word;
     wpa             : absatzp;
 begin
   if workpos=0 then
@@ -1175,11 +1174,10 @@ var n,i   : byte;
     wp    : integer;
 begin
   n:=8 - workpos mod 8;
-  if not e^.insertmode then
-  begin
+  if not e^.insertmode then begin
     for i:=1 to n do CondZeichenRechts;
-  end else
-  begin
+    end
+  else begin
     wp:=workpos;
     ap:=AllocAbsatz(n);
     fillchar(ap^.cont,n,32);
@@ -1732,8 +1730,7 @@ begin
     if blockinverse or blockhidden then
       errsound
     else
-      if ClipAvailable then
-      begin
+      if ClipAvailable then begin
         if SaveBlock(block[1].pos,block[2].pos,EdTempFile,rrand,false,true,false) then
         begin
           FileToClip(EdTempFile);
@@ -1772,8 +1769,7 @@ procedure BlockEinlesen;
 var fn : string;
     ap : absatzp;
 begin
-  with e^ do
-  begin
+  with e^ do begin
     Procs.FileProc(e,fn,false,false);
     if fn<>'' then
       if not FileExists(fn) then
@@ -1789,8 +1785,7 @@ procedure BlockUUeEinlesen;
 var fn : string;
     ap : absatzp;
 begin
-  with e^ do
-  begin
+  with e^ do begin
     Procs.FileProc(e,fn,false,true);
     if fn<>'' then
       if not FileExists(fn) then
@@ -1822,8 +1817,8 @@ end;
 
 procedure BlockDrucken;
 var ap,endap   : absatzp;
-    ofs,endofs : Integer;
-    nofs       : Integer;
+    ofs,endofs : word;
+    nofs       : word;
     s          : string;
 begin
   with e^ do begin
@@ -1838,7 +1833,7 @@ begin
       ofs:=block[1].pos.offset;
       endap:=block[2].pos.absatz;
       endofs:=block[2].pos.offset;
-    end;
+      end;
     checklst:=true;
     repeat
       nofs:=Advance(ap,ofs,rrand);
