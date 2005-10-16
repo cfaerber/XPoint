@@ -2127,7 +2127,7 @@ fromstart:
 
     hdp.replypath:=_replypath;
 //  hdp.typ:=iifs(binary,'B','T');
-    hdp.programm:=xp_xp+'/'+verstr + pformstr;
+    hdp.programm:=xp_xp+'/'+verstr + pformstr {$IFDEF FPC} + ' (' + {$I %FPCTARGET%} + ')' {$ENDIF};
     hdp.organisation:=orga;
     
     if sData.ersetzt<>''then hdp.ersetzt:=sData.ersetzt;
