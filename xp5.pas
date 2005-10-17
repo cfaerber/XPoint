@@ -38,8 +38,8 @@ uses
   unix,
 {$ELSE}
   linux,
-{$ENDIF}  
-{$ENDIF}  
+{$ENDIF}
+{$ENDIF}
   xplinux,
   xpcurses,
 {$ENDIF}
@@ -85,12 +85,12 @@ begin
   until eof(t) or fnd;
   close(t);
   if fnd then
-    result := 
-      Copy(s,Length(s1)+1+7,4)+
-      Copy(s,Length(s1)+1+4,4)+
-      Copy(s,Length(s1)+1+1,4)+
-      Copy(s,Length(s1)+1+10,4)+
-      Copy(s,Length(s1)+1+13,4);
+    result :=
+      Copy(s,Length(s1)+7,2)+
+      Copy(s,Length(s1)+4,2)+
+      Copy(s,Length(s1)+1,2)+
+      Copy(s,Length(s1)+10,2)+
+      Copy(s,Length(s1)+13,2);
 end;
 
 
