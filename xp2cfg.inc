@@ -457,6 +457,11 @@ begin
   ShowMsgPath:=false;
   ShowMsgID:=false;
   ShowMsgSize:=true;
+  {$IFDEF unix }
+  DruckProg:='/usr/bin/lpr';
+  {$ELSE }
+  DruckProg:='lpt';
+  {$ENDIF }
   DruckInit:='';
   DruckExit:='^L';
   DruckFormlen:=65;
@@ -817,9 +822,10 @@ begin
   end;
   writeln(t,'LPT=',DruckLPT);
   writeln(t,'PrinterName=', PrinterName);
-  writeln(t,'DruckerInit=',druckinit);
-  writeln(t,'DruckerExit=',druckexit);
-  writeln(t,'Seitenlaenge=',druckformlen);
+  writeln(t,'DruckProg=', DruckProg);
+  writeln(t,'DruckerInit=',DruckInit);
+  writeln(t,'DruckerExit=',DruckExit);
+  writeln(t,'Seitenlaenge=',DruckFormLen);
   writeln(t,'FormFeed=',DruckFF);
   writeln(t,'DruckRand=',DruckLira);
   writeln(t,'XPoint-Tearline=',jnf(XP_Tearline));
@@ -1356,6 +1362,7 @@ begin
                     getx(su,  'binmime',mausmpbin) then EntryFound := True;
             'C':    if getcommpar then EntryFound := true;
             'D': if xp1.gets(s,su,'defaultbox',defaultbox) or   { -> Config2 }
+		    xp1.gets(s,su,'DruckProg',DruckProg) or
                     xp1.gets(s,su,'DruckerInit',druckinit) or
                     getb(su,  'DruckRand',drucklira) or
                     xp1.gets(s,su,'DruckerExit',druckexit) or

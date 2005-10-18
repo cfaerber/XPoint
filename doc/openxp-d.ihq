@@ -8794,6 +8794,20 @@ Wenn Sie keinen Seitenvorschub wnschen, dann geben
 Sie hier eine 0 ein.
 @
 472
+Hier tragen Sie das Programm ein, ber das Sie den
+Druckbefehl senden m”chten. So ist auch die Verwen-
+dung von anderen Programmen (z.B. muttprint) oder die
+šbergabe von Parametern m”glich.
+
+Unter Windows verwenden Sie bitte immer den Eintrag
+'lpt'.
+
+<<Achtung: 
+Wenn Sie diese Zeile ohne Eintrag lassen, ist das 
+Drucken nicht m”glich.
+
+@
+473
 Diese Zeichenfolge wird vor Beginn jeder Druckausgabe
 zum Drucker gesandt. Sie k”nnen damit z.B. den Druk-
 ker initialisieren oder eine bestimmte Schriftart
@@ -8815,18 +8829,18 @@ korrekt ausgedruckt werden (dieser Befehl „ndert den
 Zeichensatz des Druckers auf PC-8).
 
 @
-473
+474
 Diese Zeichenfolge wird nach Ende jeder Druckausgabe
 zum Drucker gesandt; als Default ist hier ein Seiten-
 vorschub eingetragen (^L = Ctrl-L).
 @
-474
+475
 Diese Zeichenfolge wird am Ende jeder Druckseite zum
 Drucker gesandt, vorausgesetzt, Sie haben die Seiten-
 l„nge nicht auf 0 eingestellt. šblich ist ein ^L
 (ASCII #12).
 @
-475
+476
 Linker Seitenrand in Druckzeichen; 0 = kein Rand.
 @
 480

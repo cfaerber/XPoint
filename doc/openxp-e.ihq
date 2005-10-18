@@ -5975,6 +5975,16 @@ printer.
 If you want NO form feed at all, enter a 0 here.
 @
 472
+Enter the name of your print program here. You may
+want to use special programs like muttprint or add 
+program parameters here.
+
+Use 'lpt' on windows systems.
+
+<<Attention
+Cleaning up this entry breaks your print process.
+@
+473
 This character string will be sent as printer code to
 the printer before every print job. You can use it to
 reset the printer, or set fonts, formats or whatever.
@@ -5990,18 +6000,18 @@ prefix "##", eg. #27 for Esc. A single "#" is
 achieved using "^#".
 
 @
-473
+474
 This character string is sent to the printer after
 every printer job.
 Entered as default is a form-feed ^L (=Ctrl-L)
 @
-474
+475
 This character string will be sent to the printer at
 the end of every page (after every x lines you have
 set)
 Usual is the form-feed Ctrl-L (ASCII #12) ^L
 @
-475
+476
 Left Margin (no. of characters); 0= no margin.
 @
 480

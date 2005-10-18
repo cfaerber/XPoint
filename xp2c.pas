@@ -1151,7 +1151,7 @@ begin
 	Debug.DebugLog('xp2c', 'lpt = '+lpt,dlDebug);
     {$ENDIF }
 
-    dialog(ival(getres2(264,0)),11,getres2(264,1),x,y);   { 'Drucker-Optionen' }
+    dialog(ival(getres2(264,0)),13,getres2(264,1),x,y);   { 'Drucker-Optionen' }
     {$IFDEF Unix }
       maddstring(3,2,getres2(264,2),lpt,9,255,''); mhnr(470);  { 'Schnittstelle ' }
     {$ELSE }
@@ -1163,10 +1163,12 @@ begin
       mappsel(true, PrinterList[i]);
     allc:=range(' ',#255);
     maddint(31,2,getres2(264,3),DruckFormLen,3,3,0,255);    { 'Seitenl„nge  ' }
-    maddstring(3,4,getres2(264,4),DruckInit,30,80,allc);    { 'Drucker-Init  ' }
-    maddstring(3,6,getres2(264,5),DruckExit,30,80,allc);    { 'Drucker-Exit  ' }
-    maddstring(3,8,getres2(264,6),DruckFF,30,80,allc);      { 'Seitenvorschub' }
-    maddint(3,10,getres2(264,7),Drucklira,3,2,0,50);        { 'linker Rand:  ' }
+    maddstring(3,4,getres2(264,9),DruckProg,30,80,allc);    { 'Druckprogramm ' } 
+    mappsel(false,'lptù/usr/bin/lprù/usr/bin/lpù/bin/lp');
+    maddstring(3,6,getres2(264,4),DruckInit,30,80,allc);    { 'Drucker-Init  ' }
+    maddstring(3,8,getres2(264,5),DruckExit,30,80,allc);    { 'Drucker-Exit  ' }
+    maddstring(3,10,getres2(264,6),DruckFF,30,80,allc);      { 'Seitenvorschub' }
+    maddint(3,12,getres2(264,7),Drucklira,3,2,0,50);        { 'linker Rand:  ' }
     maddtext(length(getres2(264,7))+10,10,getres2(264,8),col.coldialog);  { 'Zeichen' }
     freeres;
     readmask(brk);

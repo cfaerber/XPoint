@@ -30,7 +30,7 @@ interface
 
 uses
   xpglobal,
-  keys,typeform,inout;
+  keys,typeform,inout,xp0,debug;
 
 const drlength = 20;
       dnlength = 30;
@@ -113,7 +113,8 @@ var LstFile:String;
 procedure OpenLst(Port: String);
 begin
  {$IFNDEF Kylix}
-  AssignLst(lst, '|/usr/bin/lpr -P ' + Port);
+  AssignLst(lst, '|'+DruckProg+' -P ' + Port);
+  Debug.Debuglog('printerx','lst-Assignment: |'+DruckProg,dlDebug);
  {$ELSE}
   LstFile:=TempS(10000);
   Assign(lst, LstFile);
@@ -136,7 +137,7 @@ begin
   Close(lst);
 {$IFDEF unix }
  {$IFDEF Kylix}
-  libc.system(PChar('/usr/bin/lpr -m '+LstFile));
+  libc.system(PChar(DruckProg+' -m '+LstFile));
   SafeDeleteFile(LstFile);
  {$ENDIF}
 {$ENDIF}
