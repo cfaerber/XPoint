@@ -5980,9 +5980,6 @@ want to use special programs like muttprint or add
 program parameters here.
 
 Use 'lpt' on windows systems.
-
-<<Attention
-Cleaning up this entry breaks your print process.
 @
 473
 This character string will be sent as printer code to

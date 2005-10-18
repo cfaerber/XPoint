@@ -112,6 +112,7 @@ var LstFile:String;
 {$IFDEF Unix }
 procedure OpenLst(Port: String);
 begin
+  if DruckProg = '' then DruckProg := '/usr/bin/lpr';
  {$IFNDEF Kylix}
   AssignLst(lst, '|'+DruckProg+' -P ' + Port);
   Debug.Debuglog('printerx','lst-Assignment: |'+DruckProg,dlDebug);
@@ -125,7 +126,8 @@ end;
 {$ELSE }
 procedure OpenLst(Port: Integer);
 begin
-  Assign(lst, 'lpt' + IntToStr(Port));
+  if DruckProg = '' then DruckProg := 'lpt';
+  Assign(lst, DruckProg + IntToStr(Port));
   ReWrite(lst);
   if IOResult = 0 then ;
 end;

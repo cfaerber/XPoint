@@ -8801,11 +8801,6 @@ dung von anderen Programmen (z.B. muttprint) oder die
 
 Unter Windows verwenden Sie bitte immer den Eintrag
 'lpt'.
-
-<<Achtung: 
-Wenn Sie diese Zeile ohne Eintrag lassen, ist das 
-Drucken nicht m”glich.
-
 @
 473
 Diese Zeichenfolge wird vor Beginn jeder Druckausgabe
