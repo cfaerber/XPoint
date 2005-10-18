@@ -290,6 +290,8 @@ begin
     Xmakro(t,ListMakros);
     end;
   c:=t[1];
+  Debug.Debuglog('xp1o:','Seitendruck angefordert via Taste:'+c,dlDebug);
+  Debug.Debuglog('xp1o:','       => Umwandlung von "'+c+'" nach '+UpCase(c),dlDebug);
   if (UpCase(c)=k4_D) or (deutsch and (UpCase(c)='D')) then begin   { ^D }
     rmessage(119);   { 'Ausdruck l„uft...' }
     InitPrinter;
