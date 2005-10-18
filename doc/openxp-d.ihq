@@ -14245,7 +14245,7 @@ Hier werden alle angezeigten Nachrichten auf nicht-
 halten, nicht-l”schen und nicht-markiert gesetzt.
 @
 11405
-<<Nachricht / Alle / Lesen
+<<Nachricht / Alle / Gelesen
 
 Diese Funktion fhrt nicht etwa dazu, daá Sie jetzt
 den ganzen Unsinn lesen mssen - nein, OpenXP
@@ -14254,6 +14254,11 @@ lesen"-Markierungen bei allen angezeigten Nachrich-
 ten.
 @
 11406
+<<Nachricht / Alle / Ungelesen
+Diese Funktion setzt alle bereits gelesenen Nach-
+richten wieder auf den Lesestatus 'Ungelesen'.
+@
+11407
 <<Nachricht / Alle / Entfernen
 
 Dieser Menpunkt entfernt alle angezeigten Nachrich-
@@ -14262,7 +14267,7 @@ als unversandt markiert sind. Die Nachrichten wer-
 den im Gegensatz zum Menpunkt 'L”schen' wie bei
 'Kill' direkt aus der Datenbank entfernt.
 @
-11407
+11408
 <<Nachricht / Alle / Drucken
 
 Hier werden alle angezeigten Nachrichten ausgedruckt.
