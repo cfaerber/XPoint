@@ -835,7 +835,8 @@ var
 begin
   for i := 0 to ReplyTree.Count - 1 do begin
     p:= ReplyTree[i];
-    FreeMem(p);
+    if p <> NIL then
+      FreeMem(p)
   end;
   ReplyTree.Clear;
 end;
