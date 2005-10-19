@@ -458,7 +458,7 @@ begin
   ShowMsgID:=false;
   ShowMsgSize:=true;
   {$IFDEF unix }
-  DruckProg:='/usr/bin/lpr';
+  DruckProg:='/usr/bin/lpr -P';
   {$ELSE }
   DruckProg:='lpt';
   {$ENDIF }

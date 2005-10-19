@@ -1164,7 +1164,7 @@ begin
     allc:=range(' ',#255);
     maddint(31,2,getres2(264,3),DruckFormLen,3,3,0,255);    { 'Seitenl„nge  ' }
     maddstring(3,4,getres2(264,9),DruckProg,30,80,allc);    { 'Druckprogramm ' } 
-    mappsel(false,'lptù/usr/bin/lprù/usr/bin/lpù/bin/lp');
+    mappsel(false,'lptù/usr/bin/lpr -Pù/usr/bin/lpù/bin/lp');
     maddstring(3,6,getres2(264,4),DruckInit,30,80,allc);    { 'Drucker-Init  ' }
     maddstring(3,8,getres2(264,5),DruckExit,30,80,allc);    { 'Drucker-Exit  ' }
     maddstring(3,10,getres2(264,6),DruckFF,30,80,allc);     { 'Seitenvorschub' }
