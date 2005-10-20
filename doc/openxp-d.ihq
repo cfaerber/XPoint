@@ -12810,19 +12810,11 @@ werden kann.
 WÑhlen Sie <<Ja>>, um den Vorgang abzubrechen.
 @
 1550
-WÑhlen Sie ...
+<<Lizenz-Informationen
 
-<<LIZENZ.DOC>>      um die Lizenzbestimmungen anzeigen
-                zu lassen,
-
-<<Registrierung>>   um das Registrierungsformular auszu-
-                fÅllen oder Ihren Registrierungscode
-                einzugeben,
-
-<<Weiter>>          um die Lizenzbestimmungen fÅr Cross-
-                Point zu bestÑtigen, oder
-
-<<Abbruch>>         um das Programm zu beenden.
+Hier sehen Sie allgemeine Informationen zur Lizenz
+von OpenXP; OpenXP ist nicht mehr registrierungs-
+pflichtig.
 @
 1551
 WÑhlen Sie ...
@@ -13239,7 +13231,7 @@ Hier werden OpenXP-Daten in Dateien geschrieben,
 um sie z.B. an ein anderes Programm zu Åbergeben.
 @
 10104
-<<OpenXP / Statistik-MenÅ
+<<OpenXP / Statistik
 
 Dieses MenÅ beinhaltet verschiedene Funktionen zur
 Status-Anzeige und Statistik-Auswertung.
@@ -13270,6 +13262,11 @@ voll sein, um mal kurz nachzuschauen ob eine Datei
 auf dem Server vorhanden ist, wie viel Speicherplatz
 in Benutzung ist und anderes mehr.
 
+ACHTUNG: Die interne telnet-Routine hat derzeit
+         kein lokales Echo, d.h., Sie sehen
+	    Zeichen, die sie eingeben, nicht auf dem
+	    Bildschirm, sondern nur die Ausgabe der
+	    Gegenstelle.
 @
 10108
 <<OpenXP / Beenden
@@ -14245,7 +14242,7 @@ Hier werden alle angezeigten Nachrichten auf nicht-
 halten, nicht-lîschen und nicht-markiert gesetzt.
 @
 11405
-<<Nachricht / Alle / Lesen
+<<Nachricht / Alle / Gelesen
 
 Diese Funktion fÅhrt nicht etwa dazu, da· Sie jetzt
 den ganzen Unsinn lesen mÅssen - nein, OpenXP
@@ -14254,6 +14251,11 @@ lesen"-Markierungen bei allen angezeigten Nachrich-
 ten.
 @
 11406
+<<Nachricht / Alle / Ungelesen
+Diese Funktion setzt alle bereits gelesenen Nach-
+richten wieder auf den Lesestatus 'Ungelesen'.
+@
+11407
 <<Nachricht / Alle / Entfernen
 
 Dieser MenÅpunkt entfernt alle angezeigten Nachrich-
@@ -14262,7 +14264,7 @@ als unversandt markiert sind. Die Nachrichten wer-
 den im Gegensatz zum MenÅpunkt 'Lîschen' wie bei
 'Kill' direkt aus der Datenbank entfernt.
 @
-11407
+11408
 <<Nachricht / Alle / Drucken
 
 Hier werden alle angezeigten Nachrichten ausgedruckt.
@@ -15963,7 +15965,7 @@ zur aktuellen Situation an.
 
 @
 14102
-<<Voriges Thema
+<<Vorheriges Thema
 
 Befinden Sie sich in der Hilfe, so kommen Sie mit der 
 Tastenkombination <<<Alt-F1> >> wieder auf den vor-
@@ -15973,7 +15975,7 @@ herigen Hilfebildschirm zurÅck.
 14103
 <<Inhaltsverzeichnis
 
-Auch dem zweifachen Druck auf <<<F1> >> wurde eine 
+Auch dem zweifachen Druck auf <<<F1>>> wurde eine 
 Funktion zugedacht, Sie bekommen die Startseite der
 Hilfe angezeigt, also die ganz gro·e Themenauswahl.
 

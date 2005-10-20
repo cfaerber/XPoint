@@ -1126,15 +1126,18 @@ begin
     {$IFDEF Unix }
       printcap := TStringList .Create;
       try
-        printcap.LoadFromFile('/etc/printcap');
-        for i := 0 to printcap.Count - 1 do
-          if FirstChar(printcap[i]) <> '#' then
-          begin
-            s := LeftStr(printcap[i], Pos('|', printcap[i]+'|')-1);
-	    Debug.DebugLog('xp2c', 's aus /etc/printcap = '+s,dlDebug);
-            if s <> '' then
-              PrinterList.Add(s);
-          end;
+        if FileExists('/etc/printcap') then
+	begin
+          printcap.LoadFromFile('/etc/printcap');
+          for i := 0 to printcap.Count - 1 do
+            if FirstChar(printcap[i]) <> '#' then
+            begin
+              s := LeftStr(printcap[i], Pos('|', printcap[i]+'|')-1);
+              Debug.DebugLog('xp2c', 's aus /etc/printcap = '+s,dlDebug);
+              if s <> '' then
+                PrinterList.Add(s);
+            end;
+        end;  
       finally
         printcap.Free;
       end;
