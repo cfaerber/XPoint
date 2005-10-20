@@ -1064,12 +1064,14 @@ begin                  { function Netcall }
     cursor(curoff);
     inc(wahlcnt);
 
-    if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP]) and (BoxPar^.Connection <> '') then
-    begin
-      Message(Format('Waehle Verbindung "%s"', [BoxPar^.Connection]));
-      RasDial(BoxPar^.Connection);
-      CloseBox;
-    end;
+    {$IFDEF Win32 }
+      if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP]) and (BoxPar^.Connection <> '') then
+      begin
+        Message(Format('Waehle Verbindung "%s"', [BoxPar^.Connection]));
+        RasDial(BoxPar^.Connection);
+        CloseBox;
+      end;
+    {$ENDIF }
 
     case netztyp of
       nt_Fido: begin
@@ -1163,8 +1165,10 @@ begin                  { function Netcall }
       trfehler(799,30); { 'Funktion nicht implementiert' }
     end; {case netztyp}
 
-    if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP]) and (BoxPar^.Connection <> '') then
-      RasHangup;
+    {$IFDEF Win32 }
+      if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP]) and (BoxPar^.Connection <> '') then
+        RasHangup;
+    {$ENDIF }
 
     //**      RemoveEPP;
     if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
