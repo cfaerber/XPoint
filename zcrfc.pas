@@ -1897,7 +1897,7 @@ begin
             else
               if (zz = 'x-mailer') or (zz = 'x-newsreader') or
                  (zz = 'x-news-reader') or (zz = 'x-software') then
-              programm := s0
+              programm := programm + iifs(programm<> '', ' / ', '') + s0
             else
               if (zz = 'x-z-post') or (zz = 'x-zc-post')  then
               postanschrift := s0
@@ -1979,7 +1979,7 @@ begin
           else
             // User-Agent is new in grandson-of-1036
             if (zz = 'newsreader') or (zz = 'user-agent') then
-            programm := s0
+            programm := programm + iifs(programm<> '', ' / ', '') + s0
           else
             if zz = 'encrypted' then
             pgpflags := iif(UpperCase(s0) = 'PGP', fPGP_encoded, 0)
