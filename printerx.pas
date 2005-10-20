@@ -28,6 +28,10 @@ UNIT printerx;
 
 interface
 
+uses
+  xpglobal,
+  keys,typeform,inout,xp0,debug;
+
 const drlength = 20;
       dnlength = 30;
       maxdd    = 75;   { Aenderung bei Driver 1.0 nicht moeglich }
@@ -113,8 +117,10 @@ var LstFile:String;
 {$IFDEF Unix }
 procedure OpenLst(Port: String);
 begin
+  if DruckProg = '' then DruckProg := '|/usr/bin/lpr -P';
  {$IFNDEF Kylix}
-  AssignLst(lst, '|/usr/bin/lpr -P ' + Port);
+  AssignLst(lst, '|'+DruckProg+' ' + Port);
+  Debug.Debuglog('printerx','lst-Assignment: |'+DruckProg+', Port: '+Port,dlDebug);
  {$ELSE}
   LstFile:=TempS(10000);
   Assign(lst, LstFile);
@@ -125,7 +131,8 @@ end;
 {$ELSE }
 procedure OpenLst(Port: Integer);
 begin
-  Assign(lst, 'lpt' + IntToStr(Port));
+  if DruckProg = '' then DruckProg := 'lpt';
+  Assign(lst, DruckProg + IntToStr(Port));
   ReWrite(lst);
   if IOResult = 0 then ;
 end;
@@ -137,7 +144,7 @@ begin
   Close(lst);
 {$IFDEF unix }
  {$IFDEF Kylix}
-  libc.system(PChar('/usr/bin/lpr -m '+LstFile));
+  libc.system(PChar(DruckProg+' -m '+LstFile));
   SafeDeleteFile(LstFile);
  {$ENDIF}
 {$ENDIF}

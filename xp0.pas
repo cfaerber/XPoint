@@ -893,6 +893,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ShowMsgSize  : boolean;
        DruckLPT     : Integer;       { 1-4: LPT1-4 }
        PrinterName  : string;        { for Unix: name of the printing port }
+       DruckProg    : string; 	     { externes Programm zum Drucken }       
        DruckInit    : string;
        DruckExit    : string;
        DruckFormlen : byte;          { Seitenlaenge; 0 = kein autom. Vorschub }

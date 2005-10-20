@@ -9058,6 +9058,15 @@ Wenn Sie keinen Seitenvorschub wnschen, dann geben
 Sie hier eine 0 ein.
 @
 472
+Hier tragen Sie das Programm ein, ber das Sie den
+Druckbefehl senden m”chten. So ist auch die Verwen-
+dung von anderen Programmen (z.B. muttprint) oder die
+šbergabe von Parametern m”glich.
+
+Unter Windows verwenden Sie bitte immer den Eintrag
+'lpt'.
+@
+473
 Diese Zeichenfolge wird vor Beginn jeder Druckausgabe
 zum Drucker gesandt. Sie k”nnen damit z.B. den Druk-
 ker initialisieren oder eine bestimmte Schriftart
@@ -9079,18 +9088,18 @@ korrekt ausgedruckt werden (dieser Befehl „ndert den
 Zeichensatz des Druckers auf PC-8).
 
 @
-473
+474
 Diese Zeichenfolge wird nach Ende jeder Druckausgabe
 zum Drucker gesandt; als Default ist hier ein Seiten-
 vorschub eingetragen (^L = Ctrl-L).
 @
-474
+475
 Diese Zeichenfolge wird am Ende jeder Druckseite zum
 Drucker gesandt, vorausgesetzt, Sie haben die Seiten-
 l„nge nicht auf 0 eingestellt. šblich ist ein ^L
 (ASCII #12).
 @
-475
+476
 Linker Seitenrand in Druckzeichen; 0 = kein Rand.
 @
 480
@@ -13078,19 +13087,11 @@ werden kann.
 W„hlen Sie <<Ja>>, um den Vorgang abzubrechen.
 @
 1550
-W„hlen Sie ...
+<<Lizenz-Informationen
 
-<<LIZENZ.DOC>>      um die Lizenzbestimmungen anzeigen
-                zu lassen,
-
-<<Registrierung>>   um das Registrierungsformular auszu-
-                fllen oder Ihren Registrierungscode
-                einzugeben,
-
-<<Weiter>>          um die Lizenzbestimmungen fr Cross-
-                Point zu best„tigen, oder
-
-<<Abbruch>>         um das Programm zu beenden.
+Hier sehen Sie allgemeine Informationen zur Lizenz
+von OpenXP; OpenXP ist nicht mehr registrierungs-
+pflichtig.
 @
 1551
 W„hlen Sie ...
@@ -13507,7 +13508,7 @@ Hier werden OpenXP-Daten in Dateien geschrieben,
 um sie z.B. an ein anderes Programm zu bergeben.
 @
 10104
-<<OpenXP / Statistik-Men
+<<OpenXP / Statistik
 
 Dieses Men beinhaltet verschiedene Funktionen zur
 Status-Anzeige und Statistik-Auswertung.
@@ -13538,6 +13539,11 @@ voll sein, um mal kurz nachzuschauen ob eine Datei
 auf dem Server vorhanden ist, wie viel Speicherplatz
 in Benutzung ist und anderes mehr.
 
+ACHTUNG: Die interne telnet-Routine hat derzeit
+         kein lokales Echo, d.h., Sie sehen
+	    Zeichen, die sie eingeben, nicht auf dem
+	    Bildschirm, sondern nur die Ausgabe der
+	    Gegenstelle.
 @
 10108
 <<OpenXP / Beenden
@@ -14513,7 +14519,7 @@ Hier werden alle angezeigten Nachrichten auf nicht-
 halten, nicht-l”schen und nicht-markiert gesetzt.
 @
 11405
-<<Nachricht / Alle / Lesen
+<<Nachricht / Alle / Gelesen
 
 Diese Funktion fhrt nicht etwa dazu, daá Sie jetzt
 den ganzen Unsinn lesen mssen - nein, OpenXP
@@ -14522,6 +14528,11 @@ lesen"-Markierungen bei allen angezeigten Nachrich-
 ten.
 @
 11406
+<<Nachricht / Alle / Ungelesen
+Diese Funktion setzt alle bereits gelesenen Nach-
+richten wieder auf den Lesestatus 'Ungelesen'.
+@
+11407
 <<Nachricht / Alle / Entfernen
 
 Dieser Menpunkt entfernt alle angezeigten Nachrich-
@@ -14530,7 +14541,7 @@ als unversandt markiert sind. Die Nachrichten wer-
 den im Gegensatz zum Menpunkt 'L”schen' wie bei
 'Kill' direkt aus der Datenbank entfernt.
 @
-11407
+11408
 <<Nachricht / Alle / Drucken
 
 Hier werden alle angezeigten Nachrichten ausgedruckt.
@@ -16231,7 +16242,7 @@ zur aktuellen Situation an.
 
 @
 14102
-<<Voriges Thema
+<<Vorheriges Thema
 
 Befinden Sie sich in der Hilfe, so kommen Sie mit der 
 Tastenkombination <<<Alt-F1> >> wieder auf den vor-
@@ -16241,7 +16252,7 @@ herigen Hilfebildschirm zurck.
 14103
 <<Inhaltsverzeichnis
 
-Auch dem zweifachen Druck auf <<<F1> >> wurde eine 
+Auch dem zweifachen Druck auf <<<F1>>> wurde eine 
 Funktion zugedacht, Sie bekommen die Startseite der
 Hilfe angezeigt, also die ganz groáe Themenauswahl.
 

@@ -240,7 +240,7 @@ const fpuffer = 'FPUFFER';
 var x,y,i: Integer;
     res,iFile: integer;
     AtLeastOneConvertedOK: Boolean;
-    aFile,ShellProg: String;
+    aFile,ShellProg, renamedFile: String;
     NewFiles: TStringList;
 begin
   with BoxPar^ do begin
@@ -282,9 +282,10 @@ begin
             i := 1;
             while FileExists(RequestedFilesDir+ExtractFileName(aFile)+ '.' + IntToStr(i))
               do Inc(i);
-            aFile := aFile + '.' + IntToStr(i);
-          end;
-          RenameFile(aFile,RequestedFilesDir+ExtractFileName(aFile));
+            Debug.DebugLog('xpncfido','Renamed existing file to ' + RequestedFilesDir+ExtractFileName(aFile)+'.' + IntToStr(i),DLDebug);
+            RenameFile(aFile,RequestedFilesDir+ExtractFileName(aFile)+'.' + IntToStr(i));
+          end else
+            RenameFile(aFile,RequestedFilesDir+ExtractFileName(aFile));
           IncomingRequestedFiles.Add(aFile);
           FilesToProcess.Delete(iFile);
           end

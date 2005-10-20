@@ -829,8 +829,9 @@ begin
     wrs('EDA: ' + zdatum);
     wrs('LEN: ' + strs(groesse));
 
-    if ReplyTo <> Absender then // only if adress is not the sender himself
-      wrs('ANTWORT-AN: '+replyto);
+    if ReplyTo <> '' then       // HJT 16.10.2005 
+      if ReplyTo <> Absender then // only if adress is not the sender himself
+        wrs('ANTWORT-AN: '+replyto);
 
     if pm_reply then begin
       wrs('STAT: PM-REPLY');  { nur temporaer zwecks Kompatibilitaet }

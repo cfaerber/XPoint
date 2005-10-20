@@ -1244,12 +1244,13 @@ begin
   ActAbs:=dl^[e^.scy].absatz;
 end;
 
-procedure GetPosition(var p:position);
+function GetPosition: Position ;
 begin
-  with e^ do begin
-    p.absatz:=dl^[scy].absatz;
-    p.offset:=dl^[scy].offset+xoffset+scx-1;
-    end;
+  with e^ do
+  begin
+    Result.absatz:=dl^[scy].absatz;
+    Result.offset:=dl^[scy].offset+xoffset+scx-1;
+  end;
 end;
 
 function AbsDelete(const ap:absatzp; from,len:integer; delentry,bkorr:boolean):absatzp;
@@ -1689,7 +1690,7 @@ begin
   NoDisplay;
   with e^ do 
   begin
-    GetPosition(p0);
+    p0 := GetPosition;
     i:=1;
     while (i<=gl) and (dl^[i].absatz<>p.absatz) do inc(i);
     if i<=gl then begin       { Absatz ist noch auf Bildschirm }
@@ -1784,7 +1785,7 @@ end;
 
 procedure SetMarker(n:byte);
 begin
-  GetPosition(e^.block[n+2].pos);
+  e^.block[n+2].pos := GetPosition;
 end;
 
 procedure GotoMarker(n:byte);
@@ -2163,7 +2164,7 @@ end;
 
 procedure DELchar;              { DEL - Zeichen l”schen }
 var ap: absatzp;
-    wp  : word;
+    wp  : Integer;
     addspaces    : integer;
     wpa          : absatzp;
     QuoteChars1: string;
@@ -2369,10 +2370,11 @@ var n,i   : byte;
     wp    : integer;
 begin
   n:=8 - workpos mod 8;
-  if not e^.insertmode then begin
+  if not e^.insertmode then
+  begin
     for i:=1 to n do CondZeichenRechts;
-    end
-  else begin
+  end else
+  begin
     wp:=workpos;
     ap:=AllocAbsatz(n);
     fillchar(ap^.cont,n,32);
@@ -2919,7 +2921,8 @@ begin
     if blockinverse or blockhidden then
       errsound
     else
-      if ClipAvailable then begin
+      if ClipAvailable then
+      begin
         if SaveBlock(block[1].pos,block[2].pos,EdTempFile,rrand,false,true,false) then
         begin
           FileToClip(EdTempFile);
@@ -2958,7 +2961,8 @@ procedure BlockEinlesen;
 var fn : string;
     ap : absatzp;
 begin
-  with e^ do begin
+  with e^ do
+  begin
     Procs.FileProc(e,fn,false,false);
     if fn<>'' then
       if not FileExists(fn) then
@@ -2974,7 +2978,8 @@ procedure BlockUUeEinlesen;
 var fn : string;
     ap : absatzp;
 begin
-  with e^ do begin
+  with e^ do
+  begin
     Procs.FileProc(e,fn,false,true);
     if fn<>'' then
       if not FileExists(fn) then
@@ -3022,7 +3027,7 @@ begin
       ofs:=block[1].pos.offset;
       endap:=block[2].pos.absatz;
       endofs:=block[2].pos.offset;
-      end;
+    end;
     checklst:=true;
     repeat
       nofs:=Advance(ap,ofs,rrand);
@@ -3623,7 +3628,7 @@ procedure InterpreteToken(tk: EdToken);
     with e^ do
       if kb_shift then 
       begin
-        GetPosition(MarkPos);
+        MarkPos := GetPosition;
         MarkPos.offset:=min(MarkPos.offset,MarkPos.absatz^.size);
         if ((PosCoord(MarkPos,2)<>PosCoord(block[1].pos,block[1].disp))
           and (PosCoord(MarkPos,2)<>PosCoord(block[2].pos,block[2].disp)))
@@ -3648,7 +3653,7 @@ procedure InterpreteToken(tk: EdToken);
     if not kb_shift then Exit;
     with e^ do 
     begin
-      GetPosition(MarkPos);
+      MarkPos := GetPosition;
       MarkPos.Offset:=min(MarkPos.offset,MarkPos.absatz^.size);
       if MoveCursorAbove then 
       begin
@@ -3684,7 +3689,7 @@ procedure InterpreteToken(tk: EdToken);
 
 begin
   with e^ do begin
-    if (tk>=1) and (tk<=29) then GetPosition(lastpos);
+    if (tk>=1) and (tk<=29) then LastPos := GetPosition;
 
     if tk in [editfBOL, editfEOL, editfPgUp, editfPgDn, editfUp, editfDown, 
       editfLeft, editfRight, editfPageTop, editfPageBottom, editfTop, 
@@ -4044,7 +4049,7 @@ end;
             SetBlockMark(1);
             SetBlockMark(2);
             display;
-            mbm:=3;     { beide }
+            mbm:=3;     { beide }                                           
             repeat                { Blockmarkierschleife }
               repeat
                 gotoxy(x+scx-1,y+scy);
@@ -4059,7 +4064,7 @@ end;
                     KorrScy;
                     Setscx(nx);
                     up:=(ny<yy) or ((ny=yy) and (nx<xx));
-                    GetPosition(apos);
+                    apos := GetPosition;
                     if up then
                       case mbm of
                         1,3 : begin SetBlockmark(1); mbm:=1; end;
