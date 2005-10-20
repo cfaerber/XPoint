@@ -41,8 +41,10 @@ Please note that the dates are not exact.
        3.8.0   3.9.0            |
 2003     |       |              |
       3.8.11   3.9.7     FreeXP 3.40 RC3
-2004     |       |              
-2004  3.9.16   3.9.8
+2004     |         \
+      3.8.16      3.9.8
+2005   |    \       |
+      4.0  4.10    5.0
 
 Ehemalige Versionen
 Version history
@@ -108,7 +110,7 @@ abhebt. Alle OpenXP-Versionen enthalten hunderte von Bugfixes und
 Features gegenüber 3.12d (siehe http://www.openxp.de).
 
 
-OpenXP/FreeXP 3.40 RC3 -> OpenXP 3.8.x (Beta, Anwenderversion)
+OpenXP/FreeXP 3.40 RC3 -> OpenXP 4.0 (Anwenderversion)
 
 Allgemein
 ---------
@@ -158,15 +160,21 @@ Networking
 - Unterstützung von HeaderOnly-News (intern und RFC/Client)
 - Online MessageID-Request
 
-Zusätzlich: OpenXP 3.8.x -> OpenXP 3.9.x (Alpha, Entwicklerversion)
+Zusätzlich: OpenXP 4.0 -> OpenXP 4.10 (Entwicklerversion)
 
 Allgemein
 ---------
-- Interner Client für IMAP4 (Win32+Linux)
+- Interner Client für IMAP4 (Win32+Unix)
+- verbesserter Druck-Support unter Unix
+
+Zusätzlich: OpenXP 4.10 -> OpenXP 5.0 (Alpha, Entwicklerversion)
+
+Allgemein
+---------
 - Automatisches Wählen mit dem DFUE-Netzwerk unter Win32
-- komplett neues, verbessertes Adresshandling sowie neues
+- komplett neues, verbessertes Adresshandling und neue interne
+  Verarbeitung der Nachrichten sowie neues
   Sendefenster (korrektes CC/BCC usw.)
 - Korrekte Anzeige von Unicode (UTF8) kodieren Nachrichten im Lister
 - Kein Limit mehr für Liste der gleichzeitig markierten Nachrichten
 - Dupekill-Feature in Edit/Boxen/Edit/Diverses, z.B. für NNTP
-
