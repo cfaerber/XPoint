@@ -449,26 +449,26 @@ end;
 
 function readln_s(stream:TStream):string;
 const
-  DefaultLength = 16;
+  DefaultLength = 80;
 var
-  i: Integer;
+  i,j,k: Integer;
 begin
   SetLength(Result, DefaultLength);
-  try
-    Stream.ReadBuffer(Result[1], 2);
-    i := 2;
-    while (Result[i] <> #10) and (Result[i-1] <> #13) do
-    begin
-      Inc(i);
-      stream.ReadBuffer(Result[i], 1);
-      if (i mod DefaultLength)=0 then
-        SetLength(Result, ((i div DefaultLength) + 1) * DefaultLength);
+  i := 0;
+
+  repeat
+    if (i>0) and (Result[i] = #13) then
+      j := 1
+    else
+      j := 2;
+    if (i+j) > Length(Result) then
+      SetLength(Result, Length(Result) + (Length(Result) div 2));
+    k := Stream.Read(Result[i+1], j);
+    if k < j then begin
+      SetLength(Result,i+k); exit;
     end;
-  except
-    Result := '';
-    raise;
-    exit;
-  end;
+    inc(i,k);
+  until (i>1) and (Result[i-1] = #13) and (Result[i] = #10);
   SetLength(Result,i-2);
 end;
 
