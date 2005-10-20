@@ -1212,7 +1212,8 @@ procedure gf_getntyp(var s:string);
 var uucp,rfc : boolean;
 begin
   rfc:=(LowerCase(s)=LowerCase(ntName(nt_Client)))or
-       (LowerCase(s)=LowerCase(ntName(nt_NNTP)))or
+       (LowerCase(s)=LowerCase(ntName(nt_NNTP))) or
+       (LowerCase(s)=LowerCase(ntName(nt_IMAP))) or
        (LowerCase(s)=LowerCase(ntName(nt_POP3)));
   gf_fido:=(LowerCase(s)=LowerCase(ntName(nt_Fido)));
   uucp:=(LowerCase(s)=LowerCase(ntName(nt_UUCP)));

@@ -1288,6 +1288,26 @@
     end;
   end;
 
+  procedure EditIMAP(var brk:boolean);
+  var x,y: Integer;
+  begin
+    dialog(ival(getres2(953,0)),12,GetRes2(953,1),x,y);         { 'IMAP-Einstellungen' }
+    with boxpar^ do
+    begin
+      maddstring(3,2,GetRes2(953,2),IMAP_ip,25,255,             { 'Server    ~' }
+                 range('0','9')+range('A','Z')+range('a','z')+'.'+'-'); mhnr(40020);
+      maddstring(3,4,GetRes2(953,3), IMAP_id,25,255,'');        { 'Loginname ~' }
+      maddstring(3,6,GetRes2(953,4), IMAP_pwd,25,255,'');       { 'Passwort  ~' }
+        mhnr(40021);
+      maddbool(3,8, GetRes2(953,5), IMAP_clear);                { 'Abgeholte Mails loeschen' }
+      maddbool(3,9, GetRes2(953,7), IMAP_OnlyNew);             { 'Nur neue Mails' }
+      maddbool(3,11, GetRes2(953,8), IMAP_ForceOneArea);        { 'Alle Mails in ein Brett einordnen' }
+      freeres;
+      readmask(brk);
+      enddialog;
+    end;
+  end;
+
   Procedure Rename_box(old_dname,dname:string);
 
     procedure renbox(const path,ext:string);
@@ -2223,6 +2243,13 @@
                          +getres2(927,30)       { ^SMTP, }
                          +getres2(927,10);      { ^Diverses }
                    end;
+      nt_IMAP:     begin
+                     pushhp(133);
+                     nts:=getres2(927,9)        { ^Namen, }
+                         +getres2(927,31)       { ^IMAP, }
+                         +getres2(927,30)       { ^SMTP, }
+                         +getres2(927,10);      { ^Diverses }
+                   end;
     end; { case nt }
     n:=MiniSel(x+10,min(y+p+1,screenlines-8),'',nts,edb_pos);
     freeres;
@@ -2290,6 +2317,12 @@
         nt_POP3     : case n of
                         1: EditInetName(brk);
                         2: EditPOP3(brk);
+                        3: EditSMTP(brk);
+                        4: EditNNTPMisc(nt,brk);
+                      end;
+        nt_IMAP     : case n of
+                        1: EditInetName(brk);
+                        2: EditIMAP(brk);
                         3: EditSMTP(brk);
                         4: EditNNTPMisc(nt,brk);
                       end;
@@ -2377,3 +2410,4 @@
       end;
     freeres;
   end;
+

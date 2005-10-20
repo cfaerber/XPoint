@@ -425,6 +425,7 @@ begin
     nt_Client   : ntName:='RFC/Client';
     nt_NNTP     : ntName:='NNTP';
     nt_POP3     : ntName:='POP3/SMTP';
+    nt_IMAP     : ntName:='IMAP';
   else
     Debug.DebugLog('xpnt','Unknown net type: '+IntToStr(nt),DLWarning);
     ntName:='? '+IntToStr(nt);

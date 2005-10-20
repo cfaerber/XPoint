@@ -88,7 +88,7 @@ implementation  {---------------------------------------------------}
 
 uses winxp,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp9bp,xpconfigedit,xp10,xpheader,
      xpfido,xpncfido,xpnczconnect,xpncpop3,xpncnntp,xpncclient,
-     xpmakeheader,ncmodem;
+     xpmakeheader,ncmodem, xpncimap;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
 
@@ -964,13 +964,14 @@ begin                  { function Netcall }
   dbClose(d);
   Debug.DebugLog('xpnetcall','got server file name: '+bfile,DLInform);
 
-  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_NNTP, nt_UUCP, nt_Client])then begin
+  if not(netztyp IN [nt_Fido,nt_ZConnect,nt_POP3,nt_NNTP, nt_IMAP, nt_UUCP, nt_Client])then
+  begin
     tfehler('Netcalls to this server type are currently not supported.',60);
     exit;
-    end;
+  end;
 
   {$ifdef DOS32}
-  if netztyp IN [nt_POP3,nt_NNTP] then begin
+  if netztyp IN [nt_POP3,nt_NNTP,NT_IMAP] then begin
     tfehler('TCP/IP netcalls are not yet supported in DOS32 version.',60);
     exit;
     end;
@@ -1132,6 +1133,13 @@ begin                  { function Netcall }
             if netcall_connect then result:= true;
         end;
       end; {case nt_POP3}
+
+      nt_IMAP: begin
+        Debug.DebugLog('xpnetcall','netcall: IMAP',DLInform);
+        netcall_connect:= SendSMTPMails(BoxName,bfile,BoxPar,email,PPFile);
+        if GetIMAPMails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles,DeleteSpoolFiles)then
+          if netcall_connect then result:= true;
+      end;
 
       nt_NNTP: begin
         Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
