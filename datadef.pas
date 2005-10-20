@@ -67,7 +67,7 @@ const   dbEMShandle   : word = 0;
 
 type    DB          = pointer;   { allgemeiner Datenbank-Typ }
         dbFeldStr   = string[dbFeldNameLen];
-        dbFileName  = string[80];
+        dbFileName  = string;
 
         dbFeldTyp   = packed record             { Felder s.u. (dbfeld)      }
                         fname     : dbFeldStr;  { Name aus A..Z,_           }
@@ -85,7 +85,7 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
         dbFLP       = ^dbFeldListe;
 
         dbIndexFunc = function(dpb:DB):string;
-        dbIndexCRec = packed record
+        dbIndexCRec = record
                         command  : byte;        { ->  }
                         indexnr  : byte;        { <-> }
                         df       : dbFileName;  { ->  }
@@ -99,5 +99,6 @@ type    DB          = pointer;   { allgemeiner Datenbank-Typ }
 
 
 implementation
+
 
 end.
