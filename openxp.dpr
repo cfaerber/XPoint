@@ -3,7 +3,7 @@ program openxp;
 {$I xpdefine.inc }
 
 {%File 'xpmecol.inc'}
-{%File 'databas2.inc'}                           
+{%File 'databas2.inc'}
 {%File 'database.inc'}
 {%File 'editor.inc'}
 {%File 'maske.inc'}
@@ -145,7 +145,6 @@ uses
   zcrfc in 'zcrfc.pas',
   OSDepend in 'osdepend.pas',
   SysUtils,
-{$IFNDEF Kylix}
   xpcrt in 'xpcrt.pas',
   xpwin32 in 'xpwin32.pas',
   ZModem in 'netcall\zmodem.pas',
@@ -170,30 +169,6 @@ uses
   ncfido in 'netcall\ncfido.pas',
   objcom in 'ObjCOM\objcom.pas',
   Ringbuff in 'ObjCOM\ringbuff.pas',
-{$ELSE}
-  ZModem in 'netcall/zmodem.pas',
-  ncgeneric in 'netcall/ncgeneric.pas',
-  NCModem in 'netcall/ncmodem.pas',
-  NCNNTP in 'netcall/ncnntp.pas',
-  NCPOP3 in 'netcall/ncpop3.pas',
-  NCSMTP in 'netcall/ncsmtp.pas',
-  NCIMAP in 'netcall/ncimap.pas',
-  NCSocket in 'netcall/ncsocket.pas',
-  ncuucp in 'netcall/ncuucp.pas',
-  Netcall in 'netcall/netcall.pas',
-  xpmodemscripts in 'netcall/xpmodemscripts.pas',
-  xpncfido in 'netcall/xpncfido.pas',
-  xpncnntp in 'netcall/xpncnntp.pas',
-  xpncimap in 'netcall/xpncimap.pas',
-  xpncpop3 in 'netcall/xpncpop3.pas',
-  xpncuucp in 'netcall/xpncuucp.pas',
-  xpnczconnect in 'netcall/xpnczconnect.pas',
-  xpnetcall in 'netcall/xpnetcall.pas',
-  ncfido in 'netcall/ncfido.pas',
-  objcom in 'ObjCOM/objcom.pas',
-  Ringbuff in 'ObjCOM/ringbuff.pas',
-  ncursix in 'ncursix.pas',
-{$ENDIF}
   archive in 'archive.pas',
   xpsendmessage_unsent in 'xpsendmessage_unsent.pas',
   xpsendmessage_internal in 'xpsendmessage_internal.pas',
@@ -201,11 +176,14 @@ uses
   RegExpr in 'regexpr.pas',
   main in 'main.pas',
   xpsendmessage_attach_analyze in 'xpsendmessage_attach_analyze.pas',
-  mime in 'mime.pas';
+  mime in 'mime.pas',
+  charmaps in 'charmaps.pas',
+  mime_analyze in 'mime_analyze.pas',
+  mime_base64 in 'mime_base64.pas',
+  mime_qp in 'mime_qp.pas';
 
 {$R *.res}
 
 begin
   StartOpenXP;
 end.
-
