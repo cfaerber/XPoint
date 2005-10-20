@@ -122,7 +122,7 @@ const umtyp : array[0..5] of string[5] =
 
 {$IFNDEF DOS32}
       SupportedNetTypes: array[0..5] of byte =
-        (nt_Client, nt_POP3, nt_NNTP, nt_UUCP, nt_Fido, nt_ZConnect);
+        (nt_Client, nt_POP3, nt_NNTP, , nt_IMAP, nt_UUCP, nt_Fido, nt_ZConnect);
 {$ELSE}
       SupportedNetTypes: array[0..3] of byte =
         (nt_Client, nt_UUCP, nt_Fido, nt_ZConnect);
