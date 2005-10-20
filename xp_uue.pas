@@ -54,7 +54,7 @@ type  buffer = array[0..50000] of byte;
 
 var   s        : string;
       shorts   : ShortString;
-      f1,f2    : ^file;
+      f1,f2    : file;
       bufp     : LongWord;
       outbuf,
       inbuf    : bufptr;
@@ -68,7 +68,7 @@ var   s        : string;
 procedure flushbuf;                   {JG:08.02.00 Verschoben: wird von Decode aufgerufen...}
 begin
   if IO_error then exit;
-  blockwrite(f2^,outbuf^,bufp);
+  blockwrite(f2,outbuf^,bufp);
   if inoutres<>0 then begin
     fehler(ioerror(ioresult,getres2(10000,10)));
     IO_error:=true;
@@ -197,7 +197,7 @@ var
   bytesread : Integer;
 begin
   if ibufend<ibufp then begin
-    blockread(f1^,inbuf^,ibufsize-5,bytesread);
+    blockread(f1,inbuf^,ibufsize-5,bytesread);
     if bytesread=0 then begin
       ibufend:=0; EOFinput:=true;
       end
@@ -207,7 +207,7 @@ begin
   else if ibufend<ibufp+ibufmin then begin
     Move(inbuf^[ibufp],inbuf^[0],ibufend-ibufp+1);
     dec(ibufend,ibufp); ibufp:=0;
-    blockread(f1^,inbuf^[ibufend+1],ibufsize-ibufend-5,bytesread);
+    blockread(f1,inbuf^[ibufend+1],ibufsize-ibufend-5,bytesread);
     inc(ibufend,bytesread);
     end;
   if ibufend<ibufp then EOFinput:=true
@@ -273,13 +273,12 @@ begin
     mwrt(x+3,y+2,getres(2400));   { 'decodiere Nachricht     / Zeile       /         Bytes' }
     end;
   attrtxt(col.colmboxhigh);
-  new(f2);
-  assign(f2^,outfile);
+  assign(f2,outfile);
   if overwrite then
-    rewrite(f2^,1)
+    rewrite(f2,1)
   else begin
-    reset(f2^,1);               { an vorhandene Teile anh„ngen }
-    seek(f2^,filesize(f2^));
+    reset(f2,1);               { an vorhandene Teile anh„ngen }
+    seek(f2,filesize(f2));
     end;
   ln:=0; bufp:=0;
   start:=true;
@@ -316,9 +315,9 @@ begin
     ReadInputLine;
     if LeftStr(s,4)='size' then begin
       size:=ival(mid(s,5));
-      if (size>0) and (size<filesize(f2^)) then begin
-        seek(f2^,size);
-        truncate(f2^);
+      if (size>0) and (size<filesize(f2)) then begin
+        seek(f2,size);
+        truncate(f2);
         end;
       end
     else
@@ -329,16 +328,15 @@ begin
           s:=trim(mid(s,13));
           ival(GetToken(s,'/'));   { Summe berlesen }
           l:=ival(GetToken(s,' '));
-          if (l<filesize(f2^)) and (l>filesize(f2^)-20) then begin
-            seek(f2^,l);
-            truncate(f2^);
+          if (l<filesize(f2)) and (l>filesize(f2)-20) then begin
+            seek(f2,l);
+            truncate(f2);
             end;
           end;
         ReadInputline;
         end;
     end;
-  close(f2^);
-  dispose(f2);
+  close(f2);
   showze;
   if filenr=filetotal then begin
     if wait then
@@ -477,11 +475,10 @@ begin
 
   dbGo(mbase,marklist[1].recno);
   extract_msg(0,'',tmp,false,0);
-  new(f1);
-  assign(f1^,tmp);
+  assign(f1,tmp);
   getmem(inbuf,ibufsize);
   getmem(outbuf,obufsize);
-  if not openinfile(f1^,fn,false) then
+  if not openinfile(f1,fn,false) then
     rfehler(2402)    { 'Nachricht enth„lt keine UUcodierte Datei' }
   else begin
     Filenr:=0;
@@ -498,17 +495,17 @@ begin
       if not FileExists(fn) or not brk then begin
         bytes:=0;
         IO_error:=false;
-        uudecIt(f1^,fn,true,1,mlanz,o);
+        uudecIt(f1,fn,true,1,mlanz,o);
         if IO_error and (mlanz>1) then
           closebox
         else begin
           i:=2;
           while (i<=mlanz) and not IO_error do begin
-            close(f1^);
+            close(f1);
             dbGo(mbase,marklist[i].recno);
             extract_msg(0,'',tmp,false,0);
-            OpenContFile(f1^);
-            uudecIt(f1^,fn,true,i,mlanz,false);
+            OpenContFile(f1);
+            uudecIt(f1,fn,true,i,mlanz,false);
             inc(i);
             end;
           if i<mlanz then closebox;   { IO_error }
@@ -517,10 +514,9 @@ begin
       end;
     pophp;
 
-    until (mlanz>1) or not openinfile(f1^,fn,true);
+    until (mlanz>1) or not openinfile(f1,fn,true);
   end;
-  close(f1^);
-  dispose(f1);
+  close(f1);
   _era(tmp);
   freemem(outbuf,obufsize);
   freemem(inbuf,ibufsize);
@@ -532,18 +528,16 @@ function uudecfile(infile,outpath:string; wait:boolean):boolean;
 var fn : string;
 begin
   uudecfile:=false;
-  new(f1);
-  assign(f1^,infile);
+  assign(f1,infile);
   getmem(inbuf,ibufsize);
   getmem(outbuf,obufsize);
-  if not openinfile(f1^,fn, false) then
+  if not openinfile(f1,fn, false) then
     trfehler(2403,20)    { 'Kann Datei nicht decodieren.' }
   else begin
-    uudecit(f1^,outpath+fn,wait,1,1,true);
+    uudecit(f1,outpath+fn,wait,1,1,true);
     uudecfile:=true;
     end;
-  close(f1^);
-  dispose(f1);
+  close(f1);
   freemem(outbuf,obufsize);
   freemem(inbuf,ibufsize);
 end;

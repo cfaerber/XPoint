@@ -239,7 +239,7 @@ var x,y        : Integer;
     chunks     : longint;   { Spuren }
     users      : longint;   { User im akt. Chunk }
     gusers     : longint;   { User gesamt }
-    uf         : array[0..1] of ^file;
+    uf         : array[0..1] of file;
 
   procedure Display;
   begin
@@ -349,7 +349,7 @@ var x,y        : Integer;
 
     procedure FlushUbufs;
     begin
-      blockwrite(uf[0]^,ubuf^,ubufs*sizeof(userrec));
+      blockwrite(uf[0],ubuf^,ubufs*sizeof(userrec));
       ubufs:=0;
     end;
 
@@ -367,7 +367,7 @@ var x,y        : Integer;
 
   begin
     lusers:=users;
-    blockwrite(uf[0]^,lusers,4);
+    blockwrite(uf[0],lusers,4);
     new(ubuf); ubufs:=0;
     WriteDelU(uroot);
     uroot:=nil;
@@ -453,9 +453,9 @@ var x,y        : Integer;
       begin
         banz[nr]:=min(anz[nr]-ranz[nr],bufanz);
         if banz[nr]>0 then begin
-          seek(uf[f0]^,pos[nr]);
-          blockread(uf[f0]^,buf[nr]^,banz[nr]*sizeof(userrec));
-          pos[nr]:=filepos(uf[f0]^);
+          seek(uf[f0],pos[nr]);
+          blockread(uf[f0],buf[nr]^,banz[nr]*sizeof(userrec));
+          pos[nr]:=filepos(uf[f0]);
           inc(ranz[nr],banz[nr]);
           end;
         bp[nr]:=0;
@@ -463,7 +463,7 @@ var x,y        : Integer;
 
       procedure FlushOutbuf;
       begin
-        blockwrite(uf[f1]^,buf[3]^,bp[3]*sizeof(userrec));
+        blockwrite(uf[f1],buf[3]^,bp[3]*sizeof(userrec));
         bp[3]:=0;
       end;
 
@@ -484,13 +484,13 @@ var x,y        : Integer;
       getmem(buf[2],bufsize);
       getmem(buf[3],bufsize);
       bp[1]:=0; bp[2]:=0; bp[3]:=0;
-      blockread(uf[f0]^,anz[1],4);
-      pos[1]:=filepos(uf[f0]^);
+      blockread(uf[f0],anz[1],4);
+      pos[1]:=filepos(uf[f0]);
       pos[2]:=pos[1]+anz[1]*sizeof(userrec)+4;
-      seek(uf[f0]^,pos[2]-4);
-      blockread(uf[f0]^,anz[2],4);      { <- Lesefehler! }
+      seek(uf[f0],pos[2]-4);
+      blockread(uf[f0],anz[2],4);      { <- Lesefehler! }
       total:=anz[1]+anz[2];
-      blockwrite(uf[f1]^,total,4);
+      blockwrite(uf[f1],total,4);
       ranz[1]:=0; ranz[2]:=0;
       ReadBuf(1); ReadBuf(2);
       while (bp[1]<banz[1]) and (bp[2]<banz[2]) do
@@ -504,7 +504,7 @@ var x,y        : Integer;
         WrUser(rn);
       if bp[3]>0 then
         FlushOutbuf;
-      seek(uf[f0]^,pos[2]);
+      seek(uf[f0],pos[2]);
       freemem(buf[3],bufsize);
       freemem(buf[2],bufsize);
       freemem(buf[1],bufsize);
@@ -527,8 +527,8 @@ var x,y        : Integer;
       inc(nn);
       attrtxt(col.colmboxhigh);
       mwrt(x+30,y+2,strs(nn)+'/'+strs(durchl));
-      seek(uf[0]^,0); seek(uf[1]^,0);
-      truncate(uf[1-ufpos]^);
+      seek(uf[0],0); seek(uf[1],0);
+      truncate(uf[1-ufpos]);
       i:=1; cc:=chunks;
       while i<chunks do begin
         MergeChunks(ufpos,1-ufpos);
@@ -536,16 +536,16 @@ var x,y        : Integer;
         dec(cc);
         end;
       if i=chunks then
-        fmove(uf[ufpos]^,uf[1-ufpos]^);    { einzelnen Chunk kopieren }
+        fmove(uf[ufpos],uf[1-ufpos]);    { einzelnen Chunk kopieren }
       chunks:=cc;
       ufpos:=1-ufpos;
       { chunksize:=chunksize*2; }
       end;
 
-    close(uf[1-ufpos]^);
-    erase(uf[1-ufpos]^);
+    close(uf[1-ufpos]);
+    erase(uf[1-ufpos]);
     if ufpos=1 then
-      Move(uf[1]^,uf[0]^,sizeof(file));
+      Move(uf[1], uf[0],sizeof(file));
   end;
 
   procedure MakeUserIndex(xx:byte);     { Userindex komprimieren, user-Name -fidoAdresse -AdresseNlEintrag }
@@ -570,7 +570,7 @@ var x,y        : Integer;
     var 
       rr: Integer;
     begin
-      blockread(uf[0]^,ubuf^,sizeof(ubufa),rr);
+      blockread(uf[0],ubuf^,sizeof(ubufa),rr);
       bufanz:=rr div sizeof(userrec);
       bufp:=0;
     end;
@@ -580,7 +580,7 @@ var x,y        : Integer;
       attrtxt(col.colmboxhigh);
       mwrt(xx,y+2,strsn(nn*100 div uihd.anzahl,3));
       bbuf^[outp]:=$ff;
-      blockwrite(uf[1]^,bbuf^,blocksize);
+      blockwrite(uf[1],bbuf^,blocksize);
       fillchar(bbuf^,blocksize,0);
       outp:=0;
       lname:='';
@@ -589,12 +589,12 @@ var x,y        : Integer;
   begin         { procedure MakeUserIndex(xx:byte);      Userindex komprimieren  }
     fillchar(uihd,sizeof(uihd),0);
     uihd.kennung:=nodekenn;
-    seek(uf[0]^,0);
-    blockread(uf[0]^,uihd.anzahl,4);
+    seek(uf[0],0);
+    blockread(uf[0],uihd.anzahl,4);
     new(bbuf);
     fillchar(bbuf^,blocksize,0);
-    seek(uf[1]^,sizeof(uihd));
-    blockwrite(uf[1]^,bbuf^,blocksize-sizeof(uihd));
+    seek(uf[1],sizeof(uihd));
+    blockwrite(uf[1],bbuf^,blocksize-sizeof(uihd));
     new(ubuf);
     ReadUbuf;
     lname:=''; outp:=0;
@@ -681,9 +681,9 @@ var x,y        : Integer;
 
     if outp>0 then
       FlushOut;
-    seek(uf[1]^,0);
-    uihd.blocks:=filesize(uf[1]^) div blocksize - 1;
-    blockwrite(uf[1]^,uihd,sizeof(uihd));       { Header schreiben }
+    seek(uf[1],0);
+    uihd.blocks:=filesize(uf[1]) div blocksize - 1;
+    blockwrite(uf[1],uihd,sizeof(uihd));       { Header schreiben }
     dispose(ubuf);
     dispose(bbuf);
   end;
@@ -749,8 +749,7 @@ begin
   nets:=0; bufnets:=0;
   uroot:=nil; chunks:=0; users:=0; gusers:=0;
   chunksize:= 2566;
-  new(uf[0]);
-  assign(uf[0]^,'users1.$$$'); rewrite(uf[0]^,1);
+  assign(uf[0],'users1.$$$'); rewrite(uf[0],1);
 
   for liste:=0 to NodeList.Count - 1 do
   begin
@@ -962,15 +961,15 @@ begin
   dispose(pp); dispose(np);
 
   wrmsg(getres2(2101,6));    { 'Userindex sortieren ...' }
-  new(uf[1]); assign(uf[1]^,'users2.$$$');
-  rewrite(uf[1]^,1);
+  assign(uf[1],'users2.$$$');
+  rewrite(uf[1],1);
   SortChunks;    { schlieát+l”scht uf[1]^ }
   wrmsg(getres2(2101,7));    { 'Userindex packen ...      %' }
-  assign(uf[1]^,UserIndexF);
-  rewrite(uf[1]^,1);
+  assign(uf[1],UserIndexF);
+  rewrite(uf[1],1);
   MakeUserindex(x+length(getres2(2101,7))-2);
-  close(uf[0]^); erase(uf[0]^); dispose(uf[0]);
-  close(uf[1]^); dispose(uf[1]);
+  close(uf[0]); erase(uf[0]); 
+  close(uf[1]);
 
   seek(idf,0);
   blockwrite(idf,ixh,sizeof(ixh));

@@ -44,7 +44,7 @@ uses xpglobal,
 
 
 const
-  maxgl   = 150;        { auf 100 erhoeht (hd/2000-07-09) }
+  maxgl   = 150; // counts the maximum number of screen lines        
 
 var   selpos  : longint;   { Ergebnis bei select(-1|3|4); recno! }
       wlpos   : longint;   { Startposition bei select(-1)        }

@@ -319,12 +319,10 @@ var d      : DB;
     c1,c2  : longint;
     lastpos: longint;
     ehd    : dbdheader;
-    f      : ^file;
+    f      : file;
     mfm    : byte;
 begin
-  new(f);
-  MakeXbase(filename,ehd,f^);
-  dispose(f);
+  MakeXbase(filename,ehd,f);
   dbOpen(d,filename,0);
   with dp(d)^ do begin
     irec.df:=fname;

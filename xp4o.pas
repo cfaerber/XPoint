@@ -52,7 +52,7 @@ var seeklen   : array[0..suchmax-1] of byte;
     seeknot   : array[0..suchmax-1] of boolean;
     suchand   : boolean;
     suchanz   : Integer;
-    sst       : string[suchlen];
+    sst       : string; // evtl. UpString von suchstring
     igcase    : boolean;
     umlaut    : boolean;
 
@@ -256,7 +256,6 @@ var x,y   : Integer;
     p     : pointer;
     psize : Integer;
     spez  : boolean;
-    sst   : string;   { evtl. UpString von suchstring }
     i     : integer;
     brett : string;
     me,uu : boolean;
