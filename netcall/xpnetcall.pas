@@ -88,6 +88,7 @@ implementation  {---------------------------------------------------}
 
 uses winxp,xpnt,xp1o,xp3,xp3o,xp4o,xp5,xp4o2,xp9bp,xpconfigedit,xp10,xpheader,
      xpfido,xpncfido,xpnczconnect,xpncpop3,xpncnntp,xpncclient,
+     {$IFDEF Win32} xpwin32, {$ENDIF }
      xpmakeheader,ncmodem, xpncimap;
 
 var  epp_apppos : longint;              { Originalgroesse von ppfile }
@@ -1054,13 +1055,22 @@ begin                  { function Netcall }
   {------------------------- call appropriate mailer ------------------------}
   Debug.DebugLog('xpnetcall','calling appropriate mailer',DLInform);
 
-  if PerformDial then begin
+  if PerformDial then
+  begin
     NetcallLogfile:=TempFile('');
     if (not fileexists(ppfile))and(not FidoCrash) then
       makepuf(ppfile,false);
     inmsgs:=0; outmsgs:=0; outemsgs:=0;
     cursor(curoff);
     inc(wahlcnt);
+
+    if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP]) and (BoxPar^.Connection <> '') then
+    begin
+      Message(Format('Waehle Verbindung "%s"', [BoxPar^.Connection]));
+      RasDial(BoxPar^.Connection);
+      CloseBox;
+    end;
+
     case netztyp of
       nt_Fido: begin
         Debug.DebugLog('xpnetcall','netcall: fido',DLInform);
@@ -1148,12 +1158,15 @@ begin                  { function Netcall }
           if netcall_connect then result:= true;
       end;
 
-      else
-        Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(netztyp),DLError);
-        trfehler(799,30); { 'Funktion nicht implementiert' }
-      end; {case netztyp}
+    else
+      Debug.DebugLog('xpnetcall','netcall type not yet implemented: '+IntToStr(ord(netztyp)),DLError);
+      trfehler(799,30); { 'Funktion nicht implementiert' }
+    end; {case netztyp}
 
-//**      RemoveEPP;
+    if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP]) and (BoxPar^.Connection <> '') then
+      RasHangup;
+
+    //**      RemoveEPP;
     if FileExists(ppfile) and (_filesize(ppfile)=0) then _era(ppfile);
     SafeDeleteFile(NetcallLogfile);
   end; {if PerformDial}
@@ -1403,5 +1416,6 @@ begin
   if ParExit then automode:=true;
   ParGelesen:=false;
 end;
+
 
 end.

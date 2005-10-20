@@ -4,6 +4,7 @@ K (c) '93-98 Peter Mandrella
 K (c) '2000 OpenXP-Team, www.openxp.de
 
 # $Id$
+=======
 
 # Online-Hilfe, Tastenmakros
 1 OPENXP-D.HLP
@@ -2193,6 +2194,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 19   Aufruf
 20   Dupes verhindern
 21   Rckl„ufer-Dupes verhindern
+22   Verbindung w„hlen ~
 + 925
 1    netzspezifische Einstellungen
 2    Message-IDs
@@ -2341,6 +2343,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 6    Passw”rter verschlsseln (APOP)
 7    Nur neue Mail abholen
 8    Alle Mails in ein Brett einordnen
+9    Maximale Mailgr”áe (KB) ~
 -
 
 + 952

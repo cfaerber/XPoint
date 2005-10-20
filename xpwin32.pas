@@ -30,7 +30,7 @@ unit xpwin32;
 interface
 
 uses
-  UTFTools,Mime;
+  UTFTools,Mime, Classes;
 
 { Gibt die Anzahl der Bildschirmzeilen/Spalten zurck }
 function SysGetScreenLines: Integer;
@@ -55,11 +55,104 @@ function RTLexec(path, comline : string; var DosExitCode: Integer; wait: boolean
 { HJT 10.09.2005 }
 // are we running under NT/Win2K/XP?
 function SysIsNT:boolean;
+function RasListEntries(List: TStringList): Integer;
+function RasDial(const PhonebookName: String): Boolean;
+function RasHangup: Boolean;
+
 
 implementation
 
 uses
   Typeform, SysUtils, windows, winxp, debug;
+
+
+  const
+  RasMaxEntries     = 64;                                                {!!.06}
+  RASDLL          = 'RASAPI32';
+  RasMaxEntryName   = 256;                                               {!!.06}
+  RasMaxDeviceName  = 128;                                               {!!.06}
+  RasMaxDeviceType  = 16;                                                {!!.06}
+  RasMaxPhoneNumber = 128;                                               {!!.06}
+  RasMaxCallBackNum = 128;                                               {!!.06}
+  RasMaxDomain      = 15;                                                {!!.06}
+  RasMaxPassword    = 256;                                               {!!.06}
+  RasMaxUserName    = 256;                                               {!!.06}
+  ntNotifyWindow    : DWord = $0FFFFFFFF;
+
+type
+  PHRasConn  = ^HRasConn;
+  HRasConn   = THandle;
+
+type {RAS Connection}
+  PRasConn = ^TRasConn;
+  TRasConn = record
+    dwSize       : DWord;
+    rasConn      : DWord;
+    szEntryName  : array [0..RasMaxEntryName] of Char;
+    szDeviceType : array [0..RasMaxDeviceType] of Char;
+    szDeviceName : array [0..RasMaxDeviceName] of Char;
+  end;
+  PRasConnArray = ^TRasConnArray;
+  TRasConnArray = array[0..RasMaxEntries] of TRasConn;
+
+type {RAS phonebook entry name}
+  PRasEntryName = ^TRasEntryName;
+  TRasEntryName = record
+    dwSize      : LongInt;
+    szEntryName : array [0..RasMaxEntryName] of Char;
+  end;
+  PRasEntryNameArray = ^TRasEntryNameArray;
+  TRasEntryNameArray = array[0..RasMaxEntries] of TRasEntryName;
+
+type {RAS dial paramters}
+  PRasDialParams = ^TRasDialParams;
+  TRasDialParams = record
+    dwSize           : DWord;
+    szEntryName      : array [0..RasMaxEntryName] of Char;
+    szPhoneNumber    : array [0..RasMaxPhoneNumber] of Char;
+    szCallbackNumber : array [0..RasMaxCallBackNum] of Char;
+    szUserName       : array [0..RasMaxUserName] of Char;
+    szPassword       : array [0..RasMaxPassword] of Char;
+    szDomain         : array [0..RasMaxDomain] of Char;
+  end;
+
+type { RAS API functions }
+  TRasEnumEntries = function(lpReserved, lpszPhonebook : PChar;
+                              lpEntryName : PRasEntryName;
+                              var lpEntryNameSize : DWord;
+                              var lpNumEntries : DWord
+                              ) : DWord; stdcall;
+
+  TRasEnumConnections = function (lpConn : PRasConn;
+                                  var lpBufSize : DWord;
+                                  var lpNumConnections : DWord
+                                  ) : DWord; stdcall;
+
+  TRasDial = function (lpDialExtensions : Pointer;
+                       lszPhonebook : PChar;
+                       lpDialParams : PRasDialParams;
+                       dwNotifierType : DWord;
+                       lpvNotifier : DWord;
+                       lpConn : PHRasConn
+                       ) : DWord; stdcall;
+
+  TRasGetEntryDialParams = function(lpszPhonebook : PChar;
+                                    lpDialParams : PRasDialParams;
+                                    var Password : Bool
+                                    ) : DWord; stdcall;
+
+  TRasHangup = function(RasConn : HRasConn
+                        ) : DWord; stdcall;
+
+var {Misc variables}
+  RASModule               : THandle = 0;
+  RasConnectionHandle     : HRASConn;
+  ApiRasEnumConnections   : TRasEnumConnections      = nil;
+  ApiRasEnumEntries       : TRasEnumEntries          = nil;
+  ApiRasGetEntryDialParams: TRasGetEntryDialParams   = nil;
+  ApiRasDial              : TRasDial                 = nil;
+  ApiRasHangUp            : TRasHangUp               = nil;
+
 
 function SysGetScreenLines: Integer;
 var
@@ -375,6 +468,70 @@ begin
   end;
 end;
 { HJT 10.09.05 end }
+
+{ Misc utilities }
+procedure LoadRASDLL;
+begin
+  if (RASModule = 0) then begin
+    RASModule := LoadLibrary(RASDLL);
+    if (RASModule = 0) then
+      raise Exception.Create('Failed to find/load RASAPI32.DLL');
+
+    @ApiRasEnumConnections := GetProcAddress(RASModule, 'RasEnumConnectionsA');
+    @ApiRasEnumEntries := GetProcAddress(RASModule, 'RasEnumEntriesA');
+    @ApiRasGetEntryDialParams := GetProcAddress(RASModule, 'RasGetEntryDialParamsA');
+    @ApiRasDial := GetProcAddress(RASModule, 'RasDialA');
+    @ApiRasHangUp := GetProcAddress(RASModule, 'RasHangUpA');
+  end;
+end; 
+
+function RasListEntries(List: TStringList): Integer;
+var
+  PREA : PRasEntryNameArray;
+  BuffSize : DWord;
+  NumEntries : DWord;
+  i : Integer;
+begin
+  LoadRASDLL;
+  BuffSize := SizeOf(TRasEntryNameArray);
+  PREA := AllocMem(BuffSize);
+  PREA^[0].dwSize := SizeOf(TRasEntryName);
+  try
+    Result := ApiRasEnumEntries(nil, nil, PRasEntryName(PREA),
+      BuffSize, NumEntries);
+    if (Result = 0) and (NumEntries > 0) then
+      for i := 0 to Pred(NumEntries) do
+        List.Add(StrPas(PREA^[I].szEntryName));
+  finally
+    FreeMem(PREA, SizeOf(TRasEntryNameArray));
+  end;
+end;
+
+function RasDial(const PhonebookName: String): Boolean;
+var
+  PW : Bool;
+  EntryDialParams: TRasDialParams;
+  DialWinHandle: THandle;
+begin
+  LoadRASDLL;
+  FillChar(EntryDialParams, SizeOf(EntryDialParams), #0);
+  EntryDialParams.dwSize := SizeOf(EntryDialParams);
+  StrPCopy(EntryDialParams.szEntryName, PhonebookName);
+  Result := ApiRasGetEntryDialParams(nil, @EntryDialParams, PW) = 0;
+  if Result then
+  begin
+    RasConnectionHandle :=0;
+    DialWinHandle := 0;
+    Result := ApiRasDial(Nil, Nil, @EntryDialParams,
+      ntNotifyWindow, DialWinHandle, @RasConnectionHandle) = 0;
+  end;
+end;
+
+function RasHangup: Boolean;
+begin
+  LoadRASDLL;
+  Result := ApiRasHangup(RasConnectionHandle) = 0;
+end;
 
 initialization
   // disable program termination at ctrl-c

@@ -650,6 +650,7 @@ type   textp  = ^text;
                   pop3_OnlyNew : boolean;  { POP3: nur neue Mails holen }
                   pop3_ForceOneArea : boolean; { POP3: put all messages into *one* group }
                   pop3_port : Integer;     { POP3: Port, default: 110 }
+                  pop3_MaxMailSize: Integer; { POP3: Max size of mail }
                   smtp_ip   : string;      { SMTP: IP oder Domain }
                   smtp_id   : string;      { SMTP: User-ID, falls noetig }
                   smtp_pwd  : string;      { SMTP: Password, falls noetig }

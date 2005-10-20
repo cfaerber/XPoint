@@ -191,6 +191,7 @@ begin
     pop3_OnlyNew := true;               { POP3: nur neue Mail holen }
     pop3_ForceOneArea := false;         { POP3: put all messages into *one* area }
     pop3_port := 110;                   { POP3: Port }
+    pop3_MaxMailSize := 0;              { POP3: max mail size }
 
     SMTP_ip := 'mail.domain.de';        { SMTP: IP oder Domain }
     SMTP_id := '';                      { SMTP: User-ID, falls noetig }
@@ -408,6 +409,7 @@ begin
             getx(su,  'POP3OnlyNew', pop3_OnlyNew) or
             getx(su,  'POP3ForceOneArea', pop3_ForceOneArea) or
             geti(su,  'POP3-Port', pop3_port) or
+            geti(su,  'POP3-MaxMailSize', pop3_maxmailsize) or
             gets(s,su,'SMTP-IP', smtp_ip) or
             gets(s,su,'SMTP-ID', smtp_id) or
             gets(s,su,'SMTP-Password', smtp_pwd) or
@@ -615,6 +617,7 @@ begin
     writeln(t,'POP3OnlyNew=',jnf(pop3_OnlyNew));
     writeln(t,'POP3ForceOneArea=',jnf(pop3_ForceOneArea));
     writeln(t,'POP3-Port=', pop3_port);
+    writeln(t,'POP3-MaxMailSize', pop3_MaxMailSize);
 
     writeln(t,'SMTP-IP=',smtp_ip);
     if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
@@ -633,7 +636,6 @@ begin
 
     writeln(t, 'Connection=', Connection);
 
-    ///////////////////////////////////////////
     if LastCall<>0.0 then writeln(t,'Letzte Verbindung=',LastCall);
 
     writeln(t,'Client-Path=', ClientPath);

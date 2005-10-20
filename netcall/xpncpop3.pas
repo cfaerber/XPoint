@@ -54,6 +54,7 @@ resourcestring
   res_pop3init          = '%s Mails holen';
   res_mailstat          = '%d (%d neue) Mails in %d Bytes';
   res_getmail           = 'Hole Mail Nr. %d';
+  res_mailtolarge       = 'Mail Nr. %d ist zu gross und wurde uebersprungen';
   res_noconnect         = 'Verbindungsaufbau fehlgeschlagen';
   res_userbreak         = 'Abbruch durch User';
 
@@ -202,6 +203,7 @@ begin
       POP.Password:= bp^.pop3_pwd;
     end;
     POP.Port := Bp^.POP3_Port;
+  POP.MaxMailSize := Bp^.POP3_MaxMailSize;
 
     { Get last retrieved UIDLs from file }
     UIDLFileName:=FileUpperCase(OwnPath+GetServerFilename(Boxname, extUdl));
@@ -224,15 +226,17 @@ begin
           lastmail := pop.newmailcount + firstmail - 1;
           end;
 
-        for i := firstmail to lastmail do
-        begin
-          powindow.writefmt(mcverbose,res_getmail,[i]);
-          pop.retr(i, list);
-          if boxpar^.pop3_clear then pop.dele(i);
-          // uuz muá erweitert werden,wenn das funktionieren soll
-          // if list.count > 10000 then
-          savemail;
-        end;
+      for i := FirstMail to LastMail do
+      begin
+        POWindow.WriteFmt(mcVerbose,res_getmail,[i]);
+        if POP.Retr(i, List) and (List.Count = 0) then
+          POWindow.WriteFmt(mcError,res_mailtolarge,[i]);
+        if BoxPar^.Pop3_Clear then
+          POP.Dele(I);
+        // UUZ muá erweitert werden,wenn das funktionieren soll
+        // if List.Count > 10000 then
+        SaveMail;
+      end;
   //    SaveMail;
       finally
         List.Free;
@@ -279,5 +283,6 @@ begin
       xp3o.ForceRecipient:= LeftStr(xp3o.ForceRecipient, i - 1);
     end;
 end;
+
 
 end.

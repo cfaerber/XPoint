@@ -51,6 +51,7 @@ type
     FMailCount, FMailSize, FLastRead: Integer;
     FSupportUIDLs       : Boolean;   { Flag: Server supports UIDLs }
     FAvailableUIDLs     : TStringList; { NEW available mail UIDLs }
+    FMaxMailSize        : Integer;   { maximum size of mail to get }
 
     { Return MailCount-LastReadID or FAvailableUIDLs.Count depending
       on whether LAST is implemented or not }
@@ -80,6 +81,7 @@ type
     property MailSize: Integer read FMailSize;
     { Number of last read mail - 0 with UIDL support and OnlyNew}
     property LastRead: Integer read SLastRead;
+    property MaxMailSize: Integer read FMaxMailSize write FMaxMailSize;
 
     { Verbindung herstellen }
     function Connect: boolean; override;
@@ -360,33 +362,46 @@ function TPOP3.Retr(ID: Integer; List: TStringList): boolean;
 var
   s: string;
   Nr: Integer;
+  MailSize: Integer;
 begin
   Result := false;
   if not Connected then exit;
 
   ID := MapUIDL(ID);
-  SWritelnFmt('RETR %d', [ID]);
-  SReadln(s);
-  if not ParseError(s) then
+
+  if MaxMailSize > 0 then
   begin
-    while s <> '.' do
-    begin
-      SReadln(s);
-      // !!todo: strip "."
-      if s <> '.' then List.Add(s);
-    end;
+    SWritelnFmt('LIST %d', [ID]);
+    SReadln(s);
+    MailSize := StrToIntDef(ExtractWord(3, s), 0);
   end else
-    exit;
+    MailSize := 0;
+
+  if (MailSize = 0) or (MailSize <= MaxMailSize * 1024) then
+  begin
+    SWritelnFmt('RETR %d', [ID]);
+    SReadln(s);
+    if not ParseError(s) then
+    begin
+      while s <> '.' do
+      begin
+        SReadln(s);
+        if s <> '.' then List.Add(s);
+      end;
+    end else
+      exit;
+  end;
   Result := true;
 
   if FSupportUIDLs then
     // mark UIDL as retrieved
     for Nr := 0 to FAvailableUIDLs.Count - 1 do
-      if Integer(FAvailableUIDLs.Objects[Nr]) = ID then begin
+      if Integer(FAvailableUIDLs.Objects[Nr]) = ID then
+      begin
         if UIDLs.IndexOf(FAvailableUIDLs[Nr]) = -1 then
           UIDLs.Add(FAvailableUIDLs[Nr]);
         break;
-        end;
+      end;
 end;
 
 function TPOP3.Dele(ID: Integer): boolean;
@@ -432,5 +447,6 @@ begin
     Result := true;
   end;
 end;
+
 
 end.

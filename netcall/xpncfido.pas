@@ -457,30 +457,33 @@ var i        : integer;
       pw     : string;
       p      : byte;
       iFile  : integer;
-
   begin
     Debug.DebugLog('xpncfido','ProcessRequestResult '+fa,dlDebug);
     files:=''; GetReqFiles(fa,files);
     Debug.DebugLog('xpncfido','GetReqFiles '+files+', keeprequests '+inttostr(ord(keeprequests)),dlDebug);
     if files<>'' then
-      if keeprequests then begin
+      if keeprequests then
+      begin
         TrimFirstChar(Files, '>');
         nfiles:='';
-        while files<>'' do begin
+        while files<>'' do
+        begin
           fname:=GetToken(files,' ');  { nÑchster Dateiname ... }
           p:=cposx('/',fname);
           pw:=mid(fname,p+1);          { Pa·wort isolieren }
           truncstr(fname,p-1);
           if cpos('.',fname)=0 then
             fname:='';                 { Magic Name -> l"schen }
+          incomingrequestedfiles.Add('test*.zip');
           for iFile:=0 to IncomingRequestedFiles.Count-1 do
             if match(fname,ExtractFileName(IncomingRequestedFiles[iFile])) then
               fname:='';
-          if fname<>'' then begin
+          if fname<>'' then
+          begin
             nfiles:=nfiles+' '+fname;
             if pw<>'' then nfiles:=nfiles+'/'+pw;
-            end;
           end;
+        end;
         nfiles:=trim(nfiles);
         if nfiles<>'' then nfiles:='>'+nfiles;   { Requests zurÅckstellen }
         SetRequest(fa,nfiles);
@@ -488,9 +491,9 @@ var i        : integer;
         end
       else
         SetRequest(fa,'');
-  end;
+    end;
 
-  function GetArcFilename(_from,_to:string):string;   { Fido-Dateiname ermitteln }
+  function GetArcFilename(const _from,_to:string):string;   { Fido-Dateiname ermitteln }
   var fn    : string[12];
       a1,a2 : fidoadr;
   begin
@@ -828,7 +831,7 @@ begin
         if s=CrashID then c:=true
         else if s<>'' then begin
           f:=true;
-          if Copy(s,1,1)='>' then old:=true;
+          if FirstChar(s)='>' then old:=true;
           end;
       until s='';
       inc(anz);
@@ -909,5 +912,6 @@ begin
   freeres;
   getCrashBox:=adr;
 end;
+
 
 end.

@@ -1250,7 +1250,7 @@
   procedure EditPOP3(var brk:boolean);
   var x,y: Integer;
   begin
-    dialog(ival(getres2(951,0)),13,GetRes2(951,1),x,y);         { 'POP3-Einstellungen' }
+    dialog(ival(getres2(951,0)),14,GetRes2(951,1),x,y);         { 'POP3-Einstellungen' }
     with boxpar^ do
     begin
       maddstring(3,2,GetRes2(951,2),pop3_ip,25,255,             { 'Server    ~' }
@@ -1262,6 +1262,7 @@
       maddbool(3,9, GetRes2(951,6), pop3_APOP);                 { 'APOP benutzen' }
       maddbool(3,10, GetRes2(951,7), pop3_OnlyNew);             { 'Nur neue Mails' }
       maddbool(3,12, GetRes2(951,8), pop3_ForceOneArea);        { 'Alle Mails in ein Brett einordnen' }
+      maddint(3,14, GetRes2(951,9), pop3_MaxMailSize, 5, 5, 0, 100000); { 'Maximale Mailgröße (KB)' }
       freeres;
       readmask(brk);
       enddialog;
@@ -1629,10 +1630,11 @@
       x2    : byte;
       add   : shortint;
       av,pv : string;
+      List: TStringList;
   begin
     add:=0;
     dialog(ival(getres2(924,0)),
-           15+iif(ntNetcall(nt),excludes+iif(nt=nt_Fido,1,3),0),getres2(924,1),x,y);
+           15{$IFDEF Win32}+2{$ENDIF}+iif(ntNetcall(nt),excludes+iif(nt=nt_Fido,1,3),0),getres2(924,1),x,y);
     dbRead(d,'script',flags);            { 'Verschiedene Einstellungen' }
     av:= dbReadStr(d,'AVertreter');
     pv:= dbReadStr(d,'PVertreter');
@@ -1678,6 +1680,17 @@
       maddbool(20,12+add,getres2(924,20),ReplaceDupes); mhnr(8051);  { 'Dupes verhindern' }
       maddbool(20,13+add,getres2(924,21),ReplaceOwn); mhnr(8052);    { 'Ruecklaeufer-Dupes verhindern' }
       maddbool(20,14+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
+      {$IFDEF Win32 }
+        maddstring(2,16+add,getres2(924,22),Connection,32,32,'');   { 'Verbindung wählen' }
+        List := TStringList.Create;
+        try
+          RasListEntries(List);
+          for i := 0 to List.Count - 1 do
+            mappsel(true, List[i]);
+        finally
+          List.Free;
+        end;
+      {$ENDIF }
       freeres;
       readmask(brk);
       enddialog;
@@ -1702,9 +1715,10 @@
       x2    : byte;
       add   : shortint;
       av,pv : string;
+      List: TStringList;
   begin
     add:=0;
-    dialog(ival(getres2(924,0)),14+excludes,getres2(924,1),x,y);
+    dialog(ival(getres2(924,0)),14{$IFDEF Win32}+2{$ENDIF}+excludes,getres2(924,1),x,y);
     dbRead(d,'script',flags);            { 'Verschiedene Einstellungen' }
     av:= dbReadStr(d,'AVertreter');
     pv:= dbReadStr(d,'PVertreter');
@@ -1739,6 +1753,17 @@
       maddbool(20,11+add,getres2(924,20),ReplaceDupes); mhnr(8051);  { 'Dupes verhindern' }
       maddbool(20,12+add,getres2(924,21),ReplaceOwn); mhnr(8052);    { 'Ruecklaeufer-Dupes verhindern' }
       maddbool(20,13+add,getres2(924,12),nall); mhnr(198);  { '/Netcall/Alle' }
+      {$IFDEF Win32 }
+        maddstring(2,15+add,getres2(924,22),Connection,32,32,'');   { 'Verbindung wählen' }
+        List := TStringList.Create;
+        try
+          RasListEntries(List);
+          for i := 0 to List.Count - 1 do
+            mappsel(true, List[i]);
+        finally
+          List.Free;
+        end;
+      {$ENDIF }
       freeres;
       readmask(brk);
       enddialog;
@@ -2410,4 +2435,5 @@
       end;
     freeres;
   end;
+
 

@@ -113,7 +113,9 @@ function  BoxToBfg(var s:string):string;
 implementation  {---------------------------------------------------}
 
 uses
-  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts, replytoall, lister, classes;
+  xp2,xp3,xp3o,xp9bp,xpnt,xpterminal,xpmodemscripts, replytoall, lister,
+  {$IFDEF Win32}xpwin32,{$ENDIF }
+  classes;
 
 const umtyp : array[0..5] of string[5] =
               ('IBM','ASCII','ISO','Tab.1','Tab.2','Tab.3');
@@ -2328,5 +2330,6 @@ restart:
   end else
     ReadExtCfgFilename := false;
 end;
+
 
 end.
