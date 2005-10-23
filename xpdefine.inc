@@ -38,7 +38,7 @@
 {.$DEFINE Beta }
 
 { Ist in Snapshot-Versionen definiert }
-{.$DEFINE Snapshot}
+{$DEFINE Snapshot}
 
 { EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
   Konfiguration mittels EASY-Mode verfÅgbar }
