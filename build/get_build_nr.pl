@@ -6,7 +6,7 @@
   $MAINVER = "unknown";
   $SUBVER = "unknown";
   $BUILD = "unknown";
-  $ARCH = "unknown";
+#  $ARCH = "unknown";
   $RELEASE = "1";
 
 
@@ -23,11 +23,11 @@
   close(InFile);
   unlink 'version.svn';
 
-  open(OutFile, ">version.inc");
+  open(OutFile, ">../version.inc");
   print OutFile "version_build = ".$BUILD.";\n";
-  $ARCH = `uname -m`;
-  $ARCH =~ tr/\n//d;
-  print OutFile "arch = '$ARCH';\n";
+#  $ARCH = `uname -m`;
+#  $ARCH =~ tr/\n//d;
+#  print OutFile "arch = '$ARCH';\n";
   close(OutFile);
 
   open(InFile, "../xpdefine.inc");
@@ -40,7 +40,7 @@
     $OPTS = "-gl -CX -O3p3";
   } else
   {
-    $OPTS = "-CX -O3p3";
+    $OPTS = "-gl -O1";
   }
 
 
@@ -73,7 +73,7 @@ if ($^O eq "MSWin32") {
 }
 
   open(InFile, "file_id.win.in");
-  open(OutFile, ">file_id.win");
+  open(OutFile, ">../dist/win32/file_id.diz");
 
   while (<InFile>) {
 
@@ -86,7 +86,7 @@ if ($^O eq "MSWin32") {
   close(OutFile);
 
   open(InFile, "file_id.dos.in");
-  open(OutFile, ">file_id.dos");
+  open(OutFile, ">../dist/dos/file_id.diz");
 
   while (<InFile>) {
 
@@ -99,7 +99,7 @@ if ($^O eq "MSWin32") {
   close(OutFile);
 
   open(InFile, "file_id.source.in");
-  open(OutFile, ">file_id.source");
+  open(OutFile, ">../file_id.diz");
 
   while (<InFile>) {
 
