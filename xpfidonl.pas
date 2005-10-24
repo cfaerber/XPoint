@@ -359,7 +359,7 @@ var diffdir  : string;
 
   function NextNumber(number:integer):integer;
   begin
-    NextNumber:=(number+6) mod iif(schaltj(ival(RightStr(date,4))-1),366,365) + 1;
+    NextNumber:=(number+6) mod iif(IsLeapYear(ival(RightStr(date,4))-1),366,365) + 1;
   end;
 
   procedure ExpandFilePath(var s:string);
