@@ -87,7 +87,7 @@ function  vert_name(s:string):string;
 function  vert_long(const s:string):string;
 function  systemname(adr:string):string;
 function  pfadbox(zconnect:boolean; var pfad:String):string;
-function  file_box(d:DB; dname:string):string;
+function  file_box(d:DB; const dname:string):string;
 function  box_file(const box:string):string;
 function  brettok(trenn:boolean):boolean;
 
@@ -1087,7 +1087,7 @@ begin
 end;
 
 
-function file_box(d:DB; dname:string):string;
+function file_box(d:DB; const dname:string):string;
 var open : boolean;
 begin
   open:=(d<>nil);

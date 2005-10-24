@@ -228,7 +228,7 @@ type
     function Seek(Offset: Longint; Origin: System.Word): Longint; override;
   end;
 
-function MimeCharsetCanonicalName(Name:string):string;
+function MimeCharsetCanonicalName(Const Name:string):string;
 
 function MimeCharsetToZC(const Name:string):string;
 function ZCCharsetToMIME(const Name:string):string;
