@@ -1725,7 +1725,7 @@ var dat    : longint;
    springt der Cursor ans Ende der Brettliste (t:=keyend) }
 
   procedure mw2;
-  var   s       : string[81]; 
+  var   s       : string;
         helprec : longint;
   begin
     if U_read then begin                   { Brett-Ungelesen-Flag berprfen }

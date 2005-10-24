@@ -710,7 +710,7 @@ begin { FidoNetcall }
 end;
 
 
-procedure AskDelRequest(adr:string);
+procedure AskDelRequest(const adr:string);
 var s : string;
 begin
   s:=''; GetReqFiles(adr,s);

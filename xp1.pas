@@ -105,7 +105,7 @@ procedure pophp;
 procedure freehelp;
 
 procedure setenable(mnu,nr:byte; flag:boolean);
-procedure setmenup(mnu:string; nr:byte; anew:string);
+procedure setmenup(mnu:string; nr:byte; const anew:string);
 procedure setmenupos(mnu:string; newpos:byte);
 procedure splitmenu(nr:byte; ma:map; var n:integer; nummern:boolean);
 
@@ -134,7 +134,7 @@ procedure moment;
 procedure message(const txt:string);
 procedure rmessage(nr:word);
 procedure WaitIt(txt:atext; p:proc; sec:word);
-procedure WriteClipFile(fn:string);
+procedure WriteClipFile(const fn:string);
 procedure selcol;
 procedure file_box(var name:string; changedir:boolean);
 procedure XP_testbrk(var brk:boolean);
@@ -223,7 +223,7 @@ procedure write_lastcall(const dat:String);
 
 procedure InitPrinter;
 procedure PrintPage;
-procedure PrintLine(s:string);
+procedure PrintLine(const s:string);
 procedure ExitPrinter;
 
 function  TempFree:Int64;                 { Platz auf Temp-Laufwerk }
@@ -233,7 +233,7 @@ procedure _era(const Filename: String);
 // Deletes a file only if exists, uses _era to report errors
 procedure SafeDeleteFile(const Filename: String);
 procedure SafeMakeBak(const Filename, NewExt: String);
-procedure _chdir(p:string);
+procedure _chdir(const p:string);
 function  testmem(size:longint; wait:boolean):boolean;
 
 procedure cm_w(const s:string);                     { Command-Mode-Ausgabe }
@@ -951,7 +951,7 @@ begin
   printlines:=0;
 end;
 
-procedure PrintLine(s:string);
+procedure PrintLine(const s:string);
 begin
   {$IFDEF Unix }
     s := IBMToISO(s);
@@ -1235,7 +1235,7 @@ begin
 end;
 
 
-procedure WriteClipFile(fn:string);
+procedure WriteClipFile(const fn:string);
 begin
   if FileExists(fn) then begin
     FileToClip(fn);
@@ -1912,16 +1912,11 @@ begin
   end;
 end;
 
-procedure _chdir(p:string);
+procedure _chdir(const p:string);
 begin
-  p:=trim(p);
-  if p<>'' then 
-  begin
-    TrimLastChar(p, DirSepa);
-    chdir(p);
-    if ioresult<>0 then
-      trfehler1(5,UpperCase(p),30);   { ungÅltiges Verzeichnis: }
-    end;
+ if p<>'' then 
+    if not SetCurrentDir(ExcludeTrailingPathDelimiter(Trim(p))) then
+      trfehler1(5,UpperCase(p),30);   { ungueltiges Verzeichnis: }
 end;
 
 function testmem(size:longint; wait:boolean):boolean;

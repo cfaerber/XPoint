@@ -392,7 +392,7 @@ var x,y      : Integer;
   end;
 
   procedure TestControlMessage;
-  var box    : string[20];
+  var box    : string;
       fstype : byte;
   begin
     automessaging:=true;
@@ -480,7 +480,7 @@ var x,y      : Integer;
     automessaging:=false;
   end;
 
-  function logstr(s:string):string;
+  function logstr(const s:string):string;
   begin
     logstr:=LeftStr(date,6)+RightStr(date,2)+' '+LeftStr(time,5)+' '+s;
   end;

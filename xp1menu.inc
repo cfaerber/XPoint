@@ -218,7 +218,7 @@ end;
 
 { ACHTUNG!! es muss auf dem Heap genuf Platz fr menu[n]^ belegt sein!! }
 
-procedure setmenup(mnu:string; nr:byte; anew:string);
+procedure setmenup(mnu:string; nr:byte; const anew:string);
 var n,p,p2 : byte;
 begin
   findnr(mnu,nr,n,p);

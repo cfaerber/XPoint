@@ -222,7 +222,7 @@ var   fb     : string;
     if invers then invtxt else normtxt;
   end;
 
-  procedure rahmen1(li,re,ob,un: Integer; const txt:txst);
+  procedure rahmen1(li,re,ob,un: Integer; const txt: String);
   var i : Integer;
   begin
     moff;

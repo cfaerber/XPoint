@@ -56,20 +56,20 @@ procedure bd_setzen(sig:boolean);  { Wartung/Datumsbezuege }
 procedure readpuffer;              { Xpoint/Import/Puffer }
 
 procedure BrettdatumSetzen(show:boolean);
-procedure RereadBrettdatum(_brett:string);
+procedure RereadBrettdatum(const _brett:string);
 procedure Bverknuepfen;
 procedure Uverknuepfen;
 procedure extrakt(art:byte; aktdispmode,rdmode:shortint);
 procedure msgall(art:byte; aktdispmode,rdmode:shortint);
-procedure NeuerEmpfaenger(name:string);
+procedure NeuerEmpfaenger(const name:string);
 function  PufferEinlesen(puffer:string; pollbox:string; replace_ed,
                          sendbuf,ebest:boolean; pflags:word):boolean;
 procedure AppPuffer(const Box,fn:string);
-procedure empfang_bestaetigen(var box:string);
+procedure empfang_bestaetigen(const box:string);
 procedure CancelMessage;
 procedure ErsetzeMessage;
-function  testpuffer(fn:string; show:boolean; var fattaches:longint):longint;
-function  ZC_puffer(var fn:string):boolean;
+function  testpuffer(const fn:string; show:boolean; var fattaches:longint):longint;
+function  ZC_puffer(const fn:string):boolean;
 procedure MoveToBad(fn:string);
 
 procedure wrtiming(s:string);
@@ -105,7 +105,7 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xpsendmessage,xp8,xp9bp,xpnt,xp_pgp,win
 procedure auto_empfsel_do (var cr:Customrec;user:boolean) ;
 var p        : scrptr;
     mt       : boolean;
-    pollbox  : string[BoxNameLen];
+    pollbox  : string;
     zg_flags : integer;
     size     : Integer;
     adresse  : string[AdrLen];
@@ -295,8 +295,8 @@ end;
 
 { Brett = dbLongStr(Int_nr) }
 
-procedure RereadBrettdatum(_brett:string);
-var _mBrett : string[5];
+procedure RereadBrettdatum(const _brett:string);
+var _mBrett : string;
     d1,d2   : longint;
     mi      : word;
 begin
@@ -936,7 +936,7 @@ end;
 { diese Prozedur verpasst der Nachricht in recno(mbase) }
 { eine neue Empfaenger-Zeile im Header                  }
 
-procedure NeuerEmpfaenger(name:string);
+procedure NeuerEmpfaenger(const name:string);
 var f1    : file;
     size  : longint;
     fn    : string;
@@ -991,7 +991,7 @@ end;
 
 { Empfangsbestaetigung zu aktueller Nachricht erzeugen }
 
-procedure empfang_bestaetigen(var box:string);
+procedure empfang_bestaetigen(const box:string);
 var tmp  : string;
     t,t2 : text;
     orgd : string;
@@ -1329,7 +1329,7 @@ end;
 
 { Puffer im ZConnect-Format? }
 
-function ZC_puffer(var fn:string):boolean;
+function ZC_puffer(const fn:string):boolean;
 var t : text;
     s : string;
     abs,emp,eda : boolean;
@@ -1359,7 +1359,7 @@ end;
 
 { liefert Anzahl der Nachrichten, oder -1 bei Fehler }
 
-function testpuffer(fn:string; show:boolean; var fattaches:longint):longint;
+function testpuffer(const fn:string; show:boolean; var fattaches:longint):longint;
 var ok       : boolean;
     f        : file;
     MsgCount,
@@ -1414,7 +1414,7 @@ procedure wrtiming(s:string);
 var t1,t2 : text;
     s1    : string;
     ww    : boolean;
-    ts    : string[80];
+    ts    : string;
 begin
   s:=uppercase(s);
   ts:=trim(s)+'='+LeftStr(date,6)+RightStr(date,2)+' '+LeftStr(time,5);

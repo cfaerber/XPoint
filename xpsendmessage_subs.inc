@@ -350,7 +350,7 @@ begin
 end;
 
 procedure ShowFlags;
-var flags : string[80];
+var flags : string;
 
   function pmcc_anz:integer;
   var i,anz : integer;

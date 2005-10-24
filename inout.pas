@@ -808,7 +808,7 @@ const trennz  = [' ','&','('..'/',':'..'?','['..'`','{'..#127];
 VAR   p: integer;
       fnkn  : shortint;
       a       : taste;
-      inss    : string[80];
+      inss    : string;
       ste     : shortstring;
       mlm,mrm : boolean;
       r1      : taste;

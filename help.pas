@@ -78,7 +78,7 @@ const maxpst  = 20;
       _pexit  : string  = '';
 
 
-type pageadr = array[1..maxpages] of packed record
+type pageadr = array[1..maxint div 16] of packed record
                                        nr  : smallword;
                                        adr : longint;
                                      end;
@@ -192,10 +192,6 @@ begin
     wdt:=blockrb;
     hgh:=blockrb; dec(hgh,3);
     pages:=blockrw;
-    {$IFDEF Debug }
-      if Pages > MaxPages then
-        raise Exception.Create('MaxPages in help.pas is to small');
-    {$ENDIF }
     ixp:=blockrw;
     illp:=blockrw;
     ixadr:=blockrl;

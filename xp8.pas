@@ -889,7 +889,7 @@ var t     : text;
 
   function qwkbrett(brett:string):string;
   var t : text;
-      s : string[80];
+      s : string;
   begin
     brett:=UpperCase(mid(brett,length(boxpar^.magicbrett)+2));
     assign(t,bfile+extBl);

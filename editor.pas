@@ -701,6 +701,7 @@ begin
   root:=nil;
   if Fileexists(fn) then
   begin
+    IOResult;
     mfm:=filemode; filemode:= fmOpenRead + fmShareDenyWrite;
     assign(t,fn); reset(t);
     filemode:=mfm;
