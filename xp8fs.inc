@@ -312,7 +312,7 @@ var d     : DB;
   begin
     showkeys(10);
     List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/');
-    List.ReadFromFile(MangleBoxName(fs)+ extFl,0);
+    List.ReadFromFile(MangleBoxName(fs)+ extFl,0, false);
     List.OnTestMark := testmark;
   again:
     brk := List.Show;

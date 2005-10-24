@@ -203,6 +203,7 @@ uses
   maus2,
   mime,
   winxp,
+  xpcharset,
   xp0,
   xp1;
 

@@ -30,7 +30,7 @@ uses
 {$IFDEF FPC }
   unix,
 {$ENDIF }
-  utftools,
+  xpcharset,
 {$IFDEF Kylix}
   libc,
   ncursix,

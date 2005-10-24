@@ -69,7 +69,7 @@ uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   libc,
   {$ENDIF}
   debug,
-  xpcc,xpnt,mime,mime_base64;
+  xpcc,xpnt,mime,mime_base64, xpstreams_temporary, xpcharset, xpcharset_streams;
 
 const
   savekey : string = '';

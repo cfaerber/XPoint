@@ -45,7 +45,9 @@ uses
   inout,
   maus2,
   typeform,
-  xpglobal, 
+  xpglobal,
+  xpcharset_codec,
+  xpcharset,
   mime;
 
 const
@@ -57,6 +59,9 @@ const
       maxpush = 20;
 
       shadowcol: byte = 8;
+
+      csInternal: TMimeCharsets = csCP437;
+      csSystem: TMimeCharsets = csCP437;
 
 {$IFNDEF NCRT}
 const
@@ -206,15 +211,13 @@ procedure InitWinXPUnit;
 implementation
 
 uses 
-  xp0,
 {$IFDEF DOS32}
   Go32,
 {$ENDIF}
 {$IFDEF FPC }
   Objects, (* For PWordArray *)
-{$ENDIF}  
-  unicode,
-  utftools;
+{$ENDIF}
+  xp0;
 
 const rchar : array[1..3,1..6] of char =
               ('⁄ƒø≥¿Ÿ','…Õª∫»º','’Õ∏≥‘æ');

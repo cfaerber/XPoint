@@ -30,7 +30,7 @@ unit xpdos32;
 interface
 
 uses
-  UTFTools,MIME;
+  xpcharset, MIME;
 
 { Anzahl der aktuellen Bildschirmzeilen/Spalten }
 function SysGetScreenLines: Integer;

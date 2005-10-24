@@ -421,6 +421,9 @@ procedure TrimLastChar(var s: String; c: Char);   { Spezielles Zeichen am Ende d
 {$ifndef FPC}
 function UpCase(const c:char):char;                { int. UpCase                  }
 {$endif}
+function UTF8Mid(const s:string; n:integer):string;       { Rest des Strings ab Pos.    }
+function UTF8FormS(const s:string; StartColumn,Columns:integer):string; overload; { String auf n Stellen mit ' ' }
+function UTF8FormS(const s:string; Columns:integer):string; overload; { String auf n Stellen mit ' ' }
 { Lo/Upcase-String fuer Files, abhaengig von UnixFS }
 function FileUpperCase(const s:string):string;
 function Without(const s1,s2:string):string;       { Strings "subtrahieren"       }
@@ -434,6 +437,7 @@ Procedure TruncStr(var s:string; n:integer);    { String kuerzen                
 Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 procedure UkonvStr(var s:string;len:integer);     { Umlautkonvertierung (ae,oe...) }
+function DecodeRot13String(const s: String): String;
 procedure Rot13(var data; Size: Integer);         { Rot 13 Kodierung }
 function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 function IBMToISO(const s: String): String;
@@ -461,11 +465,14 @@ function IsPathDelimiter(const S: string; Index: Integer): Boolean;
 {$ENDIF }
 // scans Buffer with Len for first occurrence of char c
 function BufferScan(const Buffer; Len: Integer; c: Char): Integer; 
+function FindURL(s: String; var x, y: Integer): Boolean;
 
 
 { ================= Implementation-Teil ==================  }
 
 implementation
+
+uses xpunicode;
 
 type
 {$IFDEF Delphi }
@@ -748,6 +755,74 @@ begin
   sp:=dup(n,' ');
 end;
 
+
+function UTF8Mid(const s:string; n:integer):string;
+var Position: Integer;
+begin
+  Position := 1;
+  while n > 1 do begin
+    dec(n);
+    UTF8NextChar(s,Position);
+  end;
+  Result := Mid(s,Position);
+end;
+
+function UTF8FormS(const s:string; StartColumn, Columns:integer):string; overload;
+var Position, NewPosition: Integer;
+    StartPosition: Integer;
+    W: Integer;
+    AddStart, AddEnd: string;
+{$IFDEF DEBUG}
+//    SaveColumns : Integer;
+{$ENDIF}
+begin
+{$IFDEF DEBUG}
+//  SaveColumns := Columns;
+{$ENDIF}
+
+  StartPosition := 1;
+  Dec(StartColumn);
+  while StartPosition <= Length(s) do
+  begin
+    NewPosition := StartPosition;
+    w := abs(UnicodeCharacterWidth(UTF8GetCharNext(s,NewPosition)));
+    if w > StartColumn then
+    begin
+      if StartColumn >= 1 then
+        AddStart := '<';
+      break;
+    end;
+    dec(StartColumn,w);
+    StartPosition := NewPosition;
+  end;
+
+  Position := StartPosition;
+  while Position <= Length(s) do
+  begin
+    NewPosition := Position;
+    w := abs(UnicodeCharacterWidth(UTF8GetCharNext(s,NewPosition)));
+    if w > Columns then
+    begin
+      if Columns >= 1 then
+        AddEnd := '>';
+      Columns := 0;
+      break;
+    end;
+    dec(Columns,w);
+    Position := NewPosition;
+  end;
+
+  Result := AddStart + Copy(s,StartPosition,Position-StartPosition) + AddEnd + Sp(Columns);
+
+{$IFDEF DEBUG}
+//  assert(UTF8StringWidth(Result) = SaveColumns);
+{$ENDIF}
+end;
+
+function UTF8FormS(const s:string; Columns:integer):string; overload;
+begin
+  result := UTF8FormS(S,1,Columns);
+end;
 
 function FormS(const s:string; n:integer):string;
 var
@@ -1669,6 +1744,29 @@ begin
   b30:=bc;
 end;
 
+function DecodeRot13String(const s: String): String;
+var
+  i: Integer;
+  c: Char;
+begin
+  SetLength(Result, Length(s));
+  for i := 1 to Length(s) do
+  begin
+    c := s[i];
+    if (c >= 'A') and (c <= 'Z') then
+    begin
+      Inc(c, 13);
+      if c > 'Z' then Dec(c, 26);
+    end else
+      if (c >= 'a') and (c <= 'z') then
+      begin
+        Inc(c, 13);
+        if c > 'z' then Dec(c, 26);
+      end;
+    Result[i] := c;
+  end;
+end;
+
 { ROT13 Kodierung }
 procedure Rot13(var data; Size: Integer); {&uses edi} assembler;
 asm
@@ -1814,5 +1912,42 @@ asm
         DEC     EAX
 @@1:    POP     EDI
 end;
+
+function FindURL(s: String; var x, y: Integer): Boolean; overload;
+const
+  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':',';','/','~','?',
+    '-','_','#','=','&','%','@','$',',','+'];
+var
+  u: string;
+begin
+  u := UpperCase(s);
+  x := Pos('HTTP://',u); {WWW URL ?}
+  if x=0 then x:=Pos('HTTPS://',u);  {HTTPS URL ?}
+  if x=0 then x:=Pos('GOPHER://',u); {Gopher URL ?}
+  if x=0 then x:=Pos('FTP://',u);    {oder FTP ?}
+  if x=0 then x:=Pos('WWW.',u);      {oder WWW URL ohne HTTP:? }
+  if x=0 then x:=Pos('HOME.',u);     {oder WWW URL ohne HTTP:? }
+  if x=0 then x:=Pos('FTP.',u);      {oder FTP URL ohne HTTP:? }
+  if x=0 then x:=Pos('URL:',u);      {oder explizit mark. URL? }
+  if x=0 then x:=Pos('URN:',u);      {oder explizit mark. URN? }
+  if x=0 then x:=Pos('URI:',u);      {oder explizit mark. URL? }
+  if x=0 then x:=Pos('MAILTO:',u);   {oder MAILTO: ?}
+
+  y:=x;
+  Result := x <> 0; s := s + ' ';
+  if Result then
+  begin
+    while (y<=length(s)) and (s[y] in urlchars) do
+    begin
+      // "," is a valid url char, but test for things like
+      // "see on http:///www.openxp.de, where" ...
+      // in this case, "," does not belong to the url
+      if ((s[y] = ',') or (s[y] = '.')) and (y<Length(s)) and (not (s[y+1] in urlchars)) then
+        break;
+      inc(y); {Ende der URL suchen...}
+    end;
+  end;
+end;
+
 
 end.

@@ -258,8 +258,10 @@ uses
   {$ENDIF}
 {$ENDIF }
   mime,
-  utftools,
-  direct;
+  direct,
+  xpunicode,
+  xpunicode_lbr,
+  xpcharset;
 
 { Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
 { vollstÑndige ISO-Konvertierung: siehe XP3 }
@@ -356,426 +358,158 @@ end ['EAX', 'EBX', 'ECX', 'EDI'];
 end;
 {$ENDIF }
 
+procedure ListDisplay(x,y, StartC, Columns: Integer; var s: string);
+var Pos:     integer;   // current position in bytes
+    NewPos:  integer;   // save for current pos
+    PosC:    integer;   // position in columns
+    OutPos:  integer;   // current position of data already written in bytes
+    OutPosC: integer;   // position in columns
 
-{ Hervorhebungsregeln fuer * und _ im Lister: }
-{ 1 = vor  Startzeichen erlaubt }
-{ 2 = nach Startzeichen erlaubt }
-{ 4 = vor  Endzeichen erlaubt }
-{ 8 = nach Endzeichen erlaubt }
+    C, LastC: TUnicodeChar;     // current and last character
+    W: Integer;                 // width of current character (columns)
+    B, LastB : TUnicodeLineBreakType; // lb class of current and last character
 
-const
-  delimiters : array[0..255] of byte = (
-            0                            ,{ ^@ }
-            0                            ,{ ^A }
-            0                            ,{ ^B }
-            0                            ,{ ^C }
-            0                            ,{ ^D }
-            0                            ,{ ^E }
-            0                            ,{ ^F }
-            0                            ,{ ^G }
-            0                            ,{ ^H }
-            0                            ,{ ^I }
-            0                            ,{ ^J }
-            0                            ,{ ^K }
-            0                            ,{ ^L }
-            0                            ,{ ^M }
-            0                            ,{ ^N }
-            0                            ,{ ^O }
-            0                            ,{ ^P }
-            0                            ,{ ^Q }
-            0                            ,{ ^R }
-            0                            ,{ ^S }
-            0                            ,{ ^T }
-            0                            ,{ ^U }
-            0                            ,{ ^V }
-            0                            ,{ ^W }
-            0                            ,{ ^X }
-            0                            ,{ ^Y }
-            0                            ,{ ^Z }
-            0                            ,{ ^[ }
-            0                            ,{ ^\ }
-            0                            ,{ ^] }
-            0                            ,{ ^^ }
-            0                            ,{ ^_ }
+    HiChar : TUnicodeChar;      // character that started highlighting
+    HiStart: Integer;           // position of starting char in bytes
+    HiStartC: Integer;          // ...in columns
+    HiDelimCount : Integer;     // count of occurrence of HiChar within hilighting sequence
+    HiWordCCount : Integer;     // count of word characters within hilighting sequence
 
-            0  +  1 +         8          ,{ Space }
-            0  +          4 + 8          ,{ ! }
-            0  +  1 + 2 + 4 + 8          ,{ " }
-            0                            ,{ # }
-            0                            ,{ $ }
-            0                            ,{ % }
-            0                            ,{ & }
-            0  +  1 + 2 + 4 + 8          ,{ ' }
-            0  +  1                      ,{ ( }
-            0  +              8          ,{ ) }
-            0                            ,{ * }
-            0                            ,{ + }
-            0  +          4 + 8          ,{ , }
-            0  +              8          ,{ - }
-            0  +          4 + 8          ,{ . }
-            0                            ,{ / }
-            0  +      2 + 4              ,{ 0 }
-            0  +      2 + 4              ,{ 1 }
-            0  +      2 + 4              ,{ 2 }
-            0  +      2 + 4              ,{ 3 }
-            0  +      2 + 4              ,{ 4 }
-            0  +      2 + 4              ,{ 5 }
-            0  +      2 + 4              ,{ 6 }
-            0  +      2 + 4              ,{ 7 }
-            0  +      2 + 4              ,{ 8 }
-            0  +      2 + 4              ,{ 9 }
-            0  +          4 + 8          ,{ : }
-            0  +          4 + 8          ,{ ; }
-            0                            ,{ < }
-            0                            ,{ = }
-            0  +  1                      ,{ > }
-            0  +          4 + 8          ,{ ? }
-            0  +      2 + 4              ,{ @ }
-            0  +      2 + 4              ,{ A }
-            0  +      2 + 4              ,{ B }
-            0  +      2 + 4              ,{ C }
-            0  +      2 + 4              ,{ D }
-            0  +      2 + 4              ,{ E }
-            0  +      2 + 4              ,{ F }
-            0  +      2 + 4              ,{ G }
-            0  +      2 + 4              ,{ H }
-            0  +      2 + 4              ,{ I }
-            0  +      2 + 4              ,{ J }
-            0  +      2 + 4              ,{ K }
-            0  +      2 + 4              ,{ L }
-            0  +      2 + 4              ,{ M }
-            0  +      2 + 4              ,{ N }
-            0  +      2 + 4              ,{ O }
-            0  +      2 + 4              ,{ P }
-            0  +      2 + 4              ,{ Q }
-            0  +      2 + 4              ,{ R }
-            0  +      2 + 4              ,{ S }
-            0  +      2 + 4              ,{ T }
-            0  +      2 + 4              ,{ U }
-            0  +      2 + 4              ,{ V }
-            0  +      2 + 4              ,{ W }
-            0  +      2 + 4              ,{ X }
-            0  +      2 + 4              ,{ Y }
-            0  +      2 + 4              ,{ Z }
-            0  +  1                      ,{ [ }
-            0                            ,{ \ }
-            0  +              8          ,{ ] }
-            0                            ,{ ^ }
-            0                            ,{ _ }
-            0  +  1 + 2 + 4 + 8          ,{ ` }
-            0  +      2 + 4              ,{ a }
-            0  +      2 + 4              ,{ b }
-            0  +      2 + 4              ,{ c }
-            0  +      2 + 4              ,{ d }
-            0  +      2 + 4              ,{ e }
-            0  +      2 + 4              ,{ f }
-            0  +      2 + 4              ,{ g }
-            0  +      2 + 4              ,{ h }
-            0  +      2 + 4              ,{ i }
-            0  +      2 + 4              ,{ j }
-            0  +      2 + 4              ,{ k }
-            0  +      2 + 4              ,{ l }
-            0  +      2 + 4              ,{ m }
-            0  +      2 + 4              ,{ n }
-            0  +      2 + 4              ,{ o }
-            0  +      2 + 4              ,{ p }
-            0  +      2 + 4              ,{ q }
-            0  +      2 + 4              ,{ r }
-            0  +      2 + 4              ,{ s }
-            0  +      2 + 4              ,{ t }
-            0  +      2 + 4              ,{ u }
-            0  +      2 + 4              ,{ v }
-            0  +      2 + 4              ,{ w }
-            0  +      2 + 4              ,{ x }
-            0  +      2 + 4              ,{ y }
-            0  +      2 + 4              ,{ z }
-            0  +  1                      ,(* { *)
-            0                            ,{ | }
-            0  +              8          ,{   }
-            0                            ,{ ~ }
-            0                            ,{ DEL }
+    URL: boolean;               // URL has been found
+    URLStart, URLEnd: integer;  // URL start and end position in bytes
+    URLStartC: integer;
 
-            0  +      2 + 4              ,{ Ä }
-            0  +      2 + 4              ,{ Å }
-            0  +      2 + 4              ,{ Ç }
-            0  +      2 + 4              ,{ É }
-            0  +      2 + 4              ,{ Ñ }
-            0  +      2 + 4              ,{ Ö }
-            0  +      2 + 4              ,{ Ü }
-            0  +      2 + 4              ,{ á }
-            0  +      2 + 4              ,{ à }
-            0  +      2 + 4              ,{ â }
-            0  +      2 + 4              ,{ ä }
-            0  +      2 + 4              ,{ ã }
-            0  +      2 + 4              ,{ å }
-            0  +      2 + 4              ,{ ç }
-            0  +      2 + 4              ,{ é }
-            0  +      2 + 4              ,{ è }
-            0  +      2 + 4              ,{ ê }
-            0  +      2 + 4              ,{ ë }
-            0  +      2 + 4              ,{ í }
-            0  +      2 + 4              ,{ ì }
-            0  +      2 + 4              ,{ î }
-            0  +      2 + 4              ,{ ï }
-            0  +      2 + 4              ,{ ñ }
-            0  +      2 + 4              ,{ ó }
-            0  +      2 + 4              ,{ ò }
-            0  +      2 + 4              ,{ ô }
-            0  +      2 + 4              ,{ ö }
-            0  +          4              ,{ õ }
-            0  +          4              ,{ ú }
-            0  +          4              ,{ ù }
-            0  +          4              ,{ û }
-            0                            ,{ ü }
-            0  +      2 + 4              ,{ † }
-            0  +      2 + 4              ,{ ° }
-            0  +      2 + 4              ,{ ¢ }
-            0  +      2 + 4              ,{ £ }
-            0  +      2 + 4              ,{ § }
-            0  +      2 + 4              ,{ • }
-            0  +          4              ,{ ¶ }
-            0  +          4              ,{ ß }
-            0  +  1 +         8          ,{ ® }
-            0                            ,{ © }
-            0                            ,{ ™ }
-            0                            ,{ ´ }
-            0                            ,{ ¨ }
-            0  +  1 +         8          ,{ ≠ }
-            0  +  1                      ,{ Æ }
-            0  +              8          ,{ Ø }
-            0                            ,{ ∞ }
-            0                            ,{ ± }
-            0                            ,{ ≤ }
-            0                            ,{ ≥ }
-            0                            ,{ ¥ }
-            0                            ,{ µ }
-            0                            ,{ ∂ }
-            0                            ,{ ∑ }
-            0                            ,{ ∏ }
-            0                            ,{ π }
-            0                            ,{ ∫ }
-            0                            ,{ ª }
-            0                            ,{ º }
-            0                            ,{ Ω }
-            0                            ,{ æ }
-            0                            ,{ ø }
-            0                            ,{ ¿ }
-            0                            ,{ ¡ }
-            0                            ,{ ¬ }
-            0                            ,{ √ }
-            0                            ,{ ƒ }
-            0                            ,{ ≈ }
-            0                            ,{ ∆ }
-            0                            ,{ « }
-            0                            ,{ » }
-            0                            ,{ … }
-            0                            ,{   }
-            0                            ,{ À }
-            0                            ,{ Ã }
-            0                            ,{ Õ }
-            0                            ,{ Œ }
-            0                            ,{ œ }
-            0                            ,{ – }
-            0                            ,{ — }
-            0                            ,{ “ }
-            0                            ,{ ” }
-            0                            ,{ ‘ }
-            0                            ,{ ’ }
-            0                            ,{ ÷ }
-            0                            ,{ ◊ }
-            0                            ,{ ÿ }
-            0                            ,{ Ÿ }
-            0                            ,{ ⁄ }
-            0                            ,{ € }
-            0                            ,{ ‹ }
-            0                            ,{ › }
-            0                            ,{ ﬁ }
-            0                            ,{ ﬂ }
-            0  +      2 + 4              ,{ ‡ }
-            0  +      2 + 4              ,{ · }
-            0  +      2 + 4              ,{ ‚ }
-            0  +      2 + 4              ,{ „ }
-            0  +      2 + 4              ,{ ‰ }
-            0  +      2 + 4              ,{ Â }
-            0  +      2 + 4              ,{ Ê }
-            0  +      2 + 4              ,{ Á }
-            0  +      2 + 4              ,{ Ë }
-            0  +      2 + 4              ,{ È }
-            0  +      2 + 4              ,{ Í }
-            0  +      2 + 4              ,{ Î }
-            0                            ,{ Ï }
-            0                            ,{ Ì }
-            0                            ,{ Ó }
-            0                            ,{ Ô }
-            0                            ,{  }
-            0                            ,{ Ò }
-            0                            ,{ Ú }
-            0                            ,{ Û }
-            0                            ,{ Ù }
-            0                            ,{ ı }
-            0                            ,{ ˆ }
-            0                            ,{ ˜ }
-            0                            ,{ ¯ }
-            0                            ,{ ˘ }
-            0                            ,{ ˙ }
-            0                            ,{ ˚ }
-            0  +          4              ,{ ¸ }
-            0  +          4              ,{ ˝ }
-            0                            ,{ ˛ }
-            0  +  1 +         8          ){ #255 };
+    DefaultAttr: SmallWord;     // saved text attribute
 
-{ Variable in XP0.PAS: }
-{ charbuf     : string[255];}                  {82 Zeichen}
-{ attrbuf     : array [1..255] of smallword;}  {82 Attribute}
+    i : Integer;
 
-{ Attribute werden als Word erzeugt, fuer nicht Windows-Versionen }
-{ mussen die Zugriffe auf Attrbuf evtl angepasst werden zu "attrbuf[ebx],dl" }
+    j: Integer;
 
-procedure MakeListDisplay(const s: shortstring); assembler; {&uses ebx, esi, edi}
+  procedure _(Attr: SmallWord; ToPos, ToPosC: integer);
+  begin
+    if ToPos <= OutPos then exit;
+    TextAttr := Attr;
+    FWrt(x+OutPosC-StartC,y,Copy(s,OutPos,ToPos-OutPos));
+    OutPosC := ToPosC;
+    OutPOs := ToPos;
+  end;
 
-asm
-            mov edi,s
-            cld
-            xor ecx,ecx
-            mov cl,[edi]
-            inc edi
-            push ecx
-
-            xor ebx,ebx                    { s + color -> dispbuf }
-
-            mov dh,0
-            mov dl,textattr
-            mov al,' '                     { Abgrenzung links }
-            mov byte ptr charbuf[ebx],al
-            mov word ptr attrbuf[ebx*2],dx
-            inc ebx
-
-@dcopylp:   mov al,[edi]
-            mov byte ptr charbuf[ebx],al
-            mov word ptr attrbuf[ebx*2],dx
-            inc edi
-            inc ebx
-            loop @dcopylp
-
-            mov al,' '                     { Abgrenzung rechts }
-            mov byte ptr charbuf[ebx],al
-            mov word ptr attrbuf[ebx*2],dx
-            pop ecx
-
-            cmp ListXhighlight,0           { keine Hervorhebungen? }
-            je @nodh
-            mov al,'*'
-            call @testattr                 { sichert cx }
-            mov al,'_'
-            call @testattr
-            mov   al,'/'
-            call  @testattr
-
-@nodh:      mov byte ptr charbuf[0],cl
-            add ecx,ecx
-            mov word ptr attrbuf[0],cx
-            jmp @ende
-
-
-{-----------------------}
-
-@testattr:  pusha
-            mov edx,ecx
-            xor ebx,ebx
-
-            {-----------}
-@ta1:       push eax
-            mov ecx,edx
-            xor esi,esi
-
-@talp1:     cmp al,byte ptr charbuf[esi]          { Startzeichen checken }
-            jne @tanext1
-
-             mov bl,byte ptr charbuf[esi-1]
-             test byte ptr delimiters[ebx],1      { Byte vor Startzeichen ok? }
-             jz @tanext1
-             mov bl,byte ptr charbuf[esi+1]
-             test byte ptr delimiters[ebx],2      { Byte vor Startzeichen ok? }
-             jnz @tastart                          { Startzeichen gefunden }
-
-@tanext1:   inc esi
-            loop @talp1
-            jmp @taende
-
-            {-----------}
-
-@tastart:   mov edi,esi                            { Di = Byte nach Startzeichen }
-            dec ecx
-            jz @taende                             { Mindestens 1 Zeichen abstand }
-            dec ecx                                { min. ein Zeichen Abstand }
-            jz @taende
-            inc si                                 { dann Endzeichen Checken }
-
-@talp2:     cmp al,byte ptr charbuf[esi]
-            jne @tanext2
-
-             mov bl,byte ptr charbuf[esi-1]
-             test byte ptr delimiters[ebx],4      { Byte vor Endzeichen ok? }
-             jz @tanext2
-             mov bl,byte ptr charbuf[esi+1]
-             test byte ptr delimiters[ebx],8      { Byte nach Endzeichen ok? }
-             jnz @tafound2                        { Endzeichen gefunden }
-
-@tanext2:   inc esi
-            loop @talp2
-            jmp @taende
-
-            {------------}
-
-@tafound2:  push ecx
-            mov ecx,esi
-            sub ecx,edi
-            dec ecx                                { cx <- Anzahl hervorgeh. Zeichen }
-            mov ah,listhicol
-
-@tacopy1:   mov al,byte ptr charbuf[edi+1]        { hervorgehobenen Text eins nach }
-            mov byte ptr charbuf[edi],al          { vorne kopieren; Farbe tauschen }
-            mov byte ptr attrbuf[edi*2],ah
-            inc edi
-            loop @tacopy1
-
-            pop ecx
-            dec ecx                                { restliche Zeichen }
-            jz @addspace
-
-@tacopy2:   mov al,byte ptr charbuf[edi+2]         { Zeichen nach links schieben }
-            mov byte ptr charbuf[edi],al
-            mov ah,byte ptr attrbuf[edi*2+4]       { Attribute ebenso !!! }
-            mov byte ptr attrbuf[edi*2],ah
-            inc edi
-            dec ecx
-            jns  @tacopy2
-
-@addspace:  mov word ptr charbuf[edi],'  '        { 2 Leerzeichen anhÑngen }
-            pop eax
-            jmp @ta1                               { ... und das Ganze nochmal }
-
-@taende:    pop eax
-            mov ecx,edx
-            popa
-            ret
-            // this is end of internal function testattr
-{-------------------------}
-@ende:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
-end; { of MakeListdisplay }
-{$ENDIF }
-
-procedure ListDisplay(x,y:word; var s: string);
-var
-  s0: shortstring;
 begin
-  s0:= s;
-  makelistdisplay(s0);
-  Consolewrite(x,y,length(s0));
+  if not ListXHighlight then begin
+    FWrt(x,y,UTF8FormS(s,StartC,Columns));
+    exit;
+  end;
+
+  DefaultAttr := TextAttr;
+  
+  Pos := 1; PosC := 1;
+  OutPos := 1; OutPosC := 1;
+
+  URLStartC := 0;
+  HiChar := 0;
+
+  // put a space at the start
+  LastC := 32;
+  LastB := UNICODE_BREAK_SP;
+
+  // and at the end
+  s := s+' ';
+
+  URL := FindUrl(s, URLStart, URLEnd);
+
+  while (Pos <= Length(s)) do
+  begin
+    NewPos := Pos;
+    C := UTF8GetCharNext(s, NewPos);
+    W := UnicodeCharacterWidth(C);
+    B := UnicodeCharacterLineBreakType(C);
+
+    if PosC <= StartC then begin OutPos := Pos; OutPosC := PosC; end;
+
+    if URL and (Pos >= URLStart) and (URLStartC <= 0) then
+    begin
+      URLStartC := PosC;
+      HiChar := 0; // URLs break the highlighting
+    end else
+
+    if URL and (Pos >= URLStart) and (Pos < UrlEnd) then
+    begin
+    end else
+
+    if URL and (Pos >= URLEnd) and (URLStartC > 0) then
+    begin
+      _(DefaultAttr,URLStart, URLStartC);
+      _(ListHiCol,  Pos,      PosC);
+      URL := false;
+    end else
+
+    if (HiChar<>0) and (C=HiChar) then
+    begin
+      // Count the delimiters seen
+      Inc(HiDelimCount);
+    end else
+
+    if (HiChar<>0) and (LastC=HiChar) and not (B in [ UNICODE_BREAK_AL,
+      UNICODE_BREAK_ID,UNICODE_BREAK_GL, UNICODE_BREAK_UNKNOWN,
+      UNICODE_BREAK_CM ]) and (HiWordCCount >= 1) then
+    begin
+      // replace continuations by ' '
+      if(HiDelimCount > 1) and (HiChar <> Ord('_')) then
+        for i := HiStart+1 to Pos-1 do
+          if Ord(s[i]) = HiChar then
+            s[i] := ' ';
+      _(DefaultAttr, HiStart, HiStartC);
+      Inc(OutPos); // ignore starting delimiter
+      Dec(PosC,2);
+      _(ListHiCol, Pos-1, PosC);
+      Inc(OutPos); // ignore ending delimiter
+      HiChar := 0;
+    end else
+
+    if (HiChar<>0) and (B in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,
+      UNICODE_BREAK_NU ]) then
+    begin
+      // count "word" chars
+      Inc(HiWordCCount);
+    end else
+
+    if (HiChar<>0) and not (B in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,
+      UNICODE_BREAK_GL, UNICODE_BREAK_UNKNOWN, UNICODE_BREAK_CM,
+      UNICODE_BREAK_B2, UNICODE_BREAK_BA, UNICODE_BREAK_NU,
+      UNICODE_BREAK_BB, UNICODE_BREAK_HY, UNICODE_BREAK_SP ]) then
+    begin
+      // not a valid highlighting sequence, ignore
+      HiChar := 0;
+    end else
+
+    // check for c < 256 to avoid range check error with fpc
+    if (HiChar = 0) and (C <= 255) and (C in [Ord('*'),Ord('_'),Ord('/')]) and not
+      (LastB in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,UNICODE_BREAK_GL,
+      UNICODE_BREAK_UNKNOWN, UNICODE_BREAK_CM, UNICODE_BREAK_NU ]) then
+    begin
+      HiStart := Pos;
+      HiStartC := PosC;
+      HiDelimCount := 0;
+      HiWordCCount := 0;
+      HiChar := C;
+    end;
+
+    LastC := C;
+    LastB := B;
+
+    Pos := NewPos;
+    if Pos <= Length(s) then Inc(PosC, W);
+  end;
+
+  // the last char is the space inserted above and should not be output
+  _(DefaultAttr,Length(s),PosC);
+
+  TextAttr := DefaultAttr;
+  // fill end of line
+  if(OutPosC <= Columns) then
+    FWrt(Max(1,x+OutPosC-StartC),y,sp(Min(Columns,Columns-OutPosC+StartC)));
 end;
+
 
 procedure interr(const txt:string);
 begin

@@ -26,23 +26,20 @@ unit lister;
 interface
 
 uses
-  xpglobal,
-  {$IFDEF NCRT }
-  xpcurses,
-  {$ENDIF }
-  typeform,
-  sysutils, classes,
-  inout,maus2,keys,winxp,resource;
+  classes,
+  xpglobal, keys;
 
-const
-  ListHelpStr: string[8] = 'Hilfe';
+var
+  ListHelpStr: string[8] = 'Hilfe'; //todo: international
   Listunvers: byte = 0;
   Listhalten: byte = 0;
   Listflags: longint = 0;
-  ListerBufferCount = 16383;            { LÑnge des Eingangspuffers }
 
 const
-  mcursor: boolean = false;             { Auswahlcursor fÅr Blinde }
+  ListerBufferCount = 16383;            { Laenge des Eingangspuffers }
+
+var
+  mcursor: boolean = false;             { Auswahlcursor fuer Blinde }
 
 type
   listcol = packed record
@@ -60,40 +57,41 @@ type
 
   TLister = class;
 
-  TListerConvertEvent = procedure(var buf; Size: word) of object; { fÅr Zeichensatzkonvert. }
+  TListerConvertEvent = procedure(var buf; Size: Word) of object; { fuer Zeichensatzkonvert. }
   TListerTestMarkEvent = function(const s: string; block: boolean): boolean;
   TListerEnterEvent = procedure(const s: string);
+  TListerTestSelectEvent = function(const s: string; down: boolean): boolean;
   TListerKeyPressedEvent = procedure(LSelf: TLister; var t: taste);
   TListerShowLinesEvent = procedure(s: string);
-  TListerDisplayLineEvent = procedure(x, y: word; var s: string);
+  TListerDisplayLineEvent = procedure(x, y, start_col, columns: Integer; var s: String);
   TListerColorEvent = function(const s: string; line: longint): byte;
 
-  { mîgliche Optionen fÅr den Lister                             }
+  { moegliche Optionen fuer den Lister                             }
   {                                                              }
   { SB  =  SelBar                  M   =  markable               }
-  { F1  =  "F1-Hilfe"              S   =  Suchen mîglich         }
-  { NS  =  NoStatus                NA  =  ^A nicht mîglich       }
+  { F1  =  "F1-Hilfe"              S   =  Suchen moeglich         }
+  { NS  =  NoStatus                NA  =  ^A nicht moeglich       }
   { CR  =  mit Enter beendbar      MS  =  SelBar umschaltbar     }
   { NLR =  kein l/r-Scrolling      APGD=  immer komplettes PgDn  }
   {                                DM  =  direkte Mausauswahl    }
   { VSC =  vertikaler Scrollbar    ROT =  Taste ^R aktivieren    }
 
   liststat = packed record
-    statline: boolean;
+    statline: boolean;  //todo: make set from booleans?
     wrapmode: boolean;
-    markable: boolean;                  { markieren mîglich   }
+    markable: boolean;                  { markieren moeglich   }
     endoncr: boolean;                   { Ende mit <cr>       }
     helpinfo: boolean;                  { F1=Hilfe            }
-    wrappos: Integer;
+    wrappos: byte;
     noshift: boolean;                   { kein links/rechts-Scrolling }
     markswitch: boolean;                { SelBar umschaltbar  }
-    maysearch: boolean;                 { Suchen mîglich      }
-    noctrla: boolean;                   { ^A nicht mîglich    }
+    maysearch: boolean;                 { Suchen moeglich      }
+    noctrla: boolean;                   { ^A nicht moeglich    }
     AllPgDn: boolean;                   { immer komplettes PgDn }
     directmaus: boolean;                { Enter bei Maus-Auswahl }
     vscroll: boolean;                   { vertikaler Scrollbar   }
     scrollx: Integer;
-    rot13enable: boolean;               { ^R mîglich }
+    rot13enable: boolean;               { ^R moeglich }
     autoscroll: boolean;
     Signatur: boolean;                  { Highlight beginning from signatur }
   end;
@@ -113,6 +111,7 @@ type
     FOnConvert: TListerConvertEvent;
     FOnTestMark: TListerTestMarkEvent;
     FOnEnter: TListerEnterEvent;
+    FOnTestSelect: TListerTestSelectEvent;
     FOnKeypressed: TListerKeyPressedEvent;
     FOnShowLines: TListerShowLinesEvent;
     FOnDisplayLine: TListerDisplayLineEvent;
@@ -135,7 +134,6 @@ type
     function GetMarked(Index: Integer): boolean;
     procedure SetMarked(Index: Integer; NewValue: boolean);
     procedure SetHeaderText(s: String);
-    function make_list(var buf: ListerCharArray; BufLen, Wrap: Integer): Integer;
 
   private
     FIsUTF8: boolean;
@@ -147,6 +145,8 @@ type
   public
     col: listcol;
     stat: liststat;
+    suchstr:  string; //persistent?
+    suchcase: boolean; { true -> Case-sensitiv }
 
     constructor Create;
     constructor CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
@@ -156,7 +156,7 @@ type
     // append one line
     procedure AddLine(Line: String);
     // read file from Ofs into Lines of Lister
-    procedure ReadFromFile(const Filename: string; ofs: Integer);
+    procedure ReadFromFile(const Filename: string; ofs: Integer; line_break: boolean);
     // Show Lister, Result is true if ESC was pressed
     function Show: Boolean;
     procedure SetArrows(x, y1, y2, acol, bcol: byte; backchr: char);
@@ -176,6 +176,7 @@ type
     property OnConvert: TListerConvertEvent read FOnConvert write FOnConvert;
     property OnTestMark: TListerTestMarkEvent read FOnTestMark write FOnTestMark;
     property OnEnter: TListerEnterEvent read FOnEnter write FOnEnter;
+    property OnTestSelect: TListerTestSelectEvent read FOnTestSelect write FOnTestSelect;
     property OnKeyPressed: TListerKeyPressedEvent read FOnKeyPressed write FOnKeyPressed;
     property OnShowLines: TListerShowLinesEvent read FOnShowLines write FOnShowLines;
     property OnDisplayLine: TListerDisplayLineEvent read FOnDisplayline write FOnDisplayLine;
@@ -192,71 +193,18 @@ var
 implementation { ------------------------------------------------ }
 
 uses
-{$IFDEF WIn32 }
-  xpwin32,
-{$ENDIF }
-  gpltools,xp0,xp1,clip,mime,utftools,xpkeys;
+  sysutils,
+  {$IFDEF NCRT }
+  xpcurses,
+  {$ENDIF }
+  xpunicode_lbr,
+  xpcharset,
+  xpcharset_maps,
+  typeform,
+  inout, maus2, winxp, resource,xp1, clip,
+  xp0,mime,xpkeys;
 
-// Zerlegen des Buffers in einzelne Zeilen
-
-function TLister.make_list(var buf: ListerCharArray; BufLen, Wrap: Integer):
-  Integer;
-var
-  i, j: Integer;
-  s: string;
-  MaxLen: Integer;                      // Maximale Leselaenge
-  TempIJ: Integer;                      // Temporaer i + j in der Hauptschleife
-begin
-  Result := 0;
-  if BufLen = 0 then exit;
-  if wrap = 0 then wrap := MaxInt div 2; // ‹berlauf vermeiden
-  j := 0;
-  while j < BufLen do
-  begin
-    // vorher auswerten, um Rechenzeit in der Hauptschleife zu sparen
-    MaxLen := Min(Wrap + j, BufLen);
-    TempIJ := j;
-
-    // solange, bis entweder Zeilenende, Wrap-Bereich Åberschritten,
-    // LÑnge des Buffers erreicht oder maximale ZeilenÑnge erreicht
-    while (buf[TempIJ] <> #13) and (buf[TempIJ] <> #10) and (TempIJ < MaxLen) do
-      inc(TempIJ);
-    i := TempIJ - j;                    // i = lÑnge der neuen Zeile
-
-    // Spezialbehandlung, wenn Zeile umgebrochen werden mu·
-    if i = wrap then
-    begin
-      i := wrap;
-      while (i > 20) and (Buf[i + j] <> ' ') do
-        dec(i);
-      // wenn keine Umbruchstelle gefunden wurde, Wrap-LÑnge Åbernehmen
-      // ansonsten Leerzeichen Åberspringen
-      if i = 20 then
-        i := wrap
-      else
-        inc(i);
-    end;
-
-    // wenn kein Zeilenende gefunden wurde, aber Puffer alle ist
-    if i + j = BufLen then
-    begin
-      Result := i;
-      Move(Buf[j], Buf[0], i);
-      Exit;
-    end
-    else
-    begin
-      SetLength(s, i);
-      if i > 0 then
-        Move(Buf[j], S[1], i);
-      AddLine(s);
-    end;
-    // CRLF Åberlesen
-    if Buf[i + j] = #13 then inc(i);
-    if Buf[i + j] = #10 then inc(i);
-    inc(j, i);
-  end;
-end;
+{ TLister }
 
 constructor TLister.Create;
 begin
@@ -283,7 +231,7 @@ begin
   FIsUTF8 := false;
   
   FLines := TStringList.Create;
-  SignaturPosition := MaxInt; // no signature found
+  SignaturPosition := MaxInt;
 end;
 
 constructor TLister.CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
@@ -336,7 +284,7 @@ procedure TLister.SetCP437;
 begin
   if not UTF8Mode then exit;
   if not FIsUTF8 then exit;
-  SetLogicalOutputCharset(csCP437);
+  SetLogicalOutputCharset(csInternal);
   FIsUTF8 := false;
 end;
 
@@ -372,56 +320,50 @@ begin
     insert(sp(8 - (p - 1) mod 8), Line, p);
     p := pos(#9, Line);
   end;
-  if (Line = '-- ') and (SignaturPosition = MaxInt) then
-    SignaturPosition := Lines.Count;
   // add one line, not marked
   Lines.AddObject(Line, nil);
 end;
 
-procedure TLister.ReadFromFile(const Filename: string; ofs: Integer);
-var
-  f: file;
-  s: string;
-  p: ^ListerCharArray;
-  ps: word;
-  rp: Integer;
-  rr: Integer;
-  fm: byte;
+procedure TLister.ReadFromFile(const Filename: string; ofs: Integer; line_break: boolean);
+var input: TFileStream;
+    breaker: TUnicodeLineBreaker;
 begin
   FHeaderText := fitpath(FileUpperCase(FileName), 40);
-  assign(f, FileName);
-  fm := filemode; filemode := fmOpenRead + fmShareDenyWrite;
-  reset(f, 1);
-  filemode := fm;
-  ps := ListerBufferCount;
-  getmem(p, ps);
-  rp := 0; rr := 0;
-  if ioresult = 0 then
-  begin
-    seek(f, ofs);
-    repeat
-      blockread(f, p^[rp], ps - rp, rr);
-      if Assigned(FOnConvert) and (rr > 0) then FOnConvert(p^[rp], rr);
-      // TempRP := rp;
-      rp := make_list(p^, rr + rp, stat.wrappos);
-    until eof(f);
-    close(f);
-    if rp > 0 then
-    begin { den Rest der letzten Zeile noch anhÑngen.. }
-      SetLength(s, rp);
-      Move(p^[0], s[1], rp);
-      AddLine(s);
+
+  Input := TFileStream.Create(Filename,fmOpenRead);
+  try
+    Input.Position := ofs; 
+    Breaker := TUnicodeLineBreaker.Create;
+    try
+      if FUTF8Mode then Breaker.SetUTF8
+      else Breaker.SetCodePage(CP437TransTable);
+      Breaker.MaxWidth := iif(Line_Break,self.w,MaxInt);
+      Breaker.TabWidth := 8;
+      Breaker.Sink := Lines;
+      Breaker.AddData(Input);      
+      Breaker.FlushData;
+    finally
+      Breaker.Free;
     end;
-    // Sonderbehandlung fÅr die letzte Leerzeile
-//    if p^[rr + TempRP - 1] = #10 then AddLine('');
+  finally
+    Input.Free;
   end;
-  freemem(p, ps);
+
+  // search for begin of signature
+  if stat.Signatur then
+  begin
+    SignaturPosition := Lines.IndexOf('-- ');
+    if SignaturPosition = -1 then
+      SignaturPosition := MaxInt; // no signature found
+  end;
 end;
 
+
+var //eliminate "var not initialized" warning by using static variables
+  oldtcs: TMIMECharsets;
+  oldlcs: TMIMECharsets;
+
 function TLister.Show: Boolean;
-const
-  suchstr: string = '';
-  suchcase: boolean = false;            { true -> Case-sensitiv }
 var
   DispLines: Integer; // Screenlines to Display (List.Height - Statusline)
   y: integer;
@@ -431,23 +373,20 @@ var
   FirstLine: integer;                   // number of first line in display
   f7p, f8p: longint;
   suchline: longint;                    { Zeilennr.           }
-  spos, slen: integer;                  { Such-Position/LÑnge }
+  spos, slen: integer;                  { Such-Position/Laenge }
 
   mzo, mzu: boolean;
   mzl, mzr: boolean;
-  mb: boolean;                          { Merker fÅr Inout.AutoBremse }
+  mb: boolean;                          { Merker fuer Inout.AutoBremse }
   vstart,
     vstop: integer;                     { Scrollbutton-Position }
   _unit: longint;
   scrolling: boolean;
   scrollpos: integer;
   scroll1st: integer;
-  mausdown: boolean;                    { Maus innerhalb des Fensters gedrÅckt }
+  mausdown: boolean;                    { Maus innerhalb des Fensters gedrueckt }
   oldmark : boolean;
   oldselb : boolean;
-
-  oldtcs: TMIMECharsets;
-  oldlcs: TMIMECharsets;
 
   procedure showstat;
   begin
@@ -519,14 +458,20 @@ var
         else
           attrtxt(col.coltext);
 
-      if xa = 1 then
-        s := forms(s, w)
-      else
-        s := forms(Mid(s, xa), w);
+
       if Assigned(FOnDisplayLine) then
-        FOnDisplayLine(l, y + i, s)
+        FOnDisplayLine(l, y + i, xa, w, s)
       else
+      begin
+        if FUTF8Mode then
+          s := UTF8FormS(s,xa,w)
+        else if xa = 1 then
+          s := forms(s, w)
+        else
+          s := forms(Mid(s, xa), w);
         FWrt(l, y + i, s);
+      end;
+
       if (FirstLine + i = suchline) and (slen > 0) and (spos >= xa) and (spos
         <= xa + w - slen) then
       begin
@@ -800,8 +745,6 @@ var
     end;
   end;
 
-var
- exitcode: integer;
 begin // Show
   startpos := minmax(startpos, 0, Lines.Count - 1);
   DispLines := Height - iif(stat.statline, 1, 0);
@@ -811,7 +754,7 @@ begin // Show
     OldTCS := GetConsoleOutputCharset;
     OldLCS := GetLogicalOutputCharset;
     SetConsoleOutputCharset(csUTF8);
-    SetLogicalOutputCharset(csCP437);
+    SetLogicalOutputCharset(csInternal);
   end;
   
   if startpos > DispLines then
@@ -845,10 +788,10 @@ begin // Show
   oldselb := true; {!}
 
   repeat
+
     if SelBar then
     begin
       FSelLine := MinMax(FSelLine, 0, Lines.Count -1);
-(*
       while assigned(FOnTestSelect) and not FOnTestSelect(Lines[FSelLine],true) do
       begin
         if FSelLine < Lines.Count - 1 then Inc(FSelLine) else break;
@@ -858,7 +801,6 @@ begin // Show
       begin
         if FSelLine > 0 then Dec(FSelLine) else break;
       end;
-*)      
       FirstLine := Min(FirstLine, FSelLine);
       FirstLine := Max(FirstLine, FSelLine-DispLines +1);
       FirstLine := Max(FirstLine, 0);
@@ -874,6 +816,7 @@ begin // Show
     mauszuo:=false; // (pl<>nil) and (pl^.prev<>nil);
     mauszuu:=false; // (pl<>nil) and (pl^.next<>nil);
     mauszul := false; mauszur := false;
+    
     if (FirstLine = 0) or (_mausy > y) then AutoUp := false;
     if (FirstLine + DispLines > lines.count - 1) or (_mausy < y + DispLines -
       1) then AutoDown := false;
@@ -884,11 +827,13 @@ begin // Show
     end
     else
       get(t, curoff);
+
     {$IFDEF Win32 }
-    if t = #0#137 then                                                        
+    if t = #0#137 then
       if fileexists('lister.bat') then
         shell('lister.bat + ' + clip2string,0,3);
     {$ENDIF }
+
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;
 
@@ -1165,5 +1110,202 @@ initialization
       colsignatur := $F;
     end;
 finalization
+{
+  $Log: lister.pas,v $
+  Revision 1.95  2004/01/15 01:32:34  mk
+  - fixed NextLine: Last Line was deleted
 
+  Revision 1.94  2003/10/02 20:50:12  cl
+  - TLister.OnDisplay now gets the full line to be displayed
+  - tweaks and optimisations for xp1.ListDisplay
+
+  Revision 1.93  2003/09/29 20:47:12  cl
+  - moved charset handling/conversion code to xplib
+
+  Revision 1.92  2003/09/28 11:00:30  mk
+  - removed unused variable in ReadFromFile
+
+  Revision 1.91  2003/09/25 20:27:39  cl
+  - BUGFIX: UTF8Mid works with characters, not columns => use extended version
+    of UTF8FormS for lister.
+
+  Revision 1.90  2003/09/21 20:17:39  mk
+  - rewrite of Listdisplay:
+    removed Assemlber function MakeListDisplay, now
+    recoded in Pascal in ListDisplay
+  - use Integer instead of xpWord in TListerDisplayLineEvent
+  - removed global Variable CharBuf
+  - new parameters for ConsoleWrite, removed CharBuf support
+  - Highlight Lines with URL in Lister
+  - Added support for Highlighting in Lister with Unicode-Display
+
+  Revision 1.89  2003/09/11 22:30:04  mk
+  - added special color for signatures
+
+  Revision 1.88  2003/08/26 01:30:22  mk
+  - improved display of actual line in lister (showstat)
+
+  Revision 1.87  2003/08/21 18:41:25  cl
+  - some fixes for last commits
+
+  Revision 1.86  2003/08/20 20:39:21  cl
+  - fixed one more "list index out of bounds" error
+
+  Revision 1.85  2003/08/20 18:24:21  cl
+  - fixed several off-by-one errors in lister component
+
+  Revision 1.84  2003/08/05 23:34:34  cl
+  - xpunicode_linebreak was too long unit name for FPC/1.0.6 on Linux
+
+  Revision 1.83  2003/05/10 15:44:30  mk
+  - show two more lines when listing messages after PgDown
+
+  Revision 1.82  2003/05/01 10:53:59  mk
+  - restored correct page down handling, when stat.allpgdn = true
+
+  Revision 1.81  2003/04/28 20:18:57  cl
+  - CRLF at the end of a text file is now uniformly handled as the start of
+    an additional line.
+
+  Revision 1.80  2003/04/03 15:56:00  mk
+  - added handling ofs in TLister.ReadFromFile,
+    this fixes problem with double header in messages
+
+  Revision 1.79  2003/03/16 19:02:05  cl
+  - initial support for langage files in encodings different from CP437
+
+  Revision 1.78  2003/02/13 14:41:57  cl
+  - implemented correct display of UTF8 in the lister
+  - implemented Unicode line breaking in the lister
+
+  Revision 1.77  2003/01/07 00:20:37  cl
+  - added OnTestSelect event
+
+  Revision 1.76  2002/12/21 05:37:50  dodi
+  - removed questionable references to Word type
+
+  Revision 1.75  2002/12/14 09:25:17  dodi
+  - removed gpltools and encoder units
+
+  Revision 1.74  2002/12/14 07:31:27  dodi
+  - using new types
+
+  Revision 1.73  2002/12/12 11:58:40  dodi
+  - set $WRITEABLECONT OFF
+
+  Revision 1.72  2002/12/04 16:56:58  dodi
+  - updated uses, comments and todos
+
+  Revision 1.71  2002/08/01 17:21:18  mk
+  - fixed TLister.NextMarked: AV when Lines.Count = 0 and MarkPos = 1
+
+  Revision 1.70  2002/05/30 13:28:33  mk
+  - added automatic UTF-8 detection to lister
+
+  Revision 1.69  2002/04/07 18:36:40  mk
+  - fixed some with newsgroup lists
+
+  Revision 1.68  2002/04/06 18:37:45  mk
+  - fixed Ctrl-A in Lister (bug in setmark)
+
+  Revision 1.67  2002/03/03 15:45:54  cl
+  - changed TListerColorEvent's first parameter from var => const
+
+  Revision 1.66  2002/01/29 11:47:38  mk
+  - fixed crash in getline (xp1o.pas)
+
+  Revision 1.65  2002/01/03 19:19:13  cl
+  - added and improved UTF-8/charset switching support
+
+  Revision 1.64  2001/12/30 19:56:48  cl
+  - Kylix 2 compile fixes
+
+  Revision 1.63  2001/10/22 21:55:46  cl
+  - killed more range check errors
+
+  Revision 1.62  2001/10/20 17:26:39  mk
+  - changed some Word to Integer
+    Word = Integer will be removed from xpglobal in a while
+
+  Revision 1.61  2001/10/20 17:12:36  ml
+  - range check errorfix
+  - removed some hints and warnings
+  - corrected debuglog
+  - 2 more keytranslations for xterm
+
+  Revision 1.60  2001/10/10 20:38:52  mk
+  - removed (unnecessary) ScreenWidth from Lister option VSC
+  - use correct scrollbar position with more than 80 screen columns
+  - show scrollbar only if listscroller is enabled
+
+  Revision 1.59  2001/09/26 23:34:18  mk
+  - fixed FPC compile error with newest snapshot:
+    Error: Self can only be an explicit parameter in message handlers or class methods
+
+  Revision 1.58  2001/09/20 18:28:23  cl
+  - mouse support in message lister
+
+  Revision 1.57  2001/09/15 19:54:56  cl
+  - compiler-independent mouse support for Win32
+
+  Revision 1.56  2001/09/10 15:58:01  ml
+  - Kylix-compatibility (xpdefines written small)
+  - removed div. hints and warnings
+
+  Revision 1.55  2001/09/08 16:29:29  mk
+  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
+  - some AnsiString fixes
+
+  Revision 1.54  2001/07/31 16:18:39  mk
+  - removed some unused variables
+  - changed some LongInt to DWord
+  - removed other hints and warnings
+
+  Revision 1.53  2001/07/28 12:04:08  mk
+  - removed crt unit as much as possible
+
+  Revision 1.52  2001/07/21 13:44:36  mk
+  - Added TLister method UnmarkLine
+
+  Revision 1.51  2001/05/27 18:22:46  ma
+  - fixed: selection bar did not work properly
+
+  Revision 1.50  2001/04/07 11:37:25  ma
+  - "search" function now working as usual
+
+  Revision 1.49  2001/02/03 08:45:07  mk
+  - published lines property
+
+  Revision 1.48  2001/01/03 08:01:49  mo
+  -Richtige Positionierung des cursors und der Zeilenposition bei Suche ñS-
+
+  Revision 1.47  2000/12/26 16:40:27  mk
+  - readded search function
+
+  Revision 1.46  2000/12/26 12:10:00  mk
+  - fixed a litte bug in pgend
+
+  Revision 1.45  2000/12/26 09:44:48  mk
+  - fixed some more bugs
+
+  Revision 1.44  2000/12/25 22:50:45  mk
+  - MarkPos in FirstMarked should be 0
+
+  Revision 1.43  2000/12/25 20:40:24  mk
+  - fixed FirstMarked
+
+  Revision 1.42  2000/12/25 20:30:20  mk
+  - test if Event functions are not nil
+
+  Revision 1.41  2000/12/25 14:02:40  mk
+  - converted Lister to class TLister
+
+  Revision 1.40  2000/12/22 10:09:04  mk
+  - compatiblity update for fpc
+
+  Revision 1.39  2000/12/22 10:04:33  mk
+  - nearly complete rewrite
+
+}
 end.
+

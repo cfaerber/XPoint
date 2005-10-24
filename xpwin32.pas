@@ -30,7 +30,7 @@ unit xpwin32;
 interface
 
 uses
-  UTFTools,Mime, Classes;
+  Mime, Classes, xpcharset;
 
 { Gibt die Anzahl der Bildschirmzeilen/Spalten zurÅck }
 function SysGetScreenLines: Integer;

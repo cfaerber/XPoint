@@ -30,7 +30,7 @@ unit xpos2;
 interface
 
 uses
-  UTFTools, Mime;
+  xpcharset, Mime;
 
 { Anzahl der aktuellen Bildschirmzeilen/Spalten }
 function SysGetScreenLines: Integer;

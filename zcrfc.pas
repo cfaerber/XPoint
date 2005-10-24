@@ -171,7 +171,7 @@ type TDotEscapeStream = class(TStream)
 implementation
 
 uses
-  xpheader, UTFTools, xpmakeheader, resource, Debug;
+  xpheader, xpcharset, xpcharset_streams, xpmakeheader, resource, Debug, xpstreams_codec;
 
 const
   cr: char = #13;

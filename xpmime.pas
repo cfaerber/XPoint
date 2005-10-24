@@ -28,7 +28,7 @@ unit xpmime;
 interface
 
 uses  xpglobal,sysutils,typeform,montage,keys,lister,database,
-      resource,xpheader,xp0,xp1,xpkeys,utftools,Mime;
+      resource,xpheader,xp0,xp1,xpkeys,Mime, xpcharset;
 
 
 type  TMimePart = class { Teil einer Multipart-Nachricht }
@@ -76,7 +76,7 @@ uses
   {$ENDIF }
   classes, 
   xpstreams,
-  xp1o,xp3,xp3o,xp3ex;
+  xp1o,xp3,xp3o,xp3ex, xpstreams_partial, xpcharset_streams;
 
 
 { lokale Variablen von SelectMultiPart() und SMP_Keys }

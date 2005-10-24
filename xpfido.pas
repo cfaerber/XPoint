@@ -1441,7 +1441,7 @@ var s   : string;
 begin
   List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/APGD/');
   rmessage(2110);   { 'Lade Fileliste ...' }
-  List.ReadFromFile(FreqLst,0);
+  List.ReadFromFile(FreqLst,0, true);
   closebox;
   List.OnTestMark := fstestmark;
   sichern(p);
@@ -2150,7 +2150,7 @@ begin       { FidoSeekfile:string;************************ }
   if not brk then    { gefundene Dateien Listen und ggf. requesten }
   begin
     List := TLister.CreateWithOptions(1,ScreenWidth,4,screenlines-fnkeylines-1,-1,'/NS/SB/M/NA/S/NLR/APGD/');
-    List.ReadFromFile(seekfile,0);
+    List.ReadFromFile(seekfile,0, false);
     List.OnTestMark := fstestmark;
     List.OnKeypressed := listext;                { 'D' + 'W' }
     llh:=false; listmakros:=0;

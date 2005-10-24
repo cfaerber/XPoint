@@ -644,7 +644,7 @@ begin
     end;
   close(t1);
   close(t2);
-  List.ReadFromFile(tname,0);
+  List.ReadFromFile(tname,0, false);
   List.HeaderText := s;
   _era(tname);
   closebox;

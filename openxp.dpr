@@ -82,8 +82,6 @@ uses
   StringTools in 'stringtools.pas',
   Timer in 'timer.pas',
   typeform in 'typeform.pas',
-  Unicode in 'unicode.pas',
-  UTFTools in 'utftools.pas',
   viewer in 'viewer.pas',
   win2 in 'win2.pas',
   winxp in 'winxp.pas',
@@ -177,10 +175,20 @@ uses
   main in 'main.pas',
   xpsendmessage_attach_analyze in 'xpsendmessage_attach_analyze.pas',
   mime in 'mime.pas',
-  charmaps in 'charmaps.pas',
   mime_analyze in 'mime_analyze.pas',
   mime_base64 in 'mime_base64.pas',
-  mime_qp in 'mime_qp.pas';
+  mime_qp in 'mime_qp.pas',
+  xpunicode_lbr in 'xplib\xpunicode_lbr.pas',
+  xpcharset in 'xplib\xpcharset.pas',
+  xpcharset_codec in 'xplib\xpcharset_codec.pas',
+  xpcharset_maps in 'xplib\xpcharset_maps.pas',
+  xpcharset_streams in 'xplib\xpcharset_streams.pas',
+  xpstreams in 'xplib\xpstreams.pas',
+  xpstreams_codec in 'xplib\xpstreams_codec.pas',
+  xpstreams_partial in 'xplib\xpstreams_partial.pas',
+  xpstreams_pascal in 'xplib\xpstreams_pascal.pas',
+  xpstreams_temporary in 'xplib\xpstreams_temporary.pas',
+  xpunicode in 'xplib\xpunicode.pas';
 
 {$R *.res}
 

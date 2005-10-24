@@ -147,27 +147,10 @@ begin
       exit;
       end
     else
-    if useclip and (s='CLIPBOARD (URL)') then begin               { Markierten Text als URL}
-      s:=getline;
-      y:=pos('HTTP://',UpperCase(s));                             {WWW URL ?}
-      if y=0 then y:=pos('HTTPS://',UpperCase(s));                {HTTPS URL ?}
-      if y=0 then y:=pos('FTP://',UpperCase(s));                  {oder FTP ?}
-      if y=0 then y:=pos('WWW.',UpperCase(s));                    {oder WWW URL ohne HTTP:? }
-      if y<>0 then
-      begin
-        s:=mid(s,y) + ' '; 
-        y:=1;
-        while (y<=length(s)) and (s[y] in urlchars) do
-        begin
-          // "," is a valid url char, but test for things like
-          // "see on http:///www.openxp.de, where" ...
-          // in this case, "," does not belong to the url
-          if ((s[y] = ',') or (s[y] = '.')) and (y<Length(s)) and (not (s[y+1] in urlchars)) then
-            break;
-          inc(y); {Ende der URL suchen...}
-        end;
-        s:=leftStr(s,y-1);
-      end;
+    if useclip and (s='CLIPBOARD (URL)') then
+    begin               { Markierten Text als URL}
+     if FindUrl(s, x, y) then
+        s := Copy(s, x, y-x);
       string2clip(s);
       ReadFilename:=false;
       exit;

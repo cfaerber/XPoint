@@ -88,7 +88,7 @@ uses xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xpsendmessage,xp8,xp9bp,xpnt,xp_pgp,win
 {$IFDEF Kylix}
   xplinux,
 {$ENDIF}  
-  xpmakeheader, xpspam, xpstreams;
+  xpmakeheader, xpspam, xpstreams, xpstreams_pascal, xpstreams_partial;
 
 
 { Customselectroutinen fuer Brett/User }

@@ -35,7 +35,7 @@ uses
   {$ENDIF }
   sysutils,typeform,fileio,inout,win2,keys,maske,mouse,
   maus2,resource,lister,editor,xp0,xp1,xp1input,xpdatum,
-  utftools, mime,debug,xpglobal;
+  mime,debug,xpglobal;
 
 procedure options;
 procedure UI_options;
@@ -98,7 +98,7 @@ uses
 {$IFDEF Kylix}
   libc,
 {$ENDIF}  
-  winxp, xp1o,xp2,xp4o2,xp9bp,xpnt,osdepend,classes;
+  winxp, xp1o,xp2,xp4o2,xp9bp,xpnt,osdepend,classes, xpcharset;
 
 const
   MaxProtocols = 2;

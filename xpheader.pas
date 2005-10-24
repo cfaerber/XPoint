@@ -214,7 +214,7 @@ implementation
 
 uses
   SysUtils,Typeform,xp0,xpnt,xpdatum,xp_pgp,xpmakeheader,xpstreams,
-  debug { HJT 09.10.2005 };
+  debug, xpcharset;
 
 constructor THeader.Create;
 begin

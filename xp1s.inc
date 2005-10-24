@@ -403,7 +403,7 @@ begin
     if not ListAutoscroll then List.Stat.Autoscroll := false;
     msg:=(_filesize(name)>1024*100);
     if msg then rmessage(130);    { 'Lade Datei ...' }
-    List.ReadFromFile(name,lofs);
+    List.ReadFromFile(name,lofs,listwrap);
     if msg then closebox;
     List.HeaderText := header;
     List.OnKeypressed := listExt;

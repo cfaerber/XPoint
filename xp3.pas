@@ -49,7 +49,7 @@ procedure UBUnmark(rec:longint);
 procedure XreadF(ofs:longint; var f:file);
 procedure XreadS(ofs:longint; s:TStream);
 procedure Xread(const fn:string; append:boolean);
-procedure XmemRead(ofs:word; var size: Integer; var data);
+procedure XmemRead(ofs: Integer; var size: Integer; var data);
 procedure Xwrite(const fn:string);
 
 procedure Cut_QPC_DES(var betr:string);
@@ -497,15 +497,14 @@ end;
 procedure XreadS(ofs:longint; s:TStream);
 var p        : pointer;
     bufs,rr  : Integer;
-    puffer   : file;
     ablage   : byte;
     size     : longint;
     adr      : longint;
     berr     : string[40];
-    iso      : boolean;
     hdp      : theader;
     hds      : longint;
     minus    : longint;
+    i : Integer;
 
 begin
   bufs:=65536;
@@ -513,7 +512,6 @@ begin
   dbReadN(mbase,mb_ablage,ablage);
  try
   OpenAblage(ablage);
-  writeln(ioresult);
   if ioresult<>0 then begin
     fehler(getreps(305,strs(ablage)));   { 'Ablage %s fehlt!' }
     exit;
@@ -528,7 +526,7 @@ begin
       minus:=hdp.komlen;
     Hdp.Free;
     end;
-  if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(Globalpuffer) then begin
+  if adr+ofs-1-minus+dbReadInt(mbase,'groesse')>filesize(Globalpuffer) then begin
     berr:=buferr(ablage);
     s.Write(berr[1],length(berr));
     end
@@ -565,19 +563,18 @@ begin
   close(f);
 end;
 
-procedure XmemRead(ofs:word; var size: Integer; var data);
-var puffer   : file;
-    ablage   : byte;
+procedure XmemRead(ofs: Integer; var size: Integer; var data);
+var
+  ablage   : byte;
 begin
-  if ofs<dbReadInt(mbase,'msgsize') then begin
+  if ofs<dbReadInt(mbase,'msgsize') then
+  begin
     dbReadN(mbase,mb_ablage,ablage);
-    assign(puffer,aFile(ablage));
-    reset(puffer,1);
-    seek(puffer,dbReadInt(mbase,'adresse')+ofs);
-    blockread(puffer,data,size,size);
+    OpenAblage(Ablage);
+    seek(GlobalPuffer,dbReadInt(mbase,'adresse')+ofs);
+    blockread(GlobalPuffer,data,size,size);
     if ioresult = 0 then ;
-    close(puffer);
-    end
+  end
   else
     fillchar(data,size,0);
 end;
@@ -626,7 +623,6 @@ begin
 end;
 
 
-{ R-}
 procedure seekmark(rec:longint; var found:boolean; var x:integer);
 var l,r,m : integer;
 begin

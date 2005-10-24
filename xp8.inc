@@ -93,7 +93,7 @@ begin
     end; 
   List := TLister.CreateWithOptions(1,iif(_maus and ListScroller,Screenwidth-1,screenwidth),4,screenlines-fnkeylines-1,-1,'/NS/M/SB/S/'+
              'APGD/'+iifs(_maus and ListScroller,'VSC/',''));
-  List.ReadFromFile(fl,0);
+  List.ReadFromFile(fl,0, false);
   case art of
     1 : showkeys(12);
     2 : showkeys(11);

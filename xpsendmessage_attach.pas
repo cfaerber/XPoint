@@ -89,9 +89,9 @@ uses
 {$IFDEF Delphi}
   DateUtils,
 {$ENDIF}
-  fileio,inout,keys,maske,maus2,resource,typeform,utftools,winxp,
+  fileio,inout,keys,maske,maus2,resource,typeform,winxp,
   xp0,xp1,xp1input,xp1o,xp2c,xp4e,xpdatum,xpe,xpglobal,xpnt, 
-  xpsendmessage_attach_analyze,xpstreams,debug;
+  xpsendmessage_attach_analyze,xpstreams,debug, xpcharset, xpcharset_streams;
 
 constructor TSendAttach_Part.Create;
 begin

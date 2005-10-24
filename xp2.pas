@@ -85,7 +85,7 @@ Procedure GetUsrFeldPos;     { User-NamenPosition fuer Schnellsuche }
 implementation  {-----------------------------------------------------}
 
 uses
- winxp,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,mime,utftools
+ winxp,xpe,xp3,xp9bp,xpconfigedit,xpnt,xpfido,xpkeys,mime,xpcharset
 {$IFDEF Kylix}
   ,libc
 {$ENDIF}  

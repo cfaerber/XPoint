@@ -23,17 +23,17 @@ echo Packe Sourcen
 rar a \a\openxp-%OXP_VER%.src.rar -cl -r -s -ts- -mc16:128t+ -x!com*.bak -m5 >\temp\pack
 
 echo Compilere mit FreePascal fuer DOS 32
-\fpc\2.0.0\bin\go32v2\ppc386 -B %OXP_OPTS% -Xs -XX -FEdist\dos  -FUdist -FuObjCOM;netcall;DOS32 -Tgo32v2 openxp.pas >!compdos.bak
+\fpc\2.0.0\bin\go32v2\ppc386 -B %OXP_OPTS% -Xs -XX -FEdist\dos  -FUdist -FuObjCOM;netcall;DOS32;xplib -Tgo32v2 openxp.pas >!compdos.bak
+pause
 
 echo Compilere mit FreePascal fuer Win32
-
-ppc386 -B %OXP_OPTS% -Xs -XX -FuObjCOM;netcall -FEdist\win32 -FUdist -TWin32 openxp.pas >!compwin.bak
+ppc386 -B %OXP_OPTS% -Xs -XX -FuObjCOM;netcall;xplib -FEdist\win32 -FUdist -TWin32 openxp.pas >!compwin.bak
 del *.ppu *.o /s
-ppc386 -B %OXP_OPTS% -FuObjCOM;netcall -FUdist -TWin32 rc.pas >>!compwin.bak
+ppc386 -B %OXP_OPTS% -FuObjCOM;netcall;xplib -FUdist -TWin32 rc.pas >>!compwin.bak
 del *.ppu *.o /s
-ppc386 -B %OXP_OPTS% -FuObjCOM;netcall -FUdist -TWin32 docform.pas >>!compwin.bak
+ppc386 -B %OXP_OPTS% -FuObjCOM;netcall;xplib -FUdist -TWin32 docform.pas >>!compwin.bak
 del *.ppu *.o /s
-ppc386 -B %OXP_OPTS% -FuObjCOM;netcall -FUdist -TWin32 ihs.pas >>!compwin.bak
+ppc386 -B %OXP_OPTS% -FuObjCOM;netcall;xplib -FUdist -TWin32 ihs.pas >>!compwin.bak
 
 echo Compiliere Doku
 docform doc\fido.dq dist\fido.txt 68 8

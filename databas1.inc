@@ -47,9 +47,9 @@ begin
   dbReleaseCache;
 end;
 
-procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
+procedure cache_read(dbp:DB; irsize:Integer; offs:longint; var data);
 var
-  s,i,j,sp : integer;
+  s,i,sp : integer;
   TempCachePage: PCachepage;
 begin
   with dp(dbp)^ do
@@ -60,7 +60,7 @@ begin
     else
     begin
       i:=cacheanz-1; // we can safely assume that cacheanz>=1 => i>=0
-      TempCachePage := @cache^[i]; // MUCH faster8!
+      TempCachePage := @cache^[i]; // MUCH faster!
       while ((TempCachePage.dbp<>dbp) or (TempCachePage.ofs<>offs) or not TempCachePage.used) do
       begin
         Dec(i);
@@ -106,7 +106,7 @@ begin
 end;
 
 
-procedure cache_write(dbp:DB; irsize:word; offs:longint; var data);
+procedure cache_write(dbp:DB; irsize:Integer; offs:longint; var data);
 var i,sp : integer;
     s    : longint;
 begin
@@ -147,7 +147,7 @@ end;
 { Platz fÅr Index-Knoten auf Heap belegen }
 
 procedure AllocNode(dbp:DB; indnr:word; var np:inodep);
-var size: word;
+var size: Integer;
 begin
   with dp(dbp)^.index^[indnr] do begin
     size:=16+(nn+1)*sizeof(inodekey);

@@ -107,9 +107,10 @@ function pgpo_keytest(var s:string):boolean;
 
 implementation  { --------------------------------------------------- }
 
-uses mime, mime_analyze, rfc2822, StringTools, utftools, xp_pgp, xp1o, xp3,
+uses mime, mime_analyze, rfc2822, StringTools, xp_pgp, xp1o, xp3,
   xp3ex, xp3o, xp3o2, xp4e, xp9bp, xpcc, xpconfigedit, xpfido, xpmakeheader,
-  xpnt, xpsendmessage_internal, xpstreams;
+  xpnt, xpsendmessage_internal, xpstreams, xpstreams_temporary, xpstreams_codec,
+  xpcharset, xpcharset_codec, xpcharset_streams;
 
 procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
 asm

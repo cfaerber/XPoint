@@ -58,7 +58,9 @@ procedure extract_msg(art:Integer; schablone:string; name:string;
 
 implementation  { ---------------------------------------------------- }
 
-uses winxp, xp1o,xp3,xp_des,xpnt,xpfido,xpmakeheader,mime,utftools,unicode,xpstreams, debug;
+uses winxp, xp1o,xp3,xp_des,xpnt,xpfido,xpmakeheader,mime,
+  xpstreams, debug, xpstreams_pascal, xpcharset, xpcharset_codec,
+  xpcharset_streams, xpunicode;
 
 var  ex_MimePart : TMimePart;
 
@@ -212,7 +214,7 @@ var size   : longint;
 
   procedure wrs(s:string);
   begin
-    if UCLength(s) > ScreenWidth then
+    if UTF8StringWidth(s) > ScreenWidth then
       s := LeftStr(s, ScreenWidth); // !!Todo: handle UTF8 correct 
     s := s + #13#10;
     blockwrite(f,s[1],length(s));

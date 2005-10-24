@@ -36,7 +36,7 @@ function  GuessContentTypeFromFileName(FileName:String):String;
 uses
   {$IFDEF Win32} windows, {$ENDIF}
   classes,database,inout,keys,typeform,xp0,xpglobal,xpnt,
-  sysutils,xpstreams;
+  sysutils,xpstreams,xpcharset;
 
 function GuessContentTypeFromFileName(FileName:String):String;
 var ext: string;
