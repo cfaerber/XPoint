@@ -3207,7 +3207,7 @@ type rcommand = (rmail,rsmtp,rnews);
 
       fs := f2.Size;
     finally
-      f2.Free; f2:=nil;
+      FreeAndNil(f2);
     end;
 
       name2 := 'X.' + LeftStr(_to, 7) + 'X' + nr;
