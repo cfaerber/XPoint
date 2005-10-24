@@ -56,6 +56,9 @@ type
                ReqFile: TStringList; // needed for request result processing
              end;
 
+  { non-fatal error exception }
+  FidoException = class(Exception);
+
 var
   AKABoxes: TAKABoxes;
   AKAs: string;
@@ -584,12 +587,13 @@ begin { FidoNetcall }
   AKABoxes.BoxName:=TStringList.Create;
   AKABoxes.ReqFile:=TStringList.Create;
   AKABoxes.PPFile:=TStringList.Create;
-  try
 
+  try
     // Convert outgoing buffers
     if Crash then
       if not ProcessCrash(Crash,CrashOutBuffer)then
-        raise Exception.Create('');
+        raise FidoException.Create('');
+        
     ProcessAKABoxes(boxpar,boxname,Crash,CrashOutBuffer,ConvertedFiles,OutgoingFiles);
 
     if ConvertedFiles.Count>0 then
@@ -600,10 +604,11 @@ begin { FidoNetcall }
         exchange(ShellCommandUparcer,'$PUFFER',StringListToString(ConvertedFiles));
         exchange(ShellCommandUparcer,'$UPFILE',UpArcFilename);
         result:=ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles);
-        if result<>0 then begin
+        if result<>0 then
+        begin
           trfehler(713,30);  { 'Fehler beim Packen!' }
-          raise Exception.Create('');
-          end;
+          raise FidoException.Create('');
+        end;
         end
       else
         OutgoingFiles.AddStrings(ConvertedFiles);
@@ -683,10 +688,14 @@ begin { FidoNetcall }
 
   except
     // ignore exceptions
-    end;
+    on e: FidoException do
+      Debug.DebugLog('xpncfido','Fido Exception: '+ e.Message, DLInform);
+    else
+      raise;
+  end;
 
   // let's clean up
-  SafeDeleteFile(UpArcFilename);          
+  SafeDeleteFile(UpArcFilename);
   for i:=0 to AKABoxes.ReqFile.Count-1 do
     if AKABoxes.ReqFile[i]<>'' then
     begin
