@@ -1,4 +1,4 @@
-(* $Id: Makefile.PL,v 1.1 2003/09/29 20:47:19 cl Exp )
+(* $Id: Makefile.PL 6397 2003-09-29 20:47:21Z cl )
 (* generated from IANA charset list -- do not edit *)
 
 type

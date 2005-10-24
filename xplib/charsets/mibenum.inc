@@ -1,4 +1,4 @@
-(* $Id: Makefile.PL,v 1.1 2003/09/29 20:47:19 cl Exp )
+(* $Id: Makefile.PL 6397 2003-09-29 20:47:21Z cl )
 (* generated from IANA charset list -- do not edit *)
 
 function GetCharsetFromName(Const Name: String): TMIMECharset;
@@ -9,7 +9,7 @@ begin
 (* ===================================================================        *)
 (* CHARACTER SETS                                                             *)
 
-(* (last updated 2004-02-06)                                                  *)
+(* (last updated 28 January 2005)                                             *)
 
 (* These are the official names for character sets that may be used in        *)
 (* the Internet and may be referred to in Internet documentation.  These      *)
@@ -43,13 +43,17 @@ begin
 (*         2000-2999       Vendor                                             *)
 
 (* The aliases that start with "cs" have been added for use with the          *)
-(* Printer MIB (see RFC 1759) and contain the standard numbers along with     *)
-(* suggestive names in order to facilitate applications that want to          *)
-(* display the names in user interfaces.  The "cs" stands for character       *)
-(* set and is provided for applications that need a lower case first          *)
-(* letter but want to use mixed case thereafter that cannot contain any       *)
-(* special characters, such as underbar ("_") and dash ("-").  If the         *)
-(* character set is from an ISO standard, its cs alias is the ISO             *)
+(* IANA-CHARSET-MIB as originally defined in RFC3808, and as currently        *)
+(* maintained by IANA at http://www/iana.org/assignments/ianacharset-mib.     *)
+(* Note that the ianacharset-mib needs to be kept in sync with this           *)
+(* registry.  These aliases that start with "cs" contain the standard         *)
+(* numbers along with suggestive names in order to facilitate applications    *)
+(* that want to display the names in user interfaces.  The "cs" stands        *)
+(* for character set and is provided for applications that need a lower       *)
+(* case first letter but want to use mixed case thereafter that cannot        *)
+(* contain any special characters, such as underbar ("_") and dash ("-").     *)
+
+(* If the character set is from an ISO standard, its cs alias is the ISO      *)
 (* standard number or name.  If the character set is not from an ISO          *)
 (* standard, but is registered with ISO (IPSJ/ITSCJ is the current ISO        *)
 (* Registration Authority), the ISO Registry number is specified as           *)
@@ -982,14 +986,14 @@ begin
 (* Source: ISO registry (formerly ECMA registry)                              *)
 (*          http://www.itscj.ipsj.jp/ISO-IR/111.pdf                           *)
 (* Alias: iso-ir-111                                                          *)
-(* Alias: KO18-E                                                              *)
+(* Alias: KOI8-E                                                              *)
 (* Alias: csISO111ECMACyrillic                                                *)
 
   (* overridden preference for MIME: iso-ir-111                             *)
 
   if UName='ECMA-CYRILLIC'           then result := csISO111ECMACyrillic   else
   if UName='ISO-IR-111'              then result := csISO111ECMACyrillic   else
-  if UName='KO18-E'                  then result := csISO111ECMACyrillic   else
+  if UName='KOI8-E'                  then result := csISO111ECMACyrillic   else
   if UName='CSISO111ECMACYRILLIC'    then result := csISO111ECMACyrillic   else
 
 (* Name: CSA_Z243.4-1985-1                                  [RFC1345,KXS2]    *)

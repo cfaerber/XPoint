@@ -1,4 +1,4 @@
-{ $Id: xpunicode_lbr.pas,v 1.4 2003/08/26 22:56:18 cl Exp $
+{ $Id$
 
   Copyright (C) 2003 OpenXP/32 Team <www.openxp.de> 
   see CVS log below for authors
@@ -64,6 +64,8 @@ type TUnicodeLineBreakType = (
   UNICODE_BREAK_PR, UNICODE_BREAK_PO, UNICODE_BREAK_NU, UNICODE_BREAK_AL,
   UNICODE_BREAK_ID, UNICODE_BREAK_IN, UNICODE_BREAK_HY, UNICODE_BREAK_BA,
   UNICODE_BREAK_BB, UNICODE_BREAK_B2, UNICODE_BREAK_ZW, UNICODE_BREAK_CM,
+  UNICODE_BREAK_NL, UNICODE_BREAK_JL, UNICODE_BREAK_JV, UNICODE_BREAK_JT,
+  UNICODE_BREAK_WJ, UNICODE_BREAK_H3, UNICODE_BREAK_H2, 
   // Not in Table
   UNICODE_BREAK_CR, UNICODE_BREAK_LF, UNICODE_BREAK_SP, UNICODE_BREAK_BK,
   UNICODE_BREAK_UNKNOWN );
@@ -167,7 +169,7 @@ uses xpstreams,
 {$IFDEF UnixFS}
 {$I unicode/linebreak.inc }
 {$ELSE}
-{$I unicode\linebreak.inc }
+{$I unicode\linebreak.inc } 
 {$ENDIF}
 
 function UnicodeCharacterLineBreakType(AUnicodeChar: TUnicodeChar): TUnicodeLineBreakType;
