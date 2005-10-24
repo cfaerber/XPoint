@@ -70,7 +70,7 @@ begin
 end;
 
 procedure set_cce;
-var i,j  : shortint;
+var i,j  : Integer;
     used : boolean;
 begin
   used:=true;
@@ -266,7 +266,7 @@ begin
 end;
 
 procedure SortCCs(cc:ccp; cc_anz:integer);
-var i,j  : shortint;
+var i,j  : Integer;
     xchg : boolean;
     s    : string[80];
 
