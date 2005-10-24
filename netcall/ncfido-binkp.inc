@@ -379,7 +379,7 @@ var
             TheQueue.Add(InBpF); InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
             end;
           M_NUL: Log(lcInfo,InBpF.CommandPar);
-          M_FILE: begin RxState:=RxAccF; FileClose(RxFileHandle); end; //** report partially recv file
+          M_FILE: begin RxState:=RxAccF; FileClose(RxFileHandle); RxFileHandle := 0; end; //** report partially recv file
           end;
         InBpF.ReadFromStream(False);
         end;
@@ -391,6 +391,7 @@ var
         if(RxFilePos=RxSize)or(RxSize=0)then begin
           RxState:=RxWaitF; //** set file time
           FileClose(RxFileHandle);
+          RxFileHandle := 0;
           OutBpF.SendCommandFrame(M_GOT,RxFilename+' '+IntToStr(RxSize)+' '+IntToStr(RxTime));
           Output(mcInfo,'%s received',[RxFilename]);
           IncomingFiles.Add(IncomingDir+RxFilename);
@@ -426,6 +427,7 @@ var
         s:=QBpF.CommandPar; s:=GetPar(s);
         if s=TxFilename then begin
           FileClose(TxFileHandle);
+          TxFileHandle := 0;
           Output(mcError,'Remote refused file %s',[TxFilename]);
           TxState:=TxGNF;
           end else begin
@@ -442,6 +444,7 @@ var
         s:=QBpF.CommandPar; s:=GetPar(s);
         if s=TxFilename then begin
           FileClose(TxFileHandle);
+          TxFileHandle := 0;
           Output(mcInfo,'Remote will accept file %s later',[TxFilename]);
           TxState:=TxGNF;
           end;
@@ -495,6 +498,7 @@ var
         OutBpF.SetupDataFrame(TxResult); OutBpF.Send;
         if TxResult<BufferSize then begin // file end reached
           FileClose(TxFileHandle);
+          TxFileHandle := 0;
           TxState:=TxGNF;
           PendingFiles.Add(TxFilename);
           PendingFilesWithPath.Add(TxFilenameWithPath);
@@ -515,7 +519,8 @@ var
   function BreakTransfer: integer;
   begin
     State:=Done;
-    FileClose(RxFileHandle); FileClose(TxFileHandle);
+    if RxFileHandle <> 0 then FileClose(RxFileHandle); 
+    if TxFileHandle <> 0 then FileClose(TxFileHandle);
     DebugLog('ncfido','BreakTransfer: '+IntToStr(OutgoingFiles.Count)+'!'+IntToStr(Pendingfiles.Count),DLDebug);
     if(OutgoingFiles.Count<=0)and(PendingFiles.Count<=0)then
       result:=1
@@ -528,6 +533,7 @@ begin
   State:=WaitConn; LastRxState:=RxWaitF; LastTxState:=TxGNF;
   InBpF:=tBinkpFrame.CreateWithCommObj(FCommObj); OutBpF:=tBinkpFrame.CreateWithCommObj(FCommObj);
   TheQueue:=TList.Create; PendingFiles:=TStringList.Create; PendingFilesWithPath:=TStringList.Create;
+  RxFileHandle := 0; TxFileHandle := 0;
   InBpF.ReadFromStream(False);
 
   try
