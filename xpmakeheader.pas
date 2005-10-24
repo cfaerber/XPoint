@@ -37,12 +37,12 @@ procedure makeheader(ZConnect:boolean; var f:file; NrOfFirstRecipient: integer;
 implementation
 
 uses
-  xpdatum, xpnt, Xp0, SysUtils, Typeform, mime, xpmime, debug, rfc2822;
+  xpdatum, xpnt, Xp0, SysUtils, Typeform, mime, xpmime, debug;
 
 { Achtung! hd.empfaenger entaelt u.U. eine /TO:-Kennung }
 
 const
-  bufsize = 4096;
+  bufsize = 65535;
 
 
 var line : string;
@@ -58,48 +58,19 @@ var i,res : integer;
     id0     : string;
     p    : integer;
     buf     : PCharArray;
+    bufsize : Integer;
     bufanz  : Integer;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
 
-  procedure getline(var s:string);
-  var l,p:integer;
-  label again;
+  procedure ReadBuf;
   begin
-    SetLength(s,0);
-   
-  again:
-    if o>=BufAnz then
-      if eof(f) then begin
-        ok := false;
-        exit;
-      end else
-      begin
-        blockread(f,buf^,bufsize,bufanz);
-        o:=0;
-      end;
-
-    l := o + BufferScan(Buf^[o], BufAnz-o, #10);    
-
-    if l>o then 
-    begin
-      p := Length(s);
-      SetLength(s,p+l-o);
-      Move(Buf^[o],s[p+1],l-o);
-    end;
-    
-    o := l+1;
-
-    if (l<BufAnz) and (Length(s)>0) and (s[Length(s)]=#13) then 
-    begin
-      SetLength(s,Length(s)-1);
-      exit;
-    end;
-  
-    goto again;
+    blockread(f,buf^,bufsize,bufanz);
+    o:=0;
   end;
 
-(*  
   procedure getline(var s:string);
+  var
+    l: Integer;
 
     procedure IncO;
     begin
@@ -113,23 +84,23 @@ var i,res : integer;
         end;
     end;
 
-  var
-    l: Integer;
   begin
-    l := o + BufferScan(Buf^[o], BufAnz-o, #13);
-{   l := o;
-    while (Buf^[l] <> #13) and (l < BufAnz) do
-      inc(l); } 
+    l := o;
+    while l < BufAnz do
+    begin
+      if Buf^[l] = #13 then break;
+      inc(l);
+    end;
 
     if l = BufAnz then // das letze Byte war noch kein #13, dann neue Daten holen
     begin
       s := '';
-      while (buf^[o]<>#13) and (o< bufanz) do
+      while (o<bufanz) and (buf^[o]<>#13) do
       begin
         s := s + buf^[o];
         incO;
       end;
-      IncO;                                            
+      IncO;
     end else
     begin
       SetLength(s, l-o);
@@ -141,7 +112,7 @@ var i,res : integer;
     end;
     if ok and (buf^[o]=#10) then IncO;
   end;
-*)
+
   procedure LRead(var s:string);
   begin
     s:=line;
@@ -352,8 +323,9 @@ var i,res : integer;
 begin
   ok:=true;
   hd.Clear;
+  bufsize := 2048;
   getmem(buf,bufsize);
-  size:=0; o:=1; BufAnz:=0;
+  size:=0; Readbuf;
 
   with hd do
     if ZConnect then
@@ -367,8 +339,7 @@ begin
         begin
           if line[1]<' ' then DeleteFirstChar(line);    { gegen LF's o.ae. }
           p:=cpos(':',line);
-          if p<2 then 
-            ok:=false // Die ID muss mindestens ein Zeichen sein
+          if p<2 then ok:=false // Die ID muss mindestens ein Zeichen sein
           else begin
             id:=LeftStr(line,p-1);
             id0:=id;
