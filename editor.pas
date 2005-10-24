@@ -1634,10 +1634,15 @@ var  dl         : displp;
     procedure KorrScy;
     begin
       with e^ do
+      begin
+        scy := Max(Scy,Low(dl^));
+        scy := Min(Scy,High(dl^));
+
         if dl^[scy].absatz=nil then begin
           while dl^[scy].absatz=nil do dec(scy);
           scx:=dl^[scy].absatz^.size-dl^[scy].offset+1;
           end;
+      end;
     end;
 
     procedure setscx(xx:integer);
