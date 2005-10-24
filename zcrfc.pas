@@ -451,7 +451,10 @@ begin
           ppp := true
         else
           if switch = 'client' then
-          client := true
+          begin
+            ppp := true;
+            client := true;
+          end
         else
           if switch[1] = 'u' then
         begin

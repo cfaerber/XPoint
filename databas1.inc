@@ -50,6 +50,7 @@ end;
 procedure cache_read(dbp:DB; irsize:word; offs:longint; var data);
 var
   s, i,sp : integer;
+  TempCachePage: PCachepage;
 begin
   with dp(dbp)^ do
     if cacheanz=0 then begin
@@ -58,12 +59,18 @@ begin
       end
     else
     begin
-      i:=0;
-      while (i<cacheanz) and
-        (not cache^[i].used or (cache^[i].dbp<>dbp) or (cache^[i].ofs<>offs))
-      do inc(i);
+      i:=cacheanz-1;
 
-      if i<cacheanz then begin
+      TempCachePage := @cache^[i]; // MUCH faster8!
+      while ((TempCachePage.dbp<>dbp) or (TempCachePage.ofs<>offs) or not TempCachePage.used)
+        and (i>0) do
+      begin
+        Dec(i);
+        TempCachePage := @cache^[i];
+      end;
+
+      if i>0 then
+      begin
         Move(cache^[i].page,data,irsize);
         cache^[i].lasttick:=ticker;
         end
@@ -73,15 +80,17 @@ begin
 
         s:=maxlongint;
         sp:=0;
-        i:=0;
-        while (i<cacheanz) and (cache^[i].used) do begin
-          if cache^[i].lasttick<s then begin
-            s:=cache^[i].lasttick;
+        i:=cacheanz-1;
+        while (i>=0) and (cache^[i].used) do
+        with Cache^[i] do
+        begin
+          if lasttick<s then begin
+            s:=lasttick;
             sp:=i;
             end;
-          inc(i);
-          end;
-        if i<cacheanz then sp:=i;
+          Dec(i);
+        end;
+        if i>=0 then sp:=i;
 
         cache^[sp].used:=true;
         cache^[sp].lasttick:=ticker;
@@ -117,13 +126,14 @@ begin
         end;
       if i<cacheanz then   { Seite schon im Cache vorhanden }
         Move(data,cache^[i].page,irsize)
-      else begin
+      else 
+      begin
         cache^[sp].lasttick:=ticker;
         cache^[sp].dbp:=dbp;
         cache^[sp].ofs:=offs;
         Move(data,cache^[sp].page,irsize);
         i:=sp;
-        end;
+      end;
       cache^[i].used:=true;
       end;
     end;
@@ -194,8 +204,8 @@ var rbuf : barrp;
     wp   : ^smallword absolute rbuf;
     i,o  : word;
 begin
-  with np^ do
-    with dp(db_p)^ do begin
+  with np^, dp(db_p)^ do
+  begin
       getmem(rbuf,irsize);
       wp^:=anzahl;
       Move(key[0].data,rbuf^[2],8);

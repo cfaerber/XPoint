@@ -134,7 +134,8 @@ begin
         end   { not leer }
       else dbNext(d);
       wrstat;
-      if (n mod 16=0) and not brk then begin
+      if (n mod 16=0) and not brk then
+      begin
         testbrk(brk);
         if brk and not ReadJN(getres(446),true) then   { 'Reorganisation abbrechen' }
           brk:=false;
@@ -171,7 +172,7 @@ var x,y,wdt: Integer;
     mon;
   end;
 
-  procedure testdel(_brett:string);
+  procedure testdel(const _brett:string);
   var _mbrett : string;
       haltedat: longint;
       edat    : longint;
@@ -199,7 +200,7 @@ var x,y,wdt: Integer;
       else dbSkip(mbase,-1);
       if dbBOF(mbase) then exit;
       while not dbBOF(mbase) and (dbReadStrN(mbase,mb_brett)=_brett) and
-            (dbReadInt(mbase,'unversandt') and 8<>0) do
+            (dbReadIntN(mbase,mb_unversandt) and 8<>0) do
         dbSkip(mbase,-1);
       if dbBOF(mbase) then exit;
       end
@@ -214,9 +215,10 @@ var x,y,wdt: Integer;
       haltedat:=ixdat(FormatDateTime('yymmdd', Dat-hzeit+1) + '0000');
     nzahl:=1;
 
+    brk := false;
     hdp := THeader.Create;
     repeat
-      testbrk(brk);
+      if n mod 100 = 0 then testbrk(brk);
       if brk then
         brk:=ReadJN(getres(iif(_del,446,447)),true);   { (Reorganisation) 'abbrechen' }
       _mbrett := dbReadNStr(mbase,mb_brett);
@@ -230,10 +232,10 @@ var x,y,wdt: Integer;
         dbReadN(mbase,mb_halteflags,hflags);
         defekt:=(groesse<0) or (msize<0) or (groesse+14>msize) or (ablage>=ablagen) or
                 (msize-groesse>iif(ntZCablage(ablage),1000000,8000)) or
-                (dbReadInt(mbase,'adresse')+msize>ablsize[ablage]) or
+                (dbReadIntN(mbase, mb_adresse)+msize>ablsize[ablage]) or
                 ((typ<>'T') and (typ<>'B') and (typ<>'M')) or (hflags>2) or
-                (dbReadInt(mbase,'adresse')<0) or
-                (dbReadInt(mbase,'netztyp')<0);    { empfanz > 127 ? }
+                (dbReadIntN(mbase, mb_adresse)<0) or
+                (dbReadIntN(mbase, mb_netztyp)<0);    { empfanz > 127 ? }
         if repair and not defekt then begin
           dbReadN(mbase,mb_gelesen,b);
           if b>1 then begin
@@ -271,7 +273,7 @@ var x,y,wdt: Integer;
           if ablage<ablagen then inc(bufsiz[ablage],msize);
         dbSkip(mbase,iif(hzahl,-1,1));
         inc(nzahl);
-        if n mod 10=0 then display;
+        if n mod 20=0 then display;
         end;
     until brk or (_mbrett<>_brett) or dbEOF(mbase) or dbBOF(mbase);
     Hdp.Free;
@@ -592,6 +594,7 @@ var x,y,yy  : Integer;
   end;
 
 begin
+  CloseAblage;
   msgbox(50,15,getres2(451,1),x,y);    { 'Reorganisation' }
   bsize:=65536;
   getmem(p,bsize);

@@ -93,6 +93,7 @@ function  brettok(trenn:boolean):boolean;
 
 function  extmimetyp(const typ:string):string;
 function  compmimetyp(const typ:string):string;
+procedure CloseAblage;
 
 var
   TxtSeekKey: ShortString;
@@ -106,6 +107,41 @@ implementation  {-----------------------------------------------------}
 
 uses
   xp3o, xp3ex, xpnt, xpmakeheader, debug;
+
+const
+  GlobalAblageOpen : Boolean = false;
+var
+  GlobalPuffer: file;
+  GlobalLastPuffer: Byte;
+
+procedure CloseAblage;
+begin
+  if IOResult = 0 then;
+  if GlobalAblageOpen then
+  begin
+    Close(GlobalPuffer);
+    if IOResult = 0 then ;
+    GlobalAblageOpen := false;
+  end;
+end;
+
+procedure OpenAblage(Ablage: Byte);
+var
+  OldFileMode: Byte;
+begin
+  if (GlobalLastPuffer <> Ablage) or not GlobalAblageOpen then
+  begin
+    CloseAblage;
+    OldFileMode := FileMode;
+    FileMode := fmOpenRead + fmShareDenyWrite;
+    Assign(GlobalPuffer,aFile(Ablage));
+    Reset(GlobalPuffer, 1);
+    GlobalLastPuffer := Ablage;
+    FileMode := OldFileMode;
+    GlobalAblageOpen := true;
+    if IOResult = 0 then ;
+  end;
+end;
 
 
 procedure QPC(decode:boolean; var data; size: Integer; passwd:pointer;
@@ -337,7 +373,6 @@ end;
 { XP2.NewFieldMessageID !                               }
 procedure ReadHeader(var hd:theader; var hds:longint; hderr:boolean);
 var ok     : boolean;
-    puffer : file;
     ablg   : byte;
     flags  : byte;
     errstr : string[30];
@@ -352,16 +387,15 @@ begin
     errstr:=getres(300);  { '; falsche Gr”áenangaben' }
     end
   else begin
-    assign(puffer,aFile(ablg));
-    reset(puffer,1);
+    OpenAblage(Ablg);
     nopuffer:=(ioresult<>0);
     if nopuffer then begin
       ok:=false;
       errstr:=getres(301);  { '; Ablage fehlt' }
       end
     else begin
-      seek(puffer,dbReadInt(mbase,'adresse'));
-      if eof(puffer) then begin
+      seek(Globalpuffer,dbReadInt(mbase,'adresse'));
+      if IOResult <> 0 { eof(Globalpuffer) }then begin
         ok:=false;
         errstr:=getres(302)  { '; Adreáindex fehlerhaft' }
         end;
@@ -371,10 +405,8 @@ begin
     else begin
       empfnr:=ReadHeadEmpf; ReadHeadEmpf:=0;
       end;
-    if ok then makeheader(ntZCablage(ablg),puffer,empfnr,hds,hd,
+    if ok then makeheader(ntZCablage(ablg),Globalpuffer,empfnr,hds,hd,
                           ok,true, true);
-    if not nopuffer then
-      close(puffer);
     errstr:='';
     end;
   if not ok then begin
@@ -399,7 +431,6 @@ end;
 procedure XreadF(ofs:longint; var f:file);
 var p        : pointer;
     bufs,rr  : Integer;
-    puffer   : file;
     ablage   : byte;
     size     : longint;
     adr      : longint;
@@ -413,9 +444,8 @@ label ende;
 begin
   bufs:=65536;
   dbReadN(mbase,mb_ablage,ablage);
-  assign(puffer,aFile(ablage));
-  reset(puffer,1);
-  if ioresult<>0 then begin
+  OpenAblage(ablage);
+  if IOResult <>0 then begin
     fehler(getreps(305,strs(ablage)));   { 'Ablage %s fehlt!' }
     XReadIsoDecode:=false;
     exit;
@@ -430,18 +460,18 @@ begin
       minus:=hdp.komlen;
     Hdp.Free;
     end;
-  if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(puffer) then begin
+  if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(Globalpuffer) then begin
     berr:=buferr(ablage);
     blockwrite(f,berr[1],length(berr));
     end
   else begin
-    seek(puffer,adr+ofs);
+    seek(Globalpuffer,adr+ofs);
     dbReadN(mbase,mb_msgsize,size);
     dec(size,ofs);
     iso:=XReadIsoDecode and (dbReadInt(mbase,'typ')=ord('T')) and
          (dbReadInt(mbase,'netztyp') and $2000<>0);
     while size>0 do begin
-      blockread(puffer,p^,min(bufs,size),rr);
+      blockread(Globalpuffer,p^,min(bufs,size),rr);
       if inoutres<>0 then begin
         tfehler('XReadF: '+ioerror(ioresult,getreps(306,strs(ablage))),30);  { 'Fehler beim Lesen aus Ablage %s' }
         goto ende;
@@ -454,12 +484,11 @@ begin
         goto ende;
         end;
       dec(size,rr);
-      if (size>0) and eof(puffer) then
+      if (size>0) and eof(Globalpuffer) then
         size:=0;
       end;
     end;
 ende:
-  close(puffer);
   if ioresult = 0 then ;
   freemem(p,bufs);
   XReadIsoDecode:=false;
@@ -483,8 +512,8 @@ begin
   p:=nil;
   dbReadN(mbase,mb_ablage,ablage);
  try
-  assign(puffer,aFile(ablage));
-  reset(puffer,1);
+  OpenAblage(ablage);
+  writeln(ioresult);
   if ioresult<>0 then begin
     fehler(getreps(305,strs(ablage)));   { 'Ablage %s fehlt!' }
     exit;
@@ -499,24 +528,23 @@ begin
       minus:=hdp.komlen;
     Hdp.Free;
     end;
-  if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(puffer) then begin
+  if adr+ofs-minus+dbReadInt(mbase,'groesse')>filesize(Globalpuffer) then begin
     berr:=buferr(ablage);
     s.Write(berr[1],length(berr));
     end
   else begin
-    seek(puffer,adr+ofs);
+    seek(Globalpuffer,adr+ofs);
     dbReadN(mbase,mb_msgsize,size);
     dec(size,ofs);
     while size>0 do begin
-      blockread(puffer,p^,min(bufs,size),rr);
+      blockread(Globalpuffer,p^,min(bufs,size),rr);
       s.Write(PChar(p)^,rr);
       dec(size,rr);
-      if (size>0) and eof(puffer) then
+      if (size>0) and eof(Globalpuffer) then
         size:=0;
       end;
     end;
  finally
-  close(puffer);
   if ioresult = 0 then ;
   if assigned(p) then freemem(p,bufs);
  end;
@@ -564,6 +592,7 @@ var f,puffer : file;
     p        : pointer;
     bs,rr    : Integer;
 begin
+  CloseAblage;
   bs:=65536;
   getmem(p,bs);
   dbReadN(mbase,mb_ablage,ablage);

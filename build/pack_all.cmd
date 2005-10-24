@@ -23,14 +23,17 @@ echo Packe Sourcen
 rar a \a\openxp-%OXP_VER%.src.rar -cl -r -s -ts- -mc16:128t+ -x!com*.bak -m5 >\temp\pack
 
 echo Compilere mit FreePascal fuer DOS 32
-\fpc\2.0.0\bin\go32v2\ppc386 -B %OXP_OPTS% -Xs -XX -FEdist\dos  -FUdist -FuObjCOM;netcall;DOS32 -Tgo32v2 openxp.pas >!compdos.bak
+rem \fpc\2.0.0\bin\go32v2\ppc386 -B %OXP_OPTS% -Xs -XX -FEdist\dos  -FUdist -FuObjCOM;netcall;DOS32 -Tgo32v2 openxp.pas >!compdos.bak
 
 echo Compilere mit FreePascal fuer Win32
 
 ppc386 -B %OXP_OPTS% -Xs -XX -FuObjCOM;netcall -FEdist\win32 -FUdist -TWin32 openxp.pas >!compwin.bak
-ppc386 %OXP_OPTS% -FuObjCOM;netcall -FUdist -TWin32 rc.pas >>!compwin.bak
-ppc386 %OXP_OPTS% -FuObjCOM;netcall -FUdist -TWin32 docform.pas >>!compwin.bak
-ppc386 %OXP_OPTS% -FuObjCOM;netcall -FUdist -TWin32 ihs.pas >>!compwin.bak
+del *.ppu *.o /s
+ppc386 -B %OXP_OPTS% -FuObjCOM;netcall -FUdist -TWin32 rc.pas >>!compwin.bak
+del *.ppu *.o /s
+ppc386 -B %OXP_OPTS% -FuObjCOM;netcall -FUdist -TWin32 docform.pas >>!compwin.bak
+del *.ppu *.o /s
+ppc386 -B %OXP_OPTS% -FuObjCOM;netcall -FUdist -TWin32 ihs.pas >>!compwin.bak
 
 echo Compiliere Doku
 docform doc\fido.dq dist\fido.txt 68 8
@@ -65,7 +68,7 @@ rar a -cl -r -s -ts- -m5 \a\openxp-%OXP_VER%.win.rar >\temp\pack
 
 echo Packe DOS 32 Bit
 cd ..\dos
-rar a -cl -r -m5 -s -md512 -ts- \a\openxp-%OXP_VER%.dos.rar >\temp\pack
+rar a -cl -r -s -ts- -m5 \a\openxp-%OXP_VER%.dos.rar >\temp\pack
 
 echo Lösche alte Dateien
 cd ..\..\..

@@ -128,8 +128,10 @@ type    proctype  = procedure;
                       ofs      : longint;  { 5 }
                       lasttick : longint;  { 9 }
                       page     : array[0..264*4+10] of byte;
+                      fill:    array[1..968] of byte;
                     end;
         icache    = array[0..maxcache-1] of cachepage;
+        pcachepage = ^cachepage;
         icachep   = ^icache;
 
 
@@ -187,7 +189,6 @@ function  iohandler:boolean;
 procedure error(const txt:string);
 procedure writeinf(dbp:DB);
 procedure writehd(dpb:DB);
-
 
 implementation
 

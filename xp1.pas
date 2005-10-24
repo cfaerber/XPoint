@@ -188,7 +188,7 @@ function  mbrett(typ:char; intnr:longint):string; { Xpoint.Db1/Bretter erz. }
 function  mbrettd(typ:char; dbp:DB):string;       { Int_Nr auslesen }
 function  ixdat(const s:string):longint;           { Z-Date -> Long  }
 function  longdat(l:longint):string;              { Long -> Z-Date  }
-function  ixdispdat(dat:shortstring):longint;      { Datum -> Long   }
+function  ixdispdat(const dat:shortstring):longint;      { Datum -> Long   }
 function  smdl(d1,d2:longint):boolean;            { Datum1 < Datum2 }
 
 function  fdat(const dat:string):string;             { Z-Datum -> Datum   }
@@ -1443,13 +1443,33 @@ end;
 
 
 function longdat(l:longint):string;
+var
+  s: String;
+  p: Integer;
+
+  procedure WriteChar(i: Integer);
+  begin
+    Inc(p);
+    s[p] := Char(i div 10 + Byte('0'));
+    Inc(p);
+    s[p] := Char(i mod 10 + Byte('0'));
+  end;
+
 begin
-  longdat:=formi((l shr 24) mod 100,2)+formi((l shr 20) and 15,2)+
+  SetLength(s, 10);
+  p := 0;
+  WriteChar((l shr 24) mod 100);
+  WriteChar((l shr 20) and 15);
+  WriteChar((l shr 15) and 31);
+  WriteChar((l shr 10) and 31);
+  WriteChar((l shr 4) and 63);
+  Result := s;
+{  Result  := formi((l shr 24) mod 100,2)+formi((l shr 20) and 15,2)+
            formi((l shr 15) and 31,2)+formi((l shr 10) and 31,2)+
-           formi((l shr 4) and 63,2);
+           formi((l shr 4) and 63,2); }
 end;
 
-function ixdispdat(dat:shortstring):longint;      { Datum -> Long   }
+function ixdispdat(const dat:shortstring):longint;      { Datum -> Long   }
 begin
   ixdispdat:=ixdat(RightStr(dat,2)+copy(dat,4,2)+LeftStr(dat,2)+'0000');
 end;

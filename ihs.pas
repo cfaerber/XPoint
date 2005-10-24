@@ -25,8 +25,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  xp0, dos,
-  typeform,fileio, xpglobal,sysutils;
+  typeform,xpglobal,xp0,sysutils;
 
 {$IFDEF Delphi}
 type pathstr = string;
@@ -388,9 +387,8 @@ begin
     outpath := paramstr(2);
     if outpath <> '' then
     begin
-      OutPath := AddDirSepa(OutPath);
-      fsplit(fname,dir,name,ext);
-      fname:=name
+      OutPath := IncludeTrailingPathDelimiter(OutPath);
+      fname:= ExtractFilename(fname);
     end
   end;
 
