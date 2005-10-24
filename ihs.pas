@@ -37,7 +37,7 @@ const maxpages = 4096;
       obufsize = 16384;
 
 var  fname,
-     outpath  : pathstr;
+     outpath  : string;
      t        : text;
      f        : file;
      pages    : word;
