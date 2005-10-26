@@ -861,8 +861,7 @@ var
           continue;
           end;
 
-        if (CPos('@', hdp.FirstEmpfaenger) > 0) and (not spam_ok) then
-//      if not spam_ok then
+(*        if (CPos('@', hdp.FirstEmpfaenger) > 0) and (not spam_ok) then
         begin
           if not assigned(spam) then
             spam := TSpamicityCalculator.Create;
@@ -875,7 +874,7 @@ var
           data.Seek(0,soFromBeginning);
           spam.CalculateMessageSpamicity(data);
           data.Free;
-          
+
           is_spam := spam.IsSpam;
           is_ham  := spam.IsHam;
           spam_ok := true;
@@ -886,7 +885,7 @@ var
             hdp.Empfaenger.Add('/¯Spam'); // Unterscheidung von der Pseudo-Newsgroup junk
             BrettKommentar := 'SPAM, SPAM, wonderful SPAM!' // nicht uebersetzen (Zitat aus Monty Phyton).
           end;
-        end;
+        end;  *)
 
 
 

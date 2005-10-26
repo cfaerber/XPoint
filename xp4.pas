@@ -2056,8 +2056,8 @@ begin      { --- select --- }
                    if t=keycr then
                      if kb_shift then read_msg(rmNormal, mpMulti)   { Shift-Enter }
                      else read_msg(rmNormal, mpAuto) else          { Enter }
-                   if t=',' then register_spam(false) else
-                   if t='.' then register_spam(true) else
+(*                   if t=',' then register_spam(false) else
+                   if t='.' then register_spam(true) else *)
                    if t=^J then read_msg(rmNormal, mpNone) else    { Ctrl-Enter }
                    if t=k2_cR then read_msg(rmRot13, mpNone) else { 'R' - Rot13 }
                    if t=k2_cH then read_msg(rmHexDump, mpNone) else { ^H }
