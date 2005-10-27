@@ -79,6 +79,7 @@ function testurl(var s:string):boolean;
 function testtimezone(var s:string):boolean;
 function SetTimezone(var s:string):boolean;
 function testexecutable(var s:string):boolean;
+function testexist_st(var s:string):boolean;  { HJT 27.10.2005 }
 function testpgpexe(var s:string):boolean;
 function testxpgp(var s:string):boolean;
 function ngdispChanged(var s:string):boolean;
@@ -626,7 +627,10 @@ begin
   dialog(ival(getres2(256,0)),13,getres2(256,5),x,y);   { 'Editor' }
 {$ENDIF }
   maddstring(3,2,getres2(256,6),VarEditor,28,40,''); mhnr(300);  { 'Editor ' }
-  msetvfunc(testexecutable);
+  { HJT 27.10.2005 neue Funktion beruecksichigt }
+  {  ein fuehrendes Sternchen }
+  { msetvfunc(testexecutable); }
+  msetvfunc(testexist_st);
   maddstring(3,4,getres2(256,8),EditorBakExt,3,3,'>');      { 'Backup-Dateierweiterung  ' }
   
   maddstring(3,6,getres2(256,14),EditCharset,12,MAXINT,''); { 'Zeichensatz  ' }
@@ -1443,18 +1447,37 @@ end;
 {$endif} { Linix }
 
 function testexecutable(var s:string):boolean;
-var s2 : string;
 begin
+  Debug.DebugLog('xp2c', 'testexecutable for: <'+s+'>',dlDebug);
   if s = '' then
   begin
     Result := true;
     Exit;
   end;
-  s2:=trim(s);
-  if FirstChar(s2) ='*' then DeleteFirstChar(s2);
-  result:=ExecutableExists(s2);
+  result:=ExecutableExists(s);
   if not result then rfehler(206);
 end;
+
+{ HJT 27.10.2005 Sternchen als erstes Zeichen beruecksichtigen,
+  sprich fuer den Existenztest abschneiden
+}
+function testexist_st(var s:string):boolean;
+var s2 : string;
+begin
+  Debug.DebugLog('xp2c', 'testexist_st for: <'+s+'>',dlDebug);
+
+  s2:=trim(s);
+  if s2 = '' then
+  begin
+    Result := true;
+    Exit;
+  end;
+
+  if LeftStr(s2,1) = '*' then DeleteFirstChar(s2);
+  result:=ExecutableExists(s2);
+  if not result then rfehler(206); { 'Programm nicht erreichbar (Extension nicht vergessen!)' }
+end;
+    
 
 function testpgpexe(var s:string):boolean;
 begin
