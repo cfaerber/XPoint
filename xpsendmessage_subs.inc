@@ -31,7 +31,6 @@ var
   s       : string;
   num,n   : word;
   Buf: array[0..4095] of Char;
-  FirstLine: Boolean;
 begin
   sigtemp:=false;
   if _filesize(signat)=0 then
@@ -64,26 +63,16 @@ begin
     assign(t2,sigfile);
     rewrite(t2);
     s:='';
-    FirstLine := true;
-    while not eof(t) and (s<>sigsep) do
-    begin
+    while not eof(t) and (s<>sigsep) do begin
       readln(t,s);
       if pm then
         rpsuser(s,empfaenger,sdata.empfrealname);
       rpsdate(s);
-      if s <> sigsep then
-      begin
-        if FirstLine then
-        begin
-          write(t2, s);
-          FirstLine := false;
-        end else
-          write(t2, #13#10 + s);
+      if s<>sigsep then write(t2,s+#13#10);
       end;
-    end;
     close(t);
     close(t2);
-  end;
+    end;
 end;
 
 function getsize:boolean;
