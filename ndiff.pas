@@ -30,7 +30,7 @@ procedure processlist(const nl, nd: String);
 implementation
 
 uses
-  sysutils, typeform, fileio, xpglobal;
+  sysutils, typeform, fileio, xpglobal, xpx;
 
 const
   shrink: boolean = false;
@@ -52,15 +52,6 @@ var
   buf3: array[0..8191] of byte;
   reg: array[1..maxregs] of regrec;
 
-procedure logo;
-begin
-  writeln;
-  writeln('----------------  Nodelist Processor ', verstr, betastr);
-  writeln;
-  writeln('OpenXP-Version ', verstr, pformstr, betastr, ' ', x_copyright,
-    ' by ', author_name, ' <', author_mail, '>');
-  writeln;
-end;
 
 procedure helppage;
 begin
@@ -334,7 +325,10 @@ end;
 procedure StartCommandLineNdiff;
 begin
   UseCommandLine := true;
-  logo;
+  Logo;
+  writeln('----------------  Nodelist Processor ', verstr, betastr);
+  writeln;
+
   getpar;
   if shrink then
     shrinklist;

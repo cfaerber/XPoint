@@ -34,7 +34,7 @@ uses
   typeform,fileio,mouse,inout,xp0,crc,sysutils;
 
 function _deutsch:boolean;
-procedure stop(txt:string);
+procedure stop(const txt:string);
 procedure logo;
 
 procedure InitXPXUnit;
@@ -49,7 +49,7 @@ uses
 
 const starting : boolean = true;
 
-procedure stop(txt:string);
+procedure stop(const txt:string);
 begin
   writeln;
   writeln(txt);
@@ -81,7 +81,6 @@ begin
   if (xp_xp='CrossPoint') then write(t,'(R)');
   writeln(t,' ',verstr,pformstr,betastr);
   Writeln(t,'Copyright ', x_copyright, ' by ',author_name,' (',author_mail,')');
-  writeln(t);
   writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
   writeln(t);
 {$IFNDEF VP }

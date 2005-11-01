@@ -45,7 +45,7 @@ procedure StartCommandlineMaggi;
 implementation
 
 uses sysutils, classes, xpheader, xpmakeheader,
-  typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
+  typeform,fileio,montage,xpdatum,xp_iti, xpglobal, xpx;
 
 const maxbrett  = 2000;
       attrMPbin   = $0040;            { Multipart-Binary           }
@@ -1595,10 +1595,8 @@ end;
 
 procedure StartCommandlineMaggi;
 begin
-  writeln;
+  Logo;
   writeln('MAGGI - Magic/Quick/Maus/ZConnect - Konvertierer (c) P.Mandrella');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
-            ' by ',author_name,' <',author_mail,'>');
   writeln;
 
   getpar;

@@ -205,7 +205,8 @@ uses
   winxp,
   xpcharset,
   xp0,
-  xp1;
+  xp1,
+  xpx;
 
 procedure ExpandCR(var data; bpos: Integer; size: Integer; var addlfs: Integer); assembler; {&uses ebx, esi, edi}
 asm
@@ -1808,6 +1809,9 @@ end;
 
 procedure StartCommandLineZFIDO;
 begin
+  Logo;
+  writeln('ZConnect <-> Fido - Konvertierer  (c) ''92-99 PM');
+  Writeln;
   getpar;
   testfiles;
   if direction=1 then testadr;

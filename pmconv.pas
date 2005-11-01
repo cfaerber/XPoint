@@ -32,7 +32,7 @@ implementation
 
 uses
   xpglobal, typeform,xpdatum,sysutils,classes,xpnt, xpheader,
-  xpmakeheader, Fileio;
+  xpmakeheader, Fileio, xpx;
 
 const
       TO_ID     : string[10] = '/'#0#0#8#8'TO:';
@@ -65,7 +65,7 @@ procedure helppage;
 begin
   writeln('PMs in Pufferdatei konvertieren:  PMCONV <Puffer> [Username]');
   writeln;
-  writeln('Dokumentation: s. XPOINT.TXT, Anhang C');
+  writeln('Dokumentation: s. OPENXP.TXT, Anhang C');
   halt(1);
 end;
 
@@ -167,7 +167,7 @@ end;
 
 procedure StartCommandLinePMConv;
 begin
-  writeln;
+  Logo;
   if paramcount=1 then helppage;
   uname:=paramstr(3);
   assign(f,paramstr(2));
