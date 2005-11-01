@@ -28,7 +28,7 @@
 
 // always use $R+ because a bug in FPC
 {$IFDEF FPC }
-  {$R}
+  {$R+}
 {$ENDIF }
 
 { Unter Virtual Pascal werden Informationen Åber die Zeilennummern
