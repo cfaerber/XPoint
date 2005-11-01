@@ -26,6 +26,11 @@
 
 {.$DEFINE Debug }
 
+// always use $R+ because a bug in FPC
+{$IFDEF FPC }
+  {$R}
+{$ENDIF }
+
 { Unter Virtual Pascal werden Informationen Åber die Zeilennummern
   gespeichert, vergrî·ert die EXE-Datei etwas.
 
