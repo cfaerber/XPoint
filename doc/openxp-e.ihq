@@ -4179,6 +4179,10 @@ P.MANDRELLA    gives  PM>
 FRANK_MUELLER  gives  FM>
 GHOSTWRITER    gives   G>
 
+Initials will only be inserted in Non-RFC-networks.
+If you with to create initials on RFC-networks
+use <<\@@>> instead.
+
 You can also use <<$>> instead of "\@" and then no
 initials are produced for names with no divider.
 

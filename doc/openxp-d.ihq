@@ -6786,6 +6786,11 @@ P.MANDRELLA    ->  PM>
 FRANK_MUELLER  ->  FM>
 GHOSTWRITER    ->  G>
 
+Quoteinitialen werden jedoch nur in Netzen erzeugt, 
+in denen dies auch erwnscht ist (z.B. Fidonet). Wenn
+Sie Quoteinitialen auch fr z.B. Usenet erzeugen 
+m”chten, dann verwenden Sie <<\@@>>.
+
 Wahlweise k”nnen Sie statt des <<\@>> auch <<$>> verwenden;
 dann wird bei Namen ohne Trennung gar keine Initiale
 erzeugt.

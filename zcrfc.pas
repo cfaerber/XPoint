@@ -2913,7 +2913,7 @@ begin
 
       for i := 1 to Empfaenger.Count - 1 do
         if not nokop then
-          wrs(f, 'cc: ' + Empfaenger[i]);
+          wrs(f, 'Cc: ' + Empfaenger[i]);
     end
     else
       Wrs(f, 'Newsgroups: ' + Newsgroupsline(hd.Empfaenger));
