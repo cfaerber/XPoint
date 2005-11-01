@@ -1441,13 +1441,16 @@ end;
 {$endif} { Linix }
 
 function testexecutable(var s:string):boolean;
+var s2 : string;
 begin
   if s = '' then
   begin
     Result := true;
     Exit;
   end;
-  result:=ExecutableExists(s);
+  s2:=trim(s);
+  if FirstChar(s2) ='*' then DeleteFirstChar(s2);
+  result:=ExecutableExists(s2);
   if not result then rfehler(206);
 end;
 
