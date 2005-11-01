@@ -146,6 +146,7 @@ type  FidoAdr  = record
 
 var   _from,_to : FidoAdr;
       bh_anz    : shortint;     { Anzahl Bretteintraege in ZFIDO.CFG }
+      commandline: boolean = false;
 
       bretths   : array[1..maxbretth] of record
                     box : string;
@@ -967,12 +968,15 @@ begin                   //ZFidoProc
   assign(f1,infile);
   reset(f1,1);
   fs:=filesize(f1);
-  msgbox(70,7,GetRes2(30003,20),x,y);   { 'Konvertiere ZConnect -> FTS' }
-  MWrt(x+2,y+2,GetRes2(30003,12));      { 'Nummer' }
-  MWrt(x+2,y+3,GetRes2(30003,14));      { 'An' }
-  MWrt(x+2,y+4,GetRes2(30003,15));      { 'Betreff' }
-  MWrt(x+2,y+5,GetRes2(30003,16));      { 'Status' }
-  attrtxt(col.ColMboxHigh);
+  if not CommandLine then
+  begin
+    msgbox(70,7,GetRes2(30003,20),x,y);   { 'Konvertiere ZConnect -> FTS' }
+    MWrt(x+2,y+2,GetRes2(30003,12));      { 'Nummer' }
+    MWrt(x+2,y+3,GetRes2(30003,14));      { 'An' }
+    MWrt(x+2,y+4,GetRes2(30003,15));      { 'Betreff' }
+    MWrt(x+2,y+5,GetRes2(30003,16));      { 'Status' }
+    attrtxt(col.ColMboxHigh);
+  end;
   adr:=0;
   n:=0;
   ok:=true;
@@ -988,7 +992,8 @@ begin                   //ZFidoProc
         end
       else begin
         inc(n);
-        MWrt(x+15,y+2,IntToStr(n));
+        if not CommandLine then
+          MWrt(x+15,y+2,IntToStr(n));
         if WriteMessageHeader then begin
           CopyMessageText;
           WriteMessageFooter;
@@ -1002,9 +1007,12 @@ begin                   //ZFidoProc
   freemem(buf,bufsize);
   if reqopen then
     close(reqfile);
-  closebox;
   if not ok then trfehler(2303,15);
   freeres;
+  if CommandLine then
+    writeln(n, ' Nachrichten konvertiert')
+  else
+    closebox;
 end;
 
 { FTS-0001 -> ZCONNECT }
@@ -1694,7 +1702,10 @@ abbr:
       end;
     end
   else
-    writeln;
+    if CommandLine then
+      writeln(anz_msg, ' Nachrichten konvertiert')
+    else
+      Writeln;
 end;
 
 
@@ -1812,6 +1823,7 @@ begin
   Logo;
   writeln('ZConnect <-> Fido - Konvertierer  (c) ''92-99 PM');
   Writeln;
+  CommandLine := true;
   getpar;
   testfiles;
   if direction=1 then testadr;
