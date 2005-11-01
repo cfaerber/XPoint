@@ -249,9 +249,12 @@ function testreplyto(var s:string):boolean;
 var p : byte;
     d : DB;
 begin
+  Debug.DebugLog('xpsendmessage','testreplyto('+s+')', DLDebug);
   p:=cpos('@',s);
   if (s<>'') and ((p=0) or (cpos('.',mid(s,p))=0)) then
   begin
+      Debug.DebugLog('xpsendmessage','testreplyto, calling dbOpen(PseudoFile)', DLDebug);
+
       dbOpen(d,PseudoFile,1);           { Wenns keine gueltige Adresse ist...}
       dbSeek(d,piKurzname,UpperCase(s));
       if dbFound then
@@ -523,6 +526,8 @@ function getForceBoxNT :byte;
 var d :DB;
     res :byte;
 begin
+  Debug.DebugLog('xpsendmessage','getForceBoxNT, calling dbOpen(BoxenFile)', DLDebug);
+
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName, Uppercase(forcebox));
   if dbFound then
@@ -537,7 +542,12 @@ var server :string;
     nt :byte;
     d :DB;
 begin
+  Debug.DebugLog('xpsendmessage','getUserNT', DLDebug);
+
   server := dbReadNStr(ubase,ub_pollbox);
+
+  Debug.DebugLog('xpsendmessage','getUserNT, calling dbOpen(BoxenFile)', DLDebug);
+
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName, Uppercase(server));
   if dbFound then
@@ -552,7 +562,12 @@ var server :string;
     nt :byte;
     d :DB;
 begin
+  Debug.DebugLog('xpsendmessage','getBrettNT', DLDebug);
+
   server := dbReadNStr(bbase,bb_pollbox);
+
+  Debug.DebugLog('xpsendmessage','getBrettNT, calling dbOpen(BoxenFile)', DLDebug);
+
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName, Uppercase(server));
   if dbFound then
@@ -694,6 +709,8 @@ end;
       nt : byte;
       s  : string[BoxNameLen];
   begin
+    Debug.DebugLog('xpsendmessage','ReadServerNTs, calling dbOpen(BoxenFile)', DLDebug);
+    
     dbOpen(d,BoxenFile,1);
     i:=iif(verteiler,1,0);
     while i<=cc_anz do begin
@@ -843,6 +860,7 @@ end;
   Procedure changeempf;                         {Empfaenger der Mail aendern}
   var kb_s: boolean;
       oldNT:byte;
+      newNT:byte;   { HJT 29.10.2005 }
   begin
     Debug.DebugLog('xpsendmessage','changeempf', DLDebug);
 
@@ -884,11 +902,30 @@ end;
     pm:=cpos('@',empfaenger)>0;
     if forcebox <> '' then
     begin
-      if pm then
-        dbSeek (ubase, uiName, UpperCase (empfaenger))
-      else
+      if pm then begin
+        Debug.DebugLog('xpsendmessage','changeempf calling, '
+                       +'dbSeek (ubase,uiName) for emp:<'
+                       +UpperCase (empfaenger), DLDebug);
+        dbSeek (ubase, uiName, UpperCase (empfaenger));
+        if dbFound then begin   { HJT 29.10.2005 }
+           Debug.DebugLog('xpsendmessage','changeempf, dbFound is True', DLDebug);
+           newNT:=getUserNT;    { HJT 29.10.2005 }
+           end
+        end
+      else begin
+        Debug.DebugLog('xpsendmessage','changeempf calling, '
+                       +'dbSeek (bbase, biBrett) for emp:<'
+                       +UpperCase (empfaenger), DLDebug);
         dbSeek (bbase, biBrett, UpperCase (empfaenger));
-      if (not dbFound) or (not ntAdrCompatible (oldNT, iif (pm, getUserNT, getBrettNT))) then
+        if dbFound then begin   { HJT 29.10.2005 }
+           Debug.DebugLog('xpsendmessage','changeempf, dbFound is True', DLDebug);
+           newNT:=getBrettNT;   { HJT 29.10.2005 }
+           end
+      end;
+      { HJT 29.10.2005 iif ruft getUserNT UND getBrettNT auf, auch wenn }
+      { wir nur einen aktuellen User ODER ein aktuelles Brett haben     }
+      { if (not dbFound) or (not ntAdrCompatible (oldNT, iif (pm, getUserNT, getBrettNT))) then }
+      if (not dbFound) or (not ntAdrCompatible (oldNT, newNT)) then
       begin
         hinweis (getres (623)); { 'Inkompatible Netztypen - Serverbox-Žnderungen werden zurckgesetzt.' }
         forceBox := ''
@@ -1091,6 +1128,8 @@ procedure checkIncompatibleNT;
 var i, nt :integer;
     compatible :boolean;
 begin
+  Debug.DebugLog('xpsendmessage','checkIncompatibleNT, forcebox: <'+forcebox+'>', DLDebug);
+
   if (forcebox <> '') and (cc_anz > 0) then
   begin
     compatible := true;
@@ -1106,6 +1145,9 @@ begin
       testXPostings (true, true);
       box := ccm^[0].server;
       if cc_anz = 0 then fillchar(ccm^,sizeof(ccm^),0);
+
+      Debug.DebugLog('xpsendmessage','checkIncompatibleNT, calling dbOpen(BoxenFile)', DLDebug);
+
       dbOpen(d,BoxenFile,1);
       dbSeek(d,boiName, Uppercase(box));
       if dbFound then
@@ -1328,6 +1370,8 @@ fromstart:
         FidoName := dbReadNStr(bbase,bb_adresse);    { Brett-Origin }
     end;
 
+    Debug.DebugLog('xpsendmessage','DoSend, calling dbOpen(gruppenfile)', DLDebug);
+
     dbOpen(d,gruppenfile,1);          { max. BrettMsg-Groesse ermitteln   }
     dbSeek(d,giIntnr,dbLongStr(grnr));
     if not dbFound then maxsize:=0    { duerfte nicht vorkommen }
@@ -1353,6 +1397,8 @@ fromstart:
   firststart := false;
 
   { -- Boxdaten -- }
+
+  Debug.DebugLog('xpsendmessage','DoSend, calling dbOpen(BoxenFile)', DLDebug);
 
   dbOpen(d,BoxenFile,1);           { Pollbox + MAPS-Name ueberpruefen }
   if box<>'' then begin            { nicht intern.. }
