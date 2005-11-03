@@ -463,8 +463,6 @@ function StringListToString(SL: TStringList): String;
 function ExcludeTrailingPathDelimiter(const s: String): String;
 function IsPathDelimiter(const S: string; Index: Integer): Boolean;
 {$ENDIF }
-// scans Buffer with Len for first occurrence of char c
-function BufferScan(const Buffer; Len: Integer; c: Char): Integer; 
 function FindURL(s: String; var x, y: Integer): Boolean;
 
 
@@ -515,8 +513,9 @@ begin
   CPos := 0;
 end;
 
-procedure SetParity(var b:byte; even:boolean); {&uses edi} assembler;
+procedure SetParity(var b:byte; even:boolean);assembler;
 asm
+          push edi
           mov    edi,b
           mov    al,[edi]
           cmp    even,0
@@ -529,11 +528,8 @@ asm
           jpo    @spok
           or     al,80h
 @spok:    mov    [edi],al
-{$ifdef FPC }
-end ['EAX', 'EDI'];
-{$else}
+          pop edi
 end;
-{$endif}
 
 function Hoch(const r:real; const n:integer):real;
 var i : integer;
@@ -877,7 +873,6 @@ begin
   strsrnp:=s;
 end;
 
-{$IFDEF NOASM }
 {$IFNDEF WIN32 }
 
 {$ifndef FPC}
@@ -941,161 +936,6 @@ begin
 end;
 
 {$ENDIF}
-
-{$ELSE} { NOASM }
-
-{$ifdef ver32}
-
-{$ifndef FPC}
-function Upcase(const c:char): char; {&uses ebx} assembler;
-const
-  LookUp: array[0..158] of Char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~' +
-{$IFDEF WIN32 }
-   '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿' +
-   'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ÷ØÙÚÛÜÝÞß';
-{$ELSE}
-   '€šƒŽ…€ˆ‰Š‹ŒŽ’’“™•–—˜™š›œžŸ ¡¢£¥¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿' +
-   'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ';
-{$ENDIF}
-asm
-{$IFDEF Delphi }
-    push ebx
-{$ENDIF }
-    xor ebx,ebx
-    mov   bl, c
-    cmp   bl, 'a'                         { erst ab 'a'... }
-    jb @noupcase
-    mov al, byte ptr [lookup+ebx-61h]          { Lookup-Table begint bei 'a'... }
-    jmp @Upcase_end
-@noupcase:
-    mov al,bl
-@Upcase_end:
-{$IFDEF Delphi }
-    pop ebx 
-{$ENDIF Delphi }
-end;
-{$endif}
-
-function Locase(const c:char):char; {&uses ebx} assembler;
-const
-  Look: array[0..7] of char = '’¥€Ž™š';
-  Get: array[0..7] of char = '‚†‘¤‡„”';
-asm
-    mov al,c                { Weniger Benutzt - weniger schnell aber kuerzer }
-    cmp al,"A"
-    jb @Locase_end
-    cmp al,"Z"
-    ja @3
-@1: or al,20h
-    jmp @Locase_end
-
-
-{$IFDEF Win32 }
-
- @3: cmp al,192
-     jb @Locase_end
-     cmp al,221
-     jna @1
-     jmp @Locase_end
-
-{$ELSE}
-
- @3: mov ebx,7
- @4: cmp byte ptr [look+eBX],al
-     je @5
-     dec ebx
-     jns @4
-     jmp @Locase_end
- @5: mov al,byte ptr [get+ebx]
-     jmp @Locase_end
-
-{$ENDIF}
-
-@Locase_end:
-{$ifdef FPC }
-end ['EAX', 'EBX'];
-{$else}
-end;
-{$endif}
-
-{$else}
-
-{$ifndef FPC}
-function Upcase(const c:char): char; assembler;
-asm
-    mov   bl, c
-    cmp   bl, 'a'                         { erst ab 'a'... }
-    mov   bh, 0
-    jb @noupcase
-    mov al,cs:[offset @lookup+bx-61h]          { Lookup-Table begint bei 'a'... }
-    jmp @Upcase_end
-
-{Win/DOS Tabellenteile nur mit dem jeweils passenden  }
-{Editor bzw. Zeichensatz aendern...                   }
-
-@Lookup: db 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~'
-
-{$IFDEF Win32 }
-         db '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
-         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ÷ØÙÚÛÜÝÞß'
-{$ELSE}
-         db '€šƒŽ…€ˆ‰Š‹ŒŽ’’“™•–—˜™š›œžŸ ¡¢£¥¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
-         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ'
-{$ENDIF}
-
-@noupcase:
-    mov al,bl
-
-@Upcase_end:
-end;
-{$endif}
-
-function Locase(const c:char):char; assembler;
-asm
-    mov al,c                { Weniger Benutzt - weniger schnell aber kuerzer }
-    cmp al,"A"
-    jb @Locase_end
-    cmp al,"Z"
-    ja @3
-@1: or al,20h
-    jmp @Locase_end
-
-
-{$IFDEF Win32 }
-
- @3: cmp al,192
-     jb @Locase_end
-     cmp al,221
-     jna @1
-     jmp @Locase_end
-
-{$ELSE}
-
- @3: mov bx,7
- @4: cmp byte ptr cs:[@look+BX],al
-     je @5
-     dec bx
-     jns @4
-     jmp @Locase_end
- @5: mov al,byte ptr cs:[@get+bx]
-     jmp @Locase_end
-
- @Look: db '’¥€Ž™š'
- @Get:  db '‚†‘¤‡„”'
-
-{$ENDIF}
-
-@Locase_end:
-{$ifdef FPC }
-end ['EAX', 'EBX'];
-{$else}
-end;
-{$endif}
-
-{$endif}
-
-{$ENDIF}
-
 
 
 function FileUpperCase(const s:string):string;
@@ -1898,20 +1738,6 @@ begin
   Result := (Index > 0) and (Index <= Length(S)) and (S[Index] = PathDelim);
 end;
 {$ENDIF }
-
-function BufferScan(const Buffer; Len: Integer; c: Char): Integer; assembler;
-asm
-        PUSH    EDI
-        MOV     EDI, Buffer
-        MOV     AL, C
-        MOV     ECX, Len
-        MOV     EBX, ECX
-        REPNE   SCASB
-        SUB     EBX, ECX
-        MOV     EAX, EBX
-        DEC     EAX
-@@1:    POP     EDI
-end;
 
 function FindURL(s: String; var x, y: Integer): Boolean; overload;
 const

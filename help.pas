@@ -239,8 +239,10 @@ begin
   x:=_x; y:=_y; hgh:=height;
 end;
 
-procedure decode(buf:pointer; size: LongWord); assembler; {&uses ebx}
+procedure decode(buf:pointer; size: LongWord); assembler; 
 asm
+        push ebx
+        push ecx
         mov ecx, size
         mov ebx, buf
         mov al, 7
@@ -248,11 +250,9 @@ asm
         add al, 125
         inc ebx
         loop @lp;
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX'];
-{$ELSE }
+        pop ecx
+        pop ebx
 end;
-{$ENDIF }
 
 procedure loadpage(nr:word; pstentry:boolean);
 type buft    = array[1..32768] of byte;

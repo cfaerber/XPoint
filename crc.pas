@@ -181,15 +181,12 @@ begin { UpdCRC32 }
    UpdCRC32 := crc_32_tab[(BYTE(crc XOR DWord(octet))AND $FF)] XOR ((crc SHR 8) AND $00FFFFFF)
 end;
 
-procedure CCITT_CRC32_calc_Block(var block; size: DWord);
-                                {&uses ebx,esi,edi} assembler;  {  CRC-32  }
+procedure CCITT_CRC32_calc_Block(var block; size: DWord); assembler;  {  CRC-32  }
 asm
-{$IFDEF Delphi }
      push ebx
-     
+
      push esi
      push edi
-{$ENDIF }
      mov ebx, CRC_Reg
      mov edi, block
      mov esi, size
@@ -207,16 +204,10 @@ asm
      jnz @u3
      mov CRC_reg, ebx
 @u4:
-{$IFDEF Delphi }
      pop edi
      pop esi
      pop ebx
-{$ENDIF Delphi }
-{$ifdef FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$else}
 end;
-{$endif}
 
 function CRC32Str(s: string) : longint;
 begin

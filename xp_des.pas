@@ -133,8 +133,10 @@ const IP : array[1..64] of byte =
 var x,buf : stream;    { buf = Puffer; nur fÅr Assembler-Routinen ! }
     k     : array[1..16] of stream;
 
-procedure make_stream(var source, dest); assembler; {&uses esi, edi}
+procedure make_stream(var source, dest); assembler;
 asm
+             push esi
+             push edi
              mov    esi, source
              mov    edi, dest
 
@@ -156,14 +158,16 @@ asm
              inc     esi
              dec     dh
              jnz     @mstl1
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
+             pop edi
+             pop esi
 end;
-{$ENDIF }
 
-procedure permutate(var s; codeofs: longint; n:longint); assembler; {&uses ebx, esi, edi}
+procedure permutate(var s; codeofs: longint; n:longint);assembler;
 asm
+             push ebx
+             push ecx
+             push esi
+             push edi
              mov     esi, codeofs
              mov     edi, offset buf
              mov     ebx, s
@@ -185,15 +189,18 @@ asm
              inc     edi
              mov     ecx,n
              rep     movsb
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$ELSE }
+             pop edi
+             pop esi
+             pop ecx
+             pop ebx
 end;
-{$ENDIF }
 
 
 procedure make_comp(var source; var dest); assembler; {&uses esi, edi}
 asm
+              push ecx
+              push esi
+              push edi
              mov     esi, source
              mov     edi, dest
 
@@ -214,14 +221,17 @@ asm
              inc     edi
              dec     dh
              jnz     @mkklp1
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'ESI', 'EDI'];
-{$ELSE }
+             pop edi
+             pop esi
+             pop ecx
 end;
-{$ENDIF }
 
 procedure Xs(var s1, s2; n: longint); assembler; {&uses esi, edi}
 asm
+             push ecx
+             push edx
+             push esi
+             push edi
              mov     edi, s1
              mov     esi, s2
              cld
@@ -232,14 +242,19 @@ asm
              xor     [edi], al
              inc     edi
              loop    @Xslp
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
+             pop edi
+             pop esi
+             pop edx
+             pop ecx
 end;
-{$ENDIF }
 
 procedure F2(var s, s2); assembler; {&uses ebx, esi, edi}
 asm
+             push ebx
+             push ecx
+             push edx
+             push esi
+             push edi
              mov     ecx,0
 @F2lp:       push    ecx
              shl     ecx,1
@@ -296,11 +311,12 @@ asm
              inc     ecx
              cmp     ecx,8
              jb      @F2lp
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
+             pop edi
+             pop esi
+             pop edx
+             pop ecx
+             pop ebx
 end;
-{$ENDIF }
 
 procedure sleft(var s:stream; n:integer);
 var i : integer;

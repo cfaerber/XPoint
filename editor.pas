@@ -180,10 +180,13 @@ var   Defaults : edp;
 { ------------------------------------------------ externe Routinen }
 
 function SeekStr(var data; len: LongWord;
-                 var s:string; igcase:boolean):integer; assembler; {&uses ebx, esi, edi}
+                 var s:string; igcase:boolean):integer; assembler;
 
   { -1 = nicht gefunden, sonst Position }
 asm
+        push ebx
+        push esi
+        push edi
         jmp    @start
   @uppertab:   db    'Ä','ö','ê','É','é','Ö','è','Ä','à','â','ä','ã'
                db    'å','ç','é','è','ê','í','í','ì','ô'
@@ -244,16 +247,17 @@ asm
          pop   esi
          sub   eax,esi
   @sende:
-{$IFDEF FPC }
-end ['EBX', 'ESI', 'EDI'];
-{$ELSE }
+        pop edi
+        pop esi
+        pop ebx
 end;
-{$ENDIF }
 
 
 function FindUmbruch(var data; zlen:integer):integer; assembler; {&uses ebx, esi}
   { rÅckwÑrts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 asm
+            push ebx
+            push esi
             mov   esi,data
             mov   ebx,zlen
             test  ebx, ebx
@@ -302,11 +306,9 @@ asm
             jnz   @floop
   @ufound:
             mov   eax,ebx
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ESI'];
-{$ELSE }
+            pop esi
+            pop ebx
 end;
-{$ENDIF }
 
 procedure FlipCase(var data; size: Integer);
 var
