@@ -325,6 +325,22 @@ const
     97,223, 71,182, 83,115,181,110,111, 79, 79,100,111,248, 69, 32,
     61,177, 62, 60,124,124,247, 61,176,183,183, 32,179,178,183, 32);
 
+      { Mac: €¥™š …ƒ„a†‡‚Š ˆ‰¡Œ‹¤¢•“”o£—– +ø›œùáRCt'"!’O
+             ìñóòëäãôãaoê_í  ¨­ªûŸ÷^®¯__AAOOo --,"`'öş˜Y/x<>__
+             +ú,"_AEAEEIIIIOO _OUUUi^~-_úø,",_
+
+        fehlt: BE, DE, DF }
+
+      Mac2IBMtab : array[128..255] of byte =
+      (142,143,128,144,165,153,154,160,133,131,132, 97,134,135,130,138,
+       136,137,161,141,140,139,164,162,149,147,148,111,163,151,150,129,
+        43,248,155,156, 21,249, 20,225, 82, 67,116, 39, 34, 33,146, 79,
+       236,241,243,242,157,230,235,228,227,227,244, 97,111,234, 32,237,
+       168,173,170,251,159,247, 94,174,175, 32, 32, 65, 65, 79, 79,111,
+        45, 45, 44, 32, 96, 39,246,254,152, 89, 47,120, 60, 62, 32, 32,
+        43,250, 44, 32, 32, 65, 69, 65, 69, 69, 73, 73, 73, 73, 79, 79,
+        32, 79, 85, 85, 85,105, 94,126, 45, 32,250,248, 44, 34, 44, 32);
+
 type DateTimeSt = string;
      s20        = string;
      s40        = string;
@@ -441,6 +457,8 @@ function DecodeRot13String(const s: String): String;
 procedure Rot13(var data; Size: Integer);         { Rot 13 Kodierung }
 function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 function IBMToISO(const s: String): String;
+procedure Iso1ToIBM(var data; size: Integer); 
+procedure Mac2IBM(var data; size: LongWord);
 { Der Filename wird zur Anzeige auf den Bildschirm in den richtigen
   Zeichensatz konvertiert }
 function ConvertFileName(const s:string): String;
@@ -1608,41 +1626,27 @@ begin
 end;
 
 { ROT13 Kodierung }
-procedure Rot13(var data; Size: Integer); {&uses edi} assembler;
-asm
-         mov   edi, data
-         mov   ecx, size
-         jecxz @ende
-         cld
-  @rotlp:
-         mov   al, [edi]
-         cmp   al,'A'
-         jb    @rot
-         cmp   al,'Z'
-         ja    @noupcase
-         add   al,13
-         cmp   al,'Z'
-         jbe   @rot
-         sub   al,26
-         jmp   @rot
-  @noupcase:
-         cmp   al,'a'
-         jb    @rot
-         cmp   al,'z'
-         ja    @rot
-         add   al,13
-         cmp   al,'z'
-         jbe   @rot
-         sub   al,26
-  @rot:
-         stosb
-         loop  @rotlp
-  @ende:
-{$ifdef FPC }
-end ['EAX', 'ECX', 'EDI'];
-{$else}
+procedure Rot13(var data; Size: Integer);
+var
+  i: Integer;
+  c: Char;
+begin
+  for i := 0 to size - 1 do
+  begin
+    c := TCharArray(data)[i];
+    if (c >= 'A') and (c <= 'Z') then
+    begin
+      Inc(c, 13);
+      if c > 'Z' then Dec(c, 26);
+    end else
+      if (c >= 'a') and (c <= 'z') then
+      begin
+        Inc(c, 13);
+        if c > 'z' then Dec(c, 26);
+      end;
+    TCharArray(data)[i] := c;
+  end;
 end;
-{$endif}
 
 function IsoToIbm(const s:string): String;
 var
@@ -1654,6 +1658,15 @@ begin
       IsoToIBM[i] := chr(iso2ibmtab[byte(s[i])])
 end;
 
+procedure Iso1ToIBM(var data; size: Integer);
+var
+  i : integer;
+begin
+  for i:=0 to size-1 do
+    if (TByteArray(data)[i]>=128) then
+      TByteArray(data)[i] := iso2ibmtab[TByteArray(data)[i]];
+end;
+
 function IBMToISO(const s: String): String;
 var
   i: Integer;
@@ -1662,6 +1675,17 @@ begin
   for i := 1 to Length(s) do
     Result[i] := Char(IBM2ISOTab[byte(s[i])]);
 end;
+
+
+procedure Mac2IBM(var data; size: LongWord);
+var
+  i : integer;
+begin
+  for i:=0 to size-1 do
+    if (TByteArray(data)[i]>=128) then
+      TByteArray(data)[i] := mac2ibmtab[TByteArray(data)[i]];
+end;
+
 
 function ConvertFileName(const s:string): String;
 begin

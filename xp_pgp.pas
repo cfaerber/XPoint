@@ -33,7 +33,7 @@ uses
 {$ENDIF}
   xp0,xp1,xpstreams,Classes;
 
-procedure LogPGP(s:string);                  { s in PGP.LOG schreiben         }
+procedure LogPGP(const s:string);            { s in PGP.LOG schreiben         }
 procedure RunPGP(par:string);                { PGP 2.6.x bzw. 6.5.x aufrufen  }
 procedure RunPGP5(exe:string;par:string);    { PGP 5.x aufrufen               }
 procedure UpdateKeyfile;
@@ -76,25 +76,20 @@ const
   flag_PGPSigOk = $01;
   flag_PGPSigErr = $02;
 
-function testbin(var bdata; rr: Integer):boolean; assembler;
-asm
-         push ecx
-         push esi
-         mov   ecx,rr
-         mov   esi,bdata
-         cld
-@tbloop: lodsb
-         cmp   al,9                     { Binaerzeichen 0..8, ja: c=1 }
-         jb    @tbend                  { JB = JC }
-         loop  @tbloop
-@tbend:  mov eax, 0
-       {  adc ax,ax }                      { C=0: false, c=1: true }
-         sbb eax,eax
-         pop esi
-         pop ecx
+function testbin(var bdata; rr: Integer):boolean; 
+var
+  i : integer;
+begin
+  Result := false;
+  for i:=0 to rr-1 do
+    if (TByteArray(bdata)[i] < 9) then
+    begin
+      Result := true;
+      break;
+    end;
 end;
 
-procedure LogPGP(s:string);
+procedure LogPGP(const s:string);
 var t : text;
 begin
   assign(t,LogPath+'PGP.LOG');

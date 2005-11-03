@@ -156,24 +156,6 @@ var   _from,_to : FidoAdr;
       avia      : array[1..maxvia] of string;
       viaanz    : integer;
 
-const
-      { Mac: éèÄê•ôö†ÖÉÑaÜáÇä àâ°çåã§¢ïìîo£óñÅ +¯õú˘·RCt'"!íO
-             ÏÒÛÚùÎ‰„Ù„aoÍ_Ì  ®≠™˚ü˜^ÆØ__AAOOo --,"`'ˆ˛òY/x<>__
-             +˙,"_AEAEEIIIIOO _OUUUi^~-_˙¯,",_
-
-        fehlt: BE, DE, DF }
-
-      Mac2IBMtab : array[128..255] of byte =
-      (142,143,128,144,165,153,154,160,133,131,132, 97,134,135,130,138,
-       136,137,161,141,140,139,164,162,149,147,148,111,163,151,150,129,
-        43,248,155,156, 21,249, 20,225, 82, 67,116, 39, 34, 33,146, 79,
-       236,241,243,242,157,230,235,228,227,227,244, 97,111,234, 32,237,
-       168,173,170,251,159,247, 94,174,175, 32, 32, 65, 65, 79, 79,111,
-        45, 45, 44, 32, 96, 39,246,254,152, 89, 47,120, 60, 62, 32, 32,
-        43,250, 44, 32, 32, 65, 69, 65, 69, 69, 73, 73, 73, 73, 79, 79,
-        32, 79, 85, 85, 85,105, 94,126, 45, 32,250,248, 44, 34, 44, 32);
-
-
 { Aufruf von ZFido }
 function DoZFido(const dir      : integer;      { 1 ZC->FTS, 2 FTS->ZC }
                  const ebene    : string;       { Brettebene /FIDO/ }
@@ -266,49 +248,6 @@ begin
   for i := 0 to Size -1 do
     if TByteArray(data)[i] = 0 then
       TByteArray(data)[i] := 32;
-end;
-
-procedure ISO2IBM(var data; size: LongWord); assembler;
-asm
-          push ebx
-          push esi
-          mov    ebx,offset ISO2IBMtab - 128
-          mov    esi,data
-          mov    ecx,size
-          jecxz  @xende
-@xloop:   mov    al,[esi]
-          inc    esi
-          cmp    al,127
-          ja     @trans
-          loop   @xloop
-          jmp    @xende
-@trans:   xlatb
-          mov    [esi-1],al
-          loop   @xloop
-@xende:   pop esi
-          pop ebx
-end;
-
-procedure Mac2IBM(var data; size: LongWord); assembler;
-asm
-          push ebx
-          push esi
-          mov    ebx,offset Mac2IBMtab - 128
-          mov    esi,data
-          mov    ecx,size
-          jecxz  @xende
-          jmp    @xloop
-@xloop:   mov    al,[esi]
-          inc    esi
-          cmp    al,127
-          ja     @trans
-          loop   @xloop
-          jmp    @xende
-@trans:   xlatb
-          mov    [esi-1],al
-          loop   @xloop
-@xende:   pop esi
-          pop ebx
 end;
 
 { --- Allgemeines --------------------------------------------------- }
@@ -1162,51 +1101,25 @@ label abbr;
               copy(s,15,2);
   end;
 
-  function seek0(var buf; smallsize: LongWord):word; assembler;  { suche #0 }
-  asm
-    push ecx
-    push edx
-    push edi
-    mov  ecx, smallsize
-    mov  edi, buf
-    mov  al, 0
-    mov  edx, ecx
-    cld
-    repnz scasb
-    mov eax, edx
-    sub eax, ecx
-    pop edi
-    pop edx
-    pop ecx
+  function seek0(var buf; smallsize: LongWord):word; { suche #0 }
+  var
+    i : integer;
+  begin
+    i := 0;
+    while (i < smallsize) and (TByteArray(buf)[i] <> 0) do
+      Inc(i);
+    Result := i;
   end;
 
-  function seekt(var buf; size: LongWord):word; assembler; { suche _'---'_ }
-  asm
-        push ebx
-        push ecx
-        push edx
-        push edi
-        mov ecx, size
-        mov edi, buf
-        mov ax, '--'
-        mov bl, ' '
-        mov edx, ecx
-        cld
-@lp:    repnz scasb
-        jecxz @ok
-        cmp [edi], ax
-        jnz @lp
-        cmp [edi-2],bl
-        jnb @lp
-        cmp [edi+2],bl
-        ja  @lp
-@ok:    mov eax, edx
-        sub eax, ecx
-        pop edi
-        pop edx
-        pop ecx
-        pop ebx
+  function seekt(var buf; size: LongWord):word; { suche _'---'_ }
+  var
+    TempS: String;
+  begin
+    SetString(TempS, PChar(@buf), size);
+    Result := Max(Pos(#13'--- ', Temps), Pos(#10'--- ', Temps)) + 1;
+    if Result = 1 then Result := size;
   end;
+
 
   procedure seekEOM;   { Tearline & Nachrichtenende suchen }
   const bs = 4096;
@@ -1237,21 +1150,13 @@ label abbr;
     inc(tearadr,tadd);
   end;
 
-  procedure exch_8d(var buf; asize: LongWord); assembler;
-  asm
-        push ecx
-        push edi
-        mov ecx, asize
-        mov edi, buf
-        cld
-@l:     mov al, [edi]
-        cmp al, $8d
-        jnz @j
-        mov al, $0d
-@j:     stosb
-        loop @l
-        pop edi
-        pop ecx
+  procedure exch_8d(var buf; asize: Integer);
+  var
+    i : integer;
+  begin
+    for i:=0 to asize-1 do
+      if TByteArray(buf)[i] = $8d then
+        TByteArray(buf)[i] := $0d;
   end;
 
   procedure CopyMsg(size:longint);
@@ -1265,7 +1170,7 @@ label abbr;
         blockread(f1,p^,min(size,bs),rr);
         exch_8d(p^,rr);
         case cxlate of
-          1 : ISO2IBM(p^,rr);
+          1 : ISO1toIBM(p^,rr);
           2 : Mac2IBM(p^,rr);
         end;
         blockwrite(f2,p^,rr);
@@ -1286,7 +1191,7 @@ label abbr;
     blockread(f1,msgbuf^[bpos],size);
     exch_8d(msgbuf^[bpos],size);
     case cxlate of
-      1 : ISO2IBM(msgbuf^[bpos],size);
+      1 : ISO1toIBM(msgbuf^[bpos],size);
       2 : Mac2IBM(msgbuf^[bpos],size);
     end;
     ExpandCR(msgbuf^,bpos,size,addlf);
@@ -1810,6 +1715,7 @@ begin
   result:= _result;
   Debug.DebugLog('zftools','conversion finished',DLInform);
 end;
+
 
 
 procedure StartCommandLineZFIDO;

@@ -61,8 +61,6 @@ procedure BriefSchablone(pm:boolean; const schab,fn:string; const empf:string;
 procedure ReadHeader(var hd:theader; var hds:longint; hderr:boolean);  { Fehler-> hds=1 ! }
 procedure QPC(decode:boolean; var data; size: Integer; passwd:pointer;
               var passpos:smallword);
-procedure Iso1ToIBM(var data; size: Integer);
-procedure IBMToIso1(var data; size: Integer);
 function  TxtSeek(adr:pointer; Size: Integer; igcase,umlaut:boolean):boolean;
 
 function  newdate:longint;    { Datum des letzten Puffer-Einlesens }
@@ -319,46 +317,6 @@ asm
 @ende:   pop ebp
         pop edi
         pop esi
-        pop ecx
-        pop ebx
-end;
-
-procedure Iso1ToIBM(var data; size: Integer); assembler;
-asm
-          push ebx
-          push ecx
-          push edi
-          mov    ecx,size
-          jecxz  @noconv1
-          mov    edi,data
-          mov    ebx,offset ISO2IBMtab - 128
-          cld
-@isolp1:  mov    al,[edi]
-          or     al,al
-          jns    @ii1
-          xlatb
-@ii1:     stosb
-          loop   @isolp1
-@noconv1: pop edi
-        pop ecx
-        pop ebx
-end;
-
-procedure IBMToIso1(var data; size: Integer); assembler;
-asm
-          push ebx
-          push ecx
-          push edi
-          mov    ecx,size
-          jecxz  @noconv2
-          mov    edi,data
-          mov    ebx,offset IBM2ISOtab
-          cld
-@isolp2:  mov    al,[edi]
-          xlatb
-          stosb
-          loop   @isolp2
-@noconv2:  pop edi
         pop ecx
         pop ebx
 end;

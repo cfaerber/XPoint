@@ -180,7 +180,6 @@ procedure FlushClose;
 procedure xp_DB_Error;    { Aufruf bei <DB> internem Fehler }
 
 function fmove(var f1,f2:file): boolean;
-procedure iso_conv(var buf; bufsize: Integer);
 
 function  aFile(nr:byte):string;
 
@@ -263,15 +262,7 @@ uses
   xpunicode_lbr,
   xpcharset;
 
-{ Diese Tabelle konvertiert NUR ôöÑîÅ· !    }
-{ vollstÑndige ISO-Konvertierung: siehe XP3 }
-
-const isotab1   : array[$c0..$ff] of byte =
-             ($c0,$c1,$c2,$c3,{ $8e,}$c4,$c5,$c6,$c7,$c8,$c9,$ca,$cb,$cc,$cd,$ce,$cf,
-              $d0,$d1,$d2,$d3,$d4,$d5,$99,$d7,$d8,$d9,$da,$db,$9a,$dd,$de,$e1,
-              $e0,$e1,$e2,$e3,$84,$e5,$e6,$e7,$e8,$e9,$ea,$eb,$ec,$ed,$ee,$ef,
-              $f0,$f1,$f2,$f3,$f4,$f5,$94,$f7,$f8,$f9,$fa,$fb,$81,$fd,$fe,$ff);
-
+const
       maxwinst  = 20;
 
       closed    : boolean = false;
@@ -340,25 +331,6 @@ begin
   result := r;
 end;
 
-procedure iso_conv(var buf; bufsize: Integer); assembler;
-asm
-         push ebx
-         push ecx
-         push edi
-         cld
-         mov    edi, buf
-         mov    ecx, bufsize
-         mov    ebx, offset isotab1 - 0c0h
-@isolp:  mov    al, [edi]
-         cmp    al, 0c0h
-         jb     @noconv
-         xlatb
-@noconv: stosb
-         loop   @isolp
-         pop edi
-         pop ecx
-         pop ebx
-end;
 
 procedure ListDisplay(x,y, StartC, Columns: Integer; var s: string);
 var Pos:     integer;   // current position in bytes
