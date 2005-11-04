@@ -432,7 +432,7 @@ begin
   if (infile='') or (outfile='') or
      ((direction=1) and ((fromadr='') or (toadr=''))) then
     helppage;
-  if not fileexists(infile) then
+  if not fileexists(infile) and (direction = 1) then
     error('Eingabedatei fehlt: '+infile);
   if not validfilename(outfile) then
     error('UngÅltige Ausgabedatei: '+outfile);
