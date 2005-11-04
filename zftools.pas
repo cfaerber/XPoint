@@ -362,7 +362,7 @@ begin
   if (infile='') or (outfile='') or
      ((direction=1) and ((fromadr='') or (toadr=''))) then
     helppage;
-  if not fileexists(infile) then
+  if not fileexists(infile) and (direction = 1) then
     error('Eingabedatei fehlt: '+infile);
   if not validfilename(outfile) then
     error('UngÅltige Ausgabedatei: '+outfile);
@@ -1108,7 +1108,7 @@ label abbr;
     i := 0;
     while (i < smallsize) and (TByteArray(buf)[i] <> 0) do
       Inc(i);
-    Result := i;
+    Result := i + 1;
   end;
 
   function seekt(var buf; size: LongWord):word; { suche _'---'_ }
@@ -1365,10 +1365,13 @@ begin
       fmzone:=0; tozone:=0;
       fromline:=''; inetadr:=false;
       viaanz:=0;
-      MWrt(x+15,y+4,IntToStr(anz_msg));
-      MWrt(x+15,y+5,FormS(fromu,50));
-      MWrt(x+15,y+6,FormS(tou,50));
-      MWrt(x+15,y+7,FormS(subj,50));
+      if not CommandLine then
+      begin
+        MWrt(x+15,y+4,IntToStr(anz_msg));
+        MWrt(x+15,y+5,FormS(fromu,50));
+        MWrt(x+15,y+6,FormS(tou,50));
+        MWrt(x+15,y+7,FormS(subj,50));
+      end;
 
       repeat                      { .. und die Kludges bearbeiten }
         seek(f1,adr);
@@ -1591,8 +1594,12 @@ abbr:
   freemem(msgbuf,mbufsize);
   close(f1);
   close(f2);
-  if not ok then begin
-    trfehler1(2302,ExtractFileName(fn),15); { 'fehlerhaftes Fido-Paket' }
+  if not ok then
+  begin
+    if CommandLine then
+      Writeln(Getres(2302) +ExtractFileName(fn)) { 'fehlerhaftes Fido-Paket' }
+    else
+      trfehler1(2302,ExtractFileName(fn),15); { 'fehlerhaftes Fido-Paket' }
     _result:=1;
     if baddir then begin
       { 'Kopiere %s ins Verzeichnis BAD' }
