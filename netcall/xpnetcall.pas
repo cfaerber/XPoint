@@ -1,4 +1,4 @@
-{  $Id: xpnetcall.pas,v 1.82 2004/01/17 16:33:53 mk Exp $
+{  $Id$
 
    OpenXP netcall unit
    Copyright (C) 2001 OpenXP team (www.openxp.de) and M.Kiesel
@@ -785,7 +785,7 @@ function BoxParOk: string;
 var
   uucp : boolean;
 begin
-  uucp:=(netztyp=nt_UUCP);
+  uucp:=(netztyp=nt_UUCP); 
   TempPPPMode := (netztyp = nt_Client);
   with BoxPar^ do
   begin
@@ -1060,7 +1060,7 @@ begin                  { function Netcall }
     inc(wahlcnt);
 
     {$IFDEF Win32 }
-      if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP]) and (BoxPar^.Connection <> '') then
+      if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP, nt_FIDO]) and (BoxPar^.Connection <> '') then
       begin
         Message(Format('Waehle Verbindung "%s"', [BoxPar^.Connection]));
         RasDial(BoxPar^.Connection);
@@ -1175,7 +1175,7 @@ begin                  { function Netcall }
     end; {case netztyp}
 
     {$IFDEF Win32 }
-      if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP]) and (BoxPar^.Connection <> '') then
+      if (NetzTyp in [nt_POP3, nt_NNTP, nt_IMAP, nt_FIDO]) and (BoxPar^.Connection <> '') then
         RasHangup;
     {$ENDIF }
 

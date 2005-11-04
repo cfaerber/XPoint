@@ -522,7 +522,6 @@ begin
   dbReadN(mbase,mb_ablage,ablage);
  try
   OpenAblage(ablage);
-// writeln(ioresult);
   if ioresult<>0 then begin
     fehler(getreps(305,strs(ablage)));   { 'Ablage %s fehlt!' }
     exit;

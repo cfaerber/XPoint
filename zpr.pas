@@ -47,7 +47,7 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
-  sysutils, xpconst,fileio, typeform, xpconfigedit, xpglobal, xp0;
+  sysutils, xpconst,fileio, typeform, xpconfigedit, xpglobal, xp0, xpx;
 
 const maxhdlines  = 256;    { max. ausgewertete Headerzeilen pro Nachricht }
       bufsize     = 16384;  { Gr”áe Kopier/Einlesepuffer                   }
@@ -177,17 +177,6 @@ begin
   for i := 1 to Length(s) do
     if (s[i] < ' ') and (s[i] <> '9') then
       Result := true;
-end;
-
-procedure logo;
-begin
-  writeln;
-  writeln('ZPR - ZCONNECT(R)-Pufferreparierer - Freeware');
-  writeln('(c) 1994-96 by Peter Mandrella <p.mandrella@ldb.han.de>');
-  Writeln;
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
-            ' by ',author_name,' <',author_mail,'>');
-  writeln;
 end;
 
 procedure helppage;
@@ -1248,7 +1237,10 @@ end;
 
 procedure StartCommandlineZPR;
 begin
-  logo;
+  Logo;
+  writeln('ZPR - ZCONNECT(R)-Pufferreparierer - Freeware');
+  writeln('(c) 1994-96 by Peter Mandrella <p.mandrella@ldb.han.de>');
+  writeln;
   getpar;
   checkpar;
   initvar;

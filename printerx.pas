@@ -94,7 +94,6 @@ implementation
 
 uses
   SysUtils,
-  xpglobal,
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
@@ -106,7 +105,7 @@ uses
   libc,
  {$ENDIF}
 {$ENDIF }
-  winxp,keys,typeform,inout,maus2;
+  winxp,maus2;
 
 {$IFDEF unix }
  {$IFDEF Kylix}

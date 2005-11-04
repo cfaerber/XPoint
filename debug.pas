@@ -242,7 +242,7 @@ begin
   end
   else
     Logging := False;
-  Debuglog('openxp', 'OpenXP ' + mainver + '.' + IntToStr(version_build) + ' ' + betastr {$IFDEF Snapshot} + ' Snapshot' {$ENDIF}  + pformstr
+  Debuglog('openxp', 'OpenXP ' + mainver + '.' + version_build + ' ' + betastr {$IFDEF Snapshot} + ' Snapshot' {$ENDIF}  + pformstr
 {$IFDEF FPC }
 {$ifndef Unix}
    + ' Compiled at ' + {$I %TIME%} + ' on ' + {$I %DATE%} + ' with Compiler ' + {$I %FPCVERSION%}+ ' for ' + {$I %FPCTARGET%}

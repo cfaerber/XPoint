@@ -314,17 +314,8 @@ function memadr(x,y:byte):xpWord;forward;
 
 // time critical
 function ticker:longint;
-{[var
-  h, m, s, millis : smallword; }
 begin
-{  DecodeTime(Now, h, m, s, millis);
-  Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
-    (millis / (1000 / TickFreq))); }
-{$R-}
-  Result := Trunc(Now * 8640000);
-{$IFDEF Debug }
-  {$R+}
-{$ENDIF }
+  Result := LongInt(Trunc(Now * 8640000));
 end;
 
 { !! Diese Funktion liefert mit and $70 nur CAPSLock zurueck,

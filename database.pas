@@ -562,7 +562,6 @@ procedure cache_read(dbp:DB; irsize:xpWord; offs:longint; var data);
 var
   s,i,sp : integer;
   TempCachePage: PCachepage;
-
 begin
   with dp(dbp)^ do
     if cacheanz=0 then begin
@@ -572,7 +571,7 @@ begin
     else
     begin
       i:=cacheanz-1; // we can safely assume that cacheanz>=1 => i>=0
-      TempCachePage := @cache^[i]; // MUCH faster8!
+      TempCachePage := @cache^[i]; // MUCH faster!
       while ((TempCachePage.dbp<>dbp) or (TempCachePage.ofs<>offs) or not TempCachePage.used) do
       begin
         Dec(i);

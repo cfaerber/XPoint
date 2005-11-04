@@ -45,7 +45,7 @@ procedure StartCommandlineMaggi;
 implementation
 
 uses sysutils, classes, xpheader, xpmakeheader,
-  typeform,fileio,montage,xpdatum,xp_iti, xpglobal;
+  typeform,fileio,montage,xpdatum,xp_iti, xpglobal, xpx;
 
 const nt_ZConnect  = 2;
       nt_UUCP      = 40;
@@ -1624,10 +1624,8 @@ end;
 
 procedure StartCommandlineMaggi;
 begin
-  writeln;
+  Logo;
   writeln('MAGGI - Magic/Quick/Maus/ZConnect - Konvertierer (c) P.Mandrella');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
-            ' by ',author_name,' <',author_mail,'>');
   writeln;
   getpar;
   if direction in [1,2,3,8,9] then loadbretter(direction in [8,9]);

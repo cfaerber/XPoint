@@ -166,12 +166,12 @@ Allgemein
 ---------
 - Interner Client für IMAP4 (Win32+Unix)
 - verbesserter Druck-Support unter Unix
+- Automatisches Wählen mit dem DFUE-Netzwerk unter Win32
 
 Zusätzlich: OpenXP 4.10 -> OpenXP 5.0 (Alpha, Entwicklerversion)
 
 Allgemein
 ---------
-- Automatisches Wählen mit dem DFUE-Netzwerk unter Win32
 - komplett neues, verbessertes Adresshandling und neue interne
   Verarbeitung der Nachrichten sowie neues
   Sendefenster (korrektes CC/BCC usw.)

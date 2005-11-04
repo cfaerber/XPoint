@@ -31,7 +31,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
-  typeform,fileio,xpdiff,xpdatum,xpglobal,winxp,debug;
+  typeform,fileio,xpdiff,xpdatum,xpglobal,winxp,debug, xpx;
 
 const XPrequest = 'File Request';
       maxbretth = 20;
@@ -146,6 +146,7 @@ type  FidoAdr  = record
 
 var   _from,_to : FidoAdr;
       bh_anz    : shortint;     { Anzahl Bretteintraege in ZFIDO.CFG }
+      commandline: boolean = false;
 
       bretths   : array[1..maxbretth] of record
                     box : string;
@@ -423,7 +424,7 @@ begin
   if (infile='') or (outfile='') or
      ((direction=1) and ((fromadr='') or (toadr=''))) then
     helppage;
-  if not fileexists(infile) then
+  if not fileexists(infile) and (direction = 1) then
     error('Eingabedatei fehlt: '+infile);
   if not validfilename(outfile) then
     error('Ungltige Ausgabedatei: '+outfile);
@@ -956,12 +957,15 @@ begin                   //ZFidoProc
   assign(f1,infile);
   reset(f1,1);
   fs:=filesize(f1);
-  msgbox(70,7,GetRes2(30003,20),x,y);   { 'Konvertiere ZConnect -> FTS' }
-  MWrt(x+2,y+2,GetRes2(30003,12));      { 'Nummer' }
-  MWrt(x+2,y+3,GetRes2(30003,14));      { 'An' }
-  MWrt(x+2,y+4,GetRes2(30003,15));      { 'Betreff' }
-  MWrt(x+2,y+5,GetRes2(30003,16));      { 'Status' }
-  attrtxt(col.ColMboxHigh);
+  if not CommandLine then
+  begin
+    msgbox(70,7,GetRes2(30003,20),x,y);   { 'Konvertiere ZConnect -> FTS' }
+    MWrt(x+2,y+2,GetRes2(30003,12));      { 'Nummer' }
+    MWrt(x+2,y+3,GetRes2(30003,14));      { 'An' }
+    MWrt(x+2,y+4,GetRes2(30003,15));      { 'Betreff' }
+    MWrt(x+2,y+5,GetRes2(30003,16));      { 'Status' }
+    attrtxt(col.ColMboxHigh);
+  end;
   adr:=0;
   n:=0;
   ok:=true;
@@ -977,7 +981,8 @@ begin                   //ZFidoProc
         end
       else begin
         inc(n);
-        MWrt(x+15,y+2,IntToStr(n));
+        if not CommandLine then
+          MWrt(x+15,y+2,IntToStr(n));
         if WriteMessageHeader then begin
           CopyMessageText;
           WriteMessageFooter;
@@ -991,9 +996,12 @@ begin                   //ZFidoProc
   freemem(buf,bufsize);
   if reqopen then
     close(reqfile);
-  closebox;
   if not ok then trfehler(2303,15);
   freeres;
+  if CommandLine then
+    writeln(n, ' Nachrichten konvertiert')
+  else
+    closebox;
 end;
 
 { FTS-0001 -> ZCONNECT }
@@ -1670,8 +1678,12 @@ abbr:
   freemem(msgbuf,mbufsize);
   close(f1);
   close(f2);
-  if not ok then begin
-    trfehler1(2302,ExtractFileName(fn),15); { 'fehlerhaftes Fido-Paket' }
+  if not ok then
+  begin
+    if CommandLine then
+      Writeln(Getres(2302) +ExtractFileName(fn)) { 'fehlerhaftes Fido-Paket' }
+    else
+      trfehler1(2302,ExtractFileName(fn),15); { 'fehlerhaftes Fido-Paket' }
     _result:=1;
     if baddir then begin
       { 'Kopiere %s ins Verzeichnis BAD' }
@@ -1680,7 +1692,10 @@ abbr:
       end;
     end
   else
-    writeln;
+    if CommandLine then
+      writeln(anz_msg, ' Nachrichten konvertiert')
+    else
+      Writeln;
 end;
 
 
@@ -1795,149 +1810,15 @@ end;
 
 procedure StartCommandLineZFIDO;
 begin
+  Logo;
+  writeln('ZConnect <-> Fido - Konvertierer  (c) ''92-99 PM');
+  Writeln;
   getpar;
   testfiles;
   if direction=1 then testadr;
   if direction=1 then ZFidoProc
   else FidoZ(1,1);
 end;
-{
-        $Log: zftools.pas,v $
-        Revision 1.38  2003/09/29 20:47:14  cl
-        - moved charset handling/conversion code to xplib
 
-        Revision 1.37  2003/09/17 01:00:50  cl
-        - TEMPORARY BUGFIX: charset declaration for Fido
-          WORKAROUND FOR #727387 [Fido, 3.9.4] UTF-8-Deklaration
-          WORKAROUND FOR #727381 [Fido, 3.9.4] Falsche Umlautdeklaration
-
-        Revision 1.36  2003/09/17 00:38:41  cl
-        - BUGFIX: charset for incoming messages evaluated incorrectly.
-
-        Revision 1.35  2002/12/21 05:38:04  dodi
-        - removed questionable references to Word type
-
-        Revision 1.34  2002/12/14 07:31:41  dodi
-        - using new types
-
-        Revision 1.33  2002/12/12 11:58:53  dodi
-        - set $WRITEABLECONT OFF
-
-        Revision 1.32  2002/09/26 12:53:36  ma
-        - fixed outgoing charset declaration (CHRS)
-
-        Revision 1.31  2002/07/25 20:43:58  ma
-        - updated copyright notices
-
-        Revision 1.30  2002/07/20 12:27:19  ma
-        - fixed charset issues with fido messages
-
-        Revision 1.29  2001/12/08 14:21:58  mk
-        - implemented zfido command line
-
-        Revision 1.28  2001/10/28 15:40:38  ma
-        - Fido mailer header uses standard format
-
-        Revision 1.27  2001/10/20 17:26:44  mk
-        - changed some Word to Integer
-          Word = Integer will be removed from xpglobal in a while
-
-        Revision 1.26  2001/09/10 15:58:04  ml
-        - Kylix-compatibility (xpdefines written small)
-        - removed div. hints and warnings
-
-        Revision 1.25  2001/09/08 20:59:50  cl
-        - ZC header X-Charset/X-XP-Charset renamed to X-XP-Charset uniformly (X-Charset
-          is still recognized for backwards compatibility).
-
-        Revision 1.24  2001/09/08 16:29:42  mk
-        - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-        - some AnsiString fixes
-
-        Revision 1.23  2001/09/08 14:53:19  cl
-        - adaptions/fixes for MIME support
-
-        Revision 1.22  2001/09/07 23:24:55  ml
-        - Kylix compatibility stage II
-
-        Revision 1.21  2001/08/11 23:06:40  mk
-        - changed Pos() to cPos() when possible
-
-        Revision 1.20  2001/08/10 20:58:02  mk
-        - removed some hints and warnings
-        - fixed some minior bugs
-
-        Revision 1.19  2001/07/31 16:18:42  mk
-        - removed some unused variables
-        - changed some LongInt to DWord
-        - removed other hints and warnings
-
-        Revision 1.18  2001/07/31 13:10:35  mk
-        - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
-
-        Revision 1.17  2001/07/28 12:04:17  mk
-        - removed crt unit as much as possible
-
-        Revision 1.16  2001/07/23 16:05:24  mk
-        - added some const parameters
-        - changed most screen coordinates from byte to integer (saves some kb code)
-
-        Revision 1.15  2001/03/23 13:42:34  ma
-        - missing msgid reported in debug log
-
-        Revision 1.14  2001/02/26 00:03:04  ma
-        - adr3d was not initialized correctly (an annoying bug: zc->fido conversion
-          failed if and only if fido->zc conversion [=netcall] was done before)
-        - added GPL header
-
-        Revision 1.13  2001/01/04 21:22:54  ma
-        - added/refined debug logs
-
-        Revision 1.12  2000/12/28 13:29:57  hd
-        - Fix: packets now sorted in after netcall
-        - Adjusted: Open window once during sorting in
-
-        Revision 1.11  2000/12/25 23:24:59  mk
-        - improved outfit ;)
-
-        Revision 1.10  2000/12/25 20:31:18  mk
-        - zfido is now completly integrated
-
-        Revision 1.9  2000/12/13 14:14:47  hd
-        - some changes on the fido-sysop-poll
-          - a little state window
-          - allways enabled with defined symbol DEVELOP
-
-        Revision 1.8  2000/12/08 11:14:55  hd
-        - A little change: outfile will only be deleted before starting
-          if infile does not contain any wildcard. In that case, the
-          output will be written to the end of the file.
-
-        Revision 1.7  2000/12/06 22:29:44  mo
-        -indexfehler bei nodelistenlöschung besetigt
-
-        Revision 1.6  2000/11/19 00:11:49  mk
-        - rtlword -> smallword
-
-        Revision 1.5  2000/11/16 13:45:24  hd
-        - Dos-Unit entfernt
-
-        Revision 1.4  2000/11/16 13:38:19  hd
-        - MoveToBad neu implementiert
-          - Auf SysUtils umgestellt
-          - Neues Limit der Extension: $fff (war 999)
-
-        Revision 1.3  2000/11/15 23:37:34  fe
-        Corrected some string things.
-
-        Revision 1.2  2000/11/14 22:19:16  hd
-        - Fido-Modul: Anpassungen an Linux
-
-        Revision 1.1  2000/11/14 20:24:03  hd
-        - Funktionen in Unit ZFTools ausgelagert
-        - exist->FileExists
-        - ZFido enthaelt keine Konvertierungen mehr
-
-}
 end.
 

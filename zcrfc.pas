@@ -3585,6 +3585,7 @@ var
 begin
   Logo;
   writeln('ZConnect <-> RFC/UUCP/SMTP Converter with MIME (c) ''93-99 PM');
+  writeln;
   Randomize;
 
   if AutomaticTimeZone then

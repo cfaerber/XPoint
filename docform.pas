@@ -78,7 +78,7 @@ var t1,t2 : text;
       fs:=trim(LeftStr(buf,p));
       delete(buf,1,p);
       if (buf<>'') and (buf[1]=' ') then
-        delfirst(buf);
+        DeleteFirstChar(buf);
       ls:=0;
       for p:=1 to length(fs) do
         if fs[p]=' ' then begin
