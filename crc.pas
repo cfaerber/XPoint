@@ -181,38 +181,44 @@ begin { UpdCRC32 }
    UpdCRC32 := crc_32_tab[(BYTE(crc XOR DWord(octet))AND $FF)] XOR ((crc SHR 8) AND $00FFFFFF)
 end;
 
-procedure CCITT_CRC32_calc_Block(var block; size: DWord); {  CRC-32  }
-{$IFDEF NOASM }
+procedure CCITT_CRC32_calc_Block(var block; size: DWord); { HJT 05.11.2005 ASM ->Pascal }
+var
+  carry_v : byte;
+  carry_n : byte;
+  c       : byte;
+  i       : DWORD;
+  j       : integer;
 begin
+  if size = 0 then
+  begin
+    exit;
+  end;
+  
+  carry_v := 0;  carry_n := 0;
+  
+  for i:=0 to size -1 do
+  begin
+    c := TByteArray(block)[i];
+    for j:=1 to 8 do 
+    begin
+      carry_n := c and 1;
+      c := c shr 1;
+      if carry_v <> 0 then
+        c := c or $80
+      else
+        c := c and $7f;
+      carry_v := carry_n;
+      carry_n := CRC_Reg and 1;
+      CRC_Reg := CRC_Reg shr 1;
+      if carry_v <> 0 then
+        CRC_Reg := CRC_Reg or $80000000
+      else
+        CRC_Reg := CRC_Reg and $7fffffff;
+      if carry_n <> 0 then
+        CRC_Reg := CRC_Reg xor $edb88320;        
+    end;
+  end;
 end;
-{$ELSE }
-assembler;  asm
-     push ebx
-
-     push esi
-     push edi
-     mov ebx, CRC_Reg
-     mov edi, block
-     mov esi, size
-     or  esi, esi
-     jz  @u4
-@u3: mov al, byte ptr [edi]
-     mov ecx, 8
-@u1: rcr al, 1
-     rcr ebx, 1
-     jnc @u2
-     xor ebx, $edb88320
-@u2: loop @u1
-     inc edi
-     dec esi
-     jnz @u3
-     mov CRC_reg, ebx
-@u4:
-     pop edi
-     pop esi
-     pop ebx
-end;
-{$ENDIF }
 
 function CRC32Str(s: string) : longint;
 begin
