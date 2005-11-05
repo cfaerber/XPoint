@@ -111,8 +111,12 @@ uses mime, mime_analyze, rfc2822, StringTools, utftools, xp_pgp, xp1o, xp3,
   xp3ex, xp3o, xp3o2, xp4e, xp9bp, xpcc, xpconfigedit, xpfido, xpmakeheader,
   xpnt, xpsendmessage_internal, xpstreams;
 
-procedure ukonv(typ:byte; var data; var bytes:word); assembler; {&uses ebx, esi, edi}
+procedure ukonv(typ:byte; var data; var bytes:word); assembler;
 asm
+         push edi
+         push esi
+         push ecx
+         push ebx
          xor   edx, edx
          mov   edi,bytes
          mov   ecx,[edi]
@@ -174,11 +178,11 @@ asm
 
 @ende:   mov   edi,bytes
          add   [edi],edx
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$ELSE }
+         pop ebx
+         pop ecx
+         pop esi
+         pop edi
 end;
-{$ENDIF }
 
 function  ContainsUmlaut(var s:string):boolean;
 var

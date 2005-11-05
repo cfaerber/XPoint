@@ -159,10 +159,6 @@
       {$S-}               { Stack Checking }
     {$ENDIF }
     {$C-,M-,Q-,R-,Y-}
-    // always use $R+ because a bug in FPC
-    {$IFDEF FPC }
-     {$R+}
-    {$ENDIF }
   {$ENDIF }
 {$ENDIF }
 

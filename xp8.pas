@@ -579,6 +579,10 @@ var t1,t2    : text;
   { und Offsetanpassung fuer Bestellt-Flag ermitteln }
   Function Reformat_UKA_Brett(Var s:Shortstring):byte; Assembler;
   asm
+        push ebx
+        push ecx
+        push esi
+        push edi
         mov esi,s
         xor eax,eax
         cmp byte ptr [esi+2],' '
@@ -612,7 +616,10 @@ var t1,t2    : text;
         stosw
         cld
         pop eax
-  @end:
+  @end: pop edi
+        pop esi
+        pop ecx
+        pop ebx
   end;
 
 begin

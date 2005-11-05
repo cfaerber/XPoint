@@ -111,6 +111,11 @@ uses
 procedure QPC(decode:boolean; var data; size: Integer; passwd:pointer;
               var passpos:smallword); assembler; {&uses ebx, esi, edi}
 asm
+         push ebx
+         push ecx
+         push edx
+         push esi
+         push edi
          mov   edi,passpos
          xor   ebx, ebx
          mov   bx,[edi]
@@ -140,15 +145,19 @@ asm
 
          mov   edi,passpos              { neuen PW-Index speichern }
          mov   [edi],bx
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
+         pop edi
+         pop esi
+         pop edx
+         pop ecx
+         pop ebx
 end;
-{$ENDIF }
 
-function TxtSeek(adr:pointer; size: Integer; igcase,umlaut:boolean):
-         boolean; assembler;
+function TxtSeek(adr:pointer; size: Integer; igcase,umlaut:boolean): boolean; assembler;
 asm
+         push ebx
+         push ecx
+         push esi
+         push edi
          push ebp
          cld
          mov   esi,adr
@@ -272,14 +281,17 @@ asm
          jmp   @ende
 @found:  mov   eax,1
 @ende:   pop ebp
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
+        pop edi
+        pop esi
+        pop ecx
+        pop ebx
 end;
-{$ENDIF }
 
 procedure Iso1ToIBM(var data; size: Integer); assembler;
 asm
+          push ebx
+          push ecx
+          push edi
           mov    ecx,size
           jecxz  @noconv1
           mov    edi,data
@@ -291,15 +303,16 @@ asm
           xlatb
 @ii1:     stosb
           loop   @isolp1
-@noconv1:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDI'];
-{$ELSE }
+@noconv1: pop edi
+        pop ecx
+        pop ebx
 end;
-{$ENDIF }
 
 procedure IBMToIso1(var data; size: Integer); assembler;
 asm
+          push ebx
+          push ecx
+          push edi
           mov    ecx,size
           jecxz  @noconv2
           mov    edi,data
@@ -309,12 +322,10 @@ asm
           xlatb
           stosb
           loop   @isolp2
-@noconv2:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDI'];
-{$ELSE }
+@noconv2:  pop edi
+        pop ecx
+        pop ebx
 end;
-{$ENDIF }
 
 { Datum des letzten Puffer-Einlesens ermitteln }
 

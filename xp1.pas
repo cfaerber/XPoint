@@ -332,14 +332,17 @@ begin
          shl   edx, 16
          mov   eax, edx
          mov   ax,cx
-         mov    r, eax
+         mov   r, eax
   end;
   end;
   result := r;
 end;
 
-procedure iso_conv(var buf; bufsize: Integer); assembler;  {&uses ebx, edi}
+procedure iso_conv(var buf; bufsize: Integer); assembler;
 asm
+         push ebx
+         push ecx
+         push edi
          cld
          mov    edi, buf
          mov    ecx, bufsize
@@ -350,11 +353,10 @@ asm
          xlatb
 @noconv: stosb
          loop   @isolp
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDI'];
-{$ELSE }
+         pop edi
+         pop ecx
+         pop ebx
 end;
-{$ENDIF }
 
 
 { Hervorhebungsregeln fuer * und _ im Lister: }

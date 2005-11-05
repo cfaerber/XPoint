@@ -206,8 +206,13 @@ uses
   xp0,
   xp1;
 
-procedure ExpandCR(var data; bpos: Integer; size: Integer; var addlfs: Integer); assembler; {&uses ebx, esi, edi}
+procedure ExpandCR(var data; bpos: Integer; size: Integer; var addlfs: Integer); assembler; 
 asm
+       push ebx
+       push ecx
+       push edx
+       push esi
+       push edi
        mov    edi,data          { es:di -> msgbuf^[0] }
        mov    esi,data          { es:si -> msgbuf^[bpos] }
        mov    ebx,bpos          { max. Anzahl einfuegbarer LFs }
@@ -240,6 +245,11 @@ asm
        loopne @lp1
 @ende: mov edi, addlfs
        mov [edi], edx
+       pop edi
+       pop esi
+       pop edx
+       pop ecx
+       pop ebx
 {$IFDEF FPC }
 end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
 {$ELSE }
@@ -247,7 +257,6 @@ end;
 {$ENDIF }
 
 procedure Remove0(var data; size: LongWord);
-{$IFDEF NOASM }
 var
   i: Integer;
 begin
@@ -255,28 +264,11 @@ begin
     if TByteArray(data)[i] = 0 then
       TByteArray(data)[i] := 32;
 end;
-{$ELSE }
-  assembler; {&uses edi}
-asm
-        mov    edi,data
-        mov    ecx,size
-        jecxz  @rende
-        mov    al,0
-        cld
-@rlp:   repnz  scasb
-        jecxz  @rende
-        mov    byte ptr [edi-1],' '    { #0 -> ' ' }
-        jmp    @rlp
-@rende:
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'EDI'];
-{$ELSE }
-end;
-{$ENDIF }
-{$ENDIF }
 
-procedure ISO2IBM(var data; size: LongWord); assembler; {&uses ebx, esi}
+procedure ISO2IBM(var data; size: LongWord); assembler;
 asm
+          push ebx
+          push esi
           mov    ebx,offset ISO2IBMtab - 128
           mov    esi,data
           mov    ecx,size
@@ -290,15 +282,14 @@ asm
 @trans:   xlatb
           mov    [esi-1],al
           loop   @xloop
-@xende:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI'];
-{$ELSE }
+@xende:   pop esi
+          pop ebx
 end;
-{$ENDIF }
 
-procedure Mac2IBM(var data; size: LongWord); assembler; {&uses ebx, esi}
+procedure Mac2IBM(var data; size: LongWord); assembler;
 asm
+          push ebx
+          push esi
           mov    ebx,offset Mac2IBMtab - 128
           mov    esi,data
           mov    ecx,size
@@ -313,12 +304,9 @@ asm
 @trans:   xlatb
           mov    [esi-1],al
           loop   @xloop
-@xende:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI'];
-{$ELSE }
+@xende:   pop esi
+          pop ebx
 end;
-{$ENDIF }
 
 { --- Allgemeines --------------------------------------------------- }
 
@@ -1164,8 +1152,11 @@ label abbr;
               copy(s,15,2);
   end;
 
-  function seek0(var buf; smallsize: LongWord):word; assembler; {&uses edi} { suche #0 }
+  function seek0(var buf; smallsize: LongWord):word; assembler;  { suche #0 }
   asm
+    push ecx
+    push edx
+    push edi
     mov  ecx, smallsize
     mov  edi, buf
     mov  al, 0
@@ -1174,14 +1165,17 @@ label abbr;
     repnz scasb
     mov eax, edx
     sub eax, ecx
-  {$IFDEF FPC }
-  end ['EAX', 'ECX', 'EDX', 'EDI'];
-  {$ELSE }
+    pop edi
+    pop edx
+    pop ecx
   end;
-  {$ENDIF }
 
-  function seekt(var buf; size: LongWord):word; assembler; {&uses edi } { suche _'---'_ }
+  function seekt(var buf; size: LongWord):word; assembler; { suche _'---'_ }
   asm
+        push ebx
+        push ecx
+        push edx
+        push edi
         mov ecx, size
         mov edi, buf
         mov ax, '--'
@@ -1198,11 +1192,11 @@ label abbr;
         ja  @lp
 @ok:    mov eax, edx
         sub eax, ecx
-  {$IFDEF FPC }
-  end ['EAX', 'EBX', 'ECX', 'EDX', 'EDI'];
-  {$ELSE }
+        pop edi
+        pop edx
+        pop ecx
+        pop ebx
   end;
-  {$ENDIF }
 
   procedure seekEOM;   { Tearline & Nachrichtenende suchen }
   const bs = 4096;
@@ -1233,8 +1227,10 @@ label abbr;
     inc(tearadr,tadd);
   end;
 
-  procedure exch_8d(var buf; asize: LongWord); assembler; {&uses edi}
+  procedure exch_8d(var buf; asize: LongWord); assembler;
   asm
+        push ecx
+        push edi
         mov ecx, asize
         mov edi, buf
         cld
@@ -1244,11 +1240,9 @@ label abbr;
         mov al, $0d
 @j:     stosb
         loop @l
-  {$IFDEF FPC }
-  end ['EAX', 'ECX', 'EDI'];
-  {$ELSE }
+        pop edi
+        pop ecx
   end;
-  {$ENDIF }
 
   procedure CopyMsg(size:longint);
   const bs = 8192;

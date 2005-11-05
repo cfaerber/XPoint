@@ -77,8 +77,11 @@ begin
 end;
 
 { !! Ungetestet und unoptimiert }
-procedure decode; assembler;  {&uses ebx, esi, edi}
+procedure decode; assembler;  
 asm
+          push ebx
+          push esi
+          push edi
           mov esi, offset ShortS       { Adresse des zu dekod. Strings }
           mov ebx, 2              { Offset innerhalb von s }
 
@@ -144,16 +147,17 @@ asm
           call flushbuf            {setzt bufp auf 0   JG:FAR }
           popad
           jmp @mloop0
-@ende:
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
+@ende:    pop edi
+          pop esi
+          pop ebx
 end;
-{$ENDIF }
 
 
 procedure getstring; assembler; {&uses ebx, esi}
 asm
+          push ebx
+          push ecx
+          push esi
           mov esi,inbuf
           mov ebx,ibufp
           mov edi, offset ShortS
@@ -184,11 +188,10 @@ asm
 @getende: mov ibufp,ebx
           mov edi, offset ShortS
           mov [edi],ah             { Stringl„nge setzen (s[0]) }
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI'];
-{$ELSE }
+          pop esi
+          pop ecx
+          pop ebx
 end;
-{$ENDIF }
 
 procedure ReadInputLine;
 const

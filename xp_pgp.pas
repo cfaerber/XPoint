@@ -76,8 +76,10 @@ const
   flag_PGPSigOk = $01;
   flag_PGPSigErr = $02;
 
-function testbin(var bdata; rr: Integer):boolean; assembler; {&uses esi}
+function testbin(var bdata; rr: Integer):boolean; assembler;
 asm
+         push ecx
+         push esi
          mov   ecx,rr
          mov   esi,bdata
          cld
@@ -88,11 +90,9 @@ asm
 @tbend:  mov eax, 0
        {  adc ax,ax }                      { C=0: false, c=1: true }
          sbb eax,eax
-{$IFDEF FPC }
-end ['EAX', 'ECX', 'ESI'];
-{$ELSE }
+         pop esi
+         pop ecx
 end;
-{$ENDIF }
 
 procedure LogPGP(s:string);
 var t : text;
