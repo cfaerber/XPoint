@@ -41,7 +41,7 @@ procedure CRC64Full(var CRC: TCRC64; Msg: pointer; Len: word);    {-CRC64 of Msg
 implementation
 
 var
-   CRC_Reg: LongInt;
+   CRC_Reg: DWord;
 
 (* crctab calculated by Mark G. Mendel, Network Systems Corporation *)
 CONST crctab: ARRAY[0..255] OF smallWORD = (
@@ -440,7 +440,7 @@ type
   PByte = ^byte;
 var
   i,it: word;
-  clo,chi: longint;
+  clo,chi: DWord;
 type
   BR = packed record
          b0,b1,b2,b3: byte;
