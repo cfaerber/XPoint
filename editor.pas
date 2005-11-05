@@ -180,10 +180,10 @@ var   Defaults : edp;
 { ------------------------------------------------ externe Routinen }
 
 function SeekStr(var data; len: LongWord;
-                 var s:string; igcase:boolean):integer; assembler;
+                 var s:string; igcase:boolean):integer;
 
   { -1 = nicht gefunden, sonst Position }
-asm
+assembler; asm
         push ebx
         push esi
         push edi
@@ -253,13 +253,13 @@ asm
 end;
 
 
-function FindUmbruch(var data; zlen:integer):integer; assembler; {&uses ebx, esi}
+function FindUmbruch(var data; zlen:integer):integer;  
   { rckw„rts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 {$IFDEF NOASM }
 begin
 end
 {$ELSE }
-asm
+assembler; asm
             push ebx
             push esi
             mov   esi,data

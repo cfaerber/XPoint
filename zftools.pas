@@ -191,12 +191,12 @@ uses
   xp1,
   xpx;
 
-procedure ExpandCR(var data; bpos: Integer; size: Integer; var addlfs: Integer); assembler; 
+procedure ExpandCR(var data; bpos: Integer; size: Integer; var addlfs: Integer);
 {$IFDEF NOASM }
 begin
 end
 {$ELSE }
-asm
+assembler; asm
        push ebx
        push ecx
        push edx

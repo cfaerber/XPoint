@@ -577,12 +577,12 @@ var t1,t2    : text;
   { Brettlisten-Zeilen im UKA* Format vor der        }
   { Uebergabe an den Lister ins XP-Format bringen    }
   { und Offsetanpassung fuer Bestellt-Flag ermitteln }
-  Function Reformat_UKA_Brett(Var s:Shortstring):byte; Assembler;
+  Function Reformat_UKA_Brett(Var s:Shortstring):byte;
 {$IFDEF NOASM }
 begin
 end;
 {$ELSE }
-  asm
+assembler; asm
         push ebx
         push ecx
         push esi

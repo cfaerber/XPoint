@@ -77,12 +77,12 @@ begin
 end;
 
 { !! Ungetestet und unoptimiert }
-procedure decode; assembler;  
+procedure decode;
 {$IFDEF NOASM }
 begin
 end;
 {$ELSE }
-asm
+assembler; asm
           push ebx
           push esi
           push edi
@@ -158,12 +158,12 @@ end;
 {$ENDIF }
 
 
-procedure getstring; assembler; {&uses ebx, esi}
+procedure getstring;
 {$IFDEF NOASM }
 begin
 end;
 {$ELSE }
-asm
+assembler; asm
           push ebx
           push ecx
           push esi

@@ -239,12 +239,12 @@ begin
   x:=_x; y:=_y; hgh:=height;
 end;
 
-procedure decode(buf:pointer; size: LongWord); assembler; 
+procedure decode(buf:pointer; size: LongWord);
 {$IFDEF NOASM }
 begin
 end
 {$ELSE }
-asm
+assembler; asm
         push ebx
         push ecx
         mov ecx, size

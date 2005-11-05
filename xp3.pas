@@ -143,12 +143,12 @@ end;
 
 
 procedure QPC(decode:boolean; var data; size: Integer; passwd:pointer;
-              var passpos:smallword); assembler; {&uses ebx, esi, edi}
+              var passpos:smallword);
 {$IFDEF NOASM }
 begin
 end;
 {$ELSE }
-asm
+assembler; asm
          push ebx
          push ecx
          push edx
@@ -191,12 +191,12 @@ asm
 end;
 {$ENDIF }
 
-function TxtSeek(adr:pointer; size: Integer; igcase,umlaut:boolean): boolean; assembler;
+function TxtSeek(adr:pointer; size: Integer; igcase,umlaut:boolean): boolean;
 {$IFDEF NOASM }
 begin
 end;
 {$ELSE }
-asm
+assembler; asm
          push ebx
          push ecx
          push esi

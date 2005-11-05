@@ -181,12 +181,12 @@ begin { UpdCRC32 }
    UpdCRC32 := crc_32_tab[(BYTE(crc XOR DWord(octet))AND $FF)] XOR ((crc SHR 8) AND $00FFFFFF)
 end;
 
-procedure CCITT_CRC32_calc_Block(var block; size: DWord); assembler;  {  CRC-32  }
+procedure CCITT_CRC32_calc_Block(var block; size: DWord); {  CRC-32  }
 {$IFDEF NOASM }
 begin
 end
 {$ELSE }
-asm
+assembler;  asm
      push ebx
 
      push esi

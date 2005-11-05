@@ -531,12 +531,12 @@ begin
   CPos := 0;
 end;
 
-procedure SetParity(var b:byte; even:boolean);assembler;
+procedure SetParity(var b:byte; even:boolean);
 {$IFDEF NOASM }
 begin
 end
 {$ELSE }
-asm
+assembler; asm
           push edi
           mov    edi,b
           mov    al,[edi]
