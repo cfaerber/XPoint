@@ -89,10 +89,6 @@
     {$UNDEF DPMI }
   {$ENDIF }
   {$MODE Delphi }
-  {$IFNDEF x86_64 }
-    {$ASMMODE Intel }
-  {$ENDIF }
-  {$DEFINE NOASM }        // there are ASM problems with FPC 2.0
   {$GOTO ON }
   {$INLINE ON }
   {$PACKRECORDS 8 }       { Default: 2 }
@@ -115,10 +111,6 @@
   {$MINSTACKSIZE $00004000}
   {$MAXSTACKSIZE $00100000}
   {$IMAGEBASE $00400000}
-{$ENDIF }
-
-{$IFDEF CLR}
-  {$DEFINE NOASM }        // No ASM within CLR
 {$ENDIF }
 
 {$IFDEF DebugInfo }
@@ -197,6 +189,10 @@
 {$ELSE}
   !! Only i386 platform supported
 {$ENDIF}
+
+{$IFDEF x86_64 }
+  {$DEFINE NOASM }
+{$ENDIF }
 
 {$IFDEF OS2 }
   {$M 131072,524288}

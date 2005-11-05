@@ -144,6 +144,10 @@ end;
 
 procedure QPC(decode:boolean; var data; size: Integer; passwd:pointer;
               var passpos:smallword); assembler; {&uses ebx, esi, edi}
+{$IFDEF NOASM }
+begin
+end;
+{$ELSE }
 asm
          push ebx
          push ecx
@@ -185,8 +189,13 @@ asm
          pop ecx
          pop ebx
 end;
+{$ENDIF }
 
 function TxtSeek(adr:pointer; size: Integer; igcase,umlaut:boolean): boolean; assembler;
+{$IFDEF NOASM }
+begin
+end;
+{$ELSE }
 asm
          push ebx
          push ecx
@@ -320,6 +329,7 @@ asm
         pop ecx
         pop ebx
 end;
+{$ENDIF }
 
 { Datum des letzten Puffer-Einlesens ermitteln }
 

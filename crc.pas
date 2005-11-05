@@ -182,6 +182,10 @@ begin { UpdCRC32 }
 end;
 
 procedure CCITT_CRC32_calc_Block(var block; size: DWord); assembler;  {  CRC-32  }
+{$IFDEF NOASM }
+begin
+end
+{$ELSE }
 asm
      push ebx
 
@@ -208,6 +212,7 @@ asm
      pop esi
      pop ebx
 end;
+{$ENDIF }
 
 function CRC32Str(s: string) : longint;
 begin
@@ -231,7 +236,7 @@ end;
  und Includes auszukommen (Erleichtert die Itegration in bestehende
  Pascal-Units von FreeXP und OpenXP).
  
- Der Code an sich ist Copyright 2002-2004 Wolfgang Ehrhardt 
+ Der Code an sich ist Copyright 2002-2004 Wolfgang Ehrhardt
 ----------------------------------------------------------------------------*)
 
 (*-------------------------------------------------------------------------

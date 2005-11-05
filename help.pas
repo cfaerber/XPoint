@@ -240,6 +240,10 @@ begin
 end;
 
 procedure decode(buf:pointer; size: LongWord); assembler; 
+{$IFDEF NOASM }
+begin
+end
+{$ELSE }
 asm
         push ebx
         push ecx
@@ -253,6 +257,7 @@ asm
         pop ecx
         pop ebx
 end;
+{$ENDIF }
 
 procedure loadpage(nr:word; pstentry:boolean);
 type buft    = array[1..32768] of byte;

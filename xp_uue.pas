@@ -78,6 +78,10 @@ end;
 
 { !! Ungetestet und unoptimiert }
 procedure decode; assembler;  
+{$IFDEF NOASM }
+begin
+end;
+{$ELSE }
 asm
           push ebx
           push esi
@@ -151,9 +155,14 @@ asm
           pop esi
           pop ebx
 end;
+{$ENDIF }
 
 
 procedure getstring; assembler; {&uses ebx, esi}
+{$IFDEF NOASM }
+begin
+end;
+{$ELSE }
 asm
           push ebx
           push ecx
@@ -192,6 +201,7 @@ asm
           pop ecx
           pop ebx
 end;
+{$ENDIF }
 
 procedure ReadInputLine;
 const

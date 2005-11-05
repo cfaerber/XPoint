@@ -192,6 +192,10 @@ uses
   xpx;
 
 procedure ExpandCR(var data; bpos: Integer; size: Integer; var addlfs: Integer); assembler; 
+{$IFDEF NOASM }
+begin
+end
+{$ELSE }
 asm
        push ebx
        push ecx
@@ -235,9 +239,6 @@ asm
        pop edx
        pop ecx
        pop ebx
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ECX', 'EDX', 'ESI', 'EDI'];
-{$ELSE }
 end;
 {$ENDIF }
 

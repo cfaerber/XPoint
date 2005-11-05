@@ -532,6 +532,10 @@ begin
 end;
 
 procedure SetParity(var b:byte; even:boolean);assembler;
+{$IFDEF NOASM }
+begin
+end
+{$ELSE }
 asm
           push edi
           mov    edi,b
@@ -548,6 +552,7 @@ asm
 @spok:    mov    [edi],al
           pop edi
 end;
+{$ENDIF }
 
 function Hoch(const r:real; const n:integer):real;
 var i : integer;

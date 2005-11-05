@@ -255,6 +255,10 @@ end;
 
 function FindUmbruch(var data; zlen:integer):integer; assembler; {&uses ebx, esi}
   { rckw„rts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
+{$IFDEF NOASM }
+begin
+end
+{$ELSE }
 asm
             push ebx
             push esi
@@ -309,6 +313,7 @@ asm
             pop esi
             pop ebx
 end;
+{$ENDIF }
 
 procedure FlipCase(var data; size: Integer);
 var

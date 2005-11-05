@@ -578,6 +578,10 @@ var t1,t2    : text;
   { Uebergabe an den Lister ins XP-Format bringen    }
   { und Offsetanpassung fuer Bestellt-Flag ermitteln }
   Function Reformat_UKA_Brett(Var s:Shortstring):byte; Assembler;
+{$IFDEF NOASM }
+begin
+end;
+{$ELSE }
   asm
         push ebx
         push ecx
@@ -621,6 +625,7 @@ var t1,t2    : text;
         pop ecx
         pop ebx
   end;
+{$ENDIF }
 
 begin
   moment;      

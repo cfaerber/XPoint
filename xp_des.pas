@@ -133,6 +133,18 @@ const IP : array[1..64] of byte =
 var x,buf : stream;    { buf = Puffer; nur fÅr Assembler-Routinen ! }
     k     : array[1..16] of stream;
 
+{$IFDEF NOASM }
+procedure make_stream(var source, dest);
+begin end;
+procedure permutate(var s; codeofs: longint; n:longint);
+begin end;
+procedure make_comp(var source; var dest);
+begin end;
+procedure Xs(var s1, s2; n: longint);
+begin end;
+procedure F2(var s, s2);
+begin end;
+{$ELSE }
 procedure make_stream(var source, dest); assembler;
 asm
              push esi
@@ -317,6 +329,7 @@ asm
              pop ecx
              pop ebx
 end;
+{$ENDIF }
 
 procedure sleft(var s:stream; n:integer);
 var i : integer;
