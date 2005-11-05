@@ -257,7 +257,7 @@ function FindUmbruch(var data; zlen:integer):integer;
   { rckw„rts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
 {$IFDEF NOASM }
 begin
-end
+end;
 {$ELSE }
 assembler; asm
             push ebx

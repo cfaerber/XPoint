@@ -194,7 +194,7 @@ uses
 procedure ExpandCR(var data; bpos: Integer; size: Integer; var addlfs: Integer);
 {$IFDEF NOASM }
 begin
-end
+end;
 {$ELSE }
 assembler; asm
        push ebx

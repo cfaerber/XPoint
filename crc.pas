@@ -184,7 +184,7 @@ end;
 procedure CCITT_CRC32_calc_Block(var block; size: DWord); {  CRC-32  }
 {$IFDEF NOASM }
 begin
-end
+end;
 {$ELSE }
 assembler;  asm
      push ebx

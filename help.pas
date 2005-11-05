@@ -242,7 +242,7 @@ end;
 procedure decode(buf:pointer; size: LongWord);
 {$IFDEF NOASM }
 begin
-end
+end;
 {$ELSE }
 assembler; asm
         push ebx

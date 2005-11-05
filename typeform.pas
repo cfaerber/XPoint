@@ -534,7 +534,7 @@ end;
 procedure SetParity(var b:byte; even:boolean);
 {$IFDEF NOASM }
 begin
-end
+end;
 {$ELSE }
 assembler; asm
           push edi
