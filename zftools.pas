@@ -311,7 +311,6 @@ var i    : integer;
 
 begin
   warn:=false; adr3d:=false;
-  writeln('#', infile, '#');
   for i:=2 to paramcount do
   begin
     so:= ParamStr(i);
