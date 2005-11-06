@@ -234,6 +234,8 @@ begin
   CRC32block := CRC_Reg;
 end;
 
+{$IFNDEF NOASM }
+
 (*----------------------------- CRC64 Routinen -----------------------------*)
 (*--------------------------------------------------------------------------
  (C) Copyright 2005      Martin Wodrich 
@@ -484,5 +486,7 @@ begin
   CRC64Update(CRC, Msg, Len);
   CRC64Final(CRC);
 end;
+
+{$ENDIF NOASM }
 
 end.

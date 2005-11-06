@@ -138,7 +138,7 @@ begin
   begin
     TrimLastChar(Message, #10);
     TrimLastChar(Message, #13);
-    WriteToLog := Integer(Logbadges.Objects[C]) >= Level;
+    WriteToLog := Int64(Pointer(Logbadges.Objects[C])) >= Level;
     if WriteToLog and (LogLast=Badge+#0+Message) then begin
       LogCount:=LogCount+1;
       WriteToLog := false;
