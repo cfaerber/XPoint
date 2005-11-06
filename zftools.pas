@@ -39,22 +39,6 @@ const XPrequest = 'File Request';
       midlen    = 120;
       maxvia    = 100;
 
-      infile    : string = '';       { kann Wildcard enthalten }
-      outfile   : string = '';
-      fromadr   : string = '';
-      toadr     : string = '';
-      direction : byte = 0;           { 1 = Z->F, 2 = F->Z }
-      bretter   : string = '';
-      fakenet   : word = 0;
-      adr3d     : boolean = false;
-      ppassword : string = '';
-      LocalINTL : boolean = true;
-      _result   : integer = 0;
-      DoRequest : boolean = false;
-      DelEmpty  : boolean = false;
-      BadDir    : boolean = false;   { BAD\ vorhanden }
-      KeepVia   : boolean = false;
-
       ReadFirst = 2500;
       attrCrash = $0002;
       attrFile  = $0010;
@@ -147,6 +131,23 @@ type  FidoAdr  = record
 var   _from,_to : FidoAdr;
       bh_anz    : shortint;     { Anzahl Bretteintraege in ZFIDO.CFG }
       commandline: boolean = false;
+
+
+      infile    : string = '';       { kann Wildcard enthalten }
+      outfile   : string = '';
+      fromadr   : string = '';
+      toadr     : string = '';
+      direction : byte = 0;           { 1 = Z->F, 2 = F->Z }
+      bretter   : string = '';
+      fakenet   : word = 0;
+      adr3d     : boolean = false;
+      ppassword : string = '';
+      LocalINTL : boolean = true;
+      _result   : integer = 0;
+      DoRequest : boolean = false;
+      DelEmpty  : boolean = false;
+      BadDir    : boolean = false;   { BAD\ vorhanden }
+      KeepVia   : boolean = false;
 
       bretths   : array[1..maxbretth] of record
                     box : string;
@@ -270,10 +271,29 @@ begin
   halt(1);
 end;
 
-procedure error(txt:string);
+procedure error(const txt:string);
 begin
   writeln('Fehler: ',txt);
   halt(1);
+end;
+
+procedure InitVariables;
+begin
+  infile := '';
+  outfile := '';
+  fromadr := '';
+  toadr := '';
+  direction  := 0;           { 1 := Z->F, 2 := F->Z }
+  bretter   := '';
+  fakenet  := 0;
+  adr3d    := false;
+  ppassword  := '';
+  LocalINTL := true;
+  _result   := 0;
+  DoRequest  := false;
+  DelEmpty  := false;
+  BadDir    := false;   { BAD\ vorhanden }
+  KeepVia   := false;
 end;
 
 procedure getpar;
@@ -283,7 +303,7 @@ var i    : integer;
     t    : text;
     p    : byte;
 
-  procedure warnung(s:string);
+  procedure warnung(const s:string);
   begin
     writeln('Warnung - ',s,#7);
     warn:=true;
@@ -291,7 +311,9 @@ var i    : integer;
 
 begin
   warn:=false; adr3d:=false;
-  for i:=2 to paramcount do begin
+  writeln('#', infile, '#');
+  for i:=2 to paramcount do
+  begin
     so:= ParamStr(i);
     s:=UpperCase(so);
     if (s='-ZF') or (s='/ZF') then direction:=1
@@ -1663,6 +1685,7 @@ var
   s: string;
   p: integer;
 begin
+  InitVariables;
   case dir of
     1: Debug.DebugLog('zftools','converting ZC to fido',DLInform);
     2: Debug.DebugLog('zftools','converting fido to ZC',DLInform);
@@ -1732,6 +1755,7 @@ begin
   writeln('ZConnect <-> Fido - Konvertierer  (c) ''92-99 PM');
   Writeln;
   CommandLine := true;
+  InitVariables;
   getpar;
   testfiles;
   if direction=1 then testadr;
