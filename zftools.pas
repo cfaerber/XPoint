@@ -965,7 +965,7 @@ begin                   //ZFidoProc
 end;
 
 { FTS-0001 -> ZCONNECT }
-procedure FidoZfile(const fn: string; append:boolean; const x,y: integer);
+function FidoZfile(const fn: string; append:boolean; const x,y: integer): Integer;
 const kArea = $41455241;    { AREA   }
       kFrom = $6d6f7246;    { From   }
       kFmpt = $54504d46;    { FMPT   }
@@ -1623,17 +1623,16 @@ abbr:
     else
       trfehler1(2302,ExtractFileName(fn),15); { 'fehlerhaftes Fido-Paket' }
     _result:=1;
-    if baddir then begin
+    if baddir then
+    begin
       { 'Kopiere %s ins Verzeichnis BAD' }
       MWrt(x+15,y+7,GetRepS2(30003,50,ExtractFileName(fn)));
       MoveToBad(fn);
-      end;
-    end
+    end;
+    Result := 0;
+  end
   else
-    if CommandLine then
-      writeln(anz_msg, ' Nachrichten konvertiert')
-    else
-      Writeln;
+    Result := anz_msg;
 end;
 
 
@@ -1642,6 +1641,7 @@ var sr  : TSearchRec;
     rc  : integer;
     dir : string;
     fst : boolean;
+    count: integer;
 begin
   { Kill outfile only on wildcards. Otherwise the
     function was called by XP and then allways without
@@ -1649,18 +1649,26 @@ begin
   fst:= (cPos('*',infile)+cPos('?',infile)>0);
   dir:= AddDirSepa(ExtractFilePath(infile));
   rc:= findfirst(infile,faAnyFile-faDirectory,sr);
-  MWrt(x+2,y+2,GetRes2(30003,11));      { 'Datei......: ' }
-  MWrt(x+2,y+4,GetRes2(30003,12));      { 'Nummer' }
-  MWrt(x+2,y+5,GetRes2(30003,14));      { 'An' }
-  MWrt(x+2,y+6,GetRes2(30003,15));      { 'Betreff' }
-  MWrt(x+2,y+7,GetRes2(30003,16));      { 'Status' }
-  while  rc=0 do begin
+  if not CommandLine then
+  begin
+    MWrt(x+2,y+2,GetRes2(30003,11));      { 'Datei......: ' }
+    MWrt(x+2,y+4,GetRes2(30003,12));      { 'Nummer' }
+    MWrt(x+2,y+5,GetRes2(30003,14));      { 'An' }
+    MWrt(x+2,y+6,GetRes2(30003,15));      { 'Betreff' }
+    MWrt(x+2,y+7,GetRes2(30003,16));      { 'Status' }
+  end;
+  count := 0;
+  while  rc=0 do
+  begin
     MWrt(x+15,y+2,sr.name);
-    FidoZfile(dir+sr.name,not fst,x,y);
+    Inc(count, FidoZfile(dir+sr.name,not fst,x,y));
     fst:=false;
     rc:= findnext(sr);
+
   end;
   FindClose(sr);
+  if CommandLine then
+    Writeln(count, ' Nachrichten konvertiert');
 end;
 
 
