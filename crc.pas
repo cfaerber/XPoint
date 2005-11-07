@@ -215,7 +215,7 @@ begin
       else
         CRC_Reg := CRC_Reg and $7fffffff;
       if carry_n <> 0 then
-        CRC_Reg := CRC_Reg xor $edb88320;        
+        CRC_Reg := CRC_Reg xor $edb88320;
     end;
   end;
 end;
@@ -234,7 +234,9 @@ begin
   CRC32block := CRC_Reg;
 end;
 
-{$IFNDEF NOASM }
+// Routinen auskommentiert, wegen der Code-Qualität
+// erst wieder einschalten, wenn Pointer-Increment raus ist
+{$IFDEF DasLassenWirLieber }
 
 (*----------------------------- CRC64 Routinen -----------------------------*)
 (*--------------------------------------------------------------------------
@@ -243,7 +245,7 @@ end;
  Modifikation um ohne Assembler-Abschnitte, lange Define-Abschnitte
  und Includes auszukommen (Erleichtert die Itegration in bestehende
  Pascal-Units von FreeXP und OpenXP).
- 
+
  Der Code an sich ist Copyright 2002-2004 Wolfgang Ehrhardt
 ----------------------------------------------------------------------------*)
 
@@ -458,6 +460,7 @@ begin
     chi := chi xor Tab64Hi[it];
     clo := (clo shl 8) xor Tab64Lo[it];
     inc(longint(Msg));
+
   end;
   CRC.lo32 := clo;
   CRC.hi32 := chi;
