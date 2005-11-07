@@ -30,6 +30,10 @@ type
              lo32, hi32: longint;
            end;
 
+
+// Routinen auskommentiert, wegen der Code-Qualität
+// erst wieder einschalten, wenn Pointer-Increment raus ist
+{$IFDEF DasLassenWirLieber }
 procedure CRC64Init(var CRC: TCRC64);                             {-CRC64 initialization}
 
 procedure CRC64Update(var CRC: TCRC64; Msg: pointer; Len: word);  {-update CRC64 with Msg data}
@@ -37,6 +41,8 @@ procedure CRC64Update(var CRC: TCRC64; Msg: pointer; Len: word);  {-update CRC64
 procedure CRC64Final(var CRC: TCRC64);                            {-CRC64: finalize calculation}
 
 procedure CRC64Full(var CRC: TCRC64; Msg: pointer; Len: word);    {-CRC64 of Msg with init/update/final}
+
+{$ENDIF DasLassenWirLieber }
 
 implementation
 
