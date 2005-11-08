@@ -1393,6 +1393,7 @@ var
 
 begin
   if (bytesleft > 54) and (bufpos < bufanz - 54) then
+  {$IFNDEF NOASM }
     asm
       cld
       mov   esi,offset buffer
@@ -1434,6 +1435,7 @@ begin
       mov   byte ptr TempS[0],72
       add   bufpos,54
     end
+ {$ENDIF }
   else
   begin
     p := 0;
