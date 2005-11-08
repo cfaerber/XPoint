@@ -273,8 +273,8 @@ begin
     Xmakro(t,ListMakros);
     end;
   c:=t[1];
-  Debug.Debuglog('xp1o:','Seitendruck angefordert via Taste:'+c,dlDebug);
-  Debug.Debuglog('xp1o:','       => Umwandlung von "'+c+'" nach '+UpCase(c),dlDebug);
+  Debug.Debuglog('xp1o:','Seitendruck angefordert via Taste:'+c,DLTrace);
+  Debug.Debuglog('xp1o:','       => Umwandlung von "'+c+'" nach '+UpCase(c),DLTrace);
   if (UpCase(c)=k4_D) or (deutsch and (UpCase(c)='D')) then begin   { ^D }
     rmessage(119);   { 'Ausdruck l„uft...' }
     InitPrinter;
@@ -614,7 +614,7 @@ procedure AddNewBezug(MsgPos, MsgId, Ref, Datum: Integer);
 begin
   Debug.DebugLog('xp1o',Format(
     'adding reference: msg no. %d (id=%4x, refid=%4x, date=%d)',
-    [MsgPos,MsgId,Ref,Datum]),dlDebug);
+    [MsgPos,MsgId,Ref,Datum]),DLTrace);
   dbAppend(bezbase);
   dbWriteN(bezbase,bezb_msgpos, MsgPos);
   dbWriteN(bezbase,bezb_msgid, MsgId);

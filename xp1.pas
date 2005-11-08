@@ -369,6 +369,10 @@ var Pos:     integer;   // current position in bytes
   end;
 
 begin
+  Debug.DebugLog('xp1','ListDisplay, x:'+IntToStr(x)
+                 +',y:'+IntToStr(y)+',StartC:'+IntToStr(StartC)
+                 +', Columns:'+IntToStr(Columns)
+                 +', s:<'+s+'>',DLTrace);
   if not ListXHighlight then begin
     FWrt(x,y,UTF8FormS(s,StartC,Columns));
     exit;
@@ -482,6 +486,8 @@ begin
   // fill end of line
   if(OutPosC <= Columns) then
     FWrt(Max(1,x+OutPosC-StartC),y,sp(Min(Columns,Columns-OutPosC+StartC)));
+
+  Debug.DebugLog('xp1','ListDisplay, End',DLTrace);
 end;
 
 
@@ -733,7 +739,7 @@ procedure shell(const prog:string; space:word; cls:shortint);
     parameters,commandsave : string;
     callviacli : boolean; // "call via command line interpreter" (usually via COMMAND /C)
   begin
-    Debug.DebugLog('xp1s','Xec, command:<'+command+'>, prompt:>'+prompt+'>', DLInform); { HJT 01.10.2005 }
+    Debug.DebugLog('xp1s','Xec, command:<'+command+'>, prompt:>'+prompt+'>', DLInform);
     pp:=cPos(' ',command);
     if pp=0 then parameters:=''
     else begin
@@ -798,14 +804,14 @@ var
   sp       : scrptr;
 
 begin
-  Debug.DebugLog('xp1s','shell, prog:<'+prog+'>, cls:<'+IntToStr(cls)+'>', DLInform); { HJT 01.10.2005 }
+  Debug.DebugLog('xp1s','shell, prog:<'+prog+'>, cls:<'+IntToStr(cls)+'>', DLInform);
   Debug.DebugLog('xp1s','shell, screenlines:'+IntToStr(screenlines)+',ScreenWidth:'+IntToStr(ScreenWidth), DLInform); { HJT 01.10.2005 }
   if (ParDebFlags and 1<>0) or ShellShowpar then
     ShowPar;
   getmaus(maussave);
   xp_maus_aus;
   if (cls<>4) and (cls<>5) then begin
-    Debug.DebugLog('xp1s','shell, calling sichern(sp)', DLInform); { HJT 01.10.2005 }
+    Debug.DebugLog('xp1s','shell, calling sichern(sp)', DLDebug);
     sichern(sp);
     savecursor;
     end;
@@ -821,16 +827,16 @@ begin
               m2t:=false;
             end;
     3   : begin
-            Debug.DebugLog('xp1s','shell, calling clwin(1,ScreenWidth,4,screenlines-2)', DLInform); { HJT 01.10.2005 }
+            Debug.DebugLog('xp1s','shell, calling clwin(1,ScreenWidth,4,screenlines-2)', DLInform);
             clwin(1,ScreenWidth,4,screenlines-2);
             gotoxy(1,5);
           end;
   end;
   {$ifdef Win32}
   if not SysIsNT then begin  { HJT 10.09.05 }
-    Debug.DebugLog('xp1s','shell, calling SysSetScreenSize(25,80)', DLInform); { HJT 01.10.2005 }
+    Debug.DebugLog('xp1s','shell, calling SysSetScreenSize(25,80)', DLInform);
     SysSetScreenSize(25,80);
-    Debug.DebugLog('xp1s','shell, calling Window(1,1,80,25)', DLInform); { HJT 01.10.2005 }
+    Debug.DebugLog('xp1s','shell, calling Window(1,1,80,25)', DLInform);
     Window(1,1,80,25);
   end;
   {$endif}
@@ -842,11 +848,11 @@ begin
   end;
   cursor(curon);
 
-  Debug.DebugLog('xp1s','shell, calling Xec('+prog+'>', DLInform); { HJT 01.10.2005 }
+  Debug.DebugLog('xp1s','shell, calling Xec('+prog+'>', DLInform);
   
   Errorlevel := Xec(prog,'[XP]');
 
-  Debug.DebugLog('xp1s','shell, Xec returns Errowlevel:'+IntToStr(Errorlevel), DLInform); { HJT 01.10.2005 }
+  Debug.DebugLog('xp1s','shell, Xec returns Errowlevel:'+IntToStr(Errorlevel), DLInform);
   
   if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then
   begin
@@ -865,13 +871,13 @@ begin
   Debug.DebugLog('xp1s','shell, calling SetScreenSize, ScreenLines:'
                         + IntToStr(ScreenLines)
                         + ', ScreenWidth:'+IntToStr(ScreenWidth), 
-                        DLInform); { HJT 01.10.2005 }
+                        DLInform);
   SetScreenSize;
 
   Debug.DebugLog('xp1s','shell, after calling SetScreenSize, ScreenLines:'
                         + IntToStr(ScreenLines)
                         + ', ScreenWidth:'+IntToStr(ScreenWidth), 
-                        DLInform); { HJT 01.10.2005 }
+                        DLInform);
 
   cursor(curoff);
   if (cls<>4) and (cls<>5) then holen(sp);
@@ -1050,6 +1056,8 @@ begin
         SetLogicalOutputCharset(csCP437);
       end;
     end;
+
+    Debug.Debuglog('xp1s','listfile, TLister.CreateWithOptions',dlTrace);
       
     List := TLister.CreateWithOptions(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
@@ -1065,6 +1073,7 @@ begin
     List.ReadFromFile(name,lofs,listwrap);
     if msg then closebox;
     List.HeaderText := header;
+    Debug.Debuglog('xp1s','listfile, List.OnKeypressed := listExt',dlTrace);
     List.OnKeypressed := listExt;
     List.UTF8Mode := utf8;
     llh:=listmsg;
@@ -1075,6 +1084,7 @@ begin
       List.OnColor := listColor;
       if cols and 2<>0 then
       begin
+        Debug.Debuglog('xp1s','listfile, List.OnDisplayLine := Listdisplay',dlTrace);
         List.OnDisplayLine := Listdisplay;
         xp1o.ListXHighlight:=ListHighlight;
         end;
@@ -1123,6 +1133,8 @@ begin
     then otherquotechars:=otherqcback;   { Status der Quotechars '|' und ':' reseten }
   listfile:=listexit;
   no_ListWrapToggle:=wrapb;
+
+  Debug.Debuglog('xp1s','listfile, At End',dlTrace);
 end;
 
 

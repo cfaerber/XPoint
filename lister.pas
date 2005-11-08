@@ -27,7 +27,7 @@ interface
 
 uses
   classes,
-  xpglobal, keys;
+  debug, xpglobal, keys;
 
 var
   ListHelpStr: string[8] = 'Hilfe'; //todo: international
@@ -208,6 +208,8 @@ uses
 
 constructor TLister.Create;
 begin
+  Debug.Debuglog('lister','TLister.Create',DLTrace);
+
   LastLister := Self;
   col := ListColors;
   fillchar(stat, sizeof(stat), 0);
@@ -236,6 +238,7 @@ end;
 
 constructor TLister.CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
 begin
+  Debug.Debuglog('lister','TLister.CreateWithOptions',DLTrace);
   Create;
   SetSize(_l, _r, _o, _u);
   options := UpperCase(options);
@@ -262,6 +265,7 @@ end;
 
 destructor TLister.Destroy;
 begin
+  Debug.Debuglog('lister','TLister.Destroy',DLTrace);
   LastLister := nil;
   Lines.Free;
   inherited destroy;
@@ -328,6 +332,8 @@ procedure TLister.ReadFromFile(const Filename: string; ofs: Integer; line_break:
 var input: TFileStream;
     breaker: TUnicodeLineBreaker;
 begin
+  Debug.Debuglog('lister','TLister.ReadFromFile, Filename: <'+Filename+'>',DLTrace);
+
   FHeaderText := fitpath(FileUpperCase(FileName), 40);
 
   Input := TFileStream.Create(Filename,fmOpenRead);
@@ -746,6 +752,8 @@ var
   end;
 
 begin // Show
+  Debug.Debuglog('lister','TLister.Show',DLTrace);
+
   startpos := minmax(startpos, 0, Lines.Count - 1);
   DispLines := Height - iif(stat.statline, 1, 0);
 
@@ -839,6 +847,10 @@ begin // Show
 
     if ((t>=mausfirstkey) and (t<=mauslastkey)) or mausdown then
       Maus_bearbeiten;
+
+    if Assigned(FonKeyPressed) then
+      Debug.Debuglog('lister','TLister.Show, calling FOnKeyPressed(Self, t)',DLTrace);
+
     if Assigned(FonKeyPressed) then FOnKeyPressed(Self, t);
 
     if Lines.Count > 0 then
@@ -992,6 +1004,8 @@ begin // Show
   
   if Result then
     FSelLine := - 1;
+
+  Debug.Debuglog('lister','TLister.Show, End',DLTrace);
 end;
 
 procedure TLister.SetHeaderText(s: string);
