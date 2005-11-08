@@ -60,12 +60,11 @@
     {$UNDEF DPMI }
   {$ENDIF }
   {$MODE Delphi }
-  {$ASMMODE Intel }
   {$GOTO ON }
   {$INLINE ON }
   {$PACKRECORDS 8 }       { Default: 2 }
   {$PACKENUM 1 }          { Default: 4, valid: 1, 2, 4, Normal, Default }
-  {$H+,I-,J+,M-,P-,T-,V-,X+}
+  {$C-,H+,I-,J+,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
 {$ENDIF }
