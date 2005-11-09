@@ -983,21 +983,23 @@ restart:
       if or_user then ormask:=4;
       if or_betr then inc(ormask,2);
       if or_fidoempf then inc(ormask);   
-      if txt='' then
+      if txt='' then  ;
+      {$IFNDEF NOASM }
         asm
              mov al,ormask  { verhindern, dass alle Suchbegriffe auf OR stehen }
-             or al,al 
-             je @2 
+             or al,al
+             je @2
              cmp al,andmask
              jne @2
              mov cl,0
-         @1: inc cx 
+         @1: inc cx
              shr al,1
              jnc @1
              shl al,cl
              mov ormask,al
-         @2: 
-        end; 
+         @2:
+        end;
+      {$ENDIF }
       end;
 
     sst:=suchstring;
