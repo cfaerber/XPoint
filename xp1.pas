@@ -301,7 +301,7 @@ begin
   monat  := ((Ord(s[3])-48) * 10 + (Ord(s [4])-48)) and $0F;    // 12 = $0C
   tag    := ((Ord(s[5])-48) * 10 + (Ord(s [6])-48)) and $1F;    // 31 = $1F
   stunde := ((Ord(s[7])-48) * 10 + (Ord(s [8])-48)) and $1F;    // 24 = $18
-  minute := ((Ord(s[9])-48) * 10 + (Ord(s[10])-48)) and $1F;    // 60 = $3C
+  minute := ((Ord(s[9])-48) * 10 + (Ord(s[10])-48)) and $3F;    // 60 = $3C
 
   result:=((jahr   shl 24) or
            (monat  shl 20) or
