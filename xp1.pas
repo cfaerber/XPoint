@@ -281,54 +281,34 @@ var  menulevel : byte;                  { Menebene }
      mst       : boolean;
 
 
-function ixdat(const s: string): longint;       // 0506032053 -> 1768018768
-var
-  a1, a2, a3, a4, a5: byte;
-  r: Integer;
+// 0506032053 -> 1768018768
+// jjmmtthhmm
+function ixdat(const s: string): longint;       
+  var jahr   : integer;
+      monat  : integer;
+      tag    : integer;
+      stunde : integer;
+      minute : integer;
 begin
-  if Length(s) < 10 then
-    result := 0
-  else begin
-  { HJT: 25.09.2005 bei ungueltigen Datumsstrings Overflow verhindern }
-  { Quick and Dirty Hack ( and $00FF)                                 }
-  a1 := ((Ord(s[1])-48) * 10 + (Ord(s[2])-48)) and $00FF;
-  if a1 < 70 then a1 := a1 + 100;
-  a2 := ((Ord(s[3])-48) * 10 + (Ord(s[4])-48)) and $00FF;
-  a3 := ((Ord(s[5])-48) * 10 + (Ord(s[6])-48)) and $00FF;
-  a4 := ((Ord(s[7])-48) * 10 + (Ord(s[8])-48)) and $00FF;
-  a5 := ((Ord(s[9])-48) * 10 + (Ord(s[10])-48) and $00FF);
-  asm
-         mov   dh, a1                   { Jahr }
-         mov   al, a2                   { Monat }
-         mov   cl, 4
-         shl   al, cl
-         mov   dl, al
-         mov   ecx,0
-         mov   al, a3                   { Tag }
-         shr   al,1
-         rcr   ch,1
-         add   dl,al
-         mov   al, a4                   { Stunde }
-         shl   al,1
-         shl   al,1
-         add   ch,al
-         mov   al, a5                   { Minute }
-         shr   al,1
-         rcr   cl,1
-         shr   al,1
-         rcr   cl,1
-         shr   al,1
-         rcr   cl,1
-         shr   al,1
-         rcr   cl,1
-         add   ch,al
-         shl   edx, 16
-         mov   eax, edx
-         mov   ax,cx
-         mov   r, eax
+  if Length(s) < 10 then begin
+    result := 0;
+    exit;
   end;
-  end;
-  result := r;
+
+  jahr   := ((Ord(s[1])-48) * 10 + (Ord(s[2])-48)) and $006F;   // 99 = $63
+  if jahr < 70 then 
+    jahr := jahr + 100;
+  monat  := ((Ord(s[3])-48) * 10 + (Ord(s [4])-48)) and $0F;    // 12 = $0C
+  tag    := ((Ord(s[5])-48) * 10 + (Ord(s [6])-48)) and $1F;    // 31 = $1F
+  stunde := ((Ord(s[7])-48) * 10 + (Ord(s [8])-48)) and $1F;    // 24 = $18
+  minute := ((Ord(s[9])-48) * 10 + (Ord(s[10])-48)) and $1F;    // 60 = $3C
+
+  result:=((jahr   shl 24) or
+           (monat  shl 20) or
+           (tag    shl 15) or
+           (stunde shl 10) or
+           (minute shl  4)   ) and $7fffffff;
+          
 end;
 
 
@@ -369,10 +349,14 @@ var Pos:     integer;   // current position in bytes
   end;
 
 begin
+{$IFDEF Debug }
+{
   Debug.DebugLog('xp1','ListDisplay, x:'+IntToStr(x)
                  +',y:'+IntToStr(y)+',StartC:'+IntToStr(StartC)
                  +', Columns:'+IntToStr(Columns)
                  +', s:<'+s+'>',DLTrace);
+}
+{$ENDIF }
   if not ListXHighlight then begin
     FWrt(x,y,UTF8FormS(s,StartC,Columns));
     exit;
@@ -403,7 +387,15 @@ begin
     B := UnicodeCharacterLineBreakType(C);
 
     if PosC <= StartC then begin OutPos := Pos; OutPosC := PosC; end;
-
+{$IFDEF Debug }
+{
+    Debug.DebugLog('xp1','ListDisplay, NewPos:'+IntToStr(NewPos)
+                         +',OutPosC:'+IntToStr(OutPosC)
+                         +',UTF8GetCharNext:'+IntToStr(C)
+                         +',UnicodeCharacterWidth:'+IntToStr(W)
+                         +',UnicodeCharacterLineBreakType:'+IntToStr(integer(B)),DLTrace);
+}
+{$ENDIF }
     if URL and (Pos >= URLStart) and (URLStartC <= 0) then
     begin
       URLStartC := PosC;
