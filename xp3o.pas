@@ -1687,7 +1687,7 @@ var
     puffereinlesen:=true;
     exit;
     end;
-  check:=(fs*1.3<diskfree(0));
+  check:=((fs*1.3<diskfree(0)) and ((diskfree(0) <> 0)));
 
   getmem(p,bufsize);
   hdp := THeader.Create;
@@ -2263,11 +2263,11 @@ var
     if check then begin
       FWrt(x+2,y+2,getres2(336,2)+FileUpperCase(puffer));   { 'Fehlerhafte Pufferdatei:  ' }
       Debug.DebugLog('xp3o','buffer corrupted: "'+puffer+'"',DLError);
-      end
-    else begin
+    end else
+    begin
       FWrt(x+2,y+2,getres2(336,3));    { 'Zu wenig Platz auf der Festplatte.' }
       Debug.DebugLog('xp3o','insufficent disk space',DLError);
-      end;
+    end;
     FWrt(x+2,y+3,getres2(336,4));      { 'Puffer wurde NICHT eingelesen!' }
     if pflags and pe_Bad<>0 then begin
       MoveToBad(puffer);
