@@ -51,22 +51,17 @@ uses debug;
 
 const maxblocks = 4;
       maxindex  = 4096;   { max. Strings pro Block }
-      flPreload = 1;
 
 type
       barr   = packed array[0..65300] of byte;
       barrp  = ^barr;
-      rblock = packed record case integer of
-                 0 : (anzahl   : smallword; { Anzahl Strings in diesem Block  }
+      rblock = packed record
+                      anzahl   : smallword; { Anzahl Strings in diesem Block  }
                       fileadr  : longint;   { Startadresse in RES-Datei       }
                       contsize : smallword; { Gr”áe des Inhalts (Texte)       }
                       lastnr   : smallword; { letzte Res.-Nr. in diesem Block }
                       flags    : smallword; { 1 = preload                     }
-                      emshandle: smallword;
-                      loaded   : boolean;
-                      emspages : byte);
-                 2 : (dummy2   : smallword;
-                      rptr     : barrp);
+                      dummy    : longint;   
                end;
       tindex = packed array[0..maxindex-1,0..1] of smallword;
 
@@ -75,6 +70,7 @@ const
       ResourceOpen : Boolean = false;
 
 var   block  : packed array[1..maxblocks] of rblock;
+      blockptr: packed array[1..maxblocks] of barrp;
       blocks : word;
       index  : packed array[1..maxblocks] of ^tindex;
       FH: Integer;
@@ -113,16 +109,9 @@ begin
     getmem(index[i],block[i].anzahl*4);
     FileSeek(FH, block[i].fileadr, 0);
     FileRead(FH, index[i]^,block[i].anzahl*4);
-    if block[i].flags and flPreload<>0 then
-    begin
-      getmem(block[i].rptr,block[i].contsize);
-      block[i].loaded:=true;
-      if block[i].loaded then
-        FileRead(FH,block[i].rptr^,block[i].contsize)   { preload }
-      else
-        inc(block[i].fileadr,block[i].anzahl*4);
-      end;
-    end;
+    getmem(blockptr[i],block[i].contsize);
+    FileRead(FH,blockptr[i]^,block[i].contsize)   { preload }
+  end;
 end;
 
 
@@ -133,10 +122,10 @@ begin
      error('no resource file open');
   FileClose(FH);
   ResourceOpen := false;
-  for i:=1 to blocks do with block[i] do
+  for i:=1 to blocks do
+  with block[i] do
   begin
-    if loaded then
-      freemem(rptr,contsize);
+    freemem(blockptr[i],contsize);
     freemem(index[i],anzahl*4);
   end;
   freeres;
@@ -155,9 +144,11 @@ begin
   bnr:=1;
   while (bnr<=blocks) and (nr>block[bnr].lastnr) do
     inc(bnr);
-  if (bnr<=blocks) and (block[bnr].anzahl>0) then begin
+  if (bnr<=blocks) and (block[bnr].anzahl>0) then
+  begin
     getnr:=true;
-    l:=0; r:=block[bnr].anzahl-1;
+    l:=0;
+    r:=block[bnr].anzahl-1;
     while (r-l>1) and (index[bnr]^[l,0] and $7fff<>nr) do begin
       m:=(l+r)div 2;
       if index[bnr]^[m,0] and $7fff<=nr then l:=m
@@ -169,7 +160,7 @@ begin
       inr:=r
     else
       getnr:=false;
-    end;
+  end;
 end;
 
 
@@ -187,30 +178,24 @@ function GetRes(nr:word):string;
 var bnr,inr : word;
     s       : shortstring;
 begin
-  if not getnr(nr,bnr,inr) then begin
+  if not getnr(nr,bnr,inr) then
+  begin
     GetRes:='fehlt: ['+strs(nr)+'] ';
     Debug.DebugLog('resource','resource missing: '+strs(nr),dlWarning);
     end
   else
-    with block[bnr] do begin
+    with block[bnr] do
+    begin
       SetLength(s, rsize(bnr,inr)); {s[0]:=chr(rsize(bnr,inr));}
-      if loaded then begin
-        Move(rptr^[index[bnr]^[inr,1]],s[1],length(s));
-        end
-      else begin
-        FileSeek(FH, fileadr+index[bnr]^[inr,1], 0);
-        FileRead(FH,s[1],length(s));
-        end;
+      Move(blockptr[bnr]^[index[bnr]^[inr,1]],s[1],length(s));
       GetRes:=s;
-      end;
+    end;
 end;
 
 
 procedure FreeRes;                        { Gruppe freigeben }
 begin
   if clnr<>$ffff then begin
-    if not block[clbnr].loaded then
-      freemem(clcont,clcsize);
     freemem(clindex,clsize*4);
     clnr:=$ffff;
     end;
@@ -220,16 +205,17 @@ end;
 function GetRes2(nr1,nr2:word):string;
 var bnr,inr  : word;
     size,ofs : word;
-    p        : barrp;
     l,r,m,i  : word;
     s        : shortstring;
 label ende;
+
   function fehlt:string;
   begin
     fehlt:='fehlt: ['+strs(Nr1)+'.'+strs(nr2)+'] ';
     Debug.DebugLog('resource','resource missing: '+strs(nr1)+'.'+strs(nr2),dlWarning);
   end;
-begin
+
+  begin
   if not getnr(nr1,bnr,inr) then
     GetRes2:=fehlt
   else
@@ -242,25 +228,11 @@ begin
           FreeRes;
           size:=rsize(bnr,inr);
           ofs:=index[bnr]^[inr,1];
-          if loaded then begin
-            Move(rptr^[ofs],clsize,2);
+            Move(blockptr[bnr]^[ofs],clsize,2);
             clcsize:=size-2-clsize*4;
             getmem(clindex,clsize*4);
-            Move(rptr^[ofs+2],clindex^,clsize*4);
-            clcont:=@rptr^[ofs+2+clsize*4];
-            end
-          else begin
-            FileSeek(FH,fileadr+ofs, 0);
-            getmem(p,size);
-            FileRead(FH,p^,size);                 { Cluster komplett laden }
-            Move(p^[0],clsize,2);                  { -> Anzahl Elemente     }
-            clcsize:=size-2-clsize*4;
-            getmem(clindex,clsize*4);
-            Move(p^[2],clindex^,clsize*4);         { -> Clusterindex        }
-            getmem(clcont,clcsize);
-            Move(p^[2+clsize*4],clcont^,clcsize);  { -> Clusterinhalt }
-            freemem(p,size);
-            end;
+            Move(blockptr[bnr]^[ofs+2],clindex^,clsize*4);
+            clcont:=@blockptr[bnr]^[ofs+2+clsize*4];
           end;
         l:=0; r:=clsize-1;
         while (r-l>1) and (clindex^[l,0]<>nr2) do begin
@@ -290,16 +262,11 @@ function Res2Anz(nr:word):word;
 var bnr,inr : word;
 begin
   if getnr(nr,bnr,inr) then
-    with block[bnr] do begin
-      if loaded then begin
-        Move(rptr^[index[bnr]^[inr,1]],nr,2);
-        end
-      else begin
-        FileSeek(FH,fileadr+index[bnr]^[inr,1], 0);
-        FileRead(FH,nr,2);
-        end;
-      Res2Anz:=nr;
-      end
+    with block[bnr] do
+    begin
+       Move(blockptr[bnr]^[index[bnr]^[inr,1]],nr,2);
+       Res2Anz:=nr;
+    end
   else
     Res2Anz:=0;
 end;
