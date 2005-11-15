@@ -670,7 +670,7 @@ var lf : string;
     close(t);
   end;
 
-  begin { loadresource }
+begin { loadresource }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
   rc:= findfirst(LibDir + 'openxp-*.res', faAnyFile, sr);         { Hier duerfte es keine Probleme geben }
@@ -915,12 +915,11 @@ var
   free : Int64;
   x,y  : Integer;
 begin
-  if ParNomem then exit;
-{$IFDEF Debug }
-  dbLog('-- Plattenplatz testen');
-{$ENDIF }
+  if ParNomem then
+    exit;
   free:=diskfree(0);
-  if (free>=0) and (free<200000) then begin
+  if (free>0) and (free<200000) then
+  begin
     exitscreen(0);
     writeln(getreps(205,LeftStr(OwnPath,2)));   { 'Fehler: zu wenig freier Speicher auf Laufwerk %s !' }
     writeln;
