@@ -1742,6 +1742,11 @@ var
     mon;
     assign(pfile,aFile(ablage));        { Puffer in die kleinste }
     if existf(pfile) then begin         { Ablage kopieren ..     }
+      { HJT 25.11.2005 Ansonsten Sharing Violation, wenn die letzte im }
+      { Lister angezeigte Nachricht in dem MPUFFER liegt, in den jetzt }
+      { importiert werden soll                                         }
+      CloseAblage;
+
       reset(pfile,1);
       padr:=filesize(pfile);
       seek(pfile,padr);
