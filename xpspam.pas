@@ -693,9 +693,14 @@ end;
 function calc_spam_stats(Content: TStream; Status: PTSpamStats): Double;
 var Calculator: TSpamicityCalculator;
 begin
+  { HJT 26.11.2005 Rueckgabe versorgen, ansonsten Exception: }
+  { Invalid floating point operation                         }
+  Result:=0.0;
   Calculator := TSpamicityCalculator.Create;
   try
-    Calculator.CalculateMessageSpamicity(Content);
+    { HJT 26.11.2005  }
+    { Calculator.CalculateMessageSpamicity(Content); }
+    Result:=Calculator.CalculateMessageSpamicity(Content);
     if Assigned(Status) then Status^ := Calculator.Statistics;
   finally
     Calculator.Free;
