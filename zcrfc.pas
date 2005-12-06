@@ -2372,9 +2372,14 @@ var
   p: integer;
   binaer,multi,recode: boolean;
   pfrec: ^tfilerec;
+  empty_body: boolean;  { HJT 06.12.2005 }
 label
   ende;
 begin
+
+  Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, Datei:<'+fn+'>'
+                        +', CommandLine:'+iifs(CommandLine, 'True','False'), DLDebug);
+
   n := 0;
   if CommandLine then write('news: ', fn);
   DeCompress(fn,true);
@@ -2387,14 +2392,29 @@ begin
   OpenFile(fn);
   ReadString;
 
+  { HJT 06.12.2005 bei leerer Datei vernuenftige Meldung }
+  if length(s)  = 0 then begin
+    Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, empty file ignored', DLInform);
+    if CommandLine then  writeln(' - empty file ignored');
+    goto ende;  
+  end;
+  
   if LeftStr(s, 8) <> '#! rnews' then
   begin
+    Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, unbekanntes Batchformat: <'+s+'>', DLInform);
     if CommandLine then  writeln(' - unbekanntes Batchformat');
     goto ende;
   end;
 
   if CommandLine then write(sp(7));
   repeat
+  
+    {$IFDEF DEBUG}
+    Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, bufpos: '+IntToStr(bufpos)
+                          +', bufanz: '+IntToStr(bufanz)
+                          +', s:<'+s+'>', DLDebug);
+    {$ENDIF}
+
     Size := 0;
     while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and (bufpos < bufanz) do
       ReadString;
@@ -2405,6 +2425,8 @@ begin
     begin
       delete(s, 1, p - 1);
       size := minmax(IVal(trim(mid(s, 10))), 0, maxlongint);
+
+      Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, New Msg, size: '+IntToStr(size), DLDebug);
     end;
 
     if bufpos < bufanz then
@@ -2415,6 +2437,9 @@ begin
       fp := fpos; bp := bufpos;
       ClearHeader;
       hd.netztyp:=nt_UUCP;
+      
+      Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, reading header', DLDebug);
+      
       ReadRFCheader(false, s);
       binaer := (hd.typ = 'B');
       multi  := (hd.typ = 'M');
@@ -2422,32 +2447,77 @@ begin
         (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
       hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
 
+      Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, hd.charset:<'+hd.charset+'>'
+                              +', recode: '+iifs(recode,'True','False'), DLDebug);
+
+
       seek(f1, fp); ReadBuf; bufpos := bp;
+
+      Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, reread header, skipping', DLDebug);
+
       repeat                        { Header ueberlesen }
         ReadString;
 
         // RFC so1036
         // The article size is a  decimal count of the octets in the article, counting each EOL as one
         // octet regardless of how it is actually represented.
-        dec(size, length(s) + MinMax(eol, 0, 1));
+        dec(Size, length(s) + MinMax(eol, 0, 1));
       until (s = '') or (bufpos >= bufanz);
+
+      { HJT, 06.12.2005 die Konvertierung darf natuerlich nicht }
+      { beendet werden, wenn die Laenge des Nachrichtenkoerpers }
+      { gleich Null ist. S.u beim Beenden der Leseschleife.     }
+
+      if size = 0 then empty_body:=true else empty_body:=false;
+      
+      {$IFDEF DEBUG}
+      Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, remaining Size after skipping Header:'
+                              +IntToStr(Size)+',empty_body: '
+                              +iifs(empty_body, 'True', 'False'), DLDebug);
+      {$ENDIF}
 
       while (Size > 0) and (bufpos < bufanz) do
       begin                         { Groesse des Textes berechnen }
         ReadString;
         dec(Size, length(s) + MinMax(Eol, 0, 1));
+        
         DecodeLine;
-        if recode then
+        
+        if recode then begin        
+          {$IFDEF DEBUG}
+          // Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, before RecodeCharset, s:<'+s+'>', DLDebug);
+          {$ENDIF}
+          
           s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
-
+        
+          {$IFDEF DEBUG}
+          // Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, after  RecodeCharset, s:<'+s+'>', DLDebug);
+          {$ENDIF}
+        end;
+        
         Mail.Add(s);
         inc(hd.groesse, length(s));
       end;
+      
       WriteHeader;                  { ZC-Header inkl. Groessenangabe erzeugen }
       for i := 0 to Mail.Count - 1 do
         wrfs(Mail[i]);
     end;
-  until (bufpos >= bufanz) or (s = '');
+    
+    {$IFDEF DEBUG}
+    Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, vor Schleifenende, s:<'+s+'>'
+                          +', bufpos: '+IntToStr(bufpos)
+                          +', bufanz: '+IntToStr(bufanz), DLDebug);
+    {$ENDIF}
+
+  { HJT 06.12.2005 s ist auch leer, wenn wir eine Nachricht mit leerem  }
+  { Body haben.  In diesem Fall darf die Konvertierung natuerlich       }
+  { nicht beendet werden                                                }
+  { until (bufpos >= bufanz) or (s = ''); }
+  until (bufpos >= bufanz) or ((s = '') and not empty_body);
+
+  Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, Exit', DLDebug);
+
   if CommandLine then writeln(' - ok');
 
 ende:
@@ -2565,7 +2635,7 @@ var
 var
   s1: String; // file extension of sr.name
 begin
-  Debug.DebugLog('uuz', Format('UtoZ: Source:%s Dest:%s _From:%s _To:%s',
+  Debug.DebugLog('zcrfc', Format('UtoZ: Source:%s Dest:%s _From:%s _To:%s',
     [Source, Dest, _From, _To]), DLDebug);
   assign(f2,dest);
   rewrite(f2,1);
@@ -3190,7 +3260,7 @@ type rcommand = (rmail,rsmtp,rnews);
     if ParECmd then
       cline := cline + ' ' + command;
 
-    Debug.DebugLog('uuz','Adding to command file: '+cline,dlDebug);
+    Debug.DebugLog('zcrfc','Adding to command file: '+cline,dlDebug);
     writeln(fc,cline);
 
     if not ParECmd then
@@ -3199,7 +3269,7 @@ type rcommand = (rmail,rsmtp,rnews);
       nr := hex(NextUunumber, 4);
       f2 := TFileStream.Create(dest + 'X-' + nr + ExtOut,fmCreate);
     try
-      Debug.DebugLog('uuz','Creating execution file: '+dest + 'X-' + nr + ExtOut,dlDebug);
+      Debug.DebugLog('zcrfc','Creating execution file: '+dest + 'X-' + nr + ExtOut,dlDebug);
     
       wrs(f2, 'U ' + iifs(t in [rmail,rsmtp],MailUser,NewsUser) + ' ' + _from);
 
@@ -3218,7 +3288,7 @@ type rcommand = (rmail,rsmtp,rnews);
         nr + ' ' + iifs(t in [rmail,rsmtp], MailUser, NewsUser) + ' - ' + name2 + ' 0666';
       if ParSize then cline := cline + ' "" ' + StrS(fs);
       
-      Debug.DebugLog('uuz','Adding to command file: '+cline,dlDebug);
+      Debug.DebugLog('zcrfc','Adding to command file: '+cline,dlDebug);
       writeln(fc,cline);
     end;
   end;
@@ -3349,13 +3419,13 @@ type rcommand = (rmail,rsmtp,rnews);
   end;
 
 begin
-  Debug.DebugLog('uuz', Format('ZtoU: Source:%s Dest:%s _From:%s _To:%s', 
+  Debug.DebugLog('zcrfc', Format('ZtoU: Source:%s Dest:%s _From:%s _To:%s', 
     [Source, Dest, _From, _To]), DLDebug);
 
-  Debug.DebugLog('uuz', '- PPP mode is '+iifs(ppp,'ON','OFF'),dlTrace);
-  Debug.DebugLog('uuz', '- Client mode is '+iifs(client,'ON','OFF'),dlTrace);
-  Debug.DebugLog('uuz', '- Batched SMTP mode is '+iifs(smtp,'ON','OFF'),dlTrace);
-  Debug.DebugLog('uuz', '- Source file is '+Source,dlTrace);
+  Debug.DebugLog('zcrfc', '- PPP mode is '+iifs(ppp,'ON','OFF'),dlTrace);
+  Debug.DebugLog('zcrfc', '- Client mode is '+iifs(client,'ON','OFF'),dlTrace);
+  Debug.DebugLog('zcrfc', '- Batched SMTP mode is '+iifs(smtp,'ON','OFF'),dlTrace);
+  Debug.DebugLog('zcrfc', '- Source file is '+Source,dlTrace);
     
   assign(f1, source);
   reset(f1, 1);
@@ -3367,11 +3437,11 @@ begin
     CommandFile := Dest+UpperCase('C-'+hex(NextUunumber, 4) + ExtOut);
     assign(fc, CommandFile); { "C."-File }
     rewrite(fc);
-    Debug.DebugLog('uuz', 'Opened command file '+Commandfile,dlDebug);
+    Debug.DebugLog('zcrfc', 'Opened command file '+Commandfile,dlDebug);
   end;
   if filesize(f1) < 10 then
   begin
-    Debug.DebugLog('uuz', 'Source file '+Source+' is empty',dlDebug);
+    Debug.DebugLog('zcrfc', 'Source file '+Source+' is empty',dlDebug);
     close(f1);
     if not ppp then close(fc);
     exit;
@@ -3380,7 +3450,7 @@ begin
   server := UpperCase(UUserver + '@' + _to);
   files := 0;
 
-  Debug.DebugLog('uuz', 'Pass 1: News',dlDebug);
+  Debug.DebugLog('zcrfc', 'Pass 1: News',dlDebug);
   
   if not client then CreateNewfile(false);           { 1. Durchgang: News }
   fs := filesize(f1);
@@ -3401,7 +3471,7 @@ begin
 //      end else
       begin                             { AM }
         inc(n);if CommandLine then  write(#13'News: ', n);
-        Debug.DebugLog('uuz', 'Message #'+StrS(n)+' - <'+hd.msgid+'>',dlTrace);
+        Debug.DebugLog('zcrfc', 'Message #'+StrS(n)+' - <'+hd.msgid+'>',dlTrace);
         
         if client then CreateNewFile(false);
         seek(f1, adr + hds);
@@ -3453,7 +3523,7 @@ begin
     if CommandLine then writeln;
   end;
 
-  Debug.DebugLog('uuz', 'Pass 2: Mail',dlDebug);
+  Debug.DebugLog('zcrfc', 'Pass 2: Mail',dlDebug);
   
   adr := 0; n := 0;                     { 2. Durchgang: Mail }
   if SMTP and not client then CreateNewfile(true);
@@ -3470,7 +3540,7 @@ begin
         end else
         begin
           inc(n); if CommandLine then write(#13'Mails: ', n);
-          Debug.DebugLog('uuz', 'Message #'+StrS(n)+' - <'+hd.msgid+'>',dlTrace);
+          Debug.DebugLog('zcrfc', 'Message #'+StrS(n)+' - <'+hd.msgid+'>',dlTrace);
           if not SMTP or Client then
             CreateNewfile(true);
           SetMimeData;
