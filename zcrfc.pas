@@ -2367,7 +2367,6 @@ var
   p: integer;
   binaer,multi,recode: boolean;
   pfrec: ^tfilerec;
-  empty_body: boolean;  { HJT 06.12.2005 }
 label
   ende;
 begin
@@ -2410,6 +2409,7 @@ begin
                           +', s:<'+s+'>', DLDebug);
     {$ENDIF}
 
+    { Anfang der naechsten Nachricht suchen }
     Size := 0;
     while ((pos('#! rnews', s) = 0) or (length(s) < 10)) and (bufpos < bufanz) do
       ReadString;
@@ -2459,16 +2459,9 @@ begin
         dec(Size, length(s) + MinMax(eol, 0, 1));
       until (s = '') or (bufpos >= bufanz);
 
-      { HJT, 06.12.2005 die Konvertierung darf natuerlich nicht }
-      { beendet werden, wenn die Laenge des Nachrichtenkoerpers }
-      { gleich Null ist. S.u beim Beenden der Leseschleife.     }
-
-      if size = 0 then empty_body:=true else empty_body:=false;
-      
       {$IFDEF DEBUG}
       Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, remaining Size after skipping Header:'
-                              +IntToStr(Size)+',empty_body: '
-                              +iifs(empty_body, 'True', 'False'), DLDebug);
+                              +IntToStr(Size), DLDebug);
       {$ENDIF}
 
       while (Size > 0) and (bufpos < bufanz) do
@@ -2505,11 +2498,16 @@ begin
                           +', bufanz: '+IntToStr(bufanz), DLDebug);
     {$ENDIF}
 
-  { HJT 06.12.2005 s ist auch leer, wenn wir eine Nachricht mit leerem  }
-  { Body haben.  In diesem Fall darf die Konvertierung natuerlich       }
-  { nicht beendet werden                                                }
-  { until (bufpos >= bufanz) or (s = ''); }
-  until (bufpos >= bufanz) or ((s = '') and not empty_body);
+    { HJT 06.12.2005: Nachlesen. Ansonsten wird oben in der Hauptschleife }
+    { in der bereits verarbeiteten Zeile nach dem Begin einer neuen       }
+    { Nachricht gesucht.  Erwuenschter Seiteneffekt: auch Nachrichten mit }
+    { leerem Body werden jetzt korrekt verabeitet und fuehren nicht mehr  }
+    { dazu, dass nachfolgende Nachrichten ignoriert werden.               }
+    
+    if bufpos < bufanz then
+      ReadString;
+
+  until (bufpos >= bufanz) or (s = '');
 
   Debug.DebugLog('zcrfc', 'TUUz.ConvertNewsfile, Exit', DLDebug);
 
