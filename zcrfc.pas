@@ -3647,7 +3647,12 @@ begin
       else
         ZtoU;
     except
-      on E: Exception do Writeln(E.Message);
+      on E: Exception do
+      begin
+        Writeln(E.Message);
+        if not (E is UUZException) then
+          raise;
+      end;
     end;
   finally
     UUZc.Free;
