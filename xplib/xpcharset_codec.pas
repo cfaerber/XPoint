@@ -220,7 +220,7 @@ begin
       Inc(p);
     end else if Ord(Source[p+0]) < $e0 then
     begin
-      if Source[p+0] <= #$c3 then
+      if (Source[p+0] <= #$c3) and (p+1<=Length(Source)) then
         Result := Result + Chr((Ord(Source[p+1]) and $3f) or (Ord(Source[p+0]) shl 6))
       else
         Result := Result + '?';
