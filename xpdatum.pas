@@ -132,10 +132,8 @@ end;
 procedure DecodeTimeZone(var IsNegative:boolean;var tzHours,tzMinutes:integer;var IsDST:boolean);
 {$IFDEF unix}
 var tzBase:Longint;
-  {$IFDEF Kylix }
   tzseconds: LongInt;
   tzdaylight: Boolean;
-  {$ENDIF}
 begin
   {$IFDEF Kylix }
   {TODO1: tzseconds in Kylix ermitteln !!!!!!!!}
