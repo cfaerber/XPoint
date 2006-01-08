@@ -10814,7 +10814,7 @@ l”schen Sie ggf. unter Anhang bereits erzeugte Teile.
        Nachricht die Betreffzeile ver„ndern und
        die Bezugsverkettung beibehalten, dann
        wird der alte Betreff automatisch in der
-       Form "<<(war: <alter Betreff>)>>" an den neuen
+       Form "<<(was: <alter Betreff>)>>" an den neuen
        Betreff angeh„ngt.
 
 <<Hinweis:>> Viele Mail- und Newsreader (auch XP) entfer-
