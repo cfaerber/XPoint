@@ -356,7 +356,15 @@ begin
           getrecenvemp := true
         else
           if switch = 'r' then
-          shrinkheader := true;
+          shrinkheader := true
+        else
+          if switch = 'client' then
+        begin
+          ppp := true;
+          client := true;
+        end else
+          if switch = 'norecode' then
+          NoCharsetRecode := false
       end
       else
         {$IFDEF unix}
@@ -2319,6 +2327,8 @@ begin
           if FirstChar(s) = '.' then { SMTP-'.' entfernen }
             DeleteFirstChar(s);
           DecodeLine;             { haengt CR/LF an, falls kein Base64 }
+          if recode then
+            s := RecodeCharset(s,MimeGetCharsetFromName(hd.x_charset),csCP437);
           inc(hd.groesse, length(s));
         end;
       end;
@@ -3598,6 +3608,7 @@ begin
   writeln;
   writeln('uz switches:  -graberec  =  grab envelope recipient from Received-header');
   writeln('              -client    =  Mode for net type RFC/Client');
+  writeln('              -norecode  =  Do not recode charsets');
   writeln;
   writeln('zu switches:  -s      =  Taylor UUCP size negotiation');
   writeln('              -SMTP   =  Batched SMTP (-c/f/g/z/bSMTP = compressed)');
