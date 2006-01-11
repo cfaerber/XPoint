@@ -89,7 +89,7 @@ type
   }
 
   {$IFDEF FPC }
-    { FreePascal, 32 Bit }
+    { FreePascal, 32/64 Bit }
     integer8 =   shortint;
     integer16 =  system.smallint;
     integer32 =  longint;
@@ -99,6 +99,7 @@ type
     integer =    longint;
     Word =       System.Word;
     DWord =      Longword;
+    Cardinal =   Longword;
   {$endif}
   {$IFDEF Delphi }
     { Delphi, 32 Bit }
@@ -111,6 +112,7 @@ type
     Word =       System.Word;
     {$ENDIF }
     DWord =      Longword;  { = unsigned 32 bit }
+    Cardinal =   Longword;
   {$endif}
   {$IFDEF CLR }
   {$ENDIF }
