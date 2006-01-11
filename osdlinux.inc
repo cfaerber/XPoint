@@ -50,15 +50,12 @@ function GetTimeZone: String;
 var
   tzBase, tzMinutes, tzHours: LongInt;
   isNegative: boolean;
-  s: string[7];
+  s: string;
   tzseconds: LongInt;
   tzdaylight: Boolean;
 begin
-  {$IFDEF Kylix }
-  {TODO1: tzseconds in Kylix ermitteln !!!!!!!!}
   tzseconds := 0;
   tzdaylight := False;
-  {$ENDIF}
   { Abweichung in positiven Minuten darstellen }
   if (tzseconds < 0) then begin
     isNegative:= true;
