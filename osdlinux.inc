@@ -51,10 +51,8 @@ var
   tzBase, tzMinutes, tzHours: LongInt;
   isNegative: boolean;
   s: string[7];
-  {$IFDEF Kylix }
   tzseconds: LongInt;
   tzdaylight: Boolean;
-  {$ENDIF}
 begin
   {$IFDEF Kylix }
   {TODO1: tzseconds in Kylix ermitteln !!!!!!!!}
