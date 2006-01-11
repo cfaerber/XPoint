@@ -129,7 +129,7 @@ function TCharsetEncoderStream.Seek(Offset: Longint; Origin: System.Word): Longi
 begin
   Result := FPosition;
   if not (
-    ((Origin in [soFromCurrent,soFromEnd]) and (Offset = 0)) or
+    (((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0)) or
     ((Origin = soFromBeginning) and (Offset = Result)) ) then
     raise EStreamError.Create('Stream does not support seeking.');
 end;

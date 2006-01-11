@@ -625,9 +625,9 @@ var s: string;
 begin
   s:=lowercase(value);
 
-  if value='inline' then
+  if s='inline' then
     FDispo:=MimeDispositionInline
-  else if value='attachment' then
+  else if s='attachment' then
     FDispo:=MimeDispositionAttach
   else
     FDispo:=MimeDispositionNone;
@@ -645,7 +645,7 @@ end;
 function TMimeDisposition.MayEncodeParam(const name:string):boolean;
 var name_lc: string;
 begin
-  name_lc := LowerCase(name_lc);
+  name_lc := LowerCase(name);
   Result :=
     (name_lc<>'creation-date') and
     (name_lc<>'modification-date') and
