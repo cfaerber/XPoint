@@ -658,7 +658,7 @@ var t     : text;
     x,y,i : Integer;
     lines : Integer;
     a     : taste;
-    p     : byte;
+    p     : Integer;
     OldFileMode: Byte;
 begin
   QuoteOK:=true;
