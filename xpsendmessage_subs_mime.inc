@@ -246,8 +246,8 @@ begin
 
 
   // presize the output stream (in case of a memory stream) to improve speed (reduces memory allocations)
-  if TNullCodecStream(outs).OtherStream is TMemoryStream then
-    TNullCodecStream(outs).OtherStream.Size := TNullCodecStream(outs).OtherStream.Size + Ins.Size; 
+  if (outs is TNullCodecStream) and (TNullCodecStream(outs).OtherStream is TMemoryStream) then
+    TNullCodecStream(outs).OtherStream.Size := TNullCodecStream(outs).OtherStream.Size + Ins.Size;
   CopyStream(ins,outs);
 
   ins.Free;
