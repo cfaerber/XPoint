@@ -230,6 +230,37 @@ end;
 
 function unbatch(s: string): boolean; forward;
 
+{ HJT 12.01.2006                                  }
+{ Aus dekodierten RFC-Headerzeilen alle Zeichen   }
+{ entfernen, die dazu fuehren wuerden, dass ein   }
+{ mehrzeiliger ZConnect-Header entsteht.          }
+{ 'in the wild' wurden solche Header speziell bei }
+{ kodierten X-Face-Headern gesichtet.             }
+{ Auch der 'ZPR' kommt mit den gefoldeten Headern }
+{ nicht klar.                                     }
+function remove_crlf(const s : string): string;
+var 
+    len : integer; 
+    i   : integer;
+    z   : integer;
+begin
+    len := length(s);
+    SetLength(result, len); 
+    z := 0;
+    for i := 1 to len do begin
+        if (Ord(s[i]) <> $0d) and (Ord(s[i]) <> $0a) then begin
+            z := z + 1;
+            result[z] := s[i];
+        end
+        else begin
+            Debug.DebugLog('zcrfc', 'remove_crlf, removed '
+                           +Hex(Ord(s[i]),2)+' from header: '
+                           +'<'+s+'>', DLInform);
+        end;
+    end;
+    SetLength(result, z);
+end;
+
 constructor TUUZ.create;
 var
   t: Text;
@@ -2042,7 +2073,9 @@ begin
     begin
       s := ULine[i];
       s := RFC2047_Decode(s,csCP437);
-      ULine[i] := s;
+      { HJT 12.01.2006: gegebenenfalls cr/lf entfernen }
+      { ULine[i] := s; }
+      ULine[i] := remove_crlf(s);
     end;
 
     if pm_reply then
@@ -2084,6 +2117,8 @@ var
   binaer,multi,recode,LastLineWasBlank,FirstLineHasBeenRead: boolean;
   pfrec: ^tfilerec;
 begin
+  Debug.DebugLog('zcrfc', 'TUUz.ConvertMailfile, Datei:<'+fn+'>'
+                        +', CommandLine:'+iifs(CommandLine, 'True','False'), DLDebug);
   if CommandLine then write('mail: ', fn);
   OpenFile(fn);
   while bufpos < bufanz do
@@ -2258,6 +2293,8 @@ var
   end;
 
 begin
+  Debug.DebugLog('zcrfc', 'TUUz.ConvertSmtpFile, Datei:<'+fn+'>'
+                        +', CommandLine:'+iifs(CommandLine, 'True','False'), DLDebug);
   n := 0;                     
   if CommandLine then write('mail: ', fn);
   DeCompress(fn,false);
