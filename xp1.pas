@@ -295,20 +295,19 @@ begin
     exit;
   end;
 
-  jahr   := ((Ord(s[1])-48) * 10 + (Ord(s[2])-48)) and $006F;   // 99 = $63
+  jahr   := ((Ord(s[1])-48) * 10 + (Ord(s[2])-48)) and $007F;
   if jahr < 70 then 
     jahr := jahr + 100;
-  monat  := ((Ord(s[3])-48) * 10 + (Ord(s [4])-48)) and $0F;    // 12 = $0C
-  tag    := ((Ord(s[5])-48) * 10 + (Ord(s [6])-48)) and $1F;    // 31 = $1F
-  stunde := ((Ord(s[7])-48) * 10 + (Ord(s [8])-48)) and $1F;    // 24 = $18
-  minute := ((Ord(s[9])-48) * 10 + (Ord(s[10])-48)) and $3F;    // 60 = $3C
+  monat  := ((Ord(s[3])-48) * 10 + (Ord(s [4])-48)) and $FF;
+  tag    := ((Ord(s[5])-48) * 10 + (Ord(s [6])-48)) and $FF;
+  stunde := ((Ord(s[7])-48) * 10 + (Ord(s [8])-48)) and $1F;
+  minute := ((Ord(s[9])-48) * 10 + (Ord(s[10])-48)) and $3F;
 
   result:=((jahr   shl 24) or
            (monat  shl 20) or
            (tag    shl 15) or
            (stunde shl 10) or
-           (minute shl  4)   ) and $7fffffff;
-          
+           (minute shl  4)   );          
 end;
 
 
