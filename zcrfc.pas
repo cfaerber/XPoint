@@ -2350,7 +2350,15 @@ begin
         (not binaer) and (not multi) and IsKnownCharset(hd.x_charset);
       hd.charset:=iifs(recode,'IBM437',MimeCharsetToZC(hd.x_charset));
 
-      if (mempf <> '') and (hd.xempf.count > 0) and (mempf <> hd.xempf[0]) then
+      { HJT: 19.01.2006, wenn wir nur den Envelope-To Empfaenger }
+      { haben, setzten wir diesen unbedingt als EMP ein          }
+      if (mempf <> '') and (hd.xempf.count = 0) then
+      begin
+        Debug.DebugLog('zcrfc', 'TUUz.ConvertSmtpFile, kein To, versorge EMP aus Envelope-To',
+                                DLDebug);
+        hd.xempf.Add(mempf);
+      end
+      else if (mempf <> '') and (hd.xempf.count > 0) and (mempf <> hd.xempf[0]) then
       begin
         hd.xoem.Assign(hd.xempf);
         hd.XEmpf.Clear;
