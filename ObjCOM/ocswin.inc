@@ -181,8 +181,7 @@ var DCB   : TDCB;
 begin
   if BpsRate = 11520 then BpsRate := 115200;
 
-  GetCommState(tempHandle, DCB);
-  SaveHandle := tempHandle;
+  GetCommState(GetHandle, DCB);
 
   if NOT (Parity in ['N', 'E', 'O', 'M']) then Parity := 'N';
   if BpsRate >= 0 then dcb.BaudRate := BpsRate;
