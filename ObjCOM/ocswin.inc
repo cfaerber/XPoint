@@ -3,8 +3,6 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-{$IFDEF FPC} {$I OCDefFPC.inc} {$ENDIF}
-
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 const
@@ -179,10 +177,12 @@ end; { func. TSerialStream.OpenCom }
 function TSerialStream.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 var DCB   : TDCB;
     BPSID : Longint;
+  tempHandle: THandle;
 begin
   if BpsRate = 11520 then BpsRate := 115200;
 
-  GetCommState(GetHandle, DCB);
+  GetCommState(tempHandle, DCB);
+  SaveHandle := tempHandle;
 
   if NOT (Parity in ['N', 'E', 'O', 'M']) then Parity := 'N';
   if BpsRate >= 0 then dcb.BaudRate := BpsRate;
