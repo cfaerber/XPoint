@@ -1184,13 +1184,13 @@ begin
   That's not a big problem as only NT/2k/XP allow switching charsets
   for the console (i.e. 95/98/ME _always_ uses the OEM codepage).
 }
-  {$IFDEF Debug }
-  Debug.DebugLog('winxp','Win32_Wrt, Start, X:'+IntToStr(WritePos.X)
-                        +', Y:'+IntToStr(WritePos.Y)
-                        +', Length(s):'+IntToStr(Length(s))
-                        +', s:<'+s+'>'
-                        ,DLTrace);
-  {$ENDIF }
+  // {$IFDEF Debug }
+  // Debug.DebugLog('winxp','Win32_Wrt, Start, X:'+IntToStr(WritePos.X)
+  //                       +', Y:'+IntToStr(WritePos.Y)
+  //                       +', Length(s):'+IntToStr(Length(s))
+  //                       +', s:<'+s+'>'
+  //                       ,DLTrace);
+  // {$ENDIF }
 
 
   if Assigned(SourceToUTF8) then s := SourceToUTF8.Encode(s);
@@ -1223,13 +1223,13 @@ begin
   begin
     WriteConsoleOutputCharacterA(OutHandle, @(s[1]), Length(s), WritePos, OutRes);
 
-    {$IFDEF Debug }
-    Debug.DebugLog('winxp','Win32_Wrt A, "IsUnicode:'+iifs(IsUnicode,'True','false')
-                           +', OutputCP: '+IntToStr(OutputCP)
-                           +', dwFlags: '+IntToStr(dwFlags)
-                           +', OutRes:'+IntToStr(OutRes)
-                           ,DLTrace);
-    {$ENDIF }
+    // {$IFDEF Debug }
+    // Debug.DebugLog('winxp','Win32_Wrt A, "IsUnicode:'+iifs(IsUnicode,'True','false')
+    //                        +', OutputCP: '+IntToStr(OutputCP)
+    //                        +', dwFlags: '+IntToStr(dwFlags)
+    //                        +', OutRes:'+IntToStr(OutRes)
+    //                        ,DLTrace);
+    // {$ENDIF }
     
   end;
 
