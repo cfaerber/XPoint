@@ -177,7 +177,6 @@ end; { func. TSerialStream.OpenCom }
 function TSerialStream.SetLine(BpsRate: longint; Parity: Char; DataBits, Stopbits: Byte): Boolean;
 var DCB   : TDCB;
     BPSID : Longint;
-  tempHandle: THandle;
 begin
   if BpsRate = 11520 then BpsRate := 115200;
 
