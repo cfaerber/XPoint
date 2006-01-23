@@ -725,14 +725,17 @@ end;
   var
     i: Integer;
   begin
-    Debug.DebugLog('xpsendmessage','ReadEmpflist, SendEmpfList.Count:'+IntToStr(SendEmpfList.Count), DLDebug);
-
+    Debug.DebugLog('xpsendmessage','ReadEmpflist, SendEmpfList.Count:'
+                   +IntToStr(SendEmpfList.Count), DLDebug);
     // !! Assign moeglich, wenn beides StringListe
     for i := 0 to SendEmpfList.Count - 1 do
       if cc_anz<maxcc then
       begin
         inc(cc_anz);
         cc^[cc_anz]:=Sendempflist[i];
+        Debug.DebugLog('xpsendmessage','ReadEmpflist, '+
+                       'Sendempflist['+IntToStr(i)+']: <'
+                       +Sendempflist[i]+'>', DLDebug); 
       end;
     SortCCs(cc,cc_anz);
    TestXpostings(true, false);
@@ -1161,7 +1164,11 @@ begin      //-------- of DoSend ---------
   fillchar(cc^,sizeof(cc^),0);
   SendDefault:=1;
   verteiler:=false;
-  if SendEmpflist<>nil then ReadEmpflist;
+  if SendEmpflist<>nil then begin
+    Debug.DebugLog('xpsendmessage','DoSend, SendEmpflist<>nil, '
+                    +'calling ReadEmpflist', DLDebug);
+    ReadEmpflist;
+  end;
   flPGPkey:=(sendflags and SendPGPkey<>0);
   flPGPsig:=(sendflags and SendPGPsig<>0) or PGP_signall;
   flPGPreq:=(sendflags and SendPGPreq<>0);
@@ -1170,7 +1177,7 @@ begin      //-------- of DoSend ---------
 
 { Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }
 fromstart:
-  Debug.DebugLog('xpsendmessage','DoSend, fromstart---', DLDebug);  
+  Debug.DebugLog('xpsendmessage','DoSend, fromstart---', DLDebug);
 
   passwd:='';          { Betreffbox true = Betreff nochmal eintippen           }
   empfneu:=false;      { Edit       true = Editor Starten                      }
@@ -2078,7 +2085,14 @@ fromstart:
     else
       hdp.pfad:='';
     end;
+    Debug.DebugLog('xpsendmessage','DoSend, calling dbAppend(mbase)', 
+                   DLDebug);
+
     dbAppend(mbase);            { neue mbase.INT_NR fuer MessageID }
+
+    Debug.DebugLog('xpsendmessage','DoSend, after calling dbAppend(mbase)', 
+                   DLDebug);
+
     hdp.msgid:=MessageID;
     sData.msgid:=hdp.msgid;
 
@@ -2438,8 +2452,8 @@ fromstart:
   end;   { not verteiler }
 
   if cc_anz>0 then begin           { weitere CC-Empfaenger bearbeiten }
-    Debug.DebugLog('xpsendmessage','DoSend, weitere CC-Empfaenger bearbeiten, cc_anz:'+IntToStr(cc_anz), DLDebug);
-
+    Debug.DebugLog('xpsendmessage','DoSend, weitere CC-Empfaenger bearbeiten, '
+                   +'cc_anz:'+IntToStr(cc_anz), DLDebug);
     empfaenger:=cc^[1];
     Move(cc^[2],cc^[1],(maxcc-1)*sizeof(cc^[1]));
     Move(ccm^[1],ccm^[0],maxcc*sizeof(ccm^[1]));
