@@ -1073,16 +1073,22 @@ begin
       end
     else begin
       recno:=hd.firstfree;
+      dbLog('FreeList <> 0 ' + strs(recno) + ' ' +  strs(hd.hdsize) + ' ' +  strs(hd.firstfree) + ' ' + strs(hd.recsize));
       seek(f1,hd.hdsize+(hd.firstfree-1)*hd.recsize+1);
-      if eof(f1) then begin     { fehlerhafter FreeList-Eintrag }
+      if eof(f1) then
+      begin           { fehlerhafter FreeList-Eintrag }
         hd.firstfree:=0;        { -> Freeliste kappen           }
         inc(hd.recs);
         recno:=hd.recs;
         writeln('<DB> Freelist error - cutting freelist');
         end
       else
+      begin
         blockread(f1,hd.firstfree,4);
+        dbLog('read firstfree');
       end;
+
+    end;
     if hdupdate then writehd(dbp);
     tiefe:=0;
     dEOF:=false; dBOF:=false;
