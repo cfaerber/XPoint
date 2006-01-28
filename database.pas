@@ -48,11 +48,9 @@ procedure dbEnableIndexCache;
 procedure dbDisableIndexCache;
 procedure dbGetFrag(dbp:DB; typ:byte; var fsize,anz,gsize:longint);
 
-procedure dbOpenLog(const fn: string);
 {$IFDEF Debug }
 procedure dbLog(const s:string);
 {$ENDIF }
-procedure dbCloseLog;
 
 {------------------------------------------------------- Datenbanken ---}
 
@@ -142,7 +140,7 @@ uses
 {$IFDEF unix}
   xplinux,
 {$ENDIF }
-  datadef1;
+  datadef1, Debug;
 
 procedure dbSetICP(p:dbIndexCProc);
 begin
@@ -1535,32 +1533,14 @@ end;
 
 { --- Logging --------------------------------------------------------}
 
-procedure dbOpenLog(const fn: string);
-begin
-  assign(dblogfile,fn);
-  rewrite(dblogfile);
-  dl:=true;
-end;
-
 {$IFDEF Debug }
 procedure dbLog(const s:string);
 begin
   if dl then
-  begin
-    writeln(dblogfile,s);
-    Flush(dblogfile);
-  end;
-{$ifdef UseSysLog}
-  XPDebugLog(s);
-{$ENDIF }
+    Debug.DebugLog('XPDB', s, DLTrace);
 end;
 {$ENDIF }
 
-procedure dbCloseLog;
-begin
-  if dl then
-    close(dblogfile);
-end;
 
 {=====================================================================}
 
@@ -1633,7 +1613,6 @@ procedure ExitDataBaseUnit;
 begin
   ExitProc:= SavedExitProc;
   if ioresult<>0 then;
-  dbCloseLog;
 end;
 
 procedure InitDataBaseUnit;

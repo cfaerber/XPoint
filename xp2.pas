@@ -37,7 +37,7 @@ uses
   sysutils,xpcfg,typeform,fileio,keys,inout,mouse,datadef,database,
   maske,help,lister,win2,maus2,clip,resource,montage,xpglobal,debug,
   xp0,xp1,xp1o2,xp1input,xp1help,xp5,xp10,xpdatum,fidoglob,classes,
-  osdepend;
+  osdepend, datadef1;
 
 var
   XPFirstStart: Boolean;
@@ -564,7 +564,7 @@ begin
       writeln('Fehler: kann '+AutoxDir+sr.name+' nicht l”schen!');
   until findnext(sr)<>0;
   FindClose(sr);
-  if ParDDebug then dbOpenLog('database.log');
+  if ParDDebug then dl := true; 
   if (LeftStr(ParAutost,4)<='0001') and (RightStr(ParAutost,4)>='2359') then
     ParAutost:='';
 end;
