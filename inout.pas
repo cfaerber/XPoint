@@ -319,7 +319,10 @@ begin
 {  DecodeTime(Now, h, m, s, millis);
   Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
     (millis / (1000 / TickFreq))); }
-  Result := LongInt(Trunc(Now * 8640000));
+  // erst ab 01.01.2006 z‰hlen (38718 = EncodeDate(2006,1,1));
+  // um einen ‹berlauf herauszuzˆgern
+  // 8640000 = auf hundertstel sekunden umrechnen
+  Result := LongInt(Trunc(((Now-38718) * 8640000)));
 end;
 
 { !! Diese Funktion lieft mit and $70 nur CAPSLock zurÅck,
