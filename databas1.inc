@@ -49,7 +49,8 @@ end;
 
 procedure cache_read(dbp:DB; irsize:Integer; offs:longint; var data);
 var
-  s,i,sp : integer;
+  i,sp : integer;
+  s: TDateTime;
   TempCachePage: PCachepage;
 begin
   with dp(dbp)^ do
@@ -71,7 +72,7 @@ begin
       if i>=0 then
       begin
         Move(cache^[i].page,data,irsize);
-        cache^[i].lasttick:=ticker;
+        cache^[i].lasttick:= Now;
         end
       else begin
         seek(fi,offs);
@@ -85,7 +86,7 @@ begin
         while TempCachePage.used do 
         begin
           with TempCachePage^ do 
-            if lasttick<s then 
+            if lasttick<s then
             begin
               s:=lasttick;
               sp:=i;
@@ -97,7 +98,7 @@ begin
         if i>=0 then sp:=i;
 
         cache^[sp].used:=true;
-        cache^[sp].lasttick:=ticker;
+        cache^[sp].lasttick:= Now;
         cache^[sp].dbp:=dbp;
         cache^[sp].ofs:=offs;
         Move(data,cache^[sp].page,irsize);
@@ -108,7 +109,7 @@ end;
 
 procedure cache_write(dbp:DB; irsize:Integer; offs:longint; var data);
 var i,sp : integer;
-    s    : longint;
+    s    : TDateTime;
 begin
   with dp(dbp)^ do
   begin
@@ -132,7 +133,7 @@ begin
         Move(data,cache^[i].page,irsize)
       else 
       begin
-        cache^[sp].lasttick:=ticker;
+        cache^[sp].lasttick:= Now;
         cache^[sp].dbp:=dbp;
         cache^[sp].ofs:=offs;
         Move(data,cache^[sp].page,irsize);
