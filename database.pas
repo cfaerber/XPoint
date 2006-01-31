@@ -185,7 +185,7 @@ procedure deletekey(dbp:DB; indnr:word; const key:string); forward;
 { Datensatz schreiben }
 
 procedure dbFlush(dbp:DB);
-var i   : integer;      { MK 12/99 }
+var i   : integer;  
     k1,k2 : string;
 begin
   with dp(dbp)^ do begin
@@ -196,21 +196,24 @@ begin
     seek(f1,hd.hdsize+(recno-1)*hd.recsize);
     blockwrite(f1,recbuf^,hd.recsize);
 
-    if flindex then begin
-      for i:=1 to ixhd.indizes do begin
+    if flindex then
+    begin
+      for i:=1 to ixhd.indizes do
+      begin
         getkey(dbp,i,false,k2);
         if newrec then
           insertkey(dbp,i,k2)
         else begin
           getkey(dbp,i,true,k1);
-          if k1<>k2 then begin
+          if k1<>k2 then
+          begin
             deletekey(dbp,i,k1);
             insertkey(dbp,i,k2);
-            end;
           end;
         end;
-      move(recbuf^,orecbuf^,hd.recsize);
       end;
+      move(recbuf^,orecbuf^,hd.recsize);
+    end;
 
     flushed:=true; newrec:=false;
     end;
