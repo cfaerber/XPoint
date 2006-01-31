@@ -190,7 +190,7 @@ var bf        : inodep;
 
 begin   { insertkey }
 {$IFDEF Debug }
-   if dl then dbLog('GetKey: ' + strs(indnr) + key);
+   if dl then dbLog('InsertKey: ' + strs(indnr) + key);
 {$ENDIF }
   with dp(dbp)^ do
     with index^[indnr] do begin
@@ -377,7 +377,7 @@ var z         : longint;
 
 begin    { deletekey }
 {$IFDEF Debug }
-   if dl then dbLog('GetKey: ' + strs(indnr) + key);
+   if dl then dbLog('DeleteKey: ' + strs(indnr) + key);
 {$ENDIF }
   allocnode(dbp,indnr,bf);
   with dp(dbp)^ do
