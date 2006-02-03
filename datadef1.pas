@@ -226,9 +226,12 @@ end;
 
 procedure writehd(dpb:DB);
 begin
-  with dp(dpb)^ do begin
+  with dp(dpb)^ do
+  begin
+    Debug.DebugLog('database', 'writehd'+strs(sizeof(hd)), dlTrace);
     seek(f1,0);
     blockwrite(f1,hd,sizeof(hd));
+    Debug.DebugLog('database', 'writehd2'+strs(sizeof(hd)), dltrace);
     end;
 end;
 

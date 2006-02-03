@@ -188,6 +188,7 @@ procedure dbFlush(dbp:DB);
 var i   : integer;  
     k1,k2 : string;
 begin
+  dbLog('dbFlush start');
   with dp(dbp)^ do begin
     if flushed then exit;
 {$IFDEF Debug }
