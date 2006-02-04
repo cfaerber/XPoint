@@ -194,7 +194,10 @@ begin
 {$IFDEF Debug }
     if dl then dbLog('   '+fname+' - Write('+strs(recno)+')');
 {$ENDIF }
+
+    dbLog('a: ' + strs(hd.hdsize) + ' ' + strs(recno) + ' ' + strs(hd.recsize));
     seek(f1,hd.hdsize+(recno-1)*hd.recsize);
+    dbLog('blockwrite');
     blockwrite(f1,recbuf^,hd.recsize);
 
     if flindex then

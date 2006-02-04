@@ -65,9 +65,6 @@ var i,j : byte;
     rb  : barrp;
     s2: ShortString;
 begin
-{$IFDEF Debug }
-   if dl then dbLog('GetKey: ' + strs(indnr) + key);
-{$ENDIF }
   with dp(dbp)^ do
     with index^[indnr] do
       if feldanz and $80<>0 then
@@ -189,9 +186,6 @@ var bf        : inodep;
   end;
 
 begin   { insertkey }
-{$IFDEF Debug }
-   if dl then dbLog('InsertKey: ' + strs(indnr) + key);
-{$ENDIF }
   with dp(dbp)^ do
     with index^[indnr] do begin
       srecno:=recno;
@@ -376,9 +370,6 @@ var z         : longint;
   end;
 
 begin    { deletekey }
-{$IFDEF Debug }
-   if dl then dbLog('DeleteKey: ' + strs(indnr) + key);
-{$ENDIF }
   allocnode(dbp,indnr,bf);
   with dp(dbp)^ do
     with index^[indnr] do begin
