@@ -467,7 +467,13 @@ begin
     LastB := B;
 
     Pos := NewPos;
-    if Pos <= Length(s) then Inc(PosC, W);
+
+    { HJT 11.11.2005  no width of -1                            }
+    { xpunicode.pas, UnicodeCharacterWidth                      }
+    { - Other C0/C1 control characters and DEL will lead to a	}
+    {   return value of -1.					                    }	
+    { if Pos <= Length(s) then Inc(PosC, W); }
+    if Pos <= Length(s) then Inc(PosC, iif(W<=0,1,W));
   end;
 
   // the last char is the space inserted above and should not be output
@@ -996,7 +1002,13 @@ var
     if UTF8 then SetLogicalOutputCharset(csUTF8);
     for i:=1 to exthdlines do begin
       readln(t,s);
-      mwrt(1,lfirst,' '+forms(s,79+ScreenWidth-80));
+      { HJT 05.02.2006: UTF8FormS bei UTF-8, ansonsten bleiben eventuell }
+      { bei Headerzeilen am Ende nicht 'ausgeblankte' Zeichen }
+      if UTF8 then begin
+         mwrt(1,lfirst,' '+UTF8FormS(s,79+ScreenWidth-80));
+      end else begin
+         mwrt(1,lfirst,' '+forms(s,79+ScreenWidth-80));
+      end;      
       inc(lfirst);
       inc(lofs,length(s)+2);
       end;
@@ -1006,7 +1018,7 @@ var
     lfirst:=min(lfirst,screenlines-5);
   end;
 
-begin
+begin   // listfile
   listexit:=0;
   wrapb:=no_ListWrapToggle;
   no_ListWrapToggle:=false;
@@ -1048,12 +1060,15 @@ begin
       end;
     end;
 
-    Debug.Debuglog('xp1s','listfile, TLister.CreateWithOptions',dlTrace);
+    Debug.Debuglog('xp1','listfile, TLister.CreateWithOptions',dlTrace);
       
     List := TLister.CreateWithOptions(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
              iifs(_maus and ListScroller,'VSC/','')+
+             { HJT 05.02.2006 wenn UTF-8 gewuenscht wird, die Options }
+             { auch entsprechend versorgen                            }
+             iifs(UTF8,'UTF8/','')+
              iifs(listmsg,'ROT/SIG/',''));
     if listwrap {or listkommentar} then
       list.Stat.WrapPos := iif(_maus and listscroller,78,80)+ScreenWidth-80;
