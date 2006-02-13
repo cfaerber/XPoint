@@ -313,9 +313,9 @@ assembler; asm
             jb    @fnext
             cmp   al,'z'
             jbe   @ufound
-            cmp   al,'€'               { '€'..'¥' }
+            cmp   al, $80               { '€'..'¥' }
             jb    @fnext
-            cmp   al,'¥'
+            cmp   al, $A5
             jbe   @ufound
             jmp   @fnext
 
