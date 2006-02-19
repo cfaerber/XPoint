@@ -23,7 +23,7 @@ echo Packe Sourcen
 rar a \a\openxp-%OXP_VER%.src.rar -cl -r -s -ts- -mc16:128t+ -x!com*.bak -m5 >\temp\pack
 
 echo Compilere mit FreePascal fuer DOS 32
-\fpc\2.0.0\bin\go32v2\ppc386 -B %OXP_OPTS% -Xs -XX -FEdist\dos  -FUdist -FuObjCOM;netcall;DOS32 -Tgo32v2 openxp.pas >!compdos.bak
+\fpc\2.0.2\bin\go32v2\ppc386 -B %OXP_OPTS% -Xs -XX -FEdist\dos  -FUdist -FuObjCOM;netcall;DOS32 -Tgo32v2 openxp.pas >!compdos.bak
 
 echo Compilere mit FreePascal fuer Win32
 
