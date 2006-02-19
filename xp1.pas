@@ -334,8 +334,7 @@ var Pos:     integer;   // current position in bytes
 
     DefaultAttr: SmallWord;     // saved text attribute
 
-    i : Integer;
-    j: Integer;
+    i, j, k : Integer;
     us: String;
 
   procedure _(Attr: SmallWord; ToPos, ToPosC: integer);
