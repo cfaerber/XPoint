@@ -382,6 +382,28 @@ begin
   begin
     NewPos := Pos;
     C := UTF8GetCharNext(s, NewPos);
+    { HJT 19.02.2006 Q&D. Im nicht UTF-8 Modus (Enable-UTF8=F, XPOINT.CFG)    )
+    { keine Sequenz laenger eins zulassen. Eigentlich muessten  W und B (s.u.)}
+    { auch angepasst werden.                                                  }
+    { Und: Der Lister ist scheinbar GAR NICHT auf nicht UTF-8 Dateien /       }
+    { Nachrichten vorbereitet mit Zeichen > $7f                               }
+    if not Enable_UTF8 then begin
+       if NewPos - Pos > 1 then begin
+          {$IFDEF Debug }
+          us:='';
+          for k:=pos to NewPos - 1 do begin
+            us:=us+Hex(Ord(s[k]),2)+' ';
+          end; 
+          Debug.DebugLog('xp1','ListDisplay, Setting wg NOT Enable_UTF8'
+                         +' NewPos from: '+IntToStr(NewPos)
+                         +' To: '+IntToStr(Pos+1)
+                         +', Seq: '+us
+                         ,DLTrace);
+          {$ENDIF }
+          NewPos := Pos + 1;
+       end;
+    end;
+
     W := UnicodeCharacterWidth(C);
     B := UnicodeCharacterLineBreakType(C);
 
