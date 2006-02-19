@@ -617,7 +617,7 @@ begin
     writeln(t,'POP3OnlyNew=',jnf(pop3_OnlyNew));
     writeln(t,'POP3ForceOneArea=',jnf(pop3_ForceOneArea));
     writeln(t,'POP3-Port=', pop3_port);
-    writeln(t,'POP3-MaxMailSize', pop3_MaxMailSize);
+    writeln(t,'POP3-MaxMailSize=', pop3_MaxMailSize); { HJT 11.01.2006 }
 
     writeln(t,'SMTP-IP=',smtp_ip);
     if smtp_id <>''  then writeln(t,'SMTP-ID=',smtp_id);
