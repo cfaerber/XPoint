@@ -28,7 +28,7 @@ unit xpmime;
 interface
 
 uses  xpglobal,sysutils,typeform,montage,keys,lister,database,
-      resource,xpheader,xp0,xp1,xpkeys,Mime, xpcharset;
+      resource,xpheader,xp0,xp1,xpkeys,Mime, xpcharset,debug;
 
 
 type  TMimePart = class { Teil einer Multipart-Nachricht }
@@ -368,7 +368,11 @@ var   hdp      : THeader;
                     (firstline='  This message is in MIME format.  The first part should be readable text,');   { elm }
     end;
 
-  begin
+  begin  // MakePartlist
+    {$IFDEF Debug }
+    Debug.DebugLog('xpmime','MakePartlist',DLTrace);
+    {$ENDIF }
+
     tmp:=TempS(dbReadInt(mbase,'msgsize'));
     extract_msg(0,'',tmp,false,0);
     assign(t,tmp);
@@ -576,8 +580,17 @@ var   hdp      : THeader;
 
 
 var i : integer;
+    exit_str_idx   : integer;     { HJT 19.02.2006 }
+const 
+    exit_str : string = 'úEXIT';  { HJT 19.02.2006 }
 
 begin                         { SelectMultiPart }
+  {$IFDEF Debug }
+  Debug.DebugLog('xpmime','-- SelectMultiPart, select:'+iifs(select,'True','False')
+                           +', forceselect:'+iifs(forceselect, 'True','False')
+                          ,DLTrace);
+  {$ENDIF }
+
   brk:=false;
   mpdata.Clear;
   hdp := THeader.Create;
@@ -610,14 +623,40 @@ begin                         { SelectMultiPart }
         end
       end
     else begin
-      List := listbox(56,min(screenlines-4, PartsList.Count),getres2(2440,9));   { 'mehrteilige Nachricht' }
-      for i:=0 to PartsList.Count - 1 do
-        with TMimePart(PartsList[i]) do
+      { HJT 19.02.2006 'Beenden' als letzten Auswahlpunkt aufnehmen, s.u.}
+      { List := listbox(56,min(screenlines-4, PartsList.Count),getres2(2440,9)); }  { 'mehrteilige Nachricht' }
+      List := listbox(56,min(screenlines-4, PartsList.Count+1),getres2(2440,9));   { 'mehrteilige Nachricht' }
+      for i:=0 to PartsList.Count - 1 do begin
+        with TMimePart(PartsList[i]) do begin
           List.AddLine(forms(sp((level-1)*2+1)+typname(typ,subtyp),25)+strsn(lines,6)+
                 ' ' + fnform(fname,23) + ' ' + strs(i));
+          {$IFDEF Debug }
+          Debug.DebugLog('xpmime','SelectMultiPart, '
+                                  +'level: '+IntToStr(level)
+                                  +',List.AddLine('+List.Lines[List.Lines.Count-1]+')'
+                                  ,DLTrace);
+          {$ENDIF }
+        end;
+      end;
+      List.AddLine(exit_str);
+      exit_str_idx := List.Lines.Count - 1;
       List.OnKeypressed := SMP_Keys;
       List.Startpos := index-1;
       brk := List.Show;
+
+      { HJT 19.09.2006 retour auch wenn 'EXIT' gewaehlt wurde }
+      if (not brk) and (exit_str_idx = List.SelLine) then
+      begin
+        {$IFDEF Debug }
+        Debug.DebugLog('xpmime','SelectMultiPart, '
+                                +'selected line:<'+List.Lines[List.SelLine]+'>'
+                                +'---->RETOUR<----'
+                                ,DLTrace);
+        {$ENDIF }
+        brk:=True;
+      end;
+      List.Lines.Delete(exit_str_idx);             
+
       if not brk then
       begin
         mpdata.Assign(PartsList[List.SelLine]);
