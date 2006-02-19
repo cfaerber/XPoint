@@ -30,7 +30,7 @@ uses
   xpcurses,
 {$ENDIF }
   sysutils,typeform,fileio,inout,keys,datadef,database,maske,xpheader,
-  maus2,resource,xp0,xp1,xp1input,xpcc,fidoglob;
+  maus2,resource,xp0,xp1,xp1input,xpcc,fidoglob,debug;
 
 procedure Unversandt(edit,modi:boolean);
 procedure Weiterleit(typ:byte; sendbox:boolean);
@@ -222,12 +222,15 @@ label ende,nextpp;
       for i:=0 to SendEmpfList.Count-1 do
         if p+SendEmpfList[i]=Empf then
           begin
+            DebugLog('xpsendmessage_unsent.pas',
+                'EmpfCorrect, Deleting SendEmpflist['+IntToStr(i)+']: <'
+                +SendEmpflist[i]+'>', DLDebug);          
             SendEmpfList.Delete(i);
             exit;
           end;
     end;
 
-begin
+begin   // Unversandt(edit,modi:boolean);
   dbReadN(mbase,mb_unversandt,uvs);
   if uvs and 1=0 then begin
     rfehler(619);              { 'keine unversandte Nachricht!' }
@@ -524,6 +527,7 @@ var
     sendflags : word;
     msgflags : integer;
     zg_flags: integer;
+    j       : integer;
 
 label ende,again;
 
@@ -720,6 +724,10 @@ label ende,again;
   begin
     IsOempf:=(LeftStr(empf,length(oempf))=oempf) or
              (LeftStr(empf,21)='## Originalempf„nger:');   { Kompatibilitaet zu XP 1.0-2.1 }
+    DebugLog('xpsendmessage_unsent.pas','IsOempf, empf: <'+empf+'>'
+                +', oempf: <'+oempf+'>'
+                +' IsOempf:'+iifs(result, 'True','False'), 
+                DLDebug);
   end;
 
   procedure GetOEmpflist;
@@ -731,13 +739,21 @@ label ende,again;
       begin
         hdp.Empfaenger.Add(trim(mid(s,length(oempf)+1)));
         inc(add_oe_cc,length(s)+2);
+        DebugLog('xpsendmessage_unsent.pas','GetOEmpflist, '
+                    +'hdp.Empfaenger.Add('+trim(mid(s,length(oempf)+1))
+                    +'), add_oe_cc:'+IntToStr(add_oe_cc),
+                    DLDebug);
       end;
     until not IsOempf(s) or eof(t);
     if eof(t) then leerz:=''
     else leerz:=s;
   end;
 
-begin
+begin       // of Weiterleit(typ:byte; sendbox:boolean);
+  DebugLog('xpsendmessage_unsent.pas','Weiterleit, typ: '+IntToStr(typ)
+                +', sendbox: '+iifs(sendbox,'True','False'), 
+                DLDebug);
+
   if not (aktdispmode in [10..19]) then begin
     rfehler(631);    { 'Nur in der Nachrichtenuebersicht moeglich.' }
     exit;
@@ -1048,8 +1064,20 @@ again:
                  end;
                close(t);
                unpark:=IsOempf(empf);
+               DebugLog('xpsendmessage_unsent.pas',
+                        'Weiterleit, unpark: '+iifs(unpark,'True','False')
+                        +', add_oe_cc:'+IntToStr(add_oe_cc), 
+                        DLDebug);
+               DebugLog('xpsendmessage_unsent.pas',
+                        'Weiterleit, SendEmpflist.count: '
+                        +IntToStr(SendEmpflist.count)
+                        +', hdp.Empfaenger.count: '+IntToStr(hdp.Empfaenger.count), 
+                        DLDebug);
+
                if not unpark then begin
                  _Brett := dbReadNStr(mbase,mb_brett);
+                 DebugLog('xpsendmessage_unsent.pas',
+                            'Weiterleit, _Brett aus mbase: <'+_Brett+'>', DLDebug);
                  if FirstChar(_brett)<'A' then begin
                    rfehler(625);    { 'Schreiben in dieses Brett ist nicht moeglich.' }
                    goto ende;
@@ -1060,6 +1088,24 @@ again:
                    end;
                  end
                else begin
+                 { HJT 23.01.2006: loeschen '/¯Unversandt' aus SendEmpflist, }
+                 { ansonsten wird '¯Unversandt' Kopienempfaenger beim        }
+                 { Weiterleiten/Erneut und zusaetzlich wuerde ein Pseudo     }
+                 { '¯Unversandt'-Brett (nicht intern) angelegt.              }
+                 { Eigentlich ist dies mehr ein Hotfix. Sinnvollerweise      }
+                 { muesste das Aufnehmen bereits unterbunden werden (ToDo)   }
+                 if assigned(SendEmpflist) then begin
+                    for j:=0 to SendEmpflist.count - 1 do begin
+                       if SendEmpfList[j] = '/¯Unversandt' then begin
+                          DebugLog('xpsendmessage_unsent.pas',
+                                'Weiterleit, Deleting SendEmpflist['+IntToStr(j)+']: <'
+                                +SendEmpflist[j]+'>', DLDebug);
+                          SendEmpfList.Delete(j);
+                          break;
+                       end;
+                    end;
+                 end;
+               
                  shortmsg(length(empf)+add_oe_cc+2+iif(leerz='',2,0));
                  empf:=vert_long(trim(mid(empf,length(oempf)+1)));
                  if length(empf)<3 then begin
@@ -1181,7 +1227,7 @@ ende:
   hdp.Free;
   archivweiterleiten:=false;
 //  if FileExists(fn) then _era(fn);
-end;
+end;    // of Weiterleit(typ:byte; sendbox:boolean);
 
 
 procedure ArchivAMtoPM;
