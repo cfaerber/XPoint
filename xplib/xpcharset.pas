@@ -204,7 +204,9 @@ begin
     (Result[Length(Result)] in ['1'..'4']) then
     result:=Trim(LeftStr(result,Length(result)-2));
 
-  result := MimeCharsetCanonicalName(Name);
+  { HJT 19.02.2006 }
+  { result := MimeCharsetCanonicalName(Name); }
+  result := MimeCharsetCanonicalName(result);
 end;
 
 // -------------------------------------------------------------------
