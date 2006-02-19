@@ -335,8 +335,8 @@ var Pos:     integer;   // current position in bytes
     DefaultAttr: SmallWord;     // saved text attribute
 
     i : Integer;
-
     j: Integer;
+    us: String;
 
   procedure _(Attr: SmallWord; ToPos, ToPosC: integer);
   begin
@@ -393,7 +393,7 @@ begin
           us:='';
           for k:=pos to NewPos - 1 do begin
             us:=us+Hex(Ord(s[k]),2)+' ';
-          end; 
+          end;
           Debug.DebugLog('xp1','ListDisplay, Setting wg NOT Enable_UTF8'
                          +' NewPos from: '+IntToStr(NewPos)
                          +' To: '+IntToStr(Pos+1)
