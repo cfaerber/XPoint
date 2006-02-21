@@ -280,67 +280,68 @@ begin
 end;
 
 
-function FindUmbruch(var data; zlen:integer):integer;  
-  { rckw„rts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
-{$IFDEF NOASM }
+// rueckwaerts von data[zlen] bis data[0] nach erster Umbruchstelle suchen 
+function FindUmbruch(var data; zlen:integer):integer;
+type
+   tpc = array[0..MaxInt div 2] of Char;
+   pc	    = ^tpc;
+   chartype = (c_alnum,c_space,c_minus,c_slash,c_other);
+   action   = (ret0,ret1,cont);
+   state    = (none, alnum, slash);
+const
+   todo : array[c_alnum..c_other,c_alnum..c_other] of action =
+   (
+    (cont,cont,cont,ret1,cont),
+    (ret0,ret0,ret0,ret0,ret0),
+    (ret0,cont,cont,cont,cont),
+    (cont,cont,cont,ret1,cont),
+    (cont,cont,cont,ret1,cont)
+    );
+
+   function ct(c : char):chartype;
+   begin
+      case c of
+      	' '                                   : ct := c_space;
+       	'-'				      : ct := c_minus;
+      	'/'				      : ct := c_slash;
+      	'0'..'9','a'..'z','A'..'Z',#128..#165 : ct := c_alnum
+      else
+     	 ct := c_other;
+      end
+   end; { ct }
+
+   function fu(c : pc; zlen: integer):integer;
+   // Cave: greift auf c[zlen+1] zu!!! 
+   var
+     left,right : chartype;
+   begin
+      right := ct(c[zlen+1]);
+      if (right = c_slash) then
+    	 right := c_other;
+      while (zlen >= 0) do
+      begin
+    	 left := ct(c[zlen]);
+    	 case todo[left,right] of
+    	   cont	: begin right := left; zlen := zlen-1; end;
+    	   ret0	: begin fu := zlen  ; break; end;
+    	   ret1	: begin
+   		     if ((zlen = 0) and (right = c_slash)) then
+       			fu := 0
+   		     else
+         		fu := zlen+1;
+	  	     break;
+  		   end
+    	 end; { case }
+     end;
+     if (zlen < 0) then fu := 0;
+   end;
+
 begin
+   if (zlen <= 0) then
+      FindUmbruch := 0
+   else
+      FindUmbruch := fu(pc(@data),zlen);
 end;
-{$ELSE }
-assembler; asm
-            push ebx
-            push esi
-            mov   esi,data
-            mov   ebx,zlen
-            test  ebx, ebx
-            jz    @ufound
-  @floop:
-            mov   al,[esi+ebx]
-            cmp   al,' '               { ' ' -> unbedingter Umbruch }
-            jz    @ufound
-
-            cmp   al,'-'               { '-' -> Umbruch, falls alphanum. }
-            jnz   @testslash           {        Zeichen folgt: }
-            mov   al,[esi+ebx+1]
-            cmp   al,'0'               { '0'..'9' }
-            jb    @fnext
-            cmp   al,'9'
-            jbe   @ufound
-            cmp   al,'A'               { 'A'..'Z' }
-            jb    @fnext
-            cmp   al,'Z'
-            jbe   @ufound
-            cmp   al,'a'               { 'a'..'z' }
-            jb    @fnext
-            cmp   al,'z'
-            jbe   @ufound
-            cmp   al, $80               { '€'..'¥' }
-            jb    @fnext
-            cmp   al, $A5
-            jbe   @ufound
-            jmp   @fnext
-
-  @testslash:
-            cmp   ebx,1
-            ja    @testslash2
-            mov   ebx,0
-            jmp   @ufound
-  @testslash2:
-            cmp   al,'/'               { '/' -> Umbruch, falls kein }
-            jnz   @fnext               {        Trennzeichen vorausgeht }
-            cmp   byte ptr [esi+ebx-1],' '
-            jz    @fnext
-            cmp   byte ptr [esi+ebx-1],'-'
-            jnz   @ufound
-
-  @fnext:
-            dec   ebx
-            jnz   @floop
-  @ufound:
-            mov   eax,ebx
-            pop esi
-            pop ebx
-end;
-{$ENDIF }
 
 procedure FlipCase(var data; size: Integer);
 var
