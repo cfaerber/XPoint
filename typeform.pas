@@ -26,7 +26,7 @@ unit typeform;
 interface
 
 uses
-  xpglobal, sysutils, Classes;
+  sysutils, Classes, xpglobal;
 
 {$IFNDEF DPMI}
   const  Seg0040 = $40;
