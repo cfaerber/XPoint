@@ -1130,7 +1130,10 @@ label abbr;
     i := 0;
     while (i < smallsize) and (TByteArray(buf)[i] <> 0) do
       Inc(i);
-    Result := i + 1;
+    if i < smallsize then   { HJT 26.02.2006 }
+      Result := i + 1
+    else
+      Result := i;          { HJT 26.02.2006 }
   end;
 
   function seekt(var buf; size: LongWord):word; { suche _'---'_ }
