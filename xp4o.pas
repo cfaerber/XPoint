@@ -1485,7 +1485,7 @@ end;
 procedure MsgReorgScan(_del,repair:boolean; var brk:boolean);
 var x,y,wdt: Integer;
     n,ndel,
-    nbesch : longint;
+    nbesch : Int64;
     bt,dbt,
     { HJT 11.03.2006 sonst Abbruch bei mehr als 2 GB }
     { bbt    : longint; }
