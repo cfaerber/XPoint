@@ -380,7 +380,9 @@ begin
   cal_active:=false;
 end;
 
-function xpspace(dir:string):longint;
+{ HJT 11.03.2006 wg. Abbruch bei mehr als 2 GIB }
+{ function xpspace(dir:string):longint; }
+function xpspace(dir:string):Int64;
 var sr  : tsearchrec;
     rc  : integer;
 begin

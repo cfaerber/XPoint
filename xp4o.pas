@@ -778,7 +778,7 @@ msg_ok: MsgAddmark;
     Boxname, Filename: String;
     IDList: TStringList;
   begin
-    if ReadJN('Soll die Message-ID online gesucht werden?', true) then
+    if ReadJN('Soll die Message-ID online gesucht werden', true) then
     begin
       BoxName := UniSel(1, false, DefaultBox);
       if BoxName <> '' then
@@ -1487,7 +1487,9 @@ var x,y,wdt: Integer;
     n,ndel,
     nbesch : longint;
     bt,dbt,
-    bbt    : longint;
+    { HJT 11.03.2006 sonst Abbruch bei mehr als 2 GB }
+    { bbt    : longint; }
+    bbt    : Int64;
     disp   : string;
     hzeit  : integer16;
     hzahl  : boolean;
