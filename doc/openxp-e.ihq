@@ -1142,7 +1142,7 @@ sent.
 
 <<Subject>> Changes the subject of the message.
 
-<<Box>>     Allows a different Server to be selected.
+<<Server>>  Allows a different Server to be selected.
 
 <<Code>>    Changes the encoding of the message. PMs
         can only be changed when the recipient has
