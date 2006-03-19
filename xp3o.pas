@@ -1559,7 +1559,9 @@ var x,y      : Integer;
         if ((i mod 10)=0) then
         begin
           moff;
-          FWrt(x+3+length(mstr),y+5,StrS(i*100 div fs)+'%');
+          { HJT 12.03.2006 sonst werden immer 0% angezeigt }
+          { FWrt(x+3+length(mstr),y+5,StrS(i*100 div fs)+'%'); }
+          FWrt(x+3+length(mstr),y+5,StrS((i*100) div RefList.count)+'%');
           mon;
         end;
       end;
