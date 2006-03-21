@@ -10751,7 +10751,7 @@ sollten Sie auch die Adreá-Groáwandlung unter
        Status bei jedem Netzanruf und die Wartezeit
        zum Einlesen der Status nach dem Anruf.
 @
-797
+7988
 <<[x]>> -> Vereinfacht ausgedrckt: OpenXP verwendet
        ein spezielles Verfahren namens "quoted-prin-
        table", um Umlaute und andere Sonderzeichen
@@ -10768,7 +10768,7 @@ Unabh„ngig von dieser Einstellung werden alle ein-
 gehenden, als "quoted-printable" codierten Texte
 korrekt verarbeitet.
 @
-798
+7989
 Normalerweise k”nnen in Betreff, Realname, Zusammen-
 fassung und anderen Header-Informationen mit Text-
 charakter keine Sonderzeichen verwendet werden. Es
@@ -10792,7 +10792,7 @@ Unabh„ngig von dieser Einstellung werden nach RFC
 2047 codierte Zeilen in eingehenden Nachrichten im-
 mer erkannt und ausgewertet.
 @
-799
+7990
 <<[x]>> -> Einteiligen Bin„rnachrichten wird ein Textteil
        vorangestellt, so dass diese zu mehrteiligen
        Nachrichten werden. 
