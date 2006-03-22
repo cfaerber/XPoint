@@ -128,7 +128,9 @@ const arcbufp : byte = 0;
     history_changed   : boolean = false;
 
 var  reobuf : array[0..ablagen-1] of boolean;
-     bufsiz : array[0..ablagen-1] of longint;  { Groesse nach Reorg }
+     { HJT: 22.03.2006, sonst Arithmetic overflow bei zu grossen MPUFFERn }
+     { bufsiz : array[0..ablagen-1] of longint; } { Groesse nach Reorg }
+     bufsiz : array[0..ablagen-1] of Int64;
      abuf   : array[1..max_arc+1] of arcbuf;
      exdir  : string;
      arctyp_save : shortint;
