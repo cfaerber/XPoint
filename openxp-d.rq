@@ -584,8 +584,8 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    M”chten Sie diese Option wirklich einschalten?
 8    ~ ^Ja  , ^Nein~
 10   ISO-8859-1-Zeichensatz
-11   MIME: Quoted-Printable voreinstellen
-12   MIME: Sonderzeichen in Headerzeilen
+11   Quoted-Printable verwenden
+12   Sonderzeichen im Header kodieren
 14   Kommentarverkettung
 15   Keine einteiligen Bin„rnachrichten
 16   Alten Betreff anh„ngen
