@@ -1026,7 +1026,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 436  keine Bretter mit ungelesenen Nachrichten vorhanden
 437  Message-ID
 438  Text-Markier
-439  Funktion wird nur für RFC/Client und RFC/NNTP unterstützt
+439  Funktion wird nur fr RFC/Client und RFC/NNTP untersttzt
 
 # XP4O
 + 441
@@ -1135,7 +1135,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 7    nach Gruppen ordnen
 8    nach Serverbox sortieren
 9    nur User im Adreßbuch exportieren
-10   Sortierung aus Brettübersicht beibehalten
+10   Sortierung aus Brettbersicht beibehalten
 -
 458  Keine unversandten Nachrichten vorhanden!
 + 459
@@ -1468,7 +1468,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 10   E^mpf„nger~
 11   ^An
 12   Betreff
-13   Server
+13   Serverb^ox
 14   Gr”áe
 15   Code:   ~
 16   Kopien:
@@ -3139,7 +3139,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 2739 Vertreter nicht in der Datenbank - neu anlegen
 +2740
 0 Serverbox "%s" allen unbekannten Usern (%s) zuweisen?
-1 ~^Ja , ^Nein , Anderer ^Server , ^Zurück~
+1 ~^Ja , ^Nein , Anderer ^Server , ^Zurck~
 -
 +2750
 # Zeilenzahl
@@ -3347,7 +3347,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 36 Bin„rnachrichten sind in diesem Netz nicht m”glich.
 37 Server„nderung nicht m”glich - abweichende Brettebene!
 38 Als 'Original' weitergeleitete Nachrichen drfen nicht ge„ndert werden!
-39 Bei Multipart-Nahrichten nicht möglich.
+39 Bei Multipart-Nahrichten nicht m”glich.
 
 +  10700
 1  Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!
@@ -3399,7 +3399,7 @@ K (c) '2000 OpenXP-Team, www.openxp.de
 46 Ungltige Auswahl
 47 Oops - *alle* passenden Empf„nger markiert/gefiltert!?  (Hilfe mit F1)
 48 Sendepuffer (%s) ist fehlerhaft!
-49 /nsp: Ungültige Zeilenangabe für NETCALL.DAT: %s
+49 /nsp: Ungltige Zeilenangabe fr NETCALL.DAT: %s
 50 Fehler beim Dekomprimieren von %s
 # Hinweis auf fehlende Implementation
 99 Funktion ist noch nicht implementiert!

@@ -317,31 +317,32 @@ var f,f2     : file;
     edis     : byte;
     x,y      : Integer;
     brk      : boolean;
-    typ      : string;  { Kopf fuer Betreff/Sende-Box          }
+    typ      : string;      { Kopf fuer Betreff/Sende-Box          }
     wbox     : string;
-    ch       : string;  { '*'-Zeichen fuer abweichende Adresse }
-    box      : string;  { Empfaenger-Pollbox                   }
+    ch       : string;      { '*'-Zeichen fuer abweichende Adresse }
+    box      : string;      { Empfaenger-Pollbox                   }
     adresse  : string;
-    newbox   : string;  { Zwischensp. fuer geaenderte Pollbox  }
+    newbox   : string;      { Zwischensp. fuer geaenderte Pollbox  }
     boxfile  : string;
-    username : string;  { eigener Username                    }
+    username : string;      { eigener Username                    }
     pointname: string;
     email    : string;
     _brett   : string;
     mapsname : string;
-    senddate : string;  { mit 'D' zeitversetzt absenden       }
+    senddate : string;      { mit 'D' zeitversetzt absenden       }
     shortmid : string;
     realname : string;
     domain   : string;
-    fqdn     : string;  { 16.01.00: HS}
-    fidoname : string;  { Origin-Systemname                   }
-    OrigBox  : string;    { Box aus Pfad  }
-    AltAdr   : string;  { Gruppen / Fido-Absender }
+    fqdn     : string;      { 16.01.00: HS}
+    fidoname : string;      { Origin-Systemname                   }
+    OrigBox  : string;      { Box aus Pfad  }
+    AltAdr   : string;      { Gruppen / Fido-Absender }
     sendbutt : string;
-    kopkey   : string;   { (K)opien }
-    fidokey  : string;   { (A)n     }
-    empfkey  : string;   { E(m)pfaenger }
-    betrkey  : string;   { (B)etreff }
+    kopkey   : string;      { (K)opien }
+    fidokey  : string;      { (A)n     }
+    empfkey  : string;      { E(m)pfaenger }
+    betrkey  : string;      { (B)etreff }
+    servkey  : string;      { Serverb(o)x }
     pgpkey   : string;
     oldbetr  : string;
     d        : DB;
@@ -973,9 +974,18 @@ end;
     betrkey := FirstChar(getres2(611,12)); { '(B)etreff' }
     wrt(x+3,y+4,betrkey);
     attrtxt(col.coldialog);
-    
-    wrt(x+3,y+6,getres2(611,13));      { 'Server'  }
-    wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
+
+    ToStr := GetRes2(611,13); { 'Serverb^ox' }
+    ToPos := CPos('^',ToStr);
+    servkey := copy(ToStr, ToPos+1, 1); { 'Serverb(o)x' }
+    Delete(ToStr, ToPos, 1);
+
+    wrt(x+3,y+6,ToStr+ch);
+    attrtxt(col.coldiahigh);
+    wrt(x+3+ToPos-1,y+6,servkey);
+    attrtxt(col.coldialog);
+        
+        wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
     wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
     showcode; 
     attrtxt(col.coldialog);

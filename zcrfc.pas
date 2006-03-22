@@ -789,6 +789,7 @@ var
   ml: integer;
   mtype : TMimeContentType;
   mdisp : TMimeDisposition;
+  emp_writen: boolean;
 
   procedure wrs(const s: String);
   begin
@@ -810,12 +811,27 @@ var
     end;
   end;
 
-begin
+begin           // TUUz.WriteHeader
   with hd do
   begin
-    if XEmpf.Count = 0 then wrs('EMP: /UNZUSTELLBAR');
-    for i := 0 to XEmpf.Count - 1 do
-      wrs('EMP: ' + xempf[i]);
+    { HJT 19.03.2006 nur nicht-leere EMP schreiben     }
+    { und damit gegebenebfalls Dummy EMP /UNZUSTELLBAR }
+    { ToDo: Aufnahme von leeren EMP unterbinden        }
+    // if XEmpf.Count = 0 then wrs('EMP: /UNZUSTELLBAR');
+    emp_writen:=false;
+    for i := 0 to XEmpf.Count - 1 do 
+    begin
+      if length(xempf[i]) > 0 then begin
+        wrs('EMP: ' + xempf[i]);
+        emp_writen:=true;
+      end else
+        Debug.DebugLog('zcrfc', 'TUUz.WriteHeader, empty EMP ignored', DLDebug);
+    end;    
+    if not emp_writen then begin
+      wrs('EMP: /UNZUSTELLBAR');
+      Debug.DebugLog('zcrfc', 'TUUz.WriteHeader, Dummy-EMP /UNZUSTELLBAR writen', DLDebug);
+    end;
+
     for i := 0 to XOEM.Count - 1 do
     begin
       ml := min(length(xoem[i]), length(xempf[0]));
