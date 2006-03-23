@@ -58,7 +58,7 @@ const
 
   author_name = 'OpenXP-Team';
   author_mail = 'dev@openxp.de';
-  x_copyright = '(c) 2000-2005';
+  x_copyright = '(c) 2000-2006';
 
 type
   { Regeln fÅr Datentypen unter 16/32 Bit
