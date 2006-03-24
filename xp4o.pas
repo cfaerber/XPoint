@@ -1525,6 +1525,12 @@ var x,y,wdt: Integer;
       hds     : longint;
       nzahl   : longint;
       typ     : char;
+      defekt_reason : integer;
+      hd_read       : boolean;
+      inr_deb       : longint;
+      brett_deb     : string;
+      edat_deb      : longint;
+      dat_deb       : longint;
 
     function htimeout:boolean;
     begin
@@ -1533,6 +1539,9 @@ var x,y,wdt: Integer;
     end;
 
   begin
+    Debug.DebugLog('xp4o','testdel, Brett-Start',dlDebug);
+    hd_read:=false;
+
     if hzahl then begin
       dbSeek(mbase,miBrett,_brett+#$ff#$ff);  { Brettende suchen }
       if dbEOF(mbase) then dbGoEnd(mbase)
@@ -1575,6 +1584,11 @@ var x,y,wdt: Integer;
                 ((typ<>'T') and (typ<>'B') and (typ<>'M')) or (hflags>2) or
                 (dbReadIntN(mbase, mb_adresse)<0) or
                 (dbReadIntN(mbase, mb_netztyp)<0);    { empfanz > 127 ? }
+        if defekt then { HJT 23.03.2006, Infos zur Nachricht ins Log }
+        begin
+          defekt_reason := 1;
+        end;
+
         if repair and not defekt then begin
           dbReadN(mbase,mb_gelesen,b);
           if b>1 then begin
@@ -1583,9 +1597,54 @@ var x,y,wdt: Integer;
             end;
           ReadHeader(hdp,hds,false);
           defekt:=(hds=1) or (hds<>msize-groesse) or (groesse<>hdp.groesse);
+          if defekt then { HJT 23.03.2006, Infos zur Nachricht ins Log }
+          begin  
+            defekt_reason := 2;
+            Debug.DebugLog('xp4o','testdel, Nachricht defekt wg.: '+
+                          '(hds=1) or (hds<>msize-groesse) or (groesse<>hdp.groesse)'
+                          ,DLWarning);
           end;
+          end;
+
+          if defekt then    { HJT 23.03.2006, Infos zur Nachricht ins Log }
+          begin
+            Debug.DebugLog('xp4o','Nachricht defekt, reason: '+IntToStr(defekt_reason),dlInform);
+            Debug.DebugLog('xp4o','   Werte des aktuellen MSGS.DB1-Satzes', DLWarning);
+            Debug.DebugLog('xp4o','   groesse        : '+IntToStr(groesse), DLWarning);
+            Debug.DebugLog('xp4o','   msize          : '+IntToStr(msize), DLWarning);
+            Debug.DebugLog('xp4o','   ablage         : '+IntToStr(ablage), DLWarning);
+            Debug.DebugLog('xp4o','   ablagen        : '+IntToStr(ablagen), DLWarning);
+            Debug.DebugLog('xp4o','   mb_adresse     : '+IntToStr(dbReadIntN(mbase, mb_adresse)), DLWarning);
+            Debug.DebugLog('xp4o','   ablsize[ablage]: '+IntToStr(ablsize[ablage]), DLWarning);
+            Debug.DebugLog('xp4o','   typ            : <'+typ+'>', DLWarning);
+            Debug.DebugLog('xp4o','   hflags         : '+IntToStr(hflags), DLWarning);
+            Debug.DebugLog('xp4o','   mb_netztyp     : '+IntToStr(dbReadIntN(mbase, mb_netztyp)), DLWarning);
+            Debug.DebugLog('xp4o','   ntZCablage     : '+iifs(ntZCablage(ablage), 'True', 'False'), DLWarning);
+            if hd_read then 
+            begin
+              if hds <> 1 then 
+              begin
+                Debug.DebugLog('xp4o','    hdp.groesse: '+IntToStr(hdp.groesse),DLWarning);
+              end else begin
+                Debug.DebugLog('xp4o','    Header aus MPUFFER konnte nicht gelesen werden',DLWarning);
+              end;
+            end;
+            // duerfen wir das? Erstes Byte ist String-Laenge, und moeglicherweise korrupt
+            Debug.DebugLog('xp4o','   absender       : '+dbReadNStr(mbase,mb_absender), DLWarning);
+            dbRead(mbase,'INT_NR',inr_deb);
+            Debug.DebugLog('xp4o','   INT_NR         : '+IntToStr(inr_deb), DLWarning);
+            brett_deb := dbReadNStr(mbase,mb_brett);
+            Debug.DebugLog('xp4o','   brett          : '+brett_deb, DLWarning);
+            dbReadN(mbase,mb_EmpfDatum,edat_deb);
+            Debug.DebugLog('xp4o','   edat           : '+fdat(longdat(edat)), DLWarning);
+            dbReadN(mbase,mb_OrigDatum,dat_deb);
+            Debug.DebugLog('xp4o','   dat            : '+fdat(longdat(dat_deb)), DLWarning);
+            Debug.DebugLog('xp4o','   MID(intern)    : '+dbReadNStr(mbase,mb_msgid), DLWarning);
+        end;
+
         if defekt then begin
           hflags:=2;        { Nachricht defekt }
+          Debug.DebugLog('xp4o','setze hflags:=2', DLWarning);
           dbWriteN(mbase,mb_halteflags,hflags);
           if repair then msgaddmark;
           inc(nbesch); inc(bbt,msize);
