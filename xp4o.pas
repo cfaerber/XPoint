@@ -1538,8 +1538,8 @@ var x,y,wdt: Integer;
                 (not hzahl and smdl(edat,haltedat));
     end;
 
-  begin
-    Debug.DebugLog('xp4o','testdel, Brett-Start',dlDebug);
+  begin     //  MsgReorgScan::testdel
+    // Debug.DebugLog('xp4o','MsgReorgScan::testdel, Brett-Start',dlDebug);
     hd_read:=false;
 
     if hzahl then begin
@@ -1600,7 +1600,7 @@ var x,y,wdt: Integer;
           if defekt then { HJT 23.03.2006, Infos zur Nachricht ins Log }
           begin  
             defekt_reason := 2;
-            Debug.DebugLog('xp4o','testdel, Nachricht defekt wg.: '+
+            Debug.DebugLog('xp4o','MsgReorgScan::testdel, Nachricht defekt wg.: '+
                           '(hds=1) or (hds<>msize-groesse) or (groesse<>hdp.groesse)'
                           ,DLWarning);
           end;
@@ -1608,7 +1608,8 @@ var x,y,wdt: Integer;
 
           if defekt then    { HJT 23.03.2006, Infos zur Nachricht ins Log }
           begin
-            Debug.DebugLog('xp4o','Nachricht defekt, reason: '+IntToStr(defekt_reason),dlInform);
+            Debug.DebugLog('xp4o','MsgReorgScan::testdel, Nachricht defekt, reason: '
+                                                +IntToStr(defekt_reason),DLWarning);
             Debug.DebugLog('xp4o','   Werte des aktuellen MSGS.DB1-Satzes', DLWarning);
             Debug.DebugLog('xp4o','   groesse        : '+IntToStr(groesse), DLWarning);
             Debug.DebugLog('xp4o','   msize          : '+IntToStr(msize), DLWarning);
@@ -1844,10 +1845,24 @@ var x,y,yy  : Integer;
         end;
     end;
 
-  begin
+  begin // MsgReorg::MsgOK
     dbReadN(mbase,mb_adresse,adr);
     dbReadN(mbase,mb_msgsize,size);
     if (size<0) or (adr<0) or (MaxInt-adr<size) or (adr+size>f1s) then begin        { Nachricht defekt }
+
+      Debug.DebugLog('xp4o','MsgReorg::MsgOK MSGS.DB1-Satze defekt', DLWarning);    { HJT 27.03.2006 Traces }
+      Debug.DebugLog('xp4o','   size:'+IntToStr(size), DLWarning);
+      Debug.DebugLog('xp4o','   adr :'+IntToStr(adr), DLWarning);
+      Debug.DebugLog('xp4o','   f1s :'+IntToStr(f1s), DLWarning);      
+      if size<0 then
+        Debug.DebugLog('xp4o','   Grund: size<0', DLWarning);
+      if adr<0 then
+        Debug.DebugLog('xp4o','   Grund: adr<0', DLWarning);
+      if MaxInt-adr<size then
+        Debug.DebugLog('xp4o','   Grund: MaxInt-adr<size', DLWarning);
+      if adr+size>f1s then
+        Debug.DebugLog('xp4o','   Grund: adr+size>f1s', DLWarning);
+
       dbDelete(mbase);
       exit;
       end;
@@ -1991,7 +2006,7 @@ var x,y,yy  : Integer;
       end;
   end;
 
-begin
+begin       // procedure MsgReorg;
   CloseAblage;
   msgbox(50,15,getres2(451,1),x,y);    { 'Reorganisation' }
   bsize:=65536;
@@ -2025,6 +2040,7 @@ begin
           assign(f1,aFile(abl));
           if not FileExists(aFile(abl)) then begin
             savecursor;
+            Debug.DebugLog('xp4o','MsgReorg, Ablage fehlt: '+aFile(abl), DLWarning);
             trfehler1(421,UpperCase(aFile(abl)),30);   { 'Warnung: Ablagendatei %s fehlt!' }
             restcursor;
             rewrite(f1,1);
@@ -2047,7 +2063,12 @@ begin
           while not dbEOF(mbase) do
           begin
             if n>count then
+            begin
+              Debug.DebugLog('xp4o','MsgReorg, zuviele Saetze in MSGS.DB1, aktuell:'
+                                    +IntToStr(n)+' dbRecCount(mbase):'
+                                    +IntToStr(count), DLWarning);
               errflag:=true;
+            end;
             if n mod 10=0 then show;
             dbReadN(mbase,mb_ablage,ablage);
             if ablage=abl then
@@ -2063,12 +2084,21 @@ begin
             end
             else
               if ablage>=ablagen then
-                dbDelete(mbase)
+              begin
+                Debug.DebugLog('xp4o','MsgReorg,  fehlerhafter MSGS.DB1-Satz, Ablagenr:'
+                                    +IntToStr(ablage)+', Satz wird geloescht', DLWarning);
+                dbDelete(mbase);
+              end
               else
                 dbSkip(mbase,1);
             inc(n);
           end;
-          if n<=count then errflag:=true;
+          if n<=count then begin 
+            Debug.DebugLog('xp4o','MsgReorg, zuwenige Saetze in MSGS.DB1, aktuell:'
+                                    +IntToStr(n)+', soll lt. dbRecCount(mbase):'
+                                    +IntToStr(count), DLWarning);
+            errflag:=true;
+          end;
           flushbufs;
           if count>0 then show;
           close(f2);
@@ -2076,6 +2106,8 @@ begin
           rename(f2,aFile(abl));
           FlushClose;
           if errflag then begin
+            Debug.DebugLog('xp4o','MsgReorg, Nachrichtendatenbank fehlerhaft '
+                            +'- verwenden Sie /Wartung/Packen!', DLWarning);
             trfehler(445,30);   { 'Nachrichtendatenbank fehlerhaft - verwenden Sie /Wartung/Packen!' }
             break:=true;
             end;
