@@ -2370,7 +2370,9 @@ fromstart:
     else
       Debug.DebugLog('xpsendmessage','DoSend, Nachricht ggf. fuer Pollpaket kodieren, intern == False', DLDebug);
 
-    if not intern then begin
+    if not intern then 
+    begin
+      hdp.archive := false;
       s1.Seek(0,soFromBeginning);
 
       if (hdp.typ<>'M') and 
