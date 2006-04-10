@@ -32,8 +32,7 @@ uses  sysutils,xp0,xpcc, xpglobal;
 { Tabelle fr IBM -> ISO-Konvertierung }
 
 {     oempf  = '## Originalempf„nger:';  - 600 }
-const maxcc  = 50;
-
+const
       um     : array[1..7] of char = '„”™šá';
 
       flEB     : boolean = false;

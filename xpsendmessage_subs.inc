@@ -346,7 +346,7 @@ var flags : string;
   begin
     anz:=0;
     for i:=1 to cc_anz do
-      if cpos('@',cc^[i])>0 then inc(anz);
+      if cpos('@',cc[i])>0 then inc(anz);
     pmcc_anz:=anz;
   end;
 
@@ -743,7 +743,7 @@ begin
     rewrite(f,1);
     wrs(getres(600){oempf}+' '+mid(vert_name(empfaenger),iif(pm,1,2)));
     for i:=1 to cc_anz do
-      wrs(getres(600)+' '+cc^[i]);
+      wrs(getres(600)+' '+cc[i]);
     wrs('');
     assign(f2, Filename);
     reset(f2,1);

@@ -505,7 +505,6 @@ type   textp  = ^text;
        { Netztypen: 0=Netcall, 1=Pointcall, 2=ZConnect, 3=MagicNET }
        {            10=QM, 11=GS, 20=Maus, 30=Fido, 40=RFC         }
 
-       AdrStr      = string;
        CustHeadStr = string;
 
        markrec  =  packed record
