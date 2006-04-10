@@ -524,7 +524,6 @@ begin
 
   SetCryptFlag;
   hdp.betreff:=LeftStr(iifs(des,DES_ID,QPC_ID)+hdp.betreff,BetreffLen);
-  hdp.archive:=false;
   if hdp.Empfaenger.Count > 0 then
     hdp.Empfaenger[0] :=iifs(pm, empfaenger,mid(empfaenger,2));
 

@@ -10773,6 +10773,8 @@ Software inzwischen kaum noch in Benutzung sein.
 Unabh„ngig von dieser Einstellung werden nach RFC
 2047 codierte Zeilen in eingehenden Nachrichten im-
 mer erkannt und ausgewertet.
+
+<<Hinweis:>> Das Setzen dieser Option wird empfohlen.
 @
 7990
 <<[x]>> -> Einteiligen Bin„rnachrichten wird ein Textteil
