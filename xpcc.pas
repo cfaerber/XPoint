@@ -36,18 +36,17 @@ const maxcc = 126;
 
 type
       CcAdrStr      = string;
-      ccl   = array[1..maxcc] of CcAdrStr;
-      ccp   = ccl;
+      ccp   = array[1..maxcc] of CcAdrStr;
 
 
 var pm :boolean;
 
 procedure SortCCs(cc:ccp; cc_anz:integer);
-procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
-procedure read_verteiler(name:string; var cc:ccp; var cc_anz:integer16);
-procedure write_verteiler(var name:string; var cc:ccp; cc_anz:integer);
-procedure edit_verteiler(name:string; var anz:integer16; var brk:boolean);
-procedure del_verteiler(name:string);
+procedure edit_cc(var cc:ccp; var cc_anz:integer; var brk:boolean);
+function read_verteiler(name:string; var cc:ccp): Integer;
+procedure write_verteiler(const name:string; var cc:ccp; cc_anz:integer);
+function edit_verteiler(const name:string; var brk:boolean): Integer16;
+procedure del_verteiler(const name:string);
 
 function  cc_test1(var s:string):boolean;
 function  cc_testempf(var s:string):boolean;
@@ -270,7 +269,7 @@ end;
 procedure SortCCs(cc:ccp; cc_anz:integer);
 var i,j  : Integer;
     xchg : boolean;
-    s    : string[80];
+    s    : string;
 
   function ccsmaller(cc1,cc2:string):boolean;
   begin
@@ -292,11 +291,11 @@ begin
   until not xchg or (j=0);
 end;
 
-procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
+procedure edit_cc(var cc:ccp; var cc_anz:integer; var brk:boolean);
 var x,y   : Integer;
     i     : shortint;
     h     : byte;
-    small : string[1];
+    small : string;
     t     : text;
     s     : string;
 begin
@@ -381,12 +380,12 @@ end;
 
 { Verteiler-Liste einlesen; Name hat Format '[..]' }
 
-procedure read_verteiler(name:string; var cc:ccp; var cc_anz:integer16);
+function read_verteiler(name:string; var cc:ccp): Integer;
 var t : text;
     s : string;
     i: Integer;
 begin
-  cc_anz:=0;
+  Result:=0;
   for i:=1 to maxcc do
     cc[i] := '';
   assign(t,CCfile);
@@ -410,7 +409,7 @@ begin
 end;
 
 
-procedure del_verteiler(name:string);
+procedure del_verteiler(const name:string);
 var t1,t2 : text;
     s     : string;
     same  : boolean;
@@ -445,7 +444,7 @@ begin
 end;
 
 
-procedure write_verteiler(var name:string; var cc:ccp; cc_anz:integer);
+procedure write_verteiler(const name:string; var cc:ccp; cc_anz:integer);
 var t2 : text;
     i  : integer;
 begin
@@ -460,13 +459,16 @@ begin
 end;
 
 
-procedure edit_verteiler(name:string; var anz:integer16; var brk:boolean);
-var cc  : ccp;
+function edit_verteiler(const name:string; var brk:boolean): Integer16;
+var
+  cc  : ccp;
+  anz: Integer;
 begin
-  read_verteiler(name,cc,anz);
+  anz  := read_verteiler(name,cc);
   edit_cc(cc,anz,brk);
   if not brk then
     write_verteiler(name,cc,anz);
+  Result := anz;
 end;
 
 end.

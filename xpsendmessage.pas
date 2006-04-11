@@ -1211,7 +1211,7 @@ fromstart:
       Box := dbReadStrN(ubase,ub_pollbox);
       if verteiler then begin  { Verteiler }
         cancode:=0;
-        read_verteiler(vert_name(empfaenger),cc,cc_anz);
+        cc_anz := read_verteiler(vert_name(empfaenger),cc);
         TestXpostings(true, false);
         if box='' then box:=ccm^[1].server
         else forcebox:=box;
@@ -1726,7 +1726,7 @@ fromstart:
                   sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }
                   cc_NT := netztyp;
                   xpcc.pm:=pm;
-                  edit_cc(cc,cc_anz,brk);
+                  edit_cc(cc,cc_anz, brk);
                   sel_verteiler:=false;
                   if cc_anz>0 then TestXpostings(true, true);
                   checkIncompatibleNT;

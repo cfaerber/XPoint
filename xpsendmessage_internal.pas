@@ -50,7 +50,7 @@ type ccmore  = record
 
 var umlaute  : byte;        { 0=IBM; 1=ASCII; (2=ISO) }
     min_send : longint;     { minimales Sendedatum (fÅr "D"atum) }
-    cc_anz   : integer16;   { Anzahl CC-Empf"nger }
+    cc_anz   : integer;     { Anzahl CC-Empf"nger }
     cc       : ccp;         { Kopie-Empf"nger }
     ccm      : ^ccmorea;
 

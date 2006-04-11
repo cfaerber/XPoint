@@ -292,7 +292,7 @@ var anz : integer16;
 begin
   GoP;
   rec:=disprec[p];
-  edit_verteiler(vert_name(dbReadStrN(ubase,ub_username)),anz,brk);
+  anz := edit_verteiler(vert_name(dbReadStrN(ubase,ub_username)),brk);
   if not brk then begin
     dbGo(ubase,rec);
     dbWriteN(ubase,ub_haltezeit,anz);
