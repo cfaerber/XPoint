@@ -939,8 +939,23 @@ begin
         end;
     end; // not FileAttach
 
+    Debug.Debuglog('xp4w.inc','read_msg'
+                    +', MimePart.fname: <'+MimePart.fname+'>'
+                    +', MimePart.typ: <'+MimePart.typ+'>'
+                    +', MimePart.subtyp: <'+MimePart.subtyp+'>'
+                    , DLDebug);
 
-    MimePart.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+    { HJT 14.04.2006, HotFix. GetMsgFilename liest den originaeren         }
+    { Header ein, und ueberschreibt den bereits ermittelten Dateinamen     }
+    { in MimePart.fname bei MultiParts.  Damit haben wir keinen Dateinamen }
+    { fuer die Viewerselektion. Vermutlich (bleibt zu pruefen),            }
+    { ist hier das erneute Einlesen des Headers generell nicht notwendig.  }
+    if MultiPartType <> mpMulti then begin  { HJT 14.04.2006 }
+      MimePart.fname:=GetMsgFilename;                               { Schutz vor Mail-Viren }
+      Debug.Debuglog('xp4w.inc','read_msg'
+                    +', after Calling GetMsgFilename, MimePart.fname: <'+MimePart.fname+'>'
+                    , DLDebug);
+    end;
     MimeViewer.GetFromExtension(ExtractFileExt(MimePart.fname));     { Dateiendung hat bei Viewerauswahl }
     if MimeViewer.IsInternal then           { Vorrang vor dem Mimetyp }
       MimeViewer.GetFromMimeType(MimeType);
