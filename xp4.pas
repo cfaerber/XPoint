@@ -68,7 +68,7 @@ implementation  {----------------------------------------------------}
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xpsendmessage,xpnetcall,xp8,
       xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_unsent,xpmime,lister, viewer,
-      xpmakeheader, replytoall, mime, classes, xpspam, xprope;
+      xpmakeheader, replytoall, mime, classes, xpspam, xprope, debug;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
