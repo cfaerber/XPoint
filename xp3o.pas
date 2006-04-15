@@ -1447,7 +1447,7 @@ var x,y      : Integer;
       hds2     : longint;
       ok       : boolean;
       orgsize  : longint;
-      orgempf  : string;
+      orgempf  : AdrStr;
       sp       : scrptr;
       hdp2typ  : char;
   begin

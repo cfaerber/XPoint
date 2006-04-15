@@ -515,7 +515,7 @@ end;
   var i,first : integer;
     nt_ForceBox :byte;
 
-    procedure GetInf(n:integer; var adr:CcAdrStr);
+    procedure GetInf(n:integer; var adr:string);
     var
       p : Integer;
       size: Integer;
@@ -588,7 +588,7 @@ end;
 
   procedure CollectFirstServer;
   var s1    : string[BoxNameLen];
-      s     : CcAdrStr;
+      s     : AdrStr;
       cmr   : ccmore;
       p1,p2 : integer;
   begin
@@ -602,9 +602,9 @@ end;
         cmr:=ccm^[p1];                  // rette alten Wert
         Move(ccm^[p2],ccm^[p2+1],(p1-p2)*sizeof(cmr));
         ccm^[p2]:=cmr;
-        s:=cc[p1];
-        Move(cc[p2],cc[p2+1],(p1-p2)*sizeof(cc[1]));
-        cc[p2]:=s;
+        s:=cc^[p1];
+        Move(cc^[p2],cc^[p2+1],(p1-p2)*sizeof(cc^[1]));
+        cc^[p2]:=s;
         inc(p1);inc(p2);
         end;
       end;
@@ -617,7 +617,7 @@ end;
   var i   : integer;
       xch : boolean;
       cmr : ccmore;
-      s   : CcAdrStr;
+      s   : AdrStr;
     function IndexStr(i:integer):string;
     begin
       with ccm^[i] do
@@ -630,7 +630,7 @@ end;
       for i:=cc_anz downto first+1 do
         if IndexStr(i)<IndexStr(i-1) then begin
           cmr:=ccm^[i];
-          s:=cc[i]; cc[i]:=cc[i-1]; cc[i-1]:=s;
+          s:=cc^[i]; cc^[i]:=cc^[i-1]; cc^[i-1]:=s;
           xch:=true;
           end;
       inc(first);
@@ -684,11 +684,11 @@ end;
               rfehler1(632,strs(MaxXposts));   { 'Es sind maximal %s Brettempfaenger pro Server moeglich.' }
             errflag:=true;
             if j<=cc_anz then begin
-              Move(cc[j],cc[i+MaxXposts],(cc_anz-j)*sizeof(cc[1]));
+              Move(cc^[j],cc^[i+MaxXposts],(cc_anz-j)*sizeof(cc^[1]));
               Move(ccm^[j],ccm^[i+MaxXposts],(cc_anz-j)*sizeof(ccm^[1]));
               end;
             dec(cc_anz,j-i-MaxXposts);
-            for k:=cc_anz+1 to maxcc do cc[k]:='';
+            for k:=cc_anz+1 to maxcc do cc^[k]:='';
             j:=i+MaxXposts;
             end;
           end;
@@ -704,7 +704,7 @@ end;
     fillchar(ccm^,sizeof(ccm^),0);
     if not verteiler then GetInf(0,empfaenger);   { 1. Server einlesen, }
     for i:=1 to cc_anz do                         {    PM-Flags setzen  }
-      GetInf(i,cc[i]);
+      GetInf(i,cc^[i]);
     first:=1;
     if not verteiler then CollectFirstServer;     { 2. nach Server sortieren }
     SortForServer_PM;
@@ -733,7 +733,7 @@ end;
       if cc_anz<maxcc then
       begin
         inc(cc_anz);
-        cc[cc_anz]:=Sendempflist[i];
+        cc^[cc_anz]:=Sendempflist[i];
         Debug.DebugLog('xpsendmessage','ReadEmpflist, '+
                        'Sendempflist['+IntToStr(i)+']: <'
                        +Sendempflist[i]+'>', DLDebug); 
@@ -750,15 +750,15 @@ end;
 
     for i:=1 to cc_anz do
       if ccm^[i].nobrett then
-        delete(cc[i],1,cpos(':',cc[i]));
+        delete(cc^[i],1,cpos(':',cc^[i]));
   end;
 
   function ohnebox(i:integer):string;
   begin
     if ccm^[i].nobrett then
-      ohnebox:='A'+mid(cc[i],cpos(':',cc[i])+1)
+      ohnebox:='A'+mid(cc^[i],cpos(':',cc^[i])+1)
     else
-      ohnebox:='A'+cc[i];
+      ohnebox:='A'+cc^[i];
   end;
 
 
@@ -784,7 +784,7 @@ end;
     for i:=0 to cc_anz do
       if ccm^[i].nobrett and (ccm^[i].server=UpperCase(oldbox)) then begin
         ccm^[i].server:=UpperCase(newbox);
-        cc[i]:='+'+newbox+mid(cc[i],cpos(':',cc[i]));
+        cc^[i]:='+'+newbox+mid(cc^[i],cpos(':',cc^[i]));
         modi:=true;
         end
     else if ntAdrCompatible (ccm^[i].ccnt, newnt) then begin
@@ -798,7 +798,6 @@ end;
   var kb_s: boolean;
       oldNT:byte;
       newNT:byte;   { HJT 29.10.2005 }
-      i: Integer;
   begin
     Debug.DebugLog('xpsendmessage','changeempf', DLDebug);
 
@@ -832,9 +831,8 @@ end;
       else if not kb_s then
       begin
         cc_anz:=0;                                         { Kein Verteiler: CCs loeschen }
-        for i:=1 to maxcc do
-          cc[i] := '';
-       end;
+        fillchar(cc^,sizeof(cc^),0);
+        end;
       if cpos('@',adresse)=0 then adresse:='A'+adresse;
       empfaenger:=adresse;
       end;
@@ -986,7 +984,7 @@ begin
     Wrt2(leftstr(rfcbrett(empfaenger,edis),bboxwid));
     for ii:=1 to min(showempfs,14) do
     if ccm^[ii].ccpm then
-      wrt(x+3+length(getres2(611,6)),y+2+ii,leftstr(cc[ii],bboxwid))
+      wrt(x+3+length(getres2(611,6)),y+2+ii,leftstr(cc^[ii],bboxwid))
     else
       wrt(x+3+length(getres2(611,6)),y+2+ii,leftstr(rfcbrett(ohnebox(ii),2),bboxwid));
   if showempfs=15 then
@@ -1172,9 +1170,8 @@ begin      //-------- of DoSend ---------
   MakeSignature(signat,sigfile,sigtemp);
 
   cc_anz:=0; cc_count:=0;
-  new(ccm);                             //mo bookmark
-  for i:=1 to maxcc do
-    cc[i] := '';
+  new(cc);new(ccm);                             //mo bookmark
+  fillchar(cc^,sizeof(cc^),0);
   SendDefault:=1;
   verteiler:=false;
   if SendEmpflist<>nil then begin
@@ -2220,7 +2217,7 @@ fromstart:
     Debug.DebugLog('xpsendmessage','DoSend, msgCPanz: '+IntToStr(msgCPanz), DLDebug);
 
     for ii:=1 to msgCPanz-1 do
-      hdp.Empfaenger.Add(cc[ii]);
+      hdp.Empfaenger.Add(cc^[ii]);
     hdp.References.Assign(sData.References);
 
     hdp.groesse:=s1.Size;
@@ -2343,7 +2340,7 @@ fromstart:
         repeat
           if ccm^[msgCPpos].ccpm then
           begin
-            dbSeek(ubase,uiName,UpperCase(cc[msgCPpos]));
+            dbSeek(ubase,uiName,UpperCase(cc^[msgCPpos]));
             if dbFound then
             begin
               _brett:=mbrettd('U',ubase);
@@ -2352,7 +2349,7 @@ fromstart:
             end;
           end
           else begin
-            dbSeek(bbase,biBrett,'A'+UpperCase(cc[msgCPpos]));
+            dbSeek(bbase,biBrett,'A'+UpperCase(cc^[msgCPpos]));
             if dbFound then begin
               _brett:=mbrettd('A',bbase);
               dbWriteN(bbase,bb_ldatum,sendedat);    { Brettdatum neu setzen }
@@ -2416,7 +2413,7 @@ fromstart:
       Debug.DebugLog('xpsendmessage','DoSend, Nachricht ins Pollpaket schreiben', DLDebug);
 
 {      for ii:=1 to msgCPanz-1 do
-        hdp.Empfaenger.Add(cc[ii]); }
+        hdp.Empfaenger.Add(cc^[ii]); }
 
       if not flCrash or not MayCrash then
         fn2 := boxfile+ExtBoxfile
@@ -2458,7 +2455,7 @@ fromstart:
     Debug.DebugLog('xpsendmessage','DoSend, CCs, msgCPanz:'+IntToStr(msgCPanz), DLDebug);
 
     if msgCPanz>1 then begin    { cc-Epfaenger bis auf einen ueberspringen }
-      Move(cc[msgCPanz],cc[1],(maxcc-msgCPanz+1)*sizeof(cc[1]));
+      Move(cc^[msgCPanz],cc^[1],(maxcc-msgCPanz+1)*sizeof(cc^[1]));
       Move(ccm^[msgCPanz-1],ccm^[0],(maxcc-msgCPanz+2)*sizeof(ccm^[1]));
       dec(cc_anz,msgCPanz-1); inc(cc_count,msgCPanz-1);
       end;
@@ -2469,8 +2466,8 @@ fromstart:
   if cc_anz>0 then begin           { weitere CC-Empfaenger bearbeiten }
     Debug.DebugLog('xpsendmessage','DoSend, weitere CC-Empfaenger bearbeiten, '
                    +'cc_anz:'+IntToStr(cc_anz), DLDebug);
-    empfaenger:=cc[1];
-    Move(cc[2],cc[1],(maxcc-1)*sizeof(cc[1]));
+    empfaenger:=cc^[1];
+    Move(cc^[2],cc^[1],(maxcc-1)*sizeof(cc^[1]));
     Move(ccm^[1],ccm^[0],maxcc*sizeof(ccm^[1]));
     dec(cc_anz); inc(cc_count);
     pm:=cpos('@',empfaenger)>0;
@@ -2494,7 +2491,7 @@ fromstart:
   { es muss jetzt der korrekte Satz in mbase aktuell sein! }
 xexit:
   freeres;
-  dispose(ccm);
+  dispose(cc); dispose(ccm);
   Hdp.Free;
   if sigtemp then _era(sigfile);
 xexit1:

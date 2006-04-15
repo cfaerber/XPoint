@@ -577,13 +577,14 @@ begin
     dbWriteNStr(ubase,ub_pollbox,pollbox);
     dbWriteN(ubase,ub_adrbuch,adr);
     dbFlushClose(ubase);
-    if name<>oldname then
-    begin
+    if name<>oldname then begin
+      new(cc);
       oldname:=vert_name(oldname);
       name:=vert_name(name);
       anz := read_verteiler(oldname,cc);
       del_verteiler(oldname);
       write_verteiler(name,cc,anz);
+      dispose(cc);
       end;
     aufbau:=true;
     modiverteiler:=true;

@@ -32,7 +32,7 @@ function  go_pm:boolean;
 procedure Smenu(var t:taste);
 function  readmsg_getfilename:string;
 function  GetWABreplyEmpfaenger(var realname:string):string;
-procedure ReadXpostEmpfaenger(pm:boolean; var empf: string; var brk:boolean);
+procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 
 
 implementation  { --------------------------------------------------- }
@@ -233,7 +233,7 @@ begin
 end;
 
 
-procedure ReadXpostEmpfaenger(pm:boolean; var empf: string; var brk:boolean);
+procedure ReadXpostEmpfaenger(pm:boolean; var empf:adrstr; var brk:boolean);
 var i,n    : integer;
     server : string;
     d      : DB;

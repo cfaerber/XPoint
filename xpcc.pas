@@ -34,9 +34,8 @@ const maxcc = 126;
       cc_NT :byte = 0;
       _UserAutoCreate : boolean = false;  { User ohne Rckfrage anlegen }
 
-type
-      CcAdrStr      = string;
-      ccp   = array[1..maxcc] of CcAdrStr;
+type  ccl   = array[1..maxcc] of AdrStr;
+      ccp   = ^ccl;
 
 
 var pm :boolean;
@@ -283,8 +282,8 @@ begin
   repeat
     xchg:=false;
     for i:=1 to j do
-      if ccsmaller(UpperCase(cc[i+1]),UpperCase(cc[i])) then begin
-        s:=cc[i]; cc[i]:=cc[i+1]; cc[i+1]:=s;
+      if ccsmaller(UpperCase(cc^[i+1]),UpperCase(cc^[i])) then begin
+        s:=cc^[i]; cc^[i]:=cc^[i+1]; cc^[i+1]:=s;
         xchg:=true;
         end;
     dec(j);
@@ -308,11 +307,11 @@ begin
 { SortCCs(cc,cc_anz); }
   small:=iifs(ntZonly and not smallnames,'>','');
   for i:=1 to maxcc do begin
-    maddstring(2,i,strsn(i,3)+'.',cc[i],50,eAdrLen,small);
+    maddstring(2,i,strsn(i,3)+'.',cc^[i],50,eAdrLen,small);
     mappcustomsel(auto_empfsel,false);
     mset1func(cc_test1);
     msetvfunc(cc_testempf);
-    ccused[i]:=(cc[i]<>'');
+    ccused[i]:=(cc^[i]<>'');
     end;
   maskdontclear;
   for i:=cc_anz+2 to maxcc do
@@ -333,7 +332,7 @@ begin
     for i:=1 to maxcc do             { leere entfernen }
       if ccused[i] then begin
         inc(cc_anz);
-        cc[cc_anz]:=cc[i];
+        cc^[cc_anz]:=cc^[i];
         end;
 
     if cc_anz>0 then                 { wenn CCs da sind Verteilernamen suchen und aufloesen }
@@ -341,7 +340,7 @@ begin
       i:=0;
       repeat
       inc(i);
-      if is_vname(cc[i]) then
+      if is_vname(cc^[i]) then
       begin                                                    { nach Verteilernamen suchen }
         assign(t,CCfile);
         reset(t);
@@ -349,7 +348,7 @@ begin
         begin
           repeat
             readln(t,s)
-          until eof(t) or (UpperCase(s)=UpperCase(cc[i]));
+          until eof(t) or (UpperCase(s)=UpperCase(cc^[i]));
           if not eof(t) then                                   { wenn gefunden... }
           begin
             repeat
@@ -357,10 +356,10 @@ begin
               if (trim(s)<>'') and not is_vname(s) then
               begin
                 inc(cc_anz);
-                cc[cc_anz]:=LeftStr(s,79);
+                cc^[cc_anz]:=LeftStr(s,79);
                 end;
             until eof(t) or is_vname(s) or (cc_anz>=maxcc-1);
-            cc[i]:=cc[cc_anz];                               { Verteilernamen durch }
+            cc^[i]:=cc^[cc_anz];                               { Verteilernamen durch }
             dec(cc_anz);                                       { letzten Eintrag ersetzen }
             end;
           close(t);
@@ -370,7 +369,7 @@ begin
       end;
 
     for i:=cc_anz+1 to maxcc do
-      cc[i]:='';
+      cc^[i]:='';
     SortCCs(cc,cc_anz);
     end;
   hinweisGegeben := true;
@@ -383,11 +382,9 @@ end;
 function read_verteiler(name:string; var cc:ccp): Integer;
 var t : text;
     s : string;
-    i: Integer;
 begin
   Result:=0;
-  for i:=1 to maxcc do
-    cc[i] := '';
+  fillchar(cc^,sizeof(cc^),0);
   assign(t,CCfile);
   reset(t);
   if ioresult=0 then begin
@@ -400,7 +397,7 @@ begin
         readln(t,s);
         if (trim(s)<>'') and not is_vname(s) then begin
           inc(cc_anz);
-          cc[cc_anz]:=s;
+          cc^[cc_anz]:=LeftStr(s,79);
           end;
       until eof(t) or is_vname(s);
     close(t);
@@ -453,7 +450,7 @@ begin
   append(t2);
   writeln(t2,name);             { neuen Eintrag anh„ngen }
   for i:=1 to cc_anz do
-    writeln(t2,cc[i]);
+    writeln(t2,cc^[i]);
   writeln(t2);
   close(t2);
 end;
@@ -464,11 +461,13 @@ var
   cc  : ccp;
   anz: Integer;
 begin
+  new(cc);
   anz  := read_verteiler(name,cc);
   edit_cc(cc,anz,brk);
   if not brk then
     write_verteiler(name,cc,anz);
   Result := anz;
+  dispose(cc);
 end;
 
 end.
