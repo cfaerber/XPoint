@@ -603,7 +603,8 @@ end;
         Move(ccm^[p2],ccm^[p2+1],(p1-p2)*sizeof(cmr));
         ccm^[p2]:=cmr;
         s:=cc^[p1];
-        Move(cc^[p2],cc^[p2+1],(p1-p2)*sizeof(cc^[1]));
+        { Move(cc^[p2],cc^[p2+1],(p1-p2)*sizeof(cc^[1])); }
+        cc_move(p2, p2+1, p1-p2);
         cc^[p2]:=s;
         inc(p1);inc(p2);
         end;
@@ -684,7 +685,8 @@ end;
               rfehler1(632,strs(MaxXposts));   { 'Es sind maximal %s Brettempfaenger pro Server moeglich.' }
             errflag:=true;
             if j<=cc_anz then begin
-              Move(cc^[j],cc^[i+MaxXposts],(cc_anz-j)*sizeof(cc^[1]));
+              { Move(cc^[j],cc^[i+MaxXposts],(cc_anz-j)*sizeof(cc^[1])); }
+              cc_move(j, i+MaxXposts, cc_anz-j);
               Move(ccm^[j],ccm^[i+MaxXposts],(cc_anz-j)*sizeof(ccm^[1]));
               end;
             dec(cc_anz,j-i-MaxXposts);
@@ -699,7 +701,7 @@ end;
 
   begin
   nt_forcebox := getForceBoxNT;
-    if all then begin
+  if all then begin
     if cc_anz>10 then rmessage(620);    { 'Teste auf Crosspostings ...' }
     fillchar(ccm^,sizeof(ccm^),0);
     if not verteiler then GetInf(0,empfaenger);   { 1. Server einlesen, }
@@ -831,7 +833,7 @@ end;
       else if not kb_s then
       begin
         cc_anz:=0;                                         { Kein Verteiler: CCs loeschen }
-        fillchar(cc^,sizeof(cc^),0);
+        cc_reset;
         end;
       if cpos('@',adresse)=0 then adresse:='A'+adresse;
       empfaenger:=adresse;
@@ -1171,7 +1173,7 @@ begin      //-------- of DoSend ---------
 
   cc_anz:=0; cc_count:=0;
   new(cc);new(ccm);                             //mo bookmark
-  fillchar(cc^,sizeof(cc^),0);
+  cc_reset;
   SendDefault:=1;
   verteiler:=false;
   if SendEmpflist<>nil then begin
@@ -2455,7 +2457,8 @@ fromstart:
     Debug.DebugLog('xpsendmessage','DoSend, CCs, msgCPanz:'+IntToStr(msgCPanz), DLDebug);
 
     if msgCPanz>1 then begin    { cc-Epfaenger bis auf einen ueberspringen }
-      Move(cc^[msgCPanz],cc^[1],(maxcc-msgCPanz+1)*sizeof(cc^[1]));
+      { Move(cc^[msgCPanz],cc^[1],(maxcc-msgCPanz+1)*sizeof(cc^[1])); }
+      cc_move(msgCPanz, 1, maxcc-msgCPanz+1);
       Move(ccm^[msgCPanz-1],ccm^[0],(maxcc-msgCPanz+2)*sizeof(ccm^[1]));
       dec(cc_anz,msgCPanz-1); inc(cc_count,msgCPanz-1);
       end;
@@ -2467,7 +2470,8 @@ fromstart:
     Debug.DebugLog('xpsendmessage','DoSend, weitere CC-Empfaenger bearbeiten, '
                    +'cc_anz:'+IntToStr(cc_anz), DLDebug);
     empfaenger:=cc^[1];
-    Move(cc^[2],cc^[1],(maxcc-1)*sizeof(cc^[1]));
+    { Move(cc^[2],cc^[1],(maxcc-1)*sizeof(cc^[1])); }
+    cc_move(2, 1, maxcc-1);
     Move(ccm^[1],ccm^[0],maxcc*sizeof(ccm^[1]));
     dec(cc_anz); inc(cc_count);
     pm:=cpos('@',empfaenger)>0;
