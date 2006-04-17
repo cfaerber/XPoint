@@ -32,7 +32,7 @@ interface
 
 const
   mainver     = '4.0';       { Versionnr. - steht nur an dieser Stelle }
-  betastr     = ' RC3';        { ' ' oder ' beta' }
+  betastr     = ' RC4';        { ' ' oder ' beta' }
 
   {$IFDEF Win32 }
   pformstr    = ' (Win32)';     { 32 Bit Windows mit FPC oder VP }
