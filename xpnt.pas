@@ -713,7 +713,7 @@ end;
 
 function ntBCC(nt:byte):boolean;              { BCC-Option vorhanden }
 begin
-  ntBCC := (nt in [nt_ZConnect,nt_UUCP,nt_POP3]);
+  ntBCC := (nt in [nt_ZConnect,nt_UUCP,nt_POP3, nt_Client]);
 end;
 
 
