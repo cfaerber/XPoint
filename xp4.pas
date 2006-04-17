@@ -2350,6 +2350,8 @@ var t,lastt: taste;
 
         Box := dbReadNStr(mbase, mb_brett);
         dbSeek(bbase,BiIntnr,copy(Box,2,4));
+        if not dbFound then
+          continue;
         Box := dbReadNStr(bbase, bb_pollbox);      { Pollbox des Brettes     }
         // Hilfe nachtragen
 
