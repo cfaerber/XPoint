@@ -597,7 +597,7 @@ end;
 
 function ntCrossPM(nt:byte):boolean;          { PM-Crosspostings m”glich }
 begin
-  ntCrossPM:=nt in [nt_ZConnect,nt_UUCP,nt_POP3];
+  ntCrossPM:=nt in [nt_ZConnect,nt_UUCP,nt_POP3,nt_Client]; { HJT 17.04.2006, CCs fuer nt_Client }
 end;
 
 
@@ -712,7 +712,7 @@ end;
 
 function ntBCC(nt:byte):boolean;              { BCC-Option vorhanden }
 begin
-  ntBCC := (nt in [nt_ZConnect,nt_UUCP,nt_POP3]);
+  ntBCC := (nt in [nt_ZConnect,nt_UUCP,nt_POP3, nt_Client]);
 end;
 
 

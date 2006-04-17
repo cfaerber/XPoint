@@ -107,7 +107,11 @@ begin
       end;
     end;
   closebox;
-  for iFile:=0 to NewFiles.Count-1 do FilesToProcess.Add(NewFiles[iFile]);
+  for iFile:=0 to NewFiles.Count-1 do
+  begin
+    FilesToProcess.Add(NewFiles[iFile]);
+    CallFilter(false, NewFiles[iFile]);
+  end;
   NewFiles.Destroy;
   Debug.DebugLog('xpnczconnect','Files remaining to process: '+StringListToString(FilesToProcess),DLDebug);
   freeres;
