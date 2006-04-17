@@ -343,7 +343,7 @@ var f,f2     : file;
 
     parts    : TList;       { Nachrichten-Teile }
     partsex  : Boolean;	    { bereits extrahiert? }
-    pa       : TSendAttach_Part;
+//  pa       : TSendAttach_Part;
 
     s        : String;
     s1,s2,s3,s4,s5 : TStream;
@@ -460,7 +460,7 @@ function getForceBoxNT :byte;
 var d :DB;
     res :byte;
 begin
-  Debug.DebugLog('xpsendmessage','getForceBoxNT, calling dbOpen(BoxenFile)', DLDebug);
+  Debug.DebugLog('xpsendmessage','getForceBoxNT, calling dbOpen(BoxenFile) for forcebox:<'+forcebox+'>', DLDebug);
 
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName, Uppercase(forcebox));
@@ -480,7 +480,7 @@ begin
 
   server := dbReadNStr(ubase,ub_pollbox);
 
-  Debug.DebugLog('xpsendmessage','getUserNT, calling dbOpen(BoxenFile)', DLDebug);
+  Debug.DebugLog('xpsendmessage','getUserNT, calling dbOpen(BoxenFile) for server:<'+server+'>', DLDebug);
 
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName, Uppercase(server));
@@ -500,7 +500,7 @@ begin
 
   server := dbReadNStr(bbase,bb_pollbox);
 
-  Debug.DebugLog('xpsendmessage','getBrettNT, calling dbOpen(BoxenFile)', DLDebug);
+  Debug.DebugLog('xpsendmessage','getBrettNT, calling dbOpen(BoxenFile) for server:<'+server+'>', DLDebug);
 
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName, Uppercase(server));
@@ -630,7 +630,9 @@ end;
       xch:=false;
       for i:=cc_anz downto first+1 do
         if IndexStr(i)<IndexStr(i-1) then begin
-          cmr:=ccm^[i];
+          { HJT 17.04.2006 }
+          { cmr:=ccm^[i]; }
+          cmr:=ccm^[i]; ccm^[i]:=ccm^[i-1]; ccm^[i-1]:=cmr;
           s:=cc^[i]; cc^[i]:=cc^[i-1]; cc^[i-1]:=s;
           xch:=true;
           end;
@@ -699,7 +701,7 @@ end;
       end;
     end;
 
-  begin
+  begin     // TestXpostings;
   nt_forcebox := getForceBoxNT;
   if all then begin
     if cc_anz>10 then rmessage(620);    { 'Teste auf Crosspostings ...' }
@@ -718,6 +720,8 @@ end;
     first := 1;
     for i:=0 to cc_anz do
       ccm^[i].cpanz:=0;
+    { HJT 17.04.2006, see  xp6.pas/FreeXP}
+    if not verteiler then CollectFirstServer;   { nach Server sortieren }
     SortForServer_PM;
     FindXposts;
     end;
@@ -1093,9 +1097,8 @@ begin
       testXPostings (true, true);
       box := ccm^[0].server;
       if cc_anz = 0 then fillchar(ccm^,sizeof(ccm^),0);
-
-      Debug.DebugLog('xpsendmessage','checkIncompatibleNT, calling dbOpen(BoxenFile)', DLDebug);
-
+      Debug.DebugLog('xpsendmessage','checkIncompatibleNT'
+                      +', calling dbOpen(BoxenFile), box: <'+box+'>', DLDebug);
       dbOpen(d,BoxenFile,1);
       dbSeek(d,boiName, Uppercase(box));
       if dbFound then
