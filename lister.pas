@@ -35,6 +35,7 @@ var
   Listhalten: byte = 0;
   Listflags: longint = 0;
 
+
 const
   ListerBufferCount = 16383;            { Laenge des Eingangspuffers }
 
@@ -196,6 +197,9 @@ uses
   sysutils,
   {$IFDEF NCRT }
   xpcurses,
+  {$ENDIF }
+  {$IFDEF WIN32 }
+  xpwin32,
   {$ENDIF }
   xpunicode_lbr,
   xpcharset,
@@ -730,19 +734,19 @@ var
         else
         if yy>vstop then
           t:=keypgdn
-        else 
+        else
         begin
           scrolling:=true;
           scrollpos:=yy;
           scroll1st:=iif(SelBar,FSelLine,FirstLine);
         end;
       end;
-    end else 
-    if (t=mausunleft) then 
+    end else
+    if (t=mausunleft) then
     begin
       if stat.directmaus and mausdown and inside then
         t:=keycr;
-      if mausdown then 
+      if mausdown then
       begin
         FSelBar:=OldSelb;
         OldSelB:=true;
@@ -751,6 +755,9 @@ var
     end;
   end;
 
+var
+  ShellCommand, UrlString: String;
+  UrlStart, UrlEnd: Integer;
 begin // Show
   Debug.Debuglog('lister','TLister.Show',DLTrace);
 
@@ -824,7 +831,7 @@ begin // Show
     mauszuo:=false; // (pl<>nil) and (pl^.prev<>nil);
     mauszuu:=false; // (pl<>nil) and (pl^.next<>nil);
     mauszul := false; mauszur := false;
-    
+
     if (FirstLine = 0) or (_mausy > y) then AutoUp := false;
     if (FirstLine + DispLines > lines.count - 1) or (_mausy < y + DispLines -
       1) then AutoDown := false;
@@ -837,9 +844,17 @@ begin // Show
       get(t, curoff);
 
     {$IFDEF Win32 }
-    if t = #0#137 then
-      if fileexists('lister.bat') then
-        shell('lister.bat + ' + clip2string,0,3);
+      if t = #0#137 then  // Ctrg+F11
+      begin
+        UrlString := FirstMarked;
+        if FindUrl(UrlString, UrlStart, UrlEnd) then
+          UrlString := Copy(UrlString, UrlStart, UrlEnd-UrlStart);
+        if fileexists('lister.cmd') then
+          SysExec('lister.cmd', UrlString)
+        else
+          if fileexists('lister.bat') then
+            SysExec('lister.bat', UrlString);
+      end;
     {$ENDIF }
 
     mauszuo := mzo; mauszuu := mzu;
