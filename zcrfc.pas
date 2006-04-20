@@ -1021,13 +1021,12 @@ var
 
   procedure CorrTime;                   { Zonenoffset zu Zeit addieren }
   var
-    res: integer;
     off, moff: integer;
     p: integer;
   begin
-    val(copy(ti, 1, 2), h, res);
-    val(copy(ti, 4, 2), min, res);
-    val(copy(ti, 7, 2), s, res);
+    TryStrToInt(copy(ti, 1, 2), h);
+    TryStrToInt(copy(ti, 4, 2), min);
+    TryStrToInt(copy(ti, 7, 2), s);
     p := cpos(':', zone);
     if p = 0 then
     begin
@@ -1852,20 +1851,19 @@ var
   end;
 
   procedure GetPriority;
-  var p: integer;
-    prio: Integer;
+  var
+    p, Prio: integer;
   begin
-    if hd.priority<>0 then exit;
-    s0:=RFCRemoveComments(s0);
-    val(s0,prio,p);
-    hd.priority := minmax(prio, 1, 5);
-    if p>1 then
+    if hd.priority <> 0 then
+      exit;
+    s0 := RFCRemoveComments(s0);
+    Val(s0, Prio, p);
+    hd.Priority := MinMax(Prio, 1, 5);
+    if p > 1 then
     begin // at least first char is a number
-      s0:=LeftStr(s0,p-1); p:=IVal(s0);
-      if p>5 then p:=5
-      else if p<1 then p:=1;
-      hd.priority:=p;
-      end else
+      s0 := LeftStr(s0, p - 1);
+      hd.Priority:= MinMax(IVal(s0), 1, 5);
+    end else
       if p=1 then // plain text priority
         hd.priority:=((pos(UpperCase(LeftStr(s0,3)),
                          'HIGURGNOR   LOW')-1)div 6)*2+1;
