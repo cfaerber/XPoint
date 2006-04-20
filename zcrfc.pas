@@ -1853,16 +1853,21 @@ var
 
   procedure GetPriority;
   var p: integer;
+    prio: Integer;
   begin
     if hd.priority<>0 then exit;
     s0:=RFCRemoveComments(s0);
-    val(s0,hd.priority,p);
-    if p>1 then begin // at least first char is a number
+    val(s0,prio,p);
+    hd.priority := minmax(prio, 1, 5);
+    if p>1 then
+    begin // at least first char is a number
       s0:=LeftStr(s0,p-1); p:=IVal(s0);
-      if p>5 then p:=5 else if p<1 then p:=1;
+      if p>5 then p:=5
+      else if p<1 then p:=1;
       hd.priority:=p;
-      end else if p=1 then // plain text priority
-      hd.priority:=((pos(UpperCase(LeftStr(s0,3)),
+      end else
+      if p=1 then // plain text priority
+        hd.priority:=((pos(UpperCase(LeftStr(s0,3)),
                          'HIGURGNOR   LOW')-1)div 6)*2+1;
   end;
 
