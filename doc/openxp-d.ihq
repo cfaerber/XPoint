@@ -4728,6 +4728,11 @@ aber angesichts der Tatsache, daá eingehende Mail
 nicht unbedingt die eigene E-Mail-Adresse als Em-
 pf„nger haben muá, unpraktisch sein kann.
 @
+40026
+Mails, die die hier angegebene Gr”áe bersteigen, 
+werden nicht vom Server geladen, sondern
+bersprungen und ungelesen gel”scht.
+@
 40040
 Geben Sie hier den Rechnernamen oder die IP-Adresse
 des SMTP-Servers an (Beispiel: smtp.gmx.de).
