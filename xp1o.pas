@@ -268,14 +268,15 @@ var s     : string;
   end;
 
 begin
+  Debug.Debuglog('xp1o:','listExt start, taste: <'+t+'>', DLTrace);
   if listmakros<>0 then begin
     if t=keyf6 then Makroliste(iif(listmakros=8,4,5));
     Xmakro(t,ListMakros);
     end;
   c:=t[1];
-  Debug.Debuglog('xp1o:','Seitendruck angefordert via Taste:'+c,DLTrace);
-  Debug.Debuglog('xp1o:','       => Umwandlung von "'+c+'" nach '+UpCase(c),DLTrace);
   if (UpCase(c)=k4_D) or (deutsch and (UpCase(c)='D')) then begin   { ^D }
+    Debug.Debuglog('xp1o:','Seitendruck angefordert via Taste:'+c,DLTrace);
+    Debug.Debuglog('xp1o:','       => Umwandlung von "'+c+'" nach '+UpCase(c),DLTrace);
     rmessage(119);   { 'Ausdruck l„uft...' }
     InitPrinter;
     all:=(LSelf.SelCount=0);
@@ -775,7 +776,7 @@ begin
     GetBezug:=0;
 end;
 
-{ HJT 11.00.05: Reference Normalisieren                      }
+{ HJT 11.05.05: Reference Normalisieren                      }
 { zZ. werden lediglich eventuell vorhandene spitze Klammern  }
 { entfernt. ToDo: eventuell vorhandene Kommentare wie in:    }
 {                                                            }
@@ -796,8 +797,20 @@ end;
 function NormalizeBezug(const ref:string):string;
 begin
     Result:=ref;
-    if FirstChar(Result) ='<' then DeleteFirstChar(Result);  
-    if LastChar(Result)  ='>' then DeleteLastChar(Result);
+    { HJT 23.04.2006, nur dann die eckigen Klammern entfernen,  }
+    { wenn die References links- und rechtsseitig damit         }
+    { eingeschlossen werden.                                    }
+    { Damit werden dann bei 'kaputten' Fidogate generierten     }
+    { BEZs in Fidonachrichten wie zB:                           }
+    { <9sCkUyx4u+B@zeus.crashmail.de> 40548408'                 }
+    { die Bezuege korrekt aufgebaut                             }
+    { if FirstChar(Result) ='<' then DeleteFirstChar(Result); }
+    { if LastChar(Result)  ='>' then DeleteLastChar(Result);  }
+    if (FirstChar(Result) = '<') and (LastChar(Result) = '>') then
+    begin
+      DeleteFirstChar(Result);
+      DeleteLastChar(Result);
+    end;
 end;
 
 
