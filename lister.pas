@@ -758,6 +758,7 @@ var
 var
   ShellCommand, UrlString: String;
   UrlStart, UrlEnd: Integer;
+  DosExitCode: Integer;
 begin // Show
   Debug.Debuglog('lister','TLister.Show',DLTrace);
 
@@ -844,16 +845,20 @@ begin // Show
       get(t, curoff);
 
     {$IFDEF Win32 }
-      if t = #0#137 then  // Ctrg+F11
+      if t = keyf11 then
       begin
         UrlString := FirstMarked;
         if FindUrl(UrlString, UrlStart, UrlEnd) then
-          UrlString := Copy(UrlString, UrlStart, UrlEnd-UrlStart);
-        if fileexists('lister.cmd') then
-          SysExec('lister.cmd', UrlString)
-        else
-          if fileexists('lister.bat') then
-            SysExec('lister.bat', UrlString);
+        begin
+          UrlString := '"' + Copy(UrlString, UrlStart, UrlEnd-UrlStart) + '"';
+          Debug.DebugLog('Lister', 'Call lister.* with ' + UrlString, dlInform);
+          if fileexists('lister.cmd') then
+            RTLExec('lister.cmd', UrlString, DosExitCode, false)
+          else
+            if fileexists('lister.bat') then
+              RTLExec('lister.bat', UrlString, DosExitCode, false);
+        end else
+          ErrSound;
       end;
     {$ENDIF }
 
