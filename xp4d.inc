@@ -517,7 +517,7 @@ begin  { __ Suchmarke }
                 dispbuf[y]:=forms(dflags+siz+sdat+' '+s,ScreenWidth);
 
               end
-              else msgtausch('B',forms(s1,blen+60-1+h3+
+              else msgtausch('B',forms(s1,blen-1+h3+
                 iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
 
               { HJT 23.09.2005 asm durch Pascal ersetzt wg. Optimierer, siehe getprio }
