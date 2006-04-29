@@ -110,7 +110,7 @@ abhebt. Alle OpenXP-Versionen enthalten hunderte von Bugfixes und
 Features gegenüber 3.12d (siehe http://www.openxp.de).
 
 
-OpenXP/FreeXP 3.40 RC3 -> OpenXP 4.0 (Anwenderversion)
+FreeXP 3.40 -> OpenXP 4.0 (Anwenderversion)
 
 Allgemein
 ---------
@@ -164,9 +164,16 @@ Zusätzlich: OpenXP 4.0 -> OpenXP 4.10 (Entwicklerversion)
 
 Allgemein
 ---------
+- Interner SPAM-Filter
 - Interner Client für IMAP4 (Win32+Unix)
 - verbesserter Druck-Support unter Unix
 - Automatisches Wählen mit dem DFUE-Netzwerk unter Win32
+- verbesserter Unicodesupport, besonders im Lister
+- In der Nachrichtenübersicht wird die komplette Betreffzeile angezeigt,
+  von der eingstellten Bildschirmbreite, vorher war dies auf 40 Zeichen beschränkt
+- F11 auf einer markieren Zeile im Lister ruft LISTER.BAT/.COM mit
+  der gefunden URL als Parameter auf
+- Kommandozeilen bis 4094 Zeichen (statt 253 Zeichen) unter WinXP möglich
 
 Zusätzlich: OpenXP 4.10 -> OpenXP 5.0 (Alpha, Entwicklerversion)
 
