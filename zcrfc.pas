@@ -75,6 +75,7 @@ type
     nomailer: boolean;
     eol: Integer;
     FDeleteFiles: TStringList;
+    InReplyTo: String;
     function SetMailUser(const mailuser: string): string;
     procedure FlushOutbuf;
     procedure wrfs(const s: string);
@@ -314,7 +315,7 @@ begin
   _from := '';
   _to := '';                   { UUCP-Systemnamen }
   eol := 0;
-
+  InReplyTo:='';
 
   {$IFDEF unix}
   downarcers[compress_compress] := 'compress -dvf $DOWNFILE';
@@ -894,6 +895,12 @@ begin           // TUUz.WriteHeader
     if typ = 'M' then wrs('TYP: MIME'); *)
     if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
+
+    if References.IndexOf(InReplyTo) = - 1 then
+    begin
+      References.Add(InReplyTo);
+      InReplyTo:='';
+    end;
     for i := 0 to References.Count -1 do
       wrs('BEZ: ' + References[i]);
     if ersetzt <> '' then wrs('ERSETZT: ' + ersetzt);
@@ -1784,6 +1791,7 @@ var
   var
     p,q: integer;
   begin
+    line:=trim(rfcremovecomments(line));
     { enthaelt die In-Reply-To-Zeile eine Message-ID? }
     { falls ja, spitze Klammern bei Bezugs-ID entfernen }
 
@@ -1794,10 +1802,7 @@ var
       line:=copy(line,p+1,q-p-1);
       { eine Message-ID enthaelt ein @ und kein Space }
       if (cpos('@',line)>0) and (cpos(' ',line)=0) then
-      begin
-        hd.References.clear;
-        hd.References.Add(line);
-      end
+        InReplyTo:=line;
     end else
       uline.add('U-In-Reply-To: '+line)
   end;
