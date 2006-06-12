@@ -3002,6 +3002,8 @@ var
       end;
     end;
 
+var
+  s2, SubjectPart: String;
 begin
   if not mpart then
   with hd do
@@ -3113,9 +3115,25 @@ begin
       wrs(f, 'Control: ' + betreff);
     if mail and (LowerCase(betreff) = '<none>') then
       betreff := '';
+
+    // extract re, aw, sv and replace with "Re: "
+    // don't MIME encode this string
+    // e.g. "Subject: Re: =?ISO-8859-1?Q?abcdef?="
+    SubjectPart := '';
+    p:=cpos(':', Betreff);
+    if p>0 then
+    begin
+      s2 := Trim(LowerCase(LeftStr(Betreff,p-1)));
+      if Pos(';'+s2+';',';re;aw;sv;')>0 then
+      begin
+        SubjectPart := 'Re: ';
+        Betreff := Trim(mid(Betreff,p+1));
+      end;
+    end;                                
     zcrfc.s := IBMToISO(betreff);
     RFC1522form;
-    wrs(f, 'Subject: ' + zcrfc.s);
+    wrs(f, 'Subject: ' + SubjectPart + zcrfc.s);
+
     if keywords <> '' then
     begin
       zcrfc.s := IBMToISO(keywords);
