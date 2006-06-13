@@ -482,6 +482,8 @@ function ExcludeTrailingPathDelimiter(const s: String): String;
 function IsPathDelimiter(const S: string; Index: Integer): Boolean;
 {$ENDIF }
 function FindURL(s: String; var x, y: Integer): Boolean;
+procedure StringListSaveToFile(List: TStringList; const FileName: string);
+
 
 
 { ================= Implementation-Teil ==================  }
@@ -1804,5 +1806,19 @@ begin
   end;
 end;
 
+procedure StringListSaveToFile(List: TStringList; const FileName: string);
+var
+  fs: TFileStream;
+  i: Integer;
+  s: String;
+begin
+  fs := TFileStream.Create(FileName, fmCreate);
+  for i := 0 to List.Count - 1 do
+  begin
+    s := List[i] + #13#10;
+    fs.Write(s[1], Length(s));
+  end;
+  fs.Free;
+end;
 
 end.

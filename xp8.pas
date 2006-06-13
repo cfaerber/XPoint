@@ -578,7 +578,7 @@ var t1,t2    : text;
   { Uebergabe an den Lister ins XP-Format bringen    }
   { und Offsetanpassung fuer Bestellt-Flag ermitteln }
   Function Reformat_UKA_Brett(Var s:Shortstring):byte;
-{$IFDEF NOASM }
+{$IFNDEF NOASM }
 begin
 end;
 {$ELSE }
@@ -678,7 +678,6 @@ begin
     exit;
   end;
   rc := TStringlist.Create;
-  rc.LineBreak := #$0D#$0A;
   try
     rcfile:= ChangeFileExt(sBLFilename, extRc);
     rc.LoadFromFile(rcfile);
@@ -697,7 +696,7 @@ begin
         end;
       end;
     end;
-    rc.SaveToFile(rcfile);
+    StringListSaveToFile(rc, rcfile);
   finally
     rc.Free;
   end;
@@ -778,12 +777,11 @@ begin
   end;
   moment;
   List := TStringList.Create;
-  List.LineBreak := #$0D#$0A;
   try
     try
       List.LoadFromFile(blfile);
       List.Sort;
-      List.SaveToFile(blFile);
+      StringListSaveToFile(List, blFile);
     except
       rfehler(836);      { Sortierung der Newsgroup-Liste ist fehlgeschlagen! }
     end;
@@ -1507,7 +1505,6 @@ label again;
 
     Moment;
     RCList := TStringList.Create;
-    RCList.LineBreak := #$0D#$0A;
     if Art = 0 then
       RCFilename := FileUppercase(fn + extRc)
     else
@@ -1522,7 +1519,6 @@ label again;
       Debug.DebugLog('xp8','Using RC file:'+ RCFilename + 'with filesize' + IntToStr(_FileSize(RCFilename)), DLDebug);
 
       Unmarklist := TStringlist.Create;
-      Unmarklist.LineBreak := #$0D#$0A;
       try
         s:=List.FirstMarked;
         while s<>#0 do
@@ -1574,7 +1570,7 @@ label again;
       end;
 
       RCList.Sort;
-      RCList.SaveToFile(RCFilename);
+      StringListSaveToFile(RCList, RCFilename);
       if art = 0 then
         List.Lines.SaveToFile(FileUppercase(fn + extBl))
       else
