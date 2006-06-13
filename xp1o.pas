@@ -149,9 +149,12 @@ begin
     else
     if useclip and (s='CLIPBOARD (URL)') then
     begin               { Markierten Text als URL}
-     if FindUrl(s, x, y) then
+      s := GetLine;
+      if FindUrl(s, x, y) then
+      begin
         s := Copy(s, x, y-x);
-      string2clip(s);
+        string2clip(s);
+      end;
       ReadFilename:=false;
       exit;
     end
