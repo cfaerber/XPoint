@@ -75,7 +75,6 @@ type
     nomailer: boolean;
     eol: Integer;
     FDeleteFiles: TStringList;
-    InReplyTo: String;
     function SetMailUser(const mailuser: string): string;
     procedure FlushOutbuf;
     procedure wrfs(const s: string);
@@ -315,7 +314,6 @@ begin
   _from := '';
   _to := '';                   { UUCP-Systemnamen }
   eol := 0;
-  InReplyTo:='';
 
   {$IFDEF unix}
   downarcers[compress_compress] := 'compress -dvf $DOWNFILE';
@@ -1802,7 +1800,7 @@ var
       line:=copy(line,p+1,q-p-1);
       { eine Message-ID enthaelt ein @ und kein Space }
       if (cpos('@',line)>0) and (cpos(' ',line)=0) then
-        InReplyTo:=line;
+        hd.InReplyTo:=line;
     end else
       uline.add('U-In-Reply-To: '+line)
   end;

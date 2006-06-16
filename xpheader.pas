@@ -102,6 +102,7 @@ type
     telefon: string;
     homepage: string;
     ReplyTo: String;                    { Antwort-An, "Reply-To:'    }
+    InReplyTo: String;
     followup: tstringlist;              { Diskussion-In }
     komlen: longint;                    { --- ZCONNECT --- Kommentar-Laenge }
     datei: string;                      { Dateiname                  }
@@ -273,6 +274,7 @@ begin
   telefon:= '';
   homepage:= '';
   ReplyTo := '';
+  InReplyTo:='';
   followup.clear;;
   komlen := 0;
   datei:= '';                      { Dateiname                  }
