@@ -160,6 +160,8 @@ var
     result:=helpbyte;
   end;
   
+var
+  hdp : THeader;
 begin  { __ Suchmarke }
   over80:= ScreenWidth-80;                                      { Bildschirm > Spalten }
   case aktdispmode of
@@ -380,6 +382,16 @@ begin  { __ Suchmarke }
 
             s1:= dbReadNStr(mbase,mb_betreff);
 
+            // if maximum subject length in database was used
+            // the subject may be longer, so get it direct from the message
+            if Length(s1) = 40 then
+            begin
+              hdp := THeader.Create;
+              ReadHeader(hdp,hds,false);
+              s1 := hdp.Betreff;
+              hdp.Free;
+            end;
+
             if dispmode<>12 then
             begin
 (*           if (netztyp=nt_Maus) and (mnt and $100<>0) then
@@ -411,13 +423,13 @@ begin  { __ Suchmarke }
               else
                 sdat:=LeftStr(s2,5);
               ulen:=iif(over80>2,27,25);    { wenn Platz fÅr vollen Username  }
-              blen:=iif(over80>6,40,36);    { auch noch Platz fÅr den Betreff }
+              blen:=iif(over80>6,40+Over80,36+Over80);    { auch noch Platz fÅr den Betreff }
             { kein Datum anzeigen }
             end
             else begin
               sdat:='';
               ulen:=27;
-              blen:=40;
+              blen:=40+Over80;
             end;
             if (dispmode=11) and MarkUnversandt then
             begin      {11=markierte Nachrichten}
@@ -442,7 +454,7 @@ begin  { __ Suchmarke }
             begin
               inc(ulen,blen-pp);
               blen:=pp;
-            end;
+            end;                                                                   
             dbReadN(mbase,mb_Groesse,size);
             dbReadN(mbase,mb_unversandt,unvers);
             dbReadN(mbase,mb_Typ,typ);
@@ -492,7 +504,7 @@ begin  { __ Suchmarke }
 
               ulen:=19; {Absender-laenge}
               msgtausch('E',forms(s0,19+h3));                      { (E)mpfaenger }
-              msgtausch('B',forms(s1,iif(showmsgdatum,21,27)+h3+
+              msgtausch('B',forms(s1,iif(showmsgdatum,21+over80,27+over80)+h3+
                 iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
               userflag[y]:=IIf((HighlightName=UpperCase(s0)) or (mnt and $1000<>0),1,0);
             end
@@ -507,7 +519,7 @@ begin  { __ Suchmarke }
               end
               else msgtausch('B',forms(s1,blen-1+h3+
                 iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
-            
+
               { HJT 23.09.2005 asm durch Pascal ersetzt wg. Optimierer, siehe getprio }
               userflag[y]:=getprio(flags, true);
 
