@@ -891,10 +891,14 @@ begin           // TUUz.WriteHeader
     if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
 
-    if References.IndexOf(InReplyTo) = - 1 then
+    if length(InReplyTo) > 0 then   { HJT 09.07.06 don't create empty last BEZ}
     begin
-      References.Add(InReplyTo);
-      InReplyTo:='';
+      if References.IndexOf(InReplyTo) = - 1 then
+      begin
+        Debug.DebugLog('zcrfc', 'TUUz.WriteHeader, Adding InReplyTo:<'+InReplyTo+'> to References', DLDebug);
+        References.Add(InReplyTo);
+        InReplyTo:='';
+      end;
     end;
     for i := 0 to References.Count -1 do
       wrs('BEZ: ' + References[i]);

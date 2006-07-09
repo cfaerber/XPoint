@@ -26,13 +26,8 @@ unit lister;
 interface
 
 uses
-  xpglobal,
-  {$IFDEF NCRT }
-  xpcurses,
-  {$ENDIF }
-  typeform,
-  sysutils, classes,
-  inout,maus2,keys,winxp,resource;
+  classes,
+  debug, xpglobal, keys;
 
 const
   ListHelpStr: string[8] = 'Hilfe';
@@ -40,6 +35,7 @@ const
   Listhalten: byte = 0;
   Listflags: longint = 0;
   ListerBufferCount = 16383;            { L„nge des Eingangspuffers }
+
 
 const
   mcursor: boolean = false;             { Auswahlcursor fr Blinde }
@@ -192,10 +188,17 @@ var
 implementation { ------------------------------------------------ }
 
 uses
-{$IFDEF WIn32 }
+  sysutils,
+  {$IFDEF NCRT }
+  xpcurses,
+  {$ENDIF }
+  {$IFDEF WIN32 }
   xpwin32,
-{$ENDIF }
-  gpltools,xp0,xp1,clip,mime,utftools,xpkeys;
+  {$ENDIF }
+  typeform,
+  inout, maus2, winxp, resource,xp1, clip,
+  xp0,mime,xpkeys, gpltools;
+
 
 // Zerlegen des Buffers in einzelne Zeilen
 
@@ -779,19 +782,19 @@ var
         else
         if yy>vstop then
           t:=keypgdn
-        else 
+        else
         begin
           scrolling:=true;
           scrollpos:=yy;
           scroll1st:=iif(SelBar,FSelLine,FirstLine);
         end;
       end;
-    end else 
-    if (t=mausunleft) then 
+    end else
+    if (t=mausunleft) then
     begin
       if stat.directmaus and mausdown and inside then
         t:=keycr;
-      if mausdown then 
+      if mausdown then
       begin
         FSelBar:=OldSelb;
         OldSelB:=true;
@@ -802,6 +805,9 @@ var
 
 var
  exitcode: integer;
+  ShellCommand, UrlString: String;
+  UrlStart, UrlEnd: Integer;
+  DosExitCode: Integer;
 begin // Show
   startpos := minmax(startpos, 0, Lines.Count - 1);
   DispLines := Height - iif(stat.statline, 1, 0);
@@ -885,9 +891,24 @@ begin // Show
     else
       get(t, curoff);
     {$IFDEF Win32 }
-    if t = #0#137 then                                                        
+    if t = #0#137 then
       if fileexists('lister.bat') then
         shell('lister.bat + ' + clip2string,0,3);
+      if t = keyf11 then
+      begin
+        UrlString := FirstMarked;
+        if FindUrl(UrlString, UrlStart, UrlEnd) then
+        begin
+          UrlString := '"' + Copy(UrlString, UrlStart, UrlEnd-UrlStart) + '"';
+          Debug.DebugLog('Lister', 'Call lister.* with ' + UrlString, dlInform);
+          if fileexists('lister.cmd') then
+            RTLExec('lister.cmd', UrlString, DosExitCode, false)
+          else
+            if fileexists('lister.bat') then
+              RTLExec('lister.bat', UrlString, DosExitCode, false);
+        end else
+          ErrSound;
+      end;
     {$ENDIF }
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;

@@ -130,7 +130,7 @@ const
   ISO #183 => IBM #250 ("·")
   --------------------------
   Schlicht ein Fehler in den alten Tabellen, dieser "middle dot" (Unicode  
-  00B7) existiert sowohl im ISO- wie auch im IBM-Zeichensatz, wurde aber  
+  00B7) existiert sowohl im ISO- wie auch im IBM-Zeichensatz, wurde aber
   stattdessen bisher nach #249 ("bullet operator") konvertiert.
 
 
@@ -460,6 +460,7 @@ function ExcludeTrailingPathDelimiter(const s: String): String;
 function IsPathDelimiter(const S: string; Index: Integer): Boolean;
 {$ENDIF }
 procedure StringListSaveToFile(List: TStringList; const FileName: string);
+function FindURL(s: String; var x, y: Integer): Boolean; overload;
 
 
 

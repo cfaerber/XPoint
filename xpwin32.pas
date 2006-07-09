@@ -274,14 +274,28 @@ begin
   Result := false;
 end;
 
+{ Are we running under WinXP or newer?}
+function SysXPOrNewer : boolean;
+var
+  sinfo : TOSVERSIONINFO;
+begin
+  Result :=false;
+  sInfo.dwOSVersionInfoSize:=sizeof(sInfo);
+  if GetVersionEx(sInfo) then begin
+    if sInfo.dwMajorVersion >= 5 then begin
+      Result :=True;
+    end;
+  end;
+end;
+
 function RTLexec(path, comline : string; var DosExitCode: Integer; wait: boolean): Integer;
 var
   SI: TStartupInfo;
   PI: TProcessInformation;
   Proc : THandle;
   l    : dword;
-  CommandLine : array[0..511] of char;
-  AppParam : array[0..255] of char;
+  CommandLine : array[0..4096] of char;
+  AppParam : array[0..8192] of char;
   pathlocal : string;
 begin
   FillChar(SI, SizeOf(SI), 0);
@@ -302,14 +316,17 @@ begin
   AppParam[1]:=' ';
   if ComLine <> '' then  // when ComLine is empty, ComLine[1] gives AV
   begin
-    // strip comlines longer than 253 chars
-    ComLine := LeftStr(comline, min(253, length(comline)));
+    // strip comlines longer than 4094 (within XP) or 253 chars
+    if SysXPOrNewer then
+      ComLine := LeftStr(comline, min(4094, length(comline)))
+    else
+      ComLine := LeftStr(comline, min(253, length(comline)));
     Move(ComLine[1],AppParam[2],length(Comline));
   end;
   AppParam[Length(ComLine)+2]:=#0;
   { concatenate both pathnames }
   Move(Appparam[0],CommandLine[length(Pathlocal)],strlen(Appparam)+1);
-  if not CreateProcess(nil, PChar(@CommandLine),
+  if not CreateProcess(Nil, PChar(@CommandLine),
            Nil, Nil, false,$20, Nil, Nil, SI, PI) then
   begin
     Result := GetLastError;
@@ -375,6 +392,7 @@ begin
   end;
 end;
 { HJT 10.09.05 end }
+
 
 initialization
   // disable program termination at ctrl-c
