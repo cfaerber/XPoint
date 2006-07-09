@@ -315,7 +315,6 @@ begin
   _to := '';                   { UUCP-Systemnamen }
   eol := 0;
 
-
   {$IFDEF unix}
   downarcers[compress_compress] := 'compress -dvf $DOWNFILE';
   downarcers[compress_freeze]   := 'freeze -dif $DOWNFILE';
@@ -891,6 +890,12 @@ begin           // TUUz.WriteHeader
     if typ = 'M' then wrs('TYP: MIME'); *)
     if datei <> '' then wrs('FILE: ' + datei);
     if ddatum <> '' then wrs('DDA: ' + ddatum);
+
+    if References.IndexOf(InReplyTo) = - 1 then
+    begin
+      References.Add(InReplyTo);
+      InReplyTo:='';
+    end;
     for i := 0 to References.Count -1 do
       wrs('BEZ: ' + References[i]);
     if ersetzt <> '' then wrs('ERSETZT: ' + ersetzt);
@@ -1779,6 +1784,7 @@ var
   var
     p,q: integer;
   begin
+    line:=trim(rfcremovecomments(line));
     { enthaelt die In-Reply-To-Zeile eine Message-ID? }
     { falls ja, spitze Klammern bei Bezugs-ID entfernen }
 
@@ -1789,10 +1795,7 @@ var
       line:=copy(line,p+1,q-p-1);
       { eine Message-ID enthaelt ein @ und kein Space }
       if (cpos('@',line)>0) and (cpos(' ',line)=0) then
-      begin
-        hd.References.clear;
-        hd.References.Add(line);
-      end
+        hd.InReplyTo:=line;
     end else
       uline.add('U-In-Reply-To: '+line)
   end;
@@ -2992,6 +2995,8 @@ var
       end;
     end;
 
+var
+  s2, SubjectPart: String;
 begin
   if not mpart then
   with hd do
@@ -3103,9 +3108,25 @@ begin
       wrs(f, 'Control: ' + betreff);
     if mail and (LowerCase(betreff) = '<none>') then
       betreff := '';
+
+    // extract re, aw, sv and replace with "Re: "
+    // don't MIME encode this string
+    // e.g. "Subject: Re: =?ISO-8859-1?Q?abcdef?="
+    SubjectPart := '';
+    p:=cpos(':', Betreff);
+    if p>0 then
+    begin
+      s2 := Trim(LowerCase(LeftStr(Betreff,p-1)));
+      if Pos(';'+s2+';',';re;aw;sv;')>0 then
+      begin
+        SubjectPart := 'Re: ';
+        Betreff := Trim(mid(Betreff,p+1));
+      end;
+    end;                                
     zcrfc.s := IBMToISO(betreff);
     RFC1522form;
-    wrs(f, 'Subject: ' + zcrfc.s);
+    wrs(f, 'Subject: ' + SubjectPart + zcrfc.s);
+
     if keywords <> '' then
     begin
       zcrfc.s := IBMToISO(keywords);

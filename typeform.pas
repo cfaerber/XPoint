@@ -459,6 +459,8 @@ function StringListToString(SL: TStringList): String;
 function ExcludeTrailingPathDelimiter(const s: String): String;
 function IsPathDelimiter(const S: string; Index: Integer): Boolean;
 {$ENDIF }
+procedure StringListSaveToFile(List: TStringList; const FileName: string);
+
 
 
 { ================= Implementation-Teil ==================  }
@@ -1625,5 +1627,56 @@ begin
   Result := (Index > 0) and (Index <= Length(S)) and (S[Index] = PathDelim);
 end;
 {$ENDIF }
+
+function FindURL(s: String; var x, y: Integer): Boolean; overload;
+const
+  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':',';','/','~','?',
+    '-','_','#','=','&','%','@','$',',','+'];
+var
+  u: string;
+begin
+  u := UpperCase(s);
+  x := Pos('HTTP://',u); {WWW URL ?}
+  if x=0 then x:=Pos('HTTPS://',u);  {HTTPS URL ?}
+  if x=0 then x:=Pos('GOPHER://',u); {Gopher URL ?}
+  if x=0 then x:=Pos('FTP://',u);    {oder FTP ?}
+  if x=0 then x:=Pos('WWW.',u);      {oder WWW URL ohne HTTP:? }
+  if x=0 then x:=Pos('HOME.',u);     {oder WWW URL ohne HTTP:? }
+  if x=0 then x:=Pos('FTP.',u);      {oder FTP URL ohne HTTP:? }
+  if x=0 then x:=Pos('URL:',u);      {oder explizit mark. URL? }
+  if x=0 then x:=Pos('URN:',u);      {oder explizit mark. URN? }
+  if x=0 then x:=Pos('URI:',u);      {oder explizit mark. URL? }
+  if x=0 then x:=Pos('MAILTO:',u);   {oder MAILTO: ?}
+
+  y:=x;
+  Result := x <> 0; s := s + ' ';
+  if Result then
+  begin
+    while (y<=length(s)) and (s[y] in urlchars) do
+    begin
+      // "," is a valid url char, but test for things like
+      // "see on http:///www.openxp.de, where" ...
+      // in this case, "," does not belong to the url
+      if ((s[y] = ',') or (s[y] = '.')) and (y<Length(s)) and (not (s[y+1] in urlchars)) then
+        break;
+      inc(y); {Ende der URL suchen...}
+    end;
+  end;
+end;
+
+procedure StringListSaveToFile(List: TStringList; const FileName: string);
+var
+  fs: TFileStream;
+  i: Integer;
+  s: String;
+begin
+  fs := TFileStream.Create(FileName, fmCreate);
+  for i := 0 to List.Count - 1 do
+  begin
+    s := List[i] + #13#10;
+    fs.Write(s[1], Length(s));
+  end;
+  fs.Free;
+end;
 
 end.

@@ -110,7 +110,7 @@ begin
   for iFile:=0 to NewFiles.Count-1 do
   begin
     FilesToProcess.Add(NewFiles[iFile]);
-    CallFilter(false, NewFiles[iFile]);
+    CallFilter(true, NewFiles[iFile]);
   end;
   NewFiles.Destroy;
   Debug.DebugLog('xpnczconnect','Files remaining to process: '+StringListToString(FilesToProcess),DLDebug);
@@ -189,6 +189,7 @@ begin { ZConnectNetcall }
   Debug.DebugLog('xpnczconnect','zc netcall starting',DLInform);
   result:=el_noconn;
 
+  OutFilter(ppfile);
   // Compress outgoing packets
   CopyFile(ppfile,PufferFile);
   if Diskpoll then

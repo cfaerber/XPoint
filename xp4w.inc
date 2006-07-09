@@ -999,7 +999,7 @@ begin
 //      miso:=ConvIso;
 //      if dbReadInt(mbase,'netztyp') and $2000<>0   { CHARSET: ISO1 }
 //        then ConvIso:=false;
-        lres:=Listfile(fn,ldisp,false,true,(ReadMessageType<>rmHexDump) and Enable_UTF8,1+iif(MultiPartType <> mpMulti,2,0));
+        lres:=Listfile(fn,ldisp,false,true,(ReadMessageType<>rmHexDump) and Enable_UTF8,1+iif(MultiPartType <> mpMulti,2,2));
 //      ConvIso:=miso;
         listkommentar:=lksave;
         fnproc[0,3]:=dummyFN;
