@@ -26,7 +26,12 @@
 
 { OS speceific uses }
 
-uses xpcurses,unix;
+uses xpcurses
+{$IFDEF FPC }
+{ HJT 08.10.06 tzseconds }
+,unixutil
+{$ENDIF}
+,unix;
 
 { local declaritions }
 
@@ -51,11 +56,18 @@ var
   tzBase, tzMinutes, tzHours: LongInt;
   isNegative: boolean;
   s: string;
+{ HJT 08.10.06 Variablen aus unit unix/unixutil nicht ueberschreiben }
+{$IFDEF FPC }
   tzseconds: LongInt;
   tzdaylight: Boolean;
+{$ENDIF}
 begin
+{
+{ HJT 08.10.06 Werte aus unit unix/unixutil nicht ueberschreiben }
+{$IFDEF FPC }
   tzseconds := 0;
   tzdaylight := False;
+{$ENDIF}
   { Abweichung in positiven Minuten darstellen }
   if (tzseconds < 0) then begin
     isNegative:= true;
