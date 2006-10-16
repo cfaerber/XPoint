@@ -457,7 +457,21 @@ begin
         tfehler('XReadF: '+ioerror(ioresult,getreps(306,strs(ablage))),30);  { 'Fehler beim Lesen aus Ablage %s' }
         goto ende;
         end;
-      if iso then Iso1ToIBM(p^,rr);
+
+       { HJT 15.10.06 kein Konvertieren, wenn ein externer Editor }
+       { aufgerufen wird. Hierher kommen wir nicht bei der Erst-  }
+       { anlage eines Replys, insofern stimmt der Characterset    }
+       { bereits, und darf keinesfalls geaendert werden           }       
+       if iso 
+       then
+         if ((exteditor=3) or (exteditor=2))  and 
+            (VarEditor<>'') and (FirstChar(VarEditor)<>'*') 
+         then
+           Debug.DebugLog('xp3.pas','XreadF, '
+                          +'NOT calling Iso1ToIBM(extern editor)', DLDebug)
+         else
+           Iso1ToIBM(p^,rr);
+//    if iso then Iso1ToIBM(p^,rr);
       blockwrite(f,p^,rr);
       if inoutres<>0 then begin
         tfehler('XReadF: '+ioerror(ioresult,getres(307)),30);  { 'Fehler beim Schreiben in Datei' }

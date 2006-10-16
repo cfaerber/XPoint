@@ -57,14 +57,14 @@ var
   isNegative: boolean;
   s: string;
 { HJT 08.10.06 Variablen aus unit unix/unixutil nicht ueberschreiben }
-{$IFDEF FPC }
+{$IFNDEF FPC }
   tzseconds: LongInt;
   tzdaylight: Boolean;
 {$ENDIF}
 begin
 {
 { HJT 08.10.06 Werte aus unit unix/unixutil nicht ueberschreiben }
-{$IFDEF FPC }
+{$IFNDEF FPC }
   tzseconds := 0;
   tzdaylight := False;
 {$ENDIF}
