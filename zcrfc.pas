@@ -2236,7 +2236,12 @@ begin
       end;
 
       try
-      if (mailuser <> '') and (mailuser <> hd.xempf[0]) then
+      { HJT 10.11.06  wenn hd.xempf.count = 0 ist, wird  }
+      { gegebenenfalls unnoetigerweise! eine Ausnahme    }
+      { ausgeloest. Dies fuehrt in der Folge zu Unstabi- }
+      { litaten, bis hin zu nicht gemeldeten Ausnahmen   }
+      { if (mailuser <> '') and (mailuser <> hd.xempf[0]) then }
+      if (mailuser <> '') and (hd.xempf.count > 0) and (mailuser <> hd.xempf[0]) then
       begin
        // Envelope-Empfaenger einsetzen
         hd.xoem.Assign(hd.xempf);
@@ -2278,14 +2283,15 @@ begin
         inc(hd.groesse, length(s));
       end;
       WriteHeader;
-    end
-    else
-      if CommandLine then  writeln;
+    end;
 
     // Die komplette Mail nach dem Header schreiben jetzt rausschieben
     for i := 0 to Mail.Count - 1 do
       wrfs(Mail[i]);
   end;
+
+  if CommandLine then  writeln;
+
   close(f1);
   pfrec:= @f1;
 {$IFNDEF UnixFS}
