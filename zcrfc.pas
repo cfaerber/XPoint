@@ -230,37 +230,6 @@ end;
 
 function unbatch(s: string): boolean; forward;
 
-{ HJT 12.01.2006                                  }
-{ Aus dekodierten RFC-Headerzeilen alle Zeichen   }
-{ entfernen, die dazu fuehren wuerden, dass ein   }
-{ mehrzeiliger ZConnect-Header entsteht.          }
-{ 'in the wild' wurden solche Header speziell bei }
-{ kodierten X-Face-Headern gesichtet.             }
-{ Auch der 'ZPR' kommt mit den gefoldeten Headern }
-{ nicht klar.                                     }
-function remove_crlf(const s : string): string;
-var 
-    len : integer; 
-    i   : integer;
-    z   : integer;
-begin
-    len := length(s);
-    SetLength(result, len); 
-    z := 0;
-    for i := 1 to len do begin
-        if (Ord(s[i]) <> $0d) and (Ord(s[i]) <> $0a) then begin
-            z := z + 1;
-            result[z] := s[i];
-        end
-        else begin
-            Debug.DebugLog('zcrfc', 'remove_crlf, removed '
-                           +Hex(Ord(s[i]),2)+' from header: '
-                           +'<'+s+'>', DLInform);
-        end;
-    end;
-    SetLength(result, z);
-end;
-
 constructor TUUZ.create;
 var
   t: Text;
@@ -2092,11 +2061,7 @@ begin
 
     for i := 0 to ULine.Count-1 do
     begin
-      s := ULine[i];
-      s := RFC2047_Decode(s,csCP437);
-      { HJT 12.01.2006: gegebenenfalls cr/lf entfernen }
-      { ULine[i] := s; }
-      ULine[i] := remove_crlf(s);
+      ULine[i] := RFC2047_Decode(ULine[i],csCP437);
     end;
 
     if pm_reply then
@@ -2231,7 +2196,12 @@ begin
       end;
 
       try
-      if (mailuser <> '') and (mailuser <> hd.xempf[0]) then
+      { HJT 10.11.06  wenn hd.xempf.count = 0 ist, wird  }
+      { gegebenenfalls unnoetigerweise! eine Ausnahme    }
+      { ausgeloest. Dies fuehrt in der Folge zu Unstabi- }
+      { litaten, bis hin zu nicht gemeldeten Ausnahmen   }
+      { if (mailuser <> '') and (mailuser <> hd.xempf[0]) then }
+      if (mailuser <> '') and (hd.xempf.count > 0) and (mailuser <> hd.xempf[0]) then
       begin
        // Envelope-Empfaenger einsetzen
         hd.xoem.Assign(hd.xempf);
@@ -2273,14 +2243,15 @@ begin
         inc(hd.groesse, length(s));
       end;
       WriteHeader;
-    end
-    else
-      if CommandLine then  writeln;
+    end;
 
     // Die komplette Mail nach dem Header schreiben jetzt rausschieben
     for i := 0 to Mail.Count - 1 do
       wrfs(Mail[i]);
   end;
+
+  if CommandLine then  writeln;
+
   close(f1);
   pfrec:= @f1;
 {$IFNDEF UnixFS}
