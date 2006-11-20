@@ -37,10 +37,10 @@
   close(InFile);
 
   if ($RELEASE eq "1") {
-    $OPTS = "-CX -O3p5ur";
+    $OPTS = "-CX -O3p5u";
   } else
   {
-    $OPTS = "-gl -O1";
+    $OPTS = "-gl -O3p5u";
   }
 
 
