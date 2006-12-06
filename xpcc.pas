@@ -46,7 +46,8 @@ procedure read_verteiler(name:string; var cc:ccp; var cc_anz:integer16);
 procedure write_verteiler(var name:string; var cc:ccp; cc_anz:integer);
 procedure edit_verteiler(name:string; var anz:integer16; var brk:boolean);
 procedure del_verteiler(name:string);
-
+procedure cc_move( sidx, didx, cnt : integer);  { HJT: 16.04.2006 }
+procedure cc_reset;                             { HJT: 16.04.2006 }
 function  cc_test1(var s:string):boolean;
 function  cc_testempf(var s:string):boolean;
 
@@ -384,7 +385,7 @@ var t : text;
     s : string;
 begin
   cc_anz:=0;
-  fillchar(cc^,sizeof(cc^),0);
+  cc_reset;
   assign(t,CCfile);
   reset(t);
   if ioresult=0 then begin
@@ -465,6 +466,53 @@ begin
   if not brk then
     write_verteiler(name,cc,anz);
   dispose(cc);
+end;
+
+{ HJT: 16.04.2006: bildet move fuer cc nach       }
+{ move auf Ansistrings ist generell nicht erlaubt }
+procedure cc_move( sidx, didx, cnt : integer);
+begin
+  { Wenn Quell- und Zielbereich identisch ist, gibt es nichts zu tun }
+  if sidx <> didx then 
+  begin
+    if (didx <= sidx) OR (didx >= (sidx + cnt)) then 
+    begin
+      { Quell- und Zielbereiche ueberlappen sich nicht: von }
+      { niedrigeren Indizes nach hoeheren Indizes kopieren  }    
+      while cnt > 0 do
+      begin
+        cc^[didx] := cc^[sidx];
+        inc(didx);
+        inc(sidx);
+        dec(cnt);
+      end
+    end
+    else
+    begin
+      { Quell- und Zielbereiche ueberlappen sich: von   }
+      { hoeheren nach niedrigeren Indizes kopieren      }
+      inc(didx, cnt - 1);
+      inc(sidx, cnt - 1);  
+      while cnt > 0 do
+      begin
+        cc^[didx] := cc^[sidx];            
+        dec(didx);
+        dec(sidx);
+        dec(cnt);
+      end
+    end;
+  end;
+end;
+
+{ HJT: 16.04.2006: Initialisiert den cc-Array mit Leerstrings }
+procedure cc_reset;
+var
+  i : integer;
+begin
+  for i := 1 To maxcc do 
+  begin
+    cc^[i] := '';
+  end;
 end;
 
 end.
