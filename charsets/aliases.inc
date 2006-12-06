@@ -766,6 +766,15 @@ begin
   if name='CP819'                   then result :='ISO-8859-1'            else
   if name='CSISOLATIN1'             then result :='ISO-8859-1'            else
 
+  { HJT 03.12.06 aus der Version 4.10 uebernommen             }
+  { zwingend bei der Verwendung eines externen Editors noetig }
+
+  (* additional alias: LATIN-1                                             *)
+  (* additional alias: ISO1                                                *)
+
+  if name='LATIN-1'                 then result :='ISO-8859-1'            else
+  if name='ISO1'                    then result :='ISO-8859-1'            else
+
 (* Name: ISO_8859-2:1987                                    [RFC1345,KXS2]    *)
 (* MIBenum: 5                                                                 *)
 (* Source: ECMA registry                                                      *)
