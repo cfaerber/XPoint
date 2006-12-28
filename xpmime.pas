@@ -341,7 +341,7 @@ var   hdp      : THeader;
     end;
 
     procedure GetParam;   { Content-Type-Parameter parsen }
-    var p : byte;
+    var p : integer;      { 28.12.2006  Hermann Jurksch }
     begin
       parname:=LowerCase(GetToken(s,'='));
       parvalue:='';
