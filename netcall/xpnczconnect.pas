@@ -109,8 +109,11 @@ begin
   closebox;
   for iFile:=0 to NewFiles.Count-1 do
   begin
+    Debug.DebugLog('xpnczconnect','FilesToProcess.Add:<'+NewFiles[iFile]+'>',DLDebug);
     FilesToProcess.Add(NewFiles[iFile]);
-    CallFilter(true, NewFiles[iFile]);
+    { HJT 28.12.2006 don't call the filter programm hier }
+    { it's called in netcall() / xpnetcall.pas           }
+    { CallFilter(true, NewFiles[iFile]); }
   end;
   NewFiles.Destroy;
   Debug.DebugLog('xpnczconnect','Files remaining to process: '+StringListToString(FilesToProcess),DLDebug);
