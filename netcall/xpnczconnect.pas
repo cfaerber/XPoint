@@ -109,8 +109,11 @@ begin
   closebox;
   for iFile:=0 to NewFiles.Count-1 do
   begin
+    Debug.DebugLog('xpnczconnect','FilesToProcess.Add:<'+NewFiles[iFile]+'>',DLDebug);
     FilesToProcess.Add(NewFiles[iFile]);
-    CallFilter(true, NewFiles[iFile]);
+    { HJT 28.12.2006 don't call the filter programm hier }
+    { it's called in netcall() / xpnetcall.pas           }
+    { CallFilter(true, NewFiles[iFile]); }
   end;
   NewFiles.Destroy;
   Debug.DebugLog('xpnczconnect','Files remaining to process: '+StringListToString(FilesToProcess),DLDebug);
@@ -184,11 +187,16 @@ var
 var
   ShellCommandUparcer,UpArcFile: string;
   Proceed: Boolean;
+  orig_ppfile_name: string; { HJT 01.01.07 }
 
 begin { ZConnectNetcall }
-  Debug.DebugLog('xpnczconnect','zc netcall starting',DLInform);
+  Debug.DebugLog('xpnczconnect','ZConnectNetcall, netcall starting'
+                 +', Diskpoll:'+iifs(Diskpoll,'True','False')
+                 +', ppfile:<'+ppfile+'>'
+                 ,DLInform);
   result:=el_noconn;
 
+  orig_ppfile_name:=ppfile; { HJT 01.01.07 outfilter aendert event. den Namen! }
   OutFilter(ppfile);
   // Compress outgoing packets
   CopyFile(ppfile,PufferFile);
@@ -196,17 +204,27 @@ begin { ZConnectNetcall }
     UpArcFile:=boxpar^.sysopout
   else
     UpArcFile:='CALLER.'+boxpar^.uparcext;
+  Debug.DebugLog('xpnczconnect','ZConnectNetcall'
+                 +', UpArcFile:<'+UpArcFile
+                 ,DLDebug);
   ShellCommandUparcer:=boxpar^.uparcer;
   exchange(ShellCommandUparcer,'$PUFFER',PufferFile);
   exchange(ShellCommandUparcer,'$UPFILE',UpArcFile);
   OutgoingFiles:=TStringList.Create;
   if ShellNTrackNewFiles(ShellCommandUparcer,500,1,OutgoingFiles)<>0 then begin
     trfehler(713,30);  { 'Fehler beim Packen!' }
+    Debug.DebugLog('xpnczconnect','ZConnectNetcall'
+                   +', Loesche:<'+PufferFile,DLDebug);
     _era(PufferFile);
     OutgoingFiles.Destroy;
     exit;
     end
-  else _era(PufferFile);
+  else 
+  begin
+    Debug.DebugLog('xpnczconnect','ZConnectNetcall'
+                   +', Loesche:<'+PufferFile+'>',DLDebug);
+    _era(PufferFile);
+  end;
 
   case Diskpoll of
     false: begin  // use mailer to transfer files
@@ -253,13 +271,21 @@ begin { ZConnectNetcall }
 
   ProcessIncomingFiles(IncomingFiles,ownpath+xferdir,ownpath+infiledir,boxpar);
 
-  if result IN [el_recerr,el_ok] then begin
+  if result IN [el_recerr,el_ok] then 
+  begin
     Debug.DebugLog('xpnczconnect','sending upbuffer was successful, clearing',DLInform);
-    if FileExists(ppfile) then begin
-      ClearUnversandt(ppfile,box, nil);
-      _era(ppfile);
-      end;
+    if FileExists(orig_ppfile_name) then { HJT 01.01.07 Originalpuffer, nicht den Filterpuffer}
+    begin
+      ClearUnversandt(orig_ppfile_name,box, nil);
+      Debug.DebugLog('xpnczconnect','ZConnectNetcall, loesche:<'+orig_ppfile_name+'>',DLDebug);
+      _era(orig_ppfile_name);
     end;
+    if FileExists(ppfile) then 
+    begin
+      Debug.DebugLog('xpnczconnect','ZConnectNetcall, loesche:<'+ppfile+'>',DLDebug);
+      _era(ppfile);
+    end;
+  end;
 
   OutgoingFiles.Destroy;
 end;

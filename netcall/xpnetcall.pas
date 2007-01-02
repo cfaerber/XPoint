@@ -118,7 +118,10 @@ begin
   exchange(fp,'$PUFFER',fn);
   nope:=not FileExists(fn);
   if nope then MakeFile(fn);
-  Debug.Debuglog('xpnetcall', 'Aufruf ' + iifs(input, 'Eingangsfilter', 'Ausgangsfilter') + ': ' + fp, DLInform);
+  Debug.Debuglog('xpnetcall', 'CallFilter, Aufruf ' + 
+                              iifs(input, 'Eingangsfilter', 'Ausgangsfilter') + ': ' + fp, 
+                              DLInform);
+  Debug.Debuglog('xpnetcall', '   fn:<'+fn+'>', DLDebug);
   shell(fp,600,3);
   if nope then _era(fn);
 end;
@@ -129,11 +132,15 @@ const
 begin
   if (boxpar^.aFilter<>'') and Filecopy(ppfile,FilterPuffer) then
   begin
+    Debug.Debuglog('xpnetcall', 'OutFilter, Copied file:<'+ppfile+'>, to:<'+FilterPuffer+'>', DLDebug);
+    Debug.Debuglog('xpnetcall', 'OutFilter, calling Filter', DLDebug);
     ppfile := FilterPuffer;
     CallFilter(false,ppfile);
     Result := true;
   end else
     Result := false; 
+
+  Debug.Debuglog('xpnetcall', 'result OutFilter:'+iifs(result,'True','False'), DLDebug);
 end;
 
 procedure AppLog(var logfile:string; const dest:string);   { Log an Fido/UUCP-Gesamtlog anhängen }
@@ -179,7 +186,7 @@ var f      : file;
       uvl  : boolean;
       uvs  : byte;
       MsgIDFound : boolean;
-      CCs, i: Integer;
+      CCs   : Integer;
   begin
     with Header do
     begin
@@ -329,13 +336,23 @@ end;}
 procedure SendNetzanruf(const logfile: string);
 var betreff,hd: string;
 begin
-  if not FileExists(logfile)then exit;
+  Debug.DebugLog('xpnetcall','SendNetzanruf, logfile:<'+logfile+'>',DLDebug);
+  if not FileExists(logfile)then 
+  begin
+    Debug.DebugLog('xpnetcall','SendNetzanruf, logfile:<'+logfile+'> existiert nicht!',DLInform);
+    exit;
+  end;
   betreff:=getres2(700,4)+getres2(700,8)+ { 'Netzanruf' + ' bei ' }
            boxpar^.boxname;
+  Debug.DebugLog('xpnetcall','SendNetzanruf, betreff:<'+betreff+'>',DLDebug);
+
   hd:='';
   if DoSend(false,logfile,false,false,netbrett,betreff,
             false,false,false,false,false,nil,hd,sendIntern+sendShow) then
+  begin
+    Debug.DebugLog('xpnetcall','SendNetzanruf, calling SetUngelesen',DLDebug);
     SetUngelesen;
+  end
 end;
 (* var t,log         : text;
     fn            : string;
@@ -927,7 +944,12 @@ end;
 var NetcallLogfile,CrashBoxName: String;
 
 begin                  { function Netcall }
-  Debug.DebugLog('xpnetcall','function Netcall',DLInform);
+  Debug.DebugLog('xpnetcall','function Netcall'
+                 +', BoxName:<'+BoxName+'>'
+                 +', PerformDial: '+iifs(PerformDial,'True','False')
+                 +', DialOnlyOnce: '+iifs(DialOnlyOnce,'True','False')
+                 +', FidoCrash: '+iifs(FidoCrash,'True','False')
+                 ,DLInform);
   result:=true; Netcall_connect:=false; logopen:=false; netlog:=nil;
 
   if not FidoCrash then begin
@@ -1072,7 +1094,8 @@ begin                  { function Netcall }
           EL_break  : begin result:=false; end;
         else begin result:=true; end;
           end; {case}
-        SendNetzanruf(NetcallLogFile);
+        SendNetzanruf(NetcallLogFile);        
+        if result and netcallunmark then markanz:=0; { HJT 30.12.06 ggf. /N/U/Z-Nachrichten demarkieren }
         end; {case nt_Fido}
 
       nt_ZConnect: begin
@@ -1087,6 +1110,7 @@ begin                  { function Netcall }
         else begin result:=true end;
           end; {case}
         SendNetzanruf(NetcallLogFile);
+        if result and netcallunmark then markanz:=0; { HJT 30.12.06 ggf. /N/U/Z-Nachrichten demarkieren }
         end; {case nt_ZConnect}
 
       nt_UUCP: begin
@@ -1101,6 +1125,7 @@ begin                  { function Netcall }
         else begin result:=true end;
           end; {case}
         SendNetzanruf(NetcallLogFile);
+        if result and netcallunmark then markanz:=0; { HJT 30.12.06 ggf. /N/U/Z-Nachrichten demarkieren }
         end; {case nt_UUCP}
 
       nt_Client: begin
@@ -1116,6 +1141,7 @@ begin                  { function Netcall }
           end; {case}
         SendNetzanruf(BoxPar^.ClientPath + 'XPCLIENT.LOG');
         SafeDeleteFile(BoxPar^.ClientPath + 'XPCLIENT.LOG');
+        if result and netcallunmark then markanz:=0; { HJT 30.12.06 ggf. /N/U/Z-Nachrichten demarkieren }
       end; {case nt_Client}
 
       nt_POP3: begin
@@ -1131,6 +1157,7 @@ begin                  { function Netcall }
           if GetPOP3Mails(BoxName,Boxpar,BoxPar^._Domain,IncomingFiles,DeleteSpoolFiles)then
             if netcall_connect then result:= true;
         end;
+        if result and netcallunmark then markanz:=0; { HJT 30.12.06 ggf. /N/U/Z-Nachrichten demarkieren }
       end; {case nt_POP3}
 
       nt_NNTP: begin
@@ -1138,6 +1165,7 @@ begin                  { function Netcall }
         netcall_connect:= SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
         if GetNNTPMails(BoxName,Boxpar,IncomingFiles,DeleteSpoolFiles)then
           if netcall_connect then result:= true;
+        if result and netcallunmark then markanz:=0; { HJT 30.12.06 ggf. /N/U/Z-Nachrichten demarkieren }
       end;
 
       else
@@ -1151,7 +1179,7 @@ begin                  { function Netcall }
   end; {if PerformDial}
 
   Debug.DebugLog('xpnetcall','Netcall finished. Incoming: '+StringListToString(IncomingFiles),DLDebug);
-  
+
   if (IncomingFiles.Count>0)and MergeFiles(IncomingFiles)then begin
     CallFilter(true,IncomingFiles[0]);
     if PufferEinlesen(IncomingFiles[0],boxname,false,false,true,pe_Bad)then
@@ -1162,6 +1190,10 @@ begin                  { function Netcall }
       ImportOK := false;
   end else
     ImportOK := true;
+
+  Debug.DebugLog('xpnetcall','DeleteSpoolFiles.Count: '
+                 +IntToStr(DeleteSpoolFiles.Count),DLDebug);
+
 
   if ImportOK and (DeleteSpoolFiles.Count>0) then 
     if boxpar^.SysopMode or nDelPuffer then

@@ -29,7 +29,8 @@ interface
 
 uses
   xpglobal,
-  sysutils;
+  sysutils,
+  debug;
 
 const
 {$ifdef Win32}
@@ -171,6 +172,9 @@ procedure FileToClip(fn:TFilename);
 {$ifdef UseClipFile }
 begin
   if FileExists(fn) then begin
+    Debug.DebugLog('clip','FileToClip (UseClipFile)'
+                   +', fn:<'+fn+'>'
+                   ,dlDebug);
     if CopyFile(fn, ClipFilename) then
 {$IFDEF unix}
       SetAccess(ClipFilename, taUserRW)
@@ -185,6 +189,9 @@ var
   MemHandle: HGlobal;
   Q: pChar;
 begin
+  Debug.DebugLog('clip','FileToClip (Win32)'
+                 +', fn:<'+fn+'>'
+                 ,dlDebug);
   assign(f, fn);
   reset(f, 1);
   if ioresult=0 then
@@ -200,11 +207,16 @@ begin
       GlobalUnlock(MemHandle);
       // Insert data into clipboard
       SetClipboardData(cf_OEMText, MemHandle);
-      GlobalFree(MemHandle);
-    end;
+      { HJT 29.12.06 dont free, its owned by clipboard! }
+      { GlobalFree(MemHandle);}
+    end
+    else
+      Debug.DebugLog('clip','FileToClip (Win32), OpenClipboard(0) failed',dlDebug);
     CloseClipboard;
     Close(f);
-  end;
+  end
+  else
+    Debug.DebugLog('clip','FileToClip (Win32), reset(f, 1) failed',dlDebug);
 end;
 {$ELSE }
 begin
