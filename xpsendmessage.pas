@@ -881,8 +881,9 @@ end;
 
   procedure DisplaySendbox;
   var
-    ToStr: String;
-    ToPos: Integer;
+    ToStr    : String;
+    ToPos,
+    ToTMPPos : Integer;
   begin
     diabox(78,13+fadd,typ,x,y);
     moff;
@@ -899,6 +900,9 @@ end;
     
     ToStr := getres2(611,11); { '^An' }
     ToPos := cpos('^', ToStr);
+    ToTMPPos := ToPos;			   { stv - um den Wert ToPos mit nach unten für das 
+                                             Highlighning von ^An zu nehmen und nicht von 
+					     Serverb^ox überschreiben zu lassen }
     fidokey := copy(ToStr, ToPos+1, 1);    { '(A)n' }
     Delete(ToStr, ToPos, 1);
 		
@@ -943,7 +947,7 @@ end;
 
     if echomail then
     begin
-      wrt(x+3,y+2,fidokey);           { 'A' }
+      wrt(x+2+ToTMPPos,y+2,fidokey);           { 'A' }
       wrt(x+14,y+2,fidoto);
      end; 
     showbetreff;
