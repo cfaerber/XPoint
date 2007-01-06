@@ -7124,7 +7124,36 @@ bundenen externen Lister.
 
 @
 8077
-Enable_UTF8
+Diese Option schaltet die Benutzung von UTF-8 fr
+Multipart-Nachrichten fr den internen Lister ein. 
+Unter Windows muss fr die Konsole, in der OpenXP 
+l„uft, ein entsprechender TT-Font ausgew„hlt werden 
+(z.B. Lucidia Console), Raster-/Bitmap-Fonts k”nnen
+nicht gew„hlt werden. Alle Zeichen und Zeichens„tze
+der anzuzeigenden Nachricht, die der gew„hlte Font
+untersttzt, werden im Lister korrekt angezeigt.
+Beim Beantworten der angezeigten Nachricht wird aber
+wieder, gegebenenfalls verlustbehaftet, in den
+Charset IBM437 gewandelt.
+
+M”chten Sie diese Funktion ebenfalls fr Singlepart-
+Nachrichten nutzen, setzen Sie bitte zus„tzlich in
+der jeweiligen Boxen.BGF den Schalter
+UUZ-RecodeCharset auf "N".
+
+<<ACHTUNG>>:  Setzen Sie UUZ-RecodeCharset nur dann, wenn
+          Sie sicher sind, nicht irgendwann mit einem 
+          16bit CrossPoint auf die Datenbank zu-
+          greifen wollen. Zudem ist nicht sicher-
+          gestellt, daá bei dieser Einstellung der
+          Nachrichtenaustausch zu anderen Netzen 
+          ordnungsgem„á funktioniert.
+
+          Kurzgesagt: da diese Funktionalit„t rein
+                      experimentell ist, sehen Sie
+                      von der Verwendung ab!
+           
+                      You have been warned.
 @
 237
 In vielen Netzen ist es blich, hervorgehobene W”r-
