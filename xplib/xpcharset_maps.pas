@@ -84,6 +84,8 @@ function GetT8BitTable(CharSet: TMimeCharsets): T8BitTable;
 
 implementation
 
+uses debug;
+
 function GetT8BitTable(CharSet: TMimeCharsets): T8BitTable;
 begin
   case CharSet of
@@ -111,6 +113,15 @@ begin
     csISO8859_15: Result := ISO8859_15TransTable;
     csISO8859_16: Result := ISO8859_16TransTable;
     csISO646DE:	Result := ISO646DE_TransTable;
+    { HJT 06.01.07 Notbremse! Qickfix. siehe IsKnownCharset }
+    { Wir braeuchten zB. einen UTF-7 Decorder               }
+    else
+      Debug.DebugLog('xpcharset_codec','GetT8BitTable'                    
+                     +', No charset table for Charset:<'
+                     +MimeGetCharsetName(Charset)+'>'
+                     +', setting charset table to CP1252Transtable'
+                     ,DLInform);
+     Result := CP1252Transtable;
   end;
 end;
 
