@@ -383,9 +383,15 @@ end;
 function read_verteiler(name:string; var cc:ccp): Integer;
 var t : text;
     s : string;
+    i : integer;
 begin
   Result:=0;
-  cc_reset;
+  { cc_reset; }
+  for i := 1 To maxcc do { HJT 12.01.20 cc_reset only for xpsendmessage.cc ! }
+  begin
+    cc^[i] := '';
+  end;
+  
   assign(t,CCfile);
   reset(t);
   if ioresult=0 then begin
@@ -507,7 +513,7 @@ begin
   end;
 end;
 
-{ HJT: 16.04.2006: Initialisiert den cc-Array mit Leerstrings }
+{ HJT: 16.04.2006: Initialisiert den cc-Array mit Leerstrings, only for xpsendmessage.cc ! }
 procedure cc_reset;
 var
   i : integer;
