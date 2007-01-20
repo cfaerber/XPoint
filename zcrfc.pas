@@ -786,7 +786,7 @@ begin           // TUUz.WriteHeader
   with hd do
   begin
     { HJT 19.03.2006 nur nicht-leere EMP schreiben     }
-    { und damit gegebenebfalls Dummy EMP /UNZUSTELLBAR }
+    { und damit gegebenenfalls Dummy EMP /UNZUSTELLBAR }
     { ToDo: Aufnahme von leeren EMP unterbinden        }
     // if XEmpf.Count = 0 then wrs('EMP: /UNZUSTELLBAR');
     emp_writen:=false;
@@ -1598,6 +1598,12 @@ var
       hd.Uline.Add('U-To: ' + s0)
     else
     begin
+      { HJT 20.01.07 chance auf /UNZUSTELLBAR nicht verbauen, s.u. s0 := s0 + '@' + '??' -> /?? }
+      if Length(s0) = 0 then  
+      begin
+        Debug.DebugLog('zcrfc', 'TUUz.ReadRFCheader.GetEmpf, ignoring empty ''To''', DLInform);
+        exit;
+      end;
       sto := trim(s0);
       if lastchar(sto) <> ',' then sto := sto + ',';
       hd.Empfaenger.Clear;
@@ -2114,6 +2120,7 @@ begin
   OpenFile(fn);
   while bufpos < bufanz do
   begin
+    Debug.DebugLog('zcrfc', 'TUUz.ConvertMailfile, Start New Mail', DLDebug);
     ClearHeader;
     hd.netztyp:=nt_UUCP;
     FirstLineHasBeenRead:=False;
@@ -2262,6 +2269,7 @@ begin
 {$IFNDEF UnixFS}
   FileSetAttr(pfrec^.name,0);             { Archivbit abschalten }
 {$ENDIF}
+  Debug.DebugLog('zcrfc', 'TUUz.ConvertMailfile, Exit', DLDebug);
 end;
 
 { SMTP-Mail -> ZCONNECT }
