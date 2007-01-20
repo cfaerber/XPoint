@@ -27,7 +27,7 @@ unit xpcc;
 interface
 
 uses  sysutils,typeform,fileio,inout,maske,datadef,database,stack,resource,
-      xp0,xp1,xp1input,xpglobal;
+      xp0,xp1,xp1input,xpglobal,debug;
 
 const maxcc = 126;
       ccte_nobrett : boolean = false;
@@ -315,7 +315,8 @@ begin
     ccused[i]:=(cc^[i]<>'');
     end;
   maskdontclear;
-  for i:=cc_anz+2 to maxcc do
+  { for i:=cc_anz+2 to maxcc do }
+  for i:=cc_anz+2 to maxcc - 1 do   { HJT 20.01.07 see freexp xpcc.pas }
     setfieldenable(i,false);
   wrt(x+53,y+h+2,' [F2] ');
   pushhp(600);
@@ -385,6 +386,7 @@ var t : text;
     s : string;
     i : integer;
 begin
+  Debug.DebugLog('xpcc','read_verteiler, verteilername: <'+name+'>',dltrace);
   Result:=0;
   { cc_reset; }
   for i := 1 To maxcc do { HJT 12.01.20 cc_reset only for xpsendmessage.cc ! }
@@ -405,11 +407,14 @@ begin
         if (trim(s)<>'') and not is_vname(s) then begin
           inc(cc_anz);
           cc^[cc_anz]:=LeftStr(s,79);
+          Debug.DebugLog('xpcc','read_verteiler,     cc^['+IntToStr(cc_anz)+']: <'+cc^[cc_anz]+'>',dltrace);
           end;
       until eof(t) or is_vname(s);
     close(t);
     end;
   if ioresult<>0 then;
+  Result:=cc_anz;   { HJT 20.01.07 }
+  Debug.DebugLog('xpcc','read_verteiler, Anz: '+IntToStr(Result),dltrace);
 end;
 
 
