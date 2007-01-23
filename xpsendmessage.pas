@@ -947,7 +947,8 @@ end;
 
     if echomail then
     begin
-      wrt(x+2+ToTMPPos,y+2,fidokey);           { 'A' }
+      wrt(x+2+ToPos,y+2,fidokey);            { 'A' }
+      { wrt(x+3,y+2,fidokey);           { 'A' } { st. Tell 04.01.2007 20:10 r7321 }
       wrt(x+14,y+2,fidoto);
      end; 
     showbetreff;
@@ -1033,7 +1034,10 @@ begin
       sData.References.Clear;
     end else 
       if RFCAppendOldSubject and (netztyp in netsRFC) then
+      begin
+        ReCount(oldbetr); { HJT 23.01.07 Re:/Re^ in oldbetr abschneiden }
         betreff:=betreff+' ('+getres(619)+': '+oldbetr+')';
+      end;
     pophp;
     if brk then exit;
   end;
