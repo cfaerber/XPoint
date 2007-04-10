@@ -747,11 +747,26 @@ begin
 end;
 
 procedure TUUz.wrfs(const s: string);
+  var 
+    toflush:  Integer;
+    copyfrom: Integer;
 begin
-  if outbufpos + length(s) >= bufsize then
+  { HJT 09.04.07, rewrite, siehe SF: '[ 1652877 ] Absturz beim Nachrichtenkonvertieren' }
+  toflush := outbufpos + Length(s);
+  copyfrom := 0;
+  while toflush >= bufsize do
+  begin
+    Move(s[1+copyfrom], outbuf^[outbufpos], bufsize - outbufpos);
+    inc(copyfrom, bufsize - outbufpos);
+    outbufpos := bufsize;
     FlushOutbuf;
-  if Length(s)>0 then Move(s[1], outbuf^[outbufpos], length(s));
-  inc(outbufpos, length(s));
+    dec(toflush, bufsize);
+  end;
+  if toflush > 0 then 
+  begin
+    Move(s[1+copyfrom], outbuf^[outbufpos], Length(s) - copyfrom);
+  end;
+  outbufpos := toflush;
 end;
 
 procedure TUUz.WriteHeader;
