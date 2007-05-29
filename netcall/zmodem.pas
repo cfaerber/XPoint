@@ -1074,7 +1074,7 @@ function TZModemObj.Z_GetHeader(var hdr: hdrtype): integer16;
 (* the appropriate routine.                               *)
 
 label
-  gotcan, again, agn2, splat, done;     {sorry, but it's actually eisier to}
+  gotcan, again, agn2, splat, doneLabel;     {sorry, but it's actually eisier to}
 
 var                                     {follow, and lots more efficient   }
   c, n, cancount: integer16;            {this way...                       }
@@ -1109,7 +1109,7 @@ begin
     ZPAD: {we want this! - all headers begin with '*'.}
       ;
     RCDO,
-      ZTIMEOUT: goto done;
+      ZTIMEOUT: goto doneLabel;
     CAN:
       begin
         gotcan:
@@ -1117,7 +1117,7 @@ begin
         if (cancount < 0) then
         begin
           c := ZCAN;
-          goto done
+          goto doneLabel
         end;
         c := Z_GetByte(2);
         case c of
@@ -1125,16 +1125,16 @@ begin
           ZCRCW:
             begin
               c := ZERROR;
-              goto done
+              goto doneLabel
             end;
-          RCDO: goto done;
+          RCDO: goto doneLabel;
           CAN:
             begin
               DEC(cancount);
               if (cancount < 0) then
               begin
                 c := ZCAN;
-                goto done
+                goto doneLabel
               end;
               goto again
             end
@@ -1167,7 +1167,7 @@ begin
     ZPAD: goto splat;                   {junk or second '*' of a hex header}
     RCDO,
       ZTIMEOUT:
-      goto done
+      goto doneLabel
   else
     goto agn2
   end;                                  {only falls thru if ZDLE}
@@ -1192,13 +1192,13 @@ begin
     CAN: goto gotcan;
     RCDO,
       ZTIMEOUT:
-      goto done
+      goto doneLabel
   else
     goto agn2
   end; {only falls thru if we got ZBIN, ZBIN32 or ZHEX}
 
   rxpos := Z_PullLongFromHeader(hdr);   {set rxpos just in case this}
-  done:                                 {header has file position   }
+  doneLabel:                                 {header has file position   }
   Z_GetHeader := c;                     {info (i.e.: ZRPOS, etc.   )}
   AddLogMessage('Received header ' + HeaderName(c), DLDebug);
 end;
