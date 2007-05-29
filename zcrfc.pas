@@ -3298,7 +3298,7 @@ var
 
 type rcommand = (rmail,rsmtp,rnews);
 
-  procedure FlushOutbuf(var f: file);
+  procedure FlushOutbuf2(var f: file);
   begin
     if outbufpos > 0 then
       blockwrite(f, outbuf^, outbufpos);
@@ -3309,7 +3309,7 @@ type rcommand = (rmail,rsmtp,rnews);
   begin
     s := s + #10;
     if outbufpos + length(s) >= bufsize then
-      FlushOutbuf(f);
+      FlushOutbuf2(f);
     Move(s[1], outbuf^[outbufpos], length(s));
     inc(outbufpos, length(s));
   end;
