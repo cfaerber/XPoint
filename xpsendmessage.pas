@@ -949,31 +949,35 @@ end;
 
   procedure DisplaySendbox;
   var
-    ToStr: String;
-    ToPos: Integer;
+    ToStr    : String;
+    ToPos,
+    ToTMPPos : Integer;
   begin
     diabox(78,13+fadd,typ,x,y);
     moff;
 
-    ToStr := GetRes2(611,10); { 'E^mpfaenger' }
+    ToStr := GetRes2(611,10); 	           { 'E^mpfaenger' }
     ToPos := CPos('^',ToStr);
-    empfkey := copy(ToStr, ToPos+1, 1); { 'E(m)pfaenger' }
+    empfkey := copy(ToStr, ToPos+1, 1);    { 'E(m)pfaenger' }
     Delete(ToStr, ToPos, 1);
     
-    wrt(x+3,y+2,ToStr+ch); { 'E^mpfaenger' }
+    wrt(x+3,y+2,ToStr+ch); 		   { 'E^mpfaenger' }
     attrtxt(col.coldiahigh);
-    wrt(x+3+ToPos-1,y+2,empfkey); { 'E(m)pfaenger' }
+    wrt(x+3+ToPos-1,y+2,empfkey); 	   { 'E(m)pfaenger' }
     attrtxt(col.coldialog);
     
     ToStr := getres2(611,11); { '^An' }
     ToPos := cpos('^', ToStr);
-    fidokey := copy(ToStr, ToPos+1, 1); { '(A)n' }
+    ToTMPPos := ToPos;			   { stv - um den Wert ToPos mit nach unten für das 
+                                             Highlighning von ^An zu nehmen und nicht von 
+					     Serverb^ox überschreiben zu lassen }
+    fidokey := copy(ToStr, ToPos+1, 1);    { '(A)n' }
     Delete(ToStr, ToPos, 1);
-
+		
     if echomail then begin
-      wrt(x+3,y+4, ToStr);    { 'An' }
+      wrt(x+3,y+4, ToStr);    		   { 'An' }
       inc(y,2);
-      end;
+    end;
 
     wrt(x+4,y+4,mid(getres2(611,12),2));   { 'etreff' }
     attrtxt(col.coldiahigh);    
@@ -981,9 +985,9 @@ end;
     wrt(x+3,y+4,betrkey);
     attrtxt(col.coldialog);
 
-    ToStr := GetRes2(611,13); { 'Serverb^ox' }
+    ToStr := GetRes2(611,13); 		   { 'Serverb^ox' }
     ToPos := CPos('^',ToStr);
-    servkey := copy(ToStr, ToPos+1, 1); { 'Serverb(o)x' }
+    servkey := copy(ToStr, ToPos+1, 1);    { 'Serverb(o)x' }
     Delete(ToStr, ToPos, 1);
 
     wrt(x+3,y+6,ToStr+ch);
@@ -991,7 +995,8 @@ end;
     wrt(x+3+ToPos-1,y+6,servkey);
     attrtxt(col.coldialog);
         
-        wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
+    wrt(x+3,y+8,getres2(611,14));      { 'Groesse' }
+    
     wrt(x+42,y+6,getres2(611,15));     { 'Code:'   }
     showcode; 
     attrtxt(col.coldialog);
@@ -1010,9 +1015,9 @@ end;
 
     if echomail then
     begin
-      wrt(x+2+ToPos,y+2,fidokey);            { 'A' }
+      wrt(x+2+ToTMPPos,y+2,fidokey);            { 'A' }
       wrt(x+14,y+2,fidoto);
-     end;
+     end; 
     showbetreff;
     showbox;
     showsize;
@@ -1096,7 +1101,10 @@ begin
       sData.References.Clear;
     end else 
       if RFCAppendOldSubject and (netztyp in netsRFC) then
+      begin
+        ReCount(oldbetr); { HJT 23.01.07 Re:/Re^ in oldbetr abschneiden }
         betreff:=betreff+' ('+getres(619)+': '+oldbetr+')';
+      end;
     pophp;
     if brk then exit;
   end;

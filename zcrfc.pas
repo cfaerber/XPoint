@@ -744,11 +744,26 @@ begin
 end;
 
 procedure TUUz.wrfs(const s: string);
+  var 
+    toflush:  Integer;
+    copyfrom: Integer;
 begin
-  if outbufpos + length(s) >= bufsize then
+  { HJT 09.04.07, rewrite, siehe SF: '[ 1652877 ] Absturz beim Nachrichtenkonvertieren' }
+  toflush := outbufpos + Length(s);
+  copyfrom := 0;
+  while toflush >= bufsize do
+  begin
+    Move(s[1+copyfrom], outbuf^[outbufpos], bufsize - outbufpos);
+    inc(copyfrom, bufsize - outbufpos);
+    outbufpos := bufsize;
     FlushOutbuf;
-  if Length(s)>0 then Move(s[1], outbuf^[outbufpos], length(s));
-  inc(outbufpos, length(s));
+    dec(toflush, bufsize);
+  end;
+  if toflush > 0 then 
+  begin
+    Move(s[1+copyfrom], outbuf^[outbufpos], Length(s) - copyfrom);
+  end;
+  outbufpos := toflush;
 end;
 
 procedure TUUz.WriteHeader;
@@ -783,7 +798,7 @@ begin           // TUUz.WriteHeader
   with hd do
   begin
     { HJT 19.03.2006 nur nicht-leere EMP schreiben     }
-    { und damit gegebenebfalls Dummy EMP /UNZUSTELLBAR }
+    { und damit gegebenenfalls Dummy EMP /UNZUSTELLBAR }
     { ToDo: Aufnahme von leeren EMP unterbinden        }
     // if XEmpf.Count = 0 then wrs('EMP: /UNZUSTELLBAR');
     emp_writen:=false;
@@ -1593,6 +1608,12 @@ var
       hd.Uline.Add('U-To: ' + s0)
     else
     begin
+      { HJT 20.01.07 chance auf /UNZUSTELLBAR nicht verbauen, s.u. s0 := s0 + '@' + '??' -> /?? }
+      if Length(s0) = 0 then  
+      begin
+        Debug.DebugLog('zcrfc', 'TUUz.ReadRFCheader.GetEmpf, ignoring empty ''To''', DLInform);
+        exit;
+      end;
       sto := trim(s0);
       if lastchar(sto) <> ',' then sto := sto + ',';
       hd.Empfaenger.Clear;
@@ -2109,6 +2130,7 @@ begin
   OpenFile(fn);
   while bufpos < bufanz do
   begin
+    Debug.DebugLog('zcrfc', 'TUUz.ConvertMailfile, Start New Mail', DLDebug);
     ClearHeader;
     hd.netztyp:=nt_UUCP;
     FirstLineHasBeenRead:=False;
@@ -2257,6 +2279,7 @@ begin
 {$IFNDEF UnixFS}
   FileSetAttr(pfrec^.name,0);             { Archivbit abschalten }
 {$ENDIF}
+  Debug.DebugLog('zcrfc', 'TUUz.ConvertMailfile, Exit', DLDebug);
 end;
 
 { SMTP-Mail -> ZCONNECT }
