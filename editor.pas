@@ -1111,7 +1111,7 @@ var  dl         : displp;
 
     procedure SetAbsCol;
     var p,p0 : byte;
-        s    : Integer;
+        s    : word;
         qn   : integer;
         pdiff: integer;
     begin

@@ -838,7 +838,7 @@ begin
     inc(Result);
 end;
 
-function BreakBlock(ap: AbsatzP; wp, spaces, QuoteCharCount, delSp: Integer; QuoteChars: String): AbsatzP;
+function BreakBlock(var ap: AbsatzP; wp, spaces, QuoteCharCount, delSp: Integer; QuoteChars: String): AbsatzP;
 var
   ap2: AbsatzP;
   CopySize: Integer;
