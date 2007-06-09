@@ -846,6 +846,10 @@ begin
 
 again:
   l:= wgetch(BaseWin.wHnd);
+{$IFDEF Linux }
+  // hack to Hermann Jurksch: fix backspace with new ncurses versions
+  if (l=127) then l:=8;
+{$ENDIF }
   Debug.DebugLog('xpcurses',Format('wgetch: %d',[Integer(l)]),dlTrace);
 
   { if it's an extended key, then map to the IBM values }
