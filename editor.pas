@@ -1119,7 +1119,7 @@ var  dl         : displp;
 
     procedure SetAbsCol;
     var p,p0 : byte;
-        s    : Integer;
+        s    : word;
         qn   : integer;
         pdiff: integer;
     begin
@@ -2075,7 +2075,7 @@ begin
     inc(Result);
 end;
 
-function BreakBlock(ap: AbsatzP; wp, spaces, QuoteCharCount, delSp: Integer; QuoteChars: String): AbsatzP;
+function BreakBlock(var ap: AbsatzP; wp, spaces, QuoteCharCount, delSp: Integer; QuoteChars: String): AbsatzP;
 var
   ap2: AbsatzP;
   CopySize: Integer;
