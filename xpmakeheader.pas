@@ -61,6 +61,7 @@ var i,res : integer;
     bufsize : Integer;
     bufanz  : Integer;   { gelesene Bytes im Puffer }
     tc      : char;   { 1. Trennzeichen hinter ':' }
+    idummy  : Integer;
 
   procedure ReadBuf;
   begin
@@ -418,8 +419,21 @@ begin
             if id = 'KOM'    then val(line,komlen,res) else
             if id = 'KOP'    then hd.Kopien.Add(line) else
             if id = 'BEZ'    then begin
-                                    if (Line<>'')and(References.IndexOf(Line)=-1) then
-                                      References.Add(Line)end else
+                                  if (Line<>'') then
+                                  begin
+                                    idummy := References.IndexOf(Line);
+                                    if idummy <> -1 then
+                                    begin
+                                      Debug.DebugLog('xpmakeheader.pas','makeheader,'
+                                                     +'deleting first of dublicate BEZ:<'
+                                                     +References[idummy]+'>'
+                                                     +', first index: '+IntToStr(idummy)
+                                                     , DLDebug);
+                                      References.Delete(idummy);
+                                    end;
+                                    References.Add(Line);
+                                  end
+                             end else
             if id = 'MAILER' then programm := line else
             if id = 'ORG'    then organisation := line else
             if id = 'OEM'    then hd.Oem.Add(Line) else
