@@ -281,13 +281,13 @@ end;
 
 
 // rueckwaerts von data[zlen] bis data[0] nach erster Umbruchstelle suchen 
-function FindUmbruch(var data; zlen:integer):integer;
+function FindUmbruch(var data; zlen : integer; safe : boolean):integer;
 type
-   tpc = array[0..MaxInt div 2] of Char;
-   pc	    = ^tpc;
+   tpc      = array[0..MaxInt div 2] of Char;
+   pc       = ^tpc;
    chartype = (c_alnum,c_space,c_minus,c_slash,c_other);
    action   = (ret0,ret1,cont);
-   state    = (none, alnum, slash);
+   // state    = (none, alnum, slash);
 const
    todo : array[c_alnum..c_other,c_alnum..c_other] of action =
    (
@@ -301,37 +301,41 @@ const
    function ct(c : char):chartype;
    begin
       case c of
-      	' '                                   : ct := c_space;
-       	'-'				      : ct := c_minus;
-      	'/'				      : ct := c_slash;
-      	'0'..'9','a'..'z','A'..'Z',#128..#165 : ct := c_alnum
+        ' '                                   : ct := c_space;
+        '-'                                   : ct := c_minus;
+        '/'                                   : ct := c_slash;
+        '0'..'9','a'..'z','A'..'Z',#128..#165 : ct := c_alnum
       else
-     	 ct := c_other;
+        ct := c_other;
       end
    end; { ct }
 
    function fu(c : pc; zlen: integer):integer;
-   // Cave: greift auf c[zlen+1] zu!!! 
+   // Cave: greift auf c[zlen+1] zu!!!
    var
      left,right : chartype;
    begin
-      right := ct(c[zlen+1]);
-      if (right = c_slash) then
-    	 right := c_other;
-      while (zlen >= 0) do
-      begin
-    	 left := ct(c[zlen]);
-    	 case todo[left,right] of
-    	   cont	: begin right := left; zlen := zlen-1; end;
-    	   ret0	: begin fu := zlen  ; break; end;
-    	   ret1	: begin
-   		     if ((zlen = 0) and (right = c_slash)) then
-       			fu := 0
-   		     else
-         		fu := zlen+1;
-	  	     break;
-  		   end
-    	 end; { case }
+     right := c_other;
+     if safe then // Der Aufrufer hat sichergestellt, dass der Zugriff auf
+     begin        // c[zlen+1] sicher ist.
+       right := ct(c[zlen+1]);
+       if (right = c_slash) then
+           right := c_other;
+     end;
+     while (zlen >= 0) do
+     begin
+       left := ct(c[zlen]);
+       case todo[left,right] of
+            cont    : begin right := left; zlen := zlen-1; end;
+            ret0    : begin fu := zlen  ; break; end;
+            ret1    : begin
+                        if ((zlen = 0) and (right = c_slash)) then
+                            fu := 0
+                        else
+                            fu := zlen+1;
+                        break;
+                      end
+       end; { case }
      end;
      if (zlen < 0) then fu := 0;
    end;
@@ -928,22 +932,38 @@ end;
 { Offset mu· auf Zeilenanfang zeigen!                         }
 
 function Advance(ap:absatzp; offset,rand:word):integer;
-var zlen : integer;   { ZeilenlÑnge }
+var zlen : integer;   { Zeilenlaenge }
+    safe : boolean;   { ist es sicher, dass FindUmbruch nicht auf unallozierten Speicher trifft? }
 begin
   with ap^ do
     if not umbruch or (size-offset<=rand) then
       Advance:=size
     else
     begin
-      zlen:=min(rand,size-offset-1);
-      if (zlen=rand) and (cont[offset+zlen] in ['-','/']) then dec(zlen);
-      zlen:=FindUmbruch(cont[offset],zlen);    { in EDITOR.ASM }
-//     while (zlen>0) and not (cont[offset+zlen] in [' ','-','/']) do
-//        dec(zlen);
-      if zlen=0 then
-        Advance:=offset+rand
-      else
-        Advance:=offset+zlen+1;
+       // Wird nur erreicht, wenn size-offset > rand gilt, dann aber
+       // gilt size-offset-1 >= rand und damit
+       // min(rand,size-offset-1) = rand. (1)
+       // Gefaehrlich wird FindUmbruch nur, wenn rand = size-offset-1.
+       safe := not (rand = size-offset-1);
+       // Wegen (1) kann
+       // zlen:=min(rand,size-offset-1);
+       // durch
+       zlen := rand;
+       // ersetzt werden.
+       // Folglich ist auch der Test auf zlen = rand in
+       // if (zlen=rand) and (cont[offset+zlen] in ['-','/']) then dec(zlen);
+       // immer true, und man kann verkuerzen zu
+       if (cont[offset+zlen] in ['-','/']) then
+       begin
+         dec(zlen);
+         safe := true; // Nach Dekrement ist cont[offset+zlen+1] wohldefiniert.
+       end;
+
+       zlen:=FindUmbruch(cont[offset],zlen,safe);    { in EDITOR.ASM }
+       if zlen=0 then
+         Advance:=offset+rand
+       else
+         Advance:=offset+zlen+1;
    end;
 end;
 
@@ -2216,7 +2236,7 @@ begin
         Debug.Debuglog('editor.inc','ap^.size: '+IntToStr (ap^.size),dlDebug);     
         Debug.Debuglog('editor.inc','ap^.next.size: '+IntToStr (ap^.next.size),dlDebug);
         Debug.Debuglog('editor.inc','addspaces: '+IntToStr (addspaces),dlDebug);   
-        Debug.Debuglog('editor.inc','maxabslen: '+IntToStr (maxabslen),dlDebug);		  
+        Debug.Debuglog('editor.inc','maxabslen: '+IntToStr (maxabslen),dlDebug);  
         if ap^.size + ap^.next^.size + addspaces <= maxabslen then
         begin   { Abs‰tze zusammenh‰ngen }
           { Quote-Reflow }
@@ -2228,10 +2248,10 @@ begin
           wpa := ConcatBlock(ap, addspaces);
           Modified:=true;
         end else
-	begin
+        begin
           Debug.Debuglog('editor.inc','Error, size+next.size+addspaces<=maxabslen',dlDebug);
           error(2)    { 'Absatz zu groﬂ' }
-	end  
+        end  
       end;
     MoveWorkpos(wp,wpa);
     aufbau:=true;
@@ -2374,10 +2394,10 @@ begin
           Debug.Debuglog('editor.inc','spaces: '+IntToStr (spaces),dlDebug);       
           Debug.Debuglog('editor.inc','maxabslen: '+IntToStr (maxabslen),dlDebug); 
           if ap^.size+spaces>=maxabslen then
-	  begin
-	    Debug.Debuglog('editor.inc','ap^.size+spaces>=maxabslen, Error',dlDebug);
+          begin
+            Debug.Debuglog('editor.inc','ap^.size+spaces>=maxabslen, Error',dlDebug);
             error(2)       { 'Absatz zu groﬂ' }
-	  end	    
+          end
           else begin
             apnew:=AllocAbsatz(ap^.size+spaces+1);
             copyflags(ap,apnew);
@@ -3218,7 +3238,7 @@ begin
             ap := ap^.next;
         end else
         begin
-	  Debug.Debuglog('editor.inc','Error No. 4 ',dlDebug);
+          Debug.Debuglog('editor.inc','Error No. 4 ',dlDebug);
           Error(2); // 'Absatz zu gross'
           break;
         end;
