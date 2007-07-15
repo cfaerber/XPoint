@@ -715,6 +715,9 @@ var
     c: Char;
     a: SmallWord;
     useclip: boolean;
+    {$IFDEF LocalScreen }
+    lLocalScreen: ^TLocalScreen;
+    {$ENDIF }
 label ende;
 begin
   if ss_active then exit
@@ -722,6 +725,10 @@ begin
   fn:='';
   pushhp(13604);
   useclip:=true;
+  {$IFDEF LocalScreen }
+  lLocalScreen := GetMem(SizeOf(lLocalScreen^));
+  Move(LocalScreen^,lLocalScreen^,SizeOf(lLocalScreen^));
+  {$ENDIF }
   if ReadFilename(getres(503),fn,true,useclip) then begin   { 'Bildschirm-Auszug' }
     if not useclip and not multipos(_MPMask,fn) then
       fn:=ExtractPath+fn;
@@ -734,6 +741,10 @@ begin
     assign(t,fn);
     if app then append(t)
     else rewrite(t);
+    {$IFDEF LocalScreen }   { HJT 15.07.07 Ausgabe ohne Select-Box, Screen wurde oben gesichert }
+    if lLocalScreen <> nil then
+      Move(lLocalScreen^,LocalScreen^,SizeOf(lLocalScreen^));
+    {$ENDIF }
     for y:=1 to screenlines do begin
       for x:=1 to ScreenWidth do
       begin
@@ -753,6 +764,10 @@ begin
     closebox;
     end;
 ende:
+  {$IFDEF LocalScreen }
+  if lLocalScreen <> nil then
+    FreeMem(lLocalScreen);
+  {$ENDIF }
   pophp;
   ss_active:=false;
 end;
