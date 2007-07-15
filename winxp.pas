@@ -1502,6 +1502,7 @@ begin
 
 {$IFDEF LocalScreen }
   GetMem(LocalScreen, SizeOf(LocalScreen^));
+  FillChar(LocalScreen^,SizeOf(LocalScreen^),0); { HJT 15.07.07 }
 {$ENDIF }
 
 {$IFDEF Win32}

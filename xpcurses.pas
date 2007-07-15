@@ -378,7 +378,7 @@ uses
   debug,
   keys,
   mouse,baseUnix,termio,
-  xp0,                  { ScreenLines }
+  xp0,                  { ScreenLines, LocalScreen }
   xp1,                  { CloseDatabases }
 
   typeform;             { ISOTab }
@@ -405,8 +405,10 @@ var
    LastWindMax: word;
 
 
+{ HJT 15.07.07 LocalScreen ist schon in xp0.pas definiert
 var
   LocalScreen: ^TLocalScreen;
+}
 
 {==========================================================================
    This code chunk is from the FPC source tree in rtl/inc/textrec.inc.
@@ -1534,10 +1536,11 @@ begin
   TextRec(Input).Handle:=StdInputHandle;
 {$ENDIF}
 
+{ HJT 15.07.07  wird bereits in xp0.pas alloziert
   GetMem(LocalScreen, SizeOf(LocalScreen^));
 
   GetMem(LocalScreen, SizeOf(LocalScreen^));
-
+}
   ScreenLines :=  SysGetScreenLines;
 
   ESCDELAY:= 100;               { 100 ms }
@@ -1562,7 +1565,9 @@ end;
 
 procedure DoneXPCurses;
 begin
+{ HJT 15.07.07 geschieht bereits in winxp.pas
   FreeMem(LocalScreen);
+}
   { Noch ein SubWindow vorhanden= }
   EndXPCurses;
 end;
