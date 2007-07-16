@@ -153,6 +153,7 @@ begin
   with dp(dbp)^.index^[indnr] do begin
     size:=16+(nn+1)*sizeof(inodekey);
     getmem(np,size);
+    fillchar(np^,size,0);     { 16.07.07 HJT valgrind beruhigen }
     with np^ do begin
       memsize:=size;
       ksize:=keysize;
@@ -212,6 +213,7 @@ begin
   with np^,dp(db_p)^ do
   begin
       getmem(rbuf,irsize);
+      fillchar(rbuf^,irsize,0);     { 30.06.07 HJT valgrind beruhigen }
       wp^:=anzahl;
       Move(key[0].data,rbuf^[2],8);
       o:=10;

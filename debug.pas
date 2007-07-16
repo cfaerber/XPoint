@@ -114,7 +114,7 @@ begin
   if not LogBadges.Find(Badge, I) then {Open new entry}
   begin
     I := Logbadges.Add(Badge);
-    S := GetEnv(PChar(Badge));
+    S := GetEnv(Badge);  { hjt 24.06.07 Test, wg. valgrind S := GetEnv(PChar(Badge)); }
     if S = '' then S := GetEnv('DEFAULT');
     if S = '' then Str(DLDefault,S);
     L := StrToIntDef(S, 0);
