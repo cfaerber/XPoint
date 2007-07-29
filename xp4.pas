@@ -68,7 +68,11 @@ implementation  {----------------------------------------------------}
 uses  xpkeys,xp1o,xp2,xp2c,xp2f,xp3,xp3o,xp3o2,xp3ex,xp4e,xp4o,xp5,xpsendmessage,xpnetcall,xp8,
       xpe,xpconfigedit,xp10,xpauto,xpstat,xpterminal,xp_uue,xpcc,xpnt,xpfido,xp4o2, xpheader,
       xp4o3,xpview,xpimpexp,xpmaus,xpfidonl,xpreg,xp_pgp,xpsendmessage_unsent,xpmime,lister, viewer,
-      xpmakeheader, replytoall, mime, classes, xpspam, xprope, debug;
+      xpmakeheader, replytoall, mime, classes, xpspam, xprope, debug
+      {$IFDEF Debug }
+      ,xpcharset
+      {$ENDIF }
+      ;
 
 const suchch    = #254;
       komaktiv  : boolean = false; { Kommentarbaumanzeige (12) aktiv }
@@ -2334,6 +2338,7 @@ var t,lastt: taste;
     Index: Integer;
     MsgCount: Integer;
     nt: Byte;
+    label nextcycle;
   begin
     IDList := TStringList.Create;
     try
@@ -2349,8 +2354,10 @@ var t,lastt: taste;
 
         Box := dbReadNStr(mbase, mb_brett);
         dbSeek(bbase,BiIntnr,copy(Box,2,4));
-        if not dbFound then        
-          continue;
+        if not dbFound then
+          goto nextcycle;           { HJT 24.07.07 keine Endlosschleife }
+//        if not dbFound then
+//          continue;
         Box := dbReadNStr(bbase, bb_pollbox);      { Pollbox des Brettes     }
         // Hilfe nachtragen
 
@@ -2364,7 +2371,7 @@ var t,lastt: taste;
         end;
 
         dbRead(mbase, 'netztyp', nt);
-        if not nt in [nt_Client, nt_NNTP] then     
+        if not (nt in [nt_Client, nt_NNTP]) then     { HJT 24.07.07 () }
         begin
           Fehler(GetRes(439));  // 'Funktion wird nur für RFC/Client und RFC/NNTP unterstützt'
           break;
@@ -2396,13 +2403,14 @@ var t,lastt: taste;
         end;
         dbWriteN(mbase, mb_flags, Flags);
         IDList.SaveToFile(OwnPath + Filename);
+nextcycle:
         Inc(MsgCount);
       until MsgCount >= MarkAnz;
     finally
       IDList.Free;
     end;
     UnsortMark;
-    Reread_line;
+    Reread_line;        { HJT 24.07.07 ToDo }
   end;
 
 begin      { --- select --- }
