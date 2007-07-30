@@ -115,7 +115,7 @@ function ReadFilename(txt:atext; var s:string; subs:boolean;
                       var useclip:boolean):boolean;
 const
   urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':',';','/','~','?',
-    '-','_','#','=','&','%','@','$',',','+'];
+    '-','_','#','=','&','%','@','$',',','+','*'];
 var x,y : Integer;
   brk : boolean;
   fn  : string;

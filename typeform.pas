@@ -1773,7 +1773,7 @@ end;
 function FindURL(s: String; var x, y: Integer): Boolean; overload;
 const
   urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':',';','/','~','?',
-    '-','_','#','=','&','%','@','$',',','+'];
+    '-','_','#','=','&','%','@','$',',','+','*'];
 var
   u: string;
 begin
