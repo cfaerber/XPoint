@@ -465,8 +465,12 @@ begin
   dbOpen(d,BoxenFile,1);
   dbSeek(d,boiName, Uppercase(forcebox));
   if dbFound then
+  begin
     dbRead(d, 'netztyp', res);
-  getForceBoxNT := res;
+    getForceBoxNT := res;
+  end
+  else
+    getForceBoxNT := 0;     { HJT 20.07.07 valgrind beruhigen }
   dbClose (d);
 end;
 
@@ -1130,6 +1134,7 @@ begin      //-------- of DoSend ---------
   parts := TList.Create;
   partsex := false;
   s1:=nil;{s2:=nil;}s3:=nil;s4:=nil;s5:=nil;
+  docode:=0;   { HJT 19.07.07, sonst in SendAttach_Analyze nicht initialisiert }
 
   sdNope:=(sdata=nil);
   if sdNope then sData := TSendUUData.Create;
@@ -1207,6 +1212,8 @@ fromstart:
   docode:=0;           { Sendbox    true = Sendefenster zeigen                 }
   fidoname:='';        { forcebox ''-um Box entsprechend Empfaenger zu waehlen }
   ch:=' ';             {          Ansonsten steht hier die zu benutzende Box   }
+  grnr:=-1;            { HJT 19.07.07, bei pm nicht versorgt, grnr ist INT_NR, valgrind }
+  cancode:=0;          { HJT 22.07.07, sonst bei N/D/neuer User nicht init. in showcode, valgrind }
 
   { -- Empfaenger -- }
 
