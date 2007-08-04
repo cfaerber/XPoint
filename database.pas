@@ -667,11 +667,13 @@ begin
       end;
     xflag:=xxflag;
     getmem(recbuf,hd.recsize);
+    fillchar(recbuf^,hd.recsize,0);     { 18.07.07 HJT valgrind beruhigen }
     if flags and dbFlagIndexed<>0 then begin
 {$IFDEF Debug }
       if dl then dbLog('   .IX1 ”ffnen..');
 {$ENDIF }
       getmem(orecbuf,hd.recsize);
+      fillchar(orecbuf^,hd.recsize,0);  { 18.07.07 HJT valgrind beruhigen }
       OpenIndex(dbp);
       flindex:=true;
       end

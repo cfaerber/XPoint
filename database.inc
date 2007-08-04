@@ -157,6 +157,8 @@ var bf        : inodep;
   begin
     if node=0 then begin
       rise:=true;
+      { 28.07.07  HJT valgrind beruhigen }
+      fillchar(risenitem.keystr,sizeof(risenitem.keystr),0);
       risenitem.keystr:=key;
       risenitem.data:=srecno;
       risenitem.ref:=0;

@@ -183,12 +183,14 @@ begin
     with dp(db_p)^ do
     begin
       getmem(rbuf,irsize);
+      fillchar(rbuf^,irsize,0);     { 28.07.07 HJT valgrind beruhigen }
       filepos:=offs;
       cache_read(db_p,irsize,offs,rbuf^);
       { !!      Hier muá noch was getan werden, denn so klappt das unter
-        32 Bit einfach nicht... }
-//      if wp^>nk then
-//        error('fehlerhafte Indexseite in '+fname+dbIxExt);
+        32 Bit einfach nicht... 
+        HJT 26.07.07 TEST wieder aktiviert}
+      if wp^>nk then
+        error('fehlerhafte Indexseite in '+fname+dbIxExt);
 
       anzahl:=wp^;
       Move(rbuf^[2],key[0].data,8);
