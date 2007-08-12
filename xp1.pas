@@ -473,7 +473,7 @@ begin
     end else
 
     // check for c < 256 to avoid range check error with fpc
-    if (HiChar = 0) and (C <= 255) and (C in [Ord('*'),Ord('_'),Ord('/')]) and not
+    if (HiChar = 0) and (C <= 255) and (C in [Ord('*'),Ord('_') { HJT 12.08.07  kein Hervorheben bei Pfadangaben ,Ord('/') } ]) and not
       (LastB in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,UNICODE_BREAK_GL,
       UNICODE_BREAK_UNKNOWN, UNICODE_BREAK_CM, UNICODE_BREAK_NU ]) then
     begin
