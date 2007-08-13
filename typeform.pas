@@ -1782,13 +1782,20 @@ begin
   if x=0 then x:=Pos('HTTPS://',u);  {HTTPS URL ?}
   if x=0 then x:=Pos('GOPHER://',u); {Gopher URL ?}
   if x=0 then x:=Pos('FTP://',u);    {oder FTP ?}
-  if x=0 then x:=Pos('WWW.',u);      {oder WWW URL ohne HTTP:? }
-  if x=0 then x:=Pos('HOME.',u);     {oder WWW URL ohne HTTP:? }
-  if x=0 then x:=Pos('FTP.',u);      {oder FTP URL ohne HTTP:? }
   if x=0 then x:=Pos('URL:',u);      {oder explizit mark. URL? }
   if x=0 then x:=Pos('URN:',u);      {oder explizit mark. URN? }
   if x=0 then x:=Pos('URI:',u);      {oder explizit mark. URL? }
   if x=0 then x:=Pos('MAILTO:',u);   {oder MAILTO: ?}
+  if x=0 then 
+  begin
+    x:=Pos(' FTP.',u);              {oder FTP URL ohne HTTP:? }
+    if x<>0 then inc(x);
+  end;
+  if x=0 then 
+  begin 
+    x:=Pos('FTP.',u);               {oder FTP URL ohne HTTP:? }
+    if x<>1 then x:=0;
+  end;
 
   y:=x;
   Result := x <> 0; s := s + ' ';
