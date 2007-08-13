@@ -12,7 +12,7 @@ svn up >dist_temp\build\version.svn
 cd dist_temp\build
 
 echo Erstelle Versions-Informationen
-\perl\bin\perl get_build_nr.pl >variables.cmd
+"c:\Program Files\Perl\bin\perl" get_build_nr.pl >variables.cmd
 call variables.cmd
 echo Version: %OXP_VER%
 echo Options: %OXP_OPTS%
@@ -20,19 +20,19 @@ echo Options: %OXP_OPTS%
 cd ..
 
 echo Packe Sourcen
-rar a \a\openxp-%OXP_VER%.src.rar -cl -r -s -ts- -mc16:128t+ -x!com*.bak -m5 >\temp\pack
+rar a \a\openxp-%OXP_VER%.src.rar -cl -r -s -ts- -mc16:128t+ -x!com*.bak -m5 >>\a\openxp_build.log
 
 echo Compilere mit FreePascal fuer DOS 32
-\fpc\2.0.2\bin\go32v2\ppc386 -B %OXP_OPTS% -Xs -XX -FEdist\dos  -FUdist -FuObjCOM;netcall;DOS32;xplib -Tgo32v2 openxp.pas >!compdos.bak
+c:\Development\FPC\bin\go32v2\ppc386 -B %OXP_OPTS% -Xs -XX -FEdist\dos  -FUdist -FuObjCOM;netcall;DOS32;xplib -Tgo32v2 openxp.pas >>\a\openxp_build.log
 
 echo Compilere mit FreePascal fuer Win32
-ppc386 -B %OXP_OPTS% -Xs -XX -FuObjCOM;netcall;xplib -FEdist\win32 -FUdist -TWin32 openxp.pas >!compwin.bak
+c:\Development\FPC\bin\i386-win32\ppc386 -B %OXP_OPTS% -Xs -XX -FuObjCOM;netcall;xplib -FEdist\win32 -FUdist -TWin32 openxp.pas >>\a\openxp_build.log
 del *.ppu *.o /s
-ppc386 -B %OXP_OPTS% -FuObjCOM;netcall;xplib -FUdist -TWin32 rc.pas >>!compwin.bak
+c:\Development\FPC\bin\i386-win32\ppc386 -B %OXP_OPTS% -FuObjCOM;netcall;xplib -FUdist -TWin32 rc.pas >>\a\openxp_build.log
 del *.ppu *.o /s
-ppc386 -B %OXP_OPTS% -FuObjCOM;netcall;xplib -FUdist -TWin32 docform.pas >>!compwin.bak
+c:\Development\FPC\bin\i386-win32\ppc386 -B %OXP_OPTS% -FuObjCOM;netcall;xplib -FUdist -TWin32 docform.pas >>\a\openxp_build.log
 del *.ppu *.o /s
-ppc386 -B %OXP_OPTS% -FuObjCOM;netcall;xplib -FUdist -TWin32 ihs.pas >>!compwin.bak
+c:\Development\FPC\bin\i386-win32\ppc386 -B %OXP_OPTS% -FuObjCOM;netcall;xplib -FUdist -TWin32 ihs.pas >>\a\openxp_build.log
 
 echo Compiliere Doku
 docform doc\fido.dq dist\fido.txt 68 8
@@ -63,11 +63,11 @@ copy samples dist\win32\samples
 
 echo Packe Windows 32 Bit
 cd dist\win32
-rar a -cl -r -s -ts- -m5 \a\openxp-%OXP_VER%.win.rar >\temp\pack
+rar a -cl -r -s -ts- -m5 \a\openxp-%OXP_VER%.win.rar >>\a\openxp_build.log
 
 echo Packe DOS 32 Bit
 cd ..\dos
-rar a -cl -r -s -ts- -m5 \a\openxp-%OXP_VER%.dos.rar >\temp\pack
+rar a -cl -r -s -ts- -m5 \a\openxp-%OXP_VER%.dos.rar >>\a\openxp_build.log
 
 echo Lösche alte Dateien
 cd ..\..\..
