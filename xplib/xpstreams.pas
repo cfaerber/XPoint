@@ -33,7 +33,7 @@ uses
   classes;
 
 {$IFDEF FPC}
-  {$MODE Delphi}
+//  {$MODE Delphi}
   {$IFNDEF ver1_0}
     {$DEFINE SEEK64}
   {$ELSE}
@@ -107,8 +107,8 @@ procedure write_s(stream:TStream;const s:string);
 {** Write a string, followed by CRLF (#10#13) to a stream object. }
 procedure writeln_s(stream:TStream;const s: string);
 
-{** Read a line, terminated by CRLF (#10#13) from a stream object. Please note
-  that this function does not perform well on unbuffered streams. }
+{** Read a line, terminated by CRLF (#13#10) or LF(#10) from a stream object. 
+    Please note that this function does not perform well on unbuffered streams. }
 function  readln_s(stream:TStream):string;
 
 {** Copies data from InStream to OutStream }
@@ -220,29 +220,32 @@ begin
   write_s(stream,s+#13#10);
 end;
 
+{ HJT 28.08.07 rewrite, keine Endlosschleife mehr beim Aufrufer,
+  wenn kein CRLF gefunden wird.
+  Handelt jetzt auch Unix-Dateien (GPG), wenn Zeilenenden
+  nur durch #10 beendet werden
+}
 function readln_s(stream:TStream):string;
-const
-  DefaultLength = 80;
 var
-  i,j,k: Integer;
+  einZeichen: String;   // Todo: auf Byte umstellen
 begin
-  SetLength(Result, DefaultLength);
-  i := 0;
-
-  repeat
-    if (i>0) and (Result[i] = #13) then
-      j := 1
-    else
-      j := 2;
-    if (i+j) > Length(Result) then
-      SetLength(Result, Length(Result) + (Length(Result) div 2));
-    k := Stream.Read(Result[i+1], j);
-    if k < j then begin
-      SetLength(Result,i+k); exit;
+  Result:='';
+  SetLength(einZeichen,1);
+  try
+    Stream.ReadBuffer(einZeichen[1], 1);
+    while einZeichen <> #10 do
+    begin
+        if einZeichen <> #13 then
+        begin
+            Result:=Result + einZeichen;
+        end;
+        Stream.ReadBuffer(einZeichen[1], 1);
     end;
-    inc(i,k);
-  until (i>1) and (Result[i-1] = #13) and (Result[i] = #10);
-  SetLength(Result,i-2);
+  except
+    Result := '';
+    raise;
+    exit;
+  end;
 end;
 
 procedure CopyStream(InStream,OutStream:TStream);
