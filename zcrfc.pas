@@ -764,7 +764,8 @@ begin
   end;
   if toflush > 0 then 
   begin
-    Move(s[1+copyfrom], outbuf^[outbufpos], Length(s) - copyfrom);
+    if Length(s) > 0 then   { HJT 30.09.07 Laenge 0 moegl. bei qp wie '= am Zeilenanfang, dann RTE }
+      Move(s[1+copyfrom], outbuf^[outbufpos], Length(s) - copyfrom);
   end;
   outbufpos := toflush;
 end;
