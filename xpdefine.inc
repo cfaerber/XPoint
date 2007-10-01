@@ -138,10 +138,8 @@
     {$C+}                 { Assertation support }
     {$D+}
     {$M+}                 { Typeinfo for RTTI }
-    {$L+}                 { Local Symbols }
     {$Q+}                 { Overflow-Check }
     {$R+}                 { Range Check }
-    {$Y+}                 { Browser Informations }
   {$ENDIF }
   {$IFDEF Delphi }
     {$O-}
