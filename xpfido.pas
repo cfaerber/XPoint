@@ -1679,7 +1679,6 @@ label ende;
   var
     p       : Integer;
 {$IFDEF Linux}
-// {$IFDEF Kylix}
     fs : TStatFs;
   begin
     statfs(PChar(path),fs);
@@ -1688,13 +1687,6 @@ label ende;
 {$ELSE}
     if ((int64(fs.bavail)*int64(fs.bsize))<=size)
 {$ENDIF}
-// {$ELSE}
-//     fs : statfs;
-//   begin
-//     fsstat(path,fs);
-//     if ((int64(fs.bavail)*int64(fs.bsize))<=size)
-// {$ENDIF}
-
 {$ELSE}
     driveNr : Integer;
   begin
