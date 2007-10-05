@@ -120,7 +120,11 @@ implementation
 
 uses  xpnt,xp2,xp3,xp4e,
 {$IFDEF Linux}
-  oldlinux, // for stat & fsstat
+{$IFDEF FPC }
+  baseunix,unix,unixtype,   // statFS
+{$ELSE}
+  oldlinux,                 // for stat & fsstat
+{$ENDIF}
 {$ENDIF}
 xpfidonl;
 
@@ -1675,17 +1679,21 @@ label ende;
   var
     p       : Integer;
 {$IFDEF Linux}
-{$IFDEF Kylix}
+// {$IFDEF Kylix}
     fs : TStatFs;
   begin
     statfs(PChar(path),fs);
+{$IFDEF Kylix}
     if ((int64(fs.f_bavail)*int64(fs.f_bsize))<=size)
 {$ELSE}
-    fs : statfs;
-  begin
-    fsstat(path,fs);
     if ((int64(fs.bavail)*int64(fs.bsize))<=size)
 {$ENDIF}
+// {$ELSE}
+//     fs : statfs;
+//   begin
+//     fsstat(path,fs);
+//     if ((int64(fs.bavail)*int64(fs.bsize))<=size)
+// {$ENDIF}
 
 {$ELSE}
     driveNr : Integer;
