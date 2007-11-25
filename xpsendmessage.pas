@@ -273,7 +273,7 @@ var f,f2     : file;
     betrkey  : string;      { (B)etreff }
     servkey  : string;      { Serverb(o)x }
     pgpkey   : string;
-    oldbetr  : string;
+//  oldbetr  : string;
     d        : DB;
     fs,l     : longint;
     t        : taste;
@@ -289,13 +289,13 @@ var f,f2     : file;
     empfneu  : boolean;
     cancode  : Byte;        { 0=kein PW, 1=QPC, 2=DES, 9=PGP, 10=Rot13 }
     docode   : Byte;        { gewaehlte Codierung                 }
-    pmc_code : boolean;
+//  pmc_code : boolean;
     senden   : shortint;    { 0=Nein, 1=Ja, 2=Intern              }
     halten   : integer16;   { Haltezeit fuer neuen User           }
     sendedat : longint;     { Empfangsdatum                       }
     passwd   : string;      { Passwort des empfangenden Users     }
-    passpos  : smallword;   { PW-Position fuer QPC                }
-    newbin   : boolean;     { Typ nach Codierung                  }
+//  passpos  : smallword;   { PW-Position fuer QPC                }
+//  newbin   : boolean;     { Typ nach Codierung                  }
     intern,                 { interne Nachricht                   }
     lokalPM  : boolean;     { lokale PM                           }
     maxsize  : longint;     { ab hier muss gesplittet werden      }
@@ -315,7 +315,7 @@ var f,f2     : file;
     fadd     : shortint;
     oldnt    : byte;        { alter Netztyp bei Pollbox-Wechsel   }
     fidoam   : boolean;
-    old_cca  : integer;     { vor (K)opien            }
+//  old_cca  : integer;     { vor (K)opien            }
     FidoBin  : boolean;     { File Attach }
     cc_count : integer;
     betrlen  : Integer;     { max. Betrefflaenge }
@@ -325,7 +325,7 @@ var f,f2     : file;
     flOhnesig: boolean;
     flLoesch : boolean;
     sdnope   : boolean;     { sData = nil }
-    orgftime : longint;
+//  orgftime : longint;
     sigfile  : string;
     sigtemp  : boolean;
     flPGPkey : boolean;     { eigenen Key mitschicken }
@@ -371,6 +371,13 @@ var f,f2     : file;
   procedure AddMessagePart(datei:string;temp,is_orig:boolean);
   var pa     : TSendAttach_Part;
   begin
+
+    Debug.DebugLog('xpsendmessage','AddMessagePart, Start'
+                    +', datei:<'+datei+'>'
+                    +', temp:'+iifs(temp,'True','False')
+                    +', is_orig:'+iifs(is_orig,'True','False')
+                    , DLDebug);
+
     pa := TSendAttach_Part.Create;
 
     pa.FileName    := datei;
@@ -402,6 +409,12 @@ var f,f2     : file;
   procedure AddFilePart(datei:string;temp:boolean);
   var pa     : TSendAttach_Part;
   begin
+
+    Debug.DebugLog('xpsendmessage','AddFilePart, Start'
+                    +', datei:<'+datei+'>'
+                    +', temp:<'+iifs(temp,'True','False')
+                    , DLDebug);
+
     pa := TSendAttach_Part.Create;
 
     pa.FileName    := datei;
@@ -735,19 +748,43 @@ end;
   procedure ReadEmpflist;
   var
     i: Integer;
+    vergl_empfaenger: string;   { HJT 17.11.07 }
+    check_empfaenger: boolean;
   begin
     Debug.DebugLog('xpsendmessage','ReadEmpflist, SendEmpfList.Count:'
                    +IntToStr(SendEmpfList.Count), DLDebug);
+    Debug.DebugLog('xpsendmessage','ReadEmpflist, empfaenger: <'+empfaenger+'>'
+                   +', pm: '+iifs(pm,'True','False'), DLDebug);
     // !! Assign moeglich, wenn beides StringListe
+
+    { HJT 17.11.07 xposting nicht aufnehmen, wenn sich nur  }
+    { die Gross-Klein-Schreibung unterscheidet              }
+    if not pm and (SendEmpfList.Count > 0) and
+       (length(empfaenger) > 2) and (copy(empfaenger,1,2) = 'A/') then
+    begin
+      vergl_empfaenger:=UpperCase(copy(empfaenger, 2, length(empfaenger) - 1));
+      check_empfaenger:=True;
+      Debug.DebugLog('xpsendmessage','ReadEmpflist, vergl_empfaenger: <'+vergl_empfaenger+'>', DLDebug);
+    end
+    else
+      check_empfaenger:=False;
+
     for i := 0 to SendEmpfList.Count - 1 do
       if cc_anz<maxcc then
-      begin
-        inc(cc_anz);
-        cc^[cc_anz]:=Sendempflist[i];
-        Debug.DebugLog('xpsendmessage','ReadEmpflist, '+
-                       'Sendempflist['+IntToStr(i)+']: <'
-                       +Sendempflist[i]+'>', DLDebug); 
-      end;
+        { HJT 17.11.07 xp nicht aufnehmen, wenn gleich empfaenger, s.o. }
+        if check_empfaenger and (UpperCase(Sendempflist[i]) = vergl_empfaenger) then
+           Debug.DebugLog('xpsendmessage','ReadEmpflist'
+                          +', nehme Sendempflist['+IntToStr(i)+']: <'+Sendempflist[i]+'>'
+                          +' nicht auf, da gleich vergl_empfaenger: <'+vergl_empfaenger+'>'
+                          , DLDebug)
+        else
+          begin
+            inc(cc_anz);
+            cc^[cc_anz]:=Sendempflist[i];
+            Debug.DebugLog('xpsendmessage','ReadEmpflist, '+
+                           'Sendempflist['+IntToStr(i)+']: <'
+                           +Sendempflist[i]+'>', DLDebug); 
+          end;
     SortCCs(cc,cc_anz);
    TestXpostings(true, false);
   end;
@@ -1124,6 +1161,7 @@ end;
 begin      //-------- of DoSend ---------
   Debug.DebugLog('xpsendmessage','----- DoSend, begin, empfaenger:'+empfaenger+',datei:'+datei, DLDebug);
   Debug.DebugLog('xpsendmessage','----- DoSend, begin, sendFlags:'+IntToStr(sendFlags), DLDebug);
+  Debug.DebugLog('xpsendmessage','----- DoSend, begin, pm: '+iifs(pm,'True','False'), DLDebug);
 
   firststart := true;
   DoSend:=false;
@@ -1206,6 +1244,7 @@ begin      //-------- of DoSend ---------
 { Einsprung hier startet ganze Versand-Prozedur von vorne (mit den bestehenden Daten) }
 fromstart:
   Debug.DebugLog('xpsendmessage','DoSend, fromstart---', DLDebug);
+  Debug.DebugLog('xpsendmessage','DoSend, empfaenger:<'+empfaenger+'>', DLDebug);
 
   passwd:='';          { Betreffbox true = Betreff nochmal eintippen           }
   empfneu:=false;      { Edit       true = Editor Starten                      }
@@ -1440,7 +1479,7 @@ fromstart:
     if brk then goto xexit;
   end;
 
-  orgftime:=filetime(datei);
+// orgftime:=filetime(datei);
   if edit then begin
     WriteHeaderHdr;
     EditNachricht(pgdown);              //Editor aufrufen
@@ -1739,7 +1778,7 @@ fromstart:
       else    if n<0 then begin
 //              n:=abs(n);
                 if UpperCase(t)=kopkey then begin
-                  old_cca:=cc_anz;
+//                old_cca:=cc_anz;
                   sel_verteiler:=true;           { im Kopien-Dialog sind Verteiler erlaubt }
                   cc_NT := netztyp;
                   xpcc.pm:=pm;
@@ -1783,6 +1822,8 @@ fromstart:
     end;
     if sendFlags and sendIntern<>0 then intern:=true;
 
+    Debug.DebugLog('xpsendmessage','DoSend, grnr: '+IntToStr(grnr)+'(LocGruppe='+IntToStr(LocGruppe)+')',DLDebug);
+
   until (senden<>5) and ((netztyp<>nt_Pronet) or SizeOk) and
         ((senden<>1) or intern or (grnr=LocGruppe) or pm or (fs+addsize<1024)
          or (fs+addsize>50000) or binary or QuoteOK)
@@ -1813,8 +1854,8 @@ fromstart:
     Debug.DebugLog('xpsendmessage','DoSend, verteiler == True', DLDebug);
 
   if not verteiler then begin
-    newbin:=binary or (docode=1) or (docode=2);
-    pmc_code:=(docode>=3) and (docode<=2+maxpmc);
+//  newbin:=binary or (docode=1) or (docode=2);
+//  pmc_code:=(docode>=3) and (docode<=2+maxpmc);
     SendMbox;
     DoSend:=true;
 
@@ -1982,6 +2023,12 @@ fromstart:
       else
       begin
         Boundary:=MimeCreateMultipartBoundary(username); // does not contain chars that must be quoted
+
+        Debug.DebugLog('xpsendmessage','DoSend'+
+                       ', ueberschreibe hdp.boundary: <'+hdp.boundary+'>'
+                       +' mit: <'+boundary+'>'
+                       , DLDebug);
+
         hdp.boundary:=boundary;
         hdp.typ:='M';
         hdp.MIME.ctype := 'multipart/mixed; boundary="'+Boundary+'"';
@@ -2020,6 +2067,20 @@ fromstart:
         writeln_s(s1,'--'+boundary+'--');
       end;
     end;
+
+    Debug.DebugLog('xpsendmessage','DoSend'
+                   +', partsex:'+iifs(partsex,'True','False')
+                   +', parts: ' +IntToStr(parts.Count)
+                   +', encoding: '+                     
+                   iifs(hdp.mime.encoding = MimeEncoding7Bit, 'MimeEncoding7Bit',
+                    iifs(hdp.mime.encoding = MimeEncoding8Bit, 'MimeEncoding8Bit',
+                     iifs(hdp.mime.encoding = MimeEncodingQuotedPrintable, 'MimeEncodingQuotedPrintable',
+                      iifs(hdp.mime.encoding = MimeEncodingBase64, 'MimeEncodingBase64',
+                       iifs(hdp.mime.encoding = MimeEncodingUnknown, 'MimeEncodingUnknown', 'Unbekannt')))))
+                   +', disposition: '+hdp.mime.disposition
+                   +', charset: '+hdp.charset
+                   +', hdp.x_charset: '+hdp.x_charset
+                   , DLDebug);
 
     { --- 2. Schritt: Headerdaten erzeugen ---------------------------- }
 
@@ -2385,15 +2446,21 @@ fromstart:
 
     { --- 3. Schritt: Nachricht ggf. fuer Pollpaket kodieren --------- }
 
-    if intern then
-      Debug.DebugLog('xpsendmessage','DoSend, Nachricht ggf. fuer Pollpaket kodieren, intern == True', DLDebug)
-    else
-      Debug.DebugLog('xpsendmessage','DoSend, Nachricht ggf. fuer Pollpaket kodieren, intern == False', DLDebug);
+    Debug.DebugLog('xpsendmessage','DoSend, Nachricht ggf. fuer Pollpaket kodieren'
+                   +', intern: '+iifs(intern,'True','False'), DLDebug);
 
     if not intern then 
     begin
       hdp.archive := false;
       s1.Seek(0,soFromBeginning);
+
+      Debug.DebugLog('xpsendmessage','DoSend'
+                     +', hdp.typ: <'+hdp.typ+'>'
+                     +', docode: '+IntToStr(docode)
+                     +', cancode: '+IntToStr(cancode)
+                     +', flPGPSig: '+iifs(flPGPSig,'True','False')
+                     +', PGP_MIME: '+iifs(PGP_MIME,'True','False')
+                     , DLDebug);
 
       if (hdp.typ<>'M') and 
         ( (docode in [1..5,9]) or 
@@ -2420,6 +2487,11 @@ fromstart:
               fido_origin);
           hdp.typ:='M';
         end;
+
+        Debug.DebugLog('xpsendmessage','DoSend'
+                       +', flPGPSig: '+iifs(flPGPSig,'True','False')
+                       +', docode: '+IntToStr(docode)
+                       ,dlDebug);
 
         if flPGPSig then
           XP_PGP.PGP_MimeSignStream(s1,hdp);
