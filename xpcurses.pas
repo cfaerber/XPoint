@@ -391,6 +391,8 @@ const
    STDERR = 2;
 
    __isInit: boolean = false;           { Curses initialisiert? }
+   __isfinalized: boolean = false;      { HJT 22.12.07 , Tote nicht wiedererwecken }
+
    PrefChar: Char = #1;                 { Previous Char should be <> #0 }
 
 var
@@ -888,6 +890,13 @@ function CrtWrite(var F: TextRec): integer;
 var
   i: integer;
 begin
+   { HJT 22.12.07 CrtWrite wird von flush aus der RTL aufgerufen,        }
+   { wenn curses bereits heruntergefahren wird/wurde. Ansonsten  Abbruch }
+  if __isfinalized then
+  begin
+    Result:=0;
+    exit;
+  end;
   if not __isInit then InitXPCurses;
   if (TextAttr<>LastTextAttr) then
     SetTextAttr(TextAttr);
@@ -1358,7 +1367,7 @@ end;
 { Unit-Interna --------------------------------------------------------- }
 
 { Sig Handler is called, when a SIG is called by Linux }
-procedure SigHandler(Sig : Integer);
+procedure SigHandler(Sig : Integer); cdecl;
 begin
   case Sig of
     SIGWINCH		     : { when XTerm is Resized }
@@ -1384,6 +1393,7 @@ procedure EndXPCurses;
 begin
   ExitProc := ExitSave;
   Debug.DebugLog('xpcurses','EndXPCurses: Curses is going down.',dlDebug);
+
   { Noch ein SubWindow vorhanden= }
   if (BaseSub <> nil) then
     delwin(BaseSub);
@@ -1391,11 +1401,13 @@ begin
   CursorOn;
   { Eventuell nicht ausgefuehrte Aenderungen darstellen }
   wrefresh(ActWin.wHnd);
+  endwin;
+  { HJT, 22.12.07 verschoben }
   { tty restaurieren }
   resetty;
-  endwin;
   tcSetAttr(STDIN,TCSANOW,tios);
   __isInit:= false;
+  __isfinalized:= true;      { HJT 22.12.07, Tote nicht wiedererwecken, gibt nur Zombies }
 end;
 
 function StartCurses(var win: TWinDesc): Boolean;
@@ -1479,6 +1491,7 @@ begin
       [MaxCols,MaxRows,COLORS,TABSIZE]),dlDebug);
     Debug.DebugLog('xpcurses',Format('Esc Delay=%d, Baudrate=%d, Has Colors=%s',
       [ESCDELAY,baudrate,iifs(has_colors<>0,'yes','no')]),dlDebug);
+    Debug.DebugLog('xpcurses','longname: <'+ncurses.longname+'>',dlDebug);
 
     { initialize mouse }
 {$IFDEF Kylix}
@@ -1551,6 +1564,7 @@ begin
   libc.signal(SIGQUIT, @SigHandler);
   libc.signal(SIGKILL, @SigHandler);
 {$ELSE}
+{ HJT testweise deaktiviert }
   fpsignal(SIGWINCH, SigHandler);
   fpsignal(SIGHUP, SigHandler);
   fpsignal(SIGQUIT, SigHandler);
