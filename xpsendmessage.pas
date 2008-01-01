@@ -2404,7 +2404,12 @@ fromstart:
       if (sendFlags and sendMark<>0) and (msgCPpos+1=msgMarkEmpf) then
         msgaddmark;
       AddBezug(hdp,iif(msgCPanz=0,0,iif(msgCPpos=0,1,2)));
-      if cc_anz=0 then dbFlushClose(mbase);
+      if cc_anz=0 then 
+      begin
+        Debug.DebugLog('xpsendmessage','DoSend, calling dbFlushClose(mbase), dbFlushClose(bezbase)',dlDebug);
+        dbFlushClose(mbase);
+        dbFlushClose(bezbase);  { HJT, 31.12.07, bleibt sonst event. ungeschrieben im Cache bis Progr.-Ende }
+      end;
       if not pm and (msgCPpos=0) then begin    { Brettdatum neu setzen }
         dbSeek(bbase,biBrett,UpperCase(empfaenger));
         if not dbFound then
