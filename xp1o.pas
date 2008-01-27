@@ -271,7 +271,7 @@ var s     : string;
   end;
 
 begin
-  Debug.Debuglog('xp1o:','listExt start, taste: <'+t+'>', DLTrace);
+  Debug.Debuglog('xp1o:','listExt start, taste: <'+t+'>, listmakros: '+IntToStr(listmakros), DLTrace);
   if listmakros<>0 then begin
     if t=keyf6 then Makroliste(iif(listmakros=8,4,5));
     Xmakro(t,ListMakros);
@@ -343,9 +343,12 @@ begin
 
   if (c=^W) and not no_ListWrapToggle then                    { '^W' = Umbruch togglen }
   begin
+    Debug.Debuglog('xp1o:','listExt c=^W', DLTrace);
     listwrap:=not listwrap;
     ListWrapToggle:=true;
-    ex(-4);
+    { HJT 27.01.08, ex(-4) -> ex(-5), siehe xp1.listfile }
+    Debug.Debuglog('xp1o:','listExt c=^W, calling ex(-5) anstatt ex(-4)', DLTrace);
+    ex(-5);
   end;
 
   if Listmakros=8 then    {Diese Funktionen NUR im Lister ausfuehren, nicht im Archivviewer... }

@@ -1010,8 +1010,11 @@ var
     lofs   : word;     { Ladeposition Datei }
     dphb   : byte;     { Uhr Hintergrundfarbe Backup }
     wrapb  : boolean;  { Backup no_ListWrapToggle }
+    ehlback: integer;  { Backup ExtHdLines }
 
     OldTCS,OldLCS: TMimeCharsets;
+
+    label again;       { HJT 27.01.08 Wortumbruch toggeln }
 
   procedure ShowMsgHead;
   var t : text;
@@ -1040,9 +1043,15 @@ var
   end;
 
 begin   // listfile
-  listexit:=0;
+  Debug.Debuglog('xp1','listfile, Start, name:<'+name+'>, listmsg: '+iifs(listmsg,'True','False'),dlTrace);
+  ehlback:=exthdlines;      { HJT 27.01.08 }
   wrapb:=no_ListWrapToggle;
   no_ListWrapToggle:=false;
+
+again:            { fuer toggeln bei O mittels Ctrl-W  }
+  Debug.Debuglog('xp1','listfile, again',dlTrace);
+  exthdlines:=ehlback;      { HJT 27.01.08 }  
+  listexit:=0;
   dphb := 0;
   if varlister<>'' then begin
     lf:=repfile(VarLister,name);
@@ -1154,6 +1163,12 @@ begin   // listfile
     if savescr then holen(p);
     List.Free;
   end;
+
+  if listexit = -5 then { HJT 27.01.08, <Ctrl-W>, siehe xp1o.listExt }
+  begin
+    goto again;
+  end;
+
   exthdlines:=0;
   llh:=false;
   if listexit<>4                         { Wenn nicht Editor gestartet wird... }
@@ -1161,7 +1176,7 @@ begin   // listfile
   listfile:=listexit;
   no_ListWrapToggle:=wrapb;
 
-  Debug.Debuglog('xp1s','listfile, At End',dlTrace);
+  Debug.Debuglog('xp1s','listfile, At End, Returning: '+IntToStr(Result),dlTrace);
 end;
 
 
