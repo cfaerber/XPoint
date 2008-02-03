@@ -1617,11 +1617,14 @@ var x,y      : Integer;
   function KillSameMsgId: boolean;
   var
     MsgPos: Integer;
+    fmid_new: String;
+    fmid_old: String;
   begin
     result:= false;
     dbSeek(bezbase,beiMsgID,dbLongStr(MsgidIndex(Hdp.msgid)));
     if dbFound and not dbDeleted(bezbase, dbRecNo(bezbase)) then
     begin
+      debug.debuglog('xp3o','KillSameMsgId, message with same msgid found in db',dltrace);
       // message with same msgid found in db
       msgpos := dbReadIntN(bezbase,bezb_msgpos);
       if not dbDeleted(mbase, msgpos) then
@@ -1635,11 +1638,23 @@ var x,y      : Integer;
             (boxpar^.ReplaceDupes) then
           begin
             debug.debuglog('xp3o','dupe (already in msgbase)',dltrace);
-            dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
-            wrkilled; { Ablage auf jeden Fall reorganisieren }
-            DelBezug;
-            dbDelete(mbase);
-            result:= (flags and 256 <> 0);
+            { HJT 03.02.08: nur wenn es sich tatsaechlich um Dupes handelt. Gleiche }
+            { CRC32 koennen sich auch bei unterschiedlichen MIDs ergeben. Dieser    }
+            { Fall kommt so selten nicht vor.                                       }
+            fmid_new:=FormMsgid(Hdp.msgid);
+            fmid_old:=dbReadNStr(mbase,mb_msgid);
+            debug.debuglog('xp3o','KillSameMsgId, fmid_old:<'+fmid_old+'>, fmid_new:<'+fmid_new+'>',DLDebug);
+            if fmid_new = fmid_old then
+            begin 
+              dbReadN(mbase,mb_halteflags, ReplaceOwnHoldFlag);
+              wrkilled; { Ablage auf jeden Fall reorganisieren }
+              DelBezug;
+              dbDelete(mbase);
+              result:= (flags and 256 <> 0);
+            end else
+            begin
+              debug.debuglog('xp3o','KillSameMsgId, NOT killed: same CRC32 for different Messages, fmid_old:<'+fmid_old+'>, fmid_new:<'+fmid_new+'>',DlInform);
+            end;
           end;
         end else
           debug.debuglog('xp3o','Error in KillSameMsgId: dbGo to bad message',dltrace);
