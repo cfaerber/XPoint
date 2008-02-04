@@ -370,6 +370,9 @@ begin
 
     if upcase(c) = 'Q' then                                   {'Q' Quotechars |: aktivieren}
       otherquotechars:=not otherquotechars;
+
+    if c = '#' then ex(-3);                                   { '#' = Kommentarbaum } { HJT 04.02.08: Uebernahme aus FreeXP }
+
     end;
 
    { Im Kommentarbaum duerfen diese Funktionen nicht aktiviert sein }
