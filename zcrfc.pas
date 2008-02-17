@@ -1524,7 +1524,7 @@ var
       p := cPos('"', mid(line, 2));
 
       { Realname-Konvertierung: Hans \"Hanswurst\" Wurst }
-      while line[p] = '\' do
+      while (p > 0) and (line[p] = '\') do  { HJT 17.02.08, p > 0 }
       begin
         delete(line, p, 1);
         p := cPos('"', mid(line, p + 1)) + p - 1;
