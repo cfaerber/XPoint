@@ -825,7 +825,7 @@ OpenXP stellt keinen eigenen Eingangsfilter zur
 Verfgung, hierzu mssen Sie sich eines externen
 Filterprogramms bedienen. Nicht ganz trivial in der
 Bedienung, aber sehr flexibel und bew„hrt ist z.B.
-das speziell fr OpenXP entwickelte XPFILTER von
+das speziell fr XP entwickelte XPFILTER von
 Robin Sommer.
 
 Ein sog. "Muster" fr XPFILTER, das alle ber die
@@ -1658,6 +1658,10 @@ von der Einstellung bei /Config/Optionen/Bedienung.
 
 <<Bei kommentarverketteten Nachrichten (Maus, Fido,
 <<ZConnect, Usenet):
+
+<<##>> zeigt den Kommentarbaum zur aktuellen Nachricht an.
+  Nach Verlassen des Kommentarbaums mit <<<Esc> >>kehrt
+  XP zur aktuellen Nachricht zurck.
 
 <<+>> springt zum ersten Kommentar der Nachricht, falls
   vorhanden.
