@@ -749,6 +749,22 @@ var size   : longint;
     until s='';
   end;
 
+  { HJT: 10.05.08 Custom-Header umbrechen }
+  procedure UmbrechenCust(CustHeaderName: String; CustHeader: String);
+  var
+    ln, p: Integer;
+  begin
+    CustHeaderName := ohfill(CustHeaderName,length(gr(2))-2)+': ';
+    ln:=length(CustHeaderName);
+    p:=0;
+    repeat
+      lr:=rightpos(' ',leftStr(CustHeader,ScreenWidth-2-ln));
+      if (lr=0) or (length(CustHeader)<=ScreenWidth-2-ln) then lr:=ScreenWidth-2-ln;
+      wrs437(iifs(p=0,CustHeaderName,sp(ln))+leftStr(CustHeader,lr));
+      inc(p);
+      CustHeader:=mid(CustHeader,lr+1);
+    until CustHeader='';
+  end;
 
 begin // extract_msg;
  try
@@ -1062,10 +1078,12 @@ begin // extract_msg;
                         gr(34)+strs(MimePart.parts));         { ' von ' }
 
     hdf_Cust1   : if mheadercustom[1]<>'' then if hdp.Cust1<>'' then begin
-                    wrs437(ohfill(mheadercustom[1],length(gr(2))-2)+': '+hdp.Cust1);
+                    UmbrechenCust(mheadercustom[1], hdp.Cust1);
+                    // wrs437(ohfill(mheadercustom[1],length(gr(2))-2)+': '+hdp.Cust1);
                   end;
     hdf_Cust2   : if mheadercustom[2]<>'' then if hdp.Cust2<>'' then begin
-                    wrs437(ohfill(mheadercustom[2],length(gr(2))-2)+': '+hdp.Cust2);
+                    UmbrechenCust(mheadercustom[2], hdp.Cust2);
+                    // wrs437(ohfill(mheadercustom[2],length(gr(2))-2)+': '+hdp.Cust2);
                   end;
 
   { Prioritaet im Listenkopf anzeigen:                                    }
