@@ -177,12 +177,12 @@ const
   cr: char = #13;
 
   bufsize = 65535;
-  readEmpfList = true;
+  // readEmpfList = true;
   xpboundary: string = '-';
 
   UUserver = 'UUCP-Fileserver';
-  tspecials = '()<>@,;:\"/[]?=';        { RFC822-Special Chars    }
-  tspecials2 = tspecials + ' ';         { RFC1341-Speical Chars   }
+  // tspecials = '()<>@,;:\"/[]?=';     { RFC822-Special Chars    }
+  // tspecials2 = tspecials + ' ';      { RFC1341-Speical Chars   }
 
   rsmtp_command: array[TCompression] of string = (
     'rsmtp',
@@ -502,7 +502,7 @@ procedure tuuz.testfiles;
 
 begin
   if not Exist(Source) then
-    raise UUZException.Create('Quelldatei fehlt');
+    raise UUZException.Create('Quelldatei fehlt: <'+Source+'>');
   if u2z and not validfilename(dest) then
     raise UUZException.Create('ungÅltige Zieldatei: ' + dest);
   if not u2z and not ppp then
@@ -3254,33 +3254,41 @@ begin
         wrs(f, addhd[i]);
     wrs(f, '');
   end else // mpart
-  with hd do begin
-    if (attrib and AttrMPbin)<> 0 then
-    begin
-      { Anzahl der Zeilen incl. Trailer oben bei Lines einsetzen! }
-      wrs(f, '--' + xpboundary);
-      wrs(f, 'Content-Type: text/plain');
-      wrs(f, 'Content-Language: de,en');
-      wrs(f, '');
-      wrs(f, 'Diese Nachricht enthaelt eine MIME-codierte Binaerdatei. Falls Ihr');
-      wrs(f, 'Mailer die Datei nicht decodieren kann, verwenden Sie dafuer bitte');
-      wrs(f, 'ein Tool wie ''munpack'' oder ''udec''.');
-      wrs(f, '');
-      wrs(f, 'This message contains a MIME encoded binary file. If your mailer');
-      wrs(f, 'cannot decode the file, please use a decoding tool like ''munpack''.');
-      wrs(f, '');
-      wrs(f, '--' + xpboundary);
-      WriteMIME(false);
-      wrs(f, '');
-    end;
-  end;
+    { HJT 04.06.08 kein Schreiben des Mime-Prologs mehr }
+    Debug.DebugLog('zcrfc', 'TUUz.WriteRFCheader, not writing '
+                   +'Mime-Prolog with Boundary:<'+xpboundary+'>', DLTrace);
+//  with hd do begin
+//    if (attrib and AttrMPbin)<> 0 then
+//    begin
+//      { Anzahl der Zeilen incl. Trailer oben bei Lines einsetzen! }
+//      wrs(f, '--' + xpboundary);
+//      wrs(f, 'Content-Type: text/plain');
+//      wrs(f, 'Content-Language: de,en');
+//      wrs(f, '');
+//      wrs(f, 'Diese Nachricht enthaelt eine MIME-codierte Binaerdatei. Falls Ihr');
+//      wrs(f, 'Mailer die Datei nicht decodieren kann, verwenden Sie dafuer bitte');
+//      wrs(f, 'ein Tool wie ''munpack'' oder ''udec''.');
+//      wrs(f, '');
+//      wrs(f, 'This message contains a MIME encoded binary file. If your mailer');
+//      wrs(f, 'cannot decode the file, please use a decoding tool like ''munpack''.');
+//      wrs(f, '');
+//      wrs(f, '--' + xpboundary);
+//      WriteMIME(false);
+//      wrs(f, '');
+//    end;
+//  end;
 end;
 
 procedure WriteRfcTrailer(f: TStream);
 begin
+  Debug.DebugLog('zcrfc', 'WriteRfcTrailer Start'
+                 +', Boundary:<'+xpboundary+'>', DLTrace);
   if hd.attrib and AttrMPbin <> 0 then begin
     wrs(f, '');
-    wrs(f, '--' + xpboundary + '--'); end;
+    wrs(f, '--' + xpboundary + '--'); 
+    Debug.DebugLog('zcrfc', 'WriteRfcTrailer '
+                 +', Boundary:<'+xpboundary+'>', DLTrace);
+  end;
 end;
 
 procedure TUUZ.ZtoU;
@@ -3574,10 +3582,13 @@ begin
         SetMimeData;
 
         f3 := TCRLFtoLFStream.Create(f0);
-        WriteRFCheader(f3, false,true);
+        { HJT 09.06.08 kein Schreiben des Prologs mehr }
+        // WriteRFCheader(f3, false,true);
         seek(f1, adr + hds);            { Text kopieren }
         CopyEncodeMail(f3,hd.groesse);
-        WriteRfcTrailer(f3);
+        { HJT 09.06.08 kein Schreiben des Trailers, er wurde schon frueher geschrieben }
+        Debug.DebugLog('zcrfc', 'ZtoU: kein Aufruf WriteRfcTrailer (Mime-Trailer-Boundary)', dlDebug);
+        // WriteRfcTrailer(f3);
         f3.Free;
 
         hd.lines:=0;
@@ -3647,7 +3658,9 @@ begin
           WriteRFCheader(f, true,true );
           seek(f1, adr + hds);          { Text kopieren }
           CopyEncodeMail(f,hd.groesse);
-          WriteRfcTrailer(f);
+          { HJT 09.06.08 kein Schreiben des Trailers, er wurde schon frueher geschrieben }
+          Debug.DebugLog('zcrfc', 'ZtoU: kein Aufruf WriteRfcTrailer (Mime-Trailer-Boundary)/Mail', dlDebug);
+          //WriteRfcTrailer(f);
 
           f.Free;
 
