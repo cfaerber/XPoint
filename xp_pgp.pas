@@ -278,6 +278,8 @@ begin
     b64:='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     reset(kf,1);
     while not eof(kf) do begin
+                                        // hjt 04.09.08, BugFix fuer SF 2081841
+      setlength(s,40);                  // Verschiebung PM in PM-Brett mit PGP-pub key in Header: crash
       fillchar(dat,sizeof(dat),0);
       blockread(kf,dat,30,rr);
       i:=0; j:=0;
