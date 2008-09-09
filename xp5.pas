@@ -406,7 +406,7 @@ var
     x,y  : Integer;
 {$IFDEF Unix}
  {$ifndef BSD}
-    info : TSysInfo;
+    info : PSysInfo;
  {$endif}
 {$endif}
 begin
