@@ -1674,7 +1674,11 @@ var
   is_spam: boolean;             // whether current message is spam
   is_ham:  boolean;
  begin
-  Debug.DebugLog('xp3o','sorting in messages',DLInform);
+  Debug.DebugLog('xp3o','PufferEinlesen, sorting in messages'
+                 +',pollbox:<'+pollbox+'>'
+                 +',puffer:<'+puffer+'>'
+                 +',UseSpamFilter: '+iifs(UseSpamFilter,'True','False')
+                 ,DLInform);
   inmsgs:=0; ReplaceOwnHoldFlag:=255; puffereinlesen:=false;
   MsgIdsRead:=TStringlist.Create; MsgIdsRead.Sorted:=true;
   RefList := TList.Create;
@@ -1833,7 +1837,9 @@ var
           continue;
           end;
 
-        if (CPos('@', hdp.FirstEmpfaenger) > 0) and (not spam_ok) then
+        if UseSpamFilter and                               { HJT 19.09.08 }
+           (CPos('@', hdp.FirstEmpfaenger) > 0) and 
+           (not spam_ok) then
 //      if not spam_ok then
         begin
           if not assigned(spam) then

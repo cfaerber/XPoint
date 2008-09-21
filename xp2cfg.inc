@@ -418,6 +418,7 @@ begin
   ArchivBretter:='';
   ArchivLoesch:=false;
   ArchivText:=true;
+  UseSpamFilter:=false;         { default fuer internen Bayes-Spamfilter benutzen } { HJT 19.09.08 }
   shell25:=false;
   edit25:=false;
   MinMB:=4;
@@ -803,6 +804,7 @@ begin
   writeln(t,'ArchivBretter=',archivbretter);
   writeln(t,'ArchivLoeschen=',jnf(archivloesch));
   writeln(t,'ArchivVermerk=',jnf(archivtext));
+  writeln(t,'SpamFilter=',jnf(UseSpamFilter));      { HJT 19.09.08 }
   writeln(t,'Shell25=',jnf(shell25));
   writeln(t,'Edit25=',jnf(edit25));
   writeln(t,'MinMB=',minmb);
@@ -1514,6 +1516,7 @@ begin
                     getx(su,  'ScrSaverPW',ss_passwort) or
                     getb(su,  'savetype',SaveType) or
                     getx(su,  'shell-showpar',ShellShowpar) or
+                    getx(su,  'SpamFilter',UseSpamFilter) or        { HJT 19.09.08 }
                     getx(su,  'shell-waitkey',ShellWaitkey) then EntryFound := true;
             'T': begin
                  if xp1.gets(s,su,'tempdir',temppath) or           { Wg. case sensetive }

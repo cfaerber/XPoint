@@ -1446,7 +1446,10 @@ var flags: longint;
   procedure delete_copies;
   begin
     // Alle Kopien der gleichen Nachricht löschen
-    //
+
+   Debug.Debuglog('xp4w.inc','register_spam.delete_copies'
+                  ,DLDebug);
+
     dbReadN(mbase,mb_ablage,ablage);
     dbReadN(mbase,mb_adresse,madr);
     crc:=LeftStr(dbReadStrN(mbase,mb_msgid),4);
@@ -1460,6 +1463,13 @@ var flags: longint;
         if (dbReadIntN(mbase,mb_ablage)=ablage) and (dbReadIntN(mbase,mb_adresse)=madr) then
         begin
           DelBezug;
+
+          Debug.Debuglog('xp4w.inc','register_spam.delete_copies'
+                         +', dbDelete(mbase), mb_msgid: <'+dbReadStrN(mbase,mb_msgid)+'>'
+                         +', mb_brett: <'+dbReadStrN(mbase,mb_brett)+'>'
+                         +', mb_absender: <'+ dbReadStrN(mbase,mb_absender)+'>'
+                         ,DLDebug);
+
           dbDelete(mbase);
         end;
       end else
@@ -1480,6 +1490,13 @@ begin
 
   GoP;
   dbReadN(mbase,mb_flags,flags);
+
+  Debug.Debuglog('xp4w.inc','register_spam'
+                 +', Spam: '+iifs(Spam,'True','False')
+                 +', aktuelles Brett(bbase): <'+dbReadStrN(bbase,bb_brettname)+'>'
+                 +', Msg Brett(mbase): <'+dbReadStrN(bbase,bb_brettname)+'>'
+                 ,DLDebug);
+
   if FirstChar(dbReadStrN(mbase,mb_brett))<>'1' then 
   begin
     if dbReadStrN(bbase,bb_brettname) <> '$/¯Spam' then

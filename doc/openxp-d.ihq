@@ -7051,6 +7051,46 @@ tenmenge stehen. Tragen Sie aber besser einen hîhe-
 ren Wert ein - Fehler durch volle Festplatten fÅhren
 meistens zu Datenverlusten!
 @
+226
+Dieser Schalter aktiviert den internen <<Bayes->>
+<<Spamfilter>>. Er filtert PMs.
+
+Als Spam erkannte Nachrichten werden beim Einlesen in 
+das Brett <</ØSpam>> verschoben.
+
+Die wichtigsten Funktionen sind folgende Tasten in 
+der <<NachrichtenÅbersicht>>:
+
+<<.>> -> der Punkt markiert die aktuelle Nachricht 
+     als SPAM und verschiebt sie ggf. in das
+     /ØSpam-Brett.
+<<,>> -> das Komma markiert die aktuelle Nachricht als 
+     Nicht-SPAM und verschiebt sie ggf. aus dem 
+     /ØSpam-Brett heraus.
+
+Trainieren:
+
+Es ist besonders wichtig, sowohl mîglichst viel SPAM 
+als auch <<eigenen>> Nicht-SPAM als solchen zu kenn-
+zeichnen. Ohne eine mîglichst gro·e Datenbasis kann 
+der Spamfilter logischerweise nichts erkennen.
+
+öber <<I>> (Informationen zur Nachricht) kann man auch
+die Informationen Åber den SPAM-Status einer Nach-
+richt abrufen: es werden dann die am meisten und 
+wenigsten charakteristischsten Worte (grî·te/
+geringste Abweichung von 50%) der aktuellen Nach-
+richt, die Anzahl des Vorkommens in "guten" und 
+"schlechten" Nachrichten sowie die daraus berech-
+nete SPAM-Wahrscheinlichkeit angezeigt.
+
+Das Filtern verzîgert das Einlesen deutlich.
+
+Sollte sich der Spamfilter "verrant" haben, kînnen
+die beiden Dateien SPAMFLT.DB1 und SPAMFLT.IX1
+unter Verlust des bisherigen Trainings gelîscht 
+werden.
+@
 230
 OpenXP besitzt einen eingebauten Nachrichten-
 Lister, so da· eigentlich kein externer Lister benî-

@@ -4430,6 +4430,10 @@ Problems through the hard disk suddenly being full
 in the middle of data handling always lead to
 unrecoverable loss of data.
 @
+226
+This switch activates the internal <<Bayes->>
+<<Spamfilter>>. He filters PMs.
+@
 230
 OpenXP does have its own built in lister, (for
 reading messages) which should do all you need.

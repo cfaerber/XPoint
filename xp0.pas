@@ -978,6 +978,7 @@ var    bb_brettname,bb_kommentar,bb_ldatum,bb_flags,bb_pollbox,bb_haltezeit,
        ArchivBretter: string;
        ArchivLoesch : boolean;       { Msgs nach Archivierung loeschen }
        ArchivText   : boolean;       { Archivier-Vermerk erstellen}
+       UseSpamFilter: boolean;       { internen Bayes-Spamfilter benutzen } { HJT 19.09.08 }
        shell25      : boolean;       { 25-Zeilen-Mode bei DOS-Shell }
        edit25       : boolean;       { dito bei externem Editor }
        MinMB        : smallword;

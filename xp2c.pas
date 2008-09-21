@@ -146,6 +146,7 @@ begin
   maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);    { 'Standard-Usergruppe' }
   mhnr(8068);
   maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
+  maddbool(32,3,getres2(250,26),UseSpamfilter); mhnr(226);   { 'Spamfilter aktivieren' }    { HJT 19.09.08 }
   maddstring(3,8,getres2(250,12),archivbretter,35,BrettLen-1,'>'); mhnr(217);
   msetvfunc(testbrett);                                   { 'Archivbretter ' }
   maddbool(3,10,getres2(250,13),archivloesch);            { 'archivierte Nachrichten l”schen' }
