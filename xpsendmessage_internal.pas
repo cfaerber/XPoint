@@ -32,7 +32,7 @@ uses  sysutils,xp0,xpcc, xpglobal;
 { Tabelle fr IBM -> ISO-Konvertierung }
 
 {     oempf  = '## Originalempf„nger:';  - 600 }
-const maxcc  = 50;
+const { maxcc  = 50;    HJT 17.10.08, maxcc ist bereits in xpcc.pas definiert mit 126 siehe auch SF [ 2172658 ] Verteiler: Crash bei Benutzung (Brief) }
 
       um     : array[1..7] of char = '„”™šá';
 
