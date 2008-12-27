@@ -1476,6 +1476,7 @@ K (c) '2000 OpenXP Team, www.openxp.de
 620  Checking for crosspostings ...
 621  Origin file not found (%s)
 622  No function in this net
+623  Net types incompatible - server changes will be resetted.
 
 + 624
 0  ~^New , ^Edit , De^lete , ^Up , ^Down ,ù8 ^Close~
