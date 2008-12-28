@@ -386,7 +386,7 @@ var t : text;
     s : string;
     i : integer;
 begin
-  Debug.DebugLog('xpcc','read_verteiler, verteilername: <'+name+'>',dltrace);
+  Debug.DebugLog('xpcc','read_verteiler, verteilername: <'+name+'>, cc_anz: '+IntToStr(cc_anz),dltrace);
   Result:=0;
   { cc_reset; }
   for i := 1 To maxcc do { HJT 12.01.20 cc_reset only for xpsendmessage.cc ! }
@@ -394,6 +394,7 @@ begin
     cc^[i] := '';
   end;
   
+  cc_anz:=0;    { HJT 17.10.08 }
   assign(t,CCfile);
   reset(t);
   if ioresult=0 then begin
