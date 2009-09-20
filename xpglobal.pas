@@ -33,7 +33,7 @@ uses sysutils;
 // verstr+pformstr+betastr is readable
 
 const
-  mainver     = '5.0';       { Versionnr. - steht nur an dieser Stelle }
+  mainver     = '3.9.99';       { Versionnr. - steht nur an dieser Stelle }
 
   betastr     = ' alpha';       { ' ', ' alpha' oder ' beta' }
 

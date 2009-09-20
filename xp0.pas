@@ -89,8 +89,8 @@ const
        UsrFelderMax = 6;             { max. Feldzahl in der Userliste }
           FelderMax = 6;             { groesste der beiden Feldanzahlen }
 
-var    xp_xp       : string = 'OpenXP';
-       xp_origin   : string = '--- OpenXP';
+var    xp_xp       : string = 'NewXP';
+       xp_origin   : string = '--- NewXP';
 const  QPC_ID      = 'QPC:';
        DES_ID      = 'DES:';
        PMC_ID      = '*crypted*';
