@@ -1,0 +1,14 @@
+# Diese Datei wird fr die Telefonkostenberechnung verwendet.
+#
+# Falls Sie die Bercksichtigung von Feiertagen bei /Config/Optionen
+# /Gebhren/Sonstiges eingeschaltet haben, brauchen Sie in dieser
+# Datei nichts einzutragen. Der Eintrag fr Neujahr dient nur als
+# Beispiel.
+
+# In der ersten Spalte steht das Datum, in der zweiten die Feiertags-
+# Kategorie (1 bis 3) und in der dritten ein beliebiger Kommentar.
+# Die Verwendung verschiedener Feiertagskategorien ist in Deutschland
+# z.Zt. nicht notwendig, weil die Telefongebhren an allen Feiertagen
+# gleich hoch sind.
+
+01.01.98  1  Neujahr

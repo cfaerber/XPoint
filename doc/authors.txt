@@ -1,0 +1,101 @@
+OpenXP contributors list
+========================
+
+Please note that not all developers are still active. For the most recent
+list please check on www.openxp.de if you feel this file is outdated.
+
+DON'T send eMail concerning OpenXP to developers not listed on
+www.openxp.de, contact openxp-dev mailing list instead (dev@openxp.de).
+
+Contributors are listed in alphabetical order in the respective section.
+Please note that beta testers are not listed here.
+
+
+
+CrossPoint (original version 3.20)
+==================================
+
+Author                  eMail/Task
+------------------------------------------------------------------------------
+Peter Mandrella         peter@mandrella.de (Author of CrossPoint :-) )
+
+
+
+
+OpenXP project coordination
+===========================
+
+Name                    eMail     
+------------------------------------------------------------------------------
+Christian Boettger      cb@openxp.de
+
+
+
+OpenXP/16 (contributors still active)
+=====================================
+
+Author                  eMail/Task
+------------------------------------------------------------------------------
+Claus Faerber           cl@openxp.de (UUZ, UUCP, MIME, RFC conformity)
+Michael Heydekamp       my@openxp.de (Misc. programming, client support,
+                                      design, online help)
+Markus Kaemmerer        mk@openxp.de (Misc. programming)
+Stefan Vinke            sv@openxp.de (Misc. programming, online help)
+Martin Wodrich          mw@openxp.de (Misc. programming)
+
+Note: All contributors of OpenXP/16 are automatically also contributors of
+      OpenXP/32 as their code is usually ported to OpenXP/32.
+
+
+
+OpenXP/16 (contributors not active anymore)
+===========================================
+
+Author                  eMail/Task
+------------------------------------------------------------------------------
+Flups Baumann           fb@openxp.de (Maggi)
+Robert Boeck            robo@xp2.de  (UUZ, editor (now => XP2))
+Frank Ellert            fe@openxp.de (Makefiles, documentation, ZC conformity)
+Christian Faulhammer    cf@openxp.de (Documentation, translation (now => XP2))
+Martin Foster           mf@openxp.de (English resources and online help)
+Jochen Gehring          jg@openxp.de (Misc. programming, assembler,
+                                      temporarily still active)
+Mathias Helm            ke@openxp.de (ZConnect)
+Oliver Hertel           oh@xp2.de    (File request processing, PGP,
+                                      accessibility (now => XP2))
+Kai Henningsen          kh@openxp.de
+Martin Max Huckenbeck   max@xp2.de   (Misc. programming, mail priorities
+                                      (now => XP2))
+Helmut Hullen           hh@openxp.de (ToDo list, now on SourceForge)
+Klaus P. Kleinsimon     kp@openxp.de
+Sebastian Mannke        sm@openxp.de (Wish list, now on SourceForge)
+Heiko Schoenfeld        hs@openxp.de (Misc. programming)
+
+
+
+OpenXP/32 (contributors still active)
+=====================================
+
+Author                  eMail/Task
+------------------------------------------------------------------------------
+Claus Faerber           cl@openxp.de (UUZ, UUCP, MIME, RFC conformity)
+Michael Heydekamp       my@openxp.de (Resources, online help)
+Markus Kaemmerer        mk@openxp.de (Misc. programming and backup admin on SourceForge)
+Matthias Leonhardt      ml@openxp.de (Linux support)
+Helge Kreutzmann	kreutzm@itp.uni-hannover.de (part of build system for Debian)
+Christian Boettger      cb@openxp.de (build scripts for Linux, RPM .specs)
+Steve Tell             	st@openxp.de (Bugfixing)
+
+
+
+OpenXP/32 (contributors not active anymore)
+===========================================
+
+Author                  eMail/Task
+------------------------------------------------------------------------------
+Hinrich Donner          hd@openxp.de (Linux support)
+Michael Koppel          mo@openxp.de (Misc. programming)
+Malte Kiesel            ma@openxp.de (Fido mailer, netcall routines, ObjCOM)
+
+
+$Id: authors.txt,v 1.5 2003/09/13 17:13:16 st Exp $
