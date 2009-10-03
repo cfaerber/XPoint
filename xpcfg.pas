@@ -73,7 +73,7 @@ implementation
 uses
   sysutils,
 {$IFDEF unix}
-  xplinux,
+  xpunix,
 {$ENDIF}
   typeform,resource,
   xpglobal;

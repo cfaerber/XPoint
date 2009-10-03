@@ -21,7 +21,6 @@
 
 {$I xpdefine.inc }
 
-
 unit xp1;
 
 interface
@@ -32,9 +31,8 @@ uses
 {$IFDEF Unix }
 {$IFDEF Kylix}
   libc,
-  xplinux,
 {$ELSE}
-  linux,
+  baseunix,unix,
 {$ENDIF}
 {$ENDIF }
 {$IFDEF FPC }
@@ -265,6 +263,9 @@ uses
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
+{$IFDEF Unix }
+  xpunix,
+{$ENDIF }
 {$IFDEF NCRT }
   {$IFDEF Kylix}
     ncursix,
@@ -308,7 +309,6 @@ var  menulevel : byte;                  { Menueebene }
      listhicol : byte;
      winstack  : array[1..maxwinst] of scrptr;   { fuer Blindensupport }
      mst       : boolean;
-
 
 function ixdat(const s: string): longint;       // 0506032053 -> 1768018768
 var
@@ -678,9 +678,8 @@ var Pos:     integer;   // current position in bytes
 
     DefaultAttr: SmallWord;     // saved text attribute
 
-    i : Integer;
-
-    j: Integer;
+    i, j, k : Integer;
+    us: String;
 
   procedure _(Attr: SmallWord; ToPos, ToPosC: integer);
   begin
@@ -692,6 +691,14 @@ var Pos:     integer;   // current position in bytes
   end;
 
 begin
+{$IFDEF Debug }
+{
+  Debug.DebugLog('xp1','ListDisplay, x:'+IntToStr(x)
+                 +',y:'+IntToStr(y)+',StartC:'+IntToStr(StartC)
+                 +', Columns:'+IntToStr(Columns)
+                 +', s:<'+s+'>',DLTrace);
+}
+{$ENDIF }
   if not ListXHighlight then begin
     FWrt(x,y,UTF8FormS(s,StartC,Columns));
     exit;
@@ -718,11 +725,41 @@ begin
   begin
     NewPos := Pos;
     C := UTF8GetCharNext(s, NewPos);
+    { HJT 19.02.2006 Q&D. Im nicht UTF-8 Modus (Enable-UTF8=F, XPOINT.CFG)    )
+    { keine Sequenz laenger eins zulassen. Eigentlich muessten  W und B (s.u.)}
+    { auch angepasst werden.                                                  }
+    { Und: Der Lister ist scheinbar GAR NICHT auf nicht UTF-8 Dateien /       }
+    { Nachrichten vorbereitet mit Zeichen > $7f                               }
+    if not Enable_UTF8 then begin
+       if NewPos - Pos > 1 then begin
+          {$IFDEF Debug }
+          us:='';
+          for k:=pos to NewPos - 1 do begin
+            us:=us+Hex(Ord(s[k]),2)+' ';
+          end;
+          Debug.DebugLog('xp1','ListDisplay, Setting wg NOT Enable_UTF8'
+                         +' NewPos from: '+IntToStr(NewPos)
+                         +' To: '+IntToStr(Pos+1)
+                         +', Seq: '+us
+                         ,DLTrace);
+          {$ENDIF }
+          NewPos := Pos + 1;
+       end;
+    end;
+
     W := UnicodeCharacterWidth(C);
     B := UnicodeCharacterLineBreakType(C);
 
     if PosC <= StartC then begin OutPos := Pos; OutPosC := PosC; end;
-
+{$IFDEF Debug }
+{
+    Debug.DebugLog('xp1','ListDisplay, NewPos:'+IntToStr(NewPos)
+                         +',OutPosC:'+IntToStr(OutPosC)
+                         +',UTF8GetCharNext:'+IntToStr(C)
+                         +',UnicodeCharacterWidth:'+IntToStr(W)
+                         +',UnicodeCharacterLineBreakType:'+IntToStr(integer(B)),DLTrace);
+}
+{$ENDIF }
     if URL and (Pos >= URLStart) and (URLStartC <= 0) then
     begin
       URLStartC := PosC;
@@ -780,7 +817,7 @@ begin
     end else
 
     // check for c < 256 to avoid range check error with fpc
-    if (HiChar = 0) and (C <= 255) and (C in [Ord('*'),Ord('_'),Ord('/')]) and not
+    if (HiChar = 0) and (C <= 255) and (C in [Ord('*'),Ord('_') { HJT 12.08.07  kein Hervorheben bei Pfadangaben ,Ord('/') } ]) and not
       (LastB in [ UNICODE_BREAK_AL, UNICODE_BREAK_ID,UNICODE_BREAK_GL,
       UNICODE_BREAK_UNKNOWN, UNICODE_BREAK_CM, UNICODE_BREAK_NU ]) then
     begin
@@ -795,7 +832,13 @@ begin
     LastB := B;
 
     Pos := NewPos;
-    if Pos <= Length(s) then Inc(PosC, W);
+
+    { HJT 11.11.2005  no width of -1                            }
+    { xpunicode.pas, UnicodeCharacterWidth                      }
+    { - Other C0/C1 control characters and DEL will lead to a	}
+    {   return value of -1.					                    }	
+    { if Pos <= Length(s) then Inc(PosC, W); }
+    if Pos <= Length(s) then Inc(PosC, iif(W<=0,1,W));
   end;
 
   // the last char is the space inserted above and should not be output
@@ -805,6 +848,8 @@ begin
   // fill end of line
   if(OutPosC <= Columns) then
     FWrt(Max(1,x+OutPosC-StartC),y,sp(Min(Columns,Columns-OutPosC+StartC)));
+
+  Debug.DebugLog('xp1','ListDisplay, End',DLTrace);
 end;
 
 (*
@@ -1686,8 +1731,6 @@ begin
   CloseLst;
 end;
 
-{.$I xp1s.inc}    { Shell }
-
 { DOS-Shell }
 
 function repfile(const prog,name:string):string;
@@ -1700,7 +1743,7 @@ begin
     result:=prog+' '+name;
 end;
 
-var   trackpath : boolean = false;
+const trackpath : boolean = false;
 
 { call of external program. errorlevel returned in gloval var errorlevel.
   errorlevel is negative if call was not performed (program not found).
@@ -1710,6 +1753,7 @@ var   trackpath : boolean = false;
   cls:   0=nicht loeschen; 1=loeschen, 2=loeschen+Hinweis, 3=Mitte loeschen
          -1=loeschen/25 Zeilen, 4=loeschen/nicht sichern,
          5=nicht loeschen/nicht sichern }
+
 procedure shell(const prog:string; space:xpWord; cls:shortint);
 
   { returned: errorlevel called program returned if call successful
@@ -1727,7 +1771,7 @@ procedure shell(const prog:string; space:xpWord; cls:shortint);
 
     Result:=libc.system(PChar(command));
 {$ELSE}
-    Result:=oldlinux.shell(command);
+    Result:=unix.shell(command);
 {$ENDIF}
     Debug.DebugLog('xp1s','reload terminal state', DLInform);
     refresh();                 { restore save modes, repaint screen }
@@ -1763,7 +1807,11 @@ procedure shell(const prog:string; space:xpWord; cls:shortint);
         callviacli:=true; command:=commandsave;
       end;
     end;
-    if trim(command)='' then begin result:=-100; exit end;
+    if trim(command)='' then
+    begin
+      result:=-100;
+      exit
+    end;
     if callviacli then begin
       parameters:=' /c '+command+' '+parameters;
       command:=getenv('comspec');
@@ -1805,11 +1853,14 @@ var
 
 begin
   CloseAblage;
+  Debug.DebugLog('xp1s','shell, prog:<'+prog+'>, cls:<'+IntToStr(cls)+'>', DLInform);
+  Debug.DebugLog('xp1s','shell, screenlines:'+IntToStr(screenlines)+',ScreenWidth:'+IntToStr(ScreenWidth), DLInform); { HJT 01.10.2005 }
   if (ParDebFlags and 1<>0) or ShellShowpar then
     ShowPar;
   getmaus(maussave);
   xp_maus_aus;
   if (cls<>4) and (cls<>5) then begin
+    Debug.DebugLog('xp1s','shell, calling sichern(sp)', DLDebug);
     sichern(sp);
     savecursor;
     end;
@@ -1825,29 +1876,37 @@ begin
               m2t:=false;
             end;
     3   : begin
+            Debug.DebugLog('xp1s','shell, calling clwin(1,ScreenWidth,4,screenlines-2)', DLInform);
             clwin(1,ScreenWidth,4,screenlines-2);
             gotoxy(1,5);
           end;
   end;
   {$ifdef Win32}
-  // todo: adjust screen size with Win9x/ME only, not with WinNT/2000
-  SysSetScreenSize(25,80);
-  Window(1,1,80,25);
+  if not SysIsNT then begin  { HJT 10.09.05 }
+    Debug.DebugLog('xp1s','shell, calling SysSetScreenSize(25,80)', DLInform);
+    SysSetScreenSize(25,80);
+    Debug.DebugLog('xp1s','shell, calling Window(1,1,80,25)', DLInform);
+    Window(1,1,80,25);
+  end;
   {$endif}
   if (cls=2) or (cls=-1) then
   begin
     if shell25 and (screenlines>25) then
       SysSetScreenSize(25, 80);
-    if cls=2 then writeln(getres(113));  { Mit EXIT geht''s zurueck zu CrossPoint. }
+    if cls=2 then writeln(getres(113));  { Mit EXIT geht''s zurck zu CrossPoint. }
   end;
   cursor(curon);
 
+  Debug.DebugLog('xp1s','shell, calling Xec('+prog+'>', DLInform);
+  
   Errorlevel := Xec(prog,'[XP]');
 
+  Debug.DebugLog('xp1s','shell, Xec returns Errowlevel:'+IntToStr(Errorlevel), DLInform);
+  
   if shellkey or (ParDebFlags and 2<>0) or ShellWaitkey then
   begin
-    if deutsch and (random<0.02) then write('Pressen Sie einen Schluessel ...')
-    else write(getres(12));  { Taste druecken ... }
+    if deutsch and (random<0.02) then write('Pressen Sie einen Schlssel ...')
+    else write(getres(12));  { Taste drcken ... }
     m2t:=false;
     pushhp(51);
     clearkeybuf;
@@ -1858,7 +1917,17 @@ begin
   end;
 
   SysSetBackintensity;
+  Debug.DebugLog('xp1s','shell, calling SetScreenSize, ScreenLines:'
+                        + IntToStr(ScreenLines)
+                        + ', ScreenWidth:'+IntToStr(ScreenWidth), 
+                        DLInform);
   SetScreenSize;
+
+  Debug.DebugLog('xp1s','shell, after calling SetScreenSize, ScreenLines:'
+                        + IntToStr(ScreenLines)
+                        + ', ScreenWidth:'+IntToStr(ScreenWidth), 
+                        DLInform);
+
   cursor(curoff);
   if (cls<>4) and (cls<>5) then holen(sp);
   m2t:=sm2t;
@@ -1969,11 +2038,14 @@ var
     pp     : byte;
     lt     : byte;
     lfirst : byte;     { Startzeile Lister }
-    lofs   : xpWord;     { Ladeposition Datei }
+    lofs   : word;     { Ladeposition Datei }
     dphb   : byte;     { Uhr Hintergrundfarbe Backup }
     wrapb  : boolean;  { Backup no_ListWrapToggle }
+    ehlback: integer;  { Backup ExtHdLines }
 
     OldTCS,OldLCS: TMimeCharsets;
+
+    label again;       { HJT 27.01.08 Wortumbruch toggeln }
 
   procedure ShowMsgHead;
   var t : text;
@@ -1985,7 +2057,13 @@ var
     if UTF8 then SetLogicalOutputCharset(csUTF8);
     for i:=1 to exthdlines do begin
       readln(t,s);
-      mwrt(1,lfirst,' '+forms(s,79+ScreenWidth-80));
+      { HJT 05.02.2006: UTF8FormS bei UTF-8, ansonsten bleiben eventuell }
+      { bei Headerzeilen am Ende nicht 'ausgeblankte' Zeichen }
+      if UTF8 then begin
+         mwrt(1,lfirst,' '+UTF8FormS(s,79+ScreenWidth-80));
+      end else begin
+         mwrt(1,lfirst,' '+forms(s,79+ScreenWidth-80));
+      end;      
       inc(lfirst);
       inc(lofs,length(s)+2);
       end;
@@ -1997,8 +2075,15 @@ var
 
 begin
   listexit:=0;
+  Debug.Debuglog('xp1','listfile, Start, name:<'+name+'>, listmsg: '+iifs(listmsg,'True','False'),dlTrace);
+  ehlback:=exthdlines;      { HJT 27.01.08 }
   wrapb:=no_ListWrapToggle;
   no_ListWrapToggle:=false;
+
+again:            { fuer toggeln bei O mittels Ctrl-W  }
+  Debug.Debuglog('xp1','listfile, again',dlTrace);
+  exthdlines:=ehlback;      { HJT 27.01.08 }  
+  listexit:=0;
   dphb := 0;
   if varlister<>'' then begin
     lf:=repfile(VarLister,name);
@@ -2026,26 +2111,26 @@ begin
         end;
       end;
     if ListMsg and ListFixedHead then
-      ShowMsgHead;
-
-    if IsFileUTF8(name) then UTF8 := true;
-    if UTF8 then
     begin
-      OldTCS := GetConsoleOutputCharset;
-      OldLCS := GetLogicalOutputCharset;
-      SetConsoleOutputCharset(csUTF8);
-      SetLogicalOutputCharset(csCP437);
-{$IFDEF ANALYSE}  //prevent warning "not initialized"
-    end else begin
-      OldTCS := csCP437;
-      OldLCS := csCP437;
-{$ENDIF}
+      ShowMsgHead;
+      if UTF8 then 
+      begin
+        OldTCS := GetConsoleOutputCharset;
+        OldLCS := GetLogicalOutputCharset;
+        SetConsoleOutputCharset(csUTF8);
+        SetLogicalOutputCharset(csCP437);
+      end;
     end;
 
+    Debug.Debuglog('xp1','listfile, TLister.CreateWithOptions',dlTrace);
+      
     List := TLister.CreateWithOptions(1,iif(_maus and listscroller,screenwidth-1,screenwidth),lfirst,
              iif(listvollbild,screenlines,screenlines-fnkeylines-1),
              iif(listvollbild,1,4),'/F1/MS/S/APGD/'+iifs(listendcr,'CR/','')+
              iifs(_maus and ListScroller,'VSC/','')+
+             { HJT 05.02.2006 wenn UTF-8 gewuenscht wird, die Options }
+             { auch entsprechend versorgen                            }
+             iifs(UTF8,'UTF8/','')+
              iifs(listmsg,'ROT/SIG/',''));
     if listwrap {or listkommentar} then
       list.Stat.WrapPos := iif(_maus and listscroller,78,80)+ScreenWidth-80;
@@ -2054,9 +2139,10 @@ begin
     msg:=(_filesize(name)>1024*100);
     if msg then rmessage(130);    { 'Lade Datei ...' }
     List.UTF8Mode := utf8;
-    List.ReadFromFile(name,lofs, listwrap);
+    List.ReadFromFile(name,lofs,listwrap);
     if msg then closebox;
     List.HeaderText := header;
+    Debug.Debuglog('xp1s','listfile, List.OnKeypressed := listExt',dlTrace);
     List.OnKeypressed := listExt;
     llh:=listmsg;
     oldm:=ListMakros;
@@ -2066,6 +2152,7 @@ begin
       List.OnColor := listColor;
       if cols and 2<>0 then
       begin
+        Debug.Debuglog('xp1s','listfile, List.OnDisplayLine := Listdisplay',dlTrace);
         List.OnDisplayLine := Listdisplay;
         xp1o.ListXHighlight:=ListHighlight;
         end;
@@ -2091,12 +2178,15 @@ begin
     pophp;
     ListMakros:=oldm;
 
-    if UTF8 then
+    if ListMsg and ListFixedHead then
     begin
-      SetConsoleOutputCharset(OldTCS);
-      SetLogicalOutputCharset(OldLCS);
+      if UTF8 then 
+      begin
+        SetConsoleOutputCharset(OldTCS);
+        SetLogicalOutputCharset(OldLCS);
+      end;
     end;
-
+    
     if listvollbild and listuhr and ListMsg then begin
      dphback:=dphb;                        {Uhrfarbe reseten}
      if not Listfixedhead then timey:=1;   {Und evtl. Position}
@@ -2105,12 +2195,20 @@ begin
     if savescr then holen(p);
     List.Free;
   end;
+
+  if listexit = -5 then { HJT 27.01.08, <Ctrl-W>, siehe xp1o.listExt }
+  begin
+    goto again;
+  end;
+
   exthdlines:=0;
   llh:=false;
   if listexit<>4                         { Wenn nicht Editor gestartet wird... }
     then otherquotechars:=otherqcback;   { Status der Quotechars '|' und ':' reseten }
   listfile:=listexit;
   no_ListWrapToggle:=wrapb;
+
+  Debug.Debuglog('xp1s','listfile, At End, Returning: '+IntToStr(Result),dlTrace);
 end;
 
 
@@ -2131,7 +2229,6 @@ begin
     end;
   close(f);
 end;
-
 
 { reedit: Nachbearbeiten einer XP-erzeugten-Nachricht - }
 {         TED-Softreturns zurueckwandeln                 }

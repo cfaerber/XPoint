@@ -1,5 +1,4 @@
-{   $Id$
-
+{  
     OpenXP typeform unit
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
@@ -650,11 +649,7 @@ asm
           jpo    @spok
           or     al,80h
 @spok:    mov    [edi],al
-{$ifdef FPC }
-end ['EAX', 'EDI'];
-{$else}
 end;
-{$endif}
 
 function Hoch(const r:real; const n:integer):real;
 var i : integer;
@@ -1993,42 +1988,6 @@ begin
   else d2:='19'+d1+'00W+0';
 end;
 
-function FindURL(s: String; var x, y: Integer): Boolean; overload;
-const
-  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':',';','/','~','?',
-    '-','_','#','=','&','%','@','$',',','+'];
-var
-  u: string;
-begin
-  u := UpperCase(s);
-              x := Pos('HTTP://',u); {WWW URL ?}
-  if x=0 then x:=Pos('HTTPS://',u);  {HTTPS URL ?}
-  if x=0 then x:=Pos('GOPHER://',u); {Gopher URL ?}
-  if x=0 then x:=Pos('FTP://',u);    {oder FTP ?}
-  if x=0 then x:=Pos('WWW.',u);      {oder WWW URL ohne HTTP:? }
-  if x=0 then x:=Pos('HOME.',u);     {oder WWW URL ohne HTTP:? }
-  if x=0 then x:=Pos('FTP.',u);      {oder FTP URL ohne HTTP:? }
-  if x=0 then x:=Pos('URL:',u);      {oder explizit mark. URL? }
-  if x=0 then x:=Pos('URN:',u);      {oder explizit mark. URN? }
-  if x=0 then x:=Pos('URI:',u);      {oder explizit mark. URL? }
-  if x=0 then x:=Pos('MAILTO:',u);   {oder MAILTO: ?}
-
-  y:=x;
-  Result := x <> 0; s := s + ' ';
-  if Result then
-  begin
-    while (y<=length(s)) and (s[y] in urlchars) do
-    begin
-      // "," is a valid url char, but test for things like
-      // "see on http:///www.openxp.de, where" ...
-      // in this case, "," does not belong to the url
-      if ((s[y] = ',') or (s[y] = '.')) and (y<Length(s)) and (not (s[y+1] in urlchars)) then
-        break;
-      inc(y); {Ende der URL suchen...}
-    end;
-  end;
-end;
-
 { functions to convert from/to MSB and LSB }
 
 Function Swap16(X : smallword) : smallword; {$IFNDEF Delphi} inline; {$ENDIF }
@@ -2091,10 +2050,37 @@ begin
 end;
 {$ENDIF }
 
+function FindURL(s: String; var x, y: Integer): Boolean; overload;
+const
+  urlchars: set of char=['a'..'z','A'..'Z','0'..'9','.',':',';','/','~','?',
+    '-','_','#','=','&','%','@','$',',','+','*'];
+var
+  u: string;
+begin
+  u := UpperCase(s);
+  x := Pos('HTTP://',u); {WWW URL ?}
+  if x=0 then x:=Pos('HTTPS://',u);  {HTTPS URL ?}
+  if x=0 then x:=Pos('GOPHER://',u); {Gopher URL ?}
+  if x=0 then x:=Pos('FTP://',u);    {oder FTP ?}
+  if x=0 then x:=Pos('URL:',u);      {oder explizit mark. URL? }
+  if x=0 then x:=Pos('URN:',u);      {oder explizit mark. URN? }
+  if x=0 then x:=Pos('URI:',u);      {oder explizit mark. URL? }
+  if x=0 then x:=Pos('MAILTO:',u);   {oder MAILTO: ?}
+  if x=0 then 
+  begin
+    x:=Pos(' FTP.',u);              {oder FTP URL ohne HTTP:? }
+    if x<>0 then inc(x);
+  end;
+  if x=0 then 
+  begin 
+    x:=Pos('FTP.',u);               {oder FTP URL ohne HTTP:? }
+    if x<>1 then x:=0;
+  end;
+end;
+
 { Sucht nach char in Buffer mit Länge Len }
 { Ausgabe: 0..Len-1 => Position von c     }
 {          Len      => nicht gefunden     }
-
 function BufferScan(const Buffer; Len: Integer; c: Char): Integer; assembler;
 asm
         PUSH    EDI
@@ -2117,265 +2103,4 @@ asm
         POP     EDI
 end;
 
-{
-  $Log: typeform.pas,v $
-  Revision 1.146  2003/12/08 10:35:07  mk
-  - fied FindURL from last commit
-
-  Revision 1.145  2003/12/07 13:01:58  mk
-  - additional fix for last commit
-
-  Revision 1.144  2003/12/06 11:04:24  mk
-  - special handling for '.' at end of URLs
-
-  Revision 1.143  2003/11/10 01:14:34  cl
-  - MausTausch update
-
-  Revision 1.142  2003/09/29 23:52:02  cl
-  - alternative implementation of xp1.ListDisplay, fixes several problems
-    (see <mid:8uXefR8ocDD@3247.org>, <mid:8ur99CyJcDD@3247.org>)
-
-  Revision 1.141  2003/09/28 20:24:21  cl
-  - fixed UTF8FormS
-
-  Revision 1.140  2003/09/26 11:45:24  mk
-  - added ";" to list of valid urlchars
-
-  Revision 1.139  2003/09/25 20:27:39  cl
-  - BUGFIX: UTF8Mid works with characters, not columns => use extended version
-    of UTF8FormS for lister.
-
-  Revision 1.138  2003/09/22 11:25:07  cl
-  - Fixed UTF8FormS: Use of Position-1 with UTF_8 strings
-
-  Revision 1.137  2003/09/21 20:11:39  mk
-  - added function FindURL
-
-  Revision 1.136  2003/09/10 14:17:39  mk
-  - removed dupe function CharExistsL and optimized WordCountEx
-
-  Revision 1.135  2003/09/02 16:43:26  mk
-  - added const parameter for MultiPos
-
-  Revision 1.134  2003/08/30 23:47:09  mk
-  - added WordCount(Ex)
-
-  Revision 1.133  2003/08/28 01:14:15  mk
-  - removed old types s20, s40, s60 and s80
-
-  Revision 1.132  2003/08/25 22:38:09  mk
-  - fixed comment for TrimLastChar
-
-  Revision 1.131  2003/08/23 23:02:35  mk
-  - removed hints and warnings
-
-  Revision 1.130  2003/05/11 11:13:56  mk
-  - added ExtractWord, ExtractWordEx and WordPosition
-
-  Revision 1.129  2003/05/11 11:10:27  mk
-  - added funciton IsMailAdr
-
-  Revision 1.128  2003/05/01 10:20:22  mk
-  - fixed range check error in SMatch
-
-  Revision 1.127  2003/02/13 14:41:57  cl
-  - implemented correct display of UTF8 in the lister
-  - implemented Unicode line breaking in the lister
-
-  Revision 1.126  2002/12/21 05:37:52  dodi
-  - removed questionable references to Word type
-
-  Revision 1.125  2002/12/14 09:25:18  dodi
-  - removed gpltools and encoder units
-
-  Revision 1.124  2002/12/13 14:31:35  dodi
-  - added IsIntVal function
-
-  Revision 1.123  2002/12/12 11:58:41  dodi
-  - set $WRITEABLECONT OFF
-
-  Revision 1.122  2002/12/06 14:27:27  dodi
-  - updated uses, comments and todos
-
-  Revision 1.121  2002/12/04 16:57:00  dodi
-  - updated uses, comments and todos
-
-  Revision 1.120  2002/11/14 00:29:50  mk
-  dido:- fixed bug in cVal
-
-  Revision 1.119  2002/11/10 10:55:03  mk
-  - fixed bug in CountChar
-
-  Revision 1.118  2002/09/26 22:51:46  cl
-  - further improved BufferScan, and added comments
-
-  Revision 1.117  2002/09/26 22:16:53  cl
-  - Fixed bug in BufferScan: Incorrect result when char not found in Buffer
-  - Added functions CPosX (similar to PosX), and CPosFrom, CPosXFrom
-    (like CPos/CPosX, but searches from start pos)
-
-  Revision 1.116  2002/09/09 08:42:32  mk
-  - misc performance improvements
-
-  Revision 1.115  2002/07/25 20:43:53  ma
-  - updated copyright notices
-
-  Revision 1.114  2002/07/01 11:59:41  mk
-  MY: Neue ISO->IBM-Tabelle
-
-  Revision 1.113  2002/05/13 07:59:05  mk
-  - asm version of cpos has problems with FPC, removed temporary
-
-  Revision 1.112  2002/05/05 22:26:33  mk
-  - added ASM version of cPos
-
-  Revision 1.111  2002/04/22 10:04:22  mk
-  - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
-
-  Revision 1.110  2002/04/19 16:52:20  cl
-  - fix for last commit: pathdelim is '/' for UnixFS
-
-  Revision 1.109  2002/04/19 16:51:24  cl
-  - fix for FPC <= 1.0.4
-
-  Revision 1.108  2002/04/14 22:21:31  cl
-  - Hex(): Delphi fix; changed to universally portable code
-
-  Revision 1.107  2002/04/06 17:07:47  mk
-  - fixed some hard coded '\' to PathDelim and other functions
-    should resolve misc problems with linux
-
-  Revision 1.106  2002/03/23 15:12:51  mk
-  - removed compiler warnings
-
-  Revision 1.105  2002/01/28 20:32:24  mk
-  - completed 3.40 merge, source is compilable for dos and win
-    linux is still untested
-
-  Revision 1.104  2001/10/26 11:20:38  ma
-  - new var "OpenXPEXEPath" (which replaces ParamStr(0) because of problems
-    with Unix)
-
-  Revision 1.103  2001/10/17 10:54:58  ml
-  - fix for umlaut
-  - range Error fix
-
-  Revision 1.102  2001/10/17 07:33:26  mk
-  - Word to Integer in Rot13
-
-  Revision 1.101  2001/09/17 16:29:17  cl
-  - mouse support for ncurses
-  - fixes for xpcurses, esp. wrt forwardkeys handling
-
-  - small changes to Win32 mouse support
-  - function to write exceptions to debug log
-
-  Revision 1.100  2001/09/10 15:58:01  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.99  2001/09/08 16:29:30  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.98  2001/09/08 14:20:00  cl
-  - Moved MIME functions to mime.pas
-  - Moved Stream functions to xpstreams.pas
-  - Moved b30 to typeform.pas
-
-  Revision 1.97  2001/09/07 17:27:24  mk
-  - Kylix compatiblity update
-
-  Revision 1.96  2001/08/28 08:15:44  mk
-  - blankpos(x) now with const parameter
-
-  Revision 1.95  2001/08/12 19:59:17  cl
-  - rename xp6*.* => xpsendmessage*.*
-  - NaN/IsNaN added
-  - CopyStream[Mult] added
-
-  Revision 1.94  2001/08/11 23:06:28  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.93  2001/08/02 22:24:46  mk
-  - use AnsiUpperCase instead of UpperCase in FileUpperCase
-
-  Revision 1.92  2001/07/31 16:18:40  mk
-  - removed some unused variables
-  - changed some LongInt to DWord
-  - removed other hints and warnings
-
-  Revision 1.91  2001/07/31 13:10:32  mk
-  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
-
-  Revision 1.90  2001/07/28 12:33:33  mk
-  - GetEnv is now in OS dependend and not in dos unit
-
-  Revision 1.88  2001/07/02 23:41:32  mk
-  - defect base64 lines are'nt decoded anymore (readded this fix)
-
-  Revision 1.87  2001/07/01 23:03:33  mk
-  - fixed base64 decoding
-
-  Revision 1.86  2001/05/20 12:16:12  ma
-  - added StrgListToString
-
-  Revision 1.85  2001/04/19 13:06:14  ml
-    - keyboardtranslation extended   (Pos1/Home etc.)
-    - ISO2IBM - Codetabletranslation (äöüß - this was shitty hard work)
-
-  Revision 1.84  2001/04/19 12:54:26  ml
-  - keyboardtranslation extended   (Pos1/Home etc.)
-  - ISO2IBM - Codetabletranslation (äöüß - this was shitty hard work)
-
-  Revision 1.83  2001/04/09 13:18:15  cl
-  - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
-  - zcrfc.pas: regognition of all known charsets for news and smtp batches
-  - typeform.pas: Changed DecodeBase64 from var-procedure to function.
-  - Moved RecodeCharset from zcrfc.pas to UTFTools.pas
-  - utftools.pas: Optimized Charset recoders
-  - utftools.pas: added charset aliases from IANA database
-
-  Revision 1.82  2001/03/16 16:58:40  cl
-  - Little/Big-Endian conversion/macros
-  - GetTokenC (token terminated by on of several chars instead of string)
-
-  Revision 1.81  2001/02/25 17:38:33  cl
-  - moved CVal to typeform.pas, now also supports octal numbers
-
-  Revision 1.80  2001/02/25 15:15:19  ma
-  - shortened logs
-  - added GPL headers
-  - deleted DecBase64 as it was implemented twice
-
-  Revision 1.79  2001/02/19 15:27:18  cl
-  - marked/modified non-GPL code by RB and MH
-
-  Revision 1.78  2001/01/04 17:27:36  mk
-  - iifs now uses const parameters
-
-  Revision 1.77  2000/12/04 14:20:56  mk
-  RB:- UTF-7 Support added
-
-  Revision 1.76  2000/11/18 21:17:37  mk
-  - changed in CPosX var to const parameter
-
-  Revision 1.75  2000/11/16 12:35:47  mk
-  - Unit Stringtools added
-
-  Revision 1.74  2000/11/15 23:21:02  fe
-  Made compileable.
-
-  Revision 1.73  2000/11/15 23:12:32  mk
-  - implemented ZCDateTimeToDateTime and DateTimeToZCDateTime functions
-
-  Revision 1.72  2000/11/15 18:01:31  hd
-  - Unit DOS entfernt
-
-  Revision 1.71  2000/11/01 22:59:23  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.70  2000/10/17 10:05:43  mk
-  - Left->LeftStr, Right->RightStr
-}
 end.

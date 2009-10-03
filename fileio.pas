@@ -31,9 +31,8 @@ uses
 {$IFDEF Kylix}
   libc,
 {$ELSE}
-  Linux,oldlinux,
+  unix,baseunix,
 {$ENDIF }
-  xplinux,
 {$else }
   {$ifdef vp} vpusrlow, {$endif}
   {$ifdef Dos32} xpdos32, {$endif}
@@ -188,6 +187,7 @@ uses
   typeform,
   {$ifdef Win32} xpwin32, windows, {$endif}
   {$ifdef os2} xpos2, {$endif}
+  {$ifdef Unix} xpunix, {$endif}
   debug,xp0;
 
 {$ifdef unix}
@@ -221,7 +221,7 @@ begin
 {$IFDEF Kylix}
   result:= chmod(PChar(fn), fm) <> 0;
 {$ELSE}
-  result:= chmod(fn, fm);
+  result:= fpchmod(fn, fm)<>0;
 {$ENDIF}
 end;
 {$else}

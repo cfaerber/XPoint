@@ -31,8 +31,9 @@ unit mime;
 uses
   Classes,
   xpcharset,
-  xpstreams,
-  xpstreams_codec;
+//  xpstreams,
+  xpstreams_codec,
+  debug;
 
 { ---------------------- Enum types & Constants ---------------------- }
 
@@ -625,9 +626,9 @@ var s: string;
 begin
   s:=lowercase(value);
 
-  if value='inline' then
+  if s='inline' then
     FDispo:=MimeDispositionInline
-  else if value='attachment' then
+  else if s='attachment' then
     FDispo:=MimeDispositionAttach
   else
     FDispo:=MimeDispositionNone;
@@ -645,7 +646,7 @@ end;
 function TMimeDisposition.MayEncodeParam(const name:string):boolean;
 var name_lc: string;
 begin
-  name_lc := LowerCase(name_lc);
+  name_lc := LowerCase(name);
   Result :=
     (name_lc<>'creation-date') and
     (name_lc<>'modification-date') and
@@ -812,10 +813,16 @@ function RFC2047_Decode(const ss: string; csTo: TMIMECharsets):String;
 var p,q,r: longint;
     e,t:   longint;
     sd:    string;
+    s:     string;
+    len:   longint; 
+    z:     longint;
+    i:     longint;
+    chk_valid_zcchars: boolean;
 
 label outer;
 
 begin
+  chk_valid_zcchars:=false; {im dekodiertem String ungueltige Zeichen eliminieren }
   p:=1;       { current scan position in ss      }
   q:=1;       { start of data not copied into sd }
   r:=1;       { last non-whitespace char in ss   }
@@ -882,6 +889,7 @@ outer:
           sd := sd + RecodeCharset(DecodeBase64(Copy(ss,e+2,t-(e+2))),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csTo)
         else                       { quoted-printable }
            sd := sd + RecodeCharset(DecodeQuotedPrintable_Internal(Copy(ss,e+2,t-(e+2)),true),MimeGetCharsetFromName(Copy(ss,p+2,e-1-(p+2))),csTo);
+        chk_valid_zcchars:=true;
       end;
 
       p:=t+2;
@@ -899,6 +907,30 @@ outer:
     Result := sd + RecodeCharset(mid(ss,q),csCP1252,csTo)
   else
     Result := RecodeCharset(ss,csCP1252,csTo);
+
+    { HJT: 10.11.06 aus dekodierten RFC-Headerzeilen    }
+    { alle Zeichen entfernen, die dazu fuehren wuerden, }
+    { dass ein ungueltiger, insbesondere mehrzeiliger   }
+    { ZConnect-Header entstuende.                       }
+    if chk_valid_zcchars then
+    begin
+      s := Result;
+      len := length(s);
+      SetLength(result, len); 
+      z := 0;
+      for i := 1 to len do begin
+        if s[i] in [#0,#10,#13,#26] then begin
+          Debug.DebugLog('mime.pas', 'remove_RFC2047_Decode, removed '
+                          +Hex(Ord(s[i]),2)+' from header: '
+                          +'<'+s+'>', DLInform);
+        end
+        else begin
+          inc(z,1);
+          Result[z] := s[i];
+        end;
+      end;
+      SetLength(Result, z);
+    end;
 end;
 
 function RFC2047_Encode(ss: string; csFrom: TMimeCharsets; MaxFirstLen,MaxLen:Integer;EOL:String):String;

@@ -131,6 +131,41 @@ var
     taus[cpos(c,UsrFeldTausch)] := s;
   end;
 
+  { 23.09.2005 HJT: ehemalige eingebettete Assemblerzeilen }
+  { auf Pascal umgeschrieben.                              }
+  { Hintergrund: moeglicherweise erzeugt FP2 fehlerhaften  }
+  { code bei hoeheren Optimierungsstufen.                  }
+  { Konkreter Anlass: in der Nachrichtenuebersicht wurden  }
+  { Nachrichten beim erstmaligen rueckwaertsblaettern mit  }
+  { der falschen Farbe (Prio) dargestellt.                 }
+  { Dessweiteren wurden beim Bewegen des Scrollbalkens     }
+  { ueber eine rot-hinterlegte Nachricht anschliessend     }
+  { die Nachricht wieder 'normal', also nicht rot, ange-   }
+  { zeigt. Das Auslagern der Assemblezeilen scheint das    }
+  { Problem auch bei den hoeheren Optimierungsstufen zu    }
+  { beheben                                                }
+  
+  function getprio(const flag:byte; msgs:boolean):byte;
+  var
+    helpbyte: byte;
+  begin
+      { codieren Prioritaet... Farbflag setzen:   }
+      { Nachrichten: Bit 3-5                      }
+      { User       : Bit 5-7                      }
+      { 000=normal   -> 0     100=niedrigste -> 5 }
+      { 001=hoechste -> 2     101=    ?      -> 6 }
+      { 010=hoch     -> 3     110=    ?      -> 7 }
+      { 011=niedrig  -> 4     111=    ?      -> 8 }
+
+    if msgs then helpbyte:=flag DIV  8  { Nachrichten }
+    else         helpbyte:=flag DIV 32; { User        }
+    helpbyte:=helpbyte and 7;
+    if helpbyte > 0 then inc(helpbyte);
+    result:=helpbyte;
+  end;
+  
+var
+  hdp : THeader;
 begin  { __ Suchmarke }
   over80:= ScreenWidth-80;                                      { Bildschirm > Spalten }
   case aktdispmode of
@@ -357,6 +392,16 @@ begin  { __ Suchmarke }
 
             s1:= dbReadNStr(mbase,mb_betreff);
 
+            // if maximum subject length in database was used
+            // the subject may be longer, so get it direct from the message
+            if Length(s1) = 40 then
+            begin
+              hdp := THeader.Create;
+              ReadHeader(hdp,hds,false);
+              s1 := hdp.Betreff;
+              hdp.Free;
+            end;
+
             if dispmode<>12 then
             begin
 (*           if (netztyp=nt_Maus) and (mnt and $100<>0) then
@@ -388,13 +433,13 @@ begin  { __ Suchmarke }
               else
                 sdat:=LeftStr(s2,5);
               ulen:=iif(over80>2,27,25);    { wenn Platz fÅr vollen Username  }
-              blen:=iif(over80>6,40,36);    { auch noch Platz fÅr den Betreff }
+              blen:=iif(over80>6,40+Over80,36+Over80);    { auch noch Platz fÅr den Betreff }
             { kein Datum anzeigen }
             end
             else begin
               sdat:='';
               ulen:=27;
-              blen:=40;
+              blen:=40+Over80;
             end;
             if (dispmode=11) and MarkUnversandt then
             begin      {11=markierte Nachrichten}
@@ -419,7 +464,7 @@ begin  { __ Suchmarke }
             begin
               inc(ulen,blen-pp);
               blen:=pp;
-            end;
+            end;                                                                   
             dbReadN(mbase,mb_Groesse,size);
             dbReadN(mbase,mb_unversandt,unvers);
             dbReadN(mbase,mb_Typ,typ);
@@ -470,7 +515,7 @@ begin  { __ Suchmarke }
 
               ulen:=19; {Absender-laenge}
               msgtausch('E',forms(s0,19+h3));                      { (E)mpfaenger }
-              msgtausch('B',forms(s1,iif(showmsgdatum,21,27)+h3+
+              msgtausch('B',forms(s1,iif(showmsgdatum,21+over80,27+over80)+h3+
                 iif(Short_Realnames and not (MarkUnversandt and (Dispmode=11)),5,0))); { (B)etreff }
               userflag[y]:=IIf((HighlightName=UpperCase(s0)) or (mf_Reply in mnt.flags),1,0);
             end
@@ -495,7 +540,8 @@ begin  { __ Suchmarke }
               @1: mov helpbyte,al
               end;
 *)
-              userflag[y]:=(flags and (8+16+32)) + iif(flags and (8+16+32)<>0,1,0);
+              { HJT 23.09.2005 asm durch Pascal ersetzt wg. Optimierer, siehe getprio }
+              userflag[y]:=getprio(flags, true);
 
               if (fidoqwk and (FirstChar(_brett)='A') and
                   (HighlightName=UpperCase(dbReadStr(mbase,'name'))))

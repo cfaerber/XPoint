@@ -30,7 +30,8 @@ uses xpcurses,
   {$IFDEF Kylix }
     libc
   {$ELSE }
-    linux,oldlinux
+    unixutil,
+    unix
   {$ENDIF }
   ;
 
@@ -57,17 +58,19 @@ function GetTimeZone: String;
 var
   tzBase, tzMinutes, tzHours: LongInt;
   isNegative: boolean;
-  s: string[7];
-  {$IFDEF Kylix }
+  s: string;
+{ HJT 08.10.06 Variablen aus unit unix/unixutil nicht ueberschreiben }
+{$IFNDEF FPC }
   tzseconds: LongInt;
   tzdaylight: Boolean;
-  {$ENDIF}
+{$ENDIF}
 begin
-  {$IFDEF Kylix }
-  {TODO1: tzseconds in Kylix ermitteln !!!!!!!!}
+{
+{ HJT 08.10.06 Werte aus unit unix/unixutil nicht ueberschreiben }
+{$IFNDEF FPC }
   tzseconds := 0;
   tzdaylight := False;
-  {$ENDIF}
+{$ENDIF}
   { Abweichung in positiven Minuten darstellen }
   if (tzseconds < 0) then begin
     isNegative:= true;

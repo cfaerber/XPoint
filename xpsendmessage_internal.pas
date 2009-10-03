@@ -40,7 +40,7 @@ uses  sysutils,xp0,xpcc, xpnt, xpglobal;
 }
 
 {     oempf  = '## OriginalempfÑnger:';  - 600 }
-const maxcc  = 50;
+const { maxcc  = 50;    HJT 17.10.08, maxcc ist bereits in xpcc.pas definiert mit 126 siehe auch SF [ 2172658 ] Verteiler: Crash bei Benutzung (Brief) }
 
       um     : array[1..7] of char = 'ÑîÅéôö·';
 
@@ -59,7 +59,7 @@ type ccmore  = record
 
 var umlaute  : byte;        { 0=IBM; 1=ASCII; (2=ISO) }
     min_send : longint;     { minimales Sendedatum (fÅr "D"atum) }
-    cc_anz   : integer16;   { Anzahl CC-Empf"nger }
+    cc_anz   : integer;     { Anzahl CC-Empf"nger }
     cc       : ccp;         { Kopie-Empf"nger }
     ccm      : ^ccmorea;
 

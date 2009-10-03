@@ -691,7 +691,7 @@ end;
 
 function ntCrossPM(nt:eNetz):boolean;          { PM-Crosspostings m”glich }
 begin
-  ntCrossPM:=nt in [nt_ZConnect,nt_UUCP,nt_POP3];
+  ntCrossPM:=nt in [nt_ZConnect,nt_UUCP,nt_POP3,nt_Client]; { HJT 17.04.2006, CCs fuer nt_Client }
 end;
 
 
@@ -808,7 +808,6 @@ function ntBCC(nt:eNetz):boolean;              { BCC-Option vorhanden }
 begin
   ntBCC := (nt in ([nt_ZConnect]+netsRFC));
 end;
-
 
 function ntFilename(nt:eNetz):boolean;         { Dateiname im Header }
 begin

@@ -360,7 +360,7 @@ begin
   if (not FSupportUIDLs)or(not OnlyNew) then
     result:=Nr
   else
-    result:=Integer(FAvailableUIDLs.Objects[Nr - 1]);
+    result:=Int64(Pointer(FAvailableUIDLs.Objects[Nr - 1]));
 end;
 
 function TPOP3.Retr(ID: Integer; List: TStringList): boolean;
@@ -401,7 +401,7 @@ begin
   if FSupportUIDLs then
     // mark UIDL as retrieved
     for Nr := 0 to FAvailableUIDLs.Count - 1 do
-      if Integer(FAvailableUIDLs.Objects[Nr]) = ID then
+      if Int64(Pointer(FAvailableUIDLs.Objects[Nr])) = ID then
       begin
         if UIDLs.IndexOf(FAvailableUIDLs[Nr]) = -1 then
           UIDLs.Add(FAvailableUIDLs[Nr]);

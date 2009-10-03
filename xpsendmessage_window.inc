@@ -1599,7 +1599,7 @@ begin
       ScrollDone;
       SetFieldPos(ok_pos);
 
-      Senden := readmask(brk);
+      readmask(brk);
 
       enddialog;
     until done;

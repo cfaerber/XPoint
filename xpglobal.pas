@@ -57,6 +57,9 @@ const
   {$IFDEF Dos32 }
   target_os   = 'DOS32';        { 32 Bit DOS mit FPC oder VP }
   {$ENDIF}
+  {$IFDEF Darwin }
+  target_os   = 'Darwin';       { 32 Bit MacOS X mit FPC }
+  {$ENDIF}
 
   {$IFDEF FPC}
   compiler    = 'FPC';          { Free Pascal }
@@ -78,9 +81,9 @@ const
 
   pformstr = ' (' + target_os + '; ' + compiler + ')';
 
-  author_name = 'OpenXP-Team';
-  author_mail = 'dev@openxp.de';
-  x_copyright = '(c) 2000-2005';
+  author_name = 'cfaerber';
+  author_mail = 'cfaerber@users.sf.net';
+  x_copyright = '(c) 2000-2009';
 
 const
 
@@ -114,13 +117,16 @@ type
   }
 
   {$IFDEF FPC }
-    { FreePascal, 32 Bit }
+    { FreePascal, 32/64 Bit }
     integer8 =   shortint;
     integer16 =  system.smallint;
     integer32 =  longint;
     unsigned16 = system.word;
     { Unter FPC ist ein Integer im BP Kompatibilitätsmodus standardmaessig 16 Bit gross }
     integer =    longint;
+  //  Word =       System.Word;
+  //  DWord =      Longword;
+  //  Cardinal =   Longword;
   {$endif}
   {$IFDEF Delphi }
     { Delphi, 32 Bit }
@@ -129,6 +135,7 @@ type
     integer32 =  longint;
     unsigned16 = system.word;
     DWord =      Longword;  { = unsigned 32 bit }
+    Cardinal =   Longword;
   {$endif}
     smallword =  unsigned16;  //todo: drop and use unsigned16 wherever required
 

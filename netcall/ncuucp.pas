@@ -112,7 +112,7 @@ type TUUCProtocolSimple = class(TUUCProtocol)
     procedure RecFile (var f:file);                 virtual; abstract;
 
    (* statistics functions *)
-    procedure FileStart(fn:string;send:boolean;size:longint);
+    procedure FileStart(const fn:string;send:boolean;size:longint);
     procedure FileReStart;
     procedure FileAdvance(var buf;addsize:longint);
     procedure FileError;
@@ -1049,7 +1049,7 @@ begin
   result:=result+', '+StrS(file_errors)+' errors';
 end;
 
-procedure TUUCProtocolSimple.FileStart(fn:string;send:boolean;size:longint);
+procedure TUUCProtocolSimple.FileStart(const fn:string;send:boolean;size:longint);
 begin
   File_Errors:=0;
   FileRestart;
@@ -1082,8 +1082,8 @@ begin
   T:=(GetTicks/100.0); Dialog.WriteFmt(mcInfo,'',[0]);
   Dialog.WrtData(15,5,StrS(File_Pos           ),10,true);
   Dialog.WrtData(28,7,StrS(File_Pos+Total_Size),10,true);
-  if (T-File_Start )>=0.001 then Dialog.WrtData(46,5,StrS(Min(99999,System.Round((File_Pos           )/(T-File_Start )))),7,true);
-  if (T-Total_Start)>=0.001 then Dialog.WrtData(46,7,StrS(Min(99999,System.Round((File_Pos+Total_Size)/(T-Total_Start)))),7,true);
+  if (T-File_Start )>=0.001 then Dialog.WrtData(46,5,StrS(Min(9999999,System.Round((File_Pos           )/(T-File_Start )))),7,true);
+  if (T-Total_Start)>=0.001 then Dialog.WrtData(46,7,StrS(Min(9999999,System.Round((File_Pos+Total_Size)/(T-Total_Start)))),7,true);
   if (file_type=1) and b then Dialog.WrtData(15,4,PacketType(buf,addsize),46,false);
 end;
 

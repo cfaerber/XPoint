@@ -21,9 +21,10 @@
 
 {$I xpdefine.inc}
 
+{$PIC OFF} //FIXME
+
 { OpenXP UU decoding unit }
 unit xp_uue;
-
 
 interface
 

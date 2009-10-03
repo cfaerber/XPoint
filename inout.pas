@@ -315,7 +315,13 @@ function memadr(x,y:byte):xpWord;forward;
 // time critical
 function ticker:longint;
 begin
-  Result := LongInt(Trunc(Now * 8640000));
+{  DecodeTime(Now, h, m, s, millis);
+  Ticker := system.round(((longint(h*60 + m)*60 + s) * TickFreq) +
+    (millis / (1000 / TickFreq))); }
+  // erst ab 01.01.2006 zählen (38718 = EncodeDate(2006,1,1));
+  // um einen Überlauf herauszuzögern
+  // 8640000 = auf hundertstel sekunden umrechnen
+  Result := LongInt(Trunc(((Now-38718) * 8640000)));
 end;
 
 { !! Diese Funktion liefert mit and $70 nur CAPSLock zurueck,

@@ -571,7 +571,7 @@ begin
       new(cc);
       oldname:=vert_name(oldname);
       name:=vert_name(name);
-      read_verteiler(oldname,cc,anz);
+      anz := read_verteiler(oldname,cc);
       del_verteiler(oldname);
       write_verteiler(name,cc,anz);
       dispose(cc);

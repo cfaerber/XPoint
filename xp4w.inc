@@ -292,7 +292,7 @@ var anz : integer16;
 begin
   GoP;
   rec:=disprec[p];
-  edit_verteiler(vert_name(dbReadStrN(ubase,ub_username)),anz,brk);
+  anz := edit_verteiler(vert_name(dbReadStrN(ubase,ub_username)),brk);
   if not brk then begin
     dbGo(ubase,rec);
     dbWriteN(ubase,ub_haltezeit,anz);
@@ -935,8 +935,23 @@ begin
       end;
     end; // not FileAttach
 
+    Debug.Debuglog('xp4w.inc','read_msg'
+                    +', MimePart.fname: <'+MimePart.fname+'>'
+                    +', MimePart.typ: <'+MimePart.typ+'>'
+                    +', MimePart.subtyp: <'+MimePart.subtyp+'>'
+                    , DLDebug);
 
-    MimePart.fname:=GetMsgFilename;         { Schutz vor Mail-Viren }
+    { HJT 14.04.2006, HotFix. GetMsgFilename liest den originaeren         }
+    { Header ein, und ueberschreibt den bereits ermittelten Dateinamen     }
+    { in MimePart.fname bei MultiParts.  Damit haben wir keinen Dateinamen }
+    { fuer die Viewerselektion. Vermutlich (bleibt zu pruefen),            }
+    { ist hier das erneute Einlesen des Headers generell nicht notwendig.  }
+    if MultiPartType <> mpMulti then begin  { HJT 14.04.2006 }
+      MimePart.fname:=GetMsgFilename;                               { Schutz vor Mail-Viren }
+      Debug.Debuglog('xp4w.inc','read_msg'
+                    +', after Calling GetMsgFilename, MimePart.fname: <'+MimePart.fname+'>'
+                    , DLDebug);
+    end;
     MimeViewer.GetFromExtension(ExtractFileExt(MimePart.fname));     { Dateiendung hat bei Viewerauswahl }
     if MimeViewer.IsInternal then           { Vorrang vor dem Mimetyp }
       MimeViewer.GetFromMimeType(MimeType);
@@ -1426,7 +1441,10 @@ var flags: longint;
   procedure delete_copies;
   begin
     // Alle Kopien der gleichen Nachricht löschen
-    //
+
+   Debug.Debuglog('xp4w.inc','register_spam.delete_copies'
+                  ,DLDebug);
+
     dbReadN(mbase,mb_ablage,ablage);
     dbReadN(mbase,mb_adresse,madr);
     crc:=LeftStr(dbReadStrN(mbase,mb_msgid),4);
@@ -1440,6 +1458,13 @@ var flags: longint;
         if (dbReadIntN(mbase,mb_ablage)=ablage) and (dbReadIntN(mbase,mb_adresse)=madr) then
         begin
           DelBezug;
+
+          Debug.Debuglog('xp4w.inc','register_spam.delete_copies'
+                         +', dbDelete(mbase), mb_msgid: <'+dbReadStrN(mbase,mb_msgid)+'>'
+                         +', mb_brett: <'+dbReadStrN(mbase,mb_brett)+'>'
+                         +', mb_absender: <'+ dbReadStrN(mbase,mb_absender)+'>'
+                         ,DLDebug);
+
           dbDelete(mbase);
         end;
       end else
@@ -1460,6 +1485,13 @@ begin
 
   GoP;
   dbReadN(mbase,mb_flags,flags);
+
+  Debug.Debuglog('xp4w.inc','register_spam'
+                 +', Spam: '+iifs(Spam,'True','False')
+                 +', aktuelles Brett(bbase): <'+dbReadStrN(bbase,bb_brettname)+'>'
+                 +', Msg Brett(mbase): <'+dbReadStrN(bbase,bb_brettname)+'>'
+                 ,DLDebug);
+
   if FirstChar(dbReadStrN(mbase,mb_brett))<>'1' then 
   begin
     if dbReadStrN(bbase,bb_brettname) <> '$/¯Spam' then

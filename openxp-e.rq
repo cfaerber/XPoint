@@ -491,6 +491,7 @@ N English
 23   Default Usergroup ~
 24   Create an archive-note
 25   Minimum disk space            ~
+26   Spamfilter
 + 251
 # Extract as
 0    Text w/o head
@@ -626,6 +627,7 @@ N English
 12   Multi-coloured quotes
 13   Exit message reader with <Return>
 14   Display clock
+15   Use UTF-8
 #
 20   51
 21   External lister options
@@ -1445,7 +1447,7 @@ N English
 10   To^:      ~
 11   ^Recipient
 12   Subject
-13   Server
+13   Ser^ver
 14   Size
 15   Code:
 
@@ -1497,6 +1499,7 @@ N English
 620  Checking for crosspostings ...
 621  Origin file not found (%s)
 622  No function in this net
+623  Net types incompatible - server changes will be resetted.
 
 + 624
 0  ~^New , ^Edit , De^lete , ^Up , ^Down ,ù8 ^Close~

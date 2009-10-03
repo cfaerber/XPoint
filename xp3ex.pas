@@ -738,6 +738,38 @@ var size   : longint;
     ohfill:=s;
   end;
 
+  procedure Umbrechen(ResNumber: Integer);
+  var
+    ln, p: Integer;
+  begin
+    ln:=length(gr(ResNumber));
+    p:=0;
+    repeat                               { langen Betreff umbrechen }
+      lr:=rightpos(' ',leftStr(s,ScreenWidth-2-ln));
+      if (lr=0) or (length(s)<=ScreenWidth-2-ln) then lr:=ScreenWidth-2-ln;
+      wrs437(iifs(p=0,gr(ResNumber),sp(ln))+leftStr(s,lr));
+      inc(p);
+      s:=mid(s,lr+1);
+    until s='';
+  end;
+
+  { HJT: 10.05.08 Custom-Header umbrechen }
+  procedure UmbrechenCust(CustHeaderName: String; CustHeader: String);
+  var
+    ln, p: Integer;
+  begin
+    CustHeaderName := ohfill(CustHeaderName,length(gr(2))-2)+': ';
+    ln:=length(CustHeaderName);
+    p:=0;
+    repeat
+      lr:=rightpos(' ',leftStr(CustHeader,ScreenWidth-2-ln));
+      if (lr=0) or (length(CustHeader)<=ScreenWidth-2-ln) then lr:=ScreenWidth-2-ln;
+      wrs437(iifs(p=0,CustHeaderName,sp(ln))+leftStr(CustHeader,lr));
+      inc(p);
+      CustHeader:=mid(CustHeader,lr+1);
+    until CustHeader='';
+  end;
+
 begin // extract_msg;
  try
   extheadersize:=0; exthdlines:=0; hdlines:=0;
@@ -907,12 +939,12 @@ begin // extract_msg;
 
     hdf_KOP   : if hdp.Kopien.Count > 0 then
                 begin
-                  s := getres2(361,28)+hdp.Kopien[0];    { 'Kopien an  : ' }
+                  s := gr(28)+hdp.Kopien[0];    { 'Kopien an  : ' }
                   for i := 1 to hdp.Kopien.Count - 1 do
                   begin
-                    if length(s)+length(hdp.Kopien[i])>iif(listscroller,76,77) then
+                    if length(s)+length(hdp.Kopien[i])>iif(listscroller,ScreenWidth-4,ScreenWidth-3) then
                     begin
-                      wrs437(s); s:=getres2(361,28);
+                      wrs437(s); s:=gr(28);
                     end else
                       s := s + ', ';
                     s := s+ hdp.Kopien[i];
@@ -963,28 +995,12 @@ begin // extract_msg;
                    _era(tmp);
                    if LeftStr(s,4)='BET:' then s:=mid(s,6)
                      else s:=hdp.betreff;
-                   ln:=length(getres2(361,5));
-                   p:=0;
-                   repeat                               { langen Betreff umbrechen }
-                     lr:=rightpos(' ',leftStr(s,78-ln));
-                     if (lr=0) or (length(s)<=78-ln) then lr:=78-ln;
-                     wrs437(iifs(p=0,gr(5),sp(ln))+leftStr(s,lr));
-                     inc(p);
-                     s:=mid(s,lr+1);
-                   until s='';
+                   Umbrechen(5);
                  end;
     hdf_ZUSF   : if hdp.summary<>'' then        { 'Zus.fassung: ' }
                  begin
                    s:=hdp.summary;
-                   p:=0;
-                   ln:=length(getres2(361,23));
-                   repeat                               { lange Zusammenfassung umbrechen }
-                     lr:=rightpos(' ', LeftStr(s,78-ln));
-                     if (lr=0) or (length(s)<=78-ln) then lr:=78-ln;
-                     wrs437(iifs(p=0,gr(23),sp(ln))+ LeftStr(s,lr));
-                     inc(p);
-                     s:=mid(s,lr+1);
-                   until s='';
+                   Umbrechen(23);
                  end;
     hdf_STW    : if hdp.keywords<>'' then       { 'Stichworte : ' }
                    wrs437(gr(22)+hdp.keywords);
@@ -994,12 +1010,12 @@ begin // extract_msg;
                    hs:=gr(7);                    { 'Pfad       : ' }
                    while s<>'' do begin
                      p:=length(s);
-                     if p+length(hs)>79 then begin
-                       p:=79-length(hs);
+                     if p+length(hs)>ScreenWidth-1 then begin
+                       p:=ScreenWidth-1-length(hs);
                        while (p>30) and (s[p]<>'!') and (s[p]<>' ')
                              and (s[p]<>'.') do
                          dec(p);
-                       if p=30 then p:=79-length(hs);
+                       if p=30 then p:=ScreenWidth-1-length(hs);
                        end;
                      wrs437(hs+LeftStr(s,p));
                      delete(s,1,p);
@@ -1009,9 +1025,9 @@ begin // extract_msg;
 
     hdf_MID    : begin
                    ln:=length(getres2(361,8));                  { 'Message-ID : ' }
-                   wrs437(gr(8)+leftStr(hdp.msgid,78-ln));
-                   if length(hdp.msgid)>78-ln then
-                     wrs437(sp(ln)+copy(hdp.msgid,79-ln,78-ln));
+                   wrs437(gr(8)+leftStr(hdp.msgid,ScreenWidth-2-ln));
+                   if length(hdp.msgid)>ScreenWidth-2-ln then
+                     wrs437(sp(ln)+copy(hdp.msgid,ScreenWidth-1-ln,ScreenWidth-2-ln));
                  end;
 
     hdf_BEZ    : with hdp do if References.Count > 0 then            { 'Bezugs-ID  : ' }
@@ -1068,10 +1084,12 @@ begin // extract_msg;
                         gr(34)+strs(MimePart.parts));         { ' von ' }
 
     hdf_Cust1   : if mheadercustom[1]<>'' then if hdp.Cust1<>'' then begin
-                    wrs437(ohfill(mheadercustom[1],length(getres2(361,2))-2)+': '+hdp.Cust1);
+                    UmbrechenCust(mheadercustom[1], hdp.Cust1);
+                    // wrs437(ohfill(mheadercustom[1],length(gr(2))-2)+': '+hdp.Cust1);
                   end;
     hdf_Cust2   : if mheadercustom[2]<>'' then if hdp.Cust2<>'' then begin
-                    wrs437(ohfill(mheadercustom[2],length(getres2(361,2))-2)+': '+hdp.Cust2);
+                    UmbrechenCust(mheadercustom[2], hdp.Cust2);
+                    // wrs437(ohfill(mheadercustom[2],length(gr(2))-2)+': '+hdp.Cust2);
                   end;
 
   { Prioritaet im Listenkopf anzeigen:                                    }

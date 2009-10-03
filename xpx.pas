@@ -29,9 +29,8 @@ interface
 uses
   xpglobal,
 {$IFDEF unix}
-  xplinux,
+  xpunix,
 {$IFDEF fpc}
-  linux,
 {$ENDIF }
 {$ENDIF }
 {$IFDEF NCRT }

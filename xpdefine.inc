@@ -1,5 +1,4 @@
-{  $Id$
-
+{ 
    This is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
    Free Software Foundation; either version 2, or (at your option) any
@@ -25,47 +24,14 @@
      NoSnapshot to switch of Snapshot 
 }
 
-{ Wenn gesetzt, werden erweiterte Checks in der EXE-Datei durchgefuehrt
-  (Rangecheck) usw. }
-
 {$DEFINE Debug }
-
-{ Unter Virtual Pascal werden Informationen ueber die Zeilennummern
-  gespeichert, vergroessert die EXE-Datei etwas.
-
-  Under FPC use -gl. Prints a backtrace with unit-name and linenumber info.
-}
-
 {$DEFINE DebugInfo }
-
-{ Ist definiert, wenn Beta-Informationen anzeigt werden sollen }
 {$DEFINE Beta }
-
-{ Ist in Snapshot-Versionen definiert }
 {$DEFINE Snapshot}
 
-{ EASY-Modus Wenn dieser Schalter gesetzt ist dann ist die einfache
-  Konfiguration mittels EASY-Mode verfuegbar }
-{.$DEFINE EASY }
-
-{ --- User Inteface Type (set one) ----------------------------------- }
-{.DEFINE TextMode     } { textmode interface (default)                 }
-{.DEFINE GUIMode      } { graphical user interface                     }
-
-{ --- Textmode API (set one) ----------------------------------------- }
-{.DEFINE Win32Console } { Win32: console (default for Win32)           }
-{.DEFINE Win32Window  } { Win32: own text window                       }
-{.DEFINE NCURSES      } { NCurses (default for *ix)                    }
-{.DEFINE CRT          } { PASCAL RTL unit CRT (default for DOS32/OS2)  }
-
-{ --- GUI API (set one) ---------------------------------------------- }
-{.DEFINE GTK          } { GIMP Toolkit                                 }
-{.DEFINE Win32GUI     } { Win32 API                                    }
-{.DEFINE QtGUI        } { Trolltech Qt (X11 only)                      }
-{.DEFINE CLX          } { Borland FreeCLX (X11 only)/Lazarus CL        }
-
-{ --- ab hier sind keine Aenderungen noetig -------------------------- }
 { --- no user-serviceable parts below -------------------------------- }
+
+{$UNITPATH xplib;ObjCOM;netcall}
 
 { --- 0. Some UnDefs ------------------------------------------------- }
 
@@ -105,6 +71,10 @@
   {$DEFINE Delphi }
 {$ENDIF }
 
+{$IFDEF VER180 }          { Delphi 2006/10.0  }
+  {$DEFINE Delphi }
+{$ENDIF }
+
 {$IFNDEF FPC }
    {$IFNDEF Delphi }
      {$IFNDEF Kylix }
@@ -125,8 +95,8 @@
   {$GOTO ON }
   {$INLINE ON }
   {$PACKRECORDS 8 }       { Default: 2, use 8 like Delphi }
-  {$PACKENUM 4 }          { Default: 4, valid: 1, 2, 4, Normal, Default, use 4 like Delphi (Z4) }
-  {$H+,I-,M-,P-,T-,V-,X+}
+  {$PACKENUM 1 }          { Default: 4, valid: 1, 2, 4, Normal, Default }
+  {$C-,H+,I-,J+,M-,P-,T-,V-,X+}
   {$DEFINE Int64 }
   {$DEFINE i386 }
   // writable const noch definieren
@@ -179,10 +149,8 @@
     {$C+}                 { Assertation support }
     {$D+}
     {$M+}                 { Typeinfo for RTTI }
-    {$L+}                 { Local Symbols }
     {$Q+}                 { Overflow-Check }
     {$R+}                 { Range Check }
-    {$Y+}                 { Browser Informations }
   {$ENDIF }
   {$IFDEF Delphi }
     {$O-}
@@ -221,6 +189,10 @@
 {$ELSE}
   !! Only i386 platform supported
 {$ENDIF}
+
+{$IFDEF x86_64 }
+  {$DEFINE NOASM }
+{$ENDIF }
 
 {$IFDEF OS2 }
   {$M 131072,524288}

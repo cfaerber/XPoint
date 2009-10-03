@@ -1213,7 +1213,7 @@ sent.
 
 <<Subject>> Changes the subject of the message.
 
-<<Box>>     Allows a different Server to be selected.
+<<Server>>  Allows a different Server to be selected.
 
 <<Code>>    Changes the encoding of the message. PMs
         can only be changed when the recipient has
@@ -4503,6 +4503,10 @@ Problems through the hard disk suddenly being full
 in the middle of data handling always lead to
 unrecoverable loss of data.
 @
+226
+This switch activates the internal <<Bayes->>
+<<Spamfilter>>. He filters PMs.
+@
 230
 OpenXP does have its own built in lister, (for
 reading messages) which should do all you need.
@@ -4577,6 +4581,9 @@ acters in the lister and for quotes into the editor
 into their IBM equivalents. Unfortunately the "Ä"
 cannot be converted (to "Ž") because it is so often
 used in its true IBM graphics form for lines.
+@
+8077
+Enable_UTF8
 @
 237
 It is common to indicate emphasis on words by en-

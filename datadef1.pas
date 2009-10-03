@@ -127,9 +127,9 @@ type    proctype  = procedure;
                       used     : boolean;  { 0 }
                       dbp      : DB;       { 1 }
                       ofs      : longint;  { 5 }
-                      lasttick : longint;  { 9 }
+                      lasttick : TDateTime;  { 9, = double = 8 Byte }
                       page     : array[0..264*4+10] of byte;
-                      fill:    array[1..968] of byte;
+                      fill:    array[1..964] of byte;
                     end;
         icache    = array[0..maxcache-1] of cachepage;
         pcachepage = ^cachepage;
@@ -227,7 +227,8 @@ end;
 
 procedure writehd(dpb:DB);
 begin
-  with dp(dpb)^ do begin
+  with dp(dpb)^ do
+  begin
     seek(f1,0);
     blockwrite(f1,hd,sizeof(hd));
   end;

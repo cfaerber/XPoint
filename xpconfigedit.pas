@@ -119,7 +119,7 @@ implementation  {---------------------------------------------------}
 uses
   sysutils,
   {$IFDEF NCRT}xpcurses,{$ENDIF}
-  {$IFDEF unix}xplinux,{$ENDIF}
+  {$IFDEF unix}xpunix,{$ENDIF}
   {$IFDEF Win32}xpwin32,{$ENDIF }
   fileio,inout,keys,winxp,win2,database,maus2,mouse,resource,fidoglob,lister,
   xp0,xp1,xp1o,xp1input,xp2,xp2c,xp3,xp3o,xp9bp, classes, xpconst,

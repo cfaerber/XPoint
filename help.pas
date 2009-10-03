@@ -58,7 +58,7 @@ IMPLEMENTATION
 uses
   sysutils,
 {$ifdef unix}
-  XPLinux,
+  XPUnix,
 {$endif}
   osdepend,
 {$IFDEF NCRT }
@@ -183,7 +183,7 @@ begin
   reset(f,1);
   if (ioresult<>0)
 {$ifdef unix}
-     or not TestAccess(name, taUserR)
+ // FIXME:    or not TestAccess(name, taUserR)
 {$endif}
   then begin
     filemode:=fm;

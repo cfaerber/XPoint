@@ -825,7 +825,7 @@ OpenXP stellt keinen eigenen Eingangsfilter zur
 Verfgung, hierzu mssen Sie sich eines externen
 Filterprogramms bedienen. Nicht ganz trivial in der
 Bedienung, aber sehr flexibel und bew„hrt ist z.B.
-das speziell fr OpenXP entwickelte XPFILTER von
+das speziell fr XP entwickelte XPFILTER von
 Robin Sommer.
 
 Ein sog. "Muster" fr XPFILTER, das alle ber die
@@ -1658,6 +1658,10 @@ von der Einstellung bei /Config/Optionen/Bedienung.
 
 <<Bei kommentarverketteten Nachrichten (Maus, Fido,
 <<ZConnect, Usenet):
+
+<<##>> zeigt den Kommentarbaum zur aktuellen Nachricht an.
+  Nach Verlassen des Kommentarbaums mit <<<Esc> >>kehrt
+  XP zur aktuellen Nachricht zurck.
 
 <<+>> springt zum ersten Kommentar der Nachricht, falls
   vorhanden.
@@ -4988,6 +4992,11 @@ aber angesichts der Tatsache, daá eingehende Mail
 nicht unbedingt die eigene E-Mail-Adresse als Em-
 pf„nger haben muá, unpraktisch sein kann.
 @
+40026
+Mails, die die hier angegebene Gr”áe bersteigen, 
+werden nicht vom Server geladen, sondern
+bersprungen und ungelesen gel”scht.
+@
 40040
 Geben Sie hier den Rechnernamen oder die IP-Adresse
 des SMTP-Servers an (Beispiel: smtp.gmx.de).
@@ -7306,6 +7315,46 @@ tenmenge stehen. Tragen Sie aber besser einen h”he-
 ren Wert ein - Fehler durch volle Festplatten fhren
 meistens zu Datenverlusten!
 @
+226
+Dieser Schalter aktiviert den internen <<Bayes->>
+<<Spamfilter>>. Er filtert PMs.
+
+Als Spam erkannte Nachrichten werden beim Einlesen in 
+das Brett <</¯Spam>> verschoben.
+
+Die wichtigsten Funktionen sind folgende Tasten in 
+der <<Nachrichtenbersicht>>:
+
+<<.>> -> der Punkt markiert die aktuelle Nachricht 
+     als SPAM und verschiebt sie ggf. in das
+     /¯Spam-Brett.
+<<,>> -> das Komma markiert die aktuelle Nachricht als 
+     Nicht-SPAM und verschiebt sie ggf. aus dem 
+     /¯Spam-Brett heraus.
+
+Trainieren:
+
+Es ist besonders wichtig, sowohl m”glichst viel SPAM 
+als auch <<eigenen>> Nicht-SPAM als solchen zu kenn-
+zeichnen. Ohne eine m”glichst groáe Datenbasis kann 
+der Spamfilter logischerweise nichts erkennen.
+
+šber <<I>> (Informationen zur Nachricht) kann man auch
+die Informationen ber den SPAM-Status einer Nach-
+richt abrufen: es werden dann die am meisten und 
+wenigsten charakteristischsten Worte (gr”áte/
+geringste Abweichung von 50%) der aktuellen Nach-
+richt, die Anzahl des Vorkommens in "guten" und 
+"schlechten" Nachrichten sowie die daraus berech-
+nete SPAM-Wahrscheinlichkeit angezeigt.
+
+Das Filtern verz”gert das Einlesen deutlich.
+
+Sollte sich der Spamfilter "verrant" haben, k”nnen
+die beiden Dateien SPAMFLT.DB1 und SPAMFLT.IX1
+unter Verlust des bisherigen Trainings gel”scht 
+werden.
+@
 230
 OpenXP besitzt einen eingebauten Nachrichten-
 Lister, so daá eigentlich kein externer Lister ben”-
@@ -7381,6 +7430,38 @@ Rahmengrafiken sehr merkwrdig aussehen.
 Diese Einstellung betrifft auch einen evtl. einge-
 bundenen externen Lister.
 
+@
+8077
+Diese Option schaltet die Benutzung von UTF-8 fr
+Multipart-Nachrichten fr den internen Lister ein. 
+Unter Windows muss fr die Konsole, in der OpenXP 
+l„uft, ein entsprechender TT-Font ausgew„hlt werden 
+(z.B. Lucidia Console), Raster-/Bitmap-Fonts k”nnen
+nicht gew„hlt werden. Alle Zeichen und Zeichens„tze
+der anzuzeigenden Nachricht, die der gew„hlte Font
+untersttzt, werden im Lister korrekt angezeigt.
+Beim Beantworten der angezeigten Nachricht wird aber
+wieder, gegebenenfalls verlustbehaftet, in den
+Charset IBM437 gewandelt.
+
+M”chten Sie diese Funktion ebenfalls fr Singlepart-
+Nachrichten nutzen, setzen Sie bitte zus„tzlich in
+der jeweiligen Boxen.BGF den Schalter
+UUZ-RecodeCharset auf "N".
+
+<<ACHTUNG>>:  Setzen Sie UUZ-RecodeCharset nur dann, wenn
+          Sie sicher sind, nicht irgendwann mit einem 
+          16bit CrossPoint auf die Datenbank zu-
+          greifen wollen. Zudem ist nicht sicher-
+          gestellt, daá bei dieser Einstellung der
+          Nachrichtenaustausch zu anderen Netzen 
+          ordnungsgem„á funktioniert.
+
+          Kurzgesagt: da diese Funktionalit„t rein
+                      experimentell ist, sehen Sie
+                      von der Verwendung ab!
+           
+                      You have been warned.
 @
 237
 In vielen Netzen ist es blich, hervorgehobene W”r-
@@ -11010,7 +11091,7 @@ sollten Sie auch die Adreá-Groáwandlung unter
        Status bei jedem Netzanruf und die Wartezeit
        zum Einlesen der Status nach dem Anruf.
 @
-797
+7988
 <<[x]>> -> Vereinfacht ausgedrckt: OpenXP verwendet
        ein spezielles Verfahren namens "quoted-prin-
        table", um Umlaute und andere Sonderzeichen
@@ -11027,7 +11108,7 @@ Unabh„ngig von dieser Einstellung werden alle ein-
 gehenden, als "quoted-printable" codierten Texte
 korrekt verarbeitet.
 @
-798
+7989
 Normalerweise k”nnen in Betreff, Realname, Zusammen-
 fassung und anderen Header-Informationen mit Text-
 charakter keine Sonderzeichen verwendet werden. Es
@@ -11050,8 +11131,10 @@ Software inzwischen kaum noch in Benutzung sein.
 Unabh„ngig von dieser Einstellung werden nach RFC
 2047 codierte Zeilen in eingehenden Nachrichten im-
 mer erkannt und ausgewertet.
+
+<<Hinweis:>> Das Setzen dieser Option wird empfohlen.
 @
-799
+7990
 <<[x]>> -> Einteiligen Bin„rnachrichten wird ein Textteil
        vorangestellt, so dass diese zu mehrteiligen
        Nachrichten werden. 
@@ -11073,7 +11156,7 @@ l”schen Sie ggf. unter Anhang bereits erzeugte Teile.
        Nachricht die Betreffzeile ver„ndern und
        die Bezugsverkettung beibehalten, dann
        wird der alte Betreff automatisch in der
-       Form "<<(war: <alter Betreff>)>>" an den neuen
+       Form "<<(was: <alter Betreff>)>>" an den neuen
        Betreff angeh„ngt.
 
 <<Hinweis:>> Viele Mail- und Newsreader (auch XP) entfer-

@@ -3,8 +3,6 @@
 ** See files "LICENSE.TXT" and "CREDITS.TXT"
 *)
 
-{$IFDEF FPC} {$I OCDefFPC.inc} {$ENDIF}
-
 (*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-+-*-*)
 
 const

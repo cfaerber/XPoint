@@ -136,7 +136,8 @@ implementation  {=======================================================}
 uses
   sysutils,
 {$IFDEF unix}
-  xplinux,
+  baseunix,unix,
+  xpunix,
 {$ENDIF }
 {$IFDEF debug}
   debug,
@@ -328,7 +329,7 @@ begin
           recno:=l
       else
         if not mustfind then
-          error('Huch! šberfluessiger Datensatz!');
+          error('Huch! Âšberfluessiger Datensatz!');
       end;
 
     if n<0 then begin
@@ -560,7 +561,8 @@ end;
 
 procedure cache_read(dbp:DB; irsize:xpWord; offs:longint; var data);
 var
-  s,i,sp : integer;
+  s: TDateTime;
+  i,sp : integer;
   TempCachePage: PCachepage;
 begin
   with dp(dbp)^ do
@@ -619,7 +621,7 @@ end;
 
 procedure cache_write(dbp:DB; irsize:xpWord; offs:longint; var data);
 var i,sp : integer;
-    s    : longint;
+    s    : TDateTime;
 begin
   with dp(dbp)^ do
   begin
@@ -1326,7 +1328,7 @@ var icr : dbIndexCRec;
             end;
           until icr.indexstr='';
           if keysize>127 then begin
-            raise EXPDatabase.Create(1,'<DB> interner Fehler: zu groáer Indexschluessel');
+            raise EXPDatabase.Create(1,'<DB> interner Fehler: zu groÃ¡er Indexschluessel');
           end;
           nn:=max(2,128 div (keysize+12))*2;
           irecsize:=nn*(9+keysize)+10;
@@ -2754,7 +2756,7 @@ end;
   - Funktion FUStr fuer Filenamen Up/Locase eingebaut
 
   Revision 1.16  2000/04/04 21:01:20  mk
-  - Bugfixes für VP sowie Assembler-Routinen an VP angepasst
+  - Bugfixes fÃ¼r VP sowie Assembler-Routinen an VP angepasst
 
   Revision 1.15  2000/03/24 15:41:01  mk
   - FPC Spezifische Liste der benutzten ASM-Register eingeklammert
@@ -2777,7 +2779,7 @@ end;
   - Portierung: 32 Bit Version laeuft fast vollstaendig
 
   Revision 1.10  2000/03/08 22:36:32  mk
-  - Bugfixes für die 32 Bit-Version und neue ASM-Routinen
+  - Bugfixes fÃ¼r die 32 Bit-Version und neue ASM-Routinen
 
   Revision 1.9  2000/03/07 23:41:07  mk
   Komplett neue 32 Bit Windows Screenroutinen und Bugfixes
@@ -2796,4 +2798,3 @@ end;
 
 }
 end.
-

@@ -24,10 +24,30 @@ function CRC16Str(s:string): smallword;
 function CRC32Block(var data; size: Dword): longint;
 function CRC32Str(s: string): longint;
 
+(* --------------- CRC64 Routinen ------------------------------- *)
+type
+  TCRC64 = packed record
+             lo32, hi32: longint;
+           end;
+
+
+// Routinen auskommentiert, wegen der Code-Qualität
+// erst wieder einschalten, wenn Pointer-Increment raus ist
+{$IFDEF DasLassenWirLieber }
+procedure CRC64Init(var CRC: TCRC64);                             {-CRC64 initialization}
+
+procedure CRC64Update(var CRC: TCRC64; Msg: pointer; Len: word);  {-update CRC64 with Msg data}
+
+procedure CRC64Final(var CRC: TCRC64);                            {-CRC64: finalize calculation}
+
+procedure CRC64Full(var CRC: TCRC64; Msg: pointer; Len: word);    {-CRC64 of Msg with init/update/final}
+
+{$ENDIF DasLassenWirLieber }
+
 implementation
 
 var
-   CRC_Reg: LongInt;
+   CRC_Reg: DWord;
 
 (* crctab calculated by Mark G. Mendel, Network Systems Corporation *)
 CONST crctab: ARRAY[0..255] OF smallWORD = (
@@ -167,42 +187,44 @@ begin { UpdCRC32 }
    UpdCRC32 := crc_32_tab[(BYTE(crc XOR DWord(octet))AND $FF)] XOR ((crc SHR 8) AND $00FFFFFF)
 end;
 
-procedure CCITT_CRC32_calc_Block(var block; size: DWord);
-                                {&uses ebx,esi,edi} assembler;  {  CRC-32  }
-asm
-{$IFDEF Delphi }
-     push ebx
-     
-     push esi
-     push edi
-{$ENDIF }
-     mov ebx, CRC_Reg
-     mov edi, block
-     mov esi, size
-     or  esi, esi
-     jz  @u4
-@u3: mov al, byte ptr [edi]
-     mov ecx, 8
-@u1: rcr al, 1
-     rcr ebx, 1
-     jnc @u2
-     xor ebx, $edb88320
-@u2: loop @u1
-     inc edi
-     dec esi
-     jnz @u3
-     mov CRC_reg, ebx
-@u4:
-{$IFDEF Delphi }
-     pop edi
-     pop esi
-     pop ebx
-{$ENDIF Delphi }
-{$ifdef FPC }
-end ['EAX', 'EBX', 'ECX', 'ESI', 'EDI'];
-{$else}
+procedure CCITT_CRC32_calc_Block(var block; size: DWord); { HJT 05.11.2005 ASM ->Pascal }
+var
+  carry_v : byte;
+  carry_n : byte;
+  c       : byte;
+  i       : DWORD;
+  j       : integer;
+begin
+  if size = 0 then
+  begin
+    exit;
+  end;
+  
+  carry_v := 0;  carry_n := 0;
+  
+  for i:=0 to size -1 do
+  begin
+    c := TByteArray(block)[i];
+    for j:=1 to 8 do 
+    begin
+      carry_n := c and 1;
+      c := c shr 1;
+      if carry_v <> 0 then
+        c := c or $80
+      else
+        c := c and $7f;
+      carry_v := carry_n;
+      carry_n := CRC_Reg and 1;
+      CRC_Reg := CRC_Reg shr 1;
+      if carry_v <> 0 then
+        CRC_Reg := CRC_Reg or $80000000
+      else
+        CRC_Reg := CRC_Reg and $7fffffff;
+      if carry_n <> 0 then
+        CRC_Reg := CRC_Reg xor $edb88320;
+    end;
+  end;
 end;
-{$endif}
 
 function CRC32Str(s: string) : longint;
 begin
@@ -218,13 +240,20 @@ begin
   CRC32block := CRC_Reg;
 end;
 
-{
-  $Log: crc.pas,v $
-  Revision 1.11  2002/12/21 05:37:48  dodi
-  - removed questionable references to Word type
+// Routinen auskommentiert, wegen der Code-Qualität
+// erst wieder einschalten, wenn Pointer-Increment raus ist
+{$IFDEF DasLassenWirLieber }
 
-  Revision 1.10  2002/04/22 10:04:22  mk
-  - fixed crashes with delphi in non debug mode (asm registers had to be preserved)
+(*----------------------------- CRC64 Routinen -----------------------------*)
+(*--------------------------------------------------------------------------
+ (C) Copyright 2005      Martin Wodrich 
+
+ Modifikation um ohne Assembler-Abschnitte, lange Define-Abschnitte
+ und Includes auszukommen (Erleichtert die Itegration in bestehende
+ Pascal-Units von FreeXP und OpenXP).
+
+ Der Code an sich ist Copyright 2002-2004 Wolfgang Ehrhardt
+----------------------------------------------------------------------------*)
 
   Revision 1.9  2001/10/20 17:26:38  mk
   - changed some Word to Integer
@@ -254,11 +283,216 @@ end;
   Revision 1.2  2000/06/19 23:14:47  mk
   - CRCFile rausgenommen, verschiedenes
 
-  Revision 1.1  2000/06/19 20:14:04  ma
-  - Zusammenfuehrung von CRC16 und XPCRC32
-  - neue Routine UpdCRC32 fuer ZModem
-  - Umbenennung CRC32 aus XPCRC32 in CRC32Str
+(*************************************************************************
+T_CTab64 - CRC64 table calculation     (c) 2002-2004 W.Ehrhardt
 
-}
+Calculate CRC64 tables for polynomial:
+
+x^64 + x^62 + x^57 + x^55 + x^54 + x^53 + x^52 + x^47 + x^46 + x^45 +
+x^40 + x^39 + x^38 + x^37 + x^35 + x^33 + x^32 + x^31 + x^29 + x^27 +
+x^24 + x^23 + x^22 + x^21 + x^19 + x^17 + x^13 + x^12 + x^10 + x^9  +
+x^7  + x^4  + x^1  + 1
+
+const
+  PolyLo = $A9EA3693;
+  PolyHi = $42F0E1EB;
+*************************************************************************)
+
+
+const Tab64lo : array[0..255] of Cardinal = (
+    $00000000,    $A9EA3693,    $53D46D26,    $FA3E5BB5,
+    $0E42ECDF,    $A7A8DA4C,    $5D9681F9,    $F47CB76A,
+    $1C85D9BE,    $B56FEF2D,    $4F51B498,    $E6BB820B,
+    $12C73561,    $BB2D03F2,    $41135847,    $E8F96ED4,
+    $90E185EF,    $390BB37C,    $C335E8C9,    $6ADFDE5A,
+    $9EA36930,    $37495FA3,    $CD770416,    $649D3285,
+    $8C645C51,    $258E6AC2,    $DFB03177,    $765A07E4,
+    $8226B08E,    $2BCC861D,    $D1F2DDA8,    $7818EB3B,
+    $21C30BDE,    $88293D4D,    $721766F8,    $DBFD506B,
+    $2F81E701,    $866BD192,    $7C558A27,    $D5BFBCB4,
+    $3D46D260,    $94ACE4F3,    $6E92BF46,    $C77889D5,
+    $33043EBF,    $9AEE082C,    $60D05399,    $C93A650A,
+    $B1228E31,    $18C8B8A2,    $E2F6E317,    $4B1CD584,
+    $BF6062EE,    $168A547D,    $ECB40FC8,    $455E395B,
+    $ADA7578F,    $044D611C,    $FE733AA9,    $57990C3A,
+    $A3E5BB50,    $0A0F8DC3,    $F031D676,    $59DBE0E5,
+    $EA6C212F,    $438617BC,    $B9B84C09,    $10527A9A,
+    $E42ECDF0,    $4DC4FB63,    $B7FAA0D6,    $1E109645,
+    $F6E9F891,    $5F03CE02,    $A53D95B7,    $0CD7A324,
+    $F8AB144E,    $514122DD,    $AB7F7968,    $02954FFB,
+    $7A8DA4C0,    $D3679253,    $2959C9E6,    $80B3FF75,
+    $74CF481F,    $DD257E8C,    $271B2539,    $8EF113AA,
+    $66087D7E,    $CFE24BED,    $35DC1058,    $9C3626CB,
+    $684A91A1,    $C1A0A732,    $3B9EFC87,    $9274CA14,
+    $CBAF2AF1,    $62451C62,    $987B47D7,    $31917144,
+    $C5EDC62E,    $6C07F0BD,    $9639AB08,    $3FD39D9B,
+    $D72AF34F,    $7EC0C5DC,    $84FE9E69,    $2D14A8FA,
+    $D9681F90,    $70822903,    $8ABC72B6,    $23564425,
+    $5B4EAF1E,    $F2A4998D,    $089AC238,    $A170F4AB,
+    $550C43C1,    $FCE67552,    $06D82EE7,    $AF321874,
+    $47CB76A0,    $EE214033,    $141F1B86,    $BDF52D15,
+    $49899A7F,    $E063ACEC,    $1A5DF759,    $B3B7C1CA,
+    $7D3274CD,    $D4D8425E,    $2EE619EB,    $870C2F78,
+    $73709812,    $DA9AAE81,    $20A4F534,    $894EC3A7,
+    $61B7AD73,    $C85D9BE0,    $3263C055,    $9B89F6C6,
+    $6FF541AC,    $C61F773F,    $3C212C8A,    $95CB1A19,
+    $EDD3F122,    $4439C7B1,    $BE079C04,    $17EDAA97,
+    $E3911DFD,    $4A7B2B6E,    $B04570DB,    $19AF4648,
+    $F156289C,    $58BC1E0F,    $A28245BA,    $0B687329,
+    $FF14C443,    $56FEF2D0,    $ACC0A965,    $052A9FF6,
+    $5CF17F13,    $F51B4980,    $0F251235,    $A6CF24A6,
+    $52B393CC,    $FB59A55F,    $0167FEEA,    $A88DC879,
+    $4074A6AD,    $E99E903E,    $13A0CB8B,    $BA4AFD18,
+    $4E364A72,    $E7DC7CE1,    $1DE22754,    $B40811C7,
+    $CC10FAFC,    $65FACC6F,    $9FC497DA,    $362EA149,
+    $C2521623,    $6BB820B0,    $91867B05,    $386C4D96,
+    $D0952342,    $797F15D1,    $83414E64,    $2AAB78F7,
+    $DED7CF9D,    $773DF90E,    $8D03A2BB,    $24E99428,
+    $975E55E2,    $3EB46371,    $C48A38C4,    $6D600E57,
+    $991CB93D,    $30F68FAE,    $CAC8D41B,    $6322E288,
+    $8BDB8C5C,    $2231BACF,    $D80FE17A,    $71E5D7E9,
+    $85996083,    $2C735610,    $D64D0DA5,    $7FA73B36,
+    $07BFD00D,    $AE55E69E,    $546BBD2B,    $FD818BB8,
+    $09FD3CD2,    $A0170A41,    $5A2951F4,    $F3C36767,
+    $1B3A09B3,    $B2D03F20,    $48EE6495,    $E1045206,
+    $1578E56C,    $BC92D3FF,    $46AC884A,    $EF46BED9,
+    $B69D5E3C,    $1F7768AF,    $E549331A,    $4CA30589,
+    $B8DFB2E3,    $11358470,    $EB0BDFC5,    $42E1E956,
+    $AA188782,    $03F2B111,    $F9CCEAA4,    $5026DC37,
+    $A45A6B5D,    $0DB05DCE,    $F78E067B,    $5E6430E8,
+    $267CDBD3,    $8F96ED40,    $75A8B6F5,    $DC428066,
+    $283E370C,    $81D4019F,    $7BEA5A2A,    $D2006CB9,
+    $3AF9026D,    $931334FE,    $692D6F4B,    $C0C759D8,
+    $34BBEEB2,    $9D51D821,    $676F8394,    $CE85B507);
+
+const Tab64hi : array[0..255] of Cardinal = (
+    $00000000,    $42F0E1EB,    $85E1C3D7,    $C711223C,
+    $49336645,    $0BC387AE,    $CCD2A592,    $8E224479,
+    $9266CC8A,    $D0962D61,    $17870F5D,    $5577EEB6,
+    $DB55AACF,    $99A54B24,    $5EB46918,    $1C4488F3,
+    $663D78FF,    $24CD9914,    $E3DCBB28,    $A12C5AC3,
+    $2F0E1EBA,    $6DFEFF51,    $AAEFDD6D,    $E81F3C86,
+    $F45BB475,    $B6AB559E,    $71BA77A2,    $334A9649,
+    $BD68D230,    $FF9833DB,    $388911E7,    $7A79F00C,
+    $CC7AF1FF,    $8E8A1014,    $499B3228,    $0B6BD3C3,
+    $854997BA,    $C7B97651,    $00A8546D,    $4258B586,
+    $5E1C3D75,    $1CECDC9E,    $DBFDFEA2,    $990D1F49,
+    $172F5B30,    $55DFBADB,    $92CE98E7,    $D03E790C,
+    $AA478900,    $E8B768EB,    $2FA64AD7,    $6D56AB3C,
+    $E374EF45,    $A1840EAE,    $66952C92,    $2465CD79,
+    $3821458A,    $7AD1A461,    $BDC0865D,    $FF3067B6,
+    $711223CF,    $33E2C224,    $F4F3E018,    $B60301F3,
+    $DA050215,    $98F5E3FE,    $5FE4C1C2,    $1D142029,
+    $93366450,    $D1C685BB,    $16D7A787,    $5427466C,
+    $4863CE9F,    $0A932F74,    $CD820D48,    $8F72ECA3,
+    $0150A8DA,    $43A04931,    $84B16B0D,    $C6418AE6,
+    $BC387AEA,    $FEC89B01,    $39D9B93D,    $7B2958D6,
+    $F50B1CAF,    $B7FBFD44,    $70EADF78,    $321A3E93,
+    $2E5EB660,    $6CAE578B,    $ABBF75B7,    $E94F945C,
+    $676DD025,    $259D31CE,    $E28C13F2,    $A07CF219,
+    $167FF3EA,    $548F1201,    $939E303D,    $D16ED1D6,
+    $5F4C95AF,    $1DBC7444,    $DAAD5678,    $985DB793,
+    $84193F60,    $C6E9DE8B,    $01F8FCB7,    $43081D5C,
+    $CD2A5925,    $8FDAB8CE,    $48CB9AF2,    $0A3B7B19,
+    $70428B15,    $32B26AFE,    $F5A348C2,    $B753A929,
+    $3971ED50,    $7B810CBB,    $BC902E87,    $FE60CF6C,
+    $E224479F,    $A0D4A674,    $67C58448,    $253565A3,
+    $AB1721DA,    $E9E7C031,    $2EF6E20D,    $6C0603E6,
+    $F6FAE5C0,    $B40A042B,    $731B2617,    $31EBC7FC,
+    $BFC98385,    $FD39626E,    $3A284052,    $78D8A1B9,
+    $649C294A,    $266CC8A1,    $E17DEA9D,    $A38D0B76,
+    $2DAF4F0F,    $6F5FAEE4,    $A84E8CD8,    $EABE6D33,
+    $90C79D3F,    $D2377CD4,    $15265EE8,    $57D6BF03,
+    $D9F4FB7A,    $9B041A91,    $5C1538AD,    $1EE5D946,
+    $02A151B5,    $4051B05E,    $87409262,    $C5B07389,
+    $4B9237F0,    $0962D61B,    $CE73F427,    $8C8315CC,
+    $3A80143F,    $7870F5D4,    $BF61D7E8,    $FD913603,
+    $73B3727A,    $31439391,    $F652B1AD,    $B4A25046,
+    $A8E6D8B5,    $EA16395E,    $2D071B62,    $6FF7FA89,
+    $E1D5BEF0,    $A3255F1B,    $64347D27,    $26C49CCC,
+    $5CBD6CC0,    $1E4D8D2B,    $D95CAF17,    $9BAC4EFC,
+    $158E0A85,    $577EEB6E,    $906FC952,    $D29F28B9,
+    $CEDBA04A,    $8C2B41A1,    $4B3A639D,    $09CA8276,
+    $87E8C60F,    $C51827E4,    $020905D8,    $40F9E433,
+    $2CFFE7D5,    $6E0F063E,    $A91E2402,    $EBEEC5E9,
+    $65CC8190,    $273C607B,    $E02D4247,    $A2DDA3AC,
+    $BE992B5F,    $FC69CAB4,    $3B78E888,    $79880963,
+    $F7AA4D1A,    $B55AACF1,    $724B8ECD,    $30BB6F26,
+    $4AC29F2A,    $08327EC1,    $CF235CFD,    $8DD3BD16,
+    $03F1F96F,    $41011884,    $86103AB8,    $C4E0DB53,
+    $D8A453A0,    $9A54B24B,    $5D459077,    $1FB5719C,
+    $919735E5,    $D367D40E,    $1476F632,    $568617D9,
+    $E085162A,    $A275F7C1,    $6564D5FD,    $27943416,
+    $A9B6706F,    $EB469184,    $2C57B3B8,    $6EA75253,
+    $72E3DAA0,    $30133B4B,    $F7021977,    $B5F2F89C,
+    $3BD0BCE5,    $79205D0E,    $BE317F32,    $FCC19ED9,
+    $86B86ED5,    $C4488F3E,    $0359AD02,    $41A94CE9,
+    $CF8B0890,    $8D7BE97B,    $4A6ACB47,    $089A2AAC,
+    $14DEA25F,    $562E43B4,    $913F6188,    $D3CF8063,
+    $5DEDC41A,    $1F1D25F1,    $D80C07CD,    $9AFCE626);
+
+{$ifdef FPC}
+{$ifndef VER1_0}
+  {$warnings on}
+  {$ifdef RangeChecks_on}
+    {$R+}
+  {$endif}
+{$endif}
+{$endif}
+
+{---------------------------------------------------------------------------}
+procedure CRC64Update(var CRC: TCRC64; Msg: pointer; Len: word);
+  {-update CRC64 with Msg data}
+type
+  PByte = ^byte;
+var
+  i,it: word;
+  clo,chi: DWord;
+type
+  BR = packed record
+         b0,b1,b2,b3: byte;
+       end;
+begin
+  clo := CRC.lo32;
+  chi := CRC.hi32;
+  for i:=1 to Len do begin
+    {c64 := Tab64[(c64 shr 56) xor Msg^] xor  (c64 shl 8)}
+    it := BR(chi).b3 xor PByte(Msg)^;  {index in tables}
+    chi := chi shl 8;
+    BR(chi).b0 := BR(clo).b3;
+    chi := chi xor Tab64Hi[it];
+    clo := (clo shl 8) xor Tab64Lo[it];
+    inc(longint(Msg));
+
+  end;
+  CRC.lo32 := clo;
+  CRC.hi32 := chi;
+end;
+
+{---------------------------------------------------------------------------}
+procedure CRC64Init(var CRC: TCRC64);
+  {-CRC64 initialization}
+begin
+  CRC := Mask64;
+end;
+
+{---------------------------------------------------------------------------}
+procedure CRC64Final(var CRC: TCRC64);
+  {-CRC64: finalize calculation}
+begin
+  CRC.lo32 := CRC.lo32 xor Mask64.lo32;
+  CRC.hi32 := CRC.hi32 xor Mask64.hi32;
+end;
+
+{---------------------------------------------------------------------------}
+procedure CRC64Full(var CRC: TCRC64; Msg: pointer; Len: word);
+  {-CRC64 of Msg with init/update/final}
+begin
+  CRC64Init(CRC);
+  CRC64Update(CRC, Msg, Len);
+  CRC64Final(CRC);
+end;
+
+{$ENDIF NOASM }
+
 end.
-

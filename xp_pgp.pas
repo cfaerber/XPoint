@@ -30,7 +30,7 @@ uses
   sysutils,xpglobal,typeform,fileio,resource,database,maske, xpheader,
 {$IFDEF unix}
 {$IFDEF fpc}
-  linux,oldlinux,
+  baseunix,unix,
 {$ENDIF}  
 {$ENDIF}
   xp0,xp1,xpstreams,Classes;
@@ -74,9 +74,11 @@ uses  xp3,xp3o,xp3o2,xp3ex,xpsendmessage,
   {$ifdef Win32} xpwin32, {$endif}
   {$ifdef OS2} xpos2, {$endif}
   {$ifdef DOS32} xpdos32, {$endif}
+  {$ifdef Unix} xpunix, {$endif}
   {$IFDEF Kylix}
   libc,
   {$ENDIF}
+  debug,
   xpstreams_temporary,
   xprope,
   xpcharset,
@@ -131,6 +133,9 @@ const
 var
   path : string;
 begin
+  Debug.DebugLog('xp_pgp','start RunPGP'
+                ,DLDebug);
+
   if FileExists(PGPBAT) then
     path:=PGPBAT
   else begin
@@ -161,13 +166,11 @@ var path : string;
     pass,batch : string;
     {$ifdef unix}
     dir, name, ext:
-    {$IFDEF fpc}
-    shortstring;
-    {$ELSE}
     string;
     {$endif}
-    {$endif}
 begin
+  Debug.DebugLog('xp_pgp','start RunPGP5'
+                ,DLDebug);
   {$ifdef unix}
   fsplit(exe,dir,name,ext);
   exe:=LowerCase(name); { aus PGPK.EXE wird pgpk etc ...}
@@ -213,6 +216,9 @@ const
 var
   path : string;
 begin
+  Debug.DebugLog('xp_pgp','start RunGPG'
+                ,DLDebug);
+
   if FileExists(PGPBAT) then
     path:=PGPBAT
   else begin
@@ -288,6 +294,8 @@ begin
     b64:='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     reset(kf,1);
     while not eof(kf) do begin
+                                        // hjt 04.09.08, BugFix fuer SF 2081841
+      setlength(s,40);                  // Verschiebung PM in PM-Brett mit PGP-pub key in Header: crash
       fillchar(dat,sizeof(dat),0);
       blockread(kf,dat,30,rr);
       i:=0; j:=0;
@@ -364,6 +372,12 @@ var b    : byte;
     fis: TStream;
 
 begin
+  DebugLog('xp_pgp','PGP_EncodeStream'
+           +', encode: '+iifs(encode,'True','False')
+           +', sign: '+iifs(sign,'True','False')
+           +', RemoteUserID: <'+RemoteUserID+'>'
+           ,dlDebug);
+
   if RemoteUserID='' then                       { User-ID ermitteln }
     RemoteUserID:=hd.Firstempfaenger;
   if cPos('/',RemoteUserID)>0 then
@@ -554,7 +568,6 @@ begin
   Hd.Mime.ContentType.ParamValues['protocol']:=protocol;
   if micalg<>'' then Hd.Mime.ContentType.ParamValues['micalg']:='pgp-'+LowerCase(micalg);
   Hd.Mime.ContentType.boundary := MimeCreateMultipartBoundary(bound_seed);
-
   hd.mime.encoding:= MimeEncoding7Bit;
   hd.mime.description:='';
   hd.mime.disposition.AsString:='';
@@ -574,6 +587,13 @@ begin
 
   fi:=TempExtS(data.Size,'PGP_','');
   fo:=TempS(data.Size+(data.Size div 2)+2000);
+
+  DebugLog('xp_pgp','PGP_MimeEncodeStream'
+            +', PGPVersion: '+iifs(PGPVersion=PGP2,'PGP2',iifs(PGPVersion=PGP5,'PGP5',iifs(PGPVersion=GPG,'GPG','??')))
+            +', fi:<'+fi+'>'
+            +', fo:<'+fo+'>'
+            +', RemoteUserID:<'+RemoteUserID+'>'
+            ,dlDebug);
 
   fis:=TFileStream.Create(fi,fmCreate);
   MimeWriteType(fis,hd);
@@ -622,6 +642,9 @@ begin
     dbWriteN(mbase,mb_unversandt,b);
   end else
     rfehler(3002);      { 'PGP-Codierung ist fehlgeschlagen.' }
+
+  DebugLog('xp_pgp','PGP_MimeEncodeStream. End'
+            ,dlDebug);
 end;
 
 const PGP_HashAlgos: array[1..7] of string = (
@@ -647,6 +670,11 @@ begin
 
   fi:=TempExtS(data.Size,'PGP_','');
   fo:=TempS(data.Size+(data.Size div 2)+2000);
+
+  DebugLog('xp_pgp','PGP_MimeSignStream'
+            +', fi:<'+fi+'>'
+            +', fo:<'+fo+'>'
+            ,dlDebug);
 
   fis:=TFileStream.Create(fi,fmCreate);
   MimeWriteType(fis,hd);
@@ -768,15 +796,25 @@ begin
     fis.Free;
     fie.Free;
 
-    inc(hd.pgpflags,fPGP_encoded);
+    inc(hd.pgpflags,fPGP_signed);  { HJT 23.09.07: signieren, nicht codieren ?! }
+    { inc(hd.pgpflags,fPGP_encoded); }
     dbReadN(mbase,mb_netztyp,nt);
     nt:=nt or Longint($4000);                         { 's'-Kennzeichnung }
     dbWriteN(mbase,mb_netztyp,nt);
   end else
+  begin
+    DebugLog('xp_pgp','PGP_MimeSignStream'
+            +', fo:<'+fo+'> existiert nicht!'
+            ,dlDebug);
+
     rfehler(3002);      { 'PGP-Codierung ist fehlgeschlagen.' }
+  end;
 
   if FileExists(fi) then
     _era(fi);         { Temporaerdatei loeschen }
+
+  DebugLog('xp_pgp','PGP_MimeSignStream, end'
+            ,dlDebug);
 end;
 
 procedure PGP_RequestKey;
@@ -897,6 +935,10 @@ var tmp,tmp2 : string;
   end;
 
 begin
+  Debug.DebugLog('xp_pgp','start PGP_DecodeMessage'
+                 +', sigtest: '+iifs(sigtest,'True','False')
+                ,DLDebug);
+
   tmp:=TempS(dbReadInt(mbase,'groesse'));
   assign(f,tmp);
   rewrite(f,1);
@@ -937,6 +979,10 @@ begin
   end;
 
   if not FileExists(tmp2) then begin
+    Debug.DebugLog('xp_pgp','PGP_DecodeMessage, Fehler'
+                   +', Datei exitiert nicht: <'+tmp2+'>'
+                   +', errorlevel: '+IntToStr(errorlevel)
+                  ,DLDebug);
     if sigtest then begin
       if errorlevel=18 then begin
         trfehler(3007,30);  { 'Ungueltige Signatur!' }
@@ -948,6 +994,9 @@ begin
   end else
   begin { Ausgabedatei korrekt geschrieben: }
     orgsize:=hdp.groesse;
+    Debug.DebugLog('xp_pgp','PGP_DecodeMessage'
+                   +', Ausgabe-Datei exitiert: <'+tmp2+'>'
+                  ,DLDebug);
     if not SigTest then begin
       PGP_BeginSavekey;
       hdp.groesse:=_filesize(tmp2);
@@ -1009,6 +1058,8 @@ procedure PGP_DecodeMsg(sigtest:boolean);
 var hdp : Theader;
     hds : longint;
 begin
+  Debug.DebugLog('xp_pgp','start PGP_DecodeMsg',DLDebug);
+
   hdp := THeader.Create;
   ReadHeader(hdp,hds,true);
   PGP_DecodeMessage(hdp,sigtest);

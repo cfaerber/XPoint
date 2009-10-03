@@ -27,7 +27,7 @@ unit  maus2;
 interface
 
 uses
-  {$ifdef NCRT} xplinux,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$endif}
+  {$ifdef NCRT} xpunix,xpcurses,{$ifdef Kylix}ncursix,{$else}ncurses,{$endif} {$endif}
   {$IFDEF Win32} Windows, {$ENDIF}
   keys, //taste, in interface for NCRT
   xpglobal; 

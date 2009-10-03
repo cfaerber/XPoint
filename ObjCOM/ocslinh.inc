@@ -35,11 +35,7 @@ type TSerialStream = class(TCommStream)
         private
          SHandle: Longint;
          InBuffer: tRingbuffer;
-{$IFDEF Kylix}
          fds : Tfdset;
-{$ELSE}
-         fds : fdset;
-{$ENDIF}
          procedure ProcIncoming;
      end; { object TSerialStream }
 

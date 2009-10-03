@@ -85,12 +85,12 @@ uses
   {$IFDEF NCRT}
   xpcurses,
   {$IFDEF fpc}
-  linux,oldlinux,
   {$ENDIF}
   {$ENDIF }
   {$ifdef Win32} xpwin32, {$endif}
   {$ifdef os2} xpos2, {$endif}
   {$ifdef Dos32} xpdos32, {$endif}
+  {$ifdef Unix} xpunix, {$endif}
 {$IFDEF Kylix}
   libc,
 {$ENDIF}
@@ -146,6 +146,7 @@ begin
   maddint(3,6,getres2(250,23),NeuUserGruppe,2,2,1,99);    { 'Standard-Usergruppe' }
   mhnr(8068);
   maddbool(32,2,getres2(250,10),AskQuit); mhnr(214);   { 'Fragen bei Quit' }
+  maddbool(32,3,getres2(250,26),UseSpamfilter); mhnr(226);   { 'Spamfilter aktivieren' }    { HJT 19.09.08 }
   maddstring(3,8,getres2(250,12),archivbretter,35,BrettLen-1,'>'); mhnr(217);
   msetvfunc(testbrett);                                   { 'Archivbretter ' }
   maddbool(3,10,getres2(250,13),archivloesch);            { 'archivierte Nachrichten loeschen' }
@@ -550,7 +551,7 @@ var brk : boolean;
     x,y : Integer;
 begin
 {$IFDEF unix}
-  dialog(ival(getres2(255,0)),15,getres2(255,1),x,y);    { 'Lister' }
+  dialog(ival(getres2(255,0)),16,getres2(255,1),x,y);    { 'Lister' }
   maddbool(3,2,getres2(255,4),listvollbild);   { 'interner Lister - Vollbild' }
     mhnr(232);
   maddbool(3,3,getres2(255,5),listwrap);       { 'Wortumbruch in Spalte 80' }
@@ -558,13 +559,16 @@ begin
   maddbool(3,4,getres2(255,6),KomArrows);      { 'Kommentarpfeile anzeigen' }
   maddbool(3,5,getres2(255,7),ListFixedHead);  { 'feststehender Nachrichtenkopf' }
   maddbool(3,7,getres2(255,8),ConvISO);        { 'ISO-Umlaute konvertieren' }
-  maddbool(3,8,getres2(255,9),ListHighlight);  { 'farbliche *Hervorhebungen*' }
-  maddbool(3,9,getres2(255,12),QuoteColors);   { 'verschiedenfarbige Quoteebenen' }
+  maddbool(3,8,getres2(255,15),Enable_UTF8);   { 'UTF-8 aktivieren' }
+    mhnr(8077);
+  maddbool(3,9,getres2(255,9),ListHighlight);  { 'farbliche *Hervorhebungen*' }
+    mhnr(237);
+  maddbool(3,10,getres2(255,12),QuoteColors);   { 'verschiedenfarbige Quoteebenen' }
     mhnr(8060);
-  maddbool(3,11,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
+  maddbool(3,12,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
     mhnr(238);
-  maddbool(3,12,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
-  maddbool(3,14,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
+  maddbool(3,13,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
+  maddbool(3,15,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
     mhnr(8061);
 {$ELSE }
   dialog(ival(getres2(255,0)),16,getres2(255,1),x,y);    { 'Lister' }
@@ -577,13 +581,16 @@ begin
   maddbool(3,5,getres2(255,6),KomArrows);      { 'Kommentarpfeile anzeigen' }
   maddbool(3,6,getres2(255,7),ListFixedHead);  { 'feststehender Nachrichtenkopf' }
   maddbool(3,8,getres2(255,8),ConvISO);        { 'ISO-Umlaute konvertieren' }
-  maddbool(3,9,getres2(255,9),ListHighlight);  { 'farbliche *Hervorhebungen*' }
-  maddbool(3,10,getres2(255,12),QuoteColors);   { 'verschiedenfarbige Quoteebenen' }
+  maddbool(3,9,getres2(255,15),Enable_UTF8);   { 'UTF-8 aktivieren' }
+    mhnr(8077);
+  maddbool(3,10,getres2(255,9),ListHighlight);  { 'farbliche *Hervorhebungen*' }
+    mhnr(237);
+  maddbool(3,11,getres2(255,12),QuoteColors);   { 'verschiedenfarbige Quoteebenen' }
     mhnr(8060);
-  maddbool(3,12,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
+  maddbool(3,13,getres2(255,10),ListScroller); { 'Rollbalken bei Mausbedienung' }
     mhnr(238);
-  maddbool(3,13,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
-  maddbool(3,15,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
+  maddbool(3,14,getres2(255,11),ListAutoScroll);  { 'automatisches Rollen am Bildrand' }
+  maddbool(3,16,getres2(255,13),ListEndCR);    { 'Lister mit <Return> verlassen' }
     mhnr(8061);
 {$ENDIF } { Linux }
   freeres;

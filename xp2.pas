@@ -26,11 +26,6 @@ unit xp2;
 
 interface
 
-uses
-  sysutils, classes,  //conflicting type names
-  keys, //taste
-  xpglobal;
-
 procedure zusatz_menue;
 procedure setaltfkeys;
 
@@ -79,16 +74,21 @@ uses
 {$ENDIF}
  {$IFDEF UnixFS}xpx,{$ENDIF}
   {$IFDEF unix}
-  xplinux,
   xpcurses,
   {$IFDEF fpc}
-  linux,oldlinux,
+  unix,baseunix,
   {$ENDIF}
   {$ENDIF}
   {$IFDEF Win32} xpwin32, {$ENDIF }
   {$IFDEF DOS32} xpdos32, {$ENDIF }
   {$IFDEF OS2} xpos2, {$ENDIF }
+  {$IFDEF Unix} xpunix, {$ENDIF }
   {$IFDEF XPEasy} xpeasy, {$ENDIF }
+
+  sysutils, classes,  //conflicting type names
+  keys, //taste
+  xpglobal,
+
   xpcfg,typeform,fileio,inout,winxp,mouse,datadef,database,osdepend,
   maske,help,lister,win2,maus2,clip,resource,montage,debug,fidoglob,
   xp0,xp1,xp1o2,xp1input,xp1help,xpe,xp3,xp5,xp9bp,xp10,xpdatum,xp_pgp, xpconst,
@@ -579,8 +579,6 @@ begin
     ParAutost:='';
 end;
 
-
-
 procedure GetResdata;
 const intbrett = '$/¯';
 var s : string;
@@ -684,7 +682,7 @@ var lf : string;
     close(t);
   end;
 
-  begin { loadresource }
+begin { loadresource }
   col.colmbox:=$70;
   col.colmboxrahmen:=$70;
   rc:= findfirst(LibDir + 'openxp-*.res', faAnyFile, sr);         { Hier duerfte es keine Probleme geben }
@@ -2629,10 +2627,12 @@ var
   free : Int64;
   x,y  : Integer;
 begin
-  if ParNomem then exit;
+  if ParNomem then
+    exit;
   Debug.DebugLog('xp2','testdiskspace', dlTrace);
   free:=diskfree(0);
-  if (free>=0) and (free<200000) then begin
+  if (free>0) and (free<200000) then
+  begin
     exitscreen(0);
     writeln(getreps(205,LeftStr(OwnPath,2)));   { 'Fehler: zu wenig freier Speicher auf Laufwerk %s !' }
     writeln;

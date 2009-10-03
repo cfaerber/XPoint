@@ -796,6 +796,8 @@ begin
       begin
         sn:=i div 32;
         sb:=i and (32-1);
+        if i >= 255 then
+          break;
         if lines[sn] and (Cardinal(1) shl sb)<>0 then
             ss[i*komwidth+1]:='³';
       end;

@@ -37,6 +37,7 @@ const  keyf1   = #0#59;             { Funktionstasten }
        keyf4   = #0#62;             keyf8   = #0#66;
        keyf5   = #0#63;             keyf9   = #0#67;
        keyf6   = #0#64;             keyf10  = #0#68;
+       keyf11  = #0#133;             keyf12  = #0#134;
 
        keysf1  = #0#84;             { Shift + Funktionstasten }
        keysf2  = #0#85;

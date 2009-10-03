@@ -906,19 +906,4 @@ finalization
   end;
 {$ENDIF}
 
-//
-// $Log: xpspam.pas,v $
-// Revision 1.4  2003/08/23 23:02:37  mk
-// - removed hints and warnings
-//
-// Revision 1.3  2003/07/12 18:45:06  cl
-// - speed improvement by caching of database connection
-// - compile-time $DEFINE to enable SQLite support (EXPERIMENTAL)
-//
-// Revision 1.2  2003/02/07 16:13:02  cl
-// - added field ``DATUM'' to SPAMFLT.DB1
-//
-// Revision 1.1  2003/01/28 10:42:25  cl
-// - Added statistical SPAM filter
-//
 end.

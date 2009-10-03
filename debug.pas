@@ -89,12 +89,15 @@ uses
   {$IFDEF Kylix}
   libc,
   {$ELSE} {fpc}
-  Linux,dos,
+  baseunix,unix,
   {$ENDIF }
   {$ENDIF }
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF Dos32} xpdos32, {$ENDIF}
   {$IFDEF OS2} xpos2, {$ENDIF}
+  {$IFDEF Linux} xplinux, {$ELSE }
+  {$IFDEF Unix} xpunix, {$ENDIF}
+  {$ENDIF}
   TypeForm,
   xpglobal; //not really
 
@@ -118,7 +121,7 @@ begin
   if not LogBadges.Find(Badge, I) then {Open new entry}
   begin
     I := Logbadges.Add(Badge);
-    S := GetEnv(PChar(Badge));
+    S := GetEnv(Badge);  { hjt 24.06.07 Test, wg. valgrind S := GetEnv(PChar(Badge)); }
     if S = '' then S := GetEnv('DEFAULT');
     if S = '' then Str(DLDefault,S);
     L := StrToIntDef(S, 0);
@@ -142,7 +145,7 @@ begin
   begin
     TrimLastChar(Message, #10);
     TrimLastChar(Message, #13);
-    WriteToLog := Integer(Logbadges.Objects[C]) >= Level;
+    WriteToLog := Int64(Pointer(Logbadges.Objects[C])) >= Level;
     if WriteToLog and (LogLast=Badge+#0+Message) then begin
       LogCount:=LogCount+1;
       WriteToLog := false;

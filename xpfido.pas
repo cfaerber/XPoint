@@ -130,7 +130,7 @@ uses  xpnt,xp2,xp3,xp4e, classes,xpconst,
   xplinux,
 {$ELSE}
 {$IFDEF Unix}
-  linux, // for stat & fsstat
+  baseunix,unix,unixtype,   // statFS
 {$ENDIF}
 {$ENDIF}
 xpfidonl;
@@ -2621,15 +2621,12 @@ var fn     : string;
   function filetest(docopy:boolean; size:Int64; path:string; fi:string):boolean;
   var
 {$IFDEF Linux}
-{$IFDEF Kylix}
     fs : TStatFs;
   begin
     statfs(PChar(path),fs);
+{$IFDEF Kylix}
     if ((int64(fs.f_bavail)*int64(fs.f_bsize))<=size)
 {$ELSE}
-    fs : statfs;
-  begin
-    fsstat(path,fs);
     if ((int64(fs.bavail)*int64(fs.bsize))<=size)
 {$ENDIF}
 

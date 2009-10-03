@@ -86,6 +86,11 @@ end;
 
 procedure TMessageViewer.GetFromExtension(const Extension: String);
 begin
+  { HJT 19.02.2006 Start, fuer nachfolgende Aufrufe wird }
+  { sonst der vormalige Viewer aufgerufen                }
+  fProg := '';
+  fExt  := '';
+  { HJT 19.02.2006 End }
   if Extension = '' then exit;
   dbSeek(mimebase,mtiExt,UpperCase(mid(Extension,2)));
   if dbFound then

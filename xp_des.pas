@@ -23,6 +23,11 @@
 {$I xpdefine.inc }
 
 { OpenXP DES unit }
+
+{$IFDEF FPC}
+{$PIC OFF} //FIXME
+{$ENDIF}
+
 unit xp_des;
 
 interface

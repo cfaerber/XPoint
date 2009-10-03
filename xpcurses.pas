@@ -29,7 +29,7 @@ interface
 uses
 //  xpglobal,
 {$IFDEF FPC }
-  linux,oldlinux,
+  unix,baseunix,
 {$ENDIF }
 {$IFDEF Kylix}
   libc,
@@ -40,7 +40,12 @@ uses
 {$IFDEF Unix}
   xpcharset,
 {$ENDIF}
-  xplinux;
+{$IFDEF Linux}
+  xplinux
+{$ELSE}
+  xpunix
+{$ENDIF}
+;
 
 {$IFDEF fpc }
 {$packrecords 4}
@@ -392,8 +397,8 @@ uses
 {$endif}
   debug,
   keys,
-  mouse,baseUnix,termio,
-  xp0,                  { ScreenLines }
+  mouse,termio,
+  xp0,                  { ScreenLines, LocalScreen }
   xp1,                  { CloseDatabases }
 
   typeform;             { ISOTab }
@@ -406,6 +411,8 @@ const
    STDERR = 2;
 
    __isInit: boolean = false;           { Curses initialisiert? }
+   __isfinalized: boolean = false;      { HJT 22.12.07 , Tote nicht wiedererwecken }
+
    PrefChar: Char = #1;                 { Previous Char should be <> #0 }
 
 var
@@ -419,8 +426,10 @@ var
    LastWindMin,                         { Manipulationen abfangen }
    LastWindMax: word;
 
+{ HJT 15.07.07 LocalScreen ist schon in xp0.pas definiert
 var
   LocalScreen: ^TLocalScreen;
+}
 
 {==========================================================================
    This code chunk is from the FPC source tree in rtl/inc/textrec.inc.
@@ -860,6 +869,10 @@ begin
 
 again:
   l:= wgetch(BaseWin.wHnd);
+{$IFDEF Linux }
+  // hack to Hermann Jurksch: fix backspace with new ncurses versions
+  if (l=127) then l:=8;
+{$ENDIF }
   Debug.DebugLog('xpcurses',Format('wgetch: %d',[Integer(l)]),dlTrace);
 
   { if it's an extended key, then map to the IBM values }
@@ -897,6 +910,13 @@ function CrtWrite(var F: TextRec): integer;
 var
   i: integer;
 begin
+   { HJT 22.12.07 CrtWrite wird von flush aus der RTL aufgerufen,        }
+   { wenn curses bereits heruntergefahren wird/wurde. Ansonsten  Abbruch }
+  if __isfinalized then
+  begin
+    Result:=0;
+    exit;
+  end;
   if not __isInit then InitXPCurses;
   if (TextAttr<>LastTextAttr) then
     SetTextAttr(TextAttr);
@@ -918,7 +938,7 @@ begin
 {$IFDEF Kylix}
   F.BufEnd:=__Read(F.Handle, PChar(F.BufPtr), F.BufSize);
 {$ELSE}
-  F.BufEnd:=fdRead(F.Handle, F.BufPtr^, F.BufSize);
+  F.BufEnd:=fpRead(F.Handle, F.BufPtr^, F.BufSize);
 {$ENDIF}
 { fix #13 only's -> #10 to overcome terminal setting }
   for i:=1 to F.BufEnd do begin
@@ -1342,7 +1362,7 @@ end;
 { Unit-Interna --------------------------------------------------------- }
 
 { Sig Handler is called, when a SIG is called by Linux }
-procedure SigHandler(Sig : LongInt);
+procedure SigHandler(Sig : Integer); cdecl;
 begin
   case Sig of
     SIGWINCH		     : { when XTerm is Resized }
@@ -1368,6 +1388,7 @@ procedure EndXPCurses;
 begin
   ExitProc := ExitSave;
   Debug.DebugLog('xpcurses','EndXPCurses: Curses is going down.',dlDebug);
+
   { Noch ein SubWindow vorhanden= }
   if (BaseSub <> nil) then
     delwin(BaseSub);
@@ -1375,11 +1396,13 @@ begin
   CursorOn;
   { Eventuell nicht ausgefuehrte Aenderungen darstellen }
   wrefresh(ActWin.wHnd);
+  endwin;
+  { HJT, 22.12.07 verschoben }
   { tty restaurieren }
   resetty;
-  endwin;
   tcSetAttr(STDIN,TCSANOW,tios);
   __isInit:= false;
+  __isfinalized:= true;      { HJT 22.12.07, Tote nicht wiedererwecken, gibt nur Zombies }
 end;
 
 function StartCurses(var win: TWinDesc): Boolean;
@@ -1463,6 +1486,7 @@ begin
       [MaxCols,MaxRows,COLORS,TABSIZE]),dlDebug);
     Debug.DebugLog('xpcurses',Format('Esc Delay=%d, Baudrate=%d, Has Colors=%s',
       [ESCDELAY,baudrate,iifs(has_colors<>0,'yes','no')]),dlDebug);
+    Debug.DebugLog('xpcurses','longname: <'+ncurses.longname+'>',dlDebug);
 
     { initialize mouse }
 {$IFDEF Kylix}
@@ -1520,6 +1544,7 @@ begin
   TextRec(Input).Handle:=StdInputHandle;
 {$ENDIF}
 
+{ HJT 15.07.07  wird bereits in xp0.pas alloziert
   GetMem(LocalScreen, SizeOf(LocalScreen^));
 
   ScreenLines :=  SysGetScreenLines;
@@ -1532,10 +1557,15 @@ begin
   libc.signal(SIGQUIT, @SigHandler);
   libc.signal(SIGKILL, @SigHandler);
 {$ELSE}
-  Linux.SigNal(SIGWINCH, @SigHandler);
-  Linux.SigNal(SIGHUP, @SigHandler);
-  Linux.SigNal(SIGQUIT, @SigHandler);
-  Linux.SigNal(SIGKILL, @SigHandler);
+//  Linux.SigNal(SIGWINCH, @SigHandler);
+//  Linux.SigNal(SIGHUP, @SigHandler);
+//  Linux.SigNal(SIGQUIT, @SigHandler);
+//  Linux.SigNal(SIGKILL, @SigHandler);
+{ HJT testweise deaktiviert }
+  fpsignal(SIGWINCH, SigHandler);
+  fpsignal(SIGHUP, SigHandler);
+  fpsignal(SIGQUIT, SigHandler);
+  fpsignal(SIGKILL, SigHandler);
 {$ENDIF}
 
   { set the unit exit procedure }
@@ -1550,201 +1580,4 @@ begin
   EndXPCurses;
 end;
 
-{$Warnings OFF}
 end.
-{
-  $Log: xpcurses.pas,v $
-  Revision 1.83  2004/04/09 11:01:58  mk
-  - added keycodes for freebsd from stefan tell
-
-  Revision 1.82  2003/09/30 00:11:27  cl
-  - fixes for Linux compilation
-
-  Revision 1.81  2003/09/06 22:29:30  mk
-  - removd new added keyboard codes due hangs with linux/netbios
-    we have to find another way to support this keycodes
-
-  Revision 1.80  2003/09/06 17:44:20  mk
-  - do not add Linux keycodes under NetBSD
-
-  Revision 1.79  2003/09/06 15:58:43  mk
-  - fixed garbage from last checkins
-
-  Revision 1.78  2003/09/05 18:20:06  mk
-  - added more codes for ctrl-left and ctrl-right
-
-  Revision 1.77  2003/09/03 18:49:08  mk
-  - added codes for Ctrl-Left + Ctrl-Right on NetBSD
-
-  Revision 1.76  2003/09/03 00:45:20  mk
-  - added codes for Home and End from NetBSD
-
-  Revision 1.75  2003/06/23 14:25:52  mk
-  - added alternate keyboard codes for Ctrl+PgDown/PgUp
-
-  Revision 1.74  2003/04/12 16:58:21  mk
-  - fixed last commit
-
-  Revision 1.73  2003/04/12 13:02:00  mk
-  - fixed garbage character in editor after del and high-ascii
-  - added more debugging output
-
-  Revision 1.72  2003/01/26 20:19:16  mk
-  - fixed typo from last committ
-
-  Revision 1.71  2003/01/26 12:18:24  mk
-  - forwardkeys is not public anymore, use _keboard in readkey
-
-  Revision 1.70  2003/01/17 13:04:44  mk
-  - FPC compile problem is fixed in FPC now,
-    code is now active again
-
-  Revision 1.69  2003/01/11 22:30:47  mk
-  - changed define Linux->Unix
-
-  Revision 1.68  2003/01/09 17:32:56  mk
-  - fixes kylix compile bug (added j+ to this unit)
-
-  Revision 1.67  2003/01/07 09:50:23  mk
-  - made xpcurses temporary compilable
-  - bug with forwardkeys has to be fixed (commented out)
-  - signal-handler commented out due to compile problem with fp
-
-  Revision 1.66  2002/12/22 13:33:06  mk
-  - writable const on for this unit only
-
-  Revision 1.65  2002/07/25 20:43:56  ma
-  - updated copyright notices
-
-  Revision 1.64  2002/04/05 04:48:21  mk
-  - removed message in EndCurses
-
-  Revision 1.63  2001/12/30 19:56:49  cl
-  - Kylix 2 compile fixes
-
-  Revision 1.62  2001/11/06 12:12:31  ml
-  - highlighted backgrounds work now with Eterm (console blinks yes but will be fixed soon)
-
-  Revision 1.61  2001/10/24 09:25:17  ma
-  - adjusted debug levels
-
-  Revision 1.60  2001/10/21 12:33:54  ml
-  - killed local constant
-  - fix for range-error
-
-  Revision 1.59  2001/10/20 17:12:36  ml
-  - range check errorfix
-  - removed some hints and warnings
-  - corrected debuglog
-  - 2 more keytranslations for xterm
-
-  Revision 1.58  2001/10/17 10:54:58  ml
-  - fix for umlaut
-  - range Error fix
-
-  Revision 1.57  2001/10/17 10:07:38  ml
-  - use integer for cursorpos to prevent range errors
-
-  Revision 1.56  2001/10/15 09:33:17  ml
-  - exit works now with Kylix-compiled openxp
-
-  Revision 1.55  2001/10/15 09:04:22  ml
-  - compilable with Kylix ;-)
-
-  Revision 1.54  2001/09/27 21:22:26  ml
-  - Kylix compatibility stage IV
-
-  Revision 1.53  2001/09/17 16:29:17  cl
-  - mouse support for ncurses
-  - fixes for xpcurses, esp. wrt forwardkeys handling
-
-  - small changes to Win32 mouse support
-  - function to write exceptions to debug log
-
-  Revision 1.52  2001/09/10 15:58:03  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.51  2001/09/09 10:23:20  ml
-  - Kylix compatibility stage III
-  - compilable in linux
-
-  Revision 1.50  2001/09/07 23:24:54  ml
-  - Kylix compatibility stage II
-
-  Revision 1.49  2001/09/07 17:27:24  mk
-  - Kylix compatiblity update
-
-  Revision 1.48  2001/09/03 16:09:34  ml
-
-  - fixed Grey-Keyboard-Editcontrol-feature kills 'J' and 'N' keys - bug
-
-  Revision 1.47  2001/07/23 15:36:46  ml
-  - Editor: Numblock Copy/Paste/Insert works now in linux
-
-  Revision 1.46  2001/04/23 20:45:40  ml
-  - Sig-Int Handler for Linux (SIGKILL, SIGHUP, SIGQUIT)
-  - XTerm-Resizing is now recognized by openxp - repaint works not completely yet
-
-  Revision 1.45  2001/04/23 18:32:28  ml
-  - Helpscreen now uses full terminal in Linux
-
-  Revision 1.44  2001/04/19 14:06:24  ml
-  - fixes for KeyboardIO in linux
-
-  Revision 1.43  2001/04/19 12:54:26  ml
-  - keyboardtranslation extended   (Pos1/Home etc.)
-  - ISO2IBM - Codetabletranslation (äöüß - this was shitty hard work)
-
-  Revision 1.42  2001/04/19 00:04:05  ml
-  - fix in creating ~/.curses.log - now available for logging
-
-  Revision 1.41  2001/04/17 07:41:06  ml
-  - /? - fix for linux
-  -    - german resfix for 202.4
-
-  Revision 1.40  2001/04/13 20:22:49  ml
-  - fix of accessviolation in unhandled keys
-
-  Revision 1.39  2001/04/11 07:00:22  ml
-  - fixed debugfilenotopen-RuntimeError
-
-  Revision 1.38  2001/04/10 16:19:35  ml
-  - disabled shitty blinking-bit till we find another solution
-
-  Revision 1.37  2001/04/10 10:03:23  ml
-  - keyboard-translation completely rewritten (what a mess)
-  - Ctrl-Up/Down now do the job
-
-  Revision 1.36  2001/04/09 14:18:25  ml
-  -disabled blinking till it is working well
-
-  Revision 1.35  2001/03/13 19:24:57  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.34  2001/01/04 21:21:10  ma
-  - added/refined debug logs
-
-  Revision 1.33  2000/11/16 19:23:53  hd
-  - SysLog abgeschaltet (kann mit UseSysLog aktiviert werden
-
-  Revision 1.32  2000/11/14 14:47:52  hd
-  - Anpassung an Linux
-
-  Revision 1.31  2000/11/12 17:28:45  hd
-  - Terminal funktioniert (aber nur im Direkten Modus)
-
-  Revision 1.30  2000/10/24 17:37:24  fe
-  Zirkulaere Abhaengigkeiten beseitigt.
-
-  Revision 1.29  2000/10/10 12:15:24  mk
-  - SysGetConsoleCodepage added
-
-  Revision 1.28  2000/09/30 16:34:50  mk
-  - SysSetBackIntensity
-
-  Revision 1.27  2000/09/10 15:11:52  hd
-  - Fix: Farbe unter Linux
-
-}

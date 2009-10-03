@@ -23,6 +23,8 @@
 
 {$I xpdefine.inc }
 
+{$PIC OFF} //FIXME
+
 unit zcrfc;
 
 //{$IFDEF NCRT}
@@ -155,9 +157,9 @@ uses
   sysutils,
   {$IFDEF unix}
   {$IFDEF fpc}
-  linux,oldlinux,
+  baseunix,unix,
   {$ENDIF }
-  XPLinux,
+  xpunix,
   {$ENDIF }
   {$IFDEF NCRT }
   xpcurses,                             { Fuer die Sonderzeichen an der Console }
@@ -2534,7 +2536,7 @@ begin
   begin
   try
     s1 := ExtractFileExt(sr.name);
-    // BAK-Dateien ¸berspringen
+    // BAK-Dateien √ºberspringen
     if LowerCase(s1) = LowerCase(ExtBak) then Continue;
     if not (UpperCase(RightStr(sr.name,4))='.OUT') then
     if ExtractFileExt(sr.name) = '.mail' then
@@ -2645,7 +2647,8 @@ begin
     fn:=LeftStr(fn,p+3);           { Extension auf 3 Zeichen kuerzen }
     dec(p);
     end;
-  allowed:=['A'..'Z','_','-','é','ô','ö','Ñ','î','Å','#','@','$','!','0'..'9']; //todo: use predefined set
+  allowed:=['A'..'Z','_','-',{$IFNDEF Unix}'¬é','¬ô','¬ö','¬Ñ','¬î','¬Å',{$ENDIF}'#','@','$','!','0'..'9']; //todo: use predefined set
+
   for i:=1 to p do
     if not (fn[i] in allowed) then   { linken Teil nach DOS konvertieren }
       fn[i]:='-';
@@ -3433,7 +3436,7 @@ begin
     if not IsMailAddr(hd.FirstEmpfaenger) then { AM }
 //      if binmail and not NewsMIME then
 //      begin
-//        if CommandLine then  writeln(#13'BinÑrnachricht <', hd.msgid, '> wird nicht konvertiert')
+//        if CommandLine then  writeln(#13'Bin¬Ñrnachricht <', hd.msgid, '> wird nicht konvertiert')
 //      end else
     begin                             { AM }
       inc(n);if CommandLine then  write(#13'News: ', n);
@@ -3916,7 +3919,7 @@ end;
   - fixed stripping of last character (">") of cancel headers
 
   Revision 1.96  2002/04/10 08:35:23  mk
-  MY[+JG]:- Der From:-Header durchlÑuft jetzt die MIME-Decodierung nach
+  MY[+JG]:- Der From:-Header durchl¬Ñuft jetzt die MIME-Decodierung nach
             RFC 1522, *bevor* er in 'GetAdr' in Adresse und Realname
             zerlegt wird (vorher wurde ein Header wie
             'From: "Christian =?Iso-8859-1?Q?R=F6=DFler"?= <...>' nicht

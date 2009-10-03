@@ -44,12 +44,13 @@ type  ccl   = array[1..maxcc] of AdrStr;
 var pm :boolean;
 
 procedure SortCCs(cc:ccp; cc_anz:integer);
-procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
-procedure read_verteiler(name:string; var cc:ccp; var cc_anz:integer16);
-procedure write_verteiler(var name:string; var cc:ccp; cc_anz:integer);
-procedure edit_verteiler(name:string; var anz:integer16; var brk:boolean);
-procedure del_verteiler(name:string);
-
+procedure edit_cc(var cc:ccp; var cc_anz:integer; var brk:boolean);
+function read_verteiler(name:string; var cc:ccp): Integer;
+procedure write_verteiler(const name:string; var cc:ccp; cc_anz:integer);
+function edit_verteiler(const name:string; var brk:boolean): Integer16;
+procedure del_verteiler(const name:string);
+// procedure cc_move( sidx, didx, cnt : integer);  { HJT: 16.04.2006 }
+// procedure cc_reset;                             { HJT: 16.04.2006 }
 function  cc_test1(var s:string):boolean;
 function  cc_testempf(var s:string):boolean;
 
@@ -61,6 +62,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
+  debug,
   typeform,fileio,maske,datadef,database,stack,resource,
   xp1,xp1input, xp3,xp3o2,xp3o,xp4e,xpsendmessage_internal, winxp;
 
@@ -272,7 +274,7 @@ end;
 procedure SortCCs(cc:ccp; cc_anz:integer);
 var i,j  : Integer;
     xchg : boolean;
-    s    : string[80];
+    s    : string;
 
   function ccsmaller(cc1,cc2:string):boolean;
   begin
@@ -294,11 +296,11 @@ begin
   until not xchg or (j=0);
 end;
 
-procedure edit_cc(var cc:ccp; var cc_anz:integer16; var brk:boolean);
+procedure edit_cc(var cc:ccp; var cc_anz:integer; var brk:boolean);
 var x,y   : Integer;
     i     : shortint;
     h     : byte;
-    small : string[1];
+    small : string;
     t     : text;
     s     : string;
 begin
@@ -318,7 +320,8 @@ begin
     ccused[i]:=(cc^[i]<>'');
     end;
   maskdontclear;
-  for i:=cc_anz+2 to maxcc do
+  { for i:=cc_anz+2 to maxcc do }
+  for i:=cc_anz+2 to maxcc - 1 do   { HJT 20.01.07 see freexp xpcc.pas }
     setfieldenable(i,false);
   wrt(x+53,y+h+2,' [F2] ');
   pushhp(600);
@@ -383,12 +386,20 @@ end;
 
 { Verteiler-Liste einlesen; Name hat Format '[..]' }
 
-procedure read_verteiler(name:string; var cc:ccp; var cc_anz:integer16);
+function read_verteiler(name:string; var cc:ccp): Integer;
 var t : text;
     s : string;
+    i : integer;
 begin
-  cc_anz:=0;
-  fillchar(cc^,sizeof(cc^),0);
+  Debug.DebugLog('xpcc','read_verteiler, verteilername: <'+name+'>, cc_anz: '+IntToStr(cc_anz),dltrace);
+  Result:=0;
+  { cc_reset; }
+  for i := 1 To maxcc do { HJT 12.01.20 cc_reset only for xpsendmessage.cc ! }
+  begin
+    cc^[i] := '';
+  end;
+  
+  cc_anz:=0;    { HJT 17.10.08 }
   assign(t,CCfile);
   reset(t);
   if ioresult=0 then begin
@@ -402,15 +413,18 @@ begin
         if (trim(s)<>'') and not is_vname(s) then begin
           inc(cc_anz);
           cc^[cc_anz]:=LeftStr(s,79);
+          Debug.DebugLog('xpcc','read_verteiler,     cc^['+IntToStr(cc_anz)+']: <'+cc^[cc_anz]+'>',dltrace);
           end;
       until eof(t) or is_vname(s);
     close(t);
     end;
   if ioresult<>0 then;
+  Result:=cc_anz;   { HJT 20.01.07 }
+  Debug.DebugLog('xpcc','read_verteiler, Anz: '+IntToStr(Result),dltrace);
 end;
 
 
-procedure del_verteiler(name:string);
+procedure del_verteiler(const name:string);
 var t1,t2 : text;
     s     : string;
     same  : boolean;
@@ -445,7 +459,7 @@ begin
 end;
 
 
-procedure write_verteiler(var name:string; var cc:ccp; cc_anz:integer);
+procedure write_verteiler(const name:string; var cc:ccp; cc_anz:integer);
 var t2 : text;
     i  : integer;
 begin
@@ -460,166 +474,66 @@ begin
 end;
 
 
-procedure edit_verteiler(name:string; var anz:integer16; var brk:boolean);
-var cc  : ccp;
+function edit_verteiler(const name:string; var brk:boolean): Integer16;
+var
+  cc  : ccp;
+  anz: Integer;
 begin
   new(cc);
-  read_verteiler(name,cc,anz);
+  anz  := read_verteiler(name,cc);
   edit_cc(cc,anz,brk);
   if not brk then
     write_verteiler(name,cc,anz);
+  Result := anz;
   dispose(cc);
 end;
 
-{
-  $Log: xpcc.pas,v $
-  Revision 1.43  2003/10/18 17:14:47  mk
-  - persistent open database boxenfile (DB: boxbase)
+{ HJT: 16.04.2006: bildet move fuer cc nach       }
+{ move auf Ansistrings ist generell nicht erlaubt }
+procedure cc_move( sidx, didx, cnt : integer);
+begin
+  { Wenn Quell- und Zielbereich identisch ist, gibt es nichts zu tun }
+  if sidx <> didx then 
+  begin
+    if (didx <= sidx) OR (didx >= (sidx + cnt)) then 
+    begin
+      { Quell- und Zielbereiche ueberlappen sich nicht: von }
+      { niedrigeren Indizes nach hoeheren Indizes kopieren  }    
+      while cnt > 0 do
+      begin
+        cc^[didx] := cc^[sidx];
+        inc(didx);
+        inc(sidx);
+        dec(cnt);
+      end
+    end
+    else
+    begin
+      { Quell- und Zielbereiche ueberlappen sich: von   }
+      { hoeheren nach niedrigeren Indizes kopieren      }
+      inc(didx, cnt - 1);
+      inc(sidx, cnt - 1);  
+      while cnt > 0 do
+      begin
+        cc^[didx] := cc^[sidx];            
+        dec(didx);
+        dec(sidx);
+        dec(cnt);
+      end
+    end;
+  end;
+end;
 
-  Revision 1.42  2003/03/28 23:21:28  mk
-  - loop variable for cc-handling changed from shortint to Integer
+{ HJT: 16.04.2006: Initialisiert den cc-Array mit Leerstrings, only for xpsendmessage.cc ! }
+procedure cc_reset;
+var
+  i : integer;
+begin
+  for i := 1 To maxcc do 
+  begin
+    cc^[i] := '';
+  end;
+end;
 
-  Revision 1.41  2003/03/28 06:51:29  mk
-  - maxcc is now 126 instead of 50
-
-  Revision 1.40  2002/12/14 07:31:37  dodi
-  - using new types
-
-  Revision 1.39  2002/12/12 11:58:49  dodi
-  - set $WRITEABLECONT OFF
-
-  Revision 1.38  2002/12/06 14:27:28  dodi
-  - updated uses, comments and todos
-
-  Revision 1.37  2002/11/14 21:06:13  cl
-  - DoSend/send window rewrite -- part I
-
-  Revision 1.36  2002/07/25 20:43:56  ma
-  - updated copyright notices
-
-  Revision 1.35  2002/07/09 13:37:20  mk
-  - merged forcebox-fixes from OpenXP/16 (sv+my), most obsolet due to new adress handling
-
-  Revision 1.34  2002/04/14 22:27:15  cl
-  - added is_vname to exports
-
-  Revision 1.33  2002/03/17 11:20:36  mk
-  JG+MY:- Fix: Beim Aendern des Empfaengers im Sendefenster konnte es zu
-          Problemen ("unbekanntes Brett: /FIDO.CROSSPOINT.GER - neu
-          anlegen?") kommen, wenn es sich z.B. um Fido-Bretter mit
-          Brettebenen handelte und unter /Config/Anzeige/Bretter die
-          Punktschreibweise fuer alle Bretter gewaehlt war. Zusatz-Fix fuer
-          praezisere Anzeige und Bestimmung der Brettebene im Sendefenster
-          implementiert.
-
-  Revision 1.32  2002/01/19 14:17:03  mk
-  - Big 3.40 update part IV
-
-  Revision 1.31  2002/01/19 13:46:09  mk
-  - Big 3.40 udpate part III
-
-  Revision 1.30  2001/09/10 15:58:03  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.29  2001/09/08 16:29:38  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.28  2001/08/12 11:50:43  mk
-  - replaced dbRead/dbWrite with dbReadN/dbWriteN
-
-  Revision 1.27  2001/08/11 23:06:36  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.26  2001/07/23 16:05:22  mk
-  - added some const parameters
-  - changed most screen coordinates from byte to integer (saves some kb code)
-
-  Revision 1.25  2001/07/10 19:02:50  my
-  - fixed previous commit
-
-  Revision 1.24  2001/07/10 14:47:51  mk
-  JG:- Fix: Cancelling the automatic creation (e.g. of an Reply-To)
-       user with <Esc> does *not* create the user anymore :-)
-
-  Revision 1.23  2001/03/13 19:24:57  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.22  2000/12/05 14:58:11  mk
-  - AddNewUser
-
-  Revision 1.21  2000/10/17 10:05:57  mk
-  - Left->LeftStr, Right->RightStr
-
-  Revision 1.20  2000/08/13 21:47:32  mk
-  - fuer Langname auf dbReadStr umgestellt
-
-  Revision 1.19  2000/07/21 20:56:30  mk
-  - dbRead/Write in dbRead/WriteStr gewandelt, wenn mit AnsiStrings
-
-  Revision 1.18  2000/07/04 12:04:29  hd
-  - UStr durch UpperCase ersetzt
-  - LStr durch LowerCase ersetzt
-  - FUStr durch FileUpperCase ersetzt
-  - Sysutils hier und da nachgetragen
-
-  Revision 1.17  2000/07/03 13:31:44  hd
-  - SysUtils eingefuegt
-  - Workaround Bug FPC bei val(s,i,err) (err ist undefiniert)
-
-  Revision 1.16  2000/06/29 13:00:59  mk
-  - 16 Bit Teile entfernt
-  - OS/2 Version läuft wieder
-  - Jochens 'B' Fixes übernommen
-  - Umfangreiche Umbauten für Config/Anzeigen/Zeilen
-  - Modeminitialisierung wieder an alten Platz gelegt
-  - verschiedene weitere fixes
-
-  Revision 1.15  2000/05/13 09:14:41  jg
-  - Ueberpruefung der Adresseingaben jetzt auch Fido und Maus kompatibel
-
-  Revision 1.14  2000/05/07 18:16:04  hd
-  Kleine Linux-Anpassungen
-
-  Revision 1.13  2000/05/05 18:08:50  jg
-  - Sendefenster: Verteiler im "Kopien an" Dialog erlaubt
-  - Empfaenger aendern Loescht alte "Kopien an" Eintraege
-
-  Revision 1.12  2000/04/29 19:11:52  jg
-  - Ueberpruefung der Usernameneingabe bei Nachricht/Direkt, Verteilern
-    und "Kopien an" + "Empfaenger aendern" im Sendefenster
-
-  Revision 1.11  2000/04/15 21:44:48  mk
-  - Datenbankfelder von Integer auf Integer16 gaendert
-
-  Revision 1.10  2000/03/14 15:15:42  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.9  2000/03/09 23:39:34  mk
-  - Portierung: 32 Bit Version laeuft fast vollstaendig
-
-  Revision 1.8  2000/03/04 14:53:50  mk
-  Zeichenausgabe geaendert und Winxp portiert
-
-  Revision 1.7  2000/02/29 09:30:17  jg
-  -Bugfix Brettnameneingaben mit "." bei Empfaenger und Kopien im Sendefenster
-
-  Revision 1.6  2000/02/20 09:51:39  jg
-  - auto_empfsel von XP4E.PAS nach XP3O.PAS verlegt
-    und verbunden mit selbrett/seluser
-  - Bei Brettvertreteradresse (Spezial..zUgriff) kann man jetzt
-    mit F2 auch User direkt waehlen. Und Kurznamen eingeben.
-
-  Revision 1.5  2000/02/19 11:40:08  mk
-  Code aufgeraeumt und z.T. portiert
-
-}
 end.
 

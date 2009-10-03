@@ -1,5 +1,4 @@
-{   $Id$
-
+{   
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de) and Markus Kaemmerer
 
     This program is free software; you can redistribute it and/or modify
@@ -17,13 +16,14 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 }
 
-{ XP - Linux - Supportroutinen }
+{ XP - Linux/Unix - Supportroutinen }
+
 {$I xpdefine.inc }
 
-unit xplinux;
+unit xpunix;
 
-{$IFNDEF unix}
-  {$FATAL Die Unit XPLINUX kann nur unter Linux compiliert werden }
+{$IFNDEF Unix }
+  {$FATAL the xpunix unit is only compatible with POSIX systems.}
 {$ENDIF }
 
 interface
@@ -36,7 +36,7 @@ interface
 
 uses
   {$IFDEF fpc }
-  linux,  oldlinux,
+  unix,baseunix,
   {$ELSE }
   Libc,
   {$ENDIF }
@@ -90,7 +90,6 @@ type
 
 function SysExec(const Path, CmdLine: String): Integer;
 
-
 { Verzeichnis-/Datei-Routinen ------------------------------------------ }
 
 function MakeDir(p: string; a: longint): boolean;
@@ -102,6 +101,11 @@ function Diskfree(drive: byte): LongInt;
 function DiskSize(drive: byte): LongInt;
 function FileGetAttr(filename: string): Integer;
 function FileSetAttr(filename: string; Attr: Integer): Integer;
+{$ENDIF}
+
+{$IFNDEF Linux}
+Function GetEnv(envvar: string): string;
+function GetUid : LongInt;
 {$ENDIF}
 
 { Zugriffe ueber /proc/* ----------------------------------------------- }
@@ -128,7 +132,6 @@ implementation
 uses
   typeform,
   fileio;
-
 
 {$ifdef UseSysLog}
 
@@ -237,7 +240,7 @@ begin
 {$IFDEF Kylix}
     MakeDir:= chmod(PChar(p), a) = 0;
 {$ELSE}
-    MakeDir:= chmod(p, a);
+    MakeDir:= fpchmod(p, a) = 0;
 {$ENDIF}
 end;
 
@@ -251,28 +254,19 @@ var
 begin
   TestAccess := false;
 {$IFDEF FPC }
-  if not (fstat(p, info)) then
+  if 0<>(fpstat(p, info)) then
 {$ELSE }
   if stat(PChar(p), info) <> 0 then
 {$ENDIF }
     TestAccess:= false
   else with info do begin
     case ta of
-{$IFDEF FPC }
-      taUserR:   TestAccess:= (mode and STAT_IRUSR) <> 0;
-      taUserW:   TestAccess:= (mode and STAT_IWUSR) <> 0;
-      taUserRW:  TestAccess:= (mode and (STAT_IRUSR or STAT_IWUSR)) <> 0;
-      taUserRWX: TestAccess:= (mode and STAT_IRWXU) <> 0;
-      taUserX:   TestAccess:= (mode and STAT_IXUSR) <> 0;
-      taUserRX:  TestAccess:= (mode and (STAT_IRUSR or STAT_IXUSR)) <> 0;
-{$ELSE }
       taUserR:   TestAccess:= (st_mode and S_IRUSR) <> 0;
       taUserW:   TestAccess:= (st_mode and S_IWUSR) <> 0;
       taUserRW:  TestAccess:= (st_mode and (S_IRUSR or S_IWUSR)) <> 0;
-      taUserRWX: TestAccess:= (st_mode and S_IRWXU) <> 0;
+      taUserRWX: TestAccess:= (st_mode and STAT_IRWXU) <> 0;
       taUserX:   TestAccess:= (st_mode and S_IXUSR) <> 0;
       taUserRX:  TestAccess:= (st_mode and (S_IRUSR or S_IXUSR)) <> 0;
-{$ENDIF }
     end;
   end;
 end;
@@ -290,12 +284,12 @@ begin
   end;
 {$ELSE}
   case ta of
-    taUserR:   chmod(p, STAT_IRUSR);
-    taUserW:   chmod(p, STAT_IWUSR);
-    taUserRW:  chmod(p, STAT_IRUSR or STAT_IWUSR);
-    taUserRWX: chmod(p, STAT_IRWXU);
-    taUserX:   chmod(p, STAT_IXUSR);
-    taUserRX:  chmod(p, STAT_IRUSR or STAT_IXUSR);
+    taUserR:   fpchmod(p, STAT_IRUSR);
+    taUserW:   fpchmod(p, STAT_IWUSR);
+    taUserRW:  fpchmod(p, STAT_IRUSR or STAT_IWUSR);
+    taUserRWX: fpchmod(p, STAT_IRWXU);
+    taUserX:   fpchmod(p, STAT_IXUSR);
+    taUserRX:  fpchmod(p, STAT_IRUSR or STAT_IXUSR);
   end;
 {$ENDIF}
 end;
@@ -443,7 +437,7 @@ begin
 {$IFDEF Kylix}
   result:= libc.System(PChar(AddDirSepa(path)+CmdLine));
 {$ELSE}
-  result:= oldLinux.Shell(AddDirSepa(path)+CmdLine);
+  result:= fpSystem(AddDirSepa(path)+CmdLine);
 {$ENDIF}
 end;             
 
@@ -471,126 +465,24 @@ begin
   {Todo1: get FileSetAttr in Kylix !!!!!!!!!}
   Result := 0;
 end;
-
 {$ENDIF}
-{$ifdef UseSysLog}
 
+{$IFNDEF Linux}
+
+Function GetEnv(envvar: string): string;
+begin
+   Result := fpGetEnv(envvar);
+end;
+
+function GetUid : LongInt;
+begin
+   Result := fpGetUid;
+end;
+{$ENDIF}
+
+{$ifdef UseSysLog}
 begin
   InitLogStream;
 {$endif}
 
-{$Warnings OFF}
 end.
-{
-  $Log: xplinux.pas,v $
-  Revision 1.32  2002/07/25 20:43:56  ma
-  - updated copyright notices
-
-  Revision 1.31  2001/10/21 12:49:57  ml
-  - removed some warnings
-
-  Revision 1.30  2001/10/16 13:11:56  mk
-  - simplyfied ResolvePathName
-
-  Revision 1.29  2001/10/15 09:04:22  ml
-  - compilable with Kylix ;-)
-
-  Revision 1.28  2001/09/27 21:22:26  ml
-  - Kylix compatibility stage IV
-
-  Revision 1.27  2001/09/10 15:58:03  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.26  2001/09/07 23:24:55  ml
-  - Kylix compatibility stage II
-
-  Revision 1.25  2001/09/07 17:27:24  mk
-  - Kylix compatiblity update
-
-  Revision 1.24  2001/03/13 19:24:58  ma
-  - added GPL headers, PLEASE CHECK!
-  - removed unnecessary comments
-
-  Revision 1.23  2000/11/19 16:51:02  hd
-  - SysExec
-
-  Revision 1.22  2000/11/16 19:23:53  hd
-  - SysLog abgeschaltet (kann mit UseSysLog aktiviert werden
-
-  Revision 1.21  2000/11/15 18:01:31  hd
-  - Unit DOS entfernt
-
-  Revision 1.20  2000/11/11 19:28:13  ml
-  - bugfix TestAccess (rwx are modes, not uids
-
-  Revision 1.19  2000/11/01 22:59:24  mv
-   * Replaced If(n)def Linux with if(n)def Unix in all .pas files. Defined sockets for FreeBSD
-
-  Revision 1.18  2000/10/19 20:52:24  mk
-  - removed Unit dosx.pas
-
-  Revision 1.17  2000/05/15 14:01:51  hd
-  Fix Bedingte Compilierung
-
-  Revision 1.16  2000/05/15 13:56:53  hd
-  - Linux: Env-Var XPHOME uebersteuert nun die Vorgabe ~/.openxp
-
-  Revision 1.15  2000/05/14 17:29:04  ml
-  - VP-Portierung fr linux
-
-  Revision 1.14  2000/05/14 15:04:52  hd
-  - Anpassungen Linux
-
-  Revision 1.13  2000/05/14 12:22:47  hd
-  - ResolvePathName: Loest ~/ nach $HOME auf
-
-  Revision 1.12  2000/05/13 11:01:28  hd
-  Fix: Falsche Unit
-
-  Revision 1.11  2000/05/13 09:42:26  hd
-  xpglobal wird benoetigt (Typen)
-
-  Revision 1.10  2000/05/09 15:52:15  hd
-  - SetAccess definiert
-
-  Revision 1.9  2000/05/08 18:22:50  hd
-  - Unter Linux wird jetzt $HOME/openxp/ als Verzeichnis benutzt.
-
-  Revision 1.8  2000/05/06 15:57:04  hd
-  - Diverse Anpassungen fuer Linux
-  - DBLog schreibt jetzt auch in syslog
-  - Window-Funktion implementiert
-  - ScreenLines/ScreenWidth werden beim Start gesetzt
-  - Einige Routinen aus INOUT.PAS/VIDEO.PAS -> XPCURSES.PAS (nur NCRT)
-  - Keine CAPI bei Linux
-
-  Revision 1.7  2000/05/05 15:00:09  hd
-  - SysLog-Interface (Linux)
-
-  Revision 1.6  2000/05/02 14:35:30  hd
-  - Konvertierungsroutine entfernt. Die Konvertierung fuer den
-    Bildschirm findet nun in XPCURSES.PAS statt.
-  - Leere Unit bleibt bestehen, fuer Linux-spezifische Erweiterungen
-
-  Revision 1.5  2000/04/29 16:10:41  hd
-  Linux-Anpassung
-
-  Revision 1.4  2000/04/09 13:27:07  ml
-  Diverse Änderungen zu Bildschirmausgabe unter linux (XPME)
-
-  Revision 1.3  2000/03/26 11:04:10  ml
-  zpr-Anzeige in linux geht jetzt
-
-  Revision 1.2  2000/03/14 15:15:42  mk
-  - Aufraeumen des Codes abgeschlossen (unbenoetigte Variablen usw.)
-  - Alle 16 Bit ASM-Routinen in 32 Bit umgeschrieben
-  - TPZCRC.PAS ist nicht mehr noetig, Routinen befinden sich in CRC16.PAS
-  - XP_DES.ASM in XP_DES integriert
-  - 32 Bit Windows Portierung (misc)
-  - lauffaehig jetzt unter FPC sowohl als DOS/32 und Win/32
-
-  Revision 1.1  2000/03/06 08:51:04  mk
-  - OpenXP/32 ist jetzt Realitaet
-
-}

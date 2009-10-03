@@ -140,7 +140,9 @@ var   arcbufp : byte = 0;
     history_changed   : boolean = false;
 
 var  reobuf : array[0..ablagen-1] of boolean;
-     bufsiz : array[0..ablagen-1] of longint;  { Groesse nach Reorg }
+     { HJT: 22.03.2006, sonst Arithmetic overflow bei zu grossen MPUFFERn }
+     { bufsiz : array[0..ablagen-1] of longint; } { Groesse nach Reorg }
+     bufsiz : array[0..ablagen-1] of Int64;
      abuf   : array[1..max_arc+1] of arcbuf;
      exdir  : string;
      arctyp_save : shortint;
@@ -783,7 +785,7 @@ msg_ok: MsgAddmark;
     Boxname, Filename: String;
     IDList: TStringList;
   begin
-    if ReadJN('Soll die Message-ID online gesucht werden?', true) then
+    if ReadJN('Soll die Message-ID online gesucht werden', true) then
     begin
       BoxName := UniSel(usBoxes, false, DefaultBox);
       if BoxName <> '' then
@@ -988,21 +990,23 @@ restart:
       if or_user then ormask:=4;
       if or_betr then inc(ormask,2);
       if or_fidoempf then inc(ormask);   
-      if txt='' then
+      if txt='' then  ;
+      {$IFNDEF NOASM }
         asm
              mov al,ormask  { verhindern, dass alle Suchbegriffe auf OR stehen }
-             or al,al 
-             je @2 
+             or al,al
+             je @2
              cmp al,andmask
              jne @2
              mov cl,0
-         @1: inc cx 
+         @1: inc cx
              shr al,1
              jnc @1
              shl al,cl
              mov ormask,al
-         @2: 
-        end; 
+         @2:
+        end;
+      {$ENDIF }
       end;
 
     sst:=suchstring;
@@ -1499,9 +1503,11 @@ end;
 procedure MsgReorgScan(_del,repair:boolean; var brk:boolean);
 var x,y,wdt: Integer;
     n,ndel,
-    nbesch : longint;
+    nbesch : Int64;
     bt,dbt,
-    bbt    : longint;
+    { HJT 11.03.2006 sonst Abbruch bei mehr als 2 GB }
+    { bbt    : longint; }
+    bbt    : Int64;
     disp   : string;
     hzeit  : integer16;
     hzahl  : boolean;
@@ -1535,6 +1541,12 @@ var x,y,wdt: Integer;
       hds     : longint;
       nzahl   : longint;
       typ     : char;
+      defekt_reason : integer;
+      hd_read       : boolean;
+      inr_deb       : longint;
+      brett_deb     : string;
+      edat_deb      : longint;
+      dat_deb       : longint;
 
     function htimeout:boolean;
     begin
@@ -1542,7 +1554,10 @@ var x,y,wdt: Integer;
                 (not hzahl and smdl(edat,haltedat));
     end;
 
-  begin
+  begin     //  MsgReorgScan::testdel
+    // Debug.DebugLog('xp4o','MsgReorgScan::testdel, Brett-Start',dlDebug);
+    hd_read:=false;
+
     if hzahl then begin
       dbSeek(mbase,miBrett,_brett+#$ff#$ff);  { Brettende suchen }
       if dbEOF(mbase) then dbGoEnd(mbase)
@@ -1585,6 +1600,11 @@ var x,y,wdt: Integer;
                 ((typ<>'T') and (typ<>'B') and (typ<>'M')) or (hflags>2) or
                 (dbReadIntN(mbase, mb_adresse)<0) or
                 (dbReadIntN(mbase, mb_netztyp)<0);    { empfanz > 127 ? }
+        if defekt then { HJT 23.03.2006, Infos zur Nachricht ins Log }
+        begin
+          defekt_reason := 1;
+        end;
+
         if repair and not defekt then begin
           dbReadN(mbase,mb_gelesen,b);
           if b>1 then begin
@@ -1593,9 +1613,55 @@ var x,y,wdt: Integer;
             end;
           ReadHeader(hdp,hds,false);
           defekt:=(hds=1) or (hds<>msize-groesse) or (groesse<>hdp.groesse);
+          if defekt then { HJT 23.03.2006, Infos zur Nachricht ins Log }
+          begin  
+            defekt_reason := 2;
+            Debug.DebugLog('xp4o','MsgReorgScan::testdel, Nachricht defekt wg.: '+
+                          '(hds=1) or (hds<>msize-groesse) or (groesse<>hdp.groesse)'
+                          ,DLWarning);
           end;
+          end;
+
+          if defekt then    { HJT 23.03.2006, Infos zur Nachricht ins Log }
+          begin
+            Debug.DebugLog('xp4o','MsgReorgScan::testdel, Nachricht defekt, reason: '
+                                                +IntToStr(defekt_reason),DLWarning);
+            Debug.DebugLog('xp4o','   Werte des aktuellen MSGS.DB1-Satzes', DLWarning);
+            Debug.DebugLog('xp4o','   groesse        : '+IntToStr(groesse), DLWarning);
+            Debug.DebugLog('xp4o','   msize          : '+IntToStr(msize), DLWarning);
+            Debug.DebugLog('xp4o','   ablage         : '+IntToStr(ablage), DLWarning);
+            Debug.DebugLog('xp4o','   ablagen        : '+IntToStr(ablagen), DLWarning);
+            Debug.DebugLog('xp4o','   mb_adresse     : '+IntToStr(dbReadIntN(mbase, mb_adresse)), DLWarning);
+            Debug.DebugLog('xp4o','   ablsize[ablage]: '+IntToStr(ablsize[ablage]), DLWarning);
+            Debug.DebugLog('xp4o','   typ            : <'+typ+'>', DLWarning);
+            Debug.DebugLog('xp4o','   hflags         : '+IntToStr(hflags), DLWarning);
+            Debug.DebugLog('xp4o','   mb_netztyp     : '+IntToStr(dbReadIntN(mbase, mb_netztyp)), DLWarning);
+            Debug.DebugLog('xp4o','   ntZCablage     : '+iifs(ntZCablage(ablage), 'True', 'False'), DLWarning);
+            if hd_read then 
+            begin
+              if hds <> 1 then 
+              begin
+                Debug.DebugLog('xp4o','    hdp.groesse: '+IntToStr(hdp.groesse),DLWarning);
+              end else begin
+                Debug.DebugLog('xp4o','    Header aus MPUFFER konnte nicht gelesen werden',DLWarning);
+              end;
+            end;
+            // duerfen wir das? Erstes Byte ist String-Laenge, und moeglicherweise korrupt
+            Debug.DebugLog('xp4o','   absender       : '+dbReadNStr(mbase,mb_absender), DLWarning);
+            dbRead(mbase,'INT_NR',inr_deb);
+            Debug.DebugLog('xp4o','   INT_NR         : '+IntToStr(inr_deb), DLWarning);
+            brett_deb := dbReadNStr(mbase,mb_brett);
+            Debug.DebugLog('xp4o','   brett          : '+brett_deb, DLWarning);
+            dbReadN(mbase,mb_EmpfDatum,edat_deb);
+            Debug.DebugLog('xp4o','   edat           : '+fdat(longdat(edat)), DLWarning);
+            dbReadN(mbase,mb_OrigDatum,dat_deb);
+            Debug.DebugLog('xp4o','   dat            : '+fdat(longdat(dat_deb)), DLWarning);
+            Debug.DebugLog('xp4o','   MID(intern)    : '+dbReadNStr(mbase,mb_msgid), DLWarning);
+        end;
+
         if defekt then begin
           hflags:=2;        { Nachricht defekt }
+          Debug.DebugLog('xp4o','setze hflags:=2', DLWarning);
           dbWriteN(mbase,mb_halteflags,hflags);
           if repair then msgaddmark;
           inc(nbesch); inc(bbt,msize);
@@ -1638,7 +1704,7 @@ begin
   wdt:=length(getres2(448,4));
   msgbox(max(45,wdt+33),iif(_del,9,10),getres2(448,iif(_del,1,iif(repair,2,3))),x,y);
   mwrt(x+3,y+4,getres2(448,4)+'        /        KB');   { 'Nachrichten:' }
-  mwrt(x+3,y+5,getres2(448,5)+'        /        KB');   { 'auf Loeschen:' }
+  mwrt(x+3,y+5,getres2(448,5)+'        /        KB');   { 'auf Lîschen:' }
   mwrt(x+3,y+6,getres2(448,6)+'        /        KB');   { 'fehlerhaft: ' }
   n:=0; ndel:=0; nbesch:=0;
   bt:=0; dbt:=0; bbt:=0;
@@ -1651,8 +1717,7 @@ begin
   brk:=false;
   fillchar(reobuf,sizeof(reobuf),false);
   fillchar(bufsiz,sizeof(bufsiz),0);
-  if repair then
-    Marked.Clear;
+  if repair then Marked.Clear;
   while not brk and not dbEOF(bbase) do begin
     dbReadN(bbase,bb_haltezeit,hzeit);
     hzahl:=odd(dbReadInt(bbase,'flags'));
@@ -1681,7 +1746,7 @@ begin
   dbSetIndex(bbase,bi);
   if repair then begin
     closebox;
-    if Marked.Count =0 then
+    if Marked.Count=0 then
       hinweis(getres2(448,7))   { 'keine fehlerhaften Nachrichten gefunden' }
     else
       select(11);
@@ -1704,8 +1769,8 @@ begin
 end;
 
 
-{ Alle Nachrichten mit halteflags=2 loeschen; Puffer ueberarbeiten }
-{ Nachrichten mit defekter Groesse werden auf 'loeschen' gesetzt    }
+{ Alle Nachrichten mit halteflags=2 lîschen; Puffer Åberarbeiten }
+{ Nachrichten mit defekter Grî·e werden auf 'lîschen' gesetzt    }
 
 procedure MsgReorg;
 const tmp     = 'REORG.$$$';
@@ -1726,12 +1791,12 @@ var x,y,yy  : Integer;
     reo     : boolean;
     bufa    : array[1..maxbufs] of record
                                      bp   : pointer;
-                                     size : xpWord;
+                                     size : word;
                                    end;
     bufs    : byte;
     break   : boolean;
-    mi      : xpWord;
-    voll    : boolean;        { kein Platz fuer eine ode mehrere Abl. }
+    mi      : word;
+    voll    : boolean;        { kein Platz fÅr eine ode mehrere Abl. }
     errflag : boolean;
 
   procedure test_killed;
@@ -1796,10 +1861,24 @@ var x,y,yy  : Integer;
         end;
     end;
 
-  begin
+  begin // MsgReorg::MsgOK
     dbReadN(mbase,mb_adresse,adr);
     dbReadN(mbase,mb_msgsize,size);
     if (size<0) or (adr<0) or (MaxInt-adr<size) or (adr+size>f1s) then begin        { Nachricht defekt }
+
+      Debug.DebugLog('xp4o','MsgReorg::MsgOK MSGS.DB1-Satze defekt', DLWarning);    { HJT 27.03.2006 Traces }
+      Debug.DebugLog('xp4o','   size:'+IntToStr(size), DLWarning);
+      Debug.DebugLog('xp4o','   adr :'+IntToStr(adr), DLWarning);
+      Debug.DebugLog('xp4o','   f1s :'+IntToStr(f1s), DLWarning);      
+      if size<0 then
+        Debug.DebugLog('xp4o','   Grund: size<0', DLWarning);
+      if adr<0 then
+        Debug.DebugLog('xp4o','   Grund: adr<0', DLWarning);
+      if MaxInt-adr<size then
+        Debug.DebugLog('xp4o','   Grund: MaxInt-adr<size', DLWarning);
+      if adr+size>f1s then
+        Debug.DebugLog('xp4o','   Grund: adr+size>f1s', DLWarning);
+
       dbDelete(mbase);
       exit;
       end;
@@ -1920,7 +1999,7 @@ var x,y,yy  : Integer;
     reobufs:=b;
   end;
 
-  { Zugriff fuer /T/S/XPOINT und /Z/ALT/S/XPOINT setzen }
+  { Zugriff fÅr /T/S/XPOINT und /Z/ALT/S/XPOINT setzen }
 
   procedure Rerout(znetz:boolean; brett:string; sperre:boolean);
   var b        : byte;
@@ -1943,7 +2022,7 @@ var x,y,yy  : Integer;
       end;
   end;
 
-begin
+begin       // procedure MsgReorg;
   CloseAblage;
   msgbox(50,15,getres2(451,1),x,y);    { 'Reorganisation' }
   bsize:=65536;
@@ -1977,6 +2056,7 @@ begin
           assign(f1,aFile(abl));
           if not FileExists(aFile(abl)) then begin
             savecursor;
+            Debug.DebugLog('xp4o','MsgReorg, Ablage fehlt: '+aFile(abl), DLWarning);
             trfehler1(421,UpperCase(aFile(abl)),30);   { 'Warnung: Ablagendatei %s fehlt!' }
             restcursor;
             rewrite(f1,1);
@@ -1989,7 +2069,7 @@ begin
           lastproz:=101;
           reset(f1,1);
           f1s:=filesize(f1);
-          assign(f2,FileUpperCase(tmp));  { muss wg. rename jedesmal neu assigned werden! }
+          assign(f2,FileUpperCase(tmp));  { mu· wg. rename jedesmal neu assigned werden! }
           rewrite(f2,1);
           newadr:=0;
           dbGoTop(mbase);
@@ -1999,7 +2079,12 @@ begin
           while not dbEOF(mbase) do
           begin
             if n>count then
+            begin
+              Debug.DebugLog('xp4o','MsgReorg, zuviele Saetze in MSGS.DB1, aktuell:'
+                                    +IntToStr(n)+' dbRecCount(mbase):'
+                                    +IntToStr(count), DLWarning);
               errflag:=true;
+            end;
             if n mod 10=0 then show;
             dbReadN(mbase,mb_ablage,ablage);
             if ablage=abl then
@@ -2015,12 +2100,21 @@ begin
             end
             else
               if ablage>=ablagen then
-                dbDelete(mbase)
+              begin
+                Debug.DebugLog('xp4o','MsgReorg,  fehlerhafter MSGS.DB1-Satz, Ablagenr:'
+                                    +IntToStr(ablage)+', Satz wird geloescht', DLWarning);
+                dbDelete(mbase);
+              end
               else
                 dbSkip(mbase,1);
             inc(n);
           end;
-          if n<=count then errflag:=true;
+          if n<=count then begin 
+            Debug.DebugLog('xp4o','MsgReorg, zuwenige Saetze in MSGS.DB1, aktuell:'
+                                    +IntToStr(n)+', soll lt. dbRecCount(mbase):'
+                                    +IntToStr(count), DLWarning);
+            errflag:=true;
+          end;
           flushbufs;
           if count>0 then show;
           close(f2);
@@ -2028,6 +2122,8 @@ begin
           rename(f2,aFile(abl));
           FlushClose;
           if errflag then begin
+            Debug.DebugLog('xp4o','MsgReorg, Nachrichtendatenbank fehlerhaft '
+                            +'- verwenden Sie /Wartung/Packen!', DLWarning);
             trfehler(445,30);   { 'Nachrichtendatenbank fehlerhaft - verwenden Sie /Wartung/Packen!' }
             break:=true;
             end;
@@ -2047,7 +2143,7 @@ begin
     GotoXY(WhereX-5, WhereY);   { 'Einen Moment noch...     %' }
     brettdatumsetzen(true);
   end else
-    mwrt(x+3,yy+2,getres2(451,7));   { 'nix zu loeschen' }
+    mwrt(x+3,yy+2,getres2(451,7));   { 'nix zu lîschen' }
   DisableDOS:=false;
   signal;
   Rerout(false,'MELDUNGEN',true);
@@ -2062,7 +2158,6 @@ begin
   Marked.Clear;
   aufbau:=true; xaufbau:=true;
 end;
-
 
 procedure ModiEmpfDatum;
 var d   : datetimest;

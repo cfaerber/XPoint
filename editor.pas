@@ -183,143 +183,175 @@ var   Defaults : edp;
       ECBOpen   : integer;           { Semaphor fÅr Anzahl der offenen ECB's }
 
 
-{ ------------------------------------------------ externe Routinen }
+{ SeekStr:
+  Sucht den String s im len Byte langen Chararray data
+  je nach igcase case-sensitiv oder insensitiv (wohl
+  in Bezug auf den DOS-Zeichensatz) und liefert die
+  Position der ersten Fundstelle oder -1 zurueck.
+  Das Fehlen einer praezisen Typdeklaration fuer data
+  erklaert sich daraus, dass diese Funktion ein Ersatz
+  fuer eine historische Assemblerfunktion ist.
+  Verwendet wird der Algorithmus von Knuth, Morris und
+  Pratt.
+}
 
 function SeekStr(var data; len: LongWord;
-                 var s:string; igcase:boolean):integer; assembler; {&uses ebx, esi, edi}
+		 var s	  : string; igcase:boolean):integer;
 
-  { -1 = nicht gefunden, sonst Position }
-{$IFDEF ANALYSE}
+const
+  uc : array[#0..#255] of char =
+   (				
+    #0,  #1,  #2,  #3,  #4,  #5,  #6,  #7,
+    #8,  #9, #10, #11, #12, #13, #14, #15,
+    #16, #17, #18, #19, #20, #21, #22, #23,
+    #24, #25, #26, #27, #28, #29, #30, #31,
+    #32, #33, #34, #35, #36, #37, #38, #39,
+    #40, #41, #42, #43, #44, #45, #46, #47,
+    #48, #49, #50, #51, #52, #53, #54, #55,
+    #56, #57, #58, #59, #60, #61, #62, #63,
+    #64, #65, #66, #67, #68, #69, #70, #71,
+    #72, #73, #74, #75, #76, #77, #78, #79,
+    #80, #81, #82, #83, #84, #85, #86, #87,
+    #88, #89, #90, #91, #92, #93, #94, #95,
+    #96, #65, #66, #67, #68, #69, #70, #71,
+    #72, #73, #74, #75, #76, #77, #78, #79,
+    #80, #81, #82, #83, #84, #85, #86, #87,
+    #88, #89, #90,#123,#124,#125,#126,#127,
+    #128,#154,#144,#131,#142,#133,#143,#128,
+    #136,#137,#138,#139,#140,#141,#142,#143,
+    #144,#146,#146,#147,#153,#149,#150,#151,
+    #152,#153,#154,#155,#156,#157,#158,#159,
+    #160,#161,#162,#163,#164,#165,#166,#167,
+    #168,#169,#170,#171,#172,#173,#174,#175,
+    #176,#177,#178,#179,#180,#181,#182,#183,
+    #184,#185,#186,#187,#188,#189,#190,#191,
+    #192,#193,#194,#195,#196,#197,#198,#199,
+    #200,#201,#202,#203,#204,#205,#206,#207,
+    #208,#209,#210,#211,#212,#213,#214,#215,
+    #216,#217,#218,#219,#220,#221,#222,#223,
+    #224,#225,#226,#227,#228,#229,#230,#231,
+    #232,#233,#234,#235,#236,#237,#238,#239,
+    #240,#241,#242,#243,#244,#245,#246,#247,
+    #248,#249,#250,#251,#252,#253,#254,#255
+    );
+
+   function cc(c : char):char;  { Konvertiert zu Grossbuchstaben, falls igcase }
+   begin
+      if igcase then
+	      cc := uc[c]
+      else
+        cc := c;
+   end;
+
+   function kmp(t:charrp; tl:longint; const suchwort:string): longint;
+   var wortl  : longint;
+      kmpnext : array of longint;
+      i,j     : longint;
+      found   : boolean;
+   begin
+     wortl := length(suchwort);
+     j := -1;
+     i :=  0;
+     kmp := -1;
+     setlength(kmpnext,wortl+1);
+     kmpnext[0] := -1;
+     while (i < wortl) do
+     begin
+       while ((j >= 0) and (cc(suchwort[j+1]) <> cc(suchwort[i+1]))) do
+         j := kmpnext[j];
+       j := j+1;
+       i := i+1;
+       kmpnext[i] := j;
+     end;
+     i     := 0;
+     j     := 0;
+     found := false;
+     while ((not found) and (i < tl)) do
+     begin
+    	  while ((j >= 0) and (cc(suchwort[j+1]) <> cc(t[i]))) do
+	       j := kmpnext[j];
+    	  j := j+1;
+       i := i+1;
+ 	     if (j >= wortl) then
+ 	     begin
+  	     found := true;
+        kmp := i - j;
+        { j := kmpnext[j]; // sollte hier stehen, sofern man weitersucht }
+     end
+   end;
+ end;
+
 begin
-  //no asm
-  Result := 0;
+   SeekStr := kmp(charrp(@data),len,s);
 end;
-{$ELSE}
-asm
-        jmp    @start
-  @uppertab:   db    'Ä','ö','ê','É','é','Ö','è','Ä','à','â','ä','ã'
-               db    'å','ç','é','è','ê','í','í','ì','ô'
-  @start:
-         mov    esi,data
-         push   esi
-         mov    edi,s
-         mov    ecx,len
-         mov    al,[edi]              { ax:=length(s) - < 127! }
-         cbw
-         inc   ecx
-         sub   ecx,eax
-         jbe   @nfound
-         mov   dh,igcase
 
-  @sblp1:
-         xor   ebx,ebx                  { Suchpuffer- u. String-Offset }
-         mov   dl,[edi]                { Key-Laenge }
-  @sblp2:
-         mov   al,[esi+ebx]
-         or    dh,dh                   { ignore case (grosswandeln) ? }
-         jz    @noupper
-         cmp   al,'a'
-         jb    @noupper
-         cmp   al,'z'
-         ja    @umtest
-         and   al,0dfh
-         jmp   @noupper                { kein Sonderzeichen }
-  @umtest:
-         cmp   al,128
-         jb    @noupper
-         cmp   al,148
-         ja    @noupper
-         push  ebx
-         mov   ebx,offset @uppertab-128
-{$IFNDEF Delphi } //!
-         segcs
-{$ENDIF }
-         xlatb
-         pop   ebx
-  @noupper:
-         cmp   al,[edi+ebx+1]
-         jnz   @nextb
-         inc   ebx
-         dec   dl
-         jz    @found
-         jmp   @sblp2
-  @nextb:
-         inc   esi
-         loop  @sblp1
 
-  @nfound:
-         pop   esi
-         mov   eax,-1
-         jmp   @sende
-  @found:
-         mov   eax,esi
-         pop   esi
-         sub   eax,esi
-  @sende:
-{$IFDEF FPC }
-end ['EBX', 'ESI', 'EDI'];
-{$ELSE }
+// rueckwaerts von data[zlen] bis data[0] nach erster Umbruchstelle suchen 
+function FindUmbruch(var data; zlen : integer; safe : boolean):integer;
+type
+   tpc      = array[0..MaxInt div 2] of Char;
+   pc       = ^tpc;
+   chartype = (c_alnum,c_space,c_minus,c_slash,c_other);
+   action   = (ret0,ret1,cont);
+   // state    = (none, alnum, slash);
+const
+   todo : array[c_alnum..c_other,c_alnum..c_other] of action =
+   (
+    (cont,cont,cont,ret1,cont),
+    (ret0,ret0,ret0,ret0,ret0),
+    (ret0,cont,cont,cont,cont),
+    (cont,cont,cont,ret1,cont),
+    (cont,cont,cont,ret1,cont)
+    );
+
+   function ct(c : char):chartype;
+   begin
+      case c of
+        ' '                                   : ct := c_space;
+        '-'                                   : ct := c_minus;
+        '/'                                   : ct := c_slash;
+        '0'..'9','a'..'z','A'..'Z',#128..#165 : ct := c_alnum
+      else
+        ct := c_other;
+      end
+   end; { ct }
+
+   function fu(c : pc; zlen: integer):integer;
+   // Cave: greift auf c[zlen+1] zu!!!
+   var
+     left,right : chartype;
+   begin
+     right := c_other;
+     if safe then // Der Aufrufer hat sichergestellt, dass der Zugriff auf
+     begin        // c[zlen+1] sicher ist.
+       right := ct(c[zlen+1]);
+       if (right = c_slash) then
+           right := c_other;
+     end;
+     while (zlen >= 0) do
+     begin
+       left := ct(c[zlen]);
+       case todo[left,right] of
+            cont    : begin right := left; zlen := zlen-1; end;
+            ret0    : begin fu := zlen  ; break; end;
+            ret1    : begin
+                        if ((zlen = 0) and (right = c_slash)) then
+                            fu := 0
+                        else
+                            fu := zlen+1;
+                        break;
+                      end
+       end; { case }
+     end;
+     if (zlen < 0) then fu := 0;
+   end;
+
+begin
+   if (zlen <= 0) then
+      FindUmbruch := 0
+   else
+      FindUmbruch := fu(pc(@data),zlen);
 end;
-{$ENDIF }
-{$ENDIF }
-
-
-function FindUmbruch(var data; zlen:integer):integer; assembler; {&uses ebx, esi}
-  { rueckwaerts von data[zlen] bis data[0] nach erster Umbruchstelle suchen }
-asm
-            mov   esi,data
-            mov   ebx,zlen
-            test  ebx, ebx
-            jz    @ufound
-  @floop:
-            mov   al,[esi+ebx]
-            cmp   al,' '               { ' ' -> unbedingter Umbruch }
-            jz    @ufound
-
-            cmp   al,'-'               { '-' -> Umbruch, falls alphanum. }
-            jnz   @testslash           {        Zeichen folgt: }
-            mov   al,[esi+ebx+1]
-            cmp   al,'0'               { '0'..'9' }
-            jb    @fnext
-            cmp   al,'9'
-            jbe   @ufound
-            cmp   al,'A'               { 'A'..'Z' }
-            jb    @fnext
-            cmp   al,'Z'
-            jbe   @ufound
-            cmp   al,'a'               { 'a'..'z' }
-            jb    @fnext
-            cmp   al,'z'
-            jbe   @ufound
-            cmp   al,'Ä'               { 'Ä'..'•' }
-            jb    @fnext
-            cmp   al,'•'
-            jbe   @ufound
-            jmp   @fnext
-
-  @testslash:
-            cmp   ebx,1
-            ja    @testslash2
-            mov   ebx,0
-            jmp   @ufound
-  @testslash2:
-            cmp   al,'/'               { '/' -> Umbruch, falls kein }
-            jnz   @fnext               {        Trennzeichen vorausgeht }
-            cmp   byte ptr [esi+ebx-1],' '
-            jz    @fnext
-            cmp   byte ptr [esi+ebx-1],'-'
-            jnz   @ufound
-
-  @fnext:
-            dec   ebx
-            jnz   @floop
-  @ufound:
-            mov   eax,ebx
-{$IFDEF FPC }
-end ['EAX', 'EBX', 'ESI'];
-{$ELSE }
-end;
-{$ENDIF }
 
 procedure FlipCase(var data; size: Integer);
 var
@@ -879,23 +911,39 @@ end;
 { Positionszeiger in Absatz auf naechsten Zeilenbeginn bewegen }
 { Offset muss auf Zeilenanfang zeigen!                         }
 
-function Advance(ap:absatzp; offset,rand:xpWord):integer;
+function Advance(ap:absatzp; offset,rand:word):integer;
 var zlen : integer;   { Zeilenlaenge }
+    safe : boolean;   { ist es sicher, dass FindUmbruch nicht auf unallozierten Speicher trifft? }
 begin
   with ap^ do
     if not umbruch or (size-offset<=rand) then
       Advance:=size
     else
     begin
-      zlen:=min(rand,size-offset-1);
-      if (zlen=rand) and (cont[offset+zlen] in ['-','/']) then dec(zlen);
-      zlen:=FindUmbruch(cont[offset],zlen);    { in EDITOR.ASM }
-//     while (zlen>0) and not (cont[offset+zlen] in [' ','-','/']) do
-//        dec(zlen);
-      if zlen=0 then
-        Advance:=offset+rand
-      else
-        Advance:=offset+zlen+1;
+       // Wird nur erreicht, wenn size-offset > rand gilt, dann aber
+       // gilt size-offset-1 >= rand und damit
+       // min(rand,size-offset-1) = rand. (1)
+       // Gefaehrlich wird FindUmbruch nur, wenn rand = size-offset-1.
+       safe := not (rand = size-offset-1);
+       // Wegen (1) kann
+       // zlen:=min(rand,size-offset-1);
+       // durch
+       zlen := rand;
+       // ersetzt werden.
+       // Folglich ist auch der Test auf zlen = rand in
+       // if (zlen=rand) and (cont[offset+zlen] in ['-','/']) then dec(zlen);
+       // immer true, und man kann verkuerzen zu
+       if (cont[offset+zlen] in ['-','/']) then
+       begin
+         dec(zlen);
+         safe := true; // Nach Dekrement ist cont[offset+zlen+1] wohldefiniert.
+       end;
+
+       zlen:=FindUmbruch(cont[offset],zlen,safe);    { in EDITOR.ASM }
+       if zlen=0 then
+         Advance:=offset+rand
+       else
+         Advance:=offset+zlen+1;
    end;
 end;
 

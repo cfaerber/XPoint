@@ -32,7 +32,8 @@ implementation
 uses
   Sysutils,
   xpglobal, debug,
-  {$IFDEF unix} xplinux, xpcurses, {$ENDIF }
+  {$IFDEF Linux} xplinux, {$ENDIF }
+  {$IFDEF Unix} xpcurses, {$ENDIF }
   {$IFDEF os2 } doscalls, {$ENDIF }
   xpx,typeform,keys,inout,database,maske,
   winxp,resource,

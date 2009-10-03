@@ -28,6 +28,7 @@ interface
 
 uses
   {$IFDEF Win32 }
+    debug,
     windows,
     {$IFDEF Delphi }
       messages,
@@ -205,7 +206,7 @@ uses
     crt, {for GotoXY}
   {$ENDIF}
   {$IFDEF unix}
-    xplinux,
+    xpunix,
     xpcurses,
   {$ENDIF }
   osdepend,
@@ -1212,6 +1213,14 @@ begin
   That's not a big problem as only NT/2k/XP allow switching charsets
   for the console (i.e. 95/98/ME _always_ uses the OEM codepage).
 }
+  // {$IFDEF Debug }
+  // Debug.DebugLog('winxp','Win32_Wrt, Start, X:'+IntToStr(WritePos.X)
+  //                       +', Y:'+IntToStr(WritePos.Y)
+  //                       +', Length(s):'+IntToStr(Length(s))
+  //                       +', s:<'+s+'>'
+  //                       ,DLTrace);
+  // {$ENDIF }
+
   if Assigned(SourceToUTF8) then s := SourceToUTF8.Encode(s);
   if Assigned(UTF8ToDest)   then s := UTF8ToDest.Decode(s);
   
@@ -1231,7 +1240,6 @@ begin
       dwFlags := 0 
     else
       dwFlags := MB_PRECOMPOSED + MB_USEGLYPHCHARS;
-  
     OutRes := MultiByteToWideChar(OutputCP,dwFlags,@(s[1]),
       Length(s),nil,0);
     if OutRes = 0 then begin Result := 0; Exit; end;
@@ -1242,7 +1250,17 @@ begin
   end else 
   begin
     WriteConsoleOutputCharacterA(OutHandle, @(s[1]), Length(s), WritePos, OutRes);
+
+    // {$IFDEF Debug }
+    // Debug.DebugLog('winxp','Win32_Wrt A, "IsUnicode:'+iifs(IsUnicode,'True','false')
+    //                        +', OutputCP: '+IntToStr(OutputCP)
+    //                        +', dwFlags: '+IntToStr(dwFlags)
+    //                        +', OutRes:'+IntToStr(OutRes)
+    //                        ,DLTrace);
+    // {$ENDIF }
+    
   end;
+
 
   Result := OutRes;
 {$ENDIF }
@@ -1514,6 +1532,7 @@ begin
 
 {$IFDEF LocalScreen }
   GetMem(LocalScreen, SizeOf(LocalScreen^));
+  FillChar(LocalScreen^,SizeOf(LocalScreen^),0); { HJT 15.07.07 }
 {$ENDIF }
 
 {$IFDEF Win32}

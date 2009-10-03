@@ -47,7 +47,7 @@ uses
   SysUtils,
 {$IFDEF UnixFS }
   {$IFDEF unix}
-    xplinux,
+    xpunix,
   {$ELSE }
     {$FATAL Need chmod - look at xplinux for procedure SetAccess }
   {$ENDIF }

@@ -54,7 +54,7 @@ implementation  { ---------------------------------------------------- }
 uses
 {$IFDEF unix}
 {$IFDEF fpc}
-  linux,oldlinux,
+  unix,baseunix,
 {$ENDIF }
 {$ENDIF }
   montage,
@@ -134,32 +134,6 @@ begin
 end;
 
 procedure DecodeTimeZone(var IsNegative:boolean;var tzHours,tzMinutes:integer;var IsDST:boolean);
-{$IFDEF unix}
-var tzBase:Longint;
-  {$IFDEF Kylix }
-  tzseconds: LongInt;
-  tzdaylight: Boolean;
-  {$ENDIF}
-begin
-  {$IFDEF Kylix }
-  {TODO1: tzseconds in Kylix ermitteln !!!!!!!!}
-  tzseconds := 0;
-  tzdaylight := False;
-  {$ENDIF}
-  if (tzseconds < 0) then begin
-    isNegative:= true;
-    tzBase:= tzseconds div -60;
-  end else begin
-    isNegative:= false;
-    tzBase:= tzseconds div 60;
-  end;
-  { Minuten sind der Rest von Stunden }
-  tzMinutes:= tzBase mod 60;
-  { Stunde hat 60 Minuten }
-  tzHours:= tzBase div 60;
-
-  IsDST := (tzdaylight);
-{$ELSE}
 var
   p:  Integer;
 begin
@@ -168,7 +142,6 @@ begin
   p := CposX(':', XpTimeZone);
   tzHours:=IVal(Copy(XpTimezone,3,p-3));
   tzMinutes:=IVal(Copy(XpTimezone,p,length(XpTimezone)-p));
-{$ENDIF}
 end;
 
 function LongDateToDateTime(date: LongInt): TDateTime;

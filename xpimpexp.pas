@@ -44,7 +44,7 @@ implementation  { ----------------------------------------------------- }
 
 uses
 {$IFDEF unix}
-  xplinux,
+  xpunix,
 {$ENDIF }
 {$IFDEF NCRT }
   xpcurses,

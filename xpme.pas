@@ -36,7 +36,7 @@ implementation
 
 uses  //last check: 2002-12-03 DoDi
 {$IFDEF unix}
-  xplinux,
+  xpunix,
 {$ENDIF }
   winxp,
 {$IFDEF NCRT }

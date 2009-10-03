@@ -27,13 +27,14 @@ interface
 
 uses
   classes,
-  xpglobal, keys;
+  debug, xpglobal, keys;
 
 var
   ListHelpStr: string[8] = 'Hilfe'; //todo: international
   Listunvers: byte = 0;
   Listhalten: byte = 0;
   Listflags: longint = 0;
+
 
 const
   ListerBufferCount = 16383;            { Laenge des Eingangspuffers }
@@ -197,6 +198,9 @@ uses
   {$IFDEF NCRT }
   xpcurses,
   {$ENDIF }
+  {$IFDEF WIN32 }
+  xpwin32,
+  {$ENDIF }
   xpunicode_lbr,
   xpcharset,
   xpcharset_maps,
@@ -208,6 +212,8 @@ uses
 
 constructor TLister.Create;
 begin
+  Debug.Debuglog('lister','TLister.Create',DLTrace);
+
   LastLister := Self;
   col := ListColors;
   fillchar(stat, sizeof(stat), 0);
@@ -236,6 +242,7 @@ end;
 
 constructor TLister.CreateWithOptions(_l, _r, _o, _u: byte; statpos: shortint; options: string);
 begin
+  Debug.Debuglog('lister','TLister.CreateWithOptions',DLTrace);
   Create;
   SetSize(_l, _r, _o, _u);
   options := UpperCase(options);
@@ -262,6 +269,7 @@ end;
 
 destructor TLister.Destroy;
 begin
+  Debug.Debuglog('lister','TLister.Destroy',DLTrace);
   LastLister := nil;
   Lines.Free;
   inherited destroy;
@@ -328,6 +336,8 @@ procedure TLister.ReadFromFile(const Filename: string; ofs: Integer; line_break:
 var input: TFileStream;
     breaker: TUnicodeLineBreaker;
 begin
+  Debug.Debuglog('lister','TLister.ReadFromFile, Filename: <'+Filename+'>',DLTrace);
+
   FHeaderText := fitpath(FileUpperCase(FileName), 40);
 
   Input := TFileStream.Create(Filename,fmOpenRead);
@@ -724,19 +734,19 @@ var
         else
         if yy>vstop then
           t:=keypgdn
-        else 
+        else
         begin
           scrolling:=true;
           scrollpos:=yy;
           scroll1st:=iif(SelBar,FSelLine,FirstLine);
         end;
       end;
-    end else 
-    if (t=mausunleft) then 
+    end else
+    if (t=mausunleft) then
     begin
       if stat.directmaus and mausdown and inside then
         t:=keycr;
-      if mausdown then 
+      if mausdown then
       begin
         FSelBar:=OldSelb;
         OldSelB:=true;
@@ -745,7 +755,13 @@ var
     end;
   end;
 
+var
+  ShellCommand, UrlString: String;
+  UrlStart, UrlEnd: Integer;
+  DosExitCode: Integer;
 begin // Show
+  Debug.Debuglog('lister','TLister.Show',DLTrace);
+
   startpos := minmax(startpos, 0, Lines.Count - 1);
   DispLines := Height - iif(stat.statline, 1, 0);
 
@@ -816,7 +832,7 @@ begin // Show
     mauszuo:=false; // (pl<>nil) and (pl^.prev<>nil);
     mauszuu:=false; // (pl<>nil) and (pl^.next<>nil);
     mauszul := false; mauszur := false;
-    
+
     if (FirstLine = 0) or (_mausy > y) then AutoUp := false;
     if (FirstLine + DispLines > lines.count - 1) or (_mausy < y + DispLines -
       1) then AutoDown := false;
@@ -828,11 +844,33 @@ begin // Show
     else
       get(t, curoff);
 
+    {$IFDEF Win32 }
+      if t = keyf11 then
+      begin
+        UrlString := FirstMarked;
+        if FindUrl(UrlString, UrlStart, UrlEnd) then
+        begin
+          UrlString := '"' + Copy(UrlString, UrlStart, UrlEnd-UrlStart) + '"';
+          Debug.DebugLog('Lister', 'Call lister.* with ' + UrlString, dlInform);
+          if fileexists('lister.cmd') then
+            RTLExec('lister.cmd', UrlString, DosExitCode, false)
+          else
+            if fileexists('lister.bat') then
+              RTLExec('lister.bat', UrlString, DosExitCode, false);
+        end else
+          ErrSound;
+      end;
+    {$ENDIF }
+
     mauszuo := mzo; mauszuu := mzu;
     mauszul := mzl; mauszur := mzr;
 
     if ((t>=mausfirstkey) and (t<=mauslastkey)) or mausdown then
       Maus_bearbeiten;
+
+    if Assigned(FonKeyPressed) then
+      Debug.Debuglog('lister','TLister.Show, calling FOnKeyPressed(Self, t)',DLTrace);
+
     if Assigned(FonKeyPressed) then FOnKeyPressed(Self, t);
 
     if Lines.Count > 0 then
@@ -986,6 +1024,8 @@ begin // Show
   
   if Result then
     FSelLine := - 1;
+
+  Debug.Debuglog('lister','TLister.Show, End',DLTrace);
 end;
 
 procedure TLister.SetHeaderText(s: string);

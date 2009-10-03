@@ -1,5 +1,4 @@
-{ $Id$
-
+{ 
   Copyright (C) 2003 OpenXP/32 Team <www.openxp.de> 
   see CVS log below for authors
 

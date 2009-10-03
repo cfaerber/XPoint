@@ -331,10 +331,29 @@ begin
   halt(1);
 end;
 
-procedure error(txt:string);
+procedure error(const txt:string);
 begin
   writeln('Fehler: ',txt);
   halt(1);
+end;
+
+procedure InitVariables;
+begin
+  infile := '';
+  outfile := '';
+  fromadr := '';
+  toadr := '';
+  direction  := 0;           { 1 := Z->F, 2 := F->Z }
+  bretter   := '';
+  fakenet  := 0;
+  adr3d    := false;
+  ppassword  := '';
+  LocalINTL := true;
+  _result   := 0;
+  DoRequest  := false;
+  DelEmpty  := false;
+  BadDir    := false;   { BAD\ vorhanden }
+  KeepVia   := false;
 end;
 
 procedure getpar;
@@ -344,7 +363,7 @@ var i    : integer;
     t    : text;
     p    : byte;
 
-  procedure warnung(s:string);
+  procedure warnung(const s:string);
   begin
     writeln('Warnung - ',s,#7);
     warn:=true;
@@ -352,7 +371,8 @@ var i    : integer;
 
 begin
   warn:=false; adr3d:=false;
-  for i:=2 to paramcount do begin
+  for i:=2 to paramcount do
+  begin
     so:= ParamStr(i);
     s:=UpperCase(so);
     if (s='-ZF') or (s='/ZF') then direction:=1
@@ -1005,7 +1025,7 @@ begin                   //ZFidoProc
 end;
 
 { FTS-0001 -> ZCONNECT }
-procedure FidoZfile(const fn: string; append:boolean; const x,y: integer);
+function FidoZfile(const fn: string; append:boolean; const x,y: integer): Integer;
 const kArea = $41455241;    { AREA   }
       kFrom = $6d6f7246;    { From   }
       kFmpt = $54504d46;    { FMPT   }
@@ -1163,21 +1183,18 @@ label abbr;
               copy(s,15,2);
   end;
 
-  function seek0(var buf; smallsize: LongWord):xpWord; assembler; {&uses edi} { suche #0 }
-  asm
-    mov  ecx, smallsize
-    mov  edi, buf
-    mov  al, 0
-    mov  edx, ecx
-    cld
-    repnz scasb
-    mov eax, edx
-    sub eax, ecx
-  {$IFDEF FPC }
-  end ['EAX', 'ECX', 'EDX', 'EDI'];
-  {$ELSE }
+  function seek0(var buf; smallsize: LongWord):word; { suche #0 }
+  var
+    i : integer;
+  begin
+    i := 0;
+    while (i < smallsize) and (TByteArray(buf)[i] <> 0) do
+      Inc(i);
+    if i < smallsize then   { HJT 26.02.2006 }
+      Result := i + 1
+    else
+      Result := i;          { HJT 26.02.2006 }
   end;
-  {$ENDIF }
 
   function seekt(var buf; size: LongWord):xpWord; assembler; {&uses edi } { suche _'---'_ }
   asm
@@ -1685,17 +1702,16 @@ abbr:
     else
       trfehler1(2302,ExtractFileName(fn),15); { 'fehlerhaftes Fido-Paket' }
     _result:=1;
-    if baddir then begin
+    if baddir then
+    begin
       { 'Kopiere %s ins Verzeichnis BAD' }
       MWrt(x+15,y+7,GetRepS2(30003,50,ExtractFileName(fn)));
       MoveToBad(fn);
-      end;
-    end
+    end;
+    Result := 0;
+  end
   else
-    if CommandLine then
-      writeln(anz_msg, ' Nachrichten konvertiert')
-    else
-      Writeln;
+    Result := anz_msg;
 end;
 
 
@@ -1704,6 +1720,7 @@ var sr  : TSearchRec;
     rc  : integer;
     dir : string;
     fst : boolean;
+    count: integer;
 begin
   { Kill outfile only on wildcards. Otherwise the
     function was called by XP and then allways without
@@ -1711,18 +1728,26 @@ begin
   fst:= (cPos('*',infile)+cPos('?',infile)>0);
   dir:= AddDirSepa(ExtractFilePath(infile));
   rc:= findfirst(infile,faAnyFile-faDirectory,sr);
-  MWrt(x+2,y+2,GetRes2(30003,11));      { 'Datei......: ' }
-  MWrt(x+2,y+4,GetRes2(30003,12));      { 'Nummer' }
-  MWrt(x+2,y+5,GetRes2(30003,14));      { 'An' }
-  MWrt(x+2,y+6,GetRes2(30003,15));      { 'Betreff' }
-  MWrt(x+2,y+7,GetRes2(30003,16));      { 'Status' }
-  while  rc=0 do begin
+  if not CommandLine then
+  begin
+    MWrt(x+2,y+2,GetRes2(30003,11));      { 'Datei......: ' }
+    MWrt(x+2,y+4,GetRes2(30003,12));      { 'Nummer' }
+    MWrt(x+2,y+5,GetRes2(30003,14));      { 'An' }
+    MWrt(x+2,y+6,GetRes2(30003,15));      { 'Betreff' }
+    MWrt(x+2,y+7,GetRes2(30003,16));      { 'Status' }
+  end;
+  count := 0;
+  while  rc=0 do
+  begin
     MWrt(x+15,y+2,sr.name);
-    FidoZfile(dir+sr.name,not fst,x,y);
+    Inc(count, FidoZfile(dir+sr.name,not fst,x,y));
     fst:=false;
     rc:= findnext(sr);
+
   end;
   FindClose(sr);
+  if CommandLine then
+    Writeln(count, ' Nachrichten konvertiert');
 end;
 
 
@@ -1746,6 +1771,7 @@ var
   s: string;
   p: integer;
 begin
+  InitVariables;
   case dir of
     1: Debug.DebugLog('zftools','converting ZC to fido',DLInform);
     2: Debug.DebugLog('zftools','converting fido to ZC',DLInform);
@@ -1813,6 +1839,8 @@ begin
   Logo;
   writeln('ZConnect <-> Fido - Konvertierer  (c) ''92-99 PM');
   Writeln;
+  CommandLine := true;
+  InitVariables;
   getpar;
   testfiles;
   if direction=1 then testadr;

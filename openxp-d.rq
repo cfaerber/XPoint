@@ -501,6 +501,7 @@ N Deutsch
 23   Standard-Adreábuchgruppe
 24   Archivierungsvermerk erstellen
 25   minimaler Platz auf dem Laufwerk  ~
+26   Spamfilter
 + 251
 # Extrakt als
 0    Text ohne Kopf
@@ -590,8 +591,8 @@ N Deutsch
 7    M”chten Sie diese Option wirklich einschalten?
 8    ~ ^Ja  , ^Nein~
 10   ISO-8859-1-Zeichensatz
-11   MIME: Quoted-Printable voreinstellen
-12   MIME: Sonderzeichen in Headerzeilen
+11   Quoted-Printable verwenden
+12   Sonderzeichen im Header kodieren
 14   Kommentarverkettung
 15   Keine einteiligen Bin„rnachrichten
 16   Alten Betreff anh„ngen
@@ -635,6 +636,7 @@ N Deutsch
 12   verschiedenfarbige Quoteebenen
 13   Lister mit <Enter> verlassen
 14   interner Lister - Uhr bei Vollbild
+15   UTF-8 aktivieren
 #
 20   50
 21   externer Lister
@@ -1034,7 +1036,7 @@ N Deutsch
 436  keine Bretter mit ungelesenen Nachrichten vorhanden
 437  Message-ID
 438  Text-Markier
-439  Funktion wird nur für RFC/Client und RFC/NNTP unterstützt
+439  Funktion wird nur fr RFC/Client und RFC/NNTP untersttzt
 
 # XP4O
 + 441
@@ -1142,8 +1144,8 @@ N Deutsch
 6    erzeuge Brettliste...     %
 7    nach Gruppen ordnen
 8    nach Serverbox sortieren
-9    nur User im Adreßbuch exportieren
-10   Sortierung aus Brettübersicht beibehalten
+9    nur User im Adreábuch exportieren
+10   Sortierung aus Brettbersicht beibehalten
 -
 458  Keine unversandten Nachrichten vorhanden!
 + 459
@@ -1427,7 +1429,7 @@ N Deutsch
 10   PGP-Key~
 11   PGP-Sig~
 12   PGP-Req~
-13   BK~
+13   BCC~
 14   H”chste~
 15   Hoch~
 16   Normal~
@@ -1569,7 +1571,7 @@ N Deutsch
 10   Empf„nger~
 11   ^An
 12   Betreff
-13   Server
+13   Serverb^ox
 14   Gr”áe
 15   Code:   ~
 # Betreff-Fenster (Forts.)
@@ -1627,10 +1629,11 @@ N Deutsch
 -
 617  Betreff ge„ndert - Verkettung beibehalten
 618  Nachricht ohne Betreff absenden
-619  war
+619  was
 620  Teste auf Crosspostings...
 621  Origin-Datei fehlt: %s
 622  In diesem Netz nicht m”glich
+623  Inkompatible Netztypen - Serverbox-nderungen werden zurckgesetzt.
 
 + 624
 0  ~^Neu ,B^earbeiten,^L”schen, ^Auf , A^b ,ù4S^chlieáen
@@ -3279,7 +3282,7 @@ N Deutsch
 2739 Vertreter nicht in der Datenbank - neu anlegen
 +2740
 0 Serverbox "%s" allen unbekannten Usern (%s) zuweisen?
-1 ~^Ja , ^Nein , Anderer ^Server , ^Zurück~
+1 ~^Ja , ^Nein , Anderer ^Server , ^Zurck~
 -
 +2750
 # Zeilenzahl
@@ -3488,7 +3491,7 @@ N Deutsch
 36 Bin„rnachrichten sind in diesem Netz nicht m”glich.
 37 Server„nderung nicht m”glich - abweichende Brettebene!
 38 Als 'Original' weitergeleitete Nachrichen drfen nicht ge„ndert werden!
-39 Bei Multipart-Nahrichten nicht möglich.
+39 Bei Multipart-Nachrichten nicht m”glich.
 
 +  10700
 1  Interner Fehler: Brett mit unvers. Nachr. nicht mehr vorhanden!
@@ -3540,7 +3543,7 @@ N Deutsch
 46 Ungltige Auswahl
 47 Oops - *alle* passenden Empf„nger markiert/gefiltert!?  (Hilfe mit F1)
 48 Sendepuffer (%s) ist fehlerhaft!
-49 /nsp: Ungültige Zeilenangabe für NETCALL.DAT: %s
+49 /nsp: Ungltige Zeilenangabe fr NETCALL.DAT: %s
 50 Fehler beim Dekomprimieren von %s
 # Hinweis auf fehlende Implementation
 99 Funktion ist noch nicht implementiert!

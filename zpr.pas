@@ -32,9 +32,6 @@ procedure StartCommandlineZPR;
 implementation
 
 uses
-{$IFDEF unix}
-  xplinux,
-{$ENDIF }
 {$IFDEF NCRT }
   xpcurses,             { Fuer die Sonderzeichen an der Console }
 {$ENDIF }
@@ -46,6 +43,9 @@ uses
 {$ENDIF }
 {$IFDEF OS2 }
   xpos2,
+{$ENDIF }
+{$IFDEF Unix }
+  xpunix,
 {$ENDIF }
   sysutils, xpconst,fileio, typeform, xpconfigedit, xpglobal, xp0, xpx;
 
