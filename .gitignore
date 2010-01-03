@@ -1,2 +1,10 @@
-*.ppu
+*.dcu
 *.o
+*.ppu
+*.rst
+*.~*
+Package.fpc
+debuglog.txt
+openxp
+openxp-?.res
+rc
