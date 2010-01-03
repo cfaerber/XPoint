@@ -31,8 +31,6 @@
 
 { --- no user-serviceable parts below -------------------------------- }
 
-{$UNITPATH xplib;ObjCOM;netcall}
-
 { --- 0. Some UnDefs ------------------------------------------------- }
 
 {$IFDEF NoDebug }

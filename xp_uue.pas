@@ -21,7 +21,9 @@
 
 {$I xpdefine.inc}
 
+{$IFNDEF Delphi}
 {$PIC OFF} //FIXME
+{$ENDIF Delphi}
 
 { OpenXP UU decoding unit }
 unit xp_uue;

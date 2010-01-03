@@ -55,6 +55,8 @@ function RasListEntries(List: TStringList): Integer;
 function RasDial(const PhonebookName: String): Boolean;
 function RasHangup: Boolean;
 
+function SysIsNT : boolean;
+function RTLexec(const path: string; comline : string; var DosExitCode: Integer): Integer;
 
 implementation
 
@@ -363,7 +365,7 @@ begin
   Result := false;
 end;
 
-function RTLexec(const path, comline : string; var DosExitCode: Integer): Integer;
+function RTLexec(const path: string; comline : string; var DosExitCode: Integer): Integer;
   { Are we running under WinXP or newer?}
   function SysXPOrNewer : boolean;
   var
@@ -411,6 +413,7 @@ begin
     else
       ComLine := LeftStr(comline, min(253, length(comline)));
     Move(ComLine[1],AppParam[2],length(Comline));
+  end;
   AppParam[Length(ComLine)+2]:=#0;
   { concatenate both pathnames }
   Move(Appparam[0],CommandLine[length(Pathlocal)],strlen(Appparam)+1);
@@ -466,18 +469,18 @@ end;
 
 { HJT 10.09.05 start }
 { are we running under NT/Win2K/XP? }
-// function SysIsNT : boolean;
-// var
-//   sinfo : TOSVERSIONINFO;
-// begin
-//   SysIsNT:=false;
-//   sInfo.dwOSVersionInfoSize:=sizeof(sInfo);
-//   if GetVersionEx(sInfo) then begin
-//     if sInfo.dwPlatformId = VER_PLATFORM_WIN32_NT then begin
-//       SysIsNT:=True;
-//     end;
-//   end;
-// end;
+function SysIsNT : boolean;
+var
+   sinfo : TOSVERSIONINFO;
+begin
+  SysIsNT:=false;
+  sInfo.dwOSVersionInfoSize:=sizeof(sInfo);
+  if GetVersionEx(sInfo) then begin
+    if sInfo.dwPlatformId = VER_PLATFORM_WIN32_NT then begin
+      SysIsNT:=True;
+    end;
+  end;
+end;
 { HJT 10.09.05 end }
 
 { Misc utilities }

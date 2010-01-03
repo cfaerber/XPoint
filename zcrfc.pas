@@ -23,7 +23,9 @@
 
 {$I xpdefine.inc }
 
+{$IFNDEF Delphi}
 {$PIC OFF} //FIXME
+{$ENDIF Delphi}
 
 unit zcrfc;
 
@@ -2647,7 +2649,7 @@ begin
     fn:=LeftStr(fn,p+3);           { Extension auf 3 Zeichen kuerzen }
     dec(p);
     end;
-  allowed:=['A'..'Z','_','-',{$IFNDEF Unix}'','','','','','',{$ENDIF}'#','@','$','!','0'..'9']; //todo: use predefined set
+  allowed:=['A'..'Z','_','-','#','@','$','!','0'..'9']; //todo: use predefined set
 
   for i:=1 to p do
     if not (fn[i] in allowed) then   { linken Teil nach DOS konvertieren }

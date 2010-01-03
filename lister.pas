@@ -195,6 +195,7 @@ implementation { ------------------------------------------------ }
 
 uses
   sysutils,
+  xp1,
   {$IFDEF NCRT }
   xpcurses,
   {$ENDIF }
@@ -853,10 +854,10 @@ begin // Show
           UrlString := '"' + Copy(UrlString, UrlStart, UrlEnd-UrlStart) + '"';
           Debug.DebugLog('Lister', 'Call lister.* with ' + UrlString, dlInform);
           if fileexists('lister.cmd') then
-            RTLExec('lister.cmd', UrlString, DosExitCode, false)
+            RTLExec('lister.cmd', UrlString, DosExitCode)
           else
             if fileexists('lister.bat') then
-              RTLExec('lister.bat', UrlString, DosExitCode, false);
+              RTLExec('lister.bat', UrlString, DosExitCode);
         end else
           ErrSound;
       end;

@@ -22,6 +22,10 @@
 
 {$I xpdefine.inc }
 
+{$IFDEF Delphi}
+{$J+} // assignable const
+{$ENDIF}
+
 unit xp4;
 
 interface
@@ -391,8 +395,8 @@ begin
 end;
 
 procedure menuopt(t:taste);
-const
-  lastmenusel : integer = 0;
+var
+  lastmenusel : integer;
 var m,m1     : integer;
     nix      : string;
     adr      : string;
@@ -402,6 +406,8 @@ begin
 {$IFDEF Debug }
 //FIXME:  Log('-- menuopt, taste: <'+t+'>');
 {$ENDIF }
+  lastmenusel:=0;
+
   menurestart:=false;
   repeat
    if (t=keyf4) and (lastmenusel>0) and       { v- MenÅpunkt nicht disabled }

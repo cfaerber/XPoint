@@ -21,6 +21,10 @@
 
 {$I xpdefine.inc }
 
+{$IFDEF Delphi}
+{$J+} //assignable constants
+{$ENDIF Delphi}
+
 unit xp1;
 
 interface

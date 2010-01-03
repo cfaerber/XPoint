@@ -368,14 +368,11 @@ const NilTm: TTimeVal =
   (tv_sec:0;tv_usec:0)
   {$ENDIF};
 begin
-{$IFNDEF VP} { - VPascal has crippled Winsock - }
-  fpFD_ZERO(SSet); fpFD_SET (SHandle,SSet);
-{$ELSE}
-  SSet.fd_count:=1;SSet.fd_array[0]:=Shandle;
-{$ENDIF}
+  {$IFNDEF Delphi}fp{$ENDIF}FD_ZERO(SSet);
+  {$IFNDEF Delphi}fp{$ENDIF}FD_SET (SHandle,SSet);
 
   {$IFNDEF Kylix}   {TODO1: !!!!!!!Kylix-support}
-  case {$IFDEF Win32}WinSock.{$ENDIF}fpselect(256,@SSet,nil,nil,@NilTm) of
+  case {$IFDEF Win32}WinSock.{$ENDIF}{$IFNDEF Delphi}fp{$ENDIF}select(256,@SSet,nil,nil,@NilTm) of
     0:            begin Result:=0; end;
     SOCKET_ERROR: begin Result:=0; SetErrorStr('CharCount'); SOpened:=false; end;
   else            if {$IFDEF WinSockets}ioctlsocket(SHandle,FIONREAD,{$IFDEF FPC}@{$ENDIF}{$IFDEF VP}@{$ENDIF}Result)<>0
