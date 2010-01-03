@@ -145,9 +145,7 @@ var
   { Problem auch bei den hoeheren Optimierungsstufen zu    }
   { beheben                                                }
   
-  function getprio(const flag:byte; msgs:boolean):byte;
-  var
-    helpbyte: byte;
+  function getprio(flag: integer; msgs:boolean):integer;
   begin
       { codieren Prioritaet... Farbflag setzen:   }
       { Nachrichten: Bit 3-5                      }
@@ -157,13 +155,12 @@ var
       { 010=hoch     -> 3     110=    ?      -> 7 }
       { 011=niedrig  -> 4     111=    ?      -> 8 }
 
-    if msgs then helpbyte:=flag DIV  8  { Nachrichten }
-    else         helpbyte:=flag DIV 32; { User        }
-    helpbyte:=helpbyte and 7;
-    if helpbyte > 0 then inc(helpbyte);
-    result:=helpbyte;
+    if msgs then result:=flag shr 3  { Nachrichten }
+    else         result:=flag shr 6; { User        }
+    result := result and 7;
+    if result > 0 then inc(result);
   end;
-  
+
 var
   hdp : THeader;
 begin  { __ Suchmarke }
