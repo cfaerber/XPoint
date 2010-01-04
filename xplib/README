@@ -1,0 +1,18 @@
+NAME
+
+  Pick an expansion:
+
+  XPLib - CrossPoint (XP) Library
+  XPLib	- Extended Pascal Library
+  XPLib - Cross-Platform Library
+
+DESCRIPTION
+
+  These are libraries that provide:
+
+  1. a unified interface & slim layer around:
+  1.1. FreePascal's os-dependent RTL (Unix, Win32)
+  1.2. Delphi's RTL (Win32)
+  1.3. Windows' os-specific functions (Win32)
+
+  2. additional types and functions, e.g. TRopeStream
