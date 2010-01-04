@@ -168,6 +168,8 @@ function  kb_ctrl:boolean;           { Ctrl gedrueckt  }
 function  kb_alt:boolean;            { Alt gedrueckt   }
 function  ScrollMode:boolean;
 
+function  AltBaseKey(key: Taste): Taste;   { Taste ohne ALT }
+
 implementation  { ---------------------------------------------------------- }
 
 uses
@@ -362,6 +364,23 @@ end;
   {$HINTS ON }
 {$ENDIF }
 
+function  AltBaseKey(key: Taste): Taste;   { Taste ohne ALT }
+begin
+  if key=keyalta then result:='a' else if key=keyaltb then result:='b' else
+  if key=keyaltc then result:='c' else if key=keyaltd then result:='d' else
+  if key=keyalte then result:='e' else if key=keyaltf then result:='f' else
+  if key=keyaltg then result:='g' else if key=keyalth then result:='h' else
+  if key=keyalti then result:='i' else if key=keyaltj then result:='j' else
+  if key=keyaltk then result:='k' else if key=keyaltl then result:='l' else
+  if key=keyaltm then result:='m' else if key=keyaltn then result:='n' else
+  if key=keyalto then result:='o' else if key=keyaltp then result:='p' else
+  if key=keyaltq then result:='q' else if key=keyaltr then result:='r' else
+  if key=keyalts then result:='s' else if key=keyaltt then result:='t' else
+  if key=keyaltu then result:='u' else if key=keyaltv then result:='v' else
+  if key=keyaltw then result:='w' else if key=keyaltx then result:='x' else
+  if key=keyalty then result:='y' else if key=keyaltz then result:='z' else
+  result := '';
+end;
 
 procedure pushkey(t:taste);
 begin

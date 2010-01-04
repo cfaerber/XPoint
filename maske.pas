@@ -265,11 +265,24 @@ type
                    xx,yy,attr  : Integer;
                  end;
 
+      feldtyp = (  feldtyp_null = 0,
+                   feldtyp_string = 1,
+                   feldtyp_shortint,
+                   feldtyp_byte,
+                   feldtyp_integer,
+                   feldtyp_word,
+                   feldtyp_longint,
+                   feldtyp_real,
+                   feldtyp_bool,
+                   feldtyp_date,
+                   feldtyp_time,
+                   feldtyp_button );
+
       feldrec  = record
                    enabled     : boolean;
                    disnodisp   : boolean;
                    txt         : string;   { Feld-Text }
-                   typ         : byte;     { Feldtyp }
+                   typ         : feldtyp;     { Feldtyp }
                    variable    : Pointer;     { Adresse der Variablen }
                    xx,yy, len  : Integer;     { Position, Anzeigelaenge }
                    yy0,xx2     : Integer;     { Position des Inhalts }
@@ -696,7 +709,7 @@ begin
         enabled:=true;
         if text='' then addblank:=false;
         txt:=text+iifs(addblank,' ','');
-        typ := 0;
+        typ := feldtyp_null;
         len := 0;
         yy0:=y; ownattr := 0;
         maxyy0:=max(maxyy0,yy0);
@@ -745,7 +758,7 @@ begin
   setall(text,x,y,true);
   with lastfld^ do 
   begin
-    typ:=1;
+    typ:=feldtyp_string;
     variable:=@s;          
     len:=displ; maxlen:=maxl;
     if maxlen=1 then autohigh:=false;
@@ -763,24 +776,34 @@ end;
 { Integer Anfuegen
   Typ 2 = ShortInt, 3 = Byte, 4 = Integer, 5 = Word, 6 = LongInt }
 
+function feldtyp_is_int(ityp: feldtyp): boolean;
+begin
+  result := ityp in [feldtyp_shortint..feldtyp_longint];
+end;
+
+function feldtyp_is_num(ityp: feldtyp): boolean;
+begin
+  result := ityp in [feldtyp_shortint..feldtyp_longint,feldtyp_real];
+end;
+
 procedure Maddint(x,y:integer; const text:string; var int; ityp,displ:integer;
                   imin,imax:longint);
 var l : longint;
     s : String;
 begin
-  if (ityp<2) or (ityp>6) then
+  if not feldtyp_is_int(feldtyp(ityp)) then
     error('illegal Int type');
 
   setall(text,x,y,true);
   with lastfld^ do begin
-    typ:=ityp;
+    typ:=feldtyp(ityp);
     variable:= @int;
     len:=displ{+1}; maxlen:=displ;
-    case ityp of
-      2 : l:=shortint(int);
-      3 : l:=byte(int);
-      4 : l:=integer16(int);
-      5 : l:=smallword(int);
+    case feldtyp(ityp) of
+      feldtyp_shortint : l:=shortint(int);
+      feldtyp_byte : l:=byte(int);
+      feldtyp_integer : l:=integer16(int);
+      feldtyp_word : l:=smallword(int);
     else
       l:=longint(int);
     end;
@@ -801,7 +824,7 @@ var s : String;
 begin
   setall(text,x,y,true);
   with lastfld^ do begin
-    typ:=7;
+    typ:=feldtyp_real;
     variable:=@r;
     len:=displ{+1}; maxlen:=displ;
     _rmin:=rmin; _rmax:=rmax;
@@ -830,7 +853,7 @@ begin
       xx2:=xx;
       xx:=xx2+7;
       end;
-    typ:=10;
+    typ:=feldtyp_bool;
     variable:=@b;
     len:=1; maxlen:=1;
     cont:=iifc(b,yesno[1],yesno[2]);
@@ -866,7 +889,7 @@ procedure Madddate(x,y:integer; const text:string; var d:string; long,mbempty:bo
 begin
   Maddform(x,y,text,d,iifs(long,'  .  .    ','  .  .  '),' 0123456789');
   with lastfld^ do begin
-    typ:=8;
+    typ:=feldtyp_date;
     pempty:=mbempty;
     counter:=1;
     end;
@@ -878,7 +901,7 @@ end;
 procedure Maddtime(x,y:integer; const text:string; var t:string; long:boolean);
 begin
   Maddform(x,y,text,t,iifs(long,'  :  :  ','  :  '),'0123456789');
-  lastfld^.typ:=9;
+  lastfld^.typ:=feldtyp_time;
   lastfld^.counter:=2;
 end;
 
@@ -897,7 +920,7 @@ begin
   setall(text,x,y,false);
   with lastfld^ do 
   begin
-    typ := 120;
+    typ := feldtyp_button;
     variable := @ret;
     maxlen := retval;     // na ja.
     autohigh := false;
@@ -1071,9 +1094,9 @@ begin
       if p=0 then p:=length(s)+1
       else inc(p);
       s1:=copy(s,1,p-1);
-      if (typ>=2) and (typ<=6) then
+      if feldtyp_is_int(typ) then
         str(ival(s1):maxlen,s1)
-      else if typ=7 then
+      else if typ=feldtyp_real then
         str(rval(s1):maxlen:nk,s1);
       s:=Mid(s,p+1);
       app(selliste);
@@ -1148,7 +1171,7 @@ procedure readHmask(mhelpnr: Integer; var brk:boolean);
 var ax,p,myp  : integer;
     afld      : feldp;
     helpsave  : Integer;          { zum Sichern von help_page }
-    t         : taste;
+    t,alt_t   : taste;
     newfld    : boolean;
     redisplay : boolean;
     replace   : boolean;
@@ -1176,7 +1199,7 @@ var ax,p,myp  : integer;
         with fld[i]^ do
           if disnodisp and not enabled then begin
             attrtxt(stat.col.ColFeldName);
-            wrt(xx,yy,dup(length(txt)+len+3,' '));
+            wrt(xx,yy,dup(length(txt)+iif(typ=feldtyp_button,2,len+3),' '));
           end;
       mon;
       end;
@@ -1185,28 +1208,61 @@ var ax,p,myp  : integer;
 
   procedure ShowFldNames;
   var i : integer;
-      s : string;
   begin
     with amaskp^ do begin
       moff;
       for i:=1 to felder do
         with fld[i]^ do
-          if enabled or (not disnodisp) then begin
-            s:=txt;
+          if enabled or (not disnodisp) and (typ<>feldtyp_button) then
+          begin
             if enabled then
               if owncol then attrtxt(ownattr)
               else attrtxt(stat.col.ColFeldName)
-            else begin
-              attrtxt(stat.col.ColDisabled);
-              if stat.col.ColDisabled shr 4 = stat.col.ColDisabled and $f then
-                s:=sp(length(s));  { einige Herc-Bildschirme k”nnen gleiches }
-              end;                 { Vorder- und Hintergrundattribut nicht   }
-            if (yy0>=a+1) and (yy<=a+un) then                  { darstellen  }
-              fwrt(xx,yy-a,txt);
-            end;
+            else attrtxt(stat.col.ColDisabled);
+
+            if enabled and (hotkeypos > 0) then
+            begin
+              if hotkeypos>1 then
+                FWrt(xx,yy-a,LeftStr(txt, hotkeypos));
+              if hotkeypos<length(txt) then
+                FWrt(xx+hotkeypos+1,yy-a,RightStr(txt, Length(txt)-hotkeypos));
+              attrtxt(col.coldiahigh);
+              FWrt(xx+hotkeypos,yy-a,txt[hotkeypos]);
+            end else
+              FWrt(xx,yy-a,txt);
+          end;
       mon;
       end;
     normtxt;
+  end;
+
+  procedure ButtonDisplay(var fld:feldp;active:boolean);
+  begin
+    with fld^,amaskp^ do 
+    begin
+      if hotkeypos>0 then
+      begin
+        attrtxt(col.colbuttonhigh);
+        FWrt(xx+1+hotkeypos-1,yy-a,txt[hotkeypos]);
+      end;
+          
+      attrtxt(col.colbutton);
+
+      if hotkeypos>1 then
+        FWrt(xx+1        ,yy-a,LeftStr(txt,hotkeypos-1));
+      FWrt(xx+1+hotkeypos,yy-a,Mid(txt,Max(1,hotkeypos+1)));
+         
+      if active then
+      begin
+        attrtxt(col.colbuttonarr);
+        FWrt(xx,              yy-a,#16);
+        FWrt(xx+Length(txt)+1,yy-a,#17);
+      end else
+      begin
+        FWrt(xx,              yy-a,' ');
+        FWrt(xx+Length(txt)+1,yy-a,' ');
+      end;
+    end;
   end;
 
   procedure FldDisplay;
@@ -1223,6 +1279,9 @@ var ax,p,myp  : integer;
       moff;
       for i:=1 to felder do
         with fld[i]^ do
+          if typ=feldtyp_button then
+            ButtonDisplay(fld[i],i=yp)
+          else
           if (yy0>=a+1) and (yy<=a+un) then begin
             if enabled or (not disnodisp) then begin
               if not enabled then { not enabled }
@@ -1345,15 +1404,15 @@ var ax,p,myp  : integer;
   begin
     v:=true;
     with feld^ do begin
-      if typ=1 then
+      if typ=feldtyp_string then
         case autotrim of
           1 : cont:=trimright(cont);
           2 : cont:=trim(cont);
         end;
-      if (typ>=2) and (typ<=7) then begin
+      if feldtyp_is_num(typ) then begin
         s:=trim(cont);
         if cPos(' ',s)>0 then s:=copy(s,1,cPos(' ',s)-1);
-        if typ<7 then begin
+        if feldtyp_is_int(typ) then begin
           val(s,l,res);
           if not entered then begin
             v:=v and (l>=_min) and (l<=_max);
@@ -1397,8 +1456,8 @@ var ax,p,myp  : integer;
         v:=v and (p<>nil);
         end;
       case typ of
-        8 : v:=v and testdate;
-        9 : v:=v and testtime(len,cont);
+        feldtyp_date : v:=v and testdate;
+        feldtyp_time : v:=v and testtime(len,cont);
       end;
       valid:=v and test2(cont);
     end;
@@ -1417,6 +1476,8 @@ var ax,p,myp  : integer;
           attrtxt(stat.col.colbuttons);
           FWrt(xx2, yy-a, ' [' + iifc(cont=yesno[1],'x',' ') + '] ');
         end else
+        if typ=feldtyp_button then
+          ButtonDisplay(afld,true) else
         begin
           x := xx2;
           if stat.arrowspace then
@@ -1490,7 +1551,6 @@ var ax,p,myp  : integer;
         if p<afld^.sll then inc(p)
         else inc(sa);
     end;
-
     procedure maus_bearbeiten;
     var mx,my  : integer;
         inside : boolean;
@@ -1710,17 +1770,18 @@ var ax,p,myp  : integer;
       for i:=1 to felder do
         with fld[i]^ do
           if variable<>nil then begin
-            if (typ>=2) and (typ<=6) then l:=ival(cont);
+            if feldtyp_is_num(typ) then l:=ival(cont);
             case typ of
-              1,8,9 : AnsiString(variable^):= cont; {Move(cont,variable^,length(cont)+1);}
-              2,3   : Move(l,variable^,1);
-              4,5   : Move(l,variable^,2);
-              6     : Move(l,variable^,4);
-              7     : begin
+              feldtyp_string,feldtyp_date,feldtyp_time
+                    : AnsiString(variable^):= cont; {Move(cont,variable^,length(cont)+1);}
+              feldtyp_shortint,feldtyp_byte : Move(l,variable^,1);
+              feldtyp_integer,feldtyp_word  : Move(l,variable^,2);
+              feldtyp_longint               : Move(l,variable^,4);
+              feldtyp_real : begin
                         r:=rval(cont);
                         Move(r,variable^,6);
                       end;
-              10    : begin
+              feldtyp_bool : begin
                         b:=(cont=yesno[1]);
                         Move(b,variable^,1);
                       end;
@@ -1816,6 +1877,17 @@ var ax,p,myp  : integer;
       end;
   end;
 
+  procedure button_bearbeiten(fld: feldp);
+  begin
+    fld.test0(fld.cont);
+    if fld.test1(fld.cont) and fld.btnquit then
+    begin
+      amaskp^.return := fld.maxlen;
+      if fld.maxlen<0 then t := keyESC
+      else                 t := ^J;
+    end;
+  end;
+
   procedure maus_bearbeiten;
   var inside  : boolean;
       mx,my,i : integer;
@@ -1908,7 +1980,9 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
     a:=0; ax:=0; p:=1;
     modified:=false;
     doreplace:=true;
-    yp:=1;
+//  yp:=1;
+    setfieldpos(yp);
+
     while not fld[yp]^.enabled do inc(yp);
     if dopush then
       if rahmentyp=0 then
@@ -1973,7 +2047,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         if newfld then begin
           replace:=autohigh and doreplace;
           doreplace:=true;
-          test0(cont);
+          if typ<>feldtyp_button then test0(cont);
           if autoup then UpString(cont)
           else if autodown then LoString(cont);
           showfield;
@@ -2004,10 +2078,15 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
         if maussel then
           t:=selboxkey
         else
+          if typ=feldtyp_button then
+            get(t,curoff)
+          else
           if insert_mode then
             get(t,curon)
           else
             get(t,cureinf);
+
+        alt_t := AltBaseKey(t); // always lowercase
 
         if (t>=mausfirstkey) and (t<=mauslastkey) then
           maus_bearbeiten;
@@ -2017,16 +2096,35 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 
         if ((t=keyins) and not (kb_shift or kb_ctrl)) then insert_mode:=not insert_mode;
 
-        if (t=keyup) or (t=keystab) then
+        if (t=keyup) or (t=keystab) or ((t=keyleft)and(typ in [feldtyp_button])) then
           if yp>1 then movefield(-1)
           else
             if wrapmode=do_wrap then t:=keycpgd;
-        if (t=keydown) or (t=keytab) or (t=keycr) then
+
+        if (typ=feldtyp_button) and (Length(t)=1) and (t[1] in ['A'..'Z','a'..'z']) then
+          alt_t := LowerCase(t);
+
+        if (Length(alt_t)=1) and (alt_t[1] in ['a'..'z']) then
+          for i := 1 to felder do
+            if (fld[i].hotkeypos>0) and (LowerCase(fld[i].hotkey) = alt_t) then
+            begin
+              SetFieldPos(i);
+              t := '';
+              if fld[i].typ = feldtyp_button then button_bearbeiten(fld[i]);
+              break; // found, don't continue search
+            end;
+
+        if t='' then Continue;
+
+        if (typ=feldtyp_button) and ((t=' ') or (t=keycr)) then
+          button_bearbeiten(afld)
+        else
+        if (t=keydown) or (t=keytab) or (t=keycr) or ((t=keyrght)and(typ in [feldtyp_button]))  then
           if yp<felder then movefield(+1)
           else if wrapmode=do_wrap then t:=keycpgu
           else if (wrapmode=endonlast) and (t=keycr) then t:=^J;
-        if t=keyleft then links;
-        if t=keyrght then rechts;
+        if (t=keyleft)and not(typ in [feldtyp_button]) then links;
+        if (t=keyrght)and not(typ in [feldtyp_button]) then rechts;
         if (t=keyclft) and (ax+p>1) then
           repeat
             links
@@ -2082,7 +2180,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
           if xtest1(s) then cont:=s;
           replace:=false;
           end;
-        if typ=1 then
+        if typ=feldtyp_string then
           if (t=^G) and not (autodown or topcase) then begin
             UpString(cont); replace:=false; end
             else
@@ -2208,7 +2306,7 @@ begin { procedure readHmask(mhelpnr:word; var brk:boolean); }
 
         if (counter>0) and ((t='-') or (t='+')) then
           _count_
-        else if t>=' ' then
+        else if (t>=' ') and (typ<>feldtyp_button) then
         begin
           if replace then
             s:=mask
