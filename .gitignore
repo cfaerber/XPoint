@@ -3,6 +3,7 @@
 *.ppu
 *.rst
 *.~*
+.*.swp
 Package.fpc
 debuglog.txt
 openxp
