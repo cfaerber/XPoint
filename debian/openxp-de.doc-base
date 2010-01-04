@@ -1,9 +1,0 @@
-Document: openxp-de
-Title: OpenXP Manual (German)
-Author: OpenXP Team <dev@openxp.de>
-Abstract: Manual for OpenXP (German).
-Section: Apps/Mail
-
-Format: HTML
-Index: /usr/share/doc/openxp-doc/html-de/book1.html
-Files: /usr/share/doc/openxp-doc/html-de/*.html
