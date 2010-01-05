@@ -626,7 +626,7 @@ label again;
       wrr;
       end;
     dbReadN(mbase,mb_flags,flags);
-    extract_msg(0,'',fn,true,1);
+    extract_msg(0,'',fn,true,true);
     if not FileExists(fn) then exit;      { Nachricht nicht extrahiert !? }
     tmp:=TempS(_filesize(fn)+2000);
     assign(tf,tmp);
@@ -869,21 +869,21 @@ again:
       wlKopie: begin
             ExtCliptearline:=false;
             ExtChgtearline:=true;
-            extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,1);
+            extract_msg(0,iifs(binaermail,'',WeiterMsk),fn,false,true);
           end;
       wlOriginal: begin 
              // we extract our message as UTF8, this prevents data loss
-             extract_msg(xtractutf8,'',fn,false,1);     { Original weiterleiten }
+             extract_msg(xtractutf8,'',fn,false,true);     { Original weiterleiten }
              hdp.charset := 'UTF-8';
            end;
       wlEditTo: begin
             ExtCliptearline:=false;
             ExtChgtearline:=true;
-            extract_msg(0,WeiterMsk,fn,false,1);
+            extract_msg(0,WeiterMsk,fn,false,true);
           end;
       wlErneut: extract_msg(0,iifs((FirstChar(_brett)='$') or binaermail or not sendbox,'',
-                             ErneutMsk),fn,false,1);
-      wlQuoteTo: extract_msg(3,QuoteToMsk,fn,false,1);
+                             ErneutMsk),fn,false,true);
+      wlQuoteTo: extract_msg(3,QuoteToMsk,fn,false,true);
       wlArchiv: binaermail:=IsBinary;          { In Archivbrett archivieren }
       wlUserArchiv: begin                          { Im PM-Brett des Users archivieren }
             binaermail:=IsBinary;
@@ -923,7 +923,7 @@ again:
               wrr;
               end;
             ExtCliptearline:=false;
-            extract_msg(0,'',fn,true,1);
+            extract_msg(0,'',fn,true,true);
           end;
   end;
   leer:='';
@@ -1286,7 +1286,7 @@ begin
     writeln(t);
     close(t);
     end;
-  extract_msg(xTractMsg,'',fn,true,1);
+  extract_msg(xTractMsg,'',fn,true,true);
   if not FileExists(fn) then exit;      { Nachricht nicht extrahiert !? }
 
   dbSeek(ubase,uiName,UpperCase(hdp.absender));

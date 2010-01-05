@@ -379,7 +379,7 @@ var   hdp      : THeader;
     {$ENDIF }
 
     tmp:=TempS(dbReadInt(mbase,'msgsize'));
-    extract_msg(0,'',tmp,false,0);
+    extract_msg(0,'',tmp,false);
     assign(t,tmp);
     getmem(buf,bufsize);
     settextbuf(t,buf^,bufsize);
@@ -689,7 +689,7 @@ var
 begin
   // Extract full message
   tmp:=TempS(dbReadInt(mbase,'msgsize'));
-  extract_msg(0,'',tmp,false,0);
+  extract_msg(0,'',tmp,false);
 
   // Open it and seek to correct position
   ins := TFileStream.Create(tmp,fmOpenRead);

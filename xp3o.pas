@@ -615,7 +615,7 @@ var fname   : string;
   procedure readit;
   begin
     if XReadF_error then exit;
-    extract_msg(ETyp,schab,fname,append,1);
+    extract_msg(ETyp,schab,fname,append,true);
     if art<>1 then
     begin
       inc(n);
@@ -2697,7 +2697,7 @@ begin
   end;
 
   fn:=TempS(8196);
-  extract_msg(0,'',fn,false,0);
+  extract_msg(0,'',fn,false);
   leer:='';
   sdata:= TSendUUData.Create;
 
@@ -2935,7 +2935,7 @@ begin
     IsBinary:=(dbReadInt(mbase,'typ')=ord('B'))
   else begin
     fn:=TempS(dbReadInt(mbase,'msgsize'));
-    extract_msg(0,'',fn,false,1);
+    extract_msg(0,'',fn,false,true);
     getmem(buf,bufsize);
     assign(f,fn);
     reset(f,1);

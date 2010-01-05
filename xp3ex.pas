@@ -49,8 +49,7 @@ procedure rpsuser(var s:string; name: string; const realname:string);
 procedure rpsdate(var s:string);
 procedure ExtractSetMimePart(MimePart: TMimePart);
 procedure extract_msg(art:Integer; schablone:string; name:string;
-                      append:boolean; decode:shortint);
-
+                      append:boolean; decode:boolean = false);
 
 implementation  { ---------------------------------------------------- }
 
@@ -170,7 +169,7 @@ todo: enums
 }
 
 procedure extract_msg(art:integer; schablone:string; name:string;
-                      append:boolean; decode:shortint);
+                      append:boolean; decode:boolean);
 var size   : longint;
     f,decf : file;
     hdp    : THeader;
@@ -297,7 +296,7 @@ var size   : longint;
         fp:=filepos(decf);
         blockread(decf,p^,ps,rr);
         case dtyp of
-         -1 : Rot13(p^,rr);
+//       -1 : Rot13(p^,rr);
           1 : QPC(true,p^,rr,@pw,passpos);
           2 : DES_code(true,p^,_off,total,rr,x,y);
         end;
@@ -1145,17 +1144,14 @@ begin // extract_msg;
         end;
       end;
       
-      if decode<>0 then 
+      if decode then
       begin
         Move(f,decf,sizeof(f));
-        case decode of
-         -1 : do_decode(-1,filesize(f)-size);      { Rot13 }
-          1 : if IS_QPC(hdp.betreff) then
+        if IS_QPC(hdp.betreff) then
                 do_decode(1,filesize(f)-size)
               else
                 if IS_DES(hdp.betreff) then
                   do_decode(2,filesize(f)-size);
-        end;
       end;
     end
     else 
@@ -1188,17 +1184,14 @@ begin // extract_msg;
           end;
         end;
 
-        if decode<>0 then begin
+        if decode then begin
           assign(decf,tmp);
           reset(decf,1);
-          case decode of
-           -1 : do_decode(-1,hds);
-            1 : if IS_QPC(hdp.betreff) then
+          if IS_QPC(hdp.betreff) then
                   do_decode(1,hds)
                 else
                   if IS_DES(hdp.betreff) then
                     do_decode(2,hds);
-          end;
           close(decf);
           end;
         end;

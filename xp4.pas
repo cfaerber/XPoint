@@ -98,7 +98,7 @@ var
 type
   TReadMessageType = (rmNormal, rmRot13, rmHexDump);
   TMultiPartType = (mpNone, mpAuto, mpSingle, mpMulti);
-
+ 
 type  dispra    = array[1..maxgl] of longint;
 
 
@@ -1846,7 +1846,7 @@ var t,lastt: taste;
               for i:=0 to Marked.Count - 1 do
               begin
                 dbGo(mbase,marked[i].recno);
-                extract_msg(xTractQuote,QuoteMask,fn,true,1);
+                extract_msg(xTractQuote,QuoteMask,fn,true,true);
               end;
               if not markaktiv then Marked.UnSort;
               GoP;
@@ -1887,7 +1887,7 @@ var t,lastt: taste;
           
             if (orghdp.typ='B') and not IS_QPC(OrgHdp.betreff) and not IS_DES(OrgHdp.betreff) and
               not ReadJN(getres(406),true) then exit;  { 'Das ist eine Binaernachricht! Moechten Sie die wirklich quoten' }
-            extract_msg(xTractQuote,QuoteMask,fn,true,1);
+            extract_msg(xTractQuote,QuoteMask,fn,true,true);
           end;
 
           if QuoteString<>'' then xp0.QuoteChar := QuoteOld;

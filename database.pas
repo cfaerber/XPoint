@@ -1554,6 +1554,7 @@ var i,o   : integer;
           close(f1);
           dbp:=nil;
           DeleteFile(fname+dbIxExt);
+
           raise EXPDatabase.Create(1,'<DB> interner Fehler: '+fname+dbExt+' ist fehlerhaft!');
         end;
         if reccount>recs then begin

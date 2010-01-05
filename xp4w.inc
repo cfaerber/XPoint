@@ -913,8 +913,8 @@ begin
 
       poppush:=true;
       ExtractSetMimePart(MimePart);
-      Extract_msg(iif(ReadMessageType=rmHexDump,xTractDump,xTractHead+iif(Enable_UTF8,xTractUTF8,0)),'',fn,false,
-        iif(MultiPartType = mpAuto,-1,1));
+      Extract_msg(iif(ReadMessageType=rmHexDump,xTractDump,xTractHead+iif(Enable_UTF8,xTractUTF8,0)),'',fn, true);
+      // iif(MultiPartType = mpAuto,-1,exdecAuto));
       if MimePart.code=MimeEncodingBase64 then
         typ:='B';
 

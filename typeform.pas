@@ -1,4 +1,4 @@
-{  
+{
     OpenXP typeform unit
     Copyright (C) 1991-2001 Peter Mandrella
     Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
@@ -456,7 +456,7 @@ Procedure TruncStr(var s:string; n:integer);    { String kuerzen                
 Procedure UpString(var s:string);            { UpperString                  }
 function mailstring(s: String; Reverse: boolean): string; { JG:04.02.00 Mailadresse aus String ausschneiden }
 procedure UkonvStr(var s:string;len:integer);     { Umlautkonvertierung (ae,oe...) }
-procedure Rot13(var data; Size: Integer);         { Rot 13 Kodierung }
+procedure Rot13(var data; Size: Integer);
 function DecodeRot13String(const s: String): String;
 function IsoToIbm(const s:string): String;            { Konvertiert ISO in IBM Zeichnen }
 function IBMToISO(const s: String): String;
@@ -539,46 +539,7 @@ begin
       inc(Result);
 end;
 
-(*
-function CPos(c: char; const s: string): integer; assembler;
-asm
-  push  ebx             { Save registers }
-  push  edi
-
-  or    edx, edx        { Protect against null string }
-  jz    @@NotFound
-
-  xor   edi, edi        { Zero counter }
-  mov   ebx, [edx-StrOffset].LStrRec.Length  { Get input length }
-
-@@Loop:
-  inc   edi             { Increment counter }
-  cmp   [edx], al       { Did we find it? }
-  jz    @@Found
-  inc   edx             { Increment pointer }
-
-  cmp   edi, ebx        { End of string? }
-  jnz   @@Loop          { If not, loop }
-
-@@NotFound:
-  xor   edi, edi
-
-@@Found:
-  mov   eax, edi
-
-@@Done:
-  pop   edi             { Restore registers }
-  pop   ebx
-{$ifdef FPC }
-end ['EAX', 'ECX', 'EDX'];
-{$else}
-end;
-{$endif}
-{$ENDIF }
-*)
-
 function CPos(c: char; const s: string): integer;
-// {$IFDEF NOASM }
 var
   i: Integer;
 begin
@@ -590,35 +551,6 @@ begin
     end;
   CPos := 0;
 end;
-(* {$ELSE } // does not work with FPC
-asm
-  TEST  EDX, EDX       {Str = NIL?}
-  JZ    @@NotFound     {Yes - Jump}
-  PUSH  EDI            {Save EDI}
-  MOV   ECX, [EDX-4]   {ECX = Length(Str) - NOTE - Assumes Null Strings are Always Passed in as NIL Pointer}
-  MOV   EDI, EDX       {EDI = addr(Str)}
-  MOV   EDX, ECX       {Copy Length(Str) in EDX}
-@@Loop:
-  CMP   AL, [EDI]      {Compare Ch with Next Character of Str}
-  JZ    @@Found        {Jump if Same}
-  INC   EDI            {Mov to Next Character of Str}
-  DEC   ECX            {Dec Character Counter}
-  JNZ   @@Loop         {Loop until all Characters Compared}
-  POP   EDI            {Restore EDI}
-@@NotFound:
-  XOR   EAX, EAX       {Set Result to 0}
-  RET                  {Finished}
-@@Found:
-  POP   EDI            {Restore EDI}
-  DEC   ECX            {Adjust Counter}
-  MOV   EAX, EDX       {EAX = Length(Str)}
-  SUB   EAX, ECX       {Set Result}
-{$ifdef FPC }
-end ['ECX', 'EDX', 'EDI'];
-{$else}
-end;
-{$endif}
-{$ENDIF } *)
 
 
 function CPosFrom(c:char; const s:string; start: integer):integer;  { schnelles POS fuer CHARs -- ab Position start }
@@ -635,21 +567,22 @@ begin
   CPosFrom := 0;
 end;
 
-procedure SetParity(var b:byte; even:boolean); {&uses edi} assembler;
-asm
-          mov    edi,b
-          mov    al,[edi]
-          cmp    even,0
-          jz     @setodd
-          and    al,07fh               { Test auf gerade Paritaet }
-          jpe    @spok
-          or     al,80h
-          jmp    @spok
-@setodd:  and    al,07fh               { Test auf ungerade Paritaet }
-          jpo    @spok
-          or     al,80h
-@spok:    mov    [edi],al
+procedure SetParity(var b:byte; even:boolean);
+var t: byte;
+    c: integer;
+begin
+  c := 0;
+  b := b and $7F;
+
+  while t>0 do begin
+    if (t and 1) <> 0 then inc(c);
+    t := t shr 1;
+  end;
+
+  if ((c mod 2)=0) <> even then
+    b := b or $80;
 end;
+
 
 function Hoch(const r:real; const n:integer):real;
 var i : integer;
@@ -981,10 +914,6 @@ begin
   strsrnp:=s;
 end;
 
-{$IFDEF NOASM }
-{$IFNDEF WIN32 }
-
-{$ifndef FPC}
 function UpCase(const c:char):char;
 begin
   case c of
@@ -1001,7 +930,6 @@ begin
     UpCase:=c;
   end;
 end;
-{$ENDIF}
 
 function LoCase(const c:char):char;
 begin
@@ -1019,188 +947,6 @@ begin
     LoCase:=c;
   end;
 end;
-
-{$ELSE}
-
-{$ifndef FPC}
-function UpCase(const c:char):char;
-begin
-  case c of
-    'a'..'z'  : UpCase:=chr(ord(c) and $df);
-    #224..#253: UpCase:=chr(ord(c) and $df);
-  else
-    UpCase:=c;
-  end;
-end;
-{$endif}
-
-function LoCase(const c:char):char;
-begin
-  case c of
-    'A'..'Z'  : LoCase:=chr(ord(c) or $20);
-    #192..#221: LoCase:=chr(ord(c) or $20);
-  else
-    LoCase:=c;
-  end;
-end;
-
-{$ENDIF}
-
-{$ELSE} { NOASM }
-
-{$ifdef ver32}
-
-{$ifndef FPC}
-function Upcase(const c:char): char; {&uses ebx} assembler;
-const
-  LookUp: array[0..158] of Char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~' +
-{$IFDEF WIN32 }
-   '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿' +
-   'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ÷ØÙÚÛÜÝÞß';
-{$ELSE}
-   '€šƒŽ…€ˆ‰Š‹ŒŽ’’“™•–—˜™š›œžŸ ¡¢£¥¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿' +
-   'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ';
-{$ENDIF}
-asm
-{$IFDEF Delphi }
-    push ebx
-{$ENDIF }
-    xor ebx,ebx
-    mov   bl, c
-    cmp   bl, 'a'                         { erst ab 'a'... }
-    jb @noupcase
-    mov al, byte ptr [lookup+ebx-61h]          { Lookup-Table begint bei 'a'... }
-    jmp @Upcase_end
-@noupcase:
-    mov al,bl
-@Upcase_end:
-{$IFDEF Delphi }
-    pop ebx 
-{$ENDIF Delphi }
-end;
-{$endif}
-
-function Locase(const c:char):char; {&uses ebx} assembler;
-const
-  Look: array[0..7] of char = '’¥€Ž™š';
-  Get: array[0..7] of char = '‚†‘¤‡„”';
-asm
-    mov al,c                { Weniger Benutzt - weniger schnell aber kuerzer }
-    cmp al,"A"
-    jb @Locase_end
-    cmp al,"Z"
-    ja @3
-@1: or al,20h
-    jmp @Locase_end
-
-
-{$IFDEF Win32 }
-
- @3: cmp al,192
-     jb @Locase_end
-     cmp al,221
-     jna @1
-     jmp @Locase_end
-
-{$ELSE}
-
- @3: mov ebx,7
- @4: cmp byte ptr [look+eBX],al
-     je @5
-     dec ebx
-     jns @4
-     jmp @Locase_end
- @5: mov al,byte ptr [get+ebx]
-     jmp @Locase_end
-
-{$ENDIF}
-
-@Locase_end:
-{$ifdef FPC }
-end ['EAX', 'EBX'];
-{$else}
-end;
-{$endif}
-
-{$else}
-
-{$ifndef FPC}
-function Upcase(const c:char): char; assembler;
-asm
-    mov   bl, c
-    cmp   bl, 'a'                         { erst ab 'a'... }
-    mov   bh, 0
-    jb @noupcase
-    mov al,cs:[offset @lookup+bx-61h]          { Lookup-Table begint bei 'a'... }
-    jmp @Upcase_end
-
-{Win/DOS Tabellenteile nur mit dem jeweils passenden  }
-{Editor bzw. Zeichensatz aendern...                   }
-
-@Lookup: db 'ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~'
-
-{$IFDEF Win32 }
-         db '€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
-         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ÷ØÙÚÛÜÝÞß'
-{$ELSE}
-         db '€šƒŽ…€ˆ‰Š‹ŒŽ’’“™•–—˜™š›œžŸ ¡¢£¥¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿'
-         db 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ'
-{$ENDIF}
-
-@noupcase:
-    mov al,bl
-
-@Upcase_end:
-end;
-{$endif}
-
-function Locase(const c:char):char; assembler;
-asm
-    mov al,c                { Weniger Benutzt - weniger schnell aber kuerzer }
-    cmp al,"A"
-    jb @Locase_end
-    cmp al,"Z"
-    ja @3
-@1: or al,20h
-    jmp @Locase_end
-
-
-{$IFDEF Win32 }
-
- @3: cmp al,192
-     jb @Locase_end
-     cmp al,221
-     jna @1
-     jmp @Locase_end
-
-{$ELSE}
-
- @3: mov bx,7
- @4: cmp byte ptr cs:[@look+BX],al
-     je @5
-     dec bx
-     jns @4
-     jmp @Locase_end
- @5: mov al,byte ptr cs:[@get+bx]
-     jmp @Locase_end
-
- @Look: db '’¥€Ž™š'
- @Get:  db '‚†‘¤‡„”'
-
-{$ENDIF}
-
-@Locase_end:
-{$ifdef FPC }
-end ['EAX', 'EBX'];
-{$else}
-end;
-{$endif}
-
-{$endif}
-
-{$ENDIF}
-
-
 
 function FileUpperCase(const s:string):string;
 begin
@@ -1895,63 +1641,20 @@ end;
 { ROT13 Kodierung }
 
 function DecodeRot13String(const s: String): String;
-var
-  i: Integer;
-  c: Char;
 begin
-  SetLength(Result, Length(s));
-  for i := 1 to Length(s) do
-  begin
-    c := s[i];
-    if (c >= 'A') and (c <= 'Z') then
-    begin
-      Inc(c, 13);
-      if c > 'Z' then Dec(c, 26);
-    end else
-      if (c >= 'a') and (c <= 'z') then
-      begin
-        Inc(c, 13);
-        if c > 'z' then Dec(c, 26);
-      end;
-    Result[i] := c;
-  end;
+  result := s;
+  Rot13(result[1], length(result));
 end;
 
-procedure Rot13(var data; Size: Integer); {&uses edi} assembler;
-asm
-         mov   edi, data
-         mov   ecx, size
-         jecxz @ende
-         cld
-  @rotlp:
-         mov   al, [edi]
-         cmp   al,'A'
-         jb    @rot
-         cmp   al,'Z'
-         ja    @noupcase
-         add   al,13
-         cmp   al,'Z'
-         jbe   @rot
-         sub   al,26
-         jmp   @rot
-  @noupcase:
-         cmp   al,'a'
-         jb    @rot
-         cmp   al,'z'
-         ja    @rot
-         add   al,13
-         cmp   al,'z'
-         jbe   @rot
-         sub   al,26
-  @rot:
-         stosb
-         loop  @rotlp
-  @ende:
-{$ifdef FPC }
-end ['EAX', 'ECX', 'EDI'];
-{$else}
+procedure Rot13(var data; Size: Integer);
+var i : Integer;
+begin
+  for i := 0 to size-1 do
+    case (PChar(@data)+i)^ of
+      'A'..'M','a'..'m': inc((PChar(@data)+i)^, 13);
+      'N'..'Z','n'..'z': dec((PChar(@data)+i)^, 13);
+    end;
 end;
-{$endif}
 
 function IsoToIbm(const s:string): String;
 var
@@ -2081,26 +1784,16 @@ end;
 { Sucht nach char in Buffer mit Länge Len }
 { Ausgabe: 0..Len-1 => Position von c     }
 {          Len      => nicht gefunden     }
-function BufferScan(const Buffer; Len: Integer; c: Char): Integer; assembler;
-asm
-        PUSH    EDI
-        CLD
-        MOV     EDI, Buffer
-        MOV     AL, C
-        MOV     EBX, Len
-        OR      EBX, EBX    // Check that Len>0
-        JLE      @@2        // return Len
-        
-        MOV     ECX, EBX
-
-        REPNE   SCASB       // Execute CX=CX times
-
-        JNZ     @@1         // Not found
-        INC     ECX         // Found - Undo last CX decrement by REPNE
-
-@@1:    SUB     EBX, ECX
-@@2:    MOV     EAX, EBX
-        POP     EDI
+function BufferScan(const Buffer; Len: Integer; c: Char): Integer;
+var i : integer;
+begin
+  for i := 0 to len-1 do
+    if (PChar(@Buffer)+i)^ = c then
+    begin
+      result := i;
+      Exit;
+    end;
+  result := len;
 end;
 
 end.

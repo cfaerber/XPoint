@@ -1177,7 +1177,7 @@ begin
   if mt in [mtMAF,mtPronet] then begin
     message('Brettliste fuer '+UpperCase(box)+' wird eingelesen ...');
     fn:=TempS(dbReadInt(mbase,'msgsize'));
-    extract_msg(0,'',fn,false,0);
+    extract_msg(0,'',fn,false,false);
     case mt of
       mtMAF : if ReadMaflist(fn,bfile) then;
       mtPronet : ReadPromafList(fn,bfile);
@@ -1196,7 +1196,7 @@ begin
       message(getreps(806,UpperCase(box)));   { 'Brettliste fuer %s wird eingelesen ...' }
       makebak(bfile+extBl,ExtBak);
       fn:=TempS(dbReadInt(mbase,'msgsize'));
-      extract_msg(xTractMsg,'',fn,false,0);
+      extract_msg(xTractMsg,'',fn,false,false);
       ExpandTabs(fn,FileUpperCase(bfile+extBl));
       _era(fn);
       wkey(1,false);
@@ -3010,7 +3010,7 @@ begin
       rfehler1(851,box)    { '%s ist kein eingetragener Fido-Server!' }
     else begin
       message(getreps(850,box));       { 'Fileecho-Liste fuer %s wird eingelesen ...' }
-      extract_msg(xTractMsg,'',GetServerFilename(box, extFbl),false,0);
+      extract_msg(xTractMsg,'',GetServerFilename(box, extFbl),false,false);
       mdelay(500);
       closebox;
       end;

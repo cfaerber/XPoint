@@ -242,6 +242,7 @@ begin
   x:=_x; y:=_y; hgh:=height;
 end;
 
+(*
 procedure decode(buf:pointer; size: LongWord); assembler; {&uses ebx}
 asm
         mov ecx, size
@@ -256,6 +257,7 @@ end ['EAX', 'EBX', 'ECX'];
 {$ELSE }
 end;
 {$ENDIF }
+*)
 
 procedure loadpage(nr:Unsigned16; pstentry:boolean);
 type buft    = array[1..32768] of byte;
@@ -269,6 +271,18 @@ var  size    : Unsigned16;
      res     : integer;
      wd      : byte;
 label laden;
+
+  procedure decode(var buf: buft; size: Unsigned16);
+  var 	ebx: Unsigned16;
+	al:  byte;
+  begin
+    al := 7;
+    for ebx := 1 to size do
+    begin
+      buf[ebx] := (buf[ebx] xor al) and $FF;
+      al := (al + 125) and $FF;
+    end;
+  end;
 
    procedure insqvw(y1,x1:integer; add:shortint);
    var i : byte;
@@ -344,7 +358,7 @@ laden:
   getmem(buf,size);
   blockread(f,buf^,size);
   testio;
-  if dodecode then decode(buf,size);
+  if dodecode then decode(buf^,size);
   p:=1; sl:=0;
   while p<=size do begin
     if buf^[p]>=32 then begin

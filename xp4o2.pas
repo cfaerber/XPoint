@@ -136,7 +136,7 @@ var
   begin
     cc:=['0'..'9','A'..'Z','Ž','™','š','_','\','~','/','+','<','>'];
     fn:=TempS(dbReadInt(mbase,'msgsize')+1000);
-    extract_msg(xTractMsg,'',fn,false,1);
+    extract_msg(xTractMsg,'',fn,false,true);
     assign(t,fn);
     reset(t);
     n:=0;

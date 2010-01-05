@@ -1148,10 +1148,10 @@ begin
   hdp := THeader.Create;
   ReadHeader(hdp,hds,true);
   if hdp.pgpflags and fPGP_haskey = 0 then
-    extract_msg(xTractMsg,'',tmp,false,0)
+    extract_msg(xTractMsg,'',tmp,false)
   else begin
     tmp2:=TempS(dbReadInt(mbase,'msgsize'));
-    extract_msg(xTractPuf,'',tmp2,false,0);
+    extract_msg(xTractPuf,'',tmp2,false);
     PGP_DecodeKey(tmp2,tmp);
     SafeDeleteFile(tmp2);
     end;
@@ -1217,7 +1217,7 @@ begin
   ReadHeader(hdp,hds,false);
   if hdp.pgpflags and fPGP_haskey<>0 then begin
     tmp:=TempS(dbReadInt(mbase,'msgsize'));
-    extract_msg(xTractPuf,'',tmp,false,0);
+    extract_msg(xTractPuf,'',tmp,false);
     savekey:=TempS(hds);
     PGP_DecodeKey(tmp,savekey);
     SafeDeleteFile(tmp);

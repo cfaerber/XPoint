@@ -247,9 +247,9 @@ var f      : file;
                   if not ((Header.typ='B') and (maxbinsave>0)
                   and    (Header.groesse > maxbinsave*1024)) then begin
                     if FileExists('UNSENT.PP') then
-                      extract_msg(2,'','UNSENT.PP',true,1)
+                      extract_msg(2,'','UNSENT.PP',true,true)
                     else
-                      extract_msg(2,'','UNSENT.PP',false,1);
+                      extract_msg(2,'','UNSENT.PP',false,true);
                     Dec(OutMsgs);
                   end else begin
                     { String noch in die Resource uebernehmen }
@@ -541,7 +541,7 @@ begin
         then
          begin
           tmp:=TempS(dbReadInt(mbase,'msgsize'));
-          extract_msg(xTractHead,'',tmp,false,0);
+          extract_msg(xTractHead,'',tmp,false);
           miso:=ConvIso;
           if dbReadInt(mbase,'netztyp') and $2000<>0   { CHARSET: ISO1 }
             then ConvIso:=false;

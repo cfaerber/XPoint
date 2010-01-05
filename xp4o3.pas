@@ -79,7 +79,7 @@ begin
       fn:=LeftStr(betr,min(i-1,iif(cpos('.',fn)>0,12,8)));
       end;
     setfn;
-    extract_msg(ntyp,iifs(ntyp=3,QuoteMsk,''),fn,false,1);
+    extract_msg(ntyp,iifs(ntyp=3,QuoteMsk,''),fn,false,true);
     end;
   __getfilename:=fn;
 end;

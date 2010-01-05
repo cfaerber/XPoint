@@ -3550,7 +3550,7 @@ begin
     rfehler(436)   { 'Drucken nicht moeglich - Binaernachricht' }
   else begin
     fn:=TempS(dbReadInt(mbase,'groesse')+1000);
-    extract_msg(1,'',fn,false,1);
+    extract_msg(1,'',fn,false,true);
     assign(t,fn);
     if existf(t) then begin
       if initpr then begin

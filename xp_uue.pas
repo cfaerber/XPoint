@@ -449,7 +449,7 @@ var tmp,fn   : string;
     i:=1;
     while (i<=mlanz) and ok do begin
       dbGo(mbase,marklist[i].recno);
-      extract_msg(0,'',tmp,false,0);
+      extract_msg(0,'',tmp,false);
       assign(t,tmp); settextbuf(t,tb^,tbs);
       reset(t); s:='';
       while not eof(t) and (LeftStr(s,8)<>'section ') do
@@ -514,7 +514,7 @@ begin
     end;
 
   dbGo(mbase,marklist[1].recno);
-  extract_msg(0,'',tmp,false,0);
+  extract_msg(0,'',tmp,false);
   assign(f1,tmp);
   getmem(inbuf,ibufsize);
   getmem(outbuf,obufsize);
@@ -543,7 +543,7 @@ begin
           while (i<=mlanz) and not IO_error do begin
             close(f1);
             dbGo(mbase,marklist[i].recno);
-            extract_msg(0,'',tmp,false,0);
+            extract_msg(0,'',tmp,false);
             OpenContFile(f1);
             uudecIt(f1,fn,true,i,mlanz,false);
             inc(i);
