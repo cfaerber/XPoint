@@ -8,6 +8,7 @@ Package.fpc
 debuglog.txt
 openxp
 openxp-?.res
+openxp.res
 rc
 *.BFG
 *.BL
