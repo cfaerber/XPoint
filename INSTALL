@@ -1,0 +1,13 @@
+
+
+Supported platforms & compilers:
+
+  POSIXoids:	FreePascal
+
+  Win32:	Delphi 6	(later versions may work)
+		FreePascal
+
+  Currently, only 32bit platforms are supported.
+
+For all platforms, you'll need perl to create supporting files (help,
+ressource, message files).
