@@ -40,6 +40,7 @@ uses
 {$ENDIF }
   typeform,inout,keys,winxp,maske,maus2,resource,
   xp0,xp1,xp1help,xp1input,xp2,
+  xpversion,
   xpglobal;
 
 procedure EditFkeys(typ:byte);
@@ -277,7 +278,7 @@ begin
     wrt(31,2,forms('  Alle  Brief  Textfile  Binaer  Spezial  Lesen    ',len+50));
     wrt(31,screenlines,forms('F1-Hilfe  F6-Makros  F9-DOS'
                               +dup(13+len,' ')
-                              +RightStr(sp(10)+xp_xp,10),len+50));
+                              +RightStr(sp(10)+xp_version,10),len+50));
     at(colkeyshigh);
     wrt(33,2,'A'); wrt(39,2,'B'); wrt(47,2,'e'); wrt(57,2,'i');
     wrt(63,2,'S'); wrt(72,2,'L');
@@ -301,10 +302,9 @@ begin
     at(colmenu[0]);
     moff;
     wrt(31,1,forms(
-    '  '+iifs(xp_xp='CrossPoint','X','?')+'Point  Wartung  Nachricht  NeTcall  Fido  Edit ',len));
+    ' XPoint  Wartung  Nachricht  NeTcall  Fido  Edit ',len));
     at(colmenuhigh[0]);
-    if xp_xp='CrossPoint' then wrt(33,1,'X')
-    else wrt(33,1,'?');
+    wrt(33,1,'X');
     wrt(41,1,'W'); wrt(50,1,'N'); wrt(63,1,'T');
     wrt(70,1,'F'); wrt(76,1,'E');
     wrkeys(false);
@@ -365,11 +365,9 @@ begin
     wrt(33,1,'X'); wrt(41,1,'W'); wrt(50,1,'N'); wrt(63,1,'T');
     wrt(70,1,'F'); wrt(76,1,'E');
     at(colmenuinv[0]);
-    if xp_xp='CrossPoint' then wrt(32,1,' XPoint ')
-    else wrt(33,1,' Point ');
+    wrt(32,1,' XPoint ');
     at(colmenuinvhi[0]);
-    if xp_xp='CrossPoint' then wrt(33,1,'X')
-    else wrt(34,1,'P');
+    wrt(33,1,'X');
     mon;
     end;
 end;

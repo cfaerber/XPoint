@@ -40,6 +40,7 @@ uses
 {$ENDIF }
   typeform,keys,winxp,maske,maus2,resource,
   xp0,xp1,xp1o,xp1input,xp2c,
+  xpversion,
   xpglobal;
 
 function NeuBenutzergruss:boolean;
@@ -51,7 +52,7 @@ function NeuBenutzergruss:boolean;
     msglines:=ival(getres2(14000,0));
     msgbox(73,msglines+7,'',x,y);
     moff;
-    s:=x_copyright + ' ' + author_name;
+    s:='(C) ' + xp_copyright;
     wrt(x+67-length(s),y+2,s);
     for i:=1 to msglines do
     begin

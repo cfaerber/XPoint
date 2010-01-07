@@ -202,13 +202,12 @@ begin
     case State of
       WaitConn: begin
         if SysName='' then
-          BpF.SendCommandFrame(M_NUL,'SYS OpenXP system')
+          BpF.SendCommandFrame(M_NUL,'SYS '+xp_product+' system')
         else
           BpF.SendCommandFrame(M_NUL,'SYS '+SysName);
         BpF.SendCommandFrame(M_NUL,'ZYZ '+Username);
 //        BpF.SendCommandFrame(M_NUL,'OPT ND');
-        BpF.SendCommandFrame(M_NUL,'VER OpenXP/'+Without(verstr,'v')+'/'+
-                                   Without(Without(Without(Trim(pformstr),'/'),'('),')')+' binkp/1.1');        
+        BpF.SendCommandFrame(M_NUL,'VER '+xp_product+'/'+xp_version+' binkp/1.1');
         BpF.SendCommandFrame(M_ADR,AKAs);
         State:=WaitAddr;
         BpF.ReadFromStream(False);

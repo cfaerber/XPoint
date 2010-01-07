@@ -87,7 +87,7 @@ uses
 
   sysutils, classes,  //conflicting type names
   keys, //taste
-  xpglobal,
+  xpglobal, xpversion,
 
   xpcfg,typeform,fileio,inout,winxp,mouse,datadef,database,osdepend,
   maske,help,lister,win2,maus2,clip,resource,montage,debug,fidoglob,
@@ -227,7 +227,7 @@ begin
     erase(f);
   end else begin
     writeln;
-    writeln(xp_xp+' kann nicht von einem schreibgeschuetzten Laufwerk gestartet');
+    writeln(xp_product+' kann nicht von einem schreibgeschuetzten Laufwerk gestartet');
     writeln('werden. Kopieren Sie das Programm bitte auf Festplatte.');
     runerror:=false;
 {$IFDEF Unix}

@@ -27,3 +27,4 @@ openxp.cfg
 openxp.dof
 *.exe
 *.EXE
+git-version.inc

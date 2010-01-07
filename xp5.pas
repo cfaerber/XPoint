@@ -71,7 +71,7 @@ uses
   maus2,resource,xp0,xp1,xp1input,xp1o,xp1o2,
   fidoglob,OSDepend,fileio,inout,keys,winxp,montage,feiertag,datadef,  database,
   xpcharset, xpconst,
-  xpglobal;
+  xpversion, xpglobal;
 
 
 function timingdate(s1:string):datetimest;
@@ -431,7 +431,7 @@ begin
    wrt(x+21,y+2,'RAM         '+RightStr('     '+getres2(rnr,8)+' '+LeftStr(ownpath,2),8));
 {$ENDIF}
   wrt(x+4,y+4,getres2(rnr,2));    { gesamt }
-  wrt(x+4,y+5,xp_xp);             { CrossPoint }
+  wrt(x+4,y+5,xp_product);          { CrossPoint }
   wrt(x+4,y+6,getres2(rnr,4));    { frei }
 {$IFDEF Unix }
   wrt(x+4,y+7,getres2(rnr,12));
@@ -978,7 +978,7 @@ begin
   msgbox(62,anz+6,'',x,y);
   moff;
   attrtxt(col.colmboxhigh);
-  wrt(x+3,y+2,reps(getreps2(511,1,xp_xp),Verstr+BetaStr));  { 'Willkommen bei %s Version %s!' }
+  wrt(x+3,y+2,xp_prver);  { 'Willkommen bei %s Version %s!' }
   attrtxt(col.colmbox);
   for i:=2 to anz do
     wrt(x+3,y+2+i,getres2(511,i));

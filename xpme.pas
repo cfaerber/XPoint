@@ -51,6 +51,7 @@ uses  //last check: 2002-12-03 DoDi
 {$IFDEF OS2 }
   xpos2,
 {$ENDIF }
+  xpversion,
   osdepend, sysutils, typeform,fileio,keys,maus2,inout,resource,xpglobal, xp1;
 
 const menus      = 99;
@@ -491,9 +492,8 @@ var   menu      : array[0..menus] of string;
 procedure wrlogo;
 begin
   writeln;
-  writeln('CrossPoint-MenÅeditor    (c) ''96-99 Peter Mandrella, Freeware');
-  writeln('OpenXP-Version ',verstr,pformstr,betastr,' ',x_copyright,
-            ' by ',author_name,' <',author_mail,'>');
+  writeln('CrossPoint-MenÅeditor (c) ''96-99 Peter Mandrella, Freeware');
+  writeln(xp_prver,' (c)' + xp_copyright);
   writeln;
 end;
 

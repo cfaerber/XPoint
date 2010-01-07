@@ -49,6 +49,7 @@ uses
 {$IFDEF NCRT }
   xpcurses,
 {$ENDIF }
+ xpversion,
  xpconst,xp1o,xp1o2,xp3,xp3o,xp3o2,
  xpmaus,xp9bp,xpconfigedit,xpnt, winxp, xp1;
 
@@ -98,7 +99,7 @@ begin
     fn:='userbase.dat'
   else begin
     dialog(51,7,'',x,y);
-    maddtext(3,2,'Im '+xp_xp+'-Verzeichnis befindet sich keine',col.coldialog);
+    maddtext(3,2,'Im '+xp_product+'-Verzeichnis befindet sich keine',col.coldialog);
     maddtext(3,3,'USERBASE.DAT.  Bitte geben Sie den Namen Ihres',col.coldialog);
     maddtext(3,4,'MessageBase-Verzeichnisses an:',col.coldialog);
     fn:='';

@@ -79,6 +79,7 @@ uses
   xpsendmessage_rta,
   xpspam,
   xprope,
+  xpversion,
   xpglobal;
 
 const suchch    = #254;
@@ -976,7 +977,7 @@ begin
   begin
    if (t=mausunright) and (shortp=maxskeys+1) then begin         {Rechtsklick}
       dispshort(false); shortp:=0;
-      if XPdisplayed and (x>(80-length(xp_xp))) then begin
+      if XPdisplayed and (x>(80-length(xp_product))) then begin
         if (shortkey[maxskeys+1].key='?') then ShowAboutDialog;
         end
      else begin
@@ -991,7 +992,7 @@ begin
 
    if (t=mausunleft) and (shortp=maxskeys+1) then begin          {Linksklick}
       dispshort(false); shortp:=0;
-      if (XPdisplayed) and (x>(80-length(xp_xp))) then begin
+      if (XPdisplayed) and (x>(80-length(xp_product))) then begin
         if (shortkey[maxskeys+1].key='?') then pushkey(keyaltc);
         end
       else begin
@@ -1008,12 +1009,12 @@ begin
         and ((t=mauslmoved) or (t=mausrmoved)))
     then begin
       if (t=mauslmoved) or (t=mausrmoved) then dispshort(false);
-      if XPdisplayed and (x>(80-length(xp_xp))) then begin
+      if XPdisplayed and (x>(80-length(xp_product))) then begin
         shortp:=maxskeys+1;
         shortkey[maxskeys+1].key:='?';
-        shortkey[maxskeys+1].keylen:=length(xp_xp)+1;
+        shortkey[maxskeys+1].keylen:=length(xp_product)+1;
         shortkey[maxskeys+1].keyspot:=0;
-        shortkey[maxskeys+1].keypos:=79-length(xp_xp);
+        shortkey[maxskeys+1].keypos:=79-length(xp_product);
         dispshort(true);
         end
       else if getfkeyfromscreen(x,y,0)>0 then begin

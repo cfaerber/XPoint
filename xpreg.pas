@@ -37,10 +37,12 @@ uses
   xp0,xp1,xp1o,xp1o2,xp1input,xpnt,xpglobal;
 
 procedure OpenXPInfo;
-procedure BetaMessage;
 procedure ShowAboutDialog;
 
 implementation
+
+uses
+  xpversion;
 
 procedure OpenXPInfo;
 var x,y,i : Integer;
@@ -51,15 +53,23 @@ var x,y,i : Integer;
 
     sely  : byte;
     z     : taste;
+
+    xpos  : integer;
 begin
   msglines:=ival(getres2(520,0));
   msgbox(70,msglines+8,'',x,y);
   moff;
-  wrt(x+3,y+1,'Open \\//     '+
-              RightStr('           ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 50));
-  wrt(x+3,y+2,'     //\\ XP');
-  s:=x_copyright + ' ' + author_name;
-  wrt(x+67-length(s),y+2,s);
+
+  xpos := CPos('X',xp_product);
+
+  if xpos>0 then
+  begin
+    wrt(x+3,y+1, LeftStr(xp_product, xpos-1) + '\\//' + RightStr(Forms(' ',80), 50-xpos-1));
+
+  end else
+  begin
+
+  end;
 
   for i:=1 to msglines do begin
     s:=getres2(520,i);
@@ -87,49 +97,16 @@ begin
   freeres;
 end;
 
-procedure BetaMessage;
-var x,y,i : Integer;
-    msglines    : byte;
-    z     : taste;
-    s:String;
-begin
-  msglines:=ival(getres2(530,0));
-  msgbox(73,msglines+7,'',x,y);
-  moff;
-  wrt(x+3,y+1,'Open \\//    '+
-              RightStr('              ' + verstr+pformstr+betastr+' (c) 1992-99 '+pm, 53));
-  wrt(x+3,y+2,'     //\\ XP');
-  s:=x_copyright + ' ' + author_name;
-  wrt(x+69-length(s),y+2,s);
-
-  for i:=1 to msglines do
-  begin
-    s:=getres2(530,i);
-    wrt(x+3,y+3+i, s);
-  end;
-  mon;
-  pushhp(1550);
-  quit := (ReadButton(x+45,y+msglines+5,2,'*'+getres2(530,30),1,true,z) <> 1);
-  pophp;
-  closebox;
-  freeres;
-end;
-
 procedure ShowAboutDialog;
 var x,y : integer;
     z   : taste;
     ver : string;
-    addxVer,addxInf,addxDia,addy : shortint;
+    addxVer,addxInf,addxDia : shortint;
 begin
-  addy := 0;
   addxVer := 0;
   addxInf := 0;
   addxDia := 0;
-  ver := xp_xp+' '+verstr+betastr;
-  {$IFDEF Snapshot}
-    addy := addy+1;
-  {$ENDIF}
-//  if registriert.r2 then addy := addy+1;
+  ver := xp_prver;
   if length(ver) > 28 then  { Versionsstring l„nger als PM-Copyright }
   begin
     if odd(length(ver)) then
@@ -144,7 +121,7 @@ begin
     else
       addxVer := (28-length(ver)) div 2;
   end;
-  diabox(34+addxDia,17+addy,'',x,y);
+  diabox(34+addxDia,17+0,'',x,y);
   moff;
   attrtxt(col.colmboxhigh);
   wrt(x+15+addxInf,y+2,'\\//');
@@ -153,11 +130,12 @@ begin
   attrtxt(col.colmbox);
   wrt(x+9+addxInf,y+2,'Open');
   wrt(x+21+addxInf,y+3,'XP');
-  wrt(x+3+addxInf,y+7+addy,'(c) 1992-99   '+pm);
-  wrt(x+3+addxInf,y+8+addy,x_copyright+' '+author_name);
-  wrt(x+3+addxInf,y+11+addy,'eMail: '+author_mail);
+  wrt(x+3+addxInf,y+7,'(c) 1992-1999 '+pm);
+  wrt(x+3+addxInf,y+8,'(c) 1992-2005 OpenXP team + FSF Europe');
+  wrt(x+3+addxInf,y+9,'(c) '+xp_copyright);
+//  wrt(x+3+addxInf,y+11,'eMail: '+author_mail);
   mon;
-  ReadButton(x+12+addxInf,y+14+addy,1,'*   ^OK   ',1,true,z);
+  ReadButton(x+12+addxInf,y+14,1,'*   ^OK   ',1,true,z);
   closebox;
   freeres;
 end;

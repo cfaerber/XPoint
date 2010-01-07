@@ -97,7 +97,7 @@ begin
                                                         { EMSI_DAT erzeugen }
   sec70:=secsfrom70;
   EMSIData:='{'+Password+'}{8N1,PUA}{ZAP,ZMO,XMA,ARC,FNC}{'+
-            hex(prodcode,2)+'}{OpenXP}{'+verstr+'}{}{IDENT}{['+Convert2SevenBit(SysName)+']'+
+            hex(prodcode,2)+'}{'+xp_product+'}{'+xp_version+'}{}{IDENT}{['+Convert2SevenBit(SysName)+']'+
             '[]['+Convert2SevenBit(UserName)+'][-Unpublished-]['+iifs(LineSpeed>=9600,
             '9600',strs(LineSpeed))+'][]}'+
             iifs(SendTrx,'{TRX#}{['+hex(sec70,8)+']}','');

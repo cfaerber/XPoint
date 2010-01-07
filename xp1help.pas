@@ -52,6 +52,7 @@ uses
   keys, //taste
   resource,maus2,help,winxp,printerx,
   SysUtils, // for FPC
+  xpversion,
   maske,xp0,xp1;
 
 var lastkeys : integer;
@@ -408,7 +409,7 @@ begin
   attrtxt(col.colkeys);
   XPdisplayed:=(wherey=screenlines) and (wherex<=screenwidth-10);
   if XPdisplayed then
-    Wrt2(sp(screenwidth+1-length(xp_xp)-wherex) + xp_xp)   { 'CrossPoint' }
+    Wrt2(sp(screenwidth+1-length(xp_product)-wherex) + xp_product)   { 'CrossPoint' }
   else
     if wherey=screenlines then Wrt2(sp(screenwidth+1-wherex));
   mon;

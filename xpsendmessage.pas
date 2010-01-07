@@ -440,6 +440,7 @@ implementation  { --------------------------------------------------- }
 
 uses mime, mime_analyze, rfc2822, StringTools, xp_pgp, xp1o, xp3,
   xp3ex, xp3o2, xp4e, xpcc, xpfido, xpmakeheader, xpconst,
+  xpversion,
   xpsendmessage_internal, xpstreams, addresses,
   xpstreams_codec, 
   xpstreams_temporary,

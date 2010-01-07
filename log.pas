@@ -81,6 +81,7 @@ implementation
 
 uses
   SysUtils,
+  xpversion,
   XPGlobal;
 
 const
@@ -157,8 +158,8 @@ begin
       result:= false;
       FCanWrite:= false;
     end else if FFirstLog then begin
-      writeln(FHandle,'---------- OpenXP ',DateToStr(Now),verstr,betastr,pformstr);
-      writeln(FHandle,FormatDateTime('hh:nn:ss',Now),'   Logging started');
+      writeln(FHandle,'---------- ', xp_prver_full);
+      writeln(FHandle,FormatDateTime('yyyy-mm-dd"T"hh:nn:ss',Now),' Logging started');
       FFirstLog:= False;
     end;
   end;
@@ -175,7 +176,7 @@ begin
   if not FisOpen then
     Open;
   if FisOpen then begin
-    WriteLn(FHandle, FormatDateTime('hh:nn:ss',now),' ',llChars[l],s);
+    WriteLn(FHandle, FormatDateTime('yyyy-mm-dd"T"hh:nn:ss',Now),' ',llChars[l],s);
     Close;
   end;
 end;

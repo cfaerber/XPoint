@@ -435,7 +435,7 @@ begin
   else begin
     if not pm then
       if XP_Tearline then
-        s:=#13#10+xp_origin + ' ' + verstr + betastr
+        s:=#13#10+'---'+xp_prver
       else
         s:=#13#10+'---'
     else

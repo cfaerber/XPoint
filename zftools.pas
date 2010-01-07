@@ -204,6 +204,7 @@ uses
   maus2,
   mime,
   xp0,
+  xpversion,
   xpcharset,
   xp1;
 
@@ -879,7 +880,7 @@ var f1,f2   : file;
       if programm<>'' then
         wrs(^A'PID: '+programm)
       else
-        wrs(^A'PID: '+xp_xp+verstr+pformstr+betastr);
+        wrs(^A'PID: '+xp_prver);
       xflags:='';
       if attrib and attrReqEB<>0 then
         xflags:=xflags+' RRQ';    { Return Receipt Request }

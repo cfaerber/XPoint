@@ -94,6 +94,7 @@ uses
   printerx,xp0,xp1,xp1o2,xp1input,xpconst,
   xp1o,xp3,xp3o2,xp3ex,xp4,xp4e, xp4o,xp8,xp9bp,xpnt,xp_pgp,winxp,xp4o2,debug,
   xprope,xpspam,xpstreams,crc,
+  xpversion,
   xpstreams_pascal,
   xpstreams_partial,
   xpmakeheader,xpsendmessage,xpsendmessage_rta;
@@ -2420,7 +2421,7 @@ begin
   tmp:=TempS(2000);
   assign(t,tmp);
   rewrite(t);
-  write(t,'## ',getres2(337,iif(auto,2,1)),' '+xp_xp+' ',verstr);
+  write(t,'## ',getres2(337,iif(auto,2,1)),' '+xp_prver);
   writeln(t);
   writeln(t,'## ',getres2(337,3));   { 'erhaltene Nachricht:' }
   writeln(t);

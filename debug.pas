@@ -99,6 +99,7 @@ uses
   {$IFDEF Unix} xpunix, {$ENDIF}
   {$ENDIF}
   TypeForm,
+  xpversion,
   xpglobal; //not really
 
 var
@@ -245,13 +246,7 @@ begin
   end
   else
     Logging := False;
-  Debuglog('openxp', 'OpenXP ' + mainver + '.' + version_build + ' ' + betastr {$IFDEF Snapshot} + ' Snapshot' {$ENDIF}  + pformstr
-{$IFDEF FPC }
-{$ifndef Unix}
-   + ' Compiled at ' + {$I %TIME%} + ' on ' + {$I %DATE%} + ' with Compiler ' + {$I %FPCVERSION%}+ ' for ' + {$I %FPCTARGET%}
-{$endif}
-{$ENDIF }
-  , dlNone);
+  Debuglog(LowerCase(xp_product), xp_prver_full, dlNone);
 end;
 
 procedure CloseLogfile;

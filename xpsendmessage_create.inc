@@ -62,7 +62,7 @@ var FidoOriginSav: string;
       end;
 
       if XP_Tearline then
-        Result := #13#10+xp_origin + ' ' + verstr + betastr
+        Result := #13#10+'--- '+xp_prver
       else
         Result := #13#10+'---';
 
@@ -565,7 +565,7 @@ var FidoOriginSav: string;
       hdp.replypath:=orghdp.replypath;
     
 //  hdp.typ:=iifs(binary,'B','T');
-    hdp.programm:= xp_xp + '/' + verstr + pformstr;
+    hdp.programm:= xp_user_agent;
     hdp.organisation:=orga;
     if ersetzt<>''then hdp.ersetzt:=ersetzt;
     if (pm and ntPMTeleData(Server.netztyp)) or (not pm and ntAMTeleData(Server.netztyp))

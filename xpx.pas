@@ -50,6 +50,7 @@ uses
   {$IFDEF Win32} xpwin32, {$ENDIF}
   {$IFDEF OS2} xpos2, {$ENDIF}
   {$IFDEF DOS32} xpdos32, {$ENDIF}
+  xpversion,
   log,xp2;
 
 var   starting : boolean = true;
@@ -68,52 +69,11 @@ end;
 { Diese Funktion und deren Aufruf dÅrfen nicht verÑndert werden }
 { (siehe LIZENZ.TXT).                                           }
 procedure logo;
-{$ifndef unix}
-var t : text;
-{$endif}
 begin
-{$ifdef unix}
-  writeln;
-  writeln(xp_xp,' ',verstr,pformstr,betastr);
-  writeln(x_copyright,' by ',author_name,' <',author_mail,'>');
-  writeln('basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
-  writeln;
-{$else}
-  assign(t,'');
-  rewrite(t);
-  writeln(t);
-  write(t,xp_xp);
-  if (xp_xp='CrossPoint') then write(t,'(R)');
-  writeln(t,' ',verstr,pformstr,betastr);
-  Writeln(t,'Copyright ', x_copyright, ' by ',author_name,' (',author_mail,')');
-  writeln(t,'basierend auf CrossPoint(R) v3.2 (c) 1992-99 by ',pm);
-  writeln(t);
-{$IFNDEF VP }
-  close(t); { !? }
-{$ENDIF }
-{$endif} { Linux }
-end;
-
-
-procedure readname;
-var t    : text;
-    name : string[10];
-    short: string[2];
-    code : string[20];
-begin
-  assign(t,progpath+'pname.dat');
-  if existf(t) then begin
-    reset(t);
-    readln(t,name);
-    readln(t,short);
-    readln(t,code);
-    close(t);
-    if (ioresult=0) and
-       (ival(code)=sqr(CRC32Str(reverse(name)) and $ffff)) then begin
-      XP_xp:=name;
-      XP_origin := '--- '+name;
-      end;
-    end;
+  writeln(xp_prver);
+  writeln('Copyright (C) ',xp_copyright);
+  Writeln('based on OpenXP(R)/32 v3.9 (C) 1999-2005 by OpenXP Team');
+  writeln('based on CrossPoint(R) v3.2 (C) 1992-1999 by Peter Mandrella');
 end;
 
 function _deutsch:boolean;
@@ -151,14 +111,10 @@ end;
 
 procedure InitXPXUnit;
 begin
-{$IFNDEF OS2 }
-//  checkbreak:=false;
-{$ENDIF }
-  readname;
 {$ifndef unix}
   if LeftStr(getenv('PROMPT'),4)='[XP]' then
-    if _deutsch then stop('ZurÅck zu '+xp_xp+' mit EXIT.')
-    else stop('Type EXIT to return to '+xp_xp+'.');
+    if _deutsch then stop('ZurÅck zu '+xp_product+' mit EXIT.')
+    else stop('Type EXIT to return to '+xp_product+'.');
 {$endif}
 
   logo;

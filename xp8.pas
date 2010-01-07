@@ -70,6 +70,7 @@ uses
   xp0,xp1,xp1o2,xp1help,xp1input,xp1o,xp3,xp3o2,xp3ex,xp4,xp9bp,
   xpsendmessage,xpsendmessage_resend,xpconfigedit,xpnt, crc,
   addresses, debug,
+  xpversion,
   xpglobal;
 
 var mapsbox : string = '';
@@ -452,7 +453,7 @@ begin
   write(t,'##  ',getreps2(800,iif(del,4,5),bretter),#13#10);
   write(t,'##',#13#10);
   write(t,'##  ',getres2(800,6),#13#10);   { 'mit virtuellen Gruessen' }
-  write(t,'##     '+xp_xp+' ',verstr,#13#10);
+  write(t,'##     '+xp_prver,#13#10);
   write(t,#13#10);
   write(t,dup(40,'-'),#13#10);
   write(t,#13#10);

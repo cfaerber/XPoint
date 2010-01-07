@@ -30,7 +30,7 @@ procedure processlist(const nl, nd: String);
 implementation
 
 uses
-  sysutils,
+  sysutils, xpversion,
   typeform, fileio, xpglobal, xpx;
 
 var
@@ -329,7 +329,7 @@ procedure StartCommandLineNdiff;
 begin
   UseCommandLine := true;
   Logo;
-  writeln('----------------  Nodelist Processor ', verstr, betastr);
+  writeln('----------------  Nodelist Processor ', xp_prver);
   writeln;
 
   getpar;
