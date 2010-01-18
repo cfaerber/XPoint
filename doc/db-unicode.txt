@@ -1,0 +1,35 @@
+$00   (U+0000)	- ASCII: NUL
+$01 ☺ (U+263A)
+$02 ☻ (U+263B)
+$03 ♥ (U+2665)
+$04 ♦ (U+2666)	- XP intern
+$05 ♣ (U+2663)
+$06 ♠ (U+2660)
+$07 • (U+2022)	- Windows-1252, ASCII: BEL
+$08 ◘ (U+25D8) ***
+$09 ○ (U+25CB)	- ASCII: HT bzw. TAB
+$0A ◙ (U+25D9)	- ASCII: LF
+$0B ♂ (U+2642)	- ASCII: VT
+$0C ♀ (U+2640)	- ASCII: FF
+$0D ♪ (U+266A)	- ASCII: CR
+$0E ♫ (U+266B) ***
+$0F ☼ (U+263C) ***
+$10 ► (U+25BA) 
+$11 ◄ (U+25C4)
+$12 ↕ (U+2195) ***
+$13 ‼ (U+203C)
+$14 ¶ (U+B6)	- Latin-1
+$15 § (U+A7)	- Latin-1
+$16 ▬ (U+25AC)
+$17 ↨ (U+21A8) ***
+$18 ↑ (U+2191)
+$19 ↓ (U+2193)
+$1A → (U+2192)
+$1B ← (U+2190)	- ASCII: ESC
+$1C ∟ (U+221F) ***
+$1D ↔ (U+2194)
+$1E ▲ (U+25B2)	- XP intern
+$1F ▼ (U+25BC)	- XP intern
+
+U1…U4 + $80…FF + $80…FF (16 bit): Basic plane
+U5…U6 + $80…FF + $80…FF + $80…FF (20 bit): planes 1…16

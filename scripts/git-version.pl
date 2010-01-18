@@ -9,7 +9,7 @@ my @git = split /[,\r\n]/s, scalar <GITLOG>;
 
 open GITLOG, '-|', 'git', 'describe', '--tags', '--dirty=+';
 binmode GITLOG, ':utf8';
-push @git, scalar <GITLOG>;
+push @git, map { chomp;$_; } scalar <GITLOG>;
 
 open GITVER, '>', 'git-version.inc';
 binmode GITVER, ':encoding(IBM437)';
