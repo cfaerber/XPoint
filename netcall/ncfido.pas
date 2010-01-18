@@ -103,6 +103,7 @@ implementation
 
 uses
   sysutils,
+  xpversion,
   keys,zmodem,progressoutput,resource,typeform,debug,montage,crc,xpdiff,objcom,md5;
 
 const {Y_DietIfna = $0001;}   { Capability Flags }

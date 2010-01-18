@@ -100,7 +100,9 @@ type
     function GetMessageByID(const MsgID: String; Message: TStringList): Integer;
 
     { Message vom server holen }
+(*
     function PostMessage(Message: TStringList): Integer; virtual;
+*)
     function PostPlainRFCMessages(Message: TStringList): Integer;
 
     { next 3 only available after selecting Group }
@@ -535,6 +537,7 @@ begin
   end;
 end;
 
+(*
 function TNNTP.PostMessage(Message: TStringList): Integer;
 var
   Error, I: Integer;
@@ -564,26 +567,68 @@ begin
     if Error =   nntp_PostArticlePosted then
        Result := 0
     else
+    begin
+       SWriteln('STAT ');
+
+
        Result := Error;
+
+    end;
   end;
 end;
+*)
 
 function TNNTP.PostPlainRFCMessages(Message: TStringList): Integer;
 var
   Error, I, iPosting: Integer;
   s: String;
+
+  in_header: boolean;
+  message_id: string;
+
+const
+  mid_str: string = 'message-id:';
+
+  procedure CheckPosted(var Error: Integer);
+  var NewError: Integer;
+  begin
+    if (Error <> nntp_PostArticlePosted) and (message_id <> '') then
+    begin
+      Output(mcInfo, 'POST error, Check for %s', [message_id]);
+      SWriteln('STAT ' + message_id);
+      SReadln(s);
+      NewError := ParseResult(s);
+
+      if (NewError div 100) = 2 then
+        Error := nntp_PostArticlePosted;
+    end;
+  end;
+
 begin
   Result := nntp_NotConnected;
   if Connected then
   begin
     SWriteln('POST');
     SReadln(s);
+    in_header := true;
+    message_id := '';
+
     Error := ParseResult(s);
     I := 1; iPosting := 0;
     while Error = nntp_PostPleaseSend do
     begin
       inc(iPosting);
       repeat
+        if Message[I] = '' then
+          in_header := false
+        else if in_header and StartsText(mid_str, Message[I]) then
+        begin
+          message_id := Mid(Message[I], Length(mid_str)+1);
+          message_id := Trim(message_id);
+          if not (StartsStr('<', message_id) and EndsStr('>', message_id)) then
+            message_id := '';
+        end;
+
         SWriteln(iifs(FirstChar(Message[I])='.','.','')+Message[I]);
         Inc(I);
       until (I >= Message.Count) or (Pos('#! rnews', Message[I]) = 1);
@@ -591,6 +636,8 @@ begin
       Output(mcInfo,res_postmsg,[iPosting,(I/Message.Count*100)]);
       SReadln(s);
       Error := ParseResult(s);
+      CheckPosted(Error);
+      
       if (Error = nntp_PostArticlePosted) and (I < Message.Count) then
       begin
         SWriteln('POST');
@@ -599,10 +646,12 @@ begin
         Inc(I);
       end;
     end;
+
     if Error = nntp_PostArticlePosted then
       Result := 0
     else begin
       Output(mcError, res_error, [ErrorMsg]);
+      Sleep(5);
       Result := Error;
     end;
   end;

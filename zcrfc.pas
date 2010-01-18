@@ -1,23 +1,3 @@
-{   $Id$
-
-    Copyright (C) 1991-2001 Peter Mandrella
-    Copyright (C) 2000-2002 OpenXP team (www.openxp.de)
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-}
-
 { UUCP/RFC <-> ZConnect }
 { PM 10/92              }
 
@@ -28,10 +8,6 @@
 {$ENDIF Delphi}
 
 unit zcrfc;
-
-//{$IFDEF NCRT}
-//  {$UNDEF NCRT}
-//{$ENDIF}
 
 interface
 
@@ -116,42 +92,11 @@ type
     function NextUunumber: unsigned16;
     procedure ZtoU;
     procedure UtoZ;
+
     property DeleteFiles: TStringList read FDeleteFiles;
   end;
 
 procedure StartCommandlineUUZ;
-
-{ -------------------------- Unix line ends -------------------------- }
-
-type TCRLFtoLFStream = class(TStream)
-  private
-    FStream: TStream;
-    BytesWritten: LongInt;
-    LastCharWasCR: Boolean;
-  public
-    constructor Create(AnOtherStream: TStream);
-    destructor Destroy; override;
-
-    function Read(var Buffer; Count: Longint): Longint; override;
-    function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: unsigned16): Longint; override;
-  end;
-
-{ ------------------- RFC 2821/976/977 Dot Escaping ------------------ }
-
-type TDotEscapeStream = class(TStream)
-  private
-    FStream: TStream;
-    BytesWritten: LongInt;
-    LastWasCRLF,LastWasCR: Boolean;
-  public
-    constructor Create(AnOtherStream: TStream);
-    destructor Destroy; override;
-
-    function Read(var Buffer; Count: Longint): Longint; override;
-    function Write(const Buffer; Count: Longint): Longint; override;
-    function Seek(Offset: Longint; Origin: unsigned16): Longint; override;
-  end;
 
 implementation
 
@@ -181,6 +126,7 @@ uses
   xpstreams_codec,
   xpcharset,
   xpcharset_streams,
+  rfc_streams,
   osdepend, xpconst, xpx,
   xpheader, xpmakeheader, resource, Debug, addresslist;
 
@@ -205,7 +151,8 @@ const
     'rcsmtp',
     'rfsmtp');
 
-  rnews_shebang: array [compress_gzip..compress_freeze] of string = (
+  rnews_shebang: array [TCompression] of string = (
+    '',
     '#! gunbatch'#10,
     '#! bunbatch'#10,
     '#! cunbatch'#10,
@@ -3183,7 +3130,8 @@ var
   hds, adr: longint;
   fs, n, gs, i: longint;
   ok: boolean;
-  f,f2,f3: TStream;
+  f,f2: TStream;
+  f3: TCodecStream;
   f0: TMemoryStream;
   fn: string;
   fc: text;
@@ -3450,7 +3398,9 @@ begin
 
       SetMimeData;
 
-      f3 := TCRLFtoLFStream.Create(f0);
+      f3 := TCRLFtoLFStream.Create;
+      f3.OtherStream := f0;
+
       WriteRFCheader(f3, false,true);
       seek(f1, adr + hds);            { Text kopieren }
       CopyEncodeMail(f3,hd.groesse);
@@ -3462,7 +3412,10 @@ begin
           Inc(hd.lines);
 
       f3.Free; //f3 := nil;
-      f3 := TCRLFtoLFStream.Create(f);
+
+      f3 := TCRLFtoLFStream.Create;
+      f3.OtherStream := f;
+
       WriteRfcHeader(f3,false,false);
       f3.Free; f3 := nil;
 
@@ -3509,11 +3462,9 @@ begin
             CreateNewfile(true);
           SetMimeData;
 
-          if SMTP then begin
-            f3:=TCRLFtoLFStream.Create(f2);
-            f :=TDotEscapeStream.Create(f3);
-          end else
-            f :=TCRLFtoLFStream.Create(f2);
+          ConnectStream(f, TCRLFtoLFStream.Create);
+          if SMTP then
+            ConnectStream(f, TDotEscapeStream.Create);
 
           WriteRFCheader(f, true,false);
           WriteRFCheader(f, true,true );
@@ -3521,18 +3472,13 @@ begin
           CopyEncodeMail(f,hd.groesse);
           WriteRfcTrailer(f);
 
-          f.Free; f := nil;
-
-          if SMTP then begin
-            if Client then begin
-              Wrs(f2, 'QUIT');
-              f2.Free; f2 := nil;
-            end;
-            f3.Free; f3 := nil;
-          end else begin
-            f2.Free; f2 := nil;
-            if not client then QueueCompressfile(rmail);
+          if SMTP and Client then begin
+            UnConnectStream(f);
+            Wrs(f, 'QUIT');
           end;
+
+          if not SMTP and not Client then
+            QueueCompressfile(rmail);
         end;
       if not SMTP then
         inc(copycount);
@@ -3622,521 +3568,4 @@ begin
   end;
 end;
 
-{ -------------------------- Unix line ends -------------------------- }
-
-constructor TCRLFtoLFStream.Create(AnOtherStream: TStream);
-begin
-  FStream:=AnOtherStream;
-  BytesWritten:=0;
-  LastCharWasCR:=false;
-end;
-
-function TCRLFtoLFStream.Read(var Buffer; Count: Longint): Longint;
-begin
-  raise EStreamError.Create('Illegal stream operation.');
-end;
-
-function TCRLFtoLFStream.Write(const Buffer; Count: Longint): Longint;
-var I:Longint;
-begin
-  Result := 0;
-
-  if Count<=0 then
-    exit;
-
-  if LastCharWasCR and (PChar(@Buffer)^<>#10) then
-    FStream.WriteBuffer(cr,1);
-
-  for i:=1 to Count-1 do
-    if ((PChar(@Buffer)+i-1)^=#13) and
-       ((PChar(@Buffer)+i  )^=#10) then
-    begin
-      if i-Result-1>0 then
-        Inc(Result,FStream.Write((PChar(@Buffer)+Result)^,i-Result-1));
-      Inc(Result,1);
-      if Result<>i then
-        exit;
-    end;
-
-  LastCharWasCR := (PChar(@Buffer)+Count-1)^=#13;
-
-  if Count-Result>0 then
-    Inc(Result,FStream.Write((PChar(@Buffer)+Result)^,Count-Result-iif(LastCharWasCR,1,0)));
-
-  if LastCharWasCR then
-    Inc(Result);
-
-  Inc(BytesWritten,Result);
-end;
-
-function TCRLFtoLFStream.Seek(Offset: Longint; Origin: unsigned16): Longint;
-begin
-  Result := BytesWritten;
-  if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
-     or ((Origin = soFromBeginning) and (Offset = Result))) then
-    raise EStreamError.Create('Invalid stream operation');
-end;
-
-destructor TCRLFtoLFStream.Destroy;
-begin
-  if LastCharWasCR then
-    FStream.WriteBuffer(cr,1);
-end;
-
-{ ------------------- RFC 2821/976/977 Dot Escaping ------------------ }
-
-constructor TDotEscapeStream.Create(AnOtherStream: TStream);
-begin
-  inherited Create;
-
-  FStream:=AnOtherStream;
-  BytesWritten:=0;
-  LastWasCRLF:=false;
-  LastWasCR:=false;
-end;
-
-destructor TDotEscapeStream.Destroy;
-const delim: array[0..4] of char = #13#10'.'#13#10;
-var o:integer;
-begin
-  o:=iif(LastWasCRLF,2,0);
-  FStream.WriteBuffer(delim[o],sizeof(delim)-o);
-  inherited Destroy;
-end;
-
-function TDotEscapeStream.Read(var Buffer; Count: Longint): Longint;
-begin
-  raise EStreamError.Create('Illegal stream operation.');
-end;
-
-function TDotEscapeStream.Write(const Buffer; Count: Longint): Longint;
-var I,Beg:Longint;
-begin
-  Result := 0;
-  Beg := 0;
-
-  for i:=0 to Count-1 do
-  begin
-    if LastWasCRLF and ((PChar(@Buffer)+i)^='.') then
-    begin
-      Inc(Beg,FStream.Write((PChar(@Buffer)+Beg)^,i-beg+1)-1);
-      if Beg<>i then exit; // write error
-    end;
-
-    LastWasCRLF:=((PChar(@Buffer)+i)^=#10) and LastWasCR;
-    LastWasCR  :=((PChar(@Buffer)+i)^=#13);
-  end;
-
-  if Count-Beg>0 then
-    Inc(Beg,FStream.Write((PChar(@Buffer)+Beg)^,Count-beg));
-
-  Result:=Beg;
-  Inc(BytesWritten,Result);
-end;
-
-function TDotEscapeStream.Seek(Offset: Longint; Origin: unsigned16): Longint;
-begin
-  Result := BytesWritten;
-  if not ((((Origin = soFromCurrent) or (Origin = soFromEnd)) and (Offset = 0))
-     or ((Origin = soFromBeginning) and (Offset = Result))) then
-    raise EStreamError.Create('Invalid stream operation');
-end;
-
-{
-  $Log: zcrfc.pas,v $
-  Revision 1.148  2004/01/17 16:33:50  mk
-  - split xp0.pas in xp0.pas and xpconst.pas to remove some dependencies
-    xpconst.pas should be used for global constants (only!)
-
-  Revision 1.147  2003/12/07 16:41:44  mk
-  - fixed crash in ZtoRFCDate when date is empty
-
-  Revision 1.146  2003/10/21 21:25:04  cl
-  - Changed THeader.MIME to use TMimeContentType and TMimeDisposition objects
-  - Changed MausTausch headers for Maus-internal IDs: MID/BEZ => maus_*, org_* => MID/BEZ,
-
-  Revision 1.145  2003/10/05 12:37:42  mk
-  - removed RawFormat and NNTPSpoolFormat from ZCRFC
-  - internal NNTP uses rnews format now
-  - removed use of lines header
-
-  Revision 1.144  2003/10/01 10:09:56  mk
-  - added initialization of XPTimzeone for command line uuz
-
-  Revision 1.143  2003/09/29 20:47:14  cl
-  - moved charset handling/conversion code to xplib
-
-  Revision 1.142  2003/09/09 16:03:24  mk
-  - use lowercase mail.rfc and news.rfc for Unix, uppercase for Dos+Win
-
-  Revision 1.141  2003/09/09 14:21:51  mk
-  - fixed reading of news.rfc and mail.rfc, is now working again
-
-  Revision 1.140  2003/08/28 18:48:33  cl
-  - fixed memory leak
-
-  Revision 1.139  2003/08/26 22:47:17  cl
-  - split xpstreams into individual small files to remove some dependencies
-
-  Revision 1.138  2003/08/04 22:48:15  mk
-  - removed Edit/netze/verschiedens/mime in news
-
-  Revision 1.137  2003/06/22 11:08:30  mk
-  - removed last fix, the fix does not work for internal raw format
-
-  Revision 1.135  2003/05/11 11:12:20  mk
-  - use IsMailAddr when possible
-
-  Revision 1.134  2003/05/05 09:49:35  cl
-  - FIX: Messages ending without a CRLF from ZConnect were not converted
-    correctly
-
-  Revision 1.133  2003/04/25 21:11:19  mk
-  - added Headeronly and MessageID request
-    toggle with "m" in message view
-
-  Revision 1.132  2003/03/16 18:59:37  cl
-  - better handling of unknown charsets
-
-  Revision 1.131  2003/02/07 16:12:18  cl
-  - BUGFIX: Fixed ``Cannot delete X-XXXXXX.OUT'' with Batched SMTP
-
-  Revision 1.130  2003/01/25 18:21:35  mk
-  - removed DOS Unit
-  - filerec->TFileRec
-
-  Revision 1.129  2003/01/13 22:14:29  cl
-  - send window rewrite IIa - cleanups
-
-  Revision 1.128  2003/01/07 00:56:47  cl
-  - send window rewrite -- part II:
-    . added support for Reply-To/(Mail-)Followup-To
-    . added support to add addresses from quoted message/group list/user list
-
-  - new address handling -- part II:
-    . added support for extended Reply-To syntax (multiple addresses and group syntax)
-    . added support for Mail-Followup-To, Mail-Reply-To (incoming)
-
-  - changed "reply-to-all":
-    . different default for Ctrl-P and Ctrl-B
-    . more addresses can be added directly from send window
-
-  Revision 1.127  2002/12/22 13:28:31  mk
-  - use common Shell command (from xp1.pas) with linux, too
-
-  Revision 1.126  2002/12/21 05:38:03  dodi
-  - removed questionable references to Word type
-
-  Revision 1.125  2002/12/16 01:05:14  dodi
-  - fixed some hints and warnings
-
-  Revision 1.124  2002/12/14 22:43:39  dodi
-  - fixed some hints and warnings
-
-  Revision 1.123  2002/12/14 07:31:41  dodi
-  - using new types
-
-  Revision 1.122  2002/12/12 11:58:53  dodi
-  - set $WRITEABLECONT OFF
-
-  Revision 1.121  2002/12/09 14:37:22  dodi
-  - merged include files, updated comments
-
-  Revision 1.120  2002/12/08 12:35:41  mk
-  - removed line-header detection for mails again
-
-  Revision 1.119  2002/10/13 11:47:39  mk
-  - fixed converting news files with base64 encoding and empty lines
-    see <8YjoOQphsaB@MSchiff.gmx.de>
-
-  Revision 1.118  2002/09/13 11:57:32  cl
-  - added List-* fields
-
-  Revision 1.117  2002/08/25 19:42:18  cl
-  - UUZ: Fixes for AttrMPart
-
-  Revision 1.116  2002/08/25 19:37:56  cl
-  - UUZ: Fixes for AttrMPart
-
-  Revision 1.115  2002/08/04 18:41:10  mk
-  - fixed linux compiliation problems from last patch
-
-  Revision 1.114  2002/08/04 14:03:55  mk
-  - fixed testfiles: allow wildcards in source filename
-
-  Revision 1.113  2002/08/03 09:10:30  mk
-  - set -ppp when -client is set
-
-  Revision 1.112  2002/08/01 17:56:48  mk
-  - added "-client" to help page
-  - fixed creation of outgoing news with -client
-  - fixed create of file names for client-mode (CreateNewFile)
-
-  Revision 1.111  2002/07/31 20:25:53  cl
-  - fixed lasf commit
-
-  Revision 1.110  2002/07/31 19:54:45  cl
-  - Fehler beim Entpacken von Dateien werden abgefangen; Dateien werden
-    nach BAD verschoben.
-
-  Revision 1.109  2002/07/25 20:43:57  ma
-  - updated copyright notices
-
-  Revision 1.108  2002/07/21 23:18:31  mk
-  - write 'HELO' header in client mode in every new file
-
-  Revision 1.107  2002/07/21 13:38:17  mk
-  - with SMTP swith on, create one file for every outgoing message
-
-  Revision 1.106  2002/07/20 15:36:41  cl
-  - adaptions for new address handling
-
-  Revision 1.105  2002/05/24 06:54:52  mk
-  - fixed handling of size parameter for messages
-
-  Revision 1.104  2002/05/20 15:18:44  cl
-  - added outgoing U-To/U-CC handling
-
-  Revision 1.103  2002/05/20 07:47:57  mk
-  - fixed backup extension: now ExtBak and EditorExtBak
-
-  Revision 1.102  2002/05/12 20:42:49  mk
-  - first version of client netcall hack
-
-  Revision 1.101  2002/05/05 22:47:20  mk
-  - use correct case for 'bak' extension
-
-  Revision 1.100  2002/05/05 22:29:43  mk
-  - removed unused code
-  - fixed "Puffer fehlt" error
-
-  Revision 1.99  2002/04/19 16:51:43  cl
-  - fix for FPC
-
-  Revision 1.98  2002/04/14 22:30:26  cl
-  - changes for new address handling
-  - fixed GetAdr
-
-  Revision 1.97  2002/04/12 22:08:18  mk
-  - fixed stripping of last character (">") of cancel headers
-
-  Revision 1.96  2002/04/10 08:35:23  mk
-  MY[+JG]:- Der From:-Header durchluft jetzt die MIME-Decodierung nach
-            RFC 1522, *bevor* er in 'GetAdr' in Adresse und Realname
-            zerlegt wird (vorher wurde ein Header wie
-            'From: "Christian =?Iso-8859-1?Q?R=F6=DFler"?= <...>' nicht
-             korrekt decodiert).
-
-  Revision 1.95  2002/04/06 17:07:48  mk
-  - fixed some hard coded '\' to PathDelim and other functions
-    should resolve misc problems with linux
-
-  Revision 1.94  2002/03/24 11:51:25  mk
-  - fixed bug: hd.lines is parsed 0 if lines header line contains white spaces
-
-  Revision 1.93  2002/03/06 16:51:25  cl
-  - BUGFIX *** FIXES POSSIBLE MAIL LOSS WITH BSMTP ***
-    HELO was missing on all BSMTP packages not converted during first use
-    of TUUZ after OpenXP start.
-
-  Revision 1.92  2002/03/04 01:13:49  mk
-  - made uuz -uz three times faster
-
-  Revision 1.91  2002/02/18 16:59:41  cl
-  - TYP: MIME no longer used for RFC and not written into database
-
-  Revision 1.90  2002/02/11 11:26:58  cl
-  - fixed address handling for unbatched mail (rmail)
-
-  Revision 1.89  2002/01/13 15:15:55  mk
-  - new "empfaenger"-handling
-
-  Revision 1.88  2002/01/02 15:33:52  cl
-  - UUZ can now (optionally) not recode any charsets.
-  - new box configuration option: UUZRecodeCharset
-  - extract_msg can not handle all charsets and extract in UTF8 mode.
-
-  Revision 1.87  2001/12/23 23:26:00  mk
-  - fixed multible EmfpList and problems with CCs (outgoing, witz uuz -smtp)
-
-  Revision 1.86  2001/12/21 21:25:18  cl
-  BUGFIX: [ #470339 ] UUCP (-over-IP): Mailverlust
-  SEE ALSO: <8FIVnDgocDB@3247.org>
-  - UUZ does not delete ANY files
-  - spool files only deleted after successful import of mail buffers.
-
-  Revision 1.85  2001/12/05 11:18:54  mk
-  - added some debug logs
-  - removed some hints and warnings
-
-  Revision 1.84  2001/11/11 15:46:21  mk
-  - prevent range check error in ConvertMailFile
-
-  Revision 1.83  2001/10/30 23:45:20  cl
-  - COMPATIBILITY FIX: rnews batches without a correct "#! unbatch" line
-    should now be uncompressed correctly.
-
-  Revision 1.82  2001/10/26 11:23:32  ma
-  - fixes and changes concerning CompileTime mailer header
-
-  Revision 1.81  2001/10/21 13:09:05  ml
-  - removed some more warnings (only 130 yet...)
-
-  Revision 1.80  2001/10/20 17:26:43  mk
-  - changed some Word to Integer
-    Word = Integer will be removed from xpglobal in a while
-
-  Revision 1.79  2001/10/17 12:07:28  ma
-  - fixed range check errors
-
-  Revision 1.78  2001/09/15 19:51:26  cl
-  - optimized some code related to charset recoding
-
-  Revision 1.77  2001/09/10 17:42:04  cl
-  - BUGFIX: ZConnect Charset header only written if not in ['US-ASCII','IBM437']
-
-  Revision 1.76  2001/09/10 17:28:35  cl
-  - BUGFIX: multipart messages don't have a charset, so don's assume Windows-1252.
-  - Snapshot versions of UUZ now leave a scent mark in buffers converted to
-    ZConnect for debugging purposes.
-
-  Revision 1.75  2001/09/10 15:58:04  ml
-  - Kylix-compatibility (xpdefines written small)
-  - removed div. hints and warnings
-
-  Revision 1.74  2001/09/09 17:40:47  cl
-  - moved common code between alle en-/decoding streams to a base class
-  - all en-/decoding streams can now destruct the other stream
-  - much more elegant way to connect en-/decoding streams to each other
-
-  Revision 1.73  2001/09/08 18:46:43  cl
-  - small bug/compiler warning fixes
-
-  Revision 1.72  2001/09/08 16:29:41  mk
-  - use FirstChar/LastChar/DeleteFirstChar/DeleteLastChar when possible
-  - some AnsiString fixes
-
-  Revision 1.71  2001/09/08 14:51:36  cl
-  - Conversion to RFC uses encoding and charset suggested by OpenXP (or user)
-  - Conversion to RFC now supports ZConnect-MIME (TYP: MIME)
-  - Conversion of message body to RFC completly rewritten.
-
-  - Conversion from RFC now does not try to decode multipart/messages
-    (and marks them as TYP: MIME)
-
-  - Moved MIME functions/types/consts to mime.pas
-  - Moved RFC2822 functions to rfc2822.pas
-  - More uniform naming of MIME functions/types/consts
-  - Moved Stream functions to xpstreams.pas
-  - optimized RecodeCharset to replace zcrfc.decodecharset
-  - cleaned up MIME-related fields in THeader
-  - THeader can now write itsself to streams
-  - adaptions/fixes for MIME support
-  - adaptions/fixes for PGP/MIME support
-
-  Revision 1.70  2001/09/07 23:24:55  ml
-  - Kylix compatibility stage II
-
-  Revision 1.69  2001/09/06 19:31:21  mk
-  - removed some hints und warnings
-
-  Revision 1.68  2001/08/11 23:06:39  mk
-  - changed Pos() to cPos() when possible
-
-  Revision 1.67  2001/08/11 21:20:52  mk
-  - THeader.OEM is now TStringList (before: String)
-
-  Revision 1.66  2001/08/10 20:58:01  mk
-  - removed some hints and warnings
-  - fixed some minior bugs
-
-  Revision 1.65  2001/08/07 16:54:12  mk
-  - convert Ctrl-Z in ReadString to ?
-
-  Revision 1.64  2001/07/31 13:10:35  mk
-  - added support for Delphi 5 and 6 (sill 153 hints and 421 warnings)
-
-  Revision 1.63  2001/07/30 19:07:44  cl
-  - support of UUCP E command for outgoing messages
-
-  Revision 1.62  2001/07/30 12:43:41  cl
-  - ZCRFC: more helpful error messages
-
-  Revision 1.61  2001/07/28 12:04:16  mk
-  - removed crt unit as much as possible
-
-  Revision 1.60  2001/07/27 18:10:15  mk
-  - ported Reply-To-All from 3.40, first part, untested
-  - replyto is now string instead of TStringList again
-
-  Revision 1.59  2001/07/09 08:44:59  mk
-  - prevent creation of wrong ABS headers when doing N/W/O with News
-
-  Revision 1.58  2001/06/13 10:37:52  ma
-  - fixed: News files using integrated client spool format were incorrectly
-    processed if NNTPSpoolFormat was true, but file ext not ".news".
-  - ToDo: A generic format chooser variable should be implemented.
-
-  Revision 1.57  2001/05/30 21:22:55  mk
-  JG:- 'Xref' headers are not thrown away anymore
-
-  Revision 1.56  2001/05/20 18:23:02  cl
-  - fixed bug in RFC2047_Decode w/ bare "=?" sequences
-
-  Revision 1.55  2001/04/27 10:16:02  ma
-  - added "point quoted" NNTP spool format
-  - cosmetics
-
-  Revision 1.54  2001/04/18 20:00:59  ma
-  - fixed: last lines of long postings showed up at the bottom of following
-    shorter postings
-
-  Revision 1.53  2001/04/17 00:21:54  ma
-  - fixed: "Path:" was written in RFC header if path=""
-
-  Revision 1.52  2001/04/14 00:00:47  ma
-  - added simple mbox format support (.mail->ZC)
-
-  Revision 1.51  2001/04/11 19:37:52  ma
-  - fixed: First posting line was ignored sometimes :-(
-  - getting rid of ReadString/BufPos/BufAnz is definitely a must.
-  - shortened CVS logs
-
-  Revision 1.50  2001/04/10 17:38:01  mk
-  - Stringlist Code cleanup
-
-  Revision 1.49  2001/04/10 15:55:48  ml
-  - inline produced accessviolations under vp
-
-  Revision 1.48  2001/04/09 16:07:00  mk
-  - fixed some bugs
-
-  Revision 1.47  2001/04/09 13:18:14  cl
-  - zcrfc.pas: complete rewrite of MIMEISODecode (now RFC2047_Decode)
-  - zcrfc.pas: regognition of all known charsets for news and smtp batches
-  - typeform.pas: Changed DecodeBase64 from var-procedure to function.
-  - Moved RecodeCharset from zcrfc.pas to UTFTools.pas
-  - utftools.pas: Optimized Charset recoders
-  - utftools.pas: added charset aliases from IANA database
-
-  Revision 1.46  2001/04/08 23:04:58  ma
-  - fixed: sometimes the last line of a posting showed up in the next
-    posting's header
-  - fixed: first line was sometimes interpreted as posting's size
-
-  Revision 1.45  2001/04/05 14:12:30  ml
-  - working on smtp
-
-  Revision 1.44  2001/04/05 13:51:47  ml
-  - POP3 is working now!
-
-  Revision 1.43  2001/04/05 13:25:46  ml
-  - NNTP is working now!
-
-  Revision 1.42  2001/03/28 12:59:06  ml
-  - Shellcommandfix under linux
-
-  Revision 1.41  2001/03/26 23:18:17  cl
-  - fix for news batch decompression
-}
 end.

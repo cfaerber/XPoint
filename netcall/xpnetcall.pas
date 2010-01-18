@@ -42,18 +42,12 @@ procedure EinzelNetcall(BoxName:string);
 function  AutoMode:boolean;
 
 procedure CallFilter(input:boolean; const fn:string);
-{ Ausgangs-PP-Datei kopieren und filtern }
 function  OutFilter(var ppfile:string):boolean;
 procedure AppLog(var logfile:string; const dest:string);   { Log an Fido/UUCP-Gesamtlog anhängen }
 
 procedure ClearUnversandt(const puffer,BoxName:string; IDList: TStringList);
 procedure MakeMimetypCfg;
-//**procedure LogNetcall(secs:word; FidoCrash:boolean);
 procedure SendNetzanruf(const logfile: string);
-//**procedure SendFilereqReport;
-//**procedure MovePuffers(fmask,dest:string);  { JANUS/GS-Puffer zusammenkopieren }
-//**procedure MoveRequestFiles(var packetsize:longint);
-//**procedure MoveLastFileIfBad;
 
 procedure AssignUniqueDownloadName(var f:file;var s:string;path:string); { makes a a download filename usable and unique }
 
@@ -346,179 +340,8 @@ begin
     sData.CreateMessages;
   finally
     sdata.Free;
-  end;    
-end;
-(* var t,log         : text;
-    fn            : string;
-    sum           : word;
-    hd            : string;
-    sz            : string;
-    txt           : string;
-    betreff       : string;
-    bytes         : string;
-    cps,cfos      : string;
-    inwin         : boolean;
-    rate          : word;
-    s             : string;
-
-  function sec(zeit:longint):string;
-  begin
-    sec:=strsn(zeit div 60,3)+':'+formi(zeit mod 60,2)+sp(10);
-    inc(sum,zeit);
   end;
-
-begin
-  fn:=TempS(1000);
-  DebugLog('xpnetcall','SendNetzanruf '+fn,4);
-  assign(t,fn); rewrite(t);
-  with NC^ do begin
-    writeln(t);
-    txt:=getres2(700,iif(sysopmode,3,4));   { 'Netztransfer' / 'Netzanruf' }
-    write(t,txt,getres2(700,5),fdat(datum),getres2(700,6),ftime(datum),  { ' vom ' / ' um ' }
-            getres2(700,iif(sysopmode,7,8)),boxpar^.boxname);  { ' zur ' / ' bei ' }
-    if NC^.telefon='' then NC^.telefon:=boxpar^.telefon;
-    if sysopmode or (NC^.telefon='') then writeln(t)
-    else writeln(t,', ',NC^.telefon);
-{     p:=cpos(' ',boxpar^.telefon);
-      if p=0 then writeln(t,', ',boxpar^.telefon)
-      else writeln(t,', ',LeftStr(boxpar^.telefon,p-1));
-      end; }
-    writeln(t);
-    bytes:=getres(13);
-    cps:=getres2(700,28);
-    if sysopmode then begin
-      abbruch:=false;
-      writeln(t,getreps2(700,9,strsn(sendbuf,7)));   { 'Ausgangspuffer: %s Bytes' }
-      writeln(t,getreps2(700,10,strsn(recbuf,7)));   { 'Eingangspuffer: %s Bytes' }
-      end
-    else begin
-      if not (_fido or _turbo or _uucp) then
-        abbruch:=(recbuf+recpack=0);
-      if abbruch then begin
-        writeln(t,getres2(700,11));   { '== Netzanruf wurde abgebrochen! ==' }
-        writeln(t);
-        end;
-      writeln(t,getres2(700,12),starttime);   { 'Anwahlbeginn : ' }
-      if not once then writeln(t,getres2(700,13),wahlcnt);  { 'Wählversuche : ' }
-      writeln(t,getres2(700,14),conntime);    { 'Verbindung   : ' }
-      writeln(t,getres2(700,15),connstr);     { 'Connect .... : ' }
-      writeln(t);
-      sum:=0;
-      write  (t,getres2(700,16),sec(connsecs));  { 'Connectzeit  : ' }
-      if _fido then writeln(t)
-      else writeln(t,getres2(700,17),sendbuf:8,bytes);   { 'Sendepuffer   :' }
-      writeln(t,getres2(700,18),sec(logtime),                  getres2(700,19),sendpack:8,bytes);
-          { 'Loginzeit    : ' / 'Sendepaket    :' }
-      writeln(t,getres2(700,iif(_uucp,39,20)),sec(waittime),   getres2(700,21),recpack:8,bytes);
-          { 'Wartezeit    : ' / 'Empfangspaket :' }
-      if bimodem then sz:=getres2(700,22)   { 'BiModem-Zeit : ' }
-      else sz:=getres2(700,23);             { 'Sendezeit    : ' }
-      write  (t,sz,               sec(sendtime));
-      if _fido then writeln(t) else writeln(t,getres2(700,24),recbuf:8,bytes);   { 'Empfangspuffer:' }
-      if not bimodem then
-        writeln(t,getres2(700,25),sec(rectime));    { 'Empfangszeit : ' }
-      if sendtime=0 then rate:=0 else rate:=min(65535,sendpack div sendtime);
-      write(t,  getres2(700,26),sec(hanguptime));   { 'Hangupzeit   : ' }
-      if not bimodem then writeln(t,getres2(700,27),rate:8,cps)   { 'Senderate     :' / ' cps' }
-      else writeln(t);
-      if rectime=0 then rate:=0 else rate:=min(65535,recpack div rectime);
-      write  (t,getres2(700,29));    { '---------------------' }
-      if not bimodem then writeln(t,sp(10),getres2(700,30),rate:8,cps)   { 'Empfangsrate  :' }
-      else writeln(t);
-      if sendtime+rectime=0 then rate:=0 else
-        rate:=min(65535,(sendpack+recpack) div (sendtime+rectime));
-      writeln(t,getres2(700,31),sec(sum),   getres2(700,32),rate:8,cps);   { 'Gesamtzeit   : ' / 'Schnitt       :' }
-      sum:=sum div 2;  { wegen Gesamtzeit }
-      if endtime<>'' then begin
-        writeln(t);
-        cfos:='';
-        if gebCfos and comn[comnr].fossil and (GetCfosCharges(comnr)>0)
-        then begin
-          kosten:=GetCfosCharges(comnr)*Einheitenpreis;
-          cfos:=', cFos';
-          end
-        else begin
-          kosten:={* laeuft noch nicht wieder CalcGebuehren(conndate,conntime,sum)}0;
-          DebugLog('xpnetcall','CalcGebuehren omitted',4);
-          cfos:='';
-          end;
-        if kosten>0 then
-          writeln(t,getres2(700,1),'(',boxpar^.gebzone,cfos,  { 'Telefonkosten ' }
-                    '):  ',waehrung,'  ',kosten:0:2);
-        end;
-      end;
-    writeln(t);
-    writeln(t,getres2(700,34),outmsgs:7);  { 'ausgehende Nachrichten:' }
-    writeln(t,getres2(700,33),inmsgs:7);   { 'eingehende Nachrichten:' }
-    if outemsgs>0 then
-      writeln(t,getres2(700,42),outemsgs:7);  { 'mitverschickte Nachr.  :' }
-    if logopen then begin            { Online-Logfile anhängem }
-      writeln(t);
-      writeln(t,getres2(700,41));    { Logfile }
-      writeln(t);
-      close(netlog^);
-      reset(netlog^);
-      while not eof(netlog^) do begin
-        readln(netlog^,s);
-        writeln(t,s);
-        end;
-      close(netlog^);
-      logopen:=false;
-      end;
-    if (_maus and FileExists(mauslogfile)) or
-       ((_fido or _uucp) and FileExists(fidologfile)) then
-    begin
-      writeln(t);
-      if _maus then
-        writeln(t,getres2(700,35))   { MausTausch-Logfile }
-      else if _fido then
-        writeln(t,getres2(700,36))   { Fido-Logfile }
-      else
-        writeln(t,getres2(700,40));  { UUCP-Logfile }
-      writeln(t);
-      assign(log,iifs(_maus,mauslogfile,fidologfile));
-      resetfm(log, fmOpenRead + fmShareDenyNone
-      if _fido or _uucp then
-        repeat
-          readln(log,s);
-        until (LeftStr(s,2)='--') or eof(log);
-      while not eof(log) do begin
-        readln(log,s);
-        writeln(t,s);
-        end;
-      close(log);
-      end;
-    close(t);
-    inwin:=windmin>0;
-    if inwin then begin
-      SaveCursor;
-      cursor(curoff);
-      window(1,1,screenwidth,screenlines);
-    end;
-    hd:='';
-    InternBox:=BoxName;
-    if FidoCrash then betreff:=ftime(datum)+' - '+getres2(700,37)+boxpar^.boxname   { 'Direktanruf bei ' }
-    else betreff:=ftime(datum)+' - '+getres2(700,4)+getres2(700,8)+ { 'Netzanruf' + ' bei ' }
-                  boxpar^.boxname;
-    if DoSend(false,fn,netbrett,betreff+iifs(abbruch,getres2(700,38),''),  { ' (Fehler)' }
-              false,false,false,false,false,nil,hd,sendIntern+sendShow) then
-      SetUngelesen;
-    if inwin then
-    begin
-      // window(1,4,screenwidth,screenlines-2);
-      RestCursor;
-    end;
-    end;
-  _era(fn);
-  LogNetcall(sum,FidoCrash);
-  freeres;
-  if netcallunmark then
-    Marked.Clear;          { ggf. /N/U/Z-Nachrichten demarkieren }
-  { Nach dem Netcall Datumsbezüge setzen, damit
-    /»Netzanruf korrekt in der Brettliste auftaucht }
-  if AutoDatumsBezuege then
-    bd_setzen(true);
-end; *)
+end;
 
 { ApoNet: nach erfolgreichem Netcall automatisch letzte Nachricht }
 {         in bestimmtem Brett anzeigen                            }
@@ -1184,8 +1007,7 @@ begin                  { function Netcall }
         Debug.DebugLog('xpnetcall','netcall: NNTP',DLInform);
         netcall_connect:= SendNNTPMails(BoxName,bfile,BoxPar,PPFile);
         if GetNNTPMails(BoxName,Boxpar,IncomingFiles,DeleteSpoolFiles)then
-          if netcall_connect then result:= true;
-        if result and netcallunmark then Marked.Clear; { HJT 30.12.06 ggf. /N/U/Z-Nachrichten demarkieren }
+          if netcall_connect then result:= true;        if result and netcallunmark then Marked.Clear; { HJT 30.12.06 ggf. /N/U/Z-Nachrichten demarkieren }
       end;
 
     else

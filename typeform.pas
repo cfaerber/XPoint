@@ -425,6 +425,10 @@ function SgnR(const x:real):real;            { Signum Real                  }
 function SMatch(const s1,s2:string):integer;          { Anzahl der uebereinst. Bytes  }
 function SiMatch(const s1,s2:string):integer;         { dto., ignore case            }
 function Sp(const n:integer):string;               { space$                       }
+function StartsStr(const ASubText, AText: string): Boolean;   { s1 starts with wstr? }
+function EndsStr(const ASubText, AText: string): Boolean;   { s1 starts with wstr? }
+function StartsText(const ASubText, AText: string): Boolean;   { s1 starts with wstr? }
+function EndsText(const ASubText, AText: string): Boolean;   { s1 starts with wstr? }
 function Stricmp(const s1,s2:string):boolean;      { UStr-Vergleich               }
 function StrS(const l:longint):string;             { "echtes" Str$, Integer       }
 function StrSn(const l:longint; const n:integer):string;    { "echtes" Str$, Integer       }
@@ -1794,6 +1798,27 @@ begin
       Exit;
     end;
   result := len;
+end;
+
+function StartsStr(const ASubText, AText: string): Boolean;   { s1 starts with wstr? }
+begin
+  result := 0 = CompareStr(ASubText, LeftStr(AText, Length(ASubText)));
+end;
+
+function EndsStr(const ASubText, AText: string): Boolean;   { s1 starts with wstr? }
+begin
+  result := 0 = CompareStr(ASubText, RightStr(AText, Length(ASubText)));
+end;
+
+
+function StartsText(const ASubText, AText: string): Boolean;   { s1 starts with wstr? }
+begin
+  result := 0 = CompareText(ASubText, LeftStr(AText, Length(ASubText)));
+end;
+
+function EndsText(const ASubText, AText: string): Boolean;   { s1 starts with wstr? }
+begin
+  result := 0 = CompareText(ASubText, RightStr(AText, Length(ASubText)));
 end;
 
 end.
