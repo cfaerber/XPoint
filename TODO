@@ -1,0 +1,5 @@
+Compression method 7 isn't supported yet. But I've never seen any
+files which use this. (Please contact me if you have any files which
+use an unsupported method, or indeed any which use method 5 or 6
+(which are pretty rare). You can use `nomarch -lv' to check the
+methods used.)

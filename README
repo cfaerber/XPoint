@@ -1,0 +1,74 @@
+nomarch 1.4 - extract old `.arc' archives.
+Copyright (C) 2001-2006 Russell Marks.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+Description
+-----------
+
+nomarch lists/extracts/tests `.arc' archives. (It also handles `.ark'
+files, they're exactly the same.) This is a *very* outdated file
+format which should never be used for anything new, but unfortunately,
+you can still run into it every so often (especially if you mess about
+with old CP/M stuff). So nomarch is handy as a way to deal with these
+files.
+
+For more on how nomarch works and how to use it, do `man nomarch' once
+it's installed.
+
+
+Installation
+------------
+
+Check the Makefile is ok (it should be), then do `make' and (as root)
+`make install'.
+
+
+Why not just use `arc'?
+-----------------------
+
+`arc' is (or certainly *used* to be) non-Free. For a while this didn't
+annoy me that much, and I put up with using it because there wasn't
+really anything else I could use. But once I realised that I could
+probably write my own extraction program, and that some old .arc files
+aren't likely to go away (for example, the Walnut Creek CP/M CD-ROM
+contains well over a thousand), I thought I'd try writing something a
+bit more useful than a picture viewer for once. :-)
+
+
+Why the name?
+-------------
+
+Since there are at least two different programs called `unarc' already
+(one is an old CP/M program, the other isn't .arc-related), I had to
+pick something a bit more obscure. I considered `arcbgon', but I
+thought that was a little tacky. :-) When I noticed that there was a
+word looking so similar to `no more arc', I went with that instead,
+even if the mundane meaning is a little, uh, grandiose...
+
+(Though it looks like it might also be Spanish for `filename' or
+something, which could be a bit weird. Oh well.)
+
+
+Contacting me
+-------------
+
+You can email me at rus@svgalib.org.
+
+
+Share and enjoy!
+
+-Rus.

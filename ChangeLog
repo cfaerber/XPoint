@@ -1,0 +1,86 @@
+2006-06-18  Russell Marks  <russell.marks@ntlworld.com>
+
+	* Version 1.4.
+
+	* README: some minor updates to reflect changes in the last 4
+	years. :-)
+
+	* readlzw.c (code_resync): fixed a possible hang with corrupt
+	files.
+
+2002-08-08  Russell Marks  <russell.marks@ntlworld.com>
+
+	* Version 1.3.
+
+	* main.c: now supports reading of self-extracting archives. (It
+	doesn't support those produced with pkpak, but even pkunpak can't
+	read those.)
+
+	* main.c (arc_extract_or_test): added support for compression
+	methods 5 and 6, which seem to be along the same lines as v1.0 of
+	the CP/M `crunch' scheme. So I was able to adapt some code from
+	lbrate. This isn't very well tested though - it works on the
+	only test file I have.
+
+	* main.c (read_file_header): added support for the Acorn
+	Archimedes's variant "Spark" format (including the extra
+	compression method), which is based on the more usual .arc. Any
+	`subdirectories' are extracted as the .arc files they really are.
+
+2002-08-07  Russell Marks  <russell.marks@ntlworld.com>
+
+	* main.c: include unistd.h rather than getopt.h, which was
+	troublesome on some systems. Thanks to Geoff Gibbs for
+	pointing this out (I'm slightly annoyed that I didn't notice
+	it myself, to be honest).
+
+2002-04-15  Russell Marks  <russell.marks@ntlworld.com>
+
+	* Version 1.2.
+
+	* main.c: added `-p' option, to extract files to stdout.
+	(Enabling this also moves some error-reporting from stdout to
+	stderr.) Thanks to Hilko Bengen for reminding me about this
+	one.
+
+2001-08-30  Russell Marks  <russell.marks@ntlworld.com>
+
+	* main.c (mkdatetimet): DST effects from the mktime() timestamp
+	generation caused some file times to be off by an hour - now
+	fixed.
+
+2001-08-16  Russell Marks  <russell.marks@ntlworld.com>
+
+	* Version 1.1.
+
+	* Added `extracting multiple archives' section to man page, from
+	lbrate.
+
+2001-08-12  Russell Marks  <russell.marks@ntlworld.com>
+
+	* main.c (usage_help): removed embedded LFs in string.
+
+	* nomarch.1: added section on how to use nomarch with Emacs.
+
+	* main.c: added `-U' option to use uppercase archive member
+	filenames - or more precisely, to avoid lowercasing them. (In
+	practice, almost all archives use uppercase member filenames.)
+
+2001-08-08  Russell Marks  <russell.marks@ntlworld.com>
+
+	* main.c (arc_extract_or_test): corrected typo in comment :-) (it
+	does *atime* and mtime, not ctime/mtime!).
+
+2001-08-04  Russell Marks  <russell.marks@ntlworld.com>
+
+	* main.c (arc_extract_or_test): file-writing errors didn't
+	previously cause a non-zero exit value - they do now.
+
+2001-08-03  Russell Marks  <russell.marks@ntlworld.com>
+
+	* main.c (read_file_data): fixed memory leak when not all of an
+	archive file member could be read.
+
+2001-07-30  Russell Marks  <russell.marks@ntlworld.com>
+
+	* Version 1.0.

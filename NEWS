@@ -1,0 +1,55 @@
+* Changes between versions   -*- mode:indented-text; mode:outline-minor -*-
+
+This file (NEWS) documents the significant changes between all
+versions of nomarch, with the newest changes first.
+
+
+* Changes in nomarch 1.4
+
+Fixed a bug which could hang nomarch with corrupt files.
+
+
+* Changes in nomarch 1.3
+
+Added compression methods 5 and 6, which seem to be along the same
+lines as v1.0 of the CP/M `crunch' scheme (so I was able to adapt some
+code from lbrate). This isn't very well tested though - all I know is
+that it works on the single method-6 test file I have - so if anyone
+has any more files using these methods they can test it on (use
+`nomarch -lv' to check the methods used by a file) I'd appreciate
+feedback on whether it works or not. :-)
+
+Self-extracting archives (for both MS-DOS and CP/M) can be read. (It
+doesn't support those produced with pkpak, but even pkunpak can't read
+those.)
+
+Now supports the Acorn Archimedes's variant "Spark" format (including
+the extra compression method), which is based on the more usual .arc.
+Any `subdirectories' are extracted as the .arc files they really are.
+
+main.c now uses unistd.h rather than getopt.h, which was troublesome
+on some systems. Thanks to Geoff Gibbs for spotting this.
+
+
+* Changes in nomarch 1.2
+
+Added `-p' option, to extract files to standard output. Thanks to
+Hilko Bengen for reminding me about this one.
+
+Fixed DST-related bug which caused some file times to be wrong by an
+hour.
+
+
+* Changes in nomarch 1.1
+
+New `-U' option, to use uppercase archive member filenames - or more
+precisely, to avoid lowercasing them. (In practice, almost all
+archives use uppercase member filenames.)
+
+File-writing errors didn't previously cause a non-zero exit value -
+they do now.
+
+Fixed memory leak when not all of an archive file member could be
+read.
+
+Added section on how to use nomarch with Emacs to man page.

@@ -1,0 +1,148 @@
+.\" -*- nroff -*-
+.\"
+.\" nomarch 1.4 - extract old `.arc' archives.
+.\" Copyright (C) 2001-2006 Russell Marks.
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.\"
+.\" nomarch.1 - man page
+.\"
+.TH nomarch 1 "18th June, 2006" "Version 1.4" "Archive Extraction"
+.\"
+.\"------------------------------------------------------------------
+.\"
+.SH NAME
+nomarch \- extract `.arc' archives
+.\"
+.\"------------------------------------------------------------------
+.\"
+.SH SYNOPSIS
+.PD 0
+.B nomarch
+.RI [ -hlptUv ]
+.RB [ archive.arc ]
+.RB [ match1
+.RB [ match2
+.cc @
+... ]]
+@cc .
+.P
+.PD 1
+.\"
+.\"------------------------------------------------------------------
+.\"
+.SH DESCRIPTION
+nomarch lists, extracts, or tests `.arc' archives. (An alternate
+extension sometimes used was `.ark'; these work too.) This is a
+.I very
+outdated file format which should certainly not be used for anything
+new, but you may still need an extraction utility, and here it is. :-)
+.PP
+The default action is to extract all files in the specified archive;
+see
+.B OPTIONS
+below for how to do other things instead.
+.\"
+.\"------------------------------------------------------------------
+.\"
+.SH OPTIONS
+.TP
+.I -h
+give terse usage help.
+.TP
+.I -l
+list files in archive. If verbose listings are enabled, it shows the
+filename, compression method, compressed/uncompressed size, date/time,
+and CRC; but by default, it just shows the filename, uncompressed
+size, and date/time.
+.TP
+.I -p
+extract to standard output, rather than to separate files.
+.TP
+.I -t
+test files in archive (more precisely, check file CRCs).
+.TP
+.I -U
+use uppercase filenames; more precisely, preserve original case from
+archive.
+.TP
+.I -v
+give verbose output (when used with
+.RI ` -l ').
+.TP
+.B archive.arc
+the archive to operate on.
+.TP
+.BR match1 " etc."
+optionally specify which archive members to list/extract/test. Those
+which match any of these filenames/wildcards are processed. Wildcard
+operators supported are shell-like `*' and `?', but don't forget to
+quote arguments which use these (e.g.
+.RI ` nomarch
+.IR "foo.arc '*.bar'" ').
+.\"
+.\"------------------------------------------------------------------
+.\"
+.SH "EXTRACTING MULTIPLE ARCHIVES"
+nomarch follows the `unzip'-like practice of working on only one
+archive per run, with further `filenames' given on the command-line
+actually specifying files to extract (or whatever). The easiest way to
+work on multiple files with nomarch is simply to run it multiple
+times using
+.IR for ;
+for example:
+.PP
+for i in *.arc; do nomarch $i; done
+.PP
+The above would extract all archives in the current directory.
+.\"
+.\"------------------------------------------------------------------
+.\"
+.SH "USING THE PROGRAM FROM EMACS"
+Emacs's arc-mode facility lets you work with various kinds of archive
+file directly from the editor. Making it use nomarch for
+extracting `.arc' files isn't too hard. Just add the following to your
+.I "~/.emacs"
+file:
+.PP
+(setq archive-arc-extract '("nomarch" "-U"))
+.\"
+.\"------------------------------------------------------------------
+.\"
+.SH BUGS
+The CRC used by the format is only 16-bit, so
+.RI ` -t '
+is a less-than-perfect test.
+.PP
+One compression method, obsolete even by `.arc' standards :-), isn't
+supported yet. This is partly because I've yet to find a single file
+which uses it, despite testing an awful lot of files.
+.PP
+Subdirectories in Spark archives are extracted as the `.arc'-format
+files they really are, which may not be terribly convenient.
+.\"
+.\"------------------------------------------------------------------
+.\"
+.SH SEE ALSO
+.IR tar "(1),"
+.IR gzip "(1),"
+.IR bzip2 "(1),"
+.IR lbrate "(1)"
+.\"
+.\"------------------------------------------------------------------
+.\"
+.SH AUTHOR
+Russell Marks (rus@svgalib.org).
