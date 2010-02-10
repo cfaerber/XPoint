@@ -3462,19 +3462,19 @@ begin
             CreateNewfile(true);
           SetMimeData;
 
-          ConnectStream(f, TCRLFtoLFStream.Create);
+          ConnectStream(f2, TCRLFtoLFStream.Create);
           if SMTP then
-            ConnectStream(f, TDotEscapeStream.Create);
+            ConnectStream(f2, TDotEscapeStream.Create);
 
-          WriteRFCheader(f, true,false);
-          WriteRFCheader(f, true,true );
+          WriteRFCheader(f2, true,false);
+          WriteRFCheader(f2, true,true );
           seek(f1, adr + hds);          { Text kopieren }
-          CopyEncodeMail(f,hd.groesse);
-          WriteRfcTrailer(f);
+          CopyEncodeMail(f2,hd.groesse);
+          WriteRfcTrailer(f2);
 
           if SMTP and Client then begin
-            UnConnectStream(f);
-            Wrs(f, 'QUIT');
+            UnConnectStream(f2);
+            Wrs(f2, 'QUIT');
           end;
 
           if not SMTP and not Client then
